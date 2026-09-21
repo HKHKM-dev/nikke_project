@@ -1,9 +1,9 @@
 import type { CharacterData, DamageResult } from '@nikke/core';
 import { formatNumber, formatPercent } from '../format.ts';
 
-type Props = { character: CharacterData; result: DamageResult };
+type Props = { character: CharacterData; result: DamageResult; attackLabel?: string };
 
-export function ResultPanel({ character, result }: Props) {
+export function ResultPanel({ character, result, attackLabel = '攻撃力（素）' }: Props) {
   const { cadence } = result;
   return (
     <section className="panel result">
@@ -33,7 +33,7 @@ export function ResultPanel({ character, result }: Props) {
       <table className="breakdown">
         <tbody>
           <tr>
-            <th>攻撃力（素）</th>
+            <th>{attackLabel}</th>
             <td>{formatNumber(result.attack)}</td>
           </tr>
           <tr>

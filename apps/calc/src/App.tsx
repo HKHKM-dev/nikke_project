@@ -1,5 +1,8 @@
 import {
   computeDamage,
+  computeFixedSpecAttack,
+  FIXED_SPEC_ENEMY_DEFENCE,
+  fixedSpecGrowth,
   growthLimits,
   loadCharacter,
   loadCharacterIndex,
@@ -35,6 +38,7 @@ export function App() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [character, setCharacter] = useState<CharacterData | null>(null);
   const [growth, setGrowth] = useState<GrowthInput>({ level: 200, grade: 3, core: 0 });
+  const [fixedSpec, setFixedSpec] = useState(false);
   const [enemy, setEnemy] = useState<EnemyInput>(SHOOTING_RANGE_ENEMY);
   const [condition, setCondition] = useState<ConditionInput>({
     coreHitRate: 1,
@@ -67,16 +71,40 @@ export function App() {
   // 選択中のキャラと一致するデータだけを使う（切り替え直後の古いデータは読み込み中として扱う）
   const current = character !== null && character.resourceId === selectedId ? character : null;
 
-  const effectiveGrowth = useMemo(() => (current ? clampGrowth(current, growth) : growth), [current, growth]);
+  const effectiveGrowth = useMemo(() => {
+    if (!current) return growth;
+    return fixedSpec ? fixedSpecGrowth(current) : clampGrowth(current, growth);
+  }, [current, growth, fixedSpec]);
+  const fixedAttack = useMemo(
+    () => (current && fixedSpec ? computeFixedSpecAttack(current) : null),
+    [current, fixedSpec],
+  );
+
+  const handleFixedSpecChange = (on: boolean) => {
+    setFixedSpec(on);
+    if (on) {
+      setEnemy((e) => ({ ...e, defence: FIXED_SPEC_ENEMY_DEFENCE }));
+      setCondition((c) => ({ ...c, durationSeconds: 90 }));
+    }
+  };
 
   const computed = useMemo<Computed | null>(() => {
     if (!current) return null;
     try {
-      return { ok: true, result: computeDamage({ character: current, growth: effectiveGrowth, enemy, condition }) };
+      return {
+        ok: true,
+        result: computeDamage({
+          character: current,
+          growth: effectiveGrowth,
+          enemy,
+          condition,
+          ...(fixedAttack ? { attackOverride: fixedAttack.attack } : {}),
+        }),
+      };
     } catch (e) {
       return { ok: false, error: e instanceof Error ? e.message : String(e) };
     }
-  }, [current, effectiveGrowth, enemy, condition]);
+  }, [current, effectiveGrowth, enemy, condition, fixedAttack]);
 
   return (
     <main className="app">
@@ -96,6 +124,8 @@ export function App() {
               character={current}
               growth={effectiveGrowth}
               onGrowthChange={setGrowth}
+              fixedSpec={fixedSpec}
+              onFixedSpecChange={handleFixedSpecChange}
             />
             <EnemyForm
               character={current}
@@ -107,7 +137,17 @@ export function App() {
           </div>
           <div className="output">
             {selectedId !== null && !current && !loadError && <p>キャラデータを読み込み中…</p>}
-            {current && computed?.ok && <ResultPanel character={current} result={computed.result} />}
+            {current && computed?.ok && (
+              <ResultPanel
+                character={current}
+                result={computed.result}
+                attackLabel={
+                  fixedAttack
+                    ? `攻撃力（スペック固定: 好感度 rank${fixedAttack.affectionRank} + 装備）`
+                    : '攻撃力（素）'
+                }
+              />
+            )}
             {computed && !computed.ok && <p className="error">{computed.error}</p>}
             {selectedId === null && <p className="hint">左のリストからニケを選んでください。</p>}
           </div>

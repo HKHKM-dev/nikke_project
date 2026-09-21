@@ -27,6 +27,8 @@ export type DamageInput = {
   enemy: EnemyInput;
   condition: ConditionInput;
   model?: WeaponModel;
+  /** 戦闘中の攻撃力を直接指定する（射撃場スペック固定など）。指定時は growth からの算出をしない */
+  attackOverride?: number;
 };
 
 export type ModelNoteLevel = 'unsupported' | 'approx';
@@ -89,7 +91,7 @@ export function computeDamage(input: DamageInput): DamageResult {
   }
   if (condition.durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const attack = computeStat(character, 'attack', growth);
+  const attack = input.attackOverride ?? computeStat(character, 'attack', growth);
   const baseHit = Math.max(1, attack - enemy.defence);
   const weaponMultiplier = shot.damage / 10000;
   const charge = isChargeWeapon(shot) && condition.fullCharge;

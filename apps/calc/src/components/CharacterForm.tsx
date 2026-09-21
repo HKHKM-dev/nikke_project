@@ -15,13 +15,24 @@ type Props = {
   character: CharacterData | null;
   growth: GrowthInput;
   onGrowthChange: (growth: GrowthInput) => void;
+  fixedSpec: boolean;
+  onFixedSpecChange: (fixedSpec: boolean) => void;
 };
 
 function label(entry: CharacterIndexEntry): string {
   return `${entry.name.ja} (${entry.name.en}) — ${entry.rarity} ${entry.weaponType} ${ELEMENT_LABEL[entry.element].ja}`;
 }
 
-export function CharacterForm({ index, selectedId, onSelect, character, growth, onGrowthChange }: Props) {
+export function CharacterForm({
+  index,
+  selectedId,
+  onSelect,
+  character,
+  growth,
+  onGrowthChange,
+  fixedSpec,
+  onFixedSpecChange,
+}: Props) {
   const [filter, setFilter] = useState('');
   const visible = useMemo(() => {
     const q = filter.trim().toLowerCase();
@@ -41,6 +52,7 @@ export function CharacterForm({ index, selectedId, onSelect, character, growth, 
         max={max}
         step={1}
         value={growth[key]}
+        disabled={fixedSpec}
         onChange={(e) => onGrowthChange({ ...growth, [key]: Number(e.target.value) })}
       />
       <small>
@@ -77,6 +89,10 @@ export function CharacterForm({ index, selectedId, onSelect, character, growth, 
             {WEAPON_LABEL[character.weaponType].ja} / {ELEMENT_LABEL[character.element].ja} / {character.class} / 装弾数{' '}
             {character.shot.maxAmmo} / リロード {character.shot.reloadTime}s / 武器倍率 {character.shot.damage / 100}%
           </p>
+          <label className="field checkbox">
+            <input type="checkbox" checked={fixedSpec} onChange={(e) => onFixedSpecChange(e.target.checked)} />
+            <span>ユニオン射撃場スペック固定（Lv400・凸/コア上限・T9 装備・好感度込み、敵防御 100）</span>
+          </label>
           {numberField('level', 'レベル', 1, limits.levelMax)}
           {numberField('grade', '限界突破', 0, limits.gradeMax)}
           {numberField('core', 'コア強化', 0, limits.coreMax)}
