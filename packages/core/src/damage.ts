@@ -77,12 +77,6 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
       'MG のスピンアップはレート蓄積モデル（エマの録画で較正、誤差 1% 程度）',
       'MG spin-up uses an accumulator model calibrated on one recording',
     );
-  if (isChargeWeapon(shot) && shot.chargeTime !== 1)
-    approx(
-      'charge-release',
-      'チャージ 1.0 秒以外の武器は解放遅延 22f が未検証',
-      'Charge release delay (22f) only verified for 1.0 s charge',
-    );
   return notes;
 }
 

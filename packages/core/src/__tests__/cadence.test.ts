@@ -65,7 +65,7 @@ describe('computeCadence (calibrated against recordings)', () => {
     expect(c.triggersPerSecond).toBeCloseTo((60 * 60) / 355, 6);
   });
 
-  it('SMG: 1440 rpm accumulates to 2.5f average (unverified; assumes the same accumulator as MG)', () => {
+  it('SMG: 1440 rpm accumulates to 2.5f average (measured: period-5 autocorrelation, 120 rounds ≈ 298f)', () => {
     const c = computeCadence(shot({ maxAmmo: 120, rateOfFire: 1440, endRateOfFire: 1440 }));
     expect(c.shotFrames.slice(0, 5)).toEqual([0, 3, 5, 8, 10]);
     expect(c.magazineFrames).toBe(298);
@@ -96,6 +96,12 @@ describe('computeCadence (calibrated against recordings)', () => {
     expect(c.reloadFrames).toBe(150);
     // 実測サイクル 563f（1 発目→次マガジン 1 発目）
     expect(Math.abs(c.cycleFrames - 563)).toBeLessThanOrEqual(5);
+  });
+
+  it('RL with 1.5 s charge: 112f per shot (90f + 22f), reload 120f → 792f cycle (measured 790f)', () => {
+    const c = computeCadence(shot({ ...RL, chargeTime: 1.5, fullChargeDamage: 3.5 }));
+    expect(c.shotFrames).toEqual([0, 112, 224, 336, 448, 560]);
+    expect(c.cycleFrames).toBe(792);
   });
 
   it('charge release frames are configurable', () => {
