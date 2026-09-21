@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+    "paths": {
+      "@nikke/core": ["../../packages/core/src/index.ts"],
+      "@nikke/core/*": ["../../packages/core/src/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}
