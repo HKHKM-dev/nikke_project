@@ -41,8 +41,6 @@ export function isChargeWeapon(shot: Pick<ShotParams, 'chargeTime' | 'inputType'
   return shot.chargeTime > 0 && shot.inputType !== 'DOWN';
 }
 
-export function hasSpinUp(
-  shot: Pick<ShotParams, 'rateOfFireChangePerShot' | 'endRateOfFire' | 'rateOfFire'>,
-): boolean {
+export function hasSpinUp(shot: Pick<ShotParams, 'rateOfFireChangePerShot' | 'endRateOfFire' | 'rateOfFire'>): boolean {
   return shot.rateOfFireChangePerShot > 0 && shot.endRateOfFire > shot.rateOfFire;
 }

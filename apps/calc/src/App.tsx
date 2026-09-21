@@ -52,7 +52,6 @@ export function App() {
   useEffect(() => {
     if (selectedId === null) return;
     let cancelled = false;
-    setCharacter(null);
     loadCharacter(selectedId, { baseUrl: BASE_URL })
       .then((c) => {
         if (!cancelled) setCharacter(c);
@@ -65,16 +64,19 @@ export function App() {
     };
   }, [selectedId]);
 
-  const effectiveGrowth = useMemo(() => (character ? clampGrowth(character, growth) : growth), [character, growth]);
+  // 選択中のキャラと一致するデータだけを使う（切り替え直後の古いデータは読み込み中として扱う）
+  const current = character !== null && character.resourceId === selectedId ? character : null;
+
+  const effectiveGrowth = useMemo(() => (current ? clampGrowth(current, growth) : growth), [current, growth]);
 
   const computed = useMemo<Computed | null>(() => {
-    if (!character) return null;
+    if (!current) return null;
     try {
-      return { ok: true, result: computeDamage({ character, growth: effectiveGrowth, enemy, condition }) };
+      return { ok: true, result: computeDamage({ character: current, growth: effectiveGrowth, enemy, condition }) };
     } catch (e) {
       return { ok: false, error: e instanceof Error ? e.message : String(e) };
     }
-  }, [character, effectiveGrowth, enemy, condition]);
+  }, [current, effectiveGrowth, enemy, condition]);
 
   return (
     <main className="app">
@@ -91,15 +93,21 @@ export function App() {
               index={index}
               selectedId={selectedId}
               onSelect={setSelectedId}
-              character={character}
+              character={current}
               growth={effectiveGrowth}
               onGrowthChange={setGrowth}
             />
-            <EnemyForm character={character} enemy={enemy} onEnemyChange={setEnemy} condition={condition} onConditionChange={setCondition} />
+            <EnemyForm
+              character={current}
+              enemy={enemy}
+              onEnemyChange={setEnemy}
+              condition={condition}
+              onConditionChange={setCondition}
+            />
           </div>
           <div className="output">
-            {selectedId !== null && !character && !loadError && <p>キャラデータを読み込み中…</p>}
-            {character && computed?.ok && <ResultPanel character={character} result={computed.result} />}
+            {selectedId !== null && !current && !loadError && <p>キャラデータを読み込み中…</p>}
+            {current && computed?.ok && <ResultPanel character={current} result={computed.result} />}
             {computed && !computed.ok && <p className="error">{computed.error}</p>}
             {selectedId === null && <p className="hint">左のリストからニケを選んでください。</p>}
           </div>

@@ -6,6 +6,7 @@
 ## 類似 OSS
 
 ### Jgaram/nikke-calc
+
 - URL: https://github.com/Jgaram/nikke-calc
 - 言語: Python。ライセンス: MIT（コードのみ。ゲームアセットは対象外）
 - 内容: 180 秒ボス戦を 1/60 秒刻みで再現する決定論的シミュレータ。乱数シード固定モードと期待値モードの両方あり
@@ -17,6 +18,7 @@
 - 多数のフォークあり（Tizmaos-crypto, farly6966, Swiftstar, dino02021 など）
 
 ### Infernal-Crack-LED/nikke-sim
+
 - URL: https://github.com/Infernal-Crack-LED/nikke-sim
 - 言語: TypeScript（Vite + React、Vitest、Hono）。ライセンス: README に記載なし（流用不可として扱う）
 - 内容: ソロレイド 180 秒の 60fps フレームシミュレータ。CLI と Web が同じエンジンを使う
@@ -28,6 +30,7 @@
 - 既知の制限（v1）: 敵デバフなし、常に有効射程内、敵 DEF とコア命中率は入力値、貫通・パーツ未対応
 
 ### その他
+
 - ExiaProject/ExiaInvasion: https://github.com/ExiaProject/ExiaInvasion
   - Blablalink にログインして所持ニケの育成データを取得する Chrome 拡張（GPL-3.0）。アカウント連携を検討する際の参考。規約違反の可能性を README で明記している
 - NKAS Data: https://nkas.pages.dev/data/

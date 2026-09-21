@@ -25,7 +25,11 @@ export type CadenceResult = {
 };
 
 /** shotIndex 発目（0 始まり）の所要フレーム。 */
-export function shotIntervalFrames(shot: ShotParams, shotIndex: number, model: WeaponModel = DEFAULT_WEAPON_MODEL): number {
+export function shotIntervalFrames(
+  shot: ShotParams,
+  shotIndex: number,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+): number {
   if (isChargeWeapon(shot)) {
     return Math.max(framesPerShot(shot.rateOfFire), secondsToFrames(shot.chargeTime)) + model.chargeReleaseFrames;
   }

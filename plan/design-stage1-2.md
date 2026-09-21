@@ -77,10 +77,14 @@ D:\nikke_project\
 
 ```ts
 type CharacterIndexEntry = {
-  resourceId: number; name: { ja: string; en: string };
-  rarity: 'SSR'|'SR'|'R'; class: 'Attacker'|'Defender'|'Supporter'; corporation: string;
-  element: 'Fire'|'Water'|'Wind'|'Electronic'|'Iron'; weaponType: 'AR'|'SMG'|'SR'|'RL'|'SG'|'MG';
-  burstStep: 'Step1'|'Step2'|'Step3'|'AllStep';
+  resourceId: number;
+  name: { ja: string; en: string };
+  rarity: 'SSR' | 'SR' | 'R';
+  class: 'Attacker' | 'Defender' | 'Supporter';
+  corporation: string;
+  element: 'Fire' | 'Water' | 'Wind' | 'Electronic' | 'Iron';
+  weaponType: 'AR' | 'SMG' | 'SR' | 'RL' | 'SG' | 'MG';
+  burstStep: 'Step1' | 'Step2' | 'Step3' | 'AllStep';
 };
 ```
 
@@ -89,20 +93,36 @@ type CharacterIndexEntry = {
 ```ts
 type CharacterData = CharacterIndexEntry & {
   levelCurve: { attack: number[]; hp: number[]; defence: number[] }; // index = level-1、長さ 1400
-  statEnhance: { gradeRatio: number; gradeAttack: number; gradeHp: number; gradeDefence: number;
-                 coreAttack: number; coreHp: number; coreDefence: number }; // CDN 生値（1e-4 単位）
-  crit: { rate: number; damage: number };            // 0.15, 1.5（全キャラ共通と確認済み。将来差分に備え保持）
-  bonusRange: { min: number; max: number } | null;   // RL は (0,0) → null
+  statEnhance: {
+    gradeRatio: number;
+    gradeAttack: number;
+    gradeHp: number;
+    gradeDefence: number;
+    coreAttack: number;
+    coreHp: number;
+    coreDefence: number;
+  }; // CDN 生値（1e-4 単位）
+  crit: { rate: number; damage: number }; // 0.15, 1.5（全キャラ共通と確認済み。将来差分に備え保持）
+  bonusRange: { min: number; max: number } | null; // RL は (0,0) → null
   shot: {
-    damage: number;            // 1e-4 単位（557 = 5.57%、SG は全ペレット合計）
-    shotCount: number;         // SG ペレット数（通常 10）
+    damage: number; // 1e-4 単位（557 = 5.57%、SG は全ペレット合計）
+    shotCount: number; // SG ペレット数（通常 10）
     muzzleCount: number;
-    maxAmmo: number; reloadTime: number /*秒*/; reloadBullet: number /*0..1、1 未満は分割リロード*/;
-    rateOfFire: number; endRateOfFire: number; rateOfFireChangePerShot: number; rateOfFireResetTime: number; // rpm
-    chargeTime: number /*秒*/; fullChargeDamage: number /*倍率、1.0 or 2.5 等*/;
-    coreDamageRate: number;    // 倍率、通常 2.0（Miranda 等 2.5）
-    inputType: 'DOWN'|'UP'|'DOWN_Charge'; fireType: string; penetration: number;
-    maintainFireStance: number; uptypeFireTiming: number;
+    maxAmmo: number;
+    reloadTime: number /*秒*/;
+    reloadBullet: number /*0..1、1 未満は分割リロード*/;
+    rateOfFire: number;
+    endRateOfFire: number;
+    rateOfFireChangePerShot: number;
+    rateOfFireResetTime: number; // rpm
+    chargeTime: number /*秒*/;
+    fullChargeDamage: number /*倍率、1.0 or 2.5 等*/;
+    coreDamageRate: number; // 倍率、通常 2.0（Miranda 等 2.5）
+    inputType: 'DOWN' | 'UP' | 'DOWN_Charge';
+    fireType: string;
+    penetration: number;
+    maintainFireStance: number;
+    uptypeFireTiming: number;
   };
   skills: { skill1: SkillRaw; skill2: SkillRaw; burst: SkillRaw }; // 説明文 + description_value_list（Stage 4 用に保持のみ）
 };
@@ -151,12 +171,12 @@ CDN にない「解釈ルール」だけを置く小さな表:
 
 ### 3.1 入力
 
-| 区分 | 項目 | 既定 |
-|---|---|---|
-| ニケ | キャラ（index から選択）、レベル、限界突破、コア | Lv 200 / 3 / 0 |
-| 敵 | 防御力、属性（5 種 + なし）、コア有無 | 射撃場プリセット: 防御 100、属性なし、コアあり |
-| 条件 | コア命中率（0〜1）、距離ボーナス（on/off、RL は常に off）、戦闘時間（秒） | 1.0 / on / 180（射撃場照合時は 90） |
-| SR/RL | フルチャージ前提（v1 は常に on） | on |
+| 区分  | 項目                                                                      | 既定                                           |
+| ----- | ------------------------------------------------------------------------- | ---------------------------------------------- |
+| ニケ  | キャラ（index から選択）、レベル、限界突破、コア                          | Lv 200 / 3 / 0                                 |
+| 敵    | 防御力、属性（5 種 + なし）、コア有無                                     | 射撃場プリセット: 防御 100、属性なし、コアあり |
+| 条件  | コア命中率（0〜1）、距離ボーナス（on/off、RL は常に off）、戦闘時間（秒） | 1.0 / on / 180（射撃場照合時は 90）            |
+| SR/RL | フルチャージ前提（v1 は常に on）                                          | on                                             |
 
 ### 3.2 計算（`src/damage.ts`, `src/cadence.ts`）— すべて純関数
 

@@ -14,7 +14,15 @@ function makeCharacter(shot: Partial<ShotParams> = {}, overrides: Partial<Charac
     weaponType: 'AR',
     burstStep: 'Step3',
     levelCurve: { attack: [1000], hp: [10000], defence: [100] },
-    statEnhance: { gradeRatio: 200, gradeAttack: 20, gradeHp: 3000, gradeDefence: 100, coreAttack: 200, coreHp: 200, coreDefence: 200 },
+    statEnhance: {
+      gradeRatio: 200,
+      gradeAttack: 20,
+      gradeHp: 3000,
+      gradeDefence: 100,
+      coreAttack: 200,
+      coreHp: 200,
+      coreDefence: 200,
+    },
     crit: { rate: 0.15, damage: 1.5 },
     bonusRange: { min: 25, max: 45 },
     shot: {
@@ -75,7 +83,12 @@ describe('computeDamage', () => {
   });
 
   it('scales core boost by hit rate and per-character core rate', () => {
-    const r = computeDamage(input({ character: makeCharacter({ coreDamageRate: 2.5 }), condition: { coreHitRate: 0.4, distanceBonus: false, fullCharge: true, durationSeconds: 1 } }));
+    const r = computeDamage(
+      input({
+        character: makeCharacter({ coreDamageRate: 2.5 }),
+        condition: { coreHitRate: 0.4, distanceBonus: false, fullCharge: true, durationSeconds: 1 },
+      }),
+    );
     expect(r.boost.core).toBeCloseTo(0.6, 10);
     expect(r.boost.distance).toBe(0);
   });
@@ -87,25 +100,45 @@ describe('computeDamage', () => {
 
   it('applies full charge multiplier only for charge weapons, and no distance bonus without bonusRange', () => {
     const rl = makeCharacter(
-      { damage: 6130, maxAmmo: 6, reloadTime: 2, rateOfFire: 60, endRateOfFire: 60, chargeTime: 1, fullChargeDamage: 2.5, inputType: 'UP' },
+      {
+        damage: 6130,
+        maxAmmo: 6,
+        reloadTime: 2,
+        rateOfFire: 60,
+        endRateOfFire: 60,
+        chargeTime: 1,
+        fullChargeDamage: 2.5,
+        inputType: 'UP',
+      },
       { weaponType: 'RL', bonusRange: null },
     );
     const full = computeDamage(input({ character: rl }));
     expect(full.chargeMultiplier).toBe(2.5);
     expect(full.boost.distance).toBe(0);
-    const noCharge = computeDamage(input({ character: rl, condition: { coreHitRate: 1, distanceBonus: true, fullCharge: false, durationSeconds: 180 } }));
+    const noCharge = computeDamage(
+      input({
+        character: rl,
+        condition: { coreHitRate: 1, distanceBonus: true, fullCharge: false, durationSeconds: 180 },
+      }),
+    );
     expect(noCharge.chargeMultiplier).toBe(1);
     expect(full.notes.map((n) => n.code)).toContain('charge-release');
   });
 
   it('rejects invalid core hit rate', () => {
-    expect(() => computeDamage(input({ condition: { coreHitRate: 1.5, distanceBonus: true, fullCharge: true, durationSeconds: 180 } }))).toThrow(RangeError);
+    expect(() =>
+      computeDamage(
+        input({ condition: { coreHitRate: 1.5, distanceBonus: true, fullCharge: true, durationSeconds: 180 } }),
+      ),
+    ).toThrow(RangeError);
   });
 });
 
 describe('modelNotes', () => {
   it('flags unsupported and approximated mechanics', () => {
-    const codes = modelNotes(makeCharacter({ muzzleCount: 2, reloadBullet: 0.33, penetration: 1 }).shot).map((n) => `${n.level}:${n.code}`);
+    const codes = modelNotes(makeCharacter({ muzzleCount: 2, reloadBullet: 0.33, penetration: 1 }).shot).map(
+      (n) => `${n.level}:${n.code}`,
+    );
     expect(codes).toEqual(['unsupported:multi-muzzle', 'unsupported:penetration', 'approx:chunked-reload']);
   });
 

@@ -48,7 +48,6 @@ export type DamageResult = {
   notes: ModelNote[];
 };
 
-
 export function modelNotes(shot: ShotParams): ModelNote[] {
   const notes: ModelNote[] = [];
   const unsupported = (code: string, ja: string, en: string): void => {
@@ -57,14 +56,29 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
   const approx = (code: string, ja: string, en: string): void => {
     notes.push({ level: 'approx', code, message: { ja, en } });
   };
-  if (shot.muzzleCount !== 1) unsupported('multi-muzzle', '複数銃口（二丁持ち）は未対応', 'Multiple muzzles not modeled');
-  if (shot.inputType === 'DOWN_Charge') unsupported('down-charge', '押下チャージ型の入力は未対応', 'DOWN_Charge input not modeled');
-  if (shot.maintainFireStance !== 0) unsupported('fire-stance', '射撃姿勢維持型の武器は未対応', 'Fire-stance weapons not modeled');
-  if (shot.fireType === 'ProjectileCurve') unsupported('projectile-curve', '曲射型の弾は未対応', 'Curved projectiles not modeled');
+  if (shot.muzzleCount !== 1)
+    unsupported('multi-muzzle', '複数銃口（二丁持ち）は未対応', 'Multiple muzzles not modeled');
+  if (shot.inputType === 'DOWN_Charge')
+    unsupported('down-charge', '押下チャージ型の入力は未対応', 'DOWN_Charge input not modeled');
+  if (shot.maintainFireStance !== 0)
+    unsupported('fire-stance', '射撃姿勢維持型の武器は未対応', 'Fire-stance weapons not modeled');
+  if (shot.fireType === 'ProjectileCurve')
+    unsupported('projectile-curve', '曲射型の弾は未対応', 'Curved projectiles not modeled');
   if (shot.penetration > 0) unsupported('penetration', '貫通は未対応', 'Penetration not modeled');
-  if (shot.reloadBullet < 1) approx('chunked-reload', '分割リロードは「回数 × リロード時間」で近似', 'Chunked reload approximated as chunks × reload time');
-  if (hasSpinUp(shot)) approx('spin-up', 'MG のスピンアップは 1 発ごとのレート上昇で近似', 'MG spin-up approximated per shot');
-  if (isChargeWeapon(shot)) approx('charge-release', 'チャージ武器の発射間隔は較正前（解放遅延 0f）', 'Charge cadence not yet calibrated (release delay 0f)');
+  if (shot.reloadBullet < 1)
+    approx(
+      'chunked-reload',
+      '分割リロードは「回数 × リロード時間」で近似',
+      'Chunked reload approximated as chunks × reload time',
+    );
+  if (hasSpinUp(shot))
+    approx('spin-up', 'MG のスピンアップは 1 発ごとのレート上昇で近似', 'MG spin-up approximated per shot');
+  if (isChargeWeapon(shot))
+    approx(
+      'charge-release',
+      'チャージ武器の発射間隔は較正前（解放遅延 0f）',
+      'Charge cadence not yet calibrated (release delay 0f)',
+    );
   return notes;
 }
 

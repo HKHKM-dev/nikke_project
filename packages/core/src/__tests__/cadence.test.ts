@@ -45,7 +45,15 @@ describe('computeCadence', () => {
 
   it('SR: full charge 1.0 s at 60 rpm → 60f per shot, 2.0 s reload', () => {
     const c = computeCadence(
-      shot({ maxAmmo: 6, reloadTime: 2, rateOfFire: 60, endRateOfFire: 60, chargeTime: 1, fullChargeDamage: 2.5, inputType: 'UP' }),
+      shot({
+        maxAmmo: 6,
+        reloadTime: 2,
+        rateOfFire: 60,
+        endRateOfFire: 60,
+        chargeTime: 1,
+        fullChargeDamage: 2.5,
+        inputType: 'UP',
+      }),
     );
     expect(c.shotFrames).toEqual([60, 60, 60, 60, 60, 60]);
     expect(c.cycleSeconds).toBe(8);
@@ -89,7 +97,9 @@ describe('reloadChunks', () => {
   });
 
   it('multiplies reload time by chunk count', () => {
-    const c = computeCadence(shot({ maxAmmo: 9, reloadTime: 0.67, reloadBullet: 0.33, rateOfFire: 90, endRateOfFire: 90 }));
+    const c = computeCadence(
+      shot({ maxAmmo: 9, reloadTime: 0.67, reloadBullet: 0.33, rateOfFire: 90, endRateOfFire: 90 }),
+    );
     expect(c.reloadChunks).toBe(3);
     expect(c.reloadFrames).toBe(41 * 3);
   });

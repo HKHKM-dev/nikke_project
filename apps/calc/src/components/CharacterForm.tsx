@@ -1,4 +1,11 @@
-import { growthLimits, WEAPON_LABEL, ELEMENT_LABEL, type CharacterData, type CharacterIndexEntry, type GrowthInput } from '@nikke/core';
+import {
+  growthLimits,
+  WEAPON_LABEL,
+  ELEMENT_LABEL,
+  type CharacterData,
+  type CharacterIndexEntry,
+  type GrowthInput,
+} from '@nikke/core';
 import { useMemo, useState } from 'react';
 
 type Props = {
@@ -47,7 +54,12 @@ export function CharacterForm({ index, selectedId, onSelect, character, growth, 
       <legend>ニケ</legend>
       <label className="field">
         <span>検索</span>
-        <input type="search" value={filter} placeholder="名前（日本語 / 英語）" onChange={(e) => setFilter(e.target.value)} />
+        <input
+          type="search"
+          value={filter}
+          placeholder="名前（日本語 / 英語）"
+          onChange={(e) => setFilter(e.target.value)}
+        />
       </label>
       <label className="field">
         <span>キャラ</span>
