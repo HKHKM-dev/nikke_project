@@ -1,0 +1,28 @@
+{
+  "name": "nikke-project",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "fetch-data": "npm run fetch-data -w @nikke/core",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "dev": "npm run dev -w @nikke/calc",
+    "build": "npm run build -w @nikke/calc",
+    "preview": "npm run preview -w @nikke/calc"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
+  }
+}

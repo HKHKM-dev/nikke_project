@@ -1,0 +1,13 @@
+{
+  "name": "@nikke/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "fetch-data": "node scripts/fetch-data.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

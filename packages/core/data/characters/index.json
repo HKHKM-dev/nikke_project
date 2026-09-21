@@ -1,0 +1,2631 @@
+{
+  "formatVersion": 1,
+  "characters": [
+    {
+      "resourceId": 10,
+      "name": {
+        "ja": "ラピ",
+        "en": "Rapi"
+      },
+      "rarity": "SR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 11,
+      "name": {
+        "ja": "ネオン",
+        "en": "Neon"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "SG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 12,
+      "name": {
+        "ja": "アニス",
+        "en": "Anis"
+      },
+      "rarity": "SR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 14,
+      "name": {
+        "ja": "ネオン：ブルーオーシャン",
+        "en": "Neon: Blue Ocean"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 15,
+      "name": {
+        "ja": "アニス：スパークリングサマー",
+        "en": "Anis: Sparkling Summer"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 16,
+      "name": {
+        "ja": "ラピ：レッドフード",
+        "en": "Rapi: Red Hood"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 17,
+      "name": {
+        "ja": "アニス：スター",
+        "en": "Anis: Star"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 18,
+      "name": {
+        "ja": "ネオン：ビジョン・アイ",
+        "en": "Neon: Vision Eye"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 20,
+      "name": {
+        "ja": "デルタ",
+        "en": "Delta"
+      },
+      "rarity": "SR",
+      "class": "Defender",
+      "corporation": "ELYSION",
+      "element": "Wind",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 22,
+      "name": {
+        "ja": "シグナル",
+        "en": "Signal"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 23,
+      "name": {
+        "ja": "デルタ：ニンジャシーフ",
+        "en": "Delta: Ninja Thief"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "MG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 30,
+      "name": {
+        "ja": "ポリ",
+        "en": "Poli"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "SG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 32,
+      "name": {
+        "ja": "ミランダ",
+        "en": "Miranda"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 33,
+      "name": {
+        "ja": "キリ",
+        "en": "Quiry"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Wind",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 40,
+      "name": {
+        "ja": "D",
+        "en": "D"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Wind",
+      "weaponType": "SMG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 41,
+      "name": {
+        "ja": "K",
+        "en": "K"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Electronic",
+      "weaponType": "SMG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 43,
+      "name": {
+        "ja": "D：キラーワイフ",
+        "en": "D: Killer Wife"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 60,
+      "name": {
+        "ja": "ベロータ",
+        "en": "Belorta"
+      },
+      "rarity": "SR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 61,
+      "name": {
+        "ja": "ミカ",
+        "en": "Mica"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 62,
+      "name": {
+        "ja": "ミカ：スノーバディ",
+        "en": "Mica: Snow Buddy"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 70,
+      "name": {
+        "ja": "ブリッド",
+        "en": "Brid"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 71,
+      "name": {
+        "ja": "ソリン",
+        "en": "Soline"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Iron",
+      "weaponType": "SMG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 72,
+      "name": {
+        "ja": "ディーゼル",
+        "en": "Diesel"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "ELYSION",
+      "element": "Wind",
+      "weaponType": "MG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 73,
+      "name": {
+        "ja": "ブリッド：サイレントトラック",
+        "en": "Brid: Silent Track"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "SG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 74,
+      "name": {
+        "ja": "ソリン：フロストチケット",
+        "en": "Soline: Frost Ticket"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "SG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 75,
+      "name": {
+        "ja": "ディーゼル：ウィンタースイーツ",
+        "en": "Diesel: Winter Sweets"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 80,
+      "name": {
+        "ja": "センチ",
+        "en": "Centi"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Iron",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 82,
+      "name": {
+        "ja": "リター",
+        "en": "Liter"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Iron",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 90,
+      "name": {
+        "ja": "エマ",
+        "en": "Emma"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 91,
+      "name": {
+        "ja": "ベスティー",
+        "en": "Vesti"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 92,
+      "name": {
+        "ja": "ウンファ",
+        "en": "Eunhwa"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 93,
+      "name": {
+        "ja": "エマ：タクティカル・アップ",
+        "en": "Emma: Tactical Upgrade"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 94,
+      "name": {
+        "ja": "ベスティー：タクティカル・アップ",
+        "en": "Vesti: Tactical Upgrade"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 95,
+      "name": {
+        "ja": "ウンファ：タクティカル・アップ",
+        "en": "Eunhwa: Tactical Upgrade"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 100,
+      "name": {
+        "ja": "ラプラス",
+        "en": "Laplace"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Iron",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 101,
+      "name": {
+        "ja": "ドレイク",
+        "en": "Drake"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Fire",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 102,
+      "name": {
+        "ja": "マクスウェル",
+        "en": "Maxwell"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Iron",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 103,
+      "name": {
+        "ja": "ラプラス：アルティメットヒーロー",
+        "en": "Laplace: Ultimate Hero"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 104,
+      "name": {
+        "ja": "ドレイク：グレイトヴィラン",
+        "en": "Drake: Great Villain"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 105,
+      "name": {
+        "ja": "マクスウェル：オーディナリーメカニック",
+        "en": "Maxwell: Ordinary Mechanic"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 110,
+      "name": {
+        "ja": "クロウ",
+        "en": "Crow"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Fire",
+      "weaponType": "SMG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 111,
+      "name": {
+        "ja": "ジャッカル",
+        "en": "Jackal"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Iron",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 112,
+      "name": {
+        "ja": "バイパー",
+        "en": "Viper"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 113,
+      "name": {
+        "ja": "E.H.",
+        "en": "E.H."
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Wind",
+      "weaponType": "SMG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 120,
+      "name": {
+        "ja": "N102",
+        "en": "N102"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Water",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 121,
+      "name": {
+        "ja": "エヌ : ミラクルフェアリー",
+        "en": "Anne: Miracle Fairy"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 130,
+      "name": {
+        "ja": "メアリー",
+        "en": "Mary"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 131,
+      "name": {
+        "ja": "ペッパー",
+        "en": "Pepper"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "SG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 132,
+      "name": {
+        "ja": "メアリー：ベイゴッデス",
+        "en": "Mary: Bay Goddess"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 140,
+      "name": {
+        "ja": "シュガー",
+        "en": "Sugar"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 141,
+      "name": {
+        "ja": "ミルク",
+        "en": "Milk"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 142,
+      "name": {
+        "ja": "プリム",
+        "en": "Frima"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 143,
+      "name": {
+        "ja": "ミルク：ブルーミングバニー",
+        "en": "Milk: Blooming Bunny"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 150,
+      "name": {
+        "ja": "ジュリア",
+        "en": "Julia"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Iron",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 160,
+      "name": {
+        "ja": "ユニ",
+        "en": "Yuni"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Fire",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 161,
+      "name": {
+        "ja": "ミハラ",
+        "en": "Mihara"
+      },
+      "rarity": "SR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Water",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 162,
+      "name": {
+        "ja": "ミハラ：ボンディングチェーン",
+        "en": "Mihara: Bonding Chain"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 170,
+      "name": {
+        "ja": "プリバティ",
+        "en": "Privaty"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 171,
+      "name": {
+        "ja": "ユルハ",
+        "en": "Yulha"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Fire",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 172,
+      "name": {
+        "ja": "アドミ",
+        "en": "Admi"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 180,
+      "name": {
+        "ja": "ギロチン",
+        "en": "Guillotine"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Electronic",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 181,
+      "name": {
+        "ja": "メイデン",
+        "en": "Maiden"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Electronic",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 182,
+      "name": {
+        "ja": "ギロチン：ウィンタースレイヤー",
+        "en": "Guillotine: Winter Slayer"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 183,
+      "name": {
+        "ja": "メイデン：アイスローズ",
+        "en": "Maiden: Ice Rose"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "ELYSION",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 190,
+      "name": {
+        "ja": "ルドミラ",
+        "en": "Ludmilla"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 191,
+      "name": {
+        "ja": "アリス",
+        "en": "Alice"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Fire",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 192,
+      "name": {
+        "ja": "トーブ",
+        "en": "Tove"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Water",
+      "weaponType": "AR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 193,
+      "name": {
+        "ja": "ネヴェ",
+        "en": "Neve"
+      },
+      "rarity": "SR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 194,
+      "name": {
+        "ja": "ルドミラ：ウィンターオーナー",
+        "en": "Ludmilla: Winter Owner"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 195,
+      "name": {
+        "ja": "アリス：ワンダーランドバニー",
+        "en": "Alice: Wonderland Bunny"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 200,
+      "name": {
+        "ja": "ルピー",
+        "en": "Rupee"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "AR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 201,
+      "name": {
+        "ja": "ヤン",
+        "en": "Yan"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Fire",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 202,
+      "name": {
+        "ja": "ドラー",
+        "en": "Dolla"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 203,
+      "name": {
+        "ja": "ルピー：ウィンターショッパー",
+        "en": "Rupee: Winter Shopper"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "AR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 210,
+      "name": {
+        "ja": "エクシア",
+        "en": "Exia"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 212,
+      "name": {
+        "ja": "ノベル",
+        "en": "Novel"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 220,
+      "name": {
+        "ja": "スノーホワイト",
+        "en": "Snow White"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Iron",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 221,
+      "name": {
+        "ja": "ラプンツェル",
+        "en": "Rapunzel"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "PILGRIM",
+      "element": "Iron",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 222,
+      "name": {
+        "ja": "紅蓮",
+        "en": "Scarlet"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Electronic",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 223,
+      "name": {
+        "ja": "ナユタ",
+        "en": "Nayuta"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "PILGRIM",
+      "element": "Wind",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 224,
+      "name": {
+        "ja": "スノーホワイト：イノセントデイズ",
+        "en": "Snow White: Innocent Days"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Iron",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 225,
+      "name": {
+        "ja": "紅蓮：ブラックシャドウ",
+        "en": "Scarlet: Black Shadow"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Wind",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 226,
+      "name": {
+        "ja": "ラプンツェル：ピュアグレイス",
+        "en": "Rapunzel: Pure Grace"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "PILGRIM",
+      "element": "Iron",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 230,
+      "name": {
+        "ja": "ハラン",
+        "en": "Harran"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Electronic",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 231,
+      "name": {
+        "ja": "イサベル",
+        "en": "Isabel"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Electronic",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 232,
+      "name": {
+        "ja": "ノア",
+        "en": "Noah"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "PILGRIM",
+      "element": "Wind",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 233,
+      "name": {
+        "ja": "ドロシー",
+        "en": "Dorothy"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "PILGRIM",
+      "element": "Water",
+      "weaponType": "AR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 234,
+      "name": {
+        "ja": "ドロシー：セレンディピティ",
+        "en": "Dorothy: Serendipity"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Water",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 240,
+      "name": {
+        "ja": "ルマニ",
+        "en": "Rumani"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Fire",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 241,
+      "name": {
+        "ja": "エピネル",
+        "en": "Epinel"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "SMG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 242,
+      "name": {
+        "ja": "フォルクヴァン",
+        "en": "Folkwang"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "AR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 260,
+      "name": {
+        "ja": "モダニア",
+        "en": "Modernia"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 261,
+      "name": {
+        "ja": "ニヒリスター",
+        "en": "Nihilister"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Fire",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 262,
+      "name": {
+        "ja": "リバーレリオ",
+        "en": "Liberalio"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Wind",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 270,
+      "name": {
+        "ja": "ブラン",
+        "en": "Blanc"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "AR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 271,
+      "name": {
+        "ja": "ノワール",
+        "en": "Noir"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 272,
+      "name": {
+        "ja": "ルージュ",
+        "en": "Rouge"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 280,
+      "name": {
+        "ja": "ロザンナ",
+        "en": "Rosanna"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "MG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 281,
+      "name": {
+        "ja": "モラン",
+        "en": "Moran"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "AR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 282,
+      "name": {
+        "ja": "サクラ",
+        "en": "Sakura"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Fire",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 283,
+      "name": {
+        "ja": "ロザンナ：シックオーシャン",
+        "en": "Rosanna: Chic Ocean"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "AR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 284,
+      "name": {
+        "ja": "サクラ：ブルーム・イン・サマー",
+        "en": "Sakura: Bloom in Summer"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 290,
+      "name": {
+        "ja": "マナ",
+        "en": "Mana"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 291,
+      "name": {
+        "ja": "エーテル",
+        "en": "Ether"
+      },
+      "rarity": "SR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Electronic",
+      "weaponType": "SG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 300,
+      "name": {
+        "ja": "ソルジャーE.G.",
+        "en": "Soldier EG"
+      },
+      "rarity": "R",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Electronic",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 301,
+      "name": {
+        "ja": "ソルジャーF.A.",
+        "en": "Soldier FA"
+      },
+      "rarity": "R",
+      "class": "Defender",
+      "corporation": "ELYSION",
+      "element": "Iron",
+      "weaponType": "SG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 302,
+      "name": {
+        "ja": "プロダクト08",
+        "en": "Product 08"
+      },
+      "rarity": "R",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Electronic",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 303,
+      "name": {
+        "ja": "プロダクト12",
+        "en": "Product 12"
+      },
+      "rarity": "R",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 304,
+      "name": {
+        "ja": "I-DOLL・フラワー",
+        "en": "iDoll Flower"
+      },
+      "rarity": "R",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 305,
+      "name": {
+        "ja": "I-DOLL・オーシャン",
+        "en": "iDoll Ocean"
+      },
+      "rarity": "R",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 306,
+      "name": {
+        "ja": "ソルジャーO.W.",
+        "en": "Soldier OW"
+      },
+      "rarity": "R",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 307,
+      "name": {
+        "ja": "プロダクト23",
+        "en": "Product 23"
+      },
+      "rarity": "R",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "SG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 308,
+      "name": {
+        "ja": "I-DOLL・サン",
+        "en": "iDoll Sun"
+      },
+      "rarity": "R",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 310,
+      "name": {
+        "ja": "エード",
+        "en": "Ade"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "AR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 311,
+      "name": {
+        "ja": "ココア",
+        "en": "Cocoa"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Fire",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 312,
+      "name": {
+        "ja": "ソーダ",
+        "en": "Soda"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 313,
+      "name": {
+        "ja": "プリバティ：アンカインド・メイド",
+        "en": "Privaty: Unkind Maid"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Electronic",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 314,
+      "name": {
+        "ja": "ソーダ：トゥインクルバニー",
+        "en": "Soda: Twinkling Bunny"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 315,
+      "name": {
+        "ja": "エード：エージェントバニー",
+        "en": "Ade: Agent Bunny"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 316,
+      "name": {
+        "ja": "ベルベット",
+        "en": "Velvet"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 321,
+      "name": {
+        "ja": "マルチャーナ",
+        "en": "Marciana"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Iron",
+      "weaponType": "SG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 322,
+      "name": {
+        "ja": "マルチャーナ：マリンスタディ",
+        "en": "Marciana: Marine Study"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Iron",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 330,
+      "name": {
+        "ja": "クラウン",
+        "en": "Crown"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "PILGRIM",
+      "element": "Iron",
+      "weaponType": "MG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 331,
+      "name": {
+        "ja": "チャイム",
+        "en": "Chime"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "PILGRIM",
+      "element": "Iron",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 350,
+      "name": {
+        "ja": "マスト",
+        "en": "Mast"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Electronic",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 351,
+      "name": {
+        "ja": "アンカー",
+        "en": "Anchor"
+      },
+      "rarity": "SR",
+      "class": "Defender",
+      "corporation": "ELYSION",
+      "element": "Wind",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 352,
+      "name": {
+        "ja": "ヘルム",
+        "en": "Helm"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 353,
+      "name": {
+        "ja": "ヘルム：アクアマリン",
+        "en": "Helm: Aquamarine"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Iron",
+      "weaponType": "AR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 354,
+      "name": {
+        "ja": "マスト：ロマンチックメイド",
+        "en": "Mast: Romantic Maid"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "MG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 355,
+      "name": {
+        "ja": "アンカー：イノセントメイド",
+        "en": "Anchor: Innocent Maid"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 361,
+      "name": {
+        "ja": "キロ",
+        "en": "Kilo"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 380,
+      "name": {
+        "ja": "ネロ",
+        "en": "Nero"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Fire",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 381,
+      "name": {
+        "ja": "ビスケット",
+        "en": "Biscuit"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 382,
+      "name": {
+        "ja": "レオナ",
+        "en": "Leona"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 390,
+      "name": {
+        "ja": "ツバイ",
+        "en": "Zwei"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Electronic",
+      "weaponType": "SG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 391,
+      "name": {
+        "ja": "アイン",
+        "en": "Ein"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Electronic",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 392,
+      "name": {
+        "ja": "ライ",
+        "en": "Rei"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 400,
+      "name": {
+        "ja": "ギルティ",
+        "en": "Guilty"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "SG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 401,
+      "name": {
+        "ja": "シン",
+        "en": "Sin"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Electronic",
+      "weaponType": "AR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 402,
+      "name": {
+        "ja": "クエンシー",
+        "en": "Quency"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Electronic",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 403,
+      "name": {
+        "ja": "クエンシー：エスケープクイーン",
+        "en": "Quency: Escape Queen"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Water",
+      "weaponType": "SMG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 404,
+      "name": {
+        "ja": "ギルティ：マイティバニー",
+        "en": "Guilty: Mighty Bunny"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Water",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 405,
+      "name": {
+        "ja": "シン：スウィフトバニー",
+        "en": "Sin: Swift Bunny"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Water",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 411,
+      "name": {
+        "ja": "フローラ",
+        "en": "Flora"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Electronic",
+      "weaponType": "MG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 412,
+      "name": {
+        "ja": "トリナ",
+        "en": "Trina"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 430,
+      "name": {
+        "ja": "ノイズ",
+        "en": "Noise"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 431,
+      "name": {
+        "ja": "ボリューム",
+        "en": "Volume"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 432,
+      "name": {
+        "ja": "アリア",
+        "en": "Aria"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "MG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 441,
+      "name": {
+        "ja": "アビスタ",
+        "en": "Avistar"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Electronic",
+      "weaponType": "MG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 450,
+      "name": {
+        "ja": "ナガ",
+        "en": "Naga"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Electronic",
+      "weaponType": "SG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 451,
+      "name": {
+        "ja": "ティア",
+        "en": "Tia"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Iron",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 470,
+      "name": {
+        "ja": "レッドフード",
+        "en": "Red Hood"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Iron",
+      "weaponType": "SR",
+      "burstStep": "AllStep"
+    },
+    {
+      "resourceId": 471,
+      "name": {
+        "ja": "スノーホワイト：ヘビーアームズ",
+        "en": "Snow White: Heavy Arms"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Water",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 500,
+      "name": {
+        "ja": "エレグ",
+        "en": "Elegg"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "MISSILIS",
+      "element": "Electronic",
+      "weaponType": "MG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 501,
+      "name": {
+        "ja": "トロニー",
+        "en": "Trony"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Fire",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 502,
+      "name": {
+        "ja": "エレグ：ブーム・アンド・ショック",
+        "en": "Elegg: Boom and Shock"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "MISSILIS",
+      "element": "Water",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 511,
+      "name": {
+        "ja": "シンデレラ",
+        "en": "Cinderella"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "PILGRIM",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 513,
+      "name": {
+        "ja": "リトルマーメイド",
+        "en": "Little Mermaid"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "PILGRIM",
+      "element": "Wind",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 514,
+      "name": {
+        "ja": "グレイブ",
+        "en": "Grave"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "PILGRIM",
+      "element": "Fire",
+      "weaponType": "AR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 515,
+      "name": {
+        "ja": "シンデレラ：クリスタルウェーブ",
+        "en": "Cinderella: Crystal Wave"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Iron",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 520,
+      "name": {
+        "ja": "ブレッディ",
+        "en": "Bready"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 521,
+      "name": {
+        "ja": "クラスト",
+        "en": "Crust"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 532,
+      "name": {
+        "ja": "ソラ",
+        "en": "Sora"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Wind",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 550,
+      "name": {
+        "ja": "ベイ",
+        "en": "Bay"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "TETRA",
+      "element": "Fire",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 551,
+      "name": {
+        "ja": "クレイ",
+        "en": "Clay"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Electronic",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 570,
+      "name": {
+        "ja": "アークレンジャー・ブラック",
+        "en": "Ark Ranger Black"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "TETRA",
+      "element": "Wind",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 580,
+      "name": {
+        "ja": "ファントム",
+        "en": "Phantom"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Water",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 581,
+      "name": {
+        "ja": "アルカナ",
+        "en": "Arcana"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ELYSION",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 582,
+      "name": {
+        "ja": "レーベル",
+        "en": "Label"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "ELYSION",
+      "element": "Iron",
+      "weaponType": "AR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 583,
+      "name": {
+        "ja": "アルカナ：フォーチュンメイト",
+        "en": "Arcana: Fortune Mate"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ELYSION",
+      "element": "Fire",
+      "weaponType": "SG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 590,
+      "name": {
+        "ja": "モリー",
+        "en": "Mori"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Wind",
+      "weaponType": "AR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 600,
+      "name": {
+        "ja": "ミント",
+        "en": "Mint"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Iron",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 601,
+      "name": {
+        "ja": "プリカ",
+        "en": "Prika"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 620,
+      "name": {
+        "ja": "シラツル",
+        "en": "Snow Crane"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "MISSILIS",
+      "element": "Water",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 800,
+      "name": {
+        "ja": "マキマ",
+        "en": "Makima"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "ABNORMAL",
+      "element": "Water",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 801,
+      "name": {
+        "ja": "パワー",
+        "en": "Power"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Fire",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 802,
+      "name": {
+        "ja": "姫野",
+        "en": "Himeno"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Wind",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 810,
+      "name": {
+        "ja": "2B",
+        "en": "2B"
+      },
+      "rarity": "SSR",
+      "class": "Defender",
+      "corporation": "ABNORMAL",
+      "element": "Fire",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 811,
+      "name": {
+        "ja": "A2",
+        "en": "A2"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Fire",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 812,
+      "name": {
+        "ja": "パスカル",
+        "en": "Pascal"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Iron",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 820,
+      "name": {
+        "ja": "レム",
+        "en": "Rem"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Water",
+      "weaponType": "MG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 821,
+      "name": {
+        "ja": "エミリア",
+        "en": "Emilia"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Water",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 822,
+      "name": {
+        "ja": "ラム",
+        "en": "Ram"
+      },
+      "rarity": "SR",
+      "class": "Defender",
+      "corporation": "ABNORMAL",
+      "element": "Wind",
+      "weaponType": "SR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 830,
+      "name": {
+        "ja": "アスカ",
+        "en": "Asuka"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Fire",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 831,
+      "name": {
+        "ja": "レイ",
+        "en": "Rei"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 832,
+      "name": {
+        "ja": "マリ",
+        "en": "Mari"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Electronic",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 833,
+      "name": {
+        "ja": "ミサト",
+        "en": "Misato"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Iron",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 834,
+      "name": {
+        "ja": "レイ（仮称）",
+        "en": "Rei (Tentative Name)"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Wind",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 835,
+      "name": {
+        "ja": "アスカ：WILLE",
+        "en": "Asuka: WILLE"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Wind",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 836,
+      "name": {
+        "ja": "サクラ",
+        "en": "Sakura"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Water",
+      "weaponType": "SMG",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 840,
+      "name": {
+        "ja": "エイダ",
+        "en": "Ada"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 841,
+      "name": {
+        "ja": "ジル",
+        "en": "Jill"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Electronic",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 842,
+      "name": {
+        "ja": "クレア",
+        "en": "Claire"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Electronic",
+      "weaponType": "RL",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 850,
+      "name": {
+        "ja": "イヴ",
+        "en": "EVE"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Iron",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 851,
+      "name": {
+        "ja": "レイヴン",
+        "en": "Raven"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Iron",
+      "weaponType": "RL",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 852,
+      "name": {
+        "ja": "リリー",
+        "en": "Lily"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Wind",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 860,
+      "name": {
+        "ja": "千束",
+        "en": "Chisato"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Iron",
+      "weaponType": "SMG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 861,
+      "name": {
+        "ja": "たきな",
+        "en": "Takina"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Iron",
+      "weaponType": "SR",
+      "burstStep": "Step2"
+    },
+    {
+      "resourceId": 862,
+      "name": {
+        "ja": "クルミ",
+        "en": "Kurumi"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Iron",
+      "weaponType": "AR",
+      "burstStep": "Step1"
+    },
+    {
+      "resourceId": 870,
+      "name": {
+        "ja": "クイーン（真）",
+        "en": "Queen (Makoto)"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Fire",
+      "weaponType": "SG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 871,
+      "name": {
+        "ja": "雪子",
+        "en": "Yukiko"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "ABNORMAL",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 872,
+      "name": {
+        "ja": "アイギス",
+        "en": "Aigis"
+      },
+      "rarity": "SR",
+      "class": "Supporter",
+      "corporation": "ABNORMAL",
+      "element": "Iron",
+      "weaponType": "SMG",
+      "burstStep": "Step2"
+    }
+  ]
+}
