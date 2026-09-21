@@ -31,6 +31,25 @@ describe('computeStat (Emma, resourceId 90, SSR)', () => {
     expect(stats).toEqual({ attack: 500, hp: 15000, defence: 84 });
   });
 
+  it('matches Blablalink ShiftyPad display values (checked 2026-09-22)', () => {
+    expect(computeBaseStats(emma, { level: 200, grade: 0, core: 0 })).toEqual({
+      attack: 17576,
+      hp: 527303,
+      defence: 2940,
+    });
+    expect(computeBaseStats(emma, { level: 200, grade: 3, core: 0 })).toEqual({
+      attack: 18690,
+      hp: 567941,
+      defence: 3416,
+    });
+    expect(computeBaseStats(emma, { level: 200, grade: 3, core: 7 })).toEqual({
+      attack: 21307,
+      hp: 647453,
+      defence: 3894,
+    });
+    expect(computeStat(emma, 'attack', { level: 201, grade: 0, core: 0 })).toBe(18455);
+  });
+
   it('exposes growth limits by rarity', () => {
     expect(growthLimits(emma)).toEqual({ levelMax: 1400, gradeMax: 3, coreMax: 7 });
   });
@@ -49,10 +68,8 @@ describe('computeStat (Rapi, resourceId 10, SR)', () => {
 
   it('uses SR coefficients (+18 attack per limit break, max 2, no core)', () => {
     expect(growthLimits(rapi)).toEqual({ levelMax: 1400, gradeMax: 2, coreMax: 0 });
-    const lv200 = computeStat(rapi, 'attack', { level: 200, grade: 0, core: 0 });
-    expect(lv200).toBe(18983);
-    expect(computeStat(rapi, 'attack', { level: 200, grade: 2, core: 0 })).toBe(Math.floor(18983 * 1.04 + 36));
+    // ShiftyPad の表示値と一致を確認済み（2026-09-22）
+    expect(computeStat(rapi, 'attack', { level: 200, grade: 0, core: 0 })).toBe(18983);
+    expect(computeStat(rapi, 'attack', { level: 200, grade: 2, core: 0 })).toBe(19778);
   });
 });
-
-// TODO(Stage 1 検証): ユーザー提供のゲーム内実測値（Lv・凸・コア付き）をここに追加する。
