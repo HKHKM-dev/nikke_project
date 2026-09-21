@@ -72,12 +72,16 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
       'Chunked reload approximated as chunks × reload time',
     );
   if (hasSpinUp(shot))
-    approx('spin-up', 'MG のスピンアップは 1 発ごとのレート上昇で近似', 'MG spin-up approximated per shot');
-  if (isChargeWeapon(shot))
+    approx(
+      'spin-up',
+      'MG のスピンアップはレート蓄積モデル（エマの録画で較正、誤差 1% 程度）',
+      'MG spin-up uses an accumulator model calibrated on one recording',
+    );
+  if (isChargeWeapon(shot) && shot.chargeTime !== 1)
     approx(
       'charge-release',
-      'チャージ武器の発射間隔は較正前（解放遅延 0f）',
-      'Charge cadence not yet calibrated (release delay 0f)',
+      'チャージ 1.0 秒以外の武器は解放遅延 22f が未検証',
+      'Charge release delay (22f) only verified for 1.0 s charge',
     );
   return notes;
 }

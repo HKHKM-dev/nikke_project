@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeCadence, reloadChunks, shotIntervalFrames } from '../cadence.ts';
+import { computeCadence, reloadChunks, simulateShotFrames } from '../cadence.ts';
 import type { ShotParams } from '../types.ts';
 
 function shot(overrides: Partial<ShotParams>): ShotParams {
@@ -26,62 +26,81 @@ function shot(overrides: Partial<ShotParams>): ShotParams {
   };
 }
 
-describe('computeCadence', () => {
-  it('AR: 60 rounds at 720 rpm (5f) + 1.0 s reload → 6.0 s cycle, 10 triggers/s', () => {
+const SR = shot({
+  maxAmmo: 6,
+  reloadTime: 1.5,
+  rateOfFire: 60,
+  endRateOfFire: 60,
+  chargeTime: 1,
+  fullChargeDamage: 2.5,
+  inputType: 'UP',
+});
+const RL = shot({
+  maxAmmo: 6,
+  reloadTime: 2,
+  rateOfFire: 60,
+  endRateOfFire: 60,
+  chargeTime: 1,
+  fullChargeDamage: 2.5,
+  inputType: 'UP',
+});
+const MG = shot({
+  maxAmmo: 300,
+  reloadTime: 2.5,
+  rateOfFire: 60,
+  endRateOfFire: 4200,
+  rateOfFireChangePerShot: 100,
+  rateOfFireResetTime: 1,
+});
+
+// 期待値は 2026-09-22 の射撃場録画（60fps）の実測に基づく。plan/verification.md 参照。
+describe('computeCadence (calibrated against recordings)', () => {
+  it('AR: 5f per shot, 60 rounds span 295f, next magazine starts right after the 60f reload (measured 355f cycle)', () => {
     const c = computeCadence(shot({}));
-    expect(c.shotFrames.every((f) => f === 5)).toBe(true);
-    expect(c.magazineFrames).toBe(300);
+    expect(c.shotFrames.slice(0, 4)).toEqual([0, 5, 10, 15]);
+    expect(c.magazineFrames).toBe(295);
+    expect(c.firstShotFrames).toBe(0);
     expect(c.reloadFrames).toBe(60);
-    expect(c.cycleSeconds).toBe(6);
-    expect(c.triggersPerSecond).toBe(10);
+    expect(c.cycleFrames).toBe(355);
+    expect(c.triggersPerSecond).toBeCloseTo((60 * 60) / 355, 6);
   });
 
-  it('SMG: 1440 rpm is quantized to 3f (20/s while firing)', () => {
+  it('SMG: 1440 rpm accumulates to 2.5f average (unverified; assumes the same accumulator as MG)', () => {
     const c = computeCadence(shot({ maxAmmo: 120, rateOfFire: 1440, endRateOfFire: 1440 }));
-    expect(c.shotFrames[0]).toBe(3);
-    expect(c.cycleFrames).toBe(360 + 60);
-    expect(c.triggersPerSecond).toBeCloseTo(120 / 7, 6);
+    expect(c.shotFrames.slice(0, 5)).toEqual([0, 3, 5, 8, 10]);
+    expect(c.magazineFrames).toBe(298);
   });
 
-  it('SR: full charge 1.0 s at 60 rpm → 60f per shot, 2.0 s reload', () => {
-    const c = computeCadence(
-      shot({
-        maxAmmo: 6,
-        reloadTime: 2,
-        rateOfFire: 60,
-        endRateOfFire: 60,
-        chargeTime: 1,
-        fullChargeDamage: 2.5,
-        inputType: 'UP',
-      }),
-    );
-    expect(c.shotFrames).toEqual([60, 60, 60, 60, 60, 60]);
-    expect(c.cycleSeconds).toBe(8);
-    expect(c.triggersPerSecond).toBe(0.75);
+  it('SR: 82f per full-charge shot (60f charge + 22f release), reload 90f → 582f cycle (measured 577f)', () => {
+    const c = computeCadence(SR);
+    expect(c.shotFrames).toEqual([0, 82, 164, 246, 328, 410]);
+    expect(c.firstShotFrames).toBe(82);
+    expect(c.cycleFrames).toBe(82 + 410 + 90);
   });
 
-  it('charge release frames are added per shot', () => {
-    const sr = shot({ maxAmmo: 6, reloadTime: 2, rateOfFire: 60, endRateOfFire: 60, chargeTime: 1, inputType: 'UP' });
-    expect(shotIntervalFrames(sr, 0, { chargeReleaseFrames: 22 })).toBe(82);
+  it('RL: same charge cadence, reload 120f → 612f cycle (measured 610f)', () => {
+    const c = computeCadence(RL);
+    expect(c.cycleFrames).toBe(612);
+    expect(c.triggersPerSecond).toBeCloseTo(360 / 612, 6);
   });
 
-  it('MG: spin-up from 60 rpm by +100 rpm per shot, capped at 1f', () => {
-    const mg = shot({
-      maxAmmo: 300,
-      reloadTime: 2.5,
-      rateOfFire: 60,
-      endRateOfFire: 4200,
-      rateOfFireChangePerShot: 100,
-      rateOfFireResetTime: 1,
-    });
-    const c = computeCadence(mg);
-    expect(c.shotFrames[0]).toBe(60);
-    expect(c.shotFrames[1]).toBe(23);
-    expect(c.shotFrames[35]).toBe(2);
-    expect(c.shotFrames[36]).toBe(1);
-    expect(c.magazineFrames).toBe(468);
+  it('MG: spin-up from 60 rpm (+100 rpm per shot) reaches 1f/shot, 300 rounds span ~390f (measured 387f)', () => {
+    const f = simulateShotFrames(MG);
+    expect(f[1]! - f[0]!).toBeGreaterThanOrEqual(22); // 160 rpm → 22.5f
+    expect(f[1]! - f[0]!).toBeLessThanOrEqual(23);
+    expect(f[299]! - f[298]!).toBe(1);
+    const c = computeCadence(MG);
+    expect(c.magazineFrames).toBeGreaterThanOrEqual(385);
+    expect(c.magazineFrames).toBeLessThanOrEqual(392);
+    expect(c.firstShotFrames).toBe(20);
     expect(c.reloadFrames).toBe(150);
-    expect(c.cycleFrames).toBe(618);
+    // 実測サイクル 563f（1 発目→次マガジン 1 発目）
+    expect(Math.abs(c.cycleFrames - 563)).toBeLessThanOrEqual(5);
+  });
+
+  it('charge release frames are configurable', () => {
+    const f = simulateShotFrames(SR, { chargeReleaseFrames: 0, spinUpFirstShotFrames: 20 });
+    expect(f[1]).toBe(60);
   });
 });
 

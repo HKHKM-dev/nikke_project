@@ -70,8 +70,8 @@ describe('computeDamage', () => {
     expect(r.boost).toEqual({ core: 1, crit: 0.075, distance: 0.3, total: 2.375 });
     expect(r.elementMultiplier).toBe(1.1);
     expect(r.perTrigger).toBeCloseTo(900 * 0.1365 * 2.375 * 1.1, 6);
-    expect(r.cadence.triggersPerSecond).toBe(10);
-    expect(r.dps).toBeCloseTo(r.perTrigger * 10, 6);
+    expect(r.cadence.triggersPerSecond).toBeCloseTo(3600 / 355, 6);
+    expect(r.dps).toBeCloseTo(r.perTrigger * r.cadence.triggersPerSecond, 6);
     expect(r.totalDamage).toBeCloseTo(r.dps * 180, 4);
   });
 
@@ -122,7 +122,7 @@ describe('computeDamage', () => {
       }),
     );
     expect(noCharge.chargeMultiplier).toBe(1);
-    expect(full.notes.map((n) => n.code)).toContain('charge-release');
+    expect(full.notes.map((n) => n.code)).not.toContain('charge-release');
   });
 
   it('rejects invalid core hit rate', () => {

@@ -17,21 +17,20 @@ export const WEAPON_LABEL: Record<WeaponType, { ja: string; en: string }> = {
   MG: { ja: 'マシンガン', en: 'Machine Gun' },
 };
 
-/** 実測で較正する定数。 */
+/**
+ * 実測で較正する定数（2026-09-22 射撃場の 60fps 録画で較正。plan/verification.md 参照）。
+ */
 export type WeaponModel = {
-  /** チャージ完了から発射・次チャージ開始までの追加フレーム（参考 OSS は約 22f。既定 0） */
+  /** チャージ完了から発射・次チャージ開始までの追加フレーム。SR/RL とも実測 82f = チャージ 60f + 22f */
   chargeReleaseFrames: number;
+  /** スピンアップ武器（MG）がリロード完了・戦闘開始から 1 発目を撃つまでのフレーム。実測 約 20f */
+  spinUpFirstShotFrames: number;
 };
 
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
-  chargeReleaseFrames: 0,
+  chargeReleaseFrames: 22,
+  spinUpFirstShotFrames: 20,
 };
-
-/** 60fps 量子化した発射間隔（フレーム）。AR 720rpm→5f、SMG 1440rpm→3f、MG 上限 1f */
-export function framesPerShot(rpm: number): number {
-  if (rpm <= 0) throw new RangeError(`rpm must be positive, got ${rpm}`);
-  return Math.max(1, Math.ceil(MAX_RPM / Math.min(rpm, MAX_RPM)));
-}
 
 export function secondsToFrames(seconds: number): number {
   return Math.ceil(seconds * FPS);
