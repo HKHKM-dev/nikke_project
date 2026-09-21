@@ -9,3 +9,4 @@ packages/core/.cache/
 Thumbs.db
 .claude/settings.local.json
 plan/.claude/
+plan/captures/
