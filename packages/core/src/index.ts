@@ -18,5 +18,6 @@ export * from './skills/timeline.ts';
 export * from './burst/schedule.ts';
 export * from './burst/fixedCycle.ts';
 export * from './burst/controller.ts';
+export * from './burst/dynamic.ts';
 export * from './sim/shooter.ts';
 export * from './sim/engine.ts';

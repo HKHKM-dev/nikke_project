@@ -3,9 +3,17 @@
 // サイクルごとのバーストスキルダメージで足す。
 // Stage 6: 持続バフ（timed）を skills/timeline.ts の区間分割に載せた。calc は「同じバフ状態の区間」をまとめた
 // グループ単位で computeDamage を呼ぶ。timed 効果がなければグループは 2 つに退化し、Stage 5 と同じ計算になる。
+// Stage 7: burst の時刻表を動的サイクル（ゲージ蓄積・CT・チェーン。burst/dynamic.ts）にした。固定 20 秒サイクルは burstModel: 'fixed'。
 // sim（sim/engine.ts）とは時刻表・区間・式をすべて共有し、違いは「発射をフレームで数えるか、平均レートで置くか」だけ。
 import { durationToFrames, planFixedCycle } from './burst/fixedCycle.ts';
-import { activationFramesOfSlot, type BurstSchedule } from './burst/schedule.ts';
+import { planDynamicSchedule } from './burst/dynamic.ts';
+import {
+  activationFramesOfSlot,
+  summarizeSchedule,
+  type BurstSchedule,
+  type BurstScheduleModel,
+  type BurstSummary,
+} from './burst/schedule.ts';
 import {
   baseAttackOf,
   computeDamage,
@@ -64,8 +72,13 @@ export type TeamInput = {
   enemy: EnemyInput;
   durationSeconds: number;
   model?: WeaponModel;
-  /** 固定 20 秒サイクルのバーストを回すか。省略 false = Stage 4 と同一（バーストなし・フルバーストなし） */
+  /** バーストを回すか。省略 false = Stage 4 と同一（バーストなし・フルバーストなし） */
   burst?: boolean;
+  /**
+   * burst が true のときの時刻表の作り方。省略 'dynamic'（ゲージ蓄積・CT・チェーン。Stage 7）。
+   * 'fixed' は Stage 5 / 6 の固定 20 秒サイクル（比較・退化テスト用。UI には出さない）
+   */
+  burstModel?: BurstScheduleModel;
 };
 
 export type { AppliedEffect, AppliedTimedEffect };
@@ -129,6 +142,8 @@ export type TeamResult = {
   totalDamage: number;
   /** burst なしなら null */
   schedule: BurstSchedule | null;
+  /** 時刻表の集計（フルバースト回数・稼働率・平均サイクル）。burst なしなら null */
+  burstSummary: BurstSummary | null;
   timeline: BuffTimeline;
 };
 
@@ -173,17 +188,22 @@ export function resolveTeamBuffs(slots: readonly (TeamSlotInput | null)[]): (Slo
   );
 }
 
-/** 固定サイクルの時刻表（sim と calc で共通）。burst が false なら null */
+/** バーストの時刻表（sim と calc で共通）。burst が false なら null */
 export function planTeamSchedule(
   slots: readonly (TeamSlotInput | null)[],
   frames: number,
   burst: boolean | undefined,
+  burstModel: BurstScheduleModel = 'dynamic',
+  model?: WeaponModel,
 ): BurstSchedule | null {
   if (!burst) return null;
-  return planFixedCycle(
-    slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep })),
-    frames,
-  );
+  if (burstModel === 'fixed') {
+    return planFixedCycle(
+      slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep })),
+      frames,
+    );
+  }
+  return planDynamicSchedule(slots, frames, model);
 }
 
 function skillSupportOf(slot: TeamSlotInput): Record<SkillSlot, SkillSupport> | null {
@@ -223,7 +243,7 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
   const frames = durationToFrames(durationSeconds);
-  const schedule = planTeamSchedule(slots, frames, input.burst);
+  const schedule = planTeamSchedule(slots, frames, input.burst, input.burstModel, model);
   const timelineSlots = toTimelineSlots(slots);
   const timeline = planBuffTimeline(timelineSlots, schedule, frames);
 
@@ -335,6 +355,7 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
     totalDps,
     totalDamage,
     schedule,
+    burstSummary: schedule === null ? null : summarizeSchedule(schedule, frames),
     timeline,
   };
 }

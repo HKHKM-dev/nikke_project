@@ -3,6 +3,8 @@
 // 1 トリガーのダメージは calc と同じ computeTriggerDamage の期待値（乱数なし）。バーストスキルは同じ computeBurstHit。
 // Stage 6: 持続バフを skills/timeline.ts の区間に載せた。区間ごとの 1 トリガー値を先に計算しておき、
 // フレームループは「区間をまたいだら参照を差し替える」だけにする（毎フレーム式を評価しない）。
+// Stage 7: 時刻表を動的サイクル（burst/dynamic.ts。射手を回してゲージを溜め、状態機械で発動を決める）にした。
+// 射撃は時刻表に依存しないので 2 パス（1 パス目 = planTeamSchedule で時刻表、2 パス目 = 下のフレームループ）で済む。
 // calc（team.ts）はこの sim の期待値モデルで、両者の差は発射サイクルの離散化（マガジンの位相と端数）だけになる（__tests__/simCalc.test.ts）。
 import { durationToFrames } from '../burst/fixedCycle.ts';
 import type { BurstSchedule, BurstStepKey } from '../burst/schedule.ts';
@@ -99,7 +101,8 @@ export function runSimulation(input: SimInput): SimResult {
   validateTeamSlots(slots);
   const frames = durationToFrames(durationSeconds);
 
-  const schedule = planTeamSchedule(slots, frames, input.burst);
+  // 1 パス目: 射手を回してゲージを溜め、時刻表を作る（動的サイクル）。2 パス目がこの下のフレームループ
+  const schedule = planTeamSchedule(slots, frames, input.burst, input.burstModel, model);
   const timelineSlots = toTimelineSlots(slots);
   const timeline = planBuffTimeline(timelineSlots, schedule, frames);
 

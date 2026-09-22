@@ -1,5 +1,13 @@
 // テスト用の最小キャラデータ。AR 720rpm・60 発・リロード 1 秒・武器倍率 13.65% を既定にする。
-import type { CharacterData, ShotParams } from '../types.ts';
+import type { BurstNextStep, BurstStep, CharacterData, ShotParams } from '../types.ts';
+
+/** 実データと同じ既定の遷移先（I → II → III → フルバースト、AllStep は 1 つ上） */
+const NEXT_STEP: Record<BurstStep, BurstNextStep> = {
+  Step1: 'Step2',
+  Step2: 'Step3',
+  Step3: 'StepFull',
+  AllStep: 'NextStep',
+};
 
 export function makeCharacter(shot: Partial<ShotParams> = {}, overrides: Partial<CharacterData> = {}): CharacterData {
   const skill = { id: 0, name: { ja: '', en: '' }, description: { ja: '', en: '' }, values: [] };
@@ -48,7 +56,7 @@ export function makeCharacter(shot: Partial<ShotParams> = {}, overrides: Partial
       fullChargeBurstEnergy: 1,
       ...shot,
     },
-    burstSkill: { cooldownSeconds: 40, nextStep: 'StepFull', durationSeconds: 10 },
+    burstSkill: { cooldownSeconds: 40, nextStep: NEXT_STEP[overrides.burstStep ?? 'Step3'], durationSeconds: 10 },
     skills: { skill1: skill, skill2: skill, burst: skill },
     ...overrides,
   };
