@@ -1,7 +1,7 @@
 # NIKKE ダメージ計算ツール 要件定義書
 
 - 作成日: 2026-09-21
-- 状態: 要件確定（整理フェーズ完了。Stage 1 の設計に進める状態）
+- 状態: 要件確定（整理フェーズ完了）。Stage 1・2 は完了、Stage 3 は設計中（[design-stage3.md](design-stage3.md)）
 - 関連: [roadmap.md](roadmap.md)、[references.md](references.md)
 
 ---
@@ -119,9 +119,9 @@ calc の区間期待値モデルは、以下のようなケースで数式化・
 
 ## 7. 未決事項（設計フェーズで決める）
 
-1. **リポジトリ構成**: 推奨は `D:\nikke_project` 直下をモノレポにして `packages/core`, `apps/calc`, `apps/sim`（既存の空ディレクトリ `nikke_calc` / `nikke_sim` は置き換え）。別リポ 3 本にする案もあり。
-2. **ダメージ式の係数の検証方法**: 射撃場の実測値・参考 OSS との突き合わせ手順。
-3. **Stage 2 の秒間発射数モデル**: 武器種ごとの平均化の式（SG / RL のチャージや MG のスピンアップの扱い）。
+1. ~~**リポジトリ構成**~~ → 解決（モノレポ。[design-stage1-2.md](design-stage1-2.md) 1 節）。
+2. ~~**ダメージ式の係数の検証方法**~~ → 解決（要素ごとの実測。[verification.md](verification.md)）。
+3. ~~**Stage 2 の秒間発射数モデル**~~ → 解決（録画で較正。[verification.md](verification.md) Stage 2-B）。SG の実時間は未計測。
 4. **スキル DSL 段階 A の語彙**（Stage 4 着手時）。
 5. **calc の近似方針**: 数式化困難なメカニクスを sim 計測値で補うか、固定稼働率の手入力にするか。
 6. **最初に定義するキャラの選定**（Stage 4 着手時）。
@@ -129,4 +129,4 @@ calc の区間期待値モデルは、以下のようなケースで数式化・
 
 ## 8. 次のアクション
 
-次のセッションで Stage 1 + Stage 2 の設計プラン（リポ構成・データ取得スクリプト・計算式・テスト）を作る。
+Stage 1・2 は 2026-09-22 に完了。Stage 3 の設計案 [design-stage3.md](design-stage3.md) の「決めてほしいこと」に回答し、承認したら実装に入る。
