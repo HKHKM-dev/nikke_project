@@ -208,7 +208,12 @@ export function burstSnapshotState(
   return timeline.segments[index]!.slots[slotIndex] ?? EMPTY_BUFF_STATE;
 }
 
-/** バーストヒットに「発動直前」のバフを使うか。false なら発動フレームの区間（その発動で付くバフ込み）を使う */
+/**
+ * バーストヒットに「発動直前」のバフを使うか。false なら発動フレームの区間（その発動で付くバフ込み）を使う。
+ * **2026-09-22 の射撃場実測で true と確定**（plan/verification.md Stage 6 節、録画 18）:
+ * ラピのバーストは自分に攻撃力 +60.75%（10 秒）を付けるが、そのバーストのダメージは 208,131 × 3 = 624,393 で
+ * 素の攻撃力基準だった（バフ込みなら 1 発 334,704 になるはず）。
+ */
 export const BURST_HIT_USES_PRE_ACTIVATION_BUFFS = true;
 
 export function computeTeamDamage(input: TeamInput): TeamResult {

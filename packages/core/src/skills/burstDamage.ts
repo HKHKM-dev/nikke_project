@@ -1,5 +1,5 @@
 // Stage 5: バーストスロットの倍率ダメージ（burstDamage）を Lv の数値に解決し、1 発動あたりの期待ダメージを出す。
-// 式（参考資料どおり。射撃場で実測して確かめる。plan/design-stage5.md 1 節）:
+// 式（2026-09-22 の射撃場実測で確認。plan/design-stage5.md 1 節、plan/verification.md Stage 5 節）:
 //   burstHit = max(1, 攻撃力(バフ後) − 防御力) × X/100 × (1 + 会心期待値 [+ 0.5]) × (1 + Σ attackDamage) × 属性有利
 // 武器倍率・チャージ倍率・コア・距離は掛けない。
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
@@ -12,8 +12,10 @@ import type { BurstDamageType, SkillDefinition } from './types.ts';
 
 /**
  * バースト発動時の即時ダメージにフルバースト補正 +0.5 を乗せるか。
- * 参考資料は両説ある（Jgaram/nikke-calc は乗せる、nikke-sim はフルバースト開始前のスナップショットとして乗せない）ので、
- * 射撃場の実測で決める。実測まではこの既定値（乗せない）で計算する。
+ * **2026-09-22 の射撃場実測で「乗せない」と確定**（plan/verification.md Stage 5 節、録画 18・19）:
+ * ラピのバースト 657.72% が 208,131 × 3 = 624,393 =（素の攻撃力 − 防御）× 6.5772、
+ * ノワールのバースト 351.64% が 480,611 =（バフ後 136,777 − 100）× 3.5164 で、どちらも +0.5 が乗っていない。
+ * コア・距離も乗らないことを同時に確認した。
  */
 export const BURST_SKILL_FULL_BURST_BONUS = false;
 
