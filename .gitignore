@@ -15,3 +15,5 @@ plan/captures/*
 !plan/captures/frames/
 plan/captures/frames/*
 !plan/captures/frames/*.jpg
+# 解析の中間生成物（切り出しフレーム・diff.ts の CSV）。結論は台帳と verification.md に残す。
+scratch/
