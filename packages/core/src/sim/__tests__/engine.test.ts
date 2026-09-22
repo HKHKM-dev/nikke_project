@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
+import { slotsByStep } from '../../burst/schedule.ts';
 import { computeCadence } from '../../cadence.ts';
 import type { EnemyInput } from '../../damage.ts';
 import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
@@ -110,7 +111,7 @@ describe('runSimulation with the fixed burst cycle', () => {
     const other = slot(6, {}, 'Step3', '100'); // 同じ段階の 2 体目は発動しない
     const step1 = slot(7, {}, 'Step1', '50');
     const sim = runSimulation({ slots: [step2, buster, other, step1], enemy, durationSeconds: 180, burst: true });
-    expect(sim.schedule?.assignment).toEqual({ Step1: 3, Step2: 0, Step3: 1 });
+    expect(sim.schedule && slotsByStep(sim.schedule)).toEqual({ Step1: [3], Step2: [0], Step3: [1] });
     const b = sim.slots[1]!;
     expect(b.burst.activations).toEqual([600, 1800, 3000, 4200, 5400, 6600, 7800, 9000, 10200]);
     expect(b.burst.hit?.multiplier).toBeCloseTo(3.5164, 12);
@@ -147,7 +148,7 @@ describe('runSimulation with the fixed burst cycle', () => {
     expect(runSimulation({ slots: [ar], enemy, durationSeconds: 0, burst: true }).totalDamage).toBe(0);
     const empty = runSimulation({ slots: [null, null], enemy, durationSeconds: 180, burst: true });
     expect(empty.totalDamage).toBe(0);
-    expect(empty.schedule?.assignment).toEqual({ Step1: null, Step2: null, Step3: null });
+    expect(empty.schedule?.activations).toEqual([]);
   });
 
   it('rejects duplicate characters like computeTeamDamage', () => {

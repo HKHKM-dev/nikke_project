@@ -4,6 +4,7 @@
 //   3. 長時間での収束（calc は sim の長時間平均）
 // Stage 6 の持続バフは describe('with timed buffs') で扱う。
 import { describe, expect, it } from 'vitest';
+import { slotsByStep } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
@@ -114,7 +115,7 @@ describe('sim vs calc: quantities that must match exactly', () => {
 
   it('share the same schedule, buffs and per-trigger damage', () => {
     expect(sim.schedule).toEqual(calc.schedule);
-    expect(calc.schedule?.assignment).toEqual({ Step1: 1, Step2: 3, Step3: 0 });
+    expect(calc.schedule && slotsByStep(calc.schedule)).toEqual({ Step1: [1], Step2: [3], Step3: [0] });
     expect(sim.timeline.segments).toEqual(calc.timeline.segments);
     for (let i = 0; i < team.length; i++) {
       const c = calc.slots[i]!;

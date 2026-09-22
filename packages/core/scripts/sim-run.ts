@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
+import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../src/skills/resolve.ts';
@@ -78,11 +79,13 @@ console.log(
     `fixed spec ${fixedSpec}, enemy defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}`,
 );
 if (calc.schedule) {
-  const a = calc.schedule.assignment;
-  const who = (i: number | null) => (i === null ? '-' : `slot ${i + 1} ${slots[i]!.character.name.ja}`);
+  const byStep = slotsByStep(calc.schedule);
+  const who = (list: number[]) =>
+    list.length === 0 ? '-' : list.map((i) => `slot ${i + 1} ${slots[i]!.character.name.ja}`).join(' / ');
+  const starts = calc.schedule.fullBurstWindows.map((w) => w.start);
   console.log(
-    `activations ${calc.schedule.activationFrames.length} (first at ${(calc.schedule.activationFrames[0] ?? 0) / FPS}s), ` +
-      `full burst ${calc.schedule.fullBurstFramesTotal / FPS}s; I: ${who(a.Step1)}, II: ${who(a.Step2)}, III: ${who(a.Step3)}`,
+    `full bursts ${starts.length} (first at ${(starts[0] ?? 0) / FPS}s), ` +
+      `full burst ${calc.schedule.fullBurstFramesTotal / FPS}s; I: ${who(byStep.Step1)}, II: ${who(byStep.Step2)}, III: ${who(byStep.Step3)}`,
   );
 }
 

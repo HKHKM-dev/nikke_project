@@ -8,29 +8,42 @@ import {
   planFixedCycle,
   type BurstCandidate,
 } from '../fixedCycle.ts';
+import { slotsByStep, type BurstSchedule } from '../schedule.ts';
+
+const starts = (s: BurstSchedule): number[] => s.fullBurstWindows.map((w) => w.start);
 
 const c = (step: BurstStep): BurstCandidate => ({ burstStep: step });
 
 describe('planFixedCycle', () => {
   it('fires 9 times in 180 seconds at 10, 30, …, 170 s and spends 90 s in full burst', () => {
     const s = planFixedCycle([c('Step1'), c('Step2'), c('Step3')], durationToFrames(180));
-    expect(s.activationFrames).toEqual([600, 1800, 3000, 4200, 5400, 6600, 7800, 9000, 10200]);
+    expect(starts(s)).toEqual([600, 1800, 3000, 4200, 5400, 6600, 7800, 9000, 10200]);
+    expect(s.model).toBe('fixed');
+    // 各サイクルで I → II → III が同じフレームに並ぶ
+    expect(s.activations).toHaveLength(27);
+    expect(s.activations.slice(0, 3)).toEqual([
+      { frame: 600, step: 'Step1', slotIndex: 0, startsFullBurst: false },
+      { frame: 600, step: 'Step2', slotIndex: 1, startsFullBurst: false },
+      { frame: 600, step: 'Step3', slotIndex: 2, startsFullBurst: true },
+    ]);
     expect(s.fullBurstWindows[0]).toEqual({ start: 600, end: 1200 });
     expect(s.fullBurstWindows[8]).toEqual({ start: 10200, end: 10800 });
     expect(s.fullBurstFramesTotal).toBe(5400);
-    expect(s.assignment).toEqual({ Step1: 0, Step2: 1, Step3: 2 });
+    expect(slotsByStep(s)).toEqual({ Step1: [0], Step2: [1], Step3: [2] });
+    expect(assignBurstSteps([c('Step1'), c('Step2'), c('Step3')])).toEqual({ Step1: 0, Step2: 1, Step3: 2 });
   });
 
   it('clips the last window at the end of the battle and drops activations after it', () => {
     const s = planFixedCycle([c('Step3')], 10500);
-    expect(s.activationFrames).toHaveLength(9);
+    expect(starts(s)).toHaveLength(9);
     expect(s.fullBurstWindows[8]).toEqual({ start: 10200, end: 10500 });
     expect(s.fullBurstFramesTotal).toBe(8 * 600 + 300);
     const short = planFixedCycle([c('Step3')], 600);
-    expect(short.activationFrames).toEqual([]);
+    expect(starts(short)).toEqual([]);
+    expect(short.activations).toEqual([]);
     expect(short.fullBurstFramesTotal).toBe(0);
-    expect(planFixedCycle([c('Step3')], 601).activationFrames).toEqual([600]);
-    expect(planFixedCycle([c('Step3')], 0).activationFrames).toEqual([]);
+    expect(starts(planFixedCycle([c('Step3')], 601))).toEqual([600]);
+    expect(starts(planFixedCycle([c('Step3')], 0))).toEqual([]);
   });
 
   it('rejects a non-integer or negative duration and an inconsistent cycle', () => {

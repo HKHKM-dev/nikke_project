@@ -4,8 +4,8 @@
 // Stage 6: 持続バフを skills/timeline.ts の区間に載せた。区間ごとの 1 トリガー値を先に計算しておき、
 // フレームループは「区間をまたいだら参照を差し替える」だけにする（毎フレーム式を評価しない）。
 // calc（team.ts）はこの sim の期待値モデルで、両者の差は発射サイクルの離散化（マガジンの位相と端数）だけになる（__tests__/simCalc.test.ts）。
-import { durationToFrames, isFullBurstFrame, type FixedCycleSchedule } from '../burst/fixedCycle.ts';
-import { BURST_STEP_KEYS, type BurstStepKey } from '../burst/fixedCycle.ts';
+import { durationToFrames } from '../burst/fixedCycle.ts';
+import type { BurstSchedule, BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
 import { baseAttackOf, computeTriggerDamage, modelNotes, type ModelNote, type TriggerDamage } from '../damage.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect } from '../skills/resolve.ts';
@@ -38,7 +38,7 @@ export type SimInput = TeamInput & {
 export type SimEvent =
   | { frame: number; kind: 'trigger'; slot: number; fullBurst: boolean; damage: number }
   | { frame: number; kind: 'burst'; slot: number; step: BurstStepKey; damage: number }
-  | { frame: number; kind: 'fullBurstStart' | 'fullBurstEnd' }
+  | { frame: number; kind: 'fullBurstStart' | 'fullBurstEnd' | 'gaugeFull' | 'chainTimeout' }
   | { frame: number; kind: 'buffStart' | 'buffEnd'; slot: number; effect: BuffWindow['effect'] };
 
 /** 1 区間ぶんの結果。区間は timeline.segments と 1:1 */
@@ -78,7 +78,7 @@ export type SimSlotResult = {
 export type SimResult = {
   /** 回したフレーム数 = durationSeconds × 60（切り上げ） */
   frames: number;
-  schedule: FixedCycleSchedule | null;
+  schedule: BurstSchedule | null;
   timeline: BuffTimeline;
   slots: (SimSlotResult | null)[];
   totalDamage: number;
@@ -165,54 +165,60 @@ export function runSimulation(input: SimInput): SimResult {
   });
 
   const events: SimEvent[] = [];
-  const activations = schedule?.activationFrames ?? [];
+  const activations = schedule?.activations ?? [];
+  const fullBurstWindows = schedule?.fullBurstWindows ?? [];
+  const gaugeFull = new Set(schedule?.gaugeFullFrames ?? []);
+  const chainTimeouts = new Set(schedule?.chainTimeouts ?? []);
   let nextActivation = 0;
+  let windowIndex = 0;
   let inFullBurst = false;
   let segIndex = 0;
 
   for (let f = 0; f < frames; f++) {
     while (segIndex + 1 < timeline.segments.length && timeline.segments[segIndex]!.end <= f) segIndex += 1;
-    const fb = schedule !== null && isFullBurstFrame(f);
+    while (windowIndex < fullBurstWindows.length && fullBurstWindows[windowIndex]!.end <= f) windowIndex += 1;
+    const window = fullBurstWindows[windowIndex];
+    const fb = window !== undefined && window.start <= f;
     if (trace) {
-      if (schedule !== null && inFullBurst && !fb) events.push({ frame: f, kind: 'fullBurstEnd' });
+      if (inFullBurst && !fb) events.push({ frame: f, kind: 'fullBurstEnd' });
+      if (gaugeFull.has(f)) events.push({ frame: f, kind: 'gaugeFull' });
+      if (chainTimeouts.has(f)) events.push({ frame: f, kind: 'chainTimeout' });
       for (const w of timeline.windows) {
         if (w.start === f) events.push({ frame: f, kind: 'buffStart', slot: w.slotIndex, effect: w.effect });
         if (w.end === f) events.push({ frame: f, kind: 'buffEnd', slot: w.slotIndex, effect: w.effect });
       }
+      if (fb && !inFullBurst) events.push({ frame: f, kind: 'fullBurstStart' });
     }
-    // バースト発動（同一フレームに I → II → III の順。そのフレームの通常攻撃より先）
-    if (schedule !== null && activations[nextActivation] === f) {
+    // バースト発動（そのフレームの通常攻撃より先。同じフレームなら時刻表の順 = I → II → III）
+    while (activations[nextActivation]?.frame === f) {
+      const activation = activations[nextActivation]!;
       nextActivation += 1;
-      if (trace) events.push({ frame: f, kind: 'fullBurstStart' });
-      for (const step of BURST_STEP_KEYS) {
-        const index = schedule.assignment[step];
-        if (index === null) continue;
-        const runner = runners[index];
-        if (!runner) continue;
-        const slot = slots[index]!;
-        const state = burstSnapshotState(timeline, f, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
-        const trigger = computeTriggerDamage({
-          character: slot.character,
-          growth: slot.growth,
-          enemy,
-          attackOverride: slot.attackOverride,
-          buffs: state.buffs,
-          condition: { ...slot.condition, fullBurst: false },
-        });
-        const hit = slotBurstHit(
-          slot.skills?.definition,
-          slot.skills?.levels ?? MAX_SKILL_LEVELS,
-          slot.character,
-          enemy,
-          trigger,
-          state.buffs,
-        );
-        if (hit === null) continue;
-        if (runner.result.burst.activations.length === 0) runner.result.burst.hit = hit;
-        runner.result.burst.activations.push(f);
-        runner.result.burst.damage += hit.perActivation;
-        if (trace) events.push({ frame: f, kind: 'burst', slot: index, step, damage: hit.perActivation });
-      }
+      const { slotIndex: index, step } = activation;
+      const runner = runners[index];
+      if (!runner) continue;
+      const slot = slots[index]!;
+      const state = burstSnapshotState(timeline, f, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
+      const trigger = computeTriggerDamage({
+        character: slot.character,
+        growth: slot.growth,
+        enemy,
+        attackOverride: slot.attackOverride,
+        buffs: state.buffs,
+        condition: { ...slot.condition, fullBurst: false },
+      });
+      const hit = slotBurstHit(
+        slot.skills?.definition,
+        slot.skills?.levels ?? MAX_SKILL_LEVELS,
+        slot.character,
+        enemy,
+        trigger,
+        state.buffs,
+      );
+      if (hit === null) continue;
+      if (runner.result.burst.activations.length === 0) runner.result.burst.hit = hit;
+      runner.result.burst.activations.push(f);
+      runner.result.burst.damage += hit.perActivation;
+      if (trace) events.push({ frame: f, kind: 'burst', slot: index, step, damage: hit.perActivation });
     }
     inFullBurst = fb;
     // 通常射撃（枠順）

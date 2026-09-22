@@ -1,7 +1,8 @@
 // Stage 6: 持続バフのタイムライン。plan/design-stage6.md 6.1 節の表を固定する。
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
-import { assignedStepOf, isFullBurstFrame, planFixedCycle } from '../../burst/fixedCycle.ts';
+import { isFullBurstFrame, planFixedCycle } from '../../burst/fixedCycle.ts';
+import { slotsByStep } from '../../burst/schedule.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { groupTimeline, planBuffTimeline, triggerFrames, type TimelineSlot } from '../timeline.ts';
 import type { BuffTrigger, SkillDefinition, SkillEntry, TimedEffect } from '../types.ts';
@@ -72,21 +73,19 @@ describe('triggerFrames', () => {
   });
 
   it('fires burstUse only for the slot assigned to a step', () => {
-    expect(assignedStepOf(schedule.assignment, 0)).toBe('Step3');
-    expect(assignedStepOf(schedule.assignment, 1)).toBe('Step1');
+    expect(slotsByStep(schedule)).toEqual({ Step1: [1], Step2: [], Step3: [0] });
     expect(triggerFrames('burstUse', schedule, 0, FRAMES)).toHaveLength(9);
     expect(triggerFrames('burstUse', schedule, 1, FRAMES)).toHaveLength(9);
     // 同じ段階の 2 体目・空枠は割当がないので発火しない
     const crowded = planFixedCycle([{ burstStep: 'Step3' }, { burstStep: 'Step3' }, null], FRAMES);
-    expect(assignedStepOf(crowded.assignment, 1)).toBeNull();
+    expect(slotsByStep(crowded).Step3).toEqual([0]);
     expect(triggerFrames('burstUse', crowded, 1, FRAMES)).toEqual([]);
     expect(triggerFrames('burstUse', crowded, 2, FRAMES)).toEqual([]);
   });
 
   it('fills an empty step with an AllStep slot and gives it that step’s frames', () => {
     const all = planFixedCycle([{ burstStep: 'AllStep' }, { burstStep: 'Step3' }], FRAMES);
-    expect(all.assignment).toEqual({ Step1: 0, Step2: null, Step3: 1 });
-    expect(assignedStepOf(all.assignment, 0)).toBe('Step1');
+    expect(slotsByStep(all)).toEqual({ Step1: [0], Step2: [], Step3: [1] });
     expect(triggerFrames('burstUse', all, 0, FRAMES)).toHaveLength(9);
   });
 

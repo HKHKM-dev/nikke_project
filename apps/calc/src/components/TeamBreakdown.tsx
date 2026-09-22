@@ -1,4 +1,11 @@
-import { BURST_STEP_KEYS, WEAPON_LABEL, type TeamResult, type TeamSlotResult, type TriggerDamage } from '@nikke/core';
+import {
+  BURST_STEP_KEYS,
+  WEAPON_LABEL,
+  slotsByStep,
+  type TeamResult,
+  type TeamSlotResult,
+  type TriggerDamage,
+} from '@nikke/core';
 import { formatNumber, formatPercent } from '../format.ts';
 import { ResultPanel } from './ResultPanel.tsx';
 
@@ -24,7 +31,9 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
   const filled = result.slots.filter((s): s is TeamSlotResult => s !== null);
   const attackLabel = fixedSpec ? '攻撃力（スペック固定: 好感度 + 装備込み）' : '攻撃力（素）';
   const schedule = result.schedule;
-  const missingSteps = schedule ? BURST_STEP_KEYS.filter((step) => schedule.assignment[step] === null) : [];
+  const byStep = schedule ? slotsByStep(schedule) : null;
+  const missingSteps = byStep ? BURST_STEP_KEYS.filter((step) => byStep[step].length === 0) : [];
+  const fullBurstStarts = schedule ? schedule.fullBurstWindows.map((w) => w.start) : [];
 
   return (
     <section className="panel result breakdown-panel">
@@ -34,13 +43,15 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
       )}
       {filled.length > 0 && schedule && (
         <p className="hint">
-          バースト {schedule.activationFrames.length} 回（
-          {schedule.activationFrames.map((f) => `${f / 60}s`).join(', ')}）、フルバースト合計{' '}
+          フルバースト {fullBurstStarts.length} 回（
+          {fullBurstStarts.map((f) => `${formatNumber(f / 60)}s`).join(', ')}）、フルバースト合計{' '}
           {formatNumber(schedule.fullBurstFramesTotal / 60)} 秒。発動:{' '}
           {BURST_STEP_KEYS.map((step) => {
-            const i = schedule.assignment[step];
-            const s = i === null ? undefined : filled.find((f) => f.index === i);
-            return `${STEP_LABEL[step]}: ${s ? `枠 ${i! + 1} ${s.character.name.ja}` : '—'}`;
+            const names = (byStep?.[step] ?? []).map((i) => {
+              const s = filled.find((f) => f.index === i);
+              return s ? `枠 ${i + 1} ${s.character.name.ja}` : `枠 ${i + 1}`;
+            });
+            return `${STEP_LABEL[step]}: ${names.length > 0 ? names.join('・') : '—'}`;
           }).join(' / ')}
           {missingSteps.length > 0 &&
             `。バースト ${missingSteps.map((s) => STEP_LABEL[s]).join('・')} のニケがいません（フルバーストは起きると仮定）`}

@@ -1,17 +1,13 @@
 // Stage 6: 持続バフのタイムライン（純関数）。sim と calc が同じ区間分割を使う。
-// 固定サイクル（burst/fixedCycle.ts）なので、バフの付与・失効のフレームは戦闘前に静的に決まる。
+// 時刻表（burst/schedule.ts の BurstSchedule）は戦闘前に決まるので、バフの付与・失効のフレームも静的に決まる。
+// Stage 7 で固定サイクル専用の形から BurstSchedule に一般化した（固定・動的どちらの時刻表でも同じ作り方）。
 //
 // 流れ: トリガーの発火フレーム → バフ窓 [start, end)（同一効果の再発火は和集合 = 上書き延長）
 //       → 境界を集めて区間に割る → 区間ごとに枠の BuffTotals を作る → 同じバフ状態の区間をグループにまとめる。
 //
 // calc はグループごとに computeDamage を 1 回呼び、sim はフレームループで区間をまたぐたびに 1 トリガーの値を差し替える。
 // timed 効果が 1 つもなければグループは「通常区間 / フルバースト区間」の 2 つに退化し、Stage 5 とまったく同じ計算になる。
-import {
-  activationFramesOfStep,
-  assignedStepOf,
-  isFullBurstFrame,
-  type FixedCycleSchedule,
-} from '../burst/fixedCycle.ts';
+import { activationFramesOfSlot, isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { CharacterData } from '../types.ts';
 import { FPS } from '../weapons.ts';
 import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from './buffs.ts';
@@ -127,23 +123,21 @@ function keyOf(fullBurst: boolean, state: SlotBuffState): string {
 
 /**
  * トリガーの発火フレーム列。schedule が null（バーストなし）なら battleStart だけ発火する。
- * burstUse は「枠から段階を引いて、その段階の発動フレーム列を取る」形にしてある（Stage 7 で段階の遅延が入る場所）。
+ * burstUse はその枠が実際に撃った発動のフレーム（動的サイクルでは段階ごとに別フレーム、同じ段階の 2 体は交互になりうる）。
  */
 export function triggerFrames(
   trigger: BuffTrigger,
-  schedule: FixedCycleSchedule | null,
+  schedule: BurstSchedule | null,
   slotIndex: number,
   frames: number,
 ): number[] {
   if (trigger === 'battleStart') return frames > 0 ? [0] : [];
   if (schedule === null) return [];
   switch (trigger) {
-    case 'burstUse': {
-      const step = assignedStepOf(schedule.assignment, slotIndex);
-      return step === null ? [] : activationFramesOfStep(schedule, step).filter((f) => f < frames);
-    }
+    case 'burstUse':
+      return activationFramesOfSlot(schedule, slotIndex).filter((f) => f < frames);
     case 'fullBurstStart':
-      return schedule.activationFrames.filter((f) => f < frames);
+      return schedule.fullBurstWindows.map((w) => w.start).filter((f) => f < frames);
     case 'fullBurstEnd':
       // 戦闘時間で切られた最後の窓（end === frames）では発火しない
       return schedule.fullBurstWindows.map((w) => w.end).filter((f) => f < frames);
@@ -198,7 +192,7 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
  */
 export function planBuffTimeline(
   slots: readonly TimelineSlot[],
-  schedule: FixedCycleSchedule | null,
+  schedule: BurstSchedule | null,
   frames: number,
 ): BuffTimeline {
   if (!Number.isInteger(frames) || frames < 0) {
@@ -235,7 +229,7 @@ export function planBuffTimeline(
       bounds.add(w.start);
       bounds.add(w.end);
     }
-    for (const f of schedule.activationFrames) bounds.add(f);
+    for (const a of schedule.activations) bounds.add(a.frame);
   }
   const sorted = [...bounds].filter((b) => b >= 0 && b <= frames).sort((a, b) => a - b);
 
@@ -245,7 +239,8 @@ export function planBuffTimeline(
     const start = sorted[i]!;
     const end = sorted[i + 1]!;
     if (start >= end) continue;
-    const fullBurst = schedule !== null && isFullBurstFrame(start);
+    // 境界にフルバースト区間の端が入っているので、区間の先頭で判定すれば区間全体で同じ値になる
+    const fullBurst = schedule !== null && isInFullBurst(schedule, start);
     const slotStates = passive.map((base) =>
       base === null
         ? null

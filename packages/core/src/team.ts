@@ -4,7 +4,8 @@
 // Stage 6: 持続バフ（timed）を skills/timeline.ts の区間分割に載せた。calc は「同じバフ状態の区間」をまとめた
 // グループ単位で computeDamage を呼ぶ。timed 効果がなければグループは 2 つに退化し、Stage 5 と同じ計算になる。
 // sim（sim/engine.ts）とは時刻表・区間・式をすべて共有し、違いは「発射をフレームで数えるか、平均レートで置くか」だけ。
-import { durationToFrames, planFixedCycle, type FixedCycleSchedule } from './burst/fixedCycle.ts';
+import { durationToFrames, planFixedCycle } from './burst/fixedCycle.ts';
+import { activationFramesOfSlot, type BurstSchedule } from './burst/schedule.ts';
 import {
   baseAttackOf,
   computeDamage,
@@ -127,7 +128,7 @@ export type TeamResult = {
   totalDps: number;
   totalDamage: number;
   /** burst なしなら null */
-  schedule: FixedCycleSchedule | null;
+  schedule: BurstSchedule | null;
   timeline: BuffTimeline;
 };
 
@@ -177,7 +178,7 @@ export function planTeamSchedule(
   slots: readonly (TeamSlotInput | null)[],
   frames: number,
   burst: boolean | undefined,
-): FixedCycleSchedule | null {
+): BurstSchedule | null {
   if (!burst) return null;
   return planFixedCycle(
     slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep })),
@@ -260,12 +261,11 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
       normalDamage += result.totalDamage;
     }
 
-    // バーストスキルは発動ごとに（その時点のバフで）計算する
-    const assigned = schedule !== null && Object.values(schedule.assignment).includes(index);
+    // バーストスキルは発動ごとに（その時点のバフで）計算する。撃つのは時刻表でこの枠が発動したフレームだけ
     const activations: { seconds: number; hit: BurstHitResult }[] = [];
     let burstDamage = 0;
-    if (assigned) {
-      for (const frame of schedule?.activationFrames ?? []) {
+    if (schedule !== null) {
+      for (const frame of activationFramesOfSlot(schedule, index)) {
         const state = burstSnapshotState(timeline, frame, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
         const trigger = computeTriggerDamage({
           ...base,
