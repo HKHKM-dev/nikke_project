@@ -14,7 +14,7 @@
     "fetch-data": "npm run fetch-data -w @nikke/core",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present && tsc -p tools/tsconfig.json",
     "dev": "npm run dev -w @nikke/calc",
     "build": "npm run build -w @nikke/calc",
     "preview": "npm run preview -w @nikke/calc",

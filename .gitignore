@@ -9,4 +9,9 @@ packages/core/.cache/
 Thumbs.db
 .claude/settings.local.json
 plan/.claude/
-plan/captures/
+# 録画の実体（数百 MB・ゲーム映像）は追跡しない。台帳と証拠フレームだけ追跡する。
+plan/captures/*
+!plan/captures/index.md
+!plan/captures/frames/
+plan/captures/frames/*
+!plan/captures/frames/*.jpg
