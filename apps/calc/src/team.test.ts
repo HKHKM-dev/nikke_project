@@ -2,6 +2,8 @@ import type { CharacterIndexEntry } from '@nikke/core';
 import { describe, expect, it } from 'vitest';
 import {
   INITIAL_TEAM_STATE,
+  clampSkillLevel,
+  effectiveSkillLevels,
   initialTeamState,
   parseTeamState,
   serializeTeamState,
@@ -129,5 +131,58 @@ describe('parseTeamState', () => {
     const raw = { ...initialTeamState(), extra: 1 };
     const parsed = parseTeamState(JSON.stringify(raw), index);
     expect(parsed).toEqual(initialTeamState());
+  });
+});
+
+describe('skill levels (Stage 4)', () => {
+  it('defaults every slot to Lv10 and updates per slot', () => {
+    const s0 = initialTeamState();
+    expect(
+      s0.slots.every((s) => s.skillLevels.skill1 === 10 && s.skillLevels.skill2 === 10 && s.skillLevels.burst === 10),
+    ).toBe(true);
+    const s1 = teamReducer(s0, { type: 'setSkillLevels', index: 2, skillLevels: { skill1: 4, skill2: 10, burst: 7 } });
+    expect(s1.slots[2]?.skillLevels).toEqual({ skill1: 4, skill2: 10, burst: 7 });
+    expect(s1.slots[1]?.skillLevels).toEqual({ skill1: 10, skill2: 10, burst: 10 });
+    expect(teamReducer(s0, { type: 'setSkillLevels', index: 9, skillLevels: { skill1: 1, skill2: 1, burst: 1 } })).toBe(
+      s0,
+    );
+  });
+
+  it('clearSlot keeps skill levels; fixedSpec forces Lv10 without touching the stored levels', () => {
+    let s = teamReducer(initialTeamState(), { type: 'selectCharacter', index: 0, resourceId: 10 });
+    s = teamReducer(s, { type: 'setSkillLevels', index: 0, skillLevels: { skill1: 3, skill2: 3, burst: 3 } });
+    expect(effectiveSkillLevels(s.slots[0]!, false)).toEqual({ skill1: 3, skill2: 3, burst: 3 });
+    expect(effectiveSkillLevels(s.slots[0]!, true)).toEqual({ skill1: 10, skill2: 10, burst: 10 });
+    s = teamReducer(s, { type: 'clearSlot', index: 0 });
+    expect(s.slots[0]?.skillLevels).toEqual({ skill1: 3, skill2: 3, burst: 3 });
+  });
+
+  it('clampSkillLevel keeps typed values inside 1..10', () => {
+    expect(clampSkillLevel(0)).toBe(1);
+    expect(clampSkillLevel(11)).toBe(10);
+    expect(clampSkillLevel(4.6)).toBe(5);
+    expect(clampSkillLevel(Number.NaN)).toBe(1);
+  });
+
+  it('parseTeamState fills missing skill levels (Stage 3 data) with 10 and rejects out-of-range ones', () => {
+    const stage3 = JSON.parse(serializeTeamState(withCharacters([10, 20]))) as { slots: Record<string, unknown>[] };
+    for (const s of stage3.slots) delete s.skillLevels;
+    const parsed = parseTeamState(JSON.stringify(stage3), index);
+    expect(parsed?.slots.every((s) => s.skillLevels.skill1 === 10)).toBe(true);
+
+    for (const bad of [0, 11, 2.5, '10']) {
+      const raw = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
+      raw.slots[0]!.skillLevels = { skill1: bad, skill2: 10, burst: 10 };
+      expect(parseTeamState(JSON.stringify(raw), index), String(bad)).toBeNull();
+    }
+    const missingSlot = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
+    missingSlot.slots[0]!.skillLevels = { skill1: 10, skill2: 10 };
+    expect(parseTeamState(JSON.stringify(missingSlot), index)).toBeNull();
+  });
+
+  it('round-trips skill levels', () => {
+    let s = withCharacters([10, null, 30]);
+    s = teamReducer(s, { type: 'setSkillLevels', index: 2, skillLevels: { skill1: 1, skill2: 5, burst: 9 } });
+    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
   });
 });

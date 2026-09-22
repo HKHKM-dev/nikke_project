@@ -17,12 +17,14 @@ import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
 import {
   INITIAL_TEAM_STATE,
   STORAGE_KEY,
+  effectiveSkillLevels,
   parseTeamState,
   serializeTeamState,
   takenResourceIds,
   teamReducer,
 } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
+import { slotSkillsStatus, toSlotSkills, useSkillDefinitions } from './useSkillDefinitions.ts';
 
 const BASE_URL = import.meta.env.BASE_URL;
 
@@ -73,28 +75,36 @@ export function App() {
     }
   }, [team, restored]);
 
-  const cache = useCharacterCache(
-    team.slots.map((s) => s.resourceId),
-    BASE_URL,
+  const resourceIds = team.slots.map((s) => s.resourceId);
+  const cache = useCharacterCache(resourceIds, BASE_URL);
+  const skills = useSkillDefinitions(resourceIds, BASE_URL);
+
+  // 枠ごとのスキル定義の状態（未選択は null）
+  const skillsStatuses = useMemo(
+    () => team.slots.map((slot) => (slot.resourceId === null ? null : slotSkillsStatus(skills, slot.resourceId))),
+    [team.slots, skills],
   );
 
   // 枠ごとの計算入力。データが揃っていない枠は null（合計から除外）
   const slotInputs = useMemo<(TeamSlotInput | null)[]>(
     () =>
-      team.slots.map((slot) => {
+      team.slots.map((slot, i) => {
         if (slot.resourceId === null) return null;
         const character = cache.characters.get(slot.resourceId);
-        if (!character) return null;
+        const status = skillsStatuses[i];
+        if (!character || !status) return null;
+        const slotSkills = toSlotSkills(status, effectiveSkillLevels(slot, team.fixedSpec));
         return team.fixedSpec
           ? {
               character,
               growth: fixedSpecGrowth(character),
               condition: slot.condition,
               attackOverride: computeFixedSpecAttack(character).attack,
+              skills: slotSkills,
             }
-          : { character, growth: clampGrowth(character, slot.growth), condition: slot.condition };
+          : { character, growth: clampGrowth(character, slot.growth), condition: slot.condition, skills: slotSkills };
       }),
-    [team.slots, team.fixedSpec, cache.characters],
+    [team.slots, team.fixedSpec, cache.characters, skillsStatuses],
   );
 
   const computed = useMemo<Computed>(() => {
@@ -111,12 +121,17 @@ export function App() {
   const loadingCount = team.slots.filter(
     (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
   ).length;
+  const skillsLoadingCount = skillsStatuses.filter((s) => s?.kind === 'loading').length;
+
+  const slotNames = team.slots.map((s) =>
+    s.resourceId === null ? undefined : cache.characters.get(s.resourceId)?.name.ja,
+  );
 
   return (
     <main className="app">
       <header>
-        <h1>NIKKE calc v2</h1>
-        <p>5 人編成の通常攻撃合算（Stage 3）</p>
+        <h1>NIKKE calc v3</h1>
+        <p>5 人編成の通常攻撃 + 常時発動パッシブ（Stage 4）</p>
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
@@ -144,6 +159,9 @@ export function App() {
                   error={slot.resourceId === null ? undefined : cache.errors.get(slot.resourceId)}
                   fixedSpec={team.fixedSpec}
                   effectiveGrowth={input?.growth ?? slot.growth}
+                  effectiveSkillLevels={effectiveSkillLevels(slot, team.fixedSpec)}
+                  skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
+                  slotNames={slotNames}
                   slotResult={computed.ok ? (computed.result.slots[i] ?? null) : null}
                   dispatch={dispatch}
                 />
@@ -151,7 +169,12 @@ export function App() {
             })}
           </section>
           {computed.ok ? (
-            <TeamBreakdown result={computed.result} loadingCount={loadingCount} fixedSpec={team.fixedSpec} />
+            <TeamBreakdown
+              result={computed.result}
+              loadingCount={loadingCount}
+              skillsLoadingCount={skillsLoadingCount}
+              fixedSpec={team.fixedSpec}
+            />
           ) : (
             <p className="error">{computed.error}</p>
           )}

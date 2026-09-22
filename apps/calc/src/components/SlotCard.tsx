@@ -8,12 +8,16 @@ import {
   type CharacterIndexEntry,
   type GrowthInput,
   type NikkeClass,
+  type SkillLevels,
   type TeamSlotResult,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber, formatPercent } from '../format.ts';
+import { formatAppliedAmount, formatEffectSource } from '../skillLabels.ts';
 import type { SlotState, TeamAction } from '../team.ts';
+import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { CharacterPicker } from './CharacterPicker.tsx';
+import { SkillSection } from './SkillSection.tsx';
 
 const CLASS_LABEL: Record<NikkeClass, string> = { Attacker: '火力型', Defender: '防御型', Supporter: '支援型' };
 const BURST_LABEL: Record<BurstStep, string> = { Step1: 'I', Step2: 'II', Step3: 'III', AllStep: 'I〜III' };
@@ -29,6 +33,11 @@ type Props = {
   fixedSpec: boolean;
   /** clamp・スペック固定を反映した実際に計算へ渡す育成値 */
   effectiveGrowth: GrowthInput;
+  /** スペック固定を反映した実際に計算へ渡すスキル Lv */
+  effectiveSkillLevels: SkillLevels;
+  skillsStatus: SlotSkillsStatus;
+  /** 枠番号 → ニケ名（バフの発動元表示用）。未選択・読み込み中は undefined */
+  slotNames: readonly (string | undefined)[];
   slotResult: TeamSlotResult | null;
   dispatch: Dispatch<TeamAction>;
 };
@@ -43,6 +52,9 @@ export function SlotCard({
   error,
   fixedSpec,
   effectiveGrowth,
+  effectiveSkillLevels,
+  skillsStatus,
+  slotNames,
   slotResult,
   dispatch,
 }: Props) {
@@ -142,6 +154,34 @@ export function SlotCard({
               <span>フルチャージで撃つ</span>
             </label>
           )}
+          <SkillSection
+            slotIndex={slotIndex}
+            character={character}
+            levels={effectiveSkillLevels}
+            disabled={fixedSpec}
+            status={skillsStatus}
+            dispatch={dispatch}
+          />
+          {slotResult && (
+            <div className="received">
+              <span className="skills-title">受けているバフ</span>
+              {slotResult.appliedEffects.length === 0 ? (
+                <p className="hint">なし</p>
+              ) : (
+                <ul className="received-list">
+                  {slotResult.appliedEffects.map((e, i) => (
+                    <li key={i}>
+                      <span className="amount">{formatAppliedAmount(e)}</span>
+                      <small className="sub">
+                        {formatEffectSource(e, slotNames[e.sourceSlotIndex])}
+                        {e.assumes ? `・仮定: ${e.assumes.ja}` : ''}
+                      </small>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
           {slotResult && slotResult.result.notes.length > 0 && (
             <ul className="notes">
               {slotResult.result.notes.map((note) => (
@@ -153,6 +193,8 @@ export function SlotCard({
           )}
           {slotResult && (
             <dl className="mini">
+              <dt>攻撃力（バフ後）</dt>
+              <dd>{formatNumber(slotResult.result.attack)}</dd>
               <dt>DPS</dt>
               <dd>{formatNumber(slotResult.result.dps)}</dd>
               <dt>総ダメージ</dt>

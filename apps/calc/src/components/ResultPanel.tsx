@@ -4,7 +4,9 @@ import { formatNumber, formatPercent } from '../format.ts';
 type Props = { character: CharacterData; result: DamageResult; attackLabel?: string };
 
 export function ResultPanel({ character, result, attackLabel = '攻撃力（素）' }: Props) {
-  const { cadence } = result;
+  const { cadence, buffs } = result;
+  const hasAttackBuff = buffs.attackRatio !== 0 || buffs.attackFlat !== 0;
+  const hasCritBuff = buffs.critRate !== 0 || buffs.critDamage !== 0;
   return (
     <section className="panel result">
       <h2>{character.name.ja} の通常攻撃</h2>
@@ -34,8 +36,24 @@ export function ResultPanel({ character, result, attackLabel = '攻撃力（素�
         <tbody>
           <tr>
             <th>{attackLabel}</th>
-            <td>{formatNumber(result.attack)}</td>
+            <td>{formatNumber(result.baseAttack)}</td>
           </tr>
+          {hasAttackBuff && (
+            <>
+              <tr>
+                <th>攻撃力バフ</th>
+                <td>
+                  {buffs.attackRatio !== 0 ? `×(1 + ${formatPercent(buffs.attackRatio, 2)})` : ''}
+                  {buffs.attackRatio !== 0 && buffs.attackFlat !== 0 ? ' ' : ''}
+                  {buffs.attackFlat !== 0 ? `+${formatNumber(buffs.attackFlat)}` : ''}
+                </td>
+              </tr>
+              <tr>
+                <th>攻撃力（バフ後）</th>
+                <td>{formatNumber(result.attack)}</td>
+              </tr>
+            </>
+          )}
           <tr>
             <th>攻撃力 − 防御力</th>
             <td>{formatNumber(result.baseHit)}</td>
@@ -50,7 +68,12 @@ export function ResultPanel({ character, result, attackLabel = '攻撃力（素�
           {result.chargeMultiplier !== 1 && (
             <tr>
               <th>チャージ倍率</th>
-              <td>×{result.chargeMultiplier}</td>
+              <td>
+                ×{formatNumber(result.chargeMultiplier, 4)}
+                {buffs.chargeDamage !== 0
+                  ? `（${character.shot.fullChargeDamage} + ${formatPercent(buffs.chargeDamage, 2)}）`
+                  : ''}
+              </td>
             </tr>
           )}
           <tr>
@@ -59,12 +82,26 @@ export function ResultPanel({ character, result, attackLabel = '攻撃力（素�
           </tr>
           <tr>
             <th>会心（期待値）</th>
-            <td>+{formatNumber(result.boost.crit, 3)}</td>
+            <td>
+              +{formatNumber(result.boost.crit, 3)}
+              {hasCritBuff
+                ? `（確率 ${formatPercent(character.crit.rate + buffs.critRate, 2)} × ダメージ +${formatPercent(
+                    character.crit.damage - 1 + buffs.critDamage,
+                    2,
+                  )}）`
+                : ''}
+            </td>
           </tr>
           <tr>
             <th>距離ボーナス</th>
             <td>+{formatNumber(result.boost.distance, 1)}</td>
           </tr>
+          {result.boost.attackDamage !== 0 && (
+            <tr>
+              <th>攻撃ダメージ（バフ）</th>
+              <td>+{formatNumber(result.boost.attackDamage, 4)}</td>
+            </tr>
+          )}
           <tr>
             <th>倍率グループ合計</th>
             <td>×{formatNumber(result.boost.total, 3)}</td>
@@ -94,7 +131,7 @@ export function ResultPanel({ character, result, attackLabel = '攻撃力（素�
       </table>
 
       <p className="scope">
-        calc v1 は通常攻撃のみを計算します。スキル・バースト・バフ/デバフ・弾数増加・ヒット率は含みません。SG
+        通常攻撃と、定義済みの常時発動パッシブ（攻撃力・会心・攻撃ダメージ・チャージダメージ）だけを計算します。バースト・時間限定のバフ/デバフ・弾数増加・ヒット率は含みません。SG
         は全ペレット命中が前提です。
       </p>
     </section>

@@ -6,10 +6,12 @@ type Props = {
   result: TeamResult;
   /** ニケは選ばれているがデータ読み込み中で合計に入っていない枠の数 */
   loadingCount: number;
+  /** スキル定義を読み込み中で、まだバフなしで計算している枠の数 */
+  skillsLoadingCount: number;
   fixedSpec: boolean;
 };
 
-export function TeamBreakdown({ result, loadingCount, fixedSpec }: Props) {
+export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedSpec }: Props) {
   const filled = result.slots.filter((s): s is TeamSlotResult => s !== null);
   const attackLabel = fixedSpec ? '攻撃力（スペック固定: 好感度 + 装備込み）' : '攻撃力（素）';
 
@@ -27,6 +29,7 @@ export function TeamBreakdown({ result, loadingCount, fixedSpec }: Props) {
                 <th>枠</th>
                 <th>ニケ</th>
                 <th>{attackLabel}</th>
+                <th>攻撃力（バフ後）</th>
                 <th>1 トリガー</th>
                 <th>秒間トリガー</th>
                 <th>DPS</th>
@@ -42,6 +45,7 @@ export function TeamBreakdown({ result, loadingCount, fixedSpec }: Props) {
                     {s.character.name.ja}
                     <small className="sub"> {WEAPON_LABEL[s.character.weaponType].ja}</small>
                   </td>
+                  <td>{formatNumber(s.result.baseAttack)}</td>
                   <td>{formatNumber(s.result.attack)}</td>
                   <td>{formatNumber(s.result.perTrigger)}</td>
                   <td>{formatNumber(s.result.cadence.triggersPerSecond, 3)}</td>
@@ -53,7 +57,7 @@ export function TeamBreakdown({ result, loadingCount, fixedSpec }: Props) {
             </tbody>
             <tfoot>
               <tr>
-                <th colSpan={5}>合計（{result.filledCount} 体）</th>
+                <th colSpan={6}>合計（{result.filledCount} 体）</th>
                 <td>{formatNumber(result.totalDps)}</td>
                 <td className="grand-total">{formatNumber(result.totalDamage)}</td>
                 <td>100%</td>
@@ -64,6 +68,11 @@ export function TeamBreakdown({ result, loadingCount, fixedSpec }: Props) {
       )}
       {loadingCount > 0 && (
         <p className="hint">読み込み中の枠が {loadingCount} つあります。合計にはまだ含まれていません。</p>
+      )}
+      {skillsLoadingCount > 0 && (
+        <p className="hint">
+          スキル定義を読み込み中の枠が {skillsLoadingCount} つあります。そのスキルはまだ反映されていません。
+        </p>
       )}
       {filled.length > 0 && (
         <div className="details">
@@ -80,8 +89,8 @@ export function TeamBreakdown({ result, loadingCount, fixedSpec }: Props) {
         </div>
       )}
       <p className="scope">
-        calc v2
-        は各ニケの通常攻撃を個別に計算して足し合わせるだけです。スキル・バースト・バフ/デバフ・弾数増加・ヒット率・味方間の相互作用は含みません。SG
+        calc v3
+        は各ニケの通常攻撃に、定義済みの常時発動パッシブ（自分・味方全体の攻撃力・会心・攻撃ダメージ・チャージダメージ）を乗せて足し合わせます。バースト・時間限定のバフ/デバフ・弾数増加・ヒット率は含みません。定義のないニケはスキルなしで計算します。SG
         は全ペレット命中が前提です。
       </p>
     </section>

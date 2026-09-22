@@ -1,0 +1,33 @@
+{
+  "formatVersion": 1,
+  "resourceId": 93,
+  "checkedAt": "2026-09-22",
+  "skills": {
+    "skill1": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "環境コントロール（敵の受けるダメージ増加・味方回復・再発動周期）と陽動は未対応。敵デバフは要件でスコープ外",
+          "en": "Environment Setup (Damage Taken on enemies, ally heal, recurring interval) and Exposure are not modeled; enemy debuffs are out of scope"
+        }
+      ]
+    },
+    "skill2": {
+      "support": "partial",
+      "effects": [{ "kind": "passive", "target": "allies", "stat": "critDamage", "ref": 1 }],
+      "notes": [
+        { "ja": "発射体爆発ダメージは未対応", "en": "Projectile Explosion Damage is not modeled" },
+        {
+          "ja": "フォーメーションAS 併用時の追加効果（防御力無視ダメージ・再発動周期短縮）は未対応",
+          "en": "Bonus effects while in AS Formation (True Damage, recurring interval) are not modeled"
+        }
+      ]
+    },
+    "burst": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [{ "ja": "バーストスキルは Stage 5", "en": "Burst skills are Stage 5" }]
+    }
+  }
+}
