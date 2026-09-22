@@ -58,7 +58,7 @@
 
 ## Stage 4: スキルモデル段階 A — 常時発動パッシブ
 
-- **設計**: [design-stage4.md](design-stage4.md)（2026-09-22 承認・実装完了。射撃場の実測は [verification.md](verification.md) Stage 4 節の表が空欄）
+- **設計**: [design-stage4.md](design-stage4.md)（2026-09-22 承認・実装・射撃場の実測まで完了。[verification.md](verification.md) Stage 4 節。実測で `attackDamage` が会心・コアの加算グループの外で乗算されると分かり、式を同日に訂正）
 - **入力**: スキル定義 JSON（無条件・常時の自己/味方ステータス上昇のみ）、スキル Lv
 - **処理**:
   - DSL の最小語彙を設計（対象・ステータス種別・値の参照先）
