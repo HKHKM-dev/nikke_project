@@ -1,55 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { computeDamage, modelNotes, type DamageInput } from '../damage.ts';
-import type { CharacterData, ShotParams } from '../types.ts';
-
-function makeCharacter(shot: Partial<ShotParams> = {}, overrides: Partial<CharacterData> = {}): CharacterData {
-  const skill = { id: 0, name: { ja: '', en: '' }, description: { ja: '', en: '' }, values: [] };
-  return {
-    resourceId: 1,
-    name: { ja: 'テスト', en: 'Test' },
-    rarity: 'SSR',
-    class: 'Attacker',
-    corporation: 'ELYSION',
-    element: 'Fire',
-    weaponType: 'AR',
-    burstStep: 'Step3',
-    levelCurve: { attack: [1000], hp: [10000], defence: [100] },
-    statEnhance: {
-      gradeRatio: 200,
-      gradeAttack: 20,
-      gradeHp: 3000,
-      gradeDefence: 100,
-      coreAttack: 200,
-      coreHp: 200,
-      coreDefence: 200,
-    },
-    crit: { rate: 0.15, damage: 1.5 },
-    bonusRange: { min: 25, max: 45 },
-    shot: {
-      damage: 1365,
-      shotCount: 1,
-      muzzleCount: 1,
-      maxAmmo: 60,
-      reloadTime: 1,
-      reloadBullet: 1,
-      rateOfFire: 720,
-      endRateOfFire: 720,
-      rateOfFireChangePerShot: 0,
-      rateOfFireResetTime: 0,
-      chargeTime: 0,
-      fullChargeDamage: 1,
-      coreDamageRate: 2,
-      inputType: 'DOWN',
-      fireType: 'Instant',
-      penetration: 0,
-      maintainFireStance: 0,
-      uptypeFireTiming: 0,
-      ...shot,
-    },
-    skills: { skill1: skill, skill2: skill, burst: skill },
-    ...overrides,
-  };
-}
+import { makeCharacter } from './fixtures.ts';
 
 function input(overrides: Partial<DamageInput> = {}): DamageInput {
   return {

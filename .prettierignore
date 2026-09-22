@@ -3,3 +3,4 @@ dist/
 .cache/
 packages/core/data/
 package-lock.json
+.claude/
