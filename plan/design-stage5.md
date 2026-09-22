@@ -1,7 +1,7 @@
 # Stage 5 設計書: フルバースト基礎とシンプルバースト（sim 先行 → calc）
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **案（レビュー待ち・2026-09-22 のロードマップ改定を反映した改訂版）**。第 8 節の「決めてほしいこと」に答えてもらってから実装に入る
+- 状態: **承認済み・実装完了（2026-09-22）**。2026-09-22 のロードマップ改定を反映した改訂版。レビュー 2 点（4.2 節の境界、5.3 節の参照先）を反映後、第 8 節の 8 点はいずれも推奨案で確定。実装での差分は 10 節
 - 関連: [design-stage4.md](design-stage4.md)、[verification.md](verification.md)、[roadmap.md](roadmap.md)
 - 作成日: 2026-09-22（同日、改定前の「固定サイクルのフルバースト（calc のみ）」案を全面改訂）
 
@@ -449,6 +449,8 @@ Stage 2-A / 4 と同じ方法（HUD 総ダメージの差分と的の上の数�
 
 ## 8. 決めてほしいこと（推奨付き）
 
+2026-09-22 に 8 点とも推奨案で承認された。
+
 1. **バーストスキルダメージにフルバースト +0.5 を乗せるか** — 推奨: **乗せない**（`BURST_SKILL_FULL_BURST_BONUS = false`）で実装し、6.3 の実測で確定する。nikke-sim は「バースト発動時の即時ダメージはフルバースト開始前のスナップショット」とし、深淵？ note も「使用時点」の計算と書く。Jgaram/nikke-calc は乗せているので両説あり、定数 1 つで切り替えられるようにしておく。
 2. **バースト CT とフルバースト時間のデータを Stage 5 で扱うか** — 推奨: **扱わない**。改定後のロードマップは CT 管理を Stage 7 に置いているので、Stage 5 は「毎サイクル I → II → III が必ず発動する」固定サイクルだけにし、`burst_duration` / `skill_cooltime` の `CharacterData` への追加（改定前の案 2 節）も Stage 7 に送る。III 1 体（CT 40 秒）の編成では発動回数が現実の約 2 倍になるが、それは固定サイクルという前提の限界として UI とドキュメントに明記する。代替: CT だけ先に入れる（改定前の `scheduleBursts`）。
 3. **sim のダメージを期待値にするか、乱数で抽選するか** — 推奨: **期待値**（会心・コア命中を確率で均した 1 トリガー値をフレームごとに加算）。決定的なので sim と calc の整合テストが安定し、ロードマップの「端数差を除き高精度で一致」をそのまま判定できる。乱数版（分布・分散）は将来 `seed` 付きのオプションとして足す。
@@ -472,3 +474,18 @@ Stage 2-A / 4 と同じ方法（HUD 総ダメージの差分と的の上の数�
 - **sim の性能**: 5 体 × 10,800f のループは数万回の単純な加算で、テストで 18,000 秒（1,080,000f）を回しても数百 ms に収まる見込み。イベント記録は `trace: true` のときだけにして配列の肥大化を避ける。
 - **説明文の更新**: Stage 4 と同じく `checkedAt` と `definitions.test.ts` で検知する。
 - **Stage 6 への拡張余地**: sim はフレームループにバフのタイマーを足すだけ（`resolveTeamBuffs` を区間ごとに作り直す）。calc は `planFixedCycle` の `activationFrames` + 持続時間で区間分割できる。
+
+---
+
+## 10. 実装時の差分と知見（2026-09-22）
+
+設計書からずらした点と、実装して分かったこと。
+
+- **`SimInput.burst` は省略可**: `TeamInput` と同じ形（`burst?: boolean`、省略 false）にして、sim と calc に同じ入力オブジェクトをそのまま渡せるようにした（`simCalc.test.ts` と `sim-run.ts` はそうしている）。4.1 節の `burst: boolean`（必須）からの変更。
+- **`slotBurstHit`**（`skills/burstDamage.ts`）: 「定義 + Lv + 通常攻撃の `TriggerDamage` + `BuffTotals` → `BurstHitResult | null`」の共通関数を足し、sim と calc の両方がこれを呼ぶ。バーストヒットの攻撃力・会心・攻撃ダメージは通常区間の 1 トリガーと同じバフ後の値。
+- **calc の発動回数は割当枠だけ**: 実装当初、定義に `burstDamage` があるすべての枠に 9 回を付けていた（同段階の 2 体目にも付く）バグを `simCalc.test.ts` の厳密一致で検出し、`schedule.assignment` に含まれる枠だけにした。sim 先行の整合テストが calc のバグを拾った最初の例。
+- **`hit` は割当に関係なく計算する**: 定義があれば `burst.hit`（1 発動の内訳）は常に出し、`activations` が空なら合計 0。UI で「1 発動 X × 0 回」と見せて、同段階の 2 体目や `burst` OFF でも値を確認できるようにした。
+- **AR の 180 秒トリガー数は 1,830**: 30 マガジン（10,650f）+ 31 マガジン目の 30 発（10,650 + 5 × 29 < 10,800）。4.5 節に書いた 1,829 は数え間違い。
+- **MG の位相ロック**: 周期 560f と 1,200f の gcd 80 が 600 を割り切らないので、フルバースト区間の割合が長時間でも 50.13% に張り付く（[verification.md](verification.md) Stage 5 節）。6.1 節の「収束」は 0.5% 以内で成立するが、厳密に 1/2 に収束するのは周期と 600 が通約しない武器だけ。
+- **`resolvePassives` は `burstDamage` を読み飛ばす**: `SkillEntry.effects` が `SkillEffect`（`PassiveEffect | BurstDamageEffect`）の配列になったので、`kind` で分岐する。`definitions.test.ts` の「`burst` は unsupported」の固定は外し、代わりに `burstDamage` の値が 100% 以上（倍率ダメージ）であることを見る。
+- **CLI**: `npm run sim -- --ids 271,870,10 --fixed-spec` で sim / calc の枠別の内訳表が出る（`packages/core/scripts/sim-run.ts`）。verification.md の数値はここから採った。
