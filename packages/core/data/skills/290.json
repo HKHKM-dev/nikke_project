@@ -21,16 +21,41 @@
       ]
     },
     "skill2": {
-      "support": "unsupported",
-      "effects": [],
-      "notes": [
+      "support": "partial",
+      "effects": [
         {
-          "ja": "バーストゲージのチャージ速度は未対応",
-          "en": "Burst Gauge filling speed is not modeled"
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "毎サイクル自分がバーストするのでマターシグマが再付与され、毎回発動する",
+            "en": "Metal σ is re-applied every cycle because she bursts each cycle, so this triggers every time"
+          }
         },
         {
-          "ja": "フルバースト時の攻撃ダメージ・攻撃力・チャージ時間短縮は Stage 6",
-          "en": "Full Burst effects are Stage 6"
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "毎サイクル自分がバーストするのでマターシグマが再付与され、毎回発動する",
+            "en": "Metal σ is re-applied every cycle because she bursts each cycle, so this triggers every time"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "バーストゲージのチャージ速度は未対応（Stage 7）",
+          "en": "Burst Gauge filling speed is not modeled (Stage 7)"
+        },
+        {
+          "ja": "フルバースト時の味方 1 機のチャージ時間短縮は未対応（発射サイクルが変わるバフは段階 C / D）",
+          "en": "Charge time reduction for one ally on Full Burst is not modeled (cadence buffs are phase C / D)"
         }
       ]
     },
@@ -39,8 +64,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "持続ダメージ（最終攻撃力の 396% × 1 秒間隔 × 10 秒）と自分の持続ダメージ▲は未対応（tick 数が未検証。Stage 6 以降）",
-          "en": "Damage over time (396% every 1 s for 10 s) and own DoT up are not modeled (tick count unverified; Stage 6 or later)"
+          "ja": "持続ダメージ（最終攻撃力の 396% × 1 秒間隔 × 10 秒）と自分の持続ダメージ▲は未対応（tick 数が未検証）",
+          "en": "Damage over time (396% every 1 s for 10 s) and own DoT up are not modeled (tick count unverified)"
         }
       ]
     }

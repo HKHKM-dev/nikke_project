@@ -1,12 +1,13 @@
-// Stage 5: sim（フレーム逐次）と calc（2 区間の期待値）の整合。plan/design-stage5.md 6.1 節の 3 段で固定する。
-//   1. 厳密一致する量（バーストスキル・1 トリガー値・フルバースト時間）
-//   2. 離散化誤差の上限（トリガー数は 1 マガジン未満、総ダメージは 3% 以内）
+// Stage 5 / 6: sim（フレーム逐次）と calc（区間期待値）の整合。plan/design-stage6.md 6.4 節の 3 段で固定する。
+//   1. 厳密一致する量（区間分割・バフ・1 トリガー値・バーストスキル・フルバースト時間）
+//   2. 離散化誤差の上限（グループのトリガー数は「1 マガジン × 区間数」未満、枠 5%・編成 3%）
 //   3. 長時間での収束（calc は sim の長時間平均）
+// Stage 6 の持続バフは describe('with timed buffs') で扱う。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { runSimulation } from '../sim/engine.ts';
+import { runSimulation, simGroupTotals, simIntervalTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import type { SkillDefinition } from '../skills/types.ts';
+import type { SkillDefinition, TimedEffect } from '../skills/types.ts';
 import { computeTeamDamage, type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { BurstStep, ShotParams, SkillRaw } from '../types.ts';
 import { FPS } from '../weapons.ts';
@@ -24,13 +25,19 @@ function slot(
   burstStep: BurstStep,
   burstPercent: string | null,
   passiveAttackPercent: string | null = null,
+  timedEffect: TimedEffect | null = null,
 ): TeamSlotInput {
   const skill1: SkillRaw = {
     ...empty,
     id: resourceId * 10 + 1,
     values: passiveAttackPercent ? [tenLevels(passiveAttackPercent)] : [],
   };
-  const burst: SkillRaw = { ...empty, id: resourceId * 10 + 3, values: burstPercent ? [tenLevels(burstPercent)] : [] };
+  // burst の values: [1] = バースト倍率、[2] = 持続バフの比率 40%、[3] = 維持秒数 10
+  const burst: SkillRaw = {
+    ...empty,
+    id: resourceId * 10 + 3,
+    values: burstPercent ? [tenLevels(burstPercent), tenLevels('40'), tenLevels('10')] : [],
+  };
   const character = makeCharacter(shot, { resourceId, burstStep, skills: { skill1, skill2: empty, burst } });
   const definition: SkillDefinition = {
     formatVersion: 1,
@@ -42,7 +49,12 @@ function slot(
         : { support: 'unsupported', effects: [] },
       skill2: { support: 'unsupported', effects: [] },
       burst: burstPercent
-        ? { support: 'supported', effects: [{ kind: 'burstDamage', ref: 1, damageType: 'skill' }] }
+        ? {
+            support: 'supported',
+            effects: timedEffect
+              ? [{ kind: 'burstDamage', ref: 1, damageType: 'skill' }, timedEffect]
+              : [{ kind: 'burstDamage', ref: 1, damageType: 'skill' }],
+          }
         : { support: 'unsupported', effects: [] },
     },
   };
@@ -103,20 +115,24 @@ describe('sim vs calc: quantities that must match exactly', () => {
   it('share the same schedule, buffs and per-trigger damage', () => {
     expect(sim.schedule).toEqual(calc.schedule);
     expect(calc.schedule?.assignment).toEqual({ Step1: 1, Step2: 3, Step3: 0 });
+    expect(sim.timeline.segments).toEqual(calc.timeline.segments);
     for (let i = 0; i < team.length; i++) {
-      const s = sim.slots[i]!;
       const c = calc.slots[i]!;
-      expect(s.buffs).toEqual(c.buffs);
-      expect(s.trigger.normal.perTrigger).toBe(c.result.perTrigger);
-      expect(s.trigger.fullBurst.perTrigger).toBe(c.fullBurstResult?.perTrigger);
-      expect(s.trigger.normal.boost).toEqual(c.result.boost);
-      expect(c.fullBurstResult?.boost.fullBurst).toBe(0.5);
+      const groups = simGroupTotals(sim, i);
+      // 持続バフがないので区間は「通常 / フルバースト」の 2 グループに退化する
+      expect(c.segments.map((g) => g.fullBurst)).toEqual([false, true]);
+      expect(c.segments.map((g) => g.seconds)).toEqual([90, 90]);
+      expect(groups.map((g) => g.key)).toEqual(
+        c.segments.map((_, j) => sim.timeline.segments[j === 0 ? 0 : 1]!.slotKeys[i]),
+      );
+      expect(c.passiveBuffs).toEqual(sim.slots[i]!.passiveBuffs);
+      for (const g of c.segments) expect(g.buffs).toEqual(c.passiveBuffs);
+      expect(c.segments[1]!.trigger.boost.fullBurst).toBe(0.5);
+      expect(c.segments[0]!.trigger.boost.fullBurst).toBe(0);
+      expect(sim.slots[i]!.segments.map((seg) => seg.trigger.perTrigger)).toEqual(
+        sim.timeline.segments.map((seg) => c.segments[seg.fullBurst ? 1 : 0]!.trigger.perTrigger),
+      );
     }
-    expect((calc.slots[0]?.result.totalDamage ?? 0) / (calc.slots[0]?.result.dps ?? 1)).toBeCloseTo(90, 9);
-    expect((calc.slots[0]?.fullBurstResult?.totalDamage ?? 0) / (calc.slots[0]?.fullBurstResult?.dps ?? 1)).toBeCloseTo(
-      90,
-      9,
-    );
   });
 
   it('give identical burst skill totals and activation counts', () => {
@@ -124,7 +140,7 @@ describe('sim vs calc: quantities that must match exactly', () => {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;
       expect(s.burst.hit).toEqual(c.burst.hit);
-      expect(s.burst.activations.map((f) => f / FPS)).toEqual(c.burst.activations);
+      expect(s.burst.activations.map((f) => f / FPS)).toEqual(c.burst.activations.map((a) => a.seconds));
       expect(s.burst.damage).toBeCloseTo(c.burst.totalDamage, 6);
     }
     expect(calc.slots[0]?.burst.activations).toHaveLength(9);
@@ -140,8 +156,10 @@ describe('sim vs calc: discretization error bounds', () => {
     for (let i = 0; i < team.length; i++) {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;
-      const expected = c.result.cadence.triggersPerSecond * 180;
-      expect(Math.abs(s.normal.nonFullBurst.triggers - expected)).toBeLessThanOrEqual(s.character.shot.maxAmmo);
+      const expected = c.cadence.triggersPerSecond * 180;
+      expect(Math.abs(simIntervalTotals(s).nonFullBurst.triggers - expected)).toBeLessThanOrEqual(
+        s.character.shot.maxAmmo,
+      );
       expect(Math.abs(s.totalDamage - c.totalDamage) / c.totalDamage).toBeLessThan(0.03);
     }
   });
@@ -153,11 +171,12 @@ describe('sim vs calc: discretization error bounds', () => {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;
       expect(Math.abs(s.totalDamage - c.totalDamage) / c.totalDamage, `slot ${i}`).toBeLessThan(0.05);
-      // フルバースト区間のトリガー数は期待値 (秒間トリガー × 90) から 1 マガジン以上ずれない
-      const expectedFb = c.fullBurstResult!.cadence.triggersPerSecond * 90;
-      expect(Math.abs(s.normal.fullBurst.triggers - expectedFb), `slot ${i} fb`).toBeLessThanOrEqual(
-        s.character.shot.maxAmmo,
-      );
+      // グループのトリガー数は「1 マガジン × そのグループに含まれる区間数」を超えてずれない
+      const groups = simGroupTotals(sim, i);
+      c.segments.forEach((g, j) => {
+        const bound = s.character.shot.maxAmmo * g.ranges.length;
+        expect(Math.abs(groups[j]!.triggers - g.triggers), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
+      });
     }
   });
 });
@@ -170,5 +189,121 @@ describe('sim vs calc: convergence', () => {
     });
     expect(diffs[2]).toBeLessThan(0.005);
     expect(diffs[2]).toBeLessThanOrEqual(diffs[0]! + 1e-12);
+  });
+});
+
+// ---- Stage 6: 持続バフを載せた編成 ----
+
+// III（AR）が自分に攻撃力 +40%（10 秒）、II（RL）が味方全体に +40%（10 秒）を配る
+const selfBuff: TimedEffect = {
+  kind: 'timed',
+  trigger: 'burstUse',
+  target: 'self',
+  stat: 'attack',
+  ref: 2,
+  durationRef: 3,
+};
+const alliesBuff: TimedEffect = { ...selfBuff, target: 'allies', trigger: 'fullBurstStart' };
+const timedTeam: TeamSlotInput[] = [
+  slot(1, {}, 'Step3', '351.64', null, selfBuff),
+  team[1]!,
+  team[2]!,
+  slot(
+    4,
+    {
+      maxAmmo: 6,
+      reloadTime: 2,
+      rateOfFire: 60,
+      endRateOfFire: 60,
+      chargeTime: 1.5,
+      inputType: 'UP',
+      damage: 6130,
+      fullChargeDamage: 3.5,
+    },
+    'Step2',
+    '150',
+    null,
+    alliesBuff,
+  ),
+  team[4]!,
+];
+
+function bothTimed(durationSeconds: number, burst = true) {
+  const input = { slots: timedTeam, enemy, durationSeconds, burst };
+  return { sim: runSimulation(input), calc: computeTeamDamage(input) };
+}
+
+describe('sim vs calc with timed buffs: quantities that must match exactly', () => {
+  const { sim, calc } = bothTimed(180);
+
+  it('share the same segmentation and per-segment buffs', () => {
+    expect(sim.timeline.segments).toEqual(calc.timeline.segments);
+    // 10 秒バフの窓はフルバースト窓と重なるので、区間は 18 個・バフ状態は 2 通り
+    expect(sim.timeline.segments).toHaveLength(18);
+    for (let i = 0; i < timedTeam.length; i++) {
+      const c = calc.slots[i]!;
+      expect(c.segments).toHaveLength(2);
+      expect(c.segments.map((g) => g.fullBurst)).toEqual([false, true]);
+      expect(c.segments.map((g) => g.seconds)).toEqual([90, 90]);
+      const groups = simGroupTotals(sim, i);
+      expect(groups.map((g) => g.seconds)).toEqual(c.segments.map((g) => g.seconds));
+    }
+  });
+
+  it('put the buffs on the right slots', () => {
+    // 枠 0 は自分の +40% だけ、枠 3 の allies は全枠に掛かる
+    const fb = calc.slots[0]!.segments[1]!;
+    expect(fb.buffs.attackRatio).toBeCloseTo(0.4 + 0.4 + 0.1, 12); // self + allies + SR の常時 +10%
+    expect(calc.slots[0]!.segments[0]!.buffs.attackRatio).toBeCloseTo(0.1, 12);
+    expect(calc.slots[1]!.segments[1]!.buffs.attackRatio).toBeCloseTo(0.4 + 0.1, 12);
+    expect(calc.slots[1]!.segments[0]!.buffs.attackRatio).toBeCloseTo(0.1, 12);
+    expect(calc.slots[0]!.windows).toHaveLength(18); // self 9 + allies 9
+    expect(calc.slots[1]!.windows).toHaveLength(9);
+  });
+
+  it('compute the same per-segment trigger damage and the same burst hits', () => {
+    for (let i = 0; i < timedTeam.length; i++) {
+      const c = calc.slots[i]!;
+      const simSlot = sim.slots[i]!;
+      // sim の各区間の 1 トリガー値は、calc の対応するグループの値と完全一致する
+      sim.timeline.segments.forEach((segment, j) => {
+        const group = c.segments.find((g) => g.ranges.some((r) => r.start === segment.start))!;
+        expect(simSlot.segments[j]!.trigger.perTrigger).toBe(group.trigger.perTrigger);
+        expect(simSlot.segments[j]!.buffs).toEqual(group.buffs);
+      });
+      expect(simSlot.burst.activations.map((f) => f / FPS)).toEqual(c.burst.activations.map((a) => a.seconds));
+      expect(simSlot.burst.damage).toBeCloseTo(c.burst.totalDamage, 6);
+      if (c.burst.activations.length > 0) expect(simSlot.burst.hit).toEqual(c.burst.activations[0]!.hit);
+    }
+  });
+
+  it('give a bigger total than the same team without the timed buffs', () => {
+    const plain = computeTeamDamage({ slots: team, enemy, durationSeconds: 180, burst: true });
+    expect(calc.totalDamage).toBeGreaterThan(plain.totalDamage);
+  });
+});
+
+describe('sim vs calc with timed buffs: discretization error bounds', () => {
+  it('stays within one magazine per segment and 5% / 3% on the totals', () => {
+    const { sim, calc } = bothTimed(180);
+    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
+    for (let i = 0; i < timedTeam.length; i++) {
+      const s = sim.slots[i]!;
+      const c = calc.slots[i]!;
+      expect(Math.abs(s.totalDamage - c.totalDamage) / c.totalDamage, `slot ${i}`).toBeLessThan(0.05);
+      const groups = simGroupTotals(sim, i);
+      c.segments.forEach((g, j) => {
+        const bound = s.character.shot.maxAmmo * g.ranges.length;
+        expect(Math.abs(groups[j]!.triggers - g.triggers), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
+      });
+    }
+  });
+
+  it('converges below 0.5% at 18,000 s', () => {
+    const diffs = [180, 1800, 18000].map((d) => {
+      const { sim, calc } = bothTimed(d);
+      return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
+    });
+    expect(diffs[2]).toBeLessThan(0.005);
   });
 });

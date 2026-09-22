@@ -8,8 +8,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "被弾 N 回で自分に攻撃力▲（維持型）は段階 C 以降",
-          "en": "ATK up on taking hits (timed) is phase C or later"
+          "ja": "被弾 N 回で自分に攻撃力▲（維持型）は段階 C 以降（被弾回数トリガー）",
+          "en": "ATK up on taking hits (timed) is phase C or later (hit-count trigger)"
         }
       ]
     },
@@ -18,18 +18,30 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルバースト時の攻撃力▲（維持型）は Stage 6",
-          "en": "ATK up during Full Burst (timed) is Stage 6"
+          "ja": "単体大ダメージ（最終攻撃力の 528.97%）と挑発は未対応。倍率ダメージは burst スロットの burstDamage だけが扱える",
+          "en": "The single-target hit (528.97% of Final ATK) and Taunt are not modeled; burstDamage only covers the burst slot"
         }
       ]
     },
     "burst": {
-      "support": "partial",
-      "effects": [{ "kind": "burstDamage", "ref": 1, "damageType": "skill" }],
-      "notes": [
+      "support": "supported",
+      "effects": [
         {
-          "ja": "自分に攻撃力 60.75%▲（10 秒間維持）は Stage 6。対象「最終攻撃力が最も高い敵 1 機」は単体ボスで 1 ヒット",
-          "en": "Self ATK up 60.75% (10 s) is Stage 6. The single-target hit is one hit on a lone boss"
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「最終攻撃力が最も高い敵 1 機」は単体ボスで 1 ヒット",
+            "en": "The single-target hit lands once on a lone boss"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3
         }
       ]
     }

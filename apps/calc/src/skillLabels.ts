@@ -1,5 +1,5 @@
 // スキル関連の表示用ラベル（React 非依存）
-import type { AppliedEffect, BuffStat, BurstDamageType, SkillSlot, SkillSupport } from '@nikke/core';
+import type { AppliedEffect, BuffStat, BuffTrigger, BurstDamageType, SkillSlot, SkillSupport } from '@nikke/core';
 import { formatNumber, formatPercent } from './format.ts';
 
 export const SKILL_SLOT_LABEL: Record<SkillSlot, string> = {
@@ -15,6 +15,18 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   attackDamage: '攻撃ダメージ',
   chargeDamage: 'チャージダメージ',
 };
+
+export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
+  battleStart: '戦闘開始時',
+  burstUse: 'バースト使用時',
+  fullBurstStart: 'フルバースト発動時',
+  fullBurstEnd: 'フルバースト終了時',
+};
+
+/** 「バースト使用時 →」 */
+export function formatTimedTrigger(trigger: BuffTrigger): string {
+  return `${BUFF_TRIGGER_LABEL[trigger]} →`;
+}
 
 export const BURST_DAMAGE_TYPE_LABEL: Record<BurstDamageType, string> = {
   skill: 'バーストスキルダメージ',

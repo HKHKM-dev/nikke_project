@@ -35,12 +35,22 @@
       ]
     },
     "burst": {
-      "support": "unsupported",
-      "effects": [],
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ],
       "notes": [
         {
-          "ja": "味方全体に発動者基準の攻撃力▲（10 秒間維持）は Stage 6。環境コントロールは未対応",
-          "en": "Caster-based ATK up for all allies (10 s) is Stage 6. Environment control is not modeled"
+          "ja": "環境コントロール強化（環境コントロールのダメージ増加倍率・受ける HP 回復量▲）は未対応",
+          "en": "Enhanced Environment Setup (damage multiplier, HP recovery taken) is not modeled"
         }
       ]
     }

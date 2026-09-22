@@ -1,4 +1,4 @@
-import { BURST_STEP_KEYS, WEAPON_LABEL, type TeamResult, type TeamSlotResult } from '@nikke/core';
+import { BURST_STEP_KEYS, WEAPON_LABEL, type TeamResult, type TeamSlotResult, type TriggerDamage } from '@nikke/core';
 import { formatNumber, formatPercent } from '../format.ts';
 import { ResultPanel } from './ResultPanel.tsx';
 
@@ -12,6 +12,13 @@ type Props = {
 };
 
 const STEP_LABEL = { Step1: 'I', Step2: 'II', Step3: 'III' } as const;
+
+/** 区間によって値が変わる項目の最小値（max: true で最大値）。持続バフがなければ 1 区間なので同じ値 */
+function triggerRange(slot: TeamSlotResult, pick: (t: TriggerDamage) => number, max = false): number {
+  const values = slot.segments.map((s) => pick(s.trigger));
+  if (values.length === 0) return 0;
+  return max ? Math.max(...values) : Math.min(...values);
+}
 
 export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedSpec }: Props) {
   const filled = result.slots.filter((s): s is TeamSlotResult => s !== null);
@@ -65,16 +72,16 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                     {s.character.name.ja}
                     <small className="sub"> {WEAPON_LABEL[s.character.weaponType].ja}</small>
                   </td>
-                  <td>{formatNumber(s.result.baseAttack)}</td>
-                  <td>{formatNumber(s.result.attack)}</td>
+                  <td>{formatNumber(s.baseAttack)}</td>
+                  <td>{formatNumber(triggerRange(s, (t) => t.attack))}</td>
                   <td>
-                    {formatNumber(s.result.perTrigger)}
-                    {s.fullBurstResult && (
-                      <small className="sub"> / FB {formatNumber(s.fullBurstResult.perTrigger)}</small>
+                    {formatNumber(triggerRange(s, (t) => t.perTrigger))}
+                    {s.segments.length > 1 && (
+                      <small className="sub"> 〜 {formatNumber(triggerRange(s, (t) => t.perTrigger, true))}</small>
                     )}
                   </td>
-                  <td>{formatNumber(s.result.cadence.triggersPerSecond, 3)}</td>
-                  <td>{formatNumber(s.result.totalDamage + (s.fullBurstResult?.totalDamage ?? 0))}</td>
+                  <td>{formatNumber(s.cadence.triggersPerSecond, 3)}</td>
+                  <td>{formatNumber(s.normalDamage)}</td>
                   <td>
                     {s.burst.hit ? formatNumber(s.burst.totalDamage) : '—'}
                     {s.burst.hit && <small className="sub"> ×{s.burst.activations.length}</small>}
@@ -113,15 +120,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                 枠 {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
                 {formatPercent(s.share, 1)}）
               </summary>
-              <ResultPanel
-                character={s.character}
-                result={s.result}
-                fullBurstResult={s.fullBurstResult}
-                burst={s.burst}
-                totalDamage={s.totalDamage}
-                dps={s.dps}
-                attackLabel={attackLabel}
-              />
+              <ResultPanel character={s.character} slot={s} attackLabel={attackLabel} />
             </details>
           ))}
         </div>

@@ -24,8 +24,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルバースト時の最大装弾数増加と弾丸チャージは Stage 6 以降（装弾数は段階 C）",
-          "en": "Max Ammunition and reload on Full Burst are Stage 6 or later (ammo is phase C)"
+          "ja": "フルバースト時の最大装弾数増加と弾丸チャージは未対応（発射サイクルが変わるバフなので段階 C）",
+          "en": "Max Ammunition and reload on Full Burst are not modeled (cadence buffs are phase C)"
         }
       ]
     },
@@ -40,8 +40,8 @@
       ],
       "notes": [
         {
-          "ja": "SG 味方の命中率▲・阻止部位の攻撃ダメージ▲（10 秒 / 30 秒間維持）は Stage 6",
-          "en": "Hit rate up and Parts damage up for SG allies (10 s / 30 s) are Stage 6"
+          "ja": "SG 味方の命中率▲・阻止部位の攻撃ダメージ▲（10 秒 / 30 秒間維持）は未対応（命中率と阻止部位ダメージは語彙になく、SG 味方限定の対象も語彙外）",
+          "en": "Hit rate up and Parts damage up for SG allies (10 s / 30 s) are not modeled (no vocabulary for hit rate, parts damage or SG-only targets)"
         }
       ]
     }

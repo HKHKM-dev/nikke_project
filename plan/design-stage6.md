@@ -1,7 +1,7 @@
 # Stage 6 設計書: スキルモデル段階 B — バースト時トリガーの持続バフ
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **起案（レビュー待ち）**。2026-09-22 のレビュー 5 点（`burstUse` の段階逆引き、`key` の固定桁化、代表値が `segments[0]` になる件、誤差許容値の粒度分け、ラピ `skill2` の notes 誤記）を反映済み。8 節の 9 点に回答がほしい
+- 状態: **承認済み（2026-09-22）**。レビュー 5 点（`burstUse` の段階逆引き、`key` の固定桁化、代表値が `segments[0]` になる件、誤差許容値の粒度分け、ラピ `skill2` の notes 誤記）を反映後、8 節の 9 点はいずれも推奨案で確定。実装での差分は 10 節
 - 関連: [design-stage5.md](design-stage5.md)、[design-stage4.md](design-stage4.md)、[verification.md](verification.md)、[roadmap.md](roadmap.md)
 - 作成日: 2026-09-22
 
@@ -522,6 +522,8 @@ Stage 2-A / 4 / 5 と同じ方法（的の上のポップアップ数値をコ�
 
 ## 8. 決めてほしいこと（推奨付き）
 
+2026-09-22 に 9 点とも推奨案で承認された。
+
 1. **`battleStart` を Stage 6 に入れるか** — 推奨: **入れる**。ロードマップの文言は「バースト時トリガー」だが、機構（発火フレーム + 持続 + 失効）はまったく同じで、クイーン（真）の「戦闘開始時 攻撃力 50.28%▲ 15 秒」は**録画 14 で既に実測済み**（Stage 4 の `attackDamage` の切り分けに使った）。ここで拾えば新規撮影なしで回帰テストが 1 本増える。代替: `burstUse` / `fullBurstStart` / `fullBurstEnd` の 3 種だけにし、`battleStart` は Stage 8 に送る。
 
 2. **同じ効果が持続中に再発火したときの扱い** — 推奨: **上書き延長（窓の和集合）**。NIKKE の「N 秒間維持」は同一ソースなら延長で、加算スタックは「{N}スタック」と明記された効果（クイーン（真）S2 のバトンタッチ）だけ。スタックは段階 C（Stage 8）で `stacks` を足して扱う。代替: 加算スタック（上限なし）。**これを間違えると持続 ≥ サイクル長のときに値が跳ねる**ので、6.3 の B で固定する。
@@ -554,3 +556,21 @@ Stage 2-A / 4 / 5 と同じ方法（的の上のポップアップ数値をコ�
 - **sim の性能**: 区間数 × 枠数の `computeTriggerDamage` を先に計算しておくので、フレームループ自体は Stage 5 と同じ加算だけ。18,000 秒（1,080,000f）のテストでも区間数は 2,700 程度で、事前計算は 1 万回台に収まる。
 - **説明文の更新**: Stage 4 / 5 と同じく `checkedAt` と `definitions.test.ts` で検知する。2.1 節の「要確認」（ラピ skill2 の notes）はこの機会に直す。
 - **Stage 7 への拡張余地**: `planBuffTimeline` は `FixedCycleSchedule` を受け取るだけなので、Stage 7 で動的サイクル（ゲージ・CT）の時刻表に差し替えれば、タイムラインの作り方は変えずに済む。sim はそのまま、calc は「区間の秒数が編成ごとに変わる」だけになる。
+
+---
+
+## 10. 実装時の差分と知見（2026-09-22）
+
+設計書からずらした点と、実装して分かったこと。
+
+- **`key` は編成全体ではなく枠ごとにした（3.1 節 手順 5 / 3.2 節からの変更）**: 設計では `fullBurst` + **全枠**の `BuffTotals` を 1 本の鍵にしていたが、それだと**ある枠のバフ切り替えが他の枠の区間まで刻む**。クイーン（真）の 15 秒バフを入れた編成では、ラピのフルバースト区間が 10 秒 → 5 秒 × 2 に割れ、離散化誤差がそのぶん増えた。`TimelineSegment.slotKeys[i]`（その枠の状態だけの鍵）にして `groupTimeline(timeline, slotIndex)` で枠ごとにまとめると、持続バフを持たない枠は Stage 5 と同じ 2 グループのまま保てる。退化テスト（6.2）もこの形で通る。
+- **`key` に「効いている効果の出どころ」も入れた**: クイーン（真）の `battleStart` と `fullBurstEnd` はどちらも攻撃力 +50.28% なので、数値だけの鍵では 0〜10 秒（戦闘開始時）と 20〜30 秒（フルバースト終了時）が同じグループにまとまり、**UI の「持続バフ」欄に誤ったトリガー名が出た**。鍵に `sourceSlotIndex.skill.effectIndex` を並べて、合計が同じでも出どころが違えば別グループにした。ダメージは同じなので総和は変わらず、グループが 3 → 5 に増えるだけ。
+- **区間の `ranges` は隣接を畳んでから表示する**: 他の枠のバフ切り替えで割れた境界（ラピの `0–15s, 15–180s`）が UI に残ったので、`mergeAdjacentRanges` で `0–180s` に畳んでから `SlotSegmentResult.ranges` に入れる。
+- **`AppliedEffect` を `skills/resolve.ts` に移した**: `team.ts` と `skills/timeline.ts` の両方が使うので、定義元を `resolve.ts`（`ResolvedEffect` の隣）にして `team.ts` は再エクスポートだけにした。`AppliedTimedEffect` も同じ場所。
+- **`resolveTeamBuffs` は残した**: 中身は `skills/timeline.ts` の `resolvePassiveStates` に移したが、Stage 4 の API（`{ buffs, appliedEffects }`）はそのまま残してテストを無変更で通した。
+- **sim にも区間ごとの結果（`SimSlotSegment`）を持たせた**: Stage 5 の `normal: { nonFullBurst, fullBurst }` は `simIntervalTotals(slot)` という関数に置き換え、2 区間の集計が要るところ（CLI・既存テスト）だけで呼ぶ。sim と calc をグループ単位で突き合わせるために `simGroupTotals(result, slotIndex)` も足した。
+- **バーストヒットは「代表値」と「発動ごとの値」を分けた**: `SlotBurstResult.activations` が `{ seconds, hit }[]` になり、発動ごとにその時点のバフで計算する。割当枠でなくても 1 発動の内訳（`hit`）は出す（Stage 5 の流儀を踏襲）。クイーン（真）の `fullBurstEnd` 15 秒バフは次の発動フレームまで生きているので、実際に全 9 回が同じ値になる。
+- **マナの 180 秒での −4.05%**: 区間モデルの誤差ではなく位相の偏り。周期 396f と 1,200 サイクルの関係で通常区間に 907 発・フルバースト区間に 735 発と偏る（期待値は各 818 発）。1,800 秒で +0.06%、18,000 秒で −0.04% まで縮む。9 節に書いた「区間が細かくなるほど誤差が効く」の実例だが、原因は区間の細かさではなく**戦闘 180 秒が短いこと**だった（[verification.md](verification.md) Stage 6 節）。
+- **`data/skills/10.json` の notes の誤記を直した**（2.1 節の「要確認」）: ラピの skill2 は単体大ダメージ + 挑発で、攻撃力バフはなかった。あわせて 271（ノワール）と 95（ウンファ：TU）の notes から「Stage 6」の文字を消し、語彙にない効果（命中率・阻止部位・防御力無視・敵デバフ・弾数）であることを書いた。
+- **ラピとクイーン（真）の burst が `supported` になった**: バーストスロットの効果をすべて `burstDamage` + `timed` で書けたため。`assumes`（単体ボスで 1 ヒット / 対象が風圧コード）は残す。
+- **テスト**: core 20 ファイル 210 件・calc 17 件（合計 227 件、Stage 5 の 170 件から +57）。新規は `skills/__tests__/timeline.test.ts`（21 件）、`__tests__/teamTimed.test.ts`（13 件）、`__tests__/timedRegression.test.ts`（4 件、録画 14 の回帰）と、既存ファイルへの追加。

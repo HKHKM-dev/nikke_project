@@ -104,3 +104,18 @@ export function planFixedCycle(
 export function isFullBurstFrame(frame: number, cycle: BurstCycleFrames = FIXED_BURST_CYCLE): boolean {
   return frame % cycle.cycleFrames >= cycle.normalFrames;
 }
+
+/** 枠 slotIndex が割り当てられている段階。割当なし（空枠・同段階の 2 体目）なら null */
+export function assignedStepOf(assignment: BurstAssignment, slotIndex: number): BurstStepKey | null {
+  for (const step of BURST_STEP_KEYS) if (assignment[step] === slotIndex) return step;
+  return null;
+}
+
+/**
+ * その段階のバーストが発動するフレーム列。
+ * Stage 5 / 6 の固定サイクルでは 3 段階とも同一フレームなので activationFrames をそのまま返す。
+ * Stage 7 で段階ごとの演出遅延を入れるときは、ここに段階ごとのオフセットを足すだけで済む。
+ */
+export function activationFramesOfStep(schedule: FixedCycleSchedule, _step: BurstStepKey): number[] {
+  return schedule.activationFrames;
+}
