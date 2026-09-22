@@ -100,7 +100,7 @@ export function ResultPanel({ character, result, attackLabel = '攻撃力（素�
             <th>倍率グループ合計</th>
             <td>×{formatNumber(result.boost.total, 3)}</td>
           </tr>
-          {result.attackDamageMultiplier !== 1 && (
+          {buffs.attackDamage !== 0 && (
             <tr>
               <th>攻撃ダメージ（バフ）</th>
               <td>×{formatNumber(result.attackDamageMultiplier, 4)}（倍率グループとは別枠）</td>
