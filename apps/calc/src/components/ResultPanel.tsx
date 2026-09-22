@@ -96,16 +96,16 @@ export function ResultPanel({ character, result, attackLabel = '攻撃力（素�
             <th>距離ボーナス</th>
             <td>+{formatNumber(result.boost.distance, 1)}</td>
           </tr>
-          {result.boost.attackDamage !== 0 && (
-            <tr>
-              <th>攻撃ダメージ（バフ）</th>
-              <td>+{formatNumber(result.boost.attackDamage, 4)}</td>
-            </tr>
-          )}
           <tr>
             <th>倍率グループ合計</th>
             <td>×{formatNumber(result.boost.total, 3)}</td>
           </tr>
+          {result.attackDamageMultiplier !== 1 && (
+            <tr>
+              <th>攻撃ダメージ（バフ）</th>
+              <td>×{formatNumber(result.attackDamageMultiplier, 4)}（倍率グループとは別枠）</td>
+            </tr>
+          )}
           <tr>
             <th>属性有利</th>
             <td>×{result.elementMultiplier}</td>

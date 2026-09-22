@@ -13,7 +13,7 @@ export type BuffTotals = {
   critRate: number;
   /** 会心ダメージ倍率の加算。crit.damage − 1 に足す */
   critDamage: number;
-  /** 攻撃ダメージの加算。boost の加算項 */
+  /** 攻撃ダメージの加算。コア・会心・距離の加算グループとは別の乗数 (1 + attackDamage)（2026-09-22 実測で確認） */
   attackDamage: number;
   /** チャージダメージ倍率の加算。fullChargeDamage に足す（フルチャージ時のみ） */
   chargeDamage: number;
@@ -74,6 +74,11 @@ export function applyAttackBuffs(baseAttack: number, buffs: BuffTotals): number 
 /** { rate: crit.rate + critRate, damage: crit.damage + critDamage } */
 export function applyCritBuffs(crit: CharacterData['crit'], buffs: BuffTotals): CharacterData['crit'] {
   return { rate: crit.rate + buffs.critRate, damage: crit.damage + buffs.critDamage };
+}
+
+/** 1 + attackDamage。倍率グループ (1 + コア + 会心 + 距離) とは別に掛ける */
+export function applyAttackDamageBuffs(buffs: BuffTotals): number {
+  return 1 + buffs.attackDamage;
 }
 
 /** charge ? fullChargeDamage + chargeDamage : 1 */

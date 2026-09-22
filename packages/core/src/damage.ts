@@ -1,7 +1,14 @@
 // Stage 2: 通常攻撃のみの静的 DPS。Stage 4 で常時発動パッシブのバフ（buffs）を差し込めるようにした。バースト・時間変化するバフは含まない。
 import { computeCadence, type CadenceResult } from './cadence.ts';
 import { elementMultiplier } from './element.ts';
-import { ZERO_BUFFS, applyAttackBuffs, applyChargeBuffs, applyCritBuffs, type BuffTotals } from './skills/buffs.ts';
+import {
+  ZERO_BUFFS,
+  applyAttackBuffs,
+  applyAttackDamageBuffs,
+  applyChargeBuffs,
+  applyCritBuffs,
+  type BuffTotals,
+} from './skills/buffs.ts';
 import { computeStat, type GrowthInput } from './stats.ts';
 import type { CharacterData, Element, LocalizedText, ShotParams } from './types.ts';
 import { DEFAULT_WEAPON_MODEL, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
@@ -47,7 +54,10 @@ export type DamageResult = {
   baseHit: number;
   weaponMultiplier: number;
   chargeMultiplier: number;
-  boost: { core: number; crit: number; distance: number; attackDamage: number; total: number };
+  /** 加算グループ 1 + コア + 会心 + 距離。攻撃ダメージバフはここに入らない */
+  boost: { core: number; crit: number; distance: number; total: number };
+  /** 攻撃ダメージバフの乗数 1 + Σ attackDamage（倍率グループとは別枠。射撃場の実測で確認） */
+  attackDamageMultiplier: number;
   elementMultiplier: number;
   /** 1 トリガー（SG は全ペレット）あたりの期待ダメージ */
   perTrigger: number;
@@ -116,11 +126,11 @@ export function computeDamage(input: DamageInput): DamageResult {
   const crit = applyCritBuffs(character.crit, buffs);
   const boostCrit = crit.rate * (crit.damage - 1);
   const boostDistance = condition.distanceBonus && character.bonusRange !== null ? 0.3 : 0;
-  const boostAttackDamage = buffs.attackDamage;
-  const boostTotal = 1 + boostCore + boostCrit + boostDistance + boostAttackDamage;
+  const boostTotal = 1 + boostCore + boostCrit + boostDistance;
+  const attackDamageMultiplier = applyAttackDamageBuffs(buffs);
 
   const element = elementMultiplier(character.element, enemy.element);
-  const perTrigger = baseHit * weaponMultiplier * chargeMultiplier * boostTotal * element;
+  const perTrigger = baseHit * weaponMultiplier * chargeMultiplier * boostTotal * attackDamageMultiplier * element;
 
   const cadence = computeCadence(shot, model);
   const dps = perTrigger * cadence.triggersPerSecond;
@@ -136,9 +146,9 @@ export function computeDamage(input: DamageInput): DamageResult {
       core: boostCore,
       crit: boostCrit,
       distance: boostDistance,
-      attackDamage: boostAttackDamage,
       total: boostTotal,
     },
+    attackDamageMultiplier,
     elementMultiplier: element,
     perTrigger,
     cadence,

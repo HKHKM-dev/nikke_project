@@ -4,6 +4,7 @@ import {
   addFlatAttack,
   addRatioBuff,
   applyAttackBuffs,
+  applyAttackDamageBuffs,
   applyChargeBuffs,
   applyCritBuffs,
   applyResolvedEffect,
@@ -84,5 +85,12 @@ describe('applyResolvedEffect', () => {
 
     const crit = applyResolvedEffect(ZERO_BUFFS, { stat: 'critRate', scaling: 'ratio', value: 0.0816 }, 0);
     expect(crit.totals.critRate).toBe(0.0816);
+  });
+});
+
+describe('applyAttackDamageBuffs', () => {
+  it('returns 1 + attackDamage as a multiplier separate from the boost group', () => {
+    expect(applyAttackDamageBuffs(ZERO_BUFFS)).toBe(1);
+    expect(applyAttackDamageBuffs({ ...ZERO_BUFFS, attackDamage: 0.3 })).toBeCloseTo(1.3, 12);
   });
 });

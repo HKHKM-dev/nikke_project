@@ -25,13 +25,13 @@ Stage 1〜3 は 2026-09-22 に完了した。calc v2 は 5 枠の編成を合算
 - **対象**: `self`（自分）と `allies`（味方全体。自分を含む）の 2 種だけ。「自分を除く味方全体」「最終攻撃力が最も高い味方 N 機」「同じ武器種の味方」は段階 B 以降。
 - **ステータス種別（語彙）**: 既存のダメージ式に直接差し込めるものだけ。「何が上がるか」（`stat`）と「どう算出するか」（`scaling`）は直交させる。
 
-  | stat           | 説明文の表現              | 式への入り方                                                                                  |
-  | -------------- | ------------------------- | --------------------------------------------------------------------------------------------- |
-  | `attack`       | 攻撃力 X％▲               | `attack = base × (1 + Σ attackRatio) + Σ attackFlat`                                          |
-  | `critRate`     | クリティカル確率 X％▲     | `boostCrit = (crit.rate + Σ critRate) × (crit.damage − 1 + Σ critDamage)`                     |
-  | `critDamage`   | クリティカルダメージ X％▲ | 同上                                                                                          |
-  | `attackDamage` | 攻撃ダメージ X％▲         | `boostTotal = 1 + core + crit + distance + Σ attackDamage`                                    |
-  | `chargeDamage` | チャージダメージ X％▲     | `chargeMultiplier = charge ? fullChargeDamage + Σ chargeDamage : 1`（フルチャージ時だけ効く） |
+  | stat           | 説明文の表現              | 式への入り方                                                                                                                                                                                                                      |
+  | -------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `attack`       | 攻撃力 X％▲               | `attack = base × (1 + Σ attackRatio) + Σ attackFlat`                                                                                                                                                                              |
+  | `critRate`     | クリティカル確率 X％▲     | `boostCrit = (crit.rate + Σ critRate) × (crit.damage − 1 + Σ critDamage)`                                                                                                                                                         |
+  | `critDamage`   | クリティカルダメージ X％▲ | 同上                                                                                                                                                                                                                              |
+  | `attackDamage` | 攻撃ダメージ X％▲         | `attackDamageMultiplier = 1 + Σ attackDamage`（倍率グループ `1 + core + crit + distance` とは別枠で乗算。**2026-09-22 訂正**: 当初は加算項としていたが、射撃場の実測で別枠と判明。[verification.md](verification.md) Stage 4 節） |
+  | `chargeDamage` | チャージダメージ X％▲     | `chargeMultiplier = charge ? fullChargeDamage + Σ chargeDamage : 1`（フルチャージ時だけ効く）                                                                                                                                     |
 
   | scaling（既定 `ratio`） | 説明文の表現                  | 意味                                                                                   |
   | ----------------------- | ----------------------------- | -------------------------------------------------------------------------------------- |
@@ -199,7 +199,7 @@ export type BuffTotals = {
   critRate: number;
   /** 会心ダメージ倍率の加算。crit.damage − 1 に足す */
   critDamage: number;
-  /** 攻撃ダメージの加算。boost の加算項 */
+  /** 攻撃ダメージの加算。倍率グループとは別の乗数 (1 + attackDamage)（2026-09-22 訂正） */
   attackDamage: number;
   /** チャージダメージ倍率の加算。fullChargeDamage に足す（フルチャージ時のみ） */
   chargeDamage: number;
@@ -212,6 +212,8 @@ export function applyAttackBuffs(baseAttack: number, buffs: BuffTotals): number;
 export function applyCritBuffs(crit: CharacterData['crit'], buffs: BuffTotals): CharacterData['crit'];
 /** charge ? fullChargeDamage + chargeDamage : 1 */
 export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buffs: BuffTotals): number;
+/** 1 + attackDamage（2026-09-22 追加。倍率グループとは別に掛ける） */
+export function applyAttackDamageBuffs(buffs: BuffTotals): number;
 ```
 
 `computeDamage` は攻撃力・会心・チャージの 3 箇所でこれらの純関数を呼ぶだけにし、式の単体テストは `buffs.ts` 側で行う（`damage.ts` を肥大化させない）。`DamageInput` に `buffs?: BuffTotals` を足す。`DamageResult` は `baseAttack`（バフ前）を追加し、`attack` はバフ後になる。`buffs` 未指定は `ZERO_BUFFS` と同じで、Stage 2・3 のテストは `boost` に `attackDamage` が増えた分の期待値を足すだけで通る。
@@ -297,7 +299,7 @@ TeamBreakdown
   - `applyCritBuffs`: `critRate` / `critDamage` が加算される。
   - `applyChargeBuffs`: `charge = false` なら `chargeDamage` があっても 1。
 - core `src/__tests__/damage.test.ts`（追加）
-  - `buffs` 未指定は `ZERO_BUFFS` と同一で既存テストがそのまま通る（`boost` の形が広がった 1 行だけ更新）。`baseAttack` がバフ前、`attack` がバフ後。`attackDamage` が `boost.total` に加算される。`chargeDamage` はチャージ武器のフルチャージ時だけ効く。
+  - `buffs` 未指定は `ZERO_BUFFS` と同一で既存テストがそのまま通る（`boost` の形が広がった 1 行だけ更新）。`baseAttack` がバフ前、`attack` がバフ後。`attackDamage` は `attackDamageMultiplier`（= 1 + Σ）として `boost.total` とは別に掛かる（2026-09-22 訂正）。`chargeDamage` はチャージ武器のフルチャージ時だけ効く。
 - core `src/__tests__/team.test.ts`（追加）
   - 定義なし編成は Stage 3 と同一。`allies` 効果が全枠（自分含む、`skills` 省略の枠も含む）に乗る。`casterAttack` が発動者のバフ前攻撃力を基準にする（発動者に `attack` バフがあっても変わらない）。枠を外すとその枠の `allies` 効果だけ消える。`appliedEffects` の `sourceSlotIndex` / `appliedAmount` が正しい。`skillSupport` は定義なしで `null`。
 - core `src/skills/__tests__/definitions.test.ts`（データの整合性）
@@ -309,14 +311,14 @@ TeamBreakdown
 
 Stage 2-A と同じ方法（非コア・非会心の 1 ヒットを読む。[verification.md](verification.md) の測定条件）。スペック固定なら攻撃力が既知（Stage 2-A で一致確認済み）なので、バフの効き方だけを切り出せる。
 
-| 確認したいこと                   | 編成                   | 予測                                                                     |
-| -------------------------------- | ---------------------- | ------------------------------------------------------------------------ |
-| `attack`（自己）                 | マナ 1 体              | `(attack × 1.5808 − 100) × 武器倍率 × …` が 1 ヒットと一致               |
-| `attack`（発動者基準・固定加算） | ノワール + AR 1 体     | AR 側の 1 ヒットが `attack + ノワールの攻撃力 × 0.1408` で一致           |
-| `attackDamage`                   | クイーン（真）1 体     | 1 ヒットが `boost` に +0.30 で一致                                       |
-| `chargeDamage`                   | ウンファ：TU + SR 1 体 | SR 側のフルチャージ 1 ヒットが `fullChargeDamage + 0.4181` で一致        |
-| スキル Lv 追従                   | 任意の定義済みキャラ   | UI で Lv 1↔10 を変えると「受けているバフ」の値が Blablalink の表示と一致 |
-| 未定義キャラ                     | 定義のないニケ         | 「スキル定義なし」が出て、結果は Stage 3 と同じ                          |
+| 確認したいこと                   | 編成                   | 予測                                                                                        |
+| -------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------- |
+| `attack`（自己）                 | マナ 1 体              | `(attack × 1.5808 − 100) × 武器倍率 × …` が 1 ヒットと一致                                  |
+| `attack`（発動者基準・固定加算） | ノワール + AR 1 体     | AR 側の 1 ヒットが `attack + ノワールの攻撃力 × 0.1408` で一致                              |
+| `attackDamage`                   | クイーン（真）1 体     | 1 ヒットが `× (1 + 0.30)` で一致（2026-09-22 訂正: 当初の「`boost` に +0.30」は実測で否定） |
+| `chargeDamage`                   | ウンファ：TU + SR 1 体 | SR 側のフルチャージ 1 ヒットが `fullChargeDamage + 0.4181` で一致                           |
+| スキル Lv 追従                   | 任意の定義済みキャラ   | UI で Lv 1↔10 を変えると「受けているバフ」の値が Blablalink の表示と一致                    |
+| 未定義キャラ                     | 定義のないニケ         | 「スキル定義なし」が出て、結果は Stage 3 と同じ                                             |
 
 会心系（`critRate` / `critDamage`）は 1 ヒットで切り出せない（会心の有無は表示で分かるが確率は測れない）ので、式の妥当性は参考資料（吟味.net）に拠り、実測は総ダメージの目安（Stage 2-C 方式、±10%）に留める。
 

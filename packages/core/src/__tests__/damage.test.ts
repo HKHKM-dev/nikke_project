@@ -19,7 +19,8 @@ describe('computeDamage', () => {
     expect(r.attack).toBe(1000);
     expect(r.baseHit).toBe(900);
     expect(r.weaponMultiplier).toBeCloseTo(0.1365, 10);
-    expect(r.boost).toEqual({ core: 1, crit: 0.075, distance: 0.3, attackDamage: 0, total: 2.375 });
+    expect(r.boost).toEqual({ core: 1, crit: 0.075, distance: 0.3, total: 2.375 });
+    expect(r.attackDamageMultiplier).toBe(1);
     expect(r.baseAttack).toBe(1000);
     expect(r.buffs).toEqual(ZERO_BUFFS);
     expect(r.elementMultiplier).toBe(1.1);
@@ -79,7 +80,7 @@ describe('computeDamage', () => {
     expect(full.notes.map((n) => n.code)).not.toContain('charge-release');
   });
 
-  it('applies buffs: attack before defence, crit and attack damage in the boost group, charge only when charging', () => {
+  it('applies buffs: attack before defence, crit in the boost group, attack damage as its own multiplier, charge only when charging', () => {
     const buffs = {
       attackRatio: 0.2,
       attackFlat: 100,
@@ -94,8 +95,10 @@ describe('computeDamage', () => {
     expect(r.baseHit).toBeCloseTo(1200, 10);
     // (0.15 + 0.05) × (1.5 − 1 + 0.5) = 0.2
     expect(r.boost.crit).toBeCloseTo(0.2, 12);
-    expect(r.boost.attackDamage).toBe(0.3);
-    expect(r.boost.total).toBeCloseTo(1 + 1 + 0.2 + 0.3 + 0.3, 12);
+    // 攻撃ダメージは加算グループの外（クイーン（真）の実測で比 1 : 1.5 : 2 : 2.5 を確認）
+    expect(r.boost.total).toBeCloseTo(1 + 1 + 0.2 + 0.3, 12);
+    expect(r.attackDamageMultiplier).toBeCloseTo(1.3, 12);
+    expect(r.perTrigger).toBeCloseTo(1200 * 0.1365 * 2.5 * 1.3 * 1.1, 8);
     expect(r.chargeMultiplier).toBe(1); // AR はチャージ武器ではない
     expect(r.buffs).toBe(buffs);
 
