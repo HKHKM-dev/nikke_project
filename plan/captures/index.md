@@ -28,25 +28,40 @@ D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
 
 ### 運用
 
-1. 撮る → Xbox Game Bar が `E:/record/nikke/` に吐く。そのまま置いておく。
-2. 検証に採用した録画だけを `E:/nikke_project_captures/<種別>/` に**コピー**（移動ではない）し、規約名を付ける。
+1. 撮る → Xbox Game Bar が `E:/record/nikke/` に吐く。検証に使わないものはそのまま置いておく。
+2. 検証に採用した録画は `E:/nikke_project_captures/<種別>/` へ**移動**し、規約名を付ける。`E:/record/nikke/` 側には残さない（同じ録画が 2 箇所にあって食い違う状態を作らない）。
 3. 台帳に 1 行足し、証拠フレームを `plan/captures/frames/` に切り出してコミットする。
+4. Google Drive に同期する（下記）。
 
-移動ではなくコピーにすることで、生録画がそのままバックアップになる。同一性は台帳の sha256 で検証できる（05〜09 の 5 本が `E:/record/nikke/` 側と完全一致することを確認済み）。
+## バックアップ
+
+`E:/nikke_project_captures/` を Google Drive にバックアップする。Google Drive for desktop がストリーミングモードで `J:/マイドライブ/` にマウントされている。
+
+```bash
+robocopy "E:/nikke_project_captures" "J:/マイドライブ/nikke_project_captures" /MIR /R:1 /W:1
+```
+
+- `/MIR` はコピー先を**コピー元に合わせる**（コピー元で消したファイルはコピー先でも消える）。ミスでコピー元を消したときは、同期する前に気づくこと。
+- 録画を足した / 消したタイミングで実行する。
+- robocopy の終了コードは 0〜7 が正常（1 = コピーした、0 = 差分なし）。8 以上が失敗。
+
+同期したら sha256 で中身を突き合わせる。`probe.ts` はどのディレクトリにも使える:
+
+```bash
+node tools/captures/probe.ts "J:/マイドライブ/nikke_project_captures"
+```
+
+2026-09-22 に初回同期を実行し、9 本すべて sha256 が一致することを確認済み。
 
 ### 冗長性の現状と限界
 
-| 対象               | 冗長                                                         |
-| ------------------ | ------------------------------------------------------------ |
-| 台帳・証拠フレーム | Git → GitHub（`HKHKM-dev/nikke_project`）。**別拠点にある**  |
-| 録画 05〜09        | `E:/record/nikke/` と `E:/nikke_project_captures/` の 2 箇所 |
-| 録画 01〜04        | `E:/nikke_project_captures/` のみ（生録画が残っていない）    |
+| 対象               | 冗長                                                            |
+| ------------------ | --------------------------------------------------------------- |
+| 台帳・証拠フレーム | Git → GitHub（`HKHKM-dev/nikke_project`）                       |
+| 録画（全 9 本）    | E: の実体 + Google Drive。**別拠点にコピーがある**              |
+| 生録画アーカイブ   | `E:/record/nikke/` のみ。バックアップ対象外（検証には使わない） |
 
-**いずれも同じ物理ディスク（E: の WD30EZRZ）の上にある。** このディスクが壊れると録画は全部失われる。ただし台帳と証拠フレームは GitHub に残るので、数値の根拠そのものは追跡できる。別ディスクに二次コピーを置くなら H:（NVMe、空き 1.28TB）が候補:
-
-```bash
-robocopy "E:/nikke_project_captures" "H:/nikke_project_captures" /MIR /R:1 /W:1
-```
+**容量の上限に注意。** Google Drive の空きは 6GB で、現在の録画は 364MB。射撃場の 30 秒録画は 1 本あたり約 40MB だが、レイド実戦 180 秒は 1 本 250MB 程度になる見込みで、20 本ほどで空きを使い切る。`raid/` を撮り始める前に、Drive の容量を増やすか、バックアップ対象を種別ごとに絞るかを決めておく。
 
 ## 命名規約
 
