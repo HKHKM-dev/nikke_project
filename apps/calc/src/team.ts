@@ -22,7 +22,7 @@ export const DEFAULT_SLOT_CONDITION: SlotCondition = { coreHitRate: 1, distanceB
 export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 /** 戦闘時間の規定値。レイド・射撃場ともに 180 秒（スペック固定でも変えない） */
 export const DEFAULT_DURATION_SECONDS = 180;
-/** 固定 20 秒サイクルのバーストの既定。ON */
+/** バーストの既定。ON */
 export const DEFAULT_BURST = true;
 
 export type SlotState = {
@@ -39,7 +39,7 @@ export type TeamState = {
   durationSeconds: number;
   /** ユニオン射撃場スペック固定（編成共通） */
   fixedSpec: boolean;
-  /** 固定 20 秒サイクル（通常 10 秒 + フルバースト 10 秒）でバーストを回すか（Stage 5） */
+  /** バーストを回すか（Stage 5 で固定 20 秒サイクル、Stage 7 からゲージ・CT の動的サイクル） */
   burst: boolean;
 };
 

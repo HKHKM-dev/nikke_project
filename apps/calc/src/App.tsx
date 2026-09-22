@@ -136,7 +136,9 @@ export function App() {
     <main className="app">
       <header>
         <h1>NIKKE calc v4</h1>
-        <p>5 人編成の通常攻撃 + 常時発動パッシブ + 固定サイクルのフルバーストとバーストスキル（Stage 5）</p>
+        <p>
+          5 人編成の通常攻撃 + 常時発動パッシブ + 持続バフ + ゲージ・CT で回るフルバーストとバーストスキル（Stage 7）
+        </p>
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}

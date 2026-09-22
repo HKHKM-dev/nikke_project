@@ -33,7 +33,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
   const schedule = result.schedule;
   const byStep = schedule ? slotsByStep(schedule) : null;
   const missingSteps = byStep ? BURST_STEP_KEYS.filter((step) => byStep[step].length === 0) : [];
-  const fullBurstStarts = schedule ? schedule.fullBurstWindows.map((w) => w.start) : [];
+  const summary = result.burstSummary;
 
   return (
     <section className="panel result breakdown-panel">
@@ -41,21 +41,65 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
       {filled.length === 0 && loadingCount === 0 && (
         <p className="hint">枠にニケを選ぶと、ここに内訳と合計が出ます。</p>
       )}
-      {filled.length > 0 && schedule && (
-        <p className="hint">
-          フルバースト {fullBurstStarts.length} 回（
-          {fullBurstStarts.map((f) => `${formatNumber(f / 60)}s`).join(', ')}）、フルバースト合計{' '}
-          {formatNumber(schedule.fullBurstFramesTotal / 60)} 秒。発動:{' '}
-          {BURST_STEP_KEYS.map((step) => {
-            const names = (byStep?.[step] ?? []).map((i) => {
-              const s = filled.find((f) => f.index === i);
-              return s ? `枠 ${i + 1} ${s.character.name.ja}` : `枠 ${i + 1}`;
-            });
-            return `${STEP_LABEL[step]}: ${names.length > 0 ? names.join('・') : '—'}`;
-          }).join(' / ')}
-          {missingSteps.length > 0 &&
-            `。バースト ${missingSteps.map((s) => STEP_LABEL[s]).join('・')} のニケがいません（フルバーストは起きると仮定）`}
-        </p>
+      {filled.length > 0 && schedule && summary && (
+        <>
+          <p className="hint">
+            フルバースト {summary.fullBursts} 回（稼働率 {formatPercent(summary.fullBurstUptime)}
+            {summary.meanCycleSeconds !== null && `・平均サイクル ${formatNumber(summary.meanCycleSeconds, 1)} 秒`}
+            {summary.firstFullBurstSeconds !== null && `・初回 ${formatNumber(summary.firstFullBurstSeconds, 1)} 秒`}
+            ）。発動:{' '}
+            {BURST_STEP_KEYS.map((step) => {
+              const names = (byStep?.[step] ?? []).map((i) => {
+                const s = filled.find((f) => f.index === i);
+                return s ? `枠 ${i + 1} ${s.character.name.ja}` : `枠 ${i + 1}`;
+              });
+              return `${STEP_LABEL[step]}: ${names.length > 0 ? names.join('・') : '—'}`;
+            }).join(' / ')}
+            {summary.fullBursts === 0 &&
+              `。フルバーストしません（${missingSteps.length > 0 ? `バースト ${missingSteps.map((s) => STEP_LABEL[s]).join('・')} のニケがいない` : 'チェーンがつながらない'}）`}
+            {summary.chainTimeouts > 0 &&
+              `。チェーン失敗 ${summary.chainTimeouts} 回（次の段階が 10 秒出ずにゲージが 0 に戻った）`}
+          </p>
+          <p className="hint">
+            ゲージ量は CDN の値からの仮の式（射撃場の実測で未較正。1 回目のフルバーストの時刻は ±3 秒程度ずれうる）。
+          </p>
+          <details className="segments">
+            <summary>バーストの時刻表（{schedule.activations.length} 回の発動）</summary>
+            <div className="table-scroll">
+              <table className="team-table">
+                <thead>
+                  <tr>
+                    <th>時刻</th>
+                    <th>段階</th>
+                    <th>ニケ</th>
+                    <th>バーストスキル</th>
+                    <th>フルバースト</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {schedule.activations.map((a, k) => {
+                    const s = filled.find((f) => f.index === a.slotIndex);
+                    const hit = s?.burst.activations.find((h) => Math.round(h.seconds * 60) === a.frame)?.hit;
+                    const window = a.startsFullBurst
+                      ? schedule.fullBurstWindows.find((w) => w.start >= a.frame)
+                      : undefined;
+                    return (
+                      <tr key={k}>
+                        <td>{formatNumber(a.frame / 60, 2)}s</td>
+                        <td>{STEP_LABEL[a.step]}</td>
+                        <td>{s ? `枠 ${a.slotIndex + 1} ${s.character.name.ja}` : `枠 ${a.slotIndex + 1}`}</td>
+                        <td>{hit ? formatNumber(hit.perActivation) : '—'}</td>
+                        <td>
+                          {window ? `${formatNumber(window.start / 60, 1)}–${formatNumber(window.end / 60, 1)}s` : '—'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </>
       )}
       {filled.length > 0 && (
         <div className="table-scroll">
@@ -138,9 +182,10 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
       )}
       <p className="scope">
         calc v4
-        は各ニケの通常攻撃に、定義済みの常時発動パッシブ（自分・味方全体の攻撃力・会心・攻撃ダメージ・チャージダメージ）を乗せ、固定
-        20 秒サイクルのフルバースト区間（+0.5）と倍率ダメージだけのバーストスキルを足し合わせます。バースト
-        CT・ゲージ・時間限定のバフ/デバフ・弾数増加・ヒット率は含みません。定義のないニケはスキルなしで計算します。SG
+        は各ニケの通常攻撃に、定義済みの常時発動パッシブとバースト時トリガーの持続バフ（攻撃力・会心・攻撃ダメージ・チャージダメージ）を乗せ、
+        通常攻撃のゲージ蓄積と各ニケのバースト CT
+        から決まるフルバースト区間（+0.5）と、倍率ダメージだけのバーストスキルを足し合わせます。 CT
+        短縮・ゲージ速度・敵デバフ・弾数増加・ヒット率は含みません。定義のないニケはスキルなしで計算します。SG
         は全ペレット命中が前提です。
       </p>
     </section>

@@ -1,6 +1,8 @@
 import {
+  BURST_GAUGE_MAX,
   ELEMENT_LABEL,
   WEAPON_LABEL,
+  energyPerTrigger,
   growthLimits,
   isChargeWeapon,
   type BurstStep,
@@ -129,6 +131,9 @@ export function SlotCard({
             {WEAPON_LABEL[character.weaponType].ja} / {ELEMENT_LABEL[character.element].ja} /{' '}
             {CLASS_LABEL[character.class]} / バースト {BURST_LABEL[character.burstStep]} / 装弾数{' '}
             {character.shot.maxAmmo} / リロード {character.shot.reloadTime}s / 武器倍率 {character.shot.damage / 100}%
+            <br />
+            バースト CT {character.burstSkill.cooldownSeconds}s / ゲージ 1 トリガー{' '}
+            {formatNumber((energyPerTrigger(character.shot) / BURST_GAUGE_MAX) * 100, 2)}%（仮）
           </p>
           <div className="growth-row">
             {growthField('level', 'レベル', 1, limits.levelMax)}

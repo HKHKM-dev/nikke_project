@@ -31,7 +31,9 @@ const { values } = parseArgs({
 });
 
 if (!values.ids) {
-  console.error('usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle]');
+  console.error(
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle]',
+  );
   process.exit(2);
 }
 const ids = values.ids.split(',').map((s) => Number(s.trim()));
