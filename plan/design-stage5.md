@@ -270,13 +270,21 @@ export function initialShooter(shot: ShotParams, model?: WeaponModel): ShooterSt
 export function stepShooter(state: ShooterState, shot: ShotParams, model?: WeaponModel): boolean;
 ```
 
-規則（`computeCadence` と 1 フレームもずれないこと をテストで固定する）:
+規則（`computeCadence` と 1 フレームもずれないこと をテストで固定する）。`wait` は「撃てないフレームがあと何個残っているか」で、`stepShooter` は**先に判定してから減らす**: `if (wait > 0) { wait -= 1; return false; }` を通過したフレームだけが発射候補になる（オフバイワン防止のため、境界は下記の絶対フレームで固定する。2026-09-22 レビュー反映）:
 
-1. 戦闘開始・リロード完了後、`wait = firstShotFrames`。`wait > 0` の間は減らすだけ。
-2. マガジンの 1 発目は `wait` が切れたフレームに撃つ（`shotFrames[0] = 0` に対応）。
-3. 2 発目以降（非チャージ）: 毎フレーム `acc += rateAfterShots(shot, shotsInMagazine) / MAX_RPM`、`acc ≥ 1` で撃って `acc -= 1`。マガジンが変わったら `acc = 0`（`simulateShotFrames` と同じ）。
-4. チャージ武器: 毎発 `wait = chargeFrames + chargeReleaseFrames`。
-5. 最終弾を撃ったら `reloading = true`、`wait = reloadFrames × reloadChunks`。切れたら `ammo = maxAmmo`、`shotsInMagazine = 0`、`wait = firstShotFrames`。
+1. **戦闘開始**: `wait = firstShotFrames`。非チャージ武器（AR 等）は 0 なので f = 0 に 1 発目を撃ち、f = 1 から `acc` を積む。MG は 20 なので f = 0..19 で消化して f = 20 に 1 発目、チャージ武器は 82（チャージ 60f + 解放 22f）なので f = 82 に 1 発目。
+2. **マガジンの 1 発目**は `wait` が 0 になった最初のフレームに撃つ（`shotFrames[0] = 0` に対応）。
+3. **2 発目以降（非チャージ）**: `wait` は 0 のまま。前の発射の**翌フレームから**毎フレーム `acc += rateAfterShots(shot, shotsInMagazine) / MAX_RPM`、`acc ≥ 1` で撃って `acc -= 1`。マガジンが変わったら `acc = 0`（`simulateShotFrames` と同じ）。
+4. **チャージ武器**: 発射したフレーム S で `wait = chargeFrames + chargeReleaseFrames − 1`（S 自身を 1 フレームと数える）。次弾は S + 82。
+5. **リロード**: 最終弾を撃ったフレーム L で `reloading = true`、`wait = reloadFrames × reloadChunks + firstShotFrames − 1`。`wait` が 0 になったフレームで `ammo = maxAmmo`、`shotsInMagazine = 0`、`acc = 0` にして 1 発目を撃つ。つまり次のマガジンの 1 発目は **L + リロード + 初弾遅延** で、`computeCadence` の `cycleFrames = firstShotFrames + magazineFrames + reloadFrames` と同じ位置になる（−1 は「L の翌フレームから数えて reloadFrames + first 個目のフレームに撃つ」ため。例: AR は最終弾 295 → リロード 60 → 355 に撃つので、消化するのは 296..354 の 59 フレーム）。
+
+絶対フレームの契約（`shooter.test.ts` はこの列と `k × cycleFrames + firstShotFrames + shotFrames[i]` の両方に一致することを見る）:
+
+| 武器（フィクスチャ）                   | 1 マガジン目                         | 2 マガジン目の 1 発目   | cadence    |
+| -------------------------------------- | ------------------------------------ | ----------------------- | ---------- |
+| AR 720rpm・60 発・リロード 1s          | 0, 5, 10, …, 295                     | 355（= 295 + 60 + 0）   | cycle 355f |
+| SR チャージ 1s・6 発・リロード 1.5s    | 82, 164, 246, 328, 410, 492          | 664（= 492 + 90 + 82）  | cycle 582f |
+| MG スピンアップ・300 発・リロード 2.5s | 20, …, 410（1 発目 → 300 発目 390f） | 580（= 410 + 150 + 20） | cycle 560f |
 
 ### 4.3 エンジンのフレームループ（`sim/engine.ts`）
 
@@ -375,6 +383,8 @@ TeamBreakdown
 
 `distributed` は「近似」バッジ（単体ボスでは全額と仮定）。sim の結果は UI に出さない（CLI と自動テストで見る）。
 
+**参照先の変更（2026-09-22 レビュー反映）**: 5.1 節で `TeamSlotResult.result` は「通常区間だけの `DamageResult`」になるので、いま `s.result.totalDamage` / `s.result.dps` を枠の合計として読んでいる箇所は、枠全体の `s.totalDamage` / `s.dps` に付け替える。2026-09-22 時点の該当箇所は `SlotCard.tsx` の小結果（DPS・総ダメージ）、`TeamBreakdown.tsx` の表の DPS・総ダメージ列と展開行の見出し、core `team.test.ts` の `share` の検算（`result.totalDamage` 基準 → `totalDamage` 基準）。`result.baseAttack` / `result.attack` / `result.perTrigger` / `result.boost` は通常区間の値として読んで問題ないので据え置く（`ResultPanel` はフルバースト区間の列を `fullBurstResult` から足す）。付け替え漏れは「`burst` ON のとき表の各行の和が合計行と一致しない」形で現れるので、Stage 3 の手動確認項目（各行の和 = 合計）を `burst` ON で再度行う。
+
 ---
 
 ## 6. テスト・検証（PDCA）
@@ -431,7 +441,7 @@ Stage 2-A / 4 と同じ方法（HUD 総ダメージの差分と的の上の数�
 7. **sim** `sim/engine.ts` + `engine.test.ts` → `npm test`。`data/skills/` に 8 節 6 のキャラ定義を書き、`definitions.test.ts` を通す。
 8. `scripts/sim-run.ts`（任意）で 5 体編成の sim を流し、内訳が読めることを確認。
 9. **calc** core `team.ts` の 2 区間モデル + `team.test.ts` → `simCalc.test.ts`（6.1）→ `npm test`。差の実測値を verification.md に控える。
-10. **calc** apps `team.ts`（`burst`・`setBurst`・`parseTeamState`）+ テスト → `TeamSettingsForm` のトグル → `SlotCard` / `TeamBreakdown` / `ResultPanel` の最小変更 → `npm run dev` で 1 体の数値が CLI（sim-run）の calc 列と合うことを確認。
+10. **calc** apps `team.ts`（`burst`・`setBurst`・`parseTeamState`）+ テスト → `TeamSettingsForm` のトグル → `SlotCard` / `TeamBreakdown` / `ResultPanel` の最小変更。**チェックリスト**: (a) `SlotCard` と `TeamBreakdown` の `s.result.totalDamage` / `s.result.dps` を `s.totalDamage` / `s.dps` に付け替える（5.3 節）、(b) `TeamBreakdown` の合計行が各行の `totalDamage` の和と一致する、(c) `burst` OFF で Stage 4 と同じ表示になる → `npm run dev` で 1 体の数値が CLI（sim-run）の calc 列と合うことを確認。
 11. `npm run lint && npm run format:check && npm run typecheck && npm test && npm run build`。
 12. 射撃場で 6.3 を実測し、`BURST_SKILL_FULL_BURST_BONUS` を確定。verification.md に記録し、roadmap / requirements を更新して PR。
 
@@ -457,7 +467,8 @@ Stage 2-A / 4 と同じ方法（HUD 総ダメージの差分と的の上の数�
 - **発射サイクルとの独立性**: フルバースト 10 秒とリロードの位相で、フルバースト区間の実トリガー数は sim ごとに変わり得る（マガジンが長い SR / RL / MG で顕著）。calc はこれを平均で置くので、6.1 節の上限を武器種別に記録して「どの程度ずれるか」を先に把握する。ずれが大きければ 8 節 4 の代替案に切り替える。
 - **バーストスキルダメージの式は未実測**: コア・距離が乗らないこと、会心・攻撃ダメージが乗ることは参考資料の一致で置いているが、6.3 で確かめるまでは「参考資料どおり、未実測」。フルバースト +0.5 は両説あるので定数で逃がした。
 - **分配ダメージの単体ボス仕様**: 「敵の数で除算」が単体で全額になるかは実測で決める。パーツ持ちボスでの分配は対象外。
-- **`computeDamage` の分割**: 既存の calc UI は `DamageResult` の形に依存している（`boost` の内訳表示など）。`DamageResult = TriggerDamage & {…}` の形で互換を保ち、追加フィールド（`boost.fullBurst`）だけ表示に足す。
+- **`computeDamage` の分割**: 既存の calc UI は `DamageResult` の形に依存している（`boost` の内訳表示など）。`DamageResult = TriggerDamage & {…}` の形で互換を保ち、追加フィールド（`boost.fullBurst`）だけ表示に足す。枠の合計は `result.totalDamage` ではなく `TeamSlotResult.totalDamage` になるので、参照の付け替え（5.3 節）を実装手順 10 のチェックリストで拾う。
+- **射手の状態機械のオフバイワン**: `wait` の「判定してから減らす」規則と、チャージ・リロード時の `− 1` を 4.2 節の絶対フレーム表で固定した。実装は表のとおりのフレーム列を返すことを `shooter.test.ts` で最初に確認してから、エンジンに組み込む。
 - **sim の性能**: 5 体 × 10,800f のループは数万回の単純な加算で、テストで 18,000 秒（1,080,000f）を回しても数百 ms に収まる見込み。イベント記録は `trace: true` のときだけにして配列の肥大化を避ける。
 - **説明文の更新**: Stage 4 と同じく `checkedAt` と `definitions.test.ts` で検知する。
 - **Stage 6 への拡張余地**: sim はフレームループにバフのタイマーを足すだけ（`resolveTeamBuffs` を区間ごとに作り直す）。calc は `planFixedCycle` の `activationFrames` + 持続時間で区間分割できる。
