@@ -3,6 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
+import { resolveBurstDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, skillValue } from '../resolve.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
 import { parseSkillDefinition, parseSkillIndex, SKILL_SLOTS } from '../types.ts';
@@ -37,8 +38,7 @@ describe('data/skills', () => {
       expect(def.checkedAt <= new Date().toISOString().slice(0, 10)).toBe(true);
     });
 
-    it('references values that exist for every level, and burst is unsupported', () => {
-      expect(def.skills.burst.support).toBe('unsupported');
+    it('references values that exist for every level (passives ≤ 100%, burst damage ≥ 100%)', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
           const entry = character.skills[slot].values[effect.ref - 1];
@@ -46,7 +46,8 @@ describe('data/skills', () => {
           for (let lv = 1; lv <= SKILL_LEVEL_MAX; lv++) {
             const v = skillValue(character.skills[slot], effect.ref, lv);
             expect(v).toBeGreaterThan(0);
-            expect(v).toBeLessThanOrEqual(100);
+            if (effect.kind === 'passive') expect(v).toBeLessThanOrEqual(100);
+            else expect(v).toBeGreaterThanOrEqual(100);
           }
         }
       }
@@ -55,8 +56,11 @@ describe('data/skills', () => {
     it('resolves at Lv10 and values are non-decreasing with level', () => {
       const lv10 = resolvePassives(def, character, MAX_SKILL_LEVELS);
       const lv1 = resolvePassives(def, character, { skill1: 1, skill2: 1, burst: 1 });
-      expect(lv10.length).toBeGreaterThan(0);
+      const burst10 = resolveBurstDamage(def, character, MAX_SKILL_LEVELS);
+      const burst1 = resolveBurstDamage(def, character, { skill1: 1, skill2: 1, burst: 1 });
+      expect(lv10.length + burst10.length).toBeGreaterThan(0);
       lv10.forEach((e, i) => expect(e.value).toBeGreaterThanOrEqual(lv1[i]!.value));
+      burst10.forEach((e, i) => expect(e.multiplier).toBeGreaterThanOrEqual(burst1[i]!.multiplier));
     });
 
     it('explains what is not modeled', () => {

@@ -22,6 +22,8 @@ export const DEFAULT_SLOT_CONDITION: SlotCondition = { coreHitRate: 1, distanceB
 export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 /** 戦闘時間の規定値。レイド・射撃場ともに 180 秒（スペック固定でも変えない） */
 export const DEFAULT_DURATION_SECONDS = 180;
+/** 固定 20 秒サイクルのバーストの既定。ON */
+export const DEFAULT_BURST = true;
 
 export type SlotState = {
   resourceId: number | null;
@@ -37,6 +39,8 @@ export type TeamState = {
   durationSeconds: number;
   /** ユニオン射撃場スペック固定（編成共通） */
   fixedSpec: boolean;
+  /** 固定 20 秒サイクル（通常 10 秒 + フルバースト 10 秒）でバーストを回すか（Stage 5） */
+  burst: boolean;
 };
 
 export type TeamAction =
@@ -48,6 +52,7 @@ export type TeamAction =
   | { type: 'setEnemy'; enemy: EnemyInput }
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
+  | { type: 'setBurst'; burst: boolean }
   | { type: 'replace'; state: TeamState };
 
 export function emptySlot(): SlotState {
@@ -65,6 +70,7 @@ export function initialTeamState(): TeamState {
     enemy: { ...SHOOTING_RANGE_ENEMY },
     durationSeconds: DEFAULT_DURATION_SECONDS,
     fixedSpec: false,
+    burst: DEFAULT_BURST,
   };
 }
 
@@ -102,6 +108,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return action.fixedSpec
         ? { ...state, fixedSpec: true, enemy: { ...state.enemy, defence: FIXED_SPEC_ENEMY_DEFENCE } }
         : { ...state, fixedSpec: false };
+    case 'setBurst':
+      return { ...state, burst: action.burst };
     case 'replace':
       return action.state;
   }
@@ -219,6 +227,14 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
   if (enemy === null) return null;
   if (!isFinite_(raw.durationSeconds) || raw.durationSeconds < 0) return null;
   if (!isBool(raw.fixedSpec)) return null;
+  // Stage 4 までの保存データには無いので、欠落は既定値（ON）
+  if (raw.burst !== undefined && !isBool(raw.burst)) return null;
 
-  return { slots, enemy, durationSeconds: raw.durationSeconds, fixedSpec: raw.fixedSpec };
+  return {
+    slots,
+    enemy,
+    durationSeconds: raw.durationSeconds,
+    fixedSpec: raw.fixedSpec,
+    burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
+  };
 }

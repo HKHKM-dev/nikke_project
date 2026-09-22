@@ -40,6 +40,7 @@ describe('teamReducer', () => {
     expect(INITIAL_TEAM_STATE.enemy).toEqual({ defence: 100, element: null, hasCore: true });
     expect(INITIAL_TEAM_STATE.durationSeconds).toBe(180);
     expect(INITIAL_TEAM_STATE.fixedSpec).toBe(false);
+    expect(INITIAL_TEAM_STATE.burst).toBe(true);
   });
 
   it('selects a character into a slot and ignores a duplicate in another slot', () => {
@@ -131,6 +132,22 @@ describe('parseTeamState', () => {
     const raw = { ...initialTeamState(), extra: 1 };
     const parsed = parseTeamState(JSON.stringify(raw), index);
     expect(parsed).toEqual(initialTeamState());
+  });
+});
+
+describe('burst toggle (Stage 5)', () => {
+  it('setBurst toggles the fixed cycle and round-trips', () => {
+    const off = teamReducer(initialTeamState(), { type: 'setBurst', burst: false });
+    expect(off.burst).toBe(false);
+    expect(parseTeamState(serializeTeamState(off), index)).toEqual(off);
+    expect(teamReducer(off, { type: 'setBurst', burst: true }).burst).toBe(true);
+  });
+
+  it('parseTeamState fills a missing burst flag (Stage 4 data) with true and rejects non-booleans', () => {
+    const stage4 = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
+    delete stage4.burst;
+    expect(parseTeamState(JSON.stringify(stage4), index)?.burst).toBe(true);
+    expect(parseTeamState(JSON.stringify({ ...stage4, burst: 'on' }), index)).toBeNull();
   });
 });
 

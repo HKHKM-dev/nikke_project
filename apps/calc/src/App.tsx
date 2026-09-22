@@ -111,12 +111,17 @@ export function App() {
     try {
       return {
         ok: true,
-        result: computeTeamDamage({ slots: slotInputs, enemy: team.enemy, durationSeconds: team.durationSeconds }),
+        result: computeTeamDamage({
+          slots: slotInputs,
+          enemy: team.enemy,
+          durationSeconds: team.durationSeconds,
+          burst: team.burst,
+        }),
       };
     } catch (e) {
       return { ok: false, error: e instanceof Error ? e.message : String(e) };
     }
-  }, [slotInputs, team.enemy, team.durationSeconds]);
+  }, [slotInputs, team.enemy, team.durationSeconds, team.burst]);
 
   const loadingCount = team.slots.filter(
     (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
@@ -130,8 +135,8 @@ export function App() {
   return (
     <main className="app">
       <header>
-        <h1>NIKKE calc v3</h1>
-        <p>5 人編成の通常攻撃 + 常時発動パッシブ（Stage 4）</p>
+        <h1>NIKKE calc v4</h1>
+        <p>5 人編成の通常攻撃 + 常時発動パッシブ + 固定サイクルのフルバーストとバーストスキル（Stage 5）</p>
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
@@ -141,6 +146,7 @@ export function App() {
             enemy={team.enemy}
             durationSeconds={team.durationSeconds}
             fixedSpec={team.fixedSpec}
+            burst={team.burst}
             dispatch={dispatch}
           />
           <section className="slots" aria-label="編成">

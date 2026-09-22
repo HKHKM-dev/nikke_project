@@ -12,7 +12,10 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 2,
-          "assumes": { "ja": "自分の HP が 70% 以上", "en": "Own HP is 70% or above" }
+          "assumes": {
+            "ja": "自分の HP が 70% 以上",
+            "en": "Own HP is 70% or above"
+          }
         }
       ]
     },
@@ -27,9 +30,20 @@
       ]
     },
     "burst": {
-      "support": "unsupported",
-      "effects": [],
-      "notes": [{ "ja": "バーストスキルは Stage 5", "en": "Burst skills are Stage 5" }]
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill"
+        }
+      ],
+      "notes": [
+        {
+          "ja": "SG 味方の命中率▲・阻止部位の攻撃ダメージ▲（10 秒 / 30 秒間維持）は Stage 6",
+          "en": "Hit rate up and Parts damage up for SG allies (10 s / 30 s) are Stage 6"
+        }
+      ]
     }
   }
 }

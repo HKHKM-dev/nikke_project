@@ -1,5 +1,5 @@
 // スキル関連の表示用ラベル（React 非依存）
-import type { AppliedEffect, BuffStat, SkillSlot, SkillSupport } from '@nikke/core';
+import type { AppliedEffect, BuffStat, BurstDamageType, SkillSlot, SkillSupport } from '@nikke/core';
 import { formatNumber, formatPercent } from './format.ts';
 
 export const SKILL_SLOT_LABEL: Record<SkillSlot, string> = {
@@ -14,6 +14,11 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   critDamage: 'クリティカルダメージ',
   attackDamage: '攻撃ダメージ',
   chargeDamage: 'チャージダメージ',
+};
+
+export const BURST_DAMAGE_TYPE_LABEL: Record<BurstDamageType, string> = {
+  skill: 'バーストスキルダメージ',
+  distributed: '分配ダメージ',
 };
 
 export type SupportBadge = { label: string; className: string };

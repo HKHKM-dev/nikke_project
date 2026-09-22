@@ -45,7 +45,7 @@ describe('computeTeamDamage', () => {
 
   it('returns zero totals for an all-empty team', () => {
     const team = computeTeamDamage({ slots: [null, null, null], enemy, durationSeconds: 180 });
-    expect(team).toEqual({ slots: [null, null, null], filledCount: 0, totalDps: 0, totalDamage: 0 });
+    expect(team).toEqual({ slots: [null, null, null], filledCount: 0, totalDps: 0, totalDamage: 0, schedule: null });
   });
 
   it('shares are each slot’s fraction of the total and add up to 1', () => {
@@ -53,7 +53,7 @@ describe('computeTeamDamage', () => {
     const shares = team.slots.map((s) => s?.share ?? 0);
     expect(shares.reduce((a, b) => a + b, 0)).toBeCloseTo(1, 12);
     for (const s of team.slots) {
-      expect(s?.share).toBeCloseTo((s?.result.totalDamage ?? 0) / team.totalDamage, 12);
+      expect(s?.share).toBeCloseTo((s?.totalDamage ?? 0) / team.totalDamage, 12);
     }
   });
 
@@ -80,6 +80,8 @@ describe('computeTeamDamage', () => {
     expect(team.slots[0]?.result.attack).toBe(5000);
     expect(team.slots[1]?.result.attack).toBe(1000);
     expect(team.slots[0]?.result.totalDamage).toBeCloseTo((team.slots[0]?.result.dps ?? 0) * 90, 6);
+    expect(team.slots[0]?.totalDamage).toBe(team.slots[0]?.result.totalDamage);
+    expect(team.slots[0]?.dps).toBe(team.slots[0]?.result.dps);
   });
 
   it('passes the weapon model through to every slot', () => {

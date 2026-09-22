@@ -19,7 +19,14 @@
     },
     "skill2": {
       "support": "partial",
-      "effects": [{ "kind": "passive", "target": "self", "stat": "attackDamage", "ref": 9 }],
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 9
+        }
+      ],
       "notes": [
         {
           "ja": "バースト使用時の鉄・拳・制・裁！（有利コードの攻撃ダメージ・防御力）、バースト 3 段階突入時の分配ダメージ、1more 時のバトンタッチは未対応",
@@ -28,9 +35,24 @@
       ]
     },
     "burst": {
-      "support": "unsupported",
-      "effects": [],
-      "notes": [{ "ja": "バーストスキルは Stage 5", "en": "Burst skills are Stage 5" }]
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "distributed",
+          "assumes": {
+            "ja": "単体ボスなので分配ダメージは全額 1 ヒット",
+            "en": "Distributed damage lands in full as one hit on a lone boss"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "対象が風圧コードなら自分に 1more 攻撃力▲（10 秒間維持）は Stage 6",
+          "en": "1more ATK up against Wind targets (10 s) is Stage 6"
+        }
+      ]
     }
   }
 }

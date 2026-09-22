@@ -195,10 +195,20 @@ export function SlotCard({
             <dl className="mini">
               <dt>攻撃力（バフ後）</dt>
               <dd>{formatNumber(slotResult.result.attack)}</dd>
+              <dt>通常攻撃</dt>
+              <dd>{formatNumber(slotResult.result.totalDamage + (slotResult.fullBurstResult?.totalDamage ?? 0))}</dd>
+              <dt>バーストスキル</dt>
+              <dd>
+                {slotResult.burst.hit
+                  ? `${formatNumber(slotResult.burst.totalDamage)}（${slotResult.burst.activations.length} 回 × ${formatNumber(
+                      slotResult.burst.hit.perActivation,
+                    )}）`
+                  : '—'}
+              </dd>
               <dt>DPS</dt>
-              <dd>{formatNumber(slotResult.result.dps)}</dd>
+              <dd>{formatNumber(slotResult.dps)}</dd>
               <dt>総ダメージ</dt>
-              <dd className="total">{formatNumber(slotResult.result.totalDamage)}</dd>
+              <dd className="total">{formatNumber(slotResult.totalDamage)}</dd>
               <dt>寄与率</dt>
               <dd>{formatPercent(slotResult.share, 1)}</dd>
             </dl>

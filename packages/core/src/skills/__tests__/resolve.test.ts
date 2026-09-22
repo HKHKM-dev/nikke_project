@@ -105,6 +105,16 @@ describe('resolvePassives', () => {
     expect(lv10[1]?.value).toBeCloseTo(0.125, 12);
   });
 
+  it('ignores burstDamage effects (they are resolved by resolveBurstDamage)', () => {
+    const withBurst = definition({
+      skills: {
+        ...definition().skills,
+        burst: { support: 'supported', effects: [{ kind: 'burstDamage', ref: 1, damageType: 'skill' }] },
+      },
+    });
+    expect(resolvePassives(withBurst, character, MAX_SKILL_LEVELS)).toHaveLength(2);
+  });
+
   it('skips unsupported skills and rejects a definition for another character', () => {
     const none = definition({
       skills: {
@@ -148,12 +158,45 @@ describe('parseSkillDefinition', () => {
     const extra = raw();
     (extra.skills as Record<string, unknown>).skill3 = { support: 'unsupported', effects: [] };
     expect(() => parseSkillDefinition(extra)).toThrow(/skill3/);
-    const burstModeled = raw();
-    (burstModeled.skills as Record<string, unknown>).burst = {
+    const burstPassive = raw();
+    (burstPassive.skills as Record<string, unknown>).burst = {
       support: 'supported',
       effects: [{ kind: 'passive', target: 'self', stat: 'attack', ref: 1 }],
     };
-    expect(() => parseSkillDefinition(burstModeled)).toThrow(/burst/);
+    expect(() => parseSkillDefinition(burstPassive)).toThrow(/passive effects are not allowed in burst/);
+  });
+
+  it('accepts burstDamage only in the burst slot (Stage 5)', () => {
+    const ok = raw();
+    (ok.skills as Record<string, unknown>).burst = {
+      support: 'partial',
+      effects: [
+        { kind: 'burstDamage', ref: 1, damageType: 'skill' },
+        { kind: 'burstDamage', ref: 2, damageType: 'distributed', assumes: { ja: '単体', en: 'single target' } },
+      ],
+      notes: [{ ja: 'バフは Stage 6', en: 'buffs are Stage 6' }],
+    };
+    expect(parseSkillDefinition(ok).skills.burst.effects).toEqual([
+      { kind: 'burstDamage', ref: 1, damageType: 'skill' },
+      { kind: 'burstDamage', ref: 2, damageType: 'distributed', assumes: { ja: '単体', en: 'single target' } },
+    ]);
+
+    const inSkill1 = raw();
+    (inSkill1.skills as Record<string, { effects: unknown[] }>).skill1!.effects = [
+      { kind: 'burstDamage', ref: 1, damageType: 'skill' },
+    ];
+    expect(() => parseSkillDefinition(inSkill1)).toThrow(/burstDamage is only allowed in burst/);
+
+    const badType = raw();
+    (badType.skills as Record<string, unknown>).burst = {
+      support: 'supported',
+      effects: [{ kind: 'burstDamage', ref: 1, damageType: 'dot' }],
+    };
+    expect(() => parseSkillDefinition(badType)).toThrow(/damageType/);
+
+    const badKind = raw();
+    (badKind.skills as Record<string, unknown>).burst = { support: 'supported', effects: [{ kind: 'dot', ref: 1 }] };
+    expect(() => parseSkillDefinition(badKind)).toThrow(/kind/);
   });
 
   it('requires effects to match support', () => {
