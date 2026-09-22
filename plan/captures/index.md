@@ -35,10 +35,10 @@ D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
 
 ## バックアップ
 
-`E:/nikke_project_captures/` を Google Drive にバックアップする。Google Drive for desktop がストリーミングモードで `J:/マイドライブ/` にマウントされている。
+`E:/nikke_project_captures/` を Google Drive にバックアップする。Google Drive for desktop がストリーミングモードで 2 アカウント分マウントされている。**使うのはメインアカウント側の `I:`**（222GB プラン）。`J:` は別アカウント（15GB プラン）なので使わない。
 
 ```bash
-robocopy "E:/nikke_project_captures" "J:/マイドライブ/nikke_project_captures" /MIR /R:1 /W:1
+robocopy "E:/nikke_project_captures" "I:/マイドライブ/nikke_project_captures" /MIR /R:1 /W:1
 ```
 
 - `/MIR` はコピー先を**コピー元に合わせる**（コピー元で消したファイルはコピー先でも消える）。ミスでコピー元を消したときは、同期する前に気づくこと。
@@ -48,7 +48,7 @@ robocopy "E:/nikke_project_captures" "J:/マイドライブ/nikke_project_captur
 同期したら sha256 で中身を突き合わせる。`probe.ts` はどのディレクトリにも使える:
 
 ```bash
-node tools/captures/probe.ts "J:/マイドライブ/nikke_project_captures"
+node tools/captures/probe.ts "I:/マイドライブ/nikke_project_captures"
 ```
 
 2026-09-22 に初回同期を実行し、9 本すべて sha256 が一致することを確認済み。
@@ -58,10 +58,10 @@ node tools/captures/probe.ts "J:/マイドライブ/nikke_project_captures"
 | 対象               | 冗長                                                            |
 | ------------------ | --------------------------------------------------------------- |
 | 台帳・証拠フレーム | Git → GitHub（`HKHKM-dev/nikke_project`）                       |
-| 録画（全 9 本）    | E: の実体 + Google Drive。**別拠点にコピーがある**              |
+| 録画（全 9 本）    | E: の実体 + Google Drive（`I:`）。**別拠点にコピーがある**      |
 | 生録画アーカイブ   | `E:/record/nikke/` のみ。バックアップ対象外（検証には使わない） |
 
-**容量の上限に注意。** Google Drive の空きは 6GB で、現在の録画は 364MB。射撃場の 30 秒録画は 1 本あたり約 40MB だが、レイド実戦 180 秒は 1 本 250MB 程度になる見込みで、20 本ほどで空きを使い切る。`raid/` を撮り始める前に、Drive の容量を増やすか、バックアップ対象を種別ごとに絞るかを決めておく。
+**容量の見通し。** I: の空きは 18.9GB（222.4GB 中）で、現在の録画は 364MB。射撃場の 30 秒録画は 1 本あたり約 40MB、レイド実戦 180 秒は 1 本 250MB 程度になる見込みなので、実戦録画だけなら 70 本強は入る。**ただし I: は Drive アカウント全体の残量であり、このプロジェクト以外の使用分と共有している。** `raid/` を撮り始めたら残量を見ながら進める。
 
 ## 命名規約
 
