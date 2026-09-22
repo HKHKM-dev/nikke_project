@@ -4,16 +4,29 @@
   "checkedAt": "2026-09-22",
   "skills": {
     "skill1": {
-      "support": "unsupported",
-      "effects": [],
-      "notes": [
+      "support": "partial",
+      "effects": [
         {
-          "ja": "有利コードの攻撃ダメージ・防御力・1more/追撃の分配ダメージは未対応",
-          "en": "Elemental Advantage Attack Damage, DEF and the 1 More / Follow Up distributed damage are not modeled"
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 5,
+          "durationRef": 6
         },
         {
-          "ja": "戦闘開始時とフルバースト終了時の攻撃力（15 秒間維持）は Stage 6",
-          "en": "ATK for 15 sec at battle start and Full Burst end is Stage 6"
+          "kind": "timed",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "stat": "attack",
+          "ref": 5,
+          "durationRef": 6
+        }
+      ],
+      "notes": [
+        {
+          "ja": "有利コードの攻撃ダメージ・防御力（ペルソナ - ヨハンナ）と 1more/追撃の分配ダメージは未対応",
+          "en": "Elemental Advantage Attack Damage and DEF (Persona - Johanna) and the 1 More / Follow Up distributed damage are not modeled"
         }
       ]
     },
@@ -29,8 +42,8 @@
       ],
       "notes": [
         {
-          "ja": "バースト使用時の鉄・拳・制・裁！（有利コードの攻撃ダメージ・防御力）、バースト 3 段階突入時の分配ダメージ、1more 時のバトンタッチは未対応",
-          "en": "Fist of Justice! on Burst Skill use, Distributed Damage on Burst Stage 3 and Baton Pass on 1 More are not modeled"
+          "ja": "バースト使用時の鉄・拳・制・裁！（有利コードの攻撃ダメージ・防御力）と 1more 時のバトンタッチ（スタック）は未対応。**バースト 3 段階突入時の分配ダメージ 90.01%▲（10 秒間維持）は未対応で、これが無いぶんバーストの分配ダメージを 1.9001 倍ぶん過小評価する**（2026-09-22 の実測: 6,323,975 = 予測 3,328,233 × 1.9001。verification.md Stage 6 節）。分配ダメージ▲は専用の stat で、バースト 3 段階突入時は専用のトリガー。どちらも段階 C の語彙",
+          "en": "Fist of Justice! on Burst Skill use and Baton Pass on 1 More (stacks) are not modeled. **Distributed Damage +90.01% on entering Burst Stage 3 (10 s) is not modeled, so the burst distributed damage is underestimated by a factor of 1.9001** (measured 2026-09-22: 6,323,975 vs predicted 3,328,233). Both the stat and the trigger belong to phase C"
         }
       ]
     },
@@ -45,12 +58,24 @@
             "ja": "単体ボスなので分配ダメージは全額 1 ヒット",
             "en": "Distributed damage lands in full as one hit on a lone boss"
           }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "対象が風圧コード（1more が適用される）",
+            "en": "The target is Wind code, so 1 More applies"
+          }
         }
       ],
       "notes": [
         {
-          "ja": "対象が風圧コードなら自分に 1more 攻撃力▲（10 秒間維持）は Stage 6",
-          "en": "1more ATK up against Wind targets (10 s) is Stage 6"
+          "ja": "分配ダメージの倍率と攻撃ダメージは合っているが、S2 のバースト 3 段階突入時の分配ダメージ▲（+90.01%）が未対応なので実際の 1 / 1.9001 の値になる",
+          "en": "The multiplier and Attack Damage are right, but S2 grants Distributed Damage +90.01% on entering Burst Stage 3, which is not modeled, so this is 1 / 1.9001 of the real value"
         }
       ]
     }

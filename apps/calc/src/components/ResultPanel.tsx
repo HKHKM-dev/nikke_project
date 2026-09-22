@@ -1,50 +1,38 @@
-import type { CharacterData, DamageResult, SlotBurstResult } from '@nikke/core';
+import type { CharacterData, TeamSlotResult } from '@nikke/core';
 import { formatNumber, formatPercent } from '../format.ts';
-import { BURST_DAMAGE_TYPE_LABEL } from '../skillLabels.ts';
+import { BURST_DAMAGE_TYPE_LABEL, formatAppliedAmount, formatTimedTrigger } from '../skillLabels.ts';
 
 type Props = {
   character: CharacterData;
-  /** 通常区間（バーストなしなら戦闘時間すべて）の通常攻撃 */
-  result: DamageResult;
-  /** フルバースト区間の通常攻撃。バーストなしなら null */
-  fullBurstResult: DamageResult | null;
-  burst: SlotBurstResult;
-  /** 通常攻撃（両区間）+ バーストスキル */
-  totalDamage: number;
-  dps: number;
+  slot: TeamSlotResult;
   attackLabel?: string;
 };
 
-export function ResultPanel({
-  character,
-  result,
-  fullBurstResult,
-  burst,
-  totalDamage,
-  dps,
-  attackLabel = '攻撃力（素）',
-}: Props) {
-  const { cadence, buffs } = result;
-  const hasAttackBuff = buffs.attackRatio !== 0 || buffs.attackFlat !== 0;
-  const hasCritBuff = buffs.critRate !== 0 || buffs.critDamage !== 0;
-  const fb = fullBurstResult;
-  const normalDamage = result.totalDamage + (fb?.totalDamage ?? 0);
+/** [0.0–15.0s, 20.0–35.0s] */
+function formatRanges(ranges: readonly { start: number; end: number }[]): string {
+  return ranges.map((r) => `${formatNumber(r.start / 60, 1)}–${formatNumber(r.end / 60, 1)}s`).join(', ');
+}
 
-  /** 通常区間 / フルバースト区間で値が違う行。fb が無ければ 1 列 */
-  const twoCols = (normal: string, full: string) => (
-    <>
-      <td>{normal}</td>
-      {fb && <td>{full}</td>}
-    </>
-  );
-  const oneCol = (value: string) => <td colSpan={fb ? 2 : 1}>{value}</td>;
+export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）' }: Props) {
+  const { cadence, segments, burst, notes } = slot;
+  // 代表値は最初の区間（= 戦闘開始時点の状態）。持続バフ中ならその旨を出す
+  const rep = segments[0];
+  const buffs = rep?.buffs;
+  const hasAttackBuff = buffs !== undefined && (buffs.attackRatio !== 0 || buffs.attackFlat !== 0);
+  const hasCritBuff = buffs !== undefined && (buffs.critRate !== 0 || buffs.critDamage !== 0);
+  const repIsTimed = (rep?.timedEffects.length ?? 0) > 0 && segments.length > 1;
+  const activationsVary =
+    burst.activations.length > 1 &&
+    burst.activations.some((a) => a.hit.perActivation !== burst.activations[0]!.hit.perActivation);
+
+  if (rep === undefined || buffs === undefined) return null;
 
   return (
     <section className="panel result">
       <h2>{character.name.ja}</h2>
       <dl className="summary">
         <dt>通常攻撃</dt>
-        <dd>{formatNumber(normalDamage)}</dd>
+        <dd>{formatNumber(slot.normalDamage)}</dd>
         <dt>バーストスキル</dt>
         <dd>
           {burst.hit
@@ -52,14 +40,14 @@ export function ResultPanel({
             : '—'}
         </dd>
         <dt>DPS</dt>
-        <dd>{formatNumber(dps)}</dd>
+        <dd>{formatNumber(slot.dps)}</dd>
         <dt>総ダメージ</dt>
-        <dd className="total">{formatNumber(totalDamage)}</dd>
+        <dd className="total">{formatNumber(slot.totalDamage)}</dd>
       </dl>
 
-      {result.notes.length > 0 && (
+      {notes.length > 0 && (
         <ul className="notes">
-          {result.notes.map((note) => (
+          {notes.map((note) => (
             <li key={note.code} className={`note ${note.level}`}>
               <span className="badge">{note.level === 'unsupported' ? '未対応' : '近似'}</span> {note.message.ja}
             </li>
@@ -67,140 +55,171 @@ export function ResultPanel({
         </ul>
       )}
 
-      <h3>通常攻撃の内訳</h3>
+      <h3>
+        通常攻撃の内訳
+        <small className="sub">
+          （代表: {formatRanges(rep.ranges)}
+          {rep.fullBurst ? '・フルバースト中' : ''}
+          {repIsTimed ? '・持続バフ中' : ''}）
+        </small>
+      </h3>
       <table className="breakdown">
-        {fb && (
-          <thead>
-            <tr>
-              <th></th>
-              <th>通常区間</th>
-              <th>フルバースト区間</th>
-            </tr>
-          </thead>
-        )}
         <tbody>
           <tr>
             <th>{attackLabel}</th>
-            {oneCol(formatNumber(result.baseAttack))}
+            <td>{formatNumber(slot.baseAttack)}</td>
           </tr>
           {hasAttackBuff && (
             <>
               <tr>
                 <th>攻撃力バフ</th>
-                {oneCol(
-                  `${buffs.attackRatio !== 0 ? `×(1 + ${formatPercent(buffs.attackRatio, 2)})` : ''}${
+                <td>
+                  {`${buffs.attackRatio !== 0 ? `×(1 + ${formatPercent(buffs.attackRatio, 2)})` : ''}${
                     buffs.attackRatio !== 0 && buffs.attackFlat !== 0 ? ' ' : ''
-                  }${buffs.attackFlat !== 0 ? `+${formatNumber(buffs.attackFlat)}` : ''}`,
-                )}
+                  }${buffs.attackFlat !== 0 ? `+${formatNumber(buffs.attackFlat)}` : ''}`}
+                </td>
               </tr>
               <tr>
                 <th>攻撃力（バフ後）</th>
-                {oneCol(formatNumber(result.attack))}
+                <td>{formatNumber(rep.trigger.attack)}</td>
               </tr>
             </>
           )}
           <tr>
             <th>攻撃力 − 防御力</th>
-            {oneCol(formatNumber(result.baseHit))}
+            <td>{formatNumber(rep.trigger.baseHit)}</td>
           </tr>
           <tr>
             <th>武器倍率</th>
-            {oneCol(
-              `${formatPercent(result.weaponMultiplier, 2)}${
+            <td>
+              {`${formatPercent(rep.trigger.weaponMultiplier, 2)}${
                 character.shot.shotCount > 1 ? `（${character.shot.shotCount} ペレット合計）` : ''
-              }`,
-            )}
+              }`}
+            </td>
           </tr>
-          {result.chargeMultiplier !== 1 && (
+          {rep.trigger.chargeMultiplier !== 1 && (
             <tr>
               <th>チャージ倍率</th>
-              {oneCol(
-                `×${formatNumber(result.chargeMultiplier, 4)}${
+              <td>
+                {`×${formatNumber(rep.trigger.chargeMultiplier, 4)}${
                   buffs.chargeDamage !== 0
                     ? `（${character.shot.fullChargeDamage} + ${formatPercent(buffs.chargeDamage, 2)}）`
                     : ''
-                }`,
-              )}
+                }`}
+              </td>
             </tr>
           )}
           <tr>
             <th>コア（期待値）</th>
-            {oneCol(`+${formatNumber(result.boost.core, 3)}`)}
+            <td>+{formatNumber(rep.trigger.boost.core, 3)}</td>
           </tr>
           <tr>
             <th>会心（期待値）</th>
-            {oneCol(
-              `+${formatNumber(result.boost.crit, 3)}${
+            <td>
+              {`+${formatNumber(rep.trigger.boost.crit, 3)}${
                 hasCritBuff
                   ? `（確率 ${formatPercent(character.crit.rate + buffs.critRate, 2)} × ダメージ +${formatPercent(
                       character.crit.damage - 1 + buffs.critDamage,
                       2,
                     )}）`
                   : ''
-              }`,
-            )}
+              }`}
+            </td>
           </tr>
           <tr>
             <th>距離ボーナス</th>
-            {oneCol(`+${formatNumber(result.boost.distance, 1)}`)}
+            <td>+{formatNumber(rep.trigger.boost.distance, 1)}</td>
           </tr>
-          {fb && (
-            <tr>
-              <th>フルバースト</th>
-              {twoCols('—', `+${formatNumber(fb.boost.fullBurst, 1)}`)}
-            </tr>
-          )}
+          <tr>
+            <th>フルバースト</th>
+            <td>{rep.trigger.boost.fullBurst !== 0 ? `+${formatNumber(rep.trigger.boost.fullBurst, 1)}` : '—'}</td>
+          </tr>
           <tr>
             <th>倍率グループ合計</th>
-            {twoCols(`×${formatNumber(result.boost.total, 3)}`, `×${formatNumber(fb?.boost.total ?? 0, 3)}`)}
+            <td>×{formatNumber(rep.trigger.boost.total, 3)}</td>
           </tr>
           {buffs.attackDamage !== 0 && (
             <tr>
               <th>攻撃ダメージ（バフ）</th>
-              {oneCol(`×${formatNumber(result.attackDamageMultiplier, 4)}（倍率グループとは別枠）`)}
+              <td>×{formatNumber(rep.trigger.attackDamageMultiplier, 4)}（倍率グループとは別枠）</td>
             </tr>
           )}
           <tr>
             <th>属性有利</th>
-            {oneCol(`×${result.elementMultiplier}`)}
+            <td>×{rep.trigger.elementMultiplier}</td>
           </tr>
           <tr>
             <th>1 トリガー期待ダメージ</th>
-            {twoCols(formatNumber(result.perTrigger), formatNumber(fb?.perTrigger ?? 0))}
+            <td>{formatNumber(rep.trigger.perTrigger)}</td>
           </tr>
           <tr>
             <th>マガジン</th>
-            {oneCol(`${cadence.triggersPerCycle} 発 / ${formatNumber(cadence.magazineFrames / 60, 2)} 秒`)}
+            <td>{`${cadence.triggersPerCycle} 発 / ${formatNumber(cadence.magazineFrames / 60, 2)} 秒`}</td>
           </tr>
           <tr>
             <th>リロード</th>
-            {oneCol(
-              `${formatNumber(cadence.reloadFrames / 60, 2)} 秒${
+            <td>
+              {`${formatNumber(cadence.reloadFrames / 60, 2)} 秒${
                 cadence.reloadChunks > 1 ? `（${cadence.reloadChunks} 回）` : ''
-              }`,
-            )}
+              }`}
+            </td>
           </tr>
           <tr>
             <th>1 周期</th>
-            {oneCol(`${formatNumber(cadence.cycleSeconds, 2)} 秒`)}
+            <td>{formatNumber(cadence.cycleSeconds, 2)} 秒</td>
           </tr>
           <tr>
             <th>秒間トリガー数</th>
-            {oneCol(formatNumber(cadence.triggersPerSecond, 3))}
-          </tr>
-          <tr>
-            <th>区間の長さ</th>
-            {twoCols(
-              `${formatNumber(result.totalDamage / (result.dps || 1), 1)} 秒`,
-              `${formatNumber((fb?.totalDamage ?? 0) / (fb?.dps || 1), 1)} 秒`,
-            )}
-          </tr>
-          <tr>
-            <th>区間のダメージ</th>
-            {twoCols(formatNumber(result.totalDamage), formatNumber(fb?.totalDamage ?? 0))}
+            <td>{formatNumber(cadence.triggersPerSecond, 3)}</td>
           </tr>
         </tbody>
       </table>
+
+      <details className="segments">
+        <summary>区間（{segments.length} 通りのバフ状態）</summary>
+        <table className="breakdown">
+          <thead>
+            <tr>
+              <th>時間帯</th>
+              <th>FB</th>
+              <th>攻撃力</th>
+              <th>倍率グループ</th>
+              <th>攻撃ダメージ</th>
+              <th>1 トリガー</th>
+              <th>トリガー数</th>
+              <th>ダメージ</th>
+              <th>持続バフ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {segments.map((seg, i) => (
+              <tr key={i}>
+                <td>
+                  {formatRanges(seg.ranges)}
+                  <small className="sub"> 計 {formatNumber(seg.seconds, 1)}s</small>
+                </td>
+                <td>{seg.fullBurst ? '○' : '—'}</td>
+                <td>{formatNumber(seg.trigger.attack)}</td>
+                <td>×{formatNumber(seg.trigger.boost.total, 3)}</td>
+                <td>×{formatNumber(seg.trigger.attackDamageMultiplier, 4)}</td>
+                <td>{formatNumber(seg.trigger.perTrigger)}</td>
+                <td>{formatNumber(seg.triggers, 1)}</td>
+                <td>{formatNumber(seg.damage)}</td>
+                <td>
+                  {seg.timedEffects.length === 0
+                    ? '—'
+                    : seg.timedEffects.map((e, j) => (
+                        <small key={j} className="sub">
+                          {formatTimedTrigger(e.trigger)} {formatAppliedAmount(e)}
+                          {j < seg.timedEffects.length - 1 ? ' / ' : ''}
+                        </small>
+                      ))}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </details>
 
       {burst.hit && (
         <>
@@ -249,18 +268,32 @@ export function ResultPanel({
               </tr>
               <tr>
                 <th>1 発動</th>
-                <td>{formatNumber(burst.hit.perActivation)}</td>
+                <td>
+                  {formatNumber(burst.hit.perActivation)}
+                  {activationsVary ? <small className="sub">（発動ごとに異なる。下の一覧を見る）</small> : ''}
+                </td>
               </tr>
               <tr>
                 <th>発動</th>
                 <td>
                   {burst.activations.length} 回
-                  {burst.activations.length > 0 ? `（${burst.activations.map((t) => `${t}s`).join(', ')}）` : ''}
+                  {burst.activations.length > 0
+                    ? `（${burst.activations
+                        .map(
+                          (a) =>
+                            `${formatNumber(a.seconds, 0)}s${activationsVary ? `: ${formatNumber(a.hit.perActivation)}` : ''}`,
+                        )
+                        .join(', ')}）`
+                    : ''}
                 </td>
               </tr>
               <tr>
                 <th>合計</th>
                 <td>{formatNumber(burst.totalDamage)}</td>
+              </tr>
+              <tr>
+                <th>バフのスナップショット</th>
+                <td>発動直前のバフで計算（その発動で自分に付く持続バフは乗らない。実測で確定するまでの仮定）</td>
               </tr>
             </tbody>
           </table>
@@ -268,7 +301,7 @@ export function ResultPanel({
       )}
 
       <p className="scope">
-        通常攻撃（固定サイクルのフルバースト補正込み）と、定義済みの常時発動パッシブ、倍率ダメージだけのバーストスキルを計算します。時間限定のバフ/デバフ・弾数増加・ヒット率・バースト
+        通常攻撃（固定サイクルのフルバースト補正込み）と、定義済みの常時発動パッシブ・バースト時トリガーの持続バフ・倍率ダメージだけのバーストスキルを計算します。弾数増加・ヒット率・スタック・バースト
         CT は含みません。SG は全ペレット命中が前提です。
       </p>
     </section>

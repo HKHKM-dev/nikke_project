@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { SkillRaw } from '../../types.ts';
-import { MAX_SKILL_LEVELS, renderSkillDescription, resolvePassives, skillValue } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, renderSkillDescription, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../types.ts';
 
 /** Lv1..10 で lv1 から step ずつ増える値の文字列配列 */
@@ -214,6 +214,122 @@ describe('parseSkillDefinition', () => {
       resourceIds: [1, 2],
     });
     expect(() => parseSkillIndex({ formatVersion: 1, resourceIds: ['1'] })).toThrow(/resourceIds/);
+  });
+});
+
+// ---- Stage 6: timed（トリガー付きの持続バフ） ----
+
+describe('resolveTimed', () => {
+  const timedDef = (): SkillDefinition => ({
+    formatVersion: 1,
+    resourceId: 7,
+    checkedAt: '2026-09-22',
+    skills: {
+      skill1: { support: 'unsupported', effects: [] },
+      skill2: {
+        support: 'supported',
+        effects: [
+          // skill2 の values: [1] = 70（一定）、[2] = 8 + 0.5/Lv
+          { kind: 'timed', trigger: 'fullBurstStart', target: 'self', stat: 'attack', ref: 1, durationRef: 2 },
+        ],
+      },
+      burst: { support: 'unsupported', effects: [] },
+    },
+  });
+
+  it('resolves the ratio and the duration from refs and follows the skill level', () => {
+    const lv10 = resolveTimed(timedDef(), character, MAX_SKILL_LEVELS);
+    expect(lv10).toHaveLength(1);
+    expect(lv10[0]).toMatchObject({
+      trigger: 'fullBurstStart',
+      target: 'self',
+      stat: 'attack',
+      scaling: 'ratio',
+      value: 0.7,
+      // 維持秒数 12.5 秒 → 750f
+      durationFrames: 750,
+      effectIndex: 0,
+    });
+    const lv1 = resolveTimed(timedDef(), character, { skill1: 1, skill2: 1, burst: 1 });
+    expect(lv1[0]?.durationFrames).toBe(480); // 8 秒
+  });
+
+  it('takes a literal durationSeconds and rounds it up to frames', () => {
+    const def = timedDef();
+    def.skills.skill2.effects = [
+      { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 1, durationSeconds: 10 },
+    ];
+    expect(resolveTimed(def, character, MAX_SKILL_LEVELS)[0]?.durationFrames).toBe(600);
+    def.skills.skill2.effects = [
+      { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 1, durationSeconds: 0.05 },
+    ];
+    expect(resolveTimed(def, character, MAX_SKILL_LEVELS)[0]?.durationFrames).toBe(3);
+  });
+
+  it('skips unsupported slots and passive effects', () => {
+    const def = timedDef();
+    def.skills.skill2.support = 'unsupported';
+    def.skills.skill2.effects = [];
+    expect(resolveTimed(def, character, MAX_SKILL_LEVELS)).toEqual([]);
+    expect(resolveTimed(definition(), character, MAX_SKILL_LEVELS)).toEqual([]); // passive だけの定義
+    expect(resolvePassives(timedDef(), character, MAX_SKILL_LEVELS)).toEqual([]); // timed だけの定義
+  });
+
+  it('rejects a definition for another character', () => {
+    expect(() => resolveTimed(timedDef(), makeCharacter({}, { resourceId: 8 }), MAX_SKILL_LEVELS)).toThrow(RangeError);
+  });
+});
+
+describe('parseSkillDefinition with timed', () => {
+  const withTimed = (effect: Record<string, unknown>, slot = 'burst'): unknown => {
+    const raw = {
+      formatVersion: 1,
+      resourceId: 7,
+      checkedAt: '2026-09-22',
+      skills: {
+        skill1: { support: 'unsupported', effects: [] },
+        skill2: { support: 'unsupported', effects: [] },
+        burst: { support: 'unsupported', effects: [] },
+      },
+    };
+    (raw.skills as Record<string, unknown>)[slot] = { support: 'supported', effects: [effect] };
+    return raw;
+  };
+  const base = { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 1, durationRef: 2 };
+
+  it('accepts timed in any slot', () => {
+    for (const slot of ['skill1', 'skill2', 'burst']) {
+      expect(parseSkillDefinition(withTimed(base, slot)).skills[slot as 'burst'].effects).toEqual([base]);
+    }
+  });
+
+  it('requires exactly one of durationRef and durationSeconds', () => {
+    const { durationRef: _omit, ...noDuration } = base;
+    expect(() => parseSkillDefinition(withTimed(noDuration))).toThrow(/exactly one of durationRef/);
+    expect(() => parseSkillDefinition(withTimed({ ...base, durationSeconds: 10 }))).toThrow(
+      /exactly one of durationRef/,
+    );
+    expect(() => parseSkillDefinition(withTimed({ ...base, durationRef: undefined, durationSeconds: -1 }))).toThrow(
+      /durationSeconds/,
+    );
+  });
+
+  it('validates trigger, stat and casterAttack the same way as passive', () => {
+    expect(() => parseSkillDefinition(withTimed({ ...base, trigger: 'onHit' }))).toThrow(/trigger/);
+    expect(() => parseSkillDefinition(withTimed({ ...base, stat: 'defence' }))).toThrow(/stat/);
+    expect(() => parseSkillDefinition(withTimed({ ...base, stat: 'critRate', scaling: 'casterAttack' }))).toThrow(
+      /casterAttack/,
+    );
+    expect(
+      parseSkillDefinition(withTimed({ ...base, target: 'allies', scaling: 'casterAttack' })).skills.burst.effects,
+    ).toHaveLength(1);
+  });
+
+  it('still refuses passive in burst, pointing at timed', () => {
+    const raw = withTimed({ kind: 'passive', target: 'self', stat: 'attack', ref: 1 }) as {
+      skills: Record<string, unknown>;
+    };
+    expect(() => parseSkillDefinition(raw)).toThrow(/use timed with trigger "burstUse"/);
   });
 });
 

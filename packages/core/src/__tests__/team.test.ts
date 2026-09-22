@@ -38,14 +38,29 @@ describe('computeTeamDamage', () => {
       individual.reduce((a, r) => a + r.totalDamage, 0),
       6,
     );
-    expect(team.slots[0]?.result).toEqual(individual[0]);
-    expect(team.slots[1]?.result).toEqual(individual[1]);
-    expect(team.slots[3]?.result).toEqual(individual[2]);
+    // 持続バフもフルバーストもないので区間は 1 つ。1 トリガーの値と合計が単体計算と一致する
+    for (const [slotIndex, r] of [
+      [0, individual[0]!],
+      [1, individual[1]!],
+      [3, individual[2]!],
+    ] as const) {
+      const c = team.slots[slotIndex]!;
+      expect(c.segments).toHaveLength(1);
+      expect(c.segments[0]!.trigger.perTrigger).toBe(r.perTrigger);
+      expect(c.cadence).toEqual(r.cadence);
+      expect(c.normalDamage).toBe(r.totalDamage);
+      expect(c.dps).toBeCloseTo(r.dps, 9);
+    }
   });
 
   it('returns zero totals for an all-empty team', () => {
     const team = computeTeamDamage({ slots: [null, null, null], enemy, durationSeconds: 180 });
-    expect(team).toEqual({ slots: [null, null, null], filledCount: 0, totalDps: 0, totalDamage: 0, schedule: null });
+    expect(team.slots).toEqual([null, null, null]);
+    expect(team.filledCount).toBe(0);
+    expect(team.totalDps).toBe(0);
+    expect(team.totalDamage).toBe(0);
+    expect(team.schedule).toBeNull();
+    expect(team.timeline.segments).toHaveLength(1);
   });
 
   it('shares are each slot’s fraction of the total and add up to 1', () => {
@@ -65,7 +80,8 @@ describe('computeTeamDamage', () => {
       enemy,
       condition: { ...condition, durationSeconds: 90 },
     });
-    expect(team.slots[0]?.result).toEqual(single);
+    expect(team.slots[0]?.segments[0]?.trigger.perTrigger).toBe(single.perTrigger);
+    expect(team.slots[0]?.normalDamage).toBe(single.totalDamage);
     expect(team.slots[0]?.share).toBe(1);
     expect(team.totalDps).toBe(single.dps);
     expect(team.totalDamage).toBe(single.totalDamage);
@@ -77,20 +93,17 @@ describe('computeTeamDamage', () => {
       enemy,
       durationSeconds: 90,
     });
-    expect(team.slots[0]?.result.attack).toBe(5000);
-    expect(team.slots[1]?.result.attack).toBe(1000);
-    expect(team.slots[0]?.result.totalDamage).toBeCloseTo((team.slots[0]?.result.dps ?? 0) * 90, 6);
-    expect(team.slots[0]?.totalDamage).toBe(team.slots[0]?.result.totalDamage);
-    expect(team.slots[0]?.dps).toBe(team.slots[0]?.result.dps);
+    expect(team.slots[0]?.segments[0]?.trigger.attack).toBe(5000);
+    expect(team.slots[1]?.segments[0]?.trigger.attack).toBe(1000);
+    expect(team.slots[0]?.totalDamage).toBe(team.slots[0]?.normalDamage);
+    expect(team.slots[0]?.dps).toBeCloseTo((team.slots[0]?.normalDamage ?? 0) / 90, 9);
   });
 
   it('passes the weapon model through to every slot', () => {
     const model = { ...DEFAULT_WEAPON_MODEL, chargeReleaseFrames: 0 };
     const withModel = computeTeamDamage({ slots: [sr], enemy, durationSeconds: 180, model });
     const withoutModel = computeTeamDamage({ slots: [sr], enemy, durationSeconds: 180 });
-    expect(withModel.slots[0]?.result.cadence.cycleFrames).toBeLessThan(
-      withoutModel.slots[0]?.result.cadence.cycleFrames ?? 0,
-    );
+    expect(withModel.slots[0]?.cadence.cycleFrames).toBeLessThan(withoutModel.slots[0]?.cadence.cycleFrames ?? 0);
   });
 
   it('rejects duplicate characters and out-of-range slot counts', () => {
@@ -171,17 +184,17 @@ describe('computeTeamDamage with passives', () => {
   it('leaves a team without definitions identical to Stage 3 and reports no skill support', () => {
     const team = computeTeamDamage({ slots: [ar, smg], enemy, durationSeconds: 180 });
     for (const s of team.slots) {
-      expect(s?.buffs).toEqual(ZERO_BUFFS);
-      expect(s?.appliedEffects).toEqual([]);
+      expect(s?.passiveBuffs).toEqual(ZERO_BUFFS);
+      expect(s?.passiveEffects).toEqual([]);
       expect(s?.skillSupport).toBeNull();
-      expect(s?.result.attack).toBe(s?.result.baseAttack);
+      expect(s?.segments[0]?.trigger.attack).toBe(s?.baseAttack);
     }
     const withNull = computeTeamDamage({
       slots: [{ ...ar, skills: { definition: null, levels: MAX_SKILL_LEVELS } }],
       enemy,
       durationSeconds: 180,
     });
-    expect(withNull.slots[0]?.result).toEqual(team.slots[0]?.result);
+    expect(withNull.slots[0]?.normalDamage).toBe(team.slots[0]?.normalDamage);
     expect(withNull.slots[0]?.skillSupport).toBeNull();
   });
 
@@ -189,44 +202,44 @@ describe('computeTeamDamage with passives', () => {
     const team = computeTeamDamage({ slots: [buffer, plain, null, caster], enemy, durationSeconds: 180 });
     const [a, c, , b] = team.slots;
     // 枠 A: 自分の +20% と B からの固定加算 1000 × 0.1、自分の会心ダメ +10%
-    expect(a?.buffs).toEqual({ ...ZERO_BUFFS, attackRatio: 0.2, attackFlat: 100, critDamage: 0.1 });
-    expect(a?.result.attack).toBeCloseTo(1000 * 1.2 + 100, 10);
+    expect(a?.passiveBuffs).toEqual({ ...ZERO_BUFFS, attackRatio: 0.2, attackFlat: 100, critDamage: 0.1 });
+    expect(a?.segments[0]?.trigger.attack).toBeCloseTo(1000 * 1.2 + 100, 10);
     // 枠 C（定義なし）: A の会心ダメと B の固定加算だけ
-    expect(c?.buffs).toEqual({ ...ZERO_BUFFS, attackFlat: 100, critDamage: 0.1 });
-    expect(c?.result.attack).toBeCloseTo(1100, 10);
+    expect(c?.passiveBuffs).toEqual({ ...ZERO_BUFFS, attackFlat: 100, critDamage: 0.1 });
+    expect(c?.segments[0]?.trigger.attack).toBeCloseTo(1100, 10);
     expect(c?.skillSupport).toBeNull();
     // 枠 B: 自分の allies 効果も自分に掛かる
-    expect(b?.buffs).toEqual({ ...ZERO_BUFFS, attackFlat: 100, critDamage: 0.1 });
+    expect(b?.passiveBuffs).toEqual({ ...ZERO_BUFFS, attackFlat: 100, critDamage: 0.1 });
     expect(b?.skillSupport).toEqual({ skill1: 'supported', skill2: 'unsupported', burst: 'unsupported' });
-    expect(a?.appliedEffects.map((e) => [e.sourceSlotIndex, e.stat, e.scaling, e.appliedAmount])).toEqual([
+    expect(a?.passiveEffects.map((e) => [e.sourceSlotIndex, e.stat, e.scaling, e.appliedAmount])).toEqual([
       [0, 'attack', 'ratio', 0.2],
       [0, 'critDamage', 'ratio', 0.1],
       [3, 'attack', 'casterAttack', 100],
     ]);
-    expect(c?.appliedEffects.map((e) => e.sourceSlotIndex)).toEqual([0, 3]);
+    expect(c?.passiveEffects.map((e) => e.sourceSlotIndex)).toEqual([0, 3]);
   });
 
   it('bases casterAttack on the caster’s pre-buff attack, even when the caster is buffed', () => {
     // A の +20% は A 自身にしか掛からず、B の固定加算は B のバフ前攻撃力（1000）を基準にする
     const team = computeTeamDamage({ slots: [buffer, caster], enemy, durationSeconds: 180 });
-    expect(team.slots[0]?.buffs.attackFlat).toBe(100);
-    expect(team.slots[1]?.buffs.attackFlat).toBe(100);
+    expect(team.slots[0]?.passiveBuffs.attackFlat).toBe(100);
+    expect(team.slots[1]?.passiveBuffs.attackFlat).toBe(100);
     // スペック固定など attackOverride があればそれが基準
     const fixed = computeTeamDamage({
       slots: [plain, { ...caster, attackOverride: 5000 }],
       enemy,
       durationSeconds: 180,
     });
-    expect(fixed.slots[0]?.buffs.attackFlat).toBe(500);
-    expect(fixed.slots[0]?.result.attack).toBe(1500);
+    expect(fixed.slots[0]?.passiveBuffs.attackFlat).toBe(500);
+    expect(fixed.slots[0]?.segments[0]?.trigger.attack).toBe(1500);
   });
 
   it('removing a slot removes only the effects it was giving', () => {
     const full = computeTeamDamage({ slots: [buffer, plain, caster], enemy, durationSeconds: 180 });
     const withoutCaster = computeTeamDamage({ slots: [buffer, plain, null], enemy, durationSeconds: 180 });
-    expect(withoutCaster.slots[1]?.buffs).toEqual({ ...ZERO_BUFFS, critDamage: 0.1 });
-    expect(withoutCaster.slots[0]?.buffs).toEqual({ ...ZERO_BUFFS, attackRatio: 0.2, critDamage: 0.1 });
-    expect(full.slots[1]?.result.dps).toBeGreaterThan(withoutCaster.slots[1]?.result.dps ?? 0);
+    expect(withoutCaster.slots[1]?.passiveBuffs).toEqual({ ...ZERO_BUFFS, critDamage: 0.1 });
+    expect(withoutCaster.slots[0]?.passiveBuffs).toEqual({ ...ZERO_BUFFS, attackRatio: 0.2, critDamage: 0.1 });
+    expect(full.slots[1]?.dps).toBeGreaterThan(withoutCaster.slots[1]?.dps ?? 0);
   });
 
   it('follows skill levels per slot', () => {
@@ -251,7 +264,7 @@ describe('computeTeamDamage with passives', () => {
       enemy,
       durationSeconds: 180,
     });
-    expect(lv1.slots[0]?.buffs.attackRatio).toBeCloseTo(0.1, 12);
-    expect(lv10.slots[0]?.buffs.attackRatio).toBeCloseTo(0.19, 12);
+    expect(lv1.slots[0]?.passiveBuffs.attackRatio).toBeCloseTo(0.1, 12);
+    expect(lv10.slots[0]?.passiveBuffs.attackRatio).toBeCloseTo(0.19, 12);
   });
 });

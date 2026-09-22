@@ -1,10 +1,12 @@
 // スキル定義の ref を Lv の数値に解決する。単位変換（% → 比率）はここで一律に行う。
 import type { CharacterData, Locale, LocalizedText, SkillRaw } from '../types.ts';
+import { durationToFrames } from '../burst/fixedCycle.ts';
 import {
   SKILL_SLOTS,
   type BuffScaling,
   type BuffStat,
   type BuffTarget,
+  type BuffTrigger,
   type SkillDefinition,
   type SkillSlot,
 } from './types.ts';
@@ -58,6 +60,14 @@ export type ResolvedEffect = {
   assumes?: LocalizedText;
 };
 
+/** 解決済みの効果が実際に枠へ適用された記録。発動元の枠と、BuffTotals へ足した量を添える */
+export type AppliedEffect = ResolvedEffect & {
+  /** 発動元の枠（slots 内の位置） */
+  sourceSlotIndex: number;
+  /** 実際に BuffTotals へ足した量。ratio なら value そのもの（0.1535）、casterAttack なら攻撃力の実数 */
+  appliedAmount: number;
+};
+
 /** 定義の各 passive 効果を Lv の数値に解決する。support が 'unsupported' のスキルは空。burstDamage は resolveBurstDamage が扱う */
 export function resolvePassives(def: SkillDefinition, character: CharacterData, levels: SkillLevels): ResolvedEffect[] {
   if (def.resourceId !== character.resourceId) {
@@ -80,6 +90,59 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     }
+  }
+  return resolved;
+}
+
+/** Stage 6: トリガー付きの持続バフ。ResolvedEffect に「いつ付いて、何フレーム続くか」が付いた形 */
+export type ResolvedTimedEffect = ResolvedEffect & {
+  trigger: BuffTrigger;
+  /** durationToFrames(維持秒数)。0 なら効果なし */
+  durationFrames: number;
+  /** 上書き延長の同一性判定に使う（同じスロットの何番目の効果か） */
+  effectIndex: number;
+};
+
+/** 持続バフが枠へ適用された記録 */
+export type AppliedTimedEffect = ResolvedTimedEffect & {
+  sourceSlotIndex: number;
+  appliedAmount: number;
+};
+
+/** 定義の各 timed 効果を Lv の数値に解決する。support が 'unsupported' のスキルは空 */
+export function resolveTimed(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedTimedEffect[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const resolved: ResolvedTimedEffect[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const entry = def.skills[slot];
+    if (entry.support === 'unsupported') continue;
+    const skill = character.skills[slot];
+    entry.effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'timed') return;
+      const seconds =
+        effect.durationRef === undefined
+          ? (effect.durationSeconds ?? 0)
+          : skillValue(skill, effect.durationRef, levels[slot]);
+      if (seconds < 0) throw new RangeError(`skill ${skill.id}: duration must be >= 0, got ${seconds}`);
+      const r: ResolvedTimedEffect = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        target: effect.target,
+        stat: effect.stat,
+        scaling: effect.scaling ?? 'ratio',
+        value: skillValue(skill, effect.ref, levels[slot]) / 100,
+        trigger: effect.trigger,
+        durationFrames: durationToFrames(seconds),
+        effectIndex,
+      };
+      if (effect.assumes) r.assumes = effect.assumes;
+      resolved.push(r);
+    });
   }
   return resolved;
 }

@@ -1,19 +1,36 @@
 // Stage 3: 5 人編成の合算。Stage 4 で常時発動パッシブ（自分・味方全体）を枠間で配ってから computeDamage に渡すようにした。
 // Stage 5: 固定 20 秒サイクルのバースト（burst: true）を「通常区間 / フルバースト区間」の 2 区間の期待値と、
-// サイクルごとのバーストスキルダメージで足す。sim（sim/engine.ts）の期待値モデルで、時刻表・式は sim と共有する。
-import { planFixedCycle, durationToFrames, type FixedCycleSchedule } from './burst/fixedCycle.ts';
+// サイクルごとのバーストスキルダメージで足す。
+// Stage 6: 持続バフ（timed）を skills/timeline.ts の区間分割に載せた。calc は「同じバフ状態の区間」をまとめた
+// グループ単位で computeDamage を呼ぶ。timed 効果がなければグループは 2 つに退化し、Stage 5 と同じ計算になる。
+// sim（sim/engine.ts）とは時刻表・区間・式をすべて共有し、違いは「発射をフレームで数えるか、平均レートで置くか」だけ。
+import { durationToFrames, planFixedCycle, type FixedCycleSchedule } from './burst/fixedCycle.ts';
 import {
   baseAttackOf,
   computeDamage,
-  type ConditionInput,
-  type DamageResult,
+  computeTriggerDamage,
+  modelNotes,
   type EnemyInput,
+  type ModelNote,
   type TriggerCondition,
+  type TriggerDamage,
 } from './damage.ts';
+import { computeCadence, type CadenceResult } from './cadence.ts';
 import { slotBurstHit, type BurstHitResult } from './skills/burstDamage.ts';
-import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from './skills/buffs.ts';
-import { MAX_SKILL_LEVELS, resolvePassives, type ResolvedEffect, type SkillLevels } from './skills/resolve.ts';
-import { isEffectTarget } from './skills/targets.ts';
+import type { BuffTotals } from './skills/buffs.ts';
+import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type SkillLevels } from './skills/resolve.ts';
+import {
+  EMPTY_BUFF_STATE,
+  groupTimeline,
+  mergeAdjacentRanges,
+  planBuffTimeline,
+  resolvePassiveStates,
+  segmentIndexAt,
+  type BuffTimeline,
+  type BuffWindow,
+  type SlotBuffState,
+  type TimelineSlot,
+} from './skills/timeline.ts';
 import { SKILL_SLOTS, type SkillDefinition, type SkillSlot, type SkillSupport } from './skills/types.ts';
 import type { GrowthInput } from './stats.ts';
 import type { CharacterData } from './types.ts';
@@ -50,19 +67,28 @@ export type TeamInput = {
   burst?: boolean;
 };
 
-export type AppliedEffect = ResolvedEffect & {
-  /** 発動元の枠（slots 内の位置） */
-  sourceSlotIndex: number;
-  /** 実際に BuffTotals へ足した量。ratio なら value そのもの（0.1535）、casterAttack なら攻撃力の実数 */
-  appliedAmount: number;
+export type { AppliedEffect, AppliedTimedEffect };
+
+/** 1 つのバフ状態でいた区間の結果。calc はグループ単位、sim は区間単位で埋める */
+export type SlotSegmentResult = {
+  /** 含まれる区間 [start, end) の列（フレーム）。グループは離れた複数区間を含みうる */
+  ranges: { start: number; end: number }[];
+  seconds: number;
+  fullBurst: boolean;
+  buffs: BuffTotals;
+  passiveEffects: AppliedEffect[];
+  timedEffects: AppliedTimedEffect[];
+  trigger: TriggerDamage;
+  /** calc: triggersPerSecond × seconds（小数） / sim: 実際に撃った数（整数） */
+  triggers: number;
+  damage: number;
 };
 
 export type SlotBurstResult = {
-  /** 発動時刻（秒）。schedule.activationFrames / 60 */
-  activations: number[];
-  /** 1 発動あたりの内訳。定義がない・unsupported・倍率ダメージなしなら null */
+  /** 発動ごとの内訳（時刻は秒）。定義がない・unsupported・倍率ダメージなしなら空 */
+  activations: { seconds: number; hit: BurstHitResult }[];
+  /** 1 回目の内訳（UI の代表値）。定義がない・unsupported・倍率ダメージなしなら null */
   hit: BurstHitResult | null;
-  /** activations.length × hit.perActivation */
   totalDamage: number;
 };
 
@@ -70,21 +96,27 @@ export type TeamSlotResult = {
   /** slots 内の位置 */
   index: number;
   character: CharacterData;
-  /** 通常区間の通常攻撃（burst なしなら戦闘時間すべて）。durationSeconds = duration − フルバースト時間 */
-  result: DamageResult;
-  /** フルバースト区間の通常攻撃（fullBurst: true）。burst なしなら null */
-  fullBurstResult: DamageResult | null;
+  /** バフ前の攻撃力（素、またはスペック固定値）。区間に依らない */
+  baseAttack: number;
+  /** 発射サイクル。Stage 6 では弾数・リロードのバフがないので区間に依らない */
+  cadence: CadenceResult;
+  notes: ModelNote[];
+  /** 常時パッシブだけのバフ合計（Stage 4 互換の表示用） */
+  passiveBuffs: BuffTotals;
+  passiveEffects: AppliedEffect[];
+  /** この枠に掛かった持続バフの窓（発生順） */
+  windows: BuffWindow[];
+  /** バフ状態ごとにまとめた通常攻撃の結果（groupTimeline の順） */
+  segments: SlotSegmentResult[];
+  /** Σ segments.damage */
+  normalDamage: number;
   burst: SlotBurstResult;
-  /** 通常攻撃（両区間）+ バーストスキル */
+  /** normalDamage + burst.totalDamage */
   totalDamage: number;
   /** totalDamage / durationSeconds（0 秒なら 0） */
   dps: number;
   /** 編成の総ダメージに対する寄与率 0..1（合計 0 のときは 0） */
   share: number;
-  /** この枠が受けたバフの合計 */
-  buffs: BuffTotals;
-  /** この枠に掛かった効果（発動元の枠順） */
-  appliedEffects: AppliedEffect[];
   /** null = 定義ファイルなし（未定義） */
   skillSupport: Record<SkillSlot, SkillSupport> | null;
 };
@@ -96,25 +128,8 @@ export type TeamResult = {
   totalDamage: number;
   /** burst なしなら null */
   schedule: FixedCycleSchedule | null;
+  timeline: BuffTimeline;
 };
-
-type Source = { slotIndex: number; casterBaseAttack: number; effect: ResolvedEffect };
-
-/** 全枠の常時効果を発動元の枠順に集める。発動者基準の固定加算に使うバフ前攻撃力も添える */
-function collectPassiveSources(slots: readonly (TeamSlotInput | null)[]): Source[] {
-  const sources: Source[] = [];
-  slots.forEach((slot, slotIndex) => {
-    if (slot === null || !slot.skills?.definition) return;
-    // 循環参照を避けるため、発動者自身のバフは乗せない
-    const casterBaseAttack = baseAttackOf(slot);
-    for (const effect of resolvePassives(slot.skills.definition, slot.character, slot.skills.levels)) {
-      sources.push({ slotIndex, casterBaseAttack, effect });
-    }
-  });
-  return sources;
-}
-
-export type SlotBuffs = { buffs: BuffTotals; appliedEffects: AppliedEffect[] };
 
 /** 枠数と重複を検証する。sim と calc で共通 */
 export function validateTeamSlots(slots: readonly (TeamSlotInput | null)[]): void {
@@ -130,24 +145,44 @@ export function validateTeamSlots(slots: readonly (TeamSlotInput | null)[]): voi
   }
 }
 
+/** TeamSlotInput を timeline.ts の入力に落とす（sim と calc で共通） */
+export function toTimelineSlots(slots: readonly (TeamSlotInput | null)[]): TimelineSlot[] {
+  return slots.map((slot) =>
+    slot === null
+      ? null
+      : {
+          character: slot.character,
+          definition: slot.skills?.definition ?? null,
+          levels: slot.skills?.levels ?? MAX_SKILL_LEVELS,
+          // 循環参照を避けるため、発動者自身のバフは乗せない値（バフ前攻撃力）を使う
+          casterBaseAttack: baseAttackOf(slot),
+        },
+  );
+}
+
+export type SlotBuffs = { buffs: BuffTotals; appliedEffects: AppliedEffect[] };
+
 /**
- * 常時発動パッシブを枠間で配り、枠ごとの BuffTotals を作る（純関数。sim と calc で共通）。
- * 自分の self 効果 + 全枠（自分を含む）の allies 効果。空枠は null
+ * 常時発動パッシブを枠間で配り、枠ごとの BuffTotals を作る（Stage 4 の API。持続バフは含まない）。
+ * 中身は skills/timeline.ts の resolvePassiveStates に移した。
  */
 export function resolveTeamBuffs(slots: readonly (TeamSlotInput | null)[]): (SlotBuffs | null)[] {
-  const sources = collectPassiveSources(slots);
-  return slots.map((slot, index) => {
-    if (slot === null) return null;
-    let buffs: BuffTotals = { ...ZERO_BUFFS };
-    const appliedEffects: AppliedEffect[] = [];
-    for (const { slotIndex, casterBaseAttack, effect } of sources) {
-      if (!isEffectTarget(effect.target, slotIndex, index)) continue;
-      const applied = applyResolvedEffect(buffs, effect, casterBaseAttack);
-      buffs = applied.totals;
-      appliedEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount: applied.appliedAmount });
-    }
-    return { buffs, appliedEffects };
-  });
+  return resolvePassiveStates(toTimelineSlots(slots)).map((state) =>
+    state === null ? null : { buffs: state.buffs, appliedEffects: state.passiveEffects },
+  );
+}
+
+/** 固定サイクルの時刻表（sim と calc で共通）。burst が false なら null */
+export function planTeamSchedule(
+  slots: readonly (TeamSlotInput | null)[],
+  frames: number,
+  burst: boolean | undefined,
+): FixedCycleSchedule | null {
+  if (!burst) return null;
+  return planFixedCycle(
+    slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep })),
+    frames,
+  );
 }
 
 function skillSupportOf(slot: TeamSlotInput): Record<SkillSlot, SkillSupport> | null {
@@ -158,68 +193,125 @@ function skillSupportOf(slot: TeamSlotInput): Record<SkillSlot, SkillSupport> | 
   return support;
 }
 
+/**
+ * 発動フレーム f のバーストヒットが見るバフ状態。
+ * BURST_HIT_USES_PRE_ACTIVATION_BUFFS が true なら「f を終端に持つ区間」（= その発動で付くバフは乗らない）。
+ */
+export function burstSnapshotState(
+  timeline: BuffTimeline,
+  frame: number,
+  slotIndex: number,
+  preActivation: boolean,
+): SlotBuffState {
+  const index = preActivation ? segmentIndexAt(timeline, frame - 1) : segmentIndexAt(timeline, frame);
+  if (index < 0) return EMPTY_BUFF_STATE;
+  return timeline.segments[index]!.slots[slotIndex] ?? EMPTY_BUFF_STATE;
+}
+
+/**
+ * バーストヒットに「発動直前」のバフを使うか。false なら発動フレームの区間（その発動で付くバフ込み）を使う。
+ * **2026-09-22 の射撃場実測で true と確定**（plan/verification.md Stage 6 節、録画 18）:
+ * ラピのバーストは自分に攻撃力 +60.75%（10 秒）を付けるが、そのバーストのダメージは 208,131 × 3 = 624,393 で
+ * 素の攻撃力基準だった（バフ込みなら 1 発 334,704 になるはず）。
+ */
+export const BURST_HIT_USES_PRE_ACTIVATION_BUFFS = true;
+
 export function computeTeamDamage(input: TeamInput): TeamResult {
   const { slots, enemy, durationSeconds, model } = input;
   validateTeamSlots(slots);
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const schedule = input.burst
-    ? planFixedCycle(
-        slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep })),
-        durationToFrames(durationSeconds),
-      )
-    : null;
-  const fullBurstSeconds = schedule === null ? 0 : schedule.fullBurstFramesTotal / FPS;
-  const normalSeconds = Math.max(0, durationSeconds - fullBurstSeconds);
-  const activationSeconds = schedule === null ? [] : schedule.activationFrames.map((f) => f / FPS);
-  const teamBuffs = resolveTeamBuffs(slots);
+  const frames = durationToFrames(durationSeconds);
+  const schedule = planTeamSchedule(slots, frames, input.burst);
+  const timelineSlots = toTimelineSlots(slots);
+  const timeline = planBuffTimeline(timelineSlots, schedule, frames);
 
   const computed = slots.map((slot, index) => {
     if (slot === null) return null;
-    const { buffs, appliedEffects } = teamBuffs[index]!;
     const base = {
       character: slot.character,
       growth: slot.growth,
       enemy,
       model,
       attackOverride: slot.attackOverride,
-      buffs,
     };
-    const normalCondition: ConditionInput = { ...slot.condition, fullBurst: false, durationSeconds: normalSeconds };
-    const result = computeDamage({ ...base, condition: normalCondition });
-    const fullBurstResult =
-      schedule === null
-        ? null
-        : computeDamage({
-            ...base,
-            condition: { ...slot.condition, fullBurst: true, durationSeconds: fullBurstSeconds },
-          });
-    const hit = slotBurstHit(
-      slot.skills?.definition,
-      slot.skills?.levels ?? MAX_SKILL_LEVELS,
-      slot.character,
-      enemy,
-      result,
-      buffs,
-    );
+    const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
+
+    const segments: SlotSegmentResult[] = [];
+    let normalDamage = 0;
+    for (const group of groupTimeline(timeline, index)) {
+      const state = group.state;
+      const result = computeDamage({
+        ...base,
+        buffs: state.buffs,
+        condition: { ...slot.condition, fullBurst: group.fullBurst, durationSeconds: group.seconds },
+      });
+      segments.push({
+        ranges: mergeAdjacentRanges(group.segments.map((s) => ({ start: s.start, end: s.end }))),
+        seconds: group.seconds,
+        fullBurst: group.fullBurst,
+        buffs: state.buffs,
+        passiveEffects: state.passiveEffects,
+        timedEffects: state.timedEffects,
+        trigger: result,
+        triggers: result.cadence.triggersPerSecond * group.seconds,
+        damage: result.totalDamage,
+      });
+      normalDamage += result.totalDamage;
+    }
+
+    // バーストスキルは発動ごとに（その時点のバフで）計算する
     const assigned = schedule !== null && Object.values(schedule.assignment).includes(index);
-    const activations = hit !== null && assigned ? activationSeconds : [];
-    const burst: SlotBurstResult = {
-      activations,
-      hit,
-      totalDamage: hit === null ? 0 : activations.length * hit.perActivation,
-    };
-    const totalDamage = result.totalDamage + (fullBurstResult?.totalDamage ?? 0) + burst.totalDamage;
+    const activations: { seconds: number; hit: BurstHitResult }[] = [];
+    let burstDamage = 0;
+    if (assigned) {
+      for (const frame of schedule?.activationFrames ?? []) {
+        const state = burstSnapshotState(timeline, frame, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
+        const trigger = computeTriggerDamage({
+          ...base,
+          buffs: state.buffs,
+          condition: { ...slot.condition, fullBurst: false },
+        });
+        const hit = slotBurstHit(
+          slot.skills?.definition,
+          slot.skills?.levels ?? MAX_SKILL_LEVELS,
+          slot.character,
+          enemy,
+          trigger,
+          state.buffs,
+        );
+        if (hit === null) break;
+        activations.push({ seconds: frame / FPS, hit });
+        burstDamage += hit.perActivation;
+      }
+    }
+    // 代表値（1 発動の内訳）は割当に関係なく出す。UI で「1 発動 X × 0 回」と見せられるようにする
+    const representative =
+      activations[0]?.hit ??
+      slotBurstHit(
+        slot.skills?.definition,
+        slot.skills?.levels ?? MAX_SKILL_LEVELS,
+        slot.character,
+        enemy,
+        computeTriggerDamage({ ...base, buffs: passive.buffs, condition: { ...slot.condition, fullBurst: false } }),
+        passive.buffs,
+      );
+
+    const totalDamage = normalDamage + burstDamage;
     return {
       index,
       character: slot.character,
-      result,
-      fullBurstResult,
-      burst,
+      baseAttack: baseAttackOf(slot),
+      cadence: computeCadence(slot.character.shot, model),
+      notes: modelNotes(slot.character.shot),
+      passiveBuffs: passive.buffs,
+      passiveEffects: passive.passiveEffects,
+      windows: timeline.windows.filter((w) => w.slotIndex === index),
+      segments,
+      normalDamage,
+      burst: { activations, hit: representative, totalDamage: burstDamage },
       totalDamage,
       dps: durationSeconds > 0 ? totalDamage / durationSeconds : 0,
-      buffs,
-      appliedEffects,
       skillSupport: skillSupportOf(slot),
     };
   });
@@ -243,5 +335,6 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
     totalDps,
     totalDamage,
     schedule,
+    timeline,
   };
 }

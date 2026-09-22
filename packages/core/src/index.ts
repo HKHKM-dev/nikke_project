@@ -14,6 +14,7 @@ export * from './skills/buffs.ts';
 export * from './skills/resolve.ts';
 export * from './skills/targets.ts';
 export * from './skills/burstDamage.ts';
+export * from './skills/timeline.ts';
 export * from './burst/fixedCycle.ts';
 export * from './sim/shooter.ts';
 export * from './sim/engine.ts';

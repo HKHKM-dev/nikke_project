@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
 import { resolveBurstDamage } from '../burstDamage.ts';
-import { MAX_SKILL_LEVELS, resolvePassives, skillValue } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
 import { parseSkillDefinition, parseSkillIndex, SKILL_SLOTS } from '../types.ts';
 
@@ -38,7 +38,7 @@ describe('data/skills', () => {
       expect(def.checkedAt <= new Date().toISOString().slice(0, 10)).toBe(true);
     });
 
-    it('references values that exist for every level (passives ≤ 100%, burst damage ≥ 100%)', () => {
+    it('references values that exist for every level (buffs ≤ 100%, burst damage ≥ 100%)', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
           const entry = character.skills[slot].values[effect.ref - 1];
@@ -46,9 +46,23 @@ describe('data/skills', () => {
           for (let lv = 1; lv <= SKILL_LEVEL_MAX; lv++) {
             const v = skillValue(character.skills[slot], effect.ref, lv);
             expect(v).toBeGreaterThan(0);
-            if (effect.kind === 'passive') expect(v).toBeLessThanOrEqual(100);
-            else expect(v).toBeGreaterThanOrEqual(100);
+            if (effect.kind === 'burstDamage') expect(v).toBeGreaterThanOrEqual(100);
+            else expect(v).toBeLessThanOrEqual(100);
           }
+        }
+      }
+    });
+
+    it('timed effects reference a positive duration that does not change with the skill level', () => {
+      for (const slot of SKILL_SLOTS) {
+        for (const effect of def.skills[slot].effects) {
+          if (effect.kind !== 'timed' || effect.durationRef === undefined) continue;
+          const seconds = Array.from({ length: SKILL_LEVEL_MAX }, (_, i) =>
+            skillValue(character.skills[slot], effect.durationRef!, i + 1),
+          );
+          expect(seconds[0], `${slot} durationRef ${effect.durationRef}`).toBeGreaterThan(0);
+          // NIKKE の維持時間は Lv に依らないはず。崩れたらここで気づきたい
+          expect(new Set(seconds).size, `${slot} durationRef ${effect.durationRef}`).toBe(1);
         }
       }
     });
@@ -58,9 +72,15 @@ describe('data/skills', () => {
       const lv1 = resolvePassives(def, character, { skill1: 1, skill2: 1, burst: 1 });
       const burst10 = resolveBurstDamage(def, character, MAX_SKILL_LEVELS);
       const burst1 = resolveBurstDamage(def, character, { skill1: 1, skill2: 1, burst: 1 });
-      expect(lv10.length + burst10.length).toBeGreaterThan(0);
+      const timed10 = resolveTimed(def, character, MAX_SKILL_LEVELS);
+      const timed1 = resolveTimed(def, character, { skill1: 1, skill2: 1, burst: 1 });
+      expect(lv10.length + burst10.length + timed10.length).toBeGreaterThan(0);
       lv10.forEach((e, i) => expect(e.value).toBeGreaterThanOrEqual(lv1[i]!.value));
       burst10.forEach((e, i) => expect(e.multiplier).toBeGreaterThanOrEqual(burst1[i]!.multiplier));
+      timed10.forEach((e, i) => {
+        expect(e.value).toBeGreaterThanOrEqual(timed1[i]!.value);
+        expect(e.durationFrames).toBe(timed1[i]!.durationFrames);
+      });
     });
 
     it('explains what is not modeled', () => {

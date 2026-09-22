@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
-import { runSimulation } from '../src/sim/engine.ts';
+import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../src/skills/resolve.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
 import { computeTeamDamage, TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
@@ -94,9 +94,10 @@ const rows = slots.map((slot, i) => {
     name: slot.character.name.ja,
     weapon: slot.character.weaponType,
     burst: slot.character.burstStep,
-    attack: fmt(c.result.attack),
-    'sim normal (nonFB/FB triggers)': `${fmt(s.normal.nonFullBurst.damage)} (${s.normal.nonFullBurst.triggers}/${s.normal.fullBurst.triggers})`,
-    'calc normal (nonFB+FB)': fmt(c.result.totalDamage + (c.fullBurstResult?.totalDamage ?? 0)),
+    attack: fmt(c.segments[0]?.trigger.attack ?? c.baseAttack),
+    'sim normal (nonFB/FB triggers)': `${fmt(simIntervalTotals(s).nonFullBurst.damage)} (${simIntervalTotals(s).nonFullBurst.triggers}/${simIntervalTotals(s).fullBurst.triggers})`,
+    'calc normal': fmt(c.normalDamage),
+    segments: c.segments.length,
     'burst skill (sim=calc)': `${fmt(s.burst.damage)} (${s.burst.activations.length}× ${fmt(s.burst.hit?.perActivation ?? 0)})`,
     'sim total': fmt(s.totalDamage),
     'calc total': fmt(c.totalDamage),
@@ -107,3 +108,26 @@ console.table(rows);
 console.log(
   `TOTAL sim ${fmt(sim.totalDamage)}  calc ${fmt(calc.totalDamage)}  diff ${pct((sim.totalDamage - calc.totalDamage) / (calc.totalDamage || 1))}`,
 );
+
+// Stage 6: バフ状態ごとの区間表（枠ごと）。sim はフレームで数えた実トリガー数、calc はレート × 秒数
+for (const [i, slot] of slots.entries()) {
+  const c = calc.slots[i];
+  if (!c) continue;
+  const simGroups = simGroupTotals(sim, i);
+  console.log(`
+[slot ${i + 1}] ${slot.character.name.ja} — segments`);
+  console.table(
+    c.segments.map((g, j) => ({
+      ranges: g.ranges.map((r) => `${(r.start / FPS).toFixed(1)}-${(r.end / FPS).toFixed(1)}s`).join(' '),
+      sec: g.seconds.toFixed(1),
+      FB: g.fullBurst ? 'yes' : '',
+      attack: fmt(g.trigger.attack),
+      boost: g.trigger.boost.total.toFixed(3),
+      atkDmg: g.trigger.attackDamageMultiplier.toFixed(4),
+      perTrigger: fmt(g.trigger.perTrigger),
+      'triggers sim/calc': `${simGroups[j]?.triggers ?? 0} / ${g.triggers.toFixed(1)}`,
+      'damage sim/calc': `${fmt(simGroups[j]?.damage ?? 0)} / ${fmt(g.damage)}`,
+      timed: g.timedEffects.map((e) => `${e.trigger} ${e.stat}+${(e.value * 100).toFixed(2)}%`).join(', '),
+    })),
+  );
+}

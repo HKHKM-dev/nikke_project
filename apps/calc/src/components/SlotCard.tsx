@@ -8,12 +8,13 @@ import {
   type CharacterIndexEntry,
   type GrowthInput,
   type NikkeClass,
+  type AppliedTimedEffect,
   type SkillLevels,
   type TeamSlotResult,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber, formatPercent } from '../format.ts';
-import { formatAppliedAmount, formatEffectSource } from '../skillLabels.ts';
+import { formatAppliedAmount, formatEffectSource, formatTimedTrigger } from '../skillLabels.ts';
 import type { SlotState, TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { CharacterPicker } from './CharacterPicker.tsx';
@@ -60,6 +61,35 @@ export function SlotCard({
 }: Props) {
   const limits = character ? growthLimits(character) : null;
   const condition = slot.condition;
+  // 同じ効果の窓をまとめて「10 秒 × 9 回」と見せる（窓は発動ごとに 1 件ある）
+  const timedSummary = (() => {
+    const byKey = new Map<string, { effect: AppliedTimedEffect; count: number }>();
+    for (const w of slotResult?.windows ?? []) {
+      const key = `${w.sourceSlotIndex}:${w.effect.source.skill}:${w.effect.effectIndex}`;
+      const found = byKey.get(key);
+      if (found) {
+        found.count += 1;
+        continue;
+      }
+      byKey.set(key, {
+        effect: { ...w.effect, sourceSlotIndex: w.sourceSlotIndex, appliedAmount: 0 },
+        count: 1,
+      });
+    }
+    // appliedAmount は区間依存なので、代表区間（最初の区間）に出ていればそれを使う
+    for (const entry of byKey.values()) {
+      const applied = slotResult?.segments
+        .flatMap((seg) => seg.timedEffects)
+        .find(
+          (e) =>
+            e.sourceSlotIndex === entry.effect.sourceSlotIndex &&
+            e.source.skill === entry.effect.source.skill &&
+            e.effectIndex === entry.effect.effectIndex,
+        );
+      if (applied) entry.effect = applied;
+    }
+    return [...byKey.values()];
+  })();
 
   const growthField = (key: keyof GrowthInput, name: string, min: number, max: number) => (
     <label className="field">
@@ -165,11 +195,11 @@ export function SlotCard({
           {slotResult && (
             <div className="received">
               <span className="skills-title">受けているバフ</span>
-              {slotResult.appliedEffects.length === 0 ? (
+              {slotResult.passiveEffects.length === 0 && slotResult.windows.length === 0 ? (
                 <p className="hint">なし</p>
               ) : (
                 <ul className="received-list">
-                  {slotResult.appliedEffects.map((e, i) => (
+                  {slotResult.passiveEffects.map((e, i) => (
                     <li key={i}>
                       <span className="amount">{formatAppliedAmount(e)}</span>
                       <small className="sub">
@@ -178,13 +208,24 @@ export function SlotCard({
                       </small>
                     </li>
                   ))}
+                  {timedSummary.map((t, i) => (
+                    <li key={`timed-${i}`}>
+                      <span className="amount">{formatAppliedAmount(t.effect)}</span>
+                      <small className="sub">
+                        {formatTimedTrigger(t.effect.trigger)}{' '}
+                        {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}・
+                        {formatNumber(t.effect.durationFrames / 60, 0)} 秒 × {t.count} 回
+                        {t.effect.assumes ? `・仮定: ${t.effect.assumes.ja}` : ''}
+                      </small>
+                    </li>
+                  ))}
                 </ul>
               )}
             </div>
           )}
-          {slotResult && slotResult.result.notes.length > 0 && (
+          {slotResult && slotResult.notes.length > 0 && (
             <ul className="notes">
-              {slotResult.result.notes.map((note) => (
+              {slotResult.notes.map((note) => (
                 <li key={note.code} className={`note ${note.level}`}>
                   <span className="badge">{note.level === 'unsupported' ? '未対応' : '近似'}</span> {note.message.ja}
                 </li>
@@ -194,9 +235,9 @@ export function SlotCard({
           {slotResult && (
             <dl className="mini">
               <dt>攻撃力（バフ後）</dt>
-              <dd>{formatNumber(slotResult.result.attack)}</dd>
+              <dd>{formatNumber(slotResult.segments[0]?.trigger.attack ?? slotResult.baseAttack)}</dd>
               <dt>通常攻撃</dt>
-              <dd>{formatNumber(slotResult.result.totalDamage + (slotResult.fullBurstResult?.totalDamage ?? 0))}</dd>
+              <dd>{formatNumber(slotResult.normalDamage)}</dd>
               <dt>バーストスキル</dt>
               <dd>
                 {slotResult.burst.hit

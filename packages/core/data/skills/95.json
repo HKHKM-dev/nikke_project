@@ -47,8 +47,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "武器変更（1 発のみ）は未対応。敵の受けるダメージ▲（10 秒間維持）は Stage 6",
-          "en": "Weapon change (one shot) is not modeled. Damage taken up on enemies (10 s) is Stage 6"
+          "ja": "武器変更（1 発のみ）は未対応。敵の受けるダメージ▲（10 秒間維持）も未対応（敵デバフは語彙にない）",
+          "en": "Weapon change (one shot) is not modeled. Damage taken up on enemies (10 s) is not modeled either (no vocabulary for enemy debuffs)"
         }
       ]
     }

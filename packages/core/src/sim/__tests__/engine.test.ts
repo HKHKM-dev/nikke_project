@@ -6,7 +6,7 @@ import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
 import type { SkillDefinition } from '../../skills/types.ts';
 import type { SlotCondition, TeamSlotInput } from '../../team.ts';
 import type { BurstStep, ShotParams, SkillRaw } from '../../types.ts';
-import { runSimulation } from '../engine.ts';
+import { runSimulation, simIntervalTotals } from '../engine.ts';
 
 const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
 const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
@@ -63,11 +63,15 @@ describe('runSimulation without burst', () => {
     expect(sim.slots[1]).toBeNull();
     for (const s of sim.slots) {
       if (s === null) continue;
-      expect(s.normal.fullBurst).toEqual({ triggers: 0, damage: 0 });
-      expect(s.normal.nonFullBurst.triggers).toBe(triggersByCadence(s.character.shot, 10800));
-      expect(s.normal.nonFullBurst.damage).toBeCloseTo(s.normal.nonFullBurst.triggers * s.trigger.normal.perTrigger, 6);
+      const totals = simIntervalTotals(s);
+      expect(totals.fullBurst).toEqual({ triggers: 0, damage: 0 });
+      expect(totals.nonFullBurst.triggers).toBe(triggersByCadence(s.character.shot, 10800));
+      expect(totals.nonFullBurst.damage).toBeCloseTo(
+        totals.nonFullBurst.triggers * s.segments[0]!.trigger.perTrigger,
+        6,
+      );
       expect(s.burst).toEqual({ activations: [], hit: null, damage: 0 });
-      expect(s.totalDamage).toBe(s.normal.nonFullBurst.damage);
+      expect(s.totalDamage).toBeCloseTo(totals.nonFullBurst.damage, 6);
     }
     expect(sim.totalDamage).toBeCloseTo((sim.slots[0]?.totalDamage ?? 0) + (sim.slots[2]?.totalDamage ?? 0), 6);
     expect(sim.events).toEqual([]);
@@ -75,7 +79,7 @@ describe('runSimulation without burst', () => {
 
   it('AR fires 1830 times in 180 s (30 magazines of 355f + 30 shots of the 31st, 10650 + 5 × 29 < 10800)', () => {
     const sim = runSimulation({ slots: [ar], enemy, durationSeconds: 180 });
-    expect(sim.slots[0]?.normal.nonFullBurst.triggers).toBe(30 * 60 + 30);
+    expect(simIntervalTotals(sim.slots[0]!).nonFullBurst.triggers).toBe(30 * 60 + 30);
   });
 });
 
@@ -87,12 +91,15 @@ describe('runSimulation with the fixed burst cycle', () => {
     for (let i = 0; i < 2; i++) {
       const a = off.slots[i]!;
       const b = on.slots[i]!;
-      expect(b.normal.nonFullBurst.triggers + b.normal.fullBurst.triggers).toBe(a.normal.nonFullBurst.triggers);
-      expect(b.normal.fullBurst.damage / b.normal.fullBurst.triggers).toBeCloseTo(
-        (a.trigger.normal.perTrigger * (a.trigger.normal.boost.total + 0.5)) / a.trigger.normal.boost.total,
+      const at = simIntervalTotals(a);
+      const bt = simIntervalTotals(b);
+      const normalTrigger = a.segments[0]!.trigger;
+      expect(bt.nonFullBurst.triggers + bt.fullBurst.triggers).toBe(at.nonFullBurst.triggers);
+      expect(bt.fullBurst.damage / bt.fullBurst.triggers).toBeCloseTo(
+        (normalTrigger.perTrigger * (normalTrigger.boost.total + 0.5)) / normalTrigger.boost.total,
         6,
       );
-      expect(b.trigger.fullBurst.boost.fullBurst).toBe(0.5);
+      expect(b.segments.find((s) => s.fullBurst)?.trigger.boost.fullBurst).toBe(0.5);
       expect(b.totalDamage).toBeGreaterThan(a.totalDamage);
     }
   });
@@ -113,7 +120,7 @@ describe('runSimulation with the fixed burst cycle', () => {
     expect(sim.slots[2]?.burst.damage).toBe(0);
     expect(sim.slots[3]?.burst.activations).toHaveLength(9);
     expect(sim.slots[0]?.burst.hit).toBeNull();
-    expect(b.totalDamage).toBeCloseTo(b.normal.nonFullBurst.damage + b.normal.fullBurst.damage + b.burst.damage, 6);
+    expect(b.totalDamage).toBeCloseTo(b.normalDamage + b.burst.damage, 6);
   });
 
   it('records events in order when tracing: full burst starts at 600 and bursts fire I → II → III before triggers', () => {

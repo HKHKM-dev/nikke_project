@@ -1,4 +1,5 @@
 // Stage 4: スキル定義（DSL）の型と検証。段階 A は常時発動パッシブ、Stage 5 でバーストスロットの倍率ダメージ（burstDamage）を足した。
+// Stage 6（段階 B）でトリガー付きの持続バフ（timed）を足した。新しい BuffStat は増えず、「いつ付いて、いつ切れるか」だけが増える。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import type { LocalizedText } from '../types.ts';
 
@@ -26,7 +27,7 @@ export type SkillSupport = 'supported' | 'partial' | 'unsupported';
 export const SKILL_SUPPORTS = ['supported', 'partial', 'unsupported'] as const satisfies readonly SkillSupport[];
 
 export type PassiveEffect = {
-  /** 段階 A はこれだけ。段階 B で 'onFullBurst' 等を足す */
+  /** 無条件・常時（段階 A）。トリガー付きの持続バフは 'timed'（段階 B） */
   kind: 'passive';
   target: BuffTarget;
   stat: BuffStat;
@@ -34,6 +35,38 @@ export type PassiveEffect = {
   scaling?: BuffScaling;
   /** description_value_NN の NN（1 始まり）。値は % 表記（"20.1"）。100 で割るのは resolvePassives の責務 */
   ref: number;
+  /** 常に満たすとみなした条件。UI に「仮定」として出す */
+  assumes?: LocalizedText;
+};
+
+/**
+ * Stage 6: 持続バフが付くきっかけ。
+ * battleStart = 戦闘開始時（1 回だけ）、burstUse = 自分がバーストスキルを使った時（割当枠のときだけ）、
+ * fullBurstStart = フルバーストタイムが発動した時、fullBurstEnd = フルバーストタイムが終了した時。
+ * 固定サイクル（Stage 5）では burstUse と fullBurstStart が同じフレームになるが、段階の演出遅延を入れる Stage 7 でずれる。
+ */
+export type BuffTrigger = 'battleStart' | 'burstUse' | 'fullBurstStart' | 'fullBurstEnd';
+export const BUFF_TRIGGERS = [
+  'battleStart',
+  'burstUse',
+  'fullBurstStart',
+  'fullBurstEnd',
+] as const satisfies readonly BuffTrigger[];
+
+/** Stage 6: 「（トリガー）時、（対象）に （stat）X%▲、Y 秒間維持」。同じ効果が持続中に再発火したら上書き延長（窓の和集合） */
+export type TimedEffect = {
+  kind: 'timed';
+  trigger: BuffTrigger;
+  target: BuffTarget;
+  stat: BuffStat;
+  /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す（passive と同じ規則） */
+  scaling?: BuffScaling;
+  /** description_value_NN の NN（1 始まり）。値は % 表記。100 で割るのは resolveTimed の責務 */
+  ref: number;
+  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
+  durationRef?: number;
+  /** 維持秒数の即値（説明文に「維持時間：10秒」と直書きされている場合）。durationRef とちょうど片方 */
+  durationSeconds?: number;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -52,7 +85,7 @@ export type BurstDamageEffect = {
   assumes?: LocalizedText;
 };
 
-export type SkillEffect = PassiveEffect | BurstDamageEffect;
+export type SkillEffect = PassiveEffect | BurstDamageEffect | TimedEffect;
 
 export type SkillEntry = {
   /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
@@ -113,6 +146,33 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   return effect;
 }
 
+function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
+  const trigger = oneOf(BUFF_TRIGGERS, v.trigger, `${path}.trigger`);
+  const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
+  const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
+  if (scaling === 'casterAttack' && stat !== 'attack') {
+    fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
+  }
+  const hasRef = v.durationRef !== undefined;
+  const hasSeconds = v.durationSeconds !== undefined;
+  if (hasRef === hasSeconds) {
+    fail(path, 'exactly one of durationRef and durationSeconds is required');
+  }
+  const effect: TimedEffect = { kind: 'timed', trigger, target, stat, ref: parseRef(v.ref, `${path}.ref`) };
+  if (scaling !== undefined) effect.scaling = scaling;
+  if (hasRef) effect.durationRef = parseRef(v.durationRef, `${path}.durationRef`);
+  if (hasSeconds) {
+    const seconds = v.durationSeconds;
+    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds < 0) {
+      fail(`${path}.durationSeconds`, `expected a non-negative finite number, got ${JSON.stringify(seconds)}`);
+    }
+    effect.durationSeconds = seconds;
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
 function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDamageEffect {
   const damageType = oneOf(BURST_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: BurstDamageEffect = { kind: 'burstDamage', ref: parseRef(v.ref, `${path}.ref`), damageType };
@@ -127,19 +187,20 @@ function parseRef(v: Json, path: string): number {
   return v;
 }
 
-/** passive は skill1 / skill2 にだけ、burstDamage は burst にだけ書ける（バースト使用時のバフは Stage 6 の別 kind） */
+/** passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed はどのスロットにも書ける */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
   if (v.kind === 'passive') {
     if (slot === 'burst')
-      fail(`${path}.kind`, 'passive effects are not allowed in burst (burst-time buffs are Stage 6)');
+      fail(`${path}.kind`, 'passive effects are not allowed in burst (use timed with trigger "burstUse")');
     return parsePassiveEffect(v, path);
   }
   if (v.kind === 'burstDamage') {
     if (slot !== 'burst') fail(`${path}.kind`, `burstDamage is only allowed in burst, found in ${slot}`);
     return parseBurstDamageEffect(v, path);
   }
-  fail(`${path}.kind`, `expected "passive" or "burstDamage", got ${JSON.stringify(v.kind)}`);
+  if (v.kind === 'timed') return parseTimedEffect(v, path);
+  fail(`${path}.kind`, `expected "passive", "burstDamage" or "timed", got ${JSON.stringify(v.kind)}`);
 }
 
 function parseEntry(v: Json, slot: SkillSlot): SkillEntry {
