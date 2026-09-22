@@ -13,9 +13,8 @@ import {
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: 100, element: null, hasCore: true };
 export const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
 export const DEFAULT_SLOT_CONDITION: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
+/** 戦闘時間の規定値。レイド・射撃場ともに 180 秒（スペック固定でも変えない） */
 export const DEFAULT_DURATION_SECONDS = 180;
-/** スペック固定 ON にしたときの戦闘時間（射撃場） */
-export const FIXED_SPEC_DURATION_SECONDS = 90;
 
 export type SlotState = {
   resourceId: number | null;
@@ -83,14 +82,9 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
     case 'setDuration':
       return { ...state, durationSeconds: action.durationSeconds };
     case 'setFixedSpec':
-      // v1 と同じく ON で射撃場の条件に切り替え、OFF では戻さない
+      // ON で敵防御を射撃場の値に切り替える（戦闘時間は変えない）。OFF では戻さない
       return action.fixedSpec
-        ? {
-            ...state,
-            fixedSpec: true,
-            enemy: { ...state.enemy, defence: FIXED_SPEC_ENEMY_DEFENCE },
-            durationSeconds: FIXED_SPEC_DURATION_SECONDS,
-          }
+        ? { ...state, fixedSpec: true, enemy: { ...state.enemy, defence: FIXED_SPEC_ENEMY_DEFENCE } }
         : { ...state, fixedSpec: false };
     case 'replace':
       return action.state;

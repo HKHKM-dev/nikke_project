@@ -126,7 +126,7 @@ export const INITIAL_TEAM_STATE: TeamState;
 reducer の規則:
 
 - `selectCharacter`: 他の枠に同じ `resourceId` があれば **何もしない**（UI 側でも選択肢から除外するので二重防御）。
-- `setFixedSpec(true)`: v1 と同じく敵防御を 100、戦闘時間を 90 に切り替える。OFF にしても戻さない（v1 と同じ）。
+- `setFixedSpec(true)`: 敵防御を 100 に切り替える。戦闘時間は変えない（規定 180 秒のまま。2026-09-22 のユーザー指示で v1 の「90 秒に切り替え」を廃止）。OFF にしても戻さない。
 - 育成値の clamp はキャラデータが必要なので reducer では行わず、派生値の計算時に既存の `clampGrowth` 相当で行う（v1 と同じ方針）。
 
 ### 3.2 データ読み込み（`apps/calc/src/useCharacterCache.ts`）
@@ -183,14 +183,14 @@ header        NIKKE calc v2 — 5 人編成の通常攻撃合算（Stage 3）
   - `attackOverride` が枠ごとに独立して効く。
 - calc `src/team.test.ts`（node 環境、React 不要）
   - `selectCharacter` の重複は無視される。`clearSlot` で `resourceId` が null になり育成値は保持される。
-  - `setFixedSpec(true)` で敵防御 100・戦闘時間 90。
+  - `setFixedSpec(true)` で敵防御 100、戦闘時間は据え置き。
   - `parseTeamState` が不正 JSON・長さ違い・存在しない `resourceId` を初期値に落とす。
 
 ### 4.2 手動確認（ブラウザ、`npm run dev`）
 
 - 5 体を入力し、内訳表の合計が各行の和と一致する（表示桁での一致）。
 - 1 枠を外すと合計がその行の分だけ減る。
-- スペック固定 ON で全枠の攻撃力ラベルが「スペック固定」に変わり、敵防御 100・90 秒になる。
+- スペック固定 ON で全枠の攻撃力ラベルが「スペック固定」に変わり、敵防御 100 になる（戦闘時間は 180 のまま）。
 - 他枠で選択中のニケが選択肢に出ない。
 - リロードしても編成が復元される（永続化を入れた場合）。
 - 幅 375px（スマホ）で横スクロールが出ない。

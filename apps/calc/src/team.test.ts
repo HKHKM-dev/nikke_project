@@ -64,20 +64,20 @@ describe('teamReducer', () => {
     expect(teamReducer(s, { type: 'clearSlot', index: 7 })).toBe(s);
   });
 
-  it('setFixedSpec(true) switches to shooting-range defence and 90 seconds; false only turns it off', () => {
+  it('setFixedSpec(true) switches to shooting-range defence but keeps the duration; false only turns it off', () => {
     let s = teamReducer(initialTeamState(), {
       type: 'setEnemy',
       enemy: { defence: 140, element: 'Wind', hasCore: true },
     });
-    s = teamReducer(s, { type: 'setDuration', durationSeconds: 180 });
+    s = teamReducer(s, { type: 'setDuration', durationSeconds: 120 });
     s = teamReducer(s, { type: 'setFixedSpec', fixedSpec: true });
     expect(s.fixedSpec).toBe(true);
     expect(s.enemy).toEqual({ defence: 100, element: 'Wind', hasCore: true });
-    expect(s.durationSeconds).toBe(90);
+    expect(s.durationSeconds).toBe(120);
     s = teamReducer(s, { type: 'setFixedSpec', fixedSpec: false });
     expect(s.fixedSpec).toBe(false);
     expect(s.enemy.defence).toBe(100);
-    expect(s.durationSeconds).toBe(90);
+    expect(s.durationSeconds).toBe(120);
   });
 
   it('takenResourceIds excludes the slot itself', () => {

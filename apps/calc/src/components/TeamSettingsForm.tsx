@@ -50,7 +50,7 @@ export function TeamSettingsForm({ enemy, durationSeconds, fixedSpec, dispatch }
             value={durationSeconds}
             onChange={(e) => dispatch({ type: 'setDuration', durationSeconds: Number(e.target.value) })}
           />
-          <small>レイドは 180、射撃場は 90</small>
+          <small>規定は 180（レイド・射撃場とも）</small>
         </label>
         <label className="field checkbox">
           <input type="checkbox" checked={enemy.hasCore} onChange={(e) => setEnemy({ hasCore: e.target.checked })} />
@@ -62,7 +62,7 @@ export function TeamSettingsForm({ enemy, durationSeconds, fixedSpec, dispatch }
             checked={fixedSpec}
             onChange={(e) => dispatch({ type: 'setFixedSpec', fixedSpec: e.target.checked })}
           />
-          <span>ユニオン射撃場スペック固定（全枠: Lv400・凸/コア上限・T9 装備・好感度込み、敵防御 100・90 秒）</span>
+          <span>ユニオン射撃場スペック固定（全枠: Lv400・凸/コア上限・T9 装備・好感度込み、敵防御 100）</span>
         </label>
       </div>
     </fieldset>
