@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { baseAttackOf, computeDamage, modelNotes, type DamageInput } from '../damage.ts';
+import {
+  FULL_BURST_BOOST,
+  baseAttackOf,
+  computeDamage,
+  computeTriggerDamage,
+  modelNotes,
+  type DamageInput,
+} from '../damage.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
 import { makeCharacter } from './fixtures.ts';
 
@@ -19,7 +26,7 @@ describe('computeDamage', () => {
     expect(r.attack).toBe(1000);
     expect(r.baseHit).toBe(900);
     expect(r.weaponMultiplier).toBeCloseTo(0.1365, 10);
-    expect(r.boost).toEqual({ core: 1, crit: 0.075, distance: 0.3, total: 2.375 });
+    expect(r.boost).toEqual({ core: 1, crit: 0.075, distance: 0.3, fullBurst: 0, total: 2.375 });
     expect(r.attackDamageMultiplier).toBe(1);
     expect(r.baseAttack).toBe(1000);
     expect(r.buffs).toEqual(ZERO_BUFFS);
@@ -137,6 +144,45 @@ describe('computeDamage', () => {
         input({ condition: { coreHitRate: 1.5, distanceBonus: true, fullCharge: true, durationSeconds: 180 } }),
       ),
     ).toThrow(RangeError);
+  });
+});
+
+// ---- Stage 5: 1 トリガーの式の切り出しとフルバースト補正 ----
+
+describe('computeTriggerDamage', () => {
+  it('is the cadence-independent part of computeDamage', () => {
+    const full = computeDamage(input());
+    const trigger = computeTriggerDamage(input());
+    const { cadence: _c, dps: _d, totalDamage: _t, notes: _n, ...rest } = full;
+    expect(trigger).toEqual(rest);
+  });
+
+  it('adds FULL_BURST_BOOST to the boost group only when fullBurst is true', () => {
+    const base = computeTriggerDamage(input());
+    const fb = computeTriggerDamage(
+      input({
+        condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true, fullBurst: true, durationSeconds: 180 },
+      }),
+    );
+    expect(FULL_BURST_BOOST).toBe(0.5);
+    expect(base.boost.fullBurst).toBe(0);
+    expect(fb.boost.fullBurst).toBe(0.5);
+    expect(fb.boost.total).toBeCloseTo(base.boost.total + 0.5, 12);
+    expect(fb.perTrigger).toBeCloseTo((base.perTrigger * fb.boost.total) / base.boost.total, 8);
+    // 攻撃ダメージ・属性・武器倍率には触らない
+    expect(fb.attackDamageMultiplier).toBe(base.attackDamageMultiplier);
+    expect(fb.elementMultiplier).toBe(base.elementMultiplier);
+    expect(fb.weaponMultiplier).toBe(base.weaponMultiplier);
+  });
+
+  it('computeDamage with fullBurst omitted equals fullBurst: false', () => {
+    const omitted = computeDamage(input());
+    const explicit = computeDamage(
+      input({
+        condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true, fullBurst: false, durationSeconds: 180 },
+      }),
+    );
+    expect(explicit).toEqual(omitted);
   });
 });
 

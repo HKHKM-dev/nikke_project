@@ -5,7 +5,14 @@
   "skills": {
     "skill1": {
       "support": "partial",
-      "effects": [{ "kind": "passive", "target": "self", "stat": "attack", "ref": 1 }],
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1
+        }
+      ],
       "notes": [
         {
           "ja": "10 回攻撃ごとの味方回復、味方戦闘不能時の復活とマターガンマ解除は未対応（静止ボス・被弾なし前提では起きない）",
@@ -17,14 +24,25 @@
       "support": "unsupported",
       "effects": [],
       "notes": [
-        { "ja": "バーストゲージのチャージ速度は未対応", "en": "Burst Gauge filling speed is not modeled" },
-        { "ja": "フルバースト時の攻撃ダメージ・攻撃力・チャージ時間短縮は Stage 6", "en": "Full Burst effects are Stage 6" }
+        {
+          "ja": "バーストゲージのチャージ速度は未対応",
+          "en": "Burst Gauge filling speed is not modeled"
+        },
+        {
+          "ja": "フルバースト時の攻撃ダメージ・攻撃力・チャージ時間短縮は Stage 6",
+          "en": "Full Burst effects are Stage 6"
+        }
       ]
     },
     "burst": {
       "support": "unsupported",
       "effects": [],
-      "notes": [{ "ja": "バーストスキルは Stage 5", "en": "Burst skills are Stage 5" }]
+      "notes": [
+        {
+          "ja": "持続ダメージ（最終攻撃力の 396% × 1 秒間隔 × 10 秒）と自分の持続ダメージ▲は未対応（tick 数が未検証。Stage 6 以降）",
+          "en": "Damage over time (396% every 1 s for 10 s) and own DoT up are not modeled (tick count unverified; Stage 6 or later)"
+        }
+      ]
     }
   }
 }

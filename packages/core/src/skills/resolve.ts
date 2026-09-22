@@ -58,7 +58,7 @@ export type ResolvedEffect = {
   assumes?: LocalizedText;
 };
 
-/** 定義の各 effect を Lv の数値に解決する。support が 'unsupported' のスキルは空 */
+/** 定義の各 passive 効果を Lv の数値に解決する。support が 'unsupported' のスキルは空。burstDamage は resolveBurstDamage が扱う */
 export function resolvePassives(def: SkillDefinition, character: CharacterData, levels: SkillLevels): ResolvedEffect[] {
   if (def.resourceId !== character.resourceId) {
     throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
@@ -69,6 +69,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
     if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     for (const effect of entry.effects) {
+      if (effect.kind !== 'passive') continue;
       const r: ResolvedEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         target: effect.target,

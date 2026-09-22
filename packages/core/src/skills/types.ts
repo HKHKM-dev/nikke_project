@@ -1,4 +1,4 @@
-// Stage 4: スキル定義（DSL）の型と検証。段階 A は常時発動パッシブだけを扱う。
+// Stage 4: スキル定義（DSL）の型と検証。段階 A は常時発動パッシブ、Stage 5 でバーストスロットの倍率ダメージ（burstDamage）を足した。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import type { LocalizedText } from '../types.ts';
 
@@ -38,10 +38,26 @@ export type PassiveEffect = {
   assumes?: LocalizedText;
 };
 
+/** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */
+export type BurstDamageType = 'skill' | 'distributed';
+export const BURST_DAMAGE_TYPES = ['skill', 'distributed'] as const satisfies readonly BurstDamageType[];
+
+/** Stage 5: 「最終攻撃力の X％の（バーストスキル）ダメージ」。burst スロットにだけ書ける */
+export type BurstDamageEffect = {
+  kind: 'burstDamage';
+  /** description_value_NN の NN（1 始まり）。値は % 表記（"351.64"）。100 で割るのは resolveBurstDamage の責務 */
+  ref: number;
+  damageType: BurstDamageType;
+  /** 常に満たすとみなした条件。UI に「仮定」として出す */
+  assumes?: LocalizedText;
+};
+
+export type SkillEffect = PassiveEffect | BurstDamageEffect;
+
 export type SkillEntry = {
-  /** そのスキルの効果のうち段階 A で扱えたもの: すべて / 一部 / ゼロ */
+  /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
   support: SkillSupport;
-  effects: PassiveEffect[];
+  effects: SkillEffect[];
   /** 扱わなかった効果の説明（partial / unsupported のとき） */
   notes?: LocalizedText[];
 };
@@ -84,22 +100,46 @@ function parseLocalizedText(v: Json, path: string): LocalizedText {
   return { ja: v.ja, en: v.en };
 }
 
-function parseEffect(v: Json, path: string): PassiveEffect {
-  if (!isRecord(v)) fail(path, 'expected an object');
-  if (v.kind !== 'passive') fail(`${path}.kind`, `expected "passive", got ${JSON.stringify(v.kind)}`);
+function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffect {
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   if (scaling === 'casterAttack' && stat !== 'attack') {
     fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
   }
-  if (typeof v.ref !== 'number' || !Number.isInteger(v.ref) || v.ref < 1) {
-    fail(`${path}.ref`, `expected a positive integer, got ${JSON.stringify(v.ref)}`);
-  }
-  const effect: PassiveEffect = { kind: 'passive', target, stat, ref: v.ref };
+  const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
   if (scaling !== undefined) effect.scaling = scaling;
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
+}
+
+function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDamageEffect {
+  const damageType = oneOf(BURST_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
+  const effect: BurstDamageEffect = { kind: 'burstDamage', ref: parseRef(v.ref, `${path}.ref`), damageType };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+function parseRef(v: Json, path: string): number {
+  if (typeof v !== 'number' || !Number.isInteger(v) || v < 1) {
+    fail(path, `expected a positive integer, got ${JSON.stringify(v)}`);
+  }
+  return v;
+}
+
+/** passive は skill1 / skill2 にだけ、burstDamage は burst にだけ書ける（バースト使用時のバフは Stage 6 の別 kind） */
+function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
+  if (!isRecord(v)) fail(path, 'expected an object');
+  if (v.kind === 'passive') {
+    if (slot === 'burst')
+      fail(`${path}.kind`, 'passive effects are not allowed in burst (burst-time buffs are Stage 6)');
+    return parsePassiveEffect(v, path);
+  }
+  if (v.kind === 'burstDamage') {
+    if (slot !== 'burst') fail(`${path}.kind`, `burstDamage is only allowed in burst, found in ${slot}`);
+    return parseBurstDamageEffect(v, path);
+  }
+  fail(`${path}.kind`, `expected "passive" or "burstDamage", got ${JSON.stringify(v.kind)}`);
 }
 
 function parseEntry(v: Json, slot: SkillSlot): SkillEntry {
@@ -107,13 +147,11 @@ function parseEntry(v: Json, slot: SkillSlot): SkillEntry {
   if (!isRecord(v)) fail(path, 'expected an object');
   const support = oneOf(SKILL_SUPPORTS, v.support, `${path}.support`);
   if (!Array.isArray(v.effects)) fail(`${path}.effects`, 'expected an array');
-  const effects = v.effects.map((e, i) => parseEffect(e, `${path}.effects[${i}]`));
+  const effects = v.effects.map((e, i) => parseEffect(e, `${path}.effects[${i}]`, slot));
   if (support === 'unsupported' && effects.length > 0)
     fail(`${path}.effects`, 'unsupported skills must have no effects');
   if (support !== 'unsupported' && effects.length === 0)
     fail(`${path}.effects`, `${support} skills need at least one effect`);
-  if (slot === 'burst' && support !== 'unsupported')
-    fail(`${path}.support`, 'burst skills are not modeled in formatVersion 1');
   const entry: SkillEntry = { support, effects };
   if (v.notes !== undefined) {
     if (!Array.isArray(v.notes)) fail(`${path}.notes`, 'expected an array');

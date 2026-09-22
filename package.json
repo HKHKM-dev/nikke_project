@@ -20,7 +20,8 @@
     "preview": "npm run preview -w @nikke/calc",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "sim": "node packages/core/scripts/sim-run.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
