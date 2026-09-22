@@ -173,7 +173,7 @@ export function SlotCard({
                     <li key={i}>
                       <span className="amount">{formatAppliedAmount(e)}</span>
                       <small className="sub">
-                        {formatEffectSource(e, slotNames[e.sourceSlotIndex] ?? e.source.name.ja)}
+                        {formatEffectSource(e, slotNames[e.sourceSlotIndex])}
                         {e.assumes ? `・仮定: ${e.assumes.ja}` : ''}
                       </small>
                     </li>

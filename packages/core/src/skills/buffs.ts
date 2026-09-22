@@ -1,6 +1,7 @@
 // 1 体が受けるバフの合計と、ダメージ式への適用（純関数）。computeDamage はここの関数を呼ぶだけにする。
 import type { CharacterData } from '../types.ts';
-import type { BuffScaling, BuffStat } from './types.ts';
+import type { ResolvedEffect } from './resolve.ts';
+import type { BuffStat } from './types.ts';
 
 /** 1 体が受けるバフの合計。attackFlat 以外はすべて比率の加算（0.2 = +20%） */
 export type BuffTotals = {
@@ -27,14 +28,42 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   chargeDamage: 0,
 });
 
-/** totals に 1 効果分を足した新しいオブジェクトを返す。amount は ratio なら比率、casterAttack なら攻撃力の実数 */
-export function addBuff(totals: BuffTotals, stat: BuffStat, scaling: BuffScaling, amount: number): BuffTotals {
-  if (stat === 'attack') {
-    return scaling === 'casterAttack'
-      ? { ...totals, attackFlat: totals.attackFlat + amount }
-      : { ...totals, attackRatio: totals.attackRatio + amount };
+/** stat に対応する BuffTotals の比率フィールド */
+const RATIO_FIELD: Record<BuffStat, keyof BuffTotals> = {
+  attack: 'attackRatio',
+  critRate: 'critRate',
+  critDamage: 'critDamage',
+  attackDamage: 'attackDamage',
+  chargeDamage: 'chargeDamage',
+};
+
+/** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す */
+export function addRatioBuff(totals: BuffTotals, stat: BuffStat, ratio: number): BuffTotals {
+  const field = RATIO_FIELD[stat];
+  return { ...totals, [field]: totals[field] + ratio };
+}
+
+/** 攻撃力の固定加算（実数）。新しいオブジェクトを返す */
+export function addFlatAttack(totals: BuffTotals, amount: number): BuffTotals {
+  return { ...totals, attackFlat: totals.attackFlat + amount };
+}
+
+export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
+
+/**
+ * 解決済みの効果 1 件を totals に足す。単位の判断（比率か実数か）はここに閉じ込める。
+ * casterAttack は 発動者のバフ前攻撃力 × value を固定加算し、それ以外は value を比率として加算する。
+ */
+export function applyResolvedEffect(
+  totals: BuffTotals,
+  effect: Pick<ResolvedEffect, 'stat' | 'scaling' | 'value'>,
+  casterBaseAttack: number,
+): AppliedBuff {
+  if (effect.scaling === 'casterAttack') {
+    const appliedAmount = casterBaseAttack * effect.value;
+    return { totals: addFlatAttack(totals, appliedAmount), appliedAmount };
   }
-  return { ...totals, [stat]: totals[stat] + amount };
+  return { totals: addRatioBuff(totals, effect.stat, effect.value), appliedAmount: effect.value };
 }
 
 /** base × (1 + attackRatio) + attackFlat */

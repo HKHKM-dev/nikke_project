@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeDamage, modelNotes, type DamageInput } from '../damage.ts';
+import { baseAttackOf, computeDamage, modelNotes, type DamageInput } from '../damage.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
 import { makeCharacter } from './fixtures.ts';
 
@@ -113,6 +113,11 @@ describe('computeDamage', () => {
         }),
       ).chargeMultiplier,
     ).toBe(1);
+  });
+
+  it('baseAttackOf prefers attackOverride over the growth-derived attack', () => {
+    expect(baseAttackOf(input())).toBe(1000);
+    expect(baseAttackOf(input({ attackOverride: 5000 }))).toBe(5000);
   });
 
   it('buffs stack on top of attackOverride', () => {

@@ -1,10 +1,11 @@
 // Stage 3: 5 人編成の合算。Stage 4 で常時発動パッシブ（自分・味方全体）を枠間で配ってから computeDamage に渡すようにした。
 // バースト・時間変化するバフはまだ扱わない。
-import { computeDamage, type ConditionInput, type DamageResult, type EnemyInput } from './damage.ts';
-import { ZERO_BUFFS, addBuff, type BuffTotals } from './skills/buffs.ts';
+import { baseAttackOf, computeDamage, type ConditionInput, type DamageResult, type EnemyInput } from './damage.ts';
+import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from './skills/buffs.ts';
 import { resolvePassives, type ResolvedEffect, type SkillLevels } from './skills/resolve.ts';
+import { isEffectTarget } from './skills/targets.ts';
 import { SKILL_SLOTS, type SkillDefinition, type SkillSlot, type SkillSupport } from './skills/types.ts';
-import { computeStat, type GrowthInput } from './stats.ts';
+import type { GrowthInput } from './stats.ts';
 import type { CharacterData } from './types.ts';
 import type { WeaponModel } from './weapons.ts';
 
@@ -66,7 +67,29 @@ export type TeamResult = {
   totalDamage: number;
 };
 
-type Source = { slotIndex: number; effect: ResolvedEffect };
+type Source = { slotIndex: number; casterBaseAttack: number; effect: ResolvedEffect };
+
+/** 全枠の常時効果を発動元の枠順に集める。発動者基準の固定加算に使うバフ前攻撃力も添える */
+function collectPassiveSources(slots: readonly (TeamSlotInput | null)[]): Source[] {
+  const sources: Source[] = [];
+  slots.forEach((slot, slotIndex) => {
+    if (slot === null || !slot.skills?.definition) return;
+    // 循環参照を避けるため、発動者自身のバフは乗せない
+    const casterBaseAttack = baseAttackOf(slot);
+    for (const effect of resolvePassives(slot.skills.definition, slot.character, slot.skills.levels)) {
+      sources.push({ slotIndex, casterBaseAttack, effect });
+    }
+  });
+  return sources;
+}
+
+function skillSupportOf(slot: TeamSlotInput): Record<SkillSlot, SkillSupport> | null {
+  const definition = slot.skills?.definition;
+  if (!definition) return null;
+  const support = {} as Record<SkillSlot, SkillSupport>;
+  for (const s of SKILL_SLOTS) support[s] = definition.skills[s].support;
+  return support;
+}
 
 export function computeTeamDamage(input: TeamInput): TeamResult {
   const { slots, enemy, durationSeconds, model } = input;
@@ -81,30 +104,17 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
     seen.add(id);
   }
 
-  // 発動者基準の固定加算に使う「バフ前攻撃力」。循環参照を避けるため、発動者自身のバフは乗せない
-  const baseAttacks = slots.map((slot) =>
-    slot === null ? 0 : (slot.attackOverride ?? computeStat(slot.character, 'attack', slot.growth)),
-  );
-
-  // 全枠の常時効果を発動元の枠順に集める
-  const sources: Source[] = [];
-  slots.forEach((slot, slotIndex) => {
-    const definition = slot?.skills?.definition;
-    if (!slot || !definition) return;
-    for (const effect of resolvePassives(definition, slot.character, slot.skills!.levels)) {
-      sources.push({ slotIndex, effect });
-    }
-  });
+  const sources = collectPassiveSources(slots);
 
   const computed = slots.map((slot, index) => {
     if (slot === null) return null;
     let buffs: BuffTotals = { ...ZERO_BUFFS };
     const appliedEffects: AppliedEffect[] = [];
-    for (const { slotIndex, effect } of sources) {
-      if (effect.target === 'self' && slotIndex !== index) continue;
-      const appliedAmount = effect.scaling === 'casterAttack' ? baseAttacks[slotIndex]! * effect.value : effect.value;
-      buffs = addBuff(buffs, effect.stat, effect.scaling, appliedAmount);
-      appliedEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount });
+    for (const { slotIndex, casterBaseAttack, effect } of sources) {
+      if (!isEffectTarget(effect.target, slotIndex, index)) continue;
+      const applied = applyResolvedEffect(buffs, effect, casterBaseAttack);
+      buffs = applied.totals;
+      appliedEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount: applied.appliedAmount });
     }
     const result = computeDamage({
       character: slot.character,
@@ -115,15 +125,7 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
       attackOverride: slot.attackOverride,
       buffs,
     });
-    const definition = slot.skills?.definition ?? null;
-    const skillSupport =
-      definition === null
-        ? null
-        : (Object.fromEntries(SKILL_SLOTS.map((s) => [s, definition.skills[s].support])) as Record<
-            SkillSlot,
-            SkillSupport
-          >);
-    return { index, character: slot.character, result, buffs, appliedEffects, skillSupport };
+    return { index, character: slot.character, result, buffs, appliedEffects, skillSupport: skillSupportOf(slot) };
   });
 
   // 枠 0 から順に加算する（加算順を固定し、個別計算の和と一致させる）

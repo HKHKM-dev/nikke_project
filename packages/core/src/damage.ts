@@ -57,6 +57,11 @@ export type DamageResult = {
   notes: ModelNote[];
 };
 
+/** バフ前の攻撃力。attackOverride（射撃場スペック固定など）があればそれ、無ければ育成値から算出する */
+export function baseAttackOf(input: Pick<DamageInput, 'character' | 'growth' | 'attackOverride'>): number {
+  return input.attackOverride ?? computeStat(input.character, 'attack', input.growth);
+}
+
 export function modelNotes(shot: ShotParams): ModelNote[] {
   const notes: ModelNote[] = [];
   const unsupported = (code: string, ja: string, en: string): void => {
@@ -90,7 +95,7 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
 }
 
 export function computeDamage(input: DamageInput): DamageResult {
-  const { character, growth, enemy, condition } = input;
+  const { character, enemy, condition } = input;
   const model = input.model ?? DEFAULT_WEAPON_MODEL;
   const buffs = input.buffs ?? ZERO_BUFFS;
   const shot = character.shot;
@@ -99,7 +104,7 @@ export function computeDamage(input: DamageInput): DamageResult {
   }
   if (condition.durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const baseAttack = input.attackOverride ?? computeStat(character, 'attack', growth);
+  const baseAttack = baseAttackOf(input);
   const attack = applyAttackBuffs(baseAttack, buffs);
   const baseHit = Math.max(1, attack - enemy.defence);
   const weaponMultiplier = shot.damage / 10000;

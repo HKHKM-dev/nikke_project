@@ -1,6 +1,11 @@
-import { loadSkillDefinition, loadSkillIndex, type SkillDefinition, type TeamSlotSkills } from '@nikke/core';
-import { useEffect, useRef, useState } from 'react';
-import type { SkillLevels } from '@nikke/core';
+import {
+  loadSkillDefinition,
+  loadSkillIndex,
+  type SkillDefinition,
+  type SkillLevels,
+  type TeamSlotSkills,
+} from '@nikke/core';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export type SkillDefinitionCache = {
   /** 定義済み resourceId の一覧。読み込み前は null */
@@ -18,13 +23,19 @@ export type SlotSkillsStatus =
   | { kind: 'error'; message: string }
   | { kind: 'ready'; definition: SkillDefinition };
 
+/** 枠の並びに依存しないキー（重複を除いて昇順）。枠の入れ替えでは変わらない */
+function wantedKeyOf(resourceIds: readonly (number | null)[]): string {
+  return [...new Set(resourceIds.filter((id): id is number => id !== null))].sort((a, b) => a - b).join(',');
+}
+
 /** 定義一覧を 1 回読み、枠が参照している定義済みニケの定義をまとめて読み込んでキャッシュする。 */
 export function useSkillDefinitions(resourceIds: readonly (number | null)[], baseUrl: string): SkillDefinitionCache {
   const [index, setIndex] = useState<ReadonlySet<number> | null>(null);
   const [indexError, setIndexError] = useState<string | null>(null);
   const [definitions, setDefinitions] = useState<ReadonlyMap<number, SkillDefinition>>(() => new Map());
   const [errors, setErrors] = useState<ReadonlyMap<number, string>>(() => new Map());
-  const inflight = useRef(new Set<number>());
+  // 取得を開始した id（完了・失敗も含む）。state ではなく ref に持ち、取得完了で Effect を再実行させない
+  const requested = useRef(new Set<number>());
 
   useEffect(() => {
     loadSkillIndex({ baseUrl })
@@ -32,22 +43,20 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
       .catch((e: unknown) => setIndexError(e instanceof Error ? e.message : String(e)));
   }, [baseUrl]);
 
-  const wantedKey = resourceIds.filter((id): id is number => id !== null).join(',');
+  const wantedKey = useMemo(() => wantedKeyOf(resourceIds), [resourceIds]);
 
   useEffect(() => {
     if (index === null || wantedKey === '') return;
     for (const text of wantedKey.split(',')) {
       const id = Number(text);
-      if (!index.has(id) || definitions.has(id) || errors.has(id) || inflight.current.has(id)) continue;
-      inflight.current.add(id);
-      loadSkillDefinition(id, { baseUrl })
-        .then(
-          (def) => setDefinitions((m) => new Map(m).set(id, def)),
-          (e: unknown) => setErrors((m) => new Map(m).set(id, e instanceof Error ? e.message : String(e))),
-        )
-        .finally(() => inflight.current.delete(id));
+      if (!index.has(id) || requested.current.has(id)) continue;
+      requested.current.add(id);
+      loadSkillDefinition(id, { baseUrl }).then(
+        (def) => setDefinitions((m) => new Map(m).set(id, def)),
+        (e: unknown) => setErrors((m) => new Map(m).set(id, e instanceof Error ? e.message : String(e))),
+      );
     }
-  }, [wantedKey, baseUrl, index, definitions, errors]);
+  }, [wantedKey, baseUrl, index]);
 
   return { index, indexError, definitions, errors };
 }

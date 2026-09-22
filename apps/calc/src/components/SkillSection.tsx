@@ -5,11 +5,60 @@ import {
   renderSkillDescription,
   type CharacterData,
   type SkillLevels,
+  type SkillSlot,
 } from '@nikke/core';
-import type { Dispatch } from 'react';
+import { useState, type Dispatch } from 'react';
 import { SKILL_SLOT_LABEL, SUPPORT_BADGE } from '../skillLabels.ts';
 import { clampSkillLevel, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
+
+type LevelInputProps = {
+  value: number;
+  disabled: boolean;
+  onCommit: (level: number) => void;
+};
+
+/**
+ * スキル Lv の入力欄。入力途中の空欄や範囲外はそのまま表示しておき、
+ * 1..10 の整数になった時点で反映、フォーカスが外れたら clamp して確定する（"10" を打ち直せるように）。
+ */
+function SkillLevelInput({ value, disabled, onCommit }: LevelInputProps) {
+  const [text, setText] = useState(String(value));
+  // 外から値が変わったとき（スペック固定・復元など）は表示を合わせる（レンダー中に前回値と比べて更新する）
+  const [lastValue, setLastValue] = useState(value);
+  if (lastValue !== value) {
+    setLastValue(value);
+    setText(String(value));
+  }
+
+  const commit = (raw: string, clamp: boolean) => {
+    const n = Number(raw);
+    const valid = raw.trim() !== '' && Number.isInteger(n) && n >= SKILL_LEVEL_MIN && n <= SKILL_LEVEL_MAX;
+    if (valid) {
+      if (n !== value) onCommit(n);
+    } else if (clamp) {
+      const level = clampSkillLevel(n);
+      setText(String(level));
+      if (level !== value) onCommit(level);
+    }
+  };
+
+  return (
+    <input
+      type="number"
+      min={SKILL_LEVEL_MIN}
+      max={SKILL_LEVEL_MAX}
+      step={1}
+      value={text}
+      disabled={disabled}
+      onChange={(e) => {
+        setText(e.target.value);
+        commit(e.target.value, false);
+      }}
+      onBlur={(e) => commit(e.target.value, true)}
+    />
+  );
+}
 
 type Props = {
   slotIndex: number;
@@ -31,6 +80,9 @@ export function SkillSection({ slotIndex, character, levels, disabled, status, d
         : status.kind === 'error'
           ? { badge: SUPPORT_BADGE.error, text: `スキル定義を読み込めませんでした: ${status.message}` }
           : null;
+
+  const setLevel = (slot: SkillSlot, level: number) =>
+    dispatch({ type: 'setSkillLevels', index: slotIndex, skillLevels: { ...levels, [slot]: level } });
 
   return (
     <div className="skills">
@@ -57,21 +109,7 @@ export function SkillSection({ slotIndex, character, levels, disabled, status, d
               </summary>
               <label className="field skill-level">
                 <span>Lv</span>
-                <input
-                  type="number"
-                  min={SKILL_LEVEL_MIN}
-                  max={SKILL_LEVEL_MAX}
-                  step={1}
-                  value={levels[slot]}
-                  disabled={disabled}
-                  onChange={(e) =>
-                    dispatch({
-                      type: 'setSkillLevels',
-                      index: slotIndex,
-                      skillLevels: { ...levels, [slot]: clampSkillLevel(Number(e.target.value)) },
-                    })
-                  }
-                />
+                <SkillLevelInput value={levels[slot]} disabled={disabled} onCommit={(level) => setLevel(slot, level)} />
               </label>
               <pre className="skill-desc">{renderSkillDescription(skill, levels[slot], 'ja')}</pre>
               {entry && entry.effects.some((e) => e.assumes) && (

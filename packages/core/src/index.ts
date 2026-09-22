@@ -12,3 +12,4 @@ export * from './team.ts';
 export * from './skills/types.ts';
 export * from './skills/buffs.ts';
 export * from './skills/resolve.ts';
+export * from './skills/targets.ts';

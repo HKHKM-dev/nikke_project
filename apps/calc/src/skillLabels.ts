@@ -36,7 +36,11 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
   return `${stat} +${formatPercent(effect.appliedAmount, 2)}`;
 }
 
-/** 「枠 2 ノワール スキル 1」 */
-export function formatEffectSource(effect: AppliedEffect, characterName: string): string {
-  return `枠 ${effect.sourceSlotIndex + 1} ${characterName} ${SKILL_SLOT_LABEL[effect.source.skill]}`;
+/** 「枠 2 ノワール スキル 1」。ニケ名がまだ無い（読み込み中）ときは「枠 2（読み込み中）スキル 1」 */
+export function formatEffectSource(effect: AppliedEffect, characterName: string | undefined): string {
+  const who =
+    characterName === undefined
+      ? `枠 ${effect.sourceSlotIndex + 1}（読み込み中）`
+      : `枠 ${effect.sourceSlotIndex + 1} ${characterName}`;
+  return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}`;
 }

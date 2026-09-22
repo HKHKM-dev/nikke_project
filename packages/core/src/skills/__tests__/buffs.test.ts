@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { ZERO_BUFFS, addBuff, applyAttackBuffs, applyChargeBuffs, applyCritBuffs, type BuffTotals } from '../buffs.ts';
+import {
+  ZERO_BUFFS,
+  addFlatAttack,
+  addRatioBuff,
+  applyAttackBuffs,
+  applyChargeBuffs,
+  applyCritBuffs,
+  applyResolvedEffect,
+  type BuffTotals,
+} from '../buffs.ts';
 
 const buffs: BuffTotals = {
   attackRatio: 0.2,
@@ -36,11 +45,12 @@ describe('applyChargeBuffs', () => {
   });
 });
 
-describe('addBuff', () => {
-  it('routes attack by scaling and other stats by name, without mutating the input', () => {
-    const a = addBuff(ZERO_BUFFS, 'attack', 'ratio', 0.1);
-    const b = addBuff(a, 'attack', 'casterAttack', 250);
-    const c = addBuff(b, 'critDamage', 'ratio', 0.3);
+describe('addRatioBuff / addFlatAttack', () => {
+  it('route each stat to its field without mutating the input', () => {
+    const a = addRatioBuff(ZERO_BUFFS, 'attack', 0.1);
+    const b = addFlatAttack(a, 250);
+    const c = addRatioBuff(b, 'critDamage', 0.3);
+    const d = addRatioBuff(c, 'chargeDamage', 0.4);
     expect(ZERO_BUFFS).toEqual({
       attackRatio: 0,
       attackFlat: 0,
@@ -49,13 +59,30 @@ describe('addBuff', () => {
       attackDamage: 0,
       chargeDamage: 0,
     });
-    expect(c).toEqual({
+    expect(d).toEqual({
       attackRatio: 0.1,
       attackFlat: 250,
       critRate: 0,
       critDamage: 0.3,
       attackDamage: 0,
-      chargeDamage: 0,
+      chargeDamage: 0.4,
     });
+  });
+});
+
+describe('applyResolvedEffect', () => {
+  it('treats casterAttack as caster attack × value (flat) and everything else as a ratio', () => {
+    const flat = applyResolvedEffect(ZERO_BUFFS, { stat: 'attack', scaling: 'casterAttack', value: 0.1408 }, 119896);
+    expect(flat.appliedAmount).toBeCloseTo(16881.36, 2);
+    expect(flat.totals.attackFlat).toBeCloseTo(16881.36, 2);
+    expect(flat.totals.attackRatio).toBe(0);
+
+    const ratio = applyResolvedEffect(flat.totals, { stat: 'attack', scaling: 'ratio', value: 0.5808 }, 119896);
+    expect(ratio.appliedAmount).toBe(0.5808);
+    expect(ratio.totals.attackRatio).toBe(0.5808);
+    expect(ratio.totals.attackFlat).toBeCloseTo(16881.36, 2);
+
+    const crit = applyResolvedEffect(ZERO_BUFFS, { stat: 'critRate', scaling: 'ratio', value: 0.0816 }, 0);
+    expect(crit.totals.critRate).toBe(0.0816);
   });
 });
