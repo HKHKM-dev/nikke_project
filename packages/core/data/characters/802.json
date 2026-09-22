@@ -50,7 +50,15 @@
     "fireType": "Instant",
     "penetration": 0,
     "maintainFireStance": 0,
-    "uptypeFireTiming": 0
+    "uptypeFireTiming": 0,
+    "targetBurstEnergyPerShot": 58000,
+    "burstEnergyPerShot": 29000,
+    "fullChargeBurstEnergy": 2.5
+  },
+  "burstSkill": {
+    "cooldownSeconds": 20,
+    "nextStep": "Step3",
+    "durationSeconds": 10
   },
   "skills": {
     "skill1": {
