@@ -8,3 +8,4 @@ export * from './load.ts';
 export * from './cadence.ts';
 export * from './damage.ts';
 export * from './fixedSpec.ts';
+export * from './team.ts';

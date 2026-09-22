@@ -1,7 +1,7 @@
 # Stage 3 設計書: calc v2 — 5 人編成の合算
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **承認済み（2026-09-22）**。第 6 節の 4 点はいずれも推奨案で確定。実装はこの文書に従う
+- 状態: **承認済み・実装完了（2026-09-22）**。第 6 節の 4 点はいずれも推奨案で確定。確認結果は [verification.md](verification.md) の Stage 3 節
 - 関連: [design-stage1-2.md](design-stage1-2.md)、[verification.md](verification.md)、[roadmap.md](roadmap.md)
 - 作成日: 2026-09-22
 

@@ -1,22 +1,28 @@
 import {
-  computeDamage,
   computeFixedSpecAttack,
-  FIXED_SPEC_ENEMY_DEFENCE,
+  computeTeamDamage,
   fixedSpecGrowth,
   growthLimits,
-  loadCharacter,
   loadCharacterIndex,
   type CharacterData,
   type CharacterIndexEntry,
-  type ConditionInput,
-  type DamageResult,
-  type EnemyInput,
   type GrowthInput,
+  type TeamResult,
+  type TeamSlotInput,
 } from '@nikke/core';
-import { useEffect, useMemo, useState } from 'react';
-import { CharacterForm } from './components/CharacterForm.tsx';
-import { EnemyForm, SHOOTING_RANGE_ENEMY } from './components/EnemyForm.tsx';
-import { ResultPanel } from './components/ResultPanel.tsx';
+import { useEffect, useMemo, useReducer, useState } from 'react';
+import { SlotCard } from './components/SlotCard.tsx';
+import { TeamBreakdown } from './components/TeamBreakdown.tsx';
+import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
+import {
+  INITIAL_TEAM_STATE,
+  STORAGE_KEY,
+  parseTeamState,
+  serializeTeamState,
+  takenResourceIds,
+  teamReducer,
+} from './team.ts';
+import { useCharacterCache } from './useCharacterCache.ts';
 
 const BASE_URL = import.meta.env.BASE_URL;
 
@@ -30,128 +36,126 @@ function clampGrowth(character: CharacterData, growth: GrowthInput): GrowthInput
   };
 }
 
-type Computed = { ok: true; result: DamageResult } | { ok: false; error: string };
+function readSavedTeam(): string | null {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+type Computed = { ok: true; result: TeamResult } | { ok: false; error: string };
 
 export function App() {
   const [index, setIndex] = useState<CharacterIndexEntry[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [character, setCharacter] = useState<CharacterData | null>(null);
-  const [growth, setGrowth] = useState<GrowthInput>({ level: 200, grade: 3, core: 0 });
-  const [fixedSpec, setFixedSpec] = useState(false);
-  const [enemy, setEnemy] = useState<EnemyInput>(SHOOTING_RANGE_ENEMY);
-  const [condition, setCondition] = useState<ConditionInput>({
-    coreHitRate: 1,
-    distanceBonus: true,
-    fullCharge: true,
-    durationSeconds: 180,
-  });
+  const [team, dispatch] = useReducer(teamReducer, INITIAL_TEAM_STATE);
+  // 保存済みの編成を復元し終えるまでは保存しない（初期値で上書きしないため）
+  const [restored, setRestored] = useState(false);
 
   useEffect(() => {
     loadCharacterIndex({ baseUrl: BASE_URL })
-      .then((i) => setIndex(i.characters))
+      .then((i) => {
+        setIndex(i.characters);
+        const saved = parseTeamState(readSavedTeam(), i.characters);
+        if (saved) dispatch({ type: 'replace', state: saved });
+        setRestored(true);
+      })
       .catch((e: unknown) => setLoadError(String(e)));
   }, []);
 
   useEffect(() => {
-    if (selectedId === null) return;
-    let cancelled = false;
-    loadCharacter(selectedId, { baseUrl: BASE_URL })
-      .then((c) => {
-        if (!cancelled) setCharacter(c);
-      })
-      .catch((e: unknown) => {
-        if (!cancelled) setLoadError(String(e));
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedId]);
+    if (!restored) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, serializeTeamState(team));
+    } catch {
+      // プライベートモード等で保存できないときは黙って諦める
+    }
+  }, [team, restored]);
 
-  // 選択中のキャラと一致するデータだけを使う（切り替え直後の古いデータは読み込み中として扱う）
-  const current = character !== null && character.resourceId === selectedId ? character : null;
-
-  const effectiveGrowth = useMemo(() => {
-    if (!current) return growth;
-    return fixedSpec ? fixedSpecGrowth(current) : clampGrowth(current, growth);
-  }, [current, growth, fixedSpec]);
-  const fixedAttack = useMemo(
-    () => (current && fixedSpec ? computeFixedSpecAttack(current) : null),
-    [current, fixedSpec],
+  const cache = useCharacterCache(
+    team.slots.map((s) => s.resourceId),
+    BASE_URL,
   );
 
-  const handleFixedSpecChange = (on: boolean) => {
-    setFixedSpec(on);
-    if (on) {
-      setEnemy((e) => ({ ...e, defence: FIXED_SPEC_ENEMY_DEFENCE }));
-      setCondition((c) => ({ ...c, durationSeconds: 90 }));
-    }
-  };
+  // 枠ごとの計算入力。データが揃っていない枠は null（合計から除外）
+  const slotInputs = useMemo<(TeamSlotInput | null)[]>(
+    () =>
+      team.slots.map((slot) => {
+        if (slot.resourceId === null) return null;
+        const character = cache.characters.get(slot.resourceId);
+        if (!character) return null;
+        return team.fixedSpec
+          ? {
+              character,
+              growth: fixedSpecGrowth(character),
+              condition: slot.condition,
+              attackOverride: computeFixedSpecAttack(character).attack,
+            }
+          : { character, growth: clampGrowth(character, slot.growth), condition: slot.condition };
+      }),
+    [team.slots, team.fixedSpec, cache.characters],
+  );
 
-  const computed = useMemo<Computed | null>(() => {
-    if (!current) return null;
+  const computed = useMemo<Computed>(() => {
     try {
       return {
         ok: true,
-        result: computeDamage({
-          character: current,
-          growth: effectiveGrowth,
-          enemy,
-          condition,
-          ...(fixedAttack ? { attackOverride: fixedAttack.attack } : {}),
-        }),
+        result: computeTeamDamage({ slots: slotInputs, enemy: team.enemy, durationSeconds: team.durationSeconds }),
       };
     } catch (e) {
       return { ok: false, error: e instanceof Error ? e.message : String(e) };
     }
-  }, [current, effectiveGrowth, enemy, condition, fixedAttack]);
+  }, [slotInputs, team.enemy, team.durationSeconds]);
+
+  const loadingCount = team.slots.filter(
+    (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
+  ).length;
 
   return (
     <main className="app">
       <header>
-        <h1>NIKKE calc v1</h1>
-        <p>通常攻撃のみの静的 DPS（Stage 2）</p>
+        <h1>NIKKE calc v2</h1>
+        <p>5 人編成の通常攻撃合算（Stage 3）</p>
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
       {index && (
-        <div className="layout">
-          <div className="forms">
-            <CharacterForm
-              index={index}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-              character={current}
-              growth={effectiveGrowth}
-              onGrowthChange={setGrowth}
-              fixedSpec={fixedSpec}
-              onFixedSpecChange={handleFixedSpecChange}
-            />
-            <EnemyForm
-              character={current}
-              enemy={enemy}
-              onEnemyChange={setEnemy}
-              condition={condition}
-              onConditionChange={setCondition}
-            />
-          </div>
-          <div className="output">
-            {selectedId !== null && !current && !loadError && <p>キャラデータを読み込み中…</p>}
-            {current && computed?.ok && (
-              <ResultPanel
-                character={current}
-                result={computed.result}
-                attackLabel={
-                  fixedAttack
-                    ? `攻撃力（スペック固定: 好感度 rank${fixedAttack.affectionRank} + 装備）`
-                    : '攻撃力（素）'
-                }
-              />
-            )}
-            {computed && !computed.ok && <p className="error">{computed.error}</p>}
-            {selectedId === null && <p className="hint">左のリストからニケを選んでください。</p>}
-          </div>
-        </div>
+        <>
+          <TeamSettingsForm
+            enemy={team.enemy}
+            durationSeconds={team.durationSeconds}
+            fixedSpec={team.fixedSpec}
+            dispatch={dispatch}
+          />
+          <section className="slots" aria-label="編成">
+            {team.slots.map((slot, i) => {
+              const character = slot.resourceId === null ? undefined : cache.characters.get(slot.resourceId);
+              const input = slotInputs[i] ?? null;
+              return (
+                <SlotCard
+                  key={i}
+                  slotIndex={i}
+                  slot={slot}
+                  index={index}
+                  excludeIds={takenResourceIds(team, i)}
+                  character={character}
+                  loading={slot.resourceId !== null && character === undefined && !cache.errors.has(slot.resourceId)}
+                  error={slot.resourceId === null ? undefined : cache.errors.get(slot.resourceId)}
+                  fixedSpec={team.fixedSpec}
+                  effectiveGrowth={input?.growth ?? slot.growth}
+                  slotResult={computed.ok ? (computed.result.slots[i] ?? null) : null}
+                  dispatch={dispatch}
+                />
+              );
+            })}
+          </section>
+          {computed.ok ? (
+            <TeamBreakdown result={computed.result} loadingCount={loadingCount} fixedSpec={team.fixedSpec} />
+          ) : (
+            <p className="error">{computed.error}</p>
+          )}
+        </>
       )}
     </main>
   );

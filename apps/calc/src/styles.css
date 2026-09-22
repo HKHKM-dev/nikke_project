@@ -13,7 +13,7 @@ body {
   padding: 0 16px;
 }
 .app {
-  max-width: 1100px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 16px 0 48px;
 }
@@ -25,26 +25,14 @@ header p {
   margin: 0 0 16px;
   opacity: 0.75;
 }
-.layout {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: minmax(0, 1fr);
-}
-@media (min-width: 900px) {
-  .layout {
-    grid-template-columns: 420px minmax(0, 1fr);
-  }
-}
-.forms {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+
+/* 共通のパネルとフォーム */
 .panel {
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   border-radius: 8px;
   padding: 12px 16px;
   margin: 0;
+  min-width: 0;
 }
 .panel legend {
   font-weight: 600;
@@ -80,6 +68,98 @@ header p {
   font-size: 0.85rem;
   opacity: 0.8;
 }
+
+/* 編成共通の設定 */
+.settings-grid {
+  display: grid;
+  gap: 0 24px;
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 900px) {
+  .settings-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .settings-grid .field.checkbox {
+    grid-column: 1 / -1;
+  }
+}
+
+/* 枠カード */
+.slots {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 16px 0;
+}
+@media (min-width: 900px) {
+  .slots {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1300px) {
+  .slots {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.slot .field {
+  grid-template-columns: 6.5em minmax(0, 1fr);
+}
+.picker {
+  display: grid;
+  gap: 6px;
+  margin: 4px 0 8px;
+}
+.picker input,
+.picker select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  font: inherit;
+}
+.picker-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+}
+.picker button {
+  font: inherit;
+  padding: 4px 10px;
+}
+.growth-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 8px 0;
+}
+.growth-row .field {
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+}
+.growth-row .field > small {
+  grid-column: 1;
+}
+.mini {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 2px 12px;
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+.mini dt {
+  opacity: 0.8;
+}
+.mini dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.mini dd.total {
+  font-weight: 700;
+}
+
+/* 1 体分の結果（詳細） */
 .result h2 {
   margin: 8px 0 12px;
   font-size: 1.2rem;
@@ -152,6 +232,61 @@ header p {
 .breakdown tr + tr {
   border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
 }
+
+/* 編成の内訳 */
+.table-scroll {
+  overflow-x: auto;
+}
+.team-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.team-table th,
+.team-table td {
+  padding: 6px 8px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.team-table th:nth-child(-n + 2),
+.team-table td:nth-child(-n + 2) {
+  text-align: left;
+}
+.team-table thead th {
+  font-weight: 600;
+  opacity: 0.8;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+}
+.team-table tbody tr + tr {
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+.team-table tfoot th,
+.team-table tfoot td {
+  font-weight: 700;
+  border-top: 2px solid color-mix(in srgb, currentColor 35%, transparent);
+}
+.team-table .grand-total {
+  font-size: 1.1rem;
+}
+.team-table .sub {
+  opacity: 0.65;
+  font-size: 0.8rem;
+}
+.details {
+  margin-top: 16px;
+}
+.slot-detail > summary {
+  cursor: pointer;
+  padding: 6px 0;
+}
+.slot-detail .result {
+  border: none;
+  padding: 0 0 8px 16px;
+}
+.slot-detail .result h2 {
+  font-size: 1rem;
+}
 .scope {
   font-size: 0.8rem;
   opacity: 0.7;
@@ -162,4 +297,7 @@ header p {
 }
 .hint {
   opacity: 0.7;
+}
+.slot .field.checkbox {
+  grid-template-columns: auto minmax(0, 1fr);
 }
