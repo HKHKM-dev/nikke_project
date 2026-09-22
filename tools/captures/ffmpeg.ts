@@ -79,6 +79,25 @@ export function cropFilter(crop: Crop): string {
   return `crop=${crop.w}:${crop.h}:${crop.x}:${crop.y}`;
 }
 
+export type StillOptions = { crop?: Crop; scale?: number; quality?: number };
+
+/**
+ * フレーム番号を指定して静止画を 1 枚書き出す。
+ * -ss（時間指定）ではなく select=eq(n,N) を使う。録画にはフレーム落ちがあり、
+ * 時間とフレーム番号が比例しないため、番号で取らないと解析結果と対応が取れない。
+ */
+export function writeStill(video: string, frame: number, out: string, options: StillOptions = {}): void {
+  // コンマをフィルタ区切りと解釈させないよう、式全体を単引用符で囲む。
+  const filters = [`select='eq(n,${frame})'`];
+  if (options.crop) filters.push(cropFilter(options.crop));
+  if (options.scale) filters.push(`scale=${options.scale}:-1:flags=lanczos`);
+  const args = ['-v', 'error', '-i', video, '-vf', filters.join(','), '-fps_mode', 'vfr', '-frames:v', '1'];
+  if (options.quality !== undefined) args.push('-q:v', String(options.quality));
+  args.push('-y', out);
+  const result = spawnSync('ffmpeg', args, { stdio: 'inherit' });
+  if (result.status !== 0) throw new Error(`ffmpeg failed writing ${out} (frame ${frame} of ${video})`);
+}
+
 /** ffmpeg を起動し、生バイト列を frameBytes 単位で切り出して順に返す。 */
 export async function* rawFrames(args: string[], frameBytes: number): AsyncGenerator<Buffer, void, undefined> {
   const child = spawn('ffmpeg', args, { stdio: ['ignore', 'pipe', 'pipe'] });
