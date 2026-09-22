@@ -2,17 +2,24 @@
 import {
   ELEMENTS,
   FIXED_SPEC_ENEMY_DEFENCE,
+  MAX_SKILL_LEVELS,
+  SKILL_LEVEL_MAX,
+  SKILL_LEVEL_MIN,
+  SKILL_SLOTS,
   TEAM_SIZE,
   type CharacterIndexEntry,
   type Element,
   type EnemyInput,
   type GrowthInput,
+  type SkillLevels,
   type SlotCondition,
 } from '@nikke/core';
 
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: 100, element: null, hasCore: true };
 export const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
 export const DEFAULT_SLOT_CONDITION: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
+/** スキル Lv の既定値。全部 10 */
+export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 /** 戦闘時間の規定値。レイド・射撃場ともに 180 秒（スペック固定でも変えない） */
 export const DEFAULT_DURATION_SECONDS = 180;
 
@@ -20,6 +27,7 @@ export type SlotState = {
   resourceId: number | null;
   growth: GrowthInput;
   condition: SlotCondition;
+  skillLevels: SkillLevels;
 };
 
 export type TeamState = {
@@ -36,13 +44,19 @@ export type TeamAction =
   | { type: 'clearSlot'; index: number }
   | { type: 'setGrowth'; index: number; growth: GrowthInput }
   | { type: 'setSlotCondition'; index: number; condition: SlotCondition }
+  | { type: 'setSkillLevels'; index: number; skillLevels: SkillLevels }
   | { type: 'setEnemy'; enemy: EnemyInput }
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
   | { type: 'replace'; state: TeamState };
 
 export function emptySlot(): SlotState {
-  return { resourceId: null, growth: { ...DEFAULT_GROWTH }, condition: { ...DEFAULT_SLOT_CONDITION } };
+  return {
+    resourceId: null,
+    growth: { ...DEFAULT_GROWTH },
+    condition: { ...DEFAULT_SLOT_CONDITION },
+    skillLevels: { ...DEFAULT_SKILL_LEVELS },
+  };
 }
 
 export function initialTeamState(): TeamState {
@@ -77,6 +91,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return updateSlot(state, action.index, (s) => ({ ...s, growth: action.growth }));
     case 'setSlotCondition':
       return updateSlot(state, action.index, (s) => ({ ...s, condition: action.condition }));
+    case 'setSkillLevels':
+      return updateSlot(state, action.index, (s) => ({ ...s, skillLevels: action.skillLevels }));
     case 'setEnemy':
       return { ...state, enemy: action.enemy };
     case 'setDuration':
@@ -98,6 +114,17 @@ export function takenResourceIds(state: TeamState, index: number): Set<number> {
     if (i !== index && s.resourceId !== null) ids.add(s.resourceId);
   });
   return ids;
+}
+
+/** 計算に渡すスキル Lv。スペック固定は全スキル Lv10 */
+export function effectiveSkillLevels(slot: SlotState, fixedSpec: boolean): SkillLevels {
+  return fixedSpec ? MAX_SKILL_LEVELS : slot.skillLevels;
+}
+
+/** 1..10 の整数に clamp する（入力欄の途中状態を吸収する） */
+export function clampSkillLevel(level: number): number {
+  if (!Number.isFinite(level)) return SKILL_LEVEL_MIN;
+  return Math.min(SKILL_LEVEL_MAX, Math.max(SKILL_LEVEL_MIN, Math.round(level)));
 }
 
 // ---- 永続化 ----
@@ -135,6 +162,19 @@ function parseCondition(v: Json): SlotCondition | null {
   return { coreHitRate: v.coreHitRate, distanceBonus: v.distanceBonus, fullCharge: v.fullCharge };
 }
 
+/** Stage 3 の保存データには無いので、欠落は既定値（全部 10）。あれば 1..10 の整数だけ許す */
+function parseSkillLevels(v: Json): SkillLevels | null {
+  if (v === undefined) return { ...DEFAULT_SKILL_LEVELS };
+  if (!isRecord(v)) return null;
+  const levels = {} as SkillLevels;
+  for (const slot of SKILL_SLOTS) {
+    const level = v[slot];
+    if (!isInt(level, SKILL_LEVEL_MIN) || level > SKILL_LEVEL_MAX) return null;
+    levels[slot] = level;
+  }
+  return levels;
+}
+
 function parseEnemy(v: Json): EnemyInput | null {
   if (!isRecord(v)) return null;
   if (!isFinite_(v.defence) || v.defence < 0) return null;
@@ -170,8 +210,9 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
     }
     const growth = parseGrowth(s.growth);
     const condition = parseCondition(s.condition);
-    if (growth === null || condition === null) return null;
-    slots.push({ resourceId: id, growth, condition });
+    const skillLevels = parseSkillLevels(s.skillLevels);
+    if (growth === null || condition === null || skillLevels === null) return null;
+    slots.push({ resourceId: id, growth, condition, skillLevels });
   }
 
   const enemy = parseEnemy(raw.enemy);

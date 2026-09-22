@@ -1,0 +1,36 @@
+{
+  "formatVersion": 1,
+  "resourceId": 95,
+  "checkedAt": "2026-09-22",
+  "skills": {
+    "skill1": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "カモフラージュ状態（バースト使用時・フルバースト中のフルチャージ時）の防御力無視ダメージは未対応",
+          "en": "True damage while in Camouflage (after Burst Skill / Full Charge during Full Burst) is not modeled"
+        }
+      ]
+    },
+    "skill2": {
+      "support": "partial",
+      "effects": [
+        { "kind": "passive", "target": "allies", "stat": "critRate", "ref": 1 },
+        { "kind": "passive", "target": "allies", "stat": "chargeDamage", "ref": 2 },
+        { "kind": "passive", "target": "self", "stat": "attack", "ref": 5 }
+      ],
+      "notes": [
+        {
+          "ja": "フォーメーションLT 併用時の追加効果（発射体爆発ダメージ・防御力無視ダメージ）は未対応",
+          "en": "Bonus effects while in LT Formation (Projectile Explosion Damage, True Damage) are not modeled"
+        }
+      ]
+    },
+    "burst": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [{ "ja": "バーストスキルは Stage 5", "en": "Burst skills are Stage 5" }]
+    }
+  }
+}

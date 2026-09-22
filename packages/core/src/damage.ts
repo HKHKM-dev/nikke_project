@@ -1,6 +1,7 @@
-// Stage 2: 通常攻撃のみの静的 DPS。スキル・バースト・バフは一切含まない。
+// Stage 2: 通常攻撃のみの静的 DPS。Stage 4 で常時発動パッシブのバフ（buffs）を差し込めるようにした。バースト・時間変化するバフは含まない。
 import { computeCadence, type CadenceResult } from './cadence.ts';
 import { elementMultiplier } from './element.ts';
+import { ZERO_BUFFS, applyAttackBuffs, applyChargeBuffs, applyCritBuffs, type BuffTotals } from './skills/buffs.ts';
 import { computeStat, type GrowthInput } from './stats.ts';
 import type { CharacterData, Element, LocalizedText, ShotParams } from './types.ts';
 import { DEFAULT_WEAPON_MODEL, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
@@ -27,20 +28,26 @@ export type DamageInput = {
   enemy: EnemyInput;
   condition: ConditionInput;
   model?: WeaponModel;
-  /** 戦闘中の攻撃力を直接指定する（射撃場スペック固定など）。指定時は growth からの算出をしない */
+  /** 戦闘中の攻撃力（バフ前）を直接指定する（射撃場スペック固定など）。指定時は growth からの算出をしない */
   attackOverride?: number;
+  /** 常時発動パッシブなどのバフ合計。省略は ZERO_BUFFS */
+  buffs?: BuffTotals;
 };
 
 export type ModelNoteLevel = 'unsupported' | 'approx';
 export type ModelNote = { level: ModelNoteLevel; code: string; message: LocalizedText };
 
 export type DamageResult = {
+  /** バフ前の攻撃力（素、またはスペック固定値） */
+  baseAttack: number;
+  /** バフ後の攻撃力 */
   attack: number;
+  buffs: BuffTotals;
   /** max(1, 攻撃力 − 防御力) */
   baseHit: number;
   weaponMultiplier: number;
   chargeMultiplier: number;
-  boost: { core: number; crit: number; distance: number; total: number };
+  boost: { core: number; crit: number; distance: number; attackDamage: number; total: number };
   elementMultiplier: number;
   /** 1 トリガー（SG は全ペレット）あたりの期待ダメージ */
   perTrigger: number;
@@ -85,23 +92,27 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
 export function computeDamage(input: DamageInput): DamageResult {
   const { character, growth, enemy, condition } = input;
   const model = input.model ?? DEFAULT_WEAPON_MODEL;
+  const buffs = input.buffs ?? ZERO_BUFFS;
   const shot = character.shot;
   if (condition.coreHitRate < 0 || condition.coreHitRate > 1) {
     throw new RangeError(`coreHitRate must be in [0, 1], got ${condition.coreHitRate}`);
   }
   if (condition.durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const attack = input.attackOverride ?? computeStat(character, 'attack', growth);
+  const baseAttack = input.attackOverride ?? computeStat(character, 'attack', growth);
+  const attack = applyAttackBuffs(baseAttack, buffs);
   const baseHit = Math.max(1, attack - enemy.defence);
   const weaponMultiplier = shot.damage / 10000;
   const charge = isChargeWeapon(shot) && condition.fullCharge;
-  const chargeMultiplier = charge ? shot.fullChargeDamage : 1;
+  const chargeMultiplier = applyChargeBuffs(shot.fullChargeDamage, charge, buffs);
 
   const coreRate = enemy.hasCore ? condition.coreHitRate : 0;
   const boostCore = coreRate * (shot.coreDamageRate - 1);
-  const boostCrit = character.crit.rate * (character.crit.damage - 1);
+  const crit = applyCritBuffs(character.crit, buffs);
+  const boostCrit = crit.rate * (crit.damage - 1);
   const boostDistance = condition.distanceBonus && character.bonusRange !== null ? 0.3 : 0;
-  const boostTotal = 1 + boostCore + boostCrit + boostDistance;
+  const boostAttackDamage = buffs.attackDamage;
+  const boostTotal = 1 + boostCore + boostCrit + boostDistance + boostAttackDamage;
 
   const element = elementMultiplier(character.element, enemy.element);
   const perTrigger = baseHit * weaponMultiplier * chargeMultiplier * boostTotal * element;
@@ -110,11 +121,19 @@ export function computeDamage(input: DamageInput): DamageResult {
   const dps = perTrigger * cadence.triggersPerSecond;
 
   return {
+    baseAttack,
     attack,
+    buffs,
     baseHit,
     weaponMultiplier,
     chargeMultiplier,
-    boost: { core: boostCore, crit: boostCrit, distance: boostDistance, total: boostTotal },
+    boost: {
+      core: boostCore,
+      crit: boostCrit,
+      distance: boostDistance,
+      attackDamage: boostAttackDamage,
+      total: boostTotal,
+    },
     elementMultiplier: element,
     perTrigger,
     cadence,

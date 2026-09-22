@@ -1,0 +1,35 @@
+{
+  "formatVersion": 1,
+  "resourceId": 271,
+  "checkedAt": "2026-09-22",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 2,
+          "assumes": { "ja": "自分の HP が 70% 以上", "en": "Own HP is 70% or above" }
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルバースト時の最大装弾数増加と弾丸チャージは Stage 6 以降（装弾数は段階 C）",
+          "en": "Max Ammunition and reload on Full Burst are Stage 6 or later (ammo is phase C)"
+        }
+      ]
+    },
+    "burst": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [{ "ja": "バーストスキルは Stage 5", "en": "Burst skills are Stage 5" }]
+    }
+  }
+}
