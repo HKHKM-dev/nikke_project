@@ -43,8 +43,12 @@ export function makeCharacter(shot: Partial<ShotParams> = {}, overrides: Partial
       penetration: 0,
       maintainFireStance: 0,
       uptypeFireTiming: 0,
+      targetBurstEnergyPerShot: 4000,
+      burstEnergyPerShot: 2000,
+      fullChargeBurstEnergy: 1,
       ...shot,
     },
+    burstSkill: { cooldownSeconds: 40, nextStep: 'StepFull', durationSeconds: 10 },
     skills: { skill1: skill, skill2: skill, burst: skill },
     ...overrides,
   };

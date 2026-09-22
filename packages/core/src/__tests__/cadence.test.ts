@@ -22,6 +22,9 @@ function shot(overrides: Partial<ShotParams>): ShotParams {
     penetration: 0,
     maintainFireStance: 0,
     uptypeFireTiming: 0,
+    targetBurstEnergyPerShot: 4000,
+    burstEnergyPerShot: 2000,
+    fullChargeBurstEnergy: 1,
     ...overrides,
   };
 }
