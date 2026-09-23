@@ -7,7 +7,15 @@ import { FPS } from '../weapons.ts';
 export type BurstStepKey = 'Step1' | 'Step2' | 'Step3';
 export const BURST_STEP_KEYS = ['Step1', 'Step2', 'Step3'] as const satisfies readonly BurstStepKey[];
 
-export type FullBurstWindow = { start: number; end: number };
+export type FullBurstWindow = {
+  start: number;
+  end: number;
+  /**
+   * Stage 11: このフルバーストを開いたチェーンでバーストを撃った枠（発動順）。「直前にバーストスキルを使用した味方」。
+   * 動的サイクルはゲージ満タン後〜フルバースト開始の発動（途切れたチェーンの発動は含めない）、固定サイクルは割り当ての枠
+   */
+  burstUsers: number[];
+};
 
 export type BurstActivation = {
   frame: number;

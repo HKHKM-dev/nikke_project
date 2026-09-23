@@ -43,14 +43,14 @@ describe('full burst length per unit (burst_duration)', () => {
   it('uses the length of the unit whose activation starts the full burst', () => {
     // III が 300f（イサベル型）。I / II の長さは使わない
     const s = run([unit('Step1', 0, 900), unit('Step2', 0, 900), unit('Step3', 0, 300)], 1000, BURST_GAUGE_MAX);
-    expect(s.fullBurstWindows[0]).toEqual({ start: 60, end: 360 });
+    expect(s.fullBurstWindows[0]).toEqual({ start: 60, end: 360, burstUsers: [0, 1, 2] });
     // 終了後は 0 から溜め直して、次の満タンは 360f
     expect(s.gaugeFullFrames[1]).toBe(360);
   });
 
   it('falls back to timing.fullBurstFrames (600f) when the unit has none', () => {
     const s = run([unit('Step1', 0), unit('Step2', 0), unit('Step3', 0)], 1000, BURST_GAUGE_MAX);
-    expect(s.fullBurstWindows[0]).toEqual({ start: 60, end: 660 });
+    expect(s.fullBurstWindows[0]).toEqual({ start: 60, end: 660, burstUsers: [0, 1, 2] });
   });
 
   it('takes 5 s from イサベル and 15 s from モダニア as III in a real team', () => {

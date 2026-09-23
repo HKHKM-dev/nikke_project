@@ -14,6 +14,10 @@
 // 射撃に効かない効果（攻撃力・会心など）はここでは扱わない。ループの後で planBuffTimeline が確定した射撃の列と時刻表から
 // すべての窓を作り直す（トリガーは同じ TriggerTracker を通るので、射撃に効く効果の窓はここで登録したものと一致する）。
 // 射撃に効く効果も即時効果も無い編成では、射撃の列は planShots、時刻表は planDynamicSchedule と 1 フレームも違わない（1.3 節）。
+//
+// Stage 11（plan/design-stage11.md 3 節）: 対象 burstUsers（「直前にバーストスキルを使用した味方」）は発火ごとに対象が変わるので、
+// 窓を対象の枠ごとに持つ。回復（heal）は手順 3 の最初に当て、射撃の回数起点なら次のフレームに送って healed を立てる
+// （planBuffTimeline 側の skills/heals.ts の planHeals と同じ規則）。
 import { planFixedCycle, durationToFrames } from '../burst/fixedCycle.ts';
 import {
   DEFAULT_BURST_TIMING,
@@ -34,9 +38,16 @@ import {
   type ResolvedInstantEffect,
   type ResolvedTimedEffect,
 } from '../skills/resolve.ts';
-import { isEffectTarget } from '../skills/targets.ts';
+import { healFrameOf } from '../skills/heals.ts';
+import { dependsOnContext, isEffectTarget, type FireContext } from '../skills/targets.ts';
 import { resolvePassiveStates, type TimelineSlot } from '../skills/timeline.ts';
-import { createTriggerTracker, type FrameEvents, type ShotEvent, type TriggerTracker } from '../skills/triggers.ts';
+import {
+  createTriggerTracker,
+  fireContextOf,
+  type FrameEvents,
+  type ShotEvent,
+  type TriggerTracker,
+} from '../skills/triggers.ts';
 import { isFiringStat } from '../skills/types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
@@ -54,8 +65,10 @@ export type FirstPassOptions = {
   timing?: Readonly<BurstTiming>;
 };
 
-/** 射撃に効く timed 効果の窓（効果ごと。対象の枠に配る前） */
+/** 射撃に効く timed 効果の窓（Stage 11 から対象の枠ごと。発火ごとに対象が変わる効果があるため） */
 export type FiringWindow = {
+  /** 効果を受ける枠 */
+  slotIndex: number;
   sourceSlotIndex: number;
   effect: ResolvedTimedEffect;
   start: number;
@@ -68,7 +81,7 @@ export type InstantApplication = {
   sourceSlotIndex: number;
   slotIndex: number;
   effect: ResolvedInstantEffect;
-  /** CT 短縮なら縮めたフレーム数（実際に縮んだ分）、弾丸チャージなら足した弾数（最大で止めた後） */
+  /** CT 短縮なら縮めたフレーム数（実際に縮んだ分）、弾丸チャージなら足した弾数（最大で止めた後）、回復は 0 */
   amount: number;
 };
 
@@ -86,17 +99,16 @@ type FiringSource = {
   sourceSlotIndex: number;
   effect: ResolvedTimedEffect;
   casterBaseAttack: number;
-  /** 対象の枠 */
-  targets: boolean[];
+  /** 対象になりうる枠（burstUsers は発火の文脈を除いた判定。実際に掛かるかは発火ごとに決まる） */
+  canTarget: boolean[];
   fires: TriggerTracker;
-  /** 窓（和集合済み。昇順） */
-  windows: [number, number][];
+  /** 対象の枠ごとの窓（和集合済み。昇順）。上書き延長はその枠が受けた発火どうしでだけ起きる（Stage 11） */
+  windows: [number, number][][];
 };
 
 type InstantSource = {
   sourceSlotIndex: number;
   effect: ResolvedInstantEffect;
-  targets: number[];
   fires: TriggerTracker;
 };
 
@@ -124,49 +136,63 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const passive = resolvePassiveStates(slots);
   const firing: FiringSource[] = [];
   const instant: InstantSource[] = [];
+  /** 発火の文脈 context のとき、効果 e が掛かる枠（Stage 11: burstUsers は発火ごとに変わる） */
+  const targetsAt = (e: Parameters<typeof isEffectTarget>[0], sourceSlotIndex: number, context: FireContext) =>
+    slots.flatMap((t, i) =>
+      t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character.weaponType, context) ? [i] : [],
+    );
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
-    const targetsOf = (e: Parameters<typeof isEffectTarget>[0]) =>
-      slots.map((t, i) => t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character.weaponType));
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
       if (!isFiringStat(effect.stat) || effect.durationFrames <= 0) continue;
+      // burstUsers は「チェーンの全員」を文脈にすれば、なりうる枠（武器種の条件だけ）になる
+      const everyone: FireContext = { burstUsers: slots.map((_, i) => i) };
+      const possible = new Set(targetsAt(effect, sourceSlotIndex, dependsOnContext(effect) ? everyone : null));
       firing.push({
         sourceSlotIndex,
         effect,
         casterBaseAttack: slot.casterBaseAttack,
-        targets: targetsOf(effect),
+        canTarget: slots.map((_, i) => possible.has(i)),
         fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
-        windows: [],
+        windows: slots.map(() => []),
       });
     }
     for (const effect of resolveInstant(slot.definition, slot.character, slot.levels)) {
       instant.push({
         sourceSlotIndex,
         effect,
-        targets: targetsOf(effect).flatMap((hit, i) => (hit ? [i] : [])),
         fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
       });
     }
   });
+  // 回復は healed の出来事を作るので先に当てる（heal のトリガーに healed は書けないので順番で閉じる。plan/design-stage11.md 3.3 節）
+  const heals = instant.filter((src) => src.effect.kind === 'heal');
+  const otherInstants = instant.filter((src) => src.effect.kind !== 'heal');
   const trackEvents = firing.length > 0 || instant.length > 0;
 
-  /** 窓を登録する（同じ効果の再発火は和集合 = 上書き延長。planBuffTimeline の unionWindows と同じ） */
-  const register = (src: FiringSource, start: number): void => {
+  /**
+   * 窓を登録する（同じ効果の再発火は和集合 = 上書き延長。planBuffTimeline の unionWindows と同じ）。
+   * Stage 11: 対象の枠ごとに、その枠が対象になった発火だけで和集合にする
+   */
+  const register = (src: FiringSource, start: number, context: FireContext): void => {
     if (start >= frames) return;
     const end = Math.min(start + src.effect.durationFrames, frames);
-    const last = src.windows[src.windows.length - 1];
-    if (last !== undefined && start <= last[1]) {
-      if (end > last[1]) last[1] = end;
-      return;
+    for (const i of targetsAt(src.effect, src.sourceSlotIndex, context)) {
+      const list = src.windows[i]!;
+      const last = list[list.length - 1];
+      if (last !== undefined && start <= last[1]) {
+        if (end > last[1]) last[1] = end;
+        continue;
+      }
+      list.push([start, end]);
     }
-    src.windows.push([start, end]);
   };
   // 戦闘開始時の窓はループの前に登録する（1 発目のマガジンから効く）
-  for (const src of firing) if (src.effect.trigger === 'battleStart' && frames > 0) register(src, 0);
+  for (const src of firing) if (src.effect.trigger === 'battleStart' && frames > 0) register(src, 0, null);
 
   // ---- 射手 ----
   const passiveFiring = passive.map((s) => s?.buffs ?? ZERO_BUFFS);
-  const hasTimedFiring = slots.map((_, i) => firing.some((src) => src.targets[i]));
+  const hasTimedFiring = slots.map((_, i) => firing.some((src) => src.canTarget[i]));
   const baseParams = slots.map((slot, i) =>
     slot === null ? null : firingParams(slot.character.shot, passiveFiring[i]!),
   );
@@ -181,8 +207,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     let buffs: BuffTotals = passiveFiring[i]!;
     let changed = false;
     for (const src of firing) {
-      if (!src.targets[i]) continue;
-      const w = src.windows.find(([s, e]) => s <= f && f < e);
+      if (!src.canTarget[i]) continue;
+      const w = src.windows[i]!.find(([s, e]) => s <= f && f < e);
       if (w === undefined) continue;
       buffs = applyResolvedEffect(buffs, src.effect, src.casterBaseAttack).totals;
       changed = true;
@@ -226,6 +252,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const gaugeFullOf = (): readonly number[] => controller?.gaugeFullFrames ?? [];
 
   const instants: InstantApplication[] = [];
+  /** Stage 11: 次のフレーム以降に起きる回復（射撃の回数起点）。フレーム → 受ける枠 */
+  const pendingHeals = new Map<
+    number,
+    { sourceSlotIndex: number; slotIndex: number; effect: ResolvedInstantEffect }[]
+  >();
+  /** このフレームに回復を受けた枠（FrameEvents.healed）。毎フレーム作らずに使い回す */
+  const healed: boolean[] = slots.map(() => false);
+  let healedDirty = false;
   const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
 
   for (let f = 0; f < frames; f++) {
@@ -256,13 +290,21 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
     const windows = windowsOf();
     let fullBurstStart = false;
+    let fullBurstStartUsers: readonly number[] = [];
     while (nextWindowStart < windows.length && windows[nextWindowStart]!.start <= f) {
-      if (windows[nextWindowStart]!.start === f) fullBurstStart = true;
+      if (windows[nextWindowStart]!.start === f) {
+        fullBurstStart = true;
+        fullBurstStartUsers = windows[nextWindowStart]!.burstUsers;
+      }
       nextWindowStart += 1;
     }
     let fullBurstEnd = false;
+    let fullBurstEndUsers: readonly number[] = [];
     while (nextWindowEnd < windows.length && windows[nextWindowEnd]!.end <= f) {
-      if (windows[nextWindowEnd]!.end === f) fullBurstEnd = true;
+      if (windows[nextWindowEnd]!.end === f) {
+        fullBurstEnd = true;
+        fullBurstEndUsers = windows[nextWindowEnd]!.burstUsers;
+      }
       nextWindowEnd += 1;
     }
     const gaugeFulls = gaugeFullOf();
@@ -271,16 +313,68 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (gaugeFulls[gaugeFullSeen] === f) gaugeFull = true;
       gaugeFullSeen += 1;
     }
-    const ev: FrameEvents = { frame: f, shots: shotEvents, activations: now, fullBurstStart, fullBurstEnd, gaugeFull };
+    // 前のフレームの射撃で起きた回復（射撃の回数起点）はこのフレームの healed になる。
+    // 出来事はこのフレームの判定にしか使わないので、配列は使い回す（立てたフレームの次に戻す）
+    if (healedDirty) {
+      healed.fill(false);
+      healedDirty = false;
+    }
+    const due = pendingHeals.size > 0 ? pendingHeals.get(f) : undefined;
+    for (const h of due ?? []) {
+      healed[h.slotIndex] = true;
+      healedDirty = true;
+      instants.push({
+        frame: f,
+        sourceSlotIndex: h.sourceSlotIndex,
+        slotIndex: h.slotIndex,
+        effect: h.effect,
+        amount: 0,
+      });
+    }
+    if (due !== undefined) pendingHeals.delete(f);
+    const ev: FrameEvents = {
+      frame: f,
+      shots: shotEvents,
+      activations: now,
+      fullBurstStart,
+      fullBurstEnd,
+      gaugeFull,
+      fullBurstStartUsers,
+      fullBurstEndUsers,
+      healed,
+    };
+
+    // 回復を先に当てる。射撃の回数起点は次のフレームに送り（窓の開始と同じ規則）、それ以外はこのフレームの healed に立てる
+    for (const src of heals) {
+      if (!src.fires(ev)) continue;
+      const at = healFrameOf(src.effect, f);
+      for (const target of targetsAt(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev))) {
+        if (at === f) {
+          healed[target] = true;
+          healedDirty = true;
+          instants.push({
+            frame: f,
+            sourceSlotIndex: src.sourceSlotIndex,
+            slotIndex: target,
+            effect: src.effect,
+            amount: 0,
+          });
+        } else if (at < frames) {
+          const list = pendingHeals.get(at) ?? [];
+          list.push({ sourceSlotIndex: src.sourceSlotIndex, slotIndex: target, effect: src.effect });
+          pendingHeals.set(at, list);
+        }
+      }
+    }
 
     for (const src of firing) {
       if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
       if (!src.fires(ev)) continue;
-      register(src, isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
+      register(src, isResolvedShotCount(src.effect.trigger) ? f + 1 : f, fireContextOf(src.effect.trigger, ev));
     }
-    for (const src of instant) {
+    for (const src of otherInstants) {
       if (!src.fires(ev)) continue;
-      for (const target of src.targets) {
+      for (const target of targetsAt(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev))) {
         if (src.effect.kind === 'cooldownReduction') {
           if (controller === null) continue; // 固定サイクル・バーストなしでは CT を見ない
           const before = controller.cooldownReductions.length;
@@ -314,7 +408,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
 
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;
   const firingWindows: FiringWindow[] = firing.flatMap((src) =>
-    src.windows.map(([start, end]) => ({ sourceSlotIndex: src.sourceSlotIndex, effect: src.effect, start, end })),
+    src.windows.flatMap((list, slotIndex) =>
+      list.map(([start, end]) => ({ slotIndex, sourceSlotIndex: src.sourceSlotIndex, effect: src.effect, start, end })),
+    ),
   );
   return { frames, shots: logs, schedule, firingWindows, instants };
 }

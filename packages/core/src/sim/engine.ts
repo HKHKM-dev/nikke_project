@@ -42,7 +42,7 @@ export type SimEvent =
   | { frame: number; kind: 'fullBurstStart' | 'fullBurstEnd' | 'gaugeFull' | 'chainTimeout' }
   | { frame: number; kind: 'buffStart' | 'buffEnd'; slot: number; effect: BuffWindow['effect'] }
   | { frame: number; kind: 'skillHit'; slot: number; effect: SkillHitEvent['effect']; damage: number }
-  | { frame: number; kind: 'cooldownReduction' | 'ammoRefill'; slot: number; source: number; amount: number };
+  | { frame: number; kind: 'cooldownReduction' | 'ammoRefill' | 'heal'; slot: number; source: number; amount: number };
 
 /** 1 区間ぶんの結果。区間は timeline.segments と 1:1 */
 export type SimSlotSegment = {

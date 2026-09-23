@@ -52,8 +52,8 @@ describe('BurstController', () => {
       '1118:Step3:2',
     ]);
     expect(s.fullBurstWindows).toEqual([
-      { start: 259, end: 859 },
-      { start: 1118, end: 1718 },
+      { start: 259, end: 859, burstUsers: [0, 1, 2] },
+      { start: 1118, end: 1718, burstUsers: [0, 1, 2] },
     ]);
     // 3 回目の満タンは 1,718 + 199 = 1,917 で、1,800f の戦闘には入らない
     expect(s.activations.map((a) => a.startsFullBurst)).toEqual([false, false, true, false, false, true]);
@@ -128,7 +128,7 @@ describe('BurstController', () => {
 
   it('clips the last full burst at the end of the battle', () => {
     const s = run([unit('Step1', 0), unit('Step2', 0), unit('Step3', 0)], 500, 5000);
-    expect(s.fullBurstWindows).toEqual([{ start: 259, end: 500 }]);
+    expect(s.fullBurstWindows).toEqual([{ start: 259, end: 500, burstUsers: [0, 1, 2] }]);
     expect(s.fullBurstFramesTotal).toBe(241);
   });
 

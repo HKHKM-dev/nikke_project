@@ -93,7 +93,7 @@ export function SlotCard({
     return [...byKey.values()];
   })();
 
-  // Stage 10: 受けた即時効果（CT 短縮・弾丸チャージ）を効果ごとにまとめる
+  // Stage 10: 受けた即時効果（CT 短縮・弾丸チャージ。Stage 11 で回復も）を効果ごとにまとめる
   const instantSummary = (() => {
     const byKey = new Map<
       string,
@@ -256,7 +256,10 @@ export function SlotCard({
                         {slotNames[x.instant.sourceSlotIndex] ?? ''}・{x.count} 回
                         {x.instant.effect.kind === 'cooldownReduction'
                           ? `（実際に縮んだ計 ${formatNumber(x.total / 60, 2)} 秒）`
-                          : `（計 ${x.total} 発）`}
+                          : x.instant.effect.kind === 'ammoRefill'
+                            ? `（計 ${x.total} 発）`
+                            : ''}
+                        {x.instant.effect.assumes ? `・仮定: ${x.instant.effect.assumes.ja}` : ''}
                       </small>
                     </li>
                   ))}

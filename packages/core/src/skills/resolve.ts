@@ -20,10 +20,15 @@ import {
  * Stage 8: Lv の数値に解決したトリガー。射撃の回数トリガーは every（1 以上の整数）に解決済み。
  * 文字列のトリガーと発動回数のトリガーはそのまま。
  */
-export type ResolvedTrigger =
-  BuffTrigger | { count: ShotCountKind; every: number } | { count: EventCountKind; atLeast: number };
+export type ResolvedTrigger = BuffTrigger | ResolvedShotCountTrigger | { count: EventCountKind; atLeast: number };
 
-export function isResolvedShotCount(t: ResolvedTrigger): t is { count: ShotCountKind; every: number } {
+/**
+ * 射撃の回数トリガー（解決済み）。every は発火の間隔（回）。
+ * Stage 11: stacksRef があれば every = 1 スタックの回数 × スタック数 で、stacks にスタック数を残す（表示用）
+ */
+export type ResolvedShotCountTrigger = { count: ShotCountKind; every: number; stacks?: number };
+
+export function isResolvedShotCount(t: ResolvedTrigger): t is ResolvedShotCountTrigger {
   return typeof t === 'object' && 'every' in t;
 }
 
@@ -31,14 +36,20 @@ export function isResolvedEventCount(t: ResolvedTrigger): t is { count: EventCou
   return typeof t === 'object' && 'atLeast' in t;
 }
 
-/** everyRef を Lv の数値に解決する。回数は整数でなければ RangeError */
+/** everyRef・stacksRef を Lv の数値に解決する。回数・スタック数は整数でなければ RangeError */
 export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: number): ResolvedTrigger {
   if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
   const every = trigger.everyRef === undefined ? (trigger.every ?? 1) : skillValue(skill, trigger.everyRef, level);
   if (!Number.isInteger(every) || every < 1) {
     throw new RangeError(`skill ${skill.id}: count trigger must be a positive integer, got ${every}`);
   }
-  return { count: trigger.count, every };
+  if (trigger.stacksRef === undefined) return { count: trigger.count, every };
+  const stacks = skillValue(skill, trigger.stacksRef, level);
+  if (!Number.isInteger(stacks) || stacks < 1) {
+    throw new RangeError(`skill ${skill.id}: stack count must be a positive integer, got ${stacks}`);
+  }
+  // 数えるだけのスタック（効果なし）なので、N 回 × スタック数 ごとの発火と同じ（plan/design-stage11.md 2.2 節）
+  return { count: trigger.count, every: every * stacks, stacks };
 }
 
 export const SKILL_LEVEL_MIN = 1;
@@ -186,7 +197,10 @@ export function resolveTimed(
   return resolved;
 }
 
-/** Stage 10: 即時効果（CT 短縮・弾丸チャージ）。value は CT 短縮なら秒、弾丸チャージなら比率（0.3988） */
+/**
+ * Stage 10: 即時効果（CT 短縮・弾丸チャージ）。value は CT 短縮なら秒、弾丸チャージなら比率（0.3988）。
+ * Stage 11: 回復（heal）の value は最大 HP に対する比率（0.0523。表示用で計算には使わない）
+ */
 export type ResolvedInstantEffect = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
   kind: InstantKind;
@@ -214,7 +228,7 @@ export function resolveInstant(
     if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
-      if (effect.kind !== 'cooldownReduction' && effect.kind !== 'ammoRefill') return;
+      if (effect.kind !== 'cooldownReduction' && effect.kind !== 'ammoRefill' && effect.kind !== 'heal') return;
       const raw = skillValue(skill, effect.ref, levels[slot]);
       if (raw < 0) throw new RangeError(`skill ${skill.id}: ${effect.kind} must be >= 0, got ${raw}`);
       const r: ResolvedInstantEffect = {
