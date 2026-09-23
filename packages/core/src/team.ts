@@ -273,7 +273,7 @@ export type TeamPlan = {
 
 /**
  * Stage 8: 1 パス目。射撃の列 → 時刻表（常時のゲージ速度込み）→ バフの区間（射撃の回数トリガー込み）→ 倍率ダメージの発動。
- * どれも射撃の列と時刻表だけから決まる（射撃がバフに依存するのは Stage 9）。
+ * どれも射撃の列と時刻表だけから決まる（射撃がバフに依存するのは Stage 10）。
  */
 export function planTeamRun(input: TeamInput): TeamPlan {
   const { slots, enemy, model } = input;

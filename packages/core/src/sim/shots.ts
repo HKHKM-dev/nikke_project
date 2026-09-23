@@ -1,5 +1,5 @@
 // Stage 8: 各枠の射撃の列（純関数）。sim と calc が共有する 1 パス目の土台。
-// Stage 8 の範囲では射撃のタイミングがバフにもバーストにも依存しない（弾数・リロード・チャージ速度のバフは Stage 9）ので、
+// Stage 8 の範囲では射撃のタイミングがバフにもバーストにも依存しない（弾数・リロード・チャージ速度のバフは Stage 10）ので、
 // 射撃の列は編成だけで決まる。ゲージ（burst/dynamic.ts）も、回数トリガー（skills/timeline.ts）も、sim の本体（engine.ts）も
 // この列を読む（plan/design-stage8.md 1 節・3.1 節）。
 import type { CharacterData } from '../types.ts';

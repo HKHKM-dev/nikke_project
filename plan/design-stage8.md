@@ -3,6 +3,7 @@
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
 - 状態: **完了（2026-09-23）。射撃場の撮影（録画 36〜38）で 8.6 節の 5 項目を確認し、仮定を 2 点訂正した（14 節）**。改訂 2 の 11 節の 7 点はいずれも推奨案で承認。実装での差分は 13 節、検証は [verification.md](verification.md) Stage 8 節
 - 関連: [design-stage7.md](design-stage7.md)、[design-stage6.md](design-stage6.md)、[verification.md](verification.md)、[roadmap.md](roadmap.md)
+- 番号の注記（2026-09-23）: 宝物版スキルを Stage 9 に挿入したため（[design-stage9.md](design-stage9.md)）、本書の「Stage 9」（射撃が変わるバフ）は現 Stage 10、「Stage 10」（主力キャラ）は現 Stage 11 を指す
 - 作成日: 2026-09-23（同日改訂）
 
 ## 改訂の経緯（2026-09-23）

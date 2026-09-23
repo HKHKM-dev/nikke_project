@@ -55,8 +55,8 @@
       ],
       "notes": [
         {
-          "ja": "自分の最大装弾数▲（10 秒間維持）は未対応（射撃が変わるバフは Stage 9）",
-          "en": "Max Ammunition up on self (10 s) is not modeled (cadence buffs are Stage 9)"
+          "ja": "自分の最大装弾数▲（10 秒間維持）は未対応（射撃が変わるバフは Stage 10）",
+          "en": "Max Ammunition up on self (10 s) is not modeled (cadence buffs are Stage 10)"
         }
       ]
     }
