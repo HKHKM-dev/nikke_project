@@ -91,13 +91,16 @@ export const SUPPORT_BADGE: Record<SkillSupport | 'undefined' | 'loading' | 'err
   error: { label: '読み込み失敗', className: 'unsupported' },
 };
 
-/** 「攻撃力 +42.2%」「攻撃力 +3,105（発動者基準 14.1%）」「最大装弾数 +5 発」 */
+/** 「攻撃力 +42.2%」「攻撃力 +3,105（発動者基準 14.1%）」「最大装弾数 +5 発」「チャージ時間 −0.175 秒（発動者基準のチャージ速度）」 */
 export function formatAppliedAmount(effect: AppliedEffect): string {
   const stat = BUFF_STAT_LABEL[effect.stat];
   if (effect.scaling === 'casterAttack') {
     return `${stat} +${formatNumber(effect.appliedAmount)}（発動者基準 ${formatPercent(effect.value, 2)}）`;
   }
   if (effect.scaling === 'flat') return `${stat} +${formatNumber(effect.appliedAmount)} 発`;
+  // Stage 11 アリス編: 発動者基準のチャージ速度は秒数でチャージ時間から引く
+  if (effect.scaling === 'casterChargeTime')
+    return `チャージ時間 −${formatNumber(effect.appliedAmount, 3)} 秒（発動者基準のチャージ速度）`;
   return `${stat} +${formatPercent(effect.appliedAmount, 2)}`;
 }
 
@@ -119,14 +122,16 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
     characterName === undefined
       ? `枠 ${effect.sourceSlotIndex + 1}（読み込み中）`
       : `枠 ${effect.sourceSlotIndex + 1} ${characterName}`;
-  // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果。Stage 11: 「直前にバーストを使った味方」
+  // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果。Stage 11: 「直前にバーストを使った味方」「最終攻撃力が最も高い味方 N 機」
   const weapon = effect.targetWeapon ? `${effect.targetWeapon} の` : '';
   const only =
     effect.target === 'burstUsers'
       ? `（直前にバーストを使った${weapon}味方）`
-      : effect.targetWeapon
-        ? `（${weapon}味方）`
-        : '';
+      : effect.target === 'topAttack'
+        ? `（最終攻撃力が最も高い${weapon}味方 ${effect.targetCount ?? 1} 機）`
+        : effect.targetWeapon
+          ? `（${weapon}味方）`
+          : '';
   return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}`;
 }
 

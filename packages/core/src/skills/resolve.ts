@@ -14,6 +14,7 @@ import {
   type ShotCountKind,
   type SkillDefinition,
   type SkillSlot,
+  type TargetCountFields,
 } from './types.ts';
 
 /**
@@ -50,6 +51,16 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   }
   // 数えるだけのスタック（効果なし）なので、N 回 × スタック数 ごとの発火と同じ（plan/design-stage11.md 2.2 節）
   return { count: trigger.count, every: every * stacks, stacks };
+}
+
+/** Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」の N を Lv の数値に解決する。無ければ undefined、整数でなければ RangeError */
+export function resolveTargetCount(effect: TargetCountFields, skill: SkillRaw, level: number): number | undefined {
+  if (effect.targetCount === undefined && effect.targetCountRef === undefined) return undefined;
+  const n = effect.targetCount ?? skillValue(skill, effect.targetCountRef!, level);
+  if (!Number.isInteger(n) || n < 1) {
+    throw new RangeError(`skill ${skill.id}: target count must be a positive integer, got ${n}`);
+  }
+  return n;
 }
 
 export const SKILL_LEVEL_MIN = 1;
@@ -90,9 +101,14 @@ export function skillValue(skill: SkillRaw, ref: number, level: number): number 
   return value;
 }
 
-/** % 表記の値を比率にする。flat（Stage 10。最大装弾数の発数）はそのまま */
-function scaledValue(raw: number, scaling: BuffScaling | undefined): number {
-  return scaling === 'flat' ? raw : raw / 100;
+/**
+ * % 表記の値を比率にする。flat（Stage 10。最大装弾数の発数）はそのまま。
+ * casterChargeTime（Stage 11 アリス編）は 発動者の基礎チャージ時間 × 比率 の秒数にする
+ */
+function scaledValue(raw: number, scaling: BuffScaling | undefined, caster: CharacterData): number {
+  if (scaling === 'flat') return raw;
+  if (scaling === 'casterChargeTime') return (raw / 100) * caster.shot.chargeTime;
+  return raw / 100;
 }
 
 export type ResolvedEffect = {
@@ -100,6 +116,8 @@ export type ResolvedEffect = {
   target: BuffTarget;
   /** Stage 9: 「〈武器〉を所持する味方」。定義に無ければキーごと無い */
   targetWeapon?: WeaponType;
+  /** Stage 11 アリス編: target が topAttack のときの N（解決済み）。それ以外はキーごと無い */
+  targetCount?: number;
   stat: BuffStat;
   /** 省略を 'ratio' に埋めた後の値 */
   scaling: BuffScaling;
@@ -133,7 +151,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
         target: effect.target,
         stat: effect.stat,
         scaling: effect.scaling ?? 'ratio',
-        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling),
+        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character),
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.assumes) r.assumes = effect.assumes;
@@ -184,12 +202,14 @@ export function resolveTimed(
         target: effect.target,
         stat: effect.stat,
         scaling: effect.scaling ?? 'ratio',
-        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling),
+        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character),
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         durationFrames: durationToFrames(seconds),
         effectIndex,
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
+      const count = resolveTargetCount(effect, skill, levels[slot]);
+      if (count !== undefined) r.targetCount = count;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
@@ -207,6 +227,8 @@ export type ResolvedInstantEffect = {
   trigger: ResolvedTrigger;
   target: BuffTarget;
   targetWeapon?: WeaponType;
+  /** Stage 11 アリス編: target が topAttack のときの N */
+  targetCount?: number;
   value: number;
   /** 同じスロットの何番目の効果か（識別用） */
   effectIndex: number;
@@ -240,6 +262,8 @@ export function resolveInstant(
         effectIndex,
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
+      const count = effect.kind === 'heal' ? undefined : resolveTargetCount(effect, skill, levels[slot]);
+      if (count !== undefined) r.targetCount = count;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });

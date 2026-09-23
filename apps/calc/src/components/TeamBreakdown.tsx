@@ -32,6 +32,26 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
   const attackLabel = fixedSpec ? '攻撃力（スペック固定: 好感度 + 装備込み）' : '攻撃力（素）';
   const schedule = result.schedule;
   const byStep = schedule ? slotsByStep(schedule) : null;
+  // Stage 11 アリス編: フルバースト開始時の「最終攻撃力が最も高い味方 N 機」の対象（同じ発火の同じ対象はまとめる）
+  const rankings = result.timeline.rankings;
+  const rankingLabel = (frame: number): string => {
+    const seen = new Set<string>();
+    const parts: string[] = [];
+    for (const r of rankings) {
+      if (r.frame !== frame) continue;
+      const label =
+        r.targets
+          .map((i) => {
+            const s = filled.find((f) => f.index === i);
+            return `${s ? s.character.name.ja : `枠 ${i + 1}`} ${formatNumber(r.finalAttacks[i] ?? 0)}`;
+          })
+          .join(' / ') + (r.tied ? '（同値は枠の順と仮定）' : '');
+      if (seen.has(label)) continue;
+      seen.add(label);
+      parts.push(label);
+    }
+    return parts.length > 0 ? parts.join('、') : '—';
+  };
   const missingSteps = byStep ? BURST_STEP_KEYS.filter((step) => byStep[step].length === 0) : [];
   const summary = result.burstSummary;
 
@@ -75,6 +95,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                     <th>ニケ</th>
                     <th>バーストスキル</th>
                     <th>フルバースト</th>
+                    {rankings.length > 0 && <th>最終攻撃力の上位（対象）</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -95,6 +116,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                             ? `${formatNumber(window.start / 60, 1)}–${formatNumber(window.end / 60, 1)}s（${formatNumber((window.end - window.start) / 60, 1)} 秒）`
                             : '—'}
                         </td>
+                        {rankings.length > 0 && <td>{window ? rankingLabel(window.start) : '—'}</td>}
                       </tr>
                     );
                   })}
@@ -196,7 +218,9 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
         通常攻撃のゲージ蓄積（常時のゲージ速度込み）と各ニケのバースト CT から決まるフルバースト区間（+0.5。長さは III
         のニケごと）と、バーストスキル・スキルの倍率ダメージ（N 回攻撃ごと・バースト使用 N
         回目以降・最後の弾丸など）を足し合わせます。最大装弾数・リロード速度・チャージ速度のバフ、バースト CT
-        短縮、弾丸チャージは射撃とフルバーストの時刻に反映し、射撃が変わるバフの掛かった区間は発数を実数で数えます。対象「直前にバーストスキルを使用した味方」と、回復・「回復効果が適用された時」の発動（回復は定義のあるニケによるものだけ）にも対応します。防御力▼などの敵デバフ・ヒット率・被弾・OL・キューブは含みません。定義のないニケはスキルなしで計算します。SG
+        短縮、弾丸チャージは射撃とフルバーストの時刻に反映し、射撃が変わるバフの掛かった区間は発数を実数で数えます。対象「直前にバーストスキルを使用した味方」「最終攻撃力が最も高い味方
+        N
+        機」（発動の瞬間の順位）と、回復・「回復効果が適用された時」の発動（回復は定義のあるニケによるものだけ）にも対応します。防御力▼などの敵デバフ・ヒット率・被弾・OL・キューブは含みません。定義のないニケはスキルなしで計算します。SG
         は全ペレット命中が前提です。
       </p>
     </section>

@@ -1,0 +1,62 @@
+{
+  "formatVersion": 1,
+  "resourceId": 191,
+  "checkedAt": "2026-09-23",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "stat": "chargeSpeed",
+          "scaling": "casterChargeTime",
+          "ref": 2,
+          "durationRef": 3
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "stat": "chargeDamage",
+          "ref": 4,
+          "durationRef": 5
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "貫通特化は単体の的ではダメージに関係しない。HP 80% 未満の回復は HP を持たないので扱わない",
+          "en": "Pierce does not affect damage on a single target; the heal below 80% HP is not modeled (HP is not tracked)"
+        }
+      ]
+    },
+    "burst": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "chargeSpeed",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4
+        }
+      ]
+    }
+  }
+}

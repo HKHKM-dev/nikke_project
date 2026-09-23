@@ -153,6 +153,26 @@ if (calc.schedule && calc.burstSummary) {
   );
 }
 
+// Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」の発火ごとの順位。同じ発火の同じ対象（S1 の 2 効果など）はまとめる
+if (calc.timeline.rankings.length > 0) {
+  const merged = new Map<string, Record<string, string | number>>();
+  for (const r of calc.timeline.rankings) {
+    const key = `${r.frame}.${r.sourceSlotIndex}.${r.effect.source.skill}.${r.targets.join(',')}`;
+    if (merged.has(key)) continue;
+    merged.set(key, {
+      time: `${(r.frame / FPS).toFixed(2)}s`,
+      frame: r.frame,
+      from: `slot ${r.sourceSlotIndex + 1} ${r.effect.source.skill}`,
+      targets: r.targets
+        .map((i) => `slot ${i + 1} ${slots[i]!.character.name.ja} ${fmt(r.finalAttacks[i]!)}`)
+        .join(' / '),
+      tied: r.tied ? 'yes (slot order)' : '',
+    });
+  }
+  console.log('top final ATK targets (topAttack)');
+  console.table([...merged.values()]);
+}
+
 // Stage 10: 即時効果（CT 短縮・弾丸チャージ）。同じフレーム・同じ枠はまとめる。Stage 11: 回復（heal）も出る
 if (sim.instants.length > 0) {
   const merged = new Map<string, { time: string; kind: string; from: string; to: string; amount: number }>();
