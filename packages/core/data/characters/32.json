@@ -133,5 +133,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 200601,
+    "name": {
+      "ja": "寄せ書き",
+      "en": "Sheet of Paper"
+    },
+    "unlockOrder": ["burst", "skill2", "skill1"],
+    "skills": {
+      "burst": {
+        "id": 1032351,
+        "name": {
+          "ja": "パワーアップ！",
+          "en": "Powering Up!"
+        },
+        "description": {
+          "ja": "■自分を除く<word_group=10025>最終</word_group>攻撃力が最も高い味方{description_value_01}機に（対象が足りない場合、自分も対象となる）\n<color=#00AEFF>「攻撃力{description_value_02}％▲」「{description_value_03}秒間維持」\n「クリティカルダメージ{description_value_04}％▲」「{description_value_05}秒間維持」</color>",
+          "en": "■ Affects {description_value_01} ally unit(s) with the highest <word_group=10025>final</word_group> ATK (except the skill user; including the skill user if there are not enough allies). \n<color=#00AEFF>ATK ▲ {description_value_02}% for {description_value_03} sec. \nCritical Damage ▲ {description_value_04}% for {description_value_05} sec.</color>"
+        },
+        "values": [
+          ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2"],
+          ["23.87", "25.71", "27.55", "29.38", "31.22", "33.06", "34.89", "36.73", "38.57", "40.4"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["33.22", "35.78", "38.34", "40.89", "43.45", "46.01", "48.56", "51.12", "53.67", "56.23"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "skill2": {
+        "id": 2032251,
+        "name": {
+          "ja": "ウェイクアップ！",
+          "en": "Wake Up!"
+        },
+        "description": {
+          "ja": "■フルバーストタイムが発動した時、味方全体に\n<color=#00AEFF>「クリティカルダメージ{description_value_01}％▲」「{description_value_02}秒間維持」</color>\n■フルバーストタイムが発動した時、自分に\n<color=#00AEFF>「クリティカル確率{description_value_03}％▲」「{description_value_04}秒間維持」\n「攻撃ダメージ{description_value_05}％▲」「{description_value_06}秒間維持」</color>\n■フルバーストタイムが発動した時、自分を除く<word_group=10025>最終</word_group>攻撃力が最も高い味方{description_value_07}機に（対象が足りない場合、自分も対象となる）\n<color=#00AEFF>「クリティカル確率{description_value_08}％▲」「{description_value_09}発間維持」</color>",
+          "en": "■ Activates when entering Full Burst. Affects all allies.\n<color=#00AEFF>Critical Damage ▲ {description_value_01}% for {description_value_02} sec.</color>\n■ Activates when entering Full Burst. Affects self.\n<color=#00AEFF>Critical Rate ▲ {description_value_03}% for {description_value_04} sec.\nAttack Damage ▲ {description_value_05}% for {description_value_06} sec.</color>\n■ Activates when entering Full Burst. Affects {description_value_07} ally unit(s) with the highest <word_group=10025>final</word_group> ATK (except the skill user; including the skill user if there are not enough allies). \n<color=#00AEFF>Critical Rate ▲ {description_value_08}% for {description_value_09} round(s).</color>"
+        },
+        "values": [
+          ["19.49", "20.99", "22.49", "23.99", "25.49", "26.99", "28.49", "29.99", "31.49", "32.99"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["17.79", "19.15", "20.52", "21.89", "23.26", "24.63", "26", "27.37", "28.73", "30.1"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["14", "15.08", "16.16", "17.23", "18.31", "19.39", "20.47", "21.54", "22.62", "23.7"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
+          ["50.48", "54.36", "58.24", "62.12", "66.01", "69.89", "73.77", "77.66", "81.54", "85.42"],
+          ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
+          null,
+          null
+        ]
+      },
+      "skill1": {
+        "id": 2032151,
+        "name": {
+          "ja": "ヘルスアップ！",
+          "en": "Health Up!"
+        },
+        "description": {
+          "ja": "■通常攻撃が{description_value_01}回命中した時、味方全体に\n<color=#00AEFF>「命中率{description_value_02}％▲」「{description_value_03}秒間維持」</color>\n■通常攻撃が{description_value_04}回命中した時、サブマシンガンの味方全体に\n<color=#00AEFF>「命中率{description_value_05}％▲」「{description_value_06}秒間維持」</color>\n■通常攻撃が{description_value_07}回命中した時、自分に\n<color=#00AEFF>「攻撃力{description_value_08}％▲」「{description_value_09}秒間維持」</color>",
+          "en": "■ Activates after landing {description_value_01} normal attacks. Affects all allies.\n<color=#00AEFF>Hit Rate ▲ {description_value_02}% for {description_value_03} sec.</color>\n■ Activates after landing {description_value_04} normal attacks. Affects all allies with a Submachine Gun.\n<color=#00AEFF>Hit Rate ▲ {description_value_05}% for {description_value_06} sec.</color>\n■ Activates after landing {description_value_07} normal attacks. Affects self.\n<color=#00AEFF>ATK ▲ {description_value_08}% for {description_value_09} sec.</color>"
+        },
+        "values": [
+          ["30", "30", "30", "30", "30", "30", "30", "30", "30", "30"],
+          ["3.31", "3.55", "3.78", "4.02", "4.26", "4.49", "4.73", "4.97", "5.2", "5.44"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["30", "30", "30", "30", "30", "30", "30", "30", "30", "30"],
+          ["2.09", "2.28", "2.47", "2.66", "2.85", "3.03", "3.22", "3.41", "3.6", "3.79"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["30", "30", "30", "30", "30", "30", "30", "30", "30", "30"],
+          ["29.58", "31.86", "34.13", "36.41", "38.68", "40.96", "43.24", "45.51", "47.79", "50.06"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          null,
+          null
+        ]
+      }
+    }
   }
 }

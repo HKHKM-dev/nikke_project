@@ -133,5 +133,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 202001,
+    "name": {
+      "ja": "シグネットリング",
+      "en": "Signet Ring"
+    },
+    "unlockOrder": ["skill2", "burst", "skill1"],
+    "skills": {
+      "skill2": {
+        "id": 2280251,
+        "name": {
+          "ja": "カポ・ディ・カピ",
+          "en": "Capo dei Capi"
+        },
+        "description": {
+          "ja": "■戦闘開始時、自分に\n<color=#00AEFF>「隠れ身：<word_group=10004>単一攻撃対象から除外</word_group>直接攻撃を受けると解除」\n「{description_value_01}秒間維持」</color>\n■ニケの誰かが戦闘不能時、自分に\n<color=#00AEFF>「狂気：攻撃力{description_value_02}％▲」「{description_value_03}スタック」「{description_value_04}秒間維持」\n「<word_group=10015>バーストゲージのチャージ</word_group>{description_value_05}％」</color>\n■味方の誰かが戦闘不能時、<word_group=10021>優先的に火力型の敵</word_group>{description_value_10}機に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_11}％のダメージ」</color>\n■通常攻撃が{description_value_06}回命中した時、対象が<word_group=10105>ターゲット</word_group>なら自分に\n<color=#00AEFF>「狂気：攻撃力{description_value_07}％▲」「{description_value_08}スタック」「{description_value_09}秒間維持」</color>",
+          "en": "■ Activates at the start of battle. Affects self.\n<color=#00AEFF>Concealment: <word_group=10004>Prevents being targeted by single-target attacks</word_group> for {description_value_01} sec. This effect is removed upon taking a direct hit.</color>\n■ Activates when a Nikke is incapacitated. Affects self.\n<color=#00AEFF>Frenzy: ATK ▲ {description_value_02}%. Stacks up to {description_value_03} times and lasts for {description_value_04} sec.\n<word_group=10015>Fills Burst Gauge</word_group> by {description_value_05}%.</color>\n■ Activates when a Nikke is incapacitated. <word_group=10021>Prioritizes Attacker-type enemies</word_group>. Affects {description_value_10} unit(s).\n<color=#00AEFF>Deals {description_value_11}% of <word_group=10025>final</word_group> ATK as damage.</color>\n■ Activates after landing {description_value_06} normal attacks on the <word_group=10105>stage target</word_group>. Affects self.\n<color=#00AEFF>Frenzy: ATK ▲ {description_value_07}%. Stacks up to {description_value_08} times and lasts for {description_value_09} sec.</color>"
+        },
+        "values": [
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["12.83", "13.92", "15.01", "16.09", "17.18", "18.27", "19.35", "20.44", "21.53", "22.61"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["30", "30", "30", "30", "30", "30", "30", "30", "30", "30"],
+          ["20.54", "22.32", "24.09", "25.87", "27.65", "29.43", "31.2", "32.98", "34.76", "36.54"],
+          ["500", "500", "500", "500", "500", "500", "500", "500", "500", "500"],
+          ["12.83", "13.92", "15.01", "16.09", "17.18", "18.27", "19.35", "20.44", "21.53", "22.61"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["30", "30", "30", "30", "30", "30", "30", "30", "30", "30"],
+          ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
+          ["200", "222.22", "244.44", "266.67", "288.89", "311.11", "333.33", "355.56", "377.78", "400"]
+        ]
+      },
+      "burst": {
+        "id": 1280351,
+        "name": {
+          "ja": "ヴェンデッタ",
+          "en": "Vendetta"
+        },
+        "description": {
+          "ja": "■<word_group=10021>優先的に火力型の敵</word_group>{description_value_01}機に\n<color=#00AEFF>「アサルト：<word_group=10025>最終</word_group>攻撃力の{description_value_02}％のダメージ」</color>\n■自分が隠れ身状態なら、アサルトの命中した対象に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_03}％の追加ダメージ」</color>\n■アサルトの命中した対象が水冷コードの\n<word_group=10105>ターゲット</word_group>なら、対象に\n<color=#00AEFF>「受けるダメージ{description_value_05}％▲」「{description_value_06}秒間維持」</color>",
+          "en": "■ <word_group=10021>Prioritizes Attacker-type enemies</word_group>. Affects {description_value_01} enemy unit(s).\n<color=#00AEFF>Assalto: Deals {description_value_02}% of <word_group=10025>final</word_group> ATK as damage.</color>\n■ Activates when the skill user is in the Concealment state. Affects the target(s) hit by Assalto.\n<color=#00AEFF>Deals {description_value_03}% of <word_group=10025>final</word_group> ATK as additional damage.</color>\n■ Activates if the target that was hit by Assalto is a Water Code <word_group=10105>stage target</word_group>. Affects the target.\n<color=#00AEFF>Damage Taken ▲ {description_value_05}% for {description_value_06} sec.</color>"
+        },
+        "values": [
+          ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2"],
+          ["720.72", "786.24", "851.76", "917.28", "982.8", "1048.32", "1113.84", "1179.36", "1244.88", "1310.4"],
+          ["308.88", "336.96", "365.04", "393.12", "421.2", "449.28", "477.36", "505.44", "533.52", "561.6"],
+          null,
+          ["14.5", "16.11", "17.72", "19.33", "20.94", "22.56", "24.17", "25.78", "27.39", "29"],
+          ["30", "30", "30", "30", "30", "30", "30", "30", "30", "30"],
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "skill1": {
+        "id": 2280151,
+        "name": {
+          "ja": "オン・ザ・ラム",
+          "en": "On the Lam"
+        },
+        "description": {
+          "ja": "■通常攻撃が{description_value_01}回命中した時、自分に\n<color=#00AEFF>「隠れ身：<word_group=10004>単一攻撃対象から除外</word_group>\n直接攻撃を受けると解除」「{description_value_02}秒間維持」\n「クリティカル確率{description_value_03}％▲」「{description_value_04}秒間維持」</color>\n■通常攻撃で{description_value_05}回攻撃した時、<word_group=10025>最終</word_group>攻撃力が最も高い敵{description_value_06}機に\n<color=#00AEFF>「<word_group=10022>バフ効果解除</word_group>{description_value_07}個」「戦闘中1回発動」</color>\n■<word_group=10105>ターゲット</word_group>が出現した時、自分に\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group>{description_value_08}％▲」「持続」</color>",
+          "en": "■ Activates after landing {description_value_01} normal attacks. Affects self.\n<color=#00AEFF>Concealment: <word_group=10004>Prevents being targeted by single-target attacks</word_group> for {description_value_02} sec. This effect is removed upon taking a direct hit.\nCritical Rate ▲ {description_value_03}% for {description_value_04} sec.</color>\n■ Activates after performing {description_value_05} normal attacks. Affects the {description_value_06} enemy unit(s) with the highest <word_group=10025>final</word_group> ATK.\n<color=#00AEFF><word_group=10022>Removes {description_value_07} buff(s)</word_group>. Activates once per battle.</color>\n■ Activates when the <word_group=10105>stage target</word_group> appears. Affects self.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_08}% continuously.</color>"
+        },
+        "values": [
+          ["120", "120", "120", "120", "120", "120", "120", "120", "120", "120"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["8.98", "10.13", "11.28", "12.43", "13.59", "14.74", "15.89", "17.04", "18.19", "19.34"],
+          ["3", "3", "3", "3", "3", "3", "3", "3", "3", "3"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2"],
+          ["1", "1", "1", "3", "3", "3", "5", "5", "5", "5"],
+          ["11", "12", "13", "14", "15", "16", "17", "18", "19", "20"],
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }

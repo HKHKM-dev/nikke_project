@@ -11,6 +11,7 @@ import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
 import { MAX_SKILL_LEVELS, type ResolvedTrigger } from '../src/skills/resolve.ts';
+import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
 import { computeTeamDamage, TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { CharacterData, Element } from '../src/types.ts';
@@ -35,12 +36,14 @@ const { values } = parseArgs({
     defence: { type: 'string', default: '100' },
     element: { type: 'string' },
     'core-hit-rate': { type: 'string', default: '1' },
+    // Stage 9: 宝物の段階（resourceId:段階 をカンマ区切り。省略は全員 0）
+    treasure: { type: 'string' },
   },
 });
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3]',
   );
   process.exit(2);
 }
@@ -48,6 +51,16 @@ const ids = values.ids.split(',').map((s) => Number(s.trim()));
 if (ids.length < 1 || ids.length > TEAM_SIZE || ids.some((id) => !Number.isInteger(id) || id < 1)) {
   console.error(`--ids must list 1..${TEAM_SIZE} resource ids`);
   process.exit(2);
+}
+
+const treasurePhases = new Map<number, number>();
+for (const entry of values.treasure?.split(',') ?? []) {
+  const [id, phase] = entry.split(':').map((v) => Number(v.trim()));
+  if (!ids.includes(id!) || !Number.isInteger(phase)) {
+    console.error(`--treasure expects resourceId:phase for ids in --ids, got "${entry}"`);
+    process.exit(2);
+  }
+  treasurePhases.set(id!, phase!);
 }
 
 function readJson(path: string): unknown {
@@ -62,7 +75,12 @@ const slots: TeamSlotInput[] = ids.map((id) => {
   const definition = skillIndex.resourceIds.includes(id)
     ? parseSkillDefinition(readJson(join(DATA_DIR, `skills/${id}.json`)))
     : null;
-  const skills = { definition, levels: MAX_SKILL_LEVELS };
+  // 段階の範囲・宝物の有無は computeTeamDamage が検証する（RangeError）
+  const skills = {
+    definition,
+    levels: MAX_SKILL_LEVELS,
+    treasurePhase: (treasurePhases.get(id) ?? 0) as TreasurePhase,
+  };
   return fixedSpec
     ? {
         character,
@@ -129,6 +147,8 @@ const rows = slots.map((slot, i) => {
     name: slot.character.name.ja,
     weapon: slot.character.weaponType,
     burst: slot.character.burstStep,
+    // Stage 9: 宝物の段階（宝物版で計算したスロット数）
+    treasure: c.treasurePhase === 0 ? '-' : `${c.treasurePhase} (${c.treasureSlots.join('+')})`,
     attack: fmt(c.segments[0]?.trigger.attack ?? c.baseAttack),
     'sim normal (nonFB/FB triggers)': `${fmt(simIntervalTotals(s).nonFullBurst.damage)} (${simIntervalTotals(s).nonFullBurst.triggers}/${simIntervalTotals(s).fullBurst.triggers})`,
     'calc normal': fmt(c.normalDamage),
@@ -165,7 +185,10 @@ for (const [i, slot] of slots.entries()) {
       'triggers sim/calc': `${simGroups[j]?.triggers ?? 0} / ${g.triggers.toFixed(1)}`,
       'damage sim/calc': `${fmt(simGroups[j]?.damage ?? 0)} / ${fmt(g.damage)}`,
       timed: g.timedEffects
-        .map((e) => `${triggerLabel(e.trigger)} ${e.stat}+${(e.value * 100).toFixed(2)}%`)
+        .map(
+          (e) =>
+            `${triggerLabel(e.trigger)} ${e.stat}+${(e.value * 100).toFixed(2)}%${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
+        )
         .join(', '),
     })),
   );

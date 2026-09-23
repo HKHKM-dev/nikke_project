@@ -234,7 +234,7 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
     let buffs: BuffTotals = { ...ZERO_BUFFS };
     const passiveEffects: AppliedEffect[] = [];
     for (const { slotIndex, casterBaseAttack, effect } of sources) {
-      if (!isEffectTarget(effect.target, slotIndex, index)) continue;
+      if (!isEffectTarget(effect, slotIndex, index, slot.character.weaponType)) continue;
       const applied = applyResolvedEffect(buffs, effect, casterBaseAttack);
       buffs = applied.totals;
       passiveEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount: applied.appliedAmount });
@@ -271,7 +271,7 @@ export function planBuffTimeline(
       );
       if (merged.length === 0) continue;
       slots.forEach((target, slotIndex) => {
-        if (target === null || !isEffectTarget(effect.target, sourceSlotIndex, slotIndex)) return;
+        if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType)) return;
         for (const [start, end] of merged) windows.push({ slotIndex, sourceSlotIndex, effect, start, end });
       });
     }

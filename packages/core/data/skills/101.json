@@ -55,8 +55,101 @@
       ],
       "notes": [
         {
-          "ja": "自分の最大装弾数▲（10 秒間維持）は未対応（射撃が変わるバフは Stage 9）",
-          "en": "Max Ammunition up on self (10 s) is not modeled (cadence buffs are Stage 9)"
+          "ja": "自分の最大装弾数▲（10 秒間維持）は未対応（射撃が変わるバフは Stage 10）",
+          "en": "Max Ammunition up on self (10 s) is not modeled (cadence buffs are Stage 10)"
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetWeapon": "SG",
+          "stat": "attack",
+          "ref": 5,
+          "durationRef": 6
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体の命中率▲（10 秒間維持）は未対応（全弾命中の前提なのでダメージに効かない）",
+          "en": "Hit rate up for all allies (10 s) is not modeled (every shot is assumed to hit, so it does not change damage)"
+        },
+        {
+          "ja": "ショットガンを所持する味方の最大装弾数▲（10 秒間維持）は未対応（射撃が変わるバフは Stage 10）",
+          "en": "Max Ammunition up for Shotgun allies (10 s) is not modeled (cadence buffs are Stage 10)"
+        }
+      ]
+    },
+    "skill2": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "damageType": "skill",
+          "ref": 3,
+          "assumes": {
+            "ja": "対象「残りの HP が最も低い敵 3 機」は単体ボスで 1 ヒット",
+            "en": "The 3 lowest-HP enemies are a lone boss, so it lands once"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 4
+          },
+          "damageType": "skill",
+          "ref": 6,
+          "assumes": {
+            "ja": "対象「残りの HP が最も低い敵 1 機」は単体ボス",
+            "en": "The lowest-HP enemy is the lone boss"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "攻撃範囲内の敵は単体ボス。実機では 3 回に分けて当たる（録画 37: 1,201,793 × 3）が、合計 3009.6% の 1 回として扱う",
+            "en": "Enemies in range are a lone boss. In game it lands as 3 hits (recording 37: 1,201,793 × 3); modeled as one 3009.6% hit"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 4,
+          "durationRef": 5
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分の最大装弾数▲（10 秒間維持）は未対応（射撃が変わるバフは Stage 10）",
+          "en": "Max Ammunition up on self (10 s) is not modeled (cadence buffs are Stage 10)"
         }
       ]
     }

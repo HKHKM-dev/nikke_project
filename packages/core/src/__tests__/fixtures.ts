@@ -58,6 +58,7 @@ export function makeCharacter(shot: Partial<ShotParams> = {}, overrides: Partial
     },
     burstSkill: { cooldownSeconds: 40, nextStep: NEXT_STEP[overrides.burstStep ?? 'Step3'], durationSeconds: 10 },
     skills: { skill1: skill, skill2: skill, burst: skill },
+    treasure: null,
     ...overrides,
   };
 }

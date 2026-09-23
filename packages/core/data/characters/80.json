@@ -130,5 +130,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 201601,
+    "name": {
+      "ja": "金属製のネックレス",
+      "en": "Metal Pendant"
+    },
+    "unlockOrder": ["skill2", "skill1", "burst"],
+    "skills": {
+      "skill2": {
+        "id": 1080251,
+        "name": {
+          "ja": "現場検討",
+          "en": "Field Discussion"
+        },
+        "description": {
+          "ja": "■自分に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPの{description_value_01}％の\n味方共用<word_group=10023>バリア</word_group>」\n「{description_value_02}秒間維持」</color>\n■味方全体に\n<color=#00AEFF>「スキル発動者基準で攻撃力{description_value_03}％▲」\n「{description_value_04}スタック」「{description_value_05}秒間維持」</color>",
+          "en": "■ Affects self.\n<color=#00AEFF>Creates a shared <word_group=10023>shield</word_group> with HP equal to {description_value_01}% of the skill user's <word_group=10025>final</word_group> max HP that protects all allies from damage. Lasts for {description_value_02} sec. </color>\n■ Affects all allies.\n<color=#00AEFF>ATK ▲ {description_value_03}% of the skill user's ATK. Stacks up to {description_value_04} times and lasts for {description_value_05} sec.</color>"
+        },
+        "values": [
+          ["3.5", "3.88", "4.27", "4.66", "5.04", "5.44", "5.83", "6.22", "6.6", "7"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["2.53", "2.76", "2.99", "3.22", "3.45", "3.68", "3.92", "4.14", "4.37", "4.6"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["8", "8", "8", "8", "8", "8", "8", "8", "8", "8"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "skill1": {
+        "id": 2080151,
+        "name": {
+          "ja": "補修工事",
+          "en": "Maintain Fortification"
+        },
+        "description": {
+          "ja": "■フルチャージ攻撃が命中した時、自分に\n<color=#00AEFF>「スキル2の<word_group=10031>クールタイム</word_group>{description_value_01}％▼」</color>\n■スキル2を発動した時、鉄甲コードの味方全体に\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group>{description_value_02}％▲」「{description_value_04}スタック」「{description_value_03}秒間維持」</color>\n■戦闘開始時、味方全体に\n<color=#00AEFF>「資材備蓄：スキル発動者基準で最大HP{description_value_06}％まで超過するHP回復量保存」「{description_value_07}秒間維持」\n「スキル発動者の<word_group=10025>最終</word_group>最大HPの{description_value_08}％回復」</color>\n■自分を含む味方誰かのHPが{description_value_09}％以下になった時、自分が資材備蓄状態なら味方全体に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPの{description_value_05}％回復」</color>",
+          "en": "■ Activates when landing a Full Charge attack. Affects self.\n<color=#00AEFF><word_group=10031>Cooldown</word_group> of Skill 2 ▼ {description_value_01}%.</color>\n■ Activates when Skill 2 activates. Affects all Iron Code allies.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_02}%. Stacks up to {description_value_04} times and lasts for {description_value_03} sec.</color>\n■ Activates at the start of battle. Affects all allies.\n<color=#00AEFF>Stockpile: Stores excess incoming healing, up to {description_value_06}% of the skill user's max HP. Lasts for {description_value_07} sec.\nRestores HP equal to {description_value_08}% of the skill user's <word_group=10025>final</word_group> max HP.</color>\n■ Activates when an ally's HP (including this unit's) drops to {description_value_09}% or below while this unit is in the Stockpile state. Affects all allies.\n<color=#00AEFF>Restores HP equal to {description_value_05}% of the skill user's <word_group=10025>final</word_group> max HP.</color>"
+        },
+        "values": [
+          ["4.58", "5.09", "5.6", "6.11", "6.62", "7.12", "7.63", "8.14", "8.65", "9.16"],
+          ["3.13", "3.41", "3.7", "3.98", "4.27", "4.56", "4.84", "5.12", "5.41", "5.69"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["3.5", "3.88", "4.27", "4.66", "5.04", "5.44", "5.83", "6.22", "6.6", "7"],
+          ["3.5", "3.88", "4.27", "4.66", "5.04", "5.44", "5.83", "6.22", "6.6", "7"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["3.5", "3.88", "4.27", "4.66", "5.04", "5.44", "5.83", "6.22", "6.6", "7"],
+          ["100", "100", "100", "100", "100", "100", "100", "100", "100", "100"],
+          null,
+          null
+        ]
+      },
+      "burst": {
+        "id": 1080351,
+        "name": {
+          "ja": "着工開始",
+          "en": "Start Construction"
+        },
+        "description": {
+          "ja": "■残HPが最も低い敵{description_value_01}機に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_02}％のダメージ」\n「防御力{description_value_03}％▼」「{description_value_04}秒間維持」</color>\n■味方全体に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPの{description_value_05}％回復」</color>",
+          "en": "■ Affects the {description_value_01} enemy unit(s) with the lowest remaining HP.\n<color=#00AEFF>Deals {description_value_02}% of <word_group=10025>final</word_group> ATK as damage.\nDEF ▼ {description_value_03}% for {description_value_04} sec.</color>\n■ Affects all allies.\n<color=#00AEFF>Restores HP equal to {description_value_05}% of the skill user's <word_group=10025>final</word_group> max HP.</color>"
+        },
+        "values": [
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["72.73", "80.81", "88.89", "96.97", "105.06", "113.14", "121.22", "129.3", "137.38", "145.46"],
+          ["7.27", "8.08", "8.88", "9.69", "10.5", "11.31", "12.12", "12.93", "13.73", "14.54"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["17.84", "19.21", "20.59", "21.96", "23.33", "24.71", "26.08", "27.45", "28.82", "30.2"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }

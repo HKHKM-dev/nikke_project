@@ -130,5 +130,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 201301,
+    "name": {
+      "ja": "練習用シューズ",
+      "en": "Practice Shoes"
+    },
+    "unlockOrder": ["skill1", "skill2", "burst"],
+    "skills": {
+      "skill1": {
+        "id": 2550151,
+        "name": {
+          "ja": "ユーキャンドゥーイット",
+          "en": "You Can Do It"
+        },
+        "description": {
+          "ja": "■バーストスキルを使用した時、\n自分が生存している限り、味方全体に\n<color=#00AEFF>「<word_group=10044>受けるダメージ偏差分配</word_group>」「持続」\n「スキル発動者基準で防御力{description_value_01}％▲」\n「持続」</color>\n■フルチャージして攻撃した時、\n自分を除く味方全体に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPの\n{description_value_02}％回復」</color>",
+          "en": "■ Activates when using Burst Skill as long as this unit is still alive. Affects all allies.\n<color=#00AEFF><word_group=10044>Proportionally shares damage taken</word_group>. This effect is continuous.\nDEF ▲ {description_value_01}% of the skill user's DEF continuously.</color>\n■ Activates when performing a Full Charge attack. Affects all allies (except self).\n<color=#00AEFF>Restores HP equal to {description_value_02}% of the skill user's <word_group=10025>final</word_group> max HP.</color>"
+        },
+        "values": [
+          ["5.57", "6.08", "6.58", "7.09", "7.6", "8.11", "8.61", "9.12", "9.63", "10.13"],
+          ["2.36", "2.54", "2.72", "2.91", "3.09", "3.27", "3.45", "3.63", "3.82", "4"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "skill2": {
+        "id": 2550251,
+        "name": {
+          "ja": "チアアップトゥギャザー",
+          "en": "Cheer Up Together"
+        },
+        "description": {
+          "ja": "■バーストスキルを使用した時、\n自分が生存している限り、自分の遮蔽物に\n<color=#00AEFF>「<word_group=10044>受けるダメージ偏差分配</word_group>」「持続」</color>\n■フルバーストタイムが終了した時、自分に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPに比例して\n<word_group=10043>遮蔽物HP持続回復</word_group> {description_value_01}％」\n「1秒間隔」「{description_value_02}秒間維持」</color>\n■バースト1段階突入時、自分の遮蔽物が\n破壊された状態なら、自分に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPの{description_value_03}％回復」</color>",
+          "en": "■ Activates when using Burst Skill as long as this unit is still alive. Affects this unit's cover. \n<color=#00AEFF><word_group=10044>Proportionally shares damage taken</word_group>. This effect is continuous.</color>\n■ Activates when Full Burst ends. Affects self.\n<color=#00AEFF><word_group=10043>Continuously restores cover HP</word_group> equal to {description_value_01}% of the skill user's <word_group=10025>final</word_group> max HP every second for {description_value_02} sec.</color>\n■ Activates when entering Burst Stage 1 if this unit's cover has been destroyed. Affects self.\n<color=#00AEFF>Restores HP equal to {description_value_03}% of the skill user's <word_group=10025>final</word_group> max HP.</color>"
+        },
+        "values": [
+          ["1.58", "1.72", "1.87", "2.01", "2.16", "2.3", "2.44", "2.59", "2.73", "2.88"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["11.82", "12.73", "13.64", "14.54", "15.45", "16.36", "17.27", "18.18", "19.09", "20"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "burst": {
+        "id": 1550351,
+        "name": {
+          "ja": "ファーストウィナー",
+          "en": "First Winner"
+        },
+        "description": {
+          "ja": "■自分の遮蔽物が破壊された状態なら、自分に\n<color=#00AEFF>「遮蔽物HP{description_value_05}％で<word_group=10016>遮蔽物復活</word_group>」\n「戦闘中1回発動」</color>\n■自分に\n<color=#00AEFF>「スキル発動者の最大HPに比例して\n<word_group=10033>遮蔽物最大HP</word_group> {description_value_01}％▲」「{description_value_02}秒間維持」</color>\n■味方全体に\n<color=#00AEFF>「受けるダメージ{description_value_03}％▼」「{description_value_04}秒間維持」</color>",
+          "en": "■ Affects this unit if her cover has been destroyed.\n<color=#00AEFF><word_group=10016>Rebuilds cover</word_group> with {description_value_05}% HP. Activates once per battle.</color>\n■ Affects self.\n<color=#00AEFF><word_group=10033>Max HP of cover</word_group> ▲ {description_value_01}% of the skill user's max HP for {description_value_02} sec.</color>\n■ Affects all allies.\n<color=#00AEFF>Damage Taken ▼ {description_value_03}% for {description_value_04} sec.</color>"
+        },
+        "values": [
+          ["9.9", "10.8", "11.7", "12.6", "13.5", "14.4", "15.3", "16.2", "17.1", "18"],
+          ["20", "20", "20", "20", "20", "20", "20", "20", "20", "20"],
+          ["4.87", "5.32", "5.76", "6.2", "6.65", "7.09", "7.53", "7.98", "8.42", "8.87"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["11.81", "12.72", "13.63", "14.54", "15.45", "16.36", "17.27", "18.18", "19.09", "20"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }

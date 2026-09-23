@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { toCharacterData, toIndexEntry, type RawRoleData, type RawSkillDetail } from './normalize.ts';
+import {
+  findTreasureOwner,
+  toCharacterData,
+  toIndexEntry,
+  toTreasureData,
+  type RawFavorite,
+  type RawRoleData,
+  type RawSkillDetail,
+} from './normalize.ts';
 
 // Emma (resourceId 90) の roledata から必要フィールドだけを抜き出した固定値。曲線は先頭 3 レベル分。
 function skill(id: number, name: string, values: (string[] | undefined)[]): RawSkillDetail {
@@ -16,6 +24,7 @@ function emma(locale: 'en' | 'ja'): RawRoleData {
   return {
     resource_id: 90,
     name_localkey: ja ? 'エマ' : 'Emma',
+    name_code: 5001,
     original_rare: 'SSR',
     class: 'Supporter',
     corporation: 'ELYSION',
@@ -133,5 +142,69 @@ describe('toCharacterData', () => {
       weaponType: 'MG',
       burstStep: 'Step1',
     });
+  });
+});
+
+// Stage 9: 宝物。エマの宝物は実在しないが、形はドレイクの 200801 と同じ（配列順 = 解放順、ID は基礎版 + 50）
+function favorite(locale: 'en' | 'ja', order: number[] = [2, 3, 1]): RawFavorite {
+  const ja = locale === 'ja';
+  const info: Record<number, RawSkillDetail> = {
+    1: skill(2090151, ja ? 'チアリーディング改' : 'Cheerleading+', [['9.99'], ['5']]),
+    2: skill(2090251, 'S2+', [['1']]),
+    // 先頭の桁が基礎版（1090301）と違っても、下 6 桁が + 50 なら同じスキルの宝物版
+    3: skill(2090351, 'Burst+', [['30']]),
+  };
+  return {
+    id: 209901,
+    name_localkey: ja ? 'テストの宝物' : 'Test Treasure',
+    favorite_rare: 'SSR',
+    name_code: 5001,
+    favoriteitem_skill_group_data: order.map((slot) => ({ skill_change_slot: slot, info: info[slot]! })),
+  };
+}
+
+describe('toTreasureData (Stage 9)', () => {
+  const treasure = toTreasureData(favorite('en'), favorite('ja'), emma('en'));
+
+  it('keeps the array order as the unlock order and maps slots', () => {
+    expect(treasure.favoriteId).toBe(209901);
+    expect(treasure.name).toEqual({ ja: 'テストの宝物', en: 'Test Treasure' });
+    expect(treasure.unlockOrder).toEqual(['skill2', 'burst', 'skill1']);
+    expect(treasure.skills.skill1.name).toEqual({ ja: 'チアリーディング改', en: 'Cheerleading+' });
+    expect(treasure.skills.skill1.values).toEqual([['9.99'], ['5']]);
+    expect(treasure.skills.burst.id).toBe(2090351);
+  });
+
+  it('is stored on CharacterData (null when absent)', () => {
+    expect(toCharacterData(emma('en'), emma('ja')).treasure).toBeNull();
+    expect(toCharacterData(emma('en'), emma('ja'), treasure).treasure).toBe(treasure);
+  });
+
+  it('rejects a skill id that is not base + 50', () => {
+    const bad = favorite('en');
+    bad.favoriteitem_skill_group_data![0]!.info.id = 2090252;
+    const badJa = favorite('ja');
+    badJa.favoriteitem_skill_group_data![0]!.info.id = 2090252;
+    expect(() => toTreasureData(bad, badJa, emma('en'))).toThrow(/not the treasure version/);
+  });
+
+  it('rejects missing or duplicated slots and ja/en mismatches', () => {
+    expect(() => toTreasureData(favorite('en', [1, 2]), favorite('ja', [1, 2]), emma('en'))).toThrow(/3 distinct/);
+    expect(() => toTreasureData(favorite('en', [1, 1, 2]), favorite('ja', [1, 1, 2]), emma('en'))).toThrow(
+      /3 distinct/,
+    );
+    expect(() => toTreasureData(favorite('en', [1, 2, 3]), favorite('ja', [2, 1, 3]), emma('en'))).toThrow(/ja and en/);
+  });
+
+  it('finds the owner by name_code', () => {
+    const roles = [
+      { resource_id: 90, name_code: 5001 },
+      { resource_id: 91, name_code: 5002 },
+    ];
+    expect(findTreasureOwner(favorite('en'), roles)?.resource_id).toBe(90);
+    expect(findTreasureOwner({ id: 1, name_code: 9999 }, roles)).toBeNull();
+    expect(() => findTreasureOwner(favorite('en'), [...roles, { resource_id: 92, name_code: 5001 }])).toThrow(
+      /several characters \(90, 92\)/,
+    );
   });
 });

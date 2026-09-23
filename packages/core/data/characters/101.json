@@ -133,5 +133,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 200801,
+    "name": {
+      "ja": "ヴィランのフィギュア",
+      "en": "Villain Figurine"
+    },
+    "unlockOrder": ["skill1", "skill2", "burst"],
+    "skills": {
+      "skill1": {
+        "id": 2101151,
+        "name": {
+          "ja": "オーバーチャージ",
+          "en": "Overcharge"
+        },
+        "description": {
+          "ja": "■フルバーストタイムが発動した時、味方全体に\n<color=#00AEFF>「命中率{description_value_01}％▲」「{description_value_02}秒間維持」\n「攻撃力{description_value_03}％▲」「{description_value_04}秒間維持」</color>\n■フルバーストタイムが発動した時、ショットガンを所持する味方全体に\n<color=#00AEFF>「攻撃力{description_value_05}％▲」「{description_value_06}秒間維持」\n「最大装弾数{description_value_07}％▲」「{description_value_08}秒間維持」</color>",
+          "en": "■ Activates when entering Full Burst. Affects all allies.\n<color=#00AEFF>Hit Rate ▲ {description_value_01}% for {description_value_02} sec.\nATK ▲ {description_value_03}% for {description_value_04} sec.</color>\n■ Activates when entering Full Burst. Affects all allies with shotguns.\n<color=#00AEFF>ATK ▲ {description_value_05}% for {description_value_06} sec.\nMax Ammunition Capacity ▲ {description_value_07}% for {description_value_08} sec.</color>"
+        },
+        "values": [
+          ["11.87", "12.78", "13.7", "14.61", "15.52", "16.44", "17.35", "18.26", "19.18", "20.09"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["7", "7.54", "8.08", "8.62", "9.15", "9.69", "10.23", "10.77", "11.31", "11.85"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["37.75", "40.65", "43.56", "46.46", "49.36", "52.27", "55.17", "58.08", "60.98", "63.88"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["29.62", "31.9", "34.18", "36.46", "38.74", "41.02", "43.3", "45.58", "47.86", "50.14"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null
+        ]
+      },
+      "skill2": {
+        "id": 2101251,
+        "name": {
+          "ja": "サンダーボルト",
+          "en": "Thunderbolt"
+        },
+        "description": {
+          "ja": "■{description_value_01}回攻撃した時、残りのHPの数値が最も低い敵{description_value_02}機に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_03}％のダメージ」</color>\n■{description_value_04}回攻撃した時、残りのHPの数値が最も低い敵{description_value_05}機に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_06}％のダメージ」</color>",
+          "en": "■ Activates after performing {description_value_01} normal attacks. Affects the {description_value_02} enemy unit(s) with the lowest remaining HP.\n<color=#00AEFF>Deals {description_value_03}% of <word_group=10025>final</word_group> ATK as damage.</color>\n■ Activates after performing {description_value_04} normal attacks. Affects the {description_value_05} enemy unit(s) with the lowest remaining HP.\n<color=#00AEFF>Deals {description_value_06}% of <word_group=10025>final</word_group> ATK as damage.</color>"
+        },
+        "values": [
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["3", "3", "3", "3", "3", "3", "3", "3", "3", "3"],
+          ["58.24", "62.72", "67.19", "71.68", "76.16", "80.64", "85.11", "89.6", "94.07", "98.55"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
+          ["119.12", "128.29", "137.45", "146.61", "155.78", "164.94", "174.1", "183.27", "192.43", "201.6"],
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "burst": {
+        "id": 1101351,
+        "name": {
+          "ja": "ドレイクスペシャル",
+          "en": "Drake Special"
+        },
+        "description": {
+          "ja": "■<word_group=10020>攻撃範囲内の敵</word_group>に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_01}％のダメージ」</color>\n■自分に\n<color=#00AEFF>「最大装弾数{description_value_02}％▲」「{description_value_03}秒間維持」\n「攻撃ダメージ{description_value_04}％▲」「{description_value_05}秒間維持」</color>",
+          "en": "■ Affects <word_group=10020>enemies within attack range</word_group>.\nDeals <color=#00AEFF>{description_value_01}% of <word_group=10025>final</word_group> ATK as damage.</color> \n■ Affects self.\n<color=#00AEFF>Max Ammunition Capacity ▲ {description_value_02}% for {description_value_03} sec.\nAttack Damage ▲ {description_value_04}% for {description_value_05} sec.</color>"
+        },
+        "values": [
+          ["1778.4", "1915.2", "2052", "2188.8", "2325.6", "2462.4", "2599.2", "2736", "2872.8", "3009.6"],
+          ["42.65", "45.93", "49.21", "52.5", "55.78", "59.06", "62.34", "65.62", "68.9", "72.18"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["18.72", "20.16", "21.6", "23.04", "24.48", "25.92", "27.36", "28.8", "30.24", "31.68"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }

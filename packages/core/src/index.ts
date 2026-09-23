@@ -15,6 +15,7 @@ export * from './skills/resolve.ts';
 export * from './skills/targets.ts';
 export * from './skills/burstDamage.ts';
 export * from './skills/timeline.ts';
+export * from './skills/treasure.ts';
 export * from './burst/schedule.ts';
 export * from './burst/fixedCycle.ts';
 export * from './burst/controller.ts';

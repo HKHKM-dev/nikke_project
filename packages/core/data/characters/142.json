@@ -133,5 +133,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 200301,
+    "name": {
+      "ja": "お気に入りの枕",
+      "en": "Beloved Pillow"
+    },
+    "unlockOrder": ["skill1", "burst", "skill2"],
+    "skills": {
+      "skill1": {
+        "id": 2142151,
+        "name": {
+          "ja": "…眠い",
+          "en": "... I Want to Sleep"
+        },
+        "description": {
+          "ja": "■フルチャージ攻撃が命中した時、対象に\n<color=#00AEFF>「眠い：防御力{description_value_01}％▼」「{description_value_02}スタック」「{description_value_03}秒間維持」</color>\n■フルチャージ攻撃が{description_value_04}回命中した時、対象が眠いのフルスタック状態なら、自分に\n<color=#00AEFF>「起きた：通常攻撃を防御力無視ダメージとして適用」「{description_value_05}秒間維持」</color>",
+          "en": "■ Activates when landing a Full Charge attack.\n<color=#00AEFF>Sleepy: DEF ▼ {description_value_01}%. Stacks up to {description_value_02} time(s) for {description_value_03} sec.</color>\n■ Activates after landing {description_value_04} Full Charge Attacks on a target with max stacks of Sleepy. Affects self.\n<color=#00AEFF>Wake Up: Normal attacks deal true damage for {description_value_05} sec.</color>"
+        },
+        "values": [
+          ["2.53", "2.7", "2.86", "3.02", "3.18", "3.35", "3.51", "3.67", "3.84", "4"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["6", "6", "6", "6", "6", "6", "6", "6", "6", "6"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "burst": {
+        "id": 1142351,
+        "name": {
+          "ja": "…メンドイ",
+          "en": "... Annoying"
+        },
+        "description": {
+          "ja": "■<word_group=10025>最終</word_group>防御力が最も高い敵{description_value_01}機に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_02}％のダメージ」\n「防御力{description_value_03}％▼」「{description_value_04}秒間維持」</color>\n■味方全体に\n<color=#00AEFF>「最大HP{description_value_05}％▲」「{description_value_06}秒間維持」</color>\n■自分が起きた状態なら味方全体に\n<color=#00AEFF>「防御力無視ダメージ{description_value_07}％▲」「{description_value_08}秒間維持」</color>",
+          "en": "■ Affects the {description_value_01} enemy unit(s) with the highest <word_group=10025>final</word_group> DEF.\n<color=#00AEFF>Deals {description_value_02}% of <word_group=10025>final</word_group> ATK as damage.\nDEF ▼ {description_value_03}% for {description_value_04} sec.</color>\n■ Affects all allies.\n<color=#00AEFF>Max HP ▲ {description_value_05}% for {description_value_06} sec.</color>\n■ Activiates when in the Wake Up state. Affects all allies.\n<color=#00AEFF>True Damage ▲ {description_value_07}% for {description_value_08} sec.</color>"
+        },
+        "values": [
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["60.07", "64.69", "69.31", "73.93", "78.56", "83.18", "87.8", "92.42", "97.04", "101.66"],
+          ["5.83", "6.27", "6.72", "7.17", "7.62", "8.07", "8.52", "8.97", "9.41", "9.86"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["17.88", "19.25", "20.63", "22", "23.38", "24.76", "26.13", "27.51", "28.88", "30.26"],
+          ["4", "4", "4", "4", "4", "4", "4", "4", "4", "4"],
+          ["36.44", "37.94", "39.44", "40.95", "42.45", "43.96", "45.46", "46.96", "48.47", "49.97"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null
+        ]
+      },
+      "skill2": {
+        "id": 2142251,
+        "name": {
+          "ja": "…あ",
+          "en": "... Ah"
+        },
+        "description": {
+          "ja": "■フルチャージして攻撃した時、味方全体に\n<color=#00AEFF>「最大HP{description_value_01}％▲」「{description_value_02}秒間維持」</color>\n■フルチャージして攻撃した時、自分が起きた状態なら味方全体に\n<color=#00AEFF>「防御力無視ダメージ{description_value_03}％▲」「{description_value_04}秒間維持」</color>",
+          "en": "■ Activates when performing a Full Charge attack. Affects all allies.\n<color=#00AEFF>Max HP ▲ {description_value_01}% for {description_value_02} sec.</color>\n■ Activates when performing a Full Charge attack in the Wake Up state. Affects all allies.\n<color=#00AEFF>True Damage ▲ {description_value_03}% for {description_value_04} sec.</color>"
+        },
+        "values": [
+          ["3.6", "3.88", "4.15", "4.43", "4.71", "4.98", "5.26", "5.54", "5.82", "6.09"],
+          ["4", "4", "4", "4", "4", "4", "4", "4", "4", "4"],
+          ["21.17", "21.95", "22.72", "23.5", "24.28", "25.05", "25.83", "26.6", "27.38", "28.16"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }

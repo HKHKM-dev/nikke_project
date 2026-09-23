@@ -1,5 +1,5 @@
 // スキル定義の ref を Lv の数値に解決する。単位変換（% → 比率）はここで一律に行う。
-import type { CharacterData, Locale, LocalizedText, SkillRaw } from '../types.ts';
+import type { CharacterData, Locale, LocalizedText, SkillRaw, WeaponType } from '../types.ts';
 import { durationToFrames } from '../burst/fixedCycle.ts';
 import {
   SKILL_SLOTS,
@@ -81,6 +81,8 @@ export function skillValue(skill: SkillRaw, ref: number, level: number): number 
 export type ResolvedEffect = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
   target: BuffTarget;
+  /** Stage 9: 「〈武器〉を所持する味方」。定義に無ければキーごと無い */
+  targetWeapon?: WeaponType;
   stat: BuffStat;
   /** 省略を 'ratio' に埋めた後の値 */
   scaling: BuffScaling;
@@ -116,6 +118,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
         scaling: effect.scaling ?? 'ratio',
         value: skillValue(skill, effect.ref, levels[slot]) / 100,
       };
+      if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     }
@@ -169,6 +172,8 @@ export function resolveTimed(
         durationFrames: durationToFrames(seconds),
         effectIndex,
       };
+      if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
+      if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });

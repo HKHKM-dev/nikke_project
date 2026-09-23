@@ -1,10 +1,12 @@
 // data/skills/ の手書き定義がキャラデータと整合していることを固定する。
+// Stage 9: 宝物版の定義（treasureSkills）は、宝物の全段階（3）で差し替えたキャラデータ・定義に同じ検査を掛ける。
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
 import { resolveBurstDamage, resolveDamageEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
+import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
 import { parseSkillDefinition, parseSkillIndex, SKILL_SLOTS } from '../types.ts';
 
@@ -28,10 +30,31 @@ describe('data/skills', () => {
     expect(new Set(index.resourceIds).size).toBe(index.resourceIds.length);
   });
 
-  describe.each(files)('definition %i', (resourceId) => {
+  // 基礎版と、treasureSkills があれば宝物版（全段階で差し替えたもの）
+  const variants = files.flatMap((resourceId) => {
+    const def = parseSkillDefinition(readJson(join(SKILLS_DIR, `${resourceId}.json`)));
+    const character = readJson(join(DATA_DIR, 'characters', `${resourceId}.json`)) as CharacterData;
+    const base = { label: `${resourceId}`, resourceId, def, character };
+    if (def.treasureSkills === undefined || character.treasure === null) return [base];
+    const applied = applyTreasure(character, def, TREASURE_PHASE_MAX);
+    return [
+      base,
+      { label: `${resourceId} (treasure)`, resourceId, def: applied.definition!, character: applied.character },
+    ];
+  });
+
+  describe.each(files)('treasure definition %i (Stage 9)', (resourceId) => {
     const def = parseSkillDefinition(readJson(join(SKILLS_DIR, `${resourceId}.json`)));
     const character = readJson(join(DATA_DIR, 'characters', `${resourceId}.json`)) as CharacterData;
 
+    // 宝物版の定義が無いスロットは unsupported になる（設計書 2.2 節）ので、スロットが揃っていることまでは求めない
+    it('exists only for characters with a treasure', () => {
+      if (def.treasureSkills === undefined) return;
+      expect(character.treasure, 'treasureSkills without a treasure').not.toBeNull();
+    });
+  });
+
+  describe.each(variants)('definition $label', ({ resourceId, def, character }) => {
     it('names the character of its file and a checked date', () => {
       expect(def.resourceId).toBe(resourceId);
       expect(character.resourceId).toBe(resourceId);

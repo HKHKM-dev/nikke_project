@@ -2,10 +2,12 @@
 // Stage 6（段階 B）でトリガー付きの持続バフ（timed）を足した。新しい BuffStat は増えず、「いつ付いて、いつ切れるか」だけが増える。
 // Stage 8（段階 C）で、射撃の回数・発動の回数で発火するトリガー、バースト N 段階突入時のトリガー、
 // バースト以外の倍率ダメージ（damage）、stat の distributedDamage / burstGaugeSpeed を足した（plan/design-stage8.md 2 節）。
+// Stage 9 で宝物版の定義（treasureSkills）と、武器種で絞る対象（targetWeapon）を足した（plan/design-stage9.md 2・3 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
-import type { LocalizedText } from '../types.ts';
+import type { LocalizedText, SkillSlot, WeaponType } from '../types.ts';
+import { WEAPON_TYPES } from '../weapons.ts';
 
-export type SkillSlot = 'skill1' | 'skill2' | 'burst';
+export type { SkillSlot };
 export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies readonly SkillSlot[];
 
 /**
@@ -40,6 +42,8 @@ export type PassiveEffect = {
   /** 無条件・常時（段階 A）。トリガー付きの持続バフは 'timed'（段階 B） */
   kind: 'passive';
   target: BuffTarget;
+  /** Stage 9: 「〈武器〉を所持する味方」。target が 'allies' のときだけ書ける */
+  targetWeapon?: WeaponType;
   stat: BuffStat;
   /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す */
   scaling?: BuffScaling;
@@ -125,6 +129,8 @@ export type TimedEffect = {
   kind: 'timed';
   trigger: EffectTrigger;
   target: BuffTarget;
+  /** Stage 9: 「〈武器〉を所持する味方」。target が 'allies' のときだけ書ける */
+  targetWeapon?: WeaponType;
   stat: BuffStat;
   /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す（passive と同じ規則） */
   scaling?: BuffScaling;
@@ -186,6 +192,11 @@ export type SkillDefinition = {
   /** 説明文を確認した日（YYYY-MM-DD）。データ更新で説明文が変わったときの目印 */
   checkedAt: string;
   skills: Record<SkillSlot, SkillEntry>;
+  /**
+   * Stage 9: 宝物版の定義。ref は CharacterData.treasure.skills を指す（基礎版とは番号がずれるので別に書く）。
+   * 宝物の段階で宝物版になるスロットにここが無ければ、そのスロットは unsupported として扱う（skills/treasure.ts）
+   */
+  treasureSkills?: Partial<Record<SkillSlot, SkillEntry>>;
 };
 
 /** 定義済みキャラの一覧（data/skills/index.json） */
@@ -218,14 +229,24 @@ function parseLocalizedText(v: Json, path: string): LocalizedText {
   return { ja: v.ja, en: v.en };
 }
 
+/** Stage 9: targetWeapon は target が allies のときだけ */
+function parseTargetWeapon(v: Record<string, Json>, target: BuffTarget, path: string): WeaponType | undefined {
+  if (v.targetWeapon === undefined) return undefined;
+  const weapon = oneOf(WEAPON_TYPES, v.targetWeapon, `${path}.targetWeapon`);
+  if (target !== 'allies') fail(`${path}.targetWeapon`, `only allowed with target "allies", got "${target}"`);
+  return weapon;
+}
+
 function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffect {
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  const targetWeapon = parseTargetWeapon(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   if (scaling === 'casterAttack' && stat !== 'attack') {
     fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
   }
   const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
+  if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (scaling !== undefined) effect.scaling = scaling;
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
@@ -267,6 +288,7 @@ function parseTrigger(v: Json, path: string): EffectTrigger {
 function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  const targetWeapon = parseTargetWeapon(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   if (stat === 'burstGaugeSpeed') {
     fail(
@@ -284,6 +306,7 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
     fail(path, 'exactly one of durationRef and durationSeconds is required');
   }
   const effect: TimedEffect = { kind: 'timed', trigger, target, stat, ref: parseRef(v.ref, `${path}.ref`) };
+  if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (scaling !== undefined) effect.scaling = scaling;
   if (hasRef) effect.durationRef = parseRef(v.durationRef, `${path}.durationRef`);
   if (hasSeconds) {
@@ -339,8 +362,8 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   fail(`${path}.kind`, `expected "passive", "burstDamage", "timed" or "damage", got ${JSON.stringify(v.kind)}`);
 }
 
-function parseEntry(v: Json, slot: SkillSlot): SkillEntry {
-  const path = `skills.${slot}`;
+function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' = 'skills'): SkillEntry {
+  const path = `${root}.${slot}`;
   if (!isRecord(v)) fail(path, 'expected an object');
   const support = oneOf(SKILL_SUPPORTS, v.support, `${path}.support`);
   if (!Array.isArray(v.effects)) fail(`${path}.effects`, 'expected an array');
@@ -373,7 +396,19 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   }
   const skills = {} as Record<SkillSlot, SkillEntry>;
   for (const slot of SKILL_SLOTS) skills[slot] = parseEntry(raw.skills[slot], slot);
-  return { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
+  const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
+  if (raw.treasureSkills !== undefined) {
+    const treasure = raw.treasureSkills;
+    if (!isRecord(treasure)) fail('treasureSkills', 'expected an object');
+    const treasureSkills: Partial<Record<SkillSlot, SkillEntry>> = {};
+    for (const key of Object.keys(treasure)) {
+      if (!(SKILL_SLOTS as readonly string[]).includes(key)) fail(`treasureSkills.${key}`, 'unknown skill slot');
+      const slot = key as SkillSlot;
+      treasureSkills[slot] = parseEntry(treasure[slot], slot, 'treasureSkills');
+    }
+    def.treasureSkills = treasureSkills;
+  }
+  return def;
 }
 
 export function parseSkillIndex(raw: Json): SkillIndex {

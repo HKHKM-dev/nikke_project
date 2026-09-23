@@ -67,3 +67,13 @@ export function nikkeListPath(locale: CdnLocale): string {
 export function roleDataPath(resourceId: number, locale: CdnLocale): string {
   return `/roledata/${resourceId}-v2-${locale}.json`;
 }
+
+/** Stage 9: 宝物 ID の一覧（レア度ごと） */
+export function favoriteRareMapPath(): string {
+  return '/equip/favorite_rare_map.json';
+}
+
+/** Stage 9: 宝物 1 個分。SSR だけが宝物版のスキル（favoriteitem_skill_group_data）を持つ */
+export function favoritePath(favoriteId: number, locale: CdnLocale): string {
+  return `/equip/${locale}/favorite_${favoriteId}.json`;
+}

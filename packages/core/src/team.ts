@@ -7,6 +7,7 @@
 // sim（sim/engine.ts）とは時刻表・区間・式をすべて共有し、違いは「発射をフレームで数えるか、平均レートで置くか」だけ。
 // Stage 8: 1 パス目（射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動）を planTeamRun にまとめ、sim と calc が同じものを使う。
 // 射撃の回数トリガーの窓と倍率ダメージ（damage）の発動は sim と厳密一致し、calc が期待値で置くのは通常攻撃のトリガー数だけ。
+// Stage 9: 宝物の段階（skills.treasurePhase）を、最上位で applyTreasureToTeam により基礎版 → 宝物版に差し替えてから計算する。
 import { durationToFrames, planFixedCycle } from './burst/fixedCycle.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from './burst/dynamic.ts';
 import {
@@ -60,6 +61,7 @@ import {
   type SlotBuffState,
   type TimelineSlot,
 } from './skills/timeline.ts';
+import { applyTreasureToTeam, treasureSlots, type TreasurePhase } from './skills/treasure.ts';
 import { SKILL_SLOTS, type SkillDefinition, type SkillSlot, type SkillSupport } from './skills/types.ts';
 import type { GrowthInput } from './stats.ts';
 import type { CharacterData } from './types.ts';
@@ -74,6 +76,11 @@ export type TeamSlotSkills = {
   /** null = 定義ファイルなし（未定義）。自分のスキルは発動しないが、味方からの allies 効果は受ける */
   definition: SkillDefinition | null;
   levels: SkillLevels;
+  /**
+   * Stage 9: 宝物の段階（0..3）。省略 0 = 宝物なし。character.treasure が null なら 0 だけ許す。
+   * スペック固定でも上書きしない（所持状況がそのまま反映される）
+   */
+  treasurePhase?: TreasurePhase;
 };
 
 export type TeamSlotInput = {
@@ -174,6 +181,10 @@ export type TeamSlotResult = {
   share: number;
   /** null = 定義ファイルなし（未定義） */
   skillSupport: Record<SkillSlot, SkillSupport> | null;
+  /** Stage 9: 入力の宝物の段階（省略は 0） */
+  treasurePhase: TreasurePhase;
+  /** Stage 9: 宝物版で計算したスロット（unlockOrder の先頭 treasurePhase 個）。character はこれらを差し替え済み */
+  treasureSlots: SkillSlot[];
 };
 
 export type TeamResult = {
@@ -273,9 +284,11 @@ export type TeamPlan = {
 
 /**
  * Stage 8: 1 パス目。射撃の列 → 時刻表（常時のゲージ速度込み）→ バフの区間（射撃の回数トリガー込み）→ 倍率ダメージの発動。
- * どれも射撃の列と時刻表だけから決まる（射撃がバフに依存するのは Stage 9）。
+ * どれも射撃の列と時刻表だけから決まる（射撃がバフに依存するのは Stage 10）。
  */
-export function planTeamRun(input: TeamInput): TeamPlan {
+export function planTeamRun(teamInput: TeamInput): TeamPlan {
+  // Stage 9: 直接呼ばれても宝物の段階が効くように。最上位で適用済みなら何もしない（同じオブジェクト）
+  const input = applyTreasureToTeam(teamInput);
   const { slots, enemy, model } = input;
   validateTeamSlots(slots);
   validateControlledSlot(slots, input.controlledSlot);
@@ -338,6 +351,12 @@ export function planSkillHits(
   return hits.sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
 }
 
+/** Stage 9: 結果に添える宝物の段階。適用前の入力（元のキャラデータ）から取る */
+function treasureOf(slot: TeamSlotInput | null): { treasurePhase: TreasurePhase; treasureSlots: SkillSlot[] } {
+  const treasurePhase = slot?.skills?.treasurePhase ?? 0;
+  return { treasurePhase, treasureSlots: slot === null ? [] : treasureSlots(slot.character, treasurePhase) };
+}
+
 function skillSupportOf(slot: TeamSlotInput): Record<SkillSlot, SkillSupport> | null {
   const definition = slot.skills?.definition;
   if (!definition) return null;
@@ -369,9 +388,11 @@ export function burstSnapshotState(
  */
 export const BURST_HIT_USES_PRE_ACTIVATION_BUFFS = true;
 
-export function computeTeamDamage(input: TeamInput): TeamResult {
+export function computeTeamDamage(teamInput: TeamInput): TeamResult {
+  validateTeamSlots(teamInput.slots);
+  // Stage 9: 宝物版への差し替えは最上位で 1 回だけ（planTeamRun の外でも definition と character を読むため）
+  const input = applyTreasureToTeam(teamInput);
   const { slots, enemy, durationSeconds, model } = input;
-  validateTeamSlots(slots);
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
   const { frames, schedule, timeline, skillHits } = planTeamRun(input);
@@ -472,6 +493,7 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
       totalDamage,
       dps: durationSeconds > 0 ? totalDamage / durationSeconds : 0,
       skillSupport: skillSupportOf(slot),
+      ...treasureOf(teamInput.slots[index] ?? null),
     };
   });
 

@@ -4,6 +4,7 @@ import {
   type SkillDefinition,
   type SkillLevels,
   type TeamSlotSkills,
+  type TreasurePhase,
 } from '@nikke/core';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -71,7 +72,14 @@ export function slotSkillsStatus(cache: SkillDefinitionCache, resourceId: number
   return definition ? { kind: 'ready', definition } : { kind: 'loading' };
 }
 
-/** computeTeamDamage に渡す skills。読み込み中・エラー・未定義は definition: null（味方の効果は受ける） */
-export function toSlotSkills(status: SlotSkillsStatus, levels: SkillLevels): TeamSlotSkills {
-  return { definition: status.kind === 'ready' ? status.definition : null, levels };
+/**
+ * computeTeamDamage に渡す skills。読み込み中・エラー・未定義は definition: null（味方の効果は受ける）。
+ * Stage 9: treasurePhase は effectiveTreasurePhase を通した値（宝物のないキャラは 0）
+ */
+export function toSlotSkills(
+  status: SlotSkillsStatus,
+  levels: SkillLevels,
+  treasurePhase: TreasurePhase = 0,
+): TeamSlotSkills {
+  return { definition: status.kind === 'ready' ? status.definition : null, levels, treasurePhase };
 }

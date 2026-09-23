@@ -2,13 +2,17 @@ import {
   SKILL_LEVEL_MAX,
   SKILL_LEVEL_MIN,
   SKILL_SLOTS,
+  TREASURE_PHASE_MAX,
+  applyTreasure,
   renderSkillDescription,
+  treasureSlots,
   type CharacterData,
   type SkillLevels,
   type SkillSlot,
+  type TreasurePhase,
 } from '@nikke/core';
 import { useState, type Dispatch } from 'react';
-import { SKILL_SLOT_LABEL, SUPPORT_BADGE } from '../skillLabels.ts';
+import { SKILL_SLOT_LABEL, SUPPORT_BADGE, treasurePhaseLabel } from '../skillLabels.ts';
 import { clampSkillLevel, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 
@@ -65,13 +69,19 @@ type Props = {
   character: CharacterData;
   /** 実際に計算へ渡す Lv（スペック固定なら全部 10） */
   levels: SkillLevels;
+  /** Stage 9: 実際に計算へ渡す宝物の段階（宝物のないキャラは 0）。スペック固定でも変えられる */
+  treasurePhase: TreasurePhase;
   disabled: boolean;
   status: SlotSkillsStatus;
   dispatch: Dispatch<TeamAction>;
 };
 
-/** 枠のスキル Lv 入力と、定義の対応状況・説明文 */
-export function SkillSection({ slotIndex, character, levels, disabled, status, dispatch }: Props) {
+/** 枠のスキル Lv 入力と、宝物の段階、定義の対応状況・説明文 */
+export function SkillSection({ slotIndex, character, levels, treasurePhase, disabled, status, dispatch }: Props) {
+  // Stage 9: 宝物版に差し替えた説明文と定義を出す（計算と同じ applyTreasure を通す）
+  const shown = applyTreasure(character, status.kind === 'ready' ? status.definition : null, treasurePhase);
+  const treasureShown = new Set(treasureSlots(character, treasurePhase));
+  const treasure = character.treasure;
   const headline =
     status.kind === 'undefined'
       ? { badge: SUPPORT_BADGE.undefined, text: 'スキル定義なし（通常攻撃のみで計算。味方からのバフは受ける）' }
@@ -93,11 +103,32 @@ export function SkillSection({ slotIndex, character, levels, disabled, status, d
             <span className="badge">{headline.badge.label}</span> {headline.text}
           </span>
         )}
+        {treasure && (
+          <label className="treasure-phase" title={treasure.name.ja}>
+            <span>宝物</span>
+            <select
+              value={treasurePhase}
+              onChange={(e) =>
+                dispatch({
+                  type: 'setTreasurePhase',
+                  index: slotIndex,
+                  treasurePhase: Number(e.target.value) as TreasurePhase,
+                })
+              }
+            >
+              {Array.from({ length: TREASURE_PHASE_MAX + 1 }, (_, phase) => (
+                <option key={phase} value={phase}>
+                  {treasurePhaseLabel(treasure.unlockOrder, phase)}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
       <div className="skill-row">
         {SKILL_SLOTS.map((slot) => {
-          const skill = character.skills[slot];
-          const entry = status.kind === 'ready' ? status.definition.skills[slot] : null;
+          const skill = shown.character.skills[slot];
+          const entry = shown.definition?.skills[slot] ?? null;
           const badge = entry ? SUPPORT_BADGE[entry.support] : null;
           return (
             <details key={slot} className="skill">
@@ -105,6 +136,7 @@ export function SkillSection({ slotIndex, character, levels, disabled, status, d
                 <span className="skill-name">
                   {SKILL_SLOT_LABEL[slot]}: {skill.name.ja}
                 </span>
+                {treasureShown.has(slot) && <span className="badge treasure">宝物版</span>}
                 {badge && <span className={`badge ${badge.className}`}>{badge.label}</span>}
               </summary>
               <label className="field skill-level">

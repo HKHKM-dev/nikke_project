@@ -133,5 +133,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 201001,
+    "name": {
+      "ja": "捜査用手帳",
+      "en": "Police Notebook"
+    },
+    "unlockOrder": ["skill1", "burst", "skill2"],
+    "skills": {
+      "skill1": {
+        "id": 2030151,
+        "name": {
+          "ja": "ブレイブコール",
+          "en": "Brave Call"
+        },
+        "description": {
+          "ja": "■通常攻撃を{description_value_01}回行った時、味方全体に\n<color=#00AEFF>「攻撃力{description_value_02}％▲」「{description_value_03}秒間維持」</color>\n■戦闘開始時、自分に\n<color=#00AEFF>「ポリスバッジ：スキル発動者の<word_group=10025>最終</word_group>最大HPの\n{description_value_04}％の<word_group=10023>バリア</word_group>」「{description_value_05}秒間維持」</color>",
+          "en": "■ Activates after performing {description_value_01} normal attacks. Affects all allies.\n<color=#00AEFF>ATK ▲ {description_value_02}% for {description_value_03} sec.</color>\n■ Activates at the start of battle. Affects self.\n<color=#00AEFF>Police Badge: Creates a <word_group=10023>shield</word_group> with HP equal to {description_value_04}% of the skill user's <word_group=10025>final</word_group> max HP that lasts for {description_value_05} sec.</color>"
+        },
+        "values": [
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["2.73", "3.03", "3.33", "3.64", "3.94", "4.25", "4.55", "4.85", "5.16", "5.46"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["59.09", "63.64", "68.18", "72.73", "77.27", "81.82", "86.36", "90.91", "95.46", "100"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "burst": {
+        "id": 1030351,
+        "name": {
+          "ja": "ポリスライン",
+          "en": "Poli's Defense Line"
+        },
+        "description": {
+          "ja": "■自分がポリスバッジ状態なら、自分に\n<color=#00AEFF>「<word_group=10006>不屈</word_group>」「{description_value_05}秒間維持」「ポリスバッジ解除」</color>\n■自分に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPの\n{description_value_01}％の味方共用<word_group=10023>バリア</word_group>」「{description_value_02}秒間維持」</color>\n■味方全体に\n<color=#00AEFF>「攻撃力{description_value_03}％▲」「{description_value_04}秒間維持」</color>",
+          "en": "■ Activates when in the Police Badge state. Affects self.\n<color=#00AEFF>Gains <word_group=10006>Indomitability</word_group> for {description_value_05} sec. Removes Police Badge.</color>\n■ Affects self.\n<color=#00AEFF>Creates a shared <word_group=10023>shield</word_group> with HP equal to {description_value_01}% of the skill user's <word_group=10025>final</word_group> max HP that protects all allies from damage. Lasts for {description_value_02} sec.</color>\n■ Affects all allies.\n<color=#00AEFF>ATK ▲ {description_value_03}% for {description_value_04} sec.</color>"
+        },
+        "values": [
+          ["23.63", "25.45", "27.27", "29.09", "30.91", "32.73", "34.55", "36.36", "38.18", "40"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["22.27", "24.75", "27.22", "29.7", "32.17", "34.65", "37.12", "39.6", "42.07", "44.55"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "skill2": {
+        "id": 2030251,
+        "name": {
+          "ja": "ドッグセラピー",
+          "en": "That's a Good Boy"
+        },
+        "description": {
+          "ja": "■{description_value_05}秒ごとに自分と自分を除く\nHPが最も低い味方{description_value_01}機に\n<color=#00AEFF>「防御力{description_value_02}％▲」「{description_value_03}秒間維持」\n「<word_group=10044>受けるダメージ均等分配</word_group>」「{description_value_04}秒間維持」</color>\n■ポリスバッジ状態が終了した時、自分に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPの\n{description_value_06}％持続回復」「1秒間隔」「{description_value_07}秒間維持」</color>",
+          "en": "■ Activates every {description_value_05} sec. Affects self and the {description_value_01} ally unit(s) with the lowest HP.\n<color=#00AEFF>DEF ▲ {description_value_02}% for {description_value_03} sec.\n<word_group=10044>Equally shares damage taken</word_group> for {description_value_04} sec.</color>\n■ Activates when Police Badge ends. Affects self.\n<color=#00AEFF>Restores HP equal to {description_value_06}% of the skill user's <word_group=10025>final</word_group> max HP every second for {description_value_07} sec.</color>"
+        },
+        "values": [
+          ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2"],
+          ["11.75", "13.06", "14.36", "15.67", "16.97", "18.28", "19.59", "20.89", "22.2", "23.51"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["20", "20", "20", "20", "20", "20", "20", "20", "20", "20"],
+          ["2.95", "3.18", "3.41", "3.64", "3.86", "4.09", "4.32", "4.55", "4.77", "5"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }
