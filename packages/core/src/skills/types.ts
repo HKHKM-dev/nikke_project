@@ -57,10 +57,17 @@ export function isFiringStat(stat: BuffStat): boolean {
 
 /**
  * どう算出するか。ratio = 対象自身の基礎値に対する比率、casterAttack = 発動者のバフ前攻撃力 × 比率の固定加算、
- * flat = 実数の固定加算（Stage 10。stat が maxAmmo のときだけ。値は発数で 100 で割らない）
+ * flat = 実数の固定加算（Stage 10。stat が maxAmmo のときだけ。値は発数で 100 で割らない）、
+ * casterChargeTime = 発動者の基礎チャージ時間 × 比率の秒数を対象のチャージ時間から引く（Stage 11 アリス編。stat が chargeSpeed のときだけ。
+ * 「スキル発動者基準でチャージ速度 X%▲」。録画 42 でアドミ（1 秒）が 0.175 秒縮んだ。plan/design-stage11.md 27 節）
  */
-export type BuffScaling = 'ratio' | 'casterAttack' | 'flat';
-export const BUFF_SCALINGS = ['ratio', 'casterAttack', 'flat'] as const satisfies readonly BuffScaling[];
+export type BuffScaling = 'ratio' | 'casterAttack' | 'flat' | 'casterChargeTime';
+export const BUFF_SCALINGS = [
+  'ratio',
+  'casterAttack',
+  'flat',
+  'casterChargeTime',
+] as const satisfies readonly BuffScaling[];
 
 /**
  * 効果の対象。Stage 11: burstUsers = 「直前にバーストスキルを使用した味方」（そのフルバーストを開いたチェーンでバーストを撃った枠）。
@@ -333,6 +340,9 @@ function parseLocalizedText(v: Json, path: string): LocalizedText {
 function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path: string): void {
   if (scaling === 'casterAttack' && stat !== 'attack') {
     fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
+  }
+  if (scaling === 'casterChargeTime' && stat !== 'chargeSpeed') {
+    fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
   }
   if (scaling === 'flat' && stat !== 'maxAmmo') {
     fail(`${path}.scaling`, `flat is only allowed with stat "maxAmmo", got "${stat}"`);

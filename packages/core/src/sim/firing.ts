@@ -5,13 +5,17 @@ import type { ShotParams } from '../types.ts';
 import { isChargeWeapon, secondsToFrames } from '../weapons.ts';
 
 /** 射撃に効くバフの合計（BuffTotals の 4 フィールド） */
-export type FiringBuffs = Pick<BuffTotals, 'maxAmmoRatio' | 'maxAmmoFlat' | 'reloadSpeed' | 'chargeSpeed'>;
+export type FiringBuffs = Pick<
+  BuffTotals,
+  'maxAmmoRatio' | 'maxAmmoFlat' | 'reloadSpeed' | 'chargeSpeed' | 'chargeTimeFlat'
+>;
 
 export const ZERO_FIRING_BUFFS: Readonly<FiringBuffs> = Object.freeze({
   maxAmmoRatio: 0,
   maxAmmoFlat: 0,
   reloadSpeed: 0,
   chargeSpeed: 0,
+  chargeTimeFlat: 0,
 });
 
 /** 射手が各フレームで使う実効値 */
@@ -40,7 +44,13 @@ export const MAX_AMMO_ROUNDING: 'floor' | 'round' = 'round';
 export const SPEED_FORMULA: 'subtract' | 'divide' = 'subtract';
 
 export function isZeroFiring(buffs: FiringBuffs): boolean {
-  return buffs.maxAmmoRatio === 0 && buffs.maxAmmoFlat === 0 && buffs.reloadSpeed === 0 && buffs.chargeSpeed === 0;
+  return (
+    buffs.maxAmmoRatio === 0 &&
+    buffs.maxAmmoFlat === 0 &&
+    buffs.reloadSpeed === 0 &&
+    buffs.chargeSpeed === 0 &&
+    buffs.chargeTimeFlat === 0
+  );
 }
 
 /** 速度のバフで縮めた秒数 */
@@ -63,7 +73,10 @@ export function firingParams(shot: ShotParams, buffs: FiringBuffs = ZERO_FIRING_
   return {
     maxAmmo: effectiveMaxAmmo(shot.maxAmmo, buffs),
     reloadChunkFrames: secondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)),
-    chargeFrames: isChargeWeapon(shot) ? secondsToFrames(speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed)) : 0,
+    // Stage 11 アリス編: 発動者基準のチャージ速度は、比率で縮めた後の秒数からさらに引く（アリス自身は比率と同じ値になる）
+    chargeFrames: isChargeWeapon(shot)
+      ? secondsToFrames(Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat))
+      : 0,
   };
 }
 

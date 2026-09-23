@@ -101,9 +101,14 @@ export function skillValue(skill: SkillRaw, ref: number, level: number): number 
   return value;
 }
 
-/** % 表記の値を比率にする。flat（Stage 10。最大装弾数の発数）はそのまま */
-function scaledValue(raw: number, scaling: BuffScaling | undefined): number {
-  return scaling === 'flat' ? raw : raw / 100;
+/**
+ * % 表記の値を比率にする。flat（Stage 10。最大装弾数の発数）はそのまま。
+ * casterChargeTime（Stage 11 アリス編）は 発動者の基礎チャージ時間 × 比率 の秒数にする
+ */
+function scaledValue(raw: number, scaling: BuffScaling | undefined, caster: CharacterData): number {
+  if (scaling === 'flat') return raw;
+  if (scaling === 'casterChargeTime') return (raw / 100) * caster.shot.chargeTime;
+  return raw / 100;
 }
 
 export type ResolvedEffect = {
@@ -146,7 +151,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
         target: effect.target,
         stat: effect.stat,
         scaling: effect.scaling ?? 'ratio',
-        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling),
+        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character),
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.assumes) r.assumes = effect.assumes;
@@ -197,7 +202,7 @@ export function resolveTimed(
         target: effect.target,
         stat: effect.stat,
         scaling: effect.scaling ?? 'ratio',
-        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling),
+        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character),
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         durationFrames: durationToFrames(seconds),
         effectIndex,

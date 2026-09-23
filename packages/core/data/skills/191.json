@@ -12,12 +12,9 @@
           "target": "topAttack",
           "targetCountRef": 1,
           "stat": "chargeSpeed",
+          "scaling": "casterChargeTime",
           "ref": 2,
-          "durationRef": 3,
-          "assumes": {
-            "ja": "「スキル発動者基準」は発動者のバフ前のチャージ速度（全員同じ）とみなし、値をそのまま足す",
-            "en": "\"Based on the caster\" is read as the caster's unbuffed Charge Speed (the same for everyone), so the value is added as is"
-          }
+          "durationRef": 3
         },
         {
           "kind": "timed",

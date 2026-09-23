@@ -3,7 +3,8 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { WeaponType } from '../../types.ts';
-import { ZERO_BUFFS } from '../buffs.ts';
+import { firingParams } from '../../sim/firing.ts';
+import { ZERO_BUFFS, applyResolvedEffect } from '../buffs.ts';
 import {
   attackRankFor,
   finalAttacksAt,
@@ -168,7 +169,7 @@ describe('順位（skills/ranking.ts、18 節）', () => {
 
   it('includes passive attack in the final attack', () => {
     const slots: RankSlot[] = [
-      { ...slot(100), passive: { ...ZERO_BUFFS, attackRatio: 0.5, attackFlat: 10 } },
+      { ...slot(100)!, passive: { ...ZERO_BUFFS, attackRatio: 0.5, attackFlat: 10 } },
       slot(155),
     ];
     expect(finalAttacksAt(slots, [], 0)).toEqual([160, 155]);
@@ -196,5 +197,47 @@ describe('対象判定（topAttack）', () => {
     expect(canEverTarget(e, 0, 3, 'AR')).toBe(true);
     expect(canEverTarget({ ...e, targetWeapon: 'SG' }, 0, 3, 'AR')).toBe(false);
     expect(canEverTarget({ target: 'self' }, 0, 3, 'AR')).toBe(false);
+  });
+});
+
+describe('発動者基準のチャージ速度（scaling casterChargeTime、録画 42 で確定）', () => {
+  it('is only allowed with stat chargeSpeed', () => {
+    expect(() =>
+      parseSkillDefinition(
+        definition({ skill1: supported({ ...aliceS1, stat: 'attack', scaling: 'casterChargeTime' }) }),
+      ),
+    ).toThrow(/casterChargeTime is only allowed with stat "chargeSpeed"/);
+  });
+
+  it('resolves to seconds of the caster’s base charge time and subtracts them after the ratio', () => {
+    const base = makeCharacter();
+    const caster = makeCharacter(
+      { chargeTime: 1.5, inputType: 'UP' },
+      {
+        skills: {
+          ...base.skills,
+          skill1: {
+            id: 1,
+            name: { ja: 'S1', en: 'S1' },
+            description: { ja: '', en: '' },
+            values: ['2', '11.67', '10'].map((v) => Array.from({ length: 10 }, () => v)),
+          },
+        },
+      },
+    );
+    const def = parseSkillDefinition(definition({ skill1: supported({ ...aliceS1, scaling: 'casterChargeTime' }) }));
+    const [effect] = resolveTimed(def, caster, MAX_SKILL_LEVELS);
+    expect(effect!.value).toBeCloseTo(0.1167 * 1.5, 12);
+    const totals = applyResolvedEffect(ZERO_BUFFS, effect!, 0).totals;
+    expect(totals.chargeTimeFlat).toBeCloseTo(0.17505, 12);
+    expect(totals.chargeSpeed).toBe(0);
+    // アドミ（1 秒）: 60 − 10.5 = 49.5 → 50f（録画 42 の間隔 72f = 50 + 22）
+    const admi = makeCharacter({ chargeTime: 1, inputType: 'UP' }).shot;
+    expect(firingParams(admi, totals).chargeFrames).toBe(50);
+    // アリス自身（1.5 秒・バースト 80.15%）: 1.5 × 0.1985 − 0.175 = 0.1227 秒 → 8f（比率 11.67% と同じ）
+    const alice = makeCharacter({ chargeTime: 1.5, inputType: 'UP' }).shot;
+    expect(firingParams(alice, { ...totals, chargeSpeed: 0.8015 }).chargeFrames).toBe(8);
+    // 0 未満にはならない
+    expect(firingParams(admi, { ...totals, chargeTimeFlat: 2 }).chargeFrames).toBe(0);
   });
 });

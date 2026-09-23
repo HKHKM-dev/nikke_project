@@ -29,6 +29,8 @@ export type BuffTotals = {
   reloadSpeed: number;
   /** Stage 10: チャージ速度の加算 */
   chargeSpeed: number;
+  /** Stage 11 アリス編: チャージ時間から引く秒数（発動者基準のチャージ速度。scaling casterChargeTime） */
+  chargeTimeFlat: number;
 };
 
 export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
@@ -44,6 +46,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   maxAmmoFlat: 0,
   reloadSpeed: 0,
   chargeSpeed: 0,
+  chargeTimeFlat: 0,
 });
 
 /** stat に対応する BuffTotals の比率フィールド */
@@ -86,6 +89,10 @@ export function applyResolvedEffect(
   if (effect.scaling === 'casterAttack') {
     const appliedAmount = casterBaseAttack * effect.value;
     return { totals: addFlatAttack(totals, appliedAmount), appliedAmount };
+  }
+  if (effect.scaling === 'casterChargeTime') {
+    // value は解決時に 発動者の基礎チャージ時間 × 比率 の秒数にしてある（skills/resolve.ts）
+    return { totals: { ...totals, chargeTimeFlat: totals.chargeTimeFlat + effect.value }, appliedAmount: effect.value };
   }
   if (effect.scaling === 'flat') {
     return { totals: { ...totals, maxAmmoFlat: totals.maxAmmoFlat + effect.value }, appliedAmount: effect.value };

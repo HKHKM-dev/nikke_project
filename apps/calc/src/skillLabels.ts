@@ -91,13 +91,16 @@ export const SUPPORT_BADGE: Record<SkillSupport | 'undefined' | 'loading' | 'err
   error: { label: '読み込み失敗', className: 'unsupported' },
 };
 
-/** 「攻撃力 +42.2%」「攻撃力 +3,105（発動者基準 14.1%）」「最大装弾数 +5 発」 */
+/** 「攻撃力 +42.2%」「攻撃力 +3,105（発動者基準 14.1%）」「最大装弾数 +5 発」「チャージ時間 −0.175 秒（発動者基準のチャージ速度）」 */
 export function formatAppliedAmount(effect: AppliedEffect): string {
   const stat = BUFF_STAT_LABEL[effect.stat];
   if (effect.scaling === 'casterAttack') {
     return `${stat} +${formatNumber(effect.appliedAmount)}（発動者基準 ${formatPercent(effect.value, 2)}）`;
   }
   if (effect.scaling === 'flat') return `${stat} +${formatNumber(effect.appliedAmount)} 発`;
+  // Stage 11 アリス編: 発動者基準のチャージ速度は秒数でチャージ時間から引く
+  if (effect.scaling === 'casterChargeTime')
+    return `チャージ時間 −${formatNumber(effect.appliedAmount, 3)} 秒（発動者基準のチャージ速度）`;
   return `${stat} +${formatPercent(effect.appliedAmount, 2)}`;
 }
 
