@@ -58,7 +58,11 @@
   "burstSkill": {
     "cooldownSeconds": 40,
     "nextStep": "StepFull",
-    "durationSeconds": 15
+    "durationSeconds": 15,
+    "changeWeapon": {
+      "rateOfFire": 4200,
+      "shotId": 1026002
+    }
   },
   "skills": {
     "skill1": {

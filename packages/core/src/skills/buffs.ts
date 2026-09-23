@@ -1,7 +1,19 @@
 // 1 体が受けるバフの合計と、ダメージ式への適用（純関数）。computeDamage はここの関数を呼ぶだけにする。
-import type { CharacterData } from '../types.ts';
+import type { CharacterData, ShotParams } from '../types.ts';
 import type { ResolvedEffect } from './resolve.ts';
 import type { BuffStat } from './types.ts';
+
+/**
+ * Stage 11 モダニア: 使用武器の変更（殲滅モード）で持ち替えた武器。shot は基礎の武器を写して、1 発のダメージとレートを差し替えたもの
+ * （CDN に無いパラメータは仮の定数。skills/resolve.ts の changedWeaponShot）
+ */
+export type ChangedWeapon = {
+  /** 区間の鍵・同一性の判定用（resourceId.slot.effectIndex） */
+  id: string;
+  /** 1 発のヒット数（shot.damage はヒット数ぶんを合計した武器倍率。表示用に残す） */
+  hits: number;
+  shot: ShotParams;
+};
 
 /** 1 体が受けるバフの合計。attackFlat 以外はすべて比率の加算（0.2 = +20%） */
 export type BuffTotals = {
@@ -31,6 +43,15 @@ export type BuffTotals = {
   chargeSpeed: number;
   /** Stage 11 アリス編: チャージ時間から引く秒数（発動者基準のチャージ速度。scaling casterChargeTime） */
   chargeTimeFlat: number;
+  /**
+   * Stage 11 モダニア: 命中率の加算。ダメージの式も射手も読まない（全弾命中の前提）。区間の鍵にも入れず、
+   * 「自分が命中率増加状態なら」の条件（timed の condition）と表示にだけ使う
+   */
+  hitRate: number;
+  /** Stage 11 モダニア: 装弾数無限の窓の数（> 0 なら残弾を減らさない。射撃に効く） */
+  infiniteAmmo: number;
+  /** Stage 11 モダニア: 使用武器の変更（無ければ null）。射手とダメージの式が基礎の武器の代わりに使う */
+  weapon: ChangedWeapon | null;
 };
 
 export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
@@ -47,10 +68,13 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   reloadSpeed: 0,
   chargeSpeed: 0,
   chargeTimeFlat: 0,
+  hitRate: 0,
+  infiniteAmmo: 0,
+  weapon: null,
 });
 
 /** stat に対応する BuffTotals の比率フィールド */
-const RATIO_FIELD: Record<BuffStat, keyof BuffTotals> = {
+const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon'>> = {
   attack: 'attackRatio',
   critRate: 'critRate',
   critDamage: 'critDamage',
@@ -61,7 +85,14 @@ const RATIO_FIELD: Record<BuffStat, keyof BuffTotals> = {
   maxAmmo: 'maxAmmoRatio',
   reloadSpeed: 'reloadSpeed',
   chargeSpeed: 'chargeSpeed',
+  hitRate: 'hitRate',
+  infiniteAmmo: 'infiniteAmmo',
 };
+
+/** Stage 11 モダニア: stat の合計（「自分が 〈stat〉 増加状態なら」の判定用） */
+export function statTotal(totals: BuffTotals, stat: BuffStat): number {
+  return totals[RATIO_FIELD[stat]];
+}
 
 /** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す */
 export function addRatioBuff(totals: BuffTotals, stat: BuffStat, ratio: number): BuffTotals {
@@ -83,9 +114,13 @@ export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
  */
 export function applyResolvedEffect(
   totals: BuffTotals,
-  effect: Pick<ResolvedEffect, 'stat' | 'scaling' | 'value'>,
+  effect: Pick<ResolvedEffect, 'stat' | 'scaling' | 'value'> & { weapon?: ChangedWeapon },
   casterBaseAttack: number,
 ): AppliedBuff {
+  // Stage 11 モダニア: 使用武器の変更は値を足さず、武器を差し替える（1 体に 1 つ。後から付いたほうを使う）
+  if (effect.stat === 'weapon') {
+    return { totals: { ...totals, weapon: effect.weapon ?? null }, appliedAmount: effect.value };
+  }
   if (effect.scaling === 'casterAttack') {
     const appliedAmount = casterBaseAttack * effect.value;
     return { totals: addFlatAttack(totals, appliedAmount), appliedAmount };
@@ -97,7 +132,7 @@ export function applyResolvedEffect(
   if (effect.scaling === 'flat') {
     return { totals: { ...totals, maxAmmoFlat: totals.maxAmmoFlat + effect.value }, appliedAmount: effect.value };
   }
-  return { totals: addRatioBuff(totals, effect.stat, effect.value), appliedAmount: effect.value };
+  return { totals: addRatioBuff(totals, effect.stat as BuffStat, effect.value), appliedAmount: effect.value };
 }
 
 /** base × (1 + attackRatio) + attackFlat */

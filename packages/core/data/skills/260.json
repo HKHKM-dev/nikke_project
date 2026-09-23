@@ -1,0 +1,113 @@
+{
+  "formatVersion": 1,
+  "resourceId": 260,
+  "checkedAt": "2026-09-23",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit"
+          },
+          "damageType": "additional",
+          "ref": 1,
+          "assumes": {
+            "ja": "通常攻撃 1 発ごとに 1 回（全弾命中の前提。殲滅モードの 2 ヒットでも 1 回）。コア・距離は乗らない（録画 44 で確認）",
+            "en": "Once per normal shot (every shot is assumed to hit; once even for the 2 hits of Annihilation Mode). Core and distance do not boost it (recording 44)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 2
+          },
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 3,
+          "maxStacksRef": 4,
+          "durationRef": 5
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 2
+          },
+          "target": "self",
+          "stat": "maxAmmo",
+          "decrease": true,
+          "ref": 6,
+          "maxStacksRef": 7,
+          "durationRef": 8
+        }
+      ]
+    },
+    "skill2": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "hitRate",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 3
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 4,
+          "durationRef": 5,
+          "condition": {
+            "selfBuffed": "hitRate"
+          },
+          "assumes": {
+            "ja": "回数は命中率増加状態に関係なく通算で数え、200 回目の瞬間に命中率増加状態かを見る",
+            "en": "Hits are counted regardless of the hit rate state; the state is checked at every 200th hit"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "infiniteAmmo",
+          "durationRef": 2
+        },
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "hitsPerShot": 2,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "殲滅モードは 1 発に 2 ヒット（射撃場の的で実測。照準範囲内の敵の数か弾の数かは未確定）。コア倍率は基礎の MG と同じ、スピンアップなしで毎フレーム 1 発、終わると基礎の MG を最大装弾数まで込め直して戻る（録画 44）",
+            "en": "Annihilation Mode lands 2 hits per shot (measured on the range target; whether it is per enemy in range or per bullet is unknown). Base MG core multiplier, no spin-up (one shot per frame), and the base MG comes back fully reloaded (recording 44)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている",
+          "en": "Full Burst Time +5 s is already in burst_duration (a 15 s full burst)"
+        },
+        {
+          "ja": "殲滅モードの照準線拡張・照準範囲内のすべての敵を同時に照準は、単体の的では関係しない",
+          "en": "Annihilation Mode's wider aim and targeting every enemy in range do not matter against a single target"
+        }
+      ]
+    }
+  }
+}

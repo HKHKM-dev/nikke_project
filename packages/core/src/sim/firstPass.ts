@@ -23,6 +23,11 @@
 // 攻撃力の timed 効果の窓も同じ TriggerTracker で追い（射撃には使わず順位のためだけ）、発火のフレームで順位を出して対象を決める。
 // 手順 3 の順番は 回復 → 攻撃力の窓 → 射撃に効く窓 → 即時効果 で、同じフレームに付いた攻撃力の窓も順位に入る
 // （planBuffTimeline の 2 段目と同じ意味。skills/ranking.ts）。
+//
+// Stage 11 モダニア（plan/design-stage11-modernia.md 3 節）: スタックする効果（最大装弾数▼）は段ごとの窓で登録する（skills/stacks.ts）。
+// 条件「自分が 〈stat〉 増加状態なら」の効果を追うときは、条件の stat の窓（状態の窓）も追い、手順 3 の順番は
+// 回復 → 状態の窓 → 攻撃力の窓 → 射撃に効く窓 → 即時効果。使用武器の変更（殲滅モード）の間は、変更後の武器を別の射手の状態で撃ち、
+// 終わったら基礎の武器を最大装弾数まで込め直して戻す（sim/shooter.ts の resumeShooter。録画 44 で確定）。武器の窓は持ち替えるフレーム（発火の次のフレーム）から。
 import { planFixedCycle, durationToFrames } from '../burst/fixedCycle.ts';
 import {
   DEFAULT_BURST_TIMING,
@@ -46,7 +51,14 @@ import {
 import { healFrameOf } from '../skills/heals.ts';
 import { attackRankFor, finalAttacksAt, type AttackWindow } from '../skills/ranking.ts';
 import { canEverTarget, dependsOnRank, isEffectTarget, type FireContext } from '../skills/targets.ts';
-import { rankSlotsOf, resolvePassiveStates, type TimelineSlot } from '../skills/timeline.ts';
+import { stackWindows } from '../skills/stacks.ts';
+import {
+  rankSlotsOf,
+  resolvePassiveStates,
+  selfBuffedAt,
+  weaponStartTrim,
+  type TimelineSlot,
+} from '../skills/timeline.ts';
 import {
   createTriggerTracker,
   fireContextOf,
@@ -54,10 +66,10 @@ import {
   type ShotEvent,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import { isFiringStat } from '../skills/types.ts';
+import { isFiringStat, type BuffStat } from '../skills/types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
-import { initialShooter, refillAmmo, stepShooter, type ShooterState } from './shooter.ts';
+import { initialShooter, refillAmmo, resumeShooter, stepShooter, type ShooterState } from './shooter.ts';
 import type { ShotLog } from './shots.ts';
 
 export type FirstPassOptions = {
@@ -79,6 +91,8 @@ export type FiringWindow = {
   effect: ResolvedTimedEffect;
   start: number;
   end: number;
+  /** Stage 11 モダニア: 効果のあるスタックの段（1 始まり）。スタックしない効果はキーごと無い */
+  stack?: number;
 };
 
 /** 即時効果を 1 枠に当てた記録 */
@@ -103,6 +117,9 @@ export type FirstPassResult = {
   rankAttackWindows: FiringWindow[];
 };
 
+/** 窓 [start, end) と、スタックする効果なら段（1 始まり） */
+type LoopWindow = [start: number, end: number, stack?: number];
+
 type FiringSource = {
   sourceSlotIndex: number;
   effect: ResolvedTimedEffect;
@@ -111,7 +128,9 @@ type FiringSource = {
   canTarget: boolean[];
   fires: TriggerTracker;
   /** 対象の枠ごとの窓（和集合済み。昇順）。上書き延長はその枠が受けた発火どうしでだけ起きる（Stage 11） */
-  windows: [number, number][][];
+  windows: LoopWindow[][];
+  /** Stage 11 モダニア: スタックする効果の、対象の枠ごとの窓の始まり（段ごとの窓はここから作り直す） */
+  starts: number[][];
 };
 
 type InstantSource = {
@@ -157,13 +176,19 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     canTarget: slots.map((t, i) => t !== null && canEverTarget(effect, sourceSlotIndex, i, t.character.weaponType)),
     fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
     windows: slots.map(() => []),
+    starts: slots.map(() => []),
   });
   /** 攻撃力の timed 効果（順位の要らないもの）。topAttack の射撃系・即時効果があるときだけ使う */
   const attackCandidates: FiringSource[] = [];
+  /** Stage 11 モダニア: 条件の無い・順位の要らない timed 効果（条件の stat の窓を追うときの候補） */
+  const plainTimed: { effect: ResolvedTimedEffect; sourceSlotIndex: number; casterBaseAttack: number }[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
       if (effect.durationFrames <= 0) continue;
+      if (!dependsOnRank(effect) && effect.condition === undefined) {
+        plainTimed.push({ effect, sourceSlotIndex, casterBaseAttack: slot.casterBaseAttack });
+      }
       if (effect.stat === 'attack' && !dependsOnRank(effect)) {
         attackCandidates.push(sourceOf(effect, sourceSlotIndex, slot.casterBaseAttack));
       }
@@ -187,6 +212,26 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     firing.some((src) => dependsOnRank(src.effect)) || otherInstants.some((src) => dependsOnRank(src.effect));
   const attackTrack = needsRank ? attackCandidates : [];
   const rankSlots = needsRank ? rankSlotsOf(slots, passive) : [];
+  // Stage 11 モダニア: ループで追う条件付きの効果（射撃に効くもの、順位のために追う攻撃力のもの）があるときだけ、条件の stat の窓を追う
+  const conditionStats = new Set<BuffStat>(
+    [...firing, ...attackTrack].flatMap((src) =>
+      src.effect.condition === undefined ? [] : [src.effect.condition.selfBuffed],
+    ),
+  );
+  const stateTrack: FiringSource[] = plainTimed
+    .filter(({ effect }) => effect.stat !== 'weapon' && conditionStats.has(effect.stat))
+    .map(({ effect, sourceSlotIndex, casterBaseAttack }) => sourceOf(effect, sourceSlotIndex, casterBaseAttack));
+  /** 効果 src の条件を、フレーム f の状態の窓（同じフレームに付いたものも入れる）で判定する。条件の無い効果は常に true */
+  const conditionOk = (src: FiringSource, f: number): boolean => {
+    const condition = src.effect.condition;
+    if (condition === undefined) return true;
+    const windows = stateTrack.flatMap((st) =>
+      st.windows.flatMap((list, slotIndex) =>
+        list.map(([start, end]) => ({ slotIndex, effect: st.effect, start, end })),
+      ),
+    );
+    return selfBuffedAt(passive, windows, src.sourceSlotIndex, condition.selfBuffed, f);
+  };
   /** 効果 e の発火の文脈に、フレーム f の攻撃力の順位を足す（topAttack の効果だけ） */
   const withRank = (e: ResolvedTimedEffect | ResolvedInstantEffect, context: FireContext, f: number): FireContext => {
     if (!dependsOnRank(e)) return context;
@@ -207,24 +252,38 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
 
   /**
    * 窓を登録する（同じ効果の再発火は和集合 = 上書き延長。planBuffTimeline の unionWindows と同じ）。
-   * Stage 11: 対象の枠ごとに、その枠が対象になった発火だけで和集合にする
+   * Stage 11: 対象の枠ごとに、その枠が対象になった発火だけで和集合にする。
+   * Stage 11 モダニア: スタックする効果は、その枠の窓の始まりの列から段ごとの窓を作り直す（skills/stacks.ts。planBuffTimeline と同じ関数）
    */
   const register = (src: FiringSource, start: number, context: FireContext): void => {
     if (start >= frames) return;
     const end = Math.min(start + src.effect.durationFrames, frames);
     for (const i of targetsAt(src.effect, src.sourceSlotIndex, context)) {
+      if (src.effect.maxStacks !== undefined) {
+        src.starts[i]!.push(start);
+        src.windows[i] = stackWindows(src.starts[i]!, src.effect.durationFrames, frames, src.effect.maxStacks).map(
+          (w): LoopWindow => [w.start, w.end, w.stack],
+        );
+        continue;
+      }
       const list = src.windows[i]!;
       const last = list[list.length - 1];
       if (last !== undefined && start <= last[1]) {
         if (end > last[1]) last[1] = end;
         continue;
       }
-      list.push([start, end]);
+      // Stage 11 モダニア: 使用武器の変更は持ち替えるフレーム（発火の次）から（planBuffTimeline の weaponStartTrim と同じ）
+      const trimmed = start + weaponStartTrim(src.effect);
+      if (trimmed < end) list.push([trimmed, end]);
     }
   };
+  /** フレーム f の発火で付く窓の始まり。射撃の回数トリガーは次のフレームから（Stage 8） */
+  const startOf = (src: FiringSource, f: number): number => (isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
   // 戦闘開始時の窓はループの前に登録する（1 発目のマガジンから効く）
-  for (const src of [...attackTrack, ...firing]) {
-    if (src.effect.trigger === 'battleStart' && frames > 0) register(src, 0, withRank(src.effect, null, 0));
+  for (const src of [...stateTrack, ...attackTrack, ...firing]) {
+    if (src.effect.trigger !== 'battleStart' || frames <= 0) continue;
+    if (!conditionOk(src, 0)) continue;
+    register(src, 0, withRank(src.effect, null, 0));
   }
 
   // ---- 射手 ----
@@ -245,10 +304,12 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     let changed = false;
     for (const src of firing) {
       if (!src.canTarget[i]) continue;
-      const w = src.windows[i]!.find(([s, e]) => s <= f && f < e);
-      if (w === undefined) continue;
-      buffs = applyResolvedEffect(buffs, src.effect, src.casterBaseAttack).totals;
-      changed = true;
+      // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す
+      for (const [s, e] of src.windows[i]!) {
+        if (s > f || f >= e) continue;
+        buffs = applyResolvedEffect(buffs, src.effect, src.casterBaseAttack).totals;
+        changed = true;
+      }
     }
     if (!changed || isZeroFiring(buffs)) return base;
     return firingParams(slots[i]!.character.shot, buffs);
@@ -256,6 +317,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const shooters: (ShooterState | null)[] = slots.map((slot, i) =>
     slot === null ? null : initialShooter(slot.character.shot, model, paramsAt(i, 0)),
   );
+  /** Stage 11 モダニア: 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
+  const changedShooters: (ShooterState | null)[] = slots.map(() => null);
+  const activeWeapon: (string | null)[] = slots.map(() => null);
   const logs: (ShotLog | null)[] = slots.map((slot) =>
     slot === null ? null : { frames: [], fullCharge: isChargeWeapon(slot.character.shot), lastShotFrames: [] },
   );
@@ -304,10 +368,21 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     let gauge = 0;
     slots.forEach((slot, i) => {
       shotEvents[i] = null;
-      const state = shooters[i];
-      if (slot === null || !state) return;
-      const shot = slot.character.shot;
-      if (!stepShooter(state, shot, model, paramsAt(i, f))) return;
+      if (slot === null || !shooters[i]) return;
+      const params = paramsAt(i, f);
+      // Stage 11 モダニア: 使用武器の変更。始まったら変更後の武器を新しい状態で撃ち、終わったら基礎の武器の状態に戻す
+      const weaponId = params.weapon?.id ?? null;
+      if (weaponId !== activeWeapon[i]) {
+        activeWeapon[i] = weaponId;
+        if (params.weapon !== null) changedShooters[i] = initialShooter(params.weapon.shot, model, params);
+        else {
+          changedShooters[i] = null;
+          resumeShooter(shooters[i]!, slot.character.shot, model, params);
+        }
+      }
+      const state = params.weapon !== null ? changedShooters[i]! : shooters[i]!;
+      const shot = params.weapon?.shot ?? slot.character.shot;
+      if (!stepShooter(state, shot, model, params)) return;
       const log = logs[i]!;
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
@@ -404,17 +479,23 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
     }
 
+    // Stage 11 モダニア: 条件の stat の窓（状態の窓）を先に登録し、同じフレームの条件の判定に入れる
+    for (const src of stateTrack) {
+      if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
+      if (!src.fires(ev)) continue;
+      register(src, startOf(src, f), fireContextOf(src.effect.trigger, ev));
+    }
     // 攻撃力の窓（順位のためだけ）を先に登録し、同じフレームに付いたものも順位に入れる
     for (const src of attackTrack) {
       if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
-      if (!src.fires(ev)) continue;
-      register(src, isResolvedShotCount(src.effect.trigger) ? f + 1 : f, fireContextOf(src.effect.trigger, ev));
+      if (!src.fires(ev) || !conditionOk(src, f)) continue;
+      register(src, startOf(src, f), fireContextOf(src.effect.trigger, ev));
     }
     for (const src of firing) {
       if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
-      if (!src.fires(ev)) continue;
+      if (!src.fires(ev) || !conditionOk(src, f)) continue;
       const context = withRank(src.effect, fireContextOf(src.effect.trigger, ev), f);
-      register(src, isResolvedShotCount(src.effect.trigger) ? f + 1 : f, context);
+      register(src, startOf(src, f), context);
     }
     for (const src of otherInstants) {
       if (!src.fires(ev)) continue;
@@ -455,13 +536,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const windowsOfSources = (sources: readonly FiringSource[]): FiringWindow[] =>
     sources.flatMap((src) =>
       src.windows.flatMap((list, slotIndex) =>
-        list.map(([start, end]) => ({
-          slotIndex,
-          sourceSlotIndex: src.sourceSlotIndex,
-          effect: src.effect,
-          start,
-          end,
-        })),
+        list.map(([start, end, stack]) => {
+          const w: FiringWindow = { slotIndex, sourceSlotIndex: src.sourceSlotIndex, effect: src.effect, start, end };
+          if (stack !== undefined) w.stack = stack;
+          return w;
+        }),
       ),
     );
   return {

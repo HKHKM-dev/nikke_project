@@ -16,7 +16,13 @@ import {
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber, formatPercent } from '../format.ts';
-import { formatAppliedAmount, formatEffectSource, formatInstant, formatTimedTrigger } from '../skillLabels.ts';
+import {
+  formatAppliedAmount,
+  formatEffectSource,
+  formatInstant,
+  formatTimedExtras,
+  formatTimedTrigger,
+} from '../skillLabels.ts';
 import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { CharacterPicker } from './CharacterPicker.tsx';
@@ -63,18 +69,24 @@ export function SlotCard({
 }: Props) {
   const limits = character ? growthLimits(character) : null;
   const condition = slot.condition;
-  // 同じ効果の窓をまとめて「10 秒 × 9 回」と見せる（窓は発動ごとに 1 件ある）
+  // 同じ効果の窓をまとめて「10 秒 × 9 回」と見せる（窓は発動ごとに 1 件ある）。
+  // Stage 11 モダニア: スタックする効果は段 1 の窓だけを数える。命中率（状態だけの stat）の窓も並べる
   const timedSummary = (() => {
     const byKey = new Map<string, { effect: AppliedTimedEffect; count: number }>();
-    for (const w of slotResult?.windows ?? []) {
+    for (const w of [...(slotResult?.windows ?? []), ...(slotResult?.stateWindows ?? [])]) {
       const key = `${w.sourceSlotIndex}:${w.effect.source.skill}:${w.effect.effectIndex}`;
       const found = byKey.get(key);
       if (found) {
-        found.count += 1;
+        if ((w.stack ?? 1) === 1) found.count += 1;
         continue;
       }
       byKey.set(key, {
-        effect: { ...w.effect, sourceSlotIndex: w.sourceSlotIndex, appliedAmount: 0 },
+        // 区間に出ない窓（命中率）でも値が出るように、比率の効果は値そのものを仮に入れる（下で区間の値に置き換える）
+        effect: {
+          ...w.effect,
+          sourceSlotIndex: w.sourceSlotIndex,
+          appliedAmount: w.effect.scaling === 'casterAttack' ? 0 : w.effect.value,
+        },
         count: 1,
       });
     }
@@ -92,6 +104,13 @@ export function SlotCard({
     }
     return [...byKey.values()];
   })();
+  /** Stage 11 モダニア: 条件を満たさずに発火しなかった回数（効果ごと） */
+  const skipsOf = (effect: AppliedTimedEffect): number =>
+    (slotResult?.conditionSkips ?? []).filter(
+      (x) => x.effect.source.skill === effect.source.skill && x.effect.effectIndex === effect.effectIndex,
+    ).length;
+  /** Stage 11 モダニア: 射撃ごとの追加ダメージの合計（1 トリガーの値に畳み込んだ分） */
+  const perShotDamage = (slotResult?.segments ?? []).reduce((sum, g) => sum + g.trigger.perShot * g.triggers, 0);
 
   // Stage 10: 受けた即時効果（CT 短縮・弾丸チャージ。Stage 11 で回復も）を効果ごとにまとめる
   const instantSummary = (() => {
@@ -243,7 +262,10 @@ export function SlotCard({
                       <small className="sub">
                         {formatTimedTrigger(t.effect.trigger)}{' '}
                         {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}・
-                        {formatNumber(t.effect.durationFrames / 60, 0)} 秒 × {t.count} 回
+                        {formatNumber(t.effect.durationFrames / 60, 0)} 秒 × {t.count} 回{formatTimedExtras(t.effect)}
+                        {t.effect.condition && skipsOf(t.effect) > 0
+                          ? `・状態でなく発動せず ${skipsOf(t.effect)} 回`
+                          : ''}
                         {t.effect.assumes ? `・仮定: ${t.effect.assumes.ja}` : ''}
                       </small>
                     </li>
@@ -281,7 +303,10 @@ export function SlotCard({
               <dt>攻撃力（バフ後）</dt>
               <dd>{formatNumber(slotResult.segments[0]?.trigger.attack ?? slotResult.baseAttack)}</dd>
               <dt>通常攻撃</dt>
-              <dd>{formatNumber(slotResult.normalDamage)}</dd>
+              <dd>
+                {formatNumber(slotResult.normalDamage)}
+                {perShotDamage > 0 && `（うち毎発の追加ダメージ ${formatNumber(perShotDamage)}）`}
+              </dd>
               <dt>バーストスキル</dt>
               <dd>
                 {slotResult.burst.hit

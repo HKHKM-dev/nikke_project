@@ -94,12 +94,11 @@ describe('parseSkillDefinition (Stage 8)', () => {
     ).toThrow(/only allowed in passive/);
   });
 
-  it('refuses damage on every shot (every omitted or 1) and unknown damage types', () => {
+  it('refuses unknown damage types (damage on every shot is allowed since Stage 11 Modernia)', () => {
     const dmg = { kind: 'damage', damageType: 'skill', ref: 1 };
-    expect(() => parseSkillDefinition(withEffect({ ...dmg, trigger: { count: 'normalHit' } }))).toThrow(/every/);
-    expect(() => parseSkillDefinition(withEffect({ ...dmg, trigger: { count: 'normalHit', every: 1 } }))).toThrow(
-      /every/,
-    );
+    // Stage 11 モダニア: 射撃ごとの倍率ダメージは 1 トリガーの値に畳み込むので書ける（stage11Modernia.test.ts）
+    expect(() => parseSkillDefinition(withEffect({ ...dmg, trigger: { count: 'normalHit' } }))).not.toThrow();
+    expect(() => parseSkillDefinition(withEffect({ ...dmg, trigger: { count: 'normalHit', every: 1 } }))).not.toThrow();
     expect(() => parseSkillDefinition(withEffect({ ...dmg, trigger: 'burstUse', damageType: 'dot' }))).toThrow(
       /damageType/,
     );

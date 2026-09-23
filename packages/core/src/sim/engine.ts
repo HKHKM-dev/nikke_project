@@ -21,6 +21,7 @@ import { EMPTY_BUFF_STATE, groupTimeline, type BuffTimeline, type BuffWindow } f
 import {
   BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
   burstSnapshotState,
+  perShotDamageOf,
   planTeamRun,
   type SkillHitEvent,
   type TeamInput,
@@ -123,6 +124,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       attackOverride: slot.attackOverride,
     };
     const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
+    const perShot = perShotDamageOf(slot);
     // 区間ごとの 1 トリガー値を先に計算しておく（フレームループでは参照するだけ）
     const segments: SimSlotSegment[] = timeline.segments.map((segment) => {
       const state = segment.slots[index] ?? EMPTY_BUFF_STATE;
@@ -137,6 +139,7 @@ export function runSimulation(simInput: SimInput): SimResult {
         trigger: computeTriggerDamage({
           ...base,
           buffs: state.buffs,
+          perShot,
           condition: { ...slot.condition, fullBurst: segment.fullBurst },
         }),
         triggers: 0,

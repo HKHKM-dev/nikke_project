@@ -98,14 +98,14 @@ describe('parseSkillDefinition (Stage 10)', () => {
     );
   });
 
-  it('still rejects damage on every normal shot', () => {
+  it('accepts damage on every normal shot since Stage 11 Modernia (folded into the per-trigger value)', () => {
     expect(() =>
       parseSkillDefinition(
         definition({
           skill1: supported({ kind: 'damage', trigger: { count: 'normalShot' }, damageType: 'skill', ref: 1 }),
         }),
       ),
-    ).toThrow(/every must be >= 2/);
+    ).not.toThrow();
   });
 
   it('classifies the firing stats', () => {

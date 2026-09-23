@@ -64,10 +64,13 @@ describe('data/skills', () => {
     it('references values that exist for every level (buffs ≤ 100%, burst damage ≥ 100% at Lv10)', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
-          const entry = character.skills[slot].values[effect.ref - 1];
-          expect(entry, `${slot} ref ${effect.ref}`).toHaveLength(SKILL_LEVEL_MAX);
+          // Stage 11 モダニア: 使用武器の変更は damageRef、フラグの stat（装弾数無限）は ref を持たない
+          const ref = effect.kind === 'weaponChange' ? effect.damageRef : effect.ref;
+          if (ref === undefined) continue;
+          const entry = character.skills[slot].values[ref - 1];
+          expect(entry, `${slot} ref ${ref}`).toHaveLength(SKILL_LEVEL_MAX);
           for (let lv = 1; lv <= SKILL_LEVEL_MAX; lv++) {
-            const v = skillValue(character.skills[slot], effect.ref, lv);
+            const v = skillValue(character.skills[slot], ref, lv);
             expect(v).toBeGreaterThan(0);
             // イサベルのバーストは Lv1 で 93.65%（Lv10 で 149.85%）なので、下限は Lv10 だけで見る
             if (effect.kind === 'burstDamage') {

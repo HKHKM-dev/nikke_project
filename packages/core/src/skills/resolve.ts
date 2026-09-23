@@ -1,13 +1,17 @@
 // スキル定義の ref を Lv の数値に解決する。単位変換（% → 比率）はここで一律に行う。
-import type { CharacterData, Locale, LocalizedText, SkillRaw, WeaponType } from '../types.ts';
+// Stage 11 モダニア: スタックの最大数・「▼」・条件・使用武器の変更（stat 'weapon' の持続効果として解決する）を足した。
+import type { CharacterData, Locale, LocalizedText, ShotParams, SkillRaw, WeaponType } from '../types.ts';
 import { durationToFrames } from '../burst/fixedCycle.ts';
+import type { ChangedWeapon } from './buffs.ts';
 import {
   SKILL_SLOTS,
+  isFlagStat,
   isShotCountTrigger,
   type BuffScaling,
   type BuffStat,
   type BuffTarget,
   type BuffTrigger,
+  type EffectCondition,
   type EffectTrigger,
   type EventCountKind,
   type InstantKind,
@@ -103,13 +107,26 @@ export function skillValue(skill: SkillRaw, ref: number, level: number): number 
 
 /**
  * % 表記の値を比率にする。flat（Stage 10。最大装弾数の発数）はそのまま。
- * casterChargeTime（Stage 11 アリス編）は 発動者の基礎チャージ時間 × 比率 の秒数にする
+ * casterChargeTime（Stage 11 アリス編）は 発動者の基礎チャージ時間 × 比率 の秒数にする。
+ * Stage 11 モダニア: decrease（「▼」）なら符号を反転する
  */
-function scaledValue(raw: number, scaling: BuffScaling | undefined, caster: CharacterData): number {
-  if (scaling === 'flat') return raw;
+function scaledValue(
+  raw: number,
+  scaling: BuffScaling | undefined,
+  caster: CharacterData,
+  decrease: boolean | undefined,
+): number {
+  const sign = decrease ? -1 : 1;
+  if (scaling === 'flat') return sign * raw;
   if (scaling === 'casterChargeTime') return (raw / 100) * caster.shot.chargeTime;
-  return raw / 100;
+  return (sign * raw) / 100;
 }
+
+/**
+ * Stage 11 モダニア: 解決後の stat。'weapon' は使用武器の変更（weaponChange）を持続効果として解決したもの
+ * （BuffTotals.weapon を差し替える。DSL の timed には書けない）
+ */
+export type EffectStat = BuffStat | 'weapon';
 
 export type ResolvedEffect = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
@@ -118,11 +135,16 @@ export type ResolvedEffect = {
   targetWeapon?: WeaponType;
   /** Stage 11 アリス編: target が topAttack のときの N（解決済み）。それ以外はキーごと無い */
   targetCount?: number;
-  stat: BuffStat;
+  stat: EffectStat;
   /** 省略を 'ratio' に埋めた後の値 */
   scaling: BuffScaling;
-  /** 比率。0.201 のように 100 で割った後の値（% 表記の stat は一律に割る）。scaling 'flat' は発数のまま */
+  /**
+   * 比率。0.201 のように 100 で割った後の値（% 表記の stat は一律に割る）。scaling 'flat' は発数のまま。
+   * Stage 11 モダニア: 「▼」（decrease）は負の値。フラグの stat（装弾数無限）は 1、使用武器の変更は変更後の 1 発の比率（0.0224）
+   */
   value: number;
+  /** Stage 11 モダニア: stat が 'weapon' のときの変更後の武器 */
+  weapon?: ChangedWeapon;
   assumes?: LocalizedText;
 };
 
@@ -151,7 +173,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
         target: effect.target,
         stat: effect.stat,
         scaling: effect.scaling ?? 'ratio',
-        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character),
+        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character, effect.decrease),
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.assumes) r.assumes = effect.assumes;
@@ -168,6 +190,10 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   durationFrames: number;
   /** 上書き延長の同一性判定に使う（同じスロットの何番目の効果か） */
   effectIndex: number;
+  /** Stage 11 モダニア: 効果のあるスタックの最大数（解決済み）。無ければスタックしない（和集合 = 上書き延長） */
+  maxStacks?: number;
+  /** Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」 */
+  condition?: EffectCondition;
 };
 
 /** 持続バフが枠へ適用された記録 */
@@ -191,18 +217,25 @@ export function resolveTimed(
     if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
+      if (effect.kind === 'weaponChange') {
+        resolved.push(resolveWeaponChange(effect, character, slot, levels[slot], effectIndex));
+        return;
+      }
       if (effect.kind !== 'timed') return;
-      const seconds =
-        effect.durationRef === undefined
-          ? (effect.durationSeconds ?? 0)
-          : skillValue(skill, effect.durationRef, levels[slot]);
-      if (seconds < 0) throw new RangeError(`skill ${skill.id}: duration must be >= 0, got ${seconds}`);
+      const seconds = durationSecondsOf(effect, skill, levels[slot]);
+      const value =
+        effect.ref === undefined
+          ? 1 // フラグの stat（装弾数無限）
+          : scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character, effect.decrease);
+      if (effect.ref === undefined && !isFlagStat(effect.stat)) {
+        throw new RangeError(`skill ${skill.id}: timed ${effect.stat} needs ref`);
+      }
       const r: ResolvedTimedEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         target: effect.target,
         stat: effect.stat,
         scaling: effect.scaling ?? 'ratio',
-        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character),
+        value,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         durationFrames: durationToFrames(seconds),
         effectIndex,
@@ -210,11 +243,98 @@ export function resolveTimed(
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       const count = resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
+      const maxStacks = resolveMaxStacks(effect, skill, levels[slot]);
+      if (maxStacks !== undefined) r.maxStacks = maxStacks;
+      if (effect.condition) r.condition = effect.condition;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
   }
   return resolved;
+}
+
+function durationSecondsOf(
+  effect: { durationRef?: number; durationSeconds?: number },
+  skill: SkillRaw,
+  level: number,
+): number {
+  const seconds =
+    effect.durationRef === undefined ? (effect.durationSeconds ?? 0) : skillValue(skill, effect.durationRef, level);
+  if (seconds < 0) throw new RangeError(`skill ${skill.id}: duration must be >= 0, got ${seconds}`);
+  return seconds;
+}
+
+/** Stage 11 モダニア: スタックの最大数を Lv の数値に解決する。無ければ undefined、整数でなければ RangeError */
+function resolveMaxStacks(
+  effect: { maxStacks?: number; maxStacksRef?: number },
+  skill: SkillRaw,
+  level: number,
+): number | undefined {
+  if (effect.maxStacks === undefined && effect.maxStacksRef === undefined) return undefined;
+  const n = effect.maxStacks ?? skillValue(skill, effect.maxStacksRef!, level);
+  if (!Number.isInteger(n) || n < 1) {
+    throw new RangeError(`skill ${skill.id}: max stacks must be a positive integer, got ${n}`);
+  }
+  return n;
+}
+
+/**
+ * Stage 11 モダニア: 使用武器の変更で、CDN に無い変更後の武器のパラメータをどう置くか（plan/design-stage11-modernia.md 3.4 節）。
+ * 変更後の武器は基礎の武器を写し、1 発のダメージを damageRef の値 × ヒット数に、レートを changeWeapon.rateOfFire（スピンアップなし）に
+ * 差し替える。コア倍率・装弾数・リロード・ゲージの量は基礎の武器のまま。
+ * **2026-09-24 の録画 44 で確定**: 殲滅モードのコア 6,753 = (120,694 − 100) × 2.24% × (1 + コア 1.0 + FB 0.5)（コア倍率は基礎と同じ）、
+ * 1 発目から毎フレーム 1 発（スピンアップなし・4200 rpm は 1 フレーム 1 発で止まる）。1 発に 2 ヒット（hitsPerShot）
+ */
+export const WEAPON_CHANGE_CORE = 'base' as const;
+
+/** 変更後の武器の ShotParams（WEAPON_CHANGE_CORE と、スピンアップなし = rateOfFire と endRateOfFire を同じにする） */
+export function changedWeaponShot(
+  base: ShotParams,
+  damageRatio: number,
+  rateOfFire: number,
+  hitsPerShot = 1,
+): ShotParams {
+  return {
+    ...base,
+    damage: Math.round(damageRatio * 10000) * hitsPerShot,
+    rateOfFire,
+    endRateOfFire: rateOfFire,
+    rateOfFireChangePerShot: 0,
+  };
+}
+
+/** Stage 11 モダニア: 使用武器の変更を、自分に付く stat 'weapon' の持続効果に解決する */
+function resolveWeaponChange(
+  effect: Extract<SkillDefinition['skills'][SkillSlot]['effects'][number], { kind: 'weaponChange' }>,
+  character: CharacterData,
+  slot: SkillSlot,
+  level: number,
+  effectIndex: number,
+): ResolvedTimedEffect {
+  const skill = character.skills[slot];
+  const change = character.burstSkill.changeWeapon;
+  if (change === undefined || change === null) {
+    throw new RangeError(`character ${character.resourceId}: weaponChange needs burstSkill.changeWeapon (CDN data)`);
+  }
+  const damage = skillValue(skill, effect.damageRef, level) / 100;
+  const hits = effect.hitsPerShot ?? 1;
+  const r: ResolvedTimedEffect = {
+    source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+    target: 'self',
+    stat: 'weapon',
+    scaling: 'ratio',
+    value: damage,
+    weapon: {
+      id: `${character.resourceId}.${slot}.${effectIndex}`,
+      hits,
+      shot: changedWeaponShot(character.shot, damage, change.rateOfFire, hits),
+    },
+    trigger: resolveTrigger(effect.trigger, skill, level),
+    durationFrames: durationToFrames(durationSecondsOf(effect, skill, level)),
+    effectIndex,
+  };
+  if (effect.assumes) r.assumes = effect.assumes;
+  return r;
 }
 
 /**

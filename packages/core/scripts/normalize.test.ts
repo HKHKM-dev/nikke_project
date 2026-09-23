@@ -105,6 +105,30 @@ describe('toCharacterData', () => {
     expect(() => toCharacterData(bad, emma('ja'))).toThrow(/change_burst_step/);
   });
 
+  it('keeps the changed weapon of a ChangeWeapon burst (Stage 11 モダニア)', () => {
+    const modernia = emma('en');
+    modernia.ulti_skill_detail = {
+      ...modernia.ulti_skill_detail,
+      skill_type: 'ChangeWeapon',
+      skill_value_data: [
+        { skill_value_type: 'Percent', skill_value: 152 },
+        { skill_value_type: 'Integer', skill_value: 4200 },
+        { skill_value_type: 'Integer', skill_value: 1026002 },
+        { skill_value_type: 'None', skill_value: 0 },
+        { skill_value_type: 'Integer', skill_value: 1 },
+      ],
+    };
+    expect(toCharacterData(modernia, emma('ja')).burstSkill.changeWeapon).toEqual({
+      rateOfFire: 4200,
+      shotId: 1026002,
+    });
+    // ChangeWeapon でなければキーごと無い（既存のデータは変わらない）
+    expect(data.burstSkill).not.toHaveProperty('changeWeapon');
+    const broken = emma('en');
+    broken.ulti_skill_detail = { ...broken.ulti_skill_detail, skill_type: 'ChangeWeapon', skill_value_data: [] };
+    expect(() => toCharacterData(broken, emma('ja'))).toThrow(/ChangeWeapon/);
+  });
+
   it('keeps both locale names and enum fields', () => {
     expect(data.name).toEqual({ ja: 'エマ', en: 'Emma' });
     expect(data.element).toBe('Fire');

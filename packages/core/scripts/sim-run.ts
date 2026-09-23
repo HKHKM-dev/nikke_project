@@ -11,6 +11,7 @@ import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
+import { firingParams } from '../src/sim/firing.ts';
 import { MAX_SKILL_LEVELS, type ResolvedTrigger } from '../src/skills/resolve.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
@@ -234,15 +235,45 @@ for (const [i, slot] of slots.entries()) {
       attack: fmt(g.trigger.attack),
       boost: g.trigger.boost.total.toFixed(3),
       atkDmg: g.trigger.attackDamageMultiplier.toFixed(4),
-      perTrigger: fmt(g.trigger.perTrigger),
+      // Stage 11 モダニア: 使用武器の変更（1 発の倍率）と、最大装弾数（スタックの▼・装弾数無限込み）
+      weapon: g.buffs.weapon ? `${(g.trigger.weaponMultiplier * 100).toFixed(2)}%` : '',
+      ammo: g.buffs.infiniteAmmo > 0 ? '∞' : firingParams(slot.character.shot, g.buffs).maxAmmo,
+      perTrigger:
+        g.trigger.perShot > 0
+          ? `${fmt(g.trigger.perTrigger)} (${fmt(g.trigger.normal)}+${fmt(g.trigger.perShot)})`
+          : fmt(g.trigger.perTrigger),
       'triggers sim/calc': `${simGroups[j]?.triggers ?? 0} / ${g.triggers.toFixed(1)}${g.triggerSource === 'shots' ? '*' : ''}`,
       'damage sim/calc': `${fmt(simGroups[j]?.damage ?? 0)} / ${fmt(g.damage)}`,
-      timed: g.timedEffects
+      timed: compactTimed(g.timedEffects)
         .map(
-          (e) =>
-            `${triggerLabel(e.trigger)} ${e.stat}+${e.scaling === 'flat' ? `${e.value}` : `${(e.value * 100).toFixed(2)}%`}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
+          ({ e, n }) =>
+            `${triggerLabel(e.trigger)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
         )
         .join(', '),
     })),
   );
+  // Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった回数
+  if (c.conditionSkips.length > 0) {
+    console.log(
+      `condition skips: ${c.conditionSkips.length} (${c.conditionSkips.map((x) => (x.frame / FPS).toFixed(2)).join(', ')}s)`,
+    );
+  }
+}
+
+/** Stage 11 モダニア: 同じ効果のスタックの段をまとめる（「critDamage+14.25% ×5」） */
+function compactTimed<T extends { sourceSlotIndex: number; effectIndex: number; source: { skill: string } }>(
+  effects: readonly T[],
+): { e: T; n: number }[] {
+  const out: { e: T; n: number }[] = [];
+  for (const e of effects) {
+    const found = out.find(
+      (x) =>
+        x.e.sourceSlotIndex === e.sourceSlotIndex &&
+        x.e.source.skill === e.source.skill &&
+        x.e.effectIndex === e.effectIndex,
+    );
+    if (found) found.n += 1;
+    else out.push({ e, n: 1 });
+  }
+  return out;
 }

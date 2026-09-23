@@ -46,12 +46,21 @@
           "kind": "burstDamage",
           "ref": 1,
           "damageType": "skill"
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetWeapon": "SG",
+          "stat": "hitRate",
+          "ref": 2,
+          "durationRef": 3
         }
       ],
       "notes": [
         {
-          "ja": "SG 味方の命中率▲・阻止部位の攻撃ダメージ▲（10 秒 / 30 秒間維持）は未対応（命中率と阻止部位ダメージは語彙になく、SG 味方限定の対象も語彙外）",
-          "en": "Hit rate up and Parts damage up for SG allies (10 s / 30 s) are not modeled (no vocabulary for hit rate, parts damage or SG-only targets)"
+          "ja": "SG 味方の阻止部位の攻撃ダメージ▲（10 秒間維持）は未対応（阻止部位ダメージは単体の的では関係しない）。「同じ部隊の味方がいれば」味方全体の命中率▲・阻止部位の攻撃ダメージ▲（30 秒間維持）は未対応（部隊の条件は語彙外）",
+          "en": "Parts damage up for SG allies (10 s) is not modeled (parts damage does not apply to a single target). The same-squad hit rate and parts damage up for all allies (30 s) are not modeled (squad conditions are out of vocabulary)"
         }
       ]
     }
