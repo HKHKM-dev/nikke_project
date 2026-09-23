@@ -245,8 +245,7 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
     expect(state.ammo).toBe(9);
 
     const reloading = initialShooter(shot);
-    let f = 0;
-    while (reloading.phase !== 'reloading') (stepShooter(reloading, shot, DEFAULT_WEAPON_MODEL), (f += 1));
+    while (reloading.phase !== 'reloading') stepShooter(reloading, shot, DEFAULT_WEAPON_MODEL);
     refillAmmo(reloading, 9, shot);
     expect(reloading.phase).toBe('priming');
     expect(stepShooter(reloading, shot)).toBe(true); // SG は 1 発目の遅延 0 → 次のフレームに撃つ
