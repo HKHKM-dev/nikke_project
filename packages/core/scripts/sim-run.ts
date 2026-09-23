@@ -15,7 +15,7 @@ import { firingParams } from '../src/sim/firing.ts';
 import { MAX_SKILL_LEVELS, type ResolvedTrigger } from '../src/skills/resolve.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
-import { computeTeamDamage, TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
+import { computeTeamDamage, planTeamRun, TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { CharacterData, Element } from '../src/types.ts';
 import { FPS } from '../src/weapons.ts';
 
@@ -104,6 +104,8 @@ const input = {
 };
 const sim = runSimulation(input);
 const calc = computeTeamDamage(input);
+// Stage 11 紅蓮BS: 射撃の列（循環の窓ごとの並びの表示用）
+const plan = planTeamRun(input);
 
 const fmt = (n: number, digits = 0) => n.toLocaleString('en-US', { maximumFractionDigits: digits });
 const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
@@ -258,6 +260,48 @@ for (const [i, slot] of slots.entries()) {
       `condition skips: ${c.conditionSkips.length} (${c.conditionSkips.map((x) => (x.frame / FPS).toFixed(2)).join(', ')}s)`,
     );
   }
+  printCycles(i, c);
+}
+
+/**
+ * Stage 11 紅蓮BS: 段の循環の内訳（段ごとの回数・合計）と、間隔の変更の窓ごとの並び
+ * （窓の前の段なしの発数 p・窓の中の段・窓の後の最初の段が何発目か。plan/design-stage11-scarlet-bs.md 0.3・7.5 節）
+ */
+function printCycles(slotIndex: number, c: NonNullable<(typeof calc.slots)[number]>): void {
+  const cycled = c.skillHits.activations.filter((a) => a.effect.cycle !== undefined);
+  if (cycled.length === 0) return;
+  const letter = (step: number) => String.fromCharCode(65 + step);
+  const bySteps = new Map<number, { n: number; damage: number; multiplier: number }>();
+  for (const a of cycled) {
+    const s = bySteps.get(a.effect.cycle!.step) ?? { n: 0, damage: 0, multiplier: a.effect.multiplier };
+    s.n += 1;
+    s.damage += a.hit.perActivation;
+    bySteps.set(a.effect.cycle!.step, s);
+  }
+  console.log(
+    `cycle tiers: ${[...bySteps.entries()]
+      .sort((a, b) => a[0] - b[0])
+      .map(([step, s]) => `${letter(step)} ${(s.multiplier * 100).toFixed(2)}% ×${s.n} = ${fmt(s.damage)}`)
+      .join(', ')}`,
+  );
+  const shots = plan.shots[slotIndex]?.frames ?? [];
+  const stepAt = new Map(cycled.map((a) => [Math.round(a.seconds * FPS), a.effect.cycle!.step]));
+  const rows = c.cycleWindows.map((w) => {
+    const before = shots.filter((f) => f < w.start);
+    let lastTier = before.length - 1;
+    while (lastTier >= 0 && !stepAt.has(before[lastTier]!)) lastTier -= 1;
+    const inside = shots.filter((f) => f >= w.start && f < w.end);
+    const after = shots.filter((f) => f >= w.end);
+    const k = after.findIndex((f) => stepAt.has(f));
+    return {
+      window: `${(w.start / FPS).toFixed(2)}-${(w.end / FPS).toFixed(2)}s`,
+      'last tier before': lastTier < 0 ? '-' : letter(stepAt.get(before[lastTier]!)!),
+      p: lastTier < 0 ? before.length : before.length - 1 - lastTier,
+      inside: `${inside.length} ${inside.map((f) => (stepAt.has(f) ? letter(stepAt.get(f)!) : '-')).join('')}`,
+      'first tier after': k < 0 ? '-' : `shot ${k + 1} (${letter(stepAt.get(after[k]!)!)})`,
+    };
+  });
+  if (rows.length > 0) console.table(rows);
 }
 
 /** Stage 11 モダニア: 同じ効果のスタックの段をまとめる（「critDamage+14.25% ×5」） */
