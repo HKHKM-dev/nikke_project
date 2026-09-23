@@ -364,6 +364,18 @@ header p {
   background: #c62828;
   color: #fff;
 }
+/* Stage 9: 宝物版で計算しているスロット */
+.badge.treasure {
+  background: #6a1b9a;
+  color: #fff;
+}
+.treasure-phase {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-left: auto;
+}
 .badge.undefined,
 .badge.loading {
   background: #616161;

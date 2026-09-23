@@ -18,6 +18,7 @@ import {
   INITIAL_TEAM_STATE,
   STORAGE_KEY,
   effectiveSkillLevels,
+  effectiveTreasurePhase,
   parseTeamState,
   serializeTeamState,
   takenResourceIds,
@@ -93,7 +94,11 @@ export function App() {
         const character = cache.characters.get(slot.resourceId);
         const status = skillsStatuses[i];
         if (!character || !status) return null;
-        const slotSkills = toSlotSkills(status, effectiveSkillLevels(slot, team.fixedSpec));
+        const slotSkills = toSlotSkills(
+          status,
+          effectiveSkillLevels(slot, team.fixedSpec),
+          effectiveTreasurePhase(slot, character),
+        );
         return team.fixedSpec
           ? {
               character,

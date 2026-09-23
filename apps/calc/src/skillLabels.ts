@@ -94,5 +94,15 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
     characterName === undefined
       ? `枠 ${effect.sourceSlotIndex + 1}（読み込み中）`
       : `枠 ${effect.sourceSlotIndex + 1} ${characterName}`;
-  return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}`;
+  // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果
+  const only = effect.targetWeapon ? `（${effect.targetWeapon} の味方）` : '';
+  return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}`;
+}
+
+/** Stage 9: 宝物の段階の選択肢のラベル。「1 段階（スキル 1）」「2 段階（+スキル 2）」 */
+export function treasurePhaseLabel(unlockOrder: readonly SkillSlot[], phase: number): string {
+  if (phase === 0) return 'なし';
+  const slot = unlockOrder[phase - 1];
+  const what = slot === undefined ? '' : SKILL_SLOT_LABEL[slot];
+  return `${phase} 段階（${phase === 1 ? '' : '+'}${what}）`;
 }

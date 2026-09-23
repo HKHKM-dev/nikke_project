@@ -1,9 +1,10 @@
-import type { CharacterIndexEntry } from '@nikke/core';
+import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import { describe, expect, it } from 'vitest';
 import {
   INITIAL_TEAM_STATE,
   clampSkillLevel,
   effectiveSkillLevels,
+  effectiveTreasurePhase,
   initialTeamState,
   parseTeamState,
   serializeTeamState,
@@ -217,6 +218,42 @@ describe('skill levels (Stage 4)', () => {
   it('round-trips skill levels', () => {
     let s = withCharacters([10, null, 30]);
     s = teamReducer(s, { type: 'setSkillLevels', index: 2, skillLevels: { skill1: 1, skill2: 5, burst: 9 } });
+    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
+  });
+});
+
+describe('treasure phase (Stage 9)', () => {
+  it('defaults to 0, updates per slot and resets when the character changes or the slot is cleared', () => {
+    let s = withCharacters([10, 20]);
+    expect(s.slots.every((slot) => slot.treasurePhase === 0)).toBe(true);
+    s = teamReducer(s, { type: 'setTreasurePhase', index: 0, treasurePhase: 3 });
+    expect(s.slots.map((slot) => slot.treasurePhase)).toEqual([3, 0, 0, 0, 0]);
+    // 同じニケを選び直しても変わらない
+    expect(teamReducer(s, { type: 'selectCharacter', index: 0, resourceId: 10 }).slots[0]!.treasurePhase).toBe(3);
+    expect(teamReducer(s, { type: 'selectCharacter', index: 0, resourceId: 30 }).slots[0]!.treasurePhase).toBe(0);
+    expect(teamReducer(s, { type: 'clearSlot', index: 0 }).slots[0]!.treasurePhase).toBe(0);
+  });
+
+  it('keeps the phase under fixed spec, and uses 0 for characters without a treasure', () => {
+    let s = withCharacters([10]);
+    s = teamReducer(s, { type: 'setTreasurePhase', index: 0, treasurePhase: 2 });
+    s = teamReducer(s, { type: 'setFixedSpec', fixedSpec: true });
+    const withTreasure = { treasure: { unlockOrder: ['skill1', 'skill2', 'burst'] } } as unknown as CharacterData;
+    const without = { treasure: null } as unknown as CharacterData;
+    expect(effectiveTreasurePhase(s.slots[0]!, withTreasure)).toBe(2);
+    expect(effectiveTreasurePhase(s.slots[0]!, without)).toBe(0);
+  });
+
+  it('parseTeamState fills a missing phase (Stage 8 data) with 0, rejects out-of-range ones and round-trips', () => {
+    const stage8 = JSON.parse(serializeTeamState(withCharacters([10, 20]))) as { slots: Record<string, unknown>[] };
+    for (const slot of stage8.slots) delete slot.treasurePhase;
+    expect(parseTeamState(JSON.stringify(stage8), index)?.slots.every((slot) => slot.treasurePhase === 0)).toBe(true);
+    for (const bad of [-1, 4, 1.5, '1']) {
+      const raw = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
+      raw.slots[0]!.treasurePhase = bad;
+      expect(parseTeamState(JSON.stringify(raw), index), String(bad)).toBeNull();
+    }
+    const s = teamReducer(withCharacters([10]), { type: 'setTreasurePhase', index: 0, treasurePhase: 1 });
     expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
   });
 });

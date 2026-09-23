@@ -7,12 +7,15 @@ import {
   SKILL_LEVEL_MIN,
   SKILL_SLOTS,
   TEAM_SIZE,
+  TREASURE_PHASE_MAX,
+  type CharacterData,
   type CharacterIndexEntry,
   type Element,
   type EnemyInput,
   type GrowthInput,
   type SkillLevels,
   type SlotCondition,
+  type TreasurePhase,
 } from '@nikke/core';
 
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: 100, element: null, hasCore: true };
@@ -24,12 +27,16 @@ export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 export const DEFAULT_DURATION_SECONDS = 180;
 /** バーストの既定。ON */
 export const DEFAULT_BURST = true;
+/** Stage 9: 宝物の段階の既定。0 = 宝物なし（ユーザー指定） */
+export const DEFAULT_TREASURE_PHASE: TreasurePhase = 0;
 
 export type SlotState = {
   resourceId: number | null;
   growth: GrowthInput;
   condition: SlotCondition;
   skillLevels: SkillLevels;
+  /** Stage 9: 宝物の段階。キャラを選び直すと 0 に戻る。スペック固定でも上書きしない */
+  treasurePhase: TreasurePhase;
 };
 
 export type TeamState = {
@@ -51,6 +58,7 @@ export type TeamAction =
   | { type: 'setGrowth'; index: number; growth: GrowthInput }
   | { type: 'setSlotCondition'; index: number; condition: SlotCondition }
   | { type: 'setSkillLevels'; index: number; skillLevels: SkillLevels }
+  | { type: 'setTreasurePhase'; index: number; treasurePhase: TreasurePhase }
   | { type: 'setEnemy'; enemy: EnemyInput }
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
@@ -64,6 +72,7 @@ export function emptySlot(): SlotState {
     growth: { ...DEFAULT_GROWTH },
     condition: { ...DEFAULT_SLOT_CONDITION },
     skillLevels: { ...DEFAULT_SKILL_LEVELS },
+    treasurePhase: DEFAULT_TREASURE_PHASE,
   };
 }
 
@@ -93,16 +102,27 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
     case 'selectCharacter': {
       // 同じニケは 1 枠まで。他の枠にいれば何もしない（UI 側でも選択肢から除外している）
       if (state.slots.some((s, i) => i !== action.index && s.resourceId === action.resourceId)) return state;
-      return updateSlot(state, action.index, (s) => ({ ...s, resourceId: action.resourceId }));
+      // 宝物の段階はキャラごとのものなので、別のニケに変えたら 0 に戻す
+      return updateSlot(state, action.index, (s) =>
+        s.resourceId === action.resourceId
+          ? s
+          : { ...s, resourceId: action.resourceId, treasurePhase: DEFAULT_TREASURE_PHASE },
+      );
     }
     case 'clearSlot':
-      return updateSlot(state, action.index, (s) => ({ ...s, resourceId: null }));
+      return updateSlot(state, action.index, (s) => ({
+        ...s,
+        resourceId: null,
+        treasurePhase: DEFAULT_TREASURE_PHASE,
+      }));
     case 'setGrowth':
       return updateSlot(state, action.index, (s) => ({ ...s, growth: action.growth }));
     case 'setSlotCondition':
       return updateSlot(state, action.index, (s) => ({ ...s, condition: action.condition }));
     case 'setSkillLevels':
       return updateSlot(state, action.index, (s) => ({ ...s, skillLevels: action.skillLevels }));
+    case 'setTreasurePhase':
+      return updateSlot(state, action.index, (s) => ({ ...s, treasurePhase: action.treasurePhase }));
     case 'setEnemy':
       return { ...state, enemy: action.enemy };
     case 'setDuration':
@@ -133,6 +153,14 @@ export function takenResourceIds(state: TeamState, index: number): Set<number> {
 /** 計算に渡すスキル Lv。スペック固定は全スキル Lv10 */
 export function effectiveSkillLevels(slot: SlotState, fixedSpec: boolean): SkillLevels {
   return fixedSpec ? MAX_SKILL_LEVELS : slot.skillLevels;
+}
+
+/**
+ * Stage 9: 計算に渡す宝物の段階。宝物のないキャラは 0（保存データが古い・データ更新で宝物が消えた場合に備える）。
+ * スペック固定でも上書きしない（所持状況がそのまま反映される）
+ */
+export function effectiveTreasurePhase(slot: SlotState, character: CharacterData): TreasurePhase {
+  return character.treasure === null ? 0 : slot.treasurePhase;
 }
 
 /** 1..10 の整数に clamp する（入力欄の途中状態を吸収する） */
@@ -189,6 +217,13 @@ function parseSkillLevels(v: Json): SkillLevels | null {
   return levels;
 }
 
+/** Stage 8 までの保存データには無いので、欠落は 0。あれば 0..3 の整数だけ許す */
+function parseTreasurePhase(v: Json): TreasurePhase | null {
+  if (v === undefined) return DEFAULT_TREASURE_PHASE;
+  if (!isInt(v, 0) || v > TREASURE_PHASE_MAX) return null;
+  return v as TreasurePhase;
+}
+
 function parseEnemy(v: Json): EnemyInput | null {
   if (!isRecord(v)) return null;
   if (!isFinite_(v.defence) || v.defence < 0) return null;
@@ -225,8 +260,9 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
     const growth = parseGrowth(s.growth);
     const condition = parseCondition(s.condition);
     const skillLevels = parseSkillLevels(s.skillLevels);
-    if (growth === null || condition === null || skillLevels === null) return null;
-    slots.push({ resourceId: id, growth, condition, skillLevels });
+    const treasurePhase = parseTreasurePhase(s.treasurePhase);
+    if (growth === null || condition === null || skillLevels === null || treasurePhase === null) return null;
+    slots.push({ resourceId: id, growth, condition, skillLevels, treasurePhase });
   }
 
   const enemy = parseEnemy(raw.enemy);

@@ -17,7 +17,7 @@ import {
 import type { Dispatch } from 'react';
 import { formatNumber, formatPercent } from '../format.ts';
 import { formatAppliedAmount, formatEffectSource, formatTimedTrigger } from '../skillLabels.ts';
-import type { SlotState, TeamAction } from '../team.ts';
+import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { CharacterPicker } from './CharacterPicker.tsx';
 import { SkillSection } from './SkillSection.tsx';
@@ -195,6 +195,7 @@ export function SlotCard({
             slotIndex={slotIndex}
             character={character}
             levels={effectiveSkillLevels}
+            treasurePhase={effectiveTreasurePhase(slot, character)}
             disabled={fixedSpec}
             status={skillsStatus}
             dispatch={dispatch}
