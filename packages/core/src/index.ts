@@ -20,4 +20,5 @@ export * from './burst/fixedCycle.ts';
 export * from './burst/controller.ts';
 export * from './burst/dynamic.ts';
 export * from './sim/shooter.ts';
+export * from './sim/shots.ts';
 export * from './sim/engine.ts';

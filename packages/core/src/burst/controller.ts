@@ -23,7 +23,10 @@ export const BURST_STEP1_TO_STEP2_FRAMES = 20;
 export const BURST_STEP2_TO_STEP3_FRAMES = 20;
 /** StepFull の発動からフルバースト開始まで（フレーム）。Stage 6 の実測で 3f 未満 */
 export const FULL_BURST_START_DELAY_FRAMES = 0;
-/** フルバースト時間（フレーム）。burst_duration は取り込むが使わない（設計書 9 節 3） */
+/**
+ * フルバースト時間（フレーム）の既定値。Stage 8 からは StepFull に入る発動をしたニケの burst_duration
+ * （BurstUnit.fullBurstFrames。イサベル 5 秒、モダニア 15 秒）を優先し、それがない枠だけこの値を使う（plan/design-stage8.md 3.3 節）
+ */
 export const FULL_BURST_FRAMES = 600;
 /** チェーン中に次の段階の候補が出ないまま待てるフレーム（録画 22 で約 600f） */
 export const BURST_CHAIN_TIMEOUT_FRAMES = 600;
@@ -53,6 +56,8 @@ export type BurstUnit = {
   burstStep: BurstStep;
   nextStep: BurstNextStep;
   cooldownFrames: number;
+  /** Stage 8: この枠の発動でフルバーストに入ったときの長さ（burst_duration）。省略は timing.fullBurstFrames */
+  fullBurstFrames?: number;
 } | null;
 
 export type BurstPhase = 'charging' | 'ready' | 'chain' | 'fullBurst';
@@ -101,6 +106,9 @@ export function initialBurstController(
   for (const u of units) {
     if (u !== null && (!Number.isInteger(u.cooldownFrames) || u.cooldownFrames < 0)) {
       throw new RangeError(`cooldownFrames must be a non-negative integer, got ${u.cooldownFrames}`);
+    }
+    if (u?.fullBurstFrames !== undefined && (!Number.isInteger(u.fullBurstFrames) || u.fullBurstFrames < 0)) {
+      throw new RangeError(`fullBurstFrames must be a non-negative integer, got ${u.fullBurstFrames}`);
     }
   }
   return {
@@ -158,10 +166,10 @@ function activate(state: BurstControllerState, slotIndex: number, frame: number)
   state.usedInChain[slotIndex] = true;
   state.lastUseFrame = frame;
   const startsFullBurst = next === 'StepFull';
-  state.activations.push({ frame, step: from, slotIndex, startsFullBurst });
+  state.activations.push({ frame, step: from, slotIndex, startsFullBurst, enteredStep: startsFullBurst ? null : next });
   if (startsFullBurst) {
     const start = frame + state.timing.fullBurstStartDelayFrames;
-    state.fullBurstEnd = start + state.timing.fullBurstFrames;
+    state.fullBurstEnd = start + (unit.fullBurstFrames ?? state.timing.fullBurstFrames);
     state.windows.push({ start, end: state.fullBurstEnd });
     state.phase = 'fullBurst';
     resetChain(state);

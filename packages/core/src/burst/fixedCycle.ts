@@ -5,7 +5,13 @@
 // Stage 7 で時刻表の形を BurstSchedule（schedule.ts）に一般化した。固定サイクルは比較・退化テスト用に残す（TeamInput.burstModel: 'fixed'）。
 import type { BurstStep } from '../types.ts';
 import { FPS } from '../weapons.ts';
-import { BURST_STEP_KEYS, type BurstActivation, type BurstSchedule, type FullBurstWindow } from './schedule.ts';
+import {
+  BURST_STEP_KEYS,
+  type BurstActivation,
+  type BurstSchedule,
+  type BurstStepKey,
+  type FullBurstWindow,
+} from './schedule.ts';
 
 export type BurstCycleFrames = {
   cycleFrames: number;
@@ -64,6 +70,9 @@ export function assignBurstSteps(candidates: readonly BurstCandidate[]): BurstAs
   return assignment;
 }
 
+/** 固定サイクルの段階の進み方（Stage 8 の段階突入トリガー用）。III でフルバーストに入る */
+const FIXED_ENTERED_STEP: Record<BurstStepKey, BurstStepKey | null> = { Step1: 'Step2', Step2: 'Step3', Step3: null };
+
 /**
  * 固定サイクルの時刻表。各サイクルの発動フレーム（180 秒なら 600, 1800, …, 10200 の 9 個）に、
  * 割り当てのある段階を I → II → III の順で同じフレームに並べる。段階が欠けてもフルバーストは起きると仮定する（Stage 5）。
@@ -87,7 +96,14 @@ export function planFixedCycle(
     const end = Math.min(start + cycle.fullBurstFrames, durationFrames);
     for (const step of BURST_STEP_KEYS) {
       const slotIndex = assignment[step];
-      if (slotIndex !== null) activations.push({ frame: start, step, slotIndex, startsFullBurst: step === 'Step3' });
+      if (slotIndex === null) continue;
+      activations.push({
+        frame: start,
+        step,
+        slotIndex,
+        startsFullBurst: step === 'Step3',
+        enteredStep: FIXED_ENTERED_STEP[step],
+      });
     }
     fullBurstWindows.push({ start, end });
     fullBurstFramesTotal += end - start;

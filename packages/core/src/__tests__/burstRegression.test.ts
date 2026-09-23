@@ -33,8 +33,9 @@ type Recording = {
   measuredFirstFill: number;
 };
 
-// エーテル（I・SG）+ デルタ（II・SR）+ III。録画 20（マナ）は S2 の「バーストゲージのチャージ速度▲」（未対応）が
-// 戦闘開始から乗っているので、満タンまでの時間の比較から外す
+// エーテル（I・SG）+ デルタ（II・SR）+ III。録画 20（マナ）は S2 の「バーストゲージのチャージ速度▲」が
+// 戦闘開始から乗っている。この表はスキル定義を読まない planDynamicSchedule を直接呼ぶので、マナの満タンまでの時間は
+// Stage 8 でゲージ速度を入れた __tests__/stage8Team.test.ts（録画 20: 予測 270f / 実測 267f）で見る
 const WITH_III: Recording[] = [
   { name: '録画 18（ラピ III）', ids: [291, 20, 10], controlledSlot: 2, measuredFirstFill: 427 },
   { name: '録画 19（ノワール III）', ids: [291, 20, 271], controlledSlot: 2, measuredFirstFill: 266 },

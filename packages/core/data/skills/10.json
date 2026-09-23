@@ -1,15 +1,15 @@
 {
   "formatVersion": 1,
   "resourceId": 10,
-  "checkedAt": "2026-09-22",
+  "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
       "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "被弾 N 回で自分に攻撃力▲（維持型）は段階 C 以降（被弾回数トリガー）",
-          "en": "ATK up on taking hits (timed) is phase C or later (hit-count trigger)"
+          "ja": "被弾 N 回で自分に攻撃力▲（維持型）は未対応（被弾は要件 5.2 でスコープ外。射撃場の 3 分モードでは的が反撃するので発動する）",
+          "en": "ATK up on taking hits (timed) is not modeled (taking damage is out of scope per requirements 5.2; the 3-minute range mode fires back, so it does trigger there)"
         }
       ]
     },

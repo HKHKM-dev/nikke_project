@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
-import { resolveBurstDamage } from '../burstDamage.ts';
+import { resolveBurstDamage, resolveDamageEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
 import { parseSkillDefinition, parseSkillIndex, SKILL_SLOTS } from '../types.ts';
@@ -38,7 +38,7 @@ describe('data/skills', () => {
       expect(def.checkedAt <= new Date().toISOString().slice(0, 10)).toBe(true);
     });
 
-    it('references values that exist for every level (buffs ≤ 100%, burst damage ≥ 100%)', () => {
+    it('references values that exist for every level (buffs ≤ 100%, burst damage ≥ 100% at Lv10)', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
           const entry = character.skills[slot].values[effect.ref - 1];
@@ -46,9 +46,28 @@ describe('data/skills', () => {
           for (let lv = 1; lv <= SKILL_LEVEL_MAX; lv++) {
             const v = skillValue(character.skills[slot], effect.ref, lv);
             expect(v).toBeGreaterThan(0);
-            if (effect.kind === 'burstDamage') expect(v).toBeGreaterThanOrEqual(100);
-            else expect(v).toBeLessThanOrEqual(100);
+            // イサベルのバーストは Lv1 で 93.65%（Lv10 で 149.85%）なので、下限は Lv10 だけで見る
+            if (effect.kind === 'burstDamage') {
+              if (lv === SKILL_LEVEL_MAX) expect(v).toBeGreaterThanOrEqual(100);
+            }
+            // Stage 8 の倍率ダメージは 100% 未満もある（ドレイク S2 98.55%）ので上限を見ない
+            else if (effect.kind !== 'damage') expect(v).toBeLessThanOrEqual(100);
           }
+        }
+      }
+    });
+
+    it('count triggers resolve to the same positive integer at every level (Stage 8)', () => {
+      for (const slot of SKILL_SLOTS) {
+        for (const effect of def.skills[slot].effects) {
+          if (effect.kind !== 'timed' && effect.kind !== 'damage') continue;
+          const t = effect.trigger;
+          if (typeof t !== 'object' || !('everyRef' in t) || t.everyRef === undefined) continue;
+          const counts = Array.from({ length: SKILL_LEVEL_MAX }, (_, i) =>
+            skillValue(character.skills[slot], t.everyRef!, i + 1),
+          );
+          expect(Number.isInteger(counts[0]) && counts[0]! >= 1, `${slot} everyRef ${t.everyRef}`).toBe(true);
+          expect(new Set(counts).size, `${slot} everyRef ${t.everyRef}`).toBe(1);
         }
       }
     });
@@ -74,7 +93,13 @@ describe('data/skills', () => {
       const burst1 = resolveBurstDamage(def, character, { skill1: 1, skill2: 1, burst: 1 });
       const timed10 = resolveTimed(def, character, MAX_SKILL_LEVELS);
       const timed1 = resolveTimed(def, character, { skill1: 1, skill2: 1, burst: 1 });
-      expect(lv10.length + burst10.length + timed10.length).toBeGreaterThan(0);
+      const damage10 = resolveDamageEffects(def, character, MAX_SKILL_LEVELS);
+      const damage1 = resolveDamageEffects(def, character, { skill1: 1, skill2: 1, burst: 1 });
+      expect(lv10.length + burst10.length + timed10.length + damage10.length).toBeGreaterThan(0);
+      damage10.forEach((e, i) => {
+        expect(e.multiplier).toBeGreaterThanOrEqual(damage1[i]!.multiplier);
+        expect(e.trigger).toEqual(damage1[i]!.trigger);
+      });
       lv10.forEach((e, i) => expect(e.value).toBeGreaterThanOrEqual(lv1[i]!.value));
       burst10.forEach((e, i) => expect(e.multiplier).toBeGreaterThanOrEqual(burst1[i]!.multiplier));
       timed10.forEach((e, i) => {

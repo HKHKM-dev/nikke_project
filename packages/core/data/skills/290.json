@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 290,
-  "checkedAt": "2026-09-22",
+  "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
       "support": "partial",
@@ -23,6 +23,16 @@
     "skill2": {
       "support": "partial",
       "effects": [
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "burstGaugeSpeed",
+          "ref": 1,
+          "assumes": {
+            "ja": "マターシグマはフルバースト開始で解除されるが、毎サイクル自分がバーストするのでフルバースト終了時に再付与され、ゲージが溜まる区間にはいつも付いている",
+            "en": "Metal σ is removed at Full Burst start but re-applied at its end because she bursts each cycle, so it is always on while the gauge charges"
+          }
+        },
         {
           "kind": "timed",
           "trigger": "fullBurstStart",
@@ -49,10 +59,6 @@
         }
       ],
       "notes": [
-        {
-          "ja": "バーストゲージのチャージ速度は未対応（Stage 7）",
-          "en": "Burst Gauge filling speed is not modeled (Stage 7)"
-        },
         {
           "ja": "フルバースト時の味方 1 機のチャージ時間短縮は未対応（発射サイクルが変わるバフは段階 C / D）",
           "en": "Charge time reduction for one ally on Full Burst is not modeled (cadence buffs are phase C / D)"

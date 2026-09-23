@@ -1,5 +1,13 @@
 // スキル関連の表示用ラベル（React 非依存）
-import type { AppliedEffect, BuffStat, BuffTrigger, BurstDamageType, SkillSlot, SkillSupport } from '@nikke/core';
+import type {
+  AppliedEffect,
+  BuffStat,
+  BuffTrigger,
+  ResolvedTrigger,
+  SkillDamageType,
+  SkillSlot,
+  SkillSupport,
+} from '@nikke/core';
 import { formatNumber, formatPercent } from './format.ts';
 
 export const SKILL_SLOT_LABEL: Record<SkillSlot, string> = {
@@ -14,6 +22,8 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   critDamage: 'クリティカルダメージ',
   attackDamage: '攻撃ダメージ',
   chargeDamage: 'チャージダメージ',
+  distributedDamage: '分配ダメージ',
+  burstGaugeSpeed: 'バーストゲージのチャージ速度',
 };
 
 export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
@@ -21,16 +31,41 @@ export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
   burstUse: 'バースト使用時',
   fullBurstStart: 'フルバースト発動時',
   fullBurstEnd: 'フルバースト終了時',
+  burstStage1Enter: 'バースト 1 段階突入時',
+  burstStage2Enter: 'バースト 2 段階突入時',
+  burstStage3Enter: 'バースト 3 段階突入時',
 };
 
-/** 「バースト使用時 →」 */
-export function formatTimedTrigger(trigger: BuffTrigger): string {
-  return `${BUFF_TRIGGER_LABEL[trigger]} →`;
+/** Stage 8: 「通常攻撃 10 回ごと」「バースト使用 2 回目以降」。文字列のトリガーは BUFF_TRIGGER_LABEL */
+export function formatTrigger(trigger: ResolvedTrigger): string {
+  if (typeof trigger === 'string') return BUFF_TRIGGER_LABEL[trigger];
+  if ('every' in trigger) {
+    const what = { normalShot: '通常攻撃', normalHit: '通常攻撃の命中', fullChargeShot: 'フルチャージ攻撃' }[
+      trigger.count
+    ];
+    return trigger.every === 1 ? `${what}ごと` : `${what} ${trigger.every} 回ごと`;
+  }
+  const what = trigger.count === 'burstUse' ? 'バースト使用' : 'フルバースト';
+  return trigger.atLeast === 1 ? `${what}時` : `${what} ${trigger.atLeast} 回目以降`;
 }
 
-export const BURST_DAMAGE_TYPE_LABEL: Record<BurstDamageType, string> = {
+/** 「バースト使用時 →」 */
+export function formatTimedTrigger(trigger: ResolvedTrigger): string {
+  return `${formatTrigger(trigger)} →`;
+}
+
+/** バーストスロットの倍率ダメージ（burstDamage）の種別 */
+export const BURST_DAMAGE_TYPE_LABEL: Record<SkillDamageType, string> = {
   skill: 'バーストスキルダメージ',
   distributed: '分配ダメージ',
+  additional: '追加ダメージ',
+};
+
+/** Stage 8: トリガー付きの倍率ダメージ（damage）の種別 */
+export const SKILL_DAMAGE_TYPE_LABEL: Record<SkillDamageType, string> = {
+  skill: 'ダメージ',
+  distributed: '分配ダメージ',
+  additional: '追加ダメージ',
 };
 
 export type SupportBadge = { label: string; className: string };

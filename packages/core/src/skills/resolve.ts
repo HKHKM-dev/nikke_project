@@ -3,13 +3,42 @@ import type { CharacterData, Locale, LocalizedText, SkillRaw } from '../types.ts
 import { durationToFrames } from '../burst/fixedCycle.ts';
 import {
   SKILL_SLOTS,
+  isShotCountTrigger,
   type BuffScaling,
   type BuffStat,
   type BuffTarget,
   type BuffTrigger,
+  type EffectTrigger,
+  type EventCountKind,
+  type ShotCountKind,
   type SkillDefinition,
   type SkillSlot,
 } from './types.ts';
+
+/**
+ * Stage 8: Lv の数値に解決したトリガー。射撃の回数トリガーは every（1 以上の整数）に解決済み。
+ * 文字列のトリガーと発動回数のトリガーはそのまま。
+ */
+export type ResolvedTrigger =
+  BuffTrigger | { count: ShotCountKind; every: number } | { count: EventCountKind; atLeast: number };
+
+export function isResolvedShotCount(t: ResolvedTrigger): t is { count: ShotCountKind; every: number } {
+  return typeof t === 'object' && 'every' in t;
+}
+
+export function isResolvedEventCount(t: ResolvedTrigger): t is { count: EventCountKind; atLeast: number } {
+  return typeof t === 'object' && 'atLeast' in t;
+}
+
+/** everyRef を Lv の数値に解決する。回数は整数でなければ RangeError */
+export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: number): ResolvedTrigger {
+  if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
+  const every = trigger.everyRef === undefined ? (trigger.every ?? 1) : skillValue(skill, trigger.everyRef, level);
+  if (!Number.isInteger(every) || every < 1) {
+    throw new RangeError(`skill ${skill.id}: count trigger must be a positive integer, got ${every}`);
+  }
+  return { count: trigger.count, every };
+}
 
 export const SKILL_LEVEL_MIN = 1;
 export const SKILL_LEVEL_MAX = 10;
@@ -96,7 +125,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
 
 /** Stage 6: トリガー付きの持続バフ。ResolvedEffect に「いつ付いて、何フレーム続くか」が付いた形 */
 export type ResolvedTimedEffect = ResolvedEffect & {
-  trigger: BuffTrigger;
+  trigger: ResolvedTrigger;
   /** durationToFrames(維持秒数)。0 なら効果なし */
   durationFrames: number;
   /** 上書き延長の同一性判定に使う（同じスロットの何番目の効果か） */
@@ -136,7 +165,7 @@ export function resolveTimed(
         stat: effect.stat,
         scaling: effect.scaling ?? 'ratio',
         value: skillValue(skill, effect.ref, levels[slot]) / 100,
-        trigger: effect.trigger,
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         durationFrames: durationToFrames(seconds),
         effectIndex,
       };

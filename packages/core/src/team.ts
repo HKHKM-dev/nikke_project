@@ -5,15 +5,19 @@
 // グループ単位で computeDamage を呼ぶ。timed 効果がなければグループは 2 つに退化し、Stage 5 と同じ計算になる。
 // Stage 7: burst の時刻表を動的サイクル（ゲージ蓄積・CT・チェーン。burst/dynamic.ts）にした。固定 20 秒サイクルは burstModel: 'fixed'。
 // sim（sim/engine.ts）とは時刻表・区間・式をすべて共有し、違いは「発射をフレームで数えるか、平均レートで置くか」だけ。
+// Stage 8: 1 パス目（射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動）を planTeamRun にまとめ、sim と calc が同じものを使う。
+// 射撃の回数トリガーの窓と倍率ダメージ（damage）の発動は sim と厳密一致し、calc が期待値で置くのは通常攻撃のトリガー数だけ。
 import { durationToFrames, planFixedCycle } from './burst/fixedCycle.ts';
-import { planDynamicSchedule } from './burst/dynamic.ts';
+import { planDynamicSchedule, type DynamicScheduleOptions } from './burst/dynamic.ts';
 import {
   activationFramesOfSlot,
+  isInFullBurst,
   summarizeSchedule,
   type BurstSchedule,
   type BurstScheduleModel,
   type BurstSummary,
 } from './burst/schedule.ts';
+import { planShots, type ShotLog } from './sim/shots.ts';
 import {
   baseAttackOf,
   computeDamage,
@@ -25,9 +29,24 @@ import {
   type TriggerDamage,
 } from './damage.ts';
 import { computeCadence, type CadenceResult } from './cadence.ts';
-import { slotBurstHit, type BurstHitResult } from './skills/burstDamage.ts';
+import {
+  SKILL_HIT_FULL_BURST_BONUS,
+  computeSkillHit,
+  resolveDamageEffects,
+  slotBurstHit,
+  type BurstHitResult,
+  type ResolvedDamageEffect,
+  type SkillHitResult,
+} from './skills/burstDamage.ts';
 import type { BuffTotals } from './skills/buffs.ts';
-import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type SkillLevels } from './skills/resolve.ts';
+import {
+  MAX_SKILL_LEVELS,
+  isResolvedEventCount,
+  type AppliedEffect,
+  type AppliedTimedEffect,
+  type ResolvedTrigger,
+  type SkillLevels,
+} from './skills/resolve.ts';
 import {
   EMPTY_BUFF_STATE,
   groupTimeline,
@@ -35,6 +54,7 @@ import {
   planBuffTimeline,
   resolvePassiveStates,
   segmentIndexAt,
+  triggerFrames,
   type BuffTimeline,
   type BuffWindow,
   type SlotBuffState,
@@ -111,6 +131,20 @@ export type SlotBurstResult = {
   totalDamage: number;
 };
 
+/** Stage 8: 倍率ダメージ 1 回の発動（1 パス目で決まる。sim と calc で共通） */
+export type SkillHitEvent = {
+  frame: number;
+  slotIndex: number;
+  effect: ResolvedDamageEffect;
+  hit: SkillHitResult;
+};
+
+export type SlotSkillHitsResult = {
+  /** 発生順。時刻は秒 */
+  activations: { seconds: number; effect: ResolvedDamageEffect; hit: SkillHitResult }[];
+  totalDamage: number;
+};
+
 export type TeamSlotResult = {
   /** slots 内の位置 */
   index: number;
@@ -130,7 +164,9 @@ export type TeamSlotResult = {
   /** Σ segments.damage */
   normalDamage: number;
   burst: SlotBurstResult;
-  /** normalDamage + burst.totalDamage */
+  /** Stage 8: トリガー付きの倍率ダメージ（damage）。発動ごとの内訳と合計。sim と同じ発動列 */
+  skillHits: SlotSkillHitsResult;
+  /** normalDamage + burst.totalDamage + skillHits.totalDamage */
   totalDamage: number;
   /** totalDamage / durationSeconds（0 秒なら 0） */
   dps: number;
@@ -204,7 +240,7 @@ export function resolveTeamBuffs(slots: readonly (TeamSlotInput | null)[]): (Slo
   );
 }
 
-/** バーストの時刻表（sim と calc で共通）。burst が false なら null */
+/** バーストの時刻表（sim と calc で共通）。burst が false なら null。options は動的サイクルの射撃の列とゲージ速度（Stage 8） */
 export function planTeamSchedule(
   slots: readonly (TeamSlotInput | null)[],
   frames: number,
@@ -212,6 +248,7 @@ export function planTeamSchedule(
   burstModel: BurstScheduleModel = 'dynamic',
   model?: WeaponModel,
   controlledSlot: number | null = null,
+  options: DynamicScheduleOptions = {},
 ): BurstSchedule | null {
   if (!burst) return null;
   if (burstModel === 'fixed') {
@@ -220,7 +257,85 @@ export function planTeamSchedule(
       frames,
     );
   }
-  return planDynamicSchedule(slots, frames, model, undefined, controlledSlot);
+  return planDynamicSchedule(slots, frames, model, undefined, controlledSlot, options);
+}
+
+/** 1 パス目の結果（sim と calc で共通） */
+export type TeamPlan = {
+  frames: number;
+  /** 各枠の射撃の列（空枠は null） */
+  shots: (ShotLog | null)[];
+  schedule: BurstSchedule | null;
+  timeline: BuffTimeline;
+  /** 倍率ダメージ（damage）の発動（フレーム順） */
+  skillHits: SkillHitEvent[];
+};
+
+/**
+ * Stage 8: 1 パス目。射撃の列 → 時刻表（常時のゲージ速度込み）→ バフの区間（射撃の回数トリガー込み）→ 倍率ダメージの発動。
+ * どれも射撃の列と時刻表だけから決まる（射撃がバフに依存するのは Stage 9）。
+ */
+export function planTeamRun(input: TeamInput): TeamPlan {
+  const { slots, enemy, model } = input;
+  validateTeamSlots(slots);
+  validateControlledSlot(slots, input.controlledSlot);
+  const frames = durationToFrames(input.durationSeconds);
+  const timelineSlots = toTimelineSlots(slots);
+  const shots = planShots(slots, frames, model);
+  const gaugeSpeed = resolvePassiveStates(timelineSlots).map((s) => s?.buffs.burstGaugeSpeed ?? 0);
+  const schedule = planTeamSchedule(slots, frames, input.burst, input.burstModel, model, input.controlledSlot ?? null, {
+    shots,
+    gaugeSpeed,
+  });
+  const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots);
+  const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
+  return { frames, shots, schedule, timeline, skillHits };
+}
+
+/** バースト系のトリガー（burstDamage と同じく発動直前のバフで計算する）か */
+function isBurstUseTrigger(trigger: ResolvedTrigger): boolean {
+  return trigger === 'burstUse' || (isResolvedEventCount(trigger) && trigger.count === 'burstUse');
+}
+
+/**
+ * Stage 8: 倍率ダメージ（damage）の発動を列挙し、発動フレームのバフで期待ダメージを計算する。
+ * 射撃の回数トリガーはその射撃と同じバフ（その射撃で付くバフは次のフレームからなので含まない）、
+ * バーストを使った時のもの（burstUse とその回数）は burstDamage と同じく発動直前のバフ。
+ */
+export function planSkillHits(
+  slots: readonly (TeamSlotInput | null)[],
+  enemy: EnemyInput,
+  timeline: BuffTimeline,
+  schedule: BurstSchedule | null,
+  frames: number,
+  shots: readonly (ShotLog | null)[],
+): SkillHitEvent[] {
+  const hits: SkillHitEvent[] = [];
+  slots.forEach((slot, slotIndex) => {
+    const definition = slot?.skills?.definition;
+    if (!slot || !definition) return;
+    const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
+    for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
+      const pre = isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
+      for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) {
+        const state = burstSnapshotState(timeline, frame, slotIndex, pre);
+        const trigger = computeTriggerDamage({
+          character: slot.character,
+          growth: slot.growth,
+          enemy,
+          attackOverride: slot.attackOverride,
+          buffs: state.buffs,
+          condition: { ...slot.condition, fullBurst: false },
+        });
+        // フルバースト補正はフルバースト中に出た倍率ダメージにだけ乗る（2026-09-23 実測）
+        const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, frame);
+        const hit = computeSkillHit([effect], slot.character, enemy, trigger, state.buffs, fullBurst);
+        hits.push({ frame, slotIndex, effect, hit });
+      }
+    }
+  });
+  // フレーム順（同じフレームは枠順・定義順。sort は安定）
+  return hits.sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
 }
 
 function skillSupportOf(slot: TeamSlotInput): Record<SkillSlot, SkillSupport> | null {
@@ -259,11 +374,7 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
   validateTeamSlots(slots);
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const frames = durationToFrames(durationSeconds);
-  validateControlledSlot(slots, input.controlledSlot);
-  const schedule = planTeamSchedule(slots, frames, input.burst, input.burstModel, model, input.controlledSlot ?? null);
-  const timelineSlots = toTimelineSlots(slots);
-  const timeline = planBuffTimeline(timelineSlots, schedule, frames);
+  const { frames, schedule, timeline, skillHits } = planTeamRun(input);
 
   const computed = slots.map((slot, index) => {
     if (slot === null) return null;
@@ -335,7 +446,16 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
         passive.buffs,
       );
 
-    const totalDamage = normalDamage + burstDamage;
+    // Stage 8: 倍率ダメージは 1 パス目の発動列をそのまま足す（sim と同じ値）
+    const skillHitActivations: SlotSkillHitsResult['activations'] = [];
+    let skillHitDamage = 0;
+    for (const h of skillHits) {
+      if (h.slotIndex !== index) continue;
+      skillHitActivations.push({ seconds: h.frame / FPS, effect: h.effect, hit: h.hit });
+      skillHitDamage += h.hit.perActivation;
+    }
+
+    const totalDamage = normalDamage + burstDamage + skillHitDamage;
     return {
       index,
       character: slot.character,
@@ -348,6 +468,7 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
       segments,
       normalDamage,
       burst: { activations, hit: representative, totalDamage: burstDamage },
+      skillHits: { activations: skillHitActivations, totalDamage: skillHitDamage },
       totalDamage,
       dps: durationSeconds > 0 ? totalDamage / durationSeconds : 0,
       skillSupport: skillSupportOf(slot),

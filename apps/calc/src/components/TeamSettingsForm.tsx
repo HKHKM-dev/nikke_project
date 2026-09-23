@@ -76,7 +76,8 @@ export function TeamSettingsForm({ enemy, durationSeconds, fixedSpec, burst, con
           />
           <span>
             バースト: 通常攻撃でゲージを溜め、満タンで I → II → III を自動発動（各ニケのバースト CT
-            を待つ）。フルバースト {FULL_BURST_SECONDS} 秒。III がいないとフルバーストしない
+            を待つ）。フルバーストは通常 {FULL_BURST_SECONDS} 秒（III のニケで変わる: イサベル 5 秒・モダニア 15
+            秒など）。III がいないとフルバーストしない
           </span>
         </label>
         <label className="field">

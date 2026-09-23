@@ -1,12 +1,63 @@
 import type { CharacterData, TeamSlotResult } from '@nikke/core';
 import { formatNumber, formatPercent } from '../format.ts';
-import { BURST_DAMAGE_TYPE_LABEL, formatAppliedAmount, formatTimedTrigger } from '../skillLabels.ts';
+import {
+  BURST_DAMAGE_TYPE_LABEL,
+  SKILL_DAMAGE_TYPE_LABEL,
+  SKILL_SLOT_LABEL,
+  formatAppliedAmount,
+  formatTimedTrigger,
+  formatTrigger,
+} from '../skillLabels.ts';
 
 type Props = {
   character: CharacterData;
   slot: TeamSlotResult;
   attackLabel?: string;
 };
+
+type SkillHitGroup = {
+  label: string;
+  trigger: string;
+  multiplier: number;
+  assumes: string | null;
+  count: number;
+  total: number;
+  /** 発動ごとに値が違うか（持続バフの有無で変わる） */
+  varies: boolean;
+  min: number;
+  max: number;
+};
+
+/** Stage 8: 倍率ダメージ（damage）を効果ごとにまとめる */
+function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
+  const groups = new Map<string, SkillHitGroup>();
+  for (const a of slot.skillHits.activations) {
+    const e = a.effect;
+    const key = `${e.source.skill}.${e.effectIndex}`;
+    const value = a.hit.perActivation;
+    const g = groups.get(key);
+    if (g) {
+      g.count += 1;
+      g.total += value;
+      g.min = Math.min(g.min, value);
+      g.max = Math.max(g.max, value);
+      g.varies = g.min !== g.max;
+      continue;
+    }
+    groups.set(key, {
+      label: `${SKILL_SLOT_LABEL[e.source.skill]} ${SKILL_DAMAGE_TYPE_LABEL[e.damageType]}`,
+      trigger: formatTrigger(e.trigger),
+      multiplier: e.multiplier,
+      assumes: e.assumes?.ja ?? null,
+      count: 1,
+      total: value,
+      varies: false,
+      min: value,
+      max: value,
+    });
+  }
+  return [...groups.values()];
+}
 
 /** [0.0–15.0s, 20.0–35.0s] */
 function formatRanges(ranges: readonly { start: number; end: number }[]): string {
@@ -15,6 +66,7 @@ function formatRanges(ranges: readonly { start: number; end: number }[]): string
 
 export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）' }: Props) {
   const { cadence, segments, burst, notes } = slot;
+  const skillHitGroups = groupSkillHits(slot);
   // 代表値は最初の区間（= 戦闘開始時点の状態）。持続バフ中ならその旨を出す
   const rep = segments[0];
   const buffs = rep?.buffs;
@@ -39,6 +91,12 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
             ? `${formatNumber(burst.totalDamage)}（${burst.activations.length} 回 × ${formatNumber(burst.hit.perActivation)}）`
             : '—'}
         </dd>
+        {skillHitGroups.length > 0 && (
+          <>
+            <dt>スキルダメージ</dt>
+            <dd>{`${formatNumber(slot.skillHits.totalDamage)}（${slot.skillHits.activations.length} 回）`}</dd>
+          </>
+        )}
         <dt>DPS</dt>
         <dd>{formatNumber(slot.dps)}</dd>
         <dt>総ダメージ</dt>
@@ -262,6 +320,12 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
                   <td>×{formatNumber(burst.hit.attackDamageMultiplier, 4)}</td>
                 </tr>
               )}
+              {burst.hit.distributedDamageMultiplier !== 1 && (
+                <tr>
+                  <th>分配ダメージ（バフ）</th>
+                  <td>×{formatNumber(burst.hit.distributedDamageMultiplier, 4)}（分配ダメージにだけ掛かる）</td>
+                </tr>
+              )}
               <tr>
                 <th>属性有利</th>
                 <td>×{burst.hit.elementMultiplier}</td>
@@ -300,10 +364,41 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
         </>
       )}
 
+      {skillHitGroups.length > 0 && (
+        <>
+          <h3>スキルの倍率ダメージ</h3>
+          <table className="breakdown">
+            <tbody>
+              {skillHitGroups.map((g, i) => (
+                <tr key={i}>
+                  <th>
+                    {g.label}
+                    <small className="sub">（{g.trigger}）</small>
+                  </th>
+                  <td>
+                    ×{formatNumber(g.multiplier, 4)} → 1 回{' '}
+                    {g.varies ? `${formatNumber(g.min)}〜${formatNumber(g.max)}` : formatNumber(g.min)} × {g.count} 回 ={' '}
+                    {formatNumber(g.total)}
+                    {g.assumes ? <small className="sub">・仮定: {g.assumes}</small> : null}
+                  </td>
+                </tr>
+              ))}
+              <tr>
+                <th>式</th>
+                <td>
+                  バーストスキルと同じ（攻撃力 − 防御力）× 倍率 ×（1 + 会心期待値）× 攻撃ダメージ ×
+                  属性有利。コア・距離・フルバースト補正は乗せない（実測で確定するまでの仮定）
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </>
+      )}
+
       <p className="scope">
         通常攻撃（ゲージ・CT
-        で回るフルバーストの補正込み）と、定義済みの常時発動パッシブ・バースト時トリガーの持続バフ・倍率ダメージだけのバーストスキルを計算します。弾数増加・ヒット率・スタック・CT
-        短縮・ゲージ速度のバフは含みません。SG は全ペレット命中が前提です。
+        で回るフルバーストの補正込み）と、定義済みの常時発動パッシブ・持続バフ・バーストスキル・スキルの倍率ダメージを計算します。弾数増加・リロード速度・チャージ速度・ヒット率・スタック・CT
+        短縮のバフは含みません。SG は全ペレット命中が前提です。
       </p>
     </section>
   );

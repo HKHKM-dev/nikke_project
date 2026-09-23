@@ -136,9 +136,10 @@ export function App() {
   return (
     <main className="app">
       <header>
-        <h1>NIKKE calc v4</h1>
+        <h1>NIKKE calc v5</h1>
         <p>
-          5 人編成の通常攻撃 + 常時発動パッシブ + 持続バフ + ゲージ・CT で回るフルバーストとバーストスキル（Stage 7）
+          5 人編成の通常攻撃 + 常時発動パッシブ + 持続バフ + ゲージ・CT で回るフルバーストとバーストスキル +
+          回数トリガーの倍率ダメージ（Stage 8）
         </p>
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}

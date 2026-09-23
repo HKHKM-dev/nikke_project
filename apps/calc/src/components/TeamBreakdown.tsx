@@ -91,7 +91,9 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                         <td>{s ? `枠 ${a.slotIndex + 1} ${s.character.name.ja}` : `枠 ${a.slotIndex + 1}`}</td>
                         <td>{hit ? formatNumber(hit.perActivation) : '—'}</td>
                         <td>
-                          {window ? `${formatNumber(window.start / 60, 1)}–${formatNumber(window.end / 60, 1)}s` : '—'}
+                          {window
+                            ? `${formatNumber(window.start / 60, 1)}–${formatNumber(window.end / 60, 1)}s（${formatNumber((window.end - window.start) / 60, 1)} 秒）`
+                            : '—'}
                         </td>
                       </tr>
                     );
@@ -115,6 +117,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                 <th>秒間トリガー</th>
                 <th>通常攻撃</th>
                 <th>バーストスキル</th>
+                <th>スキルダメージ</th>
                 <th>DPS</th>
                 <th>総ダメージ</th>
                 <th>寄与率</th>
@@ -142,6 +145,12 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                     {s.burst.hit ? formatNumber(s.burst.totalDamage) : '—'}
                     {s.burst.hit && <small className="sub"> ×{s.burst.activations.length}</small>}
                   </td>
+                  <td>
+                    {s.skillHits.activations.length > 0 ? formatNumber(s.skillHits.totalDamage) : '—'}
+                    {s.skillHits.activations.length > 0 && (
+                      <small className="sub"> ×{s.skillHits.activations.length}</small>
+                    )}
+                  </td>
                   <td>{formatNumber(s.dps)}</td>
                   <td>{formatNumber(s.totalDamage)}</td>
                   <td>{formatPercent(s.share, 1)}</td>
@@ -150,7 +159,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
             </tbody>
             <tfoot>
               <tr>
-                <th colSpan={8}>合計（{result.filledCount} 体）</th>
+                <th colSpan={9}>合計（{result.filledCount} 体）</th>
                 <td>{formatNumber(result.totalDps)}</td>
                 <td className="grand-total">{formatNumber(result.totalDamage)}</td>
                 <td>100%</td>
@@ -182,11 +191,12 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
         </div>
       )}
       <p className="scope">
-        calc v4
-        は各ニケの通常攻撃に、定義済みの常時発動パッシブとバースト時トリガーの持続バフ（攻撃力・会心・攻撃ダメージ・チャージダメージ）を乗せ、
-        通常攻撃のゲージ蓄積と各ニケのバースト CT
-        から決まるフルバースト区間（+0.5）と、倍率ダメージだけのバーストスキルを足し合わせます。 CT
-        短縮・ゲージ速度・敵デバフ・弾数増加・ヒット率は含みません。定義のないニケはスキルなしで計算します。SG
+        calc v5
+        は各ニケの通常攻撃に、定義済みの常時発動パッシブと持続バフ（攻撃力・会心・攻撃ダメージ・チャージダメージ・分配ダメージ）を乗せ、
+        通常攻撃のゲージ蓄積（常時のゲージ速度込み）と各ニケのバースト CT から決まるフルバースト区間（+0.5。長さは III
+        のニケごと）と、バーストスキル・スキルの倍率ダメージ（N 回攻撃ごと・バースト使用 N
+        回目以降など）を足し合わせます。CT
+        短縮・敵デバフ・弾数増加・リロード速度・チャージ速度・ヒット率は含みません。定義のないニケはスキルなしで計算します。SG
         は全ペレット命中が前提です。
       </p>
     </section>

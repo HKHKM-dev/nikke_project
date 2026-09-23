@@ -1,19 +1,29 @@
 // Stage 4: スキル定義（DSL）の型と検証。段階 A は常時発動パッシブ、Stage 5 でバーストスロットの倍率ダメージ（burstDamage）を足した。
 // Stage 6（段階 B）でトリガー付きの持続バフ（timed）を足した。新しい BuffStat は増えず、「いつ付いて、いつ切れるか」だけが増える。
+// Stage 8（段階 C）で、射撃の回数・発動の回数で発火するトリガー、バースト N 段階突入時のトリガー、
+// バースト以外の倍率ダメージ（damage）、stat の distributedDamage / burstGaugeSpeed を足した（plan/design-stage8.md 2 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import type { LocalizedText } from '../types.ts';
 
 export type SkillSlot = 'skill1' | 'skill2' | 'burst';
 export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies readonly SkillSlot[];
 
-/** 何が上がるか */
-export type BuffStat = 'attack' | 'critRate' | 'critDamage' | 'attackDamage' | 'chargeDamage';
+/**
+ * 何が上がるか。Stage 8 の 2 つ:
+ * distributedDamage = 分配ダメージの乗数 (1 + Σ)。distributed の倍率ダメージにだけ掛かる（録画 21 で別枠の乗数と確認）。
+ * burstGaugeSpeed = バーストゲージのチャージ速度 (1 + Σ)。対象の枠の射撃で溜まるゲージに掛かる。passive にだけ書ける
+ * （timed に書くと 時刻表 → バフ窓 → ゲージ → 時刻表 と循環するため）。
+ */
+export type BuffStat =
+  'attack' | 'critRate' | 'critDamage' | 'attackDamage' | 'chargeDamage' | 'distributedDamage' | 'burstGaugeSpeed';
 export const BUFF_STATS = [
   'attack',
   'critRate',
   'critDamage',
   'attackDamage',
   'chargeDamage',
+  'distributedDamage',
+  'burstGaugeSpeed',
 ] as const satisfies readonly BuffStat[];
 
 /** どう算出するか。ratio = 対象自身の基礎値に対する比率、casterAttack = 発動者のバフ前攻撃力 × 比率の固定加算 */
@@ -44,19 +54,76 @@ export type PassiveEffect = {
  * battleStart = 戦闘開始時（1 回だけ）、burstUse = 自分がバーストスキルを使った時（割当枠のときだけ）、
  * fullBurstStart = フルバーストタイムが発動した時、fullBurstEnd = フルバーストタイムが終了した時。
  * 固定サイクル（Stage 5）では burstUse と fullBurstStart が同じフレームになるが、段階の演出遅延を入れる Stage 7 でずれる。
+ * Stage 8: burstStageNEnter = バースト N 段階突入時。1 はゲージ満タン（とリエントリー）、2 / 3 は発動の結果その段階に進んだ時
+ * （通常は I / II の発動フレーム）。固定サイクルでは 3 つとも発動フレーム。
  */
-export type BuffTrigger = 'battleStart' | 'burstUse' | 'fullBurstStart' | 'fullBurstEnd';
+export type BuffTrigger =
+  | 'battleStart'
+  | 'burstUse'
+  | 'fullBurstStart'
+  | 'fullBurstEnd'
+  | 'burstStage1Enter'
+  | 'burstStage2Enter'
+  | 'burstStage3Enter';
 export const BUFF_TRIGGERS = [
   'battleStart',
   'burstUse',
   'fullBurstStart',
   'fullBurstEnd',
+  'burstStage1Enter',
+  'burstStage2Enter',
+  'burstStage3Enter',
 ] as const satisfies readonly BuffTrigger[];
+
+/**
+ * Stage 8: 自分の射撃の回数で発火するトリガー。1 回 = 弾薬を 1 消費する 1 トリガー（SG もペレットではなくトリガー）。
+ * 全弾命中の前提なので normalShot と normalHit は同じ列になる。fullChargeShot はチャージ武器の全射撃（常にフルチャージのモデル）。
+ * カウンタはリロードでも戦闘中ずっとリセットしない（every: 10 は通算 10・20・30…回目）。
+ */
+export type ShotCountKind = 'normalShot' | 'normalHit' | 'fullChargeShot';
+export const SHOT_COUNT_KINDS = [
+  'normalShot',
+  'normalHit',
+  'fullChargeShot',
+] as const satisfies readonly ShotCountKind[];
+
+export type ShotCountTrigger = {
+  count: ShotCountKind;
+  /** N 回ごと（即値）。every / everyRef とも省略なら毎回（1） */
+  every?: number;
+  /** N の description_value_NN。every とどちらか片方 */
+  everyRef?: number;
+};
+
+/**
+ * Stage 8: 発動の回数の段階（「使用回数別の効果」「開始回数別の効果」、下位効果のスタック適用）。
+ * atLeast 回目以降の発動のたびに発火する。burstUse = 自分がバーストスキルを使った回数、fullBurstStart = フルバーストの回数（編成全体）。
+ * 回数は戦闘中ずっと数え、リセットしない。
+ */
+export type EventCountKind = 'burstUse' | 'fullBurstStart';
+export const EVENT_COUNT_KINDS = ['burstUse', 'fullBurstStart'] as const satisfies readonly EventCountKind[];
+
+export type EventCountTrigger = {
+  count: EventCountKind;
+  /** 何回目以降か（1 始まりの即値。説明文の「1 回 / 2 回 / 3 回」） */
+  atLeast: number;
+};
+
+/** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガー */
+export type EffectTrigger = BuffTrigger | ShotCountTrigger | EventCountTrigger;
+
+export function isShotCountTrigger(t: EffectTrigger): t is ShotCountTrigger {
+  return typeof t === 'object' && (SHOT_COUNT_KINDS as readonly string[]).includes(t.count);
+}
+
+export function isEventCountTrigger(t: EffectTrigger): t is EventCountTrigger {
+  return typeof t === 'object' && (EVENT_COUNT_KINDS as readonly string[]).includes(t.count);
+}
 
 /** Stage 6: 「（トリガー）時、（対象）に （stat）X%▲、Y 秒間維持」。同じ効果が持続中に再発火したら上書き延長（窓の和集合） */
 export type TimedEffect = {
   kind: 'timed';
-  trigger: BuffTrigger;
+  trigger: EffectTrigger;
   target: BuffTarget;
   stat: BuffStat;
   /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す（passive と同じ規則） */
@@ -85,7 +152,25 @@ export type BurstDamageEffect = {
   assumes?: LocalizedText;
 };
 
-export type SkillEffect = PassiveEffect | BurstDamageEffect | TimedEffect;
+/** 倍率ダメージの種別（damage 用）。additional = 追加ダメージ */
+export type SkillDamageType = BurstDamageType | 'additional';
+export const SKILL_DAMAGE_TYPES = ['skill', 'distributed', 'additional'] as const satisfies readonly SkillDamageType[];
+
+/**
+ * Stage 8: トリガー付きの倍率ダメージ（「最終攻撃力の X% のダメージ / 分配ダメージ / 追加ダメージ」）。どのスロットにも書ける。
+ * burst スロットの無条件の発動ダメージは従来どおり burstDamage。毎回（every = 1）の射撃トリガーは Stage 8 では書けない。
+ */
+export type DamageEffect = {
+  kind: 'damage';
+  trigger: EffectTrigger;
+  /** description_value_NN の NN（1 始まり）。値は % 表記 */
+  ref: number;
+  damageType: SkillDamageType;
+  /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
+  assumes?: LocalizedText;
+};
+
+export type SkillEffect = PassiveEffect | BurstDamageEffect | TimedEffect | DamageEffect;
 
 export type SkillEntry = {
   /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
@@ -146,10 +231,49 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   return effect;
 }
 
+function parsePositiveInt(v: Json, path: string): number {
+  if (typeof v !== 'number' || !Number.isInteger(v) || v < 1) {
+    fail(path, `expected a positive integer, got ${JSON.stringify(v)}`);
+  }
+  return v;
+}
+
+/** 文字列なら BuffTrigger、オブジェクトなら回数トリガー */
+function parseTrigger(v: Json, path: string): EffectTrigger {
+  if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
+  if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
+  if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
+    for (const key of Object.keys(v)) {
+      if (!['count', 'every', 'everyRef'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+    }
+    if (v.every !== undefined && v.everyRef !== undefined) fail(path, 'at most one of every and everyRef');
+    const trigger: ShotCountTrigger = { count: v.count as ShotCountKind };
+    if (v.every !== undefined) trigger.every = parsePositiveInt(v.every, `${path}.every`);
+    if (v.everyRef !== undefined) trigger.everyRef = parseRef(v.everyRef, `${path}.everyRef`);
+    return trigger;
+  }
+  if ((EVENT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
+    for (const key of Object.keys(v)) {
+      if (!['count', 'atLeast'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+    }
+    return { count: v.count as EventCountKind, atLeast: parsePositiveInt(v.atLeast, `${path}.atLeast`) };
+  }
+  fail(
+    `${path}.count`,
+    `expected one of ${[...SHOT_COUNT_KINDS, ...EVENT_COUNT_KINDS].join(', ')}, got ${JSON.stringify(v.count)}`,
+  );
+}
+
 function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
-  const trigger = oneOf(BUFF_TRIGGERS, v.trigger, `${path}.trigger`);
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
+  if (stat === 'burstGaugeSpeed') {
+    fail(
+      `${path}.stat`,
+      'burstGaugeSpeed is only allowed in passive (a timed gauge speed would feed back into the schedule)',
+    );
+  }
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   if (scaling === 'casterAttack' && stat !== 'attack') {
     fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
@@ -180,6 +304,17 @@ function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDam
   return effect;
 }
 
+function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  if (isShotCountTrigger(trigger) && trigger.everyRef === undefined && (trigger.every ?? 1) === 1) {
+    fail(`${path}.trigger`, 'damage on every shot is not supported yet (every must be >= 2)');
+  }
+  const damageType = oneOf(SKILL_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
+  const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
 function parseRef(v: Json, path: string): number {
   if (typeof v !== 'number' || !Number.isInteger(v) || v < 1) {
     fail(path, `expected a positive integer, got ${JSON.stringify(v)}`);
@@ -187,7 +322,7 @@ function parseRef(v: Json, path: string): number {
   return v;
 }
 
-/** passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed はどのスロットにも書ける */
+/** passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed と damage はどのスロットにも書ける */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
   if (v.kind === 'passive') {
@@ -200,7 +335,8 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
     return parseBurstDamageEffect(v, path);
   }
   if (v.kind === 'timed') return parseTimedEffect(v, path);
-  fail(`${path}.kind`, `expected "passive", "burstDamage" or "timed", got ${JSON.stringify(v.kind)}`);
+  if (v.kind === 'damage') return parseDamageEffect(v, path);
+  fail(`${path}.kind`, `expected "passive", "burstDamage", "timed" or "damage", got ${JSON.stringify(v.kind)}`);
 }
 
 function parseEntry(v: Json, slot: SkillSlot): SkillEntry {

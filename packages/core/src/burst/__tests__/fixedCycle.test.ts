@@ -22,9 +22,9 @@ describe('planFixedCycle', () => {
     // 各サイクルで I → II → III が同じフレームに並ぶ
     expect(s.activations).toHaveLength(27);
     expect(s.activations.slice(0, 3)).toEqual([
-      { frame: 600, step: 'Step1', slotIndex: 0, startsFullBurst: false },
-      { frame: 600, step: 'Step2', slotIndex: 1, startsFullBurst: false },
-      { frame: 600, step: 'Step3', slotIndex: 2, startsFullBurst: true },
+      { frame: 600, step: 'Step1', slotIndex: 0, startsFullBurst: false, enteredStep: 'Step2' },
+      { frame: 600, step: 'Step2', slotIndex: 1, startsFullBurst: false, enteredStep: 'Step3' },
+      { frame: 600, step: 'Step3', slotIndex: 2, startsFullBurst: true, enteredStep: null },
     ]);
     expect(s.fullBurstWindows[0]).toEqual({ start: 600, end: 1200 });
     expect(s.fullBurstWindows[8]).toEqual({ start: 10200, end: 10800 });

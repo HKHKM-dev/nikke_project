@@ -2,8 +2,10 @@
 // 各枠の射手（sim/shooter.ts）を 1 フレームずつ回し、撃ったフレームにゲージを入れて状態機械（controller.ts）を進める。
 // Stage 7 の範囲では射撃のタイミングがバフにもバーストにも依存しない（弾数・リロード・チャージ速度のバフは段階 C / D）ので、
 // 時刻表は編成だけで決まり、sim の本体（2 パス目）の射撃列とも 1 フレームも違わない。
-// 射撃がバフに依存するようになったら（Stage 8 / 9）、sim を 1 パスにして状態機械をフレームループの中で回す。
-import { initialShooter, stepShooter } from '../sim/shooter.ts';
+// 射撃がバフに依存するようになったら（Stage 9）、sim を 1 パスにして状態機械をフレームループの中で回す。
+// Stage 8: 射手は sim/shots.ts の planShots で 1 回だけ回し、その射撃の列からゲージを溜める（回数トリガーと共有する）。
+// 常時のゲージ速度（burstGaugeSpeed。マナ S2）は枠ごとの 1 トリガーのゲージに (1 + 速度) を掛ける。
+import { planShots, type ShotLog } from '../sim/shots.ts';
 import type { CharacterData, ShotParams } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, type WeaponModel } from '../weapons.ts';
 import {
@@ -48,8 +50,17 @@ export function burstUnitOf(character: CharacterData): NonNullable<BurstUnit> {
     burstStep: character.burstStep,
     nextStep: character.burstSkill.nextStep,
     cooldownFrames: durationToFrames(character.burstSkill.cooldownSeconds),
+    // Stage 8: フルバースト時間は StepFull に入る発動をしたニケの burst_duration（イサベル 5 秒、モダニア 15 秒）
+    fullBurstFrames: durationToFrames(character.burstSkill.durationSeconds),
   };
 }
+
+export type DynamicScheduleOptions = {
+  /** 射撃の列（planShots の結果）。省略時はここで回す。sim / calc は 1 パス目の列を渡して共有する */
+  shots?: readonly (ShotLog | null)[];
+  /** 枠ごとのゲージ速度 Σ burstGaugeSpeed（常時パッシブ）。省略は全員 0 */
+  gaugeSpeed?: readonly number[];
+};
 
 /**
  * @param controlledSlot 操作キャラの枠（フルチャージ倍率がゲージに乗る）。null は全員 AI 扱い
@@ -60,6 +71,7 @@ export function planDynamicSchedule(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   timing: Readonly<BurstTiming> = DEFAULT_BURST_TIMING,
   controlledSlot: number | null = null,
+  options: DynamicScheduleOptions = {},
 ): BurstSchedule {
   if (!Number.isInteger(frames) || frames < 0) {
     throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
@@ -68,19 +80,24 @@ export function planDynamicSchedule(
     slots.map((s) => (s === null ? null : burstUnitOf(s.character))),
     timing,
   );
-  const shooters = slots.map((s, index) =>
-    s === null
-      ? null
-      : {
-          shot: s.character.shot,
-          state: initialShooter(s.character.shot, model),
-          energy: energyPerTrigger(s.character.shot, index === controlledSlot),
-        },
-  );
+  const shots = options.shots ?? planShots(slots, frames, model);
+  const feeds = slots.map((s, index) => {
+    const log = shots[index];
+    if (s === null || !log) return null;
+    const speed = options.gaugeSpeed?.[index] ?? 0;
+    return {
+      frames: log.frames,
+      next: 0,
+      energy: energyPerTrigger(s.character.shot, index === controlledSlot) * (1 + speed),
+    };
+  });
   for (let f = 0; f < frames; f++) {
     let gauge = 0;
-    for (const shooter of shooters) {
-      if (shooter !== null && stepShooter(shooter.state, shooter.shot, model)) gauge += shooter.energy;
+    for (const feed of feeds) {
+      if (feed !== null && feed.frames[feed.next] === f) {
+        gauge += feed.energy;
+        feed.next += 1;
+      }
     }
     stepBurstController(controller, f, gauge);
   }

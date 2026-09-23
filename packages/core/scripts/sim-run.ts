@@ -10,13 +10,19 @@ import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../src/skills/resolve.ts';
+import { MAX_SKILL_LEVELS, type ResolvedTrigger } from '../src/skills/resolve.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
 import { computeTeamDamage, TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { CharacterData, Element } from '../src/types.ts';
 import { FPS } from '../src/weapons.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
+
+/** Stage 8: 回数トリガーも 1 語で出す（normalShot/10、burstUse≥2） */
+function triggerLabel(t: ResolvedTrigger): string {
+  if (typeof t === 'string') return t;
+  return 'every' in t ? `${t.count}/${t.every}` : `${t.count}≥${t.atLeast}`;
+}
 
 const { values } = parseArgs({
   options: {
@@ -105,7 +111,9 @@ if (calc.schedule && calc.burstSummary) {
       frame: a.frame,
       step: STEP[a.step],
       nike: `slot ${a.slotIndex + 1} ${slots[a.slotIndex]!.character.name.ja}`,
-      fullBurst: a.startsFullBurst ? 'start' : '',
+      fullBurst: a.startsFullBurst
+        ? `start (${(((calc.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.end ?? a.frame) - a.frame) / FPS).toFixed(1)}s)`
+        : '',
     })),
   );
   if (calc.schedule.chainTimeouts.length > 0) {
@@ -126,6 +134,8 @@ const rows = slots.map((slot, i) => {
     'calc normal': fmt(c.normalDamage),
     segments: c.segments.length,
     'burst skill (sim=calc)': `${fmt(s.burst.damage)} (${s.burst.activations.length}× ${fmt(s.burst.hit?.perActivation ?? 0)})`,
+    // Stage 8: トリガー付きの倍率ダメージ（damage）
+    'skill hits (sim=calc)': `${fmt(s.skillHits.damage)} (${s.skillHits.frames.length}×)`,
     'sim total': fmt(s.totalDamage),
     'calc total': fmt(c.totalDamage),
     diff: pct((s.totalDamage - c.totalDamage) / (c.totalDamage || 1)),
@@ -154,7 +164,9 @@ for (const [i, slot] of slots.entries()) {
       perTrigger: fmt(g.trigger.perTrigger),
       'triggers sim/calc': `${simGroups[j]?.triggers ?? 0} / ${g.triggers.toFixed(1)}`,
       'damage sim/calc': `${fmt(simGroups[j]?.damage ?? 0)} / ${fmt(g.damage)}`,
-      timed: g.timedEffects.map((e) => `${e.trigger} ${e.stat}+${(e.value * 100).toFixed(2)}%`).join(', '),
+      timed: g.timedEffects
+        .map((e) => `${triggerLabel(e.trigger)} ${e.stat}+${(e.value * 100).toFixed(2)}%`)
+        .join(', '),
     })),
   );
 }
