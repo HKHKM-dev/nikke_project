@@ -1,5 +1,5 @@
 // Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）から、射手が使う実効値を作る（plan/design-stage10.md 3 節）。
-// 最大装弾数は録画 37・39 で確定した（比率は加算、端数は四捨五入）。速度の式は名前付きの定数にして、録画 B（8.6 節）で確定する。
+// 最大装弾数は録画 37・39（比率は加算、端数は四捨五入）、速度の式は録画 40（時間 × (1 − 速度)）で確定した。
 import type { BuffTotals } from '../skills/buffs.ts';
 import type { ShotParams } from '../types.ts';
 import { isChargeWeapon, secondsToFrames } from '../weapons.ts';
@@ -32,9 +32,10 @@ export type FiringParams = {
 export const MAX_AMMO_ROUNDING: 'floor' | 'round' = 'round';
 
 /**
- * リロード速度・チャージ速度の式（仮）。'subtract' = 時間 × max(0, 1 − 速度)、'divide' = 時間 ÷ (1 + 速度)。
- * 説明文の「チャージ速度 100% を超えた場合」（レッドフード）「リロード速度 99.96% で固定」（ジル）から 100% が上限の subtract と読んだ。
- * 録画 B（アドミのリロード速度 50.91%: 59f か 80f、ユニのチャージ速度 8.97%: 77f か 78f）で確定する
+ * リロード速度・チャージ速度の式。'subtract' = 時間 × max(0, 1 − 速度)、'divide' = 時間 ÷ (1 + 速度)。
+ * **2026-09-23 の録画 40（録画 B）で subtract と確定**: アドミのリロード速度 50.91% の間のラム（SR・リロード 2 秒）の
+ * リロードが 66f（窓の外は 126f。表示の遅れ 6f を引いて 60f ≒ 120 × 0.4909 = 59f。divide なら 80f）、
+ * ユニのチャージ速度 8.97% のフルバースト中のラムの射撃間隔が 4 発平均 77.0f（窓の外は 82.0f。divide なら 78f）
  */
 export const SPEED_FORMULA: 'subtract' | 'divide' = 'subtract';
 

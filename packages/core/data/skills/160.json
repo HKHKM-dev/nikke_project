@@ -28,11 +28,7 @@
           "stat": "maxAmmo",
           "scaling": "flat",
           "ref": 5,
-          "durationRef": 6,
-          "assumes": {
-            "ja": "AI の射撃も「フルチャージして攻撃した時」に数える（録画 B で確かめる）",
-            "en": "AI shots count as fully charged attacks (to be checked with recording B)"
-          }
+          "durationRef": 6
         }
       ],
       "notes": [

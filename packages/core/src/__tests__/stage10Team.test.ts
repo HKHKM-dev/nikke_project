@@ -63,9 +63,10 @@ const TEAMS: Record<string, TeamInput> = {
   '録画 37（ラム + デルタ + ドレイク宝物 3）': team([fixedSlot(822), fixedSlot(20), fixedSlot(101, 3)], 2),
   '録画 19（エーテル + デルタ + ノワール）': team([fixedSlot(291), fixedSlot(20), fixedSlot(271)], 2),
   '録画 A（リター + デルタ + ドレイク宝物 3）': team([fixedSlot(82), fixedSlot(20), fixedSlot(101, 3)], 2),
-  '録画 B（ラム + アドミ + ユニ + クイーン（真））': team(
-    [fixedSlot(822), fixedSlot(172), fixedSlot(160), fixedSlot(870)],
-    0,
+  // 録画 40 と同じ枠順（アドミ・ユニ・ラム（操作）・クイーン（真））
+  '録画 B（アドミ + ユニ + ラム + クイーン（真））': team(
+    [fixedSlot(172), fixedSlot(160), fixedSlot(822), fixedSlot(870)],
+    2,
   ),
 };
 
@@ -141,17 +142,36 @@ describe('録画 39（録画 A）: リターの CT 短縮と最大装弾数', ()
   });
 });
 
-describe('録画 B: アドミのリロード速度・ユニのチャージ速度と最大装弾数（撮影予定の編成）', () => {
-  const calc = computeTeamDamage(TEAMS['録画 B（ラム + アドミ + ユニ + クイーン（真））']!);
-  const ram = calc.slots[0]!;
+describe('録画 40（録画 B）: アドミのリロード速度・ユニのチャージ速度と最大装弾数', () => {
+  const input = TEAMS['録画 B（アドミ + ユニ + ラム + クイーン（真））']!;
+  const calc = computeTeamDamage(input);
+  const ram = calc.slots[2]!;
 
   it('puts reload speed (アドミ) and charge speed / +1 round (ユニ) on ラム, counted from the shot log', () => {
     const stats = new Set(ram.segments.flatMap((g) => g.timedEffects.map((e) => e.stat)));
     expect(stats).toEqual(new Set(['reloadSpeed', 'critDamage', 'chargeSpeed', 'maxAmmo']));
     expect(ram.segments.some((g) => g.triggerSource === 'shots')).toBe(true);
     // ユニ S2（フルチャージ攻撃ごとに +1 発、5 秒）はユニが撃ち続けるので途切れにくい
-    const plan = planTeamRun(TEAMS['録画 B（ラム + アドミ + ユニ + クイーン（真））']!);
-    expect(magazineSizes(plan.shots[0]!).filter((n) => n === 7).length).toBeGreaterThan(0);
+    // 録画 40: AI のユニの射撃もフルチャージ攻撃に数えられ、アドミ・ユニ 3/7・4/7、クイーン（真）2/10
+    const plan = planTeamRun(input);
+    expect(magazineSizes(plan.shots[2]!).filter((n) => n === 7).length).toBeGreaterThan(0);
+    const max = (i: number) =>
+      Math.max(...calc.slots[i]!.segments.map((g) => firingParams(calc.slots[i]!.character.shot, g.buffs).maxAmmo));
+    expect([max(0), max(1), max(2), max(3)]).toEqual([7, 7, 7, 10]);
+  });
+
+  it('fires every 77f in the full burst (charge 60f × (1 − 0.0897) → 55f + 22f), 82f outside (recording 40)', () => {
+    const plan = planTeamRun(input);
+    const frames = plan.shots[2]!.frames;
+    const fb = plan.schedule!.fullBurstWindows[0]!;
+    const inside = frames.filter((f) => f > fb.start + 80 && f < fb.end - 80);
+    // マガジンの中の間隔だけを見る（最後の弾丸からの間隔はリロード 59f + 1 発目 77f = 136f）
+    const last = new Set(plan.shots[2]!.lastShotFrames ?? []);
+    const gaps = inside.slice(1).flatMap((f, k) => (last.has(inside[k]!) ? [] : [f - inside[k]!]));
+    expect(gaps.length).toBeGreaterThan(2);
+    expect(new Set(gaps)).toEqual(new Set([77]));
+    const reloads = inside.slice(1).flatMap((f, k) => (last.has(inside[k]!) ? [f - inside[k]!] : []));
+    expect(new Set(reloads)).toEqual(new Set([136]));
   });
 });
 
