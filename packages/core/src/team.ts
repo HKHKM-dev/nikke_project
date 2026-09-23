@@ -79,6 +79,11 @@ export type TeamInput = {
    * 'fixed' は Stage 5 / 6 の固定 20 秒サイクル（比較・退化テスト用。UI には出さない）
    */
   burstModel?: BurstScheduleModel;
+  /**
+   * 操作キャラの枠（Stage 7）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ（AI の SR は倍率なし）。
+   * 省略・null は全員 AI 扱い。ダメージには影響しない（ゲージと時刻表だけ）
+   */
+  controlledSlot?: number | null;
 };
 
 export type { AppliedEffect, AppliedTimedEffect };
@@ -147,6 +152,17 @@ export type TeamResult = {
   timeline: BuffTimeline;
 };
 
+/** 操作キャラの枠が編成の範囲内の埋まった枠か検証する。sim と calc で共通 */
+export function validateControlledSlot(
+  slots: readonly (TeamSlotInput | null)[],
+  controlledSlot: number | null | undefined,
+): void {
+  if (controlledSlot === null || controlledSlot === undefined) return;
+  if (!Number.isInteger(controlledSlot) || controlledSlot < 0 || controlledSlot >= slots.length) {
+    throw new RangeError(`controlledSlot must be a slot index, got ${controlledSlot}`);
+  }
+}
+
 /** 枠数と重複を検証する。sim と calc で共通 */
 export function validateTeamSlots(slots: readonly (TeamSlotInput | null)[]): void {
   if (slots.length < 1 || slots.length > TEAM_SIZE) {
@@ -195,6 +211,7 @@ export function planTeamSchedule(
   burst: boolean | undefined,
   burstModel: BurstScheduleModel = 'dynamic',
   model?: WeaponModel,
+  controlledSlot: number | null = null,
 ): BurstSchedule | null {
   if (!burst) return null;
   if (burstModel === 'fixed') {
@@ -203,7 +220,7 @@ export function planTeamSchedule(
       frames,
     );
   }
-  return planDynamicSchedule(slots, frames, model);
+  return planDynamicSchedule(slots, frames, model, undefined, controlledSlot);
 }
 
 function skillSupportOf(slot: TeamSlotInput): Record<SkillSlot, SkillSupport> | null {
@@ -243,7 +260,8 @@ export function computeTeamDamage(input: TeamInput): TeamResult {
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
   const frames = durationToFrames(durationSeconds);
-  const schedule = planTeamSchedule(slots, frames, input.burst, input.burstModel, model);
+  validateControlledSlot(slots, input.controlledSlot);
+  const schedule = planTeamSchedule(slots, frames, input.burst, input.burstModel, model, input.controlledSlot ?? null);
   const timelineSlots = toTimelineSlots(slots);
   const timeline = planBuffTimeline(timelineSlots, schedule, frames);
 

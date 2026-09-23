@@ -41,6 +41,8 @@ export type TeamState = {
   fixedSpec: boolean;
   /** バーストを回すか（Stage 5 で固定 20 秒サイクル、Stage 7 からゲージ・CT の動的サイクル） */
   burst: boolean;
+  /** 操作キャラの枠（Stage 7）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ。null は全員 AI 扱い */
+  controlledSlot: number | null;
 };
 
 export type TeamAction =
@@ -53,6 +55,7 @@ export type TeamAction =
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
   | { type: 'setBurst'; burst: boolean }
+  | { type: 'setControlledSlot'; controlledSlot: number | null }
   | { type: 'replace'; state: TeamState };
 
 export function emptySlot(): SlotState {
@@ -71,6 +74,7 @@ export function initialTeamState(): TeamState {
     durationSeconds: DEFAULT_DURATION_SECONDS,
     fixedSpec: false,
     burst: DEFAULT_BURST,
+    controlledSlot: null,
   };
 }
 
@@ -110,6 +114,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
         : { ...state, fixedSpec: false };
     case 'setBurst':
       return { ...state, burst: action.burst };
+    case 'setControlledSlot':
+      return { ...state, controlledSlot: action.controlledSlot };
     case 'replace':
       return action.state;
   }
@@ -229,6 +235,15 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
   if (!isBool(raw.fixedSpec)) return null;
   // Stage 4 までの保存データには無いので、欠落は既定値（ON）
   if (raw.burst !== undefined && !isBool(raw.burst)) return null;
+  // Stage 6 までの保存データには無いので、欠落は null（全員 AI 扱い）
+  const controlled = raw.controlledSlot;
+  if (
+    controlled !== undefined &&
+    controlled !== null &&
+    !(typeof controlled === 'number' && Number.isInteger(controlled) && controlled >= 0 && controlled < TEAM_SIZE)
+  ) {
+    return null;
+  }
 
   return {
     slots,
@@ -236,5 +251,6 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
     durationSeconds: raw.durationSeconds,
     fixedSpec: raw.fixedSpec,
     burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
+    controlledSlot: typeof controlled === 'number' ? controlled : null,
   };
 }

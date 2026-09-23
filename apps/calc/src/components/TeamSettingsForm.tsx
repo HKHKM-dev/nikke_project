@@ -1,4 +1,4 @@
-import { ELEMENTS, ELEMENT_LABEL, FULL_BURST_FRAMES, FPS, type Element, type EnemyInput } from '@nikke/core';
+import { ELEMENTS, ELEMENT_LABEL, FULL_BURST_FRAMES, FPS, TEAM_SIZE, type Element, type EnemyInput } from '@nikke/core';
 import type { Dispatch } from 'react';
 import type { TeamAction } from '../team.ts';
 
@@ -7,13 +7,14 @@ type Props = {
   durationSeconds: number;
   fixedSpec: boolean;
   burst: boolean;
+  controlledSlot: number | null;
   dispatch: Dispatch<TeamAction>;
 };
 
 const FULL_BURST_SECONDS = FULL_BURST_FRAMES / FPS;
 
 /** 編成共通の設定: 敵・戦闘時間・スペック固定・バースト */
-export function TeamSettingsForm({ enemy, durationSeconds, fixedSpec, burst, dispatch }: Props) {
+export function TeamSettingsForm({ enemy, durationSeconds, fixedSpec, burst, controlledSlot, dispatch }: Props) {
   const setEnemy = (patch: Partial<EnemyInput>) => dispatch({ type: 'setEnemy', enemy: { ...enemy, ...patch } });
   return (
     <fieldset className="panel settings">
@@ -77,6 +78,27 @@ export function TeamSettingsForm({ enemy, durationSeconds, fixedSpec, burst, dis
             バースト: 通常攻撃でゲージを溜め、満タンで I → II → III を自動発動（各ニケのバースト CT
             を待つ）。フルバースト {FULL_BURST_SECONDS} 秒。III がいないとフルバーストしない
           </span>
+        </label>
+        <label className="field">
+          <span>操作キャラ</span>
+          <select
+            value={controlledSlot ?? ''}
+            disabled={!burst}
+            onChange={(e) =>
+              dispatch({
+                type: 'setControlledSlot',
+                controlledSlot: e.target.value === '' ? null : Number(e.target.value),
+              })
+            }
+          >
+            <option value="">なし（全員 AI）</option>
+            {Array.from({ length: TEAM_SIZE }, (_, i) => (
+              <option key={i} value={i}>
+                枠 {i + 1}
+              </option>
+            ))}
+          </select>
+          <small>SR / RL のフルチャージでゲージが多く溜まるのは操作キャラだけ（AI は倍率なし）</small>
         </label>
       </div>
     </fieldset>

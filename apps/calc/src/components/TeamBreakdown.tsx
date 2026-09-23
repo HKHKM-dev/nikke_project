@@ -61,7 +61,8 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
               `。チェーン失敗 ${summary.chainTimeouts} 回（次の段階が 10 秒出ずにゲージが 0 に戻った）`}
           </p>
           <p className="hint">
-            ゲージ量は CDN の値からの仮の式（射撃場の実測で未較正。1 回目のフルバーストの時刻は ±3 秒程度ずれうる）。
+            ゲージ量は射撃場の的で較正した値（1 回目の満タンの時刻は録画と ±1 秒程度。レイドボスでは未確認）。SR / RL
+            のフルチャージ倍率は「操作キャラ」の枠だけに乗る。
           </p>
           <details className="segments">
             <summary>バーストの時刻表（{schedule.activations.length} 回の発動）</summary>

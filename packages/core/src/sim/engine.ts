@@ -25,6 +25,7 @@ import {
   burstSnapshotState,
   planTeamSchedule,
   toTimelineSlots,
+  validateControlledSlot,
   validateTeamSlots,
   type TeamInput,
 } from '../team.ts';
@@ -102,7 +103,8 @@ export function runSimulation(input: SimInput): SimResult {
   const frames = durationToFrames(durationSeconds);
 
   // 1 パス目: 射手を回してゲージを溜め、時刻表を作る（動的サイクル）。2 パス目がこの下のフレームループ
-  const schedule = planTeamSchedule(slots, frames, input.burst, input.burstModel, model);
+  validateControlledSlot(slots, input.controlledSlot);
+  const schedule = planTeamSchedule(slots, frames, input.burst, input.burstModel, model, input.controlledSlot ?? null);
   const timelineSlots = toTimelineSlots(slots);
   const timeline = planBuffTimeline(timelineSlots, schedule, frames);
 

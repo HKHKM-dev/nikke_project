@@ -116,12 +116,13 @@ export function App() {
           enemy: team.enemy,
           durationSeconds: team.durationSeconds,
           burst: team.burst,
+          controlledSlot: team.controlledSlot,
         }),
       };
     } catch (e) {
       return { ok: false, error: e instanceof Error ? e.message : String(e) };
     }
-  }, [slotInputs, team.enemy, team.durationSeconds, team.burst]);
+  }, [slotInputs, team.enemy, team.durationSeconds, team.burst, team.controlledSlot]);
 
   const loadingCount = team.slots.filter(
     (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
@@ -149,6 +150,7 @@ export function App() {
             durationSeconds={team.durationSeconds}
             fixedSpec={team.fixedSpec}
             burst={team.burst}
+            controlledSlot={team.controlledSlot}
             dispatch={dispatch}
           />
           <section className="slots" aria-label="編成">

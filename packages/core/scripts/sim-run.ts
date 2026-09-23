@@ -1,6 +1,7 @@
 // Stage 5: ヘッドレスの実行口。sim（フレーム逐次）と calc（2 区間の期待値）の枠別・区間別の内訳を表で出す。
-//   node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--defence 100] [--element Fire]
+//   node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--controlled 3] [--defence 100] [--element Fire]
 // Stage 7: バーストは既定で動的サイクル（ゲージ・CT・チェーン）。--fixed-cycle で Stage 5 / 6 の固定 20 秒サイクル。
+// --controlled は操作キャラの枠（1 始まり）。省略は全員 AI 扱い（SR / RL のフルチャージ倍率がゲージに乗らない）。
 // 育成値は既定 Lv200・3 凸・コア 0、条件は コア命中率 1・距離ボーナスあり・フルチャージ（calc の既定と同じ）。
 // スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
 import { readFileSync } from 'node:fs';
@@ -24,6 +25,7 @@ const { values } = parseArgs({
     duration: { type: 'string', default: '180' },
     'no-burst': { type: 'boolean', default: false },
     'fixed-cycle': { type: 'boolean', default: false },
+    controlled: { type: 'string' },
     defence: { type: 'string', default: '100' },
     element: { type: 'string' },
     'core-hit-rate': { type: 'string', default: '1' },
@@ -72,6 +74,7 @@ const input = {
   durationSeconds: Number(values.duration),
   burst: !values['no-burst'],
   burstModel: values['fixed-cycle'] ? ('fixed' as const) : ('dynamic' as const),
+  controlledSlot: values.controlled === undefined ? null : Number(values.controlled) - 1,
 };
 const sim = runSimulation(input);
 const calc = computeTeamDamage(input);
@@ -81,7 +84,8 @@ const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
 
 console.log(
   `duration ${input.durationSeconds}s (${sim.frames}f), burst ${input.burst ? input.burstModel : 'off'}, ` +
-    `fixed spec ${fixedSpec}, enemy defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}`,
+    `fixed spec ${fixedSpec}, controlled ${input.controlledSlot === null ? 'none (all AI)' : `slot ${input.controlledSlot + 1}`}, ` +
+    `enemy defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}`,
 );
 if (calc.schedule && calc.burstSummary) {
   const byStep = slotsByStep(calc.schedule);

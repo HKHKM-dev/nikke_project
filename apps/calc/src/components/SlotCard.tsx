@@ -133,7 +133,9 @@ export function SlotCard({
             {character.shot.maxAmmo} / リロード {character.shot.reloadTime}s / 武器倍率 {character.shot.damage / 100}%
             <br />
             バースト CT {character.burstSkill.cooldownSeconds}s / ゲージ 1 トリガー{' '}
-            {formatNumber((energyPerTrigger(character.shot) / BURST_GAUGE_MAX) * 100, 2)}%（仮）
+            {formatNumber((energyPerTrigger(character.shot, true) / BURST_GAUGE_MAX) * 100, 2)}%
+            {character.shot.chargeTime > 0 &&
+              `（AI ${formatNumber((energyPerTrigger(character.shot, false) / BURST_GAUGE_MAX) * 100, 2)}%）`}
           </p>
           <div className="growth-row">
             {growthField('level', 'レベル', 1, limits.levelMax)}
