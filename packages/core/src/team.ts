@@ -11,6 +11,7 @@ import { durationToFrames, planFixedCycle } from './burst/fixedCycle.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from './burst/dynamic.ts';
 import {
   activationFramesOfSlot,
+  isInFullBurst,
   summarizeSchedule,
   type BurstSchedule,
   type BurstScheduleModel,
@@ -326,7 +327,9 @@ export function planSkillHits(
           buffs: state.buffs,
           condition: { ...slot.condition, fullBurst: false },
         });
-        const hit = computeSkillHit([effect], slot.character, enemy, trigger, state.buffs, SKILL_HIT_FULL_BURST_BONUS);
+        // フルバースト補正はフルバースト中に出た倍率ダメージにだけ乗る（2026-09-23 実測）
+        const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, frame);
+        const hit = computeSkillHit([effect], slot.character, enemy, trigger, state.buffs, fullBurst);
         hits.push({ frame, slotIndex, effect, hit });
       }
     }

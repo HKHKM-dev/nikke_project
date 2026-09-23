@@ -63,33 +63,33 @@
           "kind": "damage",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 2
+            "atLeast": 3
           },
           "damageType": "additional",
           "ref": 4,
           "assumes": {
-            "ja": "ターゲットマーキングの段階は同じ発動で上がった段階を見る（2 回目の発動から段階 2 の追加ダメージ）",
-            "en": "The Target Marking tier includes the one gained by the same activation (tier 2 damage from the 2nd use)"
+            "ja": "ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 2 の追加ダメージは 3 回目の発動から。録画 38 で確認）",
+            "en": "The Target Marking tier is the one before this activation raises it (tier 2 damage from the 3rd use; confirmed by recording 38)"
           }
         },
         {
           "kind": "damage",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 3
+            "atLeast": 4
           },
           "damageType": "additional",
           "ref": 5,
           "assumes": {
-            "ja": "ターゲットマーキングの段階は同じ発動で上がった段階を見る（3 回目の発動から段階 3 の追加ダメージ）",
-            "en": "The Target Marking tier includes the one gained by the same activation (tier 3 damage from the 3rd use)"
+            "ja": "ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 3 の追加ダメージは 4 回目の発動から。録画 38 で確認）",
+            "en": "The Target Marking tier is the one before this activation raises it (tier 3 damage from the 4th use; confirmed by recording 38)"
           }
         }
       ],
       "notes": [
         {
-          "ja": "段階 1 の敵の受けるダメージ▲（5 秒間維持）は未対応（敵デバフは語彙にない）。フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る",
-          "en": "Tier 1 Damage Taken up on enemies (5 s) is not modeled (no vocabulary for enemy debuffs). The Full Burst Time −5 s comes from burst_duration (5 s) in the schedule"
+          "ja": "段階 1 の敵の受けるダメージ 39.96%▲（5 秒間維持。2 回目の発動から）は未対応（敵デバフは語彙にない。録画 38 で別枠の乗数 ×1.3996 と確認）。フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る",
+          "en": "Tier 1 Damage Taken +39.96% on enemies (5 s, from the 2nd use) is not modeled (no vocabulary for enemy debuffs; recording 38 shows it is a separate ×1.3996 multiplier). The Full Burst Time −5 s comes from burst_duration (5 s) in the schedule"
         }
       ]
     }

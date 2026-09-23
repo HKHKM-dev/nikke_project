@@ -22,10 +22,13 @@ import { resolveTrigger, skillValue, type ResolvedTrigger, type SkillLevels } fr
 export const BURST_SKILL_FULL_BURST_BONUS = false;
 
 /**
- * Stage 8: バースト以外の倍率ダメージ（damage）にフルバースト補正 +0.5 を乗せるか。
- * burstDamage の実測からの類推で「乗せない」を既定にする。ドレイク S2 の実測（plan/design-stage8.md 8.6 節 2）で確かめる。
+ * Stage 8: バースト以外の倍率ダメージ（damage）が**フルバースト中に出たとき**、フルバースト補正 +0.5 を乗せるか。
+ * **2026-09-23 の射撃場実測で「乗せる」と確定**（plan/verification.md Stage 8 節、録画 36〜38）:
+ * ドレイク S2 は通常時 118,059 = (攻撃力 − 防御力) × 98.55%、フルバースト中 409,932 で、どちらもペレットとの比が 4.5987 と同じ
+ * （ペレットの倍率グループは 1.0 → 1.5）。イサベルの段階 2 の追加ダメージ 758,766 = 299.7% × 1.5 × 受けるダメージ 1.3996。
+ * バーストスキルダメージ（burstDamage）には乗らない（BURST_SKILL_FULL_BURST_BONUS）のと違う。
  */
-export const SKILL_HIT_FULL_BURST_BONUS = false;
+export const SKILL_HIT_FULL_BURST_BONUS = true;
 
 /** 解決済みの倍率ダメージ 1 件。burstDamage（burst スロット）と damage（Stage 8）で共通 */
 export type ResolvedSkillDamage = {

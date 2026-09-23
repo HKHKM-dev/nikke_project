@@ -115,6 +115,22 @@ describe('ドレイク: 10 回攻撃ごとの倍率ダメージ', () => {
   });
 });
 
+describe('ドレイク: フルバースト中の倍率ダメージ（録画 37）', () => {
+  // 録画 37: S2 / ペレットの比がフルバーストの外 118,059 / 25,672 と中 409,932 / 89,141 で同じ 4.5987
+  const input: TeamInput = { slots: [822, 20, 101].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
+  const calc = computeTeamDamage(input);
+  const drake = calc.slots[2]!;
+  const windows = calc.schedule!.fullBurstWindows;
+  const inFb = (s: number) => windows.some((w) => w.start <= s * FPS && s * FPS < w.end);
+
+  it('adds +0.5 to the skill hits that land in a full burst, and only to those', () => {
+    const hits = drake.skillHits.activations;
+    expect(hits.some((a) => inFb(a.seconds))).toBe(true);
+    expect(hits.some((a) => !inFb(a.seconds))).toBe(true);
+    for (const a of hits) expect(a.hit.boost.fullBurst).toBe(inFb(a.seconds) ? 0.5 : 0);
+  });
+});
+
 describe('イサベル: 使用回数別の段階とフルバースト 5 秒', () => {
   const input: TeamInput = { slots: [291, 20, 231].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
   const calc = computeTeamDamage(input);
@@ -126,15 +142,19 @@ describe('イサベル: 使用回数別の段階とフルバースト 5 秒', ()
     expect(summarizeSchedule(calc.schedule!, 10800).fullBursts).toBeGreaterThanOrEqual(5);
   });
 
-  it('adds the tier-2 / tier-3 additional damage from the 2nd / 3rd burst on', () => {
+  it('adds the tier-2 / tier-3 additional damage from the 3rd / 4th burst on (the tier before this activation)', () => {
+    // 録画 38: 段階 2 の追加ダメージは 3 回目、段階 3 は 4 回目から（バーストは同じ発動で上がる前の段階を見る）
     const uses = isabel.burst.activations.length;
     expect(uses).toBeGreaterThanOrEqual(5);
     const byRef = (m: number) => isabel.skillHits.activations.filter((a) => Math.abs(a.hit.multiplier - m) < 1e-9);
-    expect(byRef(2.997)).toHaveLength(uses - 1);
-    expect(byRef(3.4965)).toHaveLength(uses - 2);
-    // バーストと同じフレームに出る
+    expect(byRef(2.997)).toHaveLength(uses - 2);
+    expect(byRef(3.4965)).toHaveLength(uses - 3);
+    // バーストと同じフレーム（III の発動 = フルバースト開始）に出るので、フルバースト補正 +0.5 が乗る
     const burstSeconds = isabel.burst.activations.map((a) => a.seconds);
-    for (const a of isabel.skillHits.activations) expect(burstSeconds).toContain(a.seconds);
+    for (const a of isabel.skillHits.activations) {
+      expect(burstSeconds).toContain(a.seconds);
+      expect(a.hit.boost.fullBurst).toBe(0.5);
+    }
   });
 
   it('stacks the lower tiers: crit rate from the 1st use, crit damage from the 2nd, attack from the 3rd', () => {
@@ -144,6 +164,34 @@ describe('イサベル: 使用回数別の段階とフルバースト 5 秒', ()
     expect(firstOf('critRate')).toBe(use[0]);
     expect(firstOf('critDamage')).toBe(use[1]);
     expect(firstOf('attack')).toBe(use[2]);
+  });
+});
+
+describe('録画 38: イサベル（III）+ ラム（I）+ デルタ（II）の実測値', () => {
+  // 灼熱の的・距離ボーナスなしの数値で比べる。受けるダメージ 39.96%▲（段階 1。2 回目の発動から 5 秒）は未対応なので、
+  // その区間の実測値は ×1.3996 して比べる
+  const input: TeamInput = { slots: [822, 20, 231].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
+  const isabel = computeTeamDamage(input).slots[2]!;
+  const DAMAGE_TAKEN = 1.3996;
+  /** 非会心の値（倍率グループから会心期待値を外す） */
+  const nonCrit = (hit: { perActivation: number; boost: { crit: number; total: number } }) =>
+    (hit.perActivation / hit.boost.total) * (hit.boost.total - hit.boost.crit);
+
+  it('burst skill damage: 180,710 for the 1st–3rd, 211,963 from the 4th (tier-3 attack, pre-activation buffs)', () => {
+    const hits = isabel.burst.activations.map((a) => nonCrit(a.hit));
+    for (const h of hits.slice(0, 3)) expect(Math.abs(h - 180_710)).toBeLessThan(2);
+    for (const h of hits.slice(3)) expect(Math.abs(h - 211_963)).toBeLessThan(2);
+  });
+
+  it('tier-2 additional damage at the 3rd burst: 758,766 = 299.7% × 1.5 (full burst) × damage taken', () => {
+    const add2 = isabel.skillHits.activations.filter((a) => Math.abs(a.hit.multiplier - 2.997) < 1e-9)[0]!;
+    expect(Math.abs(nonCrit(add2.hit) * DAMAGE_TAKEN - 758_766)).toBeLessThan(5);
+  });
+
+  it('tier-3 additional damage at the 4th burst crits: 1,509,234 = 349.65% × (1 + 0.5 + 0.5 + 18.03%) × damage taken', () => {
+    const add3 = isabel.skillHits.activations.filter((a) => Math.abs(a.hit.multiplier - 3.4965) < 1e-9)[0]!;
+    const base = add3.hit.perActivation / add3.hit.boost.total; // 倍率グループの前
+    expect(Math.abs(base * (1 + 0.5 + 0.5 + 0.1803) * DAMAGE_TAKEN - 1_509_234)).toBeLessThan(20);
   });
 });
 
