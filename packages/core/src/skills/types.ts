@@ -3,6 +3,8 @@
 // Stage 8（段階 C）で、射撃の回数・発動の回数で発火するトリガー、バースト N 段階突入時のトリガー、
 // バースト以外の倍率ダメージ（damage）、stat の distributedDamage / burstGaugeSpeed を足した（plan/design-stage8.md 2 節）。
 // Stage 9 で宝物版の定義（treasureSkills）と、武器種で絞る対象（targetWeapon）を足した（plan/design-stage9.md 2・3 節）。
+// Stage 10（段階 D）で射撃に効く stat（maxAmmo / reloadSpeed / chargeSpeed）と scaling 'flat'、即時効果（cooldownReduction /
+// ammoRefill）、トリガー「最後の弾丸」（lastShot）を足した（plan/design-stage10.md 2 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import type { LocalizedText, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
@@ -15,9 +17,21 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * distributedDamage = 分配ダメージの乗数 (1 + Σ)。distributed の倍率ダメージにだけ掛かる（録画 21 で別枠の乗数と確認）。
  * burstGaugeSpeed = バーストゲージのチャージ速度 (1 + Σ)。対象の枠の射撃で溜まるゲージに掛かる。passive にだけ書ける
  * （timed に書くと 時刻表 → バフ窓 → ゲージ → 時刻表 と循環するため）。
+ * Stage 10 の 3 つ（射撃に効く。ダメージの式は読まない）:
+ * maxAmmo = 最大装弾数（scaling 'ratio' は %、'flat' は発数）、reloadSpeed = リロード速度（%）、chargeSpeed = チャージ速度（%）。
+ * 1 パス目（sim/firstPass.ts）が射手に渡すので、timed にも書ける。
  */
 export type BuffStat =
-  'attack' | 'critRate' | 'critDamage' | 'attackDamage' | 'chargeDamage' | 'distributedDamage' | 'burstGaugeSpeed';
+  | 'attack'
+  | 'critRate'
+  | 'critDamage'
+  | 'attackDamage'
+  | 'chargeDamage'
+  | 'distributedDamage'
+  | 'burstGaugeSpeed'
+  | 'maxAmmo'
+  | 'reloadSpeed'
+  | 'chargeSpeed';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -26,11 +40,24 @@ export const BUFF_STATS = [
   'chargeDamage',
   'distributedDamage',
   'burstGaugeSpeed',
+  'maxAmmo',
+  'reloadSpeed',
+  'chargeSpeed',
 ] as const satisfies readonly BuffStat[];
 
-/** どう算出するか。ratio = 対象自身の基礎値に対する比率、casterAttack = 発動者のバフ前攻撃力 × 比率の固定加算 */
-export type BuffScaling = 'ratio' | 'casterAttack';
-export const BUFF_SCALINGS = ['ratio', 'casterAttack'] as const satisfies readonly BuffScaling[];
+/** Stage 10: 射撃に効く stat（射手の実効値を変える） */
+export const FIRING_STATS = ['maxAmmo', 'reloadSpeed', 'chargeSpeed'] as const satisfies readonly BuffStat[];
+
+export function isFiringStat(stat: BuffStat): boolean {
+  return (FIRING_STATS as readonly BuffStat[]).includes(stat);
+}
+
+/**
+ * どう算出するか。ratio = 対象自身の基礎値に対する比率、casterAttack = 発動者のバフ前攻撃力 × 比率の固定加算、
+ * flat = 実数の固定加算（Stage 10。stat が maxAmmo のときだけ。値は発数で 100 で割らない）
+ */
+export type BuffScaling = 'ratio' | 'casterAttack' | 'flat';
+export const BUFF_SCALINGS = ['ratio', 'casterAttack', 'flat'] as const satisfies readonly BuffScaling[];
 
 export type BuffTarget = 'self' | 'allies';
 export const BUFF_TARGETS = ['self', 'allies'] as const satisfies readonly BuffTarget[];
@@ -83,12 +110,14 @@ export const BUFF_TRIGGERS = [
  * Stage 8: 自分の射撃の回数で発火するトリガー。1 回 = 弾薬を 1 消費する 1 トリガー（SG もペレットではなくトリガー）。
  * 全弾命中の前提なので normalShot と normalHit は同じ列になる。fullChargeShot はチャージ武器の全射撃（常にフルチャージのモデル）。
  * カウンタはリロードでも戦闘中ずっとリセットしない（every: 10 は通算 10・20・30…回目）。
+ * Stage 10: lastShot = 残弾を 0 にした射撃（「最後の弾丸で攻撃した時 / 命中した時」）。最大装弾数▲で遅れ、弾丸チャージで出なくなる。
  */
-export type ShotCountKind = 'normalShot' | 'normalHit' | 'fullChargeShot';
+export type ShotCountKind = 'normalShot' | 'normalHit' | 'fullChargeShot' | 'lastShot';
 export const SHOT_COUNT_KINDS = [
   'normalShot',
   'normalHit',
   'fullChargeShot',
+  'lastShot',
 ] as const satisfies readonly ShotCountKind[];
 
 export type ShotCountTrigger = {
@@ -176,7 +205,36 @@ export type DamageEffect = {
   assumes?: LocalizedText;
 };
 
-export type SkillEffect = PassiveEffect | BurstDamageEffect | TimedEffect | DamageEffect;
+/**
+ * Stage 10: 「バーストスキルクールタイム X 秒▼」。発火の瞬間に対象の残りの CT を X 秒減らす（0 未満にはしない。即時効果）。
+ * 同じフレームの発動の後に当てる（plan/design-stage10.md 4 節）
+ */
+export type CooldownReductionEffect = {
+  kind: 'cooldownReduction';
+  trigger: EffectTrigger;
+  target: BuffTarget;
+  targetWeapon?: WeaponType;
+  /** 秒数の description_value_NN */
+  ref: number;
+  assumes?: LocalizedText;
+};
+
+/** Stage 10: 「弾丸チャージ X%」。発火の瞬間に対象の残弾へ 最大装弾数 × X% を足す（最大で止める。即時効果） */
+export type AmmoRefillEffect = {
+  kind: 'ammoRefill';
+  trigger: EffectTrigger;
+  target: BuffTarget;
+  targetWeapon?: WeaponType;
+  /** % の description_value_NN */
+  ref: number;
+  assumes?: LocalizedText;
+};
+
+export type InstantEffect = CooldownReductionEffect | AmmoRefillEffect;
+export type InstantKind = InstantEffect['kind'];
+export const INSTANT_KINDS = ['cooldownReduction', 'ammoRefill'] as const satisfies readonly InstantKind[];
+
+export type SkillEffect = PassiveEffect | BurstDamageEffect | TimedEffect | DamageEffect | InstantEffect;
 
 export type SkillEntry = {
   /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
@@ -229,6 +287,16 @@ function parseLocalizedText(v: Json, path: string): LocalizedText {
   return { ja: v.ja, en: v.en };
 }
 
+/** casterAttack は attack だけ、flat（Stage 10）は maxAmmo だけ */
+function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path: string): void {
+  if (scaling === 'casterAttack' && stat !== 'attack') {
+    fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
+  }
+  if (scaling === 'flat' && stat !== 'maxAmmo') {
+    fail(`${path}.scaling`, `flat is only allowed with stat "maxAmmo", got "${stat}"`);
+  }
+}
+
 /** Stage 9: targetWeapon は target が allies のときだけ */
 function parseTargetWeapon(v: Record<string, Json>, target: BuffTarget, path: string): WeaponType | undefined {
   if (v.targetWeapon === undefined) return undefined;
@@ -242,9 +310,7 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   const targetWeapon = parseTargetWeapon(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
-  if (scaling === 'casterAttack' && stat !== 'attack') {
-    fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
-  }
+  validateScaling(scaling, stat, path);
   const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (scaling !== undefined) effect.scaling = scaling;
@@ -297,9 +363,7 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
     );
   }
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
-  if (scaling === 'casterAttack' && stat !== 'attack') {
-    fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
-  }
+  validateScaling(scaling, stat, path);
   const hasRef = v.durationRef !== undefined;
   const hasSeconds = v.durationSeconds !== undefined;
   if (hasRef === hasSeconds) {
@@ -329,11 +393,32 @@ function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDam
 
 function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
-  if (isShotCountTrigger(trigger) && trigger.everyRef === undefined && (trigger.every ?? 1) === 1) {
+  // 毎回の倍率ダメージ（モダニアの毎命中など）は扱い方が未定。最後の弾丸はマガジンに 1 回なので毎回でよい（Stage 10）
+  if (
+    isShotCountTrigger(trigger) &&
+    trigger.count !== 'lastShot' &&
+    trigger.everyRef === undefined &&
+    (trigger.every ?? 1) === 1
+  ) {
     fail(`${path}.trigger`, 'damage on every shot is not supported yet (every must be >= 2)');
   }
   const damageType = oneOf(SKILL_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'target', 'targetWeapon', 'ref', 'assumes'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  const targetWeapon = parseTargetWeapon(v, target, path);
+  const effect: InstantEffect = { kind, trigger, target, ref: parseRef(v.ref, `${path}.ref`) };
+  if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -345,7 +430,7 @@ function parseRef(v: Json, path: string): number {
   return v;
 }
 
-/** passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed と damage はどのスロットにも書ける */
+/** passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果はどのスロットにも書ける */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
   if (v.kind === 'passive') {
@@ -359,7 +444,11 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   }
   if (v.kind === 'timed') return parseTimedEffect(v, path);
   if (v.kind === 'damage') return parseDamageEffect(v, path);
-  fail(`${path}.kind`, `expected "passive", "burstDamage", "timed" or "damage", got ${JSON.stringify(v.kind)}`);
+  if (v.kind === 'cooldownReduction' || v.kind === 'ammoRefill') return parseInstantEffect(v, path, v.kind);
+  fail(
+    `${path}.kind`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction" or "ammoRefill", got ${JSON.stringify(v.kind)}`,
+  );
 }
 
 function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' = 'skills'): SkillEntry {

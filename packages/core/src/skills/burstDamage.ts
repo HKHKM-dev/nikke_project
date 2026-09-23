@@ -91,7 +91,7 @@ export function resolveDamageEffects(
     entry.effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'damage') return;
       const trigger = resolveTrigger(effect.trigger, skill, levels[slot]);
-      if (typeof trigger === 'object' && 'every' in trigger && trigger.every < 2) {
+      if (typeof trigger === 'object' && 'every' in trigger && trigger.every < 2 && trigger.count !== 'lastShot') {
         throw new RangeError(`skill ${skill.id}: damage on every shot is not supported yet`);
       }
       const r: ResolvedDamageEffect = {

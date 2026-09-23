@@ -121,6 +121,10 @@ const BUFF_FIELDS = [
   'chargeDamage',
   'distributedDamage',
   'burstGaugeSpeed',
+  'maxAmmoRatio',
+  'maxAmmoFlat',
+  'reloadSpeed',
+  'chargeSpeed',
 ] as const satisfies readonly (keyof BuffTotals)[];
 
 /** key の桁数。最下位ビットのずれで同一状態が別グループに割れないよう固定桁で文字列化する */
