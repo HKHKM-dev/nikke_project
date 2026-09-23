@@ -44,6 +44,7 @@ import {
   type ResolvedSkillDamage,
   type SkillHitResult,
 } from './skills/burstDamage.ts';
+import { cycleFires, cycleShotFrames, resolveCycles, type CycleWindow } from './skills/cycles.ts';
 import type { BuffTotals } from './skills/buffs.ts';
 import {
   MAX_SKILL_LEVELS,
@@ -182,6 +183,8 @@ export type TeamSlotResult = {
   stateWindows: BuffWindow[];
   /** Stage 11 モダニア: この枠の条件付きの効果が、条件を満たさずに発火しなかった記録 */
   conditionSkips: ConditionSkip[];
+  /** Stage 11 紅蓮BS: この枠の循環の間隔の変更（cycleEvery）の窓（区間には入らない。表示用） */
+  cycleWindows: CycleWindow[];
   /** バフ状態ごとにまとめた通常攻撃の結果（groupTimeline の順） */
   segments: SlotSegmentResult[];
   /** Σ segments.damage */
@@ -357,22 +360,34 @@ export function planSkillHits(
     const definition = slot?.skills?.definition;
     if (!slot || !definition) return;
     const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
+    const push = (frame: number, effect: ResolvedDamageEffect, pre: boolean): void => {
+      const state = burstSnapshotState(timeline, frame, slotIndex, pre);
+      const trigger = computeTriggerDamage({
+        character: slot.character,
+        growth: slot.growth,
+        enemy,
+        attackOverride: slot.attackOverride,
+        buffs: state.buffs,
+        condition: { ...slot.condition, fullBurst: false },
+      });
+      // フルバースト補正はフルバースト中に出た倍率ダメージにだけ乗る（2026-09-23 実測）
+      const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, frame);
+      const hit = computeSkillHit([effect], slot.character, enemy, trigger, state.buffs, fullBurst);
+      hits.push({ frame, slotIndex, effect, hit });
+    };
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
       const pre = isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
-      for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) {
-        const state = burstSnapshotState(timeline, frame, slotIndex, pre);
-        const trigger = computeTriggerDamage({
-          character: slot.character,
-          growth: slot.growth,
-          enemy,
-          attackOverride: slot.attackOverride,
-          buffs: state.buffs,
-          condition: { ...slot.condition, fullBurst: false },
-        });
-        // フルバースト補正はフルバースト中に出た倍率ダメージにだけ乗る（2026-09-23 実測）
-        const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, frame);
-        const hit = computeSkillHit([effect], slot.character, enemy, trigger, state.buffs, fullBurst);
-        hits.push({ frame, slotIndex, effect, hit });
+      for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) push(frame, effect, pre);
+    }
+    // Stage 11 紅蓮BS: 段の循環。射撃の列を通算で数え、間隔の変更の窓に入る射撃は窓の間隔で段を進める（skills/cycles.ts）。
+    // 値は射撃の回数トリガーの倍率ダメージと同じく、その射撃と同じバフ
+    for (const cycle of resolveCycles(definition, slot.character, levels)) {
+      const windows = timeline.cycleWindows.filter(
+        (w) => w.slotIndex === slotIndex && w.targetSkill === cycle.source.skill,
+      );
+      const shotFrames = cycleShotFrames(shots[slotIndex], cycle.trigger);
+      for (const fire of cycleFires(cycle.trigger.every, cycle.steps.length, shotFrames, windows)) {
+        push(fire.frame, cycle.steps[fire.step]!, false);
       }
     }
   });
@@ -565,6 +580,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
       windows: timeline.windows.filter((w) => w.slotIndex === index),
       stateWindows: timeline.stateWindows.filter((w) => w.slotIndex === index),
       conditionSkips: timeline.conditionSkips.filter((x) => x.sourceSlotIndex === index),
+      cycleWindows: timeline.cycleWindows.filter((w) => w.slotIndex === index),
       segments,
       normalDamage,
       burst: { activations, hit: representative, totalDamage: burstDamage },

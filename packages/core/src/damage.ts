@@ -4,7 +4,7 @@
 // Stage 11 モダニア: 射撃ごとの倍率ダメージ（「通常攻撃が命中した時、最終攻撃力の X% の追加ダメージ」）を 1 トリガーの値に足す（perShot）。
 // 使用武器の変更（殲滅モード）が効いている区間は、武器倍率・コア倍率を変更後の武器（buffs.weapon）から取る。
 import { computeCadence, type CadenceResult } from './cadence.ts';
-import type { FiringParams } from './sim/firing.ts';
+import { measuredChargeCadence, type FiringParams } from './sim/firing.ts';
 import { elementMultiplier } from './element.ts';
 import type { ResolvedSkillDamage } from './skills/burstDamage.ts';
 import {
@@ -131,7 +131,14 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
     unsupported('multi-muzzle', '複数銃口（二丁持ち）は未対応', 'Multiple muzzles not modeled');
   if (shot.inputType === 'DOWN_Charge')
     unsupported('down-charge', '押下チャージ型の入力は未対応', 'DOWN_Charge input not modeled');
-  if (shot.maintainFireStance !== 0)
+  // Stage 11 紅蓮BS: 射撃の刻みを実測で較正した武器（sim/firing.ts の MEASURED_CHARGE_CADENCE）は近似として扱う
+  if (shot.maintainFireStance !== 0 && measuredChargeCadence(shot) !== null)
+    approx(
+      'measured-cadence',
+      '射撃の刻みは射撃場の実測で較正（射撃姿勢維持型。紅蓮：ブラックシャドウは 43f 間隔・リロードをまたいで 172f）',
+      'Shot cadence calibrated on range recordings (fire-stance weapon)',
+    );
+  else if (shot.maintainFireStance !== 0)
     unsupported('fire-stance', '射撃姿勢維持型の武器は未対応', 'Fire-stance weapons not modeled');
   if (shot.fireType === 'ProjectileCurve')
     unsupported('projectile-curve', '曲射型の弾は未対応', 'Curved projectiles not modeled');

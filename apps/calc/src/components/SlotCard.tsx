@@ -17,6 +17,7 @@ import {
 import type { Dispatch } from 'react';
 import { formatNumber, formatPercent } from '../format.ts';
 import {
+  SKILL_SLOT_LABEL,
   formatAppliedAmount,
   formatEffectSource,
   formatInstant,
@@ -127,6 +128,18 @@ export function SlotCard({
         continue;
       }
       byKey.set(key, { instant: x, count: 1, total: x.amount });
+    }
+    return [...byKey.values()];
+  })();
+
+  // Stage 11 紅蓮BS: 循環の間隔の変更（「スキル 1 の段を毎回進める」）の窓を効果ごとにまとめる
+  const cycleSummary = (() => {
+    const byKey = new Map<string, { window: NonNullable<typeof slotResult>['cycleWindows'][number]; count: number }>();
+    for (const w of slotResult?.cycleWindows ?? []) {
+      const key = `${w.source.skill}:${w.effectIndex}`;
+      const found = byKey.get(key);
+      if (found) found.count += 1;
+      else byKey.set(key, { window: w, count: 1 });
     }
     return [...byKey.values()];
   })();
@@ -243,7 +256,8 @@ export function SlotCard({
               <span className="skills-title">受けているバフ</span>
               {slotResult.passiveEffects.length === 0 &&
               slotResult.windows.length === 0 &&
-              slotResult.instants.length === 0 ? (
+              slotResult.instants.length === 0 &&
+              slotResult.cycleWindows.length === 0 ? (
                 <p className="hint">なし</p>
               ) : (
                 <ul className="received-list">
@@ -282,6 +296,16 @@ export function SlotCard({
                             ? `（計 ${x.total} 発）`
                             : ''}
                         {x.instant.effect.assumes ? `・仮定: ${x.instant.effect.assumes.ja}` : ''}
+                      </small>
+                    </li>
+                  ))}
+                  {cycleSummary.map(({ window: w, count }) => (
+                    <li key={`cycle-${w.source.skill}-${w.effectIndex}`}>
+                      <span className="amount">
+                        {SKILL_SLOT_LABEL[w.targetSkill]} の段を{w.every === 1 ? '毎回' : ` ${w.every} 回ごとに`}進める
+                      </span>
+                      <small className="sub">
+                        {SKILL_SLOT_LABEL[w.source.skill]}・{formatNumber((w.end - w.start) / 60, 0)} 秒 × {count} 回
                       </small>
                     </li>
                   ))}

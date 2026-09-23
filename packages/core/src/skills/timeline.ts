@@ -19,6 +19,7 @@
 // 1 段目の窓と stateWindows を見て発火を間引く。使用武器の変更の窓は、射手が持ち替えるフレーム（発火の次のフレーム）から始める
 // （weaponStartTrim）。
 import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
+import { resolveCycleEvery, type CycleWindow } from './cycles.ts';
 import type { ShotLog } from '../sim/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { FPS } from '../weapons.ts';
@@ -114,6 +115,11 @@ export type BuffTimeline = {
   stateWindows: BuffWindow[];
   /** Stage 11 モダニア: 条件を満たさずに発火しなかった記録（発生順） */
   conditionSkips: ConditionSkip[];
+  /**
+   * Stage 11 紅蓮BS: 循環の間隔の変更（cycleEvery）の窓（発生順）。区間には入れない（ダメージの式も射手も読まない）。
+   * team.ts の planSkillHits が、射撃がこの窓に入るかで循環の段を決める（plan/design-stage11-scarlet-bs.md 3.2 節）
+   */
+  cycleWindows: CycleWindow[];
 };
 
 /** 1 枠ぶんの「同じバフ状態の区間」をまとめたもの。calc はこの単位で computeDamage を呼ぶ */
@@ -530,7 +536,49 @@ export function planBuffTimeline(
     });
   }
 
-  return { frames, segments, windows, passive, heals, rankings, stateWindows, conditionSkips };
+  return {
+    frames,
+    segments,
+    windows,
+    passive,
+    heals,
+    rankings,
+    stateWindows,
+    conditionSkips,
+    cycleWindows: planCycleWindows(slots, schedule, frames, shots, healsKey),
+  };
+}
+
+/**
+ * Stage 11 紅蓮BS: 循環の間隔の変更の窓。対象は常に自分で、同じ効果の再発火は上書き延長（和集合）。
+ * 窓の始まりは持続バフと同じ（射撃の回数トリガーは書けないので、発火のフレームから）
+ */
+function planCycleWindows(
+  slots: readonly TimelineSlot[],
+  schedule: BurstSchedule | null,
+  frames: number,
+  shots: readonly (ShotLog | null)[],
+  heals: readonly HealRecord[],
+): CycleWindow[] {
+  const out: CycleWindow[] = [];
+  slots.forEach((slot, slotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const e of resolveCycleEvery(slot.definition, slot.character, slot.levels)) {
+      const starts = buffStartFrames(e.trigger, schedule, slotIndex, frames, shots, heals);
+      for (const [start, end] of unionWindows(starts, e.durationFrames, frames)) {
+        out.push({
+          slotIndex,
+          source: e.source,
+          effectIndex: e.effectIndex,
+          targetSkill: e.targetSkill,
+          every: e.every,
+          start,
+          end,
+        });
+      }
+    }
+  });
+  return out.sort((a, b) => a.start - b.start || a.slotIndex - b.slotIndex);
 }
 
 function windowOf(

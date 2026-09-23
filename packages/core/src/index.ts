@@ -15,6 +15,7 @@ export * from './skills/resolve.ts';
 export * from './skills/ranking.ts';
 export * from './skills/targets.ts';
 export * from './skills/burstDamage.ts';
+export * from './skills/cycles.ts';
 export * from './skills/timeline.ts';
 export * from './skills/triggers.ts';
 export * from './skills/treasure.ts';

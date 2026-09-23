@@ -65,19 +65,32 @@ describe('data/skills', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
           // Stage 11 モダニア: 使用武器の変更は damageRef、フラグの stat（装弾数無限）は ref を持たない
-          const ref = effect.kind === 'weaponChange' ? effect.damageRef : effect.ref;
-          if (ref === undefined) continue;
-          const entry = character.skills[slot].values[ref - 1];
-          expect(entry, `${slot} ref ${ref}`).toHaveLength(SKILL_LEVEL_MAX);
-          for (let lv = 1; lv <= SKILL_LEVEL_MAX; lv++) {
-            const v = skillValue(character.skills[slot], ref, lv);
-            expect(v).toBeGreaterThan(0);
-            // イサベルのバーストは Lv1 で 93.65%（Lv10 で 149.85%）なので、下限は Lv10 だけで見る
-            if (effect.kind === 'burstDamage') {
-              if (lv === SKILL_LEVEL_MAX) expect(v).toBeGreaterThanOrEqual(100);
+          // Stage 11 紅蓮BS: 循環は段ごとの ref、間隔の変更は ref を持たない（維持時間は下のテスト）
+          const refs =
+            effect.kind === 'weaponChange'
+              ? [effect.damageRef]
+              : effect.kind === 'cycle'
+                ? effect.steps.map((s) => s.ref)
+                : effect.kind === 'cycleEvery' || effect.ref === undefined
+                  ? []
+                  : [effect.ref];
+          for (const ref of refs) {
+            const entry = character.skills[slot].values[ref - 1];
+            expect(entry, `${slot} ref ${ref}`).toHaveLength(SKILL_LEVEL_MAX);
+            for (let lv = 1; lv <= SKILL_LEVEL_MAX; lv++) {
+              const v = skillValue(character.skills[slot], ref, lv);
+              expect(v).toBeGreaterThan(0);
+              // イサベルのバーストは Lv1 で 93.65%（Lv10 で 149.85%）なので、下限は Lv10 だけで見る
+              if (effect.kind === 'burstDamage') {
+                if (lv === SKILL_LEVEL_MAX) expect(v).toBeGreaterThanOrEqual(100);
+              }
+              // Stage 8 の倍率ダメージは 100% 未満もある（ドレイク S2 98.55%）ので上限を見ない
+              else if (effect.kind !== 'damage' && effect.kind !== 'cycle') {
+                // Stage 11 紅蓮BS: バーストの攻撃力 115.12%・チャージダメージ 169.63% は 100% を超える（上限は 200% で見る）
+                const limit = effect.kind === 'timed' && ['attack', 'chargeDamage'].includes(effect.stat) ? 200 : 100;
+                expect(v).toBeLessThanOrEqual(limit);
+              }
             }
-            // Stage 8 の倍率ダメージは 100% 未満もある（ドレイク S2 98.55%）ので上限を見ない
-            else if (effect.kind !== 'damage') expect(v).toBeLessThanOrEqual(100);
           }
         }
       }
@@ -101,7 +114,7 @@ describe('data/skills', () => {
     it('timed effects reference a positive duration that does not change with the skill level', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
-          if (effect.kind !== 'timed' || effect.durationRef === undefined) continue;
+          if ((effect.kind !== 'timed' && effect.kind !== 'cycleEvery') || effect.durationRef === undefined) continue;
           const seconds = Array.from({ length: SKILL_LEVEL_MAX }, (_, i) =>
             skillValue(character.skills[slot], effect.durationRef!, i + 1),
           );

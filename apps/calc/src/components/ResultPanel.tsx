@@ -33,7 +33,8 @@ function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
   const groups = new Map<string, SkillHitGroup>();
   for (const a of slot.skillHits.activations) {
     const e = a.effect;
-    const key = `${e.source.skill}.${e.effectIndex}`;
+    // Stage 11 紅蓮BS: 段の循環は段ごとに分ける
+    const key = `${e.source.skill}.${e.effectIndex}.${e.cycle?.step ?? ''}`;
     const value = a.hit.perActivation;
     const g = groups.get(key);
     if (g) {
@@ -45,8 +46,12 @@ function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
       continue;
     }
     groups.set(key, {
-      label: `${SKILL_SLOT_LABEL[e.source.skill]} ${SKILL_DAMAGE_TYPE_LABEL[e.damageType]}`,
-      trigger: formatTrigger(e.trigger),
+      label: `${SKILL_SLOT_LABEL[e.source.skill]} ${SKILL_DAMAGE_TYPE_LABEL[e.damageType]}${
+        e.cycle ? `（段 ${String.fromCharCode(65 + e.cycle.step)}）` : ''
+      }`,
+      trigger: e.cycle
+        ? `${formatTrigger(e.trigger)}に ${e.cycle.steps} 段を循環（${e.cycle.step + 1} 段目。窓の中は間隔の変更に従う）`
+        : formatTrigger(e.trigger),
       multiplier: e.multiplier,
       assumes: e.assumes?.ja ?? null,
       count: 1,

@@ -41,6 +41,11 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   trigger: ResolvedTrigger;
   /** 同じスロットの何番目の効果か（表示・識別用） */
   effectIndex: number;
+  /**
+   * Stage 11 紅蓮BS: 段の循環（cycle）の 1 段なら、何段目（0 始まり）と段の数。trigger は循環の射撃の回数トリガー
+   * （窓の外の間隔）で、実際の発動は skills/cycles.ts の cycleFires が決める。damage 効果ではキーごと無い
+   */
+  cycle?: { step: number; steps: number };
 };
 
 /** burst スロットの burstDamage 効果を Lv の数値に解決する。unsupported・効果なしなら空 */

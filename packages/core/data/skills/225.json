@@ -1,0 +1,95 @@
+{
+  "formatVersion": 1,
+  "resourceId": 225,
+  "checkedAt": "2026-09-23",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "cycle",
+          "trigger": {
+            "count": "fullChargeShot",
+            "every": 3
+          },
+          "steps": [
+            {
+              "kind": "damage",
+              "damageType": "skill",
+              "ref": 2
+            },
+            {
+              "kind": "damage",
+              "damageType": "distributed",
+              "ref": 3,
+              "assumes": {
+                "ja": "的 1 体では 1/3 ずつ 3 ティック（約 14〜15f おき）で当たるが、合計（全額）を 1 ヒットにまとめる（録画 46）",
+                "en": "On a single target it lands as 3 ticks of 1/3 (about 14-15f apart); modeled as one hit of the full amount (recording 46)"
+              }
+            },
+            {
+              "kind": "damage",
+              "damageType": "distributed",
+              "ref": 4
+            }
+          ],
+          "assumes": {
+            "ja": "対象は単体ボス（最も防御の低い敵 1 機・攻撃範囲内の敵・敵全体とも同じ敵で、分配ダメージは全額）。回数は戦闘開始からの通算のフルチャージ攻撃回数で、段は A → B → C を循環する（録画 46・47）",
+            "en": "A single boss is assumed (the lowest-DEF enemy, enemies in range and all enemies are the same target; distributed damage is dealt in full). The count is the running total of full charge attacks since the battle started, and the tiers cycle A → B → C (recordings 46 and 47)"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "maxAmmo",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "ammoRefill",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "ref": 3
+        }
+      ]
+    },
+    "burst": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "cycleEvery",
+          "trigger": "burstUse",
+          "slot": "skill1",
+          "every": 1,
+          "durationRef": 1,
+          "assumes": {
+            "ja": "「1 回 / 2 回 / 3 回」は窓の中では毎回次の段が出ることと読み、通算のカウンタはそのまま続ける（録画 47 の 5 回のフルバーストで確認）。窓に入るかは射撃のフレームで判定する",
+            "en": "\"1 / 2 / 3 times\" is read as advancing one tier on every shot inside the window, while the running count keeps going (confirmed with the 5 full bursts of recording 47). Whether a shot is inside the window is judged at the shot frame"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "chargeDamage",
+          "ref": 4,
+          "durationRef": 5
+        }
+      ]
+    }
+  }
+}

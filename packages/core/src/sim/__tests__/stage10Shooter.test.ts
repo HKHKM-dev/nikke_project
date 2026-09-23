@@ -11,7 +11,13 @@ import {
 } from '../../cadence.ts';
 import type { CharacterData, ShotParams } from '../../types.ts';
 import { DEFAULT_WEAPON_MODEL, MAX_RPM, isChargeWeapon, secondsToFrames, type WeaponModel } from '../../weapons.ts';
-import { ZERO_FIRING_BUFFS, effectiveMaxAmmo, firingParams, type FiringBuffs } from '../firing.ts';
+import {
+  ZERO_FIRING_BUFFS,
+  effectiveMaxAmmo,
+  firingParams,
+  measuredChargeCadence,
+  type FiringBuffs,
+} from '../firing.ts';
 import { initialShooter, refillAmmo, shotFramesUpTo, stepShooter } from '../shooter.ts';
 
 const CHARACTERS_DIR = new URL('../../../data/characters/', import.meta.url);
@@ -109,7 +115,10 @@ describe('stage 10 shooter: degeneration (8.2)', () => {
       const actual = shotFramesUpTo(c.shot, 10_800);
       if (actual.length !== expected.length || actual.some((f, i) => f !== expected[i])) mismatched.push(c.resourceId);
     }
-    expect(mismatched).toEqual([]);
+    // Stage 11 紅蓮BS: 射撃の刻みを実測で較正した武器（MEASURED_CHARGE_CADENCE）だけは Stage 9 と違う（意図した差分）
+    const calibrated = characters.filter((c) => measuredChargeCadence(c.shot) !== null).map((c) => c.resourceId);
+    expect(calibrated).toEqual([225]);
+    expect(mismatched).toEqual(calibrated);
   });
 
   it('includes the chunked-reload weapons (reloadBullet < 1), which match too', () => {

@@ -1,6 +1,7 @@
 // Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）から、射手が使う実効値を作る（plan/design-stage10.md 3 節）。
 // 最大装弾数は録画 37・39（比率は加算、端数は四捨五入）、速度の式は録画 40（時間 × (1 − 速度)）で確定した。
 // Stage 11 モダニア: 装弾数無限と使用武器の変更（殲滅モード）も射撃の実効値に入れた（plan/design-stage11-modernia.md 3.4 節）。
+// Stage 11 紅蓮BS: 射撃の刻みを実測で較正する武器（MEASURED_CHARGE_CADENCE）の分もここで足す（plan/design-stage11-scarlet-bs.md 3.3 節）。
 import type { BuffTotals, ChangedWeapon } from '../skills/buffs.ts';
 import type { ShotParams } from '../types.ts';
 import { isChargeWeapon, secondsToFrames } from '../weapons.ts';
@@ -27,7 +28,10 @@ export type FiringParams = {
   maxAmmo: number;
   /** 分割リロードの 1 回分（reloadBullet ≥ 1 の武器は 1 回で満タン）のフレーム数 */
   reloadChunkFrames: number;
-  /** チャージ時間のフレーム数（チャージ武器だけ意味を持つ。解放遅延は含まない） */
+  /**
+   * チャージ時間のフレーム数（チャージ武器だけ意味を持つ。解放遅延は含まない）。
+   * Stage 11 紅蓮BS: 較正表（MEASURED_CHARGE_CADENCE）の武器は chargeExtraFrames を足した値（チャージ速度はチャージ時間の側にだけ効く）
+   */
   chargeFrames: number;
   /** Stage 11 モダニア: 装弾数無限（撃っても残弾を減らさない） */
   infiniteAmmo: boolean;
@@ -62,6 +66,41 @@ export function isZeroFiring(buffs: FiringBuffs): boolean {
   );
 }
 
+/** Stage 11 紅蓮BS: 実測の較正値。チャージの後に足すフレームと、リロード 1 回分に足すフレーム（どちらも速度のバフで縮まない） */
+export type MeasuredChargeCadence = { chargeExtraFrames: number; reloadExtraFrames: number };
+
+/**
+ * Stage 11 紅蓮BS: 射撃の刻みを実測で較正する武器（plan/design-stage11-scarlet-bs.md 3.3 節）。
+ * 202 体で射撃のパラメータ（チャージ 0.3 秒・maintainFireStance 23・uptypeFireTiming 1）が紅蓮：ブラックシャドウだけ違い、
+ * 1 秒チャージの較正（チャージ 60f + 解放 22f = 82f）が当てはまらない。**録画 46・47** で間隔 43f = チャージ 18f + 3f + 22f、
+ * 9 発目 → 次の 1 発目 172f = リロード 120f + 9f + 43f。
+ * ShotParams に resourceId が無く、キャラの読み込みの経路（アプリ・テスト・CLI）も複数あるので、射撃のパラメータの組で引く
+ * （resourceIds は出どころの記録）。同じ組のキャラが出たら実測で確かめる
+ */
+export const MEASURED_CHARGE_CADENCE: readonly {
+  resourceIds: readonly number[];
+  match: Pick<ShotParams, 'chargeTime' | 'maintainFireStance' | 'uptypeFireTiming'>;
+  cadence: MeasuredChargeCadence;
+}[] = [
+  {
+    resourceIds: [225],
+    match: { chargeTime: 0.3, maintainFireStance: 23, uptypeFireTiming: 1 },
+    cadence: { chargeExtraFrames: 3, reloadExtraFrames: 9 },
+  },
+];
+
+/** 較正表に載っている武器ならその較正値、無ければ null */
+export function measuredChargeCadence(shot: ShotParams): MeasuredChargeCadence | null {
+  if (!isChargeWeapon(shot)) return null;
+  const row = MEASURED_CHARGE_CADENCE.find(
+    (r) =>
+      r.match.chargeTime === shot.chargeTime &&
+      r.match.maintainFireStance === shot.maintainFireStance &&
+      r.match.uptypeFireTiming === shot.uptypeFireTiming,
+  );
+  return row?.cadence ?? null;
+}
+
 /** 速度のバフで縮めた秒数 */
 export function speedScaledSeconds(seconds: number, speed: number): number {
   if (speed === 0) return seconds;
@@ -83,12 +122,15 @@ export function effectiveMaxAmmo(baseMaxAmmo: number, buffs: FiringBuffs): numbe
  */
 export function firingParams(base: ShotParams, buffs: FiringBuffs = ZERO_FIRING_BUFFS): FiringParams {
   const shot = buffs.weapon?.shot ?? base;
+  const measured = measuredChargeCadence(shot);
   return {
     maxAmmo: effectiveMaxAmmo(shot.maxAmmo, buffs),
-    reloadChunkFrames: secondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)),
+    reloadChunkFrames:
+      secondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)) + (measured?.reloadExtraFrames ?? 0),
     // Stage 11 アリス編: 発動者基準のチャージ速度は、比率で縮めた後の秒数からさらに引く（アリス自身は比率と同じ値になる）
     chargeFrames: isChargeWeapon(shot)
-      ? secondsToFrames(Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat))
+      ? secondsToFrames(Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat)) +
+        (measured?.chargeExtraFrames ?? 0)
       : 0,
     infiniteAmmo: buffs.infiniteAmmo > 0,
     weapon: buffs.weapon,

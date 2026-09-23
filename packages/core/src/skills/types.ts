@@ -11,6 +11,8 @@
 // Stage 11 モダニア編で、射撃ごとの倍率ダメージ（damage の every = 1）、効果のあるスタック（maxStacks / maxStacksRef）、「▼」（decrease）、
 // stat の hitRate（命中率）と infiniteAmmo（装弾数無限）、条件「自分が 〈stat〉 増加状態なら」（condition）、
 // 使用武器の変更（weaponChange）を足した（plan/design-stage11-modernia.md 2 節）。
+// Stage 11 紅蓮BS で、段の循環（cycle。「攻撃回数別の効果」「各段階の効果のみ適用」）と、その間隔の変更（cycleEvery。
+// 「スキル 1 のフルチャージ攻撃回数の条件が 1 回 / 2 回 / 3 回に変更」）を足した（plan/design-stage11-scarlet-bs.md 2 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import type { LocalizedText, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
@@ -361,8 +363,57 @@ export type WeaponChangeEffect = {
   assumes?: LocalizedText;
 };
 
+/** Stage 11 紅蓮BS: 段の中身。DamageEffect から trigger を除いた形（今は倍率ダメージだけ） */
+export type CycleStep = {
+  kind: 'damage';
+  /** description_value_NN の NN（1 始まり）。値は % 表記 */
+  ref: number;
+  damageType: SkillDamageType;
+  assumes?: LocalizedText;
+};
+
+/**
+ * Stage 11 紅蓮BS: 「攻撃回数別の効果」「各段階の効果のみ適用」の循環。trigger の回数（射撃の通算カウンタの every の倍数）ごとに
+ * steps を 1 段ずつ順に発動し、最後の次は最初に戻る。段のポインタはカウンタと別に 1 つだけ持ち、戦闘中ずっと続く
+ * （リロードでもフルバーストでも戻さない）。録画 46・47 で確認（plan/design-stage11-scarlet-bs.md 0.3 節）。
+ * 回数トリガーの「N 回ごとに同じ効果」（damage の every）とは別物
+ */
+export type CycleEffect = {
+  kind: 'cycle';
+  /** 1 段進むきっかけ。射撃の回数トリガーだけ（every = 段の間隔。「3 回 / 6 回 / 9 回」なら 3。stacksRef・lastShot は不可） */
+  trigger: ShotCountTrigger;
+  /** 段の中身（2 つ以上） */
+  steps: CycleStep[];
+  assumes?: LocalizedText;
+};
+
+/**
+ * Stage 11 紅蓮BS: 「スキル N の（フルチャージ）攻撃回数の条件が … に変更」。維持時間のあいだ、自分のスロット slot の cycle を
+ * every 回ごとに進める（通算カウンタの every の倍数。1 なら毎回）。カウンタ自体は変えない（録画 47 の 5 回の FB で確認）。
+ * 対象は常に自分。窓は BuffTimeline.cycleWindows に置き、区間には入れない
+ */
+export type CycleEveryEffect = {
+  kind: 'cycleEvery';
+  trigger: EffectTrigger;
+  /** 対象の cycle を持つ自分のスロット */
+  slot: SkillSlot;
+  /** 変更後の段の間隔（即値。説明文の「1 回 / 2 回 / 3 回」は 1） */
+  every: number;
+  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
+  durationRef?: number;
+  durationSeconds?: number;
+  assumes?: LocalizedText;
+};
+
 export type SkillEffect =
-  PassiveEffect | BurstDamageEffect | TimedEffect | DamageEffect | InstantEffect | WeaponChangeEffect;
+  | PassiveEffect
+  | BurstDamageEffect
+  | TimedEffect
+  | DamageEffect
+  | InstantEffect
+  | WeaponChangeEffect
+  | CycleEffect
+  | CycleEveryEffect;
 
 export type SkillEntry = {
   /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
@@ -617,6 +668,57 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
   return effect;
 }
 
+/** Stage 11 紅蓮BS: 段の循環 */
+function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'steps', 'assumes'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+  }
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  if (!isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'a cycle needs a shot count trigger');
+  if (trigger.count === 'lastShot') fail(`${path}.trigger.count`, 'lastShot is not allowed in a cycle');
+  if (trigger.stacksRef !== undefined) fail(`${path}.trigger.stacksRef`, 'stacksRef is not allowed in a cycle');
+  if (!Array.isArray(v.steps) || v.steps.length < 2) fail(`${path}.steps`, 'expected an array of at least 2 steps');
+  const steps = v.steps.map((raw, i): CycleStep => {
+    const stepPath = `${path}.steps[${i}]`;
+    if (!isRecord(raw)) fail(stepPath, 'expected an object');
+    for (const key of Object.keys(raw)) {
+      if (!['kind', 'ref', 'damageType', 'assumes'].includes(key)) fail(`${stepPath}.${key}`, 'unknown field');
+    }
+    if (raw.kind !== 'damage') fail(`${stepPath}.kind`, `expected "damage", got ${JSON.stringify(raw.kind)}`);
+    const step: CycleStep = {
+      kind: 'damage',
+      ref: parseRef(raw.ref, `${stepPath}.ref`),
+      damageType: oneOf(SKILL_DAMAGE_TYPES, raw.damageType, `${stepPath}.damageType`),
+    };
+    if (raw.assumes !== undefined) step.assumes = parseLocalizedText(raw.assumes, `${stepPath}.assumes`);
+    return step;
+  });
+  const effect: CycleEffect = { kind: 'cycle', trigger, steps };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/** Stage 11 紅蓮BS: 循環の間隔の変更。slot に cycle がちょうど 1 つあるかは定義全体で見る（validateCycles） */
+function parseCycleEveryEffect(v: Record<string, Json>, path: string): CycleEveryEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'slot', 'every', 'durationRef', 'durationSeconds', 'assumes'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  // 自分の射撃で自分の循環を速めると判定が循環するので、射撃の回数トリガーは書けない（plan/design-stage11-scarlet-bs.md 2.2 節）
+  if (isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'cycleEvery cannot be triggered by a shot count');
+  const effect: CycleEveryEffect = {
+    kind: 'cycleEvery',
+    trigger,
+    slot: oneOf(SKILL_SLOTS, v.slot, `${path}.slot`),
+    every: parsePositiveInt(v.every, `${path}.every`),
+    ...parseDuration(v, path),
+  };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
 function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDamageEffect {
   const damageType = oneOf(BURST_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: BurstDamageEffect = { kind: 'burstDamage', ref: parseRef(v.ref, `${path}.ref`), damageType };
@@ -664,7 +766,10 @@ function parseRef(v: Json, path: string): number {
   return v;
 }
 
-/** passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange はどのスロットにも書ける */
+/**
+ * passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange・cycle・cycleEvery は
+ * どのスロットにも書ける
+ */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
   if (v.kind === 'passive') {
@@ -682,9 +787,11 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
     return parseInstantEffect(v, path, v.kind);
   }
   if (v.kind === 'weaponChange') return parseWeaponChangeEffect(v, path);
+  if (v.kind === 'cycle') return parseCycleEffect(v, path);
+  if (v.kind === 'cycleEvery') return parseCycleEveryEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal" or "weaponChange", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "weaponChange", "cycle" or "cycleEvery", got ${JSON.stringify(v.kind)}`,
   );
 }
 
@@ -706,6 +813,28 @@ function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' 
   return entry;
 }
 
+/**
+ * Stage 11 紅蓮BS: cycle は 1 スロットに 1 つまで。cycleEvery の slot にはちょうど 1 つの cycle があり、
+ * every が即値ならそれより小さい（間隔を「速める」効果だけ。everyRef との比較は Lv で決まるので解決時に見る）
+ */
+function validateCycles(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  for (const slot of SKILL_SLOTS) {
+    const cycles = entries[slot]?.effects.filter((e) => e.kind === 'cycle') ?? [];
+    if (cycles.length > 1) fail(`${root}.${slot}.effects`, 'at most one cycle per skill');
+  }
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'cycleEvery') return;
+      const path = `${root}.${slot}.effects[${i}]`;
+      const target = entries[e.slot]?.effects.find((x): x is CycleEffect => x.kind === 'cycle');
+      if (target === undefined) fail(`${path}.slot`, `${e.slot} has no cycle`);
+      if (target.trigger.every !== undefined && e.every >= target.trigger.every) {
+        fail(`${path}.every`, `must be less than the cycle's every (${target.trigger.every})`);
+      }
+    });
+  }
+}
+
 /** JSON.parse 済みの値を検証して SkillDefinition にする。不正なら Error */
 export function parseSkillDefinition(raw: Json): SkillDefinition {
   if (!isRecord(raw)) fail('', 'expected an object');
@@ -722,6 +851,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   }
   const skills = {} as Record<SkillSlot, SkillEntry>;
   for (const slot of SKILL_SLOTS) skills[slot] = parseEntry(raw.skills[slot], slot);
+  validateCycles(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   if (raw.treasureSkills !== undefined) {
     const treasure = raw.treasureSkills;
@@ -732,6 +862,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
       const slot = key as SkillSlot;
       treasureSkills[slot] = parseEntry(treasure[slot], slot, 'treasureSkills');
     }
+    validateCycles({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;
