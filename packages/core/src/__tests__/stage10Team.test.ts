@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
+import { firingParams } from '../sim/firing.ts';
 import type { ShotLog } from '../sim/shots.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
@@ -77,7 +78,7 @@ describe('録画 37: ドレイクの最大装弾数（8.5）', () => {
     expect(sizes.every((n) => n === 9 || n <= 20)).toBe(true);
   });
 
-  it('holds 15 with the base burst only (9 × 1.7218 = 15.5, rounded down for now)', () => {
+  it('holds 15 with the base burst only (9 × 1.7218 = 15.496, rounded to nearest)', () => {
     const plan = planTeamRun(team([fixedSlot(822), fixedSlot(20), fixedSlot(101, 0)], 2));
     expect(Math.max(...magazineSizes(plan.shots[2]!))).toBe(15);
   });
@@ -109,7 +110,7 @@ describe('録画 19: ノワールの最大装弾数 +5 発と弾丸チャージ 
   });
 });
 
-describe('録画 A: リターの CT 短縮（撮影予定の編成）', () => {
+describe('録画 39（録画 A）: リターの CT 短縮と最大装弾数', () => {
   const plan = planTeamRun(TEAMS['録画 A（リター + デルタ + ドレイク宝物 3）']!);
   const schedule = plan.schedule!;
   const starts = schedule.fullBurstWindows.map((w) => w.start);
@@ -121,6 +122,16 @@ describe('録画 A: リターの CT 短縮（撮影予定の編成）', () => {
         .reduce((s, r) => s + r.frames, 0);
     expect(starts.map((fb) => cutAt(fb, 2))).toEqual([141, 303, 494, 494, 494]);
     expect(starts.map((fb) => cutAt(fb, 1))).toEqual([141, 303, 494, 494, 494]);
+  });
+
+  it('raises the max ammo as recording 39 showed (rounded to nearest): Delta 6 → 9, Liter 120 → 174, Drake 9 → 24', () => {
+    // 区間のバフ合計から実効の最大装弾数を出し、区間ごとの最大を取る（射撃の回数はリロードの位相で変わるので使わない）
+    const calc = computeTeamDamage(TEAMS['録画 A（リター + デルタ + ドレイク宝物 3）']!);
+    const max = (i: number) =>
+      Math.max(...calc.slots[i]!.segments.map((g) => firingParams(calc.slots[i]!.character.shot, g.buffs).maxAmmo));
+    expect(max(0)).toBe(174);
+    expect(max(1)).toBe(9);
+    expect(max(2)).toBe(24);
   });
 
   it('shortens the full burst interval below the 40 s of the II / III cooldowns', () => {

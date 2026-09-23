@@ -19,8 +19,8 @@ import { DEFAULT_WEAPON_MODEL, MAX_RPM, isChargeWeapon, type WeaponModel } from 
 import { firingParams, reloadChunkAmmo, type FiringParams } from './firing.ts';
 
 /**
- * 最大装弾数が残弾より小さくなった（最大装弾数▲が切れた）ときに残弾を削るか（仮）。
- * 録画 37 では切れた時の残弾が 7（< 9）で確かめられなかった。録画 A（リターの 5 秒窓が切れる瞬間）で確定する
+ * 最大装弾数が残弾より小さくなった（最大装弾数▲が切れた）ときに残弾を削るか。
+ * **2026-09-23 の録画 39（録画 A）で「削る」と確定**: リターの 5 秒窓が切れた瞬間に、デルタの表示が 9/9 → 6/6 になった
  */
 export const MAX_AMMO_CLAMP_ON_DECREASE = true;
 

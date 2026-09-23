@@ -134,7 +134,9 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
     expect(effectiveMaxAmmo(9, { ...ZERO_FIRING_BUFFS, maxAmmoRatio: 0.7218 + 0.5014 })).toBe(20);
     expect(effectiveMaxAmmo(9, { ...ZERO_FIRING_BUFFS, maxAmmoFlat: 5 })).toBe(14);
     expect(effectiveMaxAmmo(120, { ...ZERO_FIRING_BUFFS, maxAmmoRatio: 0.4517 })).toBe(174);
-    expect(effectiveMaxAmmo(6, { ...ZERO_FIRING_BUFFS, maxAmmoRatio: 0.4517 })).toBe(8); // 仮: 切り捨て（録画 A で確定）
+    // 録画 39: デルタ 6 × 1.4517 = 8.71 → 9（四捨五入）、ドレイク 9 × 2.6749 = 24.07 → 24
+    expect(effectiveMaxAmmo(6, { ...ZERO_FIRING_BUFFS, maxAmmoRatio: 0.4517 })).toBe(9);
+    expect(effectiveMaxAmmo(9, { ...ZERO_FIRING_BUFFS, maxAmmoRatio: 0.4517 + 0.7218 + 0.5014 })).toBe(24);
   });
 
   it('reproduces recording 37: a max-ammo buff mid-reload keeps loading to the new max (3 → 10 → 17 → 20)', () => {
