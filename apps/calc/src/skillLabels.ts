@@ -1,6 +1,7 @@
 // スキル関連の表示用ラベル（React 非依存）
 import type {
   AppliedEffect,
+  ResolvedInstantEffect,
   BuffStat,
   BuffTrigger,
   ResolvedTrigger,
@@ -93,6 +94,13 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
   }
   if (effect.scaling === 'flat') return `${stat} +${formatNumber(effect.appliedAmount)} 発`;
   return `${stat} +${formatPercent(effect.appliedAmount, 2)}`;
+}
+
+/** Stage 10: 即時効果。「バースト CT −2.34 秒」「弾丸チャージ 39.88%」 */
+export function formatInstant(effect: ResolvedInstantEffect): string {
+  return effect.kind === 'cooldownReduction'
+    ? `バースト CT −${formatNumber(effect.value, 2)} 秒`
+    : `弾丸チャージ ${formatPercent(effect.value, 2)}`;
 }
 
 /** 「枠 2 ノワール スキル 1」。ニケ名がまだ無い（読み込み中）ときは「枠 2（読み込み中）スキル 1」 */

@@ -182,6 +182,8 @@ export type TeamSlotResult = {
   burst: SlotBurstResult;
   /** Stage 8: トリガー付きの倍率ダメージ（damage）。発動ごとの内訳と合計。sim と同じ発動列 */
   skillHits: SlotSkillHitsResult;
+  /** Stage 10: この枠が受けた即時効果（CT 短縮・弾丸チャージ）。発生順 */
+  instants: InstantApplication[];
   /** normalDamage + burst.totalDamage + skillHits.totalDamage */
   totalDamage: number;
   /** totalDamage / durationSeconds（0 秒なら 0） */
@@ -433,7 +435,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
   const { slots, enemy, durationSeconds, model } = input;
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const { frames, shots, schedule, timeline, skillHits } = planTeamRun(input);
+  const { frames, shots, schedule, timeline, skillHits, instants } = planTeamRun(input);
 
   const computed = slots.map((slot, index) => {
     if (slot === null) return null;
@@ -548,6 +550,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
       normalDamage,
       burst: { activations, hit: representative, totalDamage: burstDamage },
       skillHits: { activations: skillHitActivations, totalDamage: skillHitDamage },
+      instants: instants.filter((x) => x.slotIndex === index),
       totalDamage,
       dps: durationSeconds > 0 ? totalDamage / durationSeconds : 0,
       skillSupport: skillSupportOf(slot),

@@ -16,7 +16,7 @@ import {
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber, formatPercent } from '../format.ts';
-import { formatAppliedAmount, formatEffectSource, formatTimedTrigger } from '../skillLabels.ts';
+import { formatAppliedAmount, formatEffectSource, formatInstant, formatTimedTrigger } from '../skillLabels.ts';
 import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { CharacterPicker } from './CharacterPicker.tsx';
@@ -89,6 +89,25 @@ export function SlotCard({
             e.effectIndex === entry.effect.effectIndex,
         );
       if (applied) entry.effect = applied;
+    }
+    return [...byKey.values()];
+  })();
+
+  // Stage 10: 受けた即時効果（CT 短縮・弾丸チャージ）を効果ごとにまとめる
+  const instantSummary = (() => {
+    const byKey = new Map<
+      string,
+      { instant: NonNullable<typeof slotResult>['instants'][number]; count: number; total: number }
+    >();
+    for (const x of slotResult?.instants ?? []) {
+      const key = `${x.sourceSlotIndex}:${x.effect.source.skill}:${x.effect.effectIndex}`;
+      const found = byKey.get(key);
+      if (found) {
+        found.count += 1;
+        found.total += x.amount;
+        continue;
+      }
+      byKey.set(key, { instant: x, count: 1, total: x.amount });
     }
     return [...byKey.values()];
   })();
@@ -203,7 +222,9 @@ export function SlotCard({
           {slotResult && (
             <div className="received">
               <span className="skills-title">受けているバフ</span>
-              {slotResult.passiveEffects.length === 0 && slotResult.windows.length === 0 ? (
+              {slotResult.passiveEffects.length === 0 &&
+              slotResult.windows.length === 0 &&
+              slotResult.instants.length === 0 ? (
                 <p className="hint">なし</p>
               ) : (
                 <ul className="received-list">
@@ -224,6 +245,18 @@ export function SlotCard({
                         {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}・
                         {formatNumber(t.effect.durationFrames / 60, 0)} 秒 × {t.count} 回
                         {t.effect.assumes ? `・仮定: ${t.effect.assumes.ja}` : ''}
+                      </small>
+                    </li>
+                  ))}
+                  {instantSummary.map((x, i) => (
+                    <li key={`instant-${i}`}>
+                      <span className="amount">{formatInstant(x.instant.effect)}</span>
+                      <small className="sub">
+                        {formatTimedTrigger(x.instant.effect.trigger)} 枠 {x.instant.sourceSlotIndex + 1}{' '}
+                        {slotNames[x.instant.sourceSlotIndex] ?? ''}・{x.count} 回
+                        {x.instant.effect.kind === 'cooldownReduction'
+                          ? `（実際に縮んだ計 ${formatNumber(x.total / 60, 2)} 秒）`
+                          : `（計 ${x.total} 発）`}
                       </small>
                     </li>
                   ))}
