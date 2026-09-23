@@ -32,6 +32,26 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
   const attackLabel = fixedSpec ? '攻撃力（スペック固定: 好感度 + 装備込み）' : '攻撃力（素）';
   const schedule = result.schedule;
   const byStep = schedule ? slotsByStep(schedule) : null;
+  // Stage 11 アリス編: フルバースト開始時の「最終攻撃力が最も高い味方 N 機」の対象（同じ発火の同じ対象はまとめる）
+  const rankings = result.timeline.rankings;
+  const rankingLabel = (frame: number): string => {
+    const seen = new Set<string>();
+    const parts: string[] = [];
+    for (const r of rankings) {
+      if (r.frame !== frame) continue;
+      const label =
+        r.targets
+          .map((i) => {
+            const s = filled.find((f) => f.index === i);
+            return `${s ? s.character.name.ja : `枠 ${i + 1}`} ${formatNumber(r.finalAttacks[i] ?? 0)}`;
+          })
+          .join(' / ') + (r.tied ? '（同値は枠の順と仮定）' : '');
+      if (seen.has(label)) continue;
+      seen.add(label);
+      parts.push(label);
+    }
+    return parts.length > 0 ? parts.join('、') : '—';
+  };
   const missingSteps = byStep ? BURST_STEP_KEYS.filter((step) => byStep[step].length === 0) : [];
   const summary = result.burstSummary;
 
@@ -75,6 +95,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                     <th>ニケ</th>
                     <th>バーストスキル</th>
                     <th>フルバースト</th>
+                    {rankings.length > 0 && <th>最終攻撃力の上位（対象）</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -95,6 +116,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                             ? `${formatNumber(window.start / 60, 1)}–${formatNumber(window.end / 60, 1)}s（${formatNumber((window.end - window.start) / 60, 1)} 秒）`
                             : '—'}
                         </td>
+                        {rankings.length > 0 && <td>{window ? rankingLabel(window.start) : '—'}</td>}
                       </tr>
                     );
                   })}

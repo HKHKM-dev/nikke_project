@@ -7,6 +7,7 @@
 // ammoRefill）、トリガー「最後の弾丸」（lastShot）を足した（plan/design-stage10.md 2 節）。
 // Stage 11 で対象「直前にバーストスキルを使用した味方」（burstUsers）、フルスタックで発火する射撃の回数トリガー（stacksRef）、
 // 即時効果「回復」（heal）とトリガー「回復効果が適用された時」（healed）を足した（plan/design-stage11.md 2 節）。
+// Stage 11 アリス編で対象「最終攻撃力が最も高い味方 N 機」（topAttack と targetCount / targetCountRef）を足した（同 17 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import type { LocalizedText, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
@@ -63,10 +64,20 @@ export const BUFF_SCALINGS = ['ratio', 'casterAttack', 'flat'] as const satisfie
 
 /**
  * 効果の対象。Stage 11: burstUsers = 「直前にバーストスキルを使用した味方」（そのフルバーストを開いたチェーンでバーストを撃った枠）。
- * トリガーが fullBurstStart / fullBurstEnd のときだけ書ける（発火のたびに対象が変わる。skills/targets.ts）
+ * トリガーが fullBurstStart / fullBurstEnd のときだけ書ける（発火のたびに対象が変わる。skills/targets.ts）。
+ * Stage 11 アリス編: topAttack = 「最終攻撃力が最も高い味方 N 機」（発火のフレームの最終攻撃力の順位。自分も候補。skills/ranking.ts）。
+ * N は targetCount / targetCountRef。passive と heal には書けない
  */
-export type BuffTarget = 'self' | 'allies' | 'burstUsers';
-export const BUFF_TARGETS = ['self', 'allies', 'burstUsers'] as const satisfies readonly BuffTarget[];
+export type BuffTarget = 'self' | 'allies' | 'burstUsers' | 'topAttack';
+export const BUFF_TARGETS = ['self', 'allies', 'burstUsers', 'topAttack'] as const satisfies readonly BuffTarget[];
+
+/** Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」の N。target が topAttack のときだけ、ちょうど片方 */
+export type TargetCountFields = {
+  /** N の即値 */
+  targetCount?: number;
+  /** N の description_value_NN */
+  targetCountRef?: number;
+};
 
 export type SkillSupport = 'supported' | 'partial' | 'unsupported';
 export const SKILL_SUPPORTS = ['supported', 'partial', 'unsupported'] as const satisfies readonly SkillSupport[];
@@ -171,7 +182,7 @@ export function isEventCountTrigger(t: EffectTrigger): t is EventCountTrigger {
 }
 
 /** Stage 6: 「（トリガー）時、（対象）に （stat）X%▲、Y 秒間維持」。同じ効果が持続中に再発火したら上書き延長（窓の和集合） */
-export type TimedEffect = {
+export type TimedEffect = TargetCountFields & {
   kind: 'timed';
   trigger: EffectTrigger;
   target: BuffTarget;
@@ -226,7 +237,7 @@ export type DamageEffect = {
  * Stage 10: 「バーストスキルクールタイム X 秒▼」。発火の瞬間に対象の残りの CT を X 秒減らす（0 未満にはしない。即時効果）。
  * 同じフレームの発動の後に当てる（plan/design-stage10.md 4 節）
  */
-export type CooldownReductionEffect = {
+export type CooldownReductionEffect = TargetCountFields & {
   kind: 'cooldownReduction';
   trigger: EffectTrigger;
   target: BuffTarget;
@@ -237,7 +248,7 @@ export type CooldownReductionEffect = {
 };
 
 /** Stage 10: 「弾丸チャージ X%」。発火の瞬間に対象の残弾へ 最大装弾数 × X% を足す（最大で止める。即時効果） */
-export type AmmoRefillEffect = {
+export type AmmoRefillEffect = TargetCountFields & {
   kind: 'ammoRefill';
   trigger: EffectTrigger;
   target: BuffTarget;
@@ -328,12 +339,12 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   }
 }
 
-/** Stage 9: targetWeapon は target が self 以外のときだけ（Stage 11 で burstUsers にも広げた） */
+/** Stage 9: targetWeapon は target が self 以外のときだけ（Stage 11 で burstUsers・topAttack にも広げた） */
 function parseTargetWeapon(v: Record<string, Json>, target: BuffTarget, path: string): WeaponType | undefined {
   if (v.targetWeapon === undefined) return undefined;
   const weapon = oneOf(WEAPON_TYPES, v.targetWeapon, `${path}.targetWeapon`);
   if (target === 'self')
-    fail(`${path}.targetWeapon`, `only allowed with target "allies" or "burstUsers", got "${target}"`);
+    fail(`${path}.targetWeapon`, `only allowed with target "allies", "burstUsers" or "topAttack", got "${target}"`);
   return weapon;
 }
 
@@ -347,9 +358,28 @@ function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrigger, pa
   );
 }
 
+/** Stage 11 アリス編: topAttack の N（targetCount / targetCountRef）。topAttack のときだけ、ちょうど片方 */
+function parseTargetCount(v: Record<string, Json>, target: BuffTarget, path: string): TargetCountFields {
+  const hasCount = v.targetCount !== undefined;
+  const hasRef = v.targetCountRef !== undefined;
+  if (target !== 'topAttack') {
+    if (hasCount || hasRef)
+      fail(path, `targetCount / targetCountRef are only allowed with target "topAttack", got "${target}"`);
+    return {};
+  }
+  if (hasCount === hasRef)
+    fail(path, 'exactly one of targetCount and targetCountRef is required with target "topAttack"');
+  return hasCount
+    ? { targetCount: parsePositiveInt(v.targetCount, `${path}.targetCount`) }
+    : { targetCountRef: parseRef(v.targetCountRef, `${path}.targetCountRef`) };
+}
+
 function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffect {
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'burstUsers') fail(`${path}.target`, 'burstUsers is not allowed in passive (it needs a full burst)');
+  // 常時の効果の対象が戦闘中に入れ替わるのは持続バフの窓の仕組みの外（plan/design-stage11.md 17 節）
+  if (target === 'topAttack')
+    fail(`${path}.target`, 'topAttack is not allowed in passive (the ranking changes during battle)');
   const targetWeapon = parseTargetWeapon(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
@@ -400,6 +430,7 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
+  const count = parseTargetCount(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   if (stat === 'burstGaugeSpeed') {
     fail(
@@ -416,6 +447,7 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   }
   const effect: TimedEffect = { kind: 'timed', trigger, target, stat, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
+  Object.assign(effect, count);
   if (scaling !== undefined) effect.scaling = scaling;
   if (hasRef) effect.durationRef = parseRef(v.durationRef, `${path}.durationRef`);
   if (hasSeconds) {
@@ -455,7 +487,9 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
 
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'target', 'targetWeapon', 'ref', 'assumes'].includes(key)) {
+    if (
+      !['kind', 'trigger', 'target', 'targetWeapon', 'targetCount', 'targetCountRef', 'ref', 'assumes'].includes(key)
+    ) {
       fail(`${path}.${key}`, 'unknown field');
     }
   }
@@ -464,9 +498,13 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   if (kind === 'heal' && trigger === 'healed') fail(`${path}.trigger`, 'heal cannot be triggered by "healed"');
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   validateBurstUsersTarget(target, trigger, path);
+  // 回復 → healed の攻撃力の窓 → 順位 → 回復の対象、と循環するので heal には書けない（plan/design-stage11.md 19.3 節）
+  if (kind === 'heal' && target === 'topAttack') fail(`${path}.target`, 'heal cannot target "topAttack"');
   const targetWeapon = parseTargetWeapon(v, target, path);
+  const count = parseTargetCount(v, target, path);
   const effect: InstantEffect = { kind, trigger, target, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
+  if (kind !== 'heal') Object.assign(effect, count);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }

@@ -119,14 +119,16 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
     characterName === undefined
       ? `枠 ${effect.sourceSlotIndex + 1}（読み込み中）`
       : `枠 ${effect.sourceSlotIndex + 1} ${characterName}`;
-  // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果。Stage 11: 「直前にバーストを使った味方」
+  // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果。Stage 11: 「直前にバーストを使った味方」「最終攻撃力が最も高い味方 N 機」
   const weapon = effect.targetWeapon ? `${effect.targetWeapon} の` : '';
   const only =
     effect.target === 'burstUsers'
       ? `（直前にバーストを使った${weapon}味方）`
-      : effect.targetWeapon
-        ? `（${weapon}味方）`
-        : '';
+      : effect.target === 'topAttack'
+        ? `（最終攻撃力が最も高い${weapon}味方 ${effect.targetCount ?? 1} 機）`
+        : effect.targetWeapon
+          ? `（${weapon}味方）`
+          : '';
   return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}`;
 }
 

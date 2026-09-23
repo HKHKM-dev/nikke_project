@@ -12,6 +12,8 @@
 // Stage 10: トリガーの判定を skills/triggers.ts の TriggerTracker に移し、1 パス目のフレームループと同じコードを通す。
 // Stage 11: 対象「直前にバーストスキルを使用した味方」（burstUsers）は発火ごとに対象が変わるので、対象の枠ごとに窓を和集合にする。
 // 回復（heal）を 1 段目に planHeals（skills/heals.ts）で集め、「回復効果が適用された時」（healed）の出来事として流し直す。
+// Stage 11 アリス編: 対象「最終攻撃力が最も高い味方 N 機」（topAttack）の効果は 2 段目に回し、1 段目の攻撃力の窓で順位を付けて
+// 対象を決める（skills/ranking.ts。plan/design-stage11.md 19.2 節）。
 import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { ShotLog } from '../sim/shots.ts';
 import type { CharacterData } from '../types.ts';
@@ -29,7 +31,8 @@ import {
   type SkillLevels,
 } from './resolve.ts';
 import { hasHealEffects, planHeals } from './heals.ts';
-import { dependsOnContext, isEffectTarget } from './targets.ts';
+import { attackRankFor, finalAttacksAt, tiedAtCutoff, type RankSlot, type RankingRecord } from './ranking.ts';
+import { dependsOnContext, dependsOnRank, isEffectTarget } from './targets.ts';
 import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
 import type { SkillDefinition } from './types.ts';
 
@@ -90,6 +93,8 @@ export type BuffTimeline = {
   passive: (SlotBuffState | null)[];
   /** Stage 11: 回復の記録（skills/heals.ts の planHeals）。heal 効果が無ければ空 */
   heals: HealRecord[];
+  /** Stage 11 アリス編: topAttack の効果の発火ごとの順位（効果ごと・発生順）。topAttack の効果が無ければ空 */
+  rankings: RankingRecord[];
 };
 
 /** 1 枠ぶんの「同じバフ状態の区間」をまとめたもの。calc はこの単位で computeDamage を呼ぶ */
@@ -286,9 +291,15 @@ export function planBuffTimeline(
 
   // 1〜2. 発火フレーム → 窓（同一効果は和集合）→ 対象の枠に配る
   const windows: BuffWindow[] = [];
+  /** 2 段目に回す効果（対象が攻撃力の順位で決まる） */
+  const ranked: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
+      if (dependsOnRank(effect)) {
+        ranked.push({ sourceSlotIndex, effect });
+        continue;
+      }
       const fires = buffStartFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey);
       if (!dependsOnContext(effect)) {
         const merged = unionWindows(
@@ -318,6 +329,46 @@ export function planBuffTimeline(
       });
     }
   });
+
+  // 2 段目（Stage 11 アリス編）: 1 段目の攻撃力の窓で発火ごとに順位を付け、対象の枠ごとに和集合にする
+  const rankings: RankingRecord[] = [];
+  if (ranked.length > 0) {
+    const rankSlots = rankSlotsOf(slots, passive);
+    const attackWindows = windows.filter((w) => w.effect.stat === 'attack');
+    const rankedWindows: BuffWindow[] = [];
+    for (const { sourceSlotIndex, effect } of ranked) {
+      const perTarget: number[][] = slots.map(() => []);
+      // 順位はトリガーが起きたフレームで出し、窓は射撃の回数起点なら次のフレームから（1 パス目と同じ）
+      for (const fire of triggerFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey)) {
+        const start = isResolvedShotCount(effect.trigger) ? fire.frame + 1 : fire.frame;
+        if (start >= frames) continue;
+        const finalAttacks = finalAttacksAt(rankSlots, attackWindows, fire.frame);
+        const attackRank = attackRankFor(effect, rankSlots, finalAttacks);
+        const context = { ...fire.context, attackRank };
+        const targets: number[] = [];
+        slots.forEach((target, slotIndex) => {
+          if (target === null) return;
+          if (!isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType, context)) return;
+          perTarget[slotIndex]!.push(start);
+          targets.push(slotIndex);
+        });
+        rankings.push({
+          frame: fire.frame,
+          sourceSlotIndex,
+          effect: { source: effect.source, effectIndex: effect.effectIndex },
+          finalAttacks,
+          targets: attackRank.filter((i) => targets.includes(i)),
+          tied: tiedAtCutoff(attackRank, finalAttacks, effect.targetCount ?? 1),
+        });
+      }
+      perTarget.forEach((starts, slotIndex) => {
+        for (const [start, end] of unionWindows(starts, effect.durationFrames, frames)) {
+          rankedWindows.push({ slotIndex, sourceSlotIndex, effect, start, end });
+        }
+      });
+    }
+    windows.push(...rankedWindows);
+  }
 
   // 3. 境界
   const bounds = new Set<number>([0, frames]);
@@ -370,7 +421,20 @@ export function planBuffTimeline(
     });
   }
 
-  return { frames, segments, windows, passive, heals };
+  return { frames, segments, windows, passive, heals, rankings };
+}
+
+/** 順位の材料（skills/ranking.ts）。常時パッシブは resolvePassiveStates の結果 */
+export function rankSlotsOf(slots: readonly TimelineSlot[], passive: readonly (SlotBuffState | null)[]): RankSlot[] {
+  return slots.map((slot, i) =>
+    slot === null
+      ? null
+      : {
+          casterBaseAttack: slot.casterBaseAttack,
+          weaponType: slot.character.weaponType,
+          passive: passive[i]?.buffs ?? ZERO_BUFFS,
+        },
+  );
 }
 
 /**

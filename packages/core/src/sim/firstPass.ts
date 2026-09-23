@@ -18,6 +18,11 @@
 // Stage 11（plan/design-stage11.md 3 節）: 対象 burstUsers（「直前にバーストスキルを使用した味方」）は発火ごとに対象が変わるので、
 // 窓を対象の枠ごとに持つ。回復（heal）は手順 3 の最初に当て、射撃の回数起点なら次のフレームに送って healed を立てる
 // （planBuffTimeline 側の skills/heals.ts の planHeals と同じ規則）。
+//
+// Stage 11 アリス編（plan/design-stage11.md 19.3 節）: 対象「最終攻撃力が最も高い味方 N 機」（topAttack）の射撃系・即時効果があるときだけ、
+// 攻撃力の timed 効果の窓も同じ TriggerTracker で追い（射撃には使わず順位のためだけ）、発火のフレームで順位を出して対象を決める。
+// 手順 3 の順番は 回復 → 攻撃力の窓 → 射撃に効く窓 → 即時効果 で、同じフレームに付いた攻撃力の窓も順位に入る
+// （planBuffTimeline の 2 段目と同じ意味。skills/ranking.ts）。
 import { planFixedCycle, durationToFrames } from '../burst/fixedCycle.ts';
 import {
   DEFAULT_BURST_TIMING,
@@ -39,8 +44,9 @@ import {
   type ResolvedTimedEffect,
 } from '../skills/resolve.ts';
 import { healFrameOf } from '../skills/heals.ts';
-import { dependsOnContext, isEffectTarget, type FireContext } from '../skills/targets.ts';
-import { resolvePassiveStates, type TimelineSlot } from '../skills/timeline.ts';
+import { attackRankFor, finalAttacksAt, type AttackWindow } from '../skills/ranking.ts';
+import { canEverTarget, dependsOnRank, isEffectTarget, type FireContext } from '../skills/targets.ts';
+import { rankSlotsOf, resolvePassiveStates, type TimelineSlot } from '../skills/timeline.ts';
 import {
   createTriggerTracker,
   fireContextOf,
@@ -93,6 +99,8 @@ export type FirstPassResult = {
   firingWindows: FiringWindow[];
   /** 即時効果（発生順） */
   instants: InstantApplication[];
+  /** Stage 11 アリス編: 順位のためだけに追った攻撃力の窓（topAttack の射撃系・即時効果が無ければ空）。テスト用 */
+  rankAttackWindows: FiringWindow[];
 };
 
 type FiringSource = {
@@ -141,21 +149,26 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     slots.flatMap((t, i) =>
       t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character.weaponType, context) ? [i] : [],
     );
+  /** 窓を持ちうる枠（burstUsers・topAttack は武器種の条件だけ）で FiringSource を作る */
+  const sourceOf = (effect: ResolvedTimedEffect, sourceSlotIndex: number, casterBaseAttack: number): FiringSource => ({
+    sourceSlotIndex,
+    effect,
+    casterBaseAttack,
+    canTarget: slots.map((t, i) => t !== null && canEverTarget(effect, sourceSlotIndex, i, t.character.weaponType)),
+    fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
+    windows: slots.map(() => []),
+  });
+  /** 攻撃力の timed 効果（順位の要らないもの）。topAttack の射撃系・即時効果があるときだけ使う */
+  const attackCandidates: FiringSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
-      if (!isFiringStat(effect.stat) || effect.durationFrames <= 0) continue;
-      // burstUsers は「チェーンの全員」を文脈にすれば、なりうる枠（武器種の条件だけ）になる
-      const everyone: FireContext = { burstUsers: slots.map((_, i) => i) };
-      const possible = new Set(targetsAt(effect, sourceSlotIndex, dependsOnContext(effect) ? everyone : null));
-      firing.push({
-        sourceSlotIndex,
-        effect,
-        casterBaseAttack: slot.casterBaseAttack,
-        canTarget: slots.map((_, i) => possible.has(i)),
-        fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
-        windows: slots.map(() => []),
-      });
+      if (effect.durationFrames <= 0) continue;
+      if (effect.stat === 'attack' && !dependsOnRank(effect)) {
+        attackCandidates.push(sourceOf(effect, sourceSlotIndex, slot.casterBaseAttack));
+      }
+      if (!isFiringStat(effect.stat)) continue;
+      firing.push(sourceOf(effect, sourceSlotIndex, slot.casterBaseAttack));
     }
     for (const effect of resolveInstant(slot.definition, slot.character, slot.levels)) {
       instant.push({
@@ -169,6 +182,28 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const heals = instant.filter((src) => src.effect.kind === 'heal');
   const otherInstants = instant.filter((src) => src.effect.kind !== 'heal');
   const trackEvents = firing.length > 0 || instant.length > 0;
+  // Stage 11 アリス編: 順位が要るときだけ攻撃力の窓を追う（無ければクラウン編までのループと同じ）
+  const needsRank =
+    firing.some((src) => dependsOnRank(src.effect)) || otherInstants.some((src) => dependsOnRank(src.effect));
+  const attackTrack = needsRank ? attackCandidates : [];
+  const rankSlots = needsRank ? rankSlotsOf(slots, passive) : [];
+  /** 効果 e の発火の文脈に、フレーム f の攻撃力の順位を足す（topAttack の効果だけ） */
+  const withRank = (e: ResolvedTimedEffect | ResolvedInstantEffect, context: FireContext, f: number): FireContext => {
+    if (!dependsOnRank(e)) return context;
+    const attackWindows: AttackWindow[] = attackTrack.flatMap((src) =>
+      src.windows.flatMap((list, slotIndex) =>
+        list.map(([start, end]) => ({
+          slotIndex,
+          sourceSlotIndex: src.sourceSlotIndex,
+          effect: src.effect,
+          start,
+          end,
+        })),
+      ),
+    );
+    const finalAttacks = finalAttacksAt(rankSlots, attackWindows, f);
+    return { ...context, attackRank: attackRankFor(e, rankSlots, finalAttacks) };
+  };
 
   /**
    * 窓を登録する（同じ効果の再発火は和集合 = 上書き延長。planBuffTimeline の unionWindows と同じ）。
@@ -188,7 +223,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
   };
   // 戦闘開始時の窓はループの前に登録する（1 発目のマガジンから効く）
-  for (const src of firing) if (src.effect.trigger === 'battleStart' && frames > 0) register(src, 0, null);
+  for (const src of [...attackTrack, ...firing]) {
+    if (src.effect.trigger === 'battleStart' && frames > 0) register(src, 0, withRank(src.effect, null, 0));
+  }
 
   // ---- 射手 ----
   const passiveFiring = passive.map((s) => s?.buffs ?? ZERO_BUFFS);
@@ -367,14 +404,22 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
     }
 
-    for (const src of firing) {
+    // 攻撃力の窓（順位のためだけ）を先に登録し、同じフレームに付いたものも順位に入れる
+    for (const src of attackTrack) {
       if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
       if (!src.fires(ev)) continue;
       register(src, isResolvedShotCount(src.effect.trigger) ? f + 1 : f, fireContextOf(src.effect.trigger, ev));
     }
+    for (const src of firing) {
+      if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
+      if (!src.fires(ev)) continue;
+      const context = withRank(src.effect, fireContextOf(src.effect.trigger, ev), f);
+      register(src, isResolvedShotCount(src.effect.trigger) ? f + 1 : f, context);
+    }
     for (const src of otherInstants) {
       if (!src.fires(ev)) continue;
-      for (const target of targetsAt(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev))) {
+      const context = withRank(src.effect, fireContextOf(src.effect.trigger, ev), f);
+      for (const target of targetsAt(src.effect, src.sourceSlotIndex, context)) {
         if (src.effect.kind === 'cooldownReduction') {
           if (controller === null) continue; // 固定サイクル・バーストなしでは CT を見ない
           const before = controller.cooldownReductions.length;
@@ -407,10 +452,24 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   }
 
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;
-  const firingWindows: FiringWindow[] = firing.flatMap((src) =>
-    src.windows.flatMap((list, slotIndex) =>
-      list.map(([start, end]) => ({ slotIndex, sourceSlotIndex: src.sourceSlotIndex, effect: src.effect, start, end })),
-    ),
-  );
-  return { frames, shots: logs, schedule, firingWindows, instants };
+  const windowsOfSources = (sources: readonly FiringSource[]): FiringWindow[] =>
+    sources.flatMap((src) =>
+      src.windows.flatMap((list, slotIndex) =>
+        list.map(([start, end]) => ({
+          slotIndex,
+          sourceSlotIndex: src.sourceSlotIndex,
+          effect: src.effect,
+          start,
+          end,
+        })),
+      ),
+    );
+  return {
+    frames,
+    shots: logs,
+    schedule,
+    firingWindows: windowsOfSources(firing),
+    instants,
+    rankAttackWindows: windowsOfSources(attackTrack),
+  };
 }
