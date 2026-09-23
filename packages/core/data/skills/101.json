@@ -41,7 +41,7 @@
       ]
     },
     "burst": {
-      "support": "partial",
+      "support": "supported",
       "effects": [
         {
           "kind": "burstDamage",
@@ -51,12 +51,14 @@
             "ja": "攻撃範囲内の敵は単体ボスで 1 ヒット",
             "en": "Enemies in range are a lone boss, so it lands once"
           }
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "自分の最大装弾数▲（10 秒間維持）は未対応（射撃が変わるバフは Stage 10）",
-          "en": "Max Ammunition up on self (10 s) is not modeled (cadence buffs are Stage 10)"
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "maxAmmo",
+          "ref": 2,
+          "durationRef": 3
         }
       ]
     }
@@ -81,16 +83,21 @@
           "stat": "attack",
           "ref": 5,
           "durationRef": 6
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetWeapon": "SG",
+          "stat": "maxAmmo",
+          "ref": 7,
+          "durationRef": 8
         }
       ],
       "notes": [
         {
           "ja": "味方全体の命中率▲（10 秒間維持）は未対応（全弾命中の前提なのでダメージに効かない）",
           "en": "Hit rate up for all allies (10 s) is not modeled (every shot is assumed to hit, so it does not change damage)"
-        },
-        {
-          "ja": "ショットガンを所持する味方の最大装弾数▲（10 秒間維持）は未対応（射撃が変わるバフは Stage 10）",
-          "en": "Max Ammunition up for Shotgun allies (10 s) is not modeled (cadence buffs are Stage 10)"
         }
       ]
     },
@@ -126,7 +133,7 @@
       ]
     },
     "burst": {
-      "support": "partial",
+      "support": "supported",
       "effects": [
         {
           "kind": "burstDamage",
@@ -144,12 +151,14 @@
           "stat": "attackDamage",
           "ref": 4,
           "durationRef": 5
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "自分の最大装弾数▲（10 秒間維持）は未対応（射撃が変わるバフは Stage 10）",
-          "en": "Max Ammunition up on self (10 s) is not modeled (cadence buffs are Stage 10)"
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "maxAmmo",
+          "ref": 2,
+          "durationRef": 3
         }
       ]
     }

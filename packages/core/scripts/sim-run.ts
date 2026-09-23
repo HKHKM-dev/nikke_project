@@ -2,6 +2,7 @@
 //   node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--controlled 3] [--defence 100] [--element Fire]
 // Stage 7: バーストは既定で動的サイクル（ゲージ・CT・チェーン）。--fixed-cycle で Stage 5 / 6 の固定 20 秒サイクル。
 // --controlled は操作キャラの枠（1 始まり）。省略は全員 AI 扱い（SR / RL のフルチャージ倍率がゲージに乗らない）。
+// Stage 10: CT 短縮・弾丸チャージ（即時効果）の記録と、射撃に効くバフの区間（calc が射撃の列から数えた区間は * 付き）を出す。
 // 育成値は既定 Lv200・3 凸・コア 0、条件は コア命中率 1・距離ボーナスあり・フルチャージ（calc の既定と同じ）。
 // スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
 import { readFileSync } from 'node:fs';
@@ -137,6 +138,32 @@ if (calc.schedule && calc.burstSummary) {
   if (calc.schedule.chainTimeouts.length > 0) {
     console.log(`chain timeouts at ${calc.schedule.chainTimeouts.map((f) => `${(f / FPS).toFixed(2)}s`).join(', ')}`);
   }
+  const starts = calc.schedule.fullBurstWindows.map((w) => w.start);
+  console.log(
+    `full burst intervals ${starts
+      .slice(1)
+      .map((f, k) => `${((f - starts[k]!) / FPS).toFixed(2)}s`)
+      .join(', ')}`,
+  );
+}
+
+// Stage 10: 即時効果（CT 短縮・弾丸チャージ）。同じフレーム・同じ枠はまとめる
+if (sim.instants.length > 0) {
+  const merged = new Map<string, { time: string; kind: string; from: string; to: string; amount: number }>();
+  for (const x of sim.instants) {
+    const key = `${x.frame}.${x.effect.kind}.${x.slotIndex}`;
+    const row = merged.get(key) ?? {
+      time: `${(x.frame / FPS).toFixed(2)}s`,
+      kind: x.effect.kind,
+      from: `slot ${x.sourceSlotIndex + 1}`,
+      to: `slot ${x.slotIndex + 1} ${slots[x.slotIndex]!.character.name.ja}`,
+      amount: 0,
+    };
+    row.amount += x.amount;
+    merged.set(key, row);
+  }
+  console.log('instant effects (cooldownReduction: frames actually cut, ammoRefill: rounds added)');
+  console.table([...merged.values()]);
 }
 
 const rows = slots.map((slot, i) => {
@@ -182,12 +209,12 @@ for (const [i, slot] of slots.entries()) {
       boost: g.trigger.boost.total.toFixed(3),
       atkDmg: g.trigger.attackDamageMultiplier.toFixed(4),
       perTrigger: fmt(g.trigger.perTrigger),
-      'triggers sim/calc': `${simGroups[j]?.triggers ?? 0} / ${g.triggers.toFixed(1)}`,
+      'triggers sim/calc': `${simGroups[j]?.triggers ?? 0} / ${g.triggers.toFixed(1)}${g.triggerSource === 'shots' ? '*' : ''}`,
       'damage sim/calc': `${fmt(simGroups[j]?.damage ?? 0)} / ${fmt(g.damage)}`,
       timed: g.timedEffects
         .map(
           (e) =>
-            `${triggerLabel(e.trigger)} ${e.stat}+${(e.value * 100).toFixed(2)}%${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
+            `${triggerLabel(e.trigger)} ${e.stat}+${e.scaling === 'flat' ? `${e.value}` : `${(e.value * 100).toFixed(2)}%`}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
         )
         .join(', '),
     })),

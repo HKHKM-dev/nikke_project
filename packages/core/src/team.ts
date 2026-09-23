@@ -65,7 +65,8 @@ import {
   type TimelineSlot,
 } from './skills/timeline.ts';
 import { applyTreasureToTeam, treasureSlots, type TreasurePhase } from './skills/treasure.ts';
-import { SKILL_SLOTS, type SkillDefinition, type SkillSlot, type SkillSupport } from './skills/types.ts';
+import { SKILL_SLOTS, isFiringStat, type SkillDefinition, type SkillSlot, type SkillSupport } from './skills/types.ts';
+import { firingParams } from './sim/firing.ts';
 import type { GrowthInput } from './stats.ts';
 import type { CharacterData } from './types.ts';
 import { FPS, type WeaponModel } from './weapons.ts';
@@ -128,8 +129,13 @@ export type SlotSegmentResult = {
   passiveEffects: AppliedEffect[];
   timedEffects: AppliedTimedEffect[];
   trigger: TriggerDamage;
-  /** calc: triggersPerSecond × seconds（小数） / sim: 実際に撃った数（整数） */
+  /** calc: triggersPerSecond × seconds（小数）か射撃の列の発数（triggerSource）/ sim: 実際に撃った数（整数） */
   triggers: number;
+  /**
+   * Stage 10: トリガー数の出どころ。'average' = 平均レート × 秒数（常時分の射撃バフは平均レートに畳み込む）、
+   * 'shots' = 持続の射撃バフ（最大装弾数・リロード速度・チャージ速度の timed）が掛かっているので、射撃の列の発数を数えた
+   */
+  triggerSource: 'average' | 'shots';
   damage: number;
 };
 
@@ -161,7 +167,7 @@ export type TeamSlotResult = {
   character: CharacterData;
   /** バフ前の攻撃力（素、またはスペック固定値）。区間に依らない */
   baseAttack: number;
-  /** 発射サイクル。Stage 6 では弾数・リロードのバフがないので区間に依らない */
+  /** 発射サイクル（平均レート）。Stage 10: 常時分の射撃バフを畳み込んだもの（持続分は含まない。表示用） */
   cadence: CadenceResult;
   notes: ModelNote[];
   /** 常時パッシブだけのバフ合計（Stage 4 互換の表示用） */
@@ -358,6 +364,31 @@ export function planSkillHits(
   return hits.sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
 }
 
+/**
+ * Stage 10: 射撃の列 frames（昇順）のうち、区間の列 ranges（[start, end)、昇順・重なりなし）に入る発数。
+ * 区間は planBuffTimeline の [0, frames) を隙間・重なりなく覆う区間から作るので、どの射撃もちょうど 1 つの区間に入る
+ */
+export function countShotsInRanges(
+  frames: readonly number[],
+  ranges: readonly { start: number; end: number }[],
+): number {
+  let count = 0;
+  for (const r of ranges) count += lowerBound(frames, r.end) - lowerBound(frames, r.start);
+  return count;
+}
+
+/** frames の中で value 以上の最初の添字 */
+function lowerBound(frames: readonly number[], value: number): number {
+  let lo = 0;
+  let hi = frames.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (frames[mid]! < value) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+
 /** Stage 9: 結果に添える宝物の段階。適用前の入力（元のキャラデータ）から取る */
 function treasureOf(slot: TeamSlotInput | null): { treasurePhase: TreasurePhase; treasureSlots: SkillSlot[] } {
   const treasurePhase = slot?.skills?.treasurePhase ?? 0;
@@ -402,7 +433,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
   const { slots, enemy, durationSeconds, model } = input;
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const { frames, schedule, timeline, skillHits } = planTeamRun(input);
+  const { frames, shots, schedule, timeline, skillHits } = planTeamRun(input);
 
   const computed = slots.map((slot, index) => {
     if (slot === null) return null;
@@ -417,22 +448,42 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
 
     const segments: SlotSegmentResult[] = [];
     let normalDamage = 0;
+    const shotFrames = shots[index]?.frames ?? [];
     for (const group of groupTimeline(timeline, index)) {
       const state = group.state;
-      const result = computeDamage({
-        ...base,
-        buffs: state.buffs,
-        condition: { ...slot.condition, fullBurst: group.fullBurst, durationSeconds: group.seconds },
-      });
-      segments.push({
-        ranges: mergeAdjacentRanges(group.segments.map((s) => ({ start: s.start, end: s.end }))),
+      const ranges = mergeAdjacentRanges(group.segments.map((s) => ({ start: s.start, end: s.end })));
+      const common = {
+        ranges,
         seconds: group.seconds,
         fullBurst: group.fullBurst,
         buffs: state.buffs,
         passiveEffects: state.passiveEffects,
         timedEffects: state.timedEffects,
+      };
+      // Stage 10: 持続の射撃バフが掛かっているグループは、射撃の列の発数を数える（plan/design-stage10.md 5 節）
+      if (state.timedEffects.some((e) => isFiringStat(e.stat))) {
+        const trigger = computeTriggerDamage({
+          ...base,
+          buffs: state.buffs,
+          condition: { ...slot.condition, fullBurst: group.fullBurst },
+        });
+        const triggers = countShotsInRanges(shotFrames, ranges);
+        const damage = trigger.perTrigger * triggers;
+        segments.push({ ...common, trigger, triggers, triggerSource: 'shots', damage });
+        normalDamage += damage;
+        continue;
+      }
+      const result = computeDamage({
+        ...base,
+        buffs: state.buffs,
+        firing: firingParams(slot.character.shot, state.buffs),
+        condition: { ...slot.condition, fullBurst: group.fullBurst, durationSeconds: group.seconds },
+      });
+      segments.push({
+        ...common,
         trigger: result,
         triggers: result.cadence.triggersPerSecond * group.seconds,
+        triggerSource: 'average',
         damage: result.totalDamage,
       });
       normalDamage += result.totalDamage;
@@ -488,7 +539,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
       index,
       character: slot.character,
       baseAttack: baseAttackOf(slot),
-      cadence: computeCadence(slot.character.shot, model),
+      cadence: computeCadence(slot.character.shot, model, firingParams(slot.character.shot, passive.buffs)),
       notes: modelNotes(slot.character.shot),
       passiveBuffs: passive.buffs,
       passiveEffects: passive.passiveEffects,
