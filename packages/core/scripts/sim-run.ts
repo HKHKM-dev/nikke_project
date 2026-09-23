@@ -133,6 +133,12 @@ if (calc.schedule && calc.burstSummary) {
       fullBurst: a.startsFullBurst
         ? `start (${(((calc.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.end ?? a.frame) - a.frame) / FPS).toFixed(1)}s)`
         : '',
+      // Stage 11: そのフルバーストを開いたチェーンで撃った枠（「直前にバーストスキルを使用した味方」）
+      burstUsers: a.startsFullBurst
+        ? (calc.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.burstUsers ?? [])
+            .map((i) => i + 1)
+            .join(',')
+        : '',
     })),
   );
   if (calc.schedule.chainTimeouts.length > 0) {
@@ -147,7 +153,7 @@ if (calc.schedule && calc.burstSummary) {
   );
 }
 
-// Stage 10: 即時効果（CT 短縮・弾丸チャージ）。同じフレーム・同じ枠はまとめる
+// Stage 10: 即時効果（CT 短縮・弾丸チャージ）。同じフレーム・同じ枠はまとめる。Stage 11: 回復（heal）も出る
 if (sim.instants.length > 0) {
   const merged = new Map<string, { time: string; kind: string; from: string; to: string; amount: number }>();
   for (const x of sim.instants) {
@@ -162,7 +168,7 @@ if (sim.instants.length > 0) {
     row.amount += x.amount;
     merged.set(key, row);
   }
-  console.log('instant effects (cooldownReduction: frames actually cut, ammoRefill: rounds added)');
+  console.log('instant effects (cooldownReduction: frames actually cut, ammoRefill: rounds added, heal: always 0)');
   console.table([...merged.values()]);
 }
 

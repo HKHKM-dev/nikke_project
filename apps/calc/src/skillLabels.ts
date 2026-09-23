@@ -38,6 +38,7 @@ export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
   burstStage1Enter: 'バースト 1 段階突入時',
   burstStage2Enter: 'バースト 2 段階突入時',
   burstStage3Enter: 'バースト 3 段階突入時',
+  healed: '回復を受けた時',
 };
 
 /** Stage 8: 「通常攻撃 10 回ごと」「バースト使用 2 回目以降」。文字列のトリガーは BUFF_TRIGGER_LABEL */
@@ -50,6 +51,10 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
       fullChargeShot: 'フルチャージ攻撃',
       lastShot: '最後の弾丸',
     }[trigger.count];
+    // Stage 11: 数えるだけのスタック（クラウン S2）は「通常攻撃 43 回 × 20 スタックごと」
+    if (trigger.stacks !== undefined) {
+      return `${what} ${formatNumber(trigger.every / trigger.stacks)} 回 × ${trigger.stacks} スタックごと`;
+    }
     return trigger.every === 1 ? `${what}ごと` : `${what} ${trigger.every} 回ごと`;
   }
   const what = trigger.count === 'burstUse' ? 'バースト使用' : 'フルバースト';
@@ -96,11 +101,16 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
   return `${stat} +${formatPercent(effect.appliedAmount, 2)}`;
 }
 
-/** Stage 10: 即時効果。「バースト CT −2.34 秒」「弾丸チャージ 39.88%」 */
+/** Stage 10: 即時効果。「バースト CT −2.34 秒」「弾丸チャージ 39.88%」。Stage 11: 「回復（最大 HP の 5.23%）」 */
 export function formatInstant(effect: ResolvedInstantEffect): string {
-  return effect.kind === 'cooldownReduction'
-    ? `バースト CT −${formatNumber(effect.value, 2)} 秒`
-    : `弾丸チャージ ${formatPercent(effect.value, 2)}`;
+  switch (effect.kind) {
+    case 'cooldownReduction':
+      return `バースト CT −${formatNumber(effect.value, 2)} 秒`;
+    case 'ammoRefill':
+      return `弾丸チャージ ${formatPercent(effect.value, 2)}`;
+    case 'heal':
+      return `回復（最大 HP の ${formatPercent(effect.value, 2)}）`;
+  }
 }
 
 /** 「枠 2 ノワール スキル 1」。ニケ名がまだ無い（読み込み中）ときは「枠 2（読み込み中）スキル 1」 */
@@ -109,8 +119,14 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
     characterName === undefined
       ? `枠 ${effect.sourceSlotIndex + 1}（読み込み中）`
       : `枠 ${effect.sourceSlotIndex + 1} ${characterName}`;
-  // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果
-  const only = effect.targetWeapon ? `（${effect.targetWeapon} の味方）` : '';
+  // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果。Stage 11: 「直前にバーストを使った味方」
+  const weapon = effect.targetWeapon ? `${effect.targetWeapon} の` : '';
+  const only =
+    effect.target === 'burstUsers'
+      ? `（直前にバーストを使った${weapon}味方）`
+      : effect.targetWeapon
+        ? `（${weapon}味方）`
+        : '';
   return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}`;
 }
 

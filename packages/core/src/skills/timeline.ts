@@ -10,6 +10,8 @@
 // Stage 8: 射撃の回数（sim/shots.ts の射撃の列から）・発動の回数・バースト N 段階突入時のトリガーを足した。
 // 射撃の回数で付くバフの窓は発火フレームの次のフレームから始める（トリガーになった射撃自身には乗らない）。
 // Stage 10: トリガーの判定を skills/triggers.ts の TriggerTracker に移し、1 パス目のフレームループと同じコードを通す。
+// Stage 11: 対象「直前にバーストスキルを使用した味方」（burstUsers）は発火ごとに対象が変わるので、対象の枠ごとに窓を和集合にする。
+// 回復（heal）を 1 段目に planHeals（skills/heals.ts）で集め、「回復効果が適用された時」（healed）の出来事として流し直す。
 import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { ShotLog } from '../sim/shots.ts';
 import type { CharacterData } from '../types.ts';
@@ -26,8 +28,9 @@ import {
   type ResolvedTrigger,
   type SkillLevels,
 } from './resolve.ts';
-import { isEffectTarget } from './targets.ts';
-import { replayEvents, trackTriggerFrames, type FrameEvents } from './triggers.ts';
+import { hasHealEffects, planHeals } from './heals.ts';
+import { dependsOnContext, isEffectTarget } from './targets.ts';
+import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
 import type { SkillDefinition } from './types.ts';
 
 /** 枠 1 つ分の入力。TeamSlotInput ではなく必要な情報だけを受けて循環 import を避ける（planFixedCycle と同じ流儀） */
@@ -85,6 +88,8 @@ export type BuffTimeline = {
   windows: BuffWindow[];
   /** 常時パッシブだけの状態（Stage 4 互換の表示用）。空枠は null */
   passive: (SlotBuffState | null)[];
+  /** Stage 11: 回復の記録（skills/heals.ts の planHeals）。heal 効果が無ければ空 */
+  heals: HealRecord[];
 };
 
 /** 1 枠ぶんの「同じバフ状態の区間」をまとめたもの。calc はこの単位で computeDamage を呼ぶ */
@@ -134,19 +139,32 @@ function keyOf(fullBurst: boolean, state: SlotBuffState): string {
   return parts.join('|');
 }
 
-/** 同じ射撃の列・時刻表で何度も呼ばれる（効果ごと）ので、直前の出来事の列を使い回す */
+/**
+ * 同じ射撃の列・時刻表で何度も呼ばれる（効果ごと）ので、直前の出来事の列を使い回す。
+ * Stage 11: 回復の記録（heals）も鍵に入れる（回復の無い列と有る列は別物）。どれも参照の一致で見る
+ */
 let replayCache: {
   schedule: BurstSchedule | null;
   shots: readonly (ShotLog | null)[];
   frames: number;
+  heals: readonly HealRecord[];
   events: FrameEvents[];
 } | null = null;
 
-function eventsOf(schedule: BurstSchedule | null, shots: readonly (ShotLog | null)[], frames: number): FrameEvents[] {
+const NO_HEALS: readonly HealRecord[] = Object.freeze([]);
+
+function eventsOf(
+  schedule: BurstSchedule | null,
+  shots: readonly (ShotLog | null)[],
+  frames: number,
+  heals: readonly HealRecord[] = NO_HEALS,
+): FrameEvents[] {
   const c = replayCache;
-  if (c !== null && c.schedule === schedule && c.shots === shots && c.frames === frames) return c.events;
-  const events = replayEvents(schedule, shots, frames);
-  replayCache = { schedule, shots, frames, events };
+  if (c !== null && c.schedule === schedule && c.shots === shots && c.frames === frames && c.heals === heals) {
+    return c.events;
+  }
+  const events = replayEvents(schedule, shots, frames, heals);
+  replayCache = { schedule, shots, frames, heals, events };
   return events;
 }
 
@@ -162,8 +180,21 @@ export function triggerFrames(
   slotIndex: number,
   frames: number,
   shots: readonly (ShotLog | null)[] = [],
+  heals: readonly HealRecord[] = NO_HEALS,
 ): number[] {
-  return trackTriggerFrames(trigger, slotIndex, schedule, eventsOf(schedule, shots, frames));
+  return triggerFires(trigger, schedule, slotIndex, frames, shots, heals).map((f) => f.frame);
+}
+
+/** Stage 11: triggerFrames の文脈つき版（対象 burstUsers の判定に使う）。heals は healed の出来事（planHeals の結果） */
+export function triggerFires(
+  trigger: ResolvedTrigger,
+  schedule: BurstSchedule | null,
+  slotIndex: number,
+  frames: number,
+  shots: readonly (ShotLog | null)[] = [],
+  heals: readonly HealRecord[] = NO_HEALS,
+): TriggerFire[] {
+  return trackTriggerFires(trigger, slotIndex, schedule, eventsOf(schedule, shots, frames, heals));
 }
 
 /** バフ窓が始まるフレーム。射撃の回数トリガーだけ、トリガーになった射撃の次のフレームから（その射撃自身には乗らない） */
@@ -173,10 +204,23 @@ export function buffStartFrames(
   slotIndex: number,
   frames: number,
   shots: readonly (ShotLog | null)[] = [],
+  heals: readonly HealRecord[] = NO_HEALS,
 ): number[] {
-  const fired = triggerFrames(trigger, schedule, slotIndex, frames, shots);
+  return buffStartFires(trigger, schedule, slotIndex, frames, shots, heals).map((f) => f.frame);
+}
+
+/** Stage 11: buffStartFrames の文脈つき版 */
+export function buffStartFires(
+  trigger: ResolvedTrigger,
+  schedule: BurstSchedule | null,
+  slotIndex: number,
+  frames: number,
+  shots: readonly (ShotLog | null)[] = [],
+  heals: readonly HealRecord[] = NO_HEALS,
+): TriggerFire[] {
+  const fired = triggerFires(trigger, schedule, slotIndex, frames, shots, heals);
   if (!isResolvedShotCount(trigger)) return fired;
-  return fired.map((f) => f + 1).filter((f) => f < frames);
+  return fired.map((f) => ({ frame: f.frame + 1, context: f.context })).filter((f) => f.frame < frames);
 }
 
 /** 同一効果の窓を和集合にする（上書き延長。重ねない）。frames が上限 */
@@ -236,21 +280,41 @@ export function planBuffTimeline(
     throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
   }
   const passive = resolvePassiveStates(slots);
+  // Stage 11: 回復の記録（1 段目）。heal 効果が無ければ空のまま（出来事の列は今までと同じ）
+  const heals = hasHealEffects(slots) ? planHeals(slots, schedule, shots, frames) : [];
+  const healsKey: readonly HealRecord[] = heals.length === 0 ? NO_HEALS : heals;
 
   // 1〜2. 発火フレーム → 窓（同一効果は和集合）→ 対象の枠に配る
   const windows: BuffWindow[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
-      const merged = unionWindows(
-        buffStartFrames(effect.trigger, schedule, sourceSlotIndex, frames, shots),
-        effect.durationFrames,
-        frames,
-      );
-      if (merged.length === 0) continue;
+      const fires = buffStartFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey);
+      if (!dependsOnContext(effect)) {
+        const merged = unionWindows(
+          fires.map((f) => f.frame),
+          effect.durationFrames,
+          frames,
+        );
+        if (merged.length === 0) continue;
+        slots.forEach((target, slotIndex) => {
+          if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType)) {
+            return;
+          }
+          for (const [start, end] of merged) windows.push({ slotIndex, sourceSlotIndex, effect, start, end });
+        });
+        continue;
+      }
+      // Stage 11: 対象が発火ごとに変わる効果（burstUsers）は、対象の枠ごとに「その枠が対象だった発火」だけで和集合にする
+      // （上書き延長はその枠が受けた発火どうしでだけ起きる。plan/design-stage11.md 3.2 節）
       slots.forEach((target, slotIndex) => {
-        if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType)) return;
-        for (const [start, end] of merged) windows.push({ slotIndex, sourceSlotIndex, effect, start, end });
+        if (target === null) return;
+        const mine = fires
+          .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType, f.context))
+          .map((f) => f.frame);
+        for (const [start, end] of unionWindows(mine, effect.durationFrames, frames)) {
+          windows.push({ slotIndex, sourceSlotIndex, effect, start, end });
+        }
       });
     }
   });
@@ -306,7 +370,7 @@ export function planBuffTimeline(
     });
   }
 
-  return { frames, segments, windows, passive };
+  return { frames, segments, windows, passive, heals };
 }
 
 /**

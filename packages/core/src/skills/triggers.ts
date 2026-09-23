@@ -4,9 +4,12 @@
 //   - 1 パス目のフレームループ（sim/firstPass.ts）は、出来事が起きるたびに流す（射撃に効く効果だけ）。
 //   - バッチの triggerFrames（skills/timeline.ts）は、確定した射撃の列と時刻表を同じ出来事の列に直して流し直す。
 // どちらも同じコードを通るので、ループの中で見た発火と、あとで planBuffTimeline が作る窓が食い違わない。
+// Stage 11: 出来事に「回復を受けた」（healed）と、フルバーストを開いたチェーンの枠（burstUsers。発火の文脈）を足した
+// （plan/design-stage11.md 3 節）。
 import type { BurstActivation, BurstSchedule, BurstScheduleModel, BurstStepKey } from '../burst/schedule.ts';
 import type { ShotLog } from '../sim/shots.ts';
 import { isResolvedEventCount, isResolvedShotCount, type ResolvedTrigger } from './resolve.ts';
+import type { FireContext } from './targets.ts';
 
 /** 1 枠の 1 回の射撃 */
 export type ShotEvent = {
@@ -27,6 +30,18 @@ export type FrameEvents = {
   /** フルバーストが終わった（戦闘時間で切られた最後の窓の end = frames は来ない） */
   fullBurstEnd: boolean;
   gaugeFull: boolean;
+  /** Stage 11: 始まった / 終わったフルバーストを開いたチェーンの枠（FullBurstWindow.burstUsers）。無ければ空 */
+  fullBurstStartUsers: readonly number[];
+  fullBurstEndUsers: readonly number[];
+  /** Stage 11: 枠ごとに、このフレームに回復を受けたか（heal 効果の対象になった） */
+  healed: readonly boolean[];
+};
+
+/** 回復の記録（Stage 11）。frame に slotIndex の枠が sourceSlotIndex の heal 効果で回復を受けた */
+export type HealRecord = {
+  frame: number;
+  sourceSlotIndex: number;
+  slotIndex: number;
 };
 
 const STAGE_OF: Record<'burstStage1Enter' | 'burstStage2Enter' | 'burstStage3Enter', BurstStepKey> = {
@@ -78,6 +93,8 @@ export function createTriggerTracker(
       return (ev) => ev.fullBurstStart;
     case 'fullBurstEnd':
       return (ev) => ev.fullBurstEnd;
+    case 'healed':
+      return (ev) => ev.healed[slotIndex] === true;
     case 'burstStage1Enter':
     case 'burstStage2Enter':
     case 'burstStage3Enter': {
@@ -91,14 +108,23 @@ export function createTriggerTracker(
   }
 }
 
+/** Stage 11: 発火したトリガーの文脈（対象 burstUsers の判定に使う）。フルバーストの開始・終了だけが枠の列を持つ */
+export function fireContextOf(trigger: ResolvedTrigger, ev: FrameEvents): FireContext {
+  if (trigger === 'fullBurstStart') return { burstUsers: ev.fullBurstStartUsers };
+  if (trigger === 'fullBurstEnd') return { burstUsers: ev.fullBurstEndUsers };
+  return null;
+}
+
 /**
  * 確定した射撃の列と時刻表を、出来事のあるフレームだけの FrameEvents の列（昇順）に直す。
- * 戦闘時間 frames の外（f ≥ frames）の出来事は含めない。フレーム 0 は常に含める（戦闘開始）
+ * 戦闘時間 frames の外（f ≥ frames）の出来事は含めない。フレーム 0 は常に含める（戦闘開始）。
+ * Stage 11: heals（skills/heals.ts の planHeals）の回復を healed として書き込む。省略時は回復なし
  */
 export function replayEvents(
   schedule: BurstSchedule | null,
   shots: readonly (ShotLog | null)[],
   frames: number,
+  heals: readonly HealRecord[] = [],
 ): FrameEvents[] {
   if (frames <= 0) return [];
   const slotCount = shots.length;
@@ -113,6 +139,9 @@ export function replayEvents(
         fullBurstStart: false,
         fullBurstEnd: false,
         gaugeFull: false,
+        fullBurstStartUsers: [],
+        fullBurstEndUsers: [],
+        healed: Array.from({ length: slotCount }, () => false),
       };
       byFrame.set(frame, ev);
     }
@@ -130,12 +159,40 @@ export function replayEvents(
   if (schedule !== null) {
     for (const a of schedule.activations) if (a.frame < frames) (at(a.frame).activations as BurstActivation[]).push(a);
     for (const w of schedule.fullBurstWindows) {
-      if (w.start < frames) at(w.start).fullBurstStart = true;
-      if (w.end < frames) at(w.end).fullBurstEnd = true;
+      if (w.start < frames) {
+        const ev = at(w.start);
+        ev.fullBurstStart = true;
+        ev.fullBurstStartUsers = w.burstUsers;
+      }
+      if (w.end < frames) {
+        const ev = at(w.end);
+        ev.fullBurstEnd = true;
+        ev.fullBurstEndUsers = w.burstUsers;
+      }
     }
     for (const f of schedule.gaugeFullFrames) if (f < frames) at(f).gaugeFull = true;
   }
+  for (const h of heals) {
+    if (h.frame < 0 || h.frame >= frames || h.slotIndex >= slotCount) continue;
+    (at(h.frame).healed as boolean[])[h.slotIndex] = true;
+  }
   return [...byFrame.values()].sort((a, b) => a.frame - b.frame);
+}
+
+/** Stage 11: トリガーの発火（フレームと文脈） */
+export type TriggerFire = { frame: number; context: FireContext };
+
+/** トリガーが起きたフレームと文脈の列（昇順）。出来事の列を TriggerTracker に流し直す */
+export function trackTriggerFires(
+  trigger: ResolvedTrigger,
+  slotIndex: number,
+  schedule: BurstSchedule | null,
+  events: readonly FrameEvents[],
+): TriggerFire[] {
+  const fires = createTriggerTracker(trigger, slotIndex, schedule?.model ?? null);
+  const fired: TriggerFire[] = [];
+  for (const ev of events) if (fires(ev)) fired.push({ frame: ev.frame, context: fireContextOf(trigger, ev) });
+  return fired;
 }
 
 /** トリガーが起きたフレーム列（昇順）。出来事の列を TriggerTracker に流し直す */
@@ -145,8 +202,5 @@ export function trackTriggerFrames(
   schedule: BurstSchedule | null,
   events: readonly FrameEvents[],
 ): number[] {
-  const fires = createTriggerTracker(trigger, slotIndex, schedule?.model ?? null);
-  const fired: number[] = [];
-  for (const ev of events) if (fires(ev)) fired.push(ev.frame);
-  return fired;
+  return trackTriggerFires(trigger, slotIndex, schedule, events).map((f) => f.frame);
 }

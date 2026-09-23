@@ -76,6 +76,8 @@ export type BurstControllerState = {
   /** 枠ごとの CT 明けフレーム（戦闘開始時は 0 = すぐ使える） */
   cooldownEnd: number[];
   usedInChain: boolean[];
+  /** Stage 11: 今のチェーンで撃った枠（発動順）。フルバーストに入ったら窓の burstUsers になる */
+  chainSlots: number[];
   fullBurstEnd: number;
   activations: BurstActivation[];
   /** 戦闘時間で切る前の窓 */
@@ -122,6 +124,7 @@ export function initialBurstController(
     lastUseFrame: 0,
     cooldownEnd: units.map(() => 0),
     usedInChain: units.map(() => false),
+    chainSlots: [],
     fullBurstEnd: 0,
     activations: [],
     windows: [],
@@ -156,6 +159,7 @@ function intervalAfter(timing: BurstTiming, from: BurstStepKey): number {
 
 function resetChain(state: BurstControllerState): void {
   state.usedInChain.fill(false);
+  state.chainSlots = [];
   state.gauge = 0;
   state.step = 'Step1';
 }
@@ -166,13 +170,15 @@ function activate(state: BurstControllerState, slotIndex: number, frame: number)
   const next = resolveNextStep(unit.nextStep, from);
   state.cooldownEnd[slotIndex] = frame + unit.cooldownFrames;
   state.usedInChain[slotIndex] = true;
+  state.chainSlots.push(slotIndex);
   state.lastUseFrame = frame;
   const startsFullBurst = next === 'StepFull';
   state.activations.push({ frame, step: from, slotIndex, startsFullBurst, enteredStep: startsFullBurst ? null : next });
   if (startsFullBurst) {
     const start = frame + state.timing.fullBurstStartDelayFrames;
     state.fullBurstEnd = start + (unit.fullBurstFrames ?? state.timing.fullBurstFrames);
-    state.windows.push({ start, end: state.fullBurstEnd });
+    // resetChain が chainSlots を差し替えるので、この配列はそのまま窓に渡せる
+    state.windows.push({ start, end: state.fullBurstEnd, burstUsers: state.chainSlots });
     state.phase = 'fullBurst';
     resetChain(state);
     return;
@@ -241,7 +247,7 @@ export function reduceCooldown(
 export function finishSchedule(state: BurstControllerState, frames: number): BurstSchedule {
   const fullBurstWindows = state.windows
     .filter((w) => w.start < frames)
-    .map((w) => ({ start: w.start, end: Math.min(w.end, frames) }));
+    .map((w) => ({ start: w.start, end: Math.min(w.end, frames), burstUsers: [...w.burstUsers] }));
   return {
     model: 'dynamic',
     activations: state.activations.filter((a) => a.frame < frames),

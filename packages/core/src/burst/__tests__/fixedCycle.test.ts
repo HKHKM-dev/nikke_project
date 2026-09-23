@@ -26,8 +26,8 @@ describe('planFixedCycle', () => {
       { frame: 600, step: 'Step2', slotIndex: 1, startsFullBurst: false, enteredStep: 'Step3' },
       { frame: 600, step: 'Step3', slotIndex: 2, startsFullBurst: true, enteredStep: null },
     ]);
-    expect(s.fullBurstWindows[0]).toEqual({ start: 600, end: 1200 });
-    expect(s.fullBurstWindows[8]).toEqual({ start: 10200, end: 10800 });
+    expect(s.fullBurstWindows[0]).toEqual({ start: 600, end: 1200, burstUsers: [0, 1, 2] });
+    expect(s.fullBurstWindows[8]).toEqual({ start: 10200, end: 10800, burstUsers: [0, 1, 2] });
     expect(s.fullBurstFramesTotal).toBe(5400);
     expect(slotsByStep(s)).toEqual({ Step1: [0], Step2: [1], Step3: [2] });
     expect(assignBurstSteps([c('Step1'), c('Step2'), c('Step3')])).toEqual({ Step1: 0, Step2: 1, Step3: 2 });
@@ -36,7 +36,7 @@ describe('planFixedCycle', () => {
   it('clips the last window at the end of the battle and drops activations after it', () => {
     const s = planFixedCycle([c('Step3')], 10500);
     expect(starts(s)).toHaveLength(9);
-    expect(s.fullBurstWindows[8]).toEqual({ start: 10200, end: 10500 });
+    expect(s.fullBurstWindows[8]).toEqual({ start: 10200, end: 10500, burstUsers: [0] });
     expect(s.fullBurstFramesTotal).toBe(8 * 600 + 300);
     const short = planFixedCycle([c('Step3')], 600);
     expect(starts(short)).toEqual([]);

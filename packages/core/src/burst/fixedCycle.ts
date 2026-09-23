@@ -94,9 +94,11 @@ export function planFixedCycle(
     const start = k * cycle.cycleFrames + cycle.normalFrames;
     if (start >= durationFrames) break;
     const end = Math.min(start + cycle.fullBurstFrames, durationFrames);
+    const burstUsers: number[] = [];
     for (const step of BURST_STEP_KEYS) {
       const slotIndex = assignment[step];
       if (slotIndex === null) continue;
+      burstUsers.push(slotIndex);
       activations.push({
         frame: start,
         step,
@@ -105,7 +107,7 @@ export function planFixedCycle(
         enteredStep: FIXED_ENTERED_STEP[step],
       });
     }
-    fullBurstWindows.push({ start, end });
+    fullBurstWindows.push({ start, end, burstUsers });
     fullBurstFramesTotal += end - start;
   }
   return {

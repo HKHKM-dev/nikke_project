@@ -5,6 +5,8 @@
 // Stage 9 で宝物版の定義（treasureSkills）と、武器種で絞る対象（targetWeapon）を足した（plan/design-stage9.md 2・3 節）。
 // Stage 10（段階 D）で射撃に効く stat（maxAmmo / reloadSpeed / chargeSpeed）と scaling 'flat'、即時効果（cooldownReduction /
 // ammoRefill）、トリガー「最後の弾丸」（lastShot）を足した（plan/design-stage10.md 2 節）。
+// Stage 11 で対象「直前にバーストスキルを使用した味方」（burstUsers）、フルスタックで発火する射撃の回数トリガー（stacksRef）、
+// 即時効果「回復」（heal）とトリガー「回復効果が適用された時」（healed）を足した（plan/design-stage11.md 2 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import type { LocalizedText, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
@@ -59,8 +61,12 @@ export function isFiringStat(stat: BuffStat): boolean {
 export type BuffScaling = 'ratio' | 'casterAttack' | 'flat';
 export const BUFF_SCALINGS = ['ratio', 'casterAttack', 'flat'] as const satisfies readonly BuffScaling[];
 
-export type BuffTarget = 'self' | 'allies';
-export const BUFF_TARGETS = ['self', 'allies'] as const satisfies readonly BuffTarget[];
+/**
+ * 効果の対象。Stage 11: burstUsers = 「直前にバーストスキルを使用した味方」（そのフルバーストを開いたチェーンでバーストを撃った枠）。
+ * トリガーが fullBurstStart / fullBurstEnd のときだけ書ける（発火のたびに対象が変わる。skills/targets.ts）
+ */
+export type BuffTarget = 'self' | 'allies' | 'burstUsers';
+export const BUFF_TARGETS = ['self', 'allies', 'burstUsers'] as const satisfies readonly BuffTarget[];
 
 export type SkillSupport = 'supported' | 'partial' | 'unsupported';
 export const SKILL_SUPPORTS = ['supported', 'partial', 'unsupported'] as const satisfies readonly SkillSupport[];
@@ -87,6 +93,7 @@ export type PassiveEffect = {
  * 固定サイクル（Stage 5）では burstUse と fullBurstStart が同じフレームになるが、段階の演出遅延を入れる Stage 7 でずれる。
  * Stage 8: burstStageNEnter = バースト N 段階突入時。1 はゲージ満タン（とリエントリー）、2 / 3 は発動の結果その段階に進んだ時
  * （通常は I / II の発動フレーム）。固定サイクルでは 3 つとも発動フレーム。
+ * Stage 11: healed = 自分に回復効果が適用された時（heal 効果の対象になった時。HP は持たず、満タンでも適用とみなす）。
  */
 export type BuffTrigger =
   | 'battleStart'
@@ -95,7 +102,8 @@ export type BuffTrigger =
   | 'fullBurstEnd'
   | 'burstStage1Enter'
   | 'burstStage2Enter'
-  | 'burstStage3Enter';
+  | 'burstStage3Enter'
+  | 'healed';
 export const BUFF_TRIGGERS = [
   'battleStart',
   'burstUse',
@@ -104,7 +112,11 @@ export const BUFF_TRIGGERS = [
   'burstStage1Enter',
   'burstStage2Enter',
   'burstStage3Enter',
+  'healed',
 ] as const satisfies readonly BuffTrigger[];
+
+/** Stage 11: 対象 burstUsers を書けるトリガー */
+export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const satisfies readonly BuffTrigger[];
 
 /**
  * Stage 8: 自分の射撃の回数で発火するトリガー。1 回 = 弾薬を 1 消費する 1 トリガー（SG もペレットではなくトリガー）。
@@ -126,6 +138,11 @@ export type ShotCountTrigger = {
   every?: number;
   /** N の description_value_NN。every とどちらか片方 */
   everyRef?: number;
+  /**
+   * Stage 11: フルスタックの数の description_value_NN。N 回ごとに 1 スタック、満ちたら解除して発火する（N × スタック数 回ごと）。
+   * スタック自体に効果が無い場合だけ使う（クラウン S2 のリラックス）
+   */
+  stacksRef?: number;
 };
 
 /**
@@ -158,7 +175,7 @@ export type TimedEffect = {
   kind: 'timed';
   trigger: EffectTrigger;
   target: BuffTarget;
-  /** Stage 9: 「〈武器〉を所持する味方」。target が 'allies' のときだけ書ける */
+  /** Stage 9: 「〈武器〉を所持する味方」。target が self 以外（allies・Stage 11 の burstUsers）のときだけ書ける */
   targetWeapon?: WeaponType;
   stat: BuffStat;
   /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す（passive と同じ規則） */
@@ -230,9 +247,23 @@ export type AmmoRefillEffect = {
   assumes?: LocalizedText;
 };
 
-export type InstantEffect = CooldownReductionEffect | AmmoRefillEffect;
+/**
+ * Stage 11: 「HP を X% 回復」。数値はダメージに関係しないので、対象に「回復を受けた」出来事（トリガー healed）を起こすだけ。
+ * 回復は heal の窓が始まるはずのフレーム（射撃の回数起点なら次のフレーム）に起きる。トリガーに healed は書けない（連鎖させない）
+ */
+export type HealEffect = {
+  kind: 'heal';
+  trigger: EffectTrigger;
+  target: BuffTarget;
+  targetWeapon?: WeaponType;
+  /** 回復量（%）の description_value_NN（UI の表示用） */
+  ref: number;
+  assumes?: LocalizedText;
+};
+
+export type InstantEffect = CooldownReductionEffect | AmmoRefillEffect | HealEffect;
 export type InstantKind = InstantEffect['kind'];
-export const INSTANT_KINDS = ['cooldownReduction', 'ammoRefill'] as const satisfies readonly InstantKind[];
+export const INSTANT_KINDS = ['cooldownReduction', 'ammoRefill', 'heal'] as const satisfies readonly InstantKind[];
 
 export type SkillEffect = PassiveEffect | BurstDamageEffect | TimedEffect | DamageEffect | InstantEffect;
 
@@ -297,16 +328,28 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   }
 }
 
-/** Stage 9: targetWeapon は target が allies のときだけ */
+/** Stage 9: targetWeapon は target が self 以外のときだけ（Stage 11 で burstUsers にも広げた） */
 function parseTargetWeapon(v: Record<string, Json>, target: BuffTarget, path: string): WeaponType | undefined {
   if (v.targetWeapon === undefined) return undefined;
   const weapon = oneOf(WEAPON_TYPES, v.targetWeapon, `${path}.targetWeapon`);
-  if (target !== 'allies') fail(`${path}.targetWeapon`, `only allowed with target "allies", got "${target}"`);
+  if (target === 'self')
+    fail(`${path}.targetWeapon`, `only allowed with target "allies" or "burstUsers", got "${target}"`);
   return weapon;
+}
+
+/** Stage 11: burstUsers はトリガーが fullBurstStart / fullBurstEnd のときだけ */
+function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrigger, path: string): void {
+  if (target !== 'burstUsers') return;
+  if (typeof trigger === 'string' && (BURST_USERS_TRIGGERS as readonly string[]).includes(trigger)) return;
+  fail(
+    `${path}.target`,
+    `burstUsers is only allowed with trigger ${BURST_USERS_TRIGGERS.join(' or ')}, got ${JSON.stringify(trigger)}`,
+  );
 }
 
 function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffect {
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  if (target === 'burstUsers') fail(`${path}.target`, 'burstUsers is not allowed in passive (it needs a full burst)');
   const targetWeapon = parseTargetWeapon(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
@@ -331,12 +374,13 @@ function parseTrigger(v: Json, path: string): EffectTrigger {
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
-      if (!['count', 'every', 'everyRef'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+      if (!['count', 'every', 'everyRef', 'stacksRef'].includes(key)) fail(`${path}.${key}`, 'unknown field');
     }
     if (v.every !== undefined && v.everyRef !== undefined) fail(path, 'at most one of every and everyRef');
     const trigger: ShotCountTrigger = { count: v.count as ShotCountKind };
     if (v.every !== undefined) trigger.every = parsePositiveInt(v.every, `${path}.every`);
     if (v.everyRef !== undefined) trigger.everyRef = parseRef(v.everyRef, `${path}.everyRef`);
+    if (v.stacksRef !== undefined) trigger.stacksRef = parseRef(v.stacksRef, `${path}.stacksRef`);
     return trigger;
   }
   if ((EVENT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
@@ -354,6 +398,7 @@ function parseTrigger(v: Json, path: string): EffectTrigger {
 function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   if (stat === 'burstGaugeSpeed') {
@@ -415,7 +460,10 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
     }
   }
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  // 回復で回復を起こすと連鎖が閉じないので、heal のトリガーに healed は書けない（plan/design-stage11.md 3.3 節）
+  if (kind === 'heal' && trigger === 'healed') fail(`${path}.trigger`, 'heal cannot be triggered by "healed"');
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
   const effect: InstantEffect = { kind, trigger, target, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
@@ -444,10 +492,12 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   }
   if (v.kind === 'timed') return parseTimedEffect(v, path);
   if (v.kind === 'damage') return parseDamageEffect(v, path);
-  if (v.kind === 'cooldownReduction' || v.kind === 'ammoRefill') return parseInstantEffect(v, path, v.kind);
+  if (v.kind === 'cooldownReduction' || v.kind === 'ammoRefill' || v.kind === 'heal') {
+    return parseInstantEffect(v, path, v.kind);
+  }
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction" or "ammoRefill", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill" or "heal", got ${JSON.stringify(v.kind)}`,
   );
 }
 

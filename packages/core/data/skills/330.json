@@ -1,0 +1,91 @@
+{
+  "formatVersion": 1,
+  "resourceId": 330,
+  "checkedAt": "2026-09-23",
+  "skills": {
+    "skill1": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "burstUsers",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "reloadSpeed",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "説明文の「直前にバーストを使用した味方」「使用していない味方」へのリロード速度（どちらも同じ値・同じ秒数）を味方全体の 1 効果にまとめた",
+            "en": "The two Reload Speed lines (allies who just used / did not use their Burst, same value and duration) are merged into one effect on all allies"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "直前にバーストスキルを使用していない味方への防御力▲はダメージに関係しない",
+          "en": "The DEF buff on allies who did not just use their Burst does not affect damage"
+        }
+      ]
+    },
+    "skill2": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1,
+            "stacksRef": 3
+          },
+          "target": "self",
+          "ref": 6,
+          "assumes": {
+            "ja": "編成の外（定義の無いヒーラーなど）からの回復は数えない。HP が満タンでも回復は適用されたとみなす",
+            "en": "Healing from outside the modeled skills (e.g. undefined healers) is not counted; a heal at full HP still counts as applied"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "healed",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 7,
+          "durationRef": 8
+        }
+      ],
+      "notes": [
+        {
+          "ja": "リラックス（受ける HP 回復量▲）・無敵・挑発はダメージに関係しない。リラックスは 20 スタックで回復するまでの数え上げにだけ使う",
+          "en": "Relax (Incoming Healing up), Invulnerable and Attract do not affect damage; Relax only counts shots until the heal at 20 stacks"
+        }
+      ]
+    },
+    "burst": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ],
+      "notes": [
+        {
+          "ja": "バリアはダメージに関係しない",
+          "en": "The shield does not affect damage"
+        }
+      ]
+    }
+  }
+}
