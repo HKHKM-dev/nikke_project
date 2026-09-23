@@ -27,7 +27,7 @@
 // Stage 11 モダニア（plan/design-stage11-modernia.md 3 節）: スタックする効果（最大装弾数▼）は段ごとの窓で登録する（skills/stacks.ts）。
 // 条件「自分が 〈stat〉 増加状態なら」の効果を追うときは、条件の stat の窓（状態の窓）も追い、手順 3 の順番は
 // 回復 → 状態の窓 → 攻撃力の窓 → 射撃に効く窓 → 即時効果。使用武器の変更（殲滅モード）の間は、変更後の武器を別の射手の状態で撃ち、
-// 終わったら基礎の武器の状態に戻す（sim/shooter.ts の resumeShooter）。武器の窓は持ち替えるフレーム（発火の次のフレーム）から。
+// 終わったら基礎の武器を最大装弾数まで込め直して戻す（sim/shooter.ts の resumeShooter。録画 44 で確定）。武器の窓は持ち替えるフレーム（発火の次のフレーム）から。
 import { planFixedCycle, durationToFrames } from '../burst/fixedCycle.ts';
 import {
   DEFAULT_BURST_TIMING,

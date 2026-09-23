@@ -279,17 +279,24 @@ function resolveMaxStacks(
 }
 
 /**
- * Stage 11 モダニア: 使用武器の変更で、CDN に無い変更後の武器のパラメータをどう置くか（仮。plan/design-stage11-modernia.md 3.4 節）。
- * 変更後の武器は基礎の武器を写し、1 発のダメージを damageRef の値に、レートを changeWeapon.rateOfFire（スピンアップなし）に差し替える。
- * コア倍率・装弾数・リロード・ゲージの量は基礎の武器のまま。録画 44 の 5 で確かめる
+ * Stage 11 モダニア: 使用武器の変更で、CDN に無い変更後の武器のパラメータをどう置くか（plan/design-stage11-modernia.md 3.4 節）。
+ * 変更後の武器は基礎の武器を写し、1 発のダメージを damageRef の値 × ヒット数に、レートを changeWeapon.rateOfFire（スピンアップなし）に
+ * 差し替える。コア倍率・装弾数・リロード・ゲージの量は基礎の武器のまま。
+ * **2026-09-24 の録画 44 で確定**: 殲滅モードのコア 6,753 = (120,694 − 100) × 2.24% × (1 + コア 1.0 + FB 0.5)（コア倍率は基礎と同じ）、
+ * 1 発目から毎フレーム 1 発（スピンアップなし・4200 rpm は 1 フレーム 1 発で止まる）。1 発に 2 ヒット（hitsPerShot）
  */
 export const WEAPON_CHANGE_CORE = 'base' as const;
 
-/** 変更後の武器の ShotParams（仮の定数は WEAPON_CHANGE_CORE と、スピンアップなし = rateOfFire と endRateOfFire を同じにする） */
-export function changedWeaponShot(base: ShotParams, damageRatio: number, rateOfFire: number): ShotParams {
+/** 変更後の武器の ShotParams（WEAPON_CHANGE_CORE と、スピンアップなし = rateOfFire と endRateOfFire を同じにする） */
+export function changedWeaponShot(
+  base: ShotParams,
+  damageRatio: number,
+  rateOfFire: number,
+  hitsPerShot = 1,
+): ShotParams {
   return {
     ...base,
-    damage: Math.round(damageRatio * 10000),
+    damage: Math.round(damageRatio * 10000) * hitsPerShot,
     rateOfFire,
     endRateOfFire: rateOfFire,
     rateOfFireChangePerShot: 0,
@@ -310,6 +317,7 @@ function resolveWeaponChange(
     throw new RangeError(`character ${character.resourceId}: weaponChange needs burstSkill.changeWeapon (CDN data)`);
   }
   const damage = skillValue(skill, effect.damageRef, level) / 100;
+  const hits = effect.hitsPerShot ?? 1;
   const r: ResolvedTimedEffect = {
     source: { resourceId: character.resourceId, skill: slot, name: skill.name },
     target: 'self',
@@ -318,7 +326,8 @@ function resolveWeaponChange(
     value: damage,
     weapon: {
       id: `${character.resourceId}.${slot}.${effectIndex}`,
-      shot: changedWeaponShot(character.shot, damage, change.rateOfFire),
+      hits,
+      shot: changedWeaponShot(character.shot, damage, change.rateOfFire, hits),
     },
     trigger: resolveTrigger(effect.trigger, skill, level),
     durationFrames: durationToFrames(durationSecondsOf(effect, skill, level)),

@@ -350,6 +350,11 @@ export type WeaponChangeEffect = {
   trigger: EffectTrigger;
   /** 変更後の 1 発のダメージ（%）の description_value_NN */
   damageRef: number;
+  /**
+   * 1 発のヒット数（即値。省略 1）。説明文にも CDN にも無いので実測で書く。モダニアの殲滅モードは射撃場の的で 2
+   * （録画 44。照準範囲内の敵の数か弾の数かは未確定）。会心はヒットごとに判定されるので、期待値は武器倍率 × ヒット数と同じ
+   */
+  hitsPerShot?: number;
   /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
   durationRef?: number;
   durationSeconds?: number;
@@ -597,7 +602,7 @@ function parseDuration(v: Record<string, Json>, path: string): { durationRef?: n
 /** Stage 11 モダニア: 使用武器の変更 */
 function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponChangeEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'damageRef', 'durationRef', 'durationSeconds', 'assumes'].includes(key)) {
+    if (!['kind', 'trigger', 'damageRef', 'hitsPerShot', 'durationRef', 'durationSeconds', 'assumes'].includes(key)) {
       fail(`${path}.${key}`, 'unknown field');
     }
   }
@@ -607,6 +612,7 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
     damageRef: parseRef(v.damageRef, `${path}.damageRef`),
     ...parseDuration(v, path),
   };
+  if (v.hitsPerShot !== undefined) effect.hitsPerShot = parsePositiveInt(v.hitsPerShot, `${path}.hitsPerShot`);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }

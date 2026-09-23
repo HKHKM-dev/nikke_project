@@ -14,8 +14,8 @@
           "damageType": "additional",
           "ref": 1,
           "assumes": {
-            "ja": "通常攻撃 1 発ごとに 1 回（全弾命中の前提）。コアは乗らない（仮）",
-            "en": "Once per normal shot (every shot is assumed to hit). Core hits do not boost it (provisional)"
+            "ja": "通常攻撃 1 発ごとに 1 回（全弾命中の前提。殲滅モードの 2 ヒットでも 1 回）。コア・距離は乗らない（録画 44 で確認）",
+            "en": "Once per normal shot (every shot is assumed to hit; once even for the 2 hits of Annihilation Mode). Core and distance do not boost it (recording 44)"
           }
         },
         {
@@ -90,10 +90,11 @@
           "kind": "weaponChange",
           "trigger": "burstUse",
           "damageRef": 1,
+          "hitsPerShot": 2,
           "durationRef": 2,
           "assumes": {
-            "ja": "殲滅モードの武器は CDN に中身が無い。コア倍率は基礎の MG と同じ、スピンアップなし（最初から 4200 rpm、1 フレーム 1 発）、終わったら基礎の MG の残弾に戻りスピンアップからやり直す（仮）",
-            "en": "The Annihilation Mode weapon is not in the CDN data. Assumes the base MG core multiplier, no spin-up (4200 rpm from the start, one shot per frame), and that the base MG resumes with its ammo and spins up again afterwards (provisional)"
+            "ja": "殲滅モードは 1 発に 2 ヒット（射撃場の的で実測。照準範囲内の敵の数か弾の数かは未確定）。コア倍率は基礎の MG と同じ、スピンアップなしで毎フレーム 1 発、終わると基礎の MG を最大装弾数まで込め直して戻る（録画 44）",
+            "en": "Annihilation Mode lands 2 hits per shot (measured on the range target; whether it is per enemy in range or per bullet is unknown). Base MG core multiplier, no spin-up (one shot per frame), and the base MG comes back fully reloaded (recording 44)"
           }
         }
       ],

@@ -2,7 +2,7 @@
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
 - 状態: **クラウン完了（2026-09-23）**。承認・実装・録画 41 の実測まで終えた（実装の差分は 13 節、実測の結果は 14 節、検証は [verification.md](verification.md) Stage 11 節）。承認は 2026-09-23。レビュー 3 点を 2.1・3.3・4・7・10 節に反映済み（12 節）。10 節の 7 点はいずれも推奨案（1 はレビュー ③ で変更した案）で承認。I-DOLL・フラワーは所持で、録画 41 は撮影済み。**アリス完了（2026-09-24）**。アリス編（15 節以降）は同日に承認・実装・録画 42・43 の実測まで終えた（26 節の 8 点とも推奨案。実装の差分は 25 節、実測の結果と「発動者基準のチャージ速度」の訂正は 27 節）
-- モダニア編: [design-stage11-modernia.md](design-stage11-modernia.md)（2026-09-24 起案・承認・実装、録画 44・45 の撮影待ち。このファイルが長くなったので別ファイルにした）
+- モダニア編: [design-stage11-modernia.md](design-stage11-modernia.md)（2026-09-24 に起案・承認・実装・録画 44・45 の実測まで完了。このファイルが長くなったので別ファイルにした）
 - 関連: [design-stage8.md](design-stage8.md) 12 節・[design-stage10.md](design-stage10.md) 12 節（主力キャラへの申し送り）、[design-stage6.md](design-stage6.md)（`timed` と窓の規則）、[verification.md](verification.md)、[roadmap.md](roadmap.md)
 - 作成日: 2026-09-23
 

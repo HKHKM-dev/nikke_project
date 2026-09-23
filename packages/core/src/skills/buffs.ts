@@ -10,6 +10,8 @@ import type { BuffStat } from './types.ts';
 export type ChangedWeapon = {
   /** 区間の鍵・同一性の判定用（resourceId.slot.effectIndex） */
   id: string;
+  /** 1 発のヒット数（shot.damage はヒット数ぶんを合計した武器倍率。表示用に残す） */
+  hits: number;
   shot: ShotParams;
 };
 

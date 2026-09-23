@@ -101,7 +101,8 @@ export const SUPPORT_BADGE: Record<SkillSupport | 'undefined' | 'loading' | 'err
 export function formatAppliedAmount(effect: AppliedEffect): string {
   if (effect.stat === 'weapon') {
     const shot = effect.weapon?.shot;
-    return `使用武器の変更（1 発 ${formatPercent(effect.value, 2)}${shot ? `・${formatNumber(shot.rateOfFire)} rpm` : ''}）`;
+    const hits = effect.weapon && effect.weapon.hits > 1 ? ` × ${effect.weapon.hits} ヒット` : '';
+    return `使用武器の変更（1 発 ${formatPercent(effect.value, 2)}${hits}${shot ? `・${formatNumber(shot.rateOfFire)} rpm` : ''}）`;
   }
   const stat = BUFF_STAT_LABEL[effect.stat];
   if (effect.stat === 'infiniteAmmo') return stat;

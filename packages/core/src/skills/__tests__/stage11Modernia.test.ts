@@ -183,6 +183,24 @@ describe('resolve (Stage 11 モダニア)', () => {
     expect(weapon!.weapon!.id).toBe('1.burst.1');
   });
 
+  it('multiplies the weapon damage by hitsPerShot (録画 44: 2 hits of 2.24%)', () => {
+    const twoHits = parseSkillDefinition(
+      definition({
+        ...MODERNIA_DEF,
+        burst: supported({ kind: 'weaponChange', trigger: 'burstUse', damageRef: 1, hitsPerShot: 2, durationRef: 2 }),
+      }),
+    );
+    const weapon = resolveTimed(twoHits, character, MAX_SKILL_LEVELS).find((e) => e.stat === 'weapon')!;
+    expect(weapon.weapon).toMatchObject({ hits: 2, shot: { damage: 448 } });
+    expect(() =>
+      parseSkillDefinition(
+        definition({
+          burst: supported({ kind: 'weaponChange', trigger: 'burstUse', damageRef: 1, hitsPerShot: 0, durationRef: 2 }),
+        }),
+      ),
+    ).toThrow(/hitsPerShot/);
+  });
+
   it('needs burstSkill.changeWeapon for a weapon change', () => {
     const { changeWeapon: _c, ...burstSkill } = character.burstSkill;
     expect(() => resolveTimed(def, { ...character, burstSkill }, MAX_SKILL_LEVELS)).toThrow(/changeWeapon/);

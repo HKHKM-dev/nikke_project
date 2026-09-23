@@ -176,11 +176,13 @@ export function refillAmmo(
 }
 
 /**
- * Stage 11 モダニア: 使用武器の変更が終わって基礎の武器に戻るときの扱い（仮。録画 44 の 6 で確かめる）。
- * 'resume' = しまっておいた基礎の武器の状態（残弾・リロードの途中）をそのまま戻し、撃てる状態ならスピンアップ
- * （1 発目の遅延とレートの蓄積）からやり直す
+ * Stage 11 モダニア: 使用武器の変更が終わって基礎の武器に戻るときの扱い。
+ * **2026-09-24 の録画 44 で 'refill' と確定**（起案時の仮定は 'resume' = バースト前の残弾のまま）:
+ * バースト前の残弾に関係なく最大装弾数まで込め直した状態で戻る（4 回とも 224。連射中の 149 からでも 224）。
+ * MG のレートの蓄積はバースト前の状態を引き継ぎ（連射中なら最高レートのまま、リロード中ならスピンアップから）、
+ * どちらも殲滅モードの終わりから 1 発目まで約 22〜23f 空く（ふだんのリロード明けの 1 発目の遅延と同じとみなす）
  */
-export const WEAPON_CHANGE_RESTORE = 'resume' as const;
+export const WEAPON_CHANGE_RESTORE = 'refill' as const;
 
 /** Stage 11 モダニア: 使用武器の変更が終わった枠の基礎の武器の状態を戻す（state を書き換える） */
 export function resumeShooter(
@@ -189,9 +191,10 @@ export function resumeShooter(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): void {
-  if (state.phase !== 'ready') return; // リロードの途中・1 発目の遅延の途中は、その続きから
-  state.shotsInMagazine = 0;
-  state.acc = 0;
+  // リロード中・込め終えて 1 発目を待っていた枠は、込め終えたマガジンの 1 発目から（スピンアップも最初から）
+  if (state.phase !== 'ready') startMagazine(state);
+  state.ammo = params.maxAmmo;
+  state.lastShot = false;
   state.wait = firstShotFrames(shot, model, params);
 }
 
