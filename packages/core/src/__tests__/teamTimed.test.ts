@@ -88,7 +88,8 @@ describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first
   });
 
   it('splits 180 s into three buff states and matches the hand calculation', () => {
-    const s = computeTeamDamage({ slots: [slot20s], enemy, durationSeconds: 180, burst: true }).slots[0]!;
+    const s = computeTeamDamage({ slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
+      .slots[0]!;
     expect(s.segments.map((g) => [g.fullBurst, g.buffs.attackRatio !== 0, g.seconds])).toEqual([
       [false, false, 10],
       [true, true, 90],
@@ -103,7 +104,8 @@ describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first
   });
 
   it('is on for the whole battle except the first 10 s', () => {
-    const s = computeTeamDamage({ slots: [slot20s], enemy, durationSeconds: 180, burst: true }).slots[0]!;
+    const s = computeTeamDamage({ slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
+      .slots[0]!;
     const buffedSeconds = s.segments.filter((g) => g.buffs.attackRatio !== 0).reduce((a, g) => a + g.seconds, 0);
     expect(buffedSeconds).toBe(170);
   });
@@ -117,8 +119,8 @@ describe('6.3 C: a zero-duration buff is the same as no effect at all', () => {
       ]),
     });
     const none = skillSlot(22, {});
-    const a = computeTeamDamage({ slots: [zero], enemy, durationSeconds: 180, burst: true });
-    const b = computeTeamDamage({ slots: [none], enemy, durationSeconds: 180, burst: true });
+    const a = computeTeamDamage({ slots: [zero], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
+    const b = computeTeamDamage({ slots: [none], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
     expect(a.totalDamage).toBe(b.totalDamage);
     expect(a.slots[0]?.windows).toEqual([]);
   });
@@ -126,7 +128,13 @@ describe('6.3 C: a zero-duration buff is the same as no effect at all', () => {
 
 describe('6.2 degeneration: without timed effects the model is Stage 5’s two intervals', () => {
   it('gives exactly two groups of 90 s each and the plain rate × seconds product', () => {
-    const t = computeTeamDamage({ slots: [plain(1), sr(3)], enemy, durationSeconds: 180, burst: true });
+    const t = computeTeamDamage({
+      slots: [plain(1), sr(3)],
+      enemy,
+      durationSeconds: 180,
+      burst: true,
+      burstModel: 'fixed',
+    });
     for (const s of t.slots) {
       if (s === null) continue;
       expect(s.segments).toHaveLength(2);
@@ -158,7 +166,13 @@ describe('timed buff targets and levels', () => {
         { kind: 'timed', trigger: 'burstUse', target: 'allies', stat: 'attack', ref: 1, durationRef: 2 },
       ]),
     });
-    const t = computeTeamDamage({ slots: [caster, plain(2)], enemy, durationSeconds: 180, burst: true });
+    const t = computeTeamDamage({
+      slots: [caster, plain(2)],
+      enemy,
+      durationSeconds: 180,
+      burst: true,
+      burstModel: 'fixed',
+    });
     expect(t.slots[0]?.windows).toHaveLength(9);
     expect(t.slots[1]?.windows).toHaveLength(9);
     const buffed = t.slots[1]?.segments.find((g) => g.buffs.attackRatio !== 0);
@@ -172,7 +186,13 @@ describe('timed buff targets and levels', () => {
         { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 1, durationRef: 2 },
       ]),
     });
-    const t = computeTeamDamage({ slots: [caster, plain(2)], enemy, durationSeconds: 180, burst: true });
+    const t = computeTeamDamage({
+      slots: [caster, plain(2)],
+      enemy,
+      durationSeconds: 180,
+      burst: true,
+      burstModel: 'fixed',
+    });
     expect(t.slots[0]?.windows).toHaveLength(9);
     expect(t.slots[1]?.windows).toEqual([]);
     expect(t.slots[1]?.segments.every((g) => g.buffs.attackRatio === 0)).toBe(true);
@@ -200,8 +220,10 @@ describe('timed buff targets and levels', () => {
         scaling,
         { skill1: 10, skill2: 10, burst: level },
       );
-    const lv1 = computeTeamDamage({ slots: [make(1)], enemy, durationSeconds: 180, burst: true }).slots[0]!;
-    const lv10 = computeTeamDamage({ slots: [make(10)], enemy, durationSeconds: 180, burst: true }).slots[0]!;
+    const lv1 = computeTeamDamage({ slots: [make(1)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
+      .slots[0]!;
+    const lv10 = computeTeamDamage({ slots: [make(10)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
+      .slots[0]!;
     // Lv1: +10% / 5 秒（300f）、Lv10: +55% / 14 秒（840f）
     expect(lv1.windows[0]).toMatchObject({ start: 600, end: 900 });
     expect(lv10.windows[0]).toMatchObject({ start: 600, end: 1440 });
@@ -221,7 +243,13 @@ describe('burst hit buff snapshot', () => {
     });
 
   it('uses the buffs from just before the activation, so its own buff does not apply', () => {
-    const s = computeTeamDamage({ slots: [lapi(10, 25)], enemy, durationSeconds: 180, burst: true }).slots[0]!;
+    const s = computeTeamDamage({
+      slots: [lapi(10, 25)],
+      enemy,
+      durationSeconds: 180,
+      burst: true,
+      burstModel: 'fixed',
+    }).slots[0]!;
     expect(s.burst.activations).toHaveLength(9);
     // 10 秒バフはフルバースト区間の終わりで切れるので、どの発動も「素の攻撃力 − 防御力」基準になる
     const bare = s.baseAttack - enemy.defence;
@@ -230,7 +258,13 @@ describe('burst hit buff snapshot', () => {
   });
 
   it('differs per activation when a buff outlives the cycle', () => {
-    const s = computeTeamDamage({ slots: [lapi(20, 26)], enemy, durationSeconds: 180, burst: true }).slots[0]!;
+    const s = computeTeamDamage({
+      slots: [lapi(20, 26)],
+      enemy,
+      durationSeconds: 180,
+      burst: true,
+      burstModel: 'fixed',
+    }).slots[0]!;
     const hits = s.burst.activations.map((a) => a.hit.perActivation);
     // 1 回目は素の攻撃力（1000 − 100）、2 回目以降は前サイクルの 20 秒バフが生きている（1000 × 1.5 − 100）
     expect(s.burst.activations.map((a) => a.hit.baseHit)).toEqual([
@@ -247,7 +281,13 @@ describe('burst hit buff snapshot', () => {
 
   it('keeps the representative hit even for a slot that never activates', () => {
     const second = lapi(10, 30);
-    const t = computeTeamDamage({ slots: [lapi(10, 25), second], enemy, durationSeconds: 180, burst: true });
+    const t = computeTeamDamage({
+      slots: [lapi(10, 25), second],
+      enemy,
+      durationSeconds: 180,
+      burst: true,
+      burstModel: 'fixed',
+    });
     // 同じ段階（Step3）の 2 体目は発動しないが、1 発動の内訳は出る
     expect(t.slots[1]?.burst.activations).toEqual([]);
     expect(t.slots[1]?.burst.hit).not.toBeNull();

@@ -4,6 +4,7 @@
 //   3. 長時間での収束（calc は sim の長時間平均）
 // Stage 6 の持続バフは describe('with timed buffs') で扱う。
 import { describe, expect, it } from 'vitest';
+import { slotsByStep, type BurstScheduleModel } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
@@ -104,8 +105,9 @@ const team: TeamSlotInput[] = [
   ),
 ];
 
-function both(durationSeconds: number, burst: boolean) {
-  const input = { slots: team, enemy, durationSeconds, burst };
+// Stage 5 / 6 のテストは固定 20 秒サイクルで書いてある（Stage 7 の退化テストを兼ねる）。動的サイクルは末尾の Stage 7 節
+function both(durationSeconds: number, burst: boolean, burstModel: BurstScheduleModel = 'fixed') {
+  const input = { slots: team, enemy, durationSeconds, burst, burstModel };
   return { sim: runSimulation(input), calc: computeTeamDamage(input) };
 }
 
@@ -114,7 +116,7 @@ describe('sim vs calc: quantities that must match exactly', () => {
 
   it('share the same schedule, buffs and per-trigger damage', () => {
     expect(sim.schedule).toEqual(calc.schedule);
-    expect(calc.schedule?.assignment).toEqual({ Step1: 1, Step2: 3, Step3: 0 });
+    expect(calc.schedule && slotsByStep(calc.schedule)).toEqual({ Step1: [1], Step2: [3], Step3: [0] });
     expect(sim.timeline.segments).toEqual(calc.timeline.segments);
     for (let i = 0; i < team.length; i++) {
       const c = calc.slots[i]!;
@@ -228,8 +230,8 @@ const timedTeam: TeamSlotInput[] = [
   team[4]!,
 ];
 
-function bothTimed(durationSeconds: number, burst = true) {
-  const input = { slots: timedTeam, enemy, durationSeconds, burst };
+function bothTimed(durationSeconds: number, burst = true, burstModel: BurstScheduleModel = 'fixed') {
+  const input = { slots: timedTeam, enemy, durationSeconds, burst, burstModel };
   return { sim: runSimulation(input), calc: computeTeamDamage(input) };
 }
 
@@ -278,7 +280,7 @@ describe('sim vs calc with timed buffs: quantities that must match exactly', () 
   });
 
   it('give a bigger total than the same team without the timed buffs', () => {
-    const plain = computeTeamDamage({ slots: team, enemy, durationSeconds: 180, burst: true });
+    const plain = computeTeamDamage({ slots: team, enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
     expect(calc.totalDamage).toBeGreaterThan(plain.totalDamage);
   });
 });
@@ -302,6 +304,64 @@ describe('sim vs calc with timed buffs: discretization error bounds', () => {
   it('converges below 0.5% at 18,000 s', () => {
     const diffs = [180, 1800, 18000].map((d) => {
       const { sim, calc } = bothTimed(d);
+      return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
+    });
+    expect(diffs[2]).toBeLessThan(0.005);
+  });
+});
+
+// ---- Stage 7: 動的サイクル（ゲージ蓄積・CT・チェーン） ----
+
+describe('sim vs calc on the dynamic cycle: quantities that must match exactly', () => {
+  const { sim, calc } = bothTimed(180, true, 'dynamic');
+
+  it('share the same schedule, segmentation and per-segment trigger damage', () => {
+    expect(calc.schedule?.model).toBe('dynamic');
+    expect(sim.schedule).toEqual(calc.schedule);
+    expect(sim.timeline.segments).toEqual(calc.timeline.segments);
+    for (let i = 0; i < timedTeam.length; i++) {
+      const c = calc.slots[i]!;
+      const simSlot = sim.slots[i]!;
+      sim.timeline.segments.forEach((segment, j) => {
+        const group = c.segments.find((g) => g.ranges.some((r) => r.start <= segment.start && segment.start < r.end))!;
+        expect(simSlot.segments[j]!.trigger.perTrigger).toBe(group.trigger.perTrigger);
+      });
+      expect(simSlot.burst.activations.map((f) => f / FPS)).toEqual(c.burst.activations.map((a) => a.seconds));
+      expect(simSlot.burst.damage).toBeCloseTo(c.burst.totalDamage, 6);
+    }
+  });
+
+  it('bursts fewer times than the fixed 20 s cycle (every nike here has a 40 s cooldown)', () => {
+    const fixed = bothTimed(180).calc;
+    expect(fixed.burstSummary?.fullBursts).toBe(9);
+    expect(calc.burstSummary?.fullBursts).toBeLessThan(9);
+    expect(calc.burstSummary?.meanCycleSeconds).toBeGreaterThanOrEqual(40);
+    // フルバーストは III が撃ったフレームから始まる
+    for (const w of calc.schedule!.fullBurstWindows) {
+      expect(calc.schedule!.activations.some((a) => a.startsFullBurst && a.frame === w.start)).toBe(true);
+    }
+  });
+});
+
+describe('sim vs calc on the dynamic cycle: discretization error bounds', () => {
+  it('stays within one magazine per segment and 5% / 3% on the totals', () => {
+    const { sim, calc } = bothTimed(180, true, 'dynamic');
+    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
+    for (let i = 0; i < timedTeam.length; i++) {
+      const s = sim.slots[i]!;
+      const c = calc.slots[i]!;
+      expect(Math.abs(s.totalDamage - c.totalDamage) / c.totalDamage, `slot ${i}`).toBeLessThan(0.05);
+      const groups = simGroupTotals(sim, i);
+      c.segments.forEach((g, j) => {
+        const bound = s.character.shot.maxAmmo * g.ranges.length;
+        expect(Math.abs(groups[j]!.triggers - g.triggers), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
+      });
+    }
+  });
+
+  it('converges below 0.5% at 18,000 s', () => {
+    const diffs = [180, 1800, 18000].map((d) => {
+      const { sim, calc } = bothTimed(d, true, 'dynamic');
       return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
     });
     expect(diffs[2]).toBeLessThan(0.005);

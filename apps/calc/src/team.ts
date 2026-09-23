@@ -22,7 +22,7 @@ export const DEFAULT_SLOT_CONDITION: SlotCondition = { coreHitRate: 1, distanceB
 export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 /** 戦闘時間の規定値。レイド・射撃場ともに 180 秒（スペック固定でも変えない） */
 export const DEFAULT_DURATION_SECONDS = 180;
-/** 固定 20 秒サイクルのバーストの既定。ON */
+/** バーストの既定。ON */
 export const DEFAULT_BURST = true;
 
 export type SlotState = {
@@ -39,8 +39,10 @@ export type TeamState = {
   durationSeconds: number;
   /** ユニオン射撃場スペック固定（編成共通） */
   fixedSpec: boolean;
-  /** 固定 20 秒サイクル（通常 10 秒 + フルバースト 10 秒）でバーストを回すか（Stage 5） */
+  /** バーストを回すか（Stage 5 で固定 20 秒サイクル、Stage 7 からゲージ・CT の動的サイクル） */
   burst: boolean;
+  /** 操作キャラの枠（Stage 7）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ。null は全員 AI 扱い */
+  controlledSlot: number | null;
 };
 
 export type TeamAction =
@@ -53,6 +55,7 @@ export type TeamAction =
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
   | { type: 'setBurst'; burst: boolean }
+  | { type: 'setControlledSlot'; controlledSlot: number | null }
   | { type: 'replace'; state: TeamState };
 
 export function emptySlot(): SlotState {
@@ -71,6 +74,7 @@ export function initialTeamState(): TeamState {
     durationSeconds: DEFAULT_DURATION_SECONDS,
     fixedSpec: false,
     burst: DEFAULT_BURST,
+    controlledSlot: null,
   };
 }
 
@@ -110,6 +114,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
         : { ...state, fixedSpec: false };
     case 'setBurst':
       return { ...state, burst: action.burst };
+    case 'setControlledSlot':
+      return { ...state, controlledSlot: action.controlledSlot };
     case 'replace':
       return action.state;
   }
@@ -229,6 +235,15 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
   if (!isBool(raw.fixedSpec)) return null;
   // Stage 4 までの保存データには無いので、欠落は既定値（ON）
   if (raw.burst !== undefined && !isBool(raw.burst)) return null;
+  // Stage 6 までの保存データには無いので、欠落は null（全員 AI 扱い）
+  const controlled = raw.controlledSlot;
+  if (
+    controlled !== undefined &&
+    controlled !== null &&
+    !(typeof controlled === 'number' && Number.isInteger(controlled) && controlled >= 0 && controlled < TEAM_SIZE)
+  ) {
+    return null;
+  }
 
   return {
     slots,
@@ -236,5 +251,6 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
     durationSeconds: raw.durationSeconds,
     fixedSpec: raw.fixedSpec,
     burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
+    controlledSlot: typeof controlled === 'number' ? controlled : null,
   };
 }

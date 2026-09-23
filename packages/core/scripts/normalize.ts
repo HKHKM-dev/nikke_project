@@ -1,5 +1,6 @@
 // Blablalink roledata（生 JSON）→ 正規化済み CharacterData。単位変換はここに集約する。
 import type {
+  BurstNextStep,
   BurstStep,
   CharacterData,
   CharacterIndexEntry,
@@ -33,6 +34,8 @@ export type RawRoleData = {
   class: string;
   corporation: string;
   use_burst_skill: string;
+  change_burst_step: string;
+  burst_duration: number;
   critical_ratio: number;
   critical_damage: number;
   bonusrange_min: number;
@@ -67,10 +70,13 @@ export type RawRoleData = {
     penetration: number;
     maintain_fire_stance: number;
     uptype_fire_timing: number;
+    burst_energy_pershot: number;
+    target_burst_energy_pershot: number;
+    full_charge_burst_energy: number;
   };
   skill1_detail: RawSkillDetail;
   skill2_detail: RawSkillDetail;
-  ulti_skill_detail: RawSkillDetail;
+  ulti_skill_detail: RawSkillDetail & { skill_cooltime: number };
   character_level_attack_list: number[];
   character_level_hp_list: number[];
   character_level_defence_list: number[];
@@ -81,6 +87,7 @@ const CLASSES: readonly NikkeClass[] = ['Attacker', 'Defender', 'Supporter'];
 const ELEMENTS: readonly Element[] = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'];
 const WEAPON_TYPES: readonly WeaponType[] = ['AR', 'SMG', 'SR', 'RL', 'SG', 'MG'];
 const BURST_STEPS: readonly BurstStep[] = ['Step1', 'Step2', 'Step3', 'AllStep'];
+const NEXT_STEPS: readonly BurstNextStep[] = ['Step1', 'Step2', 'Step3', 'StepFull', 'NextStep'];
 const INPUT_TYPES: readonly ShotInputType[] = ['DOWN', 'UP', 'DOWN_Charge'];
 
 function oneOf<T extends string>(allowed: readonly T[], value: string, field: string): T {
@@ -150,6 +157,15 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData): CharacterData
       penetration: shot.penetration,
       maintainFireStance: shot.maintain_fire_stance,
       uptypeFireTiming: shot.uptype_fire_timing,
+      targetBurstEnergyPerShot: shot.target_burst_energy_pershot,
+      burstEnergyPerShot: shot.burst_energy_pershot,
+      // チャージなし武器は 0 が入っているので 1 にする（式に分岐を持ち込まない）
+      fullChargeBurstEnergy: shot.full_charge_burst_energy === 0 ? 1 : shot.full_charge_burst_energy / 10000,
+    },
+    burstSkill: {
+      cooldownSeconds: en.ulti_skill_detail.skill_cooltime / 100,
+      nextStep: oneOf(NEXT_STEPS, en.change_burst_step, 'change_burst_step'),
+      durationSeconds: en.burst_duration / 100,
     },
     skills: {
       skill1: toSkill(en.skill1_detail, ja.skill1_detail),

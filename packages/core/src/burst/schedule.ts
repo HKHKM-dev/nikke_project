@@ -1,0 +1,84 @@
+// Stage 7: バーストの時刻表（sim と calc が共有する）。
+// Stage 5 / 6 の固定サイクルは「全段階が同じフレーム」「段階の割当が固定」だったが、動的サイクルでは
+// 段階ごとに発動フレームが違い、同じ段階の 2 体が CT で交互に撃つこともあるので、発動を 1 回ずつ列挙する形にする。
+// 固定サイクル（fixedCycle.ts）も動的サイクル（dynamic.ts）もこの形を返す。
+import { FPS } from '../weapons.ts';
+
+export type BurstStepKey = 'Step1' | 'Step2' | 'Step3';
+export const BURST_STEP_KEYS = ['Step1', 'Step2', 'Step3'] as const satisfies readonly BurstStepKey[];
+
+export type FullBurstWindow = { start: number; end: number };
+
+export type BurstActivation = {
+  frame: number;
+  step: BurstStepKey;
+  slotIndex: number;
+  /** この発動でフルバーストに入るか */
+  startsFullBurst: boolean;
+};
+
+export type BurstScheduleModel = 'fixed' | 'dynamic';
+
+export type BurstSchedule = {
+  model: BurstScheduleModel;
+  /** 発生順（同じフレームなら I → II → III の順） */
+  activations: BurstActivation[];
+  /** フルバースト区間 [start, end) の列。末尾は戦闘時間で切る */
+  fullBurstWindows: FullBurstWindow[];
+  /** fullBurstWindows の長さの合計（フレーム） */
+  fullBurstFramesTotal: number;
+  /** ゲージが満タンになったフレーム（動的サイクルだけ。固定サイクルは空） */
+  gaugeFullFrames: number[];
+  /** チェーンが途切れた（次の段階が出ないままタイムアウトした）フレーム（動的サイクルだけ） */
+  chainTimeouts: number[];
+};
+
+/** 枠 slotIndex がバーストを撃ったフレーム列（発生順） */
+export function activationFramesOfSlot(schedule: BurstSchedule, slotIndex: number): number[] {
+  return schedule.activations.filter((a) => a.slotIndex === slotIndex).map((a) => a.frame);
+}
+
+/** frame がフルバースト区間に入っているか */
+export function isInFullBurst(schedule: BurstSchedule, frame: number): boolean {
+  return schedule.fullBurstWindows.some((w) => w.start <= frame && frame < w.end);
+}
+
+export type BurstSummary = {
+  model: BurstScheduleModel;
+  /** フルバーストの回数（戦闘時間内に始まったもの） */
+  fullBursts: number;
+  /** fullBurstFramesTotal / frames（0 フレームなら 0） */
+  fullBurstUptime: number;
+  /** 隣り合うフルバースト開始の間隔の平均（秒）。1 回以下なら null */
+  meanCycleSeconds: number | null;
+  /** 1 回目のフルバースト開始（秒）。なければ null */
+  firstFullBurstSeconds: number | null;
+  /** バーストの発動回数（全段階の合計） */
+  activations: number;
+  chainTimeouts: number;
+};
+
+export function summarizeSchedule(schedule: BurstSchedule, frames: number): BurstSummary {
+  const starts = schedule.fullBurstWindows.map((w) => w.start);
+  const first = starts[0];
+  const last = starts[starts.length - 1];
+  return {
+    model: schedule.model,
+    fullBursts: starts.length,
+    fullBurstUptime: frames > 0 ? schedule.fullBurstFramesTotal / frames : 0,
+    meanCycleSeconds:
+      starts.length >= 2 && first !== undefined && last !== undefined
+        ? (last - first) / (starts.length - 1) / FPS
+        : null,
+    firstFullBurstSeconds: first === undefined ? null : first / FPS,
+    activations: schedule.activations.length,
+    chainTimeouts: schedule.chainTimeouts.length,
+  };
+}
+
+/** 段階ごとに、実際に撃った枠（初出順・重複なし）。UI とテスト用 */
+export function slotsByStep(schedule: BurstSchedule): Record<BurstStepKey, number[]> {
+  const result: Record<BurstStepKey, number[]> = { Step1: [], Step2: [], Step3: [] };
+  for (const a of schedule.activations) if (!result[a.step].includes(a.slotIndex)) result[a.step].push(a.slotIndex);
+  return result;
+}

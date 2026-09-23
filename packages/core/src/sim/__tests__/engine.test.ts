@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
+import { slotsByStep } from '../../burst/schedule.ts';
 import { computeCadence } from '../../cadence.ts';
 import type { EnemyInput } from '../../damage.ts';
 import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
@@ -86,7 +87,7 @@ describe('runSimulation without burst', () => {
 describe('runSimulation with the fixed burst cycle', () => {
   it('does not change the firing pattern, only which bucket each trigger lands in (+0.5 boost in full burst)', () => {
     const off = runSimulation({ slots: [ar, sr], enemy, durationSeconds: 180 });
-    const on = runSimulation({ slots: [ar, sr], enemy, durationSeconds: 180, burst: true });
+    const on = runSimulation({ slots: [ar, sr], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
     expect(on.schedule?.fullBurstFramesTotal).toBe(5400);
     for (let i = 0; i < 2; i++) {
       const a = off.slots[i]!;
@@ -109,8 +110,14 @@ describe('runSimulation with the fixed burst cycle', () => {
     const buster = slot(5, {}, 'Step3', '351.64');
     const other = slot(6, {}, 'Step3', '100'); // 同じ段階の 2 体目は発動しない
     const step1 = slot(7, {}, 'Step1', '50');
-    const sim = runSimulation({ slots: [step2, buster, other, step1], enemy, durationSeconds: 180, burst: true });
-    expect(sim.schedule?.assignment).toEqual({ Step1: 3, Step2: 0, Step3: 1 });
+    const sim = runSimulation({
+      slots: [step2, buster, other, step1],
+      enemy,
+      durationSeconds: 180,
+      burst: true,
+      burstModel: 'fixed',
+    });
+    expect(sim.schedule && slotsByStep(sim.schedule)).toEqual({ Step1: [3], Step2: [0], Step3: [1] });
     const b = sim.slots[1]!;
     expect(b.burst.activations).toEqual([600, 1800, 3000, 4200, 5400, 6600, 7800, 9000, 10200]);
     expect(b.burst.hit?.multiplier).toBeCloseTo(3.5164, 12);
@@ -127,7 +134,14 @@ describe('runSimulation with the fixed burst cycle', () => {
     const step1 = slot(7, {}, 'Step1', '50');
     const step2 = slot(8, {}, 'Step2', '60');
     const step3 = slot(9, {}, 'Step3', '70');
-    const sim = runSimulation({ slots: [step3, step1, step2], enemy, durationSeconds: 20.5, burst: true, trace: true });
+    const sim = runSimulation({
+      slots: [step3, step1, step2],
+      enemy,
+      durationSeconds: 20.5,
+      burst: true,
+      burstModel: 'fixed',
+      trace: true,
+    });
     const at600 = sim.events.filter((e) => e.frame === 600);
     expect(at600[0]).toEqual({ frame: 600, kind: 'fullBurstStart' });
     expect(at600.slice(1, 4).map((e) => (e.kind === 'burst' ? [e.step, e.slot] : null))).toEqual([
@@ -144,13 +158,48 @@ describe('runSimulation with the fixed burst cycle', () => {
   });
 
   it('runs a very short battle and an empty team', () => {
-    expect(runSimulation({ slots: [ar], enemy, durationSeconds: 0, burst: true }).totalDamage).toBe(0);
-    const empty = runSimulation({ slots: [null, null], enemy, durationSeconds: 180, burst: true });
+    expect(
+      runSimulation({ slots: [ar], enemy, durationSeconds: 0, burst: true, burstModel: 'fixed' }).totalDamage,
+    ).toBe(0);
+    const empty = runSimulation({ slots: [null, null], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
     expect(empty.totalDamage).toBe(0);
-    expect(empty.schedule?.assignment).toEqual({ Step1: null, Step2: null, Step3: null });
+    expect(empty.schedule?.activations).toEqual([]);
   });
 
   it('rejects duplicate characters like computeTeamDamage', () => {
     expect(() => runSimulation({ slots: [ar, slot(1)], enemy, durationSeconds: 1 })).toThrow(RangeError);
+  });
+});
+
+describe('runSimulation on the dynamic cycle (Stage 7)', () => {
+  const step1 = slot(7, {}, 'Step1', '50');
+  const step2 = slot(8, {}, 'Step2', '60');
+  const step3 = slot(9, {}, 'Step3', '70');
+  const team = [step3, step1, step2];
+
+  it('fires exactly the same shots as without burst (the schedule does not change the shooters)', () => {
+    const shots = (burst: boolean) =>
+      runSimulation({ slots: team, enemy, durationSeconds: 180, burst, trace: true })
+        .events.filter((e) => e.kind === 'trigger')
+        .map((e) => (e.kind === 'trigger' ? `${e.frame}:${e.slot}` : ''));
+    expect(shots(true)).toEqual(shots(false));
+  });
+
+  it('traces gauge full, the chain I → II → III 20f apart and the full burst from III', () => {
+    const sim = runSimulation({ slots: team, enemy, durationSeconds: 60, burst: true, trace: true });
+    const schedule = sim.schedule!;
+    expect(schedule.model).toBe('dynamic');
+    const full = schedule.gaugeFullFrames[0]!;
+    expect(sim.events.find((e) => e.kind === 'gaugeFull')?.frame).toBe(full);
+    const bursts = sim.events.filter((e) => e.kind === 'burst').slice(0, 3);
+    expect(bursts.map((e) => (e.kind === 'burst' ? [e.frame, e.step, e.slot] : null))).toEqual([
+      [full + 20, 'Step1', 1],
+      [full + 40, 'Step2', 2],
+      [full + 60, 'Step3', 0],
+    ]);
+    expect(sim.events.find((e) => e.kind === 'fullBurstStart')?.frame).toBe(full + 60);
+    expect(sim.events.find((e) => e.kind === 'fullBurstEnd')?.frame).toBe(full + 660);
+    // 全員 CT 40 秒なので 2 回目は 1 回目の I から 2,400f 後
+    expect(sim.slots[1]!.burst.activations).toEqual([full + 20, full + 20 + 2400]);
   });
 });

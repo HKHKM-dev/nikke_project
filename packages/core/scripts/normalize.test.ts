@@ -20,6 +20,8 @@ function emma(locale: 'en' | 'ja'): RawRoleData {
     class: 'Supporter',
     corporation: 'ELYSION',
     use_burst_skill: 'Step1',
+    change_burst_step: 'Step2',
+    burst_duration: 1000,
     critical_ratio: 1500,
     critical_damage: 15000,
     bonusrange_min: 35,
@@ -54,10 +56,13 @@ function emma(locale: 'en' | 'ja'): RawRoleData {
       penetration: 0,
       maintain_fire_stance: 0,
       uptype_fire_timing: 0,
+      burst_energy_pershot: 500,
+      target_burst_energy_pershot: 1000,
+      full_charge_burst_energy: 0,
     },
     skill1_detail: skill(2090101, ja ? 'チアリーディング' : 'Cheerleading', [['5.92', '6.46'], ['5', '5'], undefined]),
     skill2_detail: skill(2090201, 'S2', []),
-    ulti_skill_detail: skill(1090301, 'Burst', [['10']]),
+    ulti_skill_detail: { ...skill(1090301, 'Burst', [['10']]), skill_cooltime: 2000 },
     character_level_attack_list: [500, 525, 550],
     character_level_hp_list: [15000, 15750, 16500],
     character_level_defence_list: [84, 88, 92],
@@ -76,6 +81,19 @@ describe('toCharacterData', () => {
     expect(data.shot.coreDamageRate).toBe(2);
     expect(data.shot.damage).toBe(557); // 生値のまま
     expect(data.shot.maxAmmo).toBe(300);
+  });
+
+  it('converts burst gauge and cooldown fields (Stage 7)', () => {
+    expect(data.shot.targetBurstEnergyPerShot).toBe(1000);
+    expect(data.shot.burstEnergyPerShot).toBe(500);
+    expect(data.shot.fullChargeBurstEnergy).toBe(1); // 0 → 1
+    expect(data.burstSkill).toEqual({ cooldownSeconds: 20, nextStep: 'Step2', durationSeconds: 10 });
+    const charged = emma('en');
+    charged.shot_detail.full_charge_burst_energy = 25000;
+    expect(toCharacterData(charged, emma('ja')).shot.fullChargeBurstEnergy).toBe(2.5);
+    const bad = emma('en');
+    bad.change_burst_step = 'Step4';
+    expect(() => toCharacterData(bad, emma('ja'))).toThrow(/change_burst_step/);
   });
 
   it('keeps both locale names and enum fields', () => {

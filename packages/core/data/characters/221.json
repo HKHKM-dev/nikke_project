@@ -47,7 +47,15 @@
     "fireType": "HomingProjectile",
     "penetration": 0,
     "maintainFireStance": 0,
-    "uptypeFireTiming": 0
+    "uptypeFireTiming": 0,
+    "targetBurstEnergyPerShot": 29000,
+    "burstEnergyPerShot": 14500,
+    "fullChargeBurstEnergy": 2.5
+  },
+  "burstSkill": {
+    "cooldownSeconds": 60,
+    "nextStep": "Step2",
+    "durationSeconds": 10
   },
   "skills": {
     "skill1": {

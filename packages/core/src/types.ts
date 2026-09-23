@@ -9,6 +9,8 @@ export type NikkeClass = 'Attacker' | 'Defender' | 'Supporter';
 export type Element = 'Fire' | 'Water' | 'Wind' | 'Electronic' | 'Iron';
 export type WeaponType = 'AR' | 'SMG' | 'SR' | 'RL' | 'SG' | 'MG';
 export type BurstStep = 'Step1' | 'Step2' | 'Step3' | 'AllStep';
+/** バースト後に進む段階（CDN の change_burst_step）。Step1〜3 はその段階へ（戻り = リエントリーを含む）、StepFull はフルバースト、NextStep は 1 つ上 */
+export type BurstNextStep = 'Step1' | 'Step2' | 'Step3' | 'StepFull' | 'NextStep';
 export type StatKind = 'attack' | 'hp' | 'defence';
 export type ShotInputType = 'DOWN' | 'UP' | 'DOWN_Charge';
 
@@ -43,7 +45,7 @@ export type StatEnhance = {
 export type ShotParams = {
   /** 武器倍率（1e-4 単位。557 = 5.57%。SG は全ペレット合計） */
   damage: number;
-  /** 1 トリガーあたりの弾数（SG のペレット数。通常 1） */
+  /** 1 トリガーで出るペレット数（CDN の shot_count。SG は 10、それ以外は通常 1）。弾薬の消費数ではない（消費は 1 トリガー = 1） */
   shotCount: number;
   muzzleCount: number;
   maxAmmo: number;
@@ -68,6 +70,12 @@ export type ShotParams = {
   penetration: number;
   maintainFireStance: number;
   uptypeFireTiming: number;
+  /** 敵に 1 ペレット（SG 以外は 1 発）当たったときのバーストゲージ量（上限 BURST_GAUGE_MAX = 1,000,000） */
+  targetBurstEnergyPerShot: number;
+  /** 敵以外に当たったときのゲージ量（保持のみ。Stage 7 では使わない） */
+  burstEnergyPerShot: number;
+  /** フルチャージ時のゲージ倍率（2.5 = ×2.5）。チャージなし武器は 1 */
+  fullChargeBurstEnergy: number;
 };
 
 /** スキルの説明文と Lv 別数値（Stage 4 で構造化する。今は保持のみ）。 */
@@ -88,5 +96,12 @@ export type CharacterData = CharacterIndexEntry & {
   /** 距離ボーナスが付く距離（m）。RL のように存在しない場合は null */
   bonusRange: { min: number; max: number } | null;
   shot: ShotParams;
+  burstSkill: {
+    /** バースト CT（秒）。skill_cooltime / 100。Lv で変わらない */
+    cooldownSeconds: number;
+    nextStep: BurstNextStep;
+    /** burst_duration / 100。意味は未確認（フルバースト時間かもしれない）。Stage 7 では使わない */
+    durationSeconds: number;
+  };
   skills: { skill1: SkillRaw; skill2: SkillRaw; burst: SkillRaw };
 };

@@ -47,7 +47,15 @@
     "fireType": "ProjectileDirect",
     "penetration": 0,
     "maintainFireStance": 83,
-    "uptypeFireTiming": 3200
+    "uptypeFireTiming": 3200,
+    "targetBurstEnergyPerShot": 28000,
+    "burstEnergyPerShot": 14000,
+    "fullChargeBurstEnergy": 2.5
+  },
+  "burstSkill": {
+    "cooldownSeconds": 40,
+    "nextStep": "StepFull",
+    "durationSeconds": 10
   },
   "skills": {
     "skill1": {

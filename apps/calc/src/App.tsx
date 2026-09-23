@@ -116,12 +116,13 @@ export function App() {
           enemy: team.enemy,
           durationSeconds: team.durationSeconds,
           burst: team.burst,
+          controlledSlot: team.controlledSlot,
         }),
       };
     } catch (e) {
       return { ok: false, error: e instanceof Error ? e.message : String(e) };
     }
-  }, [slotInputs, team.enemy, team.durationSeconds, team.burst]);
+  }, [slotInputs, team.enemy, team.durationSeconds, team.burst, team.controlledSlot]);
 
   const loadingCount = team.slots.filter(
     (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
@@ -136,7 +137,9 @@ export function App() {
     <main className="app">
       <header>
         <h1>NIKKE calc v4</h1>
-        <p>5 人編成の通常攻撃 + 常時発動パッシブ + 固定サイクルのフルバーストとバーストスキル（Stage 5）</p>
+        <p>
+          5 人編成の通常攻撃 + 常時発動パッシブ + 持続バフ + ゲージ・CT で回るフルバーストとバーストスキル（Stage 7）
+        </p>
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
@@ -147,6 +150,7 @@ export function App() {
             durationSeconds={team.durationSeconds}
             fixedSpec={team.fixedSpec}
             burst={team.burst}
+            controlledSlot={team.controlledSlot}
             dispatch={dispatch}
           />
           <section className="slots" aria-label="編成">

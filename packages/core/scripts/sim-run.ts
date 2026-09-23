@@ -1,10 +1,13 @@
 // Stage 5: ヘッドレスの実行口。sim（フレーム逐次）と calc（2 区間の期待値）の枠別・区間別の内訳を表で出す。
-//   node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--defence 100] [--element Fire]
+//   node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--controlled 3] [--defence 100] [--element Fire]
+// Stage 7: バーストは既定で動的サイクル（ゲージ・CT・チェーン）。--fixed-cycle で Stage 5 / 6 の固定 20 秒サイクル。
+// --controlled は操作キャラの枠（1 始まり）。省略は全員 AI 扱い（SR / RL のフルチャージ倍率がゲージに乗らない）。
 // 育成値は既定 Lv200・3 凸・コア 0、条件は コア命中率 1・距離ボーナスあり・フルチャージ（calc の既定と同じ）。
 // スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
+import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../src/skills/resolve.ts';
@@ -21,6 +24,8 @@ const { values } = parseArgs({
     'fixed-spec': { type: 'boolean', default: false },
     duration: { type: 'string', default: '180' },
     'no-burst': { type: 'boolean', default: false },
+    'fixed-cycle': { type: 'boolean', default: false },
+    controlled: { type: 'string' },
     defence: { type: 'string', default: '100' },
     element: { type: 'string' },
     'core-hit-rate': { type: 'string', default: '1' },
@@ -28,7 +33,9 @@ const { values } = parseArgs({
 });
 
 if (!values.ids) {
-  console.error('usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst]');
+  console.error(
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle]',
+  );
   process.exit(2);
 }
 const ids = values.ids.split(',').map((s) => Number(s.trim()));
@@ -66,6 +73,8 @@ const input = {
   enemy: { defence: Number(values.defence), element: (values.element as Element | undefined) ?? null, hasCore: true },
   durationSeconds: Number(values.duration),
   burst: !values['no-burst'],
+  burstModel: values['fixed-cycle'] ? ('fixed' as const) : ('dynamic' as const),
+  controlledSlot: values.controlled === undefined ? null : Number(values.controlled) - 1,
 };
 const sim = runSimulation(input);
 const calc = computeTeamDamage(input);
@@ -74,16 +83,34 @@ const fmt = (n: number, digits = 0) => n.toLocaleString('en-US', { maximumFracti
 const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
 
 console.log(
-  `duration ${input.durationSeconds}s (${sim.frames}f), burst ${input.burst ? 'fixed 20s cycle' : 'off'}, ` +
-    `fixed spec ${fixedSpec}, enemy defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}`,
+  `duration ${input.durationSeconds}s (${sim.frames}f), burst ${input.burst ? input.burstModel : 'off'}, ` +
+    `fixed spec ${fixedSpec}, controlled ${input.controlledSlot === null ? 'none (all AI)' : `slot ${input.controlledSlot + 1}`}, ` +
+    `enemy defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}`,
 );
-if (calc.schedule) {
-  const a = calc.schedule.assignment;
-  const who = (i: number | null) => (i === null ? '-' : `slot ${i + 1} ${slots[i]!.character.name.ja}`);
+if (calc.schedule && calc.burstSummary) {
+  const byStep = slotsByStep(calc.schedule);
+  const who = (list: number[]) =>
+    list.length === 0 ? '-' : list.map((i) => `slot ${i + 1} ${slots[i]!.character.name.ja}`).join(' / ');
+  const b = calc.burstSummary;
+  const sec = (v: number | null) => (v === null ? '-' : `${v.toFixed(2)}s`);
   console.log(
-    `activations ${calc.schedule.activationFrames.length} (first at ${(calc.schedule.activationFrames[0] ?? 0) / FPS}s), ` +
-      `full burst ${calc.schedule.fullBurstFramesTotal / FPS}s; I: ${who(a.Step1)}, II: ${who(a.Step2)}, III: ${who(a.Step3)}`,
+    `full bursts ${b.fullBursts} (first ${sec(b.firstFullBurstSeconds)}, mean cycle ${sec(b.meanCycleSeconds)}, ` +
+      `uptime ${pct(b.fullBurstUptime)}), activations ${b.activations}, chain timeouts ${b.chainTimeouts}; ` +
+      `I: ${who(byStep.Step1)}, II: ${who(byStep.Step2)}, III: ${who(byStep.Step3)}`,
   );
+  const STEP = { Step1: 'I', Step2: 'II', Step3: 'III' } as const;
+  console.table(
+    calc.schedule.activations.map((a) => ({
+      time: `${(a.frame / FPS).toFixed(2)}s`,
+      frame: a.frame,
+      step: STEP[a.step],
+      nike: `slot ${a.slotIndex + 1} ${slots[a.slotIndex]!.character.name.ja}`,
+      fullBurst: a.startsFullBurst ? 'start' : '',
+    })),
+  );
+  if (calc.schedule.chainTimeouts.length > 0) {
+    console.log(`chain timeouts at ${calc.schedule.chainTimeouts.map((f) => `${(f / FPS).toFixed(2)}s`).join(', ')}`);
+  }
 }
 
 const rows = slots.map((slot, i) => {

@@ -84,7 +84,13 @@ describe('録画 14: クイーン（真）の戦闘開始時 攻撃力 +50.28%�
   });
 
   it('adds the fullBurstEnd window on top once bursts are running', () => {
-    const withBurst = computeTeamDamage({ slots: [slot], enemy, durationSeconds: 180, burst: true });
+    const withBurst = computeTeamDamage({
+      slots: [slot],
+      enemy,
+      durationSeconds: 180,
+      burst: true,
+      burstModel: 'fixed',
+    });
     const b = withBurst.slots[0]!;
     // battleStart 1 本 + fullBurstEnd 8 本（最後のフルバースト窓は戦闘終了で切れる）
     expect(b.windows.filter((w) => w.effect.trigger === 'battleStart')).toHaveLength(1);

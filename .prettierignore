@@ -4,3 +4,4 @@ dist/
 packages/core/data/
 package-lock.json
 .claude/
+scratch/

@@ -151,6 +151,23 @@ describe('burst toggle (Stage 5)', () => {
   });
 });
 
+describe('controlled slot (Stage 7)', () => {
+  it('defaults to null (everyone is AI), updates and round-trips', () => {
+    expect(INITIAL_TEAM_STATE.controlledSlot).toBeNull();
+    const s1 = teamReducer(withCharacters([10, 20]), { type: 'setControlledSlot', controlledSlot: 1 });
+    expect(s1.controlledSlot).toBe(1);
+    expect(parseTeamState(serializeTeamState(s1), index)).toEqual(s1);
+  });
+
+  it('parseTeamState fills a missing value (Stage 6 data) with null and rejects out-of-range values', () => {
+    const stage6 = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
+    delete stage6.controlledSlot;
+    expect(parseTeamState(JSON.stringify(stage6), index)?.controlledSlot).toBeNull();
+    expect(parseTeamState(JSON.stringify({ ...stage6, controlledSlot: 5 }), index)).toBeNull();
+    expect(parseTeamState(JSON.stringify({ ...stage6, controlledSlot: '1' }), index)).toBeNull();
+  });
+});
+
 describe('skill levels (Stage 4)', () => {
   it('defaults every slot to Lv10 and updates per slot', () => {
     const s0 = initialTeamState();
