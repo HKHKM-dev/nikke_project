@@ -13,6 +13,9 @@
 // 録画 19: 0 → 5 → 8 → 9）。最大装弾数が増えても残弾は増えない（録画 37）。
 // つなぎ目の −1 は「最終弾の直後」の 1 回だけにする（plan/design-stage10.md 3.3 節）。1 回分の完了ごとに −1 すると
 // 1 回分につき 1 フレームずつ早くなる。
+//
+// Stage 11 モダニア: 装弾数無限（FiringParams.infiniteAmmo）の間は撃っても残弾を減らさない。使用武器の変更（殲滅モード）は
+// sim/firstPass.ts が別の射手の状態で撃ち、終わったら resumeShooter で基礎の武器の状態に戻す（plan/design-stage11-modernia.md 3.4 節）。
 import { firstShotFrames, rateAfterShots } from '../cadence.ts';
 import type { ShotParams } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, MAX_RPM, isChargeWeapon, type WeaponModel } from '../weapons.ts';
@@ -90,6 +93,12 @@ function loadChunks(state: ShooterState, shot: ShotParams, model: WeaponModel, p
 /** 撃つ（残弾・マガジンの状態を進め、次の待ちを決める） */
 function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params: FiringParams): void {
   state.shotsInMagazine += 1;
+  if (params.infiniteAmmo) {
+    // Stage 11 モダニア: 装弾数無限。残弾は減らず、リロードも最後の弾丸も起きない
+    state.lastShot = false;
+    if (isChargeWeapon(shot)) state.wait = Math.max(0, params.chargeFrames + model.chargeReleaseFrames - 1);
+    return;
+  }
   state.ammo -= 1;
   state.lastShot = state.ammo <= 0;
   if (state.ammo <= 0) {
@@ -164,6 +173,26 @@ export function refillAmmo(
     state.phase = 'priming';
     state.wait = Math.max(0, firstShotFrames(shot, model, params) - 1);
   }
+}
+
+/**
+ * Stage 11 モダニア: 使用武器の変更が終わって基礎の武器に戻るときの扱い（仮。録画 44 の 6 で確かめる）。
+ * 'resume' = しまっておいた基礎の武器の状態（残弾・リロードの途中）をそのまま戻し、撃てる状態ならスピンアップ
+ * （1 発目の遅延とレートの蓄積）からやり直す
+ */
+export const WEAPON_CHANGE_RESTORE = 'resume' as const;
+
+/** Stage 11 モダニア: 使用武器の変更が終わった枠の基礎の武器の状態を戻す（state を書き換える） */
+export function resumeShooter(
+  state: ShooterState,
+  shot: ShotParams,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): void {
+  if (state.phase !== 'ready') return; // リロードの途中・1 発目の遅延の途中は、その続きから
+  state.shotsInMagazine = 0;
+  state.acc = 0;
+  state.wait = firstShotFrames(shot, model, params);
 }
 
 /** 最初の frames フレームで発射したフレームの列（テスト・CLI 用） */

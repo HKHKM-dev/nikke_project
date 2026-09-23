@@ -80,7 +80,12 @@ export type RawRoleData = {
   };
   skill1_detail: RawSkillDetail;
   skill2_detail: RawSkillDetail;
-  ulti_skill_detail: RawSkillDetail & { skill_cooltime: number };
+  ulti_skill_detail: RawSkillDetail & {
+    skill_cooltime: number;
+    /** Stage 11 モダニア: 'ChangeWeapon' なら skill_value_data の [1] が変更後の発射レート、[2] が変更後の shot_id */
+    skill_type?: string;
+    skill_value_data?: { skill_value_type: string; skill_value: number }[];
+  };
   character_level_attack_list: number[];
   character_level_hp_list: number[];
   character_level_defence_list: number[];
@@ -236,6 +241,7 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
       cooldownSeconds: en.ulti_skill_detail.skill_cooltime / 100,
       nextStep: oneOf(NEXT_STEPS, en.change_burst_step, 'change_burst_step'),
       durationSeconds: en.burst_duration / 100,
+      ...changeWeaponOf(en.ulti_skill_detail),
     },
     skills: {
       skill1: toSkill(en.skill1_detail, ja.skill1_detail),
@@ -244,6 +250,25 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
     },
     treasure,
   };
+}
+
+/**
+ * Stage 11 モダニア: バーストの使用武器の変更（skill_type 'ChangeWeapon'）。skill_value_data の [1] = 変更後の発射レート（rpm。
+ * 基礎の rate_of_fire と同じ単位）、[2] = 変更後の shot_id（中身は CDN に無い）。解読はユーザーの別プロジェクト
+ * （NIKKE_Damage_Calculator の scripts/build_change_weapon_from_cdn.py）による。ChangeWeapon でなければ何も足さない
+ */
+export function changeWeaponOf(
+  ulti: RawRoleData['ulti_skill_detail'],
+): { changeWeapon: { rateOfFire: number; shotId: number } } | Record<string, never> {
+  if (ulti.skill_type !== 'ChangeWeapon') return {};
+  const rate = ulti.skill_value_data?.[1];
+  const shotId = ulti.skill_value_data?.[2];
+  if (rate?.skill_value_type !== 'Integer' || shotId?.skill_value_type !== 'Integer' || !(rate.skill_value > 0)) {
+    throw new Error(
+      `ulti ${ulti.id}: unexpected ChangeWeapon skill_value_data ${JSON.stringify(ulti.skill_value_data)}`,
+    );
+  }
+  return { changeWeapon: { rateOfFire: rate.skill_value, shotId: shotId.skill_value } };
 }
 
 export function toIndexEntry(data: CharacterData): CharacterIndexEntry {

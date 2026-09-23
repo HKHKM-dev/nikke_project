@@ -21,14 +21,9 @@ import { resolveTrigger, skillValue, type ResolvedTrigger, type SkillLevels } fr
  */
 export const BURST_SKILL_FULL_BURST_BONUS = false;
 
-/**
- * Stage 8: バースト以外の倍率ダメージ（damage）が**フルバースト中に出たとき**、フルバースト補正 +0.5 を乗せるか。
- * **2026-09-23 の射撃場実測で「乗せる」と確定**（plan/verification.md Stage 8 節、録画 36〜38）:
- * ドレイク S2 は通常時 118,059 = (攻撃力 − 防御力) × 98.55%、フルバースト中 409,932 で、どちらもペレットとの比が 4.5987 と同じ
- * （ペレットの倍率グループは 1.0 → 1.5）。イサベルの段階 2 の追加ダメージ 758,766 = 299.7% × 1.5 × 受けるダメージ 1.3996。
- * バーストスキルダメージ（burstDamage）には乗らない（BURST_SKILL_FULL_BURST_BONUS）のと違う。
- */
-export const SKILL_HIT_FULL_BURST_BONUS = true;
+// Stage 8 の SKILL_HIT_FULL_BURST_BONUS（倍率ダメージにフルバースト補正を乗せる）は、Stage 11 モダニアで 1 トリガーの式
+// （damage.ts の射撃ごとの倍率ダメージ）も使うので damage.ts に移した（循環 import を避けるため）。ここからも export する
+export { SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 
 /** 解決済みの倍率ダメージ 1 件。burstDamage（burst スロット）と damage（Stage 8）で共通 */
 export type ResolvedSkillDamage = {
@@ -91,9 +86,8 @@ export function resolveDamageEffects(
     entry.effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'damage') return;
       const trigger = resolveTrigger(effect.trigger, skill, levels[slot]);
-      if (typeof trigger === 'object' && 'every' in trigger && trigger.every < 2 && trigger.count !== 'lastShot') {
-        throw new RangeError(`skill ${skill.id}: damage on every shot is not supported yet`);
-      }
+      // 射撃ごとの倍率ダメージは発動を作らず、1 トリガーの値に畳み込む（resolvePerShotDamage）
+      if (isPerShotTrigger(trigger)) return;
       const r: ResolvedDamageEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         damageType: effect.damageType,
@@ -104,6 +98,51 @@ export function resolveDamageEffects(
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
+  }
+  return resolved;
+}
+
+/**
+ * Stage 11 モダニア: 射撃ごとに発火するトリガーか（射撃の回数トリガーの every = 1。最後の弾丸は除く）。
+ * 「通常攻撃が命中した時」の倍率ダメージは射撃と 1 対 1 で、同じ区間では毎回同じ値なので、1 トリガーの値に畳み込む
+ */
+export function isPerShotTrigger(trigger: ResolvedTrigger): boolean {
+  return typeof trigger === 'object' && 'every' in trigger && trigger.every === 1 && trigger.count !== 'lastShot';
+}
+
+/**
+ * Stage 11 モダニア: 射撃ごとの倍率ダメージ（damage の every = 1）を Lv の数値に解決する。damage.ts の computeTriggerDamage が
+ * 1 トリガーの値（perShot）に足す。SG は「命中した時」がペレットごとかトリガーごとか分からないので拒否する
+ */
+export function resolvePerShotDamage(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedSkillDamage[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const resolved: ResolvedSkillDamage[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const entry = def.skills[slot];
+    if (entry.support === 'unsupported') continue;
+    const skill = character.skills[slot];
+    for (const effect of entry.effects) {
+      if (effect.kind !== 'damage') continue;
+      if (!isPerShotTrigger(resolveTrigger(effect.trigger, skill, levels[slot]))) continue;
+      if (character.weaponType === 'SG') {
+        throw new RangeError(
+          `skill ${skill.id}: damage on every shot is not supported for SG (per pellet or per trigger)`,
+        );
+      }
+      const r: ResolvedSkillDamage = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        damageType: effect.damageType,
+        multiplier: skillValue(skill, effect.ref, levels[slot]) / 100,
+      };
+      if (effect.assumes) r.assumes = effect.assumes;
+      resolved.push(r);
+    }
   }
   return resolved;
 }

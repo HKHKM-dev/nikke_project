@@ -1,13 +1,14 @@
 // Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）から、射手が使う実効値を作る（plan/design-stage10.md 3 節）。
 // 最大装弾数は録画 37・39（比率は加算、端数は四捨五入）、速度の式は録画 40（時間 × (1 − 速度)）で確定した。
-import type { BuffTotals } from '../skills/buffs.ts';
+// Stage 11 モダニア: 装弾数無限と使用武器の変更（殲滅モード）も射撃の実効値に入れた（plan/design-stage11-modernia.md 3.4 節）。
+import type { BuffTotals, ChangedWeapon } from '../skills/buffs.ts';
 import type { ShotParams } from '../types.ts';
 import { isChargeWeapon, secondsToFrames } from '../weapons.ts';
 
-/** 射撃に効くバフの合計（BuffTotals の 4 フィールド） */
+/** 射撃に効くバフの合計（BuffTotals のうち射撃に効くフィールド） */
 export type FiringBuffs = Pick<
   BuffTotals,
-  'maxAmmoRatio' | 'maxAmmoFlat' | 'reloadSpeed' | 'chargeSpeed' | 'chargeTimeFlat'
+  'maxAmmoRatio' | 'maxAmmoFlat' | 'reloadSpeed' | 'chargeSpeed' | 'chargeTimeFlat' | 'infiniteAmmo' | 'weapon'
 >;
 
 export const ZERO_FIRING_BUFFS: Readonly<FiringBuffs> = Object.freeze({
@@ -16,6 +17,8 @@ export const ZERO_FIRING_BUFFS: Readonly<FiringBuffs> = Object.freeze({
   reloadSpeed: 0,
   chargeSpeed: 0,
   chargeTimeFlat: 0,
+  infiniteAmmo: 0,
+  weapon: null,
 });
 
 /** 射手が各フレームで使う実効値 */
@@ -26,6 +29,10 @@ export type FiringParams = {
   reloadChunkFrames: number;
   /** チャージ時間のフレーム数（チャージ武器だけ意味を持つ。解放遅延は含まない） */
   chargeFrames: number;
+  /** Stage 11 モダニア: 装弾数無限（撃っても残弾を減らさない） */
+  infiniteAmmo: boolean;
+  /** Stage 11 モダニア: 使用武器の変更（無ければ null = 基礎の武器）。射手は変更後の武器を別の状態で撃つ（sim/firstPass.ts） */
+  weapon: ChangedWeapon | null;
 };
 
 /**
@@ -49,7 +56,9 @@ export function isZeroFiring(buffs: FiringBuffs): boolean {
     buffs.maxAmmoFlat === 0 &&
     buffs.reloadSpeed === 0 &&
     buffs.chargeSpeed === 0 &&
-    buffs.chargeTimeFlat === 0
+    buffs.chargeTimeFlat === 0 &&
+    buffs.infiniteAmmo === 0 &&
+    buffs.weapon === null
   );
 }
 
@@ -68,8 +77,12 @@ export function effectiveMaxAmmo(baseMaxAmmo: number, buffs: FiringBuffs): numbe
   return Math.max(1, rounded + buffs.maxAmmoFlat);
 }
 
-/** バフ込みの実効値。buffs 省略は基礎値（Stage 9 までの射手と同じ） */
-export function firingParams(shot: ShotParams, buffs: FiringBuffs = ZERO_FIRING_BUFFS): FiringParams {
+/**
+ * バフ込みの実効値。buffs 省略は基礎値（Stage 9 までの射手と同じ）。
+ * Stage 11 モダニア: 使用武器の変更が効いていれば、装弾数・リロード・チャージは変更後の武器から取る
+ */
+export function firingParams(base: ShotParams, buffs: FiringBuffs = ZERO_FIRING_BUFFS): FiringParams {
+  const shot = buffs.weapon?.shot ?? base;
   return {
     maxAmmo: effectiveMaxAmmo(shot.maxAmmo, buffs),
     reloadChunkFrames: secondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)),
@@ -77,6 +90,8 @@ export function firingParams(shot: ShotParams, buffs: FiringBuffs = ZERO_FIRING_
     chargeFrames: isChargeWeapon(shot)
       ? secondsToFrames(Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat))
       : 0,
+    infiniteAmmo: buffs.infiniteAmmo > 0,
+    weapon: buffs.weapon,
   };
 }
 

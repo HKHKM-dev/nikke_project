@@ -4,7 +4,7 @@
   "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
-      "support": "partial",
+      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -13,12 +13,14 @@
           "stat": "attack",
           "ref": 3,
           "durationRef": 4
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "味方全体の命中率▲（10 秒間維持）は未対応（全弾命中の前提なのでダメージに効かない）",
-          "en": "Hit rate up for all allies (10 s) is not modeled (every shot is assumed to hit, so it does not change damage)"
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "hitRate",
+          "ref": 1,
+          "durationRef": 2
         }
       ]
     },
@@ -65,7 +67,7 @@
   },
   "treasureSkills": {
     "skill1": {
-      "support": "partial",
+      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -92,12 +94,14 @@
           "stat": "maxAmmo",
           "ref": 7,
           "durationRef": 8
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "味方全体の命中率▲（10 秒間維持）は未対応（全弾命中の前提なのでダメージに効かない）",
-          "en": "Hit rate up for all allies (10 s) is not modeled (every shot is assumed to hit, so it does not change damage)"
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "hitRate",
+          "ref": 1,
+          "durationRef": 2
         }
       ]
     },

@@ -102,6 +102,9 @@ describe('computeDamage', () => {
       reloadSpeed: 0,
       chargeSpeed: 0,
       chargeTimeFlat: 0,
+      hitRate: 0,
+      infiniteAmmo: 0,
+      weapon: null,
     };
     const r = computeDamage(input({ buffs }));
     expect(r.baseAttack).toBe(1000);

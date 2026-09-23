@@ -1,6 +1,7 @@
 // スキル関連の表示用ラベル（React 非依存）
 import type {
   AppliedEffect,
+  AppliedTimedEffect,
   ResolvedInstantEffect,
   BuffStat,
   BuffTrigger,
@@ -28,6 +29,8 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   maxAmmo: '最大装弾数',
   reloadSpeed: 'リロード速度',
   chargeSpeed: 'チャージ速度',
+  hitRate: '命中率',
+  infiniteAmmo: '装弾数無限',
 };
 
 export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
@@ -91,17 +94,37 @@ export const SUPPORT_BADGE: Record<SkillSupport | 'undefined' | 'loading' | 'err
   error: { label: '読み込み失敗', className: 'unsupported' },
 };
 
-/** 「攻撃力 +42.2%」「攻撃力 +3,105（発動者基準 14.1%）」「最大装弾数 +5 発」「チャージ時間 −0.175 秒（発動者基準のチャージ速度）」 */
+/**
+ * 「攻撃力 +42.2%」「攻撃力 +3,105（発動者基準 14.1%）」「最大装弾数 +5 発」「チャージ時間 −0.175 秒（発動者基準のチャージ速度）」。
+ * Stage 11 モダニア: 「最大装弾数 −5.04%」（▼）、「装弾数無限」、「使用武器の変更（1 発 2.24%・4200 rpm）」
+ */
 export function formatAppliedAmount(effect: AppliedEffect): string {
+  if (effect.stat === 'weapon') {
+    const shot = effect.weapon?.shot;
+    return `使用武器の変更（1 発 ${formatPercent(effect.value, 2)}${shot ? `・${formatNumber(shot.rateOfFire)} rpm` : ''}）`;
+  }
   const stat = BUFF_STAT_LABEL[effect.stat];
+  if (effect.stat === 'infiniteAmmo') return stat;
+  const sign = effect.appliedAmount < 0 ? '−' : '+';
+  const amount = Math.abs(effect.appliedAmount);
   if (effect.scaling === 'casterAttack') {
     return `${stat} +${formatNumber(effect.appliedAmount)}（発動者基準 ${formatPercent(effect.value, 2)}）`;
   }
-  if (effect.scaling === 'flat') return `${stat} +${formatNumber(effect.appliedAmount)} 発`;
+  if (effect.scaling === 'flat') return `${stat} ${sign}${formatNumber(amount)} 発`;
   // Stage 11 アリス編: 発動者基準のチャージ速度は秒数でチャージ時間から引く
   if (effect.scaling === 'casterChargeTime')
     return `チャージ時間 −${formatNumber(effect.appliedAmount, 3)} 秒（発動者基準のチャージ速度）`;
-  return `${stat} +${formatPercent(effect.appliedAmount, 2)}`;
+  return `${stat} ${sign}${formatPercent(amount, 2)}`;
+}
+
+/**
+ * Stage 11 モダニア: 持続効果の付き方の補足。「最大 5 スタック」「自分が命中率増加状態なら」。無ければ空文字
+ */
+export function formatTimedExtras(effect: AppliedTimedEffect): string {
+  const parts: string[] = [];
+  if (effect.maxStacks !== undefined) parts.push(`最大 ${effect.maxStacks} スタック`);
+  if (effect.condition !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[effect.condition.selfBuffed]}増加状態なら`);
+  return parts.length === 0 ? '' : `（${parts.join('・')}）`;
 }
 
 /** Stage 10: 即時効果。「バースト CT −2.34 秒」「弾丸チャージ 39.88%」。Stage 11: 「回復（最大 HP の 5.23%）」 */

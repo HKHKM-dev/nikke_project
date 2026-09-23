@@ -8,6 +8,9 @@
 // Stage 11 で対象「直前にバーストスキルを使用した味方」（burstUsers）、フルスタックで発火する射撃の回数トリガー（stacksRef）、
 // 即時効果「回復」（heal）とトリガー「回復効果が適用された時」（healed）を足した（plan/design-stage11.md 2 節）。
 // Stage 11 アリス編で対象「最終攻撃力が最も高い味方 N 機」（topAttack と targetCount / targetCountRef）を足した（同 17 節）。
+// Stage 11 モダニア編で、射撃ごとの倍率ダメージ（damage の every = 1）、効果のあるスタック（maxStacks / maxStacksRef）、「▼」（decrease）、
+// stat の hitRate（命中率）と infiniteAmmo（装弾数無限）、条件「自分が 〈stat〉 増加状態なら」（condition）、
+// 使用武器の変更（weaponChange）を足した（plan/design-stage11-modernia.md 2 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import type { LocalizedText, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
@@ -23,6 +26,9 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * Stage 10 の 3 つ（射撃に効く。ダメージの式は読まない）:
  * maxAmmo = 最大装弾数（scaling 'ratio' は %、'flat' は発数）、reloadSpeed = リロード速度（%）、chargeSpeed = チャージ速度（%）。
  * 1 パス目（sim/firstPass.ts）が射手に渡すので、timed にも書ける。
+ * Stage 11 モダニアの 2 つ:
+ * hitRate = 命中率（%）。全弾命中の前提なのでダメージにも射撃にも効かない。区間の鍵にも入れず、条件（condition）の判定と表示にだけ使う。
+ * infiniteAmmo = 装弾数無限（射撃に効く。値を持たないフラグなので ref を書かない。timed だけ）。
  */
 export type BuffStat =
   | 'attack'
@@ -34,7 +40,9 @@ export type BuffStat =
   | 'burstGaugeSpeed'
   | 'maxAmmo'
   | 'reloadSpeed'
-  | 'chargeSpeed';
+  | 'chargeSpeed'
+  | 'hitRate'
+  | 'infiniteAmmo';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -46,13 +54,38 @@ export const BUFF_STATS = [
   'maxAmmo',
   'reloadSpeed',
   'chargeSpeed',
+  'hitRate',
+  'infiniteAmmo',
 ] as const satisfies readonly BuffStat[];
 
-/** Stage 10: 射撃に効く stat（射手の実効値を変える） */
-export const FIRING_STATS = ['maxAmmo', 'reloadSpeed', 'chargeSpeed'] as const satisfies readonly BuffStat[];
+/** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限を足した */
+export const FIRING_STATS = [
+  'maxAmmo',
+  'reloadSpeed',
+  'chargeSpeed',
+  'infiniteAmmo',
+] as const satisfies readonly BuffStat[];
 
-export function isFiringStat(stat: BuffStat): boolean {
-  return (FIRING_STATS as readonly BuffStat[]).includes(stat);
+/** 射撃に効くか。Stage 11 モダニア: 解決後の使用武器の変更（stat 'weapon'。skills/resolve.ts の EffectStat）も射撃に効く */
+export function isFiringStat(stat: BuffStat | 'weapon'): boolean {
+  return stat === 'weapon' || (FIRING_STATS as readonly string[]).includes(stat);
+}
+
+/**
+ * Stage 11 モダニア: 状態だけを表す stat（ダメージにも射撃にも効かない）。timed の窓は区間に入れず、BuffTimeline.stateWindows に置く
+ * （区間の鍵・グループが変わらないので、既存の編成の区間は 1 つも変わらない）
+ */
+export const STATE_STATS = ['hitRate'] as const satisfies readonly BuffStat[];
+
+export function isStateStat(stat: BuffStat | 'weapon'): boolean {
+  return (STATE_STATS as readonly string[]).includes(stat);
+}
+
+/** Stage 11 モダニア: 値を持たないフラグの stat（ref を書かない） */
+export const FLAG_STATS = ['infiniteAmmo'] as const satisfies readonly BuffStat[];
+
+export function isFlagStat(stat: BuffStat): boolean {
+  return (FLAG_STATS as readonly string[]).includes(stat);
 }
 
 /**
@@ -100,6 +133,8 @@ export type PassiveEffect = {
   scaling?: BuffScaling;
   /** description_value_NN の NN（1 始まり）。値は % 表記（"20.1"）。100 で割るのは resolvePassives の責務 */
   ref: number;
+  /** Stage 11 モダニア: 「▼」。値の符号を反転する（scaling が ratio / flat のときだけ） */
+  decrease?: true;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -198,8 +233,25 @@ export type TimedEffect = TargetCountFields & {
   stat: BuffStat;
   /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す（passive と同じ規則） */
   scaling?: BuffScaling;
-  /** description_value_NN の NN（1 始まり）。値は % 表記。100 で割るのは resolveTimed の責務 */
-  ref: number;
+  /**
+   * description_value_NN の NN（1 始まり）。値は % 表記。100 で割るのは resolveTimed の責務。
+   * Stage 11 モダニア: フラグの stat（infiniteAmmo）だけは書かない（値 1）
+   */
+  ref?: number;
+  /** Stage 11 モダニア: 「▼」。値の符号を反転する（scaling が ratio / flat のときだけ） */
+  decrease?: true;
+  /**
+   * Stage 11 モダニア: 効果のあるスタックの最大数（即値）。有れば発火のたびに 1 スタック足し（上限で止める）、値は 1 スタックあたり。
+   * 維持時間の数え方は skills/stacks.ts の STACK_REFRESH。クラウンの ShotCountTrigger.stacksRef（数えるだけのスタックが満ちたら発火）とは別物
+   */
+  maxStacks?: number;
+  /** 最大スタック数の description_value_NN。maxStacks と片方まで */
+  maxStacksRef?: number;
+  /**
+   * Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」。発火の瞬間に、効果を持つ枠がその stat の増加状態（常時パッシブか、
+   * 効いている窓で合計 > 0。同じフレームに付いた窓も入れる）なら発火する。カウンタは状態に関係なく数える
+   */
+  condition?: EffectCondition;
   /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
   durationRef?: number;
   /** 維持秒数の即値（説明文に「維持時間：10秒」と直書きされている場合）。durationRef とちょうど片方 */
@@ -207,6 +259,9 @@ export type TimedEffect = TargetCountFields & {
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
+
+/** Stage 11 モダニア: 発火の条件。selfBuffed = 自分がその stat の増加状態なら */
+export type EffectCondition = { selfBuffed: BuffStat };
 
 /** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */
 export type BurstDamageType = 'skill' | 'distributed';
@@ -228,7 +283,9 @@ export const SKILL_DAMAGE_TYPES = ['skill', 'distributed', 'additional'] as cons
 
 /**
  * Stage 8: トリガー付きの倍率ダメージ（「最終攻撃力の X% のダメージ / 分配ダメージ / 追加ダメージ」）。どのスロットにも書ける。
- * burst スロットの無条件の発動ダメージは従来どおり burstDamage。毎回（every = 1）の射撃トリガーは Stage 8 では書けない。
+ * burst スロットの無条件の発動ダメージは従来どおり burstDamage。
+ * Stage 11 モダニア: 射撃の回数トリガーの毎回（every = 1。「通常攻撃が命中した時」）は、発動を 1 件ずつ作らずに
+ * 1 トリガーの値に畳み込む（damage.ts の perShot）。最後の弾丸（lastShot）の毎回はマガジンに 1 回なので今までどおり 1 件ずつ
  */
 export type DamageEffect = {
   kind: 'damage';
@@ -283,7 +340,24 @@ export type InstantEffect = CooldownReductionEffect | AmmoRefillEffect | HealEff
 export type InstantKind = InstantEffect['kind'];
 export const INSTANT_KINDS = ['cooldownReduction', 'ammoRefill', 'heal'] as const satisfies readonly InstantKind[];
 
-export type SkillEffect = PassiveEffect | BurstDamageEffect | TimedEffect | DamageEffect | InstantEffect;
+/**
+ * Stage 11 モダニア: 「殲滅モード」「使用武器変更」。維持時間のあいだ、自分の通常攻撃を別の武器にする（対象は常に自分）。
+ * 変更後の武器のレートは CharacterData.burstSkill.changeWeapon（CDN の skill_value_data）から取る。
+ * CDN に無いパラメータ（コア倍率・スピンアップなど）は仮の定数（skills/resolve.ts の changedWeaponShot）
+ */
+export type WeaponChangeEffect = {
+  kind: 'weaponChange';
+  trigger: EffectTrigger;
+  /** 変更後の 1 発のダメージ（%）の description_value_NN */
+  damageRef: number;
+  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
+  durationRef?: number;
+  durationSeconds?: number;
+  assumes?: LocalizedText;
+};
+
+export type SkillEffect =
+  PassiveEffect | BurstDamageEffect | TimedEffect | DamageEffect | InstantEffect | WeaponChangeEffect;
 
 export type SkillEntry = {
   /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
@@ -392,13 +466,25 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
     fail(`${path}.target`, 'topAttack is not allowed in passive (the ranking changes during battle)');
   const targetWeapon = parseTargetWeapon(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
+  if (isFlagStat(stat)) fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
   const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (scaling !== undefined) effect.scaling = scaling;
+  if (parseDecrease(v, scaling, path)) effect.decrease = true;
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
+}
+
+/** Stage 11 モダニア: decrease（「▼」）は true だけ・scaling が ratio / flat のときだけ */
+function parseDecrease(v: Record<string, Json>, scaling: BuffScaling | undefined, path: string): boolean {
+  if (v.decrease === undefined) return false;
+  if (v.decrease !== true) fail(`${path}.decrease`, `expected true, got ${JSON.stringify(v.decrease)}`);
+  if (scaling !== undefined && scaling !== 'ratio' && scaling !== 'flat') {
+    fail(`${path}.decrease`, `only allowed with scaling "ratio" or "flat", got "${scaling}"`);
+  }
+  return true;
 }
 
 function parsePositiveInt(v: Json, path: string): number {
@@ -450,23 +536,77 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   }
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
+  const effect: TimedEffect = { kind: 'timed', trigger, target, stat };
+  // Stage 11 モダニア: フラグの stat（装弾数無限）は値を持たないので ref も scaling も書かない
+  if (isFlagStat(stat)) {
+    if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value (do not write ref)`);
+    if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value (do not write scaling)`);
+  } else {
+    effect.ref = parseRef(v.ref, `${path}.ref`);
+  }
+  if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
+  Object.assign(effect, count);
+  if (scaling !== undefined) effect.scaling = scaling;
+  if (parseDecrease(v, scaling, path)) {
+    if (isFlagStat(stat)) fail(`${path}.decrease`, `${stat} has no value`);
+    effect.decrease = true;
+  }
+  Object.assign(effect, parseDuration(v, path));
+  // Stage 11 モダニア: 効果のあるスタック
+  if (v.maxStacks !== undefined && v.maxStacksRef !== undefined)
+    fail(path, 'at most one of maxStacks and maxStacksRef');
+  if (v.maxStacks !== undefined) effect.maxStacks = parsePositiveInt(v.maxStacks, `${path}.maxStacks`);
+  if (v.maxStacksRef !== undefined) effect.maxStacksRef = parseRef(v.maxStacksRef, `${path}.maxStacksRef`);
+  if (isFlagStat(stat) && (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)) {
+    fail(path, `${stat} cannot stack`);
+  }
+  // Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」
+  if (v.condition !== undefined) {
+    const c = v.condition;
+    if (!isRecord(c) || Object.keys(c).some((k) => k !== 'selfBuffed')) {
+      fail(`${path}.condition`, 'expected { selfBuffed: stat }');
+    }
+    const selfBuffed = oneOf(BUFF_STATS, c.selfBuffed, `${path}.condition.selfBuffed`);
+    if (isFlagStat(selfBuffed)) fail(`${path}.condition.selfBuffed`, `${selfBuffed} is not a buff state`);
+    // 条件付きの効果が状態を作ると連鎖するので、同じ stat と状態だけの stat は出せない（plan/design-stage11-modernia.md 2.4 節）
+    if (stat === selfBuffed || isStateStat(stat)) {
+      fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
+    }
+    if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
+    effect.condition = { selfBuffed };
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/** durationRef / durationSeconds のちょうど片方 */
+function parseDuration(v: Record<string, Json>, path: string): { durationRef?: number; durationSeconds?: number } {
   const hasRef = v.durationRef !== undefined;
   const hasSeconds = v.durationSeconds !== undefined;
   if (hasRef === hasSeconds) {
     fail(path, 'exactly one of durationRef and durationSeconds is required');
   }
-  const effect: TimedEffect = { kind: 'timed', trigger, target, stat, ref: parseRef(v.ref, `${path}.ref`) };
-  if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
-  Object.assign(effect, count);
-  if (scaling !== undefined) effect.scaling = scaling;
-  if (hasRef) effect.durationRef = parseRef(v.durationRef, `${path}.durationRef`);
-  if (hasSeconds) {
-    const seconds = v.durationSeconds;
-    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds < 0) {
-      fail(`${path}.durationSeconds`, `expected a non-negative finite number, got ${JSON.stringify(seconds)}`);
-    }
-    effect.durationSeconds = seconds;
+  if (hasRef) return { durationRef: parseRef(v.durationRef, `${path}.durationRef`) };
+  const seconds = v.durationSeconds;
+  if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds < 0) {
+    fail(`${path}.durationSeconds`, `expected a non-negative finite number, got ${JSON.stringify(seconds)}`);
   }
+  return { durationSeconds: seconds };
+}
+
+/** Stage 11 モダニア: 使用武器の変更 */
+function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponChangeEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'damageRef', 'durationRef', 'durationSeconds', 'assumes'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const effect: WeaponChangeEffect = {
+    kind: 'weaponChange',
+    trigger: parseTrigger(v.trigger, `${path}.trigger`),
+    damageRef: parseRef(v.damageRef, `${path}.damageRef`),
+    ...parseDuration(v, path),
+  };
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -480,15 +620,7 @@ function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDam
 
 function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
-  // 毎回の倍率ダメージ（モダニアの毎命中など）は扱い方が未定。最後の弾丸はマガジンに 1 回なので毎回でよい（Stage 10）
-  if (
-    isShotCountTrigger(trigger) &&
-    trigger.count !== 'lastShot' &&
-    trigger.everyRef === undefined &&
-    (trigger.every ?? 1) === 1
-  ) {
-    fail(`${path}.trigger`, 'damage on every shot is not supported yet (every must be >= 2)');
-  }
+  // Stage 11 モダニア: 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
   const damageType = oneOf(SKILL_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
@@ -526,7 +658,7 @@ function parseRef(v: Json, path: string): number {
   return v;
 }
 
-/** passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果はどのスロットにも書ける */
+/** passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange はどのスロットにも書ける */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
   if (v.kind === 'passive') {
@@ -543,9 +675,10 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (v.kind === 'cooldownReduction' || v.kind === 'ammoRefill' || v.kind === 'heal') {
     return parseInstantEffect(v, path, v.kind);
   }
+  if (v.kind === 'weaponChange') return parseWeaponChangeEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill" or "heal", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal" or "weaponChange", got ${JSON.stringify(v.kind)}`,
   );
 }
 

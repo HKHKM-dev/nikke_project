@@ -1,9 +1,12 @@
 // Stage 2: 通常攻撃のみの静的 DPS。Stage 4 で常時発動パッシブのバフ（buffs）を差し込めるようにした。
 // Stage 5 で「1 トリガーの式」（computeTriggerDamage）を発射サイクルから切り離し、sim がフレームごとに使えるようにした。
 // フルバースト区間は condition.fullBurst で倍率グループに +0.5 が乗る。時間変化するバフはまだ含まない。
+// Stage 11 モダニア: 射撃ごとの倍率ダメージ（「通常攻撃が命中した時、最終攻撃力の X% の追加ダメージ」）を 1 トリガーの値に足す（perShot）。
+// 使用武器の変更（殲滅モード）が効いている区間は、武器倍率・コア倍率を変更後の武器（buffs.weapon）から取る。
 import { computeCadence, type CadenceResult } from './cadence.ts';
 import type { FiringParams } from './sim/firing.ts';
 import { elementMultiplier } from './element.ts';
+import type { ResolvedSkillDamage } from './skills/burstDamage.ts';
 import {
   ZERO_BUFFS,
   applyAttackBuffs,
@@ -18,6 +21,22 @@ import { DEFAULT_WEAPON_MODEL, hasSpinUp, isChargeWeapon, type WeaponModel } fro
 
 /** フルバースト区間中の通常攻撃に、倍率グループ (1 + コア + 会心 + 距離) へ加算される補正 */
 export const FULL_BURST_BOOST = 0.5;
+
+/**
+ * Stage 8: バースト以外の倍率ダメージ（damage）が**フルバースト中に出たとき**、フルバースト補正 +0.5 を乗せるか。
+ * **2026-09-23 の射撃場実測で「乗せる」と確定**（plan/verification.md Stage 8 節、録画 36〜38）:
+ * ドレイク S2 は通常時 118,059 = (攻撃力 − 防御力) × 98.55%、フルバースト中 409,932 で、どちらもペレットとの比が 4.5987 と同じ
+ * （ペレットの倍率グループは 1.0 → 1.5）。イサベルの段階 2 の追加ダメージ 758,766 = 299.7% × 1.5 × 受けるダメージ 1.3996。
+ * バーストスキルダメージ（burstDamage）には乗らない（BURST_SKILL_FULL_BURST_BONUS）のと違う。
+ * Stage 11 モダニア: 射撃ごとの倍率ダメージ（perShot）にも同じ規則を使うので、skills/burstDamage.ts からここへ移した
+ */
+export const SKILL_HIT_FULL_BURST_BONUS = true;
+
+/**
+ * Stage 11 モダニア: 射撃ごとの倍率ダメージ（perShot）にコアの補正を乗せるか（仮）。
+ * Stage 8 の倍率ダメージ（コアは乗らない）に合わせて false。録画 44 の 1 で確かめる（plan/design-stage11-modernia.md 7.5 節）
+ */
+export const PER_SHOT_DAMAGE_CORE = false;
 
 export type EnemyInput = {
   defence: number;
@@ -50,6 +69,8 @@ export type TriggerDamageInput = {
   attackOverride?: number;
   /** 常時発動パッシブなどのバフ合計。省略は ZERO_BUFFS */
   buffs?: BuffTotals;
+  /** Stage 11 モダニア: その枠の射撃ごとの倍率ダメージ（resolvePerShotDamage の結果）。省略は無し */
+  perShot?: readonly ResolvedSkillDamage[];
 };
 
 export type DamageInput = TriggerDamageInput & {
@@ -78,7 +99,11 @@ export type TriggerDamage = {
   /** 攻撃ダメージバフの乗数 1 + Σ attackDamage（倍率グループとは別枠。射撃場の実測で確認） */
   attackDamageMultiplier: number;
   elementMultiplier: number;
-  /** 1 トリガー（SG は全ペレット）あたりの期待ダメージ */
+  /** Stage 11 モダニア: 通常攻撃の分（Stage 10 までの perTrigger） */
+  normal: number;
+  /** Stage 11 モダニア: 射撃ごとの倍率ダメージの分（無ければ 0）。倍率グループは 1 + 会心 + フルバースト（コア・距離なし） */
+  perShot: number;
+  /** 1 トリガー（SG は全ペレット）あたりの期待ダメージ = normal + perShot */
   perTrigger: number;
 };
 
@@ -130,7 +155,8 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
 export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const { character, enemy, condition } = input;
   const buffs = input.buffs ?? ZERO_BUFFS;
-  const shot = character.shot;
+  // Stage 11 モダニア: 使用武器の変更が効いていれば、変更後の武器の倍率で撃つ
+  const shot = buffs.weapon?.shot ?? character.shot;
   if (condition.coreHitRate < 0 || condition.coreHitRate > 1) {
     throw new RangeError(`coreHitRate must be in [0, 1], got ${condition.coreHitRate}`);
   }
@@ -152,7 +178,8 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const attackDamageMultiplier = applyAttackDamageBuffs(buffs);
 
   const element = elementMultiplier(character.element, enemy.element);
-  const perTrigger = baseHit * weaponMultiplier * chargeMultiplier * boostTotal * attackDamageMultiplier * element;
+  const normal = baseHit * weaponMultiplier * chargeMultiplier * boostTotal * attackDamageMultiplier * element;
+  const perShot = perShotDamage(input.perShot, baseHit, boostCore, boostCrit, boostFullBurst, buffs, element);
 
   return {
     baseAttack,
@@ -170,8 +197,34 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     },
     attackDamageMultiplier,
     elementMultiplier: element,
-    perTrigger,
+    normal,
+    perShot,
+    perTrigger: normal + perShot,
   };
+}
+
+/**
+ * Stage 11 モダニア: 射撃ごとの倍率ダメージ。式は Stage 8 の倍率ダメージ（skills/burstDamage.ts の computeBurstHit）と同じ:
+ * max(1, 攻撃力 − 防御力) × X × (1 + 会心期待値 + フルバースト補正) × (1 + Σ攻撃ダメージ) × 属性。距離は乗らず、コアは PER_SHOT_DAMAGE_CORE
+ */
+function perShotDamage(
+  effects: readonly ResolvedSkillDamage[] | undefined,
+  baseHit: number,
+  boostCore: number,
+  boostCrit: number,
+  boostFullBurst: number,
+  buffs: BuffTotals,
+  element: number,
+): number {
+  if (effects === undefined || effects.length === 0) return 0;
+  const boost =
+    1 + boostCrit + (SKILL_HIT_FULL_BURST_BONUS ? boostFullBurst : 0) + (PER_SHOT_DAMAGE_CORE ? boostCore : 0);
+  const common = baseHit * boost * applyAttackDamageBuffs(buffs) * element;
+  let total = 0;
+  for (const e of effects) {
+    total += common * e.multiplier * (e.damageType === 'distributed' ? 1 + buffs.distributedDamage : 1);
+  }
+  return total;
 }
 
 /** 1 区間の静的 DPS。1 トリガーの式 × 発射サイクルの平均トリガー数 × 秒数 */
@@ -181,7 +234,7 @@ export function computeDamage(input: DamageInput): DamageResult {
   if (condition.durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
   const trigger = computeTriggerDamage(input);
-  const cadence = computeCadence(character.shot, model, input.firing);
+  const cadence = computeCadence(input.buffs?.weapon?.shot ?? character.shot, model, input.firing);
   const dps = trigger.perTrigger * cadence.triggersPerSecond;
 
   return {

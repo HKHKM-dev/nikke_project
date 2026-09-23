@@ -102,8 +102,13 @@ export type CharacterData = CharacterIndexEntry & {
     /** バースト CT（秒）。skill_cooltime / 100。Lv で変わらない */
     cooldownSeconds: number;
     nextStep: BurstNextStep;
-    /** burst_duration / 100。意味は未確認（フルバースト時間かもしれない）。Stage 7 では使わない */
+    /** burst_duration / 100。その III が起こすフルバーストの長さ（Stage 8 で確認。モダニアは 15 秒） */
     durationSeconds: number;
+    /**
+     * Stage 11 モダニア: バーストの skill_type が ChangeWeapon のキャラだけ。skill_value_data の [1] = 変更後の発射レート（rpm）、
+     * [2] = 変更後の shot_id（中身は CDN に無い）。1 発のダメージは説明文の値（スキル定義の weaponChange の damageRef）を使う
+     */
+    changeWeapon?: { rateOfFire: number; shotId: number };
   };
   skills: { skill1: SkillRaw; skill2: SkillRaw; burst: SkillRaw };
   /** Stage 9: 宝物（SSR のお気に入りアイテム）。ないキャラは null */

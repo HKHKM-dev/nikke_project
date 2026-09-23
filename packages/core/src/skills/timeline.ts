@@ -14,11 +14,15 @@
 // 回復（heal）を 1 段目に planHeals（skills/heals.ts）で集め、「回復効果が適用された時」（healed）の出来事として流し直す。
 // Stage 11 アリス編: 対象「最終攻撃力が最も高い味方 N 機」（topAttack）の効果は 2 段目に回し、1 段目の攻撃力の窓で順位を付けて
 // 対象を決める（skills/ranking.ts。plan/design-stage11.md 19.2 節）。
+// Stage 11 モダニア（plan/design-stage11-modernia.md 3 節）: 効果のあるスタックは段ごとの窓にほどく（skills/stacks.ts）。
+// 状態だけの stat（命中率）の窓は区間に入れず stateWindows に置く。条件「自分が 〈stat〉 増加状態なら」の効果は 1.5 段目で、
+// 1 段目の窓と stateWindows を見て発火を間引く。使用武器の変更の窓は、射手が持ち替えるフレーム（発火の次のフレーム）から始める
+// （weaponStartTrim）。
 import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { ShotLog } from '../sim/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { FPS } from '../weapons.ts';
-import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from './buffs.ts';
+import { ZERO_BUFFS, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
 import {
   isResolvedShotCount,
   resolvePassives,
@@ -32,9 +36,10 @@ import {
 } from './resolve.ts';
 import { hasHealEffects, planHeals } from './heals.ts';
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type RankSlot, type RankingRecord } from './ranking.ts';
+import { stackWindows } from './stacks.ts';
 import { dependsOnContext, dependsOnRank, isEffectTarget } from './targets.ts';
 import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
-import type { SkillDefinition } from './types.ts';
+import { isStateStat, type BuffStat, type SkillDefinition } from './types.ts';
 
 /** 枠 1 つ分の入力。TeamSlotInput ではなく必要な情報だけを受けて循環 import を避ける（planFixedCycle と同じ流儀） */
 export type TimelineSlot = {
@@ -56,6 +61,16 @@ export type BuffWindow = {
   start: number;
   /** 戦闘時間で切る */
   end: number;
+  /** Stage 11 モダニア: 効果のあるスタックの段（1 始まり）。スタックしない効果はキーごと無い */
+  stack?: number;
+};
+
+/** Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった記録 */
+export type ConditionSkip = {
+  /** トリガーが起きたフレーム */
+  frame: number;
+  sourceSlotIndex: number;
+  effect: { source: ResolvedEffect['source']; effectIndex: number };
 };
 
 /** 枠ごとのバフ合計と、そこに効いた効果（発生順） */
@@ -95,6 +110,10 @@ export type BuffTimeline = {
   heals: HealRecord[];
   /** Stage 11 アリス編: topAttack の効果の発火ごとの順位（効果ごと・発生順）。topAttack の効果が無ければ空 */
   rankings: RankingRecord[];
+  /** Stage 11 モダニア: 状態だけの stat（命中率）の窓。区間には入れない（条件の判定と表示用） */
+  stateWindows: BuffWindow[];
+  /** Stage 11 モダニア: 条件を満たさずに発火しなかった記録（発生順） */
+  conditionSkips: ConditionSkip[];
 };
 
 /** 1 枠ぶんの「同じバフ状態の区間」をまとめたもの。calc はこの単位で computeDamage を呼ぶ */
@@ -131,6 +150,8 @@ const BUFF_FIELDS = [
   'reloadSpeed',
   'chargeSpeed',
   'chargeTimeFlat',
+  // Stage 11 モダニア: 装弾数無限は射撃が変わるので鍵に入れる。命中率（hitRate）は状態だけなので入れない
+  'infiniteAmmo',
 ] as const satisfies readonly (keyof BuffTotals)[];
 
 /** key の桁数。最下位ビットのずれで同一状態が別グループに割れないよう固定桁で文字列化する */
@@ -139,6 +160,8 @@ export const KEY_DIGITS = 6;
 function keyOf(fullBurst: boolean, state: SlotBuffState): string {
   const parts: string[] = [fullBurst ? 'FB' : '--'];
   for (const field of BUFF_FIELDS) parts.push(state.buffs[field].toFixed(KEY_DIGITS));
+  // Stage 11 モダニア: 使用武器の変更は武器ごとに別の状態
+  if (state.buffs.weapon !== null) parts.push(`W:${state.buffs.weapon.id}`);
   // 効いている効果の出どころも鍵に入れる。合計が同じでも別の効果なら別の状態として扱い、UI のラベルが混ざらないようにする
   // （例: クイーン（真）の battleStart と fullBurstEnd はどちらも攻撃力 +50.28%）
   for (const e of state.timedEffects) parts.push(`${e.sourceSlotIndex}.${e.source.skill}.${e.effectIndex}`);
@@ -229,6 +252,53 @@ export function buffStartFires(
   return fired.map((f) => ({ frame: f.frame + 1, context: f.context })).filter((f) => f.frame < frames);
 }
 
+/**
+ * Stage 11 モダニア: 使用武器の変更の窓の頭を何フレーム削るか。バースト系の発火（f）で付く窓 [f, f + d) を、射手が持ち替えるフレーム
+ * （f + 1。sim/firstPass.ts の射手が見る窓の規則）から始める。発火のフレームの射撃は基礎の武器で撃たれるので、その 1 発を
+ * 変更後の武器のダメージで数えないため。終わりは変えない（同じ発動の装弾数無限と同じフレームに切れる）。
+ * 射撃の回数トリガー（窓がもともと f + 1 から）と戦闘開始時（ループの前に登録）は削らない
+ */
+export function weaponStartTrim(effect: Pick<ResolvedTimedEffect, 'stat' | 'trigger'>): number {
+  return effect.stat === 'weapon' && effect.trigger !== 'battleStart' && !isResolvedShotCount(effect.trigger) ? 1 : 0;
+}
+
+/** Stage 11 モダニア: 効果 1 つの窓（スタックする効果は段ごと、しない効果は和集合。使用武器の変更は頭を削る） */
+export function effectWindows(
+  starts: readonly number[],
+  effect: Pick<ResolvedTimedEffect, 'durationFrames' | 'maxStacks' | 'stat' | 'trigger'>,
+  frames: number,
+): { start: number; end: number; stack?: number }[] {
+  if (effect.maxStacks !== undefined) return stackWindows(starts, effect.durationFrames, frames, effect.maxStacks);
+  const trim = weaponStartTrim(effect);
+  return unionWindows(starts, effect.durationFrames, frames)
+    .map(([start, end]) => ({ start: start + trim, end }))
+    .filter((w) => w.start < w.end);
+}
+
+/**
+ * Stage 11 モダニア: 枠 slotIndex がフレーム frame で stat の増加状態か（常時パッシブの合計 > 0、または値が正の窓が効いている）。
+ * 同じフレームに始まった窓も入れる（アリス編の順位と同じ）
+ */
+export function selfBuffedAt(
+  passive: readonly (SlotBuffState | null)[],
+  windows: readonly {
+    slotIndex: number;
+    effect: Pick<ResolvedTimedEffect, 'stat' | 'value'>;
+    start: number;
+    end: number;
+  }[],
+  slotIndex: number,
+  stat: BuffStat,
+  frame: number,
+): boolean {
+  const base = passive[slotIndex];
+  if (base && statTotal(base.buffs, stat) > 0) return true;
+  return windows.some(
+    (w) =>
+      w.slotIndex === slotIndex && w.effect.stat === stat && w.effect.value > 0 && w.start <= frame && frame < w.end,
+  );
+}
+
 /** 同一効果の窓を和集合にする（上書き延長。重ねない）。frames が上限 */
 function unionWindows(fireFrames: readonly number[], durationFrames: number, frames: number): [number, number][] {
   if (durationFrames <= 0) return [];
@@ -290,10 +360,46 @@ export function planBuffTimeline(
   const heals = hasHealEffects(slots) ? planHeals(slots, schedule, shots, frames) : [];
   const healsKey: readonly HealRecord[] = heals.length === 0 ? NO_HEALS : heals;
 
-  // 1〜2. 発火フレーム → 窓（同一効果は和集合）→ 対象の枠に配る
+  // 1〜2. 発火フレーム → 窓（同一効果は和集合、スタックする効果は段ごと）→ 対象の枠に配る
   const windows: BuffWindow[] = [];
+  /** Stage 11 モダニア: 状態だけの stat（命中率）の窓。区間には入れない */
+  const stateWindows: BuffWindow[] = [];
   /** 2 段目に回す効果（対象が攻撃力の順位で決まる） */
   const ranked: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
+  /** 1.5 段目に回す効果（Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」） */
+  const conditional: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
+  /** 窓の始まりの列 fires から効果の窓を作り、対象の枠に配る */
+  const distribute = (
+    out: BuffWindow[],
+    effect: ResolvedTimedEffect,
+    sourceSlotIndex: number,
+    fires: readonly TriggerFire[],
+  ): void => {
+    if (!dependsOnContext(effect)) {
+      const merged = effectWindows(
+        fires.map((f) => f.frame),
+        effect,
+        frames,
+      );
+      if (merged.length === 0) return;
+      slots.forEach((target, slotIndex) => {
+        if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType)) {
+          return;
+        }
+        for (const w of merged) out.push(windowOf(slotIndex, sourceSlotIndex, effect, w));
+      });
+      return;
+    }
+    // Stage 11: 対象が発火ごとに変わる効果（burstUsers）は、対象の枠ごとに「その枠が対象だった発火」だけで和集合にする
+    // （上書き延長はその枠が受けた発火どうしでだけ起きる。plan/design-stage11.md 3.2 節）
+    slots.forEach((target, slotIndex) => {
+      if (target === null) return;
+      const mine = fires
+        .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType, f.context))
+        .map((f) => f.frame);
+      for (const w of effectWindows(mine, effect, frames)) out.push(windowOf(slotIndex, sourceSlotIndex, effect, w));
+    });
+  };
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
@@ -301,35 +407,37 @@ export function planBuffTimeline(
         ranked.push({ sourceSlotIndex, effect });
         continue;
       }
-      const fires = buffStartFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey);
-      if (!dependsOnContext(effect)) {
-        const merged = unionWindows(
-          fires.map((f) => f.frame),
-          effect.durationFrames,
-          frames,
-        );
-        if (merged.length === 0) continue;
-        slots.forEach((target, slotIndex) => {
-          if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType)) {
-            return;
-          }
-          for (const [start, end] of merged) windows.push({ slotIndex, sourceSlotIndex, effect, start, end });
-        });
+      if (effect.condition !== undefined) {
+        conditional.push({ sourceSlotIndex, effect });
         continue;
       }
-      // Stage 11: 対象が発火ごとに変わる効果（burstUsers）は、対象の枠ごとに「その枠が対象だった発火」だけで和集合にする
-      // （上書き延長はその枠が受けた発火どうしでだけ起きる。plan/design-stage11.md 3.2 節）
-      slots.forEach((target, slotIndex) => {
-        if (target === null) return;
-        const mine = fires
-          .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType, f.context))
-          .map((f) => f.frame);
-        for (const [start, end] of unionWindows(mine, effect.durationFrames, frames)) {
-          windows.push({ slotIndex, sourceSlotIndex, effect, start, end });
-        }
-      });
+      const fires = buffStartFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey);
+      distribute(isStateStat(effect.stat) ? stateWindows : windows, effect, sourceSlotIndex, fires);
     }
   });
+
+  // 1.5 段目（Stage 11 モダニア）: 条件付きの効果。発火の瞬間の状態は 1 段目の窓と状態の窓で見る（条件付きの効果どうしは連鎖させない）
+  const conditionSkips: ConditionSkip[] = [];
+  if (conditional.length > 0) {
+    const stateSources = [...windows, ...stateWindows];
+    for (const { sourceSlotIndex, effect } of conditional) {
+      const accepted: TriggerFire[] = [];
+      for (const fire of triggerFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey)) {
+        if (!selfBuffedAt(passive, stateSources, sourceSlotIndex, effect.condition!.selfBuffed, fire.frame)) {
+          conditionSkips.push({
+            frame: fire.frame,
+            sourceSlotIndex,
+            effect: { source: effect.source, effectIndex: effect.effectIndex },
+          });
+          continue;
+        }
+        // 窓は射撃の回数起点なら次のフレームから（buffStartFires と同じ規則）
+        const start = isResolvedShotCount(effect.trigger) ? fire.frame + 1 : fire.frame;
+        if (start < frames) accepted.push({ frame: start, context: fire.context });
+      }
+      distribute(windows, effect, sourceSlotIndex, accepted);
+    }
+  }
 
   // 2 段目（Stage 11 アリス編）: 1 段目の攻撃力の窓で発火ごとに順位を付け、対象の枠ごとに和集合にする
   const rankings: RankingRecord[] = [];
@@ -363,8 +471,8 @@ export function planBuffTimeline(
         });
       }
       perTarget.forEach((starts, slotIndex) => {
-        for (const [start, end] of unionWindows(starts, effect.durationFrames, frames)) {
-          rankedWindows.push({ slotIndex, sourceSlotIndex, effect, start, end });
+        for (const w of effectWindows(starts, effect, frames)) {
+          rankedWindows.push(windowOf(slotIndex, sourceSlotIndex, effect, w));
         }
       });
     }
@@ -422,7 +530,18 @@ export function planBuffTimeline(
     });
   }
 
-  return { frames, segments, windows, passive, heals, rankings };
+  return { frames, segments, windows, passive, heals, rankings, stateWindows, conditionSkips };
+}
+
+function windowOf(
+  slotIndex: number,
+  sourceSlotIndex: number,
+  effect: ResolvedTimedEffect,
+  w: { start: number; end: number; stack?: number },
+): BuffWindow {
+  const window: BuffWindow = { slotIndex, sourceSlotIndex, effect, start: w.start, end: w.end };
+  if (w.stack !== undefined) window.stack = w.stack;
+  return window;
 }
 
 /** 順位の材料（skills/ranking.ts）。常時パッシブは resolvePassiveStates の結果 */

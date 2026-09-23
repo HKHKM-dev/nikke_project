@@ -37,9 +37,11 @@ import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
   resolveDamageEffects,
+  resolvePerShotDamage,
   slotBurstHit,
   type BurstHitResult,
   type ResolvedDamageEffect,
+  type ResolvedSkillDamage,
   type SkillHitResult,
 } from './skills/burstDamage.ts';
 import type { BuffTotals } from './skills/buffs.ts';
@@ -61,6 +63,7 @@ import {
   triggerFrames,
   type BuffTimeline,
   type BuffWindow,
+  type ConditionSkip,
   type SlotBuffState,
   type TimelineSlot,
 } from './skills/timeline.ts';
@@ -175,6 +178,10 @@ export type TeamSlotResult = {
   passiveEffects: AppliedEffect[];
   /** この枠に掛かった持続バフの窓（発生順） */
   windows: BuffWindow[];
+  /** Stage 11 モダニア: この枠に掛かった状態だけの stat（命中率）の窓（区間には入らない。表示用） */
+  stateWindows: BuffWindow[];
+  /** Stage 11 モダニア: この枠の条件付きの効果が、条件を満たさずに発火しなかった記録 */
+  conditionSkips: ConditionSkip[];
   /** バフ状態ごとにまとめた通常攻撃の結果（groupTimeline の順） */
   segments: SlotSegmentResult[];
   /** Σ segments.damage */
@@ -320,6 +327,13 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   return { frames, shots, schedule, timeline, skillHits, instants };
 }
 
+/** Stage 11 モダニア: その枠の射撃ごとの倍率ダメージ（1 トリガーの値に畳み込む）。定義が無ければ空 */
+export function perShotDamageOf(slot: TeamSlotInput): ResolvedSkillDamage[] {
+  const definition = slot.skills?.definition;
+  if (!definition) return [];
+  return resolvePerShotDamage(definition, slot.character, slot.skills?.levels ?? MAX_SKILL_LEVELS);
+}
+
 /** バースト系のトリガー（burstDamage と同じく発動直前のバフで計算する）か */
 function isBurstUseTrigger(trigger: ResolvedTrigger): boolean {
   return trigger === 'burstUse' || (isResolvedEventCount(trigger) && trigger.count === 'burstUse');
@@ -447,6 +461,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
       attackOverride: slot.attackOverride,
     };
     const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
+    const perShot = perShotDamageOf(slot);
 
     const segments: SlotSegmentResult[] = [];
     let normalDamage = 0;
@@ -467,6 +482,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
         const trigger = computeTriggerDamage({
           ...base,
           buffs: state.buffs,
+          perShot,
           condition: { ...slot.condition, fullBurst: group.fullBurst },
         });
         const triggers = countShotsInRanges(shotFrames, ranges);
@@ -478,6 +494,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
       const result = computeDamage({
         ...base,
         buffs: state.buffs,
+        perShot,
         firing: firingParams(slot.character.shot, state.buffs),
         condition: { ...slot.condition, fullBurst: group.fullBurst, durationSeconds: group.seconds },
       });
@@ -546,6 +563,8 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
       passiveBuffs: passive.buffs,
       passiveEffects: passive.passiveEffects,
       windows: timeline.windows.filter((w) => w.slotIndex === index),
+      stateWindows: timeline.stateWindows.filter((w) => w.slotIndex === index),
+      conditionSkips: timeline.conditionSkips.filter((x) => x.sourceSlotIndex === index),
       segments,
       normalDamage,
       burst: { activations, hit: representative, totalDamage: burstDamage },

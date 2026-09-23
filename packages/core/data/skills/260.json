@@ -1,0 +1,112 @@
+{
+  "formatVersion": 1,
+  "resourceId": 260,
+  "checkedAt": "2026-09-23",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit"
+          },
+          "damageType": "additional",
+          "ref": 1,
+          "assumes": {
+            "ja": "通常攻撃 1 発ごとに 1 回（全弾命中の前提）。コアは乗らない（仮）",
+            "en": "Once per normal shot (every shot is assumed to hit). Core hits do not boost it (provisional)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 2
+          },
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 3,
+          "maxStacksRef": 4,
+          "durationRef": 5
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 2
+          },
+          "target": "self",
+          "stat": "maxAmmo",
+          "decrease": true,
+          "ref": 6,
+          "maxStacksRef": 7,
+          "durationRef": 8
+        }
+      ]
+    },
+    "skill2": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "hitRate",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 3
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 4,
+          "durationRef": 5,
+          "condition": {
+            "selfBuffed": "hitRate"
+          },
+          "assumes": {
+            "ja": "回数は命中率増加状態に関係なく通算で数え、200 回目の瞬間に命中率増加状態かを見る",
+            "en": "Hits are counted regardless of the hit rate state; the state is checked at every 200th hit"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "infiniteAmmo",
+          "durationRef": 2
+        },
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "殲滅モードの武器は CDN に中身が無い。コア倍率は基礎の MG と同じ、スピンアップなし（最初から 4200 rpm、1 フレーム 1 発）、終わったら基礎の MG の残弾に戻りスピンアップからやり直す（仮）",
+            "en": "The Annihilation Mode weapon is not in the CDN data. Assumes the base MG core multiplier, no spin-up (4200 rpm from the start, one shot per frame), and that the base MG resumes with its ammo and spins up again afterwards (provisional)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている",
+          "en": "Full Burst Time +5 s is already in burst_duration (a 15 s full burst)"
+        },
+        {
+          "ja": "殲滅モードの照準線拡張・照準範囲内のすべての敵を同時に照準は、単体の的では関係しない",
+          "en": "Annihilation Mode's wider aim and targeting every enemy in range do not matter against a single target"
+        }
+      ]
+    }
+  }
+}
