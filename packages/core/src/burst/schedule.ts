@@ -24,6 +24,19 @@ export type BurstActivation = {
 
 export type BurstScheduleModel = 'fixed' | 'dynamic';
 
+/** Stage 10: 「バーストスキルクールタイム X 秒▼」を 1 枠に当てた記録（即時効果。plan/design-stage10.md 4 節） */
+export type CooldownReduction = {
+  frame: number;
+  /** CT を縮めた枠 */
+  slotIndex: number;
+  /** 効果を出した枠 */
+  sourceSlotIndex: number;
+  /** 縮めようとしたフレーム数（durationToFrames(X 秒)） */
+  frames: number;
+  /** 実際に縮んだフレーム数（CT が明けていれば 0。明けるフレームより前には戻さない） */
+  applied: number;
+};
+
 export type BurstSchedule = {
   model: BurstScheduleModel;
   /** 発生順（同じフレームなら I → II → III の順） */
@@ -36,6 +49,8 @@ export type BurstSchedule = {
   gaugeFullFrames: number[];
   /** チェーンが途切れた（次の段階が出ないままタイムアウトした）フレーム（動的サイクルだけ） */
   chainTimeouts: number[];
+  /** Stage 10: CT 短縮の記録（動的サイクルだけ。固定サイクルは CT を見ないので空） */
+  cooldownReductions: CooldownReduction[];
 };
 
 /** 枠 slotIndex がバーストを撃ったフレーム列（発生順） */

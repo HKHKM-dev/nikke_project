@@ -8,6 +8,8 @@
 // Stage 8: 1 パス目（射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動）を planTeamRun にまとめ、sim と calc が同じものを使う。
 // 射撃の回数トリガーの窓と倍率ダメージ（damage）の発動は sim と厳密一致し、calc が期待値で置くのは通常攻撃のトリガー数だけ。
 // Stage 9: 宝物の段階（skills.treasurePhase）を、最上位で applyTreasureToTeam により基礎版 → 宝物版に差し替えてから計算する。
+// Stage 10: 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、1 パス目の射撃の列と時刻表は sim/firstPass.ts の
+// フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
 import { durationToFrames, planFixedCycle } from './burst/fixedCycle.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from './burst/dynamic.ts';
 import {
@@ -18,7 +20,8 @@ import {
   type BurstScheduleModel,
   type BurstSummary,
 } from './burst/schedule.ts';
-import { planShots, type ShotLog } from './sim/shots.ts';
+import { runFirstPass, type InstantApplication } from './sim/firstPass.ts';
+import type { ShotLog } from './sim/shots.ts';
 import {
   baseAttackOf,
   computeDamage,
@@ -280,11 +283,14 @@ export type TeamPlan = {
   timeline: BuffTimeline;
   /** 倍率ダメージ（damage）の発動（フレーム順） */
   skillHits: SkillHitEvent[];
+  /** Stage 10: 即時効果（CT 短縮・弾丸チャージ）を当てた記録（発生順） */
+  instants: InstantApplication[];
 };
 
 /**
  * Stage 8: 1 パス目。射撃の列 → 時刻表（常時のゲージ速度込み）→ バフの区間（射撃の回数トリガー込み）→ 倍率ダメージの発動。
- * どれも射撃の列と時刻表だけから決まる（射撃がバフに依存するのは Stage 10）。
+ * Stage 10: 射撃の列と時刻表は runFirstPass のフレームループで同時に作る（射撃に効くバフ・CT 短縮・弾丸チャージ込み）。
+ * バフの区間と倍率ダメージは、確定した射撃の列と時刻表から作る。
  */
 export function planTeamRun(teamInput: TeamInput): TeamPlan {
   // Stage 9: 直接呼ばれても宝物の段階が効くように。最上位で適用済みなら何もしない（同じオブジェクト）
@@ -294,15 +300,16 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   validateControlledSlot(slots, input.controlledSlot);
   const frames = durationToFrames(input.durationSeconds);
   const timelineSlots = toTimelineSlots(slots);
-  const shots = planShots(slots, frames, model);
-  const gaugeSpeed = resolvePassiveStates(timelineSlots).map((s) => s?.buffs.burstGaugeSpeed ?? 0);
-  const schedule = planTeamSchedule(slots, frames, input.burst, input.burstModel, model, input.controlledSlot ?? null, {
-    shots,
-    gaugeSpeed,
+  const { shots, schedule, instants } = runFirstPass(timelineSlots, {
+    frames,
+    model,
+    burst: input.burst ?? false,
+    burstModel: input.burstModel ?? 'dynamic',
+    controlledSlot: input.controlledSlot ?? null,
   });
   const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots);
   const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
-  return { frames, shots, schedule, timeline, skillHits };
+  return { frames, shots, schedule, timeline, skillHits, instants };
 }
 
 /** バースト系のトリガー（burstDamage と同じく発動直前のバフで計算する）か */
