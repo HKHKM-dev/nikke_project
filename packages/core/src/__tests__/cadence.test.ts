@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { computeCadence, reloadChunks, simulateShotFrames } from '../cadence.ts';
+import { firingParams, ZERO_FIRING_BUFFS } from '../sim/firing.ts';
 import type { ShotParams } from '../types.ts';
 
 function shot(overrides: Partial<ShotParams>): ShotParams {
@@ -99,6 +100,49 @@ describe('computeCadence (calibrated against recordings)', () => {
     expect(c.reloadFrames).toBe(150);
     // 実測サイクル 563f（1 発目→次マガジン 1 発目）
     expect(Math.abs(c.cycleFrames - 563)).toBeLessThanOrEqual(5);
+  });
+
+  // 2026-09-24 の再確認（plan/design-mg-fire-rate.md）。録画 35（エマ AI）・41（クラウン AI）の残弾表示を 1 フレームずつ読んだ、
+  // 描画が軽い場面のマガジン。重い場面（描画落ち）と 3 分モードの的が狙えない区間はモデルに入れない（撮影環境の性質）
+  describe('MG re-check against recordings 35 and 41 (light scenes)', () => {
+    it('300 rounds span 390f, inside the measured 386–391f', () => {
+      const c = computeCadence(MG);
+      expect(c.magazineFrames).toBe(390);
+      expect(c.magazineFrames).toBeGreaterThanOrEqual(386);
+      expect(c.magazineFrames).toBeLessThanOrEqual(391);
+    });
+
+    it('spin-up has the measured shape and is at most 4f behind it (the gap builds up over shots 1–30)', () => {
+      // k 発目（1 発目 = 0）の累積フレーム。軽い場面の 4 マガジンで同じ値
+      const measured: Record<number, number> = {
+        1: 23,
+        2: 36,
+        3: 46,
+        5: 60,
+        10: 81,
+        20: 104,
+        30: 117,
+        40: 128,
+        50: 137,
+        100: 187,
+        299: 386,
+      };
+      const f = simulateShotFrames(MG);
+      for (const [k, frame] of Object.entries(measured)) {
+        const lag = f[Number(k)]! - frame;
+        expect(lag, `shot ${k}`).toBeGreaterThanOrEqual(0);
+        expect(lag, `shot ${k}`).toBeLessThanOrEqual(4);
+      }
+      // 30 発目以降は実測もモデルも 1 フレーム 1 発なので、差は広がらない
+      expect(f[299]! - f[30]!).toBe(386 - 117);
+    });
+
+    it('last shot to the next first shot: 170f plain (measured 171–176f), 104f with クラウン S1 reload speed 44.35% (measured 105–110f)', () => {
+      const plain = computeCadence(MG);
+      expect(plain.reloadFrames + plain.firstShotFrames).toBe(170);
+      const buffed = computeCadence(MG, undefined, firingParams(MG, { ...ZERO_FIRING_BUFFS, reloadSpeed: 0.4435 }));
+      expect(buffed.reloadFrames + buffed.firstShotFrames).toBe(104);
+    });
   });
 
   it('RL with 1.5 s charge: 112f per shot (90f + 22f), reload 120f → 792f cycle (measured 790f)', () => {
