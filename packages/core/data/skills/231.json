@@ -1,0 +1,97 @@
+{
+  "formatVersion": 1,
+  "resourceId": 231,
+  "checkedAt": "2026-09-23",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 1
+          },
+          "target": "self",
+          "stat": "critRate",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2
+          },
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 3,
+          "durationRef": 4
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 3
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 5,
+          "durationRef": 6
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終防御力が最も高い敵への 170.58% のダメージは、説明文にきっかけ（いつ出るか）が書かれていないので未対応",
+          "en": "The 170.58% hit on the highest-DEF enemies is not modeled because the description does not say when it happens"
+        }
+      ]
+    },
+    "burst": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill"
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2
+          },
+          "damageType": "additional",
+          "ref": 4,
+          "assumes": {
+            "ja": "ターゲットマーキングの段階は同じ発動で上がった段階を見る（2 回目の発動から段階 2 の追加ダメージ）",
+            "en": "The Target Marking tier includes the one gained by the same activation (tier 2 damage from the 2nd use)"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 3
+          },
+          "damageType": "additional",
+          "ref": 5,
+          "assumes": {
+            "ja": "ターゲットマーキングの段階は同じ発動で上がった段階を見る（3 回目の発動から段階 3 の追加ダメージ）",
+            "en": "The Target Marking tier includes the one gained by the same activation (tier 3 damage from the 3rd use)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "段階 1 の敵の受けるダメージ▲（5 秒間維持）は未対応（敵デバフは語彙にない）。フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る",
+          "en": "Tier 1 Damage Taken up on enemies (5 s) is not modeled (no vocabulary for enemy debuffs). The Full Burst Time −5 s comes from burst_duration (5 s) in the schedule"
+        }
+      ]
+    }
+  }
+}

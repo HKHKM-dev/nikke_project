@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 870,
-  "checkedAt": "2026-09-22",
+  "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
       "support": "partial",
@@ -38,17 +38,25 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 9
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "self",
+          "stat": "distributedDamage",
+          "ref": 3,
+          "durationRef": 4
         }
       ],
       "notes": [
         {
-          "ja": "バースト使用時の鉄・拳・制・裁！（有利コードの攻撃ダメージ・防御力）と 1more 時のバトンタッチ（スタック）は未対応。**バースト 3 段階突入時の分配ダメージ 90.01%▲（10 秒間維持）は未対応で、これが無いぶんバーストの分配ダメージを 1.9001 倍ぶん過小評価する**（2026-09-22 の実測: 6,323,975 = 予測 3,328,233 × 1.9001。verification.md Stage 6 節）。分配ダメージ▲は専用の stat で、バースト 3 段階突入時は専用のトリガー。どちらも段階 C の語彙",
-          "en": "Fist of Justice! on Burst Skill use and Baton Pass on 1 More (stacks) are not modeled. **Distributed Damage +90.01% on entering Burst Stage 3 (10 s) is not modeled, so the burst distributed damage is underestimated by a factor of 1.9001** (measured 2026-09-22: 6,323,975 vs predicted 3,328,233). Both the stat and the trigger belong to phase C"
+          "ja": "バースト使用時の鉄・拳・制・裁！（有利コードの攻撃ダメージ・防御力）と 1more 時のバトンタッチ（スタック）は未対応。バースト 3 段階突入時の分配ダメージ 90.01%▲（10 秒間維持）は Stage 8 で対応（録画 21 の 6,323,975 = 1.9001 倍を再現）",
+          "en": "Fist of Justice! on Burst Skill use and Baton Pass on 1 More (stacks) are not modeled. Distributed Damage +90.01% on entering Burst Stage 3 (10 s) is modeled since Stage 8 (reproduces the 1.9001 factor of recording 21)"
         }
       ]
     },
     "burst": {
-      "support": "partial",
+      "support": "supported",
       "effects": [
         {
           "kind": "burstDamage",
@@ -70,12 +78,6 @@
             "ja": "対象が風圧コード（1more が適用される）",
             "en": "The target is Wind code, so 1 More applies"
           }
-        }
-      ],
-      "notes": [
-        {
-          "ja": "分配ダメージの倍率と攻撃ダメージは合っているが、S2 のバースト 3 段階突入時の分配ダメージ▲（+90.01%）が未対応なので実際の 1 / 1.9001 の値になる",
-          "en": "The multiplier and Attack Damage are right, but S2 grants Distributed Damage +90.01% on entering Burst Stage 3, which is not modeled, so this is 1 / 1.9001 of the real value"
         }
       ]
     }
