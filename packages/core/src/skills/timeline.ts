@@ -7,21 +7,33 @@
 //
 // calc はグループごとに computeDamage を 1 回呼び、sim はフレームループで区間をまたぐたびに 1 トリガーの値を差し替える。
 // timed 効果が 1 つもなければグループは「通常区間 / フルバースト区間」の 2 つに退化し、Stage 5 とまったく同じ計算になる。
-import { activationFramesOfSlot, isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
+// Stage 8: 射撃の回数（sim/shots.ts の射撃の列から）・発動の回数・バースト N 段階突入時のトリガーを足した。
+// 射撃の回数で付くバフの窓は発火フレームの次のフレームから始める（トリガーになった射撃自身には乗らない）。
+import {
+  activationFramesOfSlot,
+  isInFullBurst,
+  stageEnterFrames,
+  type BurstSchedule,
+  type BurstStepKey,
+} from '../burst/schedule.ts';
+import type { ShotLog } from '../sim/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { FPS } from '../weapons.ts';
 import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from './buffs.ts';
 import {
+  isResolvedEventCount,
+  isResolvedShotCount,
   resolvePassives,
   resolveTimed,
   type AppliedEffect,
   type AppliedTimedEffect,
   type ResolvedEffect,
   type ResolvedTimedEffect,
+  type ResolvedTrigger,
   type SkillLevels,
 } from './resolve.ts';
 import { isEffectTarget } from './targets.ts';
-import type { BuffTrigger, SkillDefinition } from './types.ts';
+import type { SkillDefinition } from './types.ts';
 
 /** 枠 1 つ分の入力。TeamSlotInput ではなく必要な情報だけを受けて循環 import を避ける（planFixedCycle と同じ流儀） */
 export type TimelineSlot = {
@@ -107,6 +119,8 @@ const BUFF_FIELDS = [
   'critDamage',
   'attackDamage',
   'chargeDamage',
+  'distributedDamage',
+  'burstGaugeSpeed',
 ] as const satisfies readonly (keyof BuffTotals)[];
 
 /** key の桁数。最下位ビットのずれで同一状態が別グループに割れないよう固定桁で文字列化する */
@@ -121,18 +135,44 @@ function keyOf(fullBurst: boolean, state: SlotBuffState): string {
   return parts.join('|');
 }
 
+const STAGE_OF: Record<'burstStage1Enter' | 'burstStage2Enter' | 'burstStage3Enter', BurstStepKey> = {
+  burstStage1Enter: 'Step1',
+  burstStage2Enter: 'Step2',
+  burstStage3Enter: 'Step3',
+};
+
 /**
- * トリガーの発火フレーム列。schedule が null（バーストなし）なら battleStart だけ発火する。
+ * トリガーが起きたフレーム列（昇順）。schedule が null（バーストなし）なら battleStart と射撃の回数だけ発火する。
  * burstUse はその枠が実際に撃った発動のフレーム（動的サイクルでは段階ごとに別フレーム、同じ段階の 2 体は交互になりうる）。
+ * 射撃の回数（Stage 8）は shots[slotIndex] の every・2 × every…番目の射撃のフレーム。バフ窓の開始は buffStartFrames が 1 つ後ろにずらす。
  */
 export function triggerFrames(
-  trigger: BuffTrigger,
+  trigger: ResolvedTrigger,
   schedule: BurstSchedule | null,
   slotIndex: number,
   frames: number,
+  shots: readonly (ShotLog | null)[] = [],
 ): number[] {
+  if (isResolvedShotCount(trigger)) {
+    const log = shots[slotIndex];
+    if (!log || (trigger.count === 'fullChargeShot' && !log.fullCharge)) return [];
+    const fired: number[] = [];
+    for (let i = trigger.every - 1; i < log.frames.length; i += trigger.every) {
+      const f = log.frames[i]!;
+      if (f < frames) fired.push(f);
+    }
+    return fired;
+  }
   if (trigger === 'battleStart') return frames > 0 ? [0] : [];
   if (schedule === null) return [];
+  if (isResolvedEventCount(trigger)) {
+    const base =
+      trigger.count === 'burstUse'
+        ? activationFramesOfSlot(schedule, slotIndex)
+        : schedule.fullBurstWindows.map((w) => w.start);
+    // 回数は戦闘中ずっと数える。atLeast 回目以降の発動のたびに発火する（下位効果のスタック適用）
+    return base.slice(trigger.atLeast - 1).filter((f) => f < frames);
+  }
   switch (trigger) {
     case 'burstUse':
       return activationFramesOfSlot(schedule, slotIndex).filter((f) => f < frames);
@@ -141,7 +181,24 @@ export function triggerFrames(
     case 'fullBurstEnd':
       // 戦闘時間で切られた最後の窓（end === frames）では発火しない
       return schedule.fullBurstWindows.map((w) => w.end).filter((f) => f < frames);
+    case 'burstStage1Enter':
+    case 'burstStage2Enter':
+    case 'burstStage3Enter':
+      return stageEnterFrames(schedule, STAGE_OF[trigger]).filter((f) => f < frames);
   }
+}
+
+/** バフ窓が始まるフレーム。射撃の回数トリガーだけ、トリガーになった射撃の次のフレームから（その射撃自身には乗らない） */
+export function buffStartFrames(
+  trigger: ResolvedTrigger,
+  schedule: BurstSchedule | null,
+  slotIndex: number,
+  frames: number,
+  shots: readonly (ShotLog | null)[] = [],
+): number[] {
+  const fired = triggerFrames(trigger, schedule, slotIndex, frames, shots);
+  if (!isResolvedShotCount(trigger)) return fired;
+  return fired.map((f) => f + 1).filter((f) => f < frames);
 }
 
 /** 同一効果の窓を和集合にする（上書き延長。重ねない）。frames が上限 */
@@ -189,11 +246,13 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
 /**
  * 持続バフの区間分割。
  * 境界は {0, frames} ∪ 全バフ窓の端 ∪ フルバースト区間の端 ∪ バースト発動フレーム。
+ * shots（Stage 8）は射撃の回数トリガーに使う射撃の列。省略すると射撃の回数トリガーは発火しない。
  */
 export function planBuffTimeline(
   slots: readonly TimelineSlot[],
   schedule: BurstSchedule | null,
   frames: number,
+  shots: readonly (ShotLog | null)[] = [],
 ): BuffTimeline {
   if (!Number.isInteger(frames) || frames < 0) {
     throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
@@ -206,7 +265,7 @@ export function planBuffTimeline(
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
       const merged = unionWindows(
-        triggerFrames(effect.trigger, schedule, sourceSlotIndex, frames),
+        buffStartFrames(effect.trigger, schedule, sourceSlotIndex, frames, shots),
         effect.durationFrames,
         frames,
       );

@@ -56,8 +56,23 @@ describe('energyPerTrigger (calibrated on single-character recordings)', () => {
 
 describe('burstUnitOf', () => {
   it('turns the cooldown seconds into frames and keeps the step and the next step', () => {
-    expect(burstUnitOf(load(10))).toEqual({ burstStep: 'Step3', nextStep: 'StepFull', cooldownFrames: 2400 });
-    expect(burstUnitOf(load(93))).toEqual({ burstStep: 'Step1', nextStep: 'Step2', cooldownFrames: 1200 });
+    expect(burstUnitOf(load(10))).toEqual({
+      burstStep: 'Step3',
+      nextStep: 'StepFull',
+      cooldownFrames: 2400,
+      fullBurstFrames: 600,
+    });
+    expect(burstUnitOf(load(93))).toEqual({
+      burstStep: 'Step1',
+      nextStep: 'Step2',
+      cooldownFrames: 1200,
+      fullBurstFrames: 600,
+    });
+  });
+
+  it('takes the full burst length from burst_duration (Stage 8: イサベル 5 秒、モダニア 15 秒)', () => {
+    expect(burstUnitOf(load(231)).fullBurstFrames).toBe(300);
+    expect(burstUnitOf(load(260)).fullBurstFrames).toBe(900);
   });
 });
 

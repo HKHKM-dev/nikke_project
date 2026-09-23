@@ -95,6 +95,8 @@ describe('computeDamage', () => {
       critDamage: 0.5,
       attackDamage: 0.3,
       chargeDamage: 0.4,
+      distributedDamage: 0,
+      burstGaugeSpeed: 0,
     };
     const r = computeDamage(input({ buffs }));
     expect(r.baseAttack).toBe(1000);

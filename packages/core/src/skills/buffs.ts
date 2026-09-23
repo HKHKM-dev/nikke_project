@@ -17,6 +17,10 @@ export type BuffTotals = {
   attackDamage: number;
   /** チャージダメージ倍率の加算。fullChargeDamage に足す（フルチャージ時のみ） */
   chargeDamage: number;
+  /** Stage 8: 分配ダメージの加算。distributed の倍率ダメージにだけ (1 + distributedDamage) を掛ける（録画 21 で別枠の乗数と確認） */
+  distributedDamage: number;
+  /** Stage 8: バーストゲージのチャージ速度の加算。この枠の射撃で溜まるゲージに (1 + burstGaugeSpeed) を掛ける（passive のみ） */
+  burstGaugeSpeed: number;
 };
 
 export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
@@ -26,6 +30,8 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   critDamage: 0,
   attackDamage: 0,
   chargeDamage: 0,
+  distributedDamage: 0,
+  burstGaugeSpeed: 0,
 });
 
 /** stat に対応する BuffTotals の比率フィールド */
@@ -35,6 +41,8 @@ const RATIO_FIELD: Record<BuffStat, keyof BuffTotals> = {
   critDamage: 'critDamage',
   attackDamage: 'attackDamage',
   chargeDamage: 'chargeDamage',
+  distributedDamage: 'distributedDamage',
+  burstGaugeSpeed: 'burstGaugeSpeed',
 };
 
 /** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す */

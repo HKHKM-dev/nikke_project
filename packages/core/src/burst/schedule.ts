@@ -15,6 +15,11 @@ export type BurstActivation = {
   slotIndex: number;
   /** この発動でフルバーストに入るか */
   startsFullBurst: boolean;
+  /**
+   * Stage 8: この発動の結果入った段階（「バースト N 段階突入時」のトリガー）。フルバーストに入るなら null。
+   * 通常は I → Step2、II → Step3。リエントリー（Step1 → Step1）なら Step1
+   */
+  enteredStep: BurstStepKey | null;
 };
 
 export type BurstScheduleModel = 'fixed' | 'dynamic';
@@ -36,6 +41,21 @@ export type BurstSchedule = {
 /** 枠 slotIndex がバーストを撃ったフレーム列（発生順） */
 export function activationFramesOfSlot(schedule: BurstSchedule, slotIndex: number): number[] {
   return schedule.activations.filter((a) => a.slotIndex === slotIndex).map((a) => a.frame);
+}
+
+/**
+ * Stage 8: 「バースト N 段階突入時」の発火フレーム（昇順・重複なし）。
+ * 段階 2 / 3 は発動の結果その段階に進んだフレーム。段階 1 はゲージ満タンのフレームとリエントリーの発動
+ * （固定サイクルは満タンがないので、各サイクルのフルバースト開始 = 発動フレーム）。
+ */
+export function stageEnterFrames(schedule: BurstSchedule, step: BurstStepKey): number[] {
+  const frames = schedule.activations.filter((a) => a.enteredStep === step).map((a) => a.frame);
+  if (step === 'Step1') {
+    frames.push(
+      ...(schedule.model === 'fixed' ? schedule.fullBurstWindows.map((w) => w.start) : schedule.gaugeFullFrames),
+    );
+  }
+  return [...new Set(frames)].sort((a, b) => a - b);
 }
 
 /** frame がフルバースト区間に入っているか */

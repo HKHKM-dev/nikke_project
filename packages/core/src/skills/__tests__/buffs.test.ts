@@ -18,6 +18,8 @@ const buffs: BuffTotals = {
   critDamage: 0.2,
   attackDamage: 0.1,
   chargeDamage: 0.4,
+  distributedDamage: 0,
+  burstGaugeSpeed: 0,
 };
 
 describe('applyAttackBuffs', () => {
@@ -52,6 +54,7 @@ describe('addRatioBuff / addFlatAttack', () => {
     const b = addFlatAttack(a, 250);
     const c = addRatioBuff(b, 'critDamage', 0.3);
     const d = addRatioBuff(c, 'chargeDamage', 0.4);
+    const e = addRatioBuff(addRatioBuff(d, 'distributedDamage', 0.9001), 'burstGaugeSpeed', 0.704);
     expect(ZERO_BUFFS).toEqual({
       attackRatio: 0,
       attackFlat: 0,
@@ -59,6 +62,8 @@ describe('addRatioBuff / addFlatAttack', () => {
       critDamage: 0,
       attackDamage: 0,
       chargeDamage: 0,
+      distributedDamage: 0,
+      burstGaugeSpeed: 0,
     });
     expect(d).toEqual({
       attackRatio: 0.1,
@@ -67,7 +72,12 @@ describe('addRatioBuff / addFlatAttack', () => {
       critDamage: 0.3,
       attackDamage: 0,
       chargeDamage: 0.4,
+      distributedDamage: 0,
+      burstGaugeSpeed: 0,
     });
+    // Stage 8 の 2 つもそれぞれのフィールドへ
+    expect(e.distributedDamage).toBe(0.9001);
+    expect(e.burstGaugeSpeed).toBe(0.704);
   });
 });
 
