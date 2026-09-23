@@ -128,6 +128,9 @@ export function replayEvents(
 ): FrameEvents[] {
   if (frames <= 0) return [];
   const slotCount = shots.length;
+  // 出来事のあるフレームは射撃ごとにできるので、空の列は共有し、回復が起きたフレームだけ配列を作る
+  const noUsers: readonly number[] = [];
+  const noHeal: readonly boolean[] = Array.from({ length: slotCount }, () => false);
   const byFrame = new Map<number, FrameEvents>();
   const at = (frame: number): FrameEvents => {
     let ev = byFrame.get(frame);
@@ -139,9 +142,9 @@ export function replayEvents(
         fullBurstStart: false,
         fullBurstEnd: false,
         gaugeFull: false,
-        fullBurstStartUsers: [],
-        fullBurstEndUsers: [],
-        healed: Array.from({ length: slotCount }, () => false),
+        fullBurstStartUsers: noUsers,
+        fullBurstEndUsers: noUsers,
+        healed: noHeal,
       };
       byFrame.set(frame, ev);
     }
@@ -174,7 +177,9 @@ export function replayEvents(
   }
   for (const h of heals) {
     if (h.frame < 0 || h.frame >= frames || h.slotIndex >= slotCount) continue;
-    (at(h.frame).healed as boolean[])[h.slotIndex] = true;
+    const ev = at(h.frame);
+    if (ev.healed === noHeal) ev.healed = [...noHeal];
+    (ev.healed as boolean[])[h.slotIndex] = true;
   }
   return [...byFrame.values()].sort((a, b) => a.frame - b.frame);
 }

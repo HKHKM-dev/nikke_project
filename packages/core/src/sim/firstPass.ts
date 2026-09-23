@@ -257,6 +257,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     number,
     { sourceSlotIndex: number; slotIndex: number; effect: ResolvedInstantEffect }[]
   >();
+  /** このフレームに回復を受けた枠（FrameEvents.healed）。毎フレーム作らずに使い回す */
+  const healed: boolean[] = slots.map(() => false);
+  let healedDirty = false;
   const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
 
   for (let f = 0; f < frames; f++) {
@@ -310,10 +313,16 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (gaugeFulls[gaugeFullSeen] === f) gaugeFull = true;
       gaugeFullSeen += 1;
     }
-    // 前のフレームの射撃で起きた回復（射撃の回数起点）はこのフレームの healed になる
-    const healed = slots.map(() => false);
-    for (const h of pendingHeals.get(f) ?? []) {
+    // 前のフレームの射撃で起きた回復（射撃の回数起点）はこのフレームの healed になる。
+    // 出来事はこのフレームの判定にしか使わないので、配列は使い回す（立てたフレームの次に戻す）
+    if (healedDirty) {
+      healed.fill(false);
+      healedDirty = false;
+    }
+    const due = pendingHeals.size > 0 ? pendingHeals.get(f) : undefined;
+    for (const h of due ?? []) {
       healed[h.slotIndex] = true;
+      healedDirty = true;
       instants.push({
         frame: f,
         sourceSlotIndex: h.sourceSlotIndex,
@@ -322,7 +331,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         amount: 0,
       });
     }
-    pendingHeals.delete(f);
+    if (due !== undefined) pendingHeals.delete(f);
     const ev: FrameEvents = {
       frame: f,
       shots: shotEvents,
@@ -342,6 +351,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev))) {
         if (at === f) {
           healed[target] = true;
+          healedDirty = true;
           instants.push({
             frame: f,
             sourceSlotIndex: src.sourceSlotIndex,
