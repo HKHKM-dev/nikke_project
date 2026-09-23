@@ -133,5 +133,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 200901,
+    "name": {
+      "ja": "ペアマグカップ",
+      "en": "Lover Mug"
+    },
+    "unlockOrder": ["skill1", "skill2", "burst"],
+    "skills": {
+      "skill1": {
+        "id": 2141151,
+        "name": {
+          "ja": "負けず嫌い",
+          "en": "In It to Win It"
+        },
+        "description": {
+          "ja": "■{description_value_03}秒ごとに<word_group=10025>最終</word_group>攻撃力が最も高い味方{description_value_05}機に\n<color=#00AEFF>「攻撃力{description_value_01}％▲」「{description_value_02}秒間維持」</color>\n■戦闘開始時、自分に\n<color=#00AEFF>「バーストスキル<word_group=10031>クールタイム</word_group>{description_value_04}秒▼」「持続」</color>",
+          "en": "■ Activates every {description_value_03} sec. Affects {description_value_05} ally unit(s) with the highest <word_group=10025>final</word_group> ATK.\n<color=#00AEFF>ATK ▲ {description_value_01}% for {description_value_02} sec.</color>\n■ Activates at the start of battle. Affects self.\n<color=#00AEFF><word_group=10031>Cooldown</word_group> of Burst Skill ▼ {description_value_04} sec continuously.</color>"
+        },
+        "values": [
+          ["17.51", "19.1", "20.69", "22.28", "23.87", "25.46", "27.06", "28.65", "30.24", "31.83"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["20", "20", "20", "20", "20", "20", "20", "20", "20", "20"],
+          ["20", "20", "20", "20", "20", "20", "20", "20", "20", "20"],
+          ["3", "3", "3", "3", "3", "3", "3", "3", "3", "3"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "skill2": {
+        "id": 2141251,
+        "name": {
+          "ja": "ミルクドーピング",
+          "en": "Sugar Rush"
+        },
+        "description": {
+          "ja": "■自分のHPが{description_value_01}％以上の時のみ味方全体に\n<color=#00AEFF>「クリティカルダメージ{description_value_02}％▲」「持続」</color>\n■フルチャージ攻撃が{description_value_03}回命中した時、味方全体に\n<color=#00AEFF>「バーストスキル<word_group=10031>クールタイム</word_group>{description_value_04}秒▼」</color>",
+          "en": "■ Activates when above {description_value_01}% HP. Affects all allies.\n<color=#00AEFF>Critical Damage ▲ {description_value_02}% continuously.</color>\n■ Activates when performing a Full Charge attack for {description_value_03} time(s). Affects all allies.\n<color=#00AEFF><word_group=10031>Cooldown</word_group> of Burst Skill ▼ {description_value_04} sec.</color>"
+        },
+        "values": [
+          ["80", "80", "80", "80", "80", "80", "80", "80", "80", "80"],
+          ["6.12", "6.68", "7.23", "7.79", "8.35", "8.9", "9.46", "10.02", "10.57", "11.13"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["1.67", "1.8", "1.93", "2.06", "2.19", "2.32", "2.44", "2.58", "2.7", "2.83"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "burst": {
+        "id": 1141351,
+        "name": {
+          "ja": "勝利に向かって",
+          "en": "Victory is Mine"
+        },
+        "description": {
+          "ja": "■<word_group=10025>最終</word_group>防御力が最も高い敵{description_value_01}機に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_02}％の\nバーストスキルダメージ」</color>\n■味方全体に\n<color=#00AEFF>「攻撃ダメージの{description_value_03}％の回復」「{description_value_04}秒間維持」\n「受けるHP回復量{description_value_05}％▲」「{description_value_06}秒間維持」</color>",
+          "en": "■ Affects {description_value_01} enemy unit(s) with the highest <word_group=10025>final</word_group> DEF. \n<color=#00AEFF>Deals {description_value_02}% of <word_group=10025>final</word_group> ATK as Burst Skill damage.</color>\n■ Affects all allies. \n<color=#00AEFF>Restores HP equal to {description_value_03}% of attack damage. Lasts for {description_value_04} sec.\nIncoming Healing ▲ {description_value_05}% for {description_value_06} sec.</color>"
+        },
+        "values": [
+          ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
+          ["202.04", "220.4", "238.77", "257.14", "275.51", "293.87", "312.24", "330.61", "348.97", "367.34"],
+          ["8.88", "9.69", "10.5", "11.31", "12.12", "12.93", "13.73", "14.54", "15.35", "16.16"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["44.61", "48.04", "51.48", "54.91", "58.34", "61.77", "65.2", "68.64", "72.07", "75.5"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }

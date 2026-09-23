@@ -133,5 +133,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 201101,
+    "name": {
+      "ja": "ファイヤースターター",
+      "en": "Fire Starter"
+    },
+    "unlockOrder": ["skill1", "burst", "skill2"],
+    "skills": {
+      "skill1": {
+        "id": 2192151,
+        "name": {
+          "ja": "代用弾丸",
+          "en": "Emergency-Crafted Bullets"
+        },
+        "description": {
+          "ja": "■通常攻撃を{description_value_01}回行った時、自分に\n<color=#00AEFF>「代用弾丸：弾丸チャージ{description_value_02}％」</color>\n■代用弾丸が適用される時、味方全体に\n<color=#00AEFF>「応急改造：最大装弾数{description_value_03}発▲」\n「{description_value_04}スタック」「{description_value_05}秒間維持」\n「クリティカルダメージ{description_value_06}％▲」\n「{description_value_07}秒間維持」</color>",
+          "en": "■ Activates after performing {description_value_01} normal attacks. Affects self.\n<color=#00AEFF>Emergency-Crafted Bullets: Reloads {description_value_02}% of the magazine.</color>\n■ Activates during Emergency-Crafted Bullets. Affects all allies.\n<color=#00AEFF>Temporary Modification: Max Ammunition Capacity ▲ {description_value_03}. Stacks up to {description_value_04} time(s) and lasts for {description_value_05} sec.\nCritical Damage ▲ {description_value_06}% for {description_value_07} sec.</color>"
+        },
+        "values": [
+          ["25", "25", "20", "20", "20", "15", "15", "15", "10", "10"],
+          ["3.13", "3.37", "3.62", "3.86", "4.1", "4.34", "4.58", "4.82", "5.06", "5.31"],
+          ["1", "1", "1", "1", "1", "2", "2", "2", "2", "2"],
+          ["3", "3", "3", "3", "3", "3", "3", "3", "3", "3"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["2.96", "3.21", "3.47", "3.72", "3.97", "4.23", "4.48", "4.73", "4.99", "5.24"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "burst": {
+        "id": 1192351,
+        "name": {
+          "ja": "その場しのぎの奇跡",
+          "en": "Miracle of Makeshifts"
+        },
+        "description": {
+          "ja": "■味方全体に\n<color=#00AEFF>「その場しのぎの奇跡：\nスキル発動者基準で攻撃力{description_value_01}％▲」\n「応急改造<word_group=10026>スタックコピー</word_group>」「{description_value_02}秒間維持」</color>\n■ショットガンを所持する味方全体に\n<color=#00AEFF>「その場しのぎの奇跡：\nスキル発動者基準で攻撃力{description_value_03}％▲」\n「応急改造<word_group=10026>スタックコピー</word_group>」「{description_value_04}秒間維持」</color>",
+          "en": "■ Affects all allies.\n<color=#00AEFF>Miracle of Makeshifts: ATK ▲ {description_value_01}% of the skill user's ATK. <word_group=10026>Mirrors the stack count</word_group> of Temporary Modification for {description_value_02} sec.</color>\n■ Affects all allies with shotguns.\n<color=#00AEFF>Miracle of Makeshifts: ATK ▲ {description_value_03}% of the skill user's ATK. <word_group=10026>Mirrors the stack count</word_group> of Temporary Modification for {description_value_04} sec.</color>"
+        },
+        "values": [
+          ["1.37", "1.47", "1.58", "1.68", "1.79", "1.9", "2", "2.11", "2.21", "2.32"],
+          ["15", "15", "15", "15", "15", "15", "15", "15", "15", "15"],
+          ["14.31", "15.41", "16.51", "17.61", "18.71", "19.81", "20.91", "22.01", "23.11", "24.21"],
+          ["15", "15", "15", "15", "15", "15", "15", "15", "15", "15"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "skill2": {
+        "id": 2192251,
+        "name": {
+          "ja": "改造成功",
+          "en": "Modification Successful"
+        },
+        "description": {
+          "ja": "■自分が応急改造のフルスタック時のみ、\n味方全体に\n<color=#00AEFF>「クリティカル確率{description_value_01}％▲」「持続」</color>\n■自分が応急改造のフルスタック時のみ、\nショットガンを所持する味方全体に\n<color=#00AEFF>「攻撃速度{description_value_02}％▲」「持続」</color>",
+          "en": "■ Only activates when Temporary Modification is at max stacks. Affects all allies.\n<color=#00AEFF>Critical Rate ▲ {description_value_01}% continuously.</color>\n■ Only activates when Temporary Modification is at max stacks. Affects all allies with shotguns.\n<color=#00AEFF>Attack Speed ▲ {description_value_02}% continuously.</color>"
+        },
+        "values": [
+          ["5.27", "5.81", "6.34", "6.87", "7.41", "7.94", "8.47", "9.01", "9.54", "10.08"],
+          ["24.96", "26.88", "28.8", "30.72", "32.64", "34.56", "36.48", "38.4", "40.32", "42.24"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }

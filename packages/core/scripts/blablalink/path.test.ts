@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { cdnUrl, djb2Int32, nikkeListPath, obfuscatePath, roleDataPath } from './path.ts';
+import {
+  cdnUrl,
+  djb2Int32,
+  favoritePath,
+  favoriteRareMapPath,
+  nikkeListPath,
+  obfuscatePath,
+  roleDataPath,
+} from './path.ts';
 
 describe('obfuscatePath', () => {
   // 期待値は Python で独立に再現し、実際に CDN から 200 が返ることを確認済みのもの。
@@ -17,6 +25,12 @@ describe('obfuscatePath', () => {
 
   it('roledata (ja)', () => {
     expect(obfuscatePath(roleDataPath(90, 'ja'))).toBe('ze-80/b1e70181972316a2a591fe60c64aa3bd.json');
+  });
+
+  // Stage 9: 2026-09-23 に CDN から 200 が返ることを確認した
+  it('favorite rare map and favorite item (ja)', () => {
+    expect(obfuscatePath(favoriteRareMapPath())).toBe('yb-61/eaff19debcb789edef7e1e8a377e12e5.json');
+    expect(obfuscatePath(favoritePath(200801, 'ja'))).toBe('lf-94/tz-90/beee880649deaaf826b0a542f0c44bab.json');
   });
 
   it('builds full CDN URL', () => {

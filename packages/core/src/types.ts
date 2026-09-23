@@ -13,6 +13,8 @@ export type BurstStep = 'Step1' | 'Step2' | 'Step3' | 'AllStep';
 export type BurstNextStep = 'Step1' | 'Step2' | 'Step3' | 'StepFull' | 'NextStep';
 export type StatKind = 'attack' | 'hp' | 'defence';
 export type ShotInputType = 'DOWN' | 'UP' | 'DOWN_Charge';
+/** スキルの枠。skills/types.ts が SKILL_SLOTS と一緒に再エクスポートする（Stage 9 で TreasureData から参照するためここへ移した） */
+export type SkillSlot = 'skill1' | 'skill2' | 'burst';
 
 export type CharacterIndexEntry = {
   resourceId: number;
@@ -104,4 +106,20 @@ export type CharacterData = CharacterIndexEntry & {
     durationSeconds: number;
   };
   skills: { skill1: SkillRaw; skill2: SkillRaw; burst: SkillRaw };
+  /** Stage 9: 宝物（SSR のお気に入りアイテム）。ないキャラは null */
+  treasure: TreasureData | null;
+};
+
+/**
+ * Stage 9: 宝物のスキル差し替え。宝物のステータスはスペック固定で乗らないので持たない（plan/design-stage9.md 0.5 節）。
+ * 宝物の段階 N（1..3）では unlockOrder の先頭 N 個のスロットが skills の宝物版になる
+ */
+export type TreasureData = {
+  /** 宝物 ID（CDN の favorite_{id}.json） */
+  favoriteId: number;
+  name: LocalizedText;
+  /** 解放順（favoriteitem_skill_group_data の配列順）。3 スロットちょうど */
+  unlockOrder: SkillSlot[];
+  /** 宝物版のスキル。形は基礎版と同じ。CT は基礎版の burstSkill を使う */
+  skills: Record<SkillSlot, SkillRaw>;
 };

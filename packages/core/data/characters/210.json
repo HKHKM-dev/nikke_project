@@ -133,5 +133,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 200201,
+    "name": {
+      "ja": "ゲームキッドエボリューション",
+      "en": "Gamekid Evolution"
+    },
+    "unlockOrder": ["skill2", "burst", "skill1"],
+    "skills": {
+      "skill2": {
+        "id": 2210251,
+        "name": {
+          "ja": "シークレットコード",
+          "en": "Secret Code"
+        },
+        "description": {
+          "ja": "■フルチャージ攻撃が命中した時、自分に\n<color=#00AEFF>「ハッキングコード収集：攻撃力{description_value_01}％▲」「{description_value_02}スタック」「{description_value_03}秒間維持」</color>\n■最後の弾丸が命中した時、自分がハッキングコード収集状態なら、電撃コードの味方全体に\n<color=#00AEFF>「スキル発動者基準で攻撃力{description_value_04}％▲」「{description_value_05}スタック」「{description_value_06}秒間維持」</color>",
+          "en": "■ Activates when landing a Full Charge attack. Affects self.\n<color=#00AEFF>Collect Hacking Code: ATK ▲ {description_value_01}%. Stacks up to {description_value_02} times and lasts for {description_value_03} sec.</color>\n■ Activates when the last round of ammunition hits while this unit is in the Collect Hacking Code state. Affects all Electric Code allies.\n<color=#00AEFF>ATK ▲ {description_value_04}% of the skill user's ATK. Stacks up to {description_value_05} times and lasts for {description_value_06} sec.</color>"
+        },
+        "values": [
+          ["9.24", "11.32", "13.41", "15.49", "17.58", "19.66", "21.74", "23.83", "25.91", "28"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["1.05", "1.58", "2.11", "2.64", "3.16", "3.69", "4.22", "4.75", "5.28", "5.8"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["15", "15", "15", "15", "15", "15", "15", "15", "15", "15"],
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "burst": {
+        "id": 1210351,
+        "name": {
+          "ja": "ワンサイドプロトコル",
+          "en": "Partisan Protocol"
+        },
+        "description": {
+          "ja": "■<word_group=10025>最終</word_group>防御力が最も高い敵{description_value_01}機に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_02}％のダメージ」\n「防御力{description_value_03}％▼」「{description_value_04}秒間維持」</color>\n■自分がハッキングコード収集のフルスタック状態なら、同じ敵に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_05}％の追加ダメージ」\n「受けるダメージ{description_value_06}％▲」「{description_value_07}秒間維持」</color>",
+          "en": "■ Affects the {description_value_01} enemy unit(s) with the highest <word_group=10025>final</word_group> DEF.\n<color=#00AEFF>Deals {description_value_02}% of <word_group=10025>final</word_group> ATK as damage.\nDEF ▼ {description_value_03}% for {description_value_04} sec.</color>\n■ Activates when Collect Hacking Code is at max stacks. Affects the same target(s).\n<color=#00AEFF>Deals {description_value_05}% of <word_group=10025>final</word_group> ATK as additional damage.\nDamage Taken ▲ {description_value_06}% for {description_value_07} sec.</color>"
+        },
+        "values": [
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["67.27", "73.39", "79.51", "85.62", "91.74", "97.86", "103.97", "110.09", "116.21", "122.32"],
+          ["1.49", "1.63", "1.76", "1.9", "2.03", "2.17", "2.31", "2.44", "2.58", "2.71"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["67.27", "73.39", "79.51", "85.62", "91.74", "97.86", "103.97", "110.09", "116.21", "122.32"],
+          ["9.36", "10.32", "11.28", "12.25", "13.21", "14.18", "15.14", "16.11", "17.07", "18.04"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "skill1": {
+        "id": 2210151,
+        "name": {
+          "ja": "インヴェイジョン",
+          "en": "Invasion"
+        },
+        "description": {
+          "ja": "■最後の弾丸が命中した時、自分がハッキングコード収集状態なら対象に\n<color=#00AEFF>「攻撃力{description_value_01}％▼」「{description_value_02}秒間維持」\n「防御力{description_value_03}％▼」「{description_value_04}秒間維持」</color>\n■フルバーストタイム発動時、自分に\n<color=#00AEFF>「リロード速度{description_value_05}％増加状態で固定」「{description_value_06}秒間維持」</color>",
+          "en": "■ Activates when the last bullet hits the target. Affects the target if the skill user is in Collect Hacking Code.\n<color=#00AEFF>ATK ▼ {description_value_01}% for {description_value_02} sec.\nDEF ▼ {description_value_03}% for {description_value_04} sec.</color>\n■ Activates when entering Full Burst. Affects self.\n<color=#00AEFF>Reload speed is fixed at a {description_value_05}% increase for {description_value_06} sec.</color>"
+        },
+        "values": [
+          ["7.57", "8.26", "8.95", "9.63", "10.32", "11.01", "11.7", "12.39", "13.08", "13.77"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["7.57", "8.26", "8.95", "9.63", "10.32", "11.01", "11.7", "12.39", "13.08", "13.77"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["95", "95", "95", "95", "95", "95", "95", "95", "95", "95"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }

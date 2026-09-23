@@ -133,5 +133,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 201201,
+    "name": {
+      "ja": "五線譜ノート",
+      "en": "Music Notebook"
+    },
+    "unlockOrder": ["skill2", "skill1", "burst"],
+    "skills": {
+      "skill2": {
+        "id": 2150251,
+        "name": {
+          "ja": "クレッシェンド",
+          "en": "Crescendo"
+        },
+        "description": {
+          "ja": "■通常攻撃が{description_value_01}回クリティカル命中した時、\n自分に\n<color=#00AEFF>「クレッシェンド：クリティカルダメージ\n{description_value_02}％▲」「{description_value_03}スタック」「{description_value_04}秒間維持」</color>\n■通常攻撃が{description_value_07}回クリティカル命中した時、対象に\n<color=#00AEFF>「マルカート：<word_group=10025>最終</word_group>攻撃力の{description_value_05}％の追加ダメージ」</color>\n■マルカートがクリティカル命中した時、同じ敵に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_06}％の追加ダメージ」</color>\n■戦闘開始時、自分に\n<color=#00AEFF>「スキル1強制使用」</color>",
+          "en": "■ Activates after landing {description_value_01} critical hit(s) with normal attacks. Affects self.\n<color=#00AEFF>Crescendo: Critical Damage ▲ {description_value_02}%. Stacks up to {description_value_03} times and lasts for {description_value_04} sec.</color>\n■ Activates after landing {description_value_07} critical hit(s) with normal attacks. Affects the target(s).\n<color=#00AEFF>Marcato: Deals {description_value_05}% of <word_group=10025>final</word_group> ATK as additional damage.</color>\n■ Activates if Marcato lands as a crit attack. Affects the same target.\n<color=#00AEFF>Deals {description_value_06}% of <word_group=10025>final</word_group> ATK as additional damage.</color>\n■ Activates at the start of battle. Affects self.\n<color=#00AEFF>Forcefully uses Skill 1.</color>"
+        },
+        "values": [
+          ["6", "6", "6", "6", "6", "6", "6", "6", "6", "6"],
+          ["14.65", "15.78", "16.9", "18.03", "19.16", "20.29", "21.41", "22.54", "23.67", "24.79"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["15", "15", "15", "15", "15", "15", "15", "15", "15", "15"],
+          ["52", "56", "60", "64", "68", "72", "76", "80", "84", "88"],
+          ["59.09", "63.63", "68.18", "72.72", "77.27", "81.81", "86.36", "90.91", "95.45", "100"],
+          ["8", "8", "8", "8", "8", "8", "8", "8", "8", "8"],
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "skill1": {
+        "id": 1150151,
+        "name": {
+          "ja": "デクレッシェンド",
+          "en": "Decrescendo"
+        },
+        "description": {
+          "ja": "■自分に\n<color=#00AEFF>「クリティカル確率{description_value_01}％▲」\n「{description_value_02}秒間維持」</color>\n<color=#00AEFF>「攻撃力{description_value_03}％▲」「{description_value_04}秒間維持」</color>\n<color=#00AEFF>「通常攻撃のクリティカル確率{description_value_05}％▲」\n「{description_value_06}秒間維持」</color>",
+          "en": "■ Affects self.\n<color=#00AEFF>Critical Rate ▲ {description_value_01}% for {description_value_02} sec.</color>\n<color=#00AEFF>ATK ▲ {description_value_03}% for {description_value_04} sec.</color>\n<color=#00AEFF>Normal Attack Critical Rate ▲ {description_value_05}% for {description_value_06} sec.</color>"
+        },
+        "values": [
+          ["15.38", "16.57", "17.75", "18.93", "20.12", "21.3", "22.48", "23.67", "24.85", "26.04"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["11.81", "12.72", "13.63", "14.54", "15.45", "16.36", "17.27", "18.18", "19.09", "20"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["21.36", "23.01", "24.65", "26.29", "27.94", "29.58", "31.23", "32.87", "34.51", "36.16"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "burst": {
+        "id": 1150351,
+        "name": {
+          "ja": "クライマックス",
+          "en": "Climax"
+        },
+        "description": {
+          "ja": "■ランダムな敵に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_01}％のダメージ」\n「{description_value_02}回<word_group=10050>順番に攻撃</word_group>」</color>\n■自分がクレッシェンドの\nフルスタック状態なら、同じ敵に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_03}％の追加ダメージ」</color>",
+          "en": "■ Affects random enemies.\n<color=#00AEFF>Deals {description_value_01}% of <word_group=10025>final</word_group> ATK as damage. <word_group=10050>Attacks sequentially</word_group> {description_value_02} times.</color>\n■ Activates when Crescendo is at max stacks. Affects the same target.\n<color=#00AEFF>Deals {description_value_03}% of <word_group=10025>final</word_group> ATK as additional damage.</color>"
+        },
+        "values": [
+          ["321.75", "346.5", "371.25", "396", "420.75", "445.5", "470.25", "495", "519.75", "544.5"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["321.75", "346.5", "371.25", "396", "420.75", "445.5", "470.25", "495", "519.75", "544.5"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }

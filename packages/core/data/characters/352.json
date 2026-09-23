@@ -133,5 +133,87 @@
         null
       ]
     }
+  },
+  "treasure": {
+    "favoriteId": 200701,
+    "name": {
+      "ja": "古びた羅針盤",
+      "en": "Antique Compass"
+    },
+    "unlockOrder": ["skill1", "skill2", "burst"],
+    "skills": {
+      "skill1": {
+        "id": 2352151,
+        "name": {
+          "ja": "陣頭指揮",
+          "en": "Frontline Command"
+        },
+        "description": {
+          "ja": "■最後の弾丸が命中した時、味方全体に\n<color=#00AEFF>「通常攻撃のクリティカル確率{description_value_01}％▲」「{description_value_02}秒間維持」</color>\n■フルチャージして攻撃した時、味方全体に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPの{description_value_03}％回復」\n「<word_group=10015>バーストゲージのチャージ</word_group>{description_value_04}％」</color>",
+          "en": "■ Activates when the last bullet hits the target. Affects all allies.\n<color=#00AEFF>Critical Rate of normal attacks ▲ {description_value_01}% for {description_value_02} sec.</color>\n■ Activates when performing a Full Charge attack. Affects all allies.\n<color=#00AEFF>Restores HP equal to {description_value_03}% of the skill user's <word_group=10025>final</word_group> max HP.\n<word_group=10015>Fills Burst Gauge</word_group> by {description_value_04}%.</color>"
+        },
+        "values": [
+          ["8.65", "9.31", "9.98", "10.64", "11.31", "11.98", "12.64", "13.31", "13.97", "14.64"],
+          ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
+          ["0.34", "0.37", "0.4", "0.42", "0.45", "0.48", "0.51", "0.53", "0.56", "0.59"],
+          ["8.46", "9.11", "9.76", "10.41", "11.06", "11.71", "12.36", "13.01", "13.66", "14.31"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "skill2": {
+        "id": 2352251,
+        "name": {
+          "ja": "砲門開放",
+          "en": "Fire Away"
+        },
+        "description": {
+          "ja": "■味方全体に\n<color=#00AEFF>「<word_group=10000>阻止部位の攻撃ダメージ</word_group> {description_value_01}％▲」「持続」</color>\n■フルバーストタイムが発動した時、味方全体に\n<color=#00AEFF>「攻撃ダメージ{description_value_02}％▲」「{description_value_03}秒間維持」</color>\n■フルチャージ攻撃が命中した時、対象に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_04}％の追加ダメージ」</color>",
+          "en": "■ Affects all allies.\n<color=#00AEFF><word_group=10000>Damage to Interruption Parts</word_group> ▲ {description_value_01}% continuously.</color>\n■ Activates when entering Full Burst. Affects all allies.\n<color=#00AEFF>Attack Damage ▲ {description_value_02}% for {description_value_03} sec.</color>\n■ Activates when landing a Full Charge attack. Affects the target.\n<color=#00AEFF>Deals {description_value_04}% of <word_group=10025>final</word_group> ATK as additional damage.</color>"
+        },
+        "values": [
+          ["1.82", "1.96", "2.1", "2.24", "2.38", "2.52", "2.66", "2.8", "2.94", "3.08"],
+          ["16.47", "17.74", "19", "20.27", "21.54", "22.8", "24.07", "25.34", "26.61", "27.87"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["105.76", "113.89", "122.03", "130.16", "138.3", "146.44", "154.57", "162.71", "170.84", "178.98"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "burst": {
+        "id": 1352351,
+        "name": {
+          "ja": "イージスキャノン",
+          "en": "Aegis Cannon"
+        },
+        "description": {
+          "ja": "■<word_group=10025>最終</word_group>攻撃力が最も高い敵1機に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_01}％のバーストスキルダメージ」</color>\n■味方全体に\n<color=#00AEFF>「攻撃ダメージの{description_value_02}％回復」「{description_value_03}秒間維持」</color>\n■自分に\n<color=#00AEFF>「チャージダメージ{description_value_04}％<word_group=10029>倍率</word_group>▲」「{description_value_05}発間維持」</color>",
+          "en": "■ Affects the enemy with the highest <word_group=10025>final</word_group> ATK.\n<color=#00AEFF>Deals {description_value_01}% of <word_group=10025>final</word_group> ATK as Burst Skill damage.</color>\n■ Affects all allies.\n<color=#00AEFF>Restores HP equal to {description_value_02}% of attack damage. Lasts for {description_value_03} sec.</color>\n■ Affects self.\n<color=#00AEFF>Charge Damage <word_group=10029>Multiplier</word_group> ▲ {description_value_04}% for {description_value_05} round(s).</color>"
+        },
+        "values": [
+          ["4867.2", "5241.6", "5616", "5990.4", "6364.8", "6739.2", "7113.6", "7488", "7862.4", "8236.8"],
+          ["32.17", "34.65", "37.12", "39.6", "42.07", "44.55", "47.02", "49.5", "51.97", "54.45"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          ["93.6", "100.8", "108", "115.2", "122.4", "129.6", "136.8", "144", "151.2", "158.4"],
+          ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
   }
 }

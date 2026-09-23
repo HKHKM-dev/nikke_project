@@ -13,6 +13,7 @@ import { computeCadence, type CadenceResult } from '../cadence.ts';
 import { baseAttackOf, computeTriggerDamage, modelNotes, type ModelNote, type TriggerDamage } from '../damage.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect } from '../skills/resolve.ts';
 import { slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
+import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { BuffTotals } from '../skills/buffs.ts';
 import { EMPTY_BUFF_STATE, groupTimeline, type BuffTimeline, type BuffWindow } from '../skills/timeline.ts';
 import {
@@ -96,7 +97,9 @@ type Runner = {
   result: SimSlotResult;
 };
 
-export function runSimulation(input: SimInput): SimResult {
+export function runSimulation(simInput: SimInput): SimResult {
+  // Stage 9: 宝物版への差し替えは最上位で 1 回だけ（planTeamRun の外でもバーストの定義と character を読むため）
+  const input = applyTreasureToTeam(simInput);
   const { slots, enemy } = input;
   const model = input.model ?? DEFAULT_WEAPON_MODEL;
   const trace = input.trace ?? false;
