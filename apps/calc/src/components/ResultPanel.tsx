@@ -261,7 +261,17 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
                 <td>×{formatNumber(seg.trigger.boost.total, 3)}</td>
                 <td>×{formatNumber(seg.trigger.attackDamageMultiplier, 4)}</td>
                 <td>{formatNumber(seg.trigger.perTrigger)}</td>
-                <td>{formatNumber(seg.triggers, 1)}</td>
+                <td>
+                  {formatNumber(seg.triggers, 1)}
+                  {seg.triggerSource === 'shots' && (
+                    <small
+                      className="sub"
+                      title="最大装弾数・リロード速度・チャージ速度の持続バフが掛かっている区間は、平均レートではなく 1 パス目の射撃の列から発数を数える"
+                    >
+                      （実数）
+                    </small>
+                  )}
+                </td>
                 <td>{formatNumber(seg.damage)}</td>
                 <td>
                   {seg.timedEffects.length === 0

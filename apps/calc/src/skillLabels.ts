@@ -1,6 +1,7 @@
 // スキル関連の表示用ラベル（React 非依存）
 import type {
   AppliedEffect,
+  ResolvedInstantEffect,
   BuffStat,
   BuffTrigger,
   ResolvedTrigger,
@@ -24,6 +25,9 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   chargeDamage: 'チャージダメージ',
   distributedDamage: '分配ダメージ',
   burstGaugeSpeed: 'バーストゲージのチャージ速度',
+  maxAmmo: '最大装弾数',
+  reloadSpeed: 'リロード速度',
+  chargeSpeed: 'チャージ速度',
 };
 
 export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
@@ -40,9 +44,12 @@ export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
 export function formatTrigger(trigger: ResolvedTrigger): string {
   if (typeof trigger === 'string') return BUFF_TRIGGER_LABEL[trigger];
   if ('every' in trigger) {
-    const what = { normalShot: '通常攻撃', normalHit: '通常攻撃の命中', fullChargeShot: 'フルチャージ攻撃' }[
-      trigger.count
-    ];
+    const what = {
+      normalShot: '通常攻撃',
+      normalHit: '通常攻撃の命中',
+      fullChargeShot: 'フルチャージ攻撃',
+      lastShot: '最後の弾丸',
+    }[trigger.count];
     return trigger.every === 1 ? `${what}ごと` : `${what} ${trigger.every} 回ごと`;
   }
   const what = trigger.count === 'burstUse' ? 'バースト使用' : 'フルバースト';
@@ -79,13 +86,21 @@ export const SUPPORT_BADGE: Record<SkillSupport | 'undefined' | 'loading' | 'err
   error: { label: '読み込み失敗', className: 'unsupported' },
 };
 
-/** 「攻撃力 +42.2%」「攻撃力 +3,105（発動者基準 14.1%）」 */
+/** 「攻撃力 +42.2%」「攻撃力 +3,105（発動者基準 14.1%）」「最大装弾数 +5 発」 */
 export function formatAppliedAmount(effect: AppliedEffect): string {
   const stat = BUFF_STAT_LABEL[effect.stat];
   if (effect.scaling === 'casterAttack') {
     return `${stat} +${formatNumber(effect.appliedAmount)}（発動者基準 ${formatPercent(effect.value, 2)}）`;
   }
+  if (effect.scaling === 'flat') return `${stat} +${formatNumber(effect.appliedAmount)} 発`;
   return `${stat} +${formatPercent(effect.appliedAmount, 2)}`;
+}
+
+/** Stage 10: 即時効果。「バースト CT −2.34 秒」「弾丸チャージ 39.88%」 */
+export function formatInstant(effect: ResolvedInstantEffect): string {
+  return effect.kind === 'cooldownReduction'
+    ? `バースト CT −${formatNumber(effect.value, 2)} 秒`
+    : `弾丸チャージ ${formatPercent(effect.value, 2)}`;
 }
 
 /** 「枠 2 ノワール スキル 1」。ニケ名がまだ無い（読み込み中）ときは「枠 2（読み込み中）スキル 1」 */

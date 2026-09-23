@@ -2,8 +2,11 @@
 // Stage 8 の範囲では射撃のタイミングがバフにもバーストにも依存しない（弾数・リロード・チャージ速度のバフは Stage 10）ので、
 // 射撃の列は編成だけで決まる。ゲージ（burst/dynamic.ts）も、回数トリガー（skills/timeline.ts）も、sim の本体（engine.ts）も
 // この列を読む（plan/design-stage8.md 1 節・3.1 節）。
+// Stage 10: 射撃に効くバフが入ると射撃の列はバフに依存するので、1 パス目は sim/firstPass.ts のフレームループが作る。
+// planShots はバフなし（基礎値）の列で、射撃に効く効果の無い編成では firstPass と 1 フレームも違わない。
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
+import { firingParams } from './firing.ts';
 import { initialShooter, stepShooter } from './shooter.ts';
 
 export type ShotLog = {
@@ -11,6 +14,8 @@ export type ShotLog = {
   frames: number[];
   /** チャージ武器なら true。常にフルチャージで撃つモデルなので、fullChargeShot の列 = frames */
   fullCharge: boolean;
+  /** Stage 10: 残弾を 0 にした射撃のフレーム（frames の部分列。「最後の弾丸」）。省略は無し（手で作る列のため） */
+  lastShotFrames?: number[];
 };
 
 /** 各枠の射手を frames フレーム回し、発射フレームを記録する。空枠は null */
@@ -25,9 +30,15 @@ export function planShots(
   return slots.map((slot) => {
     if (slot === null) return null;
     const shot = slot.character.shot;
-    const state = initialShooter(shot, model);
+    const params = firingParams(shot);
+    const state = initialShooter(shot, model, params);
     const fired: number[] = [];
-    for (let f = 0; f < frames; f++) if (stepShooter(state, shot, model)) fired.push(f);
-    return { frames: fired, fullCharge: isChargeWeapon(shot) };
+    const lastShotFrames: number[] = [];
+    for (let f = 0; f < frames; f++) {
+      if (!stepShooter(state, shot, model, params)) continue;
+      fired.push(f);
+      if (state.lastShot) lastShotFrames.push(f);
+    }
+    return { frames: fired, fullCharge: isChargeWeapon(shot), lastShotFrames };
   });
 }

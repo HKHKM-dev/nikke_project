@@ -2,6 +2,7 @@
 // Stage 5 で「1 トリガーの式」（computeTriggerDamage）を発射サイクルから切り離し、sim がフレームごとに使えるようにした。
 // フルバースト区間は condition.fullBurst で倍率グループに +0.5 が乗る。時間変化するバフはまだ含まない。
 import { computeCadence, type CadenceResult } from './cadence.ts';
+import type { FiringParams } from './sim/firing.ts';
 import { elementMultiplier } from './element.ts';
 import {
   ZERO_BUFFS,
@@ -54,6 +55,8 @@ export type TriggerDamageInput = {
 export type DamageInput = TriggerDamageInput & {
   condition: ConditionInput;
   model?: WeaponModel;
+  /** Stage 10: 発射サイクルに使う射撃の実効値（常時分の射撃バフを畳み込んだもの）。省略は基礎値 */
+  firing?: FiringParams;
 };
 
 export type ModelNoteLevel = 'unsupported' | 'approx';
@@ -178,7 +181,7 @@ export function computeDamage(input: DamageInput): DamageResult {
   if (condition.durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
   const trigger = computeTriggerDamage(input);
-  const cadence = computeCadence(character.shot, model);
+  const cadence = computeCadence(character.shot, model, input.firing);
   const dps = trigger.perTrigger * cadence.triggersPerSecond;
 
   return {

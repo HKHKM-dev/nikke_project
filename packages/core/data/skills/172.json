@@ -1,0 +1,48 @@
+{
+  "formatVersion": 1,
+  "resourceId": 172,
+  "checkedAt": "2026-09-23",
+  "skills": {
+    "skill1": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "「20 回攻撃を受けた時」のチャージダメージ倍率▲は未対応（被弾は要件 5.2 でスコープ外）",
+          "en": "Charge damage up after being hit 20 times is not modeled (taking hits is out of scope, requirement 5.2)"
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い味方 2 機の受けるダメージ▼は防御系でダメージに関係しない",
+          "en": "Damage taken down for the top-2 ATK allies is defensive and does not affect damage"
+        }
+      ]
+    },
+    "burst": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "reloadSpeed",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 3,
+          "durationRef": 4
+        }
+      ]
+    }
+  }
+}

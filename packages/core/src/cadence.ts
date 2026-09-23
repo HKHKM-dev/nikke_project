@@ -1,15 +1,10 @@
 // マガジン 1 周期（1 発目までの遅延 + 発射 × 装弾数 + リロード）をフレーム単位で離散化し、平均の秒間トリガー数を求める。
 // モデルは 2026-09-22 の射撃場録画（AR / SR / RL / MG）で較正済み。plan/verification.md 参照。
+// Stage 10: 射撃に効くバフの実効値（sim/firing.ts の FiringParams）を受け取れるようにした。省略は基礎値（Stage 9 と同じ）。
+// calc は常時分の射撃バフをここで平均レートに畳み込む（plan/design-stage10.md 3.4 節）。
+import { firingParams, type FiringParams } from './sim/firing.ts';
 import type { ShotParams } from './types.ts';
-import {
-  DEFAULT_WEAPON_MODEL,
-  FPS,
-  MAX_RPM,
-  hasSpinUp,
-  isChargeWeapon,
-  secondsToFrames,
-  type WeaponModel,
-} from './weapons.ts';
+import { DEFAULT_WEAPON_MODEL, FPS, MAX_RPM, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
 
 export type CadenceResult = {
   /** 各発の発射フレーム（1 発目 = 0） */
@@ -49,18 +44,22 @@ export function rateAfterShots(shot: ShotParams, shotsFired: number): number {
  * - それ以外: 発射レートを 1 フレームごとに蓄積し、1 発分たまったフレームで発射（端数は持ち越し）。
  *   AR 720rpm は 5f 固定、MG はレート上昇に従って間隔が縮む。
  */
-export function simulateShotFrames(shot: ShotParams, model: WeaponModel = DEFAULT_WEAPON_MODEL): number[] {
+export function simulateShotFrames(
+  shot: ShotParams,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): number[] {
   if (shot.maxAmmo < 1) throw new RangeError(`maxAmmo must be >= 1, got ${shot.maxAmmo}`);
   if (shot.rateOfFire <= 0) throw new RangeError(`rateOfFire must be positive, got ${shot.rateOfFire}`);
   const frames: number[] = [0];
   if (isChargeWeapon(shot)) {
-    const interval = secondsToFrames(shot.chargeTime) + model.chargeReleaseFrames;
-    for (let i = 1; i < shot.maxAmmo; i++) frames.push(i * interval);
+    const interval = params.chargeFrames + model.chargeReleaseFrames;
+    for (let i = 1; i < params.maxAmmo; i++) frames.push(i * interval);
     return frames;
   }
   let acc = 0;
   let t = 0;
-  while (frames.length < shot.maxAmmo) {
+  while (frames.length < params.maxAmmo) {
     t += 1;
     acc += rateAfterShots(shot, frames.length) / MAX_RPM;
     if (acc >= 1) {
@@ -71,18 +70,26 @@ export function simulateShotFrames(shot: ShotParams, model: WeaponModel = DEFAUL
   return frames;
 }
 
-export function firstShotFrames(shot: ShotParams, model: WeaponModel = DEFAULT_WEAPON_MODEL): number {
-  if (isChargeWeapon(shot)) return secondsToFrames(shot.chargeTime) + model.chargeReleaseFrames;
+export function firstShotFrames(
+  shot: ShotParams,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): number {
+  if (isChargeWeapon(shot)) return params.chargeFrames + model.chargeReleaseFrames;
   if (hasSpinUp(shot)) return model.spinUpFirstShotFrames;
   return 0;
 }
 
-export function computeCadence(shot: ShotParams, model: WeaponModel = DEFAULT_WEAPON_MODEL): CadenceResult {
-  const shotFrames = simulateShotFrames(shot, model);
-  const first = firstShotFrames(shot, model);
+export function computeCadence(
+  shot: ShotParams,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): CadenceResult {
+  const shotFrames = simulateShotFrames(shot, model, params);
+  const first = firstShotFrames(shot, model, params);
   const magazineFrames = shotFrames[shotFrames.length - 1] ?? 0;
-  const chunks = reloadChunks(shot);
-  const reloadFrames = secondsToFrames(shot.reloadTime) * chunks;
+  const chunks = reloadChunks({ maxAmmo: params.maxAmmo, reloadBullet: shot.reloadBullet });
+  const reloadFrames = params.reloadChunkFrames * chunks;
   const cycleFrames = first + magazineFrames + reloadFrames;
   return {
     shotFrames,
@@ -92,7 +99,7 @@ export function computeCadence(shot: ShotParams, model: WeaponModel = DEFAULT_WE
     reloadFrames,
     cycleFrames,
     cycleSeconds: cycleFrames / FPS,
-    triggersPerCycle: shot.maxAmmo,
-    triggersPerSecond: (shot.maxAmmo * FPS) / cycleFrames,
+    triggersPerCycle: params.maxAmmo,
+    triggersPerSecond: (params.maxAmmo * FPS) / cycleFrames,
   };
 }

@@ -10,6 +10,7 @@ import {
   type BuffTrigger,
   type EffectTrigger,
   type EventCountKind,
+  type InstantKind,
   type ShotCountKind,
   type SkillDefinition,
   type SkillSlot,
@@ -78,6 +79,11 @@ export function skillValue(skill: SkillRaw, ref: number, level: number): number 
   return value;
 }
 
+/** % 表記の値を比率にする。flat（Stage 10。最大装弾数の発数）はそのまま */
+function scaledValue(raw: number, scaling: BuffScaling | undefined): number {
+  return scaling === 'flat' ? raw : raw / 100;
+}
+
 export type ResolvedEffect = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
   target: BuffTarget;
@@ -86,7 +92,7 @@ export type ResolvedEffect = {
   stat: BuffStat;
   /** 省略を 'ratio' に埋めた後の値 */
   scaling: BuffScaling;
-  /** 比率。0.201 のように 100 で割った後の値（段階 A の stat はすべて % 表記なので一律に割る） */
+  /** 比率。0.201 のように 100 で割った後の値（% 表記の stat は一律に割る）。scaling 'flat' は発数のまま */
   value: number;
   assumes?: LocalizedText;
 };
@@ -116,7 +122,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
         target: effect.target,
         stat: effect.stat,
         scaling: effect.scaling ?? 'ratio',
-        value: skillValue(skill, effect.ref, levels[slot]) / 100,
+        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling),
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.assumes) r.assumes = effect.assumes;
@@ -167,12 +173,58 @@ export function resolveTimed(
         target: effect.target,
         stat: effect.stat,
         scaling: effect.scaling ?? 'ratio',
-        value: skillValue(skill, effect.ref, levels[slot]) / 100,
+        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling),
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         durationFrames: durationToFrames(seconds),
         effectIndex,
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
+      if (effect.assumes) r.assumes = effect.assumes;
+      resolved.push(r);
+    });
+  }
+  return resolved;
+}
+
+/** Stage 10: 即時効果（CT 短縮・弾丸チャージ）。value は CT 短縮なら秒、弾丸チャージなら比率（0.3988） */
+export type ResolvedInstantEffect = {
+  source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
+  kind: InstantKind;
+  trigger: ResolvedTrigger;
+  target: BuffTarget;
+  targetWeapon?: WeaponType;
+  value: number;
+  /** 同じスロットの何番目の効果か（識別用） */
+  effectIndex: number;
+  assumes?: LocalizedText;
+};
+
+/** 定義の各即時効果を Lv の数値に解決する。support が 'unsupported' のスキルは空 */
+export function resolveInstant(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedInstantEffect[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const resolved: ResolvedInstantEffect[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const entry = def.skills[slot];
+    if (entry.support === 'unsupported') continue;
+    const skill = character.skills[slot];
+    entry.effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'cooldownReduction' && effect.kind !== 'ammoRefill') return;
+      const raw = skillValue(skill, effect.ref, levels[slot]);
+      if (raw < 0) throw new RangeError(`skill ${skill.id}: ${effect.kind} must be >= 0, got ${raw}`);
+      const r: ResolvedInstantEffect = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        kind: effect.kind,
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        target: effect.target,
+        value: effect.kind === 'cooldownReduction' ? raw : raw / 100,
+        effectIndex,
+      };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);

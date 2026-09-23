@@ -1,0 +1,95 @@
+{
+  "formatVersion": 1,
+  "resourceId": 82,
+  "checkedAt": "2026-09-23",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "ref": 1
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "ref": 2
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "ref": 3
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "stat": "maxAmmo",
+          "ref": 4,
+          "durationRef": 5
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 6,
+          "durationRef": 7
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "stat": "attack",
+          "ref": 8,
+          "durationRef": 9
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "遮蔽物の HP 回復はダメージに関係しない",
+          "en": "Cover HP recovery does not affect damage"
+        }
+      ]
+    },
+    "burst": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ]
+    }
+  }
+}

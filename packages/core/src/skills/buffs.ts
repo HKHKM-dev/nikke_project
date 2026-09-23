@@ -21,6 +21,14 @@ export type BuffTotals = {
   distributedDamage: number;
   /** Stage 8: バーストゲージのチャージ速度の加算。この枠の射撃で溜まるゲージに (1 + burstGaugeSpeed) を掛ける（passive のみ） */
   burstGaugeSpeed: number;
+  /** Stage 10: 最大装弾数の比率の加算（sim/firing.ts の effectiveMaxAmmo）。ダメージの式は読まない */
+  maxAmmoRatio: number;
+  /** Stage 10: 最大装弾数の発数の加算（scaling 'flat'） */
+  maxAmmoFlat: number;
+  /** Stage 10: リロード速度の加算 */
+  reloadSpeed: number;
+  /** Stage 10: チャージ速度の加算 */
+  chargeSpeed: number;
 };
 
 export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
@@ -32,6 +40,10 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   chargeDamage: 0,
   distributedDamage: 0,
   burstGaugeSpeed: 0,
+  maxAmmoRatio: 0,
+  maxAmmoFlat: 0,
+  reloadSpeed: 0,
+  chargeSpeed: 0,
 });
 
 /** stat に対応する BuffTotals の比率フィールド */
@@ -43,6 +55,9 @@ const RATIO_FIELD: Record<BuffStat, keyof BuffTotals> = {
   chargeDamage: 'chargeDamage',
   distributedDamage: 'distributedDamage',
   burstGaugeSpeed: 'burstGaugeSpeed',
+  maxAmmo: 'maxAmmoRatio',
+  reloadSpeed: 'reloadSpeed',
+  chargeSpeed: 'chargeSpeed',
 };
 
 /** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す */
@@ -60,7 +75,8 @@ export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
 
 /**
  * 解決済みの効果 1 件を totals に足す。単位の判断（比率か実数か）はここに閉じ込める。
- * casterAttack は 発動者のバフ前攻撃力 × value を固定加算し、それ以外は value を比率として加算する。
+ * casterAttack は 発動者のバフ前攻撃力 × value を固定加算し、flat（Stage 10。maxAmmo だけ）は value を発数として
+ * maxAmmoFlat に加算し、それ以外は value を比率として加算する。
  */
 export function applyResolvedEffect(
   totals: BuffTotals,
@@ -70,6 +86,9 @@ export function applyResolvedEffect(
   if (effect.scaling === 'casterAttack') {
     const appliedAmount = casterBaseAttack * effect.value;
     return { totals: addFlatAttack(totals, appliedAmount), appliedAmount };
+  }
+  if (effect.scaling === 'flat') {
+    return { totals: { ...totals, maxAmmoFlat: totals.maxAmmoFlat + effect.value }, appliedAmount: effect.value };
   }
   return { totals: addRatioBuff(totals, effect.stat, effect.value), appliedAmount: effect.value };
 }

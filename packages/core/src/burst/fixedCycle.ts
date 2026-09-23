@@ -115,6 +115,7 @@ export function planFixedCycle(
     fullBurstFramesTotal,
     gaugeFullFrames: [],
     chainTimeouts: [],
+    cooldownReductions: [],
   };
 }
 

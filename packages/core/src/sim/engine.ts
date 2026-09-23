@@ -8,6 +8,8 @@
 // calc（team.ts）はこの sim の期待値モデルで、両者の差は発射サイクルの離散化（マガジンの位相と端数）だけになる（__tests__/simCalc.test.ts）。
 // Stage 8: 1 パス目を team.ts の planTeamRun（射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動）にまとめた。
 // 射撃は 1 パス目の射撃の列（sim/shots.ts）をそのまま使い、倍率ダメージ（damage）は発動フレームで足す。
+// Stage 10: 1 パス目の射撃の列と時刻表は sim/firstPass.ts のフレームループ（射撃に効くバフ・CT 短縮・弾丸チャージ込み）で作る。
+// 2 パス目は変えない（射撃の列を読み、区間ごとの 1 トリガー値を足す）。
 import type { BurstSchedule, BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
 import { baseAttackOf, computeTriggerDamage, modelNotes, type ModelNote, type TriggerDamage } from '../damage.ts';
@@ -25,6 +27,8 @@ import {
 } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
+import { firingParams } from './firing.ts';
+import type { InstantApplication } from './firstPass.ts';
 import type { ShotLog } from './shots.ts';
 
 export type SimInput = TeamInput & {
@@ -37,7 +41,8 @@ export type SimEvent =
   | { frame: number; kind: 'burst'; slot: number; step: BurstStepKey; damage: number }
   | { frame: number; kind: 'fullBurstStart' | 'fullBurstEnd' | 'gaugeFull' | 'chainTimeout' }
   | { frame: number; kind: 'buffStart' | 'buffEnd'; slot: number; effect: BuffWindow['effect'] }
-  | { frame: number; kind: 'skillHit'; slot: number; effect: SkillHitEvent['effect']; damage: number };
+  | { frame: number; kind: 'skillHit'; slot: number; effect: SkillHitEvent['effect']; damage: number }
+  | { frame: number; kind: 'cooldownReduction' | 'ammoRefill'; slot: number; source: number; amount: number };
 
 /** 1 区間ぶんの結果。区間は timeline.segments と 1:1 */
 export type SimSlotSegment = {
@@ -82,6 +87,8 @@ export type SimResult = {
   timeline: BuffTimeline;
   /** Stage 8: 各枠の射撃の列（1 パス目）。2 パス目の射撃はこの列どおり */
   shots: (ShotLog | null)[];
+  /** Stage 10: 即時効果（CT 短縮・弾丸チャージ）を当てた記録（1 パス目） */
+  instants: InstantApplication[];
   slots: (SimSlotResult | null)[];
   totalDamage: number;
   /** trace: false なら空 */
@@ -105,7 +112,7 @@ export function runSimulation(simInput: SimInput): SimResult {
   const trace = input.trace ?? false;
 
   // 1 パス目（calc と共通）: 射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動。2 パス目がこの下のフレームループ
-  const { frames, shots, schedule, timeline, skillHits } = planTeamRun({ ...input, model });
+  const { frames, shots, schedule, timeline, skillHits, instants } = planTeamRun({ ...input, model });
 
   const runners: (Runner | null)[] = slots.map((slot, index) => {
     if (slot === null) return null;
@@ -144,7 +151,7 @@ export function runSimulation(simInput: SimInput): SimResult {
         index,
         character: slot.character,
         baseAttack: baseAttackOf(slot),
-        cadence: computeCadence(slot.character.shot, model),
+        cadence: computeCadence(slot.character.shot, model, firingParams(slot.character.shot, passive.buffs)),
         notes: modelNotes(slot.character.shot),
         passiveBuffs: passive.buffs,
         passiveEffects: passive.passiveEffects,
@@ -177,6 +184,7 @@ export function runSimulation(simInput: SimInput): SimResult {
   const chainTimeouts = new Set(schedule?.chainTimeouts ?? []);
   let nextActivation = 0;
   let nextSkillHit = 0;
+  let nextInstant = 0;
   let windowIndex = 0;
   let inFullBurst = false;
   let segIndex = 0;
@@ -238,6 +246,13 @@ export function runSimulation(simInput: SimInput): SimResult {
       if (trace)
         events.push({ frame: f, kind: 'skillHit', slot: h.slotIndex, effect: h.effect, damage: h.hit.perActivation });
     }
+    if (trace) {
+      while (instants[nextInstant]?.frame === f) {
+        const x = instants[nextInstant]!;
+        nextInstant += 1;
+        events.push({ frame: f, kind: x.effect.kind, slot: x.slotIndex, source: x.sourceSlotIndex, amount: x.amount });
+      }
+    }
     inFullBurst = fb;
     // 通常射撃（枠順）。射撃は 1 パス目の射撃の列どおり
     for (const runner of runners) {
@@ -269,7 +284,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     return r;
   });
 
-  return { frames, schedule, timeline, shots, slots: results, totalDamage, events };
+  return { frames, schedule, timeline, shots, instants, slots: results, totalDamage, events };
 }
 
 export type SimIntervalTotals = { triggers: number; damage: number };

@@ -1,0 +1,62 @@
+{
+  "formatVersion": 1,
+  "resourceId": 160,
+  "checkedAt": "2026-09-23",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "chargeSpeed",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ]
+    },
+    "skill2": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "stat": "maxAmmo",
+          "scaling": "flat",
+          "ref": 5,
+          "durationRef": 6
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体の防御力▲・攻撃ダメージの回復は防御系でダメージに関係しない",
+          "en": "Defence up and damage-based healing for all allies are defensive and do not affect damage"
+        }
+      ]
+    },
+    "burst": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "攻撃範囲内の敵は単体ボスで 1 ヒット",
+            "en": "Enemies in range are a lone boss, so it lands once"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "移動不可（5 秒間維持）はダメージに関係しない",
+          "en": "Immobilize (5 s) does not affect damage"
+        }
+      ]
+    }
+  }
+}

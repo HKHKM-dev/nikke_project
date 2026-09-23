@@ -11,7 +11,7 @@
 // - 候補の順: その段階の専任（burstStep が一致）→ AllStep、それぞれ枠番号の若い順。CT が明けていて、このチェーンで未使用のもの。
 // 定数の根拠は plan/design-stage7.md 0 節・1 節。演出時間は録画からの目視で、tools/captures/gauge.ts で較正する。
 import type { BurstNextStep, BurstStep } from '../types.ts';
-import type { BurstActivation, BurstSchedule, BurstStepKey, FullBurstWindow } from './schedule.ts';
+import type { BurstActivation, BurstSchedule, BurstStepKey, CooldownReduction, FullBurstWindow } from './schedule.ts';
 
 /** バーストゲージの上限（CDN の target_burst_energy_pershot と同じ単位） */
 export const BURST_GAUGE_MAX = 1_000_000;
@@ -82,6 +82,7 @@ export type BurstControllerState = {
   windows: FullBurstWindow[];
   gaugeFullFrames: number[];
   chainTimeouts: number[];
+  cooldownReductions: CooldownReduction[];
 };
 
 function validateTiming(t: BurstTiming): void {
@@ -126,6 +127,7 @@ export function initialBurstController(
     windows: [],
     gaugeFullFrames: [],
     chainTimeouts: [],
+    cooldownReductions: [],
   };
 }
 
@@ -212,6 +214,29 @@ export function stepBurstController(state: BurstControllerState, frame: number, 
   }
 }
 
+/**
+ * Stage 10: 枠 slotIndex の残りの CT を frames フレーム縮める（「バーストスキルクールタイム X 秒▼」。即時効果）。
+ * そのフレームの stepBurstController の後に呼ぶ（同じフレームに発動した枠の CT も縮む。plan/design-stage10.md 4 節）。
+ * CT が明けている枠は変わらず、明けるフレームは frame より前に戻さない（縮んで明けた枠が撃てるのは次のフレームから）。
+ * 同じフレームに何度呼んでも max(frame, c − a − b …) になり、順番に依らない
+ */
+export function reduceCooldown(
+  state: BurstControllerState,
+  slotIndex: number,
+  frames: number,
+  frame: number,
+  sourceSlotIndex: number,
+): void {
+  if (!Number.isInteger(frames) || frames < 0)
+    throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
+  if (state.units[slotIndex] == null) return;
+  const before = state.cooldownEnd[slotIndex]!;
+  const after = Math.max(frame, before - frames);
+  const applied = Math.max(0, before - after);
+  if (applied > 0) state.cooldownEnd[slotIndex] = after;
+  state.cooldownReductions.push({ frame, slotIndex, sourceSlotIndex, frames, applied });
+}
+
 /** 戦闘時間 frames で切って BurstSchedule にする */
 export function finishSchedule(state: BurstControllerState, frames: number): BurstSchedule {
   const fullBurstWindows = state.windows
@@ -224,5 +249,6 @@ export function finishSchedule(state: BurstControllerState, frames: number): Bur
     fullBurstFramesTotal: fullBurstWindows.reduce((sum, w) => sum + (w.end - w.start), 0),
     gaugeFullFrames: state.gaugeFullFrames.filter((f) => f < frames),
     chainTimeouts: state.chainTimeouts.filter((f) => f < frames),
+    cooldownReductions: state.cooldownReductions.filter((r) => r.frame < frames),
   };
 }
