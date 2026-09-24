@@ -2,11 +2,12 @@
 // 「戦闘中の攻撃力（バフ前）」を作る。スペック固定（fixedSpec.ts）はこの入力の 1 つのプリセット（fixedSpecBuild）で、
 // computeCombatAttack(fixedSpecBuild) が computeFixedSpecAttack と同値になることをテストで固定している（退化）。
 //
-// 合成順（plan/design-stage12.md 2.1 節）。Stage 2-A の実測（9 体で誤差ゼロ）で確定しているのは好感度と装備の位置だけ:
-//   coreSide  = 突破後の素の攻撃力 + 好感度 + [キューブ + コレクション + リサイクルルーム]   ← コアが掛かる側
+// 合成順（plan/design-stage12.md 2.1 節）。好感度と装備の位置は Stage 2-A の実測（9 体で誤差ゼロ）、
+// キューブ・コレクション・リサイクルルームの位置は Stage 12 の実測 (b)（2026-09-24、キャラ画面の攻撃力）で確定:
+//   coreSide  = 突破後の素の攻撃力 + 好感度 + リサイクルルーム                                   ← コアが掛かる側
 //   withCore  = round(coreSide × (1 + コア段 × coreAttack / 1e4))
-//   attack    = withCore + 装備 4 部位 + [その他加算]                                          ← コアの外
-// [ ] の位置は仮定（BUILD_CORE_APPLIES_TO）。Stage 12 の実測 (b)（キャラ画面の攻撃力との一致）で決める。
+//   attack    = withCore + 装備 4 部位 + キューブ + コレクション（宝物） + [その他加算]           ← コアの外
+// 位置は BUILD_CORE_APPLIES_TO に置く。その他加算（CDN に無いもの）の位置だけは未確認。
 import { fixedSpecAffectionRank } from './fixedSpec.ts';
 import { computeStat, validateGrowth, type GrowthInput } from './stats.ts';
 import type {
@@ -104,12 +105,14 @@ export function isEmptyBuild(build: BuildInput): boolean {
 }
 
 /**
- * 仮定: コア強化の +2%/段が掛かる側に入る加算。好感度（true）と装備（常に外）は実測で確定。残りは Stage 12 の
- * 実測 (b) で決める（plan/design-stage12.md 2.4 節）。値を変えると computeCombatAttack の内訳が変わる
+ * コア強化の +2%/段が掛かる側に入る加算。好感度（常に内）と装備（常に外）は Stage 2-A の実測。
+ * キューブ・コレクション・リサイクルルームは Stage 12 の実測 (b)（plan/verification.md Stage 12 節）: リター（コア 7）の
+ * キャラ画面 406,172 は 8 通りのうちこの組だけが一致し、Lv15 のキューブを付けると +2,780（コアの外）。
+ * extra（その他加算）は未確認のまま外に置く
  */
 export const BUILD_CORE_APPLIES_TO = {
-  cube: true,
-  collection: true,
+  cube: false,
+  collection: false,
   recycleRoom: true,
   extra: false,
 } as const;
@@ -236,7 +239,7 @@ export type CombatAttackOptions = {
 
 /**
  * 戦闘中の攻撃力（バフ前）。growth は Stage 1 の育成値（レベル・限界突破・コア）。
- * 装備は常にコアの外、好感度は常にコアの内側（Stage 2-A の実測）。それ以外は BUILD_CORE_APPLIES_TO の仮定
+ * 装備・キューブ・コレクションはコアの外、好感度・リサイクルルームはコアの内側（実測。BUILD_CORE_APPLIES_TO）
  */
 export function computeCombatAttack(
   character: Pick<

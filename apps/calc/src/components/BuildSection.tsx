@@ -359,12 +359,12 @@ export function BuildSection({
         <p className="hint build-breakdown">
           {formatNumber(combat.attack)} = round(({formatNumber(combat.gradeBase)} 素 + {formatNumber(combat.affection)}{' '}
           好感度
-          {combat.cube > 0 && ` + ${formatNumber(combat.cube)} キューブ`}
-          {combat.collection > 0 && ` + ${formatNumber(combat.collection)} コレクション`}
           {combat.recycleRoom > 0 && ` + ${formatNumber(combat.recycleRoom)} リサイクル`}) × (1 + コア {growth.core}{' '}
           段)) = {formatNumber(combat.withCore)} + {formatNumber(combat.gear)} 装備
+          {combat.cube > 0 && ` + ${formatNumber(combat.cube)} キューブ`}
+          {combat.collection > 0 && ` + ${formatNumber(combat.collection)} コレクション`}
           {combat.extra > 0 && ` + ${formatNumber(combat.extra)} その他`}
-          。キューブ・コレクション・リサイクルルームがコアの内側に入るのは仮定（実測待ち）
+          。キューブ・コレクションはコアの外、リサイクルルームは内側（キャラ画面の実測）。その他加算の位置は未確認
         </p>
       )}
       {effects && (effects.effects.length > 0 || effects.notes.length > 0) && (

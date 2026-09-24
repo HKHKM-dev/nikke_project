@@ -147,8 +147,8 @@ function withBuild(
   const combat = computeCombatAttack(character, growth, build, masters, { treasurePhase: skills.treasurePhase });
   console.log(
     `build ${character.name.ja}: attack ${combat.attack} = round((${combat.gradeBase} + affection ${combat.affection}` +
-      ` + cube ${combat.cube} + collection ${combat.collection} + recycle ${combat.recycleRoom}) × core) ${combat.withCore}` +
-      ` + gear ${combat.gear} + extra ${combat.extra}`,
+      ` + recycle ${combat.recycleRoom}) × core) ${combat.withCore}` +
+      ` + gear ${combat.gear} + cube ${combat.cube} + collection ${combat.collection} + extra ${combat.extra}`,
   );
   const effects = resolveBuildEffects(character, build, masters, { treasurePhase: skills.treasurePhase });
   if (effects.effects.length > 0 || effects.notes.length > 0) {
