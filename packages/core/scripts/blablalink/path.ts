@@ -77,3 +77,25 @@ export function favoriteRareMapPath(): string {
 export function favoritePath(favoriteId: number, locale: CdnLocale): string {
   return `/equip/${locale}/favorite_${favoriteId}.json`;
 }
+
+// ---- Stage 12: 育成のマスタ ----
+
+/** 装備マスタ（ティア・クラス・部位ごとの Lv0 のステータス。強化 Lv 別の値は無い） */
+export function itemEquipTablePath(locale: CdnLocale): string {
+  return `/equip/ItemEquipTable-${locale}.json`;
+}
+
+/** 好感度（rank 1〜40 のクラス別加算） */
+export function attractiveLevelTablePath(): string {
+  return '/character/AttractiveLevelTable.json';
+}
+
+/** リサイクルルーム研究（1 Lv あたりの加算） */
+export function recycleResearchStatTablePath(): string {
+  return '/character/RecycleResearchStatTable.json';
+}
+
+/** キューブ（ID は 1000301 から連番） */
+export function cubePath(cubeId: number, locale: CdnLocale): string {
+  return `/equip/${locale}/cube_${cubeId}.json`;
+}

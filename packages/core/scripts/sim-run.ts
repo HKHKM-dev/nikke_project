@@ -1,22 +1,26 @@
 // Stage 5: ヘッドレスの実行口。sim（フレーム逐次）と calc（2 区間の期待値）の枠別・区間別の内訳を表で出す。
-//   node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--controlled 3] [--defence 100] [--element Fire]
+//   node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--controlled 3] [--defence 100] [--element Fire] [--build builds.json]
 // Stage 7: バーストは既定で動的サイクル（ゲージ・CT・チェーン）。--fixed-cycle で Stage 5 / 6 の固定 20 秒サイクル。
 // --controlled は操作キャラの枠（1 始まり）。省略は全員 AI 扱い（SR / RL のフルチャージ倍率がゲージに乗らない）。
 // Stage 10: CT 短縮・弾丸チャージ（即時効果）の記録と、射撃に効くバフの区間（calc が射撃の列から数えた区間は * 付き）を出す。
 // 育成値は既定 Lv200・3 凸・コア 0、条件は コア命中率 1・距離ボーナスあり・フルチャージ（calc の既定と同じ）。
 // スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
+// Stage 12: --build は resourceId → 育成入力（BuildInput の各項目と任意の growth）の JSON。--fixed-spec のときは使わない。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
+import { computeCombatAttack, emptyBuild, type BuildInput } from '../src/build.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
+import { MASTER_FILES } from '../src/load.ts';
+import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
 import { firingParams } from '../src/sim/firing.ts';
 import { MAX_SKILL_LEVELS, type ResolvedTrigger } from '../src/skills/resolve.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
 import { computeTeamDamage, planTeamRun, TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
-import type { CharacterData, Element } from '../src/types.ts';
+import type { BuildMasters, CharacterData, Element } from '../src/types.ts';
 import { FPS } from '../src/weapons.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
@@ -40,12 +44,14 @@ const { values } = parseArgs({
     'core-hit-rate': { type: 'string', default: '1' },
     // Stage 9: 宝物の段階（resourceId:段階 をカンマ区切り。省略は全員 0）
     treasure: { type: 'string' },
+    // Stage 12: 育成入力の JSON ファイル
+    build: { type: 'string' },
   },
 });
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json]',
   );
   process.exit(2);
 }
@@ -70,6 +76,15 @@ function readJson(path: string): unknown {
 }
 const skillIndex = parseSkillIndex(readJson(join(DATA_DIR, 'skills/index.json')));
 const fixedSpec = values['fixed-spec'];
+
+// Stage 12: 育成入力。ファイルは { "<resourceId>": { growth?, affectionRank?, gear?, cube?, collection?, recycleRoom?, extraAttack? } }
+type BuildFile = Record<string, Partial<BuildInput> & { growth?: GrowthInput }>;
+const buildFile: BuildFile = values.build === undefined ? {} : (readJson(values.build) as BuildFile);
+if (values.build !== undefined && fixedSpec) console.warn('--build is ignored under --fixed-spec');
+const masters = Object.fromEntries(
+  Object.entries(MASTER_FILES).map(([name, file]) => [name, readJson(join(DATA_DIR, 'masters', file))]),
+) as BuildMasters;
+const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
 const condition = { coreHitRate: Number(values['core-hit-rate']), distanceBonus: true, fullCharge: true };
 
 const slots: TeamSlotInput[] = ids.map((id) => {
@@ -91,8 +106,31 @@ const slots: TeamSlotInput[] = ids.map((id) => {
         attackOverride: computeFixedSpecAttack(character).attack,
         skills,
       }
-    : { character, growth: { level: 200, grade: 3, core: 0 }, condition, skills };
+    : withBuild(character, skills, buildFile[String(id)]);
 });
+
+/** Stage 12: 育成入力があれば戦闘中の攻撃力を computeCombatAttack で作り、attackOverride に入れる。無ければ素のステータス */
+function withBuild(
+  character: CharacterData,
+  skills: {
+    definition: ReturnType<typeof parseSkillDefinition> | null;
+    levels: typeof MAX_SKILL_LEVELS;
+    treasurePhase: TreasurePhase;
+  },
+  entry: BuildFile[string] | undefined,
+): TeamSlotInput {
+  const growth = entry?.growth ?? DEFAULT_GROWTH;
+  if (entry === undefined) return { character, growth, condition, skills };
+  const { growth: _growth, ...rest } = entry;
+  const build: BuildInput = { ...emptyBuild(), ...rest };
+  const combat = computeCombatAttack(character, growth, build, masters, { treasurePhase: skills.treasurePhase });
+  console.log(
+    `build ${character.name.ja}: attack ${combat.attack} = round((${combat.gradeBase} + affection ${combat.affection}` +
+      ` + cube ${combat.cube} + collection ${combat.collection} + recycle ${combat.recycleRoom}) × core) ${combat.withCore}` +
+      ` + gear ${combat.gear} + extra ${combat.extra}`,
+  );
+  return { character, growth, condition, attackOverride: combat.attack, skills };
+}
 
 const input = {
   slots,
@@ -112,7 +150,7 @@ const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
 
 console.log(
   `duration ${input.durationSeconds}s (${sim.frames}f), burst ${input.burst ? input.burstModel : 'off'}, ` +
-    `fixed spec ${fixedSpec}, controlled ${input.controlledSlot === null ? 'none (all AI)' : `slot ${input.controlledSlot + 1}`}, ` +
+    `fixed spec ${fixedSpec}, build ${values.build ?? 'none'}, controlled ${input.controlledSlot === null ? 'none (all AI)' : `slot ${input.controlledSlot + 1}`}, ` +
     `enemy defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}`,
 );
 if (calc.schedule && calc.burstSummary) {

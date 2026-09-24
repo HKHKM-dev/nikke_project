@@ -1,15 +1,23 @@
 // Blablalink roledata（生 JSON）→ 正規化済み CharacterData。単位変換はここに集約する。
 import type {
+  AffectionMaster,
   BurstNextStep,
   BurstStep,
   CharacterData,
   CharacterIndexEntry,
+  CollectionData,
+  CubeData,
   Element,
+  GearMaster,
+  GearPart,
+  GearType,
   NikkeClass,
   Rarity,
+  RecycleRoomMaster,
   ShotInputType,
   SkillRaw,
   SkillSlot,
+  StatKind,
   TreasureData,
   WeaponType,
 } from '../src/types.ts';
@@ -281,5 +289,201 @@ export function toIndexEntry(data: CharacterData): CharacterIndexEntry {
     element: data.element,
     weaponType: data.weaponType,
     burstStep: data.burstStep,
+  };
+}
+
+// ---- Stage 12: 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム） ----
+
+/** /equip/ItemEquipTable-ja.json の 1 件。stat は 6 枠（None は未使用） */
+export type RawEquipRecord = {
+  id: number;
+  name_localkey: string;
+  item_type: string;
+  item_sub_type: string;
+  class: string;
+  item_rare: string;
+  grade_core_id: number;
+  grow_grade: number;
+  stat: { stat_type: string; stat_value: number }[];
+};
+export type RawEquipTable = { version: string; records: RawEquipRecord[] };
+
+/** /character/AttractiveLevelTable.json の 1 件。*_rate は名前に反して加算値そのもの（rank30 の Supporter = 1367） */
+export type RawAttractiveRecord = {
+  id: number;
+  attractive_level: number;
+  attractive_point: number;
+} & Record<string, number>;
+export type RawAttractiveTable = { version: string; records: RawAttractiveRecord[] };
+
+/** /equip/{locale}/cube_{id}.json のうち使うフィールド。atk 等は index = Lv − 1（15 要素） */
+export type RawCube = {
+  id: number;
+  name_localkey: string;
+  atk: number[];
+  hp: number[];
+  def: number[];
+  level1: number[];
+  level2: number[];
+  level3: number[];
+  item_rare: string;
+  /** スキル（末尾に null が入ることがある） */
+  harmonycube_skill_group: (RawSkillDetail | null)[];
+};
+
+/** /equip/{locale}/favorite_{id}.json の R / SR（コレクション）で使うフィールド。atk 等は index = Lv（16 要素） */
+export type RawCollection = RawFavorite & {
+  atk: number[];
+  hp: number[];
+  def: number[];
+  level1: number[];
+  level2: number[];
+  favorite_type: string;
+  weapon_type: string;
+  max_level: number;
+  collection_skill_group_data: RawSkillDetail[];
+};
+
+/** /character/RecycleResearchStatTable.json の 1 件（研究 1 Lv あたりの加算） */
+export type RawRecycleRecord = {
+  id: number;
+  recycle_type: string;
+  recycle_sub_type: string;
+  attack: number;
+  defence: number;
+  hp: number;
+};
+export type RawRecycleTable = { version: string; records: RawRecycleRecord[] };
+
+const GEAR_PART_OF_SUB_TYPE: Record<string, GearPart> = {
+  Module_A: 'head',
+  Module_B: 'body',
+  Module_C: 'arm',
+  Module_D: 'leg',
+};
+/** CDN の item_rare → マスタの種類。T9 企業装備は CDN に無い（Lv0 が T9 Lv3 相当） */
+const GEAR_TYPE_OF_RARE: Record<string, GearType> = { T9: 'T9', T10: 'OL' };
+const STAT_KIND_OF_TYPE: Record<string, StatKind> = { Atk: 'attack', Hp: 'hp', Defence: 'defence' };
+
+/**
+ * Stage 12: 手書きの装備マスタ（data/masters/gear.json）の Lv0 が CDN の ItemEquipTable と一致するか。
+ * 違いがあれば「種類 クラス 部位 stat: マスタ / CDN」の一覧を返す（空なら一致）
+ */
+export function checkGearMaster(gear: GearMaster, table: RawEquipTable): string[] {
+  const problems: string[] = [];
+  for (const rec of table.records) {
+    const type = GEAR_TYPE_OF_RARE[rec.item_rare];
+    const part = GEAR_PART_OF_SUB_TYPE[rec.item_sub_type];
+    if (type === undefined || part === undefined || rec.class === 'All') continue;
+    if (!(CLASSES as readonly string[]).includes(rec.class)) continue;
+    const stats = gear.tiers[type]?.[rec.class as NikkeClass]?.[part];
+    if (stats === undefined) {
+      problems.push(`${type} ${rec.class} ${part}: missing in gear master`);
+      continue;
+    }
+    const cdn: Record<StatKind, number> = { attack: 0, hp: 0, defence: 0 };
+    for (const s of rec.stat) {
+      const kind = STAT_KIND_OF_TYPE[s.stat_type];
+      if (kind !== undefined) cdn[kind] += s.stat_value;
+    }
+    for (const kind of ['attack', 'hp', 'defence'] as const) {
+      if (stats[kind][0] !== cdn[kind]) {
+        problems.push(`${type} ${rec.class} ${part} ${kind} Lv0: master ${stats[kind][0]} / CDN ${cdn[kind]}`);
+      }
+    }
+  }
+  return problems;
+}
+
+export function toAffectionMaster(table: RawAttractiveTable): AffectionMaster {
+  const records = [...table.records].sort((a, b) => a.attractive_level - b.attractive_level);
+  const ranks = records.map((r, i) => {
+    if (r.attractive_level !== i + 1) throw new Error(`attractive level ${r.attractive_level} at index ${i}`);
+    const pick = (kind: 'attack' | 'hp' | 'defence'): Record<NikkeClass, number> => ({
+      Attacker: r[`attacker_${kind}_rate`] ?? 0,
+      Defender: r[`defender_${kind}_rate`] ?? 0,
+      Supporter: r[`supporter_${kind}_rate`] ?? 0,
+    });
+    return { rank: r.attractive_level, attack: pick('attack'), hp: pick('hp'), defence: pick('defence') };
+  });
+  return { formatVersion: 1, ranks };
+}
+
+function toSkillList(en: (RawSkillDetail | null)[], ja: (RawSkillDetail | null)[], what: string): SkillRaw[] {
+  const skills: SkillRaw[] = [];
+  en.forEach((s, i) => {
+    const j = ja[i];
+    if (s === null || s === undefined) return;
+    if (j === null || j === undefined || j.id !== s.id)
+      throw new Error(`${what}: ja and en skills differ at index ${i}`);
+    skills.push(toSkill(s, j));
+  });
+  return skills;
+}
+
+export function toCubeData(en: RawCube, ja: RawCube): CubeData {
+  if (en.id !== ja.id) throw new Error(`cube locale mismatch: en=${en.id} ja=${ja.id}`);
+  const skills = toSkillList(en.harmonycube_skill_group, ja.harmonycube_skill_group, `cube ${en.id}`);
+  const stageLists = [en.level1, en.level2, en.level3].slice(0, skills.length);
+  for (const list of [en.atk, en.hp, en.def, ...stageLists]) {
+    if (list.length !== 15) throw new Error(`cube ${en.id}: expected 15 levels, got ${list.length}`);
+  }
+  return {
+    id: en.id,
+    name: { ja: ja.name_localkey, en: en.name_localkey },
+    stats: { attack: en.atk, hp: en.hp, defence: en.def },
+    skillStages: stageLists,
+    skills,
+  };
+}
+
+export function toCollectionData(en: RawCollection, ja: RawCollection): CollectionData {
+  if (en.id !== ja.id) throw new Error(`favorite locale mismatch: en=${en.id} ja=${ja.id}`);
+  if (en.favorite_rare !== 'R' && en.favorite_rare !== 'SR') {
+    throw new Error(`favorite ${en.id}: expected R or SR collection, got ${en.favorite_rare}`);
+  }
+  const skills = toSkillList(en.collection_skill_group_data, ja.collection_skill_group_data, `favorite ${en.id}`);
+  const stageLists = [en.level1, en.level2].slice(0, skills.length);
+  for (const list of [en.atk, en.hp, en.def, ...stageLists]) {
+    if (list.length !== 16) throw new Error(`favorite ${en.id}: expected Lv0..15 (16 values), got ${list.length}`);
+  }
+  return {
+    id: en.id,
+    rarity: en.favorite_rare,
+    weaponType: oneOf(WEAPON_TYPES, en.weapon_type, 'weapon_type'),
+    name: { ja: ja.name_localkey, en: en.name_localkey },
+    stats: { attack: en.atk, hp: en.hp, defence: en.def },
+    skillStages: stageLists,
+    skills,
+  };
+}
+
+/** SSR（宝物）のステータス。段階 1..3 で同じ値でなければ Error */
+export function toTreasureStats(ssr: Pick<RawCollection, 'id' | 'atk' | 'hp' | 'def'>): Record<StatKind, number> {
+  const same = (list: number[]) => list.every((v) => v === list[0]);
+  if (!same(ssr.atk) || !same(ssr.hp) || !same(ssr.def) || ssr.atk.length === 0) {
+    throw new Error(`favorite ${ssr.id}: treasure stats differ by grade`);
+  }
+  return { attack: ssr.atk[0]!, hp: ssr.hp[0]!, defence: ssr.def[0]! };
+}
+
+export function toRecycleRoomMaster(table: RawRecycleTable): RecycleRoomMaster {
+  const triple = (r: RawRecycleRecord) => ({ attack: r.attack, hp: r.hp, defence: r.defence });
+  const byType = (type: string, sub: string): RawRecycleRecord => {
+    const r = table.records.find((x) => x.recycle_type === type && x.recycle_sub_type === sub);
+    if (r === undefined) throw new Error(`recycle research ${type}/${sub} not found`);
+    return r;
+  };
+  const corporation: Record<string, Record<StatKind, number>> = {};
+  for (const r of table.records) if (r.recycle_type === 'Corporation') corporation[r.recycle_sub_type] = triple(r);
+  return {
+    formatVersion: 1,
+    personal: triple(byType('Personal', 'Personal')),
+    class: {
+      Attacker: triple(byType('Class', 'Attacker')),
+      Defender: triple(byType('Class', 'Defender')),
+      Supporter: triple(byType('Class', 'Supporter')),
+    },
+    corporation,
   };
 }

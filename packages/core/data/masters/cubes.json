@@ -1,0 +1,1127 @@
+{
+  "formatVersion": 1,
+  "cubes": [
+    {
+      "id": 1000301,
+      "name": {
+        "ja": "レリックアサルトキューブ",
+        "en": "Assault Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4007011,
+          "name": {
+            "ja": "ヒートアップHC",
+            "en": "Heat Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「命中率{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>Hit Rate ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["2.54", "3.81", "5.09", "17.5", "20", "22.5", "25", "27.5", "30", "32.5"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4007012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000302,
+      "name": {
+        "ja": "タクティカルアサルトキューブ",
+        "en": "Onslaught Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4008011,
+          "name": {
+            "ja": "チャージダメージアップHC",
+            "en": "Charge Damage Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「チャージダメージ{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>Charge Damage ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["2.54", "3.81", "5.09", "17.5", "20", "22.5", "25", "27.5", "30", "32.5"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4008012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000303,
+      "name": {
+        "ja": "レリックベアーキューブ",
+        "en": "Resilience Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4009011,
+          "name": {
+            "ja": "クイックリロードHC",
+            "en": "Quick Reload HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「リロード速度{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>Reload Speed ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["14.84", "22.27", "29.69", "17.5", "20", "22.5", "25", "27.5", "30", "32.5"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4009012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000304,
+      "name": {
+        "ja": "タクティカルベアーキューブ",
+        "en": "Bastion Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4010011,
+          "name": {
+            "ja": "リロードアップHC",
+            "en": "Reload Up HC"
+          },
+          "description": {
+            "ja": "■{description_value_01}発射撃した時\n<color=#00AEFF>「弾丸チャージ{description_value_02}発▲」</color>",
+            "en": "■ Activates when firing {description_value_01} round(s).\n<color=#00AEFF>Reload ▲ {description_value_02} round(s).</color>"
+          },
+          "values": [
+            ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+            ["1", "2", "3", "2.5", "3", "3.5", "4", "4.5", "5", "5.5"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4010012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000305,
+      "name": {
+        "ja": "レリックブーストキューブ",
+        "en": "Adjutant Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4011011,
+          "name": {
+            "ja": "チャージスピードアップHC",
+            "en": "Charge Speed Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「チャージ速度{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>Charge Speed ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["1.06", "1.59", "2.12", "17.5", "20", "22.5", "25", "27.5", "30", "32.5"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4011012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000306,
+      "name": {
+        "ja": "タクティカルブーストキューブ",
+        "en": "Wingman Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4012011,
+          "name": {
+            "ja": "マガジンアップHC",
+            "en": "Magazine Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「最大装弾数{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>Max Ammunition Capacity ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["14.84", "22.27", "29.69", "17.5", "20", "22.5", "25", "27.5", "30", "32.5"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4012012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000307,
+      "name": {
+        "ja": "レリッククオンタムキューブ",
+        "en": "Quantum Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4013011,
+          "name": {
+            "ja": "バーストチャージアップHC",
+            "en": "Burst Charge Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「バーストゲージのチャージ速度{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>Burst Gauge filling speed ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["2.33", "3.5", "4.66", "17.5", "20", "22.5", "25", "27.5", "30", "32.5"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4013012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000308,
+      "name": {
+        "ja": "レリックビガーキューブ",
+        "en": "Vigor Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 40140101,
+          "name": {
+            "ja": "ヘルスアップHC",
+            "en": "Priority: Health HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「最大HP{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>Max HP ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["4.84", "7.27", "9.69", "12.12", "14.55", "16.97", "19.4", "21.82", "24.24", "26.67"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 40140102,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000309,
+      "name": {
+        "ja": "レリックエンデュアーキューブ",
+        "en": "Endurance Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4015011,
+          "name": {
+            "ja": "ディフェンスアップHC",
+            "en": "Defense Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「防御力{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>DEF ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["24.2", "36.35", "48.45", "60.6", "72.75", "84.85", "97", "109.1", "121.2", "133.35"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4015012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000310,
+      "name": {
+        "ja": "レリックヒーリングキューブ",
+        "en": "Healing Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4016011,
+          "name": {
+            "ja": "ヒールアップHC",
+            "en": "Heal Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「与えるHP回復量{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>Outgoing Healing ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.08", "12.12", "16.16", "20.2", "24.24", "28.28", "32.32", "36.36", "40.4", "44.44"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4016012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000311,
+      "name": {
+        "ja": "レリックテンパリングキューブ",
+        "en": "Tempering Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4017011,
+          "name": {
+            "ja": "ダメージリダクションHC",
+            "en": "Damage Reduction HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>[受けるダメージ{description_value_01}％▼」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>Damage Taken ▼ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["4.84", "7.27", "9.69", "12.11", "14.53", "16.95", "19.37", "21.79", "24.21", "44.44"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4017012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000312,
+      "name": {
+        "ja": "レリックアシストキューブ",
+        "en": "Assist Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4018011,
+          "name": {
+            "ja": "ピンチヘルスアップHC",
+            "en": "Emergency Health Up HC"
+          },
+          "description": {
+            "ja": "■装備したニケのHPが{description_value_01}％以下の時、\n<color=#00AEFF>「最大HP{description_value_02}％▲」「{description_value_03}秒間維持」</color>",
+            "en": "■ Activates when HP is lower than {description_value_01}%.\n<color=#00AEFF>Max HP ▲ {description_value_02}% for {description_value_03} sec.</color>"
+          },
+          "values": [
+            ["20", "20", "20", "20", "20", "20", "20", "20", "20", "20"],
+            ["6.07", "9.1", "12.14", "19.48", "26.82", "34.16", "41.5", "48.84", "56.18", "63.52"],
+            ["20", "20", "20", "20", "20", "20", "20", "20", "20", "20"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4018012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000313,
+      "name": {
+        "ja": "レリックデストロイキューブ",
+        "en": "Destruction Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4019011,
+          "name": {
+            "ja": "ピンチパーツヒートアップHC",
+            "en": "Emergency Part Hit Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10011>パーツダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10011>Damage to Parts</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["15.95", "23.92", "31.9", "39.88", "47.85", "55.83", "63.8", "71.78", "79.75", "87.73"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4019012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000314,
+      "name": {
+        "ja": "レリックピアシングキューブ",
+        "en": "Piercing Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4020011,
+          "name": {
+            "ja": "ピアスヒートアップHC",
+            "en": "Pierce Hit Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10042>貫通ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10042>Pierce Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["7.07", "10.6", "14.14", "17.68", "21.22", "24.76", "28.3", "31.84", "35.38", "38.92"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4020012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000315,
+      "name": {
+        "ja": "レリッククラッシュキューブ",
+        "en": "Rupture Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4021011,
+          "name": {
+            "ja": "トゥルーダメージアップHC",
+            "en": "True Damage Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「防御力無視ダメージ{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF>True Damage ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["7.07", "10.6", "14.14", "17.68", "21.22", "24.76", "28.3", "31.84", "35.38", "38.92"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4021012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000316,
+      "name": {
+        "ja": "レリックカバーキューブ",
+        "en": "Stealth Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4022011,
+          "name": {
+            "ja": "カバーヘルスアップHC",
+            "en": "Cover Health Up HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「スキル発動者の最大HPに比例して<word_group=10033>遮蔽物最大HP</word_group>{description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10033>Max HP of cover</word_group> ▲ {description_value_01}% of the skill user's max HP.</color>"
+          },
+          "values": [
+            ["7.26", "10.91", "14.54", "18.18", "21.83", "25.46", "29.1", "32.73", "36.36", "40.01"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4022012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000317,
+      "name": {
+        "ja": "レリックディバイドキューブ",
+        "en": "Diffusion Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4023011,
+          "name": {
+            "ja": "ディバイドアップHC",
+            "en": "Diffusion HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10019>分配ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10019>Distributed Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.84", "13.27", "17.69", "25.03", "32.37", "39.71", "47.05", "54.39", "61.73", "69.07"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4023012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    }
+  ]
+}

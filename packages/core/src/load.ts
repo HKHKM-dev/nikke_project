@@ -1,8 +1,19 @@
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition, type SkillIndex } from './skills/types.ts';
-import type { CharacterData, CharacterIndex } from './types.ts';
+import type {
+  AffectionMaster,
+  BuildMasters,
+  CharacterData,
+  CharacterIndex,
+  CollectionMaster,
+  CubeMaster,
+  GearMaster,
+  RecycleRoomMaster,
+} from './types.ts';
 
 export const CHARACTER_DATA_DIR = 'characters';
 export const SKILL_DATA_DIR = 'skills';
+/** Stage 12: 育成のマスタ（gear / affection / cubes / collections / recycleRoom） */
+export const MASTER_DATA_DIR = 'masters';
 
 export type LoadOptions = {
   /** データを配信しているベース URL（末尾スラッシュ任意）。既定 "/" */
@@ -29,6 +40,18 @@ export function skillIndexPath(): string {
 
 export function skillDefinitionPath(resourceId: number): string {
   return `${SKILL_DATA_DIR}/${resourceId}.json`;
+}
+
+export const MASTER_FILES: Record<keyof BuildMasters, string> = {
+  gear: 'gear.json',
+  affection: 'affection.json',
+  cubes: 'cubes.json',
+  collections: 'collections.json',
+  recycleRoom: 'recycleRoom.json',
+};
+
+export function masterDataPath(name: keyof BuildMasters): string {
+  return `${MASTER_DATA_DIR}/${MASTER_FILES[name]}`;
 }
 
 async function fetchJson<T>(url: string, fetchImpl: typeof fetch): Promise<T> {
@@ -63,4 +86,27 @@ export async function loadSkillDefinition(resourceId: number, options: LoadOptio
     throw new Error(`skill definition ${resourceId}: file declares resourceId ${def.resourceId}`);
   }
   return def;
+}
+
+function assertFormatVersion(name: string, value: { formatVersion?: unknown }): void {
+  if (value.formatVersion !== 1)
+    throw new Error(`master ${name}: unsupported formatVersion ${String(value.formatVersion)}`);
+}
+
+/** Stage 12: 育成のマスタ 5 つをまとめて読む（calc の起動時に 1 回） */
+export async function loadBuildMasters(options: LoadOptions = {}): Promise<BuildMasters> {
+  const { baseUrl = '/', fetchImpl = fetch } = options;
+  const load = <T extends { formatVersion?: unknown }>(name: keyof BuildMasters) =>
+    fetchJson<T>(joinUrl(baseUrl, masterDataPath(name)), fetchImpl).then((v) => {
+      assertFormatVersion(name, v);
+      return v;
+    });
+  const [gear, affection, cubes, collections, recycleRoom] = await Promise.all([
+    load<GearMaster>('gear'),
+    load<AffectionMaster>('affection'),
+    load<CubeMaster>('cubes'),
+    load<CollectionMaster>('collections'),
+    load<RecycleRoomMaster>('recycleRoom'),
+  ]);
+  return { gear, affection, cubes, collections, recycleRoom };
 }

@@ -1,0 +1,52 @@
+{
+  "formatVersion": 1,
+  "personal": {
+    "attack": 0,
+    "hp": 450,
+    "defence": 0
+  },
+  "class": {
+    "Attacker": {
+      "attack": 0,
+      "hp": 750,
+      "defence": 5
+    },
+    "Defender": {
+      "attack": 0,
+      "hp": 750,
+      "defence": 5
+    },
+    "Supporter": {
+      "attack": 0,
+      "hp": 750,
+      "defence": 5
+    }
+  },
+  "corporation": {
+    "ELYSION": {
+      "attack": 25,
+      "hp": 0,
+      "defence": 5
+    },
+    "MISSILIS": {
+      "attack": 25,
+      "hp": 0,
+      "defence": 5
+    },
+    "TETRA": {
+      "attack": 25,
+      "hp": 0,
+      "defence": 5
+    },
+    "PILGRIM": {
+      "attack": 25,
+      "hp": 0,
+      "defence": 5
+    },
+    "ABNORMAL": {
+      "attack": 25,
+      "hp": 0,
+      "defence": 5
+    }
+  }
+}
