@@ -11,6 +11,10 @@ import {
   GEAR_PARTS,
   GEAR_TYPES,
   MAX_SKILL_LEVELS,
+  OVERLOAD_LEVEL_MAX,
+  OVERLOAD_LEVEL_MIN,
+  OVERLOAD_LINE_MAX,
+  OVERLOAD_OPTIONS,
   SKILL_LEVEL_MAX,
   SKILL_LEVEL_MIN,
   SKILL_SLOTS,
@@ -26,6 +30,8 @@ import {
   type GearInput,
   type GearType,
   type GrowthInput,
+  type OverloadLine,
+  type OverloadOption,
   type SkillLevels,
   type SlotCondition,
   type TreasurePhase,
@@ -248,12 +254,28 @@ function parseTreasurePhase(v: Json): TreasurePhase | null {
   return v as TreasurePhase;
 }
 
+/** Stage 13: OL のオプション行。Stage 12 の保存データには無いので、欠落は空（オプションなし） */
+function parseOverload(v: Json, type: GearType): OverloadLine[] | undefined {
+  if (v === undefined) return [];
+  if (!Array.isArray(v) || v.length > OVERLOAD_LINE_MAX || (v.length > 0 && type !== 'OL')) return undefined;
+  const lines: OverloadLine[] = [];
+  for (const line of v as Json[]) {
+    if (!isRecord(line) || !(OVERLOAD_OPTIONS as readonly string[]).includes(String(line.option))) return undefined;
+    if (!isInt(line.level, OVERLOAD_LEVEL_MIN) || line.level > OVERLOAD_LEVEL_MAX) return undefined;
+    lines.push({ option: line.option as OverloadOption, level: line.level });
+  }
+  return lines;
+}
+
 function parseGear(v: Json): GearInput | undefined {
   if (v === null) return null;
   if (!isRecord(v)) return undefined;
   if (!(GEAR_TYPES as readonly string[]).includes(String(v.type))) return undefined;
   if (!isInt(v.level, 0) || v.level > GEAR_LEVEL_MAX) return undefined;
-  return { type: v.type as GearType, level: v.level };
+  const type = v.type as GearType;
+  const overload = parseOverload(v.overload, type);
+  if (overload === undefined) return undefined;
+  return overload.length === 0 ? { type, level: v.level } : { type, level: v.level, overload };
 }
 
 /** Stage 11 までの保存データには無いので、欠落は空（素のステータス）。あれば各項目の範囲だけ見る（マスタとの照合は計算時） */

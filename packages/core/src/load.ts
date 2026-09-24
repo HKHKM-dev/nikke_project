@@ -7,6 +7,7 @@ import type {
   CollectionMaster,
   CubeMaster,
   GearMaster,
+  OverloadMaster,
   RecycleRoomMaster,
 } from './types.ts';
 
@@ -48,6 +49,7 @@ export const MASTER_FILES: Record<keyof BuildMasters, string> = {
   cubes: 'cubes.json',
   collections: 'collections.json',
   recycleRoom: 'recycleRoom.json',
+  overload: 'overload.json',
 };
 
 export function masterDataPath(name: keyof BuildMasters): string {
@@ -93,7 +95,7 @@ function assertFormatVersion(name: string, value: { formatVersion?: unknown }): 
     throw new Error(`master ${name}: unsupported formatVersion ${String(value.formatVersion)}`);
 }
 
-/** Stage 12: 育成のマスタ 5 つをまとめて読む（calc の起動時に 1 回） */
+/** Stage 12: 育成のマスタをまとめて読む（calc の起動時に 1 回）。Stage 13 で OL の上昇値の表を足した */
 export async function loadBuildMasters(options: LoadOptions = {}): Promise<BuildMasters> {
   const { baseUrl = '/', fetchImpl = fetch } = options;
   const load = <T extends { formatVersion?: unknown }>(name: keyof BuildMasters) =>
@@ -101,12 +103,13 @@ export async function loadBuildMasters(options: LoadOptions = {}): Promise<Build
       assertFormatVersion(name, v);
       return v;
     });
-  const [gear, affection, cubes, collections, recycleRoom] = await Promise.all([
+  const [gear, affection, cubes, collections, recycleRoom, overload] = await Promise.all([
     load<GearMaster>('gear'),
     load<AffectionMaster>('affection'),
     load<CubeMaster>('cubes'),
     load<CollectionMaster>('collections'),
     load<RecycleRoomMaster>('recycleRoom'),
+    load<OverloadMaster>('overload'),
   ]);
-  return { gear, affection, cubes, collections, recycleRoom };
+  return { gear, affection, cubes, collections, recycleRoom, overload };
 }

@@ -155,7 +155,7 @@ export type AffectionMaster = { formatVersion: 1; ranks: AffectionRankStats[] };
 
 /**
  * キューブ 1 個。attack 等は index = Lv − 1（Lv1..15）の加算値。skillStages[i][lv − 1] は Lv のときのスキル i の段階
- * （0 = 未解放）。skills は宝物と同じ形（values[段階 − 1] が段階の数値）。効果は Stage 13 で使う
+ * （0 = 未解放）。skills は宝物と同じ形（values[段階 − 1] が段階の数値）。効果は Stage 13 で使う（buildEffects.ts）
  */
 export type CubeData = {
   id: number;
@@ -194,10 +194,40 @@ export type RecycleRoomMaster = {
   corporation: Record<string, Record<StatKind, number>>;
 };
 
+// ---- Stage 13: 効果層のマスタ。plan/design-stage12.md 3・12 節 ----
+
+/** OL 装備のオプション（CDN の equip_option_table_v2 の 9 種。state_effect_group_id 100100〜100900 の順） */
+export type OverloadOption =
+  | 'elementDamage'
+  | 'hitRate'
+  | 'maxAmmo'
+  | 'attack'
+  | 'chargeDamage'
+  | 'chargeSpeed'
+  | 'critRate'
+  | 'critDamage'
+  | 'defence';
+
+export type OverloadOptionData = {
+  option: OverloadOption;
+  name: LocalizedText;
+  /** CDN の state_effect_group_id（fetch-data が CDN の表と照合する） */
+  cdnGroupId: number;
+  /** Lv1..15 の上昇値（% の実数。4.77 = +4.77%）。index = Lv − 1。CDN に無いので手書き */
+  values: number[];
+  /** ユーザーの実装備の表示値で確かめた行か（plan/design-stage12.md 3.2 節） */
+  verified: boolean;
+};
+
+/** OL オプションの上昇値の表（data/masters/overload.json、手書き） */
+export type OverloadMaster = { formatVersion: 1; source: string; options: OverloadOptionData[] };
+
 export type BuildMasters = {
   gear: GearMaster;
   affection: AffectionMaster;
   cubes: CubeMaster;
   collections: CollectionMaster;
   recycleRoom: RecycleRoomMaster;
+  /** Stage 13 */
+  overload: OverloadMaster;
 };

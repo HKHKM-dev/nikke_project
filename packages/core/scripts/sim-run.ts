@@ -6,11 +6,13 @@
 // 育成値は既定 Lv200・3 凸・コア 0、条件は コア命中率 1・距離ボーナスあり・フルチャージ（calc の既定と同じ）。
 // スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
 // Stage 12: --build は resourceId → 育成入力（BuildInput の各項目と任意の growth）の JSON。--fixed-spec のときは使わない。
+// Stage 13: gear の OL 装備に overload（[{ option, level }]、最大 3 行）を書ける。効果層（OL・キューブ・コレクション）を枠ごとに 1 行ずつ出す。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, emptyBuild, type BuildInput } from '../src/build.ts';
+import { resolveBuildEffects } from '../src/buildEffects.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
 import { MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
@@ -129,7 +131,17 @@ function withBuild(
       ` + cube ${combat.cube} + collection ${combat.collection} + recycle ${combat.recycleRoom}) × core) ${combat.withCore}` +
       ` + gear ${combat.gear} + extra ${combat.extra}`,
   );
-  return { character, growth, condition, attackOverride: combat.attack, skills };
+  const effects = resolveBuildEffects(character, build, masters, { treasurePhase: skills.treasurePhase });
+  if (effects.effects.length > 0 || effects.notes.length > 0) {
+    const pctOf = (v: number) => `${(v * 100).toFixed(2)}%`;
+    console.log(
+      `  effects: ${effects.effects.map((e) => `${e.source.kind} ${e.stat} +${pctOf(e.value)}`).join(', ') || 'none'}` +
+        (effects.notes.length > 0
+          ? `; not applied: ${effects.notes.map((n) => `${n.source.kind} ${n.source.name.en} (${n.level})`).join(', ')}`
+          : ''),
+    );
+  }
+  return { character, growth, condition, attackOverride: combat.attack, buildEffects: effects.effects, skills };
 }
 
 const input = {

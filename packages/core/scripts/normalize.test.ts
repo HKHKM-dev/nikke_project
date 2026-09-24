@@ -1,9 +1,13 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import type { OverloadMaster } from '../src/types.ts';
 import {
+  checkOverloadMaster,
   findTreasureOwner,
   toCharacterData,
   toIndexEntry,
   toTreasureData,
+  type RawEquipOption,
   type RawFavorite,
   type RawRoleData,
   type RawSkillDetail,
@@ -230,5 +234,48 @@ describe('toTreasureData (Stage 9)', () => {
     expect(() => findTreasureOwner(favorite('en'), [...roles, { resource_id: 92, name_code: 5001 }])).toThrow(
       /several characters \(90, 92\)/,
     );
+  });
+});
+
+describe('checkOverloadMaster (Stage 13)', () => {
+  const master: OverloadMaster = JSON.parse(
+    readFileSync(new URL('../data/masters/overload.json', import.meta.url), 'utf8'),
+  ) as OverloadMaster;
+  // CDN の equip_option_table_v2 の形: オプションごとに 3 行 × state_effect 5 段。id 10 / 11 / 20 は OL 以外の古い行
+  const cdn: RawEquipOption[] = [
+    {
+      id: 10,
+      description_localkey: '「攻撃力増加」',
+      state_effect_group_id: 1000,
+      state_effect_id_list: [1, 2, 3, 4, 5],
+    },
+    ...master.options.flatMap((o, k) =>
+      [1, 2, 3].map((row) => ({
+        id: 1000000 + (k + 1) * 1000 + row,
+        description_localkey: `「${o.name.ja}」`,
+        state_effect_group_id: o.cdnGroupId,
+        state_effect_id_list: [1, 2, 3, 4, 5].map((i) => 7000000 + k * 100 + row * 5 + i),
+      })),
+    ),
+  ];
+
+  it('accepts the hand-written table against the CDN option list', () => {
+    expect(checkOverloadMaster(master, cdn)).toEqual([]);
+  });
+
+  it('reports a missing option, a renamed option and a level-count mismatch', () => {
+    const extra = { ...cdn[1]!, id: 1010001, state_effect_group_id: 101000, description_localkey: '「新オプション」' };
+    expect(checkOverloadMaster(master, [...cdn, extra])).toEqual([
+      'group 101000 (新オプション): missing in overload master',
+    ]);
+    const renamed = cdn.map((r) =>
+      r.state_effect_group_id === 100400 ? { ...r, description_localkey: '「攻撃」' } : r,
+    );
+    expect(checkOverloadMaster(master, renamed)).toEqual(['group 100400: master name 攻撃力増加 / CDN 攻撃']);
+    const short = cdn.filter((r) => r.id !== 1004003);
+    expect(checkOverloadMaster(master, short)).toEqual([
+      'group 100400: CDN has 10 levels',
+      'group 100400: master has 15 levels / CDN 10',
+    ]);
   });
 });

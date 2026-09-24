@@ -17,6 +17,7 @@ import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect } from '.
 import { slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { BuffTotals } from '../skills/buffs.ts';
+import type { BuildEffect } from '../buildEffects.ts';
 import { EMPTY_BUFF_STATE, groupTimeline, type BuffTimeline, type BuffWindow } from '../skills/timeline.ts';
 import {
   BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
@@ -69,6 +70,8 @@ export type SimSlotResult = {
   /** 常時パッシブだけ（Stage 4 互換の表示用） */
   passiveBuffs: BuffTotals;
   passiveEffects: AppliedEffect[];
+  /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。passiveBuffs に含まれている */
+  buildEffects: readonly BuildEffect[];
   /** この枠に掛かった持続バフの窓（発生順） */
   windows: BuffWindow[];
   segments: SimSlotSegment[];
@@ -158,6 +161,7 @@ export function runSimulation(simInput: SimInput): SimResult {
         notes: modelNotes(slot.character.shot),
         passiveBuffs: passive.buffs,
         passiveEffects: passive.passiveEffects,
+        buildEffects: passive.buildEffects,
         windows: timeline.windows.filter((w) => w.slotIndex === index),
         segments,
         normalDamage: 0,

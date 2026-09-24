@@ -21,6 +21,8 @@ import { formatNumber, formatPercent } from '../format.ts';
 import {
   SKILL_SLOT_LABEL,
   formatAppliedAmount,
+  formatBuildEffect,
+  formatBuildEffectSource,
   formatEffectSource,
   formatInstant,
   formatTimedExtras,
@@ -277,6 +279,7 @@ export function SlotCard({
             <div className="received">
               <span className="skills-title">受けているバフ</span>
               {slotResult.passiveEffects.length === 0 &&
+              slotResult.buildEffects.length === 0 &&
               slotResult.windows.length === 0 &&
               slotResult.instants.length === 0 &&
               slotResult.cycleWindows.length === 0 ? (
@@ -290,6 +293,12 @@ export function SlotCard({
                         {formatEffectSource(e, slotNames[e.sourceSlotIndex])}
                         {e.assumes ? `・仮定: ${e.assumes.ja}` : ''}
                       </small>
+                    </li>
+                  ))}
+                  {slotResult.buildEffects.map((e, i) => (
+                    <li key={`build-${i}`}>
+                      <span className="amount">{formatBuildEffect(e)}</span>
+                      <small className="sub">育成 {formatBuildEffectSource(e.source)}</small>
                     </li>
                   ))}
                   {timedSummary.map((t, i) => (

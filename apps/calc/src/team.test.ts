@@ -298,3 +298,52 @@ describe('build (Stage 12)', () => {
     }
   });
 });
+
+describe('OL lines (Stage 13)', () => {
+  const withGear = (head: unknown) => {
+    const ok = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: { build: Record<string, unknown> }[] };
+    return JSON.stringify({
+      ...ok,
+      slots: ok.slots.map((s, i) =>
+        i === 0 ? { ...s, build: { ...s.build, gear: { head, body: null, arm: null, leg: null } } } : s,
+      ),
+    });
+  };
+
+  it('round-trips OL gear with option lines; Stage 12 data without lines still reads', () => {
+    let s = withCharacters([10]);
+    const build = {
+      ...s.slots[0]!.build,
+      gear: {
+        ...s.slots[0]!.build.gear,
+        head: {
+          type: 'OL' as const,
+          level: 5,
+          overload: [
+            { option: 'attack' as const, level: 15 },
+            { option: 'elementDamage' as const, level: 11 },
+          ],
+        },
+      },
+    };
+    s = teamReducer(s, { type: 'setBuild', index: 0, build });
+    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
+    expect(parseTeamState(withGear({ type: 'OL', level: 5 }), index)?.slots[0]?.build.gear.head).toEqual({
+      type: 'OL',
+      level: 5,
+    });
+  });
+
+  it('rejects lines on non-OL gear, more than 3 lines, unknown options and levels out of 1..15', () => {
+    const line = (option: string, level: number) => ({ option, level });
+    const bad = [
+      { type: 'T9', level: 5, overload: [line('attack', 1)] },
+      { type: 'OL', level: 5, overload: [line('attack', 1), line('attack', 1), line('attack', 1), line('attack', 1)] },
+      { type: 'OL', level: 5, overload: [line('speed', 1)] },
+      { type: 'OL', level: 5, overload: [line('attack', 0)] },
+      { type: 'OL', level: 5, overload: [line('attack', 16)] },
+      { type: 'OL', level: 5, overload: 'attack' },
+    ];
+    for (const head of bad) expect(parseTeamState(withGear(head), index), JSON.stringify(head)).toBeNull();
+  });
+});

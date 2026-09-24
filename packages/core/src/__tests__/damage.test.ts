@@ -104,6 +104,9 @@ describe('computeDamage', () => {
       chargeTimeFlat: 0,
       hitRate: 0,
       infiniteAmmo: 0,
+      elementDamage: 0,
+      coreDamage: 0,
+      normalAttackDamage: 0,
       weapon: null,
     };
     const r = computeDamage(input({ buffs }));

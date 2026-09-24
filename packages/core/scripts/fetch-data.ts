@@ -1,6 +1,7 @@
 // Blablalink 公開 CDN からキャラ一覧と roledata（ja/en）、SSR の宝物（ja/en）を取得し、正規化して data/characters に書き出す。
 // Stage 12: 育成のマスタ（好感度・キューブ・R/SR のコレクション・リサイクルルーム）も取得して data/masters に書き出し、
 // 手書きの装備マスタ（data/masters/gear.json）の Lv0 が CDN の ItemEquipTable と一致することを確かめる。
+// Stage 13: 手書きの OL の表（data/masters/overload.json）のオプションが CDN の equip_option_table_v2 と一致することを確かめる。
 //   node scripts/fetch-data.ts [--limit N] [--refresh] [--concurrency N]
 // 生 JSON は .cache/ に保存し、--refresh を付けない限りキャッシュを優先する。
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -11,6 +12,7 @@ import { fetchCdnJson, mapWithConcurrency } from './blablalink/client.ts';
 import {
   attractiveLevelTablePath,
   cubePath,
+  equipOptionTablePath,
   favoritePath,
   favoriteRareMapPath,
   itemEquipTablePath,
@@ -21,6 +23,7 @@ import {
 import { formatJson } from './format-json.ts';
 import {
   checkGearMaster,
+  checkOverloadMaster,
   findTreasureOwner,
   toAffectionMaster,
   toCharacterData,
@@ -33,6 +36,7 @@ import {
   type RawAttractiveTable,
   type RawCollection,
   type RawCube,
+  type RawEquipOption,
   type RawEquipTable,
   type RawFavorite,
   type RawFavoriteRareMap,
@@ -46,6 +50,7 @@ import type {
   CollectionMaster,
   CubeMaster,
   GearMaster,
+  OverloadMaster,
   TreasureData,
 } from '../src/types.ts';
 
@@ -111,6 +116,17 @@ async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<void> {
     throw new Error(`gear master (data/masters/gear.json) differs from CDN at Lv0:\n  ${gearProblems.join('\n  ')}`);
   }
   console.log(`gear: master Lv0 matches CDN (${equipTable.records.length} records)`);
+
+  // Stage 13: OL の表はオプションの一覧だけ CDN と突き合わせる（Lv 別の数値は CDN に無い）
+  const overload = JSON.parse(await readFile(path.join(MASTERS_DIR, 'overload.json'), 'utf8')) as OverloadMaster;
+  const optionTable = await cachedJson<RawEquipOption[]>('equip_option_table_v2-ja.json', equipOptionTablePath('ja'));
+  const overloadProblems = checkOverloadMaster(overload, optionTable);
+  if (overloadProblems.length > 0) {
+    throw new Error(
+      `overload master (data/masters/overload.json) differs from CDN:\n  ${overloadProblems.join('\n  ')}`,
+    );
+  }
+  console.log(`overload: master options match CDN (${overload.options.length} options)`);
 
   const affection = toAffectionMaster(
     await cachedJson<RawAttractiveTable>('AttractiveLevelTable.json', attractiveLevelTablePath()),

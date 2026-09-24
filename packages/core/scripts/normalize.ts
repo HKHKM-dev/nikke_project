@@ -12,6 +12,7 @@ import type {
   GearPart,
   GearType,
   NikkeClass,
+  OverloadMaster,
   Rarity,
   RecycleRoomMaster,
   ShotInputType,
@@ -486,4 +487,53 @@ export function toRecycleRoomMaster(table: RawRecycleTable): RecycleRoomMaster {
     },
     corporation,
   };
+}
+
+// ---- Stage 13: OL オプションの表（data/masters/overload.json、手書き）と CDN の照合 ----
+
+/** CDN の equip_option_table_v2（配列）。OL のオプションは id 1001001〜。state_effect_id_list は 5 段ずつ */
+export type RawEquipOption = {
+  id: number;
+  description_localkey: string;
+  state_effect_group_id: number;
+  state_effect_id_list: number[];
+};
+
+/** OL のオプションの id の下限（10 / 11 / 20 は OL 以外の古い行） */
+const OVERLOAD_OPTION_ID_MIN = 1_000_000;
+/** OL のオプションの Lv の数（CDN の 3 行 × 5 段） */
+const OVERLOAD_LEVELS = 15;
+
+/**
+ * 手書きの OL の表が CDN のオプションの一覧と一致するか。group id の集合・名前（「」を除く）・Lv の数（CDN の行 × 5 段 = 15）を見る。
+ * 違いがあれば一覧を返す（空なら一致）。数値は CDN に無いので見ない
+ */
+export function checkOverloadMaster(master: OverloadMaster, table: readonly RawEquipOption[]): string[] {
+  const problems: string[] = [];
+  const groups = new Map<number, { name: string; levels: number }>();
+  for (const rec of table) {
+    if (rec.id < OVERLOAD_OPTION_ID_MIN) continue;
+    const g = groups.get(rec.state_effect_group_id) ?? {
+      name: rec.description_localkey.replace(/[「」]/g, ''),
+      levels: 0,
+    };
+    g.levels += rec.state_effect_id_list.length;
+    groups.set(rec.state_effect_group_id, g);
+  }
+  for (const [groupId, g] of groups) {
+    const option = master.options.find((o) => o.cdnGroupId === groupId);
+    if (option === undefined) {
+      problems.push(`group ${groupId} (${g.name}): missing in overload master`);
+      continue;
+    }
+    if (option.name.ja !== g.name) problems.push(`group ${groupId}: master name ${option.name.ja} / CDN ${g.name}`);
+    if (g.levels !== OVERLOAD_LEVELS) problems.push(`group ${groupId}: CDN has ${g.levels} levels`);
+    if (option.values.length !== g.levels) {
+      problems.push(`group ${groupId}: master has ${option.values.length} levels / CDN ${g.levels}`);
+    }
+  }
+  for (const option of master.options) {
+    if (!groups.has(option.cdnGroupId)) problems.push(`${option.option} (group ${option.cdnGroupId}): not in CDN`);
+  }
+  return problems;
 }

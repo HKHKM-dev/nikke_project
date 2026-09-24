@@ -1,5 +1,6 @@
 // Stage 12: 育成入力（ステータス層）の入力欄と、戦闘中の攻撃力（バフ前）の内訳。
 // スペック固定のときは fixedSpecBuild（T9 Lv5 × 4・好感度 rank30/40/10）を表示して入力を止める。
+// Stage 13: OL 装備のオプション行（最大 3 行）の入力と、効果層（OL・キューブ・コレクション → 常時バフ）の一覧。
 import {
   AFFECTION_RANK_MAX,
   AFFECTION_RANK_MIN,
@@ -9,22 +10,37 @@ import {
   GEAR_LEVEL_MAX,
   GEAR_PARTS,
   GEAR_TYPES,
+  OVERLOAD_LEVEL_MAX,
+  OVERLOAD_LEVEL_MIN,
+  OVERLOAD_LINE_MAX,
   computeCombatAttack,
+  resolveBuildEffects,
+  type BuildEffects,
   type BuildInput,
   type BuildMasters,
   type CharacterData,
   type CombatAttack,
+  type GearInput,
   type GearPart,
   type GearType,
   type GrowthInput,
+  type OverloadLine,
+  type OverloadOption,
   type TreasurePhase,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber } from '../format.ts';
+import { GEAR_PART_LABEL, formatBuildEffect, formatBuildEffectSource } from '../skillLabels.ts';
 import type { TeamAction } from '../team.ts';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
-const GEAR_PART_LABEL: Record<GearPart, string> = { head: '頭', body: '胴', arm: '腕', leg: '足' };
+
+/** Stage 13: i 行目を line にした OL の行（null は削除。後ろの行は詰める） */
+function withOverloadLine(lines: readonly OverloadLine[], i: number, line: OverloadLine | null): OverloadLine[] {
+  const next: (OverloadLine | null)[] = [...lines];
+  next[i] = line;
+  return next.filter((l): l is OverloadLine => l !== null && l !== undefined);
+}
 
 type Props = {
   slotIndex: number;
@@ -64,11 +80,18 @@ export function BuildSection({
   const setGear = (part: GearPart, gear: BuildInput['gear'][GearPart]) =>
     set({ gear: { ...build.gear, [part]: gear } });
 
+  const setOverload = (part: GearPart, gear: NonNullable<GearInput>, i: number, line: OverloadLine | null) => {
+    const overload = withOverloadLine(gear.overload ?? [], i, line);
+    setGear(part, overload.length === 0 ? { type: gear.type, level: gear.level } : { ...gear, overload });
+  };
+
   let combat: CombatAttack | null = null;
+  let effects: BuildEffects | null = null;
   let combatError: string | null = null;
   if (masters) {
     try {
       combat = computeCombatAttack(character, growth, effectiveBuild, masters, { treasurePhase });
+      effects = resolveBuildEffects(character, effectiveBuild, masters, { treasurePhase });
     } catch (e) {
       combatError = e instanceof Error ? e.message : String(e);
     }
@@ -121,7 +144,12 @@ export function BuildSection({
                   disabled={disabled}
                   onChange={(e) => {
                     const type = e.target.value as GearType | '';
-                    setGear(part, type === '' ? null : { type, level: gear?.level ?? 0 });
+                    // OL のオプション行は OL 装備だけ。ほかの種類に変えたら捨てる
+                    const overload = type === 'OL' ? gear?.overload : undefined;
+                    setGear(
+                      part,
+                      type === '' ? null : { type, level: gear?.level ?? 0, ...(overload?.length ? { overload } : {}) },
+                    );
                   }}
                 >
                   <option value="">なし</option>
@@ -143,7 +171,60 @@ export function BuildSection({
                   }
                 />
               </span>
-              <small>Lv 0〜{GEAR_LEVEL_MAX}。OL の効果は Stage 13（未対応）</small>
+              {gear?.type === 'OL' && (
+                <span className="ol-lines">
+                  {Array.from({ length: OVERLOAD_LINE_MAX }, (_, i) => {
+                    const lines = gear.overload ?? [];
+                    const line = lines[i];
+                    // 前の行が空なら次の行は入れられない（行は詰めて持つ）
+                    if (i > lines.length) return null;
+                    return (
+                      <span className="gear-inputs" key={i}>
+                        <select
+                          value={line?.option ?? ''}
+                          disabled={disabled || !masters}
+                          onChange={(e) => {
+                            const option = e.target.value as OverloadOption | '';
+                            setOverload(
+                              part,
+                              gear,
+                              i,
+                              option === '' ? null : { option, level: line?.level ?? OVERLOAD_LEVEL_MIN },
+                            );
+                          }}
+                        >
+                          <option value="">オプション {i + 1}: なし</option>
+                          {(masters?.overload.options ?? []).map((o) => (
+                            <option key={o.option} value={o.option}>
+                              {o.name.ja}
+                            </option>
+                          ))}
+                        </select>
+                        <input
+                          type="number"
+                          min={OVERLOAD_LEVEL_MIN}
+                          max={OVERLOAD_LEVEL_MAX}
+                          step={1}
+                          value={line?.level ?? OVERLOAD_LEVEL_MIN}
+                          disabled={disabled || line === undefined}
+                          onChange={(e) =>
+                            line &&
+                            setOverload(part, gear, i, {
+                              ...line,
+                              level: clampInt(Number(e.target.value), OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX),
+                            })
+                          }
+                        />
+                      </span>
+                    );
+                  })}
+                </span>
+              )}
+              <small>
+                Lv 0〜{GEAR_LEVEL_MAX}
+                {gear?.type === 'OL' &&
+                  `。オプションは最大 ${OVERLOAD_LINE_MAX} 行・Lv ${OVERLOAD_LEVEL_MIN}〜${OVERLOAD_LEVEL_MAX}`}
+              </small>
             </div>
           );
         })}
@@ -181,7 +262,7 @@ export function BuildSection({
             />
           </span>
           <small>
-            Lv {CUBE_LEVEL_MIN}〜{CUBE_LEVEL_MAX}。固有効果は Stage 13（未対応）
+            Lv {CUBE_LEVEL_MIN}〜{CUBE_LEVEL_MAX}。固有効果とアンチコード（Lv5〜）は下の「効果」に出る
           </small>
         </div>
         <div className="field gear">
@@ -218,7 +299,7 @@ export function BuildSection({
           <small>
             {hasTreasure
               ? '宝物を解放しているので宝物のステータス（SR Lv15 と同値）が乗る'
-              : `Lv 0〜${COLLECTION_LEVEL_MAX}。武器種の効果は Stage 13（未対応）`}
+              : `Lv 0〜${COLLECTION_LEVEL_MAX}。武器種の効果は下の「効果」に出る`}
           </small>
         </div>
         <div className="field gear">
@@ -268,6 +349,32 @@ export function BuildSection({
           {combat.extra > 0 && ` + ${formatNumber(combat.extra)} その他`}
           。キューブ・コレクション・リサイクルルームがコアの内側に入るのは仮定（実測待ち）
         </p>
+      )}
+      {effects && (effects.effects.length > 0 || effects.notes.length > 0) && (
+        <div className="build-effects">
+          <span className="skills-title">効果（OL・キューブ・コレクション → 常時バフ）</span>
+          <ul className="received-list">
+            {effects.effects.map((e, i) => (
+              <li key={i}>
+                <span className="amount">{formatBuildEffect(e)}</span>
+                <small className="sub">{formatBuildEffectSource(e.source)}</small>
+              </li>
+            ))}
+            {effects.notes.map((n, i) => (
+              <li key={`note-${i}`} className={n.level === 'unsupported' ? 'note-unsupported' : 'note-ignored'}>
+                <span className="amount">{n.level === 'unsupported' ? '未対応' : '計算に無関係'}</span>
+                <small className="sub">
+                  {formatBuildEffectSource(n.source)}: {n.message.ja}
+                </small>
+              </li>
+            ))}
+          </ul>
+          <p className="hint">
+            OL の上昇値はコミュニティの表の転記（未検証）。OL
+            の攻撃力▲はスキルの攻撃力▲と同じ加算群、倍率ダメージにも有利コード▲が乗る、
+            通常攻撃ダメージ倍率▲は武器倍率に掛かる、はどれも仮定（射撃場の実測待ち）
+          </p>
+        </div>
       )}
     </details>
   );

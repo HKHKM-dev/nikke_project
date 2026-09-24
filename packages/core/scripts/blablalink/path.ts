@@ -99,3 +99,10 @@ export function recycleResearchStatTablePath(): string {
 export function cubePath(cubeId: number, locale: CdnLocale): string {
   return `/equip/${locale}/cube_${cubeId}.json`;
 }
+
+// ---- Stage 13: 効果層 ----
+
+/** OL 装備のオプション（名前と state_effect の ID だけ。Lv 別の数値は CDN に無い） */
+export function equipOptionTablePath(locale: CdnLocale): string {
+  return `/equip/equip_option_table_v2-${locale}.json`;
+}

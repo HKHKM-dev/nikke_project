@@ -7,6 +7,8 @@ import {
   isEmptyBuild,
   loadBuildMasters,
   loadCharacterIndex,
+  resolveBuildEffects,
+  type BuildEffect,
   type BuildMasters,
   type CharacterData,
   type CharacterIndexEntry,
@@ -124,17 +126,21 @@ export function App() {
         }
         const growth = clampGrowth(character, slot.growth);
         // Stage 12: 育成入力か宝物のステータスがあれば、戦闘中の攻撃力（バフ前）を computeCombatAttack で作る。
+        // Stage 13: 同じ入力から効果層（OL・キューブ・コレクション → 常時バフ）を resolveBuildEffects で作る。
         // マスタの読み込み前・入力がマスタと合わないときは素のステータスのまま（BuildSection が知らせる）
         const treasurePhase = effectiveTreasurePhase(slot, character);
         let attackOverride: number | undefined;
+        let buildEffects: BuildEffect[] | undefined;
         if (masters && (!isEmptyBuild(slot.build) || treasurePhase > 0)) {
           try {
             attackOverride = computeCombatAttack(character, growth, slot.build, masters, { treasurePhase }).attack;
+            buildEffects = resolveBuildEffects(character, slot.build, masters, { treasurePhase }).effects;
           } catch {
             attackOverride = undefined;
+            buildEffects = undefined;
           }
         }
-        return { character, growth, condition: slot.condition, attackOverride, skills: slotSkills };
+        return { character, growth, condition: slot.condition, attackOverride, buildEffects, skills: slotSkills };
       }),
     [team.slots, team.fixedSpec, cache.characters, skillsStatuses, masters],
   );

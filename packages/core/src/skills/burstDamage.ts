@@ -5,8 +5,7 @@
 // Stage 8: トリガー付きの倍率ダメージ（damage。「10 回攻撃した時 X% のダメージ」など）も同じ式で計算する（computeSkillHit）。
 // 分配ダメージには (1 + Σ distributedDamage) を別の乗数で掛ける（録画 21 のクイーン（真）の 1.9001 倍。plan/design-stage8.md 2.4 節）。
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
-import { FULL_BURST_BOOST } from '../damage.ts';
-import { elementMultiplier } from '../element.ts';
+import { FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
 import { SKILL_SLOTS, type SkillDamageType, type SkillDefinition, type SkillSlot } from './types.ts';
@@ -233,7 +232,7 @@ export function computeSkillHit(
     enemy,
     crit: applyCritBuffs(character.crit, buffs),
     attackDamageMultiplier: trigger.attackDamageMultiplier,
-    elementMultiplier: elementMultiplier(character.element, enemy.element),
+    elementMultiplier: skillElementMultiplier(character, enemy, buffs),
     effects,
     fullBurstBonus,
     distributedDamageMultiplier: 1 + buffs.distributedDamage,

@@ -464,3 +464,19 @@ header p {
 .build-breakdown {
   font-variant-numeric: tabular-nums;
 }
+
+/* Stage 13: OL のオプション行と効果層の一覧 */
+.ol-lines {
+  grid-column: 2;
+  display: grid;
+  gap: 2px;
+}
+.build-effects {
+  margin-top: 6px;
+}
+.received-list li.note-ignored {
+  opacity: 0.55;
+}
+.received-list li.note-unsupported .amount {
+  color: #b35900;
+}

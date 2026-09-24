@@ -25,6 +25,10 @@ export function isAdvantage(attacker: Element, enemy: Element | null): boolean {
   return enemy !== null && STRONG_AGAINST[attacker] === enemy;
 }
 
-export function elementMultiplier(attacker: Element, enemy: Element | null): number {
-  return isAdvantage(attacker, enemy) ? ELEMENT_ADVANTAGE_MULTIPLIER : 1;
+/**
+ * 属性の乗数。有利なら 1.1 + bonus、それ以外は 1（Stage 13: bonus は有利コードの攻撃ダメージ▲の合計 elementDamage。
+ * 非有利では乗らない。要件 5.1 節の「属性有利 (1.1 + 属性ダメバフ)」）
+ */
+export function elementMultiplier(attacker: Element, enemy: Element | null, bonus = 0): number {
+  return isAdvantage(attacker, enemy) ? ELEMENT_ADVANTAGE_MULTIPLIER + bonus : 1;
 }
