@@ -71,7 +71,7 @@ describe('runSimulation without burst', () => {
         totals.nonFullBurst.triggers * s.segments[0]!.trigger.perTrigger,
         6,
       );
-      expect(s.burst).toEqual({ activations: [], hit: null, damage: 0 });
+      expect(s.burst).toEqual({ activations: [], hit: null, damage: 0, hits: [] });
       expect(s.totalDamage).toBeCloseTo(totals.nonFullBurst.damage, 6);
     }
     expect(sim.totalDamage).toBeCloseTo((sim.slots[0]?.totalDamage ?? 0) + (sim.slots[2]?.totalDamage ?? 0), 6);

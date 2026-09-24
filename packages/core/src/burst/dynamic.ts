@@ -1,11 +1,11 @@
 // Stage 7: 動的サイクルの時刻表（純関数）。sim と calc が同じ時刻表を使う。
-// 各枠の射手（sim/shooter.ts）を 1 フレームずつ回し、撃ったフレームにゲージを入れて状態機械（controller.ts）を進める。
+// 各枠の射手（frame/shooter.ts）を 1 フレームずつ回し、撃ったフレームにゲージを入れて状態機械（controller.ts）を進める。
 // Stage 7 の範囲では射撃のタイミングがバフにもバーストにも依存しない（弾数・リロード・チャージ速度のバフは段階 C / D）ので、
 // 時刻表は編成だけで決まり、sim の本体（2 パス目）の射撃列とも 1 フレームも違わない。
 // 射撃がバフに依存するようになったら（Stage 10）、sim を 1 パスにして状態機械をフレームループの中で回す。
-// Stage 8: 射手は sim/shots.ts の planShots で 1 回だけ回し、その射撃の列からゲージを溜める（回数トリガーと共有する）。
+// Stage 8: 射手は frame/shots.ts の planShots で 1 回だけ回し、その射撃の列からゲージを溜める（回数トリガーと共有する）。
 // 常時のゲージ速度（burstGaugeSpeed。マナ S2）は枠ごとの 1 トリガーのゲージに (1 + 速度) を掛ける。
-import { planShots, type ShotLog } from '../sim/shots.ts';
+import { planShots, type ShotLog } from '../frame/shots.ts';
 import type { CharacterData, ShotParams } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, type WeaponModel } from '../weapons.ts';
 import {

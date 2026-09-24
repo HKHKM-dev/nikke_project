@@ -27,7 +27,7 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * （timed に書くと 時刻表 → バフ窓 → ゲージ → 時刻表 と循環するため）。
  * Stage 10 の 3 つ（射撃に効く。ダメージの式は読まない）:
  * maxAmmo = 最大装弾数（scaling 'ratio' は %、'flat' は発数）、reloadSpeed = リロード速度（%）、chargeSpeed = チャージ速度（%）。
- * 1 パス目（sim/firstPass.ts）が射手に渡すので、timed にも書ける。
+ * 1 パス目（frame/firstPass.ts）が射手に渡すので、timed にも書ける。
  * Stage 11 モダニアの 2 つ:
  * hitRate = 命中率（%）。全弾命中の前提なのでダメージにも射撃にも効かない。区間の鍵にも入れず、条件（condition）の判定と表示にだけ使う。
  * infiniteAmmo = 装弾数無限（射撃に効く。値を持たないフラグなので ref を書かない。timed だけ）。

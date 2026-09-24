@@ -1,7 +1,7 @@
 // Stage 8: 時刻表の追加分（枠ごとのフルバースト時間、発動の結果入った段階、段階突入のフレーム、常時のゲージ速度、射撃の列の共有）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { planShots } from '../../sim/shots.ts';
+import { planShots } from '../../frame/shots.ts';
 import type { BurstNextStep, BurstStep, CharacterData } from '../../types.ts';
 import {
   BURST_GAUGE_MAX,

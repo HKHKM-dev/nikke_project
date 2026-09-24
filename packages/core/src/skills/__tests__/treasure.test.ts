@@ -2,7 +2,8 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { EnemyInput } from '../../damage.ts';
-import { planTeamRun, type TeamInput } from '../../team.ts';
+import { planTeamRun } from '../../frame/plan.ts';
+import { type TeamInput } from '../../team.ts';
 import type { CharacterData, SkillRaw } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed } from '../resolve.ts';
 import { applyTreasure, applyTreasureToTeam, treasureSlots, validateTreasurePhase } from '../treasure.ts';

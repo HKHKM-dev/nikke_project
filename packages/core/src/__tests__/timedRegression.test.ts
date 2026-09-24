@@ -6,7 +6,8 @@ import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, type TeamSlotInput } from '../team.ts';
+import { computeTeamDamage } from '../calc/model.ts';
+import { type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 
 function load<T>(path: string): T {

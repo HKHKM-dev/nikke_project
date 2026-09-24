@@ -5,7 +5,7 @@
 //   2. replayEvents(…, heals): 回復を healed として出来事の列に書き込み、ほかの効果を流す
 // 回復のフレームは heal の窓が始まるはずのフレーム（射撃の回数起点ならトリガーになった射撃の次のフレーム）。
 import type { BurstSchedule } from '../burst/schedule.ts';
-import type { ShotLog } from '../sim/shots.ts';
+import type { ShotLog } from '../frame/shots.ts';
 import { isResolvedShotCount, resolveInstant, type ResolvedInstantEffect } from './resolve.ts';
 import { isEffectTarget } from './targets.ts';
 import type { TimelineSlot } from './timeline.ts';

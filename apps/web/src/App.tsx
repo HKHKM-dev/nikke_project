@@ -9,6 +9,8 @@ import {
   loadCharacterIndex,
   loadEnemyPresets,
   resolveBuildEffects,
+  runSimulation,
+  simTeamResult,
   type BuildEffect,
   type BuildEffectNote,
   type BuildMasters,
@@ -16,6 +18,7 @@ import {
   type CharacterIndexEntry,
   type EnemyPreset,
   type GrowthInput,
+  type TeamInput,
   type TeamResult,
   type TeamSlotInput,
 } from '@nikke/core';
@@ -23,7 +26,7 @@ import { useEffect, useMemo, useReducer, useState } from 'react';
 import { DataPanel } from './components/DataPanel.tsx';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
-import { TeamBreakdown } from './components/TeamBreakdown.tsx';
+import { TeamBreakdown, type ModelKind } from './components/TeamBreakdown.tsx';
 import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
 import {
   INITIAL_TEAM_STATE,
@@ -60,6 +63,25 @@ function readSavedTeam(): string | null {
 }
 
 type Computed = { ok: true; result: TeamResult } | { ok: false; error: string };
+
+/** Stage 16: 表示する計算モデル。閲覧者ごとの好みなので編成の保存形式には入れない */
+const MODEL_STORAGE_KEY = 'nikke-web.model';
+
+function readSavedModel(): ModelKind {
+  try {
+    return localStorage.getItem(MODEL_STORAGE_KEY) === 'sim' ? 'sim' : 'calc';
+  } catch {
+    return 'calc';
+  }
+}
+
+function compute(run: () => TeamResult): Computed {
+  try {
+    return { ok: true, result: run() };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
 
 export function App() {
   const [index, setIndex] = useState<CharacterIndexEntry[] | null>(null);
@@ -158,22 +180,33 @@ export function App() {
     [team.slots, team.fixedSpec, cache.characters, skillsStatuses, masters],
   );
 
-  const computed = useMemo<Computed>(() => {
+  const teamInput = useMemo<TeamInput>(
+    () => ({
+      slots: slotInputs,
+      enemy: team.enemy,
+      durationSeconds: team.durationSeconds,
+      burst: team.burst,
+      controlledSlot: team.controlledSlot,
+    }),
+    [slotInputs, team.enemy, team.durationSeconds, team.burst, team.controlledSlot],
+  );
+  const computed = useMemo<Computed>(() => compute(() => computeTeamDamage(teamInput)), [teamInput]);
+
+  // Stage 16: sim（フレーム逐次）。選んだときだけ回し、calc と同じ内訳の表で出す（plan/design-stage16.md 3 節 16-A）
+  const [model, setModel] = useState<ModelKind>(readSavedModel);
+  const changeModel = (next: ModelKind) => {
+    setModel(next);
     try {
-      return {
-        ok: true,
-        result: computeTeamDamage({
-          slots: slotInputs,
-          enemy: team.enemy,
-          durationSeconds: team.durationSeconds,
-          burst: team.burst,
-          controlledSlot: team.controlledSlot,
-        }),
-      };
-    } catch (e) {
-      return { ok: false, error: e instanceof Error ? e.message : String(e) };
+      localStorage.setItem(MODEL_STORAGE_KEY, next);
+    } catch {
+      // 保存できなくても表示は切り替える
     }
-  }, [slotInputs, team.enemy, team.durationSeconds, team.burst, team.controlledSlot]);
+  };
+  const simComputed = useMemo<Computed | null>(
+    () => (model === 'sim' ? compute(() => simTeamResult(teamInput, runSimulation(teamInput))) : null),
+    [model, teamInput],
+  );
+  const shown = simComputed ?? computed;
 
   const loadingCount = team.slots.filter(
     (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
@@ -217,7 +250,7 @@ export function App() {
   return (
     <main className="app">
       <header>
-        <h1>NIKKE ダメージ計算（calc）</h1>
+        <h1>NIKKE ダメージ計算</h1>
         <p>
           ソロレイド / ユニオンレイド（単体ボス・180 秒）向けに、5
           人編成の総ダメージの期待値を出します。通常攻撃・スキルのバフ・ ゲージと CT
@@ -260,21 +293,24 @@ export function App() {
                   effectiveSkillLevels={effectiveSkillLevels(slot, team.fixedSpec)}
                   skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
                   slotNames={slotNames}
-                  slotResult={computed.ok ? (computed.result.slots[i] ?? null) : null}
+                  slotResult={shown.ok ? (shown.result.slots[i] ?? null) : null}
                   dispatch={dispatch}
                 />
               );
             })}
           </section>
-          {computed.ok ? (
+          {shown.ok ? (
             <TeamBreakdown
-              result={computed.result}
+              result={shown.result}
+              model={model}
+              onModelChange={changeModel}
+              compare={model === 'sim' && computed.ok ? computed.result : null}
               loadingCount={loadingCount}
               skillsLoadingCount={skillsLoadingCount}
               fixedSpec={team.fixedSpec}
             />
           ) : (
-            <p className="error">{computed.error}</p>
+            <p className="error">{shown.error}</p>
           )}
           <NotesSummary slots={summarySlots} />
           <DataPanel team={team} index={index} dispatch={dispatch} />

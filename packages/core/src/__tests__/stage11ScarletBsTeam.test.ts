@@ -6,19 +6,13 @@ import { computeCadence } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
-import { measuredChargeCadence } from '../sim/firing.ts';
-import { planShots } from '../sim/shots.ts';
+import { measuredChargeCadence } from '../frame/firing.ts';
+import { planShots } from '../frame/shots.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import {
-  computeTeamDamage,
-  countShotsInRanges,
-  planTeamRun,
-  type SkillHitEvent,
-  type TeamInput,
-  type TeamResult,
-  type TeamSlotInput,
-} from '../team.ts';
+import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { planTeamRun, type SkillHitEvent } from '../frame/plan.ts';
+import { type TeamInput, type TeamSlotInput, type TeamResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 
 function readJson<T>(path: string): T {

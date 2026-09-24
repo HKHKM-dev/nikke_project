@@ -1,13 +1,13 @@
 // Stage 10: トリガーの判定を 1 か所にする（plan/design-stage10.md 1.2 節）。
 // フレームごとの出来事（射撃・バーストの発動・フルバーストの開始 / 終了・ゲージ満タン）を 1 つずつ受け取り、
 // そのフレームにトリガーが発火したかを返す。回数トリガーの数え上げもここに持つ。
-//   - 1 パス目のフレームループ（sim/firstPass.ts）は、出来事が起きるたびに流す（射撃に効く効果だけ）。
+//   - 1 パス目のフレームループ（frame/firstPass.ts）は、出来事が起きるたびに流す（射撃に効く効果だけ）。
 //   - バッチの triggerFrames（skills/timeline.ts）は、確定した射撃の列と時刻表を同じ出来事の列に直して流し直す。
 // どちらも同じコードを通るので、ループの中で見た発火と、あとで planBuffTimeline が作る窓が食い違わない。
 // Stage 11: 出来事に「回復を受けた」（healed）と、フルバーストを開いたチェーンの枠（burstUsers。発火の文脈）を足した
 // （plan/design-stage11.md 3 節）。
 import type { BurstActivation, BurstSchedule, BurstScheduleModel, BurstStepKey } from '../burst/schedule.ts';
-import type { ShotLog } from '../sim/shots.ts';
+import type { ShotLog } from '../frame/shots.ts';
 import { isResolvedEventCount, isResolvedShotCount, type ResolvedTrigger } from './resolve.ts';
 import type { FireContext } from './targets.ts';
 

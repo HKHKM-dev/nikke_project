@@ -19,7 +19,7 @@ export default tseslint.config(
   {
     files: [
       'packages/core/scripts/**/*.ts',
-      'apps/calc/scripts/**/*.ts',
+      'apps/web/scripts/**/*.ts',
       'tools/**/*.ts',
       '**/*.config.ts',
       'eslint.config.js',

@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { planFixedCycle } from '../../burst/fixedCycle.ts';
-import type { ShotLog } from '../../sim/shots.ts';
+import type { ShotLog } from '../../frame/shots.ts';
 import type { SkillRaw } from '../../types.ts';
 import { computeBurstHit, resolveDamageEffects, type ResolvedSkillDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveTimed, resolveTrigger } from '../resolve.ts';

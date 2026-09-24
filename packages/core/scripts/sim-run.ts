@@ -19,11 +19,13 @@ import { enemyInputOf, parseEnemyPresets } from '../src/enemies.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
-import { firingParams } from '../src/sim/firing.ts';
+import { firingParams } from '../src/frame/firing.ts';
 import { MAX_SKILL_LEVELS, type ResolvedTrigger } from '../src/skills/resolve.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
-import { computeTeamDamage, planTeamRun, TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
+import { computeTeamDamage } from '../src/calc/model.ts';
+import { planTeamRun } from '../src/frame/plan.ts';
+import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, Element } from '../src/types.ts';
 import { FPS } from '../src/weapons.ts';
 

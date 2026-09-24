@@ -12,7 +12,8 @@ import {
 } from '../../buildEffects.ts';
 import { ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE, computeTriggerDamage, type EnemyInput } from '../../damage.ts';
 import { elementMultiplier } from '../../element.ts';
-import { computeTeamDamage, type TeamSlotInput } from '../../team.ts';
+import { computeTeamDamage } from '../../calc/model.ts';
+import { type TeamSlotInput } from '../../team.ts';
 import type { BuildMasters, CharacterData, OverloadOption } from '../../types.ts';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { ZERO_BUFFS, type BuffTotals } from '../buffs.ts';

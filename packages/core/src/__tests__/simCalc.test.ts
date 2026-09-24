@@ -8,9 +8,11 @@ import type { BuildEffect } from '../buildEffects.ts';
 import { slotsByStep, type BurstScheduleModel } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../sim/engine.ts';
+import { simTeamResult } from '../sim/teamResult.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, TimedEffect } from '../skills/types.ts';
-import { computeTeamDamage, type SlotCondition, type TeamSlotInput } from '../team.ts';
+import { computeTeamDamage } from '../calc/model.ts';
+import { type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { BurstStep, ShotParams, SkillRaw } from '../types.ts';
 import { FPS } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
@@ -440,5 +442,44 @@ describe('sim vs calc with build effects (Stage 13)', () => {
     }
     const plain = computeTeamDamage({ ...input, slots: team });
     expect(calc.totalDamage).toBeGreaterThan(plain.totalDamage);
+  });
+});
+
+// Stage 16（plan/design-stage16.md 3 節 16-A）: 画面は sim の結果も calc と同じ形（TeamResult）で出す
+describe('simTeamResult: sim in the TeamResult shape', () => {
+  const input = { slots: team, enemy, durationSeconds: 180, burst: true };
+  const sim = runSimulation(input);
+  const calc = computeTeamDamage(input);
+  const view = simTeamResult(input, sim);
+
+  it('keeps the sim totals', () => {
+    expect(view.totalDamage).toBe(sim.totalDamage);
+    expect(view.totalDps).toBeCloseTo(sim.totalDamage / 180, 6);
+    expect(view.filledCount).toBe(team.length);
+    for (let i = 0; i < team.length; i++) {
+      const v = view.slots[i]!;
+      const s = sim.slots[i]!;
+      expect(v.totalDamage).toBe(s.totalDamage);
+      expect(v.normalDamage).toBe(s.normalDamage);
+      expect(v.segments.reduce((sum, g) => sum + g.damage, 0)).toBeCloseTo(s.normalDamage, 6);
+      expect(v.segments.map((g) => g.triggers)).toEqual(simGroupTotals(sim, i).map((g) => g.triggers));
+    }
+  });
+
+  it('matches calc except for the normal-attack trigger counts', () => {
+    expect(view.schedule).toEqual(calc.schedule);
+    expect(view.burstSummary).toEqual(calc.burstSummary);
+    for (let i = 0; i < team.length; i++) {
+      const v = view.slots[i]!;
+      const c = calc.slots[i]!;
+      expect(v.segments.map((g) => [g.ranges, g.seconds, g.fullBurst, g.trigger.perTrigger])).toEqual(
+        c.segments.map((g) => [g.ranges, g.seconds, g.fullBurst, g.trigger.perTrigger]),
+      );
+      expect(v.burst).toEqual(c.burst);
+      expect(v.skillHits).toEqual(c.skillHits);
+      expect(v.cadence).toEqual(c.cadence);
+      expect(v.skillSupport).toEqual(c.skillSupport);
+      expect(v.segments.every((g) => g.triggerSource === 'shots')).toBe(true);
+    }
   });
 });

@@ -2,7 +2,7 @@
 // Stage 8 の範囲では射撃のタイミングがバフにもバーストにも依存しない（弾数・リロード・チャージ速度のバフは Stage 10）ので、
 // 射撃の列は編成だけで決まる。ゲージ（burst/dynamic.ts）も、回数トリガー（skills/timeline.ts）も、sim の本体（engine.ts）も
 // この列を読む（plan/design-stage8.md 1 節・3.1 節）。
-// Stage 10: 射撃に効くバフが入ると射撃の列はバフに依存するので、1 パス目は sim/firstPass.ts のフレームループが作る。
+// Stage 10: 射撃に効くバフが入ると射撃の列はバフに依存するので、1 パス目は frame/firstPass.ts のフレームループが作る。
 // planShots はバフなし（基礎値）の列で、射撃に効く効果の無い編成では firstPass と 1 フレームも違わない。
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';

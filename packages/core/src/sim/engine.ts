@@ -5,10 +5,10 @@
 // フレームループは「区間をまたいだら参照を差し替える」だけにする（毎フレーム式を評価しない）。
 // Stage 7: 時刻表を動的サイクル（burst/dynamic.ts。射手を回してゲージを溜め、状態機械で発動を決める）にした。
 // 射撃は時刻表に依存しないので 2 パス（1 パス目 = planTeamSchedule で時刻表、2 パス目 = 下のフレームループ）で済む。
-// calc（team.ts）はこの sim の期待値モデルで、両者の差は発射サイクルの離散化（マガジンの位相と端数）だけになる（__tests__/simCalc.test.ts）。
-// Stage 8: 1 パス目を team.ts の planTeamRun（射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動）にまとめた。
-// 射撃は 1 パス目の射撃の列（sim/shots.ts）をそのまま使い、倍率ダメージ（damage）は発動フレームで足す。
-// Stage 10: 1 パス目の射撃の列と時刻表は sim/firstPass.ts のフレームループ（射撃に効くバフ・CT 短縮・弾丸チャージ込み）で作る。
+// calc（calc/model.ts）はこの sim の期待値モデルで、両者の差は発射サイクルの離散化（マガジンの位相と端数）だけになる（__tests__/simCalc.test.ts）。
+// Stage 8: 1 パス目を frame/plan.ts の planTeamRun（射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動）にまとめた。
+// 射撃は 1 パス目の射撃の列（frame/shots.ts）をそのまま使い、倍率ダメージ（damage）は発動フレームで足す。
+// Stage 10: 1 パス目の射撃の列と時刻表は frame/firstPass.ts のフレームループ（射撃に効くバフ・CT 短縮・弾丸チャージ込み）で作る。
 // 2 パス目は変えない（射撃の列を読み、区間ごとの 1 トリガー値を足す）。
 import type { BurstSchedule, BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
@@ -32,13 +32,13 @@ import {
   perShotDamageOf,
   planTeamRun,
   type SkillHitEvent,
-  type TeamInput,
-} from '../team.ts';
+} from '../frame/plan.ts';
+import { type TeamInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
-import { firingParams } from './firing.ts';
-import type { InstantApplication } from './firstPass.ts';
-import type { ShotLog } from './shots.ts';
+import { firingParams } from '../frame/firing.ts';
+import type { InstantApplication } from '../frame/firstPass.ts';
+import type { ShotLog } from '../frame/shots.ts';
 
 export type SimInput = TeamInput & {
   /** true なら全イベントを events に残す（テスト・デバッグ用。既定 false） */
@@ -85,7 +85,12 @@ export type SimSlotResult = {
   /** Σ segments.damage */
   normalDamage: number;
   /** バーストスキル。activations は発動フレーム。hit は定義がない・unsupported なら null */
-  burst: { activations: number[]; hit: BurstHitResult | null; damage: number };
+  burst: {
+    activations: number[];
+    hit: BurstHitResult | null;
+    damage: number;
+    /** Stage 16: 発動ごとの内訳（activations と同じ順） */ hits: BurstHitResult[];
+  };
   /** Stage 8: 倍率ダメージ（damage）の発動フレームと合計（calc と同じ発動列） */
   skillHits: { frames: number[]; damage: number };
   totalDamage: number;
@@ -100,6 +105,8 @@ export type SimResult = {
   shots: (ShotLog | null)[];
   /** Stage 10: 即時効果（CT 短縮・弾丸チャージ）を当てた記録（1 パス目） */
   instants: InstantApplication[];
+  /** Stage 16: 倍率ダメージの発動（1 パス目。calc と同じ列） */
+  skillHits: SkillHitEvent[];
   slots: (SimSlotResult | null)[];
   totalDamage: number;
   /** trace: false なら空 */
@@ -184,6 +191,7 @@ export function runSimulation(simInput: SimInput): SimResult {
             passive.buffs,
           ),
           damage: 0,
+          hits: [],
         },
         skillHits: { frames: [], damage: 0 },
         totalDamage: 0,
@@ -246,6 +254,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       if (hit === null) continue;
       if (runner.result.burst.activations.length === 0) runner.result.burst.hit = hit;
       runner.result.burst.activations.push(f);
+      runner.result.burst.hits.push(hit);
       runner.result.burst.damage += hit.perActivation;
       if (trace) events.push({ frame: f, kind: 'burst', slot: index, step, damage: hit.perActivation });
     }
@@ -298,7 +307,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     return r;
   });
 
-  return { frames, schedule, timeline, shots, instants, slots: results, totalDamage, events };
+  return { frames, schedule, timeline, shots, instants, skillHits, slots: results, totalDamage, events };
 }
 
 export type SimIntervalTotals = { triggers: number; damage: number };

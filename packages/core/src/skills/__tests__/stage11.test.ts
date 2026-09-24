@@ -10,7 +10,7 @@ import {
   type BurstUnit,
 } from '../../burst/controller.ts';
 import { durationToFrames, planFixedCycle } from '../../burst/fixedCycle.ts';
-import { runFirstPass } from '../../sim/firstPass.ts';
+import { runFirstPass } from '../../frame/firstPass.ts';
 import type { CharacterData, ShotParams, SkillRaw } from '../../types.ts';
 import { planHeals } from '../heals.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';

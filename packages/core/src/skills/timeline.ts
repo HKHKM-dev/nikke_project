@@ -7,7 +7,7 @@
 //
 // calc はグループごとに computeDamage を 1 回呼び、sim はフレームループで区間をまたぐたびに 1 トリガーの値を差し替える。
 // timed 効果が 1 つもなければグループは「通常区間 / フルバースト区間」の 2 つに退化し、Stage 5 とまったく同じ計算になる。
-// Stage 8: 射撃の回数（sim/shots.ts の射撃の列から）・発動の回数・バースト N 段階突入時のトリガーを足した。
+// Stage 8: 射撃の回数（frame/shots.ts の射撃の列から）・発動の回数・バースト N 段階突入時のトリガーを足した。
 // 射撃の回数で付くバフの窓は発火フレームの次のフレームから始める（トリガーになった射撃自身には乗らない）。
 // Stage 10: トリガーの判定を skills/triggers.ts の TriggerTracker に移し、1 パス目のフレームループと同じコードを通す。
 // Stage 11: 対象「直前にバーストスキルを使用した味方」（burstUsers）は発火ごとに対象が変わるので、対象の枠ごとに窓を和集合にする。
@@ -21,7 +21,7 @@
 import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { BuildEffect } from '../buildEffects.ts';
 import { resolveCycleEvery, type CycleWindow } from './cycles.ts';
-import type { ShotLog } from '../sim/shots.ts';
+import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { FPS } from '../weapons.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
@@ -49,7 +49,7 @@ export type TimelineSlot = {
   /** null = 定義ファイルなし。自分の効果は出ないが、味方の allies 効果は受ける */
   definition: SkillDefinition | null;
   levels: SkillLevels;
-  /** 発動者基準の固定加算に使うバフ前攻撃力（team.ts の baseAttackOf と同じ値） */
+  /** 発動者基準の固定加算に使うバフ前攻撃力（damage.ts の baseAttackOf と同じ値） */
   casterBaseAttack: number;
   /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。自分だけに効く常時バフ。省略は無し */
   buildEffects?: readonly BuildEffect[];
@@ -124,7 +124,7 @@ export type BuffTimeline = {
   conditionSkips: ConditionSkip[];
   /**
    * Stage 11 紅蓮BS: 循環の間隔の変更（cycleEvery）の窓（発生順）。区間には入れない（ダメージの式も射手も読まない）。
-   * team.ts の planSkillHits が、射撃がこの窓に入るかで循環の段を決める（plan/design-stage11-scarlet-bs.md 3.2 節）
+   * frame/plan.ts の planSkillHits が、射撃がこの窓に入るかで循環の段を決める（plan/design-stage11-scarlet-bs.md 3.2 節）
    */
   cycleWindows: CycleWindow[];
 };
@@ -272,7 +272,7 @@ export function buffStartFires(
 
 /**
  * Stage 11 モダニア: 使用武器の変更の窓の頭を何フレーム削るか。バースト系の発火（f）で付く窓 [f, f + d) を、射手が持ち替えるフレーム
- * （f + 1。sim/firstPass.ts の射手が見る窓の規則）から始める。発火のフレームの射撃は基礎の武器で撃たれるので、その 1 発を
+ * （f + 1。frame/firstPass.ts の射手が見る窓の規則）から始める。発火のフレームの射撃は基礎の武器で撃たれるので、その 1 発を
  * 変更後の武器のダメージで数えないため。終わりは変えない（同じ発動の装弾数無限と同じフレームに切れる）。
  * 射撃の回数トリガー（窓がもともと f + 1 から）と戦闘開始時（ループの前に登録）は削らない
  */

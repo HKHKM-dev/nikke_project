@@ -9,8 +9,20 @@ import {
 import { formatNumber, formatPercent } from '../format.ts';
 import { ResultPanel } from './ResultPanel.tsx';
 
+/** Stage 16: 表示する計算モデル（plan/design-stage16.md 1 節） */
+export type ModelKind = 'calc' | 'sim';
+
+const MODEL_LABEL: Record<ModelKind, string> = {
+  calc: 'calc（区間の期待値。即時）',
+  sim: 'sim（フレーム逐次）',
+};
+
 type Props = {
   result: TeamResult;
+  model: ModelKind;
+  onModelChange: (model: ModelKind) => void;
+  /** sim を表示しているときの calc の結果（差を並べる）。calc の表示では null */
+  compare: TeamResult | null;
   /** ニケは選ばれているがデータ読み込み中で合計に入っていない枠の数 */
   loadingCount: number;
   /** スキル定義を読み込み中で、まだバフなしで計算している枠の数 */
@@ -27,7 +39,22 @@ function triggerRange(slot: TeamSlotResult, pick: (t: TriggerDamage) => number, 
   return max ? Math.max(...values) : Math.min(...values);
 }
 
-export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedSpec }: Props) {
+/** 差の表示（符号付き。基準が 0 なら率は出さない） */
+function formatDiff(value: number, base: number): string {
+  const sign = value > 0 ? '+' : value < 0 ? '−' : '±';
+  const rate = base !== 0 ? `（${sign}${formatPercent(Math.abs(value) / base, 2)}）` : '';
+  return `${sign}${formatNumber(Math.abs(value))}${rate}`;
+}
+
+export function TeamBreakdown({
+  result,
+  model,
+  onModelChange,
+  compare,
+  loadingCount,
+  skillsLoadingCount,
+  fixedSpec,
+}: Props) {
   const filled = result.slots.filter((s): s is TeamSlotResult => s !== null);
   const attackLabel = fixedSpec ? '攻撃力（スペック固定: 好感度 + 装備込み）' : '攻撃力（素）';
   const schedule = result.schedule;
@@ -58,6 +85,26 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
   return (
     <section className="panel result breakdown-panel">
       <h2>編成の内訳</h2>
+      <label className="field">
+        <span>計算モデル</span>
+        <select value={model} onChange={(e) => onModelChange(e.target.value === 'sim' ? 'sim' : 'calc')}>
+          {(Object.keys(MODEL_LABEL) as ModelKind[]).map((m) => (
+            <option key={m} value={m}>
+              {MODEL_LABEL[m]}
+            </option>
+          ))}
+        </select>
+        <small>
+          calc と sim は同じ式・時刻表・バフを使います。sim は通常攻撃を 1 発ずつ数え、calc
+          は区間の平均の発射レートで置きます。
+        </small>
+      </label>
+      {compare && filled.length > 0 && (
+        <p className="hint">
+          calc との差: 合計 {formatDiff(result.totalDamage - compare.totalDamage, compare.totalDamage)}
+          。いまの差は通常攻撃の発数の端数（マガジンの位相）だけです。
+        </p>
+      )}
       {filled.length === 0 && loadingCount === 0 && (
         <p className="hint">枠にニケを選ぶと、ここに内訳と合計が出ます。</p>
       )}
@@ -143,6 +190,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                 <th>DPS</th>
                 <th>総ダメージ</th>
                 <th>寄与率</th>
+                {compare && <th>calc との差</th>}
               </tr>
             </thead>
             <tbody>
@@ -176,6 +224,14 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                   <td>{formatNumber(s.dps)}</td>
                   <td>{formatNumber(s.totalDamage)}</td>
                   <td>{formatPercent(s.share, 1)}</td>
+                  {compare && (
+                    <td>
+                      {formatDiff(
+                        s.totalDamage - (compare.slots[s.index]?.totalDamage ?? 0),
+                        compare.slots[s.index]?.totalDamage ?? 0,
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -185,6 +241,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
                 <td>{formatNumber(result.totalDps)}</td>
                 <td className="grand-total">{formatNumber(result.totalDamage)}</td>
                 <td>100%</td>
+                {compare && <td>{formatDiff(result.totalDamage - compare.totalDamage, compare.totalDamage)}</td>}
               </tr>
             </tfoot>
           </table>
@@ -213,7 +270,7 @@ export function TeamBreakdown({ result, loadingCount, skillsLoadingCount, fixedS
         </div>
       )}
       <p className="scope">
-        calc v5
+        calc と sim
         は各ニケの通常攻撃に、定義済みの常時発動パッシブと持続バフ（攻撃力・会心・攻撃ダメージ・チャージダメージ・分配ダメージ）を乗せ、
         通常攻撃のゲージ蓄積（常時のゲージ速度込み）と各ニケのバースト CT から決まるフルバースト区間（+0.5。長さは III
         のニケごと）と、バーストスキル・スキルの倍率ダメージ（N 回攻撃ごと・バースト使用 N

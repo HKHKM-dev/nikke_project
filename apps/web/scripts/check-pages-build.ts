@@ -1,5 +1,5 @@
 // Stage 14: GitHub Pages 用のビルド成果物（vite build の出力）がサブパス（base）で動くかを確かめる（plan/design-stage12.md 4.1 節）。
-//   node apps/calc/scripts/check-pages-build.ts apps/calc/dist /nikke_project/
+//   node apps/web/scripts/check-pages-build.ts apps/web/dist /nikke_project/
 // 見るもの: index.html が参照するスクリプト・スタイルが base の下にあること、バンドルに base が埋め込まれていること
 // （データの fetch は import.meta.env.BASE_URL を前に付ける）、データ（キャラ・スキル定義・育成のマスタ・敵のプリセット）が同梱されていること。
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -42,7 +42,7 @@ export function checkPagesBuild(distDir: string, base: string): string[] {
 if (import.meta.main) {
   const [distDir, base] = process.argv.slice(2);
   if (distDir === undefined || base === undefined) {
-    console.error('usage: node apps/calc/scripts/check-pages-build.ts <dist> <base>');
+    console.error('usage: node apps/web/scripts/check-pages-build.ts <dist> <base>');
     process.exit(2);
   }
   const problems = checkPagesBuild(distDir, base);

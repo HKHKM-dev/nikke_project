@@ -9,7 +9,7 @@
 // 窓の中の毎回の段はカウンタを戻さないので、窓の後の最初の段は「通算の every の倍数」の射撃に戻る
 // （録画 47 の FB 明けの段が 1 発目の回と 2 発目の回に分かれたのはこのため）。
 import { durationToFrames } from '../burst/fixedCycle.ts';
-import type { ShotLog } from '../sim/shots.ts';
+import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData, LocalizedText, SkillRaw } from '../types.ts';
 import type { ResolvedDamageEffect } from './burstDamage.ts';
 import {

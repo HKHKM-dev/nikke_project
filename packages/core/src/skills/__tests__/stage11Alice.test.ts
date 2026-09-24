@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { WeaponType } from '../../types.ts';
-import { firingParams } from '../../sim/firing.ts';
+import { firingParams } from '../../frame/firing.ts';
 import { ZERO_BUFFS, applyResolvedEffect } from '../buffs.ts';
 import {
   attackRankFor,

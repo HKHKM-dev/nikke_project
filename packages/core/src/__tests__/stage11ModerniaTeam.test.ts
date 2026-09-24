@@ -6,20 +6,14 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
-import { firingParams } from '../sim/firing.ts';
-import { runFirstPass } from '../sim/firstPass.ts';
-import { initialShooter, resumeShooter, stepShooter } from '../sim/shooter.ts';
+import { firingParams } from '../frame/firing.ts';
+import { runFirstPass } from '../frame/firstPass.ts';
+import { initialShooter, resumeShooter, stepShooter } from '../frame/shooter.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import {
-  computeTeamDamage,
-  countShotsInRanges,
-  planTeamRun,
-  toTimelineSlots,
-  type TeamInput,
-  type TeamResult,
-  type TeamSlotInput,
-} from '../team.ts';
+import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { planTeamRun } from '../frame/plan.ts';
+import { toTimelineSlots, type TeamInput, type TeamSlotInput, type TeamResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 
