@@ -1,7 +1,7 @@
 # Stage 12 以降 設計書: 育成入力の拡張・実戦との突き合わせ・公開
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **Stage 12 実装済み（2026-09-24。実測 (b)〜(d) はユーザーの実ビルド待ち。11 節）。Stage 13 実装済み（2026-09-24。OL の表の検証と射撃場の実測 3.5 節はユーザーの実装備待ち。12・13 節）**。設計は承認済み（2026-09-24）。同日起案し、Stage 14 と 15 の順序（公開を先に、実戦との突き合わせは公開後）と実戦の基準（ソロレイド未開催のため射撃場 3 分モード・固定 OFF → 迎撃戦）を対話で決めたうえで、9 節の残り 7 点をすべて推奨案で承認。**着手は Stage 11 の紅蓮：ブラックシャドウの後**（9 節 1）。各 Stage の着手時にこの設計書の該当節へ詳細を追記して起案する。ロードマップの「Stage 12+」を **4 つの Stage（12〜15）に分け、それぞれの実装・検証手順を決める**ための設計書。各 Stage の着手時に、この設計書の該当節を起点に詳細（DSL の字面・テストの名前）を詰める。
+- 状態: **Stage 12 実装済み（2026-09-24。実測 (b)〜(d) はユーザーの実ビルド待ち。11 節）。Stage 13 実装済み（2026-09-24。OL の表の検証と射撃場の実測 3.5 節はユーザーの実装備待ち。12・13 節）。Stage 14 実装済み（2026-09-24。リポジトリの公開と Pages の有効化はユーザーの操作待ち。14・15 節）**。設計は承認済み（2026-09-24）。同日起案し、Stage 14 と 15 の順序（公開を先に、実戦との突き合わせは公開後）と実戦の基準（ソロレイド未開催のため射撃場 3 分モード・固定 OFF → 迎撃戦）を対話で決めたうえで、9 節の残り 7 点をすべて推奨案で承認。**着手は Stage 11 の紅蓮：ブラックシャドウの後**（9 節 1）。各 Stage の着手時にこの設計書の該当節へ詳細を追記して起案する。ロードマップの「Stage 12+」を **4 つの Stage（12〜15）に分け、それぞれの実装・検証手順を決める**ための設計書。各 Stage の着手時に、この設計書の該当節を起点に詳細（DSL の字面・テストの名前）を詰める。
 - 関連: [roadmap.md](roadmap.md)、[requirements.md](requirements.md)（3 節「初期の育成入力」・5.2 節「当面扱わないもの」・6.3 節「公開の留意点」）、[verification.md](verification.md)（Stage 2-A「スペック固定の仕様」・較正した定数）、[design-stage11.md](design-stage11.md)（1 節の進め方）、[design-stage11-scarlet-bs.md](design-stage11-scarlet-bs.md)（Stage 11 の残り）、[captures/index.md](captures/index.md)
 - 作成日: 2026-09-24
 
@@ -418,3 +418,31 @@ export function computeCombatAttack(character, build: BuildInput, masters: Build
 | 9    | **通常攻撃ダメージ倍率▲**（SG・SMG のコレクション）         | SMG / SG をコレクションあり / なしで撃ち、非会心・胴体の 1 ヒットの比が `1 + Σ` か                                                       | 加算なら `normalAttackMultiplier` を「武器倍率 + Σ」に                                                              |
 
 録画は 3.5 節の 2〜3 本に、モダニアとコレクション付きの SMG / SG を足す。台帳・証拠フレーム・sha256 の運用は既存どおり。
+
+---
+
+## 14. Stage 14 の実装時の差分と知見（2026-09-24）
+
+Stage 13 の実測（13 節）は後回しにし（2026-09-24 ユーザー決定: 実測できるまで実測の要る部分は未実装のまま次へ進む）、4 節の公開準備を実装した。PR #22（Stage 13）と同じブランチに積んだ。
+
+1. **Pages の workflow**（`.github/workflows/pages.yml`）: `main` への push と手動実行で `npm ci` → `npm run build`（`VITE_BASE_PATH=/<リポジトリ名>/`）→ `apps/calc/scripts/check-pages-build.ts` → `actions/upload-pages-artifact` → `actions/deploy-pages`。4.1 節の固定の `/nikke_project/` ではなく `github.event.repository.name` から作る。**配信（deploy）はリポジトリが公開のときだけ**（非公開のあいだは Pages を使えず `deploy-pages` が失敗するので、ビルドと確認だけ通す）。`ci.yml` は変えていない。
+2. **ビルドの確認**（`check-pages-build.ts`）: index.html のスクリプト・スタイルが base の下にあること、バンドルに base の文字列が埋め込まれていること（データの fetch は `import.meta.env.BASE_URL` を前に付ける）、キャラ・スキル定義・育成のマスタが同梱されていること。7 節の「vite build の出力パスのテスト」は、同じ関数を vitest から vite の `build()` を base `/nikke_project/` で呼んで確かめる形にした（`check-pages-build.test.ts`）。
+3. **保存形式の版**: `serializeTeamState` が `formatVersion: 1` を付ける。版のない JSON（Stage 3〜13）は版 0 として今までどおり欠落互換で読み、未知の版は読まない。localStorage のキー（`nikke-calc.team.v1`）は変えない（旧データをそのまま読むため）。
+4. **JSON の書き出し / 取り込み**（2.3 節で入れていなかったのでここで。9 節 3）:
+   - 編成: 画面末尾の「編成の JSON」（コピー・ファイルに保存・貼り付け / ファイルからの取り込み）。形式は localStorage と同じ。取り込めないときは理由（JSON でない・未知の版・形が合わない）を出す。
+   - 枠の育成: 育成の折り畳みの末尾の「JSON」（`{ formatVersion, growth, build }`）。**CLI の `--build` の 1 枠分（BuildInput の一部と任意の growth）もそのまま貼れる**（書かれていない項目・部位は空の育成で埋める。CLI 側も同じ埋め方に揃えた）。
+5. **未対応の一覧を 1 画面に**: 画面末尾の「未対応・近似・仮定の一覧」。モデル全体で扱わないもの（実戦未照合・命中率・ボスの行動・被弾と回復・育成の仮定）と、枠ごとのスキル定義の有無・一部対応 / 未対応のスキルとその注記・仮定・計算のモデルの注記（近似）・育成の未対応（弾丸チャージ等）をまとめる。中身は枠カードに出しているものと同じで、1 か所で見渡せるようにしただけ。
+6. **公開前の確認**（4.1 節）: 追跡しているファイルにメールアドレス・トークン（`ghp_` / `github_pat_` / `sk-` / `AKIA` / 秘密鍵など）・ユーザー名は無い。コミットの作者は GitHub の noreply アドレスだけ。残る絶対パスはローカルのドライブ（`D:\` `E:/` `I:/マイドライブ/`）だけで、4.1 節のとおり残す。**`plan/captures/frames` の 123 枚は全部目で見て、プレイヤー名・UID が写っていないことを確かめた**（射撃場の HUD と一時停止・戦闘履歴のパネルだけ）。ゲームの画面なので README の権利表記に含めた。
+7. **データの同梱**: 9 節 8 の承認どおり同梱のまま。README に「非公式のファンメイド」「権利者から要請があれば同梱をやめ `npm run fetch-data` に切り替える」を足した。**Blablalink の規約の確認はこのセッションではしていない**（15 節の 3）。
+8. **README**: できること・精度と未対応（射撃場の録画でだけ確かめた範囲、実戦は公開後の Stage 15、育成の仮定、スキル定義のある 15 体）・Pages の配信・権利表記。calc の見出しの説明文と `<title>` も今の範囲に合わせた。
+9. **テスト**: 660 件（+7: calc `team.test.ts` 5 件（版の書き出し・旧形式・未知の版の理由・育成の JSON の往復・CLI 形式の取り込み・不正値）、`check-pages-build.test.ts` 2 件）。
+10. **ブラウザ**（`vite preview`）: base `/` と `/nikke_project/` の 2 つのビルドに、版のない旧形式の保存データ（スペック固定 ON・リター + クラウン + モダニア + アリス + アドミ）を入れて開き、**編成の合計 1,216,473,289 が両方で一致**（4.3 節の「ローカルと一致」の代わり。Pages 上での確認は公開後）。どちらも 404・ページのエラーなし、保存し直すと `formatVersion: 1` が付く。編成の JSON の取り込みと、未知の版（`formatVersion 9`）の拒否を確かめた。
+
+## 15. 公開の手順（ユーザーの操作。未実施）
+
+リポジトリを公開にするのは外に出る操作なので、このセッションではしていない。PR をマージした後に次の順で行う。
+
+1. リポジトリの Settings → Pages → Build and deployment の Source を **GitHub Actions** にする。
+2. リポジトリを **Public** にする（Settings → General → Danger Zone）。その前に 14 節 6 の確認を見直す（特に、この確認の後に足した録画の切り出し）。
+3. Blablalink（と SHIFT UP / Level Infinite）の規約に、取得データの再配布を禁じる記述が無いか確かめる。あれば `packages/core/data` を `.gitignore` に入れ、README の手順を `npm run fetch-data` 前提に書き換える（9 節 8）。
+4. Actions の「Pages」を手動で実行し（または `main` に push し）、https://hkhkm-dev.github.io/nikke_project/ でスペック固定 ON の合計がローカルと一致することを確かめる（4.3 節）。verification.md Stage 14 節に結果を書く。

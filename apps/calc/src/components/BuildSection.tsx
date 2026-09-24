@@ -1,6 +1,7 @@
 // Stage 12: 育成入力（ステータス層）の入力欄と、戦闘中の攻撃力（バフ前）の内訳。
 // スペック固定のときは fixedSpecBuild（T9 Lv5 × 4・好感度 rank30/40/10）を表示して入力を止める。
 // Stage 13: OL 装備のオプション行（最大 3 行）の入力と、効果層（OL・キューブ・コレクション → 常時バフ）の一覧。
+// Stage 14: 枠の育成（育成値 + 育成入力）の JSON の書き出し / 取り込み（CLI の --build の 1 枠分も読める）。
 import {
   AFFECTION_RANK_MAX,
   AFFECTION_RANK_MIN,
@@ -28,10 +29,10 @@ import {
   type OverloadOption,
   type TreasurePhase,
 } from '@nikke/core';
-import type { Dispatch } from 'react';
+import { useState, type Dispatch } from 'react';
 import { formatNumber } from '../format.ts';
 import { GEAR_PART_LABEL, formatBuildEffect, formatBuildEffectSource } from '../skillLabels.ts';
-import type { TeamAction } from '../team.ts';
+import { readSlotBuildJson, serializeSlotBuild, type TeamAction } from '../team.ts';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
 
@@ -51,6 +52,8 @@ type Props = {
   effectiveBuild: BuildInput;
   /** 実際に計算へ渡す育成値 */
   growth: GrowthInput;
+  /** Stage 14: 保存している育成値（JSON の書き出し用。スペック固定でも入力のまま） */
+  savedGrowth: GrowthInput;
   treasurePhase: TreasurePhase;
   masters: BuildMasters | null;
   mastersError: string | null;
@@ -69,12 +72,26 @@ export function BuildSection({
   build,
   effectiveBuild,
   growth,
+  savedGrowth,
   treasurePhase,
   masters,
   mastersError,
   disabled,
   dispatch,
 }: Props) {
+  const [jsonText, setJsonText] = useState('');
+  const [jsonMessage, setJsonMessage] = useState<string | null>(null);
+  const importJson = () => {
+    const result = readSlotBuildJson(jsonText);
+    if (!result.ok) {
+      setJsonMessage(`取り込めませんでした: ${result.error}`);
+      return;
+    }
+    dispatch({ type: 'setBuild', index: slotIndex, build: result.value.build });
+    if (result.value.growth !== null) dispatch({ type: 'setGrowth', index: slotIndex, growth: result.value.growth });
+    setJsonText('');
+    setJsonMessage(null);
+  };
   const set = (patch: Partial<BuildInput>) =>
     dispatch({ type: 'setBuild', index: slotIndex, build: { ...build, ...patch } });
   const setGear = (part: GearPart, gear: BuildInput['gear'][GearPart]) =>
@@ -376,6 +393,36 @@ export function BuildSection({
           </p>
         </div>
       )}
+      <details className="build-json">
+        <summary>JSON（この枠の育成の書き出し / 取り込み）</summary>
+        <div className="data-grid">
+          <label className="field">
+            <span>書き出し（育成値 + 育成入力）</span>
+            <textarea
+              readOnly
+              rows={6}
+              value={serializeSlotBuild({ growth: savedGrowth, build })}
+              onFocus={(e) => e.currentTarget.select()}
+            />
+          </label>
+          <label className="field">
+            <span>取り込み（CLI の --build の 1 枠分も可）</span>
+            <textarea
+              rows={6}
+              value={jsonText}
+              disabled={disabled}
+              placeholder='{ "affectionRank": 30, "gear": { "head": { "type": "OL", "level": 5 } } }'
+              onChange={(e) => setJsonText(e.target.value)}
+            />
+            <span className="data-buttons">
+              <button type="button" disabled={disabled || jsonText.trim() === ''} onClick={importJson}>
+                取り込む
+              </button>
+            </span>
+          </label>
+        </div>
+        {jsonMessage && <p className="error">{jsonMessage}</p>}
+      </details>
     </details>
   );
 }

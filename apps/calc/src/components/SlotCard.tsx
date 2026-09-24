@@ -211,6 +211,7 @@ export function SlotCard({
             build={slot.build}
             effectiveBuild={effectiveBuild}
             growth={effectiveGrowth}
+            savedGrowth={slot.growth}
             treasurePhase={effectiveTreasurePhase(slot, character)}
             masters={masters}
             mastersError={mastersError}

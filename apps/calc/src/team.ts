@@ -201,10 +201,24 @@ export function clampSkillLevel(level: number): number {
 
 // ---- 永続化 ----
 
+/** localStorage のキー。Stage 14 で formatVersion を付けたが、版のない旧形式もこのキーのまま読む */
 export const STORAGE_KEY = 'nikke-calc.team.v1';
 
+/**
+ * Stage 14: 編成の保存形式の版。localStorage と「編成の JSON」の書き出しで共通。
+ * 版のない JSON（Stage 3〜13 の保存データ）は版 0 として読み、欠落した項目を既定値で埋める（各 parse* の欠落互換）
+ */
+export const TEAM_FORMAT_VERSION = 1;
+
 export function serializeTeamState(state: TeamState): string {
-  return JSON.stringify(state);
+  return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, ...state });
+}
+
+/** 読めた版（版のない旧形式は 0）。未知の版・形が合わないものは null */
+function formatVersionOf(raw: Record<string, unknown>): number | null {
+  const v = raw.formatVersion;
+  if (v === undefined) return 0;
+  return typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= TEAM_FORMAT_VERSION ? v : null;
 }
 
 type Json = unknown;
@@ -329,19 +343,41 @@ function parseEnemy(v: Json): EnemyInput | null {
   return { defence: v.defence, element: element === null ? null : (element as Element), hasCore: v.hasCore };
 }
 
+export type ReadResult<T> = { ok: true; value: T } | { ok: false; error: string };
+
+/**
+ * Stage 14: 編成の JSON（localStorage・書き出したファイル・貼り付け）を検証して復元する。失敗の理由を返す（取り込み欄に出す）。
+ * 未知の formatVersion（新しい版で書き出したもの）・形が合わない・index に存在しないニケ・同じニケが 2 枠は失敗
+ */
+export function readTeamJson(json: string, index: readonly CharacterIndexEntry[]): ReadResult<TeamState> {
+  let raw: Json;
+  try {
+    raw = JSON.parse(json);
+  } catch {
+    return { ok: false, error: 'JSON として読めません' };
+  }
+  if (!isRecord(raw)) return { ok: false, error: '編成の JSON ではありません' };
+  if (formatVersionOf(raw) === null) {
+    return { ok: false, error: `この版の編成は読めません（formatVersion ${String(raw.formatVersion)}）` };
+  }
+  const state = parseTeamFields(raw, index);
+  return state === null
+    ? { ok: false, error: '編成の JSON の形が合いません（範囲外の値・未知のニケ・同じニケが 2 枠など）' }
+    : { ok: true, value: state };
+}
+
 /**
  * localStorage に保存した JSON を検証して復元する。
  * 形が合わない・index に存在しないニケを指す・同じニケが 2 枠にある場合は null（呼び出し側で初期値に落とす）。
  */
 export function parseTeamState(json: string | null, index: readonly CharacterIndexEntry[]): TeamState | null {
   if (json === null) return null;
-  let raw: Json;
-  try {
-    raw = JSON.parse(json);
-  } catch {
-    return null;
-  }
-  if (!isRecord(raw) || !Array.isArray(raw.slots) || raw.slots.length !== TEAM_SIZE) return null;
+  const result = readTeamJson(json, index);
+  return result.ok ? result.value : null;
+}
+
+function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterIndexEntry[]): TeamState | null {
+  if (!Array.isArray(raw.slots) || raw.slots.length !== TEAM_SIZE) return null;
 
   const known = new Set(index.map((e) => e.resourceId));
   const seen = new Set<number>();
@@ -388,4 +424,47 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
     burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
     controlledSlot: typeof controlled === 'number' ? controlled : null,
   };
+}
+
+// ---- Stage 14: 枠ごとの育成の JSON（書き出し / 取り込み） ----
+
+/** 枠ごとの育成の JSON の版 */
+export const BUILD_FORMAT_VERSION = 1;
+
+export type SlotBuildJson = { growth: GrowthInput; build: BuildInput };
+
+/** 枠の育成値と育成入力を JSON にする（{ formatVersion, growth, build }） */
+export function serializeSlotBuild(slot: Pick<SlotState, 'growth' | 'build'>): string {
+  return JSON.stringify({ formatVersion: BUILD_FORMAT_VERSION, growth: slot.growth, build: slot.build }, null, 2);
+}
+
+/**
+ * 枠ごとの育成の JSON を読む。書き出した形（{ formatVersion, growth, build }）のほか、CLI の --build の 1 枠分
+ * （BuildInput の一部と任意の growth。欠けた項目は空の育成で埋める）も読む。growth が無ければ null（枠の育成値を変えない）
+ */
+export function readSlotBuildJson(json: string): ReadResult<{ growth: GrowthInput | null; build: BuildInput }> {
+  let raw: Json;
+  try {
+    raw = JSON.parse(json);
+  } catch {
+    return { ok: false, error: 'JSON として読めません' };
+  }
+  if (!isRecord(raw)) return { ok: false, error: '育成の JSON ではありません' };
+  const version = raw.formatVersion;
+  if (version !== undefined && version !== BUILD_FORMAT_VERSION) {
+    return { ok: false, error: `この版の育成は読めません（formatVersion ${String(version)}）` };
+  }
+  const wrapped = version !== undefined || isRecord(raw.build);
+  const { growth: rawGrowth, formatVersion: _v, ...rest } = raw;
+  const buildRaw = wrapped ? raw.build : rest;
+  if (!isRecord(buildRaw)) return { ok: false, error: '育成（build）がありません' };
+  // 書かれていない項目・部位は空の育成で埋める（CLI の --build と同じ）
+  const empty = emptyBuild();
+  const gear = isRecord(buildRaw.gear) ? { ...empty.gear, ...buildRaw.gear } : buildRaw.gear;
+  const build = parseBuild({ ...empty, ...buildRaw, ...(gear === undefined ? {} : { gear }) });
+  if (build === null) return { ok: false, error: '育成の値が範囲外か、形が合いません' };
+  if (rawGrowth === undefined) return { ok: true, value: { growth: null, build } };
+  const growth = parseGrowth(rawGrowth);
+  if (growth === null) return { ok: false, error: '育成値（growth）の形が合いません' };
+  return { ok: true, value: { growth, build } };
 }

@@ -1,0 +1,50 @@
+# Stage 14: calc を GitHub Pages に配信する（plan/design-stage12.md 4.1 節）。CI（ci.yml）とは別。
+# base はリポジトリ名のサブパス（https://<owner>.github.io/<repo>/）。ビルドの出力は check-pages-build.ts で確かめる。
+# 配信（deploy）はリポジトリが公開のときだけ行う。非公開のあいだはビルドと確認だけ通す。
+# 初回は リポジトリの Settings → Pages → Build and deployment の Source を「GitHub Actions」にする。
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          VITE_BASE_PATH: ${{ env.BASE_PATH }}
+      - run: node apps/calc/scripts/check-pages-build.ts apps/calc/dist "$BASE_PATH"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/calc/dist
+
+  deploy:
+    needs: build
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -480,3 +480,31 @@ header p {
 .received-list li.note-unsupported .amount {
   color: #b35900;
 }
+
+/* Stage 14: JSON の書き出し / 取り込み、未対応の一覧 */
+.data-panel > summary,
+.build-json > summary {
+  cursor: pointer;
+}
+.build-json {
+  margin-top: 6px;
+  font-size: 0.9em;
+}
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
+  gap: 8px;
+  margin-top: 6px;
+}
+.data-grid textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+.data-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}

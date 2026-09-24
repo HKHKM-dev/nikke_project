@@ -124,7 +124,9 @@ function withBuild(
   const growth = entry?.growth ?? DEFAULT_GROWTH;
   if (entry === undefined) return { character, growth, condition, skills };
   const { growth: _growth, ...rest } = entry;
-  const build: BuildInput = { ...emptyBuild(), ...rest };
+  // 書かれていない項目・部位は空の育成で埋める（Stage 14: calc の育成の JSON の取り込みと同じ）
+  const empty = emptyBuild();
+  const build: BuildInput = { ...empty, ...rest, gear: { ...empty.gear, ...rest.gear } };
   const combat = computeCombatAttack(character, growth, build, masters, { treasurePhase: skills.treasurePhase });
   console.log(
     `build ${character.name.ja}: attack ${combat.attack} = round((${combat.gradeBase} + affection ${combat.affection}` +
