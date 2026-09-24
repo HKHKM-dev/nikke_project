@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "source": "オプションの種類と CDN の group id: Blablalink CDN /equip/equip_option_table_v2-ja.json（9 種 × 3 行 × 5 段 = Lv1〜15。fetch-data が照合）。Lv1〜15 の上昇値（%）: CDN に無い（state_effect のテーブルは 404）ので、コミュニティの公開表（Web 由来）を転記。別プロジェクト（D:/NIKKE_Damage_Calculator）の表とは plan/design-stage12.md 0.3 節に引いた 6 点（攻撃力▲ Lv1 4.77 / Lv13 13.22、有利コード▲ 9.54 / 26.36、最大装弾数▲ 27.84 / 77.15）だけ一致を確かめた（全行の突き合わせは未実施）。どの行も Lv1〜Lv15 の等差を小数 2 桁に丸めた値と ±0.01 以内。verified は実装備の表示値で確かめた行だけ true（同 3.2 節）",
+  "source": "オプションの種類と CDN の group id: Blablalink CDN /equip/equip_option_table_v2-ja.json（9 種 × 3 行 × 5 段 = Lv1〜15。fetch-data が照合）。Lv1〜15 の上昇値（%）: CDN に無い（state_effect のテーブルは 404）ので、コミュニティの公開表（Web 由来）を転記。別プロジェクト（D:/NIKKE_Damage_Calculator）の表とは plan/design-stage12.md 0.3 節に引いた 6 点（攻撃力▲ Lv1 4.77 / Lv13 13.22、有利コード▲ 9.54 / 26.36、最大装弾数▲ 27.84 / 77.15）だけ一致を確かめた（全行の突き合わせは未実施）。どの行も Lv1〜Lv15 の等差を小数 2 桁に丸めた値と ±0.01 以内。verified は実データで確かめた行だけ true（同 3.2 節）。2026-09-24: ユーザーのアカウントの ShiftyPad（Blablalink）の state_effects（ゲームが持つ OL 行の実数値 function_value。1/100 %）113 点と突き合わせ、9 種とも観測点があり、チャージ速度 Lv2〜13・15 とクリティカル確率 Lv7 を実値に直した（チャージ速度 Lv14 は観測なし。前後の刻み 0.29 から 5.80 と推定）。それ以外の観測点はすべて一致。観測点は src/skills/__tests__/stage13.test.ts",
   "options": [
     {
       "option": "elementDamage",
@@ -10,7 +10,7 @@
       },
       "cdnGroupId": 100100,
       "values": [9.54, 10.94, 12.34, 13.75, 15.15, 16.55, 17.95, 19.35, 20.75, 22.15, 23.56, 24.96, 26.36, 27.76, 29.16],
-      "verified": false
+      "verified": true
     },
     {
       "option": "hitRate",
@@ -20,7 +20,7 @@
       },
       "cdnGroupId": 100200,
       "values": [4.77, 5.47, 6.18, 6.88, 7.59, 8.29, 9, 9.7, 10.4, 11.11, 11.81, 12.52, 13.22, 13.93, 14.63],
-      "verified": false
+      "verified": true
     },
     {
       "option": "maxAmmo",
@@ -30,7 +30,7 @@
       },
       "cdnGroupId": 100300,
       "values": [27.84, 31.95, 36.06, 40.17, 44.28, 48.39, 52.5, 56.6, 60.71, 64.82, 68.93, 73.04, 77.15, 81.26, 85.37],
-      "verified": false
+      "verified": true
     },
     {
       "option": "attack",
@@ -40,7 +40,7 @@
       },
       "cdnGroupId": 100400,
       "values": [4.77, 5.47, 6.18, 6.88, 7.59, 8.29, 9, 9.7, 10.4, 11.11, 11.81, 12.52, 13.22, 13.93, 14.63],
-      "verified": false
+      "verified": true
     },
     {
       "option": "chargeDamage",
@@ -50,7 +50,7 @@
       },
       "cdnGroupId": 100500,
       "values": [4.77, 5.47, 6.18, 6.88, 7.59, 8.29, 9, 9.7, 10.4, 11.11, 11.81, 12.52, 13.22, 13.93, 14.63],
-      "verified": false
+      "verified": true
     },
     {
       "option": "chargeSpeed",
@@ -59,8 +59,8 @@
         "en": "Increased Charge Speed"
       },
       "cdnGroupId": 100600,
-      "values": [1.98, 2.27, 2.56, 2.85, 3.14, 3.43, 3.72, 4.01, 4.3, 4.59, 4.88, 5.17, 5.46, 5.75, 6.04],
-      "verified": false
+      "values": [1.98, 2.28, 2.57, 2.86, 3.16, 3.45, 3.75, 4.04, 4.33, 4.63, 4.92, 5.21, 5.51, 5.8, 6.09],
+      "verified": true
     },
     {
       "option": "critRate",
@@ -69,8 +69,8 @@
         "en": "Increased Critical Rate"
       },
       "cdnGroupId": 100700,
-      "values": [2.3, 2.64, 2.98, 3.32, 3.66, 4, 4.34, 4.69, 5.03, 5.37, 5.71, 6.05, 6.39, 6.73, 7.07],
-      "verified": false
+      "values": [2.3, 2.64, 2.98, 3.32, 3.66, 4, 4.35, 4.69, 5.03, 5.37, 5.71, 6.05, 6.39, 6.73, 7.07],
+      "verified": true
     },
     {
       "option": "critDamage",
@@ -80,7 +80,7 @@
       },
       "cdnGroupId": 100800,
       "values": [6.64, 7.62, 8.6, 9.58, 10.56, 11.54, 12.52, 13.5, 14.48, 15.46, 16.44, 17.42, 18.4, 19.38, 20.36],
-      "verified": false
+      "verified": true
     },
     {
       "option": "defence",
@@ -90,7 +90,7 @@
       },
       "cdnGroupId": 100900,
       "values": [4.77, 5.47, 6.18, 6.88, 7.59, 8.29, 9, 9.7, 10.4, 11.11, 11.81, 12.52, 13.22, 13.93, 14.63],
-      "verified": false
+      "verified": true
     }
   ]
 }
