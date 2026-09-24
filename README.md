@@ -2,7 +2,7 @@
 
 『勝利の女神：NIKKE』のソロレイド / ユニオンレイド（単体ボス・180 秒）を対象に、5 人編成の総ダメージの期待値を算出するツール群です。
 
-- **Web 版（calc）**: https://hkhkm-dev.github.io/nikke_project/ （リポジトリの公開後に GitHub Pages で配信）
+- **Web 版（calc）**: https://hkhkm-dev.github.io/nikke_project/ （GitHub Pages）
 - `packages/core` … Blablalink 公開 CDN からのデータ取得、キャラデータ、育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム・OL オプション）、ステータス・ダメージ計算（calc / sim で共有）
 - `apps/calc` … 数式ベースの期待値計算 Web アプリ。編成はブラウザの localStorage に保存し、JSON で書き出し / 取り込みできる
 - `plan/` … 要件定義・ロードマップ・設計書・検証記録（[verification.md](plan/verification.md)）

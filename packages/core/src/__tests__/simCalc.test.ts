@@ -15,6 +15,12 @@ import type { BurstStep, ShotParams, SkillRaw } from '../types.ts';
 import { FPS } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
 
+/**
+ * 18,000 秒（5 時間）を sim で回す収束のテストの制限時間。単独でも 2〜4 秒かかり、CI でほかのテスト（vite build を回す
+ * check-pages-build.test.ts など）と並ぶと既定の 5 秒を超えることがあった（2026-09-24、6.5 秒）ので、長めに取る
+ */
+const LONG_SIM_TIMEOUT_MS = 60_000;
+
 const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
 const condition: SlotCondition = { coreHitRate: 0.6, distanceBonus: true, fullCharge: true };
 const growth = { level: 1, grade: 0, core: 0 };
@@ -185,14 +191,18 @@ describe('sim vs calc: discretization error bounds', () => {
 });
 
 describe('sim vs calc: convergence', () => {
-  it('the relative difference shrinks as the battle gets longer and is below 0.5% at 18,000 s', () => {
-    const diffs = [180, 1800, 18000].map((d) => {
-      const { sim, calc } = both(d, true);
-      return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
-    });
-    expect(diffs[2]).toBeLessThan(0.005);
-    expect(diffs[2]).toBeLessThanOrEqual(diffs[0]! + 1e-12);
-  });
+  it(
+    'the relative difference shrinks as the battle gets longer and is below 0.5% at 18,000 s',
+    () => {
+      const diffs = [180, 1800, 18000].map((d) => {
+        const { sim, calc } = both(d, true);
+        return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
+      });
+      expect(diffs[2]).toBeLessThan(0.005);
+      expect(diffs[2]).toBeLessThanOrEqual(diffs[0]! + 1e-12);
+    },
+    LONG_SIM_TIMEOUT_MS,
+  );
 });
 
 // ---- Stage 6: 持続バフを載せた編成 ----
@@ -302,13 +312,17 @@ describe('sim vs calc with timed buffs: discretization error bounds', () => {
     }
   });
 
-  it('converges below 0.5% at 18,000 s', () => {
-    const diffs = [180, 1800, 18000].map((d) => {
-      const { sim, calc } = bothTimed(d);
-      return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
-    });
-    expect(diffs[2]).toBeLessThan(0.005);
-  });
+  it(
+    'converges below 0.5% at 18,000 s',
+    () => {
+      const diffs = [180, 1800, 18000].map((d) => {
+        const { sim, calc } = bothTimed(d);
+        return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
+      });
+      expect(diffs[2]).toBeLessThan(0.005);
+    },
+    LONG_SIM_TIMEOUT_MS,
+  );
 });
 
 // ---- Stage 7: 動的サイクル（ゲージ蓄積・CT・チェーン） ----
@@ -360,13 +374,17 @@ describe('sim vs calc on the dynamic cycle: discretization error bounds', () => 
     }
   });
 
-  it('converges below 0.5% at 18,000 s', () => {
-    const diffs = [180, 1800, 18000].map((d) => {
-      const { sim, calc } = bothTimed(d, true, 'dynamic');
-      return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
-    });
-    expect(diffs[2]).toBeLessThan(0.005);
-  });
+  it(
+    'converges below 0.5% at 18,000 s',
+    () => {
+      const diffs = [180, 1800, 18000].map((d) => {
+        const { sim, calc } = bothTimed(d, true, 'dynamic');
+        return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
+      });
+      expect(diffs[2]).toBeLessThan(0.005);
+    },
+    LONG_SIM_TIMEOUT_MS,
+  );
 });
 
 // Stage 13: 育成入力の効果層（OL・キューブ・コレクション）を付けた編成（plan/design-stage12.md 3.4 節）。
