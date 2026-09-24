@@ -380,13 +380,15 @@ export function computeCombatAttack(character, build: BuildInput, masters: Build
   - `Game/GetUserProfileOutpostInfo`: `synchro_level`、`recycle_room_researches[]`（`tid` 1001 = 共通、1101〜1103 = 火力型・防御型・支援型、1201〜1205 = エリシオン・ミシリス・テトラ・ピルグリム・アブノーマル。CDN の `RecycleResearchStatTable` の id と同じ）。
 - `character_details` のフィールド: 部位 `head` / `torso` / `arm` / `leg` ごとに `<部位>_equip_tid`・`_lv`（0〜5）・`_tier`（9 / 10）・`_corporation_type`・`_option1_id`〜`_option3_id`。`attractive_lv`（好感度。R は 0）、`harmony_cube_tid` / `_lv`（キャンペーン用のキューブ。`arena_harmony_cube_*` はアリーナ用で別）、`favorite_item_tid` / `_lv`（`1xxx01` = R・`1xxx02` = SR のコレクション、`2xxx01` = 宝物）、`skill1_lv`・`skill2_lv`・`ulti_skill_lv`、`lv`（本人の Lv。シンクロ装置の 5 体は 200、他は 1。**計算にはシンクロ Lv を使う**）、`grade`・`core`・`combat`・`arena_combat`。
 - 写し方: `name_code` → resourceId は CDN のキャラ一覧（`resource_id` と `name_code`。198 体とも 1 対 1）。装備の tid は `ItemEquipTable`（`item_rare` T9 / T10、`item_sub_type` Module_A〜D = 頭・胴・腕・足、`class`）。T10 = OL。**T9 で `corporation_type` が 0 でなければ企業装備**（1 = エリシオン・2 = ミシリス・3 = テトラ・4 = ピルグリム・7 = アブノーマル。198 体で着用キャラの企業と全件一致）。OL のオプション ID は `70GGLL`（GG = 05〜13 が CDN の group 100100〜100900 の順、LL = Lv 1〜15）。
-- 分からないまま残るもの: 宝物の `favorite_item_lv`（0〜2）と段階（1〜3）の対応（攻撃力は段階 1〜3 で同じなので (b) には効かない）、企業タワーなど画面の攻撃力に入りうる他の加算。
+- 分からないまま残るもの: 宝物の `favorite_item_lv`（0〜2）と段階（1〜3）の対応（Lv 0 でもステータスは乗る（実測）。攻撃力は段階 1〜3 で同じなので (b) には効かない）、企業タワーなど画面の攻撃力に入りうる他の加算。
 
 **結果（2026-09-24）**: リター（コア 7）のキャラ画面は **406,172** で、8 通りのうち「コレクション外・リサイクル内」だけが一致した（リターはキューブなし）。Lv15 のキューブを付けると **408,952（+2,780）** で、キューブもコアの外（内側なら +3,169）。`BUILD_CORE_APPLIES_TO` を `{ cube: false, collection: false, recycleRoom: true }` に直した（verification.md Stage 12 節）。リターは コア 7 でコレクション 9,688・リサイクル 4,700 がどちらも大きく、1 体で 3 つの位置を切り分けられた。
 
 残りの 7 体（クラウン・アリス・モダニア・紅蓮：ブラックシャドウ・アリス：ワンダーランドバニー・ミルク：ブルーミングバニー・ジャッカル）も、直した合成順の予測どおりだった（**8 体とも差 0**。好感度 rank 10・24 を含むので (d) も合格。丸めは合計してから 1 回の四捨五入）。
 
-**残り**: 宝物持ちのキャラ 1 体で、宝物のステータスもコアの外かを確かめる。(c) 射撃場（スペック固定 OFF）の 1 ヒットからの逆算。
+宝物持ちの 3 体（ヘルム・ロザンナ・シュガー）も「コアの外」の予測と差 0 で、**宝物のステータスもコアの外**。API の宝物 Lv 0（ロザンナ）でもステータスは乗る。
+
+**残り**: (c) 射撃場（スペック固定 OFF）の 1 ヒットからの逆算。その他加算の位置と、API の宝物 Lv と段階の対応は未確認。
 
 ---
 
