@@ -327,7 +327,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   // ---- バースト ----
   const gaugeSpeed = passive.map((s) => s?.buffs.burstGaugeSpeed ?? 0);
   const energies = slots.map((slot, i) =>
-    slot === null ? 0 : energyPerTrigger(slot.character.shot, i === controlledSlot) * (1 + gaugeSpeed[i]!),
+    slot === null
+      ? 0
+      : energyPerTrigger(slot.character.shot, i === controlledSlot, slot.hitRate ?? 1) * (1 + gaugeSpeed[i]!),
   );
   let controller: BurstControllerState | null = null;
   let fixed: BurstSchedule | null = null;

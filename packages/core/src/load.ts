@@ -1,3 +1,4 @@
+import { parseEnemyPresets } from './enemies.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition, type SkillIndex } from './skills/types.ts';
 import type {
   AffectionMaster,
@@ -6,6 +7,7 @@ import type {
   CharacterIndex,
   CollectionMaster,
   CubeMaster,
+  EnemyPresetMaster,
   GearMaster,
   OverloadMaster,
   RecycleRoomMaster,
@@ -112,4 +114,13 @@ export async function loadBuildMasters(options: LoadOptions = {}): Promise<Build
     load<OverloadMaster>('overload'),
   ]);
   return { gear, affection, cubes, collections, recycleRoom, overload };
+}
+
+/** Stage 15: 敵のプリセット（data/enemies.json） */
+export const ENEMY_PRESETS_PATH = 'enemies.json';
+
+/** Stage 15: 敵のプリセットを読んで検証する（calc の起動時に 1 回） */
+export async function loadEnemyPresets(options: LoadOptions = {}): Promise<EnemyPresetMaster> {
+  const { baseUrl = '/', fetchImpl = fetch } = options;
+  return parseEnemyPresets(await fetchJson<unknown>(joinUrl(baseUrl, ENEMY_PRESETS_PATH), fetchImpl));
 }

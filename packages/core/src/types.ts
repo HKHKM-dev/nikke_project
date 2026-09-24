@@ -231,3 +231,26 @@ export type BuildMasters = {
   /** Stage 13 */
   overload: OverloadMaster;
 };
+
+// ---- Stage 15: 敵のプリセット（data/enemies.json、手書き）。plan/design-stage12.md 5.2 節 ----
+
+/** どのコンテンツの敵か */
+export type EnemyContent = 'range' | 'interception' | 'soloRaid' | 'unionRaid';
+
+/** 敵 1 体。防御力は 1 ヒットの逆算で確かめた値だけ載せる（measuredAt・source を添える） */
+export type EnemyPreset = {
+  id: string;
+  name: LocalizedText;
+  content: EnemyContent;
+  element: Element | null;
+  hasCore: boolean;
+  defence: number;
+  /** 敵のレベル（迎撃戦・レイド）。射撃場は null */
+  level: number | null;
+  /** 防御力を確かめた日（YYYY-MM-DD） */
+  measuredAt: string;
+  /** 防御力の出どころ（verification.md の節など） */
+  source: string;
+};
+
+export type EnemyPresetMaster = { formatVersion: 1; source: string; enemies: EnemyPreset[] };

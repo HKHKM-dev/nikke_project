@@ -69,6 +69,12 @@ export type TriggerCondition = {
   fullCharge: boolean;
   /** フルバースト区間中か。省略 false。true なら倍率グループに FULL_BURST_BOOST を足す */
   fullBurst?: boolean;
+  /**
+   * Stage 15: 命中率 0..1（省略 1）。**射撃場（静止の的）を 1 とした相対値**で、通常攻撃の期待ダメージ（射撃ごとの倍率ダメージを含む）と
+   * ゲージ（burst/dynamic.ts の energyPerTrigger）に掛ける。SG のペレットのゲージの割合（SG_PELLET_GAUGE_HIT_RATE）はこの外側の較正値のまま。
+   * スキルの倍率ダメージ・バーストスキルには掛けない。命中を数えるトリガーは全弾命中で数える（近似。conditionNotes）
+   */
+  hitRate?: number;
 };
 
 export type ConditionInput = TriggerCondition & {
@@ -122,6 +128,8 @@ export type TriggerDamage = {
   perShot: number;
   /** 1 トリガー（SG は全ペレット）あたりの期待ダメージ = normal + perShot */
   perTrigger: number;
+  /** Stage 15: 掛けた命中率（condition.hitRate。省略は 1）。normal と perShot に含まれている */
+  hitRate: number;
 };
 
 export type DamageResult = TriggerDamage & {
@@ -175,6 +183,31 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
   return notes;
 }
 
+/** Stage 15: 条件の命中率（省略は 1 = 射撃場）。0..1 の外は RangeError */
+export function hitRateOf(condition: Pick<TriggerCondition, 'hitRate'>): number {
+  const hitRate = condition.hitRate ?? 1;
+  if (!Number.isFinite(hitRate) || hitRate < 0 || hitRate > 1) {
+    throw new RangeError(`hitRate must be in [0, 1], got ${hitRate}`);
+  }
+  return hitRate;
+}
+
+/** Stage 15: 条件から来る注記。命中率が 1 未満なら、命中を数えるトリガーを全弾命中で数える近似を知らせる */
+export function conditionNotes(condition: Pick<TriggerCondition, 'hitRate'>): ModelNote[] {
+  const hitRate = hitRateOf(condition);
+  if (hitRate >= 1) return [];
+  return [
+    {
+      level: 'approx',
+      code: 'hit-rate',
+      message: {
+        ja: `命中率 ${Math.round(hitRate * 1000) / 10}%: 通常攻撃のダメージとゲージに掛ける。命中を数えるトリガー（通常攻撃の命中 N 回ごと等）とスキルの倍率ダメージは全弾命中のまま`,
+        en: `Hit rate ${Math.round(hitRate * 1000) / 10}%: applied to normal-attack damage and gauge; hit-count triggers and skill damage assume every shot hits`,
+      },
+    },
+  ];
+}
+
 /** 1 トリガーの期待ダメージ。sim はフレームごとにこの値を加算し、calc は秒間トリガー数を掛ける */
 export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const { character, enemy, condition } = input;
@@ -184,6 +217,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   if (condition.coreHitRate < 0 || condition.coreHitRate > 1) {
     throw new RangeError(`coreHitRate must be in [0, 1], got ${condition.coreHitRate}`);
   }
+  const hitRate = hitRateOf(condition);
 
   const baseAttack = baseAttackOf(input);
   const attack = applyAttackBuffs(baseAttack, buffs);
@@ -207,6 +241,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
 
   const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage);
   const normal =
+    hitRate *
     baseHit *
     weaponMultiplier *
     normalAttackMultiplier *
@@ -214,15 +249,17 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     boostTotal *
     attackDamageMultiplier *
     element;
-  const perShot = perShotDamage(
-    input.perShot,
-    baseHit,
-    boostCore,
-    boostCrit,
-    boostFullBurst,
-    buffs,
-    skillElementMultiplier(character, enemy, buffs),
-  );
+  const perShot =
+    hitRate *
+    perShotDamage(
+      input.perShot,
+      baseHit,
+      boostCore,
+      boostCrit,
+      boostFullBurst,
+      buffs,
+      skillElementMultiplier(character, enemy, buffs),
+    );
 
   return {
     baseAttack,
@@ -244,6 +281,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     normal,
     perShot,
     perTrigger: normal + perShot,
+    hitRate,
   };
 }
 

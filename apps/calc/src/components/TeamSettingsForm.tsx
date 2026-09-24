@@ -1,9 +1,23 @@
-import { ELEMENTS, ELEMENT_LABEL, FULL_BURST_FRAMES, FPS, TEAM_SIZE, type Element, type EnemyInput } from '@nikke/core';
+import {
+  ELEMENTS,
+  ELEMENT_LABEL,
+  ENEMY_CONTENT_LABEL,
+  FULL_BURST_FRAMES,
+  FPS,
+  TEAM_SIZE,
+  enemyInputOf,
+  matchingEnemyPreset,
+  type Element,
+  type EnemyInput,
+  type EnemyPreset,
+} from '@nikke/core';
 import type { Dispatch } from 'react';
 import type { TeamAction } from '../team.ts';
 
 type Props = {
   enemy: EnemyInput;
+  /** Stage 15: 敵のプリセット（data/enemies.json）。読み込み前・失敗は空 */
+  enemyPresets: readonly EnemyPreset[];
   durationSeconds: number;
   fixedSpec: boolean;
   burst: boolean;
@@ -14,12 +28,43 @@ type Props = {
 const FULL_BURST_SECONDS = FULL_BURST_FRAMES / FPS;
 
 /** 編成共通の設定: 敵・戦闘時間・スペック固定・バースト */
-export function TeamSettingsForm({ enemy, durationSeconds, fixedSpec, burst, controlledSlot, dispatch }: Props) {
+export function TeamSettingsForm({
+  enemy,
+  enemyPresets,
+  durationSeconds,
+  fixedSpec,
+  burst,
+  controlledSlot,
+  dispatch,
+}: Props) {
   const setEnemy = (patch: Partial<EnemyInput>) => dispatch({ type: 'setEnemy', enemy: { ...enemy, ...patch } });
+  const preset = matchingEnemyPreset(enemyPresets, enemy);
   return (
     <fieldset className="panel settings">
       <legend>敵・共通条件</legend>
       <div className="settings-grid">
+        <label className="field">
+          <span>敵のプリセット</span>
+          <select
+            value={preset?.id ?? ''}
+            onChange={(e) => {
+              const picked = enemyPresets.find((p) => p.id === e.target.value);
+              if (picked) dispatch({ type: 'setEnemy', enemy: enemyInputOf(picked) });
+            }}
+          >
+            <option value="">カスタム（下の値）</option>
+            {enemyPresets.map((p) => (
+              <option key={p.id} value={p.id}>
+                {ENEMY_CONTENT_LABEL[p.content].ja}: {p.name.ja}
+              </option>
+            ))}
+          </select>
+          <small>
+            {preset
+              ? `防御力 ${preset.defence}（${preset.measuredAt} 測定: ${preset.source}）`
+              : '測った敵だけ載せる。迎撃戦・レイドのボスは実戦の撮影の後に足す'}
+          </small>
+        </label>
         <label className="field">
           <span>防御力</span>
           <input

@@ -7,12 +7,14 @@ import {
   isEmptyBuild,
   loadBuildMasters,
   loadCharacterIndex,
+  loadEnemyPresets,
   resolveBuildEffects,
   type BuildEffect,
   type BuildEffectNote,
   type BuildMasters,
   type CharacterData,
   type CharacterIndexEntry,
+  type EnemyPreset,
   type GrowthInput,
   type TeamResult,
   type TeamSlotInput,
@@ -68,6 +70,14 @@ export function App() {
   // Stage 12: 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム）。起動時に 1 回読む
   const [masters, setMasters] = useState<BuildMasters | null>(null);
   const [mastersError, setMastersError] = useState<string | null>(null);
+
+  // Stage 15: 敵のプリセット。読めなければ空（手入力はできる）
+  const [enemyPresets, setEnemyPresets] = useState<EnemyPreset[]>([]);
+  useEffect(() => {
+    loadEnemyPresets({ baseUrl: BASE_URL })
+      .then((m) => setEnemyPresets(m.enemies))
+      .catch(() => setEnemyPresets([]));
+  }, []);
 
   useEffect(() => {
     loadBuildMasters({ baseUrl: BASE_URL })
@@ -221,6 +231,7 @@ export function App() {
         <>
           <TeamSettingsForm
             enemy={team.enemy}
+            enemyPresets={enemyPresets}
             durationSeconds={team.durationSeconds}
             fixedSpec={team.fixedSpec}
             burst={team.burst}

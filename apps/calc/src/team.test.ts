@@ -409,3 +409,26 @@ describe('slot build JSON (Stage 14)', () => {
     expect(readSlotBuildJson('nope').ok).toBe(false);
   });
 });
+
+describe('hit rate (Stage 15)', () => {
+  it('defaults to 1, round-trips, and reads Stage 14 data without it (treated as 1)', () => {
+    let s = withCharacters([10]);
+    expect(s.slots[0]?.condition.hitRate).toBe(1);
+    s = teamReducer(s, {
+      type: 'setSlotCondition',
+      index: 0,
+      condition: { ...s.slots[0]!.condition, hitRate: 0.8 },
+    });
+    expect(parseTeamState(serializeTeamState(s), index)?.slots[0]?.condition.hitRate).toBe(0.8);
+    const raw = JSON.parse(serializeTeamState(s)) as { slots: { condition: Record<string, unknown> }[] };
+    for (const slot of raw.slots) delete slot.condition.hitRate;
+    // 欠落は欠落のまま（計算では 1 = 射撃場）
+    expect(parseTeamState(JSON.stringify(raw), index)?.slots.every((x) => x.condition.hitRate === undefined)).toBe(
+      true,
+    );
+    for (const bad of [-0.1, 1.5, '1']) {
+      raw.slots[0]!.condition.hitRate = bad;
+      expect(parseTeamState(JSON.stringify(raw), index), String(bad)).toBeNull();
+    }
+  });
+});

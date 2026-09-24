@@ -39,7 +39,13 @@ import {
 
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: 100, element: null, hasCore: true };
 export const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
-export const DEFAULT_SLOT_CONDITION: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
+/** Stage 15: hitRate（命中率。射撃場 = 1）を足した */
+export const DEFAULT_SLOT_CONDITION: SlotCondition = {
+  coreHitRate: 1,
+  distanceBonus: true,
+  fullCharge: true,
+  hitRate: 1,
+};
 /** スキル Lv の既定値。全部 10 */
 export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 /** 戦闘時間の規定値。レイド・射撃場ともに 180 秒（スペック固定でも変えない） */
@@ -245,7 +251,17 @@ function parseCondition(v: Json): SlotCondition | null {
   if (!isRecord(v)) return null;
   if (!isFinite_(v.coreHitRate) || v.coreHitRate < 0 || v.coreHitRate > 1) return null;
   if (!isBool(v.distanceBonus) || !isBool(v.fullCharge)) return null;
-  return { coreHitRate: v.coreHitRate, distanceBonus: v.distanceBonus, fullCharge: v.fullCharge };
+  const condition: SlotCondition = {
+    coreHitRate: v.coreHitRate,
+    distanceBonus: v.distanceBonus,
+    fullCharge: v.fullCharge,
+  };
+  // Stage 15: 命中率。Stage 14 までの保存データには無い。欠落は欠落のまま読む（計算では 1 = 射撃場）
+  if (v.hitRate !== undefined) {
+    if (!isFinite_(v.hitRate) || v.hitRate < 0 || v.hitRate > 1) return null;
+    condition.hitRate = v.hitRate;
+  }
+  return condition;
 }
 
 /** Stage 3 の保存データには無いので、欠落は既定値（全部 10）。あれば 1..10 の整数だけ許す */

@@ -53,6 +53,8 @@ export type TimelineSlot = {
   casterBaseAttack: number;
   /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。自分だけに効く常時バフ。省略は無し */
   buildEffects?: readonly BuildEffect[];
+  /** Stage 15: 命中率（射撃場 = 1 の相対値。省略 1）。1 パス目のゲージにだけ使う */
+  hitRate?: number;
 } | null;
 
 /** 1 つの効果が 1 人に効いているフレーム区間 */

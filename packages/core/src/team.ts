@@ -25,6 +25,8 @@ import type { ShotLog } from './sim/shots.ts';
 import {
   baseAttackOf,
   computeDamage,
+  conditionNotes,
+  hitRateOf,
   computeTriggerDamage,
   modelNotes,
   type EnemyInput,
@@ -265,6 +267,7 @@ export function toTimelineSlots(slots: readonly (TeamSlotInput | null)[]): Timel
           // 循環参照を避けるため、発動者自身のバフは乗せない値（バフ前攻撃力）を使う
           casterBaseAttack: baseAttackOf(slot),
           buildEffects: slot.buildEffects,
+          hitRate: hitRateOf(slot.condition),
         },
   );
 }
@@ -583,7 +586,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
       character: slot.character,
       baseAttack: baseAttackOf(slot),
       cadence: computeCadence(slot.character.shot, model, firingParams(slot.character.shot, passive.buffs)),
-      notes: modelNotes(slot.character.shot),
+      notes: [...modelNotes(slot.character.shot), ...conditionNotes(slot.condition)],
       passiveBuffs: passive.buffs,
       passiveEffects: passive.passiveEffects,
       buildEffects: passive.buildEffects,

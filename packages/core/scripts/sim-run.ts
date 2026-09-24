@@ -6,6 +6,7 @@
 // 育成値は既定 Lv200・3 凸・コア 0、条件は コア命中率 1・距離ボーナスあり・フルチャージ（calc の既定と同じ）。
 // スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
 // Stage 12: --build は resourceId → 育成入力（BuildInput の各項目と任意の growth）の JSON。--fixed-spec のときは使わない。
+// Stage 15: --hit-rate（命中率。射撃場 = 1）と --enemy（data/enemies.json のプリセット）。
 // Stage 13: gear の OL 装備に overload（[{ option, level }]、最大 3 行）を書ける。効果層（OL・キューブ・コレクション）を枠ごとに 1 行ずつ出す。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -14,7 +15,8 @@ import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, emptyBuild, type BuildInput } from '../src/build.ts';
 import { resolveBuildEffects } from '../src/buildEffects.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
-import { MASTER_FILES } from '../src/load.ts';
+import { enemyInputOf, parseEnemyPresets } from '../src/enemies.ts';
+import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
 import { firingParams } from '../src/sim/firing.ts';
@@ -48,12 +50,15 @@ const { values } = parseArgs({
     treasure: { type: 'string' },
     // Stage 12: 育成入力の JSON ファイル
     build: { type: 'string' },
+    // Stage 15: 命中率（射撃場 = 1 の相対値。全枠共通）と敵のプリセット（data/enemies.json の id。--defence / --element より優先）
+    'hit-rate': { type: 'string', default: '1' },
+    enemy: { type: 'string' },
   },
 });
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--hit-rate 0.8] [--enemy range-bigarms-wind]',
   );
   process.exit(2);
 }
@@ -87,7 +92,19 @@ const masters = Object.fromEntries(
   Object.entries(MASTER_FILES).map(([name, file]) => [name, readJson(join(DATA_DIR, 'masters', file))]),
 ) as BuildMasters;
 const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
-const condition = { coreHitRate: Number(values['core-hit-rate']), distanceBonus: true, fullCharge: true };
+const condition = {
+  coreHitRate: Number(values['core-hit-rate']),
+  distanceBonus: true,
+  fullCharge: true,
+  hitRate: Number(values['hit-rate']),
+};
+// Stage 15: 敵のプリセット
+const enemyPresets = parseEnemyPresets(readJson(join(DATA_DIR, ENEMY_PRESETS_PATH)));
+const enemyPreset = values.enemy === undefined ? undefined : enemyPresets.enemies.find((e) => e.id === values.enemy);
+if (values.enemy !== undefined && enemyPreset === undefined) {
+  console.error(`--enemy: unknown preset ${values.enemy} (${enemyPresets.enemies.map((e) => e.id).join(', ')})`);
+  process.exit(2);
+}
 
 const slots: TeamSlotInput[] = ids.map((id) => {
   const character = readJson(join(DATA_DIR, `characters/${id}.json`)) as CharacterData;
@@ -148,7 +165,9 @@ function withBuild(
 
 const input = {
   slots,
-  enemy: { defence: Number(values.defence), element: (values.element as Element | undefined) ?? null, hasCore: true },
+  enemy: enemyPreset
+    ? enemyInputOf(enemyPreset)
+    : { defence: Number(values.defence), element: (values.element as Element | undefined) ?? null, hasCore: true },
   durationSeconds: Number(values.duration),
   burst: !values['no-burst'],
   burstModel: values['fixed-cycle'] ? ('fixed' as const) : ('dynamic' as const),
@@ -165,7 +184,7 @@ const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
 console.log(
   `duration ${input.durationSeconds}s (${sim.frames}f), burst ${input.burst ? input.burstModel : 'off'}, ` +
     `fixed spec ${fixedSpec}, build ${values.build ?? 'none'}, controlled ${input.controlledSlot === null ? 'none (all AI)' : `slot ${input.controlledSlot + 1}`}, ` +
-    `enemy defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}`,
+    `enemy ${enemyPreset?.id ?? 'custom'} defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}, hit rate ${condition.hitRate}`,
 );
 if (calc.schedule && calc.burstSummary) {
   const byStep = slotsByStep(calc.schedule);
