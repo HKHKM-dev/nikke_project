@@ -6,6 +6,7 @@ import {
   BUILD_CORE_APPLIES_TO,
   GEAR_PARTS,
   computeCombatAttack,
+  computeCombatStat,
   emptyBuild,
   fixedSpecBuild,
   isEmptyBuild,
@@ -13,7 +14,7 @@ import {
   type BuildInput,
 } from '../build.ts';
 import { AFFECTION_ATTACK, FIXED_SPEC_GEAR_ATTACK, computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
-import { computeStat } from '../stats.ts';
+import { applyCoreRatio, computeStat } from '../stats.ts';
 import type { BuildMasters, CharacterData, NikkeClass } from '../types.ts';
 
 function readJson<T>(relative: string): T {
@@ -113,7 +114,7 @@ describe('computeCombatAttack', () => {
     expect(isEmptyBuild(fixedSpecBuild(emma))).toBe(false);
   });
 
-  it('adds gear outside the core multiplier and cube / collection / recycle room inside it (assumption)', () => {
+  it('adds gear / cube / collection outside the core multiplier and recycle room inside it (Stage 12 (b))', () => {
     const emma = loadCharacter(90); // SSR Supporter, coreAttack 200 (2% / step)
     const growth = { level: 400, grade: 3, core: 7 };
     const build: BuildInput = {
@@ -142,17 +143,44 @@ describe('computeCombatAttack', () => {
     expect(r.collection).toBe(9688);
     expect(r.recycleRoom).toBe(4 * masters.recycleRoom.corporation[emma.corporation]!.attack); // 企業研究 Lv4。共通・クラスは攻撃力 0
     expect(r.extra).toBe(100);
-    const inner = (flag: boolean, v: number) => (flag ? v : 0);
-    const coreSide =
-      79840 +
-      1367 +
-      inner(BUILD_CORE_APPLIES_TO.cube, 2780) +
-      inner(BUILD_CORE_APPLIES_TO.collection, 9688) +
-      inner(BUILD_CORE_APPLIES_TO.recycleRoom, 100) +
-      inner(BUILD_CORE_APPLIES_TO.extra, 100);
+    expect(BUILD_CORE_APPLIES_TO).toEqual({ cube: false, collection: false, recycleRoom: true, extra: false });
+    const coreSide = 79840 + 1367 + 100;
     expect(r.coreSide).toBe(coreSide);
     expect(r.withCore).toBe(Math.round(coreSide * (1 + (7 * emma.statEnhance.coreAttack) / 10000)));
-    expect(r.attack).toBe(r.withCore + r.gear + (BUILD_CORE_APPLIES_TO.extra ? 0 : 100));
+    expect(r.attack).toBe(r.withCore + r.gear + 2780 + 9688 + 100);
+  });
+
+  // plan/verification.md Stage 12 節: ユーザーのリター（育成は ShiftyPad から取得）のキャラ画面の攻撃力。
+  // 8 通りの合成順のうち、キューブ外・コレクション外・リサイクル内だけが 406,172 に一致する
+  it('matches the character screen of a real build: Liter 406,172, and +2,780 with a Lv15 cube (outside the core)', () => {
+    const liter = loadCharacter(82); // SSR Supporter MISSILIS SMG
+    const growth = { level: 705, grade: 3, core: 7 };
+    const ol = { type: 'OL' as const, level: 0 };
+    const build: BuildInput = {
+      ...emptyBuild(),
+      affectionRank: 30,
+      gear: { head: ol, body: ol, arm: ol, leg: ol },
+      collection: { rarity: 'SR', level: 15 },
+      recycleRoom: { personal: 330, class: 191, corporation: 188 },
+    };
+    const before = computeCombatAttack(liter, growth, build, masters);
+    expect(before.attack).toBe(406172);
+    expect(before.withCore).toBe(Math.round((333733 + 1367 + 4700) * 1.14));
+    const after = computeCombatAttack(liter, growth, { ...build, cube: { id: 1000303, level: 15 } }, masters);
+    expect(after.attack).toBe(408952);
+    // 同じ画面の HP・防御力（合成順は攻撃力と同じ）
+    expect(computeCombatStat(liter, growth, build, masters, 'hp').value).toBe(12376306);
+    expect(computeCombatStat(liter, growth, build, masters, 'defence').value).toBe(72202);
+  });
+
+  // plan/verification.md Stage 12 節: コア倍率を掛けてちょうど .5 になった 3 点。偶数への丸め（C# の Math.Round の既定）
+  it('rounds the core multiplier half to even, as the character screen does', () => {
+    expect(applyCoreRatio(9379875, 5, 200)).toBe(10317862); // 10,317,862.5（モダニアの HP）→ 切り捨て
+    expect(applyCoreRatio(9379875, 3, 200)).toBe(9942668); // 9,942,667.5（紅蓮：ブラックシャドウの HP）→ 切り上げ
+    expect(applyCoreRatio(61225, 3, 200)).toBe(64898); // 64,898.5（紅蓮：ブラックシャドウの防御力）→ 切り捨て
+    expect(applyCoreRatio(339800, 7, 200)).toBe(387372); // .5 でない値は四捨五入と同じ
+    expect(applyCoreRatio(1001, 0, 200)).toBe(1001);
+    expect(() => applyCoreRatio(0.1, 1, 1)).toThrow(RangeError);
   });
 
   it('uses the treasure stats instead of the collection when the treasure is unlocked', () => {

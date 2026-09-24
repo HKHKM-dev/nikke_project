@@ -118,7 +118,7 @@ export function computeCombatAttack(character, build: BuildInput, masters: Build
 ```
 
 - **`computeFixedSpecAttack` は `computeCombatAttack(character, fixedSpecBuild(character), masters)` に置き換え、`fixedSpec.ts` の固定値（T9 Lv5 のクラス別攻撃力・好感度 rank 別の加算）はマスタから引いた値と一致することをテストで固定する**（退化）。固定値の定数は消さずに「マスタとの一致テスト」の期待値として残す。
-- 合成順は 0.1 節のスペック固定の式を出発点にする。**キューブ・コレクション・リサイクルルームの加算が「コアが掛かる側」（好感度と同じ）か「掛からない側」（装備と同じ）かは、2.4 節の実測 (b) で決める**。設計時点の仮定: **好感度と同じ側（コアが掛かる）** — 理由は、別プロジェクトの式がどれも「素と同列の加算」として扱っており、装備だけが別扱い（スペック固定の実測）だから。仮定は `BUILD_CORE_APPLIES_TO` のような定数で 1 箇所に置く（Stage 10 の仮の定数と同じ運用）。
+- 合成順は 0.1 節のスペック固定の式を出発点にする。**キューブ・コレクション・リサイクルルームの加算が「コアが掛かる側」（好感度と同じ）か「掛からない側」（装備と同じ）かは、2.4 節の実測 (b) で決める**。設計時点の仮定: **好感度と同じ側（コアが掛かる）** — 理由は、別プロジェクトの式がどれも「素と同列の加算」として扱っており、装備だけが別扱い（スペック固定の実測）だから。仮定は `BUILD_CORE_APPLIES_TO` のような定数で 1 箇所に置く（Stage 10 の仮の定数と同じ運用）。**→ 2026-09-24 の実測 (b) で、この仮定は半分外れた: キューブ・コレクションはコアの外、リサイクルルームは内側（11.1 節）。**
 - `TeamSlotInput` は `growth` の隣に `build?: BuildInput` を持ち、**`build` があれば `computeCombatAttack`、無ければ従来の `computeStat`（素のステータス）**。`attackOverride` は残す（実測の逆算に使う）。calc の `fixedSpec: true` は `build` を `fixedSpecBuild` にする経路に変える。
 
 ### 2.2 データ取得（`fetch-data.ts` の拡張）
@@ -352,7 +352,7 @@ export function computeCombatAttack(character, build: BuildInput, masters: Build
 8. **CLI**: `--build builds.json`（`{ "<resourceId>": { growth?, affectionRank?, gear?, cube?, collection?, recycleRoom?, extraAttack? } }`）。枠ごとに内訳を 1 行出す。`--fixed-spec` と併用すると無視する。
 9. **テスト**: 630 件（+11: `__tests__/build.test.ts` 9 件、calc `team.test.ts` 2 件）。マスタの形・退化・合成順の仮定（`BUILD_CORE_APPLIES_TO`）・宝物のステータス・範囲外の入力。
 
-## 11. Stage 12 の実測（(b)〜(d)、未実施。ユーザーの実ビルドが要る）
+## 11. Stage 12 の実測（(b)・(d) は 2026-09-24 に合格。(c) は未実施）
 
 2.4 節の (a) は自動テストで合格。(b)〜(d) はユーザーの実際の育成状況が要るので、次の表をキャラごとに埋めてもらう（主力 5 体 + 検証用 3 体。**キューブ Lv・コレクション Lv・好感度ランクが互いに違う組**を含める）。
 
@@ -368,6 +368,29 @@ export function computeCombatAttack(character, build: BuildInput, masters: Build
 | その他                        | 企業タワー等、キャラ画面の攻撃力に含まれていそうな加算があれば                                  |
 
 集まったら `sim-run.ts --build` の JSON にして計算値と表示値を比べ、合わなければ `BUILD_CORE_APPLIES_TO`（キューブ・コレクション・リサイクルルームがコアの内側か）を切り替えて全体が合う組を探す（8 通り）。(c) は同じキャラで射撃場（スペック固定 OFF）の非会心・胴体・非有利の 1 ヒットから逆算する。OL 装備の攻撃力▲行があるキャラは (b) より大きく出るはずで、その差が Stage 13 の出発点になる。
+
+### 11.1 ShiftyPad からの取得（2026-09-24 実施。結果は verification.md Stage 12 節）
+
+上の表の「キャラ画面の攻撃力」以外は、**Blablalink の ShiftyPad（https://www.blablalink.com/shiftyspad）がユーザー自身のアカウントの値を返す**ので、手で書き写さずに取った。ログインはユーザーが画面上で行い、パスワード・トークン・Cookie は扱わない。取ったデータから `intl_open_id` などアカウントを特定できる値を除き、Git の追跡外（`scratch/`）に置く（**リポジトリは公開なのでアカウントのデータはコミットしない**）。
+
+- 手順: Claude のブラウザペインで ShiftyPad を開き、ユーザーがログインする。ニケを 1 体開いたときにページ自身が送る `GetUserCharacterDetails` のリクエスト（ヘッダ `x-common-params` 等）を拾い、同じヘッダで次の 3 つを呼ぶ（読み取りだけ）。ページの CSP で localhost への送信・iframe・ポップアップが止まるので、取り出しは「ページに足したボタンのクリックでクリップボードへ → PowerShell の `Get-Clipboard`」で行った。
+- API（ベース `https://api.blablalink.com/api/game/proxy/`。body は `{ intl_open_id, nikke_area_id }`）:
+  - `Game/GetUserCharacters`: 所持ニケ（`name_code`・`lv`（= シンクロ Lv。全員 705）・`grade`・`core`・`combat`）。`Tools/GetUserCharacters` は `not permission`。
+  - `Game/GetUserCharacterDetails`（body に `name_codes: [...]`。20 体ずつ）: `character_details[]` と `state_effects[]`。
+  - `Game/GetUserProfileOutpostInfo`: `synchro_level`、`recycle_room_researches[]`（`tid` 1001 = 共通、1101〜1103 = 火力型・防御型・支援型、1201〜1205 = エリシオン・ミシリス・テトラ・ピルグリム・アブノーマル。CDN の `RecycleResearchStatTable` の id と同じ）。
+- `character_details` のフィールド: 部位 `head` / `torso` / `arm` / `leg` ごとに `<部位>_equip_tid`・`_lv`（0〜5）・`_tier`（9 / 10）・`_corporation_type`・`_option1_id`〜`_option3_id`。`attractive_lv`（好感度。R は 0）、`harmony_cube_tid` / `_lv`（キャンペーン用のキューブ。`arena_harmony_cube_*` はアリーナ用で別）、`favorite_item_tid` / `_lv`（`1xxx01` = R・`1xxx02` = SR のコレクション、`2xxx01` = 宝物）、`skill1_lv`・`skill2_lv`・`ulti_skill_lv`、`lv`（本人の Lv。シンクロ装置の 5 体は 200、他は 1。**計算にはシンクロ Lv を使う**）、`grade`・`core`・`combat`・`arena_combat`。
+- 写し方: `name_code` → resourceId は CDN のキャラ一覧（`resource_id` と `name_code`。198 体とも 1 対 1）。装備の tid は `ItemEquipTable`（`item_rare` T9 / T10、`item_sub_type` Module_A〜D = 頭・胴・腕・足、`class`）。T10 = OL。**T9 で `corporation_type` が 0 でなければ企業装備**（1 = エリシオン・2 = ミシリス・3 = テトラ・4 = ピルグリム・7 = アブノーマル。198 体で着用キャラの企業と全件一致）。OL のオプション ID は `70GGLL`（GG = 05〜13 が CDN の group 100100〜100900 の順、LL = Lv 1〜15）。
+- 分からないまま残るもの: 宝物の `favorite_item_lv`（0〜2）と段階（1〜3）の対応（Lv 0 でもステータスは乗る（実測）。攻撃力は段階 1〜3 で同じなので (b) には効かない）、企業タワーなど画面の攻撃力に入りうる他の加算。
+
+**結果（2026-09-24）**: リター（コア 7）のキャラ画面は **406,172** で、8 通りのうち「コレクション外・リサイクル内」だけが一致した（リターはキューブなし）。Lv15 のキューブを付けると **408,952（+2,780）** で、キューブもコアの外（内側なら +3,169）。`BUILD_CORE_APPLIES_TO` を `{ cube: false, collection: false, recycleRoom: true }` に直した（verification.md Stage 12 節）。リターは コア 7 でコレクション 9,688・リサイクル 4,700 がどちらも大きく、1 体で 3 つの位置を切り分けられた。
+
+残りの 7 体（クラウン・アリス・モダニア・紅蓮：ブラックシャドウ・アリス：ワンダーランドバニー・ミルク：ブルーミングバニー・ジャッカル）も、直した合成順の予測どおりだった（**8 体とも差 0**。好感度 rank 10・24 を含むので (d) も合格。丸めは合計してから 1 回の四捨五入）。
+
+宝物持ちの 3 体（ヘルム・ロザンナ・シュガー）も「コアの外」の予測と差 0 で、**宝物のステータスもコアの外**。API の宝物 Lv 0（ロザンナ）でもステータスは乗る。
+
+**HP・防御力**も同じ合成順で 13 体（ポリ・キリを足した）とも合った。ただし、コア倍率を掛けてちょうど .5 になる点の丸めは**偶数への丸め**だった（`applyCoreRatio`。verification.md Stage 12 節）。その他加算は 13 体とも 0 で合ったので、手入力の欄として残す。
+
+**残り**: (c) 射撃場（スペック固定 OFF）の 1 ヒットからの逆算。API の宝物 Lv と段階の対応は未確認。
 
 ---
 
@@ -396,9 +419,11 @@ export function computeCombatAttack(character, build: BuildInput, masters: Build
 12. **CLI**: `--build` の `gear.<部位>` に `overload: [{ "option": "attack", "level": 15 }]`。枠ごとに効果と計算に入らないものを 1 行出す。
 13. **テスト**: 653 件（+23: `skills/__tests__/stage13.test.ts` 17 件、`simCalc.test.ts` 2 件、calc `team.test.ts` 2 件、`scripts/normalize.test.ts` 2 件）。OL の表の形と 6 点・等差、OL 行の検証、OL / キューブ / コレクションの写像と段階、全スキルの対応表、自分だけへの合成、新 stat の式（非有利 0・殲滅モード基点・perShot に掛けない・倍率ダメージの有利コード）、空の効果の退化、効果層ありの編成の sim / calc 整合（区間・1 トリガー値は厳密一致、枠 5%・編成 3%）。
 
-## 13. Stage 13 の実測（未実施。ユーザーの実装備が要る）
+## 13. Stage 13 の実測（13.1 は済み。13.2 はユーザーの実装備が要る）
 
 ### 13.1 OL の表の確認（`verified`）
+
+**2026-09-24 に済んだ**: 下の表を手で集める代わりに、ShiftyPad の `state_effects`（ゲームが持つ OL 行の実数値。11.1 節）から 113 点を取って突き合わせた。チャージ速度の行（Lv2〜13・15）とクリティカル確率 Lv7 を直し、全行 `verified: true`（verification.md Stage 12 節）。別プロジェクトの表との全値の突き合わせは、実データで確かめたので不要になった。以下は当初の依頼。
 
 装備画面の OL オプションの表示値（% と Lv）を、実際に付いている行から集める。行ごとに 1 点でも合えば、その行を `verified: true` にする（表は等差なので、1 点で転記の誤りはほぼ潰せる）。あわせて **別プロジェクト（`D:\NIKKE_Damage_Calculator`）の表と全 135 値を突き合わせる**（このセッションでは読めなかった）。
 

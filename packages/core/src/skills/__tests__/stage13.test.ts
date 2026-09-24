@@ -46,7 +46,7 @@ const byStat = (effects: readonly BuildEffect[]) => effects.map((e) => [e.stat, 
 describe('OL の上昇値の表（3.2）', () => {
   const options = masters.overload.options;
 
-  it('has the 9 CDN options in group-id order, 15 levels each, all unverified for now', () => {
+  it('has the 9 CDN options in group-id order, 15 levels each, all verified against game data', () => {
     expect(options.map((o) => o.cdnGroupId)).toEqual([
       100100, 100200, 100300, 100400, 100500, 100600, 100700, 100800, 100900,
     ]);
@@ -54,8 +54,107 @@ describe('OL の上昇値の表（3.2）', () => {
     expect(Object.keys(OVERLOAD_OPTION_STAT)).toEqual(OVERLOAD_OPTIONS);
     for (const o of options) {
       expect(o.values, o.option).toHaveLength(15);
-      expect(o.verified).toBe(false);
+      expect(o.verified).toBe(true);
     }
+  });
+
+  // 2026-09-24: ShiftyPad（Blablalink）の state_effects にある OL 行の実数値（function_value = 1/100 %）。
+  // ユーザーのアカウントの 198 体の装備から観測できた 113 点（Lv → 値）。チャージ速度 Lv14 は観測なし
+  const OBSERVED: Record<OverloadOption, Record<number, number>> = {
+    elementDamage: {
+      2: 1094,
+      3: 1234,
+      4: 1375,
+      5: 1515,
+      6: 1655,
+      7: 1795,
+      8: 1935,
+      9: 2075,
+      10: 2215,
+      11: 2356,
+      12: 2496,
+      13: 2636,
+      14: 2776,
+      15: 2916,
+    },
+    hitRate: { 1: 477, 2: 547, 3: 618, 4: 688, 5: 759, 6: 829, 7: 900, 8: 970, 10: 1111, 11: 1181, 13: 1322, 15: 1463 },
+    maxAmmo: {
+      1: 2784,
+      2: 3195,
+      3: 3606,
+      4: 4017,
+      5: 4428,
+      6: 4839,
+      7: 5250,
+      8: 5660,
+      9: 6071,
+      10: 6482,
+      11: 6893,
+      12: 7304,
+      13: 7715,
+      14: 8126,
+    },
+    attack: {
+      1: 477,
+      2: 547,
+      3: 618,
+      4: 688,
+      5: 759,
+      6: 829,
+      7: 900,
+      8: 970,
+      9: 1040,
+      10: 1111,
+      11: 1181,
+      12: 1252,
+      13: 1322,
+      14: 1393,
+      15: 1463,
+    },
+    chargeDamage: { 1: 477, 2: 547, 3: 618, 4: 688, 5: 759, 6: 829, 7: 900, 9: 1040, 10: 1111, 11: 1181, 14: 1393 },
+    chargeSpeed: {
+      1: 198,
+      2: 228,
+      3: 257,
+      4: 286,
+      5: 316,
+      6: 345,
+      7: 375,
+      8: 404,
+      9: 433,
+      10: 463,
+      11: 492,
+      12: 521,
+      13: 551,
+      15: 609,
+    },
+    critRate: { 1: 230, 2: 264, 3: 298, 4: 332, 5: 366, 7: 435, 8: 469, 10: 537, 11: 571, 14: 673, 15: 707 },
+    critDamage: {
+      1: 664,
+      2: 762,
+      3: 860,
+      4: 958,
+      5: 1056,
+      6: 1154,
+      7: 1252,
+      8: 1350,
+      9: 1448,
+      10: 1546,
+      11: 1644,
+      14: 1938,
+    },
+    defence: { 2: 547, 3: 618, 5: 759, 7: 900, 8: 970, 9: 1040, 10: 1111, 11: 1181, 13: 1322, 14: 1393 },
+  };
+
+  it('matches the 113 values observed in the game data (ShiftyPad state_effects)', () => {
+    let count = 0;
+    for (const o of options) {
+      for (const [level, value] of Object.entries(OBSERVED[o.option])) {
+        expect(o.values[Number(level) - 1], `${o.option} Lv${level}`).toBe(value / 100);
+        count++;
+      }
+    }
+    expect(count).toBe(113);
   });
 
   it('matches the six values quoted from the other project (design 0.3)', () => {

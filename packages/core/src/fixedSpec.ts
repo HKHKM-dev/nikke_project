@@ -3,7 +3,7 @@
 //   Lv400、限界突破・コアはレア度上限、好感度 rank30（ピルグリム SSR は rank40、R は rank10）、
 //   装備は T9 Lv5 のクラス別固定値、キューブ・コンソールなし。
 //   コア強化の +2%/段は「突破後の素の攻撃力 + 好感度」に掛かり、装備には掛からない。
-import { CORE_MAX, GRADE_MAX, computeStat, type GrowthInput } from './stats.ts';
+import { CORE_MAX, GRADE_MAX, applyCoreRatio, computeStat, type GrowthInput } from './stats.ts';
 import type { CharacterData, NikkeClass } from './types.ts';
 
 export const FIXED_SPEC_LEVEL = 400;
@@ -56,7 +56,7 @@ export function computeFixedSpecAttack(
   const gradeBase = computeStat(character, 'attack', { ...growth, core: 0 });
   const affectionRank = fixedSpecAffectionRank(character);
   const affection = AFFECTION_ATTACK[character.class][affectionRank];
-  const withCore = Math.round((gradeBase + affection) * (1 + (growth.core * character.statEnhance.coreAttack) / 10000));
+  const withCore = applyCoreRatio(gradeBase + affection, growth.core, character.statEnhance.coreAttack);
   const gear = FIXED_SPEC_GEAR_ATTACK[character.class];
   return { attack: withCore + gear, growth, affectionRank, gradeBase, affection, withCore, gear };
 }

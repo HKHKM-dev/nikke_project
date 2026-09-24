@@ -2,13 +2,14 @@
 // 「戦闘中の攻撃力（バフ前）」を作る。スペック固定（fixedSpec.ts）はこの入力の 1 つのプリセット（fixedSpecBuild）で、
 // computeCombatAttack(fixedSpecBuild) が computeFixedSpecAttack と同値になることをテストで固定している（退化）。
 //
-// 合成順（plan/design-stage12.md 2.1 節）。Stage 2-A の実測（9 体で誤差ゼロ）で確定しているのは好感度と装備の位置だけ:
-//   coreSide  = 突破後の素の攻撃力 + 好感度 + [キューブ + コレクション + リサイクルルーム]   ← コアが掛かる側
+// 合成順（plan/design-stage12.md 2.1 節）。好感度と装備の位置は Stage 2-A の実測（9 体で誤差ゼロ）、
+// キューブ・コレクション・リサイクルルームの位置は Stage 12 の実測 (b)（2026-09-24、キャラ画面の攻撃力）で確定:
+//   coreSide  = 突破後の素の攻撃力 + 好感度 + リサイクルルーム                                   ← コアが掛かる側
 //   withCore  = round(coreSide × (1 + コア段 × coreAttack / 1e4))
-//   attack    = withCore + 装備 4 部位 + [その他加算]                                          ← コアの外
-// [ ] の位置は仮定（BUILD_CORE_APPLIES_TO）。Stage 12 の実測 (b)（キャラ画面の攻撃力との一致）で決める。
+//   attack    = withCore + 装備 4 部位 + キューブ + コレクション（宝物） + [その他加算]           ← コアの外
+// 位置は BUILD_CORE_APPLIES_TO に置く。その他加算（CDN に無いもの）の位置だけは未確認。
 import { fixedSpecAffectionRank } from './fixedSpec.ts';
-import { computeStat, validateGrowth, type GrowthInput } from './stats.ts';
+import { applyCoreRatio, computeStat, validateGrowth, type GrowthInput } from './stats.ts';
 import type {
   BuildMasters,
   CharacterData,
@@ -104,12 +105,15 @@ export function isEmptyBuild(build: BuildInput): boolean {
 }
 
 /**
- * 仮定: コア強化の +2%/段が掛かる側に入る加算。好感度（true）と装備（常に外）は実測で確定。残りは Stage 12 の
- * 実測 (b) で決める（plan/design-stage12.md 2.4 節）。値を変えると computeCombatAttack の内訳が変わる
+ * コア強化の +2%/段が掛かる側に入る加算。好感度（常に内）と装備（常に外）は Stage 2-A の実測。
+ * キューブ・コレクション・リサイクルルームは Stage 12 の実測 (b)（plan/verification.md Stage 12 節）: リター（コア 7）の
+ * キャラ画面 406,172 は 8 通りのうちこの組だけが一致し、Lv15 のキューブを付けると +2,780（コアの外）。ほか 7 体も差 0。
+ * 宝物（SSR）のステータスもコレクションと同じくコアの外（ヘルム・ロザンナ・シュガーのキャラ画面で差 0）。
+ * extra（その他加算）は未確認のまま外に置く
  */
 export const BUILD_CORE_APPLIES_TO = {
-  cube: true,
-  collection: true,
+  cube: false,
+  collection: false,
   recycleRoom: true,
   extra: false,
 } as const;
@@ -234,11 +238,17 @@ export type CombatAttackOptions = {
   treasurePhase?: number;
 };
 
+const CORE_RATIO_KEY = { attack: 'coreAttack', hp: 'coreHp', defence: 'coreDefence' } as const;
+
+/** 攻撃力以外も含む、戦闘中のステータス（バフ前）の内訳。フィールドの意味は CombatAttack と同じ */
+export type CombatStat = Omit<CombatAttack, 'attack'> & { kind: StatKind; value: number };
+
 /**
- * 戦闘中の攻撃力（バフ前）。growth は Stage 1 の育成値（レベル・限界突破・コア）。
- * 装備は常にコアの外、好感度は常にコアの内側（Stage 2-A の実測）。それ以外は BUILD_CORE_APPLIES_TO の仮定
+ * 戦闘中のステータス（バフ前）。growth は Stage 1 の育成値（レベル・限界突破・コア）。
+ * 装備・キューブ・コレクション（宝物）はコアの外、好感度・リサイクルルームはコアの内側（実測。BUILD_CORE_APPLIES_TO）。
+ * コア倍率の丸めは偶数への丸め（applyCoreRatio）。攻撃力・HP・防御力とも 13 体のキャラ画面と差 0（plan/verification.md Stage 12 節）
  */
-export function computeCombatAttack(
+export function computeCombatStat(
   character: Pick<
     CharacterData,
     'rarity' | 'class' | 'corporation' | 'weaponType' | 'levelCurve' | 'statEnhance' | 'treasure'
@@ -246,8 +256,9 @@ export function computeCombatAttack(
   growth: GrowthInput,
   build: BuildInput,
   masters: BuildMasters,
+  kind: StatKind,
   options: CombatAttackOptions = {},
-): CombatAttack {
+): CombatStat {
   validateGrowth(character, growth);
   validateBuild(character, build, masters);
   const treasurePhase = options.treasurePhase ?? 0;
@@ -255,32 +266,33 @@ export function computeCombatAttack(
     throw new RangeError(`treasurePhase ${treasurePhase} but the character has no treasure`);
   }
 
-  const gradeBase = computeStat(character, 'attack', { ...growth, core: 0 });
+  const gradeBase = computeStat(character, kind, { ...growth, core: 0 });
   const affection = statOf(
-    masters.affection.ranks.map((r) => r.attack[character.class]),
+    masters.affection.ranks.map((r) => r[kind][character.class]),
     build.affectionRank - 1,
     'affection',
   );
   const cube =
-    build.cube === null ? 0 : statOf(findCube(masters, build.cube.id)?.stats.attack, build.cube.level - 1, 'cube');
+    build.cube === null ? 0 : statOf(findCube(masters, build.cube.id)?.stats[kind], build.cube.level - 1, 'cube');
   const collection =
     treasurePhase > 0
-      ? masters.collections.treasureStats.attack
+      ? masters.collections.treasureStats[kind]
       : build.collection === null
         ? 0
         : statOf(
-            findCollection(masters, build.collection.rarity, character.weaponType)?.stats.attack,
+            findCollection(masters, build.collection.rarity, character.weaponType)?.stats[kind],
             build.collection.level,
             'collection',
           );
   const rr = masters.recycleRoom;
   const recycleRoom =
-    rr.personal.attack * build.recycleRoom.personal +
-    rr.class[character.class].attack * build.recycleRoom.class +
-    (rr.corporation[character.corporation]?.attack ?? 0) * build.recycleRoom.corporation;
-  const extra = build.extraAttack;
+    rr.personal[kind] * build.recycleRoom.personal +
+    rr.class[character.class][kind] * build.recycleRoom.class +
+    (rr.corporation[character.corporation]?.[kind] ?? 0) * build.recycleRoom.corporation;
+  // その他加算は攻撃力の実数だけ（HP・防御力には無い）
+  const extra = kind === 'attack' ? build.extraAttack : 0;
   const gear = GEAR_PARTS.reduce(
-    (sum, part) => sum + gearStat(masters, character.class, part, build.gear[part], 'attack'),
+    (sum, part) => sum + gearStat(masters, character.class, part, build.gear[part], kind),
     0,
   );
 
@@ -292,7 +304,7 @@ export function computeCombatAttack(
     inner(BUILD_CORE_APPLIES_TO.collection, collection) +
     inner(BUILD_CORE_APPLIES_TO.recycleRoom, recycleRoom) +
     inner(BUILD_CORE_APPLIES_TO.extra, extra);
-  const withCore = Math.round(coreSide * (1 + (growth.core * character.statEnhance.coreAttack) / 10000));
+  const withCore = applyCoreRatio(coreSide, growth.core, character.statEnhance[CORE_RATIO_KEY[kind]]);
   const outer =
     gear +
     inner(!BUILD_CORE_APPLIES_TO.cube, cube) +
@@ -300,7 +312,8 @@ export function computeCombatAttack(
     inner(!BUILD_CORE_APPLIES_TO.recycleRoom, recycleRoom) +
     inner(!BUILD_CORE_APPLIES_TO.extra, extra);
   return {
-    attack: withCore + outer,
+    kind,
+    value: withCore + outer,
     growth,
     gradeBase,
     affection,
@@ -312,6 +325,18 @@ export function computeCombatAttack(
     coreSide,
     withCore,
   };
+}
+
+/** 戦闘中の攻撃力（バフ前）。computeCombatStat の攻撃力版 */
+export function computeCombatAttack(
+  character: Parameters<typeof computeCombatStat>[0],
+  growth: GrowthInput,
+  build: BuildInput,
+  masters: BuildMasters,
+  options: CombatAttackOptions = {},
+): CombatAttack {
+  const { kind: _kind, value, ...rest } = computeCombatStat(character, growth, build, masters, 'attack', options);
+  return { attack: value, ...rest };
 }
 
 /**
