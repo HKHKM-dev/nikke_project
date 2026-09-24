@@ -160,6 +160,12 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
               }`}
             </td>
           </tr>
+          {rep.trigger.normalAttackMultiplier !== 1 && (
+            <tr>
+              <th>通常攻撃ダメージ倍率</th>
+              <td>×{formatNumber(rep.trigger.normalAttackMultiplier, 4)}（武器倍率に掛ける。仮定）</td>
+            </tr>
+          )}
           {rep.trigger.chargeMultiplier !== 1 && (
             <tr>
               <th>チャージ倍率</th>
@@ -174,7 +180,10 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
           )}
           <tr>
             <th>コア（期待値）</th>
-            <td>+{formatNumber(rep.trigger.boost.core, 3)}</td>
+            <td>
+              +{formatNumber(rep.trigger.boost.core, 3)}
+              {buffs.coreDamage !== 0 && `（コアダメージ +${formatPercent(buffs.coreDamage, 2)} 込み）`}
+            </td>
           </tr>
           <tr>
             <th>会心（期待値）</th>
@@ -209,7 +218,12 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
           )}
           <tr>
             <th>属性有利</th>
-            <td>×{rep.trigger.elementMultiplier}</td>
+            <td>
+              ×{formatNumber(rep.trigger.elementMultiplier, 4)}
+              {rep.trigger.elementMultiplier !== 1 &&
+                buffs.elementDamage !== 0 &&
+                `（1.1 + 有利コード ${formatPercent(buffs.elementDamage, 2)}）`}
+            </td>
           </tr>
           <tr>
             <th>1 トリガー期待ダメージ</th>
@@ -343,7 +357,7 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
               )}
               <tr>
                 <th>属性有利</th>
-                <td>×{burst.hit.elementMultiplier}</td>
+                <td>×{formatNumber(burst.hit.elementMultiplier, 4)}</td>
               </tr>
               <tr>
                 <th>1 発動</th>

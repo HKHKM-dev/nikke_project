@@ -31,6 +31,10 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * Stage 11 モダニアの 2 つ:
  * hitRate = 命中率（%）。全弾命中の前提なのでダメージにも射撃にも効かない。区間の鍵にも入れず、条件（condition）の判定と表示にだけ使う。
  * infiniteAmmo = 装弾数無限（射撃に効く。値を持たないフラグなので ref を書かない。timed だけ）。
+ * Stage 13 の 3 つ（OL・キューブ・コレクションの効果層で使う。スキルの DSL にも書ける。plan/design-stage12.md 3.1 節）:
+ * elementDamage = 有利コードの攻撃ダメージ。属性有利のときだけ (1.1 + Σ)、非有利は 1 のまま。
+ * coreDamage = コアダメージ。コア命中の加算項を (コア倍率 − 1 + Σ) にする（通常攻撃だけ）。
+ * normalAttackDamage = 通常攻撃ダメージ倍率（SG・SMG のコレクション）。通常攻撃の武器倍率に (1 + Σ) を掛ける（仮定。damage.ts）。
  */
 export type BuffStat =
   | 'attack'
@@ -44,7 +48,10 @@ export type BuffStat =
   | 'reloadSpeed'
   | 'chargeSpeed'
   | 'hitRate'
-  | 'infiniteAmmo';
+  | 'infiniteAmmo'
+  | 'elementDamage'
+  | 'coreDamage'
+  | 'normalAttackDamage';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -58,6 +65,9 @@ export const BUFF_STATS = [
   'chargeSpeed',
   'hitRate',
   'infiniteAmmo',
+  'elementDamage',
+  'coreDamage',
+  'normalAttackDamage',
 ] as const satisfies readonly BuffStat[];
 
 /** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限を足した */

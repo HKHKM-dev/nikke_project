@@ -38,6 +38,21 @@ export const SKILL_HIT_FULL_BURST_BONUS = true;
  */
 export const PER_SHOT_DAMAGE_CORE = false;
 
+/**
+ * Stage 13: 有利コードの攻撃ダメージ▲（elementDamage）を倍率ダメージ（damage / perShot / burstDamage）にも乗せるか（仮定）。
+ * 設計時点の仮定は「乗る」（plan/design-stage12.md 3.3 節）。射撃場の実測 3.5 節の 7 で確かめる
+ */
+export const ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE = true;
+
+/** Stage 13: 倍率ダメージに使う属性の乗数（ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE で有利コードの攻撃ダメージ▲を乗せるか決める） */
+export function skillElementMultiplier(character: CharacterData, enemy: EnemyInput, buffs: BuffTotals): number {
+  return elementMultiplier(
+    character.element,
+    enemy.element,
+    ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE ? buffs.elementDamage : 0,
+  );
+}
+
 export type EnemyInput = {
   defence: number;
   element: Element | null;
@@ -54,6 +69,12 @@ export type TriggerCondition = {
   fullCharge: boolean;
   /** フルバースト区間中か。省略 false。true なら倍率グループに FULL_BURST_BOOST を足す */
   fullBurst?: boolean;
+  /**
+   * Stage 15: 命中率 0..1（省略 1）。**射撃場（静止の的）を 1 とした相対値**で、通常攻撃の期待ダメージ（射撃ごとの倍率ダメージを含む）と
+   * ゲージ（burst/dynamic.ts の energyPerTrigger）に掛ける。SG のペレットのゲージの割合（SG_PELLET_GAUGE_HIT_RATE）はこの外側の較正値のまま。
+   * スキルの倍率ダメージ・バーストスキルには掛けない。命中を数えるトリガーは全弾命中で数える（近似。conditionNotes）
+   */
+  hitRate?: number;
 };
 
 export type ConditionInput = TriggerCondition & {
@@ -93,6 +114,8 @@ export type TriggerDamage = {
   /** max(1, 攻撃力 − 防御力) */
   baseHit: number;
   weaponMultiplier: number;
+  /** Stage 13: 通常攻撃ダメージ倍率の乗数 1 + Σ normalAttackDamage（通常攻撃だけ。perShot には掛けない） */
+  normalAttackMultiplier: number;
   chargeMultiplier: number;
   /** 加算グループ 1 + コア + 会心 + 距離 + フルバースト。攻撃ダメージバフはここに入らない */
   boost: { core: number; crit: number; distance: number; fullBurst: number; total: number };
@@ -105,6 +128,8 @@ export type TriggerDamage = {
   perShot: number;
   /** 1 トリガー（SG は全ペレット）あたりの期待ダメージ = normal + perShot */
   perTrigger: number;
+  /** Stage 15: 掛けた命中率（condition.hitRate。省略は 1）。normal と perShot に含まれている */
+  hitRate: number;
 };
 
 export type DamageResult = TriggerDamage & {
@@ -158,6 +183,31 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
   return notes;
 }
 
+/** Stage 15: 条件の命中率（省略は 1 = 射撃場）。0..1 の外は RangeError */
+export function hitRateOf(condition: Pick<TriggerCondition, 'hitRate'>): number {
+  const hitRate = condition.hitRate ?? 1;
+  if (!Number.isFinite(hitRate) || hitRate < 0 || hitRate > 1) {
+    throw new RangeError(`hitRate must be in [0, 1], got ${hitRate}`);
+  }
+  return hitRate;
+}
+
+/** Stage 15: 条件から来る注記。命中率が 1 未満なら、命中を数えるトリガーを全弾命中で数える近似を知らせる */
+export function conditionNotes(condition: Pick<TriggerCondition, 'hitRate'>): ModelNote[] {
+  const hitRate = hitRateOf(condition);
+  if (hitRate >= 1) return [];
+  return [
+    {
+      level: 'approx',
+      code: 'hit-rate',
+      message: {
+        ja: `命中率 ${Math.round(hitRate * 1000) / 10}%: 通常攻撃のダメージとゲージに掛ける。命中を数えるトリガー（通常攻撃の命中 N 回ごと等）とスキルの倍率ダメージは全弾命中のまま`,
+        en: `Hit rate ${Math.round(hitRate * 1000) / 10}%: applied to normal-attack damage and gauge; hit-count triggers and skill damage assume every shot hits`,
+      },
+    },
+  ];
+}
+
 /** 1 トリガーの期待ダメージ。sim はフレームごとにこの値を加算し、calc は秒間トリガー数を掛ける */
 export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const { character, enemy, condition } = input;
@@ -167,6 +217,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   if (condition.coreHitRate < 0 || condition.coreHitRate > 1) {
     throw new RangeError(`coreHitRate must be in [0, 1], got ${condition.coreHitRate}`);
   }
+  const hitRate = hitRateOf(condition);
 
   const baseAttack = baseAttackOf(input);
   const attack = applyAttackBuffs(baseAttack, buffs);
@@ -175,8 +226,12 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const charge = isChargeWeapon(shot) && condition.fullCharge;
   const chargeMultiplier = applyChargeBuffs(shot.fullChargeDamage, charge, buffs);
 
+  // Stage 13: 通常攻撃ダメージ倍率▲（SG・SMG のコレクション）は通常攻撃の武器倍率に掛ける（仮定）
+  const normalAttackMultiplier = 1 + buffs.normalAttackDamage;
+
   const coreRate = enemy.hasCore ? condition.coreHitRate : 0;
-  const boostCore = coreRate * (shot.coreDamageRate - 1);
+  // Stage 13: コアダメージ▲はコア倍率に加算する（殲滅モードなら変更後の武器のコア倍率が基点）
+  const boostCore = coreRate * (shot.coreDamageRate - 1 + buffs.coreDamage);
   const crit = applyCritBuffs(character.crit, buffs);
   const boostCrit = crit.rate * (crit.damage - 1);
   const boostDistance = condition.distanceBonus && character.bonusRange !== null ? 0.3 : 0;
@@ -184,9 +239,27 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const boostTotal = 1 + boostCore + boostCrit + boostDistance + boostFullBurst;
   const attackDamageMultiplier = applyAttackDamageBuffs(buffs);
 
-  const element = elementMultiplier(character.element, enemy.element);
-  const normal = baseHit * weaponMultiplier * chargeMultiplier * boostTotal * attackDamageMultiplier * element;
-  const perShot = perShotDamage(input.perShot, baseHit, boostCore, boostCrit, boostFullBurst, buffs, element);
+  const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage);
+  const normal =
+    hitRate *
+    baseHit *
+    weaponMultiplier *
+    normalAttackMultiplier *
+    chargeMultiplier *
+    boostTotal *
+    attackDamageMultiplier *
+    element;
+  const perShot =
+    hitRate *
+    perShotDamage(
+      input.perShot,
+      baseHit,
+      boostCore,
+      boostCrit,
+      boostFullBurst,
+      buffs,
+      skillElementMultiplier(character, enemy, buffs),
+    );
 
   return {
     baseAttack,
@@ -194,6 +267,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     buffs,
     baseHit,
     weaponMultiplier,
+    normalAttackMultiplier,
     chargeMultiplier,
     boost: {
       core: boostCore,
@@ -207,6 +281,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     normal,
     perShot,
     perTrigger: normal + perShot,
+    hitRate,
   };
 }
 

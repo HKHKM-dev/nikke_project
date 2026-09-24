@@ -9,7 +9,17 @@
 // [ ] の位置は仮定（BUILD_CORE_APPLIES_TO）。Stage 12 の実測 (b)（キャラ画面の攻撃力との一致）で決める。
 import { fixedSpecAffectionRank } from './fixedSpec.ts';
 import { computeStat, validateGrowth, type GrowthInput } from './stats.ts';
-import type { BuildMasters, CharacterData, CollectionData, CubeData, GearPart, GearType, StatKind } from './types.ts';
+import type {
+  BuildMasters,
+  CharacterData,
+  CollectionData,
+  CubeData,
+  GearPart,
+  GearType,
+  OverloadOption,
+  OverloadOptionData,
+  StatKind,
+} from './types.ts';
 
 export const GEAR_TYPES: readonly GearType[] = ['T9', 'T9Corp', 'OL'];
 export const GEAR_PARTS: readonly GearPart[] = ['head', 'body', 'arm', 'leg'];
@@ -19,8 +29,28 @@ export const AFFECTION_RANK_MAX = 40;
 export const CUBE_LEVEL_MIN = 1;
 export const CUBE_LEVEL_MAX = 15;
 export const COLLECTION_LEVEL_MAX = 15;
+/** Stage 13: OL 装備 1 部位のオプション行の上限と、オプションの Lv の範囲 */
+export const OVERLOAD_LINE_MAX = 3;
+export const OVERLOAD_LEVEL_MIN = 1;
+export const OVERLOAD_LEVEL_MAX = 15;
 
-export type GearInput = { type: GearType; level: number } | null;
+/** Stage 13: OL のオプション（CDN の group id 順。data/masters/overload.json と同じ並び） */
+export const OVERLOAD_OPTIONS: readonly OverloadOption[] = [
+  'elementDamage',
+  'hitRate',
+  'maxAmmo',
+  'attack',
+  'chargeDamage',
+  'chargeSpeed',
+  'critRate',
+  'critDamage',
+  'defence',
+];
+
+/** Stage 13: OL 装備のオプション 1 行（効果は buildEffects.ts） */
+export type OverloadLine = { option: OverloadOption; level: number };
+/** overload は OL 装備だけ（最大 3 行。省略・空 = オプションなし）。ステータス層（攻撃力）には効かない */
+export type GearInput = { type: GearType; level: number; overload?: OverloadLine[] } | null;
 export type CubeInput = { id: number; level: number } | null;
 export type CollectionInput = { rarity: 'R' | 'SR'; level: number } | null;
 /** リサイクルルーム研究の Lv（共通・クラス・企業。0 = 未研究） */
@@ -112,6 +142,13 @@ export function findCube(masters: Pick<BuildMasters, 'cubes'>, id: number): Cube
   return masters.cubes.cubes.find((c) => c.id === id);
 }
 
+export function findOverloadOption(
+  masters: Pick<BuildMasters, 'overload'>,
+  option: OverloadOption,
+): OverloadOptionData | undefined {
+  return masters.overload.options.find((o) => o.option === option);
+}
+
 export function findCollection(
   masters: Pick<BuildMasters, 'collections'>,
   rarity: 'R' | 'SR',
@@ -137,6 +174,19 @@ export function validateBuild(
     if (gear === null) continue;
     if (!GEAR_TYPES.includes(gear.type)) throw new RangeError(`gear.${part}.type: unknown gear type ${gear.type}`);
     assertInt(`gear.${part}.level`, gear.level, 0, GEAR_LEVEL_MAX);
+    const lines = gear.overload ?? [];
+    if (lines.length > 0 && gear.type !== 'OL') {
+      throw new RangeError(`gear.${part}: overload options are only allowed on OL gear, got ${gear.type}`);
+    }
+    if (lines.length > OVERLOAD_LINE_MAX) {
+      throw new RangeError(`gear.${part}: at most ${OVERLOAD_LINE_MAX} overload lines, got ${lines.length}`);
+    }
+    lines.forEach((line, i) => {
+      if (findOverloadOption(masters, line.option) === undefined) {
+        throw new RangeError(`gear.${part}.overload[${i}]: unknown option ${String(line.option)}`);
+      }
+      assertInt(`gear.${part}.overload[${i}].level`, line.level, OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX);
+    });
   }
   if (build.cube !== null) {
     if (findCube(masters, build.cube.id) === undefined)

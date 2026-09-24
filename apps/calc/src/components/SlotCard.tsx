@@ -21,6 +21,8 @@ import { formatNumber, formatPercent } from '../format.ts';
 import {
   SKILL_SLOT_LABEL,
   formatAppliedAmount,
+  formatBuildEffect,
+  formatBuildEffectSource,
   formatEffectSource,
   formatInstant,
   formatTimedExtras,
@@ -209,6 +211,7 @@ export function SlotCard({
             build={slot.build}
             effectiveBuild={effectiveBuild}
             growth={effectiveGrowth}
+            savedGrowth={slot.growth}
             treasurePhase={effectiveTreasurePhase(slot, character)}
             masters={masters}
             mastersError={mastersError}
@@ -232,6 +235,24 @@ export function SlotCard({
               }
             />
             <small>0〜1。敵にコアが無いときは無視</small>
+          </label>
+          <label className="field">
+            <span>命中率</span>
+            <input
+              type="number"
+              min={0}
+              max={1}
+              step={0.05}
+              value={condition.hitRate ?? 1}
+              onChange={(e) =>
+                dispatch({
+                  type: 'setSlotCondition',
+                  index: slotIndex,
+                  condition: { ...condition, hitRate: Math.min(1, Math.max(0, Number(e.target.value) || 0)) },
+                })
+              }
+            />
+            <small>0〜1。射撃場（静止の的）= 1。通常攻撃のダメージとゲージに掛ける（実戦用・Stage 15）</small>
           </label>
           <label className="field checkbox">
             <input
@@ -277,6 +298,7 @@ export function SlotCard({
             <div className="received">
               <span className="skills-title">受けているバフ</span>
               {slotResult.passiveEffects.length === 0 &&
+              slotResult.buildEffects.length === 0 &&
               slotResult.windows.length === 0 &&
               slotResult.instants.length === 0 &&
               slotResult.cycleWindows.length === 0 ? (
@@ -290,6 +312,12 @@ export function SlotCard({
                         {formatEffectSource(e, slotNames[e.sourceSlotIndex])}
                         {e.assumes ? `・仮定: ${e.assumes.ja}` : ''}
                       </small>
+                    </li>
+                  ))}
+                  {slotResult.buildEffects.map((e, i) => (
+                    <li key={`build-${i}`}>
+                      <span className="amount">{formatBuildEffect(e)}</span>
+                      <small className="sub">育成 {formatBuildEffectSource(e.source)}</small>
                     </li>
                   ))}
                   {timedSummary.map((t, i) => (

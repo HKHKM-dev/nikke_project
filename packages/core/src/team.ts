@@ -25,6 +25,8 @@ import type { ShotLog } from './sim/shots.ts';
 import {
   baseAttackOf,
   computeDamage,
+  conditionNotes,
+  hitRateOf,
   computeTriggerDamage,
   modelNotes,
   type EnemyInput,
@@ -46,6 +48,7 @@ import {
 } from './skills/burstDamage.ts';
 import { cycleFires, cycleShotFrames, resolveCycles, type CycleWindow } from './skills/cycles.ts';
 import type { BuffTotals } from './skills/buffs.ts';
+import type { BuildEffect } from './buildEffects.ts';
 import {
   MAX_SKILL_LEVELS,
   isResolvedEventCount,
@@ -99,6 +102,11 @@ export type TeamSlotInput = {
   attackOverride?: number;
   /** 省略は { definition: null, levels: 全部 10 } と同じ（自分のスキルなし、味方の効果は受ける） */
   skills?: TeamSlotSkills;
+  /**
+   * Stage 13: 育成入力の効果層（OL・キューブ・コレクション。resolveBuildEffects の effects）。自分だけの常時バフ。
+   * 省略は無し。マスタは呼び出し側が引く（attackOverride と同じ）
+   */
+  buildEffects?: readonly BuildEffect[];
 };
 
 export type TeamInput = {
@@ -177,6 +185,8 @@ export type TeamSlotResult = {
   /** 常時パッシブだけのバフ合計（Stage 4 互換の表示用） */
   passiveBuffs: BuffTotals;
   passiveEffects: AppliedEffect[];
+  /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。passiveBuffs に含まれている */
+  buildEffects: readonly BuildEffect[];
   /** この枠に掛かった持続バフの窓（発生順） */
   windows: BuffWindow[];
   /** Stage 11 モダニア: この枠に掛かった状態だけの stat（命中率）の窓（区間には入らない。表示用） */
@@ -256,6 +266,8 @@ export function toTimelineSlots(slots: readonly (TeamSlotInput | null)[]): Timel
           levels: slot.skills?.levels ?? MAX_SKILL_LEVELS,
           // 循環参照を避けるため、発動者自身のバフは乗せない値（バフ前攻撃力）を使う
           casterBaseAttack: baseAttackOf(slot),
+          buildEffects: slot.buildEffects,
+          hitRate: hitRateOf(slot.condition),
         },
   );
 }
@@ -574,9 +586,10 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
       character: slot.character,
       baseAttack: baseAttackOf(slot),
       cadence: computeCadence(slot.character.shot, model, firingParams(slot.character.shot, passive.buffs)),
-      notes: modelNotes(slot.character.shot),
+      notes: [...modelNotes(slot.character.shot), ...conditionNotes(slot.condition)],
       passiveBuffs: passive.buffs,
       passiveEffects: passive.passiveEffects,
+      buildEffects: passive.buildEffects,
       windows: timeline.windows.filter((w) => w.slotIndex === index),
       stateWindows: timeline.stateWindows.filter((w) => w.slotIndex === index),
       conditionSkips: timeline.conditionSkips.filter((x) => x.sourceSlotIndex === index),

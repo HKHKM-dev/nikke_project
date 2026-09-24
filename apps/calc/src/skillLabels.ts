@@ -1,6 +1,9 @@
 // スキル関連の表示用ラベル（React 非依存）
 import type {
   AppliedEffect,
+  BuildEffect,
+  BuildEffectSource,
+  GearPart,
   AppliedTimedEffect,
   ResolvedInstantEffect,
   BuffStat,
@@ -31,6 +34,9 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   chargeSpeed: 'チャージ速度',
   hitRate: '命中率',
   infiniteAmmo: '装弾数無限',
+  elementDamage: '有利コードの攻撃ダメージ',
+  coreDamage: 'コアダメージ',
+  normalAttackDamage: '通常攻撃ダメージ倍率',
 };
 
 export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
@@ -165,4 +171,25 @@ export function treasurePhaseLabel(unlockOrder: readonly SkillSlot[], phase: num
   const slot = unlockOrder[phase - 1];
   const what = slot === undefined ? '' : SKILL_SLOT_LABEL[slot];
   return `${phase} 段階（${phase === 1 ? '' : '+'}${what}）`;
+}
+
+// ---- Stage 13: 育成入力の効果層（OL・キューブ・コレクション） ----
+
+export const GEAR_PART_LABEL: Record<GearPart, string> = { head: '頭', body: '胴', arm: '腕', leg: '足' };
+
+/** 「攻撃力 +14.63%」 */
+export function formatBuildEffect(effect: BuildEffect): string {
+  return `${BUFF_STAT_LABEL[effect.stat]} +${formatPercent(effect.value, 2)}`;
+}
+
+/** 「OL 頭 1 行目（攻撃力増加 Lv15）」「キューブ（アンチコードHC 段階 6）」「コレクション（…段階 4）」 */
+export function formatBuildEffectSource(source: BuildEffectSource): string {
+  switch (source.kind) {
+    case 'overload':
+      return `OL ${source.part ? GEAR_PART_LABEL[source.part] : ''} ${(source.line ?? 0) + 1} 行目（${source.name.ja} Lv${source.level}）`;
+    case 'cube':
+      return `キューブ（${source.name.ja} 段階 ${source.level}）`;
+    case 'collection':
+      return `コレクション（${source.name.ja} 段階 ${source.level}）`;
+  }
 }

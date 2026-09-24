@@ -50,6 +50,12 @@ export type BuffTotals = {
   hitRate: number;
   /** Stage 11 モダニア: 装弾数無限の窓の数（> 0 なら残弾を減らさない。射撃に効く） */
   infiniteAmmo: number;
+  /** Stage 13: 有利コードの攻撃ダメージの加算。属性有利のときだけ (1.1 + elementDamage)（element.ts） */
+  elementDamage: number;
+  /** Stage 13: コアダメージの加算。コア命中の加算項 (コア倍率 − 1 + coreDamage)（通常攻撃だけ） */
+  coreDamage: number;
+  /** Stage 13: 通常攻撃ダメージ倍率の加算。通常攻撃の武器倍率に (1 + normalAttackDamage) を掛ける（仮定。damage.ts） */
+  normalAttackDamage: number;
   /** Stage 11 モダニア: 使用武器の変更（無ければ null）。射手とダメージの式が基礎の武器の代わりに使う */
   weapon: ChangedWeapon | null;
 };
@@ -70,6 +76,9 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   chargeTimeFlat: 0,
   hitRate: 0,
   infiniteAmmo: 0,
+  elementDamage: 0,
+  coreDamage: 0,
+  normalAttackDamage: 0,
   weapon: null,
 });
 
@@ -87,6 +96,9 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon'>> = {
   chargeSpeed: 'chargeSpeed',
   hitRate: 'hitRate',
   infiniteAmmo: 'infiniteAmmo',
+  elementDamage: 'elementDamage',
+  coreDamage: 'coreDamage',
+  normalAttackDamage: 'normalAttackDamage',
 };
 
 /** Stage 11 モダニア: stat の合計（「自分が 〈stat〉 増加状態なら」の判定用） */

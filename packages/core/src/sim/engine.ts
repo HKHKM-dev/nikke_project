@@ -12,11 +12,19 @@
 // 2 パス目は変えない（射撃の列を読み、区間ごとの 1 トリガー値を足す）。
 import type { BurstSchedule, BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
-import { baseAttackOf, computeTriggerDamage, modelNotes, type ModelNote, type TriggerDamage } from '../damage.ts';
+import {
+  baseAttackOf,
+  computeTriggerDamage,
+  conditionNotes,
+  modelNotes,
+  type ModelNote,
+  type TriggerDamage,
+} from '../damage.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect } from '../skills/resolve.ts';
 import { slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { BuffTotals } from '../skills/buffs.ts';
+import type { BuildEffect } from '../buildEffects.ts';
 import { EMPTY_BUFF_STATE, groupTimeline, type BuffTimeline, type BuffWindow } from '../skills/timeline.ts';
 import {
   BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
@@ -69,6 +77,8 @@ export type SimSlotResult = {
   /** 常時パッシブだけ（Stage 4 互換の表示用） */
   passiveBuffs: BuffTotals;
   passiveEffects: AppliedEffect[];
+  /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。passiveBuffs に含まれている */
+  buildEffects: readonly BuildEffect[];
   /** この枠に掛かった持続バフの窓（発生順） */
   windows: BuffWindow[];
   segments: SimSlotSegment[];
@@ -155,9 +165,10 @@ export function runSimulation(simInput: SimInput): SimResult {
         character: slot.character,
         baseAttack: baseAttackOf(slot),
         cadence: computeCadence(slot.character.shot, model, firingParams(slot.character.shot, passive.buffs)),
-        notes: modelNotes(slot.character.shot),
+        notes: [...modelNotes(slot.character.shot), ...conditionNotes(slot.condition)],
         passiveBuffs: passive.buffs,
         passiveEffects: passive.passiveEffects,
+        buildEffects: passive.buildEffects,
         windows: timeline.windows.filter((w) => w.slotIndex === index),
         segments,
         normalDamage: 0,

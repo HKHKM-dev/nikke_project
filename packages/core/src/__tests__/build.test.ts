@@ -28,6 +28,7 @@ const masters: BuildMasters = {
   cubes: readJson('../../data/masters/cubes.json'),
   collections: readJson('../../data/masters/collections.json'),
   recycleRoom: readJson('../../data/masters/recycleRoom.json'),
+  overload: readJson('../../data/masters/overload.json'),
 };
 const CLASSES: NikkeClass[] = ['Attacker', 'Defender', 'Supporter'];
 

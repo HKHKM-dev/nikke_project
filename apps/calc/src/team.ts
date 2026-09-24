@@ -11,6 +11,10 @@ import {
   GEAR_PARTS,
   GEAR_TYPES,
   MAX_SKILL_LEVELS,
+  OVERLOAD_LEVEL_MAX,
+  OVERLOAD_LEVEL_MIN,
+  OVERLOAD_LINE_MAX,
+  OVERLOAD_OPTIONS,
   SKILL_LEVEL_MAX,
   SKILL_LEVEL_MIN,
   SKILL_SLOTS,
@@ -26,6 +30,8 @@ import {
   type GearInput,
   type GearType,
   type GrowthInput,
+  type OverloadLine,
+  type OverloadOption,
   type SkillLevels,
   type SlotCondition,
   type TreasurePhase,
@@ -33,7 +39,13 @@ import {
 
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: 100, element: null, hasCore: true };
 export const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
-export const DEFAULT_SLOT_CONDITION: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
+/** Stage 15: hitRate（命中率。射撃場 = 1）を足した */
+export const DEFAULT_SLOT_CONDITION: SlotCondition = {
+  coreHitRate: 1,
+  distanceBonus: true,
+  fullCharge: true,
+  hitRate: 1,
+};
 /** スキル Lv の既定値。全部 10 */
 export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 /** 戦闘時間の規定値。レイド・射撃場ともに 180 秒（スペック固定でも変えない） */
@@ -195,10 +207,24 @@ export function clampSkillLevel(level: number): number {
 
 // ---- 永続化 ----
 
+/** localStorage のキー。Stage 14 で formatVersion を付けたが、版のない旧形式もこのキーのまま読む */
 export const STORAGE_KEY = 'nikke-calc.team.v1';
 
+/**
+ * Stage 14: 編成の保存形式の版。localStorage と「編成の JSON」の書き出しで共通。
+ * 版のない JSON（Stage 3〜13 の保存データ）は版 0 として読み、欠落した項目を既定値で埋める（各 parse* の欠落互換）
+ */
+export const TEAM_FORMAT_VERSION = 1;
+
 export function serializeTeamState(state: TeamState): string {
-  return JSON.stringify(state);
+  return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, ...state });
+}
+
+/** 読めた版（版のない旧形式は 0）。未知の版・形が合わないものは null */
+function formatVersionOf(raw: Record<string, unknown>): number | null {
+  const v = raw.formatVersion;
+  if (v === undefined) return 0;
+  return typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= TEAM_FORMAT_VERSION ? v : null;
 }
 
 type Json = unknown;
@@ -225,7 +251,17 @@ function parseCondition(v: Json): SlotCondition | null {
   if (!isRecord(v)) return null;
   if (!isFinite_(v.coreHitRate) || v.coreHitRate < 0 || v.coreHitRate > 1) return null;
   if (!isBool(v.distanceBonus) || !isBool(v.fullCharge)) return null;
-  return { coreHitRate: v.coreHitRate, distanceBonus: v.distanceBonus, fullCharge: v.fullCharge };
+  const condition: SlotCondition = {
+    coreHitRate: v.coreHitRate,
+    distanceBonus: v.distanceBonus,
+    fullCharge: v.fullCharge,
+  };
+  // Stage 15: 命中率。Stage 14 までの保存データには無い。欠落は欠落のまま読む（計算では 1 = 射撃場）
+  if (v.hitRate !== undefined) {
+    if (!isFinite_(v.hitRate) || v.hitRate < 0 || v.hitRate > 1) return null;
+    condition.hitRate = v.hitRate;
+  }
+  return condition;
 }
 
 /** Stage 3 の保存データには無いので、欠落は既定値（全部 10）。あれば 1..10 の整数だけ許す */
@@ -248,12 +284,28 @@ function parseTreasurePhase(v: Json): TreasurePhase | null {
   return v as TreasurePhase;
 }
 
+/** Stage 13: OL のオプション行。Stage 12 の保存データには無いので、欠落は空（オプションなし） */
+function parseOverload(v: Json, type: GearType): OverloadLine[] | undefined {
+  if (v === undefined) return [];
+  if (!Array.isArray(v) || v.length > OVERLOAD_LINE_MAX || (v.length > 0 && type !== 'OL')) return undefined;
+  const lines: OverloadLine[] = [];
+  for (const line of v as Json[]) {
+    if (!isRecord(line) || !(OVERLOAD_OPTIONS as readonly string[]).includes(String(line.option))) return undefined;
+    if (!isInt(line.level, OVERLOAD_LEVEL_MIN) || line.level > OVERLOAD_LEVEL_MAX) return undefined;
+    lines.push({ option: line.option as OverloadOption, level: line.level });
+  }
+  return lines;
+}
+
 function parseGear(v: Json): GearInput | undefined {
   if (v === null) return null;
   if (!isRecord(v)) return undefined;
   if (!(GEAR_TYPES as readonly string[]).includes(String(v.type))) return undefined;
   if (!isInt(v.level, 0) || v.level > GEAR_LEVEL_MAX) return undefined;
-  return { type: v.type as GearType, level: v.level };
+  const type = v.type as GearType;
+  const overload = parseOverload(v.overload, type);
+  if (overload === undefined) return undefined;
+  return overload.length === 0 ? { type, level: v.level } : { type, level: v.level, overload };
 }
 
 /** Stage 11 までの保存データには無いので、欠落は空（素のステータス）。あれば各項目の範囲だけ見る（マスタとの照合は計算時） */
@@ -307,19 +359,41 @@ function parseEnemy(v: Json): EnemyInput | null {
   return { defence: v.defence, element: element === null ? null : (element as Element), hasCore: v.hasCore };
 }
 
+export type ReadResult<T> = { ok: true; value: T } | { ok: false; error: string };
+
+/**
+ * Stage 14: 編成の JSON（localStorage・書き出したファイル・貼り付け）を検証して復元する。失敗の理由を返す（取り込み欄に出す）。
+ * 未知の formatVersion（新しい版で書き出したもの）・形が合わない・index に存在しないニケ・同じニケが 2 枠は失敗
+ */
+export function readTeamJson(json: string, index: readonly CharacterIndexEntry[]): ReadResult<TeamState> {
+  let raw: Json;
+  try {
+    raw = JSON.parse(json);
+  } catch {
+    return { ok: false, error: 'JSON として読めません' };
+  }
+  if (!isRecord(raw)) return { ok: false, error: '編成の JSON ではありません' };
+  if (formatVersionOf(raw) === null) {
+    return { ok: false, error: `この版の編成は読めません（formatVersion ${String(raw.formatVersion)}）` };
+  }
+  const state = parseTeamFields(raw, index);
+  return state === null
+    ? { ok: false, error: '編成の JSON の形が合いません（範囲外の値・未知のニケ・同じニケが 2 枠など）' }
+    : { ok: true, value: state };
+}
+
 /**
  * localStorage に保存した JSON を検証して復元する。
  * 形が合わない・index に存在しないニケを指す・同じニケが 2 枠にある場合は null（呼び出し側で初期値に落とす）。
  */
 export function parseTeamState(json: string | null, index: readonly CharacterIndexEntry[]): TeamState | null {
   if (json === null) return null;
-  let raw: Json;
-  try {
-    raw = JSON.parse(json);
-  } catch {
-    return null;
-  }
-  if (!isRecord(raw) || !Array.isArray(raw.slots) || raw.slots.length !== TEAM_SIZE) return null;
+  const result = readTeamJson(json, index);
+  return result.ok ? result.value : null;
+}
+
+function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterIndexEntry[]): TeamState | null {
+  if (!Array.isArray(raw.slots) || raw.slots.length !== TEAM_SIZE) return null;
 
   const known = new Set(index.map((e) => e.resourceId));
   const seen = new Set<number>();
@@ -366,4 +440,47 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
     burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
     controlledSlot: typeof controlled === 'number' ? controlled : null,
   };
+}
+
+// ---- Stage 14: 枠ごとの育成の JSON（書き出し / 取り込み） ----
+
+/** 枠ごとの育成の JSON の版 */
+export const BUILD_FORMAT_VERSION = 1;
+
+export type SlotBuildJson = { growth: GrowthInput; build: BuildInput };
+
+/** 枠の育成値と育成入力を JSON にする（{ formatVersion, growth, build }） */
+export function serializeSlotBuild(slot: Pick<SlotState, 'growth' | 'build'>): string {
+  return JSON.stringify({ formatVersion: BUILD_FORMAT_VERSION, growth: slot.growth, build: slot.build }, null, 2);
+}
+
+/**
+ * 枠ごとの育成の JSON を読む。書き出した形（{ formatVersion, growth, build }）のほか、CLI の --build の 1 枠分
+ * （BuildInput の一部と任意の growth。欠けた項目は空の育成で埋める）も読む。growth が無ければ null（枠の育成値を変えない）
+ */
+export function readSlotBuildJson(json: string): ReadResult<{ growth: GrowthInput | null; build: BuildInput }> {
+  let raw: Json;
+  try {
+    raw = JSON.parse(json);
+  } catch {
+    return { ok: false, error: 'JSON として読めません' };
+  }
+  if (!isRecord(raw)) return { ok: false, error: '育成の JSON ではありません' };
+  const version = raw.formatVersion;
+  if (version !== undefined && version !== BUILD_FORMAT_VERSION) {
+    return { ok: false, error: `この版の育成は読めません（formatVersion ${String(version)}）` };
+  }
+  const wrapped = version !== undefined || isRecord(raw.build);
+  const { growth: rawGrowth, formatVersion: _v, ...rest } = raw;
+  const buildRaw = wrapped ? raw.build : rest;
+  if (!isRecord(buildRaw)) return { ok: false, error: '育成（build）がありません' };
+  // 書かれていない項目・部位は空の育成で埋める（CLI の --build と同じ）
+  const empty = emptyBuild();
+  const gear = isRecord(buildRaw.gear) ? { ...empty.gear, ...buildRaw.gear } : buildRaw.gear;
+  const build = parseBuild({ ...empty, ...buildRaw, ...(gear === undefined ? {} : { gear }) });
+  if (build === null) return { ok: false, error: '育成の値が範囲外か、形が合いません' };
+  if (rawGrowth === undefined) return { ok: true, value: { growth: null, build } };
+  const growth = parseGrowth(rawGrowth);
+  if (growth === null) return { ok: false, error: '育成値（growth）の形が合いません' };
+  return { ok: true, value: { growth, build } };
 }

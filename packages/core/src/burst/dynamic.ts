@@ -37,12 +37,13 @@ export const SG_PELLET_GAUGE_HIT_RATE = 0.75;
  * 1 トリガーで溜まるゲージ量。targetBurstEnergyPerShot は 1 ペレットあたりなので shotCount（SG のペレット数）を掛ける。
  * フルチャージ倍率（fullChargeBurstEnergy）は**操作キャラのチャージ武器にだけ**乗る。AI のデルタ（SR）は
  * 82f ごとにフルチャージの間隔で撃っていても 1 発 6.2〜7.1% で、倍率なし（53,000 × 1.2 = 6.4%）だった（2026-09-23 実測）。
- * muzzleCount = 2 は未対応で銃口 1 つとして数える。
+ * muzzleCount = 2 は未対応で銃口 1 つとして数える。Stage 15: hitRate（省略 1）を掛ける。
  */
-export function energyPerTrigger(shot: ShotParams, controlled: boolean): number {
+export function energyPerTrigger(shot: ShotParams, controlled: boolean, hitRate = 1): number {
   const charge = controlled && shot.chargeTime > 0 ? shot.fullChargeBurstEnergy : 1;
   const pellets = shot.shotCount > 1 ? shot.shotCount * SG_PELLET_GAUGE_HIT_RATE : shot.shotCount;
-  return shot.targetBurstEnergyPerShot * BURST_ENERGY_MULTIPLIER * pellets * charge;
+  // Stage 15: 命中率（射撃場 = 1 の相対値）。外れた弾はゲージにならない
+  return shot.targetBurstEnergyPerShot * BURST_ENERGY_MULTIPLIER * pellets * charge * hitRate;
 }
 
 export function burstUnitOf(character: CharacterData): NonNullable<BurstUnit> {
@@ -66,7 +67,7 @@ export type DynamicScheduleOptions = {
  * @param controlledSlot 操作キャラの枠（フルチャージ倍率がゲージに乗る）。null は全員 AI 扱い
  */
 export function planDynamicSchedule(
-  slots: readonly ({ character: CharacterData } | null)[],
+  slots: readonly ({ character: CharacterData; condition?: { hitRate?: number } } | null)[],
   frames: number,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   timing: Readonly<BurstTiming> = DEFAULT_BURST_TIMING,
@@ -88,7 +89,7 @@ export function planDynamicSchedule(
     return {
       frames: log.frames,
       next: 0,
-      energy: energyPerTrigger(s.character.shot, index === controlledSlot) * (1 + speed),
+      energy: energyPerTrigger(s.character.shot, index === controlledSlot, s.condition?.hitRate ?? 1) * (1 + speed),
     };
   });
   for (let f = 0; f < frames; f++) {

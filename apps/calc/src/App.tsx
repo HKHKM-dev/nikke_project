@@ -7,14 +7,21 @@ import {
   isEmptyBuild,
   loadBuildMasters,
   loadCharacterIndex,
+  loadEnemyPresets,
+  resolveBuildEffects,
+  type BuildEffect,
+  type BuildEffectNote,
   type BuildMasters,
   type CharacterData,
   type CharacterIndexEntry,
+  type EnemyPreset,
   type GrowthInput,
   type TeamResult,
   type TeamSlotInput,
 } from '@nikke/core';
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { DataPanel } from './components/DataPanel.tsx';
+import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
 import { TeamBreakdown } from './components/TeamBreakdown.tsx';
 import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
@@ -63,6 +70,14 @@ export function App() {
   // Stage 12: 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム）。起動時に 1 回読む
   const [masters, setMasters] = useState<BuildMasters | null>(null);
   const [mastersError, setMastersError] = useState<string | null>(null);
+
+  // Stage 15: 敵のプリセット。読めなければ空（手入力はできる）
+  const [enemyPresets, setEnemyPresets] = useState<EnemyPreset[]>([]);
+  useEffect(() => {
+    loadEnemyPresets({ baseUrl: BASE_URL })
+      .then((m) => setEnemyPresets(m.enemies))
+      .catch(() => setEnemyPresets([]));
+  }, []);
 
   useEffect(() => {
     loadBuildMasters({ baseUrl: BASE_URL })
@@ -124,17 +139,21 @@ export function App() {
         }
         const growth = clampGrowth(character, slot.growth);
         // Stage 12: 育成入力か宝物のステータスがあれば、戦闘中の攻撃力（バフ前）を computeCombatAttack で作る。
+        // Stage 13: 同じ入力から効果層（OL・キューブ・コレクション → 常時バフ）を resolveBuildEffects で作る。
         // マスタの読み込み前・入力がマスタと合わないときは素のステータスのまま（BuildSection が知らせる）
         const treasurePhase = effectiveTreasurePhase(slot, character);
         let attackOverride: number | undefined;
+        let buildEffects: BuildEffect[] | undefined;
         if (masters && (!isEmptyBuild(slot.build) || treasurePhase > 0)) {
           try {
             attackOverride = computeCombatAttack(character, growth, slot.build, masters, { treasurePhase }).attack;
+            buildEffects = resolveBuildEffects(character, slot.build, masters, { treasurePhase }).effects;
           } catch {
             attackOverride = undefined;
+            buildEffects = undefined;
           }
         }
-        return { character, growth, condition: slot.condition, attackOverride, skills: slotSkills };
+        return { character, growth, condition: slot.condition, attackOverride, buildEffects, skills: slotSkills };
       }),
     [team.slots, team.fixedSpec, cache.characters, skillsStatuses, masters],
   );
@@ -161,6 +180,36 @@ export function App() {
   ).length;
   const skillsLoadingCount = skillsStatuses.filter((s) => s?.kind === 'loading').length;
 
+  // Stage 14: 未対応の一覧に出す育成の注記（計算に入らないもののうち未対応だけ。スペック固定では効果層が空）
+  const summarySlots = useMemo<(NotesSummarySlot | null)[]>(
+    () =>
+      team.slots.map((slot, i) => {
+        if (slot.resourceId === null) return null;
+        const character = cache.characters.get(slot.resourceId);
+        if (!character) return null;
+        const treasurePhase = effectiveTreasurePhase(slot, character);
+        let buildNotes: BuildEffectNote[] = [];
+        if (masters && !team.fixedSpec) {
+          try {
+            buildNotes = resolveBuildEffects(character, slot.build, masters, { treasurePhase }).notes.filter(
+              (n) => n.level === 'unsupported',
+            );
+          } catch {
+            buildNotes = [];
+          }
+        }
+        return {
+          index: i,
+          character,
+          skills: skillsStatuses[i] ?? { kind: 'loading' },
+          treasurePhase,
+          modelNotes: computed.ok ? (computed.result.slots[i]?.notes ?? []) : [],
+          buildNotes,
+        };
+      }),
+    [team.slots, team.fixedSpec, cache.characters, skillsStatuses, masters, computed],
+  );
+
   const slotNames = team.slots.map((s) =>
     s.resourceId === null ? undefined : cache.characters.get(s.resourceId)?.name.ja,
   );
@@ -168,10 +217,12 @@ export function App() {
   return (
     <main className="app">
       <header>
-        <h1>NIKKE calc v5</h1>
+        <h1>NIKKE ダメージ計算（calc）</h1>
         <p>
-          5 人編成の通常攻撃 + 常時発動パッシブ + 持続バフ + ゲージ・CT で回るフルバーストとバーストスキル +
-          回数トリガーの倍率ダメージ（Stage 8）
+          ソロレイド / ユニオンレイド（単体ボス・180 秒）向けに、5
+          人編成の総ダメージの期待値を出します。通常攻撃・スキルのバフ・ ゲージと CT
+          で回るフルバースト・バーストスキル・倍率ダメージ・育成（装備・OL・キューブ・好感度・コレクション）を含みます。
+          確かめたのはユニオン射撃場の録画だけで、実戦とは未照合です（下の「未対応・近似・仮定の一覧」）。
         </p>
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
@@ -180,6 +231,7 @@ export function App() {
         <>
           <TeamSettingsForm
             enemy={team.enemy}
+            enemyPresets={enemyPresets}
             durationSeconds={team.durationSeconds}
             fixedSpec={team.fixedSpec}
             burst={team.burst}
@@ -224,6 +276,8 @@ export function App() {
           ) : (
             <p className="error">{computed.error}</p>
           )}
+          <NotesSummary slots={summarySlots} />
+          <DataPanel team={team} index={index} dispatch={dispatch} />
         </>
       )}
     </main>

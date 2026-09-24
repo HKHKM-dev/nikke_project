@@ -19,11 +19,12 @@
 // 1 段目の窓と stateWindows を見て発火を間引く。使用武器の変更の窓は、射手が持ち替えるフレーム（発火の次のフレーム）から始める
 // （weaponStartTrim）。
 import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
+import type { BuildEffect } from '../buildEffects.ts';
 import { resolveCycleEvery, type CycleWindow } from './cycles.ts';
 import type { ShotLog } from '../sim/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { FPS } from '../weapons.ts';
-import { ZERO_BUFFS, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
+import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
 import {
   isResolvedShotCount,
   resolvePassives,
@@ -50,6 +51,10 @@ export type TimelineSlot = {
   levels: SkillLevels;
   /** 発動者基準の固定加算に使うバフ前攻撃力（team.ts の baseAttackOf と同じ値） */
   casterBaseAttack: number;
+  /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。自分だけに効く常時バフ。省略は無し */
+  buildEffects?: readonly BuildEffect[];
+  /** Stage 15: 命中率（射撃場 = 1 の相対値。省略 1）。1 パス目のゲージにだけ使う */
+  hitRate?: number;
 } | null;
 
 /** 1 つの効果が 1 人に効いているフレーム区間 */
@@ -79,6 +84,8 @@ export type SlotBuffState = {
   buffs: BuffTotals;
   /** 常時パッシブ（Stage 4）の分 */
   passiveEffects: AppliedEffect[];
+  /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）の分。常時 */
+  buildEffects: readonly BuildEffect[];
   /** この区間で効いている持続バフの分 */
   timedEffects: AppliedTimedEffect[];
 };
@@ -138,6 +145,7 @@ export type TimelineGroup = {
 export const EMPTY_BUFF_STATE: Readonly<SlotBuffState> = Object.freeze({
   buffs: ZERO_BUFFS,
   passiveEffects: [],
+  buildEffects: [],
   timedEffects: [],
 });
 
@@ -158,6 +166,10 @@ const BUFF_FIELDS = [
   'chargeTimeFlat',
   // Stage 11 モダニア: 装弾数無限は射撃が変わるので鍵に入れる。命中率（hitRate）は状態だけなので入れない
   'infiniteAmmo',
+  // Stage 13: 効果層（常時）では区間を割らないが、スキルの timed にも書けるので鍵に入れる
+  'elementDamage',
+  'coreDamage',
+  'normalAttackDamage',
 ] as const satisfies readonly (keyof BuffTotals)[];
 
 /** key の桁数。最下位ビットのずれで同一状態が別グループに割れないよう固定桁で文字列化する */
@@ -324,7 +336,12 @@ function unionWindows(fireFrames: readonly number[], durationFrames: number, fra
 
 type PassiveSource = { slotIndex: number; casterBaseAttack: number; effect: ResolvedEffect };
 
-/** 常時パッシブだけの状態（Stage 4 の resolveTeamBuffs と同じ結果になる）。空枠は null */
+const NO_BUILD_EFFECTS: readonly BuildEffect[] = Object.freeze([]);
+
+/**
+ * 常時パッシブだけの状態（Stage 4 の resolveTeamBuffs と同じ結果になる）。空枠は null。
+ * Stage 13: 育成入力の効果層（TimelineSlot.buildEffects）はスキルの passive の後に、その枠自身へ比率で足す
+ */
 export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffState | null)[] {
   const sources: PassiveSource[] = [];
   slots.forEach((slot, slotIndex) => {
@@ -343,7 +360,9 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
       buffs = applied.totals;
       passiveEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount: applied.appliedAmount });
     }
-    return { buffs, passiveEffects, timedEffects: [] };
+    const buildEffects = slot.buildEffects ?? NO_BUILD_EFFECTS;
+    for (const e of buildEffects) buffs = addRatioBuff(buffs, e.stat, e.value);
+    return { buffs, passiveEffects, buildEffects, timedEffects: [] };
   });
 }
 
@@ -511,7 +530,12 @@ export function planBuffTimeline(
     const slotStates = passive.map((base) =>
       base === null
         ? null
-        : { buffs: { ...base.buffs }, passiveEffects: base.passiveEffects, timedEffects: [] as AppliedTimedEffect[] },
+        : {
+            buffs: { ...base.buffs },
+            passiveEffects: base.passiveEffects,
+            buildEffects: base.buildEffects,
+            timedEffects: [] as AppliedTimedEffect[],
+          },
     );
     // 窓の発生順に足して浮動小数の加算順を決定的にする
     for (const w of windows) {

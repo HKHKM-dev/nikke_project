@@ -5,8 +5,12 @@ import {
   clampSkillLevel,
   effectiveSkillLevels,
   effectiveTreasurePhase,
+  TEAM_FORMAT_VERSION,
   initialTeamState,
   parseTeamState,
+  readSlotBuildJson,
+  readTeamJson,
+  serializeSlotBuild,
   serializeTeamState,
   takenResourceIds,
   teamReducer,
@@ -295,6 +299,136 @@ describe('build (Stage 12)', () => {
     for (const patch of bad) {
       const raw = { ...ok, slots: ok.slots.map((s, i) => (i === 0 ? { ...s, build: { ...s.build, ...patch } } : s)) };
       expect(parseTeamState(JSON.stringify(raw), index), JSON.stringify(patch)).toBeNull();
+    }
+  });
+});
+
+describe('OL lines (Stage 13)', () => {
+  const withGear = (head: unknown) => {
+    const ok = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: { build: Record<string, unknown> }[] };
+    return JSON.stringify({
+      ...ok,
+      slots: ok.slots.map((s, i) =>
+        i === 0 ? { ...s, build: { ...s.build, gear: { head, body: null, arm: null, leg: null } } } : s,
+      ),
+    });
+  };
+
+  it('round-trips OL gear with option lines; Stage 12 data without lines still reads', () => {
+    let s = withCharacters([10]);
+    const build = {
+      ...s.slots[0]!.build,
+      gear: {
+        ...s.slots[0]!.build.gear,
+        head: {
+          type: 'OL' as const,
+          level: 5,
+          overload: [
+            { option: 'attack' as const, level: 15 },
+            { option: 'elementDamage' as const, level: 11 },
+          ],
+        },
+      },
+    };
+    s = teamReducer(s, { type: 'setBuild', index: 0, build });
+    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
+    expect(parseTeamState(withGear({ type: 'OL', level: 5 }), index)?.slots[0]?.build.gear.head).toEqual({
+      type: 'OL',
+      level: 5,
+    });
+  });
+
+  it('rejects lines on non-OL gear, more than 3 lines, unknown options and levels out of 1..15', () => {
+    const line = (option: string, level: number) => ({ option, level });
+    const bad = [
+      { type: 'T9', level: 5, overload: [line('attack', 1)] },
+      { type: 'OL', level: 5, overload: [line('attack', 1), line('attack', 1), line('attack', 1), line('attack', 1)] },
+      { type: 'OL', level: 5, overload: [line('speed', 1)] },
+      { type: 'OL', level: 5, overload: [line('attack', 0)] },
+      { type: 'OL', level: 5, overload: [line('attack', 16)] },
+      { type: 'OL', level: 5, overload: 'attack' },
+    ];
+    for (const head of bad) expect(parseTeamState(withGear(head), index), JSON.stringify(head)).toBeNull();
+  });
+});
+
+describe('save format version (Stage 14)', () => {
+  it('writes formatVersion and reads it back; unversioned data (Stage 3〜13) still reads', () => {
+    const s = withCharacters([10, 20]);
+    const json = serializeTeamState(s);
+    expect((JSON.parse(json) as { formatVersion: number }).formatVersion).toBe(TEAM_FORMAT_VERSION);
+    expect(parseTeamState(json, index)).toEqual(s);
+    const { formatVersion: _v, ...legacy } = JSON.parse(json) as Record<string, unknown>;
+    expect(parseTeamState(JSON.stringify(legacy), index)).toEqual(s);
+  });
+
+  it('readTeamJson says why a JSON cannot be read', () => {
+    const s = withCharacters([10]);
+    const newer = JSON.stringify({ ...(JSON.parse(serializeTeamState(s)) as object), formatVersion: 99 });
+    expect(readTeamJson(newer, index)).toEqual({ ok: false, error: expect.stringContaining('formatVersion 99') });
+    expect(readTeamJson('{', index)).toEqual({ ok: false, error: 'JSON として読めません' });
+    expect(readTeamJson('[]', index).ok).toBe(false);
+    const unknown = JSON.stringify({ ...(JSON.parse(serializeTeamState(s)) as object), durationSeconds: -1 });
+    expect(readTeamJson(unknown, index)).toEqual({ ok: false, error: expect.stringContaining('形が合いません') });
+    expect(readTeamJson(serializeTeamState(s), index)).toEqual({ ok: true, value: s });
+  });
+});
+
+describe('slot build JSON (Stage 14)', () => {
+  const build = {
+    ...initialTeamState().slots[0]!.build,
+    affectionRank: 30,
+    gear: {
+      head: { type: 'OL' as const, level: 5, overload: [{ option: 'attack' as const, level: 15 }] },
+      body: { type: 'T9' as const, level: 5 },
+      arm: null,
+      leg: null,
+    },
+    cube: { id: 1000303, level: 15 },
+  };
+  const growth = { level: 400, grade: 3, core: 7 };
+
+  it('round-trips growth and build', () => {
+    expect(readSlotBuildJson(serializeSlotBuild({ growth, build }))).toEqual({ ok: true, value: { growth, build } });
+  });
+
+  it('reads a CLI --build entry (partial build, optional growth), filling the rest with an empty build', () => {
+    const cli = { affectionRank: 30, gear: { head: { type: 'T9', level: 5 } }, cube: { id: 1000303, level: 15 } };
+    const r = readSlotBuildJson(JSON.stringify(cli));
+    expect(r.ok && r.value.growth).toBeNull();
+    expect(r.ok && r.value.build.gear).toEqual({ head: { type: 'T9', level: 5 }, body: null, arm: null, leg: null });
+    expect(r.ok && r.value.build.recycleRoom).toEqual({ personal: 0, class: 0, corporation: 0 });
+    const withGrowth = readSlotBuildJson(JSON.stringify({ ...cli, growth }));
+    expect(withGrowth.ok && withGrowth.value.growth).toEqual(growth);
+  });
+
+  it('rejects unknown versions, bad values and bad growth', () => {
+    expect(readSlotBuildJson(JSON.stringify({ formatVersion: 2, build })).ok).toBe(false);
+    expect(readSlotBuildJson(JSON.stringify({ affectionRank: 41 })).ok).toBe(false);
+    expect(readSlotBuildJson(JSON.stringify({ build, growth: { level: 0 } })).ok).toBe(false);
+    expect(readSlotBuildJson('nope').ok).toBe(false);
+  });
+});
+
+describe('hit rate (Stage 15)', () => {
+  it('defaults to 1, round-trips, and reads Stage 14 data without it (treated as 1)', () => {
+    let s = withCharacters([10]);
+    expect(s.slots[0]?.condition.hitRate).toBe(1);
+    s = teamReducer(s, {
+      type: 'setSlotCondition',
+      index: 0,
+      condition: { ...s.slots[0]!.condition, hitRate: 0.8 },
+    });
+    expect(parseTeamState(serializeTeamState(s), index)?.slots[0]?.condition.hitRate).toBe(0.8);
+    const raw = JSON.parse(serializeTeamState(s)) as { slots: { condition: Record<string, unknown> }[] };
+    for (const slot of raw.slots) delete slot.condition.hitRate;
+    // 欠落は欠落のまま（計算では 1 = 射撃場）
+    expect(parseTeamState(JSON.stringify(raw), index)?.slots.every((x) => x.condition.hitRate === undefined)).toBe(
+      true,
+    );
+    for (const bad of [-0.1, 1.5, '1']) {
+      raw.slots[0]!.condition.hitRate = bad;
+      expect(parseTeamState(JSON.stringify(raw), index), String(bad)).toBeNull();
     }
   });
 });

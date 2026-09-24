@@ -349,12 +349,14 @@ describe('stackWindows (2.2・7.2)', () => {
 describe('condition "自分が 〈stat〉 増加状態なら" (2.4・3.3)', () => {
   it('checks passives and positive windows including ones starting at the frame', () => {
     const windows = [{ slotIndex: 0, effect: { stat: 'hitRate' as const, value: 0.0856 }, start: 100, end: 200 }];
-    const passive = [{ buffs: ZERO_BUFFS, passiveEffects: [], timedEffects: [] }];
+    const passive = [{ buffs: ZERO_BUFFS, passiveEffects: [], buildEffects: [], timedEffects: [] }];
     expect(selfBuffedAt(passive, windows, 0, 'hitRate', 99)).toBe(false);
     expect(selfBuffedAt(passive, windows, 0, 'hitRate', 100)).toBe(true);
     expect(selfBuffedAt(passive, windows, 0, 'hitRate', 200)).toBe(false);
     expect(selfBuffedAt(passive, windows, 1, 'hitRate', 150)).toBe(false);
-    const withPassive = [{ buffs: { ...ZERO_BUFFS, hitRate: 0.1 }, passiveEffects: [], timedEffects: [] }];
+    const withPassive = [
+      { buffs: { ...ZERO_BUFFS, hitRate: 0.1 }, passiveEffects: [], buildEffects: [], timedEffects: [] },
+    ];
     expect(selfBuffedAt(withPassive, [], 0, 'hitRate', 0)).toBe(true);
   });
 

@@ -4,6 +4,7 @@
 //   3. 長時間での収束（calc は sim の長時間平均）
 // Stage 6 の持続バフは describe('with timed buffs') で扱う。
 import { describe, expect, it } from 'vitest';
+import type { BuildEffect } from '../buildEffects.ts';
 import { slotsByStep, type BurstScheduleModel } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../sim/engine.ts';
@@ -365,5 +366,61 @@ describe('sim vs calc on the dynamic cycle: discretization error bounds', () => 
       return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
     });
     expect(diffs[2]).toBeLessThan(0.005);
+  });
+});
+
+// Stage 13: 育成入力の効果層（OL・キューブ・コレクション）を付けた編成（plan/design-stage12.md 3.4 節）。
+// 常時バフの合成だけなので、区間・1 トリガー値は厳密一致し、差は通常攻撃のトリガー数の期待値だけ（Stage 11 までと同じ範囲）
+const effect = (stat: BuildEffect['stat'], value: number): BuildEffect => ({
+  source: { kind: 'overload', name: { ja: '', en: '' }, level: 15 },
+  stat,
+  value,
+});
+const buildTeam: TeamSlotInput[] = team.map((s, i) => ({
+  ...s,
+  buildEffects: [
+    // AR: 攻撃力・有利コード・クリダメ・コアダメ（コレクション）
+    [
+      effect('attack', 0.1463),
+      effect('elementDamage', 0.2916),
+      effect('critDamage', 0.2036),
+      effect('coreDamage', 0.1704),
+    ],
+    // SMG: 通常攻撃ダメージ倍率（コレクション）・リロード速度（キューブ）
+    [effect('normalAttackDamage', 0.0946), effect('reloadSpeed', 0.2969)],
+    // SR: チャージダメ・チャージ速度・最大装弾数
+    [effect('chargeDamage', 0.0947), effect('chargeSpeed', 0.0604), effect('maxAmmo', 0.8537)],
+    // RL: クリ率・命中率（状態だけ）
+    [effect('critRate', 0.0707), effect('hitRate', 0.1463)],
+    // MG: バーストゲージのチャージ速度（クオンタム）・最大装弾数
+    [effect('burstGaugeSpeed', 0.0466), effect('maxAmmo', 0.095)],
+  ][i]!,
+}));
+
+describe('sim vs calc with build effects (Stage 13)', () => {
+  const input = { slots: buildTeam, enemy, durationSeconds: 180, burst: true, burstModel: 'dynamic' as const };
+  const sim = runSimulation(input);
+  const calc = computeTeamDamage(input);
+
+  it('share the same schedule, segmentation and per-segment trigger damage', () => {
+    expect(sim.schedule).toEqual(calc.schedule);
+    expect(sim.timeline.segments).toEqual(calc.timeline.segments);
+    for (let i = 0; i < buildTeam.length; i++) {
+      const c = calc.slots[i]!;
+      expect(c.passiveBuffs).toEqual(sim.slots[i]!.passiveBuffs);
+      expect(c.buildEffects).toEqual(sim.slots[i]!.buildEffects);
+      expect(c.buildEffects).toBe(buildTeam[i]!.buildEffects);
+    }
+  });
+
+  it('stays within 5% per slot and 3% on the total, and beats the same team without effects', () => {
+    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
+    for (let i = 0; i < buildTeam.length; i++) {
+      const s = sim.slots[i]!;
+      const c = calc.slots[i]!;
+      expect(Math.abs(s.totalDamage - c.totalDamage) / c.totalDamage, `slot ${i}`).toBeLessThan(0.05);
+    }
+    const plain = computeTeamDamage({ ...input, slots: team });
+    expect(calc.totalDamage).toBeGreaterThan(plain.totalDamage);
   });
 });
