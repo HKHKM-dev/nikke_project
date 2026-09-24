@@ -416,3 +416,51 @@ header p {
   opacity: 0.65;
   font-size: 0.75rem;
 }
+
+/* Stage 12: 育成入力（折り畳み） */
+.build {
+  margin: 4px 0 8px;
+  padding: 4px 8px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+}
+.build > summary {
+  cursor: pointer;
+  font-size: 0.9em;
+}
+.build-attack strong {
+  font-variant-numeric: tabular-nums;
+}
+.build-grid {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+}
+.build-grid .field.gear {
+  display: grid;
+  grid-template-columns: 6.5em minmax(0, 1fr);
+  align-items: center;
+  gap: 2px 8px;
+}
+.build-grid .field.gear > small {
+  grid-column: 2;
+}
+.gear-inputs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4.5em;
+  gap: 4px;
+}
+.gear-inputs.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.gear-inputs input,
+.gear-inputs select {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  font: inherit;
+}
+.build-breakdown {
+  font-variant-numeric: tabular-nums;
+}

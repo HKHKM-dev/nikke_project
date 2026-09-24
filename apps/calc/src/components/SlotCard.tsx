@@ -11,6 +11,8 @@ import {
   type GrowthInput,
   type NikkeClass,
   type AppliedTimedEffect,
+  type BuildInput,
+  type BuildMasters,
   type SkillLevels,
   type TeamSlotResult,
 } from '@nikke/core';
@@ -26,6 +28,7 @@ import {
 } from '../skillLabels.ts';
 import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
+import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
 import { SkillSection } from './SkillSection.tsx';
 
@@ -45,6 +48,10 @@ type Props = {
   effectiveGrowth: GrowthInput;
   /** スペック固定を反映した実際に計算へ渡すスキル Lv */
   effectiveSkillLevels: SkillLevels;
+  /** Stage 12: スペック固定を反映した実際に計算へ渡す育成入力 */
+  effectiveBuild: BuildInput;
+  masters: BuildMasters | null;
+  mastersError: string | null;
   skillsStatus: SlotSkillsStatus;
   /** 枠番号 → ニケ名（バフの発動元表示用）。未選択・読み込み中は undefined */
   slotNames: readonly (string | undefined)[];
@@ -63,6 +70,9 @@ export function SlotCard({
   fixedSpec,
   effectiveGrowth,
   effectiveSkillLevels,
+  effectiveBuild,
+  masters,
+  mastersError,
   skillsStatus,
   slotNames,
   slotResult,
@@ -193,6 +203,18 @@ export function SlotCard({
             {growthField('grade', '限界突破', 0, limits.gradeMax)}
             {growthField('core', 'コア強化', 0, limits.coreMax)}
           </div>
+          <BuildSection
+            slotIndex={slotIndex}
+            character={character}
+            build={slot.build}
+            effectiveBuild={effectiveBuild}
+            growth={effectiveGrowth}
+            treasurePhase={effectiveTreasurePhase(slot, character)}
+            masters={masters}
+            mastersError={mastersError}
+            disabled={fixedSpec}
+            dispatch={dispatch}
+          />
           <label className="field">
             <span>コア命中率</span>
             <input

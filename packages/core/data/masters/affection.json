@@ -1,0 +1,725 @@
+{
+  "formatVersion": 1,
+  "ranks": [
+    {
+      "rank": 1,
+      "attack": {
+        "Attacker": 0,
+        "Defender": 0,
+        "Supporter": 0
+      },
+      "hp": {
+        "Attacker": 0,
+        "Defender": 0,
+        "Supporter": 0
+      },
+      "defence": {
+        "Attacker": 0,
+        "Defender": 0,
+        "Supporter": 0
+      }
+    },
+    {
+      "rank": 2,
+      "attack": {
+        "Attacker": 29,
+        "Defender": 19,
+        "Supporter": 24
+      },
+      "hp": {
+        "Attacker": 649,
+        "Defender": 793,
+        "Supporter": 721
+      },
+      "defence": {
+        "Attacker": 5,
+        "Defender": 6,
+        "Supporter": 5
+      }
+    },
+    {
+      "rank": 3,
+      "attack": {
+        "Attacker": 66,
+        "Defender": 44,
+        "Supporter": 55
+      },
+      "hp": {
+        "Attacker": 1490,
+        "Defender": 1822,
+        "Supporter": 1656
+      },
+      "defence": {
+        "Attacker": 10,
+        "Defender": 12,
+        "Supporter": 11
+      }
+    },
+    {
+      "rank": 4,
+      "attack": {
+        "Attacker": 108,
+        "Defender": 72,
+        "Supporter": 90
+      },
+      "hp": {
+        "Attacker": 2425,
+        "Defender": 2963,
+        "Supporter": 2694
+      },
+      "defence": {
+        "Attacker": 16,
+        "Defender": 20,
+        "Supporter": 18
+      }
+    },
+    {
+      "rank": 5,
+      "attack": {
+        "Attacker": 152,
+        "Defender": 102,
+        "Supporter": 127
+      },
+      "hp": {
+        "Attacker": 3425,
+        "Defender": 4186,
+        "Supporter": 3805
+      },
+      "defence": {
+        "Attacker": 23,
+        "Defender": 28,
+        "Supporter": 25
+      }
+    },
+    {
+      "rank": 6,
+      "attack": {
+        "Attacker": 199,
+        "Defender": 133,
+        "Supporter": 166
+      },
+      "hp": {
+        "Attacker": 4476,
+        "Defender": 5470,
+        "Supporter": 4973
+      },
+      "defence": {
+        "Attacker": 30,
+        "Defender": 36,
+        "Supporter": 33
+      }
+    },
+    {
+      "rank": 7,
+      "attack": {
+        "Attacker": 247,
+        "Defender": 165,
+        "Supporter": 206
+      },
+      "hp": {
+        "Attacker": 5571,
+        "Defender": 6809,
+        "Supporter": 6190
+      },
+      "defence": {
+        "Attacker": 37,
+        "Defender": 45,
+        "Supporter": 41
+      }
+    },
+    {
+      "rank": 8,
+      "attack": {
+        "Attacker": 298,
+        "Defender": 198,
+        "Supporter": 248
+      },
+      "hp": {
+        "Attacker": 6702,
+        "Defender": 8192,
+        "Supporter": 7447
+      },
+      "defence": {
+        "Attacker": 45,
+        "Defender": 55,
+        "Supporter": 50
+      }
+    },
+    {
+      "rank": 9,
+      "attack": {
+        "Attacker": 349,
+        "Defender": 233,
+        "Supporter": 291
+      },
+      "hp": {
+        "Attacker": 7868,
+        "Defender": 9616,
+        "Supporter": 8742
+      },
+      "defence": {
+        "Attacker": 52,
+        "Defender": 64,
+        "Supporter": 58
+      }
+    },
+    {
+      "rank": 10,
+      "attack": {
+        "Attacker": 403,
+        "Defender": 269,
+        "Supporter": 336
+      },
+      "hp": {
+        "Attacker": 9062,
+        "Defender": 11076,
+        "Supporter": 10069
+      },
+      "defence": {
+        "Attacker": 60,
+        "Defender": 74,
+        "Supporter": 67
+      }
+    },
+    {
+      "rank": 11,
+      "attack": {
+        "Attacker": 457,
+        "Defender": 305,
+        "Supporter": 381
+      },
+      "hp": {
+        "Attacker": 10283,
+        "Defender": 12569,
+        "Supporter": 11426
+      },
+      "defence": {
+        "Attacker": 68,
+        "Defender": 84,
+        "Supporter": 76
+      }
+    },
+    {
+      "rank": 12,
+      "attack": {
+        "Attacker": 512,
+        "Defender": 342,
+        "Supporter": 427
+      },
+      "hp": {
+        "Attacker": 11529,
+        "Defender": 14091,
+        "Supporter": 12810
+      },
+      "defence": {
+        "Attacker": 77,
+        "Defender": 94,
+        "Supporter": 85
+      }
+    },
+    {
+      "rank": 13,
+      "attack": {
+        "Attacker": 569,
+        "Defender": 379,
+        "Supporter": 474
+      },
+      "hp": {
+        "Attacker": 12798,
+        "Defender": 15642,
+        "Supporter": 14220
+      },
+      "defence": {
+        "Attacker": 86,
+        "Defender": 105,
+        "Supporter": 95
+      }
+    },
+    {
+      "rank": 14,
+      "attack": {
+        "Attacker": 626,
+        "Defender": 418,
+        "Supporter": 522
+      },
+      "hp": {
+        "Attacker": 14088,
+        "Defender": 17218,
+        "Supporter": 15653
+      },
+      "defence": {
+        "Attacker": 94,
+        "Defender": 114,
+        "Supporter": 104
+      }
+    },
+    {
+      "rank": 15,
+      "attack": {
+        "Attacker": 684,
+        "Defender": 456,
+        "Supporter": 570
+      },
+      "hp": {
+        "Attacker": 15398,
+        "Defender": 18820,
+        "Supporter": 17109
+      },
+      "defence": {
+        "Attacker": 103,
+        "Defender": 125,
+        "Supporter": 114
+      }
+    },
+    {
+      "rank": 16,
+      "attack": {
+        "Attacker": 744,
+        "Defender": 496,
+        "Supporter": 620
+      },
+      "hp": {
+        "Attacker": 16727,
+        "Defender": 20445,
+        "Supporter": 18586
+      },
+      "defence": {
+        "Attacker": 112,
+        "Defender": 136,
+        "Supporter": 124
+      }
+    },
+    {
+      "rank": 17,
+      "attack": {
+        "Attacker": 803,
+        "Defender": 535,
+        "Supporter": 669
+      },
+      "hp": {
+        "Attacker": 18075,
+        "Defender": 22091,
+        "Supporter": 20083
+      },
+      "defence": {
+        "Attacker": 121,
+        "Defender": 147,
+        "Supporter": 134
+      }
+    },
+    {
+      "rank": 18,
+      "attack": {
+        "Attacker": 864,
+        "Defender": 576,
+        "Supporter": 720
+      },
+      "hp": {
+        "Attacker": 19438,
+        "Defender": 23758,
+        "Supporter": 21598
+      },
+      "defence": {
+        "Attacker": 130,
+        "Defender": 158,
+        "Supporter": 144
+      }
+    },
+    {
+      "rank": 19,
+      "attack": {
+        "Attacker": 925,
+        "Defender": 617,
+        "Supporter": 771
+      },
+      "hp": {
+        "Attacker": 20819,
+        "Defender": 25445,
+        "Supporter": 23132
+      },
+      "defence": {
+        "Attacker": 139,
+        "Defender": 169,
+        "Supporter": 154
+      }
+    },
+    {
+      "rank": 20,
+      "attack": {
+        "Attacker": 988,
+        "Defender": 658,
+        "Supporter": 823
+      },
+      "hp": {
+        "Attacker": 22214,
+        "Defender": 27150,
+        "Supporter": 24682
+      },
+      "defence": {
+        "Attacker": 149,
+        "Defender": 182,
+        "Supporter": 165
+      }
+    },
+    {
+      "rank": 21,
+      "attack": {
+        "Attacker": 1050,
+        "Defender": 700,
+        "Supporter": 875
+      },
+      "hp": {
+        "Attacker": 23624,
+        "Defender": 28874,
+        "Supporter": 26249
+      },
+      "defence": {
+        "Attacker": 158,
+        "Defender": 193,
+        "Supporter": 175
+      }
+    },
+    {
+      "rank": 22,
+      "attack": {
+        "Attacker": 1114,
+        "Defender": 742,
+        "Supporter": 928
+      },
+      "hp": {
+        "Attacker": 25049,
+        "Defender": 30615,
+        "Supporter": 27832
+      },
+      "defence": {
+        "Attacker": 167,
+        "Defender": 205,
+        "Supporter": 186
+      }
+    },
+    {
+      "rank": 23,
+      "attack": {
+        "Attacker": 1177,
+        "Defender": 785,
+        "Supporter": 981
+      },
+      "hp": {
+        "Attacker": 26487,
+        "Defender": 32373,
+        "Supporter": 29430
+      },
+      "defence": {
+        "Attacker": 176,
+        "Defender": 216,
+        "Supporter": 196
+      }
+    },
+    {
+      "rank": 24,
+      "attack": {
+        "Attacker": 1242,
+        "Defender": 828,
+        "Supporter": 1035
+      },
+      "hp": {
+        "Attacker": 27938,
+        "Defender": 34146,
+        "Supporter": 31042
+      },
+      "defence": {
+        "Attacker": 186,
+        "Defender": 228,
+        "Supporter": 207
+      }
+    },
+    {
+      "rank": 25,
+      "attack": {
+        "Attacker": 1307,
+        "Defender": 871,
+        "Supporter": 1089
+      },
+      "hp": {
+        "Attacker": 29402,
+        "Defender": 35936,
+        "Supporter": 32669
+      },
+      "defence": {
+        "Attacker": 196,
+        "Defender": 240,
+        "Supporter": 218
+      }
+    },
+    {
+      "rank": 26,
+      "attack": {
+        "Attacker": 1373,
+        "Defender": 915,
+        "Supporter": 1144
+      },
+      "hp": {
+        "Attacker": 30878,
+        "Defender": 37740,
+        "Supporter": 34309
+      },
+      "defence": {
+        "Attacker": 206,
+        "Defender": 252,
+        "Supporter": 229
+      }
+    },
+    {
+      "rank": 27,
+      "attack": {
+        "Attacker": 1439,
+        "Defender": 959,
+        "Supporter": 1199
+      },
+      "hp": {
+        "Attacker": 32366,
+        "Defender": 39558,
+        "Supporter": 35962
+      },
+      "defence": {
+        "Attacker": 216,
+        "Defender": 264,
+        "Supporter": 240
+      }
+    },
+    {
+      "rank": 28,
+      "attack": {
+        "Attacker": 1505,
+        "Defender": 1003,
+        "Supporter": 1254
+      },
+      "hp": {
+        "Attacker": 33865,
+        "Defender": 41391,
+        "Supporter": 37628
+      },
+      "defence": {
+        "Attacker": 226,
+        "Defender": 276,
+        "Supporter": 251
+      }
+    },
+    {
+      "rank": 29,
+      "attack": {
+        "Attacker": 1572,
+        "Defender": 1048,
+        "Supporter": 1310
+      },
+      "hp": {
+        "Attacker": 35376,
+        "Defender": 43238,
+        "Supporter": 39307
+      },
+      "defence": {
+        "Attacker": 236,
+        "Defender": 288,
+        "Supporter": 262
+      }
+    },
+    {
+      "rank": 30,
+      "attack": {
+        "Attacker": 1640,
+        "Defender": 1094,
+        "Supporter": 1367
+      },
+      "hp": {
+        "Attacker": 36897,
+        "Defender": 45097,
+        "Supporter": 40997
+      },
+      "defence": {
+        "Attacker": 246,
+        "Defender": 300,
+        "Supporter": 273
+      }
+    },
+    {
+      "rank": 31,
+      "attack": {
+        "Attacker": 1708,
+        "Defender": 1138,
+        "Supporter": 1423
+      },
+      "hp": {
+        "Attacker": 38430,
+        "Defender": 46970,
+        "Supporter": 42700
+      },
+      "defence": {
+        "Attacker": 257,
+        "Defender": 314,
+        "Supporter": 285
+      }
+    },
+    {
+      "rank": 32,
+      "attack": {
+        "Attacker": 1776,
+        "Defender": 1184,
+        "Supporter": 1480
+      },
+      "hp": {
+        "Attacker": 39972,
+        "Defender": 48854,
+        "Supporter": 44413
+      },
+      "defence": {
+        "Attacker": 266,
+        "Defender": 326,
+        "Supporter": 296
+      }
+    },
+    {
+      "rank": 33,
+      "attack": {
+        "Attacker": 1846,
+        "Defender": 1230,
+        "Supporter": 1538
+      },
+      "hp": {
+        "Attacker": 41524,
+        "Defender": 50752,
+        "Supporter": 46138
+      },
+      "defence": {
+        "Attacker": 277,
+        "Defender": 339,
+        "Supporter": 308
+      }
+    },
+    {
+      "rank": 34,
+      "attack": {
+        "Attacker": 1915,
+        "Defender": 1277,
+        "Supporter": 1596
+      },
+      "hp": {
+        "Attacker": 43086,
+        "Defender": 52660,
+        "Supporter": 47873
+      },
+      "defence": {
+        "Attacker": 287,
+        "Defender": 351,
+        "Supporter": 319
+      }
+    },
+    {
+      "rank": 35,
+      "attack": {
+        "Attacker": 1985,
+        "Defender": 1323,
+        "Supporter": 1654
+      },
+      "hp": {
+        "Attacker": 44658,
+        "Defender": 54582,
+        "Supporter": 49620
+      },
+      "defence": {
+        "Attacker": 298,
+        "Defender": 364,
+        "Supporter": 331
+      }
+    },
+    {
+      "rank": 36,
+      "attack": {
+        "Attacker": 2056,
+        "Defender": 1370,
+        "Supporter": 1713
+      },
+      "hp": {
+        "Attacker": 46238,
+        "Defender": 56514,
+        "Supporter": 51376
+      },
+      "defence": {
+        "Attacker": 309,
+        "Defender": 377,
+        "Supporter": 343
+      }
+    },
+    {
+      "rank": 37,
+      "attack": {
+        "Attacker": 2125,
+        "Defender": 1417,
+        "Supporter": 1771
+      },
+      "hp": {
+        "Attacker": 47828,
+        "Defender": 58456,
+        "Supporter": 53142
+      },
+      "defence": {
+        "Attacker": 319,
+        "Defender": 389,
+        "Supporter": 354
+      }
+    },
+    {
+      "rank": 38,
+      "attack": {
+        "Attacker": 2197,
+        "Defender": 1465,
+        "Supporter": 1831
+      },
+      "hp": {
+        "Attacker": 49427,
+        "Defender": 60411,
+        "Supporter": 54919
+      },
+      "defence": {
+        "Attacker": 329,
+        "Defender": 403,
+        "Supporter": 366
+      }
+    },
+    {
+      "rank": 39,
+      "attack": {
+        "Attacker": 2268,
+        "Defender": 1512,
+        "Supporter": 1890
+      },
+      "hp": {
+        "Attacker": 51035,
+        "Defender": 62376,
+        "Supporter": 56705
+      },
+      "defence": {
+        "Attacker": 340,
+        "Defender": 416,
+        "Supporter": 378
+      }
+    },
+    {
+      "rank": 40,
+      "attack": {
+        "Attacker": 2340,
+        "Defender": 1560,
+        "Supporter": 1950
+      },
+      "hp": {
+        "Attacker": 52650,
+        "Defender": 64350,
+        "Supporter": 58500
+      },
+      "defence": {
+        "Attacker": 351,
+        "Defender": 429,
+        "Supporter": 390
+      }
+    }
+  ]
+}

@@ -1,0 +1,676 @@
+{
+  "formatVersion": 1,
+  "collections": [
+    {
+      "id": 100101,
+      "rarity": "R",
+      "weaponType": "AR",
+      "name": {
+        "ja": "お料理指揮官のぬいぐるみ",
+        "en": "Cooking Commander Doll"
+      },
+      "stats": {
+        "attack": [638, 809, 980, 1150, 1321, 1577, 1833, 2089, 2346, 2602, 2943, 3285, 3626, 3968, 4309, 4736],
+        "hp": [19400, 24750, 30050, 35400, 40700, 48700, 56700, 64700, 72700, 80650, 91350, 102000, 112650, 123300, 133950, 147250],
+        "defence": [128, 164, 201, 237, 274, 328, 383, 438, 492, 547, 620, 692, 765, 838, 911, 1002]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71110101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「コアダメージ{description_value_01}％▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Damage dealt when attacking core ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["5.67", "7.94", "10.22", "12.49"],
+            ["25", "28", "30", "32"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100201,
+      "rarity": "R",
+      "weaponType": "MG",
+      "name": {
+        "ja": "お買い物指揮官のぬいぐるみ",
+        "en": "Shopping Commander Doll"
+      },
+      "stats": {
+        "attack": [638, 809, 980, 1150, 1321, 1577, 1833, 2089, 2346, 2602, 2943, 3285, 3626, 3968, 4309, 4736],
+        "hp": [19400, 24750, 30050, 35400, 40700, 48700, 56700, 64700, 72700, 80650, 91350, 102000, 112650, 123300, 133950, 147250],
+        "defence": [128, 164, 201, 237, 274, 328, 383, 438, 492, 547, 620, 692, 765, 838, 911, 1002]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71140101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「最大装弾数{description_value_01}％▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Max Ammunition Capacity ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["1.56", "3.15", "4.74", "6.32"],
+            ["25", "28", "30", "32"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100301,
+      "rarity": "R",
+      "weaponType": "RL",
+      "name": {
+        "ja": "運動指揮官のぬいぐるみ",
+        "en": "Exercising Commander Doll"
+      },
+      "stats": {
+        "attack": [638, 809, 980, 1150, 1321, 1577, 1833, 2089, 2346, 2602, 2943, 3285, 3626, 3968, 4309, 4736],
+        "hp": [19400, 24750, 30050, 35400, 40700, 48700, 56700, 64700, 72700, 80650, 91350, 102000, 112650, 123300, 133950, 147250],
+        "defence": [128, 164, 201, 237, 274, 328, 383, 438, 492, 547, 620, 692, 765, 838, 911, 1002]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71130101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「チャージダメージ{description_value_01}％<word_group=10029>倍率</word_group>▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Charge Damage <word_group=10029>Multiplier</word_group> ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["1.58", "3.16", "4.74", "6.31"],
+            ["25", "28", "30", "32"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100401,
+      "rarity": "R",
+      "weaponType": "SG",
+      "name": {
+        "ja": "戦闘指揮官のぬいぐるみ",
+        "en": "Battling Commander Doll"
+      },
+      "stats": {
+        "attack": [638, 809, 980, 1150, 1321, 1577, 1833, 2089, 2346, 2602, 2943, 3285, 3626, 3968, 4309, 4736],
+        "hp": [19400, 24750, 30050, 35400, 40700, 48700, 56700, 64700, 72700, 80650, 91350, 102000, 112650, 123300, 133950, 147250],
+        "defence": [128, 164, 201, 237, 274, 328, 383, 438, 492, 547, 620, 692, 765, 838, 911, 1002]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71150101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「通常攻撃ダメージ{description_value_01}％<word_group=10029>倍率</word_group>▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Normal Attack Damage <word_group=10029>Multiplier</word_group> ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["1.57", "3.15", "4.73", "6.3"],
+            ["25", "28", "30", "32"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100501,
+      "rarity": "R",
+      "weaponType": "SMG",
+      "name": {
+        "ja": "コーヒー指揮官のぬいぐるみ",
+        "en": "Coffee Commander Doll"
+      },
+      "stats": {
+        "attack": [638, 809, 980, 1150, 1321, 1577, 1833, 2089, 2346, 2602, 2943, 3285, 3626, 3968, 4309, 4736],
+        "hp": [19400, 24750, 30050, 35400, 40700, 48700, 56700, 64700, 72700, 80650, 91350, 102000, 112650, 123300, 133950, 147250],
+        "defence": [128, 164, 201, 237, 274, 328, 383, 438, 492, 547, 620, 692, 765, 838, 911, 1002]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71190101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「通常攻撃ダメージ{description_value_01}％<word_group=10029>倍率</word_group>▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Normal Attack Damage <word_group=10029>Multiplier</word_group> ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["1.57", "3.15", "4.73", "6.3"],
+            ["25", "28", "30", "32"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100601,
+      "rarity": "R",
+      "weaponType": "SR",
+      "name": {
+        "ja": "お昼寝指揮官のぬいぐるみ",
+        "en": "Napping Commander Doll"
+      },
+      "stats": {
+        "attack": [638, 809, 980, 1150, 1321, 1577, 1833, 2089, 2346, 2602, 2943, 3285, 3626, 3968, 4309, 4736],
+        "hp": [19400, 24750, 30050, 35400, 40700, 48700, 56700, 64700, 72700, 80650, 91350, 102000, 112650, 123300, 133950, 147250],
+        "defence": [128, 164, 201, 237, 274, 328, 383, 438, 492, 547, 620, 692, 765, 838, 911, 1002]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71130101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「チャージダメージ{description_value_01}％<word_group=10029>倍率</word_group>▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Charge Damage <word_group=10029>Multiplier</word_group> ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["1.58", "3.16", "4.74", "6.31"],
+            ["25", "28", "30", "32"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100102,
+      "rarity": "SR",
+      "weaponType": "AR",
+      "name": {
+        "ja": "お料理指揮官のぬいぐるみLtd.",
+        "en": "Cooking Commander Doll Ltd."
+      },
+      "stats": {
+        "attack": [3029, 3370, 3712, 4053, 4395, 4821, 5248, 5675, 6102, 6529, 7041, 7554, 8066, 8578, 9090, 9688],
+        "hp": [94000, 104650, 115300, 125950, 136600, 149950, 163250, 176600, 189900, 203200, 219200, 235200, 251150, 267150, 283150, 301800],
+        "defence": [638, 711, 783, 856, 929, 1020, 1111, 1202, 1293, 1384, 1494, 1603, 1712, 1821, 1931, 2058]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4],
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71210101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「コアダメージ{description_value_01}％▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Damage dealt when attacking core ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["10.22", "12.49", "14.77", "17.04"],
+            ["30", "32", "35", "37"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 71200201,
+          "name": {
+            "ja": "メンタルサポート",
+            "en": "Grounding Pillar"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「受けるダメージ{description_value_01}％▼」</color>\n<color=#00AEFF>「<word_group=10033>遮蔽物最大HP</word_group>{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Damage Taken ▼ {description_value_01}%.</color>\n<color=#00AEFF><word_group=10033>Max HP of cover</word_group> ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["10", "12", "14", "17"],
+            ["12", "18", "24", "30"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100202,
+      "rarity": "SR",
+      "weaponType": "MG",
+      "name": {
+        "ja": "お買い物指揮官のぬいぐるみLtd.",
+        "en": "Shopping Commander Doll Ltd."
+      },
+      "stats": {
+        "attack": [3029, 3370, 3712, 4053, 4395, 4821, 5248, 5675, 6102, 6529, 7041, 7554, 8066, 8578, 9090, 9688],
+        "hp": [94000, 104650, 115300, 125950, 136600, 149950, 163250, 176600, 189900, 203200, 219200, 235200, 251150, 267150, 283150, 301800],
+        "defence": [638, 711, 783, 856, 929, 1020, 1111, 1202, 1293, 1384, 1494, 1603, 1712, 1821, 1931, 2058]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4],
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71240101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「最大装弾数{description_value_01}％▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Max Ammunition Capacity ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["4.74", "6.32", "7.91", "9.5"],
+            ["30", "32", "35", "37"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 71200201,
+          "name": {
+            "ja": "メンタルサポート",
+            "en": "Grounding Pillar"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「受けるダメージ{description_value_01}％▼」</color>\n<color=#00AEFF>「<word_group=10033>遮蔽物最大HP</word_group>{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Damage Taken ▼ {description_value_01}%.</color>\n<color=#00AEFF><word_group=10033>Max HP of cover</word_group> ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["10", "12", "14", "17"],
+            ["12", "18", "24", "30"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100302,
+      "rarity": "SR",
+      "weaponType": "RL",
+      "name": {
+        "ja": "運動指揮官のぬいぐるみLtd.",
+        "en": "Exercising Commander Doll Ltd."
+      },
+      "stats": {
+        "attack": [3029, 3370, 3712, 4053, 4395, 4821, 5248, 5675, 6102, 6529, 7041, 7554, 8066, 8578, 9090, 9688],
+        "hp": [94000, 104650, 115300, 125950, 136600, 149950, 163250, 176600, 189900, 203200, 219200, 235200, 251150, 267150, 283150, 301800],
+        "defence": [638, 711, 783, 856, 929, 1020, 1111, 1202, 1293, 1384, 1494, 1603, 1712, 1821, 1931, 2058]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4],
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71230101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「チャージダメージ{description_value_01}％<word_group=10029>倍率</word_group>▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Charge Damage <word_group=10029>Multiplier</word_group> ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["4.74", "6.31", "7.89", "9.47"],
+            ["30", "32", "35", "37"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 71200201,
+          "name": {
+            "ja": "メンタルサポート",
+            "en": "Grounding Pillar"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「受けるダメージ{description_value_01}％▼」</color>\n<color=#00AEFF>「<word_group=10033>遮蔽物最大HP</word_group>{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Damage Taken ▼ {description_value_01}%.</color>\n<color=#00AEFF><word_group=10033>Max HP of cover</word_group> ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["10", "12", "14", "17"],
+            ["12", "18", "24", "30"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100402,
+      "rarity": "SR",
+      "weaponType": "SG",
+      "name": {
+        "ja": "戦闘指揮官のぬいぐるみLtd.",
+        "en": "Battling Commander Doll Ltd."
+      },
+      "stats": {
+        "attack": [3029, 3370, 3712, 4053, 4395, 4821, 5248, 5675, 6102, 6529, 7041, 7554, 8066, 8578, 9090, 9688],
+        "hp": [94000, 104650, 115300, 125950, 136600, 149950, 163250, 176600, 189900, 203200, 219200, 235200, 251150, 267150, 283150, 301800],
+        "defence": [638, 711, 783, 856, 929, 1020, 1111, 1202, 1293, 1384, 1494, 1603, 1712, 1821, 1931, 2058]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4],
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71250101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「通常攻撃ダメージ{description_value_01}％<word_group=10029>倍率</word_group>▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Normal Attack Damage <word_group=10029>Multiplier</word_group> ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["4.73", "6.3", "7.88", "9.46"],
+            ["30", "32", "35", "37"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 71200201,
+          "name": {
+            "ja": "メンタルサポート",
+            "en": "Grounding Pillar"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「受けるダメージ{description_value_01}％▼」</color>\n<color=#00AEFF>「<word_group=10033>遮蔽物最大HP</word_group>{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Damage Taken ▼ {description_value_01}%.</color>\n<color=#00AEFF><word_group=10033>Max HP of cover</word_group> ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["10", "12", "14", "17"],
+            ["12", "18", "24", "30"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100502,
+      "rarity": "SR",
+      "weaponType": "SMG",
+      "name": {
+        "ja": "コーヒー指揮官のぬいぐるみLtd.",
+        "en": "Coffee Commander Doll Ltd."
+      },
+      "stats": {
+        "attack": [3029, 3370, 3712, 4053, 4395, 4821, 5248, 5675, 6102, 6529, 7041, 7554, 8066, 8578, 9090, 9688],
+        "hp": [94000, 104650, 115300, 125950, 136600, 149950, 163250, 176600, 189900, 203200, 219200, 235200, 251150, 267150, 283150, 301800],
+        "defence": [638, 711, 783, 856, 929, 1020, 1111, 1202, 1293, 1384, 1494, 1603, 1712, 1821, 1931, 2058]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4],
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71290101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「通常攻撃ダメージ{description_value_01}％<word_group=10029>倍率</word_group>▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Normal Attack Damage <word_group=10029>Multiplier</word_group> ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["4.73", "6.3", "7.88", "9.46"],
+            ["30", "32", "35", "37"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 71200201,
+          "name": {
+            "ja": "メンタルサポート",
+            "en": "Grounding Pillar"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「受けるダメージ{description_value_01}％▼」</color>\n<color=#00AEFF>「<word_group=10033>遮蔽物最大HP</word_group>{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Damage Taken ▼ {description_value_01}%.</color>\n<color=#00AEFF><word_group=10033>Max HP of cover</word_group> ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["10", "12", "14", "17"],
+            ["12", "18", "24", "30"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100602,
+      "rarity": "SR",
+      "weaponType": "SR",
+      "name": {
+        "ja": "お昼寝指揮官のぬいぐるみLtd.",
+        "en": "Napping Commander Doll Ltd."
+      },
+      "stats": {
+        "attack": [3029, 3370, 3712, 4053, 4395, 4821, 5248, 5675, 6102, 6529, 7041, 7554, 8066, 8578, 9090, 9688],
+        "hp": [94000, 104650, 115300, 125950, 136600, 149950, 163250, 176600, 189900, 203200, 219200, 235200, 251150, 267150, 283150, 301800],
+        "defence": [638, 711, 783, 856, 929, 1020, 1111, 1202, 1293, 1384, 1494, 1603, 1712, 1821, 1931, 2058]
+      },
+      "skillStages": [
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4],
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4]
+      ],
+      "skills": [
+        {
+          "id": 71230101,
+          "name": {
+            "ja": "エンカレジメント",
+            "en": "Gaze of Courage"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「チャージダメージ{description_value_01}％<word_group=10029>倍率</word_group>▲」</color>\n<color=#00AEFF>「防御力{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Charge Damage <word_group=10029>Multiplier</word_group> ▲ {description_value_01}%.</color>\n<color=#00AEFF>DEF ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["4.74", "6.31", "7.89", "9.47"],
+            ["30", "32", "35", "37"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 71200201,
+          "name": {
+            "ja": "メンタルサポート",
+            "en": "Grounding Pillar"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「受けるダメージ{description_value_01}％▼」</color>\n<color=#00AEFF>「<word_group=10033>遮蔽物最大HP</word_group>{description_value_02}％▲」</color>",
+            "en": "■ Activates at the start of battle. \n<color=#00AEFF>Damage Taken ▼ {description_value_01}%.</color>\n<color=#00AEFF><word_group=10033>Max HP of cover</word_group> ▲ {description_value_02}%.</color>"
+          },
+          "values": [
+            ["10", "12", "14", "17"],
+            ["12", "18", "24", "30"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    }
+  ],
+  "treasureStats": {
+    "attack": 9688,
+    "hp": 301800,
+    "defence": 2058
+  }
+}

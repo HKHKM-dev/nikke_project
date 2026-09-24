@@ -8,6 +8,7 @@ export * from './load.ts';
 export * from './cadence.ts';
 export * from './damage.ts';
 export * from './fixedSpec.ts';
+export * from './build.ts';
 export * from './team.ts';
 export * from './skills/types.ts';
 export * from './skills/buffs.ts';

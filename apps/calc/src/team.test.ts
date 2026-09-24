@@ -257,3 +257,44 @@ describe('treasure phase (Stage 9)', () => {
     expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
   });
 });
+
+describe('build (Stage 12)', () => {
+  it('defaults to an empty build, updates per slot and survives a character change', () => {
+    let s = withCharacters([10]);
+    expect(s.slots[0]?.build.affectionRank).toBe(1);
+    expect(s.slots[0]?.build.gear.head).toBeNull();
+    const build = {
+      ...s.slots[0]!.build,
+      affectionRank: 30,
+      gear: { ...s.slots[0]!.build.gear, head: { type: 'T9' as const, level: 5 } },
+      cube: { id: 1000301, level: 15 },
+    };
+    s = teamReducer(s, { type: 'setBuild', index: 0, build });
+    expect(s.slots[0]?.build).toEqual(build);
+    s = teamReducer(s, { type: 'selectCharacter', index: 0, resourceId: 20 });
+    expect(s.slots[0]?.build).toEqual(build);
+    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
+  });
+
+  it('parseTeamState fills a missing build (Stage 11 data) with an empty one and rejects bad values', () => {
+    const stage11 = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
+    const slots = stage11.slots as Record<string, unknown>[];
+    for (const slot of slots) delete slot.build;
+    expect(parseTeamState(JSON.stringify(stage11), index)?.slots[0]?.build.cube).toBeNull();
+    const bad = [
+      { affectionRank: 0 },
+      { affectionRank: 41 },
+      { gear: { head: { type: 'T8', level: 0 }, body: null, arm: null, leg: null } },
+      { gear: { head: { type: 'T9', level: 6 }, body: null, arm: null, leg: null } },
+      { cube: { id: 1000301, level: 16 } },
+      { collection: { rarity: 'SSR', level: 1 } },
+      { recycleRoom: { personal: -1, class: 0, corporation: 0 } },
+      { extraAttack: -5 },
+    ];
+    const ok = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: { build: Record<string, unknown> }[] };
+    for (const patch of bad) {
+      const raw = { ...ok, slots: ok.slots.map((s, i) => (i === 0 ? { ...s, build: { ...s.build, ...patch } } : s)) };
+      expect(parseTeamState(JSON.stringify(raw), index), JSON.stringify(patch)).toBeNull();
+    }
+  });
+});

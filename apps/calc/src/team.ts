@@ -1,17 +1,30 @@
 // 編成の状態と reducer。React に依存しない純関数だけを置き、node 環境の vitest でテストする。
 import {
+  AFFECTION_RANK_MAX,
+  AFFECTION_RANK_MIN,
+  COLLECTION_LEVEL_MAX,
+  CUBE_LEVEL_MAX,
+  CUBE_LEVEL_MIN,
   ELEMENTS,
   FIXED_SPEC_ENEMY_DEFENCE,
+  GEAR_LEVEL_MAX,
+  GEAR_PARTS,
+  GEAR_TYPES,
   MAX_SKILL_LEVELS,
   SKILL_LEVEL_MAX,
   SKILL_LEVEL_MIN,
   SKILL_SLOTS,
   TEAM_SIZE,
   TREASURE_PHASE_MAX,
+  emptyBuild,
+  fixedSpecBuild,
+  type BuildInput,
   type CharacterData,
   type CharacterIndexEntry,
   type Element,
   type EnemyInput,
+  type GearInput,
+  type GearType,
   type GrowthInput,
   type SkillLevels,
   type SlotCondition,
@@ -37,6 +50,8 @@ export type SlotState = {
   skillLevels: SkillLevels;
   /** Stage 9: 宝物の段階。キャラを選び直すと 0 に戻る。スペック固定でも上書きしない */
   treasurePhase: TreasurePhase;
+  /** Stage 12: 育成入力（装備・キューブ・好感度・コレクション・リサイクルルーム・その他）。growth と同じくキャラを変えても残る */
+  build: BuildInput;
 };
 
 export type TeamState = {
@@ -59,6 +74,7 @@ export type TeamAction =
   | { type: 'setSlotCondition'; index: number; condition: SlotCondition }
   | { type: 'setSkillLevels'; index: number; skillLevels: SkillLevels }
   | { type: 'setTreasurePhase'; index: number; treasurePhase: TreasurePhase }
+  | { type: 'setBuild'; index: number; build: BuildInput }
   | { type: 'setEnemy'; enemy: EnemyInput }
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
@@ -73,6 +89,7 @@ export function emptySlot(): SlotState {
     condition: { ...DEFAULT_SLOT_CONDITION },
     skillLevels: { ...DEFAULT_SKILL_LEVELS },
     treasurePhase: DEFAULT_TREASURE_PHASE,
+    build: emptyBuild(),
   };
 }
 
@@ -123,6 +140,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return updateSlot(state, action.index, (s) => ({ ...s, skillLevels: action.skillLevels }));
     case 'setTreasurePhase':
       return updateSlot(state, action.index, (s) => ({ ...s, treasurePhase: action.treasurePhase }));
+    case 'setBuild':
+      return updateSlot(state, action.index, (s) => ({ ...s, build: action.build }));
     case 'setEnemy':
       return { ...state, enemy: action.enemy };
     case 'setDuration':
@@ -161,6 +180,11 @@ export function effectiveSkillLevels(slot: SlotState, fixedSpec: boolean): Skill
  */
 export function effectiveTreasurePhase(slot: SlotState, character: CharacterData): TreasurePhase {
   return character.treasure === null ? 0 : slot.treasurePhase;
+}
+
+/** Stage 12: 計算に渡す育成入力。スペック固定は T9 Lv5 × 4 と好感度 rank30/40/10 のプリセット（保存している入力は残す） */
+export function effectiveBuild(slot: SlotState, fixedSpec: boolean, character: CharacterData): BuildInput {
+  return fixedSpec ? fixedSpecBuild(character) : slot.build;
 }
 
 /** 1..10 の整数に clamp する（入力欄の途中状態を吸収する） */
@@ -224,6 +248,56 @@ function parseTreasurePhase(v: Json): TreasurePhase | null {
   return v as TreasurePhase;
 }
 
+function parseGear(v: Json): GearInput | undefined {
+  if (v === null) return null;
+  if (!isRecord(v)) return undefined;
+  if (!(GEAR_TYPES as readonly string[]).includes(String(v.type))) return undefined;
+  if (!isInt(v.level, 0) || v.level > GEAR_LEVEL_MAX) return undefined;
+  return { type: v.type as GearType, level: v.level };
+}
+
+/** Stage 11 までの保存データには無いので、欠落は空（素のステータス）。あれば各項目の範囲だけ見る（マスタとの照合は計算時） */
+function parseBuild(v: Json): BuildInput | null {
+  if (v === undefined) return emptyBuild();
+  if (!isRecord(v)) return null;
+  if (!isInt(v.affectionRank, AFFECTION_RANK_MIN) || v.affectionRank > AFFECTION_RANK_MAX) return null;
+  if (!isRecord(v.gear)) return null;
+  const gear = {} as BuildInput['gear'];
+  for (const part of GEAR_PARTS) {
+    const g = parseGear(v.gear[part]);
+    if (g === undefined) return null;
+    gear[part] = g;
+  }
+  let cube: BuildInput['cube'] = null;
+  if (v.cube !== null) {
+    if (
+      !isRecord(v.cube) ||
+      !isInt(v.cube.id, 1) ||
+      !isInt(v.cube.level, CUBE_LEVEL_MIN) ||
+      v.cube.level > CUBE_LEVEL_MAX
+    )
+      return null;
+    cube = { id: v.cube.id, level: v.cube.level };
+  }
+  let collection: BuildInput['collection'] = null;
+  if (v.collection !== null) {
+    if (!isRecord(v.collection) || (v.collection.rarity !== 'R' && v.collection.rarity !== 'SR')) return null;
+    if (!isInt(v.collection.level, 0) || v.collection.level > COLLECTION_LEVEL_MAX) return null;
+    collection = { rarity: v.collection.rarity, level: v.collection.level };
+  }
+  const rr = v.recycleRoom;
+  if (!isRecord(rr) || !isInt(rr.personal, 0) || !isInt(rr.class, 0) || !isInt(rr.corporation, 0)) return null;
+  if (!isFinite_(v.extraAttack) || v.extraAttack < 0) return null;
+  return {
+    affectionRank: v.affectionRank,
+    gear,
+    cube,
+    collection,
+    recycleRoom: { personal: rr.personal, class: rr.class, corporation: rr.corporation },
+    extraAttack: v.extraAttack,
+  };
+}
+
 function parseEnemy(v: Json): EnemyInput | null {
   if (!isRecord(v)) return null;
   if (!isFinite_(v.defence) || v.defence < 0) return null;
@@ -261,8 +335,11 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
     const condition = parseCondition(s.condition);
     const skillLevels = parseSkillLevels(s.skillLevels);
     const treasurePhase = parseTreasurePhase(s.treasurePhase);
-    if (growth === null || condition === null || skillLevels === null || treasurePhase === null) return null;
-    slots.push({ resourceId: id, growth, condition, skillLevels, treasurePhase });
+    const build = parseBuild(s.build);
+    if (growth === null || condition === null || skillLevels === null || treasurePhase === null || build === null) {
+      return null;
+    }
+    slots.push({ resourceId: id, growth, condition, skillLevels, treasurePhase, build });
   }
 
   const enemy = parseEnemy(raw.enemy);

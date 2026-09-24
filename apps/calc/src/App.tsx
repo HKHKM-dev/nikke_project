@@ -1,9 +1,13 @@
 import {
+  computeCombatAttack,
   computeFixedSpecAttack,
   computeTeamDamage,
   fixedSpecGrowth,
   growthLimits,
+  isEmptyBuild,
+  loadBuildMasters,
   loadCharacterIndex,
+  type BuildMasters,
   type CharacterData,
   type CharacterIndexEntry,
   type GrowthInput,
@@ -17,6 +21,7 @@ import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
 import {
   INITIAL_TEAM_STATE,
   STORAGE_KEY,
+  effectiveBuild,
   effectiveSkillLevels,
   effectiveTreasurePhase,
   parseTeamState,
@@ -55,6 +60,15 @@ export function App() {
   const [team, dispatch] = useReducer(teamReducer, INITIAL_TEAM_STATE);
   // 保存済みの編成を復元し終えるまでは保存しない（初期値で上書きしないため）
   const [restored, setRestored] = useState(false);
+  // Stage 12: 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム）。起動時に 1 回読む
+  const [masters, setMasters] = useState<BuildMasters | null>(null);
+  const [mastersError, setMastersError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadBuildMasters({ baseUrl: BASE_URL })
+      .then(setMasters)
+      .catch((e: unknown) => setMastersError(e instanceof Error ? e.message : String(e)));
+  }, []);
 
   useEffect(() => {
     loadCharacterIndex({ baseUrl: BASE_URL })
@@ -99,17 +113,30 @@ export function App() {
           effectiveSkillLevels(slot, team.fixedSpec),
           effectiveTreasurePhase(slot, character),
         );
-        return team.fixedSpec
-          ? {
-              character,
-              growth: fixedSpecGrowth(character),
-              condition: slot.condition,
-              attackOverride: computeFixedSpecAttack(character).attack,
-              skills: slotSkills,
-            }
-          : { character, growth: clampGrowth(character, slot.growth), condition: slot.condition, skills: slotSkills };
+        if (team.fixedSpec) {
+          return {
+            character,
+            growth: fixedSpecGrowth(character),
+            condition: slot.condition,
+            attackOverride: computeFixedSpecAttack(character).attack,
+            skills: slotSkills,
+          };
+        }
+        const growth = clampGrowth(character, slot.growth);
+        // Stage 12: 育成入力か宝物のステータスがあれば、戦闘中の攻撃力（バフ前）を computeCombatAttack で作る。
+        // マスタの読み込み前・入力がマスタと合わないときは素のステータスのまま（BuildSection が知らせる）
+        const treasurePhase = effectiveTreasurePhase(slot, character);
+        let attackOverride: number | undefined;
+        if (masters && (!isEmptyBuild(slot.build) || treasurePhase > 0)) {
+          try {
+            attackOverride = computeCombatAttack(character, growth, slot.build, masters, { treasurePhase }).attack;
+          } catch {
+            attackOverride = undefined;
+          }
+        }
+        return { character, growth, condition: slot.condition, attackOverride, skills: slotSkills };
       }),
-    [team.slots, team.fixedSpec, cache.characters, skillsStatuses],
+    [team.slots, team.fixedSpec, cache.characters, skillsStatuses, masters],
   );
 
   const computed = useMemo<Computed>(() => {
@@ -175,6 +202,9 @@ export function App() {
                   error={slot.resourceId === null ? undefined : cache.errors.get(slot.resourceId)}
                   fixedSpec={team.fixedSpec}
                   effectiveGrowth={input?.growth ?? slot.growth}
+                  effectiveBuild={character ? effectiveBuild(slot, team.fixedSpec, character) : slot.build}
+                  masters={masters}
+                  mastersError={mastersError}
                   effectiveSkillLevels={effectiveSkillLevels(slot, team.fixedSpec)}
                   skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
                   slotNames={slotNames}
