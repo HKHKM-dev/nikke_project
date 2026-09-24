@@ -6,6 +6,7 @@ import {
   BUILD_CORE_APPLIES_TO,
   GEAR_PARTS,
   computeCombatAttack,
+  computeCombatStat,
   emptyBuild,
   fixedSpecBuild,
   isEmptyBuild,
@@ -13,7 +14,7 @@ import {
   type BuildInput,
 } from '../build.ts';
 import { AFFECTION_ATTACK, FIXED_SPEC_GEAR_ATTACK, computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
-import { computeStat } from '../stats.ts';
+import { applyCoreRatio, computeStat } from '../stats.ts';
 import type { BuildMasters, CharacterData, NikkeClass } from '../types.ts';
 
 function readJson<T>(relative: string): T {
@@ -167,6 +168,19 @@ describe('computeCombatAttack', () => {
     expect(before.withCore).toBe(Math.round((333733 + 1367 + 4700) * 1.14));
     const after = computeCombatAttack(liter, growth, { ...build, cube: { id: 1000303, level: 15 } }, masters);
     expect(after.attack).toBe(408952);
+    // 同じ画面の HP・防御力（合成順は攻撃力と同じ）
+    expect(computeCombatStat(liter, growth, build, masters, 'hp').value).toBe(12376306);
+    expect(computeCombatStat(liter, growth, build, masters, 'defence').value).toBe(72202);
+  });
+
+  // plan/verification.md Stage 12 節: コア倍率を掛けてちょうど .5 になった 3 点。偶数への丸め（C# の Math.Round の既定）
+  it('rounds the core multiplier half to even, as the character screen does', () => {
+    expect(applyCoreRatio(9379875, 5, 200)).toBe(10317862); // 10,317,862.5（モダニアの HP）→ 切り捨て
+    expect(applyCoreRatio(9379875, 3, 200)).toBe(9942668); // 9,942,667.5（紅蓮：ブラックシャドウの HP）→ 切り上げ
+    expect(applyCoreRatio(61225, 3, 200)).toBe(64898); // 64,898.5（紅蓮：ブラックシャドウの防御力）→ 切り捨て
+    expect(applyCoreRatio(339800, 7, 200)).toBe(387372); // .5 でない値は四捨五入と同じ
+    expect(applyCoreRatio(1001, 0, 200)).toBe(1001);
+    expect(() => applyCoreRatio(0.1, 1, 1)).toThrow(RangeError);
   });
 
   it('uses the treasure stats instead of the collection when the treasure is unlocked', () => {
