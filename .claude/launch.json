@@ -2,13 +2,13 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "calc",
+      "name": "web",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
         "run",
         "dev",
         "-w",
-        "@nikke/calc",
+        "@nikke/web",
         "--",
         "--port",
         "5173",

@@ -2,9 +2,9 @@
 
 『勝利の女神：NIKKE』のソロレイド / ユニオンレイド（単体ボス・180 秒）を対象に、5 人編成の総ダメージの期待値を算出するツール群です。
 
-- **Web 版（calc）**: https://hkhkm-dev.github.io/nikke_project/ （GitHub Pages）
-- `packages/core` … Blablalink 公開 CDN からのデータ取得、キャラデータ、育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム・OL オプション）、ステータス・ダメージ計算（calc / sim で共有）
-- `apps/calc` … 数式ベースの期待値計算 Web アプリ。編成はブラウザの localStorage に保存し、JSON で書き出し / 取り込みできる
+- **Web 版**: https://hkhkm-dev.github.io/nikke_project/ （GitHub Pages）
+- `packages/core` … Blablalink 公開 CDN からのデータ取得、キャラデータ、育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム・OL オプション）、ステータス・ダメージ計算。共通のフレームループ（`frame/`）の上に、区間の期待値の calc（`calc/`）とフレーム逐次の sim（`sim/`）の 2 つのモデルを持つ
+- `apps/web` … Web アプリ。calc と sim を切り替えて同じ内訳の表で出す。編成はブラウザの localStorage に保存し、JSON で書き出し / 取り込みできる
 - `plan/` … 要件定義・ロードマップ・設計書・検証記録（[verification.md](plan/verification.md)）
 
 ## できること
@@ -14,7 +14,7 @@
 - 育成入力: シンクロレベル・限界突破・コア強化・スキル Lv・好感度・装備（T9 / T9 企業 / OL と強化 Lv）・OL オプション・キューブ・コレクション・リサイクルルーム・その他の攻撃力加算
 - ユニオン射撃場のスペック固定（Lv400・T9 Lv5 × 4 など）のプリセット
 - 実戦向けの入力: 枠ごとの命中率（射撃場 = 1。通常攻撃のダメージとゲージに掛ける）、敵のプリセット（防御力を測った敵だけ。いまは射撃場の的）
-- sim（フレーム逐次のシミュレーション。CLI の `npm run sim`）と calc（区間の期待値）で、同じ時刻表・バフ・式を使う
+- sim（フレーム逐次のシミュレーション）と calc（区間の期待値）で、同じ時刻表・バフ・式を使う。Web 版の「計算モデル」で切り替えられ、CLI の `npm run sim` は両方の内訳を並べて出す
 
 ## 精度と未対応
 
@@ -33,7 +33,7 @@ Node.js 24 以上が必要です。
 npm install
 npm run fetch-data   # Blablalink CDN からキャラデータと育成のマスタを取得して packages/core/data に書き出す
 npm test
-npm run dev          # apps/calc を起動
+npm run dev          # apps/web を起動
 npm run sim -- --ids 82,330 --build builds.json   # sim と calc の内訳を CLI で出す
 ```
 

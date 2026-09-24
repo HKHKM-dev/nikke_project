@@ -9,7 +9,8 @@ import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, type TeamInput, type TeamSlotInput, type TeamSlotResult } from '../team.ts';
+import { computeTeamDamage } from '../calc/model.ts';
+import { type TeamInput, type TeamSlotInput, type TeamSlotResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { FPS } from '../weapons.ts';
 

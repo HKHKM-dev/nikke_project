@@ -8,7 +8,8 @@ import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, type SlotCondition, type TeamInput, type TeamSlotInput } from '../team.ts';
+import { computeTeamDamage } from '../calc/model.ts';
+import { type SlotCondition, type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
 

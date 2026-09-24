@@ -1,4 +1,4 @@
-# Stage 14: calc を GitHub Pages に配信する（plan/design-stage12.md 4.1 節）。CI（ci.yml）とは別。
+# Stage 14: Web 版（Stage 16 で apps/calc → apps/web）を GitHub Pages に配信する（plan/design-stage12.md 4.1 節）。CI（ci.yml）とは別。
 # base はリポジトリ名のサブパス（https://<owner>.github.io/<repo>/）。ビルドの出力は check-pages-build.ts で確かめる。
 # 配信（deploy）はリポジトリが公開のときだけ行う。非公開のあいだはビルドと確認だけ通す。
 # 初回は リポジトリの Settings → Pages → Build and deployment の Source を「GitHub Actions」にする。
@@ -33,10 +33,10 @@ jobs:
       - run: npm run build
         env:
           VITE_BASE_PATH: ${{ env.BASE_PATH }}
-      - run: node apps/calc/scripts/check-pages-build.ts apps/calc/dist "$BASE_PATH"
+      - run: node apps/web/scripts/check-pages-build.ts apps/web/dist "$BASE_PATH"
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: apps/calc/dist
+          path: apps/web/dist
 
   deploy:
     needs: build

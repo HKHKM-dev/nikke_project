@@ -1,6 +1,6 @@
 // Stage 13: 育成入力の拡張 B — 効果層（plan/design-stage12.md 3・12 節）。OL 装備のオプション・キューブの固有効果・
 // コレクション（R / SR）の武器種効果を、枠の常時バフ（BuffTotals の比率の加算）に写す。
-// どれも「戦闘開始時」の無期限の効果なので、スキルの passive と同じく区間を割らない。計算側（team.ts）はマスタを知らず、
+// どれも「戦闘開始時」の無期限の効果なので、スキルの passive と同じく区間を割らない。計算側（calc・sim）はマスタを知らず、
 // 呼び出し側（calc の App.tsx・CLI の --build）が resolveBuildEffects の結果を TeamSlotInput.buildEffects に入れる
 // （Stage 12 の attackOverride と同じ流儀）。スキル側の分配は skills/timeline.ts の resolvePassiveStates。
 //

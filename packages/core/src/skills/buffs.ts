@@ -33,7 +33,7 @@ export type BuffTotals = {
   distributedDamage: number;
   /** Stage 8: バーストゲージのチャージ速度の加算。この枠の射撃で溜まるゲージに (1 + burstGaugeSpeed) を掛ける（passive のみ） */
   burstGaugeSpeed: number;
-  /** Stage 10: 最大装弾数の比率の加算（sim/firing.ts の effectiveMaxAmmo）。ダメージの式は読まない */
+  /** Stage 10: 最大装弾数の比率の加算（frame/firing.ts の effectiveMaxAmmo）。ダメージの式は読まない */
   maxAmmoRatio: number;
   /** Stage 10: 最大装弾数の発数の加算（scaling 'flat'） */
   maxAmmoFlat: number;

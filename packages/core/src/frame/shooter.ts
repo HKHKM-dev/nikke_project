@@ -8,14 +8,14 @@
 //   リロード        最終弾のフレーム L から、1 回分ずつ込めて最後の 1 回分を込め終えたところで 1 発目の遅延につなぐ
 //                   → 次のマガジンの 1 発目は L + reload × chunks + first（最大装弾数が一定なら Stage 9 と同じ）
 //
-// Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）を FiringParams として毎フレーム受け取る（sim/firing.ts）。
+// Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）を FiringParams として毎フレーム受け取る（frame/firing.ts）。
 // 分割リロードは 1 回分ずつ込め、1 回分の弾数は込めるたびにその時点の最大装弾数で決める（録画 37: 3 → 10 → 17 → 20、
 // 録画 19: 0 → 5 → 8 → 9）。最大装弾数が増えても残弾は増えない（録画 37）。
 // つなぎ目の −1 は「最終弾の直後」の 1 回だけにする（plan/design-stage10.md 3.3 節）。1 回分の完了ごとに −1 すると
 // 1 回分につき 1 フレームずつ早くなる。
 //
 // Stage 11 モダニア: 装弾数無限（FiringParams.infiniteAmmo）の間は撃っても残弾を減らさない。使用武器の変更（殲滅モード）は
-// sim/firstPass.ts が別の射手の状態で撃ち、終わったら resumeShooter で基礎の武器の状態に戻す（plan/design-stage11-modernia.md 3.4 節）。
+// frame/firstPass.ts が別の射手の状態で撃ち、終わったら resumeShooter で基礎の武器の状態に戻す（plan/design-stage11-modernia.md 3.4 節）。
 import { firstShotFrames, rateAfterShots } from '../cadence.ts';
 import type { ShotParams } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, MAX_RPM, isChargeWeapon, type WeaponModel } from '../weapons.ts';

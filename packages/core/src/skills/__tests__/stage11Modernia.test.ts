@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { PER_SHOT_DAMAGE_CORE, computeTriggerDamage, type EnemyInput } from '../../damage.ts';
-import { firingParams } from '../../sim/firing.ts';
+import { firingParams } from '../../frame/firing.ts';
 import type { CharacterData, SkillRaw } from '../../types.ts';
 import { ZERO_BUFFS, applyResolvedEffect } from '../buffs.ts';
 import { isPerShotTrigger, resolveDamageEffects, resolvePerShotDamage } from '../burstDamage.ts';

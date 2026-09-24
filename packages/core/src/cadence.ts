@@ -1,8 +1,8 @@
 // マガジン 1 周期（1 発目までの遅延 + 発射 × 装弾数 + リロード）をフレーム単位で離散化し、平均の秒間トリガー数を求める。
 // モデルは 2026-09-22 の射撃場録画（AR / SR / RL / MG）で較正済み。plan/verification.md 参照。
-// Stage 10: 射撃に効くバフの実効値（sim/firing.ts の FiringParams）を受け取れるようにした。省略は基礎値（Stage 9 と同じ）。
+// Stage 10: 射撃に効くバフの実効値（frame/firing.ts の FiringParams）を受け取れるようにした。省略は基礎値（Stage 9 と同じ）。
 // calc は常時分の射撃バフをここで平均レートに畳み込む（plan/design-stage10.md 3.4 節）。
-import { firingParams, type FiringParams } from './sim/firing.ts';
+import { firingParams, type FiringParams } from './frame/firing.ts';
 import type { ShotParams } from './types.ts';
 import { DEFAULT_WEAPON_MODEL, FPS, MAX_RPM, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
 

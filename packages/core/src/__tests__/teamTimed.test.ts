@@ -5,7 +5,8 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, SkillEntry } from '../skills/types.ts';
-import { computeTeamDamage, type SlotCondition, type TeamSlotInput } from '../team.ts';
+import { computeTeamDamage } from '../calc/model.ts';
+import { type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
 

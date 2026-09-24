@@ -5,12 +5,14 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
-import { firingParams } from '../sim/firing.ts';
-import type { ShotLog } from '../sim/shots.ts';
+import { firingParams } from '../frame/firing.ts';
+import type { ShotLog } from '../frame/shots.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges, planTeamRun, type TeamInput, type TeamSlotInput } from '../team.ts';
+import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { planTeamRun } from '../frame/plan.ts';
+import { type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 
 function readJson<T>(path: string): T {

@@ -8,14 +8,9 @@ import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import {
-  computeTeamDamage,
-  countShotsInRanges,
-  planTeamRun,
-  type SlotSegmentResult,
-  type TeamInput,
-  type TeamSlotInput,
-} from '../team.ts';
+import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { planTeamRun } from '../frame/plan.ts';
+import { type TeamInput, type TeamSlotInput, type SlotSegmentResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 
 function readJson<T>(path: string): T {

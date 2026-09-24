@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { computeCadence, reloadChunks, simulateShotFrames } from '../cadence.ts';
-import { firingParams, ZERO_FIRING_BUFFS } from '../sim/firing.ts';
+import { firingParams, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
 import type { ShotParams } from '../types.ts';
 
 function shot(overrides: Partial<ShotParams>): ShotParams {

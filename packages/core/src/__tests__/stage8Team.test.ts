@@ -11,7 +11,9 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, planTeamRun, type TeamInput, type TeamSlotInput } from '../team.ts';
+import { computeTeamDamage } from '../calc/model.ts';
+import { planTeamRun } from '../frame/plan.ts';
+import { type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { FPS } from '../weapons.ts';
 
