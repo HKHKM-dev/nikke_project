@@ -11,7 +11,7 @@ type Props = {
 };
 
 export function characterLabel(entry: CharacterIndexEntry): string {
-  return `${entry.name.ja} (${entry.name.en}) — ${entry.rarity} ${entry.weaponType} ${ELEMENT_LABEL[entry.element].ja}`;
+  return `${entry.name.ja} — ${entry.weaponType} ${ELEMENT_LABEL[entry.element].ja}`;
 }
 
 export function CharacterPicker({ index, excludeIds, value, onSelect, onClear }: Props) {
@@ -30,7 +30,7 @@ export function CharacterPicker({ index, excludeIds, value, onSelect, onClear }:
       <input
         type="search"
         value={filter}
-        placeholder="名前で絞り込み（日本語 / 英語）"
+        placeholder="名前で絞り込み"
         aria-label="ニケを検索"
         onChange={(e) => setFilter(e.target.value)}
       />

@@ -3,6 +3,17 @@
   "source": "手書き。防御力は 1 ヒットの逆算で確かめた値だけ載せる（plan/design-stage12.md 5.2 節）。迎撃戦・レイドのボスは実戦の撮影（Stage 15）で測ってから足す",
   "enemies": [
     {
+      "id": "range-bigarms-fire",
+      "name": { "ja": "ユニオン射撃場 BigArms（灼熱）", "en": "Union Shooting Range BigArms (Fire)" },
+      "content": "range",
+      "element": "Fire",
+      "hasCore": true,
+      "defence": 100,
+      "level": null,
+      "measuredAt": "2026-09-22",
+      "source": "plan/verification.md 灼熱タブの録画（同じ BigArms で属性だけ灼熱。防御 100 相当は 1 ヒットの一致で裏付け）"
+    },
+    {
       "id": "range-bigarms-wind",
       "name": { "ja": "ユニオン射撃場 BigArms（風圧）", "en": "Union Shooting Range BigArms (Wind)" },
       "content": "range",
@@ -14,15 +25,37 @@
       "source": "plan/verification.md Stage 2-A（1 ヒットの逆算。スペック固定の攻撃力が 9 体で誤差 0）"
     },
     {
-      "id": "range-bigarms-fire",
-      "name": { "ja": "ユニオン射撃場 BigArms（灼熱タブ）", "en": "Union Shooting Range BigArms (Fire tab)" },
+      "id": "range-bigarms-iron",
+      "name": { "ja": "ユニオン射撃場 BigArms（鉄甲）", "en": "Union Shooting Range BigArms (Iron)" },
       "content": "range",
-      "element": "Fire",
+      "element": "Iron",
       "hasCore": true,
       "defence": 100,
       "level": null,
       "measuredAt": "2026-09-22",
-      "source": "plan/verification.md 灼熱タブの録画（同じ BigArms で属性だけ灼熱。防御 100 相当は 1 ヒットの一致で裏付け）"
+      "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。鉄甲タブの録画はまだない"
+    },
+    {
+      "id": "range-bigarms-electric",
+      "name": { "ja": "ユニオン射撃場 BigArms（電撃）", "en": "Union Shooting Range BigArms (Electric)" },
+      "content": "range",
+      "element": "Electronic",
+      "hasCore": true,
+      "defence": 100,
+      "level": null,
+      "measuredAt": "2026-09-22",
+      "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。電撃タブの録画 18・20 でも防御 100 の式で 1 ヒットが一致（plan/verification.md 射撃場の実測）"
+    },
+    {
+      "id": "range-bigarms-water",
+      "name": { "ja": "ユニオン射撃場 BigArms（水冷）", "en": "Union Shooting Range BigArms (Water)" },
+      "content": "range",
+      "element": "Water",
+      "hasCore": true,
+      "defence": 100,
+      "level": null,
+      "measuredAt": "2026-09-22",
+      "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。水冷タブの録画はまだない"
     }
   ]
 }

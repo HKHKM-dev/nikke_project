@@ -163,7 +163,7 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
           {rep.trigger.normalAttackMultiplier !== 1 && (
             <tr>
               <th>通常攻撃ダメージ倍率</th>
-              <td>×{formatNumber(rep.trigger.normalAttackMultiplier, 4)}（武器倍率に掛ける。仮定）</td>
+              <td>×{formatNumber(rep.trigger.normalAttackMultiplier, 4)}（仮定）</td>
             </tr>
           )}
           {rep.trigger.chargeMultiplier !== 1 && (
@@ -213,7 +213,7 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
           {buffs.attackDamage !== 0 && (
             <tr>
               <th>攻撃ダメージ（バフ）</th>
-              <td>×{formatNumber(rep.trigger.attackDamageMultiplier, 4)}（倍率グループとは別枠）</td>
+              <td>×{formatNumber(rep.trigger.attackDamageMultiplier, 4)}</td>
             </tr>
           )}
           <tr>
@@ -336,12 +336,12 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
                 <td>
                   {burst.hit.boost.fullBurst !== 0
                     ? `+${formatNumber(burst.hit.boost.fullBurst, 1)}`
-                    : '乗せない（実測で確定するまでの仮定）'}
+                    : '乗せない（仮定）'}
                 </td>
               </tr>
               <tr>
                 <th>倍率グループ合計</th>
-                <td>×{formatNumber(burst.hit.boost.total, 3)}（コア・距離・武器倍率・チャージ倍率は乗らない）</td>
+                <td>×{formatNumber(burst.hit.boost.total, 3)}</td>
               </tr>
               {burst.hit.attackDamageMultiplier !== 1 && (
                 <tr>
@@ -352,7 +352,7 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
               {burst.hit.distributedDamageMultiplier !== 1 && (
                 <tr>
                   <th>分配ダメージ（バフ）</th>
-                  <td>×{formatNumber(burst.hit.distributedDamageMultiplier, 4)}（分配ダメージにだけ掛かる）</td>
+                  <td>×{formatNumber(burst.hit.distributedDamageMultiplier, 4)}</td>
                 </tr>
               )}
               <tr>
@@ -363,7 +363,7 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
                 <th>1 発動</th>
                 <td>
                   {formatNumber(burst.hit.perActivation)}
-                  {activationsVary ? <small className="sub">（発動ごとに異なる。下の一覧を見る）</small> : ''}
+                  {activationsVary ? <small className="sub">（発動ごとに異なる）</small> : ''}
                 </td>
               </tr>
               <tr>
@@ -383,10 +383,6 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
               <tr>
                 <th>合計</th>
                 <td>{formatNumber(burst.totalDamage)}</td>
-              </tr>
-              <tr>
-                <th>バフのスナップショット</th>
-                <td>発動直前のバフで計算（その発動で自分に付く持続バフは乗らない。録画 18 のラピで確認）</td>
               </tr>
             </tbody>
           </table>
@@ -412,26 +408,10 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
                   </td>
                 </tr>
               ))}
-              <tr>
-                <th>式</th>
-                <td>
-                  （攻撃力 − 防御力）× 倍率 ×（1 + 会心期待値 + フルバースト補正）× 攻撃ダメージ ×
-                  属性有利。分配ダメージには（1 +
-                  分配ダメージのバフ）も掛かる。フルバースト補正（+0.5）はフルバースト中に出た発動にだけ乗る（バーストスキルには乗らない）。コア・距離は乗らない（録画
-                  37・38 で確認）
-                </td>
-              </tr>
             </tbody>
           </table>
         </>
       )}
-
-      <p className="scope">
-        通常攻撃（ゲージ・CT
-        で回るフルバーストの補正込み）と、定義済みの常時発動パッシブ・持続バフ（効果のあるスタックを含む）・バーストスキル・スキルの倍率ダメージを計算します。最大装弾数・リロード速度・チャージ速度のバフ、バースト
-        CT 短縮、弾丸チャージは射撃とフルバーストの時刻に反映します。命中率はダメージに使いません（全弾命中が前提）。SG
-        は全ペレット命中が前提です。
-      </p>
     </section>
   );
 }

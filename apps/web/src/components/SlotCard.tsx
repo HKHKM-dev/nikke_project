@@ -234,7 +234,6 @@ export function SlotCard({
                 })
               }
             />
-            <small>0〜1。敵にコアが無いときは無視</small>
           </label>
           <label className="field">
             <span>命中率</span>
@@ -252,7 +251,6 @@ export function SlotCard({
                 })
               }
             />
-            <small>0〜1。射撃場（静止の的）= 1。通常攻撃のダメージとゲージに掛ける（実戦用・Stage 15）</small>
           </label>
           <label className="field checkbox">
             <input
@@ -267,7 +265,7 @@ export function SlotCard({
                 })
               }
             />
-            <span>距離ボーナス{character.bonusRange === null ? '（この武器には無い）' : ''}</span>
+            <span>距離ボーナス{character.bonusRange === null ? '（なし）' : ''}</span>
           </label>
           {isChargeWeapon(character.shot) && (
             <label className="field checkbox">

@@ -1,16 +1,17 @@
 import type { Element } from './types.ts';
 
-export const ELEMENTS = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'] as const satisfies readonly Element[];
+/** 並びは相性の循環（灼熱→風圧→鉄甲→電撃→水冷）。画面の選択肢もこの順 */
+export const ELEMENTS = ['Fire', 'Wind', 'Iron', 'Electronic', 'Water'] as const satisfies readonly Element[];
 
 export const ELEMENT_LABEL: Record<Element, { ja: string; en: string }> = {
-  Fire: { ja: '炎', en: 'Fire' },
-  Water: { ja: '水', en: 'Water' },
-  Wind: { ja: '風', en: 'Wind' },
+  Fire: { ja: '灼熱', en: 'Fire' },
+  Wind: { ja: '風圧', en: 'Wind' },
+  Iron: { ja: '鉄甲', en: 'Iron' },
   Electronic: { ja: '電撃', en: 'Electric' },
-  Iron: { ja: '鉄', en: 'Iron' },
+  Water: { ja: '水冷', en: 'Water' },
 };
 
-/** 属性相性: 炎→風→鉄→電撃→水→炎（左が右に有利） */
+/** 属性相性: 灼熱→風圧→鉄甲→電撃→水冷→灼熱（左が右に有利） */
 const STRONG_AGAINST: Record<Element, Element> = {
   Fire: 'Wind',
   Wind: 'Iron',

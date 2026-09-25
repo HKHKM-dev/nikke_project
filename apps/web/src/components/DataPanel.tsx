@@ -45,11 +45,7 @@ export function DataPanel({ team, index, dispatch }: Props) {
 
   return (
     <details className="panel data-panel">
-      <summary>編成の JSON（書き出し / 取り込み）</summary>
-      <p className="hint">
-        編成・育成・条件をまとめた JSON
-        です（ブラウザに保存しているものと同じ形式）。別のブラウザへの移し替えや共有に使えます。
-      </p>
+      <summary>編成の JSON</summary>
       <div className="data-grid">
         <label className="field">
           <span>書き出し</span>
@@ -64,7 +60,7 @@ export function DataPanel({ team, index, dispatch }: Props) {
           </span>
         </label>
         <label className="field">
-          <span>取り込み（今の編成を置き換えます）</span>
+          <span>取り込み（置き換え）</span>
           <textarea
             rows={8}
             value={text}

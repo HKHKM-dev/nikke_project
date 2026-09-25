@@ -75,8 +75,8 @@ export type TeamState = {
   fixedSpec: boolean;
   /** バーストを回すか（Stage 5 で固定 20 秒サイクル、Stage 7 からゲージ・CT の動的サイクル） */
   burst: boolean;
-  /** 操作キャラの枠（Stage 7）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ。null は全員 AI 扱い */
-  controlledSlot: number | null;
+  /** 操作キャラの枠（Stage 7）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ */
+  controlledSlot: number;
 };
 
 export type TeamAction =
@@ -91,7 +91,7 @@ export type TeamAction =
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
   | { type: 'setBurst'; burst: boolean }
-  | { type: 'setControlledSlot'; controlledSlot: number | null }
+  | { type: 'setControlledSlot'; controlledSlot: number }
   | { type: 'replace'; state: TeamState };
 
 export function emptySlot(): SlotState {
@@ -105,6 +105,9 @@ export function emptySlot(): SlotState {
   };
 }
 
+/** 操作キャラの既定の枠（枠 3） */
+export const DEFAULT_CONTROLLED_SLOT = 2;
+
 export function initialTeamState(): TeamState {
   return {
     slots: Array.from({ length: TEAM_SIZE }, emptySlot),
@@ -112,7 +115,7 @@ export function initialTeamState(): TeamState {
     durationSeconds: DEFAULT_DURATION_SECONDS,
     fixedSpec: false,
     burst: DEFAULT_BURST,
-    controlledSlot: null,
+    controlledSlot: DEFAULT_CONTROLLED_SLOT,
   };
 }
 
@@ -422,7 +425,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   if (!isBool(raw.fixedSpec)) return null;
   // Stage 4 までの保存データには無いので、欠落は既定値（ON）
   if (raw.burst !== undefined && !isBool(raw.burst)) return null;
-  // Stage 6 までの保存データには無いので、欠落は null（全員 AI 扱い）
+  // Stage 6 までの保存データには無い。欠落と旧仕様の null（全員 AI）は既定の枠にする
   const controlled = raw.controlledSlot;
   if (
     controlled !== undefined &&
@@ -438,7 +441,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     durationSeconds: raw.durationSeconds,
     fixedSpec: raw.fixedSpec,
     burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
-    controlledSlot: typeof controlled === 'number' ? controlled : null,
+    controlledSlot: typeof controlled === 'number' ? controlled : DEFAULT_CONTROLLED_SLOT,
   };
 }
 

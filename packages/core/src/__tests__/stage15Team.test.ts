@@ -136,9 +136,9 @@ describe('敵のプリセット（data/enemies.json）', () => {
 
   it('has the shooting-range BigArms with the fixed-spec defence', () => {
     const range = master.enemies.filter((e) => e.content === 'range');
-    expect(range.map((e) => e.element)).toEqual(['Wind', 'Fire']);
+    expect(range.map((e) => e.element)).toEqual(['Fire', 'Wind', 'Iron', 'Electronic', 'Water']);
     for (const e of range) expect(e.defence).toBe(FIXED_SPEC_ENEMY_DEFENCE);
-    expect(enemyInputOf(range[0]!)).toEqual({ defence: 100, element: 'Wind', hasCore: true });
+    expect(enemyInputOf(range[1]!)).toEqual({ defence: 100, element: 'Wind', hasCore: true });
     expect(matchingEnemyPreset(master.enemies, { defence: 100, element: 'Fire', hasCore: true })?.id).toBe(
       'range-bigarms-fire',
     );

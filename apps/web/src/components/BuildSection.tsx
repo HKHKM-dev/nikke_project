@@ -119,7 +119,7 @@ export function BuildSection({
   return (
     <details className="build">
       <summary>
-        育成（装備・キューブ・好感度・コレクション・その他）
+        育成
         {combat && (
           <span className="build-attack">
             {' '}
@@ -237,11 +237,7 @@ export function BuildSection({
                   })}
                 </span>
               )}
-              <small>
-                Lv 0〜{GEAR_LEVEL_MAX}
-                {gear?.type === 'OL' &&
-                  `。オプションは最大 ${OVERLOAD_LINE_MAX} 行・Lv ${OVERLOAD_LEVEL_MIN}〜${OVERLOAD_LEVEL_MAX}`}
-              </small>
+              <small>Lv 0〜{GEAR_LEVEL_MAX}</small>
             </div>
           );
         })}
@@ -279,7 +275,7 @@ export function BuildSection({
             />
           </span>
           <small>
-            Lv {CUBE_LEVEL_MIN}〜{CUBE_LEVEL_MAX}。固有効果とアンチコード（Lv5〜）は下の「効果」に出る
+            Lv {CUBE_LEVEL_MIN}〜{CUBE_LEVEL_MAX}
           </small>
         </div>
         <div className="field gear">
@@ -313,11 +309,7 @@ export function BuildSection({
               }
             />
           </span>
-          <small>
-            {hasTreasure
-              ? '宝物を解放しているので宝物のステータス（SR Lv15 と同値）が乗る'
-              : `Lv 0〜${COLLECTION_LEVEL_MAX}。武器種の効果は下の「効果」に出る`}
-          </small>
+          <small>{hasTreasure ? '宝物（SR Lv15 相当）' : `Lv 0〜${COLLECTION_LEVEL_MAX}`}</small>
         </div>
         <div className="field gear">
           <span>リサイクルルーム</span>
@@ -339,10 +331,9 @@ export function BuildSection({
               />
             ))}
           </span>
-          <small>共通 / クラス / 企業の研究 Lv。攻撃力に効くのは企業研究（1 Lv +25）</small>
         </div>
         <label className="field">
-          <span>その他の加算</span>
+          <span>その他の攻撃力加算</span>
           <input
             type="number"
             min={0}
@@ -351,7 +342,6 @@ export function BuildSection({
             disabled={disabled}
             onChange={(e) => set({ extraAttack: Math.max(0, Number(e.target.value) || 0) })}
           />
-          <small>企業タワー・アウトポスト等の攻撃力の固定加算（CDN に無いもの）</small>
         </label>
       </div>
       {combatError && <p className="error">育成入力を計算に使えません: {combatError}</p>}
@@ -364,12 +354,11 @@ export function BuildSection({
           {combat.cube > 0 && ` + ${formatNumber(combat.cube)} キューブ`}
           {combat.collection > 0 && ` + ${formatNumber(combat.collection)} コレクション`}
           {combat.extra > 0 && ` + ${formatNumber(combat.extra)} その他`}
-          。キューブ・コレクションはコアの外、リサイクルルームは内側（キャラ画面の実測）。その他加算の位置は未確認
         </p>
       )}
       {effects && (effects.effects.length > 0 || effects.notes.length > 0) && (
         <div className="build-effects">
-          <span className="skills-title">効果（OL・キューブ・コレクション → 常時バフ）</span>
+          <span className="skills-title">効果</span>
           <ul className="received-list">
             {effects.effects.map((e, i) => (
               <li key={i}>
@@ -386,18 +375,13 @@ export function BuildSection({
               </li>
             ))}
           </ul>
-          <p className="hint">
-            OL の上昇値はコミュニティの表の転記（未検証）。OL
-            の攻撃力▲はスキルの攻撃力▲と同じ加算群、倍率ダメージにも有利コード▲が乗る、
-            通常攻撃ダメージ倍率▲は武器倍率に掛かる、はどれも仮定（射撃場の実測待ち）
-          </p>
         </div>
       )}
       <details className="build-json">
-        <summary>JSON（この枠の育成の書き出し / 取り込み）</summary>
+        <summary>育成の JSON</summary>
         <div className="data-grid">
           <label className="field">
-            <span>書き出し（育成値 + 育成入力）</span>
+            <span>書き出し</span>
             <textarea
               readOnly
               rows={6}
@@ -406,7 +390,7 @@ export function BuildSection({
             />
           </label>
           <label className="field">
-            <span>取り込み（CLI の --build の 1 枠分も可）</span>
+            <span>取り込み</span>
             <textarea
               rows={6}
               value={jsonText}

@@ -2,8 +2,6 @@ import {
   ELEMENTS,
   ELEMENT_LABEL,
   ENEMY_CONTENT_LABEL,
-  FULL_BURST_FRAMES,
-  FPS,
   TEAM_SIZE,
   enemyInputOf,
   matchingEnemyPreset,
@@ -21,11 +19,9 @@ type Props = {
   durationSeconds: number;
   fixedSpec: boolean;
   burst: boolean;
-  controlledSlot: number | null;
+  controlledSlot: number;
   dispatch: Dispatch<TeamAction>;
 };
-
-const FULL_BURST_SECONDS = FULL_BURST_FRAMES / FPS;
 
 /** 編成共通の設定: 敵・戦闘時間・スペック固定・バースト */
 export function TeamSettingsForm({
@@ -52,18 +48,13 @@ export function TeamSettingsForm({
               if (picked) dispatch({ type: 'setEnemy', enemy: enemyInputOf(picked) });
             }}
           >
-            <option value="">カスタム（下の値）</option>
+            <option value="">カスタム</option>
             {enemyPresets.map((p) => (
               <option key={p.id} value={p.id}>
                 {ENEMY_CONTENT_LABEL[p.content].ja}: {p.name.ja}
               </option>
             ))}
           </select>
-          <small>
-            {preset
-              ? `防御力 ${preset.defence}（${preset.measuredAt} 測定: ${preset.source}）`
-              : '測った敵だけ載せる。迎撃戦・レイドのボスは実戦の撮影の後に足す'}
-          </small>
         </label>
         <label className="field">
           <span>防御力</span>
@@ -74,7 +65,6 @@ export function TeamSettingsForm({
             value={enemy.defence}
             onChange={(e) => setEnemy({ defence: Number(e.target.value) })}
           />
-          <small>射撃場の雑魚は 100、ボスは約 140</small>
         </label>
         <label className="field">
           <span>属性</span>
@@ -82,7 +72,7 @@ export function TeamSettingsForm({
             value={enemy.element ?? ''}
             onChange={(e) => setEnemy({ element: e.target.value === '' ? null : (e.target.value as Element) })}
           >
-            <option value="">なし（相性なし）</option>
+            <option value="">なし</option>
             {ELEMENTS.map((el) => (
               <option key={el} value={el}>
                 {ELEMENT_LABEL[el].ja}
@@ -99,7 +89,6 @@ export function TeamSettingsForm({
             value={durationSeconds}
             onChange={(e) => dispatch({ type: 'setDuration', durationSeconds: Number(e.target.value) })}
           />
-          <small>規定は 180（レイド・射撃場とも）</small>
         </label>
         <label className="field checkbox">
           <input type="checkbox" checked={enemy.hasCore} onChange={(e) => setEnemy({ hasCore: e.target.checked })} />
@@ -111,7 +100,7 @@ export function TeamSettingsForm({
             checked={fixedSpec}
             onChange={(e) => dispatch({ type: 'setFixedSpec', fixedSpec: e.target.checked })}
           />
-          <span>ユニオン射撃場スペック固定（全枠: Lv400・凸/コア上限・T9 装備・好感度込み、敵防御 100）</span>
+          <span>射撃場スペック固定</span>
         </label>
         <label className="field checkbox">
           <input
@@ -119,32 +108,21 @@ export function TeamSettingsForm({
             checked={burst}
             onChange={(e) => dispatch({ type: 'setBurst', burst: e.target.checked })}
           />
-          <span>
-            バースト: 通常攻撃でゲージを溜め、満タンで I → II → III を自動発動（各ニケのバースト CT
-            を待つ）。フルバーストは通常 {FULL_BURST_SECONDS} 秒（III のニケで変わる: イサベル 5 秒・モダニア 15
-            秒など）。III がいないとフルバーストしない
-          </span>
+          <span>バースト</span>
         </label>
         <label className="field">
           <span>操作キャラ</span>
           <select
-            value={controlledSlot ?? ''}
+            value={controlledSlot}
             disabled={!burst}
-            onChange={(e) =>
-              dispatch({
-                type: 'setControlledSlot',
-                controlledSlot: e.target.value === '' ? null : Number(e.target.value),
-              })
-            }
+            onChange={(e) => dispatch({ type: 'setControlledSlot', controlledSlot: Number(e.target.value) })}
           >
-            <option value="">なし（全員 AI）</option>
             {Array.from({ length: TEAM_SIZE }, (_, i) => (
               <option key={i} value={i}>
                 枠 {i + 1}
               </option>
             ))}
           </select>
-          <small>SR / RL のフルチャージでゲージが多く溜まるのは操作キャラだけ（AI は倍率なし）</small>
         </label>
       </div>
     </fieldset>

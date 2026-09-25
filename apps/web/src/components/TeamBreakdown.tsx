@@ -13,8 +13,8 @@ import { ResultPanel } from './ResultPanel.tsx';
 export type ModelKind = 'calc' | 'sim';
 
 const MODEL_LABEL: Record<ModelKind, string> = {
-  calc: 'calc（区間の期待値。即時）',
-  sim: 'sim（フレーム逐次）',
+  calc: 'calc',
+  sim: 'sim',
 };
 
 type Props = {
@@ -94,19 +94,11 @@ export function TeamBreakdown({
             </option>
           ))}
         </select>
-        <small>
-          calc と sim は同じ式・時刻表・バフを使います。sim は通常攻撃を 1 発ずつ数え、calc
-          は区間の平均の発射レートで置きます。
-        </small>
       </label>
       {compare && filled.length > 0 && (
         <p className="hint">
           calc との差: 合計 {formatDiff(result.totalDamage - compare.totalDamage, compare.totalDamage)}
-          。いまの差は通常攻撃の発数の端数（マガジンの位相）だけです。
         </p>
-      )}
-      {filled.length === 0 && loadingCount === 0 && (
-        <p className="hint">枠にニケを選ぶと、ここに内訳と合計が出ます。</p>
       )}
       {filled.length > 0 && schedule && summary && (
         <>
@@ -124,12 +116,7 @@ export function TeamBreakdown({
             }).join(' / ')}
             {summary.fullBursts === 0 &&
               `。フルバーストしません（${missingSteps.length > 0 ? `バースト ${missingSteps.map((s) => STEP_LABEL[s]).join('・')} のニケがいない` : 'チェーンがつながらない'}）`}
-            {summary.chainTimeouts > 0 &&
-              `。チェーン失敗 ${summary.chainTimeouts} 回（次の段階が 10 秒出ずにゲージが 0 に戻った）`}
-          </p>
-          <p className="hint">
-            ゲージ量は射撃場の的で較正した値（1 回目の満タンの時刻は録画と ±1 秒程度。レイドボスでは未確認）。SR / RL
-            のフルチャージ倍率は「操作キャラ」の枠だけに乗る。
+            {summary.chainTimeouts > 0 && `。チェーン失敗 ${summary.chainTimeouts} 回`}
           </p>
           <details className="segments">
             <summary>バーストの時刻表（{schedule.activations.length} 回の発動）</summary>
@@ -247,14 +234,8 @@ export function TeamBreakdown({
           </table>
         </div>
       )}
-      {loadingCount > 0 && (
-        <p className="hint">読み込み中の枠が {loadingCount} つあります。合計にはまだ含まれていません。</p>
-      )}
-      {skillsLoadingCount > 0 && (
-        <p className="hint">
-          スキル定義を読み込み中の枠が {skillsLoadingCount} つあります。そのスキルはまだ反映されていません。
-        </p>
-      )}
+      {loadingCount > 0 && <p className="hint">読み込み中の枠: {loadingCount}</p>}
+      {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中の枠: {skillsLoadingCount}</p>}
       {filled.length > 0 && (
         <div className="details">
           <h3>ニケごとの詳細</h3>
@@ -269,17 +250,6 @@ export function TeamBreakdown({
           ))}
         </div>
       )}
-      <p className="scope">
-        calc と sim
-        は各ニケの通常攻撃に、定義済みの常時発動パッシブと持続バフ（攻撃力・会心・攻撃ダメージ・チャージダメージ・分配ダメージ）を乗せ、
-        通常攻撃のゲージ蓄積（常時のゲージ速度込み）と各ニケのバースト CT から決まるフルバースト区間（+0.5。長さは III
-        のニケごと）と、バーストスキル・スキルの倍率ダメージ（N 回攻撃ごと・バースト使用 N
-        回目以降・最後の弾丸など）を足し合わせます。最大装弾数・リロード速度・チャージ速度のバフ、バースト CT
-        短縮、弾丸チャージは射撃とフルバーストの時刻に反映し、射撃が変わるバフの掛かった区間は発数を実数で数えます。対象「直前にバーストスキルを使用した味方」「最終攻撃力が最も高い味方
-        N
-        機」（発動の瞬間の順位）と、回復・「回復効果が適用された時」の発動（回復は定義のあるニケによるものだけ）にも対応します。通常攻撃が命中するたびの追加ダメージ、効果のあるスタック（最大装弾数▼など）、「自分が命中率増加状態なら」、装弾数無限と使用武器の変更（殲滅モード）、「攻撃回数別の効果」の段の循環と、その回数の条件の変更も扱います（命中率は条件の判定にだけ使います）。防御力▼などの敵デバフ・ヒット率・被弾・OL・キューブは含みません。定義のないニケはスキルなしで計算します。SG
-        は全ペレット命中が前提です。
-      </p>
     </section>
   );
 }
