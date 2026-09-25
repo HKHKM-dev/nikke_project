@@ -8,6 +8,8 @@ packages/core/.cache/
 .DS_Store
 Thumbs.db
 .claude/settings.local.json
+.claude/worktrees/
+.antigrav/worktrees/
 plan/.claude/
 # 録画の実体（数百 MB・ゲーム映像）は追跡しない。台帳と証拠フレームだけ追跡する。
 plan/captures/*
