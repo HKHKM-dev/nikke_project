@@ -1,5 +1,6 @@
 import {
   BURST_STEP_KEYS,
+  ENEMY_EVENT_KIND_LABEL,
   WEAPON_LABEL,
   slotsByStep,
   type TeamResult,
@@ -7,6 +8,7 @@ import {
   type TriggerDamage,
 } from '@nikke/core';
 import { formatNumber, formatPercent } from '../format.ts';
+import { DamageTimeline } from './DamageTimeline.tsx';
 import { ResultPanel } from './ResultPanel.tsx';
 
 /** Stage 16: 表示する計算モデル（plan/design-stage16.md 1 節） */
@@ -81,6 +83,15 @@ export function TeamBreakdown({
   };
   const missingSteps = byStep ? BURST_STEP_KEYS.filter((step) => byStep[step].length === 0) : [];
   const summary = result.burstSummary;
+  // Stage 16-B: 敵の出来事（種類ごとの回数と区間）
+  const eventKinds = [...new Set(result.enemyEvents.map((e) => e.kind))];
+  const eventsLabel = eventKinds
+    .map((kind) => {
+      const list = result.enemyEvents.filter((e) => e.kind === kind);
+      const spans = list.map((e) => `${formatNumber(e.start, 1)}–${formatNumber(e.end, 1)}`).join('・');
+      return `${ENEMY_EVENT_KIND_LABEL[kind].ja} ${list.length} 回（${spans} 秒）`;
+    })
+    .join(' / ');
 
   return (
     <section className="panel result breakdown-panel">
@@ -99,6 +110,14 @@ export function TeamBreakdown({
         <p className="hint">
           calc との差: 合計 {formatDiff(result.totalDamage - compare.totalDamage, compare.totalDamage)}
         </p>
+      )}
+      {filled.length > 0 && eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}
+      {filled.length > 0 && result.damagePerSecond && (
+        <DamageTimeline
+          perSecond={result.damagePerSecond}
+          events={result.enemyEvents}
+          fullBursts={schedule?.fullBurstWindows ?? []}
+        />
       )}
       {filled.length > 0 && schedule && summary && (
         <>

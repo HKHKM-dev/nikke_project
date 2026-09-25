@@ -7,6 +7,7 @@
 // スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
 // Stage 12: --build は resourceId → 育成入力（BuildInput の各項目と任意の growth）の JSON。--fixed-spec のときは使わない。
 // Stage 15: --hit-rate（命中率。射撃場 = 1）と --enemy（data/enemies.json のプリセット）。
+// Stage 16-B: --events range-3min-jump（data/enemies.json の出来事のセット。カンマ区切り）。--enemy のプリセットが持つものだけ効く。
 // Stage 13: gear の OL 装備に overload（[{ option, level }]、最大 3 行）を書ける。効果層（OL・キューブ・コレクション）を枠ごとに 1 行ずつ出す。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -15,7 +16,7 @@ import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, emptyBuild, type BuildInput } from '../src/build.ts';
 import { resolveBuildEffects } from '../src/buildEffects.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
-import { enemyInputOf, parseEnemyPresets } from '../src/enemies.ts';
+import { enemyEventsOf, enemyInputOf, parseEnemyPresets } from '../src/enemies.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
@@ -55,12 +56,13 @@ const { values } = parseArgs({
     // Stage 15: 命中率（射撃場 = 1 の相対値。全枠共通）と敵のプリセット（data/enemies.json の id。--defence / --element より優先）
     'hit-rate': { type: 'string', default: '1' },
     enemy: { type: 'string' },
+    events: { type: 'string' },
   },
 });
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--hit-rate 0.8] [--enemy range-bigarms-wind]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump]',
   );
   process.exit(2);
 }
@@ -165,10 +167,18 @@ function withBuild(
   return { character, growth, condition, attackOverride: combat.attack, buildEffects: effects.effects, skills };
 }
 
+const eventSetIds = values.events?.split(',').map((s) => s.trim()) ?? [];
+for (const id of eventSetIds) {
+  if (!enemyPreset?.eventSets.includes(id)) {
+    console.error(`--events: ${id} is not an event set of --enemy ${values.enemy ?? '(none)'}`);
+    process.exit(2);
+  }
+}
+const enemyEvents = enemyEventsOf(enemyPresets, eventSetIds, Number(values.duration));
 const input = {
   slots,
   enemy: enemyPreset
-    ? enemyInputOf(enemyPreset)
+    ? { ...enemyInputOf(enemyPreset), events: enemyEvents }
     : { defence: Number(values.defence), element: (values.element as Element | undefined) ?? null, hasCore: true },
   durationSeconds: Number(values.duration),
   burst: !values['no-burst'],
@@ -188,6 +198,11 @@ console.log(
     `fixed spec ${fixedSpec}, build ${values.build ?? 'none'}, controlled ${input.controlledSlot === null ? 'none (all AI)' : `slot ${input.controlledSlot + 1}`}, ` +
     `enemy ${enemyPreset?.id ?? 'custom'} defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}, hit rate ${condition.hitRate}`,
 );
+if (eventSetIds.length > 0) {
+  console.log(
+    `enemy events ${eventSetIds.join(', ')}: ${enemyEvents.map((e) => `${e.kind} ${e.start.toFixed(1)}-${e.end.toFixed(1)}s`).join(', ')}`,
+  );
+}
 if (calc.schedule && calc.burstSummary) {
   const byStep = slotsByStep(calc.schedule);
   const who = (list: number[]) =>

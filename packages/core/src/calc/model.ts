@@ -11,9 +11,11 @@
 // Stage 10: 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、1 パス目の射撃の列と時刻表は frame/firstPass.ts の
 // フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
 // Stage 16（plan/design-stage16.md 2 節）: calc モデルを team.ts から calc/model.ts に分けた。1 パス目は frame/plan.ts。
+// Stage 16-B（同 9 節）: 敵を狙えない窓（敵の出来事）があるときは、全グループで射撃の列を数える（sim と一致する）。
 import { activationFramesOfSlot, summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
 import { baseAttackOf, computeDamage, computeTriggerDamage, conditionNotes, modelNotes } from '../damage.ts';
+import { enemyEventNotes } from '../frame/events.ts';
 import { firingParams } from '../frame/firing.ts';
 import {
   BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
@@ -69,7 +71,9 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
   const { slots, enemy, durationSeconds, model } = input;
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const { frames, shots, schedule, timeline, skillHits, instants } = planTeamRun(input);
+  const { frames, shots, schedule, timeline, skillHits, instants, untargetable } = planTeamRun(input);
+  // Stage 16-B: 狙えない窓があると平均レートでは置けない（撃てない時間・撃ち直し・ハイド中のリロード）ので、全グループで射撃の列を数える
+  const countAllShots = untargetable.length > 0;
 
   const computed = slots.map((slot, index) => {
     if (slot === null) return null;
@@ -98,7 +102,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
         timedEffects: state.timedEffects,
       };
       // Stage 10: 持続の射撃バフが掛かっているグループは、射撃の列の発数を数える（plan/design-stage10.md 5 節）
-      if (state.timedEffects.some((e) => isFiringStat(e.stat))) {
+      if (countAllShots || state.timedEffects.some((e) => isFiringStat(e.stat))) {
         const trigger = computeTriggerDamage({
           ...base,
           buffs: state.buffs,
@@ -220,5 +224,8 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
     schedule,
     burstSummary: schedule === null ? null : summarizeSchedule(schedule, frames),
     timeline,
+    enemyEvents: [...(enemy.events ?? [])],
+    enemyNotes: enemyEventNotes(enemy.events),
+    damagePerSecond: null,
   };
 }

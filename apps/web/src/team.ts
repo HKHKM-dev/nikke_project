@@ -21,12 +21,15 @@ import {
   TEAM_SIZE,
   TREASURE_PHASE_MAX,
   emptyBuild,
+  enemyEventsOf,
   fixedSpecBuild,
+  matchingEnemyPreset,
   type BuildInput,
   type CharacterData,
   type CharacterIndexEntry,
   type Element,
   type EnemyInput,
+  type EnemyPresetMaster,
   type GearInput,
   type GearType,
   type GrowthInput,
@@ -77,6 +80,11 @@ export type TeamState = {
   burst: boolean;
   /** 操作キャラの枠（Stage 7）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ */
   controlledSlot: number;
+  /**
+   * Stage 16-B: ON にした敵の出来事のセット（data/enemies.json の eventSets の id）。既定は空（OFF）。
+   * 効くのは、敵の値がそのセットを持つプリセットと一致しているときだけ（App.tsx の enemyWithEvents）
+   */
+  enemyEventSets: string[];
 };
 
 export type TeamAction =
@@ -92,6 +100,7 @@ export type TeamAction =
   | { type: 'setFixedSpec'; fixedSpec: boolean }
   | { type: 'setBurst'; burst: boolean }
   | { type: 'setControlledSlot'; controlledSlot: number }
+  | { type: 'setEnemyEventSets'; enemyEventSets: string[] }
   | { type: 'replace'; state: TeamState };
 
 export function emptySlot(): SlotState {
@@ -116,6 +125,7 @@ export function initialTeamState(): TeamState {
     fixedSpec: false,
     burst: DEFAULT_BURST,
     controlledSlot: DEFAULT_CONTROLLED_SLOT,
+    enemyEventSets: [],
   };
 }
 
@@ -170,6 +180,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return { ...state, burst: action.burst };
     case 'setControlledSlot':
       return { ...state, controlledSlot: action.controlledSlot };
+    case 'setEnemyEventSets':
+      return { ...state, enemyEventSets: action.enemyEventSets };
     case 'replace':
       return action.state;
   }
@@ -182,6 +194,23 @@ export function takenResourceIds(state: TeamState, index: number): Set<number> {
     if (i !== index && s.resourceId !== null) ids.add(s.resourceId);
   });
   return ids;
+}
+
+/**
+ * Stage 16-B: 計算に渡す敵。ON にした出来事のセットのうち、敵の値と一致するプリセットが持つものだけを戦闘時間ぶん展開して足す。
+ * 手入力で値を変えた（カスタム）・プリセットの読み込み前は出来事なし
+ */
+export function enemyWithEvents(
+  enemy: EnemyInput,
+  master: EnemyPresetMaster | null,
+  setIds: readonly string[],
+  durationSeconds: number,
+): EnemyInput {
+  if (master === null || setIds.length === 0) return enemy;
+  const preset = matchingEnemyPreset(master.enemies, enemy);
+  const ids = setIds.filter((id) => preset?.eventSets.includes(id) ?? false);
+  if (ids.length === 0) return enemy;
+  return { ...enemy, events: enemyEventsOf(master, ids, durationSeconds) };
 }
 
 /** 計算に渡すスキル Lv。スペック固定は全スキル Lv10 */
@@ -434,6 +463,11 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   ) {
     return null;
   }
+  // Stage 16-B までの保存データには無いので、欠落は空（OFF）
+  const eventSets = raw.enemyEventSets;
+  if (eventSets !== undefined && !(Array.isArray(eventSets) && eventSets.every((id) => typeof id === 'string'))) {
+    return null;
+  }
 
   return {
     slots,
@@ -442,6 +476,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     fixedSpec: raw.fixedSpec,
     burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
     controlledSlot: typeof controlled === 'number' ? controlled : DEFAULT_CONTROLLED_SLOT,
+    enemyEventSets: eventSets === undefined ? [] : (eventSets as string[]),
   };
 }
 

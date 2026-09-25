@@ -508,3 +508,54 @@ header p {
   gap: 6px;
   align-items: center;
 }
+
+/* sim のタイムライン（Stage 16-B） */
+.timeline {
+  margin: 8px 0 12px;
+}
+.timeline svg {
+  display: block;
+  width: 100%;
+  max-width: 960px;
+  height: auto;
+}
+.tl-bar {
+  fill: currentColor;
+  opacity: 0.55;
+}
+.tl-axis {
+  stroke: currentColor;
+  opacity: 0.4;
+}
+.tl-label {
+  fill: currentColor;
+  font-size: 11px;
+  opacity: 0.7;
+}
+.tl-fullburst {
+  fill: #f59e0b;
+  background: #f59e0b;
+  opacity: 0.22;
+}
+.tl-untargetable {
+  fill: #64748b;
+  background: #64748b;
+  opacity: 0.45;
+}
+.tl-invulnerable {
+  fill: #a855f7;
+  background: #a855f7;
+  opacity: 0.3;
+}
+.tl-barrier {
+  fill: #0ea5e9;
+  background: #0ea5e9;
+  opacity: 0.3;
+}
+.tl-key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  vertical-align: baseline;
+  opacity: 0.6;
+}

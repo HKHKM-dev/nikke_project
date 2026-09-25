@@ -191,8 +191,10 @@ function activate(state: BurstControllerState, slotIndex: number, frame: number)
 /**
  * frame を 1 つ進める。gauge はこのフレームに当たった分のゲージ量（charging のときだけ足される）。
  * frame は 0 から 1 ずつ増やして呼ぶ。発動・フルバースト窓・満タン・タイムアウトは state に積まれる。
+ * Stage 16-B: blocked（敵を狙えない）の間はオートバーストが発動しない（2026-09-26 ユーザー確認）。
+ * 満タン・フルバーストの終わりは進み、明けたフレームで発動の判定を再開する（チェーンのタイムアウトは最後の発動から数えたまま）
  */
-export function stepBurstController(state: BurstControllerState, frame: number, gauge: number): void {
+export function stepBurstController(state: BurstControllerState, frame: number, gauge: number, blocked = false): void {
   const { timing } = state;
   if (state.phase === 'fullBurst' && frame >= state.fullBurstEnd) state.phase = 'charging';
   if (state.phase === 'charging') {
@@ -204,6 +206,7 @@ export function stepBurstController(state: BurstControllerState, frame: number, 
       state.gaugeFullFrames.push(frame);
     }
   }
+  if (blocked) return;
   // 間隔 0 の設定では同じフレームに複数段階が撃てるのでループにする
   while ((state.phase === 'ready' || state.phase === 'chain') && frame >= state.nextAllowedFrame) {
     const candidate = pickCandidate(state, state.step, frame);

@@ -28,6 +28,9 @@
 // 条件「自分が 〈stat〉 増加状態なら」の効果を追うときは、条件の stat の窓（状態の窓）も追い、手順 3 の順番は
 // 回復 → 状態の窓 → 攻撃力の窓 → 射撃に効く窓 → 即時効果。使用武器の変更（殲滅モード）の間は、変更後の武器を別の射手の状態で撃ち、
 // 終わったら基礎の武器を最大装弾数まで込め直して戻す（frame/shooter.ts の resumeShooter。録画 44 で確定）。武器の窓は持ち替えるフレーム（発火の次のフレーム）から。
+//
+// Stage 16-B（plan/design-stage16.md 9.3 節）: 敵を狙えない窓（options.untargetable）の間は、全員が撃たず（ハイドしてリロード）、
+// オートバーストも発動しない。ゲージは射撃が無いので溜まらない。持続バフ・CT・フルバーストの時間はそのまま進む。
 import { planFixedCycle, durationToFrames } from '../burst/fixedCycle.ts';
 import {
   DEFAULT_BURST_TIMING,
@@ -68,8 +71,17 @@ import {
 } from '../skills/triggers.ts';
 import { isFiringStat, type BuffStat } from '../skills/types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
+import type { FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
-import { initialShooter, refillAmmo, resumeShooter, stepShooter, type ShooterState } from './shooter.ts';
+import {
+  hideShooter,
+  initialShooter,
+  refillAmmo,
+  resumeShooter,
+  stepShooter,
+  unhideShooter,
+  type ShooterState,
+} from './shooter.ts';
 import type { ShotLog } from './shots.ts';
 
 export type FirstPassOptions = {
@@ -81,6 +93,8 @@ export type FirstPassOptions = {
   /** 操作キャラの枠（フルチャージ倍率がゲージに乗る）。null は全員 AI */
   controlledSlot?: number | null;
   timing?: Readonly<BurstTiming>;
+  /** Stage 16-B: 敵を狙えない窓（昇順・重なりなし。frame/events.ts の untargetableRanges）。省略・空なら今までと同じ */
+  untargetable?: readonly FrameRange[];
 };
 
 /** 射撃に効く timed 効果の窓（Stage 11 から対象の枠ごと。発火ごとに対象が変わる効果があるため） */
@@ -157,6 +171,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const model = options.model ?? DEFAULT_WEAPON_MODEL;
   const burstModel = options.burstModel ?? 'dynamic';
   const controlledSlot = options.controlledSlot ?? null;
+  const untargetable = options.untargetable ?? [];
   const scheduleModel: BurstScheduleModel | null = options.burst ? burstModel : null;
 
   // ---- 効果の準備 ----
@@ -365,7 +380,16 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   let healedDirty = false;
   const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
 
+  /** Stage 16-B: いま見ている（または次に来る）狙えない窓の添字 */
+  let nextBlock = 0;
+
   for (let f = 0; f < frames; f++) {
+    // Stage 16-B: 狙えない窓。入るフレームで hide、明けるフレームで unhide（どちらも射手を進める前）
+    while (nextBlock < untargetable.length && untargetable[nextBlock]!.end < f) nextBlock += 1;
+    const block = untargetable[nextBlock];
+    const blocked = block !== undefined && block.start <= f && f < block.end;
+    const hideNow = blocked && block.start === f;
+    const unhideNow = block !== undefined && block.end === f;
     // 1. 射手
     let gauge = 0;
     slots.forEach((slot, i) => {
@@ -384,7 +408,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
       const state = params.weapon !== null ? changedShooters[i]! : shooters[i]!;
       const shot = params.weapon?.shot ?? slot.character.shot;
-      if (!stepShooter(state, shot, model, params)) return;
+      if (hideNow) hideShooter(state, shot, model, params);
+      if (unhideNow) unhideShooter(state, shot, block!.end - block!.start, model, params);
+      if (!stepShooter(state, shot, model, params, blocked)) return;
       const log = logs[i]!;
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
@@ -392,7 +418,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       gauge += energies[i]!;
     });
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）
-    if (controller !== null) stepBurstController(controller, f, gauge);
+    if (controller !== null) stepBurstController(controller, f, gauge, blocked);
     if (!trackEvents) continue;
 
     // 3. 出来事 → 射撃に効く窓の登録 → 即時効果

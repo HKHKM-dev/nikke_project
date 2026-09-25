@@ -6,6 +6,7 @@ import {
   enemyInputOf,
   matchingEnemyPreset,
   type Element,
+  type EnemyEventSet,
   type EnemyInput,
   type EnemyPreset,
 } from '@nikke/core';
@@ -16,6 +17,10 @@ type Props = {
   enemy: EnemyInput;
   /** Stage 15: 敵のプリセット（data/enemies.json）。読み込み前・失敗は空 */
   enemyPresets: readonly EnemyPreset[];
+  /** Stage 16-B: 敵の出来事のセット（data/enemies.json）。出すのは選んでいるプリセットが持つものだけ */
+  eventSets: readonly EnemyEventSet[];
+  /** Stage 16-B: ON にした出来事のセットの id */
+  enemyEventSets: readonly string[];
   durationSeconds: number;
   fixedSpec: boolean;
   burst: boolean;
@@ -27,6 +32,8 @@ type Props = {
 export function TeamSettingsForm({
   enemy,
   enemyPresets,
+  eventSets,
+  enemyEventSets,
   durationSeconds,
   fixedSpec,
   burst,
@@ -35,6 +42,12 @@ export function TeamSettingsForm({
 }: Props) {
   const setEnemy = (patch: Partial<EnemyInput>) => dispatch({ type: 'setEnemy', enemy: { ...enemy, ...patch } });
   const preset = matchingEnemyPreset(enemyPresets, enemy);
+  const availableSets = eventSets.filter((set) => preset?.eventSets.includes(set.id) ?? false);
+  const toggleEventSet = (id: string, on: boolean) =>
+    dispatch({
+      type: 'setEnemyEventSets',
+      enemyEventSets: on ? [...enemyEventSets.filter((x) => x !== id), id] : enemyEventSets.filter((x) => x !== id),
+    });
   return (
     <fieldset className="panel settings">
       <legend>敵・共通条件</legend>
@@ -94,6 +107,16 @@ export function TeamSettingsForm({
           <input type="checkbox" checked={enemy.hasCore} onChange={(e) => setEnemy({ hasCore: e.target.checked })} />
           <span>コアあり</span>
         </label>
+        {availableSets.map((set) => (
+          <label key={set.id} className="field checkbox" title={set.source}>
+            <input
+              type="checkbox"
+              checked={enemyEventSets.includes(set.id)}
+              onChange={(e) => toggleEventSet(set.id, e.target.checked)}
+            />
+            <span>{set.name.ja}</span>
+          </label>
+        ))}
         <label className="field checkbox">
           <input
             type="checkbox"

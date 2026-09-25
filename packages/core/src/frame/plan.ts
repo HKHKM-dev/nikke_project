@@ -36,6 +36,8 @@ import {
   type TeamSlotInput,
 } from '../team.ts';
 import type { WeaponModel } from '../weapons.ts';
+import { untargetableRanges } from './events.ts';
+import type { FrameRange } from '../skills/timeline.ts';
 import { runFirstPass, type InstantApplication } from './firstPass.ts';
 import type { ShotLog } from './shots.ts';
 
@@ -78,6 +80,8 @@ export type TeamPlan = {
   skillHits: SkillHitEvent[];
   /** Stage 10: 即時効果（CT 短縮・弾丸チャージ）を当てた記録（発生順） */
   instants: InstantApplication[];
+  /** Stage 16-B: 敵を狙えない窓（フレーム。出来事が無ければ空） */
+  untargetable: FrameRange[];
 };
 
 /**
@@ -93,16 +97,18 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   validateControlledSlot(slots, input.controlledSlot);
   const frames = durationToFrames(input.durationSeconds);
   const timelineSlots = toTimelineSlots(slots);
+  const untargetable = untargetableRanges(enemy.events, frames);
   const { shots, schedule, instants } = runFirstPass(timelineSlots, {
     frames,
     model,
     burst: input.burst ?? false,
     burstModel: input.burstModel ?? 'dynamic',
     controlledSlot: input.controlledSlot ?? null,
+    untargetable,
   });
   const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots);
   const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
-  return { frames, shots, schedule, timeline, skillHits, instants };
+  return { frames, shots, schedule, timeline, skillHits, instants, untargetable };
 }
 
 /** Stage 11 モダニア: その枠の射撃ごとの倍率ダメージ（1 トリガーの値に畳み込む）。定義が無ければ空 */

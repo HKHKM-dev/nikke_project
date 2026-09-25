@@ -53,10 +53,21 @@ export function skillElementMultiplier(character: CharacterData, enemy: EnemyInp
   );
 }
 
+/**
+ * Stage 16-B: 敵の出来事の種類（plan/design-stage16.md 9.2 節）。
+ * untargetable = 狙えない（射撃場 3 分モードの的のジャンプなど）。invulnerable・barrier は型と表示だけで、数値には効かせない
+ */
+export type EnemyEventKind = 'untargetable' | 'invulnerable' | 'barrier';
+
+/** Stage 16-B: 敵の出来事 1 つ。秒で [start, end) */
+export type EnemyEvent = { kind: EnemyEventKind; start: number; end: number };
+
 export type EnemyInput = {
   defence: number;
   element: Element | null;
   hasCore: boolean;
+  /** Stage 16-B: 敵の出来事（省略・空なら出来事なし = Stage 16-A と 1 フレームも違わない） */
+  events?: readonly EnemyEvent[];
 };
 
 /** 1 トリガーの式に効く条件（時間を含まない） */

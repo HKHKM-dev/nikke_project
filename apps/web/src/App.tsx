@@ -16,7 +16,7 @@ import {
   type BuildMasters,
   type CharacterData,
   type CharacterIndexEntry,
-  type EnemyPreset,
+  type EnemyPresetMaster,
   type GrowthInput,
   type TeamInput,
   type TeamResult,
@@ -34,6 +34,7 @@ import {
   effectiveBuild,
   effectiveSkillLevels,
   effectiveTreasurePhase,
+  enemyWithEvents,
   parseTeamState,
   serializeTeamState,
   takenResourceIds,
@@ -93,12 +94,12 @@ export function App() {
   const [masters, setMasters] = useState<BuildMasters | null>(null);
   const [mastersError, setMastersError] = useState<string | null>(null);
 
-  // Stage 15: 敵のプリセット。読めなければ空（手入力はできる）
-  const [enemyPresets, setEnemyPresets] = useState<EnemyPreset[]>([]);
+  // Stage 15: 敵のプリセット。読めなければ null（手入力はできる）。Stage 16-B: 出来事のセットも同じファイル
+  const [enemyMaster, setEnemyMaster] = useState<EnemyPresetMaster | null>(null);
   useEffect(() => {
     loadEnemyPresets({ baseUrl: BASE_URL })
-      .then((m) => setEnemyPresets(m.enemies))
-      .catch(() => setEnemyPresets([]));
+      .then(setEnemyMaster)
+      .catch(() => setEnemyMaster(null));
   }, []);
 
   useEffect(() => {
@@ -183,12 +184,12 @@ export function App() {
   const teamInput = useMemo<TeamInput>(
     () => ({
       slots: slotInputs,
-      enemy: team.enemy,
+      enemy: enemyWithEvents(team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds),
       durationSeconds: team.durationSeconds,
       burst: team.burst,
       controlledSlot: team.controlledSlot,
     }),
-    [slotInputs, team.enemy, team.durationSeconds, team.burst, team.controlledSlot],
+    [slotInputs, team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds, team.burst, team.controlledSlot],
   );
   const computed = useMemo<Computed>(() => compute(() => computeTeamDamage(teamInput)), [teamInput]);
 
@@ -259,7 +260,9 @@ export function App() {
         <>
           <TeamSettingsForm
             enemy={team.enemy}
-            enemyPresets={enemyPresets}
+            enemyPresets={enemyMaster?.enemies ?? []}
+            eventSets={enemyMaster?.eventSets ?? []}
+            enemyEventSets={team.enemyEventSets}
             durationSeconds={team.durationSeconds}
             fixedSpec={team.fixedSpec}
             burst={team.burst}
@@ -307,7 +310,7 @@ export function App() {
           ) : (
             <p className="error">{shown.error}</p>
           )}
-          <NotesSummary slots={summarySlots} />
+          <NotesSummary slots={summarySlots} enemyNotes={shown.ok ? shown.result.enemyNotes : []} />
           <DataPanel team={team} index={index} dispatch={dispatch} />
         </>
       )}

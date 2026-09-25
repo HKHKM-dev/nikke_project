@@ -10,6 +10,7 @@
 // 射撃は 1 パス目の射撃の列（frame/shots.ts）をそのまま使い、倍率ダメージ（damage）は発動フレームで足す。
 // Stage 10: 1 パス目の射撃の列と時刻表は frame/firstPass.ts のフレームループ（射撃に効くバフ・CT 短縮・弾丸チャージ込み）で作る。
 // 2 パス目は変えない（射撃の列を読み、区間ごとの 1 トリガー値を足す）。
+// Stage 16-B（plan/design-stage16.md 9 節）: 敵の出来事は 1 パス目で効く。タイムラインの表示用に 1 秒ごとのダメージを足し上げる。
 import type { BurstSchedule, BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
 import {
@@ -33,10 +34,11 @@ import {
   planTeamRun,
   type SkillHitEvent,
 } from '../frame/plan.ts';
-import { type TeamInput } from '../team.ts';
+import { type DamagePerSecond, type TeamInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
-import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
+import { DEFAULT_WEAPON_MODEL, FPS } from '../weapons.ts';
 import { firingParams } from '../frame/firing.ts';
+import type { FrameRange } from '../skills/timeline.ts';
 import type { InstantApplication } from '../frame/firstPass.ts';
 import type { ShotLog } from '../frame/shots.ts';
 
@@ -109,6 +111,10 @@ export type SimResult = {
   skillHits: SkillHitEvent[];
   slots: (SimSlotResult | null)[];
   totalDamage: number;
+  /** Stage 16-B: 敵を狙えない窓（1 パス目。出来事が無ければ空） */
+  untargetable: FrameRange[];
+  /** Stage 16-B: 1 秒ごとのダメージ（通常攻撃・バーストスキル・倍率ダメージの合計） */
+  damagePerSecond: DamagePerSecond;
   /** trace: false なら空 */
   events: SimEvent[];
 };
@@ -130,7 +136,18 @@ export function runSimulation(simInput: SimInput): SimResult {
   const trace = input.trace ?? false;
 
   // 1 パス目（calc と共通）: 射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動。2 パス目がこの下のフレームループ
-  const { frames, shots, schedule, timeline, skillHits, instants } = planTeamRun({ ...input, model });
+  const { frames, shots, schedule, timeline, skillHits, instants, untargetable } = planTeamRun({ ...input, model });
+  // Stage 16-B: 1 秒ごとのダメージ（タイムラインの表示用）
+  const seconds = Math.ceil(frames / FPS);
+  const perSecond: DamagePerSecond = {
+    total: new Array<number>(seconds).fill(0),
+    slots: slots.map((slot) => (slot === null ? null : new Array<number>(seconds).fill(0))),
+  };
+  const addPerSecond = (slotIndex: number, frame: number, damage: number): void => {
+    const k = Math.floor(frame / FPS);
+    perSecond.total[k]! += damage;
+    perSecond.slots[slotIndex]![k]! += damage;
+  };
 
   const runners: (Runner | null)[] = slots.map((slot, index) => {
     if (slot === null) return null;
@@ -256,6 +273,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       runner.result.burst.activations.push(f);
       runner.result.burst.hits.push(hit);
       runner.result.burst.damage += hit.perActivation;
+      addPerSecond(index, f, hit.perActivation);
       if (trace) events.push({ frame: f, kind: 'burst', slot: index, step, damage: hit.perActivation });
     }
     // Stage 8: 倍率ダメージ（damage）。値は 1 パス目で計算済み（calc と同じ）
@@ -266,6 +284,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       if (!runner) continue;
       runner.result.skillHits.frames.push(f);
       runner.result.skillHits.damage += h.hit.perActivation;
+      addPerSecond(h.slotIndex, f, h.hit.perActivation);
       if (trace)
         events.push({ frame: f, kind: 'skillHit', slot: h.slotIndex, effect: h.effect, damage: h.hit.perActivation });
     }
@@ -285,6 +304,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       const segment = runner.result.segments[segIndex]!;
       segment.triggers += 1;
       segment.damage += segment.trigger.perTrigger;
+      addPerSecond(runner.index, f, segment.trigger.perTrigger);
       if (trace)
         events.push({
           frame: f,
@@ -307,7 +327,19 @@ export function runSimulation(simInput: SimInput): SimResult {
     return r;
   });
 
-  return { frames, schedule, timeline, shots, instants, skillHits, slots: results, totalDamage, events };
+  return {
+    frames,
+    schedule,
+    timeline,
+    shots,
+    instants,
+    skillHits,
+    slots: results,
+    totalDamage,
+    untargetable,
+    damagePerSecond: perSecond,
+    events,
+  };
 }
 
 export type SimIntervalTotals = { triggers: number; damage: number };

@@ -2,6 +2,7 @@
 // 通常攻撃は calc と同じグループ（同じバフ状態）に集計し、トリガー数は sim が実際に撃った数（triggerSource: 'shots'）。
 // バーストスキルと倍率ダメージは sim の発動列をそのまま使う（calc と同じ 1 パス目の値）。
 import { summarizeSchedule } from '../burst/schedule.ts';
+import { enemyEventNotes } from '../frame/events.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { groupTimeline, mergeAdjacentRanges } from '../skills/timeline.ts';
 import {
@@ -99,5 +100,8 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
     schedule: sim.schedule,
     burstSummary: sim.schedule === null ? null : summarizeSchedule(sim.schedule, sim.frames),
     timeline: sim.timeline,
+    enemyEvents: [...(input.enemy.events ?? [])],
+    enemyNotes: enemyEventNotes(input.enemy.events),
+    damagePerSecond: sim.damagePerSecond,
   };
 }

@@ -16,9 +16,13 @@
 //
 // Stage 11 モダニア: 装弾数無限（FiringParams.infiniteAmmo）の間は撃っても残弾を減らさない。使用武器の変更（殲滅モード）は
 // frame/firstPass.ts が別の射手の状態で撃ち、終わったら resumeShooter で基礎の武器の状態に戻す（plan/design-stage11-modernia.md 3.4 節）。
+//
+// Stage 16-B: 敵を狙えない窓（敵のジャンプ）の間は撃たない（stepShooter の blocked）。待ち・リロードは進む。
+// 窓に入ったら hideShooter、明けたら unhideShooter（plan/design-stage16.md 9.3 節。2026-09-26 ユーザー確認の仕様）:
+//   攻撃できる敵がいないとハイドし、できればリロードする。窓の間に込め終われば満タンで、終わらなければ込め直しは無かったことになる。
 import { firstShotFrames, rateAfterShots } from '../cadence.ts';
 import type { ShotParams } from '../types.ts';
-import { DEFAULT_WEAPON_MODEL, MAX_RPM, isChargeWeapon, type WeaponModel } from '../weapons.ts';
+import { DEFAULT_WEAPON_MODEL, FPS, MAX_RPM, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { firingParams, reloadChunkAmmo, type FiringParams } from './firing.ts';
 
 /**
@@ -47,6 +51,8 @@ export type ShooterState = {
   acc: number;
   /** 直前に撃った射撃で残弾が 0 になったか（「最後の弾丸」の印。stepShooter が撃ったフレームだけ意味を持つ） */
   lastShot: boolean;
+  /** Stage 16-B: ハイド中に始めたリロード（明けるまでに込め終わらなければ取り消す）。無ければキーごと無い */
+  hideReload?: true;
 };
 
 export function initialShooter(
@@ -128,13 +134,15 @@ function startMagazine(state: ShooterState): void {
 
 /**
  * 1 フレーム進める（state を書き換える）。このフレームに発射したら true。
- * params はこのフレームの射撃の実効値（省略は基礎値）。最大装弾数が残弾より小さくなっていたら先に削る（MAX_AMMO_CLAMP_ON_DECREASE）
+ * params はこのフレームの射撃の実効値（省略は基礎値）。最大装弾数が残弾より小さくなっていたら先に削る（MAX_AMMO_CLAMP_ON_DECREASE）。
+ * Stage 16-B: blocked（敵を狙えない）なら撃たない。待ち・リロードは進み、撃てる状態のまま明けるのを待つ
  */
 export function stepShooter(
   state: ShooterState,
   shot: ShotParams,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
+  blocked = false,
 ): boolean {
   if (MAX_AMMO_CLAMP_ON_DECREASE && state.ammo > params.maxAmmo) state.ammo = params.maxAmmo;
   if (state.wait > 0) {
@@ -145,6 +153,7 @@ export function stepShooter(
     // 1 回分を込め終えた。最大に届いて 1 発目の遅延が 0 ならこのフレームに撃つ（AR・SMG・SG など）
     if (!loadChunks(state, shot, model, params)) return false;
   }
+  if (blocked) return false;
   if (state.phase === 'priming') startMagazine(state);
   if (state.shotsInMagazine > 0 && !isChargeWeapon(shot)) {
     // simulateShotFrames と同じ: 前の発射の翌フレームから毎フレーム蓄積し、1 発分たまったフレームで撃つ
@@ -196,6 +205,60 @@ export function resumeShooter(
   state.ammo = params.maxAmmo;
   state.lastShot = false;
   state.wait = firstShotFrames(shot, model, params);
+}
+
+/**
+ * Stage 16-B: 敵を狙えなくなった（窓の最初のフレーム、stepShooter の前に呼ぶ）。
+ * 撃てる状態で残弾が減っていれば、ハイド中のリロードを始める（チャージ中の分は捨てる）。
+ * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タンならそのまま
+ */
+export function hideShooter(
+  state: ShooterState,
+  shot: ShotParams,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): void {
+  if (state.phase !== 'ready' || params.infiniteAmmo || state.ammo >= params.maxAmmo) return;
+  state.phase = 'reloading';
+  state.hideReload = true;
+  if (params.reloadChunkFrames > 0) {
+    // 最終弾の直後のリロードと同じく、窓の最初のフレームを 1 フレーム目に数える
+    state.wait = params.reloadChunkFrames - 1;
+    return;
+  }
+  loadChunks(state, shot, model, params);
+}
+
+/**
+ * Stage 16-B: 敵を狙えるようになった（窓の明けのフレーム、stepShooter の前に呼ぶ）。stoppedFrames は窓の長さ。
+ * - ハイド中のリロードが終わっていなければ取り消す（込め終えた分割リロードの分は残る。残弾は減らない）。
+ * - 撃てる状態なら撃ち直す。窓が rateOfFireResetTime 以上ならレートは最初から（録画 41 のクラウン: 間隔 23・13・10・8…）。
+ *   1 発目は明けのフレームにすぐ撃つ（録画 41・48・49 の最後の射撃 → 撃ち直しが 111〜126f で、窓の長さとほぼ同じ）。
+ *   チャージ武器はチャージし直す（戦闘開始と同じ待ち。込め終えて 1 発目を待っていた枠も同じ）。
+ * - 弾切れのリロード中はそのまま続ける。チャージ武器以外の、込め終えて 1 発目を待っている枠（MG の初弾遅延）もそのまま
+ */
+export function unhideShooter(
+  state: ShooterState,
+  shot: ShotParams,
+  stoppedFrames: number,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): void {
+  if (state.hideReload) {
+    delete state.hideReload;
+    if (state.phase === 'reloading') {
+      state.phase = 'ready';
+      state.wait = 0;
+    }
+  }
+  if (state.phase === 'reloading') return;
+  if (state.phase === 'ready' && stoppedFrames >= shot.rateOfFireResetTime * FPS) {
+    state.shotsInMagazine = 0;
+    state.acc = 0;
+  }
+  // チャージは狙えない間には進まないので、込め終えて 1 発目を待っていた枠も明けからチャージする
+  if (isChargeWeapon(shot)) state.wait = firstShotFrames(shot, model, params);
+  else if (state.phase === 'ready') state.wait = 0;
 }
 
 /** 最初の frames フレームで発射したフレームの列（テスト・CLI 用） */

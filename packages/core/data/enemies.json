@@ -1,61 +1,109 @@
 {
   "formatVersion": 1,
   "source": "手書き。防御力は 1 ヒットの逆算で確かめた値だけ載せる（plan/design-stage12.md 5.2 節）。迎撃戦・レイドのボスは実戦の撮影（Stage 15）で測ってから足す",
+  "eventSets": [
+    {
+      "id": "range-3min-jump",
+      "name": {
+        "ja": "3 分モード（的のジャンプ）",
+        "en": "3-minute mode (target jumps)"
+      },
+      "events": [
+        {
+          "kind": "untargetable",
+          "first": 31,
+          "duration": 2,
+          "every": 36.4
+        }
+      ],
+      "source": "plan/design-stage16.md 9.0 節（2026-09-26）: 3 分モードの録画 41・43・44・48〜50 で HUD の総ダメージが止まる区間を読んだ代表値。最初のジャンプは戦闘開始（最初のダメージ）から 25.7〜32.7 秒（中央値 31 秒）、間隔は 2,014〜2,382f（中央値 2,186f = 36.4 秒）、撃てない長さは最後の射撃 → 撃ち直しが 111〜126f。位相は録画ごとに変わる（同じ編成の録画 48 と 49・50 で約 410f）"
+    }
+  ],
   "enemies": [
     {
       "id": "range-bigarms-fire",
-      "name": { "ja": "ユニオン射撃場 BigArms（灼熱）", "en": "Union Shooting Range BigArms (Fire)" },
+      "name": {
+        "ja": "ユニオン射撃場 BigArms（灼熱）",
+        "en": "Union Shooting Range BigArms (Fire)"
+      },
       "content": "range",
       "element": "Fire",
       "hasCore": true,
       "defence": 100,
       "level": null,
       "measuredAt": "2026-09-22",
-      "source": "plan/verification.md 灼熱タブの録画（同じ BigArms で属性だけ灼熱。防御 100 相当は 1 ヒットの一致で裏付け）"
+      "source": "plan/verification.md 灼熱タブの録画（同じ BigArms で属性だけ灼熱。防御 100 相当は 1 ヒットの一致で裏付け）",
+      "eventSets": [
+        "range-3min-jump"
+      ]
     },
     {
       "id": "range-bigarms-wind",
-      "name": { "ja": "ユニオン射撃場 BigArms（風圧）", "en": "Union Shooting Range BigArms (Wind)" },
+      "name": {
+        "ja": "ユニオン射撃場 BigArms（風圧）",
+        "en": "Union Shooting Range BigArms (Wind)"
+      },
       "content": "range",
       "element": "Wind",
       "hasCore": true,
       "defence": 100,
       "level": null,
       "measuredAt": "2026-09-22",
-      "source": "plan/verification.md Stage 2-A（1 ヒットの逆算。スペック固定の攻撃力が 9 体で誤差 0）"
+      "source": "plan/verification.md Stage 2-A（1 ヒットの逆算。スペック固定の攻撃力が 9 体で誤差 0）",
+      "eventSets": [
+        "range-3min-jump"
+      ]
     },
     {
       "id": "range-bigarms-iron",
-      "name": { "ja": "ユニオン射撃場 BigArms（鉄甲）", "en": "Union Shooting Range BigArms (Iron)" },
+      "name": {
+        "ja": "ユニオン射撃場 BigArms（鉄甲）",
+        "en": "Union Shooting Range BigArms (Iron)"
+      },
       "content": "range",
       "element": "Iron",
       "hasCore": true,
       "defence": 100,
       "level": null,
       "measuredAt": "2026-09-22",
-      "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。鉄甲タブの録画はまだない"
+      "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。鉄甲タブの録画はまだない",
+      "eventSets": [
+        "range-3min-jump"
+      ]
     },
     {
       "id": "range-bigarms-electric",
-      "name": { "ja": "ユニオン射撃場 BigArms（電撃）", "en": "Union Shooting Range BigArms (Electric)" },
+      "name": {
+        "ja": "ユニオン射撃場 BigArms（電撃）",
+        "en": "Union Shooting Range BigArms (Electric)"
+      },
       "content": "range",
       "element": "Electronic",
       "hasCore": true,
       "defence": 100,
       "level": null,
       "measuredAt": "2026-09-22",
-      "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。電撃タブの録画 18・20 でも防御 100 の式で 1 ヒットが一致（plan/verification.md 射撃場の実測）"
+      "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。電撃タブの録画 18・20 でも防御 100 の式で 1 ヒットが一致（plan/verification.md 射撃場の実測）",
+      "eventSets": [
+        "range-3min-jump"
+      ]
     },
     {
       "id": "range-bigarms-water",
-      "name": { "ja": "ユニオン射撃場 BigArms（水冷）", "en": "Union Shooting Range BigArms (Water)" },
+      "name": {
+        "ja": "ユニオン射撃場 BigArms（水冷）",
+        "en": "Union Shooting Range BigArms (Water)"
+      },
       "content": "range",
       "element": "Water",
       "hasCore": true,
       "defence": 100,
       "level": null,
       "measuredAt": "2026-09-22",
-      "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。水冷タブの録画はまだない"
+      "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。水冷タブの録画はまだない",
+      "eventSets": [
+        "range-3min-jump"
+      ]
     }
   ]
 }

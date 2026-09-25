@@ -34,7 +34,7 @@ const MODEL_WIDE: Item[] = [
   },
   {
     level: 'unsupported',
-    text: '命中率は枠ごとの入力（既定は射撃場と同じ 1）で、敵の移動・攻撃・カバーによる中断は扱わない。命中を数えるトリガーは全弾命中で数える',
+    text: '命中率は枠ごとの入力（既定は射撃場と同じ 1）。敵の移動・攻撃・カバーによる中断は、射撃場 3 分モードの的のジャンプ（敵の欄のチェック）だけ扱う。命中を数えるトリガーは全弾命中で数える',
   },
   { level: 'unsupported', text: 'ボスの行動パターン・パーツ破壊・貫通・範囲攻撃の複数ヒット' },
   {
@@ -88,13 +88,26 @@ function ItemList({ items }: { items: readonly Item[] }) {
   );
 }
 
-export function NotesSummary({ slots }: { slots: readonly (NotesSummarySlot | null)[] }) {
+export function NotesSummary({
+  slots,
+  enemyNotes,
+}: {
+  slots: readonly (NotesSummarySlot | null)[];
+  /** Stage 16-B: 敵の出来事の注記（未実装の種類・近似）。出来事が無ければ空 */
+  enemyNotes: readonly ModelNote[];
+}) {
   const filled = slots.filter((s): s is NotesSummarySlot => s !== null);
   return (
     <details className="panel notes-summary">
       <summary>未対応・近似・仮定の一覧</summary>
       <h3>モデル全体</h3>
       <ItemList items={MODEL_WIDE} />
+      {enemyNotes.length > 0 && (
+        <>
+          <h3>敵の出来事</h3>
+          <ItemList items={enemyNotes.map((n) => ({ level: n.level, text: n.message.ja }))} />
+        </>
+      )}
       {filled.map((slot) => {
         const items = slotItems(slot);
         return (

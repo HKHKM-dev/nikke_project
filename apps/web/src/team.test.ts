@@ -1,10 +1,11 @@
-import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
+import type { CharacterData, CharacterIndexEntry, EnemyPresetMaster } from '@nikke/core';
 import { describe, expect, it } from 'vitest';
 import {
   INITIAL_TEAM_STATE,
   clampSkillLevel,
   effectiveSkillLevels,
   effectiveTreasurePhase,
+  enemyWithEvents,
   TEAM_FORMAT_VERSION,
   initialTeamState,
   parseTeamState,
@@ -171,6 +172,56 @@ describe('controlled slot (Stage 7)', () => {
     expect(parseTeamState(JSON.stringify({ ...stage6, controlledSlot: null }), index)?.controlledSlot).toBe(2);
     expect(parseTeamState(JSON.stringify({ ...stage6, controlledSlot: 5 }), index)).toBeNull();
     expect(parseTeamState(JSON.stringify({ ...stage6, controlledSlot: '1' }), index)).toBeNull();
+  });
+});
+
+describe('enemy event sets (Stage 16-B)', () => {
+  const master: EnemyPresetMaster = {
+    formatVersion: 1,
+    source: '',
+    eventSets: [
+      {
+        id: 'jump',
+        name: { ja: 'ジャンプ', en: 'Jump' },
+        events: [{ kind: 'untargetable', first: 31, duration: 2, every: 36.4 }],
+        source: 'test',
+      },
+    ],
+    enemies: [
+      {
+        id: 'range',
+        name: { ja: '的', en: 'Target' },
+        content: 'range',
+        element: 'Wind',
+        hasCore: true,
+        defence: 100,
+        level: null,
+        measuredAt: '2026-09-26',
+        source: 'test',
+        eventSets: ['jump'],
+      },
+    ],
+  };
+  const enemy = { defence: 100, element: 'Wind' as const, hasCore: true };
+
+  it('defaults to off, updates and round-trips; a missing value (older saves) is off', () => {
+    expect(INITIAL_TEAM_STATE.enemyEventSets).toEqual([]);
+    const s1 = teamReducer(withCharacters([10]), { type: 'setEnemyEventSets', enemyEventSets: ['jump'] });
+    expect(s1.enemyEventSets).toEqual(['jump']);
+    expect(parseTeamState(serializeTeamState(s1), index)).toEqual(s1);
+    const old = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
+    delete old.enemyEventSets;
+    expect(parseTeamState(JSON.stringify(old), index)?.enemyEventSets).toEqual([]);
+    expect(parseTeamState(JSON.stringify({ ...old, enemyEventSets: 'jump' }), index)).toBeNull();
+  });
+
+  it('adds the events only when the set is on and the enemy matches a preset that has it', () => {
+    expect(enemyWithEvents(enemy, master, [], 180)).toBe(enemy);
+    expect(enemyWithEvents(enemy, null, ['jump'], 180)).toBe(enemy);
+    expect(enemyWithEvents({ ...enemy, defence: 140 }, master, ['jump'], 180).events).toBeUndefined();
+    const withJumps = enemyWithEvents(enemy, master, ['jump'], 180);
+    expect(withJumps.events?.map((e) => e.start.toFixed(1))).toEqual(['31.0', '67.4', '103.8', '140.2', '176.6']);
+    expect(enemyWithEvents(enemy, master, ['jump'], 60).events).toHaveLength(1);
   });
 });
 

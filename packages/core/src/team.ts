@@ -5,6 +5,7 @@ import type { CadenceResult } from './cadence.ts';
 import {
   baseAttackOf,
   hitRateOf,
+  type EnemyEvent,
   type EnemyInput,
   type ModelNote,
   type TriggerCondition,
@@ -171,7 +172,15 @@ export type TeamResult = {
   /** 時刻表の集計（フルバースト回数・稼働率・平均サイクル）。burst なしなら null */
   burstSummary: BurstSummary | null;
   timeline: BuffTimeline;
+  /** Stage 16-B: 敵の出来事（入力のまま）と、その注記（未実装の種類・近似）。出来事が無ければどちらも空 */
+  enemyEvents: EnemyEvent[];
+  enemyNotes: ModelNote[];
+  /** Stage 16-B: 1 秒ごとのダメージ（編成の合計と枠ごと。sim だけ。calc は null） */
+  damagePerSecond: DamagePerSecond | null;
 };
+
+/** Stage 16-B: 1 秒ごとのダメージ。添字 k は [k, k + 1) 秒（最後の 1 つは戦闘時間で切れた端数を含む） */
+export type DamagePerSecond = { total: number[]; slots: (number[] | null)[] };
 
 /** 操作キャラの枠が編成の範囲内の埋まった枠か検証する。sim と calc で共通 */
 export function validateControlledSlot(

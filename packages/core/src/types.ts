@@ -251,6 +251,30 @@ export type EnemyPreset = {
   measuredAt: string;
   /** 防御力の出どころ（verification.md の節など） */
   source: string;
+  /** Stage 16-B: 選べる出来事のセット（EnemyPresetMaster.eventSets の id）。無ければ空 */
+  eventSets: string[];
 };
 
-export type EnemyPresetMaster = { formatVersion: 1; source: string; enemies: EnemyPreset[] };
+/** Stage 16-B: 周期で書いた敵の出来事（秒）。first から duration 秒、every 秒ごとに繰り返す（every が無ければ 1 回） */
+export type EnemyEventSpec = {
+  kind: 'untargetable' | 'invulnerable' | 'barrier';
+  first: number;
+  duration: number;
+  every?: number;
+};
+
+/** Stage 16-B: 出来事のセット（射撃場 3 分モードの的のジャンプなど）。画面ではセットごとに ON/OFF する */
+export type EnemyEventSet = {
+  id: string;
+  name: LocalizedText;
+  events: EnemyEventSpec[];
+  /** 値の出どころと、代表値にした理由 */
+  source: string;
+};
+
+export type EnemyPresetMaster = {
+  formatVersion: 1;
+  source: string;
+  eventSets: EnemyEventSet[];
+  enemies: EnemyPreset[];
+};
