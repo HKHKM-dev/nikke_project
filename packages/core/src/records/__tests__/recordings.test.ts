@@ -27,9 +27,9 @@ describe('records/recordings.json', () => {
     expect(validateRecordings(file, knownRids)).toEqual([]);
   });
 
-  it('keeps the 63 project recordings and the 5 legacy ones', () => {
+  it('keeps the 69 project recordings and the 5 legacy ones', () => {
     expect(file.recordings.filter((e) => !('legacy' in e)).map((e) => e.id)).toEqual(
-      Array.from({ length: 63 }, (_, i) => String(i + 1).padStart(3, '0')),
+      Array.from({ length: 69 }, (_, i) => String(i + 1).padStart(3, '0')),
     );
     expect(file.recordings.filter((e) => 'legacy' in e).map((e) => e.id)).toEqual([
       'L-AD',

@@ -2285,6 +2285,227 @@
       "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）"
     },
     {
+      "id": "064",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-064_AR+SMG+SG_aim-sky.mp4",
+      "original": "2026-09-26_17-22-30.mp4",
+      "durationSec": 43.0,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 47.0,
+      "sha256": "cae3fee5c6f3",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": null,
+          "note": "操作を順に切り替え"
+        },
+        {
+          "slot": 2,
+          "rid": 82,
+          "name": "リター",
+          "controlled": null,
+          "note": "操作を順に切り替え"
+        },
+        {
+          "slot": 3,
+          "rid": 307,
+          "name": "プロダクト23",
+          "controlled": null,
+          "note": "操作を順に切り替え"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": false,
+      "autoBurst": false,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。照準を画面左上の空（霧）に向けて構える（Stage 18-B2 撮影 B。手動・AUTO 射撃 OFF）。AR・SMG・SG は何もないところへは撃てないので構えるだけ"
+    },
+    {
+      "id": "065",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-065_RL+SR+MG_aim-sky.mp4",
+      "original": "2026-09-26_17-24-11.mp4",
+      "durationSec": 68.0,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 90.5,
+      "sha256": "263449922cb2",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 304,
+          "name": "I-DOLL・フラワー",
+          "controlled": null,
+          "note": "操作を順に切り替え"
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": null,
+          "note": "操作を順に切り替え"
+        },
+        {
+          "slot": 3,
+          "rid": 90,
+          "name": "エマ",
+          "controlled": null,
+          "note": "操作を順に切り替え"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": false,
+      "autoBurst": false,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。照準を画面左上の空（霧）に向けて構える（Stage 18-B2 撮影 B。手動・AUTO 射撃 OFF）。SR・RL・MG は空に撃った（MG は 300 発を撃ち切る）"
+    },
+    {
+      "id": "066",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-066_SG_privaty-unkind-maid_aim-sky.mp4",
+      "original": "2026-09-26_17-27-56.mp4",
+      "durationSec": 76.7,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 84.8,
+      "sha256": "0a6e6c0e62fd",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 313,
+          "name": "プリバティ：アンカインド・メイド",
+          "controlled": true,
+          "note": "単騎・手動"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": false,
+      "autoBurst": false,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。的に数発撃ってから照準を空へ移す、を約 6 回（うち 2 回は一時停止を挟んだ）"
+    },
+    {
+      "id": "067",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-067_AR_kurumi_aim-sky.mp4",
+      "original": "2026-09-26_17-29-45.mp4",
+      "durationSec": 25.6,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 18.7,
+      "sha256": "5e1ec3638514",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": true,
+          "note": "単騎・手動、キューブなし"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": false,
+      "autoBurst": false,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**）。照準を画面左上の空（霧）に向けて構える（Stage 18-B2 撮影 B。手動・AUTO 射撃 OFF）"
+    },
+    {
+      "id": "068",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-068_AR_kurumi_aim-sky_cube.mp4",
+      "original": "2026-09-26_17-30-27.mp4",
+      "durationSec": 23.3,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 16.5,
+      "sha256": "48f2d4c451ae",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": true,
+          "note": "単騎・手動、アサルトキューブ Lv7 **あり**",
+          "cube": "assault-7"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": false,
+      "autoBurst": false,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**）。照準を画面左上の空（霧）に向けて構える（Stage 18-B2 撮影 B。手動・AUTO 射撃 OFF）"
+    },
+    {
+      "id": "069",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-069_AR_asuka_aim-sky.mp4",
+      "original": "2026-09-26_17-31-19.mp4",
+      "durationSec": 46.1,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 52.9,
+      "sha256": "68422cabc284",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 304,
+          "name": "I-DOLL・フラワー",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 830,
+          "name": "アスカ",
+          "controlled": true,
+          "note": "アスカを操作・手動・自動バースト ON"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": false,
+      "autoBurst": true,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。照準を画面左上の空（霧）に向けて構える（Stage 18-B2 撮影 B。手動・AUTO 射撃 OFF）。バーストの外と中で構える"
+    },
+    {
       "id": "L-AD",
       "legacy": true,
       "path": "E:/record/nikke/動画/命中率/nikke 2026.08.29 - 20.04.31.10.mp4",
