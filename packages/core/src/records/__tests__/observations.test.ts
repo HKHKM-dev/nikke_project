@@ -67,7 +67,23 @@ describe('plan/claims.md', () => {
   });
 
   it('puts every compared observation of 19-B behind a 確定 claim', () => {
-    expect(residuals.filter((r) => !gated.has(r.observation.id)).map((r) => r.observation.id)).toEqual([]);
+    // Stage 18-C: 自動の条件での単騎の与ダメージは、残差として並べるだけで結論には結び付けない（design-stage18.md 12.4 節）
+    const manual = residuals.filter((r) => r.observation.compare?.setup.condition !== 'auto');
+    expect(manual.filter((r) => !gated.has(r.observation.id)).map((r) => r.observation.id)).toEqual([]);
+  });
+
+  it('lists the solo AUTO totals under automatic conditions without tying them to a claim (Stage 18-C)', () => {
+    const auto = residuals.filter((r) => r.observation.compare?.setup.condition === 'auto');
+    expect(auto.map((r) => r.observation.id)).toEqual([
+      '054-02',
+      '055-02',
+      '056-02',
+      'L-AD-01',
+      'L-AI-01',
+      'L-AN-01',
+      'L-HC-01',
+    ]);
+    expect(auto.filter((r) => gated.has(r.observation.id))).toEqual([]);
   });
 
   it('keeps the corrected claims as 棄却 and points to them from the new ones', () => {
@@ -169,5 +185,44 @@ describe('照合の部品', () => {
     expect(() => buildTeamInput({ ...rec47, team: [{ ...rec47.team[0]!, cube: 'assault-7' }] }, setup, data)).toThrow(
       /キューブ/,
     );
+  });
+
+  it('builds automatic conditions with the target profile and a fixed mid-far landing (Stage 18-C)', () => {
+    const rec54 = recordings.get('054') as ProjectRecording;
+    const manual = buildTeamInput(rec54, { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] }, data);
+    expect(manual.slots[0]!.conditionMode).toBeUndefined();
+    expect(manual.enemy.target).toBeUndefined();
+    const auto = buildTeamInput(
+      rec54,
+      { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto', midFarLanding: 'A' },
+      data,
+    );
+    expect(auto.slots[0]!.conditionMode).toBe('auto');
+    expect(auto.enemy.target?.id).toBe('range-bigarms');
+    expect(auto.enemy.landings?.map((s) => s.landing)).toEqual(['midNear', 'near', 'far', 'midFarA', 'near', 'far']);
+  });
+
+  it('reports a mid-far landing without automatic conditions, or an unknown one', () => {
+    const base = observations.find((o) => o.id === '054-02')!;
+    const withSetup = (setup: Record<string, unknown>, id: string): Observation => ({
+      ...base,
+      id,
+      compare: { ...base.compare!, setup: { ...base.compare!.setup, ...setup } },
+    });
+    expect(
+      validateObservations(
+        [
+          withSetup({ condition: 'manual' }, '054-91'),
+          withSetup({ midFarLanding: 'D' }, '054-92'),
+          withSetup({ condition: 'maybe', midFarLanding: undefined }, '054-93'),
+        ],
+        recordings,
+        data.enemies,
+      ),
+    ).toEqual([
+      '054-91: midFarLanding は condition が auto のときだけ',
+      '054-92: midFarLanding は A・B・C',
+      '054-93: condition は auto か manual',
+    ]);
   });
 });

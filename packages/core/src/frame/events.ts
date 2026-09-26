@@ -29,8 +29,11 @@ export function untargetableRanges(events: readonly EnemyEvent[] | undefined, fr
   return merged;
 }
 
-/** 敵の出来事の注記（未実装の種類・近似）。出来事が無ければ空 */
-export function enemyEventNotes(events: readonly EnemyEvent[] | undefined): ModelNote[] {
+/**
+ * 敵の出来事の注記（未実装の種類・近似）。出来事が無ければ空。
+ * Stage 18-C: landingsModeled（条件が自動の枠の着地点を計算した）なら、「着地後の距離の変化は扱わない」を出さない
+ */
+export function enemyEventNotes(events: readonly EnemyEvent[] | undefined, landingsModeled = false): ModelNote[] {
   const list = events ?? [];
   const notes: ModelNote[] = [];
   if (list.some((e) => e.kind === 'untargetable')) {
@@ -38,8 +41,16 @@ export function enemyEventNotes(events: readonly EnemyEvent[] | undefined): Mode
       level: 'approx',
       code: 'enemy-untargetable',
       message: {
-        ja: '狙えない区間（敵のジャンプ）は代表値の時刻で置いた。実機では位相が録画ごとに変わり、1 回分（約 1〜2%）ずれうる。着地後の距離の変化（距離ボーナス）は扱わない',
-        en: 'Untargetable windows (enemy jumps) use representative times; the phase varies between runs (about one jump, 1-2%). Distance changes after landing are not modeled',
+        ja: `狙えない区間（敵のジャンプ）は代表値の時刻で置いた。実機では位相が録画ごとに変わり、1 回分（約 1〜2%）ずれうる。${
+          landingsModeled
+            ? '着地点は条件が自動の枠だけに効かせた（手入力の枠は条件を変えない）'
+            : '着地後の距離の変化（距離ボーナス）は扱わない'
+        }`,
+        en: `Untargetable windows (enemy jumps) use representative times; the phase varies between runs (about one jump, 1-2%). ${
+          landingsModeled
+            ? 'Landing points apply to slots with automatic conditions only'
+            : 'Distance changes after landing are not modeled'
+        }`,
       },
     });
   }

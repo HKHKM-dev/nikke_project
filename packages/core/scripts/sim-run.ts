@@ -9,6 +9,9 @@
 // Stage 15: --hit-rate（命中率。射撃場 = 1）と --enemy（data/enemies.json のプリセット）。
 // Stage 16-B: --events range-3min-jump（data/enemies.json の出来事のセット。カンマ区切り）。--enemy のプリセットが持つものだけ効く。
 // Stage 13: gear の OL 装備に overload（[{ option, level }]、最大 3 行）を書ける。効果層（OL・キューブ・コレクション）を枠ごとに 1 行ずつ出す。
+// Stage 18-C: --condition auto（射撃場の表と着地点の時間割りで、コア命中率・距離ボーナス・弾丸命中率を決める。--enemy のプリセットが
+// 的の条件の表を持つときだけ効く）。既定は manual（--core-hit-rate・--hit-rate・距離ボーナスあり）。--mid-far A|B|C で中遠の着地点を
+// 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。自動の枠は、使った条件の発数平均を出す。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -16,7 +19,15 @@ import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, emptyBuild, type BuildInput } from '../src/build.ts';
 import { resolveBuildEffects } from '../src/buildEffects.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../src/fixedSpec.ts';
-import { enemyEventsOf, enemyInputOf, parseEnemyPresets } from '../src/enemies.ts';
+import {
+  LANDING_BAND_LABEL,
+  enemyEventsOf,
+  enemyInputOf,
+  enemyLandingsOf,
+  parseEnemyPresets,
+  targetProfileOf,
+} from '../src/enemies.ts';
+import { MID_FAR_LANDINGS, midFarFixed, type MidFarLanding } from '../src/records/observations.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
@@ -48,21 +59,24 @@ const { values } = parseArgs({
     controlled: { type: 'string' },
     defence: { type: 'string', default: '100' },
     element: { type: 'string' },
-    'core-hit-rate': { type: 'string', default: '1' },
+    'core-hit-rate': { type: 'string' },
     // Stage 9: 宝物の段階（resourceId:段階 をカンマ区切り。省略は全員 0）
     treasure: { type: 'string' },
     // Stage 12: 育成入力の JSON ファイル
     build: { type: 'string' },
     // Stage 15: 命中率（射撃場 = 1 の相対値。全枠共通）と敵のプリセット（data/enemies.json の id。--defence / --element より優先）
-    'hit-rate': { type: 'string', default: '1' },
+    'hit-rate': { type: 'string' },
     enemy: { type: 'string' },
     events: { type: 'string' },
+    // Stage 18-C: 条件の決め方（auto | manual。既定 manual）と、中遠の着地点の固定（A | B | C）
+    condition: { type: 'string' },
+    'mid-far': { type: 'string' },
   },
 });
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--condition auto] [--mid-far A]',
   );
   process.exit(2);
 }
@@ -96,12 +110,28 @@ const masters = Object.fromEntries(
   Object.entries(MASTER_FILES).map(([name, file]) => [name, readJson(join(DATA_DIR, 'masters', file))]),
 ) as BuildMasters;
 const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
+// Stage 18-C: 条件の決め方。コア命中率・弾丸命中率を指定したら手入力
+const conditionMode = values.condition ?? 'manual';
+if (conditionMode !== 'auto' && conditionMode !== 'manual') {
+  console.error(`--condition must be auto or manual, got ${conditionMode}`);
+  process.exit(2);
+}
+if (conditionMode === 'auto' && (values['core-hit-rate'] !== undefined || values['hit-rate'] !== undefined)) {
+  console.error('--core-hit-rate / --hit-rate are manual conditions; drop them or use --condition manual');
+  process.exit(2);
+}
+const midFar = values['mid-far'] as MidFarLanding | undefined;
+if (midFar !== undefined && (!MID_FAR_LANDINGS.includes(midFar) || conditionMode !== 'auto')) {
+  console.error('--mid-far takes A, B or C and needs --condition auto');
+  process.exit(2);
+}
 const condition = {
-  coreHitRate: Number(values['core-hit-rate']),
+  coreHitRate: Number(values['core-hit-rate'] ?? '1'),
   distanceBonus: true,
   fullCharge: true,
-  hitRate: Number(values['hit-rate']),
+  hitRate: Number(values['hit-rate'] ?? '1'),
 };
+const modeOf = conditionMode === 'auto' ? { conditionMode: 'auto' as const } : {};
 // Stage 15: 敵のプリセット
 const enemyPresets = parseEnemyPresets(readJson(join(DATA_DIR, ENEMY_PRESETS_PATH)));
 const enemyPreset = values.enemy === undefined ? undefined : enemyPresets.enemies.find((e) => e.id === values.enemy);
@@ -126,10 +156,11 @@ const slots: TeamSlotInput[] = ids.map((id) => {
         character,
         growth: fixedSpecGrowth(character),
         condition,
+        ...modeOf,
         attackOverride: computeFixedSpecAttack(character).attack,
         skills,
       }
-    : withBuild(character, skills, buildFile[String(id)]);
+    : { ...withBuild(character, skills, buildFile[String(id)]), ...modeOf };
 });
 
 /** Stage 12: 育成入力があれば戦闘中の攻撃力を computeCombatAttack で作り、attackOverride に入れる。無ければ素のステータス */
@@ -175,10 +206,33 @@ for (const id of eventSetIds) {
   }
 }
 const enemyEvents = enemyEventsOf(enemyPresets, eventSetIds, Number(values.duration));
+// Stage 18-C: 的の条件の表（自動の条件のときだけ付ける。表の無い敵では自動でも手入力の値になり、注記が出る）
+const target =
+  conditionMode === 'auto' && enemyPreset !== undefined ? targetProfileOf(enemyPresets, enemyPreset) : undefined;
+if (conditionMode === 'auto' && target === undefined) {
+  console.warn(
+    '--condition auto: the enemy has no target profile (use --enemy range-bigarms-*); manual values are used',
+  );
+}
 const input = {
   slots,
   enemy: enemyPreset
-    ? { ...enemyInputOf(enemyPreset), events: enemyEvents }
+    ? {
+        ...enemyInputOf(enemyPreset),
+        events: enemyEvents,
+        ...(target === undefined
+          ? {}
+          : {
+              target,
+              landings: enemyLandingsOf(
+                enemyPresets,
+                eventSetIds,
+                Number(values.duration),
+                target,
+                midFarFixed(midFar),
+              ),
+            }),
+      }
     : { defence: Number(values.defence), element: (values.element as Element | undefined) ?? null, hasCore: true },
   durationSeconds: Number(values.duration),
   burst: !values['no-burst'],
@@ -196,8 +250,21 @@ const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
 console.log(
   `duration ${input.durationSeconds}s (${sim.frames}f), burst ${input.burst ? input.burstModel : 'off'}, ` +
     `fixed spec ${fixedSpec}, build ${values.build ?? 'none'}, controlled ${input.controlledSlot === null ? 'none (all AI)' : `slot ${input.controlledSlot + 1}`}, ` +
-    `enemy ${enemyPreset?.id ?? 'custom'} defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}, hit rate ${condition.hitRate}`,
+    `enemy ${enemyPreset?.id ?? 'custom'} defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}, ` +
+    `conditions ${conditionMode}${conditionMode === 'manual' ? ` (core ${condition.coreHitRate}, hit rate ${condition.hitRate})` : midFar ? ` (mid-far ${midFar})` : ''}`,
 );
+// Stage 18-C: 着地点の区間
+if (calc.landings.length > 0 && target !== undefined) {
+  const labelOf = (id: string | null): string => {
+    if (id === null) return 'unmeasured';
+    const band = target.landings.find((l) => l.id === id)?.band ?? id;
+    const name = band in LANDING_BAND_LABEL ? LANDING_BAND_LABEL[band as keyof typeof LANDING_BAND_LABEL].en : id;
+    return id in target.mixes ? `${name} (mix)` : `${name} [${id}]`;
+  };
+  console.log(
+    `landings ${calc.landings.map((s) => `${(s.start / FPS).toFixed(1)}-${(s.end / FPS).toFixed(1)}s ${labelOf(s.landing)}`).join(', ')}`,
+  );
+}
 if (eventSetIds.length > 0) {
   console.log(
     `enemy events ${eventSetIds.join(', ')}: ${enemyEvents.map((e) => `${e.kind} ${e.start.toFixed(1)}-${e.end.toFixed(1)}s`).join(', ')}`,
@@ -309,6 +376,33 @@ console.table(rows);
 console.log(
   `TOTAL sim ${fmt(sim.totalDamage)}  calc ${fmt(calc.totalDamage)}  diff ${pct((sim.totalDamage - calc.totalDamage) / (calc.totalDamage || 1))}`,
 );
+
+// Stage 18-C: 自動の枠で使った条件の平均（1 パス目の射撃の列の発数で重みを付けた。calc と sim で同じ値）
+const autoRows = calc.slots.flatMap((c, i) =>
+  c?.autoCondition
+    ? [
+        {
+          slot: i + 1,
+          name: slots[i]!.character.name.ja,
+          shots: c.autoCondition.shots,
+          'core hit rate': c.autoCondition.coreHitRate.toFixed(4),
+          'distance bonus': pct(c.autoCondition.distanceBonus),
+          'bullet hit rate': c.autoCondition.hitRate.toFixed(4),
+          'hit rate up': pct(c.autoCondition.hitRateUp),
+        },
+      ]
+    : [],
+);
+if (autoRows.length > 0) {
+  console.log('auto conditions (shot-weighted means)');
+  console.table(autoRows);
+}
+const noteLines = calc.slots.flatMap((c, i) =>
+  (c?.notes ?? [])
+    .filter((n) => n.code.startsWith('auto-') || n.code.startsWith('landing-') || n.code === 'hit-rate')
+    .map((n) => `  [slot ${i + 1}] ${n.level}: ${n.message.ja}`),
+);
+if (noteLines.length > 0) console.log(`condition notes\n${noteLines.join('\n')}`);
 
 // Stage 6: バフ状態ごとの区間表（枠ごと）。sim はフレームで数えた実トリガー数、calc はレート × 秒数
 for (const [i, slot] of slots.entries()) {

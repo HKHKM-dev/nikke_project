@@ -11,16 +11,18 @@
 // Stage 10: 1 パス目の射撃の列と時刻表は frame/firstPass.ts のフレームループ（射撃に効くバフ・CT 短縮・弾丸チャージ込み）で作る。
 // 2 パス目は変えない（射撃の列を読み、区間ごとの 1 トリガー値を足す）。
 // Stage 16-B（plan/design-stage16.md 9 節）: 敵の出来事は 1 パス目で効く。タイムラインの表示用に 1 秒ごとのダメージを足し上げる。
+// Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す（calc と同じ関数）。
 import type { BurstSchedule, BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
+import { baseAttackOf, computeTriggerDamage, modelNotes, type ModelNote, type TriggerDamage } from '../damage.ts';
 import {
-  baseAttackOf,
-  computeTriggerDamage,
-  conditionNotes,
-  modelNotes,
-  type ModelNote,
-  type TriggerDamage,
-} from '../damage.ts';
+  autoConditionSummary,
+  landingPartsOf,
+  landingTriggerDamage,
+  slotConditionNotes,
+  type AutoConditionSummary,
+  type LandingFrameSpan,
+} from '../frame/landing.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect } from '../skills/resolve.ts';
 import { slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
@@ -96,6 +98,8 @@ export type SimSlotResult = {
   /** Stage 8: 倍率ダメージ（damage）の発動フレームと合計（calc と同じ発動列） */
   skillHits: { frames: number[]; damage: number };
   totalDamage: number;
+  /** Stage 18-C: 条件が自動の枠で使った条件の平均（発数の重み。calc と同じ値）。手入力の枠は null */
+  autoCondition: AutoConditionSummary | null;
 };
 
 export type SimResult = {
@@ -113,6 +117,8 @@ export type SimResult = {
   totalDamage: number;
   /** Stage 16-B: 敵を狙えない窓（1 パス目。出来事が無ければ空） */
   untargetable: FrameRange[];
+  /** Stage 18-C: 着地点の区間（条件が自動の枠が無い、または的の表の無い敵では空） */
+  landings: LandingFrameSpan[];
   /** Stage 16-B: 1 秒ごとのダメージ（通常攻撃・バーストスキル・倍率ダメージの合計） */
   damagePerSecond: DamagePerSecond;
   /** trace: false なら空 */
@@ -136,7 +142,10 @@ export function runSimulation(simInput: SimInput): SimResult {
   const trace = input.trace ?? false;
 
   // 1 パス目（calc と共通）: 射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動。2 パス目がこの下のフレームループ
-  const { frames, shots, schedule, timeline, skillHits, instants, untargetable } = planTeamRun({ ...input, model });
+  const { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing } = planTeamRun({
+    ...input,
+    model,
+  });
   // Stage 16-B: 1 秒ごとのダメージ（タイムラインの表示用）
   const seconds = Math.ceil(frames / FPS);
   const perSecond: DamagePerSecond = {
@@ -170,16 +179,16 @@ export function runSimulation(simInput: SimInput): SimResult {
         buffs: state.buffs,
         passiveEffects: state.passiveEffects,
         timedEffects: state.timedEffects,
-        trigger: computeTriggerDamage({
-          ...base,
-          buffs: state.buffs,
-          perShot,
-          condition: { ...slot.condition, fullBurst: segment.fullBurst },
-        }),
+        trigger: landingTriggerDamage(
+          { ...base, buffs: state.buffs, perShot },
+          landingPartsOf(landing, slot, index, segment.landing),
+          segment.fullBurst,
+        ),
         triggers: 0,
         damage: 0,
       };
     });
+    const autoCondition = autoConditionSummary(landing, slot, index, shots[index]?.frames ?? []);
     return {
       index,
       shots: shots[index]?.frames ?? [],
@@ -189,7 +198,7 @@ export function runSimulation(simInput: SimInput): SimResult {
         character: slot.character,
         baseAttack: baseAttackOf(slot),
         cadence: computeCadence(slot.character.shot, model, firingParams(slot.character.shot, passive.buffs)),
-        notes: [...modelNotes(slot.character.shot), ...conditionNotes(slot.condition)],
+        notes: [...modelNotes(slot.character.shot), ...slotConditionNotes(landing, slot, index, enemy, autoCondition)],
         passiveBuffs: passive.buffs,
         passiveEffects: passive.passiveEffects,
         buildEffects: passive.buildEffects,
@@ -212,6 +221,7 @@ export function runSimulation(simInput: SimInput): SimResult {
         },
         skillHits: { frames: [], damage: 0 },
         totalDamage: 0,
+        autoCondition,
       },
     };
   });
@@ -337,6 +347,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     slots: results,
     totalDamage,
     untargetable,
+    landings: landing?.spans ?? [],
     damagePerSecond: perSecond,
     events,
   };

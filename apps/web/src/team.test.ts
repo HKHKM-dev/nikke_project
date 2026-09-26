@@ -187,6 +187,7 @@ describe('enemy event sets (Stage 16-B)', () => {
         source: 'test',
       },
     ],
+    targetProfiles: [],
     enemies: [
       {
         id: 'range',

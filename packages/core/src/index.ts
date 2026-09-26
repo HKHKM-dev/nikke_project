@@ -31,6 +31,7 @@ export * from './burst/dynamic.ts';
 export * from './frame/events.ts';
 export * from './frame/firing.ts';
 export * from './frame/firstPass.ts';
+export * from './frame/landing.ts';
 export * from './frame/shooter.ts';
 export * from './frame/shots.ts';
 export * from './sim/engine.ts';

@@ -83,6 +83,7 @@ import {
   type ShooterState,
 } from './shooter.ts';
 import type { ShotLog } from './shots.ts';
+import type { LandingHitRateSpan } from './landing.ts';
 
 export type FirstPassOptions = {
   frames: number;
@@ -95,6 +96,11 @@ export type FirstPassOptions = {
   timing?: Readonly<BurstTiming>;
   /** Stage 16-B: 敵を狙えない窓（昇順・重なりなし。frame/events.ts の untargetableRanges）。省略・空なら今までと同じ */
   untargetable?: readonly FrameRange[];
+  /**
+   * Stage 18-C: 枠ごとの弾丸命中率の区間（条件が自動の枠。frame/landing.ts の hitRateSpansOf）。null・省略の枠は
+   * TimelineSlot.hitRate の定数のまま。区間は昇順で [0, frames) を覆う
+   */
+  hitRates?: readonly (readonly LandingHitRateSpan[] | null)[];
 };
 
 /** 射撃に効く timed 効果の窓（Stage 11 から対象の枠ごと。発火ごとに対象が変わる効果があるため） */
@@ -341,11 +347,22 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
 
   // ---- バースト ----
   const gaugeSpeed = passive.map((s) => s?.buffs.burstGaugeSpeed ?? 0);
+  // Stage 18-C: 弾丸命中率が着地点で変わる枠は、1 発のゲージを命中率 1 で持ち、撃ったフレームの区間の命中率を掛ける
+  const hitRateSpans = slots.map((_, i) => options.hitRates?.[i] ?? null);
+  const hitRateAt = slots.map(() => 0);
   const energies = slots.map((slot, i) =>
     slot === null
       ? 0
-      : energyPerTrigger(slot.character.shot, i === controlledSlot, slot.hitRate ?? 1) * (1 + gaugeSpeed[i]!),
+      : energyPerTrigger(slot.character.shot, i === controlledSlot, hitRateSpans[i] ? 1 : (slot.hitRate ?? 1)) *
+        (1 + gaugeSpeed[i]!),
   );
+  /** 枠 i がフレーム f に撃った 1 発のゲージ（f は単調に増える） */
+  const energyAt = (i: number, f: number): number => {
+    const spans = hitRateSpans[i];
+    if (!spans) return energies[i]!;
+    while (hitRateAt[i]! + 1 < spans.length && spans[hitRateAt[i]!]!.end <= f) hitRateAt[i]! += 1;
+    return energies[i]! * (spans[hitRateAt[i]!]?.hitRate ?? 1);
+  };
   let controller: BurstControllerState | null = null;
   let fixed: BurstSchedule | null = null;
   if (options.burst) {
@@ -415,7 +432,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
       shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge };
-      gauge += energies[i]!;
+      gauge += energyAt(i, f);
     });
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）
     if (controller !== null) stepBurstController(controller, f, gauge, blocked);

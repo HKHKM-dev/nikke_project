@@ -10,5 +10,34 @@
     "method": {
       "note": "HUD の総ダメージの 1 フレームごとの増分を、スペック固定の 1 ヒットの値（コア × 会心 × 距離）に当てはめた"
     }
+  },
+  {
+    "id": "054-02",
+    "recording": "054",
+    "kind": "total",
+    "use": "compare",
+    "value": 36139747,
+    "description": "リター（SMG）の与ダメージ（単騎 AUTO・自動バースト OFF・180 秒）。結論には結び付けない",
+    "source": "verification.md Stage 17「読んだ条件を入れた sim との照合」（戦闘履歴）・Stage 18-C",
+    "method": {
+      "note": "戦闘履歴の与ダメージ（HUD の最後の値と 1 の位まで一致）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A"
+      }
+    }
   }
 ]

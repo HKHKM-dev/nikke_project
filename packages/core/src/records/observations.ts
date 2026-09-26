@@ -2,7 +2,7 @@
 // plan/design-stage19.md 2.3・2.3.1・2.5 節。
 import { computeTeamDamage } from '../calc/model.ts';
 import { DISTANCE_BONUS } from '../damage.ts';
-import { enemyEventsOf, enemyInputOf } from '../enemies.ts';
+import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs } from '../skills/buffs.ts';
@@ -37,7 +37,23 @@ export type CompareSetup = {
   distanceBonus?: boolean;
   /** 省略 1 */
   hitRate?: number;
+  /**
+   * Stage 18-C: 条件の決め方。'auto' は的の条件の表と着地点の時間割り（frame/landing.ts）で決める（coreHitRate・distanceBonus・
+   * hitRate は、表が未測定の項目にだけ使う）。**省略は 'manual'**（Stage 19-B の観測値は手入力のまま）
+   */
+  condition?: 'auto' | 'manual';
+  /** Stage 18-C: 中遠の着地点を 1 か所に固定する（録画で読んだ着地点。plan/verification.md「実距離への換算」）。省略は配分 */
+  midFarLanding?: MidFarLanding;
 };
+
+/** Stage 18-C: 中遠の 3 か所（足元 584・571・561。C-0044） */
+export const MID_FAR_LANDINGS = ['A', 'B', 'C'] as const;
+export type MidFarLanding = (typeof MID_FAR_LANDINGS)[number];
+
+/** 中遠の着地点を固定する enemyLandingsOf の fixed */
+export function midFarFixed(landing: MidFarLanding | undefined): Record<string, string> {
+  return landing === undefined ? {} : { midFar: `midFar${landing}` };
+}
 
 export type Tolerance = { rel: number } | { abs: number };
 
@@ -210,6 +226,16 @@ export function validateObservations(
     for (const set of c.setup.events ?? []) {
       if (!preset?.eventSets.includes(set)) errors.push(`${at}: 出来事のセット ${set} は ${c.setup.enemy} に無い`);
     }
+    const condition = c.setup.condition ?? 'manual';
+    if (condition !== 'auto' && condition !== 'manual') errors.push(`${at}: condition は auto か manual`);
+    const midFar = c.setup.midFarLanding;
+    if (midFar !== undefined) {
+      if (!MID_FAR_LANDINGS.includes(midFar)) errors.push(`${at}: midFarLanding は A・B・C`);
+      if (condition !== 'auto') errors.push(`${at}: midFarLanding は condition が auto のときだけ`);
+    }
+    if (condition === 'auto' && preset !== undefined && preset.targetProfile === undefined) {
+      errors.push(`${at}: 敵のプリセット ${c.setup.enemy} には的の条件の表が無い`);
+    }
     const tol = 'rel' in c.tolerance ? c.tolerance.rel : c.tolerance.abs;
     if (!(tol >= 0)) errors.push(`${at}: 許容幅は 0 以上`);
   }
@@ -231,6 +257,8 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
   const preset = data.enemies.enemies.find((e) => e.id === setup.enemy);
   if (preset === undefined) throw new Error(`敵のプリセット ${setup.enemy} が無い`);
   const durationSeconds = setup.durationSeconds ?? 180;
+  const auto = setup.condition === 'auto';
+  const target = auto ? targetProfileOf(data.enemies, preset) : undefined;
   const condition = {
     coreHitRate: setup.coreHitRate ?? 1,
     distanceBonus: setup.distanceBonus ?? true,
@@ -245,6 +273,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       character,
       growth: fixedSpecGrowth(character),
       condition,
+      ...(auto ? { conditionMode: 'auto' as const } : {}),
       attackOverride: computeFixedSpecAttack(character).attack,
       skills: {
         definition: data.skills.get(member.rid) ?? null,
@@ -256,7 +285,22 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
   const controlled = recording.team.findIndex((m) => m.controlled === true);
   return {
     slots,
-    enemy: { ...enemyInputOf(preset), events: enemyEventsOf(data.enemies, setup.events ?? [], durationSeconds) },
+    enemy: {
+      ...enemyInputOf(preset),
+      events: enemyEventsOf(data.enemies, setup.events ?? [], durationSeconds),
+      ...(target === undefined
+        ? {}
+        : {
+            target,
+            landings: enemyLandingsOf(
+              data.enemies,
+              setup.events ?? [],
+              durationSeconds,
+              target,
+              midFarFixed(setup.midFarLanding),
+            ),
+          }),
+    },
     durationSeconds,
     burst: setup.burst ?? true,
     burstModel: 'dynamic',
@@ -368,8 +412,11 @@ function fmtTolerance(t: Tolerance): string {
   return 'rel' in t ? `±${(t.rel * 100).toFixed(2).replace(/\.?0+$/, '')}%` : `±${fmtNumber(t.abs)}`;
 }
 
-function fmtArgs(args: CompareSpec['args']): string {
-  const entries = Object.entries(args);
+/** 引数と、手入力でない条件（Stage 18-C の自動の条件・中遠の固定）。手入力の観測値は今までと同じ表示 */
+function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
+  const entries: [string, unknown][] = Object.entries(args);
+  if (setup?.condition === 'auto') entries.push(['condition', 'auto']);
+  if (setup?.midFarLanding !== undefined) entries.push(['midFar', setup.midFarLanding]);
   return entries.length === 0 ? '' : `（${entries.map(([k, v]) => `${k}=${String(v)}`).join('、')}）`;
 }
 
@@ -400,7 +447,7 @@ export function renderResiduals(
       `| ${[
         o.id,
         cell(o.description),
-        `\`${c.metric}\`${cell(fmtArgs(c.args))}`,
+        `\`${c.metric}\`${cell(fmtArgs(c.args, c.setup))}`,
         c.model,
         fmtValue(o.value),
         fmtValue(r.predicted),

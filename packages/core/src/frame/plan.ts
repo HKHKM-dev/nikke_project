@@ -22,6 +22,7 @@ import { MAX_SKILL_LEVELS, isResolvedEventCount, type ResolvedTrigger } from '..
 import {
   EMPTY_BUFF_STATE,
   planBuffTimeline,
+  resolvePassiveStates,
   segmentIndexAt,
   triggerFrames,
   type BuffTimeline,
@@ -39,6 +40,7 @@ import type { WeaponModel } from '../weapons.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import { runFirstPass, type InstantApplication } from './firstPass.ts';
+import { hitRateSpansOf, planLandings, type LandingPlan } from './landing.ts';
 import type { ShotLog } from './shots.ts';
 
 /** Stage 8: 倍率ダメージ 1 回の発動（1 パス目で決まる。sim と calc で共通） */
@@ -82,6 +84,8 @@ export type TeamPlan = {
   instants: InstantApplication[];
   /** Stage 16-B: 敵を狙えない窓（フレーム。出来事が無ければ空） */
   untargetable: FrameRange[];
+  /** Stage 18-C: 着地点の計画（条件が自動の枠が無い、または的の表の無い敵では null） */
+  landing: LandingPlan | null;
 };
 
 /**
@@ -98,6 +102,8 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const frames = durationToFrames(input.durationSeconds);
   const timelineSlots = toTimelineSlots(slots);
   const untargetable = untargetableRanges(enemy.events, frames);
+  // Stage 18-C: 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）
+  const landing = planLandings(slots, enemy, frames, resolvePassiveStates(timelineSlots));
   const { shots, schedule, instants } = runFirstPass(timelineSlots, {
     frames,
     model,
@@ -105,10 +111,11 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     burstModel: input.burstModel ?? 'dynamic',
     controlledSlot: input.controlledSlot ?? null,
     untargetable,
+    hitRates: landing === null ? undefined : hitRateSpansOf(landing, slots.length),
   });
-  const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots);
+  const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing);
   const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
-  return { frames, shots, schedule, timeline, skillHits, instants, untargetable };
+  return { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing };
 }
 
 /** Stage 11 モダニア: その枠の射撃ごとの倍率ダメージ（1 トリガーの値に畳み込む）。定義が無ければ空 */

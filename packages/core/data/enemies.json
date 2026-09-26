@@ -16,7 +16,142 @@
           "every": 36.4
         }
       ],
-      "source": "plan/design-stage16.md 9.0 節（2026-09-26）: 3 分モードの録画 41・43・44・48〜50 で HUD の総ダメージが止まる区間を読んだ代表値。最初のジャンプは戦闘開始（最初のダメージ）から 25.7〜32.7 秒（中央値 31 秒）、間隔は 2,014〜2,382f（中央値 2,186f = 36.4 秒）、撃てない長さは最後の射撃 → 撃ち直しが 111〜126f。位相は録画ごとに変わる（同じ編成の録画 48 と 49・50 で約 410f）"
+      "landings": [
+        "midNear",
+        "near",
+        "far",
+        "midFar",
+        "near",
+        "far"
+      ],
+      "source": "plan/design-stage16.md 9.0 節（2026-09-26）: 3 分モードの録画 41・43・44・48〜50 で HUD の総ダメージが止まる区間を読んだ代表値。最初のジャンプは戦闘開始（最初のダメージ）から 25.7〜32.7 秒（中央値 31 秒）、間隔は 2,014〜2,382f（中央値 2,186f = 36.4 秒）、撃てない長さは最後の射撃 → 撃ち直しが 111〜126f。位相は録画ごとに変わる（同じ編成の録画 48 と 49・50 で約 410f）。着地点の並び（landings）は plan/claims.md C-0031（中近 → 近 → 遠 → 中遠 → 近 → 遠。旧の単騎 14 本と Stage 17 の録画 54・56。verification.md Stage 18-A「距離帯と区間の並び」）"
+    }
+  ],
+  "targetProfiles": [
+    {
+      "id": "range-bigarms",
+      "name": {
+        "ja": "射撃場の的（BigArms）",
+        "en": "Shooting range target (BigArms)"
+      },
+      "initialLanding": "midNear",
+      "landings": [
+        {
+          "id": "near",
+          "band": "near",
+          "range": [
+            15,
+            25
+          ]
+        },
+        {
+          "id": "midNear",
+          "band": "midNear",
+          "range": [
+            25,
+            35
+          ]
+        },
+        {
+          "id": "midFarA",
+          "band": "midFar",
+          "range": [
+            25,
+            35
+          ]
+        },
+        {
+          "id": "midFarB",
+          "band": "midFar",
+          "range": [
+            35,
+            45
+          ]
+        },
+        {
+          "id": "midFarC",
+          "band": "midFar",
+          "range": [
+            35,
+            45
+          ]
+        },
+        {
+          "id": "far",
+          "band": "far",
+          "range": [
+            45,
+            55
+          ]
+        }
+      ],
+      "mixes": {
+        "midFar": [
+          [
+            "midFarA",
+            0.3
+          ],
+          [
+            "midFarB",
+            0.3
+          ],
+          [
+            "midFarC",
+            0.4
+          ]
+        ]
+      },
+      "coreHitRate": {
+        "AR": {
+          "near": 0.4244,
+          "midNear": 0.2281,
+          "midFar": 0.1203,
+          "far": 0.0704
+        },
+        "SMG": {
+          "near": 0.2644,
+          "midNear": 0.1179,
+          "midFar": 0.0516,
+          "far": 0.0342
+        },
+        "MG": {
+          "near": 0.9626,
+          "midNear": 0.965,
+          "midFar": 0.9614,
+          "far": 0.9588
+        },
+        "SR": {
+          "all": 1
+        },
+        "RL": {
+          "all": 1
+        },
+        "SG": null
+      },
+      "bulletHitRate": {
+        "AR": {
+          "near": 0.9975,
+          "midNear": 0.9963,
+          "midFar": 0.9969,
+          "far": 0.9711
+        },
+        "SMG": {
+          "near": 0.9763,
+          "midNear": 0.9696,
+          "midFar": 0.921,
+          "far": 0.76
+        },
+        "MG": {
+          "near": 0.9976,
+          "midNear": 0.9982,
+          "midFar": 0.9945,
+          "far": 0.9917
+        },
+        "SR": null,
+        "RL": null,
+        "SG": null
+      },
+      "source": "plan/design-stage18.md 12.2 節。着地点と距離の範囲は plan/claims.md C-0031・C-0032・C-0044（範囲は距離ボーナスの付き方から決めた。中遠 A は 35 未満、B・C は 35 以上 45 未満）。中遠の配分 0.3 : 0.3 : 0.4 は C-0044 の 10 回の内訳。AR・SMG・MG の値は C-0034（旧の単騎の表。verification.md Stage 18-A「距離帯ごとのコア命中率と弾丸命中率」）で、中遠の 3 か所は同じ帯の値（12.9 節の 2）。MG のコア命中率は撃ち始めの外れ（C-0035）を含む帯の平均。SR・RL のコア命中率 1 は C-0028（録画 25 の 1.00・録画 55 の 0.989。着地直後の 1 発の外れは注記だけ）。SG のコア命中率と、SR・RL・SG の弾丸命中率は未測定（null）"
     }
   ],
   "enemies": [
@@ -35,7 +170,8 @@
       "source": "plan/verification.md 灼熱タブの録画（同じ BigArms で属性だけ灼熱。防御 100 相当は 1 ヒットの一致で裏付け）",
       "eventSets": [
         "range-3min-jump"
-      ]
+      ],
+      "targetProfile": "range-bigarms"
     },
     {
       "id": "range-bigarms-wind",
@@ -52,7 +188,8 @@
       "source": "plan/verification.md Stage 2-A（1 ヒットの逆算。スペック固定の攻撃力が 9 体で誤差 0）",
       "eventSets": [
         "range-3min-jump"
-      ]
+      ],
+      "targetProfile": "range-bigarms"
     },
     {
       "id": "range-bigarms-iron",
@@ -69,7 +206,8 @@
       "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。鉄甲タブの録画はまだない",
       "eventSets": [
         "range-3min-jump"
-      ]
+      ],
+      "targetProfile": "range-bigarms"
     },
     {
       "id": "range-bigarms-electric",
@@ -86,7 +224,8 @@
       "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。電撃タブの録画 18・20 でも防御 100 の式で 1 ヒットが一致（plan/verification.md 射撃場の実測）",
       "eventSets": [
         "range-3min-jump"
-      ]
+      ],
+      "targetProfile": "range-bigarms"
     },
     {
       "id": "range-bigarms-water",
@@ -103,7 +242,8 @@
       "source": "ユーザー確認（2026-09-25）: 射撃場の BigArms は属性タブ間で属性だけが違う。防御 100 は風圧（Stage 2-A）・灼熱タブの 1 ヒットの逆算で確かめた値。水冷タブの録画はまだない",
       "eventSets": [
         "range-3min-jump"
-      ]
+      ],
+      "targetProfile": "range-bigarms"
     }
   ]
 }
