@@ -1,0 +1,122 @@
+[
+  {
+    "id": "010-01",
+    "recording": "010",
+    "kind": "hit",
+    "use": "compare",
+    "value": 37112,
+    "description": "マナの通常攻撃 1 ヒット（胴体・距離あり）",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "010-02",
+    "recording": "010",
+    "kind": "hit",
+    "use": "compare",
+    "value": 51385,
+    "description": "マナの通常攻撃 1 ヒット（会心・距離あり）",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "010-03",
+    "recording": "010",
+    "kind": "hit",
+    "use": "compare",
+    "value": 65659,
+    "description": "マナの通常攻撃 1 ヒット（コア・距離あり）",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "010-04",
+    "recording": "010",
+    "kind": "hit",
+    "use": "compare",
+    "value": 79933,
+    "description": "マナの通常攻撃 1 ヒット（コア会心・距離あり）",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  }
+]

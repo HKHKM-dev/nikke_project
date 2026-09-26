@@ -1,0 +1,53 @@
+[
+  {
+    "id": "047-01",
+    "recording": "047",
+    "kind": "count",
+    "use": "compare",
+    "value": 5,
+    "description": "フルバーストの回数（180 秒）",
+    "source": "design-stage11-scarlet-bs.md 0 節・verification.md Stage 16-B「合計の照合」",
+    "method": {
+      "note": "FB の画面の色（R−B）の区間と HUD の「FULL BURST」表示を数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "047-02",
+    "recording": "047",
+    "kind": "total",
+    "use": "compare",
+    "value": 284726954,
+    "description": "紅蓮：ブラックシャドウの与ダメージ（ラム + デルタ + 紅蓮BS・180 秒）",
+    "source": "verification.md Stage 16-B「合計の照合」",
+    "method": {
+      "tool": "probe-result.ts",
+      "note": "戦闘履歴のパネルの与ダメージ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 3
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]
