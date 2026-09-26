@@ -560,9 +560,9 @@
         "element": "Electronic"
       },
       "mode": "range-3min",
-      "fixedSpec": null,
+      "fixedSpec": true,
       "autoFire": null,
-      "autoBurst": null,
+      "autoBurst": true,
       "conditionNote": "BigArms（**電撃**・防100）"
     },
     {
@@ -601,9 +601,9 @@
         "element": "Fire"
       },
       "mode": "range-3min",
-      "fixedSpec": null,
+      "fixedSpec": true,
       "autoFire": null,
-      "autoBurst": null,
+      "autoBurst": true,
       "conditionNote": "BigArms（灼熱・防100）"
     },
     {
@@ -642,9 +642,9 @@
         "element": "Electronic"
       },
       "mode": "range-3min",
-      "fixedSpec": null,
+      "fixedSpec": true,
       "autoFire": null,
-      "autoBurst": null,
+      "autoBurst": true,
       "conditionNote": "BigArms（**電撃**・防100）"
     },
     {
@@ -683,7 +683,7 @@
         "element": "Fire"
       },
       "mode": "range-3min",
-      "fixedSpec": null,
+      "fixedSpec": true,
       "autoFire": null,
       "autoBurst": null,
       "conditionNote": "BigArms（灼熱・防100）"
@@ -718,9 +718,9 @@
         "element": "Fire"
       },
       "mode": "range-3min",
-      "fixedSpec": null,
+      "fixedSpec": true,
       "autoFire": null,
-      "autoBurst": null,
+      "autoBurst": true,
       "conditionNote": "BigArms（灼熱・防100）"
     },
     {

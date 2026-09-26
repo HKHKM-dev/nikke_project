@@ -1,0 +1,182 @@
+[
+  {
+    "id": "013-01",
+    "recording": "013",
+    "kind": "hit",
+    "use": "compare",
+    "value": 121758,
+    "description": "デルタのフルチャージ 1 ヒット（胴体）。ウンファ：TU のチャージダメージ▲込み",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "013-02",
+    "recording": "013",
+    "kind": "hit",
+    "use": "compare",
+    "value": 182638,
+    "description": "デルタのフルチャージ 1 ヒット（会心）。ウンファ：TU のチャージダメージ▲込み",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "013-03",
+    "recording": "013",
+    "kind": "hit",
+    "use": "compare",
+    "value": 243517,
+    "description": "デルタのフルチャージ 1 ヒット（コア）。ウンファ：TU のチャージダメージ▲込み",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "013-04",
+    "recording": "013",
+    "kind": "hit",
+    "use": "compare",
+    "value": 304396,
+    "description": "デルタのフルチャージ 1 ヒット（コア会心）。ウンファ：TU のチャージダメージ▲込み",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 0,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "013-05",
+    "recording": "013",
+    "kind": "hit",
+    "use": "compare",
+    "value": 686756,
+    "description": "ウンファ：TU のフルチャージ 1 ヒット（コア）。自己の攻撃力▲込み",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "013-06",
+    "recording": "013",
+    "kind": "hit",
+    "use": "compare",
+    "value": 858445,
+    "description": "ウンファ：TU のフルチャージ 1 ヒット（コア会心）。自己の攻撃力▲込み",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  }
+]

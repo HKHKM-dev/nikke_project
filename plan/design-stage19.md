@@ -105,30 +105,59 @@
   {
     "id": "047-01",
     "recording": "047",
-    "kind": "total",
+    "kind": "count",
     "use": "compare",
-    "value": 284726954,
-    "method": { "tool": "probe-result.ts", "note": "戦闘履歴のパネル（紅蓮：ブラックシャドウ）" },
-    "evidence": ["frames/20260924-47_SR+SR+RL_ram+delta+scarlet-black-shadow_f12109_panel.jpg"],
+    "value": 5,
+    "description": "フルバーストの回数（180 秒）",
+    "source": "design-stage11-scarlet-bs.md 0 節・verification.md Stage 16-B「合計の照合」",
+    "method": {
+      "note": "FB の画面の色（R−B）の区間と HUD の「FULL BURST」表示を数えた"
+    },
     "compare": {
       "model": "sim",
-      "metric": "slotTotalDamage",
-      "args": { "slot": 3 },
-      "tolerance": { "rel": 0.02 }
+      "metric": "fullBurstCount",
+      "args": {},
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
     "id": "047-02",
     "recording": "047",
-    "kind": "count",
+    "kind": "total",
     "use": "compare",
-    "value": 5,
-    "method": { "note": "FB の画面の色（R−B）の区間を数えた" },
-    "compare": { "model": "sim", "metric": "fullBurstCount", "args": {}, "tolerance": { "abs": 0 } }
+    "value": 284726954,
+    "description": "紅蓮：ブラックシャドウの与ダメージ（ラム + デルタ + 紅蓮BS・180 秒）",
+    "source": "verification.md Stage 16-B「合計の照合」",
+    "method": {
+      "tool": "probe-result.ts",
+      "note": "戦闘履歴のパネルの与ダメージ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 3
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
 ```
 
+- 上は `records/observations/047.json` の実物（19-B）。`description`（何の値か）と `source`（値を記録した場所。verification.md の節など）は必須。
+- `compare.setup` は**予測の条件**（録画に書かれていない、モデルの側の設定）。敵のプリセット・出来事のセット・バーストの有無・コア命中率・距離ボーナス・命中率を書き、省略は既定値（`npm run sim` と同じ）。編成・操作枠・宝物・スペック固定は録画（`recordings.json`）から取る。
 - `kind` は**何を読んだか**の分類（人と検索のため）、`compare.metric` は**モデルのどの値と比べるか**（照合ランナーのため）。`kind` だけでは比べる値が決まらない（7 節の 1）。
 - `kind` の語彙を決めて、足すときは一覧に足してから使う（台帳の種別と同じ運用）。
 
@@ -166,7 +195,7 @@
 | `shotIntervals`   | `shots[i].frames` の差                                                | `slot`、`from`・`to`                                                                  | 列  | ×    |
 | `hitDamage`       | その時点の区間のバフで 1 トリガーの式を**パターンごとに組み直す**     | `slot`、`frame`、`source`（normal・burst・skill）、`core`・`crit`・`distance`（真偽） | 数  | ×    |
 
-- `hitDamage` だけは、モデルの出力をそのまま取り出せない。モデルは会心・コアを期待値（率 × 倍率）で持っているので、「コアかつ会心」の 1 発の値は、区間のバフ（`segments[].buffs`）と `damage.ts` の式からパターンを固定して組み直す。取り出し関数は 19-B で作り、Stage 2-A の 4 パターンの実測で確かめる。
+- `hitDamage` は通常攻撃の 1 ヒットの値（SG は 1 ペレット。1 トリガーの値を `shotCount` で割る）。`hitDamage` だけは、モデルの出力をそのまま取り出せない。モデルは会心・コアを期待値（率 × 倍率）で持っているので、「コアかつ会心」の 1 発の値は、区間のバフ（`segments[].buffs`）と `damage.ts` の式からパターンを固定して組み直す。取り出し関数は 19-B で作り、Stage 2-A の 4 パターンの実測で確かめる。
 - calc 欄が × の値は、calc の出力（`TeamResult`）に無い。`compare.model` に `calc` を書けるのは ○・△ の値だけ。△ の `burstCount` は、calc ではダメージを持たないバーストの発動が列に入らない（`SlotBurstResult.activations` は倍率ダメージの無いバーストでは空）ので、そのキャラでは使えない。
 
 ### 2.4 結論（`plan/claims.md`）
@@ -269,3 +298,18 @@
   - 表は生成したものに置き換えた。
   - 旧台帳の「用途」「証拠フレーム」の列は、「用途と証拠（2026-09-26 までの旧台帳の記述）」の節に原文のまま残した。19-B・19-C で観測値と結論に移したものから消す。
   - 命名規約を 3 桁の通し番号（064〜）・編成を入れない名前に改め、運用と撮影プロトコルの「台帳に 1 行足す」を「`records/recordings.json` に 1 件足す」にした。
+
+### 8.2 19-B（2026-09-26）
+
+- `packages/core/src/records/observations.ts`: 観測値の型・検証、比べる値の語彙（2.3.1 節の 11 個）、録画の条件と `compare.setup` からモデルの入力を組む `buildTeamInput`（`npm run sim --fixed-spec` と同じ組み方）、照合ランナー、残差の一覧の生成。`npm run records:check` で `plan/residuals.md` を作り直す。
+- 移した観測値は 30 件（16 ファイル）。**比べる 24 件はすべて許容内**で、verification.md に記録済みの予測と同じ値になった。
+  - 1 ヒット 16 件: Stage 4 の録画 10（マナ）・12 と 14（クイーン（真）の 15 秒以内と経過後）・13（デルタ・ウンファ：TU）。差はどれも 0.5 未満（表示の丸め）。
+  - FB の回数 6 件: 録画 18〜21・47（5 回）、46（0 回）。3 分モードなので的のジャンプ（`range-3min-jump`）を入れて比べた。
+  - 合計 2 件: 録画 46（−0.10%）・47（−0.07%）。verification.md Stage 16-B「合計の照合」と同じ値。
+  - 入力の根拠 6 件（`use: "input"`）: Stage 17 の AI・単騎 AUTO のコア命中率（録画 25・30・35・54・55・56）。
+- 実装で分かったことと、決めたこと:
+  - **SG の 1 ヒットは 1 ペレット**: モデルの 1 トリガーの値は全ペレットの合計（データの `damage` が全ペレット分）なので、`hitDamage` は `shotCount` で割る。はじめは割っておらず、クイーン（真）の予測がちょうど 10 倍になって気づいた。
+  - **録画 18〜22 のスペック固定**: 19-A では台帳に記録が無く `null` にしていたが、verification.md Stage 6「射撃場の実測」に「録画 18・19・20・22 はすべてスペック固定 ON・自動バースト ON」とあったので補った。録画 21 は、1 ヒットの値がスペック固定の録画 12 の値と一致した（同節の「6〜7: クイーン（真）」）ことを根拠に、スペック固定 ON とした（自動バーストは記録が無いので `null` のまま）。
+  - **移さなかったもの**: Stage 2-A の 1 ヒット（録画 01〜09）は、スペック固定だったかの記録が無く予測を組めない。Stage 5・6 の 1 ヒットと Stage 18 の値は、FB の区間やスペック固定 OFF（育成入力）の扱いが要るので後に回した。
+  - **テストで落とす範囲（19-C までの暫定）**: 結論（`claims.md`）がまだ無いので、19-B で移した 24 件が許容内であることを明示の一覧で確かめる。19-C から「確定」の結論にひもづく観測値だけを落とす形に切り替える。
+- `plan/captures/index.md` の「用途と証拠」の節は、どの録画も一部しか移していないので、まだ消していない。

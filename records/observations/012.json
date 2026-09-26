@@ -1,0 +1,122 @@
+[
+  {
+    "id": "012-01",
+    "recording": "012",
+    "kind": "hit",
+    "use": "compare",
+    "value": 47172,
+    "description": "クイーン（真）の 1 ペレット（胴体）。戦闘開始 15 秒以内（S1 の攻撃力バフあり）",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "012-02",
+    "recording": "012",
+    "kind": "hit",
+    "use": "compare",
+    "value": 70758,
+    "description": "クイーン（真）の 1 ペレット（会心）。戦闘開始 15 秒以内（S1 の攻撃力バフあり）",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "012-03",
+    "recording": "012",
+    "kind": "hit",
+    "use": "compare",
+    "value": 94344,
+    "description": "クイーン（真）の 1 ペレット（コア）。戦闘開始 15 秒以内（S1 の攻撃力バフあり）",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "012-04",
+    "recording": "012",
+    "kind": "hit",
+    "use": "compare",
+    "value": 117930,
+    "description": "クイーン（真）の 1 ペレット（コア会心）。戦闘開始 15 秒以内（S1 の攻撃力バフあり）",
+    "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
+    "method": {
+      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  }
+]

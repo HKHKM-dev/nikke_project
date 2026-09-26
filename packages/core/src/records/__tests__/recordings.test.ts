@@ -1,7 +1,12 @@
 // Stage 19-A: 録画の台帳（records/recordings.json）の検証と、台帳（plan/captures/index.md）の表が JSON から生成したものと一致すること。
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
+import {
+  LEDGER_PATH,
+  knownRids as loadKnownRids,
+  loadRecordingsFile,
+  loadRecordsData,
+} from '../../../scripts/records-data.ts';
 import {
   GENERATED_SECTIONS,
   extractGeneratedSection,
@@ -12,24 +17,10 @@ import {
   type RecordingsFile,
 } from '../recordings.ts';
 
-const root = new URL('../../../../../', import.meta.url);
-const file = JSON.parse(readFileSync(new URL('records/recordings.json', root), 'utf8')) as RecordingsFile;
-const ledger = readFileSync(new URL('plan/captures/index.md', root), 'utf8');
-
-const charactersDir = new URL('packages/core/data/characters/', root);
-const knownRids = new Set(
-  readdirSync(charactersDir)
-    .filter((name) => /^\d+\.json$/.test(name))
-    .map((name) => Number(name.replace('.json', ''))),
-);
-const characters = new Map<number, CharacterData>();
-for (const entry of file.recordings) {
-  for (const { rid } of entry.team) {
-    if (knownRids.has(rid) && !characters.has(rid)) {
-      characters.set(rid, JSON.parse(readFileSync(new URL(`${rid}.json`, charactersDir), 'utf8')) as CharacterData);
-    }
-  }
-}
+const file = loadRecordingsFile();
+const ledger = readFileSync(LEDGER_PATH, 'utf8');
+const knownRids = loadKnownRids();
+const { characters } = loadRecordsData(file);
 
 describe('records/recordings.json', () => {
   it('passes validation', () => {

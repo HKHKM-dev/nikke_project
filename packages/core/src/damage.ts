@@ -219,6 +219,9 @@ export function conditionNotes(condition: Pick<TriggerCondition, 'hitRate'>): Mo
   ];
 }
 
+/** 距離ボーナス（適正距離のとき倍率グループに足す。キャラに bonusRange がなければ乗らない） */
+export const DISTANCE_BONUS = 0.3;
+
 /** 1 トリガーの期待ダメージ。sim はフレームごとにこの値を加算し、calc は秒間トリガー数を掛ける */
 export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const { character, enemy, condition } = input;
@@ -245,7 +248,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const boostCore = coreRate * (shot.coreDamageRate - 1 + buffs.coreDamage);
   const crit = applyCritBuffs(character.crit, buffs);
   const boostCrit = crit.rate * (crit.damage - 1);
-  const boostDistance = condition.distanceBonus && character.bonusRange !== null ? 0.3 : 0;
+  const boostDistance = condition.distanceBonus && character.bonusRange !== null ? DISTANCE_BONUS : 0;
   const boostFullBurst = condition.fullBurst ? FULL_BURST_BOOST : 0;
   const boostTotal = 1 + boostCore + boostCrit + boostDistance + boostFullBurst;
   const attackDamageMultiplier = applyAttackDamageBuffs(buffs);
