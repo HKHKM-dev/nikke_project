@@ -1,0 +1,11 @@
+{
+  "id": "C-0017",
+  "text": "最大装弾数▲は加算して四捨五入し、効果が切れたら削る",
+  "state": "確定",
+  "topic": "射撃（間隔・リロード・チャージ）",
+  "grade": "厳密一致",
+  "basis": "verification.md Stage 10（録画 37・39）",
+  "model": "`sim/firing.ts`",
+  "replaces": [],
+  "updated": "2026-09-23"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "C-0032",
+  "text": "中遠の区間の実距離は 45 を超えない（SR には中遠で距離ボーナスが乗らない）",
+  "state": "確定",
+  "topic": "敵・的・場面",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 18-A「距離帯と区間の並び」（旧の AR 単騎 0/15、旧の録画 L-HC のプロダクト08）",
+  "model": "`data/enemies.json` の `range-bigarms`（中遠の範囲 25〜45）",
+  "replaces": [],
+  "updated": "2026-09-26"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "C-0019",
+  "text": "攻撃ダメージ▲は、会心・コアと同じ加算グループに入る",
+  "state": "棄却",
+  "topic": "1 発の式・バフの掛かり方",
+  "basis": "verification.md Stage 4「attackDamage の置き場所」（クイーン（真）の 4 パターンの比が 1 : 1.5 : 2 : 2.5）",
+  "model": "—",
+  "replaces": [],
+  "updated": "2026-09-22"
+}

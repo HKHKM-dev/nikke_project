@@ -1,0 +1,11 @@
+{
+  "id": "C-0028",
+  "text": "射撃場の AI（単騎の AUTO を含む）のコア命中率は武器種で違う（AR 24%・SMG 14%・MG 96〜97%・SR 100%・RL 99%）",
+  "state": "確定",
+  "topic": "命中率・距離",
+  "grade": "反復実測",
+  "basis": "`025-01`・`030-01`・`035-01`・`054-01`・`055-01`・`056-01`、verification.md Stage 17",
+  "model": "`data/enemies.json` の `range-bigarms`（武器種 × 着地点の表）・`frame/landing.ts`（条件が自動の枠。18-C2 から画面・CLI の既定）",
+  "replaces": [],
+  "updated": "2026-09-26"
+}

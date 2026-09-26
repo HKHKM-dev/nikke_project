@@ -1,0 +1,11 @@
+{
+  "id": "C-0018",
+  "text": "攻撃ダメージ▲は、会心・コアの加算グループの外で別に掛かる",
+  "state": "確定",
+  "topic": "1 発の式・バフの掛かり方",
+  "grade": "厳密一致",
+  "basis": "`012-01`〜`012-04`・`014-01`・`014-02`、verification.md Stage 4「attackDamage の置き場所」",
+  "model": "`damage.ts` の `attackDamageMultiplier`",
+  "replaces": ["C-0019"],
+  "updated": "2026-09-22"
+}

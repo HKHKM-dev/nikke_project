@@ -1,0 +1,11 @@
+{
+  "id": "C-0009",
+  "text": "次の段階が出ないとき、チェーンは約 600f で切れる",
+  "state": "仮説",
+  "topic": "バーストの段階とフルバースト",
+  "grade": "単独実測",
+  "basis": "verification.md Stage 7（録画 22 の目視）",
+  "model": "`burst/controller.ts` の `BURST_CHAIN_TIMEOUT_FRAMES` = 600",
+  "replaces": [],
+  "updated": "2026-09-27"
+}

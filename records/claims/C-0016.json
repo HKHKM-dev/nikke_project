@@ -1,0 +1,11 @@
+{
+  "id": "C-0016",
+  "text": "コア強化の倍率の丸めは偶数への丸め",
+  "state": "確定",
+  "topic": "育成・ステータス",
+  "grade": "厳密一致",
+  "basis": "verification.md Stage 12（13 体 × 3 項目のうち .5 の 3 点）",
+  "model": "`stats.ts` の `applyCoreRatio`",
+  "replaces": [],
+  "updated": "2026-09-24"
+}

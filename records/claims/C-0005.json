@@ -1,0 +1,11 @@
+{
+  "id": "C-0005",
+  "text": "1 発で溜まるゲージは CDN の値の 1.2 倍（AR・MG・RL・SR、コア / 胴体で差なし）",
+  "state": "確定",
+  "topic": "バーストゲージ",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 7「単騎の録画によるゲージの較正」（録画 23〜35）",
+  "model": "`burst/dynamic.ts` の `BURST_ENERGY_MULTIPLIER` = 1.2",
+  "replaces": [],
+  "updated": "2026-09-23"
+}

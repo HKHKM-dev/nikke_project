@@ -1,0 +1,11 @@
+{
+  "id": "C-0031",
+  "text": "射撃場の距離帯は近 15〜25・中近 25〜35・中遠 35〜45・遠 45〜55 の 4 つ。3 分モードの区間の並びは 中近 → 近 → 遠 → 中遠 → 近（→ 短い遠）",
+  "state": "確定",
+  "topic": "命中率・距離",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 18-A「距離帯と区間の並び」（旧の単騎 14 本を写し、録画 30・35・54・56・57〜62・旧の 5 本で検算）",
+  "model": "`data/enemies.json` の `range-3min-jump` の `landings`・`enemies.ts` の `enemyLandingsOf`",
+  "replaces": [],
+  "updated": "2026-09-26"
+}

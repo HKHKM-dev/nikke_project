@@ -1,0 +1,11 @@
+{
+  "id": "C-0011",
+  "text": "フルバーストの長さは、III の `burst_duration`（フルバーストタイム ▲▼ を含む）",
+  "state": "確定",
+  "topic": "バーストの段階とフルバースト",
+  "grade": "厳密一致",
+  "basis": "verification.md Stage 8（録画 38 でイサベルの 5 回とも 300f）",
+  "model": "`burst/dynamic.ts`",
+  "replaces": [],
+  "updated": "2026-09-23"
+}

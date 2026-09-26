@@ -1,0 +1,11 @@
+{
+  "id": "C-0015",
+  "text": "コア強化の倍率は、キューブ・コレクションの外、リサイクルルームの内に掛かる",
+  "state": "確定",
+  "topic": "育成・ステータス",
+  "grade": "厳密一致",
+  "basis": "verification.md Stage 12（キャラ画面の攻撃力 8 体と宝物持ち 3 体）",
+  "model": "`build.ts` の `BUILD_CORE_APPLIES_TO`",
+  "replaces": [],
+  "updated": "2026-09-24"
+}

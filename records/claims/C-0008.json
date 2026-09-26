@@ -1,0 +1,11 @@
+{
+  "id": "C-0008",
+  "text": "満タンから I → II → III の発動までの遅れは各 20f",
+  "state": "仮説",
+  "topic": "バーストの段階とフルバースト",
+  "grade": "推論",
+  "basis": "verification.md「較正した定数」（録画 18 の 60f 刻みの目視。未較正）",
+  "model": "`burst/controller.ts` の `BURST_READY_DELAY_FRAMES` 等",
+  "replaces": [],
+  "updated": "2026-09-23"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "C-0040",
+  "text": "MG（エマ）の照準円は、1 発ごとに約 32（CDN の `accuracy_change_pershot` 7 の約 4.6 倍）縮む。倍率の出どころは分かっていない",
+  "state": "仮説",
+  "topic": "命中率・距離",
+  "grade": "単独実測",
+  "basis": "verification.md Stage 18-B2「照準円の画面上の大きさ」（録画 65）",
+  "model": "**未実装**",
+  "replaces": [],
+  "updated": "2026-09-27"
+}

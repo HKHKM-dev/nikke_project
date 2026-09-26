@@ -1,0 +1,11 @@
+{
+  "id": "C-0007",
+  "text": "フルチャージ倍率がゲージに乗るのは操作キャラだけ",
+  "state": "確定",
+  "topic": "バーストゲージ",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 7（録画 23〜25）",
+  "model": "`burst/dynamic.ts`（`controlledSlot`）",
+  "replaces": [],
+  "updated": "2026-09-23"
+}
