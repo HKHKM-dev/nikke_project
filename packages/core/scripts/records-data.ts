@@ -2,6 +2,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseEnemyPresets } from '../src/enemies.ts';
+import { parseClaims, type Claim } from '../src/records/claims.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
 import type { RecordingEntry, RecordingsFile } from '../src/records/recordings.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
@@ -12,6 +13,7 @@ const DATA = `${ROOT}packages/core/data/`;
 const OBSERVATIONS_DIR = `${ROOT}records/observations/`;
 export const LEDGER_PATH = `${ROOT}plan/captures/index.md`;
 export const RESIDUALS_PATH = `${ROOT}plan/residuals.md`;
+export const CLAIMS_PATH = `${ROOT}plan/claims.md`;
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(path, 'utf8')) as T;
@@ -66,4 +68,8 @@ export function loadRecordsData(file: RecordingsFile): RecordsData {
     }
   }
   return { characters, skills, enemies: parseEnemyPresets(readJson<unknown>(`${DATA}enemies.json`)) };
+}
+
+export function loadClaims(): Claim[] {
+  return parseClaims(readFileSync(CLAIMS_PATH, 'utf8'));
 }

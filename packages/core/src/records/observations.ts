@@ -380,13 +380,18 @@ function cell(text: string): string {
 }
 
 /** 残差の一覧の本文（生成する部分） */
-export function renderResiduals(residuals: readonly Residual[], observations: readonly Observation[]): string {
+export function renderResiduals(
+  residuals: readonly Residual[],
+  observations: readonly Observation[],
+  claimsOf: ReadonlyMap<string, readonly string[]> = new Map(),
+): string {
+  const claimText = (id: string) => (claimsOf.get(id) ?? []).join('・') || '—';
   const count = (s: ResidualStatus) => residuals.filter((r) => r.status === s).length;
   const lines = [
     `比べた観測値 ${residuals.length} 件: 許容内 ${count('ok')}・許容外 ${count('outside')}・比べられない ${count('error')}。`,
     '',
-    '| 観測値 | 読んだもの | 比べる値 | モデル | 実測 | 予測 | 差 | 許容 | 判定 |',
-    '| --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+    '| 観測値 | 読んだもの | 比べる値 | モデル | 実測 | 予測 | 差 | 許容 | 判定 | 結論 |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
   ];
   for (const r of residuals) {
     const o = r.observation;
@@ -402,14 +407,15 @@ export function renderResiduals(residuals: readonly Residual[], observations: re
         fmtDiff(r),
         fmtTolerance(c.tolerance),
         r.status === 'error' ? `${STATUS_JA.error}: ${cell(r.message ?? '')}` : STATUS_JA[r.status],
+        claimText(o.id),
       ].join(' | ')} |`,
     );
   }
   const others = observations.filter((o) => o.use !== 'compare');
   lines.push('', `### モデルと比べない観測値（${others.length} 件）`, '');
-  lines.push('| 観測値 | 使い道 | 読んだもの | 値 |', '| --- | --- | --- | --- |');
+  lines.push('| 観測値 | 使い道 | 読んだもの | 値 | 結論 |', '| --- | --- | --- | --- | --- |');
   for (const o of others) {
-    lines.push(`| ${[o.id, o.use, cell(o.description), fmtValue(o.value)].join(' | ')} |`);
+    lines.push(`| ${[o.id, o.use, cell(o.description), fmtValue(o.value), claimText(o.id)].join(' | ')} |`);
   }
   return lines.join('\n');
 }

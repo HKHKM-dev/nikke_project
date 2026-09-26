@@ -1,15 +1,18 @@
-// Stage 19-B: 観測値（records/observations/）の検証と照合ランナー、残差の一覧（plan/residuals.md）が最新であること。
+// Stage 19-B・19-C: 観測値（records/observations/）・結論（plan/claims.md）の検証と照合ランナー、残差の一覧（plan/residuals.md）が最新であること。
+// 確定の結論にひもづく観測値だけ、許容幅の外なら落とす（design-stage19.md 2.5 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   LEDGER_PATH,
   RESIDUALS_PATH,
+  loadClaims,
   loadObservations,
   loadRecordingsFile,
   loadRecordsData,
   misplacedObservations,
   recordingMap,
 } from '../../../scripts/records-data.ts';
+import { claimsByObservation, gatedObservations, observationIdsIn, parseClaims, validateClaims } from '../claims.ts';
 import {
   buildTeamInput,
   compareValue,
@@ -25,6 +28,8 @@ const recordings = recordingMap(file);
 const data = loadRecordsData(file);
 const observations = loadObservations();
 const residuals = runObservations(observations, recordings, data);
+const claims = loadClaims();
+const gated = gatedObservations(claims);
 
 describe('records/observations', () => {
   it('passes validation and each file holds only its own recording', () => {
@@ -37,28 +42,76 @@ describe('records/observations', () => {
     expect(residuals).toHaveLength(observations.filter((o) => o.use === 'compare').length);
   });
 
-  // 19-C までの暫定: 19-B で移した観測値は、今の Stage ごとのテスト・verification.md と同じく許容内になる。
-  // 19-C からは「確定」の結論にひもづく観測値だけを落とす（design-stage19.md 2.5 節）
-  it('keeps the observations migrated in 19-B within tolerance', () => {
-    const migrated = [
-      ...['010-01', '010-02', '010-03', '010-04', '012-01', '012-02', '012-03', '012-04'],
-      ...['013-01', '013-02', '013-03', '013-04', '013-05', '013-06', '014-01', '014-02'],
-      ...['018-01', '019-01', '020-01', '021-01', '046-01', '046-02', '047-01', '047-02'],
-    ];
-    expect(residuals.map((r) => r.observation.id)).toEqual(migrated);
-    expect(residuals.filter((r) => r.status !== 'ok').map((r) => r.observation.id)).toEqual([]);
+  it('keeps every observation behind a 確定 claim within tolerance', () => {
+    const failing = residuals.filter((r) => gated.has(r.observation.id) && r.status !== 'ok');
+    expect(failing.map((r) => `${r.observation.id}: ${r.status} ${r.message ?? ''}`)).toEqual([]);
   });
 
   it('matches plan/residuals.md (npm run records:check)', () => {
     const doc = readFileSync(RESIDUALS_PATH, 'utf8');
     const section = extractGeneratedSection(doc, 'residuals');
-    const expected = renderResiduals(residuals, observations);
+    const expected = renderResiduals(residuals, observations, claimsByObservation(claims));
     expect(normalizeTable(section)).toEqual(normalizeTable(expected));
     expect(section).toContain(expected.split('\n')[0]!);
   });
 
   it('keeps the ledger file where the scripts expect it', () => {
     expect(readFileSync(LEDGER_PATH, 'utf8')).toContain('<!-- records:recordings:start -->');
+  });
+});
+
+describe('plan/claims.md', () => {
+  it('passes validation', () => {
+    expect(claims.length).toBeGreaterThanOrEqual(30);
+    expect(validateClaims(claims, new Set(observations.map((o) => o.id)))).toEqual([]);
+  });
+
+  it('puts every compared observation of 19-B behind a 確定 claim', () => {
+    expect(residuals.filter((r) => !gated.has(r.observation.id)).map((r) => r.observation.id)).toEqual([]);
+  });
+
+  it('keeps the corrected claims as 棄却 and points to them from the new ones', () => {
+    const byId = new Map(claims.map((c) => [c.id, c]));
+    for (const c of claims) for (const r of c.replaces) expect(byId.get(r)!.state).toBe('棄却');
+    expect(claims.filter((c) => c.replaces.length > 0).map((c) => c.id)).toEqual(['C-0018', 'C-0022']);
+  });
+
+  it('expands observation ranges and reads the table columns', () => {
+    expect(observationIdsIn('`012-01`〜`012-04`・`014-01`、verification.md Stage 4')).toEqual([
+      '012-01',
+      '012-02',
+      '012-03',
+      '012-04',
+      '014-01',
+    ]);
+    expect(observationIdsIn('verification.md Stage 2-B')).toEqual([]);
+    const parsed = parseClaims(
+      [
+        '| ID | 結論 | 状態 | 根拠 | モデル側 | 置き換え | 更新日 |',
+        '| C-0001 | a | 確定 | `001-01` | x | C-0002 | d |',
+      ].join('\n'),
+    );
+    expect(parsed).toEqual([
+      { id: 'C-0001', text: 'a', state: '確定', observations: ['001-01'], replaces: ['C-0002'] },
+    ]);
+  });
+
+  it('reports broken claims', () => {
+    const errors = validateClaims(
+      [
+        { id: 'C-0001', text: 'a', state: '確定', observations: ['999-01'], replaces: ['C-0002'] },
+        { id: 'C-0003', text: '', state: '未定' as never, observations: [], replaces: ['C-0009'] },
+      ],
+      new Set(),
+    );
+    expect(errors).toEqual([
+      'C-0001: 観測値 999-01 が無い',
+      'C-0001: 置き換えた結論 C-0002 が無い',
+      'C-0003: ID は C-0001 から通し番号（2 行目は C-0002）',
+      'C-0003: 状態が語彙に無い: 未定',
+      'C-0003: 結論が空',
+      'C-0003: 置き換えた結論 C-0009 が無い',
+    ]);
   });
 });
 
