@@ -1,0 +1,48 @@
+{
+  "id": "042",
+  "date": "2026-09-24",
+  "folder": "range",
+  "file": "20260924-42_RL+SR+SR+AR_idoll-flower+admi+alice+idoll-sun.mp4",
+  "original": "2026-09-24_00-20-46.mp4",
+  "durationSec": 209.2,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 401.6,
+  "sha256": "4fcdc890a54e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 172,
+      "name": "アドミ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": true,
+      "note": "操作"
+    },
+    {
+      "slot": 4,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+}

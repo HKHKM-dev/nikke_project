@@ -1,0 +1,29 @@
+{
+  "id": "002",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-02_RL_idoll-flower.mp4",
+  "original": "nikke 2026.09.22 - 00.27.47.18.mp4",
+  "durationSec": 26.6,
+  "frames": 1595,
+  "fps": 60,
+  "sizeMB": 39,
+  "sha256": "9291138d4592",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（風・防100）"
+}

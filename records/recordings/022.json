@@ -1,0 +1,35 @@
+{
+  "id": "022",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-22_MG+SR_emma-tactical-upgrade+delta.mp4",
+  "original": "nikke 2026.09.22 - 23.00.42.37.mp4",
+  "durationSec": 205.9,
+  "frames": 12353,
+  "fps": 60,
+  "sizeMB": 297.9,
+  "sha256": "badbf2827a3a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 93,
+      "name": "エマ：TU",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱・防100）"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "008",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-08_SG_isabel.mp4",
+  "original": "nikke 2026.09.22 - 01.54.13.24.mp4",
+  "durationSec": 27.6,
+  "frames": 1658,
+  "fps": 60,
+  "sizeMB": 39.6,
+  "sha256": "57836af31a7c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（風・防100）"
+}

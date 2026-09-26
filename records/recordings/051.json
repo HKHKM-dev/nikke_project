@@ -1,0 +1,55 @@
+{
+  "id": "051",
+  "date": "2026-09-25",
+  "folder": "interception",
+  "file": "20260925-51_special_talkative_liter+crown+alice+modernia+scarlet-black-shadow.mp4",
+  "original": "2026-09-25_22-19-37.mp4",
+  "durationSec": 47,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 101.7,
+  "sha256": "f265982c949e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": true,
+      "note": "操作"
+    },
+    {
+      "slot": 4,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": false
+    },
+    {
+      "slot": 5,
+      "rid": 225,
+      "name": "紅蓮：ブラックシャドウ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "トーカティブ",
+    "element": null,
+    "level": 200
+  },
+  "mode": "interception-special",
+  "fixedSpec": null,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "特殊個体：トーカティブ（**Lv.200 固定**。弱点は水冷で、編成に水冷はいない＝属性有利なし）"
+}

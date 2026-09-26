@@ -5,7 +5,7 @@
   "topic": "敵・的・場面",
   "grade": "厳密一致",
   "basis": "verification.md Stage 18-B",
-  "model": "`records/recordings.json` でキューブを付けた録画は照合ランナーが組まない",
+  "model": "`records/recordings/` でキューブを付けた録画は照合ランナーが組まない",
   "replaces": [],
-  "updated": "2026-09-26"
+  "updated": "2026-09-27"
 }

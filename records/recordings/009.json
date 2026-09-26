@@ -1,0 +1,29 @@
+{
+  "id": "009",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-09_SG_product23.mp4",
+  "original": "nikke 2026.09.22 - 01.55.01.25.mp4",
+  "durationSec": 26.4,
+  "frames": 1583,
+  "fps": 59.96,
+  "sizeMB": 37.1,
+  "sha256": "2cff026c9b65",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 307,
+      "name": "プロダクト23",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（風・防100）"
+}

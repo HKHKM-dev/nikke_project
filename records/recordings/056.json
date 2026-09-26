@@ -1,0 +1,30 @@
+{
+  "id": "056",
+  "date": "2026-09-26",
+  "folder": "range",
+  "file": "20260926-56_MG_crown_auto.mp4",
+  "original": "2026-09-26_02-57-16.mp4",
+  "durationSec": 202.1,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 264.2,
+  "sha256": "facca759a48b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": true,
+      "note": "単騎・AUTO"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定。単騎なので操作キャラだが **AUTO 射撃 ON**・自動バースト OFF）"
+}

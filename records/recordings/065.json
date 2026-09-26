@@ -1,0 +1,44 @@
+{
+  "id": "065",
+  "date": "2026-09-26",
+  "folder": "range",
+  "file": "20260926-065_RL+SR+MG_aim-sky.mp4",
+  "original": "2026-09-26_17-24-11.mp4",
+  "durationSec": 68,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 90.5,
+  "sha256": "263449922cb2",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": null,
+      "note": "操作を順に切り替え"
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": null,
+      "note": "操作を順に切り替え"
+    },
+    {
+      "slot": 3,
+      "rid": 90,
+      "name": "エマ",
+      "controlled": null,
+      "note": "操作を順に切り替え"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。照準を画面左上の空（霧）に向けて構える（Stage 18-B2 撮影 B。手動・AUTO 射撃 OFF）。SR・RL・MG は空に撃った（MG は 300 発を撃ち切る）"
+}

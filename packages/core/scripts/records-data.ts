@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { parseEnemyPresets } from '../src/enemies.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
-import type { RecordingEntry, RecordingsFile } from '../src/records/recordings.ts';
+import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
 import type { CharacterData } from '../src/types.ts';
 
@@ -12,7 +12,9 @@ export const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 const DATA = `${ROOT}packages/core/data/`;
 const OBSERVATIONS_DIR = `${ROOT}records/observations/`;
 const CLAIMS_DIR = `${ROOT}records/claims/`;
-export const LEDGER_PATH = `${ROOT}plan/captures/index.md`;
+const RECORDINGS_DIR = `${ROOT}records/recordings/`;
+/** 録画の一覧（生成物。Stage 20-C） */
+export const RECORDINGS_DOC_PATH = `${ROOT}plan/captures/recordings.md`;
 export const RESIDUALS_PATH = `${ROOT}plan/residuals.md`;
 /** 結論の一覧（生成物。Stage 20-B） */
 export const CLAIMS_PATH = `${ROOT}plan/claims.md`;
@@ -21,8 +23,25 @@ function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(path, 'utf8')) as T;
 }
 
+function recordingFileNames(): string[] {
+  return readdirSync(RECORDINGS_DIR).filter((name) => name.endsWith('.json'));
+}
+
+/** records/recordings/*.json（このリポジトリの録画は番号順、その後に旧の録画）。Stage 20-C から 1 本 1 ファイル */
 export function loadRecordingsFile(): RecordingsFile {
-  return readJson<RecordingsFile>(`${ROOT}records/recordings.json`);
+  return {
+    recordings: sortRecordings(
+      recordingFileNames().map((name) => readJson<RecordingEntry>(`${RECORDINGS_DIR}${name}`)),
+    ),
+  };
+}
+
+/** ファイル名（拡張子なし）と、中の録画の id が一致しないもの */
+export function misplacedRecordings(): string[] {
+  return recordingFileNames()
+    .map((name) => ({ name, id: readJson<RecordingEntry>(`${RECORDINGS_DIR}${name}`).id }))
+    .filter(({ name, id }) => `${id}.json` !== name)
+    .map(({ name, id }) => `${id}: ${name} に置かれている`);
 }
 
 export function recordingMap(file: RecordingsFile): Map<string, RecordingEntry> {

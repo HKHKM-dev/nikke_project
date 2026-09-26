@@ -1,5 +1,6 @@
-// Stage 19-A: 録画の台帳（records/recordings.json）の型・検証・台帳の表の生成（plan/design-stage19.md 2.2 節）。
-// 台帳（plan/captures/index.md）の表はここから生成する。手で書かない。
+// Stage 19-A: 録画の台帳の型・検証・台帳の表の生成（plan/design-stage19.md 2.2 節）。
+// Stage 20-C: 録画は records/recordings/<録画 id>.json に 1 本 1 ファイルで置き、表は plan/captures/recordings.md に
+// 丸ごと生成する（前の中身は読まない。plan/design-stage20.md 3.5 節）。手で書かない。
 import type { CharacterData, Element } from '../types.ts';
 
 /** 録画を置く種別フォルダ（台帳の「置き場所」の語彙） */
@@ -71,8 +72,8 @@ export type LegacyRecording = RecordingConditions & {
 
 export type RecordingEntry = ProjectRecording | LegacyRecording;
 
+/** 録画の全件（records/recordings/ の全ファイルを sortRecordings の順に並べたもの） */
 export type RecordingsFile = {
-  version: 1;
   recordings: RecordingEntry[];
 };
 
@@ -80,12 +81,17 @@ export function isLegacy(entry: RecordingEntry): entry is LegacyRecording {
   return 'legacy' in entry && entry.legacy === true;
 }
 
+/** このリポジトリの録画を番号順に、その後に旧の録画を id の順に並べる */
+export function sortRecordings(entries: readonly RecordingEntry[]): RecordingEntry[] {
+  const project = entries.filter((e) => !isLegacy(e)).sort((a, b) => Number(a.id) - Number(b.id));
+  const legacy = entries.filter(isLegacy).sort((a, b) => a.id.localeCompare(b.id));
+  return [...project, ...legacy];
+}
+
 /** 検証。問題があれば 1 件 1 行で返す（空なら問題なし） */
 export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<number>): string[] {
   const errors: string[] = [];
-  if (file.version !== 1) errors.push(`version が 1 でない: ${String(file.version)}`);
   const seen = new Set<string>();
-  let lastNumber = 0;
   for (const entry of file.recordings) {
     const at = entry.id;
     if (seen.has(entry.id)) errors.push(`${at}: id が重複している`);
@@ -93,11 +99,9 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
     if (isLegacy(entry)) {
       if (!/^L-[A-Z]{1,3}$/.test(entry.id)) errors.push(`${at}: 旧の録画の id は L-<旧のタグ>`);
     } else {
-      // Stage 20-A: 桁は 3 桁以上。抜けは許し、番号順だけを見る（plan/design-stage20.md 3.5・3.6 節）
+      // Stage 20-A・20-C: 桁は 3 桁以上。抜けは許す（plan/design-stage20.md 3.5・3.6 節）
       if (!/^\d{3,}$/.test(entry.id)) errors.push(`${at}: id は 3 桁以上の数字`);
       const number = Number(entry.id);
-      if (number <= lastNumber) errors.push(`${at}: id は番号順に並べる（前は ${lastNumber}）`);
-      lastNumber = Math.max(lastNumber, number);
       if (!RECORDING_FOLDERS.includes(entry.folder)) errors.push(`${at}: folder が語彙に無い: ${entry.folder}`);
       const m = /^(\d{4})(\d{2})(\d{2})-(\d{2,})_/.exec(entry.file);
       if (!m) errors.push(`${at}: file が命名規約に合わない: ${entry.file}`);
@@ -261,14 +265,32 @@ export function normalizeTable(markdown: string): string[] {
     );
 }
 
-export const GENERATED_SECTIONS = ['recordings', 'provenance', 'legacy'] as const;
+/** 生成した文書の比較用に、空行と表の整形（列の幅そろえ・区切り行）の違いを落とす */
+export function normalizeGeneratedDoc(markdown: string): string[] {
+  return markdown
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line !== '' && !/^\|[\s|:-]+\|$/.test(line))
+    .map((line) => (line.startsWith('|') ? (normalizeTable(line)[0] ?? line) : line));
+}
 
-export function renderSection(
-  name: (typeof GENERATED_SECTIONS)[number],
-  file: RecordingsFile,
-  characters: ReadonlyMap<number, CharacterData>,
-): string {
-  if (name === 'recordings') return renderRecordingTable(file, characters);
-  if (name === 'provenance') return renderProvenanceTable(file);
-  return renderLegacyTable(file, characters);
+const RECORDINGS_DOC_HEADER = `# 録画の一覧
+
+- **このファイルは生成する（手で書かない）**。録画は \`records/recordings/<録画 id>.json\` に 1 本 1 ファイルで置き、\`npm run records:table\` で作り直す（[design-stage20.md](../design-stage20.md) 3.5 節）。
+- 武器・属性・レアはキャラのデータから引く。\`—\` は記録が無い値。
+- 置き場所・命名規約・撮影プロトコルと、録画ごとの注記（移動の経緯・的・撮影の注意・フレーム落ち）は [index.md](index.md)。`;
+
+/** plan/captures/recordings.md の全文（録画の一覧・旧プロジェクトの録画・素性の 3 つの表） */
+export function renderRecordingsDoc(file: RecordingsFile, characters: ReadonlyMap<number, CharacterData>): string {
+  return [
+    RECORDINGS_DOC_HEADER,
+    '## 録画',
+    renderRecordingTable(file, characters),
+    '## 旧プロジェクトの録画（参照のみ。移動しない）',
+    renderLegacyTable(file, characters),
+    '## 素性（`node tools/captures/probe.ts` の出力）',
+    renderProvenanceTable(file),
+  ]
+    .join('\n\n')
+    .concat('\n');
 }

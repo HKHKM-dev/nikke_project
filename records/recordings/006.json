@@ -1,0 +1,29 @@
+{
+  "id": "006",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-06_RL_belorta.mp4",
+  "original": "nikke 2026.09.22 - 00.53.25.22.mp4",
+  "durationSec": 44.7,
+  "frames": 2682,
+  "fps": 60,
+  "sizeMB": 64.9,
+  "sha256": "f02fb436484e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 60,
+      "name": "ベロータ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（風・防100）"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "066",
+  "date": "2026-09-26",
+  "folder": "range",
+  "file": "20260926-066_SG_privaty-unkind-maid_aim-sky.mp4",
+  "original": "2026-09-26_17-27-56.mp4",
+  "durationSec": 76.7,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 84.8,
+  "sha256": "0a6e6c0e62fd",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 313,
+      "name": "プリバティ：アンカインド・メイド",
+      "controlled": true,
+      "note": "単騎・手動"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。的に数発撃ってから照準を空へ移す、を約 6 回（うち 2 回は一時停止を挟んだ）"
+}

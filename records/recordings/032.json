@@ -1,0 +1,30 @@
+{
+  "id": "032",
+  "date": "2026-09-23",
+  "folder": "range",
+  "file": "20260923-32_RL_belorta_controlled-core.mp4",
+  "original": "ベロータコア狙い.mp4",
+  "durationSec": 38.4,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 31.7,
+  "sha256": "db7fc26fe293",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 60,
+      "name": "ベロータ",
+      "controlled": true,
+      "note": "操作・コア狙い"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（3 分モード・スペック固定）"
+}

@@ -1,22 +1,22 @@
-// Stage 19-A: records/recordings.json から台帳（plan/captures/index.md）の表を作り直す。
+// Stage 19-A: 録画の台帳の表を作り直す。
+// Stage 20-C: records/recordings/<録画 id>.json から plan/captures/recordings.md を丸ごと書き出す（前の中身は読まない）。
 // 使い方: npm run records:table（ルート。整形まで行う）
-import { readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
+import { renderRecordingsDoc, validateRecordings } from '../src/records/recordings.ts';
 import {
-  GENERATED_SECTIONS,
-  renderSection,
-  replaceGeneratedSection,
-  validateRecordings,
-} from '../src/records/recordings.ts';
-import { LEDGER_PATH, knownRids, loadRecordingsFile, loadRecordsData } from './records-data.ts';
+  RECORDINGS_DOC_PATH,
+  knownRids,
+  loadRecordingsFile,
+  loadRecordsData,
+  misplacedRecordings,
+} from './records-data.ts';
 
 const file = loadRecordingsFile();
-const errors = validateRecordings(file, knownRids());
+const errors = [...misplacedRecordings(), ...validateRecordings(file, knownRids())];
 if (errors.length > 0) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
 const { characters } = loadRecordsData(file);
-let doc = readFileSync(LEDGER_PATH, 'utf8');
-for (const name of GENERATED_SECTIONS) doc = replaceGeneratedSection(doc, name, renderSection(name, file, characters));
-writeFileSync(LEDGER_PATH, doc);
-console.log(`${file.recordings.length} 件から台帳の表を作り直した`);
+writeFileSync(RECORDINGS_DOC_PATH, renderRecordingsDoc(file, characters));
+console.log(`${file.recordings.length} 件から録画の一覧を作り直した`);

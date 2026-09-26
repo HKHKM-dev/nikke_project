@@ -1,0 +1,35 @@
+{
+  "id": "011",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-11_SG+AR_noir+asuka.mp4",
+  "original": "nikke 2026.09.22 - 14.44.25.27.mp4",
+  "durationSec": 24,
+  "frames": 1414,
+  "fps": 58.88,
+  "sizeMB": 34.9,
+  "sha256": "7c70afca3f82",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": null
+    },
+    {
+      "slot": 2,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": null
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": null,
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（**灼熱**・防100）"
+}

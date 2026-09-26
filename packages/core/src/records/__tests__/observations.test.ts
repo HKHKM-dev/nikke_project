@@ -5,7 +5,6 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   CLAIMS_PATH,
-  LEDGER_PATH,
   RESIDUALS_PATH,
   loadClaims,
   loadObservations,
@@ -67,10 +66,6 @@ describe('records/observations', () => {
     const expected = renderResiduals(residuals, observations, claimsByObservation(claims));
     expect(normalizeTable(section)).toEqual(normalizeTable(expected));
     expect(section).toContain(expected.split('\n')[0]!);
-  });
-
-  it('keeps the ledger file where the scripts expect it', () => {
-    expect(readFileSync(LEDGER_PATH, 'utf8')).toContain('<!-- records:recordings:start -->');
   });
 });
 
@@ -228,7 +223,7 @@ describe('照合の部品', () => {
       '047-93: shotCount は calc の出力に無い',
       '047-94: 敵のプリセット nope が無い',
       '047-95: 出来事のセット nope は range-bigarms-fire に無い',
-      '999-01: 録画 999 が records/recordings.json に無い',
+      '999-01: 録画 999 が records/recordings/ に無い',
       '047-96: compare は use が compare のときだけ',
       '047-7: id は <録画 id>-<2 桁以上の連番>',
     ]);

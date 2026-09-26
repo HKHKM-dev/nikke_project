@@ -1,0 +1,29 @@
+{
+  "id": "005",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-05_SMG_misato.mp4",
+  "original": "nikke 2026.09.22 - 00.52.26.21.mp4",
+  "durationSec": 28.7,
+  "frames": 1721,
+  "fps": 60,
+  "sizeMB": 41.7,
+  "sha256": "9514398b0ca3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 833,
+      "name": "ミサト",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（風・防100）"
+}
