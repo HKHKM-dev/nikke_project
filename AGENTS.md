@@ -20,6 +20,7 @@ NIKKE のダメージ計算ツール。
   3. `git push -u origin HEAD`（リベースで履歴を書き換えたときは `--force-with-lease`）
   4. `gh pr create`
   5. `gh pr merge --auto --squash`（作成直後に自動マージを予約する。マージ方式はスカッシュ）
+- 2026-09-26 にリポジトリを作り直した。文書やコミットの題名にある PR #1〜#37 は旧リポジトリ（非公開）の番号で、このリポジトリの PR とは別物。PR を参照するときは、番号だけでなく題名か日付も書く。
 - worktree では最初に `npm ci`。
 
 ## 併用ルール（Claude Code / Antigravity）
