@@ -1,7 +1,7 @@
 # Stage 11 設計書: 主力キャラの定義 — その 4 紅蓮：ブラックシャドウ
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **完了（2026-09-24）**。同日起案し、10 節の 7 点をすべて推奨案で承認して実装し（実装の差分は 12 節）、先行撮影の録画 46・47 と照合した（13 節。検証は [verification.md](verification.md) Stage 11 紅蓮BS 節）。**宝物なし**（2026-09-24 にユーザーに確認。`225.json` も `treasure: null`）。**録画 46・47 は設計書より先に撮影・読み取り済み**（[captures/index.md](captures/index.md) への登録はブランチ `claude/captures-46-47` のコミット da1975a を、このブランチに取り込んだ）
+- 状態: **完了（2026-09-24）**（経緯は末尾の「経過」）
 - 関連: [design-stage11.md](design-stage11.md)（1 節の進め方、11 節の申し送り）、[design-stage11-modernia.md](design-stage11-modernia.md)（状態の窓 `stateWindows`・射撃ごとの倍率ダメージ）、[design-stage8.md](design-stage8.md)（回数トリガー・倍率ダメージ・`planSkillHits`）、[design-stage10.md](design-stage10.md)（最大装弾数▲・弾丸チャージ・1 パス目のループ）、[verification.md](verification.md)、[roadmap.md](roadmap.md)
 - 作成日: 2026-09-24
 
@@ -406,3 +406,7 @@ export const MEASURED_CHARGE_CADENCE: Readonly<
 3. 窓の判定は射撃のフレーム。実機は着弾で判定しているかもしれない（録画 47 の f6225 はカットイン中の 1 発で、通常攻撃はバフなし・段 C はバフあり）。
 4. `AMMO_REFILL_ROUNDING` は S2 の弾丸チャージが 100% なので確かめられない（持ち越し）。
 5. 較正した射撃の刻みは操作キャラで読んだ値。AI の紅蓮BS は確かめていない。
+
+## 経過
+
+- 2026-09-26 まで冒頭の状態の行に書いていたもの: **完了（2026-09-24）**。同日起案し、10 節の 7 点をすべて推奨案で承認して実装し（実装の差分は 12 節）、先行撮影の録画 46・47 と照合した（13 節。検証は [verification.md](verification.md) Stage 11 紅蓮BS 節）。**宝物なし**（2026-09-24 にユーザーに確認。`225.json` も `treasure: null`）。**録画 46・47 は設計書より先に撮影・読み取り済み**（[captures/index.md](captures/index.md) への登録はブランチ `claude/captures-46-47` のコミット da1975a を、このブランチに取り込んだ）

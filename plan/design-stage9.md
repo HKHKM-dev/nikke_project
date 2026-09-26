@@ -1,7 +1,7 @@
 # Stage 9 設計書: 宝物（お気に入りアイテム）版スキル
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **完了（2026-09-23）。実装での差分は 12 節、検証は [verification.md](verification.md) Stage 9 節**。承認は 2026-09-23。宝物の段階の既定値は 0（宝物なし、ユーザー指定）。11 節の 7 点はいずれも推奨案で承認。レビューの 3 点（解決済みの効果への `targetWeapon` の伝播、`applyTreasure` の非破壊性、`applyTreasureToTeam` で 1 か所にまとめる）は 3 節・4.2 節に反映済み
+- 状態: **完了（2026-09-23）**（経緯は末尾の「経過」）
 - 関連: [design-stage8.md](design-stage8.md)、[verification.md](verification.md) Stage 8 節（録画 36〜38）、[roadmap.md](roadmap.md)
 - 作成日: 2026-09-23
 
@@ -374,3 +374,7 @@ export function applyTreasureToTeam<T extends TeamInput>(input: T): T;
 5. モデルは最終攻撃力を整数に丸めないので、フルバースト中の「5 回攻撃」は 838,583（実測 838,582）と 1 だけずれる。回帰テストは ±1 で比べる（Stage 8 の録画 21 と同じ扱い）。
 6. `sim-run.ts` の表に宝物の段階の列を足し、持続バフのラベルに `(SG)` を付けた。
 7. 8.3 節の「SG 向けの攻撃力がラム・デルタに乗っていないこと」は録画からは確かめていない（未確認として verification.md に記録）。
+
+## 経過
+
+- 2026-09-26 まで冒頭の状態の行に書いていたもの: **完了（2026-09-23）。実装での差分は 12 節、検証は [verification.md](verification.md) Stage 9 節**。承認は 2026-09-23。宝物の段階の既定値は 0（宝物なし、ユーザー指定）。11 節の 7 点はいずれも推奨案で承認。レビューの 3 点（解決済みの効果への `targetWeapon` の伝播、`applyTreasure` の非破壊性、`applyTreasureToTeam` で 1 か所にまとめる）は 3 節・4.2 節に反映済み

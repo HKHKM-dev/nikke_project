@@ -1,7 +1,7 @@
 # Stage 1 + Stage 2 設計書
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`, `plan/references.md`）
-- 状態: 承認済み（2026-09-21）。実装はこの文書に従う
+- 状態: **完了（2026-09-22）**（経緯は末尾の「経過」）
 - 関連: [requirements.md](requirements.md)、[roadmap.md](roadmap.md)、[references.md](references.md)
 - 作成日: 2026-09-21
 
@@ -258,3 +258,8 @@ total           = DPS × duration
 - **Blablalink データの再配布可否**は公開準備（Stage 8 以降）で確認。不可なら `data/` を `.gitignore` に移し、README に `npm run fetch-data` 手順を書く（スクリプトは最初からその前提で動く）。
 - Vite / Vitest の組み合わせで peer 不整合が出た場合は、`npm install` 時点の最新安定版同士の組み合わせに揃える（メジャー番号は固定しない）。
 - 曲線データ 5 MB はキャラ単位の lazy fetch で回避。将来必要なら「変化点のみ保存」に圧縮。
+
+## 経過
+
+- 2026-09-26 まで冒頭の状態の行に書いていたもの: 承認済み（2026-09-21）。実装はこの文書に従う
+- 2026-09-26: 状態を、[roadmap.md](roadmap.md) の Stage 1・2 の行（完了（2026-09-22））に合わせて「完了」にした。

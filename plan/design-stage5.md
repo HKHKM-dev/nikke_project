@@ -1,7 +1,7 @@
 # Stage 5 設計書: フルバースト基礎とシンプルバースト（sim 先行 → calc）
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **承認済み・実装完了（2026-09-22）**。2026-09-22 のロードマップ改定を反映した改訂版。レビュー 2 点（4.2 節の境界、5.3 節の参照先）を反映後、第 8 節の 8 点はいずれも推奨案で確定。実装での差分は 10 節
+- 状態: **完了（2026-09-22）**（経緯は末尾の「経過」）
 - 関連: [design-stage4.md](design-stage4.md)、[verification.md](verification.md)、[roadmap.md](roadmap.md)
 - 作成日: 2026-09-22（同日、改定前の「固定サイクルのフルバースト（calc のみ）」案を全面改訂）
 
@@ -491,3 +491,7 @@ Stage 2-A / 4 と同じ方法（HUD 総ダメージの差分と的の上の数�
 - **MG の位相ロック**: 周期 560f と 1,200f の gcd 80 が 600 を割り切らないので、フルバースト区間の割合が長時間でも 50.13% に張り付く（[verification.md](verification.md) Stage 5 節）。6.1 節の「収束」は 0.5% 以内で成立するが、厳密に 1/2 に収束するのは周期と 600 が通約しない武器だけ。
 - **`resolvePassives` は `burstDamage` を読み飛ばす**: `SkillEntry.effects` が `SkillEffect`（`PassiveEffect | BurstDamageEffect`）の配列になったので、`kind` で分岐する。`definitions.test.ts` の「`burst` は unsupported」の固定は外し、代わりに `burstDamage` の値が 100% 以上（倍率ダメージ）であることを見る。
 - **CLI**: `npm run sim -- --ids 271,870,10 --fixed-spec` で sim / calc の枠別の内訳表が出る（`packages/core/scripts/sim-run.ts`）。verification.md の数値はここから採った。
+
+## 経過
+
+- 2026-09-26 まで冒頭の状態の行に書いていたもの: **承認済み・実装完了（2026-09-22）**。2026-09-22 のロードマップ改定を反映した改訂版。レビュー 2 点（4.2 節の境界、5.3 節の参照先）を反映後、第 8 節の 8 点はいずれも推奨案で確定。実装での差分は 10 節

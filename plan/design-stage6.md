@@ -1,7 +1,7 @@
 # Stage 6 設計書: スキルモデル段階 B — バースト時トリガーの持続バフ
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **完了（2026-09-22）**。レビュー 5 点を反映後、8 節の 9 点はいずれも推奨案で確定。実装での差分は 10 節、射撃場の実測は [verification.md](verification.md) Stage 6 節。`BURST_HIT_USES_PRE_ACTIVATION_BUFFS = true` と `BURST_SKILL_FULL_BURST_BONUS = false` は実測で確定した
+- 状態: **完了（2026-09-22）**（経緯は末尾の「経過」）
 - 関連: [design-stage5.md](design-stage5.md)、[design-stage4.md](design-stage4.md)、[verification.md](verification.md)、[roadmap.md](roadmap.md)
 - 作成日: 2026-09-22
 
@@ -592,3 +592,7 @@ Stage 2-A / 4 / 5 と同じ方法（的の上のポップアップ数値をコ�
 - **`fullBurstEnd` の再付与も実機どおり**（録画 21）。クイーン（真）の 1 ペレットがフルバースト中 47,074 → 終了直後 47,172 に戻り、S1 の 15 秒バフが掛け直されている。
 - **キャラの同定は必ずダメージ数値で行う**。録画 21 を出撃画面のカードからモダニアと読み違えた（クイーン（真）の怪盗衣装が金属マスクで似ている）。`computeFixedSpecAttack` から予測値を出して突き合わせれば一意に決まる。
 - **未確定**: バーストスキルダメージが会心するか（7 ヒットすべて非会心で決着せず）。
+
+## 経過
+
+- 2026-09-26 まで冒頭の状態の行に書いていたもの: **完了（2026-09-22）**。レビュー 5 点を反映後、8 節の 9 点はいずれも推奨案で確定。実装での差分は 10 節、射撃場の実測は [verification.md](verification.md) Stage 6 節。`BURST_HIT_USES_PRE_ACTIVATION_BUFFS = true` と `BURST_SKILL_FULL_BURST_BONUS = false` は実測で確定した

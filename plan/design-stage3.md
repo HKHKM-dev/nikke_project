@@ -1,7 +1,7 @@
 # Stage 3 設計書: calc v2 — 5 人編成の合算
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **承認済み・実装完了（2026-09-22）**。第 6 節の 4 点はいずれも推奨案で確定。確認結果は [verification.md](verification.md) の Stage 3 節
+- 状態: **完了（2026-09-22）**（経緯は末尾の「経過」）
 - 関連: [design-stage1-2.md](design-stage1-2.md)、[verification.md](verification.md)、[roadmap.md](roadmap.md)
 - 作成日: 2026-09-22
 
@@ -236,3 +236,7 @@ header        NIKKE calc v2 — 5 人編成の通常攻撃合算（Stage 3）
 - **Stage 4 への拡張余地**: スキル Lv 入力（3 つ）と「未対応」表示が枠に増える。`SlotCard` は「ニケ / 育成 / 条件 / 結果」のセクション構造にして、セクションの追加で済むようにする。
 - **読み込み中の枠**: 合計から除外すると一瞬合計が小さく見える。内訳の合計行に「読み込み中の枠があります」を出す。
 - **`ConditionInput` の二重定義**: `SlotCondition` を `Omit` で導出するので、Stage 2 の型を触らずに済む。将来 `ConditionInput` を分割したくなったら、そのとき `computeDamage` の引数も一緒に整理する。
+
+## 経過
+
+- 2026-09-26 まで冒頭の状態の行に書いていたもの: **承認済み・実装完了（2026-09-22）**。第 6 節の 4 点はいずれも推奨案で確定。確認結果は [verification.md](verification.md) の Stage 3 節
