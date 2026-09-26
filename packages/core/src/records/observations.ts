@@ -204,7 +204,8 @@ export function validateObservations(
     const at = o.id;
     if (seen.has(o.id)) errors.push(`${at}: id が重複している`);
     seen.add(o.id);
-    if (!o.id.startsWith(`${o.recording}-`)) errors.push(`${at}: id は <録画 id>-<連番>`);
+    if (!o.id.startsWith(`${o.recording}-`) || !/^\d{2,}$/.test(o.id.slice(o.recording.length + 1)))
+      errors.push(`${at}: id は <録画 id>-<2 桁以上の連番>`);
     if (!recordings.has(o.recording)) errors.push(`${at}: 録画 ${o.recording} が records/recordings.json に無い`);
     if (!OBSERVATION_KINDS.includes(o.kind)) errors.push(`${at}: kind が語彙に無い: ${o.kind}`);
     if (!OBSERVATION_USES.includes(o.use)) errors.push(`${at}: use が語彙に無い: ${o.use}`);

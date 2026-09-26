@@ -1,4 +1,5 @@
 // Stage 19-A: 録画の台帳（records/recordings.json）の検証と、台帳（plan/captures/index.md）の表が JSON から生成したものと一致すること。
+// Stage 20-A: 件数や ID の一覧は直書きしない（plan/design-stage20.md 3.6 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
@@ -14,6 +15,7 @@ import {
   renderSection,
   replaceGeneratedSection,
   validateRecordings,
+  type ProjectRecording,
   type RecordingsFile,
 } from '../recordings.ts';
 
@@ -27,17 +29,22 @@ describe('records/recordings.json', () => {
     expect(validateRecordings(file, knownRids)).toEqual([]);
   });
 
-  it('keeps the 69 project recordings and the 5 legacy ones', () => {
-    expect(file.recordings.filter((e) => !('legacy' in e)).map((e) => e.id)).toEqual(
-      Array.from({ length: 69 }, (_, i) => String(i + 1).padStart(3, '0')),
+  it('allows gaps and more than 3 digits, but keeps the numbers in order (Stage 20-A)', () => {
+    const first = file.recordings[0] as ProjectRecording;
+    const numbered = (id: string): ProjectRecording => ({
+      ...first,
+      id,
+      file: first.file.replace(/^(\d{8})-\d+_/, `$1-${id}_`),
+    });
+    expect(
+      validateRecordings({ version: 1, recordings: [first, numbered('003'), numbered('1000')] }, knownRids),
+    ).toEqual([]);
+    expect(validateRecordings({ version: 1, recordings: [numbered('12')] }, knownRids)).toContainEqual(
+      '12: id は 3 桁以上の数字',
     );
-    expect(file.recordings.filter((e) => 'legacy' in e).map((e) => e.id)).toEqual([
-      'L-AD',
-      'L-AI',
-      'L-AN',
-      'L-S',
-      'L-HC',
-    ]);
+    expect(validateRecordings({ version: 1, recordings: [first, numbered('001')] }, knownRids)).toContainEqual(
+      '001: id が重複している',
+    );
   });
 
   it('reports broken entries', () => {
@@ -55,8 +62,8 @@ describe('records/recordings.json', () => {
       ],
     };
     const errors = validateRecordings(broken, knownRids);
-    expect(errors).toContainEqual('002: 通し番号が飛んでいる（前は 0）');
-    expect(errors).toContainEqual('001: 通し番号が飛んでいる（前は 2）');
+    expect(errors.filter((e) => e.startsWith('002:'))).toEqual([]);
+    expect(errors).toContainEqual('001: id は番号順に並べる（前は 2）');
     expect(errors).toContainEqual('001: 枠は 1 から枠順に並べる（2 番目が 3）');
     expect(errors).toContainEqual('001: rid 999999 のキャラのデータが無い');
     expect(errors).toContainEqual('001: 操作した枠が 2 つ以上ある');

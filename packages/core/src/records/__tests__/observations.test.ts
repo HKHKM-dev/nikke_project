@@ -1,5 +1,6 @@
 // Stage 19-B・19-C: 観測値（records/observations/）・結論（plan/claims.md）の検証と照合ランナー、残差の一覧（plan/residuals.md）が最新であること。
 // 確定の結論にひもづく観測値だけ、許容幅の外なら落とす（design-stage19.md 2.5 節）。
+// Stage 20-A: 件数や ID の一覧は直書きしない（plan/design-stage20.md 3.6 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
@@ -12,7 +13,14 @@ import {
   misplacedObservations,
   recordingMap,
 } from '../../../scripts/records-data.ts';
-import { claimsByObservation, gatedObservations, observationIdsIn, parseClaims, validateClaims } from '../claims.ts';
+import {
+  claimsByObservation,
+  gatedObservations,
+  observationIdsIn,
+  parseClaims,
+  supportedObservations,
+  validateClaims,
+} from '../claims.ts';
 import {
   buildTeamInput,
   compareValue,
@@ -66,30 +74,22 @@ describe('plan/claims.md', () => {
     expect(validateClaims(claims, new Set(observations.map((o) => o.id)))).toEqual([]);
   });
 
-  it('puts every compared observation of 19-B behind a 確定 claim', () => {
-    // Stage 18-C: 自動の条件での単騎の与ダメージは、残差として並べるだけで結論には結び付けない（design-stage18.md 12.4 節）
+  it('ties every observation compared under manual conditions to a 確定 or 仮説 claim (Stage 20-A)', () => {
+    // 許容幅の外で落とすのは確定の結論の根拠だけ。仮説の結論の根拠は、残差の一覧に出すだけ（design-stage19.md 2.5 節）
+    const supported = supportedObservations(claims);
     const manual = residuals.filter((r) => r.observation.compare?.setup.condition !== 'auto');
-    expect(manual.filter((r) => !gated.has(r.observation.id)).map((r) => r.observation.id)).toEqual([]);
+    expect(manual.filter((r) => !supported.has(r.observation.id)).map((r) => r.observation.id)).toEqual([]);
   });
 
-  it('lists the solo AUTO totals under automatic conditions without tying them to a claim (Stage 18-C)', () => {
+  it('does not gate the totals under automatic conditions by a claim (Stage 18-C)', () => {
+    // 自動の条件での単騎の与ダメージは、残差として並べるだけで結論には結び付けない（design-stage18.md 12.4 節）
     const auto = residuals.filter((r) => r.observation.compare?.setup.condition === 'auto');
-    expect(auto.map((r) => r.observation.id)).toEqual([
-      '054-02',
-      '055-02',
-      '056-02',
-      'L-AD-01',
-      'L-AI-01',
-      'L-AN-01',
-      'L-HC-01',
-    ]);
-    expect(auto.filter((r) => gated.has(r.observation.id))).toEqual([]);
+    expect(auto.filter((r) => gated.has(r.observation.id)).map((r) => r.observation.id)).toEqual([]);
   });
 
-  it('keeps the corrected claims as 棄却 and points to them from the new ones', () => {
+  it('keeps the corrected claims as 棄却', () => {
     const byId = new Map(claims.map((c) => [c.id, c]));
     for (const c of claims) for (const r of c.replaces) expect(byId.get(r)!.state).toBe('棄却');
-    expect(claims.filter((c) => c.replaces.length > 0).map((c) => c.id)).toEqual(['C-0018', 'C-0022']);
   });
 
   it('expands observation ranges and reads the table columns', () => {
@@ -101,6 +101,14 @@ describe('plan/claims.md', () => {
       '014-01',
     ]);
     expect(observationIdsIn('verification.md Stage 2-B')).toEqual([]);
+    // Stage 20-A: 桁を決め打ちしない。範囲は始めの ID の桁にそろえる
+    expect(observationIdsIn('`1000-01`、`010-100`、`010-099`〜`010-101`、`L-AD-01`')).toEqual([
+      '010-099',
+      '010-100',
+      '010-101',
+      '1000-01',
+      'L-AD-01',
+    ]);
     const parsed = parseClaims(
       [
         '| ID | 結論 | 状態 | 根拠 | モデル側 | 置き換え | 更新日 |',
@@ -117,16 +125,23 @@ describe('plan/claims.md', () => {
       [
         { id: 'C-0001', text: 'a', state: '確定', observations: ['999-01'], replaces: ['C-0002'] },
         { id: 'C-0003', text: '', state: '未定' as never, observations: [], replaces: ['C-0009'] },
+        { id: 'C-0002', text: 'b', state: '確定', observations: [], replaces: [] },
+        { id: 'C-0003', text: 'c', state: '仮説', observations: [], replaces: [] },
+        { id: 'C-12', text: 'd', state: '仮説', observations: [], replaces: [] },
+        { id: 'C-10000', text: 'e', state: '仮説', observations: [], replaces: [] },
       ],
       new Set(),
     );
+    // 番号の抜け（C-0001 → C-0003）と 5 桁（C-10000）は許す。落とすのは逆順・重複・形の誤り
     expect(errors).toEqual([
       'C-0001: 観測値 999-01 が無い',
-      'C-0001: 置き換えた結論 C-0002 が無い',
-      'C-0003: ID は C-0001 から通し番号（2 行目は C-0002）',
+      'C-0001: 置き換えた結論 C-0002 の状態が棄却でない（確定）',
       'C-0003: 状態が語彙に無い: 未定',
       'C-0003: 結論が空',
       'C-0003: 置き換えた結論 C-0009 が無い',
+      'C-0002: ID は番号順に並べる（前は C-0003）',
+      'C-0003: ID が重複している',
+      'C-12: ID は C-<4 桁以上の数字>',
     ]);
   });
 });
@@ -157,6 +172,8 @@ describe('照合の部品', () => {
         broken({ setup: { enemy: 'range-bigarms-fire', events: ['nope'] } }, '047-95'),
         { ...base, id: '999-01', recording: '999' },
         { ...base, id: '047-96', use: 'input' },
+        broken({}, '047-7'),
+        broken({}, '047-100'),
       ],
       recordings,
       data.enemies,
@@ -169,6 +186,7 @@ describe('照合の部品', () => {
       '047-95: 出来事のセット nope は range-bigarms-fire に無い',
       '999-01: 録画 999 が records/recordings.json に無い',
       '047-96: compare は use が compare のときだけ',
+      '047-7: id は <録画 id>-<2 桁以上の連番>',
     ]);
   });
 
