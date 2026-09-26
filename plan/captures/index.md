@@ -435,11 +435,14 @@ node tools/captures/diff.ts    <動画> --crop x,y,w,h [--from N] [--to N] --pea
 node tools/captures/probe-result.ts <動画...> [--list] [--out-dir DIR] [--samples 3]
 node tools/captures/gauge.ts <動画> [--from N] [--to N] [--mode events|jumps|series] [--step 1]
 node tools/captures/ammo.ts  <動画> [--crop 785,902,110,26] [--max 300] [--mode mags|series] [--from N] [--to N]
+node tools/captures/hud.ts   <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop 810,34,300,38]
 ```
 
 `gauge.ts` は画面右の BURST バー（x 1793〜1905・y 442）の充填率を 1 フレームずつ読む（Stage 7 のゲージ較正用）。`events` は溜め始め・満タン・バー消失、`jumps` は 1 フレームで跳ねた増分（SR / SG の 1 発ずつ）、`series` は充填率の列。フルバースト中・CT 待ち・チェーン中はバーの位置に別の UI が出るので読めない（`-`）。**ゲージの較正を撮るときは、誰を操作しているか（照準画面が出ているニケ）を台帳に書く**。操作キャラと AI でゲージ量が違うらしい（[../verification.md](../verification.md) Stage 7 節）。
 
 `ammo.ts` は枠アイコンの上の残弾表示「残弾/最大」を 1 フレームずつ読む（MG の射撃レートの再較正用、[../design-mg-fire-rate.md](../design-mg-fire-rate.md)）。**AI の味方の射撃フレームはこの表示からしか読めない。** 表示は中央揃えのプロポーショナルフォントなので、「/最大」の位置を先に探してから桁をテンプレート（`ammo-templates.json`、録画 41 の暗い背景のフレームから作成）と照合し、「残弾は増えない・リロード明けは最大」の制約で復号する。`mags` はマガジンごとの 1 発目・最終弾・次の最大の表示と 4f 以上止まった区間、`series` は残弾の列。`--crop` の既定は 4 人編成の 2 枠目・2 人編成の 1 枠目（枠の間隔は約 130px）。分割リロードの武器には使えない。録画 41 の全 12,573 フレームで約 30 秒。
+
+`hud.ts` は画面上部中央の HUD の総ダメージを全フレーム読む（Stage 19-D）。`final` は最後の値（単騎なら戦闘履歴の与ダメージと同じ）、`jumps` は増えたフレームと増分（単騎で 1 フレームに 1 ヒットなら 1 ヒットの値）。数字は見本（`hud-templates.json`、録画 46 の 5 フレームから作った）と照合し、総ダメージは減らないので最長の非減少列から外れた読み（0 と 8 の読み違い・先頭の桁の欠け）を落とす。2026-09-26 に録画 10・46・47 と旧の 5 本で、最終値と 1 ヒットの値が記録と一致することを確かめた（[../verification.md](../verification.md) Stage 19-D 節）。
 
 `probe-result.ts` はキャラ同定用（上の「誰が写っているかの確かめ方」）。複数の動画をまとめて渡せる（`--list` なら区間を出すだけで画像は書かない）。判定は `--step` フレームおきなので区間の端は ±`--step` の誤差がある。
 
