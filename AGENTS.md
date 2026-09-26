@@ -55,6 +55,7 @@ NIKKE のダメージ計算ツール。
 | `plan/roadmap.md`・設計書                            | 計画・決定・Stage の状況                                                                                                                                           |
 | `plan/verification.md`                               | 実測と確認の結果（根拠と数値）                                                                                                                                     |
 | `plan/captures/index.md`                             | 録画台帳・撮影プロトコル・キャラ同定・解析ツール                                                                                                                   |
+| `records/recordings.json`                            | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性。台帳の表はここから生成する（`npm run records:table`）                                              |
 | `plan/captures/guide.md`                             | 撮影と読み取りの落とし穴の話題別の索引（根拠は上の 2 つへリンク）                                                                                                  |
 | `private/`（メインのチェックアウト直下、追跡しない） | 所持キャラ・宝物・育成状況・ローカルのパスなど個人の情報。worktree には無いので絶対パスで読む。worktree のエージェントは書き込めないので、足すものはオーナーに渡す |
 
