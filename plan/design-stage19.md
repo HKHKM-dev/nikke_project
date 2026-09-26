@@ -1,7 +1,7 @@
 # Stage 19 設計書: 検証記録の構造化（録画・観測値・結論）
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **案（レビュー待ち）**
+- 状態: **承認済み（2026-09-26。6 節の 8 点とも推奨案）。承認時のレビューの 2 点（比べる値の指定・1 録画に複数の観測値）を検証して取り入れた（7 節）**
 - 関連: [verification.md](verification.md)、[captures/index.md](captures/index.md)（録画台帳）、[captures/guide.md](captures/guide.md)（撮影と読み取りの手引き）、[design-stage12.md](design-stage12.md) 5.4 節（残差の一覧。未作成）、[../AGENTS.md](../AGENTS.md)「記録の置き場所」
 - 作成日: 2026-09-26
 
@@ -98,20 +98,38 @@
 
 ### 2.3 観測値（`records/observations/<録画 id>.json`）
 
+1 本の録画から、1 ヒット・FB の回数・合計など複数の値を読むのがふつうなので、ファイルの中身は**観測値の配列**にする（7 節の 2）。
+
 ```json
-{
-  "id": "063-01",
-  "recording": "063",
-  "kind": "total",
-  "subject": { "slot": 3 },
-  "range": { "from": 0, "to": 10800 },
-  "value": 137577675,
-  "method": { "tool": "probe-result.ts", "note": "戦闘履歴のパネル" },
-  "evidence": ["frames/20260926-63_RL+SR+AR_idoll-flower+delta+asuka_f12090_panel.jpg"],
-  "compare": { "model": "sim", "tolerance": 0.02 }
-}
+[
+  {
+    "id": "047-01",
+    "recording": "047",
+    "kind": "total",
+    "use": "compare",
+    "value": 284726954,
+    "method": { "tool": "probe-result.ts", "note": "戦闘履歴のパネル（紅蓮：ブラックシャドウ）" },
+    "evidence": ["frames/20260924-47_SR+SR+RL_ram+delta+scarlet-black-shadow_f12109_panel.jpg"],
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": { "slot": 3 },
+      "tolerance": { "rel": 0.02 }
+    }
+  },
+  {
+    "id": "047-02",
+    "recording": "047",
+    "kind": "count",
+    "use": "compare",
+    "value": 5,
+    "method": { "note": "FB の画面の色（R−B）の区間を数えた" },
+    "compare": { "model": "sim", "metric": "fullBurstCount", "args": {}, "tolerance": { "abs": 0 } }
+  }
+]
 ```
 
+- `kind` は**何を読んだか**の分類（人と検索のため）、`compare.metric` は**モデルのどの値と比べるか**（照合ランナーのため）。`kind` だけでは比べる値が決まらない（7 節の 1）。
 - `kind` の語彙を決めて、足すときは一覧に足してから使う（台帳の種別と同じ運用）。
 
   | kind       | 読むもの                                    |
@@ -123,7 +141,33 @@
   | `total`    | 区間や戦闘の合計ダメージ                    |
   | `rate`     | コア命中率・弾丸命中率など                  |
 
-- `compare` がある観測値は、照合ランナー（2.5 節）がモデルと比べる。多人数の録画は、合計・比・ばらつきといった事実だけを持たせる（AGENTS.md の規則どおり）。
+- `use` は観測値の使い道。
+  - `compare`: モデルの出力と比べる（`compare` が必須）。
+  - `input`: モデルの入力（条件の既定値など）の根拠にする。Stage 17・18 のコア命中率がこれで、モデルの出力とは比べられない。
+  - `record`: 事実として残すだけ（多人数の録画の比・ばらつきなど。AGENTS.md の規則どおり、分解しない）。
+- 枠の番号は、台帳と同じく **1 始まり**で書く（コードの `slotIndex` は 0 始まり。変換は照合ランナーが行う）。
+- 許容幅は `{ "rel": 0.02 }`（比）か `{ "abs": 30 }`（フレームや回数などの差）で書く。値が列（FB の開始フレームの並びなど）のときは要素ごとに比べる。
+
+#### 2.3.1 比べる値（`metric`）の語彙
+
+モデルの出力（`SimResult`・`TeamResult`、2026-09-26 のコード）から取り出せるものに限って決める。足すときは、照合ランナーの取り出し関数と一緒にこの表へ足す。
+
+| metric            | 取り出し元                                                            | args                                                                                  | 値  | calc |
+| ----------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | --- | ---- |
+| `teamTotalDamage` | `totalDamage`                                                         | —                                                                                     | 数  | ○    |
+| `slotTotalDamage` | `slots[i].totalDamage`                                                | `slot`                                                                                | 数  | ○    |
+| `rangeDamage`     | `damagePerSecond`（1 秒刻み）                                         | `slot`（省略で編成）、`fromSec`・`toSec`                                              | 数  | ×    |
+| `fullBurstCount`  | `schedule.fullBurstWindows.length`                                    | —                                                                                     | 数  | ○    |
+| `fullBurstStarts` | `schedule.fullBurstWindows[].start`                                   | —                                                                                     | 列  | ○    |
+| `gaugeFullFrame`  | `schedule.gaugeFullFrames[n]`                                         | `n`（0 始まり）                                                                       | 数  | ○    |
+| `burstCount`      | `slots[i].burst.activations.length`（calc も同名）                    | `slot`                                                                                | 数  | △    |
+| `skillHitCount`   | `slots[i].skillHits.frames.length`（calc は `skillHits.activations`） | `slot`                                                                                | 数  | ○    |
+| `shotCount`       | `shots[i].frames`（区間で数える）                                     | `slot`、`from`・`to`（フレーム）                                                      | 数  | ×    |
+| `shotIntervals`   | `shots[i].frames` の差                                                | `slot`、`from`・`to`                                                                  | 列  | ×    |
+| `hitDamage`       | その時点の区間のバフで 1 トリガーの式を**パターンごとに組み直す**     | `slot`、`frame`、`source`（normal・burst・skill）、`core`・`crit`・`distance`（真偽） | 数  | ×    |
+
+- `hitDamage` だけは、モデルの出力をそのまま取り出せない。モデルは会心・コアを期待値（率 × 倍率）で持っているので、「コアかつ会心」の 1 発の値は、区間のバフ（`segments[].buffs`）と `damage.ts` の式からパターンを固定して組み直す。取り出し関数は 19-B で作り、Stage 2-A の 4 パターンの実測で確かめる。
+- calc 欄が × の値は、calc の出力（`TeamResult`）に無い。`compare.model` に `calc` を書けるのは ○・△ の値だけ。△ の `burstCount` は、calc ではダメージを持たないバーストの発動が列に入らない（`SlotBurstResult.activations` は倍率ダメージの無いバーストでは空）ので、そのキャラでは使えない。
 
 ### 2.4 結論（`plan/claims.md`）
 
@@ -142,7 +186,7 @@
 
 ### 2.5 照合ランナーと残差の一覧
 
-- `npm run records:check` で、`compare` のある観測値すべてについて録画の条件から編成を組み、sim（と calc）の予測と比べる。
+- `npm run records:check` で、`use: "compare"` の観測値すべてについて録画の条件から編成を組み、`compare.metric` の値を取り出して sim（と calc）の予測と比べる。`metric` が語彙に無い、または `args` が足りない観測値は、比べずに一覧でエラーにする。
 - 結果は `plan/residuals.md` に生成する（手で書かない）。1 行が 1 観測値で、予測・実測・差・許容幅・判定・関係する結論を並べる。
 - テスト（`vitest`）では、**状態が「確定」の結論にひもづく観測値だけ**を、許容幅の外なら落とす。仮説や範囲外のものは残差の一覧に出すだけにする。
 - 既存の Stage ごとのテストは消さない。新しい検証から照合ランナーに載せ、既存のものは触ったときに移す。
@@ -183,7 +227,7 @@
 - 既存の録画・証拠フレームの改名、撮り直し。
 - 乱数と分布（16-C、凍結中）。
 
-## 6. 決めてほしいこと
+## 6. 決めてほしいこと（2026-09-26 に 8 点とも推奨案で承認）
 
 1. **3 層（録画・観測値・結論）に分けるか** — 推奨: **分ける**（2.1 節）。
 2. **置き場所と形式** — 推奨: **録画・観測値は `records/` の JSON、結論は `plan/claims.md` の Markdown の表**。別案は、すべて Markdown（機械で読みにくい）か、すべて JSON（人が読みにくい）。
@@ -193,3 +237,18 @@
 6. **番号と命名** — 推奨: **次から 3 桁の通し番号（064〜）、ファイル名から編成を外す、既存は改名しない**（2.6 節）。
 7. **結論と verification.md の関係** — 推奨: **verification.md は根拠の記録（追記のみ）、結論の状態は `claims.md` で管理する。訂正は claims の状態を変え、verification.md に訂正の節を足す**。
 8. **PR の分け方** — 推奨: **19-A〜D の 4 つ**（3 節）。19-A と 19-B だけでも、全録画の照合と残差の一覧はそろう。
+
+---
+
+## 7. 承認時のレビュー（2026-09-26）
+
+承認のときに受けた指摘 2 点を、モデルのコード（`sim/engine.ts` の `SimResult`、`team.ts` の `TeamResult`、`damage.ts` の `TriggerDamage`）と照らして確かめ、どちらも取り入れた。
+
+1. **比べる値を指定する情報（セレクタ）が無い** — **正しい。取り入れた**（2.3・2.3.1 節）。
+   - 起案時の例の `compare` には、モデルのどの値と比べるかが無かった。`kind` からは決まらない。例えば `count` は FB の回数（`schedule.fullBurstWindows`）、バーストの回数（`slots[i].burst.activations`）、倍率ダメージの回数（`slots[i].skillHits.frames`）のどれにもなりうる。
+   - `compare` に `metric` と `args` を足し、語彙はモデルの出力から取り出せるものに限った（2.3.1 節）。
+   - 確かめて分かったことが 2 つあり、あわせて設計に入れた。
+     - **1 ヒットの値は、出力から取り出せない**。モデルは会心・コアを期待値で持っているので、パターンを固定して組み直す取り出し関数が要る（`hitDamage`）。
+     - **比べられない観測値がある**。Stage 17・18 のコア命中率は、モデルの入力（条件）の根拠で、出力とは比べられない。`use`（`compare`・`input`・`record`）を足して分けた。
+   - あわせて、許容幅を比（`rel`）と差（`abs`）の 2 通りにした。フレームや回数は比では書きにくいため。
+2. **1 本の録画に観測値が複数ある** — **正しい。取り入れた**（2.3 節）。起案時の例も `"id": "063-01"` と複数を前提にしていたのに、ファイルの中身を 1 件で書いていた。ファイルの中身を観測値の配列にした。
