@@ -1,0 +1,30 @@
+{
+  "id": "058",
+  "date": "2026-09-26",
+  "folder": "range",
+  "file": "20260926-58_AR_kurumi_fixed-off.mp4",
+  "original": "2026-09-26_12-51-12.mp4",
+  "durationSec": 213.3,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 263.2,
+  "sha256": "4cef78974c76",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": true,
+      "note": "単騎・AUTO、キューブ**なし**"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": null,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・**AUTO 射撃 ON**）"
+}

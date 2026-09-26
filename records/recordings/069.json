@@ -1,0 +1,42 @@
+{
+  "id": "069",
+  "date": "2026-09-26",
+  "folder": "range",
+  "file": "20260926-069_AR_asuka_aim-sky.mp4",
+  "original": "2026-09-26_17-31-19.mp4",
+  "durationSec": 46.1,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 52.9,
+  "sha256": "68422cabc284",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true,
+      "note": "アスカを操作・手動・自動バースト ON"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。照準を画面左上の空（霧）に向けて構える（Stage 18-B2 撮影 B。手動・AUTO 射撃 OFF）。バーストの外と中で構える"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "035",
+  "date": "2026-09-23",
+  "folder": "range",
+  "file": "20260923-35_MG+AR_emma+idoll-sun_emma-ai.mp4",
+  "original": "エマ別キャラ操作.mp4",
+  "durationSec": 52.1,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 53.4,
+  "sha256": "d26ae5e4235a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 90,
+      "name": "エマ",
+      "controlled": false,
+      "note": "AI"
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true,
+      "note": "操作・撃たない"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（3 分モード・スペック固定）"
+}

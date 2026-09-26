@@ -1,0 +1,29 @@
+{
+  "id": "004",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-04_AR_kurumi.mp4",
+  "original": "nikke 2026.09.22 - 00.29.31.20.mp4",
+  "durationSec": 22.6,
+  "frames": 1353,
+  "fps": 60,
+  "sizeMB": 33.2,
+  "sha256": "314c5cc1b646",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（風・防100）"
+}

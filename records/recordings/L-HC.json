@@ -1,0 +1,22 @@
+{
+  "id": "L-HC",
+  "legacy": true,
+  "path": "E:/record/nikke/動画/nikke 2026.09.12 - 20.07.13.17.mp4",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 302,
+      "name": "プロダクト08",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": null,
+  "conditionNote": "射撃場・3 分モード・スペック固定 ON・灼熱の的・単騎・完全放置（AUTO）。"
+}

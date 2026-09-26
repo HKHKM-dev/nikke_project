@@ -1,0 +1,30 @@
+{
+  "id": "067",
+  "date": "2026-09-26",
+  "folder": "range",
+  "file": "20260926-067_AR_kurumi_aim-sky.mp4",
+  "original": "2026-09-26_17-29-45.mp4",
+  "durationSec": 25.6,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 18.7,
+  "sha256": "5e1ec3638514",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": true,
+      "note": "単騎・手動、キューブなし"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**）。照準を画面左上の空（霧）に向けて構える（Stage 18-B2 撮影 B。手動・AUTO 射撃 OFF）"
+}

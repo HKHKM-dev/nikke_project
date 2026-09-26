@@ -1,0 +1,29 @@
+{
+  "id": "016",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-16_SG_drake.mp4",
+  "original": "2026-09-22 22-36-14.mp4",
+  "durationSec": 32.1,
+  "frames": 1927,
+  "fps": 60,
+  "sizeMB": 23.4,
+  "sha256": "4093b7a9d390",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": null,
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（**灼熱**・防100）"
+}

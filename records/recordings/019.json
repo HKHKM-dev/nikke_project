@@ -1,0 +1,41 @@
+{
+  "id": "019",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-19_SG+SR+SG_ether+delta+noir.mp4",
+  "original": "nikke 2026.09.22 - 22.47.14.34.mp4",
+  "durationSec": 209.2,
+  "frames": 12555,
+  "fps": 60,
+  "sizeMB": 303.1,
+  "sha256": "ead6959e721d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 291,
+      "name": "エーテル",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱・防100）"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "012",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-12_SG_queen-makoto.mp4",
+  "original": "nikke 2026.09.22 - 14.45.10.28.mp4",
+  "durationSec": 29.4,
+  "frames": 1763,
+  "fps": 60,
+  "sizeMB": 43.3,
+  "sha256": "d96d9022f4ec",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": null,
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（**灼熱**・防100）"
+}

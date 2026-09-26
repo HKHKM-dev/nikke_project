@@ -1,0 +1,54 @@
+{
+  "id": "048",
+  "date": "2026-09-24",
+  "folder": "range",
+  "file": "20260924-48_SMG+MG+SR+MG+RL_liter+crown+alice+modernia+scarlet-black-shadow_spec-off.mp4",
+  "original": "2026-09-24_23-06-15.mp4",
+  "durationSec": 210.5,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 606,
+  "sha256": "fd2dcd623b5c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": true,
+      "note": "操作"
+    },
+    {
+      "slot": 4,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": false
+    },
+    {
+      "slot": 5,
+      "rid": 225,
+      "name": "紅蓮：ブラックシャドウ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・**スペック固定 OFF**。弱点は水冷で、編成に水冷はいない＝属性有利なし）"
+}

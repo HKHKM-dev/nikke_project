@@ -206,7 +206,7 @@ export function validateObservations(
     seen.add(o.id);
     if (!o.id.startsWith(`${o.recording}-`) || !/^\d{2,}$/.test(o.id.slice(o.recording.length + 1)))
       errors.push(`${at}: id は <録画 id>-<2 桁以上の連番>`);
-    if (!recordings.has(o.recording)) errors.push(`${at}: 録画 ${o.recording} が records/recordings.json に無い`);
+    if (!recordings.has(o.recording)) errors.push(`${at}: 録画 ${o.recording} が records/recordings/ に無い`);
     if (!OBSERVATION_KINDS.includes(o.kind)) errors.push(`${at}: kind が語彙に無い: ${o.kind}`);
     if (!OBSERVATION_USES.includes(o.use)) errors.push(`${at}: use が語彙に無い: ${o.use}`);
     if (o.description.trim() === '' || o.source.trim() === '') errors.push(`${at}: description と source は必須`);

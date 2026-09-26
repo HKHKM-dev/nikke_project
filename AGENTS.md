@@ -63,8 +63,8 @@ NIKKE のダメージ計算ツール。
 | `plan/roadmap.md`・設計書                            | 計画・決定・Stage の状況                                                                                                                                           |
 | `records/claims/`・`plan/claims.md`                  | 結論（1 件 1 ファイルの JSON。ID・状態・話題・根拠の等級・根拠・モデル側）と、話題ごとの一覧（生成）。問いからいまの結論を引くのは一覧                             |
 | `plan/verification.md`                               | 実測と確認の結果（根拠と数値）                                                                                                                                     |
-| `plan/captures/index.md`                             | 録画台帳・撮影プロトコル・キャラ同定・解析ツール                                                                                                                   |
-| `records/recordings.json`                            | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性。台帳の表はここから生成する（`npm run records:table`）                                              |
+| `plan/captures/index.md`                             | 置き場所・撮影プロトコル・命名規約・キャラ同定・解析ツールと、録画ごとの注記（録画の一覧の表は `plan/captures/recordings.md`）                                     |
+| `records/recordings/`・`plan/captures/recordings.md` | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性（1 本 1 ファイルの JSON）と、その一覧（生成。`npm run records:table`）                              |
 | `records/observations/`・`plan/residuals.md`         | 録画から読んだ値（観測値）と、モデルとの残差の一覧（生成。`npm run records:check`）                                                                                |
 | `plan/captures/guide.md`                             | 撮影と読み取りの落とし穴の話題別の索引（根拠は上の 2 つへリンク）                                                                                                  |
 | `private/`（メインのチェックアウト直下、追跡しない） | 所持キャラ・宝物・育成状況・ローカルのパスなど個人の情報。worktree には無いので絶対パスで読む。worktree のエージェントは書き込めないので、足すものはオーナーに渡す |

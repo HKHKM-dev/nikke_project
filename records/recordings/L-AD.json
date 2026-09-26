@@ -1,0 +1,22 @@
+{
+  "id": "L-AD",
+  "legacy": true,
+  "path": "E:/record/nikke/動画/命中率/nikke 2026.08.29 - 20.04.31.10.mp4",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 270,
+      "name": "ブラン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": null,
+  "conditionNote": "射撃場・3 分モード・スペック固定 ON・灼熱の的・単騎・完全放置（AUTO）。"
+}

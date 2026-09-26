@@ -1,0 +1,42 @@
+{
+  "id": "038",
+  "date": "2026-09-23",
+  "folder": "range",
+  "file": "20260923-38_SR+SR+SG_ram+delta+isabel.mp4",
+  "original": "2026-09-23_16-10-06.mp4",
+  "durationSec": 208.5,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 309.3,
+  "sha256": "fe258a7de2c1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": true,
+      "note": "操作"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（灼熱・3 分モード・スペック固定）"
+}

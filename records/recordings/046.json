@@ -1,0 +1,30 @@
+{
+  "id": "046",
+  "date": "2026-09-24",
+  "folder": "range",
+  "file": "20260924-46_RL_scarlet-black-shadow.mp4",
+  "original": "2026-09-24_01-54-25.mp4",
+  "durationSec": 202,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 263.4,
+  "sha256": "e73b01d4504c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 225,
+      "name": "紅蓮：ブラックシャドウ",
+      "controlled": true,
+      "note": "操作"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+}

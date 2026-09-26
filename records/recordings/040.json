@@ -1,0 +1,48 @@
+{
+  "id": "040",
+  "date": "2026-09-23",
+  "folder": "range",
+  "file": "20260923-40_SR+RL+SR+SG_admi+yuni+ram+queen-makoto.mp4",
+  "original": "2026-09-23_20-33-50.mp4",
+  "durationSec": 206.6,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 343.6,
+  "sha256": "585d540b8ad3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 172,
+      "name": "アドミ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": true,
+      "note": "操作"
+    },
+    {
+      "slot": 4,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（灼熱・3 分モード・スペック固定）"
+}

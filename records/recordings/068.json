@@ -1,0 +1,31 @@
+{
+  "id": "068",
+  "date": "2026-09-26",
+  "folder": "range",
+  "file": "20260926-068_AR_kurumi_aim-sky_cube.mp4",
+  "original": "2026-09-26_17-30-27.mp4",
+  "durationSec": 23.3,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 16.5,
+  "sha256": "48f2d4c451ae",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": true,
+      "note": "単騎・手動、アサルトキューブ Lv7 **あり**",
+      "cube": "assault-7"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**）。照準を画面左上の空（霧）に向けて構える（Stage 18-B2 撮影 B。手動・AUTO 射撃 OFF）"
+}

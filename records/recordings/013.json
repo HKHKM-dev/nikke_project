@@ -1,0 +1,35 @@
+{
+  "id": "013",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-13_SR+SR_eunhwa-tactical-upgrade+delta.mp4",
+  "original": "nikke 2026.09.22 - 14.46.47.29.mp4",
+  "durationSec": 41,
+  "frames": 2462,
+  "fps": 60,
+  "sizeMB": 59.5,
+  "sha256": "d5f4734d500d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 95,
+      "name": "ウンファ：TU",
+      "controlled": null
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": null
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": null,
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（**灼熱**・防100）"
+}

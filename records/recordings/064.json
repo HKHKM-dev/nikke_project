@@ -1,0 +1,44 @@
+{
+  "id": "064",
+  "date": "2026-09-26",
+  "folder": "range",
+  "file": "20260926-064_AR+SMG+SG_aim-sky.mp4",
+  "original": "2026-09-26_17-22-30.mp4",
+  "durationSec": 43,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 47,
+  "sha256": "cae3fee5c6f3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": null,
+      "note": "操作を順に切り替え"
+    },
+    {
+      "slot": 2,
+      "rid": 82,
+      "name": "リター",
+      "controlled": null,
+      "note": "操作を順に切り替え"
+    },
+    {
+      "slot": 3,
+      "rid": 307,
+      "name": "プロダクト23",
+      "controlled": null,
+      "note": "操作を順に切り替え"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。照準を画面左上の空（霧）に向けて構える（Stage 18-B2 撮影 B。手動・AUTO 射撃 OFF）。AR・SMG・SG は何もないところへは撃てないので構えるだけ"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "021",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-21_SG+SR+SG_ether+delta+queen-makoto.mp4",
+  "original": "nikke 2026.09.22 - 22.55.15.36.mp4",
+  "durationSec": 209.8,
+  "frames": 12566,
+  "fps": 59.9,
+  "sizeMB": 303.6,
+  "sha256": "73173312ff7d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 291,
+      "name": "エーテル",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（灼熱・防100）"
+}

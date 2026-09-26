@@ -1,0 +1,42 @@
+{
+  "id": "044",
+  "date": "2026-09-24",
+  "folder": "range",
+  "file": "20260924-44_RL+SR+MG_idoll-flower+delta+modernia.mp4",
+  "original": "2026-09-24_01-36-57.mp4",
+  "durationSec": 206.8,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 358.1,
+  "sha256": "0462c527512c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": true,
+      "note": "操作"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+}

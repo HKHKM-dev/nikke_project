@@ -1,0 +1,42 @@
+{
+  "id": "047",
+  "date": "2026-09-24",
+  "folder": "range",
+  "file": "20260924-47_SR+SR+RL_ram+delta+scarlet-black-shadow.mp4",
+  "original": "2026-09-24_01-59-02.mp4",
+  "durationSec": 205.1,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 379.8,
+  "sha256": "1dcadb3b8274",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 225,
+      "name": "紅蓮：ブラックシャドウ",
+      "controlled": true,
+      "note": "操作"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": true,
+  "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+}

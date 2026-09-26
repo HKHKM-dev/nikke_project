@@ -1,0 +1,30 @@
+{
+  "id": "034",
+  "date": "2026-09-23",
+  "folder": "range",
+  "file": "20260923-34_MG_emma_controlled-body.mp4",
+  "original": "エマ操作胴体狙い.mp4",
+  "durationSec": 44.4,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 36.5,
+  "sha256": "2d84e8ee69f6",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 90,
+      "name": "エマ",
+      "controlled": true,
+      "note": "操作・胴体"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（3 分モード・スペック固定）"
+}

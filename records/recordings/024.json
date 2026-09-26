@@ -1,0 +1,30 @@
+{
+  "id": "024",
+  "date": "2026-09-23",
+  "folder": "range",
+  "file": "20260923-24_SR_delta_controlled-body.mp4",
+  "original": "デルタ操作胴体.mp4",
+  "durationSec": 30.9,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 23.6,
+  "sha256": "eb30bab605ae",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true,
+      "note": "操作・胴体"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（3 分モード・スペック固定）"
+}

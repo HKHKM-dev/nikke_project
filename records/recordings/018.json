@@ -1,0 +1,41 @@
+{
+  "id": "018",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-18_SG+SR+AR_ether+delta+rapi.mp4",
+  "original": "nikke 2026.09.22 - 22.42.12.33.mp4",
+  "durationSec": 212.1,
+  "frames": 12723,
+  "fps": 60,
+  "sizeMB": 305.4,
+  "sha256": "6373bae992fb",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 291,
+      "name": "エーテル",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 10,
+      "name": "ラピ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": true,
+  "conditionNote": "BigArms（**電撃**・防100）"
+}

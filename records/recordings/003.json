@@ -1,0 +1,29 @@
+{
+  "id": "003",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-03_MG_emma.mp4",
+  "original": "nikke 2026.09.22 - 00.28.39.19.mp4",
+  "durationSec": 33.4,
+  "frames": 2006,
+  "fps": 60,
+  "sizeMB": 48.8,
+  "sha256": "0f9dd2e4c60a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 90,
+      "name": "エマ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（風・防100）（**属性有利 ×1.1**）"
+}

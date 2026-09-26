@@ -1,0 +1,29 @@
+{
+  "id": "001",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-01_SR_delta.mp4",
+  "original": "nikke 2026.09.22 - 00.26.45.17.mp4",
+  "durationSec": 28.1,
+  "frames": 1369,
+  "fps": 48.78,
+  "sizeMB": 31.7,
+  "sha256": "d918c60d78fb",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（風・防100）"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "007",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-07_AR_folkwang.mp4",
+  "original": "nikke 2026.09.22 - 01.53.21.23.mp4",
+  "durationSec": 24.3,
+  "frames": 1139,
+  "fps": 46.81,
+  "sizeMB": 27.7,
+  "sha256": "7d1231a90942",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 242,
+      "name": "フォルクヴァン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（風・防100）"
+}

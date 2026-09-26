@@ -1,0 +1,29 @@
+{
+  "id": "010",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-10_AR_mana.mp4",
+  "original": "nikke 2026.09.22 - 14.40.46.26.mp4",
+  "durationSec": 30.8,
+  "frames": 1537,
+  "fps": 49.85,
+  "sizeMB": 36.1,
+  "sha256": "912335a85986",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 290,
+      "name": "マナ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": null,
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（**灼熱**・防100）"
+}
