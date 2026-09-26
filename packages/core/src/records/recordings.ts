@@ -93,12 +93,13 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
     if (isLegacy(entry)) {
       if (!/^L-[A-Z]{1,3}$/.test(entry.id)) errors.push(`${at}: 旧の録画の id は L-<旧のタグ>`);
     } else {
-      if (!/^\d{3}$/.test(entry.id)) errors.push(`${at}: id は 3 桁の通し番号`);
+      // Stage 20-A: 桁は 3 桁以上。抜けは許し、番号順だけを見る（plan/design-stage20.md 3.5・3.6 節）
+      if (!/^\d{3,}$/.test(entry.id)) errors.push(`${at}: id は 3 桁以上の数字`);
       const number = Number(entry.id);
-      if (number !== lastNumber + 1) errors.push(`${at}: 通し番号が飛んでいる（前は ${lastNumber}）`);
-      lastNumber = number;
+      if (number <= lastNumber) errors.push(`${at}: id は番号順に並べる（前は ${lastNumber}）`);
+      lastNumber = Math.max(lastNumber, number);
       if (!RECORDING_FOLDERS.includes(entry.folder)) errors.push(`${at}: folder が語彙に無い: ${entry.folder}`);
-      const m = /^(\d{4})(\d{2})(\d{2})-(\d{2,3})_/.exec(entry.file);
+      const m = /^(\d{4})(\d{2})(\d{2})-(\d{2,})_/.exec(entry.file);
       if (!m) errors.push(`${at}: file が命名規約に合わない: ${entry.file}`);
       else {
         if (`${m[1]}-${m[2]}-${m[3]}` !== entry.date) errors.push(`${at}: file の日付と date が違う`);
