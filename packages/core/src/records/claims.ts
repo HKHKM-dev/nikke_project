@@ -143,8 +143,14 @@ const CLAIMS_HEADER = `# 結論の台帳
 - 根拠の \`010-01\` などは観測値の ID（\`records/observations/<録画 id>.json\`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）`;
 
-/** plan/claims.md の全文。話題の語彙の順に節を作り、節の中は番号順 */
-export function renderClaims(claims: readonly Claim[]): string {
+/**
+ * plan/claims.md の全文。話題の語彙の順に節を作り、節の中は番号順。
+ * verificationsOf は結論 ID → それを「結論」に書いた検証記録（Stage 20-D。検証記録の側から逆に引く）
+ */
+export function renderClaims(
+  claims: readonly Claim[],
+  verificationsOf: ReadonlyMap<string, readonly string[]> = new Map(),
+): string {
   const replacedBy = new Map<string, string[]>();
   for (const c of claims) for (const r of c.replaces) replacedBy.set(r, [...(replacedBy.get(r) ?? []), c.id]);
   const count = (state: ClaimState) => claims.filter((c) => c.state === state).length;
@@ -168,6 +174,8 @@ export function renderClaims(claims: readonly Claim[]): string {
       if (c.replaces.length > 0) lines.push(`  - 置き換え: ${c.replaces.join('、')}`);
       const by = replacedBy.get(c.id);
       if (by !== undefined) lines.push(`  - 置き換えた結論: ${by.join('、')}`);
+      const vs = verificationsOf.get(c.id);
+      if (vs !== undefined && vs.length > 0) lines.push(`  - 検証記録: ${vs.join('、')}`);
     }
   }
   return `${lines.join('\n')}\n`;

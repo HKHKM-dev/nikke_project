@@ -23,7 +23,7 @@
     "format:check": "prettier --check .",
     "sim": "node packages/core/scripts/sim-run.ts",
     "records:table": "node packages/core/scripts/records-table.ts && prettier --write plan/captures/recordings.md records/recordings",
-    "records:check": "node packages/core/scripts/records-check.ts && prettier --write plan/residuals.md plan/claims.md records/claims"
+    "records:check": "node packages/core/scripts/records-check.ts && prettier --write plan/residuals.md plan/claims.md plan/verifications.md records/claims"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,4 +1,6 @@
-# 検証記録
+# 検証記録（2026-09-26 まで・凍結）
+
+> **2026-09-26 までの記録（2026-09-27 に凍結。書き足さない・書き換えない）。** いまの結論は [claims.md](claims.md)、新しい実測は検証記録（[verifications.md](verifications.md)、`records/verifications/`）にある。節の中身を問い直すときは、検証記録を作ってここの節を指す（[design-stage20.md](design-stage20.md) 3.7 節）。
 
 - 関連: [design-stage1-2.md](design-stage1-2.md)、[roadmap.md](roadmap.md)、[captures/index.md](captures/index.md)（録画台帳。どの録画がどの実測値の根拠かはここで引く）
 - 目的: 計算値と実測値の突き合わせ結果と、そこから較正した定数を記録する。
@@ -1790,6 +1792,8 @@ CDN の値は、開始 250・下限 75・1 発ごと 18・戻る速さ 105。SG 
 - 見本は録画 46 の 5 フレームだけから作ったが、旧のリポジトリ時代の録画（2026-08・09）でも同じ見本で読めた。
 
 ## 較正した定数
+
+> 正は [claims.md](claims.md)。この表は 2026-09-24 で止まっていて、後から入った定数（`FULL_BURST_BOOST` など）は載っていない。
 
 結論の一覧は [claims.md](claims.md)（表の各行は C-0001〜C-0017）。
 
