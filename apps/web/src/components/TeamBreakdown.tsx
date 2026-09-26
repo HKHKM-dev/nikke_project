@@ -8,7 +8,7 @@ import {
   type TriggerDamage,
 } from '@nikke/core';
 import { formatNumber, formatPercent } from '../format.ts';
-import { DamageTimeline } from './DamageTimeline.tsx';
+import { DamageTimeline, landingLabel } from './DamageTimeline.tsx';
 import { ResultPanel } from './ResultPanel.tsx';
 
 /** Stage 16: 表示する計算モデル（plan/design-stage16.md 1 節） */
@@ -92,6 +92,10 @@ export function TeamBreakdown({
       return `${ENEMY_EVENT_KIND_LABEL[kind].ja} ${list.length} 回（${spans} 秒）`;
     })
     .join(' / ');
+  // Stage 18-C2: 着地点の区間（条件が自動の枠があるときだけ）
+  const landingsLabel = result.landings
+    .map((s) => `${landingLabel(s)} ${formatNumber(s.start / 60, 1)}–${formatNumber(s.end / 60, 1)}`)
+    .join('・');
 
   return (
     <section className="panel result breakdown-panel">
@@ -112,10 +116,14 @@ export function TeamBreakdown({
         </p>
       )}
       {filled.length > 0 && eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}
+      {filled.length > 0 && landingsLabel !== '' && (
+        <p className="hint">的の着地点（条件が自動の枠に効く）: {landingsLabel} 秒</p>
+      )}
       {filled.length > 0 && result.damagePerSecond && (
         <DamageTimeline
           perSecond={result.damagePerSecond}
           events={result.enemyEvents}
+          landings={result.landings}
           fullBursts={schedule?.fullBurstWindows ?? []}
         />
       )}

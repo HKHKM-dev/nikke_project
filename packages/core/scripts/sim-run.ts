@@ -3,15 +3,16 @@
 // Stage 7: バーストは既定で動的サイクル（ゲージ・CT・チェーン）。--fixed-cycle で Stage 5 / 6 の固定 20 秒サイクル。
 // --controlled は操作キャラの枠（1 始まり）。省略は全員 AI 扱い（SR / RL のフルチャージ倍率がゲージに乗らない）。
 // Stage 10: CT 短縮・弾丸チャージ（即時効果）の記録と、射撃に効くバフの区間（calc が射撃の列から数えた区間は * 付き）を出す。
-// 育成値は既定 Lv200・3 凸・コア 0、条件は コア命中率 1・距離ボーナスあり・フルチャージ（calc の既定と同じ）。
+// 育成値は既定 Lv200・3 凸・コア 0。条件は 18-C2 から既定が自動（射撃場の表。画面の既定と同じ）で、手入力はコア命中率 1・距離ボーナスあり・フルチャージ。
 // スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
 // Stage 12: --build は resourceId → 育成入力（BuildInput の各項目と任意の growth）の JSON。--fixed-spec のときは使わない。
 // Stage 15: --hit-rate（命中率。射撃場 = 1）と --enemy（data/enemies.json のプリセット）。
 // Stage 16-B: --events range-3min-jump（data/enemies.json の出来事のセット。カンマ区切り）。--enemy のプリセットが持つものだけ効く。
 // Stage 13: gear の OL 装備に overload（[{ option, level }]、最大 3 行）を書ける。効果層（OL・キューブ・コレクション）を枠ごとに 1 行ずつ出す。
-// Stage 18-C: --condition auto（射撃場の表と着地点の時間割りで、コア命中率・距離ボーナス・弾丸命中率を決める。--enemy のプリセットが
-// 的の条件の表を持つときだけ効く）。既定は manual（--core-hit-rate・--hit-rate・距離ボーナスあり）。--mid-far A|B|C で中遠の着地点を
-// 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。自動の枠は、使った条件の発数平均を出す。
+// Stage 18-C: --condition auto|manual。auto は射撃場の表と着地点の時間割りで、コア命中率・距離ボーナス・弾丸命中率を決める
+// （射撃場のプリセットと、--enemy を省いた属性なしの射撃場の的で効く。ほかの敵では手入力の値と注記）。manual は --core-hit-rate・
+// --hit-rate（省略 1）と距離ボーナスあり。18-C2 から既定は auto で、--core-hit-rate か --hit-rate を指定したら manual。
+// --mid-far A|B|C で中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。自動の枠は、使った条件の発数平均を出す。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -25,7 +26,7 @@ import {
   enemyInputOf,
   enemyLandingsOf,
   parseEnemyPresets,
-  targetProfileOf,
+  targetProfileForEnemy,
 } from '../src/enemies.ts';
 import { MID_FAR_LANDINGS, midFarFixed, type MidFarLanding } from '../src/records/observations.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
@@ -39,6 +40,7 @@ import { computeTeamDamage } from '../src/calc/model.ts';
 import { planTeamRun } from '../src/frame/plan.ts';
 import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, Element } from '../src/types.ts';
+import type { EnemyInput } from '../src/damage.ts';
 import { FPS } from '../src/weapons.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
@@ -68,7 +70,7 @@ const { values } = parseArgs({
     'hit-rate': { type: 'string' },
     enemy: { type: 'string' },
     events: { type: 'string' },
-    // Stage 18-C: 条件の決め方（auto | manual。既定 manual）と、中遠の着地点の固定（A | B | C）
+    // Stage 18-C: 条件の決め方（auto | manual。18-C2 から既定 auto）と、中遠の着地点の固定（A | B | C）
     condition: { type: 'string' },
     'mid-far': { type: 'string' },
   },
@@ -76,7 +78,7 @@ const { values } = parseArgs({
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--condition auto] [--mid-far A]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A]',
   );
   process.exit(2);
 }
@@ -110,8 +112,9 @@ const masters = Object.fromEntries(
   Object.entries(MASTER_FILES).map(([name, file]) => [name, readJson(join(DATA_DIR, 'masters', file))]),
 ) as BuildMasters;
 const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
-// Stage 18-C: 条件の決め方。コア命中率・弾丸命中率を指定したら手入力
-const conditionMode = values.condition ?? 'manual';
+// Stage 18-C: 条件の決め方。18-C2 から既定は auto。コア命中率・弾丸命中率を指定したら手入力
+const conditionMode =
+  values.condition ?? (values['core-hit-rate'] !== undefined || values['hit-rate'] !== undefined ? 'manual' : 'auto');
 if (conditionMode !== 'auto' && conditionMode !== 'manual') {
   console.error(`--condition must be auto or manual, got ${conditionMode}`);
   process.exit(2);
@@ -206,34 +209,25 @@ for (const id of eventSetIds) {
   }
 }
 const enemyEvents = enemyEventsOf(enemyPresets, eventSetIds, Number(values.duration));
-// Stage 18-C: 的の条件の表（自動の条件のときだけ付ける。表の無い敵では自動でも手入力の値になり、注記が出る）
-const target =
-  conditionMode === 'auto' && enemyPreset !== undefined ? targetProfileOf(enemyPresets, enemyPreset) : undefined;
-if (conditionMode === 'auto' && target === undefined) {
-  console.warn(
-    '--condition auto: the enemy has no target profile (use --enemy range-bigarms-*); manual values are used',
-  );
+const baseEnemy: EnemyInput = enemyPreset
+  ? { ...enemyInputOf(enemyPreset), events: enemyEvents }
+  : { defence: Number(values.defence), element: (values.element as Element | undefined) ?? null, hasCore: true };
+// Stage 18-C: 的の条件の表（自動の条件のときだけ付ける）。18-C2: 射撃場のプリセットのほか、属性なしの射撃場の的（--enemy を
+// 省いた既定の敵）も射撃場の表を使う。表の無い敵では、自動でも手入力の値になり、注記が出る
+const target = conditionMode === 'auto' ? targetProfileForEnemy(enemyPresets, baseEnemy) : undefined;
+if (values.condition === 'auto' && target === undefined) {
+  console.warn('--condition auto: the enemy has no target profile; manual values are used');
 }
 const input = {
   slots,
-  enemy: enemyPreset
-    ? {
-        ...enemyInputOf(enemyPreset),
-        events: enemyEvents,
-        ...(target === undefined
-          ? {}
-          : {
-              target,
-              landings: enemyLandingsOf(
-                enemyPresets,
-                eventSetIds,
-                Number(values.duration),
-                target,
-                midFarFixed(midFar),
-              ),
-            }),
-      }
-    : { defence: Number(values.defence), element: (values.element as Element | undefined) ?? null, hasCore: true },
+  enemy:
+    target === undefined
+      ? baseEnemy
+      : {
+          ...baseEnemy,
+          target,
+          landings: enemyLandingsOf(enemyPresets, eventSetIds, Number(values.duration), target, midFarFixed(midFar)),
+        },
   durationSeconds: Number(values.duration),
   burst: !values['no-burst'],
   burstModel: values['fixed-cycle'] ? ('fixed' as const) : ('dynamic' as const),

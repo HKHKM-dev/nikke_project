@@ -7,12 +7,19 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage } from '../calc/model.ts';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets, targetProfileOf } from '../enemies.ts';
+import {
+  enemyEventsOf,
+  enemyLandingsOf,
+  parseEnemyPresets,
+  targetProfileForEnemy,
+  targetProfileOf,
+} from '../enemies.ts';
 import { runFirstPass } from '../frame/firstPass.ts';
 import {
   autoConditionAt,
   coreHitRateWithHitRateUp,
   distanceBonusAt,
+  landingBandOf,
   landingMix,
   targetRateOf,
 } from '../frame/landing.ts';
@@ -114,6 +121,37 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     const legacy = { ...raw, enemies: master.enemies.map(({ targetProfile: _t, ...e }) => e) };
     delete (legacy as Record<string, unknown>).targetProfiles;
     expect(parseEnemyPresets(legacy).targetProfiles).toEqual([]);
+  });
+});
+
+describe('敵の値から的の条件の表を引く（18-C2）', () => {
+  it('uses the preset table, and the range table for the shooting-range target without an element', () => {
+    expect(targetProfileForEnemy(master, { defence: 100, element: 'Fire', hasCore: true })).toBe(profile);
+    expect(targetProfileForEnemy(master, { defence: 100, element: null, hasCore: true })).toBe(profile);
+    expect(targetProfileForEnemy(master, { defence: 140, element: null, hasCore: true })).toBeUndefined();
+    expect(targetProfileForEnemy(master, { defence: 140, element: 'Fire', hasCore: true })).toBeUndefined();
+    expect(targetProfileForEnemy(master, { defence: 100, element: null, hasCore: false })).toBeUndefined();
+  });
+
+  it('names the band of a landing or a mix of one band', () => {
+    expect(landingBandOf(profile, 'near')).toBe('near');
+    expect(landingBandOf(profile, 'midFarB')).toBe('midFar');
+    expect(landingBandOf(profile, 'midFar')).toBe('midFar');
+    expect(landingBandOf(profile, null)).toBeNull();
+    expect(
+      landingBandOf(
+        {
+          ...profile,
+          mixes: {
+            odd: [
+              ['near', 0.5],
+              ['far', 0.5],
+            ],
+          },
+        },
+        'odd',
+      ),
+    ).toBeNull();
   });
 });
 
@@ -319,7 +357,7 @@ describe('編成（自動の条件）', () => {
 
   it('uses the initial landing (中近) without the 3-minute mode, on the average-rate path of calc', () => {
     const calc = computeTeamDamage(input(team(true), enemy({ events: false })));
-    expect(calc.landings).toEqual([{ start: 0, end: 10800, landing: 'midNear' }]);
+    expect(calc.landings).toEqual([{ start: 0, end: 10800, landing: 'midNear', band: 'midNear' }]);
     const midNear: SlotCondition = { coreHitRate: 0.2281, distanceBonus: true, fullCharge: true, hitRate: 0.9963 };
     const manual = computeTeamDamage(
       input([slot(weapon('AR', { min: 25, max: 45 }, 1), false, { condition: midNear })], enemy({ events: false })),

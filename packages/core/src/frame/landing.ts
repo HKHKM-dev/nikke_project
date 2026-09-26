@@ -23,8 +23,22 @@ import { FPS } from '../weapons.ts';
 
 export type ConditionMode = 'manual' | 'auto';
 
-/** 着地点の区間 1 つ（フレーム。[start, end)）。landing は着地点か配分の id、null は着地点が未測定 */
-export type LandingFrameSpan = { start: number; end: number; landing: string | null };
+/**
+ * 着地点の区間 1 つ（フレーム。[start, end)）。landing は着地点か配分の id、null は着地点が未測定。
+ * band は距離帯（配分は構成する着地点の帯がそろっていればその帯。表示用）
+ */
+export type LandingFrameSpan = { start: number; end: number; landing: string | null; band: LandingBand | null };
+
+/** 着地点か配分の id の距離帯。配分の着地点の帯がそろわない・無い id は null */
+export function landingBandOf(
+  profile: Pick<TargetProfile, 'landings' | 'mixes'>,
+  id: string | null,
+): LandingBand | null {
+  if (id === null) return null;
+  const ids = profile.mixes[id]?.map(([landing]) => landing) ?? [id];
+  const bands = new Set(ids.map((x) => profile.landings.find((l) => l.id === x)?.band ?? null));
+  return bands.size === 1 ? ([...bands][0] ?? null) : null;
+}
 
 /** 着地点 1 か所ぶんの条件と重み。手入力の枠・未測定の区間は landing が null で重み 1 */
 export type LandingPart = { landing: LandingPoint | null; weight: number; condition: SlotCondition };
@@ -132,7 +146,7 @@ export function landingFrameSpans(enemy: EnemyInput, frames: number): LandingFra
   const push = (end: number, landing: string | null): void => {
     const last = spans[spans.length - 1];
     if (last !== undefined && last.landing === landing) last.end = end;
-    else spans.push({ start: at, end, landing });
+    else spans.push({ start: at, end, landing, band: landingBandOf(target, landing) });
     at = end;
   };
   for (const s of [...source].sort((a, b) => a.start - b.start)) {

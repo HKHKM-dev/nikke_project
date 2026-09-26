@@ -1,11 +1,14 @@
-import type { CharacterData, CharacterIndexEntry, EnemyPresetMaster } from '@nikke/core';
+import { parseEnemyPresets, type CharacterData, type CharacterIndexEntry, type EnemyPresetMaster } from '@nikke/core';
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   INITIAL_TEAM_STATE,
   clampSkillLevel,
   effectiveSkillLevels,
   effectiveTreasurePhase,
+  enemyForCalc,
   enemyWithEvents,
+  SHOOTING_RANGE_ENEMY,
   TEAM_FORMAT_VERSION,
   initialTeamState,
   parseTeamState,
@@ -483,5 +486,68 @@ describe('hit rate (Stage 15)', () => {
       raw.slots[0]!.condition.hitRate = bad;
       expect(parseTeamState(JSON.stringify(raw), index), String(bad)).toBeNull();
     }
+  });
+});
+
+describe('condition mode (Stage 18-C2)', () => {
+  it('defaults every slot to auto, updates per slot, keeps it on clearSlot and round-trips', () => {
+    expect(INITIAL_TEAM_STATE.slots.every((s) => s.conditionMode === 'auto')).toBe(true);
+    let s = withCharacters([10, 20]);
+    s = teamReducer(s, { type: 'setConditionMode', index: 1, conditionMode: 'manual' });
+    expect(s.slots.map((x) => x.conditionMode)).toEqual(['auto', 'manual', 'auto', 'auto', 'auto']);
+    s = teamReducer(s, { type: 'clearSlot', index: 1 });
+    expect(s.slots[1]?.conditionMode).toBe('manual');
+    const json = serializeTeamState(s);
+    expect((JSON.parse(json) as { formatVersion: number }).formatVersion).toBe(2);
+    expect(parseTeamState(json, index)).toEqual(s);
+  });
+
+  it('reads version 0/1 slots as auto when the condition is untouched (1, on, 1 or missing), manual otherwise', () => {
+    const raw = JSON.parse(serializeTeamState(withCharacters([10, 20, 30, 40, 50]))) as {
+      formatVersion: number;
+      slots: Record<string, unknown>[];
+    };
+    raw.formatVersion = 1;
+    const conditions = [
+      { coreHitRate: 1, distanceBonus: true, fullCharge: true, hitRate: 1 },
+      { coreHitRate: 1, distanceBonus: true, fullCharge: false },
+      { coreHitRate: 0.4, distanceBonus: true, fullCharge: true, hitRate: 1 },
+      { coreHitRate: 1, distanceBonus: false, fullCharge: true, hitRate: 1 },
+      { coreHitRate: 1, distanceBonus: true, fullCharge: true, hitRate: 0.8 },
+    ];
+    raw.slots.forEach((slot, i) => {
+      delete slot.conditionMode;
+      slot.condition = conditions[i];
+    });
+    const parsed = parseTeamState(JSON.stringify(raw), index)!;
+    expect(parsed.slots.map((x) => x.conditionMode)).toEqual(['auto', 'auto', 'manual', 'manual', 'manual']);
+    // 手入力の値はそのまま残す
+    expect(parsed.slots[2]?.condition.coreHitRate).toBe(0.4);
+    const unversioned: Record<string, unknown> = { ...raw };
+    delete unversioned.formatVersion;
+    expect(parseTeamState(JSON.stringify(unversioned), index)?.slots.map((x) => x.conditionMode)).toEqual(
+      parsed.slots.map((x) => x.conditionMode),
+    );
+    raw.slots[0]!.conditionMode = 'maybe';
+    expect(parseTeamState(JSON.stringify(raw), index)).toBeNull();
+  });
+
+  it('attaches the range table to range presets and the default target, with landings when the 3-minute mode is on', () => {
+    const master = parseEnemyPresets(
+      JSON.parse(readFileSync(new URL('../../../packages/core/data/enemies.json', import.meta.url), 'utf8')) as unknown,
+    );
+    const plain = enemyForCalc(SHOOTING_RANGE_ENEMY, master, [], 180);
+    expect(plain.target?.id).toBe('range-bigarms');
+    expect(plain.landings).toEqual([{ start: 0, end: 180, landing: 'midNear' }]);
+    expect(plain.events).toBeUndefined();
+    const fire = { defence: 100, element: 'Fire' as const, hasCore: true };
+    const jumping = enemyForCalc(fire, master, ['range-3min-jump'], 180);
+    expect(jumping.events).toHaveLength(5);
+    expect(jumping.landings?.map((l) => l.landing)).toEqual(['midNear', 'near', 'far', 'midFar', 'near', 'far']);
+    // 3 分モードは、一致するプリセットのセットだけ（既定の敵には付かない）
+    expect(enemyForCalc(SHOOTING_RANGE_ENEMY, master, ['range-3min-jump'], 180).landings).toHaveLength(1);
+    const boss = { defence: 140, element: 'Fire' as const, hasCore: true };
+    expect(enemyForCalc(boss, master, [], 180)).toEqual(boss);
+    expect(enemyForCalc(fire, null, ['range-3min-jump'], 180)).toBe(fire);
   });
 });

@@ -1,6 +1,14 @@
 // Stage 16-B: sim のタイムライン（plan/design-stage16.md 9.4 節）。1 秒ごとの編成のダメージの棒に、
 // 敵の出来事とフルバーストの区間を帯で重ねる。図のライブラリは使わず SVG を手で描く。
-import { ENEMY_EVENT_KIND_LABEL, type DamagePerSecond, type EnemyEvent, type EnemyEventKind } from '@nikke/core';
+// Stage 18-C2: 的の着地点（距離帯）を上端の細い帯で出す（条件が自動の枠があるときだけ）。
+import {
+  ENEMY_EVENT_KIND_LABEL,
+  LANDING_BAND_LABEL,
+  type DamagePerSecond,
+  type EnemyEvent,
+  type EnemyEventKind,
+  type LandingFrameSpan,
+} from '@nikke/core';
 import { formatNumber } from '../format.ts';
 
 type Props = {
@@ -8,7 +16,18 @@ type Props = {
   events: readonly EnemyEvent[];
   /** フルバーストの区間（フレーム） */
   fullBursts: readonly { start: number; end: number }[];
+  /** Stage 18-C2: 着地点の区間（フレーム）。無ければ空 */
+  landings: readonly LandingFrameSpan[];
 };
+
+/** 着地点の区間の呼び名（距離帯。未測定・帯の定まらない配分は「未測定」） */
+export function landingLabel(span: Pick<LandingFrameSpan, 'band'>): string {
+  return span.band === null ? '未測定' : LANDING_BAND_LABEL[span.band].ja;
+}
+
+const bandClass = (span: Pick<LandingFrameSpan, 'band'>) => `tl-band-${span.band ?? 'unknown'}`;
+/** 着地点の帯の高さ（px） */
+const BAND_HEIGHT = 6;
 
 /** 縦軸の最大値の表示（1234万 のように短くする） */
 const compact = new Intl.NumberFormat('ja-JP', { notation: 'compact', maximumFractionDigits: 1 });
@@ -21,7 +40,7 @@ const EVENT_CLASS: Record<EnemyEventKind, string> = {
   barrier: 'tl-barrier',
 };
 
-export function DamageTimeline({ perSecond, events, fullBursts }: Props) {
+export function DamageTimeline({ perSecond, events, fullBursts, landings }: Props) {
   const seconds = perSecond.total.length;
   if (seconds === 0) return null;
   const max = Math.max(...perSecond.total, 1);
@@ -32,6 +51,7 @@ export function DamageTimeline({ perSecond, events, fullBursts }: Props) {
   const tickStep = seconds > 120 ? 30 : seconds > 40 ? 10 : 5;
   const ticks = Array.from({ length: Math.floor(seconds / tickStep) + 1 }, (_, i) => i * tickStep);
   const kinds = [...new Set(events.map((e) => e.kind))];
+  const bands = [...new Map(landings.map((s) => [bandClass(s), s])).values()];
   return (
     <figure className="timeline">
       <svg
@@ -77,6 +97,20 @@ export function DamageTimeline({ perSecond, events, fullBursts }: Props) {
             </title>
           </rect>
         ))}
+        {landings.map((s, i) => (
+          <rect
+            key={`ld${i}`}
+            className={bandClass(s)}
+            x={x(s.start / 60)}
+            y={PAD.top}
+            width={Math.max(1, x(s.end / 60) - x(s.start / 60))}
+            height={BAND_HEIGHT}
+          >
+            <title>
+              着地点 {landingLabel(s)} {formatNumber(s.start / 60, 1)}–{formatNumber(s.end / 60, 1)} 秒
+            </title>
+          </rect>
+        ))}
         <line className="tl-axis" x1={PAD.left} x2={WIDTH - PAD.right} y1={PAD.top + plotH} y2={PAD.top + plotH} />
         {ticks.map((t) => (
           <text key={t} className="tl-label" x={x(t)} y={HEIGHT - 6} textAnchor="middle">
@@ -97,6 +131,13 @@ export function DamageTimeline({ perSecond, events, fullBursts }: Props) {
           <span key={k}>
             {' '}
             <span className={`tl-key ${EVENT_CLASS[k]}`} /> {ENEMY_EVENT_KIND_LABEL[k].ja}
+          </span>
+        ))}
+        {bands.length > 0 && '。上端の帯は的の着地点:'}
+        {bands.map((s) => (
+          <span key={bandClass(s)}>
+            {' '}
+            <span className={`tl-key ${bandClass(s)}`} /> {landingLabel(s)}
           </span>
         ))}
       </figcaption>
