@@ -1,7 +1,7 @@
 # 設計メモ: MG の射撃レートの再較正（録画 41・35）
 
 - 対象: `D:\nikke_project`（`packages/core/src/cadence.ts`・`sim/shooter.ts`・`weapons.ts`）
-- 状態: **承認済み・実装済み（2026-09-24）**。6 節の 4 点とも推奨案で承認。モデルは変えず、実測値の回帰テスト・`tools/captures/ammo.ts`・検証記録の訂正を入れた（8 節）
+- 状態: **承認済み・実装済み（2026-09-24）**（経緯は末尾の「経過」）
 - 関連: [verification.md](verification.md) Stage 2-B 節（エマの較正）・Stage 11 節（録画 41 で「MG の射撃モデルの問題として残す」とした件）、[design-stage11.md](design-stage11.md)
 - 作成日: 2026-09-24
 
@@ -133,3 +133,7 @@ sim（録画 41 の編成）の回復は 1,359・2,999・4,507・6,015・7,655�
 - **モデルは変えていない**。`packages/core/src/__tests__/cadence.test.ts` に「MG re-check against recordings 35 and 41 (light scenes)」の 3 件（1 マガジン 390f が実測 386〜391f の中、スピンアップの累積が実測より 0〜4f 遅い、リロード明け 170f / 104f）を足した。凍結済みの発射フレーム列・回復フレームのテストは 1 件も変えていない。
 - **`tools/captures/ammo.ts`** を足した（1 節の手順をそのままツールにしたもの）。テンプレートは `--make-templates` で録画 41 の 17 フレームから作り、`tools/captures/ammo-templates.json` に置いた。録画 41 の全 12,573 フレームで使い捨てスクリプトの結果と 1 フレームも違わない（約 30 秒）。
 - 検証記録: [verification.md](verification.md) の Stage 2-B 節に「録画 35・41 での MG の再確認」を足し、Stage 11 節の「MG の射撃モデルの問題として残す」を内訳つきで訂正し、「較正した定数」の MG の 2 行に根拠を足した。台帳 [captures/index.md](captures/index.md) の録画 35・41 の行・3 分モードの注意・解析ツールの節を更新し、証拠フレーム 5 枚（スピンアップ・1 フレーム 1 発・フルバースト中の残り時間と残弾・重複フレーム・的が狙えない区間）を `plan/captures/frames/` に置いた。
+
+## 経過
+
+- 2026-09-26 まで冒頭の状態の行に書いていたもの: **承認済み・実装済み（2026-09-24）**。6 節の 4 点とも推奨案で承認。モデルは変えず、実測値の回帰テスト・`tools/captures/ammo.ts`・検証記録の訂正を入れた（8 節）

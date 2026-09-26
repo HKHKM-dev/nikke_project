@@ -1,7 +1,7 @@
 # Stage 4 設計書: スキルモデル段階 A — 常時発動パッシブ
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: **承認済み（2026-09-22）**。第 7 節の 6 点はいずれも推奨案で確定
+- 状態: **完了（2026-09-22）**（経緯は末尾の「経過」）
 - 関連: [design-stage3.md](design-stage3.md)、[verification.md](verification.md)、[roadmap.md](roadmap.md)
 - 作成日: 2026-09-22
 
@@ -369,3 +369,8 @@ Stage 2-A と同じ方法（非コア・非会心の 1 ヒットを読む。[ver
 - **`scaling` の構造化（PR #4 レビュー）**: `casterAttack` は「発動者の攻撃力」に特化した名前で、発動者の最大 HP 基準（ラプラス：アルティメットヒーロー、2B など）や自分の防御力基準が出てくると列挙が肥大化する。段階 B で「基準値の参照先（caster / target）× ステータス × 計算方式（ratio / flat）」に分ける案を検討する。段階 A では定義が 5 体なので `parseSkillDefinition` の変換で吸収できる。
 - **対象判定の拡張**: `isEffectTarget`（`skills/targets.ts`）に述語を足すだけで「自分以外」「最終攻撃力が最も高い味方 N 機」に広げられる。`computeTeamDamage` は触らない。
 - **段階 B への拡張余地**: `PassiveEffect.kind` を判別子にしてあるので、`'onFullBurst'`（持続時間付き）を足すだけで区間分割に進める。`BuffTotals` は区間ごとに作り直せる純データにしておく。
+
+## 経過
+
+- 2026-09-26 まで冒頭の状態の行に書いていたもの: **承認済み（2026-09-22）**。第 7 節の 6 点はいずれも推奨案で確定
+- 2026-09-26: 状態を、[roadmap.md](roadmap.md) の Stage 4 の行（完了（2026-09-22））に合わせて「完了」にした。
