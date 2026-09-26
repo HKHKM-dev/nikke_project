@@ -56,6 +56,7 @@
 
 ## データの取得
 
+- スキル文の用語（分配ダメージ・フォーカス・デコイ など）の意味は、ゲーム内のツールチップの画像を見る（`E:/nikke_project_captures/reference/tooltips/<用語>.png`、[index.md](index.md)「参照資料」）。未実装キャラのスキルは先行公開の画像（同 `prerelease/`）にあるが、実装時に数値が変わることがある。
 - 宝物版スキルは CDN の `/equip/favorite_rare_map.json` と `/equip/{locale}/favorite_{id}.json`（[../design-stage9.md](../design-stage9.md) 0.1 節）。
 - 装備・キューブ・コレクションなどのマスタの所在と、CDN に無いもの（OL の Lv 別の数値など）は [../design-stage12.md](../design-stage12.md) 0.2 節。
 - 実ビルドは ShiftyPad の API から取れる（[../design-stage12.md](../design-stage12.md) 11.1 節）。取得したデータは `scratch/` に置き、コミットしない。ShiftyPad のキャラページの攻撃力は、一部のキューブ・コレクションが抜けるので正解値に使えない（verification.md「Stage 12 › 実測」）。
