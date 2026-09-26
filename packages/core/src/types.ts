@@ -78,6 +78,27 @@ export type ShotParams = {
   burstEnergyPerShot: number;
   /** フルチャージ時のゲージ倍率（2.5 = ×2.5）。チャージなし武器は 1 */
   fullChargeBurstEnergy: number;
+  /** Stage 18: 照準円（CDN の *_accuracy_circle_scale 等の生値）。データとして持つだけで、計算にはまだ使わない */
+  accuracy?: AccuracyCircle;
+};
+
+/**
+ * Stage 18: 照準円。単位は CDN の生値のまま（AR 75・SMG 110・MG 250 → 10・SR / RL 10・SG 250）。
+ * auto* は AUTO 時の値（2026-09-26 時点で全キャラ手動と同じ）。命中率▲との関係は plan/design-stage18.md 0.4 節
+ */
+export type AccuracyCircle = {
+  /** 撃ち始めの円 */
+  start: number;
+  /** 撃ち続けたときの円（縮む武器だけ start と違う） */
+  end: number;
+  /** 1 発ごとの縮み幅 */
+  changePerShot: number;
+  /** 戻る速さ */
+  changeSpeed: number;
+  autoStart: number;
+  autoEnd: number;
+  autoChangePerShot: number;
+  autoChangeSpeed: number;
 };
 
 /** スキルの説明文と Lv 別数値（Stage 4 で構造化する。今は保持のみ）。 */

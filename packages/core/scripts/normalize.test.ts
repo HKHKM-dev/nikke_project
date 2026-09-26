@@ -72,6 +72,14 @@ function emma(locale: 'en' | 'ja'): RawRoleData {
       burst_energy_pershot: 500,
       target_burst_energy_pershot: 1000,
       full_charge_burst_energy: 0,
+      start_accuracy_circle_scale: 250,
+      end_accuracy_circle_scale: 10,
+      accuracy_change_pershot: 7,
+      accuracy_change_speed: 150,
+      auto_start_accuracy_circle_scale: 250,
+      auto_end_accuracy_circle_scale: 10,
+      auto_accuracy_change_pershot: 7,
+      auto_accuracy_change_speed: 150,
     },
     skill1_detail: skill(2090101, ja ? 'チアリーディング' : 'Cheerleading', [['5.92', '6.46'], ['5', '5'], undefined]),
     skill2_detail: skill(2090201, 'S2', []),
@@ -94,6 +102,19 @@ describe('toCharacterData', () => {
     expect(data.shot.coreDamageRate).toBe(2);
     expect(data.shot.damage).toBe(557); // 生値のまま
     expect(data.shot.maxAmmo).toBe(300);
+  });
+
+  it('keeps the accuracy circle as raw values (Stage 18)', () => {
+    expect(data.shot.accuracy).toEqual({
+      start: 250,
+      end: 10,
+      changePerShot: 7,
+      changeSpeed: 150,
+      autoStart: 250,
+      autoEnd: 10,
+      autoChangePerShot: 7,
+      autoChangeSpeed: 150,
+    });
   });
 
   it('converts burst gauge and cooldown fields (Stage 7)', () => {

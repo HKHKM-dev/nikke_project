@@ -86,6 +86,14 @@ export type RawRoleData = {
     burst_energy_pershot: number;
     target_burst_energy_pershot: number;
     full_charge_burst_energy: number;
+    start_accuracy_circle_scale: number;
+    end_accuracy_circle_scale: number;
+    accuracy_change_pershot: number;
+    accuracy_change_speed: number;
+    auto_start_accuracy_circle_scale: number;
+    auto_end_accuracy_circle_scale: number;
+    auto_accuracy_change_pershot: number;
+    auto_accuracy_change_speed: number;
   };
   skill1_detail: RawSkillDetail;
   skill2_detail: RawSkillDetail;
@@ -245,6 +253,17 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
       burstEnergyPerShot: shot.burst_energy_pershot,
       // チャージなし武器は 0 が入っているので 1 にする（式に分岐を持ち込まない）
       fullChargeBurstEnergy: shot.full_charge_burst_energy === 0 ? 1 : shot.full_charge_burst_energy / 10000,
+      // Stage 18: 照準円は生値のまま持つ（単位が分かっていないので換算しない）
+      accuracy: {
+        start: shot.start_accuracy_circle_scale,
+        end: shot.end_accuracy_circle_scale,
+        changePerShot: shot.accuracy_change_pershot,
+        changeSpeed: shot.accuracy_change_speed,
+        autoStart: shot.auto_start_accuracy_circle_scale,
+        autoEnd: shot.auto_end_accuracy_circle_scale,
+        autoChangePerShot: shot.auto_accuracy_change_pershot,
+        autoChangeSpeed: shot.auto_accuracy_change_speed,
+      },
     },
     burstSkill: {
       cooldownSeconds: en.ulti_skill_detail.skill_cooltime / 100,

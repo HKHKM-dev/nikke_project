@@ -53,7 +53,17 @@
     "uptypeFireTiming": 0,
     "targetBurstEnergyPerShot": 53000,
     "burstEnergyPerShot": 26500,
-    "fullChargeBurstEnergy": 2.5
+    "fullChargeBurstEnergy": 2.5,
+    "accuracy": {
+      "start": 10,
+      "end": 10,
+      "changePerShot": 0,
+      "changeSpeed": 0,
+      "autoStart": 10,
+      "autoEnd": 10,
+      "autoChangePerShot": 0,
+      "autoChangeSpeed": 0
+    }
   },
   "burstSkill": {
     "cooldownSeconds": 20,
