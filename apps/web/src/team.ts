@@ -22,11 +22,14 @@ import {
   TREASURE_PHASE_MAX,
   emptyBuild,
   enemyEventsOf,
+  enemyLandingsOf,
   fixedSpecBuild,
   matchingEnemyPreset,
+  targetProfileForEnemy,
   type BuildInput,
   type CharacterData,
   type CharacterIndexEntry,
+  type ConditionMode,
   type Element,
   type EnemyInput,
   type EnemyPresetMaster,
@@ -42,7 +45,7 @@ import {
 
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: 100, element: null, hasCore: true };
 export const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
-/** Stage 15: hitRate（命中率。射撃場 = 1）を足した */
+/** Stage 15: hitRate（Stage 18 から「弾丸命中率」と表示。射撃場 = 1）を足した。18-C2 から、条件が手入力の枠でだけ使う */
 export const DEFAULT_SLOT_CONDITION: SlotCondition = {
   coreHitRate: 1,
   distanceBonus: true,
@@ -55,12 +58,19 @@ export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 export const DEFAULT_DURATION_SECONDS = 180;
 /** バーストの既定。ON */
 export const DEFAULT_BURST = true;
+/**
+ * Stage 18-C2: 条件の決め方の既定。自動 = 射撃場の的の表と着地点の時間割り（plan/design-stage18.md 12.9 節の 5）。
+ * 操作キャラの枠も自動（AUTO で撃つ前提）。人が狙う操作は手入力にしてもらう
+ */
+export const DEFAULT_CONDITION_MODE: ConditionMode = 'auto';
 /** Stage 9: 宝物の段階の既定。0 = 宝物なし（ユーザー指定） */
 export const DEFAULT_TREASURE_PHASE: TreasurePhase = 0;
 
 export type SlotState = {
   resourceId: number | null;
   growth: GrowthInput;
+  /** Stage 18-C2: 条件の決め方。自動でも手入力の値（condition）は残し、未測定の項目・的の表の無い敵で使う */
+  conditionMode: ConditionMode;
   condition: SlotCondition;
   skillLevels: SkillLevels;
   /** Stage 9: 宝物の段階。キャラを選び直すと 0 に戻る。スペック固定でも上書きしない */
@@ -92,6 +102,7 @@ export type TeamAction =
   | { type: 'clearSlot'; index: number }
   | { type: 'setGrowth'; index: number; growth: GrowthInput }
   | { type: 'setSlotCondition'; index: number; condition: SlotCondition }
+  | { type: 'setConditionMode'; index: number; conditionMode: ConditionMode }
   | { type: 'setSkillLevels'; index: number; skillLevels: SkillLevels }
   | { type: 'setTreasurePhase'; index: number; treasurePhase: TreasurePhase }
   | { type: 'setBuild'; index: number; build: BuildInput }
@@ -107,6 +118,7 @@ export function emptySlot(): SlotState {
   return {
     resourceId: null,
     growth: { ...DEFAULT_GROWTH },
+    conditionMode: DEFAULT_CONDITION_MODE,
     condition: { ...DEFAULT_SLOT_CONDITION },
     skillLevels: { ...DEFAULT_SKILL_LEVELS },
     treasurePhase: DEFAULT_TREASURE_PHASE,
@@ -161,6 +173,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return updateSlot(state, action.index, (s) => ({ ...s, growth: action.growth }));
     case 'setSlotCondition':
       return updateSlot(state, action.index, (s) => ({ ...s, condition: action.condition }));
+    case 'setConditionMode':
+      return updateSlot(state, action.index, (s) => ({ ...s, conditionMode: action.conditionMode }));
     case 'setSkillLevels':
       return updateSlot(state, action.index, (s) => ({ ...s, skillLevels: action.skillLevels }));
     case 'setTreasurePhase':
@@ -213,6 +227,26 @@ export function enemyWithEvents(
   return { ...enemy, events: enemyEventsOf(master, ids, durationSeconds) };
 }
 
+/**
+ * Stage 18-C2: 計算に渡す敵。出来事（enemyWithEvents）に、的の条件の表と着地点の時間割りを足す。表があるのは射撃場のプリセットと
+ * 一致する敵と、属性なしの射撃場の的（既定の敵）。3 分モードが OFF なら全体を初期位置（中近）にする。表が無い敵はそのまま
+ * （自動の枠も手入力の値で計算し、注記が出る）。条件が手入力の枠には、表を付けても何も変わらない
+ */
+export function enemyForCalc(
+  enemy: EnemyInput,
+  master: EnemyPresetMaster | null,
+  setIds: readonly string[],
+  durationSeconds: number,
+): EnemyInput {
+  const withEvents = enemyWithEvents(enemy, master, setIds, durationSeconds);
+  if (master === null) return withEvents;
+  const target = targetProfileForEnemy(master, enemy);
+  if (target === undefined) return withEvents;
+  const preset = matchingEnemyPreset(master.enemies, enemy);
+  const active = setIds.filter((id) => preset?.eventSets.includes(id) ?? false);
+  return { ...withEvents, target, landings: enemyLandingsOf(master, active, durationSeconds, target) };
+}
+
 /** 計算に渡すスキル Lv。スペック固定は全スキル Lv10 */
 export function effectiveSkillLevels(slot: SlotState, fixedSpec: boolean): SkillLevels {
   return fixedSpec ? MAX_SKILL_LEVELS : slot.skillLevels;
@@ -246,7 +280,7 @@ export const STORAGE_KEY = 'nikke-calc.team.v1';
  * Stage 14: 編成の保存形式の版。localStorage と「編成の JSON」の書き出しで共通。
  * 版のない JSON（Stage 3〜13 の保存データ）は版 0 として読み、欠落した項目を既定値で埋める（各 parse* の欠落互換）
  */
-export const TEAM_FORMAT_VERSION = 1;
+export const TEAM_FORMAT_VERSION = 2;
 
 export function serializeTeamState(state: TeamState): string {
   return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, ...state });
@@ -279,6 +313,20 @@ function parseGrowth(v: Json): GrowthInput | null {
   return { level: v.level, grade: v.grade, core: v.core };
 }
 
+/**
+ * Stage 18-C2: 条件の決め方。版 2 から保存する。欠落（版 0・1）は、条件が既定のまま（コア命中率 1・距離ボーナスあり・弾丸命中率 1 か欠落）
+ * なら自動に読み替え、それ以外は手入力として残す（Stage 17 の 8 節の 5・plan/design-stage18.md 12.9 節の 5）
+ */
+function parseConditionMode(v: Json, condition: SlotCondition): ConditionMode | null {
+  if (v === 'auto' || v === 'manual') return v;
+  if (v !== undefined) return null;
+  const untouched =
+    condition.coreHitRate === 1 &&
+    condition.distanceBonus &&
+    (condition.hitRate === undefined || condition.hitRate === 1);
+  return untouched ? 'auto' : 'manual';
+}
+
 function parseCondition(v: Json): SlotCondition | null {
   if (!isRecord(v)) return null;
   if (!isFinite_(v.coreHitRate) || v.coreHitRate < 0 || v.coreHitRate > 1) return null;
@@ -288,7 +336,7 @@ function parseCondition(v: Json): SlotCondition | null {
     distanceBonus: v.distanceBonus,
     fullCharge: v.fullCharge,
   };
-  // Stage 15: 命中率。Stage 14 までの保存データには無い。欠落は欠落のまま読む（計算では 1 = 射撃場）
+  // Stage 15: 弾丸命中率。Stage 14 までの保存データには無い。欠落は欠落のまま読む（計算では 1 = 射撃場）
   if (v.hitRate !== undefined) {
     if (!isFinite_(v.hitRate) || v.hitRate < 0 || v.hitRate > 1) return null;
     condition.hitRate = v.hitRate;
@@ -439,13 +487,21 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     }
     const growth = parseGrowth(s.growth);
     const condition = parseCondition(s.condition);
+    const conditionMode = condition === null ? null : parseConditionMode(s.conditionMode, condition);
     const skillLevels = parseSkillLevels(s.skillLevels);
     const treasurePhase = parseTreasurePhase(s.treasurePhase);
     const build = parseBuild(s.build);
-    if (growth === null || condition === null || skillLevels === null || treasurePhase === null || build === null) {
+    if (
+      growth === null ||
+      condition === null ||
+      conditionMode === null ||
+      skillLevels === null ||
+      treasurePhase === null ||
+      build === null
+    ) {
       return null;
     }
-    slots.push({ resourceId: id, growth, condition, skillLevels, treasurePhase, build });
+    slots.push({ resourceId: id, growth, conditionMode, condition, skillLevels, treasurePhase, build });
   }
 
   const enemy = parseEnemy(raw.enemy);

@@ -156,6 +156,63 @@ export function SlotCard({
     return [...byKey.values()];
   })();
 
+  // Stage 18-C2: 条件が自動の枠で使った条件の平均（的の表の無い敵では null）
+  const autoCondition = slotResult?.autoCondition ?? null;
+  // 手入力の値（コア命中率・弾丸命中率・距離ボーナス）。自動の枠でも残し、未測定の項目・的の表の無い敵で使う
+  const manualFields = character && (
+    <>
+      <label className="field">
+        <span>コア命中率</span>
+        <input
+          type="number"
+          min={0}
+          max={1}
+          step={0.05}
+          value={condition.coreHitRate}
+          onChange={(e) =>
+            dispatch({
+              type: 'setSlotCondition',
+              index: slotIndex,
+              condition: { ...condition, coreHitRate: Number(e.target.value) },
+            })
+          }
+        />
+      </label>
+      <label className="field">
+        <span>弾丸命中率</span>
+        <input
+          type="number"
+          min={0}
+          max={1}
+          step={0.05}
+          value={condition.hitRate ?? 1}
+          onChange={(e) =>
+            dispatch({
+              type: 'setSlotCondition',
+              index: slotIndex,
+              condition: { ...condition, hitRate: Math.min(1, Math.max(0, Number(e.target.value) || 0)) },
+            })
+          }
+        />
+      </label>
+      <label className="field checkbox">
+        <input
+          type="checkbox"
+          checked={condition.distanceBonus && character.bonusRange !== null}
+          disabled={character.bonusRange === null}
+          onChange={(e) =>
+            dispatch({
+              type: 'setSlotCondition',
+              index: slotIndex,
+              condition: { ...condition, distanceBonus: e.target.checked },
+            })
+          }
+        />
+        <span>距離ボーナス{character.bonusRange === null ? '（なし）' : ''}</span>
+      </label>
+    </>
+  );
+
   const growthField = (key: keyof GrowthInput, name: string, min: number, max: number) => (
     <label className="field">
       <span>{name}</span>
@@ -219,54 +276,49 @@ export function SlotCard({
             dispatch={dispatch}
           />
           <label className="field">
-            <span>コア命中率</span>
-            <input
-              type="number"
-              min={0}
-              max={1}
-              step={0.05}
-              value={condition.coreHitRate}
+            <span>条件</span>
+            <select
+              value={slot.conditionMode}
               onChange={(e) =>
                 dispatch({
-                  type: 'setSlotCondition',
+                  type: 'setConditionMode',
                   index: slotIndex,
-                  condition: { ...condition, coreHitRate: Number(e.target.value) },
+                  conditionMode: e.target.value === 'manual' ? 'manual' : 'auto',
                 })
               }
-            />
+            >
+              <option value="auto">自動（射撃場の表）</option>
+              <option value="manual">手入力</option>
+            </select>
           </label>
-          <label className="field">
-            <span>命中率</span>
-            <input
-              type="number"
-              min={0}
-              max={1}
-              step={0.05}
-              value={condition.hitRate ?? 1}
-              onChange={(e) =>
-                dispatch({
-                  type: 'setSlotCondition',
-                  index: slotIndex,
-                  condition: { ...condition, hitRate: Math.min(1, Math.max(0, Number(e.target.value) || 0)) },
-                })
-              }
-            />
-          </label>
-          <label className="field checkbox">
-            <input
-              type="checkbox"
-              checked={condition.distanceBonus && character.bonusRange !== null}
-              disabled={character.bonusRange === null}
-              onChange={(e) =>
-                dispatch({
-                  type: 'setSlotCondition',
-                  index: slotIndex,
-                  condition: { ...condition, distanceBonus: e.target.checked },
-                })
-              }
-            />
-            <span>距離ボーナス{character.bonusRange === null ? '（なし）' : ''}</span>
-          </label>
+          {slot.conditionMode === 'auto' && slotResult && (
+            <p className="meta auto-condition">
+              {autoCondition ? (
+                <>
+                  コア命中率 {formatPercent(autoCondition.coreHitRate, 1)}・距離ボーナス{' '}
+                  {character.bonusRange === null ? 'なし' : `${formatPercent(autoCondition.distanceBonus, 1)} の発`}
+                  ・弾丸命中率 {formatPercent(autoCondition.hitRate, 1)}
+                  <small>
+                    （着地点ごとの値の発数平均
+                    {autoCondition.hitRateUp > 0
+                      ? `。常時の命中率▲ ${formatPercent(autoCondition.hitRateUp, 2)} 込み`
+                      : ''}
+                    ）
+                  </small>
+                </>
+              ) : (
+                'この敵の条件は未測定なので、手入力の値で計算しています'
+              )}
+            </p>
+          )}
+          {slot.conditionMode === 'auto' && autoCondition ? (
+            <details className="manual-condition">
+              <summary>手入力の値（自動で未測定の項目に使う）</summary>
+              {manualFields}
+            </details>
+          ) : (
+            manualFields
+          )}
           {isChargeWeapon(character.shot) && (
             <label className="field checkbox">
               <input

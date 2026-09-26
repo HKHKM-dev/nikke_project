@@ -403,6 +403,28 @@ export function targetProfileOf(
   return master.targetProfiles.find((p) => p.id === preset.targetProfile);
 }
 
+/**
+ * Stage 18-C2: 敵の値（EnemyInput）から的の条件の表を引く（plan/design-stage18.md 12.9 節の 5）。
+ * 値がプリセットと一致すればそのプリセットの表。一致しなくても、属性だけを外した射撃場の的（属性なし・防御力とコアの有無が
+ * 射撃場のプリセットと同じ。画面の既定の敵）なら、射撃場のプリセットの表。それ以外（ボス・手入力の敵）は undefined
+ */
+export function targetProfileForEnemy(
+  master: Pick<EnemyPresetMaster, 'enemies' | 'targetProfiles'>,
+  enemy: EnemyInput,
+): TargetProfile | undefined {
+  const preset = matchingEnemyPreset(master.enemies, enemy);
+  if (preset !== undefined) return targetProfileOf(master, preset);
+  if (enemy.element !== null) return undefined;
+  const range = master.enemies.find(
+    (p) =>
+      p.content === 'range' &&
+      p.targetProfile !== undefined &&
+      p.defence === enemy.defence &&
+      p.hasCore === enemy.hasCore,
+  );
+  return range === undefined ? undefined : targetProfileOf(master, range);
+}
+
 /** プリセットの計算の入力 */
 export function enemyInputOf(preset: EnemyPreset): EnemyInput {
   return { defence: preset.defence, element: preset.element, hasCore: preset.hasCore };

@@ -34,7 +34,7 @@ import {
   effectiveBuild,
   effectiveSkillLevels,
   effectiveTreasurePhase,
-  enemyWithEvents,
+  enemyForCalc,
   parseTeamState,
   serializeTeamState,
   takenResourceIds,
@@ -156,6 +156,7 @@ export function App() {
             character,
             growth: fixedSpecGrowth(character),
             condition: slot.condition,
+            conditionMode: slot.conditionMode,
             attackOverride: computeFixedSpecAttack(character).attack,
             skills: slotSkills,
           };
@@ -176,7 +177,15 @@ export function App() {
             buildEffects = undefined;
           }
         }
-        return { character, growth, condition: slot.condition, attackOverride, buildEffects, skills: slotSkills };
+        return {
+          character,
+          growth,
+          condition: slot.condition,
+          conditionMode: slot.conditionMode,
+          attackOverride,
+          buildEffects,
+          skills: slotSkills,
+        };
       }),
     [team.slots, team.fixedSpec, cache.characters, skillsStatuses, masters],
   );
@@ -184,7 +193,8 @@ export function App() {
   const teamInput = useMemo<TeamInput>(
     () => ({
       slots: slotInputs,
-      enemy: enemyWithEvents(team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds),
+      // Stage 18-C2: 出来事に加えて、的の条件の表と着地点（条件が自動の枠が使う）
+      enemy: enemyForCalc(team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds),
       durationSeconds: team.durationSeconds,
       burst: team.burst,
       controlledSlot: team.controlledSlot,

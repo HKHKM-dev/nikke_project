@@ -559,3 +559,38 @@ header p {
   vertical-align: baseline;
   opacity: 0.6;
 }
+
+/* Stage 18-C2: 条件が自動の枠（使った条件の平均と、手入力の値の折り畳み） */
+.auto-condition small {
+  opacity: 0.8;
+}
+.manual-condition {
+  margin: 4px 0 8px;
+  font-size: 0.9em;
+}
+.manual-condition > summary {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+/* Stage 18-C2: タイムラインの着地点（距離帯）の帯 */
+.tl-band-near {
+  fill: #16a34a;
+  background: #16a34a;
+}
+.tl-band-midNear {
+  fill: #84cc16;
+  background: #84cc16;
+}
+.tl-band-midFar {
+  fill: #f97316;
+  background: #f97316;
+}
+.tl-band-far {
+  fill: #dc2626;
+  background: #dc2626;
+}
+.tl-band-unknown {
+  fill: #9ca3af;
+  background: #9ca3af;
+}
