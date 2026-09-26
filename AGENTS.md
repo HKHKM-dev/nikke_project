@@ -27,6 +27,7 @@ NIKKE のダメージ計算ツール。
   3. `git push -u origin HEAD`（リベースで履歴を書き換えたときは `--force-with-lease`）
   4. `gh pr create`（題名は `Stage 18-C2: ` のように Stage の番号か、`台帳: `・`AGENTS.md: ` のように対象の文書で始める）
   5. `gh pr merge --auto --squash`（作成直後に自動マージを予約する。マージ方式はスカッシュ）
+- マージの後は、メインのチェックアウトの main を origin/main へ早送りし、マージ済みのブランチを origin/main に揃える（スカッシュマージでは、揃えないと差分の表示にマージ済みの変更が残る）。Claude Code ではフック（`.claude/settings.json` → `tools/git/sync-after-merge.ts`）が、セッションの開始・発言・応答の終わりに行う。
 - worktree では最初に `npm ci`。
 - 2026-09-26 にリポジトリを作り直した。文書やコミットの題名にある PR #1〜#37 は旧リポジトリ（非公開）の番号で、このリポジトリの PR とは別物。PR を参照するときは、番号だけでなく題名か日付も書く。
 
