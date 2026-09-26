@@ -274,6 +274,8 @@ export type EnemyPreset = {
   source: string;
   /** Stage 16-B: 選べる出来事のセット（EnemyPresetMaster.eventSets の id）。無ければ空 */
   eventSets: string[];
+  /** Stage 18-C: 的の条件の表（EnemyPresetMaster.targetProfiles の id）。無ければ「この敵の条件は未測定」 */
+  targetProfile?: string;
 };
 
 /** Stage 16-B: 周期で書いた敵の出来事（秒）。first から duration 秒、every 秒ごとに繰り返す（every が無ければ 1 回） */
@@ -289,7 +291,42 @@ export type EnemyEventSet = {
   id: string;
   name: LocalizedText;
   events: EnemyEventSpec[];
+  /**
+   * Stage 18-C: 狙えない窓（untargetable）で区切った区間ごとの着地点（TargetProfile の着地点か配分の id）。
+   * 1 つ目は最初の窓の前。区間の数より短ければ、残りの区間は「着地点が未測定」。省略は着地点なし
+   */
+  landings?: string[];
   /** 値の出どころと、代表値にした理由 */
+  source: string;
+};
+
+// ---- Stage 18-C: 的の条件の表（plan/design-stage18.md 12.2 節） ----
+
+/** 射撃場の距離帯（近 / 中近 / 中遠 / 遠） */
+export type LandingBand = 'near' | 'midNear' | 'midFar' | 'far';
+
+/** 的の着地点 1 か所。range は距離の範囲（m）で、距離ボーナスは range が bonusRange に丸ごと入るかで決める */
+export type LandingPoint = { id: string; band: LandingBand; range: [number, number] };
+
+/**
+ * 武器種 × 着地点の値（0..1）。キーは着地点の id、帯、または all の順で引く。null・省略は未測定（手入力の値を使う）
+ */
+export type TargetRateTable = Partial<Record<WeaponType, Readonly<Record<string, number>> | null>>;
+
+/** 的の条件の表。射撃場の BigArms のように、属性だけ違う敵で 1 つを共有する */
+export type TargetProfile = {
+  id: string;
+  name: LocalizedText;
+  /** 出来事が無いとき（3 分モード OFF）の着地点（初期位置） */
+  initialLanding: string;
+  landings: LandingPoint[];
+  /** 配分の id → [着地点の id, 重み] の列（重みの和は 1）。中遠の 3 か所など */
+  mixes: Record<string, [string, number][]>;
+  /** コア命中率 P(コア｜命中) */
+  coreHitRate: TargetRateTable;
+  /** 弾丸命中率 */
+  bulletHitRate: TargetRateTable;
+  /** セルごとの出どころ（verification.md の節・claims.md の ID） */
   source: string;
 };
 
@@ -297,5 +334,7 @@ export type EnemyPresetMaster = {
   formatVersion: 1;
   source: string;
   eventSets: EnemyEventSet[];
+  /** Stage 18-C: 的の条件の表。省略は空 */
+  targetProfiles: TargetProfile[];
   enemies: EnemyPreset[];
 };

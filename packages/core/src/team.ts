@@ -13,6 +13,7 @@ import {
 } from './damage.ts';
 import type { BuildEffect } from './buildEffects.ts';
 import type { InstantApplication } from './frame/firstPass.ts';
+import type { AutoConditionSummary, ConditionMode, LandingFrameSpan } from './frame/landing.ts';
 import type { BuffTotals } from './skills/buffs.ts';
 import type { BurstHitResult, ResolvedDamageEffect, SkillHitResult } from './skills/burstDamage.ts';
 import type { CycleWindow } from './skills/cycles.ts';
@@ -59,6 +60,12 @@ export type TeamSlotInput = {
    * 省略は無し。マスタは呼び出し側が引く（attackOverride と同じ）
    */
   buildEffects?: readonly BuildEffect[];
+  /**
+   * Stage 18-C: 条件の決め方。'auto' は敵の的の条件の表（射撃場の BigArms）と着地点の時間割りから、コア命中率・距離ボーナス・
+   * 弾丸命中率を決める（frame/landing.ts。fullCharge は condition のまま）。**省略は 'manual'**（condition をそのまま使う）。
+   * 的の表の無い敵では、自動でも condition を使い、注記を出す
+   */
+  conditionMode?: ConditionMode;
 };
 
 export type TeamInput = {
@@ -150,6 +157,8 @@ export type TeamSlotResult = {
   instants: InstantApplication[];
   /** normalDamage + burst.totalDamage + skillHits.totalDamage */
   totalDamage: number;
+  /** Stage 18-C: 条件が自動の枠で使った条件の平均（発数の重み）。手入力の枠・的の表の無い敵では null */
+  autoCondition: AutoConditionSummary | null;
   /** totalDamage / durationSeconds（0 秒なら 0） */
   dps: number;
   /** 編成の総ダメージに対する寄与率 0..1（合計 0 のときは 0） */
@@ -175,6 +184,8 @@ export type TeamResult = {
   /** Stage 16-B: 敵の出来事（入力のまま）と、その注記（未実装の種類・近似）。出来事が無ければどちらも空 */
   enemyEvents: EnemyEvent[];
   enemyNotes: ModelNote[];
+  /** Stage 18-C: 着地点の区間（フレーム）。条件が自動の枠が無い、または的の表の無い敵では空 */
+  landings: LandingFrameSpan[];
   /** Stage 16-B: 1 秒ごとのダメージ（編成の合計と枠ごと。sim だけ。calc は null） */
   damagePerSecond: DamagePerSecond | null;
 };

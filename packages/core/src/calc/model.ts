@@ -12,10 +12,13 @@
 // フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
 // Stage 16（plan/design-stage16.md 2 節）: calc モデルを team.ts から calc/model.ts に分けた。1 パス目は frame/plan.ts。
 // Stage 16-B（同 9 節）: 敵を狙えない窓（敵の出来事）があるときは、全グループで射撃の列を数える（sim と一致する）。
+// Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、グループ（鍵に着地点が入る）の着地点の条件で 1 トリガーの値を出す
+// （中遠のような配分は Σ w_k × T_k。frame/landing.ts）。手入力の枠は今と同じ。
 import { activationFramesOfSlot, summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
-import { baseAttackOf, computeDamage, computeTriggerDamage, conditionNotes, modelNotes } from '../damage.ts';
+import { baseAttackOf, computeDamage, computeTriggerDamage, modelNotes } from '../damage.ts';
 import { enemyEventNotes } from '../frame/events.ts';
+import { autoConditionSummary, landingPartsOf, landingTriggerDamage, slotConditionNotes } from '../frame/landing.ts';
 import { firingParams } from '../frame/firing.ts';
 import {
   BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
@@ -71,7 +74,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
   const { slots, enemy, durationSeconds, model } = input;
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const { frames, shots, schedule, timeline, skillHits, instants, untargetable } = planTeamRun(input);
+  const { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing } = planTeamRun(input);
   // Stage 16-B: 狙えない窓があると平均レートでは置けない（撃てない時間・撃ち直し・ハイド中のリロード）ので、全グループで射撃の列を数える
   const countAllShots = untargetable.length > 0;
 
@@ -92,6 +95,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
     const shotFrames = shots[index]?.frames ?? [];
     for (const group of groupTimeline(timeline, index)) {
       const state = group.state;
+      const parts = landingPartsOf(landing, slot, index, group.landing);
       const ranges = mergeAdjacentRanges(group.segments.map((s) => ({ start: s.start, end: s.end })));
       const common = {
         ranges,
@@ -103,12 +107,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
       };
       // Stage 10: 持続の射撃バフが掛かっているグループは、射撃の列の発数を数える（plan/design-stage10.md 5 節）
       if (countAllShots || state.timedEffects.some((e) => isFiringStat(e.stat))) {
-        const trigger = computeTriggerDamage({
-          ...base,
-          buffs: state.buffs,
-          perShot,
-          condition: { ...slot.condition, fullBurst: group.fullBurst },
-        });
+        const trigger = landingTriggerDamage({ ...base, buffs: state.buffs, perShot }, parts, group.fullBurst);
         const triggers = countShotsInRanges(shotFrames, ranges);
         const damage = trigger.perTrigger * triggers;
         segments.push({ ...common, trigger, triggers, triggerSource: 'shots', damage });
@@ -120,16 +119,17 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
         buffs: state.buffs,
         perShot,
         firing: firingParams(slot.character.shot, state.buffs),
-        condition: { ...slot.condition, fullBurst: group.fullBurst, durationSeconds: group.seconds },
+        condition: { ...parts[0]!.condition, fullBurst: group.fullBurst, durationSeconds: group.seconds },
       });
-      segments.push({
-        ...common,
-        trigger: result,
-        triggers: result.cadence.triggersPerSecond * group.seconds,
-        triggerSource: 'average',
-        damage: result.totalDamage,
-      });
-      normalDamage += result.totalDamage;
+      const triggers = result.cadence.triggersPerSecond * group.seconds;
+      // Stage 18-C: 配分の区間は、1 トリガーの値だけ配分の重みで足し合わせる（発射サイクルは条件に依らない）
+      const trigger =
+        parts.length === 1
+          ? result
+          : landingTriggerDamage({ ...base, buffs: state.buffs, perShot }, parts, group.fullBurst);
+      const damage = parts.length === 1 ? result.totalDamage : trigger.perTrigger * triggers;
+      segments.push({ ...common, trigger, triggers, triggerSource: 'average', damage });
+      normalDamage += damage;
     }
 
     // バーストスキルは発動ごとに（その時点のバフで）計算する。撃つのは時刻表でこの枠が発動したフレームだけ
@@ -178,12 +178,13 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
     }
 
     const totalDamage = normalDamage + burstDamage + skillHitDamage;
+    const autoCondition = autoConditionSummary(landing, slot, index, shotFrames);
     return {
       index,
       character: slot.character,
       baseAttack: baseAttackOf(slot),
       cadence: computeCadence(slot.character.shot, model, firingParams(slot.character.shot, passive.buffs)),
-      notes: [...modelNotes(slot.character.shot), ...conditionNotes(slot.condition)],
+      notes: [...modelNotes(slot.character.shot), ...slotConditionNotes(landing, slot, index, enemy, autoCondition)],
       passiveBuffs: passive.buffs,
       passiveEffects: passive.passiveEffects,
       buildEffects: passive.buildEffects,
@@ -197,6 +198,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
       skillHits: { activations: skillHitActivations, totalDamage: skillHitDamage },
       instants: instants.filter((x) => x.slotIndex === index),
       totalDamage,
+      autoCondition,
       dps: durationSeconds > 0 ? totalDamage / durationSeconds : 0,
       skillSupport: skillSupportOf(slot),
       ...treasureOf(teamInput.slots[index] ?? null),
@@ -225,7 +227,8 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
     burstSummary: schedule === null ? null : summarizeSchedule(schedule, frames),
     timeline,
     enemyEvents: [...(enemy.events ?? [])],
-    enemyNotes: enemyEventNotes(enemy.events),
+    enemyNotes: enemyEventNotes(enemy.events, landing !== null),
+    landings: landing?.spans ?? [],
     damagePerSecond: null,
   };
 }

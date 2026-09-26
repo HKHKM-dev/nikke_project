@@ -73,6 +73,7 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
       skillHits: { activations: skillHitActivations, totalDamage: slot.skillHits.damage },
       instants: sim.instants.filter((x) => x.slotIndex === index),
       totalDamage: slot.totalDamage,
+      autoCondition: slot.autoCondition,
       dps: durationSeconds > 0 ? slot.totalDamage / durationSeconds : 0,
       skillSupport: skillSupportOf(slotInput),
       ...treasureOf(teamInput.slots[index] ?? null),
@@ -101,7 +102,8 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
     burstSummary: sim.schedule === null ? null : summarizeSchedule(sim.schedule, sim.frames),
     timeline: sim.timeline,
     enemyEvents: [...(input.enemy.events ?? [])],
-    enemyNotes: enemyEventNotes(input.enemy.events),
+    enemyNotes: enemyEventNotes(input.enemy.events, sim.landings.length > 0),
+    landings: sim.landings,
     damagePerSecond: sim.damagePerSecond,
   };
 }

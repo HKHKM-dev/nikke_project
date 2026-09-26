@@ -99,6 +99,11 @@ export type TimelineSegment = {
   /** 枠ごとの状態。空枠は null */
   slots: (SlotBuffState | null)[];
   /**
+   * Stage 18-C: 区間の着地点（着地点か配分の id、null = 未測定）。着地点の計画を渡したときだけ持つ
+   * （条件が自動の枠が無ければキーごと無い）
+   */
+  landing?: string | null;
+  /**
    * 枠ごとの「同じバフ状態」をまとめるための鍵（fullBurst + その枠の BuffTotals）。空枠は null。
    * 枠ごとに持つのが要点で、ある枠のバフが変わっても他の枠の区間はまとまったままになる。
    * グループ化にしか使わない（計算には丸める前の buffs を使う）。
@@ -139,6 +144,8 @@ export type TimelineGroup = {
   seconds: number;
   /** 含まれる区間（出現順） */
   segments: TimelineSegment[];
+  /** Stage 18-C: 着地点（条件が自動の枠は鍵に入るのでグループ内で同じ。それ以外は最初の区間の値） */
+  landing?: string | null;
 };
 
 /** 空枠・未計算のときに使う「バフなし」の状態 */
@@ -175,7 +182,7 @@ const BUFF_FIELDS = [
 /** key の桁数。最下位ビットのずれで同一状態が別グループに割れないよう固定桁で文字列化する */
 export const KEY_DIGITS = 6;
 
-function keyOf(fullBurst: boolean, state: SlotBuffState): string {
+function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null): string {
   const parts: string[] = [fullBurst ? 'FB' : '--'];
   for (const field of BUFF_FIELDS) parts.push(state.buffs[field].toFixed(KEY_DIGITS));
   // Stage 11 モダニア: 使用武器の変更は武器ごとに別の状態
@@ -183,6 +190,8 @@ function keyOf(fullBurst: boolean, state: SlotBuffState): string {
   // 効いている効果の出どころも鍵に入れる。合計が同じでも別の効果なら別の状態として扱い、UI のラベルが混ざらないようにする
   // （例: クイーン（真）の battleStart と fullBurstEnd はどちらも攻撃力 +50.28%）
   for (const e of state.timedEffects) parts.push(`${e.sourceSlotIndex}.${e.source.skill}.${e.effectIndex}`);
+  // Stage 18-C: 条件が自動の枠だけ、着地点も鍵に入れる（手入力の枠のグループは今と同じ）
+  if (landing !== undefined) parts.push(`L:${landing ?? '?'}`);
   return parts.join('|');
 }
 
@@ -370,12 +379,14 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
  * 持続バフの区間分割。
  * 境界は {0, frames} ∪ 全バフ窓の端 ∪ フルバースト区間の端 ∪ バースト発動フレーム。
  * shots（Stage 8）は射撃の回数トリガーに使う射撃の列。省略すると射撃の回数トリガーは発火しない。
+ * Stage 18-C: landings（着地点の区間と、条件が自動の枠）を渡すと、着地点の境目も境界に足し、自動の枠の鍵に着地点を入れる。
  */
 export function planBuffTimeline(
   slots: readonly TimelineSlot[],
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[] = [],
+  landings: TimelineLandings | null = null,
 ): BuffTimeline {
   if (!Number.isInteger(frames) || frames < 0) {
     throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
@@ -517,6 +528,11 @@ export function planBuffTimeline(
     }
     for (const a of schedule.activations) bounds.add(a.frame);
   }
+  for (const s of landings?.spans ?? []) {
+    bounds.add(s.start);
+    bounds.add(s.end);
+  }
+  let landingIndex = 0;
   const sorted = [...bounds].filter((b) => b >= 0 && b <= frames).sort((a, b) => a - b);
 
   // 4〜5. 区間ごとに状態を組む
@@ -527,6 +543,10 @@ export function planBuffTimeline(
     if (start >= end) continue;
     // 境界にフルバースト区間の端が入っているので、区間の先頭で判定すれば区間全体で同じ値になる
     const fullBurst = schedule !== null && isInFullBurst(schedule, start);
+    // Stage 18-C: 着地点の境目も境界に入っているので、区間の先頭の着地点が区間全体の着地点
+    const spans = landings?.spans ?? [];
+    while (landingIndex + 1 < spans.length && spans[landingIndex]!.end <= start) landingIndex += 1;
+    const landing = landings === null ? undefined : (spans[landingIndex]?.landing ?? null);
     const slotStates = passive.map((base) =>
       base === null
         ? null
@@ -550,14 +570,18 @@ export function planBuffTimeline(
         appliedAmount: applied.appliedAmount,
       });
     }
-    segments.push({
+    const segment: TimelineSegment = {
       start,
       end,
       seconds: (end - start) / FPS,
       fullBurst,
       slots: slotStates,
-      slotKeys: slotStates.map((state) => (state === null ? null : keyOf(fullBurst, state))),
-    });
+      slotKeys: slotStates.map((state, i) =>
+        state === null ? null : keyOf(fullBurst, state, landings?.autoSlots[i] ? landing : undefined),
+      ),
+    };
+    if (landing !== undefined) segment.landing = landing;
+    segments.push(segment);
   }
 
   return {
@@ -653,6 +677,7 @@ export function groupTimeline(timeline: BuffTimeline, slotIndex: number): Timeli
       seconds: segment.seconds,
       segments: [segment],
     };
+    if (segment.landing !== undefined) group.landing = segment.landing;
     byKey.set(key, group);
     groups.push(group);
   }
@@ -660,6 +685,13 @@ export function groupTimeline(timeline: BuffTimeline, slotIndex: number): Timeli
 }
 
 export type FrameRange = { start: number; end: number };
+
+/** Stage 18-C: planBuffTimeline に渡す着地点（frame/landing.ts の LandingPlan の一部） */
+export type TimelineLandings = {
+  spans: readonly { start: number; end: number; landing: string | null }[];
+  /** 枠ごと: 条件が自動か（鍵に着地点を入れる枠） */
+  autoSlots: readonly boolean[];
+};
 
 /** 連続する区間をひとつなぎにする（表示用）。他の枠のバフ切り替えで割れた境界を畳む */
 export function mergeAdjacentRanges(ranges: readonly FrameRange[]): FrameRange[] {

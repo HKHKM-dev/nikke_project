@@ -16,7 +16,7 @@ import {
   type BuffTotals,
 } from './skills/buffs.ts';
 import { computeStat, type GrowthInput } from './stats.ts';
-import type { CharacterData, Element, LocalizedText, ShotParams } from './types.ts';
+import type { CharacterData, Element, LocalizedText, ShotParams, TargetProfile } from './types.ts';
 import { DEFAULT_WEAPON_MODEL, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
 
 /** フルバースト区間中の通常攻撃に、倍率グループ (1 + コア + 会心 + 距離) へ加算される補正 */
@@ -62,12 +62,25 @@ export type EnemyEventKind = 'untargetable' | 'invulnerable' | 'barrier';
 /** Stage 16-B: 敵の出来事 1 つ。秒で [start, end) */
 export type EnemyEvent = { kind: EnemyEventKind; start: number; end: number };
 
+/**
+ * Stage 18-C: 着地点の区間 1 つ。秒で [start, end)。landing は TargetProfile の着地点か配分（中遠の 3 か所など）の id。
+ * null は「着地点が未測定」（出来事のセットの並びより後の区間）
+ */
+export type LandingSpan = { start: number; end: number; landing: string | null };
+
 export type EnemyInput = {
   defence: number;
   element: Element | null;
   hasCore: boolean;
   /** Stage 16-B: 敵の出来事（省略・空なら出来事なし = Stage 16-A と 1 フレームも違わない） */
   events?: readonly EnemyEvent[];
+  /**
+   * Stage 18-C: 的の条件の表（射撃場の BigArms など）。条件が「自動」の枠だけが読む。省略は「この敵の条件は未測定」
+   * （自動の枠も手入力の値で計算する）
+   */
+  target?: TargetProfile;
+  /** Stage 18-C: 着地点の時間割り（enemies.ts の enemyLandingsOf）。省略は戦闘時間全体を target の初期位置とする */
+  landings?: readonly LandingSpan[];
 };
 
 /** 1 トリガーの式に効く条件（時間を含まない） */
