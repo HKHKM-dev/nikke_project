@@ -21,7 +21,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "sim": "node packages/core/scripts/sim-run.ts"
+    "sim": "node packages/core/scripts/sim-run.ts",
+    "records:table": "node packages/core/scripts/records-table.ts && prettier --write plan/captures/index.md records/recordings.json"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

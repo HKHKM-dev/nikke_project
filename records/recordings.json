@@ -1,0 +1,2398 @@
+{
+  "version": 1,
+  "recordings": [
+    {
+      "id": "001",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-01_SR_delta.mp4",
+      "original": "nikke 2026.09.22 - 00.26.45.17.mp4",
+      "durationSec": 28.1,
+      "frames": 1369,
+      "fps": 48.78,
+      "sizeMB": 31.7,
+      "sha256": "d918c60d78fb",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Wind"
+      },
+      "mode": null,
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（風・防100）"
+    },
+    {
+      "id": "002",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-02_RL_idoll-flower.mp4",
+      "original": "nikke 2026.09.22 - 00.27.47.18.mp4",
+      "durationSec": 26.6,
+      "frames": 1595,
+      "fps": 60.0,
+      "sizeMB": 39.0,
+      "sha256": "9291138d4592",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 304,
+          "name": "I-DOLL・フラワー",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Wind"
+      },
+      "mode": null,
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（風・防100）"
+    },
+    {
+      "id": "003",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-03_MG_emma.mp4",
+      "original": "nikke 2026.09.22 - 00.28.39.19.mp4",
+      "durationSec": 33.4,
+      "frames": 2006,
+      "fps": 60.0,
+      "sizeMB": 48.8,
+      "sha256": "0f9dd2e4c60a",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 90,
+          "name": "エマ",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Wind"
+      },
+      "mode": null,
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（風・防100）（**属性有利 ×1.1**）"
+    },
+    {
+      "id": "004",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-04_AR_kurumi.mp4",
+      "original": "nikke 2026.09.22 - 00.29.31.20.mp4",
+      "durationSec": 22.6,
+      "frames": 1353,
+      "fps": 60.0,
+      "sizeMB": 33.2,
+      "sha256": "314c5cc1b646",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Wind"
+      },
+      "mode": null,
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（風・防100）"
+    },
+    {
+      "id": "005",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-05_SMG_misato.mp4",
+      "original": "nikke 2026.09.22 - 00.52.26.21.mp4",
+      "durationSec": 28.7,
+      "frames": 1721,
+      "fps": 60.0,
+      "sizeMB": 41.7,
+      "sha256": "9514398b0ca3",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 833,
+          "name": "ミサト",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Wind"
+      },
+      "mode": null,
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（風・防100）"
+    },
+    {
+      "id": "006",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-06_RL_belorta.mp4",
+      "original": "nikke 2026.09.22 - 00.53.25.22.mp4",
+      "durationSec": 44.7,
+      "frames": 2682,
+      "fps": 60.0,
+      "sizeMB": 64.9,
+      "sha256": "f02fb436484e",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 60,
+          "name": "ベロータ",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Wind"
+      },
+      "mode": null,
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（風・防100）"
+    },
+    {
+      "id": "007",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-07_AR_folkwang.mp4",
+      "original": "nikke 2026.09.22 - 01.53.21.23.mp4",
+      "durationSec": 24.3,
+      "frames": 1139,
+      "fps": 46.81,
+      "sizeMB": 27.7,
+      "sha256": "7d1231a90942",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 242,
+          "name": "フォルクヴァン",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Wind"
+      },
+      "mode": null,
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（風・防100）"
+    },
+    {
+      "id": "008",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-08_SG_isabel.mp4",
+      "original": "nikke 2026.09.22 - 01.54.13.24.mp4",
+      "durationSec": 27.6,
+      "frames": 1658,
+      "fps": 60.0,
+      "sizeMB": 39.6,
+      "sha256": "57836af31a7c",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 231,
+          "name": "イサベル",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Wind"
+      },
+      "mode": null,
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（風・防100）"
+    },
+    {
+      "id": "009",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-09_SG_product23.mp4",
+      "original": "nikke 2026.09.22 - 01.55.01.25.mp4",
+      "durationSec": 26.4,
+      "frames": 1583,
+      "fps": 59.96,
+      "sizeMB": 37.1,
+      "sha256": "2cff026c9b65",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 307,
+          "name": "プロダクト23",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Wind"
+      },
+      "mode": null,
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（風・防100）"
+    },
+    {
+      "id": "010",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-10_AR_mana.mp4",
+      "original": "nikke 2026.09.22 - 14.40.46.26.mp4",
+      "durationSec": 30.8,
+      "frames": 1537,
+      "fps": 49.85,
+      "sizeMB": 36.1,
+      "sha256": "912335a85986",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 290,
+          "name": "マナ",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": null,
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（**灼熱**・防100）"
+    },
+    {
+      "id": "011",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-11_SG+AR_noir+asuka.mp4",
+      "original": "nikke 2026.09.22 - 14.44.25.27.mp4",
+      "durationSec": 24.0,
+      "frames": 1414,
+      "fps": 58.88,
+      "sizeMB": 34.9,
+      "sha256": "7c70afca3f82",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 271,
+          "name": "ノワール",
+          "controlled": null
+        },
+        {
+          "slot": 2,
+          "rid": 830,
+          "name": "アスカ",
+          "controlled": null
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": null,
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（**灼熱**・防100）"
+    },
+    {
+      "id": "012",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-12_SG_queen-makoto.mp4",
+      "original": "nikke 2026.09.22 - 14.45.10.28.mp4",
+      "durationSec": 29.4,
+      "frames": 1763,
+      "fps": 60.0,
+      "sizeMB": 43.3,
+      "sha256": "d96d9022f4ec",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 870,
+          "name": "クイーン（真）",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": null,
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（**灼熱**・防100）"
+    },
+    {
+      "id": "013",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-13_SR+SR_eunhwa-tactical-upgrade+delta.mp4",
+      "original": "nikke 2026.09.22 - 14.46.47.29.mp4",
+      "durationSec": 41.0,
+      "frames": 2462,
+      "fps": 60.0,
+      "sizeMB": 59.5,
+      "sha256": "d5f4734d500d",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 95,
+          "name": "ウンファ：TU",
+          "controlled": null
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": null
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": null,
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（**灼熱**・防100）"
+    },
+    {
+      "id": "014",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-14_SG_queen-makoto_after-15s.mp4",
+      "original": "nikke 2026.09.22 - 15.16.59.30.mp4",
+      "durationSec": 38.3,
+      "frames": 2298,
+      "fps": 60.0,
+      "sizeMB": 56.5,
+      "sha256": "24eb593f8e49",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 870,
+          "name": "クイーン（真）",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": null,
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（**灼熱**・防100）"
+    },
+    {
+      "id": "015",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-15_SG+SR+AR+SG_noir+delta+kurumi+ether.mp4",
+      "original": "nikke 2026.09.22 - 19.42.01.31.mp4",
+      "durationSec": 214.4,
+      "frames": 12483,
+      "fps": 58.24,
+      "sizeMB": 297.4,
+      "sha256": "e08d00eca555",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 271,
+          "name": "ノワール",
+          "controlled": null
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": null
+        },
+        {
+          "slot": 3,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": null
+        },
+        {
+          "slot": 4,
+          "rid": 291,
+          "name": "エーテル",
+          "controlled": null
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": null,
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（**灼熱**・防100）"
+    },
+    {
+      "id": "016",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-16_SG_drake.mp4",
+      "original": "2026-09-22 22-36-14.mp4",
+      "durationSec": 32.1,
+      "frames": 1927,
+      "fps": 60.0,
+      "sizeMB": 23.4,
+      "sha256": "4093b7a9d390",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 101,
+          "name": "ドレイク",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": null,
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（**灼熱**・防100）"
+    },
+    {
+      "id": "017",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-17_SG_noir.mp4",
+      "original": "2026-09-22 22-37-03.mp4",
+      "durationSec": 29.7,
+      "frames": 1781,
+      "fps": 60.0,
+      "sizeMB": 23.2,
+      "sha256": "1b7b2f7a5e8c",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 271,
+          "name": "ノワール",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": null,
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（**灼熱**・防100）"
+    },
+    {
+      "id": "018",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-18_SG+SR+AR_ether+delta+rapi.mp4",
+      "original": "nikke 2026.09.22 - 22.42.12.33.mp4",
+      "durationSec": 212.1,
+      "frames": 12723,
+      "fps": 60.0,
+      "sizeMB": 305.4,
+      "sha256": "6373bae992fb",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 291,
+          "name": "エーテル",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 10,
+          "name": "ラピ",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Electronic"
+      },
+      "mode": "range-3min",
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（**電撃**・防100）"
+    },
+    {
+      "id": "019",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-19_SG+SR+SG_ether+delta+noir.mp4",
+      "original": "nikke 2026.09.22 - 22.47.14.34.mp4",
+      "durationSec": 209.2,
+      "frames": 12555,
+      "fps": 60.0,
+      "sizeMB": 303.1,
+      "sha256": "ead6959e721d",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 291,
+          "name": "エーテル",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 271,
+          "name": "ノワール",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱・防100）"
+    },
+    {
+      "id": "020",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-20_SG+SR+AR_ether+delta+mana.mp4",
+      "original": "nikke 2026.09.22 - 22.51.09.35.mp4",
+      "durationSec": 211.3,
+      "frames": 12678,
+      "fps": 60.0,
+      "sizeMB": 303.9,
+      "sha256": "3fd13ff20e54",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 291,
+          "name": "エーテル",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 290,
+          "name": "マナ",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Electronic"
+      },
+      "mode": "range-3min",
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（**電撃**・防100）"
+    },
+    {
+      "id": "021",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-21_SG+SR+SG_ether+delta+queen-makoto.mp4",
+      "original": "nikke 2026.09.22 - 22.55.15.36.mp4",
+      "durationSec": 209.8,
+      "frames": 12566,
+      "fps": 59.9,
+      "sizeMB": 303.6,
+      "sha256": "73173312ff7d",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 291,
+          "name": "エーテル",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 870,
+          "name": "クイーン（真）",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱・防100）"
+    },
+    {
+      "id": "022",
+      "date": "2026-09-22",
+      "folder": "range",
+      "file": "20260922-22_MG+SR_emma-tactical-upgrade+delta.mp4",
+      "original": "nikke 2026.09.22 - 23.00.42.37.mp4",
+      "durationSec": 205.9,
+      "frames": 12353,
+      "fps": 60.0,
+      "sizeMB": 297.9,
+      "sha256": "badbf2827a3a",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 93,
+          "name": "エマ：TU",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱・防100）"
+    },
+    {
+      "id": "023",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-23_SR_delta_controlled-core.mp4",
+      "original": "デルタ操作コア狙い.mp4",
+      "durationSec": 30.8,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 24.7,
+      "sha256": "563d34e4353b",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": true,
+          "note": "操作・コア狙い"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "024",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-24_SR_delta_controlled-body.mp4",
+      "original": "デルタ操作胴体.mp4",
+      "durationSec": 30.9,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 23.6,
+      "sha256": "eb30bab605ae",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": true,
+          "note": "操作・胴体"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "025",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-25_SR+SMG_delta+idoll-ocean_delta-ai.mp4",
+      "original": "デルタ別キャラ操作.mp4",
+      "durationSec": 51.9,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 56.2,
+      "sha256": "d30acb4bb5dc",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false,
+          "note": "AI"
+        },
+        {
+          "slot": 2,
+          "rid": 305,
+          "name": "I-DOLL・オーシャン",
+          "controlled": true,
+          "note": "操作・撃たない"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "026",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-26_SG_noir_controlled.mp4",
+      "original": "ノワール操作.mp4",
+      "durationSec": 37.3,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 32.2,
+      "sha256": "63eb9851071b",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 271,
+          "name": "ノワール",
+          "controlled": true,
+          "note": "操作。SG なのでコアだけは狙えない"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "027",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-27_SG+SMG_noir+idoll-ocean_noir-ai.mp4",
+      "original": "ノワール別キャラ操作.mp4",
+      "durationSec": 31.3,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 26.3,
+      "sha256": "c0dcd4598496",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 271,
+          "name": "ノワール",
+          "controlled": false,
+          "note": "AI"
+        },
+        {
+          "slot": 2,
+          "rid": 305,
+          "name": "I-DOLL・オーシャン",
+          "controlled": true,
+          "note": "操作・撃たない"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "028",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-28_AR_rapi_controlled-core.mp4",
+      "original": "ラピ操作コア狙い.mp4",
+      "durationSec": 42.8,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 39.4,
+      "sha256": "f5856616c6f9",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 10,
+          "name": "ラピ",
+          "controlled": true,
+          "note": "操作・コア狙い"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "029",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-29_AR_rapi_controlled-body.mp4",
+      "original": "ラピ操作胴体狙い.mp4",
+      "durationSec": 45.5,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 39.8,
+      "sha256": "77924ef4948e",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 10,
+          "name": "ラピ",
+          "controlled": true,
+          "note": "操作・胴体"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "030",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-30_AR+SMG_rapi+idoll-ocean_rapi-ai.mp4",
+      "original": "ラピ別キャラ操作.mp4",
+      "durationSec": 43.3,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 44.7,
+      "sha256": "9f2005a9275e",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 10,
+          "name": "ラピ",
+          "controlled": false,
+          "note": "AI"
+        },
+        {
+          "slot": 2,
+          "rid": 305,
+          "name": "I-DOLL・オーシャン",
+          "controlled": true,
+          "note": "操作・撃たない"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "031",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-31_MG_emma_controlled-core.mp4",
+      "original": "エマ操作コア狙い.mp4",
+      "durationSec": 47.5,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 39.7,
+      "sha256": "cae187dedb6b",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 90,
+          "name": "エマ",
+          "controlled": true,
+          "note": "操作・コア狙い"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "032",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-32_RL_belorta_controlled-core.mp4",
+      "original": "ベロータコア狙い.mp4",
+      "durationSec": 38.4,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 31.7,
+      "sha256": "db7fc26fe293",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 60,
+          "name": "ベロータ",
+          "controlled": true,
+          "note": "操作・コア狙い"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "033",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-33_RL_belorta_controlled-body.mp4",
+      "original": "ベロータ胴体狙い.mp4",
+      "durationSec": 40.4,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 30.3,
+      "sha256": "e2f3726c920e",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 60,
+          "name": "ベロータ",
+          "controlled": true,
+          "note": "操作・胴体"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "034",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-34_MG_emma_controlled-body.mp4",
+      "original": "エマ操作胴体狙い.mp4",
+      "durationSec": 44.4,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 36.5,
+      "sha256": "2d84e8ee69f6",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 90,
+          "name": "エマ",
+          "controlled": true,
+          "note": "操作・胴体"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "035",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-35_MG+AR_emma+idoll-sun_emma-ai.mp4",
+      "original": "エマ別キャラ操作.mp4",
+      "durationSec": 52.1,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 53.4,
+      "sha256": "d26ae5e4235a",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 90,
+          "name": "エマ",
+          "controlled": false,
+          "note": "AI"
+        },
+        {
+          "slot": 2,
+          "rid": 308,
+          "name": "I-DOLL・サン",
+          "controlled": true,
+          "note": "操作・撃たない"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定）"
+    },
+    {
+      "id": "036",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-36_SG_drake_treasure.mp4",
+      "original": "2026-09-23_15-57-52.mp4",
+      "durationSec": 81.9,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 88.8,
+      "sha256": "31f4fe03651a",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 101,
+          "name": "ドレイク",
+          "controlled": true,
+          "note": "操作・**宝物あり**",
+          "treasurePhase": 3
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱・3 分モード・スペック固定）"
+    },
+    {
+      "id": "037",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-37_SR+SR+SG_ram+delta+drake_treasure.mp4",
+      "original": "2026-09-23_16-07-04.mp4",
+      "durationSec": 115.0,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 118.3,
+      "sha256": "0426cc7b6b9c",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 822,
+          "name": "ラム",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 101,
+          "name": "ドレイク",
+          "controlled": true,
+          "note": "操作・**宝物あり**",
+          "treasurePhase": 3
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱・3 分モード・スペック固定）"
+    },
+    {
+      "id": "038",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-38_SR+SR+SG_ram+delta+isabel.mp4",
+      "original": "2026-09-23_16-10-06.mp4",
+      "durationSec": 208.5,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 309.3,
+      "sha256": "fe258a7de2c1",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 822,
+          "name": "ラム",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 231,
+          "name": "イサベル",
+          "controlled": true,
+          "note": "操作"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱・3 分モード・スペック固定）"
+    },
+    {
+      "id": "039",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-39_SMG+SR+SG_liter+delta+drake_treasure.mp4",
+      "original": "2026-09-23_20-28-48.mp4",
+      "durationSec": 214.2,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 331.9,
+      "sha256": "051bdc1ef556",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 82,
+          "name": "リター",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 101,
+          "name": "ドレイク",
+          "controlled": true,
+          "note": "操作・**宝物あり**",
+          "treasurePhase": 3
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱・3 分モード・スペック固定）"
+    },
+    {
+      "id": "040",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-40_SR+RL+SR+SG_admi+yuni+ram+queen-makoto.mp4",
+      "original": "2026-09-23_20-33-50.mp4",
+      "durationSec": 206.6,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 343.6,
+      "sha256": "585d540b8ad3",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 172,
+          "name": "アドミ",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 160,
+          "name": "ユニ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 822,
+          "name": "ラム",
+          "controlled": true,
+          "note": "操作"
+        },
+        {
+          "slot": 4,
+          "rid": 870,
+          "name": "クイーン（真）",
+          "controlled": false
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱・3 分モード・スペック固定）"
+    },
+    {
+      "id": "041",
+      "date": "2026-09-23",
+      "folder": "range",
+      "file": "20260923-41_RL+MG+SR+AR_idoll-flower+crown+delta+rapi.mp4",
+      "original": "2026-09-23_22-29-15.mp4",
+      "durationSec": 209.6,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 388.4,
+      "sha256": "cc78efdee47c",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 304,
+          "name": "I-DOLL・フラワー",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 330,
+          "name": "クラウン",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": true,
+          "note": "操作"
+        },
+        {
+          "slot": 4,
+          "rid": 10,
+          "name": "ラピ",
+          "controlled": false
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+    },
+    {
+      "id": "042",
+      "date": "2026-09-24",
+      "folder": "range",
+      "file": "20260924-42_RL+SR+SR+AR_idoll-flower+admi+alice+idoll-sun.mp4",
+      "original": "2026-09-24_00-20-46.mp4",
+      "durationSec": 209.2,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 401.6,
+      "sha256": "4fcdc890a54e",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 304,
+          "name": "I-DOLL・フラワー",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 172,
+          "name": "アドミ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 191,
+          "name": "アリス",
+          "controlled": true,
+          "note": "操作"
+        },
+        {
+          "slot": 4,
+          "rid": 308,
+          "name": "I-DOLL・サン",
+          "controlled": false
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+    },
+    {
+      "id": "043",
+      "date": "2026-09-24",
+      "folder": "range",
+      "file": "20260924-43_RL+MG+SR+AR+SR_idoll-flower+crown+alice+mana+admi.mp4",
+      "original": "2026-09-24_00-25-30.mp4",
+      "durationSec": 208.9,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 527.7,
+      "sha256": "2c1abe6deb81",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 304,
+          "name": "I-DOLL・フラワー",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 330,
+          "name": "クラウン",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 191,
+          "name": "アリス",
+          "controlled": true,
+          "note": "操作"
+        },
+        {
+          "slot": 4,
+          "rid": 290,
+          "name": "マナ",
+          "controlled": false
+        },
+        {
+          "slot": 5,
+          "rid": 172,
+          "name": "アドミ",
+          "controlled": false
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+    },
+    {
+      "id": "044",
+      "date": "2026-09-24",
+      "folder": "range",
+      "file": "20260924-44_RL+SR+MG_idoll-flower+delta+modernia.mp4",
+      "original": "2026-09-24_01-36-57.mp4",
+      "durationSec": 206.8,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 358.1,
+      "sha256": "0462c527512c",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 304,
+          "name": "I-DOLL・フラワー",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 260,
+          "name": "モダニア",
+          "controlled": true,
+          "note": "操作"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+    },
+    {
+      "id": "045",
+      "date": "2026-09-24",
+      "folder": "range",
+      "file": "20260924-45_MG_modernia.mp4",
+      "original": "2026-09-24_01-42-39.mp4",
+      "durationSec": 200.5,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 241.6,
+      "sha256": "9b4724bf3bc8",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 260,
+          "name": "モダニア",
+          "controlled": true,
+          "note": "操作"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定。設計は 1 分だったが 3 分で撮った）"
+    },
+    {
+      "id": "046",
+      "date": "2026-09-24",
+      "folder": "range",
+      "file": "20260924-46_RL_scarlet-black-shadow.mp4",
+      "original": "2026-09-24_01-54-25.mp4",
+      "durationSec": 202.0,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 263.4,
+      "sha256": "e73b01d4504c",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 225,
+          "name": "紅蓮：ブラックシャドウ",
+          "controlled": true,
+          "note": "操作"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+    },
+    {
+      "id": "047",
+      "date": "2026-09-24",
+      "folder": "range",
+      "file": "20260924-47_SR+SR+RL_ram+delta+scarlet-black-shadow.mp4",
+      "original": "2026-09-24_01-59-02.mp4",
+      "durationSec": 205.1,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 379.8,
+      "sha256": "1dcadb3b8274",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 822,
+          "name": "ラム",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 225,
+          "name": "紅蓮：ブラックシャドウ",
+          "controlled": true,
+          "note": "操作"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": null
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": null,
+      "autoBurst": true,
+      "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+    },
+    {
+      "id": "048",
+      "date": "2026-09-24",
+      "folder": "range",
+      "file": "20260924-48_SMG+MG+SR+MG+RL_liter+crown+alice+modernia+scarlet-black-shadow_spec-off.mp4",
+      "original": "2026-09-24_23-06-15.mp4",
+      "durationSec": 210.5,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 606.0,
+      "sha256": "fd2dcd623b5c",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 82,
+          "name": "リター",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 330,
+          "name": "クラウン",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 191,
+          "name": "アリス",
+          "controlled": true,
+          "note": "操作"
+        },
+        {
+          "slot": 4,
+          "rid": 260,
+          "name": "モダニア",
+          "controlled": false
+        },
+        {
+          "slot": 5,
+          "rid": 225,
+          "name": "紅蓮：ブラックシャドウ",
+          "controlled": false
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・**スペック固定 OFF**。弱点は水冷で、編成に水冷はいない＝属性有利なし）"
+    },
+    {
+      "id": "049",
+      "date": "2026-09-24",
+      "folder": "range",
+      "file": "20260924-49_SMG+MG+SR+MG+RL_liter+crown+alice+modernia+scarlet-black-shadow_spec-off.mp4",
+      "original": "2026-09-24_23-13-18.mp4",
+      "durationSec": 209.4,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 600.6,
+      "sha256": "d1e57abfd449",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 82,
+          "name": "リター",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 330,
+          "name": "クラウン",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 191,
+          "name": "アリス",
+          "controlled": true,
+          "note": "操作"
+        },
+        {
+          "slot": 4,
+          "rid": 260,
+          "name": "モダニア",
+          "controlled": false
+        },
+        {
+          "slot": 5,
+          "rid": 225,
+          "name": "紅蓮：ブラックシャドウ",
+          "controlled": false
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・**スペック固定 OFF**。弱点は水冷で、編成に水冷はいない＝属性有利なし）"
+    },
+    {
+      "id": "050",
+      "date": "2026-09-24",
+      "folder": "range",
+      "file": "20260924-50_SMG+MG+SR+MG+RL_liter+crown+alice+modernia+scarlet-black-shadow_spec-off.mp4",
+      "original": "2026-09-24_23-16-54.mp4",
+      "durationSec": 207.0,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 594.0,
+      "sha256": "1e1fb5457ad2",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 82,
+          "name": "リター",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 330,
+          "name": "クラウン",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 191,
+          "name": "アリス",
+          "controlled": true,
+          "note": "操作"
+        },
+        {
+          "slot": 4,
+          "rid": 260,
+          "name": "モダニア",
+          "controlled": false
+        },
+        {
+          "slot": 5,
+          "rid": 225,
+          "name": "紅蓮：ブラックシャドウ",
+          "controlled": false
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・**スペック固定 OFF**。弱点は水冷で、編成に水冷はいない＝属性有利なし）"
+    },
+    {
+      "id": "051",
+      "date": "2026-09-25",
+      "folder": "interception",
+      "file": "20260925-51_special_talkative_liter+crown+alice+modernia+scarlet-black-shadow.mp4",
+      "original": "2026-09-25_22-19-37.mp4",
+      "durationSec": 47.0,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 101.7,
+      "sha256": "f265982c949e",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 82,
+          "name": "リター",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 330,
+          "name": "クラウン",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 191,
+          "name": "アリス",
+          "controlled": true,
+          "note": "操作"
+        },
+        {
+          "slot": 4,
+          "rid": 260,
+          "name": "モダニア",
+          "controlled": false
+        },
+        {
+          "slot": 5,
+          "rid": 225,
+          "name": "紅蓮：ブラックシャドウ",
+          "controlled": false
+        }
+      ],
+      "target": {
+        "name": "トーカティブ",
+        "element": null,
+        "level": 200
+      },
+      "mode": "interception-special",
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "特殊個体：トーカティブ（**Lv.200 固定**。弱点は水冷で、編成に水冷はいない＝属性有利なし）"
+    },
+    {
+      "id": "052",
+      "date": "2026-09-25",
+      "folder": "interception",
+      "file": "20260925-52_special_talkative_liter+crown+alice+modernia+scarlet-black-shadow.mp4",
+      "original": "2026-09-25_22-21-14.mp4",
+      "durationSec": 49.8,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 96.4,
+      "sha256": "221f7edae35a",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 82,
+          "name": "リター",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 330,
+          "name": "クラウン",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 191,
+          "name": "アリス",
+          "controlled": true,
+          "note": "操作"
+        },
+        {
+          "slot": 4,
+          "rid": 260,
+          "name": "モダニア",
+          "controlled": false
+        },
+        {
+          "slot": 5,
+          "rid": 225,
+          "name": "紅蓮：ブラックシャドウ",
+          "controlled": false
+        }
+      ],
+      "target": {
+        "name": "トーカティブ",
+        "element": null,
+        "level": 200
+      },
+      "mode": "interception-special",
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "特殊個体：トーカティブ（**Lv.200 固定**。弱点は水冷で、編成に水冷はいない＝属性有利なし）"
+    },
+    {
+      "id": "053",
+      "date": "2026-09-25",
+      "folder": "interception",
+      "file": "20260925-53_special_talkative_liter+crown+alice+modernia+scarlet-black-shadow.mp4",
+      "original": "2026-09-25_22-22-08.mp4",
+      "durationSec": 46.5,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 99.9,
+      "sha256": "54448f832562",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 82,
+          "name": "リター",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 330,
+          "name": "クラウン",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 191,
+          "name": "アリス",
+          "controlled": true,
+          "note": "操作"
+        },
+        {
+          "slot": 4,
+          "rid": 260,
+          "name": "モダニア",
+          "controlled": false
+        },
+        {
+          "slot": 5,
+          "rid": 225,
+          "name": "紅蓮：ブラックシャドウ",
+          "controlled": false
+        }
+      ],
+      "target": {
+        "name": "トーカティブ",
+        "element": null,
+        "level": 200
+      },
+      "mode": "interception-special",
+      "fixedSpec": null,
+      "autoFire": null,
+      "autoBurst": null,
+      "conditionNote": "特殊個体：トーカティブ（**Lv.200 固定**。弱点は水冷で、編成に水冷はいない＝属性有利なし）"
+    },
+    {
+      "id": "054",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-54_SMG_liter_auto.mp4",
+      "original": "2026-09-26_02-49-40.mp4",
+      "durationSec": 199.9,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 251.3,
+      "sha256": "a021412c188e",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 82,
+          "name": "リター",
+          "controlled": true,
+          "note": "単騎・AUTO"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": true,
+      "autoBurst": false,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定。単騎なので操作キャラだが **AUTO 射撃 ON**・自動バースト OFF）"
+    },
+    {
+      "id": "055",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-55_RL_scarlet-black-shadow_auto.mp4",
+      "original": "2026-09-26_02-53-12.mp4",
+      "durationSec": 199.9,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 262.1,
+      "sha256": "a40a6678a1a8",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 225,
+          "name": "紅蓮：ブラックシャドウ",
+          "controlled": true,
+          "note": "単騎・AUTO"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": true,
+      "autoBurst": false,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定。単騎なので操作キャラだが **AUTO 射撃 ON**・自動バースト OFF）"
+    },
+    {
+      "id": "056",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-56_MG_crown_auto.mp4",
+      "original": "2026-09-26_02-57-16.mp4",
+      "durationSec": 202.1,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 264.2,
+      "sha256": "facca759a48b",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 330,
+          "name": "クラウン",
+          "controlled": true,
+          "note": "単騎・AUTO"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": true,
+      "autoBurst": false,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定。単騎なので操作キャラだが **AUTO 射撃 ON**・自動バースト OFF）"
+    },
+    {
+      "id": "057",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-57_AR_kurumi_cube-assault7_fixed-off.mp4",
+      "original": "2026-09-26_12-34-27.mp4",
+      "durationSec": 380.2,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 268.4,
+      "sha256": "3d6ae232cec4",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": true,
+          "note": "単騎・AUTO、アサルトキューブ Lv7 **あり**",
+          "cube": "assault-7"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・**AUTO 射撃 ON**）"
+    },
+    {
+      "id": "058",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-58_AR_kurumi_fixed-off.mp4",
+      "original": "2026-09-26_12-51-12.mp4",
+      "durationSec": 213.3,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 263.2,
+      "sha256": "4cef78974c76",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": true,
+          "note": "単騎・AUTO、キューブ**なし**"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・**AUTO 射撃 ON**）"
+    },
+    {
+      "id": "059",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-59_AR_kurumi_fixed-off.mp4",
+      "original": "2026-09-26_12-55-54.mp4",
+      "durationSec": 197.5,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 246.8,
+      "sha256": "048654f4307d",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": true,
+          "note": "単騎・AUTO、キューブ**なし**"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・**AUTO 射撃 ON**）"
+    },
+    {
+      "id": "060",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-60_AR_kurumi_fixed-off.mp4",
+      "original": "2026-09-26_12-59-16.mp4",
+      "durationSec": 198.3,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 260.6,
+      "sha256": "ac25cf417c40",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": true,
+          "note": "単騎・AUTO、キューブ**なし**"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・**AUTO 射撃 ON**）"
+    },
+    {
+      "id": "061",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-61_AR_kurumi_cube-assault7_fixed-off.mp4",
+      "original": "2026-09-26_13-02-49.mp4",
+      "durationSec": 199.7,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 244.2,
+      "sha256": "765dccf9529f",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": true,
+          "note": "単騎・AUTO、アサルトキューブ Lv7 **あり**",
+          "cube": "assault-7"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・**AUTO 射撃 ON**）"
+    },
+    {
+      "id": "062",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-62_AR_kurumi_cube-assault7_fixed-off.mp4",
+      "original": "2026-09-26_13-06-48.mp4",
+      "durationSec": 201.6,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 258.2,
+      "sha256": "d4195369e0d9",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 862,
+          "name": "クルミ",
+          "controlled": true,
+          "note": "単騎・AUTO、アサルトキューブ Lv7 **あり**",
+          "cube": "assault-7"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": false,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・**AUTO 射撃 ON**）"
+    },
+    {
+      "id": "063",
+      "date": "2026-09-26",
+      "folder": "range",
+      "file": "20260926-63_RL+SR+AR_idoll-flower+delta+asuka.mp4",
+      "original": "2026-09-26_13-48-27.mp4",
+      "durationSec": 202.0,
+      "frames": null,
+      "fps": 60.0,
+      "sizeMB": 349.1,
+      "sha256": "122c6f2204ad",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 304,
+          "name": "I-DOLL・フラワー",
+          "controlled": false
+        },
+        {
+          "slot": 2,
+          "rid": 20,
+          "name": "デルタ",
+          "controlled": false
+        },
+        {
+          "slot": 3,
+          "rid": 830,
+          "name": "アスカ",
+          "controlled": true,
+          "note": "アスカを操作・AUTO 射撃 ON・自動バースト ON"
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": true,
+      "autoBurst": true,
+      "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）"
+    },
+    {
+      "id": "L-AD",
+      "legacy": true,
+      "path": "E:/record/nikke/動画/命中率/nikke 2026.08.29 - 20.04.31.10.mp4",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 270,
+          "name": "ブラン",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "射撃場・3 分モード・スペック固定 ON・灼熱の的・単騎・完全放置（AUTO）。"
+    },
+    {
+      "id": "L-AI",
+      "legacy": true,
+      "path": "E:/record/nikke/動画/命中率/nikke 2026.08.29 - 21.09.12.15.mp4",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 331,
+          "name": "チャイム",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "射撃場・3 分モード・スペック固定 ON・灼熱の的・単騎・完全放置（AUTO）。"
+    },
+    {
+      "id": "L-AN",
+      "legacy": true,
+      "path": "E:/record/nikke/動画/命中率/nikke 2026.08.29 - 22.35.28.20.mp4",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 500,
+          "name": "エレグ",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "射撃場・3 分モード・スペック固定 ON・灼熱の的・単騎・完全放置（AUTO）。"
+    },
+    {
+      "id": "L-S",
+      "legacy": true,
+      "path": "E:/record/nikke/動画/命中率/nikke 2026.08.28 - 20.04.00.25.mp4",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 271,
+          "name": "ノワール",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "射撃場・3 分モード・スペック固定 ON・灼熱の的・単騎・完全放置（AUTO）。"
+    },
+    {
+      "id": "L-HC",
+      "legacy": true,
+      "path": "E:/record/nikke/動画/nikke 2026.09.12 - 20.07.13.17.mp4",
+      "team": [
+        {
+          "slot": 1,
+          "rid": 302,
+          "name": "プロダクト08",
+          "controlled": true
+        }
+      ],
+      "target": {
+        "name": "BigArms",
+        "element": "Fire"
+      },
+      "mode": "range-3min",
+      "fixedSpec": true,
+      "autoFire": true,
+      "autoBurst": null,
+      "conditionNote": "射撃場・3 分モード・スペック固定 ON・灼熱の的・単騎・完全放置（AUTO）。"
+    }
+  ]
+}
