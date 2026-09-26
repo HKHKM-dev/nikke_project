@@ -9,10 +9,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# 書き込みの権限は配信（deploy）のジョブだけに渡す
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -24,8 +23,10 @@ jobs:
     env:
       BASE_PATH: /${{ github.event.repository.name }}/
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -34,7 +35,7 @@ jobs:
         env:
           VITE_BASE_PATH: ${{ env.BASE_PATH }}
       - run: node apps/web/scripts/check-pages-build.ts apps/web/dist "$BASE_PATH"
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: apps/web/dist
 
@@ -42,9 +43,12 @@ jobs:
     needs: build
     if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
