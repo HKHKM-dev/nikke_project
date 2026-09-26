@@ -33,7 +33,7 @@
     "source": "verification.md Stage 16-B「合計の照合」",
     "method": {
       "tool": "probe-result.ts",
-      "note": "戦闘履歴のパネルの与ダメージ"
+      "note": "戦闘履歴のパネルの与ダメージ。hud.ts --mode final の HUD の最終値も同じ（2026-09-26）"
     },
     "compare": {
       "model": "sim",

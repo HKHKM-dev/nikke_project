@@ -49,5 +49,18 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "047-03",
+    "recording": "047",
+    "kind": "total",
+    "use": "record",
+    "value": 335071381,
+    "description": "編成の与ダメージの合計（HUD の最終値。戦闘履歴のラム 25,604,085 + デルタ 24,740,342 + 紅蓮BS 284,726,954 と一致）",
+    "source": "verification.md Stage 19-D",
+    "method": {
+      "tool": "hud.ts",
+      "note": "--mode final"
+    }
   }
 ]

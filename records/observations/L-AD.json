@@ -1,0 +1,15 @@
+[
+  {
+    "id": "L-AD-01",
+    "recording": "L-AD",
+    "kind": "total",
+    "use": "record",
+    "value": 24987160,
+    "description": "ブラン（AR）の与ダメージ（単騎・180 秒。HUD の最終値が旧の戦闘結果と一致）",
+    "source": "captures/index.md「用途と証拠」（旧の戦闘結果）・verification.md Stage 18-A・Stage 19-D",
+    "method": {
+      "tool": "hud.ts",
+      "note": "--mode final"
+    }
+  }
+]

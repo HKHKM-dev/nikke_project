@@ -8,7 +8,8 @@
     "description": "マナの通常攻撃 1 ヒット（胴体・距離あり）",
     "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
     "method": {
-      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+      "tool": "hud.ts",
+      "note": "--mode jumps の増分（2026-09-26 に読み直し、4 種類とも一致。ほかの値は出ない）。当初は HUD の差分と的の上の数値で読んだ"
     },
     "compare": {
       "model": "sim",
@@ -38,7 +39,8 @@
     "description": "マナの通常攻撃 1 ヒット（会心・距離あり）",
     "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
     "method": {
-      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+      "tool": "hud.ts",
+      "note": "--mode jumps の増分（2026-09-26 に読み直し、4 種類とも一致。ほかの値は出ない）。当初は HUD の差分と的の上の数値で読んだ"
     },
     "compare": {
       "model": "sim",
@@ -68,7 +70,8 @@
     "description": "マナの通常攻撃 1 ヒット（コア・距離あり）",
     "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
     "method": {
-      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+      "tool": "hud.ts",
+      "note": "--mode jumps の増分（2026-09-26 に読み直し、4 種類とも一致。ほかの値は出ない）。当初は HUD の差分と的の上の数値で読んだ"
     },
     "compare": {
       "model": "sim",
@@ -98,7 +101,8 @@
     "description": "マナの通常攻撃 1 ヒット（コア会心・距離あり）",
     "source": "verification.md Stage 4「射撃場の実測（スペック固定・1 ヒット）」",
     "method": {
-      "note": "HUD の総ダメージのフレーム間差分と的の上の数値"
+      "tool": "hud.ts",
+      "note": "--mode jumps の増分（2026-09-26 に読み直し、4 種類とも一致。ほかの値は出ない）。当初は HUD の差分と的の上の数値で読んだ"
     },
     "compare": {
       "model": "sim",

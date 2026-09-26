@@ -51,7 +51,7 @@
 - 録画は AV1・VFR。`fps=1/10,tile` の一覧に `%{pts}` で焼いた時刻はずれるので、時刻の判断に使わない。
 - ffmpeg の drawtext は fontconfig が無いと落ちるので、`fontfile='C:/Windows/Fonts/arial.ttf'` を明示する。コンタクトシートは crop → drawtext(`%{n}`) → select → tile の順で元のフレーム番号を焼き込む。
 - robocopy は Git Bash から実行しない（index.md「バックアップ」）。
-- HUD の総ダメージの全フレーム OCR はまだツール化していない（使い捨てのスクリプト）。やり方は verification.md「録画 45」。
+- HUD の総ダメージの全フレーム OCR は `node tools/captures/hud.ts <動画> --mode final|jumps|series`（Stage 19-D）。0 と 8 の読み違いは、総ダメージが減らないことを使って落とす（[index.md](index.md)「解析ツール」）。
 - 旧プロジェクトの録画（`E:/record/nikke/`）も同じ切り出し（`fps=60,crop=190:38:865:34`）で読める。持続ダメージなど 1 発の組み合わせで表せない固定値は、別の項目として分けて数える（verification.md「Stage 18-A」「Stage 18-B › 撮影 1」、index.md「旧プロジェクトの録画」）。
 
 ## データの取得
