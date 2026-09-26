@@ -5,6 +5,7 @@ import { parseEnemyPresets } from '../src/enemies.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
+import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
 import type { CharacterData } from '../src/types.ts';
 
@@ -18,6 +19,27 @@ export const RECORDINGS_DOC_PATH = `${ROOT}plan/captures/recordings.md`;
 export const RESIDUALS_PATH = `${ROOT}plan/residuals.md`;
 /** 結論の一覧（生成物。Stage 20-B） */
 export const CLAIMS_PATH = `${ROOT}plan/claims.md`;
+const VERIFICATIONS_DIR = `${ROOT}records/verifications/`;
+/** 検証記録の一覧（生成物。Stage 20-D） */
+export const VERIFICATIONS_PATH = `${ROOT}plan/verifications.md`;
+
+/** records/verifications/ の V- で始まる .md（ファイル名の形が違っても読み、問題として返す）。Stage 20-D */
+export function loadVerifications(): Verification[] {
+  return sortVerifications(
+    readdirSync(VERIFICATIONS_DIR)
+      .filter((name) => name.startsWith('V-') && name.endsWith('.md'))
+      .map((name) => parseVerification(name, readFileSync(`${VERIFICATIONS_DIR}${name}`, 'utf8'))),
+  );
+}
+
+/** 参照の検査の対象: plan/ と records/ の下の .md と、AGENTS.md（リポジトリの根からの相対パス）。Stage 20-D */
+export function documentPaths(): string[] {
+  const walk = (dir: string): string[] =>
+    readdirSync(`${ROOT}${dir}`, { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory() ? walk(`${dir}${e.name}/`) : e.name.endsWith('.md') ? [`${dir}${e.name}`] : [],
+    );
+  return [...walk('plan/'), ...walk('records/'), 'AGENTS.md'];
+}
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(path, 'utf8')) as T;

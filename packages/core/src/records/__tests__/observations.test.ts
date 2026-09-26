@@ -10,6 +10,7 @@ import {
   loadObservations,
   loadRecordingsFile,
   loadRecordsData,
+  loadVerifications,
   misplacedClaims,
   misplacedObservations,
   recordingMap,
@@ -35,6 +36,7 @@ import {
   type Observation,
 } from '../observations.ts';
 import { extractGeneratedSection, normalizeTable, type ProjectRecording } from '../recordings.ts';
+import { verificationsByClaim } from '../verifications.ts';
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
@@ -77,7 +79,8 @@ describe('records/claims・plan/claims.md', () => {
   });
 
   it('matches plan/claims.md (npm run records:check)', () => {
-    expect(readFileSync(CLAIMS_PATH, 'utf8')).toBe(renderClaims(claims));
+    // Stage 20-D: 検証記録の「結論」から逆に引いた結び付きも載る
+    expect(readFileSync(CLAIMS_PATH, 'utf8')).toBe(renderClaims(claims, verificationsByClaim(loadVerifications())));
   });
 
   it('ties every observation compared under manual conditions to a 確定 or 仮説 claim (Stage 20-A)', () => {
