@@ -12,18 +12,22 @@ NIKKE のダメージ計算ツール。
 
 ## 進め方
 
-- `roadmap.md`の各stage設計を行う際は`plan/design-stageN.md` を案として起こし、オーナーの承認を得る。
-- 承認を得たら設計書の状態を「承認済み」に書き換えてから実装に入る。完了したら `roadmap.md` の行を「完了（日付）」にし、確認の結果を `verification.md` に記録する。
-- 作業はブランチで行い、PR で main にマージする。
-- PR 前に CI と同じ確認を通す: `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`
+- `plan/roadmap.md` の各 Stage の設計は `plan/design-stageN.md` に案として起こし、オーナーの承認を得る。Stage を小段（18-A、18-C1 など）に分けるときは、同じ設計書に節を足す。
+- 承認を得たら設計書の状態を「承認済み」に書き換えてから実装に入る。
+- 完了したら、同じ PR で次を更新する:
+  - 設計書の状態と `plan/roadmap.md` の行を「完了（日付）」にする
+  - 確認の結果を `plan/verification.md` に記録する
+  - 結論が増えた・変わったら `plan/claims.md` を直す
+  - 録画の条件や観測値を変えたら、`npm run records:table`・`npm run records:check` で生成物（台帳の表・`plan/residuals.md`）を作り直す
+- 作業はブランチで行い、PR で main にマージする。PR は小段ごとに分ける。
 - PR を出す手順:
   1. `git fetch origin && git rebase origin/main`（main を取り込むときはマージではなくリベース）
-  2. 上の CI と同じ確認を通す
+  2. CI と同じ確認を通す: `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`
   3. `git push -u origin HEAD`（リベースで履歴を書き換えたときは `--force-with-lease`）
-  4. `gh pr create`
+  4. `gh pr create`（題名は `Stage 18-C2: ` のように Stage の番号か、`台帳: `・`AGENTS.md: ` のように対象の文書で始める）
   5. `gh pr merge --auto --squash`（作成直後に自動マージを予約する。マージ方式はスカッシュ）
-- 2026-09-26 にリポジトリを作り直した。文書やコミットの題名にある PR #1〜#37 は旧リポジトリ（非公開）の番号で、このリポジトリの PR とは別物。PR を参照するときは、番号だけでなく題名か日付も書く。
 - worktree では最初に `npm ci`。
+- 2026-09-26 にリポジトリを作り直した。文書やコミットの題名にある PR #1〜#37 は旧リポジトリ（非公開）の番号で、このリポジトリの PR とは別物。PR を参照するときは、番号だけでなく題名か日付も書く。
 
 ## 併用ルール（Claude Code / Antigravity）
 
