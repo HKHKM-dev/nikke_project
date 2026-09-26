@@ -11,7 +11,7 @@ Thumbs.db
 .claude/worktrees/
 .antigrav/worktrees/
 plan/.claude/
-# 録画の実体と証拠フレーム（スクリーンショット）は追跡しない。置き場所は E:/nikke_project_captures/。台帳と手引きだけ追跡する。
+# 録画の実体と証拠フレーム（スクリーンショット）は追跡しない。置き場所は E:/nikke_project_captures/。台帳・手引き・録画の一覧（生成）・切り出した記録だけ追跡する。
 plan/captures/*
 !plan/captures/index.md
 !plan/captures/guide.md
