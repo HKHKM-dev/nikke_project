@@ -42,7 +42,7 @@ NIKKE のダメージ計算ツール。
 ## コミットしないもの
 
 - `scratch/`（ユーザーの育成データを含む。公開リポジトリ）
-- 録画の実体。追跡するのは台帳と `plan/captures/frames/*.jpg` だけ（`.gitignore` 参照）
+- 録画の実体と証拠フレーム（スクリーンショット）。どちらも `E:/nikke_project_captures/` に置き、追跡するのは台帳と手引きだけ（`.gitignore` 参照）
 - `private/`（個人の情報。下記）
 
 ## 記録の置き場所

@@ -11,13 +11,10 @@ Thumbs.db
 .claude/worktrees/
 .antigrav/worktrees/
 plan/.claude/
-# 録画の実体（数百 MB・ゲーム映像）は追跡しない。台帳と証拠フレームだけ追跡する。
+# 録画の実体と証拠フレーム（スクリーンショット）は追跡しない。置き場所は E:/nikke_project_captures/。台帳と手引きだけ追跡する。
 plan/captures/*
 !plan/captures/index.md
 !plan/captures/guide.md
-!plan/captures/frames/
-plan/captures/frames/*
-!plan/captures/frames/*.jpg
 # 解析の中間生成物（切り出しフレーム・diff.ts の CSV）。結論は台帳と verification.md に残す。
 scratch/
 # 個人の情報（所持キャラ・宝物・育成状況・ローカルのパス）。AGENTS.md「記録の置き場所」。
