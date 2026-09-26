@@ -1,0 +1,11 @@
+{
+  "id": "C-0004",
+  "text": "モデルでは、バーストゲージの満タンを 1,000,000 とする（CDN の `target_burst_energy_pershot` と同じ単位にそろえる約束。観測できるのは C-0005 の比だけ）",
+  "state": "範囲外",
+  "topic": "バーストゲージ",
+  "grade": "推論",
+  "basis": "verification.md Stage 7",
+  "model": "`burst/controller.ts` の `BURST_GAUGE_MAX`",
+  "replaces": [],
+  "updated": "2026-09-27"
+}

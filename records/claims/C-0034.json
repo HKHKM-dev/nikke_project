@@ -1,0 +1,11 @@
+{
+  "id": "C-0034",
+  "text": "射撃場の的に対する AR・SMG・MG の距離帯ごとのコア命中率・弾丸命中率は、旧の単騎の表（Stage 18-A）のとおり",
+  "state": "確定",
+  "topic": "命中率・距離",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 18-A「距離帯ごとのコア命中率と弾丸命中率」（旧の録画 L-AD・L-AI・L-AN の読み直しと、録画 54・56・57〜62）",
+  "model": "`data/enemies.json` の `range-bigarms`（帯の値。中遠の 3 か所は同じ帯の値）",
+  "replaces": [],
+  "updated": "2026-09-26"
+}

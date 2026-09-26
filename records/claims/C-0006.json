@@ -1,0 +1,11 @@
+{
+  "id": "C-0006",
+  "text": "SG のゲージは全ペレット命中の 0.75 倍",
+  "state": "仮説",
+  "topic": "バーストゲージ",
+  "grade": "単独実測",
+  "basis": "verification.md Stage 7（録画 26・27）",
+  "model": "`burst/dynamic.ts` の `SG_PELLET_GAUGE_HIT_RATE` = 0.75",
+  "replaces": [],
+  "updated": "2026-09-27"
+}

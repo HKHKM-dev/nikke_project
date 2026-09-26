@@ -18,8 +18,8 @@ NIKKE のダメージ計算ツール。
 - 完了したら、同じ PR で次を更新する:
   - 設計書の状態と `plan/roadmap.md` の行を「完了（日付）」にする
   - 確認の結果を `plan/verification.md` に記録する
-  - 結論が増えた・変わったら `plan/claims.md` を直す
-  - 録画の条件や観測値を変えたら、`npm run records:table`・`npm run records:check` で生成物（台帳の表・`plan/residuals.md`）を作り直す
+  - 結論が増えた・変わったら `records/claims/C-NNNN.json` を足す・直す（`plan/claims.md` は生成物なので手で書かない）
+  - 録画の条件・観測値・結論を変えたら、`npm run records:table`・`npm run records:check` で生成物（台帳の表・`plan/residuals.md`・`plan/claims.md`）を作り直す
 - 作業はブランチで行い、PR で main にマージする。PR は小段ごとに分ける。
 - PR を出す手順:
   1. `git fetch origin && git rebase origin/main`（main を取り込むときはマージではなくリベース）
@@ -61,7 +61,7 @@ NIKKE のダメージ計算ツール。
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `AGENTS.md`                                          | 両エージェントが守る短い規則                                                                                                                                       |
 | `plan/roadmap.md`・設計書                            | 計画・決定・Stage の状況                                                                                                                                           |
-| `plan/claims.md`                                     | 結論の一覧（ID・状態・根拠の観測値・モデル側）。問いからいまの結論を引くところ                                                                                     |
+| `records/claims/`・`plan/claims.md`                  | 結論（1 件 1 ファイルの JSON。ID・状態・話題・根拠の等級・根拠・モデル側）と、話題ごとの一覧（生成）。問いからいまの結論を引くのは一覧                             |
 | `plan/verification.md`                               | 実測と確認の結果（根拠と数値）                                                                                                                                     |
 | `plan/captures/index.md`                             | 録画台帳・撮影プロトコル・キャラ同定・解析ツール                                                                                                                   |
 | `records/recordings.json`                            | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性。台帳の表はここから生成する（`npm run records:table`）                                              |

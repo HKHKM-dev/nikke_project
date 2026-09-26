@@ -1,0 +1,11 @@
+{
+  "id": "C-0021",
+  "text": "フルバースト補正は、倍率グループ（1 + コア + 会心 + 距離）に +0.5 を足す（別枠の乗算ではない）",
+  "state": "確定",
+  "topic": "1 発の式・バフの掛かり方",
+  "grade": "厳密一致",
+  "basis": "verification.md Stage 5「録画 15: フルバースト補正は加算だった」",
+  "model": "`damage.ts` の `FULL_BURST_BOOST` = 0.5",
+  "replaces": [],
+  "updated": "2026-09-22"
+}

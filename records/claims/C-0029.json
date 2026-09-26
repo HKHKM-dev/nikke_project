@@ -1,0 +1,11 @@
+{
+  "id": "C-0029",
+  "text": "射撃場のスペック固定ではキューブが反映されない（スペック固定 OFF では反映される）",
+  "state": "確定",
+  "topic": "敵・的・場面",
+  "grade": "厳密一致",
+  "basis": "verification.md Stage 18-B",
+  "model": "`records/recordings.json` でキューブを付けた録画は照合ランナーが組まない",
+  "replaces": [],
+  "updated": "2026-09-26"
+}

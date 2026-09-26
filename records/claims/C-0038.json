@@ -1,0 +1,11 @@
+{
+  "id": "C-0038",
+  "text": "照準円（照準の中心の半透明の円）の画面上の半径は、約 0.285 × CDN の `*_accuracy_circle_scale`（1920×1080）",
+  "state": "確定",
+  "topic": "命中率・距離",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 18-B2「照準円の画面上の大きさ」（録画 64・65。AR・SG・MG で 0.282〜0.287）",
+  "model": "—（データの `shot.accuracy` に生値を持つだけ）",
+  "replaces": [],
+  "updated": "2026-09-26"
+}

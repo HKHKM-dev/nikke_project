@@ -2,7 +2,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseEnemyPresets } from '../src/enemies.ts';
-import { parseClaims, type Claim } from '../src/records/claims.ts';
+import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
 import type { RecordingEntry, RecordingsFile } from '../src/records/recordings.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
@@ -11,8 +11,10 @@ import type { CharacterData } from '../src/types.ts';
 export const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 const DATA = `${ROOT}packages/core/data/`;
 const OBSERVATIONS_DIR = `${ROOT}records/observations/`;
+const CLAIMS_DIR = `${ROOT}records/claims/`;
 export const LEDGER_PATH = `${ROOT}plan/captures/index.md`;
 export const RESIDUALS_PATH = `${ROOT}plan/residuals.md`;
+/** 結論の一覧（生成物。Stage 20-B） */
 export const CLAIMS_PATH = `${ROOT}plan/claims.md`;
 
 function readJson<T>(path: string): T {
@@ -70,6 +72,19 @@ export function loadRecordsData(file: RecordingsFile): RecordsData {
   return { characters, skills, enemies: parseEnemyPresets(readJson<unknown>(`${DATA}enemies.json`)) };
 }
 
+function claimFileNames(): string[] {
+  return readdirSync(CLAIMS_DIR).filter((name) => name.endsWith('.json'));
+}
+
+/** records/claims/*.json（番号順）。Stage 20-B から 1 件 1 ファイル */
 export function loadClaims(): Claim[] {
-  return parseClaims(readFileSync(CLAIMS_PATH, 'utf8'));
+  return toClaims(claimFileNames().map((name) => readJson<ClaimFile>(`${CLAIMS_DIR}${name}`)));
+}
+
+/** ファイル名（拡張子なし）と、中の結論の id が一致しないもの */
+export function misplacedClaims(): string[] {
+  return claimFileNames()
+    .map((name) => ({ name, id: readJson<ClaimFile>(`${CLAIMS_DIR}${name}`).id }))
+    .filter(({ name, id }) => `${id}.json` !== name)
+    .map(({ name, id }) => `${id}: ${name} に置かれている`);
 }

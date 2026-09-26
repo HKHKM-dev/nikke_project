@@ -1,0 +1,11 @@
+{
+  "id": "C-0037",
+  "text": "命中率▲が 100% を超えると照準円が消え、コア命中率はどの距離帯でも 1 になる（ジャンプの着地直後の数発を除く）",
+  "state": "確定",
+  "topic": "命中率・距離",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 18-B「撮影 2」（録画 63）・Stage 18-B2「命中率▲で照準円は小さくなる」（録画 69）",
+  "model": "`frame/landing.ts` の `coreHitRateWithHitRateUp`（N ≥ 1 で 1）",
+  "replaces": [],
+  "updated": "2026-09-26"
+}

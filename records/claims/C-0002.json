@@ -1,0 +1,11 @@
+{
+  "id": "C-0002",
+  "text": "MG は装填完了から 1 発目まで 20f",
+  "state": "確定",
+  "topic": "射撃（間隔・リロード・チャージ）",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 2-B、録画 35・41 での MG の再確認",
+  "model": "`weapons.ts` の `spinUpFirstShotFrames` = 20",
+  "replaces": [],
+  "updated": "2026-09-24"
+}

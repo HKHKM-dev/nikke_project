@@ -1,0 +1,11 @@
+{
+  "id": "C-0039",
+  "text": "照準円は、撃たない間は CDN の `accuracy_change_speed`（毎秒）の速さで開始の大きさまで戻る",
+  "state": "確定",
+  "topic": "命中率・距離",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 18-B2「照準円の画面上の大きさ」（録画 65 の MG・150）・「撃つたびに縮む照準円: SG」（録画 66 のプリバティ・105）",
+  "model": "**未実装**",
+  "replaces": [],
+  "updated": "2026-09-26"
+}

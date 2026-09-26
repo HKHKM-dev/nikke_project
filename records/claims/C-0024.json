@@ -1,0 +1,11 @@
+{
+  "id": "C-0024",
+  "text": "バーストの段階が 1 つだけの単騎ではチェーンが組めず、フルバーストは起きない",
+  "state": "確定",
+  "topic": "バーストの段階とフルバースト",
+  "grade": "厳密一致",
+  "basis": "`046-01`、design-stage11-scarlet-bs.md 0 節",
+  "model": "`burst/dynamic.ts`",
+  "replaces": [],
+  "updated": "2026-09-24"
+}

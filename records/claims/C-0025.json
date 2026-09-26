@@ -1,0 +1,11 @@
+{
+  "id": "C-0025",
+  "text": "射撃場 3 分モードの的は、31 秒から 36.4 秒ごとに 2 秒ジャンプし、その間は撃てない（AUTO の射撃・オートバーストが止まる）",
+  "state": "確定",
+  "topic": "敵・的・場面",
+  "grade": "反復実測",
+  "basis": "`046-02`・`047-02`、verification.md Stage 16-B",
+  "model": "`data/enemies.json` の `range-3min-jump`",
+  "replaces": [],
+  "updated": "2026-09-26"
+}

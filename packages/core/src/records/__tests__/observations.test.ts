@@ -4,22 +4,28 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
+  CLAIMS_PATH,
   LEDGER_PATH,
   RESIDUALS_PATH,
   loadClaims,
   loadObservations,
   loadRecordingsFile,
   loadRecordsData,
+  misplacedClaims,
   misplacedObservations,
   recordingMap,
 } from '../../../scripts/records-data.ts';
 import {
+  CLAIM_TOPICS,
   claimsByObservation,
   gatedObservations,
   observationIdsIn,
-  parseClaims,
+  renderClaims,
   supportedObservations,
+  toClaims,
   validateClaims,
+  type Claim,
+  type ClaimFile,
 } from '../claims.ts';
 import {
   buildTeamInput,
@@ -68,10 +74,15 @@ describe('records/observations', () => {
   });
 });
 
-describe('plan/claims.md', () => {
-  it('passes validation', () => {
+describe('records/claims・plan/claims.md', () => {
+  it('passes validation and each file holds the claim of its name', () => {
     expect(claims.length).toBeGreaterThanOrEqual(30);
+    expect(misplacedClaims()).toEqual([]);
     expect(validateClaims(claims, new Set(observations.map((o) => o.id)))).toEqual([]);
+  });
+
+  it('matches plan/claims.md (npm run records:check)', () => {
+    expect(readFileSync(CLAIMS_PATH, 'utf8')).toBe(renderClaims(claims));
   });
 
   it('ties every observation compared under manual conditions to a 確定 or 仮説 claim (Stage 20-A)', () => {
@@ -92,7 +103,7 @@ describe('plan/claims.md', () => {
     for (const c of claims) for (const r of c.replaces) expect(byId.get(r)!.state).toBe('棄却');
   });
 
-  it('expands observation ranges and reads the table columns', () => {
+  it('expands observation ranges', () => {
     expect(observationIdsIn('`012-01`〜`012-04`・`014-01`、verification.md Stage 4')).toEqual([
       '012-01',
       '012-02',
@@ -109,40 +120,73 @@ describe('plan/claims.md', () => {
       '1000-01',
       'L-AD-01',
     ]);
-    const parsed = parseClaims(
-      [
-        '| ID | 結論 | 状態 | 根拠 | モデル側 | 置き換え | 更新日 |',
-        '| C-0001 | a | 確定 | `001-01` | x | C-0002 | d |',
-      ].join('\n'),
-    );
-    expect(parsed).toEqual([
-      { id: 'C-0001', text: 'a', state: '確定', observations: ['001-01'], replaces: ['C-0002'] },
-    ]);
+  });
+
+  it('reads the claim files in number order, taking the observations from the basis (Stage 20-B)', () => {
+    const file = (id: string, basis: string): ClaimFile => ({
+      id,
+      text: 't',
+      state: '確定',
+      topic: '射撃（間隔・リロード・チャージ）',
+      grade: '厳密一致',
+      basis,
+      model: 'm',
+      replaces: [],
+      updated: '2026-09-27',
+    });
+    const read = toClaims([file('C-10000', 'x'), file('C-0002', '`001-01`、verification.md'), file('C-0010', 'y')]);
+    expect(read.map((c) => c.id)).toEqual(['C-0002', 'C-0010', 'C-10000']);
+    expect(read[0]!.observations).toEqual(['001-01']);
   });
 
   it('reports broken claims', () => {
+    const claim = (patch: Partial<Claim> & { id: string }): Claim => ({
+      text: 'a',
+      state: '仮説',
+      topic: '射撃（間隔・リロード・チャージ）',
+      grade: '推論',
+      basis: 'b',
+      model: 'm',
+      replaces: [],
+      updated: '2026-09-27',
+      observations: [],
+      ...patch,
+    });
     const errors = validateClaims(
       [
-        { id: 'C-0001', text: 'a', state: '確定', observations: ['999-01'], replaces: ['C-0002'] },
-        { id: 'C-0003', text: '', state: '未定' as never, observations: [], replaces: ['C-0009'] },
-        { id: 'C-0002', text: 'b', state: '確定', observations: [], replaces: [] },
-        { id: 'C-0003', text: 'c', state: '仮説', observations: [], replaces: [] },
-        { id: 'C-12', text: 'd', state: '仮説', observations: [], replaces: [] },
-        { id: 'C-10000', text: 'e', state: '仮説', observations: [], replaces: [] },
+        claim({ id: 'C-0001', state: '確定', observations: ['999-01'], replaces: ['C-0002'] }),
+        claim({ id: 'C-0002', state: '確定' }),
+        claim({ id: 'C-0003', text: '', state: '未定' as never, replaces: ['C-0009'] }),
+        claim({ id: 'C-0003' }),
+        claim({ id: 'C-12' }),
+        claim({ id: 'C-10000', topic: '未知' as never, grade: undefined, basis: ' ', updated: '9/27' }),
+        claim({ id: 'C-10001', state: '棄却', grade: undefined }),
       ],
       new Set(),
     );
-    // 番号の抜け（C-0001 → C-0003）と 5 桁（C-10000）は許す。落とすのは逆順・重複・形の誤り
+    // 番号の抜け（C-0003 → C-10000）と 5 桁は許す。棄却の結論は等級を省ける
     expect(errors).toEqual([
       'C-0001: 観測値 999-01 が無い',
       'C-0001: 置き換えた結論 C-0002 の状態が棄却でない（確定）',
       'C-0003: 状態が語彙に無い: 未定',
       'C-0003: 結論が空',
       'C-0003: 置き換えた結論 C-0009 が無い',
-      'C-0002: ID は番号順に並べる（前は C-0003）',
       'C-0003: ID が重複している',
       'C-12: ID は C-<4 桁以上の数字>',
+      'C-10000: 話題が語彙に無い: 未知',
+      'C-10000: 根拠の等級が無い（省けるのは棄却だけ）',
+      'C-10000: 根拠が空',
+      'C-10000: 更新日は YYYY-MM-DD',
     ]);
+  });
+
+  it('renders claims.md by topic, with the reverse of the replacements', () => {
+    const doc = renderClaims(claims);
+    const topics = [...doc.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
+    expect(topics).toEqual(CLAIM_TOPICS.filter((t) => claims.some((c) => c.topic === t)));
+    for (const c of claims) expect(doc).toContain(`- **${c.id}** ${c.text}`);
+    for (const c of claims.filter((x) => x.replaces.length > 0))
+      for (const r of c.replaces) expect(doc).toMatch(new RegExp(`\\*\\*${r}\\*\\*[^]*?置き換えた結論: ${c.id}`));
   });
 });
 

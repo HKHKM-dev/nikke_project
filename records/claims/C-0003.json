@@ -1,0 +1,11 @@
+{
+  "id": "C-0003",
+  "text": "MG のスピンアップは、CDN の値のままのレート蓄積で合う（描画が軽い場面。重い場面の描画落ちは範囲外）",
+  "state": "確定",
+  "topic": "射撃（間隔・リロード・チャージ）",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 2-B、録画 35・41 での MG の再確認",
+  "model": "`cadence.ts` のレート蓄積",
+  "replaces": [],
+  "updated": "2026-09-24"
+}

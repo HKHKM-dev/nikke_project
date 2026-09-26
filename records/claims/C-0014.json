@@ -1,0 +1,11 @@
+{
+  "id": "C-0014",
+  "text": "紅蓮：ブラックシャドウの射撃は、チャージ + 3f・リロード + 9f（間隔 43f、リロードをまたいで 172f）",
+  "state": "確定",
+  "topic": "射撃（間隔・リロード・チャージ）",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 11 紅蓮：ブラックシャドウ（録画 46・47）",
+  "model": "`sim/firing.ts` の `MEASURED_CHARGE_CADENCE`",
+  "replaces": [],
+  "updated": "2026-09-24"
+}

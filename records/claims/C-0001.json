@@ -1,0 +1,11 @@
+{
+  "id": "C-0001",
+  "text": "SR・RL はチャージ完了から発射まで一律 22f 遅れる",
+  "state": "確定",
+  "topic": "射撃（間隔・リロード・チャージ）",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 2-B（SR デルタ・RL フラワー、ベロータの録画）",
+  "model": "`weapons.ts` の `chargeReleaseFrames` = 22",
+  "replaces": [],
+  "updated": "2026-09-22"
+}

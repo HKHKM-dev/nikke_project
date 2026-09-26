@@ -1,0 +1,11 @@
+{
+  "id": "C-0026",
+  "text": "距離ボーナスは、射撃場の初期位置では AR・SMG だけに乗る（3 分モードではジャンプの着地点で区間ごとに変わる）",
+  "state": "確定",
+  "topic": "敵・的・場面",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 2-A「属性ボーナス・距離ボーナスの見落とし」・Stage 17",
+  "model": "`frame/landing.ts`（着地点 × `bonusRange`。条件が自動の枠。18-C2 から画面・CLI の既定）",
+  "replaces": [],
+  "updated": "2026-09-26"
+}

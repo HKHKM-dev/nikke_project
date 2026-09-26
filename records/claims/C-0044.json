@@ -1,0 +1,11 @@
+{
+  "id": "C-0044",
+  "text": "射撃場 3 分モードの中遠の着地点は 3 か所あり（足元の y 584・571・561）、足元 584 の着地点だけが 35 未満（SMG に距離ボーナスが乗り、MG に乗らない）",
+  "state": "確定",
+  "topic": "敵・的・場面",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 18-B2「実距離への換算」（録画 54・56・57〜62・旧 L-AI・L-AN の 10 回。35 未満は 3 回）",
+  "model": "`data/enemies.json` の `range-bigarms`（中遠 A・B・C を 0.3 : 0.3 : 0.4 で配分）",
+  "replaces": [],
+  "updated": "2026-09-26"
+}
