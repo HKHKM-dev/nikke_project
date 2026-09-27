@@ -58,14 +58,13 @@
           "durationRef": 3
         },
         {
-          "kind": "lifesteal",
+          "kind": "heal",
           "trigger": "burstUse",
           "target": "self",
           "ref": 4,
-          "durationRef": 5,
           "assumes": {
-            "ja": "通常攻撃の命中ごとに回復が適用される（HP が満タンでも）",
-            "en": "Each normal-attack hit applies a heal (even at full HP)"
+            "ja": "吸収回復（10 秒間維持）は、付いた時の 1 回の回復として扱う（命中ごとの回復では S1 は延びない。V-0022）",
+            "en": "The lifesteal (10 s) counts as one heal when it is applied (hits during it do not extend S1; V-0022)"
           }
         },
         {

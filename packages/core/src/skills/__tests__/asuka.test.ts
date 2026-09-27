@@ -1,12 +1,10 @@
-// アスカ（830）: 属性で絞る対象（targetElement）と吸収回復（lifesteal）の DSL・解決・回復のフレーム（plan/design-asuka.md 2 節）。
+// アスカ（830）: 属性で絞る対象（targetElement）の DSL・解決・対象の判定と、バーストの吸収回復の書き方（plan/design-asuka.md 2 節・経過）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
-import { lifestealHealFrames } from '../heals.ts';
-import { MAX_SKILL_LEVELS, resolveLifesteal, resolveTimed } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
 import { canEverTarget, isEffectTarget } from '../targets.ts';
 import { parseSkillDefinition } from '../types.ts';
-import { gameSecondsToFrames } from '../../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -22,7 +20,6 @@ function withEffects(slot: 'skill1' | 'skill2' | 'burst', effects: unknown[]): u
   return copy;
 }
 
-const LIFESTEAL = { kind: 'lifesteal', trigger: 'burstUse', target: 'self', ref: 4, durationRef: 5 };
 const CORE_FIRE = {
   kind: 'timed',
   trigger: 'fullBurstStart',
@@ -64,33 +61,12 @@ describe('targetElement（2.2 節）', () => {
   });
 });
 
-describe('lifesteal（2.1 節）', () => {
-  it('resolves the heal ratio and the duration', () => {
+describe('バーストの吸収回復（V-0022 の後）', () => {
+  it('is one heal on the burst use, not a heal on every hit', () => {
     const def = parseSkillDefinition(raw830);
-    const [lifesteal] = resolveLifesteal(def, asuka, MAX_SKILL_LEVELS);
-    expect(lifesteal).toMatchObject({ kind: 'lifesteal', trigger: 'burstUse', target: 'self' });
-    expect(lifesteal!.value).toBeCloseTo(0.0316, 10);
-    expect(lifesteal!.durationFrames).toBe(gameSecondsToFrames(10));
-  });
-
-  it('rejects the healed trigger, the topAttack target, a missing duration and unknown fields', () => {
-    const parse = (e: object) => () => parseSkillDefinition(withEffects('burst', [e]));
-    expect(parse({ ...LIFESTEAL, trigger: 'healed' })).toThrow(/lifesteal cannot be triggered by "healed"/);
-    expect(parse({ ...LIFESTEAL, target: 'topAttack', targetCount: 2 })).toThrow(/unknown field|cannot target/);
-    expect(parse({ ...LIFESTEAL, target: 'topAttack' })).toThrow(/lifesteal cannot target "topAttack"/);
-    const { durationRef: _omit, ...noDuration } = LIFESTEAL;
-    expect(parse(noDuration)).toThrow(/exactly one of durationRef and durationSeconds/);
-    expect(parse({ ...LIFESTEAL, stat: 'attack' })).toThrow(/stat: unknown field/);
-  });
-
-  it('heals on the frame after each shot inside the windows, not after the window or past the battle', () => {
-    // 窓 [10, 20)・[30, 35)。19 は窓の中、20・35 は外。39 の次は 40 = frames なので捨てる
-    const windows: [number, number][] = [
-      [10, 20],
-      [30, 35],
-    ];
-    expect(lifestealHealFrames([5, 10, 15, 19, 20, 29, 30, 34, 35], windows, 100)).toEqual([11, 16, 20, 31, 35]);
-    expect(lifestealHealFrames([30, 34], [[30, 40]], 35)).toEqual([31]);
-    expect(lifestealHealFrames([1, 2], [], 100)).toEqual([]);
+    const heals = resolveInstant(def, asuka, MAX_SKILL_LEVELS).filter((e) => e.kind === 'heal');
+    expect(heals).toHaveLength(1);
+    expect(heals[0]).toMatchObject({ kind: 'heal', trigger: 'burstUse', target: 'self' });
+    expect(heals[0]!.value).toBeCloseTo(0.0316, 10);
   });
 });

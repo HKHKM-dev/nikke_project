@@ -119,11 +119,7 @@ describe('data/skills', () => {
     it('timed effects reference a positive duration that does not change with the skill level', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
-          if (
-            (effect.kind !== 'timed' && effect.kind !== 'cycleEvery' && effect.kind !== 'lifesteal') ||
-            effect.durationRef === undefined
-          )
-            continue;
+          if ((effect.kind !== 'timed' && effect.kind !== 'cycleEvery') || effect.durationRef === undefined) continue;
           const seconds = Array.from({ length: SKILL_LEVEL_MAX }, (_, i) =>
             skillValue(character.skills[slot], effect.durationRef!, i + 1),
           );

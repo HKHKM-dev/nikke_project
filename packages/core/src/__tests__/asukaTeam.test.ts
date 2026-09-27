@@ -1,4 +1,5 @@
-// アスカ（830）を含む編成: 吸収回復で S1 が延びる窓・灼熱の味方だけのコアダメージ▲・sim と calc の整合（plan/design-asuka.md 5 節）。
+// アスカ（830）を含む編成: バーストの吸収回復で付く S1 の窓・灼熱の味方だけのコアダメージ▲・sim と calc の整合（plan/design-asuka.md 5 節）。
+// V-0022: 吸収回復は付いた時の 1 回の回復として扱う（命中ごとの回復では S1 は延びない）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -58,23 +59,16 @@ describe('録画 063 の編成の窓（4 節）', () => {
   const windowsOf = (slotIndex: number, stat: string) =>
     plan.timeline.windows.filter((w) => w.slotIndex === slotIndex && w.effect.stat === stat);
 
-  it('extends S1 until 25 s after the heal of the last shot in each lifesteal window', () => {
+  it('gives S1 for 25 s from each burst use (one heal on the burst, not on every hit)', () => {
     const activations = plan.schedule!.activations.filter((a) => a.slotIndex === ASUKA).map((a) => a.frame);
-    const shots = plan.shots[ASUKA]!.frames;
-    const window = gameSecondsToFrames(10);
     const s1 = gameSecondsToFrames(25);
-    const expected = activations.flatMap((a) => {
-      const inWindow = shots.filter((f) => a <= f && f < a + window);
-      if (inWindow.length === 0) return [];
-      return [{ start: inWindow[0]! + 1, end: Math.min(inWindow[inWindow.length - 1]! + 1 + s1, plan.frames) }];
-    });
+    const expected = activations.map((a) => ({ start: a, end: Math.min(a + s1, plan.frames) }));
     const s1Windows = windowsOf(ASUKA, 'attack').map((w) => ({ start: w.start, end: w.end }));
     expect(s1Windows).toEqual(expected);
-    // 次のバーストまで S1 が切れる（1 回の回復なら約 16 秒切れる。ここでは 10 秒未満）
+    // 次のバーストまで約 16 秒切れる（録画 063。V-0022）
     s1Windows.slice(0, -1).forEach((w, k) => {
       const gap = activations[k + 1]! - w.end;
-      expect(gap).toBeGreaterThan(0);
-      expect(gap).toBeLessThan(gameSecondsToFrames(10));
+      expect(gap).toBeGreaterThan(gameSecondsToFrames(10));
     });
   });
 
@@ -84,16 +78,16 @@ describe('録画 063 の編成の窓（4 節）', () => {
     expect(windowsOf(1, 'coreDamage')).toEqual([]);
   });
 
-  it('records lifesteal heals only for Asuka and keeps them out of the instants', () => {
+  it('heals Asuka once per burst use', () => {
+    const uses = plan.schedule!.activations.filter((a) => a.slotIndex === ASUKA).map((a) => a.frame);
     const heals = plan.timeline.heals;
-    expect(heals.length).toBeGreaterThan(100);
+    expect(heals.map((h) => h.frame)).toEqual(uses);
     expect(heals.every((h) => h.sourceSlotIndex === ASUKA && h.slotIndex === ASUKA)).toBe(true);
-    expect(plan.instants).toEqual([]);
   });
 });
 
-describe('1 パス目のループの回復（2.1 節の実装 2）', () => {
-  it('tracks the same S1 windows for the ranking as planBuffTimeline (lifesteal heals in the loop)', () => {
+describe('1 パス目のループの回復', () => {
+  it('tracks the same S1 windows for the ranking as planBuffTimeline (the burst heal in the loop)', () => {
     const plan = planTeamRun(PRACTICAL);
     const first = runFirstPass(toTimelineSlots(PRACTICAL.slots), {
       frames: plan.frames,

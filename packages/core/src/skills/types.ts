@@ -361,25 +361,6 @@ export type InstantKind = InstantEffect['kind'];
 export const INSTANT_KINDS = ['cooldownReduction', 'ammoRefill', 'heal'] as const satisfies readonly InstantKind[];
 
 /**
- * アスカ（plan/design-asuka.md 2.1 節）: 吸収回復（「攻撃ダメージの X% 回復」「Y 秒間維持」）。維持時間の窓のあいだ、対象の枠の
- * 通常攻撃が命中するたびに、その枠が回復を受ける（トリガー healed の出来事）。回復は命中の次のフレーム。回復量は表示用。
- * heal と同じ理由で、トリガーに healed、対象に topAttack は書けない
- */
-export type LifestealEffect = {
-  kind: 'lifesteal';
-  trigger: EffectTrigger;
-  target: BuffTarget;
-  targetWeapon?: WeaponType;
-  targetElement?: Element;
-  /** 回復量（攻撃ダメージに対する %）の description_value_NN（UI の表示用） */
-  ref: number;
-  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
-  durationRef?: number;
-  durationSeconds?: number;
-  assumes?: LocalizedText;
-};
-
-/**
  * Stage 11 モダニア: 「殲滅モード」「使用武器変更」。維持時間のあいだ、自分の通常攻撃を別の武器にする（対象は常に自分）。
  * 変更後の武器のレートは CharacterData.burstSkill.changeWeapon（CDN の skill_value_data）から取る。
  * CDN に無いパラメータ（コア倍率・スピンアップなど）は仮の定数（skills/resolve.ts の changedWeaponShot）
@@ -450,8 +431,7 @@ export type SkillEffect =
   | InstantEffect
   | WeaponChangeEffect
   | CycleEffect
-  | CycleEveryEffect
-  | LifestealEffect;
+  | CycleEveryEffect;
 
 export type SkillEntry = {
   /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
@@ -822,46 +802,6 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   return effect;
 }
 
-/** アスカ: 吸収回復（plan/design-asuka.md 2.1 節） */
-function parseLifestealEffect(v: Record<string, Json>, path: string): LifestealEffect {
-  for (const key of Object.keys(v)) {
-    if (
-      ![
-        'kind',
-        'trigger',
-        'target',
-        'targetWeapon',
-        'targetElement',
-        'ref',
-        'durationRef',
-        'durationSeconds',
-        'assumes',
-      ].includes(key)
-    ) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
-  // heal と同じ: 回復で回復を起こすと連鎖が閉じない。対象を順位で決めると、順位 → 回復 → healed の攻撃力 → 順位と循環する
-  if (trigger === 'healed') fail(`${path}.trigger`, 'lifesteal cannot be triggered by "healed"');
-  const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
-  validateBurstUsersTarget(target, trigger, path);
-  if (target === 'topAttack') fail(`${path}.target`, 'lifesteal cannot target "topAttack"');
-  const targetWeapon = parseTargetWeapon(v, target, path);
-  const targetElement = parseTargetElement(v, target, path);
-  const effect: LifestealEffect = {
-    kind: 'lifesteal',
-    trigger,
-    target,
-    ref: parseRef(v.ref, `${path}.ref`),
-    ...parseDuration(v, path),
-  };
-  if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
-  if (targetElement !== undefined) effect.targetElement = targetElement;
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
-  return effect;
-}
-
 function parseRef(v: Json, path: string): number {
   if (typeof v !== 'number' || !Number.isInteger(v) || v < 1) {
     fail(path, `expected a positive integer, got ${JSON.stringify(v)}`);
@@ -870,8 +810,8 @@ function parseRef(v: Json, path: string): number {
 }
 
 /**
- * passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange・cycle・cycleEvery・
- * lifesteal はどのスロットにも書ける
+ * passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange・cycle・cycleEvery は
+ * どのスロットにも書ける
  */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
@@ -892,10 +832,9 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (v.kind === 'weaponChange') return parseWeaponChangeEffect(v, path);
   if (v.kind === 'cycle') return parseCycleEffect(v, path);
   if (v.kind === 'cycleEvery') return parseCycleEveryEffect(v, path);
-  if (v.kind === 'lifesteal') return parseLifestealEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "weaponChange", "cycle", "cycleEvery" or "lifesteal", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "weaponChange", "cycle" or "cycleEvery", got ${JSON.stringify(v.kind)}`,
   );
 }
 
