@@ -40,7 +40,7 @@ import {
   type TeamInput,
   type TeamResult,
 } from '../team.ts';
-import { FPS } from '../weapons.ts';
+import { framesToGameSeconds } from '../time.ts';
 
 /**
  * Stage 10: 射撃の列 frames（昇順）のうち、区間の列 ranges（[start, end)、昇順・重なりなし）に入る発数。
@@ -152,7 +152,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
           state.buffs,
         );
         if (hit === null) break;
-        activations.push({ seconds: frame / FPS, hit });
+        activations.push({ seconds: framesToGameSeconds(frame), hit });
         burstDamage += hit.perActivation;
       }
     }
@@ -173,7 +173,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
     let skillHitDamage = 0;
     for (const h of skillHits) {
       if (h.slotIndex !== index) continue;
-      skillHitActivations.push({ seconds: h.frame / FPS, effect: h.effect, hit: h.hit });
+      skillHitActivations.push({ seconds: framesToGameSeconds(h.frame), effect: h.effect, hit: h.hit });
       skillHitDamage += h.hit.perActivation;
     }
 

@@ -14,7 +14,7 @@ import type { SkillDefinition, TimedEffect } from '../skills/types.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { BurstStep, ShotParams, SkillRaw } from '../types.ts';
-import { FPS } from '../weapons.ts';
+import { framesToGameSeconds } from '../time.ts';
 import { makeCharacter } from './fixtures.ts';
 
 /**
@@ -151,7 +151,7 @@ describe('sim vs calc: quantities that must match exactly', () => {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;
       expect(s.burst.hit).toEqual(c.burst.hit);
-      expect(s.burst.activations.map((f) => f / FPS)).toEqual(c.burst.activations.map((a) => a.seconds));
+      expect(s.burst.activations.map((f) => framesToGameSeconds(f))).toEqual(c.burst.activations.map((a) => a.seconds));
       expect(s.burst.damage).toBeCloseTo(c.burst.totalDamage, 6);
     }
     expect(calc.slots[0]?.burst.activations).toHaveLength(9);
@@ -286,7 +286,9 @@ describe('sim vs calc with timed buffs: quantities that must match exactly', () 
         expect(simSlot.segments[j]!.trigger.perTrigger).toBe(group.trigger.perTrigger);
         expect(simSlot.segments[j]!.buffs).toEqual(group.buffs);
       });
-      expect(simSlot.burst.activations.map((f) => f / FPS)).toEqual(c.burst.activations.map((a) => a.seconds));
+      expect(simSlot.burst.activations.map((f) => framesToGameSeconds(f))).toEqual(
+        c.burst.activations.map((a) => a.seconds),
+      );
       expect(simSlot.burst.damage).toBeCloseTo(c.burst.totalDamage, 6);
       if (c.burst.activations.length > 0) expect(simSlot.burst.hit).toEqual(c.burst.activations[0]!.hit);
     }
@@ -343,7 +345,9 @@ describe('sim vs calc on the dynamic cycle: quantities that must match exactly',
         const group = c.segments.find((g) => g.ranges.some((r) => r.start <= segment.start && segment.start < r.end))!;
         expect(simSlot.segments[j]!.trigger.perTrigger).toBe(group.trigger.perTrigger);
       });
-      expect(simSlot.burst.activations.map((f) => f / FPS)).toEqual(c.burst.activations.map((a) => a.seconds));
+      expect(simSlot.burst.activations.map((f) => framesToGameSeconds(f))).toEqual(
+        c.burst.activations.map((a) => a.seconds),
+      );
       expect(simSlot.burst.damage).toBeCloseTo(c.burst.totalDamage, 6);
     }
   });

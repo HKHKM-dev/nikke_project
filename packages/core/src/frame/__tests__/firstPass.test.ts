@@ -9,7 +9,8 @@ import {
   type BurstUnit,
 } from '../../burst/controller.ts';
 import { planDynamicSchedule } from '../../burst/dynamic.ts';
-import { durationToFrames, planFixedCycle } from '../../burst/fixedCycle.ts';
+import { planFixedCycle } from '../../burst/fixedCycle.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
 import { planBuffTimeline, resolvePassiveStates, type TimelineSlot } from '../../skills/timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
@@ -17,7 +18,7 @@ import type { CharacterData, ShotParams, SkillRaw } from '../../types.ts';
 import { runFirstPass } from '../firstPass.ts';
 import { planShots } from '../shots.ts';
 
-const FRAMES = durationToFrames(180);
+const FRAMES = gameSecondsToFrames(180);
 
 function load(id: number): CharacterData {
   return JSON.parse(

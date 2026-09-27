@@ -15,7 +15,7 @@ import { computeTeamDamage } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
-import { FPS } from '../weapons.ts';
+import { framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -70,7 +70,9 @@ describe('sim vs calc with Stage 8 definitions', () => {
     for (let i = 0; i < TEAM_IDS.length; i++) {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;
-      expect(s.skillHits.frames.map((f) => f / FPS)).toEqual(c.skillHits.activations.map((a) => a.seconds));
+      expect(s.skillHits.frames.map((f) => framesToGameSeconds(f))).toEqual(
+        c.skillHits.activations.map((a) => a.seconds),
+      );
       expect(s.skillHits.damage).toBeCloseTo(c.skillHits.totalDamage, 6);
     }
     // ドレイク（枠 3）は 10 回攻撃ごと: 撃った数 ÷ 10 回
@@ -102,7 +104,9 @@ describe('ドレイク: 10 回攻撃ごとの倍率ダメージ', () => {
   it('fires without bursts and counts across reloads (9-round magazine)', () => {
     const shots = planTeamRun({ slots: [drake], enemy, durationSeconds: 60 }).shots[0]!.frames;
     expect(drake.character.shot.maxAmmo).toBe(9);
-    expect(d.skillHits.activations.map((a) => a.seconds * FPS)).toEqual(shots.filter((_, k) => (k + 1) % 10 === 0));
+    expect(d.skillHits.activations.map((a) => gameSecondsToFrame(a.seconds))).toEqual(
+      shots.filter((_, k) => (k + 1) % 10 === 0),
+    );
   });
 
   it('uses the burstDamage formula: (attack − defence) × 98.55% × (1 + crit) × attack damage × element', () => {
@@ -123,7 +127,7 @@ describe('ドレイク: フルバースト中の倍率ダメージ（録画 37�
   const calc = computeTeamDamage(input);
   const drake = calc.slots[2]!;
   const windows = calc.schedule!.fullBurstWindows;
-  const inFb = (s: number) => windows.some((w) => w.start <= s * FPS && s * FPS < w.end);
+  const inFb = (s: number) => windows.some((w) => w.start <= gameSecondsToFrame(s) && gameSecondsToFrame(s) < w.end);
 
   it('adds +0.5 to the skill hits that land in a full burst, and only to those', () => {
     const hits = drake.skillHits.activations;
@@ -162,7 +166,7 @@ describe('イサベル: 使用回数別の段階とフルバースト 5 秒', ()
   it('stacks the lower tiers: crit rate from the 1st use, crit damage from the 2nd, attack from the 3rd', () => {
     const tiers = isabel.windows.map((w) => [w.effect.stat, w.start]);
     const firstOf = (stat: string) => Math.min(...tiers.filter(([s]) => s === stat).map(([, f]) => f as number));
-    const use = isabel.burst.activations.map((a) => Math.round(a.seconds * FPS));
+    const use = isabel.burst.activations.map((a) => gameSecondsToFrame(a.seconds));
     expect(firstOf('critRate')).toBe(use[0]);
     expect(firstOf('critDamage')).toBe(use[1]);
     expect(firstOf('attack')).toBe(use[2]);

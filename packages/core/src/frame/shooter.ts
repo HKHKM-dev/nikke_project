@@ -22,7 +22,13 @@
 //   攻撃できる敵がいないとハイドし、できればリロードする。窓の間に込め終われば満タンで、終わらなければ込め直しは無かったことになる。
 import { firstShotFrames, rateAfterShots } from '../cadence.ts';
 import type { ShotParams } from '../types.ts';
-import { DEFAULT_WEAPON_MODEL, FPS, MAX_RPM, isChargeWeapon, type WeaponModel } from '../weapons.ts';
+import {
+  DEFAULT_WEAPON_MODEL,
+  MAX_RPM,
+  WEAPON_FRAMES_PER_SECOND,
+  isChargeWeapon,
+  type WeaponModel,
+} from '../weapons.ts';
 import { firingParams, reloadChunkAmmo, type FiringParams } from './firing.ts';
 
 /**
@@ -252,7 +258,7 @@ export function unhideShooter(
     }
   }
   if (state.phase === 'reloading') return;
-  if (state.phase === 'ready' && stoppedFrames >= shot.rateOfFireResetTime * FPS) {
+  if (state.phase === 'ready' && stoppedFrames >= shot.rateOfFireResetTime * WEAPON_FRAMES_PER_SECOND) {
     state.shotsInMagazine = 0;
     state.acc = 0;
   }

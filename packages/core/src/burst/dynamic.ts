@@ -16,7 +16,7 @@ import {
   type BurstTiming,
   type BurstUnit,
 } from './controller.ts';
-import { durationToFrames } from './fixedCycle.ts';
+import { gameSecondsToFrames } from '../time.ts';
 import type { BurstSchedule } from './schedule.ts';
 
 /**
@@ -50,9 +50,9 @@ export function burstUnitOf(character: CharacterData): NonNullable<BurstUnit> {
   return {
     burstStep: character.burstStep,
     nextStep: character.burstSkill.nextStep,
-    cooldownFrames: durationToFrames(character.burstSkill.cooldownSeconds),
+    cooldownFrames: gameSecondsToFrames(character.burstSkill.cooldownSeconds),
     // Stage 8: フルバースト時間は StepFull に入る発動をしたニケの burst_duration（イサベル 5 秒、モダニア 15 秒）
-    fullBurstFrames: durationToFrames(character.burstSkill.durationSeconds),
+    fullBurstFrames: gameSecondsToFrames(character.burstSkill.durationSeconds),
   };
 }
 

@@ -31,7 +31,8 @@
 //
 // Stage 16-B（plan/design-stage16.md 9.3 節）: 敵を狙えない窓（options.untargetable）の間は、全員が撃たず（ハイドしてリロード）、
 // オートバーストも発動しない。ゲージは射撃が無いので溜まらない。持続バフ・CT・フルバーストの時間はそのまま進む。
-import { planFixedCycle, durationToFrames } from '../burst/fixedCycle.ts';
+import { planFixedCycle } from '../burst/fixedCycle.ts';
+import { gameSecondsToFrames } from '../time.ts';
 import {
   DEFAULT_BURST_TIMING,
   finishSchedule,
@@ -549,7 +550,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         if (src.effect.kind === 'cooldownReduction') {
           if (controller === null) continue; // 固定サイクル・バーストなしでは CT を見ない
           const before = controller.cooldownReductions.length;
-          reduceCooldown(controller, target, durationToFrames(src.effect.value), f, src.sourceSlotIndex);
+          reduceCooldown(controller, target, gameSecondsToFrames(src.effect.value), f, src.sourceSlotIndex);
           const applied = controller.cooldownReductions[before]?.applied ?? 0;
           instants.push({
             frame: f,

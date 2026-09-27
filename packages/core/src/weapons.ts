@@ -1,10 +1,15 @@
 // CDN には無い「解釈ルール」だけを置く。武器の数値自体はキャラごとの ShotParams を使う。
 import type { ShotParams, WeaponType } from './types.ts';
 
-export const FPS = 60;
+/**
+ * Stage 21: 武器の CDN の秒（チャージ・リロード・撃ち直し）と rpm をフレームに直す換算。射撃の刻みの較正
+ * （C-0001・C-0002・C-0014 など）はこの換算との差として決めているので、ゲーム内の秒（time.ts）とは分けて持つ。
+ * 1 秒 = 58.82f にするかは 21-C で録画と照らして決める（plan/design-stage21.md 0.3 節）
+ */
+export const WEAPON_FRAMES_PER_SECOND = 60;
 
 /** 1 フレームに 1 発が上限（3600 rpm） */
-export const MAX_RPM = FPS * 60;
+export const MAX_RPM = WEAPON_FRAMES_PER_SECOND * 60;
 
 export const WEAPON_TYPES = ['AR', 'SMG', 'SR', 'RL', 'SG', 'MG'] as const satisfies readonly WeaponType[];
 
@@ -32,8 +37,9 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   spinUpFirstShotFrames: 20,
 };
 
+/** 武器の CDN の秒 → フレーム（切り上げ） */
 export function secondsToFrames(seconds: number): number {
-  return Math.ceil(seconds * FPS);
+  return Math.ceil(seconds * WEAPON_FRAMES_PER_SECOND);
 }
 
 export function isChargeWeapon(shot: Pick<ShotParams, 'chargeTime' | 'inputType'>): boolean {

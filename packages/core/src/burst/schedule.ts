@@ -2,7 +2,7 @@
 // Stage 5 / 6 の固定サイクルは「全段階が同じフレーム」「段階の割当が固定」だったが、動的サイクルでは
 // 段階ごとに発動フレームが違い、同じ段階の 2 体が CT で交互に撃つこともあるので、発動を 1 回ずつ列挙する形にする。
 // 固定サイクル（fixedCycle.ts）も動的サイクル（dynamic.ts）もこの形を返す。
-import { FPS } from '../weapons.ts';
+import { framesToGameSeconds } from '../time.ts';
 
 export type BurstStepKey = 'Step1' | 'Step2' | 'Step3';
 export const BURST_STEP_KEYS = ['Step1', 'Step2', 'Step3'] as const satisfies readonly BurstStepKey[];
@@ -39,7 +39,7 @@ export type CooldownReduction = {
   slotIndex: number;
   /** 効果を出した枠 */
   sourceSlotIndex: number;
-  /** 縮めようとしたフレーム数（durationToFrames(X 秒)） */
+  /** 縮めようとしたフレーム数（gameSecondsToFrames(X 秒)） */
   frames: number;
   /** 実際に縮んだフレーム数（CT が明けていれば 0。明けるフレームより前には戻さない） */
   applied: number;
@@ -111,9 +111,9 @@ export function summarizeSchedule(schedule: BurstSchedule, frames: number): Burs
     fullBurstUptime: frames > 0 ? schedule.fullBurstFramesTotal / frames : 0,
     meanCycleSeconds:
       starts.length >= 2 && first !== undefined && last !== undefined
-        ? (last - first) / (starts.length - 1) / FPS
+        ? framesToGameSeconds((last - first) / (starts.length - 1))
         : null,
-    firstFullBurstSeconds: first === undefined ? null : first / FPS,
+    firstFullBurstSeconds: first === undefined ? null : framesToGameSeconds(first),
     activations: schedule.activations.length,
     chainTimeouts: schedule.chainTimeouts.length,
   };

@@ -9,7 +9,8 @@ import {
   stepBurstController,
   type BurstUnit,
 } from '../../burst/controller.ts';
-import { durationToFrames, planFixedCycle } from '../../burst/fixedCycle.ts';
+import { planFixedCycle } from '../../burst/fixedCycle.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 import { runFirstPass } from '../../frame/firstPass.ts';
 import type { CharacterData, ShotParams, SkillRaw } from '../../types.ts';
 import { planHeals } from '../heals.ts';
@@ -200,7 +201,7 @@ function slotOf(character: CharacterData, effects: unknown[] | null = null): Tim
   return { character, definition: def, levels: MAX_SKILL_LEVELS, casterBaseAttack: 1000 };
 }
 
-const FRAMES = durationToFrames(180);
+const FRAMES = gameSecondsToFrames(180);
 
 describe('planBuffTimeline: burstUsers windows per target (Stage 11, 3.2)', () => {
   // I・II（CT 20 秒）と III 2 体（CT 40 秒）: フルバーストごとに III が入れ替わる

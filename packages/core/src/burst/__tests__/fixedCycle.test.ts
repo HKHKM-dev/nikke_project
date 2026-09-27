@@ -3,11 +3,11 @@ import type { BurstStep } from '../../types.ts';
 import {
   FIXED_BURST_CYCLE,
   assignBurstSteps,
-  durationToFrames,
   isFullBurstFrame,
   planFixedCycle,
   type BurstCandidate,
 } from '../fixedCycle.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 import { slotsByStep, type BurstSchedule } from '../schedule.ts';
 
 const starts = (s: BurstSchedule): number[] => s.fullBurstWindows.map((w) => w.start);
@@ -16,7 +16,7 @@ const c = (step: BurstStep): BurstCandidate => ({ burstStep: step });
 
 describe('planFixedCycle', () => {
   it('fires 9 times in 180 seconds at 10, 30, …, 170 s and spends 90 s in full burst', () => {
-    const s = planFixedCycle([c('Step1'), c('Step2'), c('Step3')], durationToFrames(180));
+    const s = planFixedCycle([c('Step1'), c('Step2'), c('Step3')], gameSecondsToFrames(180));
     expect(starts(s)).toEqual([600, 1800, 3000, 4200, 5400, 6600, 7800, 9000, 10200]);
     expect(s.model).toBe('fixed');
     // 各サイクルで I → II → III が同じフレームに並ぶ
@@ -52,12 +52,6 @@ describe('planFixedCycle', () => {
     expect(() => planFixedCycle([], 100, { cycleFrames: 100, normalFrames: 60, fullBurstFrames: 60 })).toThrow(
       RangeError,
     );
-  });
-
-  it('durationToFrames rounds up', () => {
-    expect(durationToFrames(180)).toBe(10800);
-    expect(durationToFrames(0.01)).toBe(1);
-    expect(() => durationToFrames(-1)).toThrow(RangeError);
   });
 });
 

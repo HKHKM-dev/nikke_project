@@ -41,7 +41,7 @@ import { planTeamRun } from '../src/frame/plan.ts';
 import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';
-import { FPS } from '../src/weapons.ts';
+import { framesToGameSeconds, gameSecondsToFrame } from '../src/time.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
 
@@ -256,7 +256,7 @@ if (calc.landings.length > 0 && target !== undefined) {
     return id in target.mixes ? `${name} (mix)` : `${name} [${id}]`;
   };
   console.log(
-    `landings ${calc.landings.map((s) => `${(s.start / FPS).toFixed(1)}-${(s.end / FPS).toFixed(1)}s ${labelOf(s.landing)}`).join(', ')}`,
+    `landings ${calc.landings.map((s) => `${framesToGameSeconds(s.start).toFixed(1)}-${framesToGameSeconds(s.end).toFixed(1)}s ${labelOf(s.landing)}`).join(', ')}`,
   );
 }
 if (eventSetIds.length > 0) {
@@ -278,12 +278,12 @@ if (calc.schedule && calc.burstSummary) {
   const STEP = { Step1: 'I', Step2: 'II', Step3: 'III' } as const;
   console.table(
     calc.schedule.activations.map((a) => ({
-      time: `${(a.frame / FPS).toFixed(2)}s`,
+      time: `${framesToGameSeconds(a.frame).toFixed(2)}s`,
       frame: a.frame,
       step: STEP[a.step],
       nike: `slot ${a.slotIndex + 1} ${slots[a.slotIndex]!.character.name.ja}`,
       fullBurst: a.startsFullBurst
-        ? `start (${(((calc.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.end ?? a.frame) - a.frame) / FPS).toFixed(1)}s)`
+        ? `start (${framesToGameSeconds((calc.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.end ?? a.frame) - a.frame).toFixed(1)}s)`
         : '',
       // Stage 11: そのフルバーストを開いたチェーンで撃った枠（「直前にバーストスキルを使用した味方」）
       burstUsers: a.startsFullBurst
@@ -294,13 +294,15 @@ if (calc.schedule && calc.burstSummary) {
     })),
   );
   if (calc.schedule.chainTimeouts.length > 0) {
-    console.log(`chain timeouts at ${calc.schedule.chainTimeouts.map((f) => `${(f / FPS).toFixed(2)}s`).join(', ')}`);
+    console.log(
+      `chain timeouts at ${calc.schedule.chainTimeouts.map((f) => `${framesToGameSeconds(f).toFixed(2)}s`).join(', ')}`,
+    );
   }
   const starts = calc.schedule.fullBurstWindows.map((w) => w.start);
   console.log(
     `full burst intervals ${starts
       .slice(1)
-      .map((f, k) => `${((f - starts[k]!) / FPS).toFixed(2)}s`)
+      .map((f, k) => `${framesToGameSeconds(f - starts[k]!).toFixed(2)}s`)
       .join(', ')}`,
   );
 }
@@ -312,7 +314,7 @@ if (calc.timeline.rankings.length > 0) {
     const key = `${r.frame}.${r.sourceSlotIndex}.${r.effect.source.skill}.${r.targets.join(',')}`;
     if (merged.has(key)) continue;
     merged.set(key, {
-      time: `${(r.frame / FPS).toFixed(2)}s`,
+      time: `${framesToGameSeconds(r.frame).toFixed(2)}s`,
       frame: r.frame,
       from: `slot ${r.sourceSlotIndex + 1} ${r.effect.source.skill}`,
       targets: r.targets
@@ -331,7 +333,7 @@ if (sim.instants.length > 0) {
   for (const x of sim.instants) {
     const key = `${x.frame}.${x.effect.kind}.${x.slotIndex}`;
     const row = merged.get(key) ?? {
-      time: `${(x.frame / FPS).toFixed(2)}s`,
+      time: `${framesToGameSeconds(x.frame).toFixed(2)}s`,
       kind: x.effect.kind,
       from: `slot ${x.sourceSlotIndex + 1}`,
       to: `slot ${x.slotIndex + 1} ${slots[x.slotIndex]!.character.name.ja}`,
@@ -407,7 +409,9 @@ for (const [i, slot] of slots.entries()) {
 [slot ${i + 1}] ${slot.character.name.ja} — segments`);
   console.table(
     c.segments.map((g, j) => ({
-      ranges: g.ranges.map((r) => `${(r.start / FPS).toFixed(1)}-${(r.end / FPS).toFixed(1)}s`).join(' '),
+      ranges: g.ranges
+        .map((r) => `${framesToGameSeconds(r.start).toFixed(1)}-${framesToGameSeconds(r.end).toFixed(1)}s`)
+        .join(' '),
       sec: g.seconds.toFixed(1),
       FB: g.fullBurst ? 'yes' : '',
       attack: fmt(g.trigger.attack),
@@ -433,7 +437,7 @@ for (const [i, slot] of slots.entries()) {
   // Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった回数
   if (c.conditionSkips.length > 0) {
     console.log(
-      `condition skips: ${c.conditionSkips.length} (${c.conditionSkips.map((x) => (x.frame / FPS).toFixed(2)).join(', ')}s)`,
+      `condition skips: ${c.conditionSkips.length} (${c.conditionSkips.map((x) => framesToGameSeconds(x.frame).toFixed(2)).join(', ')}s)`,
     );
   }
   printCycles(i, c);
@@ -461,7 +465,7 @@ function printCycles(slotIndex: number, c: NonNullable<(typeof calc.slots)[numbe
       .join(', ')}`,
   );
   const shots = plan.shots[slotIndex]?.frames ?? [];
-  const stepAt = new Map(cycled.map((a) => [Math.round(a.seconds * FPS), a.effect.cycle!.step]));
+  const stepAt = new Map(cycled.map((a) => [gameSecondsToFrame(a.seconds), a.effect.cycle!.step]));
   const rows = c.cycleWindows.map((w) => {
     const before = shots.filter((f) => f < w.start);
     let lastTier = before.length - 1;
@@ -470,7 +474,7 @@ function printCycles(slotIndex: number, c: NonNullable<(typeof calc.slots)[numbe
     const after = shots.filter((f) => f >= w.end);
     const k = after.findIndex((f) => stepAt.has(f));
     return {
-      window: `${(w.start / FPS).toFixed(2)}-${(w.end / FPS).toFixed(2)}s`,
+      window: `${framesToGameSeconds(w.start).toFixed(2)}-${framesToGameSeconds(w.end).toFixed(2)}s`,
       'last tier before': lastTier < 0 ? '-' : letter(stepAt.get(before[lastTier]!)!),
       p: lastTier < 0 ? before.length : before.length - 1 - lastTier,
       inside: `${inside.length} ${inside.map((f) => (stepAt.has(f) ? letter(stepAt.get(f)!) : '-')).join('')}`,

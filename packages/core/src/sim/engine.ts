@@ -38,7 +38,8 @@ import {
 } from '../frame/plan.ts';
 import { type DamagePerSecond, type TeamInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
-import { DEFAULT_WEAPON_MODEL, FPS } from '../weapons.ts';
+import { framesToGameSeconds } from '../time.ts';
+import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { firingParams } from '../frame/firing.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import type { InstantApplication } from '../frame/firstPass.ts';
@@ -103,7 +104,7 @@ export type SimSlotResult = {
 };
 
 export type SimResult = {
-  /** 回したフレーム数 = durationSeconds × 60（切り上げ） */
+  /** 回したフレーム数 = gameSecondsToFrames(durationSeconds)（切り上げ） */
   frames: number;
   schedule: BurstSchedule | null;
   timeline: BuffTimeline;
@@ -147,13 +148,13 @@ export function runSimulation(simInput: SimInput): SimResult {
     model,
   });
   // Stage 16-B: 1 秒ごとのダメージ（タイムラインの表示用）
-  const seconds = Math.ceil(frames / FPS);
+  const seconds = Math.ceil(framesToGameSeconds(frames));
   const perSecond: DamagePerSecond = {
     total: new Array<number>(seconds).fill(0),
     slots: slots.map((slot) => (slot === null ? null : new Array<number>(seconds).fill(0))),
   };
   const addPerSecond = (slotIndex: number, frame: number, damage: number): void => {
-    const k = Math.floor(frame / FPS);
+    const k = Math.floor(framesToGameSeconds(frame));
     perSecond.total[k]! += damage;
     perSecond.slots[slotIndex]![k]! += damage;
   };
