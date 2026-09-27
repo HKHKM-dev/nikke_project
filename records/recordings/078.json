@@ -1,0 +1,36 @@
+{
+  "id": "078",
+  "date": "2026-09-28",
+  "folder": "range",
+  "file": "20260928-78_AR_asuka_auto.mp4",
+  "original": "2026-09-28_03-37-18.mp4",
+  "durationSec": 268.2,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 323.7,
+  "sha256": "9c8b91d4dad1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true,
+      "note": "アスカを操作・AUTO 射撃 ON・オートバースト ON"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。ユニ + アスカの 2 体（戦闘履歴で枠と名前を確かめた）。**AUTO 射撃 ON**・**オートバースト ON**（画面左上のボタンで確かめた。計画は OFF だったが、I がいないのでバーストは起きない）。V-0024（アスカの S1 と吸収回復）"
+}
