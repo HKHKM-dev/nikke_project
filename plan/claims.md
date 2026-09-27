@@ -13,7 +13,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 52・仮説 11・棄却 9・範囲外 1（計 73）
+件数: 確定 52・仮説 14・棄却 9・範囲外 1（計 76）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -238,6 +238,18 @@
   - 根拠: `077-01`・`077-02`（録画 77 の単騎の 1 ヒット。会心なし・会心とも、モデルとの差は表示の丸めの範囲）。V-0020
   - モデル側: `data/skills/304.json` の burst の effects[0]（burstDamage）
   - 検証記録: V-0020
+- **C-0074** アスカの S1 の「回復効果が適用された時、自分の攻撃力 96.98%▲（25 秒）」は、バーストの吸収回復（攻撃ダメージの 3.16% 回復・10 秒）の命中ごとに発動し直して延び（上書き延長）、吸収回復の窓の最後の命中から 25 秒で切れる。HP が満タンでも吸収回復は適用される
+  - 状態: 仮説・等級: 推論・更新日: 2026-09-28
+  - 根拠: 説明文（`data/characters/830.json` の skill1 の description_value_02・03、burst の description_value_04・05）と、再発火の上書き延長（design-stage6.md 8 節の 2）。録画 063 で S1 の付いた 1 発があること（verification.md Stage 18-B「撮影 2」）。確かめるのは V-0022
+  - モデル側: `data/skills/830.json` の skill1 の effects[0]（timed・healed）と burst の effects[1]（lifesteal）
+- **C-0075** アスカの S2 の「フルバースト開始時、灼熱コードの味方全体にコアダメージ 60.07%▲（10 秒）」は、灼熱の味方だけに付き、ほかの属性の味方には付かない。コア命中の 1 発のコアの項（コア倍率 − 1）を 1.6007 倍にする。「自分がバリア適用状態なら有利コードの攻撃ダメージ▲」は射撃場の敵ではダメージに関係しない
+  - 状態: 仮説・等級: 推論・更新日: 2026-09-28
+  - 根拠: 説明文（`data/characters/830.json` の skill2 の description_value_03・04）。アスカ自身のバースト中の 1 発がコア × 1.6007 で式どおりなこと（verification.md Stage 18-B「撮影 2」）。風圧の味方に付かないかを確かめるのは V-0022
+  - モデル側: `data/skills/830.json` の skill2 の effects[0]（timed・fullBurstStart・targetElement Fire・coreDamage）
+- **C-0076** アスカのバーストは、自分に攻撃ダメージ 150.04%▲（10 秒。1 発に × 2.5004）と命中率 101.37%▲（10 秒）を付ける。貫通特化は射撃場の敵ではダメージに関係しない
+  - 状態: 仮説・等級: 推論・更新日: 2026-09-28
+  - 根拠: 説明文（`data/characters/830.json` の burst の description_value_02・03・06・07）。バースト中の 1 発が × 2.5004 で式どおりなこと（verification.md Stage 18-B「撮影 2」）。命中率▲がコア命中率に効くことは C-0037（モデルは持続の▲を未反映）。確かめるのは V-0022
+  - モデル側: `data/skills/830.json` の burst の effects[0]（timed・attackDamage）と effects[2]（timed・hitRate。状態だけで、コア命中率には効かせていない）
 
 ## 敵・的・場面
 

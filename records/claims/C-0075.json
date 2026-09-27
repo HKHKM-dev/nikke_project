@@ -1,0 +1,11 @@
+{
+  "id": "C-0075",
+  "text": "アスカの S2 の「フルバースト開始時、灼熱コードの味方全体にコアダメージ 60.07%▲（10 秒）」は、灼熱の味方だけに付き、ほかの属性の味方には付かない。コア命中の 1 発のコアの項（コア倍率 − 1）を 1.6007 倍にする。「自分がバリア適用状態なら有利コードの攻撃ダメージ▲」は射撃場の敵ではダメージに関係しない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/830.json` の skill2 の description_value_03・04）。アスカ自身のバースト中の 1 発がコア × 1.6007 で式どおりなこと（verification.md Stage 18-B「撮影 2」）。風圧の味方に付かないかを確かめるのは V-0022",
+  "model": "`data/skills/830.json` の skill2 の effects[0]（timed・fullBurstStart・targetElement Fire・coreDamage）",
+  "replaces": [],
+  "updated": "2026-09-28"
+}

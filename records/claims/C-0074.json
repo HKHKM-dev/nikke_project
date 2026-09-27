@@ -1,0 +1,11 @@
+{
+  "id": "C-0074",
+  "text": "アスカの S1 の「回復効果が適用された時、自分の攻撃力 96.98%▲（25 秒）」は、バーストの吸収回復（攻撃ダメージの 3.16% 回復・10 秒）の命中ごとに発動し直して延び（上書き延長）、吸収回復の窓の最後の命中から 25 秒で切れる。HP が満タンでも吸収回復は適用される",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/830.json` の skill1 の description_value_02・03、burst の description_value_04・05）と、再発火の上書き延長（design-stage6.md 8 節の 2）。録画 063 で S1 の付いた 1 発があること（verification.md Stage 18-B「撮影 2」）。確かめるのは V-0022",
+  "model": "`data/skills/830.json` の skill1 の effects[0]（timed・healed）と burst の effects[1]（lifesteal）",
+  "replaces": [],
+  "updated": "2026-09-28"
+}

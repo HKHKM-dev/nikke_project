@@ -1,0 +1,11 @@
+{
+  "id": "C-0076",
+  "text": "アスカのバーストは、自分に攻撃ダメージ 150.04%▲（10 秒。1 発に × 2.5004）と命中率 101.37%▲（10 秒）を付ける。貫通特化は射撃場の敵ではダメージに関係しない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/830.json` の burst の description_value_02・03・06・07）。バースト中の 1 発が × 2.5004 で式どおりなこと（verification.md Stage 18-B「撮影 2」）。命中率▲がコア命中率に効くことは C-0037（モデルは持続の▲を未反映）。確かめるのは V-0022",
+  "model": "`data/skills/830.json` の burst の effects[0]（timed・attackDamage）と effects[2]（timed・hitRate。状態だけで、コア命中率には効かせていない）",
+  "replaces": [],
+  "updated": "2026-09-28"
+}
