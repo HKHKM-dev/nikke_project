@@ -139,7 +139,9 @@ describe('data/skills', () => {
       const timed1 = resolveTimed(def, character, { skill1: 1, skill2: 1, burst: 1 });
       const damage10 = resolveDamageEffects(def, character, MAX_SKILL_LEVELS);
       const damage1 = resolveDamageEffects(def, character, { skill1: 1, skill2: 1, burst: 1 });
-      expect(lv10.length + burst10.length + timed10.length + damage10.length).toBeGreaterThan(0);
+      // ダメージに効く効果が 1 つも無いキャラ（ラムなど）は、全スロットを unsupported にして notes だけを書く
+      const modeled = SKILL_SLOTS.some((slot) => def.skills[slot].support !== 'unsupported');
+      if (modeled) expect(lv10.length + burst10.length + timed10.length + damage10.length).toBeGreaterThan(0);
       damage10.forEach((e, i) => {
         expect(e.multiplier).toBeGreaterThanOrEqual(damage1[i]!.multiplier);
         expect(e.trigger).toEqual(damage1[i]!.trigger);

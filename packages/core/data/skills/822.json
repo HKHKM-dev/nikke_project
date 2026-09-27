@@ -1,0 +1,41 @@
+{
+  "formatVersion": 1,
+  "resourceId": 822,
+  "checkedAt": "2026-09-28",
+  "skills": {
+    "skill1": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃 5 回命中で対象に付く攻撃力▼は、敵の攻撃力を下げるだけでダメージに関係しない",
+          "en": "ATK down on the target after 5 normal attack hits only lowers the enemy's ATK and does not affect damage"
+        },
+        {
+          "ja": "「フルバースト終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼」は未対応（部隊を扱わない）。同じ部隊の味方がいない編成では起きない（C-0080）",
+          "en": "Burst Skill cooldown down at the end of Full Burst is not modeled (squads are not tracked). It does not happen without an ally from the same squad (C-0080)"
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の最大HP▲と、残りの HP が最も低い味方 2 機の防御力▲は、ダメージに関係しない",
+          "en": "Max HP up on self and DEF up on the 2 allies with the lowest HP do not affect damage"
+        }
+      ]
+    },
+    "burst": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方全体のバリアは、ダメージに関係しない",
+          "en": "The shield on all allies does not affect damage"
+        }
+      ]
+    }
+  }
+}
