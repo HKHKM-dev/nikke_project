@@ -16,6 +16,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput, type TeamResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
+import { gameSecondsToFrames } from '../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -71,7 +72,7 @@ describe('録画 44 の予測（7.5）', () => {
 
   it('opens 4 full bursts of 15 s, each started by モダニア', () => {
     expect(fb).toHaveLength(4);
-    expect(fb.every((w) => w.end - w.start === 900 && w.burstUsers.includes(2))).toBe(true);
+    expect(fb.every((w) => w.end - w.start === gameSecondsToFrames(15) && w.burstUsers.includes(2))).toBe(true);
     expect(fb.map((w) => w.start)).toEqual([724, 3634, 6544, 9454]);
   });
 

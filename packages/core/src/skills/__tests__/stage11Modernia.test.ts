@@ -11,6 +11,7 @@ import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed } from '../resolve.ts';
 import { stackWindows } from '../stacks.ts';
 import { planBuffTimeline, selfBuffedAt, type TimelineSlot } from '../timeline.ts';
 import { isFiringStat, isStateStat, parseSkillDefinition } from '../types.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 
 function definition(skills: Record<string, unknown>, resourceId = 1): unknown {
   const none = { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] };
@@ -161,16 +162,21 @@ describe('resolve (Stage 11 モダニア)', () => {
   it('resolves stacks, ▼, the flag and the weapon change', () => {
     const timed = resolveTimed(def, character, MAX_SKILL_LEVELS);
     const [crit, ammo, hit, attack, infinite, weapon] = timed;
-    expect(crit).toMatchObject({ stat: 'critDamage', value: 0.1425, maxStacks: 5, durationFrames: 600 });
+    expect(crit).toMatchObject({
+      stat: 'critDamage',
+      value: 0.1425,
+      maxStacks: 5,
+      durationFrames: gameSecondsToFrames(10),
+    });
     expect(crit!.trigger).toEqual({ count: 'normalHit', every: 200 });
     expect(ammo).toMatchObject({ stat: 'maxAmmo', maxStacks: 5 });
     expect(ammo!.value).toBeCloseTo(-0.0504, 12);
-    expect(hit).toMatchObject({ stat: 'hitRate', durationFrames: 900 });
+    expect(hit).toMatchObject({ stat: 'hitRate', durationFrames: gameSecondsToFrames(15) });
     expect(hit!.value).toBeCloseTo(0.0856, 12);
     expect(attack).toMatchObject({ stat: 'attack', condition: { selfBuffed: 'hitRate' } });
     expect(attack!.value).toBeCloseTo(0.2938, 12);
-    expect(infinite).toMatchObject({ stat: 'infiniteAmmo', value: 1, durationFrames: 900 });
-    expect(weapon).toMatchObject({ stat: 'weapon', target: 'self', durationFrames: 900 });
+    expect(infinite).toMatchObject({ stat: 'infiniteAmmo', value: 1, durationFrames: gameSecondsToFrames(15) });
+    expect(weapon).toMatchObject({ stat: 'weapon', target: 'self', durationFrames: gameSecondsToFrames(15) });
     expect(weapon!.value).toBeCloseTo(0.0224, 12);
     expect(weapon!.weapon!.shot).toMatchObject({
       damage: 224,
@@ -365,21 +371,21 @@ describe('condition "自分が 〈stat〉 増加状態なら" (2.4・3.3)', () =
     const def = parseSkillDefinition(
       definition({
         skill2: supported(
-          { kind: 'timed', trigger: 'battleStart', target: 'self', stat: 'hitRate', ref: 1, durationSeconds: 1 },
+          { kind: 'timed', trigger: 'battleStart', target: 'self', stat: 'hitRate', ref: 1, durationSeconds: 1.02 },
           {
             kind: 'timed',
             trigger: { count: 'normalHit', every: 30 },
             target: 'self',
             stat: 'attack',
             ref: 4,
-            durationSeconds: 1,
+            durationSeconds: 1.02,
             condition: { selfBuffed: 'hitRate' },
           },
         ),
       }),
     );
     const slots: TimelineSlot[] = [{ character, definition: def, levels: MAX_SKILL_LEVELS, casterBaseAttack: 1000 }];
-    // 射撃は 1 フレームおき（30 発目 = f58、60 発目 = f118）。命中率の窓は [0, 60)
+    // 射撃は 1 フレームおき（30 発目 = f58、60 発目 = f118）。窓はどちらも 1.02 秒 = 60f（Stage 21-B の 0.017 秒刻み）。命中率の窓は [0, 60)
     const shots = [{ frames: Array.from({ length: 100 }, (_, i) => i * 2), fullCharge: false }];
     const timeline = planBuffTimeline(slots, null, 300, shots);
     expect(timeline.stateWindows.map((w) => [w.effect.stat, w.start, w.end])).toEqual([['hitRate', 0, 60]]);

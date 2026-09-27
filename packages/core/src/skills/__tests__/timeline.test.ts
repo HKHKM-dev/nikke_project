@@ -1,14 +1,19 @@
 // Stage 6: 持続バフのタイムライン。plan/design-stage6.md 6.1 節の表を固定する。
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
-import { isFullBurstFrame, planFixedCycle } from '../../burst/fixedCycle.ts';
+import { FIXED_BURST_CYCLE, isFullBurstFrame, planFixedCycle } from '../../burst/fixedCycle.ts';
 import { slotsByStep } from '../../burst/schedule.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { groupTimeline, planBuffTimeline, triggerFrames, type TimelineSlot } from '../timeline.ts';
 import type { BuffTrigger, SkillDefinition, SkillEntry, TimedEffect } from '../types.ts';
 import type { BurstStep, SkillRaw } from '../../types.ts';
+import { framesToGameSeconds, gameSecondsToFrames } from '../../time.ts';
 
-const FRAMES = 10800; // 180 秒
+// Stage 21-B: 180 秒 = 10,588f。固定サイクルは通常 10 秒 = H（588f）+ フルバースト 10 秒、1 サイクル C（1,176f）
+const FRAMES = gameSecondsToFrames(180);
+const H = FIXED_BURST_CYCLE.normalFrames;
+const C = FIXED_BURST_CYCLE.cycleFrames;
+const NINE = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
 const unsupported: SkillEntry = { support: 'unsupported', effects: [] };
 
@@ -63,13 +68,11 @@ const schedule = planFixedCycle([{ burstStep: 'Step3' }, { burstStep: 'Step1' }]
 describe('triggerFrames', () => {
   it('fires battleStart once, fullBurstStart on every activation and fullBurstEnd on every closed window', () => {
     expect(triggerFrames('battleStart', schedule, 0, FRAMES)).toEqual([0]);
-    expect(triggerFrames('fullBurstStart', schedule, 0, FRAMES)).toEqual([
-      600, 1800, 3000, 4200, 5400, 6600, 7800, 9000, 10200,
-    ]);
-    // 最後のフルバースト窓は 10,800f（= frames）で切れるので 9 回目の fullBurstEnd は発火しない
-    expect(triggerFrames('fullBurstEnd', schedule, 0, FRAMES)).toEqual([
-      1200, 2400, 3600, 4800, 6000, 7200, 8400, 9600,
-    ]);
+    expect(triggerFrames('fullBurstStart', schedule, 0, FRAMES)).toEqual(NINE.map((k) => H + k * C));
+    // 9 回目のフルバースト窓は 9C = 10,584f で閉じ、戦闘の終わり（10,588f）より前なので 9 回とも fullBurstEnd が発火する
+    expect(triggerFrames('fullBurstEnd', schedule, 0, FRAMES)).toEqual(NINE.map((k) => (k + 1) * C));
+    // 窓が戦闘の終わりで切れるときは発火しない
+    expect(triggerFrames('fullBurstEnd', planFixedCycle([{ burstStep: 'Step3' }], 9 * C), 0, 9 * C)).toHaveLength(8);
   });
 
   it('fires burstUse only for the slot assigned to a step', () => {
@@ -104,7 +107,7 @@ describe('planBuffTimeline windows', () => {
     const slots = [timedSlot(1, 'Step3', [timed('burstUse')], '50', '20')];
     const t = planBuffTimeline(slots, planFixedCycle([{ burstStep: 'Step3' }], FRAMES), FRAMES);
     expect(t.windows).toHaveLength(1);
-    expect(t.windows[0]).toMatchObject({ slotIndex: 0, sourceSlotIndex: 0, start: 600, end: FRAMES });
+    expect(t.windows[0]).toMatchObject({ slotIndex: 0, sourceSlotIndex: 0, start: H, end: FRAMES });
     // 持続 30 秒でも同じ（重ねない）
     const longer = planBuffTimeline(
       [timedSlot(1, 'Step3', [timed('burstUse')], '50', '30')],
@@ -120,16 +123,17 @@ describe('planBuffTimeline windows', () => {
       FRAMES,
     );
     expect(short.windows).toHaveLength(9);
-    expect(short.windows.map((w) => [w.start, w.end])[0]).toEqual([600, 1200]);
+    expect(short.windows.map((w) => [w.start, w.end])[0]).toEqual([H, C]);
   });
 
   it('clips the last window at the battle end', () => {
-    // fullBurstEnd の 15 秒窓: 9,600f に付いて 10,500f まで。最後は 10,800f で切れる
+    // fullBurstEnd の 15 秒窓: 最後は 9C（10,584f）に付き、戦闘の終わり（10,588f）で切れる
     const slots = [timedSlot(1, 'Step3', [timed('fullBurstEnd')], '50', '15')];
     const t = planBuffTimeline(slots, planFixedCycle([{ burstStep: 'Step3' }], FRAMES), FRAMES);
-    expect(t.windows.at(-1)).toMatchObject({ start: 9600, end: 10500 });
+    expect(t.windows.at(-1)).toMatchObject({ start: 9 * C, end: FRAMES });
+    expect(t.windows.at(-2)).toMatchObject({ start: 8 * C, end: 8 * C + gameSecondsToFrames(15) });
     const short = planBuffTimeline(slots, planFixedCycle([{ burstStep: 'Step3' }], 10000), 10000);
-    expect(short.windows.at(-1)).toMatchObject({ start: 9600, end: 10000 });
+    expect(short.windows.at(-1)).toMatchObject({ start: 8 * C, end: 10000 });
   });
 
   it('gives an allies window to every filled slot and a self window only to the caster', () => {
@@ -182,9 +186,10 @@ describe('planBuffTimeline segments', () => {
     }
   });
 
-  it('splits 180 s into 18 segments for a 10 s burstUse buff (buff window == full burst window)', () => {
-    // バフ窓 [600, 1200) がフルバースト窓と一致するので、境界は 600 と 1200 の 2 つ/サイクル
-    expect(t.segments).toHaveLength(18);
+  it('splits 180 s into 19 segments for a 10 s burstUse buff (buff window == full burst window)', () => {
+    // バフ窓 [H, C) がフルバースト窓と一致するので、境界は H と C の 2 つ/サイクル。9 サイクルの後に 4f の通常区間が残る
+    expect(t.segments).toHaveLength(19);
+    expect(t.segments.at(-1)).toMatchObject({ start: 9 * C, end: FRAMES, fullBurst: false });
     expect(t.segments.map((s) => s.fullBurst).slice(0, 4)).toEqual([false, true, false, true]);
     expect(t.segments[0]?.slots[0]?.timedEffects).toEqual([]);
     expect(t.segments[1]?.slots[0]?.timedEffects).toHaveLength(1);
@@ -193,8 +198,8 @@ describe('planBuffTimeline segments', () => {
 
   it('adds boundaries for a 15 s battleStart buff that does not line up with the cycle', () => {
     const q = planBuffTimeline([timedSlot(1, 'Step3', [timed('battleStart')], '50', '15')], sched, FRAMES);
-    // 境界に 900f（バフ切れ）が増える
-    expect(q.segments.map((s) => s.start).slice(0, 4)).toEqual([0, 600, 900, 1200]);
+    // 境界に 15 秒（バフ切れ）が増える
+    expect(q.segments.map((s) => s.start).slice(0, 4)).toEqual([0, H, gameSecondsToFrames(15), C]);
     expect(q.segments[0]?.slots[0]?.buffs.attackRatio).toBeCloseTo(0.5, 12);
     expect(q.segments[1]?.slots[0]?.buffs.attackRatio).toBeCloseTo(0.5, 12);
     expect(q.segments[2]?.slots[0]?.buffs.attackRatio).toBe(0);
@@ -218,10 +223,11 @@ describe('planBuffTimeline segments', () => {
     const slots = [timedSlot(1, 'Step3', [timed('battleStart'), timed('burstUse')], '50', '15')];
     const t2 = planBuffTimeline(slots, null, FRAMES);
     expect(t2.windows).toHaveLength(1);
-    expect(t2.windows[0]).toMatchObject({ start: 0, end: 900 });
+    const q = gameSecondsToFrames(15);
+    expect(t2.windows[0]).toMatchObject({ start: 0, end: q });
     expect(t2.segments.map((s) => [s.start, s.end])).toEqual([
-      [0, 900],
-      [900, FRAMES],
+      [0, q],
+      [q, FRAMES],
     ]);
   });
 });
@@ -229,19 +235,22 @@ describe('planBuffTimeline segments', () => {
 describe('groupTimeline', () => {
   const sched = planFixedCycle([{ burstStep: 'Step3' }], FRAMES);
 
-  it('collapses the 18 segments of a 10 s burstUse buff into 2 buff states', () => {
+  it('collapses the 19 segments of a 10 s burstUse buff into 2 buff states', () => {
     const groups = groupTimeline(planBuffTimeline([timedSlot(1, 'Step3', [timed('burstUse')])], sched, FRAMES), 0);
     expect(groups).toHaveLength(2);
     expect(groups.map((g) => g.fullBurst)).toEqual([false, true]);
-    expect(groups.map((g) => g.seconds)).toEqual([90, 90]);
-    expect(groups.map((g) => g.segments.length)).toEqual([9, 9]);
-    expect(groups.reduce((a, g) => a + g.seconds, 0)).toBe(180);
+    // 通常 9 × 588 + 4 = 5,296f、フルバースト 9 × 588 = 5,292f（ゲーム内の秒）
+    expect(groups[0]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H + 4), 9);
+    expect(groups[1]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H), 9);
+    expect(groups.map((g) => g.segments.length)).toEqual([10, 9]);
+    expect(groups.reduce((a, g) => a + g.seconds, 0)).toBeCloseTo(framesToGameSeconds(FRAMES), 9);
   });
 
   it('degenerates to 2 groups with no timed effects (Stage 5 shape)', () => {
     const groups = groupTimeline(planBuffTimeline([timedSlot(1, 'Step3', [])], sched, FRAMES), 0);
     expect(groups).toHaveLength(2);
-    expect(groups.map((g) => g.seconds)).toEqual([90, 90]);
+    expect(groups[0]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H + 4), 9);
+    expect(groups[1]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H), 9);
   });
 
   it('keeps 3 groups for a 15 s battleStart buff (buffed normal / buffed FB / plain)', () => {
@@ -249,7 +258,7 @@ describe('groupTimeline', () => {
       planBuffTimeline([timedSlot(1, 'Step3', [timed('battleStart')], '50', '15')], sched, FRAMES),
       0,
     );
-    // [0,600) バフあり通常、[600,900) バフあり FB、[900,1200) バフなし FB、[1200,1800) バフなし通常 …
+    // [0,H) バフあり通常、[H,15 秒) バフあり FB、[15 秒,C) バフなし FB、[C,C+H) バフなし通常 …
     expect(groups).toHaveLength(4);
     expect(groups.map((g) => [g.fullBurst, g.state.buffs.attackRatio !== 0])).toEqual([
       [false, true],
@@ -257,7 +266,7 @@ describe('groupTimeline', () => {
       [true, false],
       [false, false],
     ]);
-    expect(groups.reduce((a, g) => a + g.seconds, 0)).toBeCloseTo(180, 9);
+    expect(groups.reduce((a, g) => a + g.seconds, 0)).toBeCloseTo(framesToGameSeconds(FRAMES), 9);
   });
 
   it('rounds the numeric part of the key so floating-point noise does not split a state', () => {

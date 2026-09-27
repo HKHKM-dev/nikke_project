@@ -12,7 +12,7 @@ import {
   type BurstUnit,
 } from '../controller.ts';
 import { planDynamicSchedule } from '../dynamic.ts';
-import { planFixedCycle } from '../fixedCycle.ts';
+import { FIXED_BURST_CYCLE, planFixedCycle } from '../fixedCycle.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { stageEnterFrames, type BurstSchedule } from '../schedule.ts';
 
@@ -49,18 +49,18 @@ describe('full burst length per unit (burst_duration)', () => {
     expect(s.gaugeFullFrames[1]).toBe(360);
   });
 
-  it('falls back to timing.fullBurstFrames (600f) when the unit has none', () => {
+  it('falls back to timing.fullBurstFrames (10 game seconds) when the unit has none', () => {
     const s = run([unit('Step1', 0), unit('Step2', 0), unit('Step3', 0)], 1000, BURST_GAUGE_MAX);
-    expect(s.fullBurstWindows[0]).toEqual({ start: 60, end: 660, burstUsers: [0, 1, 2] });
+    expect(s.fullBurstWindows[0]).toEqual({ start: 60, end: 60 + gameSecondsToFrames(10), burstUsers: [0, 1, 2] });
   });
 
   it('takes 5 s from イサベル and 15 s from モダニア as III in a real team', () => {
     const frames = gameSecondsToFrames(180);
     const lengths = (iii: number): number[] =>
       planDynamicSchedule([291, 20, iii].map(load), frames).fullBurstWindows.map((w) => w.end - w.start);
-    expect(new Set(lengths(231).slice(0, -1))).toEqual(new Set([300]));
-    expect(new Set(lengths(260).slice(0, -1))).toEqual(new Set([900]));
-    expect(new Set(lengths(10).slice(0, -1))).toEqual(new Set([600]));
+    expect(new Set(lengths(231).slice(0, -1))).toEqual(new Set([gameSecondsToFrames(5)]));
+    expect(new Set(lengths(260).slice(0, -1))).toEqual(new Set([gameSecondsToFrames(15)]));
+    expect(new Set(lengths(10).slice(0, -1))).toEqual(new Set([gameSecondsToFrames(10)]));
   });
 });
 
@@ -87,7 +87,9 @@ describe('enteredStep and stageEnterFrames', () => {
 
   it('puts all three stage entries on the activation frame in the fixed cycle', () => {
     const s = planFixedCycle([{ burstStep: 'Step1' }, { burstStep: 'Step2' }, { burstStep: 'Step3' }], 3000);
-    for (const step of ['Step1', 'Step2', 'Step3'] as const) expect(stageEnterFrames(s, step)).toEqual([600, 1800]);
+    const { normalFrames: h, cycleFrames: c } = FIXED_BURST_CYCLE;
+    for (const step of ['Step1', 'Step2', 'Step3'] as const)
+      expect(stageEnterFrames(s, step)).toEqual([h, h + c, h + 2 * c]);
   });
 });
 

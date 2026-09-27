@@ -14,6 +14,7 @@ import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { gameSecondsToFrames } from '../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -118,13 +119,16 @@ describe('録画 39（録画 A）: リターの CT 短縮と最大装弾数', ()
   const schedule = plan.schedule!;
   const starts = schedule.fullBurstWindows.map((w) => w.start);
 
-  it('cuts 2.34 / +2.7 / +3.17 s (141 / 303 / 494 f) from every ally at the 1st / 2nd / 3rd+ full burst', () => {
+  it('cuts 2.34 / +2.7 / +3.17 s from every ally at the 1st / 2nd / 3rd+ full burst', () => {
     const cutAt = (fb: number, slot: number) =>
       schedule.cooldownReductions
         .filter((r) => r.frame === fb && r.slotIndex === slot)
         .reduce((s, r) => s + r.frames, 0);
-    expect(starts.map((fb) => cutAt(fb, 2))).toEqual([141, 303, 494, 494, 494]);
-    expect(starts.map((fb) => cutAt(fb, 1))).toEqual([141, 303, 494, 494, 494]);
+    // 秒はそれぞれ別にフレームへ直して足す（Stage 21-B: 137 / 137 + 158 / 137 + 158 + 186）
+    const [a, b, c] = [gameSecondsToFrames(2.34), gameSecondsToFrames(2.7), gameSecondsToFrames(3.17)];
+    const cuts = [a, a + b, a + b + c, a + b + c, a + b + c];
+    expect(starts.map((fb) => cutAt(fb, 2))).toEqual(cuts);
+    expect(starts.map((fb) => cutAt(fb, 1))).toEqual(cuts);
   });
 
   it('raises the max ammo as recording 39 showed (rounded to nearest): Delta 6 → 9, Liter 120 → 174, Drake 9 → 24', () => {

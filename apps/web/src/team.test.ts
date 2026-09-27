@@ -542,8 +542,9 @@ describe('condition mode (Stage 18-C2)', () => {
     expect(plain.events).toBeUndefined();
     const fire = { defence: 100, element: 'Fire' as const, hasCore: true };
     const jumping = enemyForCalc(fire, master, ['range-3min-jump'], 180);
-    expect(jumping.events).toHaveLength(5);
-    expect(jumping.landings?.map((l) => l.landing)).toEqual(['midNear', 'near', 'far', 'midFar', 'near', 'far']);
+    // Stage 21-B: 180 秒に 4 回（5 回目は 180 秒の外）
+    expect(jumping.events).toHaveLength(4);
+    expect(jumping.landings?.map((l) => l.landing)).toEqual(['midNear', 'near', 'far', 'midFar', 'near']);
     // 3 分モードは、一致するプリセットのセットだけ（既定の敵には付かない）
     expect(enemyForCalc(SHOOTING_RANGE_ENEMY, master, ['range-3min-jump'], 180).landings).toHaveLength(1);
     const boss = { defence: 140, element: 'Fire' as const, hasCore: true };

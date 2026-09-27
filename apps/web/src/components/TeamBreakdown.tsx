@@ -6,6 +6,8 @@ import {
   type TeamResult,
   type TeamSlotResult,
   type TriggerDamage,
+  framesToGameSeconds,
+  gameSecondsToFrame,
 } from '@nikke/core';
 import { formatNumber, formatPercent } from '../format.ts';
 import { DamageTimeline, landingLabel } from './DamageTimeline.tsx';
@@ -94,7 +96,10 @@ export function TeamBreakdown({
     .join(' / ');
   // Stage 18-C2: 着地点の区間（条件が自動の枠があるときだけ）
   const landingsLabel = result.landings
-    .map((s) => `${landingLabel(s)} ${formatNumber(s.start / 60, 1)}–${formatNumber(s.end / 60, 1)}`)
+    .map(
+      (s) =>
+        `${landingLabel(s)} ${formatNumber(framesToGameSeconds(s.start), 1)}–${formatNumber(framesToGameSeconds(s.end), 1)}`,
+    )
     .join('・');
 
   return (
@@ -162,19 +167,19 @@ export function TeamBreakdown({
                 <tbody>
                   {schedule.activations.map((a, k) => {
                     const s = filled.find((f) => f.index === a.slotIndex);
-                    const hit = s?.burst.activations.find((h) => Math.round(h.seconds * 60) === a.frame)?.hit;
+                    const hit = s?.burst.activations.find((h) => gameSecondsToFrame(h.seconds) === a.frame)?.hit;
                     const window = a.startsFullBurst
                       ? schedule.fullBurstWindows.find((w) => w.start >= a.frame)
                       : undefined;
                     return (
                       <tr key={k}>
-                        <td>{formatNumber(a.frame / 60, 2)}s</td>
+                        <td>{formatNumber(framesToGameSeconds(a.frame), 2)}s</td>
                         <td>{STEP_LABEL[a.step]}</td>
                         <td>{s ? `枠 ${a.slotIndex + 1} ${s.character.name.ja}` : `枠 ${a.slotIndex + 1}`}</td>
                         <td>{hit ? formatNumber(hit.perActivation) : '—'}</td>
                         <td>
                           {window
-                            ? `${formatNumber(window.start / 60, 1)}–${formatNumber(window.end / 60, 1)}s（${formatNumber((window.end - window.start) / 60, 1)} 秒）`
+                            ? `${formatNumber(framesToGameSeconds(window.start), 1)}–${formatNumber(framesToGameSeconds(window.end), 1)}s（${formatNumber(framesToGameSeconds(window.end - window.start), 1)} 秒）`
                             : '—'}
                         </td>
                         {rankings.length > 0 && <td>{window ? rankingLabel(window.start) : '—'}</td>}

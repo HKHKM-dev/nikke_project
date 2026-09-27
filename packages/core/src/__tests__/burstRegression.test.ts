@@ -3,7 +3,9 @@
 //
 // 確定していること（厳しく固定する）:
 //   - III が 1 体・全員 CT 40 秒の編成は、フルバーストが 180 秒で 5 回・40 秒周期（録画 18〜21）
-//   - III がいない編成はフルバーストせず、II の後 600f でチェーンが切れてゲージが 0 に戻る（録画 22）
+//   - III がいない編成はフルバーストせず、II の後 約 10 秒でチェーンが切れてゲージが 0 に戻る（録画 22）
+// Stage 21-B: 秒はゲーム内の秒（1 フレーム 0.017 秒）。CT 40 秒は 2,352f。録画 19 のフルバーストの入りは 2,376〜2,377f おき
+// （V-0003。フルバーストの入りで残り時間が止まる分 C-0049 はモデルに無い）
 // ゲージ量は単騎の録画 13 本（2026-09-23）で較正した（burst/dynamic.ts の BURST_ENERGY_MULTIPLIER = 1.2、
 // SG_PELLET_GAUGE_HIT_RATE = 0.75、フルチャージ倍率は操作キャラだけ）。1 回目の満タンまでの時間は、
 // 較正前の −167f〜+163f から、録画 18・19・21 で −37f〜−2f、録画 22 で +61f まで縮んだ（設計書の目標 ±30f には届いていない）。
@@ -12,6 +14,7 @@ import { describe, expect, it } from 'vitest';
 import { planDynamicSchedule } from '../burst/dynamic.ts';
 import { summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
+import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData } from '../types.ts';
 
 function load(id: number): { character: CharacterData } {
@@ -19,7 +22,7 @@ function load(id: number): { character: CharacterData } {
   return { character: JSON.parse(readFileSync(path, 'utf8')) as CharacterData };
 }
 
-const FRAMES = 180 * 60;
+const FRAMES = gameSecondsToFrames(180);
 /** 1 回目の満タンまでの許容幅（フレーム）。録画 22（MG のスピンアップ + 操作 SR）だけ外れが大きいので別に持つ */
 const FIRST_FILL_TOLERANCE = 40;
 const FIRST_FILL_TOLERANCE_MG = 70;
@@ -57,9 +60,9 @@ describe('録画 18〜21: III 1 体・CT 40 秒の編成', () => {
       it('full-bursts 5 times in 180 s, 40 s apart', () => {
         expect(summary.fullBursts).toBe(5);
         const starts = schedule.fullBurstWindows.map((w) => w.start);
-        for (let i = 1; i < starts.length; i++) expect(starts[i]! - starts[i - 1]!).toBe(2400);
+        for (let i = 1; i < starts.length; i++) expect(starts[i]! - starts[i - 1]!).toBe(gameSecondsToFrames(40));
         expect(summary.chainTimeouts).toBe(0);
-        expect(summary.fullBurstUptime).toBeCloseTo(5 / 18, 12);
+        expect(summary.fullBurstUptime).toBeCloseTo((5 * gameSecondsToFrames(10)) / FRAMES, 12);
       });
 
       it('fires I → II → III in slot order every cycle', () => {
@@ -92,10 +95,10 @@ describe('録画 22: エマ：TU（I）+ デルタ（II）、III なし', () => 
   it('never full-bursts and the chain keeps timing out after II', () => {
     expect(schedule.fullBurstWindows).toEqual([]);
     expect(schedule.chainTimeouts.length).toBeGreaterThanOrEqual(3);
-    // 最後の発動（II）から 600f 後に切れる
+    // 最後の発動（II）から 10 秒後に切れる
     const first = schedule.chainTimeouts[0]!;
     const lastUse = Math.max(...schedule.activations.filter((a) => a.frame < first).map((a) => a.frame));
-    expect(first - lastUse).toBe(600);
+    expect(first - lastUse).toBe(gameSecondsToFrames(10));
   });
 
   it(`fills the first gauge within ±${FIRST_FILL_TOLERANCE_MG}f of the recording`, () => {

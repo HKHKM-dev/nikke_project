@@ -21,6 +21,10 @@ const ar = slot(1);
 const smg = slot(2, { maxAmmo: 120, rateOfFire: 1440, endRateOfFire: 1440, damage: 500 });
 const sr = slot(3, { maxAmmo: 6, rateOfFire: 60, endRateOfFire: 60, chargeTime: 1, inputType: 'UP', damage: 6000 });
 
+const relDiff = (a: number, b: number): number => Math.abs(a / b - 1);
+/** 90 秒で 1 フレーム（0.017 秒）の比（180 秒の比べ方にも使う。どちらも 1 フレーム未満の切り捨て） */
+const ONE_FRAME_REL = 0.017 / 90;
+
 describe('computeTeamDamage', () => {
   it('sums the per-slot results in slot order and skips empty slots', () => {
     const team = computeTeamDamage({ slots: [ar, smg, null, sr], enemy, durationSeconds: 180 });
@@ -31,14 +35,20 @@ describe('computeTeamDamage', () => {
     expect(team.slots).toHaveLength(4);
     expect(team.slots[2]).toBeNull();
     expect(team.slots[3]?.index).toBe(3);
-    expect(team.totalDps).toBeCloseTo(
-      individual.reduce((a, r) => a + r.dps, 0),
-      8,
-    );
-    expect(team.totalDamage).toBeCloseTo(
-      individual.reduce((a, r) => a + r.totalDamage, 0),
-      6,
-    );
+    // Stage 21-B: 編成の計算は戦闘の長さをフレームに直して区間を切る（180 秒 = 10,588f = 179.996 秒）。単体の計算は秒のまま。
+    // 差は 1 フレーム未満の切り捨ての分だけ
+    expect(
+      relDiff(
+        team.totalDps,
+        individual.reduce((a, r) => a + r.dps, 0),
+      ),
+    ).toBeLessThan(ONE_FRAME_REL);
+    expect(
+      relDiff(
+        team.totalDamage,
+        individual.reduce((a, r) => a + r.totalDamage, 0),
+      ),
+    ).toBeLessThan(ONE_FRAME_REL);
     // 持続バフもフルバーストもないので区間は 1 つ。1 トリガーの値と合計が単体計算と一致する
     for (const [slotIndex, r] of [
       [0, individual[0]!],
@@ -49,8 +59,8 @@ describe('computeTeamDamage', () => {
       expect(c.segments).toHaveLength(1);
       expect(c.segments[0]!.trigger.perTrigger).toBe(r.perTrigger);
       expect(c.cadence).toEqual(r.cadence);
-      expect(c.normalDamage).toBe(r.totalDamage);
-      expect(c.dps).toBeCloseTo(r.dps, 9);
+      expect(relDiff(c.normalDamage, r.totalDamage)).toBeLessThan(ONE_FRAME_REL);
+      expect(relDiff(c.dps, r.dps)).toBeLessThan(ONE_FRAME_REL);
     }
   });
 
@@ -82,10 +92,11 @@ describe('computeTeamDamage', () => {
       condition: { ...condition, durationSeconds: 90 },
     });
     expect(team.slots[0]?.segments[0]?.trigger.perTrigger).toBe(single.perTrigger);
-    expect(team.slots[0]?.normalDamage).toBe(single.totalDamage);
+    // 90 秒 = 5,294f = 89.998 秒（1 フレーム未満の切り捨ての分だけ違う）
+    expect(relDiff(team.slots[0]!.normalDamage, single.totalDamage)).toBeLessThan(ONE_FRAME_REL);
     expect(team.slots[0]?.share).toBe(1);
-    expect(team.totalDps).toBe(single.dps);
-    expect(team.totalDamage).toBe(single.totalDamage);
+    expect(relDiff(team.totalDps, single.dps)).toBeLessThan(ONE_FRAME_REL);
+    expect(relDiff(team.totalDamage, single.totalDamage)).toBeLessThan(ONE_FRAME_REL);
   });
 
   it('applies attackOverride and duration per slot independently', () => {

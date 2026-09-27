@@ -241,7 +241,8 @@ describe('照合の部品', () => {
     const input = buildTeamInput(rec47, { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] }, data);
     expect(input.slots.map((s) => s!.character.resourceId)).toEqual([822, 20, 225]);
     expect(input.controlledSlot).toBe(2);
-    expect(input.enemy.events).toHaveLength(5);
+    // Stage 21-B: 180 秒に 4 回（5 回目は 180 秒の外。__tests__/stage16Events.test.ts）
+    expect(input.enemy.events).toHaveLength(4);
     expect(input.slots[0]!.condition).toEqual({ coreHitRate: 1, distanceBonus: true, fullCharge: true, hitRate: 1 });
     const setup = { enemy: 'range-bigarms-fire' };
     expect(() => buildTeamInput(recordings.get('048')!, setup, data)).toThrow(/スペック固定 OFF/);
@@ -263,7 +264,7 @@ describe('照合の部品', () => {
     );
     expect(auto.slots[0]!.conditionMode).toBe('auto');
     expect(auto.enemy.target?.id).toBe('range-bigarms');
-    expect(auto.enemy.landings?.map((s) => s.landing)).toEqual(['midNear', 'near', 'far', 'midFarA', 'near', 'far']);
+    expect(auto.enemy.landings?.map((s) => s.landing)).toEqual(['midNear', 'near', 'far', 'midFarA', 'near']);
   });
 
   it('reports a mid-far landing without automatic conditions, or an unknown one', () => {

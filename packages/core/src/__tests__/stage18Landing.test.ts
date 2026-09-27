@@ -30,6 +30,7 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, ShotParams, WeaponType } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
+import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 
 const raw = JSON.parse(readFileSync(new URL('../../data/enemies.json', import.meta.url), 'utf8')) as Record<
   string,
@@ -163,29 +164,29 @@ describe('着地点の時間割り（enemyLandingsOf）', () => {
       s.landing,
     ]);
 
-  it('cuts at each landing (the end of a jump) and follows 中近 → 近 → 遠 → 中遠 → 近 → 遠 (C-0031)', () => {
+  it('cuts at each landing (the end of a jump) and follows 中近 → 近 → 遠 → 中遠 → 近 (C-0031)', () => {
+    // Stage 21-B: ジャンプは 180 秒に 4 回（5 回目は 180 秒の外。stage16Events.test.ts）なので、6 区間目の遠は無い
     expect(spans()).toEqual([
-      [0, 33, 'midNear'],
-      [33, 69.4, 'near'],
-      [69.4, 105.8, 'far'],
-      [105.8, 142.2, 'midFar'],
-      [142.2, 178.6, 'near'],
-      [178.6, 180, 'far'],
+      [0, 33.6, 'midNear'],
+      [33.6, 70.7, 'near'],
+      [70.7, 107.9, 'far'],
+      [107.9, 145, 'midFar'],
+      [145, 180, 'near'],
     ]);
   });
 
   it('uses the initial landing for the whole battle without the 3-minute mode, and can fix the mid-far landing', () => {
     expect(enemyLandingsOf(master, [], 180, profile)).toEqual([{ start: 0, end: 180, landing: 'midNear' }]);
-    expect(spans({ midFar: 'midFarA' })[3]).toEqual([105.8, 142.2, 'midFarA']);
+    expect(spans({ midFar: 'midFarA' })[3]).toEqual([107.9, 145, 'midFarA']);
     expect(() => spans({ midFar: 'near' })).toThrow(/not part of mix/);
   });
 
   it('marks the landings after the measured order as unmeasured (battles longer than 180 s)', () => {
     const long = spans(undefined, 260);
     expect(long.slice(6).every(([, , landing]) => landing === null)).toBe(true);
-    // 6 区間目（遠）は次の着地（215 秒）まで。そこから先は未測定
-    expect(long[5]).toEqual([178.6, 215, 'far']);
-    expect(long[6]![0]).toBe(215);
+    // 6 区間目（遠）は次の着地（219.3 秒）まで。そこから先は未測定
+    expect(long[5]).toEqual([182.1, 219.3, 'far']);
+    expect(long[6]![0]).toBe(219.3);
   });
 });
 
@@ -317,11 +318,11 @@ describe('編成（自動の条件）', () => {
       expect(calc.slots[i]!.autoCondition).toEqual(sim.slots[i]!.autoCondition);
       expect(simTeam.slots[i]!.autoCondition).toEqual(calc.slots[i]!.autoCondition);
     }
-    expect(calc.landings.map((s) => s.landing)).toEqual(['midNear', 'near', 'far', 'midFar', 'near', 'far']);
+    expect(calc.landings.map((s) => s.landing)).toEqual(['midNear', 'near', 'far', 'midFar', 'near']);
     expect(simTeam.landings).toEqual(calc.landings);
     // 自動の枠は着地点の境目で区間が割れる（鍵に着地点が入る）
     const landings = new Set(calc.slots[0]!.segments.map((s) => s.ranges[0]!.start));
-    expect(landings.has(33 * 60)).toBe(true);
+    expect(landings.has(gameSecondsToFrame(33.62))).toBe(true);
     expect(calc.enemyNotes[0]!.message.ja).not.toContain('扱わない');
   });
 
@@ -329,7 +330,9 @@ describe('編成（自動の条件）', () => {
     const calc = computeTeamDamage(input(team(true), enemy({ fixed: { midFar: 'midFarA' } })));
     const smg = calc.slots[1]!;
     const at = (sec: number) =>
-      smg.segments.find((s) => s.ranges.some((r) => r.start <= sec * 60 && sec * 60 < r.end))!;
+      smg.segments.find((s) =>
+        s.ranges.some((r) => r.start <= gameSecondsToFrame(sec) && gameSecondsToFrame(sec) < r.end),
+      )!;
     expect(at(10).trigger.boost.distance).toBe(0.3);
     expect(at(80).trigger.boost.distance).toBe(0);
     expect(at(120).trigger.boost.distance).toBe(0.3);
@@ -347,7 +350,7 @@ describe('編成（自動の条件）', () => {
     }
     // 中遠で距離ボーナスが乗る割合（発数平均の中遠の分）: SMG 0.3、MG 0.7、AR 1
     const midFarShare = (i: number) => {
-      const s = mix[i]!.segments.find((x) => x.start <= 120 * 60 && 120 * 60 < x.end)!;
+      const s = mix[i]!.segments.find((x) => x.start <= gameSecondsToFrame(120) && gameSecondsToFrame(120) < x.end)!;
       return s.trigger.boost.distance / 0.3;
     };
     expect(midFarShare(0)).toBeCloseTo(1, 12);
@@ -357,7 +360,7 @@ describe('編成（自動の条件）', () => {
 
   it('uses the initial landing (中近) without the 3-minute mode, on the average-rate path of calc', () => {
     const calc = computeTeamDamage(input(team(true), enemy({ events: false })));
-    expect(calc.landings).toEqual([{ start: 0, end: 10800, landing: 'midNear', band: 'midNear' }]);
+    expect(calc.landings).toEqual([{ start: 0, end: gameSecondsToFrames(180), landing: 'midNear', band: 'midNear' }]);
     const midNear: SlotCondition = { coreHitRate: 0.2281, distanceBonus: true, fullCharge: true, hitRate: 0.9963 };
     const manual = computeTeamDamage(
       input([slot(weapon('AR', { min: 25, max: 45 }, 1), false, { condition: midNear })], enemy({ events: false })),

@@ -7,6 +7,7 @@ import { applyResolvedEffect, ZERO_BUFFS } from '../buffs.ts';
 import { resolveDamageEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveTimed } from '../resolve.ts';
 import { isFiringStat, parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
 const skill = (values: string[]): SkillRaw => ({
@@ -144,7 +145,12 @@ describe('resolve (Stage 10)', () => {
     const [passive] = resolvePassives(def, character, MAX_SKILL_LEVELS);
     expect(passive).toMatchObject({ stat: 'maxAmmo', scaling: 'flat', value: 5 });
     const [timed] = resolveTimed(def, character, MAX_SKILL_LEVELS);
-    expect(timed).toMatchObject({ stat: 'maxAmmo', scaling: 'ratio', value: 0.4517, durationFrames: 300 });
+    expect(timed).toMatchObject({
+      stat: 'maxAmmo',
+      scaling: 'ratio',
+      value: 0.4517,
+      durationFrames: gameSecondsToFrames(5),
+    });
   });
 
   it('adds flat max ammo to maxAmmoFlat and ratio max ammo to maxAmmoRatio', () => {

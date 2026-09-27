@@ -9,6 +9,12 @@ import { computeTeamDamage } from '../calc/model.ts';
 import { type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
+import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';
+import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
+
+/** Stage 21-B: 180 秒 = 10,588f、固定サイクルの通常 10 秒 = 588f */
+const FRAMES = gameSecondsToFrames(180);
+const H = FIXED_BURST_CYCLE.normalFrames;
 
 const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
 const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
@@ -91,13 +97,16 @@ describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first
   it('splits 180 s into three buff states and matches the hand calculation', () => {
     const s = computeTeamDamage({ slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
       .slots[0]!;
-    expect(s.segments.map((g) => [g.fullBurst, g.buffs.attackRatio !== 0, g.seconds])).toEqual([
-      [false, false, 10],
-      [true, true, 90],
-      [false, true, 80],
+    // Stage 21-B: 通常 10 秒 = H、フルバースト 9 回 = 9H、残りがバフありの通常（180 秒 = FRAMES）
+    expect(s.segments.map((g) => [g.fullBurst, g.buffs.attackRatio !== 0])).toEqual([
+      [false, false],
+      [true, true],
+      [false, true],
     ]);
+    const expectedSeconds = [H, 9 * H, FRAMES - 10 * H].map(framesToGameSeconds);
+    s.segments.forEach((g, i) => expect(g.seconds).toBeCloseTo(expectedSeconds[i]!, 9));
     expect(s.windows).toHaveLength(1);
-    expect(s.windows[0]).toMatchObject({ start: 600, end: 10800 });
+    expect(s.windows[0]).toMatchObject({ start: H, end: FRAMES });
     const rate = s.cadence.triggersPerSecond;
     const expected = s.segments.reduce((a, g) => a + rate * g.seconds * g.trigger.perTrigger, 0);
     expect(s.normalDamage).toBeCloseTo(expected, 6);
@@ -108,7 +117,7 @@ describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first
     const s = computeTeamDamage({ slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
       .slots[0]!;
     const buffedSeconds = s.segments.filter((g) => g.buffs.attackRatio !== 0).reduce((a, g) => a + g.seconds, 0);
-    expect(buffedSeconds).toBe(170);
+    expect(buffedSeconds).toBeCloseTo(framesToGameSeconds(FRAMES - H), 9);
   });
 });
 
@@ -139,13 +148,14 @@ describe('6.2 degeneration: without timed effects the model is Stage 5’s two i
     for (const s of t.slots) {
       if (s === null) continue;
       expect(s.segments).toHaveLength(2);
-      expect(s.segments.map((g) => [g.fullBurst, g.seconds])).toEqual([
-        [false, 90],
-        [true, 90],
-      ]);
+      // 通常 9H + 4f（9 サイクルの後の 4f）、フルバースト 9H
+      expect(s.segments.map((g) => g.fullBurst)).toEqual([false, true]);
+      const secs = [framesToGameSeconds(9 * H + 4), framesToGameSeconds(9 * H)];
       const rate = s.cadence.triggersPerSecond;
-      expect(s.segments[0]!.damage).toBe(rate * s.segments[0]!.trigger.perTrigger * 90);
-      expect(s.segments[1]!.damage).toBe(rate * s.segments[1]!.trigger.perTrigger * 90);
+      for (const i of [0, 1]) {
+        expect(s.segments[i]!.seconds).toBeCloseTo(secs[i]!, 9);
+        expect(s.segments[i]!.damage).toBeCloseTo(rate * s.segments[i]!.trigger.perTrigger * secs[i]!, 6);
+      }
       expect(s.segments[1]!.trigger.boost.fullBurst).toBe(0.5);
       expect(s.normalDamage + s.burst.totalDamage).toBeCloseTo(s.totalDamage, 6);
     }
@@ -155,7 +165,8 @@ describe('6.2 degeneration: without timed effects the model is Stage 5’s two i
   it('gives a single group without a burst schedule', () => {
     const t = computeTeamDamage({ slots: [plain(1)], enemy, durationSeconds: 180 });
     expect(t.slots[0]?.segments).toHaveLength(1);
-    expect(t.slots[0]?.segments[0]).toMatchObject({ fullBurst: false, seconds: 180 });
+    expect(t.slots[0]?.segments[0]?.fullBurst).toBe(false);
+    expect(t.slots[0]?.segments[0]?.seconds).toBeCloseTo(framesToGameSeconds(FRAMES), 9);
     expect(t.schedule).toBeNull();
   });
 });
@@ -225,9 +236,9 @@ describe('timed buff targets and levels', () => {
       .slots[0]!;
     const lv10 = computeTeamDamage({ slots: [make(10)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
       .slots[0]!;
-    // Lv1: +10% / 5 秒（300f）、Lv10: +55% / 14 秒（840f）
-    expect(lv1.windows[0]).toMatchObject({ start: 600, end: 900 });
-    expect(lv10.windows[0]).toMatchObject({ start: 600, end: 1440 });
+    // Lv1: +10% / 5 秒、Lv10: +55% / 14 秒
+    expect(lv1.windows[0]).toMatchObject({ start: H, end: H + gameSecondsToFrames(5) });
+    expect(lv10.windows[0]).toMatchObject({ start: H, end: H + gameSecondsToFrames(14) });
     expect(Math.max(...lv1.segments.map((g) => g.buffs.attackRatio))).toBeCloseTo(0.1, 12);
     expect(Math.max(...lv10.segments.map((g) => g.buffs.attackRatio))).toBeCloseTo(0.55, 12);
     expect(lv10.totalDamage).toBeGreaterThan(lv1.totalDamage);

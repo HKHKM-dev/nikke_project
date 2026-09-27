@@ -5,6 +5,7 @@ export * from './stats.ts';
 export * from './element.ts';
 export * from './enemies.ts';
 export * from './weapons.ts';
+export * from './time.ts';
 export * from './load.ts';
 export * from './cadence.ts';
 export * from './damage.ts';
