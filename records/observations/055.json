@@ -38,5 +38,111 @@
         "condition": "auto"
       }
     }
+  },
+  {
+    "id": "055-03",
+    "recording": "055",
+    "source": "V-0001",
+    "readAt": "2026-09-27",
+    "kind": "count",
+    "use": "compare",
+    "value": 179,
+    "unit": "発",
+    "description": "紅蓮：ブラックシャドウの通常攻撃のうち、HUD の総ダメージに増分が出た発の数（180 秒。部分チャージの 1 発を含む。増分の出ない発は数えない）。結論には結び付けない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分を 1 発の値（胴体・コア × 会心、部分チャージ）と S1 の段の値の組み合わせに分け、桁送りで分かれた読みは合わせた。分けた値の合計は HUD の最終値と 1 の位まで一致"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "055-04",
+    "recording": "055",
+    "source": "V-0001",
+    "readAt": "2026-09-27",
+    "kind": "count",
+    "use": "compare",
+    "value": 59,
+    "unit": "回",
+    "description": "紅蓮：ブラックシャドウの S1 の段の回数（A・B・C の合計。B の 3 ティックは 1 回と数える。180 秒）。結論には結び付けない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "03 と同じ分け方。B はティック 3 つで 1 回"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "055-05",
+    "recording": "055",
+    "source": "V-0001",
+    "readAt": "2026-09-27",
+    "kind": "count",
+    "use": "record",
+    "value": [27, 3, 2, 6],
+    "unit": "回",
+    "description": "会心の数（180 秒）。並びは 通常攻撃・段 A・段 B・段 C。母数は 03・04",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "03 と同じ分け方。段 B は 20 回とも、3 ティックがそろって会心か、そろって会心でないかのどちらかだった"
+    }
+  },
+  {
+    "id": "055-06",
+    "recording": "055",
+    "source": "V-0001",
+    "readAt": "2026-09-27",
+    "kind": "count",
+    "use": "record",
+    "value": [2, 1],
+    "unit": "発",
+    "description": "通常攻撃のうち、コアを外した発（胴体）と、部分チャージの発の数（180 秒）。並びは 胴体・部分チャージ（03 の内数）",
+    "method": {
+      "tool": "hud.ts --mode jumps"
+    }
+  },
+  {
+    "id": "055-07",
+    "recording": "055",
+    "source": "V-0001",
+    "readAt": "2026-09-27",
+    "kind": "interval",
+    "use": "record",
+    "value": [216, 253, 136, 159, 192],
+    "unit": "f",
+    "description": "的のジャンプをまたぐ通常攻撃の間隔（ジャンプの前の最後の 1 発 → 着地の後の 1 発目。5 回。3 回目は、ジャンプの始まりに出た部分チャージの 1 発から）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分の出たフレーム。増分の表示は着弾より遅れることがある（±数 f）"
+    }
   }
 ]
