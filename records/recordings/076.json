@@ -1,0 +1,30 @@
+{
+  "id": "076",
+  "date": "2026-09-27",
+  "folder": "range",
+  "file": "20260927-76_SR_ram_auto.mp4",
+  "original": "2026-09-27_23-22-02.mp4",
+  "durationSec": 198.0,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 239.9,
+  "sha256": "c1c11110f121",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": true,
+      "note": "単騎・AUTO"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定。単騎なので操作キャラだが **AUTO 射撃 ON**・自動バースト OFF。画面左上のボタンで確かめた）。V-0014 の撮り直し（録画 75 と同じ条件）"
+}
