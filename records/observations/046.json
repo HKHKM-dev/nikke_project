@@ -195,5 +195,20 @@
       "tool": "hud.ts --mode jumps"
     },
     "readAt": "2026-09-27"
+  },
+  {
+    "recording": "046",
+    "id": "046-11",
+    "kind": "timing",
+    "use": "record",
+    "value": [23.99, 59.84, 101.39, 137.31, 169.98],
+    "unit": "秒",
+    "description": "的のジャンプの始まりの、戦闘開始から数えたゲーム内の秒（単騎・バーストなし）。1〜5 回目。停止の前の最後の増分（V-0002 の射撃の並び）",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode changes",
+      "note": "戦闘開始 f862（残り時間 02:59 が出たフレーム）から 1 フレーム 0.017 秒で数えた"
+    },
+    "source": "V-0007",
+    "readAt": "2026-09-27"
   }
 ]
