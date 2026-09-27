@@ -12,7 +12,8 @@ import {
   type BurstUnit,
 } from '../controller.ts';
 import { planDynamicSchedule } from '../dynamic.ts';
-import { durationToFrames, planFixedCycle } from '../fixedCycle.ts';
+import { planFixedCycle } from '../fixedCycle.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 import { stageEnterFrames, type BurstSchedule } from '../schedule.ts';
 
 const NEXT: Record<BurstStep, BurstNextStep> = {
@@ -54,7 +55,7 @@ describe('full burst length per unit (burst_duration)', () => {
   });
 
   it('takes 5 s from イサベル and 15 s from モダニア as III in a real team', () => {
-    const frames = durationToFrames(180);
+    const frames = gameSecondsToFrames(180);
     const lengths = (iii: number): number[] =>
       planDynamicSchedule([291, 20, iii].map(load), frames).fullBurstWindows.map((w) => w.end - w.start);
     expect(new Set(lengths(231).slice(0, -1))).toEqual(new Set([300]));
@@ -91,7 +92,7 @@ describe('enteredStep and stageEnterFrames', () => {
 });
 
 describe('planDynamicSchedule with shared shots and gauge speed', () => {
-  const frames = durationToFrames(180);
+  const frames = gameSecondsToFrames(180);
   const team = [291, 20, 290].map(load);
 
   it('gives the same schedule whether it runs the shooters itself or takes planShots', () => {

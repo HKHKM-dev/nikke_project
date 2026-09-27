@@ -4,7 +4,8 @@
 // calc は常時分の射撃バフをここで平均レートに畳み込む（plan/design-stage10.md 3.4 節）。
 import { firingParams, type FiringParams } from './frame/firing.ts';
 import type { ShotParams } from './types.ts';
-import { DEFAULT_WEAPON_MODEL, FPS, MAX_RPM, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
+import { framesToGameSeconds } from './time.ts';
+import { DEFAULT_WEAPON_MODEL, MAX_RPM, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
 
 export type CadenceResult = {
   /** 各発の発射フレーム（1 発目 = 0） */
@@ -98,8 +99,8 @@ export function computeCadence(
     reloadChunks: chunks,
     reloadFrames,
     cycleFrames,
-    cycleSeconds: cycleFrames / FPS,
+    cycleSeconds: framesToGameSeconds(cycleFrames),
     triggersPerCycle: params.maxAmmo,
-    triggersPerSecond: (params.maxAmmo * FPS) / cycleFrames,
+    triggersPerSecond: params.maxAmmo / framesToGameSeconds(cycleFrames),
   };
 }

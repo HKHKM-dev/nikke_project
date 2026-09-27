@@ -19,7 +19,7 @@ import { LANDING_BAND_LABEL, LANDING_BANDS } from '../enemies.ts';
 import type { SlotBuffState } from '../skills/timeline.ts';
 import type { SlotCondition, TeamSlotInput } from '../team.ts';
 import type { CharacterData, LandingBand, LandingPoint, TargetProfile, TargetRateTable } from '../types.ts';
-import { FPS } from '../weapons.ts';
+import { framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
 
 export type ConditionMode = 'manual' | 'auto';
 
@@ -130,7 +130,7 @@ export function landingMix(profile: TargetProfile, id: string): { landing: Landi
 
 /** 秒 → フレーム（frame/events.ts の狙えない窓と同じ四捨五入） */
 function frameOf(seconds: number): number {
-  return Math.round(seconds * FPS);
+  return gameSecondsToFrame(seconds);
 }
 
 /**
@@ -140,7 +140,7 @@ function frameOf(seconds: number): number {
 export function landingFrameSpans(enemy: EnemyInput, frames: number): LandingFrameSpan[] {
   const target = enemy.target;
   if (target === undefined || frames <= 0) return [];
-  const source = enemy.landings ?? [{ start: 0, end: frames / FPS, landing: target.initialLanding }];
+  const source = enemy.landings ?? [{ start: 0, end: framesToGameSeconds(frames), landing: target.initialLanding }];
   const spans: LandingFrameSpan[] = [];
   let at = 0;
   const push = (end: number, landing: string | null): void => {
@@ -423,8 +423,8 @@ export function landingNotes(
       level: 'unsupported',
       code: 'landing-unmeasured',
       message: {
-        ja: `${(unknown.start / FPS).toFixed(1)} 秒以降の着地点は未測定なので、手入力の値（${manualText.ja}）で計算した`,
-        en: `Landing points after ${(unknown.start / FPS).toFixed(1)} s are not measured; manual values are used (${manualText.en})`,
+        ja: `${framesToGameSeconds(unknown.start).toFixed(1)} 秒以降の着地点は未測定なので、手入力の値（${manualText.ja}）で計算した`,
+        en: `Landing points after ${framesToGameSeconds(unknown.start).toFixed(1)} s are not measured; manual values are used (${manualText.en})`,
       },
     });
   }

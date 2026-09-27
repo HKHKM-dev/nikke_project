@@ -8,7 +8,7 @@
 //   n がその倍数なら steps[step] を発動して step を 1 つ進める（最後の次は最初）。
 // 窓の中の毎回の段はカウンタを戻さないので、窓の後の最初の段は「通算の every の倍数」の射撃に戻る
 // （録画 47 の FB 明けの段が 1 発目の回と 2 発目の回に分かれたのはこのため）。
-import { durationToFrames } from '../burst/fixedCycle.ts';
+import { gameSecondsToFrames } from '../time.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData, LocalizedText, SkillRaw } from '../types.ts';
 import type { ResolvedDamageEffect } from './burstDamage.ts';
@@ -39,7 +39,7 @@ export type ResolvedCycleEvery = {
   /** 窓の中の段の間隔 */
   every: number;
   trigger: ResolvedTrigger;
-  /** durationToFrames(維持秒数)。0 なら効果なし */
+  /** gameSecondsToFrames(維持秒数)。0 なら効果なし */
   durationFrames: number;
   assumes?: LocalizedText;
 };
@@ -142,7 +142,7 @@ export function resolveCycleEvery(
         targetSkill: effect.slot,
         every: effect.every,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
-        durationFrames: durationToFrames(seconds),
+        durationFrames: gameSecondsToFrames(seconds),
       };
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);

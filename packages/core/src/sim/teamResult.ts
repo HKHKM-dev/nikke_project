@@ -14,7 +14,7 @@ import {
   type TeamResult,
   type TeamSlotResult,
 } from '../team.ts';
-import { FPS } from '../weapons.ts';
+import { framesToGameSeconds } from '../time.ts';
 import type { SimResult } from './engine.ts';
 
 /** teamInput は runSimulation に渡したものと同じ（宝物の適用前）。dps と宝物の段階の表示に使う */
@@ -48,7 +48,7 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
 
     const skillHitActivations: SlotSkillHitsResult['activations'] = sim.skillHits
       .filter((h) => h.slotIndex === index)
-      .map((h) => ({ seconds: h.frame / FPS, effect: h.effect, hit: h.hit }));
+      .map((h) => ({ seconds: framesToGameSeconds(h.frame), effect: h.effect, hit: h.hit }));
 
     return {
       index,
@@ -66,7 +66,10 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
       segments,
       normalDamage: slot.normalDamage,
       burst: {
-        activations: slot.burst.activations.map((frame, k) => ({ seconds: frame / FPS, hit: slot.burst.hits[k]! })),
+        activations: slot.burst.activations.map((frame, k) => ({
+          seconds: framesToGameSeconds(frame),
+          hit: slot.burst.hits[k]!,
+        })),
         hit: slot.burst.hit,
         totalDamage: slot.burst.damage,
       },

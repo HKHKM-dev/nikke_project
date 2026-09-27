@@ -3,11 +3,11 @@
 import type { EnemyEvent, ModelNote } from '../damage.ts';
 import { IMPLEMENTED_ENEMY_EVENT_KINDS } from '../enemies.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { FPS } from '../weapons.ts';
+import { gameSecondsToFrame } from '../time.ts';
 
 /** 秒 → フレーム（出来事の境目。四捨五入） */
 function frameOf(seconds: number): number {
-  return Math.round(seconds * FPS);
+  return gameSecondsToFrame(seconds);
 }
 
 /**

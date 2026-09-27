@@ -23,7 +23,7 @@ import type { BuildEffect } from '../buildEffects.ts';
 import { resolveCycleEvery, type CycleWindow } from './cycles.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
-import { FPS } from '../weapons.ts';
+import { framesToGameSeconds } from '../time.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
 import {
   isResolvedShotCount,
@@ -93,7 +93,7 @@ export type SlotBuffState = {
 export type TimelineSegment = {
   start: number;
   end: number;
-  /** (end − start) / FPS */
+  /** framesToGameSeconds(end − start) */
   seconds: number;
   fullBurst: boolean;
   /** 枠ごとの状態。空枠は null */
@@ -573,7 +573,7 @@ export function planBuffTimeline(
     const segment: TimelineSegment = {
       start,
       end,
-      seconds: (end - start) / FPS,
+      seconds: framesToGameSeconds(end - start),
       fullBurst,
       slots: slotStates,
       slotKeys: slotStates.map((state, i) =>

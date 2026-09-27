@@ -4,7 +4,7 @@
 // バースト CT・ゲージ蓄積は Stage 7（dynamic.ts）。ここでは毎サイクル必ず発動する。
 // Stage 7 で時刻表の形を BurstSchedule（schedule.ts）に一般化した。固定サイクルは比較・退化テスト用に残す（TeamInput.burstModel: 'fixed'）。
 import type { BurstStep } from '../types.ts';
-import { FPS } from '../weapons.ts';
+import { gameSecondsToFrames } from '../time.ts';
 import {
   BURST_STEP_KEYS,
   type BurstActivation,
@@ -21,9 +21,9 @@ export type BurstCycleFrames = {
 
 /** 20 秒サイクル: 通常 10 秒 + フルバースト 10 秒 */
 export const FIXED_BURST_CYCLE: Readonly<BurstCycleFrames> = Object.freeze({
-  cycleFrames: 1200,
-  normalFrames: 600,
-  fullBurstFrames: 600,
+  cycleFrames: gameSecondsToFrames(20),
+  normalFrames: gameSecondsToFrames(10),
+  fullBurstFrames: gameSecondsToFrames(10),
 });
 
 /** 枠のバースト段階。null は空枠 */
@@ -31,12 +31,6 @@ export type BurstCandidate = { burstStep: BurstStep } | null;
 
 /** 段階ごとに発動する枠番号。null = その段階のニケがいない（発動なし。フルバースト自体は起きると仮定） */
 export type BurstAssignment = Record<(typeof BURST_STEP_KEYS)[number], number | null>;
-
-/** 秒をフレームに（切り上げ）。戦闘時間の換算に使う */
-export function durationToFrames(seconds: number): number {
-  if (!Number.isFinite(seconds) || seconds < 0) throw new RangeError(`duration must be >= 0, got ${seconds}`);
-  return Math.ceil(seconds * FPS);
-}
 
 function validateCycle(cycle: BurstCycleFrames): void {
   const { cycleFrames, normalFrames, fullBurstFrames } = cycle;

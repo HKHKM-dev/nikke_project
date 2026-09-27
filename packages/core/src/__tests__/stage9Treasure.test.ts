@@ -12,7 +12,7 @@ import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { type TeamInput, type TeamSlotInput, type TeamSlotResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
-import { FPS } from '../weapons.ts';
+import { framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -100,8 +100,8 @@ describe('録画 36: ドレイク単騎（宝物 3 段階）', () => {
     expect(Math.round(nonCritOf(every5[0]!))).toBe(241509);
     expect(Math.round(nonCritOf(every10[0]!))).toBe(118059);
     // 10 発目には両方出る（5・10・15…発目と 10・20…発目）
-    const frames5 = every5.map((a) => a.seconds * FPS);
-    for (const a of every10) expect(frames5).toContain(a.seconds * FPS);
+    const frames5 = every5.map((a) => gameSecondsToFrame(a.seconds));
+    for (const a of every10) expect(frames5).toContain(gameSecondsToFrame(a.seconds));
   });
 
   it('is at least as strong as the base version, and phase 0 is the base version', () => {
@@ -123,7 +123,8 @@ describe('録画 37: ラム + デルタ + ドレイク（宝物 3 段階）', ()
   const calc = computeTeamDamage(input);
   const drake = calc.slots[2]!;
   const windows = calc.schedule!.fullBurstWindows;
-  const inFb = (a: SkillHit) => windows.some((w) => w.start <= a.seconds * FPS && a.seconds * FPS < w.end);
+  const inFb = (a: SkillHit) =>
+    windows.some((w) => w.start <= gameSecondsToFrame(a.seconds) && gameSecondsToFrame(a.seconds) < w.end);
   const fbHits = drake.skillHits.activations.filter(inFb);
 
   it('matches the full-burst skill hits: 5 shots 838,582 and 10 shots 409,932', () => {
@@ -172,7 +173,7 @@ describe('録画 37: ラム + デルタ + ドレイク（宝物 3 段階）', ()
 
   it('sim and calc share the skill-hit activations exactly', () => {
     const sim = runSimulation(input);
-    expect(sim.slots[2]!.skillHits.frames.map((f) => f / FPS)).toEqual(
+    expect(sim.slots[2]!.skillHits.frames.map((f) => framesToGameSeconds(f))).toEqual(
       drake.skillHits.activations.map((a) => a.seconds),
     );
     expect(sim.slots[2]!.skillHits.damage).toBeCloseTo(drake.skillHits.totalDamage, 6);

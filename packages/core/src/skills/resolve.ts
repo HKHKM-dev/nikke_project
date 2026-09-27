@@ -1,7 +1,7 @@
 // スキル定義の ref を Lv の数値に解決する。単位変換（% → 比率）はここで一律に行う。
 // Stage 11 モダニア: スタックの最大数・「▼」・条件・使用武器の変更（stat 'weapon' の持続効果として解決する）を足した。
 import type { CharacterData, Locale, LocalizedText, ShotParams, SkillRaw, WeaponType } from '../types.ts';
-import { durationToFrames } from '../burst/fixedCycle.ts';
+import { gameSecondsToFrames } from '../time.ts';
 import type { ChangedWeapon } from './buffs.ts';
 import {
   SKILL_SLOTS,
@@ -186,7 +186,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
 /** Stage 6: トリガー付きの持続バフ。ResolvedEffect に「いつ付いて、何フレーム続くか」が付いた形 */
 export type ResolvedTimedEffect = ResolvedEffect & {
   trigger: ResolvedTrigger;
-  /** durationToFrames(維持秒数)。0 なら効果なし */
+  /** gameSecondsToFrames(維持秒数)。0 なら効果なし */
   durationFrames: number;
   /** 上書き延長の同一性判定に使う（同じスロットの何番目の効果か） */
   effectIndex: number;
@@ -237,7 +237,7 @@ export function resolveTimed(
         scaling: effect.scaling ?? 'ratio',
         value,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
-        durationFrames: durationToFrames(seconds),
+        durationFrames: gameSecondsToFrames(seconds),
         effectIndex,
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
@@ -330,7 +330,7 @@ function resolveWeaponChange(
       shot: changedWeaponShot(character.shot, damage, change.rateOfFire, hits),
     },
     trigger: resolveTrigger(effect.trigger, skill, level),
-    durationFrames: durationToFrames(durationSecondsOf(effect, skill, level)),
+    durationFrames: gameSecondsToFrames(durationSecondsOf(effect, skill, level)),
     effectIndex,
   };
   if (effect.assumes) r.assumes = effect.assumes;
