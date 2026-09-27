@@ -377,8 +377,10 @@ export function SlotCard({
                       <small className="sub">
                         {formatTimedTrigger(t.effect.trigger)}{' '}
                         {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}・
-                        {formatNumber(framesToGameSeconds(t.effect.durationFrames), 0)} 秒 × {t.count} 回
-                        {formatTimedExtras(t.effect)}
+                        {t.effect.durationShots !== undefined
+                          ? `${t.effect.durationShots} 発`
+                          : `${formatNumber(framesToGameSeconds(t.effect.durationFrames), 0)} 秒`}{' '}
+                        × {t.count} 回{formatTimedExtras(t.effect)}
                         {t.effect.condition && skipsOf(t.effect) > 0
                           ? `・状態でなく発動せず ${skipsOf(t.effect)} 回`
                           : ''}

@@ -164,6 +164,8 @@ const BUFF_FIELDS = [
   'critDamage',
   'attackDamage',
   'chargeDamage',
+  // ヘルム編: チャージダメージ倍率
+  'chargeDamageMultiplier',
   'distributedDamage',
   'burstGaugeSpeed',
   'maxAmmoRatio',
@@ -177,6 +179,8 @@ const BUFF_FIELDS = [
   'elementDamage',
   'coreDamage',
   'normalAttackDamage',
+  // ヘルム編: 通常攻撃のクリティカル確率
+  'normalCritRate',
 ] as const satisfies readonly (keyof BuffTotals)[];
 
 /** key の桁数。最下位ビットのずれで同一状態が別グループに割れないよう固定桁で文字列化する */
@@ -326,6 +330,32 @@ export function selfBuffedAt(
   );
 }
 
+/**
+ * ヘルム編: 「N 発間維持」の窓。始まり s から、s 以降の N 発目の射撃のフレーム + 1 まで（N 発目にも効く）。
+ * N 発を撃つ前に戦闘が終われば frames まで。維持中にまた付いたら、そこから数え直す（和集合。秒の維持の上書き延長に合わせる）
+ */
+export function shotCountWindows(
+  starts: readonly number[],
+  shotFrames: readonly number[],
+  shots: number,
+  frames: number,
+): [number, number][] {
+  const merged: [number, number][] = [];
+  for (const s of [...starts].sort((a, b) => a - b)) {
+    if (s >= frames) continue;
+    const first = shotFrames.findIndex((f) => f >= s);
+    const nth = first < 0 ? undefined : shotFrames[first + shots - 1];
+    const end = nth === undefined ? frames : Math.min(nth + 1, frames);
+    const last = merged[merged.length - 1];
+    if (last !== undefined && s <= last[1]) {
+      if (end > last[1]) last[1] = end;
+      continue;
+    }
+    merged.push([s, end]);
+  }
+  return merged;
+}
+
 /** 同一効果の窓を和集合にする（上書き延長。重ねない）。frames が上限 */
 function unionWindows(fireFrames: readonly number[], durationFrames: number, frames: number): [number, number][] {
   if (durationFrames <= 0) return [];
@@ -411,6 +441,20 @@ export function planBuffTimeline(
     sourceSlotIndex: number,
     fires: readonly TriggerFire[],
   ): void => {
+    // ヘルム編: 「N 発間維持」は対象の枠ごとに、その枠の射撃を数えて窓の終わりを決める
+    if (effect.durationShots !== undefined) {
+      const n = effect.durationShots;
+      slots.forEach((target, slotIndex) => {
+        if (target === null) return;
+        const mine = fires
+          .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, f.context))
+          .map((f) => f.frame);
+        for (const [start, end] of shotCountWindows(mine, shots[slotIndex]?.frames ?? [], n, frames)) {
+          out.push(windowOf(slotIndex, sourceSlotIndex, effect, { start, end }));
+        }
+      });
+      return;
+    }
     if (!dependsOnContext(effect)) {
       const merged = effectWindows(
         fires.map((f) => f.frame),

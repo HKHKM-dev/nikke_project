@@ -1,0 +1,135 @@
+{
+  "formatVersion": 1,
+  "resourceId": 352,
+  "checkedAt": "2026-09-28",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": { "count": "lastShot" },
+          "target": "allies",
+          "stat": "normalCritRate",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ]
+    },
+    "skill2": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 2,
+          "durationRef": 3
+        }
+      ],
+      "notes": [
+        {
+          "ja": "阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない",
+          "en": "Damage to interruption parts up does not affect damage (the shooting range enemy has no interruption part)"
+        }
+      ]
+    },
+    "burst": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill"
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体の吸収回復（攻撃ダメージの一定割合を回復）は未対応（回復を受けた時の効果を起こさない）",
+          "en": "The lifesteal on all allies is not modeled (it does not trigger effects on being healed)"
+        },
+        {
+          "ja": "説明文に出てこない数値（description_value_04・05）は使っていない",
+          "en": "Values not shown in the description (description_value_04 and 05) are not used"
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": { "count": "lastShot" },
+          "target": "allies",
+          "stat": "normalCritRate",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "burstGauge",
+          "trigger": { "count": "fullChargeShot" },
+          "target": "allies",
+          "ref": 4
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃時の味方全体の回復は未対応（回復を受けた時の効果を起こさない）",
+          "en": "The heal on all allies on a Full Charge attack is not modeled (it does not trigger effects on being healed)"
+        }
+      ]
+    },
+    "skill2": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 2,
+          "durationRef": 3
+        },
+        {
+          "kind": "damage",
+          "trigger": { "count": "fullChargeShot" },
+          "ref": 4,
+          "damageType": "additional"
+        }
+      ],
+      "notes": [
+        {
+          "ja": "阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない",
+          "en": "Damage to interruption parts up does not affect damage (the shooting range enemy has no interruption part)"
+        }
+      ]
+    },
+    "burst": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill"
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "chargeDamageMultiplier",
+          "ref": 4,
+          "durationShotsRef": 5
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体の吸収回復（攻撃ダメージの一定割合を回復）は未対応（回復を受けた時の効果を起こさない）",
+          "en": "The lifesteal on all allies is not modeled (it does not trigger effects on being healed)"
+        }
+      ]
+    }
+  }
+}

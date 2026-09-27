@@ -1,0 +1,190 @@
+[
+  {
+    "id": "079-01",
+    "recording": "079",
+    "kind": "interval",
+    "use": "compare",
+    "source": "V-0033",
+    "readAt": "2026-09-28",
+    "value": 235,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I のアイコンに替わる（本当の満タン）までのフレーム数",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode series",
+      "note": "02:59 は f859（残り時間の変わり目が +319f・+89f と続いた所）。バーは f1093 に 92%、f1094 から読めず、f1095 で I の段（ラムのカード）に替わった。3 回目の斉射（f1094）で満タン。gauge.ts --mode events の「満タン f1123」は II の段の表示を拾った誤検出"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": { "n": 0 },
+      "tolerance": { "abs": 30 },
+      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+    }
+  },
+  {
+    "id": "079-02",
+    "recording": "079",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0033",
+    "readAt": "2026-09-28",
+    "value": 5,
+    "description": "フルバーストの回数（180 秒）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "ヘルムのバーストの 1 ヒットが f1262・f3641・f6019・f8397・f10774 の 5 回（間隔 2,377〜2,379f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "tolerance": { "abs": 0 },
+      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+    }
+  },
+  {
+    "id": "079-03",
+    "recording": "079",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0033",
+    "readAt": "2026-09-28",
+    "value": 1175434,
+    "description": "ヘルムのバーストの後の 10 発（チャージダメージ倍率▲）のうち、フルバーストの外のコアの 1 発（会心・距離なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1975 の増分 1,629,687 = ラムのコア 218,400 + ヘルムのコア + 追加ダメージ 235,852。ラムのコアは 1,081,668 − 1,027,068 = 54,600（会心の 0.5 の分）から、追加ダメージは 1,027,068 − 909,142 = 117,926（会心の 0.5 の分）から出る。5 回のバーストの後の窓で同じ値。チャージダメージ▲を 2.5 に足す読みなら 743,107"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 3, "frame": 1094, "core": true, "crit": false, "distance": false },
+      "tolerance": { "abs": 3 },
+      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+    }
+  },
+  {
+    "id": "079-04",
+    "recording": "079",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0033",
+    "readAt": "2026-09-28",
+    "value": 1878785,
+    "description": "ヘルムのバーストの後の 10 発のうち、フルバースト中のコアの 1 発（会心・距離なし。攻撃ダメージ▲ 27.87% 込み）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1365 の増分 3,013,711 = フルバースト中のラムのコア 349,087 + デルタのコア 333,463（f1535 に単独）+ ヘルムのコア + 追加ダメージ 452,376"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 3, "frame": 484, "core": true, "crit": false, "distance": false },
+      "tolerance": { "abs": 3 },
+      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+    }
+  },
+  {
+    "id": "079-05",
+    "recording": "079",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0033",
+    "readAt": "2026-09-28",
+    "value": 454889,
+    "description": "ヘルムのチャージダメージ倍率▲の窓の外・フルバーストの外のコアの 1 発（会心・距離なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f2913 の増分 909,142 = ラムのコア 218,400 + ヘルムのコア + 追加ダメージ 235,852。f2995・f3160・f3242 も同じ増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 3, "frame": 2032, "core": true, "crit": false, "distance": false },
+      "tolerance": { "abs": 3 },
+      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+    }
+  },
+  {
+    "id": "079-06",
+    "recording": "079",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0033",
+    "readAt": "2026-09-28",
+    "value": 333463,
+    "description": "フルバースト中のデルタのコアの 1 発（会心・距離なし。ヘルムの S2 の攻撃ダメージ▲ 27.87% 込み）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1535・f1618・f1782 などに単独で出る。▲が無ければ 260,783"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 2, "frame": 654, "core": true, "crit": false, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+    }
+  },
+  {
+    "id": "079-07",
+    "recording": "079",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0033",
+    "readAt": "2026-09-28",
+    "value": 10854092,
+    "description": "ヘルムのバーストの 1 ヒット（会心なし）。1 回目のバースト（f1262）",
+    "method": { "tool": "hud.ts --mode jumps", "note": "3・4 回目（f6019・f8397）も同じ値" },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": { "slot": 3, "n": 0, "crit": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+    }
+  },
+  {
+    "id": "079-08",
+    "recording": "079",
+    "kind": "hit",
+    "use": "record",
+    "source": "V-0033",
+    "readAt": "2026-09-28",
+    "value": [235852, 353778, 452376, 603168],
+    "description": "ヘルムの S2 の追加ダメージ（フルバーストの外・外の会心・中・中の会心）。ヘルムの通常攻撃の 97 発のどれにも、同じフレームに付いていた",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分を、ラム・デルタ・ヘルムの 1 発と追加ダメージの候補の値の組み合わせで分けた（使い捨てのスクリプト）。約 190 件のうち 183 件が端数まで分けられた。外の値は 1,027,068 − 909,142 = 117,926（会心の 0.5 の分）の 2 倍。追加ダメージの会心率は、ヘルムの S1 の窓の中で 7/35、外で 12/62（通常攻撃の会心率▲は乗らない）"
+    }
+  },
+  {
+    "id": "079-09",
+    "recording": "079",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0033",
+    "readAt": "2026-09-28",
+    "value": [10, 10, 10, 10, 9],
+    "unit": "発",
+    "description": "ヘルムのバーストごとに、チャージダメージ倍率▲の付いたヘルムの発の数（1〜5 回目のバースト）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "▲の付いた発は、バーストの 1 ヒットの表示（f1262 など）より前の 1 発（f1180）から始まる。4 回目は分けられなかった増分（f8569）が 1 発あるので 9 + 1 とみる。5 回目は戦闘の終わりまでに 9 発。11 発目から元の値に戻る"
+    }
+  },
+  {
+    "id": "079-10",
+    "recording": "079",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0033",
+    "readAt": "2026-09-28",
+    "value": [36, 119, 28, 179],
+    "description": "味方の通常攻撃の会心の数と発の数（ヘルムの最後の弾丸の後 5 秒の窓の中、窓の外）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "079-08 と同じ分け方。最後の弾丸は、次のヘルムの発まで 150f より空いた発（21 回。ジャンプ・フルバーストの前後も混ざる近似）。窓は 294f（5 秒）。中 30.3%・外 15.6%。キャラ別の中 / 外は、ラム 16/35・10/62、デルタ 10/49・11/55、ヘルム 10/35・7/62"
+    }
+  }
+]

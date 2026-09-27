@@ -18,6 +18,7 @@ const buffs: BuffTotals = {
   critDamage: 0.2,
   attackDamage: 0.1,
   chargeDamage: 0.4,
+  chargeDamageMultiplier: 0,
   distributedDamage: 0,
   burstGaugeSpeed: 0,
   maxAmmoRatio: 0,
@@ -30,6 +31,7 @@ const buffs: BuffTotals = {
   elementDamage: 0,
   coreDamage: 0,
   normalAttackDamage: 0,
+  normalCritRate: 0,
   weapon: null,
 };
 
@@ -73,6 +75,7 @@ describe('addRatioBuff / addFlatAttack', () => {
       critDamage: 0,
       attackDamage: 0,
       chargeDamage: 0,
+      chargeDamageMultiplier: 0,
       distributedDamage: 0,
       burstGaugeSpeed: 0,
       maxAmmoRatio: 0,
@@ -85,6 +88,7 @@ describe('addRatioBuff / addFlatAttack', () => {
       elementDamage: 0,
       coreDamage: 0,
       normalAttackDamage: 0,
+      normalCritRate: 0,
       weapon: null,
     });
     expect(d).toEqual({
@@ -94,6 +98,7 @@ describe('addRatioBuff / addFlatAttack', () => {
       critDamage: 0.3,
       attackDamage: 0,
       chargeDamage: 0.4,
+      chargeDamageMultiplier: 0,
       distributedDamage: 0,
       burstGaugeSpeed: 0,
       maxAmmoRatio: 0,
@@ -106,6 +111,7 @@ describe('addRatioBuff / addFlatAttack', () => {
       elementDamage: 0,
       coreDamage: 0,
       normalAttackDamage: 0,
+      normalCritRate: 0,
       weapon: null,
     });
     // Stage 8 の 2 つもそれぞれのフィールドへ

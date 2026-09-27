@@ -1,0 +1,43 @@
+{
+  "id": "079",
+  "date": "2026-09-28",
+  "folder": "range",
+  "file": "20260928-079_SR_helm_auto.mp4",
+  "original": "2026-09-28_03-10-23.mp4",
+  "durationSec": 202.7,
+  "frames": 12159,
+  "fps": 60,
+  "sizeMB": 245.5,
+  "sha256": "9c8d5197443e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "note": "操作キャラの枠・AUTO・**宝物あり**",
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。WEAK POINT は水冷で、ヘルム（水冷）は属性有利）。AUTO 射撃・オートバーストとも ON（画面左上のボタンで確かめた）。枠と名前は戦闘履歴のパネルで確かめた。宝物の段階 3 はオーナーに確かめた（出撃画面のカードの右上の紫のバッジは宝物と関係ない）。V-0033（ヘルムのスキル）"
+}
