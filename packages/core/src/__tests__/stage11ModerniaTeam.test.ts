@@ -72,10 +72,14 @@ describe('録画 44 の予測（7.5）', () => {
 
   it('opens 4 full bursts of 15 s, each started by モダニア', () => {
     expect(fb).toHaveLength(4);
-    expect(fb.every((w) => w.end - w.start === gameSecondsToFrames(15) && w.burstUsers.includes(2))).toBe(true);
+    // 4 回目は 180 秒で切れる
+    expect(fb.every((w) => w.end - w.start === Math.min(gameSecondsToFrames(15), plan.frames - w.start))).toBe(true);
+    expect(fb.every((w) => w.burstUsers.includes(2))).toBe(true);
     // Stage 21-C3 で 2〜3 回目以降が 1〜3f 早まった（rpm の蓄積をゲーム内の時計にした。21-B までは 724・3634・6544・9454）。
-    // C-0073 で段の間隔を 20f → 29f にして、724・3633・6542・9451 から 27〜32f 遅くなった
-    expect(fb.map((w) => w.start)).toEqual([751, 3661, 6572, 9483]);
+    // C-0073 で段の間隔を 20f → 29f にして、724・3633・6542・9451 から 27〜32f 遅くなった。
+    // V-0028 で 1 発のゲージを ×1.2 → ×1.0 にして、751・3661・6572・9483 から遅くなった。録画 44 の 1 回目のフルバーストは
+    // 約 499f で、×1.2 でもモデルが遅い（モダニアのゲージは単騎の録画 45 で 1 発が CDN の値より多く見える。未解明）
+    expect(fb.map((w) => w.start)).toEqual([833, 3857, 6970, 10108]);
   });
 
   it('stacks S1 on every 200th shot and keeps 5 stacks (300 → 285 → 270 → 255 → 240 → 224)', () => {

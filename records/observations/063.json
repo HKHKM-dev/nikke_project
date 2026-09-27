@@ -78,7 +78,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 3,
-        "frame": 706,
+        "frame": 1000,
         "core": true,
         "crit": false,
         "distance": false
@@ -110,7 +110,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 1,
-        "frame": 706,
+        "frame": 1000,
         "core": true,
         "crit": true,
         "distance": false
@@ -142,7 +142,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 2,
-        "frame": 706,
+        "frame": 1000,
         "core": true,
         "crit": true,
         "distance": false
@@ -169,6 +169,35 @@
     "method": {
       "tool": "tools/captures/gauge.ts --mode series",
       "note": "100% と消えたフレーム: f1522→1550・f2963→2988・f5582→5648・f8245→8271・f10890→10920"
+    }
+  },
+  {
+    "id": "063-09",
+    "recording": "063",
+    "kind": "interval",
+    "use": "compare",
+    "value": 652,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I のアイコンに替わる（本当の満タン）までのフレーム数",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode events",
+      "note": "02:59 は f898（残り時間の変わり目が +320f・+89f と続いた所）、消えたのは f1550"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   }
 ]

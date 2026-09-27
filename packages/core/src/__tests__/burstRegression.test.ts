@@ -6,9 +6,10 @@
 //   - III がいない編成はフルバーストせず、II の後 約 10 秒でチェーンが切れてゲージが 0 に戻る（録画 22）
 // Stage 21-B: 秒はゲーム内の秒（1 フレーム 0.017 秒）。CT 40 秒は 2,352f。録画 19 のフルバーストの入りは 2,376〜2,377f おき
 // （V-0003。フルバーストの入りでゲームが止まる約 22f（C-0069・C-0070）はモデルに無い）
-// ゲージ量は単騎の録画 13 本（2026-09-23）で較正した（burst/dynamic.ts の BURST_ENERGY_MULTIPLIER = 1.2、
-// SG_PELLET_GAUGE_HIT_RATE = 0.75、フルチャージ倍率は操作キャラだけ）。1 回目の満タンまでの時間は、
-// 較正前の −167f〜+163f から、録画 18・19・21 で −37f〜−2f、録画 22 で +61f まで縮んだ（設計書の目標 ±30f には届いていない）。
+// ゲージ量は単騎の録画 13 本（2026-09-23）で較正した（SG_PELLET_GAUGE_HIT_RATE = 0.75、フルチャージ倍率は操作キャラだけ）。
+// V-0028 で、1 発は CDN の値そのまま（C-0083。Stage 7 の ×1.2 は BURST バーの表示の縮尺だった）にし、1 回目の満タンの実測を
+// 表示の 99.1% から本当の満タン（バーが消えて I のアイコンが出る）に、起点を総ダメージの HUD が最初に増えたフレームに直した
+// （表示の最初の 1px は本当の約 12.6% なので、バーが最初に増えたフレームは起点にならない。C-0084）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { planDynamicSchedule } from '../burst/dynamic.ts';
@@ -23,16 +24,15 @@ function load(id: number): { character: CharacterData } {
 }
 
 const FRAMES = gameSecondsToFrames(180);
-/** 1 回目の満タンまでの許容幅（フレーム）。録画 22（MG のスピンアップ + 操作 SR）だけ外れが大きいので別に持つ */
+/** 1 回目の満タンまでの許容幅（フレーム） */
 const FIRST_FILL_TOLERANCE = 40;
-const FIRST_FILL_TOLERANCE_MG = 70;
 
 type Recording = {
   name: string;
   ids: number[];
   /** 操作キャラの枠（録画で照準画面が出ていたニケ。18〜21 は III） */
   controlledSlot: number;
-  /** 最初にゲージが増えてから満タンまで（実測、フレーム） */
+  /** 総ダメージが最初に増えてから本当の満タンまで（実測、フレーム。観測値 018-10・019-09・021-07） */
   measuredFirstFill: number;
 };
 
@@ -40,9 +40,9 @@ type Recording = {
 // 戦闘開始から乗っている。この表はスキル定義を読まない planDynamicSchedule を直接呼ぶので、マナの満タンまでの時間は
 // Stage 8 でゲージ速度を入れた __tests__/stage8Team.test.ts（録画 20: 予測 270f / 実測 267f）で見る
 const WITH_III: Recording[] = [
-  { name: '録画 18（ラピ III）', ids: [291, 20, 10], controlledSlot: 2, measuredFirstFill: 427 },
-  { name: '録画 19（ノワール III）', ids: [291, 20, 271], controlledSlot: 2, measuredFirstFill: 266 },
-  { name: '録画 21（クイーン（真） III）', ids: [291, 20, 870], controlledSlot: 2, measuredFirstFill: 447 },
+  { name: '録画 18（ラピ III）', ids: [291, 20, 10], controlledSlot: 2, measuredFirstFill: 515 },
+  { name: '録画 19（ノワール III）', ids: [291, 20, 271], controlledSlot: 2, measuredFirstFill: 314 },
+  { name: '録画 21（クイーン（真） III）', ids: [291, 20, 870], controlledSlot: 2, measuredFirstFill: 544 },
 ];
 
 /** 最初の射撃のフレーム（録画側の「最初にゲージが増えたフレーム」に対応させる） */
@@ -101,8 +101,9 @@ describe('録画 22: エマ：TU（I）+ デルタ（II）、III なし', () => 
     expect(first - lastUse).toBe(gameSecondsToFrames(10));
   });
 
-  it(`fills the first gauge within ±${FIRST_FILL_TOLERANCE_MG}f of the recording`, () => {
+  // 実測は観測値 022-02
+  it(`fills the first gauge within ±${FIRST_FILL_TOLERANCE}f of the recording`, () => {
     const predicted = schedule.gaugeFullFrames[0]! - firstShotFrame(slots);
-    expect(Math.abs(predicted - 329)).toBeLessThanOrEqual(FIRST_FILL_TOLERANCE_MG);
+    expect(Math.abs(predicted - 446)).toBeLessThanOrEqual(FIRST_FILL_TOLERANCE);
   });
 });

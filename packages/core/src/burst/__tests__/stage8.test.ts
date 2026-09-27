@@ -110,8 +110,11 @@ describe('planDynamicSchedule with shared shots and gauge speed', () => {
     const zero = planDynamicSchedule(team, frames, undefined, undefined, 2, { gaugeSpeed: [0, 0, 0] });
     expect(zero).toEqual(plain);
     expect(fast.gaugeFullFrames[0]!).toBeLessThan(plain.gaugeFullFrames[0]!);
-    // 他の枠に付けてもマナの枠ほどは速くならない（効くのはその枠の射撃のゲージだけ）
-    const onAether = planDynamicSchedule(team, frames, undefined, undefined, 2, { gaugeSpeed: [0.704, 0, 0] });
-    expect(onAether.gaugeFullFrames[0]!).not.toBe(fast.gaugeFullFrames[0]!);
+    // 他の枠に付けてもマナの枠ほどは速くならない（効くのはその枠の射撃のゲージだけ）。
+    // 70.4% ではどの枠に付けても同じデルタの 1 発で満タンになる（V-0028 で 1 発の量を ×1.0 にした後）ので、50% で比べる
+    const at = (speed: number[]) =>
+      planDynamicSchedule(team, frames, undefined, undefined, 2, { gaugeSpeed: speed }).gaugeFullFrames[0]!;
+    expect(at([0.5, 0, 0])).toBeGreaterThan(at([0, 0, 0.5]));
+    expect(at([0, 0.5, 0])).toBeGreaterThan(at([0, 0, 0.5]));
   });
 });

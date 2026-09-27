@@ -190,5 +190,49 @@
       "tool": "tools/captures/gauge.ts --mode series",
       "note": "最初にゲージが増えたフレーム f922（Stage 7 の実測の起点。verification.md「ゲージの読み取り」の値から逆算）、99.1% は f1349、消えたのは f1379"
     }
+  },
+  {
+    "id": "018-10",
+    "recording": "018",
+    "kind": "interval",
+    "use": "record",
+    "value": 515,
+    "unit": "f",
+    "description": "総ダメージの HUD が最初に増えたフレームから、1 回目に BURST バーが消えて I のアイコンに替わる（本当の満タン）までのフレーム数",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/gauge.ts --mode events",
+      "note": "最初に増えたのは f864、消えたのは f1379"
+    }
+  },
+  {
+    "id": "018-11",
+    "recording": "018",
+    "kind": "interval",
+    "use": "compare",
+    "value": 527,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I のアイコンに替わる（本当の満タン）までのフレーム数",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode events",
+      "note": "02:59 は f852（残り時間の変わり目が +320f・+89f と続いた所）、消えたのは f1379"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
