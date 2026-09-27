@@ -91,7 +91,7 @@ describe('命中率（hitRate）: 掛かり方', () => {
     const ar = makeCharacter().shot;
     expect(energyPerTrigger(ar, false, 0.7)).toBeCloseTo(energyPerTrigger(ar, false) * 0.7, 9);
     const sg = makeCharacter({ shotCount: 10, targetBurstEnergyPerShot: 9000 }).shot;
-    expect(energyPerTrigger(sg, false, 0.8)).toBeCloseTo(9000 * 1.2 * 10 * SG_PELLET_GAUGE_HIT_RATE * 0.8, 6);
+    expect(energyPerTrigger(sg, false, 0.8)).toBeCloseTo(9000 * 10 * SG_PELLET_GAUGE_HIT_RATE * 0.8, 6);
   });
 
   it('a lower hit rate delays the first full burst on the dynamic cycle', () => {

@@ -40,5 +40,20 @@
       "tool": "ammo.ts --mode mags",
       "note": "枠アイコンの上の残弾表示（AI の味方）を全フレーム読んだ。描画が軽いマガジンだけ（design-mg-fire-rate.md と同じ読み）"
     }
+  },
+  {
+    "id": "035-04",
+    "recording": "035",
+    "kind": "count",
+    "use": "record",
+    "value": 1000,
+    "unit": "ヒット",
+    "description": "エマ（MG・AI）単騎で、戦闘の最初のヒットから数えて、BURST バーが消えた（本当の満タン）ヒットの番号",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "総ダメージの増分を 1 ヒットの値（5,560・8,340・11,121・13,901）の和に分けて数えた（読み違いの対 +800 / −800 などは 2 ヒット）。f2790 までに 998 ヒット、f2791 の 1 フレームに 2 ヒットで、同じフレームにバーが消えた。1〜3 マガジン目は 300 発に対して 298 ヒット（残弾表示。2 発は総ダメージが増えない）"
+    }
   }
 ]

@@ -210,5 +210,20 @@
     },
     "source": "V-0007",
     "readAt": "2026-09-27"
+  },
+  {
+    "id": "046-12",
+    "recording": "046",
+    "kind": "gauge",
+    "use": "record",
+    "value": [5, 3, 3, 4],
+    "unit": "px",
+    "description": "紅蓮：ブラックシャドウ（RL・操作）単騎で、通常攻撃の 1 発（207,265）と、その後のスキルのヒット（227,119）3 回のそれぞれで BURST バーが伸びた px",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "f1111 の通常攻撃（12→17px）、f1116・1130・1145 のスキルのヒット（17→20→23→27px）。通常攻撃はほかの回も 5px"
+    }
   }
 ]

@@ -3,13 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { CharacterData } from '../../types.ts';
 import { BURST_GAUGE_MAX } from '../controller.ts';
-import {
-  BURST_ENERGY_MULTIPLIER,
-  SG_PELLET_GAUGE_HIT_RATE,
-  burstUnitOf,
-  energyPerTrigger,
-  planDynamicSchedule,
-} from '../dynamic.ts';
+import { SG_PELLET_GAUGE_HIT_RATE, burstUnitOf, energyPerTrigger, planDynamicSchedule } from '../dynamic.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 
 function load(id: number): CharacterData {
@@ -18,25 +12,28 @@ function load(id: number): CharacterData {
   ) as CharacterData;
 }
 
-// 単騎の録画（2026-09-23、射撃場の BigArms）で読んだ 1 トリガーの増分。BURST バーは 113px なので 1px ≈ 0.885%。
-// AR / MG は 1 発が 1px 未満なので、1 マガジンの伸びを弾数で割った値。範囲は読み取りの ±0.5px ぶん
-const MEASURED: { name: string; id: number; controlled: boolean; percent: [number, number] }[] = [
-  { name: 'ラピ AR（操作・AI とも 32〜33px / 60 発）', id: 10, controlled: true, percent: [0.472, 0.487] },
-  { name: 'エマ MG（操作・AI とも 40〜41px / 300 発）', id: 90, controlled: true, percent: [0.118, 0.121] },
-  { name: 'ベロータ RL（操作・コア / 胴体とも 13px）', id: 60, controlled: true, percent: [11.06, 11.95] },
-  { name: 'デルタ SR（操作・コア / 胴体とも 17〜18px）', id: 20, controlled: true, percent: [15.0, 16.4] },
-  { name: 'デルタ SR（AI・7〜8px）', id: 20, controlled: false, percent: [5.75, 7.5] },
-  { name: 'ノワール SG（操作・平均 8.1%、AI・平均 8.4%）', id: 271, controlled: true, percent: [7.9, 8.6] },
+// 単騎の録画（2026-09-23、射撃場の BigArms）で、戦闘の 1 発目から数えて何ヒット目で BURST バーが消えたか（本当の満タン。
+// V-0028・C-0083）。消えたヒットの 1 つ前では満タンに届かず、そのヒットで届く。BURST バーの px は本当のゲージの
+// 約 12.6〜96% しか映さない（C-0084）ので、1 発の量は px ではなくヒットの数で比べる
+const MEASURED: { name: string; id: number; controlled: boolean; hits: number }[] = [
+  { name: 'ラピ AR（操作コア・操作胴体・AI の 3 本とも 250 ヒット目）', id: 10, controlled: true, hits: 250 },
+  { name: 'エマ MG（AI・1,000 ヒット目）', id: 90, controlled: false, hits: 1000 },
 ];
 
 describe('energyPerTrigger (calibrated on single-character recordings)', () => {
   for (const m of MEASURED) {
     it(m.name, () => {
-      const percent = (energyPerTrigger(load(m.id).shot, m.controlled) / BURST_GAUGE_MAX) * 100;
-      expect(percent).toBeGreaterThanOrEqual(m.percent[0]);
-      expect(percent).toBeLessThanOrEqual(m.percent[1]);
+      const energy = energyPerTrigger(load(m.id).shot, m.controlled);
+      expect((m.hits - 1) * energy).toBeLessThan(BURST_GAUGE_MAX);
+      expect(m.hits * energy).toBeGreaterThanOrEqual(BURST_GAUGE_MAX);
     });
   }
+
+  it('デルタ SR（AI）: 20 発目で消える。うち 1 発は的に当たらなかったので、当たりの 19 回目', () => {
+    const hit = energyPerTrigger(load(20).shot, false);
+    expect(18 * hit).toBeLessThan(BURST_GAUGE_MAX);
+    expect(19 * hit).toBeGreaterThanOrEqual(BURST_GAUGE_MAX);
+  });
 
   it('applies the full-charge ratio only to the controlled nike', () => {
     const delta = load(20).shot;
@@ -44,14 +41,11 @@ describe('energyPerTrigger (calibrated on single-character recordings)', () => {
     // チャージなし武器は操作でも AI でも同じ。倍率の値も無視する
     const ar = makeCharacter({ fullChargeBurstEnergy: 3 }).shot;
     expect(energyPerTrigger(ar, true)).toBe(energyPerTrigger(ar, false));
-    expect(energyPerTrigger(ar, true)).toBeCloseTo(4000 * BURST_ENERGY_MULTIPLIER, 9);
+    expect(energyPerTrigger(ar, true)).toBe(4000);
   });
 
   it('counts SG pellets at the gauge hit rate', () => {
-    expect(energyPerTrigger(load(271).shot, false)).toBeCloseTo(
-      9000 * 10 * SG_PELLET_GAUGE_HIT_RATE * BURST_ENERGY_MULTIPLIER,
-      9,
-    );
+    expect(energyPerTrigger(load(271).shot, false)).toBeCloseTo(9000 * 10 * SG_PELLET_GAUGE_HIT_RATE, 9);
   });
 });
 

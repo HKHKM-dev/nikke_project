@@ -1,0 +1,34 @@
+[
+  {
+    "id": "028-01",
+    "recording": "028",
+    "recordings": ["028", "029", "030"],
+    "kind": "count",
+    "use": "record",
+    "value": [250, 250, 250],
+    "unit": "ヒット",
+    "description": "ラピ（AR）単騎で、戦闘の最初のヒットから数えて、BURST バーが消えた（本当の満タン）ヒットの番号（028 操作コア・029 操作胴体・030 AI の順）",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "総ダメージの増分は 1 フレームに 1 ヒット。1 マガジン 60 ヒット（290f）× 4 と、5 マガジン目の 10 ヒット目（1 ヒット目から 45f）。消えたフレームは 028 f2351・029 f2316・030 f2349。消える前の 9 ヒットのあいだバーは 113px のまま"
+    }
+  },
+  {
+    "id": "028-02",
+    "recording": "028",
+    "recordings": ["028", "029", "030"],
+    "kind": "gauge",
+    "use": "record",
+    "value": [33, 241],
+    "unit": "ヒット",
+    "description": "ラピ（AR）単騎で、戦闘の最初のヒットから数えて、BURST バーが初めて 1px 光ったヒットと、113px（すべて）光ったまま戻らなくなったヒットの番号",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "1px は 028（f975）・029（f940）。030 はこの区間のバーが読めない。113px は 3 本とも 5 マガジン目の 1 ヒット目（028 は 240 ヒット目で 112px と 113px を行き来した）。1〜32 ヒット目のあいだバーは 0px のまま"
+    }
+  }
+]

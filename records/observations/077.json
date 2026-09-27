@@ -158,5 +158,20 @@
       "tool": "gauge.ts --mode events",
       "note": "満タン f2147・f4103・f6146・f8113・f10373（戦闘開始 f841）"
     }
+  },
+  {
+    "id": "077-09",
+    "recording": "077",
+    "kind": "count",
+    "use": "record",
+    "value": 13,
+    "unit": "ヒット",
+    "description": "I-DOLL・フラワー（RL・AUTO）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "1 ヒット目は f1008（直後のバーは 2px）、12 ヒット目 f2147 でバーは 113px、13 ヒット目 f2230 で消えた。2〜11 ヒット目の増分は 1 ヒット 9〜14px"
+    }
   }
 ]

@@ -1,7 +1,7 @@
 // Stage 8: 編成単位の確認（plan/design-stage8.md 8.4・8.5 節）。
 // - sim と calc が射撃の列・時刻表・区間・倍率ダメージの発動を共有し、倍率ダメージの合計が厳密一致する
 // - 通常攻撃の差は離散化だけ（枠 5%・編成 3%）
-// - 録画 21（クイーン（真）の分配ダメージ 6,323,975）と録画 20（マナのゲージ速度で 1 回目の満タン 267f）の回帰
+// - 録画 21（クイーン（真）の分配ダメージ 6,323,975）と録画 20（マナのゲージ速度で 1 回目の満タン）の回帰
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { summarizeSchedule } from '../burst/schedule.ts';
@@ -235,10 +235,11 @@ describe('録画 20: マナのゲージ速度 70.4%', () => {
   };
   const { schedule } = planTeamRun(input);
 
-  it('fills the first gauge within ±40f of the recording (267f)', () => {
+  // 実測は観測値 020-06（総ダメージが最初に増えてから本当の満タンまで。V-0028 で表示の 99.1% の 267f から直した）
+  it('fills the first gauge within ±40f of the recording', () => {
     const firstShot = Math.min(...input.slots.map((s) => computeCadence(s!.character.shot).firstShotFrames));
     const predicted = schedule!.gaugeFullFrames[0]! - firstShot;
-    expect(Math.abs(predicted - 267)).toBeLessThanOrEqual(40);
+    expect(Math.abs(predicted - 388)).toBeLessThanOrEqual(40);
   });
 
   it('keeps 5 full bursts 40 s apart (CT-bound)', () => {

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "026-01",
+    "recording": "026",
+    "kind": "count",
+    "use": "record",
+    "value": 14,
+    "unit": "トリガー",
+    "description": "ノワール（SG・操作）単騎で、戦闘の最初のトリガーから数えて、BURST バーが消えた（本当の満タン）トリガーの番号",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "消えたのは f1765。13 トリガー目（f1725）の直後のバーは 108px"
+    }
+  }
+]

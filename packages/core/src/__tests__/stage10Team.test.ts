@@ -75,11 +75,15 @@ const TEAMS: Record<string, TeamInput> = {
 
 describe('録画 37: ドレイクの最大装弾数（8.5）', () => {
   it('holds 20 in the full burst with treasure phase 3 (9 × (1 + 0.7218 + 0.5014))', () => {
-    const plan = planTeamRun(TEAMS['録画 37（ラム + デルタ + ドレイク宝物 3）']!);
+    const input = TEAMS['録画 37（ラム + デルタ + ドレイク宝物 3）']!;
+    const plan = planTeamRun(input);
     const sizes = magazineSizes(plan.shots[2]!);
     expect(sizes[0]).toBe(9);
-    expect(Math.max(...sizes)).toBe(20);
     expect(sizes.every((n) => n === 9 || n <= 20)).toBe(true);
+    // 区間の実効の最大装弾数（V-0028 でフルバーストの枠が動き、20 発を撃ち切るマガジンが枠に収まらなくなったので、発数ではなく値で見る）
+    const calc = computeTeamDamage(input);
+    const slot = calc.slots[2]!;
+    expect(Math.max(...slot.segments.map((g) => firingParams(slot.character.shot, g.buffs).maxAmmo))).toBe(20);
   });
 
   it('holds 15 with the base burst only (9 × 1.7218 = 15.496, rounded to nearest)', () => {
@@ -169,14 +173,17 @@ describe('録画 40（録画 B）: アドミのリロード速度・ユニのチ
   it('fires every 77f in the full burst (charge 60f × (1 − 0.0897) → 55f + 22f), 82f outside (recording 40)', () => {
     const plan = planTeamRun(input);
     const frames = plan.shots[2]!.frames;
-    const fb = plan.schedule!.fullBurstWindows[0]!;
-    const inside = frames.filter((f) => f > fb.start + 80 && f < fb.end - 80);
-    // マガジンの中の間隔だけを見る（最後の弾丸からの間隔はリロード 59f + 1 発目 77f = 136f）
+    // マガジンの中の間隔だけを見る（最後の弾丸からの間隔はリロード 59f + 1 発目 77f = 136f）。
+    // どのフルバーストでも同じ。リロードが枠に入るかは枠の位置による（V-0028 で 1 回目の枠には入らなくなった）ので、全部の枠で集める
     const last = new Set(plan.shots[2]!.lastShotFrames ?? []);
-    const gaps = inside.slice(1).flatMap((f, k) => (last.has(inside[k]!) ? [] : [f - inside[k]!]));
+    const gaps: number[] = [];
+    const reloads: number[] = [];
+    for (const fb of plan.schedule!.fullBurstWindows) {
+      const inside = frames.filter((f) => f > fb.start + 80 && f < fb.end - 80);
+      inside.slice(1).forEach((f, k) => (last.has(inside[k]!) ? reloads : gaps).push(f - inside[k]!));
+    }
     expect(gaps.length).toBeGreaterThanOrEqual(2);
     expect(new Set(gaps)).toEqual(new Set([77]));
-    const reloads = inside.slice(1).flatMap((f, k) => (last.has(inside[k]!) ? [f - inside[k]!] : []));
     expect(new Set(reloads)).toEqual(new Set([136]));
   });
 });

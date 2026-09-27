@@ -72,5 +72,34 @@
       "tool": "tools/captures/gauge.ts --mode series",
       "note": "100% と消えたフレーム: f2135→2147・f4539→4541・f5641→5655・f6885→6916・f8143→8145・f9314→9345・f10602→10615"
     }
+  },
+  {
+    "id": "043-06",
+    "recording": "043",
+    "kind": "interval",
+    "use": "compare",
+    "value": 244,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I のアイコンに替わる（本当の満タン）までのフレーム数",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode events",
+      "note": "02:59 は f941（残り時間の変わり目が +320f・+89f と続いた所）、消えたのは f1185"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

@@ -4,11 +4,41 @@
     "recording": "025",
     "kind": "rate",
     "use": "input",
-    "value": 1.0,
+    "value": 1,
     "description": "デルタ（SR・AI）のコア命中率（21 ヒット）。射撃場の条件の既定値の根拠（既定の変更は保留）",
     "source": "verification.md Stage 17「射撃場の条件（AI のコア命中率・距離ボーナス）の読み取り」",
     "method": {
       "note": "HUD の総ダメージの 1 フレームごとの増分を、スペック固定の 1 ヒットの値（コア × 会心 × 距離）に当てはめた"
+    }
+  },
+  {
+    "id": "025-02",
+    "recording": "025",
+    "kind": "count",
+    "use": "record",
+    "value": 20,
+    "unit": "発",
+    "description": "デルタ（SR・AI）単騎で、戦闘の最初の 1 発から数えて、BURST バーが消えた（本当の満タン）発の番号。9 発目は的に当たらなかった",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "19 発は総ダメージが 208,626 ずつ増えた。9 発目（f1620）は総ダメージが増えず、バーは 4px だけ伸びた（ほかの発は 7px 前後）。消えたのは 20 発目の f2715。19 発目（f2632）でバーは 113px になった"
+    }
+  },
+  {
+    "id": "025-03",
+    "recording": "025",
+    "kind": "gauge",
+    "use": "record",
+    "value": [0, 0, 4, 12, 19, 26, 33, 40],
+    "unit": "px",
+    "description": "デルタ（SR・AI）単騎の、戦闘の 1〜8 発目の直後の BURST バーの光った px",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series",
+      "note": "発は f874 から 82f おき（6 発目の後はリロード）"
     }
   }
 ]
