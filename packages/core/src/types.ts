@@ -283,7 +283,11 @@ export type EnemyEventSpec = {
   kind: 'untargetable' | 'invulnerable' | 'barrier';
   first: number;
   duration: number;
-  every?: number;
+  /**
+   * 繰り返しの間隔（秒）。配列なら k 回目 → k + 1 回目の間隔を順に並べたもので、使い切った後は最後の間隔を繰り返す
+   * （Stage 21: 的のジャンプの間隔は回ごとに決まった形がある。V-0009）
+   */
+  every?: number | number[];
 };
 
 /** Stage 16-B: 出来事のセット（射撃場 3 分モードの的のジャンプなど）。画面ではセットごとに ON/OFF する */
