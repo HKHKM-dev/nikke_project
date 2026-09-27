@@ -29,21 +29,27 @@ describe('出来事のセット（data/enemies.json）', () => {
     expect(master.eventSets.map((s) => s.id)).toEqual(['range-3min-jump']);
     for (const e of master.enemies.filter((p) => p.content === 'range'))
       expect(e.eventSets).toEqual(['range-3min-jump']);
-    // Stage 21-B: C-0025 の「最初 31 秒・36.4 秒ごと」は動画のフレームを 60 で割った値なので、読んだフレーム（1,860f・2,184f）が
-    // 変わらないようゲーム内の秒に直した（plan/design-stage21.md 3.3 節）。長さの 2 秒はそのまま
-    expect(master.eventSets[0]!.events).toEqual([{ kind: 'untargetable', first: 31.62, duration: 2, every: 37.128 }]);
-    expect([gameSecondsToFrame(31.62), gameSecondsToFrame(37.128)]).toEqual([1860, 2184]);
+    // V-0009: 5 回ともジャンプを読めた録画（041・046・055・049・050）の、ゲーム内の秒の中央値。間隔は回ごとに並べる（C-0057）
+    expect(master.eventSets[0]!.events).toEqual([
+      { kind: 'untargetable', first: 32.35, duration: 2, every: [36.34, 39.66, 36.34, 33.17] },
+    ]);
   });
 
-  it('expands to 4 jumps in 180 game seconds (recordings 41, 46 and 55 had 5: the 5th falls just after the end)', () => {
-    // 実測との食い違い（未解決）: 録画 41 は動画の時刻で 32.2 / 68.6 / 103.8 / 140.5 / 174.1 秒、録画 46・55 も 180 秒に 5 回。
-    // 代表値を読んだフレームのまま換算すると、5 回目は 1,860 + 4 × 2,184 = 10,596f で、180 秒 = 10,588f の外に出る
+  it('expands to 5 jumps in 180 game seconds, as every recording read so far (C-0056)', () => {
     const events = enemyEventsOf(master, ['range-3min-jump'], 180);
-    expect(events.map((e) => e.start.toFixed(1))).toEqual(['31.6', '68.7', '105.9', '143.0']);
+    expect(events.map((e) => e.start.toFixed(2))).toEqual(['32.35', '68.69', '108.35', '144.69', '177.86']);
     expect(events.every((e) => e.kind === 'untargetable')).toBe(true);
-    expect(events[3]!.end).toBeCloseTo(145.004, 9);
-    expect(31.62 + 4 * 37.128).toBeGreaterThan(180);
+    expect(events[4]!.end).toBeCloseTo(179.86, 9);
     expect(enemyEventsOf(master, [], 180)).toEqual([]);
+  });
+
+  it('repeats a list of intervals in order and then keeps its last interval (Stage 21)', () => {
+    expect(expandEnemyEvents([{ kind: 'untargetable', first: 10, duration: 2, every: [20, 30] }], 100)).toEqual([
+      { kind: 'untargetable', start: 10, end: 12 },
+      { kind: 'untargetable', start: 30, end: 32 },
+      { kind: 'untargetable', start: 60, end: 62 },
+      { kind: 'untargetable', start: 90, end: 92 },
+    ]);
   });
 
   it('cuts at the battle duration and repeats only with every', () => {
@@ -66,6 +72,10 @@ describe('出来事のセット（data/enemies.json）', () => {
     expect(parse([])).toThrow(/unknown event set/);
     expect(parse([set, set])).toThrow(/duplicate event set/);
     expect(parse([{ ...set, events: [{ kind: 'untargetable', first: 0, duration: 3, every: 2 }] }])).toThrow(/every/);
+    expect(parse([{ ...set, events: [{ kind: 'untargetable', first: 0, duration: 3, every: [5, 2] }] }])).toThrow(
+      /every/,
+    );
+    expect(parse([{ ...set, events: [{ kind: 'untargetable', first: 0, duration: 3, every: [] }] }])).toThrow(/every/);
     expect(parse([{ ...set, events: [{ kind: 'stun', first: 0, duration: 3 }] }])).toThrow(/kind/);
     expect(parse([{ ...set, events: [] }])).toThrow(/non-empty/);
   });
@@ -229,7 +239,7 @@ describe('編成（calc と sim の両方に効く）', () => {
 
   it('stops every shot and every burst inside the jumps, in both models', () => {
     const windows = untargetableRanges(jumps, gameSecondsToFrames(180));
-    expect(windows).toHaveLength(4);
+    expect(windows).toHaveLength(5);
     const inside = (f: number) => windows.some((w) => w.start <= f && f < w.end);
     const sim = runSimulation(input(jumps));
     for (const log of sim.shots) expect(log!.frames.some(inside)).toBe(false);
@@ -259,8 +269,8 @@ describe('編成（calc と sim の両方に効く）', () => {
     expect(total).toHaveLength(180);
     expect(total.reduce((a, b) => a + b, 0)).toBeCloseTo(sim.totalDamage, 0);
     expect(perSlot[0]!.reduce((a, b) => a + b, 0)).toBeCloseTo(sim.slots[0]!.totalDamage, 0);
-    // 31.62〜33.62 秒は丸ごと狙えない（32 秒目の 1 秒ぶんは 0）
-    expect(total[32]).toBe(0);
+    // 32.35〜34.35 秒は丸ごと狙えない（33 秒目の 1 秒ぶんは 0）
+    expect(total[33]).toBe(0);
   });
 
   it('shows invulnerable and barrier events without changing the numbers', () => {

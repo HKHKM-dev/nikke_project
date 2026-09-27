@@ -164,29 +164,30 @@ describe('着地点の時間割り（enemyLandingsOf）', () => {
       s.landing,
     ]);
 
-  it('cuts at each landing (the end of a jump) and follows 中近 → 近 → 遠 → 中遠 → 近 (C-0031)', () => {
-    // Stage 21-B: ジャンプは 180 秒に 4 回（5 回目は 180 秒の外。stage16Events.test.ts）なので、6 区間目の遠は無い
+  it('cuts at each landing (the end of a jump) and follows 中近 → 近 → 遠 → 中遠 → 近 → 遠 (C-0031)', () => {
+    // V-0009: ジャンプは 180 秒に 5 回。5 回目の着地（179.86 秒）の後に短い遠の区間が残る
     expect(spans()).toEqual([
-      [0, 33.6, 'midNear'],
-      [33.6, 70.7, 'near'],
-      [70.7, 107.9, 'far'],
-      [107.9, 145, 'midFar'],
-      [145, 180, 'near'],
+      [0, 34.4, 'midNear'],
+      [34.4, 70.7, 'near'],
+      [70.7, 110.3, 'far'],
+      [110.3, 146.7, 'midFar'],
+      [146.7, 179.9, 'near'],
+      [179.9, 180, 'far'],
     ]);
   });
 
   it('uses the initial landing for the whole battle without the 3-minute mode, and can fix the mid-far landing', () => {
     expect(enemyLandingsOf(master, [], 180, profile)).toEqual([{ start: 0, end: 180, landing: 'midNear' }]);
-    expect(spans({ midFar: 'midFarA' })[3]).toEqual([107.9, 145, 'midFarA']);
+    expect(spans({ midFar: 'midFarA' })[3]).toEqual([110.3, 146.7, 'midFarA']);
     expect(() => spans({ midFar: 'near' })).toThrow(/not part of mix/);
   });
 
   it('marks the landings after the measured order as unmeasured (battles longer than 180 s)', () => {
     const long = spans(undefined, 260);
     expect(long.slice(6).every(([, , landing]) => landing === null)).toBe(true);
-    // 6 区間目（遠）は次の着地（219.3 秒）まで。そこから先は未測定
-    expect(long[5]).toEqual([182.1, 219.3, 'far']);
-    expect(long[6]![0]).toBe(219.3);
+    // 6 区間目（遠）は次の着地（213.0 秒。並びの後は最後の間隔 33.17 秒を繰り返す）まで。そこから先は未測定
+    expect(long[5]).toEqual([179.9, 213, 'far']);
+    expect(long[6]![0]).toBe(213);
   });
 });
 
@@ -318,11 +319,11 @@ describe('編成（自動の条件）', () => {
       expect(calc.slots[i]!.autoCondition).toEqual(sim.slots[i]!.autoCondition);
       expect(simTeam.slots[i]!.autoCondition).toEqual(calc.slots[i]!.autoCondition);
     }
-    expect(calc.landings.map((s) => s.landing)).toEqual(['midNear', 'near', 'far', 'midFar', 'near']);
+    expect(calc.landings.map((s) => s.landing)).toEqual(['midNear', 'near', 'far', 'midFar', 'near', 'far']);
     expect(simTeam.landings).toEqual(calc.landings);
     // 自動の枠は着地点の境目で区間が割れる（鍵に着地点が入る）
     const landings = new Set(calc.slots[0]!.segments.map((s) => s.ranges[0]!.start));
-    expect(landings.has(gameSecondsToFrame(33.62))).toBe(true);
+    expect(landings.has(gameSecondsToFrame(34.35))).toBe(true);
     expect(calc.enemyNotes[0]!.message.ja).not.toContain('扱わない');
   });
 

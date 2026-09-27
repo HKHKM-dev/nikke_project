@@ -120,10 +120,11 @@ function parseEventSpec(v: unknown, path: string): EnemyEventSpec {
   if (!positive(v.duration)) throw new TypeError(`${path}.duration: must be a positive number (seconds)`);
   const spec: EnemyEventSpec = { kind: v.kind as EnemyEventKind, first: v.first, duration: v.duration };
   if (v.every !== undefined) {
-    if (!positive(v.every) || v.every <= v.duration) {
-      throw new TypeError(`${path}.every: must be longer than duration (seconds)`);
+    const intervals = Array.isArray(v.every) ? v.every : [v.every];
+    if (intervals.length === 0 || !intervals.every((x) => positive(x) && x > (v.duration as number))) {
+      throw new TypeError(`${path}.every: must be longer than duration (seconds), or a non-empty list of them`);
     }
-    spec.every = v.every;
+    spec.every = Array.isArray(v.every) ? (intervals as number[]) : (v.every as number);
   }
   return spec;
 }
@@ -337,10 +338,13 @@ export function parseEnemyPresets(raw: unknown): EnemyPresetMaster {
 export function expandEnemyEvents(specs: readonly EnemyEventSpec[], durationSeconds: number): EnemyEvent[] {
   const events: EnemyEvent[] = [];
   for (const spec of specs) {
+    // Stage 21: 間隔の並び（every が配列）なら、k 回目 → k + 1 回目は並びの k 番目。使い切った後は最後の間隔を繰り返す
+    const intervals = spec.every === undefined ? [] : Array.isArray(spec.every) ? spec.every : [spec.every];
+    let start = spec.first;
     for (let k = 0; ; k++) {
-      const start = spec.first + k * (spec.every ?? 0);
-      if (start >= durationSeconds || (k > 0 && spec.every === undefined)) break;
+      if (start >= durationSeconds || (k > 0 && intervals.length === 0)) break;
       events.push({ kind: spec.kind, start, end: Math.min(start + spec.duration, durationSeconds) });
+      start += intervals[Math.min(k, intervals.length - 1)] ?? 0;
     }
   }
   return events.sort((a, b) => a.start - b.start);
