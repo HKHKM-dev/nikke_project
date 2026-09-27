@@ -1,0 +1,36 @@
+{
+  "id": "081",
+  "date": "2026-09-28",
+  "folder": "range",
+  "file": "20260928-081_SR_nihilister_auto.mp4",
+  "original": "2026-09-28_05-15-43.mp4",
+  "durationSec": 208.5,
+  "frames": 12508,
+  "fps": 60,
+  "sizeMB": 252.8,
+  "sha256": "6ead5b763789",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 261,
+      "name": "ニヒリスター",
+      "controlled": true,
+      "note": "ニヒリスターを操作・AUTO 射撃 ON・オートバースト ON"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。ココア + ニヒリスターの 2 体（戦闘履歴で枠と名前を確かめた。Lv.400）。**AUTO 射撃 ON**・**オートバースト ON**（画面左上のボタンで確かめた。I → II のチェーンが自動で回り、III がいないのでフルバーストは起きない）。V-0031（ココア）・ニヒリスターの検証"
+}

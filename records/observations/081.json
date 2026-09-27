@@ -1,0 +1,79 @@
+[
+  {
+    "id": "081-01",
+    "recording": "081",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0031",
+    "readAt": "2026-09-28",
+    "value": 344596,
+    "description": "ココアのフルチャージの 1 発（コア）。1・2 回目のココアのバーストの後（S2 のスタックと、フルスタックならバーストの敵の攻撃力▼が付いた状態）。動画の f2729（ニヒリスターの発と重ならない単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "戦闘開始は f824（timer.ts --mode changes の +319f の画面の切り替えの次の +89f の変わり目。C-0078）。モデルのフレームは動画のフレーム − 824（フルバーストが無いので止まりは入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 1905, "core": true, "crit": false, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+    }
+  },
+  {
+    "id": "081-02",
+    "recording": "081",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0031",
+    "readAt": "2026-09-28",
+    "value": 396285,
+    "description": "ココアのフルチャージの 1 発（コア・距離ボーナス）。5 回目のココアのバーストの後。動画の f7179（単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "081-01 と同じ読み方。距離ボーナスの付く発は f5063〜7188 に出た"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 6355, "core": true, "crit": false, "distance": true },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+    }
+  },
+  {
+    "id": "081-03",
+    "recording": "081",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0031",
+    "readAt": "2026-09-28",
+    "value": 344596,
+    "description": "ココアのフルチャージの 1 発（コア）。戦闘の終わりの近く（9 回目のココアのバーストの後）。動画の f11292（単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "081-01 と同じ読み方"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 10468, "core": true, "crit": false, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+    }
+  },
+  {
+    "id": "081-04",
+    "recording": "081",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0031",
+    "readAt": "2026-09-28",
+    "value": 98,
+    "description": "ココアの 1 発の数と、その値がすべてスキルなしのモデルの 8 通り（コア・会心・距離の組）のどれかだったこと。最初の 1 発（f895）は戦闘の頭で、ニヒリスターの 1 発と同じフレームの 760,887 = 344,596（コア）+ 416,290（ニヒリスターのコア）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分 271 件を、ココアの 8 通り・ニヒリスターの 8 通り・ニヒリスターのバーストの倍率ダメージ・火傷の tick・S2 の値（どれも会心あり・なし）の組み合わせに分けた。分け方はどの増分でも 1 通り。分けられなかったのは、的のジャンプの始まりの直後の 5 件（f2735・4883・7216・9360・11328）だけで、チャージの途中の発とみられる（どちらの発かは分からない）"
+    }
+  }
+]
