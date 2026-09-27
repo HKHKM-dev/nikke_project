@@ -344,6 +344,8 @@ export type AmmoRefillEffect = TargetCountFields & {
 /**
  * Stage 11: 「HP を X% 回復」。数値はダメージに関係しないので、対象に「回復を受けた」出来事（トリガー healed）を起こすだけ。
  * 回復は heal の窓が始まるはずのフレーム（射撃の回数起点なら次のフレーム）に起きる。トリガーに healed は書けない（連鎖させない）
+ * V-0024: 維持時間（吸収回復などの「N 秒間維持」）を書くと、同じ効果の窓が付いている対象への付き直しでは healed を起こさず、
+ * 窓を延ばすだけにする（plan/design-heal-window.md 1.1 節、C-0082）。書かなければ付くたびに healed を起こす
  */
 export type HealEffect = {
   kind: 'heal';
@@ -353,6 +355,9 @@ export type HealEffect = {
   targetElement?: Element;
   /** 回復量（%）の description_value_NN（UI の表示用） */
   ref: number;
+  /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */
+  durationRef?: number;
+  durationSeconds?: number;
   assumes?: LocalizedText;
 };
 
@@ -767,6 +772,8 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
 }
 
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
+  // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）
+  const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds'] : [];
   for (const key of Object.keys(v)) {
     if (
       ![
@@ -778,12 +785,14 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
         'targetCount',
         'targetCountRef',
         'ref',
+        ...durationKeys,
         'assumes',
       ].includes(key)
     ) {
       fail(`${path}.${key}`, 'unknown field');
     }
   }
+  const hasDuration = v.durationRef !== undefined || v.durationSeconds !== undefined;
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   // 回復で回復を起こすと連鎖が閉じないので、heal のトリガーに healed は書けない（plan/design-stage11.md 3.3 節）
   if (kind === 'heal' && trigger === 'healed') fail(`${path}.trigger`, 'heal cannot be triggered by "healed"');
@@ -798,6 +807,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (kind !== 'heal') Object.assign(effect, count);
+  if (hasDuration) Object.assign(effect, parseDuration(v, path));
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }

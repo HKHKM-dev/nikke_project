@@ -354,6 +354,8 @@ export type ResolvedInstantEffect = {
   targetElement?: Element;
   /** Stage 11 アリス編: target が topAttack のときの N */
   targetCount?: number;
+  /** V-0024: heal の維持時間（フレーム）。あれば、同じ効果の窓が付いている対象への付き直しでは回復の記録を作らない */
+  durationFrames?: number;
   value: number;
   /** 同じスロットの何番目の効果か（識別用） */
   effectIndex: number;
@@ -390,6 +392,9 @@ export function resolveInstant(
       if (effect.targetElement) r.targetElement = effect.targetElement;
       const count = effect.kind === 'heal' ? undefined : resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
+      if (effect.kind === 'heal' && (effect.durationRef !== undefined || effect.durationSeconds !== undefined)) {
+        r.durationFrames = gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot]));
+      }
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });

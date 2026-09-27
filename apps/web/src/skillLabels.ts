@@ -1,5 +1,5 @@
 // スキル関連の表示用ラベル（React 非依存）
-import { ELEMENT_LABEL } from '@nikke/core';
+import { ELEMENT_LABEL, framesToGameSeconds } from '@nikke/core';
 import type {
   AppliedEffect,
   BuildEffect,
@@ -135,7 +135,10 @@ export function formatTimedExtras(effect: AppliedTimedEffect): string {
   return parts.length === 0 ? '' : `（${parts.join('・')}）`;
 }
 
-/** Stage 10: 即時効果。「バースト CT −2.34 秒」「弾丸チャージ 39.88%」。Stage 11: 「回復（最大 HP の 5.23%）」 */
+/**
+ * Stage 10: 即時効果。「バースト CT −2.34 秒」「弾丸チャージ 39.88%」。Stage 11: 「回復（最大 HP の 5.23%）」。
+ * V-0024: 維持時間のある回復（吸収回復）は「回復 2.77%（10 秒間維持）」
+ */
 export function formatInstant(effect: ResolvedInstantEffect): string {
   switch (effect.kind) {
     case 'cooldownReduction':
@@ -143,7 +146,9 @@ export function formatInstant(effect: ResolvedInstantEffect): string {
     case 'ammoRefill':
       return `弾丸チャージ ${formatPercent(effect.value, 2)}`;
     case 'heal':
-      return `回復（最大 HP の ${formatPercent(effect.value, 2)}）`;
+      return effect.durationFrames === undefined
+        ? `回復（最大 HP の ${formatPercent(effect.value, 2)}）`
+        : `回復 ${formatPercent(effect.value, 2)}（${formatNumber(framesToGameSeconds(effect.durationFrames), 0)} 秒間維持）`;
   }
 }
 

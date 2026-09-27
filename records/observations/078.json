@@ -126,5 +126,35 @@
       "tool": "probe-result.ts・hud.ts --mode final",
       "note": "戦闘履歴のパネル（f15945）を目で読んだ。2 体の和 68,319,117 は HUD の最終値と一致"
     }
+  },
+  {
+    "id": "078-08",
+    "recording": "078",
+    "kind": "total",
+    "use": "compare",
+    "source": "V-0024",
+    "readAt": "2026-09-28",
+    "value": 43729457,
+    "description": "アスカの与ダメージ（ユニ + アスカ・180 秒。戦闘履歴）",
+    "method": {
+      "tool": "probe-result.ts",
+      "note": "078-07 のアスカの値。S1 が最初の 25 秒だけ付く（078-02・078-03）"
+    },
+    "note": "ユニの S2 の吸収回復を維持時間のある heal で書いた後（plan/design-heal-window.md）に比べた。書く前のモデルでは S1 が付かない",
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 2
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
   }
 ]
