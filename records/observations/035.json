@@ -10,5 +10,35 @@
     "method": {
       "note": "HUD の総ダメージの 1 フレームごとの増分を、スペック固定の 1 ヒットの値（コア × 会心 × 距離）に当てはめた"
     }
+  },
+  {
+    "id": "035-02",
+    "recording": "035",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0011",
+    "readAt": "2026-09-27",
+    "value": [23, 36, 46, 60, 81, 104, 117, 128, 137, 187, 386],
+    "unit": "f",
+    "description": "エマ（MG・AI）のスピンアップ: 1 発目から数えた k 発目のフレーム（k = 1・2・3・5・10・20・30・40・50・100・299）。1 発目が f1351・f1908 の 2 マガジンで同じ値",
+    "method": {
+      "tool": "ammo.ts --mode series",
+      "note": "枠アイコンの上の残弾表示（AI の味方）を全フレーム読んだ。描画が軽いマガジンだけ（design-mg-fire-rate.md と同じ読み）"
+    }
+  },
+  {
+    "id": "035-03",
+    "recording": "035",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0011",
+    "readAt": "2026-09-27",
+    "value": [171, 171, 171],
+    "unit": "f",
+    "description": "エマ（MG・AI・リロード 2.5 秒）の最終弾（残弾 0 の表示）→ 次のマガジンの 1 発目（3 回）",
+    "method": {
+      "tool": "ammo.ts --mode mags",
+      "note": "枠アイコンの上の残弾表示（AI の味方）を全フレーム読んだ。描画が軽いマガジンだけ（design-mg-fire-rate.md と同じ読み）"
+    }
   }
 ]
