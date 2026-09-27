@@ -1,0 +1,30 @@
+{
+  "id": "070",
+  "date": "2026-09-27",
+  "folder": "range",
+  "file": "20260927-70_RL_scarlet-black-shadow_auto.mp4",
+  "original": "2026-09-27_21-56-44.mp4",
+  "durationSec": 199.2,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 241.3,
+  "sha256": "00fdffdc0594",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 225,
+      "name": "紅蓮：ブラックシャドウ",
+      "controlled": true,
+      "note": "単騎・AUTO"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定。単騎なので操作キャラだが **AUTO 射撃 ON**・自動バースト OFF）。V-0010 の R0（録画 55 の撮り直し・同じ日の対照）"
+}
