@@ -28,6 +28,8 @@ export type ResolvedCycle = {
   effectIndex: number;
   trigger: ResolvedShotCountTrigger;
   steps: ResolvedDamageEffect[];
+  /** V-0030: 段ごとの、ゲージを溜めるヒットの射撃からの遅れ（溜めない段は空） */
+  gaugeHits: number[][];
 };
 
 /** 解決済みの間隔の変更 */
@@ -88,7 +90,7 @@ function resolveCycleEffect(
     if (assumes) r.assumes = assumes;
     return r;
   });
-  return { source, effectIndex, trigger, steps };
+  return { source, effectIndex, trigger, steps, gaugeHits: effect.steps.map((step) => step.gaugeHits ?? []) };
 }
 
 /** 定義の各 cycle を Lv の数値に解決する。support が 'unsupported' のスキルは空 */

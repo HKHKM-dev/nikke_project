@@ -92,9 +92,9 @@ describe('録画 47 の予測（7.5）', () => {
 
   it('opens 5 full bursts of 10 s, 40 s apart, with 紅蓮BS as III', () => {
     // Stage 21-B: 40 秒 = 2,352f、10 秒 = 588f。C-0073 で段の間隔を 20f → 29f にして 470 → 497。
-    // V-0028 で 1 発のゲージを ×1.2 → ×1.0 にして 497 → 646（録画 47 の 1 回目は約 486f。紅蓮BS のスキルのヒットで
-    // 溜まるゲージがモデルに無い）。5 回目は 180 秒で切れる
-    expect(fb.map((w) => w.start)).toEqual([0, 1, 2, 3, 4].map((k) => 646 + k * gameSecondsToFrames(40)));
+    // V-0028 で 1 発のゲージを ×1.2 → ×1.0 にして 497 → 646、V-0030 で S1 の段のヒットのゲージ（C-0085）を入れて 497 に戻った
+    // （録画 47 の 1 回目は約 486f）
+    expect(fb.map((w) => w.start)).toEqual([0, 1, 2, 3, 4].map((k) => 497 + k * gameSecondsToFrames(40)));
     expect(fb.every((w) => w.end - w.start === Math.min(gameSecondsToFrames(10), plan.frames - w.start))).toBe(true);
     expect(fb.every((w) => w.burstUsers.includes(2))).toBe(true);
   });
@@ -127,9 +127,7 @@ describe('録画 47 の予測（7.5）', () => {
     expect(hits).toHaveLength(stepAt.size);
   });
 
-  // V-0028: 1 発のゲージを ×1.0 にしたら、モデルの 1 回目のフルバーストが録画より約 160f 遅れ、FB1 の段の並びが合わなくなった
-  // （紅蓮BS のスキルのヒットで溜まるゲージが未実装）。実装したら it に戻す
-  it.fails('matches FB1 of 録画 47: C just before, 13 tiers A → A inside, B on the 2nd shot after', () => {
+  it('matches FB1 of 録画 47: C just before, 13 tiers A → A inside, B on the 2nd shot after', () => {
     const w = plan.timeline.cycleWindows[0]!;
     const before = shots.filter((f) => f < w.start);
     const inside = shots.filter((f) => f >= w.start && f < w.end);
@@ -138,6 +136,33 @@ describe('録画 47 の予測（7.5）', () => {
     expect(inside.map((f) => 'ABC'[stepAt.get(f)!]).join('')).toBe('ABCABCABCABCA');
     expect(stepAt.has(after[0]!)).toBe(false);
     expect(stepAt.get(after[1]!)).toBe(1);
+  });
+});
+
+describe('S1 の段のヒットで溜まるゲージ（V-0030・C-0085）', () => {
+  const plan = planTeamRun(REC46);
+  const shots = plan.shots[0]!.frames;
+
+  it('charges 25,000 per hit, 5f after the shot for A and C and 5 / 19 / 33f for the 3 ticks of B', () => {
+    // 段の発動（planSkillHits）から出した予約と、1 パス目で追った予約が一致する（窓の中の段も含めて）
+    const delays = [[5], [5, 19, 33], [5]];
+    const expected = plan.skillHits
+      .filter((h) => h.slotIndex === 0 && h.effect.cycle !== undefined)
+      .flatMap((h) => delays[h.effect.cycle!.step]!.map((d) => h.frame + d));
+    expect(plan.cycleGaugeHits.map((h) => h.frame)).toEqual(expected);
+    expect(plan.cycleGaugeHits.every((h) => h.energy === 25_000)).toBe(true);
+  });
+
+  it('fills at the 20th shot with 10 skill hits before it (20 × 37,500 + 10 × 25,000 = 1,000,000。録画 46・55・70・71)', () => {
+    const full = plan.schedule!.gaugeFullFrames[0]!;
+    expect(full).toBe(shots[19]);
+    expect(plan.cycleGaugeHits.filter((h) => h.frame <= full)).toHaveLength(10);
+  });
+
+  it('counts no skill hit on the gauge without the definition', () => {
+    const bare = planTeamRun(team([{ ...fixedSlot(225), skills: undefined }], 0));
+    expect(bare.cycleGaugeHits).toEqual([]);
+    expect(bare.schedule!.gaugeFullFrames[0]!).toBe(bare.shots[0]!.frames[26]);
   });
 });
 
