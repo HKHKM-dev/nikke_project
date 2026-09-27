@@ -4,7 +4,12 @@
 // 使い方: npm run records:check（ルート。整形まで行う）
 import { readFileSync, writeFileSync } from 'node:fs';
 import { claimsByObservation, gatedObservations, renderClaims, validateClaims } from '../src/records/claims.ts';
-import { renderResiduals, runObservations, validateObservations } from '../src/records/observations.ts';
+import {
+  invalidReasonsOf,
+  renderResiduals,
+  runObservations,
+  validateObservations,
+} from '../src/records/observations.ts';
 import { replaceGeneratedSection } from '../src/records/recordings.ts';
 import { renderVerifications, validateVerifications, verificationsByClaim } from '../src/records/verifications.ts';
 import {
@@ -27,11 +32,13 @@ const data = loadRecordsData(file);
 const observations = loadObservations();
 const claims = loadClaims();
 const verifications = loadVerifications();
+// Stage 20-E: 失効した観測値は照合と結論の根拠から外す
+const invalidReasons = invalidReasonsOf(observations);
 const errors = [
   ...misplacedObservations(),
   ...validateObservations(observations, recordings, data.enemies),
   ...misplacedClaims(),
-  ...validateClaims(claims, new Set(observations.map((o) => o.id))),
+  ...validateClaims(claims, new Set(observations.map((o) => o.id)), new Set(invalidReasons.keys())),
   ...validateVerifications(verifications, { claims, recordingIds: new Set(recordings.keys()), observations }),
 ];
 if (errors.length > 0) {
@@ -44,10 +51,10 @@ writeFileSync(
   RESIDUALS_PATH,
   replaceGeneratedSection(doc, 'residuals', renderResiduals(residuals, observations, claimsByObservation(claims))),
 );
-writeFileSync(CLAIMS_PATH, renderClaims(claims, verificationsByClaim(verifications)));
+writeFileSync(CLAIMS_PATH, renderClaims(claims, verificationsByClaim(verifications), invalidReasons));
 writeFileSync(VERIFICATIONS_PATH, renderVerifications(verifications, observations));
-const gated = gatedObservations(claims);
-for (const r of residuals.filter((x) => x.status !== 'ok')) {
+const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
+for (const r of residuals.filter((x) => x.status !== 'ok' && x.status !== 'invalid')) {
   const mark = gated.has(r.observation.id) ? '（確定の結論の根拠。npm test が落ちる）' : '';
   console.log(`${r.observation.id}: ${r.status}${r.message ? ` (${r.message})` : ''}${mark}`);
 }

@@ -13,8 +13,18 @@ import type { TeamInput, TeamResult, TeamSlotInput } from '../team.ts';
 import type { CharacterData, EnemyPresetMaster } from '../types.ts';
 import type { RecordingEntry } from './recordings.ts';
 
-/** 何を読んだか（人と検索のため） */
-export const OBSERVATION_KINDS = ['hit', 'interval', 'count', 'timing', 'total', 'rate'] as const;
+/** 何を読んだか（人と検索のため）。Stage 20-E: 大きさ（照準円の半径など）・位置（着地点の y など）・ゲージを足した */
+export const OBSERVATION_KINDS = [
+  'hit',
+  'interval',
+  'count',
+  'timing',
+  'total',
+  'rate',
+  'size',
+  'position',
+  'gauge',
+] as const;
 export type ObservationKind = (typeof OBSERVATION_KINDS)[number];
 
 /** 観測値の使い道 */
@@ -65,20 +75,46 @@ export type CompareSpec = {
   setup: CompareSetup;
 };
 
+/** 値の幅（Stage 20-E）。range は最小〜最大、ci95 は 95% 区間 */
+export type ObservationSpread = { kind: 'range' | 'ci95'; low: number; high: number };
+
 export type Observation = {
   id: string;
+  /** 置き場所の録画（recordings があれば、その中で最も若い番号） */
   recording: string;
+  /** 複数の録画にまたがる値のとき、その録画の全部（recording も含める）。compare には使わない（Stage 20-E） */
+  recordings?: string[];
   kind: ObservationKind;
   use: ObservationUse;
   value: number | number[];
+  /** 値の単位（px・f・%・倍 など。Stage 20-E） */
+  unit?: string;
+  /** 値の幅（Stage 20-E） */
+  spread?: ObservationSpread;
   /** 何の値か（1〜2 文） */
   description: string;
-  /** 値を記録した場所（verification.md の節など） */
+  /** 値を記録した場所。検証記録から作ったものは、その ID（V-NNNN）だけを書く（Stage 20-D） */
   source: string;
   method?: { tool?: string; note?: string };
   evidence?: string[];
   compare?: CompareSpec;
+  /** 読み取った日（YYYY-MM-DD。Stage 20-E） */
+  readAt?: string;
+  /** 使えなくなった観測値（読み違い・条件の誤り・ゲームの更新など）。消さずに付け、照合から外す（Stage 20-E） */
+  invalid?: { reason: string; date: string };
 };
+
+/** 失効した観測値 → 失効の理由（Stage 20-E） */
+export function invalidReasonsOf(observations: readonly Observation[]): Map<string, string> {
+  return new Map(observations.flatMap((o) => (o.invalid ? [[o.id, o.invalid.reason] as const] : [])));
+}
+
+/** 録画の ID の並び（このリポジトリの録画は番号順、その後に旧の録画） */
+function recordingOrder(a: string, b: string): number {
+  const na = /^\d+$/.test(a) ? Number(a) : Infinity;
+  const nb = /^\d+$/.test(b) ? Number(b) : Infinity;
+  return na - nb || a.localeCompare(b);
+}
 
 // ---- 比べる値の語彙（2.3.1 節） ----
 
@@ -210,6 +246,28 @@ export function validateObservations(
     if (!OBSERVATION_KINDS.includes(o.kind)) errors.push(`${at}: kind が語彙に無い: ${o.kind}`);
     if (!OBSERVATION_USES.includes(o.use)) errors.push(`${at}: use が語彙に無い: ${o.use}`);
     if (o.description.trim() === '' || o.source.trim() === '') errors.push(`${at}: description と source は必須`);
+    // Stage 20-E: 複数の録画・単位と幅・読み取った日・失効の印
+    if (o.recordings !== undefined) {
+      const first = [...o.recordings].sort(recordingOrder)[0];
+      if (!o.recordings.includes(o.recording) || first !== o.recording)
+        errors.push(`${at}: recording は recordings のうち最も若い番号にし、recordings にも含める`);
+      for (const r of o.recordings)
+        if (!recordings.has(r)) errors.push(`${at}: 録画 ${r} が records/recordings/ に無い`);
+      if (o.recordings.length > 1 && o.use === 'compare')
+        errors.push(`${at}: 複数の録画にまたがる観測値は compare に使わない`);
+    }
+    if (o.unit !== undefined && o.unit.trim() === '') errors.push(`${at}: unit が空`);
+    if (o.spread !== undefined) {
+      const s = o.spread;
+      if (s.kind !== 'range' && s.kind !== 'ci95') errors.push(`${at}: spread の kind は range か ci95`);
+      if (!(s.low <= s.high)) errors.push(`${at}: spread は low ≤ high`);
+      if (typeof o.value === 'number' && !(s.low <= o.value && o.value <= s.high))
+        errors.push(`${at}: 値が spread の外にある`);
+    }
+    const isDate = (d: string) => /^\d{4}-\d{2}-\d{2}$/.test(d);
+    if (o.readAt !== undefined && !isDate(o.readAt)) errors.push(`${at}: readAt は YYYY-MM-DD`);
+    if (o.invalid !== undefined && (o.invalid.reason.trim() === '' || !isDate(o.invalid.date)))
+      errors.push(`${at}: invalid には reason と date（YYYY-MM-DD）が要る`);
     if (o.use === 'compare' && o.compare === undefined) errors.push(`${at}: use が compare なら compare が要る`);
     if (o.use !== 'compare' && o.compare !== undefined) errors.push(`${at}: compare は use が compare のときだけ`);
     const c = o.compare;
@@ -309,7 +367,8 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
   };
 }
 
-export type ResidualStatus = 'ok' | 'outside' | 'error';
+/** invalid は失効した観測値（比べずに一覧に残す。Stage 20-E） */
+export type ResidualStatus = 'ok' | 'outside' | 'error' | 'invalid';
 
 export type Residual = {
   observation: Observation;
@@ -359,6 +418,10 @@ export function runObservations(
   for (const o of observations) {
     const c = o.compare;
     if (o.use !== 'compare' || c === undefined) continue;
+    if (o.invalid !== undefined) {
+      residuals.push({ observation: o, status: 'invalid', predicted: null, diff: null, message: o.invalid.reason });
+      continue;
+    }
     try {
       const recording = recordings.get(o.recording);
       if (recording === undefined) throw new Error(`録画 ${o.recording} が無い`);
@@ -421,7 +484,22 @@ function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
   return entries.length === 0 ? '' : `（${entries.map(([k, v]) => `${k}=${String(v)}`).join('、')}）`;
 }
 
-const STATUS_JA: Record<ResidualStatus, string> = { ok: '許容内', outside: '**許容外**', error: '**比べられない**' };
+const STATUS_JA: Record<ResidualStatus, string> = {
+  ok: '許容内',
+  outside: '**許容外**',
+  error: '**比べられない**',
+  invalid: '失効',
+};
+
+/** 実測の値（単位と幅があれば添える。Stage 20-E） */
+function fmtObserved(o: Observation): string {
+  const unit = o.unit === undefined ? '' : ` ${o.unit}`;
+  const s = o.spread;
+  const spread =
+    s === undefined ? '' : `（${s.kind === 'ci95' ? '95% 区間 ' : ''}${fmtNumber(s.low)}〜${fmtNumber(s.high)}）`;
+  const invalid = o.invalid === undefined ? '' : `（失効: ${o.invalid.reason}）`;
+  return `${fmtValue(o.value)}${unit}${spread}${invalid}`;
+}
 
 function cell(text: string): string {
   return text.replace(/\|/g, '\\|');
@@ -435,8 +513,9 @@ export function renderResiduals(
 ): string {
   const claimText = (id: string) => (claimsOf.get(id) ?? []).join('・') || '—';
   const count = (s: ResidualStatus) => residuals.filter((r) => r.status === s).length;
+  const invalid = count('invalid') > 0 ? `・失効 ${count('invalid')}` : '';
   const lines = [
-    `比べた観測値 ${residuals.length} 件: 許容内 ${count('ok')}・許容外 ${count('outside')}・比べられない ${count('error')}。`,
+    `比べた観測値 ${residuals.length} 件: 許容内 ${count('ok')}・許容外 ${count('outside')}・比べられない ${count('error')}${invalid}。`,
     '',
     '| 観測値 | 読んだもの | 比べる値 | モデル | 実測 | 予測 | 差 | 許容 | 判定 | 結論 |',
     '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
@@ -450,7 +529,7 @@ export function renderResiduals(
         cell(o.description),
         `\`${c.metric}\`${cell(fmtArgs(c.args, c.setup))}`,
         c.model,
-        fmtValue(o.value),
+        cell(fmtObserved(o)),
         fmtValue(r.predicted),
         fmtDiff(r),
         fmtTolerance(c.tolerance),
@@ -463,7 +542,7 @@ export function renderResiduals(
   lines.push('', `### モデルと比べない観測値（${others.length} 件）`, '');
   lines.push('| 観測値 | 使い道 | 読んだもの | 値 | 結論 |', '| --- | --- | --- | --- | --- |');
   for (const o of others) {
-    lines.push(`| ${[o.id, o.use, cell(o.description), fmtValue(o.value), claimText(o.id)].join(' | ')} |`);
+    lines.push(`| ${[o.id, o.use, cell(o.description), cell(fmtObserved(o)), claimText(o.id)].join(' | ')} |`);
   }
   return lines.join('\n');
 }

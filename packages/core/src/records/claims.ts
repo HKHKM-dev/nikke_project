@@ -81,7 +81,15 @@ export function toClaims(files: readonly ClaimFile[]): Claim[] {
     .sort((a, b) => claimNumber(a.id) - claimNumber(b.id) || a.id.localeCompare(b.id));
 }
 
-export function validateClaims(claims: readonly Claim[], observationIds: ReadonlySet<string>): string[] {
+/**
+ * invalidIds は失効した観測値（Stage 20-E）。確定の結論は、根拠の観測値があるのに有効なものが 1 件も残らないときだけ落とす。
+ * 失効した根拠は消さずに残す（claims.md に印を付けて出す）。棄却の結論は問わない
+ */
+export function validateClaims(
+  claims: readonly Claim[],
+  observationIds: ReadonlySet<string>,
+  invalidIds: ReadonlySet<string> = new Set(),
+): string[] {
   const errors: string[] = [];
   const byId = new Map(claims.map((c) => [c.id, c]));
   const seen = new Set<string>();
@@ -98,6 +106,8 @@ export function validateClaims(claims: readonly Claim[], observationIds: Readonl
     if (c.basis.trim() === '') errors.push(`${c.id}: 根拠が空`);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(c.updated)) errors.push(`${c.id}: 更新日は YYYY-MM-DD`);
     for (const o of c.observations) if (!observationIds.has(o)) errors.push(`${c.id}: 観測値 ${o} が無い`);
+    if (c.state === '確定' && c.observations.length > 0 && c.observations.every((o) => invalidIds.has(o)))
+      errors.push(`${c.id}: 確定の結論の根拠の観測値が、すべて失効している`);
     for (const r of c.replaces) {
       const old = byId.get(r);
       if (old === undefined) errors.push(`${c.id}: 置き換えた結論 ${r} が無い`);
@@ -121,9 +131,14 @@ export function supportedObservations(claims: readonly Claim[]): Set<string> {
   return new Set(claims.filter((c) => c.state === '確定' || c.state === '仮説').flatMap((c) => c.observations));
 }
 
-/** テストで許容幅を守らせる観測値（状態が確定の結論の根拠） */
-export function gatedObservations(claims: readonly Claim[]): Set<string> {
-  return new Set(claims.filter((c) => c.state === '確定').flatMap((c) => c.observations));
+/** テストで許容幅を守らせる観測値（状態が確定の結論の根拠。失効したものは外す。Stage 20-E） */
+export function gatedObservations(claims: readonly Claim[], invalidIds: ReadonlySet<string> = new Set()): Set<string> {
+  return new Set(
+    claims
+      .filter((c) => c.state === '確定')
+      .flatMap((c) => c.observations)
+      .filter((o) => !invalidIds.has(o)),
+  );
 }
 
 // ---- plan/claims.md（生成） ----
@@ -150,6 +165,8 @@ const CLAIMS_HEADER = `# 結論の台帳
 export function renderClaims(
   claims: readonly Claim[],
   verificationsOf: ReadonlyMap<string, readonly string[]> = new Map(),
+  /** 失効した観測値 → 失効の理由（Stage 20-E。根拠に失効したものがあれば印を付ける） */
+  invalidReasons: ReadonlyMap<string, string> = new Map(),
 ): string {
   const replacedBy = new Map<string, string[]>();
   for (const c of claims) for (const r of c.replaces) replacedBy.set(r, [...(replacedBy.get(r) ?? []), c.id]);
@@ -176,6 +193,9 @@ export function renderClaims(
       if (by !== undefined) lines.push(`  - 置き換えた結論: ${by.join('、')}`);
       const vs = verificationsOf.get(c.id);
       if (vs !== undefined && vs.length > 0) lines.push(`  - 検証記録: ${vs.join('、')}`);
+      const invalid = c.observations.filter((o) => invalidReasons.has(o));
+      if (invalid.length > 0)
+        lines.push(`  - **失効した根拠**: ${invalid.map((o) => `${o}（${invalidReasons.get(o)}）`).join('、')}`);
     }
   }
   return `${lines.join('\n')}\n`;

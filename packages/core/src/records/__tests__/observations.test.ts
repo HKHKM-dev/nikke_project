@@ -30,6 +30,7 @@ import {
 import {
   buildTeamInput,
   compareValue,
+  invalidReasonsOf,
   renderResiduals,
   runObservations,
   validateObservations,
@@ -44,7 +45,8 @@ const data = loadRecordsData(file);
 const observations = loadObservations();
 const residuals = runObservations(observations, recordings, data);
 const claims = loadClaims();
-const gated = gatedObservations(claims);
+const invalidReasons = invalidReasonsOf(observations);
+const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
 
 describe('records/observations', () => {
   it('passes validation and each file holds only its own recording', () => {
@@ -75,12 +77,14 @@ describe('records/claims・plan/claims.md', () => {
   it('passes validation and each file holds the claim of its name', () => {
     expect(claims.length).toBeGreaterThanOrEqual(30);
     expect(misplacedClaims()).toEqual([]);
-    expect(validateClaims(claims, new Set(observations.map((o) => o.id)))).toEqual([]);
+    expect(validateClaims(claims, new Set(observations.map((o) => o.id)), new Set(invalidReasons.keys()))).toEqual([]);
   });
 
   it('matches plan/claims.md (npm run records:check)', () => {
     // Stage 20-D: 検証記録の「結論」から逆に引いた結び付きも載る
-    expect(readFileSync(CLAIMS_PATH, 'utf8')).toBe(renderClaims(claims, verificationsByClaim(loadVerifications())));
+    expect(readFileSync(CLAIMS_PATH, 'utf8')).toBe(
+      renderClaims(claims, verificationsByClaim(loadVerifications()), invalidReasons),
+    );
   });
 
   it('ties every observation compared under manual conditions to a 確定 or 仮説 claim (Stage 20-A)', () => {
@@ -284,5 +288,87 @@ describe('照合の部品', () => {
       '054-92: midFarLanding は A・B・C',
       '054-93: condition は auto か manual',
     ]);
+  });
+});
+
+describe('観測値の形の拡張（Stage 20-E）', () => {
+  const record = observations.find((o) => o.id === '047-03')!;
+  const compared = observations.find((o) => o.id === '047-02')!;
+
+  it('checks recordings, unit, spread, readAt and invalid', () => {
+    const errors = validateObservations(
+      [
+        { ...record, id: '047-81', recordings: ['047', '046'] },
+        { ...record, id: '046-82', recording: '046', recordings: ['046', '999'] },
+        { ...compared, id: '046-83', recording: '046', recordings: ['046', '047'] },
+        { ...record, id: '047-84', value: 10, unit: ' ', spread: { kind: 'range', low: 12, high: 11 } },
+        { ...record, id: '047-85', value: 10, spread: { kind: 'ci95', low: 11, high: 13 } },
+        { ...record, id: '047-86', readAt: '9/27', invalid: { reason: '', date: '2026-09-27' } },
+        {
+          ...record,
+          id: '046-87',
+          recording: '046',
+          recordings: ['046', '047', 'L-AD'],
+          value: 0.3,
+          unit: '倍',
+          spread: { kind: 'range', low: 0.2, high: 0.4 },
+          readAt: '2026-09-27',
+        },
+      ],
+      recordings,
+      data.enemies,
+    );
+    expect(errors).toEqual([
+      '047-81: recording は recordings のうち最も若い番号にし、recordings にも含める',
+      '046-82: 録画 999 が records/recordings/ に無い',
+      '046-83: 複数の録画にまたがる観測値は compare に使わない',
+      '047-84: unit が空',
+      '047-84: spread は low ≤ high',
+      '047-84: 値が spread の外にある',
+      '047-85: 値が spread の外にある',
+      '047-86: readAt は YYYY-MM-DD',
+      '047-86: invalid には reason と date（YYYY-MM-DD）が要る',
+    ]);
+  });
+
+  it('does not compare an invalid observation, and lists it as 失効', () => {
+    const invalid: Observation = { ...compared, invalid: { reason: '読み違い', date: '2026-09-27' } };
+    const [r] = runObservations([invalid], recordings, data);
+    expect(r).toMatchObject({ status: 'invalid', predicted: null, message: '読み違い' });
+    const text = renderResiduals([r!], [invalid]);
+    expect(text).toContain('比べられない 0・失効 1。');
+    expect(text).toContain('（失効: 読み違い）');
+    expect(
+      renderResiduals([], [{ ...record, value: 12, unit: 'px', spread: { kind: 'ci95', low: 10, high: 14 } }]),
+    ).toContain('| 12 px（95% 区間 10〜14） |');
+    expect(invalidReasonsOf([invalid, record])).toEqual(new Map([['047-02', '読み違い']]));
+  });
+
+  it('keeps an invalid basis on a claim, but fails a 確定 claim with no valid basis left', () => {
+    const claim = (id: string, state: Claim['state'], obs: string[]): Claim => ({
+      id,
+      text: 't',
+      state,
+      topic: '射撃（間隔・リロード・チャージ）',
+      grade: '反復実測',
+      basis: obs.map((o) => `\`${o}\``).join('、') || 'verification.md',
+      model: 'm',
+      replaces: [],
+      updated: '2026-09-27',
+      observations: obs,
+    });
+    const list = [
+      claim('C-0001', '確定', ['010-01']),
+      claim('C-0002', '確定', ['010-01', '010-02']),
+      claim('C-0003', '棄却', ['010-01']),
+      claim('C-0004', '確定', []),
+    ];
+    const ids = new Set(['010-01', '010-02']);
+    const invalid = new Set(['010-01']);
+    expect(validateClaims(list, ids, invalid)).toEqual(['C-0001: 確定の結論の根拠の観測値が、すべて失効している']);
+    expect(gatedObservations(list, invalid)).toEqual(new Set(['010-02']));
+    expect(renderClaims(list, new Map(), new Map([['010-01', '読み違い']]))).toContain(
+      '  - **失効した根拠**: 010-01（読み違い）',
+    );
   });
 });
