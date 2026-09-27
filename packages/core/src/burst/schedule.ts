@@ -81,6 +81,19 @@ export function stageEnterFrames(schedule: BurstSchedule, step: BurstStepKey): n
   return [...new Set(frames)].sort((a, b) => a - b);
 }
 
+/**
+ * フルバーストの入りで、ゲーム内の時間がまるごと止まる長さ（動画のフレーム）。III の発動から「FULL BURST!」の表示が
+ * 消えるまで、残り時間・CT・射撃・ダメージが止まる（C-0069〜C-0071。V-0017 で 1 回 21〜24f）。モデルはゲーム内の時間で
+ * 数えるので、与ダメージなどには足さない。録画の動画のフレームと比べるときだけ videoFrameOf で足す
+ */
+export const FULL_BURST_ENTRY_STOP_VIDEO_FRAMES = 22;
+
+/** モデルのフレーム（ゲーム内の時間）→ 録画の動画のフレーム。frame より前のフルバーストの入り（III の発動）ごとに止まりの分を足す */
+export function videoFrameOf(schedule: BurstSchedule | null, frame: number): number {
+  const entries = schedule?.activations.filter((a) => a.startsFullBurst && a.frame < frame).length ?? 0;
+  return frame + entries * FULL_BURST_ENTRY_STOP_VIDEO_FRAMES;
+}
+
 /** frame がフルバースト区間に入っているか */
 export function isInFullBurst(schedule: BurstSchedule, frame: number): boolean {
   return schedule.fullBurstWindows.some((w) => w.start <= frame && frame < w.end);

@@ -120,5 +120,35 @@
       "tool": "tools/captures/timer.ts --mode changes",
       "note": "秒の変わり目が 56〜62f（2 秒分は 116〜122f）の間隔で続く区間ごとに、共通の傾き（この録画は 58.844 f/秒）で切片を当てはめ、フルバーストをまたぐ前後の区間の切片の差を傾きで割った余りを取った。フルバーストの残り時間の表示が秒の数字に重なる区間は使わない。フルバーストの無い区間のずれは ±1f 以内"
     }
+  },
+  {
+    "id": "047-08",
+    "recording": "047",
+    "kind": "interval",
+    "use": "compare",
+    "source": "V-0019",
+    "readAt": "2026-09-28",
+    "value": 10649,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から 00:00 になったフレームまでの、動画のフレーム数（ゲーム内の 179 秒と、そのあいだのフルバーストの入りの止まり）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・ffmpeg（1 フレームずつ並べた一覧）",
+      "note": "02:59 は f870（残り時間の変わり目が +320f・+89f と続いた所）、00:00 は f11519（前のフレームは 00:01）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "videoFramesBetween",
+      "args": {
+        "fromSec": 0,
+        "toSec": 179
+      },
+      "tolerance": {
+        "abs": 15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

@@ -1,5 +1,6 @@
 // Stage 19-B: 観測値（records/observations/<録画 id>.json）の型・検証と、照合ランナー（モデルと比べて残差を出す）。
 // plan/design-stage19.md 2.3・2.3.1・2.5 節。
+import { videoFrameOf } from '../burst/schedule.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { DISTANCE_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
@@ -8,6 +9,7 @@ import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
+import { gameSecondsToFrame } from '../time.ts';
 import type { SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamResult, TeamSlotInput } from '../team.ts';
 import type { CharacterData, EnemyPresetMaster } from '../types.ts';
@@ -195,6 +197,15 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     sim: (r) => r.schedule?.fullBurstWindows.map((w) => w.start) ?? [],
     calc: (r) => r.schedule?.fullBurstWindows.map((w) => w.start) ?? [],
   },
+  /**
+   * ゲーム内の fromSec 秒から toSec 秒までの、録画の動画のフレーム数。フルバーストの入りの止まり（C-0069）を足す。
+   * 3 分モードの残り時間が 02:59 から 00:00 になるまでは fromSec 0・toSec 179
+   */
+  videoFramesBetween: {
+    args: ['fromSec', 'toSec'],
+    sim: (r, c) => videoFramesBetween(r.schedule, c),
+    calc: (r, c) => videoFramesBetween(r.schedule, c),
+  },
   gaugeFullFrame: {
     args: ['n'],
     sim: (r, c) => gaugeFull(r.schedule?.gaugeFullFrames, c),
@@ -220,6 +231,12 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
 };
+
+function videoFramesBetween(schedule: SimResult['schedule'], ctx: MetricContext): number {
+  const from = gameSecondsToFrame(Number(ctx.args.fromSec));
+  const to = gameSecondsToFrame(Number(ctx.args.toSec));
+  return videoFrameOf(schedule, to) - videoFrameOf(schedule, from);
+}
 
 function gaugeFull(frames: readonly number[] | undefined, ctx: MetricContext): number {
   const value = frames?.[Number(ctx.args.n)];
