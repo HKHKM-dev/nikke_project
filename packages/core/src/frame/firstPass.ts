@@ -29,6 +29,9 @@
 // 回復 → 状態の窓 → 攻撃力の窓 → 射撃に効く窓 → 即時効果。使用武器の変更（殲滅モード）の間は、変更後の武器を別の射手の状態で撃ち、
 // 終わったら基礎の武器を最大装弾数まで込め直して戻す（frame/shooter.ts の resumeShooter。録画 44 で確定）。武器の窓は持ち替えるフレーム（発火の次のフレーム）から。
 //
+// アスカ（plan/design-asuka.md 2.1 節）: 吸収回復（lifesteal）は、発火で対象の枠ごとに窓を開き、窓の中の対象の射撃の次のフレームに
+// 回復を送る（planHeals の lifestealHealFrames と同じ規則）。回復の数が多いので、即時効果の記録（instants）には載せない。
+//
 // Stage 16-B（plan/design-stage16.md 9.3 節）: 敵を狙えない窓（options.untargetable）の間は、全員が撃たず（ハイドしてリロード）、
 // オートバーストも発動しない。ゲージは射撃が無いので溜まらない。持続バフ・CT・フルバーストの時間はそのまま進む。
 import { planFixedCycle } from '../burst/fixedCycle.ts';
@@ -48,8 +51,10 @@ import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from '../skills/buff
 import {
   isResolvedShotCount,
   resolveInstant,
+  resolveLifesteal,
   resolveTimed,
   type ResolvedInstantEffect,
+  type ResolvedLifestealEffect,
   type ResolvedTimedEffect,
 } from '../skills/resolve.ts';
 import { healFrameOf } from '../skills/heals.ts';
@@ -160,6 +165,14 @@ type InstantSource = {
   fires: TriggerTracker;
 };
 
+/** アスカ: 吸収回復。対象の枠ごとの窓（発火順。重なりは判定で吸収する） */
+type LifestealSource = {
+  sourceSlotIndex: number;
+  effect: ResolvedLifestealEffect;
+  fires: TriggerTracker;
+  windows: [start: number, end: number][][];
+};
+
 /**
  * 弾丸チャージの端数（仮）。録画 19 のノワール（14 × 39.88% = 5.58）は満タンに近く、切り捨て・四捨五入のどちらでも 14 になった
  */
@@ -185,17 +198,16 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const passive = resolvePassiveStates(slots);
   const firing: FiringSource[] = [];
   const instant: InstantSource[] = [];
+  const lifesteal: LifestealSource[] = [];
   /** 発火の文脈 context のとき、効果 e が掛かる枠（Stage 11: burstUsers は発火ごとに変わる） */
   const targetsAt = (e: Parameters<typeof isEffectTarget>[0], sourceSlotIndex: number, context: FireContext) =>
-    slots.flatMap((t, i) =>
-      t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character.weaponType, context) ? [i] : [],
-    );
+    slots.flatMap((t, i) => (t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character, context) ? [i] : []));
   /** 窓を持ちうる枠（burstUsers・topAttack は武器種の条件だけ）で FiringSource を作る */
   const sourceOf = (effect: ResolvedTimedEffect, sourceSlotIndex: number, casterBaseAttack: number): FiringSource => ({
     sourceSlotIndex,
     effect,
     casterBaseAttack,
-    canTarget: slots.map((t, i) => t !== null && canEverTarget(effect, sourceSlotIndex, i, t.character.weaponType)),
+    canTarget: slots.map((t, i) => t !== null && canEverTarget(effect, sourceSlotIndex, i, t.character)),
     fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
     windows: slots.map(() => []),
     starts: slots.map(() => []),
@@ -224,11 +236,20 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
       });
     }
+    for (const effect of resolveLifesteal(slot.definition, slot.character, slot.levels)) {
+      if (effect.durationFrames <= 0) continue;
+      lifesteal.push({
+        sourceSlotIndex,
+        effect,
+        fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
+        windows: slots.map(() => []),
+      });
+    }
   });
   // 回復は healed の出来事を作るので先に当てる（heal のトリガーに healed は書けないので順番で閉じる。plan/design-stage11.md 3.3 節）
   const heals = instant.filter((src) => src.effect.kind === 'heal');
   const otherInstants = instant.filter((src) => src.effect.kind !== 'heal');
-  const trackEvents = firing.length > 0 || instant.length > 0;
+  const trackEvents = firing.length > 0 || instant.length > 0 || lifesteal.length > 0;
   // Stage 11 アリス編: 順位が要るときだけ攻撃力の窓を追う（無ければクラウン編までのループと同じ）
   const needsRank =
     firing.some((src) => dependsOnRank(src.effect)) || otherInstants.some((src) => dependsOnRank(src.effect));
@@ -388,10 +409,10 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const gaugeFullOf = (): readonly number[] => controller?.gaugeFullFrames ?? [];
 
   const instants: InstantApplication[] = [];
-  /** Stage 11: 次のフレーム以降に起きる回復（射撃の回数起点）。フレーム → 受ける枠 */
+  /** Stage 11: 次のフレーム以降に起きる回復（射撃の回数起点）。フレーム → 受ける枠。吸収回復は effect を持たない（instants に載せない） */
   const pendingHeals = new Map<
     number,
-    { sourceSlotIndex: number; slotIndex: number; effect: ResolvedInstantEffect }[]
+    { sourceSlotIndex: number; slotIndex: number; effect?: ResolvedInstantEffect }[]
   >();
   /** このフレームに回復を受けた枠（FrameEvents.healed）。毎フレーム作らずに使い回す */
   const healed: boolean[] = slots.map(() => false);
@@ -481,6 +502,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     for (const h of due ?? []) {
       healed[h.slotIndex] = true;
       healedDirty = true;
+      if (h.effect === undefined) continue;
       instants.push({
         frame: f,
         sourceSlotIndex: h.sourceSlotIndex,
@@ -523,6 +545,25 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
           pendingHeals.set(at, list);
         }
       }
+    }
+
+    // アスカ: 吸収回復。発火で窓を開き（射撃の回数起点は次のフレームから）、このフレームに撃った対象の枠が窓の中なら次のフレームに回復
+    for (const src of lifesteal) {
+      if (!src.fires(ev)) continue;
+      const start = healFrameOf(src.effect, f);
+      for (const target of targetsAt(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev))) {
+        src.windows[target]!.push([start, start + src.effect.durationFrames]);
+      }
+    }
+    if (lifesteal.length > 0 && f + 1 < frames) {
+      slots.forEach((_, i) => {
+        if (shotEvents[i] === null) return;
+        const src = lifesteal.find((l) => l.windows[i]!.some(([start, end]) => start <= f && f < end));
+        if (src === undefined) return;
+        const list = pendingHeals.get(f + 1) ?? [];
+        list.push({ sourceSlotIndex: src.sourceSlotIndex, slotIndex: i });
+        pendingHeals.set(f + 1, list);
+      });
     }
 
     // Stage 11 モダニア: 条件の stat の窓（状態の窓）を先に登録し、同じフレームの条件の判定に入れる

@@ -1,6 +1,6 @@
 // スキル定義の ref を Lv の数値に解決する。単位変換（% → 比率）はここで一律に行う。
 // Stage 11 モダニア: スタックの最大数・「▼」・条件・使用武器の変更（stat 'weapon' の持続効果として解決する）を足した。
-import type { CharacterData, Locale, LocalizedText, ShotParams, SkillRaw, WeaponType } from '../types.ts';
+import type { CharacterData, Element, Locale, LocalizedText, ShotParams, SkillRaw, WeaponType } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { ChangedWeapon } from './buffs.ts';
 import {
@@ -133,6 +133,8 @@ export type ResolvedEffect = {
   target: BuffTarget;
   /** Stage 9: 「〈武器〉を所持する味方」。定義に無ければキーごと無い */
   targetWeapon?: WeaponType;
+  /** アスカ: 「〈コード〉コードの味方」。定義に無ければキーごと無い */
+  targetElement?: Element;
   /** Stage 11 アリス編: target が topAttack のときの N（解決済み）。それ以外はキーごと無い */
   targetCount?: number;
   stat: EffectStat;
@@ -176,6 +178,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
         value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character, effect.decrease),
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
+      if (effect.targetElement) r.targetElement = effect.targetElement;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     }
@@ -241,6 +244,7 @@ export function resolveTimed(
         effectIndex,
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
+      if (effect.targetElement) r.targetElement = effect.targetElement;
       const count = resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
       const maxStacks = resolveMaxStacks(effect, skill, levels[slot]);
@@ -347,6 +351,7 @@ export type ResolvedInstantEffect = {
   trigger: ResolvedTrigger;
   target: BuffTarget;
   targetWeapon?: WeaponType;
+  targetElement?: Element;
   /** Stage 11 アリス編: target が topAttack のときの N */
   targetCount?: number;
   value: number;
@@ -382,8 +387,59 @@ export function resolveInstant(
         effectIndex,
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
+      if (effect.targetElement) r.targetElement = effect.targetElement;
       const count = effect.kind === 'heal' ? undefined : resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
+      if (effect.assumes) r.assumes = effect.assumes;
+      resolved.push(r);
+    });
+  }
+  return resolved;
+}
+
+/** アスカ（plan/design-asuka.md 2.1 節）: 吸収回復。value は攻撃ダメージに対する比率（0.0316。表示用で計算には使わない） */
+export type ResolvedLifestealEffect = {
+  source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
+  kind: 'lifesteal';
+  trigger: ResolvedTrigger;
+  target: BuffTarget;
+  targetWeapon?: WeaponType;
+  targetElement?: Element;
+  value: number;
+  /** gameSecondsToFrames(維持秒数)。0 なら回復は起きない */
+  durationFrames: number;
+  /** 同じスロットの何番目の効果か（識別用） */
+  effectIndex: number;
+  assumes?: LocalizedText;
+};
+
+/** 定義の各吸収回復を Lv の数値に解決する。support が 'unsupported' のスキルは空 */
+export function resolveLifesteal(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedLifestealEffect[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const resolved: ResolvedLifestealEffect[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const entry = def.skills[slot];
+    if (entry.support === 'unsupported') continue;
+    const skill = character.skills[slot];
+    entry.effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'lifesteal') return;
+      const r: ResolvedLifestealEffect = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        kind: 'lifesteal',
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        target: effect.target,
+        value: skillValue(skill, effect.ref, levels[slot]) / 100,
+        durationFrames: gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot])),
+        effectIndex,
+      };
+      if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
+      if (effect.targetElement) r.targetElement = effect.targetElement;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });

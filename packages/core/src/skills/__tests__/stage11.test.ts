@@ -129,10 +129,18 @@ describe('resolve: stacksRef and heal (Stage 11)', () => {
 describe('isEffectTarget: burstUsers (Stage 11)', () => {
   const effect = { target: 'burstUsers' as const };
   it('hits only the slots in the fire context, and nobody without a context', () => {
-    expect(isEffectTarget(effect, 1, 0, 'AR', { burstUsers: [0, 1, 3] })).toBe(true);
-    expect(isEffectTarget(effect, 1, 2, 'AR', { burstUsers: [0, 1, 3] })).toBe(false);
-    expect(isEffectTarget(effect, 1, 0, 'AR', null)).toBe(false);
-    expect(isEffectTarget({ ...effect, targetWeapon: 'MG' }, 1, 0, 'AR', { burstUsers: [0] })).toBe(false);
+    expect(isEffectTarget(effect, 1, 0, { weaponType: 'AR', element: 'Fire' }, { burstUsers: [0, 1, 3] })).toBe(true);
+    expect(isEffectTarget(effect, 1, 2, { weaponType: 'AR', element: 'Fire' }, { burstUsers: [0, 1, 3] })).toBe(false);
+    expect(isEffectTarget(effect, 1, 0, { weaponType: 'AR', element: 'Fire' }, null)).toBe(false);
+    expect(
+      isEffectTarget(
+        { ...effect, targetWeapon: 'MG' },
+        1,
+        0,
+        { weaponType: 'AR', element: 'Fire' },
+        { burstUsers: [0] },
+      ),
+    ).toBe(false);
   });
 });
 

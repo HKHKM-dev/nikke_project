@@ -1,0 +1,92 @@
+{
+  "formatVersion": 1,
+  "resourceId": 830,
+  "checkedAt": "2026-09-28",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "healed",
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "HP が満タンでも回復は適用されたとみなす",
+            "en": "A heal at full HP still counts as applied"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時のバリアに与えるダメージ▲は、射撃場の敵にバリアが無いのでダメージに関係しない",
+          "en": "Damage to barriers up from the start of battle does not affect damage (the shooting range enemy has no barrier)"
+        }
+      ]
+    },
+    "skill2": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetElement": "Fire",
+          "stat": "coreDamage",
+          "ref": 3,
+          "durationRef": 4
+        }
+      ],
+      "notes": [
+        {
+          "ja": "「自分がバリア適用状態なら」有利コードの攻撃ダメージ▲は未対応（バリアを扱わない）",
+          "en": "Elemental advantage damage up while shielded is not modeled (barriers are not tracked)"
+        }
+      ]
+    },
+    "burst": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 2,
+          "durationRef": 3
+        },
+        {
+          "kind": "lifesteal",
+          "trigger": "burstUse",
+          "target": "self",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "通常攻撃の命中ごとに回復が適用される（HP が満タンでも）",
+            "en": "Each normal-attack hit applies a heal (even at full HP)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "hitRate",
+          "ref": 6,
+          "durationRef": 7
+        }
+      ],
+      "notes": [
+        {
+          "ja": "貫通特化は射撃場の敵ではダメージに関係しない",
+          "en": "Pierce does not affect damage on the shooting range enemy"
+        },
+        {
+          "ja": "命中率▲はコア命中率に効かせていない（持続の命中率▲は未反映）",
+          "en": "The Hit Rate buff is not applied to the core hit rate (timed Hit Rate buffs are not modeled)"
+        }
+      ]
+    }
+  }
+}

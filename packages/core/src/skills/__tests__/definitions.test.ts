@@ -88,7 +88,11 @@ describe('data/skills', () => {
               // Stage 8 の倍率ダメージは 100% 未満もある（ドレイク S2 98.55%）ので上限を見ない
               else if (effect.kind !== 'damage' && effect.kind !== 'cycle') {
                 // Stage 11 紅蓮BS: バーストの攻撃力 115.12%・チャージダメージ 169.63% は 100% を超える（上限は 200% で見る）
-                const limit = effect.kind === 'timed' && ['attack', 'chargeDamage'].includes(effect.stat) ? 200 : 100;
+                // アスカ: バーストの攻撃ダメージ 150.04%・命中率 101.37% も同じ
+                const limit =
+                  effect.kind === 'timed' && ['attack', 'chargeDamage', 'attackDamage', 'hitRate'].includes(effect.stat)
+                    ? 200
+                    : 100;
                 expect(v).toBeLessThanOrEqual(limit);
               }
             }
@@ -115,7 +119,11 @@ describe('data/skills', () => {
     it('timed effects reference a positive duration that does not change with the skill level', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
-          if ((effect.kind !== 'timed' && effect.kind !== 'cycleEvery') || effect.durationRef === undefined) continue;
+          if (
+            (effect.kind !== 'timed' && effect.kind !== 'cycleEvery' && effect.kind !== 'lifesteal') ||
+            effect.durationRef === undefined
+          )
+            continue;
           const seconds = Array.from({ length: SKILL_LEVEL_MAX }, (_, i) =>
             skillValue(character.skills[slot], effect.durationRef!, i + 1),
           );

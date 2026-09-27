@@ -346,6 +346,39 @@ if (sim.instants.length > 0) {
   console.table([...merged.values()]);
 }
 
+// アスカ（plan/design-asuka.md 2.1 節）: 回復の記録。吸収回復は命中ごとに起きるので、同じ出どころ・受け手で 2 秒以内に続いた回復を 1 行にまとめる（リロードをまたいで窓 1 つが 1 行）
+if (plan.timeline.heals.length > 0) {
+  const runs: { from: string; to: string; first: number; last: number; count: number }[] = [];
+  const open = new Map<string, (typeof runs)[number]>();
+  for (const h of plan.timeline.heals) {
+    const key = `${h.sourceSlotIndex}.${h.slotIndex}`;
+    const run = open.get(key);
+    if (run !== undefined && h.frame - run.last <= gameSecondsToFrame(2)) {
+      run.last = h.frame;
+      run.count += 1;
+      continue;
+    }
+    const next = {
+      from: `slot ${h.sourceSlotIndex + 1}`,
+      to: `slot ${h.slotIndex + 1} ${slots[h.slotIndex]!.character.name.ja}`,
+      first: h.frame,
+      last: h.frame,
+      count: 1,
+    };
+    runs.push(next);
+    open.set(key, next);
+  }
+  console.log('heals (runs within 2 s; lifesteal heals on every hit)');
+  console.table(
+    runs.map((r) => ({
+      from: r.from,
+      to: r.to,
+      time: `${framesToGameSeconds(r.first).toFixed(2)}-${framesToGameSeconds(r.last).toFixed(2)}s`,
+      heals: r.count,
+    })),
+  );
+}
+
 const rows = slots.map((slot, i) => {
   const s = sim.slots[i]!;
   const c = calc.slots[i]!;

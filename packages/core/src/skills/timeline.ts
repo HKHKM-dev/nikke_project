@@ -364,7 +364,7 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
     let buffs: BuffTotals = { ...ZERO_BUFFS };
     const passiveEffects: AppliedEffect[] = [];
     for (const { slotIndex, casterBaseAttack, effect } of sources) {
-      if (!isEffectTarget(effect, slotIndex, index, slot.character.weaponType)) continue;
+      if (!isEffectTarget(effect, slotIndex, index, slot.character)) continue;
       const applied = applyResolvedEffect(buffs, effect, casterBaseAttack);
       buffs = applied.totals;
       passiveEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount: applied.appliedAmount });
@@ -419,7 +419,7 @@ export function planBuffTimeline(
       );
       if (merged.length === 0) return;
       slots.forEach((target, slotIndex) => {
-        if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType)) {
+        if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character)) {
           return;
         }
         for (const w of merged) out.push(windowOf(slotIndex, sourceSlotIndex, effect, w));
@@ -431,7 +431,7 @@ export function planBuffTimeline(
     slots.forEach((target, slotIndex) => {
       if (target === null) return;
       const mine = fires
-        .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType, f.context))
+        .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, f.context))
         .map((f) => f.frame);
       for (const w of effectWindows(mine, effect, frames)) out.push(windowOf(slotIndex, sourceSlotIndex, effect, w));
     });
@@ -493,7 +493,7 @@ export function planBuffTimeline(
         const targets: number[] = [];
         slots.forEach((target, slotIndex) => {
           if (target === null) return;
-          if (!isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType, context)) return;
+          if (!isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, context)) return;
           perTarget[slotIndex]!.push(start);
           targets.push(slotIndex);
         });
@@ -648,6 +648,7 @@ export function rankSlotsOf(slots: readonly TimelineSlot[], passive: readonly (S
       : {
           casterBaseAttack: slot.casterBaseAttack,
           weaponType: slot.character.weaponType,
+          element: slot.character.element,
           passive: passive[i]?.buffs ?? ZERO_BUFFS,
         },
   );
