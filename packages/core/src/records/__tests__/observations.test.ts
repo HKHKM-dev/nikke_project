@@ -192,7 +192,8 @@ describe('records/claims・plan/claims.md', () => {
     expect(topics).toEqual(CLAIM_TOPICS.filter((t) => claims.some((c) => c.topic === t)));
     for (const c of claims) expect(doc).toContain(`- **${c.id}** ${c.text}`);
     for (const c of claims.filter((x) => x.replaces.length > 0))
-      for (const r of c.replaces) expect(doc).toMatch(new RegExp(`\\*\\*${r}\\*\\*[^]*?置き換えた結論: ${c.id}`));
+      for (const r of c.replaces)
+        expect(doc).toMatch(new RegExp(`\\*\\*${r}\\*\\*[^]*?置き換えた結論: (?:[^\n]*、)?${c.id}`));
   });
 });
 
