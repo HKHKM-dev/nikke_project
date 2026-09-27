@@ -58,7 +58,8 @@ describe('data/skills', () => {
     it('names the character of its file and a checked date', () => {
       expect(def.resourceId).toBe(resourceId);
       expect(character.resourceId).toBe(resourceId);
-      expect(def.checkedAt <= new Date().toISOString().slice(0, 10)).toBe(true);
+      // 記録の日付は日本時間（CI は UTC で動くので、タイムゾーンを明示する）
+      expect(def.checkedAt <= new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Tokyo' })).toBe(true);
     });
 
     it('references values that exist for every level (buffs ≤ 100%, burst damage ≥ 100% at Lv10)', () => {

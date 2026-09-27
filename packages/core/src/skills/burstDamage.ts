@@ -171,8 +171,11 @@ export type BurstHitResult = {
   baseHit: number;
   /** 効果の倍率の合計（X/100 の和） */
   multiplier: number;
-  /** 1 + 会心期待値 + フルバースト補正（乗せる設定のときだけ 0.5）。コア・距離は入らない */
-  boost: { crit: number; fullBurst: number; total: number };
+  /**
+   * 1 + 会心期待値 + フルバースト補正（乗せる設定のときだけ 0.5）。コア・距離は入らない。
+   * critDamage はバフ後の会心ダメージ倍率（会心した 1 ヒットを組み直すのに使う）
+   */
+  boost: { crit: number; critDamage: number; fullBurst: number; total: number };
   attackDamageMultiplier: number;
   elementMultiplier: number;
   /** 1 + Σ distributedDamage（distributed の効果にだけ掛かる） */
@@ -206,7 +209,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   return {
     baseHit,
     multiplier,
-    boost: { crit: boostCrit, fullBurst: boostFullBurst, total: boostTotal },
+    boost: { crit: boostCrit, critDamage: input.crit.damage, fullBurst: boostFullBurst, total: boostTotal },
     attackDamageMultiplier: input.attackDamageMultiplier,
     elementMultiplier: input.elementMultiplier,
     distributedDamageMultiplier: distributed,

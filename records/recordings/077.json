@@ -1,0 +1,30 @@
+{
+  "id": "077",
+  "date": "2026-09-28",
+  "folder": "range",
+  "file": "20260928-77_RL_idoll-flower_auto.mp4",
+  "original": "2026-09-28_02-14-45.mp4",
+  "durationSec": 198.2,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 240.3,
+  "sha256": "c97def174221",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true,
+      "note": "単騎・AUTO"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定。単騎なので操作キャラだが **AUTO 射撃 ON**・**オートバースト ON**。画面左上のボタンで確かめた）。V-0020（フラワーのバーストの 1 ヒット）"
+}

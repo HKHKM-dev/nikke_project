@@ -1,0 +1,123 @@
+[
+  {
+    "id": "077-01",
+    "recording": "077",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0020",
+    "readAt": "2026-09-28",
+    "value": 179244,
+    "description": "フラワーのバーストの 1 ヒット（会心なし）。1 回目のバースト（f2272）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分。通常攻撃の増分（166,172 ほか）と違う値で、ゲージのバーが消えた直後（f2261 の 11f 後）。2・3 回目（f4117・f6195）も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "077-02",
+    "recording": "077",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0020",
+    "readAt": "2026-09-28",
+    "value": 268865,
+    "description": "フラワーのバーストの 1 ヒット（会心）。4 回目のバースト（f8238）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "5 回目（f10401）も同じ値。077-01 の 1.5 倍（端数は表示の丸め）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "077-03",
+    "recording": "077",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0020",
+    "readAt": "2026-09-28",
+    "value": 5,
+    "description": "フラワー単騎のバーストの回数（180 秒）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "バーストのヒットの増分（077-01・077-02 の値）を数えた。1 回のバーストに増分は 1 つずつ"
+    },
+    "note": "モデル（操作枠あり）は 6 回。今後の課題「単騎の I のバーストの回数」"
+  },
+  {
+    "id": "077-04",
+    "recording": "077",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0020",
+    "readAt": "2026-09-28",
+    "value": [25.84, 57.21, 92.53, 127.26, 164.03],
+    "unit": "秒",
+    "description": "バーストのヒットの、戦闘開始から数えたゲーム内の秒（1〜5 回目）",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode changes",
+      "note": "戦闘開始 f752（残り時間の変わり目が +319f・+89f と続いた所）から 1 フレーム 0.017 秒で数えた。ヒットは f2272・f4117・f6195・f8238・f10401"
+    },
+    "note": "モデル（操作枠あり）のバーストは 19.11・52.07・84.22・114.87・146.69・176.85 秒"
+  },
+  {
+    "id": "077-05",
+    "recording": "077",
+    "kind": "gauge",
+    "use": "record",
+    "source": "V-0020",
+    "readAt": "2026-09-28",
+    "value": [23.73, 56.97, 91.71, 125.13, 163.55],
+    "unit": "秒",
+    "description": "バーストゲージが満タンになった、戦闘開始から数えたゲーム内の秒（1〜5 回目）",
+    "method": {
+      "tool": "gauge.ts --mode events",
+      "note": "満タン f2147・f4103・f6146・f8113・f10373（戦闘開始 f752）。溜め始めは f764・f3017・f4729・f6926・f9087。満タンからバーの消失までは 83f・3f・7f・83f・3f"
+    }
+  },
+  {
+    "id": "077-06",
+    "recording": "077",
+    "kind": "total",
+    "use": "record",
+    "source": "V-0020",
+    "readAt": "2026-09-28",
+    "value": 16873892,
+    "description": "フラワーの与ダメージ（単騎・180 秒）",
+    "method": {
+      "tool": "hud.ts --mode final",
+      "note": "戦闘履歴のパネルの与ダメージと同じ（f11830）"
+    },
+    "note": "モデル（操作枠あり）は 17,879,259。バーストの 5 回を除いた通常攻撃は 15,798,430 で、モデルの 16,723,139 より 5.5% 少ない"
+  }
+]
