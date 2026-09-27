@@ -61,6 +61,17 @@ describe('DSL (7.1)', () => {
     expect(() => parseSkillDefinition(withEffects('skill1', [CYCLE, CYCLE]))).toThrow(/at most one cycle/);
   });
 
+  it('reads gaugeHits on a step as ascending positive frame delays (V-0029)', () => {
+    const withHits = (gaugeHits: unknown) =>
+      withEffects('skill1', [{ ...CYCLE, steps: [{ ...CYCLE.steps[0], gaugeHits }, CYCLE.steps[1]] }]);
+    const def = parseSkillDefinition(withHits([5, 19, 33]));
+    const cycle = def.skills.skill1.effects[0]!;
+    expect(cycle.kind === 'cycle' && cycle.steps.map((st) => st.gaugeHits)).toEqual([[5, 19, 33], undefined]);
+    expect(() => parseSkillDefinition(withHits([]))).toThrow(/non-empty/);
+    expect(() => parseSkillDefinition(withHits([0]))).toThrow(/positive integer/);
+    expect(() => parseSkillDefinition(withHits([19, 5]))).toThrow(/ascending/);
+  });
+
   it('checks that cycleEvery points at a cycle, speeds it up and is not triggered by shots', () => {
     const every = { kind: 'cycleEvery', trigger: 'burstUse', slot: 'skill1', every: 1, durationRef: 1 };
     expect(() => parseSkillDefinition(withEffects('burst', [{ ...every, slot: 'skill2' }]))).toThrow(/has no cycle/);

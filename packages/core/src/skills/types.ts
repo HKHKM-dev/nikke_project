@@ -392,6 +392,11 @@ export type CycleStep = {
   /** description_value_NN の NN（1 始まり）。値は % 表記 */
   ref: number;
   damageType: SkillDamageType;
+  /**
+   * V-0029: この段のヒットのうちバーストゲージを溜めるものの、段を出した射撃からの遅れ（フレーム。昇順）。
+   * 1 ヒットで射手の targetBurstEnergyPerShot（フルチャージ倍率なし）を溜める。省略は溜めない
+   */
+  gaugeHits?: number[];
   assumes?: LocalizedText;
 };
 
@@ -704,6 +709,17 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
   return effect;
 }
 
+/** V-0029: 段のゲージのヒットの遅れ（1 以上の整数・昇順・1 つ以上。射撃と同じフレームのゲージは射撃の前に足し終えているので 0 は不可） */
+function parseGaugeHits(v: Json, path: string): number[] {
+  if (!Array.isArray(v) || v.length === 0) fail(path, 'expected a non-empty array of frame delays');
+  return v.map((d, i) => {
+    if (typeof d !== 'number' || !Number.isInteger(d) || d < 1) fail(`${path}[${i}]`, 'expected a positive integer');
+    const prev = v[i - 1];
+    if (i > 0 && typeof prev === 'number' && d < prev) fail(`${path}[${i}]`, 'delays must be ascending');
+    return d;
+  });
+}
+
 /** Stage 11 紅蓮BS: 段の循環 */
 function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
   for (const key of Object.keys(v)) {
@@ -718,7 +734,9 @@ function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
     const stepPath = `${path}.steps[${i}]`;
     if (!isRecord(raw)) fail(stepPath, 'expected an object');
     for (const key of Object.keys(raw)) {
-      if (!['kind', 'ref', 'damageType', 'assumes'].includes(key)) fail(`${stepPath}.${key}`, 'unknown field');
+      if (!['kind', 'ref', 'damageType', 'gaugeHits', 'assumes'].includes(key)) {
+        fail(`${stepPath}.${key}`, 'unknown field');
+      }
     }
     if (raw.kind !== 'damage') fail(`${stepPath}.kind`, `expected "damage", got ${JSON.stringify(raw.kind)}`);
     const step: CycleStep = {
@@ -726,6 +744,7 @@ function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
       ref: parseRef(raw.ref, `${stepPath}.ref`),
       damageType: oneOf(SKILL_DAMAGE_TYPES, raw.damageType, `${stepPath}.damageType`),
     };
+    if (raw.gaugeHits !== undefined) step.gaugeHits = parseGaugeHits(raw.gaugeHits, `${stepPath}.gaugeHits`);
     if (raw.assumes !== undefined) step.assumes = parseLocalizedText(raw.assumes, `${stepPath}.assumes`);
     return step;
   });

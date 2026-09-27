@@ -40,7 +40,7 @@ import {
 import type { WeaponModel } from '../weapons.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { runFirstPass, type InstantApplication } from './firstPass.ts';
+import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
 import { hitRateSpansOf, planLandings, type LandingPlan } from './landing.ts';
 import type { ShotLog } from './shots.ts';
 
@@ -87,6 +87,8 @@ export type TeamPlan = {
   untargetable: FrameRange[];
   /** Stage 18-C: 着地点の計画（条件が自動の枠が無い、または的の表の無い敵では null） */
   landing: LandingPlan | null;
+  /** V-0029: 段の循環のヒットで溜めたゲージ（1 パス目の記録。frame/firstPass.ts） */
+  cycleGaugeHits: FirstPassResult['cycleGaugeHits'];
 };
 
 /**
@@ -105,7 +107,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const untargetable = untargetableRanges(enemy.events, frames);
   // Stage 18-C: 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）
   const landing = planLandings(slots, enemy, frames, resolvePassiveStates(timelineSlots));
-  const { shots, schedule, instants } = runFirstPass(timelineSlots, {
+  const { shots, schedule, instants, cycleGaugeHits } = runFirstPass(timelineSlots, {
     frames,
     model,
     burst: input.burst ?? false,
@@ -116,7 +118,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   });
   const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing);
   const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
-  return { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing };
+  return { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, cycleGaugeHits };
 }
 
 /** Stage 11 モダニア: その枠の射撃ごとの倍率ダメージ（1 トリガーの値に畳み込む）。定義が無ければ空 */

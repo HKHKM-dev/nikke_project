@@ -225,5 +225,58 @@
       "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
       "note": "f1111 の通常攻撃（12→17px）、f1116・1130・1145 のスキルのヒット（17→20→23→27px）。通常攻撃はほかの回も 5px"
     }
+  },
+  {
+    "id": "046-13",
+    "recording": "046",
+    "recordings": ["046", "055", "070", "071"],
+    "source": "V-0029",
+    "readAt": "2026-09-28",
+    "kind": "gauge",
+    "use": "record",
+    "value": [5, 4, 3, 3],
+    "unit": "px",
+    "description": "紅蓮：ブラックシャドウ（RL）単騎で、1 ヒットで BURST バーが伸びた px の最頻値（通常攻撃・S1 の段 A・段 B の 1 ティック・段 C の順）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "ヒットの前後でバーが止まって読めた回だけ（バーが 0px・113px の区間を除く）。通常攻撃 5px ×46・6px ×3、A 4px ×3・3px ×1、B 3px ×12・4px ×7、C 3px ×4（C はヒットの前後でバーが隠れるので、隠れる前後の値で読んだ）。値の種類は HUD の 1 ヒットの値（通常攻撃 207,265・A 341,317・B 227,119・C 1,022,673 と、その会心）で分けた"
+    }
+  },
+  {
+    "id": "046-14",
+    "recording": "046",
+    "recordings": ["046", "055", "070", "071"],
+    "source": "V-0029",
+    "readAt": "2026-09-28",
+    "kind": "count",
+    "use": "record",
+    "value": [20, 20, 20, 20],
+    "unit": "ヒット",
+    "description": "紅蓮：ブラックシャドウ（RL）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）通常攻撃のヒットの番号（046・055・070・071 の順）。どの録画も、そこまでに S1 の段のヒット（A 1・B 3 ティック・C 1 を 1 ヒットずつ）が 10 ヒットある",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "消えたのは 046 f2015・055 f1947・070 f1968・071 f2513。046 は f1670 の発が総ダメージに出ず（射撃の刻みの位置）、バーは 3px 伸びた。070 は B の 1 ティックが +800 と +226,319 に割れて読めた。071 は f2427 の通常攻撃が半分の値（103,632）で、ほかの通常攻撃と同じに数えた"
+    }
+  },
+  {
+    "id": "046-15",
+    "recording": "046",
+    "recordings": ["046", "055", "070", "071"],
+    "source": "V-0029",
+    "readAt": "2026-09-28",
+    "kind": "interval",
+    "use": "record",
+    "value": [5, 5, 19, 33, 5],
+    "unit": "f",
+    "description": "紅蓮：ブラックシャドウ（RL）の S1 の段のヒットが、直前の通常攻撃のヒットから当たるまでのフレーム数の中ほど（段 A・段 B の 1〜3 ティック・段 C の順）",
+    "spread": {
+      "kind": "range",
+      "low": 1,
+      "high": 36
+    },
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "A 2〜8f、B 1〜7f・15〜21f・30〜36f、C 1〜7f（4 本・各 60〜75 回。フルバーストの中の段や読み落としで離れた数回を除く）"
+    }
   }
 ]
