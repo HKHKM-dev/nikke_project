@@ -3,12 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { CharacterData } from '../../types.ts';
 import { BURST_GAUGE_MAX } from '../controller.ts';
-import {
-  SG_PELLET_GAUGE_HIT_RATE,
-  burstUnitOf,
-  energyPerTrigger,
-  planDynamicSchedule,
-} from '../dynamic.ts';
+import { SG_PELLET_GAUGE_HIT_RATE, burstUnitOf, energyPerTrigger, planDynamicSchedule } from '../dynamic.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 
 function load(id: number): CharacterData {
@@ -52,10 +47,7 @@ describe('energyPerTrigger (calibrated on single-character recordings)', () => {
   });
 
   it('counts SG pellets at the gauge hit rate', () => {
-    expect(energyPerTrigger(load(271).shot, false)).toBeCloseTo(
-      9000 * 10 * SG_PELLET_GAUGE_HIT_RATE,
-      9,
-    );
+    expect(energyPerTrigger(load(271).shot, false)).toBeCloseTo(9000 * 10 * SG_PELLET_GAUGE_HIT_RATE, 9);
   });
 });
 
