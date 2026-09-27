@@ -230,12 +230,24 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     },
   },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
+  burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
 };
 
 function videoFramesBetween(schedule: SimResult['schedule'], ctx: MetricContext): number {
   const from = gameSecondsToFrame(Number(ctx.args.fromSec));
   const to = gameSecondsToFrame(Number(ctx.args.toSec));
   return videoFrameOf(schedule, to) - videoFrameOf(schedule, from);
+}
+
+/**
+ * バーストの倍率ダメージ（burstDamage）の n 回目（0 始まり）の 1 発動の値。hitDamage と同じく、
+ * 会心の期待値を外して、会心したか（crit）で組み直す。効果が複数あるときは、その合計（HUD の 1 ヒットと同じとは限らない）
+ */
+function burstHitDamage(result: SimResult, ctx: MetricContext): number {
+  const hit = slotOf(result.slots, ctx).burst.hits[Number(ctx.args.n)];
+  if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目のバーストの倍率ダメージが無い`);
+  const crit = ctx.args.crit === true ? hit.boost.critDamage - 1 : 0;
+  return (hit.perActivation / hit.boost.total) * (1 + crit + hit.boost.fullBurst);
 }
 
 function gaugeFull(frames: readonly number[] | undefined, ctx: MetricContext): number {

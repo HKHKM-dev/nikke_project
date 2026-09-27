@@ -27,7 +27,11 @@ import {
   type Claim,
   type ClaimFile,
 } from '../claims.ts';
+import { computeBurstHit } from '../../skills/burstDamage.ts';
+import type { SimResult } from '../../sim/engine.ts';
+import type { TeamInput } from '../../team.ts';
 import {
+  METRICS,
   buildTeamInput,
   compareValue,
   invalidReasonsOf,
@@ -200,6 +204,31 @@ describe('照合の部品', () => {
     expect(compareValue([10, 20], [11, 20], { abs: 1 })).toEqual({ diff: 1, ok: true });
     expect(compareValue([10, 20], [10], { abs: 1 }).ok).toBe(false);
     expect(compareValue(10, [10], { abs: 1 }).ok).toBe(false);
+  });
+
+  it('rebuilds one burst hit without the crit expectation, or as a crit', () => {
+    const hit = computeBurstHit({
+      attack: 54316,
+      enemy: { defence: 100 } as TeamInput['enemy'],
+      crit: { rate: 0.15, damage: 1.5 },
+      attackDamageMultiplier: 1,
+      elementMultiplier: 1,
+      effects: [
+        {
+          source: { resourceId: 304, skill: 'burst', name: { ja: '', en: '' } },
+          damageType: 'skill',
+          multiplier: 3.3061,
+        },
+      ],
+      fullBurstBonus: false,
+    });
+    const result = { slots: [{ burst: { hits: [hit] } }] } as unknown as SimResult;
+    const metric = METRICS.burstHitDamage!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 1, n: 0, crit: false })).toBeCloseTo(54216 * 3.3061, 6);
+    expect(value({ slot: 1, n: 0, crit: true })).toBeCloseTo(54216 * 3.3061 * 1.5, 6);
+    expect(() => value({ slot: 1, n: 1, crit: false })).toThrow('1 回目');
   });
 
   it('reports unknown metrics, missing args, calc-less metrics and unknown presets', () => {
