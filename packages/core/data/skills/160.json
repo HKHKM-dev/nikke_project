@@ -33,8 +33,12 @@
       ],
       "notes": [
         {
-          "ja": "味方全体の防御力▲・攻撃ダメージの回復は防御系でダメージに関係しない",
-          "en": "Defence up and damage-based healing for all allies are defensive and do not affect damage"
+          "ja": "味方全体の防御力▲はダメージに関係しない",
+          "en": "Defence up for all allies does not affect damage"
+        },
+        {
+          "ja": "味方全体の吸収回復（攻撃ダメージの回復・10 秒間維持）は未実装。付いていない状態から付いた時に、味方の「回復効果が適用された時」を起こす（切れる前の付き直しでは起こさない。V-0024）",
+          "en": "The lifesteal for all allies (heal by attack damage, 10 s) is not modeled. It triggers allies' \"when healed\" effects only when newly applied, not when refreshed before it expires (V-0024)"
         }
       ]
     },
