@@ -216,10 +216,17 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     sim: (r, c) => slotOf(r.slots, c).burst.activations.length,
     calc: (r, c) => slotOf(r.slots, c).burst.activations.length,
   },
+  // ニヒリスター編: skill（'skill1' | 'skill2' | 'burst'）を書けば、そのスロットの倍率ダメージだけを数える（任意）
   skillHitCount: {
     args: ['slot'],
-    sim: (r, c) => slotOf(r.slots, c).skillHits.frames.length,
-    calc: (r, c) => slotOf(r.slots, c).skillHits.activations.length,
+    sim: (r, c) =>
+      c.args.skill === undefined
+        ? slotOf(r.slots, c).skillHits.frames.length
+        : r.skillHits.filter((h) => h.slotIndex === slotIndexOf(c) && h.effect.source.skill === c.args.skill).length,
+    calc: (r, c) =>
+      slotOf(r.slots, c).skillHits.activations.filter(
+        (a) => c.args.skill === undefined || a.effect.source.skill === c.args.skill,
+      ).length,
   },
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
   shotIntervals: {

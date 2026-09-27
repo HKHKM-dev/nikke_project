@@ -8,7 +8,7 @@
 // （plan/design-stage11.md 3 節）。
 import type { BurstActivation, BurstSchedule, BurstScheduleModel, BurstStepKey } from '../burst/schedule.ts';
 import type { ShotLog } from '../frame/shots.ts';
-import { isResolvedEventCount, isResolvedShotCount, type ResolvedTrigger } from './resolve.ts';
+import { isResolvedEventCount, isResolvedTimer, isResolvedShotCount, type ResolvedTrigger } from './resolve.ts';
 import type { FireContext } from './targets.ts';
 
 /** 1 枠の 1 回の射撃 */
@@ -73,6 +73,10 @@ export function createTriggerTracker(
       count += 1;
       return count % t.every === 0;
     };
+  }
+  // ニヒリスター編: 時間の周期のトリガーは出来事の列に無いフレームで起きるので、ここでは追わない（skills/timeline.ts の triggerFires が並べる）
+  if (isResolvedTimer(t)) {
+    throw new RangeError(`a timer trigger (every ${t.everySeconds} s) is not tracked per event; use triggerFires`);
   }
   if (isResolvedEventCount(t)) {
     return (ev) => {

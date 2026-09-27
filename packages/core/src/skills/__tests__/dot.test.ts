@@ -71,7 +71,8 @@ describe('dot の解決', () => {
   });
 
   it('is not a damage effect (the burst hit stays in burstDamage)', () => {
-    expect(resolveDamageEffects(def, nihilister, MAX_SKILL_LEVELS)).toEqual([]);
+    const burst = resolveDamageEffects(def, nihilister, MAX_SKILL_LEVELS).filter((e) => e.source.skill === 'burst');
+    expect(burst).toEqual([]);
   });
 
   it('rejects an interval longer than a referenced duration', () => {

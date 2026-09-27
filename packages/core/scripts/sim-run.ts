@@ -48,6 +48,8 @@ const DATA_DIR = join(import.meta.dirname, '../data');
 /** Stage 8: 回数トリガーも 1 語で出す（normalShot/10、burstUse≥2） */
 function triggerLabel(t: ResolvedTrigger): string {
   if (typeof t === 'string') return t;
+  // ニヒリスター編: 時間の周期のトリガー（every10s）
+  if ('everySeconds' in t) return `every${t.everySeconds}s`;
   return 'every' in t ? `${t.count}/${t.every}` : `${t.count}≥${t.atLeast}`;
 }
 

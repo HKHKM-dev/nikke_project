@@ -18,12 +18,19 @@
       ]
     },
     "skill2": {
-      "support": "unsupported",
-      "effects": [],
-      "notes": [
+      "support": "supported",
+      "effects": [
         {
-          "ja": "攻撃範囲内の敵へのダメージは、発動の条件が説明文に無いので未対応（CT ごとに発動するかを撮影で確かめる）",
-          "en": "The damage to enemies within attack range is not modeled because the description does not say when it activates (whether it fires on a cooldown is to be checked by recording)"
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 10
+          },
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "戦闘開始から 10 秒ごと（CT 10 秒は録画 081 から読んだ値。C-0091）。攻撃範囲内の敵は 1 体",
+            "en": "Every 10 s from the start of battle (the 10 s cooldown was read from recording 081; C-0091). There is one enemy within attack range"
+          }
         }
       ]
     },

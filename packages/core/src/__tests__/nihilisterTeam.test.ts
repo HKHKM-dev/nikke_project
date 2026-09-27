@@ -7,6 +7,7 @@ import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
+import { timerFrames } from '../skills/timeline.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
@@ -58,10 +59,10 @@ const TEAMS: Record<string, { input: TeamInput; nihilister: number }> = {
 };
 
 describe('ニヒリスターの定義', () => {
-  it('supports the burst only (S1 and S2 are notes)', () => {
+  it('supports S2 and the burst (S1 is notes)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${NIHILISTER}.json`));
     expect(def.skills.skill1.support).toBe('unsupported');
-    expect(def.skills.skill2.support).toBe('unsupported');
+    expect(def.skills.skill2.support).toBe('supported');
     expect(def.skills.burst.support).toBe('supported');
     expect(def.skills.burst.effects.map((e) => e.kind)).toEqual(['burstDamage', 'dot', 'timed']);
   });
@@ -71,6 +72,12 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, nihilis
   const sim = runSimulation(input);
   const calc = computeTeamDamage(input);
   const plan = planTeamRun(input);
+
+  it('hits with S2 every 10 s from the start of battle, whatever the shots and bursts (C-0091)', () => {
+    const s2 = plan.skillHits.filter((h) => h.slotIndex === nihilister && h.effect.source.skill === 'skill2');
+    expect(s2.map((h) => h.frame)).toEqual(timerFrames(10, plan.frames));
+    for (const h of s2) expect(h.effect.multiplier).toBeCloseTo(1.1264, 10);
+  });
 
   it('burns 10 ticks on each burst of Nihilister: at the burst, then from 1.5 s every second (C-0101, restart when re-applied)', () => {
     const uses = activationFramesOfSlot(plan.schedule!, nihilister);

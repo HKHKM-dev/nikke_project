@@ -16,6 +16,7 @@
 // ヘルム編で、stat の normalCritRate（通常攻撃のクリティカル確率）と chargeDamageMultiplier（チャージダメージ倍率）、即時効果「バーストゲージのチャージ」（burstGauge）、
 // 「N 発間維持」（timed の durationShots / durationShotsRef）を足した（plan/design-helm.md 2 節）。
 // ニヒリスター編で持続ダメージ（dot。「持続ダメージ」「1秒間隔」「10秒間維持」）を足した（plan/design-nihilister.md 2.1 節）。
+// 撮影の後に、時間の周期のトリガー（{ everySeconds }。CT ごとに発動するアクティブ型のスキル）を足した（同 8 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import { ELEMENTS } from '../element.ts';
 import type { Element, LocalizedText, SkillSlot, WeaponType } from '../types.ts';
@@ -237,15 +238,27 @@ export type EventCountTrigger = {
   atLeast: number;
 };
 
-/** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガー */
-export type EffectTrigger = BuffTrigger | ShotCountTrigger | EventCountTrigger;
+/**
+ * ニヒリスター編: 時間の周期のトリガー。戦闘開始から k × everySeconds 秒（k = 1, 2, …）に発火する。射撃・リロード・
+ * 的のジャンプ・バーストに関係しない（録画 081 の S2。C-0091）。CT が説明文にも CDN にも無いアクティブ型のスキル用で、
+ * 値は実測の即値。射撃に効かない damage と dot にだけ書ける（1 パス目の出来事の列にタイマーのフレームが無いため。
+ * plan/design-nihilister.md 8.1 節）
+ */
+export type TimerTrigger = { everySeconds: number };
+
+/** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガーか時間の周期のトリガー */
+export type EffectTrigger = BuffTrigger | ShotCountTrigger | EventCountTrigger | TimerTrigger;
+
+export function isTimerTrigger(t: unknown): t is TimerTrigger {
+  return typeof t === 'object' && t !== null && 'everySeconds' in t;
+}
 
 export function isShotCountTrigger(t: EffectTrigger): t is ShotCountTrigger {
-  return typeof t === 'object' && (SHOT_COUNT_KINDS as readonly string[]).includes(t.count);
+  return typeof t === 'object' && 'count' in t && (SHOT_COUNT_KINDS as readonly string[]).includes(t.count);
 }
 
 export function isEventCountTrigger(t: EffectTrigger): t is EventCountTrigger {
-  return typeof t === 'object' && (EVENT_COUNT_KINDS as readonly string[]).includes(t.count);
+  return typeof t === 'object' && 'count' in t && (EVENT_COUNT_KINDS as readonly string[]).includes(t.count);
 }
 
 /** Stage 6: 「（トリガー）時、（対象）に （stat）X%▲、Y 秒間維持」。同じ効果が持続中に再発火したら上書き延長（窓の和集合） */
@@ -648,10 +661,22 @@ function parsePositiveInt(v: Json, path: string): number {
   return v;
 }
 
-/** 文字列なら BuffTrigger、オブジェクトなら回数トリガー */
-function parseTrigger(v: Json, path: string): EffectTrigger {
+/**
+ * 文字列なら BuffTrigger、オブジェクトなら回数トリガー。時間の周期のトリガー（{ everySeconds }）は allowTimer のとき
+ * （damage と dot）だけ
+ */
+function parseTrigger(v: Json, path: string, allowTimer = false): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
+  if (v.everySeconds !== undefined) {
+    if (!allowTimer) fail(path, 'a timer trigger ({ everySeconds }) is only allowed in damage and dot');
+    for (const key of Object.keys(v)) if (key !== 'everySeconds') fail(`${path}.${key}`, 'unknown field');
+    const seconds = v.everySeconds;
+    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
+      fail(`${path}.everySeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
+    }
+    return { everySeconds: seconds };
+  }
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
       if (!['count', 'every', 'everyRef', 'stacksRef'].includes(key)) fail(`${path}.${key}`, 'unknown field');
@@ -874,7 +899,7 @@ function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDam
 }
 
 function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
   // Stage 11 モダニア: 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
   const damageType = oneOf(SKILL_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
@@ -898,7 +923,7 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   }
   const effect: DotEffect = {
     kind: 'dot',
-    trigger: parseTrigger(v.trigger, `${path}.trigger`),
+    trigger: parseTrigger(v.trigger, `${path}.trigger`, true),
     ref: parseRef(v.ref, `${path}.ref`),
     intervalSeconds: interval,
     ...parseDuration(v, path),

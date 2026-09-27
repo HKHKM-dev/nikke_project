@@ -56,6 +56,8 @@ export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
 /** Stage 8: 「通常攻撃 10 回ごと」「バースト使用 2 回目以降」。文字列のトリガーは BUFF_TRIGGER_LABEL */
 export function formatTrigger(trigger: ResolvedTrigger): string {
   if (typeof trigger === 'string') return BUFF_TRIGGER_LABEL[trigger];
+  // ニヒリスター編: 時間の周期のトリガー（CT ごとに発動するアクティブ型のスキル）
+  if ('everySeconds' in trigger) return `戦闘開始から ${formatNumber(trigger.everySeconds)} 秒ごと`;
   if ('every' in trigger) {
     const what = {
       normalShot: '通常攻撃',

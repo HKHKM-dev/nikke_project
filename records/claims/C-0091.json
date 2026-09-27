@@ -4,8 +4,8 @@
   "state": "仮説",
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
-  "basis": "`081-15`（録画 081。S2 は 17 回、間隔 589〜593f で、リロード・的のジャンプ・バーストに関係なく一定）。CT の値はこの録画から読んだだけ。CDN の skill2_table が `CharacterSkill`（アクティブ型）で、説明文に発動の条件が無い。V-0032",
-  "model": "未反映（`data/skills/261.json` の skill2 は notes だけ。時間の周期のトリガーは plan/design-nihilister.md 2.2 節・経過で起案）",
+  "basis": "`081-15`（録画 081。S2 は 17 回、間隔 589〜593f で、リロード・的のジャンプ・バーストに関係なく一定）、`081-19`（回数 17。10 秒ごとのモデルと一致）。CT 10 秒はこの録画から読んだ値（平均 590.2f は 0.017 秒/f で 10.03 秒。バーストの CT がどれも整数秒なので 10 秒とみた）。1 回目の約 0.3 秒の遅れは入れていない。CDN の skill2_table が `CharacterSkill`（アクティブ型）で、説明文に発動の条件が無い。V-0032",
+  "model": "`data/skills/261.json` の skill2 の effects[0]（`damage`・トリガー `{ \"everySeconds\": 10 }`）。発火は `skills/timeline.ts` の `timerFrames`",
   "replaces": [],
   "updated": "2026-09-28"
 }
