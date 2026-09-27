@@ -187,15 +187,13 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const instant: InstantSource[] = [];
   /** 発火の文脈 context のとき、効果 e が掛かる枠（Stage 11: burstUsers は発火ごとに変わる） */
   const targetsAt = (e: Parameters<typeof isEffectTarget>[0], sourceSlotIndex: number, context: FireContext) =>
-    slots.flatMap((t, i) =>
-      t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character.weaponType, context) ? [i] : [],
-    );
+    slots.flatMap((t, i) => (t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character, context) ? [i] : []));
   /** 窓を持ちうる枠（burstUsers・topAttack は武器種の条件だけ）で FiringSource を作る */
   const sourceOf = (effect: ResolvedTimedEffect, sourceSlotIndex: number, casterBaseAttack: number): FiringSource => ({
     sourceSlotIndex,
     effect,
     casterBaseAttack,
-    canTarget: slots.map((t, i) => t !== null && canEverTarget(effect, sourceSlotIndex, i, t.character.weaponType)),
+    canTarget: slots.map((t, i) => t !== null && canEverTarget(effect, sourceSlotIndex, i, t.character)),
     fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
     windows: slots.map(() => []),
     starts: slots.map(() => []),

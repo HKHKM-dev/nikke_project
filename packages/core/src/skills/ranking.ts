@@ -5,10 +5,10 @@
 //   - 順位で対象が決まる効果（topAttack）の窓は数えない（呼び出し側が渡さない）。攻撃力を配る topAttack で循環しないため。
 //   - 同値は枠の若い順（仮定。未検証）。
 // planBuffTimeline（バッチ）と 1 パス目のループ（frame/firstPass.ts）が同じ関数を使う。
-import type { WeaponType } from '../types.ts';
+import type { Element, WeaponType } from '../types.ts';
 import { applyAttackBuffs, applyResolvedEffect, type BuffTotals } from './buffs.ts';
 import type { ResolvedEffect } from './resolve.ts';
-import type { TargetedEffect } from './targets.ts';
+import { matchesTargetFilter, type TargetedEffect } from './targets.ts';
 
 /** 同じフレームに始まった攻撃力の窓を順位に入れるか（26 節 3。録画 43 で確かめる） */
 export const RANK_INCLUDES_SAME_FRAME = true;
@@ -27,6 +27,8 @@ export type RankSlot = {
   /** バフ前攻撃力（damage.ts の baseAttackOf。発動者基準の固定加算にも使う） */
   casterBaseAttack: number;
   weaponType: WeaponType;
+  /** アスカ: targetElement の絞り込み用 */
+  element: Element;
   /** 常時パッシブの合計 */
   passive: BuffTotals;
 } | null;
@@ -66,15 +68,16 @@ export function rankByFinalAttack(finalAttacks: readonly (number | null)[]): num
   return indices.sort((a, b) => finalAttacks[b]! - finalAttacks[a]! || a - b);
 }
 
-/** 効果の対象になりうる枠（targetWeapon で絞る）を順位の順に。FireContext.attackRank に入れる */
+/** 効果の対象になりうる枠（targetWeapon・targetElement で絞る）を順位の順に。FireContext.attackRank に入れる */
 export function attackRankFor(
-  effect: Pick<TargetedEffect, 'targetWeapon'>,
+  effect: Pick<TargetedEffect, 'targetWeapon' | 'targetElement'>,
   slots: readonly RankSlot[],
   finalAttacks: readonly (number | null)[],
 ): number[] {
-  return rankByFinalAttack(finalAttacks).filter(
-    (i) => effect.targetWeapon === undefined || slots[i]?.weaponType === effect.targetWeapon,
-  );
+  return rankByFinalAttack(finalAttacks).filter((i) => {
+    const slot = slots[i];
+    return slot !== null && slot !== undefined && matchesTargetFilter(effect, slot);
+  });
 }
 
 /** 順位の上位に同値があったか（N 位と N+1 位が同じ攻撃力なら、枠の順の仮定で対象が決まった） */

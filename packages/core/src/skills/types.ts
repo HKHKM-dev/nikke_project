@@ -14,7 +14,8 @@
 // Stage 11 紅蓮BS で、段の循環（cycle。「攻撃回数別の効果」「各段階の効果のみ適用」）と、その間隔の変更（cycleEvery。
 // 「スキル 1 のフルチャージ攻撃回数の条件が 1 回 / 2 回 / 3 回に変更」）を足した（plan/design-stage11-scarlet-bs.md 2 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
-import type { LocalizedText, SkillSlot, WeaponType } from '../types.ts';
+import { ELEMENTS } from '../element.ts';
+import type { Element, LocalizedText, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
 
 export type { SkillSlot };
@@ -140,6 +141,8 @@ export type PassiveEffect = {
   target: BuffTarget;
   /** Stage 9: 「〈武器〉を所持する味方」。target が 'allies' のときだけ書ける */
   targetWeapon?: WeaponType;
+  /** アスカ: 「〈コード〉コードの味方」。targetWeapon と同じ場所に書ける（plan/design-asuka.md 2.2 節） */
+  targetElement?: Element;
   stat: BuffStat;
   /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す */
   scaling?: BuffScaling;
@@ -242,6 +245,8 @@ export type TimedEffect = TargetCountFields & {
   target: BuffTarget;
   /** Stage 9: 「〈武器〉を所持する味方」。target が self 以外（allies・Stage 11 の burstUsers）のときだけ書ける */
   targetWeapon?: WeaponType;
+  /** アスカ: 「〈コード〉コードの味方」 */
+  targetElement?: Element;
   stat: BuffStat;
   /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す（passive と同じ規則） */
   scaling?: BuffScaling;
@@ -318,6 +323,7 @@ export type CooldownReductionEffect = TargetCountFields & {
   trigger: EffectTrigger;
   target: BuffTarget;
   targetWeapon?: WeaponType;
+  targetElement?: Element;
   /** 秒数の description_value_NN */
   ref: number;
   assumes?: LocalizedText;
@@ -329,6 +335,7 @@ export type AmmoRefillEffect = TargetCountFields & {
   trigger: EffectTrigger;
   target: BuffTarget;
   targetWeapon?: WeaponType;
+  targetElement?: Element;
   /** % の description_value_NN */
   ref: number;
   assumes?: LocalizedText;
@@ -343,6 +350,7 @@ export type HealEffect = {
   trigger: EffectTrigger;
   target: BuffTarget;
   targetWeapon?: WeaponType;
+  targetElement?: Element;
   /** 回復量（%）の description_value_NN（UI の表示用） */
   ref: number;
   assumes?: LocalizedText;
@@ -498,6 +506,15 @@ function parseTargetWeapon(v: Record<string, Json>, target: BuffTarget, path: st
   return weapon;
 }
 
+/** アスカ: targetElement は targetWeapon と同じく target が self 以外のときだけ */
+function parseTargetElement(v: Record<string, Json>, target: BuffTarget, path: string): Element | undefined {
+  if (v.targetElement === undefined) return undefined;
+  const element = oneOf(ELEMENTS, v.targetElement, `${path}.targetElement`);
+  if (target === 'self')
+    fail(`${path}.targetElement`, `only allowed with target "allies", "burstUsers" or "topAttack", got "${target}"`);
+  return element;
+}
+
 /** Stage 11: burstUsers はトリガーが fullBurstStart / fullBurstEnd のときだけ */
 function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrigger, path: string): void {
   if (target !== 'burstUsers') return;
@@ -531,12 +548,14 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   if (target === 'topAttack')
     fail(`${path}.target`, 'topAttack is not allowed in passive (the ranking changes during battle)');
   const targetWeapon = parseTargetWeapon(v, target, path);
+  const targetElement = parseTargetElement(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   if (isFlagStat(stat)) fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
   const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
+  if (targetElement !== undefined) effect.targetElement = targetElement;
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) effect.decrease = true;
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
@@ -592,6 +611,7 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
+  const targetElement = parseTargetElement(v, target, path);
   const count = parseTargetCount(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   if (stat === 'burstGaugeSpeed') {
@@ -611,6 +631,7 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
     effect.ref = parseRef(v.ref, `${path}.ref`);
   }
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
+  if (targetElement !== undefined) effect.targetElement = targetElement;
   Object.assign(effect, count);
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) {
@@ -748,7 +769,17 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
   for (const key of Object.keys(v)) {
     if (
-      !['kind', 'trigger', 'target', 'targetWeapon', 'targetCount', 'targetCountRef', 'ref', 'assumes'].includes(key)
+      ![
+        'kind',
+        'trigger',
+        'target',
+        'targetWeapon',
+        'targetElement',
+        'targetCount',
+        'targetCountRef',
+        'ref',
+        'assumes',
+      ].includes(key)
     ) {
       fail(`${path}.${key}`, 'unknown field');
     }
@@ -761,9 +792,11 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   // 回復 → healed の攻撃力の窓 → 順位 → 回復の対象、と循環するので heal には書けない（plan/design-stage11.md 19.3 節）
   if (kind === 'heal' && target === 'topAttack') fail(`${path}.target`, 'heal cannot target "topAttack"');
   const targetWeapon = parseTargetWeapon(v, target, path);
+  const targetElement = parseTargetElement(v, target, path);
   const count = parseTargetCount(v, target, path);
   const effect: InstantEffect = { kind, trigger, target, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
+  if (targetElement !== undefined) effect.targetElement = targetElement;
   if (kind !== 'heal') Object.assign(effect, count);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

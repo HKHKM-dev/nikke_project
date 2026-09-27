@@ -2,7 +2,8 @@
 // computeTeamDamage 側は触らない。
 // Stage 11: 発火のたびに対象が変わるもの（「直前にバーストスキルを使用した味方」）のために、発火の文脈を受ける。
 // Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」（topAttack）も文脈（攻撃力の順位）で決める（skills/ranking.ts）。
-import type { WeaponType } from '../types.ts';
+// アスカ（plan/design-asuka.md 2.2 節）: 「〈コード〉コードの味方」（targetElement）。武器種と同じく、対象の枠のキャラで絞る。
+import type { Element, WeaponType } from '../types.ts';
 import type { BuffTarget } from './types.ts';
 
 /**
@@ -15,12 +16,31 @@ import type { BuffTarget } from './types.ts';
 export type FireContext = { burstUsers?: readonly number[]; attackRank?: readonly number[] } | null;
 
 /** isEffectTarget が見る効果の項目 */
-export type TargetedEffect = { target: BuffTarget; targetWeapon?: WeaponType; targetCount?: number };
+export type TargetedEffect = {
+  target: BuffTarget;
+  targetWeapon?: WeaponType;
+  targetElement?: Element;
+  targetCount?: number;
+};
+
+/** 対象の枠のキャラのうち、絞り込みに使う項目（CharacterData をそのまま渡せる） */
+export type TargetSlot = { weaponType: WeaponType; element: Element };
+
+/** targetWeapon・targetElement の絞り込み（両方あれば両方を満たす枠だけ） */
+export function matchesTargetFilter(
+  effect: Pick<TargetedEffect, 'targetWeapon' | 'targetElement'>,
+  slot: TargetSlot,
+): boolean {
+  return (
+    (effect.targetWeapon === undefined || effect.targetWeapon === slot.weaponType) &&
+    (effect.targetElement === undefined || effect.targetElement === slot.element)
+  );
+}
 
 /**
- * sourceSlotIndex の枠が発動した効果が、targetSlotIndex の枠（武器種 targetSlotWeapon）に掛かるか。
- * Stage 9: targetWeapon（「〈武器〉を所持する味方」）があれば武器種の一致する枠だけ。
- * targetSlotWeapon を省略可能にしないのは、渡し忘れたときに黙って全員へ掛かるのを防ぐため。
+ * sourceSlotIndex の枠が発動した効果が、targetSlotIndex の枠（キャラ targetSlot）に掛かるか。
+ * Stage 9: targetWeapon（「〈武器〉を所持する味方」）があれば武器種の一致する枠だけ。アスカ: targetElement も同じ。
+ * targetSlot を省略可能にしないのは、渡し忘れたときに黙って全員へ掛かるのを防ぐため。
  * Stage 11: burstUsers は context の枠だけ（context に無ければ誰にも掛からない。検証でフルバーストのトリガーに限っている）。
  * topAttack は context.attackRank の先頭 targetCount 枠だけ（attackRank が無ければ誰にも掛からない）
  */
@@ -28,10 +48,10 @@ export function isEffectTarget(
   effect: TargetedEffect,
   sourceSlotIndex: number,
   targetSlotIndex: number,
-  targetSlotWeapon: WeaponType,
+  targetSlot: TargetSlot,
   context: FireContext = null,
 ): boolean {
-  const weaponOk = effect.targetWeapon === undefined || effect.targetWeapon === targetSlotWeapon;
+  const weaponOk = matchesTargetFilter(effect, targetSlot);
   switch (effect.target) {
     case 'self':
       return sourceSlotIndex === targetSlotIndex;
@@ -47,15 +67,15 @@ export function isEffectTarget(
   }
 }
 
-/** 文脈しだいで掛かりうるか（burstUsers・topAttack は武器種の条件だけで見る）。1 パス目で「窓を持ちうる枠」を決めるのに使う */
+/** 文脈しだいで掛かりうるか（burstUsers・topAttack は武器種・属性の条件だけで見る）。1 パス目で「窓を持ちうる枠」を決めるのに使う */
 export function canEverTarget(
   effect: TargetedEffect,
   sourceSlotIndex: number,
   targetSlotIndex: number,
-  targetSlotWeapon: WeaponType,
+  targetSlot: TargetSlot,
 ): boolean {
   if (effect.target === 'self') return sourceSlotIndex === targetSlotIndex;
-  return effect.targetWeapon === undefined || effect.targetWeapon === targetSlotWeapon;
+  return matchesTargetFilter(effect, targetSlot);
 }
 
 /** 対象が発火の文脈で変わるか（変わらなければ効果ごとに 1 回だけ対象を決めてよい） */

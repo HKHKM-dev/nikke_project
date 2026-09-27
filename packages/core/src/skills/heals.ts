@@ -47,7 +47,7 @@ export function planHeals(
         if (frame >= frames) continue;
         slots.forEach((target, slotIndex) => {
           if (target === null) return;
-          if (!isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character.weaponType, fire.context)) return;
+          if (!isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, fire.context)) return;
           heals.push({ frame, sourceSlotIndex, slotIndex });
         });
       }

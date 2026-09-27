@@ -126,6 +126,7 @@ describe('順位（skills/ranking.ts、18 節）', () => {
   const slot = (casterBaseAttack: number, weaponType: WeaponType = 'SR'): RankSlot => ({
     casterBaseAttack,
     weaponType,
+    element: 'Fire',
     passive: ZERO_BUFFS,
   });
   const attack = (value: number, scaling: 'ratio' | 'casterAttack' = 'ratio') => ({
@@ -181,22 +182,28 @@ describe('対象判定（topAttack）', () => {
 
   it('takes the first N of the attack rank, nobody without a rank', () => {
     const context = { attackRank: [2, 1, 4, 0] };
-    expect([0, 1, 2, 3, 4].filter((i) => isEffectTarget(e, 2, i, 'SR', context))).toEqual([1, 2]);
-    expect(isEffectTarget(e, 2, 2, 'SR', null)).toBe(false);
-    expect(isEffectTarget(e, 2, 2, 'SR', { burstUsers: [2] })).toBe(false);
+    expect(
+      [0, 1, 2, 3, 4].filter((i) => isEffectTarget(e, 2, i, { weaponType: 'SR', element: 'Fire' }, context)),
+    ).toEqual([1, 2]);
+    expect(isEffectTarget(e, 2, 2, { weaponType: 'SR', element: 'Fire' }, null)).toBe(false);
+    expect(isEffectTarget(e, 2, 2, { weaponType: 'SR', element: 'Fire' }, { burstUsers: [2] })).toBe(false);
     // 候補が N 未満なら全員
-    expect(isEffectTarget({ target: 'topAttack', targetCount: 5 }, 0, 4, 'SR', context)).toBe(true);
+    expect(
+      isEffectTarget({ target: 'topAttack', targetCount: 5 }, 0, 4, { weaponType: 'SR', element: 'Fire' }, context),
+    ).toBe(true);
     // 武器種の条件
-    expect(isEffectTarget({ ...e, targetWeapon: 'SG' }, 2, 2, 'SR', context)).toBe(false);
+    expect(isEffectTarget({ ...e, targetWeapon: 'SG' }, 2, 2, { weaponType: 'SR', element: 'Fire' }, context)).toBe(
+      false,
+    );
   });
 
   it('depends on the context and the rank; can target anyone with the weapon', () => {
     expect(dependsOnContext(e)).toBe(true);
     expect(dependsOnRank(e)).toBe(true);
     expect(dependsOnRank({ target: 'burstUsers' })).toBe(false);
-    expect(canEverTarget(e, 0, 3, 'AR')).toBe(true);
-    expect(canEverTarget({ ...e, targetWeapon: 'SG' }, 0, 3, 'AR')).toBe(false);
-    expect(canEverTarget({ target: 'self' }, 0, 3, 'AR')).toBe(false);
+    expect(canEverTarget(e, 0, 3, { weaponType: 'AR', element: 'Fire' })).toBe(true);
+    expect(canEverTarget({ ...e, targetWeapon: 'SG' }, 0, 3, { weaponType: 'AR', element: 'Fire' })).toBe(false);
+    expect(canEverTarget({ target: 'self' }, 0, 3, { weaponType: 'AR', element: 'Fire' })).toBe(false);
   });
 });
 
