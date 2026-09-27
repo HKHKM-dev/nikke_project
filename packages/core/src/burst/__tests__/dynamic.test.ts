@@ -29,12 +29,10 @@ describe('energyPerTrigger (calibrated on single-character recordings)', () => {
     });
   }
 
-  it('デルタ SR（AI）: 20 発目で消える。うち 1 発は的に当たらず半分（burstEnergyPerShot）', () => {
-    const shot = load(20).shot;
-    const hit = energyPerTrigger(shot, false);
-    const before = 18 * hit + shot.burstEnergyPerShot;
-    expect(before).toBeLessThan(BURST_GAUGE_MAX);
-    expect(before + hit).toBeGreaterThanOrEqual(BURST_GAUGE_MAX);
+  it('デルタ SR（AI）: 20 発目で消える。うち 1 発は的に当たらなかったので、当たりの 19 回目', () => {
+    const hit = energyPerTrigger(load(20).shot, false);
+    expect(18 * hit).toBeLessThan(BURST_GAUGE_MAX);
+    expect(19 * hit).toBeGreaterThanOrEqual(BURST_GAUGE_MAX);
   });
 
   it('applies the full-charge ratio only to the controlled nike', () => {
