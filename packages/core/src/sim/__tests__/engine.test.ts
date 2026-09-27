@@ -80,10 +80,11 @@ describe('runSimulation without burst', () => {
     expect(sim.events).toEqual([]);
   });
 
-  it('AR fires 1799 times in 180 s (29 magazines of 355f + 59 shots of the 30th, 10295 + 5 × 58 < 10588)', () => {
+  // Stage 21-C3: 1 周期 = リロード明け 22f + 60 発 290f + リロード 60f = 372f（C-0058・C-0059）
+  it('AR fires 1715 times in 180 s (28 magazines of 372f + 35 shots of the 29th, last at 10583 < 10588)', () => {
     const sim = runSimulation({ slots: [ar], enemy, durationSeconds: 180 });
     expect(sim.frames).toBe(10588);
-    expect(simIntervalTotals(sim.slots[0]!).nonFullBurst.triggers).toBe(29 * 60 + 59);
+    expect(simIntervalTotals(sim.slots[0]!).nonFullBurst.triggers).toBe(28 * 60 + 35);
   });
 });
 
@@ -157,12 +158,14 @@ describe('runSimulation with the fixed burst cycle', () => {
     ]);
     expect(atStart.slice(4).every((e) => e.kind === 'trigger' && e.fullBurst)).toBe(true);
     expect(sim.events.find((e) => e.kind === 'fullBurstEnd')?.frame).toBe(c);
-    const at585 = sim.events.filter((e) => e.frame === 585); // AR は 5f 刻みなので 585 に撃つ（586〜587 は撃たない）
-    expect(at585.length).toBeGreaterThan(0);
-    expect(at585.every((e) => e.kind === 'trigger' && !e.fullBurst)).toBe(true);
-    const at590 = sim.events.filter((e) => e.frame === 590 && e.kind === 'trigger');
-    expect(at590.length).toBeGreaterThan(0);
-    expect(at590.every((e) => e.kind === 'trigger' && e.fullBurst)).toBe(true);
+    // フルバーストの直前・直後の射撃（AR は 4〜5f 刻み。Stage 21-C3）の区分
+    const triggers = sim.events.filter((e) => e.kind === 'trigger');
+    const before = Math.max(...triggers.filter((e) => e.frame < h).map((e) => e.frame));
+    const after = Math.min(...triggers.filter((e) => e.frame > h).map((e) => e.frame));
+    expect(h - before).toBeLessThanOrEqual(5);
+    expect(after - h).toBeLessThanOrEqual(5);
+    expect(triggers.filter((e) => e.frame === before).every((e) => e.kind === 'trigger' && !e.fullBurst)).toBe(true);
+    expect(triggers.filter((e) => e.frame === after).every((e) => e.kind === 'trigger' && e.fullBurst)).toBe(true);
     expect(sim.frames).toBe(gameSecondsToFrames(20.5));
   });
 

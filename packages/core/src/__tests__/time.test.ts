@@ -34,10 +34,11 @@ describe('game time (Stage 21-B: 0.017 s per frame)', () => {
   });
 });
 
-describe('weapon conversion stays separate (decided in 21-C)', () => {
-  it('keeps 60 frames per CDN second and 1 shot per frame', () => {
+describe('weapon conversion (decided in 21-C2, V-0011)', () => {
+  it('keeps 60 frames per CDN second, and accumulates rpm on the game clock with 1 shot per frame at most', () => {
     expect(WEAPON_FRAMES_PER_SECOND).toBe(60);
     expect(secondsToFrames(0.3)).toBe(18);
-    expect(MAX_RPM).toBe(3600);
+    // 1 フレーム 1 発 = ゲーム内の 1 秒に約 58.82 発（C-0058）
+    expect(MAX_RPM).toBeCloseTo(60 / 0.017, 9);
   });
 });

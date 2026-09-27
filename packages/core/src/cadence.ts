@@ -2,6 +2,8 @@
 // モデルは 2026-09-22 の射撃場録画（AR / SR / RL / MG）で較正済み。plan/verification.md 参照。
 // Stage 10: 射撃に効くバフの実効値（frame/firing.ts の FiringParams）を受け取れるようにした。省略は基礎値（Stage 9 と同じ）。
 // calc は常時分の射撃バフをここで平均レートに畳み込む（plan/design-stage10.md 3.4 節）。
+// Stage 21-C3: rpm の蓄積をゲーム内の時計にし（C-0058）、AR・SMG・SG のリロード明けの遅れを足した（C-0059。
+// plan/design-stage21.md 8.8 節、V-0011）。
 import { firingParams, type FiringParams } from './frame/firing.ts';
 import type { ShotParams } from './types.ts';
 import { framesToGameSeconds } from './time.ts';
@@ -10,8 +12,10 @@ import { DEFAULT_WEAPON_MODEL, MAX_RPM, hasSpinUp, isChargeWeapon, type WeaponMo
 export type CadenceResult = {
   /** 各発の発射フレーム（1 発目 = 0） */
   shotFrames: number[];
-  /** リロード完了（または戦闘開始）から 1 発目までのフレーム。チャージ武器はチャージ + 解放遅延、MG は初弾遅延、それ以外は 0 */
+  /** 戦闘開始から 1 発目までのフレーム。チャージ武器はチャージ + 解放遅延、MG は初弾遅延、それ以外は 0 */
   firstShotFrames: number;
+  /** 21-C3: リロード完了から次のマガジンの 1 発目までのフレーム。AR・SMG・SG は reloadFirstShotFrames、ほかは firstShotFrames と同じ */
+  reloadFirstShotFrames: number;
   /** 1 発目から最終弾までのフレーム */
   magazineFrames: number;
   /** 1 マガジン分を回復するのに必要なリロード回数（分割リロードは複数） */
@@ -31,7 +35,7 @@ export function reloadChunks(shot: Pick<ShotParams, 'maxAmmo' | 'reloadBullet'>)
   return Math.ceil(shot.maxAmmo / ammoPerChunk);
 }
 
-/** i 発目を撃った直後の発射レート（rpm）。MG は 1 発ごとに上昇し 1 フレーム 1 発（3600 rpm）で頭打ち。 */
+/** i 発目を撃った直後の発射レート（rpm）。MG は 1 発ごとに上昇し 1 フレーム 1 発（MAX_RPM）で頭打ち。 */
 export function rateAfterShots(shot: ShotParams, shotsFired: number): number {
   const rpm = hasSpinUp(shot)
     ? Math.min(shot.endRateOfFire, shot.rateOfFire + shotsFired * shot.rateOfFireChangePerShot)
@@ -39,11 +43,14 @@ export function rateAfterShots(shot: ShotParams, shotsFired: number): number {
   return Math.min(MAX_RPM, rpm);
 }
 
+/** 1 発分たまったか。rpm ÷ MAX_RPM の和が割り算の誤差で整数のすぐ下に出ても 1 発にする */
+export const ACC_EPSILON = 1e-9;
+
 /**
  * 各発の発射フレーム（1 発目 = 0）。
  * - チャージ武器: 毎発 チャージ時間 + 解放遅延（実測 82f）
  * - それ以外: 発射レートを 1 フレームごとに蓄積し、1 発分たまったフレームで発射（端数は持ち越し）。
- *   AR 720rpm は 5f 固定、MG はレート上昇に従って間隔が縮む。
+ *   21-C3: 蓄積はゲーム内の時計（C-0058）。AR 720rpm は 5f が 9 回と 4f が 1 回の繰り返し、MG はレート上昇に従って間隔が縮む。
  */
 export function simulateShotFrames(
   shot: ShotParams,
@@ -63,7 +70,7 @@ export function simulateShotFrames(
   while (frames.length < params.maxAmmo) {
     t += 1;
     acc += rateAfterShots(shot, frames.length) / MAX_RPM;
-    if (acc >= 1) {
+    if (acc >= 1 - ACC_EPSILON) {
       acc -= 1;
       frames.push(t);
     }
@@ -81,6 +88,16 @@ export function firstShotFrames(
   return 0;
 }
 
+/** 21-C3: リロード完了から次のマガジンの 1 発目まで。AR・SMG・SG はリロードの後だけ遅れる（C-0059） */
+export function reloadFirstShotFrames(
+  shot: ShotParams,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): number {
+  if (isChargeWeapon(shot) || hasSpinUp(shot)) return firstShotFrames(shot, model, params);
+  return model.reloadFirstShotFrames;
+}
+
 export function computeCadence(
   shot: ShotParams,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
@@ -88,13 +105,16 @@ export function computeCadence(
 ): CadenceResult {
   const shotFrames = simulateShotFrames(shot, model, params);
   const first = firstShotFrames(shot, model, params);
+  const reloadFirst = reloadFirstShotFrames(shot, model, params);
   const magazineFrames = shotFrames[shotFrames.length - 1] ?? 0;
   const chunks = reloadChunks({ maxAmmo: params.maxAmmo, reloadBullet: shot.reloadBullet });
   const reloadFrames = params.reloadChunkFrames * chunks;
-  const cycleFrames = first + magazineFrames + reloadFrames;
+  // 1 周期 = リロード明けの 1 発目の遅れ + マガジン + リロード。戦闘開始のマガジンだけ first から始まる
+  const cycleFrames = reloadFirst + magazineFrames + reloadFrames;
   return {
     shotFrames,
     firstShotFrames: first,
+    reloadFirstShotFrames: reloadFirst,
     magazineFrames,
     reloadChunks: chunks,
     reloadFrames,

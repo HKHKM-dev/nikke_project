@@ -6,6 +6,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { initialBurstController, stepBurstController, type BurstUnit } from '../burst/controller.ts';
+import { computeCadence } from '../cadence.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import type { EnemyEvent, EnemyInput } from '../damage.ts';
 import { enemyEventsOf, expandEnemyEvents, parseEnemyPresets } from '../enemies.ts';
@@ -112,14 +113,19 @@ function shotsWithWindow(partial: Partial<ShotParams>, window: FrameRange, frame
   return fired;
 }
 
-const range = (from: number, to: number, step: number) =>
-  Array.from({ length: Math.floor((to - from) / step) + 1 }, (_, i) => from + i * step);
-
 describe('射手（ハイドとリロード）', () => {
   it('AR (reload 1 s < 2 s jump): reloads while hiding and resumes with a full magazine at the end of the window', () => {
-    // 0…95 で 20 発（残弾 40）→ 100 でハイドしてリロード（160 で満タン）→ 220 で撃ち直し、60 発撃って 575 に次のマガジン
+    // 0…99 で 21 発（残弾 39。Stage 21-C3 で 4〜5f 刻み）→ 100 でハイドしてリロード（160 で満タン、リロード明けの 22f は窓の中）
+    // → 220 で撃ち直し、60 発を 510 まで撃って、リロード 60f + 22f の 592 に次のマガジン
+    const ar = computeCadence(makeCharacter({}).shot).shotFrames;
     const fired = shotsWithWindow({}, { start: 100, end: 220 }, 600);
-    expect(fired).toEqual([...range(0, 95, 5), ...range(220, 515, 5), 575, 580, 585, 590, 595]);
+    expect(ar.filter((f) => f < 100)).toHaveLength(21);
+    expect(fired).toEqual([
+      ...ar.filter((f) => f < 100),
+      ...ar.map((f) => 220 + f),
+      ...ar.map((f) => 592 + f).filter((f) => f < 600),
+    ]);
+    expect(fired.at(-2)).toBe(592);
   });
 
   it('MG (reload 2.5 s > 2 s jump): the reload is cancelled and the spin-up starts over', () => {

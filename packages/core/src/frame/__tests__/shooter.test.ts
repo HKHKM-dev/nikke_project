@@ -35,19 +35,20 @@ describe('stepShooter', () => {
     });
   });
 
-  it('matches the absolute frames fixed in the design (AR 0…295 → 355, SR 82…492 → 664, MG 20…410 → 580)', () => {
+  // Stage 21-C3: rpm はゲーム内の時計（C-0058）、AR のリロード明けは 22f（C-0059）。SR は変わらない
+  it('matches the absolute frames fixed in the design (AR 0…290 → 372, SR 82…492 → 664, MG 20…408 → 578)', () => {
     const ar = shotFramesUpTo(makeCharacter(fixtures.AR).shot, 400);
     expect(ar.slice(0, 3)).toEqual([0, 5, 10]);
-    expect(ar[59]).toBe(295);
-    expect(ar[60]).toBe(355);
+    expect(ar[59]).toBe(290);
+    expect(ar[60]).toBe(372);
 
     const sr = shotFramesUpTo(makeCharacter(fixtures.SR).shot, 700);
     expect(sr).toEqual([82, 164, 246, 328, 410, 492, 664]);
 
     const mg = shotFramesUpTo(makeCharacter(fixtures.MG).shot, 600);
     expect(mg[0]).toBe(20);
-    expect(mg[299]).toBe(410);
-    expect(mg[300]).toBe(580);
+    expect(mg[299]).toBe(408);
+    expect(mg[300]).toBe(578);
   });
 
   it('consumes the initial wait before the first shot (MG: frames 0..19 wait, 20 fires)', () => {

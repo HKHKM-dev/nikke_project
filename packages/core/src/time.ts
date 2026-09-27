@@ -1,7 +1,7 @@
 // Stage 21: モデルの時間の単位（plan/design-stage21.md 3.1 節）。
 // モデルの 1 フレーム = 録画の動画の 1 フレーム。ゲーム内の秒（戦闘の長さ・スキルの持続・CT・フルバーストの長さ・
-// 的の出来事）と、秒で出す値は、ここで換算する。武器の CDN の秒・rpm は weapons.ts の WEAPON_FRAMES_PER_SECOND
-// （21-C で決める）。
+// 的の出来事）と、秒で出す値は、ここで換算する。武器の CDN の秒は weapons.ts の WEAPON_FRAMES_PER_SECOND（60f のまま）、
+// rpm は weapons.ts の MAX_RPM（ゲーム内の時計。21-C）。
 
 /** 動画の 1 フレームに進むゲーム内の秒（C-0048・C-0050。フルバーストの残り時間を 1 フレームずつ読んで 0.0170〜0.0171 秒） */
 export const GAME_SECONDS_PER_FRAME = 0.017;

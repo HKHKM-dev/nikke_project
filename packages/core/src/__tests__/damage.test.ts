@@ -33,7 +33,7 @@ describe('computeDamage', () => {
     expect(r.buffs).toEqual(ZERO_BUFFS);
     expect(r.elementMultiplier).toBe(1.1);
     expect(r.perTrigger).toBeCloseTo(900 * 0.1365 * 2.375 * 1.1, 6);
-    expect(r.cadence.triggersPerSecond).toBeCloseTo(60 / framesToGameSeconds(355), 6);
+    expect(r.cadence.triggersPerSecond).toBeCloseTo(60 / framesToGameSeconds(22 + 290 + 60), 6);
     expect(r.dps).toBeCloseTo(r.perTrigger * r.cadence.triggersPerSecond, 6);
     expect(r.totalDamage).toBeCloseTo(r.dps * 180, 4);
   });
