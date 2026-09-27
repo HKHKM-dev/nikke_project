@@ -1,0 +1,30 @@
+{
+  "id": "074",
+  "date": "2026-09-27",
+  "folder": "range",
+  "file": "20260927-74_SG_noir_auto.mp4",
+  "original": "2026-09-27_22-36-11.mp4",
+  "durationSec": 208.1,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 252.2,
+  "sha256": "3b57a3d40e4d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true,
+      "note": "単騎・AUTO"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定。単騎なので操作キャラだが **AUTO 射撃 ON**・自動バースト OFF。画面左上のボタンで確かめた）。V-0013 の SG 単騎。キャラはオーナーに確かめた"
+}
