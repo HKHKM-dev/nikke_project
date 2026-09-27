@@ -1,15 +1,21 @@
 // CDN には無い「解釈ルール」だけを置く。武器の数値自体はキャラごとの ShotParams を使う。
+import { FRAMES_PER_GAME_SECOND } from './time.ts';
 import type { ShotParams, WeaponType } from './types.ts';
 
 /**
- * Stage 21: 武器の CDN の秒（チャージ・リロード・撃ち直し）と rpm をフレームに直す換算。射撃の刻みの較正
+ * Stage 21: 武器の CDN の秒（チャージ・リロード・撃ち直し）をフレームに直す換算。射撃の刻みの較正
  * （C-0001・C-0002・C-0014 など）はこの換算との差として決めているので、ゲーム内の秒（time.ts）とは分けて持つ。
- * 1 秒 = 58.82f にするかは 21-C で録画と照らして決める（plan/design-stage21.md 0.3 節）
+ * 21-C2 で録画を読み直し、1 秒 = 60f と 58.82f のどちらも ±1f で合って決まらなかったので、60f のまま
+ * （plan/design-stage21.md 8.7 節、V-0011）
  */
 export const WEAPON_FRAMES_PER_SECOND = 60;
 
-/** 1 フレームに 1 発が上限（3600 rpm） */
-export const MAX_RPM = WEAPON_FRAMES_PER_SECOND * 60;
+/**
+ * rpm の蓄積の分母: 1 フレームに 1 発になる rpm（= 60 × ゲーム内の 1 秒のフレーム数、約 3529 rpm）。これが上限。
+ * 21-C3: rpm はゲーム内の時計で進む（C-0058。AR 720 rpm は 60 発で 290f、SMG 1440 rpm は 120 発で 292f）。
+ * 21-B までは 3600（1 秒 = 60f）だった
+ */
+export const MAX_RPM = 60 * FRAMES_PER_GAME_SECOND;
 
 export const WEAPON_TYPES = ['AR', 'SMG', 'SR', 'RL', 'SG', 'MG'] as const satisfies readonly WeaponType[];
 
@@ -30,11 +36,18 @@ export type WeaponModel = {
   chargeReleaseFrames: number;
   /** スピンアップ武器（MG）がリロード完了・戦闘開始から 1 発目を撃つまでのフレーム。実測 約 20f */
   spinUpFirstShotFrames: number;
+  /**
+   * 21-C3: チャージもスピンアップも無い武器（AR・SMG・SG）が、リロードを込め終えてから 1 発目を撃つまでのフレーム。
+   * 最終弾 → 次の 1 発目がリロードの時間より 20〜24f 長い（C-0059）。武器種で分けず、チャージの解放遅延と同じ 22f。
+   * 戦闘開始の 1 発目には使わない（戦闘開始からの遅れは読んでいない）
+   */
+  reloadFirstShotFrames: number;
 };
 
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   chargeReleaseFrames: 22,
   spinUpFirstShotFrames: 20,
+  reloadFirstShotFrames: 22,
 };
 
 /** 武器の CDN の秒 → フレーム（切り上げ） */

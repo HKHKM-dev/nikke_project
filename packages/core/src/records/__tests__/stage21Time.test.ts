@@ -31,12 +31,14 @@ describe('録画 56: クラウンの S2 の 7 秒（056-04）', () => {
       // 窓の直前のフレームが回復した発（素）で、窓の最初のフレームから▲が付く
       expect(shots).toContain(w.start - 1);
     }
-    // MG が撃ち続けている窓では、▲の付いた最初の発から最後の発までが 411f（録画の読み方と同じ数え方）
+    // MG が撃ち続けている窓（両端で 1 フレーム 1 発）では、▲の付いた最初の発から最後の発までが 411f（録画の読み方と同じ数え方）。
+    // Stage 21-C3: スピンアップの途中で窓が明ける（端の間隔が 1f でない）窓は、録画でも境目が読めないので除く
     const spans = windows
       .filter((w) => w.end < plan.frames)
       .map((w) => {
         const inside = shots.filter((f) => f >= w.start && f < w.end);
-        return { span: inside.at(-1)! - inside[0]! + 1, touching: inside[0] === w.start && shots.includes(w.end) };
+        const touching = [w.start, w.end - 1, w.end].every((f) => shots.includes(f));
+        return { span: inside.at(-1)! - inside[0]! + 1, touching };
       })
       .filter((x) => x.touching);
     expect(spans.length).toBeGreaterThanOrEqual(2);

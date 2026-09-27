@@ -73,7 +73,8 @@ describe('録画 44 の予測（7.5）', () => {
   it('opens 4 full bursts of 15 s, each started by モダニア', () => {
     expect(fb).toHaveLength(4);
     expect(fb.every((w) => w.end - w.start === gameSecondsToFrames(15) && w.burstUsers.includes(2))).toBe(true);
-    expect(fb.map((w) => w.start)).toEqual([724, 3634, 6544, 9454]);
+    // Stage 21-C3 で 2〜3 回目以降が 1〜3f 早まった（rpm の蓄積をゲーム内の時計にした。21-B までは 724・3634・6544・9454）
+    expect(fb.map((w) => w.start)).toEqual([724, 3633, 6542, 9451]);
   });
 
   it('stacks S1 on every 200th shot and keeps 5 stacks (300 → 285 → 270 → 255 → 240 → 224)', () => {

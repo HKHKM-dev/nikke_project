@@ -6,7 +6,7 @@
 //   戦闘開始        wait = firstShotFrames                        → AR は f=0、MG は f=20、チャージ武器は f=82 に 1 発目
 //   チャージ武器    発射したフレーム S で wait = charge + release − 1 → 次弾は S + 82
 //   リロード        最終弾のフレーム L から、1 回分ずつ込めて最後の 1 回分を込め終えたところで 1 発目の遅延につなぐ
-//                   → 次のマガジンの 1 発目は L + reload × chunks + first（最大装弾数が一定なら Stage 9 と同じ）
+//                   → 次のマガジンの 1 発目は L + reload × chunks + reloadFirst（Stage 21-C3: AR・SMG・SG は 22f。C-0059）
 //
 // Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）を FiringParams として毎フレーム受け取る（frame/firing.ts）。
 // 分割リロードは 1 回分ずつ込め、1 回分の弾数は込めるたびにその時点の最大装弾数で決める（録画 37: 3 → 10 → 17 → 20、
@@ -20,7 +20,7 @@
 // Stage 16-B: 敵を狙えない窓（敵のジャンプ）の間は撃たない（stepShooter の blocked）。待ち・リロードは進む。
 // 窓に入ったら hideShooter、明けたら unhideShooter（plan/design-stage16.md 9.3 節。2026-09-26 ユーザー確認の仕様）:
 //   攻撃できる敵がいないとハイドし、できればリロードする。窓の間に込め終われば満タンで、終わらなければ込め直しは無かったことになる。
-import { firstShotFrames, rateAfterShots } from '../cadence.ts';
+import { ACC_EPSILON, firstShotFrames, rateAfterShots, reloadFirstShotFrames } from '../cadence.ts';
 import type { ShotParams } from '../types.ts';
 import {
   DEFAULT_WEAPON_MODEL,
@@ -95,7 +95,7 @@ function loadChunks(state: ShooterState, shot: ShotParams, model: WeaponModel, p
       continue;
     }
     state.phase = 'priming';
-    const first = firstShotFrames(shot, model, params);
+    const first = reloadFirstShotFrames(shot, model, params);
     if (first === 0) return true;
     state.wait = first - 1;
     return false;
@@ -156,7 +156,7 @@ export function stepShooter(
     return false;
   }
   if (state.phase === 'reloading') {
-    // 1 回分を込め終えた。最大に届いて 1 発目の遅延が 0 ならこのフレームに撃つ（AR・SMG・SG など）
+    // 1 回分を込め終えた。最大に届いて 1 発目の遅延が 0 ならこのフレームに撃つ（Stage 21-C3 からは AR・SMG・SG も 22f 待つ）
     if (!loadChunks(state, shot, model, params)) return false;
   }
   if (blocked) return false;
@@ -164,7 +164,7 @@ export function stepShooter(
   if (state.shotsInMagazine > 0 && !isChargeWeapon(shot)) {
     // simulateShotFrames と同じ: 前の発射の翌フレームから毎フレーム蓄積し、1 発分たまったフレームで撃つ
     state.acc += rateAfterShots(shot, state.shotsInMagazine) / MAX_RPM;
-    if (state.acc < 1) return false;
+    if (state.acc < 1 - ACC_EPSILON) return false;
     state.acc -= 1;
   }
   fire(state, shot, model, params);
@@ -186,7 +186,7 @@ export function refillAmmo(
   state.ammo = Math.min(params.maxAmmo, state.ammo + amount);
   if (state.phase === 'reloading' && state.ammo >= params.maxAmmo) {
     state.phase = 'priming';
-    state.wait = Math.max(0, firstShotFrames(shot, model, params) - 1);
+    state.wait = Math.max(0, reloadFirstShotFrames(shot, model, params) - 1);
   }
 }
 
@@ -210,7 +210,7 @@ export function resumeShooter(
   if (state.phase !== 'ready') startMagazine(state);
   state.ammo = params.maxAmmo;
   state.lastShot = false;
-  state.wait = firstShotFrames(shot, model, params);
+  state.wait = reloadFirstShotFrames(shot, model, params);
 }
 
 /**
