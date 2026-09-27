@@ -1,0 +1,30 @@
+{
+  "id": "072",
+  "date": "2026-09-27",
+  "folder": "range",
+  "file": "20260927-72_MG_emma_auto.mp4",
+  "original": "2026-09-27_22-05-35.mp4",
+  "durationSec": 234.2,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 283.3,
+  "sha256": "c98b0a8bd783",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 90,
+      "name": "エマ",
+      "controlled": true,
+      "note": "単騎・AUTO"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定。単騎なので操作キャラだが **AUTO 射撃 ON**・自動バースト OFF）。V-0010 の R2（挑発・無敵の無い MG。録画 56 のクラウンと比べる）"
+}

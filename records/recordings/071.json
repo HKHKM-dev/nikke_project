@@ -1,0 +1,30 @@
+{
+  "id": "071",
+  "date": "2026-09-27",
+  "folder": "range",
+  "file": "20260927-71_RL_scarlet-black-shadow_auto-delayed.mp4",
+  "original": "2026-09-27_22-01-27.mp4",
+  "durationSec": 206.2,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 249.7,
+  "sha256": "4f3f845cef87",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 225,
+      "name": "紅蓮：ブラックシャドウ",
+      "controlled": true,
+      "note": "単騎・戦闘開始から AUTO 射撃 OFF、残り時間 02:50 ごろに ON"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定。単騎・自動バースト OFF）。V-0010 の R1: 戦闘開始から AUTO 射撃 OFF（撃たない）、残り時間 02:50 ごろに AUTO 射撃 ON にし、あとは放置。撃ち始めは戦闘開始から 605f"
+}
