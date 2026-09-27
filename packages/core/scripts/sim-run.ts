@@ -48,6 +48,8 @@ const DATA_DIR = join(import.meta.dirname, '../data');
 /** Stage 8: 回数トリガーも 1 語で出す（normalShot/10、burstUse≥2） */
 function triggerLabel(t: ResolvedTrigger): string {
   if (typeof t === 'string') return t;
+  // ニヒリスター編: 時間の周期のトリガー（every10s）
+  if ('everySeconds' in t) return `every${t.everySeconds}s`;
   return 'every' in t ? `${t.count}/${t.every}` : `${t.count}≥${t.atLeast}`;
 }
 
@@ -443,6 +445,27 @@ for (const [i, slot] of slots.entries()) {
     );
   }
   printCycles(i, c);
+  printDots(c);
+}
+
+/** ニヒリスター編: 持続ダメージの内訳（効果ごとの tick の数・合計と、付いた回ごとの最初の tick の秒。plan/design-nihilister.md 2.1 節） */
+function printDots(c: NonNullable<(typeof calc.slots)[number]>): void {
+  const ticks = c.skillHits.activations.filter((a) => a.effect.dot !== undefined);
+  if (ticks.length === 0) return;
+  const byEffect = new Map<string, { n: number; damage: number; multiplier: number; seconds: number[] }>();
+  for (const a of ticks) {
+    const key = `${a.effect.source.skill}.${a.effect.effectIndex}`;
+    const d = byEffect.get(key) ?? { n: 0, damage: 0, multiplier: a.effect.multiplier, seconds: [] };
+    d.n += 1;
+    d.damage += a.hit.perActivation;
+    d.seconds.push(a.seconds);
+    byEffect.set(key, d);
+  }
+  for (const [key, d] of byEffect) {
+    console.log(
+      `dot ${key}: ${(d.multiplier * 100).toFixed(2)}% ×${d.n} ticks = ${fmt(d.damage)} (ticks at ${d.seconds.map((x) => x.toFixed(2)).join(', ')}s)`,
+    );
+  }
 }
 
 /**

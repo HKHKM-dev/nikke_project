@@ -15,6 +15,8 @@
 // 「スキル 1 のフルチャージ攻撃回数の条件が 1 回 / 2 回 / 3 回に変更」）を足した（plan/design-stage11-scarlet-bs.md 2 節）。
 // ヘルム編で、stat の normalCritRate（通常攻撃のクリティカル確率）と chargeDamageMultiplier（チャージダメージ倍率）、即時効果「バーストゲージのチャージ」（burstGauge）、
 // 「N 発間維持」（timed の durationShots / durationShotsRef）を足した（plan/design-helm.md 2 節）。
+// ニヒリスター編で持続ダメージ（dot。「持続ダメージ」「1秒間隔」「10秒間維持」）を足した（plan/design-nihilister.md 2.1 節）。
+// 撮影の後に、時間の周期のトリガー（{ everySeconds }。CT ごとに発動するアクティブ型のスキル）を足した（同 8 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import { ELEMENTS } from '../element.ts';
 import type { Element, LocalizedText, SkillSlot, WeaponType } from '../types.ts';
@@ -236,15 +238,27 @@ export type EventCountTrigger = {
   atLeast: number;
 };
 
-/** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガー */
-export type EffectTrigger = BuffTrigger | ShotCountTrigger | EventCountTrigger;
+/**
+ * ニヒリスター編: 時間の周期のトリガー。戦闘開始から k × everySeconds 秒（k = 1, 2, …）に発火する。射撃・リロード・
+ * 的のジャンプ・バーストに関係しない（録画 081 の S2。C-0091）。CT が説明文にも CDN にも無いアクティブ型のスキル用で、
+ * 値は実測の即値。射撃に効かない damage と dot にだけ書ける（1 パス目の出来事の列にタイマーのフレームが無いため。
+ * plan/design-nihilister.md 8.1 節）
+ */
+export type TimerTrigger = { everySeconds: number };
+
+/** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガーか時間の周期のトリガー */
+export type EffectTrigger = BuffTrigger | ShotCountTrigger | EventCountTrigger | TimerTrigger;
+
+export function isTimerTrigger(t: unknown): t is TimerTrigger {
+  return typeof t === 'object' && t !== null && 'everySeconds' in t;
+}
 
 export function isShotCountTrigger(t: EffectTrigger): t is ShotCountTrigger {
-  return typeof t === 'object' && (SHOT_COUNT_KINDS as readonly string[]).includes(t.count);
+  return typeof t === 'object' && 'count' in t && (SHOT_COUNT_KINDS as readonly string[]).includes(t.count);
 }
 
 export function isEventCountTrigger(t: EffectTrigger): t is EventCountTrigger {
-  return typeof t === 'object' && (EVENT_COUNT_KINDS as readonly string[]).includes(t.count);
+  return typeof t === 'object' && 'count' in t && (EVENT_COUNT_KINDS as readonly string[]).includes(t.count);
 }
 
 /** Stage 6: 「（トリガー）時、（対象）に （stat）X%▲、Y 秒間維持」。同じ効果が持続中に再発火したら上書き延長（窓の和集合） */
@@ -472,6 +486,24 @@ export type CycleEveryEffect = {
   assumes?: LocalizedText;
 };
 
+/**
+ * ニヒリスター編: 「最終攻撃力の X% の持続ダメージ」「N 秒間隔」「Y 秒間維持」。発火から維持時間のあいだ、間隔ごとに
+ * 倍率ダメージを 1 tick ずつ与える（1 tick の式は damage と同じ。plan/design-nihilister.md 2.1 節）。対象は敵（1 体の前提）。
+ * tick は発火の間隔後から（発火の瞬間には出ない）。持続中の再発火は付け直し（前の残りの tick を捨てる）
+ */
+export type DotEffect = {
+  kind: 'dot';
+  trigger: EffectTrigger;
+  /** 1 tick の倍率（%）の description_value_NN */
+  ref: number;
+  /** tick の間隔（秒の即値。説明文の「1秒間隔」は直書き）。維持時間以下 */
+  intervalSeconds: number;
+  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
+  durationRef?: number;
+  durationSeconds?: number;
+  assumes?: LocalizedText;
+};
+
 export type SkillEffect =
   | PassiveEffect
   | BurstDamageEffect
@@ -480,7 +512,8 @@ export type SkillEffect =
   | InstantEffect
   | WeaponChangeEffect
   | CycleEffect
-  | CycleEveryEffect;
+  | CycleEveryEffect
+  | DotEffect;
 
 export type SkillEntry = {
   /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
@@ -628,10 +661,22 @@ function parsePositiveInt(v: Json, path: string): number {
   return v;
 }
 
-/** 文字列なら BuffTrigger、オブジェクトなら回数トリガー */
-function parseTrigger(v: Json, path: string): EffectTrigger {
+/**
+ * 文字列なら BuffTrigger、オブジェクトなら回数トリガー。時間の周期のトリガー（{ everySeconds }）は allowTimer のとき
+ * （damage と dot）だけ
+ */
+function parseTrigger(v: Json, path: string, allowTimer = false): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
+  if (v.everySeconds !== undefined) {
+    if (!allowTimer) fail(path, 'a timer trigger ({ everySeconds }) is only allowed in damage and dot');
+    for (const key of Object.keys(v)) if (key !== 'everySeconds') fail(`${path}.${key}`, 'unknown field');
+    const seconds = v.everySeconds;
+    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
+      fail(`${path}.everySeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
+    }
+    return { everySeconds: seconds };
+  }
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
       if (!['count', 'every', 'everyRef', 'stacksRef'].includes(key)) fail(`${path}.${key}`, 'unknown field');
@@ -854,10 +899,38 @@ function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDam
 }
 
 function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
   // Stage 11 モダニア: 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
   const damageType = oneOf(SKILL_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/**
+ * ニヒリスター編: 持続ダメージ。間隔は正の有限数。維持時間との比較（間隔 ≤ 維持）は、durationRef なら Lv で決まるので解決時に見る
+ * （skills/burstDamage.ts の resolveDotEffects）
+ */
+function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'ref', 'intervalSeconds', 'durationRef', 'durationSeconds', 'assumes'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const interval = v.intervalSeconds;
+  if (typeof interval !== 'number' || !Number.isFinite(interval) || interval <= 0) {
+    fail(`${path}.intervalSeconds`, `expected a positive finite number, got ${JSON.stringify(interval)}`);
+  }
+  const effect: DotEffect = {
+    kind: 'dot',
+    trigger: parseTrigger(v.trigger, `${path}.trigger`, true),
+    ref: parseRef(v.ref, `${path}.ref`),
+    intervalSeconds: interval,
+    ...parseDuration(v, path),
+  };
+  if (effect.durationSeconds !== undefined && effect.durationSeconds < interval) {
+    fail(`${path}.intervalSeconds`, `must not exceed the duration (${effect.durationSeconds} s)`);
+  }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -919,7 +992,7 @@ function parseRef(v: Json, path: string): number {
 }
 
 /**
- * passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange・cycle・cycleEvery は
+ * passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange・cycle・cycleEvery・dot は
  * どのスロットにも書ける
  */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
@@ -941,9 +1014,10 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (v.kind === 'weaponChange') return parseWeaponChangeEffect(v, path);
   if (v.kind === 'cycle') return parseCycleEffect(v, path);
   if (v.kind === 'cycleEvery') return parseCycleEveryEffect(v, path);
+  if (v.kind === 'dot') return parseDotEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle" or "cycleEvery", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery" or "dot", got ${JSON.stringify(v.kind)}`,
   );
 }
 

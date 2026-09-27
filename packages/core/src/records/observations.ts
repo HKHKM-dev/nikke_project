@@ -216,10 +216,17 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     sim: (r, c) => slotOf(r.slots, c).burst.activations.length,
     calc: (r, c) => slotOf(r.slots, c).burst.activations.length,
   },
+  // ニヒリスター編: skill（'skill1' | 'skill2' | 'burst'）を書けば、そのスロットの倍率ダメージだけを数える（任意）
   skillHitCount: {
     args: ['slot'],
-    sim: (r, c) => slotOf(r.slots, c).skillHits.frames.length,
-    calc: (r, c) => slotOf(r.slots, c).skillHits.activations.length,
+    sim: (r, c) =>
+      c.args.skill === undefined
+        ? slotOf(r.slots, c).skillHits.frames.length
+        : r.skillHits.filter((h) => h.slotIndex === slotIndexOf(c) && h.effect.source.skill === c.args.skill).length,
+    calc: (r, c) =>
+      slotOf(r.slots, c).skillHits.activations.filter(
+        (a) => c.args.skill === undefined || a.effect.source.skill === c.args.skill,
+      ).length,
   },
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
   shotIntervals: {
@@ -231,6 +238,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
   burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
+  dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
 };
 
 function videoFramesBetween(schedule: SimResult['schedule'], ctx: MetricContext): number {
@@ -248,6 +256,18 @@ function burstHitDamage(result: SimResult, ctx: MetricContext): number {
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目のバーストの倍率ダメージが無い`);
   const crit = ctx.args.crit === true ? hit.boost.critDamage - 1 : 0;
   return (hit.perActivation / hit.boost.total) * (1 + crit + hit.boost.fullBurst);
+}
+
+/**
+ * ニヒリスター編: 持続ダメージ（dot）の n 回目（0 始まり。枠の全 tick を通した順）の 1 tick の値。burstHitDamage と同じく、
+ * 会心の期待値を外して、会心したか（crit）で組み直す（plan/design-nihilister.md 4 節）
+ */
+function dotHitDamage(result: SimResult, ctx: MetricContext): number {
+  const ticks = result.skillHits.filter((h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined);
+  const tick = ticks[Number(ctx.args.n)];
+  if (tick === undefined) throw new Error(`${String(ctx.args.n)} 回目の持続ダメージの tick が無い`);
+  const crit = ctx.args.crit === true ? tick.hit.boost.critDamage - 1 : 0;
+  return (tick.hit.perActivation / tick.hit.boost.total) * (1 + crit + tick.hit.boost.fullBurst);
 }
 
 function gaugeFull(frames: readonly number[] | undefined, ctx: MetricContext): number {

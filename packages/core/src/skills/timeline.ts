@@ -23,10 +23,11 @@ import type { BuildEffect } from '../buildEffects.ts';
 import { resolveCycleEvery, type CycleWindow } from './cycles.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
-import { framesToGameSeconds } from '../time.ts';
+import { framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
 import {
   isResolvedShotCount,
+  isResolvedTimer,
   resolvePassives,
   resolveTimed,
   type AppliedEffect,
@@ -254,7 +255,23 @@ export function triggerFires(
   shots: readonly (ShotLog | null)[] = [],
   heals: readonly HealRecord[] = NO_HEALS,
 ): TriggerFire[] {
+  // ニヒリスター編: 時間の周期のトリガーは、出来事の列を使わずに戦闘開始から k × N 秒のフレームを並べる
+  if (isResolvedTimer(trigger))
+    return timerFrames(trigger.everySeconds, frames).map((frame) => ({ frame, context: null }));
   return trackTriggerFires(trigger, slotIndex, schedule, eventsOf(schedule, shots, frames, heals));
+}
+
+/**
+ * ニヒリスター編: 時間の周期のトリガーの発火フレーム。戦闘開始から k × N 秒（k = 1, 2, …）の時刻を四捨五入したフレームで、
+ * 戦闘の終わり（frames）より前だけ（plan/design-nihilister.md 8.1 節。C-0091）
+ */
+export function timerFrames(everySeconds: number, frames: number): number[] {
+  const fires: number[] = [];
+  for (let k = 1; ; k++) {
+    const frame = gameSecondsToFrame(k * everySeconds);
+    if (frame >= frames) return fires;
+    fires.push(frame);
+  }
 }
 
 /** バフ窓が始まるフレーム。射撃の回数トリガーだけ、トリガーになった射撃の次のフレームから（その射撃自身には乗らない） */

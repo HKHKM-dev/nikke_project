@@ -23,9 +23,10 @@ import {
 
 /**
  * Stage 8: Lv の数値に解決したトリガー。射撃の回数トリガーは every（1 以上の整数）に解決済み。
- * 文字列のトリガーと発動回数のトリガーはそのまま。
+ * 文字列のトリガーと発動回数のトリガーはそのまま。ニヒリスター編の時間の周期のトリガー（{ everySeconds }）もそのまま。
  */
-export type ResolvedTrigger = BuffTrigger | ResolvedShotCountTrigger | { count: EventCountKind; atLeast: number };
+export type ResolvedTrigger =
+  BuffTrigger | ResolvedShotCountTrigger | { count: EventCountKind; atLeast: number } | { everySeconds: number };
 
 /**
  * 射撃の回数トリガー（解決済み）。every は発火の間隔（回）。
@@ -39,6 +40,11 @@ export function isResolvedShotCount(t: ResolvedTrigger): t is ResolvedShotCountT
 
 export function isResolvedEventCount(t: ResolvedTrigger): t is { count: EventCountKind; atLeast: number } {
   return typeof t === 'object' && 'atLeast' in t;
+}
+
+/** ニヒリスター編: 時間の周期のトリガーか */
+export function isResolvedTimer(t: ResolvedTrigger): t is { everySeconds: number } {
+  return typeof t === 'object' && 'everySeconds' in t;
 }
 
 /** everyRef・stacksRef を Lv の数値に解決する。回数・スタック数は整数でなければ RangeError */
