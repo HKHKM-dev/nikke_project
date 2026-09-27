@@ -82,5 +82,20 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "020-05",
+    "recording": "020",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0025",
+    "readAt": "2026-09-28",
+    "value": [82, 2, 5, 5, 32],
+    "unit": "f",
+    "description": "BURST バーが 100%（113px すべて）光ってから、バーが消えて I のアイコンに替わるまでのフレーム数（フルバーストの入りの順。100% を経ずに消えた回と、味方の体力バーが重なって消えたと読み違えた回は除く）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series",
+      "note": "100% と消えたフレーム: f1125→1207・f2335→2337・f4711→4716・f7100→7105・f9385→9417"
+    }
   }
 ]
