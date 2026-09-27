@@ -15,6 +15,7 @@
 // 「スキル 1 のフルチャージ攻撃回数の条件が 1 回 / 2 回 / 3 回に変更」）を足した（plan/design-stage11-scarlet-bs.md 2 節）。
 // ヘルム編で、stat の normalCritRate（通常攻撃のクリティカル確率）と chargeDamageMultiplier（チャージダメージ倍率）、即時効果「バーストゲージのチャージ」（burstGauge）、
 // 「N 発間維持」（timed の durationShots / durationShotsRef）を足した（plan/design-helm.md 2 節）。
+// ニヒリスター編で持続ダメージ（dot。「持続ダメージ」「1秒間隔」「10秒間維持」）を足した（plan/design-nihilister.md 2.1 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import { ELEMENTS } from '../element.ts';
 import type { Element, LocalizedText, SkillSlot, WeaponType } from '../types.ts';
@@ -472,6 +473,24 @@ export type CycleEveryEffect = {
   assumes?: LocalizedText;
 };
 
+/**
+ * ニヒリスター編: 「最終攻撃力の X% の持続ダメージ」「N 秒間隔」「Y 秒間維持」。発火から維持時間のあいだ、間隔ごとに
+ * 倍率ダメージを 1 tick ずつ与える（1 tick の式は damage と同じ。plan/design-nihilister.md 2.1 節）。対象は敵（1 体の前提）。
+ * tick は発火の間隔後から（発火の瞬間には出ない）。持続中の再発火は付け直し（前の残りの tick を捨てる）
+ */
+export type DotEffect = {
+  kind: 'dot';
+  trigger: EffectTrigger;
+  /** 1 tick の倍率（%）の description_value_NN */
+  ref: number;
+  /** tick の間隔（秒の即値。説明文の「1秒間隔」は直書き）。維持時間以下 */
+  intervalSeconds: number;
+  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
+  durationRef?: number;
+  durationSeconds?: number;
+  assumes?: LocalizedText;
+};
+
 export type SkillEffect =
   | PassiveEffect
   | BurstDamageEffect
@@ -480,7 +499,8 @@ export type SkillEffect =
   | InstantEffect
   | WeaponChangeEffect
   | CycleEffect
-  | CycleEveryEffect;
+  | CycleEveryEffect
+  | DotEffect;
 
 export type SkillEntry = {
   /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
@@ -862,6 +882,34 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   return effect;
 }
 
+/**
+ * ニヒリスター編: 持続ダメージ。間隔は正の有限数。維持時間との比較（間隔 ≤ 維持）は、durationRef なら Lv で決まるので解決時に見る
+ * （skills/burstDamage.ts の resolveDotEffects）
+ */
+function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'ref', 'intervalSeconds', 'durationRef', 'durationSeconds', 'assumes'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const interval = v.intervalSeconds;
+  if (typeof interval !== 'number' || !Number.isFinite(interval) || interval <= 0) {
+    fail(`${path}.intervalSeconds`, `expected a positive finite number, got ${JSON.stringify(interval)}`);
+  }
+  const effect: DotEffect = {
+    kind: 'dot',
+    trigger: parseTrigger(v.trigger, `${path}.trigger`),
+    ref: parseRef(v.ref, `${path}.ref`),
+    intervalSeconds: interval,
+    ...parseDuration(v, path),
+  };
+  if (effect.durationSeconds !== undefined && effect.durationSeconds < interval) {
+    fail(`${path}.intervalSeconds`, `must not exceed the duration (${effect.durationSeconds} s)`);
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
   // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）
   const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds'] : [];
@@ -919,7 +967,7 @@ function parseRef(v: Json, path: string): number {
 }
 
 /**
- * passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange・cycle・cycleEvery は
+ * passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange・cycle・cycleEvery・dot は
  * どのスロットにも書ける
  */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
@@ -941,9 +989,10 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (v.kind === 'weaponChange') return parseWeaponChangeEffect(v, path);
   if (v.kind === 'cycle') return parseCycleEffect(v, path);
   if (v.kind === 'cycleEvery') return parseCycleEveryEffect(v, path);
+  if (v.kind === 'dot') return parseDotEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle" or "cycleEvery", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery" or "dot", got ${JSON.stringify(v.kind)}`,
   );
 }
 

@@ -231,6 +231,44 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 1, n: 1, crit: false })).toThrow('1 回目');
   });
 
+  it('rebuilds one dot tick of the slot, skipping other skill hits (plan/design-nihilister.md 4 節)', () => {
+    const source = { resourceId: 261, skill: 'burst' as const, name: { ja: '', en: '' } };
+    const tick = (multiplier: number) =>
+      computeBurstHit({
+        attack: 120694,
+        enemy: { defence: 100 } as TeamInput['enemy'],
+        crit: { rate: 0.15, damage: 1.5 },
+        attackDamageMultiplier: 1,
+        elementMultiplier: 1,
+        effects: [{ source, damageType: 'skill', multiplier }],
+        fullBurstBonus: false,
+      });
+    const dot = { source, damageType: 'skill', multiplier: 0.1319, trigger: 'burstUse', effectIndex: 1 };
+    const result = {
+      skillHits: [
+        {
+          frame: 10,
+          slotIndex: 0,
+          effect: { ...dot, dot: { intervalSeconds: 1, durationSeconds: 10 } },
+          hit: tick(0.1),
+        },
+        { frame: 20, slotIndex: 1, effect: { ...dot, effectIndex: 0 }, hit: tick(1.1264) },
+        {
+          frame: 30,
+          slotIndex: 1,
+          effect: { ...dot, dot: { intervalSeconds: 1, durationSeconds: 10 } },
+          hit: tick(0.1319),
+        },
+      ],
+    } as unknown as SimResult;
+    const metric = METRICS.dotHitDamage!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 2, n: 0, crit: false })).toBeCloseTo(120594 * 0.1319, 6);
+    expect(value({ slot: 2, n: 0, crit: true })).toBeCloseTo(120594 * 0.1319 * 1.5, 6);
+    expect(() => value({ slot: 2, n: 1, crit: false })).toThrow('1 回目');
+  });
+
   it('reports unknown metrics, missing args, calc-less metrics and unknown presets', () => {
     const base = observations.find((o) => o.id === '047-02')!;
     const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '047-99'): Observation => ({

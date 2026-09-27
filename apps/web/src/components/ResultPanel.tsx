@@ -47,12 +47,15 @@ function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
       continue;
     }
     groups.set(key, {
-      label: `${SKILL_SLOT_LABEL[e.source.skill]} ${SKILL_DAMAGE_TYPE_LABEL[e.damageType]}${
+      // ニヒリスター編: 持続ダメージは 1 tick を 1 回に数える
+      label: `${SKILL_SLOT_LABEL[e.source.skill]} ${e.dot ? '持続ダメージ' : SKILL_DAMAGE_TYPE_LABEL[e.damageType]}${
         e.cycle ? `（段 ${String.fromCharCode(65 + e.cycle.step)}）` : ''
       }`,
       trigger: e.cycle
         ? `${formatTrigger(e.trigger)}に ${e.cycle.steps} 段を循環（${e.cycle.step + 1} 段目。窓の中は間隔の変更に従う）`
-        : formatTrigger(e.trigger),
+        : e.dot
+          ? `${formatTrigger(e.trigger)}に付き、${e.dot.intervalSeconds} 秒ごとに ${e.dot.durationSeconds} 秒間。回数は tick の数`
+          : formatTrigger(e.trigger),
       multiplier: e.multiplier,
       assumes: e.assumes?.ja ?? null,
       count: 1,

@@ -5,7 +5,7 @@
 // フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
 // Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { gameSecondsToFrames } from '../time.ts';
+import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
 import { isInFullBurst, type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
 import { computeTriggerDamage, type EnemyInput } from '../damage.ts';
@@ -13,6 +13,7 @@ import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
   resolveDamageEffects,
+  resolveDotEffects,
   resolvePerShotDamage,
   type ResolvedDamageEffect,
   type ResolvedSkillDamage,
@@ -170,6 +171,12 @@ export function planSkillHits(
       const pre = isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
       for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) push(frame, effect, pre);
     }
+    // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む
+    for (const effect of resolveDotEffects(definition, slot.character, levels)) {
+      const fires = triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
+      const { intervalSeconds, durationSeconds } = effect.dot!;
+      for (const frame of dotTickFrames(fires, intervalSeconds, durationSeconds, frames)) push(frame, effect, false);
+    }
     // Stage 11 紅蓮BS: 段の循環。射撃の列を通算で数え、間隔の変更の窓に入る射撃は窓の間隔で段を進める（skills/cycles.ts）。
     // 値は射撃の回数トリガーの倍率ダメージと同じく、その射撃と同じバフ
     for (const cycle of resolveCycles(definition, slot.character, levels)) {
@@ -184,6 +191,30 @@ export function planSkillHits(
   });
   // フレーム順（同じフレームは枠順・定義順。sort は安定）
   return hits.sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
+}
+
+/**
+ * ニヒリスター編: 持続ダメージの tick のフレーム（plan/design-nihilister.md 2.1 節の T1）。発火 f ごとに
+ * f + gameSecondsToFrame(k × 間隔)（k = 1 … floor(維持 ÷ 間隔)。時刻の四捨五入なので長さの切り捨てを積み重ねない）。
+ * 持続中の再発火は付け直しなので、次の発火のフレーム以降の tick は捨てる。戦闘の終わり（frames）以降も出さない
+ */
+export function dotTickFrames(
+  fires: readonly number[],
+  intervalSeconds: number,
+  durationSeconds: number,
+  frames: number,
+): number[] {
+  const count = Math.floor(durationSeconds / intervalSeconds + 1e-9);
+  const ticks: number[] = [];
+  fires.forEach((fire, i) => {
+    const next = fires[i + 1] ?? Infinity;
+    for (let k = 1; k <= count; k++) {
+      const tick = fire + gameSecondsToFrame(k * intervalSeconds);
+      if (tick >= next || tick >= frames) break;
+      ticks.push(tick);
+    }
+  });
+  return ticks;
 }
 
 /**

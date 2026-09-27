@@ -1,0 +1,65 @@
+{
+  "formatVersion": 1,
+  "resourceId": 261,
+  "checkedAt": "2026-09-28",
+  "skills": {
+    "skill1": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃時の貫通特化・貫通範囲の拡張は、敵 1 体ではダメージに関係しない",
+          "en": "Pierce and the wider piercing radius after a Full Charge attack do not affect damage against a single enemy"
+        },
+        {
+          "ja": "2 機以上に同時に命中した時の追加ダメージは未対応（敵 1 体の前提）",
+          "en": "The additional damage when 2 or more enemies are hit at once is not modeled (a single enemy is assumed)"
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "攻撃範囲内の敵へのダメージは、発動の条件が説明文に無いので未対応（CT ごとに発動するかを撮影で確かめる）",
+          "en": "The damage to enemies within attack range is not modeled because the description does not say when it activates (whether it fires on a cooldown is to be checked by recording)"
+        }
+      ]
+    },
+    "burst": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "攻撃範囲内の敵は 1 体",
+            "en": "There is one enemy within attack range"
+          }
+        },
+        {
+          "kind": "dot",
+          "trigger": "burstUse",
+          "ref": 2,
+          "intervalSeconds": 1,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "火傷は 1 秒後から 1 秒ごとに 10 回。フルバースト補正・攻撃ダメージ▲は倍率ダメージと同じく乗る。持続中に付き直すと数え直す",
+            "en": "Burn ticks 10 times, every second from 1 s after it is applied. Full Burst and ATK damage up apply as for skill damage. Re-applying it restarts the count"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "maxAmmo",
+          "scaling": "flat",
+          "ref": 4,
+          "durationRef": 5
+        }
+      ]
+    }
+  }
+}

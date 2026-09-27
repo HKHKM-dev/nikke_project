@@ -196,7 +196,10 @@ describe('parseSkillDefinition', () => {
     expect(() => parseSkillDefinition(badType)).toThrow(/damageType/);
 
     const badKind = raw();
-    (badKind.skills as Record<string, unknown>).burst = { support: 'supported', effects: [{ kind: 'dot', ref: 1 }] };
+    (badKind.skills as Record<string, unknown>).burst = {
+      support: 'supported',
+      effects: [{ kind: 'barrier', ref: 1 }],
+    };
     expect(() => parseSkillDefinition(badKind)).toThrow(/kind/);
   });
 

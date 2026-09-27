@@ -45,6 +45,11 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    * （窓の外の間隔）で、実際の発動は skills/cycles.ts の cycleFires が決める。damage 効果ではキーごと無い
    */
   cycle?: { step: number; steps: number };
+  /**
+   * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
+   * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
+   */
+  dot?: { intervalSeconds: number; durationSeconds: number };
 };
 
 /** burst スロットの burstDamage 効果を Lv の数値に解決する。unsupported・効果なしなら空 */
@@ -98,6 +103,46 @@ export function resolveDamageEffects(
         multiplier: skillValue(skill, effect.ref, levels[slot]) / 100,
         trigger,
         effectIndex,
+      };
+      if (effect.assumes) r.assumes = effect.assumes;
+      resolved.push(r);
+    });
+  }
+  return resolved;
+}
+
+/**
+ * ニヒリスター編: 定義の各 dot 効果を Lv の数値に解決する（1 tick の倍率・間隔・維持秒）。support が 'unsupported' のスキルは空。
+ * 間隔が維持時間より長いと 1 tick も出ないので拒否する（durationRef は Lv で決まるのでここで見る）
+ */
+export function resolveDotEffects(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedDamageEffect[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const resolved: ResolvedDamageEffect[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const entry = def.skills[slot];
+    if (entry.support === 'unsupported') continue;
+    const skill = character.skills[slot];
+    entry.effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'dot') return;
+      const durationSeconds = effect.durationSeconds ?? skillValue(skill, effect.durationRef!, levels[slot]);
+      if (durationSeconds < effect.intervalSeconds) {
+        throw new RangeError(
+          `skill ${skill.id}: dot interval ${effect.intervalSeconds} s exceeds the duration ${durationSeconds} s`,
+        );
+      }
+      const r: ResolvedDamageEffect = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        damageType: 'skill',
+        multiplier: skillValue(skill, effect.ref, levels[slot]) / 100,
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        effectIndex,
+        dot: { intervalSeconds: effect.intervalSeconds, durationSeconds },
       };
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);

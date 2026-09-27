@@ -1,9 +1,9 @@
 # 設計書: ニヒリスター（261）のスキルの定義
 
 - 対象: `D:\nikke_project`（手順は [skills-guide.md](skills-guide.md)）
-- 状態: **起案（2026-09-28）**。7 節の論点をオーナーに決めてもらってから実装する
+- 状態: **実装済み・撮影待ち（2026-09-28）**。7 節の論点はすべて推奨どおり。S2 の語彙（2.2 節）は撮影の後に決める
 - 関連: [design-stage5.md](design-stage5.md) 8 節の 8（持続ダメージを見送った経緯）、[design-stage8.md](design-stage8.md)（トリガー付きの倍率ダメージ `damage`）、[design-stage6.md](design-stage6.md) 8 節の 2（再発火は上書き延長）、[design-stage10.md](design-stage10.md)（最大装弾数▲ `maxAmmo`・`flat`）、[verification.md](verification.md) Stage 18-B「撮影 1」（クルミの持続ダメージの 1 tick）
-- 検証記録: この設計の承認後に起こす。撮影はココアの検証（PR #67）と同じ録画
+- 検証記録: V-0032（保留・撮影待ち）。撮影はココアの検証（PR #67）と同じ録画
 
 ## Context
 
@@ -264,4 +264,9 @@
 
 ## 経過
 
-- 2026-09-28: 起案。
+- 2026-09-28: 起案。オーナーが 7 節の論点をすべて推奨どおりに決めて承認。
+- 2026-09-28: 撮影の前の段（Context の 1）を実装した。
+  - `dot` の型・検証（`skills/types.ts`）、解決（`skills/burstDamage.ts` の `resolveDotEffects`）、tick の列（`frame/plan.ts` の `dotTickFrames`・`planSkillHits`）。既存のテストの数値は変わらない。
+  - 画面の倍率ダメージの表（`ResultPanel.tsx`）と CLI（`sim-run.ts` の `dot` の行）に持続ダメージを出した。照合ランナーに `dotHitDamage` を足した。
+  - 実戦寄りの編成（リター + ニヒリスター + ドレイク + アリス + クラウン）では、リターの CT 短縮でバーストが 15 秒より短い間隔で来るので、最大装弾数▲の窓は上書き延長でつながる。火傷の窓（10 秒）は重ならない。
+  - 予測を V-0032 に書いた（結論 C-0088〜C-0091 は仮説）。

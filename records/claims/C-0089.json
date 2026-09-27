@@ -1,0 +1,11 @@
+{
+  "id": "C-0089",
+  "text": "ニヒリスターのバーストの倍率ダメージ（最終攻撃力の 158.59%）と、自分の最大装弾数 6 発▲（15 秒）は、説明文どおり。倍率ダメージは敵 1 体に 1 ヒット",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文の読み。撮影待ち。V-0032",
+  "model": "`data/skills/261.json` の burst の effects[0]（`burstDamage`）・effects[2]（`timed`・`maxAmmo`・`flat`）",
+  "replaces": [],
+  "updated": "2026-09-28"
+}
