@@ -62,9 +62,10 @@
           "trigger": "burstUse",
           "target": "self",
           "ref": 4,
+          "durationRef": 5,
           "assumes": {
-            "ja": "吸収回復（10 秒間維持）は、付いた時の 1 回の回復として扱う（命中ごとの回復では S1 は延びない。V-0022）",
-            "en": "The lifesteal (10 s) counts as one heal when it is applied (hits during it do not extend S1; V-0022)"
+            "ja": "吸収回復（10 秒間維持）は、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす。窓の中の命中や付き直しでは起こさない（V-0022・V-0024）",
+            "en": "The lifesteal (10 s) triggers \"when healed\" only when newly applied, not on hits during it or refreshes (V-0022, V-0024)"
           }
         },
         {

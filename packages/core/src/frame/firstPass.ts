@@ -52,7 +52,7 @@ import {
   type ResolvedInstantEffect,
   type ResolvedTimedEffect,
 } from '../skills/resolve.ts';
-import { healFrameOf } from '../skills/heals.ts';
+import { createHealWindow, healFrameOf } from '../skills/heals.ts';
 import { attackRankFor, finalAttacksAt, type AttackWindow } from '../skills/ranking.ts';
 import { canEverTarget, dependsOnRank, isEffectTarget, type FireContext } from '../skills/targets.ts';
 import { stackWindows } from '../skills/stacks.ts';
@@ -224,7 +224,10 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
   });
   // 回復は healed の出来事を作るので先に当てる（heal のトリガーに healed は書けないので順番で閉じる。plan/design-stage11.md 3.3 節）
-  const heals = instant.filter((src) => src.effect.kind === 'heal');
+  // V-0024: 維持時間のある heal は、窓の付いている対象への付き直しでは healed を起こさない（planHeals と同じ規則）
+  const heals = instant
+    .filter((src) => src.effect.kind === 'heal')
+    .map((src) => ({ ...src, opens: createHealWindow(src.effect) }));
   const otherInstants = instant.filter((src) => src.effect.kind !== 'heal');
   const trackEvents = firing.length > 0 || instant.length > 0;
   // Stage 11 アリス編: 順位が要るときだけ攻撃力の窓を追う（無ければクラウン編までのループと同じ）
@@ -505,6 +508,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (!src.fires(ev)) continue;
       const at = healFrameOf(src.effect, f);
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev))) {
+        if (at < frames && !src.opens(target, at)) continue;
         if (at === f) {
           healed[target] = true;
           healedDirty = true;

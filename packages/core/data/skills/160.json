@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 160,
-  "checkedAt": "2026-09-23",
+  "checkedAt": "2026-09-28",
   "skills": {
     "skill1": {
       "support": "supported",
@@ -17,7 +17,7 @@
       ]
     },
     "skill2": {
-      "support": "partial",
+      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -29,16 +29,25 @@
           "scaling": "flat",
           "ref": 5,
           "durationRef": 6
+        },
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "吸収回復（10 秒間維持）は、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす。切れる前の付き直しでは起こさない（V-0024）。回復量はダメージに関係しない",
+            "en": "The lifesteal (10 s) triggers \"when healed\" only when newly applied, not when refreshed before it expires (V-0024). The healed amount does not affect damage"
+          }
         }
       ],
       "notes": [
         {
           "ja": "味方全体の防御力▲はダメージに関係しない",
           "en": "Defence up for all allies does not affect damage"
-        },
-        {
-          "ja": "味方全体の吸収回復（攻撃ダメージの回復・10 秒間維持）は未実装。付いていない状態から付いた時に、味方の「回復効果が適用された時」を起こす（切れる前の付き直しでは起こさない。V-0024）",
-          "en": "The lifesteal for all allies (heal by attack damage, 10 s) is not modeled. It triggers allies' \"when healed\" effects only when newly applied, not when refreshed before it expires (V-0024)"
         }
       ]
     },
