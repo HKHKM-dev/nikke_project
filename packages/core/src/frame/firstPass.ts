@@ -48,6 +48,7 @@ import {
 } from '../burst/controller.ts';
 import { burstUnitOf, energyPerTrigger } from '../burst/dynamic.ts';
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
+import { resolveDamageGauges } from '../skills/burstDamage.ts';
 import type { BurstActivation, BurstSchedule, BurstScheduleModel } from '../burst/schedule.ts';
 import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
 import {
@@ -75,7 +76,7 @@ import {
   type ShotEvent,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import { isFiringStat, type BuffStat } from '../skills/types.ts';
+import { isFiringStat, type BuffStat, type ShotCountKind } from '../skills/types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
@@ -418,6 +419,29 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       });
     }
   });
+  // ヘルム編（V-0034）: ゲージを溜める倍率ダメージ（damage の gaugeHits）。射撃を数えて、段と同じく当たるフレームに予約する
+  const damageGaugeTrackers: {
+    slotIndex: number;
+    count: ShotCountKind;
+    every: number;
+    gaugeHits: number[];
+    energy: number;
+    n: number;
+  }[] = [];
+  slots.forEach((slot, i) => {
+    if (slot === null || slot.definition === null) return;
+    for (const g of resolveDamageGauges(slot.definition, slot.character, slot.levels)) {
+      if (g.trigger.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
+      damageGaugeTrackers.push({
+        slotIndex: i,
+        count: g.trigger.count,
+        every: g.trigger.every,
+        gaugeHits: g.gaugeHits,
+        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
+        n: 0,
+      });
+    }
+  });
   const pendingGauge = new Map<number, number>();
   const cycleGaugeHits: FirstPassResult['cycleGaugeHits'] = [];
   let nextCycleActivation = 0;
@@ -542,6 +566,17 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
           if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
         }
         t.step = (t.step + 1) % t.gaugeHits.length;
+      }
+    }
+    for (const t of damageGaugeTrackers) {
+      const shot = shotEvents[t.slotIndex];
+      if (shot === null || shot === undefined) continue;
+      if (t.count === 'lastShot' && !shot.lastShot) continue;
+      t.n += 1;
+      if (t.n % t.every !== 0) continue;
+      for (const d of t.gaugeHits) {
+        const at = f + d;
+        if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
       }
     }
     if (!trackEvents) continue;

@@ -9,7 +9,14 @@ import { FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
 import { SKILL_SLOTS, type SkillDamageType, type SkillDefinition, type SkillSlot } from './types.ts';
-import { resolveTrigger, skillValue, type ResolvedTrigger, type SkillLevels } from './resolve.ts';
+import {
+  isResolvedShotCount,
+  resolveTrigger,
+  skillValue,
+  type ResolvedShotCountTrigger,
+  type ResolvedTrigger,
+  type SkillLevels,
+} from './resolve.ts';
 
 /**
  * バースト発動時の即時ダメージにフルバースト補正 +0.5 を乗せるか。
@@ -109,6 +116,29 @@ export function resolveDamageEffects(
     });
   }
   return resolved;
+}
+
+/** ヘルム編（V-0034）: バーストゲージを溜める倍率ダメージ（damage の gaugeHits）。射撃の回数トリガーだけ */
+export type ResolvedDamageGauge = { trigger: ResolvedShotCountTrigger; gaugeHits: number[] };
+
+/** ヘルム編: damage の gaugeHits を Lv の数値に解決する（射撃ごとに畳み込む効果も含む）。unsupported なら空 */
+export function resolveDamageGauges(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedDamageGauge[] {
+  const out: ResolvedDamageGauge[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const entry = def.skills[slot];
+    if (entry.support === 'unsupported') continue;
+    for (const effect of entry.effects) {
+      if (effect.kind !== 'damage' || effect.gaugeHits === undefined) continue;
+      const trigger = resolveTrigger(effect.trigger, character.skills[slot], levels[slot]);
+      if (!isResolvedShotCount(trigger)) throw new RangeError('gaugeHits needs a shot count trigger');
+      out.push({ trigger, gaugeHits: effect.gaugeHits });
+    }
+  }
+  return out;
 }
 
 /**

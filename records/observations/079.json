@@ -16,9 +16,16 @@
     "compare": {
       "model": "sim",
       "metric": "gaugeFullFrame",
-      "args": { "n": 0 },
-      "tolerance": { "abs": 30 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -38,8 +45,13 @@
       "model": "sim",
       "metric": "fullBurstCount",
       "args": {},
-      "tolerance": { "abs": 0 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -58,9 +70,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 3, "frame": 1094, "core": true, "crit": false, "distance": false },
-      "tolerance": { "abs": 3 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "args": {
+        "slot": 3,
+        "frame": 1094,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -79,9 +102,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 3, "frame": 484, "core": true, "crit": false, "distance": false },
-      "tolerance": { "abs": 3 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "args": {
+        "slot": 3,
+        "frame": 484,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -100,9 +134,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 3, "frame": 2032, "core": true, "crit": false, "distance": false },
-      "tolerance": { "abs": 3 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "args": {
+        "slot": 3,
+        "frame": 2032,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -121,9 +166,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 2, "frame": 654, "core": true, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "args": {
+        "slot": 2,
+        "frame": 654,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -135,13 +191,25 @@
     "readAt": "2026-09-28",
     "value": 10854092,
     "description": "ヘルムのバーストの 1 ヒット（会心なし）。1 回目のバースト（f1262）",
-    "method": { "tool": "hud.ts --mode jumps", "note": "3・4 回目（f6019・f8397）も同じ値" },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "3・4 回目（f6019・f8397）も同じ値"
+    },
     "compare": {
       "model": "sim",
       "metric": "burstHitDamage",
-      "args": { "slot": 3, "n": 0, "crit": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -185,6 +253,21 @@
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "079-08 と同じ分け方。最後の弾丸は、次のヘルムの発まで 150f より空いた発（21 回。ジャンプ・フルバーストの前後も混ざる近似）。窓は 294f（5 秒）。中 30.3%・外 15.6%。キャラ別の中 / 外は、ラム 16/35・10/62、デルタ 10/49・11/55、ヘルム 10/35・7/62"
+    }
+  },
+  {
+    "id": "079-11",
+    "recording": "079",
+    "kind": "gauge",
+    "use": "record",
+    "source": "V-0034",
+    "readAt": "2026-09-28",
+    "value": [43, 104],
+    "unit": "px",
+    "description": "1 回目・2 回目の斉射（ラム・デルタ・ヘルムが同じフレーム）の後の BURST バーの長さ（113px 中）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode jumps",
+      "note": "38.1%・92.0%（f930・f1011）。C-0084 の縮尺で本当の 44.5%・89.6%。ラム 5.6% + デルタ 5.3% + ヘルム 33.91%（C-0103）= 44.81% の 1 倍・2 倍（44.8%・89.6%）と合う"
     }
   }
 ]

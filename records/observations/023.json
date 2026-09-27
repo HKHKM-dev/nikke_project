@@ -46,5 +46,21 @@
     "method": {
       "tool": "tools/captures/timer.ts --mode summary"
     }
+  },
+  {
+    "id": "023-02",
+    "recording": "023",
+    "recordings": ["023", "024"],
+    "kind": "gauge",
+    "use": "record",
+    "source": "V-0034",
+    "readAt": "2026-09-28",
+    "value": [18, 18, 18, 17, 18, 17, 18],
+    "unit": "px",
+    "description": "デルタ（SR・操作）のフルチャージの 1 発で伸びた BURST バーの長さ（023 の 4 発、024 の 3 発）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode jumps",
+      "note": "15.9%・15.0% の増分（113px 中）。C-0084 の縮尺で本当の約 13.3%。53,000 × フルチャージ 2.5 = 13.25%（C-0007）。戦闘開始直後の 18f おきの小さい増分（約 7%）はフルチャージでない発とみて除いた"
+    }
   }
 ]

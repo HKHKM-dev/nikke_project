@@ -97,7 +97,8 @@
           "kind": "damage",
           "trigger": { "count": "fullChargeShot" },
           "ref": 4,
-          "damageType": "additional"
+          "damageType": "additional",
+          "gaugeHits": [1]
         }
       ],
       "notes": [
