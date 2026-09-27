@@ -96,6 +96,7 @@ describe('computeDamage', () => {
       critDamage: 0.5,
       attackDamage: 0.3,
       chargeDamage: 0.4,
+      chargeDamageMultiplier: 0,
       distributedDamage: 0,
       burstGaugeSpeed: 0,
       maxAmmoRatio: 0,
@@ -108,6 +109,7 @@ describe('computeDamage', () => {
       elementDamage: 0,
       coreDamage: 0,
       normalAttackDamage: 0,
+      normalCritRate: 0,
       weapon: null,
     };
     const r = computeDamage(input({ buffs }));

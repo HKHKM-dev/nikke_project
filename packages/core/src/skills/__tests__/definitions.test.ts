@@ -88,9 +88,10 @@ describe('data/skills', () => {
               // Stage 8 の倍率ダメージは 100% 未満もある（ドレイク S2 98.55%）ので上限を見ない
               else if (effect.kind !== 'damage' && effect.kind !== 'cycle') {
                 // Stage 11 紅蓮BS: バーストの攻撃力 115.12%・チャージダメージ 169.63% は 100% を超える（上限は 200% で見る）
-                // アスカ: バーストの攻撃ダメージ 150.04%・命中率 101.37% も同じ
+                // アスカ: バーストの攻撃ダメージ 150.04%・命中率 101.37% も同じ。ヘルム: チャージダメージ倍率 158.4% も同じ
                 const limit =
-                  effect.kind === 'timed' && ['attack', 'chargeDamage', 'attackDamage', 'hitRate'].includes(effect.stat)
+                  effect.kind === 'timed' &&
+                  ['attack', 'chargeDamage', 'chargeDamageMultiplier', 'attackDamage', 'hitRate'].includes(effect.stat)
                     ? 200
                     : 100;
                 expect(v).toBeLessThanOrEqual(limit);

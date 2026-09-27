@@ -1,0 +1,11 @@
+{
+  "id": "C-0099",
+  "text": "ヘルムの宝物版バーストの「自分にチャージダメージ 158.4% 倍率▲（10 発間維持）」は、フルチャージ倍率 2.5 に (1 + 1.584) を掛ける（2.5 × 2.584）。バーストの後のヘルムの 10 発に効き、11 発目で元に戻る。「倍率」の無い「チャージダメージ X%▲」（2.5 に足す。C-0020）とは別の効果",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`079-03`（フルバーストの外のコア 1,175,434）、`079-04`（フルバースト中のコア 1,878,785）。どちらもモデルとの差は 1 未満。`079-09`（5 回のバーストで、▲の付いた発はどれも 10 発）。V-0033",
+  "model": "`data/skills/352.json` の treasureSkills.burst の effects[1]（timed・burstUse・chargeDamageMultiplier・durationShotsRef）。stat `chargeDamageMultiplier`（`skills/buffs.ts` の applyChargeBuffs）",
+  "replaces": ["C-0095"],
+  "updated": "2026-09-28"
+}

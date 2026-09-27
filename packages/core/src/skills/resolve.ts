@@ -189,8 +189,13 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
 /** Stage 6: トリガー付きの持続バフ。ResolvedEffect に「いつ付いて、何フレーム続くか」が付いた形 */
 export type ResolvedTimedEffect = ResolvedEffect & {
   trigger: ResolvedTrigger;
-  /** gameSecondsToFrames(維持秒数)。0 なら効果なし */
+  /**
+   * gameSecondsToFrames(維持秒数)。0 なら効果なし。
+   * ヘルム編: 発数の維持（durationShots）では 0 にする（1 パス目のループでは追わず、窓は planBuffTimeline が射撃の列から作る）
+   */
   durationFrames: number;
+  /** ヘルム編: 「N 発間維持」の N（解決済み）。有れば durationFrames は 0 */
+  durationShots?: number;
   /** 上書き延長の同一性判定に使う（同じスロットの何番目の効果か） */
   effectIndex: number;
   /** Stage 11 モダニア: 効果のあるスタックの最大数（解決済み）。無ければスタックしない（和集合 = 上書き延長） */
@@ -225,7 +230,8 @@ export function resolveTimed(
         return;
       }
       if (effect.kind !== 'timed') return;
-      const seconds = durationSecondsOf(effect, skill, levels[slot]);
+      const shots = resolveDurationShots(effect, skill, levels[slot]);
+      const seconds = shots === undefined ? durationSecondsOf(effect, skill, levels[slot]) : 0;
       const value =
         effect.ref === undefined
           ? 1 // フラグの stat（装弾数無限）
@@ -250,6 +256,7 @@ export function resolveTimed(
       const maxStacks = resolveMaxStacks(effect, skill, levels[slot]);
       if (maxStacks !== undefined) r.maxStacks = maxStacks;
       if (effect.condition) r.condition = effect.condition;
+      if (shots !== undefined) r.durationShots = shots;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
@@ -266,6 +273,20 @@ function durationSecondsOf(
     effect.durationRef === undefined ? (effect.durationSeconds ?? 0) : skillValue(skill, effect.durationRef, level);
   if (seconds < 0) throw new RangeError(`skill ${skill.id}: duration must be >= 0, got ${seconds}`);
   return seconds;
+}
+
+/** ヘルム編: 「N 発間維持」の N を Lv の数値に解決する。無ければ undefined、正の整数でなければ RangeError */
+function resolveDurationShots(
+  effect: { durationShots?: number; durationShotsRef?: number },
+  skill: SkillRaw,
+  level: number,
+): number | undefined {
+  if (effect.durationShots === undefined && effect.durationShotsRef === undefined) return undefined;
+  const n = effect.durationShots ?? skillValue(skill, effect.durationShotsRef!, level);
+  if (!Number.isInteger(n) || n < 1) {
+    throw new RangeError(`skill ${skill.id}: a duration in shots must be a positive integer, got ${n}`);
+  }
+  return n;
 }
 
 /** Stage 11 モダニア: スタックの最大数を Lv の数値に解決する。無ければ undefined、整数でなければ RangeError */
@@ -377,7 +398,13 @@ export function resolveInstant(
     if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
-      if (effect.kind !== 'cooldownReduction' && effect.kind !== 'ammoRefill' && effect.kind !== 'heal') return;
+      if (
+        effect.kind !== 'cooldownReduction' &&
+        effect.kind !== 'ammoRefill' &&
+        effect.kind !== 'heal' &&
+        effect.kind !== 'burstGauge'
+      )
+        return;
       const raw = skillValue(skill, effect.ref, levels[slot]);
       if (raw < 0) throw new RangeError(`skill ${skill.id}: ${effect.kind} must be >= 0, got ${raw}`);
       const r: ResolvedInstantEffect = {

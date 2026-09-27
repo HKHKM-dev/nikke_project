@@ -451,6 +451,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     number,
     { sourceSlotIndex: number; slotIndex: number; effect: ResolvedInstantEffect }[]
   >();
+  /** ヘルム編: 次のフレーム以降にゲージへ足すチャージ（burstGauge）。フレーム → 効果 */
+  const pendingGaugeCharges = new Map<number, { sourceSlotIndex: number; effect: ResolvedInstantEffect }[]>();
   /** このフレームに回復を受けた枠（FrameEvents.healed）。毎フレーム作らずに使い回す */
   const healed: boolean[] = slots.map(() => false);
   let healedDirty = false;
@@ -494,6 +496,21 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge };
       gauge += energyAt(i, f);
     });
+    // ヘルム編: 前のフレームまでに発火したバーストゲージのチャージ（最大値 × X%）を、このフレームのゲージに足す
+    const charges = pendingGaugeCharges.get(f);
+    if (charges !== undefined && controller !== null) {
+      pendingGaugeCharges.delete(f);
+      for (const c of charges) {
+        gauge += c.effect.value * controller.timing.gaugeMax;
+        instants.push({
+          frame: f,
+          sourceSlotIndex: c.sourceSlotIndex,
+          slotIndex: c.sourceSlotIndex,
+          effect: c.effect,
+          amount: c.effect.value,
+        });
+      }
+    }
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）
     if (controller !== null) stepBurstController(controller, f, gauge, blocked);
     // 2b. V-0030: 段の循環。このフレームの発動で開く間隔の変更の窓を足してから（窓は発火のフレームから）、このフレームの射撃を数える
@@ -636,6 +653,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
     for (const src of otherInstants) {
       if (!src.fires(ev)) continue;
+      // ヘルム編: バーストゲージのチャージは対象によらず 1 回だけ、次のフレームのゲージに足す（射撃の回数トリガーの窓と同じ規則）
+      if (src.effect.kind === 'burstGauge') {
+        if (controller === null || f + 1 >= frames) continue; // 固定サイクル・バーストなしではゲージを見ない
+        const list = pendingGaugeCharges.get(f + 1) ?? [];
+        list.push({ sourceSlotIndex: src.sourceSlotIndex, effect: src.effect });
+        pendingGaugeCharges.set(f + 1, list);
+        continue;
+      }
       const context = withRank(src.effect, fireContextOf(src.effect.trigger, ev), f);
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, context)) {
         if (src.effect.kind === 'cooldownReduction') {

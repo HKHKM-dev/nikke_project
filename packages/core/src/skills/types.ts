@@ -13,6 +13,8 @@
 // 使用武器の変更（weaponChange）を足した（plan/design-stage11-modernia.md 2 節）。
 // Stage 11 紅蓮BS で、段の循環（cycle。「攻撃回数別の効果」「各段階の効果のみ適用」）と、その間隔の変更（cycleEvery。
 // 「スキル 1 のフルチャージ攻撃回数の条件が 1 回 / 2 回 / 3 回に変更」）を足した（plan/design-stage11-scarlet-bs.md 2 節）。
+// ヘルム編で、stat の normalCritRate（通常攻撃のクリティカル確率）と chargeDamageMultiplier（チャージダメージ倍率）、即時効果「バーストゲージのチャージ」（burstGauge）、
+// 「N 発間維持」（timed の durationShots / durationShotsRef）を足した（plan/design-helm.md 2 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 import { ELEMENTS } from '../element.ts';
 import type { Element, LocalizedText, SkillSlot, WeaponType } from '../types.ts';
@@ -36,6 +38,9 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * elementDamage = 有利コードの攻撃ダメージ。属性有利のときだけ (1.1 + Σ)、非有利は 1 のまま。
  * coreDamage = コアダメージ。コア命中の加算項を (コア倍率 − 1 + Σ) にする（通常攻撃だけ）。
  * normalAttackDamage = 通常攻撃ダメージ倍率（SG・SMG のコレクション）。通常攻撃の武器倍率に (1 + Σ) を掛ける（仮定。damage.ts）。
+ * ヘルム編の 1 つ: normalCritRate = 通常攻撃のクリティカル確率。通常攻撃の会心率にだけ足す（バーストスキル・倍率ダメージには足さない）。
+ * ヘルム編の 2 つ目: chargeDamageMultiplier = 「チャージダメージ X% 倍率▲」。フルチャージ倍率に (1 + Σ) を掛ける（V-0033 で確定。
+ * 「倍率」の無い「チャージダメージ X%▲」は chargeDamage で、フルチャージ倍率に足す（C-0020）。
  */
 export type BuffStat =
   | 'attack'
@@ -52,7 +57,9 @@ export type BuffStat =
   | 'infiniteAmmo'
   | 'elementDamage'
   | 'coreDamage'
-  | 'normalAttackDamage';
+  | 'normalAttackDamage'
+  | 'normalCritRate'
+  | 'chargeDamageMultiplier';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -69,6 +76,8 @@ export const BUFF_STATS = [
   'elementDamage',
   'coreDamage',
   'normalAttackDamage',
+  'normalCritRate',
+  'chargeDamageMultiplier',
 ] as const satisfies readonly BuffStat[];
 
 /** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限を足した */
@@ -269,10 +278,18 @@ export type TimedEffect = TargetCountFields & {
    * 効いている窓で合計 > 0。同じフレームに付いた窓も入れる）なら発火する。カウンタは状態に関係なく数える
    */
   condition?: EffectCondition;
-  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
+  /** 維持秒数の description_value_NN。durationSeconds・durationShots・durationShotsRef とちょうど 1 つ */
   durationRef?: number;
-  /** 維持秒数の即値（説明文に「維持時間：10秒」と直書きされている場合）。durationRef とちょうど片方 */
+  /** 維持秒数の即値（説明文に「維持時間：10秒」と直書きされている場合） */
   durationSeconds?: number;
+  /**
+   * ヘルム編: 「N 発間維持」の N の即値。付いたフレームから、対象の枠の N 発目の通常攻撃まで続く（N 発目にも効く）。
+   * 対象ごとにその枠の射撃を数え、維持中にまた付いたら数え直す。窓は 1 パス目の射撃の列で決まるので、
+   * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）と、スタック・条件・順位の対象には書けない
+   */
+  durationShots?: number;
+  /** ヘルム編: 「N 発間維持」の N の description_value_NN */
+  durationShotsRef?: number;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -361,9 +378,31 @@ export type HealEffect = {
   assumes?: LocalizedText;
 };
 
-export type InstantEffect = CooldownReductionEffect | AmmoRefillEffect | HealEffect;
+/**
+ * ヘルム編: 「バーストゲージのチャージ X%」。発火の次のフレームに、編成のバーストゲージへ最大値の X% を足す（即時効果）。
+ * ゲージが溜まる状態のときだけ足し（射撃のゲージと同じ）、チャージ速度は掛けない（仮定。plan/design-helm.md 2.2 節）。
+ * ゲージは編成で 1 本なので、対象は allies だけ書ける（対象の数によらず 1 回だけ足す）
+ */
+export type BurstGaugeEffect = TargetCountFields & {
+  kind: 'burstGauge';
+  trigger: EffectTrigger;
+  target: 'allies';
+  /** 絞り込みの欄は即時効果の型をそろえるためだけにある（検証で弾く） */
+  targetWeapon?: WeaponType;
+  targetElement?: Element;
+  /** % の description_value_NN */
+  ref: number;
+  assumes?: LocalizedText;
+};
+
+export type InstantEffect = CooldownReductionEffect | AmmoRefillEffect | HealEffect | BurstGaugeEffect;
 export type InstantKind = InstantEffect['kind'];
-export const INSTANT_KINDS = ['cooldownReduction', 'ammoRefill', 'heal'] as const satisfies readonly InstantKind[];
+export const INSTANT_KINDS = [
+  'cooldownReduction',
+  'ammoRefill',
+  'heal',
+  'burstGauge',
+] as const satisfies readonly InstantKind[];
 
 /**
  * Stage 11 モダニア: 「殲滅モード」「使用武器変更」。維持時間のあいだ、自分の通常攻撃を別の武器にする（対象は常に自分）。
@@ -648,7 +687,7 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
     if (isFlagStat(stat)) fail(`${path}.decrease`, `${stat} has no value`);
     effect.decrease = true;
   }
-  Object.assign(effect, parseDuration(v, path));
+  Object.assign(effect, parseTimedDuration(v, stat, target, path));
   // Stage 11 モダニア: 効果のあるスタック
   if (v.maxStacks !== undefined && v.maxStacksRef !== undefined)
     fail(path, 'at most one of maxStacks and maxStacksRef');
@@ -657,6 +696,11 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   if (isFlagStat(stat) && (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)) {
     fail(path, `${stat} cannot stack`);
   }
+  const byShots = effect.durationShots !== undefined || effect.durationShotsRef !== undefined;
+  if (byShots && (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)) {
+    fail(path, 'a duration in shots cannot stack');
+  }
+  if (byShots && v.condition !== undefined) fail(`${path}.condition`, 'a duration in shots cannot have a condition');
   // Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」
   if (v.condition !== undefined) {
     const c = v.condition;
@@ -677,6 +721,34 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
 }
 
 /** durationRef / durationSeconds のちょうど片方 */
+/**
+ * ヘルム編: timed の維持。秒（durationRef / durationSeconds）か発数（durationShots / durationShotsRef）のちょうど 1 つ。
+ * 発数の窓は 1 パス目の射撃の列から後で決めるので、1 パス目のループの中で窓を追う stat と順位の対象には書けない
+ */
+function parseTimedDuration(
+  v: Record<string, Json>,
+  stat: BuffStat,
+  target: BuffTarget,
+  path: string,
+): { durationRef?: number; durationSeconds?: number; durationShots?: number; durationShotsRef?: number } {
+  const hasShots = v.durationShots !== undefined;
+  const hasShotsRef = v.durationShotsRef !== undefined;
+  if (!hasShots && !hasShotsRef) return parseDuration(v, path);
+  if (hasShots && hasShotsRef) fail(path, 'at most one of durationShots and durationShotsRef');
+  if (v.durationRef !== undefined || v.durationSeconds !== undefined) {
+    fail(path, 'a duration is either in seconds or in shots, not both');
+  }
+  if (stat === 'attack' || isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat)) {
+    fail(
+      `${path}.stat`,
+      `a duration in shots is not supported for "${stat}" (its window is tracked inside the first pass)`,
+    );
+  }
+  if (target === 'topAttack') fail(`${path}.target`, 'a duration in shots cannot target "topAttack"');
+  if (hasShots) return { durationShots: parsePositiveInt(v.durationShots, `${path}.durationShots`) };
+  return { durationShotsRef: parseRef(v.durationShotsRef, `${path}.durationShotsRef`) };
+}
+
 function parseDuration(v: Record<string, Json>, path: string): { durationRef?: number; durationSeconds?: number } {
   const hasRef = v.durationRef !== undefined;
   const hasSeconds = v.durationSeconds !== undefined;
@@ -819,10 +891,18 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   validateBurstUsersTarget(target, trigger, path);
   // 回復 → healed の攻撃力の窓 → 順位 → 回復の対象、と循環するので heal には書けない（plan/design-stage11.md 19.3 節）
   if (kind === 'heal' && target === 'topAttack') fail(`${path}.target`, 'heal cannot target "topAttack"');
+  // ヘルム編: ゲージは編成で 1 本なので、対象は味方全体だけ（絞り込みも書けない）
+  if (kind === 'burstGauge') {
+    if (target !== 'allies') fail(`${path}.target`, 'burstGauge must target "allies" (the team shares one gauge)');
+    for (const key of ['targetWeapon', 'targetElement', 'targetCount', 'targetCountRef']) {
+      if (v[key] !== undefined) fail(`${path}.${key}`, 'burstGauge cannot narrow its target');
+    }
+  }
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
   const count = parseTargetCount(v, target, path);
-  const effect: InstantEffect = { kind, trigger, target, ref: parseRef(v.ref, `${path}.ref`) };
+  // burstGauge は上で対象を allies に限り、絞り込みの欄も弾いてある
+  const effect = { kind, trigger, target, ref: parseRef(v.ref, `${path}.ref`) } as InstantEffect;
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (kind !== 'heal') Object.assign(effect, count);
@@ -855,7 +935,7 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   }
   if (v.kind === 'timed') return parseTimedEffect(v, path);
   if (v.kind === 'damage') return parseDamageEffect(v, path);
-  if (v.kind === 'cooldownReduction' || v.kind === 'ammoRefill' || v.kind === 'heal') {
+  if (v.kind === 'cooldownReduction' || v.kind === 'ammoRefill' || v.kind === 'heal' || v.kind === 'burstGauge') {
     return parseInstantEffect(v, path, v.kind);
   }
   if (v.kind === 'weaponChange') return parseWeaponChangeEffect(v, path);
@@ -863,7 +943,7 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (v.kind === 'cycleEvery') return parseCycleEveryEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "weaponChange", "cycle" or "cycleEvery", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle" or "cycleEvery", got ${JSON.stringify(v.kind)}`,
   );
 }
 

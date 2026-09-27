@@ -260,7 +260,9 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   // Stage 13: コアダメージ▲はコア倍率に加算する（殲滅モードなら変更後の武器のコア倍率が基点）
   const boostCore = coreRate * (shot.coreDamageRate - 1 + buffs.coreDamage);
   const crit = applyCritBuffs(character.crit, buffs);
-  const boostCrit = crit.rate * (crit.damage - 1);
+  // ヘルム編: 通常攻撃のクリティカル確率▲は通常攻撃の会心率にだけ足す（射撃ごとの倍率ダメージは boostSkillCrit）
+  const boostCrit = (crit.rate + buffs.normalCritRate) * (crit.damage - 1);
+  const boostSkillCrit = crit.rate * (crit.damage - 1);
   const boostDistance = condition.distanceBonus && character.bonusRange !== null ? DISTANCE_BONUS : 0;
   const boostFullBurst = condition.fullBurst ? FULL_BURST_BOOST : 0;
   const boostTotal = 1 + boostCore + boostCrit + boostDistance + boostFullBurst;
@@ -282,7 +284,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
       input.perShot,
       baseHit,
       boostCore,
-      boostCrit,
+      boostSkillCrit,
       boostFullBurst,
       buffs,
       skillElementMultiplier(character, enemy, buffs),

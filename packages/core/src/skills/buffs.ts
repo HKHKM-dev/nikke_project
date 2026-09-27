@@ -27,8 +27,10 @@ export type BuffTotals = {
   critDamage: number;
   /** 攻撃ダメージの加算。コア・会心・距離の加算グループとは別の乗数 (1 + attackDamage)（2026-09-22 実測で確認） */
   attackDamage: number;
-  /** チャージダメージ倍率の加算。fullChargeDamage に足す（フルチャージ時のみ） */
+  /** チャージダメージの加算。fullChargeDamage に足す（フルチャージ時のみ。「チャージダメージ X%▲」。C-0020） */
   chargeDamage: number;
+  /** ヘルム編: チャージダメージ倍率の加算。フルチャージ倍率に (1 + chargeDamageMultiplier) を掛ける（「チャージダメージ X% 倍率▲」） */
+  chargeDamageMultiplier: number;
   /** Stage 8: 分配ダメージの加算。distributed の倍率ダメージにだけ (1 + distributedDamage) を掛ける（録画 21 で別枠の乗数と確認） */
   distributedDamage: number;
   /** Stage 8: バーストゲージのチャージ速度の加算。この枠の射撃で溜まるゲージに (1 + burstGaugeSpeed) を掛ける（passive のみ） */
@@ -56,6 +58,8 @@ export type BuffTotals = {
   coreDamage: number;
   /** Stage 13: 通常攻撃ダメージ倍率の加算。通常攻撃の武器倍率に (1 + normalAttackDamage) を掛ける（仮定。damage.ts） */
   normalAttackDamage: number;
+  /** ヘルム編: 通常攻撃のクリティカル確率の加算。通常攻撃の会心率にだけ足す（倍率ダメージ・バーストスキルには足さない。damage.ts） */
+  normalCritRate: number;
   /** Stage 11 モダニア: 使用武器の変更（無ければ null）。射手とダメージの式が基礎の武器の代わりに使う */
   weapon: ChangedWeapon | null;
 };
@@ -67,6 +71,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   critDamage: 0,
   attackDamage: 0,
   chargeDamage: 0,
+  chargeDamageMultiplier: 0,
   distributedDamage: 0,
   burstGaugeSpeed: 0,
   maxAmmoRatio: 0,
@@ -79,6 +84,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   elementDamage: 0,
   coreDamage: 0,
   normalAttackDamage: 0,
+  normalCritRate: 0,
   weapon: null,
 });
 
@@ -89,6 +95,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon'>> = {
   critDamage: 'critDamage',
   attackDamage: 'attackDamage',
   chargeDamage: 'chargeDamage',
+  chargeDamageMultiplier: 'chargeDamageMultiplier',
   distributedDamage: 'distributedDamage',
   burstGaugeSpeed: 'burstGaugeSpeed',
   maxAmmo: 'maxAmmoRatio',
@@ -99,6 +106,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon'>> = {
   elementDamage: 'elementDamage',
   coreDamage: 'coreDamage',
   normalAttackDamage: 'normalAttackDamage',
+  normalCritRate: 'normalCritRate',
 };
 
 /** Stage 11 モダニア: stat の合計（「自分が 〈stat〉 増加状態なら」の判定用） */
@@ -162,7 +170,10 @@ export function applyAttackDamageBuffs(buffs: BuffTotals): number {
   return 1 + buffs.attackDamage;
 }
 
-/** charge ? fullChargeDamage + chargeDamage : 1 */
+/**
+ * charge ? (fullChargeDamage + chargeDamage) × (1 + chargeDamageMultiplier) : 1。
+ * 倍率▲の掛け算は V-0033（ヘルム）で確定。足し算の▲と両方付いたときに足してから掛けるのは仮定（両方の付く録画が無い）
+ */
 export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buffs: BuffTotals): number {
-  return charge ? fullChargeDamage + buffs.chargeDamage : 1;
+  return charge ? (fullChargeDamage + buffs.chargeDamage) * (1 + buffs.chargeDamageMultiplier) : 1;
 }

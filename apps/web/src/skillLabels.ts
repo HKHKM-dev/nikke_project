@@ -28,6 +28,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   critDamage: 'クリティカルダメージ',
   attackDamage: '攻撃ダメージ',
   chargeDamage: 'チャージダメージ',
+  chargeDamageMultiplier: 'チャージダメージ倍率',
   distributedDamage: '分配ダメージ',
   burstGaugeSpeed: 'バーストゲージのチャージ速度',
   maxAmmo: '最大装弾数',
@@ -38,6 +39,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   elementDamage: '有利コードの攻撃ダメージ',
   coreDamage: 'コアダメージ',
   normalAttackDamage: '通常攻撃ダメージ倍率',
+  normalCritRate: '通常攻撃のクリティカル確率',
 };
 
 export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
@@ -149,6 +151,8 @@ export function formatInstant(effect: ResolvedInstantEffect): string {
       return effect.durationFrames === undefined
         ? `回復（最大 HP の ${formatPercent(effect.value, 2)}）`
         : `回復 ${formatPercent(effect.value, 2)}（${formatNumber(framesToGameSeconds(effect.durationFrames), 0)} 秒間維持）`;
+    case 'burstGauge':
+      return `バーストゲージのチャージ ${formatPercent(effect.value, 2)}`;
   }
 }
 

@@ -1,0 +1,11 @@
+{
+  "id": "C-0098",
+  "text": "ヘルムの基礎版（宝物なし）のスキルは、宝物版と同じ読みで、値だけが違う（S1 の通常攻撃のクリティカル確率▲、S2 のフルバースト時の攻撃ダメージ▲、バーストのバーストスキルダメージ）。宝物なしのヘルムは撮れないので、宝物版の結論から推す",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文の読み（plan/design-helm.md 1 節）。録画 079 の予測は V-0033",
+  "model": "`data/skills/352.json` の skills.skill2 の effects[0]、skills.burst の effects[0]（skills.skill1 は C-0097）",
+  "replaces": [],
+  "updated": "2026-09-28"
+}
