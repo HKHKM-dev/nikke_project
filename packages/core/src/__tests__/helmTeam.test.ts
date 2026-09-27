@@ -90,6 +90,14 @@ describe('録画 079 の編成（V-0033）', () => {
   });
 });
 
+describe('ヘルム単騎（録画 082 の編成。V-0034）', () => {
+  it('fills the gauge on the frame after the 3rd shot: 14.0% + charge 14.31% + additional damage hit 5.6% per shot (C-0103)', () => {
+    const plan = planTeamRun(team([fixedSlot(HELM, 3)], 0));
+    const shots = plan.shots[0]!.frames;
+    expect(plan.schedule!.gaugeFullFrames[0]).toBe(shots[2]! + 1);
+  });
+});
+
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, helm }) => {
   const sim = runSimulation(input);
   const calc = computeTeamDamage(input);

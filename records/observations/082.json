@@ -1,0 +1,105 @@
+[
+  {
+    "id": "082-01",
+    "recording": "082",
+    "kind": "interval",
+    "use": "compare",
+    "source": "V-0034",
+    "readAt": "2026-09-28",
+    "value": 235,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消える（本当の満タン）までのフレーム数。ヘルムの 3 発目",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode series",
+      "note": "02:59 は f845（+319f・+89f の変わり目）。バーは 1 発目（f916）で 25.7%、2 発目（f998）で 65.5%、3 発目（f1080）で読めなくなった。どの発もバーは 1 フレームで跳んだ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "082-02",
+    "recording": "082",
+    "kind": "gauge",
+    "use": "record",
+    "source": "V-0034",
+    "readAt": "2026-09-28",
+    "value": [29, 74],
+    "unit": "px",
+    "description": "ヘルムの 1 発目・2 発目の後の BURST バーの長さ（113px 中）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series",
+      "note": "25.7%・65.5%。C-0084 の縮尺で本当の 34.1%・67.4%（1 発あたり約 33.7%）。弾 14.0% + チャージ 14.31% + 追加ダメージのヒット 5.6% = 33.91% なら 28.8px・74.6px。チャージだけ（28.31%）なら 21.2px・59.5px"
+    }
+  },
+  {
+    "id": "082-03",
+    "recording": "082",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0034",
+    "readAt": "2026-09-28",
+    "value": 454889,
+    "description": "ヘルム単騎のコアの 1 発（会心・距離なし。チャージダメージ倍率▲・フルバーストなし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 690,741（52 回）= コアの 1 発 + 追加ダメージ 235,852。追加ダメージは 808,667 − 690,741 = 117,926（会心の 0.5 の分）の 2 倍。100 件の増分のうち 97 件が本体と追加ダメージの組み合わせで端数まで分けられた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 500,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "082-04",
+    "recording": "082",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0034",
+    "readAt": "2026-09-28",
+    "value": [7, 31, 13, 67],
+    "description": "ヘルムの通常攻撃の会心の数と発の数（最後の弾丸の後 5 秒の窓の中、窓の外）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "最後の弾丸は、次の発まで 150f より空いた発（19 回。ジャンプの前後も混ざる近似）。窓は 294f。中 22.6%・外 19.4%。追加ダメージの会心は中 3/31・外 12/67"
+    }
+  },
+  {
+    "id": "082-05",
+    "recording": "082",
+    "kind": "total",
+    "use": "record",
+    "source": "V-0034",
+    "readAt": "2026-09-28",
+    "value": 56022652,
+    "description": "ヘルム単騎の与ダメージ（リザルト画面の TOTAL DAMAGE）",
+    "method": {
+      "note": "台帳を書くときの確認で、予測の前に見てしまった。予測・比較には使っていない"
+    }
+  }
+]

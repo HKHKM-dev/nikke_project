@@ -65,6 +65,14 @@ describe('parseSkillDefinition（ヘルム編）', () => {
     ).not.toThrow();
   });
 
+  it('accepts gaugeHits on damage only with a shot count trigger (V-0034)', () => {
+    const damage = { kind: 'damage', ref: 4, damageType: 'additional' };
+    expect(parseOne({ ...damage, trigger: { count: 'fullChargeShot' }, gaugeHits: [1] })).not.toThrow();
+    expect(parseOne({ ...damage, trigger: 'burstUse', gaugeHits: [1] })).toThrow(/shot count/);
+    expect(parseOne({ ...damage, trigger: { count: 'fullChargeShot' }, gaugeHits: [0] })).toThrow(/positive/);
+    expect(parseOne({ ...damage, trigger: { count: 'normalHit', stacksRef: 1 }, gaugeHits: [1] })).toThrow(/stacksRef/);
+  });
+
   it('rejects burstGauge that does not target the whole team', () => {
     expect(parseOne({ kind: 'burstGauge', trigger: 'burstUse', target: 'self', ref: 1 })).toThrow(/allies/);
     expect(parseOne({ kind: 'burstGauge', trigger: 'burstUse', target: 'allies', targetWeapon: 'SR', ref: 1 })).toThrow(

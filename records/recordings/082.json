@@ -1,0 +1,31 @@
+{
+  "id": "082",
+  "date": "2026-09-28",
+  "folder": "range",
+  "file": "20260928-082_SR_helm_solo.mp4",
+  "original": "2026-09-28_05-34-46.mp4",
+  "durationSec": 228.5,
+  "frames": 13712,
+  "fps": 60,
+  "sizeMB": 276.6,
+  "sha256": "cf34334440b0",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "note": "単騎（出撃画面では枠 3 に置いた）・AUTO・**宝物あり**",
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。ヘルム（水冷）は属性有利）。単騎を枠 3 に置いた。AUTO 射撃・オートバーストとも ON（画面左上のボタンの色。照準のアイコンはオレンジで、AUTO 射撃 OFF の録画 065 の灰色と違う）。単騎なのでバーストのチェーンは組めない。名前の出るパネルは写っていない（戦闘後のリザルト画面だけ）ので、出撃画面の単騎のカードと 1 発の値で同定した。宝物の段階 3 はオーナーに確かめた（録画 079 と同じヘルム）。V-0034"
+}
