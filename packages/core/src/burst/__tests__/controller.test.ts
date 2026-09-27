@@ -25,10 +25,17 @@ function unit(burstStep: BurstStep, cooldownFrames: number, nextStep: BurstNextS
 }
 
 /**
- * 状態機械の論理だけを見るため、フルバーストとチェーンの打ち切りを 600f に固定した timing（Stage 21-B までの既定）で回す。
- * 既定値（ゲーム内の 10 秒）は下の 'uses 10 game seconds' で確かめる
+ * 状態機械の論理だけを見るため、フルバーストとチェーンの打ち切りを 600f、段の間隔を 20f に固定した timing
+ * （Stage 21-B までの既定）で回す。既定値（ゲーム内の 10 秒・段の 29f）は下の 'uses …' で確かめる
  */
-const TIMING_600: BurstTiming = { ...DEFAULT_BURST_TIMING, fullBurstFrames: 600, chainTimeoutFrames: 600 };
+const TIMING_600: BurstTiming = {
+  ...DEFAULT_BURST_TIMING,
+  readyDelayFrames: 20,
+  step1ToStep2Frames: 20,
+  step2ToStep3Frames: 20,
+  fullBurstFrames: 600,
+  chainTimeoutFrames: 600,
+};
 
 /** 毎フレーム gaugePerFrame を入れて frames フレーム回す */
 function run(
@@ -51,6 +58,12 @@ describe('BurstController', () => {
     expect(DEFAULT_BURST_TIMING.fullBurstFrames).toBe(gameSecondsToFrames(10));
     expect(DEFAULT_BURST_TIMING.chainTimeoutFrames).toBe(gameSecondsToFrames(10));
     expect(gameSecondsToFrames(10)).toBe(588);
+  });
+
+  it('uses 29f for each burst stage: full → I → II → III (C-0073)', () => {
+    expect(DEFAULT_BURST_TIMING.readyDelayFrames).toBe(29);
+    expect(DEFAULT_BURST_TIMING.step1ToStep2Frames).toBe(29);
+    expect(DEFAULT_BURST_TIMING.step2ToStep3Frames).toBe(29);
   });
 
   it('is gauge-bound when cooldowns are short: full → I → II → III with 20f steps, 600f full burst, then refill from 0', () => {

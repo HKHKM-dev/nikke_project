@@ -91,8 +91,8 @@ describe('録画 47 の予測（7.5）', () => {
   const stepAt = new Map(hits.map((h) => [h.frame, h.effect.cycle!.step]));
 
   it('opens 5 full bursts of 10 s, 40 s apart, with 紅蓮BS as III', () => {
-    // Stage 21-B: 40 秒 = 2,352f、10 秒 = 588f
-    expect(fb.map((w) => w.start)).toEqual([0, 1, 2, 3, 4].map((k) => 470 + k * gameSecondsToFrames(40)));
+    // Stage 21-B: 40 秒 = 2,352f、10 秒 = 588f。C-0073 で段の間隔を 20f → 29f にして 470 → 497
+    expect(fb.map((w) => w.start)).toEqual([0, 1, 2, 3, 4].map((k) => 497 + k * gameSecondsToFrames(40)));
     expect(fb.every((w) => w.end - w.start === gameSecondsToFrames(10) && w.burstUsers.includes(2))).toBe(true);
   });
 

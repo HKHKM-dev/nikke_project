@@ -73,8 +73,9 @@ describe('録画 44 の予測（7.5）', () => {
   it('opens 4 full bursts of 15 s, each started by モダニア', () => {
     expect(fb).toHaveLength(4);
     expect(fb.every((w) => w.end - w.start === gameSecondsToFrames(15) && w.burstUsers.includes(2))).toBe(true);
-    // Stage 21-C3 で 2〜3 回目以降が 1〜3f 早まった（rpm の蓄積をゲーム内の時計にした。21-B までは 724・3634・6544・9454）
-    expect(fb.map((w) => w.start)).toEqual([724, 3633, 6542, 9451]);
+    // Stage 21-C3 で 2〜3 回目以降が 1〜3f 早まった（rpm の蓄積をゲーム内の時計にした。21-B までは 724・3634・6544・9454）。
+    // C-0073 で段の間隔を 20f → 29f にして、724・3633・6542・9451 から 27〜32f 遅くなった
+    expect(fb.map((w) => w.start)).toEqual([751, 3661, 6572, 9483]);
   });
 
   it('stacks S1 on every 200th shot and keeps 5 stacks (300 → 285 → 270 → 255 → 240 → 224)', () => {
@@ -165,7 +166,9 @@ describe('録画 44 の実測（1 発の数値、2026-09-24）', () => {
   });
 
   it('matches Annihilation Mode: 2 hits of 6,753 (8,739 with S2) + one additional 5,517 (7,139) per frame', () => {
-    const before = fb[0]!.start + 5;
+    // S2 の攻撃力▲（200 発目）が乗る直前。C-0073 で段の間隔を 29f にしてから、フルバースト開始の 4f 後に乗る
+    const before = attack[0]!.start - 1;
+    expect(before).toBeGreaterThanOrEqual(fb[0]!.start);
     const after = attack[0]!.start + 10;
     expect(segmentAt(calc, 2, before).trigger.weaponMultiplier).toBeCloseTo(0.0448, 12);
     expect(hit(before, 0.0224, 2.5)).toBe(6753);
