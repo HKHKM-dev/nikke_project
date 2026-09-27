@@ -14,7 +14,10 @@ import type { SkillDefinition, TimedEffect } from '../skills/types.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { BurstStep, ShotParams, SkillRaw } from '../types.ts';
-import { framesToGameSeconds } from '../time.ts';
+import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
+import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';
+
+const H = FIXED_BURST_CYCLE.normalFrames;
 import { makeCharacter } from './fixtures.ts';
 
 /**
@@ -132,7 +135,9 @@ describe('sim vs calc: quantities that must match exactly', () => {
       const groups = simGroupTotals(sim, i);
       // 持続バフがないので区間は「通常 / フルバースト」の 2 グループに退化する
       expect(c.segments.map((g) => g.fullBurst)).toEqual([false, true]);
-      expect(c.segments.map((g) => g.seconds)).toEqual([90, 90]);
+      // Stage 21-B: 通常 9H + 4f、フルバースト 9H（H = 588f）
+      expect(c.segments[0]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H + 4), 9);
+      expect(c.segments[1]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H), 9);
       expect(groups.map((g) => g.key)).toEqual(
         c.segments.map((_, j) => sim.timeline.segments[j === 0 ? 0 : 1]!.slotKeys[i]),
       );
@@ -253,13 +258,15 @@ describe('sim vs calc with timed buffs: quantities that must match exactly', () 
 
   it('share the same segmentation and per-segment buffs', () => {
     expect(sim.timeline.segments).toEqual(calc.timeline.segments);
-    // 10 秒バフの窓はフルバースト窓と重なるので、区間は 18 個・バフ状態は 2 通り
-    expect(sim.timeline.segments).toHaveLength(18);
+    // 10 秒バフの窓はフルバースト窓と重なるので、区間は 19 個（9 サイクルの後に 4f の通常区間）・バフ状態は 2 通り
+    expect(sim.timeline.segments).toHaveLength(19);
     for (let i = 0; i < timedTeam.length; i++) {
       const c = calc.slots[i]!;
       expect(c.segments).toHaveLength(2);
       expect(c.segments.map((g) => g.fullBurst)).toEqual([false, true]);
-      expect(c.segments.map((g) => g.seconds)).toEqual([90, 90]);
+      // Stage 21-B: 通常 9H + 4f、フルバースト 9H（H = 588f）
+      expect(c.segments[0]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H + 4), 9);
+      expect(c.segments[1]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H), 9);
       const groups = simGroupTotals(sim, i);
       expect(groups.map((g) => g.seconds)).toEqual(c.segments.map((g) => g.seconds));
     }
@@ -356,7 +363,8 @@ describe('sim vs calc on the dynamic cycle: quantities that must match exactly',
     const fixed = bothTimed(180).calc;
     expect(fixed.burstSummary?.fullBursts).toBe(9);
     expect(calc.burstSummary?.fullBursts).toBeLessThan(9);
-    expect(calc.burstSummary?.meanCycleSeconds).toBeGreaterThanOrEqual(40);
+    // CT 40 秒 = 2,352f（切り捨て）= 39.984 秒
+    expect(calc.burstSummary?.meanCycleSeconds).toBeGreaterThanOrEqual(framesToGameSeconds(gameSecondsToFrames(40)));
     // フルバーストは III が撃ったフレームから始まる
     for (const w of calc.schedule!.fullBurstWindows) {
       expect(calc.schedule!.activations.some((a) => a.startsFullBurst && a.frame === w.start)).toBe(true);

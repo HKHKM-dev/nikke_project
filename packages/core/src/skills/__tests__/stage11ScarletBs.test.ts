@@ -6,6 +6,7 @@ import type { CharacterData } from '../../types.ts';
 import { cycleFires, resolveCycleEvery, resolveCycles } from '../cycles.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -82,7 +83,12 @@ describe('DSL (7.1)', () => {
       ['distributed', 8.4803, { step: 2, steps: 3 }],
     ]);
     const [every] = resolveCycleEvery(def, scarlet, MAX_SKILL_LEVELS);
-    expect(every).toMatchObject({ targetSkill: 'skill1', every: 1, trigger: 'burstUse', durationFrames: 600 });
+    expect(every).toMatchObject({
+      targetSkill: 'skill1',
+      every: 1,
+      trigger: 'burstUse',
+      durationFrames: gameSecondsToFrames(10),
+    });
   });
 });
 

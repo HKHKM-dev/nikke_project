@@ -15,6 +15,7 @@ import {
   type BuildMasters,
   type SkillLevels,
   type TeamSlotResult,
+  framesToGameSeconds,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber, formatPercent } from '../format.ts';
@@ -376,7 +377,8 @@ export function SlotCard({
                       <small className="sub">
                         {formatTimedTrigger(t.effect.trigger)}{' '}
                         {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}・
-                        {formatNumber(t.effect.durationFrames / 60, 0)} 秒 × {t.count} 回{formatTimedExtras(t.effect)}
+                        {formatNumber(framesToGameSeconds(t.effect.durationFrames), 0)} 秒 × {t.count} 回
+                        {formatTimedExtras(t.effect)}
                         {t.effect.condition && skipsOf(t.effect) > 0
                           ? `・状態でなく発動せず ${skipsOf(t.effect)} 回`
                           : ''}
@@ -391,7 +393,7 @@ export function SlotCard({
                         {formatTimedTrigger(x.instant.effect.trigger)} 枠 {x.instant.sourceSlotIndex + 1}{' '}
                         {slotNames[x.instant.sourceSlotIndex] ?? ''}・{x.count} 回
                         {x.instant.effect.kind === 'cooldownReduction'
-                          ? `（実際に縮んだ計 ${formatNumber(x.total / 60, 2)} 秒）`
+                          ? `（実際に縮んだ計 ${formatNumber(framesToGameSeconds(x.total), 2)} 秒）`
                           : x.instant.effect.kind === 'ammoRefill'
                             ? `（計 ${x.total} 発）`
                             : ''}
@@ -405,7 +407,8 @@ export function SlotCard({
                         {SKILL_SLOT_LABEL[w.targetSkill]} の段を{w.every === 1 ? '毎回' : ` ${w.every} 回ごとに`}進める
                       </span>
                       <small className="sub">
-                        {SKILL_SLOT_LABEL[w.source.skill]}・{formatNumber((w.end - w.start) / 60, 0)} 秒 × {count} 回
+                        {SKILL_SLOT_LABEL[w.source.skill]}・{formatNumber(framesToGameSeconds(w.end - w.start), 0)} 秒 ×{' '}
+                        {count} 回
                       </small>
                     </li>
                   ))}

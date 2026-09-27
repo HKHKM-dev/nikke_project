@@ -3,6 +3,7 @@ import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { SkillRaw } from '../../types.ts';
 import { MAX_SKILL_LEVELS, renderSkillDescription, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../types.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 
 /** Lv1..10 で lv1 から step ずつ増える値の文字列配列 */
 function levels(lv1: number, step: number): string[] {
@@ -246,24 +247,24 @@ describe('resolveTimed', () => {
       stat: 'attack',
       scaling: 'ratio',
       value: 0.7,
-      // 維持秒数 12.5 秒 → 750f
-      durationFrames: 750,
+      // 維持秒数 12.5 秒
+      durationFrames: gameSecondsToFrames(12.5),
       effectIndex: 0,
     });
     const lv1 = resolveTimed(timedDef(), character, { skill1: 1, skill2: 1, burst: 1 });
-    expect(lv1[0]?.durationFrames).toBe(480); // 8 秒
+    expect(lv1[0]?.durationFrames).toBe(gameSecondsToFrames(8));
   });
 
-  it('takes a literal durationSeconds and rounds it up to frames', () => {
+  it('takes a literal durationSeconds and converts it to frames', () => {
     const def = timedDef();
     def.skills.skill2.effects = [
       { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 1, durationSeconds: 10 },
     ];
-    expect(resolveTimed(def, character, MAX_SKILL_LEVELS)[0]?.durationFrames).toBe(600);
+    expect(resolveTimed(def, character, MAX_SKILL_LEVELS)[0]?.durationFrames).toBe(gameSecondsToFrames(10));
     def.skills.skill2.effects = [
       { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 1, durationSeconds: 0.05 },
     ];
-    expect(resolveTimed(def, character, MAX_SKILL_LEVELS)[0]?.durationFrames).toBe(3);
+    expect(resolveTimed(def, character, MAX_SKILL_LEVELS)[0]?.durationFrames).toBe(gameSecondsToFrames(0.05));
   });
 
   it('skips unsupported slots and passive effects', () => {

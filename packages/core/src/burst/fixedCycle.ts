@@ -19,11 +19,12 @@ export type BurstCycleFrames = {
   fullBurstFrames: number;
 };
 
-/** 20 秒サイクル: 通常 10 秒 + フルバースト 10 秒 */
+/** 20 秒サイクル: 通常 10 秒 + フルバースト 10 秒（Stage 21: それぞれを切り上げたフレームの和を 1 サイクルにする） */
+const HALF_CYCLE_FRAMES = gameSecondsToFrames(10);
 export const FIXED_BURST_CYCLE: Readonly<BurstCycleFrames> = Object.freeze({
-  cycleFrames: gameSecondsToFrames(20),
-  normalFrames: gameSecondsToFrames(10),
-  fullBurstFrames: gameSecondsToFrames(10),
+  cycleFrames: 2 * HALF_CYCLE_FRAMES,
+  normalFrames: HALF_CYCLE_FRAMES,
+  fullBurstFrames: HALF_CYCLE_FRAMES,
 });
 
 /** 枠のバースト段階。null は空枠 */

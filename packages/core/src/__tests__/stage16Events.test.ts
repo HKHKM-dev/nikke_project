@@ -18,6 +18,7 @@ import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
+import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 
 const master = parseEnemyPresets(
   JSON.parse(readFileSync(new URL('../../data/enemies.json', import.meta.url), 'utf8')) as unknown,
@@ -28,14 +29,20 @@ describe('出来事のセット（data/enemies.json）', () => {
     expect(master.eventSets.map((s) => s.id)).toEqual(['range-3min-jump']);
     for (const e of master.enemies.filter((p) => p.content === 'range'))
       expect(e.eventSets).toEqual(['range-3min-jump']);
-    expect(master.eventSets[0]!.events).toEqual([{ kind: 'untargetable', first: 31, duration: 2, every: 36.4 }]);
+    // Stage 21-B: C-0025 の「最初 31 秒・36.4 秒ごと」は動画のフレームを 60 で割った値なので、読んだフレーム（1,860f・2,184f）が
+    // 変わらないようゲーム内の秒に直した（plan/design-stage21.md 3.3 節）。長さの 2 秒はそのまま
+    expect(master.eventSets[0]!.events).toEqual([{ kind: 'untargetable', first: 31.62, duration: 2, every: 37.128 }]);
+    expect([gameSecondsToFrame(31.62), gameSecondsToFrame(37.128)]).toEqual([1860, 2184]);
   });
 
-  it('expands to 5 jumps in 180 seconds (recording 41 had 5, at 32.2 / 68.6 / 103.8 / 140.5 / 174.1 s)', () => {
+  it('expands to 4 jumps in 180 game seconds (recordings 41, 46 and 55 had 5: the 5th falls just after the end)', () => {
+    // 実測との食い違い（未解決）: 録画 41 は動画の時刻で 32.2 / 68.6 / 103.8 / 140.5 / 174.1 秒、録画 46・55 も 180 秒に 5 回。
+    // 代表値を読んだフレームのまま換算すると、5 回目は 1,860 + 4 × 2,184 = 10,596f で、180 秒 = 10,588f の外に出る
     const events = enemyEventsOf(master, ['range-3min-jump'], 180);
-    expect(events.map((e) => e.start.toFixed(1))).toEqual(['31.0', '67.4', '103.8', '140.2', '176.6']);
+    expect(events.map((e) => e.start.toFixed(1))).toEqual(['31.6', '68.7', '105.9', '143.0']);
     expect(events.every((e) => e.kind === 'untargetable')).toBe(true);
-    expect(events[4]!.end).toBeCloseTo(178.6, 9);
+    expect(events[3]!.end).toBeCloseTo(145.004, 9);
+    expect(31.62 + 4 * 37.128).toBeGreaterThan(180);
     expect(enemyEventsOf(master, [], 180)).toEqual([]);
   });
 
@@ -72,9 +79,10 @@ describe('untargetableRanges', () => {
       { kind: 'untargetable', start: 2.5, end: 4 },
       { kind: 'untargetable', start: 9, end: 20 },
     ];
+    // 秒 → フレームは四捨五入（Stage 21-B: 1 フレーム 0.017 秒）
     expect(untargetableRanges(events, 600)).toEqual([
-      { start: 120, end: 240 },
-      { start: 540, end: 600 },
+      { start: gameSecondsToFrame(2), end: gameSecondsToFrame(4) },
+      { start: gameSecondsToFrame(9), end: 600 },
     ]);
     expect(untargetableRanges(undefined, 600)).toEqual([]);
   });
@@ -220,8 +228,8 @@ describe('編成（calc と sim の両方に効く）', () => {
   });
 
   it('stops every shot and every burst inside the jumps, in both models', () => {
-    const windows = untargetableRanges(jumps, 180 * 60);
-    expect(windows).toHaveLength(5);
+    const windows = untargetableRanges(jumps, gameSecondsToFrames(180));
+    expect(windows).toHaveLength(4);
     const inside = (f: number) => windows.some((w) => w.start <= f && f < w.end);
     const sim = runSimulation(input(jumps));
     for (const log of sim.shots) expect(log!.frames.some(inside)).toBe(false);
@@ -251,7 +259,7 @@ describe('編成（calc と sim の両方に効く）', () => {
     expect(total).toHaveLength(180);
     expect(total.reduce((a, b) => a + b, 0)).toBeCloseTo(sim.totalDamage, 0);
     expect(perSlot[0]!.reduce((a, b) => a + b, 0)).toBeCloseTo(sim.slots[0]!.totalDamage, 0);
-    // 31.0〜33.0 秒は丸ごと狙えない（32 秒目の 1 秒ぶんは 0）
+    // 31.62〜33.62 秒は丸ごと狙えない（32 秒目の 1 秒ぶんは 0）
     expect(total[32]).toBe(0);
   });
 

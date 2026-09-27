@@ -275,7 +275,7 @@ describe('heal and healed (Stage 11, 3.3)', () => {
     expect(heals.every((h) => h.sourceSlotIndex === 0 && h.slotIndex === 0)).toBe(true);
   });
 
-  it('opens the healed window on the heal frame for every ally (60f)', () => {
+  it('opens the healed window on the heal frame for every ally (1 s)', () => {
     const timeline = planBuffTimeline(slots, pass.schedule, 1800, pass.shots);
     const heals = timeline.heals.map((h) => h.frame);
     expect(heals.length).toBeGreaterThan(3);
@@ -283,7 +283,7 @@ describe('heal and healed (Stage 11, 3.3)', () => {
       const starts = timeline.windows.filter((w) => w.slotIndex === slotIndex).map((w) => w.start);
       expect(starts).toEqual(heals);
     }
-    expect(timeline.windows.every((w) => w.end - w.start === 60 || w.end === 1800)).toBe(true);
+    expect(timeline.windows.every((w) => w.end - w.start === gameSecondsToFrames(1) || w.end === 1800)).toBe(true);
   });
 
   it('records the same heals in the first pass loop (pendingHeals) as planHeals', () => {

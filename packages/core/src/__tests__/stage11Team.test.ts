@@ -12,6 +12,7 @@ import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput, type SlotSegmentResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { gameSecondsToFrames } from '../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -123,7 +124,8 @@ describe('録画 41: クラウンの S1・S2・バースト（7.5）', () => {
     for (const i of [0, 1, 2, 3]) {
       const s2 = calc.slots[i]!.windows.filter((w) => w.effect.trigger === 'healed');
       expect(s2.map((w) => w.start)).toEqual(heals.filter((f) => f < plan.frames));
-      expect(s2.every((w) => w.end - w.start === 420 || w.end === plan.frames)).toBe(true);
+      // 7 秒 = 411f（Stage 21-B。録画 56 の▲の発の区間と同じ。056-04）
+      expect(s2.every((w) => w.end - w.start === gameSecondsToFrames(7) || w.end === plan.frames)).toBe(true);
     }
     // クラウンの枠の即時効果にも回復が記録される
     expect(calc.slots[1]!.instants.filter((x) => x.effect.kind === 'heal').map((x) => x.frame)).toEqual(heals);

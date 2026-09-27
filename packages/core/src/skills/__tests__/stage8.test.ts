@@ -1,7 +1,8 @@
 // Stage 8: DSL の追加（射撃の回数・発動の回数・段階突入のトリガー、damage、distributedDamage / burstGaugeSpeed）。
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
-import { planFixedCycle } from '../../burst/fixedCycle.ts';
+import { FIXED_BURST_CYCLE, planFixedCycle } from '../../burst/fixedCycle.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 import type { ShotLog } from '../../frame/shots.ts';
 import type { SkillRaw } from '../../types.ts';
 import { computeBurstHit, resolveDamageEffects, type ResolvedSkillDamage } from '../burstDamage.ts';
@@ -147,9 +148,12 @@ describe('triggerFrames / buffStartFrames (Stage 8)', () => {
 
   it('fires event counts from the atLeast-th event on, every time', () => {
     const schedule = planFixedCycle([{ burstStep: 'Step1' }, { burstStep: 'Step2' }, { burstStep: 'Step3' }], 6000);
-    expect(triggerFrames({ count: 'burstUse', atLeast: 1 }, schedule, 2, 6000)).toEqual([600, 1800, 3000, 4200, 5400]);
-    expect(triggerFrames({ count: 'burstUse', atLeast: 3 }, schedule, 2, 6000)).toEqual([3000, 4200, 5400]);
-    expect(triggerFrames({ count: 'fullBurstStart', atLeast: 5 }, schedule, 0, 6000)).toEqual([5400]);
+    // 固定サイクルの発動は H + kC（Stage 21-B: H = 588f、C = 1,176f）。6,000f に 5 回
+    const { normalFrames: h, cycleFrames: c } = FIXED_BURST_CYCLE;
+    const fires = [0, 1, 2, 3, 4].map((k) => h + k * c);
+    expect(triggerFrames({ count: 'burstUse', atLeast: 1 }, schedule, 2, 6000)).toEqual(fires);
+    expect(triggerFrames({ count: 'burstUse', atLeast: 3 }, schedule, 2, 6000)).toEqual(fires.slice(2));
+    expect(triggerFrames({ count: 'fullBurstStart', atLeast: 5 }, schedule, 0, 6000)).toEqual(fires.slice(4));
     expect(triggerFrames({ count: 'burstUse', atLeast: 6 }, schedule, 2, 6000)).toEqual([]);
     expect(triggerFrames({ count: 'burstUse', atLeast: 1 }, null, 2, 6000)).toEqual([]);
   });
@@ -180,9 +184,11 @@ describe('triggerFrames / buffStartFrames (Stage 8)', () => {
     const character = makeCharacter({}, { skills: { skill1: skill(['20']), skill2: skill([]), burst: skill([]) } });
     const slots = [{ character, definition: def, levels: MAX_SKILL_LEVELS, casterBaseAttack: 1000 }];
     const t = planBuffTimeline(slots, null, frames, [log]);
+    // 1 秒 = gameSecondsToFrames(1)（Stage 21-B: 58f）
+    const len = gameSecondsToFrames(1);
     expect(t.windows.map((w) => [w.start, w.end])).toEqual([
-      [401, 461],
-      [841, 901],
+      [401, 401 + len],
+      [841, 841 + len],
     ]);
     expect(resolveTimed(def, character, MAX_SKILL_LEVELS)[0]!.trigger).toEqual({ count: 'normalShot', every: 10 });
     // shots を渡さなければ射撃の回数は発火しない（Stage 7 までの呼び出し方）

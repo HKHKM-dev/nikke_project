@@ -15,7 +15,7 @@ import { computeTeamDamage } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
-import { framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
+import { framesToGameSeconds, gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -144,8 +144,8 @@ describe('イサベル: 使用回数別の段階とフルバースト 5 秒', ()
 
   it('shortens every full burst to 5 s', () => {
     const windows = calc.schedule!.fullBurstWindows;
-    for (const w of windows.slice(0, -1)) expect(w.end - w.start).toBe(300);
-    expect(summarizeSchedule(calc.schedule!, 10800).fullBursts).toBeGreaterThanOrEqual(5);
+    for (const w of windows.slice(0, -1)) expect(w.end - w.start).toBe(gameSecondsToFrames(5));
+    expect(summarizeSchedule(calc.schedule!, gameSecondsToFrames(180)).fullBursts).toBeGreaterThanOrEqual(5);
   });
 
   it('adds the tier-2 / tier-3 additional damage from the 3rd / 4th burst on (the tier before this activation)', () => {
@@ -242,6 +242,6 @@ describe('録画 20: マナのゲージ速度 70.4%', () => {
   });
 
   it('keeps 5 full bursts 40 s apart (CT-bound)', () => {
-    expect(summarizeSchedule(schedule!, 10800).fullBursts).toBe(5);
+    expect(summarizeSchedule(schedule!, gameSecondsToFrames(180)).fullBursts).toBe(5);
   });
 });

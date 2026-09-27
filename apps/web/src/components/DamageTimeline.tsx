@@ -8,6 +8,7 @@ import {
   type EnemyEvent,
   type EnemyEventKind,
   type LandingFrameSpan,
+  framesToGameSeconds,
 } from '@nikke/core';
 import { formatNumber } from '../format.ts';
 
@@ -63,9 +64,9 @@ export function DamageTimeline({ perSecond, events, fullBursts, landings }: Prop
           <rect
             key={`fb${i}`}
             className="tl-fullburst"
-            x={x(w.start / 60)}
+            x={x(framesToGameSeconds(w.start))}
             y={PAD.top}
-            width={x(w.end / 60) - x(w.start / 60)}
+            width={x(framesToGameSeconds(w.end)) - x(framesToGameSeconds(w.start))}
             height={plotH}
           />
         ))}
@@ -101,13 +102,14 @@ export function DamageTimeline({ perSecond, events, fullBursts, landings }: Prop
           <rect
             key={`ld${i}`}
             className={bandClass(s)}
-            x={x(s.start / 60)}
+            x={x(framesToGameSeconds(s.start))}
             y={PAD.top}
-            width={Math.max(1, x(s.end / 60) - x(s.start / 60))}
+            width={Math.max(1, x(framesToGameSeconds(s.end)) - x(framesToGameSeconds(s.start)))}
             height={BAND_HEIGHT}
           >
             <title>
-              着地点 {landingLabel(s)} {formatNumber(s.start / 60, 1)}–{formatNumber(s.end / 60, 1)} 秒
+              着地点 {landingLabel(s)} {formatNumber(framesToGameSeconds(s.start), 1)}–
+              {formatNumber(framesToGameSeconds(s.end), 1)} 秒
             </title>
           </rect>
         ))}

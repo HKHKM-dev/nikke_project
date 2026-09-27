@@ -128,13 +128,13 @@ describe('runFirstPass: degeneration (1.3)', () => {
 });
 
 describe('runFirstPass: firing windows (1.1)', () => {
-  // SR をチャージ 0.3 秒（18f + 22f = 40f 間隔）・装弾数 1000（リロードなし）にすると、固定サイクルの発動フレーム 600 に撃つ
+  // SR をチャージ 0.33 秒（20f + 22f = 42f 間隔）・装弾数 1000（リロードなし）にすると、固定サイクルの発動フレーム 588（= 42 × 14。Stage 21-B）に撃つ
   const sr: Partial<ShotParams> = {
     maxAmmo: 1000,
     reloadTime: 1,
     rateOfFire: 60,
     endRateOfFire: 60,
-    chargeTime: 0.3,
+    chargeTime: 0.33,
     inputType: 'UP',
   };
 
@@ -145,9 +145,9 @@ describe('runFirstPass: firing windows (1.1)', () => {
     ]);
     const pass = runFirstPass([slotOf(character, def)], { frames: 800, burst: true, burstModel: 'fixed' });
     const frames = pass.shots[0]!.frames;
-    // 600 の射撃は基礎値（次は 600 + 40）。640 からチャージ 0f（解放遅延 22f だけ）で 662・684…
-    expect(frames.filter((f) => f >= 560 && f <= 700)).toEqual([560, 600, 640, 662, 684]);
-    expect(pass.firingWindows).toEqual([expect.objectContaining({ sourceSlotIndex: 0, start: 600, end: 800 })]);
+    // 588 の射撃は基礎値（次は 588 + 42）。630 からチャージ 0f（解放遅延 22f だけ）で 652・674…
+    expect(frames.filter((f) => f >= 546 && f <= 700)).toEqual([546, 588, 630, 652, 674, 696]);
+    expect(pass.firingWindows).toEqual([expect.objectContaining({ sourceSlotIndex: 0, start: 588, end: 800 })]);
   });
 
   it('a battleStart window is registered before the loop, so the first magazine is already buffed', () => {
@@ -266,19 +266,19 @@ describe('runFirstPass: cooldown reduction (4)', () => {
     expect(iii.frame).toBe(fb);
     const atFirst = schedule.cooldownReductions.filter((r) => r.frame === fb);
     expect(atFirst.map((r) => r.slotIndex)).toEqual([0, 1, 2]);
-    // 2.34 秒 = 141f（切り上げ）。III は今撃ったばかり（残り 2400f）なので 141f まるまる縮む
-    expect(atFirst.every((r) => r.frames === 141 && r.applied === 141)).toBe(true);
+    // 2.34 秒 = gameSecondsToFrames(2.34)（切り捨て）。III は今撃ったばかり（残り 40 秒）なので、まるまる縮む
+    const cut = gameSecondsToFrames(2.34);
+    expect(atFirst.every((r) => r.frames === cut && r.applied === cut)).toBe(true);
   });
 
-  it('stacks the per-count reductions in the same frame, each rounded up separately', () => {
+  it('stacks the per-count reductions in the same frame, each converted separately', () => {
     const pass = runFirstPass(team(['2.34', '2.7', '3.17'], liter), { frames: FRAMES, burst: true });
     const schedule = pass.schedule!;
     const third = schedule.fullBurstWindows[2]!.start;
     const iii = schedule.cooldownReductions.filter((r) => r.frame === third && r.slotIndex === 2);
-    expect(iii.map((r) => r.frames)).toEqual([141, 162, 191]);
-    expect(pass.instants.filter((x) => x.frame === third && x.slotIndex === 2).map((x) => x.amount)).toEqual([
-      141, 162, 191,
-    ]);
+    const cuts = [2.34, 2.7, 3.17].map(gameSecondsToFrames);
+    expect(iii.map((r) => r.frames)).toEqual(cuts);
+    expect(pass.instants.filter((x) => x.frame === third && x.slotIndex === 2).map((x) => x.amount)).toEqual(cuts);
   });
 
   it('brings the next full burst forward (the II / III cooldowns are the bottleneck)', () => {

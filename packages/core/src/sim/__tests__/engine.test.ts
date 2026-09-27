@@ -8,6 +8,8 @@ import type { SkillDefinition } from '../../skills/types.ts';
 import type { SlotCondition, TeamSlotInput } from '../../team.ts';
 import type { BurstStep, ShotParams, SkillRaw } from '../../types.ts';
 import { runSimulation, simIntervalTotals } from '../engine.ts';
+import { FIXED_BURST_CYCLE } from '../../burst/fixedCycle.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 
 const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
 const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
@@ -59,14 +61,14 @@ function triggersByCadence(shot: ShotParams, frames: number): number {
 describe('runSimulation without burst', () => {
   it('puts every trigger in the non-full-burst bucket and counts them like the cadence', () => {
     const sim = runSimulation({ slots: [ar, null, sr], enemy, durationSeconds: 180 });
-    expect(sim.frames).toBe(10800);
+    expect(sim.frames).toBe(gameSecondsToFrames(180));
     expect(sim.schedule).toBeNull();
     expect(sim.slots[1]).toBeNull();
     for (const s of sim.slots) {
       if (s === null) continue;
       const totals = simIntervalTotals(s);
       expect(totals.fullBurst).toEqual({ triggers: 0, damage: 0 });
-      expect(totals.nonFullBurst.triggers).toBe(triggersByCadence(s.character.shot, 10800));
+      expect(totals.nonFullBurst.triggers).toBe(triggersByCadence(s.character.shot, sim.frames));
       expect(totals.nonFullBurst.damage).toBeCloseTo(
         totals.nonFullBurst.triggers * s.segments[0]!.trigger.perTrigger,
         6,
@@ -78,9 +80,10 @@ describe('runSimulation without burst', () => {
     expect(sim.events).toEqual([]);
   });
 
-  it('AR fires 1830 times in 180 s (30 magazines of 355f + 30 shots of the 31st, 10650 + 5 × 29 < 10800)', () => {
+  it('AR fires 1799 times in 180 s (29 magazines of 355f + 59 shots of the 30th, 10295 + 5 × 58 < 10588)', () => {
     const sim = runSimulation({ slots: [ar], enemy, durationSeconds: 180 });
-    expect(simIntervalTotals(sim.slots[0]!).nonFullBurst.triggers).toBe(30 * 60 + 30);
+    expect(sim.frames).toBe(10588);
+    expect(simIntervalTotals(sim.slots[0]!).nonFullBurst.triggers).toBe(29 * 60 + 59);
   });
 });
 
@@ -88,7 +91,7 @@ describe('runSimulation with the fixed burst cycle', () => {
   it('does not change the firing pattern, only which bucket each trigger lands in (+0.5 boost in full burst)', () => {
     const off = runSimulation({ slots: [ar, sr], enemy, durationSeconds: 180 });
     const on = runSimulation({ slots: [ar, sr], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
-    expect(on.schedule?.fullBurstFramesTotal).toBe(5400);
+    expect(on.schedule?.fullBurstFramesTotal).toBe(9 * FIXED_BURST_CYCLE.fullBurstFrames);
     for (let i = 0; i < 2; i++) {
       const a = off.slots[i]!;
       const b = on.slots[i]!;
@@ -119,7 +122,8 @@ describe('runSimulation with the fixed burst cycle', () => {
     });
     expect(sim.schedule && slotsByStep(sim.schedule)).toEqual({ Step1: [3], Step2: [0], Step3: [1] });
     const b = sim.slots[1]!;
-    expect(b.burst.activations).toEqual([600, 1800, 3000, 4200, 5400, 6600, 7800, 9000, 10200]);
+    const { normalFrames: h, cycleFrames: c } = FIXED_BURST_CYCLE;
+    expect(b.burst.activations).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8].map((k) => h + k * c));
     expect(b.burst.hit?.multiplier).toBeCloseTo(3.5164, 12);
     expect(b.burst.damage).toBeCloseTo(9 * (b.burst.hit?.perActivation ?? 0), 6);
     expect(sim.slots[2]?.burst.activations).toEqual([]);
@@ -130,7 +134,7 @@ describe('runSimulation with the fixed burst cycle', () => {
     expect(b.totalDamage).toBeCloseTo(b.normalDamage + b.burst.damage, 6);
   });
 
-  it('records events in order when tracing: full burst starts at 600 and bursts fire I → II → III before triggers', () => {
+  it('records events in order when tracing: full burst starts at 10 s and bursts fire I → II → III before triggers', () => {
     const step1 = slot(7, {}, 'Step1', '50');
     const step2 = slot(8, {}, 'Step2', '60');
     const step3 = slot(9, {}, 'Step3', '70');
@@ -142,19 +146,24 @@ describe('runSimulation with the fixed burst cycle', () => {
       burstModel: 'fixed',
       trace: true,
     });
-    const at600 = sim.events.filter((e) => e.frame === 600);
-    expect(at600[0]).toEqual({ frame: 600, kind: 'fullBurstStart' });
-    expect(at600.slice(1, 4).map((e) => (e.kind === 'burst' ? [e.step, e.slot] : null))).toEqual([
+    // Stage 21-B: 10 秒 = 588f、1 サイクル 1,176f
+    const { normalFrames: h, cycleFrames: c } = FIXED_BURST_CYCLE;
+    const atStart = sim.events.filter((e) => e.frame === h);
+    expect(atStart[0]).toEqual({ frame: h, kind: 'fullBurstStart' });
+    expect(atStart.slice(1, 4).map((e) => (e.kind === 'burst' ? [e.step, e.slot] : null))).toEqual([
       ['Step1', 1],
       ['Step2', 2],
       ['Step3', 0],
     ]);
-    expect(at600.slice(4).every((e) => e.kind === 'trigger' && e.fullBurst)).toBe(true);
-    expect(sim.events.find((e) => e.kind === 'fullBurstEnd')?.frame).toBe(1200);
-    const at595 = sim.events.filter((e) => e.frame === 595); // AR は 5f 刻みなので 595 に撃つ（599 は撃たない）
-    expect(at595.length).toBeGreaterThan(0);
-    expect(at595.every((e) => e.kind === 'trigger' && !e.fullBurst)).toBe(true);
-    expect(sim.frames).toBe(1230);
+    expect(atStart.slice(4).every((e) => e.kind === 'trigger' && e.fullBurst)).toBe(true);
+    expect(sim.events.find((e) => e.kind === 'fullBurstEnd')?.frame).toBe(c);
+    const at585 = sim.events.filter((e) => e.frame === 585); // AR は 5f 刻みなので 585 に撃つ（586〜587 は撃たない）
+    expect(at585.length).toBeGreaterThan(0);
+    expect(at585.every((e) => e.kind === 'trigger' && !e.fullBurst)).toBe(true);
+    const at590 = sim.events.filter((e) => e.frame === 590 && e.kind === 'trigger');
+    expect(at590.length).toBeGreaterThan(0);
+    expect(at590.every((e) => e.kind === 'trigger' && e.fullBurst)).toBe(true);
+    expect(sim.frames).toBe(gameSecondsToFrames(20.5));
   });
 
   it('runs a very short battle and an empty team', () => {
@@ -198,8 +207,8 @@ describe('runSimulation on the dynamic cycle (Stage 7)', () => {
       [full + 60, 'Step3', 0],
     ]);
     expect(sim.events.find((e) => e.kind === 'fullBurstStart')?.frame).toBe(full + 60);
-    expect(sim.events.find((e) => e.kind === 'fullBurstEnd')?.frame).toBe(full + 660);
-    // 全員 CT 40 秒なので 2 回目は 1 回目の I から 2,400f 後
-    expect(sim.slots[1]!.burst.activations).toEqual([full + 20, full + 20 + 2400]);
+    expect(sim.events.find((e) => e.kind === 'fullBurstEnd')?.frame).toBe(full + 60 + gameSecondsToFrames(10));
+    // 全員 CT 40 秒なので 2 回目は 1 回目の I から 40 秒後
+    expect(sim.slots[1]!.burst.activations).toEqual([full + 20, full + 20 + gameSecondsToFrames(40)]);
   });
 });

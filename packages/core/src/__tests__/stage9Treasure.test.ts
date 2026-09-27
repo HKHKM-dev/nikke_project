@@ -96,7 +96,8 @@ describe('録画 36: ドレイク単騎（宝物 3 段階）', () => {
   it('adds the 5-shot hit of 201.6% (241,509) and keeps the 10-shot hit (118,059)', () => {
     const every5 = byMultiplier(hits, 2.016);
     const every10 = byMultiplier(hits, 0.9855);
-    expect(every5.length).toBe(2 * every10.length);
+    // 60 秒の終わりで 5 発目だけが余ることがある（Stage 21-B の 60 秒 = 3,529f では 75 発目）
+    expect(every10.length).toBe(Math.floor(every5.length / 2));
     expect(Math.round(nonCritOf(every5[0]!))).toBe(241509);
     expect(Math.round(nonCritOf(every10[0]!))).toBe(118059);
     // 10 発目には両方出る（5・10・15…発目と 10・20…発目）

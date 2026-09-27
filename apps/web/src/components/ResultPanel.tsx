@@ -8,6 +8,7 @@ import {
   formatTimedTrigger,
   formatTrigger,
 } from '../skillLabels.ts';
+import { framesToGameSeconds } from '@nikke/core';
 
 type Props = {
   character: CharacterData;
@@ -66,7 +67,9 @@ function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
 
 /** [0.0–15.0s, 20.0–35.0s] */
 function formatRanges(ranges: readonly { start: number; end: number }[]): string {
-  return ranges.map((r) => `${formatNumber(r.start / 60, 1)}–${formatNumber(r.end / 60, 1)}s`).join(', ');
+  return ranges
+    .map((r) => `${formatNumber(framesToGameSeconds(r.start), 1)}–${formatNumber(framesToGameSeconds(r.end), 1)}s`)
+    .join(', ');
 }
 
 export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）' }: Props) {
@@ -231,12 +234,12 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
           </tr>
           <tr>
             <th>マガジン</th>
-            <td>{`${cadence.triggersPerCycle} 発 / ${formatNumber(cadence.magazineFrames / 60, 2)} 秒`}</td>
+            <td>{`${cadence.triggersPerCycle} 発 / ${formatNumber(framesToGameSeconds(cadence.magazineFrames), 2)} 秒`}</td>
           </tr>
           <tr>
             <th>リロード</th>
             <td>
-              {`${formatNumber(cadence.reloadFrames / 60, 2)} 秒${
+              {`${formatNumber(framesToGameSeconds(cadence.reloadFrames), 2)} 秒${
                 cadence.reloadChunks > 1 ? `（${cadence.reloadChunks} 回）` : ''
               }`}
             </td>

@@ -11,6 +11,7 @@ import {
   type BurstUnit,
 } from '../controller.ts';
 import type { BurstSchedule } from '../schedule.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 
 const NEXT: Record<BurstStep, BurstNextStep> = {
   Step1: 'Step2',
@@ -23,12 +24,18 @@ function unit(burstStep: BurstStep, cooldownFrames: number, nextStep: BurstNextS
   return { burstStep, nextStep, cooldownFrames };
 }
 
+/**
+ * 状態機械の論理だけを見るため、フルバーストとチェーンの打ち切りを 600f に固定した timing（Stage 21-B までの既定）で回す。
+ * 既定値（ゲーム内の 10 秒）は下の 'uses 10 game seconds' で確かめる
+ */
+const TIMING_600: BurstTiming = { ...DEFAULT_BURST_TIMING, fullBurstFrames: 600, chainTimeoutFrames: 600 };
+
 /** 毎フレーム gaugePerFrame を入れて frames フレーム回す */
 function run(
   units: readonly BurstUnit[],
   frames: number,
   gaugePerFrame: number,
-  timing: BurstTiming = DEFAULT_BURST_TIMING,
+  timing: BurstTiming = TIMING_600,
 ): BurstSchedule {
   const state = initialBurstController(units, timing);
   for (let f = 0; f < frames; f++) stepBurstController(state, f, gaugePerFrame);
@@ -40,6 +47,12 @@ const starts = (s: BurstSchedule): number[] => s.fullBurstWindows.map((w) => w.s
 const summary = (s: BurstSchedule): string[] => s.activations.map((a) => `${a.frame}:${a.step}:${a.slotIndex}`);
 
 describe('BurstController', () => {
+  it('uses 10 game seconds for the default full burst and chain timeout (Stage 21-B: 588f)', () => {
+    expect(DEFAULT_BURST_TIMING.fullBurstFrames).toBe(gameSecondsToFrames(10));
+    expect(DEFAULT_BURST_TIMING.chainTimeoutFrames).toBe(gameSecondsToFrames(10));
+    expect(gameSecondsToFrames(10)).toBe(588);
+  });
+
   it('is gauge-bound when cooldowns are short: full → I → II → III with 20f steps, 600f full burst, then refill from 0', () => {
     const s = run([unit('Step1', 0), unit('Step2', 0), unit('Step3', 0)], 1800, 5000); // 200f で満タン
     expect(s.gaugeFullFrames).toEqual([199, 1058]);

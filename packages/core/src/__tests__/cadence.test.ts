@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { computeCadence, reloadChunks, simulateShotFrames } from '../cadence.ts';
 import { firingParams, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
 import type { ShotParams } from '../types.ts';
+import { framesToGameSeconds } from '../time.ts';
 
 function shot(overrides: Partial<ShotParams>): ShotParams {
   return {
@@ -66,7 +67,8 @@ describe('computeCadence (calibrated against recordings)', () => {
     expect(c.firstShotFrames).toBe(0);
     expect(c.reloadFrames).toBe(60);
     expect(c.cycleFrames).toBe(355);
-    expect(c.triggersPerSecond).toBeCloseTo((60 * 60) / 355, 6);
+    // 毎秒はゲーム内の秒（Stage 21-B。355f = 6.035 秒）
+    expect(c.triggersPerSecond).toBeCloseTo(60 / framesToGameSeconds(355), 6);
   });
 
   it('SMG: 1440 rpm accumulates to 2.5f average (measured: period-5 autocorrelation, 120 rounds ≈ 298f)', () => {
@@ -85,7 +87,7 @@ describe('computeCadence (calibrated against recordings)', () => {
   it('RL: same charge cadence, reload 120f → 612f cycle (measured 610f)', () => {
     const c = computeCadence(RL);
     expect(c.cycleFrames).toBe(612);
-    expect(c.triggersPerSecond).toBeCloseTo(360 / 612, 6);
+    expect(c.triggersPerSecond).toBeCloseTo(6 / framesToGameSeconds(612), 6);
   });
 
   it('MG: spin-up from 60 rpm (+100 rpm per shot) reaches 1f/shot, 300 rounds span ~390f (measured 387f)', () => {

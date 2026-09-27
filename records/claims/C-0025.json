@@ -5,7 +5,7 @@
   "topic": "敵・的・場面",
   "grade": "反復実測",
   "basis": "`046-02`・`047-02`、verification.md Stage 16-B",
-  "model": "`data/enemies.json` の `range-3min-jump`",
+  "model": "`data/enemies.json` の `range-3min-jump`（Stage 21-B で、読んだフレームが変わらないようゲーム内の秒に直した: 最初 31.62 秒・37.128 秒ごと・2 秒）",
   "replaces": [],
-  "updated": "2026-09-26"
+  "updated": "2026-09-27"
 }

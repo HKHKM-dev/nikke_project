@@ -14,6 +14,7 @@ import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun, type SkillHitEvent } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput, type TeamResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { gameSecondsToFrames } from '../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -90,17 +91,20 @@ describe('録画 47 の予測（7.5）', () => {
   const stepAt = new Map(hits.map((h) => [h.frame, h.effect.cycle!.step]));
 
   it('opens 5 full bursts of 10 s, 40 s apart, with 紅蓮BS as III', () => {
-    expect(fb.map((w) => w.start)).toEqual([470, 2870, 5270, 7670, 10070]);
-    expect(fb.every((w) => w.end - w.start === 600 && w.burstUsers.includes(2))).toBe(true);
+    // Stage 21-B: 40 秒 = 2,352f、10 秒 = 588f
+    expect(fb.map((w) => w.start)).toEqual([0, 1, 2, 3, 4].map((k) => 470 + k * gameSecondsToFrames(40)));
+    expect(fb.every((w) => w.end - w.start === gameSecondsToFrames(10) && w.burstUsers.includes(2))).toBe(true);
   });
 
   it('refills to 14 at the full burst start and opens the tier window for 10 s from the burst', () => {
     expect(plan.instants.filter((x) => x.slotIndex === 2 && x.effect.kind === 'ammoRefill')).toHaveLength(5);
     const maxAmmo = plan.timeline.windows.filter((w) => w.slotIndex === 2 && w.effect.stat === 'maxAmmo');
-    expect(maxAmmo.map((w) => [w.start, w.end])).toEqual(fb.map((w) => [w.start, w.start + 600]));
+    expect(maxAmmo.map((w) => [w.start, w.end])).toEqual(fb.map((w) => [w.start, w.start + gameSecondsToFrames(10)]));
     const windows = plan.timeline.cycleWindows;
     const bursts = plan.schedule!.activations.filter((a) => a.slotIndex === 2).map((a) => a.frame);
-    expect(windows.map((w) => [w.slotIndex, w.start, w.end, w.every])).toEqual(bursts.map((f) => [2, f, f + 600, 1]));
+    expect(windows.map((w) => [w.slotIndex, w.start, w.end, w.every])).toEqual(
+      bursts.map((f) => [2, f, f + gameSecondsToFrames(10), 1]),
+    );
   });
 
   it('fires a tier on every shot inside the window and returns to multiples of 3 of the running count after it', () => {
