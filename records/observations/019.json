@@ -22,5 +22,20 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "019-02",
+    "recording": "019",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0003",
+    "readAt": "2026-09-27",
+    "value": [25, 28, 28, 29],
+    "unit": "f",
+    "description": "フルバーストの前後で、3 分モードの残り時間の秒が変わる間隔が延びた分（1 秒 = 58.84f との差。1〜4 回目のフルバースト）。I・II・III の発動から「FULL BURST!」の表示のあいだ",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode summary",
+      "note": "長い間隔 f1206(+84)・3582(+87)・5959(+87)・8335(+88)。1 回目の前後は画面を 10f おきに見た"
+    }
   }
 ]
