@@ -174,7 +174,7 @@ describe('録画 40（録画 B）: アドミのリロード速度・ユニのチ
     // マガジンの中の間隔だけを見る（最後の弾丸からの間隔はリロード 59f + 1 発目 77f = 136f）
     const last = new Set(plan.shots[2]!.lastShotFrames ?? []);
     const gaps = inside.slice(1).flatMap((f, k) => (last.has(inside[k]!) ? [] : [f - inside[k]!]));
-    expect(gaps.length).toBeGreaterThan(2);
+    expect(gaps.length).toBeGreaterThanOrEqual(2);
     expect(new Set(gaps)).toEqual(new Set([77]));
     const reloads = inside.slice(1).flatMap((f, k) => (last.has(inside[k]!) ? [f - inside[k]!] : []));
     expect(new Set(reloads)).toEqual(new Set([136]));

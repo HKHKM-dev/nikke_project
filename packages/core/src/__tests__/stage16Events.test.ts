@@ -186,8 +186,8 @@ describe('バースト（狙えない間はオートバーストが発動しな�
     expect(state.gaugeFullFrames).toEqual([0]);
     expect(state.activations.map((a) => [a.frame, a.slotIndex])).toEqual([
       [100, 0],
-      [120, 1],
-      [140, 2],
+      [129, 1],
+      [158, 2],
     ]);
   });
 });

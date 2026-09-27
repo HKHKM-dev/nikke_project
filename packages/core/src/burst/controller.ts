@@ -16,12 +16,17 @@ import type { BurstActivation, BurstSchedule, BurstStepKey, CooldownReduction, F
 
 /** バーストゲージの上限（CDN の target_burst_energy_pershot と同じ単位） */
 export const BURST_GAUGE_MAX = 1_000_000;
+/**
+ * バーストの段の長さ（フレーム）。満タン（BURST バーが消えて I のアイコンに替わる）→ I、I → II、II → III の発動は、
+ * どれも 29f（ゲーム内の約 0.5 秒）。キャラによらない（C-0073。V-0021 で 9 本・28〜30f）
+ */
+const BURST_STAGE_FRAMES = 29;
 /** ゲージ満タンから I の発動までのフレーム（満タン後に I の CT 明けを待った場合は、CT 明けのフレームですぐ撃つ） */
-export const BURST_READY_DELAY_FRAMES = 20;
+export const BURST_READY_DELAY_FRAMES = BURST_STAGE_FRAMES;
 /** I → II の発動の間隔（フレーム） */
-export const BURST_STEP1_TO_STEP2_FRAMES = 20;
+export const BURST_STEP1_TO_STEP2_FRAMES = BURST_STAGE_FRAMES;
 /** II → III の発動の間隔（フレーム） */
-export const BURST_STEP2_TO_STEP3_FRAMES = 20;
+export const BURST_STEP2_TO_STEP3_FRAMES = BURST_STAGE_FRAMES;
 /** StepFull の発動からフルバースト開始まで（フレーム）。Stage 6 の実測で 3f 未満 */
 export const FULL_BURST_START_DELAY_FRAMES = 0;
 /**
