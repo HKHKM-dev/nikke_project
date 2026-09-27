@@ -1,0 +1,42 @@
+{
+  "id": "080",
+  "date": "2026-09-28",
+  "folder": "range",
+  "file": "20260928-080_AR_asuka_auto.mp4",
+  "original": "2026-09-28_04-58-53.mp4",
+  "durationSec": 227.8,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 275.5,
+  "sha256": "eb4996798ef9",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true,
+      "note": "アスカを操作・AUTO 射撃 ON・オートバースト ON"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。フラワー + ユニ + アスカの 3 体（戦闘履歴で枠と名前を確かめた）。**AUTO 射撃 ON**・**オートバースト ON**（画面左上のボタンで確かめた）。V-0029（出どころの違う吸収回復とアスカの S1）"
+}
