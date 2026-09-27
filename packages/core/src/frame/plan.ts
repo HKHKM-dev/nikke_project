@@ -194,9 +194,17 @@ export function planSkillHits(
 }
 
 /**
- * ニヒリスター編: 持続ダメージの tick のフレーム（plan/design-nihilister.md 2.1 節の T1）。発火 f ごとに
- * f + gameSecondsToFrame(k × 間隔)（k = 1 … floor(維持 ÷ 間隔)。時刻の四捨五入なので長さの切り捨てを積み重ねない）。
- * 持続中の再発火は付け直しなので、次の発火のフレーム以降の tick は捨てる。戦闘の終わり（frames）以降も出さない
+ * ニヒリスター編: 持続ダメージの 2 回目以降の tick の遅れ（秒）。1 回目の tick は付いた瞬間に出て、k 回目（k ≥ 1）は
+ * k × 間隔 + この値の後に出る（C-0101）。ニヒリスターの火傷（1 秒間隔・10 秒）で 0・1.5・2.5 … 9.5 秒の 10 回
+ * （録画 081 の 9 回のバーストで ±2f。1 秒間隔でない持続ダメージでも同じ 0.5 秒かは未確認）
+ */
+export const DOT_LATER_TICK_DELAY_SECONDS = 0.5;
+
+/**
+ * ニヒリスター編: 持続ダメージの tick のフレーム（plan/design-nihilister.md 2.1 節・経過）。発火 f ごとに、f と
+ * f + gameSecondsToFrame(k × 間隔 + DOT_LATER_TICK_DELAY_SECONDS)（k = 1 … floor(維持 ÷ 間隔) − 1）の計 floor(維持 ÷ 間隔) 回。
+ * 時刻の四捨五入なので長さの切り捨てを積み重ねない。持続中の再発火は付け直しなので、次の発火のフレーム以降の tick は捨てる。
+ * 戦闘の終わり（frames）以降も出さない
  */
 export function dotTickFrames(
   fires: readonly number[],
@@ -208,8 +216,8 @@ export function dotTickFrames(
   const ticks: number[] = [];
   fires.forEach((fire, i) => {
     const next = fires[i + 1] ?? Infinity;
-    for (let k = 1; k <= count; k++) {
-      const tick = fire + gameSecondsToFrame(k * intervalSeconds);
+    for (let k = 0; k < count; k++) {
+      const tick = k === 0 ? fire : fire + gameSecondsToFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS);
       if (tick >= next || tick >= frames) break;
       ticks.push(tick);
     }

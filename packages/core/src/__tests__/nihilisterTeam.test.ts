@@ -72,7 +72,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, nihilis
   const calc = computeTeamDamage(input);
   const plan = planTeamRun(input);
 
-  it('burns 10 ticks from 1 s after each burst of Nihilister (T1, restart when re-applied)', () => {
+  it('burns 10 ticks on each burst of Nihilister: at the burst, then from 1.5 s every second (C-0101, restart when re-applied)', () => {
     const uses = activationFramesOfSlot(plan.schedule!, nihilister);
     expect(uses.length).toBeGreaterThan(0);
     const ticks = plan.skillHits.filter((h) => h.slotIndex === nihilister && h.effect.dot !== undefined);

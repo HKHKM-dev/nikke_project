@@ -80,11 +80,11 @@ describe('dot の解決', () => {
   });
 });
 
-describe('dotTickFrames（T1: 1 秒後から 1 秒ごと）', () => {
-  // 1 秒 = 1 ÷ 0.017 ≒ 58.82f。k 秒後の時刻を四捨五入する
-  const OFFSETS = [59, 118, 176, 235, 294, 353, 412, 471, 529, 588];
+describe('dotTickFrames（付いた瞬間と、1.5 秒後から 1 秒ごと。C-0101）', () => {
+  // 1 秒 = 1 ÷ 0.017 ≒ 58.82f。0 と、k + 0.5 秒後（k = 1 … 9）の時刻を四捨五入する（録画 081 は 0・88・147・205・264・323・382・441・499・558）
+  const OFFSETS = [0, 88, 147, 206, 265, 324, 382, 441, 500, 559];
 
-  it('gives 10 ticks from 1 s after the fire, rounding each time', () => {
+  it('gives 10 ticks: one at the fire, then from 1.5 s every second, rounding each time', () => {
     expect(dotTickFrames([1000], 1, 10, 10588)).toEqual(OFFSETS.map((o) => 1000 + o));
   });
 
@@ -102,6 +102,6 @@ describe('dotTickFrames（T1: 1 秒後から 1 秒ごと）', () => {
   });
 
   it('counts floor(duration / interval) ticks', () => {
-    expect(dotTickFrames([0], 2, 5, 10588)).toEqual([118, 235]);
+    expect(dotTickFrames([0], 2, 5, 10588)).toEqual([0, 147]);
   });
 });
