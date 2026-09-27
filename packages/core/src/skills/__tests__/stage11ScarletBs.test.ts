@@ -61,7 +61,7 @@ describe('DSL (7.1)', () => {
     expect(() => parseSkillDefinition(withEffects('skill1', [CYCLE, CYCLE]))).toThrow(/at most one cycle/);
   });
 
-  it('reads gaugeHits on a step as ascending positive frame delays (V-0029)', () => {
+  it('reads gaugeHits on a step as ascending positive frame delays (V-0030)', () => {
     const withHits = (gaugeHits: unknown) =>
       withEffects('skill1', [{ ...CYCLE, steps: [{ ...CYCLE.steps[0], gaugeHits }, CYCLE.steps[1]] }]);
     const def = parseSkillDefinition(withHits([5, 19, 33]));

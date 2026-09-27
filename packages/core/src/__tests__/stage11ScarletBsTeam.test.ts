@@ -92,7 +92,7 @@ describe('録画 47 の予測（7.5）', () => {
 
   it('opens 5 full bursts of 10 s, 40 s apart, with 紅蓮BS as III', () => {
     // Stage 21-B: 40 秒 = 2,352f、10 秒 = 588f。C-0073 で段の間隔を 20f → 29f にして 470 → 497。
-    // V-0028 で 1 発のゲージを ×1.2 → ×1.0 にして 497 → 646、V-0029 で S1 の段のヒットのゲージ（C-0085）を入れて 497 に戻った
+    // V-0028 で 1 発のゲージを ×1.2 → ×1.0 にして 497 → 646、V-0030 で S1 の段のヒットのゲージ（C-0085）を入れて 497 に戻った
     // （録画 47 の 1 回目は約 486f）
     expect(fb.map((w) => w.start)).toEqual([0, 1, 2, 3, 4].map((k) => 497 + k * gameSecondsToFrames(40)));
     expect(fb.every((w) => w.end - w.start === Math.min(gameSecondsToFrames(10), plan.frames - w.start))).toBe(true);
@@ -139,7 +139,7 @@ describe('録画 47 の予測（7.5）', () => {
   });
 });
 
-describe('S1 の段のヒットで溜まるゲージ（V-0029・C-0085）', () => {
+describe('S1 の段のヒットで溜まるゲージ（V-0030・C-0085）', () => {
   const plan = planTeamRun(REC46);
   const shots = plan.shots[0]!.frames;
 

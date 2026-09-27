@@ -393,7 +393,7 @@ export type CycleStep = {
   ref: number;
   damageType: SkillDamageType;
   /**
-   * V-0029: この段のヒットのうちバーストゲージを溜めるものの、段を出した射撃からの遅れ（フレーム。昇順）。
+   * V-0030: この段のヒットのうちバーストゲージを溜めるものの、段を出した射撃からの遅れ（フレーム。昇順）。
    * 1 ヒットで射手の targetBurstEnergyPerShot（フルチャージ倍率なし）を溜める。省略は溜めない
    */
   gaugeHits?: number[];
@@ -709,7 +709,7 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
   return effect;
 }
 
-/** V-0029: 段のゲージのヒットの遅れ（1 以上の整数・昇順・1 つ以上。射撃と同じフレームのゲージは射撃の前に足し終えているので 0 は不可） */
+/** V-0030: 段のゲージのヒットの遅れ（1 以上の整数・昇順・1 つ以上。射撃と同じフレームのゲージは射撃の前に足し終えているので 0 は不可） */
 function parseGaugeHits(v: Json, path: string): number[] {
   if (!Array.isArray(v) || v.length === 0) fail(path, 'expected a non-empty array of frame delays');
   return v.map((d, i) => {

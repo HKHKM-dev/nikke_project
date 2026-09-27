@@ -32,7 +32,7 @@
 // Stage 16-B（plan/design-stage16.md 9.3 節）: 敵を狙えない窓（options.untargetable）の間は、全員が撃たず（ハイドしてリロード）、
 // オートバーストも発動しない。ゲージは射撃が無いので溜まらない。持続バフ・CT・フルバーストの時間はそのまま進む。
 //
-// V-0029: 段の循環（cycle）の段に gaugeHits があれば、手順 2 の後にその枠の射撃を数えて段を追い（skills/cycles.ts の cycleFires と
+// V-0030: 段の循環（cycle）の段に gaugeHits があれば、手順 2 の後にその枠の射撃を数えて段を追い（skills/cycles.ts の cycleFires と
 // 同じ規則）、段のヒットのゲージを当たるフレームに予約して、そのフレームの手順 2 で足す（紅蓮BS。C-0085）。
 // この編成では、時刻表は射撃のゲージだけの planDynamicSchedule とは違う。
 import { planFixedCycle } from '../burst/fixedCycle.ts';
@@ -141,12 +141,12 @@ export type FirstPassResult = {
   instants: InstantApplication[];
   /** Stage 11 アリス編: 順位のためだけに追った攻撃力の窓（topAttack の射撃系・即時効果が無ければ空）。テスト用 */
   rankAttackWindows: FiringWindow[];
-  /** V-0029: 段の循環のヒットで溜めたゲージ（予約した順）。frame は当たるフレーム、shotFrame は段を出した射撃。テスト用 */
+  /** V-0030: 段の循環のヒットで溜めたゲージ（予約した順）。frame は当たるフレーム、shotFrame は段を出した射撃。テスト用 */
   cycleGaugeHits: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
 };
 
 /**
- * V-0029: ゲージを溜める段の循環を 1 パス目で追う状態。規則は skills/cycles.ts の cycleFires と同じ
+ * V-0030: ゲージを溜める段の循環を 1 パス目で追う状態。規則は skills/cycles.ts の cycleFires と同じ
  * （通算の射撃回数 n、窓の中は窓の every。窓は間隔の変更の発火から durationFrames の和集合）
  */
 type CycleGaugeTracker = {
@@ -388,7 +388,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     while (hitRateAt[i]! + 1 < spans.length && spans[hitRateAt[i]!]!.end <= f) hitRateAt[i]! += 1;
     return energies[i]! * (spans[hitRateAt[i]!]?.hitRate ?? 1);
   };
-  // V-0029: 段のヒットでゲージを溜める循環。溜めるゲージは当たるフレームに予約する（pendingGauge）
+  // V-0030: 段のヒットでゲージを溜める循環。溜めるゲージは当たるフレームに予約する（pendingGauge）
   const cycleTrackers: CycleGaugeTracker[] = [];
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
@@ -466,7 +466,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     const blocked = block !== undefined && block.start <= f && f < block.end;
     const hideNow = blocked && block.start === f;
     const unhideNow = block !== undefined && block.end === f;
-    // 1. 射手（V-0029: 前のフレームまでに予約した段のヒットのゲージも、このフレームのゲージに入れる）
+    // 1. 射手（V-0030: 前のフレームまでに予約した段のヒットのゲージも、このフレームのゲージに入れる）
     let gauge = pendingGauge.get(f) ?? 0;
     pendingGauge.delete(f);
     slots.forEach((slot, i) => {
@@ -496,7 +496,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     });
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）
     if (controller !== null) stepBurstController(controller, f, gauge, blocked);
-    // 2b. V-0029: 段の循環。このフレームの発動で開く間隔の変更の窓を足してから（窓は発火のフレームから）、このフレームの射撃を数える
+    // 2b. V-0030: 段の循環。このフレームの発動で開く間隔の変更の窓を足してから（窓は発火のフレームから）、このフレームの射撃を数える
     if (cycleTrackers.length > 0) {
       const activations = activationsOf();
       while (nextCycleActivation < activations.length && activations[nextCycleActivation]!.frame <= f) {

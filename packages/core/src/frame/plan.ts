@@ -87,7 +87,7 @@ export type TeamPlan = {
   untargetable: FrameRange[];
   /** Stage 18-C: 着地点の計画（条件が自動の枠が無い、または的の表の無い敵では null） */
   landing: LandingPlan | null;
-  /** V-0029: 段の循環のヒットで溜めたゲージ（1 パス目の記録。frame/firstPass.ts） */
+  /** V-0030: 段の循環のヒットで溜めたゲージ（1 パス目の記録。frame/firstPass.ts） */
   cycleGaugeHits: FirstPassResult['cycleGaugeHits'];
 };
 

@@ -28,7 +28,7 @@ export type ResolvedCycle = {
   effectIndex: number;
   trigger: ResolvedShotCountTrigger;
   steps: ResolvedDamageEffect[];
-  /** V-0029: 段ごとの、ゲージを溜めるヒットの射撃からの遅れ（溜めない段は空） */
+  /** V-0030: 段ごとの、ゲージを溜めるヒットの射撃からの遅れ（溜めない段は空） */
   gaugeHits: number[][];
 };
 
