@@ -231,6 +231,7 @@ node tools/captures/ammo.ts  <動画> [--crop 785,902,110,26] [--max 300] [--mod
 node tools/captures/hud.ts   <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop 810,34,300,38]
 node tools/captures/aim.ts   <動画> [--from N] [--to N] [--step 60] [--csv out.csv] [--debug-dir DIR]
 node tools/captures/timer.ts <動画...> [--mode summary|changes]   # 残り時間の秒の変わり目と、1 秒あたりのフレーム数（V-0003）
+node tools/captures/dups.ts  <動画> [--from N] [--to N] [--mode summary|list|diff]   # 重複フレーム（前と同じ画）を拾う（V-0004）
 ```
 
 `gauge.ts` は画面右の BURST バー（x 1793〜1905・y 442）の充填率を 1 フレームずつ読む（Stage 7 のゲージ較正用）。`events` は溜め始め・満タン・バー消失、`jumps` は 1 フレームで跳ねた増分（SR / SG の 1 発ずつ）、`series` は充填率の列。フルバースト中・CT 待ち・チェーン中はバーの位置に別の UI が出るので読めない（`-`）。**ゲージの較正を撮るときは、誰を操作しているか（照準画面が出ているニケ）を台帳に書く**。操作キャラと AI でゲージ量が違うらしい（[../verification.md](../verification.md) Stage 7 節）。
