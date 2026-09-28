@@ -1,6 +1,6 @@
 // calc のハイブリッドの限界と案 (b) の試作（plan/design-calc-hybrid.md）。既定の calc（'hybrid'）は変えず、
 // options.shotCounting = 'firingSlots' のときだけ「射撃の窓を持つ枠は全グループを射撃の列から数える」。
-// 'average'（案 (a)）は全グループを平均レートで置く（既定にするかはオーナーの決定待ち）。
+// 'average'（案 (a)）は全グループを平均レートで置く（比較用。既定はハイブリッドのまま。plan/design-calc-hybrid.md 10 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
