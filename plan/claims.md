@@ -13,7 +13,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 74・仮説 21・棄却 14・範囲外 1（計 110）
+件数: 確定 75・仮説 21・棄却 14・範囲外 1（計 111）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -443,6 +443,12 @@
   - モデル側: `data/skills/261.json` の skill2 の effects[0]（`damage`）。値は `skills/burstDamage.ts` の `computeSkillHit`
   - 検証記録: V-0032
   - 定義: `data/skills/261.json` の skill2 の effects[0]
+- **C-0111** ニヒリスターのバーストの火傷の tick は、フルバースト中に出たものにフルバースト補正が乗る。倍率ダメージと同じく倍率グループに 0.5 を足す（1 + 会心 + 0.5）。補正は tick ごとに、その時点がフルバースト中かで決まる（火傷が付いた時点はフルバーストの前でも、後の tick には乗る）
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-09-29
+  - 根拠: `084-01`（フルバースト中の tick の会心なし 23,860）・`084-02`（会心 31,813）・`084-03`（フルバーストの外の tick 15,906）。どれもモデルとの差は 1 未満。`084-04`（フルバーストにつながった 5 回の火傷の 2〜10 回目の tick 45 回が、すべて 23,860 か 31,813。15,906 と、補正を別に掛けた会心の 35,789 は 1 回も出ない）、`084-06`（つながらなかった 4 回の火傷は 15,906 と 23,860）。1 回目の tick はバーストの倍率ダメージと同じフレームで、III のバーストより前（フルバーストの外）。V-0039
+  - モデル側: `frame/plan.ts` の `planSkillHits` の push（tick のフレームで `isInFullBurst` を見て `computeSkillHit` の fullBurstBonus に渡す）。`damage.ts` の `SKILL_HIT_FULL_BURST_BONUS`
+  - 検証記録: V-0039
+  - 定義: `data/skills/261.json` の burst の effects[1]
 
 ## 敵・的・場面
 

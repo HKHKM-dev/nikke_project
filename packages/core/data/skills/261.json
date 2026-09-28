@@ -57,10 +57,10 @@
           "intervalSeconds": 1,
           "durationRef": 3,
           "assumes": {
-            "ja": "フルバースト補正・攻撃ダメージ▲は倍率ダメージと同じく乗る。持続中に付き直すと数え直す（tick の時刻は付いた瞬間と 1.5 秒後から 1 秒ごとの計 10 回。C-0101）",
-            "en": "Full Burst and ATK damage up apply as for skill damage. Re-applying it restarts the count (ticks at application and every second from 1.5 s, 10 in total; C-0101)"
+            "ja": "攻撃ダメージ▲は倍率ダメージと同じく乗る。持続中に付き直すと数え直す（tick の時刻は付いた瞬間と 1.5 秒後から 1 秒ごとの計 10 回。C-0101。フルバースト補正は tick ごとに乗る。C-0111）",
+            "en": "ATK damage up applies as for skill damage. Re-applying it restarts the count (ticks at application and every second from 1.5 s, 10 in total; C-0101. The Full Burst bonus applies per tick; C-0111)"
           },
-          "claims": ["C-0100", "C-0101"]
+          "claims": ["C-0100", "C-0101", "C-0111"]
         },
         {
           "kind": "timed",

@@ -1,0 +1,42 @@
+{
+  "id": "084",
+  "date": "2026-09-29",
+  "folder": "range",
+  "file": "20260929-084_SR_nihilister_full-burst.mp4",
+  "original": "2026-09-29_07-16-07.mp4",
+  "durationSec": 205.7,
+  "frames": 12341,
+  "fps": 60,
+  "sizeMB": 249.5,
+  "sha256": "8008f62d8e0b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 261,
+      "name": "ニヒリスター",
+      "controlled": true,
+      "note": "ニヒリスターを操作・AUTO 射撃 ON・オートバースト ON"
+    },
+    {
+      "slot": 3,
+      "rid": 225,
+      "name": "紅蓮：ブラックシャドウ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。ココア（I）+ ニヒリスター（II）+ 紅蓮：ブラックシャドウ（III）の 3 体（戦闘履歴のパネル（f12225〜）で枠と名前を確かめた。Lv.400）。AUTO 射撃 ON・オートバースト ON（画面左上のボタン）。録画 081 に III を 1 人足した構成で、ニヒリスターのバーストは 1 回おきにフルバーストにつながる。戦闘開始は f911（timer.ts --mode changes の +319f の次の +89f の変わり目）。HUD の最後の値 387,039,922 は、戦闘履歴の 3 人の与ダメージの和と一致。V-0039"
+}
