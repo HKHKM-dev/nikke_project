@@ -13,8 +13,8 @@
 // （射撃場のプリセットと、--enemy を省いた属性なしの射撃場の的で効く。ほかの敵では手入力の値と注記）。manual は --core-hit-rate・
 // --hit-rate（省略 1）と距離ボーナスあり。18-C2 から既定は auto で、--core-hit-rate か --hit-rate を指定したら manual。
 // --mid-far A|B|C で中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。自動の枠は、使った条件の発数平均を出す。
-// calc のハイブリッドの案 (b)（plan/design-calc-hybrid.md）: --shot-counting firingSlots で、枠ごとの表に案 (b) の calc の列を足す
-// （既定の calc の列は変えない）。
+// calc の数え方（plan/design-calc-hybrid.md）: --shot-counting hybrid|firingSlots|average で、枠ごとの表にその数え方の calc の列を足す
+// （既定の calc の列は変えない。既定は hybrid）。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -77,14 +77,14 @@ const { values } = parseArgs({
     // Stage 18-C: 条件の決め方（auto | manual。18-C2 から既定 auto）と、中遠の着地点の固定（A | B | C）
     condition: { type: 'string' },
     'mid-far': { type: 'string' },
-    // plan/design-calc-hybrid.md: 案 (b) の calc を並べて出す（firingSlots）
+    // plan/design-calc-hybrid.md: 別の数え方の calc を並べて出す（hybrid・firingSlots・average）
     'shot-counting': { type: 'string' },
   },
 });
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--shot-counting firingSlots]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--shot-counting hybrid|firingSlots|average]',
   );
   process.exit(2);
 }
@@ -240,13 +240,18 @@ const input = {
   controlledSlot: values.controlled === undefined ? null : Number(values.controlled) - 1,
 };
 const shotCounting = values['shot-counting'];
-if (shotCounting !== undefined && shotCounting !== 'firingSlots') {
-  console.error(`--shot-counting takes firingSlots, got ${shotCounting}`);
+if (
+  shotCounting !== undefined &&
+  shotCounting !== 'hybrid' &&
+  shotCounting !== 'firingSlots' &&
+  shotCounting !== 'average'
+) {
+  console.error(`--shot-counting takes hybrid, firingSlots or average, got ${shotCounting}`);
   process.exit(2);
 }
 const sim = runSimulation(input);
 const calc = computeTeamDamage(input);
-// 案 (b): 射撃の窓を持つ枠は全グループを射撃の列から数える calc（比較の列だけに使う）
+// 比べる数え方の calc（比較の列だけに使う。列の見出しの (b) は「比べる側」の意味）
 const calcB = shotCounting === undefined ? null : computeTeamDamage(input, { shotCounting });
 // Stage 11 紅蓮BS: 射撃の列（循環の窓ごとの並びの表示用）
 const plan = planTeamRun(input);
@@ -386,7 +391,7 @@ const rows = slots.map((slot, i) => {
 });
 console.table(rows);
 
-/** 案 (b) の calc の合計と sim との差、射撃の列から数えたグループの数（既定の calc → 案 (b)） */
+/** 比べる数え方の calc の合計と sim との差、射撃の列から数えたグループの数（既定の calc → 比べる側） */
 function bColumns(i: number, simTotal: number): Record<string, string> {
   const c = calc.slots[i]!;
   const b = calcB!.slots[i]!;

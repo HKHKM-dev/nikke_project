@@ -1,5 +1,6 @@
 // calc のハイブリッドの限界と案 (b) の試作（plan/design-calc-hybrid.md）。既定の calc（'hybrid'）は変えず、
 // options.shotCounting = 'firingSlots' のときだけ「射撃の窓を持つ枠は全グループを射撃の列から数える」。
+// 'average'（案 (a)）は全グループを平均レートで置く（既定にするかはオーナーの決定待ち）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -100,5 +101,18 @@ describe('案 (b)（shotCounting: firingSlots）', () => {
 
   it('射撃の窓が 1 つも無い編成では既定と同じ結果', () => {
     expect(computeTeamDamage(STAGE8, { shotCounting: 'firingSlots' })).toEqual(computeTeamDamage(STAGE8));
+  });
+});
+
+describe('案 (a)（shotCounting: average。design-stage10.md 5 節）', () => {
+  it('射撃の列から数えるグループが無い（全グループが平均レート）', () => {
+    const a = computeTeamDamage(LRNAM, { shotCounting: 'average' });
+    for (const slot of a.slots) {
+      expect(slot!.segments.every((g) => g.triggerSource === 'average')).toBe(true);
+    }
+  });
+
+  it('射撃の窓が 1 つも無い編成では既定と同じ結果', () => {
+    expect(computeTeamDamage(STAGE8, { shotCounting: 'average' })).toEqual(computeTeamDamage(STAGE8));
   });
 });
