@@ -1,0 +1,37 @@
+{
+  "id": "083",
+  "date": "2026-09-29",
+  "folder": "range",
+  "file": "20260929-083_SR_helm_crit.mp4",
+  "original": "2026-09-29_06-49-29.mp4",
+  "durationSec": 200.6,
+  "frames": 12034,
+  "fps": 60,
+  "sizeMB": 243.1,
+  "sha256": "732f00e90583",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 242,
+      "name": "フォルクヴァン",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "note": "操作キャラの枠・AUTO・**宝物あり**",
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。ヘルム・フォルクヴァン（どちらも水冷）は属性有利）。枠と名前は戦闘履歴のパネル（f11685〜）で確かめた。AUTO 射撃・オートバーストとも ON（画面左上のボタンの色。オートバーストは V-0038 の計画では OFF だった）。II（フォルクヴァン）と III（ヘルム）だけで I がいないので、バーストは 1 回も起きていない（BURST バーは満タンで I のアイコンのまま。HUD の増分に、通常攻撃と追加ダメージで分けられないバーストの値は無い）。宝物の段階 3 は録画 079・082 と同じヘルム。V-0038"
+}

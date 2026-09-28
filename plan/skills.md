@@ -233,7 +233,7 @@
 ## 352 ヘルム
 
 - **skill1**: supported
-  - effects[0] timed・lastShot・normalCritRate: C-0097（仮説）
+  - effects[0] timed・lastShot・normalCritRate: C-0097（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・attackDamage: C-0098（仮説）
   - notes[0] 阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない: 根拠なし
@@ -242,7 +242,7 @@
   - notes[0] 味方全体の吸収回復（攻撃ダメージの一定割合を回復）は未対応（回復を受けた時の効果を起こさない）: 根拠なし
   - notes[1] 説明文に出てこない数値（description_value_04・05）は使っていない: 根拠なし
 - **宝物版 skill1**: partial
-  - effects[0] timed・lastShot・normalCritRate: C-0097（仮説）
+  - effects[0] timed・lastShot・normalCritRate: C-0097（確定）
   - effects[1] burstGauge・fullChargeShot: C-0094（仮説）、C-0103（確定）
   - notes[0] フルチャージ攻撃時の味方全体の回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
 - **宝物版 skill2**: supported
