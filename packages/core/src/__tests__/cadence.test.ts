@@ -189,7 +189,12 @@ describe('computeCadence (calibrated against recordings)', () => {
   });
 
   it('charge release frames are configurable', () => {
-    const f = simulateShotFrames(SR, { chargeReleaseFrames: 0, spinUpFirstShotFrames: 20, reloadFirstShotFrames: 22 });
+    const f = simulateShotFrames(SR, {
+      chargeReleaseFrames: 0,
+      spinUpFirstShotFrames: 20,
+      reloadFirstShotFrames: 22,
+      aimOutFrames: 13,
+    });
     expect(f[1]).toBe(60);
   });
 });
