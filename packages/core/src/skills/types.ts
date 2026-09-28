@@ -344,7 +344,7 @@ export type DamageEffect = {
   damageType: SkillDamageType;
   /**
    * ヘルム編（V-0034）: 1 回の発動のヒットのうちバーストゲージを溜めるものの、発動した射撃からの遅れ（フレーム。昇順）。
-   * 段の gaugeHits（V-0030、C-0085）と同じで、1 ヒットで射手の targetBurstEnergyPerShot（フルチャージ倍率なし）を溜める。
+   * 0 は発と同じフレーム（V-0035 のモダニア）。段の gaugeHits（V-0030、C-0085）と同じで、1 ヒットで射手の targetBurstEnergyPerShot（フルチャージ倍率なし）を溜める。
    * 射撃の回数トリガーのときだけ書ける。省略は溜めない
    */
   gaugeHits?: number[];
@@ -868,11 +868,16 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
   return effect;
 }
 
-/** V-0030: 段のゲージのヒットの遅れ（1 以上の整数・昇順・1 つ以上。射撃と同じフレームのゲージは射撃の前に足し終えているので 0 は不可） */
-function parseGaugeHits(v: Json, path: string): number[] {
+/**
+ * V-0030: 段のゲージのヒットの遅れ（minDelay 以上の整数・昇順・1 つ以上）。段は射撃と同じフレームのゲージを足し終えた後に数えるので
+ * 1 以上。damage の gaugeHits は射撃と同じフレームのゲージに足せるので 0 から（V-0035 のモダニア）
+ */
+function parseGaugeHits(v: Json, path: string, minDelay: 0 | 1): number[] {
   if (!Array.isArray(v) || v.length === 0) fail(path, 'expected a non-empty array of frame delays');
   return v.map((d, i) => {
-    if (typeof d !== 'number' || !Number.isInteger(d) || d < 1) fail(`${path}[${i}]`, 'expected a positive integer');
+    if (typeof d !== 'number' || !Number.isInteger(d) || d < minDelay) {
+      fail(`${path}[${i}]`, minDelay === 1 ? 'expected a positive integer' : 'expected a non-negative integer');
+    }
     const prev = v[i - 1];
     if (i > 0 && typeof prev === 'number' && d < prev) fail(`${path}[${i}]`, 'delays must be ascending');
     return d;
@@ -903,7 +908,7 @@ function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
       ref: parseRef(raw.ref, `${stepPath}.ref`),
       damageType: oneOf(SKILL_DAMAGE_TYPES, raw.damageType, `${stepPath}.damageType`),
     };
-    if (raw.gaugeHits !== undefined) step.gaugeHits = parseGaugeHits(raw.gaugeHits, `${stepPath}.gaugeHits`);
+    if (raw.gaugeHits !== undefined) step.gaugeHits = parseGaugeHits(raw.gaugeHits, `${stepPath}.gaugeHits`, 1);
     if (raw.assumes !== undefined) step.assumes = parseLocalizedText(raw.assumes, `${stepPath}.assumes`);
     return step;
   });
@@ -949,7 +954,7 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     // ヘルム編: ゲージは 1 パス目で射撃を数えて予約するので、射撃の回数トリガーのときだけ
     if (!isShotCountTrigger(trigger)) fail(`${path}.gaugeHits`, 'gaugeHits needs a shot count trigger');
     if (trigger.stacksRef !== undefined) fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with stacksRef');
-    effect.gaugeHits = parseGaugeHits(v.gaugeHits, `${path}.gaugeHits`);
+    effect.gaugeHits = parseGaugeHits(v.gaugeHits, `${path}.gaugeHits`, 0);
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

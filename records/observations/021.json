@@ -156,5 +156,65 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "021-09",
+    "recording": "021",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0035",
+    "readAt": "2026-09-29",
+    "value": [6, 6],
+    "unit": "発",
+    "description": "1 回目の満タン（f1428）までのデルタ（AI）の発の数と、そのうち総ダメージが増えた発の数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f943・1025・1107・1189・1271・1353（82f おき）に、どれも 208,626 だけ増えた（SG の発と重ならない）"
+    }
+  },
+  {
+    "id": "021-10",
+    "recording": "021",
+    "kind": "gauge",
+    "use": "record",
+    "source": "V-0035",
+    "readAt": "2026-09-29",
+    "value": [5, 8, 7, 7, 9, 7, 9],
+    "unit": "px",
+    "description": "1 回目の満タンまでに、エーテル（AI）とクイーン（真・操作）が同じフレームに撃った回（f963〜1198 の 7 回）のバーの伸び（SG のペレットの割合 0.75 なら 1 回 8.1px）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "f884・924 はバーがまだ光っていない（最初に光ったのはデルタの 1 発目の f943 で 7px）。デルタの発の伸びは 7〜8px（53,000 の予測は 7.2px）"
+    }
+  },
+  {
+    "id": "021-11",
+    "recording": "021",
+    "kind": "gauge",
+    "use": "record",
+    "source": "V-0035",
+    "readAt": "2026-09-29",
+    "value": [5, 3, 3, 2, 4],
+    "unit": "px",
+    "description": "1 回目の満タンまでに、SG が 1 体だけ撃った回のバーの伸び（クイーン（真）の f1310・1350・1389、エーテルの f1340・1380 の順。0.75 なら 1 回 4.05px）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "f1310 の後はバーが 92px と 93px を行き来した（f1340 の伸びは 92 か 93 からの 2〜3px）。f1419（エーテル）は 112 → 113px で頭打ち、f1428（クイーン（真））でバーが消えた"
+    }
+  },
+  {
+    "id": "021-12",
+    "recording": "021",
+    "kind": "hit",
+    "use": "record",
+    "source": "V-0035",
+    "readAt": "2026-09-29",
+    "value": [10.5, 4, 6, 6.5, 7.5, 8.5, 10.5],
+    "unit": "ペレット（胴体換算）",
+    "description": "1 回目の満タンまでに、SG が 1 体だけ撃った回の総ダメージの増分を、その SG の 1 ペレットの胴体の値で割った数（クイーン（真）の f1310・1350・1389・1428、エーテルの f1340・1380・1419 の順）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1 ペレットの胴体の値はクイーン（真）47,172（012-01。S1 のバフの中）、エーテル 13,558（胴体と会心 1.5 倍の組でどの増分も端数まで割り切れる値）。コアは 2、会心は 1.5 と数えるので、当たったペレットの数とは一致しない。同じフレームに 2 体が撃った回は組が一意に決まらない"
+    }
   }
 ]

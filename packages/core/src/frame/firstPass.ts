@@ -520,6 +520,19 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge };
       gauge += energyAt(i, f);
     });
+    // ヘルム編: ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
+    for (const t of damageGaugeTrackers) {
+      const shot = shotEvents[t.slotIndex];
+      if (shot === null || shot === undefined) continue;
+      if (t.count === 'lastShot' && !shot.lastShot) continue;
+      t.n += 1;
+      if (t.n % t.every !== 0) continue;
+      for (const d of t.gaugeHits) {
+        const at = f + d;
+        if (d === 0) gauge += t.energy;
+        else if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
+      }
+    }
     // ヘルム編: 前のフレームまでに発火したバーストゲージのチャージ（最大値 × X%）を、このフレームのゲージに足す
     const charges = pendingGaugeCharges.get(f);
     if (charges !== undefined && controller !== null) {
@@ -566,17 +579,6 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
           if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
         }
         t.step = (t.step + 1) % t.gaugeHits.length;
-      }
-    }
-    for (const t of damageGaugeTrackers) {
-      const shot = shotEvents[t.slotIndex];
-      if (shot === null || shot === undefined) continue;
-      if (t.count === 'lastShot' && !shot.lastShot) continue;
-      t.n += 1;
-      if (t.n % t.every !== 0) continue;
-      for (const d of t.gaugeHits) {
-        const at = f + d;
-        if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
       }
     }
     if (!trackEvents) continue;
