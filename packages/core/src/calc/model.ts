@@ -17,7 +17,7 @@
 // ハイブリッドの限界（plan/design-calc-hybrid.md）: 案 (b)「射撃の窓を持つ枠は全グループを射撃の列から数える」を
 // options.shotCounting = 'firingSlots' で試作した。
 // 2026-09-28: design-stage10.md 5 節の案 (a)（全グループをバフ込みの平均レートで置く）を 'average' で選べるようにした。
-// 既定をどれにするかはオーナーの決定待ち（ほかの機構を実装した後に、誤差の許容範囲と計算負荷で決める）。
+// 既定はハイブリッドのまま（2026-09-28 オーナー決定。実装されたキャラが増えてから、負荷と精度のバランスで改めて決める。同 10 節）。
 import { activationFramesOfSlot, summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
 import { baseAttackOf, computeDamage, computeTriggerDamage, modelNotes } from '../damage.ts';
