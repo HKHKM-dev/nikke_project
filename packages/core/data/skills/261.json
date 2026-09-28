@@ -9,11 +9,13 @@
       "notes": [
         {
           "ja": "フルチャージ攻撃時の貫通特化・貫通範囲の拡張は、敵 1 体ではダメージに関係しない",
-          "en": "Pierce and the wider piercing radius after a Full Charge attack do not affect damage against a single enemy"
+          "en": "Pierce and the wider piercing radius after a Full Charge attack do not affect damage against a single enemy",
+          "claims": ["C-0088"]
         },
         {
           "ja": "2 機以上に同時に命中した時の追加ダメージは未対応（敵 1 体の前提）",
-          "en": "The additional damage when 2 or more enemies are hit at once is not modeled (a single enemy is assumed)"
+          "en": "The additional damage when 2 or more enemies are hit at once is not modeled (a single enemy is assumed)",
+          "claims": ["C-0088"]
         }
       ]
     },
@@ -30,7 +32,8 @@
           "assumes": {
             "ja": "戦闘開始から 10 秒ごと（CT 10 秒は録画 081 から読んだ値。C-0091）。攻撃範囲内の敵は 1 体",
             "en": "Every 10 s from the start of battle (the 10 s cooldown was read from recording 081; C-0091). There is one enemy within attack range"
-          }
+          },
+          "claims": ["C-0091", "C-0102"]
         }
       ]
     },
@@ -44,7 +47,8 @@
           "assumes": {
             "ja": "攻撃範囲内の敵は 1 体",
             "en": "There is one enemy within attack range"
-          }
+          },
+          "claims": ["C-0089"]
         },
         {
           "kind": "dot",
@@ -55,7 +59,8 @@
           "assumes": {
             "ja": "フルバースト補正・攻撃ダメージ▲は倍率ダメージと同じく乗る。持続中に付き直すと数え直す（tick の時刻は付いた瞬間と 1.5 秒後から 1 秒ごとの計 10 回。C-0101）",
             "en": "Full Burst and ATK damage up apply as for skill damage. Re-applying it restarts the count (ticks at application and every second from 1.5 s, 10 in total; C-0101)"
-          }
+          },
+          "claims": ["C-0100", "C-0101"]
         },
         {
           "kind": "timed",
@@ -64,7 +69,8 @@
           "stat": "maxAmmo",
           "scaling": "flat",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": ["C-0089"]
         }
       ]
     }

@@ -10,6 +10,7 @@ import {
   loadObservations,
   loadRecordingsFile,
   loadRecordsData,
+  loadSkillDefinitions,
   loadVerifications,
   misplacedClaims,
   misplacedObservations,
@@ -41,6 +42,7 @@ import {
   type Observation,
 } from '../observations.ts';
 import { extractGeneratedSection, normalizeTable, type ProjectRecording } from '../recordings.ts';
+import { definitionPlacesByClaim } from '../skills.ts';
 import { verificationsByClaim } from '../verifications.ts';
 
 const file = loadRecordingsFile();
@@ -85,9 +87,14 @@ describe('records/claims・plan/claims.md', () => {
   });
 
   it('matches plan/claims.md (npm run records:check)', () => {
-    // Stage 20-D: 検証記録の「結論」から逆に引いた結び付きも載る
+    // Stage 20-D: 検証記録の「結論」から逆に引いた結び付きも載る。スキル定義の claims から逆に引いた場所も載る
     expect(readFileSync(CLAIMS_PATH, 'utf8')).toBe(
-      renderClaims(claims, verificationsByClaim(loadVerifications()), invalidReasons),
+      renderClaims(
+        claims,
+        verificationsByClaim(loadVerifications()),
+        invalidReasons,
+        definitionPlacesByClaim(loadSkillDefinitions()),
+      ),
     );
   });
 

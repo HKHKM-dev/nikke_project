@@ -13,7 +13,8 @@
         },
         {
           "ja": "「フルバースト終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼」は未対応（部隊を扱わない）。同じ部隊の味方がいない編成では起きない（C-0080）",
-          "en": "Burst Skill cooldown down at the end of Full Burst is not modeled (squads are not tracked). It does not happen without an ally from the same squad (C-0080)"
+          "en": "Burst Skill cooldown down at the end of Full Burst is not modeled (squads are not tracked). It does not happen without an ally from the same squad (C-0080)",
+          "claims": ["C-0080"]
         }
       ]
     },

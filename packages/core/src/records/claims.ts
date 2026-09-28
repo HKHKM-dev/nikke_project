@@ -167,6 +167,8 @@ export function renderClaims(
   verificationsOf: ReadonlyMap<string, readonly string[]> = new Map(),
   /** 失効した観測値 → 失効の理由（Stage 20-E。根拠に失効したものがあれば印を付ける） */
   invalidReasons: ReadonlyMap<string, string> = new Map(),
+  /** 結論 ID → それを claims に書いたスキル定義の場所（plan/skills-guide.md 3 節。定義の側から逆に引く） */
+  definitionPlaces: ReadonlyMap<string, readonly string[]> = new Map(),
 ): string {
   const replacedBy = new Map<string, string[]>();
   for (const c of claims) for (const r of c.replaces) replacedBy.set(r, [...(replacedBy.get(r) ?? []), c.id]);
@@ -193,6 +195,8 @@ export function renderClaims(
       if (by !== undefined) lines.push(`  - 置き換えた結論: ${by.join('、')}`);
       const vs = verificationsOf.get(c.id);
       if (vs !== undefined && vs.length > 0) lines.push(`  - 検証記録: ${vs.join('、')}`);
+      const places = definitionPlaces.get(c.id);
+      if (places !== undefined && places.length > 0) lines.push(`  - 定義: ${places.join('、')}`);
       const invalid = c.observations.filter((o) => invalidReasons.has(o));
       if (invalid.length > 0)
         lines.push(`  - **失効した根拠**: ${invalid.map((o) => `${o}（${invalidReasons.get(o)}）`).join('、')}`);
