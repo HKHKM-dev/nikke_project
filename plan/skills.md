@@ -169,7 +169,7 @@
   - effects[0] damage・10 秒ごと・skill: C-0091（仮説）、C-0102（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0089（確定）
-  - effects[1] dot・burstUse: C-0100（確定）、C-0101（確定）、C-0111（確定）
+  - effects[1] dot・burstUse: C-0100（確定）、C-0101（確定）、C-0111（確定）、C-0112（確定）
   - effects[2] timed・burstUse・maxAmmo: C-0089（確定）
 
 ## 271 ノワール
