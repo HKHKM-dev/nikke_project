@@ -15,7 +15,9 @@
 // Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、グループ（鍵に着地点が入る）の着地点の条件で 1 トリガーの値を出す
 // （中遠のような配分は Σ w_k × T_k。frame/landing.ts）。手入力の枠は今と同じ。
 // ハイブリッドの限界（plan/design-calc-hybrid.md）: 案 (b)「射撃の窓を持つ枠は全グループを射撃の列から数える」を
-// options.shotCounting = 'firingSlots' で試作した。既定は今のハイブリッドのまま（オーナーの決定待ち）。
+// options.shotCounting = 'firingSlots' で試作した。
+// 2026-09-28: design-stage10.md 5 節の案 (a)（全グループをバフ込みの平均レートで置く）を 'average' で選べるようにした。
+// 既定をどれにするかはオーナーの決定待ち（ほかの機構を実装した後に、誤差の許容範囲と計算負荷で決める）。
 import { activationFramesOfSlot, summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
 import { baseAttackOf, computeDamage, computeTriggerDamage, modelNotes } from '../damage.ts';
@@ -77,10 +79,11 @@ function hasFiringWindow(state: SlotBuffState): boolean {
 /**
  * 通常攻撃のトリガー数を射撃の列から数える範囲（plan/design-calc-hybrid.md）。
  * - 'hybrid'（既定）: 持続の射撃バフが掛かっているグループだけ（plan/design-stage10.md 5 節）
- * - 'firingSlots'（案 (b) の試作。オーナーの決定待ち）: 持続の射撃バフが 1 つでも掛かる枠は、その枠の全グループ
- * 敵を狙えない窓があるときは、どちらでも全枠の全グループを数える（Stage 16-B）
+ * - 'average'（design-stage10.md 5 節の案 (a)）: 数えない。持続の射撃バフもグループのバフ込みの平均レートに畳み込む
+ * - 'firingSlots'（比較用。案 (b)）: 持続の射撃バフが 1 つでも掛かる枠は、その枠の全グループ
+ * 敵を狙えない窓があるときは、どれでも全枠の全グループを数える（Stage 16-B。平均レートでは置けないため）
  */
-export type ShotCounting = 'hybrid' | 'firingSlots';
+export type ShotCounting = 'average' | 'hybrid' | 'firingSlots';
 
 export type CalcOptions = {
   /** 省略は 'hybrid' */
@@ -115,7 +118,8 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     const shotFrames = shots[index]?.frames ?? [];
     const groups = groupTimeline(timeline, index);
     // 案 (b)（plan/design-calc-hybrid.md）: 射撃の窓を持つ枠は、窓の外のグループも射撃の列から数える
-    const countSlotShots = options.shotCounting === 'firingSlots' && groups.some((g) => hasFiringWindow(g.state));
+    const shotCounting = options.shotCounting ?? 'hybrid';
+    const countSlotShots = shotCounting === 'firingSlots' && groups.some((g) => hasFiringWindow(g.state));
     for (const group of groups) {
       const state = group.state;
       const parts = landingPartsOf(landing, slot, index, group.landing);
@@ -128,8 +132,8 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
         passiveEffects: state.passiveEffects,
         timedEffects: state.timedEffects,
       };
-      // Stage 10: 持続の射撃バフが掛かっているグループは、射撃の列の発数を数える（plan/design-stage10.md 5 節）
-      if (countAllShots || countSlotShots || hasFiringWindow(state)) {
+      // Stage 10: 持続の射撃バフが掛かっているグループは、射撃の列の発数を数える（plan/design-stage10.md 5 節。'hybrid' のとき）
+      if (countAllShots || countSlotShots || (shotCounting === 'hybrid' && hasFiringWindow(state))) {
         const trigger = landingTriggerDamage({ ...base, buffs: state.buffs, perShot }, parts, group.fullBurst);
         const triggers = countShotsInRanges(shotFrames, ranges);
         const damage = trigger.perTrigger * triggers;
