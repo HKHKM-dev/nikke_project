@@ -1,0 +1,42 @@
+{
+  "id": "085",
+  "date": "2026-09-29",
+  "folder": "range",
+  "file": "20260929-085_SR_nihilister_attack-damage.mp4",
+  "original": "2026-09-29_07-47-15.mp4",
+  "durationSec": 215.1,
+  "frames": 12903,
+  "fps": 60,
+  "sizeMB": 260.4,
+  "sha256": "a0ad870341fe",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 261,
+      "name": "ニヒリスター",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 226,
+      "name": "ラプンツェル：ピュアグレイス",
+      "controlled": true,
+      "note": "操作キャラの枠・AUTO 射撃 OFF で撃たせない（与ダメージ 0）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。ココア（I）+ ニヒリスター（II）+ ラプンツェル：ピュアグレイス（I・操作）の 3 体（戦闘履歴のパネル（f12720〜）で枠と名前を確かめた。Lv.400。ラプンツェルの与ダメージは 0）。AUTO 射撃は OFF のまま（画面左上の照準のボタン）。**オートバーストは 1 回目のチェーンまで ON**（f900・1500 で AUTO のボタンが橙、f2400 以降は灰色）で、1 回目のチェーンはココア（I）→ ニヒリスター（II）が自動で回った。2 回目以降は手でラプンツェル（I）→ ニヒリスター（II）を撃った。ニヒリスターのバーストを手で撃つと範囲を置く画面が出て、そのあいだゲームの時間が遅くなる（f7314〜8157 など。残り時間の表示が長く止まる）。戦闘開始は f818（timer.ts --mode changes の +319f の次の +89f の変わり目）。HUD の最後の値 92,784,561 は、戦闘履歴の 3 人の与ダメージの和と一致。V-0040"
+}
