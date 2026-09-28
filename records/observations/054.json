@@ -68,5 +68,21 @@
     },
     "source": "V-0007",
     "readAt": "2026-09-27"
+  },
+  {
+    "id": "054-05",
+    "recording": "054",
+    "recordings": ["054", "058", "072", "073"],
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0036",
+    "readAt": "2026-09-29",
+    "value": [15, 17, 35, 16],
+    "unit": "f",
+    "description": "単騎・AUTO で、戦闘開始（残り時間 02:59 が出たフレーム）から最初の発の総ダメージの増分までのフレーム数（リター SMG・クルミ AR・エマ MG・ラピ AR の順）。モデルは AR・SMG が 0f、MG が 20f（C-0002）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は 054 f803・058 f746・072 f825・073 f793（各録画の観測値の注記）。最初の増分は f818・763・860・809"
+    }
   }
 ]
