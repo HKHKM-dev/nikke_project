@@ -173,5 +173,20 @@
       "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
       "note": "1 ヒット目は f1008（直後のバーは 2px）、12 ヒット目 f2147 でバーは 113px、13 ヒット目 f2230 で消えた。2〜11 ヒット目の増分は 1 ヒット 9〜14px"
     }
+  },
+  {
+    "id": "077-10",
+    "recording": "077",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0037",
+    "readAt": "2026-09-29",
+    "value": [4059, 6406, 8543, 10480],
+    "unit": "f",
+    "description": "I-DOLL・フラワー（RL）単騎で、163〜196f 撃たない間の直前に出た部分チャージの発の、戦闘開始（f841）からの増分のフレーム",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "値（前の発からの間）: 110,538（49f）・68,920（38f）・55,269（48f）・68,164（24f）。フルチャージのコアは 166,172、胴体は 83,086。最後の 1 つは戦闘の終わり（179 秒ごろ）。ジャンプの時刻は読んでいない"
+    }
   }
 ]
