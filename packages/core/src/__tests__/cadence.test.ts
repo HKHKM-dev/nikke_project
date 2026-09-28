@@ -1,7 +1,8 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence, reloadChunks, simulateShotFrames } from '../cadence.ts';
 import { firingParams, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
-import type { ShotParams } from '../types.ts';
+import type { CharacterData, ShotParams } from '../types.ts';
 import { framesToGameSeconds } from '../time.ts';
 
 function shot(overrides: Partial<ShotParams>): ShotParams {
@@ -110,7 +111,9 @@ describe('computeCadence (calibrated against recordings)', () => {
   it('SR: 82f per full-charge shot (60f charge + 22f release), reload 90f → 582f cycle (measured 577f)', () => {
     const c = computeCadence(SR);
     expect(c.shotFrames).toEqual([0, 82, 164, 246, 328, 410]);
-    expect(c.firstShotFrames).toBe(82);
+    // Stage 22-A: 戦闘開始の 1 発目は構え解除（13f）が無いぶん早い（C-0110）。リロードの後は 82f のまま
+    expect(c.firstShotFrames).toBe(69);
+    expect(c.reloadFirstShotFrames).toBe(82);
     expect(c.cycleFrames).toBe(82 + 410 + 90);
   });
 
@@ -186,7 +189,12 @@ describe('computeCadence (calibrated against recordings)', () => {
   });
 
   it('charge release frames are configurable', () => {
-    const f = simulateShotFrames(SR, { chargeReleaseFrames: 0, spinUpFirstShotFrames: 20, reloadFirstShotFrames: 22 });
+    const f = simulateShotFrames(SR, {
+      chargeReleaseFrames: 0,
+      spinUpFirstShotFrames: 20,
+      reloadFirstShotFrames: 22,
+      aimOutFrames: 13,
+    });
     expect(f[1]).toBe(60);
   });
 });
@@ -208,5 +216,19 @@ describe('reloadChunks', () => {
     );
     expect(c.reloadChunks).toBe(3);
     expect(c.reloadFrames).toBe(41 * 3);
+  });
+});
+
+// Stage 22-A（C-0110）: チャージ武器は、ハイドしていた状態（戦闘開始・窓の明け）からは構え解除（13f）が無いぶん早く撃つ。
+// ラム（822、SR）: 発と発の間 82f、戦闘開始から 1 発目は実測 70f（075-04・075-06）。紅蓮BS は stage11ScarletBsTeam.test.ts（30f）
+describe('first shot from hiding (Stage 22-A)', () => {
+  it('ラム fires the first shot 13f earlier than the interval, and after a reload at the full interval', () => {
+    const ram = JSON.parse(
+      readFileSync(new URL('../../data/characters/822.json', import.meta.url), 'utf8'),
+    ) as CharacterData;
+    const c = computeCadence(ram.shot);
+    expect(c.shotFrames[1]).toBe(82);
+    expect(c.firstShotFrames).toBe(69);
+    expect(c.reloadFirstShotFrames).toBe(82);
   });
 });

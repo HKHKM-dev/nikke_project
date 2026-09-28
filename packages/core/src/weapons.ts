@@ -42,12 +42,19 @@ export type WeaponModel = {
    * 戦闘開始の 1 発目には使わない（戦闘開始からの遅れは読んでいない）
    */
   reloadFirstShotFrames: number;
+  /**
+   * Stage 22-A: チャージ武器の構え解除モーション（紅蓮BS 等は射撃後の硬直を含む）のフレーム。発と発の間
+   * （チャージ + chargeReleaseFrames）は「構え解除 → 構え → チャージ → 射撃」で、ハイドしていた状態（戦闘開始・窓の明け）からの
+   * 1 発目は構え解除が無いぶん早い（C-0110。紅蓮BS 43f → 30f、ラム 82f → 70f）。リロードの後の 1 発目は発と発の間と同じ
+   */
+  aimOutFrames: number;
 };
 
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   chargeReleaseFrames: 22,
   spinUpFirstShotFrames: 20,
   reloadFirstShotFrames: 22,
+  aimOutFrames: 13,
 };
 
 /** 武器の CDN の秒 → フレーム（切り上げ） */
