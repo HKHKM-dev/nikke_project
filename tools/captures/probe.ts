@@ -1,12 +1,11 @@
 // 録画の素性（コーデック・尺・フレーム数・平均 fps・sha256）を台帳用の Markdown 行として出力する。
 //   node tools/captures/probe.ts [ディレクトリまたはファイル...]
-// 既定は E:/nikke_project_captures（種別サブフォルダごと再帰的に見る）。
+// 既定は録画の置き場所（dirs.ts。種別サブフォルダごと再帰的に見る）。
 // 録画本体は Git 管理外なので、worktree からは絶対パスで触る。
 import { readdirSync, statSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
+import { capturesDir } from './dirs.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
-
-const DEFAULT_DIR = 'E:/nikke_project_captures';
 
 function collect(target: string): string[] {
   if (statSync(target).isFile()) return [target];
@@ -20,7 +19,7 @@ function collect(target: string): string[] {
 }
 
 const targets = process.argv.slice(2);
-const roots = (targets.length > 0 ? targets : [DEFAULT_DIR]).map((t) => resolve(t));
+const roots = (targets.length > 0 ? targets : [capturesDir()]).map((t) => resolve(t));
 
 console.log('| ファイル | 尺 | フレーム数 | 平均 fps | サイズ | sha256 (先頭 12) |');
 console.log('| -------- | --- | ---------- | -------- | ------ | ---------------- |');
