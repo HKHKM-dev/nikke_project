@@ -13,10 +13,12 @@
           },
           "damageType": "additional",
           "ref": 1,
+          "gaugeHits": [0],
           "assumes": {
             "ja": "通常攻撃 1 発ごとに 1 回（全弾命中の前提。殲滅モードの 2 ヒットでも 1 回）。コア・距離は乗らない（録画 44 で確認）",
             "en": "Once per normal shot (every shot is assumed to hit; once even for the 2 hits of Annihilation Mode). Core and distance do not boost it (recording 44)"
-          }
+          },
+          "claims": ["C-0105"]
         },
         {
           "kind": "timed",

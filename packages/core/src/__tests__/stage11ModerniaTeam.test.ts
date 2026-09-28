@@ -78,8 +78,9 @@ describe('録画 44 の予測（7.5）', () => {
     // Stage 21-C3 で 2〜3 回目以降が 1〜3f 早まった（rpm の蓄積をゲーム内の時計にした。21-B までは 724・3634・6544・9454）。
     // C-0073 で段の間隔を 20f → 29f にして、724・3633・6542・9451 から 27〜32f 遅くなった。
     // V-0028 で 1 発のゲージを ×1.2 → ×1.0 にして、751・3661・6572・9483 から遅くなった。録画 44 の 1 回目のフルバーストは
-    // 約 499f で、×1.2 でもモデルが遅い（モダニアのゲージは単騎の録画 45 で 1 発が CDN の値より多く見える。未解明）
-    expect(fb.map((w) => w.start)).toEqual([833, 3857, 6970, 10108]);
+    // 約 499f で、×1.2 でもモデルが遅かった。V-0035 で S1 の追加ダメージのヒットもゲージを溜めるようにして（C-0105）、
+    // 833・3857・6970・10108 から早くなった
+    expect(fb.map((w) => w.start)).toEqual([497, 3253, 6001, 8739]);
   });
 
   it('stacks S1 on every 200th shot and keeps 5 stacks (300 → 285 → 270 → 255 → 240 → 224)', () => {
@@ -145,6 +146,14 @@ describe('録画 44 の予測（7.5）', () => {
     const firing = plan.timeline.windows.filter((w) => ['maxAmmo', 'infiniteAmmo', 'weapon'].includes(w.effect.stat));
     expect(first.firingWindows.map(key).sort()).toEqual(firing.map(key).sort());
     expect(first.shots).toEqual(plan.shots);
+  });
+});
+
+describe('モダニア単騎（録画 45 の編成。V-0035）', () => {
+  it('fills the gauge on the frame of the 500th shot: 1,000 per shot + 1,000 per additional damage hit (C-0105、045-03)', () => {
+    const plan = planTeamRun(team([fixedSlot(260)], 0));
+    const shots = plan.shots[0]!.frames;
+    expect(plan.schedule!.gaugeFullFrames[0]).toBe(shots[499]);
   });
 });
 

@@ -69,7 +69,9 @@ describe('parseSkillDefinition（ヘルム編）', () => {
     const damage = { kind: 'damage', ref: 4, damageType: 'additional' };
     expect(parseOne({ ...damage, trigger: { count: 'fullChargeShot' }, gaugeHits: [1] })).not.toThrow();
     expect(parseOne({ ...damage, trigger: 'burstUse', gaugeHits: [1] })).toThrow(/shot count/);
-    expect(parseOne({ ...damage, trigger: { count: 'fullChargeShot' }, gaugeHits: [0] })).toThrow(/positive/);
+    // V-0035: 遅れ 0（発と同じフレーム）は書ける。負は不可
+    expect(parseOne({ ...damage, trigger: { count: 'normalHit' }, gaugeHits: [0] })).not.toThrow();
+    expect(parseOne({ ...damage, trigger: { count: 'fullChargeShot' }, gaugeHits: [-1] })).toThrow(/non-negative/);
     expect(parseOne({ ...damage, trigger: { count: 'normalHit', stacksRef: 1 }, gaugeHits: [1] })).toThrow(/stacksRef/);
   });
 
