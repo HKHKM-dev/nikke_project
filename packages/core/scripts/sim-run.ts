@@ -13,6 +13,8 @@
 // （射撃場のプリセットと、--enemy を省いた属性なしの射撃場の的で効く。ほかの敵では手入力の値と注記）。manual は --core-hit-rate・
 // --hit-rate（省略 1）と距離ボーナスあり。18-C2 から既定は auto で、--core-hit-rate か --hit-rate を指定したら manual。
 // --mid-far A|B|C で中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。自動の枠は、使った条件の発数平均を出す。
+// calc のハイブリッドの案 (b)（plan/design-calc-hybrid.md）: --shot-counting firingSlots で、枠ごとの表に案 (b) の calc の列を足す
+// （既定の calc の列は変えない）。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -75,12 +77,14 @@ const { values } = parseArgs({
     // Stage 18-C: 条件の決め方（auto | manual。18-C2 から既定 auto）と、中遠の着地点の固定（A | B | C）
     condition: { type: 'string' },
     'mid-far': { type: 'string' },
+    // plan/design-calc-hybrid.md: 案 (b) の calc を並べて出す（firingSlots）
+    'shot-counting': { type: 'string' },
   },
 });
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--shot-counting firingSlots]',
   );
   process.exit(2);
 }
@@ -235,8 +239,15 @@ const input = {
   burstModel: values['fixed-cycle'] ? ('fixed' as const) : ('dynamic' as const),
   controlledSlot: values.controlled === undefined ? null : Number(values.controlled) - 1,
 };
+const shotCounting = values['shot-counting'];
+if (shotCounting !== undefined && shotCounting !== 'firingSlots') {
+  console.error(`--shot-counting takes firingSlots, got ${shotCounting}`);
+  process.exit(2);
+}
 const sim = runSimulation(input);
 const calc = computeTeamDamage(input);
+// 案 (b): 射撃の窓を持つ枠は全グループを射撃の列から数える calc（比較の列だけに使う）
+const calcB = shotCounting === undefined ? null : computeTeamDamage(input, { shotCounting });
 // Stage 11 紅蓮BS: 射撃の列（循環の窓ごとの並びの表示用）
 const plan = planTeamRun(input);
 
@@ -370,11 +381,27 @@ const rows = slots.map((slot, i) => {
     'sim total': fmt(s.totalDamage),
     'calc total': fmt(c.totalDamage),
     diff: pct((s.totalDamage - c.totalDamage) / (c.totalDamage || 1)),
+    ...(calcB === null ? {} : bColumns(i, s.totalDamage)),
   };
 });
 console.table(rows);
+
+/** 案 (b) の calc の合計と sim との差、射撃の列から数えたグループの数（既定の calc → 案 (b)） */
+function bColumns(i: number, simTotal: number): Record<string, string> {
+  const c = calc.slots[i]!;
+  const b = calcB!.slots[i]!;
+  const shotGroups = (r: typeof c) => r.segments.filter((g) => g.triggerSource === 'shots').length;
+  return {
+    'shots groups (calc→b)': `${shotGroups(c)}/${c.segments.length} → ${shotGroups(b)}/${b.segments.length}`,
+    'calc (b) total': fmt(b.totalDamage),
+    'diff (b)': pct((simTotal - b.totalDamage) / (b.totalDamage || 1)),
+  };
+}
 console.log(
-  `TOTAL sim ${fmt(sim.totalDamage)}  calc ${fmt(calc.totalDamage)}  diff ${pct((sim.totalDamage - calc.totalDamage) / (calc.totalDamage || 1))}`,
+  `TOTAL sim ${fmt(sim.totalDamage)}  calc ${fmt(calc.totalDamage)}  diff ${pct((sim.totalDamage - calc.totalDamage) / (calc.totalDamage || 1))}` +
+    (calcB === null
+      ? ''
+      : `  calc (b) ${fmt(calcB.totalDamage)}  diff (b) ${pct((sim.totalDamage - calcB.totalDamage) / (calcB.totalDamage || 1))}`),
 );
 
 // Stage 18-C: 自動の枠で使った条件の平均（1 パス目の射撃の列の発数で重みを付けた。calc と sim で同じ値）
