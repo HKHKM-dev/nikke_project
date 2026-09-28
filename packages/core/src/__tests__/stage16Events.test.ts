@@ -159,9 +159,10 @@ describe('射手（ハイドとリロード）', () => {
       chargeTime: 1,
       inputType: 'UP',
     };
-    // 82 で 1 発（残弾 5）→ 100 でハイドしてリロード（189 で満タン）→ 220 からチャージして 302 に 1 発目、以後 82f ごとに 6 発
+    // 69 で 1 発（残弾 5）→ 100 でハイドしてリロード（189 で満タン）→ 220 から構えてチャージして 289 に 1 発目、以後 82f ごとに 6 発
+    // （Stage 22-A: 戦闘開始と窓の明けの 1 発目は、構え解除 13f の無いぶん 82 − 13 = 69f。C-0110）
     const fired = shotsWithWindow(sr, { start: 100, end: 220 }, 800);
-    expect(fired).toEqual([82, 302, 384, 466, 548, 630, 712]);
+    expect(fired).toEqual([69, 289, 371, 453, 535, 617, 699]);
   });
 
   it('does nothing when the magazine is full or already empty (the ordinary reload continues)', () => {

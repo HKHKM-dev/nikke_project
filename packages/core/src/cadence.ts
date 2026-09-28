@@ -83,7 +83,8 @@ export function firstShotFrames(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number {
-  if (isChargeWeapon(shot)) return params.chargeFrames + model.chargeReleaseFrames;
+  // Stage 22-A: チャージ武器はハイドから構えてチャージするので、発と発の間から構え解除のぶんを引く（C-0110）
+  if (isChargeWeapon(shot)) return Math.max(0, params.chargeFrames + model.chargeReleaseFrames - model.aimOutFrames);
   if (hasSpinUp(shot)) return model.spinUpFirstShotFrames;
   return 0;
 }
@@ -94,7 +95,9 @@ export function reloadFirstShotFrames(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number {
-  if (isChargeWeapon(shot) || hasSpinUp(shot)) return firstShotFrames(shot, model, params);
+  // Stage 22-A: チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0014 の紅蓮BS 172f・ラム 200f）
+  if (isChargeWeapon(shot)) return params.chargeFrames + model.chargeReleaseFrames;
+  if (hasSpinUp(shot)) return firstShotFrames(shot, model, params);
   return model.reloadFirstShotFrames;
 }
 

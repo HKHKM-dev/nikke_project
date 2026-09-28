@@ -11,6 +11,7 @@ import {
 import { planDynamicSchedule } from '../../burst/dynamic.ts';
 import { planFixedCycle } from '../../burst/fixedCycle.ts';
 import { gameSecondsToFrames } from '../../time.ts';
+import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
 import { planBuffTimeline, resolvePassiveStates, type TimelineSlot } from '../../skills/timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
@@ -143,7 +144,9 @@ describe('runFirstPass: firing windows (1.1)', () => {
     const def = defWith(1, [
       { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'chargeSpeed', ref: 1, durationRef: 2 },
     ]);
-    const pass = runFirstPass([slotOf(character, def)], { frames: 800, burst: true, burstModel: 'fixed' });
+    // Stage 22-A: 1 発目を 42f 目に置くため、構え解除（aimOutFrames）を 0 にしたモデルで回す
+    const model = { ...DEFAULT_WEAPON_MODEL, aimOutFrames: 0 };
+    const pass = runFirstPass([slotOf(character, def)], { frames: 800, burst: true, burstModel: 'fixed', model });
     const frames = pass.shots[0]!.frames;
     // 588 の射撃は基礎値（次は 588 + 42）。630 からチャージ 0f（解放遅延 22f だけ）で 652・674…
     expect(frames.filter((f) => f >= 546 && f <= 700)).toEqual([546, 588, 630, 652, 674, 696]);

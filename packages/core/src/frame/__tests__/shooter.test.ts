@@ -36,14 +36,15 @@ describe('stepShooter', () => {
   });
 
   // Stage 21-C3: rpm はゲーム内の時計（C-0058）、AR のリロード明けは 22f（C-0059）。SR は変わらない
-  it('matches the absolute frames fixed in the design (AR 0…290 → 372, SR 82…492 → 664, MG 20…408 → 578)', () => {
+  // Stage 22-A: SR の戦闘開始の 1 発目は構え解除 13f の無いぶん 69f（C-0110）。リロードの後は 82f のまま
+  it('matches the absolute frames fixed in the design (AR 0…290 → 372, SR 69…479 → 651, MG 20…408 → 578)', () => {
     const ar = shotFramesUpTo(makeCharacter(fixtures.AR).shot, 400);
     expect(ar.slice(0, 3)).toEqual([0, 5, 10]);
     expect(ar[59]).toBe(290);
     expect(ar[60]).toBe(372);
 
     const sr = shotFramesUpTo(makeCharacter(fixtures.SR).shot, 700);
-    expect(sr).toEqual([82, 164, 246, 328, 410, 492, 664]);
+    expect(sr).toEqual([69, 151, 233, 315, 397, 479, 651]);
 
     const mg = shotFramesUpTo(makeCharacter(fixtures.MG).shot, 600);
     expect(mg[0]).toBe(20);
@@ -62,8 +63,10 @@ describe('stepShooter', () => {
 
   it('honours the weapon model (chargeReleaseFrames)', () => {
     const shot = makeCharacter(fixtures.SR).shot;
-    const model = { ...DEFAULT_WEAPON_MODEL, chargeReleaseFrames: 0 };
+    const model = { ...DEFAULT_WEAPON_MODEL, chargeReleaseFrames: 0, aimOutFrames: 0 };
     expect(shotFramesUpTo(shot, 200, model)).toEqual([60, 120, 180]);
+    // Stage 22-A: 構え解除（aimOutFrames）は戦闘開始の 1 発目だけを早める
+    expect(shotFramesUpTo(shot, 200, { ...DEFAULT_WEAPON_MODEL, aimOutFrames: 10 })).toEqual([72, 154]);
   });
 
   it('rejects invalid shot params', () => {

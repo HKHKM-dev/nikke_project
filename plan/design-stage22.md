@@ -1,7 +1,7 @@
 # Stage 22 設計書: チャージ武器の部分チャージと、待ちからの 1 発目
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: 承認（2026-09-29。6 節の 5 点とも推奨案）。22-A から実装
+- 状態: 22-A 完了（2026-09-29。実施の記録は 7 節）。22-B は未着手
 - 関連: V-0037（検証記録）、C-0001・C-0014・C-0057・C-0108・C-0109・C-0110、[claims.md](claims.md)、[design-stage16.md](design-stage16.md) 9 節（的のジャンプの窓）、[design-stage21.md](design-stage21.md) 8 節（武器の換算）
 - 作成日: 2026-09-29
 
@@ -130,6 +130,14 @@ V-0037 の読み直しと、オーナーの知見（2026-09-29）で、次の 2 
 3. **部分チャージの発のゲージ** — 推奨: **ダメージと同じくチャージの進みに比例**（未確認として注記）。別案は、フルチャージ倍率を掛けない（素のゲージ）。
 4. **チャージのバフがある場合の部分チャージの値** — 推奨: **バフ込みのフルチャージ倍率 M で 1 + (M − 1) × p**（未確認として注記）。
 5. **C-0110 を確定にするか** — 22-A の検証（紅蓮BS・ラムの 1 発目がモデルと合う）の後に、反復実測で確定にしてよいか。
+
+## 7. 実施の記録
+
+### 7.1 22-A（2026-09-29）
+
+- `weapons.ts` の `WeaponModel` に `aimOutFrames`（13）を足した。`cadence.ts` の `firstShotFrames` は、チャージ武器ではチャージ + `chargeReleaseFrames` − `aimOutFrames`。`reloadFirstShotFrames` は、チャージ武器ではチャージ + `chargeReleaseFrames`（今まで `firstShotFrames` を返していたのを分けた）。射手（`frame/shooter.ts`）は、戦闘開始と窓の明けが `firstShotFrames`、リロードの後が `reloadFirstShotFrames` を使っていたので、呼び出しは変えていない。
+- 発の時刻を固定していたテストを新しい値に直した（`shooter.test.ts`・`cadence.test.ts`・`stage16Events.test.ts`・`stage10Shooter.test.ts`・`stage11ScarletBsTeam.test.ts`・`stage11ModerniaTeam.test.ts`）。バーストの発動フレームちょうどの発を使うテスト（`firstPass.test.ts`）は、構え解除を 0 にしたモデルで回すようにした。ラムの 1 発目（69f・リロードの後 82f）のテストを足した。sim と calc の整合のテストは変えずに通った。
+- 残差の一覧の変化は V-0041。1 回目の満タンの +11〜+12f の遅れがほぼ消え、`040-04`・`043-06` が許容の外（−34・−33f。仮説の結論 C-0106 の観測値）に出た。確定の結論の観測値は許容の中に残った。C-0110 を確定にした（6 節の 5）。
 
 ## 経過
 

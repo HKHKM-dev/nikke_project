@@ -235,14 +235,14 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
     }).shot;
     expect(firingParams(sr, { ...ZERO_FIRING_BUFFS, reloadSpeed: 0.5091 }).reloadChunkFrames).toBe(59);
     expect(firingParams(sr, { ...ZERO_FIRING_BUFFS, chargeSpeed: 0.0897 }).chargeFrames).toBe(55);
-    // 100% 以上は 0 フレーム。チャージ武器は解放遅延 22f だけ残る
+    // 100% 以上は 0 フレーム。チャージ武器は解放遅延 22f だけ残る（戦闘開始の 1 発目は構え解除 13f の無いぶん 9f。Stage 22-A）
     expect(firingParams(sr, { ...ZERO_FIRING_BUFFS, reloadSpeed: 1.2 }).reloadChunkFrames).toBe(0);
     const instant = firingParams(sr, { ...ZERO_FIRING_BUFFS, chargeSpeed: 1 });
     expect(instant.chargeFrames).toBe(0);
     const state = initialShooter(sr, DEFAULT_WEAPON_MODEL, instant);
     const fired: number[] = [];
     for (let f = 0; f < 100; f++) if (stepShooter(state, sr, DEFAULT_WEAPON_MODEL, instant)) fired.push(f);
-    expect(fired.slice(0, 3)).toEqual([22, 44, 66]);
+    expect(fired.slice(0, 3)).toEqual([9, 31, 53]);
   });
 
   it('with a 0-frame reload chunk, the next magazine fires no earlier than the frame after the last shot', () => {
