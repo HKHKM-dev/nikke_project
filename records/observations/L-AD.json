@@ -26,5 +26,50 @@
         "condition": "auto"
       }
     }
+  },
+  {
+    "id": "L-AD-02",
+    "recording": "L-AD",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0036",
+    "readAt": "2026-09-29",
+    "value": [28.95, 65.72, 104.72, 134.08, 166.84],
+    "unit": "秒",
+    "description": "ブラン（AR）単騎の的のジャンプの始まりの、戦闘開始から数えたゲーム内の秒（止まる前の最後の増分）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/timer.ts --mode changes",
+      "note": "戦闘開始 f740（残り時間の変わり目が +42f・+89f と続いた所）。リロード（82〜84f）と違う長い止まり（123〜192f）を拾った。画面は見ていない。L-AN-02 とほぼ同じ組"
+    }
+  },
+  {
+    "id": "L-AD-03",
+    "recording": "L-AD",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0036",
+    "readAt": "2026-09-29",
+    "value": 1612,
+    "unit": "ヒット",
+    "description": "ブラン（AR）単騎の 180 秒のヒット数（1 フレームの増分を 1 ヒットの値に分けて数えた）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1 ヒットの値は胴体 10,900・コア 21,800 と、会心・距離の組（最大 30,520）。読みが割れた 7 か所（計 23 ヒット）は値の組で見積もった（± 5）。1 ヒットの平均は約 15,500"
+    }
+  },
+  {
+    "id": "L-AD-04",
+    "recording": "L-AD",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0036",
+    "readAt": "2026-09-29",
+    "value": [13, 375],
+    "unit": "f",
+    "description": "ブラン（AR・720rpm・60 発・リロード 1 秒）単騎で、戦闘開始から最初の発までと、マガジンの 1 発目から次のマガジンの 1 発目まで（最初の 4 マガジン）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1 発目は f753。マガジンの 1 発目は戦闘開始から 13・387・761・1136f（間 374〜375f）。モデルは 0・372・744・1116f。マガジンの中の間隔は 4.9〜5.0f。60 発のうち総ダメージに出たのが 55・57 発のマガジンがある"
+    }
   }
 ]
