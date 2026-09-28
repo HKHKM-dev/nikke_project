@@ -296,6 +296,15 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
                       （実数）
                     </small>
                   )}
+                  {seg.partialCharge && (
+                    <small
+                      className="sub"
+                      title="攻撃できる的がいなくなった瞬間に、チャージの途中で撃った発（C-0109）。値はチャージの進みに比例すると仮定（チャージのバフがある場合とゲージは未確認）"
+                    >
+                      {' '}
+                      うち部分チャージ {formatNumber(seg.partialCharge.triggers)} 発
+                    </small>
+                  )}
                 </td>
                 <td>{formatNumber(seg.damage)}</td>
                 <td>

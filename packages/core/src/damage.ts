@@ -315,6 +315,19 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
 }
 
 /**
+ * Stage 22-B: 部分チャージの発（チャージの進み progress）の 1 トリガーの値。フルチャージ倍率 M（チャージのバフ込み）を
+ * 1 + (M − 1) × progress に置き換える（C-0109。紅蓮BS・ラムで確かめたのは素の倍率だけで、バフのある場合の比例は仮定）。
+ * 射撃ごとの倍率ダメージ（perShot）は変えない
+ */
+export function partialChargeTriggerDamage<T extends TriggerDamage>(trigger: T, progress: number): T {
+  const full = trigger.chargeMultiplier;
+  if (progress >= 1 || full <= 1) return trigger;
+  const chargeMultiplier = 1 + (full - 1) * Math.max(0, progress);
+  const normal = (trigger.normal * chargeMultiplier) / full;
+  return { ...trigger, chargeMultiplier, normal, perTrigger: normal + trigger.perShot };
+}
+
+/**
  * Stage 11 モダニア: 射撃ごとの倍率ダメージ。式は Stage 8 の倍率ダメージ（skills/burstDamage.ts の computeBurstHit）と同じ:
  * max(1, 攻撃力 − 防御力) × X × (1 + 会心期待値 + フルバースト補正) × (1 + Σ攻撃ダメージ) × 属性。距離は乗らず、コアは PER_SHOT_DAMAGE_CORE
  */

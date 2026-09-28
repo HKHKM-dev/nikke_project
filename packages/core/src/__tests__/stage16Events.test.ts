@@ -249,7 +249,12 @@ describe('編成（calc と sim の両方に効く）', () => {
     expect(windows).toHaveLength(5);
     const inside = (f: number) => windows.some((w) => w.start <= f && f < w.end);
     const sim = runSimulation(input(jumps));
-    for (const log of sim.shots) expect(log!.frames.some(inside)).toBe(false);
+    // Stage 22-B: 窓の始まりのフレームの部分チャージの発（C-0109）だけは窓の中に出る。それ以外は撃たない
+    for (const log of sim.shots) {
+      const partial = new Set((log!.partialShots ?? []).map((p) => p.frame));
+      expect(log!.frames.filter((f) => !partial.has(f)).some(inside)).toBe(false);
+      for (const f of partial) expect(windows.some((w) => w.start === f)).toBe(true);
+    }
     expect(sim.schedule!.activations.some((a) => inside(a.frame))).toBe(false);
     expect(sim.untargetable).toEqual(windows);
   });

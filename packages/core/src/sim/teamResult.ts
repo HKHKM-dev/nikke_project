@@ -13,9 +13,10 @@ import {
   type TeamInput,
   type TeamResult,
   type TeamSlotResult,
+  type PartialChargeTotals,
 } from '../team.ts';
 import { framesToGameSeconds } from '../time.ts';
-import type { SimResult } from './engine.ts';
+import type { SimResult, SimSlotSegment } from './engine.ts';
 
 /** teamInput は runSimulation に渡したものと同じ（宝物の適用前）。dps と宝物の段階の表示に使う */
 export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult {
@@ -43,6 +44,7 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
         triggers: simSegments.reduce((sum, s) => sum + s.triggers, 0),
         triggerSource: 'shots',
         damage: simSegments.reduce((sum, s) => sum + s.damage, 0),
+        ...partialChargeOf(simSegments),
       });
     }
 
@@ -109,4 +111,16 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
     landings: sim.landings,
     damagePerSecond: sim.damagePerSecond,
   };
+}
+
+/** Stage 22-B: sim の区間の部分チャージの発を、グループにまとめる（無ければキーごと出さない） */
+function partialChargeOf(segments: readonly SimSlotSegment[]): { partialCharge?: PartialChargeTotals } {
+  let triggers = 0;
+  let damage = 0;
+  for (const s of segments) {
+    if (!s.partialCharge) continue;
+    triggers += s.partialCharge.triggers;
+    damage += s.partialCharge.damage;
+  }
+  return triggers > 0 ? { partialCharge: { triggers, damage } } : {};
 }

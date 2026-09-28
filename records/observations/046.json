@@ -29,7 +29,7 @@
     "kind": "total",
     "use": "compare",
     "value": 79851043,
-    "description": "紅蓮：ブラックシャドウの与ダメージ（単騎・180 秒）",
+    "description": "紅蓮：ブラックシャドウの与ダメージ（単騎・180 秒）。結論には結び付けない（会心の偏りで ±1.5% ほど動く。V-0001・V-0042）",
     "source": "verification.md Stage 16-B「合計の照合」",
     "method": {
       "tool": "probe-result.ts",
@@ -46,7 +46,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
       }
     }
   },

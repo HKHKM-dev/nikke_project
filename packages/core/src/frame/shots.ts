@@ -12,11 +12,28 @@ import { initialShooter, stepShooter } from './shooter.ts';
 export type ShotLog = {
   /** 発射フレーム（昇順）。1 要素 = 1 トリガー（弾薬 1 消費。SG は全ペレットで 1 つ） */
   frames: number[];
-  /** チャージ武器なら true。常にフルチャージで撃つモデルなので、fullChargeShot の列 = frames */
+  /**
+   * チャージ武器なら true。部分チャージの発（partialShots）を除いた frames が fullChargeShot の列
+   * （Stage 22-B まではすべての発をフルチャージとして扱っていた）
+   */
   fullCharge: boolean;
+  /**
+   * Stage 22-B: 攻撃できる的がいなくなった瞬間に、チャージの途中で撃った発（frames の部分列）と、そのチャージの進み（0〜1）。
+   * 省略・空は無し（C-0109）
+   */
+  partialShots?: PartialShot[];
   /** Stage 10: 残弾を 0 にした射撃のフレーム（frames の部分列。「最後の弾丸」）。省略は無し（手で作る列のため） */
   lastShotFrames?: number[];
 };
+
+export type PartialShot = { frame: number; progress: number };
+
+/** Stage 22-B: fullChargeShot に数える発か（チャージ武器で、部分チャージの発でない） */
+export function fullChargeFrameSet(log: ShotLog): (frame: number) => boolean {
+  if (!log.fullCharge) return () => false;
+  const partial = new Set((log.partialShots ?? []).map((p) => p.frame));
+  return (frame) => !partial.has(frame);
+}
 
 /** 各枠の射手を frames フレーム回し、発射フレームを記録する。空枠は null */
 export function planShots(

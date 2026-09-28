@@ -215,6 +215,30 @@ export function resumeShooter(
 }
 
 /**
+ * Stage 22-B: 攻撃できる的がいなくなったフレーム（窓の始まり。hideShooter の前に呼ぶ）に、チャージの途中なら、
+ * その時点のチャージで撃つ（部分チャージ。C-0109）。撃ったらチャージの進み p（0 < p ≤ 1）を返し、撃たなければ null。
+ * - 次の発までの残りの待ちが k のとき、p = (C + 1 − k) / C（C はチャージのフレーム数。チャージは撃つ前の C フレームで進み、
+ *   満ちた次のフレームで撃つ）。構え解除・構えの間（p ≤ 0）は撃たない。k = 0（このフレームに撃つはずだった）は p = 1。
+ * - 押下チャージ型（DOWN_Charge）は挙動が違うので撃たない（モデルでは未対応の武器。design-stage22.md 0.4 節）。
+ * - リロード中は撃たない。込め終えて 1 発目を待っている（priming）枠は、そのマガジンの 1 発目として撃つ
+ */
+export function partialChargeShot(
+  state: ShooterState,
+  shot: ShotParams,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): number | null {
+  if (!isChargeWeapon(shot) || shot.inputType === 'DOWN_Charge') return null;
+  if (state.phase === 'reloading') return null;
+  const charge = params.chargeFrames;
+  const progress = charge <= 0 ? 1 : Math.min(1, (charge + 1 - state.wait) / charge);
+  if (progress <= 0) return null;
+  if (state.phase === 'priming') startMagazine(state);
+  fire(state, shot, model, params);
+  return progress;
+}
+
+/**
  * Stage 16-B: 敵を狙えなくなった（窓の最初のフレーム、stepShooter の前に呼ぶ）。
  * 撃てる状態で残弾が減っていれば、ハイド中のリロードを始める（チャージ中の分は捨てる）。
  * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タンならそのまま

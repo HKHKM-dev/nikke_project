@@ -46,7 +46,7 @@ import {
   type BurstControllerState,
   type BurstTiming,
 } from '../burst/controller.ts';
-import { burstUnitOf, energyPerTrigger } from '../burst/dynamic.ts';
+import { burstUnitOf, energyPerTrigger, partialGaugeRatio } from '../burst/dynamic.ts';
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
 import { resolveDamageGauges } from '../skills/burstDamage.ts';
 import type { BurstActivation, BurstSchedule, BurstScheduleModel } from '../burst/schedule.ts';
@@ -85,6 +85,7 @@ import {
   initialShooter,
   refillAmmo,
   resumeShooter,
+  partialChargeShot,
   stepShooter,
   unhideShooter,
   type ShooterState,
@@ -160,6 +161,8 @@ type CycleGaugeTracker = {
   windows: { every: number; start: number; end: number }[];
   count: number;
   step: number;
+  /** Stage 22-B: fullChargeShot の循環は部分チャージの発を数えない */
+  fullChargeOnly: boolean;
 };
 
 /** 窓 [start, end) と、スタックする効果なら段（1 始まり） */
@@ -416,6 +419,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         windows: [],
         count: 0,
         step: 0,
+        fullChargeOnly: cycle.trigger.count === 'fullChargeShot',
       });
     }
   });
@@ -511,20 +515,25 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
       const state = params.weapon !== null ? changedShooters[i]! : shooters[i]!;
       const shot = params.weapon?.shot ?? slot.character.shot;
+      // Stage 22-B: 窓に入るフレームに、チャージの途中ならその時点のチャージで撃ってから、ハイドする（C-0109）
+      const partial = hideNow ? partialChargeShot(state, shot, model, params) : null;
       if (hideNow) hideShooter(state, shot, model, params);
       if (unhideNow) unhideShooter(state, shot, block!.end - block!.start, model, params);
-      if (!stepShooter(state, shot, model, params, blocked)) return;
+      if (!stepShooter(state, shot, model, params, blocked) && partial === null) return;
       const log = logs[i]!;
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
-      shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge };
-      gauge += energyAt(i, f);
+      const isPartial = partial !== null && partial < 1;
+      if (isPartial) (log.partialShots ??= []).push({ frame: f, progress: partial });
+      shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge && !isPartial };
+      gauge += energyAt(i, f) * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1);
     });
     // ヘルム編: ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
     for (const t of damageGaugeTrackers) {
       const shot = shotEvents[t.slotIndex];
       if (shot === null || shot === undefined) continue;
       if (t.count === 'lastShot' && !shot.lastShot) continue;
+      if (t.count === 'fullChargeShot' && !shot.fullCharge) continue;
       t.n += 1;
       if (t.n % t.every !== 0) continue;
       for (const d of t.gaugeHits) {
@@ -568,7 +577,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         }
       }
       for (const t of cycleTrackers) {
-        if (shotEvents[t.slotIndex] === null) continue;
+        const ev = shotEvents[t.slotIndex];
+        if (ev === null || ev === undefined) continue;
+        if (t.fullChargeOnly && !ev.fullCharge) continue;
         t.count += 1;
         let e = t.every;
         for (const w of t.windows) if (w.start <= f && f < w.end) e = Math.min(e, w.every);

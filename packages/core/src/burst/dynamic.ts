@@ -39,6 +39,17 @@ export function energyPerTrigger(shot: ShotParams, controlled: boolean, hitRate 
   return shot.targetBurstEnergyPerShot * pellets * charge * hitRate;
 }
 
+/**
+ * Stage 22-B: 部分チャージの発（チャージの進み progress）のゲージの、フルチャージの発に対する比。フルチャージ倍率 F が乗る枠
+ * （操作キャラのチャージ武器）では (1 + (F − 1) × progress) / F、ほかは 1。ダメージと同じくチャージの進みに比例すると仮定した
+ * （部分チャージの発のゲージは未確認。design-stage22.md 0.2 節・6 節の 3）
+ */
+export function partialGaugeRatio(shot: ShotParams, controlled: boolean, progress: number): number {
+  const full = controlled && shot.chargeTime > 0 ? shot.fullChargeBurstEnergy : 1;
+  if (full <= 1) return 1;
+  return (1 + (full - 1) * Math.min(1, Math.max(0, progress))) / full;
+}
+
 export function burstUnitOf(character: CharacterData): NonNullable<BurstUnit> {
   return {
     burstStep: character.burstStep,

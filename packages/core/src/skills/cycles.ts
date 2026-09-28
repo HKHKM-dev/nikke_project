@@ -9,7 +9,7 @@
 // 窓の中の毎回の段はカウンタを戻さないので、窓の後の最初の段は「通算の every の倍数」の射撃に戻る
 // （録画 47 の FB 明けの段が 1 発目の回と 2 発目の回に分かれたのはこのため）。
 import { gameSecondsToFrames } from '../time.ts';
-import type { ShotLog } from '../frame/shots.ts';
+import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import type { CharacterData, LocalizedText, SkillRaw } from '../types.ts';
 import type { ResolvedDamageEffect } from './burstDamage.ts';
 import {
@@ -156,7 +156,11 @@ export function resolveCycleEvery(
 /** 循環が数える射撃の列（trigger の count。フルチャージはチャージ武器だけ） */
 export function cycleShotFrames(log: ShotLog | null | undefined, trigger: ResolvedShotCountTrigger): readonly number[] {
   if (!log) return [];
-  if (trigger.count === 'fullChargeShot' && !log.fullCharge) return [];
+  if (trigger.count === 'fullChargeShot') {
+    // Stage 22-B: 部分チャージの発は数えない（design-stage22.md 0.2 節。紅蓮BS の S1 の段）
+    const full = fullChargeFrameSet(log);
+    return log.frames.filter(full);
+  }
   if (trigger.count === 'lastShot') return log.lastShotFrames ?? [];
   return log.frames;
 }
