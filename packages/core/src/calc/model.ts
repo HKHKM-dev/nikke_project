@@ -14,6 +14,8 @@
 // Stage 16-B（同 9 節）: 敵を狙えない窓（敵の出来事）があるときは、全グループで射撃の列を数える（sim と一致する）。
 // Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、グループ（鍵に着地点が入る）の着地点の条件で 1 トリガーの値を出す
 // （中遠のような配分は Σ w_k × T_k。frame/landing.ts）。手入力の枠は今と同じ。
+// ハイブリッドの限界（plan/design-calc-hybrid.md）: 案 (b)「射撃の窓を持つ枠は全グループを射撃の列から数える」を
+// options.shotCounting = 'firingSlots' で試作した。既定は今のハイブリッドのまま（オーナーの決定待ち）。
 import { activationFramesOfSlot, summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
 import { baseAttackOf, computeDamage, computeTriggerDamage, modelNotes } from '../damage.ts';
@@ -28,7 +30,7 @@ import {
 } from '../frame/plan.ts';
 import { slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges } from '../skills/timeline.ts';
+import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges, type SlotBuffState } from '../skills/timeline.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { isFiringStat } from '../skills/types.ts';
 import {
@@ -67,7 +69,25 @@ function lowerBound(frames: readonly number[], value: number): number {
   return lo;
 }
 
-export function computeTeamDamage(teamInput: TeamInput): TeamResult {
+/** Stage 10: 持続の射撃バフ（最大装弾数・リロード速度・チャージ速度・装弾数無限・使用武器変更の timed）が掛かっている状態か */
+function hasFiringWindow(state: SlotBuffState): boolean {
+  return state.timedEffects.some((e) => isFiringStat(e.stat));
+}
+
+/**
+ * 通常攻撃のトリガー数を射撃の列から数える範囲（plan/design-calc-hybrid.md）。
+ * - 'hybrid'（既定）: 持続の射撃バフが掛かっているグループだけ（plan/design-stage10.md 5 節）
+ * - 'firingSlots'（案 (b) の試作。オーナーの決定待ち）: 持続の射撃バフが 1 つでも掛かる枠は、その枠の全グループ
+ * 敵を狙えない窓があるときは、どちらでも全枠の全グループを数える（Stage 16-B）
+ */
+export type ShotCounting = 'hybrid' | 'firingSlots';
+
+export type CalcOptions = {
+  /** 省略は 'hybrid' */
+  shotCounting?: ShotCounting;
+};
+
+export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {}): TeamResult {
   validateTeamSlots(teamInput.slots);
   // Stage 9: 宝物版への差し替えは最上位で 1 回だけ（planTeamRun の外でも definition と character を読むため）
   const input = applyTreasureToTeam(teamInput);
@@ -93,7 +113,10 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
     const segments: SlotSegmentResult[] = [];
     let normalDamage = 0;
     const shotFrames = shots[index]?.frames ?? [];
-    for (const group of groupTimeline(timeline, index)) {
+    const groups = groupTimeline(timeline, index);
+    // 案 (b)（plan/design-calc-hybrid.md）: 射撃の窓を持つ枠は、窓の外のグループも射撃の列から数える
+    const countSlotShots = options.shotCounting === 'firingSlots' && groups.some((g) => hasFiringWindow(g.state));
+    for (const group of groups) {
       const state = group.state;
       const parts = landingPartsOf(landing, slot, index, group.landing);
       const ranges = mergeAdjacentRanges(group.segments.map((s) => ({ start: s.start, end: s.end })));
@@ -106,7 +129,7 @@ export function computeTeamDamage(teamInput: TeamInput): TeamResult {
         timedEffects: state.timedEffects,
       };
       // Stage 10: 持続の射撃バフが掛かっているグループは、射撃の列の発数を数える（plan/design-stage10.md 5 節）
-      if (countAllShots || state.timedEffects.some((e) => isFiringStat(e.stat))) {
+      if (countAllShots || countSlotShots || hasFiringWindow(state)) {
         const trigger = landingTriggerDamage({ ...base, buffs: state.buffs, perShot }, parts, group.fullBurst);
         const triggers = countShotsInRanges(shotFrames, ranges);
         const damage = trigger.perTrigger * triggers;

@@ -5,6 +5,7 @@ import { parseEnemyPresets } from '../src/enemies.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
+import type { DefinedCharacter } from '../src/records/skills.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
 import type { CharacterData } from '../src/types.ts';
@@ -22,6 +23,8 @@ export const CLAIMS_PATH = `${ROOT}plan/claims.md`;
 const VERIFICATIONS_DIR = `${ROOT}records/verifications/`;
 /** 検証記録の一覧（生成物。Stage 20-D） */
 export const VERIFICATIONS_PATH = `${ROOT}plan/verifications.md`;
+/** スキル定義の対応状況の一覧（生成物。plan/skills-guide.md 3 節） */
+export const SKILLS_DOC_PATH = `${ROOT}plan/skills.md`;
 
 /** records/verifications/ の V- で始まる .md（ファイル名の形が違っても読み、問題として返す）。Stage 20-D */
 export function loadVerifications(): Verification[] {
@@ -111,6 +114,14 @@ export function loadRecordsData(file: RecordingsFile): RecordsData {
     }
   }
   return { characters, skills, enemies: parseEnemyPresets(readJson<unknown>(`${DATA}enemies.json`)) };
+}
+
+/** data/skills/index.json に載った定義と、キャラの名前（index.json の順） */
+export function loadSkillDefinitions(): DefinedCharacter[] {
+  return parseSkillIndex(readJson<unknown>(`${DATA}skills/index.json`)).resourceIds.map((rid) => ({
+    definition: parseSkillDefinition(readJson<unknown>(`${DATA}skills/${rid}.json`)),
+    name: readJson<CharacterData>(`${DATA}characters/${rid}.json`).name,
+  }));
 }
 
 function claimFileNames(): string[] {

@@ -9,7 +9,8 @@
       "notes": [
         {
           "ja": "味方全体の遮蔽物 HP 回復と、デバフのかかった味方のデバフ解除は、ダメージに関係しない",
-          "en": "Cover HP recovery for all allies and debuff removal on debuffed allies do not affect damage"
+          "en": "Cover HP recovery for all allies and debuff removal on debuffed allies do not affect damage",
+          "claims": ["C-0092"]
         }
       ]
     },
@@ -19,7 +20,8 @@
       "notes": [
         {
           "ja": "フルチャージ攻撃時に自分に付くプロケチャップ（受けるダメージ▼）は、ダメージに関係しない",
-          "en": "Professional Tomato Sauce (damage taken down on self after a Full Charge attack) does not affect damage"
+          "en": "Professional Tomato Sauce (damage taken down on self after a Full Charge attack) does not affect damage",
+          "claims": ["C-0092"]
         }
       ]
     },
@@ -29,7 +31,8 @@
       "notes": [
         {
           "ja": "味方全体のデバフ解除と、プロケチャップがフルスタックのときの敵全体の攻撃力▼は、ダメージに関係しない",
-          "en": "Debuff removal on all allies and ATK down on all enemies at max Professional Tomato Sauce stacks do not affect damage"
+          "en": "Debuff removal on all allies and ATK down on all enemies at max Professional Tomato Sauce stacks do not affect damage",
+          "claims": ["C-0092"]
         }
       ]
     }

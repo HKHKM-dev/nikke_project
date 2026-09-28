@@ -39,7 +39,8 @@
           "assumes": {
             "ja": "対象は単体ボス（最も防御の低い敵 1 機・攻撃範囲内の敵・敵全体とも同じ敵で、分配ダメージは全額）。回数は戦闘開始からの通算のフルチャージ攻撃回数で、段は A → B → C を循環する（録画 46・47）",
             "en": "A single boss is assumed (the lowest-DEF enemy, enemies in range and all enemies are the same target; distributed damage is dealt in full). The count is the running total of full charge attacks since the battle started, and the tiers cycle A → B → C (recordings 46 and 47)"
-          }
+          },
+          "claims": ["C-0047", "C-0085"]
         }
       ]
     },

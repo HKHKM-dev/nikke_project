@@ -41,7 +41,8 @@
           "assumes": {
             "ja": "吸収回復（10 秒間維持）は、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす。切れる前の付き直しでは起こさない（V-0024）。回復量はダメージに関係しない",
             "en": "The lifesteal (10 s) triggers \"when healed\" only when newly applied, not when refreshed before it expires (V-0024). The healed amount does not affect damage"
-          }
+          },
+          "claims": ["C-0082"]
         }
       ],
       "notes": [

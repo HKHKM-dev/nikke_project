@@ -12,7 +12,8 @@
           "target": "allies",
           "stat": "normalCritRate",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": ["C-0097"]
         }
       ]
     },
@@ -25,7 +26,8 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 2,
-          "durationRef": 3
+          "durationRef": 3,
+          "claims": ["C-0098"]
         }
       ],
       "notes": [
@@ -41,7 +43,8 @@
         {
           "kind": "burstDamage",
           "ref": 1,
-          "damageType": "skill"
+          "damageType": "skill",
+          "claims": ["C-0098"]
         }
       ],
       "notes": [
@@ -66,13 +69,15 @@
           "target": "allies",
           "stat": "normalCritRate",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": ["C-0097"]
         },
         {
           "kind": "burstGauge",
           "trigger": { "count": "fullChargeShot" },
           "target": "allies",
-          "ref": 4
+          "ref": 4,
+          "claims": ["C-0094", "C-0103"]
         }
       ],
       "notes": [
@@ -91,14 +96,16 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 2,
-          "durationRef": 3
+          "durationRef": 3,
+          "claims": ["C-0096"]
         },
         {
           "kind": "damage",
           "trigger": { "count": "fullChargeShot" },
           "ref": 4,
           "damageType": "additional",
-          "gaugeHits": [1]
+          "gaugeHits": [1],
+          "claims": ["C-0093", "C-0103", "C-0104"]
         }
       ],
       "notes": [
@@ -114,7 +121,8 @@
         {
           "kind": "burstDamage",
           "ref": 1,
-          "damageType": "skill"
+          "damageType": "skill",
+          "claims": ["C-0096"]
         },
         {
           "kind": "timed",
@@ -122,7 +130,8 @@
           "target": "self",
           "stat": "chargeDamageMultiplier",
           "ref": 4,
-          "durationShotsRef": 5
+          "durationShotsRef": 5,
+          "claims": ["C-0099"]
         }
       ],
       "notes": [

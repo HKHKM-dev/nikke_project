@@ -1,6 +1,7 @@
 // Stage 19-B: 観測値をモデルと比べ、残差の一覧（plan/residuals.md）を作り直す。
 // Stage 20-B: 結論の一覧（plan/claims.md）も records/claims/ から作り直す（前の中身は読まない）。
 // Stage 20-D: 検証記録の一覧（plan/verifications.md）も records/verifications/ から作り直す（前の中身は読まない）。
+// スキル定義の根拠（plan/skills-guide.md 3 節）: 定義の claims を結論と突き合わせ、対応状況の一覧（plan/skills.md）も作り直す。
 // 使い方: npm run records:check（ルート。整形まで行う）
 import { readFileSync, writeFileSync } from 'node:fs';
 import { claimsByObservation, gatedObservations, renderClaims, validateClaims } from '../src/records/claims.ts';
@@ -11,15 +12,18 @@ import {
   validateObservations,
 } from '../src/records/observations.ts';
 import { replaceGeneratedSection } from '../src/records/recordings.ts';
+import { definitionPlacesByClaim, renderSkills, validateSkillClaims } from '../src/records/skills.ts';
 import { renderVerifications, validateVerifications, verificationsByClaim } from '../src/records/verifications.ts';
 import {
   CLAIMS_PATH,
   RESIDUALS_PATH,
+  SKILLS_DOC_PATH,
   VERIFICATIONS_PATH,
   loadClaims,
   loadObservations,
   loadRecordingsFile,
   loadRecordsData,
+  loadSkillDefinitions,
   loadVerifications,
   misplacedClaims,
   misplacedObservations,
@@ -32,6 +36,7 @@ const data = loadRecordsData(file);
 const observations = loadObservations();
 const claims = loadClaims();
 const verifications = loadVerifications();
+const skills = loadSkillDefinitions();
 // Stage 20-E: 失効した観測値は照合と結論の根拠から外す
 const invalidReasons = invalidReasonsOf(observations);
 const errors = [
@@ -40,6 +45,7 @@ const errors = [
   ...misplacedClaims(),
   ...validateClaims(claims, new Set(observations.map((o) => o.id)), new Set(invalidReasons.keys())),
   ...validateVerifications(verifications, { claims, recordingIds: new Set(recordings.keys()), observations }),
+  ...validateSkillClaims(skills, claims),
 ];
 if (errors.length > 0) {
   console.error(errors.join('\n'));
@@ -51,8 +57,12 @@ writeFileSync(
   RESIDUALS_PATH,
   replaceGeneratedSection(doc, 'residuals', renderResiduals(residuals, observations, claimsByObservation(claims))),
 );
-writeFileSync(CLAIMS_PATH, renderClaims(claims, verificationsByClaim(verifications), invalidReasons));
+writeFileSync(
+  CLAIMS_PATH,
+  renderClaims(claims, verificationsByClaim(verifications), invalidReasons, definitionPlacesByClaim(skills)),
+);
 writeFileSync(VERIFICATIONS_PATH, renderVerifications(verifications, observations));
+writeFileSync(SKILLS_DOC_PATH, renderSkills(skills, claims));
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
 for (const r of residuals.filter((x) => x.status !== 'ok' && x.status !== 'invalid')) {
   const mark = gated.has(r.observation.id) ? '（確定の結論の根拠。npm test が落ちる）' : '';

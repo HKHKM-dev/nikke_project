@@ -18,6 +18,7 @@
 // ニヒリスター編で持続ダメージ（dot。「持続ダメージ」「1秒間隔」「10秒間維持」）を足した（plan/design-nihilister.md 2.1 節）。
 // 撮影の後に、時間の周期のトリガー（{ everySeconds }。CT ごとに発動するアクティブ型のスキル）を足した（同 8 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
+// 効果と notes には、根拠の結論の ID（claims）を書ける（plan/skills-guide.md 3 節。実在の検査は records/skills.ts）。
 import { ELEMENTS } from '../element.ts';
 import type { Element, LocalizedText, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
@@ -510,7 +511,14 @@ export type DotEffect = {
   assumes?: LocalizedText;
 };
 
-export type SkillEffect =
+/**
+ * 効果・notes の根拠の結論の ID（`C-NNNN`。1 つ以上・重複なし）。どの結論が効果を裏付けるかは、定義のこの欄を正にする
+ * （結論の側からは生成物の plan/claims.md・plan/skills.md で引く）。実在と状態の検査は records/skills.ts（npm run records:check・npm test）。
+ * モデルの計算には使わない
+ */
+export type ClaimRefs = { claims?: string[] };
+
+export type SkillEffect = (
   | PassiveEffect
   | BurstDamageEffect
   | TimedEffect
@@ -519,14 +527,19 @@ export type SkillEffect =
   | WeaponChangeEffect
   | CycleEffect
   | CycleEveryEffect
-  | DotEffect;
+  | DotEffect
+) &
+  ClaimRefs;
+
+/** 扱わなかった効果の説明。claims は「ダメージに関係しない」などの判断の根拠 */
+export type SkillNote = LocalizedText & ClaimRefs;
 
 export type SkillEntry = {
   /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
   support: SkillSupport;
   effects: SkillEffect[];
   /** 扱わなかった効果の説明（partial / unsupported のとき） */
-  notes?: LocalizedText[];
+  notes?: SkillNote[];
 };
 
 export type SkillDefinition = {
@@ -570,6 +583,25 @@ function parseLocalizedText(v: Json, path: string): LocalizedText {
     fail(path, 'expected { ja: string, en: string }');
   }
   return { ja: v.ja, en: v.en };
+}
+
+/** 結論の ID の形（records/claims.ts の CLAIM_ID と同じ）。実在は records/skills.ts で見る */
+const CLAIM_REF = /^C-\d{4,}$/;
+
+function parseClaimRefs(v: Json, path: string): string[] {
+  if (!Array.isArray(v) || v.length === 0) fail(path, 'expected a non-empty array of claim IDs');
+  return v.map((id, i) => {
+    if (typeof id !== 'string' || !CLAIM_REF.test(id))
+      fail(`${path}[${i}]`, `expected C-<4+ digits>, got ${JSON.stringify(id)}`);
+    if (v.indexOf(id) !== i) fail(`${path}[${i}]`, `duplicate claim ID ${id}`);
+    return id;
+  });
+}
+
+function parseNote(v: Json, path: string): SkillNote {
+  const note: SkillNote = parseLocalizedText(v, path);
+  if (isRecord(v) && v.claims !== undefined) note.claims = parseClaimRefs(v.claims, `${path}.claims`);
+  return note;
 }
 
 /** casterAttack は attack だけ、flat（Stage 10）は maxAmmo だけ */
@@ -817,7 +849,11 @@ function parseDuration(v: Record<string, Json>, path: string): { durationRef?: n
 /** Stage 11 モダニア: 使用武器の変更 */
 function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponChangeEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'damageRef', 'hitsPerShot', 'durationRef', 'durationSeconds', 'assumes'].includes(key)) {
+    if (
+      !['kind', 'trigger', 'damageRef', 'hitsPerShot', 'durationRef', 'durationSeconds', 'assumes', 'claims'].includes(
+        key,
+      )
+    ) {
       fail(`${path}.${key}`, 'unknown field');
     }
   }
@@ -846,7 +882,7 @@ function parseGaugeHits(v: Json, path: string): number[] {
 /** Stage 11 紅蓮BS: 段の循環 */
 function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'steps', 'assumes'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+    if (!['kind', 'trigger', 'steps', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
   }
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   if (!isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'a cycle needs a shot count trigger');
@@ -879,7 +915,7 @@ function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
 /** Stage 11 紅蓮BS: 循環の間隔の変更。slot に cycle がちょうど 1 つあるかは定義全体で見る（validateCycles） */
 function parseCycleEveryEffect(v: Record<string, Json>, path: string): CycleEveryEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'slot', 'every', 'durationRef', 'durationSeconds', 'assumes'].includes(key)) {
+    if (!['kind', 'trigger', 'slot', 'every', 'durationRef', 'durationSeconds', 'assumes', 'claims'].includes(key)) {
       fail(`${path}.${key}`, 'unknown field');
     }
   }
@@ -925,7 +961,11 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
  */
 function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'ref', 'intervalSeconds', 'durationRef', 'durationSeconds', 'assumes'].includes(key)) {
+    if (
+      !['kind', 'trigger', 'ref', 'intervalSeconds', 'durationRef', 'durationSeconds', 'assumes', 'claims'].includes(
+        key,
+      )
+    ) {
       fail(`${path}.${key}`, 'unknown field');
     }
   }
@@ -963,6 +1003,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
         'ref',
         ...durationKeys,
         'assumes',
+        'claims',
       ].includes(key)
     ) {
       fail(`${path}.${key}`, 'unknown field');
@@ -1009,6 +1050,12 @@ function parseRef(v: Json, path: string): number {
  */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
+  const effect: SkillEffect = parseEffectBody(v, path, slot);
+  if (v.claims !== undefined) effect.claims = parseClaimRefs(v.claims, `${path}.claims`);
+  return effect;
+}
+
+function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot): SkillEffect {
   if (v.kind === 'passive') {
     if (slot === 'burst')
       fail(`${path}.kind`, 'passive effects are not allowed in burst (use timed with trigger "burstUse")');
@@ -1046,7 +1093,7 @@ function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' 
   const entry: SkillEntry = { support, effects };
   if (v.notes !== undefined) {
     if (!Array.isArray(v.notes)) fail(`${path}.notes`, 'expected an array');
-    entry.notes = v.notes.map((n, i) => parseLocalizedText(n, `${path}.notes[${i}]`));
+    entry.notes = v.notes.map((n, i) => parseNote(n, `${path}.notes[${i}]`));
   }
   return entry;
 }

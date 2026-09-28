@@ -9,7 +9,8 @@
       "notes": [
         {
           "ja": "最後の弾丸が命中した対象（敵）の攻撃力▼はダメージに関係しない",
-          "en": "ATK down on the enemy hit by the last bullet does not affect damage"
+          "en": "ATK down on the enemy hit by the last bullet does not affect damage",
+          "claims": ["C-0072"]
         }
       ]
     },
@@ -19,7 +20,8 @@
       "notes": [
         {
           "ja": "最終攻撃力が最も高い敵の攻撃力▼はダメージに関係しない",
-          "en": "ATK down on the enemy with the highest final ATK does not affect damage"
+          "en": "ATK down on the enemy with the highest final ATK does not affect damage",
+          "claims": ["C-0072"]
         }
       ]
     },
@@ -33,13 +35,15 @@
           "assumes": {
             "ja": "対象「最終攻撃力が最も高い敵 1 機」は単体ボスで 1 ヒット",
             "en": "The single-target hit lands once on a lone boss"
-          }
+          },
+          "claims": ["C-0072"]
         }
       ],
       "notes": [
         {
           "ja": "挑発はダメージに関係しない",
-          "en": "Taunt does not affect damage"
+          "en": "Taunt does not affect damage",
+          "claims": ["C-0072"]
         }
       ]
     }
