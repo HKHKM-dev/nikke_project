@@ -108,7 +108,12 @@ export type SlotSegmentResult = {
    */
   triggerSource: 'average' | 'shots';
   damage: number;
+  /** Stage 22-B: triggers・damage のうち部分チャージの発（C-0109）。無ければキーごと無い */
+  partialCharge?: PartialChargeTotals;
 };
+
+/** Stage 22-B: 部分チャージの発の数と与ダメージ */
+export type PartialChargeTotals = { triggers: number; damage: number };
 
 export type SlotBurstResult = {
   /** 発動ごとの内訳（時刻は秒）。定義がない・unsupported・倍率ダメージなしなら空 */

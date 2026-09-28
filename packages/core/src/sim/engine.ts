@@ -14,7 +14,14 @@
 // Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す（calc と同じ関数）。
 import type { BurstSchedule, BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
-import { baseAttackOf, computeTriggerDamage, modelNotes, type ModelNote, type TriggerDamage } from '../damage.ts';
+import {
+  baseAttackOf,
+  computeTriggerDamage,
+  modelNotes,
+  partialChargeTriggerDamage,
+  type ModelNote,
+  type TriggerDamage,
+} from '../damage.ts';
 import {
   autoConditionSummary,
   landingPartsOf,
@@ -36,7 +43,7 @@ import {
   planTeamRun,
   type SkillHitEvent,
 } from '../frame/plan.ts';
-import { type DamagePerSecond, type TeamInput } from '../team.ts';
+import { type DamagePerSecond, type PartialChargeTotals, type TeamInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds } from '../time.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
@@ -77,6 +84,8 @@ export type SimSlotSegment = {
   /** この区間に実際に撃った数（整数） */
   triggers: number;
   damage: number;
+  /** Stage 22-B: triggers・damage のうち部分チャージの発。無ければキーごと無い */
+  partialCharge?: PartialChargeTotals;
 };
 
 export type SimSlotResult = {
@@ -138,6 +147,8 @@ type Runner = {
   shots: readonly number[];
   /** 次に撃つ射撃の添字 */
   nextShot: number;
+  /** Stage 22-B: 部分チャージの発のフレーム → チャージの進み */
+  partial: ReadonlyMap<number, number>;
   result: SimSlotResult;
 };
 
@@ -200,6 +211,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       index,
       shots: shots[index]?.frames ?? [],
       nextShot: 0,
+      partial: new Map((shots[index]?.partialShots ?? []).map((p) => [p.frame, p.progress])),
       result: {
         index,
         character: slot.character,
@@ -319,16 +331,27 @@ export function runSimulation(simInput: SimInput): SimResult {
       if (runner.shots[runner.nextShot] !== f) continue;
       runner.nextShot += 1;
       const segment = runner.result.segments[segIndex]!;
+      // Stage 22-B: 部分チャージの発は、その発のチャージの進みで 1 トリガーの値を出し直す
+      const progress = runner.partial.get(f);
+      const damage =
+        progress === undefined
+          ? segment.trigger.perTrigger
+          : partialChargeTriggerDamage(segment.trigger, progress).perTrigger;
       segment.triggers += 1;
-      segment.damage += segment.trigger.perTrigger;
-      addPerSecond(runner.index, f, segment.trigger.perTrigger);
+      segment.damage += damage;
+      if (progress !== undefined) {
+        segment.partialCharge ??= { triggers: 0, damage: 0 };
+        segment.partialCharge.triggers += 1;
+        segment.partialCharge.damage += damage;
+      }
+      addPerSecond(runner.index, f, damage);
       if (trace)
         events.push({
           frame: f,
           kind: 'trigger',
           slot: runner.index,
           fullBurst: fb,
-          damage: segment.trigger.perTrigger,
+          damage,
         });
     }
   }

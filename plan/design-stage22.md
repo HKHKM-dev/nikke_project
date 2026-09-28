@@ -1,7 +1,7 @@
 # Stage 22 設計書: チャージ武器の部分チャージと、待ちからの 1 発目
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: 22-A 完了（2026-09-29。実施の記録は 7 節）。22-B は未着手
+- 状態: 完了（2026-09-29。22-A・22-B。実施の記録は 7 節）
 - 関連: V-0037（検証記録）、C-0001・C-0014・C-0057・C-0108・C-0109・C-0110、[claims.md](claims.md)、[design-stage16.md](design-stage16.md) 9 節（的のジャンプの窓）、[design-stage21.md](design-stage21.md) 8 節（武器の換算）
 - 作成日: 2026-09-29
 
@@ -138,6 +138,14 @@ V-0037 の読み直しと、オーナーの知見（2026-09-29）で、次の 2 
 - `weapons.ts` の `WeaponModel` に `aimOutFrames`（13）を足した。`cadence.ts` の `firstShotFrames` は、チャージ武器ではチャージ + `chargeReleaseFrames` − `aimOutFrames`。`reloadFirstShotFrames` は、チャージ武器ではチャージ + `chargeReleaseFrames`（今まで `firstShotFrames` を返していたのを分けた）。射手（`frame/shooter.ts`）は、戦闘開始と窓の明けが `firstShotFrames`、リロードの後が `reloadFirstShotFrames` を使っていたので、呼び出しは変えていない。
 - 発の時刻を固定していたテストを新しい値に直した（`shooter.test.ts`・`cadence.test.ts`・`stage16Events.test.ts`・`stage10Shooter.test.ts`・`stage11ScarletBsTeam.test.ts`・`stage11ModerniaTeam.test.ts`）。バーストの発動フレームちょうどの発を使うテスト（`firstPass.test.ts`）は、構え解除を 0 にしたモデルで回すようにした。ラムの 1 発目（69f・リロードの後 82f）のテストを足した。sim と calc の整合のテストは変えずに通った。
 - 残差の一覧の変化は V-0041。1 回目の満タンの +11〜+12f の遅れがほぼ消え、`040-04`・`043-06` が許容の外（−34・−33f。仮説の結論 C-0106 の観測値）に出た。確定の結論の観測値は許容の中に残った。C-0110 を確定にした（6 節の 5）。
+
+### 7.2 22-B（2026-09-29）
+
+- `frame/shooter.ts` に `partialChargeShot` を足した。1 パス目（`frame/firstPass.ts`）は窓に入るフレームに、これを `hideShooter` の前に呼び、撃ったら発の記録（`ShotLog.partialShots`）に進みを残す。部分チャージの発は `fullChargeShot` に数えない（`ShotEvent.fullCharge`・`replayEvents`・`cycleShotFrames`・段の循環とゲージの予約の追跡）。
+- 1 発の値は `damage.ts` の `partialChargeTriggerDamage`（倍率 1 + (M − 1) × p）。sim は部分チャージの発ごとに値を出し直し、calc は区間ごとに部分チャージの発を別に数えて足す。区間の結果に `partialCharge`（発の数と与ダメージ）を足した。ゲージは `burst/dynamic.ts` の `partialGaugeRatio`。
+- 画面: 区間の表のトリガー数に「うち部分チャージ N 発」と、仮定の注記（title）を出す。ブラウザで、紅蓮BS 単騎・射撃場・3 分モードの calc と sim の両方に出て、値が同じことを確かめた。
+- テスト: `stage22PartialCharge.test.ts`（射手・1 発の値・ゲージの比・回数トリガー・sim と calc の一致）。窓の中で撃たないことを確かめるテスト（`stage16Events.test.ts`）は、窓の始まりのフレームの部分チャージの発を除いて見る形にした。
+- 残差の一覧の変化は V-0042。射撃数は 177 → 180 発（実機は総ダメージに出た 179 発 + コンテナに当たった 1 発）。`046-02` が +2.07% で許容の外に出たので、オーナーの判断で C-0057 の根拠から外し、`055-02` と同じ比べ方（自動の条件。結論に結び付けない）にそろえた。
 
 ## 経過
 

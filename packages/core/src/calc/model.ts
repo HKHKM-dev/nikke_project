@@ -20,7 +20,13 @@
 // 既定はハイブリッドのまま（2026-09-28 オーナー決定。実装されたキャラが増えてから、負荷と精度のバランスで改めて決める。同 10 節）。
 import { activationFramesOfSlot, summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
-import { baseAttackOf, computeDamage, computeTriggerDamage, modelNotes } from '../damage.ts';
+import {
+  baseAttackOf,
+  computeDamage,
+  computeTriggerDamage,
+  modelNotes,
+  partialChargeTriggerDamage,
+} from '../damage.ts';
 import { enemyEventNotes } from '../frame/events.ts';
 import { autoConditionSummary, landingPartsOf, landingTriggerDamage, slotConditionNotes } from '../frame/landing.ts';
 import { firingParams } from '../frame/firing.ts';
@@ -45,6 +51,7 @@ import {
   type TeamResult,
 } from '../team.ts';
 import { framesToGameSeconds } from '../time.ts';
+import type { PartialShot } from '../frame/shots.ts';
 
 /**
  * Stage 10: 射撃の列 frames（昇順）のうち、区間の列 ranges（[start, end)、昇順・重なりなし）に入る発数。
@@ -57,6 +64,15 @@ export function countShotsInRanges(
   let count = 0;
   for (const r of ranges) count += lowerBound(frames, r.end) - lowerBound(frames, r.start);
   return count;
+}
+
+/** Stage 22-B: 部分チャージの発のうち、区間の列 ranges に入るもののチャージの進み（発の順） */
+export function partialShotsInRanges(
+  partial: readonly PartialShot[] | undefined,
+  ranges: readonly { start: number; end: number }[],
+): number[] {
+  if (!partial || partial.length === 0) return [];
+  return partial.filter((p) => ranges.some((r) => r.start <= p.frame && p.frame < r.end)).map((p) => p.progress);
 }
 
 /** frames の中で value 以上の最初の添字 */
@@ -136,8 +152,18 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
       if (countAllShots || countSlotShots || (shotCounting === 'hybrid' && hasFiringWindow(state))) {
         const trigger = landingTriggerDamage({ ...base, buffs: state.buffs, perShot }, parts, group.fullBurst);
         const triggers = countShotsInRanges(shotFrames, ranges);
-        const damage = trigger.perTrigger * triggers;
-        segments.push({ ...common, trigger, triggers, triggerSource: 'shots', damage });
+        // Stage 22-B: 部分チャージの発（C-0109）は、その発のチャージの進みで値を出し直す
+        const partial = partialShotsInRanges(shots[index]?.partialShots, ranges);
+        const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
+        const damage = trigger.perTrigger * (triggers - partial.length) + partialDamage;
+        segments.push({
+          ...common,
+          trigger,
+          triggers,
+          triggerSource: 'shots',
+          damage,
+          ...(partial.length > 0 ? { partialCharge: { triggers: partial.length, damage: partialDamage } } : {}),
+        });
         normalDamage += damage;
         continue;
       }

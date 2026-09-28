@@ -7,7 +7,7 @@
 // Stage 11: 出来事に「回復を受けた」（healed）と、フルバーストを開いたチェーンの枠（burstUsers。発火の文脈）を足した
 // （plan/design-stage11.md 3 節）。
 import type { BurstActivation, BurstSchedule, BurstScheduleModel, BurstStepKey } from '../burst/schedule.ts';
-import type { ShotLog } from '../frame/shots.ts';
+import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import { isResolvedEventCount, isResolvedTimer, isResolvedShotCount, type ResolvedTrigger } from './resolve.ts';
 import type { FireContext } from './targets.ts';
 
@@ -158,9 +158,10 @@ export function replayEvents(
   shots.forEach((log, slotIndex) => {
     if (!log) return;
     const last = new Set(log.lastShotFrames ?? []);
+    const full = fullChargeFrameSet(log);
     for (const f of log.frames) {
       if (f >= frames) break;
-      (at(f).shots as (ShotEvent | null)[])[slotIndex] = { lastShot: last.has(f), fullCharge: log.fullCharge };
+      (at(f).shots as (ShotEvent | null)[])[slotIndex] = { lastShot: last.has(f), fullCharge: full(f) };
     }
   });
   if (schedule !== null) {

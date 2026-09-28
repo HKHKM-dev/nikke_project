@@ -200,7 +200,7 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
 
 /**
  * Stage 8: 自分の射撃の回数で発火するトリガー。1 回 = 弾薬を 1 消費する 1 トリガー（SG もペレットではなくトリガー）。
- * 全弾命中の前提なので normalShot と normalHit は同じ列になる。fullChargeShot はチャージ武器の全射撃（常にフルチャージのモデル）。
+ * 全弾命中の前提なので normalShot と normalHit は同じ列になる。fullChargeShot はチャージ武器の射撃のうち、部分チャージの発（Stage 22-B）を除いたもの。
  * カウンタはリロードでも戦闘中ずっとリセットしない（every: 10 は通算 10・20・30…回目）。
  * Stage 10: lastShot = 残弾を 0 にした射撃（「最後の弾丸で攻撃した時 / 命中した時」）。最大装弾数▲で遅れ、弾丸チャージで出なくなる。
  */
