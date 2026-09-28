@@ -60,10 +60,11 @@ D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
 
 ## バックアップ
 
-`E:/nikke_project_captures/` を Google Drive にバックアップする。Google Drive for desktop がストリーミングモードで 2 アカウント分マウントされている。**使うのはメインアカウント側の `I:`**（別アカウントの `J:` は使わない）。
+`E:/nikke_project_captures/` と、旧プロジェクトのアーカイブ `E:/old_nikkecalc/` を Google Drive にバックアップする（Drive 上は同じ名前のフォルダ）。Google Drive for desktop がストリーミングモードで 2 アカウント分マウントされている。**使うのはメインアカウント側の `I:`**（別アカウントの `J:` は使わない）。
 
 ```bash
 robocopy "E:/nikke_project_captures" "I:/マイドライブ/nikke_project_captures" /E /R:1 /W:1
+robocopy "E:/old_nikkecalc" "I:/マイドライブ/old_nikkecalc" /E /R:1 /W:1
 ```
 
 - `/E` はサブディレクトリを含めて差分コピーする。コピー元で消したファイルはコピー先に残る（`/MIR` のようにミスが伝播しない）。リネームすると**コピー先に旧名が残る**ので、必要なら手で消す。
@@ -83,24 +84,24 @@ node tools/captures/probe.ts "I:/マイドライブ/nikke_project_captures"
 
 ### 冗長性の現状と限界
 
-| 対象               | 冗長                                                                                               |
-| ------------------ | -------------------------------------------------------------------------------------------------- |
-| 台帳               | Git → GitHub（`HKHKM-dev/nikke_project`）                                                          |
-| 録画・証拠フレーム | E: の実体 + Google Drive（`I:`）。**別拠点にコピーがある**                                         |
-| 取り込み元         | `H:/record/`・`E:/old_nikkecalc/` にあるのは未読のものだけ（読んだものは移す）。バックアップ対象外 |
+| 対象               | 冗長                                                                                                                               |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 台帳               | Git → GitHub（`HKHKM-dev/nikke_project`）                                                                                          |
+| 録画・証拠フレーム | E: の実体 + Google Drive（`I:`）。**別拠点にコピーがある**                                                                         |
+| 取り込み元         | `H:/record/` にあるのは未読のものだけ（読んだものは移す）。バックアップ対象外。`E:/old_nikkecalc/` は Google Drive（`I:`）にもある |
 
 **注意: `I:` のローカル表示の空きは Drive 本体の容量ではなく、Google Drive デスクトップアプリのローカルキャッシュ置き場の空きに連動する。** 表示が少なくなってきたら、まずキャッシュドライブの設定を疑うこと。
 
 ## クラウド環境での取り寄せ
 
-クラウド環境（Claude Code on the web など）には E: が無いので、上のバックアップ先（Drive の `マイドライブ/nikke_project_captures`）からサービスアカウントで取り寄せる（`tools/captures/fetch.ts`）。権限は読み取り専用で、共有したフォルダの中しか見えない。
+クラウド環境（Claude Code on the web など）には E: が無いので、上のバックアップ先（Drive の `マイドライブ/nikke_project_captures` と `old_nikkecalc`）からサービスアカウントで取り寄せる（`tools/captures/fetch.ts`）。権限は読み取り専用で、共有したフォルダの中しか見えない。
 
 ### 準備（オーナーが 1 回だけ）
 
 1. Google Cloud でプロジェクトを作り、Google Drive API を有効にする。サービスアカウントを作り（ロールは付けない）、鍵（JSON）を 1 つ作ってダウンロードする。
-2. Drive の `nikke_project_captures` フォルダを、サービスアカウントのメールアドレス（鍵の `client_email`）に**閲覧者**で共有する。ほかのフォルダは共有しない。フォルダ ID は、フォルダを開いたときの URL `drive.google.com/drive/folders/<ID>` の `<ID>`。
+2. Drive の `nikke_project_captures` フォルダを、サービスアカウントのメールアドレス（鍵の `client_email`）に**閲覧者**で共有する。ほかのフォルダは共有しない。フォルダ ID は、フォルダを開いたときの URL `drive.google.com/drive/folders/<ID>` の `<ID>`。旧プロジェクトの録画も取るなら、`old_nikkecalc` フォルダも同じように共有する。
 3. クラウド環境の設定に次を入れる。
-   - 環境変数: `NIKKE_DRIVE_SA_KEY`（鍵の JSON を base64 にしたもの。PowerShell なら `[Convert]::ToBase64String([IO.File]::ReadAllBytes("鍵.json"))`。JSON そのままでも読める）と `NIKKE_DRIVE_FOLDER_ID`（上の `<ID>`）。
+   - 環境変数: `NIKKE_DRIVE_SA_KEY`（鍵の JSON を base64 にしたもの。PowerShell なら `[Convert]::ToBase64String([IO.File]::ReadAllBytes("鍵.json"))`。JSON そのままでも読める）と `NIKKE_DRIVE_FOLDER_ID`（上の `<ID>`）。旧プロジェクトの録画も取るなら `NIKKE_DRIVE_LEGACY_FOLDER_ID`（`old_nikkecalc` の `<ID>`）。
    - ネットワーク: `www.googleapis.com` と `oauth2.googleapis.com` への通信を許可する。
    - セットアップスクリプト: `apt-get update && apt-get install -y ffmpeg`（解析ツールが ffmpeg・ffprobe を使う）。
 4. 鍵のファイルはリポジトリに置かない（公開リポジトリ）。漏れたら Google Cloud でその鍵を消して作り直す。
@@ -111,9 +112,12 @@ node tools/captures/probe.ts "I:/マイドライブ/nikke_project_captures"
 node tools/captures/fetch.ts 040 063                # 録画 id で取り寄せ、sha256 の先頭 12 桁を台帳と突き合わせる
 node tools/captures/fetch.ts frames/<名前>.jpg      # 相対パスでも取れる。フォルダを指すと中身を全部取る
 node tools/captures/fetch.ts --list range           # Drive 上のフォルダの中身を見る
+node tools/captures/fetch.ts L-AD                   # 旧プロジェクトの録画（台帳の path から old_nikkecalc の下を引く）
+node tools/captures/fetch.ts --legacy リザルト      # --legacy を付けると相対パスは old_nikkecalc の下（--list にも効く）
 ```
 
-- 置き場所は環境変数 `NIKKE_CAPTURES_DIR`。無ければ Windows は `E:/nikke_project_captures`、それ以外はホームの下の `nikke_project_captures`（`tools/captures/dirs.ts`）。種別フォルダの構成は E: と同じ。
+- 置き場所は環境変数 `NIKKE_CAPTURES_DIR`。無ければ Windows は `E:/nikke_project_captures`、それ以外はホームの下の `nikke_project_captures`（`tools/captures/dirs.ts`）。種別フォルダの構成は E: と同じ。旧プロジェクトのものは `NIKKE_LEGACY_DIR`（無ければ `E:/old_nikkecalc`、それ以外はホームの下の `old_nikkecalc`）。
+- 旧プロジェクトの録画は台帳に sha256 が無いので、突き合わせない。
 - 既にあるファイルは取り直さない（録画は sha256 が台帳と違えば取り直す）。`--force` で取り直す。
 - Drive に無いと言われたら、手元の E: から同期（上の「バックアップ」）していないことが多い。
 - クラウド環境のディスクはセッションごとに消える。取り寄せた録画も、クラウドで切り出したフレームも残らない（Drive へは書き戻さない）。残す証拠フレームは、検証記録にフレーム番号を書いておき、手元で切り出す。
@@ -251,7 +255,7 @@ node tools/captures/probe-result.ts <動画...> --out-dir E:/nikke_project_captu
 
 ```bash
 node tools/captures/probe.ts                        # 全録画の素性を表で出力（records/recordings/ の素性の項目に写す）
-node tools/captures/fetch.ts <録画 id | 相対パス>... [--force]   # Drive から取り寄せる（上の「クラウド環境での取り寄せ」）
+node tools/captures/fetch.ts <録画 id | 相対パス>... [--legacy] [--force]   # Drive から取り寄せる（上の「クラウド環境での取り寄せ」）
 node tools/captures/still.ts   <動画> --frame 947 --out out.png [--crop x,y,w,h] [--scale 900]
 node tools/captures/diff.ts    <動画> --crop x,y,w,h [--from N] [--to N] --peaks [--csv out.csv]
 node tools/captures/probe-result.ts <動画...> [--list] [--out-dir DIR] [--samples 3]
