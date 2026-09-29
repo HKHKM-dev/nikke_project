@@ -497,8 +497,11 @@ export type CycleEveryEffect = {
 /**
  * ニヒリスター編: 「最終攻撃力の X% の持続ダメージ」「N 秒間隔」「Y 秒間維持」。発火から維持時間のあいだ、間隔ごとに
  * 倍率ダメージを 1 tick ずつ与える（1 tick の式は damage と同じ。plan/design-nihilister.md 2.1 節）。対象は敵（1 体の前提）。
- * tick は発火の間隔後から（発火の瞬間には出ない）。持続中の再発火は付け直し（前の残りの tick を捨てる）
+ * tick の時刻は firstTick で決まる。持続中の再発火は、tick の刻みを変えずに終わりを延ばす（C-0129。frame/plan.ts の dotTickFrames）
  */
+export type DotFirstTick = 'atApplication' | 'afterInterval';
+export const DOT_FIRST_TICKS = ['atApplication', 'afterInterval'] as const satisfies readonly DotFirstTick[];
+
 export type DotEffect = {
   kind: 'dot';
   trigger: EffectTrigger;
@@ -509,6 +512,12 @@ export type DotEffect = {
   /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
   durationRef?: number;
   durationSeconds?: number;
+  /**
+   * クルミ編: tick の時刻の形（plan/design-kurumi.md 2.1 節）。省略は atApplication。
+   * atApplication = 付いた瞬間と、1.5 秒後から間隔ごと（ニヒリスターの火傷。C-0101）、
+   * afterInterval = 付いた 1 間隔後から間隔ごと（クルミのハッキング。C-0130）
+   */
+  firstTick?: DotFirstTick;
   assumes?: LocalizedText;
 };
 
@@ -968,9 +977,17 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
 function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   for (const key of Object.keys(v)) {
     if (
-      !['kind', 'trigger', 'ref', 'intervalSeconds', 'durationRef', 'durationSeconds', 'assumes', 'claims'].includes(
-        key,
-      )
+      ![
+        'kind',
+        'trigger',
+        'ref',
+        'intervalSeconds',
+        'durationRef',
+        'durationSeconds',
+        'firstTick',
+        'assumes',
+        'claims',
+      ].includes(key)
     ) {
       fail(`${path}.${key}`, 'unknown field');
     }
@@ -988,6 +1005,12 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   };
   if (effect.durationSeconds !== undefined && effect.durationSeconds < interval) {
     fail(`${path}.intervalSeconds`, `must not exceed the duration (${effect.durationSeconds} s)`);
+  }
+  if (v.firstTick !== undefined) {
+    if (typeof v.firstTick !== 'string' || !(DOT_FIRST_TICKS as readonly string[]).includes(v.firstTick)) {
+      fail(`${path}.firstTick`, `expected one of ${DOT_FIRST_TICKS.join(', ')}, got ${JSON.stringify(v.firstTick)}`);
+    }
+    effect.firstTick = v.firstTick as DotFirstTick;
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

@@ -1,0 +1,58 @@
+{
+  "formatVersion": 1,
+  "resourceId": 862,
+  "checkedAt": "2026-09-29",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "dot",
+          "trigger": { "count": "normalHit", "everyRef": 1 },
+          "ref": 2,
+          "intervalSeconds": 1,
+          "durationRef": 3,
+          "firstTick": "afterInterval",
+          "assumes": {
+            "ja": "撃った弾はすべて命中する（命中の回数は射撃の回数と同じ列）。対象は敵 1 体。持続中に付き直すと、tick の刻みはそのままで終わりが延び、最後に付いてから 5 秒の中の刻みまで出る",
+            "en": "Every shot hits (hits follow the shot count). One enemy. Re-applying it while active keeps the tick cadence and extends the end, up to the last tick within 5 s of the last application"
+          },
+          "claims": ["C-0129", "C-0130", "C-0131", "C-0133"]
+        },
+        {
+          "kind": "dot",
+          "trigger": "burstUse",
+          "ref": 2,
+          "intervalSeconds": 1,
+          "durationRef": 3,
+          "firstTick": "afterInterval",
+          "assumes": {
+            "ja": "敵全体は敵 1 体。tick の時刻の形は、通常攻撃の命中で付くハッキングと同じ",
+            "en": "All enemies means one enemy. The tick timing is the same as the hacking applied by normal hits"
+          },
+          "claims": ["C-0132"]
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルバーストタイム中に通常攻撃が 36 回命中した時、対象がハッキング状態なら 86.17% の追加ダメージは未実装（フルバースト中だけの命中の数え方と、対象がハッキング状態かの条件が語彙に無い）",
+          "en": "The 86.17% additional damage on 36 normal hits during Full Burst to a hacked target is not implemented (no vocabulary for counting hits only during Full Burst or for the target's hacked state)"
+        }
+      ]
+    },
+    "burst": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "敵全体の受けるダメージ 18.06%▲（10 秒間維持）は未実装（敵デバフは語彙に無い）",
+          "en": "Damage Taken +18.06% on all enemies (10 s) is not implemented (no vocabulary for enemy debuffs)"
+        }
+      ]
+    }
+  }
+}

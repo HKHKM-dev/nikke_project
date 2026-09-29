@@ -8,7 +8,7 @@ import type { EnemyInput, TriggerDamage } from '../damage.ts';
 import { FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
-import { SKILL_SLOTS, type SkillDamageType, type SkillDefinition, type SkillSlot } from './types.ts';
+import { SKILL_SLOTS, type DotFirstTick, type SkillDamageType, type SkillDefinition, type SkillSlot } from './types.ts';
 import {
   isResolvedShotCount,
   resolveTrigger,
@@ -56,7 +56,7 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
    */
-  dot?: { intervalSeconds: number; durationSeconds: number };
+  dot?: { intervalSeconds: number; durationSeconds: number; firstTick: DotFirstTick };
 };
 
 /** burst スロットの burstDamage 効果を Lv の数値に解決する。unsupported・効果なしなら空 */
@@ -172,7 +172,11 @@ export function resolveDotEffects(
         multiplier: skillValue(skill, effect.ref, levels[slot]) / 100,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         effectIndex,
-        dot: { intervalSeconds: effect.intervalSeconds, durationSeconds },
+        dot: {
+          intervalSeconds: effect.intervalSeconds,
+          durationSeconds,
+          firstTick: effect.firstTick ?? 'atApplication',
+        },
       };
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
