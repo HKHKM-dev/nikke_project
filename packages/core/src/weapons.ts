@@ -34,12 +34,15 @@ export const WEAPON_LABEL: Record<WeaponType, { ja: string; en: string }> = {
 export type WeaponModel = {
   /** チャージ完了から発射・次チャージ開始までの追加フレーム。SR/RL とも実測 82f = チャージ 60f + 22f */
   chargeReleaseFrames: number;
-  /** スピンアップ武器（MG）がリロード完了・戦闘開始から 1 発目を撃つまでのフレーム。実測 約 20f */
+  /**
+   * スピンアップ武器（MG）がリロード完了から 1 発目を撃つまでのフレーム。実測 約 20f（C-0002）。
+   * Stage 22-C: 戦闘開始・窓の明けには使わない（aimInFrames。戦闘開始に 20f の初弾遅延は無い。C-0114）
+   */
   spinUpFirstShotFrames: number;
   /**
    * 21-C3: チャージもスピンアップも無い武器（AR・SMG・SG）が、リロードを込め終えてから 1 発目を撃つまでのフレーム。
    * 最終弾 → 次の 1 発目がリロードの時間より 20〜24f 長い（C-0059）。武器種で分けず、チャージの解放遅延と同じ 22f。
-   * 戦闘開始の 1 発目には使わない（戦闘開始からの遅れは読んでいない）
+   * 戦闘開始・窓の明けの 1 発目には使わない（Stage 22-C の aimInFrames）
    */
   reloadFirstShotFrames: number;
   /**
@@ -48,6 +51,12 @@ export type WeaponModel = {
    * 1 発目は構え解除が無いぶん早い（C-0110。紅蓮BS 43f → 30f、ラム 82f → 70f）。リロードの後の 1 発目は発と発の間と同じ
    */
   aimOutFrames: number;
+  /**
+   * Stage 22-C: チャージの無い武器（AR・SMG・SG・MG）の構えモーションのフレーム。ハイドしていた状態（戦闘開始・窓の明け）から
+   * 1 発目を撃つまで（C-0114。戦闘開始は 11〜13f、窓の明けは MG 11f。SG はノワール 12f）。武器種で分けない
+   * （plan/design-stage22.md 8 節）。チャージ武器の構えは発と発の間から aimOutFrames を引いた長さに含まれる（Stage 22-A）
+   */
+  aimInFrames: number;
 };
 
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
@@ -55,6 +64,7 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   spinUpFirstShotFrames: 20,
   reloadFirstShotFrames: 22,
   aimOutFrames: 13,
+  aimInFrames: 12,
 };
 
 /** 武器の CDN の秒 → フレーム（切り上げ） */

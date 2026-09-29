@@ -155,11 +155,11 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
 
   it('reproduces recording 37: a max-ammo buff mid-reload keeps loading to the new max (3 → 10 → 17 → 20)', () => {
     const shot = makeCharacter(DRAKE).shot;
-    // 1 マガジン目の最終弾（9 発目）は 314f（Stage 21-C3: 90 rpm はゲーム内の時計で 39〜40f ごと）。
+    // 1 マガジン目の最終弾（9 発目）は 326f（Stage 21-C3: 90 rpm はゲーム内の時計で 39〜40f ごと。Stage 22-C: 1 発目は構え 12f の後）。
     // 1 回目の 1 回分（+3）を込めた後（L + 30 の次のフレーム以降）から最大 20 にする
     const base = shotFramesUpTo(shot, 400);
     const L = base[8]!;
-    expect(L).toBe(314);
+    expect(L).toBe(326);
     const run = runWithWindow(shot, 700, {
       start: L + 32,
       end: 10_000,
@@ -195,10 +195,10 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
 
   it('does not add current ammo when the max rises, and clamps it when the max falls', () => {
     const shot = makeCharacter(DRAKE).shot;
-    const run = runWithWindow(shot, 200, { start: 50, end: 150, buffs: { ...ZERO_FIRING_BUFFS, maxAmmoFlat: 5 } });
-    // f0 で 1 発撃って 8、f40 で 7。f50 に最大 14 になっても残弾は 7 のまま
-    expect(run.ammo[49]).toBe(7);
-    expect(run.ammo[50]).toBe(7);
+    const run = runWithWindow(shot, 200, { start: 62, end: 162, buffs: { ...ZERO_FIRING_BUFFS, maxAmmoFlat: 5 } });
+    // f12（構えの後）で 1 発撃って 8、f52 で 7。f62 に最大 14 になっても残弾は 7 のまま
+    expect(run.ammo[61]).toBe(7);
+    expect(run.ammo[62]).toBe(7);
     // 残弾が 9 を超えることはない（満タンからのバフでも増えない）ので削りは別に確かめる
     const state = initialShooter(
       shot,
@@ -206,8 +206,8 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
       firingParams(shot, { ...ZERO_FIRING_BUFFS, maxAmmoFlat: 5 }),
     );
     expect(state.ammo).toBe(14);
-    stepShooter(state, shot, DEFAULT_WEAPON_MODEL, firingParams(shot)); // f0 に撃つ前に最大 9 へ削る
-    expect(state.ammo).toBe(8);
+    stepShooter(state, shot, DEFAULT_WEAPON_MODEL, firingParams(shot)); // f0（構えの間で撃たない）に最大 9 へ削る
+    expect(state.ammo).toBe(9);
   });
 
   it('marks only the shot that empties the magazine as the last bullet, and a longer magazine delays it', () => {
@@ -248,8 +248,8 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
   it('with a 0-frame reload chunk, the next magazine fires no earlier than the frame after the last shot', () => {
     const ar = makeCharacter({ maxAmmo: 3, reloadTime: 1, rateOfFire: 720, endRateOfFire: 720 }).shot;
     const params = firingParams(ar, { ...ZERO_FIRING_BUFFS, reloadSpeed: 1 });
-    // リロード明けの遅れ（C-0059）も 0 にして、0 フレームのつなぎ目だけを見る
-    const model = { ...DEFAULT_WEAPON_MODEL, reloadFirstShotFrames: 0 };
+    // リロード明けの遅れ（C-0059）と戦闘開始の構え（Stage 22-C）も 0 にして、0 フレームのつなぎ目だけを見る
+    const model = { ...DEFAULT_WEAPON_MODEL, reloadFirstShotFrames: 0, aimInFrames: 0 };
     const state = initialShooter(ar, model, params);
     const fired: number[] = [];
     for (let f = 0; f < 20; f++) if (stepShooter(state, ar, model, params)) fired.push(f);
@@ -260,7 +260,7 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
   it('refills ammo up to the max, and finishes a reload if the refill fills the magazine', () => {
     const shot = makeCharacter(DRAKE).shot;
     const state = initialShooter(shot);
-    for (let f = 0; f <= 40; f++) stepShooter(state, shot); // f0・f40 に撃って 7
+    for (let f = 0; f <= 52; f++) stepShooter(state, shot); // f12・f52 に撃って 7（Stage 22-C: 1 発目は構え 12f の後）
     expect(state.ammo).toBe(7);
     refillAmmo(state, 5, shot);
     expect(state.ammo).toBe(9);

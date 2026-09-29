@@ -88,6 +88,7 @@ import {
   partialChargeShot,
   stepShooter,
   unhideShooter,
+  weaponChangeShooter,
   type ShooterState,
 } from './shooter.ts';
 import type { ShotLog } from './shots.ts';
@@ -507,7 +508,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const weaponId = params.weapon?.id ?? null;
       if (weaponId !== activeWeapon[i]) {
         activeWeapon[i] = weaponId;
-        if (params.weapon !== null) changedShooters[i] = initialShooter(params.weapon.shot, model, params);
+        if (params.weapon !== null) changedShooters[i] = weaponChangeShooter(params.weapon.shot, model, params);
         else {
           changedShooters[i] = null;
           resumeShooter(shooters[i]!, slot.character.shot, model, params);

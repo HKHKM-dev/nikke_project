@@ -3,11 +3,12 @@
 // 発射フレーム列は k × cycleFrames + firstShotFrames + shotFrames[i] と 1 フレームもずれない（sim/__tests__/shooter.test.ts で固定）。
 //
 // wait は「撃てないフレームがあと何個残っているか」。stepShooter は先に判定してから減らす:
-//   戦闘開始        wait = firstShotFrames                        → AR は f=0、MG は f=20、チャージ武器は f=69 に 1 発目
-//                   （Stage 22-A: ハイドから構えるので、発と発の間 82f から構え解除 13f を引く。C-0110）
+//   戦闘開始        wait = firstShotFrames                        → AR・SMG・SG・MG は f=12、チャージ武器は f=69 に 1 発目
+//                   （Stage 22-A: ハイドから構えるので、発と発の間 82f から構え解除 13f を引く。C-0110。
+//                    Stage 22-C: チャージの無い武器は構え 12f の後。C-0114）
 //   チャージ武器    発射したフレーム S で wait = charge + release − 1 → 次弾は S + 82
 //   リロード        最終弾のフレーム L から、1 回分ずつ込めて最後の 1 回分を込め終えたところで 1 発目の遅延につなぐ
-//                   → 次のマガジンの 1 発目は L + reload × chunks + reloadFirst（Stage 21-C3: AR・SMG・SG は 22f。C-0059）
+//                   → 次のマガジンの 1 発目は L + reload × chunks + reloadFirst（Stage 21-C3: AR・SMG・SG は 22f。C-0059。MG は 20f）
 //
 // Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）を FiringParams として毎フレーム受け取る（frame/firing.ts）。
 // 分割リロードは 1 回分ずつ込め、1 回分の弾数は込めるたびにその時点の最大装弾数で決める（録画 37: 3 → 10 → 17 → 20、
@@ -27,6 +28,7 @@ import {
   DEFAULT_WEAPON_MODEL,
   MAX_RPM,
   WEAPON_FRAMES_PER_SECOND,
+  hasSpinUp,
   isChargeWeapon,
   type WeaponModel,
 } from '../weapons.ts';
@@ -77,6 +79,21 @@ export function initialShooter(
     acc: 0,
     lastShot: false,
   };
+}
+
+/**
+ * Stage 11 モダニア: 使用武器の変更（殲滅モード）で持ち替えた武器の射手の初期状態。
+ * Stage 22-C の構え（aimInFrames）は入れず、持ち替えの次のフレームから撃つ（スピンアップ武器は初弾遅延、チャージ武器は
+ * 戦闘開始と同じ待ち）。持ち替えはハイドではなく、構えが要るかの根拠が無いので、22-C の前のまま（録画 44: 1 フレーム 1 発）
+ */
+export function weaponChangeShooter(
+  shot: ShotParams,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): ShooterState {
+  const state = initialShooter(shot, model, params);
+  if (!isChargeWeapon(shot)) state.wait = hasSpinUp(shot) ? model.spinUpFirstShotFrames : 0;
+  return state;
 }
 
 /**
@@ -264,9 +281,10 @@ export function hideShooter(
  * Stage 16-B: 敵を狙えるようになった（窓の明けのフレーム、stepShooter の前に呼ぶ）。stoppedFrames は窓の長さ。
  * - ハイド中のリロードが終わっていなければ取り消す（込め終えた分割リロードの分は残る。残弾は減らない）。
  * - 撃てる状態なら撃ち直す。窓が rateOfFireResetTime 以上ならレートは最初から（録画 41 のクラウン: 間隔 23・13・10・8…）。
- *   1 発目は明けのフレームにすぐ撃つ（録画 41・48・49 の最後の射撃 → 撃ち直しが 111〜126f で、窓の長さとほぼ同じ）。
+ *   Stage 22-C: チャージの無い武器は、明けから構え（aimInFrames）の後に撃つ（C-0114。MG は明けから 11f）。
  *   チャージ武器は構えてチャージし直す（戦闘開始と同じ待ち。Stage 22-A で構え解除のぶん短い。込め終えて 1 発目を待っていた枠も同じ）。
- * - 弾切れのリロード中はそのまま続ける。チャージ武器以外の、込め終えて 1 発目を待っている枠（MG の初弾遅延）もそのまま
+ * - 込め終えて 1 発目を待っている枠（窓の中でリロードが終わった）は、チャージの無い武器なら、残りの待ちと構えの長いほう。
+ * - 弾切れのリロード中はそのまま続ける
  */
 export function unhideShooter(
   state: ShooterState,
@@ -289,7 +307,8 @@ export function unhideShooter(
   }
   // チャージは狙えない間には進まないので、込め終えて 1 発目を待っていた枠も明けからチャージする
   if (isChargeWeapon(shot)) state.wait = firstShotFrames(shot, model, params);
-  else if (state.phase === 'ready') state.wait = 0;
+  else if (state.phase === 'ready') state.wait = model.aimInFrames;
+  else state.wait = Math.max(state.wait, model.aimInFrames);
 }
 
 /** 最初の frames フレームで発射したフレームの列（テスト・CLI 用） */

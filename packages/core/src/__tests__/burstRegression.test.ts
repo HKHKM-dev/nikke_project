@@ -62,7 +62,10 @@ describe('録画 18〜21: III 1 体・CT 40 秒の編成', () => {
         const starts = schedule.fullBurstWindows.map((w) => w.start);
         for (let i = 1; i < starts.length; i++) expect(starts[i]! - starts[i - 1]!).toBe(gameSecondsToFrames(40));
         expect(summary.chainTimeouts).toBe(0);
-        expect(summary.fullBurstUptime).toBeCloseTo((5 * gameSecondsToFrames(10)) / FRAMES, 12);
+        // Stage 22-C: 操作キャラの 1 発目が構え 12f ぶん遅れ、録画 18・21 は 5 回目が 180 秒で切れる。切れるのは最後の 1 回だけ
+        const lengths = schedule.fullBurstWindows.map((w) => Math.min(w.end, FRAMES) - w.start);
+        expect(lengths.slice(0, 4)).toEqual(Array(4).fill(gameSecondsToFrames(10)));
+        expect(summary.fullBurstUptime).toBeCloseTo(lengths.reduce((a, b) => a + b, 0) / FRAMES, 12);
       });
 
       it('fires I → II → III in slot order every cycle', () => {
