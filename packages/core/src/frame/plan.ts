@@ -203,8 +203,10 @@ export const DOT_LATER_TICK_DELAY_SECONDS = 0.5;
 /**
  * ニヒリスター編: 持続ダメージの tick のフレーム（plan/design-nihilister.md 2.1 節・経過）。発火 f ごとに、f と
  * f + gameSecondsToFrame(k × 間隔 + DOT_LATER_TICK_DELAY_SECONDS)（k = 1 … floor(維持 ÷ 間隔) − 1）の計 floor(維持 ÷ 間隔) 回。
- * 時刻の四捨五入なので長さの切り捨てを積み重ねない。持続中の再発火は付け直しなので、次の発火のフレーム以降の tick は捨てる。
- * 戦闘の終わり（frames）以降も出さない
+ * 時刻の四捨五入なので長さの切り捨てを積み重ねない。戦闘の終わり（frames）以降も出さない。
+ * V-0051: 維持の途中（前の発火から維持秒のうち）の再発火は、tick の刻みを変えずに終わりだけを延ばす（C-0129。クルミの
+ * ハッキングの録画 057〜062）。刻みは最初の発火のまま続き、最後の発火が単独なら出したはずの最後の tick の時刻まで出る。
+ * 再発火が無ければ（ニヒリスターの火傷）、発火ごとの 10 回のまま
  */
 export function dotTickFrames(
   fires: readonly number[],
@@ -213,15 +215,26 @@ export function dotTickFrames(
   frames: number,
 ): number[] {
   const count = Math.floor(durationSeconds / intervalSeconds + 1e-9);
+  const offset = (k: number): number =>
+    k === 0 ? 0 : gameSecondsToFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS);
+  const lastOffset = offset(count - 1);
+  const durationFrames = gameSecondsToFrame(durationSeconds);
   const ticks: number[] = [];
-  fires.forEach((fire, i) => {
-    const next = fires[i + 1] ?? Infinity;
-    for (let k = 0; k < count; k++) {
-      const tick = k === 0 ? fire : fire + gameSecondsToFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS);
-      if (tick >= next || tick >= frames) break;
+  let i = 0;
+  while (i < fires.length) {
+    // 維持の途中の再発火をまとめる（まとまりの最初の発火が刻みの起点、最後の発火が終わりを決める）
+    const anchor = fires[i]!;
+    let last = anchor;
+    while (i + 1 < fires.length && fires[i + 1]! < last + durationFrames) last = fires[++i]!;
+    i += 1;
+    const end = last + lastOffset;
+    for (let k = 0; ; k++) {
+      // 1 回目の後は、k 回目の時刻を起点から四捨五入する（間隔の四捨五入を積み重ねない）
+      const tick = anchor + offset(k);
+      if (tick > end || tick >= frames) break;
       ticks.push(tick);
     }
-  });
+  }
   return ticks;
 }
 
