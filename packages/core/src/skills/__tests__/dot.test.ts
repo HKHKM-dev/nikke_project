@@ -1,7 +1,7 @@
 // ニヒリスター（261）: 持続ダメージ（dot）の DSL・解決・tick のフレーム（plan/design-nihilister.md 2.1 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { dotTickFrames } from '../../frame/plan.ts';
+import { dotTickFrames, groupDotsByStatus } from '../../frame/plan.ts';
 import type { CharacterData } from '../../types.ts';
 import { resolveDamageEffects, resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
@@ -51,6 +51,14 @@ describe('dot の検証', () => {
     expect(def.skills.burst.effects[0]).toMatchObject({ firstTick: 'afterInterval' });
     expect(() => parseSkillDefinition(withBurst([{ ...BURN, firstTick: 'later' }]))).toThrow(
       /firstTick: expected one of atApplication, afterInterval/,
+    );
+  });
+
+  it('parses status (クルミ編) and rejects an empty one', () => {
+    const def = parseSkillDefinition(withBurst([{ ...BURN, status: 'burn' }]));
+    expect(def.skills.burst.effects[0]).toMatchObject({ status: 'burn' });
+    expect(() => parseSkillDefinition(withBurst([{ ...BURN, status: ' ' }]))).toThrow(
+      /status: expected a non-empty string/,
     );
   });
 
@@ -145,5 +153,23 @@ describe('dotTickFrames の afterInterval（付いた 1 間隔後から間隔ご
     expect(dotTickFrames([1000, 1200], 1, 5, 10588, 'afterInterval')).toEqual(
       [59, 118, 176, 235, 294, 353, 412, 471].map((o) => 1000 + o),
     );
+  });
+});
+
+describe('groupDotsByStatus（同じ status の dot は 1 つの持続ダメージ。C-0136）', () => {
+  const [burn] = resolveDotEffects(parseSkillDefinition(raw261), nihilister, MAX_SKILL_LEVELS);
+  const withStatus = (status: string | undefined, effectIndex: number, durationSeconds = 10) => ({
+    ...burn!,
+    effectIndex,
+    dot: { ...burn!.dot!, durationSeconds, ...(status !== undefined ? { status } : {}) },
+  });
+
+  it('groups effects by status and keeps effects without a status apart', () => {
+    const groups = groupDotsByStatus([withStatus('a', 0), withStatus(undefined, 1), withStatus('a', 2)]);
+    expect(groups.map((g) => g.map((e) => e.effectIndex))).toEqual([[0, 2], [1]]);
+  });
+
+  it('rejects effects of one status that differ in the duration', () => {
+    expect(() => groupDotsByStatus([withStatus('a', 0), withStatus('a', 1, 5)])).toThrow(/differ/);
   });
 });

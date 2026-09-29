@@ -68,23 +68,32 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, kurumi 
   const sim = runSimulation(input);
   const calc = computeTeamDamage(input);
   const plan = planTeamRun(input);
-  const ticksOf = (effectIndex: number) =>
-    plan.skillHits
-      .filter((h) => h.slotIndex === kurumi && h.effect.dot !== undefined && h.effect.effectIndex === effectIndex)
-      .map((h) => h.frame);
+  const ticks = plan.skillHits.filter((h) => h.slotIndex === kurumi && h.effect.dot !== undefined);
 
-  it('hacks on every 36th hit, from 1 s after, every second, extended by re-applying (C-0129, C-0130)', () => {
+  it('hacks on every 36th hit and on each burst as one hacking: from 1 s after, every second, extended by re-applying (C-0129, C-0130, C-0136)', () => {
     const shots = plan.shots[kurumi]!.frames;
-    const fires = shots.filter((_, j) => (j + 1) % 36 === 0);
-    expect(fires.length).toBeGreaterThan(10);
-    expect(ticksOf(0)).toEqual(dotTickFrames(fires, 1, 5, plan.frames, 'afterInterval'));
-    // 付いたフレームには tick が出ない
-    for (const f of fires) expect(ticksOf(0)).not.toContain(f);
+    const hits = shots.filter((_, j) => (j + 1) % 36 === 0);
+    const uses = activationFramesOfSlot(plan.schedule!, kurumi);
+    expect(hits.length).toBeGreaterThan(10);
+    expect(uses.length).toBeGreaterThan(0);
+    const fires = [...hits, ...uses].sort((a, b) => a - b);
+    expect(ticks.map((h) => h.frame)).toEqual(dotTickFrames(fires, 1, 5, plan.frames, 'afterInterval'));
+    // 付いたフレームには tick が出ない（重ならないので、同じフレームに 2 つの tick も出ない）
+    const frames = ticks.map((h) => h.frame);
+    expect(new Set(frames).size).toBe(frames.length);
+    for (const f of hits) expect(frames).not.toContain(f);
   });
 
-  it('hacks on each burst of Kurumi with the same timing (C-0132)', () => {
+  it('attributes each tick to the effect that applied the hacking last', () => {
     const uses = activationFramesOfSlot(plan.schedule!, kurumi);
-    expect(ticksOf(1)).toEqual(dotTickFrames(uses, 1, 5, plan.frames, 'afterInterval'));
+    for (const u of uses) {
+      const next = ticks.find((h) => h.frame > u);
+      if (next === undefined) continue;
+      const hitFiresBetween = plan.shots[kurumi]!.frames.filter(
+        (f, j) => (j + 1) % 36 === 0 && f > u && f <= next.frame,
+      );
+      if (hitFiresBetween.length === 0) expect(next.effect.effectIndex).toBe(1);
+    }
   });
 
   it('uses 52.24% per tick at skill Lv10', () => {

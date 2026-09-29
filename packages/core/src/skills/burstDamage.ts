@@ -56,7 +56,7 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
    */
-  dot?: { intervalSeconds: number; durationSeconds: number; firstTick: DotFirstTick };
+  dot?: { intervalSeconds: number; durationSeconds: number; firstTick: DotFirstTick; status?: string };
 };
 
 /** burst スロットの burstDamage 効果を Lv の数値に解決する。unsupported・効果なしなら空 */
@@ -176,6 +176,7 @@ export function resolveDotEffects(
           intervalSeconds: effect.intervalSeconds,
           durationSeconds,
           firstTick: effect.firstTick ?? 'atApplication',
+          ...(effect.status !== undefined ? { status: effect.status } : {}),
         },
       };
       if (effect.assumes) r.assumes = effect.assumes;
