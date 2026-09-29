@@ -1,0 +1,30 @@
+{
+  "id": "093",
+  "date": "2026-09-29",
+  "folder": "range",
+  "file": "20260929-093_AR_kurumi_hacking-end.mp4",
+  "original": "2026-09-29_23-05-09.mp4",
+  "durationSec": 138.9,
+  "frames": 8337,
+  "fps": 60,
+  "sizeMB": 167.8,
+  "sha256": "291a60bc1af6",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": true,
+      "note": "操作キャラの枠・AUTO 射撃 OFF で手で撃つ（撃つ区間と止める区間を交互に 8 回）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。クルミ単騎（一時停止の画面（f7980〜）で名前と Lv.400 を確かめた）。AUTO 射撃・オートバーストとも OFF（画面左上のボタンが 2 つとも灰色）。手で撃ち、撃つ区間と 8 秒以上止める区間を交互にした。戦闘の途中（残り 00:57）で一時停止して録画を止めた。戦闘開始は f768（timer.ts --mode changes の +319f の次の +90f の変わり目）。HUD の最後の値 9,499,331 は一時停止の画面の与ダメージと一致。V-0052"
+}
