@@ -16,7 +16,7 @@ import { computeTeamDamage } from '../../calc/model.ts';
 import { type TeamSlotInput } from '../../team.ts';
 import type { BuildMasters, CharacterData, OverloadOption } from '../../types.ts';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
-import { ZERO_BUFFS, type BuffTotals } from '../buffs.ts';
+import { ZERO_BUFFS, scaleBasisPoints, type BuffTotals } from '../buffs.ts';
 import { computeSkillHit } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { resolvePassiveStates, type TimelineSlot } from '../timeline.ts';
@@ -266,11 +266,23 @@ describe('resolveBuildEffects（3.1）', () => {
     expect(arSr15.notes.map((n) => n.level)).toEqual(['ignored', 'ignored']);
     const smgR0 = resolveBuildEffects(smg, build({ collection: { rarity: 'R', level: 0 } }), masters);
     expect(byStat(smgR0.effects)).toEqual([['normalAttackDamage', 0.0157]]);
-    // 宝物を解放している枠は R / SR のコレクションを付けていない（宝物のスキルは skills/treasure.ts）
+    // RL・SR の「チャージダメージ倍率▲」は倍率の群（C-0122）
+    const srSr15 = resolveBuildEffects(
+      { weaponType: 'SR', corporation: 'ELYSION' },
+      build({ collection: { rarity: 'SR', level: 15 } }),
+      masters,
+    );
+    expect(byStat(srSr15.effects)).toEqual([['chargeDamageMultiplier', 0.0947]]);
+    // 宝物を解放している枠は、コレクションの入力を読まず、宝物の元の SR Lv15 のスキルが乗る（C-0123）
+    expect(byStat(resolveBuildEffects(ar, build({}), masters, { treasurePhase: 1 }).effects)).toEqual([
+      ['coreDamage', 0.1704],
+    ]);
     expect(
-      resolveBuildEffects(ar, build({ collection: { rarity: 'SR', level: 15 } }), masters, { treasurePhase: 1 })
-        .effects,
-    ).toEqual([]);
+      byStat(
+        resolveBuildEffects(ar, build({ collection: { rarity: 'R', level: 0 } }), masters, { treasurePhase: 3 })
+          .effects,
+      ),
+    ).toEqual([['coreDamage', 0.1704]]);
   });
 
   it('the new stats are part of the skill DSL too', () => {
@@ -373,8 +385,11 @@ describe('新 stat の式（3.3）', () => {
       perShot,
       condition: { coreHitRate: 0.5, distanceBonus: false, fullCharge: true },
     });
-    expect(boosted.normalAttackMultiplier).toBeCloseTo(1.0946, 12);
-    expect(boosted.normal / base.normal).toBeCloseTo(1.0946, 12);
+    // C-0121: 武器倍率（1e-4 単位の整数）に掛けて四捨五入した値の比
+    const rounded = scaleBasisPoints(character.shot.damage, 0.0946) / character.shot.damage;
+    expect(Math.abs(rounded - 1.0946)).toBeLessThan(0.5 / character.shot.damage);
+    expect(boosted.normalAttackMultiplier).toBeCloseTo(rounded, 12);
+    expect(boosted.normal / base.normal).toBeCloseTo(rounded, 12);
     expect(boosted.perShot).toBeCloseTo(base.perShot, 9);
   });
 

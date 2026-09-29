@@ -5,7 +5,7 @@
   "topic": "1 発の式・バフの掛かり方",
   "grade": "厳密一致",
   "basis": "`091-01`（バーストの後の 10 発がどれも差 1 未満。コレクションで丸めてからバーストの倍率を掛けると 4.6% 大きく、OL も含めて掛けると 6.8% 大きい）。11 発目は `088-01` の値に戻る。V-0048",
-  "model": "未反映（`buildEffects.ts` はコレクションのチャージダメージ倍率を足し算の `chargeDamage` に写し、`skills/buffs.ts` の `applyChargeBuffs` は (素 + chargeDamage) × (1 + chargeDamageMultiplier) を丸めない）",
+  "model": "`skills/buffs.ts` の `applyChargeBuffs`（スキルとコレクションの倍率▲は `chargeDamageMultiplier` に足し合わせる）",
   "replaces": [],
   "updated": "2026-09-29"
 }

@@ -12,6 +12,7 @@ import {
   applyAttackBuffs,
   applyAttackDamageBuffs,
   applyChargeBuffs,
+  scaleBasisPoints,
   applyCritBuffs,
   type BuffTotals,
 } from './skills/buffs.ts';
@@ -138,7 +139,7 @@ export type TriggerDamage = {
   /** max(1, 攻撃力 − 防御力) */
   baseHit: number;
   weaponMultiplier: number;
-  /** Stage 13: 通常攻撃ダメージ倍率の乗数 1 + Σ normalAttackDamage（通常攻撃だけ。perShot には掛けない） */
+  /** Stage 13: 通常攻撃ダメージ倍率の乗数（丸めた武器倍率 ÷ 素の武器倍率。通常攻撃だけ。perShot には掛けない。C-0121） */
   normalAttackMultiplier: number;
   chargeMultiplier: number;
   /** 加算グループ 1 + コア + 会心 + 距離 + フルバースト。攻撃ダメージバフはここに入らない */
@@ -253,8 +254,10 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const charge = isChargeWeapon(shot) && condition.fullCharge;
   const chargeMultiplier = applyChargeBuffs(shot.fullChargeDamage, charge, buffs);
 
-  // Stage 13: 通常攻撃ダメージ倍率▲（SG・SMG のコレクション）は通常攻撃の武器倍率に掛ける（仮定）
-  const normalAttackMultiplier = 1 + buffs.normalAttackDamage;
+  // Stage 13: 通常攻撃ダメージ倍率▲（SG・SMG のコレクション）は、通常攻撃の武器倍率（1e-4 単位の整数）に (1 + Σ) を掛けて
+  // 四捨五入した値に置き換える（C-0121・C-0127。SG は 1 トリガーの値で丸める）。乗数はその比
+  const normalAttackMultiplier =
+    buffs.normalAttackDamage === 0 ? 1 : scaleBasisPoints(shot.damage, buffs.normalAttackDamage) / shot.damage;
 
   const coreRate = enemy.hasCore ? condition.coreHitRate : 0;
   // Stage 13: コアダメージ▲はコア倍率に加算する（殲滅モードなら変更後の武器のコア倍率が基点）

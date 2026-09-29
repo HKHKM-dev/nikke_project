@@ -1,0 +1,30 @@
+{
+  "id": "092",
+  "date": "2026-09-29",
+  "folder": "range",
+  "file": "20260929-092_SG_soda-twinkling-bunny_fixed-off.mp4",
+  "original": "2026-09-29_22-07-47.mp4",
+  "durationSec": 90,
+  "frames": 5397,
+  "fps": 60,
+  "sizeMB": 108.8,
+  "sha256": "f0e7ec31780e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 314,
+      "name": "ソーダ：トゥインクルバニー",
+      "controlled": true,
+      "note": "単騎・AUTO。コレクション SR Lv5（1 ヒットから逆算。V-0050）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・AUTO 射撃 ON・オートバースト OFF）。撮影の前にキャラ画面（攻撃力 423,134）と装備 4 部位の OL の行を映した。コレクションの画面は映していない。戦闘開始は f1678。残り 01:59 の一時停止のパネルでソーダ：トゥインクルバニー 1 体を確かめた。V-0050"
+}
