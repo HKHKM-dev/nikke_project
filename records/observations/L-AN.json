@@ -42,5 +42,50 @@
       "tool": "tools/captures/hud.ts --mode jumps・tools/captures/timer.ts --mode changes・ffmpeg",
       "note": "戦闘開始 f749（残り時間の変わり目が +322f・+90f と続いた所）。リロード（172f）と違う止まりを候補にし、止まりの中の画面で的がいないことを確かめた（28.80・105.47・134.88・168.42 秒）。37.71・69.84・88.88・130.53・175.46 秒の止まりでは的は元の位置にいた。2 回目は f4610（65.64 秒）の最終弾の後のリロード中に、的が f4660 ごろ（66.5 秒）に浮いた。4・5 回目は、2026-09 の AR・MG の単騎の組（C-0064）より 6〜7 秒早い"
     }
+  },
+  {
+    "id": "L-AN-03",
+    "recording": "L-AN",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0045",
+    "readAt": "2026-09-29",
+    "value": [-35, 0, 2, 6, 12],
+    "unit": "f",
+    "description": "エレグ（MG）単騎で、戦闘開始 S（f749）から数えた、敵名の表示が消えた・残り時間の表示（03:00）が出た・02:59 になり照準の横の残弾（300）が出た・背中からの視点に替わった・最初の発（残弾 299）のフレーム",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始 S は残り時間の表示が出たフレーム（`timer.ts --mode changes` の +89f 前後の変わり目）。ffmpeg で 1 フレームずつ切り出して目で読んだ"
+    }
+  },
+  {
+    "id": "L-AN-04",
+    "recording": "L-AN",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0045",
+    "readAt": "2026-09-29",
+    "value": [12, 12, 13, 12, 12, 12, 12],
+    "unit": "f",
+    "description": "エレグ（MG・300 発・リロード 2.5 秒）単騎で、リロード完了から最初の発まで（的のジャンプの窓をまたがない 7 回）",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
+      "note": "リロード完了は、照準の下の RELOADING のバーが消えて照準の横の残弾が最大に戻ったフレーム。最初の発は、照準の横の残弾が 1 減ったフレーム（最初の 2〜4 回は目で読み、`hud.ts --mode jumps` の総ダメージの増分のフレームと一致したので、以降は増分のフレームを使った）。どちらも ffmpeg で 1 フレームずつ切り出して目で読んだ。リロード完了のフレームは 1309・1870・3686・4247・5577・7465・8026"
+    }
+  },
+  {
+    "id": "L-AN-05",
+    "recording": "L-AN",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0045",
+    "readAt": "2026-09-29",
+    "value": [160, 160, 160, 160, 160, 160, 160],
+    "unit": "f",
+    "description": "エレグ（MG）単騎で、マガジンの最終弾（総ダメージの増分）からリロード完了まで（L-AN-04 と同じ 7 回）",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
+      "note": "最終弾は `hud.ts --mode jumps` の、リロードの空きの前の最後の増分のフレーム（1149・1710・3526・4087・5417・7305・7866）"
+    }
   }
 ]
