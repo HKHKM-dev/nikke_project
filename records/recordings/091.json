@@ -1,0 +1,43 @@
+{
+  "id": "091",
+  "date": "2026-09-29",
+  "folder": "range",
+  "file": "20260929-091_SR_helm_fixed-off_burst.mp4",
+  "original": "2026-09-29_22-03-29.mp4",
+  "durationSec": 59.9,
+  "frames": 3593,
+  "fps": 60,
+  "sizeMB": 72.4,
+  "sha256": "1907aab8203c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "note": "操作キャラの枠・AUTO・**宝物あり**",
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（**風圧タブ**・3 分モード・スペック固定 **OFF**）。ラム（I）+ デルタ（II）+ ヘルム（III・操作）の 3 体で、録画 079 と同じ編成。AUTO 射撃・オートバーストとも ON。撮影の前にヘルムのキャラ画面（攻撃力 490,558。録画 088 と同じ）を映した。戦闘開始は f1330。1 回目のバーストの後の 10 発と 11 発目まで撮り、残り 02:26 の一時停止のパネルで 3 体の枠と名前を確かめた。V-0048"
+}
