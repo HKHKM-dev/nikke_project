@@ -95,7 +95,7 @@ export function reloadFirstShotFrames(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number {
-  // Stage 22-A: チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0014 の紅蓮BS 172f・ラム 200f）
+  // Stage 22-A: チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0144 の紅蓮BS 172f・ラム 200f）
   if (isChargeWeapon(shot)) return params.chargeFrames + model.chargeReleaseFrames;
   // Stage 22-C: MG のリロードの後の初弾遅延（C-0002）は、戦闘開始の構え（firstShotFrames）と分けた
   if (hasSpinUp(shot)) return model.spinUpFirstShotFrames;

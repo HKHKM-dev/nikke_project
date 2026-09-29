@@ -5,7 +5,7 @@
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "厳密一致",
   "basis": "`075-12`（ラム 3 回。1 回は 16 フレーム、2 回は 8 フレームずつの表示の値が、「100 + 伸び × 経過フレーム」の切り捨てで、伸びが 1 フレーム 2.542〜2.554% のときだけすべて合う。0.017 秒 × 150% ÷ 1 秒 = 2.55%）、`006-03`（ベロータ 2 回。6 フレームごとにちょうど 17% ずつ伸びる。0.017 秒 × 250% ÷ 1.5 秒 × 6 = 17.0%）。V-0057",
-  "model": "未反映（`frame/firing.ts` の `firingParams` の `chargeFrames` は 1 秒 = 60f（`WEAPON_FRAMES_PER_SECOND`）の切り上げ。反映は Stage 23（plan/design-weapon-seconds.md 10 節））",
+  "model": "`weapons.ts` の `chargeSecondsToFrames`（`frame/firing.ts` の `firingParams` の `chargeFrames`。Stage 23）",
   "replaces": [],
   "updated": "2026-09-30"
 }

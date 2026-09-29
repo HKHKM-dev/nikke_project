@@ -61,12 +61,13 @@ describe('calc のハイブリッド: 既定は変えない', () => {
     expect(computeTeamDamage(input)).toEqual(computeTeamDamage(input, { shotCounting: 'hybrid' }));
   });
 
-  it('LRNAM: 既定ではリターの枠が sim より 4% 以上小さい（窓の後の平均レートの区間。roadmap の起票の現象）', () => {
+  // Stage 23 でアリスのチャージの刻みが変わり、差は 4% 余りから 3.8% に縮んだ
+  it('LRNAM: 既定ではリターの枠が sim より 3% 以上小さい（窓の後の平均レートの区間。roadmap の起票の現象）', () => {
     const calc = computeTeamDamage(LRNAM);
     const sim = runSimulation(LRNAM);
     const litter = calc.slots[0]!;
     expect(litter.segments.some((g) => g.triggerSource === 'average')).toBe(true);
-    expect(relDiff(sim.slots[0]!.totalDamage, litter.totalDamage)).toBeGreaterThan(0.04);
+    expect(relDiff(sim.slots[0]!.totalDamage, litter.totalDamage)).toBeGreaterThan(0.03);
   });
 });
 

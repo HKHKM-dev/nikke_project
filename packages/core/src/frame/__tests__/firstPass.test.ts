@@ -129,13 +129,13 @@ describe('runFirstPass: degeneration (1.3)', () => {
 });
 
 describe('runFirstPass: firing windows (1.1)', () => {
-  // SR をチャージ 0.33 秒（20f + 22f = 42f 間隔）・装弾数 1000（リロードなし）にすると、固定サイクルの発動フレーム 588（= 42 × 14。Stage 21-B）に撃つ
+  // SR をチャージ 0.32 秒（19f + 23f = 42f 間隔。Stage 23）・装弾数 1000（リロードなし）にすると、固定サイクルの発動フレーム 588（= 42 × 14。Stage 21-B）に撃つ
   const sr: Partial<ShotParams> = {
     maxAmmo: 1000,
     reloadTime: 1,
     rateOfFire: 60,
     endRateOfFire: 60,
-    chargeTime: 0.33,
+    chargeTime: 0.32,
     inputType: 'UP',
   };
 
@@ -148,8 +148,8 @@ describe('runFirstPass: firing windows (1.1)', () => {
     const model = { ...DEFAULT_WEAPON_MODEL, aimOutFrames: 0 };
     const pass = runFirstPass([slotOf(character, def)], { frames: 800, burst: true, burstModel: 'fixed', model });
     const frames = pass.shots[0]!.frames;
-    // 588 の射撃は基礎値（次は 588 + 42）。630 からチャージ 0f（解放遅延 22f だけ）で 652・674…
-    expect(frames.filter((f) => f >= 546 && f <= 700)).toEqual([546, 588, 630, 652, 674, 696]);
+    // 588 の射撃は基礎値（次は 588 + 42）。630 からチャージ 0f（解放遅延 23f だけ）で 653・676…
+    expect(frames.filter((f) => f >= 546 && f <= 700)).toEqual([546, 588, 630, 653, 676, 699]);
     expect(pass.firingWindows).toEqual([expect.objectContaining({ sourceSlotIndex: 0, start: 588, end: 800 })]);
   });
 

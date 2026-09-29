@@ -1,11 +1,11 @@
 {
   "id": "C-0001",
   "text": "SR・RL はチャージ完了から発射まで一律 22f 遅れる",
-  "state": "確定",
+  "state": "棄却",
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "反復実測",
-  "basis": "verification.md Stage 2-B（SR デルタ・RL フラワー、ベロータの録画）",
-  "model": "`weapons.ts` の `chargeReleaseFrames` = 22",
+  "basis": "verification.md Stage 2-B（SR デルタ・RL フラワー、ベロータの録画） 2026-09-30 棄却（V-0059、Stage 23）: チャージはゲーム内の時計で進み（C-0140）、1 秒チャージは 59f で満ちる。表示が満ちてから撃つまでは 1f（`075-05`）で、22f はチャージを 1 秒 = 60f で数えたときの差だった。発と発の間のうちチャージの外の長さを C-0143 に置き換えた",
+  "model": "—（Stage 23 で `chargeReleaseFrames` を 23 にした。C-0143）",
   "replaces": [],
-  "updated": "2026-09-22"
+  "updated": "2026-09-30"
 }
