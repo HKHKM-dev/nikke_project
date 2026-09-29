@@ -74,7 +74,8 @@
           "assumes": {
             "ja": "回数は命中率増加状態に関係なく通算で数え、200 回目の瞬間に命中率増加状態かを見る",
             "en": "Hits are counted regardless of the hit rate state; the state is checked at every 200th hit"
-          }
+          },
+          "claims": ["C-0124"]
         }
       ]
     },

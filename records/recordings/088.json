@@ -1,0 +1,31 @@
+{
+  "id": "088",
+  "date": "2026-09-29",
+  "folder": "range",
+  "file": "20260929-088_SR_helm_fixed-off_iron.mp4",
+  "original": "2026-09-29_21-09-31.mp4",
+  "durationSec": 64.6,
+  "frames": 3876,
+  "fps": 60,
+  "sizeMB": 78.1,
+  "sha256": "ca0c84d9a3f7",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "note": "単騎・AUTO・**宝物あり**",
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Iron"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（**鉄甲タブ**・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・AUTO 射撃 ON・オートバースト OFF）。撮影の前にキャラ画面（攻撃力 490,558）と装備 4 部位の OL の行を映した（V-0047）。宝物の段階 3 はオーナーの確認。戦闘開始は f1596。一時停止のパネルでヘルム 1 体を確かめた。V-0047"
+}

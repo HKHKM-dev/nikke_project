@@ -352,7 +352,7 @@ export function computeCombatAttack(character, build: BuildInput, masters: Build
 8. **CLI**: `--build builds.json`（`{ "<resourceId>": { growth?, affectionRank?, gear?, cube?, collection?, recycleRoom?, extraAttack? } }`）。枠ごとに内訳を 1 行出す。`--fixed-spec` と併用すると無視する。
 9. **テスト**: 630 件（+11: `__tests__/build.test.ts` 9 件、calc `team.test.ts` 2 件）。マスタの形・退化・合成順の仮定（`BUILD_CORE_APPLIES_TO`）・宝物のステータス・範囲外の入力。
 
-## 11. Stage 12 の実測（(b)・(d) は 2026-09-24 に合格。(c) は未実施）
+## 11. Stage 12 の実測（(b)・(d) は 2026-09-24 に合格。(c) は 2026-09-29 に合格）
 
 2.4 節の (a) は自動テストで合格。(b)〜(d) はユーザーの実際の育成状況が要るので、次の表をキャラごとに埋めてもらう（主力 5 体 + 検証用 3 体。**キューブ Lv・コレクション Lv・好感度ランクが互いに違う組**を含める）。
 
@@ -390,7 +390,7 @@ export function computeCombatAttack(character, build: BuildInput, masters: Build
 
 **HP・防御力**も同じ合成順で 13 体（ポリ・キリを足した）とも合った。ただし、コア倍率を掛けてちょうど .5 になる点の丸めは**偶数への丸め**だった（`applyCoreRatio`。verification.md Stage 12 節）。その他加算は 13 体とも 0 で合ったので、手入力の欄として残す。
 
-**残り**: (c) 射撃場（スペック固定 OFF）の 1 ヒットからの逆算。API の宝物 Lv と段階の対応は未確認。
+**残り**: API の宝物 Lv と段階の対応は未確認。(c) 射撃場（スペック固定 OFF）の 1 ヒットからの逆算は、V-0047（2026-09-29）で合った（キャラ画面の攻撃力に OL・スキルの攻撃力▲を足し算で掛けて丸めた値。C-0118）。
 
 ---
 
@@ -419,7 +419,7 @@ export function computeCombatAttack(character, build: BuildInput, masters: Build
 12. **CLI**: `--build` の `gear.<部位>` に `overload: [{ "option": "attack", "level": 15 }]`。枠ごとに効果と計算に入らないものを 1 行出す。
 13. **テスト**: 653 件（+23: `skills/__tests__/stage13.test.ts` 17 件、`simCalc.test.ts` 2 件、calc `team.test.ts` 2 件、`scripts/normalize.test.ts` 2 件）。OL の表の形と 6 点・等差、OL 行の検証、OL / キューブ / コレクションの写像と段階、全スキルの対応表、自分だけへの合成、新 stat の式（非有利 0・殲滅モード基点・perShot に掛けない・倍率ダメージの有利コード）、空の効果の退化、効果層ありの編成の sim / calc 整合（区間・1 トリガー値は厳密一致、枠 5%・編成 3%）。
 
-## 13. Stage 13 の実測（13.1 は済み。13.2 はユーザーの実装備が要る）
+## 13. Stage 13 の実測（13.1 は済み。13.2 は 2026-09-29 に V-0047）
 
 ### 13.1 OL の表の確認（`verified`）
 
@@ -433,6 +433,8 @@ export function computeCombatAttack(character, build: BuildInput, masters: Build
 | 行ごとの表示値 | 攻撃力増加 14.63%（Lv15）、有利コードダメージ増加 23.56%（Lv11） |
 
 ### 13.2 射撃場（スペック固定 OFF）の 1 ヒット分解
+
+**2026-09-29 の状況**: V-0047 で 3.5 節の 1〜4・7 と 8・9 を読んだ（結論は C-0118〜C-0125）。3.5 節の 5（AR のコアダメ▲）と 6（キューブのリロード速度・最大装弾数）は未実施。9 は SMG だけで、SG は未実施。モデルとずれた 3 点（コレクションのチャージダメージ倍率、宝物を持つ枠のコレクション、倍率の丸め）は未反映。
 
 3.5 節の 1〜7 に次の 8・9 を足す。Stage 12 の実測 (b)（キャラ画面の攻撃力）が先に合っていることが前提（バフ前の攻撃力が合わないと分解できない）。
 
