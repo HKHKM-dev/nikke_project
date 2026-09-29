@@ -8,7 +8,9 @@
 // --legacy を付けると old_nikkecalc の下を指す。フォルダを指すと中身を全部落とす。置き場所は dirs.ts（既にあるものは
 // 落とさない。--force で落とし直す）。
 // 環境変数: NIKKE_DRIVE_SA_KEY（drive.ts）、NIKKE_DRIVE_FOLDER_ID（nikke_project_captures フォルダの ID）、
-// NIKKE_DRIVE_LEGACY_FOLDER_ID（old_nikkecalc フォルダの ID。旧プロジェクトのものを取るときだけ）。
+// NIKKE_DRIVE_LEGACY_FOLDER_ID（old_nikkecalc フォルダの ID。旧プロジェクトのものを取るときだけ）。フォルダの ID は
+// カンマ区切りで複数書ける（環境変数の設定欄は 1 行 1 変数なので改行では分けられない）。前に書いたフォルダから探し、
+// 最初に見つかったものを使う。--list は全部のフォルダの中身を合わせて出す（同名は前のフォルダのもの）。
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -53,13 +55,13 @@ function toTarget(arg: string): Target {
   return { legacy: true, relPath: entry.path.slice(LEGACY_PREFIX.length) };
 }
 
-function rootId(legacy: boolean): string {
+function rootIds(legacy: boolean): string[] {
   const [name, folder] = legacy
     ? ['NIKKE_DRIVE_LEGACY_FOLDER_ID', 'old_nikkecalc']
     : ['NIKKE_DRIVE_FOLDER_ID', 'nikke_project_captures'];
-  const id = process.env[name];
-  if (!id) throw new Error(`環境変数 ${name}（Drive の ${folder} フォルダの ID）がありません`);
-  return id;
+  const ids = (process.env[name] ?? '').split(/[,\s]+/).filter((id) => id !== '');
+  if (ids.length === 0) throw new Error(`環境変数 ${name}（Drive の ${folder} フォルダの ID）がありません`);
+  return ids;
 }
 
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
@@ -72,11 +74,36 @@ try {
   process.exit(1);
 }
 
+/** 根のフォルダ（複数）の中で relPath を引く。前のフォルダにあればそれ。all は見つかったものを全部返す */
+async function resolveIn(roots: string[], relPath: string, all = false): Promise<DriveFile[]> {
+  const found: DriveFile[] = [];
+  const errors: string[] = [];
+  for (const root of roots) {
+    try {
+      found.push(await drive.resolve(root, relPath));
+      if (!all) break;
+    } catch (error) {
+      errors.push(roots.length > 1 ? `${message(error)}（フォルダ ${root}）` : message(error));
+    }
+  }
+  if (found.length === 0) throw new Error(errors.join('\n'));
+  return found;
+}
+
 if (values.list) {
   try {
     const target = toTarget(positionals[0] ?? '');
-    const folder = await drive.resolve(rootId(target.legacy), target.relPath);
-    for (const f of await drive.children(folder.id)) {
+    const seen = new Set<string>();
+    const entries: DriveFile[] = [];
+    for (const folder of await resolveIn(rootIds(target.legacy), target.relPath, true)) {
+      for (const f of await drive.children(folder.id)) {
+        if (seen.has(f.name)) continue;
+        seen.add(f.name);
+        entries.push(f);
+      }
+    }
+    entries.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    for (const f of entries) {
       const size = drive.isFolder(f) ? '/' : ` ${(Number(f.size ?? 0) / 1024 / 1024).toFixed(1)} MB`;
       console.log(`${f.name}${size}`);
     }
@@ -120,7 +147,7 @@ async function fetchTree(file: DriveFile, base: string, relPath: string, expecte
 for (const arg of positionals) {
   try {
     const target = toTarget(arg);
-    const file = await drive.resolve(rootId(target.legacy), target.relPath);
+    const file = (await resolveIn(rootIds(target.legacy), target.relPath))[0]!;
     await fetchTree(file, target.legacy ? legacyDir() : capturesDir(), target.relPath, target.sha256);
   } catch (error) {
     failed += 1;
