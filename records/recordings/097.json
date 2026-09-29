@@ -1,0 +1,30 @@
+{
+  "id": "097",
+  "date": "2026-09-30",
+  "folder": "range",
+  "file": "20260930-097_SR_helm_container.mp4",
+  "original": "2026-09-30_00-28-23.mp4",
+  "durationSec": 32.7,
+  "frames": 1962,
+  "fps": 60,
+  "sizeMB": 39.5,
+  "sha256": "8ac5d8e8d7c2",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "note": "単騎・操作・宝物あり（CHARGE 235〜250%）。スコープでフルチャージして撃った。1〜4 発目はコンテナ、5・6 発目は空（どちらも狙って）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": null,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。f30 の射撃場の画面で確かめた）。ヘルム単騎・操作（オーナーの説明と画面）。的には 1 発も当てていない（HUD の総ダメージは最後まで 0）。戦闘開始は f803（timer.ts --mode changes の +319f の次の +89f の変わり目）。発は f931・1100・1244・1420（スコープの中にコンテナ。着弾で爆発）、f1590 前後（残弾 002 → 001。スコープの中は空。的の攻撃で画面が赤い）、f1700（残弾 001 → 000。スコープの中は空）。f1700 でバーが消え、I のアイコンが出た。V-0056"
+}

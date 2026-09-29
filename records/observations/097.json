@@ -1,0 +1,32 @@
+[
+  {
+    "id": "097-01",
+    "recording": "097",
+    "use": "record",
+    "source": "V-0056",
+    "readAt": "2026-09-30",
+    "kind": "gauge",
+    "value": [12, 40, 69, 98],
+    "unit": "px",
+    "description": "ヘルム（SR・宝物あり・操作）単騎で、コンテナに当てたフルチャージの 1〜4 発目の直後の BURST バーの長さ（113px 中）。的には当てていない",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series",
+      "note": "発は f931・1100・1244・1420。充填率 10.6・35.4・61.1・86.7%。HUD の総ダメージは 0 のまま"
+    }
+  },
+  {
+    "id": "097-02",
+    "recording": "097",
+    "use": "record",
+    "source": "V-0056",
+    "readAt": "2026-09-30",
+    "kind": "count",
+    "value": 6,
+    "unit": "発",
+    "description": "同じ録画で、戦闘の最初の発から数えて、BURST バーが消えた（本当の満タン）発の番号。1〜4 発目はコンテナ、5・6 発目は何にも当たらない空に撃った",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events・スコープの画",
+      "note": "5 発目（f1590 前後）の後はバーが 113px のまま（1596〜1699）で、6 発目（f1700）でバーが消えた。5・6 発目のスコープの中は空と雲だけ"
+    }
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "id": "096",
+  "date": "2026-09-30",
+  "folder": "range",
+  "file": "20260930-096_SG_noir_container.mp4",
+  "original": "2026-09-30_00-25-44.mp4",
+  "durationSec": 112,
+  "frames": 6722,
+  "fps": 60,
+  "sizeMB": 135.6,
+  "sha256": "419f3240a48b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true,
+      "note": "単騎・操作。的に 5 トリガー撃った後は、コンテナだけを 1 トリガーずつ撃ち、隠れてリロードした"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": null,
+  "conditionNote": "BigArms（3 分モード・スペック固定 ON。タブは写っていない）。ノワール単騎・操作（オーナーの説明と画面）。的に撃ったのは f879〜1036 の 5 トリガーだけで、その後はコンテナ（的の左右の縦長の障害物）を撃った。戦闘開始は f813（timer.ts --mode changes の +320f の次の +88f の変わり目）。HUD の総ダメージは f1036 から最後まで 1,020,686。V-0056"
+}
