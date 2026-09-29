@@ -518,6 +518,12 @@ export type DotEffect = {
    * afterInterval = 付いた 1 間隔後から間隔ごと（クルミのハッキング。C-0130）
    */
   firstTick?: DotFirstTick;
+  /**
+   * クルミ編: 状態異常の名前（「ハッキング」など）。同じキャラの同じ status の dot は 1 つの持続ダメージとして扱い、
+   * 発火をまとめて tick を出す（どれで付いても付き直しと同じ。C-0136）。間隔・維持・firstTick・倍率は同じであること。
+   * 省略は効果ごとに別の持続ダメージ
+   */
+  status?: string;
   assumes?: LocalizedText;
 };
 
@@ -985,6 +991,7 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
         'durationRef',
         'durationSeconds',
         'firstTick',
+        'status',
         'assumes',
         'claims',
       ].includes(key)
@@ -1011,6 +1018,12 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
       fail(`${path}.firstTick`, `expected one of ${DOT_FIRST_TICKS.join(', ')}, got ${JSON.stringify(v.firstTick)}`);
     }
     effect.firstTick = v.firstTick as DotFirstTick;
+  }
+  if (v.status !== undefined) {
+    if (typeof v.status !== 'string' || v.status.trim() === '') {
+      fail(`${path}.status`, `expected a non-empty string, got ${JSON.stringify(v.status)}`);
+    }
+    effect.status = v.status;
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

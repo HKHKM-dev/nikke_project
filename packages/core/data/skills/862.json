@@ -1,23 +1,33 @@
 {
   "formatVersion": 1,
   "resourceId": 862,
-  "checkedAt": "2026-09-29",
+  "checkedAt": "2026-09-30",
   "skills": {
     "skill1": {
       "support": "supported",
       "effects": [
         {
           "kind": "dot",
-          "trigger": { "count": "normalHit", "everyRef": 1 },
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
           "ref": 2,
           "intervalSeconds": 1,
           "durationRef": 3,
           "firstTick": "afterInterval",
+          "status": "hacking",
           "assumes": {
             "ja": "撃った弾はすべて命中する（命中の回数は射撃の回数と同じ列）。対象は敵 1 体。持続中に付き直すと、tick の刻みはそのままで終わりが延び、最後に付いてから 5 秒の中の刻みまで出る",
             "en": "Every shot hits (hits follow the shot count). One enemy. Re-applying it while active keeps the tick cadence and extends the end, up to the last tick within 5 s of the last application"
           },
-          "claims": ["C-0129", "C-0130", "C-0131", "C-0133"]
+          "claims": [
+            "C-0129",
+            "C-0130",
+            "C-0131",
+            "C-0133",
+            "C-0136"
+          ]
         },
         {
           "kind": "dot",
@@ -26,11 +36,15 @@
           "intervalSeconds": 1,
           "durationRef": 3,
           "firstTick": "afterInterval",
+          "status": "hacking",
           "assumes": {
-            "ja": "敵全体は敵 1 体。tick の時刻の形は、通常攻撃の命中で付くハッキングと同じ",
-            "en": "All enemies means one enemy. The tick timing is the same as the hacking applied by normal hits"
+            "ja": "敵全体は敵 1 体。命中で付くハッキングと同じハッキング（付いている最中に使うと付き直しと同じで、tick の刻みは変わらない）",
+            "en": "All enemies means one enemy. It is the same hacking as the one applied by normal hits (using it while hacked acts as a re-application; the tick cadence does not change)"
           },
-          "claims": ["C-0132"]
+          "claims": [
+            "C-0136",
+            "C-0137"
+          ]
         }
       ]
     },
@@ -49,8 +63,11 @@
       "effects": [],
       "notes": [
         {
-          "ja": "敵全体の受けるダメージ 18.06%▲（10 秒間維持）は未実装（敵デバフは語彙に無い）",
-          "en": "Damage Taken +18.06% on all enemies (10 s) is not implemented (no vocabulary for enemy debuffs)"
+          "ja": "敵全体の受けるダメージ 18.06%▲（10 秒間維持）は未実装（敵デバフは語彙に無い）。実測では、クルミの 1 発とハッキングの tick の両方に、別枠の乗数 × 1.1806 で約 10 秒乗る",
+          "en": "Damage Taken +18.06% on all enemies (10 s) is not implemented (no vocabulary for enemy debuffs). Measured: a separate ×1.1806 multiplier on both Kurumi's shots and the hacking ticks for about 10 s",
+          "claims": [
+            "C-0138"
+          ]
         }
       ]
     }

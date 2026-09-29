@@ -172,12 +172,26 @@ export function planSkillHits(
       const pre = isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
       for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) push(frame, effect, pre);
     }
-    // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む
-    for (const effect of resolveDotEffects(definition, slot.character, levels)) {
-      const fires = triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
-      const { intervalSeconds, durationSeconds, firstTick } = effect.dot!;
-      for (const frame of dotTickFrames(fires, intervalSeconds, durationSeconds, frames, firstTick)) {
-        push(frame, effect, false);
+    // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。
+    // クルミ編: 同じ status の dot は 1 つの持続ダメージとして、発火をまとめて tick を出す（C-0136）。tick は、その時点で
+    // 最後に付けた効果に帰属させる（値は同じ）
+    for (const group of groupDotsByStatus(resolveDotEffects(definition, slot.character, levels))) {
+      const fires = group
+        .flatMap((effect) =>
+          triggerFrames(effect.trigger, schedule, slotIndex, frames, shots).map((f) => ({ f, effect })),
+        )
+        .sort((a, b) => a.f - b.f);
+      const { intervalSeconds, durationSeconds, firstTick } = group[0]!.dot!;
+      let last = 0;
+      for (const frame of dotTickFrames(
+        fires.map((x) => x.f),
+        intervalSeconds,
+        durationSeconds,
+        frames,
+        firstTick,
+      )) {
+        while (last + 1 < fires.length && fires[last + 1]!.f <= frame) last += 1;
+        push(frame, fires[last]!.effect, false);
       }
     }
     // Stage 11 紅蓮BS: 段の循環。射撃の列を通算で数え、間隔の変更の窓に入る射撃は窓の間隔で段を進める（skills/cycles.ts）。
@@ -194,6 +208,40 @@ export function planSkillHits(
   });
   // フレーム順（同じフレームは枠順・定義順。sort は安定）
   return hits.sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
+}
+
+/**
+ * クルミ編: dot を status ごとにまとめる（status の無い効果はそれぞれ 1 つ）。同じ status の効果は、間隔・維持・firstTick・
+ * 倍率が同じでなければならない（1 つの持続ダメージとして tick を出すため。C-0136）
+ */
+export function groupDotsByStatus(effects: readonly ResolvedDamageEffect[]): ResolvedDamageEffect[][] {
+  const groups: ResolvedDamageEffect[][] = [];
+  const byStatus = new Map<string, ResolvedDamageEffect[]>();
+  for (const effect of effects) {
+    const status = effect.dot?.status;
+    if (status === undefined) {
+      groups.push([effect]);
+      continue;
+    }
+    const group = byStatus.get(status);
+    if (group === undefined) {
+      const created = [effect];
+      byStatus.set(status, created);
+      groups.push(created);
+      continue;
+    }
+    const a = group[0]!;
+    if (
+      a.dot!.intervalSeconds !== effect.dot!.intervalSeconds ||
+      a.dot!.durationSeconds !== effect.dot!.durationSeconds ||
+      a.dot!.firstTick !== effect.dot!.firstTick ||
+      a.multiplier !== effect.multiplier
+    ) {
+      throw new RangeError(`dot status "${status}": effects differ in interval, duration, firstTick or multiplier`);
+    }
+    group.push(effect);
+  }
+  return groups;
 }
 
 /**
