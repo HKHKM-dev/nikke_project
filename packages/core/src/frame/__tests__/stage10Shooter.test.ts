@@ -12,7 +12,14 @@ import {
   reloadFirstShotFrames,
 } from '../../cadence.ts';
 import type { CharacterData, ShotParams } from '../../types.ts';
-import { DEFAULT_WEAPON_MODEL, MAX_RPM, isChargeWeapon, secondsToFrames, type WeaponModel } from '../../weapons.ts';
+import {
+  DEFAULT_WEAPON_MODEL,
+  MAX_RPM,
+  chargeSecondsToFrames,
+  isChargeWeapon,
+  secondsToFrames,
+  type WeaponModel,
+} from '../../weapons.ts';
 import {
   ZERO_FIRING_BUFFS,
   effectiveMaxAmmo,
@@ -29,7 +36,8 @@ const characters: CharacterData[] = readdirSync(CHARACTERS_DIR)
 
 /**
  * Stage 9 の stepShooter の写し（リロードを「回数 × 時間」の 1 つの待ちにしていた版）。退化の基準として凍結する。
- * Stage 21-C3 で意図して変えた 2 点（rpm の蓄積はゲーム内の時計 = MAX_RPM の値と誤差の幅、リロード明けの 1 発目の遅れ）だけ写しにも入れた
+ * Stage 21-C3 で意図して変えた 2 点（rpm の蓄積はゲーム内の時計 = MAX_RPM の値と誤差の幅、リロード明けの 1 発目の遅れ）と、
+ * Stage 23 で変えた 1 点（チャージの秒はゲーム内の時計 = chargeSecondsToFrames）だけ写しにも入れた
  */
 function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel = DEFAULT_WEAPON_MODEL): number[] {
   const state = {
@@ -65,7 +73,7 @@ function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel =
       const reloadFrames = secondsToFrames(shot.reloadTime) * reloadChunks(shot);
       state.wait = Math.max(0, reloadFrames + reloadFirstShotFrames(shot, model) - 1);
     } else if (charge) {
-      state.wait = Math.max(0, secondsToFrames(shot.chargeTime) + model.chargeReleaseFrames - 1);
+      state.wait = Math.max(0, chargeSecondsToFrames(shot.chargeTime) + model.chargeReleaseFrames - 1);
     }
   }
   return fired;
@@ -234,15 +242,16 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
       inputType: 'UP',
     }).shot;
     expect(firingParams(sr, { ...ZERO_FIRING_BUFFS, reloadSpeed: 0.5091 }).reloadChunkFrames).toBe(59);
-    expect(firingParams(sr, { ...ZERO_FIRING_BUFFS, chargeSpeed: 0.0897 }).chargeFrames).toBe(55);
-    // 100% 以上は 0 フレーム。チャージ武器は解放遅延 22f だけ残る（戦闘開始の 1 発目は構え解除 13f の無いぶん 9f。Stage 22-A）
+    // Stage 23: チャージは 0.9103 秒 ÷ 0.017 = 53.5 → 54f（C-0140）
+    expect(firingParams(sr, { ...ZERO_FIRING_BUFFS, chargeSpeed: 0.0897 }).chargeFrames).toBe(54);
+    // 100% 以上は 0 フレーム。チャージ武器は解放遅延 23f だけ残る（戦闘開始の 1 発目は構え解除 13f の無いぶん 10f。Stage 22-A）
     expect(firingParams(sr, { ...ZERO_FIRING_BUFFS, reloadSpeed: 1.2 }).reloadChunkFrames).toBe(0);
     const instant = firingParams(sr, { ...ZERO_FIRING_BUFFS, chargeSpeed: 1 });
     expect(instant.chargeFrames).toBe(0);
     const state = initialShooter(sr, DEFAULT_WEAPON_MODEL, instant);
     const fired: number[] = [];
     for (let f = 0; f < 100; f++) if (stepShooter(state, sr, DEFAULT_WEAPON_MODEL, instant)) fired.push(f);
-    expect(fired.slice(0, 3)).toEqual([9, 31, 53]);
+    expect(fired.slice(0, 3)).toEqual([10, 33, 56]);
   });
 
   it('with a 0-frame reload chunk, the next magazine fires no earlier than the frame after the last shot', () => {

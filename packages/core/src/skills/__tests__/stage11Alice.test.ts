@@ -238,10 +238,10 @@ describe('発動者基準のチャージ速度（scaling casterChargeTime、録�
     const totals = applyResolvedEffect(ZERO_BUFFS, effect!, 0).totals;
     expect(totals.chargeTimeFlat).toBeCloseTo(0.17505, 12);
     expect(totals.chargeSpeed).toBe(0);
-    // アドミ（1 秒）: 60 − 10.5 = 49.5 → 50f（録画 42 の間隔 72f = 50 + 22）
+    // アドミ（1 秒）: 1 − 0.175 = 0.825 秒 → 0.825 ÷ 0.017 = 48.5 → 49f（録画 42 の間隔 72f = 49 + 23。Stage 23）
     const admi = makeCharacter({ chargeTime: 1, inputType: 'UP' }).shot;
-    expect(firingParams(admi, totals).chargeFrames).toBe(50);
-    // アリス自身（1.5 秒・バースト 80.15%）: 1.5 × 0.1985 − 0.175 = 0.1227 秒 → 8f（比率 11.67% と同じ）
+    expect(firingParams(admi, totals).chargeFrames).toBe(49);
+    // アリス自身（1.5 秒・バースト 80.15%）: 1.5 × 0.1985 − 0.175 = 0.1227 秒 → 7.2 → 8f（比率 11.67% と同じ）
     const alice = makeCharacter({ chargeTime: 1.5, inputType: 'UP' }).shot;
     expect(firingParams(alice, { ...totals, chargeSpeed: 0.8015 }).chargeFrames).toBe(8);
     // 0 未満にはならない

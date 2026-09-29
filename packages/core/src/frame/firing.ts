@@ -4,7 +4,7 @@
 // Stage 11 紅蓮BS: 射撃の刻みを実測で較正する武器（MEASURED_CHARGE_CADENCE）の分もここで足す（plan/design-stage11-scarlet-bs.md 3.3 節）。
 import type { BuffTotals, ChangedWeapon } from '../skills/buffs.ts';
 import type { ShotParams } from '../types.ts';
-import { isChargeWeapon, secondsToFrames } from '../weapons.ts';
+import { chargeSecondsToFrames, isChargeWeapon, secondsToFrames } from '../weapons.ts';
 
 /** 射撃に効くバフの合計（BuffTotals のうち射撃に効くフィールド） */
 export type FiringBuffs = Pick<
@@ -72,8 +72,9 @@ export type MeasuredChargeCadence = { chargeExtraFrames: number; reloadExtraFram
 /**
  * Stage 11 紅蓮BS: 射撃の刻みを実測で較正する武器（plan/design-stage11-scarlet-bs.md 3.3 節）。
  * 202 体で射撃のパラメータ（チャージ 0.3 秒・maintainFireStance 23・uptypeFireTiming 1）が紅蓮：ブラックシャドウだけ違い、
- * 1 秒チャージの較正（チャージ 60f + 解放 22f = 82f）が当てはまらない。**録画 46・47** で間隔 43f = チャージ 18f + 3f + 22f、
- * 9 発目 → 次の 1 発目 172f = リロード 120f + 9f + 43f。
+ * 1 秒チャージの較正（チャージ 59f + 解放 23f = 82f）が当てはまらない。**録画 46・55・70・71** で間隔 43f = チャージ 18f + 2f + 23f、
+ * 9 発目 → 次の 1 発目 172f = リロード 120f + 9f + 43f（`046-21`。C-0144）。Stage 23 でチャージをゲーム内の時計で数えるように
+ * したので、チャージの分を 3f → 2f にした（解放遅延が 22f → 23f になったぶん）。リロードの分は 1 秒 = 60f のリロードとの差のまま
  * ShotParams に resourceId が無く、キャラの読み込みの経路（アプリ・テスト・CLI）も複数あるので、射撃のパラメータの組で引く
  * （resourceIds は出どころの記録）。同じ組のキャラが出たら実測で確かめる
  */
@@ -85,7 +86,7 @@ export const MEASURED_CHARGE_CADENCE: readonly {
   {
     resourceIds: [225],
     match: { chargeTime: 0.3, maintainFireStance: 23, uptypeFireTiming: 1 },
-    cadence: { chargeExtraFrames: 3, reloadExtraFrames: 9 },
+    cadence: { chargeExtraFrames: 2, reloadExtraFrames: 9 },
   },
 ];
 
@@ -129,8 +130,9 @@ export function firingParams(base: ShotParams, buffs: FiringBuffs = ZERO_FIRING_
       secondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)) + (measured?.reloadExtraFrames ?? 0),
     // Stage 11 アリス編: 発動者基準のチャージ速度は、比率で縮めた後の秒数からさらに引く（アリス自身は比率と同じ値になる）
     chargeFrames: isChargeWeapon(shot)
-      ? secondsToFrames(Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat)) +
-        (measured?.chargeExtraFrames ?? 0)
+      ? chargeSecondsToFrames(
+          Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat),
+        ) + (measured?.chargeExtraFrames ?? 0)
       : 0,
     infiniteAmmo: buffs.infiniteAmmo > 0,
     weapon: buffs.weapon,

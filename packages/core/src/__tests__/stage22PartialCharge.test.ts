@@ -39,11 +39,11 @@ describe('partialChargeShot（射手）', () => {
   const shot = makeCharacter(SR).shot;
 
   it('fires with the charge progress (C + 1 − k) / C, where k is the wait until the next shot', () => {
-    // 戦闘開始の待ちは 69f（構え 9f + チャージ 60f）。20f 進めると残り 49f で、チャージは 12f 進んでいる
+    // 戦闘開始の待ちは 69f（構え 10f + チャージ 59f。Stage 23）。20f 進めると残り 49f で、チャージは 11f 進んでいる
     expect(firstShotFrames(shot)).toBe(69);
     const state = shooterAfter(shot, 20);
     expect(state.wait).toBe(49);
-    expect(partialChargeShot(state, shot)).toBeCloseTo(12 / 60, 12);
+    expect(partialChargeShot(state, shot)).toBeCloseTo(11 / 59, 12);
     expect(state.ammo).toBe(5);
   });
 

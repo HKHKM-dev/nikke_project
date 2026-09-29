@@ -65,7 +65,8 @@ describe('stepShooter', () => {
   it('honours the weapon model (chargeReleaseFrames)', () => {
     const shot = makeCharacter(fixtures.SR).shot;
     const model = { ...DEFAULT_WEAPON_MODEL, chargeReleaseFrames: 0, aimOutFrames: 0 };
-    expect(shotFramesUpTo(shot, 200, model)).toEqual([60, 120, 180]);
+    // Stage 23: 1 秒チャージは 59f（C-0140）
+    expect(shotFramesUpTo(shot, 200, model)).toEqual([59, 118, 177]);
     // Stage 22-A: 構え解除（aimOutFrames）は戦闘開始の 1 発目だけを早める
     expect(shotFramesUpTo(shot, 200, { ...DEFAULT_WEAPON_MODEL, aimOutFrames: 10 })).toEqual([72, 154]);
   });

@@ -113,16 +113,17 @@ describe('録画 42: アリスの S1 は自分とアドミに付く（22.5、実
     expect(s1[0]!.finalAttacks[1]).toBe(99925);
   });
 
-  // 実測: アリス 31f / 101f（外 112f）、アドミ 72f（外 82f）、フラワー 82f。アリスは ±1f（姿勢の変化で読んだ）
-  it('predicts the shot intervals: アリス 30f / 102f, アドミ 72f, フラワー 82f (outside: 112f / 82f / 82f)', () => {
+  // 実測: アリス 31f / 101f（外 112f）、アドミ 72f（外 82f）、フラワー 82f。アリスは ±1f（姿勢の変化で読んだ）。
+  // Stage 23 でチャージをゲーム内の時計で数えるようにして、アリスも実測と同じ値になった（22 までは 30f / 102f）
+  it('predicts the shot intervals: アリス 31f / 101f, アドミ 72f, フラワー 82f (outside: 112f / 82f / 82f)', () => {
     const alice = intervalsInFullBursts(plan.shots[2]!.frames, windows);
-    // マガジンの中の間隔（いちばん多い値）。リロードを挟んだ間隔（89f・161f）は除く
+    // マガジンの中の間隔（いちばん多い値）。リロードを挟んだ間隔（90f・160f）は除く
     alice.forEach((list, k) => {
-      expect(mode(list)).toBe(k % 2 === 0 ? 30 : 102);
+      expect(mode(list)).toBe(k % 2 === 0 ? 31 : 101);
       expect(list.every((d) => d === mode(list) || d > mode(list) + 40)).toBe(true);
     });
     for (const list of intervalsInFullBursts(plan.shots[1]!.frames, windows)) {
-      // 発動者基準: アリスの基礎チャージ時間 1.5 秒 × 11.67% = 0.175 秒を引く（60 − 10.5 = 49.5 → 50f + 22f）
+      // 発動者基準: アリスの基礎チャージ時間 1.5 秒 × 11.67% = 0.175 秒を引く（0.825 秒 → 48.5 → 49f + 23f）
       expect(list.filter((d) => d < 100).every((d) => d === 72)).toBe(true);
     }
     for (const list of intervalsInFullBursts(plan.shots[0]!.frames, windows)) {

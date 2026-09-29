@@ -198,7 +198,8 @@ describe('computeCadence (calibrated against recordings)', () => {
       aimOutFrames: 13,
       aimInFrames: 12,
     });
-    expect(f[1]).toBe(60);
+    // Stage 23: 1 秒チャージは 1 ÷ 0.017 = 58.8 → 59f（C-0140）
+    expect(f[1]).toBe(59);
   });
 });
 

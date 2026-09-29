@@ -1,11 +1,11 @@
 {
   "id": "C-0014",
   "text": "紅蓮：ブラックシャドウの射撃は、チャージ + 3f・リロード + 9f（間隔 43f、リロードをまたいで 172f）",
-  "state": "確定",
+  "state": "棄却",
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "反復実測",
-  "basis": "verification.md Stage 11 紅蓮：ブラックシャドウ（録画 46・47）",
-  "model": "`frame/firing.ts` の `MEASURED_CHARGE_CADENCE`",
+  "basis": "verification.md Stage 11 紅蓮：ブラックシャドウ（録画 46・47） 2026-09-30 棄却（V-0059、Stage 23）: チャージをゲーム内の時計で数え、解放遅延を 23f にした（C-0140・C-0143）ので、チャージの分は + 2f になる。C-0144 に置き換えた",
+  "model": "—（C-0144）",
   "replaces": [],
-  "updated": "2026-09-24"
+  "updated": "2026-09-30"
 }
