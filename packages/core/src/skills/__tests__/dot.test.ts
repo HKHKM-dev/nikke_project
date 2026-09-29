@@ -46,6 +46,14 @@ describe('dot の検証', () => {
     );
   });
 
+  it('parses firstTick (クルミ編) and rejects other values', () => {
+    const def = parseSkillDefinition(withBurst([{ ...BURN, firstTick: 'afterInterval' }]));
+    expect(def.skills.burst.effects[0]).toMatchObject({ firstTick: 'afterInterval' });
+    expect(() => parseSkillDefinition(withBurst([{ ...BURN, firstTick: 'later' }]))).toThrow(
+      /firstTick: expected one of atApplication, afterInterval/,
+    );
+  });
+
   it('rejects an interval longer than an immediate duration', () => {
     const { durationRef: _, ...rest } = BURN;
     expect(() => parseSkillDefinition(withBurst([{ ...rest, intervalSeconds: 3, durationSeconds: 2 }]))).toThrow(
@@ -63,7 +71,7 @@ describe('dot の解決', () => {
       damageType: 'skill',
       trigger: 'burstUse',
       effectIndex: 1,
-      dot: { intervalSeconds: 1, durationSeconds: 10 },
+      dot: { intervalSeconds: 1, durationSeconds: 10, firstTick: 'atApplication' },
     });
     expect(lv10!.multiplier).toBeCloseTo(0.1319, 10);
     const [lv1] = resolveDotEffects(def, nihilister, { skill1: 1, skill2: 1, burst: 1 });
@@ -121,5 +129,21 @@ describe('dotTickFrames（付いた瞬間と、1.5 秒後から 1 秒ごと。C-
 
   it('counts floor(duration / interval) ticks', () => {
     expect(dotTickFrames([0], 2, 5, 10588)).toEqual([0, 147]);
+  });
+});
+
+describe('dotTickFrames の afterInterval（付いた 1 間隔後から間隔ごと。C-0130）', () => {
+  // 1・2・3・4・5 秒後（59・118・176・235・294f）
+  const OFFSETS = [59, 118, 176, 235, 294];
+
+  it('gives floor(duration / interval) ticks from one interval after the fire, none at the fire', () => {
+    expect(dotTickFrames([1000], 1, 5, 10588, 'afterInterval')).toEqual(OFFSETS.map((o) => 1000 + o));
+  });
+
+  it('keeps the cadence and extends the end when re-applied before it runs out (C-0129)', () => {
+    // 1200 の再発火は 1000 の維持（5 秒 = 294f）のうち。刻みは 1000 のまま、1200 + 294 = 1494 までの tick が続く
+    expect(dotTickFrames([1000, 1200], 1, 5, 10588, 'afterInterval')).toEqual(
+      [59, 118, 176, 235, 294, 353, 412, 471].map((o) => 1000 + o),
+    );
   });
 });

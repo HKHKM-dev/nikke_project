@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
-import { resolveBurstDamage, resolveDamageEffects } from '../burstDamage.ts';
+import { resolveBurstDamage, resolveDamageEffects, resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
@@ -140,12 +140,20 @@ describe('data/skills', () => {
       const timed1 = resolveTimed(def, character, { skill1: 1, skill2: 1, burst: 1 });
       const damage10 = resolveDamageEffects(def, character, MAX_SKILL_LEVELS);
       const damage1 = resolveDamageEffects(def, character, { skill1: 1, skill2: 1, burst: 1 });
+      // クルミ編: 持続ダメージ（dot）だけの定義もある
+      const dot10 = resolveDotEffects(def, character, MAX_SKILL_LEVELS);
+      const dot1 = resolveDotEffects(def, character, { skill1: 1, skill2: 1, burst: 1 });
       // ダメージに効く効果が 1 つも無いキャラ（ラムなど）は、全スロットを unsupported にして notes だけを書く
       const modeled = SKILL_SLOTS.some((slot) => def.skills[slot].support !== 'unsupported');
-      if (modeled) expect(lv10.length + burst10.length + timed10.length + damage10.length).toBeGreaterThan(0);
+      if (modeled)
+        expect(lv10.length + burst10.length + timed10.length + damage10.length + dot10.length).toBeGreaterThan(0);
       damage10.forEach((e, i) => {
         expect(e.multiplier).toBeGreaterThanOrEqual(damage1[i]!.multiplier);
         expect(e.trigger).toEqual(damage1[i]!.trigger);
+      });
+      dot10.forEach((e, i) => {
+        expect(e.multiplier).toBeGreaterThanOrEqual(dot1[i]!.multiplier);
+        expect(e.dot).toEqual(dot1[i]!.dot);
       });
       lv10.forEach((e, i) => expect(e.value).toBeGreaterThanOrEqual(lv1[i]!.value));
       burst10.forEach((e, i) => expect(e.multiplier).toBeGreaterThanOrEqual(burst1[i]!.multiplier));

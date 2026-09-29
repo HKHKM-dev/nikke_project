@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`057-03`（録画 057〜062 のクルミ単騎の 6 本とも、36 回目の命中のフレームから最初の tick まで 59f。36 回目の命中のフレームの増分には tick が入っていない）。V-0051",
-  "model": "未実装（クルミの定義は無い。`dot` の tick の形は、ニヒリスターの火傷の C-0101 の形だけ）",
+  "model": "`data/skills/862.json`（`dot` の `firstTick`: `afterInterval`）。tick の時刻は `frame/plan.ts` の `dotTickFrames`",
   "replaces": [],
   "updated": "2026-09-29"
 }

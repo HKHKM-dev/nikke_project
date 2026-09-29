@@ -41,6 +41,7 @@ import {
 import type { WeaponModel } from '../weapons.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
+import type { DotFirstTick } from '../skills/types.ts';
 import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
 import { hitRateSpansOf, planLandings, type LandingPlan } from './landing.ts';
 import type { ShotLog } from './shots.ts';
@@ -174,8 +175,10 @@ export function planSkillHits(
     // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む
     for (const effect of resolveDotEffects(definition, slot.character, levels)) {
       const fires = triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
-      const { intervalSeconds, durationSeconds } = effect.dot!;
-      for (const frame of dotTickFrames(fires, intervalSeconds, durationSeconds, frames)) push(frame, effect, false);
+      const { intervalSeconds, durationSeconds, firstTick } = effect.dot!;
+      for (const frame of dotTickFrames(fires, intervalSeconds, durationSeconds, frames, firstTick)) {
+        push(frame, effect, false);
+      }
     }
     // Stage 11 紅蓮BS: 段の循環。射撃の列を通算で数え、間隔の変更の窓に入る射撃は窓の間隔で段を進める（skills/cycles.ts）。
     // 値は射撃の回数トリガーの倍率ダメージと同じく、その射撃と同じバフ
@@ -213,10 +216,16 @@ export function dotTickFrames(
   intervalSeconds: number,
   durationSeconds: number,
   frames: number,
+  firstTick: DotFirstTick = 'atApplication',
 ): number[] {
   const count = Math.floor(durationSeconds / intervalSeconds + 1e-9);
+  // クルミ編: afterInterval は付いた 1 間隔後から間隔ごと（k + 1 間隔後。C-0130）
   const offset = (k: number): number =>
-    k === 0 ? 0 : gameSecondsToFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS);
+    firstTick === 'afterInterval'
+      ? gameSecondsToFrame((k + 1) * intervalSeconds)
+      : k === 0
+        ? 0
+        : gameSecondsToFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS);
   const lastOffset = offset(count - 1);
   const durationFrames = gameSecondsToFrame(durationSeconds);
   const ticks: number[] = [];
