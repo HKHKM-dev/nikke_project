@@ -1,0 +1,32 @@
+[
+  {
+    "id": "009-01",
+    "recording": "009",
+    "kind": "interval",
+    "use": "record",
+    "value": [170, 171],
+    "unit": "f",
+    "description": "プロダクト23（SG・リロード 0.67 秒・0.33 ずつの分割リロード）単騎で、マガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで。取り消し・窓をまたいだ回・最終弾の読み違いを除いた全部の回",
+    "method": {
+      "tool": "tools/captures/reload.ts --shots（hud.ts --mode jumps の出力） --stages",
+      "note": "完了のフレーム: 929・1427。窓をまたいだ回は、完了 → 次の増分がこの録画の中央値 + 5f を超える回。分割リロードは最後の段のバーが消えたフレーム（込め終わり）。"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
+  },
+  {
+    "id": "009-02",
+    "recording": "009",
+    "kind": "interval",
+    "use": "record",
+    "value": [39.4, 39.46, 39.46, 40.44],
+    "unit": "f",
+    "description": "プロダクト23（SG・リロード 0.67 秒・0.33 ずつの分割リロード）単騎で、分割リロードの段ごとのバーが 0 から満ちるまでの長さ（溝の幅 367px ÷ 段のバーの伸び）",
+    "method": {
+      "tool": "tools/captures/reload.ts --shots（hud.ts --mode jumps の出力） --stages",
+      "note": "段ごとに、長さが見えた最大の 10〜90% のフレームで長さとフレームに直線を当てはめた。当てはめの残差が 3px を超える段は除いた"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
+  }
+]

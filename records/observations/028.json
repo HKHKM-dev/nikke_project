@@ -30,5 +30,35 @@
       "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
       "note": "1px は 028（f975）・029（f940）。030 はこの区間のバーが読めない。113px は 3 本とも 5 マガジン目の 1 ヒット目（028 は 240 ヒット目で 112px と 113px を行き来した）。1〜32 ヒット目のあいだバーは 0px のまま"
     }
+  },
+  {
+    "id": "028-03",
+    "recording": "028",
+    "kind": "interval",
+    "use": "record",
+    "value": [70, 70, 70, 70],
+    "unit": "f",
+    "description": "ラピ（AR・リロード 1 秒）単騎で、マガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで。取り消し・窓をまたいだ回・最終弾の読み違いを除いた全部の回",
+    "method": {
+      "tool": "tools/captures/reload.ts --shots（hud.ts --mode jumps の出力）",
+      "note": "完了のフレーム: 1178・1550・1922・2294。窓をまたいだ回は、完了 → 次の増分がこの録画の中央値 + 5f を超える回。読み違いは、バーの伸びを遡った 0 の点が最終弾から 3f 以上離れた回。"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
+  },
+  {
+    "id": "028-04",
+    "recording": "028",
+    "kind": "interval",
+    "use": "record",
+    "value": [70.81, 70.77, 70.8, 70.77],
+    "unit": "f",
+    "description": "ラピ（AR・リロード 1 秒）単騎で、リロード完了から、RELOADING のバーの伸びを長さ 0 に遡った点を引いた長さ（バーだけで出す最終弾 → 完了）。取り消し・窓をまたいだ回を除いた全部の回",
+    "method": {
+      "tool": "tools/captures/reload.ts --shots（hud.ts --mode jumps の出力）",
+      "note": "リロード全体の長さとフレームに直線を当てはめ（長さが見えた最大の 10〜90%、残差 4px を超える点を落として当てはめ直す）、残差が 3px を超える回は除いた。完了のフレーム: 1178・1550・1922・2294"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
   }
 ]

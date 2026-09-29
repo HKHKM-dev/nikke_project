@@ -72,5 +72,20 @@
       "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
       "note": "最終弾は `hud.ts --mode jumps` の、リロードの空きの前の最後の増分のフレーム（1075・1453・1831・2209・3281・3659・4038・4416）"
     }
+  },
+  {
+    "id": "L-AI-05",
+    "recording": "L-AI",
+    "kind": "rate",
+    "use": "record",
+    "value": 59.321,
+    "unit": "f/秒",
+    "description": "旧の録画（2026-08-29・単騎）の、残り時間の表示 1 秒あたりの動画のフレーム数（秒の変わる間隔のうち 56〜62f のものの平均）。今の録画の 58.82〜58.84（C-0048）と同じ読み方",
+    "method": {
+      "tool": "timer.ts --mode summary",
+      "note": "150 間隔 + 2 秒分 3。録画は名目 60fps（ffprobe の r_frame_rate 60/1）"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
   }
 ]
