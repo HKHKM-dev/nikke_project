@@ -1,0 +1,42 @@
+{
+  "id": "094",
+  "date": "2026-09-29",
+  "folder": "range",
+  "file": "20260929-094_SR_alice_fixed-off_full-burst.mp4",
+  "original": "2026-09-29_23-16-32.mp4",
+  "durationSec": 259.8,
+  "frames": 15589,
+  "fps": 60,
+  "sizeMB": 313.8,
+  "sha256": "7ed7541dd471",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": true,
+      "note": "操作キャラの枠・AUTO。コレクション SR Lv15"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**）。ラム（I）+ デルタ（II）+ アリス（III・操作）の 3 体。AUTO 射撃・オートバーストとも ON。撮影の前にアリスのキャラ画面（攻撃力 490,501。録画 089 と同じ）と装備 4 部位の OL の行、スキルの画面（S1 Lv10・S2 Lv4・バースト Lv10）を映した。戦闘開始は f2173。3 分を最後まで撮り、戦闘履歴のパネルで 3 体の枠と名前を確かめた。V-0053"
+}

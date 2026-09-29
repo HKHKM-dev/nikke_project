@@ -44,7 +44,7 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * ヘルム編の 1 つ: normalCritRate = 通常攻撃のクリティカル確率。通常攻撃の会心率にだけ足す（バーストスキル・倍率ダメージには足さない）。
  * ヘルム編の 2 つ目: chargeDamageMultiplier = 「チャージダメージ X% 倍率▲」（スキル・RL / SR のコレクション）。素のフルチャージ
  * 倍率に (1 + Σ) を掛けて四捨五入する（C-0099・C-0122・C-0126）。「倍率」の無い「チャージダメージ X%▲」（スキル・OL の増加）は
- * chargeDamage で、その後に足す（C-0020・C-0122）。
+ * chargeDamage で、その後に足す（C-0020・C-0122・C-0134）。
  */
 export type BuffStat =
   | 'attack'
