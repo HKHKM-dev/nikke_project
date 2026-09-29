@@ -105,13 +105,15 @@ export async function* rawFrames(args: string[], frameBytes: number): AsyncGener
   child.stderr.on('data', (chunk: Buffer) => {
     stderr += chunk.toString();
   });
-  const failure = new Promise<never>((_resolve, reject) => {
+  // 終了の待ち受けは起動時に作る。読み終える前に ffmpeg が終わる（短い区間）と、後から付けた 'close' は来ない
+  const done = new Promise<void>((resolve, reject) => {
     child.on('error', reject);
     child.on('close', (code) => {
-      if (code !== 0) reject(new Error(`ffmpeg exited with ${code}: ${stderr}`));
+      if (code === 0) resolve();
+      else reject(new Error(`ffmpeg exited with ${code}: ${stderr}`));
     });
   });
-  failure.catch(() => {});
+  done.catch(() => {});
 
   let buffer = Buffer.alloc(0);
   for await (const chunk of child.stdout) {
@@ -121,5 +123,5 @@ export async function* rawFrames(args: string[], frameBytes: number): AsyncGener
       buffer = buffer.subarray(frameBytes);
     }
   }
-  await Promise.race([failure, new Promise<void>((resolve) => child.on('close', () => resolve()))]);
+  await done;
 }

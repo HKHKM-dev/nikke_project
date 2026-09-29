@@ -1,0 +1,32 @@
+[
+  {
+    "id": "024-01",
+    "recording": "024",
+    "kind": "interval",
+    "use": "record",
+    "value": [100],
+    "unit": "f",
+    "description": "デルタ（SR・リロード 1.5 秒）単騎で、マガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで。取り消し・窓をまたいだ回・最終弾の読み違いを除いた全部の回",
+    "method": {
+      "tool": "tools/captures/reload.ts --shots（hud.ts --mode jumps の出力）",
+      "note": "完了のフレーム: 1034。窓をまたいだ回は、完了 → 次の増分がこの録画の中央値 + 5f を超える回。読み違いは、バーの伸びを遡った 0 の点が最終弾から 3f 以上離れた回。"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
+  },
+  {
+    "id": "024-02",
+    "recording": "024",
+    "kind": "interval",
+    "use": "record",
+    "value": [101.06],
+    "unit": "f",
+    "description": "デルタ（SR・リロード 1.5 秒）単騎で、リロード完了から、RELOADING のバーの伸びを長さ 0 に遡った点を引いた長さ（バーだけで出す最終弾 → 完了）。取り消し・窓をまたいだ回を除いた全部の回",
+    "method": {
+      "tool": "tools/captures/reload.ts --shots（hud.ts --mode jumps の出力）",
+      "note": "リロード全体の長さとフレームに直線を当てはめ（長さが見えた最大の 10〜90%、残差 4px を超える点を落として当てはめ直す）、残差が 3px を超える回は除いた。完了のフレーム: 1034"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
+  }
+]
