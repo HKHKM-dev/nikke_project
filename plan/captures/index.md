@@ -101,7 +101,7 @@ node tools/captures/probe.ts "I:/マイドライブ/nikke_project_captures"
 1. Google Cloud でプロジェクトを作り、Google Drive API を有効にする。サービスアカウントを作り（ロールは付けない）、鍵（JSON）を 1 つ作ってダウンロードする。
 2. Drive の `nikke_project_captures` フォルダを、サービスアカウントのメールアドレス（鍵の `client_email`）に**閲覧者**で共有する。ほかのフォルダは共有しない。フォルダ ID は、フォルダを開いたときの URL `drive.google.com/drive/folders/<ID>` の `<ID>`。旧プロジェクトの録画も取るなら、`old_nikkecalc` フォルダも同じように共有する。
 3. クラウド環境の設定に次を入れる。
-   - 環境変数: `NIKKE_DRIVE_SA_KEY`（鍵の JSON を base64 にしたもの。PowerShell なら `[Convert]::ToBase64String([IO.File]::ReadAllBytes("鍵.json"))`。JSON そのままでも読める）と `NIKKE_DRIVE_FOLDER_ID`（上の `<ID>`）。旧プロジェクトの録画も取るなら `NIKKE_DRIVE_LEGACY_FOLDER_ID`（`old_nikkecalc` の `<ID>`）。
+   - 環境変数: `NIKKE_DRIVE_SA_KEY`（鍵の JSON を base64 にしたもの。PowerShell なら `[Convert]::ToBase64String([IO.File]::ReadAllBytes("鍵.json"))`。JSON そのままでも読める）と `NIKKE_DRIVE_FOLDER_ID`（上の `<ID>`）。旧プロジェクトの録画も取るなら `NIKKE_DRIVE_LEGACY_FOLDER_ID`（`old_nikkecalc` の `<ID>`）。どちらもフォルダを複数指すときは、1 行の中で `<ID1>,<ID2>` のようにカンマで区切る（設定欄は 1 行 1 変数なので、改行すると 2 行目は捨てられる）。前に書いたフォルダから探して最初に見つかったものを取り、`--list` は全部のフォルダの中身を合わせて出す。
    - ネットワーク: `www.googleapis.com` と `oauth2.googleapis.com` への通信を許可する。
    - セットアップスクリプト: `apt-get update && apt-get install -y ffmpeg`（解析ツールが ffmpeg・ffprobe を使う）。
 4. 鍵のファイルはリポジトリに置かない（公開リポジトリ）。漏れたら Google Cloud でその鍵を消して作り直す。
