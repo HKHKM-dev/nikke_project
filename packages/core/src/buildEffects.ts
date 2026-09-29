@@ -104,8 +104,9 @@ export const COLLECTION_SKILL_EFFECTS: Readonly<Record<number, BuildSkillMapping
   71210101: withDefence('coreDamage'), // AR SR
   71140101: withDefence('maxAmmo'), // MG R: 最大装弾数▲
   71240101: withDefence('maxAmmo'), // MG SR
-  71130101: withDefence('chargeDamage'), // RL・SR R: チャージダメージ倍率▲
-  71230101: withDefence('chargeDamage'), // RL・SR SR
+  // RL・SR の「チャージダメージ倍率▲」は、スキルの倍率▲と同じ群で素のフルチャージ倍率に掛ける（C-0122・C-0126）
+  71130101: withDefence('chargeDamageMultiplier'), // RL・SR R: チャージダメージ倍率▲
+  71230101: withDefence('chargeDamageMultiplier'), // RL・SR SR
   71150101: withDefence('normalAttackDamage'), // SG R: 通常攻撃ダメージ倍率▲
   71250101: withDefence('normalAttackDamage'), // SG SR
   71190101: withDefence('normalAttackDamage'), // SMG R
@@ -149,9 +150,15 @@ function mapSkill(
 }
 
 export type BuildEffectsOptions = {
-  /** Stage 9 の宝物の段階。1 以上なら R / SR のコレクションは付けていない（宝物のスキルは skills/treasure.ts が差し替える） */
+  /**
+   * Stage 9 の宝物の段階。1 以上なら R / SR のコレクションの入力は読まず、宝物の元になった SR Lv15 のコレクションのスキルを
+   * 乗せる（C-0123。ヘルムの段階 3 で確かめた。段階 1・2 も同じとみなす）。宝物のスキルは skills/treasure.ts が差し替える
+   */
   treasurePhase?: number;
 };
+
+/** 宝物の元になるコレクション（宝ものミッションの条件は SR を 15 段階まで育てること。plan/game-help.md） */
+const TREASURE_COLLECTION = { rarity: 'SR', level: 15 } as const;
 
 /**
  * 育成入力の効果層。OL（部位順・行順）→ キューブ（スキル順）→ コレクション（スキル順）の順に並べる。
@@ -185,16 +192,12 @@ export function resolveBuildEffects(
       mapSkill(out, 'cube', CUBE_SKILL_EFFECTS, skill, cube.skillStages[i]?.[build.cube!.level - 1] ?? 0);
     });
   }
-  if (build.collection !== null && (options.treasurePhase ?? 0) === 0) {
-    const collection = findCollection(masters, build.collection.rarity, character.weaponType)!;
+  const treasure = (options.treasurePhase ?? 0) > 0;
+  const input = treasure ? TREASURE_COLLECTION : build.collection;
+  if (input !== null) {
+    const collection = findCollection(masters, input.rarity, character.weaponType)!;
     collection.skills.forEach((skill, i) => {
-      mapSkill(
-        out,
-        'collection',
-        COLLECTION_SKILL_EFFECTS,
-        skill,
-        collection.skillStages[i]?.[build.collection!.level] ?? 0,
-      );
+      mapSkill(out, 'collection', COLLECTION_SKILL_EFFECTS, skill, collection.skillStages[i]?.[input.level] ?? 0);
     });
   }
   return out;

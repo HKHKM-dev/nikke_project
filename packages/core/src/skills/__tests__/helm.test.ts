@@ -143,10 +143,10 @@ describe('shotCountWindows（N 発間維持）', () => {
 });
 
 describe('ダメージの式（ヘルム編）', () => {
-  it('multiplies the full charge multiplier by (1 + chargeDamageMultiplier) after adding chargeDamage', () => {
+  it('multiplies the full charge multiplier by (1 + chargeDamageMultiplier), then adds chargeDamage (C-0122)', () => {
     expect(applyChargeBuffs(2.5, true, { ...ZERO_BUFFS, chargeDamageMultiplier: 1.584 })).toBeCloseTo(2.5 * 2.584, 12);
     expect(applyChargeBuffs(2.5, true, { ...ZERO_BUFFS, chargeDamage: 0.2, chargeDamageMultiplier: 1 })).toBeCloseTo(
-      5.4,
+      5.2,
       12,
     );
     expect(applyChargeBuffs(2.5, false, { ...ZERO_BUFFS, chargeDamageMultiplier: 1.584 })).toBe(1);

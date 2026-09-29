@@ -8,6 +8,7 @@ import {
   applyChargeBuffs,
   applyCritBuffs,
   applyResolvedEffect,
+  scaleBasisPoints,
   type BuffTotals,
 } from '../buffs.ts';
 
@@ -58,6 +59,24 @@ describe('applyChargeBuffs', () => {
     expect(applyChargeBuffs(2.5, true, ZERO_BUFFS)).toBe(2.5);
     expect(applyChargeBuffs(2.5, true, buffs)).toBeCloseTo(2.9, 12);
     expect(applyChargeBuffs(2.5, false, buffs)).toBe(1);
+  });
+});
+
+// V-0047・V-0048・V-0050: スペック固定 OFF の 1 ヒットで端数まで合った値
+describe('scaleBasisPoints と applyChargeBuffs（実測）', () => {
+  it('rounds half up in 1e-4 units (C-0121, C-0127)', () => {
+    expect(scaleBasisPoints(873, 0.0946)).toBe(956); // リターの武器倍率 × コレクション SR Lv15（955.59）
+    expect(scaleBasisPoints(23160, 0.063)).toBe(24619); // ソーダ：トゥインクルバニーの 1 トリガー × SR Lv5（24,619.08）
+    expect(scaleBasisPoints(35000, 0.0947)).toBe(38315); // アリス（38,314.5）
+    expect(scaleBasisPoints(25000, 0.0947)).toBe(27368); // ヘルム（27,367.5）
+  });
+
+  it('multiplies the collection and skill multipliers together as one group, then adds OL (C-0122, C-0126)', () => {
+    const charge = (chargeDamage: number, chargeDamageMultiplier: number, fullChargeDamage: number) =>
+      applyChargeBuffs(fullChargeDamage, true, { ...ZERO_BUFFS, chargeDamage, chargeDamageMultiplier });
+    expect(charge(0.1181, 0.0947, 3.5)).toBeCloseTo(3.9496, 12); // アリス（089-01）
+    expect(charge(0.1111, 0.0947, 2.5)).toBeCloseTo(2.8479, 12); // ヘルム（088-01）
+    expect(charge(0.1111, 0.0947 + 1.584, 2.5)).toBeCloseTo(6.8079, 12); // ヘルムのバーストの後（091-01）
   });
 });
 

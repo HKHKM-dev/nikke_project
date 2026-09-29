@@ -27,9 +27,15 @@ export type BuffTotals = {
   critDamage: number;
   /** 攻撃ダメージの加算。コア・会心・距離の加算グループとは別の乗数 (1 + attackDamage)（2026-09-22 実測で確認） */
   attackDamage: number;
-  /** チャージダメージの加算。fullChargeDamage に足す（フルチャージ時のみ。「チャージダメージ X%▲」。C-0020） */
+  /**
+   * チャージダメージの加算。倍率▲を掛けて丸めたフルチャージ倍率に足す（フルチャージ時のみ。「チャージダメージ X%▲」、OL の
+   * 「チャージダメージ増加」。C-0020・C-0122）
+   */
   chargeDamage: number;
-  /** ヘルム編: チャージダメージ倍率の加算。フルチャージ倍率に (1 + chargeDamageMultiplier) を掛ける（「チャージダメージ X% 倍率▲」） */
+  /**
+   * ヘルム編: チャージダメージ倍率の加算。素のフルチャージ倍率に (1 + chargeDamageMultiplier) を掛けて四捨五入する（スキルと
+   * コレクションの「チャージダメージ X% 倍率▲」。C-0099・C-0122・C-0126）
+   */
   chargeDamageMultiplier: number;
   /** Stage 8: 分配ダメージの加算。distributed の倍率ダメージにだけ (1 + distributedDamage) を掛ける（録画 21 で別枠の乗数と確認） */
   distributedDamage: number;
@@ -56,7 +62,7 @@ export type BuffTotals = {
   elementDamage: number;
   /** Stage 13: コアダメージの加算。コア命中の加算項 (コア倍率 − 1 + coreDamage)（通常攻撃だけ） */
   coreDamage: number;
-  /** Stage 13: 通常攻撃ダメージ倍率の加算。通常攻撃の武器倍率に (1 + normalAttackDamage) を掛ける（仮定。damage.ts） */
+  /** Stage 13: 通常攻撃ダメージ倍率の加算。通常攻撃の武器倍率に (1 + normalAttackDamage) を掛けて四捨五入する（C-0121。damage.ts） */
   normalAttackDamage: number;
   /** ヘルム編: 通常攻撃のクリティカル確率の加算。通常攻撃の会心率にだけ足す（倍率ダメージ・バーストスキルには足さない。damage.ts） */
   normalCritRate: number;
@@ -171,9 +177,19 @@ export function applyAttackDamageBuffs(buffs: BuffTotals): number {
 }
 
 /**
- * charge ? (fullChargeDamage + chargeDamage) × (1 + chargeDamageMultiplier) : 1。
- * 倍率▲の掛け算は V-0033（ヘルム）で確定。足し算の▲と両方付いたときに足してから掛けるのは仮定（両方の付く録画が無い）
+ * 1e-4 単位の整数 units に (1 + ratio) を掛けて四捨五入した整数（C-0127）。ratio も 1e-4 単位に直してから掛けるので、
+ * 端数がちょうど 0.5 の値（2.5 × 1.0947 = 2.73675 など）も浮動小数の誤差なく切り上がる
+ */
+export function scaleBasisPoints(units: number, ratio: number): number {
+  return Math.round((Math.round(units) * (10000 + Math.round(ratio * 10000))) / 10000);
+}
+
+/**
+ * charge ? 四捨五入(fullChargeDamage × (1 + chargeDamageMultiplier)) + chargeDamage : 1。倍率▲（スキル・コレクション）は
+ * 足し合わせてから素のフルチャージ倍率に掛けて 1e-4 単位で丸め、足し算の▲（OL の増加など）はその後に足す（C-0122・C-0126）。
+ * スキルの足し算の▲（C-0020）と倍率▲が両方付く録画は無く、OL と同じく後に足すのは仮定
  */
 export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buffs: BuffTotals): number {
-  return charge ? (fullChargeDamage + buffs.chargeDamage) * (1 + buffs.chargeDamageMultiplier) : 1;
+  if (!charge) return 1;
+  return scaleBasisPoints(fullChargeDamage * 10000, buffs.chargeDamageMultiplier) / 10000 + buffs.chargeDamage;
 }

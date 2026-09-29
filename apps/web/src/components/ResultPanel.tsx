@@ -169,7 +169,7 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
           {rep.trigger.normalAttackMultiplier !== 1 && (
             <tr>
               <th>通常攻撃ダメージ倍率</th>
-              <td>×{formatNumber(rep.trigger.normalAttackMultiplier, 4)}（仮定）</td>
+              <td>×{formatNumber(rep.trigger.normalAttackMultiplier, 4)}</td>
             </tr>
           )}
           {rep.trigger.chargeMultiplier !== 1 && (
@@ -177,8 +177,12 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
               <th>チャージ倍率</th>
               <td>
                 {`×${formatNumber(rep.trigger.chargeMultiplier, 4)}${
-                  buffs.chargeDamage !== 0
-                    ? `（${character.shot.fullChargeDamage} + ${formatPercent(buffs.chargeDamage, 2)}）`
+                  buffs.chargeDamage !== 0 || buffs.chargeDamageMultiplier !== 0
+                    ? `（${character.shot.fullChargeDamage}${
+                        buffs.chargeDamageMultiplier !== 0
+                          ? ` × (1 + ${formatPercent(buffs.chargeDamageMultiplier, 2)}) を丸め`
+                          : ''
+                      }${buffs.chargeDamage !== 0 ? ` + ${formatPercent(buffs.chargeDamage, 2)}` : ''}）`
                     : ''
                 }`}
               </td>
