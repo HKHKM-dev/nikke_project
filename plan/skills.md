@@ -4,7 +4,7 @@
 - キャラ × スロットごとに、対応状況（`supported`・`partial`・`unsupported`）と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 22・効果 96（根拠あり 22）・notes 53（根拠あり 14）
+件数: キャラ 22・効果 96（根拠あり 23）・notes 53（根拠あり 14）
 
 ## 10 ラピ
 
@@ -153,7 +153,7 @@
   - effects[2] timed・normalHit・maxAmmo: 根拠なし
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・hitRate: 根拠なし
-  - effects[1] timed・normalHit・attack: 根拠なし
+  - effects[1] timed・normalHit・attack: C-0124（確定）
 - **burst**: partial
   - effects[0] timed・burstUse・infiniteAmmo: 根拠なし
   - effects[1] weaponChange・burstUse: 根拠なし

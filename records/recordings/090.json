@@ -1,0 +1,31 @@
+{
+  "id": "090",
+  "date": "2026-09-29",
+  "folder": "range",
+  "file": "20260929-090_MG_modernia_cube-assault7_fixed-off_wind.mp4",
+  "original": "2026-09-29_21-12-12.mp4",
+  "durationSec": 86.6,
+  "frames": 5196,
+  "fps": 60,
+  "sizeMB": 104.5,
+  "sha256": "7e2538f38c6b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": true,
+      "note": "単騎・AUTO、アサルトキューブ Lv7 **あり**（撮影の直前に付けた）。コレクション SR Lv5",
+      "cube": "assault-7"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（**風圧タブ**・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・AUTO 射撃 ON・オートバースト OFF）。撮影の前に装備 4 部位の OL の行を映し、キューブを付けてから、キャラ画面（攻撃力 470,854。付ける前は 469,944）とキューブの画面（レリックアサルトキューブ Lv7、スキルの段階 3・1）を映した（V-0047）。戦闘開始は f2504。一時停止のパネルでモダニア 1 体を確かめた。V-0047"
+}
