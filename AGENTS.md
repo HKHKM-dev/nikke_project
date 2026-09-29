@@ -61,6 +61,7 @@ NIKKE のダメージ計算ツール。
 | `records/observations/`・`plan/residuals.md`         | 録画から読んだ値（観測値）と、モデルとの残差の一覧（生成。`npm run records:check`）                                                                                |
 | `plan/verification.md`                               | 2026-09-26 までの実測と確認の記録（凍結。書き足さない）                                                                                                            |
 | `plan/captures/guide.md`                             | 撮影と読み取りの落とし穴の話題別の索引（根拠は ID か、上の文書へのリンクで指す）                                                                                   |
+| `plan/game-help.md`                                  | ゲーム内のヘルプ（ⓘ）の書き起こし                                                                                                                                  |
 | `plan/skills-guide.md`                               | キャラのスキルを定義して撮影で確かめる手順                                                                                                                         |
 | `packages/core/data/skills/`・`plan/skills.md`       | スキル定義（効果ごとの根拠の結論 ID は `claims` の欄）と、キャラ × スロットの対応状況の一覧（生成。`npm run records:check`）                                       |
 | `private/`（メインのチェックアウト直下、追跡しない） | 所持キャラ・宝物・育成状況・ローカルのパスなど個人の情報。worktree には無いので絶対パスで読む。worktree のエージェントは書き込めないので、足すものはオーナーに渡す |
