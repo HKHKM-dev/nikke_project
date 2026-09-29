@@ -187,7 +187,7 @@ export function scaleBasisPoints(units: number, ratio: number): number {
 /**
  * charge ? 四捨五入(fullChargeDamage × (1 + chargeDamageMultiplier)) + chargeDamage : 1。倍率▲（スキル・コレクション）は
  * 足し合わせてから素のフルチャージ倍率に掛けて 1e-4 単位で丸め、足し算の▲（OL の増加など）はその後に足す（C-0122・C-0126）。
- * スキルの足し算の▲（C-0020）と倍率▲が両方付く録画は無く、OL と同じく後に足すのは仮定
+ * スキルの足し算の▲（C-0020）も OL と同じく倍率▲の後に足す（C-0134。アリスのフルバースト中）
  */
 export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buffs: BuffTotals): number {
   if (!charge) return 1;
