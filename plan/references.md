@@ -1,6 +1,6 @@
 # 参考資料
 
-- 関連: [requirements.md](requirements.md)
+- 関連: [requirements.md](requirements.md)、[game-help.md](game-help.md)（ゲーム内のヘルプの書き起こし）
 - 方針: 既存 OSS はコードを流用せず、仕様・検証の参考としてのみ使う。
 
 ## 類似 OSS
