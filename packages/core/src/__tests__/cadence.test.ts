@@ -78,7 +78,8 @@ describe('computeCadence (calibrated against recordings)', () => {
     expect(intervalCounts(c.shotFrames)).toEqual({ 4: 5, 5: 54 });
     const short = c.shotFrames.flatMap((f, i) => (i > 0 && f - c.shotFrames[i - 1]! === 4 ? [i] : []));
     expect(short).toEqual([11, 21, 31, 41, 51]);
-    expect(c.firstShotFrames).toBe(0);
+    // Stage 22-C: 戦闘開始は構え 12f の後（C-0114）
+    expect(c.firstShotFrames).toBe(12);
     expect(c.reloadFrames).toBe(60);
   });
 
@@ -131,7 +132,8 @@ describe('computeCadence (calibrated against recordings)', () => {
     const c = computeCadence(MG);
     expect(c.magazineFrames).toBeGreaterThanOrEqual(385);
     expect(c.magazineFrames).toBeLessThanOrEqual(392);
-    expect(c.firstShotFrames).toBe(20);
+    // Stage 22-C: 戦闘開始は構え 12f（C-0114）、リロードの後は初弾遅延 20f（C-0002）
+    expect(c.firstShotFrames).toBe(12);
     expect(c.reloadFirstShotFrames).toBe(20);
     expect(c.reloadFrames).toBe(150);
     // 実測サイクル 563f（1 発目→次マガジン 1 発目）
@@ -194,6 +196,7 @@ describe('computeCadence (calibrated against recordings)', () => {
       spinUpFirstShotFrames: 20,
       reloadFirstShotFrames: 22,
       aimOutFrames: 13,
+      aimInFrames: 12,
     });
     expect(f[1]).toBe(60);
   });

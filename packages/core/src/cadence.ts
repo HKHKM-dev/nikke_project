@@ -12,9 +12,9 @@ import { DEFAULT_WEAPON_MODEL, MAX_RPM, hasSpinUp, isChargeWeapon, type WeaponMo
 export type CadenceResult = {
   /** 各発の発射フレーム（1 発目 = 0） */
   shotFrames: number[];
-  /** 戦闘開始から 1 発目までのフレーム。チャージ武器はチャージ + 解放遅延、MG は初弾遅延、それ以外は 0 */
+  /** 戦闘開始から 1 発目までのフレーム。チャージ武器はチャージ + 解放遅延 − 構え解除、それ以外は構え（Stage 22-C） */
   firstShotFrames: number;
-  /** 21-C3: リロード完了から次のマガジンの 1 発目までのフレーム。AR・SMG・SG は reloadFirstShotFrames、ほかは firstShotFrames と同じ */
+  /** 21-C3: リロード完了から次のマガジンの 1 発目までのフレーム。AR・SMG・SG は reloadFirstShotFrames、MG は初弾遅延、チャージ武器は発と発の間 */
   reloadFirstShotFrames: number;
   /** 1 発目から最終弾までのフレーム */
   magazineFrames: number;
@@ -85,11 +85,11 @@ export function firstShotFrames(
 ): number {
   // Stage 22-A: チャージ武器はハイドから構えてチャージするので、発と発の間から構え解除のぶんを引く（C-0110）
   if (isChargeWeapon(shot)) return Math.max(0, params.chargeFrames + model.chargeReleaseFrames - model.aimOutFrames);
-  if (hasSpinUp(shot)) return model.spinUpFirstShotFrames;
-  return 0;
+  // Stage 22-C: チャージの無い武器（MG を含む）も、ハイドから構えてから撃つ（C-0114）
+  return model.aimInFrames;
 }
 
-/** 21-C3: リロード完了から次のマガジンの 1 発目まで。AR・SMG・SG はリロードの後だけ遅れる（C-0059） */
+/** 21-C3: リロード完了から次のマガジンの 1 発目まで。AR・SMG・SG は 22f（C-0059）、MG は初弾遅延 20f（C-0002） */
 export function reloadFirstShotFrames(
   shot: ShotParams,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
@@ -97,7 +97,8 @@ export function reloadFirstShotFrames(
 ): number {
   // Stage 22-A: チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0014 の紅蓮BS 172f・ラム 200f）
   if (isChargeWeapon(shot)) return params.chargeFrames + model.chargeReleaseFrames;
-  if (hasSpinUp(shot)) return firstShotFrames(shot, model, params);
+  // Stage 22-C: MG のリロードの後の初弾遅延（C-0002）は、戦闘開始の構え（firstShotFrames）と分けた
+  if (hasSpinUp(shot)) return model.spinUpFirstShotFrames;
   return model.reloadFirstShotFrames;
 }
 

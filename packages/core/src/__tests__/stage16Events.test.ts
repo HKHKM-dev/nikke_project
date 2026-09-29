@@ -115,17 +115,14 @@ function shotsWithWindow(partial: Partial<ShotParams>, window: FrameRange, frame
 
 describe('射手（ハイドとリロード）', () => {
   it('AR (reload 1 s < 2 s jump): reloads while hiding and resumes with a full magazine at the end of the window', () => {
-    // 0…99 で 21 発（残弾 39。Stage 21-C3 で 4〜5f 刻み）→ 100 でハイドしてリロード（160 で満タン、リロード明けの 22f は窓の中）
-    // → 220 で撃ち直し、60 発を 510 まで撃って、リロード 60f + 22f の 592 に次のマガジン
+    // 12…99 で 18 発（構え 12f の後から。Stage 21-C3 で 4〜5f 刻み）→ 100 でハイドしてリロード（160 で満タン、
+    // リロード明けの 22f は窓の中）→ 220 の明けから構え 12f の 232 で撃ち直し（Stage 22-C）、60 発を 522 まで撃って、
+    // リロード 60f + 22f の 604 に次のマガジン
     const ar = computeCadence(makeCharacter({}).shot).shotFrames;
-    const fired = shotsWithWindow({}, { start: 100, end: 220 }, 600);
-    expect(ar.filter((f) => f < 100)).toHaveLength(21);
-    expect(fired).toEqual([
-      ...ar.filter((f) => f < 100),
-      ...ar.map((f) => 220 + f),
-      ...ar.map((f) => 592 + f).filter((f) => f < 600),
-    ]);
-    expect(fired.at(-2)).toBe(592);
+    const fired = shotsWithWindow({}, { start: 100, end: 220 }, 700);
+    const before = ar.map((f) => 12 + f).filter((f) => f < 100);
+    expect(before).toHaveLength(18);
+    expect(fired).toEqual([...before, ...ar.map((f) => 232 + f), ...ar.map((f) => 604 + f).filter((f) => f < 700)]);
   });
 
   it('MG (reload 2.5 s > 2 s jump): the reload is cancelled and the spin-up starts over', () => {
@@ -141,7 +138,8 @@ describe('射手（ハイドとリロード）', () => {
     const before = fired.filter((f) => f < 200);
     const after = fired.filter((f) => f >= 320);
     expect(fired.some((f) => f >= 200 && f < 320)).toBe(false);
-    expect(after[0]).toBe(320);
+    // 明けから構え 12f の後に撃つ（Stage 22-C。C-0114 の MG は明けから 11f）
+    expect(after[0]).toBe(332);
     // 撃ち直しの間隔は戦闘開始のマガジンの間隔と同じ（スピンアップを最初から）
     const gaps = (xs: number[]) => xs.slice(1, 11).map((x, i) => x - xs[i]!);
     expect(gaps(after)).toEqual(gaps(fired));

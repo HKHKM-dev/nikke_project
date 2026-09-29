@@ -37,26 +37,27 @@ describe('stepShooter', () => {
 
   // Stage 21-C3: rpm はゲーム内の時計（C-0058）、AR のリロード明けは 22f（C-0059）。SR は変わらない
   // Stage 22-A: SR の戦闘開始の 1 発目は構え解除 13f の無いぶん 69f（C-0110）。リロードの後は 82f のまま
-  it('matches the absolute frames fixed in the design (AR 0…290 → 372, SR 69…479 → 651, MG 20…408 → 578)', () => {
+  it('matches the absolute frames fixed in the design (AR 12…302 → 384, SR 69…479 → 651, MG 12…400 → 570)', () => {
+    // Stage 22-C: チャージの無い武器は戦闘開始から構え 12f の後に撃つ。リロードの後は AR 22f・MG 20f のまま
     const ar = shotFramesUpTo(makeCharacter(fixtures.AR).shot, 400);
-    expect(ar.slice(0, 3)).toEqual([0, 5, 10]);
-    expect(ar[59]).toBe(290);
-    expect(ar[60]).toBe(372);
+    expect(ar.slice(0, 3)).toEqual([12, 17, 22]);
+    expect(ar[59]).toBe(302);
+    expect(ar[60]).toBe(384);
 
     const sr = shotFramesUpTo(makeCharacter(fixtures.SR).shot, 700);
     expect(sr).toEqual([69, 151, 233, 315, 397, 479, 651]);
 
     const mg = shotFramesUpTo(makeCharacter(fixtures.MG).shot, 600);
-    expect(mg[0]).toBe(20);
-    expect(mg[299]).toBe(408);
-    expect(mg[300]).toBe(578);
+    expect(mg[0]).toBe(12);
+    expect(mg[299]).toBe(400);
+    expect(mg[300]).toBe(570);
   });
 
-  it('consumes the initial wait before the first shot (MG: frames 0..19 wait, 20 fires)', () => {
+  it('consumes the initial wait before the first shot (MG: frames 0..11 wait, 12 fires)', () => {
     const shot = makeCharacter(fixtures.MG).shot;
     const state = initialShooter(shot);
-    expect(state.wait).toBe(DEFAULT_WEAPON_MODEL.spinUpFirstShotFrames);
-    for (let f = 0; f < 20; f++) expect(stepShooter(state, shot), `frame ${f}`).toBe(false);
+    expect(state.wait).toBe(DEFAULT_WEAPON_MODEL.aimInFrames);
+    for (let f = 0; f < 12; f++) expect(stepShooter(state, shot), `frame ${f}`).toBe(false);
     expect(stepShooter(state, shot)).toBe(true);
     expect(state.ammo).toBe(299);
   });
