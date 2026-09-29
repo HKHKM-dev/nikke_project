@@ -57,10 +57,10 @@
           "intervalSeconds": 1,
           "durationRef": 3,
           "assumes": {
-            "ja": "持続中に付き直すと数え直す（tick の時刻は付いた瞬間と 1.5 秒後から 1 秒ごとの計 10 回。C-0101。フルバースト補正（C-0111）と攻撃ダメージ▲（C-0112）は tick ごとに、その時点の状態で乗る）",
-            "en": "Re-applying it restarts the count (ticks at application and every second from 1.5 s, 10 in total; C-0101. The Full Burst bonus (C-0111) and ATK damage up (C-0112) apply per tick, by the state at that tick)"
+            "ja": "持続中に付き直すと、tick の刻みはそのままで終わりが延びる（クルミのハッキングの C-0129 から推す。ニヒリスター単体では付き直しは起きない）。tick の時刻は付いた瞬間と 1.5 秒後から 1 秒ごとの計 10 回（C-0101）。フルバースト補正（C-0111）と攻撃ダメージ▲（C-0112）は tick ごとに、その時点の状態で乗る",
+            "en": "Re-applying it while active keeps the tick cadence and extends the end (inferred from Kurumi's hacking, C-0129; Nihilister alone cannot re-apply it). Ticks at application and every second from 1.5 s, 10 in total (C-0101). The Full Burst bonus (C-0111) and ATK damage up (C-0112) apply per tick, by the state at that tick"
           },
-          "claims": ["C-0100", "C-0101", "C-0111", "C-0112"]
+          "claims": ["C-0100", "C-0101", "C-0111", "C-0112", "C-0129"]
         },
         {
           "kind": "timed",

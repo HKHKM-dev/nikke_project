@@ -89,10 +89,27 @@ describe('dotTickFrames（付いた瞬間と、1.5 秒後から 1 秒ごと。C-
     expect(dotTickFrames([1000], 1, 10, 10588)).toEqual(OFFSETS.map((o) => 1000 + o));
   });
 
-  it('drops the rest of the ticks when re-applied (restart from the new fire)', () => {
-    expect(dotTickFrames([1000, 1300], 1, 10, 10588)).toEqual([
-      ...OFFSETS.filter((o) => o < 300).map((o) => 1000 + o),
-      ...OFFSETS.map((o) => 1300 + o),
+  it('keeps the tick cadence and extends the end when re-applied before it runs out (C-0129)', () => {
+    // 1300 の再発火は 1000 の維持（10 秒）のうち。刻みは 1000 のまま、1300 + 559 までの tick が続く
+    const extended = [0, 88, 147, 206, 265, 324, 382, 441, 500, 559, 618, 676, 735, 794, 853];
+    expect(dotTickFrames([1000, 1300], 1, 10, 10588)).toEqual(extended.map((o) => 1000 + o));
+    expect(1000 + extended.at(-1)!).toBeLessThanOrEqual(1300 + 559);
+  });
+
+  it('chains several re-applications and starts a new cadence after it runs out', () => {
+    // 5 秒維持を 3 秒おきに付け直すと、刻みは 1000 のまま、最後の 1353 + 4.5 秒（265f）= 1618 まで続く。
+    // 6588 は 1353 + 5 秒（294f）より後なので新しい刻み
+    const ticks = dotTickFrames([1000, 1176, 1353, 6588], 1, 5, 10588);
+    expect(ticks.filter((t) => t < 6588)).toEqual(
+      [0, 88, 147, 206, 265, 324, 382, 441, 500, 559, 618].map((o) => 1000 + o),
+    );
+    expect(ticks.filter((t) => t >= 6588)).toEqual([0, 88, 147, 206, 265].map((o) => 6588 + o));
+  });
+
+  it('leaves a single fire as it was (10 ticks for 10 s)', () => {
+    expect(dotTickFrames([1000, 1000 + 588], 1, 10, 10588)).toEqual([
+      ...OFFSETS.map((o) => 1000 + o),
+      ...OFFSETS.map((o) => 1588 + o),
     ]);
   });
 
