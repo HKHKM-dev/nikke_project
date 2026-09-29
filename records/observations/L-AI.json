@@ -27,5 +27,50 @@
         "midFarLanding": "C"
       }
     }
+  },
+  {
+    "id": "L-AI-02",
+    "recording": "L-AI",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0045",
+    "readAt": "2026-09-29",
+    "value": [-36, 0, 2, 6, 12],
+    "unit": "f",
+    "description": "チャイム（SMG）単騎で、戦闘開始 S（f768）から数えた、敵名の表示が消えた・残り時間の表示（03:00）が出た・02:59 になり照準の横の残弾（120）が出た・背中からの視点に替わった・最初の発（残弾 119）のフレーム",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始 S は残り時間の表示が出たフレーム（`timer.ts --mode changes` の +89f 前後の変わり目）。ffmpeg で 1 フレームずつ切り出して目で読んだ"
+    }
+  },
+  {
+    "id": "L-AI-03",
+    "recording": "L-AI",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0045",
+    "readAt": "2026-09-29",
+    "value": [12, 12, 12, 13, 12, 13, 12, 12],
+    "unit": "f",
+    "description": "チャイム（SMG・120 発・リロード 1 秒）単騎で、リロード完了から最初の発まで（的のジャンプの窓をまたがない 8 回）",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
+      "note": "リロード完了は、照準の下の RELOADING のバーが消えて照準の横の残弾が最大に戻ったフレーム。最初の発は、照準の横の残弾が 1 減ったフレーム（最初の 2〜4 回は目で読み、`hud.ts --mode jumps` の総ダメージの増分のフレームと一致したので、以降は増分のフレームを使った）。どちらも ffmpeg で 1 フレームずつ切り出して目で読んだ。リロード完了のフレームは 1146・1524・1902・2280・3353・3730・4109・4488"
+    }
+  },
+  {
+    "id": "L-AI-04",
+    "recording": "L-AI",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0045",
+    "readAt": "2026-09-29",
+    "value": [71, 71, 71, 71, 72, 71, 71, 72],
+    "unit": "f",
+    "description": "チャイム（SMG）単騎で、マガジンの最終弾（総ダメージの増分）からリロード完了まで（L-AI-03 と同じ 8 回）",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
+      "note": "最終弾は `hud.ts --mode jumps` の、リロードの空きの前の最後の増分のフレーム（1075・1453・1831・2209・3281・3659・4038・4416）"
+    }
   }
 ]

@@ -71,5 +71,50 @@
       "tool": "tools/captures/hud.ts --mode jumps",
       "note": "1 発目は f753。マガジンの 1 発目は戦闘開始から 13・387・761・1136f（間 374〜375f）。モデルは 0・372・744・1116f。マガジンの中の間隔は 4.9〜5.0f。60 発のうち総ダメージに出たのが 55・57 発のマガジンがある"
     }
+  },
+  {
+    "id": "L-AD-05",
+    "recording": "L-AD",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0045",
+    "readAt": "2026-09-29",
+    "value": [-37, 0, 2, 8, 13],
+    "unit": "f",
+    "description": "ブラン（AR）単騎で、戦闘開始 S（f740）から数えた、敵名（BigArms）の表示が消えた・残り時間の表示（03:00）と総ダメージの表示が出た・残り時間が 02:59 になり照準の横の残弾（060）が出た・カメラがキャラの背中からの視点に替わった・最初の発（残弾 059）のフレーム",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始 S は残り時間の表示が出たフレーム（`timer.ts --mode changes` の +89f 前後の変わり目）。ffmpeg で 1 フレームずつ切り出して目で読んだ。S のフレームはカメラが戦闘の画面に切り替わるフレームでもある（切り替えの 1 フレームは前後の画が重なる）。S+1〜S+7 は遮蔽物に隠れたキャラを前から写す。下の枠アイコンは最初の発の後（S+14 前後）からフェードインする"
+    }
+  },
+  {
+    "id": "L-AD-06",
+    "recording": "L-AD",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0045",
+    "readAt": "2026-09-29",
+    "value": [12, 12, 12, 12, 12, 12, 12, 12],
+    "unit": "f",
+    "description": "ブラン（AR・60 発・リロード 1 秒）単騎で、リロード完了から最初の発まで（的のジャンプの窓をまたがない 8 回）",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
+      "note": "リロード完了は、照準の下の RELOADING のバーが消えて照準の横の残弾が最大に戻ったフレーム。最初の発は、照準の横の残弾が 1 減ったフレーム（最初の 2〜4 回は目で読み、`hud.ts --mode jumps` の総ダメージの増分のフレームと一致したので、以降は増分のフレームを使った）。どちらも ffmpeg で 1 フレームずつ切り出して目で読んだ。リロード完了のフレームは 1115・1489・1864・2239・2953・3328・4079・4455"
+    }
+  },
+  {
+    "id": "L-AD-07",
+    "recording": "L-AD",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0045",
+    "readAt": "2026-09-29",
+    "value": [71, 70, 71, 70, 72, 71, 71, 71],
+    "unit": "f",
+    "description": "ブラン（AR）単騎で、マガジンの最終弾（総ダメージの増分）からリロード完了まで（L-AD-06 と同じ 8 回）",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
+      "note": "最終弾は `hud.ts --mode jumps` の、リロードの空きの前の最後の増分のフレーム（1044・1419・1793・2169・2881・3257・4008・4384）。リロード完了は L-AD-06 と同じ"
+    }
   }
 ]
