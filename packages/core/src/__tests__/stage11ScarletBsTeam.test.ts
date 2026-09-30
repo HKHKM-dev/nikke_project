@@ -65,13 +65,14 @@ const skillHitShown = (h: SkillHitEvent, ticks = 1) =>
   Math.round((h.hit.baseHit * h.effect.multiplier * (1 + h.hit.boost.fullBurst)) / ticks);
 
 describe('射撃の刻みの較正（3.3・7.3）', () => {
-  it('fires 紅蓮BS every 43f and 172f across a reload (録画 46)', () => {
+  it('fires 紅蓮BS every 43f and 172f across a reload (録画 46。046-21)', () => {
     const cadence = computeCadence(character(225).shot);
     expect(cadence.shotFrames).toEqual([0, 43, 86, 129, 172, 215, 258, 301, 344]);
     // Stage 22-A: 戦闘開始の 1 発目は 43 − 13 = 30f（046-19）。リロードの後は 43f のまま
     expect(cadence.firstShotFrames).toBe(30);
     expect(cadence.reloadFirstShotFrames).toBe(43);
-    expect(cadence.reloadFrames).toBe(129);
+    // Stage 24: リロード 2 秒 ÷ 0.017 + 11f（C-0149）。射手は端数を持ち越すので、172f と 171f が約 2:1 で混ざる（実測は 172f）
+    expect(cadence.reloadFrames).toBeCloseTo(2 / 0.017 + 11, 9);
     const frames = planShots([{ character: character(225) }], 1200)[0]!.frames;
     const gaps = frames.slice(1).map((f, i) => f - frames[i]!);
     expect(gaps.slice(0, 10)).toEqual([43, 43, 43, 43, 43, 43, 43, 43, 172, 43]);

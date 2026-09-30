@@ -3,15 +3,6 @@ import { FRAMES_PER_GAME_SECOND, GAME_SECONDS_PER_FRAME } from './time.ts';
 import type { ShotParams, WeaponType } from './types.ts';
 
 /**
- * Stage 21: 武器の CDN の秒（リロード・撃ち直し）をフレームに直す換算。射撃の刻みの較正
- * （C-0002・C-0144 のリロードの分・C-0059）はこの換算との差として決めているので、ゲーム内の秒（time.ts）とは分けて持つ。
- * 21-C2 で録画を読み直し、1 秒 = 60f と 58.82f のどちらも ±1f で合って決まらなかったので、60f のまま
- * （plan/design-stage21.md 8.7 節、V-0011）。リロードは V-0057 の段 A でも決まらず、V-0058 で決める。
- * チャージは Stage 23 でゲーム内の時計にした（chargeSecondsToFrames。C-0140）
- */
-export const WEAPON_FRAMES_PER_SECOND = 60;
-
-/**
  * rpm の蓄積の分母: 1 フレームに 1 発になる rpm（= 60 × ゲーム内の 1 秒のフレーム数、約 3529 rpm）。これが上限。
  * 21-C3: rpm はゲーム内の時計で進む（C-0058。AR 720 rpm は 60 発で 290f、SMG 1440 rpm は 120 発で 292f）。
  * 21-B までは 3600（1 秒 = 60f）だった
@@ -40,15 +31,16 @@ export type WeaponModel = {
    */
   chargeReleaseFrames: number;
   /**
-   * スピンアップ武器（MG）がリロード完了から 1 発目を撃つまでのフレーム。実測 約 20f（C-0002）。
-   * Stage 22-C: 戦闘開始・窓の明けには使わない（aimInFrames。戦闘開始に 20f の初弾遅延は無い。C-0114）
+   * 使用武器の変更（殲滅モード）で持ち替えたスピンアップ武器の 1 発目までのフレーム（frame/shooter.ts の weaponChangeShooter）。
+   * Stage 24 で、MG のリロード明けは reloadFirstShotFrames（24f。C-0148）に移したので、使うのはここだけ。値は MG のリロード明けの
+   * 初弾遅延だった 20f（C-0002。棄却）のままで、持ち替えについては較正していない
    */
   spinUpFirstShotFrames: number;
   /**
    * 21-C3: チャージもスピンアップも無い武器（AR・SMG・SG）が、リロードを込め終えてから 1 発目を撃つまでのフレーム。
-   * 最終弾 → 次の 1 発目がリロードの時間より 20〜24f 長い（C-0059）。武器種で分けず 22f（21-C3 の時点のチャージの解放遅延と
-   * 同じ値）。リロードを 1 秒 = 60f で数えたときの差なので、Stage 23 でチャージの解放遅延を 23f にした後も 22f のまま（V-0058）。
-   * 戦闘開始・窓の明けの 1 発目には使わない（Stage 22-C の aimInFrames）
+   * Stage 24: リロードをゲーム内の時計で数えると、最終弾 → 次の 1 発目はリロードの時間より 23〜24.5f 長く、武器種によらない
+   * （C-0148。MG も同じ値）。最終弾 → リロード完了の約 12f（C-0135）と、完了 → 1 発目の約 12f（C-0115・C-0117）の和。
+   * 22f までは、リロードを 1 秒 = 60f で数えたときの差だった（C-0059）。戦闘開始・窓の明けの 1 発目には使わない（aimInFrames）
    */
   reloadFirstShotFrames: number;
   /**
@@ -68,14 +60,18 @@ export type WeaponModel = {
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   chargeReleaseFrames: 23,
   spinUpFirstShotFrames: 20,
-  reloadFirstShotFrames: 22,
+  reloadFirstShotFrames: 24,
   aimOutFrames: 13,
   aimInFrames: 12,
 };
 
-/** 武器の CDN の秒（リロード・撃ち直し）→ フレーム（1 秒 = 60f・切り上げ） */
-export function secondsToFrames(seconds: number): number {
-  return Math.ceil(seconds * WEAPON_FRAMES_PER_SECOND);
+/**
+ * Stage 24: リロードの秒 → フレーム（端数つき）。ゲーム内の時計（1 フレーム 0.017 秒）で数え、丸めない（C-0145・C-0142。
+ * plan/design-weapon-seconds.md 10.5 節）。射手は 1 回分ごとに、前の回の端数を足して切り捨て、残りを次へ持ち越す
+ * （frame/shooter.ts の nextChunkFrames）。rpm の蓄積（C-0058）と同じ形。21-C〜23 は 1 秒 = 60f の切り上げだった
+ */
+export function reloadSecondsToFrames(seconds: number): number {
+  return seconds / GAME_SECONDS_PER_FRAME;
 }
 
 /**

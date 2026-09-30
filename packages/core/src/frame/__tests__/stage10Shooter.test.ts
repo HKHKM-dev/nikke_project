@@ -17,7 +17,7 @@ import {
   MAX_RPM,
   chargeSecondsToFrames,
   isChargeWeapon,
-  secondsToFrames,
+  reloadSecondsToFrames,
   type WeaponModel,
 } from '../../weapons.ts';
 import {
@@ -37,7 +37,8 @@ const characters: CharacterData[] = readdirSync(CHARACTERS_DIR)
 /**
  * Stage 9 の stepShooter の写し（リロードを「回数 × 時間」の 1 つの待ちにしていた版）。退化の基準として凍結する。
  * Stage 21-C3 で意図して変えた 2 点（rpm の蓄積はゲーム内の時計 = MAX_RPM の値と誤差の幅、リロード明けの 1 発目の遅れ）と、
- * Stage 23 で変えた 1 点（チャージの秒はゲーム内の時計 = chargeSecondsToFrames）だけ写しにも入れた
+ * Stage 23・24 で変えた 2 点（チャージの秒はゲーム内の時計 = chargeSecondsToFrames、リロードの秒はゲーム内の時計で端数を持ち越す
+ * = reloadSecondsToFrames と carry）だけ写しにも入れた
  */
 function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel = DEFAULT_WEAPON_MODEL): number[] {
   const state = {
@@ -46,6 +47,7 @@ function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel =
     wait: stage9FirstShotFrames(shot, model),
     acc: 0,
     reloading: false,
+    reloadCarry: 0.5,
   };
   const fired: number[] = [];
   for (let f = 0; f < frames; f++) {
@@ -70,7 +72,10 @@ function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel =
     fired.push(f);
     if (state.ammo <= 0) {
       state.reloading = true;
-      const reloadFrames = secondsToFrames(shot.reloadTime) * reloadChunks(shot);
+      // Stage 24: 1 回分ごとに端数を持ち越して切り捨てた和は、回数 × 1 回分に端数を足して切り捨てた値と同じ
+      const exact = reloadSecondsToFrames(shot.reloadTime) * reloadChunks(shot) + state.reloadCarry;
+      const reloadFrames = Math.floor(exact + 1e-9);
+      state.reloadCarry = Math.max(0, exact - reloadFrames);
       state.wait = Math.max(0, reloadFrames + reloadFirstShotFrames(shot, model) - 1);
     } else if (charge) {
       state.wait = Math.max(0, chargeSecondsToFrames(shot.chargeTime) + model.chargeReleaseFrames - 1);
@@ -173,14 +178,14 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
       end: 10_000,
       buffs: { ...ZERO_FIRING_BUFFS, maxAmmoRatio: 0.7218 + 0.5014 },
     });
-    // 1 回分は 30f ずつ（0.5 秒）: L から +30・+60・+90・+120 に込め、+120 で満タン → 22f 後に 1 発目（C-0059）
-    // （基礎値なら +30・+60・+90 で 9 になり +112 に撃つ）
+    // Stage 24: 1 回分は 0.5 秒 ÷ 0.017 = 29.4f。端数（最初は 0.5）を持ち越して 29・30・29・30f: L から +29・+59・+88・+118 に込め、
+    // +118 で満タン → 24f 後に 1 発目（C-0148）。（基礎値なら +29・+59・+88 で 9 になり +112 に撃つ）
     expect(distinct(run.ammo.slice(L, L + 150))).toEqual([0, 3, 10, 17, 20, 19]);
-    expect(run.ammo[L + 29]).toBe(0);
-    expect(run.ammo[L + 30]).toBe(3);
-    expect(run.ammo[L + 60]).toBe(10);
-    expect(run.ammo[L + 90]).toBe(17);
-    expect(run.ammo[L + 120]).toBe(20);
+    expect(run.ammo[L + 28]).toBe(0);
+    expect(run.ammo[L + 29]).toBe(3);
+    expect(run.ammo[L + 59]).toBe(10);
+    expect(run.ammo[L + 88]).toBe(17);
+    expect(run.ammo[L + 118]).toBe(20);
     expect(run.fired).toContain(L + 142);
   });
 
@@ -191,11 +196,11 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
     const withBuff = runWithWindow(shot, 1_200, { start: 0, end: 10_000, buffs });
     const lastOfFirst = withBuff.fired[13]!;
     const run = runWithWindow(shot, 1_200, { start: 0, end: lastOfFirst + 31 + 1, buffs });
-    // 1 回分は +30f ごと。最大 14 の 1 回分 5 → バフが切れて最大 9 の 1 回分 3 → 残り 1 発分で 9（満タン）→ 22f 後に撃って 8
-    expect(run.ammo[lastOfFirst + 29]).toBe(0);
-    expect(run.ammo[lastOfFirst + 30]).toBe(5);
-    expect(run.ammo[lastOfFirst + 60]).toBe(8);
-    expect(run.ammo[lastOfFirst + 90]).toBe(9);
+    // 1 回分は 29・30・29f（Stage 24）。最大 14 の 1 回分 5 → バフが切れて最大 9 の 1 回分 3 → 残り 1 発分で 9（満タン）→ 24f 後に撃って 8
+    expect(run.ammo[lastOfFirst + 28]).toBe(0);
+    expect(run.ammo[lastOfFirst + 29]).toBe(5);
+    expect(run.ammo[lastOfFirst + 59]).toBe(8);
+    expect(run.ammo[lastOfFirst + 88]).toBe(9);
     expect(run.fired).toContain(lastOfFirst + 112);
     expect(run.ammo[lastOfFirst + 112]).toBe(8);
     expect(run.fired.filter((f) => f > lastOfFirst + 112 && f <= lastOfFirst + 112 + 40 * 8)).toHaveLength(8); // 9 発のマガジン
@@ -241,7 +246,11 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
       chargeTime: 1,
       inputType: 'UP',
     }).shot;
-    expect(firingParams(sr, { ...ZERO_FIRING_BUFFS, reloadSpeed: 0.5091 }).reloadChunkFrames).toBe(59);
+    // Stage 24: リロードは端数つき（2 秒 × 0.4909 ÷ 0.017 = 57.75f）
+    expect(firingParams(sr, { ...ZERO_FIRING_BUFFS, reloadSpeed: 0.5091 }).reloadChunkFrames).toBeCloseTo(
+      (2 * 0.4909) / 0.017,
+      9,
+    );
     // Stage 23: チャージは 0.9103 秒 ÷ 0.017 = 53.5 → 54f（C-0140）
     expect(firingParams(sr, { ...ZERO_FIRING_BUFFS, chargeSpeed: 0.0897 }).chargeFrames).toBe(54);
     // 100% 以上は 0 フレーム。チャージ武器は解放遅延 23f だけ残る（戦闘開始の 1 発目は構え解除 13f の無いぶん 10f。Stage 22-A）
@@ -278,8 +287,8 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
     while (reloading.phase !== 'reloading') stepShooter(reloading, shot, DEFAULT_WEAPON_MODEL);
     refillAmmo(reloading, 9, shot);
     expect(reloading.phase).toBe('priming');
-    // SG はリロード明けの遅れ 22f（C-0059）→ 次のフレームから数えて 22 フレーム目に撃つ
-    for (let f = 1; f < 22; f++) expect(stepShooter(reloading, shot), `frame ${f}`).toBe(false);
+    // SG はリロード明けの遅れ 24f（C-0148）→ 次のフレームから数えて 24 フレーム目に撃つ
+    for (let f = 1; f < 24; f++) expect(stepShooter(reloading, shot), `frame ${f}`).toBe(false);
     expect(stepShooter(reloading, shot)).toBe(true);
   });
 });

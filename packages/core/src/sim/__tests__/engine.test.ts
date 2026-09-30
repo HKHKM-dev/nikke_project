@@ -80,12 +80,13 @@ describe('runSimulation without burst', () => {
     expect(sim.events).toEqual([]);
   });
 
-  // Stage 21-C3: 1 周期 = リロード明け 22f + 60 発 290f + リロード 60f = 372f（C-0058・C-0059）。
-  // Stage 22-C: 1 発目は戦闘開始から構え 12f の後（C-0114）なので、29 マガジン目は 12 + 28 × 372 = 10428 から
-  it('AR fires 1713 times in 180 s (first at 12, 28 magazines of 372f + 33 shots of the 29th, last at 10585 < 10588)', () => {
+  // Stage 24: 1 周期 = リロード明け 24f + 60 発 290f + リロード 58.8f = 372.8f（C-0058・C-0145・C-0148）。
+  // Stage 22-C: 1 発目は戦闘開始から構え 12f の後（C-0114）。リロードは端数を持ち越すので、29 マガジン目は
+  // 12 + round(28 × 372.8) = 10451 から、10588 までの 137f に 28 発
+  it('AR fires 1708 times in 180 s (first at 12, 28 magazines of 372.8f + 28 shots of the 29th)', () => {
     const sim = runSimulation({ slots: [ar], enemy, durationSeconds: 180 });
     expect(sim.frames).toBe(10588);
-    expect(simIntervalTotals(sim.slots[0]!).nonFullBurst.triggers).toBe(28 * 60 + 33);
+    expect(simIntervalTotals(sim.slots[0]!).nonFullBurst.triggers).toBe(28 * 60 + 28);
   });
 });
 

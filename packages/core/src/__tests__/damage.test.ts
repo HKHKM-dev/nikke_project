@@ -33,7 +33,8 @@ describe('computeDamage', () => {
     expect(r.buffs).toEqual(ZERO_BUFFS);
     expect(r.elementMultiplier).toBe(1.1);
     expect(r.perTrigger).toBeCloseTo(900 * 0.1365 * 2.375 * 1.1, 6);
-    expect(r.cadence.triggersPerSecond).toBeCloseTo(60 / framesToGameSeconds(22 + 290 + 60), 6);
+    // Stage 24: リロード明け 24f + マガジン 290f + リロード 1 秒（ゲーム内の時計で 58.8f）
+    expect(r.cadence.triggersPerSecond).toBeCloseTo(60 / framesToGameSeconds(24 + 290 + 1 / 0.017), 6);
     expect(r.dps).toBeCloseTo(r.perTrigger * r.cadence.triggersPerSecond, 6);
     expect(r.totalDamage).toBeCloseTo(r.dps * 180, 4);
   });

@@ -70,7 +70,10 @@ function intervalCounts(frames: number[]): Record<number, number> {
 }
 
 // 期待値は射撃場録画（60fps）の実測に基づく。2026-09-22 の較正（plan/verification.md）を、Stage 21-C2 で読み直した
-// （V-0011。rpm はゲーム内の時計 = C-0058、AR・SMG・SG のリロード明けの遅れ = C-0059）。
+// （V-0011。rpm はゲーム内の時計 = C-0058）。Stage 23・24 でチャージとリロードの秒もゲーム内の時計で数える（C-0140・C-0145）。
+// リロードのフレーム数は端数つき（射手が端数を持ち越す）で、リロード明けの遅れは武器種によらず 24f（C-0148）。
+/** リロードの秒 → 端数つきのフレーム数（Stage 24） */
+const R = (seconds: number): number => seconds / 0.017;
 describe('computeCadence (calibrated against recordings)', () => {
   it('AR 720 rpm: 60 rounds span 290f with a 4f gap at intervals 11・21・31・41・51 (004-01・004-02・007-01・007-02)', () => {
     const c = computeCadence(shot({}));
@@ -80,48 +83,49 @@ describe('computeCadence (calibrated against recordings)', () => {
     expect(short).toEqual([11, 21, 31, 41, 51]);
     // Stage 22-C: 戦闘開始は構え 12f の後（C-0114）
     expect(c.firstShotFrames).toBe(12);
-    expect(c.reloadFrames).toBe(60);
+    expect(c.reloadFrames).toBeCloseTo(R(1), 9);
   });
 
-  it('AR: the next magazine fires 82f after the last shot (reload 60f + 22f, C-0059; 004-01), 100f for 1.3 s (007-01)', () => {
+  it('AR: the next magazine fires 82.8f after the last shot (reload 58.8f + 24f, C-0148; measured 82f in 004-01・073), 100.5f for 1.3 s (007-01: 100f)', () => {
     const c = computeCadence(shot({}));
-    expect(c.reloadFirstShotFrames).toBe(22);
-    expect(c.reloadFrames + c.reloadFirstShotFrames).toBe(82);
-    expect(c.cycleFrames).toBe(22 + 290 + 60);
+    expect(c.reloadFirstShotFrames).toBe(24);
+    expect(c.reloadFrames + c.reloadFirstShotFrames).toBeCloseTo(R(1) + 24, 9);
+    expect(Math.abs(c.reloadFrames + c.reloadFirstShotFrames - 82)).toBeLessThanOrEqual(1);
+    expect(c.cycleFrames).toBeCloseTo(24 + 290 + R(1), 9);
     // 毎秒はゲーム内の秒（Stage 21-B）
-    expect(c.triggersPerSecond).toBeCloseTo(60 / framesToGameSeconds(372), 6);
+    expect(c.triggersPerSecond).toBeCloseTo(60 / framesToGameSeconds(24 + 290 + R(1)), 6);
     const folkwang = computeCadence(shot({ reloadTime: 1.3 }));
-    expect(folkwang.reloadFrames + folkwang.reloadFirstShotFrames).toBe(100);
+    expect(Math.abs(folkwang.reloadFrames + folkwang.reloadFirstShotFrames - 100)).toBeLessThanOrEqual(1);
   });
 
-  it('SMG 1440 rpm: 120 rounds span 292f with 65 gaps of 2f and 54 of 3f (005-01・005-02); next magazine after 82f (measured 83f)', () => {
+  it('SMG 1440 rpm: 120 rounds span 292f with 65 gaps of 2f and 54 of 3f (005-01・005-02); next magazine after 82.8f (measured 83f; 098: 82.9f)', () => {
     const c = computeCadence(shot({ maxAmmo: 120, rateOfFire: 1440, endRateOfFire: 1440 }));
     expect(c.magazineFrames).toBe(292);
     expect(intervalCounts(c.shotFrames)).toEqual({ 2: 65, 3: 54 });
-    expect(c.reloadFrames + c.reloadFirstShotFrames).toBe(82);
+    expect(c.reloadFrames + c.reloadFirstShotFrames).toBeCloseTo(R(1) + 24, 9);
   });
 
   it('SG 90 rpm: 39f and 40f gaps, 9 rounds span 314f (008-01: 314・315f)', () => {
     const c = computeCadence(shot({ maxAmmo: 9, reloadTime: 1.86, rateOfFire: 90, endRateOfFire: 90 }));
     expect(c.magazineFrames).toBe(314);
     expect(intervalCounts(c.shotFrames)).toEqual({ 39: 6, 40: 2 });
-    // 最終弾 → 次の 1 発目: リロード 112f + 22f = 134f（実測 133・132f）
-    expect(c.reloadFrames + c.reloadFirstShotFrames).toBe(134);
+    // 最終弾 → 次の 1 発目: リロード 109.4f + 24f = 133.4f（実測 133・132f）
+    expect(c.reloadFrames + c.reloadFirstShotFrames).toBeCloseTo(R(1.86) + 24, 9);
   });
 
-  it('SR: 82f per full-charge shot (60f charge + 22f release), reload 90f → 582f cycle (measured 577f)', () => {
+  it('SR: 82f per full-charge shot (59f charge + 23f release), reload 88.2f → 580.2f cycle (measured 577f; 001 drops frames early)', () => {
     const c = computeCadence(SR);
     expect(c.shotFrames).toEqual([0, 82, 164, 246, 328, 410]);
     // Stage 22-A: 戦闘開始の 1 発目は構え解除（13f）が無いぶん早い（C-0110）。リロードの後は 82f のまま
     expect(c.firstShotFrames).toBe(69);
     expect(c.reloadFirstShotFrames).toBe(82);
-    expect(c.cycleFrames).toBe(82 + 410 + 90);
+    expect(c.cycleFrames).toBeCloseTo(82 + 410 + R(1.5), 9);
   });
 
-  it('RL: same charge cadence, reload 120f → 612f cycle (measured 610f)', () => {
+  it('RL: same charge cadence, reload 117.6f → 609.6f cycle (measured 610f)', () => {
     const c = computeCadence(RL);
-    expect(c.cycleFrames).toBe(612);
-    expect(c.triggersPerSecond).toBeCloseTo(6 / framesToGameSeconds(612), 6);
+    expect(c.cycleFrames).toBeCloseTo(82 + 410 + R(2), 9);
+    expect(c.triggersPerSecond).toBeCloseTo(6 / framesToGameSeconds(82 + 410 + R(2)), 6);
   });
 
   it('MG: spin-up from 60 rpm (+100 rpm per shot) reaches 1f/shot, 300 rounds span ~388f (measured 386–391f)', () => {
@@ -132,10 +136,10 @@ describe('computeCadence (calibrated against recordings)', () => {
     const c = computeCadence(MG);
     expect(c.magazineFrames).toBeGreaterThanOrEqual(385);
     expect(c.magazineFrames).toBeLessThanOrEqual(392);
-    // Stage 22-C: 戦闘開始は構え 12f（C-0114）、リロードの後は初弾遅延 20f（C-0002）
+    // Stage 22-C: 戦闘開始は構え 12f（C-0114）。リロードの後は 24f（Stage 24。C-0148）
     expect(c.firstShotFrames).toBe(12);
-    expect(c.reloadFirstShotFrames).toBe(20);
-    expect(c.reloadFrames).toBe(150);
+    expect(c.reloadFirstShotFrames).toBe(24);
+    expect(c.reloadFrames).toBeCloseTo(R(2.5), 9);
     // 実測サイクル 563f（1 発目→次マガジン 1 発目）
     expect(Math.abs(c.cycleFrames - 563)).toBeLessThanOrEqual(5);
   });
@@ -176,18 +180,21 @@ describe('computeCadence (calibrated against recordings)', () => {
       expect(f[299]! - f[0]!).toBe(388);
     });
 
-    it('last shot to the next first shot: 170f plain (measured 171–176f), 104f with クラウン S1 reload speed 44.35% (measured 105–110f)', () => {
+    it('last shot to the next first shot: 171.1f plain (measured 171–176f), 105.8f with クラウン S1 reload speed 44.35% (measured 105–110f)', () => {
+      // Stage 24 で両方とも実測の範囲に入った（23 までは 170f・104f で、どちらも範囲の外）
       const plain = computeCadence(MG);
-      expect(plain.reloadFrames + plain.reloadFirstShotFrames).toBe(170);
+      expect(plain.reloadFrames + plain.reloadFirstShotFrames).toBeCloseTo(R(2.5) + 24, 9);
+      expect(plain.reloadFrames + plain.reloadFirstShotFrames).toBeGreaterThanOrEqual(171);
       const buffed = computeCadence(MG, undefined, firingParams(MG, { ...ZERO_FIRING_BUFFS, reloadSpeed: 0.4435 }));
-      expect(buffed.reloadFrames + buffed.reloadFirstShotFrames).toBe(104);
+      expect(buffed.reloadFrames + buffed.reloadFirstShotFrames).toBeCloseTo(R(2.5 * (1 - 0.4435)) + 24, 9);
+      expect(buffed.reloadFrames + buffed.reloadFirstShotFrames).toBeGreaterThanOrEqual(105);
     });
   });
 
-  it('RL with 1.5 s charge: 112f per shot (90f + 22f), reload 120f → 792f cycle (measured 790f)', () => {
+  it('RL with 1.5 s charge: 112f per shot (89f + 23f), reload 117.6f → 789.6f cycle (measured 790f)', () => {
     const c = computeCadence(shot({ ...RL, chargeTime: 1.5, fullChargeDamage: 3.5 }));
     expect(c.shotFrames).toEqual([0, 112, 224, 336, 448, 560]);
-    expect(c.cycleFrames).toBe(792);
+    expect(c.cycleFrames).toBeCloseTo(112 + 560 + R(2), 9);
   });
 
   it('charge release frames are configurable', () => {
@@ -219,7 +226,7 @@ describe('reloadChunks', () => {
       shot({ maxAmmo: 9, reloadTime: 0.67, reloadBullet: 0.33, rateOfFire: 90, endRateOfFire: 90 }),
     );
     expect(c.reloadChunks).toBe(3);
-    expect(c.reloadFrames).toBe(41 * 3);
+    expect(c.reloadFrames).toBeCloseTo(R(0.67) * 3, 9);
   });
 });
 

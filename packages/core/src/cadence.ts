@@ -89,7 +89,7 @@ export function firstShotFrames(
   return model.aimInFrames;
 }
 
-/** 21-C3: リロード完了から次のマガジンの 1 発目まで。AR・SMG・SG は 22f（C-0059）、MG は初弾遅延 20f（C-0002） */
+/** リロード完了から次のマガジンの 1 発目まで。Stage 24: チャージの無い武器は武器種によらず 24f（MG を含む。C-0148） */
 export function reloadFirstShotFrames(
   shot: ShotParams,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
@@ -97,8 +97,7 @@ export function reloadFirstShotFrames(
 ): number {
   // Stage 22-A: チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0144 の紅蓮BS 172f・ラム 200f）
   if (isChargeWeapon(shot)) return params.chargeFrames + model.chargeReleaseFrames;
-  // Stage 22-C: MG のリロードの後の初弾遅延（C-0002）は、戦闘開始の構え（firstShotFrames）と分けた
-  if (hasSpinUp(shot)) return model.spinUpFirstShotFrames;
+  // Stage 24: MG も AR・SMG・SG と同じ（22 までは MG だけ初弾遅延 20f。C-0002）
   return model.reloadFirstShotFrames;
 }
 

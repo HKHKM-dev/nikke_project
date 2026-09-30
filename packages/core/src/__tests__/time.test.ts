@@ -7,7 +7,7 @@ import {
   gameSecondsToFrame,
   gameSecondsToFrames,
 } from '../time.ts';
-import { MAX_RPM, WEAPON_FRAMES_PER_SECOND, secondsToFrames } from '../weapons.ts';
+import { MAX_RPM, chargeSecondsToFrames, reloadSecondsToFrames } from '../weapons.ts';
 
 describe('game time (Stage 21-B: 0.017 s per frame)', () => {
   it('uses 0.017 s per frame (about 58.82 frames per game second)', () => {
@@ -34,10 +34,13 @@ describe('game time (Stage 21-B: 0.017 s per frame)', () => {
   });
 });
 
-describe('weapon conversion (decided in 21-C2, V-0011)', () => {
-  it('keeps 60 frames per CDN second, and accumulates rpm on the game clock with 1 shot per frame at most', () => {
-    expect(WEAPON_FRAMES_PER_SECOND).toBe(60);
-    expect(secondsToFrames(0.3)).toBe(18);
+describe('weapon conversion (rpm: 21-C3, charge: Stage 23, reload: Stage 24)', () => {
+  it('counts CDN seconds and rpm on the game clock, with 1 shot per frame at most', () => {
+    // チャージは切り上げ（C-0140）、リロードは端数つき（射手が端数を持ち越す。C-0145）
+    expect(chargeSecondsToFrames(1)).toBe(59);
+    expect(chargeSecondsToFrames(0.3)).toBe(18);
+    expect(chargeSecondsToFrames(0.017 * 3)).toBe(3);
+    expect(reloadSecondsToFrames(2)).toBeCloseTo(117.647, 3);
     // 1 フレーム 1 発 = ゲーム内の 1 秒に約 58.82 発（C-0058）
     expect(MAX_RPM).toBeCloseTo(60 / 0.017, 9);
   });
