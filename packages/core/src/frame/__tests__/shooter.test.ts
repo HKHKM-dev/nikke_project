@@ -15,12 +15,16 @@ const fixtures: Record<string, Partial<ShotParams>> = {
   'SG chunked reload': { maxAmmo: 9, reloadTime: 0.6, reloadBullet: 0.34, rateOfFire: 90, endRateOfFire: 90 },
 };
 
-/** cadence.ts から作った期待列: k × cycleFrames + firstShotFrames + shotFrames[i] */
+/**
+ * cadence.ts から作った期待列: round(k × cycleFrames) + firstShotFrames + shotFrames[i]。
+ * Stage 24: リロードのフレーム数は端数つきで、射手は 1 回分ごとに端数（最初は 0.5）を持ち越して切り捨てるので、k 番目のマガジンの
+ * 始まりは k × 周期の四捨五入になる
+ */
 function expectedFrames(shot: ShotParams, magazines: number): number[] {
   const c = computeCadence(shot);
   const frames: number[] = [];
   for (let k = 0; k < magazines; k++)
-    for (const f of c.shotFrames) frames.push(k * c.cycleFrames + c.firstShotFrames + f);
+    for (const f of c.shotFrames) frames.push(Math.floor(k * c.cycleFrames + 0.5 + 1e-9) + c.firstShotFrames + f);
   return frames;
 }
 
@@ -35,22 +39,22 @@ describe('stepShooter', () => {
     });
   });
 
-  // Stage 21-C3: rpm はゲーム内の時計（C-0058）、AR のリロード明けは 22f（C-0059）。SR は変わらない
-  // Stage 22-A: SR の戦闘開始の 1 発目は構え解除 13f の無いぶん 69f（C-0110）。リロードの後は 82f のまま
-  it('matches the absolute frames fixed in the design (AR 12…302 → 384, SR 69…479 → 651, MG 12…400 → 570)', () => {
-    // Stage 22-C: チャージの無い武器は戦闘開始から構え 12f の後に撃つ。リロードの後は AR 22f・MG 20f のまま
+  // Stage 21-C3: rpm はゲーム内の時計（C-0058）。Stage 22-A: SR の戦闘開始の 1 発目は構え解除 13f の無いぶん 69f（C-0110）。
+  // Stage 24: リロードはゲーム内の時計で端数つき（1 回目は四捨五入。AR 59f・SR 88f・MG 147f）、リロード明けは 24f（C-0148）
+  it('matches the absolute frames fixed in the design (AR 12…302 → 385, SR 69…479 → 649, MG 12…400 → 571)', () => {
+    // Stage 22-C: チャージの無い武器は戦闘開始から構え 12f の後に撃つ
     const ar = shotFramesUpTo(makeCharacter(fixtures.AR).shot, 400);
     expect(ar.slice(0, 3)).toEqual([12, 17, 22]);
     expect(ar[59]).toBe(302);
-    expect(ar[60]).toBe(384);
+    expect(ar[60]).toBe(385);
 
     const sr = shotFramesUpTo(makeCharacter(fixtures.SR).shot, 700);
-    expect(sr).toEqual([69, 151, 233, 315, 397, 479, 651]);
+    expect(sr).toEqual([69, 151, 233, 315, 397, 479, 649]);
 
     const mg = shotFramesUpTo(makeCharacter(fixtures.MG).shot, 600);
     expect(mg[0]).toBe(12);
     expect(mg[299]).toBe(400);
-    expect(mg[300]).toBe(570);
+    expect(mg[300]).toBe(571);
   });
 
   it('consumes the initial wait before the first shot (MG: frames 0..11 wait, 12 fires)', () => {

@@ -81,8 +81,9 @@ describe('録画 44 の予測（7.5）', () => {
     // 約 499f で、×1.2 でもモデルが遅かった。V-0035 で S1 の追加ダメージのヒットもゲージを溜めるようにして（C-0105）、
     // 833・3857・6970・10108 から早くなった。Stage 22-A でフラワー・デルタ（チャージ武器）の 1 発目が 13f 早くなって
     // 497・3253・6001・8739 から早くなった。Stage 22-C でモダニア（MG）の戦闘開始の 1 発目が 20f → 12f になり、
-    // 493・3242・5988・8726 から 1 回目が 8f 早くなった（2 回目以降は CT 律速でほぼ動かない）
-    expect(fb.map((w) => w.start)).toEqual([485, 3241, 5988, 8726]);
+    // 493・3242・5988・8726 から 1 回目が 8f 早くなった（2 回目以降は CT 律速でほぼ動かない）。
+    // Stage 24 でリロードをゲーム内の時計で数え、リロード明けを 24f にして、3241・5988・8726 から 4〜21f 早くなった
+    expect(fb.map((w) => w.start)).toEqual([485, 3237, 5974, 8705]);
   });
 
   it('stacks S1 on every 200th shot and keeps 5 stacks (300 → 285 → 270 → 255 → 240 → 224)', () => {
@@ -125,8 +126,9 @@ describe('録画 44 の予測（7.5）', () => {
       expect(inside).toHaveLength(w.end - w.start); // 毎フレーム 1 発（4200 rpm は 1 フレーム 1 発で止まる）
       expect(inside.some((f) => last.has(f))).toBe(false);
       if (w.end >= plan.frames) continue;
-      // 終わったら基礎の MG を最大装弾数（224）まで込め直して戻り、1 発目の遅延 20f の後に撃つ（録画 44: 約 22〜23f 後、4 回とも 224）
-      expect(shots.find((f) => f >= w.end)).toBe(w.end + 20);
+      // 終わったら基礎の MG を最大装弾数（224）まで込め直して戻り、リロード明けと同じ 24f の後に撃つ（録画 44: 約 22〜23f 後、
+      // 4 回とも 224。Stage 24 の前は 20f）
+      expect(shots.find((f) => f >= w.end)).toBe(w.end + 24);
       const nextLast = plan.shots[2]!.lastShotFrames!.find((f) => f >= w.end);
       if (nextLast !== undefined) expect(shots.filter((f) => f >= w.end && f <= nextLast)).toHaveLength(224);
     }
@@ -240,16 +242,16 @@ describe('射手: 装弾数無限と基礎の武器に戻るとき（3.4・7.3�
     for (let f = 0; f < 200; f++) stepShooter(state, mg, DEFAULT_WEAPON_MODEL, params);
     const firing = { ...state };
     resumeShooter(firing, mg, DEFAULT_WEAPON_MODEL, params);
-    // 連射中だった（FB 4: 149 → 224）: 残弾は最大まで、レートの蓄積はそのまま、20f 後から最高レートで撃つ
-    expect(firing).toMatchObject({ phase: 'ready', ammo: 300, shotsInMagazine: state.shotsInMagazine, wait: 20 });
+    // 連射中だった（FB 4: 149 → 224）: 残弾は最大まで、レートの蓄積はそのまま、24f 後から最高レートで撃つ（Stage 24）
+    expect(firing).toMatchObject({ phase: 'ready', ammo: 300, shotsInMagazine: state.shotsInMagazine, wait: 24 });
     const fired: number[] = [];
     for (let f = 0; f < 30; f++) if (stepShooter(firing, mg, DEFAULT_WEAPON_MODEL, params)) fired.push(f);
-    expect(fired[0]).toBe(20);
+    expect(fired[0]).toBe(24);
     expect(fired.slice(1).map((f, k) => f - fired[k]!)).toEqual(fired.slice(1).map(() => 1));
     // リロード中だった（FB 1〜3: 000 → 224）: 込め終えたマガジンの 1 発目から、スピンアップも最初から
     const reloading = { ...state, phase: 'reloading' as const, ammo: 0, wait: 50 };
     resumeShooter(reloading, mg, DEFAULT_WEAPON_MODEL, params);
-    expect(reloading).toMatchObject({ phase: 'ready', ammo: 300, shotsInMagazine: 0, acc: 0, wait: 20 });
+    expect(reloading).toMatchObject({ phase: 'ready', ammo: 300, shotsInMagazine: 0, acc: 0, wait: 24 });
   });
 });
 

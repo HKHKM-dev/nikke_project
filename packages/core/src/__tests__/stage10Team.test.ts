@@ -170,10 +170,10 @@ describe('録画 40（録画 B）: アドミのリロード速度・ユニのチ
     expect([max(0), max(1), max(2), max(3)]).toEqual([7, 7, 7, 10]);
   });
 
-  it('fires every 77f in the full burst (charge 60f × (1 − 0.0897) → 55f + 22f), 82f outside (recording 40)', () => {
+  it('fires every 77f in the full burst (charge 1 s × (1 − 0.0897) → 54f + 23f), 82f outside (recording 40)', () => {
     const plan = planTeamRun(input);
     const frames = plan.shots[2]!.frames;
-    // マガジンの中の間隔だけを見る（最後の弾丸からの間隔はリロード 59f + 1 発目 77f = 136f）。
+    // マガジンの中の間隔だけを見る（最後の弾丸からの間隔はリロード 58f（Stage 24: 2 秒 × 0.4909 ÷ 0.017 = 57.75f）+ 1 発目 77f = 135f）。
     // どのフルバーストでも同じ。リロードが枠に入るかは枠の位置による（V-0028 で 1 回目の枠には入らなくなった）ので、全部の枠で集める
     const last = new Set(plan.shots[2]!.lastShotFrames ?? []);
     const gaps: number[] = [];
@@ -184,7 +184,7 @@ describe('録画 40（録画 B）: アドミのリロード速度・ユニのチ
     }
     expect(gaps.length).toBeGreaterThanOrEqual(2);
     expect(new Set(gaps)).toEqual(new Set([77]));
-    expect(new Set(reloads)).toEqual(new Set([136]));
+    expect(new Set(reloads)).toEqual(new Set([135]));
   });
 });
 

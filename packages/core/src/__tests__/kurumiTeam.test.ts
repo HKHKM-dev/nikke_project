@@ -10,6 +10,7 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
+import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 
@@ -78,10 +79,16 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, kurumi 
     expect(uses.length).toBeGreaterThan(0);
     const fires = [...hits, ...uses].sort((a, b) => a - b);
     expect(ticks.map((h) => h.frame)).toEqual(dotTickFrames(fires, 1, 5, plan.frames, 'afterInterval'));
-    // 付いたフレームには tick が出ない（重ならないので、同じフレームに 2 つの tick も出ない）
+    // 付いたフレームには tick が出ない（重ならないので、同じフレームに 2 つの tick も出ない）。ただし付いている最中に付き直しても
+    // 刻みは変わらない（C-0146）ので、付き直したフレームには刻みの tick が重なることがある。確かめるのは、まとまりの最初に付いたフレーム
     const frames = ticks.map((h) => h.frame);
     expect(new Set(frames).size).toBe(frames.length);
-    for (const f of hits) expect(frames).not.toContain(f);
+    const holdFrames = gameSecondsToFrame(5);
+    let groupEnd = -Infinity;
+    for (const f of fires) {
+      if (f >= groupEnd) expect(frames).not.toContain(f);
+      groupEnd = Math.max(groupEnd, f + holdFrames);
+    }
   });
 
   it('attributes each tick to the effect that applied the hacking last', () => {

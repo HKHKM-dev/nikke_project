@@ -1,11 +1,11 @@
 {
   "id": "C-0002",
   "text": "MG は装填完了から 1 発目まで 20f",
-  "state": "確定",
+  "state": "棄却",
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "反復実測",
-  "basis": "verification.md Stage 2-B、録画 35・41 での MG の再確認",
-  "model": "`weapons.ts` の `spinUpFirstShotFrames` = 20",
+  "basis": "verification.md Stage 2-B、録画 35・41 での MG の再確認 2026-10-01 棄却（V-0061、Stage 24）: リロードをゲーム内の時計で数えると、MG の最終弾 → 次の 1 発目もリロードより 23.7〜24.5f 長く、AR・SMG・SG と同じ値になる。20f はリロードを 1 秒 = 60f で数えたときの差だった。C-0148 に置き換えた",
+  "model": "—（C-0148。`spinUpFirstShotFrames` = 20 は使用武器の変更で持ち替えた MG の 1 発目にだけ残した。そこは較正していない）",
   "replaces": [],
-  "updated": "2026-09-24"
+  "updated": "2026-10-01"
 }
