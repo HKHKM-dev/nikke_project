@@ -283,7 +283,7 @@
 
 - **skill1**: supported
   - effects[0] dot・normalHit: C-0129（確定）、C-0130（確定）、C-0131（確定）、C-0133（確定）、C-0136（確定）
-  - effects[1] dot・burstUse: C-0136（確定）、C-0137（仮説）
+  - effects[1] dot・burstUse: C-0136（確定）、C-0146（確定）、C-0147（仮説）
 - **skill2**: unsupported
   - notes[0] フルバーストタイム中に通常攻撃が 36 回命中した時、対象がハッキング状態なら 86.17% の追加ダメージは未実装（フルバースト中だけの命中の数え方と、対象がハッキング状態かの条件が語彙に無い）: 根拠なし
 - **burst**: unsupported
