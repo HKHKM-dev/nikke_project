@@ -1,0 +1,30 @@
+{
+  "id": "098",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-098_SMG_chime_auto.mp4",
+  "original": "2026-10-01_02-26-06.mp4",
+  "durationSec": 202.1,
+  "frames": 12123,
+  "fps": 60,
+  "sizeMB": 245.2,
+  "sha256": "c45c0afdcde1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 331,
+      "name": "チャイム",
+      "controlled": true,
+      "note": "単騎・AUTO"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（3 分モード・スペック固定（戦闘履歴の Lv.400）。単騎なので操作キャラだが AUTO 射撃 ON・自動バースト OFF）。V-0058 の段 B（リロード 1 秒の SMG。旧の録画 L-AI と同じキャラ）。名前は戦闘履歴で確かめた。的の属性タブは画面では確かめていない（依頼の条件は灼熱タブ）"
+}

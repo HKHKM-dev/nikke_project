@@ -1,0 +1,30 @@
+{
+  "id": "099",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-099_MG_ludmilla-winter-owner_auto.mp4",
+  "original": "2026-10-01_02-33-58.mp4",
+  "durationSec": 201.4,
+  "frames": 12086,
+  "fps": 60,
+  "sizeMB": 244.1,
+  "sha256": "a305c733e24f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 194,
+      "name": "ルドミラ：ウィンターオーナー",
+      "controlled": true,
+      "note": "単騎・AUTO"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（3 分モード・スペック固定（戦闘履歴の Lv.400）。単騎なので操作キャラだが AUTO 射撃 ON・自動バースト OFF）。V-0058 の段 B（リロード 3 秒の MG。設計書 5.2 節の予備の組）。名前は戦闘履歴で確かめた（「ルドミラ：ウィン…」）。的の属性タブは画面では確かめていない（依頼の条件は灼熱タブ）"
+}
