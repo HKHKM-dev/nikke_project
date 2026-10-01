@@ -89,6 +89,15 @@ describe('computeDamage', () => {
     expect(full.notes.map((n) => n.code)).not.toContain('charge-release');
   });
 
+  it('multiplies the damage taken up (an enemy debuff) as its own multiplier on normal attacks (C-0138)', () => {
+    const base = computeDamage(input());
+    const up = computeDamage(input({ buffs: { ...ZERO_BUFFS, attackDamage: 0.3, damageTaken: 0.1806 } }));
+    expect(up.damageTakenMultiplier).toBeCloseTo(1.1806, 12);
+    expect(up.attackDamageMultiplier).toBeCloseTo(1.3, 12);
+    // 攻撃ダメージ▲とも別枠（足さずに掛ける）
+    expect(up.perTrigger).toBeCloseTo(base.perTrigger * 1.3 * 1.1806, 6);
+  });
+
   it('applies buffs: attack before defence, crit in the boost group, attack damage as its own multiplier, charge only when charging', () => {
     const buffs = {
       attackRatio: 0.2,
@@ -99,6 +108,7 @@ describe('computeDamage', () => {
       chargeDamage: 0.4,
       chargeDamageMultiplier: 0,
       distributedDamage: 0,
+      damageTaken: 0,
       burstGaugeSpeed: 0,
       maxAmmoRatio: 0,
       maxAmmoFlat: 0,

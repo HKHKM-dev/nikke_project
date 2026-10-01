@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 862,
-  "checkedAt": "2026-09-30",
+  "checkedAt": "2026-10-01",
   "skills": {
     "skill1": {
       "support": "supported",
@@ -60,14 +60,23 @@
       ]
     },
     "burst": {
-      "support": "unsupported",
-      "effects": [],
-      "notes": [
+      "support": "supported",
+      "effects": [
         {
-          "ja": "敵全体の受けるダメージ 18.06%▲（10 秒間維持）は未実装（敵デバフは語彙に無い）。実測では、クルミの 1 発とハッキングの tick の両方に、別枠の乗数 × 1.1806 で約 10 秒乗る",
-          "en": "Damage Taken +18.06% on all enemies (10 s) is not implemented (no vocabulary for enemy debuffs). Measured: a separate ×1.1806 multiplier on both Kurumi's shots and the hacking ticks for about 10 s",
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "敵 1 体。味方全体の与ダメージ（通常攻撃・射撃ごとの倍率ダメージ・倍率ダメージ・持続ダメージ）に、ほかのどの群とも別の乗数 (1 + 18.06%) で掛かる。ほかの受けるダメージ▲とは足し合わせる",
+            "en": "One enemy. Applies to all allies' damage (normal attacks, per-shot skill damage, skill damage, damage over time) as a multiplier separate from every other group (1 + 18.06%). Adds up with other Damage Taken increases"
+          },
           "claims": [
-            "C-0138"
+            "C-0138",
+            "C-0152",
+            "C-0153"
           ]
         }
       ]

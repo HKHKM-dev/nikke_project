@@ -45,6 +45,8 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * ヘルム編の 2 つ目: chargeDamageMultiplier = 「チャージダメージ X% 倍率▲」（スキル・RL / SR のコレクション）。素のフルチャージ
  * 倍率に (1 + Σ) を掛けて四捨五入する（C-0099・C-0122・C-0126）。「倍率」の無い「チャージダメージ X%▲」（スキル・OL の増加）は
  * chargeDamage で、その後に足す（C-0020・C-0122・C-0134）。
+ * 受けるダメージ編: damageTaken = 敵の受けるダメージ▲（敵へのデバフ）。敵 1 体の前提なので、味方全体（target 'allies' だけ）の
+ * 与ダメージに別枠の乗数 (1 + Σ) で掛ける（通常攻撃・射撃ごとの倍率ダメージ・倍率ダメージ・持続ダメージ。C-0138。plan/design-damage-taken.md）
  */
 export type BuffStat =
   | 'attack'
@@ -63,7 +65,8 @@ export type BuffStat =
   | 'coreDamage'
   | 'normalAttackDamage'
   | 'normalCritRate'
-  | 'chargeDamageMultiplier';
+  | 'chargeDamageMultiplier'
+  | 'damageTaken';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -82,6 +85,7 @@ export const BUFF_STATS = [
   'normalAttackDamage',
   'normalCritRate',
   'chargeDamageMultiplier',
+  'damageTaken',
 ] as const satisfies readonly BuffStat[];
 
 /** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限を足した */
@@ -633,6 +637,18 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   }
 }
 
+/**
+ * 受けるダメージ編: damageTaken（敵の受けるダメージ▲）は敵へのデバフなので、味方全体（target 'allies'）にだけ書ける。
+ * 武器種・属性で絞ることもできない（敵 1 体の前提で、敵が受ける全ダメージに掛かる）
+ */
+function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Record<string, Json>, path: string): void {
+  if (stat !== 'damageTaken') return;
+  if (target !== 'allies')
+    fail(`${path}.target`, `damageTaken must target "allies" (an enemy debuff), got "${target}"`);
+  if (v.targetWeapon !== undefined || v.targetElement !== undefined)
+    fail(path, 'damageTaken cannot narrow its target by weapon or element (an enemy debuff)');
+}
+
 /** Stage 9: targetWeapon は target が self 以外のときだけ（Stage 11 で burstUsers・topAttack にも広げた） */
 function parseTargetWeapon(v: Record<string, Json>, target: BuffTarget, path: string): WeaponType | undefined {
   if (v.targetWeapon === undefined) return undefined;
@@ -689,6 +705,7 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   if (isFlagStat(stat)) fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
+  validateDamageTaken(stat, target, v, path);
   const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
@@ -770,6 +787,7 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   }
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
+  validateDamageTaken(stat, target, v, path);
   const effect: TimedEffect = { kind: 'timed', trigger, target, stat };
   // Stage 11 モダニア: フラグの stat（装弾数無限）は値を持たないので ref も scaling も書かない
   if (isFlagStat(stat)) {

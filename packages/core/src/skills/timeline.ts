@@ -168,6 +168,8 @@ const BUFF_FIELDS = [
   // ヘルム編: チャージダメージ倍率
   'chargeDamageMultiplier',
   'distributedDamage',
+  // 受けるダメージ編: 敵の受けるダメージ▲
+  'damageTaken',
   'burstGaugeSpeed',
   'maxAmmoRatio',
   'maxAmmoFlat',
