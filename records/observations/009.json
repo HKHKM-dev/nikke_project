@@ -28,5 +28,35 @@
     },
     "source": "V-0057",
     "readAt": "2026-09-30"
+  },
+  {
+    "id": "009-03",
+    "recording": "009",
+    "source": "V-0068",
+    "readAt": "2026-10-01",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [90, 90],
+    "description": "プロダクト23（SG・9 発・リロード 0.67 秒・3 発ずつの分割リロード）単騎で、最終弾（総ダメージの増分）から 1 段目の満ち終わり（1 段目の RELOADING のバーが消えたフレーム）まで。取り消し・窓をまたいだ回・最終弾の読み違い（最終弾 → 込め終わりがこの録画の最頻値から 2f 以上ずれた回）を除いた回のうち、段が 3 つに分かれて読めた回（エフェクトの重なりで段が割れた回を除く）",
+    "method": {
+      "tool": "tools/captures/reload.ts --stages --shots（hud.ts --mode jumps の出力）",
+      "note": "込め終わりのフレーム: 929・1427。"
+    }
+  },
+  {
+    "id": "009-04",
+    "recording": "009",
+    "source": "V-0068",
+    "readAt": "2026-10-01",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [40, 40, 40, 41],
+    "description": "プロダクト23（SG・9 発・リロード 0.67 秒・3 発ずつの分割リロード）単騎で、段の満ち終わりの間隔（1 段目 → 2 段目、2 段目 → 3 段目の順に 1 回 2 つずつ）。同じ回",
+    "method": {
+      "tool": "tools/captures/reload.ts --stages --shots（hud.ts --mode jumps の出力）",
+      "note": "段のバーが消えたフレームの差"
+    }
   }
 ]
