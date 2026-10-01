@@ -1,10 +1,11 @@
 // イサベル（231）を含む編成: バーストの段階 1 の受けるダメージ▲（2 回目の発動から 5 秒。V-0075）。
-// sim と calc の整合と、▲の窓・掛かる先（C-0160〜C-0163）。
+// sim と calc の整合と、▲の窓・掛かる先（C-0160〜C-0163）、着弾の遅れ（C-0165。plan/design-burst-landing.md）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { activationFramesOfSlot } from '../burst/schedule.ts';
+import { MEASURED_BURST_DELAYS } from '../burst/landing.ts';
+import { activationFramesOfSlot, effectFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -58,7 +59,8 @@ const TEAMS: Record<string, { input: TeamInput; isabel: number }> = {
 describe('イサベルの定義', () => {
   it('has the burst skill damage, the tier 1 damage taken up from the 2nd use and the tier 2 / 3 damage', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${ISABEL}.json`));
-    expect(def.skills.burst.support).toBe('partial');
+    expect(def.skills.burst.support).toBe('supported');
+    expect(def.skills.burst.sequential).toBe(true);
     expect(def.skills.burst.effects).toMatchObject([
       { kind: 'burstDamage' },
       { kind: 'timed', trigger: { count: 'burstUse', atLeast: 2 }, target: 'allies', stat: 'damageTaken' },
@@ -73,11 +75,27 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, isabel 
   const calc = computeTeamDamage(input);
   const plan = planTeamRun(input);
   const uses = activationFramesOfSlot(plan.schedule!, isabel);
+  const mine = plan.schedule!.activations.filter((a) => a.slotIndex === isabel);
+  const lands = mine.map(effectFrameOf);
   const windows = plan.timeline.windows.filter((w) => w.effect.stat === 'damageTaken');
 
-  it('raises the damage taken by 39.96% for 5 s from the 2nd use of Isabel, for every slot (C-0160, C-0161)', () => {
+  it('lands the burst skill damage and fires the burst effects 134 frames after each use (C-0165)', () => {
+    const delays = MEASURED_BURST_DELAYS.find((row) => row.resourceIds.includes(ISABEL))!.delays;
+    expect(delays).toEqual({ hitFrames: 134, effectFrames: 134 });
+    for (const a of mine) {
+      expect(hitFrameOf(a)).toBe(a.frame + 134);
+      expect(effectFrameOf(a)).toBe(a.frame + 134);
+    }
+    // ほかの枠の発動は遅れない
+    for (const a of plan.schedule!.activations.filter((x) => x.slotIndex !== isabel)) {
+      expect(a.hitFrame).toBeUndefined();
+      expect(a.effectFrame).toBeUndefined();
+    }
+  });
+
+  it('raises the damage taken by 39.96% for 5 s from the 2nd landing of Isabel, for every slot (C-0160〜C-0162)', () => {
     expect(uses.length).toBeGreaterThan(2);
-    expect(new Set(windows.map((w) => w.start))).toEqual(new Set(uses.slice(1)));
+    expect(new Set(windows.map((w) => w.start))).toEqual(new Set(lands.slice(1).filter((f) => f < plan.frames)));
     for (const w of windows) {
       expect(w.effect.value).toBeCloseTo(0.3996, 10);
       expect(w.end - w.start).toBe(gameSecondsToFrame(5));
@@ -88,16 +106,24 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, isabel 
     }
   });
 
-  it('does not put the damage taken up on the same use: burst skill damage (C-0161) and, not yet, tier 2 / 3 damage (C-0163)', () => {
+  it('puts the damage taken up of the same landing on tier 2 / 3 damage but not on the burst skill damage (C-0161, C-0163)', () => {
     const burstHits = sim.slots[isabel]!.burst.hits;
-    expect(burstHits).toHaveLength(uses.length);
+    expect(burstHits).toHaveLength(lands.filter((f) => f < plan.frames).length);
     for (const h of burstHits) expect(h.damageTakenMultiplier).toBe(1);
     const tierHits = plan.skillHits.filter((h) => h.slotIndex === isabel);
     expect(tierHits.length).toBeGreaterThan(0);
     for (const h of tierHits) {
-      expect(uses).toContain(h.frame);
-      expect(h.hit.damageTakenMultiplier).toBe(1);
+      expect(lands).toContain(h.frame);
+      expect(h.hit.damageTakenMultiplier).toBeCloseTo(1.3996, 10);
     }
+  });
+
+  it('keeps the S1 attack of the same landing off the tier 2 damage of the 3rd use (C-0163)', () => {
+    const third = plan.skillHits.find((h) => h.slotIndex === isabel)!;
+    expect(third.frame).toBe(lands[2]);
+    const at = (f: number) => plan.timeline.segments.find((g) => g.start <= f && f < g.end)!.slots[isabel]!.buffs;
+    // S1 の段階 3 の攻撃力は 3 回目の効果の発火から付くが、同じ発動の段階 2 の追加ダメージは発火の直前のバフで計算する
+    expect(at(third.frame).attackRatio - at(third.frame - 1).attackRatio).toBeCloseTo(0.1728, 10);
   });
 
   it('agree exactly on the schedule, the instants and the shot-counted groups', () => {

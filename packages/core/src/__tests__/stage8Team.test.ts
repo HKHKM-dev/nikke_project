@@ -174,11 +174,10 @@ describe('イサベル: 使用回数別の段階とフルバースト 5 秒', ()
 });
 
 describe('録画 38: イサベル（III）+ ラム（I）+ デルタ（II）の実測値', () => {
-  // 灼熱の的・距離ボーナスなしの数値で比べる。受けるダメージ 39.96%▲（段階 1。2 回目の発動から 5 秒）は未対応なので、
-  // その区間の実測値は ×1.3996 して比べる
+  // 灼熱の的・距離ボーナスなしの数値で比べる。段階 2・3 の追加ダメージには、同じ発動の受けるダメージ 39.96%▲（段階 1）が
+  // 乗る（C-0163。plan/design-burst-landing.md 3 節の sequential）
   const input: TeamInput = { slots: [822, 20, 231].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
   const isabel = computeTeamDamage(input).slots[2]!;
-  const DAMAGE_TAKEN = 1.3996;
   /** 非会心の値（倍率グループから会心期待値を外す） */
   const nonCrit = (hit: { perActivation: number; boost: { crit: number; total: number } }) =>
     (hit.perActivation / hit.boost.total) * (hit.boost.total - hit.boost.crit);
@@ -191,13 +190,15 @@ describe('録画 38: イサベル（III）+ ラム（I）+ デルタ（II）の�
 
   it('tier-2 additional damage at the 3rd burst: 758,766 = 299.7% × 1.5 (full burst) × damage taken', () => {
     const add2 = isabel.skillHits.activations.filter((a) => Math.abs(a.hit.multiplier - 2.997) < 1e-9)[0]!;
-    expect(Math.abs(nonCrit(add2.hit) * DAMAGE_TAKEN - 758_766)).toBeLessThan(5);
+    expect(add2.hit.damageTakenMultiplier).toBeCloseTo(1.3996, 10);
+    expect(Math.abs(nonCrit(add2.hit) - 758_766)).toBeLessThan(5);
   });
 
   it('tier-3 additional damage at the 4th burst crits: 1,509,234 = 349.65% × (1 + 0.5 + 0.5 + 18.03%) × damage taken', () => {
     const add3 = isabel.skillHits.activations.filter((a) => Math.abs(a.hit.multiplier - 3.4965) < 1e-9)[0]!;
     const base = add3.hit.perActivation / add3.hit.boost.total; // 倍率グループの前
-    expect(Math.abs(base * (1 + 0.5 + 0.5 + 0.1803) * DAMAGE_TAKEN - 1_509_234)).toBeLessThan(20);
+    expect(add3.hit.damageTakenMultiplier).toBeCloseTo(1.3996, 10);
+    expect(Math.abs(base * (1 + 0.5 + 0.5 + 0.1803) - 1_509_234)).toBeLessThan(20);
   });
 });
 

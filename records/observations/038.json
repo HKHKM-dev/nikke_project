@@ -466,5 +466,125 @@
       "tool": "hud.ts --mode jumps・038-22",
       "note": "5 回目は着弾の f11188 の前の f11175〜11187 が読めていない（038-15）ので、フルバーストの始まり f11020 からは 155〜168f としか言えず、使わない"
     }
+  },
+  {
+    "id": "038-24",
+    "recording": "038",
+    "source": "V-0080",
+    "readAt": "2026-10-02",
+    "kind": "hit",
+    "use": "compare",
+    "value": 758766,
+    "description": "イサベルの段階 2 の追加ダメージ（会心なし）。3 回目の発動。同じ発動の受けるダメージ▲が乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "038-14 の 1 つ目と同じ値（V-0075 で読んだ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "038-25",
+    "recording": "038",
+    "source": "V-0080",
+    "readAt": "2026-10-02",
+    "kind": "hit",
+    "use": "compare",
+    "value": 889989,
+    "description": "イサベルの段階 2 の追加ダメージ（会心なし）。4 回目の発動。同じ発動の受けるダメージ▲が乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "038-14 の 2 つ目と同じ値（V-0075 で読んだ）。モデルの倍率ダメージは発動の順で、4 回目は段階 2 → 段階 3"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "038-26",
+    "recording": "038",
+    "source": "V-0080",
+    "readAt": "2026-10-02",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1509234,
+    "description": "イサベルの段階 3 の追加ダメージ（会心）。4 回目の発動。同じ発動の受けるダメージ▲が乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "038-14 の 3 つ目と同じ値（V-0075 で読んだ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "038-27",
+    "recording": "038",
+    "source": "V-0080",
+    "readAt": "2026-10-02",
+    "kind": "interval",
+    "use": "compare",
+    "value": [156, 156, 156, 156],
+    "unit": "f",
+    "description": "1〜4 回目のフルバーストの始まり（III の発動）から、イサベルのバーストスキルダメージの着弾までの動画のフレーム数",
+    "method": {
+      "tool": "hud.ts --mode jumps・ffmpeg（038-22）",
+      "note": "038-23 と同じ値（V-0078 で読んだ）。モデルは発動からヒットまでを videoFrameOf で動画のフレームに直す"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

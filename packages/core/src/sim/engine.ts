@@ -12,7 +12,7 @@
 // 2 パス目は変えない（射撃の列を読み、区間ごとの 1 トリガー値を足す）。
 // Stage 16-B（plan/design-stage16.md 9 節）: 敵の出来事は 1 パス目で効く。タイムラインの表示用に 1 秒ごとのダメージを足し上げる。
 // Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す（calc と同じ関数）。
-import type { BurstSchedule, BurstStepKey } from '../burst/schedule.ts';
+import { hitFrameOf, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
 import {
   baseAttackOf,
@@ -246,7 +246,11 @@ export function runSimulation(simInput: SimInput): SimResult {
   });
 
   const events: SimEvent[] = [];
-  const activations = schedule?.activations ?? [];
+  // 着弾編: バーストの倍率ダメージはヒットのフレーム（発動 + 遅れ）に出す。遅れの無いキャラは発動のフレーム（時刻表の順のまま）
+  const burstHits = (schedule?.activations ?? [])
+    .map((activation) => ({ activation, frame: hitFrameOf(activation) }))
+    .filter((h) => h.frame < frames)
+    .sort((a, b) => a.frame - b.frame);
   const fullBurstWindows = schedule?.fullBurstWindows ?? [];
   const gaugeFull = new Set(schedule?.gaugeFullFrames ?? []);
   const chainTimeouts = new Set(schedule?.chainTimeouts ?? []);
@@ -272,9 +276,9 @@ export function runSimulation(simInput: SimInput): SimResult {
       }
       if (fb && !inFullBurst) events.push({ frame: f, kind: 'fullBurstStart' });
     }
-    // バースト発動（そのフレームの通常攻撃より先。同じフレームなら時刻表の順 = I → II → III）
-    while (activations[nextActivation]?.frame === f) {
-      const activation = activations[nextActivation]!;
+    // バーストのヒット（そのフレームの通常攻撃より先。同じフレームなら時刻表の順 = I → II → III）
+    while (burstHits[nextActivation]?.frame === f) {
+      const { activation } = burstHits[nextActivation]!;
       nextActivation += 1;
       const { slotIndex: index, step } = activation;
       const runner = runners[index];

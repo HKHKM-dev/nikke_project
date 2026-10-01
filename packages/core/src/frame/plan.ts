@@ -4,6 +4,7 @@
 // Stage 10: 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、1 パス目の射撃の列と時刻表は frame/firstPass.ts の
 // フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
 // Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
+import { burstDelaysFieldOf, burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
@@ -30,6 +31,7 @@ import {
   type BuffTimeline,
   type SlotBuffState,
 } from '../skills/timeline.ts';
+import { applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import {
   toTimelineSlots,
@@ -67,7 +69,9 @@ export function planTeamSchedule(
   if (!burst) return null;
   if (burstModel === 'fixed') {
     return planFixedCycle(
-      slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep })),
+      slots.map((s) =>
+        s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character.resourceId) },
+      ),
       frames,
     );
   }
@@ -153,19 +157,29 @@ export function planSkillHits(
     const definition = slot?.skills?.definition;
     if (!slot || !definition) return;
     const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
+    const sequential = definition.skills.burst.sequential === true;
+    // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
+    const delays = burstDelaysOf(slot.character.resourceId);
+    if (sequential && delays.hitFrames !== delays.effectFrames) {
+      throw new RangeError('a sequential burst needs the same hit and effect delays');
+    }
     const push = (frame: number, effect: ResolvedDamageEffect, pre: boolean): void => {
       const state = burstSnapshotState(timeline, frame, slotIndex, pre);
+      const buffs =
+        pre && sequential && effect.source.skill === 'burst'
+          ? withEarlierSequentialEffects(timeline, state.buffs, frame, slotIndex, effect.effectIndex)
+          : state.buffs;
       const trigger = computeTriggerDamage({
         character: slot.character,
         growth: slot.growth,
         enemy,
         attackOverride: slot.attackOverride,
-        buffs: state.buffs,
+        buffs,
         condition: { ...slot.condition, fullBurst: false },
       });
       // フルバースト補正はフルバースト中に出た倍率ダメージにだけ乗る（2026-09-23 実測）
       const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, frame);
-      const hit = computeSkillHit([effect], slot.character, enemy, trigger, state.buffs, fullBurst);
+      const hit = computeSkillHit([effect], slot.character, enemy, trigger, buffs, fullBurst);
       hits.push({ frame, slotIndex, effect, hit });
     };
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
@@ -293,6 +307,31 @@ export function dotTickFrames(
     }
   }
   return ticks;
+}
+
+/**
+ * 着弾編（plan/design-burst-landing.md 3.2 節）: 「下位効果のスタック適用」（burst スロットの sequential）の damage が見るバフ。
+ * 発動の直前のバフに、同じ枠の burst スロットで前に書いた timed のうち、このフレーム（同じ発動の効果の発火）に始まって
+ * この枠に掛かる窓の値を足す（イサベルの段階 2・3 の追加ダメージに、同じ発動の段階 1 の受けるダメージ▲が乗る。C-0163）。
+ * 前の発動の窓が続いていれば、直前のバフにもう入っている（窓が和集合で、このフレームに始まらない）
+ */
+function withEarlierSequentialEffects(
+  timeline: BuffTimeline,
+  buffs: BuffTotals,
+  frame: number,
+  slotIndex: number,
+  effectIndex: number,
+): BuffTotals {
+  let out = buffs;
+  for (const w of timeline.windows) {
+    if (w.start !== frame || w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex) continue;
+    if (w.effect.source.skill !== 'burst' || w.effect.effectIndex >= effectIndex) continue;
+    if (w.stack !== undefined || w.effect.scaling === 'casterAttack' || w.effect.stat === 'weapon') {
+      throw new RangeError('a sequential burst supports only plain timed effects (no stacks, casterAttack or weapon)');
+    }
+    out = applyResolvedEffect(out, w.effect, 0).totals;
+  }
+  return out;
 }
 
 /**

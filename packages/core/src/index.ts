@@ -29,6 +29,7 @@ export * from './burst/schedule.ts';
 export * from './burst/fixedCycle.ts';
 export * from './burst/controller.ts';
 export * from './burst/dynamic.ts';
+export * from './burst/landing.ts';
 export * from './frame/events.ts';
 export * from './frame/firing.ts';
 export * from './frame/firstPass.ts';
