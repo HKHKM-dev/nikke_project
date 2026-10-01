@@ -94,5 +94,36 @@
     "method": {
       "note": "265 トリガー・2518 / 2650 ペレット。区間は L-SB の近 1 回目・L-SB の近 2 回目・L-SC の近 1 回目・L-SC の近 2 回目・L-SD の近 2 回目・L-SE の近 2 回目。着地点と当たった数は、各録画の観測値（照準の高さでの的の幅・トリガーごとの当たった数）"
     }
+  },
+  {
+    "id": "L-SB-06",
+    "recording": "L-SB",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0071",
+    "readAt": "2026-10-01",
+    "value": 234,
+    "unit": "回",
+    "description": "ノワール（SG）単騎・AUTO の 180 秒のトリガーの数（総ダメージの増分の数）。結論には結び付けない（的のジャンプの時刻で動く）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分は 241 個。前の増分から 20f 未満の増分（7 個）は、1 トリガーの読みが 2 つに割れたものとして 1 回と数えた（マガジンの中の発の間は 39〜40f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
   }
 ]

@@ -327,5 +327,36 @@
     "method": {
       "note": "近の 12 区間の合計で、会心 + 2 × コア 1148 ÷ 当たったペレット 4827。着地点 A は 0.2300、B は 0.2450。会心とコアは、1 発の値（コア 1 + 胴体 1 = 会心 2）でも分けられない"
     }
+  },
+  {
+    "id": "074-21",
+    "recording": "074",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0071",
+    "readAt": "2026-10-01",
+    "value": 234,
+    "unit": "回",
+    "description": "ノワール（SG）単騎・AUTO の 180 秒のトリガーの数（総ダメージの増分の数）。結論には結び付けない（的のジャンプの時刻で動く）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分は 235 個。前の増分から 20f 未満の増分（1 個）は、1 トリガーの読みが 2 つに割れたものとして 1 回と数えた（マガジンの中の発の間は 39〜40f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
   }
 ]
