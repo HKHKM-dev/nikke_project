@@ -4,7 +4,7 @@
 - キャラ × スロットごとに、対応状況（`supported`・`partial`・`unsupported`）と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 23・効果 99（根拠あり 26）・notes 54（根拠あり 14）
+件数: キャラ 23・効果 100（根拠あり 33）・notes 55（根拠あり 16）
 
 ## 10 ラピ
 
@@ -134,16 +134,18 @@
 ## 231 イサベル
 
 - **skill1**: supported
-  - effects[0] timed・burstUse・critRate: 根拠なし
-  - effects[1] timed・burstUse・critDamage: 根拠なし
-  - effects[2] timed・burstUse・attack: 根拠なし
+  - effects[0] timed・burstUse・critRate: C-0160（確定）
+  - effects[1] timed・burstUse・critDamage: C-0160（確定）
+  - effects[2] timed・burstUse・attack: C-0160（確定）
 - **skill2**: unsupported
   - notes[0] 最終防御力が最も高い敵への 170.58% のダメージは、説明文にきっかけ（いつ出るか）が書かれていないので未対応: 根拠なし
 - **burst**: partial
-  - effects[0] burstDamage・skill: 根拠なし
-  - effects[1] damage・burstUse・additional: 根拠なし
-  - effects[2] damage・burstUse・additional: 根拠なし
-  - notes[0] 段階 1 の敵の受けるダメージ 39.96%▲（5 秒間維持。2 回目の発動から）は未対応（敵デバフは語彙にない。録画 38 で別枠の乗数 ×1.3996 と確認）。フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る: 根拠なし
+  - effects[0] burstDamage・skill: C-0160（確定）
+  - effects[1] timed・burstUse・damageTaken: C-0160（確定）、C-0161（確定）、C-0162（確定）、C-0153（仮説）
+  - effects[2] damage・burstUse・additional: C-0160（確定）、C-0163（確定）
+  - effects[3] damage・burstUse・additional: C-0160（確定）、C-0163（確定）
+  - notes[0] 未実装: 段階 1 の受けるダメージ▲の窓は、実機ではバーストスキルダメージの着弾（III の発動から約 2.6 秒後）から 5 秒だが、モデルは発動フレームから 5 秒（フルバーストと同じ窓）。同じ発動の段階 2・3 の追加ダメージに▲が乗ることも未実装（どちらも語彙に無い）: C-0162（確定）、C-0163（確定）
+  - notes[1] フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る: C-0011（確定）
 
 ## 260 モダニア
 
