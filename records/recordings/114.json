@@ -1,0 +1,51 @@
+{
+  "id": "114",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-114_SMG+SR+MG_liter+delta+modernia_liter-ai.mp4",
+  "original": "2026-10-01_23-10-34.mp4",
+  "durationSec": 203.5,
+  "frames": 12208,
+  "fps": 60,
+  "sizeMB": 246.5,
+  "sha256": "79e4f22b0f9b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": false,
+      "note": "AI。S2 の命中率▲の出どころ"
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true,
+      "note": "操作・撃たない（計画の I-DOLL・オーシャンの代わり。与ダメージ 0）"
+    },
+    {
+      "slot": 3,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false,
+      "note": "AI"
+    },
+    {
+      "slot": 4,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false,
+      "note": "AI。受け手（コア命中率を読む枠）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0074 の 1 本目（2 本の予定のうち撮れたのは 1 本）。枠順と操作枠は戦闘履歴のパネル（f12100）で確かめた（モダニア・I-DOLL・サン・デルタ・リター。Lv.400。交戦時間 03:00）。操作枠の I-DOLL・サンは撃たない。自動バースト ON。HUD の最後の値 303,193,838 はパネルの 4 人の与ダメージの和と一致。戦闘開始は f819（timer.ts --mode changes の +90f の変わり目）、的のジャンプの窓は HUD の増分の 120f 前後の空き 5 回（f2537・4703・7056・9220・11196 から）。読み取りの注記は V-0074"
+}
