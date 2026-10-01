@@ -1,0 +1,30 @@
+{
+  "id": "106",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-106_SR_delta_container.mp4",
+  "original": "2026-10-01_19-34-41.mp4",
+  "durationSec": 61.4,
+  "frames": 3683,
+  "fps": 60,
+  "sizeMB": 74.3,
+  "sha256": "32a5d08fb8d0",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true,
+      "note": "単騎・操作。スコープでフルチャージして、毎回別のコンテナを撃った（的には当てていない）。満タンの後に 1 発コンテナを撃った"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。f60 の射撃場の画面で確かめた）。デルタ単騎・操作（一時停止の画面は無く、スコープの CHARGE 250% と出撃画面のカードで同定。107 と同じ撮り方）。戦闘開始は f818（timer.ts --mode changes の +319f の次の +89f の変わり目）。HUD の総ダメージは最後まで 0。コンテナへの着弾は 16 発（バーの跳びと爆発。f1600〜2060 はスコープがバーに重なって読めない）で、16 発目の f2967 でバーが消えた。V-0066"
+}
