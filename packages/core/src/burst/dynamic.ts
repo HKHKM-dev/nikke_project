@@ -20,9 +20,10 @@ import { gameSecondsToFrames } from '../time.ts';
 import type { BurstSchedule } from './schedule.ts';
 
 /**
- * ペレット武器（SG）のペレットのうち、ゲージになる割合。単騎のノワール（9,000 × 10）の 1 トリガーの増分が、
- * 全ペレット命中の 0.75〜0.78 倍だった（射撃場の距離。C-0006）。BURST バーの表示の縮尺（C-0084）によらない比。
- * ダメージ側は全ペレット命中のまま（Stage 2 以来の仮定）。
+ * ペレット武器（SG）のペレットのうち、ゲージになる割合の置き値。SG の 1 トリガーのゲージは、的に当たったペレットの数 ×
+ * targetBurstEnergyPerShot（C-0150）。当たる割合は射撃場で区間ごとに 0.68〜0.84・平均約 0.78（`074-12`）。
+ * 弾丸命中率を的の表から取る枠（条件が自動）では、表の値が当たったペレットの割合なので掛けない（1）。
+ * 手入力の枠（弾丸命中率の既定 1 = 射撃場の相対値）だけ、射撃場の平均に近いこの値を掛ける（plan/design-sg-hit-rate.md 7 節の 3）。
  */
 export const SG_PELLET_GAUGE_HIT_RATE = 0.75;
 
@@ -31,10 +32,16 @@ export const SG_PELLET_GAUGE_HIT_RATE = 0.75;
  * BURST バーの表示の縮尺を読んだものだった。V-0028）。targetBurstEnergyPerShot は 1 ペレットあたりなので
  * shotCount（SG のペレット数）を掛ける。フルチャージ倍率（fullChargeBurstEnergy）は**操作キャラのチャージ武器にだけ**乗る
  * （C-0007）。muzzleCount = 2 は未対応で銃口 1 つとして数える。Stage 15: hitRate（省略 1）を掛ける。
+ * pelletGaugeRate は SG のペレットのうちゲージになる割合（省略は手入力の置き値 SG_PELLET_GAUGE_HIT_RATE。表の弾丸命中率を使う枠は 1）
  */
-export function energyPerTrigger(shot: ShotParams, controlled: boolean, hitRate = 1): number {
+export function energyPerTrigger(
+  shot: ShotParams,
+  controlled: boolean,
+  hitRate = 1,
+  pelletGaugeRate = SG_PELLET_GAUGE_HIT_RATE,
+): number {
   const charge = controlled && shot.chargeTime > 0 ? shot.fullChargeBurstEnergy : 1;
-  const pellets = shot.shotCount > 1 ? shot.shotCount * SG_PELLET_GAUGE_HIT_RATE : shot.shotCount;
+  const pellets = shot.shotCount > 1 ? shot.shotCount * pelletGaugeRate : shot.shotCount;
   // Stage 15: 命中率（射撃場 = 1 の相対値）。外れた弾はゲージにならない
   return shot.targetBurstEnergyPerShot * pellets * charge * hitRate;
 }

@@ -40,8 +40,16 @@ export function landingBandOf(
   return bands.size === 1 ? ([...bands][0] ?? null) : null;
 }
 
-/** 着地点 1 か所ぶんの条件と重み。手入力の枠・未測定の区間は landing が null で重み 1 */
-export type LandingPart = { landing: LandingPoint | null; weight: number; condition: SlotCondition };
+/**
+ * 着地点 1 か所ぶんの条件と重み。手入力の枠・未測定の区間は landing が null で重み 1。
+ * measuredHitRate は弾丸命中率を的の表から取ったか（省略 false。SG のゲージの割合を決める。plan/design-sg-hit-rate.md 3 節）
+ */
+export type LandingPart = {
+  landing: LandingPoint | null;
+  weight: number;
+  condition: SlotCondition;
+  measuredHitRate?: boolean;
+};
 
 /** 着地点の計画（自動の枠が 1 つも無い、または的の表の無い敵では作らない） */
 export type LandingPlan = {
@@ -188,6 +196,7 @@ export function planLandings(
               landing,
               weight,
               condition: autoConditionAt(profile, landing, slot.character, hitRateUp[i]!, slot.condition),
+              measuredHitRate: targetRateOf(profile.bulletHitRate, slot.character, landing) !== null,
             })),
       );
     }
@@ -228,11 +237,20 @@ export function hitRateSpansOf(plan: LandingPlan | null, slotCount: number): (La
   return Array.from({ length: slotCount }, (_, i) => {
     const parts = plan?.parts[i];
     if (plan === null || parts === null || parts === undefined) return null;
-    return plan.spans.map((s) => ({ start: s.start, end: s.end, hitRate: mixedHitRate(parts.get(s.landing)!) }));
+    return plan.spans.map((s) => {
+      const landingParts = parts.get(s.landing)!;
+      return {
+        start: s.start,
+        end: s.end,
+        hitRate: mixedHitRate(landingParts),
+        measured: landingParts.every((p) => p.measuredHitRate === true),
+      };
+    });
   });
 }
 
-export type LandingHitRateSpan = { start: number; end: number; hitRate: number };
+/** measured: 区間の弾丸命中率を的の表から取ったか（配分は全部の着地点で）。SG のゲージの割合を決める */
+export type LandingHitRateSpan = { start: number; end: number; hitRate: number; measured: boolean };
 
 /**
  * 条件の配分で 1 トリガーの値を出す。配分が 1 つならそのまま computeTriggerDamage（手入力と 1 の位まで同じ）、
