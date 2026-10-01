@@ -29,7 +29,7 @@ export function formatPlace(p: SkillPlace): string {
   return `\`data/skills/${p.resourceId}.json\` の ${slot} の ${part}`;
 }
 
-function entriesOf(def: SkillDefinition): { root: SkillRoot; slot: SkillSlot; entry: SkillEntry }[] {
+export function entriesOf(def: SkillDefinition): { root: SkillRoot; slot: SkillSlot; entry: SkillEntry }[] {
   return SKILL_ROOTS.flatMap((root) =>
     SKILL_SLOTS.flatMap((slot) => {
       const entry = root === 'skills' ? def.skills[slot] : def.treasureSkills?.[slot];

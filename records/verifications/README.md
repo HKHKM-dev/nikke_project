@@ -1,7 +1,7 @@
 # 検証記録
 
 - 1 回の検証（1 つの問いについて、撮って・読んで・比べて・結論を出すまで）を 1 ファイルにする。設計は [design-stage20.md](../../plan/design-stage20.md) 3.2・3.2.1 節。
-- ファイル名は `V-NNNN-<短い名前>.md`（短い名前は英小文字・数字・`-`）。番号は通し番号で、抜けは許す。並行したブランチで同じ番号を使ったときの手順は、設計書 3.6 節。
+- ファイル名は `V-NNNN-<短い名前>.md`（短い名前は英小文字・数字・`-`）。番号は通し番号で、抜けは許す。`npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題>` が次の空き番号でひな形を作る（[design-records-automation.md](../../plan/design-records-automation.md) 3.1 節）。並行したブランチで同じ番号を使ったときの手順は、設計書 3.6 節。
 - 冒頭の箇条書きと本文の見出しは、下のひな形のとおりに書く。合わない行は `npm test` で落ちる。一覧は `npm run records:check` で [plan/verifications.md](../../plan/verifications.md) に生成する。
 - 大きさは 30KB を目安にする。超えそうなら問いを分ける。
 - 観測値にできる数値は観測値（`records/observations/`）に置き、観測値の `source` にこの記録の ID を書く。本文では ID で指し、同じ数値をほかの文書に書き写さない。
@@ -36,12 +36,18 @@
 
 ## 結果
 
+<!-- records:predictions:start -->
+
+（予測との比べの表は npm run records:check が書き込む）
+
+<!-- records:predictions:end -->
+
 ## 分かったこと・分からないこと
 
 ## 次に撮るもの
 ```
 
-使わない項目の行は消す（空のまま残さない）。
+使わない項目の行は消す（空のまま残さない）。「結果」の印（`<!-- records:predictions:start -->`〜`end`）は、予測ファイルがあるときに `npm run records:check` が予測との比べの表を書き込む所（表の下に散文を書く）。予測ファイルを使わない記録では消してよい。閉じた記録には足さない。
 
 ## 状態
 

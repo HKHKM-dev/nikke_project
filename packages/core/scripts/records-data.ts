@@ -29,6 +29,11 @@ export const VERIFICATIONS_PATH = `${ROOT}plan/verifications.md`;
 /** スキル定義の対応状況の一覧（生成物。plan/skills-guide.md 3 節） */
 export const SKILLS_DOC_PATH = `${ROOT}plan/skills.md`;
 
+/** 検証記録のファイルの絶対パス */
+export function verificationPath(v: Pick<Verification, 'file'>): string {
+  return `${VERIFICATIONS_DIR}${v.file}`;
+}
+
 /** records/verifications/ の V- で始まる .md（ファイル名の形が違っても読み、問題として返す）。Stage 20-D */
 export function loadVerifications(): Verification[] {
   return sortVerifications(

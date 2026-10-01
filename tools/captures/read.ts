@@ -146,7 +146,7 @@ if (values.against) {
 if (values.write && finished.length > 0) {
   const path = `${OBSERVATIONS_DIR}${id}.json`;
   writeFileSync(path, `${JSON.stringify([...existing, ...finished], null, 2)}\n`);
-  spawnSync('npx', ['prettier', '--write', path], { stdio: 'inherit', shell: true });
+  spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['prettier', '--write', path], { stdio: 'inherit' });
   console.error(`${path} に ${finished.length} 件を足した（${finished.map((o) => o.id).join('・')}）`);
 }
 

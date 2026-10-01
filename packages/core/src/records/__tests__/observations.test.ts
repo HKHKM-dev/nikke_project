@@ -179,8 +179,8 @@ describe('records/claims・plan/claims.md', () => {
     });
     const errors = validateClaims(
       [
-        claim({ id: 'C-0001', state: '確定', observations: ['999-01'], replaces: ['C-0002'] }),
-        claim({ id: 'C-0002', state: '確定' }),
+        claim({ id: 'C-0001', state: '確定', grade: '反復実測', observations: ['999-01'], replaces: ['C-0002'] }),
+        claim({ id: 'C-0002', state: '確定', grade: '反復実測' }),
         claim({ id: 'C-0003', text: '', state: '未定' as never, replaces: ['C-0009'] }),
         claim({ id: 'C-0003' }),
         claim({ id: 'C-12' }),

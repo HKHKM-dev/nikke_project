@@ -10,10 +10,13 @@ import {
   loadObservations,
   loadPredictions,
   loadRecordingsFile,
+  loadRecordsData,
   loadVerifications,
+  recordingMap,
 } from '../../../scripts/records-data.ts';
 import type { Observation } from '../observations.ts';
-import { comparePredictions, renderPredictionLines } from '../predictions.ts';
+import { verificationExtraLines } from '../extras.ts';
+import { minimalWarnings } from '../minimal.ts';
 import { idReferencesIn } from '../references.ts';
 import {
   VERIFICATION_SECTIONS,
@@ -53,13 +56,18 @@ const check = (list: Verification[], obs: readonly Observation[] = []) =>
 describe('records/verifications・plan/verifications.md', () => {
   it('passes validation and matches plan/verifications.md (npm run records:check)', () => {
     expect(validateVerifications(verifications, { claims, recordingIds, observations })).toEqual([]);
-    // 予測との比べ（plan/design-records-automation.md 3.5 節）も載る
-    const predictionLines = new Map(
-      loadPredictions().map((p) => [p.verification, renderPredictionLines(comparePredictions(p, observations))]),
-    );
-    expect(readFileSync(VERIFICATIONS_PATH, 'utf8')).toBe(
-      renderVerifications(verifications, observations, predictionLines),
-    );
+    // 予測との比べと最小構成の警告（plan/design-records-automation.md 3.5 節）も載る
+    const file = loadRecordingsFile();
+    const data = loadRecordsData(file);
+    const warnings = minimalWarnings(verifications, {
+      recordings: recordingMap(file),
+      characters: data.characters,
+      skills: data.skills,
+      enemies: data.enemies,
+      claims,
+    });
+    const extra = verificationExtraLines(observations, loadPredictions(), warnings);
+    expect(readFileSync(VERIFICATIONS_PATH, 'utf8')).toBe(renderVerifications(verifications, observations, extra));
   });
 
   it('reads the header items, id lists and sections', () => {
