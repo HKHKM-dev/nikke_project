@@ -4,7 +4,16 @@
 // スキル定義の根拠（plan/skills-guide.md 3 節）: 定義の claims を結論と突き合わせ、対応状況の一覧（plan/skills.md）も作り直す。
 // 使い方: npm run records:check（ルート。整形まで行う）
 import { readFileSync, writeFileSync } from 'node:fs';
-import { claimsByObservation, gatedObservations, renderClaims, validateClaims } from '../src/records/claims.ts';
+import {
+  claimsByObservation,
+  gatedObservations,
+  gradeAboveCandidate,
+  gradeCandidate,
+  renderClaims,
+  validateClaims,
+  type ClaimGrade,
+} from '../src/records/claims.ts';
+import { comparePredictions, renderPredictionLines, validatePredictions } from '../src/records/predictions.ts';
 import {
   invalidReasonsOf,
   renderResiduals,
@@ -20,19 +29,26 @@ import {
   SKILLS_DOC_PATH,
   VERIFICATIONS_PATH,
   loadClaims,
+  knownRids,
   loadObservations,
+  loadPredictions,
   loadRecordingsFile,
   loadRecordsData,
   loadSkillDefinitions,
   loadVerifications,
   misplacedClaims,
   misplacedObservations,
+  misplacedPredictions,
   recordingMap,
 } from './records-data.ts';
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
-const data = loadRecordsData(file);
+const predictions = loadPredictions();
+const data = loadRecordsData(
+  file,
+  predictions.flatMap((p) => p.team.map((m) => m.rid)),
+);
 const observations = loadObservations();
 const claims = loadClaims();
 const verifications = loadVerifications();
@@ -46,6 +62,12 @@ const errors = [
   ...validateClaims(claims, new Set(observations.map((o) => o.id)), new Set(invalidReasons.keys())),
   ...validateVerifications(verifications, { claims, recordingIds: new Set(recordings.keys()), observations }),
   ...validateSkillClaims(skills, claims),
+  ...misplacedPredictions(),
+  ...validatePredictions(predictions, {
+    verificationIds: new Set(verifications.map((v) => v.id)),
+    knownRids: knownRids(),
+    observations,
+  }),
 ];
 if (errors.length > 0) {
   console.error(errors.join('\n'));
@@ -57,11 +79,30 @@ writeFileSync(
   RESIDUALS_PATH,
   replaceGeneratedSection(doc, 'residuals', renderResiduals(residuals, observations, claimsByObservation(claims))),
 );
+// 等級の候補（plan/design-records-automation.md 3.5 節）。書いた等級と違えば claims.md に出す。落とさない
+const residualOf = new Map(
+  residuals.map((r) => [r.observation.id, { status: r.status, diff: r.diff, value: r.observation.value }]),
+);
+const gradeCandidates = new Map<string, ClaimGrade>();
+for (const c of claims) {
+  const g = gradeCandidate(c, residualOf, new Set(invalidReasons.keys()));
+  if (g !== undefined) gradeCandidates.set(c.id, g);
+}
 writeFileSync(
   CLAIMS_PATH,
-  renderClaims(claims, verificationsByClaim(verifications), invalidReasons, definitionPlacesByClaim(skills)),
+  renderClaims(
+    claims,
+    verificationsByClaim(verifications),
+    invalidReasons,
+    definitionPlacesByClaim(skills),
+    gradeCandidates,
+  ),
 );
-writeFileSync(VERIFICATIONS_PATH, renderVerifications(verifications, observations));
+// 予測との突き合わせ（3.5 節）
+const predictionLines = new Map(
+  predictions.map((p) => [p.verification, renderPredictionLines(comparePredictions(p, observations))]),
+);
+writeFileSync(VERIFICATIONS_PATH, renderVerifications(verifications, observations, predictionLines));
 writeFileSync(SKILLS_DOC_PATH, renderSkills(skills, claims));
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
 for (const r of residuals.filter((x) => x.status !== 'ok' && x.status !== 'invalid')) {
@@ -69,3 +110,15 @@ for (const r of residuals.filter((x) => x.status !== 'ok' && x.status !== 'inval
   console.log(`${r.observation.id}: ${r.status}${r.message ? ` (${r.message})` : ''}${mark}`);
 }
 console.log(`${residuals.length} 件を比べた（許容内 ${residuals.filter((r) => r.status === 'ok').length}）`);
+const above = claims.filter((c) => {
+  const g = gradeCandidates.get(c.id);
+  return c.grade !== undefined && c.state !== '棄却' && g !== undefined && gradeAboveCandidate(c.grade, g);
+});
+console.log(
+  `等級の候補（機械）を出せた結論 ${gradeCandidates.size} 件のうち、書いた等級のほうが上のもの: ${above.length} 件（claims.md に出す。plan/design-records-automation.md 3.5 節）`,
+);
+for (const p of predictions) {
+  const cmp = comparePredictions(p, observations);
+  const fits = [...cmp.score.entries()].filter(([, s]) => s.total > 0).map(([h, s]) => `${h} ${s.ok}/${s.total}`);
+  console.log(`予測 ${p.verification}: ${p.predicted === null ? 'まだ出していない' : fits.join('・') || '観測値なし'}`);
+}

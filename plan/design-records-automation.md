@@ -1,7 +1,7 @@
 # 検証の自動化 設計書: 検証記録の起案から結論の下書きまで
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: 実施中（2026-10-02）。7 節の 7 点を、4 の修正（機械が確定を出せる）のほかは推奨案で承認。PR A を実施した（8.1 節）。次は PR B
+- 状態: 実施中（2026-10-02）。7 節の 7 点を、4 の修正（機械が確定を出せる）のほかは推奨案で承認。PR A・B を実施した（8.1・8.2 節）。次は PR C
 - 関連: [design-stage20.md](design-stage20.md)（記録の構造）、[skills-guide.md](skills-guide.md) 1 節（いまの手順）、[captures/index.md](captures/index.md)「解析ツール」、[records/verifications/README.md](../records/verifications/README.md)、[claims.md](claims.md) 冒頭（等級の決め方）
 - 作成日: 2026-10-01
 
@@ -215,8 +215,17 @@
   5. 102 の近 2 回目: レシピは分けられなかった 1 組をトリガー数に含めて 36（分けられたのは 35）、旧は 35。数え方の表記の違い。
 - 残り（PR D 以降）: 近の着地点（`aim.ts` の的の幅）のレシピ化、`reload-segments`、2 発にまとめた組の分布への入れ方。
 
+### 8.2 PR B: 予測の固定と判定の下書き（2026-10-02）
+
+- `records/predictions/V-NNNN.json`（書式は [records/predictions/README.md](../records/predictions/README.md)）と `npm run records:predict -- V-NNNN`（`packages/core/scripts/records-predict.ts`）。手書きの部分（`team`・`fixedSpec`・`hypotheses`・`targets`）から、照合ランナーと同じ組み方（`buildTeamInput`・`METRICS`）で sim（calc）を回し、`predicted`（仮説 × 指標の値・日付・commit）を書き込む。仮説の `override` は `setup` の項目の上書き（3.2 節のとおり。モデルのコードや定義を切り替える仮説は範囲外）。
+- `records:check`: 予測ファイルの検証（検証記録の実在・指標の語彙と引数・仮説と指標の ID・`predicted` の整合）と、観測値との突き合わせ。指標に結び付く観測値は、`observations` で明示したものか、同じ検証記録を `source` にする観測値のうち `metric`・`args`・`setup` が同じもの。許容は観測値の `compare.tolerance`（無ければ `spread`）。結果は [verifications.md](verifications.md) の検証記録の項に「予測（日付、commit）との比べ」として出し、仮説ごとに許容内の指標の数と「合う仮説」を添える。
+- 等級の候補（3.5 節）: 結論の根拠の観測値のうちモデルと比べたもの（残差）から出す。整数の観測値で差 0 なら厳密一致、許容内が 2 本以上の録画にあれば反復実測、それ以外は単独実測。比べた観測値が無い結論（記録だけの観測値や、`verification.md` を指す旧の根拠）は機械では決められないので出さない。[claims.md](claims.md) には、書いた等級と違うときだけ「等級の候補（機械）」を出す。**落とさない**（3.5 節の「機械の候補より上の等級を書いたら落とす」は、旧の結論に当てると大半が引っかかるので、新しい結論に限る形で PR C の `records:new -- claim` と合わせて決める）。2026-10-02 の時点で候補を出せたのは 37 件、うち書いた等級のほうが上が 24 件（根拠が 1 本の録画だけの確定の結論が多い）。
+- 形の確かめ: V-0063 の予測ファイルを後から書いた（`note` にそう書いた。設計書 5 節の表では V-0073 だったが、V-0073 の観測値は会心率・コア命中率で `METRICS` に無いので、与ダメージとトリガー数で比べられる V-0063 にした）。`101-01` と結び付き、許容内と出る。`shotCount` の観測値（`101-09`）は `source` が V-0071 なので自動では結び付かない（`observations` で明示すれば結び付く）。
+- 残り（PR C・D）: 撮る前の commit の日付と観測値の `readAt` の前後の検査、`records:new -- claim` の等級の候補の取り込み、仮説が 1 つに決まるかの印。
+
 ## 経過
 
 - 2026-10-01: 起案。V-0062〜V-0073 の SG の一連で、読み取りと判定の手作業が繰り返されたことから。
 - 2026-10-01: 承認。7 節の 4 だけ、機械が `確定` を出せる形（等級 1〜3 で疑問が無いとき）に変え、疑問の印の条件を 3.6 節に書いた。ほかの 6 点は推奨案のとおり。
 - 2026-10-02: PR A を実施（8.1 節）。旧の観測値との差は V-0079 に切り出した。
+- 2026-10-02: PR B を実施（8.2 節）。

@@ -20,6 +20,7 @@ import {
   CLAIM_TOPICS,
   claimsByObservation,
   gatedObservations,
+  gradeCandidate,
   observationIdsIn,
   renderClaims,
   supportedObservations,
@@ -27,6 +28,7 @@ import {
   validateClaims,
   type Claim,
   type ClaimFile,
+  type ClaimGrade,
 } from '../claims.ts';
 import { computeBurstHit } from '../../skills/burstDamage.ts';
 import type { SimResult } from '../../sim/engine.ts';
@@ -87,13 +89,23 @@ describe('records/claims・plan/claims.md', () => {
   });
 
   it('matches plan/claims.md (npm run records:check)', () => {
-    // Stage 20-D: 検証記録の「結論」から逆に引いた結び付きも載る。スキル定義の claims から逆に引いた場所も載る
+    // Stage 20-D: 検証記録の「結論」から逆に引いた結び付きも載る。スキル定義の claims から逆に引いた場所も載る。
+    // 等級の候補（機械。plan/design-records-automation.md 3.5 節）も載る
+    const residualOf = new Map(
+      residuals.map((r) => [r.observation.id, { status: r.status, diff: r.diff, value: r.observation.value }]),
+    );
+    const gradeCandidates = new Map<string, ClaimGrade>();
+    for (const c of claims) {
+      const g = gradeCandidate(c, residualOf, new Set(invalidReasons.keys()));
+      if (g !== undefined) gradeCandidates.set(c.id, g);
+    }
     expect(readFileSync(CLAIMS_PATH, 'utf8')).toBe(
       renderClaims(
         claims,
         verificationsByClaim(loadVerifications()),
         invalidReasons,
         definitionPlacesByClaim(loadSkillDefinitions()),
+        gradeCandidates,
       ),
     );
   });

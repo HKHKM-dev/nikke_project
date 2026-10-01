@@ -13,6 +13,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import type { Observation } from '../../packages/core/src/records/observations.ts';
+import { todayLocal } from '../../packages/core/src/records/predictions.ts';
 import { isLegacy, type RecordingEntry } from '../../packages/core/src/records/recordings.ts';
 import { capturesDir } from './dirs.ts';
 import { RECIPES, findRecipe } from './recipes/index.ts';
@@ -99,7 +100,7 @@ const ctx: RecipeContext = {
   video,
   derivedDir: join(capturesDir(), 'derived', id),
   source: values.source ?? '',
-  readAt: values['read-at'] ?? new Date().toISOString().slice(0, 10),
+  readAt: values['read-at'] ?? todayLocal(),
   options,
   log: (m) => console.error(m),
 };
