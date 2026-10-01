@@ -287,7 +287,7 @@
 - **skill2**: unsupported
   - notes[0] フルバーストタイム中に通常攻撃が 36 回命中した時、対象がハッキング状態なら 86.17% の追加ダメージは未実装（フルバースト中だけの命中の数え方と、対象がハッキング状態かの条件が語彙に無い）: 根拠なし
 - **burst**: supported
-  - effects[0] timed・burstUse・damageTaken: C-0138（確定）、C-0151（仮説）、C-0152（仮説）
+  - effects[0] timed・burstUse・damageTaken: C-0138（確定）、C-0152（仮説）、C-0153（仮説）
 
 ## 870 クイーン（真）
 

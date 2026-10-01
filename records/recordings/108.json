@@ -1,0 +1,30 @@
+{
+  "id": "108",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-108_SG_noir_container.mp4",
+  "original": "2026-10-01_19-37-09.mp4",
+  "durationSec": 97.9,
+  "frames": 5874,
+  "fps": 60,
+  "sizeMB": 118.2,
+  "sha256": "892b61ebbcd5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true,
+      "note": "単騎・操作。毎回別のコンテナを 1 トリガーずつ撃った（的には当てていない）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。ノワール単騎・操作（f5700 以降の一時停止の画面で名前と Lv.400 を確かめた）。戦闘開始は f779（timer.ts --mode changes の +319f の次の +89f の変わり目）。HUD の総ダメージは最後まで 0。コンテナへのトリガーは 20〜26 回（画の閃光から拾った 30 フレームのうち、被弾の閃光と一時停止を除いた数）。満タンにならず、バーは最後に 4px。V-0066"
+}

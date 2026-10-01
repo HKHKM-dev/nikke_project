@@ -106,7 +106,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, kurumi 
     }
   });
 
-  it('raises the damage taken by 18.06% for 10 s from each burst of Kurumi, for every slot (C-0138, C-0151)', () => {
+  it('raises the damage taken by 18.06% for 10 s from each burst of Kurumi, for every slot (C-0138, C-0152)', () => {
     const uses = activationFramesOfSlot(plan.schedule!, kurumi);
     const windows = plan.timeline.windows.filter((w) => w.effect.stat === 'damageTaken');
     expect(windows.length).toBeGreaterThan(0);
