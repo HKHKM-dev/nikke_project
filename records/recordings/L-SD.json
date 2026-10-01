@@ -1,0 +1,22 @@
+{
+  "id": "L-SD",
+  "legacy": true,
+  "path": "E:/old_nikkecalc/動画/命中率/nikke 2026.08.29 - 18.41.18.06.mp4",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": null,
+  "conditionNote": "射撃場・3 分モード・スペック固定 ON・灼熱の的・単騎・完全放置（AUTO）。旧の「ノワール 5 本」のうち L-S 以外の 1 本（2026-10-01 に登録。V-0062）。条件は L-S と同じとみた: 1 ペレットの値が L-S・074 と同じ（増分がどれも 13,982 で割り切れる）、操作キャラはノワール 1 体、区間の並びと距離ボーナスの付き方も同じ"
+}
