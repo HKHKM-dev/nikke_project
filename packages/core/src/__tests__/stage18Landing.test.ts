@@ -71,18 +71,28 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
       ['midFarB', 0.3],
       ['midFarC', 0.4],
     ]);
+    // C-0155: 近も 2 か所の配分（V-0069 の近 20 区間の内訳 A 8・B 12）
+    expect(profile.mixes.near).toEqual([
+      ['nearA', 0.4],
+      ['nearB', 0.6],
+    ]);
   });
 
-  it('reads the band values (C-0034・V-0056・V-0062) through the landing, the band or all, and leaves the unmeasured cells null', () => {
+  it('reads the band values (C-0034・V-0056・V-0062・V-0069) through the landing, the band or all, and leaves the unmeasured cells null', () => {
     const at = (id: string) => profile.landings.find((l) => l.id === id)!;
     expect(targetRateOf(profile.coreHitRate, AR, at('midNear'))).toBe(0.2281);
     expect(targetRateOf(profile.coreHitRate, SMG, at('midFarA'))).toBe(0.0516);
     expect(targetRateOf(profile.coreHitRate, SMG, at('midFarC'))).toBe(0.0516);
     expect(targetRateOf(profile.bulletHitRate, SMG, at('far'))).toBe(0.76);
     expect(targetRateOf(profile.coreHitRate, MG, at('far'))).toBe(0.9588);
-    expect(targetRateOf(profile.coreHitRate, RL, at('near'))).toBe(1);
+    expect(targetRateOf(profile.coreHitRate, RL, at('nearA'))).toBe(1);
     expect(targetRateOf(profile.coreHitRate, SR, at('far'))).toBe(1);
-    expect(targetRateOf(profile.coreHitRate, SG, at('near'))).toBe(0.02);
+    expect(targetRateOf(profile.coreHitRate, SG, at('nearA'))).toBe(0.02);
+    expect(targetRateOf(profile.coreHitRate, SG, at('nearB'))).toBe(0.02);
+    // C-0156: SG の弾丸命中率だけ近の着地点ごと。ほかの武器種は近の帯の値を共通に使う
+    expect(targetRateOf(profile.bulletHitRate, SG, at('nearA'))).toBe(0.845);
+    expect(targetRateOf(profile.bulletHitRate, SG, at('nearB'))).toBe(0.951);
+    expect(targetRateOf(profile.bulletHitRate, AR, at('nearB'))).toBe(0.9975);
     expect(targetRateOf(profile.bulletHitRate, SG, at('midFarB'))).toBe(0.775);
     expect(targetRateOf(profile.bulletHitRate, SR, at('far'))).toBeNull();
   });
@@ -113,7 +123,7 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(parse([{ ...p, coreHitRate: { XX: { near: 0.5 } } }])).toThrow(/weapon type/);
     expect(parse([{ ...p, initialLanding: 'moon' }])).toThrow(/initialLanding/);
     expect(
-      parse([{ ...p, landings: [...(p.landings as unknown[]), { id: 'near', band: 'near', range: [15, 25] }] }]),
+      parse([{ ...p, landings: [...(p.landings as unknown[]), { id: 'nearA', band: 'near', range: [15, 25] }] }]),
     ).toThrow(/duplicate landing/);
     expect(parse([p, p])).toThrow(/duplicate target profile/);
     expect(parse([])).toThrow(/unknown target profile/);
@@ -137,6 +147,7 @@ describe('敵の値から的の条件の表を引く（18-C2）', () => {
 
   it('names the band of a landing or a mix of one band', () => {
     expect(landingBandOf(profile, 'near')).toBe('near');
+    expect(landingBandOf(profile, 'nearB')).toBe('near');
     expect(landingBandOf(profile, 'midFarB')).toBe('midFar');
     expect(landingBandOf(profile, 'midFar')).toBe('midFar');
     expect(landingBandOf(profile, null)).toBeNull();
@@ -146,7 +157,7 @@ describe('敵の値から的の条件の表を引く（18-C2）', () => {
           ...profile,
           mixes: {
             odd: [
-              ['near', 0.5],
+              ['nearA', 0.5],
               ['far', 0.5],
             ],
           },
@@ -158,7 +169,7 @@ describe('敵の値から的の条件の表を引く（18-C2）', () => {
 });
 
 describe('着地点の時間割り（enemyLandingsOf）', () => {
-  const spans = (fixed?: Record<string, string>, duration = 180) =>
+  const spans = (fixed?: Record<string, string | string[]>, duration = 180) =>
     enemyLandingsOf(master, ['range-3min-jump'], duration, profile, fixed).map((s) => [
       Number(s.start.toFixed(1)),
       Number(s.end.toFixed(1)),
@@ -183,6 +194,21 @@ describe('着地点の時間割り（enemyLandingsOf）', () => {
     expect(() => spans({ midFar: 'near' })).toThrow(/not part of mix/);
   });
 
+  it('fixes the near landing per span in order (C-0155: 1 回目・2 回目)', () => {
+    const fixed = spans({ near: ['nearA', 'nearB'], midFar: 'midFarC' });
+    expect(fixed.map(([, , landing]) => landing)).toEqual(['midNear', 'nearA', 'far', 'midFarC', 'nearB', 'far']);
+    // 並びより後の回は配分のまま
+    expect(spans({ near: ['nearB'] }).map(([, , landing]) => landing)).toEqual([
+      'midNear',
+      'nearB',
+      'far',
+      'midFar',
+      'near',
+      'far',
+    ]);
+    expect(() => spans({ near: ['nearA', 'midFarA'] })).toThrow(/not part of mix/);
+  });
+
   it('marks the landings after the measured order as unmeasured (battles longer than 180 s)', () => {
     const long = spans(undefined, 260);
     expect(long.slice(6).every(([, , landing]) => landing === null)).toBe(true);
@@ -193,7 +219,7 @@ describe('着地点の時間割り（enemyLandingsOf）', () => {
 });
 
 describe('距離ボーナスの付き方（区間ごと。Stage 17・18-A の単騎）', () => {
-  const order = ['midNear', 'near', 'far', 'midFarA', 'near', 'far'];
+  const order = ['midNear', 'nearA', 'far', 'midFarA', 'nearB', 'far'];
   const byLanding = (c: CharacterData) =>
     order.map((id) =>
       distanceBonusAt(
@@ -239,7 +265,7 @@ describe('命中率▲（C-0036・C-0037）', () => {
   });
 
   it('applies to the table value only; the manual value and the bullet hit rate are kept as they are', () => {
-    const near = profile.landings.find((l) => l.id === 'near')!;
+    const near = profile.landings.find((l) => l.id === 'nearA')!;
     const withUp = autoConditionAt(profile, near, SMG, 0.0509, MANUAL);
     expect(withUp.coreHitRate).toBeCloseTo(0.2644 / 0.9491 ** 2, 12);
     expect(withUp.hitRate).toBe(0.9763);

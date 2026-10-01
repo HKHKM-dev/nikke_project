@@ -339,9 +339,23 @@ describe('照合の部品', () => {
     expect(auto.slots[0]!.conditionMode).toBe('auto');
     expect(auto.enemy.target?.id).toBe('range-bigarms');
     expect(auto.enemy.landings?.map((s) => s.landing)).toEqual(['midNear', 'near', 'far', 'midFarA', 'near', 'far']);
+    // C-0155: 近の着地点も 1 回目・2 回目の順に固定できる
+    const fixedNear = buildTeamInput(
+      rec54,
+      { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto', nearLanding: ['A', 'B'] },
+      data,
+    );
+    expect(fixedNear.enemy.landings?.map((s) => s.landing)).toEqual([
+      'midNear',
+      'nearA',
+      'far',
+      'midFar',
+      'nearB',
+      'far',
+    ]);
   });
 
-  it('reports a mid-far landing without automatic conditions, or an unknown one', () => {
+  it('reports a mid-far or near landing without automatic conditions, or an unknown one', () => {
     const base = observations.find((o) => o.id === '054-02')!;
     const withSetup = (setup: Record<string, unknown>, id: string): Observation => ({
       ...base,
@@ -354,6 +368,8 @@ describe('照合の部品', () => {
           withSetup({ condition: 'manual' }, '054-91'),
           withSetup({ midFarLanding: 'D' }, '054-92'),
           withSetup({ condition: 'maybe', midFarLanding: undefined }, '054-93'),
+          withSetup({ nearLanding: ['A', 'C'] }, '054-94'),
+          withSetup({ condition: 'manual', midFarLanding: undefined, nearLanding: ['A'] }, '054-95'),
         ],
         recordings,
         data.enemies,
@@ -362,6 +378,8 @@ describe('照合の部品', () => {
       '054-91: midFarLanding は condition が auto のときだけ',
       '054-92: midFarLanding は A・B・C',
       '054-93: condition は auto か manual',
+      '054-94: nearLanding は A・B の並び（1 回目・2 回目の順）',
+      '054-95: nearLanding は condition が auto のときだけ',
     ]);
   });
 });

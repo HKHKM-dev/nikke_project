@@ -5,7 +5,7 @@
   "topic": "敵・的・場面",
   "grade": "反復実測",
   "basis": "`074-17`・`L-S-03`・`L-SB-03`〜`L-SE-03`・`101-10`・`102-10`・`103-04`・`104-03`（SG 単騎・AUTO の 10 本・近の 20 区間。近 A は幅 358〜372px・上端の y 300〜306、近 B は幅 414〜528px・上端の y 268〜293。近 B は的の足元が aim.ts の探す範囲の下端に掛かり、足元の y は読めない）。V-0069。C-0045 の近（足元 685・約 18）は近 A とみられる",
-  "model": "**未反映**（`data/enemies.json` の `range-bigarms` の近は 1 か所）",
+  "model": "`data/enemies.json` の `range-bigarms`（近を `nearA`・`nearB` の 2 か所にし、配分 0.4 : 0.6。3 分モードの並びの近は配分の id `near`）・`enemies.ts` の `enemyLandingsOf`（照合では読んだ着地点を 1 回目・2 回目の順に固定できる。観測値の `compare.setup.nearLanding`、sim-run の `--near`）",
   "replaces": [],
   "updated": "2026-10-01"
 }

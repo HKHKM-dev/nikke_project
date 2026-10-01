@@ -365,21 +365,33 @@ export function enemyEventsOf(
  * 持つ最初のものについて、その狙えない窓（untargetable）の終わり = 着地で区間を切り、k 番目の区間に並びの k 番目を当てる
  * （1 つ目は最初の窓より前 = 初期位置。窓の間は誰も撃たないので、窓はその前の区間に入れる）。並びより区間が多ければ、残りは null
  * （着地点が未測定）。並びを持つセットを選んでいなければ、戦闘時間全体を初期位置にする。
- * fixed は配分の id → 着地点の id（中遠を 1 か所に固定する。録画と比べるとき用）
+ * fixed は配分の id → 着地点の id（中遠などを 1 か所に固定する。録画と比べるとき用）。配列なら、並びの中でその配分が k 回目に
+ * 出た区間を k 番目の着地点に固定する（近の 1 回目と 2 回目。配列より後の回は配分のまま。C-0155）
  */
 export function enemyLandingsOf(
   master: Pick<EnemyPresetMaster, 'eventSets'>,
   setIds: readonly string[],
   durationSeconds: number,
   profile: Pick<TargetProfile, 'initialLanding' | 'landings' | 'mixes'>,
-  fixed: Readonly<Record<string, string>> = {},
+  fixed: Readonly<Record<string, string | readonly string[]>> = {},
 ): LandingSpan[] {
   for (const [id, to] of Object.entries(fixed)) {
-    if (!profile.mixes[id]?.some(([landing]) => landing === to)) {
-      throw new RangeError(`landing ${to} is not part of mix ${id}`);
+    for (const landing of typeof to === 'string' ? [to] : to) {
+      if (!profile.mixes[id]?.some(([part]) => part === landing)) {
+        throw new RangeError(`landing ${landing} is not part of mix ${id}`);
+      }
     }
   }
-  const resolve = (id: string | null): string | null => (id === null ? null : (fixed[id] ?? id));
+  const seen = new Map<string, number>();
+  const resolve = (id: string | null): string | null => {
+    if (id === null) return null;
+    const to = fixed[id];
+    if (to === undefined) return id;
+    if (typeof to === 'string') return to;
+    const k = seen.get(id) ?? 0;
+    seen.set(id, k + 1);
+    return to[k] ?? id;
+  };
   if (durationSeconds <= 0) return [];
   const set = master.eventSets.find((s) => setIds.includes(s.id) && s.landings !== undefined);
   if (set === undefined) return [{ start: 0, end: durationSeconds, landing: resolve(profile.initialLanding) }];

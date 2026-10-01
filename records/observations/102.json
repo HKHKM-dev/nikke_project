@@ -10,7 +10,7 @@
     "description": "プロダクト23（SG）の与ダメージ（単騎・AUTO・オートバースト OFF・180 秒）。結論には結び付けない（会心の偏りと的のジャンプの時刻で動く）",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",
-      "note": "HUD の総ダメージの最後の値。戦闘結果の画面の TOTAL DAMAGE と同じ"
+      "note": "HUD の総ダメージの最後の値。戦闘結果の画面の TOTAL DAMAGE と同じ。近の着地点は A・B（V-0069 で的の大きさから読んだ。C-0155）"
     },
     "compare": {
       "model": "sim",
@@ -25,7 +25,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": false,
-        "condition": "auto"
+        "condition": "auto",
+        "nearLanding": ["A", "B"]
       }
     }
   },

@@ -56,15 +56,29 @@ export type CompareSetup = {
   condition?: 'auto' | 'manual';
   /** Stage 18-C: 中遠の着地点を 1 か所に固定する（録画で読んだ着地点。plan/verification.md「実距離への換算」）。省略は配分 */
   midFarLanding?: MidFarLanding;
+  /** 近の着地点を、並びの 1 回目・2 回目の順に固定する（録画で読んだ着地点。C-0155）。省略は配分 */
+  nearLanding?: NearLanding[];
 };
 
 /** Stage 18-C: 中遠の 3 か所（足元 584・571・561。C-0044） */
 export const MID_FAR_LANDINGS = ['A', 'B', 'C'] as const;
 export type MidFarLanding = (typeof MID_FAR_LANDINGS)[number];
 
+/** 近の 2 か所（的の見かけの大きさで分かれる。C-0155） */
+export const NEAR_LANDINGS = ['A', 'B'] as const;
+export type NearLanding = (typeof NEAR_LANDINGS)[number];
+
 /** 中遠の着地点を固定する enemyLandingsOf の fixed */
 export function midFarFixed(landing: MidFarLanding | undefined): Record<string, string> {
   return landing === undefined ? {} : { midFar: `midFar${landing}` };
+}
+
+/** 中遠と近の着地点を固定する enemyLandingsOf の fixed（近は 1 回目・2 回目の順） */
+export function landingFixed(
+  midFar: MidFarLanding | undefined,
+  near: readonly NearLanding[] | undefined,
+): Record<string, string | string[]> {
+  return { ...midFarFixed(midFar), ...(near === undefined ? {} : { near: near.map((n) => `near${n}`) }) };
 }
 
 export type Tolerance = { rel: number } | { abs: number };
@@ -341,6 +355,13 @@ export function validateObservations(
       if (!MID_FAR_LANDINGS.includes(midFar)) errors.push(`${at}: midFarLanding は A・B・C`);
       if (condition !== 'auto') errors.push(`${at}: midFarLanding は condition が auto のときだけ`);
     }
+    const near = c.setup.nearLanding;
+    if (near !== undefined) {
+      if (!Array.isArray(near) || near.length === 0 || !near.every((n) => NEAR_LANDINGS.includes(n))) {
+        errors.push(`${at}: nearLanding は A・B の並び（1 回目・2 回目の順）`);
+      }
+      if (condition !== 'auto') errors.push(`${at}: nearLanding は condition が auto のときだけ`);
+    }
     if (condition === 'auto' && preset !== undefined && preset.targetProfile === undefined) {
       errors.push(`${at}: 敵のプリセット ${c.setup.enemy} には的の条件の表が無い`);
     }
@@ -405,7 +426,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
               setup.events ?? [],
               durationSeconds,
               target,
-              midFarFixed(setup.midFarLanding),
+              landingFixed(setup.midFarLanding, setup.nearLanding),
             ),
           }),
     },
@@ -525,11 +546,12 @@ function fmtTolerance(t: Tolerance): string {
   return 'rel' in t ? `±${(t.rel * 100).toFixed(2).replace(/\.?0+$/, '')}%` : `±${fmtNumber(t.abs)}`;
 }
 
-/** 引数と、手入力でない条件（Stage 18-C の自動の条件・中遠の固定）。手入力の観測値は今までと同じ表示 */
+/** 引数と、手入力でない条件（Stage 18-C の自動の条件・中遠と近の固定）。手入力の観測値は今までと同じ表示 */
 function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
   const entries: [string, unknown][] = Object.entries(args);
   if (setup?.condition === 'auto') entries.push(['condition', 'auto']);
   if (setup?.midFarLanding !== undefined) entries.push(['midFar', setup.midFarLanding]);
+  if (setup?.nearLanding !== undefined) entries.push(['near', setup.nearLanding.join('・')]);
   return entries.length === 0 ? '' : `（${entries.map(([k, v]) => `${k}=${String(v)}`).join('、')}）`;
 }
 
