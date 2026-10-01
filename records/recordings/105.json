@@ -1,0 +1,30 @@
+{
+  "id": "105",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-105_AR_kurumi_burst-extends.mp4",
+  "original": "2026-10-01_18-41-19.mp4",
+  "durationSec": 199.1,
+  "frames": 11947,
+  "fps": 60,
+  "sizeMB": 240.9,
+  "sha256": "eaad072bc454",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": true,
+      "note": "操作キャラの枠・撃つのを止めてから少しおいてバーストを使った（4 回）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。クルミ単騎（戦闘履歴のパネル（f11805〜）で名前と Lv.400 を確かめた。交戦時間 03:00）。AUTO 射撃は途中で切り替えた（撃つ区間は ON、止める区間は OFF。画面左上の照準のボタン。f1500・5700 は ON、f5800・8300・10820 は OFF）。オートバーストもほぼ OFF だが、f5900・6300 は ON（f5820 のバーストの頃に一時 ON にしたとみられる）。バーストは 4 回（gauge.ts の満タンの後に一瞬溜まって消える動きの f2670・5820・8325・10850）。戦闘開始は f807（timer.ts --mode changes の +319f の次の +89f の変わり目）。HUD の最後の値 26,148,624 は戦闘履歴の与ダメージと一致。録画の番号は、E: の別の作業の 101〜104 の次。V-0064"
+}
