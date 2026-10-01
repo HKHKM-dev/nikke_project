@@ -39,6 +39,11 @@ export type BuffTotals = {
   chargeDamageMultiplier: number;
   /** Stage 8: 分配ダメージの加算。distributed の倍率ダメージにだけ (1 + distributedDamage) を掛ける（録画 21 で別枠の乗数と確認） */
   distributedDamage: number;
+  /**
+   * 受けるダメージ編: 敵の受けるダメージの加算。与ダメージのすべて（通常攻撃・射撃ごとの倍率ダメージ・倍率ダメージ・持続ダメージ）に
+   * 別枠の乗数 (1 + damageTaken) を掛ける（C-0138）
+   */
+  damageTaken: number;
   /** Stage 8: バーストゲージのチャージ速度の加算。この枠の射撃で溜まるゲージに (1 + burstGaugeSpeed) を掛ける（passive のみ） */
   burstGaugeSpeed: number;
   /** Stage 10: 最大装弾数の比率の加算（frame/firing.ts の effectiveMaxAmmo）。ダメージの式は読まない */
@@ -79,6 +84,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   chargeDamage: 0,
   chargeDamageMultiplier: 0,
   distributedDamage: 0,
+  damageTaken: 0,
   burstGaugeSpeed: 0,
   maxAmmoRatio: 0,
   maxAmmoFlat: 0,
@@ -103,6 +109,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon'>> = {
   chargeDamage: 'chargeDamage',
   chargeDamageMultiplier: 'chargeDamageMultiplier',
   distributedDamage: 'distributedDamage',
+  damageTaken: 'damageTaken',
   burstGaugeSpeed: 'burstGaugeSpeed',
   maxAmmo: 'maxAmmoRatio',
   reloadSpeed: 'reloadSpeed',

@@ -56,12 +56,15 @@ const TEAMS: Record<string, { input: TeamInput; kurumi: number }> = {
 };
 
 describe('クルミの定義', () => {
-  it('supports S1 (two hackings); S2 and the burst are notes', () => {
+  it('supports S1 (two hackings) and the burst (damage taken up); S2 is notes', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${KURUMI}.json`));
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['dot', 'dot']);
     expect(def.skills.skill2.support).toBe('unsupported');
-    expect(def.skills.burst.support).toBe('unsupported');
+    expect(def.skills.burst.support).toBe('supported');
+    expect(def.skills.burst.effects).toMatchObject([
+      { kind: 'timed', trigger: 'burstUse', target: 'allies', stat: 'damageTaken' },
+    ]);
   });
 });
 
@@ -100,6 +103,21 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, kurumi 
         (f, j) => (j + 1) % 36 === 0 && f > u && f <= next.frame,
       );
       if (hitFiresBetween.length === 0) expect(next.effect.effectIndex).toBe(1);
+    }
+  });
+
+  it('raises the damage taken by 18.06% for 10 s from each burst of Kurumi, for every slot (C-0138, C-0151)', () => {
+    const uses = activationFramesOfSlot(plan.schedule!, kurumi);
+    const windows = plan.timeline.windows.filter((w) => w.effect.stat === 'damageTaken');
+    expect(windows.length).toBeGreaterThan(0);
+    for (const w of windows) {
+      expect(w.effect.value).toBeCloseTo(0.1806, 10);
+      expect(uses).toContain(w.start);
+    }
+    // ▲の窓の中の tick は × 1.1806、外は × 1
+    for (const h of plan.skillHits.filter((x) => x.slotIndex === kurumi && x.effect.dot !== undefined)) {
+      const inside = windows.some((w) => w.start <= h.frame && h.frame < w.end);
+      expect(h.hit.damageTakenMultiplier).toBeCloseTo(inside ? 1.1806 : 1, 10);
     }
   });
 

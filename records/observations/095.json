@@ -71,5 +71,67 @@
       "tool": "hud.ts --mode jumps・gauge.ts --mode events",
       "note": "増分を、クルミの 1 発（素の値 10,797.29 に 1 + 会心 0.5 + コア 1 + 距離 0.3 の組み合わせを掛けた 8 通り）と、ハッキングの tick（41,322・会心 61,984）と、そのそれぞれに受けるダメージ▲の × 1.1806 を掛けた値の組み合わせに分けた（1 つの増分に 4 つまで）。バーストを使ったフレーム B は、gauge.ts の満タンの後に一瞬溜まって消える動きの満タンのフレーム（録画 085 と同じ読み方）"
     }
+  },
+  {
+    "id": "095-06",
+    "recording": "095",
+    "source": "V-0067",
+    "readAt": "2026-10-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 12747,
+    "description": "受けるダメージ▲の乗ったクルミの 1 発（胴体・会心なし）。動画の f4850（095-04 と同じ増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "095-03・095-04 と同じ増分。モデルは手で使ったバーストの時刻を持たないので、モデルの単騎のクルミが最初にバーストを使った後の受けるダメージ▲の窓（f1582〜2170）の中の値と比べる（▲の乗数は時刻に依らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "095-07",
+    "recording": "095",
+    "source": "V-0067",
+    "readAt": "2026-10-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 48785,
+    "description": "受けるダメージ▲の乗ったハッキングの 1 tick（会心なし）。動画の f2713（095-03 と同じ増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "095-03・095-04 と同じ増分。モデルは手で使ったバーストの時刻を持たないので、モデルの単騎のクルミが最初にバーストを使った後の受けるダメージ▲の窓（f1582〜2170）の中の値と比べる（▲の乗数は時刻に依らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 23,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

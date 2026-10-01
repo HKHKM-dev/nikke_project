@@ -146,6 +146,8 @@ export type TriggerDamage = {
   boost: { core: number; crit: number; distance: number; fullBurst: number; total: number };
   /** 攻撃ダメージバフの乗数 1 + Σ attackDamage（倍率グループとは別枠。射撃場の実測で確認） */
   attackDamageMultiplier: number;
+  /** 受けるダメージ編: 敵の受けるダメージ▲の乗数 1 + Σ damageTaken（ほかのどの群とも別枠。C-0138） */
+  damageTakenMultiplier: number;
   elementMultiplier: number;
   /** Stage 11 モダニア: 通常攻撃の分（Stage 10 までの perTrigger） */
   normal: number;
@@ -270,6 +272,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const boostFullBurst = condition.fullBurst ? FULL_BURST_BOOST : 0;
   const boostTotal = 1 + boostCore + boostCrit + boostDistance + boostFullBurst;
   const attackDamageMultiplier = applyAttackDamageBuffs(buffs);
+  const damageTakenMultiplier = 1 + buffs.damageTaken;
 
   const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage);
   const normal =
@@ -280,6 +283,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     chargeMultiplier *
     boostTotal *
     attackDamageMultiplier *
+    damageTakenMultiplier *
     element;
   const perShot =
     hitRate *
@@ -309,6 +313,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
       total: boostTotal,
     },
     attackDamageMultiplier,
+    damageTakenMultiplier,
     elementMultiplier: element,
     normal,
     perShot,
@@ -346,7 +351,7 @@ function perShotDamage(
   if (effects === undefined || effects.length === 0) return 0;
   const boost =
     1 + boostCrit + (SKILL_HIT_FULL_BURST_BONUS ? boostFullBurst : 0) + (PER_SHOT_DAMAGE_CORE ? boostCore : 0);
-  const common = baseHit * boost * applyAttackDamageBuffs(buffs) * element;
+  const common = baseHit * boost * applyAttackDamageBuffs(buffs) * (1 + buffs.damageTaken) * element;
   let total = 0;
   for (const e of effects) {
     total += common * e.multiplier * (e.damageType === 'distributed' ? 1 + buffs.distributedDamage : 1);

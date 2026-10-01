@@ -244,6 +244,8 @@ export type BurstHitInput = {
   fullBurstBonus?: boolean;
   /** Stage 8: 1 + Σ distributedDamage。distributed の効果にだけ掛ける。省略 1 */
   distributedDamageMultiplier?: number;
+  /** 受けるダメージ編: 1 + Σ damageTaken（敵の受けるダメージ▲。別枠。C-0138）。省略 1 */
+  damageTakenMultiplier?: number;
 };
 
 export type BurstHitResult = {
@@ -260,6 +262,8 @@ export type BurstHitResult = {
   elementMultiplier: number;
   /** 1 + Σ distributedDamage（distributed の効果にだけ掛かる） */
   distributedDamageMultiplier: number;
+  /** 受けるダメージ編: 1 + Σ damageTaken（すべての効果に掛かる） */
+  damageTakenMultiplier: number;
   /** 効果ごとの 1 発動あたり期待ダメージ */
   perEffect: { effect: ResolvedSkillDamage; expected: number }[];
   /** 1 発動あたりの合計 */
@@ -271,11 +275,12 @@ export type SkillHitResult = BurstHitResult;
 export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const fullBurstBonus = input.fullBurstBonus ?? BURST_SKILL_FULL_BURST_BONUS;
   const distributed = input.distributedDamageMultiplier ?? 1;
+  const damageTaken = input.damageTakenMultiplier ?? 1;
   const baseHit = Math.max(1, input.attack - input.enemy.defence);
   const boostCrit = input.crit.rate * (input.crit.damage - 1);
   const boostFullBurst = fullBurstBonus ? FULL_BURST_BOOST : 0;
   const boostTotal = 1 + boostCrit + boostFullBurst;
-  const common = baseHit * boostTotal * input.attackDamageMultiplier * input.elementMultiplier;
+  const common = baseHit * boostTotal * input.attackDamageMultiplier * damageTaken * input.elementMultiplier;
   const perEffect = input.effects.map((effect) => ({
     effect,
     expected: common * effect.multiplier * (effect.damageType === 'distributed' ? distributed : 1),
@@ -293,6 +298,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
     attackDamageMultiplier: input.attackDamageMultiplier,
     elementMultiplier: input.elementMultiplier,
     distributedDamageMultiplier: distributed,
+    damageTakenMultiplier: damageTaken,
     perEffect,
     perActivation,
   };
@@ -319,6 +325,7 @@ export function computeSkillHit(
     effects,
     fullBurstBonus,
     distributedDamageMultiplier: 1 + buffs.distributedDamage,
+    damageTakenMultiplier: 1 + buffs.damageTaken,
   });
 }
 

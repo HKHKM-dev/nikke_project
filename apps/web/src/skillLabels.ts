@@ -30,6 +30,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   chargeDamage: 'チャージダメージ',
   chargeDamageMultiplier: 'チャージダメージ倍率',
   distributedDamage: '分配ダメージ',
+  damageTaken: '敵の受けるダメージ',
   burstGaugeSpeed: 'バーストゲージのチャージ速度',
   maxAmmo: '最大装弾数',
   reloadSpeed: 'リロード速度',
