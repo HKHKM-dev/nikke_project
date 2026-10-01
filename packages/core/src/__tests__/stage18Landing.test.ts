@@ -73,7 +73,7 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     ]);
   });
 
-  it('reads the band values (C-0034) through the landing, the band or all, and leaves the unmeasured cells null', () => {
+  it('reads the band values (C-0034・V-0056) through the landing, the band or all, and leaves the unmeasured cells null', () => {
     const at = (id: string) => profile.landings.find((l) => l.id === id)!;
     expect(targetRateOf(profile.coreHitRate, AR, at('midNear'))).toBe(0.2281);
     expect(targetRateOf(profile.coreHitRate, SMG, at('midFarA'))).toBe(0.0516);
@@ -82,7 +82,8 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(targetRateOf(profile.coreHitRate, MG, at('far'))).toBe(0.9588);
     expect(targetRateOf(profile.coreHitRate, RL, at('near'))).toBe(1);
     expect(targetRateOf(profile.coreHitRate, SR, at('far'))).toBe(1);
-    expect(targetRateOf(profile.coreHitRate, SG, at('near'))).toBeNull();
+    expect(targetRateOf(profile.coreHitRate, SG, at('near'))).toBe(0.02);
+    expect(targetRateOf(profile.bulletHitRate, SG, at('midFarB'))).toBe(0.789);
     expect(targetRateOf(profile.bulletHitRate, SR, at('far'))).toBeNull();
   });
 
@@ -243,7 +244,8 @@ describe('命中率▲（C-0036・C-0037）', () => {
     expect(withUp.coreHitRate).toBeCloseTo(0.2644 / 0.9491 ** 2, 12);
     expect(withUp.hitRate).toBe(0.9763);
     expect(withUp.distanceBonus).toBe(true);
-    const sg = autoConditionAt(profile, near, SG, 0.5, { ...MANUAL, coreHitRate: 0.4 });
+    const unmeasured = { ...profile, coreHitRate: { ...profile.coreHitRate, SG: null } };
+    const sg = autoConditionAt(unmeasured, near, SG, 0.5, { ...MANUAL, coreHitRate: 0.4 });
     expect(sg.coreHitRate).toBe(0.4);
   });
 });
@@ -403,7 +405,7 @@ describe('編成（自動の条件）', () => {
       }).slots[0]!.notes.map((n) => n.code);
     expect(codes(AR)).toEqual(['hit-rate', 'auto-condition']);
     expect(codes(RL)).not.toContain('hit-rate');
-    expect(codes(SG)).toContain('auto-condition-unmeasured');
+    expect(codes(SG)).toEqual(['hit-rate', 'auto-condition']);
     expect(codes(RL)).toEqual(expect.arrayContaining(['auto-condition-unmeasured', 'landing-first-shot-miss']));
     expect(codes(MG)).toContain('mg-spin-up-core');
     expect(codes(AR, 240)).toContain('landing-unmeasured');
@@ -424,10 +426,37 @@ describe('編成（自動の条件）', () => {
     const spans = runFirstPass([timelineSlot(1)], {
       frames,
       burst: true,
-      hitRates: [[{ start: 0, end: frames, hitRate: 0.5 }]],
+      hitRates: [[{ start: 0, end: frames, hitRate: 0.5, measured: true }]],
     });
     expect(spans.schedule!.gaugeFullFrames).toEqual(constant.schedule!.gaugeFullFrames);
     const full = runFirstPass([timelineSlot(1)], { frames, burst: true });
     expect(full.schedule!.gaugeFullFrames[0]!).toBeLessThan(constant.schedule!.gaugeFullFrames[0]!);
+  });
+
+  it('counts SG pellets at the table bullet hit rate, and at the 0.75 stand-in only for manual values (C-0150)', () => {
+    const character = makeCharacter(
+      { shotCount: 10, targetBurstEnergyPerShot: 9000 },
+      { resourceId: 1, burstStep: 'Step1', weaponType: 'SG' },
+    );
+    const timelineSlot: TimelineSlot = {
+      character,
+      definition: null,
+      levels: MAX_SKILL_LEVELS,
+      casterBaseAttack: 1000,
+    };
+    const frames = 3600;
+    const run = (span?: { hitRate: number; measured: boolean }) =>
+      runFirstPass([timelineSlot], {
+        frames,
+        burst: true,
+        ...(span ? { hitRates: [[{ start: 0, end: frames, ...span }]] } : {}),
+      });
+    // 表の値 0.9: 1 トリガー 81,000 で 13 トリガー目（972,000 → 1,053,000）
+    const measured = run({ hitRate: 0.9, measured: true });
+    expect(measured.schedule!.gaugeFullFrames[0]).toBe(measured.shots[0]!.frames[12]);
+    // 手入力の値（区間でも未測定）: 全ペレット × 0.75 = 67,500 で 15 トリガー目
+    const manual = run();
+    expect(manual.schedule!.gaugeFullFrames[0]).toBe(manual.shots[0]!.frames[14]);
+    expect(run({ hitRate: 1, measured: false }).schedule!.gaugeFullFrames).toEqual(manual.schedule!.gaugeFullFrames);
   });
 });

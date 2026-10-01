@@ -46,6 +46,10 @@ describe('energyPerTrigger (calibrated on single-character recordings)', () => {
 
   it('counts SG pellets at the gauge hit rate', () => {
     expect(energyPerTrigger(load(271).shot, false)).toBeCloseTo(9000 * 10 * SG_PELLET_GAUGE_HIT_RATE, 9);
+    // 弾丸命中率を的の表から取る枠は、ペレットの割合を 1 にして区間の弾丸命中率を掛ける（C-0150）
+    expect(energyPerTrigger(load(271).shot, false, 0.774, 1)).toBeCloseTo(9000 * 10 * 0.774, 9);
+    // SG でない武器はペレットの割合を使わない
+    expect(energyPerTrigger(load(20).shot, false, 1, 0.5)).toBe(energyPerTrigger(load(20).shot, false));
   });
 });
 

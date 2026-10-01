@@ -96,7 +96,7 @@ export type TriggerCondition = {
   fullBurst?: boolean;
   /**
    * Stage 15: 弾丸命中率 0..1（省略 1。Stage 18 で「命中率」から呼び名を変えた。命中率▲とは別物）。**射撃場（静止の的）を 1 とした相対値**で、通常攻撃の期待ダメージ（射撃ごとの倍率ダメージを含む）と
-   * ゲージ（burst/dynamic.ts の energyPerTrigger）に掛ける。SG のペレットのゲージの割合（SG_PELLET_GAUGE_HIT_RATE）はこの外側の較正値のまま。
+   * ゲージ（burst/dynamic.ts の energyPerTrigger）に掛ける。SG では当たったペレットの割合（C-0150）。手入力の枠のゲージだけ、SG のペレットの割合の置き値（SG_PELLET_GAUGE_HIT_RATE）を外側に掛ける。
    * スキルの倍率ダメージ・バーストスキルには掛けない。命中を数えるトリガーは全弾命中で数える（近似。conditionNotes）
    */
   hitRate?: number;

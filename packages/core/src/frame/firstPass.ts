@@ -46,7 +46,7 @@ import {
   type BurstControllerState,
   type BurstTiming,
 } from '../burst/controller.ts';
-import { burstUnitOf, energyPerTrigger, partialGaugeRatio } from '../burst/dynamic.ts';
+import { SG_PELLET_GAUGE_HIT_RATE, burstUnitOf, energyPerTrigger, partialGaugeRatio } from '../burst/dynamic.ts';
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
 import { resolveDamageGauges } from '../skills/burstDamage.ts';
 import type { BurstActivation, BurstSchedule, BurstScheduleModel } from '../burst/schedule.ts';
@@ -377,21 +377,28 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
 
   // ---- バースト ----
   const gaugeSpeed = passive.map((s) => s?.buffs.burstGaugeSpeed ?? 0);
-  // Stage 18-C: 弾丸命中率が着地点で変わる枠は、1 発のゲージを命中率 1 で持ち、撃ったフレームの区間の命中率を掛ける
+  // Stage 18-C: 弾丸命中率が着地点で変わる枠は、1 発のゲージを命中率 1 で持ち、撃ったフレームの区間の命中率を掛ける。
+  // SG はペレットの割合も 1 で持ち、区間の弾丸命中率が的の表の値ならそのまま（当たったペレットの割合。C-0150）、
+  // 手入力の値なら置き値 SG_PELLET_GAUGE_HIT_RATE を掛ける（plan/design-sg-hit-rate.md 3 節）
   const hitRateSpans = slots.map((_, i) => options.hitRates?.[i] ?? null);
   const hitRateAt = slots.map(() => 0);
   const energies = slots.map((slot, i) =>
     slot === null
       ? 0
-      : energyPerTrigger(slot.character.shot, i === controlledSlot, hitRateSpans[i] ? 1 : (slot.hitRate ?? 1)) *
+      : (hitRateSpans[i]
+          ? energyPerTrigger(slot.character.shot, i === controlledSlot, 1, 1)
+          : energyPerTrigger(slot.character.shot, i === controlledSlot, slot.hitRate ?? 1)) *
         (1 + gaugeSpeed[i]!),
   );
+  const pellets = slots.map((slot) => slot !== null && slot.character.shot.shotCount > 1);
   /** 枠 i がフレーム f に撃った 1 発のゲージ（f は単調に増える） */
   const energyAt = (i: number, f: number): number => {
     const spans = hitRateSpans[i];
     if (!spans) return energies[i]!;
     while (hitRateAt[i]! + 1 < spans.length && spans[hitRateAt[i]!]!.end <= f) hitRateAt[i]! += 1;
-    return energies[i]! * (spans[hitRateAt[i]!]?.hitRate ?? 1);
+    const span = spans[hitRateAt[i]!];
+    const pelletRate = pellets[i] && span?.measured !== true ? SG_PELLET_GAUGE_HIT_RATE : 1;
+    return energies[i]! * (span?.hitRate ?? 1) * pelletRate;
   };
   // V-0030: 段のヒットでゲージを溜める循環。溜めるゲージは当たるフレームに予約する（pendingGauge）
   const cycleTrackers: CycleGaugeTracker[] = [];
