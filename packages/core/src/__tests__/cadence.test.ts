@@ -221,12 +221,21 @@ describe('reloadChunks', () => {
     expect(reloadChunks({ maxAmmo: 60, reloadBullet: 0.5 })).toBe(2);
   });
 
-  it('multiplies reload time by chunk count', () => {
+  it('waits one empty stage before loading, with each stage rounded up (C-0154)', () => {
     const c = computeCadence(
       shot({ maxAmmo: 9, reloadTime: 0.67, reloadBullet: 0.33, rateOfFire: 90, endRateOfFire: 90 }),
     );
     expect(c.reloadChunks).toBe(3);
-    expect(c.reloadFrames).toBeCloseTo(R(0.67) * 3, 9);
+    // 0.67 秒 = 39.41f → 40f の段を、込めない 1 段 + 3 段
+    expect(c.reloadFrames).toBe(160);
+  });
+
+  it('keeps the full reload unrounded (C-0145)', () => {
+    const c = computeCadence(
+      shot({ maxAmmo: 9, reloadTime: 0.67, reloadBullet: 1, rateOfFire: 90, endRateOfFire: 90 }),
+    );
+    expect(c.reloadChunks).toBe(1);
+    expect(c.reloadFrames).toBeCloseTo(R(0.67), 9);
   });
 });
 

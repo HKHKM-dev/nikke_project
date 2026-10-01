@@ -68,7 +68,8 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
 /**
  * Stage 24: リロードの秒 → フレーム（端数つき）。ゲーム内の時計（1 フレーム 0.017 秒）で数え、丸めない（C-0145・C-0142。
  * plan/design-weapon-seconds.md 10.5 節）。射手は 1 回分ごとに、前の回の端数を足して切り捨て、残りを次へ持ち越す
- * （frame/shooter.ts の nextChunkFrames）。rpm の蓄積（C-0058）と同じ形。21-C〜23 は 1 秒 = 60f の切り上げだった
+ * （frame/shooter.ts の nextChunkFrames）。rpm の蓄積（C-0058）と同じ形。21-C〜23 は 1 秒 = 60f の切り上げだった。
+ * 分割リロードの段は、この長さを段ごとに切り上げる（C-0154）
  */
 export function reloadSecondsToFrames(seconds: number): number {
   return seconds / GAME_SECONDS_PER_FRAME;

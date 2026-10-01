@@ -111,7 +111,10 @@ export function computeCadence(
   const reloadFirst = reloadFirstShotFrames(shot, model, params);
   const magazineFrames = shotFrames[shotFrames.length - 1] ?? 0;
   const chunks = reloadChunks({ maxAmmo: params.maxAmmo, reloadBullet: shot.reloadBullet });
-  const reloadFrames = params.reloadChunkFrames * chunks;
+  // 分割リロードは、込めない 1 段 + 段の数を、それぞれ切り上げた整数で数える（C-0154）
+  const reloadFrames = params.splitReload
+    ? Math.ceil(params.reloadChunkFrames - 1e-9) * (chunks + 1)
+    : params.reloadChunkFrames * chunks;
   // 1 周期 = リロード明けの 1 発目の遅れ + マガジン + リロード。戦闘開始のマガジンだけ first から始まる
   const cycleFrames = reloadFirst + magazineFrames + reloadFrames;
   return {
