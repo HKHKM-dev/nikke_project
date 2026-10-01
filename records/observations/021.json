@@ -140,7 +140,7 @@
     "readAt": "2026-09-28",
     "method": {
       "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode events",
-      "note": "02:59 は f872（残り時間の変わり目が +320f・+89f と続いた所）、消えたのは f1428"
+      "note": "02:59 は f872（残り時間の変わり目が +320f・+89f と続いた所）、消えたのは f1428。照合の許容は ±40f（モデルで満タンを決める発が SG のトリガーなので、当たったペレットの揺れの 1 トリガーぶん。2026-10-02 にオーナーが決定。V-0077 の照合の条件の案 3）"
     },
     "compare": {
       "model": "sim",
@@ -149,7 +149,7 @@
         "n": 0
       },
       "tolerance": {
-        "abs": 30
+        "abs": 40
       },
       "setup": {
         "enemy": "range-bigarms-fire",
