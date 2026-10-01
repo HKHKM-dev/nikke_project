@@ -1,0 +1,30 @@
+{
+  "id": "109",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-109_SG_noir_spec-off.mp4",
+  "original": "2026-10-01_21-47-18.mp4",
+  "durationSec": 203.5,
+  "frames": 12212,
+  "fps": 60,
+  "sizeMB": 246.6,
+  "sha256": "66c4866b507a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true,
+      "note": "単騎・AUTO 射撃 ON・オートバースト OFF。キューブなし（オーナーの説明）。戦闘中は触っていない"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・**スペック固定 OFF**。出撃画面で確かめた）。ノワール単騎・AUTO 射撃 ON・オートバースト OFF（画面左上のボタンで確かめた）。キューブなし（V-0070 の B1。オーナーの説明。画には出ない）。戦闘履歴のパネルでノワールと読めた。戦闘開始は f769（timer.ts --mode changes の +319f の次の +89f の変わり目）。1 ペレットの値は胴体 117,573・会心 195,688・コア 235,144 前後（的の上の数値と増分）。V-0070"
+}
