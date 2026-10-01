@@ -1,7 +1,7 @@
 # 検証の自動化 設計書: 検証記録の起案から結論の下書きまで
 
 - 対象: `D:\nikke_project`（要件は `plan/requirements.md`, `plan/roadmap.md`）
-- 状態: 実施中（2026-10-02）。7 節の 7 点を、4 の修正（機械が確定を出せる）のほかは推奨案で承認。PR A〜D を実施した（8.1〜8.4 節）。次は PR E（文書の更新）
+- 状態: 完了（2026-10-02）。7 節の 7 点を、4 の修正（機械が確定を出せる）のほかは推奨案で承認。PR A〜E を実施した（8.1〜8.5 節）。残りは 8.6 節
 - 関連: [design-stage20.md](design-stage20.md)（記録の構造）、[skills-guide.md](skills-guide.md) 1 節（いまの手順）、[captures/index.md](captures/index.md)「解析ツール」、[records/verifications/README.md](../records/verifications/README.md)、[claims.md](claims.md) 冒頭（等級の決め方）
 - 作成日: 2026-10-01
 
@@ -251,6 +251,19 @@
 
 差は無い（`074-03` は旧が一部の回だけを書いたもの）。
 
+### 8.5 PR E: 文書の更新（2026-10-02）
+
+- [skills-guide.md](skills-guide.md) 1.3・1.6〜1.9 節と 4 節を新しい流れ（`records:new` → `records:predict` → `intake.ts` → `records:read` → `records:check` → `records:new -- claim` → `records:close`）に書き換えた。規則（予測は撮る前、等級の決め方、棄却の仕方）は変えていない。
+- [AGENTS.md](../AGENTS.md)「記録の置き場所」に `records/predictions/` の行と、流れの道具への 1 行を足した。[captures/index.md](captures/index.md)「解析ツール」と [records/verifications/README.md](../records/verifications/README.md)・[records/predictions/README.md](../records/predictions/README.md) は PR A〜D で更新済み。
+
+### 8.6 残り（この設計書の外で起こす）
+
+- V-0079: レシピと旧の観測値の差の読み直しと訂正（オーナーの判断）。
+- 近の着地点（`aim.ts` の的の幅）のレシピ化と、2 発にまとめた組の分布への入れ方（8.1 節）。
+- 最小構成の警告を落とす（7 節の 5 の (b)）かの判断。いまは 207 件（検証記録 42 件）で、Stage 11 までの定義に `claims` を足さないと減らない。
+- 等級の候補と書いた等級の食い違い（25 件）の見直し。根拠が 1 本の録画だけの確定の結論は、別の録画で再現するか、等級を単独実測に下げて仮説にするかをオーナーが決める。
+- 流れを最初から最後まで通す新しい検証を 1 件（6 節の B〜D の確かめ）。V-0074（持続の命中率▲）の次の撮影か、新しいキャラのスキル定義で行う。
+
 ## 経過
 
 - 2026-10-01: 起案。V-0062〜V-0073 の SG の一連で、読み取りと判定の手作業が繰り返されたことから。
@@ -259,3 +272,4 @@
 - 2026-10-02: PR B を実施（8.2 節）。
 - 2026-10-02: PR C を実施（8.3 節）。
 - 2026-10-02: PR D を実施（8.4 節）。
+- 2026-10-02: PR E を実施（8.5 節）。設計書の段取りは完了。残りは 8.6 節。

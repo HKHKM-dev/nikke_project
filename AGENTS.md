@@ -58,7 +58,8 @@ NIKKE のダメージ計算ツール。
 | `AGENTS.md`                                          | 両エージェントが守る短い規則                                                                                                                                       |
 | `plan/roadmap.md`・設計書                            | 計画・決定・Stage の状況                                                                                                                                           |
 | `records/claims/`・`plan/claims.md`                  | 結論（1 件 1 ファイルの JSON。ID・状態・話題・根拠の等級・根拠・モデル側）と、話題ごとの一覧（生成）。問いからいまの結論を引くのは一覧                             |
-| `records/verifications/`・`plan/verifications.md`    | 検証記録（1 回の検証を 1 ファイル。問い・予測・結果・結論）と、その一覧（生成。開いている検証が冒頭に出る）                                                        |
+| `records/verifications/`・`plan/verifications.md`    | 検証記録（1 回の検証を 1 ファイル。問い・予測・結果・結論）と、その一覧（生成。開いている検証が冒頭に出る。予測との比べと最小構成の警告も出る）                    |
+| `records/predictions/`                               | 撮る前の予測（検証記録ごとに 1 ファイル。編成・仮説・比べる指標と、`npm run records:predict` が書く値）。撮る前に commit する                                      |
 | `plan/captures/index.md`                             | 置き場所・撮影プロトコル・命名規約・キャラ同定・解析ツールと、録画ごとの注記（録画の一覧の表は `plan/captures/recordings.md`）                                     |
 | `records/recordings/`・`plan/captures/recordings.md` | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性（1 本 1 ファイルの JSON）と、その一覧（生成。`npm run records:table`）                              |
 | `records/observations/`・`plan/residuals.md`         | 録画から読んだ値（観測値）と、モデルとの残差の一覧（生成。`npm run records:check`）                                                                                |
@@ -70,3 +71,5 @@ NIKKE のダメージ計算ツール。
 | `private/`（メインのチェックアウト直下、追跡しない） | 所持キャラ・宝物・育成状況・ローカルのパスなど個人の情報。worktree には無いので絶対パスで読む。worktree のエージェントは書き込めないので、足すものはオーナーに渡す |
 
 新しい知見は、まず検証記録（数値は観測値）に根拠つきで書き、撮影や読み取りで繰り返し効くものは `guide.md` に 1〜2 行で足す。
+
+検証の流れ（起案 → 予測の固定 → 撮る → 取り込み → レシピで読む → 比べる → 結論の下書き → 閉じる）の道具は `npm run records:new`・`records:predict`・`records:read`・`records:check`・`records:close` と `tools/captures/intake.ts`（`plan/design-records-automation.md` 2 節。手順は `plan/skills-guide.md` 1 節）。
