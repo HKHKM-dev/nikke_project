@@ -1,0 +1,30 @@
+{
+  "id": "111",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-111_SG_noir_spec-off_cube.mp4",
+  "original": "2026-10-01_21-54-41.mp4",
+  "durationSec": 202.1,
+  "frames": 12126,
+  "fps": 60,
+  "sizeMB": 244.9,
+  "sha256": "2178f70170d3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true,
+      "note": "単騎・AUTO 射撃 ON・オートバースト OFF。アサルトキューブ（命中率▲）あり（オーナーの説明）。戦闘中は触っていない"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・**スペック固定 OFF**。出撃画面で確かめた）。ノワール単騎・AUTO 射撃 ON・オートバースト OFF（画面左上のボタンで確かめた）。アサルトキューブあり（V-0070 の A2。オーナーの説明。1 ペレットの胴体が 117,812 で、キューブなしの 109 の 117,573 より多い）。戦闘履歴のパネルでノワールと読めた。最初の発は f783。HUD の最後の値 300,942,078 は戦闘履歴のパネルの値と一致。V-0070"
+}
