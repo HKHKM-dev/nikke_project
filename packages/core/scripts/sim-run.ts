@@ -15,6 +15,8 @@
 // --mid-far A|B|C で中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。自動の枠は、使った条件の発数平均を出す。
 // calc の数え方（plan/design-calc-hybrid.md）: --shot-counting hybrid|firingSlots|average で、枠ごとの表にその数え方の calc の列を足す
 // （既定の calc の列は変えない。既定は hybrid）。
+// --skill-levels resourceId:slot=Lv をカンマ区切り（slot は skill1・skill2・burst。例 191:skill2=4,260:burst=4）。省略は全部 Lv10
+// （実ビルドの録画と比べるとき用。V-0065）。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -35,7 +37,7 @@ import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
 import { firingParams } from '../src/frame/firing.ts';
-import { MAX_SKILL_LEVELS, type ResolvedTrigger } from '../src/skills/resolve.ts';
+import { MAX_SKILL_LEVELS, type ResolvedTrigger, type SkillLevels } from '../src/skills/resolve.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
 import { computeTeamDamage } from '../src/calc/model.ts';
@@ -79,12 +81,14 @@ const { values } = parseArgs({
     'mid-far': { type: 'string' },
     // plan/design-calc-hybrid.md: 別の数え方の calc を並べて出す（hybrid・firingSlots・average）
     'shot-counting': { type: 'string' },
+    // 実ビルドの録画と比べるときのスキル Lv（resourceId:slot=Lv をカンマ区切り。省略は全部 Lv10）
+    'skill-levels': { type: 'string' },
   },
 });
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--shot-counting hybrid|firingSlots|average]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--shot-counting hybrid|firingSlots|average] [--skill-levels 191:skill2=4]',
   );
   process.exit(2);
 }
@@ -102,6 +106,22 @@ for (const entry of values.treasure?.split(',') ?? []) {
     process.exit(2);
   }
   treasurePhases.set(id!, phase!);
+}
+
+// スキル Lv（省略した枠・スロットは Lv10。範囲は computeTeamDamage が検証する）
+const skillLevelsById = new Map<number, SkillLevels>();
+for (const entry of values['skill-levels']?.split(',') ?? []) {
+  const m = /^\s*(\d+):(skill1|skill2|burst)=(\d+)\s*$/.exec(entry);
+  if (m === null || !ids.includes(Number(m[1]))) {
+    console.error(
+      `--skill-levels expects resourceId:slot=Lv (slot: skill1, skill2, burst) for ids in --ids, got "${entry}"`,
+    );
+    process.exit(2);
+  }
+  const id = Number(m[1]);
+  const levels = skillLevelsById.get(id) ?? { ...MAX_SKILL_LEVELS };
+  levels[m[2] as keyof SkillLevels] = Number(m[3]);
+  skillLevelsById.set(id, levels);
 }
 
 function readJson(path: string): unknown {
@@ -157,7 +177,7 @@ const slots: TeamSlotInput[] = ids.map((id) => {
   // 段階の範囲・宝物の有無は computeTeamDamage が検証する（RangeError）
   const skills = {
     definition,
-    levels: MAX_SKILL_LEVELS,
+    levels: skillLevelsById.get(id) ?? MAX_SKILL_LEVELS,
     treasurePhase: (treasurePhases.get(id) ?? 0) as TreasurePhase,
   };
   return fixedSpec
@@ -177,7 +197,7 @@ function withBuild(
   character: CharacterData,
   skills: {
     definition: ReturnType<typeof parseSkillDefinition> | null;
-    levels: typeof MAX_SKILL_LEVELS;
+    levels: SkillLevels;
     treasurePhase: TreasurePhase;
   },
   entry: BuildFile[string] | undefined,
