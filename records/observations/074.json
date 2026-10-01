@@ -120,7 +120,7 @@
     "description": "ノワール（SG）の与ダメージ（単騎・AUTO・自動バースト OFF・180 秒）。結論には結び付けない（会心の偏りで動く）",
     "method": {
       "tool": "tools/captures/hud.ts --mode final",
-      "note": "HUD の総ダメージの最後の値（f11416 の増分の後。戦闘開始 f828 から 180 秒の終わり）"
+      "note": "HUD の総ダメージの最後の値（f11416 の増分の後。戦闘開始 f828 から 180 秒の終わり）。近の着地点は A・A（V-0069 で的の大きさから読んだ。C-0155）"
     },
     "compare": {
       "model": "sim",
@@ -135,7 +135,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": false,
-        "condition": "auto"
+        "condition": "auto",
+        "nearLanding": ["A", "A"]
       }
     }
   },

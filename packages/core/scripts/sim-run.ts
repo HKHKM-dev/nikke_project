@@ -12,7 +12,8 @@
 // Stage 18-C: --condition auto|manual。auto は射撃場の表と着地点の時間割りで、コア命中率・距離ボーナス・弾丸命中率を決める
 // （射撃場のプリセットと、--enemy を省いた属性なしの射撃場の的で効く。ほかの敵では手入力の値と注記）。manual は --core-hit-rate・
 // --hit-rate（省略 1）と距離ボーナスあり。18-C2 から既定は auto で、--core-hit-rate か --hit-rate を指定したら manual。
-// --mid-far A|B|C で中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。自動の枠は、使った条件の発数平均を出す。
+// --mid-far A|B|C で中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。--near A,B で近の 1 回目・2 回目の
+// 着地点を固定する（C-0155。省略は 2 か所の配分）。自動の枠は、使った条件の発数平均を出す。
 // calc の数え方（plan/design-calc-hybrid.md）: --shot-counting hybrid|firingSlots|average で、枠ごとの表にその数え方の calc の列を足す
 // （既定の calc の列は変えない。既定は hybrid）。
 // --skill-levels resourceId:slot=Lv をカンマ区切り（slot は skill1・skill2・burst。例 191:skill2=4,260:burst=4）。省略は全部 Lv10
@@ -32,7 +33,13 @@ import {
   parseEnemyPresets,
   targetProfileForEnemy,
 } from '../src/enemies.ts';
-import { MID_FAR_LANDINGS, midFarFixed, type MidFarLanding } from '../src/records/observations.ts';
+import {
+  landingFixed,
+  MID_FAR_LANDINGS,
+  NEAR_LANDINGS,
+  type MidFarLanding,
+  type NearLanding,
+} from '../src/records/observations.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
@@ -79,6 +86,7 @@ const { values } = parseArgs({
     // Stage 18-C: 条件の決め方（auto | manual。18-C2 から既定 auto）と、中遠の着地点の固定（A | B | C）
     condition: { type: 'string' },
     'mid-far': { type: 'string' },
+    near: { type: 'string' },
     // plan/design-calc-hybrid.md: 別の数え方の calc を並べて出す（hybrid・firingSlots・average）
     'shot-counting': { type: 'string' },
     // 実ビルドの録画と比べるときのスキル Lv（resourceId:slot=Lv をカンマ区切り。省略は全部 Lv10）
@@ -88,7 +96,7 @@ const { values } = parseArgs({
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--shot-counting hybrid|firingSlots|average] [--skill-levels 191:skill2=4]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--near A,B] [--shot-counting hybrid|firingSlots|average] [--skill-levels 191:skill2=4]',
   );
   process.exit(2);
 }
@@ -152,6 +160,11 @@ if (conditionMode === 'auto' && (values['core-hit-rate'] !== undefined || values
 const midFar = values['mid-far'] as MidFarLanding | undefined;
 if (midFar !== undefined && (!MID_FAR_LANDINGS.includes(midFar) || conditionMode !== 'auto')) {
   console.error('--mid-far takes A, B or C and needs --condition auto');
+  process.exit(2);
+}
+const near = values.near?.split(',') as NearLanding[] | undefined;
+if (near !== undefined && (!near.every((n) => NEAR_LANDINGS.includes(n)) || conditionMode !== 'auto')) {
+  console.error('--near takes A or B per near span (e.g. A,B) and needs --condition auto');
   process.exit(2);
 }
 const condition = {
@@ -252,7 +265,13 @@ const input = {
       : {
           ...baseEnemy,
           target,
-          landings: enemyLandingsOf(enemyPresets, eventSetIds, Number(values.duration), target, midFarFixed(midFar)),
+          landings: enemyLandingsOf(
+            enemyPresets,
+            eventSetIds,
+            Number(values.duration),
+            target,
+            landingFixed(midFar, near),
+          ),
         },
   durationSeconds: Number(values.duration),
   burst: !values['no-burst'],
@@ -283,7 +302,14 @@ console.log(
   `duration ${input.durationSeconds}s (${sim.frames}f), burst ${input.burst ? input.burstModel : 'off'}, ` +
     `fixed spec ${fixedSpec}, build ${values.build ?? 'none'}, controlled ${input.controlledSlot === null ? 'none (all AI)' : `slot ${input.controlledSlot + 1}`}, ` +
     `enemy ${enemyPreset?.id ?? 'custom'} defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}, ` +
-    `conditions ${conditionMode}${conditionMode === 'manual' ? ` (core ${condition.coreHitRate}, hit rate ${condition.hitRate})` : midFar ? ` (mid-far ${midFar})` : ''}`,
+    `conditions ${conditionMode}${
+      conditionMode === 'manual'
+        ? ` (core ${condition.coreHitRate}, hit rate ${condition.hitRate})`
+        : [midFar ? `mid-far ${midFar}` : '', near ? `near ${near.join(',')}` : '']
+            .filter(Boolean)
+            .map((x) => ` (${x})`)
+            .join('')
+    }`,
 );
 // Stage 18-C: 着地点の区間
 if (calc.landings.length > 0 && target !== undefined) {

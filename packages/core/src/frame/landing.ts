@@ -393,12 +393,14 @@ export function landingNotes(
     ...mixes.map((id) => mixLabel(profile, id).ja),
     ...(n > 0 ? [`常時の命中率▲ ${pct(n)} でコア命中率を 1/(1 − N)² 倍（上限 1）`] : []),
     'フルバースト中などに配られる持続の命中率▲はコア命中率に効かせていない',
+    '命中率▲は弾丸命中率に効かせていない（未実装。効き方を測っていない）',
   ];
   const en = [
     `Core hit rate, distance bonus and bullet hit rate come from the ${profile.name.en} table (solo AUTO recordings)`,
     ...mixes.map((id) => mixLabel(profile, id).en),
     ...(n > 0 ? [`constant hit rate up ${pct(n)} scales core hit rate by 1/(1 − N)² (max 1)`] : []),
     'timed hit rate buffs (e.g. given at full burst) do not change core hit rate',
+    'hit rate buffs do not change bullet hit rate (not modeled; not measured)',
   ];
   notes.push({ level: 'approx', code: 'auto-condition', message: { ja: ja.join('。'), en: en.join('; ') } });
   if (n < 0) {
