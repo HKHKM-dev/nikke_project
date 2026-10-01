@@ -1,0 +1,30 @@
+{
+  "id": "101",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-101_SG_product-23_auto.mp4",
+  "original": "2026-10-01_18-25-34.mp4",
+  "durationSec": 199.1,
+  "frames": 11944,
+  "fps": 60,
+  "sizeMB": 241.2,
+  "sha256": "8e4249bf8dab",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 307,
+      "name": "プロダクト23",
+      "controlled": true,
+      "note": "単騎・AUTO 射撃 ON・オートバースト OFF。戦闘中は触っていない"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。プロダクト23単騎・AUTO 射撃 ON・オートバースト OFF（V-0063 の手順。オーナーの説明）。戦闘履歴のパネルでプロダクト23 と読めた。戦闘開始は f743（timer.ts --mode changes の +319f 前後の次の +89f 前後の変わり目）。HUD の最後の値 29,066,175 は戦闘結果の画面の TOTAL DAMAGE と一致。V-0063"
+}

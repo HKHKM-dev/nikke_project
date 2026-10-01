@@ -1,0 +1,30 @@
+{
+  "id": "103",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-103_SG_queen-makoto_auto.mp4",
+  "original": "2026-10-01_18-32-36.mp4",
+  "durationSec": 208.8,
+  "frames": 12526,
+  "fps": 60,
+  "sizeMB": 253,
+  "sha256": "b00524595b67",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": true,
+      "note": "単騎・AUTO 射撃 ON・オートバースト OFF。戦闘中は触っていない"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。クイーン（真）単騎・AUTO 射撃 ON・オートバースト OFF（V-0063 の手順。オーナーの説明）。戦闘履歴のパネルでクイーン（真）と読めた。戦闘開始は f809（timer.ts --mode changes の +319f 前後の次の +89f 前後の変わり目）。HUD の最後の値 70,459,657 は戦闘結果の画面の TOTAL DAMAGE と一致。V-0063"
+}
