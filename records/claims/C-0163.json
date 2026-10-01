@@ -4,8 +4,8 @@
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
-  "basis": "`038-14`（3 回目の段階 2 は、▲なしのモデルの値のちょうど 1.3996 倍で、段階 3 の攻撃力は乗っていない。4 回目の段階 2・3 も 1.3996 倍）。verification.md Stage 8「射撃場の実測（録画 36〜38）」の 4。V-0075",
-  "model": "**未反映**（`data/skills/231.json` の burst の effects[2]・effects[3] は、バースト使用の回数のトリガーなので発動の直前のバフで計算し、同じ発動の▲が乗らない。同じ発動の中の効果の順を表す語彙が無い）",
+  "basis": "`038-14`（3 回目の段階 2 は、▲なしのモデルの値のちょうど 1.3996 倍で、段階 3 の攻撃力は乗っていない。4 回目の段階 2・3 も 1.3996 倍）。verification.md Stage 8「射撃場の実測（録画 36〜38）」の 4。モデルに入れた後の値は `038-24`〜`038-26` で差が 1 未満。V-0075・V-0080",
+  "model": "`data/skills/231.json` の burst の `sequential` と effects[2]・effects[3]。`frame/plan.ts` の `withEarlierSequentialEffects`（同じ発動で前に書いた timed の値を足す。plan/design-burst-landing.md 3 節）",
   "replaces": [],
-  "updated": "2026-10-01"
+  "updated": "2026-10-02"
 }

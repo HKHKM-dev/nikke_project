@@ -18,7 +18,7 @@
 // options.shotCounting = 'firingSlots' で試作した。
 // 2026-09-28: design-stage10.md 5 節の案 (a)（全グループをバフ込みの平均レートで置く）を 'average' で選べるようにした。
 // 既定はハイブリッドのまま（2026-09-28 オーナー決定。実装されたキャラが増えてから、負荷と精度のバランスで改めて決める。同 10 節）。
-import { activationFramesOfSlot, summarizeSchedule } from '../burst/schedule.ts';
+import { hitFramesOfSlot, summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
 import {
   baseAttackOf,
@@ -185,11 +185,12 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
       normalDamage += damage;
     }
 
-    // バーストスキルは発動ごとに（その時点のバフで）計算する。撃つのは時刻表でこの枠が発動したフレームだけ
+    // バーストスキルは発動ごとに（その時点のバフで）計算する。撃つのは時刻表でこの枠が発動したヒットのフレームだけ
+    // （着弾編: 発動 + 遅れ。戦闘時間を超えたヒットは出ない）
     const activations: { seconds: number; hit: BurstHitResult }[] = [];
     let burstDamage = 0;
     if (schedule !== null) {
-      for (const frame of activationFramesOfSlot(schedule, index)) {
+      for (const frame of hitFramesOfSlot(schedule, index, timeline.frames)) {
         const state = burstSnapshotState(timeline, frame, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
         const trigger = computeTriggerDamage({
           ...base,

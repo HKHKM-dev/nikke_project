@@ -12,6 +12,7 @@
 // 定数の根拠は plan/design-stage7.md 0 節・1 節。演出時間は録画からの目視で、tools/captures/gauge.ts で較正する。
 import { gameSecondsToFrames } from '../time.ts';
 import type { BurstNextStep, BurstStep } from '../types.ts';
+import { withBurstDelays, type BurstDelays } from './landing.ts';
 import type { BurstActivation, BurstSchedule, BurstStepKey, CooldownReduction, FullBurstWindow } from './schedule.ts';
 
 /** バーストゲージの上限（CDN の target_burst_energy_pershot と同じ単位） */
@@ -64,6 +65,8 @@ export type BurstUnit = {
   cooldownFrames: number;
   /** Stage 8: この枠の発動でフルバーストに入ったときの長さ（burst_duration）。省略は timing.fullBurstFrames */
   fullBurstFrames?: number;
+  /** 着弾編: 発動からヒット・効果の発火までの遅れ（burst/landing.ts）。省略は 0 */
+  delays?: Readonly<BurstDelays>;
 } | null;
 
 export type BurstPhase = 'charging' | 'ready' | 'chain' | 'fullBurst';
@@ -179,7 +182,14 @@ function activate(state: BurstControllerState, slotIndex: number, frame: number)
   state.chainSlots.push(slotIndex);
   state.lastUseFrame = frame;
   const startsFullBurst = next === 'StepFull';
-  state.activations.push({ frame, step: from, slotIndex, startsFullBurst, enteredStep: startsFullBurst ? null : next });
+  const activation: BurstActivation = {
+    frame,
+    step: from,
+    slotIndex,
+    startsFullBurst,
+    enteredStep: startsFullBurst ? null : next,
+  };
+  state.activations.push(unit.delays === undefined ? activation : withBurstDelays(activation, unit.delays));
   if (startsFullBurst) {
     const start = frame + state.timing.fullBurstStartDelayFrames;
     state.fullBurstEnd = start + (unit.fullBurstFrames ?? state.timing.fullBurstFrames);

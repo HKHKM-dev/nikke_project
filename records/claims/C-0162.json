@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`038-15`（2〜5 回目のどれも、着弾の前のヒットは▲なし、着弾の後のヒットは▲あり）、`038-16`（どの回も着弾から 5 秒で切れる）、`038-17`（1 回目の着弾）。V-0075",
-  "model": "**未反映**（`data/skills/231.json` の burst の effects[1] は発動フレームから 5 秒で、フルバーストと同じ窓。窓の始まりを遅らせる語彙が無い）",
+  "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS`（イサベルの効果の発火の遅れ。C-0165）と、`skills/triggers.ts` の `burstEffects`（自分の burstUse を効果の発火のフレームで判定する）。`data/skills/231.json` の burst の effects[1]（plan/design-burst-landing.md 2 節）",
   "replaces": [],
-  "updated": "2026-10-01"
+  "updated": "2026-10-02"
 }

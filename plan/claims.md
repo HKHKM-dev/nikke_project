@@ -259,7 +259,7 @@
   - 状態: 確定・等級: 厳密一致・更新日: 2026-09-23
   - 根拠: verification.md Stage 8（録画 38 でイサベルの 5 回とも 300f）
   - モデル側: `burst/dynamic.ts`
-  - 定義: `data/skills/231.json` の burst の notes[1]
+  - 定義: `data/skills/231.json` の burst の notes[0]
 - **C-0022** III が 1 体で全員 CT 40 秒の編成は、フルバーストが 180 秒で 5 回（40 秒周期）
   - 状態: 確定・等級: 反復実測・更新日: 2026-09-28
   - 根拠: `018-01`・`019-01`・`020-01`・`021-01`・`047-01`・`079-02`（ヘルムのゲージのチャージがあっても CT で 5 回）、verification.md Stage 7
@@ -732,22 +732,23 @@
   - 検証記録: V-0075
   - 定義: `data/skills/231.json` の burst の effects[1]
 - **C-0162** イサベルのバーストの受けるダメージ▲の 5 秒の窓は、発動からではなく、バーストスキルダメージの着弾（1 回目はフルバーストの始まりから 156f 後）から始まる
-  - 状態: 確定・等級: 反復実測・更新日: 2026-10-01
+  - 状態: 確定・等級: 反復実測・更新日: 2026-10-02
   - 根拠: `038-15`（2〜5 回目のどれも、着弾の前のヒットは▲なし、着弾の後のヒットは▲あり）、`038-16`（どの回も着弾から 5 秒で切れる）、`038-17`（1 回目の着弾）。V-0075
-  - モデル側: **未反映**（`data/skills/231.json` の burst の effects[1] は発動フレームから 5 秒で、フルバーストと同じ窓。窓の始まりを遅らせる語彙が無い）
-  - 検証記録: V-0075
-  - 定義: `data/skills/231.json` の burst の effects[1]、`data/skills/231.json` の burst の notes[0]
+  - モデル側: `burst/landing.ts` の `MEASURED_BURST_DELAYS`（イサベルの効果の発火の遅れ。C-0165）と、`skills/triggers.ts` の `burstEffects`（自分の burstUse を効果の発火のフレームで判定する）。`data/skills/231.json` の burst の effects[1]（plan/design-burst-landing.md 2 節）
+  - 検証記録: V-0075、V-0080
+  - 定義: `data/skills/231.json` の burst の effects[1]
 - **C-0163** イサベルのバーストの段階 2・3 の追加ダメージには、同じ発動で付いた段階 1 の受けるダメージ▲が乗る。同じ発動で付く S1 の段階のバフは乗らない
-  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-01
-  - 根拠: `038-14`（3 回目の段階 2 は、▲なしのモデルの値のちょうど 1.3996 倍で、段階 3 の攻撃力は乗っていない。4 回目の段階 2・3 も 1.3996 倍）。verification.md Stage 8「射撃場の実測（録画 36〜38）」の 4。V-0075
-  - モデル側: **未反映**（`data/skills/231.json` の burst の effects[2]・effects[3] は、バースト使用の回数のトリガーなので発動の直前のバフで計算し、同じ発動の▲が乗らない。同じ発動の中の効果の順を表す語彙が無い）
-  - 検証記録: V-0075
-  - 定義: `data/skills/231.json` の burst の effects[2]、`data/skills/231.json` の burst の effects[3]、`data/skills/231.json` の burst の notes[0]
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-02
+  - 根拠: `038-14`（3 回目の段階 2 は、▲なしのモデルの値のちょうど 1.3996 倍で、段階 3 の攻撃力は乗っていない。4 回目の段階 2・3 も 1.3996 倍）。verification.md Stage 8「射撃場の実測（録画 36〜38）」の 4。モデルに入れた後の値は `038-24`〜`038-26` で差が 1 未満。V-0075・V-0080
+  - モデル側: `data/skills/231.json` の burst の `sequential` と effects[2]・effects[3]。`frame/plan.ts` の `withEarlierSequentialEffects`（同じ発動で前に書いた timed の値を足す。plan/design-burst-landing.md 3 節）
+  - 検証記録: V-0075、V-0080
+  - 定義: `data/skills/231.json` の burst の effects[2]、`data/skills/231.json` の burst の effects[3]
 - **C-0165** イサベルのバーストのヒット（バーストスキルダメージ）と、バーストスキル使用時の効果の発火は、III の発動（フルバーストの始まり）から、モデルのフレームで 134f 遅れる（動画のフレームで 156f。フルバーストの入りの止まり 22f を含む）
   - 状態: 確定・等級: 反復実測・更新日: 2026-10-02
-  - 根拠: `038-23`（1〜4 回目とも同じ長さ）、`038-22`。効果の発火がヒットと同じフレームなことは `038-15`（C-0162）。止まりは `videoFrameOf` と同じ 22f で差し引いた（この録画の止まりは `038-03`）。V-0078
-  - モデル側: **未反映**（plan/design-burst-landing.md 2.3 節の実測値の表に入れる予定。いまは発動のフレームに置いている）
-  - 検証記録: V-0078
+  - 根拠: `038-23`（1〜4 回目とも同じ長さ）、`038-22`。効果の発火がヒットと同じフレームなことは `038-15`（C-0162）。止まりは `videoFrameOf` と同じ 22f で差し引いた（この録画の止まりは `038-03`）。モデルに入れた後は `038-27` で一致。V-0078・V-0080
+  - モデル側: `burst/landing.ts` の `MEASURED_BURST_DELAYS` のイサベルの 1 行。`data/skills/231.json` の burst の effects[0]・effects[1]・effects[2]・effects[3]（ヒットと効果の発火のフレームで出す）
+  - 検証記録: V-0078、V-0080
+  - 定義: `data/skills/231.json` の burst の effects[0]、`data/skills/231.json` の burst の effects[1]、`data/skills/231.json` の burst の effects[2]、`data/skills/231.json` の burst の effects[3]
 
 ## 敵・的・場面
 

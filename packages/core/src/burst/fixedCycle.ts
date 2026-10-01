@@ -3,6 +3,7 @@
 // 各サイクルの通常区間の終わり（= フルバースト区間の始まり）にバースト I → II → III が同一フレームで発動する。
 // バースト CT・ゲージ蓄積は Stage 7（dynamic.ts）。ここでは毎サイクル必ず発動する。
 // Stage 7 で時刻表の形を BurstSchedule（schedule.ts）に一般化した。固定サイクルは比較・退化テスト用に残す（TeamInput.burstModel: 'fixed'）。
+import { withBurstDelays, type BurstDelays } from './landing.ts';
 import type { BurstStep } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import {
@@ -28,7 +29,8 @@ export const FIXED_BURST_CYCLE: Readonly<BurstCycleFrames> = Object.freeze({
 });
 
 /** 枠のバースト段階。null は空枠 */
-export type BurstCandidate = { burstStep: BurstStep } | null;
+/** 着弾編: delays は burst/landing.ts の遅れ（省略は 0） */
+export type BurstCandidate = { burstStep: BurstStep; delays?: Readonly<BurstDelays> } | null;
 
 /** 段階ごとに発動する枠番号。null = その段階のニケがいない（発動なし。フルバースト自体は起きると仮定） */
 export type BurstAssignment = Record<(typeof BURST_STEP_KEYS)[number], number | null>;
@@ -94,13 +96,15 @@ export function planFixedCycle(
       const slotIndex = assignment[step];
       if (slotIndex === null) continue;
       burstUsers.push(slotIndex);
-      activations.push({
+      const activation: BurstActivation = {
         frame: start,
         step,
         slotIndex,
         startsFullBurst: step === 'Step3',
         enteredStep: FIXED_ENTERED_STEP[step],
-      });
+      };
+      const delays = candidates[slotIndex]?.delays;
+      activations.push(delays === undefined ? activation : withBurstDelays(activation, delays));
     }
     fullBurstWindows.push({ start, end, burstUsers });
     fullBurstFramesTotal += end - start;

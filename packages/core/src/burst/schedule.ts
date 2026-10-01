@@ -28,7 +28,24 @@ export type BurstActivation = {
    * 通常は I → Step2、II → Step3。リエントリー（Step1 → Step1）なら Step1
    */
   enteredStep: BurstStepKey | null;
+  /**
+   * バーストの着弾編（plan/design-burst-landing.md 2 節）: バーストの倍率ダメージのヒットのフレーム。省略は frame（遅れ 0）。
+   * 戦闘時間を超えることがある（そのヒットは出ない）
+   */
+  hitFrame?: number;
+  /** 着弾編: 自分の burstUse・{ count: burstUse } のトリガーが発火するフレーム。省略は frame（遅れ 0） */
+  effectFrame?: number;
 };
+
+/** 着弾編: 発動のヒットのフレーム */
+export function hitFrameOf(a: BurstActivation): number {
+  return a.hitFrame ?? a.frame;
+}
+
+/** 着弾編: 発動の効果の発火のフレーム */
+export function effectFrameOf(a: BurstActivation): number {
+  return a.effectFrame ?? a.frame;
+}
 
 export type BurstScheduleModel = 'fixed' | 'dynamic';
 
@@ -64,6 +81,14 @@ export type BurstSchedule = {
 /** 枠 slotIndex がバーストを撃ったフレーム列（発生順） */
 export function activationFramesOfSlot(schedule: BurstSchedule, slotIndex: number): number[] {
   return schedule.activations.filter((a) => a.slotIndex === slotIndex).map((a) => a.frame);
+}
+
+/** 着弾編: 枠 slotIndex のバーストの倍率ダメージのヒットのフレーム列（発生順。戦闘時間 frames 以降は除く） */
+export function hitFramesOfSlot(schedule: BurstSchedule, slotIndex: number, frames: number): number[] {
+  return schedule.activations
+    .filter((a) => a.slotIndex === slotIndex)
+    .map(hitFrameOf)
+    .filter((f) => f < frames);
 }
 
 /**

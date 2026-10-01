@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 231,
-  "checkedAt": "2026-10-01",
+  "checkedAt": "2026-10-02",
   "skills": {
     "skill1": {
       "support": "supported",
@@ -61,15 +61,21 @@
       ]
     },
     "burst": {
-      "support": "partial",
+      "support": "supported",
+      "sequential": true,
       "effects": [
         {
           "kind": "burstDamage",
           "ref": 1,
           "damageType": "skill",
           "claims": [
-            "C-0160"
-          ]
+            "C-0160",
+            "C-0165"
+          ],
+          "assumes": {
+            "ja": "バーストスキルダメージは III の発動から遅れて出て（C-0165）、出る直前のバフで計算する（同じ発動の▲と S1 の段階のバフは乗らない）",
+            "en": "The Burst Skill damage lands after a delay from the Step III activation (C-0165) and uses the buffs just before it lands (the same activation's Damage Taken and S1 tier buffs do not apply)"
+          }
         },
         {
           "kind": "timed",
@@ -82,13 +88,14 @@
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "敵 1 体。ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 1 の▲は 2 回目の発動から）。味方全体の与ダメージに、ほかのどの群とも別の乗数 (1 + 39.96%) で掛かる。同じ発動のバーストスキルダメージには乗らない。モデルの窓は発動フレームから 5 秒（実機はバーストスキルダメージの着弾から 5 秒。未実装）",
-            "en": "One enemy. The Marked Target tier is the one before this activation raises it (tier 1 Damage Taken from the 2nd use). Applies to all allies' damage as a multiplier separate from every other group (1 + 39.96%). It does not apply to the same activation's Burst Skill damage. The model's window is 5 s from the activation frame (in game it is 5 s from when the Burst Skill damage lands; not implemented)"
+            "ja": "敵 1 体。ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 1 の▲は 2 回目の発動から）。味方全体の与ダメージに、ほかのどの群とも別の乗数 (1 + 39.96%) で掛かる。窓はバーストスキルダメージの着弾（III の発動から遅れる。C-0165）から 5 秒。同じ発動のバーストスキルダメージには乗らない",
+            "en": "One enemy. The Marked Target tier is the one before this activation raises it (tier 1 Damage Taken from the 2nd use). Applies to all allies' damage as a multiplier separate from every other group (1 + 39.96%). The window is 5 s from when the Burst Skill damage lands (delayed from the Step III activation; C-0165). It does not apply to the same activation's Burst Skill damage"
           },
           "claims": [
             "C-0160",
             "C-0161",
             "C-0162",
+            "C-0165",
             "C-0153"
           ]
         },
@@ -101,12 +108,13 @@
           "damageType": "additional",
           "ref": 4,
           "assumes": {
-            "ja": "ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 2 の追加ダメージは 3 回目の発動から）。発動の直前のバフで計算する。実機では同じ発動の段階 1 の受けるダメージ▲が乗るが、モデルでは乗らない（未実装）",
-            "en": "The Marked Target tier is the one before this activation raises it (tier 2 damage from the 3rd use). Uses the buffs just before the activation. In game the same activation's tier 1 Damage Taken applies, but not in the model (not implemented)"
+            "ja": "ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 2 の追加ダメージは 3 回目の発動から）。下位効果のスタック適用の順で、同じ発動の段階 1 の受けるダメージ▲は乗り、同じ発動の S1 の段階のバフは乗らない",
+            "en": "The Marked Target tier is the one before this activation raises it (tier 2 damage from the 3rd use). In the order of the stacked lower-tier effects, the same activation's tier 1 Damage Taken applies and the same activation's S1 tier buffs do not"
           },
           "claims": [
             "C-0160",
-            "C-0163"
+            "C-0163",
+            "C-0165"
           ]
         },
         {
@@ -118,24 +126,17 @@
           "damageType": "additional",
           "ref": 5,
           "assumes": {
-            "ja": "ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 3 の追加ダメージは 4 回目の発動から）。発動の直前のバフで計算する。実機では同じ発動の段階 1 の受けるダメージ▲が乗るが、モデルでは乗らない（未実装）",
-            "en": "The Marked Target tier is the one before this activation raises it (tier 3 damage from the 4th use). Uses the buffs just before the activation. In game the same activation's tier 1 Damage Taken applies, but not in the model (not implemented)"
+            "ja": "ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 3 の追加ダメージは 4 回目の発動から）。下位効果のスタック適用の順で、同じ発動の段階 1 の受けるダメージ▲は乗り、同じ発動の S1 の段階のバフは乗らない",
+            "en": "The Marked Target tier is the one before this activation raises it (tier 3 damage from the 4th use). In the order of the stacked lower-tier effects, the same activation's tier 1 Damage Taken applies and the same activation's S1 tier buffs do not"
           },
           "claims": [
             "C-0160",
-            "C-0163"
+            "C-0163",
+            "C-0165"
           ]
         }
       ],
       "notes": [
-        {
-          "ja": "未実装: 段階 1 の受けるダメージ▲の窓は、実機ではバーストスキルダメージの着弾（III の発動から約 2.6 秒後）から 5 秒だが、モデルは発動フレームから 5 秒（フルバーストと同じ窓）。同じ発動の段階 2・3 の追加ダメージに▲が乗ることも未実装（どちらも語彙に無い）",
-          "en": "Not implemented: in game the tier 1 Damage Taken window is 5 s from when the Burst Skill damage lands (about 2.6 s after the Step III activation), but the model uses 5 s from the activation frame (the same window as Full Burst). The same activation's tier 2 and 3 damage also taking the Damage Taken increase is not implemented (neither has vocabulary)",
-          "claims": [
-            "C-0162",
-            "C-0163"
-          ]
-        },
         {
           "ja": "フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る",
           "en": "The Full Burst Time −5 s comes from burst_duration (5 s) in the schedule",

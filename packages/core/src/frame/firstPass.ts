@@ -35,6 +35,7 @@
 // V-0030: 段の循環（cycle）の段に gaugeHits があれば、手順 2 の後にその枠の射撃を数えて段を追い（skills/cycles.ts の cycleFires と
 // 同じ規則）、段のヒットのゲージを当たるフレームに予約して、そのフレームの手順 2 で足す（紅蓮BS。C-0085）。
 // この編成では、時刻表は射撃のゲージだけの planDynamicSchedule とは違う。
+import { burstDelaysFieldOf, burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import {
@@ -49,7 +50,7 @@ import {
 import { SG_PELLET_GAUGE_HIT_RATE, burstUnitOf, energyPerTrigger, partialGaugeRatio } from '../burst/dynamic.ts';
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
 import { resolveDamageGauges } from '../skills/burstDamage.ts';
-import type { BurstActivation, BurstSchedule, BurstScheduleModel } from '../burst/schedule.ts';
+import { effectFrameOf, type BurstActivation, type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
 import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
 import {
   isResolvedShotCount,
@@ -416,6 +417,10 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
               `cycle gauge hits support only a burstUse cycleEvery, got ${JSON.stringify(e.trigger)}`,
             );
           }
+          // 着弾編: 循環の窓は発動のフレームから数えるので、効果の発火が遅れるキャラ（burst/landing.ts）には使えない
+          if (burstDelaysOf(slot.character.resourceId).effectFrames !== 0) {
+            throw new RangeError('cycleEvery is not supported for a character with a burst effect delay');
+          }
           return { every: e.every, durationFrames: e.durationFrames };
         });
       cycleTrackers.push({
@@ -455,6 +460,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
   });
   const pendingGauge = new Map<number, number>();
+  /** 着弾編: 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
+  const pendingBurstEffects = new Map<number, BurstActivation[]>();
   const cycleGaugeHits: FirstPassResult['cycleGaugeHits'] = [];
   let nextCycleActivation = 0;
 
@@ -463,7 +470,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   if (options.burst) {
     if (burstModel === 'fixed') {
       fixed = planFixedCycle(
-        slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep })),
+        slots.map((s) =>
+          s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character.resourceId) },
+        ),
         frames,
       );
     } else {
@@ -609,6 +618,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (activations[nextActivation]!.frame === f) now.push(activations[nextActivation]!);
       nextActivation += 1;
     }
+    // 着弾編: 効果の発火は発動 + 遅れのフレーム。先のフレームなら積んでおく（遅れの無いキャラはこのフレーム）
+    const burstEffects: BurstActivation[] = pendingBurstEffects.get(f) ?? [];
+    if (burstEffects.length > 0) pendingBurstEffects.delete(f);
+    for (const a of now) {
+      const at = effectFrameOf(a);
+      if (at === f) burstEffects.push(a);
+      else if (at < frames) pendingBurstEffects.set(at, [...(pendingBurstEffects.get(at) ?? []), a]);
+    }
     const windows = windowsOf();
     let fullBurstStart = false;
     let fullBurstStartUsers: readonly number[] = [];
@@ -657,6 +674,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       frame: f,
       shots: shotEvents,
       activations: now,
+      burstEffects,
       fullBurstStart,
       fullBurstEnd,
       gaugeFull,

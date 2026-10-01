@@ -560,6 +560,12 @@ export type SkillEntry = {
   effects: SkillEffect[];
   /** 扱わなかった効果の説明（partial / unsupported のとき） */
   notes?: SkillNote[];
+  /**
+   * 着弾編（plan/design-burst-landing.md 3 節）: 「下位効果のスタック適用」。burst スロットだけに書ける。同じ発動で発火する
+   * 効果を書いた順に当て、後の damage は、同じ発動で前に書いた timed の値を足したバフで計算する（C-0163）。
+   * 先頭は burstDamage（ヒットの直前のバフのまま）。別スロットの効果は見ない
+   */
+  sequential?: true;
 };
 
 export type SkillDefinition = {
@@ -1151,6 +1157,12 @@ function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' 
   if (support !== 'unsupported' && effects.length === 0)
     fail(`${path}.effects`, `${support} skills need at least one effect`);
   const entry: SkillEntry = { support, effects };
+  if (v.sequential !== undefined) {
+    if (v.sequential !== true) fail(`${path}.sequential`, 'expected true');
+    if (slot !== 'burst') fail(`${path}.sequential`, 'only allowed in the burst slot');
+    if (effects[0]?.kind !== 'burstDamage') fail(`${path}.sequential`, 'the first effect must be burstDamage');
+    entry.sequential = true;
+  }
   if (v.notes !== undefined) {
     if (!Array.isArray(v.notes)) fail(`${path}.notes`, 'expected an array');
     entry.notes = v.notes.map((n, i) => parseNote(n, `${path}.notes[${i}]`));

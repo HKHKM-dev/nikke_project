@@ -1,6 +1,6 @@
 // Stage 19-B: 観測値（records/observations/<録画 id>.json）の型・検証と、照合ランナー（モデルと比べて残差を出す）。
 // plan/design-stage19.md 2.3・2.3.1・2.5 節。
-import { videoFrameOf } from '../burst/schedule.ts';
+import { hitFrameOf, videoFrameOf } from '../burst/schedule.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { DISTANCE_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
@@ -254,6 +254,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
   dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
   skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
+  burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
 };
 
 function videoFramesBetween(schedule: SimResult['schedule'], ctx: MetricContext): number {
@@ -295,6 +296,19 @@ function skillHitDamage(result: SimResult, ctx: MetricContext): number {
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目の倍率ダメージが無い`);
   const crit = ctx.args.crit === true ? hit.hit.boost.critDamage - 1 : 0;
   return (hit.hit.perActivation / hit.hit.boost.total) * (1 + crit + hit.hit.boost.fullBurst);
+}
+
+/**
+ * バーストの着弾編（plan/design-burst-landing.md）: 枠のバーストの、発動からヒット（バーストの倍率ダメージ）までの
+ * 動画のフレーム数（発動の順に最初の count 回）。フルバーストの入りの止まりは videoFrameOf で足す
+ */
+function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
+  const count = Number(ctx.args.count);
+  if (mine.length < count) throw new Error(`発動が ${mine.length} 回しかない`);
+  return mine.slice(0, count).map((a) => videoFrameOf(schedule, hitFrameOf(a)) - videoFrameOf(schedule, a.frame));
 }
 
 function gaugeFull(frames: readonly number[] | undefined, ctx: MetricContext): number {

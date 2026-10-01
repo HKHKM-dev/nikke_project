@@ -6,7 +6,13 @@
 // どちらも同じコードを通るので、ループの中で見た発火と、あとで planBuffTimeline が作る窓が食い違わない。
 // Stage 11: 出来事に「回復を受けた」（healed）と、フルバーストを開いたチェーンの枠（burstUsers。発火の文脈）を足した
 // （plan/design-stage11.md 3 節）。
-import type { BurstActivation, BurstSchedule, BurstScheduleModel, BurstStepKey } from '../burst/schedule.ts';
+import {
+  effectFrameOf,
+  type BurstActivation,
+  type BurstSchedule,
+  type BurstScheduleModel,
+  type BurstStepKey,
+} from '../burst/schedule.ts';
 import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import { isResolvedEventCount, isResolvedTimer, isResolvedShotCount, type ResolvedTrigger } from './resolve.ts';
 import type { FireContext } from './targets.ts';
@@ -26,6 +32,11 @@ export type FrameEvents = {
   shots: readonly (ShotEvent | null)[];
   /** このフレームのバーストの発動（時刻表の順） */
   activations: readonly BurstActivation[];
+  /**
+   * 着弾編（plan/design-burst-landing.md 2 節）: このフレームに効果が発火したバーストの発動（effectFrameOf がこのフレーム）。
+   * 自分の burstUse・{ count: burstUse } はこちらで判定する。遅れの無いキャラは activations と同じ
+   */
+  burstEffects: readonly BurstActivation[];
   fullBurstStart: boolean;
   /** フルバーストが終わった（戦闘時間で切られた最後の窓の end = frames は来ない） */
   fullBurstEnd: boolean;
@@ -81,7 +92,7 @@ export function createTriggerTracker(
   if (isResolvedEventCount(t)) {
     return (ev) => {
       const happened =
-        t.count === 'burstUse' ? ev.activations.some((a) => a.slotIndex === slotIndex) : ev.fullBurstStart;
+        t.count === 'burstUse' ? ev.burstEffects.some((a) => a.slotIndex === slotIndex) : ev.fullBurstStart;
       if (!happened) return false;
       // 回数は戦闘中ずっと数える。atLeast 回目以降の発動のたびに発火する（下位効果のスタック適用）
       count += 1;
@@ -92,7 +103,7 @@ export function createTriggerTracker(
     case 'battleStart':
       return (ev) => ev.frame === 0;
     case 'burstUse':
-      return (ev) => ev.activations.some((a) => a.slotIndex === slotIndex);
+      return (ev) => ev.burstEffects.some((a) => a.slotIndex === slotIndex);
     case 'fullBurstStart':
       return (ev) => ev.fullBurstStart;
     case 'fullBurstEnd':
@@ -143,6 +154,7 @@ export function replayEvents(
         frame,
         shots: Array.from({ length: slotCount }, () => null),
         activations: [],
+        burstEffects: [],
         fullBurstStart: false,
         fullBurstEnd: false,
         gaugeFull: false,
@@ -166,6 +178,11 @@ export function replayEvents(
   });
   if (schedule !== null) {
     for (const a of schedule.activations) if (a.frame < frames) (at(a.frame).activations as BurstActivation[]).push(a);
+    // 着弾編: 効果の発火は発動 + 遅れのフレーム（同じフレームなら時刻表の順）
+    for (const a of schedule.activations) {
+      const f = effectFrameOf(a);
+      if (f < frames) (at(f).burstEffects as BurstActivation[]).push(a);
+    }
     for (const w of schedule.fullBurstWindows) {
       if (w.start < frames) {
         const ev = at(w.start);

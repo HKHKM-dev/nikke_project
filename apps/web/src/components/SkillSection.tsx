@@ -4,6 +4,8 @@ import {
   SKILL_SLOTS,
   TREASURE_PHASE_MAX,
   applyTreasure,
+  framesToGameSeconds,
+  measuredBurstDelayRow,
   renderSkillDescription,
   treasureSlots,
   type CharacterData,
@@ -15,6 +17,24 @@ import { useState, type Dispatch } from 'react';
 import { SKILL_SLOT_LABEL, SUPPORT_BADGE, treasurePhaseLabel } from '../skillLabels.ts';
 import { clampSkillLevel, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
+
+/**
+ * バーストの着弾編（plan/design-burst-landing.md 6 節の 3）: 実測値の表に載ったキャラだけ、発動からヒットと効果の発火までの
+ * 遅れを出す（表に無いキャラは未測定だが、何も出さない）
+ */
+function BurstDelayNote({ resourceId }: { resourceId: number }) {
+  const row = measuredBurstDelayRow(resourceId);
+  if (row === null) return null;
+  const sec = (frames: number) => framesToGameSeconds(frames).toFixed(2);
+  return (
+    <ul className="notes">
+      <li className="note approx">
+        <span className="badge">実測</span>{' '}
+        {`バーストスキルダメージは発動の ${sec(row.delays.hitFrames)} 秒後、バーストスキル使用時の効果は ${sec(row.delays.effectFrames)} 秒後に出る（${row.claim}）`}
+      </li>
+    </ul>
+  );
+}
 
 type LevelInputProps = {
   value: number;
@@ -155,6 +175,7 @@ export function SkillSection({ slotIndex, character, levels, treasurePhase, disa
                     ))}
                 </ul>
               )}
+              {slot === 'burst' && <BurstDelayNote resourceId={shown.character.resourceId} />}
               {entry?.notes && entry.notes.length > 0 && (
                 <ul className="notes">
                   {entry.notes.map((n, i) => (
