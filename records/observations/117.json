@@ -1,0 +1,76 @@
+[
+  {
+    "id": "117-01",
+    "recording": "117",
+    "kind": "total",
+    "use": "record",
+    "source": "V-0074",
+    "readAt": "2026-10-02",
+    "value": 420144911,
+    "description": "ラピ：レッドフード（AI）+ I-DOLL・サン（操作・撃たない）+ デルタ（AI）+ リター（AI）の 180 秒の HUD の総ダメージの最後の値（対照の 2 本目）。戦闘履歴のパネルの 4 人の与ダメージの和と一致",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "最後の増分は f11537。パネルは f12100 を still.ts で切り出して読んだ"
+    }
+  },
+  {
+    "id": "117-02",
+    "recording": "117",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0074",
+    "readAt": "2026-10-02",
+    "value": [1479, 3962, 6535, 8430, 10325],
+    "unit": "f",
+    "description": "フルバーストの入りで HUD の総ダメージが止まった後、最初に増えたフレーム（5 回）。フルバーストの窓（10 秒 = 589f）はここから数えた",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/timer.ts --mode changes",
+      "note": "残り時間の変わり目も同じ所で延びた（1479〜1493(+14)・3963(+48)〜4054・6536(+69)・8430(+56)〜8513・10325(+45)〜10361）"
+    }
+  },
+  {
+    "id": "117-03",
+    "recording": "117",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0074",
+    "readAt": "2026-10-02",
+    "value": [2758, 4922, 7276, 9445, 11416],
+    "unit": "f",
+    "description": "的のジャンプで HUD の総ダメージが止まる直前の最後の増分のフレーム（5 回）。次の増分は 121・152・120・114・121f 後",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分の 100f を超える空き"
+    }
+  },
+  {
+    "id": "117-04",
+    "recording": "117",
+    "kind": "rate",
+    "use": "record",
+    "source": "V-0074",
+    "readAt": "2026-10-02",
+    "value": [0.262, 0.244],
+    "unit": "割合",
+    "description": "リター（SMG・AI）の近の 2 区間（2・5 区間目）のコア命中率。フルバーストの窓（命中率▲なし）の中と外の順。中は 72 / 275、外は 188 / 769（コア / 当たった数）。区間別は、2 区間目 36 / 141 と 95 / 413、5 区間目 36 / 134 と 93 / 356。会心の割合は中 0.164・外 0.161",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（分解は使い捨てのスクリプト。114-04 と同じ読み方）",
+      "note": "116-04 と同じ読み方。合わないフレームは近で 224"
+    }
+  },
+  {
+    "id": "117-05",
+    "recording": "117",
+    "kind": "rate",
+    "use": "record",
+    "source": "V-0074",
+    "readAt": "2026-10-02",
+    "value": [0.136, 0.127],
+    "unit": "割合",
+    "description": "リター（SMG・AI）の中近（1 区間目）のコア命中率。フルバーストの窓の中と外の順。中は 23 / 169、外は 52 / 409。会心の割合は中 0.148・外 0.134",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（分解は使い捨てのスクリプト。114-04 と同じ読み方）",
+      "note": "116-04 と同じ読み方"
+    }
+  }
+]

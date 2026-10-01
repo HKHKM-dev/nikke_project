@@ -1,0 +1,51 @@
+{
+  "id": "115",
+  "date": "2026-10-02",
+  "folder": "range",
+  "file": "20261002-115_SMG+SR+MG_liter+delta+modernia_liter-ai.mp4",
+  "original": "2026-10-02_00-01-42.mp4",
+  "durationSec": 210.1,
+  "frames": 12603,
+  "fps": 60,
+  "sizeMB": 254.4,
+  "sha256": "6b7953d62ea4",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": false,
+      "note": "AI。S2 の命中率▲の出どころ"
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true,
+      "note": "操作・撃たない（与ダメージ 0）"
+    },
+    {
+      "slot": 3,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false,
+      "note": "AI"
+    },
+    {
+      "slot": 4,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false,
+      "note": "AI。受け手（コア命中率を読む枠）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0074 の 2 本目（114 と同じ編成）。戦闘履歴のパネルは映っていない（結果画面の TOTAL DAMAGE 297,658,199 が HUD の最後の値と一致）。枠順は HUD の枠のアイコンと、114 と同じ 1 ヒットの値で確かめた。戦闘開始は f875（timer.ts --mode changes の +89f の変わり目）。的のジャンプの窓は HUD の増分の 120f 前後の空き 5 回（f2598・4763・7116・9281・11257 から）。読み取りの注記は V-0074"
+}
