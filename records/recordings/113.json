@@ -1,0 +1,36 @@
+{
+  "id": "113",
+  "date": "2026-10-01",
+  "folder": "range",
+  "file": "20261001-113_AR_kurumi_damage-taken-delta.mp4",
+  "original": "2026-10-01_22-03-26.mp4",
+  "durationSec": 220.3,
+  "frames": 13219,
+  "fps": 60,
+  "sizeMB": 266.6,
+  "sha256": "ddfdd4441171",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": true,
+      "note": "操作キャラの枠・AUTO 射撃 ON・オートバースト ON"
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。クルミ（I）+ デルタ（II）の 2 体（戦闘履歴のパネル（f12975〜）で枠と名前を確かめた。Lv.400。交戦時間 03:00）。AUTO 射撃・オートバーストとも ON（画面左上のボタン）。撮影中にほかの重い処理が動いていて、録画が詰まった箇所がある（dups.ts で、f2240〜3209・f9691〜10326 に 3〜5f の重複フレームが固まる。残り時間の 1 秒は平均 59.14f）。1 発の値は影響を受けない。戦闘開始は f857（timer.ts --mode changes の +88f の変わり目）。HUD の最後の値 60,968,620 は、戦闘履歴の 2 人の与ダメージの和と一致。録画の番号は、E: の別の作業の 109〜112 の次。V-0067"
+}
