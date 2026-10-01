@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 231,
-  "checkedAt": "2026-09-23",
+  "checkedAt": "2026-10-01",
   "skills": {
     "skill1": {
       "support": "supported",
@@ -15,7 +15,10 @@
           "target": "self",
           "stat": "critRate",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0160"
+          ]
         },
         {
           "kind": "timed",
@@ -26,7 +29,10 @@
           "target": "self",
           "stat": "critDamage",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-0160"
+          ]
         },
         {
           "kind": "timed",
@@ -37,7 +43,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-0160"
+          ]
         }
       ]
     },
@@ -57,7 +66,31 @@
         {
           "kind": "burstDamage",
           "ref": 1,
-          "damageType": "skill"
+          "damageType": "skill",
+          "claims": [
+            "C-0160"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "敵 1 体。ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 1 の▲は 2 回目の発動から）。味方全体の与ダメージに、ほかのどの群とも別の乗数 (1 + 39.96%) で掛かる。同じ発動のバーストスキルダメージには乗らない。モデルの窓は発動フレームから 5 秒（実機はバーストスキルダメージの着弾から 5 秒。未実装）",
+            "en": "One enemy. The Marked Target tier is the one before this activation raises it (tier 1 Damage Taken from the 2nd use). Applies to all allies' damage as a multiplier separate from every other group (1 + 39.96%). It does not apply to the same activation's Burst Skill damage. The model's window is 5 s from the activation frame (in game it is 5 s from when the Burst Skill damage lands; not implemented)"
+          },
+          "claims": [
+            "C-0160",
+            "C-0161",
+            "C-0162",
+            "C-0153"
+          ]
         },
         {
           "kind": "damage",
@@ -68,9 +101,13 @@
           "damageType": "additional",
           "ref": 4,
           "assumes": {
-            "ja": "ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 2 の追加ダメージは 3 回目の発動から。録画 38 で確認）",
-            "en": "The Target Marking tier is the one before this activation raises it (tier 2 damage from the 3rd use; confirmed by recording 38)"
-          }
+            "ja": "ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 2 の追加ダメージは 3 回目の発動から）。発動の直前のバフで計算する。実機では同じ発動の段階 1 の受けるダメージ▲が乗るが、モデルでは乗らない（未実装）",
+            "en": "The Marked Target tier is the one before this activation raises it (tier 2 damage from the 3rd use). Uses the buffs just before the activation. In game the same activation's tier 1 Damage Taken applies, but not in the model (not implemented)"
+          },
+          "claims": [
+            "C-0160",
+            "C-0163"
+          ]
         },
         {
           "kind": "damage",
@@ -81,15 +118,30 @@
           "damageType": "additional",
           "ref": 5,
           "assumes": {
-            "ja": "ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 3 の追加ダメージは 4 回目の発動から。録画 38 で確認）",
-            "en": "The Target Marking tier is the one before this activation raises it (tier 3 damage from the 4th use; confirmed by recording 38)"
-          }
+            "ja": "ターゲットマーキングの段階は同じ発動で上がる前の段階を見る（段階 3 の追加ダメージは 4 回目の発動から）。発動の直前のバフで計算する。実機では同じ発動の段階 1 の受けるダメージ▲が乗るが、モデルでは乗らない（未実装）",
+            "en": "The Marked Target tier is the one before this activation raises it (tier 3 damage from the 4th use). Uses the buffs just before the activation. In game the same activation's tier 1 Damage Taken applies, but not in the model (not implemented)"
+          },
+          "claims": [
+            "C-0160",
+            "C-0163"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "段階 1 の敵の受けるダメージ 39.96%▲（5 秒間維持。2 回目の発動から）は未対応（敵デバフは語彙にない。録画 38 で別枠の乗数 ×1.3996 と確認）。フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る",
-          "en": "Tier 1 Damage Taken +39.96% on enemies (5 s, from the 2nd use) is not modeled (no vocabulary for enemy debuffs; recording 38 shows it is a separate ×1.3996 multiplier). The Full Burst Time −5 s comes from burst_duration (5 s) in the schedule"
+          "ja": "未実装: 段階 1 の受けるダメージ▲の窓は、実機ではバーストスキルダメージの着弾（III の発動から約 2.6 秒後）から 5 秒だが、モデルは発動フレームから 5 秒（フルバーストと同じ窓）。同じ発動の段階 2・3 の追加ダメージに▲が乗ることも未実装（どちらも語彙に無い）",
+          "en": "Not implemented: in game the tier 1 Damage Taken window is 5 s from when the Burst Skill damage lands (about 2.6 s after the Step III activation), but the model uses 5 s from the activation frame (the same window as Full Burst). The same activation's tier 2 and 3 damage also taking the Damage Taken increase is not implemented (neither has vocabulary)",
+          "claims": [
+            "C-0162",
+            "C-0163"
+          ]
+        },
+        {
+          "ja": "フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る",
+          "en": "The Full Burst Time −5 s comes from burst_duration (5 s) in the schedule",
+          "claims": [
+            "C-0011"
+          ]
         }
       ]
     }

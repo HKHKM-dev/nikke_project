@@ -101,5 +101,280 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "038-07",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "description": "イサベルのバーストスキルダメージ（会心なし）。1 回目の発動（f1624）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "単独の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "038-08",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "description": "イサベルのバーストスキルダメージ（会心なし）。2 回目の発動（f4044）。段階 1 の受けるダメージ▲が付く発動だが、このヒットには乗らない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "単独の増分。直前の f4043 のラムの 1 発と直後の f4057 のイサベルの発は、別のフレームに出た"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "038-09",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "description": "イサベルのバーストスキルダメージ（会心なし）。3 回目の発動（f6421）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f6421 の増分 939,476 を、バーストスキルダメージと段階 2 の追加ダメージ（038-14）に分けた。会心・▲の有無の組み合わせのうち、端数まで合う分け方はこの 1 つだけ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "038-10",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 211963,
+    "description": "イサベルのバーストスキルダメージ（会心なし）。4 回目の発動（f8799）。3 回目の発動で付いた段階 3 の攻撃力が、発動の前から付いている",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f8799 の増分 2,611,187 を、バーストスキルダメージと段階 2・3 の追加ダメージ（038-14）に分けた。会心・▲の有無の組み合わせのうち、端数まで合う分け方はこの 1 つだけ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "038-11",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 382093,
+    "description": "ラム（SR）のフルバースト中の 1 発（コア・会心なし・距離なし）。イサベルの受けるダメージ▲の窓の中（2 回目の着弾の後の f4125 と、5 回目の着弾の後の f11263）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "単独の増分。▲の窓の外のフルバースト中は 273,001（f4043 など）。モデルは 2 回目のフルバーストの中（▲の窓の中）のフレームで比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "038-12",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 364992,
+    "description": "デルタ（SR）のフルバースト中の 1 発（コア・会心なし・距離なし）。イサベルの受けるダメージ▲の窓の中（4 回目の着弾の後の f8857 と、5 回目の着弾の後の f11266）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "単独の増分。▲の窓の外のフルバースト中は 260,783（f4007 など）。モデルは 2 回目のフルバーストの中（▲の窓の中）のフレームで比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "038-13",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 458511,
+    "description": "ラム（SR）のフルバースト中の 1 発（コア・会心・距離なし）。イサベルの受けるダメージ▲の窓の中（4 回目の着弾の後の f8833・f8915）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "単独の増分。モデルは 2 回目のフルバーストの中（▲の窓の中）のフレームで比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3200,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "038-14",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "hit",
+    "use": "record",
+    "value": [758766, 889989, 1509234],
+    "description": "イサベルの段階 2・3 の追加ダメージ: 3 回目の発動の段階 2（会心なし）、4 回目の発動の段階 2（会心なし）、4 回目の発動の段階 3（会心）。どれも、その発動で付いた受けるダメージ▲（× 1.3996）が乗り、その発動で付いた S1 の段階のバフは乗らない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f6421 の 939,476 からバーストスキルダメージ 180,710（038-09）を、f8799 の 2,611,187 から 211,963（038-10）を引いた。4 回目の残り 2,399,224 は、段階 2・3 の会心・会心なしの 4 通りの和のうち、段階 2 会心なし + 段階 3 会心だけが端数まで合う。5 回目（f11188）は前の 13 フレームが読めず、ほかのヒットと重なったので使わない"
+    }
+  },
+  {
+    "id": "038-15",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "interval",
+    "use": "record",
+    "value": [-1, 13, -23, 0, -24, 24, -86, 75],
+    "unit": "f",
+    "description": "2〜5 回目のバーストスキルダメージの着弾（f4044・6421・8799・11188）を 0 として、▲が乗っていない最後のヒットと、▲が乗った最初のヒットのフレーム（回ごとに [▲なし, ▲あり] の組を順に並べた）。3 回目の 0 は、着弾と同じフレームの段階 2 の追加ダメージ",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "ヒットの値が、▲なしと × 1.3996 のどちらの組み合わせで端数まで合うかで分けた（ラム・デルタの 1 発は値が決まっているので確か。イサベルのペレットは組み合わせが 1 通りに決まったものだけ）。5 回目の着弾の前は f11175〜11187 が読めていない"
+    }
+  },
+  {
+    "id": "038-16",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "interval",
+    "use": "record",
+    "value": [264, 298, 275, 314, 259, 299, 275, 397],
+    "unit": "f",
+    "description": "2〜5 回目のバーストスキルダメージの着弾を 0 として、▲が乗った最後のヒットと、▲が乗っていない最初のヒットのフレーム（回ごとに [▲あり, ▲なし] の組を順に並べた）。5 秒（この録画で約 294f。038-01）は、どの回の組の間にも入る",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "038-15 と同じ分け方"
+    }
+  },
+  {
+    "id": "038-17",
+    "recording": "038",
+    "source": "V-0075",
+    "readAt": "2026-10-01",
+    "kind": "interval",
+    "use": "record",
+    "value": 156,
+    "unit": "f",
+    "description": "1 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム f1468。038-04）から、イサベルのバーストスキルダメージの着弾（f1624。038-07）までのフレーム数",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "2〜5 回目のフルバーストの始まりは読んでいない"
+    }
   }
 ]

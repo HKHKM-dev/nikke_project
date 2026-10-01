@@ -253,6 +253,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
   burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
   dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
+  skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
 };
 
 function videoFramesBetween(schedule: SimResult['schedule'], ctx: MetricContext): number {
@@ -282,6 +283,18 @@ function dotHitDamage(result: SimResult, ctx: MetricContext): number {
   if (tick === undefined) throw new Error(`${String(ctx.args.n)} 回目の持続ダメージの tick が無い`);
   const crit = ctx.args.crit === true ? tick.hit.boost.critDamage - 1 : 0;
   return (tick.hit.perActivation / tick.hit.boost.total) * (1 + crit + tick.hit.boost.fullBurst);
+}
+
+/**
+ * 受けるダメージ編（イサベル）: 倍率ダメージ（damage。持続ダメージを除く）の n 回目（0 始まり。枠の発動を通した順）の 1 発動の値。
+ * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す
+ */
+function skillHitDamage(result: SimResult, ctx: MetricContext): number {
+  const hits = result.skillHits.filter((h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot === undefined);
+  const hit = hits[Number(ctx.args.n)];
+  if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目の倍率ダメージが無い`);
+  const crit = ctx.args.crit === true ? hit.hit.boost.critDamage - 1 : 0;
+  return (hit.hit.perActivation / hit.hit.boost.total) * (1 + crit + hit.hit.boost.fullBurst);
 }
 
 function gaugeFull(frames: readonly number[] | undefined, ctx: MetricContext): number {
