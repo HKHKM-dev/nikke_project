@@ -1,0 +1,61 @@
+{
+  "verification": "V-0063",
+  "note": "2026-10-02 に、予測ファイルの形を確かめるために後から書いた（V-0063 は 2026-10-01 に完了。撮る前の予測は検証記録の本文にある）。値は 2026-10-02 のモデルのもの",
+  "team": [
+    {
+      "rid": 307,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "モデルの表のまま（SG の弾丸命中率はノワールの 6 本の合計。近は着地点ごと）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "total-101",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "nearLanding": ["A", "B"]
+      },
+      "note": "録画 101・102 の与ダメージ（近の着地点 A・B）",
+      "observations": ["101-01", "102-01"]
+    },
+    {
+      "id": "shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "180 秒のトリガーの数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "72daeea3adad28fa358aec4a493bf0998f84340f",
+    "values": {
+      "H1": {
+        "total-101": 28828524.522552285,
+        "shots": 187
+      }
+    }
+  }
+}

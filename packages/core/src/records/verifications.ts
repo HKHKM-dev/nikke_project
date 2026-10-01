@@ -249,8 +249,15 @@ const HEADER = `# 検証記録の一覧
 
 const listText = (ids: readonly string[]) => ids.join('、');
 
-/** plan/verifications.md の全文 */
-export function renderVerifications(list: readonly Verification[], observations: readonly Observation[]): string {
+/**
+ * plan/verifications.md の全文。extraLines は検証記録 ID → その項に足す行（「  - 」で始まる。予測との比べなど。
+ * plan/design-records-automation.md 3.5 節）
+ */
+export function renderVerifications(
+  list: readonly Verification[],
+  observations: readonly Observation[],
+  extraLines: ReadonlyMap<string, readonly string[]> = new Map(),
+): string {
   const sorted = sortVerifications(list);
   const byId = new Map(sorted.map((v) => [v.id, v]));
   const reverse = (pick: (v: Verification) => readonly string[]) => {
@@ -308,6 +315,7 @@ export function renderVerifications(list: readonly Verification[], observations:
     for (const [name, ids] of rows)
       if (ids !== undefined && ids.length > 0) lines.push(`  - ${name}: ${listText(ids)}`);
     if (v.waitingFor) lines.push(`  - 待ち: ${v.waitingFor}`);
+    lines.push(...(extraLines.get(v.id) ?? []));
   }
   return `${lines.join('\n')}\n`;
 }

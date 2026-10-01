@@ -141,6 +141,40 @@ export function gatedObservations(claims: readonly Claim[], invalidIds: Readonly
   );
 }
 
+/**
+ * 根拠の等級の候補（plan/design-records-automation.md 3.5 節）。結論の根拠の観測値のうち、モデルと比べたもの（residuals）から
+ * 機械で出す。上から順に当てはめる。根拠にモデルと比べた観測値が無い（記録だけの観測値や、旧の文書を指す根拠）ときは
+ * 機械では決められないので undefined。データ明記は人が決めるので機械では出さない。
+ *   厳密一致: 整数の観測値で、許容内かつ差が 0 のものがある
+ *   反復実測: 許容内の観測値が 2 本以上の録画にある
+ *   単独実測: 許容内が 1 本の録画だけ（か無い）
+ */
+export function gradeCandidate(
+  claim: Claim,
+  residuals: ReadonlyMap<string, { status: string; diff: number | null; value: number | number[] }>,
+  invalidIds: ReadonlySet<string> = new Set(),
+): ClaimGrade | undefined {
+  const valid = claim.observations.filter((o) => !invalidIds.has(o));
+  const compared = valid.flatMap((o) => {
+    const r = residuals.get(o);
+    return r === undefined || r.status === 'invalid' ? [] : [{ id: o, ...r }];
+  });
+  if (compared.length === 0) return undefined;
+  const ok = compared.filter((r) => r.status === 'ok');
+  const isInteger = (v: number | number[]) => (Array.isArray(v) ? v.every(Number.isInteger) : Number.isInteger(v));
+  if (ok.some((r) => r.diff === 0 && isInteger(r.value))) return '厳密一致';
+  const recordings = new Set(ok.map((r) => r.id.replace(/-\d+$/, '')));
+  if (recordings.size >= 2) return '反復実測';
+  return '単独実測';
+}
+
+const GRADE_RANK: Record<ClaimGrade, number> = { 厳密一致: 1, 反復実測: 2, データ明記: 3, 単独実測: 4, 推論: 5 };
+
+/** 人が書いた等級が、機械の候補より上（覆りにくい側）か。データ明記は人の判断なので問わない */
+export function gradeAboveCandidate(grade: ClaimGrade, candidate: ClaimGrade): boolean {
+  return grade !== 'データ明記' && GRADE_RANK[grade] < GRADE_RANK[candidate];
+}
+
 // ---- plan/claims.md（生成） ----
 
 const CLAIMS_HEADER = `# 結論の台帳
@@ -169,6 +203,8 @@ export function renderClaims(
   invalidReasons: ReadonlyMap<string, string> = new Map(),
   /** 結論 ID → それを claims に書いたスキル定義の場所（plan/skills-guide.md 3 節。定義の側から逆に引く） */
   definitionPlaces: ReadonlyMap<string, readonly string[]> = new Map(),
+  /** 結論 ID → 機械が出した等級の候補（plan/design-records-automation.md 3.5 節。書いた等級と違うときだけ出す） */
+  gradeCandidates: ReadonlyMap<string, ClaimGrade> = new Map(),
 ): string {
   const replacedBy = new Map<string, string[]>();
   for (const c of claims) for (const r of c.replaces) replacedBy.set(r, [...(replacedBy.get(r) ?? []), c.id]);
@@ -200,6 +236,11 @@ export function renderClaims(
       const invalid = c.observations.filter((o) => invalidReasons.has(o));
       if (invalid.length > 0)
         lines.push(`  - **失効した根拠**: ${invalid.map((o) => `${o}（${invalidReasons.get(o)}）`).join('、')}`);
+      const candidate = gradeCandidates.get(c.id);
+      if (candidate !== undefined && c.grade !== undefined && candidate !== c.grade && c.state !== '棄却') {
+        const above = gradeAboveCandidate(c.grade, candidate);
+        lines.push(`  - 等級の候補（機械）: ${candidate}${above ? '（書いた等級のほうが上）' : ''}`);
+      }
     }
   }
   return `${lines.join('\n')}\n`;

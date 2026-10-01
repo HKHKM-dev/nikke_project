@@ -1,11 +1,12 @@
 // Stage 19: records/ と packages/core/data を Node で読む（records-table.ts・records-check.ts・テストで共有）。
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseEnemyPresets } from '../src/enemies.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
 import type { DefinedCharacter } from '../src/records/skills.ts';
+import type { PredictionFile } from '../src/records/predictions.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
 import type { CharacterData } from '../src/types.ts';
@@ -21,6 +22,8 @@ export const RESIDUALS_PATH = `${ROOT}plan/residuals.md`;
 /** 結論の一覧（生成物。Stage 20-B） */
 export const CLAIMS_PATH = `${ROOT}plan/claims.md`;
 const VERIFICATIONS_DIR = `${ROOT}records/verifications/`;
+/** 予測ファイル（plan/design-records-automation.md 3.2 節） */
+export const PREDICTIONS_DIR = `${ROOT}records/predictions/`;
 /** 検証記録の一覧（生成物。Stage 20-D） */
 export const VERIFICATIONS_PATH = `${ROOT}plan/verifications.md`;
 /** スキル定義の対応状況の一覧（生成物。plan/skills-guide.md 3 節） */
@@ -33,6 +36,25 @@ export function loadVerifications(): Verification[] {
       .filter((name) => name.startsWith('V-') && name.endsWith('.md'))
       .map((name) => parseVerification(name, readFileSync(`${VERIFICATIONS_DIR}${name}`, 'utf8'))),
   );
+}
+
+/** records/predictions/V-NNNN.json（番号順）。無ければ空 */
+export function loadPredictions(): PredictionFile[] {
+  if (!existsSync(PREDICTIONS_DIR)) return [];
+  return readdirSync(PREDICTIONS_DIR)
+    .filter((name) => /^V-\d{4,}\.json$/.test(name))
+    .sort()
+    .map((name) => readJson<PredictionFile>(`${PREDICTIONS_DIR}${name}`));
+}
+
+/** ファイル名（拡張子なし）と、中の verification が一致しないもの */
+export function misplacedPredictions(): string[] {
+  if (!existsSync(PREDICTIONS_DIR)) return [];
+  return readdirSync(PREDICTIONS_DIR)
+    .filter((name) => name.endsWith('.json'))
+    .map((name) => ({ name, id: readJson<PredictionFile>(`${PREDICTIONS_DIR}${name}`).verification }))
+    .filter(({ name, id }) => `${id}.json` !== name)
+    .map(({ name, id }) => `予測 ${id}: ${name} に置かれている`);
 }
 
 /** 参照の検査の対象: plan/ と records/ の下の .md と、AGENTS.md（リポジトリの根からの相対パス）。Stage 20-D */
@@ -100,18 +122,17 @@ export function knownRids(): Set<number> {
   );
 }
 
-/** 録画に出てくるキャラと、その定義・敵のプリセット */
-export function loadRecordsData(file: RecordingsFile): RecordsData {
+/** 録画（と予測の編成）に出てくるキャラと、その定義・敵のプリセット */
+export function loadRecordsData(file: RecordingsFile, extraRids: readonly number[] = []): RecordsData {
   const known = knownRids();
   const defined = new Set(parseSkillIndex(readJson<unknown>(`${DATA}skills/index.json`)).resourceIds);
   const characters = new Map<number, CharacterData>();
   const skills = new Map<number, SkillDefinition>();
-  for (const entry of file.recordings) {
-    for (const { rid } of entry.team) {
-      if (!known.has(rid) || characters.has(rid)) continue;
-      characters.set(rid, readJson<CharacterData>(`${DATA}characters/${rid}.json`));
-      if (defined.has(rid)) skills.set(rid, parseSkillDefinition(readJson<unknown>(`${DATA}skills/${rid}.json`)));
-    }
+  const rids = [...file.recordings.flatMap((entry) => entry.team.map((m) => m.rid)), ...extraRids];
+  for (const rid of rids) {
+    if (!known.has(rid) || characters.has(rid)) continue;
+    characters.set(rid, readJson<CharacterData>(`${DATA}characters/${rid}.json`));
+    if (defined.has(rid)) skills.set(rid, parseSkillDefinition(readJson<unknown>(`${DATA}skills/${rid}.json`)));
   }
   return { characters, skills, enemies: parseEnemyPresets(readJson<unknown>(`${DATA}enemies.json`)) };
 }
