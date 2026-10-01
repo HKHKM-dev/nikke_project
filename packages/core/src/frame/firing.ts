@@ -28,9 +28,14 @@ export type FiringParams = {
   maxAmmo: number;
   /**
    * 分割リロードの 1 回分（reloadBullet ≥ 1 の武器は 1 回で満タン）のフレーム数。Stage 24: 端数つき（reloadSecondsToFrames）。
-   * 射手は端数を持ち越して整数の待ちにする（frame/shooter.ts の nextChunkFrames）
+   * 射手は端数を持ち越して整数の待ちにする（frame/shooter.ts の nextChunkFrames）。分割リロードは段ごとに切り上げる（C-0154）
    */
   reloadChunkFrames: number;
+  /**
+   * 分割リロード（reloadBullet < 1）か。込め始めの前に弾を込めない 1 段を待ち、段の長さは切り上げた整数（C-0154。
+   * plan/design-sg-split-reload.md）
+   */
+  splitReload: boolean;
   /**
    * チャージ時間のフレーム数（チャージ武器だけ意味を持つ。解放遅延は含まない）。
    * Stage 11 紅蓮BS: 較正表（MEASURED_CHARGE_CADENCE）の武器は chargeExtraFrames を足した値（チャージ速度はチャージ時間の側にだけ効く）
@@ -133,6 +138,7 @@ export function firingParams(base: ShotParams, buffs: FiringBuffs = ZERO_FIRING_
     reloadChunkFrames:
       reloadSecondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)) +
       (measured?.reloadExtraFrames ?? 0),
+    splitReload: shot.reloadBullet < 1,
     // Stage 11 アリス編: 発動者基準のチャージ速度は、比率で縮めた後の秒数からさらに引く（アリス自身は比率と同じ値になる）
     chargeFrames: isChargeWeapon(shot)
       ? chargeSecondsToFrames(

@@ -38,7 +38,7 @@ const characters: CharacterData[] = readdirSync(CHARACTERS_DIR)
  * Stage 9 の stepShooter の写し（リロードを「回数 × 時間」の 1 つの待ちにしていた版）。退化の基準として凍結する。
  * Stage 21-C3 で意図して変えた 2 点（rpm の蓄積はゲーム内の時計 = MAX_RPM の値と誤差の幅、リロード明けの 1 発目の遅れ）と、
  * Stage 23・24 で変えた 2 点（チャージの秒はゲーム内の時計 = chargeSecondsToFrames、リロードの秒はゲーム内の時計で端数を持ち越す
- * = reloadSecondsToFrames と carry）だけ写しにも入れた
+ * = reloadSecondsToFrames と carry）と、分割リロードの込めない 1 段と段の切り上げ（C-0154）だけ写しにも入れた
  */
 function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel = DEFAULT_WEAPON_MODEL): number[] {
   const state = {
@@ -72,10 +72,16 @@ function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel =
     fired.push(f);
     if (state.ammo <= 0) {
       state.reloading = true;
-      // Stage 24: 1 回分ごとに端数を持ち越して切り捨てた和は、回数 × 1 回分に端数を足して切り捨てた値と同じ
-      const exact = reloadSecondsToFrames(shot.reloadTime) * reloadChunks(shot) + state.reloadCarry;
-      const reloadFrames = Math.floor(exact + 1e-9);
-      state.reloadCarry = Math.max(0, exact - reloadFrames);
+      let reloadFrames: number;
+      if (shot.reloadBullet < 1) {
+        // C-0154: 分割リロードは、込めない 1 段 + 段の数を、それぞれ切り上げた整数で（端数は持ち越さない）
+        reloadFrames = Math.ceil(reloadSecondsToFrames(shot.reloadTime) - 1e-9) * (reloadChunks(shot) + 1);
+      } else {
+        // Stage 24: 1 回分ごとに端数を持ち越して切り捨てた和は、回数 × 1 回分に端数を足して切り捨てた値と同じ
+        const exact = reloadSecondsToFrames(shot.reloadTime) * reloadChunks(shot) + state.reloadCarry;
+        reloadFrames = Math.floor(exact + 1e-9);
+        state.reloadCarry = Math.max(0, exact - reloadFrames);
+      }
       state.wait = Math.max(0, reloadFrames + reloadFirstShotFrames(shot, model) - 1);
     } else if (charge) {
       state.wait = Math.max(0, chargeSecondsToFrames(shot.chargeTime) + model.chargeReleaseFrames - 1);
@@ -169,24 +175,24 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
   it('reproduces recording 37: a max-ammo buff mid-reload keeps loading to the new max (3 → 10 → 17 → 20)', () => {
     const shot = makeCharacter(DRAKE).shot;
     // 1 マガジン目の最終弾（9 発目）は 326f（Stage 21-C3: 90 rpm はゲーム内の時計で 39〜40f ごと。Stage 22-C: 1 発目は構え 12f の後）。
-    // 1 回目の 1 回分（+3）を込めた後（L + 30 の次のフレーム以降）から最大 20 にする
+    // 1 回目の 1 回分（+3）を込めた後（L + 60 の次のフレーム以降）から最大 20 にする
     const base = shotFramesUpTo(shot, 400);
     const L = base[8]!;
     expect(L).toBe(326);
     const run = runWithWindow(shot, 700, {
-      start: L + 32,
+      start: L + 62,
       end: 10_000,
       buffs: { ...ZERO_FIRING_BUFFS, maxAmmoRatio: 0.7218 + 0.5014 },
     });
-    // Stage 24: 1 回分は 0.5 秒 ÷ 0.017 = 29.4f。端数（最初は 0.5）を持ち越して 29・30・29・30f: L から +29・+59・+88・+118 に込め、
-    // +118 で満タン → 24f 後に 1 発目（C-0148）。（基礎値なら +29・+59・+88 で 9 になり +112 に撃つ）
-    expect(distinct(run.ammo.slice(L, L + 150))).toEqual([0, 3, 10, 17, 20, 19]);
-    expect(run.ammo[L + 28]).toBe(0);
-    expect(run.ammo[L + 29]).toBe(3);
-    expect(run.ammo[L + 59]).toBe(10);
-    expect(run.ammo[L + 88]).toBe(17);
-    expect(run.ammo[L + 118]).toBe(20);
-    expect(run.fired).toContain(L + 142);
+    // C-0154: 段は 0.5 秒 ÷ 0.017 = 29.4f を切り上げた 30f。込めない 1 段（L → L + 30）の後、L から +60・+90・+120・+150 に込め、
+    // +150 で満タン → 24f 後に 1 発目（C-0148）。（基礎値なら +60・+90・+120 で 9 になり +144 に撃つ）
+    expect(distinct(run.ammo.slice(L, L + 180))).toEqual([0, 3, 10, 17, 20, 19]);
+    expect(run.ammo[L + 59]).toBe(0);
+    expect(run.ammo[L + 60]).toBe(3);
+    expect(run.ammo[L + 90]).toBe(10);
+    expect(run.ammo[L + 120]).toBe(17);
+    expect(run.ammo[L + 150]).toBe(20);
+    expect(run.fired).toContain(L + 174);
   });
 
   it('reproduces recording 19: a reload started at max 14 finishes at max 9 once the buff ends (0 → 5 → 8 → 9)', () => {
@@ -195,15 +201,37 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
     // 最大 14 で撃ち切る → 1 回目（+5）の直後にバフが切れる
     const withBuff = runWithWindow(shot, 1_200, { start: 0, end: 10_000, buffs });
     const lastOfFirst = withBuff.fired[13]!;
-    const run = runWithWindow(shot, 1_200, { start: 0, end: lastOfFirst + 31 + 1, buffs });
-    // 1 回分は 29・30・29f（Stage 24）。最大 14 の 1 回分 5 → バフが切れて最大 9 の 1 回分 3 → 残り 1 発分で 9（満タン）→ 24f 後に撃って 8
-    expect(run.ammo[lastOfFirst + 28]).toBe(0);
-    expect(run.ammo[lastOfFirst + 29]).toBe(5);
-    expect(run.ammo[lastOfFirst + 59]).toBe(8);
-    expect(run.ammo[lastOfFirst + 88]).toBe(9);
-    expect(run.fired).toContain(lastOfFirst + 112);
-    expect(run.ammo[lastOfFirst + 112]).toBe(8);
-    expect(run.fired.filter((f) => f > lastOfFirst + 112 && f <= lastOfFirst + 112 + 40 * 8)).toHaveLength(8); // 9 発のマガジン
+    const run = runWithWindow(shot, 1_200, { start: 0, end: lastOfFirst + 61 + 1, buffs });
+    // 段は 30f で、込めない 1 段の後に込める（C-0154）。最大 14 の 1 回分 5 → バフが切れて最大 9 の 1 回分 3 → 残り 1 発分で 9（満タン）
+    // → 24f 後に撃って 8
+    expect(run.ammo[lastOfFirst + 59]).toBe(0);
+    expect(run.ammo[lastOfFirst + 60]).toBe(5);
+    expect(run.ammo[lastOfFirst + 90]).toBe(8);
+    expect(run.ammo[lastOfFirst + 120]).toBe(9);
+    expect(run.fired).toContain(lastOfFirst + 144);
+    expect(run.ammo[lastOfFirst + 144]).toBe(8);
+    expect(run.fired.filter((f) => f > lastOfFirst + 144 && f <= lastOfFirst + 144 + 40 * 8)).toHaveLength(8); // 9 発のマガジン
+  });
+
+  // C-0154（V-0068）: 分割リロードは、込めない 1 段 + 3 段（どれも切り上げた整数）+ 24f（C-0148）。
+  // 実測の最終弾 → 次の 1 発目はプロダクト23 183f・ドレイク 143f・ノワール 80f（足す長さは 23〜24f）
+  it.each([
+    ['プロダクト23', 0.67, 40],
+    ['ドレイク', 0.5, 30],
+    ['ノワール', 0.23, 14],
+  ])('%s (%f s): waits one empty stage, then loads 3 stages of %i f (C-0154)', (_, reloadTime, stage) => {
+    const shot = makeCharacter({ ...DRAKE, reloadTime }).shot;
+    const run = runWithWindow(shot, 1_500, { start: 0, end: 0, buffs: ZERO_FIRING_BUFFS });
+    const L = run.lastShots[0]!;
+    expect(run.ammo[L + stage * 2 - 1]).toBe(0);
+    expect(run.ammo[L + stage * 2]).toBe(3);
+    expect(run.ammo[L + stage * 3]).toBe(6);
+    expect(run.ammo[L + stage * 4]).toBe(9);
+    const next = run.fired.find((f) => f > L)!;
+    expect(next - L).toBe(stage * 4 + 24);
+    // 2 マガジン目も同じ（端数を持ち越さない）
+    const L2 = run.lastShots[1]!;
+    expect(run.fired.find((f) => f > L2)! - L2).toBe(stage * 4 + 24);
   });
 
   it('does not add current ammo when the max rises, and clamps it when the max falls', () => {

@@ -1,5 +1,5 @@
 // Stage 5: 1 体の通常射撃をフレームごとに進める状態機械。
-// cadence.ts と同じ規則（レート蓄積、チャージ + 解放遅延、リロード = 回数 × リロード時間、MG の初弾遅延）を逐次処理で書き直したもので、
+// cadence.ts と同じ規則（レート蓄積、チャージ + 解放遅延、リロード = 回数 × リロード時間（分割リロードは C-0154）、MG の初弾遅延）を逐次処理で書き直したもので、
 // 発射フレーム列は k × cycleFrames + firstShotFrames + shotFrames[i] と 1 フレームもずれない（sim/__tests__/shooter.test.ts で固定）。
 //
 // wait は「撃てないフレームがあと何個残っているか」。stepShooter は先に判定してから減らす:
@@ -9,6 +9,8 @@
 //   チャージ武器    発射したフレーム S で wait = charge + release − 1 → 次弾は S + 82
 //   リロード        最終弾のフレーム L から、1 回分ずつ込めて最後の 1 回分を込め終えたところで 1 発目の遅延につなぐ
 //                   → 次のマガジンの 1 発目は L + reload × chunks + reloadFirst（Stage 21-C3: AR・SMG・SG は 22f。C-0059。MG は 20f）
+//                   分割リロードは、込め始めの前に弾を込めない 1 段を待ち、段は切り上げた整数（C-0154）
+//                   → L + ceil(段) × (chunks + 1) + reloadFirst
 //
 // Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）を FiringParams として毎フレーム受け取る（frame/firing.ts）。
 // 分割リロードは 1 回分ずつ込め、1 回分の弾数は込めるたびにその時点の最大装弾数で決める（録画 37: 3 → 10 → 17 → 20、
@@ -60,6 +62,8 @@ export type ShooterState = {
    * （最初のリロードが切り捨てに偏らない）
    */
   reloadCarry: number;
+  /** 分割リロードの、込め始めの前の弾を込めない 1 段の最中（C-0154）。無ければキーごと無い */
+  reloadLead?: true;
   /** Stage 16-B: ハイド中に始めたリロード（明けるまでに込め終わらなければ取り消す）。無ければキーごと無い */
   hideReload?: true;
 };
@@ -99,9 +103,12 @@ export function weaponChangeShooter(
 
 /**
  * Stage 24: リロードの 1 回分のフレーム数（整数）を決める。端数つきの 1 回分（params.reloadChunkFrames）に前の回の端数を足して
- * 切り捨て、残りを持ち越す（C-0145。長い目で見ると 1 回分の平均は端数つきの値になる）
+ * 切り捨て、残りを持ち越す（C-0145。長い目で見ると 1 回分の平均は端数つきの値になる）。
+ * 分割リロードの段は、端数つきの長さを切り上げた整数で、端数を持ち越さない（C-0154）
  */
 function nextChunkFrames(state: ShooterState, params: FiringParams): number {
+  // 割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く
+  if (params.splitReload) return Math.ceil(params.reloadChunkFrames - 1e-9);
   const total = params.reloadChunkFrames + state.reloadCarry;
   // 割り算の誤差で整数のすぐ下に出た値を切り捨てないよう、ごく小さな幅を足す
   const frames = Math.floor(total + 1e-9);
@@ -110,14 +117,27 @@ function nextChunkFrames(state: ShooterState, params: FiringParams): number {
 }
 
 /**
+ * リロードを始める（最終弾の直後・ハイド中のリロード）。分割リロードは、込め始めの前に弾を込めない 1 段を待つ
+ * （最終弾 → 込め終わりが段の数 + 1 段ぶん。C-0154）。
+ * @returns 最初の 1 回分（分割リロードでは込めない 1 段）のフレーム数
+ */
+function startReload(state: ShooterState, params: FiringParams): number {
+  state.phase = 'reloading';
+  if (params.splitReload) state.reloadLead = true;
+  return nextChunkFrames(state, params);
+}
+
+/**
  * リロード中に 1 回分を込め終えた（または込め始めの時点で 0 フレームの 1 回分が続く）ときの処理。
+ * 分割リロードの込めない 1 段（reloadLead）が明けたときは、弾を足さずに最初の 1 回分を始める。
  * 最大に届いたら 1 発目の遅延（priming）へ。届かなければ次の 1 回分。
  * 1 回分が 0 フレーム（リロード速度 100% 以上）なら同じフレームで続けて込める。
  * @returns 1 発目の遅延が 0 で、このフレームにそのまま撃ってよいなら true
  */
 function loadChunks(state: ShooterState, shot: ShotParams, model: WeaponModel, params: FiringParams): boolean {
   for (;;) {
-    state.ammo = Math.min(params.maxAmmo, state.ammo + reloadChunkAmmo(params.maxAmmo, shot.reloadBullet));
+    if (state.reloadLead) delete state.reloadLead;
+    else state.ammo = Math.min(params.maxAmmo, state.ammo + reloadChunkAmmo(params.maxAmmo, shot.reloadBullet));
     if (state.ammo < params.maxAmmo) {
       const chunk = nextChunkFrames(state, params);
       if (chunk > 0) {
@@ -147,8 +167,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
   state.lastShot = state.ammo <= 0;
   if (state.ammo <= 0) {
     state.ammo = 0;
-    state.phase = 'reloading';
-    const chunk = nextChunkFrames(state, params);
+    const chunk = startReload(state, params);
     if (chunk > 0) {
       // 最終弾の直後の 1 回だけ −1 する（先に判定してから減らすため）。1 回分の完了は L + R、L + 2R…
       state.wait = chunk - 1;
@@ -218,6 +237,7 @@ export function refillAmmo(
   if (amount <= 0) return;
   state.ammo = Math.min(params.maxAmmo, state.ammo + amount);
   if (state.phase === 'reloading' && state.ammo >= params.maxAmmo) {
+    delete state.reloadLead;
     state.phase = 'priming';
     state.wait = Math.max(0, reloadFirstShotFrames(shot, model, params) - 1);
   }
@@ -241,6 +261,7 @@ export function resumeShooter(
 ): void {
   // リロード中・込め終えて 1 発目を待っていた枠は、込め終えたマガジンの 1 発目から（スピンアップも最初から）
   if (state.phase !== 'ready') startMagazine(state);
+  delete state.reloadLead;
   state.ammo = params.maxAmmo;
   state.lastShot = false;
   state.wait = reloadFirstShotFrames(shot, model, params);
@@ -282,9 +303,8 @@ export function hideShooter(
   params: FiringParams = firingParams(shot),
 ): void {
   if (state.phase !== 'ready' || params.infiniteAmmo || state.ammo >= params.maxAmmo) return;
-  state.phase = 'reloading';
   state.hideReload = true;
-  const chunk = nextChunkFrames(state, params);
+  const chunk = startReload(state, params);
   if (chunk > 0) {
     // 最終弾の直後のリロードと同じく、窓の最初のフレームを 1 フレーム目に数える
     state.wait = chunk - 1;
@@ -312,6 +332,7 @@ export function unhideShooter(
   if (state.hideReload) {
     delete state.hideReload;
     if (state.phase === 'reloading') {
+      delete state.reloadLead;
       state.phase = 'ready';
       state.wait = 0;
     }

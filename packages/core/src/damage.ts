@@ -198,8 +198,8 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
   if (shot.reloadBullet < 1)
     approx(
       'chunked-reload',
-      '分割リロードは「回数 × リロード時間」で近似',
-      'Chunked reload approximated as chunks × reload time',
+      '分割リロードは、込めない 1 段 + 段の数を、切り上げた段の長さで数える（9 発の SG で実測。6 発の SG・グレイブと、リロード速度のバフでの縮み方は未確認。C-0154）',
+      'Chunked reload: one empty stage plus each stage, rounded up to whole frames (measured on 9-round SGs only; C-0154)',
     );
   if (hasSpinUp(shot))
     approx(
