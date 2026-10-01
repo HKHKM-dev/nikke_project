@@ -71,6 +71,39 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "invalid": {
+      "reason": "「消えた」とした f1271 は、II の段の黄色いバーを gauge.ts --mode events が満タンと拾った後のフレームだった。バーは f1239 で消えて I の段に替わっていた。読み直した値は 040-05（V-0077）",
+      "date": "2026-10-02"
+    }
+  },
+  {
+    "id": "040-05",
+    "recording": "040",
+    "kind": "interval",
+    "use": "compare",
+    "source": "V-0077",
+    "readAt": "2026-10-02",
+    "value": 317,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I のアイコンに替わる（本当の満タン）までのフレーム数",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・tools/captures/still.ts（右のバースト欄を切り出して目で見た）",
+      "note": "02:59 は f922、消えたのは f1239。f1238 はバーが約 97px（100% を経ずに消えた回）。f1239 はアドミとラムの 4 発目（総ダメージの増分 554,662）のフレームで、I の段の六角形が出ている。040-04 の読み直し"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   }
 ]
