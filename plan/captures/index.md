@@ -274,13 +274,17 @@ node tools/captures/aim.ts   <動画> [--from N] [--to N] [--step 60] [--csv out
 node tools/captures/timer.ts <動画...> [--mode summary|changes]   # 残り時間の秒の変わり目と、1 秒あたりのフレーム数（V-0003）
 node tools/captures/dups.ts  <動画> [--from N] [--to N] [--mode summary|list|diff]   # 重複フレーム（前と同じ画）を拾う（V-0004）
 node tools/captures/reload.ts <動画> [--shots <hud.ts --mode jumps の出力>] [--stages] [--mode series|segments|fit]   # RELOADING のバーから、リロードごとの完了・伸び・最終弾 → 完了（V-0057）
+node tools/captures/intake.ts <元ファイル> --id NNN --name <識別子> [--folder range] [--rid 271,870 --controlled 1 --target BigArms --element Fire --mode range-3min --fixed-spec on|off ...]   # 取り込み: リネーム・移動・素性・records/recordings/NNN.json
 node tools/captures/read.ts <録画 id> --recipe <名前> --source V-NNNN [--opt key=value ...] [--write] [--against ID,ID]   # レシピで読んで観測値にする（npm run records:read）
 ```
 
 `read.ts` は、録画を**レシピ**（名前と版を持つ読み方。`tools/captures/recipes/`）で読み、観測値（`records/observations/<録画 id>.json` の形）を出す（[../design-records-automation.md](../design-records-automation.md) 3.4 節）。`--list` でレシピと `--opt` の説明が出る。`--write` で観測値のファイルに足す（id は次の空き番号。同じレシピ・同じ版の観測値が既にあれば、同じ値なら足さず、違えば差を出して止まる）。`--against` は既存の観測値の値を並べて出す（旧の観測値の確かめ用）。中間出力（`hud.ts` の増分など）は、録画の置き場所の `derived/<録画 id>/` にキャッシュする（追跡しない。録画のファイルの大きさが変わると作り直す）。目で数える値はレシピの外（観測値の `method.note` に書く）。
 
 - `hud-jumps`: HUD の総ダメージの最後の値（total）と、増分の数から数えたトリガーの数（count）。前の増分から 30f 未満の増分は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さから発の数を決める（V-0071 の「足し戻し」）。
+- `reload-segments`: `reload.ts --mode fit --shots`（増分は hud-jumps のキャッシュ）から、リロードごとの最終弾 → 完了・完了 → 次の増分・バーの長さ（V-0057 の読み方。取り消し・窓をまたいだ回・最終弾の読み違いは除く）。分割リロードは `--opt stages=1`。
 - `sg-pellets`: SG 単騎の録画で、的のジャンプで分けた区間ごとの当たったペレットの割合・近の当たった数の分布・近の「会心 + 2 × コア」、スペック固定 OFF ならコア命中率と会心率（V-0062・V-0069・V-0070 の読み方）。区間の切れ目は、100f 以上でリロードでない空きを候補に、近の区間だけ距離ボーナスで増分の刻みが変わること（スペック固定 ON は 5 の倍数でない刻み、OFF は近の胴体でしか解けない発）で確かめる。5 番目の切れ目がリロードと重なるとき（プロダクト23）は、4 番目から 1,500〜2,600f 後で後ろが全部近以外の刻みの空きを取る。決まらないときは `--opt cuts=` で与える。スペック固定 ON の近以外の当たった数は見積もり（会心率とコア命中率は `--opt critRate=`・`coreRates=`）。
+
+`intake.ts` は録画の取り込み（design-records-automation.md 3.3 節）。元ファイルを命名規約でリネームして置き場所の種別フォルダへ移し（`--copy` で元を残す）、素性（長さ・フレーム数・fps・大きさ・sha256）を取って `records/recordings/<録画 id>.json` を書く。編成・的・モード・スペック固定などは引数で渡し、無い項目は空（null）で出して人が埋める。日付は `--date`、無ければ元のファイル名の日付、無ければ更新日時。取り込んだ後は `npm run records:table` と、キャラの確かめに `probe-result.ts --list`。
 
 `gauge.ts` は画面右の BURST バー（x 1793〜1905・y 442）の充填率を 1 フレームずつ読む（Stage 7 のゲージ較正用）。`events` は溜め始め・満タン・バー消失、`jumps` は 1 フレームで跳ねた増分（SR / SG の 1 発ずつ）、`series` は充填率の列。フルバースト中・CT 待ち・チェーン中はバーの位置に別の UI が出るので読めない（`-`）。**ゲージの較正を撮るときは、誰を操作しているか（照準画面が出ているニケ）を台帳に書く**。操作キャラと AI でゲージ量が違うらしい（[../verification.md](../verification.md) Stage 7 節）。
 

@@ -8,6 +8,7 @@
 - 撮る前の予測の数値は、予測ファイル（`records/predictions/V-NNNN.json`。`npm run records:predict`）に置き、撮る前に commit する（[design-records-automation.md](../../plan/design-records-automation.md) 3.2 節）。「予測」の節には仮説ごとの見え方と見分け方を書き、数値は予測ファイルを指す。読んだ後の突き合わせは `npm run records:check` が [plan/verifications.md](../../plan/verifications.md) に出す。
 - 使えなくなった観測値（読み違い・条件の誤り・ゲームの更新）は消さずに `invalid`（理由と日付）を付ける。単位・幅・複数の録画・読み取った日も持てる（設計書 3.4 節）。
 - 閉じた（完了・打ち切りの）記録は書き換えない。訂正は新しい記録を作り、その冒頭の「訂正」に古い記録の ID を書く。
+- 完了にする前に `npm run records:close -- V-NNNN [--mark]` で検査する（結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない・予測を撮る前に出している（探索なら「予測」の節に「探索」か「予測なし」と書く）・「分かったこと」「次に撮るもの」が空でない。design-records-automation.md 3.7 節）。通れば `--mark` が状態を完了にし、`records:check` と CI と同じ確認を回し、PR の題名の案を出す。
 
 ## ひな形
 

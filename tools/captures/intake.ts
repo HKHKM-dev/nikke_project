@@ -1,0 +1,169 @@
+// 録画の取り込み（plan/design-records-automation.md 3.3 節）: 命名規約でリネームして置き場所に移し、素性（長さ・フレーム数・fps・
+// 大きさ・sha256）を取り、records/recordings/<録画 id>.json を書く。編成・的・条件は引数で受け、無ければ空で出す（人が埋める）。
+//   node tools/captures/intake.ts <元ファイル> --id NNN --name <種別内の識別子> [--folder range] [--date YYYY-MM-DD]
+//        [--rid 271,870] [--controlled 1] [--target BigArms --element Fire] [--mode range-3min]
+//        [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."] [--copy]
+// 命名規約は plan/captures/index.md「命名規約」（<YYYYMMDD>-<番号 3 桁>_<識別子>.mp4。識別子は英小文字・数字・-・_・+）。
+// 日付は --date、無ければ元のファイル名の YYYY-MM-DD、無ければファイルの更新日時。既定は移動（--copy で元を残す）。
+// 取り込んだ後は npm run records:table（台帳の表）と、キャラの確かめに node tools/captures/probe-result.ts <動画> --list。
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+} from 'node:fs';
+import { basename, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
+import {
+  RECORDING_FOLDERS,
+  RECORDING_MODES,
+  type ProjectRecording,
+  type RecordingFolder,
+  type RecordingMode,
+} from '../../packages/core/src/records/recordings.ts';
+import type { CharacterData, Element } from '../../packages/core/src/types.ts';
+import { capturesDir } from './dirs.ts';
+import { ffprobe, sha256 } from './ffmpeg.ts';
+
+const ROOT = fileURLToPath(new URL('../../', import.meta.url));
+const ELEMENTS: readonly Element[] = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'];
+
+const { values, positionals } = parseArgs({
+  allowPositionals: true,
+  options: {
+    id: { type: 'string' },
+    name: { type: 'string' },
+    folder: { type: 'string', default: 'range' },
+    date: { type: 'string' },
+    rid: { type: 'string' },
+    controlled: { type: 'string' },
+    target: { type: 'string' },
+    element: { type: 'string' },
+    mode: { type: 'string' },
+    'fixed-spec': { type: 'string' },
+    'auto-fire': { type: 'string' },
+    'auto-burst': { type: 'string' },
+    note: { type: 'string', default: '' },
+    copy: { type: 'boolean', default: false },
+  },
+});
+
+const USAGE =
+  'usage: node tools/captures/intake.ts <元ファイル> --id NNN --name <識別子> [--folder range] [--date YYYY-MM-DD]\n' +
+  '       [--rid 271,870] [--controlled 1] [--target BigArms --element Fire] [--mode range-3min]\n' +
+  '       [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."] [--copy]';
+
+function fail(message: string): never {
+  console.error(message);
+  console.error(USAGE);
+  process.exit(1);
+}
+
+const source = positionals[0];
+if (!source || !values.id || !values.name) fail('元ファイル・--id・--name が要る');
+if (!existsSync(source)) fail(`${source} が無い`);
+if (!/^\d{3,}$/.test(values.id)) fail('--id は 3 桁以上の数字');
+if (!/^[a-z0-9][a-z0-9_+-]*$/.test(values.name)) fail('--name は英小文字・数字・-・_・+');
+if (!(RECORDING_FOLDERS as readonly string[]).includes(values.folder))
+  fail(`--folder は ${RECORDING_FOLDERS.join(' / ')}`);
+const folder = values.folder as RecordingFolder;
+if (values.mode !== undefined && !(RECORDING_MODES as readonly string[]).includes(values.mode)) {
+  fail(`--mode は ${RECORDING_MODES.join(' / ')}`);
+}
+if (values.element !== undefined && !(ELEMENTS as readonly string[]).includes(values.element)) {
+  fail(`--element は ${ELEMENTS.join(' / ')}`);
+}
+const onOff = (v: string | undefined, name: string): boolean | null => {
+  if (v === undefined) return null;
+  if (v === 'on') return true;
+  if (v === 'off') return false;
+  return fail(`${name} は on か off`);
+};
+
+const recordPath = `${ROOT}records/recordings/${values.id}.json`;
+if (existsSync(recordPath)) fail(`${recordPath} が既にある`);
+
+function dateOf(): string {
+  if (values.date !== undefined) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(values.date)) fail('--date は YYYY-MM-DD');
+    return values.date;
+  }
+  const m = /(\d{4})[-_]?(\d{2})[-_]?(\d{2})/.exec(basename(source!));
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  const t = statSync(source!).mtime;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
+}
+
+function characterName(rid: number): string {
+  const path = `${ROOT}packages/core/data/characters/${rid}.json`;
+  if (!existsSync(path)) fail(`rid ${rid} のキャラのデータが無い（${path}）`);
+  return (JSON.parse(readFileSync(path, 'utf8')) as CharacterData).name.ja;
+}
+
+const date = dateOf();
+const file = `${date.replace(/-/g, '')}-${values.id}_${values.name}.mp4`;
+const dir = join(capturesDir(), folder);
+const dest = join(dir, file);
+if (existsSync(dest)) fail(`${dest} が既にある`);
+mkdirSync(dir, { recursive: true });
+if (values.copy) copyFileSync(source, dest);
+else {
+  try {
+    renameSync(source, dest);
+  } catch {
+    copyFileSync(source, dest);
+    unlinkSync(source);
+  }
+}
+console.error(`${source} → ${dest}（${values.copy ? '複製' : '移動'}）`);
+
+const probe = ffprobe(dest);
+const digest = (await sha256(dest)).slice(0, 12);
+const rids = values.rid === undefined ? [] : values.rid.split(',').map((s) => Number(s.trim()));
+const controlled = values.controlled === undefined ? null : Number(values.controlled);
+const entry: ProjectRecording = {
+  id: values.id,
+  date,
+  folder,
+  file,
+  original: basename(source),
+  durationSec: Math.round(probe.durationSec * 10) / 10,
+  frames: probe.nbFrames > 0 ? probe.nbFrames : null,
+  fps: Math.round(probe.avgFps),
+  sizeMB: Math.round((probe.sizeBytes / 1024 / 1024) * 10) / 10,
+  sha256: digest,
+  team: rids.map((rid, i) => ({
+    slot: i + 1,
+    rid,
+    name: characterName(rid),
+    controlled: controlled === null ? null : controlled === i + 1,
+  })),
+  target: { name: values.target ?? '', element: (values.element as Element | undefined) ?? null },
+  mode: (values.mode as RecordingMode | undefined) ?? null,
+  fixedSpec: onOff(values['fixed-spec'], '--fixed-spec'),
+  autoFire: onOff(values['auto-fire'], '--auto-fire'),
+  autoBurst: onOff(values['auto-burst'], '--auto-burst'),
+  conditionNote: values.note,
+};
+writeFileSync(recordPath, `${JSON.stringify(entry, null, 2)}\n`);
+console.log(
+  `${recordPath} を書いた（${probe.durationSec.toFixed(1)}s・${probe.nbFrames}f・${probe.avgFps.toFixed(2)}fps・sha256 ${digest}）`,
+);
+const missing = [
+  ...(rids.length === 0 ? ['team（--rid・--controlled）'] : []),
+  ...(values.target === undefined ? ['target.name（--target）'] : []),
+  ...(values.element === undefined ? ['target.element（--element）'] : []),
+  ...(values.mode === undefined ? ['mode'] : []),
+  ...(values['fixed-spec'] === undefined ? ['fixedSpec'] : []),
+  ...(values['auto-fire'] === undefined ? ['autoFire'] : []),
+  ...(values['auto-burst'] === undefined ? ['autoBurst'] : []),
+  ...(values.note === '' ? ['conditionNote'] : []),
+];
+if (missing.length > 0) console.log(`人が埋める項目: ${missing.join('、')}`);
+console.log(`次: npm run records:table、キャラの確かめは node tools/captures/probe-result.ts "${dest}" --list`);
