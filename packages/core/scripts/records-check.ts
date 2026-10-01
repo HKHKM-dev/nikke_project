@@ -13,7 +13,10 @@ import {
   validateClaims,
   type ClaimGrade,
 } from '../src/records/claims.ts';
-import { comparePredictions, renderPredictionLines, validatePredictions } from '../src/records/predictions.ts';
+import { verificationExtraLines } from '../src/records/extras.ts';
+import { minimalWarnings } from '../src/records/minimal.ts';
+import { comparePredictions, renderPredictionTable, validatePredictions } from '../src/records/predictions.ts';
+import { RESULTS_MARKERS } from '../src/records/drafts.ts';
 import {
   invalidReasonsOf,
   renderResiduals,
@@ -40,6 +43,7 @@ import {
   misplacedObservations,
   misplacedPredictions,
   recordingMap,
+  verificationPath,
 } from './records-data.ts';
 
 const file = loadRecordingsFile();
@@ -98,11 +102,30 @@ writeFileSync(
     gradeCandidates,
   ),
 );
-// 予測との突き合わせ（3.5 節）
-const predictionLines = new Map(
-  predictions.map((p) => [p.verification, renderPredictionLines(comparePredictions(p, observations))]),
+// 予測との突き合わせ（3.5 節）と最小構成の警告（3.5 節）
+const warnings = minimalWarnings(verifications, {
+  recordings,
+  characters: data.characters,
+  skills: data.skills,
+  enemies: data.enemies,
+  claims,
+});
+for (const p of predictions) {
+  const comparison = comparePredictions(p, observations);
+  // 検証記録の「結果」に生成ブロックの印があれば、予測との比べの表を書き込む（3.6 節。閉じた記録には印が無い）
+  const v = verifications.find((x) => x.id === p.verification);
+  if (v !== undefined) {
+    const path = verificationPath(v);
+    const doc = readFileSync(path, 'utf8');
+    if (doc.includes(RESULTS_MARKERS[0]) && doc.includes(RESULTS_MARKERS[1])) {
+      writeFileSync(path, replaceGeneratedSection(doc, 'predictions', renderPredictionTable(comparison)));
+    }
+  }
+}
+writeFileSync(
+  VERIFICATIONS_PATH,
+  renderVerifications(verifications, observations, verificationExtraLines(observations, predictions, warnings)),
 );
-writeFileSync(VERIFICATIONS_PATH, renderVerifications(verifications, observations, predictionLines));
 writeFileSync(SKILLS_DOC_PATH, renderSkills(skills, claims));
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
 for (const r of residuals.filter((x) => x.status !== 'ok' && x.status !== 'invalid')) {
@@ -116,6 +139,9 @@ const above = claims.filter((c) => {
 });
 console.log(
   `等級の候補（機械）を出せた結論 ${gradeCandidates.size} 件のうち、書いた等級のほうが上のもの: ${above.length} 件（claims.md に出す。plan/design-records-automation.md 3.5 節）`,
+);
+console.log(
+  `最小構成の警告: ${warnings.length} 件（検証記録 ${new Set(warnings.map((w) => w.verification)).size} 件。verifications.md に出す。落とさない）`,
 );
 for (const p of predictions) {
   const cmp = comparePredictions(p, observations);

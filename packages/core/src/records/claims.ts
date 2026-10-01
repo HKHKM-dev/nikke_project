@@ -26,6 +26,8 @@ export type ClaimTopic = (typeof CLAIM_TOPICS)[number];
  */
 export const CLAIM_GRADES = ['厳密一致', '反復実測', 'データ明記', '単独実測', '推論'] as const;
 export type ClaimGrade = (typeof CLAIM_GRADES)[number];
+/** 確定にできる等級（plan/claims.md 冒頭の規則。plan/design-records-automation.md 3.6 節で検査にした） */
+export const CONFIRMABLE_GRADES: readonly ClaimGrade[] = ['厳密一致', '反復実測', 'データ明記'];
 
 /** records/claims/C-NNNN.json の中身 */
 export type ClaimFile = {
@@ -102,6 +104,9 @@ export function validateClaims(
     if (c.grade === undefined) {
       if (c.state !== '棄却') errors.push(`${c.id}: 根拠の等級が無い（省けるのは棄却だけ）`);
     } else if (!CLAIM_GRADES.includes(c.grade)) errors.push(`${c.id}: 根拠の等級が語彙に無い: ${c.grade}`);
+    else if (c.state === '確定' && !CONFIRMABLE_GRADES.includes(c.grade)) {
+      errors.push(`${c.id}: 確定にできるのは等級が厳密一致・反復実測・データ明記のときだけ（${c.grade}）`);
+    }
     if (c.text.trim() === '') errors.push(`${c.id}: 結論が空`);
     if (c.basis.trim() === '') errors.push(`${c.id}: 根拠が空`);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(c.updated)) errors.push(`${c.id}: 更新日は YYYY-MM-DD`);

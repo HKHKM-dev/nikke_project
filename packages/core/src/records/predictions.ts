@@ -283,6 +283,32 @@ function fmtDiff(o: Observation, diff: number | null): string {
   return `${diff >= 0 ? '+' : ''}${fmt(Math.round(diff * 1000) / 1000)}`;
 }
 
+/** 検証記録の「結果」の生成ブロックに書く表（予測 × 観測値。plan/design-records-automation.md 3.6 節） */
+export function renderPredictionTable(comparison: PredictionComparison): string {
+  const { file, targets } = comparison;
+  if (file.predicted === null) return '予測はまだ出していない（`npm run records:predict`）。';
+  const hyps = file.hypotheses.map((h) => h.id);
+  const header = `| 指標 | 実測 | ${hyps.map((h) => `予測 ${h}`).join(' | ')} |`;
+  const sep = `| --- | --- | ${hyps.map(() => '---').join(' | ')} |`;
+  const rows = targets.map((t) => {
+    const observed =
+      t.observation === undefined ? '（実測なし）' : `${fmt(t.observation.value)}（\`${t.observation.id}\`）`;
+    const cells = t.byHypothesis.map((b) => {
+      if (t.observation === undefined) return fmt(b.predicted);
+      const mark = b.ok === null ? '' : b.ok ? '許容内' : '**許容外**';
+      return `${fmt(b.predicted)}（${[fmtDiff(t.observation, b.diff), mark].filter(Boolean).join('、')}）`;
+    });
+    return `| ${t.target.id}（${t.target.metric}） | ${observed} | ${cells.join(' | ')} |`;
+  });
+  return [
+    `予測は ${file.predicted.at}（commit ${file.predicted.commit.slice(0, 7)}）に出した。`,
+    '',
+    header,
+    sep,
+    ...rows,
+  ].join('\n');
+}
+
 /** plan/verifications.md の検証記録の項に足す行（「  - 」で始まる。無ければ空） */
 export function renderPredictionLines(comparison: PredictionComparison): string[] {
   const { file, targets, score } = comparison;
