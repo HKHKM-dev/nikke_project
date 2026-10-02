@@ -164,11 +164,14 @@ export function planSkillHits(
       throw new RangeError('a sequential burst needs the same hit and effect delays');
     }
     const push = (frame: number, effect: ResolvedDamageEffect, pre: boolean): void => {
-      const state = burstSnapshotState(timeline, frame, slotIndex, pre);
+      // バースト使用時の倍率ダメージは、撃つ側のバフを発動の時点で固定する（burstHitBuffs）。発動は発火の effectFrames 前
+      const atHit = pre
+        ? burstHitBuffs(timeline, frame - delays.effectFrames, frame, slotIndex, pre)
+        : burstSnapshotState(timeline, frame, slotIndex, pre).buffs;
       const buffs =
         pre && sequential && effect.source.skill === 'burst'
-          ? withEarlierSequentialEffects(timeline, state.buffs, frame, slotIndex, effect.effectIndex)
-          : state.buffs;
+          ? withEarlierSequentialEffects(timeline, atHit, frame, slotIndex, effect.effectIndex)
+          : atHit;
       const trigger = computeTriggerDamage({
         character: slot.character,
         growth: slot.growth,
@@ -347,6 +350,25 @@ export function burstSnapshotState(
   const index = preActivation ? segmentIndexAt(timeline, frame - 1) : segmentIndexAt(timeline, frame);
   if (index < 0) return EMPTY_BUFF_STATE;
   return timeline.segments[index]!.slots[slotIndex] ?? EMPTY_BUFF_STATE;
+}
+
+/**
+ * 着弾編（2026-10-02 オーナー決定。plan/design-burst-landing.md 8 節、C-0163・C-0167）: バーストのヒットが見るバフ。
+ * 撃つ側のバフは発動のフレーム activationFrame の時点（preActivation なら直前）で固定し、敵の側のデバフ（damageTaken）だけ
+ * ヒットのフレーム hitFrame の時点の値を使う。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで
+ * 付く S2 の攻撃ダメージ▲は乗らない（`079-07`）。遅れの無いキャラ（hitFrame = activationFrame）は burstSnapshotState と同じ
+ */
+export function burstHitBuffs(
+  timeline: BuffTimeline,
+  activationFrame: number,
+  hitFrame: number,
+  slotIndex: number,
+  preActivation: boolean,
+): BuffTotals {
+  const atActivation = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
+  if (hitFrame === activationFrame) return atActivation;
+  const atHit = burstSnapshotState(timeline, hitFrame, slotIndex, preActivation).buffs;
+  return { ...atActivation, damageTaken: atHit.damageTaken };
 }
 
 /**

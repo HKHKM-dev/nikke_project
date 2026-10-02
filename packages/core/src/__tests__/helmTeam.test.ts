@@ -9,7 +9,7 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
-import { planTeamRun } from '../frame/plan.ts';
+import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 
@@ -87,6 +87,35 @@ describe('録画 079 の編成（V-0033）', () => {
         expect(inside).toBeLessThanOrEqual(10);
       }
     }
+  });
+});
+
+describe('録画 079 の編成: バーストのヒットの遅れ（C-0167）', () => {
+  const input = rec079(3);
+  const sim = runSimulation(input);
+  const calc = computeTeamDamage(input);
+  const HELM_SLOT = 2;
+
+  it('lands the burst 59 frames after each use, inside the full burst', () => {
+    const uses = sim.schedule!.activations.filter((a) => a.slotIndex === HELM_SLOT);
+    expect(uses.length).toBeGreaterThan(0);
+    expect(sim.slots[HELM_SLOT]!.burst.activations).toEqual(
+      uses.map((a) => a.frame + 59).filter((f) => f < sim.frames),
+    );
+  });
+
+  it('fixes the caster-side buffs at the use: the full burst attack damage of S2 is not on the hit (079-07)', () => {
+    const plan = planTeamRun(input);
+    const uses = plan.schedule!.activations.filter((a) => a.slotIndex === HELM_SLOT && a.frame + 59 < plan.frames);
+    expect(uses.length).toBeGreaterThan(0);
+    for (const a of uses) {
+      const atHit = burstSnapshotState(plan.timeline, a.frame + 59, HELM_SLOT, true).buffs;
+      const used = burstHitBuffs(plan.timeline, a.frame, a.frame + 59, HELM_SLOT, true);
+      // ヒットの時点ではフルバーストの S2 の攻撃ダメージ▲が付いているが、ヒットには発動の直前のバフを使う
+      expect(atHit.attackDamage).toBeGreaterThan(used.attackDamage);
+      expect(used).toEqual(burstSnapshotState(plan.timeline, a.frame, HELM_SLOT, true).buffs);
+    }
+    expect(calc.slots[HELM_SLOT]!.burst.totalDamage).toBe(sim.slots[HELM_SLOT]!.burst.damage);
   });
 });
 

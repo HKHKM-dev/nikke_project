@@ -18,8 +18,9 @@ const activation: BurstActivation = {
 };
 
 describe('遅れの表', () => {
-  it('has Isabel (C-0165) and returns 0 for characters not in the table', () => {
+  it('has Isabel (C-0165), Helm (C-0167) and returns 0 for characters not in the table', () => {
     expect(burstDelaysOf(ISABEL)).toEqual({ hitFrames: 134, effectFrames: 134 });
+    expect(burstDelaysOf(352)).toEqual({ hitFrames: 59, effectFrames: 0 });
     expect(burstDelaysOf(862)).toEqual({ hitFrames: 0, effectFrames: 0 });
     for (const row of MEASURED_BURST_DELAYS) expect(row.claim).toMatch(/^C-\d{4}$/);
   });

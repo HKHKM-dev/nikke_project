@@ -85,10 +85,19 @@ export function activationFramesOfSlot(schedule: BurstSchedule, slotIndex: numbe
 
 /** 着弾編: 枠 slotIndex のバーストの倍率ダメージのヒットのフレーム列（発生順。戦闘時間 frames 以降は除く） */
 export function hitFramesOfSlot(schedule: BurstSchedule, slotIndex: number, frames: number): number[] {
+  return burstHitsOfSlot(schedule, slotIndex, frames).map((h) => h.frame);
+}
+
+/** 着弾編: 枠 slotIndex のバーストのヒットと、その発動のフレーム（発生順。戦闘時間 frames 以降のヒットは除く） */
+export function burstHitsOfSlot(
+  schedule: BurstSchedule,
+  slotIndex: number,
+  frames: number,
+): { activationFrame: number; frame: number }[] {
   return schedule.activations
     .filter((a) => a.slotIndex === slotIndex)
-    .map(hitFrameOf)
-    .filter((f) => f < frames);
+    .map((a) => ({ activationFrame: a.frame, frame: hitFrameOf(a) }))
+    .filter((h) => h.frame < frames);
 }
 
 /**

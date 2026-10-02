@@ -291,13 +291,28 @@
     "source": "V-0082",
     "readAt": "2026-10-02",
     "kind": "interval",
-    "use": "record",
+    "use": "compare",
     "value": [80, 81, 81, 81, 80],
     "unit": "f",
     "description": "1〜5 回目のフルバーストの始まり（079-12）から、ヘルムのバーストスキルダメージのヒット（HUD の 10,854,092 か会心 16,281,138 の増分。f1262・3641・6019・8397・10774）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
     "method": {
       "tool": "hud.ts --mode jumps・079-12",
-      "note": "5 回で 80〜81f。1f の揺れは、タイマーの表示の替わり目の読みの幅とみる。モデルには入れていない（C-0167 のモデル側）ので照合しない"
+      "note": "5 回で 80〜81f。1f の揺れは、タイマーの表示の替わり目の読みの幅とみる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {

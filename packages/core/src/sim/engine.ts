@@ -38,7 +38,7 @@ import type { BuildEffect } from '../buildEffects.ts';
 import { EMPTY_BUFF_STATE, groupTimeline, type BuffTimeline, type BuffWindow } from '../skills/timeline.ts';
 import {
   BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
-  burstSnapshotState,
+  burstHitBuffs,
   perShotDamageOf,
   planTeamRun,
   type SkillHitEvent,
@@ -284,13 +284,13 @@ export function runSimulation(simInput: SimInput): SimResult {
       const runner = runners[index];
       if (!runner) continue;
       const slot = slots[index]!;
-      const state = burstSnapshotState(timeline, f, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
+      const buffs = burstHitBuffs(timeline, activation.frame, f, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
       const trigger = computeTriggerDamage({
         character: slot.character,
         growth: slot.growth,
         enemy,
         attackOverride: slot.attackOverride,
-        buffs: state.buffs,
+        buffs,
         condition: { ...slot.condition, fullBurst: false },
       });
       const hit = slotBurstHit(
@@ -299,7 +299,7 @@ export function runSimulation(simInput: SimInput): SimResult {
         slot.character,
         enemy,
         trigger,
-        state.buffs,
+        buffs,
       );
       if (hit === null) continue;
       if (runner.result.burst.activations.length === 0) runner.result.burst.hit = hit;
