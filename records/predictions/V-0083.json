@@ -1,0 +1,92 @@
+{
+  "verification": "V-0083",
+  "team": [
+    {
+      "rid": 16,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": true
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 82,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "B",
+      "note": "いまのモデル（C-0166。corporation_sub_type が OVERSPEC の SSR は好感度 rank40。ラピ：レッドフードの攻撃力 120,694）。rank30（119,896）の仮説 A はモデルのコードを切り替えるので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "ラピ：レッドフード（MG・AI）の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし）。116-06 と同じ指標"
+    },
+    {
+      "id": "hit-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットの会心"
+    },
+    {
+      "id": "hit-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "1569fe5ec0da48ed0506a59ef30dfd0098d2054c",
+    "values": {
+      "B": {
+        "hit-body": 6717.0858,
+        "hit-crit": 10075.6287,
+        "hit-core": 13434.1716
+      }
+    }
+  }
+}
