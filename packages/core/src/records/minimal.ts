@@ -3,7 +3,7 @@
 // 混ざる録画では結論を作らない。「機構が確定したキャラ」は、スキル定義の効果と notes の根拠がすべて確定（か範囲外）の結論に
 // 結び付き、通常攻撃の条件（コア命中率・弾丸命中率）がその的の表で測られているキャラ。
 import { targetProfileOf } from '../enemies.ts';
-import { rateRowOf } from '../frame/landing.ts';
+import { rateRowOf, targetRateOf } from '../frame/landing.ts';
 import type { SkillDefinition, SkillEntry } from '../skills/types.ts';
 import type { CharacterData, EnemyPresetMaster } from '../types.ts';
 import type { Claim, ClaimState } from './claims.ts';
@@ -32,7 +32,10 @@ export function targetProfileOfRecording(recording: RecordingEntry, enemies: Ene
   return preset === undefined ? undefined : targetProfileOf(enemies, preset);
 }
 
-/** 通常攻撃の条件（コア命中率・弾丸命中率）が、その的の表で測られているか */
+/**
+ * 通常攻撃の条件（コア命中率・弾丸命中率）が、その的の表で測られているか。的のどの着地点でも表の値があるときだけ測られているとみる
+ * （誘導弾 100 の RL の中遠のように、行の一部の距離帯だけが未測定のものは測られていない。C-0174）
+ */
 export function normalConditionMeasured(
   character: CharacterData,
   recording: RecordingEntry,
@@ -40,7 +43,13 @@ export function normalConditionMeasured(
 ): boolean {
   const profile = targetProfileOfRecording(recording, enemies);
   if (profile === undefined) return false;
-  return rateRowOf(profile.coreHitRate, character) !== null && rateRowOf(profile.bulletHitRate, character) !== null;
+  if (rateRowOf(profile.coreHitRate, character) === null || rateRowOf(profile.bulletHitRate, character) === null)
+    return false;
+  return profile.landings.every(
+    (l) =>
+      targetRateOf(profile.coreHitRate, character, l) !== null &&
+      targetRateOf(profile.bulletHitRate, character, l) !== null,
+  );
 }
 
 export type MinimalWarning = {
