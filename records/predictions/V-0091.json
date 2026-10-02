@@ -1,0 +1,75 @@
+{
+  "verification": "V-0091",
+  "team": [
+    {
+      "rid": 225,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（着地直後の外れなし。RL のコア命中率は表の 1）。H1（着地の後の k 発はコア 0）は入力で表せないので、このファイルの範囲外（注記の約 1% を目安にする）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "total-046",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["046-02"],
+      "note": "紅蓮BS 単騎（046 の組み方）の与ダメージ。H1 ならこれより約 1% 小さい"
+    },
+    {
+      "id": "total-055",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "observations": ["055-02"],
+      "note": "紅蓮BS 単騎（055 の組み方。自動バースト OFF）の与ダメージ"
+    },
+    {
+      "id": "shots-046",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["046-03"],
+      "note": "同じ枠の射撃の数（着地の回数 5 × 本数が母数。コアの当たりでは動かない）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "ccf4e68b22cc98c976ce6c93769fa97c5c3e7083",
+    "values": {
+      "H0": {
+        "total-046": 81503452.53334272,
+        "total-055": 81503452.53334272,
+        "shots-046": 180
+      }
+    }
+  }
+}

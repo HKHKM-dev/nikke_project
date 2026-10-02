@@ -1,0 +1,61 @@
+{
+  "verification": "V-0088",
+  "team": [
+    {
+      "rid": 330,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの照合（的のジャンプは代表値 C-0057）。録画ごとの窓（H1）は 056 の窓の観測値を作ってから override の jumpWindows で足す（V-0086 の経路）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "total-056",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A"
+      },
+      "observations": ["056-02"],
+      "note": "クラウン（MG）単騎 AUTO・自動バースト OFF の与ダメージ。056-02 と同じ組み方（残差の一覧の値と同じになるはず）"
+    },
+    {
+      "id": "shots-056",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A"
+      },
+      "note": "同じ組み方の 180 秒の射撃の数。区間ごとの発の数（056-08 と並べる）はこの指標では出ないので、読み方の 2 で手で出す"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "d7d1cbc1765c82ff538808ccd67b2e7391330d8a",
+    "values": {
+      "H0": {
+        "total-056": 52665827.94064529,
+        "shots-056": 5397
+      }
+    }
+  }
+}

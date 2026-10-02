@@ -1,0 +1,94 @@
+{
+  "verification": "V-0089",
+  "team": [
+    {
+      "rid": 330,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "MIX",
+      "note": "中遠は配分（0.3 : 0.3 : 0.4。いまの既定）"
+    },
+    {
+      "id": "A",
+      "note": "中遠を A（足元 584。35 未満）に固定。056 で読んだ着地点",
+      "override": {
+        "midFarLanding": "A"
+      }
+    },
+    {
+      "id": "B",
+      "note": "中遠を B（足元 571）に固定",
+      "override": {
+        "midFarLanding": "B"
+      }
+    },
+    {
+      "id": "C",
+      "note": "中遠を C（足元 561）に固定",
+      "override": {
+        "midFarLanding": "C"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "total-056",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "observations": ["056-02"],
+      "note": "クラウン（MG）単騎 AUTO・自動バースト OFF の与ダメージ。MG は B・C で距離ボーナスが乗り A で乗らないので、A と B・C の差が固定で動く大きさの目安（SMG・SR は逆向き）"
+    },
+    {
+      "id": "mid-far-056",
+      "model": "sim",
+      "metric": "rangeDamage",
+      "args": {
+        "slot": 1,
+        "fromSec": 106,
+        "toSec": 140
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "同じ枠の 4 区間目（中遠。代表値の時刻で約 106〜140 秒）だけの与ダメージ。固定で動く分はここに集まる"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "ccf4e68b22cc98c976ce6c93769fa97c5c3e7083",
+    "values": {
+      "MIX": {
+        "total-056": 53794940.93276352,
+        "mid-far-056": 9419837.556143617
+      },
+      "A": {
+        "total-056": 52665827.94064529,
+        "mid-far-056": 8540212.50557189
+      },
+      "B": {
+        "total-056": 54278846.500814214,
+        "mid-far-056": 9796819.720674349
+      },
+      "C": {
+        "total-056": 54278846.500814214,
+        "mid-far-056": 9796819.720674349
+      }
+    }
+  }
+}

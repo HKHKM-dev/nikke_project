@@ -1,0 +1,92 @@
+{
+  "verification": "V-0092",
+  "team": [
+    {
+      "rid": 225,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（Stage 22-A の待ちからの 1 発目・22-B の部分チャージ入り。コンテナ C-0108 は無いので、HUD の数より 1 発多いはず）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "shots-046",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["046-03"],
+      "note": "紅蓮BS 単騎（046 の組み方）の 180 秒の射撃の数（部分チャージの発を含む）"
+    },
+    {
+      "id": "stages-046",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["046-04"],
+      "note": "同じ枠の S1 の段の数（フルチャージの発 3 発ごと。部分チャージの発は数えない）"
+    },
+    {
+      "id": "shots-055",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "observations": ["055-03"],
+      "note": "紅蓮BS 単騎（055 の組み方。自動バースト OFF）の射撃の数"
+    },
+    {
+      "id": "stages-055",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "observations": ["055-04"],
+      "note": "同じ枠の S1 の段の数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "ccf4e68b22cc98c976ce6c93769fa97c5c3e7083",
+    "values": {
+      "H0": {
+        "shots-046": 180,
+        "stages-046": 59,
+        "shots-055": 180,
+        "stages-055": 59
+      }
+    }
+  }
+}
