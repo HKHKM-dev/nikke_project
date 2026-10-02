@@ -90,8 +90,9 @@
           "claims": ["C-0076"]
         },
         {
-          "ja": "命中率▲はコア命中率に効かせていない（持続の命中率▲は未反映）",
-          "en": "The Hit Rate buff is not applied to the core hit rate (timed Hit Rate buffs are not modeled)"
+          "ja": "命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。弾丸命中率には効かせていない（未実装）",
+          "en": "With automatic conditions the Hit Rate buff makes the core hit rate 1 during the burst (N ≥ 1; timed buffs use the same formula as constant ones). It does not change the bullet hit rate (not modeled)",
+          "claims": ["C-0037", "C-0170"]
         }
       ]
     }

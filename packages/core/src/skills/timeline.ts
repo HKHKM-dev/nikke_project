@@ -15,7 +15,8 @@
 // Stage 11 アリス編: 対象「最終攻撃力が最も高い味方 N 機」（topAttack）の効果は 2 段目に回し、1 段目の攻撃力の窓で順位を付けて
 // 対象を決める（skills/ranking.ts。plan/design-stage11.md 19.2 節）。
 // Stage 11 モダニア（plan/design-stage11-modernia.md 3 節）: 効果のあるスタックは段ごとの窓にほどく（skills/stacks.ts）。
-// 状態だけの stat（命中率）の窓は区間に入れず stateWindows に置く。条件「自分が 〈stat〉 増加状態なら」の効果は 1.5 段目で、
+// 状態だけの stat（命中率）の窓は windows（timedEffects）に入れず stateWindows に置く。着地点の計画があるときだけ、区間の
+// buffs.hitRate に足し、自動の枠の鍵に入れる（C-0170。コア命中率の N）。条件「自分が 〈stat〉 増加状態なら」の効果は 1.5 段目で、
 // 1 段目の窓と stateWindows を見て発火を間引く。使用武器の変更の窓は、射手が持ち替えるフレーム（発火の次のフレーム）から始める
 // （weaponStartTrim）。
 import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
@@ -176,7 +177,7 @@ const BUFF_FIELDS = [
   'reloadSpeed',
   'chargeSpeed',
   'chargeTimeFlat',
-  // Stage 11 モダニア: 装弾数無限は射撃が変わるので鍵に入れる。命中率（hitRate）は状態だけなので入れない
+  // Stage 11 モダニア: 装弾数無限は射撃が変わるので鍵に入れる。命中率（hitRate）は条件が自動の枠だけ keyOf で足す
   'infiniteAmmo',
   // Stage 13: 効果層（常時）では区間を割らないが、スキルの timed にも書けるので鍵に入れる
   'elementDamage',
@@ -197,8 +198,9 @@ function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null
   // 効いている効果の出どころも鍵に入れる。合計が同じでも別の効果なら別の状態として扱い、UI のラベルが混ざらないようにする
   // （例: クイーン（真）の battleStart と fullBurstEnd はどちらも攻撃力 +50.28%）
   for (const e of state.timedEffects) parts.push(`${e.sourceSlotIndex}.${e.source.skill}.${e.effectIndex}`);
-  // Stage 18-C: 条件が自動の枠だけ、着地点も鍵に入れる（手入力の枠のグループは今と同じ）
-  if (landing !== undefined) parts.push(`L:${landing ?? '?'}`);
+  // Stage 18-C: 条件が自動の枠だけ、着地点も鍵に入れる（手入力の枠のグループは今と同じ）。
+  // 持続の命中率▲（C-0170）もコア命中率を変えるので、自動の枠だけ命中率の合計を鍵に入れる
+  if (landing !== undefined) parts.push(`L:${landing ?? '?'}`, `N:${state.buffs.hitRate.toFixed(KEY_DIGITS)}`);
   return parts.join('|');
 }
 
@@ -598,6 +600,14 @@ export function planBuffTimeline(
     bounds.add(s.start);
     bounds.add(s.end);
   }
+  // 持続の命中率▲（C-0170）: 条件が自動の枠では、コア命中率の N に区間ごとの命中率を使う。着地点の計画があるときだけ、
+  // 状態の窓（命中率）の端も境界に足し、区間の状態の buffs.hitRate に持続の▲を足す（plan/design-sustained-hit-rate-core.md）
+  if (landings !== null) {
+    for (const w of stateWindows) {
+      bounds.add(w.start);
+      bounds.add(w.end);
+    }
+  }
   let landingIndex = 0;
   const sorted = [...bounds].filter((b) => b >= 0 && b <= frames).sort((a, b) => a - b);
 
@@ -635,6 +645,19 @@ export function planBuffTimeline(
         sourceSlotIndex: w.sourceSlotIndex,
         appliedAmount: applied.appliedAmount,
       });
+    }
+    // 状態の窓は timedEffects には入れない（表示は stateWindows のまま）。buffs.hitRate だけを足す
+    if (landings !== null) {
+      for (const w of stateWindows) {
+        if (w.start > start || w.end <= start) continue;
+        const state = slotStates[w.slotIndex];
+        if (!state) continue;
+        state.buffs = applyResolvedEffect(
+          state.buffs,
+          w.effect,
+          slots[w.sourceSlotIndex]?.casterBaseAttack ?? 0,
+        ).totals;
+      }
     }
     const segment: TimelineSegment = {
       start,

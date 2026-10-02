@@ -28,7 +28,13 @@ import {
   partialChargeTriggerDamage,
 } from '../damage.ts';
 import { enemyEventNotes } from '../frame/events.ts';
-import { autoConditionSummary, landingPartsOf, landingTriggerDamage, slotConditionNotes } from '../frame/landing.ts';
+import {
+  autoConditionSummary,
+  hitRateUpSpansOf,
+  landingPartsWith,
+  landingTriggerDamage,
+  slotConditionNotes,
+} from '../frame/landing.ts';
 import { firingParams } from '../frame/firing.ts';
 import { BURST_HIT_USES_PRE_ACTIVATION_BUFFS, burstHitBuffs, perShotDamageOf, planTeamRun } from '../frame/plan.ts';
 import { slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
@@ -133,7 +139,8 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     const countSlotShots = shotCounting === 'firingSlots' && groups.some((g) => hasFiringWindow(g.state));
     for (const group of groups) {
       const state = group.state;
-      const parts = landingPartsOf(landing, slot, index, group.landing);
+      // C-0170: 持続の命中率▲が効いているグループは、その N でコア命中率を出し直す（自動の枠は N が鍵に入るのでグループ内で同じ）
+      const parts = landingPartsWith(landing, slot, index, group.landing, state.buffs.hitRate);
       const ranges = mergeAdjacentRanges(group.segments.map((s) => ({ start: s.start, end: s.end })));
       const common = {
         ranges,
@@ -227,7 +234,7 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     }
 
     const totalDamage = normalDamage + burstDamage + skillHitDamage;
-    const autoCondition = autoConditionSummary(landing, slot, index, shotFrames);
+    const autoCondition = autoConditionSummary(landing, slot, index, shotFrames, hitRateUpSpansOf(timeline, index));
     return {
       index,
       character: slot.character,

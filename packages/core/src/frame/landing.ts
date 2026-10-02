@@ -2,8 +2,9 @@
 // calc と sim で共通。着地点は敵の出来事（的のジャンプ）だけで決まり、射撃やバフには依らないので、1 パス目の前に決まる。
 //
 // - 距離ボーナス: 着地点の距離の範囲が、キャラの bonusRange に丸ごと入るか（C-0026・C-0031・C-0044）。
-// - コア命中率: 的の表の値 p（着地点の id → 帯 → all の順で引く）に、常時の命中率▲ N で min(1, p ÷ (1 − N)²)。N ≥ 1 なら 1
-//   （C-0036・C-0037）。N は枠の常時の BuffTotals.hitRate（育成の効果層・常時パッシブ）。持続の▲（フルバーストの頭で配られるもの）は効かせない。
+// - コア命中率: 的の表の値 p（着地点の id → 帯 → all の順で引く）に、命中率▲ N で min(1, p ÷ (1 − N)²)。N ≥ 1 なら 1
+//   （C-0036・C-0037）。計画（planLandings）は枠の常時の BuffTotals.hitRate（育成の効果層・常時パッシブ）で出し、
+//   持続の▲（フルバーストの頭などで配られるもの。C-0170）が効いている区間は、使う時点で区間の N で出し直す（landingPartsWith）。
 // - 弾丸命中率: 的の表の値。通常攻撃のダメージと 1 パス目のゲージに掛ける（Stage 15 の condition.hitRate と同じ扱い）。
 // - 表が null（未測定）の項目・的の表の無い敵・並びより後の区間は、手入力の値（slot.condition）を使い、注記を出す。
 // - 配分（中遠の 3 か所）の区間は、着地点ごとの 1 トリガーの値を重みで足す（Σ w_k × T_k）。
@@ -42,13 +43,15 @@ export function landingBandOf(
 
 /**
  * 着地点 1 か所ぶんの条件と重み。手入力の枠・未測定の区間は landing が null で重み 1。
- * measuredHitRate は弾丸命中率を的の表から取ったか（省略 false。SG のゲージの割合を決める。plan/design-sg-hit-rate.md 3 節）
+ * measuredHitRate は弾丸命中率を的の表から取ったか（省略 false。SG のゲージの割合を決める。plan/design-sg-hit-rate.md 3 節）。
+ * tableCoreHitRate は的の表のコア命中率（命中率▲を掛ける前。表が null・手入力は省略）。区間の N で出し直すのに使う
  */
 export type LandingPart = {
   landing: LandingPoint | null;
   weight: number;
   condition: SlotCondition;
   measuredHitRate?: boolean;
+  tableCoreHitRate?: number;
 };
 
 /** 着地点の計画（自動の枠が 1 つも無い、または的の表の無い敵では作らない） */
@@ -73,8 +76,10 @@ export type AutoConditionSummary = {
   distanceBonus: number;
   /** 弾丸命中率の発数平均 */
   hitRate: number;
-  /** 掛けた常時の命中率▲ */
+  /** 掛けた命中率▲ N（常時 + 持続。発数で重みを付けた平均） */
   hitRateUp: number;
+  /** 持続の命中率▲が効いている区間で撃った発があったか */
+  timedHitRateUp: boolean;
 };
 
 /** 枠の条件が自動か（省略は手入力）。的の表が無い敵では、自動でも手入力の値を使う（注記を出す） */
@@ -192,12 +197,16 @@ export function planLandings(
         id,
         id === null
           ? [{ landing: null, weight: 1, condition: slot.condition }]
-          : landingMix(profile, id).map(({ landing, weight }) => ({
-              landing,
-              weight,
-              condition: autoConditionAt(profile, landing, slot.character, hitRateUp[i]!, slot.condition),
-              measuredHitRate: targetRateOf(profile.bulletHitRate, slot.character, landing) !== null,
-            })),
+          : landingMix(profile, id).map(({ landing, weight }) => {
+              const table = targetRateOf(profile.coreHitRate, slot.character, landing);
+              return {
+                landing,
+                weight,
+                condition: autoConditionAt(profile, landing, slot.character, hitRateUp[i]!, slot.condition),
+                measuredHitRate: targetRateOf(profile.bulletHitRate, slot.character, landing) !== null,
+                ...(table === null ? {} : { tableCoreHitRate: table }),
+              };
+            }),
       );
     }
     return map;
@@ -222,6 +231,40 @@ export function landingPartsOf(
     MANUAL_PART_CACHE.set(slot.condition, manual);
   }
   return manual;
+}
+
+const PARTS_WITH_CACHE = new WeakMap<LandingPlan, Map<string, readonly LandingPart[]>>();
+
+/**
+ * C-0170: landingPartsOf の条件のコア命中率を、命中率▲ hitRateUp（常時 + その区間の持続の▲。区間の状態の buffs.hitRate）で
+ * 出し直す。計画の常時の N と同じなら計画の配分をそのまま返す。弾丸命中率・距離ボーナスは変えない
+ */
+export function landingPartsWith(
+  plan: LandingPlan | null,
+  slot: Pick<TeamSlotInput, 'condition'>,
+  slotIndex: number,
+  landing: string | null | undefined,
+  hitRateUp: number,
+): readonly LandingPart[] {
+  const parts = landingPartsOf(plan, slot, slotIndex, landing);
+  if (plan === null || !plan.autoSlots[slotIndex] || hitRateUp === (plan.hitRateUp[slotIndex] ?? 0)) return parts;
+  if (!parts.some((p) => p.tableCoreHitRate !== undefined)) return parts;
+  let cache = PARTS_WITH_CACHE.get(plan);
+  if (cache === undefined) {
+    cache = new Map();
+    PARTS_WITH_CACHE.set(plan, cache);
+  }
+  const key = `${slotIndex}|${landing === null || landing === undefined ? '' : `L:${landing}`}|${hitRateUp}`;
+  let found = cache.get(key);
+  if (found === undefined) {
+    found = parts.map((p) =>
+      p.tableCoreHitRate === undefined
+        ? p
+        : { ...p, condition: { ...p.condition, coreHitRate: coreHitRateWithHitRateUp(p.tableCoreHitRate, hitRateUp) } },
+    );
+    cache.set(key, found);
+  }
+  return found;
 }
 
 /** 配分の弾丸命中率（Σ w × 弾丸命中率）。1 パス目のゲージに使う */
@@ -284,34 +327,68 @@ export function landingTriggerDamage(
   };
 }
 
-/** 自動で使った条件の平均（1 パス目の射撃の列で発数の重みを付ける）。自動でない枠は null */
+/** 区間ごとの命中率▲ N（区間の状態の buffs.hitRate）。autoConditionSummary に渡す */
+export type HitRateUpSpan = { start: number; end: number; hitRateUp: number };
+
+/** 持続バフの区間から、枠 slotIndex の区間ごとの N を取る */
+export function hitRateUpSpansOf(
+  timeline: { segments: readonly { start: number; end: number; slots: readonly (SlotBuffState | null)[] }[] },
+  slotIndex: number,
+): HitRateUpSpan[] {
+  return timeline.segments.map((s) => ({
+    start: s.start,
+    end: s.end,
+    hitRateUp: s.slots[slotIndex]?.buffs.hitRate ?? 0,
+  }));
+}
+
+/**
+ * 自動で使った条件の平均（1 パス目の射撃の列で発数の重みを付ける）。自動でない枠は null。
+ * hitRateSpans（区間ごとの N。省略は計画の常時の N）を渡すと、持続の命中率▲が効いている発のコア命中率をその N で出す
+ */
 export function autoConditionSummary(
   plan: LandingPlan | null,
   slot: Pick<TeamSlotInput, 'condition' | 'character'>,
   slotIndex: number,
   shotFrames: readonly number[],
+  hitRateSpans?: readonly HitRateUpSpan[],
 ): AutoConditionSummary | null {
   const parts = plan?.parts[slotIndex];
   if (plan === null || parts === null || parts === undefined) return null;
+  const constant = plan.hitRateUp[slotIndex] ?? 0;
   let shots = 0;
   let core = 0;
   let distance = 0;
   let hit = 0;
+  let upSum = 0;
+  let timed = false;
   let k = 0;
+  let h = 0;
+  const nAt = (frame: number): number => {
+    if (hitRateSpans === undefined) return constant;
+    while (h < hitRateSpans.length && hitRateSpans[h]!.end <= frame) h += 1;
+    const span = hitRateSpans[h];
+    return span !== undefined && span.start <= frame ? span.hitRateUp : constant;
+  };
   for (const span of plan.spans) {
     while (k < shotFrames.length && shotFrames[k]! < span.start) k += 1;
-    let n = 0;
+    // 同じ N が続く発をまとめて足す（持続の▲が無ければ着地点の区間ごとに 1 回で、今までと同じ足し方）
     while (k < shotFrames.length && shotFrames[k]! < span.end) {
-      n += 1;
-      k += 1;
+      const up = nAt(shotFrames[k]!);
+      let n = 0;
+      while (k < shotFrames.length && shotFrames[k]! < span.end && nAt(shotFrames[k]!) === up) {
+        n += 1;
+        k += 1;
+      }
+      for (const p of landingPartsWith(plan, slot, slotIndex, span.landing, up)) {
+        core += n * p.weight * p.condition.coreHitRate;
+        distance += n * p.weight * (p.condition.distanceBonus && slot.character.bonusRange !== null ? 1 : 0);
+        hit += n * p.weight * (p.condition.hitRate ?? 1);
+      }
+      if (up !== constant) timed = true;
+      upSum += n * up;
+      shots += n;
     }
-    if (n === 0) continue;
-    for (const p of parts.get(span.landing)!) {
-      core += n * p.weight * p.condition.coreHitRate;
-      distance += n * p.weight * (p.condition.distanceBonus && slot.character.bonusRange !== null ? 1 : 0);
-      hit += n * p.weight * (p.condition.hitRate ?? 1);
-    }
-    shots += n;
   }
   const mean = (v: number) => (shots > 0 ? v / shots : 0);
   return {
@@ -319,7 +396,8 @@ export function autoConditionSummary(
     coreHitRate: mean(core),
     distanceBonus: mean(distance),
     hitRate: mean(hit),
-    hitRateUp: plan.hitRateUp[slotIndex] ?? 0,
+    hitRateUp: timed ? mean(upSum) : constant,
+    timedHitRateUp: timed,
   };
 }
 
@@ -392,14 +470,14 @@ export function landingNotes(
     `${profile.name.ja}の表（単騎 AUTO の実測）でコア命中率・距離ボーナス・弾丸命中率を決めた`,
     ...mixes.map((id) => mixLabel(profile, id).ja),
     ...(n > 0 ? [`常時の命中率▲ ${pct(n)} でコア命中率を 1/(1 − N)² 倍（上限 1）`] : []),
-    'フルバースト中などに配られる持続の命中率▲はコア命中率に効かせていない',
+    'フルバースト中などに配られる持続の命中率▲も、効いている区間で N に足してコア命中率に効かせた（C-0170。仮説）',
     '命中率▲は弾丸命中率に効かせていない（未実装。SG の近 A では上がるが（C-0157）、効き方の式が決まっていない）',
   ];
   const en = [
     `Core hit rate, distance bonus and bullet hit rate come from the ${profile.name.en} table (solo AUTO recordings)`,
     ...mixes.map((id) => mixLabel(profile, id).en),
     ...(n > 0 ? [`constant hit rate up ${pct(n)} scales core hit rate by 1/(1 − N)² (max 1)`] : []),
-    'timed hit rate buffs (e.g. given at full burst) do not change core hit rate',
+    'timed hit rate buffs (e.g. given at full burst) are added to N while active and change core hit rate (C-0170; hypothesis)',
     'hit rate buffs do not change bullet hit rate (not modeled; they raise it for SG at near A (C-0157), but the formula is unknown)',
   ];
   notes.push({ level: 'approx', code: 'auto-condition', message: { ja: ja.join('。'), en: en.join('; ') } });
