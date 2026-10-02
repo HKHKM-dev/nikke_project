@@ -20,7 +20,8 @@
       "slot": 2,
       "rid": 101,
       "name": "ドレイク",
-      "controlled": true
+      "controlled": true,
+      "treasurePhase": 3
     },
     {
       "slot": 3,
