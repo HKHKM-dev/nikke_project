@@ -3,6 +3,7 @@
 // 混ざる録画では結論を作らない。「機構が確定したキャラ」は、スキル定義の効果と notes の根拠がすべて確定（か範囲外）の結論に
 // 結び付き、通常攻撃の条件（コア命中率・弾丸命中率）がその的の表で測られているキャラ。
 import { targetProfileOf } from '../enemies.ts';
+import { rateRowOf } from '../frame/landing.ts';
 import type { SkillDefinition, SkillEntry } from '../skills/types.ts';
 import type { CharacterData, EnemyPresetMaster } from '../types.ts';
 import type { Claim, ClaimState } from './claims.ts';
@@ -39,8 +40,7 @@ export function normalConditionMeasured(
 ): boolean {
   const profile = targetProfileOfRecording(recording, enemies);
   if (profile === undefined) return false;
-  const w = character.weaponType;
-  return profile.coreHitRate[w] != null && profile.bulletHitRate[w] != null;
+  return rateRowOf(profile.coreHitRate, character) !== null && rateRowOf(profile.bulletHitRate, character) !== null;
 }
 
 export type MinimalWarning = {

@@ -13,6 +13,8 @@ import type {
   LandingBand,
   LandingPoint,
   TargetProfile,
+  TargetRateByProjectile,
+  TargetRateRow,
   TargetRateTable,
   WeaponType,
 } from './types.ts';
@@ -206,16 +208,46 @@ function parseRateTable(v: unknown, path: string, keys: ReadonlySet<string>): Ta
       table[weapon as WeaponType] = null;
       continue;
     }
-    if (!isRecord(row) || Object.keys(row).length === 0) {
-      throw new TypeError(`${path}.${weapon}: must be a non-empty object or null`);
+    if (isRecord(row) && 'byProjectile' in row) {
+      table[weapon as WeaponType] = parseRateByProjectile(row, `${path}.${weapon}`, keys);
+      continue;
     }
-    for (const [key, value] of Object.entries(row)) {
-      if (!keys.has(key)) throw new TypeError(`${path}.${weapon}.${key}: not a landing, band or all`);
-      if (!isRate(value)) throw new TypeError(`${path}.${weapon}.${key}: must be in [0, 1]`);
-    }
-    table[weapon as WeaponType] = { ...(row as Record<string, number>) };
+    table[weapon as WeaponType] = parseRateRow(row, `${path}.${weapon}`, keys);
   }
   return table;
+}
+
+function parseRateRow(row: unknown, path: string, keys: ReadonlySet<string>): TargetRateRow {
+  if (!isRecord(row) || Object.keys(row).length === 0) {
+    throw new TypeError(`${path}: must be a non-empty object or null`);
+  }
+  for (const [key, value] of Object.entries(row)) {
+    if (!keys.has(key)) throw new TypeError(`${path}.${key}: not a landing, band or all`);
+    if (!isRate(value)) throw new TypeError(`${path}.${key}: must be in [0, 1]`);
+  }
+  return { ...(row as Record<string, number>) };
+}
+
+/** 弾の種類のキー `<fireType>:<弾速>`（plan/design-rl-core-by-projectile.md 3.1 節） */
+const PROJECTILE_KEY = /^[A-Za-z]+:\d+(\.\d+)?$/;
+
+function parseRateByProjectile(
+  row: Record<string, unknown>,
+  path: string,
+  keys: ReadonlySet<string>,
+): TargetRateByProjectile {
+  if (Object.keys(row).length !== 1) throw new TypeError(`${path}: byProjectile must be the only key`);
+  const by = row.byProjectile;
+  if (!isRecord(by) || Object.keys(by).length === 0) {
+    throw new TypeError(`${path}.byProjectile: must be a non-empty object`);
+  }
+  const rows: Record<string, TargetRateRow | null> = {};
+  for (const [key, r] of Object.entries(by)) {
+    const at = `${path}.byProjectile.${key}`;
+    if (!PROJECTILE_KEY.test(key)) throw new TypeError(`${at}: key must be <fireType>:<speed>`);
+    rows[key] = r === null ? null : parseRateRow(r, at, keys);
+  }
+  return { byProjectile: rows };
 }
 
 /** 配分の重みの和の許容誤差 */

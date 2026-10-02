@@ -332,10 +332,19 @@ export type LandingBand = 'near' | 'midNear' | 'midFar' | 'far';
 /** 的の着地点 1 か所。range は距離の範囲（m）で、距離ボーナスは range が bonusRange に丸ごと入るかで決める */
 export type LandingPoint = { id: string; band: LandingBand; range: [number, number] };
 
+/** 着地点ごとの値（0..1）。キーは着地点の id、帯、または all の順で引く */
+export type TargetRateRow = Readonly<Record<string, number>>;
+
 /**
- * 武器種 × 着地点の値（0..1）。キーは着地点の id、帯、または all の順で引く。null・省略は未測定（手入力の値を使う）
+ * 弾の種類ごとの行（plan/design-rl-core-by-projectile.md）。キーは `<fireType>:<弾速>`（キャラデータの shot.fireType と
+ * shot.projectile.speed の生値）。null・表に無いキーは未測定
  */
-export type TargetRateTable = Partial<Record<WeaponType, Readonly<Record<string, number>> | null>>;
+export type TargetRateByProjectile = { byProjectile: Readonly<Record<string, TargetRateRow | null>> };
+
+/**
+ * 武器種 × 着地点の値。武器種の行は、着地点ごとの値か、弾の種類ごとの行（RL のコア命中率。C-0171）。null・省略は未測定（手入力の値を使う）
+ */
+export type TargetRateTable = Partial<Record<WeaponType, TargetRateRow | TargetRateByProjectile | null>>;
 
 /** 的の条件の表。射撃場の BigArms のように、属性だけ違う敵で 1 つを共有する */
 export type TargetProfile = {
