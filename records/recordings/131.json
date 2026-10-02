@@ -1,0 +1,29 @@
+{
+  "id": "131",
+  "date": "2026-10-02",
+  "folder": "range",
+  "file": "20261002-131_rl_laplace-uh.mp4",
+  "original": "2026-10-02_23-42-51.mp4",
+  "durationSec": 212.8,
+  "frames": 12766,
+  "fps": 60,
+  "sizeMB": 257.8,
+  "sha256": "2039d46f269a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 103,
+      "name": "ラプラス：アルティメットヒーロー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。V-0104"
+}
