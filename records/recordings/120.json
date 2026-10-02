@@ -1,0 +1,29 @@
+{
+  "id": "120",
+  "date": "2026-10-02",
+  "folder": "range",
+  "file": "20261002-120_rl_neon-vision-eye.mp4",
+  "original": "2026-10-02_19-55-53.mp4",
+  "durationSec": 44.4,
+  "frames": 2666,
+  "fps": 60,
+  "sizeMB": 53.8,
+  "sha256": "28f615e8e8ed",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 18,
+      "name": "ネオン：ビジョン・アイ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0094。ネオン：ビジョンアイ単騎・操作・オートバースト OFF（バーストは使っていない）。出撃画面（f30）で灼熱タブとスペック固定 ON、一時停止画面（f2520〜2655）で名前・Lv.400・与ダメージ 15,104,535（HUD の最後の値と一致）を確かめた。画面左上の AUTO の表示は赤。最初の着弾は f892。S1 の火力爆発（追加ダメージ）が 1 発ごとに同じフレームに出る"
+}

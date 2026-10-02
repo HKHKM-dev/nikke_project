@@ -1,0 +1,29 @@
+{
+  "id": "119",
+  "date": "2026-10-02",
+  "folder": "range",
+  "file": "20261002-119_mg_mihara-bonding-chain.mp4",
+  "original": "2026-10-02_19-53-55.mp4",
+  "durationSec": 55.7,
+  "frames": 3342,
+  "fps": 60,
+  "sizeMB": 67.4,
+  "sha256": "0ae8646cb819",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 162,
+      "name": "ミハラ：ボンディングチェーン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0093。ミハラ：ボンディングチェーン単騎・操作・オートバースト OFF（バーストは使っていない）。出撃画面（f30）で灼熱タブとスペック固定 ON、一時停止画面（f3060〜3330）で名前・Lv.400・与ダメージ 26,795,827（HUD の最後の値と一致）を確かめた。画面左上の AUTO の表示は赤。戦闘開始は f842 の前（最初の増分は S1 のスキルダメージ）。MG の 1 ヒットは f1077 から"
+}

@@ -1,0 +1,79 @@
+[
+  {
+    "id": "119-01",
+    "recording": "119",
+    "kind": "total",
+    "use": "record",
+    "source": "V-0093",
+    "readAt": "2026-10-02",
+    "value": 26795827,
+    "description": "ミハラ：ボンディングチェーン単騎（操作・スペック固定 ON・バーストなし）の 55.7 秒の HUD の総ダメージの最後の値。一時停止画面の与ダメージと一致。S1 のスキルダメージ（キャプチャーチェーンの攻撃とチェーンバインドの持続ダメージ）を含み、モデルに定義が無いので比べない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "最後の増分は f3056。パネルは f3200 を still.ts で切り出して読んだ"
+    }
+  },
+  {
+    "id": "119-02",
+    "recording": "119",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0093",
+    "readAt": "2026-10-02",
+    "value": 6717,
+    "description": "ミハラ：ボンディングチェーン（MG・操作）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし）。ラピ：レッドフードの 116-06・117-06 と同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分 6,717 は f1077〜2880 に 51 回（撃ち始めの f1077・1100・1123 など。的の上の数値も f1078 で 6717）。rank30 の値（6,673 前後・会心 10,009 前後・コア 13,345 前後・コア + 会心 16,683 前後）の増分は 1 回も無い。S1 のスキルダメージ（30,245・60,369・453,675・1 秒ごとの 302,450 など）は別の値で、1 ヒットと同じフレームに出た増分（309,167 など）は読まない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 0, "core": false, "crit": false, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+    }
+  },
+  {
+    "id": "119-03",
+    "recording": "119",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0093",
+    "readAt": "2026-10-02",
+    "value": 10076,
+    "description": "同じ 1 ヒットの会心（胴体・距離ボーナスなし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分 10,076 は f1699・2275・2333・2357・2884 の 5 回"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 0, "core": false, "crit": true, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+    }
+  },
+  {
+    "id": "119-04",
+    "recording": "119",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0093",
+    "readAt": "2026-10-02",
+    "value": 13434,
+    "description": "同じ 1 ヒットのコア（非会心・距離ボーナスなし）。コア + 会心の 16,793 も 102 回、1 フレームに 2 ヒットの 26,868（2 × コア）も 94 回",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分 13,434 は f1151〜3056 に 526 回。値は録画を通して変わらない（バフの出入りが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 0, "core": true, "crit": false, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+    }
+  }
+]
