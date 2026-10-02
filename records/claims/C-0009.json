@@ -1,11 +1,11 @@
 {
   "id": "C-0009",
   "text": "次の段階が出ないとき、チェーンは約 600f で切れる",
-  "state": "仮説",
+  "state": "確定",
   "topic": "バーストの段階とフルバースト",
-  "grade": "単独実測",
-  "basis": "verification.md Stage 7（録画 22 の目視）",
-  "model": "`burst/controller.ts` の `BURST_CHAIN_TIMEOUT_FRAMES` = 600",
+  "grade": "反復実測",
+  "basis": "verification.md Stage 7（録画 22 の目視）。`077-21`（フラワー単騎で 5 回とも、I の発動からチェーンの UI が消えるまで 595〜602f。その間のヒットはゲージに入らず、UI が消えた後の最初のヒットから入る。値を決めるのに使っていない読み）。V-0106",
+  "model": "`burst/controller.ts` の `BURST_CHAIN_TIMEOUT_FRAMES` = ゲーム内の 10 秒（588f）。077 では、ゲージに入らなかった最後のヒットと入った最初のヒットの間（発動から 580〜661f）に入り、600f にしても満タンのフレームは変わらない（V-0106）",
   "replaces": [],
-  "updated": "2026-09-27"
+  "updated": "2026-10-03"
 }
