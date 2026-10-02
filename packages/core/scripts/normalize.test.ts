@@ -80,6 +80,10 @@ function emma(locale: 'en' | 'ja'): RawRoleData {
       auto_end_accuracy_circle_scale: 10,
       auto_accuracy_change_pershot: 7,
       auto_accuracy_change_speed: 150,
+      spot_projectile_speed: 0,
+      homing_script: null,
+      spot_radius: 0,
+      spot_explosion_range: 0,
     },
     skill1_detail: skill(2090101, ja ? 'チアリーディング' : 'Cheerleading', [['5.92', '6.46'], ['5', '5'], undefined]),
     skill2_detail: skill(2090201, 'S2', []),
@@ -115,6 +119,22 @@ describe('toCharacterData', () => {
       autoChangePerShot: 7,
       autoChangeSpeed: 150,
     });
+  });
+
+  it('keeps projectile fields only for projectile weapons', () => {
+    expect(data.shot.fireType).toBe('Instant');
+    expect(data.shot.projectile).toBeUndefined();
+    const en = emma('en');
+    const homing = { ...en.shot_detail, weapon_type: 'RL', fire_type: 'HomingProjectile' };
+    Object.assign(homing, {
+      spot_projectile_speed: 100,
+      homing_script: 'lv1',
+      spot_radius: 50,
+      spot_explosion_range: 500,
+    });
+    const rl = toCharacterData({ ...en, shot_detail: homing }, { ...emma('ja'), shot_detail: homing });
+    expect(rl.shot.fireType).toBe('HomingProjectile');
+    expect(rl.shot.projectile).toEqual({ speed: 100, homing: 'lv1', radius: 50, explosionRange: 500 });
   });
 
   it('converts burst gauge and cooldown fields (Stage 7)', () => {
