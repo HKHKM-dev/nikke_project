@@ -5,7 +5,7 @@
   "topic": "バーストゲージ",
   "grade": "推論",
   "basis": "1 発の合計（C-0103）から、説明文のチャージ 14.31%（C-0094）と弾 14.0%（C-0007）を引いた残り（約 5.6%）が 56,000 と合う。追加ダメージのヒットとチャージを別々に見た録画は無い。V-0034",
-  "model": "`data/skills/352.json` の treasureSkills.skill2 の effects[1] の gaugeHits（[1]。発の次のフレーム）",
+  "model": "`data/skills/352.json` の treasureSkills.skill2 の effects[1] の gaugeHits（[0]。発と同じフレーム。V-0034 の実測。2026-10-02 に [1] から直した）",
   "replaces": [],
   "updated": "2026-09-28"
 }

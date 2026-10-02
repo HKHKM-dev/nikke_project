@@ -104,7 +104,7 @@
           "trigger": { "count": "fullChargeShot" },
           "ref": 4,
           "damageType": "additional",
-          "gaugeHits": [1],
+          "gaugeHits": [0],
           "claims": ["C-0093", "C-0103", "C-0104"]
         }
       ],
