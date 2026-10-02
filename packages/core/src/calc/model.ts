@@ -18,7 +18,7 @@
 // options.shotCounting = 'firingSlots' で試作した。
 // 2026-09-28: design-stage10.md 5 節の案 (a)（全グループをバフ込みの平均レートで置く）を 'average' で選べるようにした。
 // 既定はハイブリッドのまま（2026-09-28 オーナー決定。実装されたキャラが増えてから、負荷と精度のバランスで改めて決める。同 10 節）。
-import { hitFramesOfSlot, summarizeSchedule } from '../burst/schedule.ts';
+import { burstHitsOfSlot, summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
 import {
   baseAttackOf,
@@ -30,12 +30,7 @@ import {
 import { enemyEventNotes } from '../frame/events.ts';
 import { autoConditionSummary, landingPartsOf, landingTriggerDamage, slotConditionNotes } from '../frame/landing.ts';
 import { firingParams } from '../frame/firing.ts';
-import {
-  BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
-  burstSnapshotState,
-  perShotDamageOf,
-  planTeamRun,
-} from '../frame/plan.ts';
+import { BURST_HIT_USES_PRE_ACTIVATION_BUFFS, burstHitBuffs, perShotDamageOf, planTeamRun } from '../frame/plan.ts';
 import { slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges, type SlotBuffState } from '../skills/timeline.ts';
@@ -190,11 +185,11 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     const activations: { seconds: number; hit: BurstHitResult }[] = [];
     let burstDamage = 0;
     if (schedule !== null) {
-      for (const frame of hitFramesOfSlot(schedule, index, timeline.frames)) {
-        const state = burstSnapshotState(timeline, frame, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
+      for (const { activationFrame, frame } of burstHitsOfSlot(schedule, index, timeline.frames)) {
+        const buffs = burstHitBuffs(timeline, activationFrame, frame, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
         const trigger = computeTriggerDamage({
           ...base,
-          buffs: state.buffs,
+          buffs,
           condition: { ...slot.condition, fullBurst: false },
         });
         const hit = slotBurstHit(
@@ -203,7 +198,7 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
           slot.character,
           enemy,
           trigger,
-          state.buffs,
+          buffs,
         );
         if (hit === null) break;
         activations.push({ seconds: framesToGameSeconds(frame), hit });

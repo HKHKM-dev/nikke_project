@@ -17,6 +17,9 @@ export const MEASURED_BURST_DELAYS: readonly { resourceIds: readonly number[]; d
   [
     // イサベル: III の発動からヒットと効果の発火まで、どちらも 134f（動画で 156f。フルバーストの入りの止まり 22f を含む）
     { resourceIds: [231], delays: { hitFrames: 134, effectFrames: 134 }, claim: 'C-0165' },
+    // ヘルム（宝物あり）: III の発動からヒットまで 59f（動画で 80〜81f。止まり 22f を含む）。効果（チャージダメージ倍率▲）は
+    // フルバーストの始まりの表示より 2〜35f 前に発火する。モデルは発動より前に置けないので 0（発動と同じフレーム）
+    { resourceIds: [352], delays: { hitFrames: 59, effectFrames: 0 }, claim: 'C-0167' },
   ];
 
 /** キャラのバーストの遅れ。表に無ければ 0 */
