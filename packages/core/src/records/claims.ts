@@ -154,9 +154,20 @@ export function gatedObservations(claims: readonly Claim[], invalidIds: Readonly
  *   反復実測: 許容内の観測値が 2 本以上の録画にある
  *   単独実測: 許容内が 1 本の録画だけ（か無い）
  */
+/**
+ * 1 ヒットの値の指標。モデルは端数を持ち、ゲームは途中の丸めで整数を出す（丸め方は四捨五入でも切り捨てでも揃わない）ので、
+ * 差の絶対値が 1 未満を厳密一致とする（plan/design-records-automation.md 3.5 節。2026-10-02 にオーナーの決定で足した）
+ */
+export const HIT_VALUE_METRICS: ReadonlySet<string> = new Set([
+  'hitDamage',
+  'burstHitDamage',
+  'dotHitDamage',
+  'skillHitDamage',
+]);
+
 export function gradeCandidate(
   claim: Claim,
-  residuals: ReadonlyMap<string, { status: string; diff: number | null; value: number | number[] }>,
+  residuals: ReadonlyMap<string, { status: string; diff: number | null; value: number | number[]; metric?: string }>,
   invalidIds: ReadonlySet<string> = new Set(),
 ): ClaimGrade | undefined {
   const valid = claim.observations.filter((o) => !invalidIds.has(o));
@@ -167,7 +178,11 @@ export function gradeCandidate(
   if (compared.length === 0) return undefined;
   const ok = compared.filter((r) => r.status === 'ok');
   const isInteger = (v: number | number[]) => (Array.isArray(v) ? v.every(Number.isInteger) : Number.isInteger(v));
-  if (ok.some((r) => r.diff === 0 && isInteger(r.value))) return '厳密一致';
+  const exact = (r: (typeof ok)[number]): boolean =>
+    isInteger(r.value) &&
+    r.diff !== null &&
+    (r.diff === 0 || (r.metric !== undefined && HIT_VALUE_METRICS.has(r.metric) && Math.abs(r.diff) < 1));
+  if (ok.some(exact)) return '厳密一致';
   const recordings = new Set(ok.map((r) => r.id.replace(/-\d+$/, '')));
   if (recordings.size >= 2) return '反復実測';
   return '単独実測';

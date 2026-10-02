@@ -170,12 +170,18 @@ describe('gradeCandidate（等級の候補）', () => {
     updated: '2026-10-02',
     observations: [...basis.matchAll(/`([^`]+)`/g)].map((m) => m[1]!),
   });
-  const residuals = new Map<string, { status: string; diff: number | null; value: number | number[] }>([
-    ['101-09', { status: 'ok', diff: 0, value: 189 }],
-    ['102-09', { status: 'ok', diff: 1, value: 188 }],
-    ['101-01', { status: 'ok', diff: 0.01, value: 29_066_175 }],
-    ['074-08', { status: 'outside', diff: 0.05, value: 63_036_302 }],
-  ]);
+  const residuals = new Map<string, { status: string; diff: number | null; value: number | number[]; metric?: string }>(
+    [
+      ['101-09', { status: 'ok', diff: 0, value: 189 }],
+      ['102-09', { status: 'ok', diff: 1, value: 188 }],
+      ['101-01', { status: 'ok', diff: 0.01, value: 29_066_175 }],
+      ['074-08', { status: 'outside', diff: 0.05, value: 63_036_302 }],
+      ['079-07', { status: 'ok', diff: 0.621, value: 10_854_092, metric: 'burstHitDamage' }],
+      ['012-01', { status: 'ok', diff: -0.12, value: 47_172, metric: 'hitDamage' }],
+      ['013-01', { status: 'ok', diff: 1.2, value: 47_172, metric: 'hitDamage' }],
+      ['047-11', { status: 'ok', diff: 0.5, value: 1_200, metric: 'gaugeFullFrame' }],
+    ],
+  );
   it('is undefined without compared observations, 厳密一致 for an exact integer match, 反復実測 across recordings, else 単独実測', () => {
     expect(gradeCandidate(claim('verification.md Stage 2'), residuals)).toBeUndefined();
     expect(gradeCandidate(claim('`101-16`'), residuals)).toBeUndefined();
@@ -184,6 +190,13 @@ describe('gradeCandidate（等級の候補）', () => {
     expect(gradeCandidate(claim('`101-01`'), residuals)).toBe('単独実測');
     expect(gradeCandidate(claim('`074-08`'), residuals)).toBe('単独実測');
     expect(gradeCandidate(claim('`101-09`'), residuals, new Set(['101-09']))).toBeUndefined();
+  });
+  it('counts a 1-hit value within 1 of the model as 厳密一致 (the model keeps fractions; 3.5 節)', () => {
+    expect(gradeCandidate(claim('`079-07`'), residuals)).toBe('厳密一致');
+    expect(gradeCandidate(claim('`012-01`'), residuals)).toBe('厳密一致');
+    // 1 以上ずれた 1 ヒット、1 ヒットでない指標の端数の差は厳密一致にしない
+    expect(gradeCandidate(claim('`013-01`'), residuals)).toBe('単独実測');
+    expect(gradeCandidate(claim('`047-11`'), residuals)).toBe('単独実測');
   });
   it('an observation is a dummy for the type', () => {
     const o: Observation = observations[0]!;
