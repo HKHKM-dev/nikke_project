@@ -269,9 +269,12 @@ export function triggerFires(
  */
 export function timerFrames(everySeconds: number, frames: number): number[] {
   const fires: number[] = [];
+  // V-0086: 戦闘の最後のフレーム（180 秒の戦闘では 179.996 秒）より後の時刻（180 秒ちょうどの発火など）は、戦闘の終わりで起きない
+  const lastFrameSeconds = framesToGameSeconds(frames - 1) + 1e-9;
   for (let k = 1; ; k++) {
-    const frame = gameSecondsToFrame(k * everySeconds);
-    if (frame >= frames) return fires;
+    const seconds = k * everySeconds;
+    const frame = gameSecondsToFrame(seconds);
+    if (frame >= frames || seconds > lastFrameSeconds) return fires;
     fires.push(frame);
   }
 }

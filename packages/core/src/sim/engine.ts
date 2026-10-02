@@ -119,7 +119,7 @@ export type SimSlotResult = {
 };
 
 export type SimResult = {
-  /** 回したフレーム数 = gameSecondsToFrames(durationSeconds)（切り上げ） */
+  /** 回したフレーム数 = battleSecondsToFrames(durationSeconds)（切り上げ。180 秒は 10,589f。V-0086） */
   frames: number;
   schedule: BurstSchedule | null;
   timeline: BuffTimeline;
@@ -165,7 +165,8 @@ export function runSimulation(simInput: SimInput): SimResult {
     model,
   });
   // Stage 16-B: 1 秒ごとのダメージ（タイムラインの表示用）
-  const seconds = Math.ceil(framesToGameSeconds(frames));
+  // 最後のフレーム（180 秒の戦闘では 179.996 秒）が入る秒までの列（V-0086）
+  const seconds = frames > 0 ? Math.floor(framesToGameSeconds(frames - 1)) + 1 : 0;
   const perSecond: DamagePerSecond = {
     total: new Array<number>(seconds).fill(0),
     slots: slots.map((slot) => (slot === null ? null : new Array<number>(seconds).fill(0))),

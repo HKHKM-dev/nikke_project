@@ -10,7 +10,7 @@ export const GAME_SECONDS_PER_FRAME = 0.017;
 export const FRAMES_PER_GAME_SECOND = 1 / GAME_SECONDS_PER_FRAME;
 
 /**
- * 長さ（持続・CT・フルバースト・戦闘の長さ）: ゲーム内の秒 → フレーム（切り捨て）。
+ * 長さ（持続・CT・フルバースト）: ゲーム内の秒 → フレーム（切り捨て）。戦闘の長さは battleSecondsToFrames。
  * 21-B: クラウンの S2 の 7 秒は、▲の付いた発の区間が 411f（056-04。7 ÷ 0.017 = 411.8 の切り捨て）。21-A までは切り上げだった
  */
 export function gameSecondsToFrames(seconds: number): number {
@@ -19,9 +19,30 @@ export function gameSecondsToFrames(seconds: number): number {
   return Math.floor(seconds / GAME_SECONDS_PER_FRAME + 1e-9);
 }
 
+/**
+ * 戦闘の長さ: ゲーム内の秒 → 回すフレーム数（0 から数えて、ゲーム内の時刻が戦闘の長さより前のフレームを全部含む。切り上げ）。
+ * V-0086: 180 秒の戦闘では、戦闘開始から 10,588f（179.996 秒）の発も総ダメージに入る（録画 074・102）。
+ * 持続などの長さ（gameSecondsToFrames。切り捨て）とは別の規則
+ */
+export function battleSecondsToFrames(seconds: number): number {
+  if (!Number.isFinite(seconds) || seconds < 0) throw new RangeError(`duration must be >= 0, got ${seconds}`);
+  // 割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く
+  return Math.max(0, Math.ceil(seconds / GAME_SECONDS_PER_FRAME - 1e-9));
+}
+
 /** 時刻（出来事の境目）: ゲーム内の秒 → フレーム（四捨五入） */
 export function gameSecondsToFrame(seconds: number): number {
   return Math.round(seconds / GAME_SECONDS_PER_FRAME);
+}
+
+/**
+ * 区間の終わりの時刻 → フレーム（四捨五入）。ただし、戦闘の最後のフレームより後に終わる区間（終わりが戦闘の長さの区間など）は、
+ * 戦闘の終わり（frames）まで覆う（battleSecondsToFrames の最後のフレームを取りこぼさない。V-0086）
+ */
+export function endSecondsToFrame(seconds: number, frames: number): number {
+  return seconds > (frames - 1) * GAME_SECONDS_PER_FRAME + 1e-9
+    ? frames
+    : Math.min(frames, gameSecondsToFrame(seconds));
 }
 
 /** 出力: フレーム → ゲーム内の秒 */

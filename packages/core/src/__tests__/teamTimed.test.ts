@@ -10,10 +10,10 @@ import { type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
 import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';
-import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
+import { battleSecondsToFrames, framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
 
-/** Stage 21-B: 180 秒 = 10,588f、固定サイクルの通常 10 秒 = 588f */
-const FRAMES = gameSecondsToFrames(180);
+/** Stage 21-B: 固定サイクルの通常 10 秒 = 588f。180 秒の戦闘は 10,589f（179.996 秒のフレームまで。V-0086） */
+const FRAMES = battleSecondsToFrames(180);
 const H = FIXED_BURST_CYCLE.normalFrames;
 
 const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
@@ -67,7 +67,8 @@ const sr = (resourceId: number): TeamSlotInput => ({
 describe('6.3 A: a battleStart buff lasting the whole battle equals the same effect as a passive', () => {
   const asTimed = skillSlot(21, {
     skill1: supported([
-      { kind: 'timed', trigger: 'battleStart', target: 'self', stat: 'attack', ref: 1, durationSeconds: 180 },
+      // 持続は切り捨て（21-B）なので、180 秒の持続は戦闘の最後のフレーム（179.996 秒。V-0086）を覆わない。戦闘より長い持続で書く
+      { kind: 'timed', trigger: 'battleStart', target: 'self', stat: 'attack', ref: 1, durationSeconds: 200 },
     ]),
   });
   const asPassive = skillSlot(21, {
@@ -148,9 +149,9 @@ describe('6.2 degeneration: without timed effects the model is Stage 5’s two i
     for (const s of t.slots) {
       if (s === null) continue;
       expect(s.segments).toHaveLength(2);
-      // 通常 9H + 4f（9 サイクルの後の 4f）、フルバースト 9H
+      // 通常 9H + 5f（9 サイクルの後の 5f。180 秒は 10,589f。V-0086）、フルバースト 9H
       expect(s.segments.map((g) => g.fullBurst)).toEqual([false, true]);
-      const secs = [framesToGameSeconds(9 * H + 4), framesToGameSeconds(9 * H)];
+      const secs = [framesToGameSeconds(9 * H + 5), framesToGameSeconds(9 * H)];
       const rate = s.cadence.triggersPerSecond;
       for (const i of [0, 1]) {
         expect(s.segments[i]!.seconds).toBeCloseTo(secs[i]!, 9);

@@ -9,7 +9,7 @@ import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
-import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
+import { battleSecondsToFrames, framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
 
 function load<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -58,13 +58,13 @@ describe('録画 14: クイーン（真）の戦闘開始時 攻撃力 +50.28%�
 
   it('splits the battle at 15 s', () => {
     expect(s.windows).toHaveLength(1);
-    // Stage 21-B: 15 秒 = 882f、180 秒 = 10,588f
+    // Stage 21-B: 15 秒 = 882f。180 秒の戦闘は 10,589f（V-0086）
     const q = gameSecondsToFrames(15);
     expect(s.windows[0]).toMatchObject({ start: 0, end: q });
     expect(s.windows[0]?.effect.trigger).toBe('battleStart');
     expect(s.segments.map((g) => g.buffs.attackRatio !== 0)).toEqual([true, false]);
     expect(s.segments[0]!.seconds).toBeCloseTo(framesToGameSeconds(q), 9);
-    expect(s.segments[1]!.seconds).toBeCloseTo(framesToGameSeconds(gameSecondsToFrames(180) - q), 9);
+    expect(s.segments[1]!.seconds).toBeCloseTo(framesToGameSeconds(battleSecondsToFrames(180) - q), 9);
   });
 
   it('applies the +50.28% only in the first 15 s and keeps attackDamage +30% throughout', () => {
