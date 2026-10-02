@@ -225,6 +225,16 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     sim: (r, c) => gaugeFull(r.schedule?.gaugeFullFrames, c),
     calc: (r, c) => gaugeFull(r.schedule?.gaugeFullFrames, c),
   },
+  // 録画 045・046・082 の「n 回目に BURST バーが消えた発の番号」（V-0085）。モデルは全発が当たるので、外れた発のある録画では
+  // 当たった発の番号と比べる。満タンが来なければ 0
+  gaugeFullShotIndex: {
+    args: ['slot', 'n'],
+    sim: (r, c) => {
+      const full = r.schedule?.gaugeFullFrames[Number(c.args.n)];
+      if (full === undefined) return 0;
+      return slotOf(r.shots, c).frames.filter((f) => f <= full).length;
+    },
+  },
   burstCount: {
     args: ['slot'],
     sim: (r, c) => slotOf(r.slots, c).burst.activations.length,

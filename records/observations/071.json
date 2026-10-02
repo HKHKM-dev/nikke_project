@@ -56,5 +56,35 @@
       "tool": "tools/captures/hud.ts --mode jumps",
       "note": "増分を 1 発の値（コア 207,265・会心 259,081・胴体 103,632、部分チャージ）と S1 の段の値に分けた。3 回目のジャンプの始まりに部分チャージ（戦闘開始から 5963f、204,732 = フルのコアの 0.988 倍。前の発から 42f。046・055・070 は 41f で 0.969 倍）、4 回目の前はフルチャージ（8078f）で止まった。総ダメージに出ない発は 820f の 1 つ（046-16）"
     }
+  },
+  {
+    "id": "071-05",
+    "recording": "071",
+    "source": "V-0085",
+    "readAt": "2026-09-28",
+    "kind": "count",
+    "use": "compare",
+    "value": 20,
+    "unit": "ヒット",
+    "description": "紅蓮：ブラックシャドウ（RL・操作）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）通常攻撃のヒットの番号。そこまでに S1 の段のヒット（A 1・B 3 ティック・C 1 を 1 ヒットずつ）が 10 ヒットある",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "消えたのは f2513。f2427 の通常攻撃が半分の値（103,632）で、ほかの通常攻撃と同じに数えた。もとは 046-14 に 046・055・070・071 の 4 本をまとめて書いていた（V-0030）。照合のため録画ごとに分けた（V-0085）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
