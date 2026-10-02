@@ -85,7 +85,10 @@ writeFileSync(
 );
 // 等級の候補（plan/design-records-automation.md 3.5 節）。書いた等級と違えば claims.md に出す。落とさない
 const residualOf = new Map(
-  residuals.map((r) => [r.observation.id, { status: r.status, diff: r.diff, value: r.observation.value }]),
+  residuals.map((r) => [
+    r.observation.id,
+    { status: r.status, diff: r.diff, value: r.observation.value, metric: r.observation.compare?.metric },
+  ]),
 );
 const gradeCandidates = new Map<string, ClaimGrade>();
 for (const c of claims) {

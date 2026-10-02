@@ -103,7 +103,10 @@ if (kind === 'verification') {
   const own = observations.filter((o) => o.source === from);
   const residuals = runObservations(own, recordings, data);
   const residualOf = new Map(
-    residuals.map((r) => [r.observation.id, { status: r.status, diff: r.diff, value: r.observation.value }]),
+    residuals.map((r) => [
+      r.observation.id,
+      { status: r.status, diff: r.diff, value: r.observation.value, metric: r.observation.compare?.metric },
+    ]),
   );
   const compared = new Map(
     residuals.filter((r) => r.status !== 'invalid').map((r) => [r.observation.id, r.status === 'ok']),
