@@ -1,0 +1,105 @@
+{
+  "verification": "V-0090",
+  "team": [
+    {
+      "rid": 225,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "SR・RL の弾丸命中率 1（いまの既定。表が null なので手入力の値 1 を使う）"
+    },
+    {
+      "id": "H1",
+      "note": "外れる発があるときの見え方の目安（180 発に 1〜2 発）。表に入れる値を決めるものではない",
+      "override": {
+        "hitRate": 0.99
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "shots-046",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["046-03"],
+      "note": "紅蓮BS 単騎（046 の組み方）の 180 秒の射撃の数。弾丸命中率では動かない（見分けは与ダメージと列の抜け）"
+    },
+    {
+      "id": "total-046",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["046-02"],
+      "note": "同じ枠の与ダメージ。H1 で下がる大きさの目安"
+    },
+    {
+      "id": "shots-055",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "observations": ["055-03"],
+      "note": "紅蓮BS 単騎（055 の組み方。自動バースト OFF）の射撃の数"
+    },
+    {
+      "id": "total-055",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "observations": ["055-02"],
+      "note": "同じ枠の与ダメージ"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "ccf4e68b22cc98c976ce6c93769fa97c5c3e7083",
+    "values": {
+      "H0": {
+        "shots-046": 180,
+        "total-046": 81503452.53334272,
+        "shots-055": 180,
+        "total-055": 81503452.53334272
+      },
+      "H1": {
+        "shots-046": 180,
+        "total-046": 81117173.78827968,
+        "shots-055": 180,
+        "total-055": 81117173.78827968
+      }
+    }
+  }
+}
