@@ -50,11 +50,11 @@ export function closeChecks(input: CloseInput): CloseResult {
       );
     }
   }
-  // 予測は撮る前に書く
+  // 予測は撮る前に書く。起票より前に撮った録画（読み直し）は撮る前に予測を書けないので、録画の日は見ず、読んだ日とだけ比べる
   const dates = [
     ...v.recordings.flatMap((r) => {
       const e = input.recordings.get(r);
-      return e !== undefined && 'date' in e ? [e.date] : [];
+      return e !== undefined && 'date' in e && e.date >= v.date ? [e.date] : [];
     }),
     ...input.observations.flatMap((o) => (o.readAt === undefined ? [] : [o.readAt])),
   ].sort();

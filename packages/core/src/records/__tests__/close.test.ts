@@ -105,8 +105,19 @@ describe('closeChecks', () => {
     expect(closeChecks({ ...base, prediction: { ...base.prediction!, predicted: null } }).errors[0]).toContain(
       '出していない',
     );
-    const late = { ...base.prediction!, predicted: { at: '2026-10-02', commit: 'abc1234', values: {} } };
-    expect(closeChecks({ ...base, prediction: late }).errors[0]).toContain('より後');
+    // 起票（2026-10-02）より前に撮った録画（2026-10-01）は読み直しなので、録画の日は見ない（読んだ日と同じ日の予測は通る）
+    const reread = { ...base.prediction!, predicted: { at: '2026-10-02', commit: 'abc1234', values: {} } };
+    expect(closeChecks({ ...base, prediction: reread }).errors).toEqual([]);
+    // 起票の後に撮った録画の日より後の予測は落ちる
+    const shot = { ...recording, date: '2026-10-02' } as RecordingEntry;
+    const late = { ...base.prediction!, predicted: { at: '2026-10-03', commit: 'abc1234', values: {} } };
+    const lateInput = {
+      ...base,
+      prediction: late,
+      recordings: new Map([['101', shot]]),
+      observations: [{ ...obs, readAt: '2026-10-03' }],
+    };
+    expect(closeChecks(lateInput).errors[0]).toContain('より後');
   });
 
   it('本文の節が空、既に完了、最小構成の警告、失効は注意', () => {

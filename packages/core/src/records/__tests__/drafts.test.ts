@@ -194,9 +194,9 @@ describe('最小構成の警告', () => {
   it('通常攻撃の条件: 射撃場の的の表に、その武器種のコア命中率と弾丸命中率がある', () => {
     const recording = recordings.get('101')!;
     expect(normalConditionMeasured(data.characters.get(307)!, recording, data.enemies)).toBe(true);
-    // SR の弾丸命中率は未測定（null）
+    // SR の弾丸命中率も表にある（C-0168）
     const sr = [...data.characters.values()].find((c) => c.weaponType === 'SR');
-    if (sr) expect(normalConditionMeasured(sr, recording, data.enemies)).toBe(false);
+    if (sr) expect(normalConditionMeasured(sr, recording, data.enemies)).toBe(true);
     const raid = { ...recording, target: { name: 'boss', element: null } };
     expect(normalConditionMeasured(data.characters.get(307)!, raid, data.enemies)).toBe(false);
   });

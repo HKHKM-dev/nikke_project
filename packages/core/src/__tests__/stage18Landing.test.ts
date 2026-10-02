@@ -94,7 +94,9 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(targetRateOf(profile.bulletHitRate, SG, at('nearB'))).toBe(0.951);
     expect(targetRateOf(profile.bulletHitRate, AR, at('nearB'))).toBe(0.9975);
     expect(targetRateOf(profile.bulletHitRate, SG, at('midFarB'))).toBe(0.77);
-    expect(targetRateOf(profile.bulletHitRate, SR, at('far'))).toBeNull();
+    // C-0168: SR・RL の弾丸命中率は 1（距離帯によらない）
+    expect(targetRateOf(profile.bulletHitRate, SR, at('far'))).toBe(1);
+    expect(targetRateOf(profile.bulletHitRate, RL, at('nearA'))).toBe(1);
   });
 
   it('rejects malformed profiles and references', () => {
@@ -432,7 +434,10 @@ describe('編成（自動の条件）', () => {
     expect(codes(AR)).toEqual(['hit-rate', 'auto-condition']);
     expect(codes(RL)).not.toContain('hit-rate');
     expect(codes(SG)).toEqual(['hit-rate', 'auto-condition']);
-    expect(codes(RL)).toEqual(expect.arrayContaining(['auto-condition-unmeasured', 'landing-first-shot-miss']));
+    expect(codes(RL)).toContain('landing-first-shot-miss');
+    // SR・RL の弾丸命中率は 1（C-0168）なので、未測定の注記は出ない
+    expect(codes(RL)).not.toContain('auto-condition-unmeasured');
+    expect(codes(SR)).not.toContain('auto-condition-unmeasured');
     expect(codes(MG)).toContain('mg-spin-up-core');
     expect(codes(AR, 240)).toContain('landing-unmeasured');
     expect(codes(SMG)).toContain('hit-rate');
