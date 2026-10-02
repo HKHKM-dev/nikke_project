@@ -1,0 +1,98 @@
+{
+  "verification": "V-0100",
+  "team": [
+    {
+      "rid": 103,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（射撃場の的の RL のコア命中率 1。C-0028）。距離帯や弾の種類でコアを外す仮説（H1a・H1b・H1c）は入力で表せない（表の RL の値は 1 で、手入力の値を使わない）ので、このファイルの範囲外（V-0097「予測」に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "ラプラス：アルティメットヒーロー（単騎・AUTO）の通常攻撃（使用武器変更の前の武器。フルチャージ）1 ヒットの胴体（非会心・距離ボーナスなし）。HUD の増分をコアと胴体に分ける鍵。S1 の戦闘開始時の攻撃力▲（最大 HP の割合）はスキル定義が無くモデルに入らないので、実測は上に出る見込み（コアと胴体の比 2 は変わらない）"
+    },
+    {
+      "id": "hit-body-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットの胴体・会心"
+    },
+    {
+      "id": "hit-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア・非会心"
+    },
+    {
+      "id": "hit-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア・会心"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "34463456a86b8314173b08c7b71859fedebc1144",
+    "values": {
+      "H0": {
+        "hit-body": 7487.25,
+        "hit-body-crit": 11230.875,
+        "hit-core": 14974.5,
+        "hit-core-crit": 18718.125
+      }
+    }
+  }
+}

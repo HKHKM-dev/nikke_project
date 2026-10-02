@@ -1,0 +1,114 @@
+{
+  "verification": "V-0099",
+  "team": [
+    {
+      "rid": 811,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（射撃場の的の RL のコア命中率 1。C-0028）。距離帯や弾の種類でコアを外す仮説（H1a・H1b・H1c）は入力で表せない（表の RL の値は 1 で、手入力の値を使わない）ので、このファイルの範囲外（V-0097「予測」に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "A2（単騎・AUTO）の通常攻撃（フルチャージ）1 ヒットの胴体（非会心・距離ボーナスなし）。HUD の増分をコアと胴体に分ける鍵。S2 のフルチャージ攻撃の命中時の追加ダメージ（最終攻撃力の割合）はスキル定義が無くモデルに入らない。増分は 1 ヒット + 追加ダメージになる見込みで、コアと胴体は 1 ヒットの部分で分ける（追加ダメージがコアで変わるかは読みで見る）"
+    },
+    {
+      "id": "hit-body-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットの胴体・会心"
+    },
+    {
+      "id": "hit-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア・非会心"
+    },
+    {
+      "id": "hit-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア・会心"
+    },
+    {
+      "id": "shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "180 秒に撃つ通常攻撃の発の数（区間ごとの割合の母数の合計の目安。的のジャンプの窓は代表値 C-0057）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "34463456a86b8314173b08c7b71859fedebc1144",
+    "values": {
+      "H0": {
+        "hit-body": 202604.98500000002,
+        "hit-body-crit": 303907.47750000004,
+        "hit-core": 405209.97000000003,
+        "hit-core-crit": 506512.4625,
+        "shots": 108
+      }
+    }
+  }
+}
