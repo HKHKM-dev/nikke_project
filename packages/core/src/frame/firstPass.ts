@@ -257,7 +257,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const heals = instant
     .filter((src) => src.effect.kind === 'heal')
     .map((src) => ({ ...src, opens: createHealWindow(src.effect) }));
-  const otherInstants = instant.filter((src) => src.effect.kind !== 'heal');
+  // V-0034: 射撃の回数トリガーのバーストゲージのチャージは、発と同じフレームのゲージに足す（手順 2 の前。下のループ）
+  const isShotGaugeCharge = (src: InstantSource): boolean =>
+    src.effect.kind === 'burstGauge' && isResolvedShotCount(src.effect.trigger);
+  const shotGaugeCharges = instant.filter(isShotGaugeCharge);
+  const otherInstants = instant.filter((src) => src.effect.kind !== 'heal' && !isShotGaugeCharge(src));
   const trackEvents = firing.length > 0 || instant.length > 0;
   // Stage 11 アリス編: 順位が要るときだけ攻撃力の窓を追う（無ければクラウン編までのループと同じ）
   const needsRank =
@@ -496,7 +500,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     number,
     { sourceSlotIndex: number; slotIndex: number; effect: ResolvedInstantEffect }[]
   >();
-  /** ヘルム編: 次のフレーム以降にゲージへ足すチャージ（burstGauge）。フレーム → 効果 */
+  /** ヘルム編: 次のフレーム以降にゲージへ足すチャージ（射撃の回数トリガーでない burstGauge）。フレーム → 効果 */
   const pendingGaugeCharges = new Map<number, { sourceSlotIndex: number; effect: ResolvedInstantEffect }[]>();
   /** このフレームに回復を受けた枠（FrameEvents.healed）。毎フレーム作らずに使い回す */
   const healed: boolean[] = slots.map(() => false);
@@ -559,10 +563,29 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         else if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
       }
     }
-    // ヘルム編: 前のフレームまでに発火したバーストゲージのチャージ（最大値 × X%）を、このフレームのゲージに足す
-    const charges = pendingGaugeCharges.get(f);
-    if (charges !== undefined && controller !== null) {
-      pendingGaugeCharges.delete(f);
+    // ヘルム編: バーストゲージのチャージ（最大値 × X%）。射撃の回数トリガーはこのフレームの射撃で発火し、このフレームのゲージに足す
+    // （V-0034: バーは発のフレームで 1 回に跳ぶ）。ほかのトリガーは前のフレームまでに発火したものを足す
+    const charges = pendingGaugeCharges.get(f) ?? [];
+    pendingGaugeCharges.delete(f);
+    if (shotGaugeCharges.length > 0) {
+      // 射撃の回数トリガーの判定（skills/triggers.ts）は射撃だけを見る。手順 3 の出来事はまだ無いので空で渡す
+      const ev: FrameEvents = {
+        frame: f,
+        shots: shotEvents,
+        activations: [],
+        burstEffects: [],
+        fullBurstStart: false,
+        fullBurstEnd: false,
+        gaugeFull: false,
+        fullBurstStartUsers: [],
+        fullBurstEndUsers: [],
+        healed: [],
+      };
+      for (const src of shotGaugeCharges) {
+        if (src.fires(ev) && controller !== null) charges.push(src);
+      }
+    }
+    if (charges.length > 0 && controller !== null) {
       for (const c of charges) {
         gauge += c.effect.value * controller.timing.gaugeMax;
         instants.push({
@@ -727,7 +750,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
     for (const src of otherInstants) {
       if (!src.fires(ev)) continue;
-      // ヘルム編: バーストゲージのチャージは対象によらず 1 回だけ、次のフレームのゲージに足す（射撃の回数トリガーの窓と同じ規則）
+      // ヘルム編: 射撃の回数トリガーでないバーストゲージのチャージは、対象によらず 1 回だけ、次のフレームのゲージに足す
       if (src.effect.kind === 'burstGauge') {
         if (controller === null || f + 1 >= frames) continue; // 固定サイクル・バーストなしではゲージを見ない
         const list = pendingGaugeCharges.get(f + 1) ?? [];

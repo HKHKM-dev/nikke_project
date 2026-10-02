@@ -59,10 +59,9 @@ describe('録画 079 の編成（V-0033）', () => {
   const plan = planTeamRun(rec079(3));
   const HELM_SLOT = 2;
 
-  it('charges the gauge once per Helm full charge shot, on the next frame (C-0094)', () => {
+  it('charges the gauge once per Helm full charge shot, on the same frame (C-0094, V-0034)', () => {
     const charges = plan.instants.filter((x) => x.effect.kind === 'burstGauge');
-    const shots = plan.shots[HELM_SLOT]!.frames.filter((f) => f + 1 < plan.frames);
-    expect(charges.map((x) => x.frame)).toEqual(shots.map((f) => f + 1));
+    expect(charges.map((x) => x.frame)).toEqual(plan.shots[HELM_SLOT]!.frames);
     expect(charges.every((x) => x.sourceSlotIndex === HELM_SLOT && x.amount === charges[0]!.amount)).toBe(true);
   });
 
@@ -120,10 +119,10 @@ describe('録画 079 の編成: バーストのヒットの遅れ（C-0167）', 
 });
 
 describe('ヘルム単騎（録画 082 の編成。V-0034）', () => {
-  it('fills the gauge on the frame after the 3rd shot: 14.0% + charge 14.31% + additional damage hit 5.6% per shot (C-0103)', () => {
+  it('fills the gauge on the frame of the 3rd shot: 14.0% + charge 14.31% + additional damage hit 5.6% per shot (C-0103, V-0034)', () => {
     const plan = planTeamRun(team([fixedSlot(HELM, 3)], 0));
     const shots = plan.shots[0]!.frames;
-    expect(plan.schedule!.gaugeFullFrames[0]).toBe(shots[2]! + 1);
+    expect(plan.schedule!.gaugeFullFrames[0]).toBe(shots[2]!);
   });
 });
 
