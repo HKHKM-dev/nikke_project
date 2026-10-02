@@ -1,0 +1,29 @@
+{
+  "id": "122",
+  "date": "2026-10-02",
+  "folder": "range",
+  "file": "20261002-122_rl_raven.mp4",
+  "original": "2026-10-02_20-53-47.mp4",
+  "durationSec": 200.2,
+  "frames": 12010,
+  "fps": 60,
+  "sizeMB": 242.6,
+  "sha256": "273d0bce7467",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。V-0098"
+}
