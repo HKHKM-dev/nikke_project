@@ -1,0 +1,121 @@
+{
+  "verification": "V-0074",
+  "note": "3 本目（▲を 2 つ重ねる 1 本。「次に撮るもの」の 1）の予測。判定に使う近のコア命中率（▲の窓の中・外）は METRICS に指標が無いので、H0・H1 の値は検証記録の「予測」に手で書いた（式は C-0036）。ここの指標は、増分を分解する格子の基準にするリターの 1 ヒットの値（撮った後に hit の観測値と突き合わせる検算）。1 ヒットの値はコア命中率に依らないので H0 と H1 で同じになる",
+  "team": [
+    {
+      "rid": 260,
+      "controlled": false
+    },
+    {
+      "rid": 101,
+      "controlled": true
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 82,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "持続の命中率▲はコア命中率を変えない（いまのモデルの形。C-0036・C-0037 の model の「持続の▲は未反映」）。近のコア命中率は▲の窓の中も外も的の表の値のまま"
+    },
+    {
+      "id": "H1",
+      "note": "持続の命中率▲も C-0036 の式（p ÷ (1 − N)²、上限 1）でコア命中率を上げ、2 つの▲（モダニア S2 8.56% + ドレイク S1 11.85%）は和で N に入る。モデルのコードを切り替える仮説なので override は無く、値は検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "liter-near-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "リター（SMG・AI）の近の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスあり。フルバーストの外）。分解の格子の基準"
+    },
+    {
+      "id": "liter-near-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア"
+    },
+    {
+      "id": "liter-near-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットの会心"
+    },
+    {
+      "id": "liter-far-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "距離ボーナスの外（中近・遠・中遠 B/C）の 1 ヒット（胴体・非会心）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "edb33876906d837cd3b51abb4889378c2206d23b",
+    "values": {
+      "H0": {
+        "liter-near-body": 11329.13925,
+        "liter-near-core": 20043.861749999996,
+        "liter-near-crit": 15686.5005,
+        "liter-far-body": 8714.7225
+      },
+      "H1": {
+        "liter-near-body": 11329.13925,
+        "liter-near-core": 20043.861749999996,
+        "liter-near-crit": 15686.5005,
+        "liter-far-body": 8714.7225
+      }
+    }
+  }
+}
