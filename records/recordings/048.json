@@ -48,7 +48,7 @@
   },
   "mode": "range-3min",
   "fixedSpec": false,
-  "autoFire": null,
+  "autoFire": true,
   "autoBurst": null,
-  "conditionNote": "BigArms（灼熱タブ・3 分モード・**スペック固定 OFF**。弱点は水冷で、編成に水冷はいない＝属性有利なし）"
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・**スペック固定 OFF**。弱点は水冷で、編成に水冷はいない＝属性有利なし）。操作枠（アリス）は AUTO 射撃 ON（オーナーの確認、2026-10-02。V-0092）"
 }
