@@ -1,0 +1,58 @@
+[
+  {
+    "id": "120-01",
+    "recording": "120",
+    "kind": "total",
+    "use": "record",
+    "source": "V-0094",
+    "readAt": "2026-10-02",
+    "value": 15104535,
+    "description": "ネオン：ビジョンアイ単騎（操作・スペック固定 ON・バーストなし）の 44.4 秒の HUD の総ダメージの最後の値。一時停止画面の与ダメージと一致。S1 の火力爆発（追加ダメージ）を含み、モデルに定義が無いので比べない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "最後の増分は f2498。パネルは f2600 を still.ts で切り出して読んだ"
+    }
+  },
+  {
+    "id": "120-02",
+    "recording": "120",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0094",
+    "readAt": "2026-10-02",
+    "value": 184810,
+    "description": "ネオン：ビジョンアイ（RL・操作）のスペック固定 ON のフルチャージの通常攻撃 1 ヒット（胴体・非会心）。的の上の数値（f1200）を読んだ",
+    "method": {
+      "tool": "tools/captures/still.ts",
+      "note": "f1200 の的の上に 184810 と 528178 の 2 つの数値。528,178 は S1 の火力爆発（最終攻撃力の 437.98% の追加ダメージ。120,594 × 4.3798 = 528,177.7）。HUD の増分（hud.ts --mode jumps）は 1 発ごとに 712,988 = 184,810 + 528,178 が f892〜2120 に 12 回で、同じ分解になる。rank30 の値（183,587。追加ダメージと合わせて 708,270 前後）は 1 回も無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 0, "core": false, "crit": false, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+    }
+  },
+  {
+    "id": "120-03",
+    "recording": "120",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0094",
+    "readAt": "2026-10-02",
+    "value": 277215,
+    "description": "同じ 1 ヒットの会心（胴体）。HUD の増分の分解から",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1009 の増分 805,393 = 277,215 + 528,178（追加ダメージは非会心）。ほかに 990,204 = 184,810 + 277,215 + 528,178（f2439・2498）、897,799 = 184,810 × 2 + 528,178（f1566・1623・2179）、1,069,481 = 277,215 + 792,266（追加ダメージの会心）（f2381）があり、1 フレームに弾の数値が 2 つ乗る発がある（原因は読んでいない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 0, "core": false, "crit": true, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+    }
+  }
+]

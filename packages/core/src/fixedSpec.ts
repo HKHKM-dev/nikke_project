@@ -28,7 +28,8 @@ export const AFFECTION_ATTACK: Record<NikkeClass, Record<AffectionRank, number>>
 
 /**
  * 好感度上限は凸段階に紐づく: 無凸 rank10、2 凸以上 rank30、CDN の corporation_sub_type が OVERSPEC の SSR は 3 凸以降 rank40。
- * OVERSPEC はピルグリム全員と、ピルグリムでない数体（ラピ：レッドフードなど）。ラピ：レッドフードの rank40 は C-0166
+ * OVERSPEC はピルグリム全員と、ピルグリムでない 4 体（ラピ：レッドフード・ミハラ：ボンディングチェーン・ネオン：ビジョンアイ・アニス：スター）。
+ * 非ピルグリムの rank40 は C-0169（ラピ：レッドフード・ミハラ：ボンディングチェーン・ネオン：ビジョンアイで実測。アニス：スターは未実測）
  */
 export function fixedSpecAffectionRank(character: Pick<CharacterData, 'rarity' | 'corporationSubType'>): AffectionRank {
   if (character.rarity === 'R') return 10;
