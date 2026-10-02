@@ -18,7 +18,10 @@
 // （既定の calc の列は変えない。既定は hybrid）。
 // --skill-levels resourceId:slot=Lv をカンマ区切り（slot は skill1・skill2・burst。例 191:skill2=4,260:burst=4）。省略は全部 Lv10
 // （実ビルドの録画と比べるとき用。V-0065）。
-import { readFileSync } from 'node:fs';
+// --jump-windows で、出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の
+// setup.jumpWindows と同じ）。観測値の id（例 056-11。records/observations/<録画>.json の値）か、[始まり, 終わり, …] の秒を
+// カンマ区切りで渡す。--events に狙えない窓を持つ出来事のセットが要る。
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
@@ -34,6 +37,7 @@ import {
   targetProfileForEnemy,
 } from '../src/enemies.ts';
 import {
+  jumpWindowsOf,
   landingFixed,
   MID_FAR_LANDINGS,
   NEAR_LANDINGS,
@@ -55,6 +59,7 @@ import type { EnemyInput } from '../src/damage.ts';
 import { framesToGameSeconds, gameSecondsToFrame } from '../src/time.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
+const OBSERVATIONS_DIR = join(import.meta.dirname, '../../../records/observations');
 
 /** Stage 8: 回数トリガーも 1 語で出す（normalShot/10、burstUse≥2） */
 function triggerLabel(t: ResolvedTrigger): string {
@@ -91,12 +96,14 @@ const { values } = parseArgs({
     'shot-counting': { type: 'string' },
     // 実ビルドの録画と比べるときのスキル Lv（resourceId:slot=Lv をカンマ区切り。省略は全部 Lv10）
     'skill-levels': { type: 'string' },
+    // 録画で読んだ的のジャンプの窓（観測値の id か秒の並び。V-0088）
+    'jump-windows': { type: 'string' },
   },
 });
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--near A,B] [--shot-counting hybrid|firingSlots|average] [--skill-levels 191:skill2=4]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--near A,B] [--shot-counting hybrid|firingSlots|average] [--skill-levels 191:skill2=4] [--jump-windows 056-11]',
   );
   process.exit(2);
 }
@@ -247,7 +254,35 @@ for (const id of eventSetIds) {
     process.exit(2);
   }
 }
-const enemyEvents = enemyEventsOf(enemyPresets, eventSetIds, Number(values.duration));
+/** --jump-windows: 観測値の id（録画 id-番号）か、秒をカンマ区切りで並べたもの */
+function jumpWindowsArg(arg: string): { start: number; end: number }[] {
+  let value: number | number[] | undefined;
+  if (/^[\d.,\s]+$/.test(arg)) {
+    value = arg.split(',').map((v) => Number(v.trim()));
+  } else {
+    const dash = arg.lastIndexOf('-');
+    const recording = dash < 0 ? arg : arg.slice(0, dash);
+    const path = join(OBSERVATIONS_DIR, `${recording}.json`);
+    const observations = existsSync(path) ? (readJson(path) as { id: string; value: number | number[] }[]) : [];
+    value = observations.find((o) => o.id === arg)?.value;
+    if (value === undefined) {
+      console.error(`--jump-windows: observation ${arg} not found in records/observations/${recording}.json`);
+      process.exit(2);
+    }
+  }
+  const windows = jumpWindowsOf(value);
+  if (windows === undefined) {
+    console.error(`--jump-windows: ${arg} is not an ascending list of [start, end, …] seconds`);
+    process.exit(2);
+  }
+  return windows;
+}
+const jumpWindows = values['jump-windows'] === undefined ? undefined : jumpWindowsArg(values['jump-windows']);
+if (jumpWindows !== undefined && eventSetIds.length === 0) {
+  console.error('--jump-windows needs --events with an untargetable event set (e.g. range-3min-jump)');
+  process.exit(2);
+}
+const enemyEvents = enemyEventsOf(enemyPresets, eventSetIds, Number(values.duration), jumpWindows);
 const baseEnemy: EnemyInput = enemyPreset
   ? { ...enemyInputOf(enemyPreset), events: enemyEvents }
   : { defence: Number(values.defence), element: (values.element as Element | undefined) ?? null, hasCore: true };
@@ -271,6 +306,7 @@ const input = {
             Number(values.duration),
             target,
             landingFixed(midFar, near),
+            jumpWindows,
           ),
         },
   durationSeconds: Number(values.duration),
@@ -325,7 +361,7 @@ if (calc.landings.length > 0 && target !== undefined) {
 }
 if (eventSetIds.length > 0) {
   console.log(
-    `enemy events ${eventSetIds.join(', ')}: ${enemyEvents.map((e) => `${e.kind} ${e.start.toFixed(1)}-${e.end.toFixed(1)}s`).join(', ')}`,
+    `enemy events ${eventSetIds.join(', ')}${jumpWindows === undefined ? '' : ` (jump windows ${values['jump-windows']})`}: ${enemyEvents.map((e) => `${e.kind} ${e.start.toFixed(1)}-${e.end.toFixed(1)}s`).join(', ')}`,
   );
 }
 if (calc.schedule && calc.burstSummary) {
