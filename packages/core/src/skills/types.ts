@@ -35,7 +35,8 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * maxAmmo = 最大装弾数（scaling 'ratio' は %、'flat' は発数）、reloadSpeed = リロード速度（%）、chargeSpeed = チャージ速度（%）。
  * 1 パス目（frame/firstPass.ts）が射手に渡すので、timed にも書ける。
  * Stage 11 モダニアの 2 つ:
- * hitRate = 命中率（%）。全弾命中の前提なのでダメージにも射撃にも効かない。区間の鍵にも入れず、条件（condition）の判定と表示にだけ使う。
+ * hitRate = 命中率（%）。全弾命中の前提なので射撃にも弾丸命中率にも効かない。条件（condition）の判定と表示と、条件が自動の枠の
+ * コア命中率の N（frame/landing.ts。常時は C-0036、持続は C-0170）に使う。
  * infiniteAmmo = 装弾数無限（射撃に効く。値を持たないフラグなので ref を書かない。timed だけ）。
  * Stage 13 の 3 つ（OL・キューブ・コレクションの効果層で使う。スキルの DSL にも書ける。plan/design-stage12.md 3.1 節）:
  * elementDamage = 有利コードの攻撃ダメージ。属性有利のときだけ (1.1 + Σ)、非有利は 1 のまま。
@@ -102,8 +103,8 @@ export function isFiringStat(stat: BuffStat | 'weapon'): boolean {
 }
 
 /**
- * Stage 11 モダニア: 状態だけを表す stat（ダメージにも射撃にも効かない）。timed の窓は区間に入れず、BuffTimeline.stateWindows に置く
- * （区間の鍵・グループが変わらないので、既存の編成の区間は 1 つも変わらない）
+ * Stage 11 モダニア: 状態だけを表す stat（射撃に効かない）。timed の窓は BuffTimeline.stateWindows に置く。区間を割り、区間の
+ * buffs と鍵に入るのは、着地点の計画（条件が自動の枠）があるときだけ（C-0170。手入力の枠の区間・グループは変わらない）
  */
 export const STATE_STATS = ['hitRate'] as const satisfies readonly BuffStat[];
 

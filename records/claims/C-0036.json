@@ -5,7 +5,7 @@
   "topic": "命中率・距離",
   "grade": "反復実測",
   "basis": "verification.md Stage 18-B「撮影 1」（クルミ・N = 0.0509。倍率 1.076、95% 信頼区間 1.013〜1.144）・Stage 18-A「照準円と命中率▲」（旧のクエンシー：エスケープクイーン・N = 0.494 で 0.514 と 0.520）",
-  "model": "`frame/landing.ts` の `coreHitRateWithHitRateUp`（条件が自動の枠。持続の▲は未反映）",
+  "model": "`frame/landing.ts` の `coreHitRateWithHitRateUp`（条件が自動の枠。持続の▲は C-0170 で `landingPartsWith` が区間ごとに足す）",
   "replaces": [],
-  "updated": "2026-09-26"
+  "updated": "2026-10-02"
 }

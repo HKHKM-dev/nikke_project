@@ -302,7 +302,9 @@ export function SlotCard({
                   <small>
                     （着地点ごとの値の発数平均
                     {autoCondition.hitRateUp > 0
-                      ? `。常時の命中率▲ ${formatPercent(autoCondition.hitRateUp, 2)} 込み`
+                      ? autoCondition.timedHitRateUp
+                        ? `。命中率▲（常時 + 持続の▲の発数平均） ${formatPercent(autoCondition.hitRateUp, 2)} 込み`
+                        : `。常時の命中率▲ ${formatPercent(autoCondition.hitRateUp, 2)} 込み`
                       : ''}
                     ）
                   </small>

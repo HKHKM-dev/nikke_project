@@ -1,7 +1,7 @@
 # 設計書: 持続の命中率▲をコア命中率に効かせる
 
 - 対象: `D:\nikke_project`
-- 状態: **承認待ち**（2026-10-02 起案。実装はしていない）
+- 状態: **実装済み**（2026-10-02 起案・承認・実装。2 節の入れ方は実装で一部変えた（経過））
 - 関連: [design-stage18.md](design-stage18.md)（コア命中率の表と常時の▲）、[design-asuka.md](design-asuka.md) 8 節の論点 1、[design-records-automation.md](design-records-automation.md)（予測の出し直し）
 - 根拠: C-0170（仮説・単独実測。V-0074・V-0096）。常時の▲の式は C-0036・C-0037
 
@@ -56,3 +56,10 @@
 ## 経過
 
 - 2026-10-02: 起案（V-0074「判定の予定」の H1 のとおり。実装はこの PR に入れない）。
+- 2026-10-02: オーナーが承認（6 節の 1・2 とも、この設計で進める）。C-0170 は仮説のまま（backlog 2-15。別の編成で確かめてから確定を判断）。
+- 2026-10-02: 実装。2 節の 1 は書いたとおりには入らなかった。持続の `hitRate` は「状態だけの stat」で、窓が `windows` ではなく `stateWindows` に置かれ、区間の状態（`buffs`）に入っていなかった（2 節の 2 の「常時の分を含むか」を確かめたときに分かった）。そこで次のようにした。
+  - `planBuffTimeline` は、着地点の計画があるときだけ、`stateWindows` の端を区間の境界に足し、区間の `buffs.hitRate` に持続の▲を足す（`timedEffects` には入れず、表示は `stateWindows` のまま）。区間の `buffs.hitRate` は常時の分を含むので、そのまま N にした。
+  - 鍵は `BUFF_FIELDS` ではなく、着地点と同じく自動の枠だけに `N:` を足した。手入力の枠の区間・グループは変わらない（テストで確かめた）。
+  - `landingPartsWith(plan, slot, slotIndex, landing, hitRateUp)` は、計画の常時の N と同じなら計画の配分をそのまま返し、違えば的の表の値（`LandingPart.tableCoreHitRate`）から引き直す。
+  - 表示: `AutoConditionSummary.hitRateUp` を発数で重みを付けた N にし、持続の▲が効いた発があれば `timedHitRateUp` を立てる。注記と画面の要約（NotesSummary）を「持続の▲も足す（仮説）」に書き換えた。アスカのバーストの notes も書き換えた（`partial` は弾丸命中率の分で残した）。
+  - 15-A の前後は V-0102（V-0065 の派生。結論は作らない）。射撃の数は変わらず、AI の 3 体（リター・クラウン・モダニア）だけが上がった。単騎の確定の照合（`npm test`）と残差の一覧は 1 つも動かなかった。

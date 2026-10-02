@@ -24,7 +24,8 @@ import {
 } from '../damage.ts';
 import {
   autoConditionSummary,
-  landingPartsOf,
+  hitRateUpSpansOf,
+  landingPartsWith,
   landingTriggerDamage,
   slotConditionNotes,
   type AutoConditionSummary,
@@ -200,14 +201,21 @@ export function runSimulation(simInput: SimInput): SimResult {
         timedEffects: state.timedEffects,
         trigger: landingTriggerDamage(
           { ...base, buffs: state.buffs, perShot },
-          landingPartsOf(landing, slot, index, segment.landing),
+          // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す
+          landingPartsWith(landing, slot, index, segment.landing, state.buffs.hitRate),
           segment.fullBurst,
         ),
         triggers: 0,
         damage: 0,
       };
     });
-    const autoCondition = autoConditionSummary(landing, slot, index, shots[index]?.frames ?? []);
+    const autoCondition = autoConditionSummary(
+      landing,
+      slot,
+      index,
+      shots[index]?.frames ?? [],
+      hitRateUpSpansOf(timeline, index),
+    );
     return {
       index,
       shots: shots[index]?.frames ?? [],
