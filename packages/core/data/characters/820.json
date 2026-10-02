@@ -7,6 +7,7 @@
   "rarity": "SSR",
   "class": "Supporter",
   "corporation": "ABNORMAL",
+  "corporationSubType": null,
   "element": "Water",
   "weaponType": "MG",
   "burstStep": "Step2",

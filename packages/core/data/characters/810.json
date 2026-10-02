@@ -7,6 +7,7 @@
   "rarity": "SSR",
   "class": "Defender",
   "corporation": "ABNORMAL",
+  "corporationSubType": null,
   "element": "Fire",
   "weaponType": "AR",
   "burstStep": "Step3",

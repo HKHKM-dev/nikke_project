@@ -17,6 +17,7 @@ export function makeCharacter(shot: Partial<ShotParams> = {}, overrides: Partial
     rarity: 'SSR',
     class: 'Attacker',
     corporation: 'ELYSION',
+    corporationSubType: null,
     element: 'Fire',
     weaponType: 'AR',
     burstStep: 'Step3',

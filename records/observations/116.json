@@ -77,14 +77,32 @@
     "id": "116-06",
     "recording": "116",
     "kind": "hit",
-    "use": "record",
+    "use": "compare",
     "source": "V-0074",
     "readAt": "2026-10-02",
     "value": 6717,
-    "description": "ラピ：レッドフード（MG）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし）。コアは 13,434、会心は 10,076、コア + 会心は 16,793。5.57% × (120,694 − 100) と 1 未満の差で、スペック固定の攻撃力はモダニアと同じ 120,694（モデルの computeFixedSpecAttack は 119,896 を出す）",
+    "description": "ラピ：レッドフード（MG）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし）。コアは 13,434、会心は 10,076、コア + 会心は 16,793。5.57% × (120,694 − 100) と 1 未満の差で、スペック固定の攻撃力はモダニアと同じ 120,694（好感度 rank40。C-0166）",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",
       "note": "中近の区間の最初のフルバーストの前（f988〜1300）の、ラピだけが当たったフレームの増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   }
 ]

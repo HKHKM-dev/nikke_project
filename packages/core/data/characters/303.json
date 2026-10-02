@@ -7,6 +7,7 @@
   "rarity": "R",
   "class": "Attacker",
   "corporation": "MISSILIS",
+  "corporationSubType": null,
   "element": "Fire",
   "weaponType": "MG",
   "burstStep": "Step3",

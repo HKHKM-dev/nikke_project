@@ -1,6 +1,6 @@
 // ユニオン射撃場「スペック固定」時の戦闘中攻撃力。
 // 仕様は plan/verification.md（2026-09-23 確定、9 体の実測で誤差ゼロ〜0.01%）:
-//   Lv400、限界突破・コアはレア度上限、好感度 rank30（ピルグリム SSR は rank40、R は rank10）、
+//   Lv400、限界突破・コアはレア度上限、好感度 rank30（corporation_sub_type が OVERSPEC の SSR は rank40、R は rank10）、
 //   装備は T9 Lv5 のクラス別固定値、キューブ・コンソールなし。
 //   コア強化の +2%/段は「突破後の素の攻撃力 + 好感度」に掛かり、装備には掛からない。
 import { CORE_MAX, GRADE_MAX, applyCoreRatio, computeStat, type GrowthInput } from './stats.ts';
@@ -26,10 +26,13 @@ export const AFFECTION_ATTACK: Record<NikkeClass, Record<AffectionRank, number>>
   Attacker: { 10: 403, 30: 1640, 40: 2340 },
 };
 
-/** 好感度上限は凸段階に紐づく: 無凸 rank10、2 凸以上 rank30、ピルグリム所属は 3 凸以降 rank40 */
-export function fixedSpecAffectionRank(character: Pick<CharacterData, 'rarity' | 'corporation'>): AffectionRank {
+/**
+ * 好感度上限は凸段階に紐づく: 無凸 rank10、2 凸以上 rank30、CDN の corporation_sub_type が OVERSPEC の SSR は 3 凸以降 rank40。
+ * OVERSPEC はピルグリム全員と、ピルグリムでない数体（ラピ：レッドフードなど）。ラピ：レッドフードの rank40 は C-0166
+ */
+export function fixedSpecAffectionRank(character: Pick<CharacterData, 'rarity' | 'corporationSubType'>): AffectionRank {
   if (character.rarity === 'R') return 10;
-  if (character.rarity === 'SSR' && character.corporation === 'PILGRIM') return 40;
+  if (character.rarity === 'SSR' && character.corporationSubType === 'OVERSPEC') return 40;
   return 30;
 }
 
@@ -50,7 +53,7 @@ export type FixedSpecAttack = {
 };
 
 export function computeFixedSpecAttack(
-  character: Pick<CharacterData, 'rarity' | 'class' | 'corporation' | 'levelCurve' | 'statEnhance'>,
+  character: Pick<CharacterData, 'rarity' | 'class' | 'corporationSubType' | 'levelCurve' | 'statEnhance'>,
 ): FixedSpecAttack {
   const growth = fixedSpecGrowth(character);
   const gradeBase = computeStat(character, 'attack', { ...growth, core: 0 });

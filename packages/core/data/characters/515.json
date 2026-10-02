@@ -7,6 +7,7 @@
   "rarity": "SSR",
   "class": "Attacker",
   "corporation": "PILGRIM",
+  "corporationSubType": "OVERSPEC",
   "element": "Iron",
   "weaponType": "MG",
   "burstStep": "Step3",

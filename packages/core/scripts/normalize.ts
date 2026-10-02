@@ -46,6 +46,8 @@ export type RawRoleData = {
   original_rare: string;
   class: string;
   corporation: string;
+  /** ピルグリム全員と一部のキャラだけにある（"OVERSPEC"） */
+  corporation_sub_type?: string;
   use_burst_skill: string;
   change_burst_step: string;
   burst_duration: number;
@@ -211,6 +213,7 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
     rarity: oneOf(RARITIES, en.original_rare, 'original_rare'),
     class: oneOf(CLASSES, en.class, 'class'),
     corporation: en.corporation,
+    corporationSubType: en.corporation_sub_type ?? null,
     element: oneOf(ELEMENTS, element, 'element'),
     weaponType: oneOf(WEAPON_TYPES, shot.weapon_type, 'weapon_type'),
     burstStep: oneOf(BURST_STEPS, en.use_burst_skill, 'use_burst_skill'),

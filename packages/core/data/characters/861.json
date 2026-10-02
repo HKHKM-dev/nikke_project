@@ -7,6 +7,7 @@
   "rarity": "SSR",
   "class": "Supporter",
   "corporation": "ABNORMAL",
+  "corporationSubType": null,
   "element": "Iron",
   "weaponType": "SR",
   "burstStep": "Step2",

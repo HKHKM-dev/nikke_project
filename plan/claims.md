@@ -13,7 +13,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 114・仮説 25・棄却 25・範囲外 1（計 165）
+件数: 確定 114・仮説 26・棄却 25・範囲外 1（計 166）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -424,6 +424,11 @@
   - モデル側: 育成の効果層はスペック固定では使わない（`sim-run.ts` の --fixed-spec・`records/observations.ts` の `buildTeamInput`）
   - 検証記録: V-0047
   - 等級の候補（機械）: 単独実測（書いた等級のほうが上）
+- **C-0166** スペック固定 ON のラピ：レッドフード（16。所属は ELYSION）の好感度は、ピルグリムと同じ rank40 で、攻撃力は 120,694。rank40 になるのは、ピルグリム所属の SSR だけでなく、CDN の roledata の corporation_sub_type が OVERSPEC の SSR（ピルグリム 23 体全員とラピ：レッドフードほか 3 体）とみる。ピルグリムでない残りの 3 体（ミハラ：ボンディングチェーン・ネオン：ビジョンアイ・アニス：スター）は実測が無い
+  - 状態: 仮説・等級: 単独実測・更新日: 2026-10-02
+  - 根拠: `116-06`（ラピ：レッドフードの 1 ヒット 6,717 が、rank40 の 120,694 から出る 6,717.086 と 1 未満の差。rank30 の 119,896 では約 6,673。会心・コア・コア + 会心の値も 120,694 と合う）。CDN の roledata で OVERSPEC はピルグリム全員と非ピルグリム 4 体だけで、rank30 と確かめた非ピルグリム SSR（エマ・フォルクヴァン。plan/verification.md Stage 2-A）には無い。V-0081。録画 116 の 1 本だけなので単独実測。同じ編成の録画 117 で 1 ヒットを読めば反復実測になる（117 は Drive に未同期で、この検証では読めなかった）
+  - モデル側: `fixedSpec.ts` の `fixedSpecAffectionRank`（`corporationSubType` が OVERSPEC の SSR を rank40）。キャラのデータの `corporationSubType`（`scripts/normalize.ts`）
+  - 検証記録: V-0081
 
 ## 命中率・距離
 

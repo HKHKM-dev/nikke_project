@@ -7,6 +7,7 @@
   "rarity": "SR",
   "class": "Supporter",
   "corporation": "ABNORMAL",
+  "corporationSubType": null,
   "element": "Wind",
   "weaponType": "SR",
   "burstStep": "Step2",
