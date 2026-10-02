@@ -20,6 +20,7 @@ import {
   regimeOfUnits,
   solveExact,
   solveUnits,
+  splitGroupHits,
   type ExactValues,
 } from './pellets.ts';
 import { findJumpBoundaries, intervalName, splitIntervals, type Interval, type TriggerGroup } from './triggers.ts';
@@ -54,6 +55,8 @@ type PerGroup = {
   /** 分けられなかった */
   failed: boolean;
   alternatives: number;
+  /** 2 発以上の組を発ごとに分けた当たった数（近の区間で、決まったときだけ。splitGroupHits） */
+  split?: number[];
 };
 
 type IntervalStats = {
@@ -74,7 +77,7 @@ type IntervalStats = {
 
 export const sgPellets: Recipe = {
   name: 'sg-pellets',
-  version: 2,
+  version: 3,
   describe:
     'SG 単騎の区間ごとの当たったペレットの割合（rate）、近の当たった数の分布（count）、近の「会心 + 2 × コア」（rate）、' +
     'スペック固定 OFF ならコア命中率と会心率（rate）',
@@ -141,16 +144,41 @@ export const sgPellets: Recipe = {
       label === '中近' ? coreRates[0] : label === '遠' ? coreRates[1] : coreRates[2];
 
     const stats: IntervalStats[] = intervals.map((interval) => {
+      const near = interval.label === '近';
+      /** 1 発（10 ペレットまで）として解いた当たった数。近の区間の、2 発以上の組を分けるときに使う */
+      const solveOne = (group: TriggerGroup, increment: number): number | undefined => {
+        if (mode === 'units') {
+          const s = solveUnits(increment, bodyOf(group) / 10, true, 10);
+          return s.kind === 'near' ? s.h : undefined;
+        }
+        const s = solveExact(increment, exact!.near, 10);
+        return s.kind === 'ok' ? s.h : undefined;
+      };
+      const withSplit = (p: PerGroup): PerGroup => {
+        const parts = p.group.parts;
+        if (!near || p.h === undefined || p.group.shots < 2 || parts === undefined) return p;
+        const split = splitGroupHits(parts, p.group.shots, p.h, (inc) => solveOne(p.group, inc));
+        return split === undefined ? p : { ...p, split };
+      };
       const perGroup: PerGroup[] = interval.groups.map((group) => {
         const maxPellets = group.shots * 10;
         if (mode === 'units') {
-          const s = solveUnits(group.increment, bodyOf(group) / 10, interval.label === '近', maxPellets);
-          if (s.kind === 'near') return { group, h: s.h, u: s.u, failed: false, alternatives: s.alternatives };
+          const s = solveUnits(group.increment, bodyOf(group) / 10, near, maxPellets);
+          if (s.kind === 'near')
+            return withSplit({ group, h: s.h, u: s.u, failed: false, alternatives: s.alternatives });
           return { group, failed: s.kind === 'none', alternatives: 0 };
         }
-        const s = solveExact(group.increment, interval.label === '近' ? exact!.near : exact!.far, maxPellets);
+        const s = solveExact(group.increment, near ? exact!.near : exact!.far, maxPellets);
         if (s.kind === 'ok')
-          return { group, h: s.h, c: s.c, k: s.k, u: s.c + 2 * s.k, failed: false, alternatives: s.alternatives };
+          return withSplit({
+            group,
+            h: s.h,
+            c: s.c,
+            k: s.k,
+            u: s.c + 2 * s.k,
+            failed: false,
+            alternatives: s.alternatives,
+          });
         return { group, failed: true, alternatives: 0 };
       });
       if (ctx.options.debug !== undefined) {
@@ -160,7 +188,7 @@ export const sgPellets: Recipe = {
               ? p.failed
                 ? '分けられない'
                 : '近以外（h は見積もり）'
-              : `h ${p.h} u ${p.u}${p.c === undefined ? '' : ` 会心 ${p.c} コア ${p.k}`}`;
+              : `h ${p.h}${p.split === undefined ? '' : `（発ごとに ${p.split.join('・')}）`} u ${p.u}${p.c === undefined ? '' : ` 会心 ${p.c} コア ${p.k}`}`;
           ctx.log(
             `  ${intervalName(interval)} f${p.group.frame} +${fmt(p.group.increment)}${p.group.shots > 1 ? `（${p.group.shots} 発）` : ''}: ${sol}${p.alternatives > 0 ? `（ほか ${p.alternatives} 候補）` : ''}`,
           );
@@ -315,9 +343,11 @@ function nearObservations(
   if (near.length === 0) return [];
   const names = near.map((s) => intervalName(s.interval)).join('・');
   const dist = near.flatMap((s) =>
-    distribution(s.perGroup.filter((p) => p.h !== undefined && p.group.shots === 1).map((p) => p.h!)),
+    distribution(s.perGroup.flatMap((p) => (p.h === undefined ? [] : p.group.shots === 1 ? [p.h] : (p.split ?? [])))),
   );
-  const multi = near.map((s) => s.perGroup.filter((p) => p.h !== undefined && p.group.shots > 1).length);
+  const multi = near.map((s) => s.perGroup.filter((p) => p.h !== undefined && p.group.shots > 1));
+  const splitCount = multi.map((list) => list.filter((p) => p.split !== undefined).length);
+  const unsplit = multi.map((list) => list.filter((p) => p.split === undefined).length);
   const out: RecipeObservation[] = [];
   out.push(
     observation(
@@ -331,7 +361,8 @@ function nearObservations(
             `${intervalName(s.interval)}: ${s.triggers} トリガー${s.failed > 0 ? `（分けられなかった ${s.failed} 組を除いて ${s.solvedTriggers}）` : ''}・当たったペレット ${s.hits}（割合 ${roundTo(s.hits / (s.solvedTriggers * 10), 3)}）・会心 + 2 × コアのぶん ${s.u}`,
         )
         .join('。') +
-        `。読みが割れて 2 発にまとめた組（${multi.join('・')} 個）は、当たった数の合計には入れたが分布には入れていない`,
+        `。読みが割れて 2 発以上にまとめた組のうち、読みを発ごとに区切ってどの区切り方でも当たった数が同じになった組（${splitCount.join('・')} 個）は、発ごとの値を分布に入れた。` +
+        `決まらなかった組（${unsplit.join('・')} 個）は、当たった数の合計には入れたが分布には入れていない`,
       { unit: 'トリガー' },
     ),
   );

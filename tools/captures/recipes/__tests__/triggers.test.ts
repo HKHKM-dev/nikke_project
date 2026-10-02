@@ -39,6 +39,8 @@ describe('parseHudJumpsTsv・groupIncrements', () => {
       [1347, 10, 1],
       [1416, 30, 2],
     ]);
+    // 読みごとの増分を残す（発ごとに分けるときに使う。pellets.ts の splitGroupHits）
+    expect(groups[1]!.parts).toEqual([15, 15]);
     // 読み 1 つの組は、読めなかった間が長くても 1 発
     const single = groupIncrements(parseHudJumpsTsv('frame\tvalue\tincrement\tgap\n100\t5\t5\t40\n'), 39);
     expect(single[0]!.shots).toBe(1);
