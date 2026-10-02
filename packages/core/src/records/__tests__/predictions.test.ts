@@ -99,15 +99,16 @@ describe('records/predictions', () => {
   it('links a target to observations by explicit ids or by the same metric・args・setup of the same verification', () => {
     const f = file();
     expect(observationsOfTarget(f, f.targets[1]!, observations).map((o) => o.id)).toEqual(['101-01']);
-    // 101-01・102-01（slotTotalDamage・slot 1・近 A・B・source V-0063）が自動で結び付く
+    // 101-01（slotTotalDamage・slot 1・近 A・B・録画 101 のジャンプの窓・source V-0063）が自動で結び付く。
+    // 102-01 は setup の jumpWindows（録画 102 の窓）が違うので結び付かない（V-0086）
     const auto = {
       id: 'a',
       model: 'sim' as const,
       metric: 'slotTotalDamage',
       args: { slot: 1 },
-      setup: { ...SETUP, nearLanding: ['A', 'B'] as ['A', 'B'] },
+      setup: { ...SETUP, nearLanding: ['A', 'B'] as ['A', 'B'], jumpWindows: '101-19' },
     };
-    expect(observationsOfTarget(f, auto, observations).map((o) => o.id)).toEqual(['101-01', '102-01']);
+    expect(observationsOfTarget(f, auto, observations).map((o) => o.id)).toEqual(['101-01']);
     const other = { ...f, verification: 'V-0001' };
     expect(observationsOfTarget(other, auto, observations)).toEqual([]);
   });

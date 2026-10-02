@@ -58,6 +58,11 @@ export type CompareSetup = {
   midFarLanding?: MidFarLanding;
   /** 近の着地点を、並びの 1 回目・2 回目の順に固定する（録画で読んだ着地点。C-0155）。省略は配分 */
   nearLanding?: NearLanding[];
+  /**
+   * V-0086: 録画で読んだ的のジャンプの窓を持つ観測値の id（同じ録画。値は [始まり, 終わり, 始まり, 終わり, …] のゲーム内の秒）。
+   * 出来事のセットの狙えない窓（代表値。C-0057）と、着地点の区間の切れ目をこれで置き換える。省略は代表値
+   */
+  jumpWindows?: string;
 };
 
 /** Stage 18-C: 中遠の 3 か所（足元 584・571・561。C-0044） */
@@ -402,6 +407,16 @@ export function validateObservations(
     if (condition === 'auto' && preset !== undefined && preset.targetProfile === undefined) {
       errors.push(`${at}: 敵のプリセット ${c.setup.enemy} には的の条件の表が無い`);
     }
+    if (c.setup.jumpWindows !== undefined) {
+      const ref = observations.find((x) => x.id === c.setup.jumpWindows);
+      if (ref === undefined) errors.push(`${at}: jumpWindows の観測値 ${c.setup.jumpWindows} が無い`);
+      else {
+        if (ref.recording !== o.recording) errors.push(`${at}: jumpWindows の観測値は同じ録画のもの`);
+        if (ref.invalid !== undefined) errors.push(`${at}: jumpWindows の観測値 ${ref.id} は失効している`);
+        if (jumpWindowsOf(ref.value) === undefined)
+          errors.push(`${at}: jumpWindows の観測値 ${ref.id} は [始まり, 終わり, …] の昇順の窓の並びでない`);
+      }
+    }
     const tol = 'rel' in c.tolerance ? c.tolerance.rel : c.tolerance.abs;
     if (!(tol >= 0)) errors.push(`${at}: 許容幅は 0 以上`);
   }
@@ -414,7 +429,22 @@ export type RecordsData = {
   characters: ReadonlyMap<number, CharacterData>;
   skills: ReadonlyMap<number, SkillDefinition>;
   enemies: EnemyPresetMaster;
+  /** 観測値の id → 値（setup.jumpWindows を引く。無ければ jumpWindows は使えない） */
+  observationValues?: ReadonlyMap<string, number | number[]>;
 };
+
+/** setup.jumpWindows の観測値の値（[始まり, 終わり, …] の秒）を窓の列にする */
+export function jumpWindowsOf(value: number | number[] | undefined): { start: number; end: number }[] | undefined {
+  if (!Array.isArray(value) || value.length === 0 || value.length % 2 !== 0) return undefined;
+  const out: { start: number; end: number }[] = [];
+  for (let i = 0; i < value.length; i += 2) {
+    const start = value[i]!;
+    const end = value[i + 1]!;
+    if (!(start < end) || (out.length > 0 && start < out.at(-1)!.end)) return undefined;
+    out.push({ start, end });
+  }
+  return out;
+}
 
 /** 録画の条件と予測の条件から、モデルの入力を組む（npm run sim の --fixed-spec と同じ組み方） */
 export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, data: RecordsData): TeamInput {
@@ -423,6 +453,11 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
   const preset = data.enemies.enemies.find((e) => e.id === setup.enemy);
   if (preset === undefined) throw new Error(`敵のプリセット ${setup.enemy} が無い`);
   const durationSeconds = setup.durationSeconds ?? 180;
+  let windows: { start: number; end: number }[] | undefined;
+  if (setup.jumpWindows !== undefined) {
+    windows = jumpWindowsOf(data.observationValues?.get(setup.jumpWindows));
+    if (windows === undefined) throw new Error(`jumpWindows の観測値 ${setup.jumpWindows} が無いか、窓の並びでない`);
+  }
   const auto = setup.condition === 'auto';
   const target = auto ? targetProfileOf(data.enemies, preset) : undefined;
   const condition = {
@@ -453,7 +488,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     slots,
     enemy: {
       ...enemyInputOf(preset),
-      events: enemyEventsOf(data.enemies, setup.events ?? [], durationSeconds),
+      events: enemyEventsOf(data.enemies, setup.events ?? [], durationSeconds, windows),
       ...(target === undefined
         ? {}
         : {
@@ -464,6 +499,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
               durationSeconds,
               target,
               landingFixed(setup.midFarLanding, setup.nearLanding),
+              windows,
             ),
           }),
     },

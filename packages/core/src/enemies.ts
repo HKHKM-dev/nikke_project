@@ -355,9 +355,27 @@ export function enemyEventsOf(
   master: Pick<EnemyPresetMaster, 'eventSets'>,
   setIds: readonly string[],
   durationSeconds: number,
+  untargetable?: readonly FrameSpanSeconds[],
 ): EnemyEvent[] {
   const specs = master.eventSets.filter((set) => setIds.includes(set.id)).flatMap((set) => set.events);
-  return expandEnemyEvents(specs, durationSeconds);
+  if (untargetable === undefined) return expandEnemyEvents(specs, durationSeconds);
+  // V-0086: 録画で読んだ狙えない窓で、出来事のセットの狙えない窓を置き換える
+  return [
+    ...expandEnemyEvents(
+      specs.filter((e) => e.kind !== 'untargetable'),
+      durationSeconds,
+    ),
+    ...untargetableEvents(untargetable, durationSeconds),
+  ].sort((a, b) => a.start - b.start);
+}
+
+/** 秒の窓 [start, end)（録画で読んだ的のジャンプの窓など） */
+export type FrameSpanSeconds = { start: number; end: number };
+
+function untargetableEvents(windows: readonly FrameSpanSeconds[], durationSeconds: number): EnemyEvent[] {
+  return windows
+    .filter((w) => w.start < durationSeconds)
+    .map((w) => ({ kind: 'untargetable' as const, start: w.start, end: Math.min(w.end, durationSeconds) }));
 }
 
 /**
@@ -365,6 +383,7 @@ export function enemyEventsOf(
  * 持つ最初のものについて、その狙えない窓（untargetable）の終わり = 着地で区間を切り、k 番目の区間に並びの k 番目を当てる
  * （1 つ目は最初の窓より前 = 初期位置。窓の間は誰も撃たないので、窓はその前の区間に入れる）。並びより区間が多ければ、残りは null
  * （着地点が未測定）。並びを持つセットを選んでいなければ、戦闘時間全体を初期位置にする。
+ * untargetable を渡すと、出来事のセットの狙えない窓の代わりにそれで区間を切る（録画で読んだ窓。V-0086）。
  * fixed は配分の id → 着地点の id（中遠などを 1 か所に固定する。録画と比べるとき用）。配列なら、並びの中でその配分が k 回目に
  * 出た区間を k 番目の着地点に固定する（近の 1 回目と 2 回目。配列より後の回は配分のまま。C-0155）
  */
@@ -374,6 +393,7 @@ export function enemyLandingsOf(
   durationSeconds: number,
   profile: Pick<TargetProfile, 'initialLanding' | 'landings' | 'mixes'>,
   fixed: Readonly<Record<string, string | readonly string[]>> = {},
+  untargetable?: readonly FrameSpanSeconds[],
 ): LandingSpan[] {
   for (const [id, to] of Object.entries(fixed)) {
     for (const landing of typeof to === 'string' ? [to] : to) {
@@ -396,9 +416,13 @@ export function enemyLandingsOf(
   const set = master.eventSets.find((s) => setIds.includes(s.id) && s.landings !== undefined);
   if (set === undefined) return [{ start: 0, end: durationSeconds, landing: resolve(profile.initialLanding) }];
   const order = set.landings!;
-  const cuts = expandEnemyEvents(
-    set.events.filter((e) => e.kind === 'untargetable'),
-    durationSeconds,
+  const cuts = (
+    untargetable === undefined
+      ? expandEnemyEvents(
+          set.events.filter((e) => e.kind === 'untargetable'),
+          durationSeconds,
+        )
+      : untargetableEvents(untargetable, durationSeconds)
   ).map((e) => e.end);
   const spans: LandingSpan[] = [];
   let start = 0;

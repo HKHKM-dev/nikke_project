@@ -42,6 +42,7 @@ import {
   runObservations,
   validateObservations,
   type Observation,
+  jumpWindowsOf,
 } from '../observations.ts';
 import { extractGeneratedSection, normalizeTable, type ProjectRecording } from '../recordings.ts';
 import { definitionPlacesByClaim } from '../skills.ts';
@@ -395,6 +396,57 @@ describe('照合の部品', () => {
       '054-93: condition は auto か manual',
       '054-94: nearLanding は A・B の並び（1 回目・2 回目の順）',
       '054-95: nearLanding は condition が auto のときだけ',
+    ]);
+  });
+
+  it('replaces the jump windows and the landing cuts with the recorded ones (setup.jumpWindows, V-0086)', () => {
+    expect(jumpWindowsOf([1, 2, 3, 4])).toEqual([
+      { start: 1, end: 2 },
+      { start: 3, end: 4 },
+    ]);
+    expect(jumpWindowsOf([1, 2, 3])).toBeUndefined();
+    expect(jumpWindowsOf([2, 1])).toBeUndefined();
+    expect(jumpWindowsOf([1, 3, 2, 4])).toBeUndefined();
+    expect(jumpWindowsOf(5)).toBeUndefined();
+    const rec074 = recordings.get('074') as ProjectRecording;
+    const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto' as const };
+    const windows = [10, 12, 50, 52.5];
+    const withValues = { ...data, observationValues: new Map([['074-99', windows]]) };
+    const input = buildTeamInput(rec074, { ...setup, jumpWindows: '074-99' }, withValues);
+    expect(input.enemy.events).toEqual([
+      { kind: 'untargetable', start: 10, end: 12 },
+      { kind: 'untargetable', start: 50, end: 52.5 },
+    ]);
+    expect(input.enemy.landings?.map((s) => [s.start, s.end])).toEqual([
+      [0, 12],
+      [12, 52.5],
+      [52.5, 180],
+    ]);
+    expect(() => buildTeamInput(rec074, { ...setup, jumpWindows: '074-98' }, withValues)).toThrow(/jumpWindows/);
+    const base = observations.find((o) => o.id === '074-08')!;
+    const ref = observations.find((o) => o.id === '102-15')!;
+    const withRef = (jumpWindows: string, id: string): Observation => ({
+      ...base,
+      id,
+      compare: { ...base.compare!, setup: { ...base.compare!.setup, jumpWindows } },
+    });
+    expect(
+      validateObservations(
+        [
+          ref,
+          { ...ref, id: '102-98', value: [3, 2] },
+          withRef('074-97', '074-91'),
+          withRef('102-15', '074-92'),
+          withRef('102-98', '074-93'),
+        ],
+        recordings,
+        data.enemies,
+      ),
+    ).toEqual([
+      '074-91: jumpWindows の観測値 074-97 が無い',
+      '074-92: jumpWindows の観測値は同じ録画のもの',
+      '074-93: jumpWindows の観測値は同じ録画のもの',
+      '074-93: jumpWindows の観測値 102-98 は [始まり, 終わり, …] の昇順の窓の並びでない',
     ]);
   });
 });
