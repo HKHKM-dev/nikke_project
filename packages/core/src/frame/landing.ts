@@ -19,7 +19,7 @@ import { LANDING_BAND_LABEL, LANDING_BANDS } from '../enemies.ts';
 import type { SlotBuffState } from '../skills/timeline.ts';
 import type { SlotCondition, TeamSlotInput } from '../team.ts';
 import type { CharacterData, LandingBand, LandingPoint, TargetProfile, TargetRateTable } from '../types.ts';
-import { framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
+import { endSecondsToFrame, framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
 
 export type ConditionMode = 'manual' | 'auto';
 
@@ -159,7 +159,7 @@ export function landingFrameSpans(enemy: EnemyInput, frames: number): LandingFra
   };
   for (const s of [...source].sort((a, b) => a.start - b.start)) {
     const start = Math.max(at, Math.min(frames, frameOf(s.start)));
-    const end = Math.min(frames, frameOf(s.end));
+    const end = endSecondsToFrame(s.end, frames);
     if (start > at) push(start, null);
     if (end > start) push(end, s.landing);
   }

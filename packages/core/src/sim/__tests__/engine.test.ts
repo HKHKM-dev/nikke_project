@@ -9,7 +9,7 @@ import type { SlotCondition, TeamSlotInput } from '../../team.ts';
 import type { BurstStep, ShotParams, SkillRaw } from '../../types.ts';
 import { runSimulation, simIntervalTotals } from '../engine.ts';
 import { FIXED_BURST_CYCLE } from '../../burst/fixedCycle.ts';
-import { gameSecondsToFrames } from '../../time.ts';
+import { battleSecondsToFrames, gameSecondsToFrames } from '../../time.ts';
 
 const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
 const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
@@ -61,7 +61,7 @@ function triggersByCadence(shot: ShotParams, frames: number): number {
 describe('runSimulation without burst', () => {
   it('puts every trigger in the non-full-burst bucket and counts them like the cadence', () => {
     const sim = runSimulation({ slots: [ar, null, sr], enemy, durationSeconds: 180 });
-    expect(sim.frames).toBe(gameSecondsToFrames(180));
+    expect(sim.frames).toBe(battleSecondsToFrames(180));
     expect(sim.schedule).toBeNull();
     expect(sim.slots[1]).toBeNull();
     for (const s of sim.slots) {
@@ -82,10 +82,10 @@ describe('runSimulation without burst', () => {
 
   // Stage 24: 1 周期 = リロード明け 24f + 60 発 290f + リロード 58.8f = 372.8f（C-0058・C-0145・C-0148）。
   // Stage 22-C: 1 発目は戦闘開始から構え 12f の後（C-0114）。リロードは端数を持ち越すので、29 マガジン目は
-  // 12 + round(28 × 372.8) = 10451 から、10588 までの 137f に 28 発
+  // 12 + round(28 × 372.8) = 10451 から、10589f（180 秒。V-0086）までの 138f に 28 発
   it('AR fires 1708 times in 180 s (first at 12, 28 magazines of 372.8f + 28 shots of the 29th)', () => {
     const sim = runSimulation({ slots: [ar], enemy, durationSeconds: 180 });
-    expect(sim.frames).toBe(10588);
+    expect(sim.frames).toBe(10589);
     expect(simIntervalTotals(sim.slots[0]!).nonFullBurst.triggers).toBe(28 * 60 + 28);
   });
 });
@@ -168,7 +168,7 @@ describe('runSimulation with the fixed burst cycle', () => {
     expect(after - h).toBeLessThanOrEqual(5);
     expect(triggers.filter((e) => e.frame === before).every((e) => e.kind === 'trigger' && !e.fullBurst)).toBe(true);
     expect(triggers.filter((e) => e.frame === after).every((e) => e.kind === 'trigger' && e.fullBurst)).toBe(true);
-    expect(sim.frames).toBe(gameSecondsToFrames(20.5));
+    expect(sim.frames).toBe(battleSecondsToFrames(20.5));
   });
 
   it('runs a very short battle and an empty team', () => {

@@ -3,7 +3,7 @@
 import type { EnemyEvent, ModelNote } from '../damage.ts';
 import { IMPLEMENTED_ENEMY_EVENT_KINDS } from '../enemies.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { gameSecondsToFrame } from '../time.ts';
+import { endSecondsToFrame, gameSecondsToFrame } from '../time.ts';
 
 /** 秒 → フレーム（出来事の境目。四捨五入） */
 function frameOf(seconds: number): number {
@@ -17,7 +17,7 @@ function frameOf(seconds: number): number {
 export function untargetableRanges(events: readonly EnemyEvent[] | undefined, frames: number): FrameRange[] {
   const ranges = (events ?? [])
     .filter((e) => e.kind === 'untargetable')
-    .map((e) => ({ start: Math.max(0, frameOf(e.start)), end: Math.min(frames, frameOf(e.end)) }))
+    .map((e) => ({ start: Math.max(0, frameOf(e.start)), end: endSecondsToFrame(e.end, frames) }))
     .filter((r) => r.start < r.end)
     .sort((a, b) => a.start - b.start);
   const merged: FrameRange[] = [];

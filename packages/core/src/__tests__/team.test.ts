@@ -35,7 +35,7 @@ describe('computeTeamDamage', () => {
     expect(team.slots).toHaveLength(4);
     expect(team.slots[2]).toBeNull();
     expect(team.slots[3]?.index).toBe(3);
-    // Stage 21-B: 編成の計算は戦闘の長さをフレームに直して区間を切る（180 秒 = 10,588f = 179.996 秒）。単体の計算は秒のまま。
+    // Stage 21-B: 編成の計算は戦闘の長さをフレームに直して区間を切る（180 秒 = 10,589f。最後のフレームは 179.996 秒。V-0086）。単体の計算は秒のまま。
     // 差は 1 フレーム未満の切り捨ての分だけ
     expect(
       relDiff(

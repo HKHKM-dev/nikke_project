@@ -135,8 +135,8 @@ describe('sim vs calc: quantities that must match exactly', () => {
       const groups = simGroupTotals(sim, i);
       // 持続バフがないので区間は「通常 / フルバースト」の 2 グループに退化する
       expect(c.segments.map((g) => g.fullBurst)).toEqual([false, true]);
-      // Stage 21-B: 通常 9H + 4f、フルバースト 9H（H = 588f）
-      expect(c.segments[0]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H + 4), 9);
+      // Stage 21-B: 通常 9H + 5f（180 秒は 10,589f。V-0086）、フルバースト 9H（H = 588f）
+      expect(c.segments[0]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H + 5), 9);
       expect(c.segments[1]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H), 9);
       expect(groups.map((g) => g.key)).toEqual(
         c.segments.map((_, j) => sim.timeline.segments[j === 0 ? 0 : 1]!.slotKeys[i]),
@@ -264,8 +264,8 @@ describe('sim vs calc with timed buffs: quantities that must match exactly', () 
       const c = calc.slots[i]!;
       expect(c.segments).toHaveLength(2);
       expect(c.segments.map((g) => g.fullBurst)).toEqual([false, true]);
-      // Stage 21-B: 通常 9H + 4f、フルバースト 9H（H = 588f）
-      expect(c.segments[0]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H + 4), 9);
+      // Stage 21-B: 通常 9H + 5f（180 秒は 10,589f。V-0086）、フルバースト 9H（H = 588f）
+      expect(c.segments[0]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H + 5), 9);
       expect(c.segments[1]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H), 9);
       const groups = simGroupTotals(sim, i);
       expect(groups.map((g) => g.seconds)).toEqual(c.segments.map((g) => g.seconds));

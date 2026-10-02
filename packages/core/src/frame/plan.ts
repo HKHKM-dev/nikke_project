@@ -6,7 +6,7 @@
 // Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
 import { burstDelaysFieldOf, burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
+import { battleSecondsToFrames, gameSecondsToFrame } from '../time.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
 import { isInFullBurst, type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
 import { computeTriggerDamage, type EnemyInput } from '../damage.ts';
@@ -108,7 +108,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const { slots, enemy, model } = input;
   validateTeamSlots(slots);
   validateControlledSlot(slots, input.controlledSlot);
-  const frames = gameSecondsToFrames(input.durationSeconds);
+  const frames = battleSecondsToFrames(input.durationSeconds);
   const timelineSlots = toTimelineSlots(slots);
   const untargetable = untargetableRanges(enemy.events, frames);
   // Stage 18-C: 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）

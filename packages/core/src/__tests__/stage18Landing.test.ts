@@ -30,7 +30,7 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, ShotParams, WeaponType } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
-import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
+import { battleSecondsToFrames, gameSecondsToFrame } from '../time.ts';
 
 const raw = JSON.parse(readFileSync(new URL('../../data/enemies.json', import.meta.url), 'utf8')) as Record<
   string,
@@ -389,7 +389,7 @@ describe('編成（自動の条件）', () => {
 
   it('uses the initial landing (中近) without the 3-minute mode, on the average-rate path of calc', () => {
     const calc = computeTeamDamage(input(team(true), enemy({ events: false })));
-    expect(calc.landings).toEqual([{ start: 0, end: gameSecondsToFrames(180), landing: 'midNear', band: 'midNear' }]);
+    expect(calc.landings).toEqual([{ start: 0, end: battleSecondsToFrames(180), landing: 'midNear', band: 'midNear' }]);
     const midNear: SlotCondition = { coreHitRate: 0.2281, distanceBonus: true, fullCharge: true, hitRate: 0.9963 };
     const manual = computeTeamDamage(
       input([slot(weapon('AR', { min: 25, max: 45 }, 1), false, { condition: midNear })], enemy({ events: false })),

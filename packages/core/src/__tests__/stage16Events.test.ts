@@ -19,7 +19,7 @@ import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
-import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
+import { battleSecondsToFrames, gameSecondsToFrame } from '../time.ts';
 
 const master = parseEnemyPresets(
   JSON.parse(readFileSync(new URL('../../data/enemies.json', import.meta.url), 'utf8')) as unknown,
@@ -243,7 +243,7 @@ describe('編成（calc と sim の両方に効く）', () => {
   });
 
   it('stops every shot and every burst inside the jumps, in both models', () => {
-    const windows = untargetableRanges(jumps, gameSecondsToFrames(180));
+    const windows = untargetableRanges(jumps, battleSecondsToFrames(180));
     expect(windows).toHaveLength(5);
     const inside = (f: number) => windows.some((w) => w.start <= f && f < w.end);
     const sim = runSimulation(input(jumps));

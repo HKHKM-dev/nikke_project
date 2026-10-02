@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import {
   FRAMES_PER_GAME_SECOND,
   GAME_SECONDS_PER_FRAME,
+  battleSecondsToFrames,
+  endSecondsToFrame,
   framesToGameSeconds,
   gameSecondsToFrame,
   gameSecondsToFrames,
@@ -22,6 +24,17 @@ describe('game time (Stage 21-B: 0.017 s per frame)', () => {
     expect(gameSecondsToFrames(0.017 * 3)).toBe(3);
     expect(gameSecondsToFrames(0.01)).toBe(0);
     expect(() => gameSecondsToFrames(-1)).toThrow(RangeError);
+  });
+
+  it('counts the battle frames by rounding up: 180 s includes the frame at 179.996 s (V-0086, recordings 074 and 102)', () => {
+    expect(battleSecondsToFrames(180)).toBe(10589);
+    expect(battleSecondsToFrames(0.017 * 3)).toBe(3);
+    expect(battleSecondsToFrames(0)).toBe(0);
+    expect(() => battleSecondsToFrames(-1)).toThrow(RangeError);
+    // 戦闘の終わりまで続く区間は最後のフレームまで覆う。それより前に終わる区間は四捨五入
+    expect(endSecondsToFrame(180, 10589)).toBe(10589);
+    expect(endSecondsToFrame(179.99, 10589)).toBe(10588);
+    expect(endSecondsToFrame(176.33, 10589)).toBe(10372);
   });
 
   it('converts instants by rounding to the nearest frame', () => {
