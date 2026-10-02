@@ -205,7 +205,7 @@ describe('validateBuild: OL の行（12.2）', () => {
 describe('resolveBuildEffects（3.1）', () => {
   it('is empty for an empty build and for the fixed-spec preset (the effect layer never applies under fixed spec)', () => {
     expect(resolveBuildEffects(ar, emptyBuild(), masters)).toEqual({ effects: [], notes: [] });
-    expect(resolveBuildEffects(ar, fixedSpecBuild({ rarity: 'SSR', corporation: 'ELYSION' }), masters)).toEqual({
+    expect(resolveBuildEffects(ar, fixedSpecBuild({ rarity: 'SSR', corporationSubType: null }), masters)).toEqual({
       effects: [],
       notes: [],
     });

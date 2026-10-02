@@ -340,10 +340,10 @@ export function computeCombatAttack(
 }
 
 /**
- * ユニオン射撃場スペック固定に相当する育成入力（plan/verification.md Stage 2-A）: 好感度 rank30（ピルグリム SSR は 40、R は 10）、
+ * ユニオン射撃場スペック固定に相当する育成入力（plan/verification.md Stage 2-A）: 好感度 rank30（OVERSPEC の SSR は 40、R は 10）、
  * 装備 4 部位 T9 Lv5、キューブ・コレクション・リサイクルルーム・その他なし。レベル・凸・コアは fixedSpecGrowth
  */
-export function fixedSpecBuild(character: Pick<CharacterData, 'rarity' | 'corporation'>): BuildInput {
+export function fixedSpecBuild(character: Pick<CharacterData, 'rarity' | 'corporationSubType'>): BuildInput {
   const gear = { type: 'T9' as const, level: GEAR_LEVEL_MAX };
   return {
     ...emptyBuild(),

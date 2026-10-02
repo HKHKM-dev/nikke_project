@@ -7,6 +7,7 @@
   "rarity": "SSR",
   "class": "Attacker",
   "corporation": "MISSILIS",
+  "corporationSubType": null,
   "element": "Fire",
   "weaponType": "SG",
   "burstStep": "Step3",

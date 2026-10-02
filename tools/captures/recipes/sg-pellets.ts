@@ -74,7 +74,7 @@ type IntervalStats = {
 
 export const sgPellets: Recipe = {
   name: 'sg-pellets',
-  version: 1,
+  version: 2,
   describe:
     'SG 単騎の区間ごとの当たったペレットの割合（rate）、近の当たった数の分布（count）、近の「会心 + 2 × コア」（rate）、' +
     'スペック固定 OFF ならコア命中率と会心率（rate）',

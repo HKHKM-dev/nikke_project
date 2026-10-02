@@ -15,7 +15,7 @@ import { parseArgs } from 'node:util';
 import type { Observation } from '../../packages/core/src/records/observations.ts';
 import { todayLocal } from '../../packages/core/src/records/predictions.ts';
 import { isLegacy, type RecordingEntry } from '../../packages/core/src/records/recordings.ts';
-import { capturesDir } from './dirs.ts';
+import { capturesDir, legacyVideoPath } from './dirs.ts';
 import { RECIPES, findRecipe } from './recipes/index.ts';
 import { toolName, type RecipeContext, type RecipeObservation } from './recipes/types.ts';
 
@@ -65,7 +65,7 @@ function loadRecording(recordingId: string): RecordingEntry {
 }
 
 function videoOf(entry: RecordingEntry): string {
-  return isLegacy(entry) ? entry.path : join(capturesDir(), entry.folder, entry.file);
+  return isLegacy(entry) ? legacyVideoPath(entry.path) : join(capturesDir(), entry.folder, entry.file);
 }
 
 function loadObservations(recordingId: string): Observation[] {

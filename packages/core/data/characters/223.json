@@ -7,6 +7,7 @@
   "rarity": "SSR",
   "class": "Supporter",
   "corporation": "PILGRIM",
+  "corporationSubType": "OVERSPEC",
   "element": "Wind",
   "weaponType": "SMG",
   "burstStep": "Step2",

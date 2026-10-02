@@ -7,6 +7,7 @@
   "rarity": "SSR",
   "class": "Supporter",
   "corporation": "PILGRIM",
+  "corporationSubType": "OVERSPEC",
   "element": "Fire",
   "weaponType": "AR",
   "burstStep": "Step2",

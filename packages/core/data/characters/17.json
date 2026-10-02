@@ -7,6 +7,7 @@
   "rarity": "SSR",
   "class": "Defender",
   "corporation": "TETRA",
+  "corporationSubType": "OVERSPEC",
   "element": "Electronic",
   "weaponType": "RL",
   "burstStep": "Step1",

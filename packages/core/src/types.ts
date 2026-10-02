@@ -111,6 +111,8 @@ export type SkillRaw = {
 };
 
 export type CharacterData = CharacterIndexEntry & {
+  /** CDN の corporation_sub_type（"OVERSPEC" など）。無いキャラは null。スペック固定の好感度の上限（fixedSpec.ts）を決める */
+  corporationSubType: string | null;
   /** index = level - 1 */
   levelCurve: Record<StatKind, number[]>;
   statEnhance: StatEnhance;

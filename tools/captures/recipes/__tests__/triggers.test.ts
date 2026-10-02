@@ -31,6 +31,19 @@ describe('parseHudJumpsTsv・groupIncrements', () => {
     expect(gapBefore(groups, 3, 40)).toBe(260 - 180 - 40);
   });
 
+  it('読めなかった後の読みは、読めなかった間の真ん中から組の跨ぐ長さを測る（V-0079 の L-S f1416）', () => {
+    // f1347 の発の後、HUD が 30f 読めず f1416 で読んだ発（本当は f1386）と、f1426 の発
+    const text = 'frame\tvalue\tincrement\tgap\n1347\t10\t10\t1\n1416\t25\t15\t30\n1426\t40\t15\t1\n';
+    const groups = groupIncrements(parseHudJumpsTsv(text), 39);
+    expect(groups.map((g) => [g.frame, g.increment, g.shots])).toEqual([
+      [1347, 10, 1],
+      [1416, 30, 2],
+    ]);
+    // 読み 1 つの組は、読めなかった間が長くても 1 発
+    const single = groupIncrements(parseHudJumpsTsv('frame\tvalue\tincrement\tgap\n100\t5\t5\t40\n'), 39);
+    expect(single[0]!.shots).toBe(1);
+  });
+
   it('発の間は 30〜60f の空きの中央値', () => {
     expect(shotIntervalOf([0, 39, 79, 118, 158, 300, 340])).toBe(40);
     expect(shotIntervalOf([0, 3])).toBe(40);

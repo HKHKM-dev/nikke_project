@@ -14,6 +14,8 @@ const CASES: { name: string; id: number; attack: number; tolerance: number }[] =
   { name: 'Emma (SSR Supporter)', id: 90, attack: 99925, tolerance: 0 },
   { name: 'Folkwang (SSR Defender)', id: 242, attack: 79954, tolerance: 0 },
   { name: 'Isabel (SSR Attacker, Pilgrim)', id: 231, attack: 120694, tolerance: 0 },
+  // ピルグリムでない OVERSPEC（ELYSION）。116-06 の 1 ヒットから（C-0166）
+  { name: 'Rapi: Red Hood (SSR Attacker, Overspec)', id: 16, attack: 120694, tolerance: 0 },
   { name: 'Delta (SR Defender)', id: 20, attack: 63368, tolerance: 0 },
   { name: 'Belorta (SR Attacker)', id: 60, attack: 95033, tolerance: 0 },
   { name: 'Kurumi (SR Supporter)', id: 862, attack: 79206, tolerance: 8 },
@@ -29,11 +31,12 @@ describe('computeFixedSpecAttack', () => {
     });
   }
 
-  it('uses rarity-max growth and rank by rarity / corporation', () => {
+  it('uses rarity-max growth and rank by rarity / corporation_sub_type', () => {
     const emma = loadCharacter(90);
     expect(fixedSpecGrowth(emma)).toEqual({ level: 400, grade: 3, core: 7 });
     expect(fixedSpecAffectionRank(emma)).toBe(30);
     expect(fixedSpecAffectionRank(loadCharacter(231))).toBe(40);
+    expect(fixedSpecAffectionRank(loadCharacter(16))).toBe(40); // ELYSION だが OVERSPEC（C-0166）
     expect(fixedSpecAffectionRank(loadCharacter(304))).toBe(10);
     expect(fixedSpecGrowth(loadCharacter(20))).toEqual({ level: 400, grade: 2, core: 0 });
   });

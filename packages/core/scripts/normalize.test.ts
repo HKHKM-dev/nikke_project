@@ -122,6 +122,7 @@ describe('toCharacterData', () => {
     expect(data.shot.burstEnergyPerShot).toBe(500);
     expect(data.shot.fullChargeBurstEnergy).toBe(1); // 0 → 1
     expect(data.burstSkill).toEqual({ cooldownSeconds: 20, nextStep: 'Step2', durationSeconds: 10 });
+    expect(data.corporationSubType).toBeNull(); // corporation_sub_type が無い
     const charged = emma('en');
     charged.shot_detail.full_charge_burst_energy = 25000;
     expect(toCharacterData(charged, emma('ja')).shot.fullChargeBurstEnergy).toBe(2.5);
@@ -178,6 +179,11 @@ describe('toCharacterData', () => {
     const bad = emma('en');
     bad.shot_detail.weapon_type = 'LASER';
     expect(() => toCharacterData(bad, emma('ja'))).toThrow(/weapon_type/);
+  });
+
+  it('keeps corporation_sub_type (OVERSPEC)', () => {
+    const overspec = { ...emma('en'), corporation_sub_type: 'OVERSPEC' };
+    expect(toCharacterData(overspec, emma('ja')).corporationSubType).toBe('OVERSPEC');
   });
 
   it('builds a compact index entry', () => {

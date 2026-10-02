@@ -7,6 +7,7 @@
   "rarity": "SSR",
   "class": "Defender",
   "corporation": "ELYSION",
+  "corporationSubType": null,
   "element": "Water",
   "weaponType": "MG",
   "burstStep": "Step2",
