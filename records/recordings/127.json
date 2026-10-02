@@ -1,0 +1,29 @@
+{
+  "id": "127",
+  "date": "2026-10-02",
+  "folder": "range",
+  "file": "20261002-127_rl_idoll-flower.mp4",
+  "original": "2026-10-02_23-28-19.mp4",
+  "durationSec": 201.3,
+  "frames": 12078,
+  "fps": 60,
+  "sizeMB": 244.1,
+  "sha256": "8fa7345c283a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。V-0104"
+}
