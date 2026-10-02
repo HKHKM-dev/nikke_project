@@ -72,5 +72,69 @@
       "tool": "tools/captures/hud.ts --mode jumps（分解は使い捨てのスクリプト。114-04 と同じ読み方）",
       "note": "116-04 と同じ読み方"
     }
+  },
+  {
+    "id": "117-06",
+    "recording": "117",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0083",
+    "readAt": "2026-10-02",
+    "value": 6717,
+    "description": "ラピ：レッドフード（MG・AI）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし）。116-06 と同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始から 1 回目のフルバーストの前（f900〜1478。中近の区間）の増分のうち、f905・f910 の 2 回（MG の撃ち始め）。デルタ（208,626）・リターの 1 ヒットの組では作れない値。rank30 の値（6,673 前後・コア 13,345 前後・コア + 会心 16,683 前後）の増分は 1 回も無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "117-07",
+    "recording": "117",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0083",
+    "readAt": "2026-10-02",
+    "value": 13434,
+    "description": "同じ 1 ヒットのコア（非会心・距離ボーナスなし）。f918〜1228 に 165 回。コア + 会心の 16,793 も 37 回（f932〜1214）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "117-06 と同じ区間。値は区間を通して変わらない（バフの出入りが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
   }
 ]
