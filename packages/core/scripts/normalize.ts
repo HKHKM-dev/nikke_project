@@ -96,6 +96,10 @@ export type RawRoleData = {
     auto_end_accuracy_circle_scale: number;
     auto_accuracy_change_pershot: number;
     auto_accuracy_change_speed: number;
+    spot_projectile_speed: number;
+    homing_script?: string | null;
+    spot_radius: number;
+    spot_explosion_range: number;
   };
   skill1_detail: RawSkillDetail;
   skill2_detail: RawSkillDetail;
@@ -267,6 +271,17 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
         autoChangePerShot: shot.auto_accuracy_change_pershot,
         autoChangeSpeed: shot.auto_accuracy_change_speed,
       },
+      // 飛ぶ弾（RL）だけ、弾速・誘導・爆発の範囲を生値のまま持つ（即着弾の武器はどれも 0 なので持たない）
+      ...(shot.fire_type === 'Instant'
+        ? {}
+        : {
+            projectile: {
+              speed: shot.spot_projectile_speed,
+              homing: shot.homing_script ?? null,
+              radius: shot.spot_radius,
+              explosionRange: shot.spot_explosion_range,
+            },
+          }),
     },
     burstSkill: {
       cooldownSeconds: en.ulti_skill_detail.skill_cooltime / 100,

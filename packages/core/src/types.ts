@@ -68,6 +68,7 @@ export type ShotParams = {
   /** コアヒット倍率（通常 2.0） */
   coreDamageRate: number;
   inputType: ShotInputType;
+  /** 弾の種類（CDN の fire_type）。Instant（即着弾。RL 以外の全武器）・ProjectileDirect（直進弾）・HomingProjectile（誘導弾）・ProjectileCurve（曲射） */
   fireType: string;
   penetration: number;
   maintainFireStance: number;
@@ -80,6 +81,23 @@ export type ShotParams = {
   fullChargeBurstEnergy: number;
   /** Stage 18: 照準円（CDN の *_accuracy_circle_scale 等の生値）。データとして持つだけで、計算にはまだ使わない */
   accuracy?: AccuracyCircle;
+  /** 飛ぶ弾（fireType が Instant 以外）の弾速・誘導・爆発の範囲。データとして持つだけで、計算にはまだ使わない */
+  projectile?: ProjectileSpec;
+};
+
+/**
+ * 飛ぶ弾の性質。単位は CDN の生値のまま（換算は分かっていない）。2026-10-02 時点で飛ぶ弾は RL だけで、
+ * 誘導弾・弾速 100 が多数、紅蓮：ブラックシャドウ・レイヴンは直進弾・弾速 400。RL のコア命中率との関係は plan/roadmap.md「今後の課題」
+ */
+export type ProjectileSpec = {
+  /** 弾速（spot_projectile_speed） */
+  speed: number;
+  /** 誘導の種類（homing_script。lv1 など）。無ければ null */
+  homing: string | null;
+  /** 当たり判定の半径（spot_radius） */
+  radius: number;
+  /** 爆発の範囲（spot_explosion_range） */
+  explosionRange: number;
 };
 
 /**

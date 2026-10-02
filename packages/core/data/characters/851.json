@@ -61,6 +61,12 @@
       "autoEnd": 10,
       "autoChangePerShot": 0,
       "autoChangeSpeed": 0
+    },
+    "projectile": {
+      "speed": 400,
+      "homing": "lv1",
+      "radius": 50,
+      "explosionRange": 500
     }
   },
   "burstSkill": {
