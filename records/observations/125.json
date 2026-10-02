@@ -1,0 +1,181 @@
+[
+  {
+    "id": "125-01",
+    "recording": "125",
+    "kind": "total",
+    "use": "record",
+    "source": "V-0103",
+    "readAt": "2026-10-02",
+    "value": 67132536,
+    "description": "クルミ（AI）+ デルタ（AI）+ I-DOLL・サン（操作・撃たない）の 180 秒の HUD の総ダメージの最後の値（V-0103 の対照の 1 本目）。戦闘履歴のパネルの 3 人の与ダメージ（クルミ 39,945,472・デルタ 27,187,064・I-DOLL・サン 0）の和と一致。モデルのフルバーストの時刻が実機と合わないので、比べない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode final・still.ts（パネル）",
+      "note": "最後の値は f11585。パネルは f12950 を still.ts で切り出して読んだ"
+    }
+  },
+  {
+    "id": "125-02",
+    "recording": "125",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0103",
+    "readAt": "2026-10-02",
+    "value": [1817, 4768, 7762, 10723],
+    "unit": "f",
+    "description": "フルバーストの入りで HUD の総ダメージが止まった後、最初に増えたフレーム（4 回）。クルミのバースト（受けるダメージ▲が乗り始めるフレーム）は 7 回（f1733・3274・4685・6207・7678・9190・10640）で、2・4・6 回目はフルバーストにならなかった（III の I-DOLL・サンのバーストが出ず、クルミの 1 ヒットの格子にフルバースト補正が乗らない）。フルバーストの窓（入りから 589f）はここから数えた",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/timer.ts --mode changes",
+      "note": "止まりは 1789→1817（28f）・4735→4768（33f。的のジャンプと重なる）・7734→7762（28f）・10693→10723（30f）。止まりの後、クルミの 1 ヒットの格子がフルバースト補正 +50% の入ったものに替わる。補正は 4768 の窓では f5353 に外れ（入りから約 585f）、ほかの窓の終わりはリロードの空きに入る。戦闘開始は f888（timer.ts --mode changes の +90f の変わり目）。クルミの S1 の持続ダメージが約 59f ごとに入り続けるので、HUD の総ダメージは的のジャンプでは止まらない"
+    }
+  },
+  {
+    "id": "125-03",
+    "recording": "125",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0103",
+    "readAt": "2026-10-02",
+    "value": [2604, 4735, 7044, 9264, 11191],
+    "unit": "f",
+    "description": "的のジャンプの前のクルミの最後の 1 ヒットのフレーム（5 回）。次のクルミの 1 ヒットは 123・163・184・131・184f 後。区間は 中近（f899〜）→ 近（f2727〜）→ 遠（f4898〜）→ 中遠（f7228〜）→ 近（f9395〜）→ 遠（f11375〜）で、代表値どおり。中近・中遠のクルミの 1 ヒットはどれも距離ボーナスの入った格子、近・遠はどれも入らない格子に合った",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "クルミの 1 ヒット（分解できたもの）の 100f を超える空き。ふだんのリロードの空きは 82〜87f。持続ダメージ（41,322 ほか）とデルタの 1 発は空きの中にも入るので、増分全体の空きでは切れない"
+    }
+  },
+  {
+    "id": "125-04",
+    "recording": "125",
+    "kind": "rate",
+    "use": "record",
+    "source": "V-0103",
+    "readAt": "2026-10-02",
+    "value": [0.461, 0.464],
+    "unit": "割合",
+    "description": "クルミ（AR・AI）の近の 2 区間（2・5 区間目）のコア命中率。フルバーストの窓（入りから 589f。命中率▲なし）の中と外の順。中は 35 / 76（5 区間目だけ。2 区間目にはフルバーストが来なかった）、外は 248 / 534（2 区間目 151 / 324、5 区間目 97 / 210。コア / 当たった数）。100f のブロック間の分散で出した標準誤差は中 0.073・外 0.019、差 −0.004 ± 0.076（発数の 2 項分布なら ± 0.061）。外のうちクルミのバーストの受けるダメージ▲だけが乗る窓（フルバーストにならなかったバーストの 10 秒と、フルバーストの入りの前）は 66 / 172 = 0.384、それ以外は 182 / 362 = 0.503。会心の割合は中 0.158・外 0.159（期待 0.15）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（分解は使い捨てのスクリプト。V-0074 の 114-04 と同じ形）",
+      "note": "クルミの 1 ヒットを B × (1 + コア 1 + 会心 0.5 + 距離ボーナス 0.3 + フルバースト補正 0.5) × (1 + 受けるダメージ▲ 0.1806) の格子（B = 10,797.2865。予測ファイル V-0103 の kurumi-near-body）で読んだ。フルバースト補正と会心は同じ +0.5 なので、補正の有無は 125-02 の窓（時刻）で決め、受けるダメージ▲の有無は値で決めた（どの値も重ならない）。格子に合わない増分は、ほかで単独に 2 回以上出た値（持続ダメージ 41,322・その会心と▲の版、デルタの 1 発、クルミの S2 の追加ダメージなど）を 1〜2 個引いて格子に合えば数え、合わなければ落とした。分解できたクルミの 1 ヒットは 1,581、落としたものは 19（近で 9）、クルミ以外だけの増分は 256"
+    }
+  },
+  {
+    "id": "125-05",
+    "recording": "125",
+    "kind": "rate",
+    "use": "record",
+    "source": "V-0103",
+    "readAt": "2026-10-02",
+    "value": [0.209, 0.24, 0.169, 0.15],
+    "unit": "割合",
+    "description": "参考（判定には使わない）。クルミの中近（1 区間目）と中遠（4 区間目）のコア命中率。中近のフルバーストの中・外、中遠のフルバーストの中・外の順。中近は 18 / 86 と 44 / 183、中遠は 15 / 89 と 35 / 234。差は中近 −0.031 ± 0.052、中遠 +0.019 ± 0.044（100f のブロック間の分散）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（分解は 125-04 と同じスクリプト）",
+      "note": "125-04 と同じ読み方"
+    }
+  },
+  {
+    "id": "125-06",
+    "recording": "125",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0103",
+    "readAt": "2026-10-02",
+    "value": 10797,
+    "description": "クルミ（AR・AI）のスペック固定 ON の近の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし。フルバーストと受けるダメージ▲の外）。2 区間目で 92 回。予測ファイル V-0103 の kurumi-near-body と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "クルミだけが当たったフレームの増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 0, "core": false, "crit": false, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+    }
+  },
+  {
+    "id": "125-07",
+    "recording": "125",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0103",
+    "readAt": "2026-10-02",
+    "value": 21595,
+    "description": "同じ 1 ヒットのコア（2 区間目で 94 回）。予測ファイル V-0103 の kurumi-near-core と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "125-06 と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 0, "core": true, "crit": false, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+    }
+  },
+  {
+    "id": "125-08",
+    "recording": "125",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0103",
+    "readAt": "2026-10-02",
+    "value": 16196,
+    "description": "同じ 1 ヒットの会心（2 区間目で 19 回）。予測ファイル V-0103 の kurumi-near-crit と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "125-06 と同じ。2 区間目にはフルバーストが来ないので、フルバースト補正の入った胴体（同じ値）と取り違えない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 0, "core": false, "crit": true, "distance": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+    }
+  },
+  {
+    "id": "125-09",
+    "recording": "125",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0103",
+    "readAt": "2026-10-02",
+    "value": 14036,
+    "description": "クルミの距離ボーナスの中の 1 ヒット（胴体・非会心。1 区間目の中近で 106 回、4 区間目の中遠で 153 回）。予測ファイル V-0103 の kurumi-midnear-body と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "125-06 と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": { "slot": 1, "frame": 0, "core": false, "crit": false, "distance": true },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+    }
+  },
+  {
+    "id": "125-10",
+    "recording": "125",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0103",
+    "readAt": "2026-10-02",
+    "value": 41322,
+    "description": "クルミ S1 のハッキング（持続ダメージ）の 1 tick（非会心。受けるダメージ▲の外）。全区間で 69 回（どれもフルバーストの外）。受けるダメージ▲の中は 1.1806 倍（48,785）で出た。予測ファイル V-0103 の kurumi-dot-tick と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "持続ダメージだけが入ったフレームの増分（フルバーストと受けるダメージ▲の外）。125-02 のフルバーストの窓の中の 23 tick は、どれも 1.5 倍（61,984。受けるダメージ▲の中は 73,178）で出た"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": { "slot": 1, "n": 0, "crit": false },
+      "tolerance": { "abs": 1 },
+      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+    }
+  }
+]
