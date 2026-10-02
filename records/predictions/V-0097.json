@@ -1,0 +1,78 @@
+{
+  "verification": "V-0097",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（射撃場の的の RL のコア命中率 1。C-0028）。距離帯や弾の種類でコアを外す仮説（H1a・H1b・H1c）は入力で表せない（表の RL の値は 1 で、手入力の値を使わない）ので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-body-304",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "後から書いた予測（形の確かめ）: フラワーの通常攻撃（フルチャージ）1 ヒットの胴体（非会心）。077-15 の注記の胴体の値と同じになるはず（読み直しで HUD の増分をコアと胴体に分ける鍵）"
+    },
+    {
+      "id": "hit-core-304",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "後から書いた予測（形の確かめ）: 同じ 1 ヒットのコア（非会心）"
+    },
+    {
+      "id": "total-077",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["077-06"],
+      "note": "後から書いた予測: フラワー単騎・AUTO・オートバースト ON（077 の組み方）の与ダメージ。H0 はコアを外さない。実測（077-06）が下回る分のうち、コアの外れ（077-15）で説明できる大きさの目安にする（コアを外した発は、その発のコアのぶんだけ減る）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "34463456a86b8314173b08c7b71859fedebc1144",
+    "values": {
+      "H0": {
+        "hit-body-304": 83086.01999999999,
+        "hit-core-304": 166172.03999999998,
+        "total-077": 18116120.264811862
+      }
+    }
+  }
+}
