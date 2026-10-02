@@ -1,0 +1,153 @@
+{
+  "verification": "V-0103",
+  "note": "▲あり（ドレイク S1 だけ）の 2 本の予測。判定に使う近のコア命中率（▲の窓の中・外）は METRICS に指標が無いので、H0・H1 の値と判定の基準は検証記録の「予測」に手で書いた（式は C-0036・C-0170、N はドレイクの宝物版 S1 の 20.09%）。対照の 1 本（ドレイクを I-DOLL・サンに替える）は編成が違うので、このファイルに入れず検証記録に手で書いた。ここの指標は、増分を分解する格子の基準にするクルミの 1 ヒットの値と持続ダメージの 1 tick（撮った後に観測値と突き合わせる検算）。1 ヒットの値はコア命中率に依らないので H0 と H1 で同じになる",
+  "team": [
+    {
+      "rid": 862,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 101,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "持続の命中率▲はコア命中率を変えない（PR #198 の前のモデルの形）。近のコア命中率は▲の窓の中も外も的の表の AR の値のまま"
+    },
+    {
+      "id": "H1",
+      "note": "持続の命中率▲も C-0036 の式（p ÷ (1 − N)²、上限 1）でコア命中率を上げる（C-0170。いまのモデル）。N はドレイクの宝物版 S1 の 20.09%。override は無く、窓ごとの値は検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "kurumi-near-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "クルミ（AR・AI）の近の通常攻撃 1 ヒット（胴体・非会心。AR の距離ボーナスは 25〜45 なので近には乗らない。フルバーストの外）。分解の格子の基準"
+    },
+    {
+      "id": "kurumi-near-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア"
+    },
+    {
+      "id": "kurumi-near-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットの会心"
+    },
+    {
+      "id": "kurumi-midnear-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "距離ボーナスの中（中近・中遠 A/B/C）の 1 ヒット（胴体・非会心）"
+    },
+    {
+      "id": "kurumi-fb-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "最初のフルバーストの中（sim の f402〜）の 1 ヒット（胴体・非会心・距離ボーナスなし）。フルバースト補正・ドレイク S1 の攻撃力▲ 11.85%・クルミのバーストの受けるダメージ▲が乗った状態。▲の窓（ドレイク S1 の 10 秒）を格子の切り替わりで読む基準"
+    },
+    {
+      "id": "kurumi-dot-tick",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "クルミ S1 のハッキング（持続ダメージ）の 1 tick（非会心。フルバーストの外）。ヒットに数えずに落とす増分の基準"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-02",
+    "commit": "e1772de14783f82841465b4e720d985cf561808e",
+    "values": {
+      "H0": {
+        "kurumi-near-body": 10797.2865,
+        "kurumi-near-core": 21594.573,
+        "kurumi-near-crit": 16195.92975,
+        "kurumi-midnear-body": 14036.472450000001,
+        "kurumi-fb-body": 21389.607525420233,
+        "kurumi-dot-tick": 41322.3624
+      },
+      "H1": {
+        "kurumi-near-body": 10797.2865,
+        "kurumi-near-core": 21594.573,
+        "kurumi-near-crit": 16195.92975,
+        "kurumi-midnear-body": 14036.472450000001,
+        "kurumi-fb-body": 21389.607525420233,
+        "kurumi-dot-tick": 41322.3624
+      }
+    }
+  }
+}
