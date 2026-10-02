@@ -181,19 +181,20 @@
 
 モデルの出力（`SimResult`・`TeamResult`、2026-09-26 のコード）から取り出せるものに限って決める。足すときは、照合ランナーの取り出し関数と一緒にこの表へ足す。
 
-| metric            | 取り出し元                                                            | args                                                                                  | 値  | calc |
-| ----------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | --- | ---- |
-| `teamTotalDamage` | `totalDamage`                                                         | —                                                                                     | 数  | ○    |
-| `slotTotalDamage` | `slots[i].totalDamage`                                                | `slot`                                                                                | 数  | ○    |
-| `rangeDamage`     | `damagePerSecond`（1 秒刻み）                                         | `slot`（省略で編成）、`fromSec`・`toSec`                                              | 数  | ×    |
-| `fullBurstCount`  | `schedule.fullBurstWindows.length`                                    | —                                                                                     | 数  | ○    |
-| `fullBurstStarts` | `schedule.fullBurstWindows[].start`                                   | —                                                                                     | 列  | ○    |
-| `gaugeFullFrame`  | `schedule.gaugeFullFrames[n]`                                         | `n`（0 始まり）                                                                       | 数  | ○    |
-| `burstCount`      | `slots[i].burst.activations.length`（calc も同名）                    | `slot`                                                                                | 数  | △    |
-| `skillHitCount`   | `slots[i].skillHits.frames.length`（calc は `skillHits.activations`） | `slot`                                                                                | 数  | ○    |
-| `shotCount`       | `shots[i].frames`（区間で数える）                                     | `slot`、`from`・`to`（フレーム）                                                      | 数  | ×    |
-| `shotIntervals`   | `shots[i].frames` の差                                                | `slot`、`from`・`to`                                                                  | 列  | ×    |
-| `hitDamage`       | その時点の区間のバフで 1 トリガーの式を**パターンごとに組み直す**     | `slot`、`frame`、`source`（normal・burst・skill）、`core`・`crit`・`distance`（真偽） | 数  | ×    |
+| metric               | 取り出し元                                                            | args                                                                                  | 値  | calc |
+| -------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | --- | ---- |
+| `teamTotalDamage`    | `totalDamage`                                                         | —                                                                                     | 数  | ○    |
+| `slotTotalDamage`    | `slots[i].totalDamage`                                                | `slot`                                                                                | 数  | ○    |
+| `rangeDamage`        | `damagePerSecond`（1 秒刻み）                                         | `slot`（省略で編成）、`fromSec`・`toSec`                                              | 数  | ×    |
+| `fullBurstCount`     | `schedule.fullBurstWindows.length`                                    | —                                                                                     | 数  | ○    |
+| `fullBurstStarts`    | `schedule.fullBurstWindows[].start`                                   | —                                                                                     | 列  | ○    |
+| `gaugeFullFrame`     | `schedule.gaugeFullFrames[n]`                                         | `n`（0 始まり）                                                                       | 数  | ○    |
+| `gaugeFullShotIndex` | `shots[i].frames` のうち `schedule.gaugeFullFrames[n]` までの数       | `slot`、`n`（0 始まり）                                                               | 数  | ×    |
+| `burstCount`         | `slots[i].burst.activations.length`（calc も同名）                    | `slot`                                                                                | 数  | △    |
+| `skillHitCount`      | `slots[i].skillHits.frames.length`（calc は `skillHits.activations`） | `slot`                                                                                | 数  | ○    |
+| `shotCount`          | `shots[i].frames`（区間で数える）                                     | `slot`、`from`・`to`（フレーム）                                                      | 数  | ×    |
+| `shotIntervals`      | `shots[i].frames` の差                                                | `slot`、`from`・`to`                                                                  | 列  | ×    |
+| `hitDamage`          | その時点の区間のバフで 1 トリガーの式を**パターンごとに組み直す**     | `slot`、`frame`、`source`（normal・burst・skill）、`core`・`crit`・`distance`（真偽） | 数  | ×    |
 
 - `hitDamage` は通常攻撃の 1 ヒットの値（SG は 1 ペレット。1 トリガーの値を `shotCount` で割る）。`hitDamage` だけは、モデルの出力をそのまま取り出せない。モデルは会心・コアを期待値（率 × 倍率）で持っているので、「コアかつ会心」の 1 発の値は、区間のバフ（`segments[].buffs`）と `damage.ts` の式からパターンを固定して組み直す。取り出し関数は 19-B で作り、Stage 2-A の 4 パターンの実測で確かめる。
 - calc 欄が × の値は、calc の出力（`TeamResult`）に無い。`compare.model` に `calc` を書けるのは ○・△ の値だけ。△ の `burstCount` は、calc ではダメージを持たないバーストの発動が列に入らない（`SlotBurstResult.activations` は倍率ダメージの無いバーストでは空）ので、そのキャラでは使えない。

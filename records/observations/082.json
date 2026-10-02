@@ -133,5 +133,35 @@
     },
     "source": "V-0057",
     "readAt": "2026-09-30"
+  },
+  {
+    "id": "082-08",
+    "recording": "082",
+    "source": "V-0085",
+    "readAt": "2026-09-28",
+    "kind": "count",
+    "use": "compare",
+    "value": 3,
+    "unit": "発",
+    "description": "ヘルム（SR・操作・宝物 3）単騎で、1 回目に BURST バーが消えた（本当の満タン）発の番号",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series",
+      "note": "1 発目（f916）・2 発目（f998）の後はバーが残り、3 発目（f1080）で消えた（`082-01`・`082-02` と同じ読み）。チャージ 14.31% だけ（1 発 28.31%）なら 4 発目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

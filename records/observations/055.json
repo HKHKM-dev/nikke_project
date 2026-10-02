@@ -201,5 +201,35 @@
     },
     "source": "V-0007",
     "readAt": "2026-09-27"
+  },
+  {
+    "id": "055-12",
+    "recording": "055",
+    "source": "V-0085",
+    "readAt": "2026-09-28",
+    "kind": "count",
+    "use": "compare",
+    "value": 20,
+    "unit": "ヒット",
+    "description": "紅蓮：ブラックシャドウ（RL・操作）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）通常攻撃のヒットの番号。そこまでに S1 の段のヒット（A 1・B 3 ティック・C 1 を 1 ヒットずつ）が 10 ヒットある",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "消えたのは f1947。もとは 046-14 に 046・055・070・071 の 4 本をまとめて書いていた（V-0030）。照合のため録画ごとに分けた（V-0085）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
