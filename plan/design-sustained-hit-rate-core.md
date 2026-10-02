@@ -3,7 +3,7 @@
 - 対象: `D:\nikke_project`
 - 状態: **承認待ち**（2026-10-02 起案。実装はしていない）
 - 関連: [design-stage18.md](design-stage18.md)（コア命中率の表と常時の▲）、[design-asuka.md](design-asuka.md) 8 節の論点 1、[design-records-automation.md](design-records-automation.md)（予測の出し直し）
-- 根拠: C-0170（仮説・反復実測。V-0074・V-0096）。常時の▲の式は C-0036・C-0037
+- 根拠: C-0170（仮説・単独実測。V-0074・V-0096）。常時の▲の式は C-0036・C-0037
 
 ## Context
 
