@@ -93,7 +93,7 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(targetRateOf(profile.bulletHitRate, SG, at('nearA'))).toBe(0.845);
     expect(targetRateOf(profile.bulletHitRate, SG, at('nearB'))).toBe(0.951);
     expect(targetRateOf(profile.bulletHitRate, AR, at('nearB'))).toBe(0.9975);
-    expect(targetRateOf(profile.bulletHitRate, SG, at('midFarB'))).toBe(0.767);
+    expect(targetRateOf(profile.bulletHitRate, SG, at('midFarB'))).toBe(0.77);
     expect(targetRateOf(profile.bulletHitRate, SR, at('far'))).toBeNull();
   });
 
