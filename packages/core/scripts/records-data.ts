@@ -139,7 +139,12 @@ export function loadRecordsData(file: RecordingsFile, extraRids: readonly number
     characters.set(rid, readJson<CharacterData>(`${DATA}characters/${rid}.json`));
     if (defined.has(rid)) skills.set(rid, parseSkillDefinition(readJson<unknown>(`${DATA}skills/${rid}.json`)));
   }
-  return { characters, skills, enemies: parseEnemyPresets(readJson<unknown>(`${DATA}enemies.json`)) };
+  return {
+    characters,
+    skills,
+    enemies: parseEnemyPresets(readJson<unknown>(`${DATA}enemies.json`)),
+    observationValues: new Map(loadObservations().map((o) => [o.id, o.value])),
+  };
 }
 
 /** data/skills/index.json に載った定義と、キャラの名前（index.json の順） */

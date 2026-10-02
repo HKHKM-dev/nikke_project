@@ -120,7 +120,7 @@
     "description": "ノワール（SG）の与ダメージ（単騎・AUTO・自動バースト OFF・180 秒）。結論には結び付けない（会心の偏りで動く）",
     "method": {
       "tool": "tools/captures/hud.ts --mode final",
-      "note": "HUD の総ダメージの最後の値（f11416 の増分の後。戦闘開始 f828 から 180 秒の終わり）。近の着地点は A・A（V-0069 で的の大きさから読んだ。C-0155）"
+      "note": "HUD の総ダメージの最後の値（f11416 の増分の後。戦闘開始 f828 から 180 秒の終わり）。近の着地点は A・A（V-0069 で的の大きさから読んだ。C-0155）。許容 ±2.9% は、区間ごとの当たったペレットの割合の録画どうしの揺れ（14 本）を、モデルの区間ごとの与ダメージの割合で合わせた 2σ（V-0086）。的のジャンプの窓は録画の値（setup.jumpWindows）"
     },
     "compare": {
       "model": "sim",
@@ -129,14 +129,15 @@
         "slot": 1
       },
       "tolerance": {
-        "rel": 0.02
+        "rel": 0.029
       },
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
-        "nearLanding": ["A", "A"]
+        "nearLanding": ["A", "A"],
+        "jumpWindows": "074-27"
       }
     }
   },
@@ -355,7 +356,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": false,
-        "condition": "auto"
+        "condition": "auto",
+        "jumpWindows": "074-27"
       }
     }
   },
@@ -471,5 +473,20 @@
     },
     "source": "V-0079",
     "readAt": "2026-10-02"
+  },
+  {
+    "id": "074-27",
+    "recording": "074",
+    "kind": "timing",
+    "use": "input",
+    "value": [32.351, 34.34, 69.026, 71.026, 108.228, 110.228, 144.982, 146.982, 177.792, 179.792],
+    "unit": "秒",
+    "description": "SG 単騎・AUTO で、的のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
+    "source": "V-0086",
+    "readAt": "2026-10-02",
+    "method": {
+      "tool": "recipe:sg-pellets@3・hud-jumps@1",
+      "note": "戦闘開始は動画 f828（最初の発の 12f 前。C-0114）。フレームは戦闘開始から数え、1f = 0.017 秒（ゲーム内の秒。モデルと同じ時計）。窓の始まりはジャンプの前の最後の発の 1f 後、終わりは着地の後の最初の発の 12f 前（構え。C-0114）。発はレシピ sg-pellets 版 3 の区間（トリガーの最初と最後）と hud-jumps のキャッシュから取った。窓（戦闘開始からのフレーム）: 1903〜2020・4043〜4178・6358〜6484・8508〜8646・10455〜10576。"
+    }
   }
 ]
