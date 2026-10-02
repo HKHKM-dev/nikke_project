@@ -26,8 +26,18 @@ export function parseHudJumpsTsv(text: string): HudRow[] {
   return rows.sort((a, b) => a.frame - b.frame);
 }
 
-/** 1 トリガー（発）の組。shots は、組が跨ぐ長さから決めた発の数（ふだん 1。割れた読みが次の発に掛かると 2） */
-export type TriggerGroup = { frame: number; last: number; increment: number; shots: number; rows: number };
+/**
+ * 1 トリガー（発）の組。shots は、組が跨ぐ長さから決めた発の数（ふだん 1。割れた読みが次の発に掛かると 2）。
+ * parts は組にまとめた読みごとの増分（読みの順。発ごとに分けるときに使う）
+ */
+export type TriggerGroup = {
+  frame: number;
+  last: number;
+  increment: number;
+  shots: number;
+  rows: number;
+  parts?: number[];
+};
 
 /** 発と発の間の長さ: 30〜60f の空きの中央値（SG の 39〜40f を想定） */
 export function shotIntervalOf(frames: readonly number[]): number {
@@ -52,8 +62,9 @@ export function groupIncrements(rows: readonly HudRow[], shotInterval: number, m
       g.last = r.frame;
       g.increment += r.increment;
       g.rows += 1;
+      g.parts!.push(r.increment);
     } else {
-      groups.push({ frame: r.frame, last: r.frame, increment: r.increment, shots: 1, rows: 1 });
+      groups.push({ frame: r.frame, last: r.frame, increment: r.increment, shots: 1, rows: 1, parts: [r.increment] });
       starts.push(r.frame - ((r.readGap ?? 1) - 1) / 2);
     }
   }

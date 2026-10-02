@@ -6,6 +6,7 @@ import {
   regimeOfUnits,
   solveExact,
   solveUnits,
+  splitGroupHits,
   type ExactValues,
 } from '../pellets.ts';
 
@@ -86,5 +87,30 @@ describe('solveExact（スペック固定 OFF）', () => {
 describe('distribution', () => {
   it('10・9・8・7 以下に数える', () => {
     expect(distribution([10, 10, 9, 8, 7, 6, 10])).toEqual([3, 1, 1, 2]);
+  });
+});
+
+describe('splitGroupHits（2 発以上にまとめた組を発ごとに分ける）', () => {
+  const near = (increment: number): number | undefined => {
+    const s = solveUnits(increment, UNIT, true, 10);
+    return s.kind === 'near' ? s.h : undefined;
+  };
+
+  it('読みの数 = 発の数なら、読みごとに 1 発（103 の f4561・f4585 のような遅れた読み）', () => {
+    expect(splitGroupHits([140 * UNIT, 140 * UNIT], 2, 20, near)).toEqual([10, 10]);
+    expect(splitGroupHits([122 * UNIT, 117 * UNIT], 2, 18, near)).toEqual([9, 9]);
+  });
+
+  it('読みが発より多いときは、区切り方を全部試し、当たった数の並びが揃えば返す', () => {
+    // 1 発目の読みが 60 + 23 に割れた: [60 | 23+117] は 60 が解けず、[60+23 | 117] だけが解ける（83 = 13 × 6 + 5、117 = 13 × 9）
+    expect(splitGroupHits([60 * UNIT, 23 * UNIT, 117 * UNIT], 2, 15, near)).toEqual([6, 9]);
+  });
+
+  it('区切り方で並びが食い違う、合計が組の解と合わない、解けないときは undefined', () => {
+    // [65 | 65+117] は 5・9、[65+65 | 117] は 10・9 に解けて、区切り方で食い違う
+    expect(splitGroupHits([65 * UNIT, 65 * UNIT, 117 * UNIT], 2, 19, near)).toBeUndefined();
+    expect(splitGroupHits([140 * UNIT, 140 * UNIT], 2, 19, near)).toBeUndefined();
+    expect(splitGroupHits([140 * UNIT], 2, 10, near)).toBeUndefined();
+    expect(splitGroupHits([104.4 * UNIT, 140 * UNIT], 2, 20, near)).toBeUndefined();
   });
 });

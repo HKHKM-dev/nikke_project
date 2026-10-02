@@ -132,7 +132,42 @@ export function regimeOfExact(
   return 'unknown';
 }
 
-/** 当たったペレットが 10・9・8・7 以下だったトリガーの数（V-0069 の近の分布。発の数が 1 の組だけ数える） */
+/**
+ * 2 発以上にまとめた組を、発ごとの当たった数に分ける。組の読み（parts）を発の数（shots）の続いた塊に区切るすべての分け方で、
+ * 塊ごとに 1 発（10 ペレットまで）として solve で解く。全部の塊が解けた分け方の、当たった数の並び（昇順）がどれも同じで、
+ * その合計が組全体の解（total）と同じときだけ返す。分け方が無い・食い違う・合計が合わないときは undefined（分布から外す）。
+ * HUD が読めなかった間に 1 発ぶんが遅れて読まれ、次の発の読みと 30f 未満で並んだ組（読みの数 = 発の数）は、読みごとに 1 発になる
+ */
+export function splitGroupHits(
+  parts: readonly number[],
+  shots: number,
+  total: number,
+  solve: (increment: number) => number | undefined,
+): number[] | undefined {
+  if (shots < 2 || parts.length < shots) return undefined;
+  let agreed: number[] | undefined;
+  let conflict = false;
+  const visit = (start: number, left: number, acc: number[]): void => {
+    if (conflict) return;
+    if (left === 1) {
+      const h = solve(parts.slice(start).reduce((a, b) => a + b, 0));
+      if (h === undefined) return;
+      const hits = [...acc, h].sort((a, b) => a - b);
+      if (agreed === undefined) agreed = hits;
+      else if (agreed.join() !== hits.join()) conflict = true;
+      return;
+    }
+    for (let end = start + 1; end <= parts.length - (left - 1); end++) {
+      const h = solve(parts.slice(start, end).reduce((a, b) => a + b, 0));
+      if (h !== undefined) visit(end, left - 1, [...acc, h]);
+    }
+  };
+  visit(0, shots, []);
+  if (conflict || agreed === undefined) return undefined;
+  return agreed.reduce((a, b) => a + b, 0) === total ? agreed : undefined;
+}
+
+/** 当たったペレットが 10・9・8・7 以下だったトリガーの数（V-0069 の近の分布。1 発ごとの当たった数を渡す） */
 export function distribution(hits: readonly number[]): [number, number, number, number] {
   const out: [number, number, number, number] = [0, 0, 0, 0];
   for (const h of hits) {
