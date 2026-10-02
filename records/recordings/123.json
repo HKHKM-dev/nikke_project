@@ -1,0 +1,29 @@
+{
+  "id": "123",
+  "date": "2026-10-02",
+  "folder": "range",
+  "file": "20261002-123_rl_a2.mp4",
+  "original": "2026-10-02_20-57-21.mp4",
+  "durationSec": 202.9,
+  "frames": 12171,
+  "fps": 60,
+  "sizeMB": 245.6,
+  "sha256": "fd5b21733748",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 811,
+      "name": "A2",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。V-0099"
+}
