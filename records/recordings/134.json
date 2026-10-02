@@ -1,0 +1,29 @@
+{
+  "id": "134",
+  "date": "2026-10-03",
+  "folder": "range",
+  "file": "20261003-134_rl_idoll-flower_manual-structure.mp4",
+  "original": "2026-10-03_08-34-48.mp4",
+  "durationSec": 144.2,
+  "frames": 8651,
+  "fps": 60,
+  "sizeMB": 173.8,
+  "sha256": "dbc39822258e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "I-DOLL・フラワー単騎・操作（AUTO 射撃 OFF・オートバースト ON。画面左上のボタンで確かめた）。的以外（コンテナ・地面）を撃つ。戦闘の途中（残り 00:51）で一時停止して退出。V-0107"
+}
