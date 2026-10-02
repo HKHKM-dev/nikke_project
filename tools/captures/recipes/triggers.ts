@@ -3,20 +3,25 @@
 //
 // - 増分の読みが 1 トリガーで 2 つに割れることがある（HUD の数字の描き替えの途中を読む）。前の増分から mergeBelow 未満の増分は
 //   同じ組にまとめ、組の跨ぐ長さから発の数を決める（V-0069・V-0071 の「足し戻し」）。
+// - HUD が何フレームか読めなかった後の読み（hud.ts の gap 列が 2 以上）は、増えた時刻がその読めなかった間のどこかにある。
+//   組の跨ぐ長さは、組の最初の読みを読めなかった間の真ん中に置いて測る（V-0079。L-S の f1416 は 30f 遅れて読んだ発で、
+//   10f 後の次の発と 1 組にまとまり、1 発に数えていた）。
 // - 空きの分類: 発と発の間（SG は 39〜40f）、リロード（マガジンの弾数ごとに同じ長さ）、的のジャンプ（100f 超。区間の切れ目）。
 //   リロードとジャンプの長さが近い武器（プロダクト23 の 183f）もあるので、長さだけでは決めず、近の区間だけ距離ボーナスで増分の
 //   刻みが変わること（regime）で切れ目を確かめる。遠 → 中遠の切れ目は刻みが変わらないので、空きの長さと数で決める。
 
-export type HudRow = { frame: number; value: number; increment: number };
+/** readGap は前の読みからのフレーム数（hud.ts の gap 列。ふだん 1。無い TSV は 1） */
+export type HudRow = { frame: number; value: number; increment: number; readGap?: number };
 
 /** hud.ts --mode jumps の出力（frame\tvalue\tincrement\tgap）を読む */
 export function parseHudJumpsTsv(text: string): HudRow[] {
   const rows: HudRow[] = [];
   for (const line of text.split(/\r?\n/)) {
-    const [f, v, d] = line.split('\t');
+    const [f, v, d, gap] = line.split('\t');
     const frame = Number(f);
     if (line === '' || !Number.isInteger(frame) || v === undefined || d === undefined) continue;
-    rows.push({ frame, value: Number(v), increment: Number(d) });
+    const readGap = gap === undefined ? 1 : Number(gap);
+    rows.push({ frame, value: Number(v), increment: Number(d), readGap: Number.isInteger(readGap) ? readGap : 1 });
   }
   return rows.sort((a, b) => a.frame - b.frame);
 }
@@ -34,9 +39,13 @@ export function shotIntervalOf(frames: readonly number[]): number {
   return median(gaps) ?? 40;
 }
 
-/** 前の増分から mergeBelow 未満の増分を同じ組にまとめる。組の発の数は round(跨ぐ長さ ÷ 発の間) + 1 */
+/**
+ * 前の増分から mergeBelow 未満の増分を同じ組にまとめる。組の発の数は round(跨ぐ長さ ÷ 発の間) + 1。
+ * 2 つ以上の読みの組は、最初の読みを読めなかった間の真ん中（frame − (readGap − 1) / 2）から跨ぐ長さを測る。読み 1 つの組は 1 発
+ */
 export function groupIncrements(rows: readonly HudRow[], shotInterval: number, mergeBelow = 30): TriggerGroup[] {
   const groups: TriggerGroup[] = [];
+  const starts: number[] = [];
   for (const r of rows) {
     const g = groups.at(-1);
     if (g && r.frame - g.last < mergeBelow) {
@@ -45,9 +54,12 @@ export function groupIncrements(rows: readonly HudRow[], shotInterval: number, m
       g.rows += 1;
     } else {
       groups.push({ frame: r.frame, last: r.frame, increment: r.increment, shots: 1, rows: 1 });
+      starts.push(r.frame - ((r.readGap ?? 1) - 1) / 2);
     }
   }
-  for (const g of groups) g.shots = Math.max(1, Math.round((g.last - g.frame) / shotInterval) + 1);
+  groups.forEach((g, i) => {
+    g.shots = g.rows === 1 ? 1 : Math.max(1, Math.round((g.last - starts[i]!) / shotInterval) + 1);
+  });
   return groups;
 }
 

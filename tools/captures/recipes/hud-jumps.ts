@@ -6,7 +6,10 @@ import { derived } from './cache.ts';
 import { groupIncrements, parseHudJumpsTsv, shotIntervalOf, type HudRow, type TriggerGroup } from './triggers.ts';
 import { observation, type Recipe, type RecipeContext } from './types.ts';
 
-export const HUD_JUMPS_VERSION = 1;
+/** レシピの版。2: 組の跨ぐ長さを、読めなかった間の真ん中から測る（V-0079） */
+export const HUD_JUMPS_VERSION = 2;
+/** hud.ts --mode jumps の出力のキャッシュの名前（出力の形は版 1 から変わらない） */
+export const HUD_JUMPS_CACHE_KEY = 'hud-jumps@1';
 
 function runHud(video: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -30,14 +33,7 @@ export type HudJumps = { rows: HudRow[]; groups: TriggerGroup[]; shotInterval: n
 /** 増分の列（キャッシュ）と、組にまとめたトリガーの列 */
 export async function loadHudJumps(ctx: RecipeContext): Promise<HudJumps> {
   const sha = 'sha256' in ctx.recording ? ctx.recording.sha256 : undefined;
-  const text = await derived(
-    ctx.derivedDir,
-    `hud-jumps@${HUD_JUMPS_VERSION}`,
-    ctx.video,
-    sha,
-    () => runHud(ctx.video),
-    ctx.log,
-  );
+  const text = await derived(ctx.derivedDir, HUD_JUMPS_CACHE_KEY, ctx.video, sha, () => runHud(ctx.video), ctx.log);
   const rows = parseHudJumpsTsv(text);
   const shotInterval = shotIntervalOf(rows.map((r) => r.frame));
   const groups = groupIncrements(rows, shotInterval);

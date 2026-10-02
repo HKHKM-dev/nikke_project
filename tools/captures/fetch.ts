@@ -15,13 +15,11 @@ import { existsSync, mkdirSync, readFileSync, renameSync, rmSync } from 'node:fs
 import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import type { RecordingEntry } from '../../packages/core/src/records/recordings.ts';
-import { capturesDir, legacyDir } from './dirs.ts';
+import { LEGACY_PREFIX, capturesDir, legacyDir } from './dirs.ts';
 import { Drive, type DriveFile } from './drive.ts';
 import { sha256 } from './ffmpeg.ts';
 
 const RECORDINGS_DIR = new URL('../../records/recordings/', import.meta.url);
-/** 台帳の L- の録画の path の頭（この下が Drive の old_nikkecalc の下と同じ構成） */
-const LEGACY_PREFIX = 'E:/old_nikkecalc/';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
