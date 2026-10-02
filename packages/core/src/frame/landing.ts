@@ -19,7 +19,15 @@ import {
 import { LANDING_BAND_LABEL, LANDING_BANDS } from '../enemies.ts';
 import type { SlotBuffState } from '../skills/timeline.ts';
 import type { SlotCondition, TeamSlotInput } from '../team.ts';
-import type { CharacterData, LandingBand, LandingPoint, TargetProfile, TargetRateTable } from '../types.ts';
+import type {
+  CharacterData,
+  LandingBand,
+  LandingPoint,
+  TargetProfile,
+  TargetRateByProjectile,
+  TargetRateRow,
+  TargetRateTable,
+} from '../types.ts';
 import { endSecondsToFrame, framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
 
 export type ConditionMode = 'manual' | 'auto';
@@ -87,10 +95,40 @@ export function isAutoCondition(slot: Pick<TeamSlotInput, 'conditionMode'>): boo
   return slot.conditionMode === 'auto';
 }
 
+/** 弾の種類のキー `<fireType>:<弾速>`（plan/design-rl-core-by-projectile.md 3.1 節）。飛ぶ弾でなければ null */
+export function projectileKeyOf(character: CharacterData): string | null {
+  const projectile = character.shot.projectile;
+  return projectile === undefined ? null : `${character.shot.fireType}:${projectile.speed}`;
+}
+
+function isByProjectile(cell: TargetRateRow | TargetRateByProjectile): cell is TargetRateByProjectile {
+  return 'byProjectile' in cell;
+}
+
+/** キャラの行（武器種の行。弾の種類ごとの行なら、そのキャラの弾の種類の行）。null = 未測定 */
+export function rateRowOf(table: TargetRateTable, character: CharacterData): TargetRateRow | null {
+  const cell = table[character.weaponType];
+  if (cell === null || cell === undefined) return null;
+  if (!isByProjectile(cell)) return cell;
+  const key = projectileKeyOf(character);
+  return key === null ? null : (cell.byProjectile[key] ?? null);
+}
+
+/**
+ * 弾の種類ごとの行に、そのキャラの弾の種類が未測定（null）と書いてあるか。測ってはいないが、表とは違うと分かっている
+ * 弾の種類（C-0171 の外す側）の注記に使う。表に無いキー（新しい弾の種類）は false
+ */
+export function projectileRowListedUnmeasured(table: TargetRateTable, character: CharacterData): boolean {
+  const cell = table[character.weaponType];
+  if (cell === null || cell === undefined || !isByProjectile(cell)) return false;
+  const key = projectileKeyOf(character);
+  return key !== null && key in cell.byProjectile && cell.byProjectile[key] === null;
+}
+
 /** 表の値（着地点の id → 帯 → all の順）。null = 未測定 */
 export function targetRateOf(table: TargetRateTable, character: CharacterData, landing: LandingPoint): number | null {
-  const row = table[character.weaponType];
-  if (row === null || row === undefined) return null;
+  const row = rateRowOf(table, character);
+  if (row === null) return null;
   return row[landing.id] ?? row[landing.band] ?? row.all ?? null;
 }
 
@@ -512,6 +550,17 @@ export function landingNotes(
       message: {
         ja: `${weapon} の${unmeasured.map((u) => u.ja).join('・')}はこの的で未測定なので、手入力の値を使った`,
         en: `${weapon} ${unmeasured.map((u) => u.en).join(', ')} not measured on this target; manual values are used`,
+      },
+    });
+  }
+  if (projectileRowListedUnmeasured(profile.coreHitRate, slot.character)) {
+    const key = projectileKeyOf(slot.character);
+    notes.push({
+      level: 'unsupported',
+      code: 'core-miss-by-projectile',
+      message: {
+        ja: `この弾の種類（${key}）の ${weapon} は、近の区間ではほとんど外さず、遠の区間で多くコアを外す（C-0171）。割合は未測定なので、手入力のコア命中率（${pct(manual.coreHitRate)}）は実際より高い`,
+        en: `${weapon} with this projectile (${key}) rarely misses the core at near range but often misses it at far range (C-0171); the rate is not measured, so the manual core hit rate (${pct(manual.coreHitRate)}) is higher than actual`,
       },
     });
   }
