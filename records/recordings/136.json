@@ -1,0 +1,29 @@
+{
+  "id": "136",
+  "date": "2026-10-03",
+  "folder": "range",
+  "file": "20261003-136_rl_idoll-flower_manual-sky-box.mp4",
+  "original": "2026-10-03_09-10-24.mp4",
+  "durationSec": 108.7,
+  "frames": 6523,
+  "fps": 60,
+  "sizeMB": 131.3,
+  "sha256": "30c75e3d6831",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "I-DOLL・フラワー単騎・操作（AUTO 射撃 OFF・オートバースト OFF。画面左上のボタンで確かめた）。V-0108 の手順: 的のコアに 3 発 → 構えて 5 秒 → 空に 6 発 → 左下から 1 発ごとに右へずらして小さな箱を撃つ（爆発が複数の障害物に届いた発もある。オーナー）→ 右下の地面。残り 01:28 ごろで一時停止して退出"
+}
