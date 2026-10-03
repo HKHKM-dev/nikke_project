@@ -20,11 +20,11 @@
 
 - **skill1**: supported
   - effects[0] passive・burstGaugeSpeed: 根拠なし
-  - effects[1] passive・attack: C-0189（確定）、C-0191（仮説）
-  - effects[2] cooldownReduction・battleStart: C-0191（仮説）
-  - effects[3] cooldownReduction・fullBurstEnd: C-0191（仮説）
+  - effects[1] passive・attack: C-0189（確定）、C-0203（仮説）
+  - effects[2] cooldownReduction・battleStart: C-0202（確定）、C-0203（仮説）
+  - effects[3] cooldownReduction・fullBurstEnd: C-0202（確定）、C-0203（仮説）
   - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）
-  - effects[5] burstReentry: C-0201（仮説）
+  - effects[5] burstReentry: C-0201（確定）、C-0203（仮説）
 - **skill2**: unsupported
   - notes[0] 未実装: フルバースト発動時の味方全体の攻撃力▲（私だけの星のとき・スキル発動者基準）・攻撃ダメージ▲、自分と防御力が低い味方の発射体爆発ダメージ▲。みんなの星のときのフルチャージ時の味方全体の回復はダメージに関係しない: 根拠なし
 - **burst**: unsupported
