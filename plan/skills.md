@@ -37,7 +37,7 @@
 - **宝物版 skill1**: supported
   - effects[0] timed・normalHit・hitRate: C-0186（仮説）
   - effects[1] timed・normalHit・hitRate: C-0186（仮説）
-  - effects[2] timed・normalHit・attack: C-0187（仮説）
+  - effects[2] timed・normalHit・attack: C-0187（確定）
 - **宝物版 skill2**: unsupported
   - notes[0] 未実装: フルバースト開始時の味方全体のクリティカルダメージ▲、自分のクリティカル確率▲・攻撃ダメージ▲（10 秒）、自分を除く最終攻撃力が最も高い味方 1 機のクリティカル確率▲（1 発間）。撮影で確かめていない（単騎ではフルバーストにならない）。自分を除く対象と、その対象への発数の維持は語彙に無い: 根拠なし
 - **宝物版 burst**: unsupported
