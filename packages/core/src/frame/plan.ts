@@ -6,7 +6,7 @@
 // Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
 import { burstDelaysFieldOf, burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { battleSecondsToFrames, gameSecondsToFrame } from '../time.ts';
+import { battleSecondsToFrames } from '../time.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
 import { isInFullBurst, type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
 import { computeTriggerDamage, type EnemyInput } from '../damage.ts';
@@ -43,7 +43,16 @@ import {
 import type { WeaponModel } from '../weapons.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import type { DotFirstTick } from '../skills/types.ts';
+import { dotTicks, groupDotsByStatus } from './dot.ts';
+export {
+  DOT_LATER_TICK_DELAY_SECONDS,
+  dotTickFrames,
+  dotTickTracker,
+  dotTicks,
+  groupDotsByStatus,
+  type DotTick,
+  type DotTickTracker,
+} from './dot.ts';
 import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
 import { hitRateSpansOf, planLandings, type LandingPlan } from './landing.ts';
 import type { ShotLog } from './shots.ts';
@@ -54,6 +63,8 @@ export type SkillHitEvent = {
   slotIndex: number;
   effect: ResolvedDamageEffect;
   hit: SkillHitResult;
+  /** レイヴン編: スタックする持続ダメージ（dot の maxStacks > 1）の tick なら、その tick の時点のスタックの数。hit はこの数倍の値 */
+  stacks?: number;
 };
 
 /** バーストの時刻表（sim と calc で共通）。burst が false なら null。options は動的サイクルの射撃の列とゲージ速度（Stage 8） */
@@ -95,6 +106,8 @@ export type TeamPlan = {
   landing: LandingPlan | null;
   /** V-0030: 段の循環のヒットで溜めたゲージ（1 パス目の記録。frame/firstPass.ts） */
   cycleGaugeHits: FirstPassResult['cycleGaugeHits'];
+  /** レイヴン編: 持続ダメージで溜めたゲージ（1 パス目。テスト用） */
+  dotGauges: FirstPassResult['dotGauges'];
 };
 
 /**
@@ -113,7 +126,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const untargetable = untargetableRanges(enemy.events, frames);
   // Stage 18-C: 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）
   const landing = planLandings(slots, enemy, frames, resolvePassiveStates(timelineSlots));
-  const { shots, schedule, instants, cycleGaugeHits } = runFirstPass(timelineSlots, {
+  const { shots, schedule, instants, cycleGaugeHits, dotGauges } = runFirstPass(timelineSlots, {
     frames,
     model,
     burst: input.burst ?? false,
@@ -124,7 +137,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   });
   const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing);
   const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
-  return { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, cycleGaugeHits };
+  return { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, cycleGaugeHits, dotGauges };
 }
 
 /** Stage 11 モダニア: その枠の射撃ごとの倍率ダメージ（1 トリガーの値に畳み込む）。定義が無ければ空 */
@@ -163,7 +176,7 @@ export function planSkillHits(
     if (sequential && delays.hitFrames !== delays.effectFrames) {
       throw new RangeError('a sequential burst needs the same hit and effect delays');
     }
-    const push = (frame: number, effect: ResolvedDamageEffect, pre: boolean): void => {
+    const push = (frame: number, effect: ResolvedDamageEffect, pre: boolean, stacks?: number): void => {
       // バースト使用時の倍率ダメージは、撃つ側のバフを発動の時点で固定する（burstHitBuffs）。発動は発火の effectFrames 前
       const atHit = pre
         ? burstHitBuffs(timeline, frame - delays.effectFrames, frame, slotIndex, pre)
@@ -182,8 +195,10 @@ export function planSkillHits(
       });
       // フルバースト補正はフルバースト中に出た倍率ダメージにだけ乗る（2026-09-23 実測）
       const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, frame);
-      const hit = computeSkillHit([effect], slot.character, enemy, trigger, buffs, fullBurst);
-      hits.push({ frame, slotIndex, effect, hit });
+      // レイヴン編: スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）
+      const scaled = stacks === undefined ? effect : { ...effect, multiplier: effect.multiplier * stacks };
+      const hit = computeSkillHit([scaled], slot.character, enemy, trigger, buffs, fullBurst);
+      hits.push({ frame, slotIndex, effect, hit, ...(stacks === undefined ? {} : { stacks }) });
     };
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
       const pre = isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
@@ -191,24 +206,26 @@ export function planSkillHits(
     }
     // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。
     // クルミ編: 同じ status の dot は 1 つの持続ダメージとして、発火をまとめて tick を出す（C-0136）。tick は、その時点で
-    // 最後に付けた効果に帰属させる（値は同じ）
+    // 最後に付けた効果に帰属させる（値は同じ）。
+    // レイヴン編: スタックする持続ダメージ（maxStacks > 1）は、tick の時点のスタックの数を倍率に掛ける（dotTicks。C-0182）
     for (const group of groupDotsByStatus(resolveDotEffects(definition, slot.character, levels))) {
       const fires = group
         .flatMap((effect) =>
           triggerFrames(effect.trigger, schedule, slotIndex, frames, shots).map((f) => ({ f, effect })),
         )
         .sort((a, b) => a.f - b.f);
-      const { intervalSeconds, durationSeconds, firstTick } = group[0]!.dot!;
+      const { intervalSeconds, durationSeconds, firstTick, maxStacks } = group[0]!.dot!;
       let last = 0;
-      for (const frame of dotTickFrames(
+      for (const tick of dotTicks(
         fires.map((x) => x.f),
         intervalSeconds,
         durationSeconds,
         frames,
         firstTick,
+        maxStacks,
       )) {
-        while (last + 1 < fires.length && fires[last + 1]!.f <= frame) last += 1;
-        push(frame, fires[last]!.effect, false);
+        while (last + 1 < fires.length && fires[last + 1]!.f <= tick.frame) last += 1;
+        push(tick.frame, fires[last]!.effect, false, maxStacks > 1 ? tick.stacks : undefined);
       }
     }
     // Stage 11 紅蓮BS: 段の循環。射撃の列を通算で数え、間隔の変更の窓に入る射撃は窓の間隔で段を進める（skills/cycles.ts）。
@@ -225,91 +242,6 @@ export function planSkillHits(
   });
   // フレーム順（同じフレームは枠順・定義順。sort は安定）
   return hits.sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
-}
-
-/**
- * クルミ編: dot を status ごとにまとめる（status の無い効果はそれぞれ 1 つ）。同じ status の効果は、間隔・維持・firstTick・
- * 倍率が同じでなければならない（1 つの持続ダメージとして tick を出すため。C-0136）
- */
-export function groupDotsByStatus(effects: readonly ResolvedDamageEffect[]): ResolvedDamageEffect[][] {
-  const groups: ResolvedDamageEffect[][] = [];
-  const byStatus = new Map<string, ResolvedDamageEffect[]>();
-  for (const effect of effects) {
-    const status = effect.dot?.status;
-    if (status === undefined) {
-      groups.push([effect]);
-      continue;
-    }
-    const group = byStatus.get(status);
-    if (group === undefined) {
-      const created = [effect];
-      byStatus.set(status, created);
-      groups.push(created);
-      continue;
-    }
-    const a = group[0]!;
-    if (
-      a.dot!.intervalSeconds !== effect.dot!.intervalSeconds ||
-      a.dot!.durationSeconds !== effect.dot!.durationSeconds ||
-      a.dot!.firstTick !== effect.dot!.firstTick ||
-      a.multiplier !== effect.multiplier
-    ) {
-      throw new RangeError(`dot status "${status}": effects differ in interval, duration, firstTick or multiplier`);
-    }
-    group.push(effect);
-  }
-  return groups;
-}
-
-/**
- * ニヒリスター編: 持続ダメージの 2 回目以降の tick の遅れ（秒）。1 回目の tick は付いた瞬間に出て、k 回目（k ≥ 1）は
- * k × 間隔 + この値の後に出る（C-0101）。ニヒリスターの火傷（1 秒間隔・10 秒）で 0・1.5・2.5 … 9.5 秒の 10 回
- * （録画 081 の 9 回のバーストで ±2f。1 秒間隔でない持続ダメージでも同じ 0.5 秒かは未確認）
- */
-export const DOT_LATER_TICK_DELAY_SECONDS = 0.5;
-
-/**
- * ニヒリスター編: 持続ダメージの tick のフレーム（plan/design-nihilister.md 2.1 節・経過）。発火 f ごとに、f と
- * f + gameSecondsToFrame(k × 間隔 + DOT_LATER_TICK_DELAY_SECONDS)（k = 1 … floor(維持 ÷ 間隔) − 1）の計 floor(維持 ÷ 間隔) 回。
- * 時刻の四捨五入なので長さの切り捨てを積み重ねない。戦闘の終わり（frames）以降も出さない。
- * V-0051: 維持の途中（前の発火から維持秒のうち）の再発火は、tick の刻みを変えずに終わりだけを延ばす（C-0129。クルミの
- * ハッキングの録画 057〜062）。刻みは最初の発火のまま続き、最後の発火が単独なら出したはずの最後の tick の時刻まで出る。
- * 再発火が無ければ（ニヒリスターの火傷）、発火ごとの 10 回のまま
- */
-export function dotTickFrames(
-  fires: readonly number[],
-  intervalSeconds: number,
-  durationSeconds: number,
-  frames: number,
-  firstTick: DotFirstTick = 'atApplication',
-): number[] {
-  const count = Math.floor(durationSeconds / intervalSeconds + 1e-9);
-  // クルミ編: afterInterval は付いた 1 間隔後から間隔ごと（k + 1 間隔後。C-0130）
-  const offset = (k: number): number =>
-    firstTick === 'afterInterval'
-      ? gameSecondsToFrame((k + 1) * intervalSeconds)
-      : k === 0
-        ? 0
-        : gameSecondsToFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS);
-  const lastOffset = offset(count - 1);
-  const durationFrames = gameSecondsToFrame(durationSeconds);
-  const ticks: number[] = [];
-  let i = 0;
-  while (i < fires.length) {
-    // 維持の途中の再発火をまとめる（まとまりの最初の発火が刻みの起点、最後の発火が終わりを決める）
-    const anchor = fires[i]!;
-    let last = anchor;
-    while (i + 1 < fires.length && fires[i + 1]! < last + durationFrames) last = fires[++i]!;
-    i += 1;
-    const end = last + lastOffset;
-    for (let k = 0; ; k++) {
-      // 1 回目の後は、k 回目の時刻を起点から四捨五入する（間隔の四捨五入を積み重ねない）
-      const tick = anchor + offset(k);
-      if (tick > end || tick >= frames) break;
-      ticks.push(tick);
-    }
-  }
-  return ticks;
 }
 
 /**

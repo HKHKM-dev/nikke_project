@@ -52,7 +52,7 @@ import {
 } from '../burst/controller.ts';
 import { SG_PELLET_GAUGE_HIT_RATE, burstUnitOf, energyPerTrigger, partialGaugeRatio } from '../burst/dynamic.ts';
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
-import { resolveDamageGauges, resolveTimerGauges } from '../skills/burstDamage.ts';
+import { resolveDamageGauges, resolveDotEffects, resolveTimerGauges } from '../skills/burstDamage.ts';
 import { effectFrameOf, type BurstActivation, type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
 import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
 import {
@@ -81,6 +81,7 @@ import {
   type TriggerTracker,
 } from '../skills/triggers.ts';
 import { isFiringStat, type BuffStat, type ShotCountKind } from '../skills/types.ts';
+import { dotTickTracker, groupDotsByStatus, type DotTickTracker } from './dot.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { timerFrames, type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
@@ -150,6 +151,10 @@ export type FirstPassResult = {
   rankAttackWindows: FiringWindow[];
   /** V-0030: 段の循環のヒットで溜めたゲージ（予約した順）。frame は当たるフレーム、shotFrame は段を出した射撃。テスト用 */
   cycleGaugeHits: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
+  /**
+   * レイヴン編: 持続ダメージで溜めたゲージ（発生順）。apply は付けたとき（発火のフレーム）、tick は予約した tick のフレーム。テスト用
+   */
+  dotGauges: { slotIndex: number; kind: 'apply' | 'tick'; frame: number; energy: number }[];
 };
 
 /**
@@ -466,6 +471,39 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       });
     }
   });
+  // レイヴン編（plan/design-raven-s1.md 4 節）: ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick）。射撃を数えて
+  // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する
+  const dotGaugeTrackers: {
+    slotIndex: number;
+    effects: { count: ShotCountKind; every: number; n: number }[];
+    tracker: DotTickTracker;
+    onApply: boolean;
+    onTick: boolean;
+    energy: number;
+  }[] = [];
+  slots.forEach((slot, i) => {
+    if (slot === null || slot.definition === null) return;
+    for (const group of groupDotsByStatus(resolveDotEffects(slot.definition, slot.character, slot.levels))) {
+      const dot = group[0]!.dot!;
+      const onApply = group.some((e) => e.dot!.gaugeOnApply === true);
+      const onTick = group.some((e) => e.dot!.gaugeOnTick === true);
+      if (!onApply && !onTick) continue;
+      const effects = group.map((e) => {
+        if (!isResolvedShotCount(e.trigger)) throw new RangeError('a dot with gauge needs shot count triggers');
+        return { count: e.trigger.count, every: e.trigger.every, n: 0 };
+      });
+      if (effects.every((e) => e.count === 'fullChargeShot') && !logs[i]!.fullCharge) continue;
+      dotGaugeTrackers.push({
+        slotIndex: i,
+        effects,
+        tracker: dotTickTracker(dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick),
+        onApply,
+        onTick,
+        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
+      });
+    }
+  });
+  const dotGauges: FirstPassResult['dotGauges'] = [];
   const pendingGauge = new Map<number, number>();
   // フラワー編: 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する
   slots.forEach((slot, i) => {
@@ -572,6 +610,31 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         const at = f + d;
         if (d === 0) gauge += t.energy;
         else if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
+      }
+    }
+    // レイヴン編: ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
+    // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）
+    for (const t of dotGaugeTrackers) {
+      const shot = shotEvents[t.slotIndex];
+      if (shot === null || shot === undefined) continue;
+      let fired = false;
+      for (const e of t.effects) {
+        if (e.count === 'lastShot' && !shot.lastShot) continue;
+        if (e.count === 'fullChargeShot' && !shot.fullCharge) continue;
+        e.n += 1;
+        if (e.n % e.every === 0) fired = true;
+      }
+      if (!fired) continue;
+      if (t.onApply) {
+        gauge += t.energy;
+        dotGauges.push({ slotIndex: t.slotIndex, kind: 'apply', frame: f, energy: t.energy });
+      }
+      const { ticks } = t.tracker.fire(f);
+      if (!t.onTick) continue;
+      for (const at of ticks) {
+        if (at <= f) throw new RangeError(`dot gauge tick at ${at} is not after the fire at ${f}`);
+        pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
+        dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy: t.energy });
       }
     }
     // ヘルム編: バーストゲージのチャージ（最大値 × X%）。射撃の回数トリガーはこのフレームの射撃で発火し、このフレームのゲージに足す
@@ -821,5 +884,6 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     instants,
     rankAttackWindows: windowsOfSources(attackTrack),
     cycleGaugeHits,
+    dotGauges,
   };
 }

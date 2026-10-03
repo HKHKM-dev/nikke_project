@@ -1,0 +1,88 @@
+{
+  "formatVersion": 1,
+  "resourceId": 851,
+  "checkedAt": "2026-10-03",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "dot",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "ref": 1,
+          "intervalSeconds": 1,
+          "durationRef": 2,
+          "firstTick": "afterInterval",
+          "maxStacksRef": 5,
+          "gaugeOnApply": true,
+          "gaugeOnTick": true,
+          "assumes": {
+            "ja": "撃ったフルチャージの発はすべて敵に付く（空に撃っても、照準線に最も近い敵に付く）。敵は 1 体。tick は付けた 1 秒後から 1 秒ごとで、全スタックの和が 1 つのダメージ。付け直すたびに全スタックの時間が付け直され、最後に付けてから 5 秒で全スタックが消える。付けたときと tick ごとに、射手の 1 ヒットぶんのゲージを溜める。上限の 10 スタックは説明文の値（録画では 7 スタックまで）。付けたのは実測では撃った 6f 後で、モデルは撃ったフレームに置く。フルバースト補正と攻撃ダメージ▲は、tick ごとにその時点の状態で乗る（ニヒリスターの火傷から推す）",
+            "en": "Every full-charge shot applies it to the enemy (even a shot into the sky applies it to the enemy nearest the crosshair). One enemy. Ticks every second from 1 s after application, with all stacks summed into one damage. Each re-application refreshes all stacks, and all stacks expire 5 s after the last application. Each application and each tick charges the Burst gauge by one hit of the shooter. The 10-stack cap is from the description (recordings reached 7). It was applied 6 frames after the shot; the model applies it on the shot frame. The Full Burst bonus and ATK damage up apply per tick by the state at that tick (inferred from Nihilister's burn)"
+          },
+          "claims": [
+            "C-0181",
+            "C-0182",
+            "C-0111",
+            "C-0112"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "単騎ではバーストを使えないので、録画では確かめていない",
+            "en": "Not checked in recordings (a solo unit cannot use its burst)"
+          },
+          "claims": [
+            "C-0185"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時とフルバーストタイム発動時の自分のパーツダメージ▲（急所攻略）は未対応（パーツのダメージはモデルに無い。射撃場の的のコア・胴体には効かない見込み）",
+          "en": "Part damage up for self at battle start and on Full Burst (Weak Point Strike) is not supported (the model has no part damage; it is not expected to affect the training target's core or body)"
+        },
+        {
+          "ja": "味方がパーツを破壊した時、A.N.モードでなければ自分に持続ダメージ▲（一点集中）は未対応（パーツの破壊のトリガーと、持続ダメージ▲の stat が無い）",
+          "en": "Sustained damage up for self when an ally destroys a part outside A.N. Mode (Focus) is not supported (no part-destruction trigger and no sustained damage up stat)"
+        }
+      ]
+    },
+    "burst": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は敵 1 体（パーツへのダメージは扱わない）",
+            "en": "All enemies means one enemy (damage to parts is not handled)"
+          },
+          "claims": [
+            "C-0185"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分の A.N.モード（一点集中の解除と、持続ダメージ▲ 10 秒）は未対応（持続ダメージ▲の stat が無い）。S1 の持続ダメージに効くので、バーストの後の tick は過小になる",
+          "en": "A.N. Mode for self (removes Focus; sustained damage up for 10 s) is not supported (no sustained damage up stat). It affects S1's damage over time, so ticks after the burst are underestimated"
+        }
+      ]
+    }
+  }
+}

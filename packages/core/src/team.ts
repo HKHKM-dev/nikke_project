@@ -125,7 +125,8 @@ export type SlotBurstResult = {
 
 export type SlotSkillHitsResult = {
   /** 発生順。時刻は秒 */
-  activations: { seconds: number; effect: ResolvedDamageEffect; hit: SkillHitResult }[];
+  /** stacks はレイヴン編: スタックする持続ダメージの tick のスタックの数（hit はその数倍の値） */
+  activations: { seconds: number; effect: ResolvedDamageEffect; hit: SkillHitResult; stacks?: number }[];
   totalDamage: number;
 };
 

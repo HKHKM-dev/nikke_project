@@ -27,7 +27,19 @@ type SkillHitGroup = {
   varies: boolean;
   min: number;
   max: number;
+  /** レイヴン編: スタックする持続ダメージなら、tick のスタックの数の範囲 */
+  stacks: { min: number; max: number } | null;
 };
+
+/** レイヴン編: 持続ダメージのトリガーの説明（スタックとゲージ。plan/design-raven-s1.md） */
+function dotTriggerText(e: NonNullable<TeamSlotResult['skillHits']['activations'][number]['effect']>): string {
+  const d = e.dot!;
+  const stacks =
+    d.maxStacks > 1 ? `（1 回で 1 スタック・最大 ${d.maxStacks}。付け直すと全スタックの時間が付け直される）` : '';
+  const gauge = [d.gaugeOnApply ? '付けたとき' : null, d.gaugeOnTick ? 'tick ごと' : null].filter((x) => x !== null);
+  const gaugeText = gauge.length > 0 ? `。${gauge.join('と ')}に射手の 1 ヒットぶんのゲージ` : '';
+  return `${formatTrigger(e.trigger)}に付き${stacks}、${d.intervalSeconds} 秒ごとに ${d.durationSeconds} 秒間。回数は tick の数${gaugeText}`;
+}
 
 /** Stage 8: 倍率ダメージ（damage）を効果ごとにまとめる */
 function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
@@ -39,6 +51,10 @@ function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
     const value = a.hit.perActivation;
     const g = groups.get(key);
     if (g) {
+      if (g.stacks && a.stacks !== undefined) {
+        g.stacks.min = Math.min(g.stacks.min, a.stacks);
+        g.stacks.max = Math.max(g.stacks.max, a.stacks);
+      }
       g.count += 1;
       g.total += value;
       g.min = Math.min(g.min, value);
@@ -54,7 +70,7 @@ function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
       trigger: e.cycle
         ? `${formatTrigger(e.trigger)}に ${e.cycle.steps} 段を循環（${e.cycle.step + 1} 段目。窓の中は間隔の変更に従う）`
         : e.dot
-          ? `${formatTrigger(e.trigger)}に付き、${e.dot.intervalSeconds} 秒ごとに ${e.dot.durationSeconds} 秒間。回数は tick の数`
+          ? dotTriggerText(e)
           : formatTrigger(e.trigger),
       multiplier: e.multiplier,
       assumes: e.assumes?.ja ?? null,
@@ -63,6 +79,7 @@ function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
       varies: false,
       min: value,
       max: value,
+      stacks: a.stacks === undefined ? null : { min: a.stacks, max: a.stacks },
     });
   }
   return [...groups.values()];
@@ -420,9 +437,12 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
                     <small className="sub">（{g.trigger}）</small>
                   </th>
                   <td>
-                    ×{formatNumber(g.multiplier, 4)} → 1 回{' '}
-                    {g.varies ? `${formatNumber(g.min)}〜${formatNumber(g.max)}` : formatNumber(g.min)} × {g.count} 回 ={' '}
-                    {formatNumber(g.total)}
+                    ×{formatNumber(g.multiplier, 4)}
+                    {g.stacks
+                      ? ` × スタック（${g.stacks.min === g.stacks.max ? g.stacks.min : `${g.stacks.min}〜${g.stacks.max}`}）`
+                      : ''}{' '}
+                    → 1 回 {g.varies ? `${formatNumber(g.min)}〜${formatNumber(g.max)}` : formatNumber(g.min)} ×{' '}
+                    {g.count} 回 = {formatNumber(g.total)}
                     {g.assumes ? <small className="sub">・仮定: {g.assumes}</small> : null}
                   </td>
                 </tr>
