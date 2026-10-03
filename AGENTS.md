@@ -13,6 +13,9 @@ NIKKE のダメージ計算ツール。
 ## コミット手順
 
 - 作業はブランチで行い、PR で main にマージする。
+- PR の単位は**実装・検証が完了した時点**（動作するコード・確定した結論・テストが揃った状態）。設計起案や撮影待ちの段階では PR を出さない。
+- 設計の承認は対話で得て、実装と同じ PR に含める。
+- 「撮る前の commit」はトピックブランチ内で行い、撮影待ちの間はブランチを保持する。
 - PR を出す手順:
   1. `git fetch origin && git rebase origin/main`（main を取り込むときはマージではなくリベース）。生成物が衝突したら `git checkout --ours -- <ファイル>` で main の版に戻し、自分のブランチで足した ID が main と重なっていれば次の空き番号に振り直し、作り直してから `git rebase --continue` する（`plan/design-stage20.md` 3.6 節）
   2. CI と同じ確認を通す: `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`
