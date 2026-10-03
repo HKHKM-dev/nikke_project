@@ -1,4 +1,5 @@
 // 起案と結論の下書き・最小構成の警告・確定の等級の検査（plan/design-records-automation.md 3.1・3.5・3.6 節）
+import { format, resolveConfig } from 'prettier';
 import { describe, expect, it } from 'vitest';
 import {
   loadClaims,
@@ -48,6 +49,23 @@ describe('nextId・verificationTemplate', () => {
     expect(v.derivedFrom).toEqual(['V-0063']);
     expect(v.sections.get('結果')).toContain(RESULTS_MARKERS[0]);
     expect(() => verificationTemplate({ ...draft, name: 'Bad Name' })).toThrow();
+  });
+
+  it('ひな形は Prettier で整えた後も書式に合う（records:check は records/verifications を Prettier にかける）', async () => {
+    const draft = {
+      id: 'V-0099',
+      title: '題名',
+      name: 'trial',
+      topic: '命中率・距離' as const,
+      question: '問い',
+      date: '2026-10-02',
+    };
+    const file = verificationFileName(draft);
+    const path = `records/verifications/${file}`;
+    const formatted = await format(verificationTemplate(draft), { ...(await resolveConfig(path)), filepath: path });
+    const v = parseVerification(file, formatted);
+    expect(v.problems).toEqual([]);
+    expect(v.recordings).toEqual([]);
   });
 });
 
