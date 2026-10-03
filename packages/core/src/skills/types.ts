@@ -559,7 +559,9 @@ export type DotEffect = {
   gaugeOnApply?: true;
   /**
    * レイヴン編（2.2 節）: tick ごとに、射手の 1 ヒットぶんのバーストゲージを tick のフレームに足す。スタックの数によらない
-   * （C-0181）。firstTick: afterInterval で、維持が間隔の整数倍のときだけ（8 節の 2。解決のときに見る）。トリガーは射撃の回数トリガーだけ
+   * （C-0181）。firstTick: afterInterval で、維持が間隔の整数倍のときだけ（8 節の 2。解決のときに見る）。トリガーは射撃の回数トリガーか、
+   * burstUse（クルミのハッキング。C-0196。plan/design-raven-s1.md 10 節）。同じ status の効果は、どれも同じ値にする（tick は持続ダメージ
+   * 1 つの性質なので）
    */
   gaugeOnTick?: true;
   assumes?: LocalizedText;
@@ -1105,7 +1107,17 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   for (const key of ['gaugeOnApply', 'gaugeOnTick'] as const) {
     if (v[key] === undefined) continue;
     if (v[key] !== true) fail(`${path}.${key}`, 'expected true');
-    if (!isShotCountTrigger(effect.trigger)) fail(`${path}.${key}`, 'needs a shot count trigger');
+    // V-0113: tick のゲージは、バースト使用時に付くハッキング（クルミ）にも要る。付けたときの分は射撃の回数トリガーだけ
+    if (key === 'gaugeOnTick' && effect.trigger === 'burstUse') {
+      effect[key] = true;
+      continue;
+    }
+    if (!isShotCountTrigger(effect.trigger)) {
+      fail(
+        `${path}.${key}`,
+        key === 'gaugeOnTick' ? 'needs a shot count trigger or burstUse' : 'needs a shot count trigger',
+      );
+    }
     effect[key] = true;
   }
   if (effect.gaugeOnTick === true && effect.firstTick !== 'afterInterval') {
