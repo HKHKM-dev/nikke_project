@@ -4,7 +4,7 @@
 - キャラ × スロットごとに、対応状況（`supported`・`partial`・`unsupported`）と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 26・効果 110（根拠あり 43）・notes 65（根拠あり 20）
+件数: キャラ 27・効果 115（根拠あり 47）・notes 68（根拠あり 21）
 
 ## 10 ラピ
 
@@ -15,6 +15,20 @@
 - **burst**: supported
   - effects[0] burstDamage・skill: 根拠なし
   - effects[1] timed・burstUse・attack: 根拠なし
+
+## 17 アニス：スター
+
+- **skill1**: partial
+  - effects[0] passive・burstGaugeSpeed: 根拠なし
+  - effects[1] passive・attack: C-0189（仮説）
+  - effects[2] cooldownReduction・battleStart: C-0189（仮説）
+  - effects[3] cooldownReduction・fullBurstEnd: C-0189（仮説）
+  - effects[4] damage・fullChargeShot・additional: C-0190（仮説）
+  - notes[0] 未実装: 自分を除く基本バースト段階 1 の味方がいるときのみんなの星（バースト再突入 I 段階に変更）。チェーンは CDN の値（I の次は II）のまま: C-0189（仮説）
+- **skill2**: unsupported
+  - notes[0] 未実装: フルバースト発動時の味方全体の攻撃力▲（私だけの星のとき・スキル発動者基準）・攻撃ダメージ▲、自分と防御力が低い味方の発射体爆発ダメージ▲。みんなの星のときのフルチャージ時の味方全体の回復はダメージに関係しない: 根拠なし
+- **burst**: unsupported
+  - notes[0] 未実装: シューティングスター（最終攻撃力の割合の自動攻撃・0.25 秒間隔・10 秒）とチャージ時間の固定、私だけの星のときの自分の攻撃ダメージ▲。爆発範囲▲・防御力▲・みんなの星のときの最大HP▲はダメージに関係しない: 根拠なし
 
 ## 20 デルタ
 

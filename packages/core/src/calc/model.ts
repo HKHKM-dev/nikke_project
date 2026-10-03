@@ -8,6 +8,7 @@
 // Stage 8: 1 パス目（射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動）を planTeamRun にまとめ、sim と calc が同じものを使う。
 // 射撃の回数トリガーの窓と倍率ダメージ（damage）の発動は sim と厳密一致し、calc が期待値で置くのは通常攻撃のトリガー数だけ。
 // Stage 9: 宝物の段階（skills.treasurePhase）を、最上位で applyTreasureToTeam により基礎版 → 宝物版に差し替えてから計算する。
+// アニス：スター編: その後に applySquadToTeam で、部隊構成の条件（squad）を満たさない効果を外す。
 // Stage 10: 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、1 パス目の射撃の列と時刻表は frame/firstPass.ts の
 // フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
 // Stage 16（plan/design-stage16.md 2 節）: calc モデルを team.ts から calc/model.ts に分けた。1 パス目は frame/plan.ts。
@@ -40,6 +41,7 @@ import { BURST_HIT_USES_PRE_ACTIVATION_BUFFS, burstHitBuffs, perShotDamageOf, pl
 import { slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges, type SlotBuffState } from '../skills/timeline.ts';
+import { applySquadToTeam } from '../skills/squad.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { isFiringStat } from '../skills/types.ts';
 import {
@@ -110,7 +112,7 @@ export type CalcOptions = {
 export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {}): TeamResult {
   validateTeamSlots(teamInput.slots);
   // Stage 9: 宝物版への差し替えは最上位で 1 回だけ（planTeamRun の外でも definition と character を読むため）
-  const input = applyTreasureToTeam(teamInput);
+  const input = applySquadToTeam(applyTreasureToTeam(teamInput));
   const { slots, enemy, durationSeconds, model } = input;
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 

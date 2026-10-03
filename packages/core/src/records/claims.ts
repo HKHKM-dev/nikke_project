@@ -163,6 +163,7 @@ export const HIT_VALUE_METRICS: ReadonlySet<string> = new Set([
   'burstHitDamage',
   'dotHitDamage',
   'skillHitDamage',
+  'perShotHitDamage',
 ]);
 
 export function gradeCandidate(

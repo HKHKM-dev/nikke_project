@@ -257,6 +257,10 @@ export function App() {
   const slotNames = team.slots.map((s) =>
     s.resourceId === null ? undefined : cache.characters.get(s.resourceId)?.name.ja,
   );
+  // アニス：スター編: 部隊構成の条件（squad）の表示用。空枠・読み込み中の枠は null（計算でも空枠は数えない）
+  const teamCharacters = team.slots.map((s) =>
+    s.resourceId === null ? null : (cache.characters.get(s.resourceId) ?? null),
+  );
 
   return (
     <main className="app">
@@ -301,6 +305,7 @@ export function App() {
                   effectiveSkillLevels={effectiveSkillLevels(slot, team.fixedSpec)}
                   skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
                   slotNames={slotNames}
+                  teamCharacters={teamCharacters}
                   slotResult={shown.ok ? (shown.result.slots[i] ?? null) : null}
                   dispatch={dispatch}
                 />

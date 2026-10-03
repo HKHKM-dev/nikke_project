@@ -3,7 +3,7 @@
 - 関連: [skills-guide.md](skills-guide.md) 1.4 節、[design-stage10.md](design-stage10.md)（バーストスキルクールタイム▼ `cooldownReduction`）、[design-stage11-modernia.md](design-stage11-modernia.md)（射撃ごとの倍率ダメージ `perShot`）、[backlog.md](backlog.md) 6 節
 - 作成日: 2026-10-03
 - 根拠: C-0188（スペック固定の攻撃力）、`150-03`・`150-04`・`150-06`（V-0115・V-0116）
-- 状態: 起案（オーナーの承認待ち）
+- 状態: オーナーの承認（2026-10-03「推奨どおりで実装する」）で実装した。5 節の論点は推奨どおりにした
 
 ## 1. 何を足すか
 
@@ -120,3 +120,10 @@ S1（スターフォール）の説明文を 1 行ずつ分ける（{NN} は des
 
 - アニス：スターの与ダメージの合計は、胴体の 2 ヒット（論点 4）と S2・バーストの未定義のぶん、モデルが小さく出る。1 ヒットと追加ダメージの値は比べられるが、総ダメージは比べない。
 - 戦闘不能で分岐が変わる場合（味方が倒れた後のフルバースト終了時のやり直し）は扱わない。
+
+## 8. 実装で 4 節から変えたこと（2026-10-03）
+
+- 条件を満たさない効果は、宝物版の差し替え（`applyTreasureToTeam`）の直後に `applySquadToTeam`（`skills/squad.ts`）で定義から外す。sim・calc・1 パス目・`sim/teamResult.ts` の 4 か所の入口で通すので、`resolvePassiveStates` と 1 パス目の列挙は変えていない。外した後の効果の番号（`effectIndex`）は 1 回の実行の中の同一性の鍵にだけ使われ、ずれても困らない。
+- 画面は、効果ごとに「部隊構成: 自分を除くバースト I の味方がいない / いるとき。この編成では効く / 効かない（計算に入れない）」を出す（`SkillSection.tsx` の `SquadNote`。編成のキャラは `App.tsx` から渡す）。CLI は `squad conditions` の表を出す。
+- 指標 `perShotHitDamage` は 1 ヒットの値の指標（`HIT_VALUE_METRICS`）に入れ、差 1 未満を厳密一致にする。`PER_SHOT_DAMAGE_CORE` が true のときは使えない（例外）。
+- 編成のテスト（`__tests__/anisStarTeam.test.ts`）の「クラウンをリターに替えた編成」は、calc の平均で数える群でアニス：スターの発の数が sim より少なく、枠の合計の差が 5% を少し超える（calc のハイブリッドの近似。backlog 4-5）。部隊構成の条件とは別なので、この編成だけ 5% の検査を外した。

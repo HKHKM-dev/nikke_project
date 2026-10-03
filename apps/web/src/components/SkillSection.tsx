@@ -7,10 +7,12 @@ import {
   framesToGameSeconds,
   measuredBurstDelayRow,
   renderSkillDescription,
+  squadAllows,
   treasureSlots,
   type CharacterData,
   type SkillLevels,
   type SkillSlot,
+  type SquadCondition,
   type TreasurePhase,
 } from '@nikke/core';
 import { useState, type Dispatch } from 'react';
@@ -84,6 +86,19 @@ function SkillLevelInput({ value, disabled, onCommit }: LevelInputProps) {
   );
 }
 
+const SQUAD_STEP_LABEL: Record<SquadCondition['otherBurstStep'], string> = { Step1: 'I', Step2: 'II', Step3: 'III' };
+
+/** アニス：スター編: 部隊構成の条件と、今の編成でその効果が効くか */
+function SquadNote({ squad, applies }: { squad: SquadCondition; applies: boolean }) {
+  const condition = `自分を除くバースト ${SQUAD_STEP_LABEL[squad.otherBurstStep]} の味方が${squad.present ? 'いる' : 'いない'}`;
+  return (
+    <li className={`note ${applies ? 'approx' : 'unsupported'}`}>
+      <span className="badge">部隊構成</span> {condition}とき。
+      {applies ? 'この編成では効く' : 'この編成では効かない（計算に入れない）'}
+    </li>
+  );
+}
+
 type Props = {
   slotIndex: number;
   character: CharacterData;
@@ -93,11 +108,22 @@ type Props = {
   treasurePhase: TreasurePhase;
   disabled: boolean;
   status: SlotSkillsStatus;
+  /** アニス：スター編: 枠番号 → キャラ（部隊構成の条件が今の編成で効くかの表示用）。空枠・読み込み中は null */
+  teamCharacters: readonly (CharacterData | null)[];
   dispatch: Dispatch<TeamAction>;
 };
 
 /** 枠のスキル Lv 入力と、宝物の段階、定義の対応状況・説明文 */
-export function SkillSection({ slotIndex, character, levels, treasurePhase, disabled, status, dispatch }: Props) {
+export function SkillSection({
+  slotIndex,
+  character,
+  levels,
+  treasurePhase,
+  disabled,
+  status,
+  teamCharacters,
+  dispatch,
+}: Props) {
   // Stage 9: 宝物版に差し替えた説明文と定義を出す（計算と同じ applyTreasure を通す）
   const shown = applyTreasure(character, status.kind === 'ready' ? status.definition : null, treasurePhase);
   const treasureShown = new Set(treasureSlots(character, treasurePhase));
@@ -173,6 +199,15 @@ export function SkillSection({ slotIndex, character, levels, treasurePhase, disa
                         <span className="badge">仮定</span> {e.assumes!.ja}
                       </li>
                     ))}
+                </ul>
+              )}
+              {entry && entry.effects.some((e) => 'squad' in e && e.squad) && (
+                <ul className="notes">
+                  {entry.effects.map((e, i) =>
+                    'squad' in e && e.squad ? (
+                      <SquadNote key={i} squad={e.squad} applies={squadAllows(e.squad, teamCharacters, slotIndex)} />
+                    ) : null,
+                  )}
                 </ul>
               )}
               {slot === 'burst' && <BurstDelayNote resourceId={shown.character.resourceId} />}

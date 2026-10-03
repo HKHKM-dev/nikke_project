@@ -58,6 +58,8 @@ type Props = {
   skillsStatus: SlotSkillsStatus;
   /** 枠番号 → ニケ名（バフの発動元表示用）。未選択・読み込み中は undefined */
   slotNames: readonly (string | undefined)[];
+  /** アニス：スター編: 枠番号 → キャラ（部隊構成の条件の表示用）。空枠・読み込み中は null */
+  teamCharacters: readonly (CharacterData | null)[];
   slotResult: TeamSlotResult | null;
   dispatch: Dispatch<TeamAction>;
 };
@@ -78,6 +80,7 @@ export function SlotCard({
   mastersError,
   skillsStatus,
   slotNames,
+  teamCharacters,
   slotResult,
   dispatch,
 }: Props) {
@@ -345,6 +348,7 @@ export function SlotCard({
             treasurePhase={effectiveTreasurePhase(slot, character)}
             disabled={fixedSpec}
             status={skillsStatus}
+            teamCharacters={teamCharacters}
             dispatch={dispatch}
           />
           {slotResult && (
