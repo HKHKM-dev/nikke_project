@@ -10,7 +10,9 @@
         {
           "ja": "最後の弾丸が命中した対象（敵）の攻撃力▼はダメージに関係しない",
           "en": "ATK down on the enemy hit by the last bullet does not affect damage",
-          "claims": ["C-0072"]
+          "claims": [
+            "C-0072"
+          ]
         }
       ]
     },
@@ -21,7 +23,16 @@
         {
           "ja": "最終攻撃力が最も高い敵の攻撃力▼はダメージに関係しない",
           "en": "ATK down on the enemy with the highest final ATK does not affect damage",
-          "claims": ["C-0072"]
+          "claims": [
+            "C-0072"
+          ]
+        },
+        {
+          "ja": "15 秒ごとの発動でバーストゲージを溜める（未対応。周期は実測で説明文に無い。ゲージだけを溜める周期の効果の語彙が要る）",
+          "en": "Fills the Burst gauge on each activation every 15 sec (unsupported; the period is measured, not in the description, and needs a periodic gauge-only effect)",
+          "claims": [
+            "C-0178"
+          ]
         }
       ]
     },
@@ -36,14 +47,18 @@
             "ja": "対象「最終攻撃力が最も高い敵 1 機」は単体ボスで 1 ヒット",
             "en": "The single-target hit lands once on a lone boss"
           },
-          "claims": ["C-0072"]
+          "claims": [
+            "C-0072"
+          ]
         }
       ],
       "notes": [
         {
           "ja": "挑発はダメージに関係しない",
           "en": "Taunt does not affect damage",
-          "claims": ["C-0072"]
+          "claims": [
+            "C-0072"
+          ]
         }
       ]
     }
