@@ -1,0 +1,11 @@
+{
+  "id": "C-0203",
+  "text": "アニス：スターの S1 の部隊構成の分岐で、バースト段階が可変（AllStep）のキャラは「基本バースト段階 1 の味方」に数えない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "解釈（plan/design-anis-star-s1.md 5 節の論点 1。2026-10-03 にオーナーが推奨どおりと承認）。AllStep のキャラ（レッドフード）を添えた録画は無い。C-0191 から分けた。V-0122",
+  "model": "`skills/squad.ts` の `squadAllows`（burstStep が otherBurstStep と一致するキャラだけを数える）",
+  "replaces": ["C-0191"],
+  "updated": "2026-10-04"
+}

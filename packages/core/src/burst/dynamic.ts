@@ -7,6 +7,7 @@
 // 常時のゲージ速度（burstGaugeSpeed。マナ S2）は枠ごとの 1 トリガーのゲージに (1 + 速度) を掛ける。
 import { planShots, type ShotLog } from '../frame/shots.ts';
 import type { CharacterData, ShotParams } from '../types.ts';
+import { burstReentryStepOf, type SkillDefinition } from '../skills/types.ts';
 import { DEFAULT_WEAPON_MODEL, type WeaponModel } from '../weapons.ts';
 import {
   DEFAULT_BURST_TIMING,
@@ -58,10 +59,16 @@ export function partialGaugeRatio(shot: ShotParams, controlled: boolean, progres
   return (1 + (full - 1) * Math.min(1, Math.max(0, progress))) / full;
 }
 
-export function burstUnitOf(character: CharacterData): NonNullable<BurstUnit> {
+/**
+ * 枠のバースト。アニス：スター編: 定義にバースト再突入（burstReentry。部隊構成の条件で外した後）があれば、次の段階をそれに差し替える
+ */
+export function burstUnitOf(
+  character: CharacterData,
+  definition: SkillDefinition | null = null,
+): NonNullable<BurstUnit> {
   return {
     burstStep: character.burstStep,
-    nextStep: character.burstSkill.nextStep,
+    nextStep: burstReentryStepOf(definition) ?? character.burstSkill.nextStep,
     cooldownFrames: gameSecondsToFrames(character.burstSkill.cooldownSeconds),
     // Stage 8: フルバースト時間は StepFull に入る発動をしたニケの burst_duration（イサベル 5 秒、モダニア 15 秒）
     fullBurstFrames: gameSecondsToFrames(character.burstSkill.durationSeconds),
@@ -80,7 +87,11 @@ export type DynamicScheduleOptions = {
  * @param controlledSlot 操作キャラの枠（フルチャージ倍率がゲージに乗る）。null は全員 AI 扱い
  */
 export function planDynamicSchedule(
-  slots: readonly ({ character: CharacterData; condition?: { hitRate?: number } } | null)[],
+  slots: readonly ({
+    character: CharacterData;
+    condition?: { hitRate?: number };
+    skills?: { definition: SkillDefinition | null };
+  } | null)[],
   frames: number,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   timing: Readonly<BurstTiming> = DEFAULT_BURST_TIMING,
@@ -91,7 +102,7 @@ export function planDynamicSchedule(
     throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
   }
   const controller = initialBurstController(
-    slots.map((s) => (s === null ? null : burstUnitOf(s.character))),
+    slots.map((s) => (s === null ? null : burstUnitOf(s.character, s.skills?.definition ?? null))),
     timing,
   );
   const shots = options.shots ?? planShots(slots, frames, model);

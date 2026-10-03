@@ -67,13 +67,16 @@ describe('data/skills', () => {
         for (const effect of def.skills[slot].effects) {
           // Stage 11 モダニア: 使用武器の変更は damageRef、フラグの stat（装弾数無限）は ref を持たない
           // Stage 11 紅蓮BS: 循環は段ごとの ref、間隔の変更は ref を持たない（維持時間は下のテスト）
-          // フラワー編: 周期のゲージ（burstGaugeHit）は ref を持たない
+          // フラワー編: 周期のゲージ（burstGaugeHit）は ref を持たない。アニス：スター編: バースト再突入（burstReentry）も
           const refs =
             effect.kind === 'weaponChange'
               ? [effect.damageRef]
               : effect.kind === 'cycle'
                 ? effect.steps.map((s) => s.ref)
-                : effect.kind === 'cycleEvery' || effect.kind === 'burstGaugeHit' || effect.ref === undefined
+                : effect.kind === 'cycleEvery' ||
+                    effect.kind === 'burstGaugeHit' ||
+                    effect.kind === 'burstReentry' ||
+                    effect.ref === undefined
                   ? []
                   : [effect.ref];
           for (const ref of refs) {

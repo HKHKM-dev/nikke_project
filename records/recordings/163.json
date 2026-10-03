@@ -1,0 +1,47 @@
+{
+  "id": "163",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-163_rl_anis-star_flower_delta_isabel.mp4",
+  "original": "2026-10-04_02-39-02.mp4",
+  "durationSec": 210.4,
+  "frames": 12623,
+  "fps": 60,
+  "sizeMB": 254.8,
+  "sha256": "2132a9394f7b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 4,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0121。デルタ・アニス：スター（操作）・I-DOLL・フラワー・イサベルの並び（依頼はアニス：スターが枠 1）。戦闘開始の直後に一時停止画面で効果一覧（みんなの星）"
+}

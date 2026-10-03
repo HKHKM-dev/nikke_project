@@ -1,6 +1,6 @@
 // Stage 19-B: 観測値（records/observations/<録画 id>.json）の型・検証と、照合ランナー（モデルと比べて残差を出す）。
 // plan/design-stage19.md 2.3・2.3.1・2.5 節。
-import { hitFrameOf, videoFrameOf } from '../burst/schedule.ts';
+import { hitFrameOf, videoFrameOf, type BurstSchedule } from '../burst/schedule.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
@@ -193,6 +193,23 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
   return ((t.normal / t.hitRate / t.hitsPerShot / t.boost.total) * boost) / shot.shotCount;
 }
 
+function fullBurstStartIntervals(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const starts = schedule.fullBurstWindows.map((w) => videoFrameOf(schedule, w.start));
+  const n = Number(ctx.args.n);
+  if (starts.length < n + 1) throw new Error(`フルバーストが ${starts.length} 回しかない`);
+  return starts.slice(1, n + 1).map((s, i) => s - starts[i]!);
+}
+
+function burstActivationSlots(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const n = Number(ctx.args.n);
+  if (schedule.activations.length < n) throw new Error(`発動が ${schedule.activations.length} 回しかない`);
+  return schedule.activations.slice(0, n).map((a) => a.slotIndex + 1);
+}
+
 /**
  * アニス：スター編: 射撃ごとの倍率ダメージ（perShot。「フルチャージ攻撃が命中した時、最終攻撃力の X% の追加ダメージ」など）の 1 回の値。
  * hitDamage と同じく、その時点の区間の 1 トリガーの perShot から、倍率グループ（1 + 会心 + フルバースト）だけをパターンに差し替えて
@@ -232,6 +249,21 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     args: [],
     sim: (r) => r.schedule?.fullBurstWindows.length ?? 0,
     calc: (r) => r.schedule?.fullBurstWindows.length ?? 0,
+  },
+  /**
+   * アニス：スター編（V-0122）: 録画の動画のフレームで数えた、フルバーストの入りどうしの間隔（最初の n 個）。入りの止まり
+   * （C-0069）を足した動画のフレームの差なので、録画の戦闘開始のずれに依らない
+   */
+  fullBurstStartIntervals: {
+    args: ['n'],
+    sim: (r, c) => fullBurstStartIntervals(r, c),
+    calc: (r, c) => fullBurstStartIntervals(r, c),
+  },
+  /** アニス：スター編（V-0121）: バーストを撃った枠（1 始まり）の並び（最初の n 回。チェーンが切れた単独の発動も入る） */
+  burstActivationSlots: {
+    args: ['n'],
+    sim: (r, c) => burstActivationSlots(r, c),
+    calc: (r, c) => burstActivationSlots(r, c),
   },
   fullBurstStarts: {
     args: [],

@@ -1,13 +1,14 @@
 // アニス：スター（17）: S1「スターフォール」の解決と、部隊構成の条件（squad。plan/design-anis-star-s1.md 2.1 節）。
 // 私だけの星（自分の攻撃力▲）と CT▼ は自分を除く基本バースト段階 1 の味方がいないときだけ、追加ダメージは射撃ごと（perShot）。
-// みんなの星（バースト再突入）・S2・バーストは未実装の notes（V-0116）。
+// みんなの星はバースト再突入 I 段階（burstReentry。V-0121）。S2・バーストは未実装の notes（V-0116）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
 import { resolvePerShotDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives } from '../resolve.ts';
+import { burstUnitOf } from '../../burst/dynamic.ts';
 import { applySquad, squadAllows } from '../squad.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { burstReentryStepOf, parseSkillDefinition } from '../types.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -56,11 +57,22 @@ describe('アニス：スター（17）の定義', () => {
     expect(lv1[0]!.multiplier).toBeCloseTo(0.71, 12);
   });
 
-  it('keeps Everyone’s Star, S2 and the burst as not implemented', () => {
-    expect(def.skills.skill1.support).toBe('partial');
-    expect(def.skills.skill1.notes).toHaveLength(1);
+  it('keeps S2 and the burst as not implemented', () => {
+    expect(def.skills.skill1.support).toBe('supported');
+    expect(def.skills.skill1.notes).toBeUndefined();
     expect(def.skills.skill2.support).toBe('unsupported');
     expect(def.skills.burst.support).toBe('unsupported');
+  });
+
+  it('re-enters Burst Stage I only with Everyone’s Star', () => {
+    expect(anis.burstSkill.nextStep).toBe('Step2');
+    const solo = applySquad(def, [anis], 0);
+    const withFlower = applySquad(def, [anis, flower], 0);
+    expect(burstReentryStepOf(solo)).toBeNull();
+    expect(burstReentryStepOf(withFlower)).toBe('Step1');
+    expect(burstUnitOf(anis, solo).nextStep).toBe('Step2');
+    expect(burstUnitOf(anis, withFlower).nextStep).toBe('Step1');
+    expect(burstUnitOf(anis).nextStep).toBe('Step2');
   });
 });
 
@@ -85,13 +97,21 @@ describe('部隊構成の条件（squad）', () => {
   });
 
   it('removes the effects whose condition fails and keeps the rest', () => {
-    expect(applySquad(def, [anis], 0)).toBe(def);
+    const solo = applySquad(def, [anis], 0);
+    expect(solo.skills.skill1.effects.map((e) => e.kind)).toEqual([
+      'passive',
+      'passive',
+      'cooldownReduction',
+      'cooldownReduction',
+      'damage',
+    ]);
     const withFlower = applySquad(def, [anis, flower], 0);
-    expect(withFlower.skills.skill1.effects.map((e) => e.kind)).toEqual(['passive', 'damage']);
+    expect(withFlower.skills.skill1.effects.map((e) => e.kind)).toEqual(['passive', 'damage', 'burstReentry']);
     expect(resolvePassives(withFlower, anis, MAX_SKILL_LEVELS).map((e) => e.stat)).toEqual(['burstGaugeSpeed']);
     expect(resolveInstant(withFlower, anis, MAX_SKILL_LEVELS)).toEqual([]);
-    // 外した後の定義には squad の効果が残らないので、2 回通しても同じ
+    // 残るのは条件を満たした効果だけなので、同じ編成で 2 回通しても同じ
     expect(applySquad(withFlower, [anis, flower], 0)).toBe(withFlower);
+    expect(applySquad(solo, [anis], 0)).toBe(solo);
   });
 
   it('rejects squad on other effect kinds and malformed conditions', () => {
@@ -106,7 +126,7 @@ describe('部隊構成の条件（squad）', () => {
           squad: absent,
         }),
       ),
-    ).toThrow(/squad: only allowed in passive, timed and cooldownReduction/);
+    ).toThrow(/squad: only allowed in passive, timed, cooldownReduction and burstReentry/);
     expect(() =>
       parseSkillDefinition(withFirstEffect({ ...base, squad: { otherBurstStep: 'AllStep', present: false } })),
     ).toThrow(/otherBurstStep/);
@@ -121,5 +141,15 @@ describe('部隊構成の条件（squad）', () => {
         withFirstEffect({ kind: 'ammoRefill', trigger: 'battleStart', target: 'allies', ref: 3, squad: absent }),
       ),
     ).toThrow(/squad: unknown field/);
+  });
+
+  it('rejects malformed burstReentry and more than one per definition', () => {
+    const reentry = { kind: 'burstReentry', step: 'Step1' };
+    expect(() => parseSkillDefinition(withFirstEffect(reentry))).toThrow(/at most one burstReentry/);
+    const copy = structuredClone(raw) as { skills: { skill1: { effects: Record<string, unknown>[] } } };
+    copy.skills.skill1.effects[5] = { kind: 'burstReentry', step: 'AllStep' };
+    expect(() => parseSkillDefinition(copy)).toThrow(/step/);
+    copy.skills.skill1.effects[5] = { kind: 'burstReentry', step: 'Step1', ref: 1 };
+    expect(() => parseSkillDefinition(copy)).toThrow(/ref: unknown field/);
   });
 });

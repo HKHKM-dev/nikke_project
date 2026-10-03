@@ -1,0 +1,41 @@
+{
+  "id": "162",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-162_rl_anis-star_delta_isabel.mp4",
+  "original": "2026-10-04_02-34-51.mp4",
+  "durationSec": 212.8,
+  "frames": 12770,
+  "fps": 60,
+  "sizeMB": 257.8,
+  "sha256": "73e267bdfc3f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0122。アニス：スター（操作）・デルタ・イサベル。戦闘開始の直後に一時停止画面で効果一覧（私だけの星）"
+}

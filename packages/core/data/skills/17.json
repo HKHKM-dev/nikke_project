@@ -4,7 +4,7 @@
   "checkedAt": "2026-10-03",
   "skills": {
     "skill1": {
-      "support": "partial",
+      "support": "supported",
       "effects": [
         {
           "kind": "passive",
@@ -31,7 +31,7 @@
           },
           "claims": [
             "C-0189",
-            "C-0191"
+            "C-0203"
           ]
         },
         {
@@ -48,7 +48,8 @@
             "en": "With My Own Star. It has no effect at the start of battle (no Burst cooldown is running yet)"
           },
           "claims": [
-            "C-0191"
+            "C-0202",
+            "C-0203"
           ]
         },
         {
@@ -65,7 +66,8 @@
             "en": "With My Own Star"
           },
           "claims": [
-            "C-0191"
+            "C-0202",
+            "C-0203"
           ]
         },
         {
@@ -86,14 +88,21 @@
             "C-0190",
             "C-0198"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "未実装: 自分を除く基本バースト段階 1 の味方がいるときのみんなの星（バースト再突入 I 段階に変更）。チェーンは CDN の値（I の次は II）のまま",
-          "en": "Not implemented: Everyone's Star (re-enters Burst at Stage I) when another standard Burst I ally is present. The chain keeps the CDN value (Stage II after Stage I)",
+          "kind": "burstReentry",
+          "step": "Step1",
+          "squad": {
+            "otherBurstStep": "Step1",
+            "present": true
+          },
+          "assumes": {
+            "ja": "みんなの星（自分を除く基本バースト段階 1 の味方がいるとき）。自分のバーストの後、チェーンはもう一度 I に入り、このチェーンで未使用の別の I の枠が撃つ",
+            "en": "Everyone’s Star (another standard Burst I ally is present). After her Burst the chain re-enters Stage I, and another Burst I slot not yet used in this chain fires"
+          },
           "claims": [
-            "C-0189"
+            "C-0201",
+            "C-0203"
           ]
         }
       ]
