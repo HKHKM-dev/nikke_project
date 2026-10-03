@@ -1,0 +1,29 @@
+{
+  "id": "141",
+  "date": "2026-10-03",
+  "folder": "range",
+  "file": "20261003-141_rl_raven_manual-dot.mp4",
+  "original": "2026-10-03_10-00-15.mp4",
+  "durationSec": 65.1,
+  "frames": 3906,
+  "fps": 60,
+  "sizeMB": 78.6,
+  "sha256": "128b4135403c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "単騎・操作。V-0111。的のコアに 2 発（f867・999）→ 撃たずに約 18 秒 → コアに 1 発（f2084）→ 約 13 秒 → 空に 3 発（f2858 ほか）。最後の tick で 1 回目の満タン"
+}
