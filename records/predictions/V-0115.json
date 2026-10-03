@@ -33,7 +33,8 @@
         "enemy": "range-bigarms-fire",
         "burst": false
       },
-      "note": "アニス：スター（RL・AI）のフルチャージの通常攻撃 1 ヒット（胴体・非会心。RL に距離ボーナスは無い）。S1 の追加ダメージ（最終攻撃力の割合）は含まない。120-02 と同じ指標"
+      "note": "アニス：スター（RL・AI）のフルチャージの通常攻撃 1 ヒット（胴体・非会心。RL に距離ボーナスは無い）。S1 の追加ダメージ（最終攻撃力の割合）は含まない。120-02 と同じ指標",
+      "observations": ["150-03"]
     },
     {
       "id": "hit-crit",
@@ -50,7 +51,8 @@
         "enemy": "range-bigarms-fire",
         "burst": false
       },
-      "note": "同じ 1 ヒットの会心"
+      "note": "同じ 1 ヒットの会心",
+      "observations": ["150-04"]
     },
     {
       "id": "hit-core",

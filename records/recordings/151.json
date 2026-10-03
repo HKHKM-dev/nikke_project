@@ -1,0 +1,35 @@
+{
+  "id": "151",
+  "date": "2026-10-03",
+  "folder": "range",
+  "file": "20261003-151_rl_anis-star_buff-list.mp4",
+  "original": "2026-10-03_17-43-38.mp4",
+  "durationSec": 25.1,
+  "frames": 1506,
+  "fps": 60,
+  "sizeMB": 30.3,
+  "sha256": "c3d9d6416bc9",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0115。150 と同じ編成。戦闘開始直後に一時停止画面でアニス：スターの適用中の効果を開いた（スターフォールとみんなの星。私だけの星は無い）"
+}

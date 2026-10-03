@@ -1,0 +1,35 @@
+{
+  "id": "150",
+  "date": "2026-10-03",
+  "folder": "range",
+  "file": "20261003-150_rl_anis-star_with-flower.mp4",
+  "original": "2026-10-03_17-40-14.mp4",
+  "durationSec": 199.1,
+  "frames": 11945,
+  "fps": 60,
+  "sizeMB": 240.9,
+  "sha256": "42038bd95f27",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0115。アニス：スター（枠 1・AI）と I-DOLL・フラワー（枠 2・操作。AUTO 射撃 OFF で撃たない）。戦闘の開始から終了まで"
+}
