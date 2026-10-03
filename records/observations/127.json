@@ -64,13 +64,28 @@
     "source": "V-0106",
     "readAt": "2026-10-03",
     "kind": "count",
-    "use": "record",
+    "use": "compare",
     "value": 14,
     "unit": "ヒット",
     "description": "I-DOLL・フラワー（RL・AUTO・オートバースト OFF）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号",
     "method": {
       "tool": "hud.ts --mode jumps（レシピ hud-jumps@1 のキャッシュ）・gauge.ts --mode series + 使い捨てのスクリプト（V-0106「読み方」）",
       "note": "1 ヒット目 f852、14 ヒット目 f2155 で消えた。1〜13 ヒット目の直後のバーの px は 0・2・11・21・30・44・54・63・73・86・95・105・113 で、077-19（録画 077 の 1 回目）と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {

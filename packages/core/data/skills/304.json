@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 304,
-  "checkedAt": "2026-09-28",
+  "checkedAt": "2026-10-03",
   "skills": {
     "skill1": {
       "support": "unsupported",
@@ -17,21 +17,29 @@
       ]
     },
     "skill2": {
-      "support": "unsupported",
-      "effects": [],
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "everySeconds": 15
+          },
+          "assumes": {
+            "ja": "周期の 15 秒は録画から読んだ値（説明文に無い）。1 回の量は的の 1 ヒットぶん（フルチャージ倍率なし）とみた",
+            "en": "The 15 s period is read from recordings (not in the description); one activation is taken as one target hit of gauge (no full-charge multiplier)"
+          },
+          "claims": [
+            "C-0178",
+            "C-0176"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "最終攻撃力が最も高い敵の攻撃力▼はダメージに関係しない",
           "en": "ATK down on the enemy with the highest final ATK does not affect damage",
           "claims": [
             "C-0072"
-          ]
-        },
-        {
-          "ja": "15 秒ごとの発動でバーストゲージを溜める（未対応。周期は実測で説明文に無い。ゲージだけを溜める周期の効果の語彙が要る）",
-          "en": "Fills the Burst gauge on each activation every 15 sec (unsupported; the period is measured, not in the description, and needs a periodic gauge-only effect)",
-          "claims": [
-            "C-0178"
           ]
         }
       ]

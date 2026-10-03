@@ -142,6 +142,20 @@ export function resolveDamageGauges(
 }
 
 /**
+ * フラワー編: 周期でゲージだけを溜める効果（burstGaugeHit）の、周期の秒の列（効果ごとに 1 つ）。unsupported なら空。
+ * 1 回の量は射手の targetBurstEnergyPerShot（frame/firstPass.ts。plan/design-flower-s2-gauge.md 2 節）
+ */
+export function resolveTimerGauges(def: SkillDefinition): number[] {
+  const out: number[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const entry = def.skills[slot];
+    if (entry.support === 'unsupported') continue;
+    for (const effect of entry.effects) if (effect.kind === 'burstGaugeHit') out.push(effect.trigger.everySeconds);
+  }
+  return out;
+}
+
+/**
  * ニヒリスター編: 定義の各 dot 効果を Lv の数値に解決する（1 tick の倍率・間隔・維持秒）。support が 'unsupported' のスキルは空。
  * 間隔が維持時間より長いと 1 tick も出ないので拒否する（durationRef は Lv で決まるのでここで見る）
  */
