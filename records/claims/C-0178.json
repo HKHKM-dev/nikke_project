@@ -5,7 +5,7 @@
   "topic": "バーストゲージ",
   "grade": "反復実測",
   "basis": "`136-02`（撃っていない間に 2 回とも 4px）、`077-25`（180 秒で 11 回、883〜885f ごと。チェーンの外の 6 回とも 3〜4px）、`126-06`・`127-06`・`135-02`（1 回目）、`134-04`（6 回とも 4px）。周期と 1 回の px は値を決めるのに使った定数なしで録画どうし揃う。28,000 という量は px からの推論（35,000 なら約 4.7px で、物 1 個の 4.65px（`134-04`）より大きい）。V-0108",
-  "model": "未反映。モデルはフラワーの S2 を notes（ダメージに関係しない）にしていて、ゲージを溜めない（`data/skills/304.json`）。スキル定義に周期のゲージの効果を足す実装を別に起票した（backlog 6 節）",
+  "model": "`data/skills/304.json` の skill2 の effects[0]（`burstGaugeHit`。15 秒ごとに射手の `targetBurstEnergyPerShot` を溜める。plan/design-flower-s2-gauge.md）。1 パス目でゲージに足す（`frame/firstPass.ts`）",
   "replaces": [],
   "updated": "2026-10-03"
 }

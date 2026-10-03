@@ -17,6 +17,7 @@
 // 「N 発間維持」（timed の durationShots / durationShotsRef）を足した（plan/design-helm.md 2 節）。
 // ニヒリスター編で持続ダメージ（dot。「持続ダメージ」「1秒間隔」「10秒間維持」）を足した（plan/design-nihilister.md 2.1 節）。
 // 撮影の後に、時間の周期のトリガー（{ everySeconds }。CT ごとに発動するアクティブ型のスキル）を足した（同 8 節）。
+// フラワー編で、周期でゲージだけを溜める効果（burstGaugeHit）を足した（plan/design-flower-s2-gauge.md 2 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 // 効果と notes には、根拠の結論の ID（claims）を書ける（plan/skills-guide.md 3 節。実在の検査は records/skills.ts）。
 import { ELEMENTS } from '../element.ts';
@@ -534,6 +535,17 @@ export type DotEffect = {
 };
 
 /**
+ * フラワー編: トリガーが発火するたびに、射手の 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ倍率は
+ * 乗らない）を発火のフレームのゲージに足す。ダメージは出さない（I-DOLL・フラワーの S2。C-0178）。
+ * トリガーは時間の周期のトリガー（{ everySeconds }）だけ（plan/design-flower-s2-gauge.md 2 節）
+ */
+export type BurstGaugeHitEffect = {
+  kind: 'burstGaugeHit';
+  trigger: TimerTrigger;
+  assumes?: LocalizedText;
+};
+
+/**
  * 効果・notes の根拠の結論の ID（`C-NNNN`。1 つ以上・重複なし）。どの結論が効果を裏付けるかは、定義のこの欄を正にする
  * （結論の側からは生成物の plan/claims.md・plan/skills.md で引く）。実在と状態の検査は records/skills.ts（npm run records:check・npm test）。
  * モデルの計算には使わない
@@ -550,6 +562,7 @@ export type SkillEffect = (
   | CycleEffect
   | CycleEveryEffect
   | DotEffect
+  | BurstGaugeHitEffect
 ) &
   ClaimRefs;
 
@@ -742,13 +755,13 @@ function parsePositiveInt(v: Json, path: string): number {
 
 /**
  * 文字列なら BuffTrigger、オブジェクトなら回数トリガー。時間の周期のトリガー（{ everySeconds }）は allowTimer のとき
- * （damage と dot）だけ
+ * （damage・dot・burstGaugeHit）だけ
  */
 function parseTrigger(v: Json, path: string, allowTimer = false): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
   if (v.everySeconds !== undefined) {
-    if (!allowTimer) fail(path, 'a timer trigger ({ everySeconds }) is only allowed in damage and dot');
+    if (!allowTimer) fail(path, 'a timer trigger ({ everySeconds }) is only allowed in damage, dot and burstGaugeHit');
     for (const key of Object.keys(v)) if (key !== 'everySeconds') fail(`${path}.${key}`, 'unknown field');
     const seconds = v.everySeconds;
     if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
@@ -1055,6 +1068,17 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   return effect;
 }
 
+function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstGaugeHitEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+  }
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
+  if (!isTimerTrigger(trigger)) fail(`${path}.trigger`, 'burstGaugeHit needs a timer trigger ({ everySeconds })');
+  const effect: BurstGaugeHitEffect = { kind: 'burstGaugeHit', trigger };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
   // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）
   const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds'] : [];
@@ -1113,8 +1137,8 @@ function parseRef(v: Json, path: string): number {
 }
 
 /**
- * passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange・cycle・cycleEvery・dot は
- * どのスロットにも書ける
+ * passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange・cycle・cycleEvery・dot・
+ * burstGaugeHit はどのスロットにも書ける
  */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
@@ -1142,9 +1166,10 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'cycle') return parseCycleEffect(v, path);
   if (v.kind === 'cycleEvery') return parseCycleEveryEffect(v, path);
   if (v.kind === 'dot') return parseDotEffect(v, path);
+  if (v.kind === 'burstGaugeHit') return parseBurstGaugeHitEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery" or "dot", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot" or "burstGaugeHit", got ${JSON.stringify(v.kind)}`,
   );
 }
 

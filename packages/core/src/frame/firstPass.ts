@@ -35,6 +35,9 @@
 // V-0030: 段の循環（cycle）の段に gaugeHits があれば、手順 2 の後にその枠の射撃を数えて段を追い（skills/cycles.ts の cycleFires と
 // 同じ規則）、段のヒットのゲージを当たるフレームに予約して、そのフレームの手順 2 で足す（紅蓮BS。C-0085）。
 // この編成では、時刻表は射撃のゲージだけの planDynamicSchedule とは違う。
+//
+// フラワー編（plan/design-flower-s2-gauge.md 3 節）: 周期でゲージだけを溜める効果（burstGaugeHit）は、ループの前に発火のフレームへ
+// 射手の 1 ヒットぶんのゲージを予約し、段のヒットと同じく手順 2 で足す（I-DOLL・フラワーの S2。C-0178）。
 import { burstDelaysFieldOf, burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { gameSecondsToFrames } from '../time.ts';
@@ -49,7 +52,7 @@ import {
 } from '../burst/controller.ts';
 import { SG_PELLET_GAUGE_HIT_RATE, burstUnitOf, energyPerTrigger, partialGaugeRatio } from '../burst/dynamic.ts';
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
-import { resolveDamageGauges } from '../skills/burstDamage.ts';
+import { resolveDamageGauges, resolveTimerGauges } from '../skills/burstDamage.ts';
 import { effectFrameOf, type BurstActivation, type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
 import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
 import {
@@ -79,7 +82,7 @@ import {
 } from '../skills/triggers.ts';
 import { isFiringStat, type BuffStat, type ShotCountKind } from '../skills/types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
-import type { FrameRange } from '../skills/timeline.ts';
+import { timerFrames, type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
 import {
   hideShooter,
@@ -464,6 +467,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
   });
   const pendingGauge = new Map<number, number>();
+  // フラワー編: 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する
+  slots.forEach((slot, i) => {
+    if (slot === null || slot.definition === null) return;
+    const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
+    for (const everySeconds of resolveTimerGauges(slot.definition)) {
+      for (const at of timerFrames(everySeconds, frames)) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+    }
+  });
   /** 着弾編: 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
   const cycleGaugeHits: FirstPassResult['cycleGaugeHits'] = [];
