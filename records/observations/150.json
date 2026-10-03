@@ -1,0 +1,109 @@
+[
+  {
+    "id": "150-01",
+    "recording": "150",
+    "kind": "total",
+    "use": "record",
+    "value": 40161571,
+    "description": "アニス：スター（AI）と I-DOLL・フラワー（操作・撃たない）の 3 分の HUD の総ダメージの最後の値。アニス：スターの S1 の追加ダメージを含み、モデルに定義が無いので比べない",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "最後の増分は f11160。増分は 119 個"
+    },
+    "source": "V-0115",
+    "readAt": "2026-10-03"
+  },
+  {
+    "id": "150-02",
+    "recording": "150",
+    "kind": "count",
+    "use": "record",
+    "value": 119,
+    "unit": "トリガー",
+    "description": "アニス：スター・I-DOLL・フラワー のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "増分は 119 個。前の増分から 30f 未満の増分（0 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 59f）から発の数を決めた（2 発になった組 0 個）"
+    },
+    "source": "V-0115",
+    "readAt": "2026-10-03"
+  },
+  {
+    "id": "150-03",
+    "recording": "150",
+    "source": "V-0115",
+    "readAt": "2026-10-03",
+    "kind": "hit",
+    "use": "compare",
+    "value": 123190,
+    "description": "アニス：スター（RL・AI）のスペック固定 ON のフルチャージの通常攻撃 1 ヒット（胴体・非会心）。S1 の追加ダメージ（150-05）を除いた値",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "的の上にダメージの数値が出ない録画（回復の数値だけ出る）なので、HUD の増分を 1 ヒット + S1 の追加ダメージに分けて読んだ。増分 342,947 が 69 回（f842 から）、追加ダメージだけの増分 219,757（150-05）が 15 回あり、342,947 − 219,757 = 123,190。会心の増分 404,542（12 回）との差 61,595 は胴体の 0.5 倍で、追加ダメージの大きさに依らずに胴体 123,190 を出す（rank30 なら差は約 61,188）。追加ダメージ 268,040 と組んだ増分 391,230（14 回）・452,825（2 回）も、差は同じ 61,595"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "150-04",
+    "recording": "150",
+    "source": "V-0115",
+    "readAt": "2026-10-03",
+    "kind": "hit",
+    "use": "compare",
+    "value": 184785,
+    "description": "同じ 1 ヒットの会心（胴体）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "増分 404,542 = 184,785 + 219,757 が 12 回、452,825 = 184,785 + 268,040 が 2 回（f960・9308）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "150-05",
+    "recording": "150",
+    "source": "V-0115",
+    "readAt": "2026-10-03",
+    "kind": "hit",
+    "use": "record",
+    "value": 219757,
+    "description": "アニス：スターの S1 のフルチャージ攻撃命中時の追加ダメージ（最終攻撃力の 120.13% と説明文）の 1 回の値。モデルに定義が無いので比べない",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "追加ダメージだけの増分 219,757 が 15 回（f1020・2450・2627・5010 ほか。1 ヒットが的に入らなかった発とみられる）。ほかに 268,040（約 1.2197 倍）が単独で 4 回・1 ヒットと組んで 16 回、329,635（219,757 の会心 1.5 倍）が 1 回、281,352（219,757 + 61,595）が 2 回。268,040 と 281,352 の出どころは読んでいない"
+    }
+  }
+]
