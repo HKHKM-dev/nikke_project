@@ -21,7 +21,7 @@
             "ja": "「通常攻撃で 60 回攻撃した時」は撃った発の通算（当たったかに依らない）で数え、60 発ごとに 1 スタック足す。スタックの維持時間は発火のたびに全スタックを数え直す（skills/stacks.ts の STACK_REFRESH）",
             "en": "\"After performing 60 normal attacks\" counts every normal shot fired (hit or miss); each 60th shot adds a stack, and every new stack restarts the duration of all stacks (STACK_REFRESH in skills/stacks.ts)"
           },
-          "claims": ["C-0179"]
+          "claims": ["C-0183", "C-0184"]
         }
       ],
       "notes": [

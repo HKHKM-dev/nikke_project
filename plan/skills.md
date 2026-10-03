@@ -284,7 +284,7 @@
 ## 833 ミサト
 
 - **skill1**: supported
-  - effects[0] timed・normalShot・hitRate: C-0179（仮説）
+  - effects[0] timed・normalShot・hitRate: C-0183（確定）、C-0184（仮説）
   - notes[0] 通常攻撃 120 回ごとの味方 1 機の HP 回復は、ダメージに関係しない: C-0180（仮説）
 - **skill2**: unsupported
   - notes[0] 射撃マニュアル状態の間の味方全体のバリアに与えるダメージ▲は、バリアの無い敵（射撃場の的）では効かない: C-0180（仮説）

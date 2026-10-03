@@ -1,5 +1,5 @@
 // ミサト（833）を含む編成: S1「射撃マニュアル」のスタック（60 発ごとに自分に命中率 5.04%▲・3 スタック・5 秒）が区間の N に入り、
-// 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0179。持続の▲の入れ方は C-0170）と、sim と calc の整合。V-0110。
+// 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0183・C-0184。持続の▲の入れ方は C-0170）と、sim と calc の整合。V-0110。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
