@@ -23,7 +23,7 @@
   - effects[1] passive・attack: C-0189（確定）、C-0191（仮説）
   - effects[2] cooldownReduction・battleStart: C-0191（仮説）
   - effects[3] cooldownReduction・fullBurstEnd: C-0191（仮説）
-  - effects[4] damage・fullChargeShot・additional: C-0190（確定）
+  - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）
   - notes[0] 未実装: 自分を除く基本バースト段階 1 の味方がいるときのみんなの星（バースト再突入 I 段階に変更）。チェーンは CDN の値（I の次は II）のまま: C-0189（確定）
 - **skill2**: unsupported
   - notes[0] 未実装: フルバースト発動時の味方全体の攻撃力▲（私だけの星のとき・スキル発動者基準）・攻撃ダメージ▲、自分と防御力が低い味方の発射体爆発ダメージ▲。みんなの星のときのフルチャージ時の味方全体の回復はダメージに関係しない: 根拠なし

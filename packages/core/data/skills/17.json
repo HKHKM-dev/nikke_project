@@ -75,12 +75,16 @@
           },
           "damageType": "additional",
           "ref": 4,
+          "gaugeHits": [
+            0
+          ],
           "assumes": {
-            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない",
-            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply"
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発と同じフレームに、倍率の乗らない 1 ヒットのゲージ（28,000）を溜める",
+            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit charges the Burst Gauge by one unmultiplied hit (28,000) on the same frame as the shot"
           },
           "claims": [
-            "C-0190"
+            "C-0190",
+            "C-0198"
           ]
         }
       ],

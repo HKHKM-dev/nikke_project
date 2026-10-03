@@ -101,6 +101,18 @@ export function projectileKeyOf(character: CharacterData): string | null {
   return projectile === undefined ? null : `${character.shot.fireType}:${projectile.speed}`;
 }
 
+/**
+ * V-0119: 弾の種類の行のキー。爆発の範囲まで書いた `<fireType>:<弾速>:<爆発の範囲>` の行があればそれ、無ければ
+ * `<fireType>:<弾速>`（爆発の範囲で振る舞いの違う弾だけ、行を分ける。C-0197）。飛ぶ弾でなければ null
+ */
+function projectileRowKeyOf(by: TargetRateByProjectile['byProjectile'], character: CharacterData): string | null {
+  const key = projectileKeyOf(character);
+  const range = character.shot.projectile?.explosionRange;
+  if (key === null) return null;
+  const withRange = range === undefined ? null : `${key}:${range}`;
+  return withRange !== null && withRange in by ? withRange : key;
+}
+
 function isByProjectile(cell: TargetRateRow | TargetRateByProjectile): cell is TargetRateByProjectile {
   return 'byProjectile' in cell;
 }
@@ -110,7 +122,7 @@ export function rateRowOf(table: TargetRateTable, character: CharacterData): Tar
   const cell = table[character.weaponType];
   if (cell === null || cell === undefined) return null;
   if (!isByProjectile(cell)) return cell;
-  const key = projectileKeyOf(character);
+  const key = projectileRowKeyOf(cell.byProjectile, character);
   return key === null ? null : (cell.byProjectile[key] ?? null);
 }
 
@@ -121,7 +133,7 @@ export function rateRowOf(table: TargetRateTable, character: CharacterData): Tar
 export function projectileRowListedUnmeasured(table: TargetRateTable, character: CharacterData): boolean {
   const cell = table[character.weaponType];
   if (cell === null || cell === undefined || !isByProjectile(cell)) return false;
-  const key = projectileKeyOf(character);
+  const key = projectileRowKeyOf(cell.byProjectile, character);
   return key !== null && key in cell.byProjectile && cell.byProjectile[key] === null;
 }
 
@@ -159,11 +171,14 @@ export function autoConditionAt(
 ): SlotCondition {
   const core = targetRateOf(profile.coreHitRate, character, landing);
   const bullet = targetRateOf(profile.bulletHitRate, character, landing);
+  // V-0119: 1 発のヒット数は表にある弾の種類だけ（無ければ 1 発 1 ヒット）。手入力の条件には無い
+  const hits = profile.hitsPerShot === undefined ? null : targetRateOf(profile.hitsPerShot, character, landing);
   return {
     coreHitRate: core === null ? manual.coreHitRate : coreHitRateWithHitRateUp(core, hitRateUp),
     distanceBonus: distanceBonusAt(character, landing),
     fullCharge: manual.fullCharge,
     hitRate: bullet === null ? (manual.hitRate ?? 1) : bullet,
+    ...(hits === null || hits === 1 ? {} : { hitsPerShot: hits }),
   };
 }
 
