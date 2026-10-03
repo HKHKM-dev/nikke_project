@@ -1,0 +1,11 @@
+{
+  "id": "C-0185",
+  "text": "レイヴンの S1 のフルバーストタイム発動時の自分の攻撃力▲（スキル発動者基準・10 秒）と、バーストの倍率ダメージ（最終攻撃力の 492.3%）は、説明文どおり",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（キャラデータの `skills.skill1`・`skills.burst`）を読んだだけ。単騎ではバースト 3 段階のバーストを使えないので、レイヴンの録画（`122`・`141`）では起きない（V-0111「条件」）。撮影で確かめていない",
+  "model": "`data/skills/851.json`（skill1 の `timed`・`fullBurstStart`・`casterAttack`、burst の `burstDamage`）。plan/design-raven-s1.md 3 節",
+  "replaces": [],
+  "updated": "2026-10-03"
+}

@@ -566,18 +566,32 @@ for (const [i, slot] of slots.entries()) {
 function printDots(c: NonNullable<(typeof calc.slots)[number]>): void {
   const ticks = c.skillHits.activations.filter((a) => a.effect.dot !== undefined);
   if (ticks.length === 0) return;
-  const byEffect = new Map<string, { n: number; damage: number; multiplier: number; seconds: number[] }>();
+  const byEffect = new Map<
+    string,
+    { n: number; damage: number; multiplier: number; seconds: number[]; stacks: number[]; maxStacks: number }
+  >();
   for (const a of ticks) {
     const key = `${a.effect.source.skill}.${a.effect.effectIndex}`;
-    const d = byEffect.get(key) ?? { n: 0, damage: 0, multiplier: a.effect.multiplier, seconds: [] };
+    const d = byEffect.get(key) ?? {
+      n: 0,
+      damage: 0,
+      multiplier: a.effect.multiplier,
+      seconds: [],
+      stacks: [],
+      maxStacks: a.effect.dot!.maxStacks,
+    };
     d.n += 1;
     d.damage += a.hit.perActivation;
     d.seconds.push(a.seconds);
+    // レイヴン編: スタックする持続ダメージは tick ごとのスタックの数も出す
+    if (a.stacks !== undefined) d.stacks.push(a.stacks);
     byEffect.set(key, d);
   }
   for (const [key, d] of byEffect) {
+    const perStack = d.maxStacks > 1 ? `/stack (max ${d.maxStacks})` : '';
+    const stacks = d.stacks.length > 0 ? ` (stacks ${d.stacks.join(', ')})` : '';
     console.log(
-      `dot ${key}: ${(d.multiplier * 100).toFixed(2)}% ×${d.n} ticks = ${fmt(d.damage)} (ticks at ${d.seconds.map((x) => x.toFixed(2)).join(', ')}s)`,
+      `dot ${key}: ${(d.multiplier * 100).toFixed(2)}%${perStack} ×${d.n} ticks = ${fmt(d.damage)} (ticks at ${d.seconds.map((x) => x.toFixed(2)).join(', ')}s)${stacks}`,
     );
   }
 }

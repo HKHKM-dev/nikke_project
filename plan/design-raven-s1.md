@@ -3,7 +3,7 @@
 - 関連: [skills-guide.md](skills-guide.md) 1.4 節、[design-nihilister.md](design-nihilister.md) 2.1 節（持続ダメージ `dot`）、[design-kurumi.md](design-kurumi.md) 2 節（`firstTick`・`status`・付き直し）、[design-flower-s2-gauge.md](design-flower-s2-gauge.md)（ゲージだけを溜める `burstGaugeHit`）、[backlog.md](backlog.md) 6 節
 - 作成日: 2026-10-03
 - 根拠: C-0181・C-0182（V-0111）
-- 状態: 起案（オーナーの承認待ち）。承認の後に実装する
+- 状態: オーナーの承認（2026-10-03「論点は推奨どおりで、実装して」）で実装した。5 節の論点は推奨どおりにした
 
 ## 1. 何を足すか
 
@@ -72,7 +72,7 @@ tick の時刻と付き直しは、クルミのハッキング（`firstTick: aft
 
 ## 3. 定義（`data/skills/851.json`）
 
-- S1: `support: "partial"`。
+- S1: `support: "supported"`（起案では partial と書いたが、S1 の説明文の 2 行はどちらも効果にしたので supported にした）。
   - 効果 0: 上の `dot` に `gaugeOnApply`・`gaugeOnTick` を足したもの。`claims` は C-0181・C-0182。`assumes` は次の 3 つ。
     - 撃った発はすべて的に付く。空に撃っても的に付くことは確かめた（C-0182）。
     - 敵は 1 体。
@@ -107,7 +107,7 @@ tick の時刻と付き直しは、クルミのハッキング（`firstTick: aft
 - 表示: Web の定義の表示と CLI に、スタックの上限とゲージの 2 つを出す（ラベルを足す）。
 - 定義: 3 節。
 
-## 5. 論点（オーナーの判断を求める）
+## 5. 論点（推奨どおりにした）
 
 1. **スタックを `dot` の項目にするか**（推奨: 項目にする）
    - 代わりの案は、レイヴン用に別の kind を作ること。
@@ -158,7 +158,18 @@ tick の時刻と付き直しは、クルミのハッキング（`firstTick: aft
    - **足した制約**: `gaugeOnTick` は、`firstTick: afterInterval` で、維持が間隔の整数倍のときだけ書ける（解決のときに検証で弾く。維持は Lv で決まる `durationRef` のこともあるので、解決の後に見る）。レイヴンはこれで足り、`atApplication` の持続ダメージにゲージが要るキャラが出たら、そのときに扱いを決める。
    - 提案のとおりにしなかったこと: スタックの数は、追跡の関数には持たせない。予約のときには後の発火がまだ分からないので決まらない。スタックの数は、ループの後の `dotTicks` で数える。
 
+## 9. 実装で 4 節から変えたこと（2026-10-03）
+
+- **置き場所**: `dotTicks`・`dotTickTracker`・`dotTickFrames`・`groupDotsByStatus` は、新しい `frame/dot.ts` に置いた。`frame/plan.ts` は `frame/firstPass.ts` を読み込むので、1 パス目が `frame/plan.ts` の関数を使うと循環 import になるため。`frame/plan.ts` から同じ名前で再エクスポートしているので、呼び出し元とテストは変えていない。
+- **ゲージの解決**: `resolveDotGauges` は足さなかった。1 パス目は `resolveDotEffects` と `groupDotsByStatus` をそのまま使い、まとまり（status）ごとに追跡する。ゲージを持つまとまりの効果は、どれも射撃の回数トリガーであることを求める（クルミのように `burstUse` で付く効果が混ざると、1 パス目で発火を追えないため）。
+- **書ける条件の検証**: 「維持が間隔の整数倍」は、維持が Lv で決まる（`durationRef`）ので、`resolveDotEffects` で見る（8 節の 2）。
+- **結果の型**: `SkillHitEvent` と `SlotSkillHitsResult` の発動に `stacks` を足した（スタックする持続ダメージの tick だけ）。1 パス目の結果に、テスト用の `dotGauges`（付けたとき・予約した tick）を足した。
+- **表示**: Web の結果の内訳（`ResultPanel`）に、1 スタックの倍率 × スタックの範囲と、付け直し・ゲージの説明を出す。CLI（`sim-run.ts`）の持続ダメージの行に、tick ごとのスタックの数を出す。定義の表示（`SkillSection`）は効果の仮定と notes だけを出すので、変えていない。
+- **確かめ**（6 節）: `__tests__/ravenTeam.test.ts` で、録画 `141` の観測値（付いたフレーム `141-03`、当たったフレーム `141-08`）を入力にして、tick（`141-01`。1f 以内）・スタック（`141-02`）・満タンの tick（`141-07`）が合うことを確かめた。`141-08` は、このテストの入力として足した観測値。
+- **ほかの持続ダメージのゲージ**（5 節の論点 3）: クルミの単騎の録画の読み直しを V-0113 に起票した。
+
 ## 経過
 
 - 2026-10-03: 起案（オーナーの指示「レイヴンの S1 の語彙の設計書を起案して」）。
 - 2026-10-03: Antigravity の提案書（提案 A・B）を確かめて採り入れた（8 節。オーナーの指示「提案書の内容を検証して、必要なら採用して」）。
+- 2026-10-03: オーナーの承認（「論点は推奨どおりで、実装して」）で実装した（9 節）。

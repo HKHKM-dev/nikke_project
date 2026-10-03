@@ -56,7 +56,17 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
    */
-  dot?: { intervalSeconds: number; durationSeconds: number; firstTick: DotFirstTick; status?: string };
+  dot?: {
+    intervalSeconds: number;
+    durationSeconds: number;
+    firstTick: DotFirstTick;
+    status?: string;
+    /** レイヴン編: 最大スタック数。スタックしない持続ダメージは 1（plan/design-raven-s1.md 8 節の 1） */
+    maxStacks: number;
+    /** レイヴン編: 付けたとき・tick ごとに射手の 1 ヒットぶんのゲージを溜める（C-0181。frame/firstPass.ts） */
+    gaugeOnApply?: true;
+    gaugeOnTick?: true;
+  };
 };
 
 /** burst スロットの burstDamage 効果を Lv の数値に解決する。unsupported・効果なしなら空 */
@@ -180,6 +190,20 @@ export function resolveDotEffects(
           `skill ${skill.id}: dot interval ${effect.intervalSeconds} s exceeds the duration ${durationSeconds} s`,
         );
       }
+      const maxStacks = effect.maxStacksRef === undefined ? 1 : skillValue(skill, effect.maxStacksRef, levels[slot]);
+      if (!Number.isInteger(maxStacks) || maxStacks < 1) {
+        throw new RangeError(`skill ${skill.id}: dot max stacks must be a positive integer, got ${maxStacks}`);
+      }
+      // レイヴン編（plan/design-raven-s1.md 8 節の 2）: tick のゲージは 1 パス目で発火のたびに後の tick を予約するので、
+      // 付け直しで延びた tick が付け直しより後に出る形（afterInterval で、維持が間隔の整数倍）だけを許す
+      if (effect.gaugeOnTick === true) {
+        const ratio = durationSeconds / effect.intervalSeconds;
+        if (Math.abs(ratio - Math.round(ratio)) > 1e-9) {
+          throw new RangeError(
+            `skill ${skill.id}: gaugeOnTick needs a duration (${durationSeconds} s) that is a multiple of the interval`,
+          );
+        }
+      }
       const r: ResolvedDamageEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         damageType: 'skill',
@@ -191,6 +215,9 @@ export function resolveDotEffects(
           durationSeconds,
           firstTick: effect.firstTick ?? 'atApplication',
           ...(effect.status !== undefined ? { status: effect.status } : {}),
+          maxStacks,
+          ...(effect.gaugeOnApply === true ? { gaugeOnApply: true as const } : {}),
+          ...(effect.gaugeOnTick === true ? { gaugeOnTick: true as const } : {}),
         },
       };
       if (effect.assumes) r.assumes = effect.assumes;

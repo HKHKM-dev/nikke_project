@@ -50,7 +50,12 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
 
     const skillHitActivations: SlotSkillHitsResult['activations'] = sim.skillHits
       .filter((h) => h.slotIndex === index)
-      .map((h) => ({ seconds: framesToGameSeconds(h.frame), effect: h.effect, hit: h.hit }));
+      .map((h) => ({
+        seconds: framesToGameSeconds(h.frame),
+        effect: h.effect,
+        hit: h.hit,
+        ...(h.stacks === undefined ? {} : { stacks: h.stacks }),
+      }));
 
     return {
       index,

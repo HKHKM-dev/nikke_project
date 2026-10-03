@@ -531,6 +531,22 @@ export type DotEffect = {
    * 省略は効果ごとに別の持続ダメージ
    */
   status?: string;
+  /**
+   * レイヴン編（plan/design-raven-s1.md 2.1 節）: 最大スタック数の description_value_NN。有れば発火のたびに 1 スタック足し
+   * （上限で止める）、tick の値は 1 スタックの倍率 × その tick の時点のスタックの数（C-0182）。付け直しで全スタックの時間が
+   * 付け直され、まとまりが終われば次は 1 スタックから。firstTick: atApplication とは組み合わせられない
+   */
+  maxStacksRef?: number;
+  /**
+   * レイヴン編（2.2 節）: 発火（付けた）ごとに、射手の 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ
+   * 倍率なし）を発火のフレームに足す（C-0181）。トリガーは射撃の回数トリガーだけ
+   */
+  gaugeOnApply?: true;
+  /**
+   * レイヴン編（2.2 節）: tick ごとに、射手の 1 ヒットぶんのバーストゲージを tick のフレームに足す。スタックの数によらない
+   * （C-0181）。firstTick: afterInterval で、維持が間隔の整数倍のときだけ（8 節の 2。解決のときに見る）。トリガーは射撃の回数トリガーだけ
+   */
+  gaugeOnTick?: true;
   assumes?: LocalizedText;
 };
 
@@ -1031,6 +1047,9 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
         'durationSeconds',
         'firstTick',
         'status',
+        'maxStacksRef',
+        'gaugeOnApply',
+        'gaugeOnTick',
         'assumes',
         'claims',
       ].includes(key)
@@ -1063,6 +1082,19 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
       fail(`${path}.status`, `expected a non-empty string, got ${JSON.stringify(v.status)}`);
     }
     effect.status = v.status;
+  }
+  if (v.maxStacksRef !== undefined) {
+    effect.maxStacksRef = parseRef(v.maxStacksRef, `${path}.maxStacksRef`);
+    if (effect.firstTick !== 'afterInterval') fail(`${path}.maxStacksRef`, 'needs firstTick afterInterval');
+  }
+  for (const key of ['gaugeOnApply', 'gaugeOnTick'] as const) {
+    if (v[key] === undefined) continue;
+    if (v[key] !== true) fail(`${path}.${key}`, 'expected true');
+    if (!isShotCountTrigger(effect.trigger)) fail(`${path}.${key}`, 'needs a shot count trigger');
+    effect[key] = true;
+  }
+  if (effect.gaugeOnTick === true && effect.firstTick !== 'afterInterval') {
+    fail(`${path}.gaugeOnTick`, 'needs firstTick afterInterval');
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

@@ -229,7 +229,12 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     let skillHitDamage = 0;
     for (const h of skillHits) {
       if (h.slotIndex !== index) continue;
-      skillHitActivations.push({ seconds: framesToGameSeconds(h.frame), effect: h.effect, hit: h.hit });
+      skillHitActivations.push({
+        seconds: framesToGameSeconds(h.frame),
+        effect: h.effect,
+        hit: h.hit,
+        ...(h.stacks === undefined ? {} : { stacks: h.stacks }),
+      });
       skillHitDamage += h.hit.perActivation;
     }
 
