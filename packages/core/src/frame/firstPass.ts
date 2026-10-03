@@ -549,7 +549,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       );
     } else {
       controller = initialBurstController(
-        slots.map((s) => (s === null ? null : burstUnitOf(s.character))),
+        slots.map((s) => (s === null ? null : burstUnitOf(s.character, s.definition))),
         options.timing ?? DEFAULT_BURST_TIMING,
       );
     }

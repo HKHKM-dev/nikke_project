@@ -1,0 +1,66 @@
+{
+  "verification": "V-0122",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 231,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（C-0191）。基本バースト段階 1 の味方がいないので私だけの星で、フルバースト終了時に味方全体のバーストスキルクールタイム 7.48 秒▼。CT▼ が起きない H0 は定義を切り替えるので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "full-burst-intervals",
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "フルバーストの入り（FULL BURST の表示）どうしの間隔（動画のフレーム）の最初の 3 つ。H0 では 2,374f（デルタ・イサベルの CT 40 秒）"
+    },
+    {
+      "id": "burst-slots",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "バーストを撃った枠の並び（最初の 6 回。1 = アニス：スター、2 = デルタ、3 = イサベル）。チェーンの間にアニス：スターが I だけ撃って切れる発動も入る"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "a0c6a19ccf9d29899155962a9ac9057845d84ec1",
+    "values": {
+      "H1": {
+        "full-burst-intervals": [2089, 2043, 1999],
+        "burst-slots": [1, 2, 3, 1, 1, 2]
+      }
+    }
+  }
+}

@@ -579,6 +579,18 @@ export type BurstGaugeHitEffect = {
 };
 
 /**
+ * アニス：スター編: 「バースト再突入 N 段階に変更」（plan/design-anis-star-rest.md 3 節）。持つ枠のバーストの次の段階（CDN の
+ * change_burst_step。BurstUnit.nextStep）を step に差し替える。I を撃った後にもう一度 I に入れば、このチェーンで未使用の
+ * 別の I の枠が撃つ。部隊構成の条件（squad）を付けられる。どのスロットにも書けるが、1 つの定義に 1 つまで
+ */
+export type BurstReentryEffect = {
+  kind: 'burstReentry';
+  step: SquadBurstStep;
+  squad?: SquadCondition;
+  assumes?: LocalizedText;
+};
+
+/**
  * 効果・notes の根拠の結論の ID（`C-NNNN`。1 つ以上・重複なし）。どの結論が効果を裏付けるかは、定義のこの欄を正にする
  * （結論の側からは生成物の plan/claims.md・plan/skills.md で引く）。実在と状態の検査は records/skills.ts（npm run records:check・npm test）。
  * モデルの計算には使わない
@@ -596,8 +608,19 @@ export type SkillEffect = (
   | CycleEveryEffect
   | DotEffect
   | BurstGaugeHitEffect
+  | BurstReentryEffect
 ) &
   ClaimRefs;
+
+/** アニス：スター編: 定義のバースト再突入の段階（部隊構成の条件で外した後の定義を渡す）。無ければ null */
+export function burstReentryStepOf(definition: SkillDefinition | null | undefined): SquadBurstStep | null {
+  if (!definition) return null;
+  for (const slot of SKILL_SLOTS) {
+    if (definition.skills[slot].support === 'unsupported') continue;
+    for (const e of definition.skills[slot].effects) if (e.kind === 'burstReentry') return e.step;
+  }
+  return null;
+}
 
 /** 扱わなかった効果の説明。claims は「ダメージに関係しない」などの判断の根拠 */
 export type SkillNote = LocalizedText & ClaimRefs;
@@ -1138,6 +1161,15 @@ function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstG
   return effect;
 }
 
+function parseBurstReentryEffect(v: Record<string, Json>, path: string): BurstReentryEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'step', 'squad', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+  }
+  const effect: BurstReentryEffect = { kind: 'burstReentry', step: oneOf(SQUAD_BURST_STEPS, v.step, `${path}.step`) };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
   // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）
   const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds'] : [];
@@ -1205,8 +1237,16 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
   const effect: SkillEffect = parseEffectBody(v, path, slot);
   if (v.squad !== undefined) {
-    if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'cooldownReduction') {
-      fail(`${path}.squad`, `only allowed in passive, timed and cooldownReduction, found in ${effect.kind}`);
+    if (
+      effect.kind !== 'passive' &&
+      effect.kind !== 'timed' &&
+      effect.kind !== 'cooldownReduction' &&
+      effect.kind !== 'burstReentry'
+    ) {
+      fail(
+        `${path}.squad`,
+        `only allowed in passive, timed, cooldownReduction and burstReentry, found in ${effect.kind}`,
+      );
     }
     effect.squad = parseSquadCondition(v.squad, `${path}.squad`);
   }
@@ -1245,9 +1285,10 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'cycleEvery') return parseCycleEveryEffect(v, path);
   if (v.kind === 'dot') return parseDotEffect(v, path);
   if (v.kind === 'burstGaugeHit') return parseBurstGaugeHitEffect(v, path);
+  if (v.kind === 'burstReentry') return parseBurstReentryEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot" or "burstGaugeHit", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "burstGaugeHit" or "burstReentry", got ${JSON.stringify(v.kind)}`,
   );
 }
 
@@ -1313,6 +1354,10 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   }
   const skills = {} as Record<SkillSlot, SkillEntry>;
   for (const slot of SKILL_SLOTS) skills[slot] = parseEntry(raw.skills[slot], slot);
+  // アニス：スター編: バースト再突入は 1 つの定義に 1 つまで（次の段階は 1 つしか持てない）
+  if (SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects).filter((e) => e.kind === 'burstReentry').length > 1) {
+    fail('skills', 'at most one burstReentry effect per definition');
+  }
   validateCycles(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   if (raw.treasureSkills !== undefined) {

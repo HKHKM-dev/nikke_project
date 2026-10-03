@@ -87,6 +87,33 @@ const PRACTICAL_WITH_LITER: TeamInput = {
   ],
 };
 
+// V-0121 の撮影と同じ: アニス：スター（操作）+ I-DOLL・フラワー + デルタ + イサベル、オートバースト ON（みんなの星）
+const REENTRY: TeamInput = {
+  slots: [fixedSlot(17, true), fixedSlot(304, true), fixedSlot(20, true), fixedSlot(231, true)],
+  enemy: rangeEnemy,
+  durationSeconds: 180,
+  burst: true,
+  controlledSlot: 0,
+};
+
+describe('みんなの星のバースト再突入 I 段階（V-0121）', () => {
+  it('lets another Burst I ally fire after her Burst I in the same chain', () => {
+    const activations = runSimulation(REENTRY).schedule!.activations;
+    expect(activations.slice(0, 4).map((a) => [a.slotIndex, a.step])).toEqual([
+      [0, 'Step1'],
+      [1, 'Step1'],
+      [2, 'Step2'],
+      [3, 'Step3'],
+    ]);
+    expect(activations[0]!.enteredStep).toBe('Step1');
+  });
+
+  it('does not re-enter with My Own Star (no other Burst I ally)', () => {
+    const solo = runSimulation({ ...REENTRY, slots: [fixedSlot(17, true), fixedSlot(20, true), fixedSlot(231, true)] });
+    expect(solo.schedule!.activations[0]!.enteredStep).toBe('Step2');
+  });
+});
+
 describe('私だけの星とみんなの星（部隊構成の分岐）', () => {
   const attackOf = (input: TeamInput) => computeTeamDamage(input).slots[0]!.segments[0]!.trigger.attack;
 
@@ -119,6 +146,7 @@ describe.each([
   ['アニス：スター + I-DOLL・フラワー（録画 150 の編成）', WITH_FLOWER, true],
   ['実戦寄り（アニス：スター + クラウン + デルタ + アリス + モダニア）', PRACTICAL, true],
   ['実戦寄り（クラウンをリターに替えた編成）', PRACTICAL_WITH_LITER, false],
+  ['バースト再突入（V-0121 の撮影の条件）', REENTRY, true],
 ] as const)('sim vs calc: %s', (_name, input, checkTotals) => {
   const sim = runSimulation(input);
   const calc = computeTeamDamage(input);

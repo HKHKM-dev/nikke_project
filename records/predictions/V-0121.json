@@ -1,0 +1,70 @@
+{
+  "verification": "V-0121",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    },
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 231,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（C-0201）。基本バースト段階 1 のフラワーがいるのでみんなの星で、アニス：スターの I の後はもう一度 I に入る。同じ段階の候補は枠の若い順（モデルの前提。未検証）。再突入しない H0 は定義を切り替えるので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-slots",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "バーストを撃った枠の並び（最初の 8 回。1 = アニス：スター、2 = I-DOLL・フラワー、3 = デルタ、4 = イサベル）"
+    },
+    {
+      "id": "full-burst-intervals",
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "フルバーストの入りどうしの間隔（動画のフレーム）の最初の 3 つ。みんなの星なので CT▼ は無く、H1・H0 とも CT 40 秒で決まる見込み"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "a0c6a19ccf9d29899155962a9ac9057845d84ec1",
+    "values": {
+      "H1": {
+        "burst-slots": [1, 2, 3, 4, 1, 2, 1, 2],
+        "full-burst-intervals": [2374, 2374, 2374]
+      }
+    }
+  }
+}
