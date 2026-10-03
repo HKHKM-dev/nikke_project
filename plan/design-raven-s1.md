@@ -67,6 +67,7 @@ tick の時刻と付き直しは、クルミのハッキング（`firstTick: aft
 
 - **意味**: `gaugeOnApply` は、発火（持続ダメージを付けた）ごとに、射手の 1 ヒットぶんのゲージを発火のフレームに足す。`gaugeOnTick` は、tick ごとに同じ量を tick のフレームに足す。ダメージには関係しない。
 - **量**: 射手の `targetBurstEnergyPerShot` × (1 + バーストゲージのチャージ速度)。フルチャージ倍率は乗らない。スタックの数によらない（C-0181）。段のヒット（C-0085）と `burstGaugeHit`（C-0178）と同じ。ゲージが溜まる状態のときだけ足される（状態機械の規則のまま）。
+- **書ける条件**: `gaugeOnTick` は、`firstTick: afterInterval` で維持が間隔の整数倍のときだけ（8 節の 2）。
 - **既定**: どちらも省略は false。ニヒリスターの火傷とクルミのハッキングがゲージを溜めるかは確かめていないので、既存の定義は変えない（5 節の論点 3）。
 
 ## 3. 定義（`data/skills/851.json`）
@@ -85,20 +86,24 @@ tick の時刻と付き直しは、クルミのハッキング（`firstTick: aft
 
 - `skills/types.ts`
   - `DotEffect` に `maxStacksRef?`・`gaugeOnApply?`・`gaugeOnTick?` を足す。
-  - `parseDotEffect` で検証する。`maxStacksRef` と `firstTick: atApplication` は組み合わせられない。
+  - `parseDotEffect` で検証する。`maxStacksRef` と `gaugeOnTick` は、`firstTick: atApplication` と組み合わせられない（`gaugeOnTick` の理由は 8 節の 2）。
   - 単体テストで、検証エラーと Lv ごとの解決値を見る。
 - `skills/burstDamage.ts`
   - `resolveDotEffects` の `dot` に `maxStacks`（解決した値）と、ゲージの 2 つを足す。
   - ゲージの分を返す解決を足す（`resolveDotGauges`。効果ごとに、トリガー・tick の形・2 つの真偽）。
 - `frame/plan.ts`（sim と calc で共有）
-  - `planSkillHits` の持続ダメージで、tick ごとにスタックの数を数え、倍率をスタックの数倍にして積む。
+  - tick のフレームとその時点のスタックの数を返す `dotTicks(fires, intervalSeconds, durationSeconds, frames, firstTick, maxStacks = 1)` を足す（戻り値は `{ frame, stacks }[]`）。スタックの数は、いまのまとまりのうち tick のフレームまでの発火の数で、`maxStacks` で止める。既定の 1 なら、今の持続ダメージ（ニヒリスター・クルミ）はどの tick も 1 スタック。
+  - 今の `dotTickFrames` は、`dotTicks` のフレームだけを返す薄いラッパーにする。シグネチャは変えないので、呼び出し元（`planSkillHits` と、テストの `dot.test.ts`・`kurumiTeam.test.ts`・`nihilisterTeam.test.ts`）は変えなくてよい（8 節の 1）。
+  - `planSkillHits` の持続ダメージは `dotTicks` を呼び、倍率をスタックの数倍にして積む。
   - `SkillHitEvent` にスタックの数を持たせ、内訳の表示で「×N スタック」と出せるようにする。
-  - 数え方は `dotTickFrames` のまとまりと同じでなければならないので、`dotTickFrames` から「tick ごとの、まとまりの中の発火の数」も返すようにして、両方で使う。
 - `frame/firstPass.ts`（ゲージ）
   - 持続ダメージのゲージは射撃の列（発火）で決まり、射撃の列は時刻表に依るので、ループの中で追う（段のヒットのゲージ（V-0030）と同じ）。
-  - 付けたときの分は、発火のフレームのゲージに足す。tick の分は、まとまりの起点と終わりを追いながら tick のフレームに予約する（`pendingGauge`）。
+  - まとまりの規則（どの発火が付け直しか・終わりがどこまで延びるか・tick の時刻）は、1 か所に置く。発火を 1 つずつ受けて、新しく決まった tick のフレームを返す追跡の関数（`dotTickTracker`。まとまりの起点・最後の発火・次の k を持つ）を `frame/plan.ts` に足し、`dotTicks` もこれに発火を順に流して作る（8 節の 2）。
+  - 付けたときの分は、発火のフレームのゲージに直に足す（`pendingGauge` はフレームの頭で取り出し済み。damage の `gaugeHits` の遅れ 0 と同じ扱い）。
+  - tick の分は、発火のたびに追跡の関数が返した tick のフレームを `pendingGauge` に予約する。新しいまとまりなら起点から終わりまで、付け直しなら延びた分だけ。予約済みの tick は変わらない（終わりは延びるだけ）。
+  - ゲージはスタックの数によらないので、tick のフレームだけを使う（スタックの数は、後の発火で増えるので、予約のときには決まらない）。
   - トリガーは、`fullChargeShot` を含む射撃の回数トリガーだけにする。ほかのトリガーは検証で弾き、使うキャラが出たら広げる。
-  - ループの中で出した tick のフレームが、ループの後の `dotTickFrames` と同じ列になることを単体テストで確かめる。
+  - ループの中で予約した tick のフレームが、ループの後の `dotTicks` のフレームと同じ列になることを単体テストで確かめる。
 - 表示: Web の定義の表示と CLI に、スタックの上限とゲージの 2 つを出す（ラベルを足す）。
 - 定義: 3 節。
 
@@ -137,6 +142,23 @@ tick の時刻と付き直しは、クルミのハッキング（`firstTick: aft
 - フルバーストの後の tick は、A.N.モードの持続ダメージ▲（未実装）のぶん過小になる。
 - 的のジャンプの間に tick が当たるかは確かめていない（クルミと同じく、最後に付けてから 5 秒は tick を出す）。
 
+## 8. レビューの反映（2026-10-03）
+
+起案の後に、Antigravity から実装についての提案書（提案 A・B）を受けた。コードと照らして確かめ、どちらも採り入れた（4 節に反映）。
+
+1. **提案 B: `dotTicks` を足し、`dotTickFrames` をそのラッパーにする**（採用）
+   - 確かめたこと: `dotTickFrames` を呼ぶのは `frame/plan.ts` の `planSkillHits` と、テストの 3 ファイル（`dot.test.ts`・`kurumiTeam.test.ts`・`nihilisterTeam.test.ts`）だけ。シグネチャを変えなければ、どれも変えずに済む。
+   - 起案の書き方（`dotTickFrames` から発火の数も返す）は戻り値の形を変えるので、呼び出し元とテストに変更が及ぶ。提案の方が小さい。
+   - 足したこと: `maxStacks` の既定を 1 にする（提案では省略時の扱いが書かれていない）。スタックしない持続ダメージも同じ式（倍率 × スタックの数）で積めて、`planSkillHits` に分岐が要らない。
+2. **提案 A: ループの中の tick の規則を `dotTickFrames` と共通にする**（採用。制約を 1 つ足した）
+   - 起案では、ループの中で別に追って、同じ列になることをテストで確かめるだけだった。規則を 1 か所に置けば、2 つが食い違う余地そのものが無くなる。
+   - 確かめたこと: `pendingGauge` は、フレームの頭（手順 2 の前）で取り出される（`frame/firstPass.ts` の `pendingGauge.get(f)`）。だから、発火のフレームより後の tick しか予約できない。
+   - 付け直しの判定は「前の発火から維持の秒数のうち」、まとまりの終わりは「最後の発火 + 最後の tick の位置」。`afterInterval` で維持が間隔の整数倍のとき（レイヴンは 1 秒間隔・5 秒）は、最後の tick の位置が維持の秒数と同じなので、付け直しで延びた tick は、どれも付け直したフレームより後に出る。予約できる。
+   - `atApplication`（ニヒリスター）では、最後の tick の位置（9.5 秒）が維持の秒数（10 秒）より短い。その間に付け直すと、延びた tick が付け直したフレームより前に出ることがある。一括の `dotTickFrames` はこの tick も出すが、ループの中では後からは予約できない。
+   - **足した制約**: `gaugeOnTick` は、`firstTick: afterInterval` で、維持が間隔の整数倍のときだけ書ける（解決のときに検証で弾く。維持は Lv で決まる `durationRef` のこともあるので、解決の後に見る）。レイヴンはこれで足り、`atApplication` の持続ダメージにゲージが要るキャラが出たら、そのときに扱いを決める。
+   - 提案のとおりにしなかったこと: スタックの数は、追跡の関数には持たせない。予約のときには後の発火がまだ分からないので決まらない。スタックの数は、ループの後の `dotTicks` で数える。
+
 ## 経過
 
 - 2026-10-03: 起案（オーナーの指示「レイヴンの S1 の語彙の設計書を起案して」）。
+- 2026-10-03: Antigravity の提案書（提案 A・B）を確かめて採り入れた（8 節。オーナーの指示「提案書の内容を検証して、必要なら採用して」）。
