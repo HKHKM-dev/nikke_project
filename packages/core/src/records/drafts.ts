@@ -45,7 +45,7 @@ export function verificationTemplate(d: VerificationDraft): string {
     `- 問い: ${d.question}`,
     `- 話題: ${d.topic}`,
     `- 日付: ${d.date}`,
-    '- 録画: ',
+    // 録画は起案の時点では無い（撮る前に起こす）。空の行は Prettier が末尾の空白を消すと書式に合わなくなるので出さない
     '- 状態: 調査中',
     ...(d.derivedFrom ? [`- 派生元: \`${d.derivedFrom}\``] : []),
   ];
