@@ -1,0 +1,29 @@
+{
+  "id": "140",
+  "date": "2026-10-03",
+  "folder": "range",
+  "file": "20261003-140_smg_liter_auto.mp4",
+  "original": "2026-10-03_09-44-39.mp4",
+  "durationSec": 198.4,
+  "frames": 11905,
+  "fps": 60,
+  "sizeMB": 240.4,
+  "sha256": "ad508721099e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0110 のリター単騎の2 本目（対照）（撮った順はミサト → リター → ミサト → リター）。AUTO 射撃 ON・オートバースト OFF（画面左上の照準のボタンが橙、AUTO が灰）。出撃画面（f30）でスペック固定 ON と編成（編成の真ん中の枠に 1 体）、戦闘履歴のパネル（f11840）で交戦時間 03:00 と与ダメージを確かめた。HUD の最後の値はパネルと一致（`140-01`）"
+}
