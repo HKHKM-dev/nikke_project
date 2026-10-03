@@ -17,16 +17,18 @@
           "durationRef": 3,
           "firstTick": "afterInterval",
           "status": "hacking",
+          "gaugeOnTick": true,
           "assumes": {
-            "ja": "撃った弾はすべて命中する（命中の回数は射撃の回数と同じ列）。対象は敵 1 体。持続中に付き直すと、tick の刻みはそのままで終わりが延び、最後に付いてから 5 秒の中の刻みまで出る",
-            "en": "Every shot hits (hits follow the shot count). One enemy. Re-applying it while active keeps the tick cadence and extends the end, up to the last tick within 5 s of the last application"
+            "ja": "撃った弾はすべて命中する（命中の回数は射撃の回数と同じ列）。対象は敵 1 体。持続中に付き直すと、tick の刻みはそのままで終わりが延び、最後に付いてから 5 秒の中の刻みまで出る。tick ごとに、射手の 1 ヒットぶんのゲージを溜める（付けたときには溜めない）",
+            "en": "Every shot hits (hits follow the shot count). One enemy. Re-applying it while active keeps the tick cadence and extends the end, up to the last tick within 5 s of the last application. Each tick charges the Burst gauge by one hit of the shooter (applying it does not)"
           },
           "claims": [
             "C-0129",
             "C-0130",
             "C-0131",
             "C-0133",
-            "C-0136"
+            "C-0136",
+            "C-0196"
           ]
         },
         {
@@ -37,14 +39,16 @@
           "durationRef": 3,
           "firstTick": "afterInterval",
           "status": "hacking",
+          "gaugeOnTick": true,
           "assumes": {
-            "ja": "敵全体は敵 1 体。命中で付くハッキングと同じハッキング（付いている最中に使うと付き直しと同じで、tick の刻みは変わらない）",
-            "en": "All enemies means one enemy. It is the same hacking as the one applied by normal hits (using it while hacked acts as a re-application; the tick cadence does not change)"
+            "ja": "敵全体は敵 1 体。命中で付くハッキングと同じハッキング（付いている最中に使うと付き直しと同じで、tick の刻みは変わらない）。同じハッキングなので、tick のゲージも同じ（バーストで付いたときにゲージを溜めるかは確かめていない。溜めないとした）",
+            "en": "All enemies means one enemy. It is the same hacking as the one applied by normal hits (using it while hacked acts as a re-application; the tick cadence does not change). Being the same hacking, its ticks charge the gauge the same way (whether applying it with the burst charges the gauge is unchecked; assumed not)"
           },
           "claims": [
             "C-0136",
             "C-0146",
-            "C-0147"
+            "C-0147",
+            "C-0196"
           ]
         }
       ]

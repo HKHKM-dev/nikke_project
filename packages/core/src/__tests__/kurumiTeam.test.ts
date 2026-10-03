@@ -1,5 +1,5 @@
 // クルミ（862）を含む編成: S1 のハッキング（持続ダメージ dot。付いた 1 秒後から 1 秒ごと・付き直しで延びる）。
-// sim と calc の整合と、ハッキングの tick（plan/design-kurumi.md）。
+// sim と calc の整合と、ハッキングの tick（plan/design-kurumi.md）と、tick のゲージ（V-0113。plan/design-raven-s1.md 10 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -46,6 +46,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 }
 
 const KURUMI = 862;
+const DEF_PATH = `../../data/skills/${KURUMI}.json`;
 // 撮影の計画の編成（クルミ単騎。V-0052）と、クルミが I の実戦寄りの 5 人
 const TEAMS: Record<string, { input: TeamInput; kurumi: number }> = {
   '撮影の計画の編成（クルミ単騎）': { input: team([fixedSlot(KURUMI)], 0), kurumi: 0 },
@@ -127,6 +128,15 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, kurumi 
     }
   });
 
+  it('charges one hit of Kurumi per hacking tick, also for a hacking applied by the burst, and nothing on applying it (C-0196)', () => {
+    const own = plan.dotGauges.filter((g) => g.slotIndex === kurumi);
+    expect(own.length).toBeGreaterThan(0);
+    expect(own.every((g) => g.kind === 'tick')).toBe(true);
+    // ループの中で予約した tick は、ループの後に出したハッキングの tick と同じ列（バーストで付いた分も含む。10 節）
+    expect(own.map((g) => g.frame)).toEqual(ticks.map((h) => h.frame));
+    expect(new Set(own.map((g) => g.energy)).size).toBe(1);
+  });
+
   it('agree exactly on the schedule, the instants and the shot-counted groups', () => {
     expect(sim.schedule).toEqual(calc.schedule);
     expect(sim.instants).toEqual(plan.instants);
@@ -159,5 +169,46 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, kurumi 
       const c = calc.slots[i]!.totalDamage;
       expect(Math.abs(s - c) / c).toBeLessThan(0.05);
     });
+  });
+});
+
+// V-0113: クルミ単騎の録画 057〜062 の 1 回目の満タン。弾とハッキングの tick を 4,000 ずつ足した合計が、1,000,000 にちょうど
+// 届いたヒットのフレームで満タンになる（付けた回は足さない）。数は観測値から読む（テストに実測値を直書きしない）
+type Observation = { id: string; value: number | number[] };
+const observations = readJson<Observation[]>('../../../../records/observations/057.json');
+const obs = (id: string): Observation['value'] => {
+  const o = observations.find((x) => x.id === id);
+  if (o === undefined) throw new Error(`observation ${id} not found`);
+  return o.value;
+};
+
+describe('recordings 057–062 (Kurumi solo): the first full gauge (V-0113)', () => {
+  const { input } = TEAMS['撮影の計画の編成（クルミ単騎）']!;
+  const plan = planTeamRun(input);
+  const one = input.slots[0]!.character.shot.targetBurstEnergyPerShot;
+  const full = plan.schedule!.gaugeFullFrames[0]!;
+  const shots = plan.shots[0]!.frames;
+  const ticks = plan.dotGauges.filter((g) => g.kind === 'tick').map((g) => g.frame);
+  const gaugeAt = (frame: number): number =>
+    (shots.filter((f) => f <= frame).length + ticks.filter((f) => f <= frame).length) * one;
+
+  it('fills the gauge on the hit where the hits and the ticks reach 1,000,000 (C-0083, C-0196)', () => {
+    expect(shots).toContain(full);
+    expect(gaugeAt(full)).toBe(1_000_000);
+    expect(gaugeAt(full - 1)).toBeLessThan(1_000_000);
+  });
+
+  it('fills the gauge later without the tick gauge', () => {
+    const plain = structuredClone(readJson<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(DEF_PATH));
+    for (const e of plain.skills.skill1.effects) delete e.gaugeOnTick;
+    const slot = { ...input.slots[0]!, skills: { definition: parseSkillDefinition(plain), levels: MAX_SKILL_LEVELS } };
+    const without = planTeamRun({ ...input, slots: [slot] });
+    expect(without.dotGauges).toEqual([]);
+    expect(without.schedule!.gaugeFullFrames[0]!).toBeGreaterThan(full);
+  });
+
+  it('counts the same hits and ticks up to the full gauge as the recordings (057-10, 057-11)', () => {
+    for (const hits of obs('057-10') as number[]) expect(shots.filter((f) => f <= full)).toHaveLength(hits);
+    for (const n of obs('057-11') as number[]) expect(ticks.filter((f) => f <= full)).toHaveLength(n);
   });
 });

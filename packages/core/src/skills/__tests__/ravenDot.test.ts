@@ -58,6 +58,19 @@ describe('dot の maxStacksRef・gaugeOnApply・gaugeOnTick の検証', () => {
       /gaugeOnApply: needs a shot count trigger/,
     );
   });
+
+  // V-0113（plan/design-raven-s1.md 10 節）: クルミのバースト使用時のハッキングにも tick のゲージを書く。付けたときの分は書けない
+  it('accepts the tick gauge with burstUse, but not the apply gauge', () => {
+    const { gaugeOnApply: _, maxStacksRef: __, ...tickOnly } = SHOCK;
+    const def = parseSkillDefinition(withSkill1([{ ...tickOnly, trigger: 'burstUse' }]));
+    expect(def.skills.skill1.effects[0]).toMatchObject({ trigger: 'burstUse', gaugeOnTick: true });
+    expect(() => parseSkillDefinition(withSkill1([{ ...SHOCK, trigger: 'burstUse' }]))).toThrow(
+      /gaugeOnApply: needs a shot count trigger/,
+    );
+    expect(() => parseSkillDefinition(withSkill1([{ ...tickOnly, trigger: 'fullBurstStart' }]))).toThrow(
+      /gaugeOnTick: needs a shot count trigger or burstUse/,
+    );
+  });
 });
 
 describe('dot の解決（スタックとゲージ）', () => {
@@ -95,6 +108,17 @@ describe('dot の解決（スタックとゲージ）', () => {
       ]),
     );
     expect(() => groupDotsByStatus(resolveDotEffects(def, raven, MAX_SKILL_LEVELS))).toThrow(/max stacks/);
+  });
+
+  it('rejects a status group where only some effects have the tick gauge (V-0113)', () => {
+    const { gaugeOnApply: _, gaugeOnTick: __, ...noGauge } = SHOCK;
+    const def = parseSkillDefinition(
+      withSkill1([
+        { ...SHOCK, status: 'shock' },
+        { ...noGauge, status: 'shock' },
+      ]),
+    );
+    expect(() => groupDotsByStatus(resolveDotEffects(def, raven, MAX_SKILL_LEVELS))).toThrow(/tick gauge/);
   });
 });
 

@@ -472,12 +472,13 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
   });
   // レイヴン編（plan/design-raven-s1.md 4 節）: ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick）。射撃を数えて
-  // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する
+  // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する。
+  // V-0113（10 節）: バースト使用時に付く効果（burstUse。クルミのハッキング）も同じまとまりの発火として、手順 3 の出来事で追う
   const dotGaugeTrackers: {
     slotIndex: number;
-    effects: { count: ShotCountKind; every: number; n: number }[];
+    effects: { count: ShotCountKind; every: number; n: number; onApply: boolean }[];
+    onBurstUse: boolean;
     tracker: DotTickTracker;
-    onApply: boolean;
     onTick: boolean;
     energy: number;
   }[] = [];
@@ -485,19 +486,26 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     if (slot === null || slot.definition === null) return;
     for (const group of groupDotsByStatus(resolveDotEffects(slot.definition, slot.character, slot.levels))) {
       const dot = group[0]!.dot!;
-      const onApply = group.some((e) => e.dot!.gaugeOnApply === true);
-      const onTick = group.some((e) => e.dot!.gaugeOnTick === true);
-      if (!onApply && !onTick) continue;
-      const effects = group.map((e) => {
-        if (!isResolvedShotCount(e.trigger)) throw new RangeError('a dot with gauge needs shot count triggers');
-        return { count: e.trigger.count, every: e.trigger.every, n: 0 };
-      });
-      if (effects.every((e) => e.count === 'fullChargeShot') && !logs[i]!.fullCharge) continue;
+      // tick のゲージは同じ status でそろっている（groupDotsByStatus）。付けたときのゲージは効果ごと
+      const onTick = dot.gaugeOnTick === true;
+      if (!onTick && !group.some((e) => e.dot!.gaugeOnApply === true)) continue;
+      const effects: { count: ShotCountKind; every: number; n: number; onApply: boolean }[] = [];
+      let onBurstUse = false;
+      for (const e of group) {
+        if (isResolvedShotCount(e.trigger)) {
+          effects.push({ count: e.trigger.count, every: e.trigger.every, n: 0, onApply: e.dot!.gaugeOnApply === true });
+        } else if (e.trigger === 'burstUse' && e.dot!.gaugeOnApply !== true) {
+          onBurstUse = true;
+        } else {
+          throw new RangeError('a dot with gauge needs shot count triggers or burstUse (without the apply gauge)');
+        }
+      }
+      if (!onBurstUse && effects.every((e) => e.count === 'fullChargeShot') && !logs[i]!.fullCharge) continue;
       dotGaugeTrackers.push({
         slotIndex: i,
         effects,
+        onBurstUse,
         tracker: dotTickTracker(dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick),
-        onApply,
         onTick,
         energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
       });
@@ -505,6 +513,17 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   });
   const dotGauges: FirstPassResult['dotGauges'] = [];
   const pendingGauge = new Map<number, number>();
+  const trackDotBurstUse = dotGaugeTrackers.some((t) => t.onBurstUse);
+  /** 持続ダメージがフレーム f に付いた。新しく決まった tick の分を、tick のフレームに予約する（どれも f より後） */
+  const reserveDotTicks = (t: (typeof dotGaugeTrackers)[number], f: number): void => {
+    const { ticks } = t.tracker.fire(f);
+    if (!t.onTick) return;
+    for (const at of ticks) {
+      if (at <= f) throw new RangeError(`dot gauge tick at ${at} is not after the fire at ${f}`);
+      pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
+      dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy: t.energy });
+    }
+  };
   // フラワー編: 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
@@ -618,24 +637,21 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const shot = shotEvents[t.slotIndex];
       if (shot === null || shot === undefined) continue;
       let fired = false;
+      let apply = false;
       for (const e of t.effects) {
         if (e.count === 'lastShot' && !shot.lastShot) continue;
         if (e.count === 'fullChargeShot' && !shot.fullCharge) continue;
         e.n += 1;
-        if (e.n % e.every === 0) fired = true;
+        if (e.n % e.every !== 0) continue;
+        fired = true;
+        if (e.onApply) apply = true;
       }
       if (!fired) continue;
-      if (t.onApply) {
+      if (apply) {
         gauge += t.energy;
         dotGauges.push({ slotIndex: t.slotIndex, kind: 'apply', frame: f, energy: t.energy });
       }
-      const { ticks } = t.tracker.fire(f);
-      if (!t.onTick) continue;
-      for (const at of ticks) {
-        if (at <= f) throw new RangeError(`dot gauge tick at ${at} is not after the fire at ${f}`);
-        pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
-        dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy: t.energy });
-      }
+      reserveDotTicks(t, f);
     }
     // ヘルム編: バーストゲージのチャージ（最大値 × X%）。射撃の回数トリガーはこのフレームの射撃で発火し、このフレームのゲージに足す
     // （V-0034: バーは発のフレームで 1 回に跳ぶ）。ほかのトリガーは前のフレームまでに発火したものを足す
@@ -706,7 +722,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         t.step = (t.step + 1) % t.gaugeHits.length;
       }
     }
-    if (!trackEvents) continue;
+    if (!trackEvents && !trackDotBurstUse) continue;
 
     // 3. 出来事 → 射撃に効く窓の登録 → 即時効果
     const activations = activationsOf();
@@ -779,6 +795,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       fullBurstEndUsers,
       healed,
     };
+    // V-0113: バースト使用時に付く持続ダメージ（クルミのハッキング）。付け直しと同じで、延びた tick のゲージを予約する
+    // （burstUse のトリガーの判定と同じく、このフレームの効果の発火 burstEffects で見る）
+    for (const t of dotGaugeTrackers) {
+      if (t.onBurstUse && burstEffects.some((a) => a.slotIndex === t.slotIndex)) reserveDotTicks(t, f);
+    }
 
     // 回復を先に当てる。射撃の回数起点は次のフレームに送り（窓の開始と同じ規則）、それ以外はこのフレームの healed に立てる
     for (const src of heals) {

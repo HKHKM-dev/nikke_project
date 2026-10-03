@@ -7,7 +7,8 @@ import { gameSecondsToFrame } from '../time.ts';
 
 /**
  * クルミ編: dot を status ごとにまとめる（status の無い効果はそれぞれ 1 つ）。同じ status の効果は、間隔・維持・firstTick・
- * 倍率が同じでなければならない（1 つの持続ダメージとして tick を出すため。C-0136）
+ * 倍率が同じでなければならない（1 つの持続ダメージとして tick を出すため。C-0136）。V-0113: tick のゲージ（gaugeOnTick）も
+ * 持続ダメージ 1 つの性質なので同じであること（付けたときのゲージ gaugeOnApply は効果のトリガーごと）
  */
 export function groupDotsByStatus(effects: readonly ResolvedDamageEffect[]): ResolvedDamageEffect[][] {
   const groups: ResolvedDamageEffect[][] = [];
@@ -31,10 +32,11 @@ export function groupDotsByStatus(effects: readonly ResolvedDamageEffect[]): Res
       a.dot!.durationSeconds !== effect.dot!.durationSeconds ||
       a.dot!.firstTick !== effect.dot!.firstTick ||
       a.dot!.maxStacks !== effect.dot!.maxStacks ||
+      a.dot!.gaugeOnTick !== effect.dot!.gaugeOnTick ||
       a.multiplier !== effect.multiplier
     ) {
       throw new RangeError(
-        `dot status "${status}": effects differ in interval, duration, firstTick, max stacks or multiplier`,
+        `dot status "${status}": effects differ in interval, duration, firstTick, max stacks, tick gauge or multiplier`,
       );
     }
     group.push(effect);
