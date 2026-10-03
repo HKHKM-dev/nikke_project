@@ -1,0 +1,96 @@
+{
+  "verification": "V-0116",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "設計書 3 節の定義（C-0189・C-0190）。単騎なので私だけの星で、自分に攻撃力 40.01%▲（Lv10）。追加ダメージは最終攻撃力（▲の後）の 120.13% ×（攻撃力 − 防御力）。私だけの星の▲が付かない H0 は定義を切り替えるので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "アニス：スター（RL・操作・単騎）のフルチャージの通常攻撃 1 ヒット（胴体・非会心）。S1 の追加ダメージは含まない"
+    },
+    {
+      "id": "hit-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットの会心"
+    },
+    {
+      "id": "additional",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "S1 のフルチャージ攻撃命中時の追加ダメージ 1 回（会心なし）。録画 150（みんなの星の編成）の 150-06・150-07 は同じ指標だが編成が違うので結び付けない（撮った後に新しい録画の観測値を書く）",
+      "observations": ["161-05"]
+    },
+    {
+      "id": "additional-crit",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ追加ダメージの会心。録画 150（みんなの星の編成）の 150-06・150-07 は同じ指標だが編成が違うので結び付けない（撮った後に新しい録画の観測値を書く）",
+      "observations": ["161-06"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-03",
+    "commit": "8e75b6c9a7cf13518ed34b8c0b62fe17a15fc2fd",
+    "values": {
+      "H1": {
+        "hit-body": 172539.65182624996,
+        "hit-crit": 258809.47773937494,
+        "additional": 135250.82136305,
+        "additional-crit": 202876.23204457498
+      }
+    }
+  }
+}

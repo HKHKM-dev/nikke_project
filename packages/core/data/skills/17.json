@@ -1,0 +1,118 @@
+{
+  "formatVersion": 1,
+  "resourceId": 17,
+  "checkedAt": "2026-10-03",
+  "skills": {
+    "skill1": {
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "burstGaugeSpeed",
+          "ref": 5,
+          "assumes": {
+            "ja": "自分が生存している（戦闘不能は扱わない）",
+            "en": "The skill user stays alive (incapacitation is not modeled)"
+          }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "squad": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "私だけの星（自分を除く基本バースト段階 1 の味方がいないとき）。バースト段階が可変（AllStep）のキャラは段階 1 に数えない",
+            "en": "My Own Star (no other standard Burst I ally). Allies with a variable Burst stage (AllStep) are not counted as Burst I"
+          },
+          "claims": [
+            "C-0189",
+            "C-0191"
+          ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": "battleStart",
+          "target": "allies",
+          "ref": 3,
+          "squad": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "私だけの星のとき。戦闘開始時はバーストの CT が回っていないので効かない",
+            "en": "With My Own Star. It has no effect at the start of battle (no Burst cooldown is running yet)"
+          },
+          "claims": [
+            "C-0191"
+          ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "ref": 3,
+          "squad": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "私だけの星のとき",
+            "en": "With My Own Star"
+          },
+          "claims": [
+            "C-0191"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 4,
+          "assumes": {
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない",
+            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply"
+          },
+          "claims": [
+            "C-0190"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "未実装: 自分を除く基本バースト段階 1 の味方がいるときのみんなの星（バースト再突入 I 段階に変更）。チェーンは CDN の値（I の次は II）のまま",
+          "en": "Not implemented: Everyone's Star (re-enters Burst at Stage I) when another standard Burst I ally is present. The chain keeps the CDN value (Stage II after Stage I)",
+          "claims": [
+            "C-0189"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "未実装: フルバースト発動時の味方全体の攻撃力▲（私だけの星のとき・スキル発動者基準）・攻撃ダメージ▲、自分と防御力が低い味方の発射体爆発ダメージ▲。みんなの星のときのフルチャージ時の味方全体の回復はダメージに関係しない",
+          "en": "Not implemented: ATK up for all allies on Full Burst (with My Own Star, based on the caster), Attack Damage up, and Projectile Explosion Damage up for self and allies with lower DEF. The heal on Full Charge with Everyone's Star does not affect damage"
+        }
+      ]
+    },
+    "burst": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "未実装: シューティングスター（最終攻撃力の割合の自動攻撃・0.25 秒間隔・10 秒）とチャージ時間の固定、私だけの星のときの自分の攻撃ダメージ▲。爆発範囲▲・防御力▲・みんなの星のときの最大HP▲はダメージに関係しない",
+          "en": "Not implemented: Shooting Stars (automatic attacks for a share of final ATK every 0.25 s for 10 s), the fixed charge time, and Attack Damage up for self with My Own Star. Explosion radius, DEF and max HP (with Everyone's Star) do not affect damage"
+        }
+      ]
+    }
+  }
+}

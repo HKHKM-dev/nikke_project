@@ -2,7 +2,7 @@
 // plan/design-stage19.md 2.3・2.3.1・2.5 節。
 import { hitFrameOf, videoFrameOf } from '../burst/schedule.ts';
 import { computeTeamDamage } from '../calc/model.ts';
-import { DISTANCE_BONUS } from '../damage.ts';
+import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
@@ -192,6 +192,27 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
   return ((t.normal / t.hitRate / t.boost.total) * boost) / shot.shotCount;
 }
 
+/**
+ * アニス：スター編: 射撃ごとの倍率ダメージ（perShot。「フルチャージ攻撃が命中した時、最終攻撃力の X% の追加ダメージ」など）の 1 回の値。
+ * hitDamage と同じく、その時点の区間の 1 トリガーの perShot から、倍率グループ（1 + 会心 + フルバースト）だけをパターンに差し替えて
+ * 組み直す。枠に射撃ごとの倍率ダメージが複数あれば合計の値になる
+ */
+function perShotHitDamage(result: SimResult, ctx: MetricContext): number {
+  if (PER_SHOT_DAMAGE_CORE) throw new Error('perShotHitDamage はコアの補正が乗る perShot に未対応');
+  const slot = slotOf(result.slots, ctx);
+  const input = slotOf(ctx.input.slots, ctx);
+  const frame = Number(ctx.args.frame);
+  const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
+  if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
+  const t = segment.trigger;
+  if (t.hitRate === 0 || t.perShot === 0) throw new Error('命中率か射撃ごとの倍率ダメージが 0');
+  const crit = applyCritBuffs(input.character.crit, t.buffs);
+  const fullBurst = SKILL_HIT_FULL_BURST_BONUS ? t.boost.fullBurst : 0;
+  const expected = 1 + crit.rate * (crit.damage - 1) + fullBurst;
+  const pattern = 1 + (ctx.args.crit === true ? crit.damage - 1 : 0) + fullBurst;
+  return (t.perShot / t.hitRate / expected) * pattern;
+}
+
 export const METRICS: Readonly<Record<string, Metric>> = {
   teamTotalDamage: { args: [], sim: (r) => r.totalDamage, calc: (r) => r.totalDamage },
   slotTotalDamage: {
@@ -266,6 +287,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     },
   },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
+  perShotHitDamage: { args: ['slot', 'frame', 'crit'], sim: perShotHitDamage },
   burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
   dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
   skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },

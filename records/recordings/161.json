@@ -1,0 +1,29 @@
+{
+  "id": "161",
+  "date": "2026-10-03",
+  "folder": "range",
+  "file": "20261003-161_rl_anis-star_solo.mp4",
+  "original": "2026-10-03_18-53-18.mp4",
+  "durationSec": 214.6,
+  "frames": 12873,
+  "fps": 60,
+  "sizeMB": 259.7,
+  "sha256": "f4ce82f0436a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0116。アニス：スター単騎・操作（AUTO 射撃 ON）。戦闘開始の直後に一時停止画面で適用中の効果を開いた"
+}
