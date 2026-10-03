@@ -30,7 +30,8 @@
             "en": "My Own Star (no other standard Burst I ally). Allies with a variable Burst stage (AllStep) are not counted as Burst I"
           },
           "claims": [
-            "C-0189"
+            "C-0189",
+            "C-0191"
           ]
         },
         {
@@ -47,7 +48,7 @@
             "en": "With My Own Star. It has no effect at the start of battle (no Burst cooldown is running yet)"
           },
           "claims": [
-            "C-0189"
+            "C-0191"
           ]
         },
         {
@@ -64,7 +65,7 @@
             "en": "With My Own Star"
           },
           "claims": [
-            "C-0189"
+            "C-0191"
           ]
         },
         {

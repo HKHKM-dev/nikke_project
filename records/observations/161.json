@@ -1,0 +1,175 @@
+[
+  {
+    "id": "161-01",
+    "recording": "161",
+    "kind": "total",
+    "use": "record",
+    "value": 56737408,
+    "description": "アニス：スター単騎（操作・AUTO・スペック固定 ON・バーストなし）の 3 分の HUD の総ダメージの最後の値。結果画面の値と一致。胴体の 2 ヒット（backlog 2-17）をモデルが持たないので比べない",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "最後の増分は f11790。増分は 123 個"
+    },
+    "source": "V-0116",
+    "readAt": "2026-10-03"
+  },
+  {
+    "id": "161-02",
+    "recording": "161",
+    "kind": "count",
+    "use": "record",
+    "value": 120,
+    "unit": "トリガー",
+    "description": "アニス：スター のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "増分は 123 個。前の増分から 30f 未満の増分（3 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 59f）から発の数を決めた（2 発になった組 0 個）"
+    },
+    "source": "V-0116",
+    "readAt": "2026-10-03"
+  },
+  {
+    "id": "161-03",
+    "recording": "161",
+    "source": "V-0116",
+    "readAt": "2026-10-03",
+    "kind": "hit",
+    "use": "compare",
+    "value": 172540,
+    "spread": {
+      "kind": "range",
+      "low": 172539,
+      "high": 172540
+    },
+    "description": "アニス：スター（RL・操作・単騎）のスペック固定 ON・私だけの星（攻撃力 40.01%▲）のフルチャージの通常攻撃 1 ヒット（胴体・非会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "的の上の数値も出るが、1 発の胴体 2 ヒットと追加ダメージが重なるので、HUD の増分を分けて読んだ。増分（120 発）はどれも胴体のヒット 1〜2 個と追加ダメージ 1 個の和に 1 未満の差で分かれる: 480,330 = 2 × 胴体 + 追加（74 回）・307,791 = 胴体 + 追加（15 回）・566,600 = 胴体 + 胴体の会心 + 追加（12 回。f2038〜2058 で 4 つに割れて読めた 1 回を含めて 13 回）・547,955 = 2 × 胴体 + 追加の会心（11 回）・375,416 = 胴体 + 追加の会心（3 回）・634,225 = 胴体 + 胴体の会心 + 追加の会心（2 回）・394,060 = 胴体の会心 + 追加（2 回）。HUD は端数を持った合計を丸めて出すので、増分どうしの差は ±1 動く。胴体は 566,600 − 480,330 = 86,270（胴体の 0.5 倍）から 172,540、480,330 − 307,791 から 172,539"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "161-04",
+    "recording": "161",
+    "source": "V-0116",
+    "readAt": "2026-10-03",
+    "kind": "hit",
+    "use": "compare",
+    "value": 258809,
+    "spread": {
+      "kind": "range",
+      "low": 258809,
+      "high": 258810
+    },
+    "description": "同じ 1 ヒットの会心（胴体）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "566,600（胴体 + 胴体の会心 + 追加）− 307,791（胴体 + 追加）= 258,809。161-03 の 1.5 倍は 258,810"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "161-05",
+    "recording": "161",
+    "source": "V-0116",
+    "readAt": "2026-10-03",
+    "kind": "hit",
+    "use": "compare",
+    "value": 135251,
+    "spread": {
+      "kind": "range",
+      "low": 135250,
+      "high": 135252
+    },
+    "description": "S1 のフルチャージ攻撃命中時の追加ダメージ 1 回（会心なし。私だけの星の攻撃力▲の後）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "547,955 − 480,330 = 67,625（追加ダメージの 0.5 倍）から 135,250、307,791 − 172,540 から 135,251、480,330 − 2 × 172,539.5 から 135,251。増分の ±1 の動きを spread に書いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "161-06",
+    "recording": "161",
+    "source": "V-0116",
+    "readAt": "2026-10-03",
+    "kind": "hit",
+    "use": "compare",
+    "value": 202876,
+    "spread": {
+      "kind": "range",
+      "low": 202875,
+      "high": 202877
+    },
+    "description": "同じ追加ダメージの会心",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "375,416 − 172,540 = 202,876、547,955 − 2 × 172,539.5 = 202,876"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  }
+]
