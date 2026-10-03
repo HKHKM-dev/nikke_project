@@ -100,6 +100,11 @@ export type TriggerCondition = {
    * スキルの倍率ダメージ・バーストスキルには掛けない。命中を数えるトリガーは全弾命中で数える（近似。conditionNotes）
    */
   hitRate?: number;
+  /**
+   * V-0119: 1 発の通常攻撃が的に何ヒットするかの期待値（省略 1）。射撃場の的の表（TargetProfile.hitsPerShot）から自動の条件で入る。
+   * 通常攻撃の分（normal）だけに掛け、射撃ごとの倍率ダメージ（perShot）とゲージには掛けない（2 ヒット目はゲージを溜めない。C-0198）
+   */
+  hitsPerShot?: number;
 };
 
 export type ConditionInput = TriggerCondition & {
@@ -157,6 +162,8 @@ export type TriggerDamage = {
   perTrigger: number;
   /** Stage 15: 掛けた命中率（condition.hitRate。省略は 1）。normal と perShot に含まれている */
   hitRate: number;
+  /** V-0119: 掛けた 1 発のヒット数（condition.hitsPerShot。省略は 1）。normal にだけ含まれている */
+  hitsPerShot: number;
 };
 
 export type DamageResult = TriggerDamage & {
@@ -219,6 +226,13 @@ export function hitRateOf(condition: Pick<TriggerCondition, 'hitRate'>): number 
   return hitRate;
 }
 
+/** V-0119: 条件の 1 発のヒット数（省略は 1）。1 未満・有限でない値は RangeError */
+export function hitsPerShotOf(condition: Pick<TriggerCondition, 'hitsPerShot'>): number {
+  const hits = condition.hitsPerShot ?? 1;
+  if (!Number.isFinite(hits) || hits < 1) throw new RangeError(`hitsPerShot must be >= 1, got ${hits}`);
+  return hits;
+}
+
 /** Stage 15: 条件から来る注記。弾丸命中率が 1 未満なら、命中を数えるトリガーを全弾命中で数える近似を知らせる */
 export function conditionNotes(condition: Pick<TriggerCondition, 'hitRate'>): ModelNote[] {
   const hitRate = hitRateOf(condition);
@@ -275,8 +289,10 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const damageTakenMultiplier = 1 + buffs.damageTaken;
 
   const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage);
+  const hitsPerShot = hitsPerShotOf(condition);
   const normal =
     hitRate *
+    hitsPerShot *
     baseHit *
     weaponMultiplier *
     normalAttackMultiplier *
@@ -319,6 +335,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     perShot,
     perTrigger: normal + perShot,
     hitRate,
+    hitsPerShot,
   };
 }
 

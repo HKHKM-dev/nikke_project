@@ -337,7 +337,7 @@ export type TargetRateRow = Readonly<Record<string, number>>;
 
 /**
  * 弾の種類ごとの行（plan/design-rl-core-by-projectile.md）。キーは `<fireType>:<弾速>`（キャラデータの shot.fireType と
- * shot.projectile.speed の生値）。null・表に無いキーは未測定
+ * shot.projectile.speed の生値）。null・表に無いキーは未測定。V-0119: `<fireType>:<弾速>:<爆発の範囲>` の行があれば、そちらを先に引く
  */
 export type TargetRateByProjectile = { byProjectile: Readonly<Record<string, TargetRateRow | null>> };
 
@@ -359,6 +359,11 @@ export type TargetProfile = {
   coreHitRate: TargetRateTable;
   /** 弾丸命中率 */
   bulletHitRate: TargetRateTable;
+  /**
+   * V-0119: 1 発の通常攻撃のヒット数の期待値（1 以上。省略・null・表に無いキーは 1）。誘導弾・爆発の範囲 750 の RL が的の 2 か所に
+   * 当たる分（C-0197）
+   */
+  hitsPerShot?: TargetRateTable;
   /** セルごとの出どころ（verification.md の節・claims.md の ID） */
   source: string;
 };

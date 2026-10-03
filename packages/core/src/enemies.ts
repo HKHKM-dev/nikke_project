@@ -197,7 +197,15 @@ function parseLanding(v: unknown, path: string): LandingPoint {
 }
 
 /** 表のキー（着地点の id・帯・all）と値（0..1 か、行ごと null）を確かめる */
-function parseRateTable(v: unknown, path: string, keys: ReadonlySet<string>): TargetRateTable {
+/** 表の値の検査。割合（[0, 1]）か、V-0119 の 1 発のヒット数（1 以上） */
+type RateValue = { check: (v: unknown) => v is number; message: string };
+const RATE: RateValue = { check: isRate, message: 'must be in [0, 1]' };
+const HITS: RateValue = {
+  check: (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v) && v >= 1,
+  message: 'must be a number >= 1',
+};
+
+function parseRateTable(v: unknown, path: string, keys: ReadonlySet<string>, value: RateValue = RATE): TargetRateTable {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
   const table: TargetRateTable = {};
   for (const [weapon, row] of Object.entries(v)) {
@@ -209,32 +217,33 @@ function parseRateTable(v: unknown, path: string, keys: ReadonlySet<string>): Ta
       continue;
     }
     if (isRecord(row) && 'byProjectile' in row) {
-      table[weapon as WeaponType] = parseRateByProjectile(row, `${path}.${weapon}`, keys);
+      table[weapon as WeaponType] = parseRateByProjectile(row, `${path}.${weapon}`, keys, value);
       continue;
     }
-    table[weapon as WeaponType] = parseRateRow(row, `${path}.${weapon}`, keys);
+    table[weapon as WeaponType] = parseRateRow(row, `${path}.${weapon}`, keys, value);
   }
   return table;
 }
 
-function parseRateRow(row: unknown, path: string, keys: ReadonlySet<string>): TargetRateRow {
+function parseRateRow(row: unknown, path: string, keys: ReadonlySet<string>, check: RateValue): TargetRateRow {
   if (!isRecord(row) || Object.keys(row).length === 0) {
     throw new TypeError(`${path}: must be a non-empty object or null`);
   }
   for (const [key, value] of Object.entries(row)) {
     if (!keys.has(key)) throw new TypeError(`${path}.${key}: not a landing, band or all`);
-    if (!isRate(value)) throw new TypeError(`${path}.${key}: must be in [0, 1]`);
+    if (!check.check(value)) throw new TypeError(`${path}.${key}: ${check.message}`);
   }
   return { ...(row as Record<string, number>) };
 }
 
-/** 弾の種類のキー `<fireType>:<弾速>`（plan/design-rl-core-by-projectile.md 3.1 節） */
-const PROJECTILE_KEY = /^[A-Za-z]+:\d+(\.\d+)?$/;
+/** 弾の種類のキー `<fireType>:<弾速>`（plan/design-rl-core-by-projectile.md 3.1 節）。V-0119: 爆発の範囲まで書いた `<fireType>:<弾速>:<爆発の範囲>` も */
+const PROJECTILE_KEY = /^[A-Za-z]+:\d+(\.\d+)?(:\d+(\.\d+)?)?$/;
 
 function parseRateByProjectile(
   row: Record<string, unknown>,
   path: string,
   keys: ReadonlySet<string>,
+  value: RateValue,
 ): TargetRateByProjectile {
   if (Object.keys(row).length !== 1) throw new TypeError(`${path}: byProjectile must be the only key`);
   const by = row.byProjectile;
@@ -244,8 +253,8 @@ function parseRateByProjectile(
   const rows: Record<string, TargetRateRow | null> = {};
   for (const [key, r] of Object.entries(by)) {
     const at = `${path}.byProjectile.${key}`;
-    if (!PROJECTILE_KEY.test(key)) throw new TypeError(`${at}: key must be <fireType>:<speed>`);
-    rows[key] = r === null ? null : parseRateRow(r, at, keys);
+    if (!PROJECTILE_KEY.test(key)) throw new TypeError(`${at}: key must be <fireType>:<speed>[:<explosionRange>]`);
+    rows[key] = r === null ? null : parseRateRow(r, at, keys, value);
   }
   return { byProjectile: rows };
 }
@@ -306,6 +315,9 @@ function parseTargetProfile(v: unknown, path: string): TargetProfile {
     mixes,
     coreHitRate: parseRateTable(v.coreHitRate, `${path}.coreHitRate`, keys),
     bulletHitRate: parseRateTable(v.bulletHitRate, `${path}.bulletHitRate`, keys),
+    ...(v.hitsPerShot === undefined
+      ? {}
+      : { hitsPerShot: parseRateTable(v.hitsPerShot, `${path}.hitsPerShot`, keys, HITS) }),
     source: v.source,
   };
 }

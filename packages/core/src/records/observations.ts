@@ -189,7 +189,8 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
   const crit = ctx.args.crit === true ? applyCritBuffs(character.crit, t.buffs).damage - 1 : 0;
   const distance = ctx.args.distance === true && character.bonusRange !== null ? DISTANCE_BONUS : 0;
   const boost = 1 + core + crit + distance + t.boost.fullBurst;
-  return ((t.normal / t.hitRate / t.boost.total) * boost) / shot.shotCount;
+  // V-0119: 1 発のヒット数（的の表の hitsPerShot）は 1 ヒットの値に含めない
+  return ((t.normal / t.hitRate / t.hitsPerShot / t.boost.total) * boost) / shot.shotCount;
 }
 
 /**
