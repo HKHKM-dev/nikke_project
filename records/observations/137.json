@@ -1,0 +1,189 @@
+[
+  {
+    "id": "137-01",
+    "recording": "137",
+    "kind": "total",
+    "use": "record",
+    "source": "V-0110",
+    "readAt": "2026-10-03",
+    "value": 28706365,
+    "description": "ミサト（SMG）単騎・AUTO・オートバースト OFF の 180 秒の HUD の総ダメージの最後の値（V-0110 のミサトの1 本目）。戦闘履歴のパネルの与ダメージと一致。的のジャンプの時刻とリロードの位置で動くので、比べない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps の total）・still.ts（パネル）",
+      "note": "パネルは f12150 を still.ts で切り出して読んだ"
+    }
+  },
+  {
+    "id": "137-02",
+    "recording": "137",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0110",
+    "readAt": "2026-10-03",
+    "value": [2509, 4650, 6956, 9119, 11049],
+    "unit": "f",
+    "description": "的のジャンプの前の最後の 1 ヒットのフレーム（5 回）。次の 1 ヒットは f2632・4788・7107・9258・11212。区間は 中近 → 近 → 遠 → 中遠 → 近 → 遠で代表値どおり。SMG の距離ボーナス（15〜35）は中近と近の 1 ヒットに付き、遠・中遠には付かない（中遠の着地点が A のときだけ付く）。区間ごとのヒットの数は 532・608・616・629・575・71",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュ。分解は使い捨てのスクリプト）",
+      "note": "ヒットの 100f を超える空きのうち、リロードの空きでないもの（ミサトのリロードの空きは約 83f。139 の f1848 の 103f の空きは中近の中の読み落としで、区間を切らない）"
+    }
+  },
+  {
+    "id": "137-03",
+    "recording": "137",
+    "kind": "rate",
+    "use": "record",
+    "source": "V-0110",
+    "readAt": "2026-10-03",
+    "value": [0.277, 0.196, 0.062, 0.044],
+    "unit": "割合",
+    "description": "ミサトの S1 の 3 スタックの窓（各区間の頭の 180 ヒットを除いた残り。頭の 180 ヒットの間に撃った発は 180 以上なので、スタックが切れていても 3 回発火している）の距離帯ごとのコア命中率。近・中近・中遠・遠の順。近 228 / 823、中近 69 / 352、中遠 28 / 449、遠 19 / 436（コア / 当たった数）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュ。分解は使い捨てのスクリプト）",
+      "note": "6,407.181 × (1 + コア 1 + 会心 0.5 + 距離ボーナス 0.3) の 8 通りの格子で、差 2 以内で読んだ。2 ヒットが 1 つの増分に入ったものは 2 つの格子の値の和で分け、コアの数が一通りに決まらない和は落とした。分解できた 1 ヒットは 3031、落とした増分は 51（HUD の読み違い（8,000・800 など、桁の割れた値）が大半）"
+    }
+  },
+  {
+    "id": "137-04",
+    "recording": "137",
+    "kind": "rate",
+    "use": "record",
+    "source": "V-0110",
+    "readAt": "2026-10-03",
+    "value": [0.267, 0.165, 0.067, 0.049],
+    "unit": "割合",
+    "description": "ミサトの全部のヒットの距離帯ごとのコア命中率（参考。区間の頭を除かない）。近・中近・中遠・遠の順。近 316 / 1183、中近 88 / 532、中遠 42 / 629、遠 34 / 687。全体は 480 / 3031、会心の割合は 0.158（期待 0.15）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュ。分解は使い捨てのスクリプト）",
+      "note": "137-03 と同じ"
+    }
+  },
+  {
+    "id": "137-05",
+    "recording": "137",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0110",
+    "readAt": "2026-10-03",
+    "value": 6407,
+    "description": "ミサト（SMG・単騎 AUTO）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし（遠・中遠））。1032 回。予測ファイル V-0110 の misato-near-body と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "ミサトだけの増分（単騎）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "137-06",
+    "recording": "137",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0110",
+    "readAt": "2026-10-03",
+    "value": 12814,
+    "description": "ミサト（SMG・単騎 AUTO）のスペック固定 ON の通常攻撃 1 ヒット（コア・非会心・距離ボーナスなし）。68 回。予測ファイル V-0110 の misato-near-core と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "ミサトだけの増分（単騎）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "137-07",
+    "recording": "137",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0110",
+    "readAt": "2026-10-03",
+    "value": 9611,
+    "description": "ミサト（SMG・単騎 AUTO）のスペック固定 ON の通常攻撃 1 ヒット（胴体・会心・距離ボーナスなし）。208 回。予測ファイル V-0110 の misato-near-crit と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "ミサトだけの増分（単騎）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "137-08",
+    "recording": "137",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0110",
+    "readAt": "2026-10-03",
+    "value": 8329,
+    "description": "ミサト（SMG・単騎 AUTO）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスの中（近・中近））。1104 回。予測ファイル V-0110 の misato-midnear-body と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "ミサトだけの増分（単騎）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  }
+]
