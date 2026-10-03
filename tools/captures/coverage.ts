@@ -513,6 +513,16 @@ for (const landing of [...new Set(sections.map((s) => s.landing))]) {
       dx: { median: median(used.map((r) => r.d!.x)), sd: sd(used.map((r) => r.d!.x)) },
       dy: { median: median(used.map((r) => r.d!.y)), sd: sd(used.map((r) => r.d!.y)) },
     },
+    cleanOffset: {
+      dx: {
+        median: median(pool.filter((x) => x.c.aim).map((x) => x.c.aim!.x - x.anchor.x)),
+        sd: sd(pool.filter((x) => x.c.aim).map((x) => x.c.aim!.x - x.anchor.x)),
+      },
+      dy: {
+        median: median(pool.filter((x) => x.c.aim).map((x) => x.c.aim!.y - x.anchor.y)),
+        sd: sd(pool.filter((x) => x.c.aim).map((x) => x.c.aim!.y - x.anchor.y)),
+      },
+    },
     uniform: cfg.sGrid.map((_, i) => mean(used.map((r) => r.u[i]!))),
     normal: cfg.sGridNormal.map((_, i) => mean(used.filter((r) => r.n.length).map((r) => r.n[i]!))),
     normalShots: used.filter((r) => r.n.length).length,
