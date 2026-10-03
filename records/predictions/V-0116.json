@@ -81,5 +81,16 @@
       "observations": []
     }
   ],
-  "predicted": null
+  "predicted": {
+    "at": "2026-10-03",
+    "commit": "8e75b6c9a7cf13518ed34b8c0b62fe17a15fc2fd",
+    "values": {
+      "H1": {
+        "hit-body": 172539.65182624996,
+        "hit-crit": 258809.47773937494,
+        "additional": 135250.82136305,
+        "additional-crit": 202876.23204457498
+      }
+    }
+  }
 }

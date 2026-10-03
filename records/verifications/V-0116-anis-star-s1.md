@@ -52,7 +52,14 @@
 
 <!-- records:predictions:start -->
 
-予測はまだ出していない（`npm run records:predict`）。
+予測は 2026-10-03（commit 8e75b6c）に出した。
+
+| 指標                                | 実測         | 予測 H1     |
+| ----------------------------------- | ------------ | ----------- |
+| hit-body（hitDamage）               | （実測なし） | 172,539.652 |
+| hit-crit（hitDamage）               | （実測なし） | 258,809.478 |
+| additional（perShotHitDamage）      | （実測なし） | 135,250.821 |
+| additional-crit（perShotHitDamage） | （実測なし） | 202,876.232 |
 
 <!-- records:predictions:end -->
 

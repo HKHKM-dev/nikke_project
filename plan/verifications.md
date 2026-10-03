@@ -1014,4 +1014,8 @@
   - 話題: スキル・キャラ固有・日付: 2026-10-03・状態: 調査中・Stage: plan/design-anis-star-s1.md（部隊構成の条件 `squad`）
   - 観測値: 150-06、150-07
   - 派生元: V-0115
-  - 予測: 予測ファイルはあるが、まだ出していない（`npm run records:predict`）
+  - 予測（2026-10-03、commit 8e75b6c）との比べ:
+    - hit-body（hitDamage）: 実測なし。H1 172,539.652
+    - hit-crit（hitDamage）: 実測なし。H1 258,809.478
+    - additional（perShotHitDamage）: 実測なし。H1 135,250.821
+    - additional-crit（perShotHitDamage）: 実測なし。H1 202,876.232
