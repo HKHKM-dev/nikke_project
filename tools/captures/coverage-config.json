@@ -2,13 +2,27 @@
   "version": 1,
   "sGrid": [0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100, 110, 120, 130],
   "sShot": 110,
-  "dark": 22,
+  "dark": 15,
   "overlayDilate": 2,
   "openTarget": 1,
-  "maxUnknown": 0.5,
   "magazineGap": 40,
   "sectionDy": 8,
   "sectionDw": 0.15,
   "nearBMinWidth": 390,
-  "midFarFootY": { "midFarA": 584, "midFarB": 571, "midFarC": 561 }
+  "midFarFootY": {
+    "midFarA": 584,
+    "midFarB": 571,
+    "midFarC": 561
+  },
+  "whiteOverBg": 25,
+  "cleanAfter": 20,
+  "cleanBefore": 3,
+  "cleanStep": 10,
+  "maxFx": 0.45,
+  "maxSamples": 24,
+  "normalEvery": 4,
+  "sGridNormal": [40, 75, 90, 100, 110, 130],
+  "anchorExclude": 45,
+  "closeTarget": 2,
+  "fillHoles": 300
 }
