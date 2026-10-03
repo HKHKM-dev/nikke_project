@@ -1,0 +1,42 @@
+{
+  "id": "133",
+  "date": "2026-10-03",
+  "folder": "range",
+  "file": "20261003-133_ar+sr+sg_kurumi+delta+drake_kurumi-ai_drake-control.mp4",
+  "original": "2026-10-03_08-30-06.mp4",
+  "durationSec": 202.7,
+  "frames": 12163,
+  "fps": 60,
+  "sizeMB": 245.5,
+  "sha256": "53b9756181c3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0103 の▲ありの 2 本目（読み取りは V-0109）: クルミ（AI）・デルタ（AI）・ドレイク（操作・撃たない・宝物 3 段階）。自動バースト ON。出撃画面（f30）で灼熱タブ・編成・スペック固定 ON、戦闘履歴のパネル（f12120）で枠順と操作枠を確かめた（Lv.400。交戦時間 03:00）。ドレイクの与ダメージはバーストの 3 回ずつの和と一致（`133-06`）。HUD の最後の値はパネルの 3 人の和と一致（`133-01`）。画面左上は AUTO（オートバースト）が橙で、照準のボタンは灰。戦闘開始は f834（+89f の変わり目）。クルミのバースト 7 回のうちフルバーストは 4 回（`133-02`）"
+}
