@@ -1,0 +1,84 @@
+{
+  "verification": "V-0115",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": true
+    },
+    {
+      "rid": 17,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（C-0169。corporation_sub_type が OVERSPEC の SSR は好感度 rank40）。アニス：スターの S1 は基本バースト段階 1 の味方（I-DOLL・フラワー）がいるので「みんなの星」で、攻撃力▲（私だけの星）は乗らない（説明文どおり。アニス：スターのスキル定義は無いので、モデルも▲なし）。rank30 の H0 と、私だけの星が乗る場合はモデルのコードや定義を切り替えるので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "アニス：スター（RL・AI）のフルチャージの通常攻撃 1 ヒット（胴体・非会心。RL に距離ボーナスは無い）。S1 の追加ダメージ（最終攻撃力の割合）は含まない。120-02 と同じ指標"
+    },
+    {
+      "id": "hit-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットの会心"
+    },
+    {
+      "id": "hit-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-03",
+    "commit": "c6e76328da35c5ec451bb0eae8164c0d37ee504c",
+    "values": {
+      "H1": {
+        "hit-body": 123190.0125,
+        "hit-crit": 184785.01875,
+        "hit-core": 246380.025
+      }
+    }
+  }
+}
