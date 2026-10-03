@@ -52,7 +52,10 @@ const ownClaims = claims.filter((c) => verification.claims.includes(c.id));
 const basisObs = observations.filter((o) => ownClaims.some((c) => c.observations.includes(o.id)));
 const residuals = runObservations(basisObs, recordings, data);
 const residualOf = new Map(
-  residuals.map((r) => [r.observation.id, { status: r.status, diff: r.diff, value: r.observation.value }]),
+  residuals.map((r) => [
+    r.observation.id,
+    { status: r.status, diff: r.diff, value: r.observation.value, metric: r.observation.compare?.metric },
+  ]),
 );
 const invalid = new Set(invalidReasonsOf(observations).keys());
 const gradeCandidates = new Map<string, ClaimGrade>();

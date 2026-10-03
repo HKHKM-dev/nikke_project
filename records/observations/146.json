@@ -57,5 +57,69 @@
       "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュ。分解は使い捨てのスクリプト。V-0110 と同じ）",
       "note": "146-03 と同じ"
     }
+  },
+  {
+    "id": "146-05",
+    "recording": "146",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0114",
+    "readAt": "2026-10-03",
+    "value": 16183,
+    "description": "ミランダ（SMG・単騎 AUTO・宝物 3 段階）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし・宝物版 S1 の攻撃力▲の中）。956 回。予測ファイル V-0114 の miranda-atk-body と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "ミランダだけの増分（単騎）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "146-06",
+    "recording": "146",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0114",
+    "readAt": "2026-10-03",
+    "value": 21039,
+    "description": "ミランダ（SMG・単騎 AUTO・宝物 3 段階）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスの中・攻撃力▲の中）。1011 回。予測ファイル V-0114 の miranda-atk-dist-body と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "ミランダだけの増分（単騎）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
   }
 ]
