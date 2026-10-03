@@ -1,0 +1,125 @@
+[
+  {
+    "id": "146-01",
+    "recording": "146",
+    "kind": "total",
+    "use": "record",
+    "source": "V-0114",
+    "readAt": "2026-10-03",
+    "value": 68642318,
+    "description": "ミランダ（SMG）単騎・AUTO・オートバースト OFF の 180 秒の HUD の総ダメージの最後の値（V-0114 のミランダの2 本目）。戦闘履歴のパネルの与ダメージと一致。的のジャンプの時刻とリロードの位置で動くので、比べない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps の total）・still.ts（パネル）",
+      "note": "パネルは f11805 を still.ts で切り出して読んだ"
+    }
+  },
+  {
+    "id": "146-02",
+    "recording": "146",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0114",
+    "readAt": "2026-10-03",
+    "value": [2653, 4375, 6703, 8845, 10794],
+    "unit": "f",
+    "description": "的のジャンプの前の最後の 1 ヒットのフレーム（5 回）。次の 1 ヒットは f2779・4535・6831・8966・10921。区間は中近 → 近 → 遠 → 中遠 → 近 → 遠で代表値どおり（距離ボーナスは中近・近と、中遠の着地点が A のとき）。区間ごとのヒットの数は 467・459・523・568・558・98",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュ。分解は使い捨てのスクリプト。V-0110 と同じ）",
+      "note": "ミランダのリロードの空き（約 108f）は約 400f ごとに来る。中近 → 近の切れ目には、リロードの周期どおりで少し長い空き（f2234 の後、127〜132f）と、その約 420f 後の周期から外れた空き（f2653 の後、126f）の 2 つの候補があり、どちらが的のジャンプかを決めきれなかった（コアの割合の変わり目は 144・146 では後、148 では前の候補。前の候補は、リター 3 本の 1 回目のジャンプと同じ、最初のヒットから約 1,472f の所）。2 つの候補の間のヒット（1 マガジン）は数えず、区間の切れ目は後の候補にした。ほかの切れ目は周期から外れた空き"
+    }
+  },
+  {
+    "id": "146-03",
+    "recording": "146",
+    "kind": "rate",
+    "use": "record",
+    "source": "V-0114",
+    "readAt": "2026-10-03",
+    "value": [0.285, 0.156, 0.054, 0.039],
+    "unit": "割合",
+    "description": "ミランダの S1 の▲の窓（各区間の頭の 30 ヒットを除いた残り）の距離帯ごとのコア命中率。近・中近・中遠・遠の順。近 273 / 957、中近 68 / 437、中遠 29 / 538、遠 22 / 561（コア / 当たった数）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュ。分解は使い捨てのスクリプト。V-0110 と同じ）",
+      "note": "B = 10,781.1（予測ファイルの miranda-body）× (1 + コア 1.5 + 会心 0.5 + 距離ボーナス 0.3) × 宝物版 S1 の攻撃力▲（× 1.5011）の 16 通りの格子で、差 2 以内で読んだ（どの値も 11 以上離れる）。分解できた 1 ヒットは 2793、落とした増分は 17（HUD の桁の割れた読み違いが大半）"
+    }
+  },
+  {
+    "id": "146-04",
+    "recording": "146",
+    "kind": "rate",
+    "use": "record",
+    "source": "V-0114",
+    "readAt": "2026-10-03",
+    "value": [0.281, 0.152, 0.055, 0.039],
+    "unit": "割合",
+    "description": "ミランダの全部のヒット（数えなかった 1 マガジンを除く）の距離帯ごとのコア命中率（参考）。近・中近・中遠・遠の順。近 286 / 1017、中近 71 / 467、中遠 31 / 568、遠 24 / 621。会心の割合は 0.156（期待 0.15）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュ。分解は使い捨てのスクリプト。V-0110 と同じ）",
+      "note": "146-03 と同じ"
+    }
+  },
+  {
+    "id": "146-05",
+    "recording": "146",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0114",
+    "readAt": "2026-10-03",
+    "value": 16183,
+    "description": "ミランダ（SMG・単騎 AUTO・宝物 3 段階）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし・宝物版 S1 の攻撃力▲の中）。956 回。予測ファイル V-0114 の miranda-atk-body と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "ミランダだけの増分（単騎）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "146-06",
+    "recording": "146",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0114",
+    "readAt": "2026-10-03",
+    "value": 21039,
+    "description": "ミランダ（SMG・単騎 AUTO・宝物 3 段階）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスの中・攻撃力▲の中）。1011 回。予測ファイル V-0114 の miranda-atk-dist-body と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "ミランダだけの増分（単騎）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  }
+]

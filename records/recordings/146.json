@@ -1,0 +1,30 @@
+{
+  "id": "146",
+  "date": "2026-10-03",
+  "folder": "range",
+  "file": "20261003-146_smg_miranda_auto.mp4",
+  "original": "2026-10-03_16-17-13.mp4",
+  "durationSec": 198.2,
+  "frames": 11890,
+  "fps": 60,
+  "sizeMB": 240.2,
+  "sha256": "162b80a352df",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 32,
+      "name": "ミランダ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0114 のミランダ（宝物 3 段階）単騎の2 本目（撮った順はミランダ → リター → ミランダ → リター → ミランダ → リター。計画はミランダ 4 本・リター 2 本だった）。AUTO 射撃 ON・オートバースト OFF（画面左上の照準のボタンが橙、AUTO が灰）。出撃画面（f30）でスペック固定 ON と編成（編成の真ん中の枠に 1 体）、戦闘履歴のパネル（f11805）で交戦時間 03:00 と与ダメージを確かめた。HUD の最後の値はパネルと一致"
+}

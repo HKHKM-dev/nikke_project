@@ -1,0 +1,152 @@
+{
+  "verification": "V-0114",
+  "note": "ミランダ単騎（宝物 3 段階・AUTO・オートバースト OFF）の予測。判定に使うコア命中率の倍率は METRICS に指標が無く、H0（命中率▲がコア命中率に効かない）はモデルのコードの切り替えなので、どちらも検証記録の「予測」に手で書いた（H0 の値は、定義から命中率▲を外した sim で出した）。ここの指標は、増分を分ける格子の基準にする 1 ヒットの値（宝物版 S1 の攻撃力▲の外と中）と、180 秒の総ダメージ（いまのモデル = H1）。対照（リター単騎）は編成が違うので、このファイルに入れず検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 32,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S1 の命中率▲（5.44% と、SMG の味方への 3.79% の和）を C-0036・C-0170 の式でコア命中率に効かせる（いまのモデル）。H0 はモデルのコードの切り替えで override で表せないので、値は検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "miranda-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "ミランダ（SMG・単騎 AUTO）の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし）。戦闘開始の 30 ヒットの前なので、宝物版 S1 の攻撃力▲の外。分解の格子の基準"
+    },
+    {
+      "id": "miranda-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア"
+    },
+    {
+      "id": "miranda-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットの会心"
+    },
+    {
+      "id": "miranda-dist-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "距離ボーナスの中（近・中近）の 1 ヒット（胴体・非会心）。攻撃力▲の外"
+    },
+    {
+      "id": "miranda-atk-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "宝物版 S1 の攻撃力▲（50.06%・5 秒。30 ヒットごと）の中の 1 ヒット（胴体・非会心・距離ボーナスなし）。撃ち続ける間はほぼずっとこの値"
+    },
+    {
+      "id": "miranda-atk-dist-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "攻撃力▲の中の、距離ボーナスの中の 1 ヒット（胴体・非会心）"
+    },
+    {
+      "id": "miranda-total",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "180 秒のミランダの総ダメージ。H0 と H1 の差はコア命中率の差だけ（H0 の値は検証記録に手で書いた）。的のジャンプの時刻とリロードの位置で動くので、判定には使わない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-03",
+    "commit": "d785a77e473a03a8c6904b96864ed459972b25e7",
+    "values": {
+      "H1": {
+        "miranda-body": 10781.1,
+        "miranda-core": 26952.75,
+        "miranda-crit": 16171.650000000001,
+        "miranda-dist-body": 14015.43,
+        "miranda-atk-body": 16183.525139999998,
+        "miranda-atk-dist-body": 21038.582681999997,
+        "miranda-total": 69931647.50787704
+      }
+    }
+  }
+}
