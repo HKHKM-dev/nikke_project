@@ -4,7 +4,7 @@
 - キャラ × スロットごとに、対応状況（`supported`・`partial`・`unsupported`）と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 25・効果 105（根拠あり 38）・notes 61（根拠あり 20）
+件数: キャラ 26・効果 110（根拠あり 43）・notes 65（根拠あり 20）
 
 ## 10 ラピ
 
@@ -24,6 +24,24 @@
   - notes[0] バーストスキル使用時の自分の防御力▲は、ダメージに関係しない（C-0081）: C-0081（確定）
 - **burst**: unsupported
   - notes[0] デコイ（分身）と挑発は、ダメージに関係しない（C-0081）: C-0081（確定）
+
+## 32 ミランダ
+
+- **skill1**: supported
+  - effects[0] timed・normalHit・hitRate: C-0186（仮説）
+  - effects[1] timed・normalHit・hitRate: C-0186（仮説）
+- **skill2**: unsupported
+  - notes[0] 未実装: フルバースト開始時の味方全体のクリティカルダメージ▲（10 秒）。撮影で確かめていない（単騎ではフルバーストにならない）: 根拠なし
+- **burst**: unsupported
+  - notes[0] 未実装: 「自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。自分を除く対象は語彙に無い（topAttack は自分も候補）: 根拠なし
+- **宝物版 skill1**: supported
+  - effects[0] timed・normalHit・hitRate: C-0186（仮説）
+  - effects[1] timed・normalHit・hitRate: C-0186（仮説）
+  - effects[2] timed・normalHit・attack: C-0187（仮説）
+- **宝物版 skill2**: unsupported
+  - notes[0] 未実装: フルバースト開始時の味方全体のクリティカルダメージ▲、自分のクリティカル確率▲・攻撃ダメージ▲（10 秒）、自分を除く最終攻撃力が最も高い味方 1 機のクリティカル確率▲（1 発間）。撮影で確かめていない（単騎ではフルバーストにならない）。自分を除く対象と、その対象への発数の維持は語彙に無い: 根拠なし
+- **宝物版 burst**: unsupported
+  - notes[0] 未実装: 「自分を除く最終攻撃力が最も高い味方 2 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。自分を除く対象は語彙に無い: 根拠なし
 
 ## 82 リター
 

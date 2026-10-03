@@ -13,7 +13,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 125・仮説 31・棄却 28・範囲外 1（計 185）
+件数: 確定 125・仮説 33・棄却 28・範囲外 1（計 187）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -877,6 +877,16 @@
   - 根拠: 説明文（キャラデータの `skills.skill1`・`skills.burst`）を読んだだけ。単騎ではバースト 3 段階のバーストを使えないので、レイヴンの録画（`122`・`141`）では起きない（V-0111「条件」）。撮影で確かめていない
   - モデル側: `data/skills/851.json`（skill1 の `timed`・`fullBurstStart`・`casterAttack`、burst の `burstDamage`）。plan/design-raven-s1.md 3 節
   - 定義: `data/skills/851.json` の skill1 の effects[1]、`data/skills/851.json` の burst の effects[0]
+- **C-0186** ミランダ S1（ヘルスアップ！）は、当たった通常攻撃 30 回ごとに味方全体へ命中率 5.44%▲と SMG の味方へ 3.79%▲（どちらも 5 秒）を配り、SMG のミランダ自身には和の 9.23% を N としてコア命中率を C-0036 の式で上げる
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-03
+  - 根拠: V-0114
+  - モデル側: `data/skills/32.json`（skill1 と treasureSkills.skill1 の命中率▲の 2 効果。回数トリガー `normalHit` 30・`targetWeapon` SMG）。コア命中率への効き方は `frame/landing.ts` の `landingPartsWith`（条件が自動の枠。C-0170・C-0183）
+  - 定義: `data/skills/32.json` の skill1 の effects[0]、`data/skills/32.json` の skill1 の effects[1]、`data/skills/32.json` の treasureSkills.skill1 の effects[0]、`data/skills/32.json` の treasureSkills.skill1 の effects[1]
+- **C-0187** 宝物版のミランダ S1 は、当たった通常攻撃 30 回ごとに自分に攻撃力 50.06%▲（5 秒）を足す（スペック固定でも反映される）
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-03
+  - 根拠: V-0114
+  - モデル側: `data/skills/32.json`（treasureSkills.skill1 の攻撃力▲）
+  - 定義: `data/skills/32.json` の treasureSkills.skill1 の effects[2]
 
 ## 敵・的・場面
 

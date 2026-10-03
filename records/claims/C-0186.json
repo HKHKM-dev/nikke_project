@@ -1,0 +1,11 @@
+{
+  "id": "C-0186",
+  "text": "ミランダ S1（ヘルスアップ！）は、当たった通常攻撃 30 回ごとに味方全体へ命中率 5.44%▲と SMG の味方へ 3.79%▲（どちらも 5 秒）を配り、SMG のミランダ自身には和の 9.23% を N としてコア命中率を C-0036 の式で上げる",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "V-0114",
+  "model": "`data/skills/32.json`（skill1 と treasureSkills.skill1 の命中率▲の 2 効果。回数トリガー `normalHit` 30・`targetWeapon` SMG）。コア命中率への効き方は `frame/landing.ts` の `landingPartsWith`（条件が自動の枠。C-0170・C-0183）",
+  "replaces": [],
+  "updated": "2026-10-03"
+}
