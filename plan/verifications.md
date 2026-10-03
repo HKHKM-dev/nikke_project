@@ -1066,14 +1066,22 @@
 - **[V-0121](../records/verifications/V-0121-anis-star-reentry.md)** アニス：スターのみんなの星のバースト再突入 I 段階
   - 問い: 基本バースト段階 1 の味方がいる編成で、アニス：スターがバースト I を撃った後、チェーンはもう一度 I に入り、別の I の味方が撃ってから II・III に進むか
   - 話題: スキル・キャラ固有・日付: 2026-10-04・状態: 調査中・Stage: plan/design-anis-star-rest.md 3 節（C）
+  - 録画: 163
+  - 観測値: 163-01、163-02、163-03
   - 派生元: V-0116
   - 予測（2026-10-04、commit a0c6a19）との比べ:
     - burst-slots（burstActivationSlots）: 実測なし。H1 [1, 2, 3, 4, 1, 2, 1, 2]
-    - full-burst-intervals（fullBurstStartIntervals）: 実測なし。H1 [2,374, 2,374, 2,374]
+    - full-burst-intervals（fullBurstStartIntervals）: 実測 [2,381, 2,381, 2,383]（163-02）。H1 [2,374, 2,374, 2,374]（-9、許容内）
+    - 許容内の指標: H1 1/1。合う仮説は H1 だけ
+  - **最小構成の警告**: 録画 163（アニス：スター・I-DOLL・フラワー・イサベル が未確定）。未確定の要素が 2 つ以上混ざる録画では結論を作らない（AGENTS.md「事実と記録」）
 - **[V-0122](../records/verifications/V-0122-anis-star-ct-cut.md)** アニス：スターの私だけの星のときのバーストスキルクールタイム▼（フルバースト終了時）
   - 問い: 基本バースト段階 1 の味方がいない編成で、アニス：スターの S1 の味方全体のバーストスキルクールタイム 7.48 秒▼はフルバースト終了時に起き、次のチェーンの発動を早めるか
   - 話題: スキル・キャラ固有・日付: 2026-10-04・状態: 調査中・Stage: plan/design-anis-star-rest.md 3 節（B）
+  - 録画: 162
+  - 観測値: 162-01、162-02、162-03
   - 派生元: V-0116
   - 予測（2026-10-04、commit a0c6a19）との比べ:
-    - full-burst-intervals（fullBurstStartIntervals）: 実測なし。H1 [2,089, 2,043, 1,999]
-    - burst-slots（burstActivationSlots）: 実測なし。H1 [1, 2, 3, 1, 1, 2]
+    - full-burst-intervals（fullBurstStartIntervals）: 実測 [1,939, 1,939, 1,940]（162-01）。H1 [2,089, 2,043, 1,999]（+150、**許容外**）
+    - burst-slots（burstActivationSlots）: 実測 [1, 2, 3, 1, 1, 2]（162-02）。H1 [1, 2, 3, 1, 1, 2]（+0、許容内）
+    - 許容内の指標: H1 1/2。合う仮説は無い
+  - **最小構成の警告**: 録画 162（アニス：スター・イサベル が未確定）。未確定の要素が 2 つ以上混ざる録画では結論を作らない（AGENTS.md「事実と記録」）
