@@ -4,7 +4,7 @@
 - キャラ × スロットごとに、対応状況（`supported`・`partial`・`unsupported`）と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 24・効果 101（根拠あり 34）・notes 59（根拠あり 21）
+件数: キャラ 24・効果 102（根拠あり 35）・notes 58（根拠あり 20）
 
 ## 10 ラピ
 
@@ -202,9 +202,9 @@
 
 - **skill1**: unsupported
   - notes[0] 最後の弾丸が命中した対象（敵）の攻撃力▼はダメージに関係しない: C-0072（確定）
-- **skill2**: unsupported
+- **skill2**: supported
+  - effects[0] burstGaugeHit・15 秒ごと: C-0178（確定）、C-0176（確定）
   - notes[0] 最終攻撃力が最も高い敵の攻撃力▼はダメージに関係しない: C-0072（確定）
-  - notes[1] 15 秒ごとの発動でバーストゲージを溜める（未対応。周期は実測で説明文に無い。ゲージだけを溜める周期の効果の語彙が要る）: C-0178（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0072（確定）
   - notes[0] 挑発はダメージに関係しない: C-0072（確定）
