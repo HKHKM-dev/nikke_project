@@ -1,0 +1,11 @@
+{
+  "id": "C-0180",
+  "text": "ミサトの S1 の回復・S2（バリアに与えるダメージ▲・与えるHP回復量▲）・バースト（持続回復）は、射撃場の的へのダメージに関係しない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "V-0110",
+  "model": "`data/skills/833.json`（skill1・skill2・burst の notes。モデルに入れない）",
+  "replaces": [],
+  "updated": "2026-10-03"
+}
