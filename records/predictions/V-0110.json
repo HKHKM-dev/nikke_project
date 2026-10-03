@@ -1,0 +1,115 @@
+{
+  "verification": "V-0110",
+  "note": "ミサト単騎（AUTO・オートバースト OFF）の 2 本の予測。判定に使うコア命中率（3 スタックの窓と対照の比）は METRICS に指標が無く、H0（持続の命中率▲がコア命中率に効かない）はモデルのコードの切り替えなので、どちらも検証記録の「予測」に手で書いた（H0 の値は、定義を外した sim で出した）。ここの指標は、増分を分ける格子の基準にする 1 ヒットの値（H0 と H1 で同じ）と、180 秒の総ダメージ（いまのモデル = H1）。対照（リター単騎）は編成が違うので、このファイルに入れず検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 833,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S1 の命中率▲（スタック数 × 5.04%）を C-0036・C-0170 の式（p ÷ (1 − N)²）でコア命中率に効かせる（いまのモデル）。H0（命中率▲がコア命中率に効かない）はモデルのコードの切り替えで override で表せないので、このファイルに入れず、値は検証記録の「予測」に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "misato-near-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "ミサト（SMG・単騎 AUTO）の近の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし）。分解の格子の基準"
+    },
+    {
+      "id": "misato-near-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア"
+    },
+    {
+      "id": "misato-near-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットの会心"
+    },
+    {
+      "id": "misato-midnear-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "距離ボーナスの中（中近・中遠 A/B/C）の 1 ヒット（胴体・非会心）"
+    },
+    {
+      "id": "misato-total",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "180 秒のミサトの総ダメージ。H0 と H1 の差はコア命中率の差だけ（H0 の値は検証記録に手で書いた）。的のジャンプの時刻（代表値）とリロードの位置で動くので、判定には使わない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-03",
+    "commit": "9e5b9ffe9d905f96f3520c5e61f3f198e68d2975",
+    "values": {
+      "H1": {
+        "misato-near-body": 6407.1810000000005,
+        "misato-near-core": 12814.362000000001,
+        "misato-near-crit": 9610.7715,
+        "misato-midnear-body": 8329.3353,
+        "misato-total": 28043846.37447472
+      }
+    }
+  }
+}

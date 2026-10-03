@@ -1,0 +1,63 @@
+{
+  "formatVersion": 1,
+  "resourceId": 833,
+  "checkedAt": "2026-10-03",
+  "skills": {
+    "skill1": {
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "stat": "hitRate",
+          "ref": 2,
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "「通常攻撃で 60 回攻撃した時」は撃った発の通算（当たったかに依らない）で数え、60 発ごとに 1 スタック足す。スタックの維持時間は発火のたびに全スタックを数え直す（skills/stacks.ts の STACK_REFRESH）",
+            "en": "\"After performing 60 normal attacks\" counts every normal shot fired (hit or miss); each 60th shot adds a stack, and every new stack restarts the duration of all stacks (STACK_REFRESH in skills/stacks.ts)"
+          },
+          "claims": ["C-0179"]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "通常攻撃 120 回ごとの味方 1 機の HP 回復は、ダメージに関係しない",
+          "en": "The HP restore on 1 ally every 120 normal attacks does not affect damage",
+          "claims": ["C-0180"]
+        }
+      ]
+    },
+    "skill2": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "射撃マニュアル状態の間の味方全体のバリアに与えるダメージ▲は、バリアの無い敵（射撃場の的）では効かない",
+          "en": "Damage dealt to Shield up for all allies during Shooting Manual has no effect on enemies without a shield (the range target)",
+          "claims": ["C-0180"]
+        },
+        {
+          "ja": "射撃マニュアルのフルスタック状態の間の自分の与えるHP回復量▲は、ダメージに関係しない",
+          "en": "Outgoing Healing up on self at max Shooting Manual stacks does not affect damage",
+          "claims": ["C-0180"]
+        }
+      ]
+    },
+    "burst": {
+      "support": "unsupported",
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方全体の持続回復は、ダメージに関係しない",
+          "en": "The heal over time on all allies does not affect damage",
+          "claims": ["C-0180"]
+        }
+      ]
+    }
+  }
+}
