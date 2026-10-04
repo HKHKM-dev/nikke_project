@@ -8,6 +8,7 @@ import {
   RESIDUALS_PATH,
   loadClaims,
   loadObservations,
+  loadPredictions,
   loadRecordingsFile,
   loadRecordsData,
   loadSkillDefinitions,
@@ -15,6 +16,7 @@ import {
   misplacedClaims,
   misplacedObservations,
   recordingMap,
+  rereadOnlyClaimsOf,
 } from '../../../scripts/records-data.ts';
 import {
   CLAIM_TOPICS,
@@ -110,6 +112,7 @@ describe('records/claims・plan/claims.md', () => {
         invalidReasons,
         definitionPlacesByClaim(loadSkillDefinitions()),
         gradeCandidates,
+        rereadOnlyClaimsOf(claims, observations, loadPredictions(), loadVerifications(), recordings),
       ),
     );
   });

@@ -2,11 +2,20 @@
 // から sim（calc）を回し、predicted（仮説 × 指標の値、日付、commit）を書き込む。手書きの部分は触らない。
 // 使い方: npm run records:predict -- V-NNNN [--date YYYY-MM-DD]
 // 撮る前にこのファイルを commit しておく（「予測は撮る前に書く」を履歴で示す）。
+// 既存の録画の読み直しでは、検証記録の「録画」に録画を挙げてから回す。そのとき既にある観測値の ID を predicted.seen に控える
+// （plan/design-reread-prediction.md 5 節。控えに入った観測値は、この予測の根拠にも照合にも数えない）。
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import { runPredictions, todayLocal, type PredictionFile } from '../src/records/predictions.ts';
-import { PREDICTIONS_DIR, ROOT, loadRecordingsFile, loadRecordsData } from './records-data.ts';
+import { runPredictions, seenAtPrediction, todayLocal, type PredictionFile } from '../src/records/predictions.ts';
+import {
+  PREDICTIONS_DIR,
+  ROOT,
+  loadObservations,
+  loadRecordingsFile,
+  loadRecordsData,
+  loadVerifications,
+} from './records-data.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -32,12 +41,19 @@ const data = loadRecordsData(
 const predicted = runPredictions(file, data);
 const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
 const at = values.date ?? todayLocal();
-const out: PredictionFile = { ...file, predicted: { at, commit, values: predicted } };
+const verification = loadVerifications().find((v) => v.id === id);
+const seen = seenAtPrediction(verification?.recordings ?? [], loadObservations());
+const out: PredictionFile = { ...file, predicted: { at, commit, values: predicted, seen } };
 writeFileSync(path, `${JSON.stringify(out, null, 2)}\n`);
 for (const h of file.hypotheses) {
   for (const t of file.targets) {
     const v = predicted[h.id]![t.id]!;
     console.log(`${h.id} ${t.id}（${t.metric}）: ${Array.isArray(v) ? JSON.stringify(v) : v.toLocaleString('en-US')}`);
   }
+}
+for (const [r, ids] of Object.entries(seen)) {
+  console.log(
+    `読み直し: 録画 ${r} の既にある観測値 ${ids.length} 件を控えた${ids.length > 0 ? `（${ids.join('・')}。後付けとして数えない）` : ''}`,
+  );
 }
 console.log(`${path} に predicted を書いた（${at}、commit ${commit.slice(0, 7)}）。この後 commit する`);

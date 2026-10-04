@@ -1,15 +1,17 @@
 // 検証記録を閉じる（plan/design-records-automation.md 3.7 節）。
 //   npm run records:close -- V-NNNN [--mark] [--no-ci]
 // 完了にできるかを検査する（結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない・予測を撮る前に出している・
-// 「次に撮るもの」「分かったこと」が空でない）。通れば --mark で状態を完了に書き換え、records:check と CI と同じ確認を回し
+// 「次に撮るもの」「分かったこと」が空でない）。予測ファイルに控え（seen）があれば、git の履歴で予測の commit が観測値を足した commit
+// より前かも見る（plan/design-reread-prediction.md 5 節。ブランチの上で、マージの前に回す）。通れば --mark で状態を完了に書き換え、records:check と CI と同じ確認を回し
 // （--no-ci で省く）、PR の題名の案を出す。roadmap.md の更新と PR は人（エージェント）が行う。
-import { spawnSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { gradeCandidate, type ClaimGrade } from '../src/records/claims.ts';
-import { closeChecks, markState, prTitle } from '../src/records/close.ts';
+import { closeChecks, markState, prTitle, type GitOrder } from '../src/records/close.ts';
 import { minimalWarnings } from '../src/records/minimal.ts';
-import { invalidReasonsOf, runObservations } from '../src/records/observations.ts';
+import { invalidReasonsOf, runObservations, type Observation } from '../src/records/observations.ts';
+import type { PredictionFile } from '../src/records/predictions.ts';
 import {
   ROOT,
   loadClaims,
@@ -70,14 +72,64 @@ const warnings = minimalWarnings([verification], {
   enemies: data.enemies,
   claims,
 });
+const git = (args: string[]): string => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
+
+/** 予測と読みの順を git の履歴で調べる（調べられなければ undefined） */
+function gitOrderOf(prediction: PredictionFile, own: readonly Observation[]): GitOrder | undefined {
+  const path = `records/predictions/${prediction.verification}.json`;
+  try {
+    const predictedAt = (rev: string): string | undefined => {
+      try {
+        return JSON.stringify((JSON.parse(git(['show', `${rev}:${path}`])) as PredictionFile).predicted ?? null);
+      } catch {
+        return undefined;
+      }
+    };
+    const current = JSON.stringify(prediction.predicted);
+    const uncommitted = predictedAt('HEAD') !== current;
+    // いまの predicted を入れた commit: 新しい順にたどり、predicted がいまと同じ中身の続く最も古い commit
+    // （手書きの部分（targets の observations など）を後で直した commit は、predicted が同じなので飛ばす）
+    let predictionCommit: string | null = null;
+    if (!uncommitted) {
+      for (const c of git(['log', '--format=%H', '--', path]).split('\n')) {
+        if (!c || predictedAt(c) !== current) break;
+        predictionCommit = c;
+      }
+    }
+    const notAfter: string[] = [];
+    if (predictionCommit !== null) {
+      for (const o of own) {
+        const file = `records/observations/${o.recording}.json`;
+        const added = git(['log', '--format=%H', '--reverse', '-S', `"id": "${o.id}"`, '--', file]).split('\n')[0];
+        if (!added) continue; // まだ commit していない読みは予測の後
+        let after = added !== predictionCommit;
+        if (after) {
+          try {
+            git(['merge-base', '--is-ancestor', predictionCommit, added]);
+          } catch {
+            after = false;
+          }
+        }
+        if (!after) notAfter.push(o.id);
+      }
+    }
+    return { uncommitted, predictionCommit, notAfter };
+  } catch (e) {
+    console.log(`注意: git の履歴で予測と読みの順を調べられなかった（${(e as Error).message.split('\n')[0]}）`);
+    return undefined;
+  }
+}
+
+const prediction = predictions.find((p) => p.verification === id);
 const result = closeChecks({
   verification,
   claims,
   observations: own,
   recordings,
-  prediction: predictions.find((p) => p.verification === id),
+  prediction,
   gradeCandidates,
   warnings,
+  ...(prediction?.predicted?.seen === undefined ? {} : { gitOrder: gitOrderOf(prediction, own) }),
 });
 for (const w of result.warnings) console.log(`注意: ${w}`);
 if (result.errors.length > 0) {

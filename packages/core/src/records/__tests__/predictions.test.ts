@@ -16,7 +16,10 @@ import {
   comparePredictions,
   observationsOfTarget,
   renderPredictionLines,
+  renderPredictionTable,
+  rereadOnlyClaims,
   runPredictions,
+  seenAtPrediction,
   todayLocal,
   validatePredictions,
   type PredictionFile,
@@ -151,6 +154,72 @@ describe('records/predictions', () => {
     const lines = renderPredictionLines(comparePredictions(f, observations));
     expect(lines[1]).toBe('    - x（shotCount）: 実測なし。H1 1、H2 2');
     expect(lines).toHaveLength(2);
+  });
+
+  it('re-reads: the snapshot (seen) lists observations per recording, and a target linked to one is late and not scored', () => {
+    const tiny = [
+      { id: '101-01', recording: '101' },
+      { id: '101-02', recording: '101', recordings: ['101', '102'] },
+      { id: '103-01', recording: '103' },
+    ];
+    expect(seenAtPrediction(['101', '102'], tiny)).toEqual({ '101': ['101-01', '101-02'], '102': ['101-02'] });
+    const f = file({
+      predicted: {
+        at: '2026-10-02',
+        commit: 'abc1234def',
+        values: { H1: { shots: 189, total: 29_000_000 }, H2: { shots: 170, total: 20_000_000 } },
+        seen: { '101': ['101-09'] },
+      },
+    });
+    const cmp = comparePredictions(f, observations);
+    expect(cmp.targets.map((t) => t.late)).toEqual([true, false]);
+    expect(cmp.score.get('H1')).toEqual({ ok: 1, total: 1 });
+    expect(renderPredictionLines(cmp).some((l) => l.includes('実測 189（101-09。予測の前に読んだ後付け）'))).toBe(true);
+    expect(renderPredictionTable(cmp)).toContain('許容内、後付け');
+    expect(validatePredictions([{ ...f, predicted: { ...f.predicted!, seen: { '101': ['101-99'] } } }], ctx)).toEqual([
+      '予測 V-0063: predicted.seen の録画 101 の観測値 101-99 が無い',
+    ]);
+  });
+
+  it('marks a 確定 claim standing only on re-read observations (C1)', () => {
+    const p = (verification: string, seen?: Record<string, string[]>): PredictionFile =>
+      file({
+        verification,
+        predicted: { at: '2026-10-02', commit: 'abc1234', values: {}, ...(seen === undefined ? {} : { seen }) },
+      });
+    const obs = [
+      { id: '046-01', recording: '046', source: 'V-0090' },
+      { id: '162-04', recording: '162', source: 'V-0124' },
+      { id: '170-01', recording: '170', source: 'V-0125' },
+      { id: '010-01', recording: '010', source: 'verification.md' },
+    ];
+    const dates = {
+      verifications: new Map([
+        ['V-0090', '2026-10-02'],
+        ['V-0124', '2026-10-04'],
+        ['V-0125', '2026-10-04'],
+      ]),
+      recordings: new Map([
+        ['046', '2026-09-24'],
+        ['162', '2026-10-04'],
+        ['170', '2026-10-05'],
+      ]),
+    };
+    const preds = [p('V-0090'), p('V-0124', { '162': ['162-01'] }), p('V-0125', {})];
+    const c = (id: string, ids: string[], state: '確定' | '仮説' = '確定') => ({ id, state, observations: ids });
+    const marked = rereadOnlyClaims(
+      [
+        c('C-1', ['046-01', '010-01']), // 録画の日が起票より前
+        c('C-2', ['162-04']), // 同じ日でも控えに録画が挙がっていれば読み直し
+        c('C-3', ['162-04', '170-01']), // 予測の後に撮った録画を含む
+        c('C-4', ['010-01']), // 予測ファイルの無い根拠だけ
+        c('C-5', ['046-01'], '仮説'),
+      ],
+      obs,
+      preds,
+      dates,
+    );
+    expect([...marked]).toEqual(['C-1', 'C-2']);
   });
 
   it('todayLocal uses the local date', () => {

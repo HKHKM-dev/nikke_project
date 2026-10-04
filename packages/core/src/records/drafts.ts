@@ -3,7 +3,7 @@
 import { CLAIM_TOPICS, type ClaimFile, type ClaimGrade, type ClaimTopic } from './claims.ts';
 import type { MinimalWarning } from './minimal.ts';
 import type { Observation } from './observations.ts';
-import type { PredictionComparison } from './predictions.ts';
+import { seenObservationIds, type PredictionComparison } from './predictions.ts';
 
 /** 既存の ID（V-0012・C-0159 など）から、同じ接頭辞の次の空き番号 */
 export function nextId(prefix: 'V' | 'C', existing: readonly string[]): string {
@@ -57,7 +57,7 @@ export function verificationTemplate(d: VerificationDraft): string {
     '',
     '## 予測（撮る前に書く）',
     '',
-    `仮説ごとに、この録画で何が見えるはずか。見分けられるか。外れたときの影響。数値は予測ファイル（records/predictions/${d.id}.json。npm run records:predict -- ${d.id}）を指す。`,
+    `仮説ごとに、この録画で何が見えるはずか。見分けられるか。外れたときの影響。数値は予測ファイル（records/predictions/${d.id}.json。npm run records:predict -- ${d.id}）を指す。既存の録画の読み直しなら、冒頭の「録画」に挙げてから予測を出し、読む前に commit する。`,
     '',
     '## 読み方',
     '',
@@ -129,6 +129,10 @@ export function claimDraft(input: ClaimDraftInput): ClaimDraft {
       if (earliest !== undefined && p.file.predicted.at > earliest) {
         reasons.push(`予測の日付（${p.file.predicted.at}）が、観測値を読んだ日（${earliest}）より後`);
       }
+      // 読み直しは比べる値を読む前の予測でよい。予測の時点で既にあった観測値は数えない（plan/design-reread-prediction.md）
+      const seen = seenObservationIds(p.file);
+      const early = valid.filter((o) => seen.has(o.id)).map((o) => o.id);
+      if (early.length > 0) reasons.push(`予測の時点で既にあった観測値がある（${early.join('・')}）`);
       if (p.file.hypotheses.length >= 2) {
         const fits = [...p.score.entries()].filter(([, s]) => s.total > 0 && s.ok === s.total).map(([h]) => h);
         if (fits.length !== 1) {
