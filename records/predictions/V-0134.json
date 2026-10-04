@@ -1,0 +1,112 @@
+{
+  "verification": "V-0134",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 231,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（押下チャージ型も発と発の間に解放 23f を足す・リロードの後の 1 発目も足す・チャージ時間が変わっても撃った時点の待ちのまま）。H1・P1 などはコードの切り替えなので検証記録に手で書いた。満タンまでのフレームは発の位相で回ごとに動くので、仮説の判定には使わず、実測の回ごとの振れがモデルと同じ程度かを見る"
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-1",
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "録画 165 の 2 回目のフルバーストの入りから、その後の満タン（バー消失）までの動画のフレーム数（165-10 の n = 1）"
+    },
+    {
+      "id": "gauge-full-2",
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "録画 165 の 3 回目のフルバーストの入りから、その後の満タン（バー消失）までの動画のフレーム数（165-10 の n = 2）"
+    },
+    {
+      "id": "gauge-full-3",
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "録画 165 の 4 回目のフルバーストの入りから、その後の満タン（バー消失）までの動画のフレーム数（165-10 の n = 3）"
+    },
+    {
+      "id": "gauge-full-4",
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "録画 165 の 5 回目のフルバーストの入りから、その後の満タン（バー消失）までの動画のフレーム数（165-10 の n = 4）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "b757b7e5f87f13afe8a399f8b02a0173c1a4642c",
+    "values": {
+      "H0": {
+        "gauge-full-1": 493,
+        "gauge-full-2": 490,
+        "gauge-full-3": 482,
+        "gauge-full-4": 581
+      }
+    },
+    "seen": {
+      "161": ["161-01", "161-02", "161-03", "161-04", "161-05", "161-06", "161-07", "161-08", "161-09"],
+      "164": ["164-01", "164-02", "164-03", "164-04", "164-05", "164-06", "164-07", "164-08"],
+      "165": [
+        "165-01",
+        "165-02",
+        "165-03",
+        "165-04",
+        "165-05",
+        "165-06",
+        "165-07",
+        "165-08",
+        "165-09",
+        "165-10",
+        "165-11",
+        "165-12"
+      ]
+    }
+  }
+}
