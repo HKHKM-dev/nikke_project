@@ -56,7 +56,8 @@
             "en": "The single-target hit lands once on a lone boss"
           },
           "claims": [
-            "C-0072"
+            "C-0072",
+            "C-0220"
           ]
         }
       ],

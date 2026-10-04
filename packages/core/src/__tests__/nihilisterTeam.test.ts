@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { activationFramesOfSlot } from '../burst/schedule.ts';
+import { MEASURED_BURST_DELAYS } from '../burst/landing.ts';
+import { effectFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
@@ -72,6 +73,19 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, nihilis
   const sim = runSimulation(input);
   const calc = computeTeamDamage(input);
   const plan = planTeamRun(input);
+  const mine = plan.schedule!.activations.filter((a) => a.slotIndex === nihilister);
+  // バースト使用時の効果（火傷・最大装弾数▲）は、発動の 9f 後の効果の発火から（C-0219）。戦闘の終わり以降は発火しない
+  const fires = mine.map(effectFrameOf).filter((f) => f < plan.frames);
+
+  it('lands the burst damage and fires the burst effects 9 frames after each use (C-0219)', () => {
+    const delays = MEASURED_BURST_DELAYS.find((row) => row.resourceIds.includes(NIHILISTER))!.delays;
+    expect(delays).toEqual({ hitFrames: 9, effectFrames: 9 });
+    expect(mine.length).toBeGreaterThan(0);
+    for (const a of mine) {
+      expect(hitFrameOf(a)).toBe(a.frame + 9);
+      expect(effectFrameOf(a)).toBe(a.frame + 9);
+    }
+  });
 
   it('hits with S2 every 10 s from the start of battle, whatever the shots and bursts (C-0091)', () => {
     const s2 = plan.skillHits.filter((h) => h.slotIndex === nihilister && h.effect.source.skill === 'skill2');
@@ -79,11 +93,10 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, nihilis
     for (const h of s2) expect(h.effect.multiplier).toBeCloseTo(1.1264, 10);
   });
 
-  it('burns 10 ticks on each burst of Nihilister: at the burst, then from 1.5 s every second (C-0101, restart when re-applied)', () => {
-    const uses = activationFramesOfSlot(plan.schedule!, nihilister);
-    expect(uses.length).toBeGreaterThan(0);
+  it('burns 10 ticks on each burst of Nihilister: at the hit, then from 1.5 s every second (C-0101, restart when re-applied)', () => {
+    expect(fires.length).toBeGreaterThan(0);
     const ticks = plan.skillHits.filter((h) => h.slotIndex === nihilister && h.effect.dot !== undefined);
-    expect(ticks.map((h) => h.frame)).toEqual(dotTickFrames(uses, 1, 10, plan.frames));
+    expect(ticks.map((h) => h.frame)).toEqual(dotTickFrames(fires, 1, 10, plan.frames));
     for (const t of ticks) expect(t.effect.multiplier).toBeCloseTo(0.1319, 10);
   });
 
@@ -91,9 +104,9 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, nihilis
     const windows = plan.timeline.windows.filter(
       (w) => w.sourceSlotIndex === nihilister && w.effect.stat === 'maxAmmo',
     );
-    // バーストごとの [発動, 発動 + 15 秒) の和集合（再発火は上書き延長）
+    // バーストごとの [効果の発火, 効果の発火 + 15 秒) の和集合（再発火は上書き延長）
     const expected: [number, number][] = [];
-    for (const u of activationFramesOfSlot(plan.schedule!, nihilister)) {
+    for (const u of fires) {
       const end = Math.min(u + gameSecondsToFrames(15), plan.frames);
       const last = expected.at(-1);
       if (last !== undefined && u <= last[1]) last[1] = Math.max(last[1], end);

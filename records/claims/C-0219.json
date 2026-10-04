@@ -1,0 +1,11 @@
+{
+  "id": "C-0219",
+  "text": "ニヒリスターのバーストの倍率ダメージのヒットと、火傷（バースト使用時の持続ダメージ）の付与は、II の発動（右のバースト欄の六角形が II から次の段の表示に替わるフレーム）から 9f 遅れる（モデルのフレーム。ヒットは III の発動より前なので、止まりを含まない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`081-20`・`084-07`。V-0131",
+  "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のニヒリスターの 1 行（hitFrames 9・effectFrames 9）。`data/skills/261.json` の burst の effects[0]・effects[1]・effects[2]（ヒットと効果の発火のフレームで出す）。効果の遅れは火傷の 1 回目の tick で読んだ値で、同じ burstUse の最大装弾数▲の窓も同じだけ遅らせる（plan/design-burst-landing.md 2.2 節。窓の始まりは単独では確かめていない）",
+  "replaces": [],
+  "updated": "2026-10-04"
+}

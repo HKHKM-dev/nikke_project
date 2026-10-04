@@ -20,6 +20,10 @@ export const MEASURED_BURST_DELAYS: readonly { resourceIds: readonly number[]; d
     // ヘルム（宝物あり）: III の発動からヒットまで 59f（動画で 80〜81f。止まり 22f を含む）。効果（チャージダメージ倍率▲）は
     // フルバーストの始まりの表示より 2〜35f 前に発火する。モデルは発動より前に置けないので 0（発動と同じフレーム）
     { resourceIds: [352], delays: { hitFrames: 59, effectFrames: 0 }, claim: 'C-0167' },
+    // I-DOLL・フラワー: I の発動（六角形が I から II に替わるフレーム）からヒットまで 14f。バースト使用時の効果は無い
+    { resourceIds: [304], delays: { hitFrames: 14, effectFrames: 0 }, claim: 'C-0220' },
+    // ニヒリスター: II の発動からヒットと火傷の付与（1 回目の tick はヒットと同じフレーム。C-0101）まで、どちらも 9f
+    { resourceIds: [261], delays: { hitFrames: 9, effectFrames: 9 }, claim: 'C-0219' },
   ];
 
 /** キャラのバーストの遅れ。表に無ければ 0 */

@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 143・仮説 41・棄却 33・範囲外 1（計 218）
+件数: 確定 143・仮説 43・棄却 33・範囲外 1（計 220）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1075,6 +1075,18 @@
   - モデル側: **未実装**（`data/skills/17.json` の burst の notes。モデルは窓の外と同じ表の行で、フルバースト中は胴体 2 ヒットで数える）
   - 検証記録: V-0124
   - 定義: `data/skills/17.json` の burst の notes[1]
+  - 等級の候補（機械）: 厳密一致
+- **C-0219** ニヒリスターのバーストの倍率ダメージのヒットと、火傷（バースト使用時の持続ダメージ）の付与は、II の発動（右のバースト欄の六角形が II から次の段の表示に替わるフレーム）から 9f 遅れる（モデルのフレーム。ヒットは III の発動より前なので、止まりを含まない）
+  - 状態: 仮説・等級: 単独実測・更新日: 2026-10-04
+  - 根拠: `081-20`・`084-07`。V-0131
+  - モデル側: `burst/landing.ts` の `MEASURED_BURST_DELAYS` のニヒリスターの 1 行（hitFrames 9・effectFrames 9）。`data/skills/261.json` の burst の effects[0]・effects[1]・effects[2]（ヒットと効果の発火のフレームで出す）。効果の遅れは火傷の 1 回目の tick で読んだ値で、同じ burstUse の最大装弾数▲の窓も同じだけ遅らせる（plan/design-burst-landing.md 2.2 節。窓の始まりは単独では確かめていない）
+  - 定義: `data/skills/261.json` の burst の effects[0]、`data/skills/261.json` の burst の effects[1]、`data/skills/261.json` の burst の effects[2]
+  - 等級の候補（機械）: 厳密一致
+- **C-0220** I-DOLL・フラワーのバーストのヒットは、I の発動（右のバースト欄の六角形が I から II に替わるフレーム。満タンの 29f 後）から 14f 遅れる（モデルのフレーム）。V-0106 の「I の発動」（BURST バーの位置が読めなくなったフレーム。077-21〜077-23 の起点）は、II の六角形が白く光るフレームで、六角形の替わり目の 3f 後
+  - 状態: 仮説・等級: 単独実測・更新日: 2026-10-04
+  - 根拠: `063-10`・`080-08`・`134-05`・`134-06`。V-0133
+  - モデル側: `burst/landing.ts` の `MEASURED_BURST_DELAYS` のフラワーの 1 行（hitFrames 14・effectFrames 0。バースト使用時の効果は無い）。`data/skills/304.json` の burst の effects[0]
+  - 定義: `data/skills/304.json` の burst の effects[0]
   - 等級の候補（機械）: 厳密一致
 
 ## 敵・的・場面

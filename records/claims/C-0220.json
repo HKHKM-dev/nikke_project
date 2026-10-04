@@ -1,0 +1,11 @@
+{
+  "id": "C-0220",
+  "text": "I-DOLL・フラワーのバーストのヒットは、I の発動（右のバースト欄の六角形が I から II に替わるフレーム。満タンの 29f 後）から 14f 遅れる（モデルのフレーム）。V-0106 の「I の発動」（BURST バーの位置が読めなくなったフレーム。077-21〜077-23 の起点）は、II の六角形が白く光るフレームで、六角形の替わり目の 3f 後",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`063-10`・`080-08`・`134-05`・`134-06`。V-0133",
+  "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のフラワーの 1 行（hitFrames 14・effectFrames 0。バースト使用時の効果は無い）。`data/skills/304.json` の burst の effects[0]",
+  "replaces": [],
+  "updated": "2026-10-04"
+}
