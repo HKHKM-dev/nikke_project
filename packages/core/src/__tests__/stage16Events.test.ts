@@ -158,9 +158,28 @@ describe('射手（ハイドとリロード）', () => {
       inputType: 'UP',
     };
     // 69 で 1 発（残弾 5）→ 100 でハイドしてリロード（189 で満タン）→ 220 から構えてチャージして 289 に 1 発目、以後 82f ごとに 6 発
-    // （Stage 22-A: 戦闘開始と窓の明けの 1 発目は、構え解除 13f の無いぶん 82 − 13 = 69f。C-0218）
+    // （Stage 22-A: 戦闘開始と窓の明けの 1 発目は、構え解除 13f の無いぶん 82 − 13 = 69f。C-0225）
     const fired = shotsWithWindow(sr, { start: 100, end: 220 }, 800);
     expect(fired).toEqual([69, 289, 371, 453, 535, 617, 699]);
+  });
+
+  it('SR: after an empty-magazine reload that finishes in the window, fires at the later of the end + 69f and the usual time (C-0225)', () => {
+    // 1 発のマガジン: 69 で撃って弾切れ → リロードの完了から 82f（モデルの分け方）で次の発。ゲームの完了は構え解除 13f のぶん
+    // 遅く、完了から 69f で撃つので、完了が窓の終わりの 13f より前なら明けから 69f、近ければふだんの時刻のまま（V-0135）
+    const sr: Partial<ShotParams> = {
+      maxAmmo: 1,
+      reloadTime: 1.5,
+      rateOfFire: 60,
+      endRateOfFire: 60,
+      chargeTime: 1,
+      inputType: 'UP',
+    };
+    const usual = shotsWithWindow(sr, { start: 1000, end: 1001 }, 300)[1]!;
+    const reloadEnd = usual - 82;
+    // 完了が窓の終わりの 5f 前: 明けから 69f より、ふだんの時刻のほうが遅い
+    expect(shotsWithWindow(sr, { start: 100, end: reloadEnd + 5 }, 400)[1]).toBe(usual);
+    // 完了が窓の終わりの 40f 前: 明けから 69f
+    expect(shotsWithWindow(sr, { start: 100, end: reloadEnd + 40 }, 400)[1]).toBe(reloadEnd + 40 + 69);
   });
 
   it('does nothing when the magazine is full or already empty (the ordinary reload continues)', () => {

@@ -83,7 +83,7 @@ export function firstShotFrames(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number {
-  // Stage 22-A: チャージ武器はハイドから構えてチャージするので、発と発の間から構え解除のぶんを引く（C-0218）
+  // Stage 22-A: チャージ武器はハイドから構えてチャージするので、発と発の間から構え解除のぶんを引く（C-0225）
   if (isChargeWeapon(shot)) return Math.max(0, params.chargeFrames + model.chargeReleaseFrames - model.aimOutFrames);
   // Stage 22-C: チャージの無い武器（MG を含む）も、ハイドから構えてから撃つ（C-0114）
   return model.aimInFrames;
@@ -95,7 +95,9 @@ export function reloadFirstShotFrames(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number {
-  // Stage 22-A: チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0144 の紅蓮BS 172f・ラム 200f）
+  // Stage 22-A: チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0149 の紅蓮BS 172f・ラム 200f）。
+  // ゲームの完了（RELOADING のバーが消える）は構え解除のぶん遅く、完了からは firstShotFrames で撃つ（C-0225）。
+  // 最後の発からの長さは同じなので分け方はそのままにし、窓の明けだけ unhideShooter で合わせる（V-0135）
   if (isChargeWeapon(shot)) return params.chargeFrames + model.chargeReleaseFrames;
   // Stage 24: MG も AR・SMG・SG と同じ（22 までは MG だけ初弾遅延 20f。C-0002）
   return model.reloadFirstShotFrames;

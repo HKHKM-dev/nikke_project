@@ -4,7 +4,7 @@
 //
 // wait は「撃てないフレームがあと何個残っているか」。stepShooter は先に判定してから減らす:
 //   戦闘開始        wait = firstShotFrames                        → AR・SMG・SG・MG は f=12、チャージ武器は f=69 に 1 発目
-//                   （Stage 22-A: ハイドから構えるので、発と発の間 82f から構え解除 13f を引く。C-0218。
+//                   （Stage 22-A: ハイドから構えるので、発と発の間 82f から構え解除 13f を引く。C-0225。
 //                    Stage 22-C: チャージの無い武器は構え 12f の後。C-0114）
 //   チャージ武器    発射したフレーム S で wait = charge + release − 1 → 次弾は S + 82
 //   リロード        最終弾のフレーム L から、1 回分ずつ込めて最後の 1 回分を込め終えたところで 1 発目の遅延につなぐ
@@ -337,8 +337,11 @@ export function hideShooter(
  * - ハイド中のリロードが終わっていなければ取り消す（込め終えた分割リロードの分は残る。残弾は減らない）。
  * - 撃てる状態なら撃ち直す。窓が rateOfFireResetTime 以上ならレートは最初から（録画 41 のクラウン: 間隔 23・13・10・8…）。
  *   Stage 22-C: チャージの無い武器は、明けから構え（aimInFrames）の後に撃つ（C-0114。MG は明けから 11f）。
- *   チャージ武器は構えてチャージし直す（戦闘開始と同じ待ち。Stage 22-A で構え解除のぶん短い。込め終えて 1 発目を待っていた枠も同じ）。
- * - 込め終えて 1 発目を待っている枠（窓の中でリロードが終わった）は、チャージの無い武器なら、残りの待ちと構えの長いほう。
+ *   チャージ武器は構えてチャージし直す（戦闘開始と同じ待ち。Stage 22-A で構え解除のぶん短い）。
+ * - 込め終えて 1 発目を待っている枠（窓の中でリロードが終わった）は、残りの待ちと、明けからの待ち（チャージの無い武器は構え、
+ *   チャージ武器は戦闘開始と同じ待ち）の長いほう。入力が UP のチャージ武器は、ゲームのリロードの完了がモデルの完了より構え解除のぶん遅く、
+ *   完了からも戦闘開始と同じ待ちで撃つ（C-0225）。完了が窓の終わりの構え解除の長さより前なら明けから、近ければ残りの待ちで撃つ
+ *   （V-0135。071 の 1 回目の明け）。
  * - 弾切れのリロード中はそのまま続ける
  */
 export function unhideShooter(
@@ -361,10 +364,13 @@ export function unhideShooter(
     state.shotsInMagazine = 0;
     state.acc = 0;
   }
-  // チャージは狙えない間には進まないので、込め終えて 1 発目を待っていた枠も明けからチャージする
+  // チャージは狙えない間には進まないので、込め終えて 1 発目を待っていた枠も明けからチャージする（入力が UP のチャージ武器は、
+  // リロードの完了が窓の終わりに近く、残りの待ちのほうが長ければそちら。C-0225。押下チャージ型は確かめていない）
   delete state.chargeElapsed;
-  if (isChargeWeapon(shot)) state.wait = firstShotFrames(shot, model, params);
-  else if (state.phase === 'ready') state.wait = model.aimInFrames;
+  if (isChargeWeapon(shot)) {
+    const first = firstShotFrames(shot, model, params);
+    state.wait = state.phase === 'priming' && shot.inputType !== 'DOWN_Charge' ? Math.max(state.wait, first) : first;
+  } else if (state.phase === 'ready') state.wait = model.aimInFrames;
   else state.wait = Math.max(state.wait, model.aimInFrames);
 }
 
