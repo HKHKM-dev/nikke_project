@@ -30,7 +30,7 @@
   },
   "mode": "range-3min",
   "fixedSpec": true,
-  "autoFire": null,
-  "autoBurst": null,
-  "conditionNote": "V-0155。アニス：スター（AI）とヘルム（操作・宝物 3）。ヘルムの弾を先に当て、アニス：スターの 1 発目のバーの伸びを見る"
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0155。アニス：スター（AI）とヘルム（操作・宝物 3）。ヘルムの弾を先に当て、アニス：スターの 1 発目のバーの伸びを見る。AUTO 射撃 ON・オートバースト OFF（左上のボタン）。一時停止画面でキャラ名を確かめた"
 }

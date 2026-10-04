@@ -18,10 +18,9 @@
     },
     {
       "slot": 2,
-      "rid": 352,
-      "name": "ヘルム",
-      "controlled": true,
-      "treasurePhase": 3
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": true
     }
   ],
   "target": {
@@ -30,7 +29,7 @@
   },
   "mode": "range-3min",
   "fixedSpec": true,
-  "autoFire": null,
-  "autoBurst": null,
-  "conditionNote": "V-0155。アニス：スター（AI）とヘルム（操作・宝物 3）。ヘルムの弾を先に当て、アニス：スターの 1 発目のバーの伸びを見る"
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0155。アニス：スター（AI）とモダニア（操作）。モダニアの弾でバーを 12.6% より上に上げてから、アニス：スターの 1 発目の伸びを見るつもりだったが、アニス：スターの 1 発目はバーが映る前に当たった。AUTO 射撃 ON・オートバースト OFF（左上のボタン）。一時停止画面でキャラ名を確かめた"
 }
