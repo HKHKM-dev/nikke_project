@@ -1,0 +1,29 @@
+{
+  "id": "178",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-178_rl_cinderella.mp4",
+  "original": "2026-10-04_19-35-08.mp4",
+  "durationSec": 199.5,
+  "frames": 11970,
+  "fps": 60,
+  "sizeMB": 241.7,
+  "sha256": "1a5391e6b718",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 511,
+      "name": "シンデレラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。V-0153"
+}
