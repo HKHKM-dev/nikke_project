@@ -195,7 +195,8 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     let burstDamage = 0;
     if (schedule !== null) {
       // 分かれたヒット編: ヒットごとに倍率の share ぶんを計算し、発動ごとに足し合わせる（秒は 1 ヒット目。plan/design-burst-split-hits.md 4.3 節）
-      const groups: { activationFrame: number; seconds: number; parts: { hit: BurstHitResult; share: number }[] }[] = [];
+      const groups: { activationFrame: number; seconds: number; parts: { hit: BurstHitResult; share: number }[] }[] =
+        [];
       for (const { activationFrame, frame, share } of burstHitsOfSlot(schedule, index, timeline.frames)) {
         const buffs = burstHitBuffs(timeline, activationFrame, frame, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
         const trigger = computeTriggerDamage({

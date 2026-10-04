@@ -377,7 +377,10 @@ export function combineBurstHitParts(parts: readonly { hit: BurstHitResult; shar
   return {
     ...first.hit,
     damageTakenMultiplier: sum((hit) => hit.damageTakenMultiplier) / weight,
-    perEffect: first.hit.perEffect.map((e, i) => ({ effect: e.effect, expected: sum((hit) => hit.perEffect[i]!.expected) })),
+    perEffect: first.hit.perEffect.map((e, i) => ({
+      effect: e.effect,
+      expected: sum((hit) => hit.perEffect[i]!.expected),
+    })),
     perActivation: sum((hit) => hit.perActivation),
   };
 }

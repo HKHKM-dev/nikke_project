@@ -81,9 +81,7 @@ export function planTeamSchedule(
   if (!burst) return null;
   if (burstModel === 'fixed') {
     return planFixedCycle(
-      slots.map((s) =>
-        s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) },
-      ),
+      slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) })),
       frames,
     );
   }

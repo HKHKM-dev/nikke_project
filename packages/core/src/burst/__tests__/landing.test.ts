@@ -2,7 +2,13 @@
 // burst スロットの sequential の検証。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { burstDelaysFieldOf, burstDelaysOf, isTreasureBurst, MEASURED_BURST_DELAYS, withBurstDelays } from '../landing.ts';
+import {
+  burstDelaysFieldOf,
+  burstDelaysOf,
+  isTreasureBurst,
+  MEASURED_BURST_DELAYS,
+  withBurstDelays,
+} from '../landing.ts';
 import {
   burstHitsOfSlot,
   effectFrameOf,
