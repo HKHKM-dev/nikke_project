@@ -68,6 +68,13 @@ export type CompareSetup = {
    * モデルの発の番号（1 始まり）、count は個数を持つ観測値の id（同じ録画・use が input・値は正の整数）。省略は無し
    */
   obstacles?: { slot: number; shot: number; count: string }[];
+  /**
+   * V-0165: 持続の命中率▲（C-0170）をコア命中率に効かせるか（TeamInput.sustainedHitRateUp）。省略 true。
+   * false は C-0170 の前の形で、予測の仮説（H0）の override に使う
+   */
+  sustainedHitRateUp?: boolean;
+  /** V-0165: false なら、録画（予測の編成）の宝物の段階を使わず、どの枠も基礎版のスキルにする。省略 true */
+  treasure?: boolean;
 };
 
 /** Stage 18-C: 中遠の 3 か所（足元 584・571・561。C-0044） */
@@ -210,6 +217,23 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
   const boost = 1 + core + crit + distance + t.boost.fullBurst;
   // V-0119: 1 発のヒット数（的の表の hitsPerShot）は 1 ヒットの値に含めない
   return ((t.normal / t.hitRate / t.hitsPerShot / t.boost.total) * boost) / shot.shotCount;
+}
+
+/**
+ * V-0165: その時点の区間で通常攻撃に使うコア命中率（条件が自動の枠は、着地点の表の値をその区間の命中率▲ N で出し直したもの。
+ * C-0036・C-0170）。1 トリガーの倍率グループのコアの項を、コアのダメージ倍率で割って戻す。着地点の配分が複数の区間（中遠）では
+ * 配分の重みの平均で、弾丸命中率の重みは付けない（録画の「コア / 当たった数」と比べるのは、配分が 1 つの区間（近・中近・遠）だけにする）
+ */
+function coreHitRate(result: SimResult, ctx: MetricContext): number {
+  if (!ctx.input.enemy.hasCore) return 0;
+  const slot = slotOf(result.slots, ctx);
+  const input = slotOf(ctx.input.slots, ctx);
+  const frame = Number(ctx.args.frame);
+  const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
+  if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
+  const t = segment.trigger;
+  const shot = t.buffs.weapon?.shot ?? input.character.shot;
+  return t.boost.core / (shot.coreDamageRate - 1 + t.buffs.coreDamage);
 }
 
 function fullBurstStartIntervals(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
@@ -382,6 +406,11 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     },
   },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
+  coreHitRate: { args: ['slot', 'frame'], sim: coreHitRate },
+  coreHitRateDiff: {
+    args: ['slot', 'frame', 'baseFrame'],
+    sim: (r, c) => coreHitRate(r, c) - coreHitRate(r, { ...c, args: { ...c.args, frame: c.args.baseFrame! } }),
+  },
   perShotHitDamage: { args: ['slot', 'frame', 'crit'], sim: perShotHitDamage },
   burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
   dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
@@ -625,7 +654,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       skills: {
         definition: data.skills.get(member.rid) ?? null,
         levels: MAX_SKILL_LEVELS,
-        treasurePhase: (member.treasurePhase ?? 0) as TreasurePhase,
+        treasurePhase: (setup.treasure === false ? 0 : (member.treasurePhase ?? 0)) as TreasurePhase,
       },
     };
   });
@@ -659,6 +688,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     burstModel: 'dynamic',
     controlledSlot: controlled < 0 ? null : controlled,
     ...(obstacleBreaks.length === 0 ? {} : { obstacleBreaks }),
+    ...(setup.sustainedHitRateUp === false ? { sustainedHitRateUp: false } : {}),
   };
 }
 

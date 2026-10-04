@@ -32,8 +32,9 @@ import {
   type ClaimFile,
   type ClaimGrade,
 } from '../claims.ts';
+import { coreHitRateWithHitRateUp } from '../../frame/landing.ts';
 import { computeBurstHit } from '../../skills/burstDamage.ts';
-import type { SimResult } from '../../sim/engine.ts';
+import { runSimulation, type SimResult } from '../../sim/engine.ts';
 import type { TeamInput } from '../../team.ts';
 import {
   METRICS,
@@ -400,6 +401,29 @@ describe('照合の部品', () => {
       '161-92: obstacles の観測値 161-13 の use は input',
       '161-93: obstacles の観測値は同じ録画のもの',
     ]);
+  });
+
+  it('reads the core hit rate of a segment, with or without the timed hit rate and the treasure (V-0165)', () => {
+    const rec132 = recordings.get('132') as ProjectRecording;
+    const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto' as const };
+    const rate = (extra: Record<string, unknown>, frame: number, baseFrame?: number): number => {
+      const input = buildTeamInput(rec132, { ...setup, ...extra }, data);
+      const sim = runSimulation(input);
+      const fb = sim.schedule!.fullBurstWindows[0]!;
+      const f = frame < 0 ? fb.start + 10 : frame;
+      const args = { slot: 1, frame: f, ...(baseFrame === undefined ? {} : { baseFrame }) };
+      const metric = baseFrame === undefined ? METRICS.coreHitRate! : METRICS.coreHitRateDiff!;
+      return metric.sim(sim, { args, input }) as number;
+    };
+    // 中近（1 区間目）の▲の外は的の表の値、▲の窓はドレイクの S1 の N で出し直した値
+    const out = rate({}, 10);
+    expect(rate({}, -1)).toBeCloseTo(coreHitRateWithHitRateUp(out, 0.2009), 9);
+    expect(rate({}, -1, 10)).toBeCloseTo(rate({}, -1) - out, 12);
+    // 持続の▲を効かせない（C-0170 の前の形）と差は 0、基礎版のスキルなら N は 0.1185
+    expect(rate({ sustainedHitRateUp: false }, -1, 10)).toBe(0);
+    expect(rate({ treasure: false }, -1)).toBeCloseTo(coreHitRateWithHitRateUp(out, 0.1185), 9);
+    expect(buildTeamInput(rec132, { ...setup, treasure: false }, data).slots[2]!.skills!.treasurePhase).toBe(0);
+    expect(buildTeamInput(rec132, setup, data).slots[2]!.skills!.treasurePhase).toBe(3);
   });
 
   it('reports a mid-far or near landing without automatic conditions, or an unknown one', () => {

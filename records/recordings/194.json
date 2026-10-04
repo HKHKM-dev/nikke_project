@@ -1,0 +1,42 @@
+{
+  "id": "194",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-194_ar+sr+sg_kurumi+delta+drake_panel-only.mp4",
+  "original": "2026-10-05_01-09-24.mp4",
+  "durationSec": 2.4,
+  "frames": 146,
+  "fps": 60,
+  "sizeMB": 2.9,
+  "sha256": "31a667508483",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": true,
+  "conditionNote": "不採用（V-0165）: 戦闘履歴のパネルだけの 2.4 秒の断片（録画 195 の直前に保存された）。クルミ（AI）・デルタ（AI）・ドレイク（操作）の 3 分の戦闘の終わりで、戦闘そのものは録画されていない。パネルの与ダメージ（クルミ 41,022,255・デルタ 27,462,292・ドレイク 21,292,558）は録画 195 と違い、別の戦闘"
+}
