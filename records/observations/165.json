@@ -376,5 +376,50 @@
         "burst": true
       }
     }
+  },
+  {
+    "id": "165-13",
+    "recording": "165",
+    "source": "V-0134",
+    "readAt": "2026-10-04",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 536,
+    "unit": "f",
+    "description": "2 回目のフルバーストの入り（f3662）から、その後に BURST バーが消えた（満タン）フレーム（f4198）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events",
+      "note": "f4194 満タン・f4198 バー消失。3〜5 回目（f5614・7554・9493 の後）は、画面の配置がずれて BURST バーが読みの位置に無いフレームがあり、gauge.ts の読みを使えない（f5880〜6100 の切り出しで確かめた）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-14",
+    "recording": "165",
+    "source": "V-0134",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [46, 51, 43, 43, 42, 43],
+    "description": "アニス：スターのバーストの発動（I）を跨ぐ発と発の間。前の 3 つは発動がチャージの途中（発動 f2398・7471・10171、前の発から 35・27・26f）、後の 3 つは発動が発に重なる回（f1637・4338・9410。その発の追加ダメージだけにバーストの攻撃ダメージ▲が乗る）の、その発 → 次の発",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分） + 使い捨てのスクリプト（増分をアニス：スターの発とほかのヒットの値の組に分けた）",
+      "note": "デルタ・イサベル・シューティングスターの増分と重なる発は、候補の値の和に分けた。f2398 の後の最初の発は 165-09 の f2409。発動の前の発がマガジンの最後の回（f3576・6292・8232 ほか）は除く"
+    }
   }
 ]

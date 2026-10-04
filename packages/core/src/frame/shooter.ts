@@ -66,6 +66,13 @@ export type ShooterState = {
   reloadLead?: true;
   /** Stage 16-B: ハイド中に始めたリロード（明けるまでに込め終わらなければ取り消す）。無ければキーごと無い */
   hideReload?: true;
+  /**
+   * 押下チャージ型（FiringParams.downCharge）の、前の発からチャージしているフレーム数。発と発の間（リロード・ハイドを挟まない）
+   * だけ持ち、毎フレームその時のチャージ時間で待ちを決め直す。チャージの途中でチャージ時間が変わる（バーストの発動で 1 秒 → 0.7 秒）と、
+   * 経過を持ち越して新しいチャージ時間に届いたら撃つ（C-0223。撃った時点の待ちのまま・やり直しとは合わない。V-0134）。
+   * 無ければキーごと無い
+   */
+  chargeElapsed?: number;
 };
 
 export function initialShooter(
@@ -122,6 +129,7 @@ function nextChunkFrames(state: ShooterState, params: FiringParams): number {
  * @returns 最初の 1 回分（分割リロードでは込めない 1 段）のフレーム数
  */
 function startReload(state: ShooterState, params: FiringParams): number {
+  delete state.chargeElapsed;
   state.phase = 'reloading';
   if (params.splitReload) state.reloadLead = true;
   return nextChunkFrames(state, params);
@@ -160,7 +168,10 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
   if (params.infiniteAmmo) {
     // Stage 11 モダニア: 装弾数無限。残弾は減らず、リロードも最後の弾丸も起きない
     state.lastShot = false;
-    if (isChargeWeapon(shot)) state.wait = Math.max(0, chargeShotIntervalFrames(params, model.chargeReleaseFrames) - 1);
+    if (isChargeWeapon(shot)) {
+      state.wait = Math.max(0, chargeShotIntervalFrames(params, model.chargeReleaseFrames) - 1);
+      if (params.downCharge) state.chargeElapsed = 0;
+    }
     return;
   }
   state.ammo -= 1;
@@ -180,6 +191,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
   }
   if (isChargeWeapon(shot)) {
     state.wait = Math.max(0, chargeShotIntervalFrames(params, model.chargeReleaseFrames) - 1);
+    if (params.downCharge) state.chargeElapsed = 0;
   }
 }
 
@@ -203,6 +215,11 @@ export function stepShooter(
   blocked = false,
 ): boolean {
   if (MAX_AMMO_CLAMP_ON_DECREASE && state.ammo > params.maxAmmo) state.ammo = params.maxAmmo;
+  if (state.chargeElapsed !== undefined) {
+    // 押下チャージ型: 前の発からの経過と、このフレームのチャージ時間で待ちを決め直す（C-0223）
+    state.chargeElapsed += 1;
+    state.wait = Math.max(0, chargeShotIntervalFrames(params, model.chargeReleaseFrames) - state.chargeElapsed);
+  }
   if (state.wait > 0) {
     state.wait -= 1;
     return false;
@@ -262,6 +279,7 @@ export function resumeShooter(
   // リロード中・込め終えて 1 発目を待っていた枠は、込め終えたマガジンの 1 発目から（スピンアップも最初から）
   if (state.phase !== 'ready') startMagazine(state);
   delete state.reloadLead;
+  delete state.chargeElapsed;
   state.ammo = params.maxAmmo;
   state.lastShot = false;
   state.wait = reloadFirstShotFrames(shot, model, params);
@@ -272,7 +290,8 @@ export function resumeShooter(
  * その時点のチャージで撃つ（部分チャージ。C-0109）。撃ったらチャージの進み p（0 < p ≤ 1）を返し、撃たなければ null。
  * - 次の発までの残りの待ちが k のとき、p = (C + 1 − k) / C（C はチャージのフレーム数。チャージは撃つ前の C フレームで進み、
  *   満ちた次のフレームで撃つ）。構え解除・構えの間（p ≤ 0）は撃たない。k = 0（このフレームに撃つはずだった）は p = 1。
- * - 押下チャージ型（DOWN_Charge）は挙動が違うので撃たない（モデルでは未対応の武器。design-stage22.md 0.4 節）。
+ * - 押下チャージ型（DOWN_Charge）は撃たない（design-stage22.md 0.4 節。アニス：スター単騎の録画 161 でも、的のジャンプの前に
+ *   フルチャージでない発は無い。V-0134）。
  * - リロード中は撃たない。込め終えて 1 発目を待っている（priming）枠は、そのマガジンの 1 発目として撃つ
  */
 export function partialChargeShot(
@@ -343,6 +362,7 @@ export function unhideShooter(
     state.acc = 0;
   }
   // チャージは狙えない間には進まないので、込め終えて 1 発目を待っていた枠も明けからチャージする
+  delete state.chargeElapsed;
   if (isChargeWeapon(shot)) state.wait = firstShotFrames(shot, model, params);
   else if (state.phase === 'ready') state.wait = model.aimInFrames;
   else state.wait = Math.max(state.wait, model.aimInFrames);

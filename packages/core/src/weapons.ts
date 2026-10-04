@@ -27,7 +27,8 @@ export type WeaponModel = {
   /**
    * チャージ武器の発と発の間のうち、チャージ（chargeSecondsToFrames）の外の長さ。Stage 23: 23f（C-0143）。
    * 撃った後に表示が出ない 13f・100% のまま待つ 9f・満ちてから撃つまで 1f の和（075-05）。発と発の間は
-   * 1 秒チャージで 59 + 23 = 82f、1.5 秒チャージで 89 + 23 = 112f。22 までは 1 秒 = 60f のチャージとの差だった（C-0001）
+   * 1 秒チャージで 59 + 23 = 82f、1.5 秒チャージで 89 + 23 = 112f。22 までは 1 秒 = 60f のチャージとの差だった（C-0001）。
+   * 押下チャージ型（DOWN_Charge）は発と発の間に足さない（C-0222。frame/firing.ts の chargeShotIntervalFrames）
    */
   chargeReleaseFrames: number;
   /**
