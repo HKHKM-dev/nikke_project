@@ -2,7 +2,7 @@
 
 - 関連: [skills-guide.md](skills-guide.md)、[design-damage-taken.md](design-damage-taken.md)（受けるダメージ▲ `damageTaken`）、[design-stage10.md](design-stage10.md)（弾丸チャージ `ammoRefill`・回数トリガー）、[design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)（1 パス目に着地点の命中率を渡す形）
 - 作成日: 2026-10-04
-- 検証記録: V-0158
+- 検証記録: V-0159
 - 根拠: 説明文（`data/characters/194.json`）。同じ形の効果の結論は各行に書く
 - 状態: オーナーの承認（2026-10-04。5 節の論点 1・4 は推奨どおり、論点 2 は代案の「乗る前提で実装」、論点 3 は代案の「弾丸命中率で数える」）で実装する
 
@@ -122,7 +122,7 @@ MG・水冷・バースト III・CT 40 秒。{NN} は description_value_NN。
 5. 退化の確かめ。命中の数え（2.3 節）と calc の数え（2.5 節）で動く数値は、既存の編成で比べて PR に書く。
 6. 画面と CLI の表示（`skillLabels.ts` の回数トリガーの名前「コア命中」、弾丸チャージの「N 発」。`sim-run.ts`）。
 7. 定義 `data/skills/194.json` と `index.json`、編成のテスト（ルドミラを含む編成で sim と calc が整合）。
-8. 予測ファイル `records/predictions/V-0158.json`（段 A）を commit してから 099 を読む。
+8. 予測ファイル `records/predictions/V-0159.json`（段 A）を commit してから 099 を読む。
 
 ## 5. 論点
 

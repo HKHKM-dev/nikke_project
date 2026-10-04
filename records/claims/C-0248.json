@@ -1,11 +1,11 @@
 {
   "id": "C-0248",
-  "text": "ルドミラ：ウィンターオーナーのバーストの自分の攻撃力▲（62.54%・10 秒）は通常攻撃と S1・S2 の追加ダメージに乗り、リロード速度▲（67.2%・20 秒）はリロードを 時間 × (1 − 速度)（C-0013）で縮める",
+  "text": "ルドミラ：ウィンターオーナーの S1 は、通常攻撃の命中 60 回ごと（命中の期待値で数え、戦闘中ずっと数える）に、対象の受けるダメージ▲（3 秒。付き直しは延ばすだけ）を付け、同じ発火の▲が乗る追加ダメージ（コア・距離なし。1 ヒットで 1 発ぶんのゲージ）を与え、自分に弾丸チャージ 20 発（最大装弾数で止める。60 回目が最後の弾丸ならリロードに間に合わない）",
   "state": "仮説",
   "topic": "スキル・キャラ固有",
-  "grade": "厳密一致",
-  "basis": "`192-01`・`192-03`（リロード: 窓の中 67〜70f・外 188〜189f。MG の切片 + 3 秒 × (1 − 0.672) の約 70f と合い、割り算なら約 118f）・`192-04`（予測 V-0159 と 1 未満で一致）・`192-06`。仮説にとどめたのは、録画 192 がラム・デルタとの 3 人編成で、ラムの S2・バーストの notes が確定の結論に結び付いておらず、最小構成の警告が出るため（AGENTS.md「事実と記録」）。V-0159",
-  "model": "`data/skills/194.json`（burst の 2 効果）。リロード速度は `frame/firing.ts`（C-0013）",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/194.json` の skill1）の読み。同じ発火の▲が乗る順はイサベル（C-0163）と同じ形、追加ダメージのゲージはモダニア（C-0105）と同じ形とみなした。録画 099 の読み直しで確かめる（予測は records/predictions/V-0159.json）。V-0159",
+  "model": "`data/skills/194.json`（skill1。`sequential`）。数えは `skills/triggers.ts` の `shotCountWeight`・`advanceShotCount`、命中の期待値は `frame/firstPass.ts` の `hitsAt`、弾丸チャージの発数は `frame/firstPass.ts`（`scaling: flat`）、同じ発火の順は `frame/plan.ts` の `withEarlierSequentialEffects`（plan/design-ludmilla-wo.md 2 節）",
   "replaces": [],
   "updated": "2026-10-04"
 }

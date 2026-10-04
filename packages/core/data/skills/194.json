@@ -22,8 +22,8 @@
           },
           "claims": [
             "C-0138",
-            "C-0244",
-            "C-0247"
+            "C-0248",
+            "C-0251"
           ]
         },
         {
@@ -43,8 +43,8 @@
           },
           "claims": [
             "C-0163",
-            "C-0244",
-            "C-0247"
+            "C-0248",
+            "C-0251"
           ]
         },
         {
@@ -61,8 +61,8 @@
             "en": "Hits are counted for the whole battle and not reset by reloads. Capped at max ammo"
           },
           "claims": [
-            "C-0244",
-            "C-0247"
+            "C-0248",
+            "C-0251"
           ]
         }
       ]
@@ -85,8 +85,8 @@
             "en": "Core hits are counted as expected values (each shot adds bullet hit rate × core hit rate; fires on the shot where the total passes a multiple of 60). No core or distance bonus. One hit charges the shooter's per-shot gauge"
           },
           "claims": [
-            "C-0245",
-            "C-0247"
+            "C-0249",
+            "C-0251"
           ]
         },
         {
@@ -97,7 +97,7 @@
           "ref": 3,
           "durationRef": 4,
           "claims": [
-            "C-0245"
+            "C-0249"
           ]
         }
       ]
@@ -112,8 +112,8 @@
           "ref": 1,
           "durationRef": 2,
           "claims": [
-            "C-0246",
-            "C-0248"
+            "C-0250",
+            "C-0252"
           ]
         },
         {
@@ -124,8 +124,8 @@
           "ref": 3,
           "durationRef": 4,
           "claims": [
-            "C-0246",
-            "C-0248"
+            "C-0250",
+            "C-0252"
           ]
         }
       ]
