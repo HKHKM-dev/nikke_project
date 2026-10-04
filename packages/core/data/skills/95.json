@@ -4,17 +4,16 @@
   "checkedAt": "2026-09-22",
   "skills": {
     "skill1": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
           "ja": "カモフラージュ状態（バースト使用時・フルバースト中のフルチャージ時）の防御力無視ダメージは未対応",
-          "en": "True damage while in Camouflage (after Burst Skill / Full Charge during Full Burst) is not modeled"
+          "en": "True damage while in Camouflage (after Burst Skill / Full Charge during Full Burst) is not modeled",
+          "kind": "unimplemented"
         }
       ]
     },
     "skill2": {
-      "support": "partial",
       "effects": [
         {
           "kind": "passive",
@@ -38,17 +37,23 @@
       "notes": [
         {
           "ja": "フォーメーションLT 併用時の追加効果（発射体爆発ダメージ・防御力無視ダメージ）は未対応",
-          "en": "Bonus effects while in LT Formation (Projectile Explosion Damage, True Damage) are not modeled"
+          "en": "Bonus effects while in LT Formation (Projectile Explosion Damage, True Damage) are not modeled",
+          "kind": "unimplemented"
+        },
+        {
+          "ja": "クリティカル確率▲の対象は「同じ部隊の味方全体」だが、対象を部隊で絞るのは未実装（いまは味方全体に付ける）",
+          "en": "Critical Rate up targets allies in the same squad, but narrowing the target by squad is not implemented (all allies get it for now)",
+          "kind": "unimplemented"
         }
       ]
     },
     "burst": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "武器変更（1 発のみ）は未対応。敵の受けるダメージ▲（10 秒間維持）も未対応（敵デバフは語彙にない）",
-          "en": "Weapon change (one shot) is not modeled. Damage taken up on enemies (10 s) is not modeled either (no vocabulary for enemy debuffs)"
+          "ja": "武器変更（1 発のみ）と、命中した敵の受けるダメージ▲（10 秒間維持）は未対応（語彙 weaponChange・damageTaken はあるが、撮影していない）",
+          "en": "The weapon change (one shot) and Damage Taken up on enemies hit (10 s) are not modeled (weaponChange and damageTaken exist, but no recording yet)",
+          "kind": "unimplemented"
         }
       ]
     }

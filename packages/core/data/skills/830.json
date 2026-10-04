@@ -4,7 +4,6 @@
   "checkedAt": "2026-09-28",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -17,18 +16,21 @@
             "ja": "HP が満タンでも回復は適用されたとみなす",
             "en": "A heal at full HP still counts as applied"
           },
-          "claims": ["C-0077", "C-0087"]
+          "claims": [
+            "C-0077",
+            "C-0087"
+          ]
         }
       ],
       "notes": [
         {
           "ja": "戦闘開始時のバリアに与えるダメージ▲は、射撃場の敵にバリアが無いのでダメージに関係しない",
-          "en": "Damage to barriers up from the start of battle does not affect damage (the shooting range enemy has no barrier)"
+          "en": "Damage to barriers up from the start of battle does not affect damage (the shooting range enemy has no barrier)",
+          "kind": "outOfScope"
         }
       ]
     },
     "skill2": {
-      "support": "partial",
       "effects": [
         {
           "kind": "timed",
@@ -38,19 +40,23 @@
           "stat": "coreDamage",
           "ref": 3,
           "durationRef": 4,
-          "claims": ["C-0075"]
+          "claims": [
+            "C-0075"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "「自分がバリア適用状態なら」有利コードの攻撃ダメージ▲は未対応（バリアを扱わない）",
-          "en": "Elemental advantage damage up while shielded is not modeled (barriers are not tracked)",
-          "claims": ["C-0075"]
+          "ja": "「自分がバリア適用状態なら」有利コードの攻撃ダメージ▲は、バリアを扱わないので起きない",
+          "en": "Elemental advantage damage up while shielded does not occur because shields are not modeled",
+          "kind": "outOfScope",
+          "claims": [
+            "C-0075"
+          ]
         }
       ]
     },
     "burst": {
-      "support": "partial",
       "effects": [
         {
           "kind": "timed",
@@ -59,7 +65,9 @@
           "stat": "attackDamage",
           "ref": 2,
           "durationRef": 3,
-          "claims": ["C-0076"]
+          "claims": [
+            "C-0076"
+          ]
         },
         {
           "kind": "heal",
@@ -71,7 +79,10 @@
             "ja": "吸収回復（10 秒間維持）は、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす。窓の中の命中や付き直しでは起こさない（V-0022・V-0024）",
             "en": "The lifesteal (10 s) triggers \"when healed\" only when newly applied, not on hits during it or refreshes (V-0022, V-0024)"
           },
-          "claims": ["C-0077", "C-0082"]
+          "claims": [
+            "C-0077",
+            "C-0082"
+          ]
         },
         {
           "kind": "timed",
@@ -80,19 +91,34 @@
           "stat": "hitRate",
           "ref": 6,
           "durationRef": 7,
-          "claims": ["C-0076"]
+          "claims": [
+            "C-0076"
+          ]
         }
       ],
       "notes": [
         {
           "ja": "貫通特化は射撃場の敵ではダメージに関係しない",
           "en": "Pierce does not affect damage on the shooting range enemy",
-          "claims": ["C-0076"]
+          "kind": "outOfScope",
+          "claims": [
+            "C-0076"
+          ]
         },
         {
-          "ja": "命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。弾丸命中率には効かせていない（未実装）",
-          "en": "With automatic conditions the Hit Rate buff makes the core hit rate 1 during the burst (N ≥ 1; timed buffs use the same formula as constant ones). It does not change the bullet hit rate (not modeled)",
-          "claims": ["C-0037", "C-0170"]
+          "ja": "命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。AR の弾丸命中率にも同じ式で効かせる（確かめたのは SMG だけ）",
+          "en": "With automatic conditions the Hit Rate buff makes the core hit rate 1 during the burst (N ≥ 1; timed buffs use the same formula as constant ones). It also raises the AR bullet hit rate with the same formula (verified only for SMG)",
+          "kind": "modeling",
+          "claims": [
+            "C-0037",
+            "C-0170",
+            "C-0192"
+          ]
+        },
+        {
+          "ja": "持続の命中率▲による弾丸命中率の上がりは、バーストゲージに入れていない",
+          "en": "The bullet hit rate gain from the timed Hit Rate buff is not added to the burst gauge",
+          "kind": "unimplemented"
         }
       ]
     }

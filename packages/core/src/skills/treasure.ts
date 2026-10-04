@@ -18,6 +18,7 @@ const UNDEFINED_TREASURE_ENTRY: SkillEntry = {
     {
       ja: '宝物版のスキル定義がない（基礎版の定義は数値の番号が違うので使わない）',
       en: 'No definition for the treasure version (the base definition refers to different values)',
+      kind: 'unimplemented',
     },
   ],
 };

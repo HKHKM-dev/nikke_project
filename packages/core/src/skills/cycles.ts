@@ -99,7 +99,6 @@ export function resolveCycles(def: SkillDefinition, character: CharacterData, le
   const resolved: ResolvedCycle[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'cycle') return;
@@ -122,7 +121,6 @@ export function resolveCycleEvery(
   const resolved: ResolvedCycleEvery[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'cycleEvery') return;

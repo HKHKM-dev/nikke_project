@@ -4,7 +4,6 @@
   "checkedAt": "2026-09-28",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "cycle",
@@ -17,13 +16,19 @@
               "kind": "damage",
               "damageType": "skill",
               "ref": 2,
-              "gaugeHits": [5]
+              "gaugeHits": [
+                5
+              ]
             },
             {
               "kind": "damage",
               "damageType": "distributed",
               "ref": 3,
-              "gaugeHits": [5, 19, 33],
+              "gaugeHits": [
+                5,
+                19,
+                33
+              ],
               "assumes": {
                 "ja": "的 1 体では 1/3 ずつ 3 ティック（約 14〜15f おき）で当たるが、合計（全額）を 1 ヒットにまとめる（録画 46）",
                 "en": "On a single target it lands as 3 ticks of 1/3 (about 14-15f apart); modeled as one hit of the full amount (recording 46)"
@@ -33,19 +38,23 @@
               "kind": "damage",
               "damageType": "distributed",
               "ref": 4,
-              "gaugeHits": [5]
+              "gaugeHits": [
+                5
+              ]
             }
           ],
           "assumes": {
             "ja": "対象は単体ボス（最も防御の低い敵 1 機・攻撃範囲内の敵・敵全体とも同じ敵で、分配ダメージは全額）。回数は戦闘開始からの通算のフルチャージ攻撃回数で、段は A → B → C を循環する（録画 46・47）",
             "en": "A single boss is assumed (the lowest-DEF enemy, enemies in range and all enemies are the same target; distributed damage is dealt in full). The count is the running total of full charge attacks since the battle started, and the tiers cycle A → B → C (recordings 46 and 47)"
           },
-          "claims": ["C-0047", "C-0085"]
+          "claims": [
+            "C-0047",
+            "C-0085"
+          ]
         }
       ]
     },
     "skill2": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -64,7 +73,6 @@
       ]
     },
     "burst": {
-      "support": "supported",
       "effects": [
         {
           "kind": "cycleEvery",

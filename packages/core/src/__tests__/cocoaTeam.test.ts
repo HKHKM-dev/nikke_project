@@ -1,4 +1,4 @@
-// ココア（311）を含む編成: 定義はダメージに効く効果を持たない（全スロット unsupported）。sim と calc の整合（V-0031、C-0092）。
+// ココア（311）を含む編成: 定義はダメージに効く効果を持たない（全スロット noEffect）。sim と calc の整合（V-0031、C-0092）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -59,7 +59,7 @@ describe('ココアの定義', () => {
   it('is defined with notes only (no effects in any slot)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${COCOA}.json`));
     for (const slot of ['skill1', 'skill2', 'burst'] as const) {
-      expect(def.skills[slot].support).toBe('unsupported');
+      expect(def.skills[slot].support).toBe('noEffect');
       expect(def.skills[slot].effects).toEqual([]);
     }
   });

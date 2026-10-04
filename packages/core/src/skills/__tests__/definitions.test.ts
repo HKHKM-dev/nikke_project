@@ -149,8 +149,8 @@ describe('data/skills', () => {
       const dot1 = resolveDotEffects(def, character, { skill1: 1, skill2: 1, burst: 1 });
       // ラム編: 即時効果（CT▼）だけの定義もある
       const instant10 = resolveInstant(def, character, MAX_SKILL_LEVELS);
-      // ダメージに効く効果が 1 つも無いキャラ（デルタなど）は、全スロットを unsupported にして notes だけを書く
-      const modeled = SKILL_SLOTS.some((slot) => def.skills[slot].support !== 'unsupported');
+      // ダメージに効く効果が 1 つも無いキャラ（デルタなど）は、全スロットが効果なしで notes だけ（noEffect・unsupported）
+      const modeled = SKILL_SLOTS.some((slot) => def.skills[slot].effects.length > 0);
       if (modeled) {
         const count = lv10.length + burst10.length + timed10.length + damage10.length + dot10.length + instant10.length;
         expect(count).toBeGreaterThan(0);

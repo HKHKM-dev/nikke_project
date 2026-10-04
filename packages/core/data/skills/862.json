@@ -4,7 +4,6 @@
   "checkedAt": "2026-10-01",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "dot",
@@ -54,17 +53,16 @@
       ]
     },
     "skill2": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
           "ja": "フルバーストタイム中に通常攻撃が 36 回命中した時、対象がハッキング状態なら 86.17% の追加ダメージは未実装（フルバースト中だけの命中の数え方と、対象がハッキング状態かの条件が語彙に無い）",
-          "en": "The 86.17% additional damage on 36 normal hits during Full Burst to a hacked target is not implemented (no vocabulary for counting hits only during Full Burst or for the target's hacked state)"
+          "en": "The 86.17% additional damage on 36 normal hits during Full Burst to a hacked target is not implemented (no vocabulary for counting hits only during Full Burst or for the target's hacked state)",
+          "kind": "unimplemented"
         }
       ]
     },
     "burst": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",

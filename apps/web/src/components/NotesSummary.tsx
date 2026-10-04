@@ -22,9 +22,20 @@ export type NotesSummarySlot = {
   buildNotes: readonly BuildEffectNote[];
 };
 
-type Item = { level: 'unsupported' | 'approx' | 'assumed'; text: string };
+type Item = { level: 'unsupported' | 'outOfScope' | 'approx' | 'assumed'; text: string };
 
-const LEVEL_LABEL: Record<Item['level'], string> = { unsupported: '未対応', approx: '近似', assumed: '仮定' };
+const LEVEL_LABEL: Record<Item['level'], string> = {
+  unsupported: '未対応',
+  outOfScope: '前提の外',
+  approx: '近似',
+  assumed: '仮定',
+};
+const LEVEL_CLASS: Record<Item['level'], string> = {
+  unsupported: 'unsupported',
+  outOfScope: 'out-of-scope',
+  approx: 'approx',
+  assumed: 'approx',
+};
 
 /** 編成によらずモデル全体で扱わないもの・確かめていないもの（README の「未対応」と同じ） */
 const MODEL_WIDE: Item[] = [
@@ -65,11 +76,17 @@ function slotItems(slot: NotesSummarySlot): Item[] {
       const entry = definition?.skills[s];
       if (!entry) continue;
       const name = `${SKILL_SLOT_LABEL[s]}「${character.skills[s].name.ja}」`;
-      if (entry.support !== 'supported') {
+      // notes の種類で分ける（plan/design-skill-note-kinds.md 2.3 節）。計算に無関係・補足はスキル欄だけに出す
+      const notes = entry.notes ?? [];
+      if (entry.support === 'partial' || entry.support === 'unsupported') {
         const what = entry.support === 'partial' ? '一部対応' : '未対応';
-        const notes = (entry.notes ?? []).map((n) => n.ja).join('、');
-        items.push({ level: 'unsupported', text: `${name}は${what}${notes ? `: ${notes}` : ''}` });
+        const text = notes
+          .filter((n) => n.kind === 'unimplemented')
+          .map((n) => n.ja)
+          .join('、');
+        items.push({ level: 'unsupported', text: `${name}は${what}: ${text}` });
       }
+      for (const n of notes) if (n.kind === 'outOfScope') items.push({ level: 'outOfScope', text: `${name}: ${n.ja}` });
       for (const e of entry.effects) if (e.assumes) items.push({ level: 'assumed', text: `${name}: ${e.assumes.ja}` });
     }
   }
@@ -84,7 +101,7 @@ function ItemList({ items }: { items: readonly Item[] }) {
   return (
     <ul className="notes">
       {items.map((item, i) => (
-        <li key={i} className={`note ${item.level === 'unsupported' ? 'unsupported' : 'approx'}`}>
+        <li key={i} className={`note ${LEVEL_CLASS[item.level]}`}>
           <span className="badge">{LEVEL_LABEL[item.level]}</span> {item.text}
         </li>
       ))}

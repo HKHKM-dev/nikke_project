@@ -10,12 +10,12 @@ const rem = makeCharacter({}, { squad: 'CE003', burstStep: 'Step2' });
 const delta = makeCharacter({}, { squad: 'Scouting', burstStep: 'Step2' });
 
 function definitionWith(effect: Record<string, unknown>): unknown {
-  const empty = { support: 'unsupported', effects: [] };
+  const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
   return {
     formatVersion: 1,
     resourceId: 1,
     checkedAt: '2026-10-04',
-    skills: { skill1: { support: 'supported', effects: [effect] }, skill2: empty, burst: empty },
+    skills: { skill1: { effects: [effect] }, skill2: empty, burst: empty },
   };
 }
 

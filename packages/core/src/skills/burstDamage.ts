@@ -83,7 +83,7 @@ export function resolveBurstDamage(
     throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
   }
   const entry = def.skills.burst;
-  if (entry.support === 'unsupported') return [];
+  if (entry.effects.length === 0) return [];
   const skill = character.skills.burst;
   const resolved: ResolvedBurstDamage[] = [];
   for (const effect of entry.effects) {
@@ -111,7 +111,6 @@ export function resolveDamageEffects(
   const resolved: ResolvedDamageEffect[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'damage') return;
@@ -144,7 +143,6 @@ export function resolveDamageGauges(
   const out: ResolvedDamageGauge[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    if (entry.support === 'unsupported') continue;
     for (const effect of entry.effects) {
       if (effect.kind !== 'damage' || effect.gaugeHits === undefined) continue;
       const trigger = resolveTrigger(effect.trigger, character.skills[slot], levels[slot]);
@@ -163,7 +161,6 @@ export function resolveTimerGauges(def: SkillDefinition): number[] {
   const out: number[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    if (entry.support === 'unsupported') continue;
     for (const effect of entry.effects) if (effect.kind === 'burstGaugeHit') out.push(effect.trigger.everySeconds);
   }
   return out;
@@ -184,7 +181,6 @@ export function resolveDotEffects(
   const resolved: ResolvedDamageEffect[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
       // アニス：スター S2・バースト編: 周期の自動攻撃も、刻みと 1 ヒットの式は dot と同じ（plan/design-anis-star-s2-burst.md 2.2 節）
@@ -260,7 +256,6 @@ export function resolvePerShotDamage(
   const resolved: ResolvedSkillDamage[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     for (const effect of entry.effects) {
       if (effect.kind !== 'damage') continue;

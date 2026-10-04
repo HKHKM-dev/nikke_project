@@ -4,7 +4,6 @@
   "checkedAt": "2026-10-03",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "dot",
@@ -48,21 +47,21 @@
       ]
     },
     "skill2": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "戦闘開始時とフルバーストタイム発動時の自分のパーツダメージ▲（急所攻略）は未対応（パーツのダメージはモデルに無い。射撃場の的のコア・胴体には効かない見込み）",
-          "en": "Part damage up for self at battle start and on Full Burst (Weak Point Strike) is not supported (the model has no part damage; it is not expected to affect the training target's core or body)"
+          "ja": "戦闘開始時とフルバーストタイム発動時の自分のパーツダメージ▲（急所攻略）は、射撃場の的にパーツが無いので効かない",
+          "en": "Part damage up for self at battle start and on Full Burst (Weak Point Strike) does not apply (the training target has no parts)",
+          "kind": "outOfScope"
         },
         {
-          "ja": "味方がパーツを破壊した時、A.N.モードでなければ自分に持続ダメージ▲（一点集中）は未対応（パーツの破壊のトリガーと、持続ダメージ▲の stat が無い）",
-          "en": "Sustained damage up for self when an ally destroys a part outside A.N. Mode (Focus) is not supported (no part-destruction trigger and no sustained damage up stat)"
+          "ja": "味方がパーツを破壊した時の、自分の持続ダメージ▲（一点集中）は、射撃場の的にパーツが無いので起きない",
+          "en": "Sustained damage up for self when an ally destroys a part (Focus) does not occur (the training target has no parts)",
+          "kind": "outOfScope"
         }
       ]
     },
     "burst": {
-      "support": "partial",
       "effects": [
         {
           "kind": "burstDamage",
@@ -82,7 +81,8 @@
       "notes": [
         {
           "ja": "自分の A.N.モード（一点集中の解除と、持続ダメージ▲ 10 秒）は未対応（持続ダメージ▲の stat が無い）。S1 の持続ダメージに効くので、バーストの後の tick は過小になる",
-          "en": "A.N. Mode for self (removes Focus; sustained damage up for 10 s) is not supported (no sustained damage up stat). It affects S1's damage over time, so ticks after the burst are underestimated"
+          "en": "A.N. Mode for self (removes Focus; sustained damage up for 10 s) is not supported (no sustained damage up stat). It affects S1's damage over time, so ticks after the burst are underestimated",
+          "kind": "unimplemented"
         }
       ]
     }

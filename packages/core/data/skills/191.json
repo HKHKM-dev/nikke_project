@@ -4,7 +4,6 @@
   "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -28,17 +27,21 @@
       ]
     },
     "skill2": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "貫通特化は単体の的ではダメージに関係しない。HP 80% 未満の回復は HP を持たないので扱わない",
-          "en": "Pierce does not affect damage on a single target; the heal below 80% HP is not modeled (HP is not tracked)"
+          "ja": "貫通特化は敵 1 体ではダメージに関係しない",
+          "en": "Pierce does not affect damage against a single enemy",
+          "kind": "outOfScope"
+        },
+        {
+          "ja": "HP 80% 未満のときの回復は、被弾を扱わないので起きない",
+          "en": "The heal below 80% HP does not occur because taking hits is not modeled",
+          "kind": "outOfScope"
         }
       ]
     },
     "burst": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",

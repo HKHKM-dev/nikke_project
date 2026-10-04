@@ -14,7 +14,7 @@ import { isFiringStat, isStateStat, parseSkillDefinition } from '../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 
 function definition(skills: Record<string, unknown>, resourceId = 1): unknown {
-  const none = { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] };
+  const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
   return {
     formatVersion: 1,
     resourceId,
@@ -23,7 +23,7 @@ function definition(skills: Record<string, unknown>, resourceId = 1): unknown {
   };
 }
 
-const supported = (...effects: unknown[]) => ({ support: 'supported', effects });
+const supported = (...effects: unknown[]) => ({ effects });
 
 function raw(values: string[][]): SkillRaw {
   return { id: 1, name: { ja: 'S', en: 'S' }, description: { ja: '', en: '' }, values };

@@ -4,7 +4,6 @@
   "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
-      "support": "partial",
       "effects": [
         {
           "kind": "timed",
@@ -25,13 +24,18 @@
       ],
       "notes": [
         {
-          "ja": "有利コードの攻撃ダメージ・防御力（ペルソナ - ヨハンナ）と 1more/追撃の分配ダメージは未対応",
-          "en": "Elemental Advantage Attack Damage and DEF (Persona - Johanna) and the 1 More / Follow Up distributed damage are not modeled"
+          "ja": "有利コードの攻撃ダメージ▲（ペルソナ - ヨハンナ）と、1more・追撃の分配ダメージは未対応",
+          "en": "Elemental Advantage Attack Damage up (Persona - Johanna) and the 1 More / Follow Up distributed damage are not modeled",
+          "kind": "unimplemented"
+        },
+        {
+          "ja": "防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない",
+          "en": "DEF up (Persona - Johanna) does not affect damage",
+          "kind": "noDamage"
         }
       ]
     },
     "skill2": {
-      "support": "partial",
       "effects": [
         {
           "kind": "passive",
@@ -50,13 +54,18 @@
       ],
       "notes": [
         {
-          "ja": "バースト使用時の鉄・拳・制・裁！（有利コードの攻撃ダメージ・防御力）と 1more 時のバトンタッチ（スタック）は未対応。バースト 3 段階突入時の分配ダメージ 90.01%▲（10 秒間維持）は Stage 8 で対応（録画 21 の 6,323,975 = 1.9001 倍を再現）",
-          "en": "Fist of Justice! on Burst Skill use and Baton Pass on 1 More (stacks) are not modeled. Distributed Damage +90.01% on entering Burst Stage 3 (10 s) is modeled since Stage 8 (reproduces the 1.9001 factor of recording 21)"
+          "ja": "バースト使用時の鉄・拳・制・裁！の有利コードの攻撃ダメージ▲と、1more 時のバトンタッチ（スタック）は未対応",
+          "en": "Elemental Advantage Attack Damage up from Fist of Justice! on Burst Skill use and Baton Pass on 1 More (stacks) are not modeled",
+          "kind": "unimplemented"
+        },
+        {
+          "ja": "鉄・拳・制・裁！の防御力▲はダメージに関係しない",
+          "en": "DEF up from Fist of Justice! does not affect damage",
+          "kind": "noDamage"
         }
       ]
     },
     "burst": {
-      "support": "supported",
       "effects": [
         {
           "kind": "burstDamage",
@@ -66,7 +75,9 @@
             "ja": "単体ボスなので分配ダメージは全額 1 ヒット",
             "en": "Distributed damage lands in full as one hit on a lone boss"
           },
-          "claims": ["C-0231"]
+          "claims": [
+            "C-0231"
+          ]
         },
         {
           "kind": "timed",

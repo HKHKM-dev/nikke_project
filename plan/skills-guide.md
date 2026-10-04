@@ -24,11 +24,13 @@
 
 ### 1.2 説明文を分解する
 
-- `packages/core/data/characters/{resourceId}.json` の `skills.{skill1|skill2|burst}` を読む。説明文の 1 行ずつを、次の 4 つに分ける。
+- `packages/core/data/characters/{resourceId}.json` の `skills.{skill1|skill2|burst}` を読む。説明文の 1 行ずつを、次のどれかに分ける。notes は種類 `kind` を付けて書く（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.1 節）。1 行の notes に種類の違う中身を混ぜない。
   - **語彙にある**: そのまま定義に書ける
   - **語彙を足す**: 足す語彙の案を書く
-  - **ダメージに関係しない**: notes に書く（防御力▲・挑発など）
-  - **未対応**: notes に書く。語彙に無く、今回は足さないもの（被弾トリガー・敵デバフ・確率発動など）
+  - **ダメージに関係しない**（`noDamage`）: どの編成・敵でも与ダメージを変えない（防御力▲・最大HP▲・挑発・敵の攻撃力▼など）
+  - **前提の外**（`outOfScope`）: モデルの前提（静止単体ボス・被弾なし・味方が倒れない・パーツ／阻止部位／バリアなし。[requirements.md](requirements.md) 5.2 節）では起きない・効かない（被弾トリガー・貫通・阻止部位・バリアなど）
+  - **未対応**（`unimplemented`）: 前提の中でダメージに効く（効きうる）のに、今回は定義しないもの。理由（語彙が無い・撮っていない・きっかけが説明文に無い など）を添える。味方の回復は、「回復を受けた時」の効果を持つ味方の発動を変えるので、`heal` で定義しないならここ
+  - 扱い方の補足（`modeling`）: 扱っていない効果ではなく、どこから入っているか・近似などの説明
 - 語彙に無い効果の見込みは [design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果）と [requirements.md](requirements.md)（スコープ外）にもある。
 
 ### 1.3 検証記録を起こす
@@ -55,7 +57,7 @@
 - **定義を書く**
   - `data/skills/{resourceId}.json` と `index.json`。
   - 数値は書かず、`ref` で説明文の値を指す。
-  - スロットごとに `support` を付ける。`unsupported` のときは `effects: []` と notes が要る。
+  - スロットの対応状況（`support`）は書かない。効果の有無と、未対応（`unimplemented`）の notes の有無から読み込みで決まる（`supported`・`partial`・`unsupported`・`noEffect`。[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）。効果の無いスロットには、理由の notes が要る。
   - いつも満たすとみなした条件は、効果の `assumes` に書く。
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作るのは 1.6 なので、そのときに書き足す。
   - `checkedAt` は説明文を読んだ日。
@@ -129,7 +131,7 @@
 ## 4. PR の前の確かめ
 
 - [ ] 説明文の全行が、定義の効果か notes のどちらかに入っている
-- [ ] 効果の `assumes` と、スロットの `support` が実態と合っている
+- [ ] 効果の `assumes` と、notes の種類（`kind`）が実態と合っている（[skills.md](skills.md) の対応状況が意図どおり）
 - [ ] 定義のどの効果にも `claims` がある（[skills.md](skills.md) のそのキャラに「根拠なし」の効果が残っていない）
 - [ ] 検証記録の「予測」が、撮る前（読み直しなら読む前）に書かれている（予測ファイルの commit が録画か読みより前）
 - [ ] `npm run records:close -- V-NNNN --mark` が通っている（結論の根拠・等級の候補・予測の日付・本文の節）

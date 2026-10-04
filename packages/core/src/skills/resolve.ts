@@ -175,7 +175,6 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
   const resolved: ResolvedEffect[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     for (const effect of entry.effects) {
       if (effect.kind !== 'passive') continue;
@@ -237,7 +236,6 @@ export function resolveTimed(
   const resolved: ResolvedTimedEffect[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
       if (effect.kind === 'weaponChange') {
@@ -416,7 +414,6 @@ export function resolveInstant(
   const resolved: ResolvedInstantEffect[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
       if (

@@ -52,7 +52,7 @@ function solo(definition: SkillDefinition): TeamInput {
 
 describe('I-DOLL・フラワー（304）', () => {
   it('models only the S2 gauge on S1 and S2', () => {
-    expect(def.skills.skill1).toMatchObject({ support: 'unsupported', effects: [] });
+    expect(def.skills.skill1).toMatchObject({ support: 'noEffect', effects: [] });
     expect(def.skills.skill2).toMatchObject({ support: 'supported', effects: [GAUGE] });
     expect(resolveTimerGauges(def)).toEqual([15]);
   });
@@ -68,7 +68,7 @@ describe('I-DOLL・フラワー（304）', () => {
 });
 
 describe('burstGaugeHit の検証', () => {
-  const entry = (effect: unknown) => withSkill2({ support: 'supported', effects: [effect] });
+  const entry = (effect: unknown) => withSkill2({ effects: [effect] });
 
   it('needs a timer trigger and no other fields', () => {
     expect(() => parseSkillDefinition(entry(GAUGE))).not.toThrow();
@@ -81,7 +81,7 @@ describe('burstGaugeHit の検証', () => {
 
   it('is ignored when the slot is unsupported', () => {
     const none = parseSkillDefinition(
-      withSkill2({ support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] }),
+      withSkill2({ effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] }),
     );
     expect(resolveTimerGauges(none)).toEqual([]);
   });
@@ -90,7 +90,7 @@ describe('burstGaugeHit の検証', () => {
 describe('S2 のゲージ（1 パス目）', () => {
   const withGauge = planTeamRun(solo(def));
   const without = planTeamRun(
-    solo(parseSkillDefinition(withSkill2({ support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] }))),
+    solo(parseSkillDefinition(withSkill2({ effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] }))),
   );
   const shotsOf = (plan: typeof withGauge) => plan.shots[0]!.frames;
   const indexOfFull = (plan: typeof withGauge) =>

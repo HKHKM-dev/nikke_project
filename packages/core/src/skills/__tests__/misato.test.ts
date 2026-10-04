@@ -1,5 +1,5 @@
 // ミサト（833）: S1「射撃マニュアル」の命中率▲（60 発ごとに自分に 1 スタック・3 スタック・5 秒）の解決と、
-// ダメージに関係しない S2・バースト（unsupported と notes）。V-0110。
+// ダメージに効く効果の無い S2（noEffect）と、回復だけのバースト（unsupported。回復は未対応）。V-0110。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { gameSecondsToFrames } from '../../time.ts';
@@ -34,8 +34,8 @@ describe('ミサト（833）の定義', () => {
     expect(lv1[0]!.value).toBeCloseTo(0.0252, 12);
   });
 
-  it('has nothing else that affects damage (S2 and the burst are notes only)', () => {
-    expect(def.skills.skill2.support).toBe('unsupported');
+  it('defines nothing else (S2 has no effect on damage; the burst heal is not modeled)', () => {
+    expect(def.skills.skill2.support).toBe('noEffect');
     expect(def.skills.burst.support).toBe('unsupported');
     expect(resolveInstant(def, misato, MAX_SKILL_LEVELS)).toEqual([]);
     expect(resolvePassives(def, misato, MAX_SKILL_LEVELS)).toEqual([]);

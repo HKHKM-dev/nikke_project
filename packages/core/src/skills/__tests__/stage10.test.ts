@@ -18,7 +18,7 @@ const skill = (values: string[]): SkillRaw => ({
 });
 
 function definition(skills: Partial<Record<keyof SkillDefinition['skills'], unknown>>): unknown {
-  const none = { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] };
+  const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
   return {
     formatVersion: 1,
     resourceId: 1,
@@ -27,7 +27,7 @@ function definition(skills: Partial<Record<keyof SkillDefinition['skills'], unkn
   };
 }
 
-const supported = (...effects: unknown[]) => ({ support: 'supported', effects });
+const supported = (...effects: unknown[]) => ({ effects });
 
 describe('parseSkillDefinition (Stage 10)', () => {
   it('accepts firing stats in passive and timed, flat max ammo, instant effects and lastShot', () => {

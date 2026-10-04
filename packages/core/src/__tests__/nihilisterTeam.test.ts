@@ -62,7 +62,7 @@ const TEAMS: Record<string, { input: TeamInput; nihilister: number }> = {
 describe('ニヒリスターの定義', () => {
   it('supports S2 and the burst (S1 is notes)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${NIHILISTER}.json`));
-    expect(def.skills.skill1.support).toBe('unsupported');
+    expect(def.skills.skill1.support).toBe('noEffect');
     expect(def.skills.skill2.support).toBe('supported');
     expect(def.skills.burst.support).toBe('supported');
     expect(def.skills.burst.effects.map((e) => e.kind)).toEqual(['burstDamage', 'dot', 'timed']);

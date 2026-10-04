@@ -301,9 +301,9 @@ describe('BuffTotals への合成（3.1）: 装備した枠自身の常時バフ
       resourceId: 2,
       checkedAt: '2026-09-24',
       skills: {
-        skill1: { support: 'supported', effects: [{ kind: 'passive', target: 'allies', stat: 'attack', ref: 1 }] },
-        skill2: { support: 'unsupported', effects: [] },
-        burst: { support: 'unsupported', effects: [] },
+        skill1: { effects: [{ kind: 'passive', target: 'allies', stat: 'attack', ref: 1 }] },
+        skill2: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+        burst: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
       },
     });
     const effects: BuildEffect[] = [

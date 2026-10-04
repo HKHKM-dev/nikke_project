@@ -18,13 +18,20 @@ const skill = (values: string[]): SkillRaw => ({
   values: values.map(tenLevels),
 });
 
+/** 定義の JSON の形にする（support は効果と notes から読み込みで決まるので外す） */
 function definition(skills: Partial<SkillDefinition['skills']>): unknown {
-  const none = { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] };
+  const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
+  const written = Object.fromEntries(
+    Object.entries(skills).map(([slot, entry]) => {
+      const { support: _derived, ...rest } = entry;
+      return [slot, rest];
+    }),
+  );
   return {
     formatVersion: 1,
     resourceId: 1,
     checkedAt: '2026-09-23',
-    skills: { skill1: none, skill2: none, burst: none, ...skills },
+    skills: { skill1: none, skill2: none, burst: none, ...written },
   };
 }
 
@@ -68,7 +75,7 @@ describe('parseSkillDefinition (Stage 8)', () => {
   });
 
   const withEffect = (effect: unknown) =>
-    definition({ skill1: { support: 'supported', effects: [effect] } as SkillDefinition['skills']['skill1'] });
+    definition({ skill1: { effects: [effect] } as SkillDefinition['skills']['skill1'] });
   const timed = { kind: 'timed', target: 'self', stat: 'attack', ref: 1, durationRef: 2 };
 
   it('rejects malformed count triggers', () => {
@@ -165,7 +172,6 @@ describe('triggerFrames / buffStartFrames (Stage 8)', () => {
       checkedAt: '2026-09-23',
       skills: {
         skill1: {
-          support: 'supported',
           effects: [
             {
               kind: 'timed',
@@ -177,8 +183,8 @@ describe('triggerFrames / buffStartFrames (Stage 8)', () => {
             },
           ],
         },
-        skill2: { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] },
-        burst: { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] },
+        skill2: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+        burst: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
       },
     });
     const character = makeCharacter({}, { skills: { skill1: skill(['20']), skill2: skill([]), burst: skill([]) } });

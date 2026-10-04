@@ -3,7 +3,15 @@
 // 効果と結論の対応は定義の claims を正にし、結論の側（plan/claims.md の「定義」の行）へは生成で逆に引く。
 // 結論の model の文が定義の場所（`data/skills/830.json` の skill1 の effects[0] など）を書いているときは、その場所が
 // 定義の claims でその結論を指しているかも確かめる（効果の並べ替えで文が古くなるのを止める）。
-import { SKILL_SLOTS, type SkillDefinition, type SkillEffect, type SkillEntry } from '../skills/types.ts';
+import {
+  SKILL_NOTE_KINDS,
+  SKILL_SLOTS,
+  type SkillDefinition,
+  type SkillEffect,
+  type SkillEntry,
+  type SkillNoteKind,
+  type SkillSupport,
+} from '../skills/types.ts';
 import type { LocalizedText, SkillSlot } from '../types.ts';
 import type { Claim, ClaimState } from './claims.ts';
 
@@ -168,7 +176,9 @@ export function validateSkillClaims(characters: readonly DefinedCharacter[], cla
 const SKILLS_HEADER = `# スキル定義の対応状況
 
 - **このファイルは生成する（手で書かない）**。定義は \`packages/core/data/skills/{resourceId}.json\` に置き、\`npm run records:check\` で作り直す（[skills-guide.md](skills-guide.md) 3 節）。
-- キャラ × スロットごとに、対応状況（\`supported\`・\`partial\`・\`unsupported\`）と、効果・notes と、その根拠の結論（定義の \`claims\`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
+- キャラ × スロットごとに、対応状況と、効果・notes と、その根拠の結論（定義の \`claims\`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
+- 対応状況は効果と notes の種類から決まる（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）: \`supported\`（効果あり・未対応なし）・\`partial\`（効果あり・未対応あり）・\`unsupported\`（効果なし・未対応あり）・\`noEffect\`（前提の中でダメージに効く効果なし）。
+- notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。`;
 
 function triggerLabel(e: SkillEffect): string | undefined {
@@ -185,6 +195,14 @@ export function effectLabel(e: SkillEffect): string {
   return [e.kind, triggerLabel(e), detail].filter((x) => x !== undefined).join('・');
 }
 
+const NOTE_KIND_LABEL: Record<SkillNoteKind, string> = {
+  unimplemented: '未対応',
+  outOfScope: '前提の外',
+  noDamage: '計算に無関係',
+  modeling: '補足',
+};
+const SUPPORT_ORDER: readonly SkillSupport[] = ['supported', 'partial', 'unsupported', 'noEffect'];
+
 function claimList(ids: readonly string[] | undefined, states: ReadonlyMap<string, ClaimState>): string {
   if (ids === undefined) return '根拠なし';
   return ids.map((id) => `${id}（${states.get(id) ?? '不明'}）`).join('、');
@@ -197,11 +215,14 @@ export function renderSkills(characters: readonly DefinedCharacter[], claims: re
   let citedEffects = 0;
   let notes = 0;
   let citedNotes = 0;
+  const noteKinds = new Map<SkillNoteKind, number>(SKILL_NOTE_KINDS.map((k) => [k, 0]));
+  const supports = new Map<SkillSupport, number>();
   const body: string[] = [];
   for (const { definition, name } of characters) {
     body.push('', `## ${definition.resourceId} ${name.ja}`, '');
     for (const { root, slot, entry } of entriesOf(definition)) {
       body.push(`- **${root === 'skills' ? slot : `宝物版 ${slot}`}**: ${entry.support}`);
+      supports.set(entry.support, (supports.get(entry.support) ?? 0) + 1);
       entry.effects.forEach((e, i) => {
         effects++;
         if (e.claims !== undefined) citedEffects++;
@@ -210,10 +231,13 @@ export function renderSkills(characters: readonly DefinedCharacter[], claims: re
       entry.notes?.forEach((n, i) => {
         notes++;
         if (n.claims !== undefined) citedNotes++;
-        body.push(`  - notes[${i}] ${n.ja}: ${claimList(n.claims, states)}`);
+        noteKinds.set(n.kind, noteKinds.get(n.kind)! + 1);
+        body.push(`  - notes[${i}] ${NOTE_KIND_LABEL[n.kind]}: ${n.ja}: ${claimList(n.claims, states)}`);
       });
     }
   }
   const summary = `件数: キャラ ${characters.length}・効果 ${effects}（根拠あり ${citedEffects}）・notes ${notes}（根拠あり ${citedNotes}）`;
-  return `${[SKILLS_HEADER, '', summary, ...body].join('\n')}\n`;
+  const kindSummary = `notes の種類: ${SKILL_NOTE_KINDS.map((k) => `${NOTE_KIND_LABEL[k]} ${noteKinds.get(k)}`).join('・')}`;
+  const supportSummary = `スロット: ${SUPPORT_ORDER.map((s) => `${s} ${supports.get(s) ?? 0}`).join('・')}`;
+  return `${[SKILLS_HEADER, '', summary, '', kindSummary, '', supportSummary, ...body].join('\n')}\n`;
 }

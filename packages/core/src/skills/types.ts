@@ -177,8 +177,24 @@ export const BASIC_BURST_STEPS = ['Step1', 'Step2', 'Step3'] as const satisfies 
  */
 export type SquadCondition = { present: boolean };
 
-export type SkillSupport = 'supported' | 'partial' | 'unsupported';
-export const SKILL_SUPPORTS = ['supported', 'partial', 'unsupported'] as const satisfies readonly SkillSupport[];
+/**
+ * スロットの対応状況（plan/design-skill-note-kinds.md 2.2 節）。定義には書かず、効果の有無と unimplemented の notes の有無から
+ * 読み込みで決める（deriveSkillSupport）。noEffect = モデルの前提の中でダメージに効く効果が無い（notes が noDamage・outOfScope・modeling だけ）
+ */
+export type SkillSupport = 'supported' | 'partial' | 'unsupported' | 'noEffect';
+
+/**
+ * notes の種類（plan/design-skill-note-kinds.md 2.1 節）。unimplemented = 前提の中でダメージに効く（効きうる）のに定義していない、
+ * outOfScope = モデルの前提（静止単体ボス・被弾なし・味方が倒れない・パーツ／阻止部位／バリアなし。要件 5.2 節）では起きない・効かない、
+ * noDamage = どの編成・敵でも与ダメージを変えない、modeling = 扱っていない効果ではなく扱い方の補足
+ */
+export type SkillNoteKind = 'unimplemented' | 'outOfScope' | 'noDamage' | 'modeling';
+export const SKILL_NOTE_KINDS = [
+  'unimplemented',
+  'outOfScope',
+  'noDamage',
+  'modeling',
+] as const satisfies readonly SkillNoteKind[];
 
 export type PassiveEffect = {
   /** 無条件・常時（段階 A）。トリガー付きの持続バフは 'timed'（段階 B） */
@@ -672,20 +688,29 @@ export type SkillEffect = (
 export function burstReentryStepOf(definition: SkillDefinition | null | undefined): BasicBurstStep | null {
   if (!definition) return null;
   for (const slot of SKILL_SLOTS) {
-    if (definition.skills[slot].support === 'unsupported') continue;
     for (const e of definition.skills[slot].effects) if (e.kind === 'burstReentry') return e.step;
   }
   return null;
 }
 
-/** 扱わなかった効果の説明。claims は「ダメージに関係しない」などの判断の根拠 */
-export type SkillNote = LocalizedText & ClaimRefs;
+/** 扱わなかった効果や扱い方の説明。claims は「ダメージに関係しない」などの判断の根拠 */
+export type SkillNote = LocalizedText & ClaimRefs & { kind: SkillNoteKind };
+
+/** 効果と notes からスロットの対応状況を決める（plan/design-skill-note-kinds.md 2.2 節） */
+export function deriveSkillSupport(
+  effects: readonly SkillEffect[],
+  notes: readonly SkillNote[] | undefined,
+): SkillSupport {
+  const unimplemented = (notes ?? []).some((n) => n.kind === 'unimplemented');
+  if (effects.length > 0) return unimplemented ? 'partial' : 'supported';
+  return unimplemented ? 'unsupported' : 'noEffect';
+}
 
 export type SkillEntry = {
-  /** そのスキルの効果のうち扱えたもの: すべて / 一部 / ゼロ */
+  /** 効果と notes から読み込みで決める（deriveSkillSupport）。定義の JSON には書かない */
   support: SkillSupport;
   effects: SkillEffect[];
-  /** 扱わなかった効果の説明（partial / unsupported のとき） */
+  /** 扱わなかった効果や扱い方の説明。種類は kind */
   notes?: SkillNote[];
   /**
    * 着弾編（plan/design-burst-landing.md 3 節）: 「下位効果のスタック適用」。burst スロットだけに書ける。同じ発動で発火する
@@ -752,8 +777,10 @@ function parseClaimRefs(v: Json, path: string): string[] {
 }
 
 function parseNote(v: Json, path: string): SkillNote {
-  const note: SkillNote = parseLocalizedText(v, path);
-  if (isRecord(v) && v.claims !== undefined) note.claims = parseClaimRefs(v.claims, `${path}.claims`);
+  const text = parseLocalizedText(v, path);
+  if (!isRecord(v)) fail(path, 'expected an object');
+  const note: SkillNote = { ...text, kind: oneOf(SKILL_NOTE_KINDS, v.kind, `${path}.kind`) };
+  if (v.claims !== undefined) note.claims = parseClaimRefs(v.claims, `${path}.claims`);
   return note;
 }
 
@@ -1438,24 +1465,25 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
 function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' = 'skills'): SkillEntry {
   const path = `${root}.${slot}`;
   if (!isRecord(v)) fail(path, 'expected an object');
-  const support = oneOf(SKILL_SUPPORTS, v.support, `${path}.support`);
+  if (v.support !== undefined)
+    fail(`${path}.support`, 'support is derived from effects and notes (plan/design-skill-note-kinds.md); remove it');
   if (!Array.isArray(v.effects)) fail(`${path}.effects`, 'expected an array');
   const effects = v.effects.map((e, i) => parseEffect(e, `${path}.effects[${i}]`, slot));
-  if (support === 'unsupported' && effects.length > 0)
-    fail(`${path}.effects`, 'unsupported skills must have no effects');
-  if (support !== 'unsupported' && effects.length === 0)
-    fail(`${path}.effects`, `${support} skills need at least one effect`);
-  const entry: SkillEntry = { support, effects };
+  let notes: SkillNote[] | undefined;
+  if (v.notes !== undefined) {
+    if (!Array.isArray(v.notes)) fail(`${path}.notes`, 'expected an array');
+    notes = v.notes.map((n, i) => parseNote(n, `${path}.notes[${i}]`));
+  }
+  if (effects.length === 0 && (notes ?? []).length === 0)
+    fail(`${path}.notes`, 'a slot without effects needs notes saying why');
+  const entry: SkillEntry = { support: deriveSkillSupport(effects, notes), effects };
   if (v.sequential !== undefined) {
     if (v.sequential !== true) fail(`${path}.sequential`, 'expected true');
     if (slot !== 'burst') fail(`${path}.sequential`, 'only allowed in the burst slot');
     if (effects[0]?.kind !== 'burstDamage') fail(`${path}.sequential`, 'the first effect must be burstDamage');
     entry.sequential = true;
   }
-  if (v.notes !== undefined) {
-    if (!Array.isArray(v.notes)) fail(`${path}.notes`, 'expected an array');
-    entry.notes = v.notes.map((n, i) => parseNote(n, `${path}.notes[${i}]`));
-  }
+  if (notes !== undefined) entry.notes = notes;
   return entry;
 }
 

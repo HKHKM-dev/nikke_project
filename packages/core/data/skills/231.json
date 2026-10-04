@@ -4,7 +4,6 @@
   "checkedAt": "2026-10-02",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -51,17 +50,16 @@
       ]
     },
     "skill2": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
           "ja": "最終防御力が最も高い敵への 170.58% のダメージは、説明文にきっかけ（いつ出るか）が書かれていないので未対応",
-          "en": "The 170.58% hit on the highest-DEF enemies is not modeled because the description does not say when it happens"
+          "en": "The 170.58% hit on the highest-DEF enemies is not modeled because the description does not say when it happens",
+          "kind": "unimplemented"
         }
       ]
     },
     "burst": {
-      "support": "supported",
       "sequential": true,
       "effects": [
         {
@@ -140,6 +138,7 @@
         {
           "ja": "フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る",
           "en": "The Full Burst Time −5 s comes from burst_duration (5 s) in the schedule",
+          "kind": "modeling",
           "claims": [
             "C-0011"
           ]
