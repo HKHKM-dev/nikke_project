@@ -3,7 +3,7 @@
 - 日付: 2026-10-04
 - 状態: 実装済み（2026-10-04 承認・同日実装。7 節・9 節）
 - 関連: [design-burst-landing.md](design-burst-landing.md)（2.5 節「分かれたヒットは扱わない」、9 節「撃つ側のバフの時点」）、[backlog.md](backlog.md) 2-4、[roadmap.md](roadmap.md) 今後の課題「バーストの効果の着弾の遅れと、同じ発動の中の効果の順」
-- 検証記録: V-0138（ラピ）、V-0140（ドレイク）、V-0143（実装の後の照合）
+- 検証記録: V-0138（ラピ）、V-0140（ドレイク）、V-0144（実装の後の照合）
 - 結論: C-0227（ラピ）、C-0228（ドレイク）。どちらも仮説（最小構成でない録画）。モデルに反映した
 
 ## 0. 要約
@@ -128,6 +128,6 @@
 - 時刻表: `BurstActivation.hitOffsets`、`hitFramesOf`。`burstHitsOfSlot` はヒットごとに `share`（等分）を返す。
 - 計算: `combineBurstHitParts`（`skills/burstDamage.ts`）で、1 回の発動の当たったヒットを足し合わせる。sim（`sim/engine.ts`）は 1 秒ごとのダメージと出来事をヒットごとに出し、バーストの合計は発動ごとの値を順に足す（calc と同じ足し方）。calc（`calc/model.ts`）は発動ごとに足し合わせる（4.3 節）。
 - 検証: `sequential` の印と分かれたヒットの組み合わせは `frame/plan.ts` で落とす。
-- 照合: `burstHitOffsets`（`records/observations.ts`）。V-0143 で 2・3 ヒット目の時刻を観測値にし、許容内。
+- 照合: `burstHitOffsets`（`records/observations.ts`）。V-0144 で 2・3 ヒット目の時刻を観測値にし、許容内。
 - 画面: `SkillSection.tsx` の注記に、各ヒットの時刻を並べる。
 - 退化: 行の無いキャラ・1 ヒットの行は、いまと同じ値（`combineBurstHitParts` は 1 ヒットならそのまま返す）。既存のテストの数値と、ほかの観測値の残差は変わらなかった。
