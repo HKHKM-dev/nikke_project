@@ -599,6 +599,11 @@ export type AutoAttackEffect = {
    * （dot の gaugeOnTick と同じ。firstTick: afterInterval で、トリガーは射撃の回数トリガーか burstUse）
    */
   gaugePerHit?: true;
+  /**
+   * ヒットが発射体の爆発か。発射体爆発ダメージ▲を、RL の通常攻撃と同じ形（damage.ts の explosionHitMultiplier）で掛ける
+   * （アニス：スターのシューティングスター。V-0124 の 162-12。plan/design-anis-star-s2-burst.md 9.3 節の a）
+   */
+  projectileExplosion?: true;
   assumes?: LocalizedText;
 };
 
@@ -1214,6 +1219,7 @@ function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttac
         'durationSeconds',
         'firstTick',
         'gaugePerHit',
+        'projectileExplosion',
         'assumes',
         'claims',
       ].includes(key)
@@ -1250,6 +1256,10 @@ function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttac
       fail(`${path}.gaugePerHit`, 'needs firstTick afterInterval');
     }
     effect.gaugePerHit = true;
+  }
+  if (v.projectileExplosion !== undefined) {
+    if (v.projectileExplosion !== true) fail(`${path}.projectileExplosion`, 'expected true');
+    effect.projectileExplosion = true;
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

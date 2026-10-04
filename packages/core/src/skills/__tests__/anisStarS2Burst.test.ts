@@ -2,13 +2,14 @@
 // 発射体爆発ダメージ▲（projectileExplosionDamage）、チャージ時間の固定（fixedChargeTime）、周期の自動攻撃（autoAttack）の検証と解決。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { PROJECTILE_EXPLOSION_BUCKET, projectileExplosionMultiplier } from '../../damage.ts';
-import { firingParams } from '../../frame/firing.ts';
+import { simulateShotFrames } from '../../cadence.ts';
+import { computeTriggerDamage, PROJECTILE_EXPLOSION_BUCKET, projectileExplosionMultiplier } from '../../damage.ts';
+import { chargeShotIntervalFrames, firingParams } from '../../frame/firing.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import type { CharacterData } from '../../types.ts';
-import { chargeSecondsToFrames } from '../../weapons.ts';
+import { chargeSecondsToFrames, DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 import { ZERO_BUFFS } from '../buffs.ts';
-import { resolveDotEffects } from '../burstDamage.ts';
+import { computeSkillHit, resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { applySquad } from '../squad.ts';
 import { parseSkillDefinition } from '../types.ts';
@@ -73,6 +74,39 @@ describe('アニス：スター（17）の S2 とバースト', () => {
       gaugeOnTick: true,
       autoAttack: true,
     });
+    // V-0124: シューティングスターのヒットは発射体の爆発（C-0213）
+    expect(dots[0]!.projectileExplosion).toBe(true);
+  });
+
+  it('applies Projectile Explosion Damage up only to the projectile-explosion hits', () => {
+    const buffs = { ...ZERO_BUFFS, attackDamage: 0.692, projectileExplosionDamage: 0.9203 };
+    const [star] = resolveDotEffects(def, anis, MAX_SKILL_LEVELS);
+    const trigger = computeTriggerDamage({
+      character: anis,
+      growth: { level: 200, coreLevel: 0, grade: 3 },
+      enemy: { defence: 100, element: null, hasCore: true },
+      attackOverride: 100000,
+      buffs,
+      condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true },
+    });
+    const withExplosion = computeSkillHit(
+      [star!],
+      anis,
+      { defence: 100, element: null, hasCore: true },
+      trigger,
+      buffs,
+      false,
+    );
+    const { projectileExplosion: _, ...plain } = star!;
+    const without = computeSkillHit(
+      [plain],
+      anis,
+      { defence: 100, element: null, hasCore: true },
+      trigger,
+      buffs,
+      false,
+    );
+    expect(withExplosion.perActivation / without.perActivation).toBeCloseTo(2.6123 / 1.692, 12);
   });
 });
 
@@ -82,6 +116,17 @@ describe('fixedChargeTime（チャージ時間の固定）', () => {
     expect(base.chargeFrames).toBe(chargeSecondsToFrames(1));
     const fixed = firingParams(anis.shot, { ...ZERO_BUFFS, fixedChargeTime: 0.7, chargeSpeed: 0.5 });
     expect(fixed.chargeFrames).toBe(chargeSecondsToFrames(0.7));
+  });
+
+  it('drops the release frames between shots while fixed (C-0214)', () => {
+    const base = firingParams(anis.shot);
+    expect(base.fixedCharge).toBe(false);
+    expect(chargeShotIntervalFrames(base, DEFAULT_WEAPON_MODEL.chargeReleaseFrames)).toBe(59 + 23);
+    const fixed = firingParams(anis.shot, { ...ZERO_BUFFS, fixedChargeTime: 0.7 });
+    expect(fixed.fixedCharge).toBe(true);
+    expect(chargeShotIntervalFrames(fixed, DEFAULT_WEAPON_MODEL.chargeReleaseFrames)).toBe(42);
+    const frames = simulateShotFrames(anis.shot, DEFAULT_WEAPON_MODEL, fixed);
+    expect(frames.slice(1).map((f, i) => f - frames[i]!)).toEqual([42, 42, 42, 42, 42]);
   });
 
   it('is only allowed in timed, on self, without scaling, once per definition', () => {
@@ -105,7 +150,7 @@ describe('projectileExplosionDamage（発射体爆発ダメージ▲）', () => 
     expect(projectileExplosionMultiplier(anis.shot, buffs)).not.toBe(1);
   });
 
-  it('uses the bucket of PROJECTILE_EXPLOSION_BUCKET (provisional: E1, the Attack Damage bucket)', () => {
+  it('uses the bucket of PROJECTILE_EXPLOSION_BUCKET (E1, the Attack Damage bucket. C-0205)', () => {
     expect(PROJECTILE_EXPLOSION_BUCKET).toBe('attackDamage');
     // (1 + 0.692 + 0.9203) / (1 + 0.692)
     expect(projectileExplosionMultiplier(anis.shot, buffs) * 1.692).toBeCloseTo(2.6123, 12);

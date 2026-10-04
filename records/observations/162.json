@@ -104,8 +104,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -138,8 +137,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -172,8 +170,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -204,8 +201,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -238,8 +234,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -272,8 +267,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -304,8 +298,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -336,8 +329,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -368,8 +360,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -444,8 +435,37 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "162-17",
+    "recording": "162",
+    "source": "V-0124",
+    "readAt": "2026-10-04",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 536,
+    "unit": "f",
+    "description": "1 回目のフルバーストの入り（f1816）から、その後に BURST バーが消えた（本当の満タン。C-0083）フレーム（f2352 ごろ）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・events",
+      "note": "バーは f2340 から 100% のまま、f2352 から消える（f2367〜2369 に一瞬戻る）。ヒットがゲージを溜めない G0 のモデルは 720f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
       }
     }
   }

@@ -4,7 +4,7 @@
 // calc は常時分の射撃バフをここで平均レートに畳み込む（plan/design-stage10.md 3.4 節）。
 // Stage 21-C3: rpm の蓄積をゲーム内の時計にし（C-0058）、AR・SMG・SG のリロード明けの遅れを足した（C-0059。
 // plan/design-stage21.md 8.8 節、V-0011）。
-import { firingParams, type FiringParams } from './frame/firing.ts';
+import { chargeShotIntervalFrames, firingParams, type FiringParams } from './frame/firing.ts';
 import type { ShotParams } from './types.ts';
 import { framesToGameSeconds } from './time.ts';
 import { DEFAULT_WEAPON_MODEL, MAX_RPM, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
@@ -61,7 +61,7 @@ export function simulateShotFrames(
   if (shot.rateOfFire <= 0) throw new RangeError(`rateOfFire must be positive, got ${shot.rateOfFire}`);
   const frames: number[] = [0];
   if (isChargeWeapon(shot)) {
-    const interval = params.chargeFrames + model.chargeReleaseFrames;
+    const interval = chargeShotIntervalFrames(params, model.chargeReleaseFrames);
     for (let i = 1; i < params.maxAmmo; i++) frames.push(i * interval);
     return frames;
   }

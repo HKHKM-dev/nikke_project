@@ -42,7 +42,7 @@ export const PER_SHOT_DAMAGE_CORE = false;
 /**
  * アニス：スター S2・バースト編: 発射体爆発ダメージ▲（projectileExplosionDamage）の式の中の置き場所（plan/design-anis-star-s2-burst.md 2.1 節）。
  * attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ)（E1）、separate = 別の乗数 (1 + Σ発射体爆発ダメージ)（E2）、
- * none = RL の通常攻撃には掛けない（E0）。**仮**: E1。録画 162・163 のフルバーストの 1 ヒットと R2 で確かめる
+ * none = RL の通常攻撃には掛けない（E0）。**E1 と確定**: 録画 162・163 のフルバーストの 1 ヒット（V-0124。C-0205）
  */
 export const PROJECTILE_EXPLOSION_BUCKET: 'attackDamage' | 'separate' | 'none' = 'attackDamage';
 
@@ -56,8 +56,16 @@ export function hasProjectileExplosion(shot: ShotParams): boolean {
  * (1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ) ÷ (1 + Σ攻撃ダメージ)）。爆発の無い武器と▲の無いときは 1
  */
 export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotals): number {
+  return hasProjectileExplosion(shot) ? explosionHitMultiplier(buffs) : 1;
+}
+
+/**
+ * 発射体の爆発のヒット 1 つに掛ける、発射体爆発ダメージ▲の乗数（武器によらない形）。通常攻撃（爆発を持つ武器）と、
+ * 発射体の爆発の自動攻撃（autoAttack の projectileExplosion。V-0124 の 162-12）で使う
+ */
+export function explosionHitMultiplier(buffs: BuffTotals): number {
   const up = buffs.projectileExplosionDamage;
-  if (up === 0 || !hasProjectileExplosion(shot) || PROJECTILE_EXPLOSION_BUCKET === 'none') return 1;
+  if (up === 0 || PROJECTILE_EXPLOSION_BUCKET === 'none') return 1;
   if (PROJECTILE_EXPLOSION_BUCKET === 'separate') return 1 + up;
   const attackDamage = applyAttackDamageBuffs(buffs);
   return (attackDamage + up) / attackDamage;

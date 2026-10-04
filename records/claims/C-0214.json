@@ -1,0 +1,11 @@
+{
+  "id": "C-0214",
+  "text": "アニス：スターのバーストの「チャージ時間 0.7 秒に固定」は、バースト使用から 10 秒、チャージ速度によらず発と発の間を 0.7 秒（チャージだけで、解放の分を足さない）にする。リロードの後の 1 発目は解放の分を足す",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "`162-14`（単独の I の 2 回の窓で、発の間隔が 42f = `chargeSecondsToFrames(0.7)`。リロードを挟む間隔は 184f で、モデルの「リロード + 0.7 秒 + 解放」の 182f に近い）。R1（V-0123）の予測で確かめる。V-0124",
+  "model": "`frame/firing.ts` の `firingParams`（fixedChargeTime・fixedCharge）と `chargeShotIntervalFrames`、`data/skills/17.json`（burst）",
+  "replaces": ["C-0208"],
+  "updated": "2026-10-04"
+}

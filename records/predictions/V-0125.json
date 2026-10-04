@@ -1,0 +1,240 @@
+{
+  "verification": "V-0125",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 231,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（C-0204・C-0205・C-0207・C-0209・C-0211 は確定、C-0213（シューティングスターに発射体爆発ダメージ▲）・C-0214（バーストの窓の発の間隔 0.7 秒）は仮説）。シューティングスターとバーストの窓の発のコア（C-0212・C-0215）は未実装なので、胴体の値とコアの値は 1 ヒットの式で比べる"
+    }
+  ],
+  "targets": [
+    {
+      "id": "delta-fb-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 649,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "1 回目のフルバーストのデルタのコアの 1 ヒット（会心なし）。162-04 の撮り直し"
+    },
+    {
+      "id": "isabel-fb-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 538,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "同じフルバーストのイサベルの胴体の 1 ペレット（会心なし）"
+    },
+    {
+      "id": "anis-fb-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 662,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "同じフルバーストのアニス：スターの発のコアの 1 ヒット（会心なし。CORE HIT）"
+    },
+    {
+      "id": "anis-fb-add",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 662,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "同じ発の S1 の追加ダメージ（会心なし）"
+    },
+    {
+      "id": "anis-after-fb-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 830,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "フルバーストの後の S2 の窓のアニス：スターの胴体の 1 ヒット（会心なし）"
+    },
+    {
+      "id": "anis-fb-star",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 4,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "1 回目のフルバーストの中のシューティングスターの胴体の 1 ヒット（会心なし）。C-0213"
+    },
+    {
+      "id": "anis-after-fb-star",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 25,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "フルバーストの後の S2 の窓のシューティングスターの胴体の 1 ヒット（会心なし）。C-0213"
+    },
+    {
+      "id": "lone-star",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 40,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "単独の I のバーストの窓のシューティングスターの胴体の 1 ヒット（会心なし。S2 なし）"
+    },
+    {
+      "id": "lone-shot-intervals",
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 1162,
+        "to": 1750
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "単独の I のバーストの窓（モデルのフレーム 1162〜1750）のアニス：スターの発の間隔。C-0214（リロードを挟む間隔も入る）"
+    },
+    {
+      "id": "gauge-full",
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "1 回目のフルバーストの入りから、BURST バーが消える（満タン）までの動画のフレーム数。C-0207"
+    },
+    {
+      "id": "lone-burst-delay",
+      "model": "sim",
+      "metric": "fullBurstToNextActivation",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "1 回目のフルバーストの入りから、アニス：スターが I だけ撃って切れる発動までの動画のフレーム数"
+    },
+    {
+      "id": "full-burst-intervals",
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "フルバーストの入りどうしの間隔（動画のフレーム）の最初の 3 つ"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "ccefd77ef56998fc1aaaf00e404b838e19e4c256",
+    "values": {
+      "H1": {
+        "delta-fb-core": 505083.72192753124,
+        "isabel-fb-hit": 63005.89806733951,
+        "anis-fb-core": 1408827.2876155956,
+        "anis-fb-add": 429177.85755939176,
+        "anis-after-fb-hit": 563530.9150462382,
+        "anis-fb-star": 220687.1638923327,
+        "anis-after-fb-star": 147124.7759282218,
+        "lone-star": 60902.2975977572,
+        "lone-shot-intervals": [42, 42, 42, 183, 42, 42, 42, 42, 42],
+        "gauge-full": 524,
+        "lone-burst-delay": 700,
+        "full-burst-intervals": [1961, 1938, 1934]
+      }
+    }
+  }
+}

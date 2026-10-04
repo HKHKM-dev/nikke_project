@@ -104,8 +104,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -138,8 +137,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -172,8 +170,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       }
     }
   },
@@ -189,6 +186,51 @@
     "method": {
       "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
       "note": "f1525・1556・1572・1586 の 64,324。f1638 から 15f ごとの 181,740"
+    }
+  },
+  {
+    "id": "163-08",
+    "recording": "163",
+    "source": "V-0124",
+    "readAt": "2026-10-04",
+    "kind": "gauge",
+    "use": "record",
+    "value": [2014, 2022, 2036, 2051, 2066, 2081, 2096, 2097],
+    "unit": "f",
+    "description": "1 回目のフルバーストの後（f1930〜2110。アニス：スターのバーストの残り）の BURST バーが +3.5%（4px）ずつ伸びたフレーム。シューティングスターのヒット（f2022・2036・2051・2081 の 145,392 などの増分）と同じフレームで、1 ヒット 28,000（C-0084 の縮尺で 4px）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode jumps --from 1920 --to 2140",
+      "note": "発（f2008・2052）の伸びは 6〜9%。バーは f2110 に 100%（本当の約 96%）。162-15 と同じ読み"
+    }
+  },
+  {
+    "id": "163-09",
+    "recording": "163",
+    "source": "V-0124",
+    "readAt": "2026-10-04",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 505,
+    "unit": "f",
+    "description": "1 回目のフルバーストの入り（f1616）から、その後に BURST バーが消えた（本当の満タン）フレーム（f2121）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・events",
+      "note": "gauge.ts の events で f2110 満タン（100%）・f2121 バー消失。G0 のモデルは 650f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
     }
   }
 ]

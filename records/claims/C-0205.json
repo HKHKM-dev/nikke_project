@@ -1,11 +1,11 @@
 {
   "id": "C-0205",
-  "text": "発射体爆発ダメージ▲は、発射体の爆発を持つ武器（RL）の通常攻撃のヒットにだけ掛かり、攻撃ダメージ▲と同じ枠に足す（1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ）。アニス：スターの S2 の対象「自分と、自分より最終防御力が低い味方」は、味方全員が低いとみなす",
-  "state": "仮説",
+  "text": "発射体爆発ダメージ▲は、発射体の爆発を持つ武器（RL）の通常攻撃のヒットに、攻撃ダメージ▲と同じ枠に足して掛かる（1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ）。アニス：スター自身にも、味方の RL にも掛かり、S1 の追加ダメージには掛からない",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
-  "grade": "推論",
-  "basis": "解釈（plan/design-anis-star-s2-burst.md 2.1 節の E1。E0・E2 と見分ける）。撮る前の予測は V-0124",
-  "model": "`damage.ts` の `PROJECTILE_EXPLOSION_BUCKET`（attackDamage）と `projectileExplosionMultiplier`、`data/skills/17.json`（skill2 の assumes）",
+  "grade": "厳密一致",
+  "basis": "`162-08`・`162-09`（アニス：スターの胴体。フルバースト中と後。E0・E2 のモデルとは合わない）、`162-07`（追加ダメージ。▲は乗らない）、`163-04`（味方の I-DOLL・フラワーのコア）、`163-06`。`162-08`・`162-09` の差 1〜2 は最終攻撃力の端数。撮る前の予測は records/predictions/V-0124.json（H1 = E1）。録画が予測より前なので確定の条件（撮る前の予測）は満たさないが、2026-10-04 にオーナーの判断で確定にした。V-0124",
+  "model": "`damage.ts` の `PROJECTILE_EXPLOSION_BUCKET`（attackDamage）と `projectileExplosionMultiplier`、`data/skills/17.json`（skill2）",
   "replaces": [],
   "updated": "2026-10-04"
 }

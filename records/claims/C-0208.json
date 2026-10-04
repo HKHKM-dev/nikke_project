@@ -1,10 +1,10 @@
 {
   "id": "C-0208",
   "text": "アニス：スターのバーストの「チャージ時間 0.7 秒に固定」は、バースト使用から 10 秒、チャージ速度によらずチャージを 0.7 秒にする（解放の分は変えない）",
-  "state": "仮説",
+  "state": "棄却",
   "topic": "スキル・キャラ固有",
   "grade": "推論",
-  "basis": "説明文の解釈（plan/design-anis-star-s2-burst.md 2.3 節）。撮る前の予測は V-0123（撮影 R1）",
+  "basis": "説明文の解釈（plan/design-anis-star-s2-burst.md 2.3 節）。撮る前の予測は V-0123（撮影 R1）。録画 162 の読み直しで、バーストの窓の発の間隔が 42f（解放の 23f を足さない）と分かり、C-0214 に置き換えた（V-0124）",
   "model": "`frame/firing.ts` の `firingParams`（fixedChargeTime）、`data/skills/17.json`（burst）",
   "replaces": [],
   "updated": "2026-10-04"

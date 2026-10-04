@@ -5,7 +5,7 @@
 // Stage 8: トリガー付きの倍率ダメージ（damage。「10 回攻撃した時 X% のダメージ」など）も同じ式で計算する（computeSkillHit）。
 // 分配ダメージには (1 + Σ distributedDamage) を別の乗数で掛ける（録画 21 のクイーン（真）の 1.9001 倍。plan/design-stage8.md 2.4 節）。
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
-import { FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
+import { explosionHitMultiplier, FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
 import { SKILL_SLOTS, type DotFirstTick, type SkillDamageType, type SkillDefinition, type SkillSlot } from './types.ts';
@@ -37,6 +37,8 @@ export type ResolvedSkillDamage = {
   damageType: SkillDamageType;
   /** X/100。3.5164 など */
   multiplier: number;
+  /** アニス：スター編: 発射体の爆発のヒット（自動攻撃の projectileExplosion）。発射体爆発ダメージ▲を掛ける（V-0124） */
+  projectileExplosion?: true;
   assumes?: LocalizedText;
 };
 
@@ -227,6 +229,7 @@ export function resolveDotEffects(
           ...(auto ? { autoAttack: true as const } : {}),
         },
       };
+      if (auto && effect.projectileExplosion === true) r.projectileExplosion = true;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
@@ -294,6 +297,8 @@ export type BurstHitInput = {
   distributedDamageMultiplier?: number;
   /** 受けるダメージ編: 1 + Σ damageTaken（敵の受けるダメージ▲。別枠。C-0138）。省略 1 */
   damageTakenMultiplier?: number;
+  /** アニス：スター編: 発射体爆発ダメージ▲の乗数（damage.ts の explosionHitMultiplier）。projectileExplosion の効果にだけ掛ける。省略 1 */
+  projectileExplosionMultiplier?: number;
 };
 
 export type BurstHitResult = {
@@ -324,6 +329,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const fullBurstBonus = input.fullBurstBonus ?? BURST_SKILL_FULL_BURST_BONUS;
   const distributed = input.distributedDamageMultiplier ?? 1;
   const damageTaken = input.damageTakenMultiplier ?? 1;
+  const explosion = input.projectileExplosionMultiplier ?? 1;
   const baseHit = Math.max(1, input.attack - input.enemy.defence);
   const boostCrit = input.crit.rate * (input.crit.damage - 1);
   const boostFullBurst = fullBurstBonus ? FULL_BURST_BOOST : 0;
@@ -331,7 +337,11 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const common = baseHit * boostTotal * input.attackDamageMultiplier * damageTaken * input.elementMultiplier;
   const perEffect = input.effects.map((effect) => ({
     effect,
-    expected: common * effect.multiplier * (effect.damageType === 'distributed' ? distributed : 1),
+    expected:
+      common *
+      effect.multiplier *
+      (effect.damageType === 'distributed' ? distributed : 1) *
+      (effect.projectileExplosion === true ? explosion : 1),
   }));
   let multiplier = 0;
   let perActivation = 0;
@@ -374,6 +384,7 @@ export function computeSkillHit(
     fullBurstBonus,
     distributedDamageMultiplier: 1 + buffs.distributedDamage,
     damageTakenMultiplier: 1 + buffs.damageTaken,
+    projectileExplosionMultiplier: explosionHitMultiplier(buffs),
   });
 }
 

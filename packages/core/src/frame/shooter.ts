@@ -28,7 +28,7 @@ import { ACC_EPSILON, firstShotFrames, rateAfterShots, reloadFirstShotFrames } f
 import { FRAMES_PER_GAME_SECOND } from '../time.ts';
 import type { ShotParams } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, MAX_RPM, hasSpinUp, isChargeWeapon, type WeaponModel } from '../weapons.ts';
-import { firingParams, reloadChunkAmmo, type FiringParams } from './firing.ts';
+import { chargeShotIntervalFrames, firingParams, reloadChunkAmmo, type FiringParams } from './firing.ts';
 
 /**
  * 最大装弾数が残弾より小さくなった（最大装弾数▲が切れた）ときに残弾を削るか。
@@ -160,7 +160,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
   if (params.infiniteAmmo) {
     // Stage 11 モダニア: 装弾数無限。残弾は減らず、リロードも最後の弾丸も起きない
     state.lastShot = false;
-    if (isChargeWeapon(shot)) state.wait = Math.max(0, params.chargeFrames + model.chargeReleaseFrames - 1);
+    if (isChargeWeapon(shot)) state.wait = Math.max(0, chargeShotIntervalFrames(params, model.chargeReleaseFrames) - 1);
     return;
   }
   state.ammo -= 1;
@@ -179,7 +179,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
     return;
   }
   if (isChargeWeapon(shot)) {
-    state.wait = Math.max(0, params.chargeFrames + model.chargeReleaseFrames - 1);
+    state.wait = Math.max(0, chargeShotIntervalFrames(params, model.chargeReleaseFrames) - 1);
   }
 }
 
