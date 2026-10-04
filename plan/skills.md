@@ -209,9 +209,9 @@
 - **skill2**: supported
   - effects[0] damage・10 秒ごと・skill: C-0091（仮説）、C-0102（確定）
 - **burst**: supported
-  - effects[0] burstDamage・skill: C-0089（確定）
-  - effects[1] dot・burstUse: C-0100（確定）、C-0101（確定）、C-0111（確定）、C-0112（確定）、C-0129（確定）
-  - effects[2] timed・burstUse・maxAmmo: C-0089（確定）
+  - effects[0] burstDamage・skill: C-0089（確定）、C-0219（仮説）
+  - effects[1] dot・burstUse: C-0100（確定）、C-0101（確定）、C-0111（確定）、C-0112（確定）、C-0129（確定）、C-0219（仮説）
+  - effects[2] timed・burstUse・maxAmmo: C-0089（確定）、C-0219（仮説）
 
 ## 271 ノワール
 
@@ -246,7 +246,7 @@
   - effects[0] burstGaugeHit・15 秒ごと: C-0178（確定）、C-0176（確定）
   - notes[0] 最終攻撃力が最も高い敵の攻撃力▼はダメージに関係しない: C-0072（確定）
 - **burst**: supported
-  - effects[0] burstDamage・skill: C-0072（確定）
+  - effects[0] burstDamage・skill: C-0072（確定）、C-0220（確定）
   - notes[0] 挑発はダメージに関係しない: C-0072（確定）
 
 ## 311 ココア
