@@ -1,0 +1,41 @@
+{
+  "id": "165",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-165_rl_anis-star_delta_isabel_retake.mp4",
+  "original": "2026-10-04_13-32-25.mp4",
+  "durationSec": 210.4,
+  "frames": 12623,
+  "fps": 60,
+  "sizeMB": 254.8,
+  "sha256": "5231cbffe3eb",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0125（R2）。アニス：スター（操作）・デルタ・イサベル。録画 162 の撮り直し"
+}

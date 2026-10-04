@@ -1,0 +1,380 @@
+[
+  {
+    "id": "165-01",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 505085,
+    "description": "1 回目のフルバースト（f1720 から 5 秒）のデルタのコアの 1 ヒット（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f1997 の単独の増分。差の 1〜2 は、最終攻撃力の端数を整数に丸めると差 1 未満になる（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 649,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-02",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 63006,
+    "description": "同じフルバーストのイサベルの胴体の 1 ペレット（会心なし）。1 トリガー 10 ペレットの増分 630,060 の 10 分の 1",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f1961 の 630,060"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 538,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-03",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1408829,
+    "description": "同じフルバーストのアニス：スターの発のコアの 1 ヒット（会心なし。CORE HIT）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分） + 的の上のポップアップの目視（f1893・1977 ごろ。「CORE HIT 1408829」と白の「429178」）",
+      "note": "増分 1,838,007（f1892・1976）。差の 1〜2 は、最終攻撃力の端数を整数に丸めると差 1 未満になる（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 662,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-04",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 429178,
+    "description": "同じ発の S1 の追加ダメージ（会心なし）",
+    "method": {
+      "tool": "的の上のポップアップの目視",
+      "note": "白の数字 429178"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 662,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-05",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 563532,
+    "description": "フルバーストの後の S2 の窓のアニス：スターの胴体の 1 ヒット（会心なし）。コア 1 ヒット（= 胴体 2 ヒット）+ 追加ダメージの増分から、追加ダメージ（165-04 ÷ 1.5）を引いた半分",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f2018 の 1,413,182。差の 1〜2 は、最終攻撃力の端数を整数に丸めると差 1 未満になる（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 830,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-06",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 220687,
+    "description": "1 回目のフルバーストの中のシューティングスターの胴体の 1 ヒット（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f1846 の 220,687。コアは 367,812（32 回）、コアの会心は 441,375"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-07",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 147125,
+    "description": "フルバーストの後の S2 の窓のシューティングスターの胴体の 1 ヒット（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f2097・2112 の 147,125。コアは 294,250"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 25,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-08",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 60902,
+    "description": "単独の I（f2398）のバーストの窓のシューティングスターの胴体の 1 ヒット（会心なし。S2 なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f2585・2599 などの 60,902。コアは 121,805"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 40,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-09",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [43, 41, 43, 184, 42, 43, 41, 42, 43],
+    "unit": "f",
+    "description": "単独の I（f2398）のバーストの窓のアニス：スターの発の間隔。リロードを挟む間隔は 184f",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分） + 使い捨てのスクリプト（増分を候補の値の和に分けた）",
+      "note": "発は f2409・2452・2493・2536・2720・2762・2805・2846・2888・2931（f2846 は 857,473 = 発 + 別のヒットの重なり）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 1162,
+        "to": 1750
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-10",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 509,
+    "unit": "f",
+    "description": "1 回目のフルバーストの入り（f1720）から、その後に BURST バーが消えた（満タン）フレーム（f2229）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events",
+      "note": "f2215 満タン（100%）・f2229 バー消失。フルバーストの入りは BURST バーの位置が桃色に替わるフレーム（162-01 の読みと同じフレームが出る使い捨てのスクリプト）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-11",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": 678,
+    "unit": "f",
+    "description": "1 回目のフルバーストの入り（f1720）から、アニス：スターが I だけ撃って切れる発動（f2398）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events（f2397〜2401 の溜め始め・満タン・バー消失が I の発動）",
+      "note": "録画 162 と同じ 678f（162-16）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToNextActivation",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-12",
+    "recording": "165",
+    "source": "V-0125",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [1942, 1952, 1940],
+    "unit": "f",
+    "description": "フルバーストの入りどうしの間隔（動画のフレーム）の最初の 3 つ",
+    "method": {
+      "tool": "使い捨てのスクリプト（BURST バーの位置が桃色に替わるフレーム。録画 162 で 162-01 と同じフレームが出る）",
+      "note": "フルバーストの入りは f1720・3662・5614・7554・9493・11432（間隔 1,942・1,952・1,940・1,939・1,939）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 90
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  }
+]

@@ -31,7 +31,7 @@
   - effects[2] timed・fullBurstStart・attackDamage: C-0204（確定）
   - notes[0] 未対応: みんなの星のときのフルチャージ攻撃時の味方全体の回復（回復を受けた時に発動する味方のスキルには効く）: 根拠なし
 - **burst**: partial
-  - effects[0] autoAttack・burstUse: C-0211（確定）、C-0213（仮説）、C-0207（確定）
+  - effects[0] autoAttack・burstUse: C-0211（確定）、C-0213（確定）、C-0207（確定）
   - effects[1] timed・burstUse・fixedChargeTime: C-0214（仮説）
   - effects[2] timed・burstUse・attackDamage: C-0209（確定）、C-0203（仮説）
   - notes[0] 未実装: シューティングスターのコアに当たる分（コアの補正 +1 が乗る。当たる割合は距離帯ごとに未測定。plan/design-anis-star-s2-burst.md 9.3 節の b）: C-0212（仮説）
