@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "RealKindness",
+  "squadName": {
+    "ja": "リアルカインドネス",
+    "en": "Real Kindness"
+  },
   "element": "Electronic",
   "weaponType": "AR",
   "burstStep": "Step2",

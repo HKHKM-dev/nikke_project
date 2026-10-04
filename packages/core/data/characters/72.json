@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "InfinityRail",
+  "squadName": {
+    "ja": "インフィニティレール",
+    "en": "Infinity Rail"
+  },
   "element": "Wind",
   "weaponType": "MG",
   "burstStep": "Step2",

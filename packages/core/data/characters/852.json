@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE006_03",
+  "squadName": {
+    "ja": "第5空挺部隊",
+    "en": "5th Airborne Squad"
+  },
   "element": "Wind",
   "weaponType": "SMG",
   "burstStep": "Step2",

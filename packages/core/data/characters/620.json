@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "VeiledOrder",
+  "squadName": {
+    "ja": "ヴェイルド・オーダー",
+    "en": "Veiled Order"
+  },
   "element": "Water",
   "weaponType": "SR",
   "burstStep": "Step2",

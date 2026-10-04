@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "HappyZoo",
+  "squadName": {
+    "ja": "ハッピーズー",
+    "en": "Happy Zoo"
+  },
   "element": "Fire",
   "weaponType": "SMG",
   "burstStep": "Step2",

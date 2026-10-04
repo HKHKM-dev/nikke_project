@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "OverTheHorizon",
+  "squadName": {
+    "ja": "オーバー・ザ・ホライズン",
+    "en": "Over the Horizon"
+  },
   "element": "Wind",
   "weaponType": "RL",
   "burstStep": "Step1",

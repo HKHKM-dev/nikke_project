@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "Exotic",
+  "squadName": {
+    "ja": "エキゾチック",
+    "en": "Exotic"
+  },
   "element": "Fire",
   "weaponType": "SMG",
   "burstStep": "Step3",

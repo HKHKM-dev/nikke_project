@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "LifeTonic",
+  "squadName": {
+    "ja": "ライフトニック",
+    "en": "Nepenthe"
+  },
   "element": "Fire",
   "weaponType": "RL",
   "burstStep": "Step1",

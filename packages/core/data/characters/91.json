@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Absolute",
+  "squadName": {
+    "ja": "アブソルート",
+    "en": "Absolute"
+  },
   "element": "Water",
   "weaponType": "RL",
   "burstStep": "Step3",

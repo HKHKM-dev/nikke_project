@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "OldTales",
+  "squadName": {
+    "ja": "オールドテイルズ",
+    "en": "Old Tales"
+  },
   "element": "Wind",
   "weaponType": "SMG",
   "burstStep": "Step1",

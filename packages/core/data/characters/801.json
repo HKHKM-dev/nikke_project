@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "ce_01",
+  "squadName": {
+    "ja": "デビルハンター",
+    "en": "Devil Hunter"
+  },
   "element": "Fire",
   "weaponType": "RL",
   "burstStep": "Step3",

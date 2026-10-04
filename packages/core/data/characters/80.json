@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "MightyTools",
+  "squadName": {
+    "ja": "マイティツールズ",
+    "en": "Mighty Tools"
+  },
   "element": "Iron",
   "weaponType": "RL",
   "burstStep": "Step2",

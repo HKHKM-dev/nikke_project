@@ -3,7 +3,7 @@
 // バーストスキルと倍率ダメージは sim の発動列をそのまま使う（calc と同じ 1 パス目の値）。
 import { summarizeSchedule } from '../burst/schedule.ts';
 import { enemyEventNotes } from '../frame/events.ts';
-import { applySquadToTeam } from '../skills/squad.ts';
+import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { groupTimeline, mergeAdjacentRanges } from '../skills/timeline.ts';
 import {
@@ -21,7 +21,7 @@ import type { SimResult, SimSlotSegment } from './engine.ts';
 
 /** teamInput は runSimulation に渡したものと同じ（宝物の適用前）。dps と宝物の段階の表示に使う */
 export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult {
-  const input = applySquadToTeam(applyTreasureToTeam(teamInput));
+  const input = applyCompositionToTeam(applyTreasureToTeam(teamInput));
   const { durationSeconds } = input;
   const segmentIndex = new Map(sim.timeline.segments.map((segment, i) => [segment, i]));
 

@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "SchoolCircle",
+  "squadName": {
+    "ja": "スクールサークル",
+    "en": "School Circle"
+  },
   "element": "Water",
   "weaponType": "SMG",
   "burstStep": "Step1",

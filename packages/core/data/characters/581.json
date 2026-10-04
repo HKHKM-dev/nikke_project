@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "BestSeller",
+  "squadName": {
+    "ja": "ベストセラー",
+    "en": "Best Seller"
+  },
   "element": "Electronic",
   "weaponType": "RL",
   "burstStep": "Step2",

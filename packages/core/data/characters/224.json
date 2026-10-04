@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "Goddess",
+  "squadName": {
+    "ja": "ゴッデス",
+    "en": "Goddess"
+  },
   "element": "Iron",
   "weaponType": "AR",
   "burstStep": "Step3",

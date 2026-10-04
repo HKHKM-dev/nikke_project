@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "T.T.STAR",
+  "squadName": {
+    "ja": "T.T. STAR",
+    "en": "T.T. STAR"
+  },
   "element": "Water",
   "weaponType": "SR",
   "burstStep": "Step2",

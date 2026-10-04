@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE004",
+  "squadName": {
+    "ja": "NERV",
+    "en": "NERV"
+  },
   "element": "Fire",
   "weaponType": "AR",
   "burstStep": "Step3",

@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "ElectricShock",
+  "squadName": {
+    "ja": "エレクトリックショック",
+    "en": "Electric Shock"
+  },
   "element": "Electronic",
   "weaponType": "MG",
   "burstStep": "Step2",

@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE005",
+  "squadName": {
+    "ja": "WILLE",
+    "en": "WILLE"
+  },
   "element": "Wind",
   "weaponType": "MG",
   "burstStep": "Step3",

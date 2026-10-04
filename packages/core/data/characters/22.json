@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Scouting",
+  "squadName": {
+    "ja": "スカウティング",
+    "en": "The Scouts"
+  },
   "element": "Fire",
   "weaponType": "SMG",
   "burstStep": "Step2",

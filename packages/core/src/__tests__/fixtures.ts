@@ -18,6 +18,8 @@ export function makeCharacter(shot: Partial<ShotParams> = {}, overrides: Partial
     class: 'Attacker',
     corporation: 'ELYSION',
     corporationSubType: null,
+    squad: 'Test',
+    squadName: { ja: 'テスト部隊', en: 'Test Squad' },
     element: 'Fire',
     weaponType: 'AR',
     burstStep: 'Step3',

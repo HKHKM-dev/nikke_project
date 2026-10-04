@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "UnderworldQueen",
+  "squadName": {
+    "ja": "アンダーワールドクイーン",
+    "en": "Underworld Queen"
+  },
   "element": "Wind",
   "weaponType": "AR",
   "burstStep": "Step3",

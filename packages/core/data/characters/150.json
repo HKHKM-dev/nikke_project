@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "MasterHand",
+  "squadName": {
+    "ja": "マスターハンド",
+    "en": "Master Hand"
+  },
   "element": "Iron",
   "weaponType": "AR",
   "burstStep": "Step3",

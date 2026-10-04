@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE003",
+  "squadName": {
+    "ja": "エミリア陣営",
+    "en": "Emilia's Faction"
+  },
   "element": "Water",
   "weaponType": "MG",
   "burstStep": "Step2",

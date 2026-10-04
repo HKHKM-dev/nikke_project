@@ -12,7 +12,7 @@ import { chargeSecondsToFrames, DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 import { ZERO_BUFFS } from '../buffs.ts';
 import { computeSkillHit, resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
-import { applySquad } from '../squad.ts';
+import { applyComposition } from '../composition.ts';
 import { parseSkillDefinition } from '../types.ts';
 
 function readJson<T>(path: string): T {
@@ -52,7 +52,7 @@ describe('アニス：スター（17）の S2 とバースト', () => {
 
   it('drops the My Own Star buffs (S2 ATK up, burst Attack Damage up) with another Burst I ally', () => {
     const stats = (team: CharacterData[]) =>
-      resolveTimed(applySquad(def, team, 0), anis, MAX_SKILL_LEVELS).map((e) => `${e.source.skill}.${e.stat}`);
+      resolveTimed(applyComposition(def, team, 0), anis, MAX_SKILL_LEVELS).map((e) => `${e.source.skill}.${e.stat}`);
     expect(stats([anis, delta])).toContain('skill2.attack');
     expect(stats([anis, delta])).toContain('burst.attackDamage');
     expect(stats([anis, flower])).toEqual([

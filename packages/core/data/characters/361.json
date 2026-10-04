@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "HeavyGram",
+  "squadName": {
+    "ja": "ヘビーグラム",
+    "en": "Heavy Gram"
+  },
   "element": "Fire",
   "weaponType": "MG",
   "burstStep": "Step3",

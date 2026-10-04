@@ -32,6 +32,8 @@ function emma(locale: 'en' | 'ja'): RawRoleData {
     original_rare: 'SSR',
     class: 'Supporter',
     corporation: 'ELYSION',
+    squad: 'Replace',
+    squad_detail: { squad_name: ja ? 'リプレイス' : 'Replace' },
     use_burst_skill: 'Step1',
     change_burst_step: 'Step2',
     burst_duration: 1000,
@@ -204,6 +206,11 @@ describe('toCharacterData', () => {
   it('keeps corporation_sub_type (OVERSPEC)', () => {
     const overspec = { ...emma('en'), corporation_sub_type: 'OVERSPEC' };
     expect(toCharacterData(overspec, emma('ja')).corporationSubType).toBe('OVERSPEC');
+  });
+
+  it('converts the squad (ラム編)', () => {
+    expect(data.squad).toBe('Replace');
+    expect(data.squadName).toEqual({ ja: 'リプレイス', en: 'Replace' });
   });
 
   it('builds a compact index entry', () => {

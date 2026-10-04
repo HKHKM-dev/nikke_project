@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "LittleCannon",
+  "squadName": {
+    "ja": "リトルキャノン",
+    "en": "The Carronades"
+  },
   "element": "Electronic",
   "weaponType": "RL",
   "burstStep": "Step2",

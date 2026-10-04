@@ -6,11 +6,14 @@ import {
   applyTreasure,
   framesToGameSeconds,
   measuredBurstDelayRow,
+  burstStepMixAllows,
   renderSkillDescription,
   squadAllows,
   treasureSlots,
   type CharacterData,
   type SkillLevels,
+  type BurstStepMixCondition,
+  type SkillEffect,
   type SkillSlot,
   type SquadCondition,
   type TreasurePhase,
@@ -93,17 +96,34 @@ function SkillLevelInput({ value, disabled, onCommit }: LevelInputProps) {
   );
 }
 
-const SQUAD_STEP_LABEL: Record<SquadCondition['otherBurstStep'], string> = { Step1: 'I', Step2: 'II', Step3: 'III' };
+const MIX_STEP_LABEL: Record<BurstStepMixCondition['otherBurstStep'], string> = {
+  Step1: 'I',
+  Step2: 'II',
+  Step3: 'III',
+};
 
-/** アニス：スター編: 部隊構成の条件と、今の編成でその効果が効くか */
-function SquadNote({ squad, applies }: { squad: SquadCondition; applies: boolean }) {
-  const condition = `自分を除くバースト ${SQUAD_STEP_LABEL[squad.otherBurstStep]} の味方が${squad.present ? 'いる' : 'いない'}`;
+/** 編成の条件の注記。今の編成でその効果が効くか */
+function CompositionNote({ badge, condition, applies }: { badge: string; condition: string; applies: boolean }) {
   return (
     <li className={`note ${applies ? 'approx' : 'unsupported'}`}>
-      <span className="badge">部隊構成</span> {condition}とき。
+      <span className="badge">{badge}</span> {condition}とき。
       {applies ? 'この編成では効く' : 'この編成では効かない（計算に入れない）'}
     </li>
   );
+}
+
+/** アニス：スター編: バースト段階の構成の条件 */
+function burstStepMixText(mix: BurstStepMixCondition): string {
+  return `自分を除くバースト ${MIX_STEP_LABEL[mix.otherBurstStep]} の味方が${mix.present ? 'いる' : 'いない'}`;
+}
+
+/** ラム編: 同じ部隊の味方の条件 */
+function squadText(squad: SquadCondition, character: CharacterData): string {
+  return `同じ部隊（${character.squadName.ja}）の味方が${squad.present ? 'いる' : 'いない'}`;
+}
+
+function hasComposition(e: SkillEffect): boolean {
+  return ('burstStepMix' in e && e.burstStepMix !== undefined) || ('squad' in e && e.squad !== undefined);
 }
 
 type Props = {
@@ -115,7 +135,7 @@ type Props = {
   treasurePhase: TreasurePhase;
   disabled: boolean;
   status: SlotSkillsStatus;
-  /** アニス：スター編: 枠番号 → キャラ（部隊構成の条件が今の編成で効くかの表示用）。空枠・読み込み中は null */
+  /** 枠番号 → キャラ（編成の条件が今の編成で効くかの表示用）。空枠・読み込み中は null */
   teamCharacters: readonly (CharacterData | null)[];
   dispatch: Dispatch<TeamAction>;
 };
@@ -135,6 +155,8 @@ export function SkillSection({
   const shown = applyTreasure(character, status.kind === 'ready' ? status.definition : null, treasurePhase);
   const treasureShown = new Set(treasureSlots(character, treasurePhase));
   const treasure = character.treasure;
+  // 編成の条件の判定用。自分の枠は表示中のキャラで埋める（読み込み中で null でも同じ部隊の判定に自分の部隊が要る）
+  const compositionCharacters = teamCharacters.map((c, i) => (i === slotIndex ? character : c));
   const headline =
     status.kind === 'undefined'
       ? { badge: SUPPORT_BADGE.undefined, text: 'スキル定義なし（通常攻撃のみで計算。味方からのバフは受ける）' }
@@ -208,13 +230,26 @@ export function SkillSection({
                     ))}
                 </ul>
               )}
-              {entry && entry.effects.some((e) => 'squad' in e && e.squad) && (
+              {entry && entry.effects.some(hasComposition) && (
                 <ul className="notes">
-                  {entry.effects.map((e, i) =>
-                    'squad' in e && e.squad ? (
-                      <SquadNote key={i} squad={e.squad} applies={squadAllows(e.squad, teamCharacters, slotIndex)} />
+                  {entry.effects.flatMap((e, i) => [
+                    'burstStepMix' in e && e.burstStepMix ? (
+                      <CompositionNote
+                        key={`${i}-mix`}
+                        badge="段階構成"
+                        condition={burstStepMixText(e.burstStepMix)}
+                        applies={burstStepMixAllows(e.burstStepMix, compositionCharacters, slotIndex)}
+                      />
                     ) : null,
-                  )}
+                    'squad' in e && e.squad ? (
+                      <CompositionNote
+                        key={`${i}-squad`}
+                        badge="部隊"
+                        condition={squadText(e.squad, character)}
+                        applies={squadAllows(e.squad, compositionCharacters, slotIndex)}
+                      />
+                    ) : null,
+                  ])}
                 </ul>
               )}
               {slot === 'burst' && <BurstDelayNote character={shown.character} />}

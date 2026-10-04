@@ -48,6 +48,9 @@ export type RawRoleData = {
   corporation: string;
   /** ピルグリム全員と一部のキャラだけにある（"OVERSPEC"） */
   corporation_sub_type?: string;
+  /** ゲーム内の部隊の ID（"CE003" など） */
+  squad: string;
+  squad_detail: { squad_name: string };
   use_burst_skill: string;
   change_burst_step: string;
   burst_duration: number;
@@ -218,6 +221,8 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
     class: oneOf(CLASSES, en.class, 'class'),
     corporation: en.corporation,
     corporationSubType: en.corporation_sub_type ?? null,
+    squad: en.squad,
+    squadName: { ja: ja.squad_detail.squad_name, en: en.squad_detail.squad_name },
     element: oneOf(ELEMENTS, element, 'element'),
     weaponType: oneOf(WEAPON_TYPES, shot.weapon_type, 'weapon_type'),
     burstStep: oneOf(BURST_STEPS, en.use_burst_skill, 'use_burst_skill'),

@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "MaidForYou",
+  "squadName": {
+    "ja": "メイド・フォー・ユー",
+    "en": "Maid For You"
+  },
   "element": "Iron",
   "weaponType": "SG",
   "burstStep": "Step3",

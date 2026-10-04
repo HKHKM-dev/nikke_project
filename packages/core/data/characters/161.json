@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "Wardress",
+  "squadName": {
+    "ja": "ワードレス",
+    "en": "Wardress"
+  },
   "element": "Water",
   "weaponType": "AR",
   "burstStep": "Step3",

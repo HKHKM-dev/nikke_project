@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
 import { resolveBurstDamage, resolveDamageEffects, resolveDotEffects } from '../burstDamage.ts';
-import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
 import { parseSkillDefinition, parseSkillIndex, SKILL_SLOTS } from '../types.ts';
@@ -147,10 +147,14 @@ describe('data/skills', () => {
       // クルミ編: 持続ダメージ（dot）だけの定義もある
       const dot10 = resolveDotEffects(def, character, MAX_SKILL_LEVELS);
       const dot1 = resolveDotEffects(def, character, { skill1: 1, skill2: 1, burst: 1 });
-      // ダメージに効く効果が 1 つも無いキャラ（ラムなど）は、全スロットを unsupported にして notes だけを書く
+      // ラム編: 即時効果（CT▼）だけの定義もある
+      const instant10 = resolveInstant(def, character, MAX_SKILL_LEVELS);
+      // ダメージに効く効果が 1 つも無いキャラ（デルタなど）は、全スロットを unsupported にして notes だけを書く
       const modeled = SKILL_SLOTS.some((slot) => def.skills[slot].support !== 'unsupported');
-      if (modeled)
-        expect(lv10.length + burst10.length + timed10.length + damage10.length + dot10.length).toBeGreaterThan(0);
+      if (modeled) {
+        const count = lv10.length + burst10.length + timed10.length + damage10.length + dot10.length + instant10.length;
+        expect(count).toBeGreaterThan(0);
+      }
       damage10.forEach((e, i) => {
         expect(e.multiplier).toBeGreaterThanOrEqual(damage1[i]!.multiplier);
         expect(e.trigger).toEqual(damage1[i]!.trigger);

@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Talentum",
+  "squadName": {
+    "ja": "タレント",
+    "en": "Talentum"
+  },
   "element": "Wind",
   "weaponType": "SR",
   "burstStep": "Step2",

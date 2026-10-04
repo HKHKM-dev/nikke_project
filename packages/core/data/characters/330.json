@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "Weissritter",
+  "squadName": {
+    "ja": "ヴァイスリッター",
+    "en": "White Knight"
+  },
   "element": "Iron",
   "weaponType": "MG",
   "burstStep": "Step2",

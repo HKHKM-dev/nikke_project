@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE005",
+  "squadName": {
+    "ja": "WILLE",
+    "en": "WILLE"
+  },
   "element": "Water",
   "weaponType": "SMG",
   "burstStep": "Step1",

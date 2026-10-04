@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Triangle",
+  "squadName": {
+    "ja": "トライアングル",
+    "en": "Triangle"
+  },
   "element": "Fire",
   "weaponType": "SR",
   "burstStep": "Step3",

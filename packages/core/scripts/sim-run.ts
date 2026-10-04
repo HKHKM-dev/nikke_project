@@ -50,7 +50,7 @@ import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/eng
 import { firingParams } from '../src/frame/firing.ts';
 import { MAX_SKILL_LEVELS, type ResolvedTrigger, type SkillLevels } from '../src/skills/resolve.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
-import { squadAllows } from '../src/skills/squad.ts';
+import { compositionAllows } from '../src/skills/composition.ts';
 import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
 import { computeTeamDamage } from '../src/calc/model.ts';
 import { planTeamRun } from '../src/frame/plan.ts';
@@ -325,30 +325,32 @@ if (
   console.error(`--shot-counting takes hybrid, firingSlots or average, got ${shotCounting}`);
   process.exit(2);
 }
-// アニス：スター編: 部隊構成の条件（squad）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
-const squadRows = slots.flatMap((slot, i) =>
+// 編成の条件（burstStepMix・squad）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
+const compositionCharacters = slots.map((s) => s.character);
+const compositionRows = slots.flatMap((slot, i) =>
   SKILL_SLOTS.flatMap((skill) =>
-    (slot.skills?.definition?.skills[skill].effects ?? []).flatMap((e, effectIndex) =>
-      'squad' in e && e.squad
-        ? [
-            {
-              slot: `slot ${i + 1} ${slot.character.name.ja}`,
-              effect: `${skill}[${effectIndex}] ${e.kind}`,
-              squad: `other ${e.squad.otherBurstStep} ${e.squad.present ? 'present' : 'absent'}`,
-              applies: squadAllows(
-                e.squad,
-                slots.map((s) => s.character),
-                i,
-              ),
-            },
-          ]
-        : [],
-    ),
+    (slot.skills?.definition?.skills[skill].effects ?? []).flatMap((e, effectIndex) => {
+      const mix = 'burstStepMix' in e ? e.burstStepMix : undefined;
+      const squad = 'squad' in e ? e.squad : undefined;
+      if (mix === undefined && squad === undefined) return [];
+      const conditions = [
+        mix && `other ${mix.otherBurstStep} ${mix.present ? 'present' : 'absent'}`,
+        squad && `same squad (${slot.character.squad}) ${squad.present ? 'present' : 'absent'}`,
+      ].filter(Boolean);
+      return [
+        {
+          slot: `slot ${i + 1} ${slot.character.name.ja}`,
+          effect: `${skill}[${effectIndex}] ${e.kind}`,
+          condition: conditions.join(' & '),
+          applies: compositionAllows(e, compositionCharacters, i),
+        },
+      ];
+    }),
   ),
 );
-if (squadRows.length > 0) {
-  console.log('squad conditions (effects that do not apply are left out)');
-  console.table(squadRows);
+if (compositionRows.length > 0) {
+  console.log('composition conditions (effects that do not apply are left out)');
+  console.table(compositionRows);
 }
 const sim = runSimulation(input);
 const calc = computeTeamDamage(input);

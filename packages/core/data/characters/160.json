@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "Wardress",
+  "squadName": {
+    "ja": "ワードレス",
+    "en": "Wardress"
+  },
   "element": "Fire",
   "weaponType": "RL",
   "burstStep": "Step2",

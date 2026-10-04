@@ -4,7 +4,7 @@
 - キャラ × スロットごとに、対応状況（`supported`・`partial`・`unsupported`）と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 27・効果 122（根拠あり 59）・notes 69（根拠あり 22）
+件数: キャラ 27・効果 123（根拠あり 60）・notes 68（根拠あり 21）
 
 ## 10 ラピ
 
@@ -298,9 +298,9 @@
 
 ## 822 ラム
 
-- **skill1**: unsupported
+- **skill1**: supported
+  - effects[0] cooldownReduction・fullBurstEnd: C-0080（確定）、C-0235（仮説）
   - notes[0] 通常攻撃 5 回命中で対象に付く攻撃力▼は、敵の攻撃力を下げるだけでダメージに関係しない: 根拠なし
-  - notes[1] 「フルバースト終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼」は未対応（部隊を扱わない）。同じ部隊の味方がいない編成では起きない（C-0080）: C-0080（確定）
 - **skill2**: unsupported
   - notes[0] 自分の最大HP▲と、残りの HP が最も低い味方 2 機の防御力▲は、ダメージに関係しない: 根拠なし
 - **burst**: unsupported

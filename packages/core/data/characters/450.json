@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "DazzlingPearl",
+  "squadName": {
+    "ja": "ダージリンパール",
+    "en": "Dazzling Pearl"
+  },
   "element": "Electronic",
   "weaponType": "SG",
   "burstStep": "Step2",

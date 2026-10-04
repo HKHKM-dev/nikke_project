@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "BotanicGarden",
+  "squadName": {
+    "ja": "ボタニックガーデン",
+    "en": "Botanic Garden"
+  },
   "element": "Electronic",
   "weaponType": "MG",
   "burstStep": "Step2",

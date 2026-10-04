@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "BestSeller",
+  "squadName": {
+    "ja": "ベストセラー",
+    "en": "Best Seller"
+  },
   "element": "Iron",
   "weaponType": "AR",
   "burstStep": "Step1",

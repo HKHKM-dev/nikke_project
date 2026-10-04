@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "CookingOil",
+  "squadName": {
+    "ja": "クッキングオイル",
+    "en": "Cooking Oil"
+  },
   "element": "Water",
   "weaponType": "SR",
   "burstStep": "Step3",

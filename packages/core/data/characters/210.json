@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Protocol",
+  "squadName": {
+    "ja": "プロトコール",
+    "en": "Protocol"
+  },
   "element": "Electronic",
   "weaponType": "SR",
   "burstStep": "Step1",

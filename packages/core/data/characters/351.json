@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Aegis",
+  "squadName": {
+    "ja": "イージス",
+    "en": "Aegis"
+  },
   "element": "Wind",
   "weaponType": "RL",
   "burstStep": "Step1",

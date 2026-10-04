@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE006_01",
+  "squadName": {
+    "ja": "第7空挺部隊",
+    "en": "7th Airborne Squad"
+  },
   "element": "Iron",
   "weaponType": "AR",
   "burstStep": "Step3",

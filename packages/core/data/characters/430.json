@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "PrimaDonna",
+  "squadName": {
+    "ja": "プリマドンナ",
+    "en": "Prima Donna"
+  },
   "element": "Electronic",
   "weaponType": "RL",
   "burstStep": "Step1",

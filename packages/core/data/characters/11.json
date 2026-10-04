@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Counters",
+  "squadName": {
+    "ja": "カウンターズ",
+    "en": "Counters"
+  },
   "element": "Fire",
   "weaponType": "SG",
   "burstStep": "Step1",

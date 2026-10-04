@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE006_02",
+  "squadName": {
+    "ja": "第2空挺部隊",
+    "en": "2nd Airborne Squad"
+  },
   "element": "Iron",
   "weaponType": "RL",
   "burstStep": "Step3",

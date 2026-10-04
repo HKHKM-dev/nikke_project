@@ -60,7 +60,7 @@ export function partialGaugeRatio(shot: ShotParams, controlled: boolean, progres
 }
 
 /**
- * 枠のバースト。アニス：スター編: 定義にバースト再突入（burstReentry。部隊構成の条件で外した後）があれば、次の段階をそれに差し替える
+ * 枠のバースト。アニス：スター編: 定義にバースト再突入（burstReentry。編成の条件で外した後）があれば、次の段階をそれに差し替える
  */
 export function burstUnitOf(
   character: CharacterData,

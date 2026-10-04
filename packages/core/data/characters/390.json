@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "SchoolCircle",
+  "squadName": {
+    "ja": "スクールサークル",
+    "en": "School Circle"
+  },
   "element": "Electronic",
   "weaponType": "SG",
   "burstStep": "Step1",

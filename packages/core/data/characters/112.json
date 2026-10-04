@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Exotic",
+  "squadName": {
+    "ja": "エキゾチック",
+    "en": "Exotic"
+  },
   "element": "Water",
   "weaponType": "SG",
   "burstStep": "Step2",

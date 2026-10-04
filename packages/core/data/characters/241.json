@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "LifeTonic",
+  "squadName": {
+    "ja": "ライフトニック",
+    "en": "Nepenthe"
+  },
   "element": "Wind",
   "weaponType": "SMG",
   "burstStep": "Step3",

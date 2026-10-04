@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Triangle",
+  "squadName": {
+    "ja": "トライアングル",
+    "en": "Triangle"
+  },
   "element": "Water",
   "weaponType": "AR",
   "burstStep": "Step3",

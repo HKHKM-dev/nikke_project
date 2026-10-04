@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "Matis",
+  "squadName": {
+    "ja": "メティス",
+    "en": "Matis"
+  },
   "element": "Wind",
   "weaponType": "SG",
   "burstStep": "Step3",

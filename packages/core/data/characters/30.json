@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "ACPU",
+  "squadName": {
+    "ja": "A.C.P.U.",
+    "en": "A.C.P.U."
+  },
   "element": "Water",
   "weaponType": "SG",
   "burstStep": "Step2",

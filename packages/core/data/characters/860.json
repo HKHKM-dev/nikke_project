@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE008",
+  "squadName": {
+    "ja": "喫茶リコリコ",
+    "en": "Café LycoReco"
+  },
   "element": "Iron",
   "weaponType": "SMG",
   "burstStep": "Step3",

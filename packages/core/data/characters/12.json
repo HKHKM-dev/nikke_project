@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Counters",
+  "squadName": {
+    "ja": "カウンターズ",
+    "en": "Counters"
+  },
   "element": "Iron",
   "weaponType": "RL",
   "burstStep": "Step2",

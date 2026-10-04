@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "777",
+  "squadName": {
+    "ja": "777",
+    "en": "777"
+  },
   "element": "Electronic",
   "weaponType": "SR",
   "burstStep": "Step1",

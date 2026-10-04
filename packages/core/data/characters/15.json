@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Counters",
+  "squadName": {
+    "ja": "カウンターズ",
+    "en": "Counters"
+  },
   "element": "Electronic",
   "weaponType": "SG",
   "burstStep": "Step3",

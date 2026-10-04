@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "DazzlingPearl",
+  "squadName": {
+    "ja": "ダージリンパール",
+    "en": "Dazzling Pearl"
+  },
   "element": "Iron",
   "weaponType": "RL",
   "burstStep": "Step1",

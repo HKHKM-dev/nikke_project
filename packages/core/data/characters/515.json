@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "OldTales",
+  "squadName": {
+    "ja": "オールドテイルズ",
+    "en": "Old Tales"
+  },
   "element": "Iron",
   "weaponType": "MG",
   "burstStep": "Step3",

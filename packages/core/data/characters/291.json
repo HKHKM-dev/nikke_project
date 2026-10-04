@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "MMR",
+  "squadName": {
+    "ja": "M.M.R.",
+    "en": "M.M.R."
+  },
   "element": "Electronic",
   "weaponType": "SG",
   "burstStep": "Step1",

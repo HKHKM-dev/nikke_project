@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "CafeSweety",
+  "squadName": {
+    "ja": "カフェ・スウィーティー",
+    "en": "Cafe Sweety"
+  },
   "element": "Iron",
   "weaponType": "SR",
   "burstStep": "Step3",

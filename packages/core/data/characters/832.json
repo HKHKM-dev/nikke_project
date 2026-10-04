@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE004",
+  "squadName": {
+    "ja": "NERV",
+    "en": "NERV"
+  },
   "element": "Electronic",
   "weaponType": "SR",
   "burstStep": "Step2",
