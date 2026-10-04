@@ -363,6 +363,29 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
 }
 
 /**
+ * 分かれたヒット編（plan/design-burst-split-hits.md 4.2 節）: 1 回の発動の、当たったヒットを足し合わせる。各ヒットは倍率の
+ * share ぶん。撃つ側のバフは発動で共通なので、ヒットごとに違うのは受けるダメージ（damageTakenMultiplier）だけで、合わせた値は
+ * share で重みをつけた平均にする。1 ヒット（share 1）ならそのまま返す
+ */
+export function combineBurstHitParts(parts: readonly { hit: BurstHitResult; share: number }[]): BurstHitResult {
+  const first = parts[0];
+  if (first === undefined) throw new RangeError('no burst hit parts');
+  if (parts.length === 1 && first.share === 1) return first.hit;
+  const sum = (value: (hit: BurstHitResult) => number): number =>
+    parts.reduce((total, p) => total + value(p.hit) * p.share, 0);
+  const weight = parts.reduce((total, p) => total + p.share, 0);
+  return {
+    ...first.hit,
+    damageTakenMultiplier: sum((hit) => hit.damageTakenMultiplier) / weight,
+    perEffect: first.hit.perEffect.map((e, i) => ({
+      effect: e.effect,
+      expected: sum((hit) => hit.perEffect[i]!.expected),
+    })),
+    perActivation: sum((hit) => hit.perActivation),
+  };
+}
+
+/**
  * 倍率ダメージ 1 回ぶん（effects をまとめて）。攻撃力・会心・攻撃ダメージ・分配ダメージは通常攻撃と同じバフ後の値を使う。
  * burstDamage（slotBurstHit）と damage（Stage 8）で共通。
  */

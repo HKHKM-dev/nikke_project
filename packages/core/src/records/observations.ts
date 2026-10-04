@@ -1,6 +1,6 @@
 // Stage 19-B: 観測値（records/observations/<録画 id>.json）の型・検証と、照合ランナー（モデルと比べて残差を出す）。
 // plan/design-stage19.md 2.3・2.3.1・2.5 節。
-import { hitFrameOf, videoFrameOf, type BurstSchedule } from '../burst/schedule.ts';
+import { hitFrameOf, hitFramesOf, videoFrameOf, type BurstSchedule } from '../burst/schedule.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
@@ -365,6 +365,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
   skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
+  burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
 };
 
 function videoFramesBetween(schedule: SimResult['schedule'], ctx: MetricContext): number {
@@ -409,7 +410,7 @@ function skillHitDamage(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * バーストの着弾編（plan/design-burst-landing.md）: 枠のバーストの、発動からヒット（バーストの倍率ダメージ）までの
+ * バーストの着弾編（plan/design-burst-landing.md）: 枠のバーストの、発動からヒット（バーストの倍率ダメージ。分かれたヒットは 1 ヒット目）までの
  * 動画のフレーム数（発動の順に最初の count 回）。フルバーストの入りの止まりは videoFrameOf で足す
  */
 function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
@@ -419,6 +420,19 @@ function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
   const count = Number(ctx.args.count);
   if (mine.length < count) throw new Error(`発動が ${mine.length} 回しかない`);
   return mine.slice(0, count).map((a) => videoFrameOf(schedule, hitFrameOf(a)) - videoFrameOf(schedule, a.frame));
+}
+
+/**
+ * 分かれたヒット編（plan/design-burst-split-hits.md 4.4 節）: n 回目（0 始まり）の発動の、1 ヒット目から各ヒットまでの動画のフレーム数
+ * （先頭は 0。1 ヒットなら [0]）
+ */
+function burstHitOffsets(result: SimResult, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const activation = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx))[Number(ctx.args.n)];
+  if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
+  const frames = hitFramesOf(activation).map((f) => videoFrameOf(schedule, f));
+  return frames.map((f) => f - frames[0]!);
 }
 
 function gaugeFull(frames: readonly number[] | undefined, ctx: MetricContext): number {

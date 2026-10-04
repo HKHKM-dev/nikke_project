@@ -31,9 +31,10 @@
           "ref": 1,
           "damageType": "skill",
           "assumes": {
-            "ja": "対象「最終攻撃力が最も高い敵 1 機」は単体ボスで 1 ヒット",
-            "en": "The single-target hit lands once on a lone boss"
-          }
+            "ja": "対象「最終攻撃力が最も高い敵 1 機」は単体ボス。倍率を 3 ヒットに等分し、遅れの表（burst/landing.ts）の時刻に出す",
+            "en": "The single target is the lone boss. The multiplier is split equally into 3 hits at the times in the delay table (burst/landing.ts)"
+          },
+          "claims": ["C-0227"]
         },
         {
           "kind": "timed",

@@ -4,7 +4,7 @@
 // Stage 10: 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、1 パス目の射撃の列と時刻表は frame/firstPass.ts の
 // フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
 // Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
-import { burstDelaysFieldOf, burstDelaysOf } from '../burst/landing.ts';
+import { burstDelaysFieldOf, burstDelaysOf, isSplit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames } from '../time.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
@@ -81,9 +81,7 @@ export function planTeamSchedule(
   if (!burst) return null;
   if (burstModel === 'fixed') {
     return planFixedCycle(
-      slots.map((s) =>
-        s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character.resourceId) },
-      ),
+      slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) })),
       frames,
     );
   }
@@ -173,10 +171,12 @@ export function planSkillHits(
     const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
     const sequential = definition.skills.burst.sequential === true;
     // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
-    const delays = burstDelaysOf(slot.character.resourceId);
+    const delays = burstDelaysOf(slot.character);
     if (sequential && delays.hitFrames !== delays.effectFrames) {
       throw new RangeError('a sequential burst needs the same hit and effect delays');
     }
+    // 分かれたヒット編: 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（plan/design-burst-split-hits.md 4.1 節）
+    if (sequential && isSplit(delays)) throw new RangeError('a sequential burst cannot have split hits');
     const push = (frame: number, effect: ResolvedDamageEffect, pre: boolean, stacks?: number): void => {
       // バースト使用時の倍率ダメージは、撃つ側のバフを発動の時点で固定する（burstHitBuffs）。発動は発火の effectFrames 前
       const atHit = pre

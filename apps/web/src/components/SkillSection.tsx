@@ -24,15 +24,22 @@ import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
  * バーストの着弾編（plan/design-burst-landing.md 6 節の 3）: 実測値の表に載ったキャラだけ、発動からヒットと効果の発火までの
  * 遅れを出す（表に無いキャラは未測定だが、何も出さない）
  */
-function BurstDelayNote({ resourceId }: { resourceId: number }) {
-  const row = measuredBurstDelayRow(resourceId);
+function BurstDelayNote({ character }: { character: CharacterData }) {
+  // 分かれたヒット編: 宝物の印のある行は、burst が宝物版のときだけ（plan/design-burst-split-hits.md 4.5 節）
+  const row = measuredBurstDelayRow(character);
   if (row === null) return null;
   const sec = (frames: number) => framesToGameSeconds(frames).toFixed(2);
+  const { hitFrames, effectFrames, hitOffsets = [0] } = row.delays;
+  // 分かれたヒット編: 等分した複数のヒットに分かれるときは、各ヒットの時刻を並べる
+  const hits =
+    hitOffsets.length > 1
+      ? `${hitOffsets.length} 回に等分して発動の ${hitOffsets.map((o) => sec(hitFrames + o)).join('・')} 秒後`
+      : `発動の ${sec(hitFrames)} 秒後`;
   return (
     <ul className="notes">
       <li className="note approx">
         <span className="badge">実測</span>{' '}
-        {`バーストスキルダメージは発動の ${sec(row.delays.hitFrames)} 秒後、バーストスキル使用時の効果は ${sec(row.delays.effectFrames)} 秒後に出る（${row.claim}）`}
+        {`バーストスキルダメージは${hits}、バーストスキル使用時の効果は ${sec(effectFrames)} 秒後に出る（${row.claim}）`}
       </li>
     </ul>
   );
@@ -210,7 +217,7 @@ export function SkillSection({
                   )}
                 </ul>
               )}
-              {slot === 'burst' && <BurstDelayNote resourceId={shown.character.resourceId} />}
+              {slot === 'burst' && <BurstDelayNote character={shown.character} />}
               {entry?.notes && entry.notes.length > 0 && (
                 <ul className="notes">
                   {entry.notes.map((n, i) => (

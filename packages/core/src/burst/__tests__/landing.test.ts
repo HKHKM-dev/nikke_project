@@ -2,13 +2,32 @@
 // burst スロットの sequential の検証。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { burstDelaysFieldOf, burstDelaysOf, MEASURED_BURST_DELAYS, withBurstDelays } from '../landing.ts';
-import { effectFrameOf, hitFrameOf, hitFramesOfSlot, type BurstActivation, type BurstSchedule } from '../schedule.ts';
+import {
+  burstDelaysFieldOf,
+  burstDelaysOf,
+  isTreasureBurst,
+  MEASURED_BURST_DELAYS,
+  withBurstDelays,
+} from '../landing.ts';
+import {
+  burstHitsOfSlot,
+  effectFrameOf,
+  hitFrameOf,
+  hitFramesOf,
+  hitFramesOfSlot,
+  type BurstActivation,
+  type BurstSchedule,
+} from '../schedule.ts';
 import { planFixedCycle } from '../fixedCycle.ts';
 import { createTriggerTracker, replayEvents } from '../../skills/triggers.ts';
+import { applyTreasure } from '../../skills/treasure.ts';
 import { parseSkillDefinition } from '../../skills/types.ts';
+import type { CharacterData } from '../../types.ts';
 
 const ISABEL = 231;
+const character = (id: number): CharacterData =>
+  JSON.parse(readFileSync(new URL(`../../../data/characters/${id}.json`, import.meta.url), 'utf8')) as CharacterData;
+const withTreasure = (id: number): CharacterData => applyTreasure(character(id), null, 3).character;
 const activation: BurstActivation = {
   frame: 600,
   step: 'Step3',
@@ -19,15 +38,34 @@ const activation: BurstActivation = {
 
 describe('遅れの表', () => {
   it('has Isabel (C-0165), Helm (C-0167) and returns 0 for characters not in the table', () => {
-    expect(burstDelaysOf(ISABEL)).toEqual({ hitFrames: 134, effectFrames: 134 });
-    expect(burstDelaysOf(352)).toEqual({ hitFrames: 59, effectFrames: 0 });
-    expect(burstDelaysOf(862)).toEqual({ hitFrames: 0, effectFrames: 0 });
+    expect(burstDelaysOf(character(ISABEL))).toEqual({ hitFrames: 134, effectFrames: 134 });
+    expect(burstDelaysOf(withTreasure(352))).toEqual({ hitFrames: 59, effectFrames: 0 });
+    expect(burstDelaysOf(character(862))).toEqual({ hitFrames: 0, effectFrames: 0 });
     for (const row of MEASURED_BURST_DELAYS) expect(row.claim).toMatch(/^C-\d{4}$/);
   });
 
   it('adds delays only for characters in the table', () => {
-    expect(burstDelaysFieldOf(862)).toEqual({});
-    expect(burstDelaysFieldOf(ISABEL)).toEqual({ delays: { hitFrames: 134, effectFrames: 134 } });
+    expect(burstDelaysFieldOf(character(862))).toEqual({});
+    expect(burstDelaysFieldOf(character(ISABEL))).toEqual({ delays: { hitFrames: 134, effectFrames: 134 } });
+  });
+
+  // 分かれたヒット編（plan/design-burst-split-hits.md 4.5 節）: 宝物の印のある行は、burst が宝物版のときだけ当てる
+  it('applies the treasure rows only when the burst is the treasure version (Helm C-0167, Drake C-0228)', () => {
+    expect(isTreasureBurst(character(101))).toBe(false);
+    expect(isTreasureBurst(withTreasure(101))).toBe(true);
+    expect(isTreasureBurst(applyTreasure(character(101), null, 2).character)).toBe(false);
+    expect(burstDelaysOf(character(352))).toEqual({ hitFrames: 0, effectFrames: 0 });
+    expect(burstDelaysOf(character(101))).toEqual({ hitFrames: 0, effectFrames: 0 });
+    expect(burstDelaysOf(withTreasure(101))).toEqual({ hitFrames: 4, effectFrames: 0, hitOffsets: [0, 27, 55] });
+  });
+
+  it('splits the hits of Rapi (C-0227) and writes ascending offsets starting at 0 in every row', () => {
+    expect(burstDelaysOf(character(10))).toEqual({ hitFrames: 90, effectFrames: 0, hitOffsets: [0, 7, 14] });
+    for (const row of MEASURED_BURST_DELAYS) {
+      const offsets = row.delays.hitOffsets ?? [0];
+      expect(offsets[0]).toBe(0);
+      for (let k = 1; k < offsets.length; k++) expect(offsets[k]!).toBeGreaterThan(offsets[k - 1]!);
+    }
   });
 });
 
@@ -38,6 +76,21 @@ describe('発動のヒットと効果の発火のフレーム', () => {
     expect(withBurstDelays(activation, { hitFrames: 0, effectFrames: 0 })).toEqual(activation);
     const delayed = withBurstDelays(activation, { hitFrames: 80, effectFrames: 10 });
     expect(delayed).toEqual({ ...activation, hitFrame: 680, effectFrame: 610 });
+  });
+
+  it('writes the offsets of split hits and gives each hit an equal share', () => {
+    const split = withBurstDelays(activation, { hitFrames: 4, effectFrames: 0, hitOffsets: [0, 27, 55] });
+    expect(split).toEqual({ ...activation, hitFrame: 604, hitOffsets: [0, 27, 55] });
+    expect(hitFramesOf(split)).toEqual([604, 631, 659]);
+    expect(hitFramesOf(activation)).toEqual([600]);
+    const schedule = { activations: [split] } as BurstSchedule;
+    expect(burstHitsOfSlot(schedule, 0, 3000)).toEqual([
+      { activationFrame: 600, frame: 604, share: 1 / 3 },
+      { activationFrame: 600, frame: 631, share: 1 / 3 },
+      { activationFrame: 600, frame: 659, share: 1 / 3 },
+    ]);
+    // 戦闘の終わり以降のヒットは、ヒットごとに出ない（4.2 節）
+    expect(hitFramesOfSlot(schedule, 0, 640)).toEqual([604, 631]);
   });
 
   it('drops hits after the end of the battle', () => {

@@ -57,5 +57,65 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "037-03",
+    "recording": "037",
+    "source": "V-0144",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 27, 55],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、1 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f1288・1315・1343）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0140・037-02 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "037-04",
+    "recording": "037",
+    "source": "V-0144",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 27, 55],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、2 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f3666・3693・3721）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0140・037-02 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
