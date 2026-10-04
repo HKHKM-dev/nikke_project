@@ -1,0 +1,204 @@
+[
+  {
+    "id": "193-01",
+    "recording": "193",
+    "source": "V-0162",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 8463,
+    "description": "I-DOLL・オーシャン単騎・操作の手順 1（戦闘開始から 2 マガジン。中近・距離ボーナスあり）の、コア以外・会心なしの 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "手順 1（f857〜1565）の単独の増分。最初は f872、同じ値が 180 回。的の上の数値とも同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "193-02",
+    "recording": "193",
+    "source": "V-0162",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11719,
+    "description": "I-DOLL・オーシャン単騎・操作の手順 1（戦闘開始から 2 マガジン。中近・距離ボーナスあり）の、コア以外・会心の 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "手順 1（f857〜1565）の単独の増分。最初は f892、同じ値が 31 回。的の上の数値とも同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "193-03",
+    "recording": "193",
+    "source": "V-0162",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 14974,
+    "description": "I-DOLL・オーシャン単騎・操作の手順 1（戦闘開始から 2 マガジン。中近・距離ボーナスあり）の、コア・会心なしの 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "手順 1（f857〜1565）の単独の増分。最初は f980、同じ値が 16 回。的の上の数値とも同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "193-04",
+    "recording": "193",
+    "source": "V-0162",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 18229,
+    "description": "I-DOLL・オーシャン単騎・操作の手順 1（戦闘開始から 2 マガジン。中近・距離ボーナスあり）の、コア・会心の 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "手順 1（f857〜1565）の単独の増分。最初は f869、同じ値が 4 回。的の上の数値とも同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "193-05",
+    "recording": "193",
+    "source": "V-0162",
+    "readAt": "2026-10-05",
+    "kind": "timing",
+    "use": "record",
+    "value": [1748, 2631, 3514, 4397, 5280, 6163, 7046, 7929, 8812, 9696, 10579],
+    "unit": "frame",
+    "description": "I-DOLL・オーシャン単騎で、左下に S2（「スキル2 オーシャンクレンジング」）の帯が出たフレーム（全 11 回）",
+    "method": {
+      "tool": "ffmpeg で左下の帯（全画面の x 58〜168・y 580〜610）を全フレーム切り出し、明るい画素（>200）の割合 0.3 以上の出だしを拾う使い捨てのスクリプト（V-0108 と同じ帯）",
+      "note": "間隔は 883f（9 回目から 10 回目だけ 884f）。戦闘開始（f857。timer.ts --mode changes の +88f の変わり目）から 1 回目まで 891f。撃っている間（f1748・9696・10579）も撃っていない間も同じ間隔。帯の中身は f1760 の画で確かめた。S1（最後の弾丸）とバーストの帯は、リロードのたびにも、I の発動（f9684）にも出ない"
+    }
+  },
+  {
+    "id": "193-06",
+    "recording": "193",
+    "source": "V-0162",
+    "readAt": "2026-10-05",
+    "kind": "gauge",
+    "use": "record",
+    "value": 0,
+    "unit": "px",
+    "description": "I-DOLL・オーシャン単騎・操作で撃っていない間（手順 2。最後のヒット f1565 から次のヒット f8783 まで、S2 の発動 8 回）の BURST バーの伸び",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・hud.ts --mode jumps + 使い捨てのスクリプト（V-0162「読み方」）",
+      "note": "バーは f1563 から f8788 まで 40.7%（46px）のまま、読めないフレームも無い。S2 の 8 回（193-05 の 1〜8 回目）の前後でも動かない。G1（1 回 2,000）なら合計 16,000 で約 2px、G2（1 回 28,000）なら 1 回約 3.8px 伸びるはず。オーナーの添え書き: 残り時間 2:45〜0:45 くらいの間は撃っていない"
+    }
+  },
+  {
+    "id": "193-07",
+    "recording": "193",
+    "source": "V-0162",
+    "readAt": "2026-10-05",
+    "kind": "gauge",
+    "use": "record",
+    "value": [0, 0, 0, 0],
+    "unit": "px",
+    "description": "I-DOLL・オーシャン単騎・操作で、リロード（最後の弾丸の後、S1 が発動しうる所）の間の BURST バーの伸び（1・3〜5 回目。2 回目は手順 2 の始まり）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・hud.ts --mode jumps + 使い捨てのスクリプト（V-0162「読み方」）",
+      "note": "f1156〜1276（12.4%）、f9069〜9187（69.0%）、f10907〜11029（19.5%）、f11303〜11427（42.5%）。どれもリロードの間は同じ px のまま。S1 の帯は出ないので、S1 が発動したか（最後の弾丸が当たったか）は画では分からない"
+    }
+  },
+  {
+    "id": "193-08",
+    "recording": "193",
+    "source": "V-0162",
+    "readAt": "2026-10-05",
+    "kind": "count",
+    "use": "record",
+    "value": 500,
+    "unit": "hit",
+    "description": "I-DOLL・オーシャン単騎・操作で、BURST バーが消えた（満タン）のは、戦闘の最初から数えて何ヒット目か",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分） + 使い捨てのスクリプト（増分をオーシャンの 1 ヒットの値の和に分解して数える）",
+      "note": "バーは f9653 にあり、f9655 のヒットで消えて六角形に替わる（画で確かめた）。f9655 までに 500 ヒット: 増分の分解で 481、読み違い（f1029・1031 の 2 つで 2 ヒット（和 16,926）、f9227〜9401 の 1 桁の読み違い 8 つで 8 ヒット）、被弾の赤い画面で HUD が読めない f9043〜9062 の増分 92,445（9 ヒット。コア以外の会心なし 4 + 会心 5 の 92,446 に合う）。1 ヒット 2,000（CDN の target_burst_energy_pershot）× 500 = 1,000,000。手順 1 の 233 ヒット（46.6%）は、手順 2 のバー 46px（C-0084 の縮尺で 12.6 + 46 × 0.74 = 46.6%）とも合う"
+    }
+  },
+  {
+    "id": "193-09",
+    "recording": "193",
+    "source": "V-0162",
+    "readAt": "2026-10-05",
+    "kind": "timing",
+    "use": "record",
+    "value": [29, 0],
+    "description": "I-DOLL・オーシャン単騎（オートバースト ON）の、満タンから I の発動までのフレーム数と、バーストのヒットの数",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・hud.ts --mode jumps + 使い捨てのスクリプト（V-0162「読み方」）・still.ts",
+      "note": "満タン f9655 → I の発動（六角形が I から II に替わる）f9684。f9684 以降の増分はどれも通常攻撃の 1 ヒットの値（の和）で、バーストのダメージは無い。単騎なので II が来ず、バーは f10289 に戻って 0 まで下がり（f10311）、次のヒット f10686 から溜まり直す"
+    }
+  }
+]
