@@ -1,0 +1,41 @@
+{
+  "id": "173",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-173_sr+sr+rl_ram+delta+raven_raven-auto.mp4",
+  "original": "2026-10-04_18-16-22.mp4",
+  "durationSec": 211.2,
+  "frames": 12674,
+  "fps": 60,
+  "sizeMB": 255.9,
+  "sha256": "8fae8ee4ea9d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0150。ラム（I）+ デルタ（II）+ レイヴン（III・操作・AUTO 射撃 ON）、オートバースト ON。戦闘履歴のパネルで枠順・キャラ名・Lv.400・交戦時間 03:00 を確かめた"
+}
