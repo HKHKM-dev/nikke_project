@@ -1,0 +1,36 @@
+{
+  "id": "183",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-183_rl_anis-star_helm.mp4",
+  "original": "2026-10-04_20-19-27.mp4",
+  "durationSec": 21.3,
+  "frames": 1277,
+  "fps": 60,
+  "sizeMB": 25.7,
+  "sha256": "2257a77b6826",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "V-0155。アニス：スター（AI）とヘルム（操作・宝物 3）。ヘルムの弾を先に当て、アニス：スターの 1 発目のバーの伸びを見る"
+}

@@ -1,0 +1,50 @@
+{
+  "verification": "V-0155",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": false
+    },
+    {
+      "rid": 352,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（戦闘開始のゲージ 0）。S（戦闘開始から 7.42%）・F（アニス：スターの最初の発に 7.42%）は読み方の切り替えなので、検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-frame-0",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 182〜184 の、残り時間 02:59 になったフレームから、1 回目に BURST バーが消えたフレームまでの動画のフレーム数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "94379633d154767687cb5be38b326f1ffe7d22aa",
+    "values": {
+      "H0": {
+        "gauge-full-frame-0": 234
+      }
+    },
+    "seen": {
+      "182": [],
+      "183": [],
+      "184": []
+    }
+  }
+}
