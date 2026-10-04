@@ -1,0 +1,29 @@
+{
+  "id": "186",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-186_rl_anis-star_pillar-first.mp4",
+  "original": "2026-10-04_20-50-27.mp4",
+  "durationSec": 31.3,
+  "frames": 1878,
+  "fps": 60,
+  "sizeMB": 38,
+  "sha256": "aa0d35289932",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": false,
+  "conditionNote": "V-0157。アニス：スター単騎・操作。最初の 1 発を的の右の柱（障害物）に撃ち、そのあと的を撃つ。オーナーによると最初の 1 発で障害物を 3 個壊した"
+}
