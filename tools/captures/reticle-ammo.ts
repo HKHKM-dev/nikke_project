@@ -21,7 +21,7 @@ import { rawFrames } from './ffmpeg.ts';
 
 const TEMPLATE_FILE = new URL('./reticle-ammo-templates.json', import.meta.url);
 /** 探す範囲（1920×1080）。照準は的を追うので広めに取る */
-const SEARCH = { x: 700, y: 300, w: 600, h: 350 };
+const SEARCH = { x: 400, y: 250, w: 1200, h: 450 };
 /** 数字とみなす明るさ（max(R,G,B)） */
 const THRESHOLD = 200;
 /** 数字の連結成分の大きさ（録画 099 で高さ 18〜20px・幅 4〜12px） */
@@ -30,6 +30,9 @@ const DIGIT_W = { min: 3, max: 14 };
 /** 桁の中心の間隔（録画 099 で 13〜15px）と、桁の上端のずれの許し */
 const PITCH = { min: 12, max: 17 };
 const TOP_SLACK = 2;
+/** 表示の四角の中（数字の上端の BOX_ABOVE px 上の帯、3 桁の幅）の明るさの上限。ダメージの数字（四角が無い）と分ける */
+const BOX_ABOVE = 3;
+const BOX_MAX_BRIGHT = 140;
 /** 照合の枠（桁の中心から左右 CELL_HALF px、上端から CELL_H px）と、縮めた大きさ */
 const CELL_HALF = 7;
 const CELL_H = 20;
@@ -99,8 +102,21 @@ function digitComponents(bright: Uint8Array): Comp[] {
 
 const center = (c: Comp) => (c.x0 + c.x1) / 2;
 
-/** 横に等間隔に並んだ 3 つの成分（表示の 3 桁）。無ければ null */
-function findTriplet(comps: Comp[]): Comp[] | null {
+/** 3 桁の上の帯（四角の中）の明るさの平均（max(R,G,B)） */
+function aboveBrightness(gray: Uint8Array, t: Comp[]): number {
+  const y = Math.min(...t.map((c) => c.y0)) - BOX_ABOVE;
+  if (y < 0) return 255;
+  let sum = 0;
+  let n = 0;
+  for (let x = t[0]!.x0; x <= t[2]!.x1; x++) {
+    sum += gray[y * SEARCH.w + x]!;
+    n += 1;
+  }
+  return sum / n;
+}
+
+/** 横に等間隔に並んだ 3 つの成分で、上の帯が暗いもの（表示の 3 桁）。無ければ null */
+function findTriplet(comps: Comp[], gray: Uint8Array): Comp[] | null {
   for (let i = 0; i < comps.length; i++) {
     for (let j = i + 1; j < comps.length; j++) {
       const p1 = center(comps[j]!) - center(comps[i]!);
@@ -108,7 +124,8 @@ function findTriplet(comps: Comp[]): Comp[] | null {
       for (let k = j + 1; k < comps.length; k++) {
         const p2 = center(comps[k]!) - center(comps[j]!);
         if (p2 < PITCH.min || p2 > PITCH.max || Math.abs(comps[k]!.y0 - comps[j]!.y0) > TOP_SLACK) continue;
-        return [comps[i]!, comps[j]!, comps[k]!];
+        const t = [comps[i]!, comps[j]!, comps[k]!];
+        if (aboveBrightness(gray, t) <= BOX_MAX_BRIGHT) return t;
       }
     }
   }
@@ -170,7 +187,7 @@ function cellsOf(rgb: Buffer): { patches: number[][]; x: number; y: number } | n
     gray[i] = v;
     bright[i] = v > THRESHOLD ? 1 : 0;
   }
-  const triplet = findTriplet(digitComponents(bright));
+  const triplet = findTriplet(digitComponents(bright), gray);
   if (triplet === null) return null;
   const top = Math.min(...triplet.map((c) => c.y0));
   return {

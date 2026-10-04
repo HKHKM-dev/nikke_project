@@ -268,6 +268,27 @@ export function refillAmmo(
 }
 
 /**
+ * ルドミラ：ウィンターオーナー編（V-0161）: 最後の弾丸を撃ったのと同じフレームの弾丸チャージで残弾が戻ったら、始めたリロードを
+ * 取り消して、そのマガジンのまま撃ち続ける（マガジンの状態・MG のレートの蓄積はそのまま。残弾が 0 にならなかったのと同じ）。
+ * 呼ぶのは、このフレームに撃った発が最後の弾丸だったときだけ（後のフレームの弾丸チャージはリロード中に弾を足すだけ。refillAmmo）
+ * @returns リロードを取り消したら true
+ */
+export function resumeAfterLastShotRefill(
+  state: ShooterState,
+  shot: ShotParams,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): boolean {
+  if (state.phase !== 'reloading' || state.ammo <= 0) return false;
+  state.phase = 'ready';
+  delete state.reloadLead;
+  state.lastShot = false;
+  state.wait = isChargeWeapon(shot) ? Math.max(0, chargeShotIntervalFrames(params, model) - 1) : 0;
+  if (isChargeWeapon(shot) && params.downCharge) state.chargeElapsed = 0;
+  return true;
+}
+
+/**
  * Stage 11 モダニア: 使用武器の変更が終わって基礎の武器に戻るときの扱い。
  * **2026-09-24 の録画 44 で 'refill' と確定**（起案時の仮定は 'resume' = バースト前の残弾のまま）:
  * バースト前の残弾に関係なく最大装弾数まで込め直した状態で戻る（4 回とも 224。連射中の 149 からでも 224）。

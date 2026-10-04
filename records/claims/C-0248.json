@@ -1,11 +1,11 @@
 {
   "id": "C-0248",
   "text": "ルドミラ：ウィンターオーナーの S1 は、通常攻撃の命中 60 回ごと（命中の期待値で数え、戦闘中ずっと数える）に、対象の受けるダメージ▲（3 秒。付き直しは延ばすだけ）を付け、同じ発火の▲が乗る追加ダメージ（コア・距離なし。1 ヒットで 1 発ぶんのゲージ）を与え、自分に弾丸チャージ 20 発（最大装弾数で止める。60 回目が最後の弾丸ならリロードに間に合わない）",
-  "state": "仮説",
+  "state": "棄却",
   "topic": "スキル・キャラ固有",
   "grade": "推論",
-  "basis": "説明文（`data/characters/194.json` の skill1）の読み。同じ発火の▲が乗る順はイサベル（C-0163）と同じ形、追加ダメージのゲージはモダニア（C-0105）と同じ形とみなした。録画 099 の読み直しで確かめる（予測は records/predictions/V-0159.json）。V-0159",
-  "model": "`data/skills/194.json`（skill1。`sequential`）。数えは `skills/triggers.ts` の `shotCountWeight`・`advanceShotCount`、命中の期待値は `frame/firstPass.ts` の `hitsAt`、弾丸チャージの発数は `frame/firstPass.ts`（`scaling: flat`）、同じ発火の順は `frame/plan.ts` の `withEarlierSequentialEffects`（plan/design-ludmilla-wo.md 2 節）",
+  "basis": "説明文（`data/characters/194.json` の skill1）の読み。同じ発火の▲が乗る順はイサベル（C-0163）と同じ形、追加ダメージのゲージはモダニア（C-0105）と同じ形とみなした。録画 099 の読み直しで確かめる（予測は records/predictions/V-0159.json）。V-0159 2026-10-05 棄却（V-0161）: 60 回目の命中が最後の弾丸と同じ発でも弾丸チャージは入り、撃ち続ける（C-0253）。それ以外の読みは C-0254 に移した",
+  "model": "—（C-0253・C-0254）",
   "replaces": [],
-  "updated": "2026-10-04"
+  "updated": "2026-10-05"
 }

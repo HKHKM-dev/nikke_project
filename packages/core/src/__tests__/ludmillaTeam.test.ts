@@ -76,13 +76,15 @@ describe('ルドミラ：ウィンターオーナー単騎（手入力の条件�
     expect(hitFrames(input, 'skill2')).toEqual(every60);
   });
 
-  it('refills 20 rounds every 60 hits; the 420th shot empties the magazine before its own refill (M1)', () => {
+  it('refills 20 rounds every 60 hits, also on the shot that empties the magazine (V-0161, M2)', () => {
     const refills = plan.instants.filter((x) => x.effect.kind === 'ammoRefill');
     expect(refills[0]).toMatchObject({ frame: shots[59], amount: 20 });
-    // 419 発で残り 1（300 − 419 + 6 × 20）。420 発目で 0 になり（最後の弾丸）、同じ発の弾丸チャージはリロードの前に間に合わない。
-    // 間に合う読み（M2。マガジン 440 発）とは録画 099 で見分ける（plan/design-ludmilla-wo.md 3.3 節）
-    expect(plan.shots[0]!.lastShotFrames![0]).toBe(shots[419]);
-    expect(plan.shots[0]!.lastShotFrames![1]).toBe(shots[839]);
+    // 419 発で残り 1（300 − 419 + 6 × 20）。420 発目で 0 になるが、同じ発の弾丸チャージで 20 に戻り、リロードせずに撃ち続ける。
+    // 1 本目は 440 発（7 回）。回数は戦闘中ずっと数える（C-0251）ので、2 本目は 40 発目から 60 発ごとで 440 発、3 本目は 460 発
+    const fromLastShot = refills.find((x) => x.frame === shots[419]);
+    expect(fromLastShot).toMatchObject({ amount: 20 });
+    const ends = plan.shots[0]!.lastShotFrames!;
+    expect(ends.slice(0, 3)).toEqual([shots[439], shots[879], shots[1339]]);
   });
 
   it('adds the Damage Taken of the same trigger to the S1 additional damage, not to the S2 one of the same shot', () => {
