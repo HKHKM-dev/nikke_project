@@ -279,6 +279,7 @@ node tools/captures/diff.ts    <動画> --crop x,y,w,h [--from N] [--to N] --pea
 node tools/captures/probe-result.ts <動画...> [--list] [--out-dir DIR] [--samples 3]
 node tools/captures/gauge.ts <動画> [--from N] [--to N] [--mode events|jumps|series] [--step 1]
 node tools/captures/ammo.ts  <動画> [--crop 785,902,110,26] [--max 300] [--mode mags|series] [--from N] [--to N]
+node tools/captures/reticle-ammo.ts <動画> [--mode mags|series] [--from N] [--to N] [--max 300]   # 照準の左の残弾（操作キャラ。V-0163）
 node tools/captures/hud.ts   <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop 810,34,300,38]
 node tools/captures/aim.ts   <動画> [--from N] [--to N] [--step 60] [--csv out.csv] [--debug-dir DIR]
 node tools/captures/timer.ts <動画...> [--mode summary|changes]   # 残り時間の秒の変わり目と、1 秒あたりのフレーム数（V-0003）
@@ -320,7 +321,7 @@ node tools/captures/read.ts <録画 id> --recipe <名前> --source V-NNNN [--opt
 | MG/SMG の命中          | `820,10,280,50`   | HUD 総ダメージカウンター。1 ヒットごとに更新     |
 | ダメージ数値の読み取り | `940,220,400,180` | 的の周りに出る数値。`still.ts --crop` で切り出す |
 
-照準の横の残弾カウンター（操作キャラ）は数字がロール表示されて毎フレーム変化するので検出には使えない。枠アイコンの上の残弾表示は読める（`ammo.ts`）。
+照準の左の残弾の表示（操作キャラ。暗い四角に 3 桁の数字、000 埋め。照準と一緒に動き、残弾が少ないと赤くなる）は `reticle-ammo.ts` で読む（V-0163）。画面の中央付近で、数字の高さの明るい成分が横に等間隔に 3 つ並び、その上の帯が暗い（四角の中）組を表示とし、各桁を見本（`reticle-ammo-templates.json`、録画 099 の 1081〜1100 フレームの 169 → 150 から作成）と照合する。ダメージの数字が重なったフレームや、数字が切り替わる途中（ロール表示）のフレームは照合が悪いので捨てる（読めないフレームは出さない）。`mags` はマガジンごとの最大の表示・0 の表示・減った量の合計・増え（弾丸チャージ）、`series` は読めたフレームの値。枠アイコンの上の残弾表示は `ammo.ts`。
 
 1 ヒットの値を読むときは、HUD 総ダメージカウンターを 1 フレームごとに並べて（`select='between(n,A,B)',crop=280:50:820:10,tile=6x30`）差分を取るのが速い。2 体編成では同じフレームに 2 人分が乗ることがある（録画 13 の 930,273 = 686,756 + 243,517）ので、単独で増えたフレームを探す。
 
