@@ -62,7 +62,8 @@
           "assumes": {
             "ja": "攻撃範囲内の敵は単体ボスで 1 ヒット",
             "en": "Enemies in range are a lone boss, so it lands once"
-          }
+          },
+          "claims": ["C-0230"]
         }
       ],
       "notes": [

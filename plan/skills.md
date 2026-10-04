@@ -4,7 +4,7 @@
 - キャラ × スロットごとに、対応状況（`supported`・`partial`・`unsupported`）と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 27・効果 122（根拠あり 57）・notes 69（根拠あり 22）
+件数: キャラ 27・効果 122（根拠あり 59）・notes 69（根拠あり 22）
 
 ## 10 ラピ
 
@@ -135,7 +135,7 @@
   - effects[1] heal・fullChargeShot: C-0082（確定）
   - notes[0] 味方全体の防御力▲はダメージに関係しない: 根拠なし
 - **burst**: partial
-  - effects[0] burstDamage・skill: 根拠なし
+  - effects[0] burstDamage・skill: C-0230（仮説）
   - notes[0] 移動不可（5 秒間維持）はダメージに関係しない: 根拠なし
 
 ## 172 アドミ
@@ -365,5 +365,5 @@
   - effects[1] timed・burstStage3Enter・distributedDamage: 根拠なし
   - notes[0] バースト使用時の鉄・拳・制・裁！（有利コードの攻撃ダメージ・防御力）と 1more 時のバトンタッチ（スタック）は未対応。バースト 3 段階突入時の分配ダメージ 90.01%▲（10 秒間維持）は Stage 8 で対応（録画 21 の 6,323,975 = 1.9001 倍を再現）: 根拠なし
 - **burst**: supported
-  - effects[0] burstDamage・distributed: 根拠なし
+  - effects[0] burstDamage・distributed: C-0231（仮説）
   - effects[1] timed・burstUse・attack: 根拠なし

@@ -65,7 +65,8 @@
           "assumes": {
             "ja": "単体ボスなので分配ダメージは全額 1 ヒット",
             "en": "Distributed damage lands in full as one hit on a lone boss"
-          }
+          },
+          "claims": ["C-0231"]
         },
         {
           "kind": "timed",
