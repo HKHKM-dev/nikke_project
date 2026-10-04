@@ -1,0 +1,29 @@
+{
+  "id": "166",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-166_sg_noir_nodmg.mp4",
+  "original": "2026-10-04_13-44-29.mp4",
+  "durationSec": 205.7,
+  "frames": 12342,
+  "fps": 60,
+  "sizeMB": 249.2,
+  "sha256": "f78b15e3a9dc",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。出撃画面で確かめた）。ノワール単騎・AUTO 射撃 ON・自動バースト OFF（画面左上のボタンで確かめた）。**ダメージの数字の表示 OFF**（V-0128。総ダメージの表示は残る）。戦闘履歴のパネルでノワールと読めた。計画（V-0128「条件」）はスペック固定 OFF だったが、撮ったのは ON"
+}
