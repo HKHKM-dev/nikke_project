@@ -101,7 +101,7 @@
     "description": "180 秒のフルバーストの回数（ルドミラの攻撃力▲・フルバーストの窓が 5 回。192-05 の窓）",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "192-05 の窓の数"
+      "note": "192-05 の窓の数。回数はバーストの CT で決まり、条件（自動・手入力）に依らないので、手入力の条件（既定）で比べる（自動の条件の観測値は結論に結び付けない。design-stage18.md 12.4 節）"
     },
     "compare": {
       "model": "sim",
@@ -112,8 +112,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     }
   }

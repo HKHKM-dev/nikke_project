@@ -27,7 +27,10 @@
         {
           "ja": "通常攻撃 5 回命中で対象に付く攻撃力▼は、敵の攻撃力を下げるだけでダメージに関係しない",
           "en": "ATK down on the target after 5 normal attack hits only lowers the enemy's ATK and does not affect damage",
-          "kind": "noDamage"
+          "kind": "noDamage",
+          "claims": [
+            "C-0253"
+          ]
         }
       ]
     },
@@ -37,7 +40,10 @@
         {
           "ja": "自分の最大HP▲と、残りの HP が最も低い味方 2 機の防御力▲は、ダメージに関係しない",
           "en": "Max HP up on self and DEF up on the 2 allies with the lowest HP do not affect damage",
-          "kind": "noDamage"
+          "kind": "noDamage",
+          "claims": [
+            "C-0253"
+          ]
         }
       ]
     },
@@ -47,7 +53,10 @@
         {
           "ja": "味方全体のバリアは扱わない（要件 5.2 節）",
           "en": "The shield on all allies is not modeled (requirements 5.2)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "claims": [
+            "C-0253"
+          ]
         }
       ]
     }

@@ -234,6 +234,14 @@ describe('最小構成の警告', () => {
     expect(normalConditionMeasured(data.characters.get(307)!, raid, data.enemies)).toBe(false);
   });
 
+  it('編成の条件で外れる効果は見ない（録画 192 のラムの S1 の CT▼。同じ部隊の味方がいない）', () => {
+    const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims };
+    const v = loadVerifications().find((x) => x.recordings.includes('192'))!;
+    expect(minimalWarnings([v], ctx)).toEqual([]);
+    // 外さずに見ると、CT▼ の根拠の C-0235（仮説）でラムが未確定になる
+    expect(mechanismConfirmed(data.skills.get(822), states)).toBe(false);
+  });
+
   it('単騎の録画には出ず、未確定の枠が 2 つ以上の多人数の録画に出る', () => {
     const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims };
     const verifications = loadVerifications();

@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 28・効果 130（根拠あり 68）・notes 82（根拠あり 22）
+件数: キャラ 28・効果 130（根拠あり 68）・notes 82（根拠あり 25）
 
 notes の種類: 未対応 34・前提の外 19・計算に無関係 24・補足 5
 
@@ -183,8 +183,8 @@ notes の種類: 未対応 34・前提の外 19・計算に無関係 24・補足
   - effects[0] damage・coreHit・additional: C-0249（仮説）、C-0251（確定）
   - effects[1] timed・fullBurstStart・critRate: C-0249（仮説）
 - **burst**: supported
-  - effects[0] timed・burstUse・attack: C-0250（仮説）、C-0252（仮説）
-  - effects[1] timed・burstUse・reloadSpeed: C-0250（仮説）、C-0252（仮説）
+  - effects[0] timed・burstUse・attack: C-0250（仮説）、C-0252（確定）
+  - effects[1] timed・burstUse・reloadSpeed: C-0250（仮説）、C-0252（確定）
 
 ## 225 紅蓮：ブラックシャドウ
 
@@ -330,11 +330,11 @@ notes の種類: 未対応 34・前提の外 19・計算に無関係 24・補足
 
 - **skill1**: supported
   - effects[0] cooldownReduction・fullBurstEnd: C-0080（確定）、C-0235（仮説）
-  - notes[0] 計算に無関係: 通常攻撃 5 回命中で対象に付く攻撃力▼は、敵の攻撃力を下げるだけでダメージに関係しない: 根拠なし
+  - notes[0] 計算に無関係: 通常攻撃 5 回命中で対象に付く攻撃力▼は、敵の攻撃力を下げるだけでダメージに関係しない: C-0253（確定）
 - **skill2**: noEffect
-  - notes[0] 計算に無関係: 自分の最大HP▲と、残りの HP が最も低い味方 2 機の防御力▲は、ダメージに関係しない: 根拠なし
+  - notes[0] 計算に無関係: 自分の最大HP▲と、残りの HP が最も低い味方 2 機の防御力▲は、ダメージに関係しない: C-0253（確定）
 - **burst**: noEffect
-  - notes[0] 前提の外: 味方全体のバリアは扱わない（要件 5.2 節）: 根拠なし
+  - notes[0] 前提の外: 味方全体のバリアは扱わない（要件 5.2 節）: C-0253（確定）
 
 ## 830 アスカ
 

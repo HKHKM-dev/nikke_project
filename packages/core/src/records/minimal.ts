@@ -2,6 +2,9 @@
 // 多人数の録画は、観測したい事象のほかは「機構が確定したキャラ」だけで組めば結論の根拠にしてよい。未確定の要素が 2 つ以上
 // 混ざる録画では結論を作らない。「機構が確定したキャラ」は、スキル定義の効果と notes の根拠がすべて確定（か範囲外）の結論に
 // 結び付き、通常攻撃の条件（コア命中率・弾丸命中率）がその的の表で測られているキャラ。
+// 編成の条件（同じ部隊の味方・バースト段階の構成）で、その録画の編成では外れる効果は、録画の中で働かないので見ない
+// （ラムの S1 の CT▼。外れること自体は C-0080 で確かめてある）。
+import { applyComposition } from '../skills/composition.ts';
 import { targetProfileOf } from '../enemies.ts';
 import { rateRowOf, targetRateOf } from '../frame/landing.ts';
 import type { SkillDefinition, SkillEntry } from '../skills/types.ts';
@@ -75,14 +78,14 @@ export function minimalWarnings(verifications: readonly Verification[], ctx: Min
     for (const id of v.recordings) {
       const recording = ctx.recordings.get(id);
       if (recording === undefined || recording.team.length < 2) continue;
+      const teamCharacters = recording.team.map((m) => ctx.characters.get(m.rid) ?? null);
       const unconfirmed = recording.team
-        .filter((m) => {
+        .filter((m, i) => {
           const character = ctx.characters.get(m.rid);
           if (character === undefined) return true;
-          return !(
-            mechanismConfirmed(ctx.skills.get(m.rid), states) &&
-            normalConditionMeasured(character, recording, ctx.enemies)
-          );
+          const def = ctx.skills.get(m.rid);
+          const inTeam = def === undefined ? undefined : applyComposition(def, teamCharacters, i);
+          return !(mechanismConfirmed(inTeam, states) && normalConditionMeasured(character, recording, ctx.enemies));
         })
         .map((m) => m.name);
       if (unconfirmed.length >= 2) out.push({ verification: v.id, recording: id, unconfirmed });

@@ -31,7 +31,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "180 秒のフルバーストの回数（ラム → デルタ → ルドミラの順で回る）"
+      "note": "180 秒のフルバーストの回数（ラム → デルタ → ルドミラの順で回る）",
+      "observations": ["192-06"]
     },
     {
       "id": "s1-in-burst",
