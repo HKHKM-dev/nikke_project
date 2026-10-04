@@ -66,6 +66,13 @@ export type WeaponModel = {
    * 紅蓮BS 11f（C-0149）。レイヴン・A2 も約 11〜12f（V-0130「条件」）。内訳は分かっていない（plan/design-fire-stance-cadence.md 3.4 節）
    */
   stanceReloadExtraFrames: number;
+  /**
+   * 入力が UP の RL（飛ぶ弾の武器。fireType が Instant 以外は RL だけ）は、敵のジャンプの明けからの 1 発目の構えが、
+   * 戦闘開始より 1f 短い（明け 11f・戦闘開始 12f。レイヴン・A2・I-DOLL・フラワーで、チャージと満ちてから撃つまでは同じ。C-0229。
+   * V-0143）。frame/shooter.ts の unhideShooter で firstShotFrames から引く。SR は戦闘開始でも構えが短い見込みで（ラムの 70f。075-04）、
+   * 明けで分けるかは確かめていないので引かない（windowEndShorterFrames）
+   */
+  rlWindowEndShorterFrames: number;
 };
 
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
@@ -75,6 +82,7 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   aimOutFrames: 13,
   aimInFrames: 12,
   stanceReloadExtraFrames: 11,
+  rlWindowEndShorterFrames: 1,
 };
 
 /**
@@ -97,6 +105,19 @@ export function chargeSecondsToFrames(seconds: number): number {
 
 export function isChargeWeapon(shot: Pick<ShotParams, 'chargeTime' | 'inputType'>): boolean {
   return shot.chargeTime > 0 && shot.inputType !== 'DOWN';
+}
+
+/**
+ * 敵のジャンプの明けからの 1 発目を、戦闘開始（firstShotFrames）より何フレーム早く撃つか。入力が UP の RL だけ
+ * WeaponModel.rlWindowEndShorterFrames（C-0229）。ほかは 0
+ */
+export function windowEndShorterFrames(
+  shot: Pick<ShotParams, 'chargeTime' | 'inputType' | 'fireType'>,
+  model: Pick<WeaponModel, 'rlWindowEndShorterFrames'>,
+): number {
+  return isChargeWeapon(shot) && shot.inputType === 'UP' && shot.fireType !== 'Instant'
+    ? model.rlWindowEndShorterFrames
+    : 0;
 }
 
 export function hasSpinUp(shot: Pick<ShotParams, 'rateOfFireChangePerShot' | 'endRateOfFire' | 'rateOfFire'>): boolean {

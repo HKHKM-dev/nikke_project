@@ -1,9 +1,9 @@
 // 射撃姿勢維持型の武器の射撃の刻み（plan/design-fire-stance-cadence.md。V-0130、C-0149・C-0216・C-0217・C-0218）
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence } from '../cadence.ts';
 import { firingParams, stanceFrames } from '../frame/firing.ts';
-import { initialShooter, partialChargeShot, stepShooter } from '../frame/shooter.ts';
+import { hideShooter, initialShooter, partialChargeShot, stepShooter, unhideShooter } from '../frame/shooter.ts';
 import { planShots } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
@@ -79,5 +79,48 @@ describe('部分チャージ（設計書 3.2 節）', () => {
     // 撃つまでの残り k = 118 − 74 = 44。満ちるのは k = H = 16 なので、p = (C + H − k) / C = (59 + 16 − 44) / 59
     const { state, shot, params } = afterShot(851, 74);
     expect(partialChargeShot(state, shot, DEFAULT_WEAPON_MODEL, params)).toBeCloseTo(31 / 59, 9);
+  });
+});
+
+describe('敵のジャンプの明けからの 1 発目（C-0229。V-0143）', () => {
+  /** 1 発撃って 20f 後に窓に入り、200f 後に明けたときの、明けから次に撃つまでのフレーム数 */
+  const fromWindowEnd = (id: number) => {
+    const shot = character(id).shot;
+    const params = firingParams(shot);
+    const state = initialShooter(shot);
+    while (!stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, false));
+    for (let i = 0; i < 20; i++) stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, false);
+    hideShooter(state, shot, DEFAULT_WEAPON_MODEL, params);
+    for (let i = 0; i < 200; i++) stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, true);
+    unhideShooter(state, shot, 200, DEFAULT_WEAPON_MODEL, params);
+    let n = 0;
+    while (!stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, false)) n++;
+    return n;
+  };
+
+  it('fires the RL (input UP) 1f earlier than from the battle start', () => {
+    expect(fromWindowEnd(851)).toBe(85); // 戦闘開始 86f
+    expect(fromWindowEnd(811)).toBe(93); // 94f
+    expect(fromWindowEnd(225)).toBe(29); // 30f（046-19 の明けは 29・30f）
+    expect(fromWindowEnd(304)).toBe(68); // 69f（射撃姿勢維持型でない RL の式は別の課題。V-0143「分かったこと」）
+  });
+
+  it('leaves the SR as from the battle start', () => {
+    const ram = character(20).shot;
+    expect(ram.fireType).toBe('Instant');
+    expect(fromWindowEnd(20)).toBe(computeCadence(ram).firstShotFrames);
+  });
+
+  it('identifies the RL by a projectile fireType (all 42 RL and no other weapon)', () => {
+    const all = readdirSync(new URL('../../data/characters/', import.meta.url))
+      .filter((f) => /^\d+\.json$/.test(f))
+      .map(
+        (f) =>
+          JSON.parse(readFileSync(new URL(`../../data/characters/${f}`, import.meta.url), 'utf8')) as CharacterData,
+      );
+    expect(all.length).toBeGreaterThan(200);
+    const projectile = all.filter((c) => c.shot.fireType !== 'Instant');
+    expect(projectile.every((c) => c.weaponType === 'RL')).toBe(true);
+    expect(projectile.length).toBe(all.filter((c) => c.weaponType === 'RL').length);
   });
 });
