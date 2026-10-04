@@ -1,0 +1,62 @@
+[
+  {
+    "id": "181-01",
+    "recording": "181",
+    "source": "V-0154",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "count",
+    "unit": "発",
+    "value": 3,
+    "description": "戦闘開始の後、空に向けて撃った発の数（照準の横の残弾が 006 → 003）。その間、総ダメージは 0 のままで、BURST バーも 0px のまま。その後に AUTO 射撃 ON（f1080 に左上の照準のボタンがオレンジ）",
+    "method": {
+      "tool": "ffmpeg で画面上部を 20f おきに切り出して目で読んだ + hud.ts --mode jumps・gauge.ts --mode series",
+      "note": "最初の的への着弾は f1097（マガジンの 4 発目。空の 3 発の後にリロードは無い）"
+    }
+  },
+  {
+    "id": "181-02",
+    "recording": "181",
+    "source": "V-0154",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "gauge",
+    "unit": "px",
+    "value": [7, 21, 35, 49, 63, 77, 101, 113],
+    "description": "AUTO 射撃で的に当てた 1〜8 発目の着弾の後の BURST バーの px（113px のうち）。1 発目の後が 7px（0 から溜めれば 0px）、2〜6 発目は 14px ずつ、7 発目は 24px（物 2 個ぶん。C-0177）、8 発目で 113px（96% 以上）、9 発目（f1712）で消えた。1 発目の後の 7px は、本当の量で 1 発 10.39% のほかに約 7.4%",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series（着弾の 1〜3f 後）+ hud.ts --mode jumps",
+      "note": "着弾は f1097・1156・1215・1416・1476・1535・1593・1653・1712。総ダメージの増分は 566,600・480,330・480,330・480,330・394,060・375,416・566,600・480,330・566,600"
+    }
+  },
+  {
+    "id": "181-03",
+    "recording": "181",
+    "source": "V-0154",
+    "readAt": "2026-10-04",
+    "use": "compare",
+    "kind": "count",
+    "unit": "発",
+    "value": 9,
+    "description": "空に撃った後の最初の的への着弾から数えて、BURST バーが消えた発の番号（f1712）。7 発目の物 2 個ぶん（7.42%）は、本当の量の和で満タンの発を変えない（8 発目の後で約 98%、9 発目で 100% を超える。物の分が無くても 9 発目）",
+    "method": {
+      "tool": "hud.ts --mode jumps・gauge.ts --mode series",
+      "note": "7.42% + 8 × 10.39% = 90.5%（物の分なし）、+ 7.42%（物 2 個）= 98.0% で、どちらも 8 発目では満タンにならない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]
