@@ -27,5 +27,35 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "037-02",
+    "recording": "037",
+    "source": "V-0140",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [26, 27],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、1・2 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1262・3639）から、ドレイクのバーストの 1 ヒット目（HUD の 1,201,793 の増分。f1288・3666）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧・hud.ts --mode jumps",
+      "note": "録画のフルバーストは 2 回だけ。2・3 ヒット目は 1 回目が f1315・1343、2 回目が f3693・3721（1 ヒット目から 27f・28f おき。値はほかの発と重なった増分を含む）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

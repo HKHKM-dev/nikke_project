@@ -1,0 +1,69 @@
+{
+  "verification": "V-0140",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 101,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（ドレイクは遅れの表に無く、バーストの倍率ダメージは 1 回のヒットとして III の発動と同じフレーム）。遅れの値の仮説（D1）と 3 ヒットの間隔は、このファイルの範囲外（検証記録に手で書く）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "drake-037",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 037（ラム + デルタ + ドレイク）の 1〜5 回目のフルバーストの始まり（III のタイマーが 00.00）から、バーストの 1 ヒット目までの動画のフレーム数（止まりを含む）"
+    },
+    {
+      "id": "drake-039",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 039（リター + デルタ + ドレイク）の 1〜4 回目。値は遅れの表だけで決まるので、037 の編成で出す"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "4efa41435a67ba8c94dbc27ba12f1f505291c5b6",
+    "values": {
+      "H0": {
+        "drake-037": [0, 0, 0, 0, 0],
+        "drake-039": [0, 0, 0, 0]
+      }
+    },
+    "seen": {
+      "037": ["018-02", "037-01"],
+      "039": ["018-02", "039-01", "039-02", "039-03", "039-04", "039-05"]
+    }
+  }
+}
