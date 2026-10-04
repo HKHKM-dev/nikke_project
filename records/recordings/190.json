@@ -1,0 +1,35 @@
+{
+  "id": "190",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-190_rl_anis-star-fire_modernia-ai.mp4",
+  "original": "2026-10-04_22-54-33.mp4",
+  "durationSec": 23,
+  "frames": 1381,
+  "fps": 60,
+  "sizeMB": 27.9,
+  "sha256": "daa8e7fb2ca7",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0158。アニス：スター（操作・AUTO 射撃 ON で撃つ）とモダニア（AI）。操作のアニス：スターが撃つとき、モダニアのゲージ 1 回あたりの上乗せがいくつかを見る。オートバースト OFF（途中でバーストを撃っているので、読むのは 1 回目の満タンまで）。一時停止画面でキャラ名を確かめた"
+}
