@@ -1,11 +1,11 @@
-// 的のマスクの取り方の候補を、SG の着弾点で比べる（V-0120。plan/design-bullet-hit-rate-frame-coverage.md 2 節 3）。
+// 的のマスクの取り方の候補を、SG の着弾点で比べる（V-0127。plan/design-bullet-hit-rate-frame-coverage.md 2 節 3）。
 //   node tools/captures/mask-tune.ts <録画 id> [--top 15] [--maxFp 0.02]
 //
 // sg-dots.ts --dump が保存した撃つ前のコマの窓を、候補ごとに classifyRect（coverage.ts と同じ分け方）で分け直し、
 // - 再現率: 数えた着弾点の画素のうち、マスクが的とした割合（照準の印・HUD・重なりで不明の点は数えない）
 // - 誤検出率: 的が確かにいない所（照準の中心から SG の照準円の半径 + 40px より外で、findTarget の外接矩形を 25px 広げた外）の
 //   画素のうち、マスクが的とした割合
-// を出す。選び方（V-0120 の「予測」に固定）: 誤検出率 ≤ maxFp の候補のうち再現率が最大。差 0.01 未満なら処理の少ない方。
+// を出す。選び方（V-0127 の「予測」に固定）: 誤検出率 ≤ maxFp の候補のうち再現率が最大。差 0.01 未満なら処理の少ない方。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';

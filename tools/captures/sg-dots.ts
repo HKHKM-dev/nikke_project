@@ -1,5 +1,5 @@
 // SG の着弾点（ペレットの落ちた所に出る点。当たりは白く光り、外れは暗い灰色）を読み、直前のコマの的のマスクと重ねる
-// （plan/design-bullet-hit-rate-frame-coverage-verify.md 5.3 の主。V-0120）。
+// （plan/design-bullet-hit-rate-frame-coverage-verify.md 5.3 の主。V-0127）。
 //   node tools/captures/sg-dots.ts <録画 id> --pellets <sg-pellets の debug 出力> [--k 10] [--k2 15] [--debug-dir DIR]
 //                                  [--debug-every 10] [--sections 遠,中遠] [--triggers f,f] [--dump] [--verbose]
 //
