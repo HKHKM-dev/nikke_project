@@ -1,0 +1,42 @@
+{
+  "verification": "V-0154",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（戦闘開始のゲージ 0。1 発 103,880）。モデルは戦闘開始から的を撃つので、空に撃った発は数えず、最初の的への着弾から数えた番号と比べる。X（最初の発の爆発が物に当たった分。空に撃てば無い）は H0 と同じ 10 発目、S（戦闘開始から 7.42%）は 9 発目。S・X は読み方の切り替えなので検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-shot-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮る録画の、空に撃った後の最初の的への着弾から数えて、1 回目に BURST バーが消えたアニス：スターの発の番号"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "87a2ee79029af3660799eea5c3332d7314f23b9a",
+    "values": {
+      "H0": {
+        "gauge-full-shot-0": 10
+      }
+    },
+    "seen": {}
+  }
+}
