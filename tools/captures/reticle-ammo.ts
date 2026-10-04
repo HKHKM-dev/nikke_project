@@ -84,10 +84,11 @@ function digitComponents(bright: Uint8Array): Comp[] {
       if (x > c.x1) c.x1 = x;
       if (y < c.y0) c.y0 = y;
       if (y > c.y1) c.y1 = y;
-      if (x + 1 < w && bright[j + 1] && !seen[j + 1]) ((seen[j + 1] = 1), stack.push(j + 1));
-      if (x > 0 && bright[j - 1] && !seen[j - 1]) ((seen[j - 1] = 1), stack.push(j - 1));
-      if (y + 1 < h && bright[j + w] && !seen[j + w]) ((seen[j + w] = 1), stack.push(j + w));
-      if (y > 0 && bright[j - w] && !seen[j - w]) ((seen[j - w] = 1), stack.push(j - w));
+      for (const k of [x + 1 < w ? j + 1 : -1, x > 0 ? j - 1 : -1, y + 1 < h ? j + w : -1, y > 0 ? j - w : -1]) {
+        if (k < 0 || !bright[k] || seen[k]) continue;
+        seen[k] = 1;
+        stack.push(k);
+      }
     }
     const ch = c.y1 - c.y0 + 1;
     const cw = c.x1 - c.x0 + 1;
