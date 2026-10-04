@@ -29,7 +29,7 @@
   },
   "mode": "range-3min",
   "fixedSpec": true,
-  "autoFire": null,
-  "autoBurst": null,
+  "autoFire": true,
+  "autoBurst": false,
   "conditionNote": "V-0156。アニス：スター（AI）とクルミ（操作・手で撃つ）。クルミでアニス：スターの発射より前に障害物を壊し、アニス：スターの 1 発目のバーの伸びを見る。出撃画面は写っていない（LV400 からスペック固定 ON とみた）。一時停止画面でキャラ名を確かめた"
 }
