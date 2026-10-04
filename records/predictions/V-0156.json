@@ -1,0 +1,47 @@
+{
+  "verification": "V-0156",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": false
+    },
+    {
+      "rid": 862,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。クルミを手で撃つ録画なので、この指標とは比べない見込み（形だけ）。F'（アニス：スターの最初の発に AI の弾のゲージ 2.97% をもう 1 回ぶん）と O（物の分）は検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-frame-0",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 185 の、残り時間 02:59 から 1 回目に BURST バーが消えたフレームまで（クルミを手で撃つので比べない見込み）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "97357cffb330a372ba352821fa83a2ef7b987e45",
+    "values": {
+      "H0": {
+        "gauge-full-frame-0": 655
+      }
+    },
+    "seen": {
+      "185": []
+    }
+  }
+}
