@@ -3,7 +3,7 @@
 - 関連: [design-anis-star-rest.md](design-anis-star-rest.md) 4 節（D）、[design-anis-star-s1.md](design-anis-star-s1.md)（`squad`）、[design-nihilister.md](design-nihilister.md) 2.1 節（`dot`）、[design-raven-s1.md](design-raven-s1.md) 2.2 節（tick のゲージ）、[skills-guide.md](skills-guide.md) 1.2・1.4 節、[backlog.md](backlog.md) 3 節（`162-01`）
 - 根拠: C-0174・C-0197（1 発のヒット数の表）、C-0198（追加ダメージのゲージ）、C-0181・C-0196（tick のゲージ）、C-0202（CT▼）、V-0122（`162-01`〜`162-03`）
 - 作成日: 2026-10-04
-- 状態: オーナーの承認（2026-10-04「推奨どおりで進める」、9 節の論点 8〜11）。実装し、録画 162〜165 で確かめた（V-0123〜V-0125 は完了）。10 節の論点を承認待ち
+- 状態: オーナーの承認（2026-10-04「推奨どおりで進める」、9 節の論点 8〜11、10 節の論点 12〜15 も推奨どおり）。実装し、録画 162〜165 で確かめた（V-0123〜V-0125 は完了）。押下チャージ型の刻みは backlog 2-18、コアの経路は別の設計
 
 ## 1. 説明文の分解
 
