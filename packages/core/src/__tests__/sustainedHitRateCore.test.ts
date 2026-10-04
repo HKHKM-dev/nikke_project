@@ -158,4 +158,15 @@ describe('持続の命中率▲（C-0170）', () => {
     expect(a.totalDamage).toBe(b.totalDamage);
     expect(a.timeline.segments.length).toBe(b.timeline.segments.length);
   });
+
+  it('drops the timed hit rate with sustainedHitRateUp false (the form before C-0170, for H0 of V-0165)', () => {
+    const off = { ...input, sustainedHitRateUp: false };
+    const a = runSimulation(off);
+    const at = (frame: number) => a.timeline.segments.find((s) => s.start <= frame && frame < s.end)!;
+    expect(at(nearFb.start + 10).slots[LITER]!.buffs.hitRate).toBe(0);
+    // 時刻表（1 パス目のゲージは計画の値）は変わらず、持続の▲の分だけダメージが減る
+    expect(a.schedule!.fullBurstWindows).toEqual(sim.schedule!.fullBurstWindows);
+    expect(a.totalDamage).toBeLessThan(sim.totalDamage);
+    expect(computeTeamDamage(off).totalDamage).toBeLessThan(calc.totalDamage);
+  });
 });

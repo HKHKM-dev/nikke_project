@@ -146,7 +146,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     flights: slotFlightsOf(slots, enemy, frames),
     obstacleBreaks: input.obstacleBreaks ?? [],
   });
-  const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing);
+  const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing, input.sustainedHitRateUp ?? true);
   const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
   return { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, cycleGaugeHits, dotGauges };
 }

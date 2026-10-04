@@ -92,6 +92,12 @@ export type TeamInput = {
    * 省略は無し（どの発も物を壊さない）。利用者の計算には出さない
    */
   obstacleBreaks?: readonly ObstacleBreak[];
+  /**
+   * C-0170（仮説）: 持続の命中率▲（フルバーストの頭などで配られるもの）を、条件が自動の枠のコア命中率（と C-0192 の弾丸命中率）に
+   * 効かせるか。省略 true（いまのモデル）。false は PR #198 の前の形で、検証の予測の仮説（records/predictions の setup）だけが使う。
+   * 常時の命中率▲には関わらない
+   */
+  sustainedHitRateUp?: boolean;
 };
 
 /** 枠 slotIndex の shot 発目（1 始まり）が、障害物を count 個壊した */

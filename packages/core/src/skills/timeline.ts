@@ -439,6 +439,7 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
  * 境界は {0, frames} ∪ 全バフ窓の端 ∪ フルバースト区間の端 ∪ バースト発動フレーム。
  * shots（Stage 8）は射撃の回数トリガーに使う射撃の列。省略すると射撃の回数トリガーは発火しない。
  * Stage 18-C: landings（着地点の区間と、条件が自動の枠）を渡すと、着地点の境目も境界に足し、自動の枠の鍵に着地点を入れる。
+ * sustainedHitRateUp が false なら、持続の命中率▲（C-0170）を区間の buffs.hitRate に足さない（TeamInput.sustainedHitRateUp）。
  */
 export function planBuffTimeline(
   slots: readonly TimelineSlot[],
@@ -446,6 +447,7 @@ export function planBuffTimeline(
   frames: number,
   shots: readonly (ShotLog | null)[] = [],
   landings: TimelineLandings | null = null,
+  sustainedHitRateUp = true,
 ): BuffTimeline {
   if (!Number.isInteger(frames) || frames < 0) {
     throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
@@ -607,7 +609,8 @@ export function planBuffTimeline(
   }
   // 持続の命中率▲（C-0170）: 条件が自動の枠では、コア命中率の N に区間ごとの命中率を使う。着地点の計画があるときだけ、
   // 状態の窓（命中率）の端も境界に足し、区間の状態の buffs.hitRate に持続の▲を足す（plan/design-sustained-hit-rate-core.md）
-  if (landings !== null) {
+  const timedHitRateUp = landings !== null && sustainedHitRateUp;
+  if (timedHitRateUp) {
     for (const w of stateWindows) {
       bounds.add(w.start);
       bounds.add(w.end);
@@ -652,7 +655,7 @@ export function planBuffTimeline(
       });
     }
     // 状態の窓は timedEffects には入れない（表示は stateWindows のまま）。buffs.hitRate だけを足す
-    if (landings !== null) {
+    if (timedHitRateUp) {
       for (const w of stateWindows) {
         if (w.start > start || w.end <= start) continue;
         const state = slotStates[w.slotIndex];
