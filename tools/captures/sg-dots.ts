@@ -15,7 +15,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
-import { FIELD, H, W, findAim, readFrames, writeJpeg, type Rgb } from './aim-lib.ts';
+import { FIELD, H, W, findAim, findTarget, readFrames, toHalfField, writeJpeg, type Rgb } from './aim-lib.ts';
 import {
   BG,
   CIRCLE_PX_PER_SCALE,
@@ -28,7 +28,7 @@ import {
   type Window,
 } from './coverage-lib.ts';
 import { capturesDir } from './dirs.ts';
-import { fieldBackground, fitTintAround } from './field-bg.ts';
+import { FIELD_H, fieldBackground, fitTintAround } from './field-bg.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -41,6 +41,7 @@ const { values, positionals } = parseArgs({
     sections: { type: 'string' },
     'debug-dir': { type: 'string' },
     'debug-every': { type: 'string', default: '10' },
+    dump: { type: 'boolean', default: false },
   },
 });
 const id = positionals[0];
@@ -88,6 +89,47 @@ log(`トリガー ${use.length} / ${triggers.length}`);
 if (use.length === 0) process.exit(1);
 
 const bg = await fieldBackground(video, triggers[0]!.frame, triggers[triggers.length - 1]!.frame, 120, log);
+const bgHalf = toHalfField({ data: Buffer.from(bg), w: W, h: FIELD_H }, FIELD.y0);
+
+/**
+ * --dump: マスクの取り方を比べる材料（mask-tune.ts）を、発ごとに保存する。撃つ前のコマと背景の窓の画素、照準、色の係数、
+ * 的の外接矩形、数えた点。derived/<id>/sg-dots-dump.json（目録）と .bin（窓の画素。発ごとに コマ・背景 の順）
+ */
+type DumpEntry = {
+  section: string;
+  trigger: number;
+  fired: number;
+  hits: number;
+  rect: { x0: number; y0: number; w: number; h: number };
+  aim: { x: number; y: number; type: 'ring' | 'cross'; size: number };
+  disk: { r: number; edge: number };
+  tintOut: { a: number; b: number }[];
+  tintIn: { a: number; b: number }[];
+  bbox: { x0: number; y0: number; x1: number; y1: number } | null;
+  dots: { x: number; y: number }[];
+  offset: number;
+};
+const dumpEntries: DumpEntry[] = [];
+const dumpChunks: Buffer[] = [];
+let dumpOffset = 0;
+function cropOf(
+  img: Uint8Array,
+  imgY0: number,
+  imgH: number,
+  rect: { x0: number; y0: number; w: number; h: number },
+): Buffer {
+  const out = Buffer.alloc(rect.w * rect.h * 3);
+  for (let j = 0; j < rect.h; j++) {
+    const y = rect.y0 + j - imgY0;
+    if (y < 0 || y >= imgH) continue;
+    for (let i = 0; i < rect.w; i++) {
+      const x = rect.x0 + i;
+      if (x < 0 || x >= W) continue;
+      img.subarray((y * W + x) * 3, (y * W + x) * 3 + 3).forEach((v, c) => (out[(j * rect.w + i) * 3 + c] = v));
+    }
+  }
+  return out;
+}
 
 /** 白くて丸い小さな塊（点）を探す。before で白かった画素は除く。exclude は除く画素（窓の座標） */
 function findDots(
@@ -309,6 +351,27 @@ for await (const { frame, img } of readFrames(video, firstF, lastF, 1)) {
       return best !== null && best.dist <= PERSIST;
     });
     perTrigger.push({ t, fired, dots: kept.length, dotShift: median(moves), aimOk: true });
+    if (values.dump) {
+      const tA = findTarget(toHalfField(a, 0), bgHalf, aim);
+      const fc = cropOf(a.data, 0, H, rect);
+      const bc = cropOf(bg, FIELD.y0, FIELD_H, rect);
+      dumpEntries.push({
+        section: t.section,
+        trigger: t.frame,
+        fired,
+        hits: t.hits,
+        rect,
+        aim: { x: aim.x, y: aim.y, type: aim.type, size: aim.size },
+        disk: { r: R, edge: 3 },
+        tintOut: outside,
+        tintIn: inside,
+        bbox: tA ? { x0: tA.x0, y0: tA.y0, x1: tA.x1, y1: tA.y1 } : null,
+        dots: kept.map((d) => ({ x: d.x, y: d.y })),
+        offset: dumpOffset,
+      });
+      dumpChunks.push(fc, bc);
+      dumpOffset += fc.length + bc.length;
+    }
     for (const d of kept) {
       // 点は画面に固定なので、撃つ前のマスクの同じ画面の座標で見る
       const mx = Math.round(d.x) - win.x0;
@@ -391,4 +454,9 @@ for (const s of sections) {
       `（的まで ≤2px ${near(2)}・≤5px ${near(5)}・≤10px ${near(10)}・>10px ${bgR.length - near(10)}）` +
       `・k→k2 の点の動き ${median(pt.map((p) => p.dotShift)).toFixed(1)}px・HUD の遅れ ${median(pt.map((p) => p.t.frame - p.fired))}f（最大 ${Math.max(...pt.map((p) => p.t.frame - p.fired))}f）`,
   );
+}
+if (values.dump) {
+  writeFileSync(join(dir, 'sg-dots-dump.bin'), Buffer.concat(dumpChunks));
+  writeFileSync(join(dir, 'sg-dots-dump.json'), `${JSON.stringify({ id, field: FIELD, entries: dumpEntries })}\n`);
+  log(`保存した: ${join(dir, 'sg-dots-dump.json')}（発 ${dumpEntries.length}）`);
 }
