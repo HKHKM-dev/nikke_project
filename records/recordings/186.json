@@ -23,7 +23,7 @@
   },
   "mode": "range-3min",
   "fixedSpec": true,
-  "autoFire": null,
+  "autoFire": true,
   "autoBurst": false,
   "conditionNote": "V-0157。アニス：スター単騎・操作。最初の 1 発を的の右の柱（障害物）に撃ち、そのあと的を撃つ。オーナーによると最初の 1 発で障害物を 3 個壊した"
 }
