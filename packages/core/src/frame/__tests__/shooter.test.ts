@@ -39,9 +39,9 @@ describe('stepShooter', () => {
     });
   });
 
-  // Stage 21-C3: rpm はゲーム内の時計（C-0058）。Stage 22-A: SR の戦闘開始の 1 発目は構え解除 13f の無いぶん 69f（C-0225）。
+  // Stage 21-C3: rpm はゲーム内の時計（C-0058）。SR の戦闘開始の 1 発目は構え 11f + チャージ 59f + 満ちてから撃つまで 1f − 1 = 70f（C-0232）。
   // Stage 24: リロードはゲーム内の時計で端数つき（1 回目は四捨五入。AR 59f・SR 88f・MG 147f）、リロード明けは 24f（C-0148）
-  it('matches the absolute frames fixed in the design (AR 12…302 → 385, SR 69…479 → 649, MG 12…400 → 571)', () => {
+  it('matches the absolute frames fixed in the design (AR 12…302 → 385, SR 70…480 → 650, MG 12…400 → 571)', () => {
     // Stage 22-C: チャージの無い武器は戦闘開始から構え 12f の後に撃つ
     const ar = shotFramesUpTo(makeCharacter(fixtures.AR).shot, 400);
     expect(ar.slice(0, 3)).toEqual([12, 17, 22]);
@@ -49,7 +49,7 @@ describe('stepShooter', () => {
     expect(ar[60]).toBe(385);
 
     const sr = shotFramesUpTo(makeCharacter(fixtures.SR).shot, 700);
-    expect(sr).toEqual([69, 151, 233, 315, 397, 479, 649]);
+    expect(sr).toEqual([70, 152, 234, 316, 398, 480, 650]);
 
     const mg = shotFramesUpTo(makeCharacter(fixtures.MG).shot, 600);
     expect(mg[0]).toBe(12);
@@ -66,13 +66,13 @@ describe('stepShooter', () => {
     expect(state.ammo).toBe(299);
   });
 
-  it('honours the weapon model (chargeReleaseFrames)', () => {
+  it('honours the weapon model (chargeReleaseFrames・aimInFrames・srHideAimShorterFrames)', () => {
     const shot = makeCharacter(fixtures.SR).shot;
-    const model = { ...DEFAULT_WEAPON_MODEL, chargeReleaseFrames: 0, aimOutFrames: 0 };
-    // Stage 23: 1 秒チャージは 59f（C-0140）
-    expect(shotFramesUpTo(shot, 200, model)).toEqual([59, 118, 177]);
-    // Stage 22-A: 構え解除（aimOutFrames）は戦闘開始の 1 発目だけを早める
-    expect(shotFramesUpTo(shot, 200, { ...DEFAULT_WEAPON_MODEL, aimOutFrames: 10 })).toEqual([72, 154]);
+    // Stage 23: 1 秒チャージは 59f（C-0140）。発と発の間は chargeReleaseFrames を足した長さ
+    expect(shotFramesUpTo(shot, 200, { ...DEFAULT_WEAPON_MODEL, chargeReleaseFrames: 0 })).toEqual([70, 129, 188]);
+    // ハイドからの構え（aimInFrames。SR は srHideAimShorterFrames だけ短い）は戦闘開始の 1 発目だけを動かす（C-0232）
+    expect(shotFramesUpTo(shot, 200, { ...DEFAULT_WEAPON_MODEL, aimInFrames: 20 })).toEqual([78, 160]);
+    expect(shotFramesUpTo(shot, 200, { ...DEFAULT_WEAPON_MODEL, srHideAimShorterFrames: 0 })).toEqual([71, 153]);
   });
 
   it('rejects invalid shot params', () => {

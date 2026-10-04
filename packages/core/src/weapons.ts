@@ -51,16 +51,29 @@ export type WeaponModel = {
    * 1 発目は構え解除が無いぶん早い（C-0225。紅蓮BS 43f → 30f、ラム 82f → 70f）。リロードの完了から 1 発目までも同じく
    * 構え解除が無い長さだが、モデルは最後の発からの長さ（C-0149）を「完了まで + 完了から発と発の間」に分けたままにし、
    * 窓の明けにだけ frame/shooter.ts の unhideShooter で扱う（V-0135）。
-   * 射撃姿勢維持型には使わない（ハイドからは aimInFrames + チャージ + 満ちてから撃つまで − 1。plan/design-fire-stance-cadence.md）
+   * いまハイドからの 1 発目に使うのは押下チャージ型（DOWN_Charge）だけ。入力が UP のチャージ武器は、射撃姿勢維持型
+   * （plan/design-fire-stance-cadence.md）もそうでない武器（C-0232。V-0149）も、aimInFrames + チャージ + 満ちてから撃つまで − 1
    */
   aimOutFrames: number;
   /**
    * Stage 22-C: チャージの無い武器（AR・SMG・SG・MG）の構えモーションのフレーム。ハイドしていた状態（戦闘開始・窓の明け）から
    * 1 発目を撃つまで（C-0114。戦闘開始は 11〜13f、窓の明けは MG 11f。SG はノワール 12f）。武器種で分けない
    * （plan/design-stage22.md 8 節）。チャージ武器の構えは発と発の間から aimOutFrames を引いた長さに含まれる（Stage 22-A）。
-   * 射撃姿勢維持型のチャージ武器は、姿勢が終わってから 100% のまま待つ構えにも使う（紅蓮BS・レイヴン・A2 とも 12f。C-0216）
+   * 射撃姿勢維持型のチャージ武器は、姿勢が終わってから 100% のまま待つ構えにも使う（紅蓮BS・レイヴン・A2 とも 12f。C-0216）。
+   * 入力が UP のチャージ武器のハイドからの 1 発目の構え（ハイド → チャージの表示が 100% を超える）にも使う（C-0225・C-0232）
    */
   aimInFrames: number;
+  /**
+   * 射撃姿勢維持型でない入力が UP のチャージ武器が、チャージが満ちてから撃つまで（マガジンの中もハイドからも 1f。
+   * 075-05・077-26。C-0232）。chargeReleaseFrames（23f）の内訳の 1 つで、ハイドからの 1 発目（cadence.ts の firstShotFrames）にだけ使う
+   */
+  chargeFullToShotFrames: number;
+  /**
+   * 入力が UP の SR（即着弾のチャージ武器。fireType が Instant）は、ハイドからの 1 発目の構えが aimInFrames より 1f 短い
+   * （戦闘開始・敵のジャンプの明けとも 11f。ラム・ヘルム・アリス。C-0232。V-0149）。RL は戦闘開始 12f・明け 11f
+   * （rlWindowEndShorterFrames）。理由は分かっていない
+   */
+  srHideAimShorterFrames: number;
   /**
    * 射撃姿勢維持型のリロードに足すフレーム（最終弾から次のマガジンの 1 発目までが、リロード + これ + 発と発の間）。
    * 紅蓮BS 11f（C-0149）。レイヴン・A2 も約 11〜12f（V-0130「条件」）。内訳は分かっていない（plan/design-fire-stance-cadence.md 3.4 節）
@@ -69,8 +82,8 @@ export type WeaponModel = {
   /**
    * 入力が UP の RL（飛ぶ弾の武器。fireType が Instant 以外は RL だけ）は、敵のジャンプの明けからの 1 発目の構えが、
    * 戦闘開始より 1f 短い（明け 11f・戦闘開始 12f。レイヴン・A2・I-DOLL・フラワーで、チャージと満ちてから撃つまでは同じ。C-0229。
-   * V-0143）。frame/shooter.ts の unhideShooter で firstShotFrames から引く。SR は戦闘開始でも構えが短い見込みで（ラムの 70f。075-04）、
-   * 明けで分けるかは確かめていないので引かない（windowEndShorterFrames）
+   * V-0143）。frame/shooter.ts の unhideShooter で firstShotFrames から引く。SR は戦闘開始も明けも 11f で（C-0232）、
+   * 明けで引かない（windowEndShorterFrames。戦闘開始からの短さは srHideAimShorterFrames）
    */
   rlWindowEndShorterFrames: number;
 };
@@ -81,6 +94,8 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   reloadFirstShotFrames: 24,
   aimOutFrames: 13,
   aimInFrames: 12,
+  chargeFullToShotFrames: 1,
+  srHideAimShorterFrames: 1,
   stanceReloadExtraFrames: 11,
   rlWindowEndShorterFrames: 1,
 };
@@ -117,6 +132,19 @@ export function windowEndShorterFrames(
 ): number {
   return isChargeWeapon(shot) && shot.inputType === 'UP' && shot.fireType !== 'Instant'
     ? model.rlWindowEndShorterFrames
+    : 0;
+}
+
+/**
+ * 入力が UP のチャージ武器のハイドからの 1 発目の構えを、aimInFrames より何フレーム短くするか。即着弾（SR）だけ
+ * WeaponModel.srHideAimShorterFrames（C-0232）。ほかは 0
+ */
+export function hideAimShorterFrames(
+  shot: Pick<ShotParams, 'chargeTime' | 'inputType' | 'fireType'>,
+  model: Pick<WeaponModel, 'srHideAimShorterFrames'>,
+): number {
+  return isChargeWeapon(shot) && shot.inputType === 'UP' && shot.fireType === 'Instant'
+    ? model.srHideAimShorterFrames
     : 0;
 }
 

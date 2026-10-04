@@ -15,7 +15,7 @@ import type { ShotParams } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
 import { framesToGameSeconds } from '../time.ts';
 
-// SR: チャージ 1 秒（60f）・発と発の間 82f・戦闘開始から 69f（Stage 22-A）・6 発
+// SR: チャージ 1 秒（59f）・発と発の間 82f・戦闘開始から 70f（C-0232）・6 発
 const SR: Partial<ShotParams> = {
   maxAmmo: 6,
   reloadTime: 1.5,
@@ -39,11 +39,12 @@ describe('partialChargeShot（射手）', () => {
   const shot = makeCharacter(SR).shot;
 
   it('fires with the charge progress (C + 1 − k) / C, where k is the wait until the next shot', () => {
-    // 戦闘開始の待ちは 69f（構え 10f + チャージ 59f。Stage 23）。20f 進めると残り 49f で、チャージは 11f 進んでいる
-    expect(firstShotFrames(shot)).toBe(69);
+    // 戦闘開始の待ちは 70f（SR の構え 11f + チャージ 59f + 満ちてから撃つまで 1f − 1。C-0232）。20f 進めると残り 50f で、
+    // チャージは 10f 進んでいる
+    expect(firstShotFrames(shot)).toBe(70);
     const state = shooterAfter(shot, 20);
-    expect(state.wait).toBe(49);
-    expect(partialChargeShot(state, shot)).toBeCloseTo(11 / 59, 12);
+    expect(state.wait).toBe(50);
+    expect(partialChargeShot(state, shot)).toBeCloseTo(10 / 59, 12);
     expect(state.ammo).toBe(5);
   });
 
@@ -55,7 +56,7 @@ describe('partialChargeShot（射手）', () => {
   });
 
   it('counts a shot that was due on this very frame as a full charge', () => {
-    const state = shooterAfter(shot, 69);
+    const state = shooterAfter(shot, 70);
     expect(state.wait).toBe(0);
     expect(partialChargeShot(state, shot)).toBe(1);
   });

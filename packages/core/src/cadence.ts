@@ -7,12 +7,19 @@
 import { chargeShotIntervalFrames, firingParams, type FiringParams } from './frame/firing.ts';
 import type { ShotParams } from './types.ts';
 import { framesToGameSeconds } from './time.ts';
-import { DEFAULT_WEAPON_MODEL, MAX_RPM, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
+import {
+  DEFAULT_WEAPON_MODEL,
+  MAX_RPM,
+  hasSpinUp,
+  hideAimShorterFrames,
+  isChargeWeapon,
+  type WeaponModel,
+} from './weapons.ts';
 
 export type CadenceResult = {
   /** 各発の発射フレーム（1 発目 = 0） */
   shotFrames: number[];
-  /** 戦闘開始から 1 発目までのフレーム。チャージ武器はチャージ + 解放遅延 − 構え解除、それ以外は構え（Stage 22-C） */
+  /** 戦闘開始から 1 発目までのフレーム。入力が UP のチャージ武器は構え + チャージ + 満ちてから撃つまで − 1（C-0232）、押下チャージ型はチャージ + 解放遅延 − 構え解除、それ以外は構え（Stage 22-C） */
   firstShotFrames: number;
   /** 21-C3: リロード完了から次のマガジンの 1 発目までのフレーム。AR・SMG・SG は reloadFirstShotFrames、MG は初弾遅延、チャージ武器は発と発の間 */
   reloadFirstShotFrames: number;
@@ -86,7 +93,13 @@ export function firstShotFrames(
   // 射撃姿勢維持型: ハイドからは姿勢の残りが無く、構え + チャージ + 満ちてから撃つまで − 1（C-0225。紅蓮BS 30f・レイヴン 86f・A2 94f。
   // plan/design-fire-stance-cadence.md 3.2 節）
   if (params.stance !== null) return model.aimInFrames + params.chargeFrames + params.stance.holdFrames - 1;
-  // Stage 22-A: チャージ武器はハイドから構えてチャージするので、発と発の間から構え解除のぶんを引く（C-0225）
+  // 射撃姿勢維持型でない入力が UP のチャージ武器も同じ形で、満ちてから撃つまでは 1f（RL 71f・SR 70f。SR は構えが 1f 短い。
+  // C-0232。V-0149）。Stage 22-A の「発と発の間 − 構え解除 13f」（69f）は構えを 10f と置いていた
+  if (isChargeWeapon(shot) && shot.inputType === 'UP') {
+    const aim = model.aimInFrames - hideAimShorterFrames(shot, model);
+    return aim + params.chargeFrames + model.chargeFullToShotFrames - 1;
+  }
+  // Stage 22-A: 押下チャージ型は確かめていないので、発と発の間から構え解除のぶんを引いたまま（C-0225）
   if (isChargeWeapon(shot)) return Math.max(0, params.chargeFrames + model.chargeReleaseFrames - model.aimOutFrames);
   // Stage 22-C: チャージの無い武器（MG を含む）も、ハイドから構えてから撃つ（C-0114）
   return model.aimInFrames;

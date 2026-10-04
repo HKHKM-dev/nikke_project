@@ -96,8 +96,9 @@ describe('録画 47 の予測（7.5）', () => {
   it('opens 5 full bursts of 10 s, 40 s apart, with 紅蓮BS as III', () => {
     // Stage 21-B: 40 秒 = 2,352f、10 秒 = 588f。C-0073 で段の間隔を 20f → 29f にして 470 → 497。
     // V-0028 で 1 発のゲージを ×1.2 → ×1.0 にして 497 → 646、V-0030 で S1 の段のヒットのゲージ（C-0085）を入れて 497 に戻った
-    // （録画 47 の 1 回目は約 486f）。Stage 22-A で戦闘開始の 1 発目が 13f 早くなって 497 → 484
-    expect(fb.map((w) => w.start)).toEqual([0, 1, 2, 3, 4].map((k) => 484 + k * gameSecondsToFrames(40)));
+    // （録画 47 の 1 回目は約 486f）。Stage 22-A で戦闘開始の 1 発目が 13f 早くなって 497 → 484。
+    // C-0232 でラム（SR）・デルタ（SR）の戦闘開始の 1 発目が 1f 遅くなって 484 → 485
+    expect(fb.map((w) => w.start)).toEqual([0, 1, 2, 3, 4].map((k) => 485 + k * gameSecondsToFrames(40)));
     expect(fb.every((w) => w.end - w.start === Math.min(gameSecondsToFrames(10), plan.frames - w.start))).toBe(true);
     expect(fb.every((w) => w.burstUsers.includes(2))).toBe(true);
   });

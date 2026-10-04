@@ -5,7 +5,7 @@
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "反復実測",
   "basis": "`122-19`〜`122-21`（レイヴン）・`123-12`〜`123-14`（A2）・`077-33`〜`077-35`（フラワー）。3 体・3 本で、明けの 12 回すべて構え 11f（A2 の 2 回目だけ明けの読みで 10〜11f）、戦闘開始の 3 回すべて 12f。明けの 2 回（A2 の 2 回目・レイヴンの 1 回目）は予測より前に見ていた（後付け）。照準の動き出しは RELOADING が消えたフレームか次のフレームで、それより早い回は無い。明けと戦闘開始のどちらが本来の長さか（戦闘開始の基準の表示が 1f 早いだけか）は見分けていない。SR（ラム）は戦闘開始でも構えが短い見込み（`075-04`）で、この結論の範囲外。2026-10-04 にオーナーの確認を得て確定にした。V-0143",
-  "model": "`weapons.ts` の `rlWindowEndShorterFrames` = 1・`windowEndShorterFrames`（入力が UP の RL だけ）、`frame/shooter.ts` の `unhideShooter`（明けの待ちを `firstShotFrames` から 1f 引く）",
+  "model": "`weapons.ts` の `rlWindowEndShorterFrames` = 1・`windowEndShorterFrames`（入力が UP の RL だけ）、`frame/shooter.ts` の `unhideShooter`（明けの待ちを `firstShotFrames` から 1f 引く）。SR は戦闘開始も明けも構え 11f で、明けでは引かない（C-0232）",
   "replaces": [],
   "updated": "2026-10-04"
 }
