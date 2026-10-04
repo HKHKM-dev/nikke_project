@@ -145,8 +145,8 @@ describe('runFirstPass: firing windows (1.1)', () => {
     const def = defWith(1, [
       { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'chargeSpeed', ref: 1, durationRef: 2 },
     ]);
-    // Stage 22-A: 1 発目を 42f 目に置くため、構え解除（aimOutFrames）を 0 にしたモデルで回す
-    const model = { ...DEFAULT_WEAPON_MODEL, aimOutFrames: 0 };
+    // 1 発目を 42f 目に置くため、ハイドからの構えを 23f（SR の短縮なし）にしたモデルで回す（23 + 19 + 1 − 1 = 42。C-0232）
+    const model = { ...DEFAULT_WEAPON_MODEL, aimInFrames: 23, srHideAimShorterFrames: 0 };
     const pass = runFirstPass([slotOf(character, def)], { frames: 800, burst: true, burstModel: 'fixed', model });
     const frames = pass.shots[0]!.frames;
     // 588 の射撃は基礎値（次は 588 + 42）。630 からチャージ 0f（解放遅延 23f だけ）で 653・676…

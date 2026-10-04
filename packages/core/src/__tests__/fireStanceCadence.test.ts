@@ -102,13 +102,14 @@ describe('敵のジャンプの明けからの 1 発目（C-0229。V-0143）', (
     expect(fromWindowEnd(851)).toBe(85); // 戦闘開始 86f
     expect(fromWindowEnd(811)).toBe(93); // 94f
     expect(fromWindowEnd(225)).toBe(29); // 30f（046-19 の明けは 29・30f）
-    expect(fromWindowEnd(304)).toBe(68); // 69f（射撃姿勢維持型でない RL の式は別の課題。V-0143「分かったこと」）
+    expect(fromWindowEnd(304)).toBe(70); // 71f（射撃姿勢維持型でない RL も構え + チャージ + 満ちてから撃つまで − 1。C-0232）
   });
 
-  it('leaves the SR as from the battle start', () => {
+  it('leaves the SR as from the battle start (11f aim at both. C-0232)', () => {
     const ram = character(20).shot;
     expect(ram.fireType).toBe('Instant');
     expect(fromWindowEnd(20)).toBe(computeCadence(ram).firstShotFrames);
+    expect(fromWindowEnd(822)).toBe(70);
   });
 
   it('identifies the RL by a projectile fireType (all 42 RL and no other weapon)', () => {
