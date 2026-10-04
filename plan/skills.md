@@ -4,7 +4,7 @@
 - キャラ × スロットごとに、対応状況（`supported`・`partial`・`unsupported`）と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 27・効果 122（根拠あり 54）・notes 69（根拠あり 22）
+件数: キャラ 27・効果 122（根拠あり 55）・notes 69（根拠あり 22）
 
 ## 10 ラピ
 
@@ -221,7 +221,7 @@
   - effects[0] timed・fullBurstStart・maxAmmo: 根拠なし
   - effects[1] ammoRefill・fullBurstStart: 根拠なし
 - **burst**: partial
-  - effects[0] burstDamage・skill: 根拠なし
+  - effects[0] burstDamage・skill: C-0226（仮説）
   - effects[1] timed・burstUse・hitRate: 根拠なし
   - notes[0] SG 味方の阻止部位の攻撃ダメージ▲（10 秒間維持）は未対応（阻止部位ダメージは単体の的では関係しない）。「同じ部隊の味方がいれば」味方全体の命中率▲・阻止部位の攻撃ダメージ▲（30 秒間維持）は未対応（部隊の条件は語彙外）: 根拠なし
 
