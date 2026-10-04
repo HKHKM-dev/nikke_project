@@ -246,7 +246,7 @@
   - effects[0] burstGaugeHit・15 秒ごと: C-0178（確定）、C-0176（確定）
   - notes[0] 最終攻撃力が最も高い敵の攻撃力▼はダメージに関係しない: C-0072（確定）
 - **burst**: supported
-  - effects[0] burstDamage・skill: C-0072（確定）、C-0220（仮説）
+  - effects[0] burstDamage・skill: C-0072（確定）、C-0220（確定）
   - notes[0] 挑発はダメージに関係しない: C-0072（確定）
 
 ## 311 ココア
