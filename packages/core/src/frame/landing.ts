@@ -6,6 +6,8 @@
 //   （C-0036・C-0037）。計画（planLandings）は枠の常時の BuffTotals.hitRate（育成の効果層・常時パッシブ）で出し、
 //   持続の▲（フルバーストの頭などで配られるもの。C-0170）が効いている区間は、使う時点で区間の N で出し直す（landingPartsWith）。
 // - 弾丸命中率: 的の表の値。通常攻撃のダメージと 1 パス目のゲージに掛ける（Stage 15 の condition.hitRate と同じ扱い）。
+//   AR・SMG・MG は命中率▲ N で外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にする（C-0192。仮説。plan/design-hit-rate-up-bullet-h2.md）。
+//   コア命中率と同じく、計画は常時の N で出し、持続の▲の区間は landingPartsWith で出し直す（1 パス目のゲージは計画の値のまま）。
 // - 表が null（未測定）の項目・的の表の無い敵・並びより後の区間は、手入力の値（slot.condition）を使い、注記を出す。
 // - 配分（中遠の 3 か所）の区間は、着地点ごとの 1 トリガーの値を重みで足す（Σ w_k × T_k）。
 import {
@@ -52,7 +54,8 @@ export function landingBandOf(
 /**
  * 着地点 1 か所ぶんの条件と重み。手入力の枠・未測定の区間は landing が null で重み 1。
  * measuredHitRate は弾丸命中率を的の表から取ったか（省略 false。SG のゲージの割合を決める。plan/design-sg-hit-rate.md 3 節）。
- * tableCoreHitRate は的の表のコア命中率（命中率▲を掛ける前。表が null・手入力は省略）。区間の N で出し直すのに使う
+ * tableCoreHitRate は的の表のコア命中率（命中率▲を掛ける前。表が null・手入力は省略）。区間の N で出し直すのに使う。
+ * tableBulletHitRate は的の表の弾丸命中率（命中率▲を掛ける前。▲を効かせる武器種で、表から取ったときだけ）
  */
 export type LandingPart = {
   landing: LandingPoint | null;
@@ -60,6 +63,7 @@ export type LandingPart = {
   condition: SlotCondition;
   measuredHitRate?: boolean;
   tableCoreHitRate?: number;
+  tableBulletHitRate?: number;
 };
 
 /** 着地点の計画（自動の枠が 1 つも無い、または的の表の無い敵では作らない） */
@@ -154,6 +158,22 @@ export function coreHitRateWithHitRateUp(p: number, hitRateUp: number): number {
   return Math.min(1, p / (1 - hitRateUp) ** 2);
 }
 
+/**
+ * C-0192（仮説）: 命中率▲ N で、弾丸命中率 p の外れの割合 1 − p を (1 − p) ^ (1 ÷ (1 − N)²) にする（H2）。N ≥ 1 なら 1。
+ * N ≤ 0 は変えない（命中率▼の効き方は測っていない）。確かめたのは SMG の遠だけ（plan/design-hit-rate-up-bullet-h2.md）
+ */
+export function bulletHitRateWithHitRateUp(p: number, hitRateUp: number): number {
+  if (hitRateUp <= 0) return p;
+  if (hitRateUp >= 1) return 1;
+  return 1 - (1 - p) ** (1 / (1 - hitRateUp) ** 2);
+}
+
+/** 命中率▲を弾丸命中率に効かせる武器種（AR・SMG・MG。SG は C-0157 と H2 が合わないので効かせない） */
+export function hitRateUpRaisesBulletHitRate(character: Pick<CharacterData, 'weaponType'>): boolean {
+  const weapon = character.weaponType;
+  return weapon === 'AR' || weapon === 'SMG' || weapon === 'MG';
+}
+
 /** 着地点の距離の範囲が bonusRange に丸ごと入るか（RL のように bonusRange が無ければ false） */
 export function distanceBonusAt(character: CharacterData, landing: LandingPoint): boolean {
   const range = character.bonusRange;
@@ -177,7 +197,12 @@ export function autoConditionAt(
     coreHitRate: core === null ? manual.coreHitRate : coreHitRateWithHitRateUp(core, hitRateUp),
     distanceBonus: distanceBonusAt(character, landing),
     fullCharge: manual.fullCharge,
-    hitRate: bullet === null ? (manual.hitRate ?? 1) : bullet,
+    hitRate:
+      bullet === null
+        ? (manual.hitRate ?? 1)
+        : hitRateUpRaisesBulletHitRate(character)
+          ? bulletHitRateWithHitRateUp(bullet, hitRateUp)
+          : bullet,
     ...(hits === null || hits === 1 ? {} : { hitsPerShot: hits }),
   };
 }
@@ -252,12 +277,16 @@ export function planLandings(
           ? [{ landing: null, weight: 1, condition: slot.condition }]
           : landingMix(profile, id).map(({ landing, weight }) => {
               const table = targetRateOf(profile.coreHitRate, slot.character, landing);
+              const bullet = targetRateOf(profile.bulletHitRate, slot.character, landing);
               return {
                 landing,
                 weight,
                 condition: autoConditionAt(profile, landing, slot.character, hitRateUp[i]!, slot.condition),
-                measuredHitRate: targetRateOf(profile.bulletHitRate, slot.character, landing) !== null,
+                measuredHitRate: bullet !== null,
                 ...(table === null ? {} : { tableCoreHitRate: table }),
+                ...(bullet === null || !hitRateUpRaisesBulletHitRate(slot.character)
+                  ? {}
+                  : { tableBulletHitRate: bullet }),
               };
             }),
       );
@@ -290,7 +319,8 @@ const PARTS_WITH_CACHE = new WeakMap<LandingPlan, Map<string, readonly LandingPa
 
 /**
  * C-0170: landingPartsOf の条件のコア命中率を、命中率▲ hitRateUp（常時 + その区間の持続の▲。区間の状態の buffs.hitRate）で
- * 出し直す。計画の常時の N と同じなら計画の配分をそのまま返す。弾丸命中率・距離ボーナスは変えない
+ * 出し直す。C-0192（仮説）: ▲を効かせる武器種は弾丸命中率も出し直す。計画の常時の N と同じなら計画の配分をそのまま返す。
+ * 距離ボーナスは変えない
  */
 export function landingPartsWith(
   plan: LandingPlan | null,
@@ -301,7 +331,7 @@ export function landingPartsWith(
 ): readonly LandingPart[] {
   const parts = landingPartsOf(plan, slot, slotIndex, landing);
   if (plan === null || !plan.autoSlots[slotIndex] || hitRateUp === (plan.hitRateUp[slotIndex] ?? 0)) return parts;
-  if (!parts.some((p) => p.tableCoreHitRate !== undefined)) return parts;
+  if (!parts.some((p) => p.tableCoreHitRate !== undefined || p.tableBulletHitRate !== undefined)) return parts;
   let cache = PARTS_WITH_CACHE.get(plan);
   if (cache === undefined) {
     cache = new Map();
@@ -311,9 +341,20 @@ export function landingPartsWith(
   let found = cache.get(key);
   if (found === undefined) {
     found = parts.map((p) =>
-      p.tableCoreHitRate === undefined
+      p.tableCoreHitRate === undefined && p.tableBulletHitRate === undefined
         ? p
-        : { ...p, condition: { ...p.condition, coreHitRate: coreHitRateWithHitRateUp(p.tableCoreHitRate, hitRateUp) } },
+        : {
+            ...p,
+            condition: {
+              ...p.condition,
+              ...(p.tableCoreHitRate === undefined
+                ? {}
+                : { coreHitRate: coreHitRateWithHitRateUp(p.tableCoreHitRate, hitRateUp) }),
+              ...(p.tableBulletHitRate === undefined
+                ? {}
+                : { hitRate: bulletHitRateWithHitRateUp(p.tableBulletHitRate, hitRateUp) }),
+            },
+          },
     );
     cache.set(key, found);
   }
@@ -327,7 +368,8 @@ export function mixedHitRate(parts: readonly LandingPart[]): number {
 }
 
 /**
- * 枠ごとの弾丸命中率の区間（1 パス目のゲージ用）。自動でない枠は null（TimelineSlot.hitRate の定数のまま）
+ * 枠ごとの弾丸命中率の区間（1 パス目のゲージ用）。自動でない枠は null（TimelineSlot.hitRate の定数のまま）。
+ * 計画の値（常時の命中率▲だけ）を使う。持続の▲の弾丸命中率の上がり（C-0192）はゲージに入れない（未実装。注記を出す）
  */
 export function hitRateSpansOf(plan: LandingPlan | null, slotCount: number): (LandingHitRateSpan[] | null)[] {
   return Array.from({ length: slotCount }, (_, i) => {
@@ -519,19 +561,24 @@ export function landingNotes(
     (id): id is string => id !== null && id in profile.mixes,
   );
   const n = plan.hitRateUp[slotIndex] ?? 0;
+  const raisesBullet = hitRateUpRaisesBulletHitRate(slot.character);
   const ja = [
     `${profile.name.ja}の表（単騎 AUTO の実測）でコア命中率・距離ボーナス・弾丸命中率を決めた`,
     ...mixes.map((id) => mixLabel(profile, id).ja),
     ...(n > 0 ? [`常時の命中率▲ ${pct(n)} でコア命中率を 1/(1 − N)² 倍（上限 1）`] : []),
     'フルバースト中などに配られる持続の命中率▲も、効いている区間で N に足してコア命中率に効かせた（C-0170。仮説）',
-    '命中率▲は弾丸命中率に効かせていない（未実装。SG の近 A では上がるが（C-0157）、効き方の式が決まっていない）',
+    raisesBullet
+      ? '命中率▲（常時 + 持続）で弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0192。仮説。確かめたのは SMG の遠だけ）。持続の▲による上がりは 1 パス目のゲージには入れていない（未実装）'
+      : '命中率▲は弾丸命中率に効かせていない（未実装。SG の近 A では上がるが（C-0157）、効き方の式が決まっていない）',
   ];
   const en = [
     `Core hit rate, distance bonus and bullet hit rate come from the ${profile.name.en} table (solo AUTO recordings)`,
     ...mixes.map((id) => mixLabel(profile, id).en),
     ...(n > 0 ? [`constant hit rate up ${pct(n)} scales core hit rate by 1/(1 − N)² (max 1)`] : []),
     'timed hit rate buffs (e.g. given at full burst) are added to N while active and change core hit rate (C-0170; hypothesis)',
-    'hit rate buffs do not change bullet hit rate (not modeled; they raise it for SG at near A (C-0157), but the formula is unknown)',
+    raisesBullet
+      ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) (C-0192; hypothesis, checked only for SMG at far range); the rise from timed buffs is not fed into the burst gauge (not modeled)'
+      : 'hit rate buffs do not change bullet hit rate (not modeled; they raise it for SG at near A (C-0157), but the formula is unknown)',
   ];
   notes.push({ level: 'approx', code: 'auto-condition', message: { ja: ja.join('。'), en: en.join('; ') } });
   if (n < 0) {
@@ -539,8 +586,8 @@ export function landingNotes(
       level: 'unsupported',
       code: 'hit-rate-down',
       message: {
-        ja: `常時の命中率▼（${pct(n)}）はコア命中率に効かせていない（効き方を測っていない）`,
-        en: `Constant hit rate down (${pct(n)}) does not change core hit rate (not measured)`,
+        ja: `常時の命中率▼（${pct(n)}）はコア命中率・弾丸命中率に効かせていない（効き方を測っていない）`,
+        en: `Constant hit rate down (${pct(n)}) does not change core or bullet hit rate (not measured)`,
       },
     });
   }

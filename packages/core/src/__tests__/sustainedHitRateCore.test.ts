@@ -9,7 +9,14 @@ import { computeTeamDamage } from '../calc/model.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { coreHitRateWithHitRateUp, landingPartsOf, landingPartsWith, landingTriggerDamage } from '../frame/landing.ts';
+import {
+  bulletHitRateWithHitRateUp,
+  coreHitRateWithHitRateUp,
+  hitRateSpansOf,
+  landingPartsOf,
+  landingPartsWith,
+  landingTriggerDamage,
+} from '../frame/landing.ts';
 import { perShotDamageOf, planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
@@ -95,6 +102,9 @@ describe('持続の命中率▲（C-0170）', () => {
     const parts = landingPartsWith(plan.landing, slot, LITER, seg.landing, buffs.hitRate);
     for (const p of parts) {
       expect(p.condition.coreHitRate).toBe(coreHitRateWithHitRateUp(p.tableCoreHitRate!, MODERNIA_S2 + DRAKE_S1));
+      // C-0192（仮説）: リターは SMG なので弾丸命中率も区間の N で出し直す
+      expect(p.condition.hitRate).toBe(bulletHitRateWithHitRateUp(p.tableBulletHitRate!, MODERNIA_S2 + DRAKE_S1));
+      expect(p.condition.hitRate).toBeGreaterThan(p.tableBulletHitRate!);
     }
     const expected = landingTriggerDamage({ ...base, buffs, perShot: perShotDamageOf(slot) }, parts, true);
     const without = landingTriggerDamage(
@@ -122,6 +132,22 @@ describe('持続の命中率▲（C-0170）', () => {
     expect(sim.slots[LITER]!.autoCondition).toEqual(summary);
     const note = calc.slots[LITER]!.notes.find((x) => x.code === 'auto-condition')!;
     expect(note.message.ja).toContain('C-0170');
+    expect(note.message.ja).toContain('C-0192');
+    // ドレイク（SG）は弾丸命中率に効かせない
+    const drake = calc.slots[1]!.notes.find((x) => x.code === 'auto-condition')!;
+    expect(drake.message.ja).toContain('C-0157');
+    expect(drake.message.ja).not.toContain('C-0192');
+  });
+
+  it('keeps the plan value (constant N only) for the gauge of the first pass, and SG parts have no table bullet hit rate', () => {
+    const spans = hitRateSpansOf(plan.landing, input.slots.length)[LITER]!;
+    const inBuff = spans.find((s) => s.start <= nearFb.start + 10 && nearFb.start + 10 < s.end)!;
+    const parts = landingPartsOf(plan.landing, input.slots[LITER]!, LITER, 'near');
+    expect(inBuff.hitRate).toBe(parts[0]!.condition.hitRate);
+    expect(inBuff.hitRate).toBe(parts[0]!.tableBulletHitRate);
+    expect(
+      landingPartsOf(plan.landing, input.slots[1]!, 1, 'near').every((p) => p.tableBulletHitRate === undefined),
+    ).toBe(true);
   });
 
   it('leaves manual slots alone: no hit rate split in the keys, same segments as without the target table', () => {
