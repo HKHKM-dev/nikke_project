@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "Pioneer",
+  "squadName": {
+    "ja": "パイオニア",
+    "en": "Pioneer"
+  },
   "element": "Iron",
   "weaponType": "RL",
   "burstStep": "Step1",

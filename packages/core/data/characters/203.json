@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Talentum",
+  "squadName": {
+    "ja": "タレント",
+    "en": "Talentum"
+  },
   "element": "Electronic",
   "weaponType": "AR",
   "burstStep": "Step1",

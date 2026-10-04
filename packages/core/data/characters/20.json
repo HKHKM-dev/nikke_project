@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Scouting",
+  "squadName": {
+    "ja": "スカウティング",
+    "en": "The Scouts"
+  },
   "element": "Wind",
   "weaponType": "SR",
   "burstStep": "Step2",

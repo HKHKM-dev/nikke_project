@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "RealKindness",
+  "squadName": {
+    "ja": "リアルカインドネス",
+    "en": "Real Kindness"
+  },
   "element": "Water",
   "weaponType": "SMG",
   "burstStep": "Step3",

@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Exotic",
+  "squadName": {
+    "ja": "エキゾチック",
+    "en": "Exotic"
+  },
   "element": "Wind",
   "weaponType": "SMG",
   "burstStep": "Step3",

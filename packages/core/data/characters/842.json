@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE007",
+  "squadName": {
+    "ja": "B.S.T.",
+    "en": "B.S.T."
+  },
   "element": "Electronic",
   "weaponType": "RL",
   "burstStep": "Step1",

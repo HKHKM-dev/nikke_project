@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "LittleCannon",
+  "squadName": {
+    "ja": "リトルキャノン",
+    "en": "The Carronades"
+  },
   "element": "Wind",
   "weaponType": "RL",
   "burstStep": "Step1",

@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "Incubator",
+  "squadName": {
+    "ja": "インキュベーター",
+    "en": "Incubator"
+  },
   "element": "Wind",
   "weaponType": "AR",
   "burstStep": "Step2",

@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "MaidForYou",
+  "squadName": {
+    "ja": "メイド・フォー・ユー",
+    "en": "Maid For You"
+  },
   "element": "Fire",
   "weaponType": "MG",
   "burstStep": "Step1",

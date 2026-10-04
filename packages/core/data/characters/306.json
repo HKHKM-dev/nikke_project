@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Replace",
+  "squadName": {
+    "ja": "リプレイス",
+    "en": "Replace"
+  },
   "element": "Fire",
   "weaponType": "SMG",
   "burstStep": "Step1",

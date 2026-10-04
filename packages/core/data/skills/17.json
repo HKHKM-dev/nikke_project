@@ -21,7 +21,7 @@
           "target": "self",
           "stat": "attack",
           "ref": 2,
-          "squad": {
+          "burstStepMix": {
             "otherBurstStep": "Step1",
             "present": false
           },
@@ -39,7 +39,7 @@
           "trigger": "battleStart",
           "target": "allies",
           "ref": 3,
-          "squad": {
+          "burstStepMix": {
             "otherBurstStep": "Step1",
             "present": false
           },
@@ -57,7 +57,7 @@
           "trigger": "fullBurstEnd",
           "target": "allies",
           "ref": 3,
-          "squad": {
+          "burstStepMix": {
             "otherBurstStep": "Step1",
             "present": false
           },
@@ -92,7 +92,7 @@
         {
           "kind": "burstReentry",
           "step": "Step1",
-          "squad": {
+          "burstStepMix": {
             "otherBurstStep": "Step1",
             "present": true
           },
@@ -118,7 +118,7 @@
           "scaling": "casterAttack",
           "ref": 1,
           "durationRef": 2,
-          "squad": {
+          "burstStepMix": {
             "otherBurstStep": "Step1",
             "present": false
           },
@@ -206,7 +206,7 @@
           "stat": "attackDamage",
           "ref": 6,
           "durationRef": 7,
-          "squad": {
+          "burstStepMix": {
             "otherBurstStep": "Step1",
             "present": false
           },

@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "Inherit",
+  "squadName": {
+    "ja": "インヘルト",
+    "en": "Inherit"
+  },
   "element": "Water",
   "weaponType": "SG",
   "burstStep": "Step3",

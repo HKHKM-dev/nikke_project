@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "MaidForYou",
+  "squadName": {
+    "ja": "メイド・フォー・ユー",
+    "en": "Maid For You"
+  },
   "element": "Electronic",
   "weaponType": "SG",
   "burstStep": "Step3",

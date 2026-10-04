@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Rewind",
+  "squadName": {
+    "ja": "リワインド",
+    "en": "Rewind"
+  },
   "element": "Fire",
   "weaponType": "RL",
   "burstStep": "Step2",

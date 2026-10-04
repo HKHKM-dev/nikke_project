@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "RealKindness",
+  "squadName": {
+    "ja": "リアルカインドネス",
+    "en": "Real Kindness"
+  },
   "element": "Electronic",
   "weaponType": "SMG",
   "burstStep": "Step2",

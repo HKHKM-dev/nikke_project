@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "SiegePerilous",
+  "squadName": {
+    "ja": "シージペリラス",
+    "en": "Perilous Siege"
+  },
   "element": "Wind",
   "weaponType": "SMG",
   "burstStep": "Step3",

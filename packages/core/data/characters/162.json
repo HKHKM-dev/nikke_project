@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "MISSILIS",
   "corporationSubType": "OVERSPEC",
+  "squad": "Wardress",
+  "squadName": {
+    "ja": "ワードレス",
+    "en": "Wardress"
+  },
   "element": "Fire",
   "weaponType": "MG",
   "burstStep": "Step3",

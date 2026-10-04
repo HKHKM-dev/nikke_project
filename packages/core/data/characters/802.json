@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "ce_01",
+  "squadName": {
+    "ja": "デビルハンター",
+    "en": "Devil Hunter"
+  },
   "element": "Wind",
   "weaponType": "SR",
   "burstStep": "Step2",

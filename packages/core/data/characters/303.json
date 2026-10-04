@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "Replace",
+  "squadName": {
+    "ja": "リプレイス",
+    "en": "Replace"
+  },
   "element": "Fire",
   "weaponType": "MG",
   "burstStep": "Step3",

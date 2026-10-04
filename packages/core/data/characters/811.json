@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "ce002_01",
+  "squadName": {
+    "ja": "ヨルハ",
+    "en": "YoRHa"
+  },
   "element": "Fire",
   "weaponType": "RL",
   "burstStep": "Step3",

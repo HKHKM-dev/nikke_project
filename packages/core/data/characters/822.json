@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE003",
+  "squadName": {
+    "ja": "エミリア陣営",
+    "en": "Emilia's Faction"
+  },
   "element": "Wind",
   "weaponType": "SR",
   "burstStep": "Step1",

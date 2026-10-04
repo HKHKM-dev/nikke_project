@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Aegis",
+  "squadName": {
+    "ja": "イージス",
+    "en": "Aegis"
+  },
   "element": "Water",
   "weaponType": "RL",
   "burstStep": "Step2",

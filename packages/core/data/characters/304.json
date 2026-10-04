@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Replace",
+  "squadName": {
+    "ja": "リプレイス",
+    "en": "Replace"
+  },
   "element": "Wind",
   "weaponType": "RL",
   "burstStep": "Step1",

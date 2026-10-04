@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "ArkRanger",
+  "squadName": {
+    "ja": "女神戦隊アークレンジャー",
+    "en": "Ark Rangers"
+  },
   "element": "Wind",
   "weaponType": "AR",
   "burstStep": "Step3",

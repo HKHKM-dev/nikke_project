@@ -1,4 +1,4 @@
-// アニス：スター（17）を含む編成: S1 の部隊構成の分岐（私だけの星の攻撃力▲は、自分を除く基本バースト段階 1 の味方がいないときだけ。
+// アニス：スター（17）を含む編成: S1 のバースト段階の構成の分岐（私だけの星の攻撃力▲は、自分を除く基本バースト段階 1 の味方がいないときだけ。
 // plan/design-anis-star-s1.md）、フルチャージの発ごとの追加ダメージ（perShot）、フルバースト終了時の CT▼、sim と calc の整合。V-0116。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -153,7 +153,7 @@ describe('みんなの星のバースト再突入 I 段階（V-0121）', () => {
   });
 });
 
-describe('私だけの星とみんなの星（部隊構成の分岐）', () => {
+describe('私だけの星とみんなの星（バースト段階の構成の分岐）', () => {
   const attackOf = (input: TeamInput) => computeTeamDamage(input).slots[0]!.segments[0]!.trigger.attack;
 
   it('gives My Own Star ATK up (40.01%) only without another Burst I ally', () => {
@@ -179,7 +179,7 @@ describe('私だけの星とみんなの星（部隊構成の分岐）', () => {
 });
 
 // クラウンをリターに替えた編成は、calc の平均で数える群（triggerSource average）でアニス：スターの発の数が sim より 4〜9% 少なく、
-// 枠の合計が 5% を少し超える（calc のハイブリッドの近似。plan/backlog.md 4-5）。部隊構成の条件とは別なので、5% の検査は外す
+// 枠の合計が 5% を少し超える（calc のハイブリッドの近似。plan/backlog.md 4-5）。バースト段階の構成の条件とは別なので、5% の検査は外す
 describe.each([
   ['アニス：スター単騎（V-0116 の撮影の条件）', SOLO, true],
   ['アニス：スター + I-DOLL・フラワー（録画 150 の編成）', WITH_FLOWER, true],

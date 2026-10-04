@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "BestSeller",
+  "squadName": {
+    "ja": "ベストセラー",
+    "en": "Best Seller"
+  },
   "element": "Fire",
   "weaponType": "SG",
   "burstStep": "Step2",

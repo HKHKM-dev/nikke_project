@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "External",
+  "squadName": {
+    "ja": "エクスターナー",
+    "en": "Extrinsic"
+  },
   "element": "Electronic",
   "weaponType": "RL",
   "burstStep": "Step3",

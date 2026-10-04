@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "OldTales",
+  "squadName": {
+    "ja": "オールドテイルズ",
+    "en": "Old Tales"
+  },
   "element": "Electronic",
   "weaponType": "RL",
   "burstStep": "Step3",

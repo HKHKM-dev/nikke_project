@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "PrimaDonna",
+  "squadName": {
+    "ja": "プリマドンナ",
+    "en": "Prima Donna"
+  },
   "element": "Wind",
   "weaponType": "SMG",
   "burstStep": "Step1",

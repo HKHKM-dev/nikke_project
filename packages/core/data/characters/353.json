@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Aegis",
+  "squadName": {
+    "ja": "イージス",
+    "en": "Aegis"
+  },
   "element": "Iron",
   "weaponType": "AR",
   "burstStep": "Step2",

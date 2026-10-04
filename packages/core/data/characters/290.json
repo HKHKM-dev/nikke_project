@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "MMR",
+  "squadName": {
+    "ja": "M.M.R.",
+    "en": "M.M.R."
+  },
   "element": "Wind",
   "weaponType": "AR",
   "burstStep": "Step3",

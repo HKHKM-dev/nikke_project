@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "Heretic",
+  "squadName": {
+    "ja": "ヘレティック",
+    "en": "Heretic"
+  },
   "element": "Fire",
   "weaponType": "SR",
   "burstStep": "Step2",

@@ -131,6 +131,13 @@ export type SkillRaw = {
 export type CharacterData = CharacterIndexEntry & {
   /** CDN の corporation_sub_type（"OVERSPEC" など）。無いキャラは null。スペック固定の好感度の上限（fixedSpec.ts）を決める */
   corporationSubType: string | null;
+  /**
+   * ラム編: CDN の squad（ゲーム内の部隊の ID。"CE003" など）。全キャラにある。同じ部隊の味方の条件（skills/composition.ts）で見る
+   * （plan/design-ram-s1.md 2.2 節）
+   */
+  squad: string;
+  /** ラム編: 部隊名（CDN の squad_detail.squad_name）。画面の表示用 */
+  squadName: LocalizedText;
   /** index = level - 1 */
   levelCurve: Record<StatKind, number[]>;
   statEnhance: StatEnhance;

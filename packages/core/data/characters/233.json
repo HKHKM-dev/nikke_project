@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "Inherit",
+  "squadName": {
+    "ja": "インヘルト",
+    "en": "Inherit"
+  },
   "element": "Water",
   "weaponType": "AR",
   "burstStep": "Step1",

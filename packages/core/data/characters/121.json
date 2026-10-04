@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "RecallRelease",
+  "squadName": {
+    "ja": "リコール＆リリーズ",
+    "en": "Recall & Release"
+  },
   "element": "Wind",
   "weaponType": "RL",
   "burstStep": "Step2",

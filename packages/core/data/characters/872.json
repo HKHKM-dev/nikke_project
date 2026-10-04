@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE009_03",
+  "squadName": {
+    "ja": "特別課外活動部",
+    "en": "Specialized Extracurricular Execution Squad"
+  },
   "element": "Iron",
   "weaponType": "SMG",
   "burstStep": "Step2",

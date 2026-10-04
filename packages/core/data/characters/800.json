@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "ce_01",
+  "squadName": {
+    "ja": "デビルハンター",
+    "en": "Devil Hunter"
+  },
   "element": "Water",
   "weaponType": "SMG",
   "burstStep": "Step2",

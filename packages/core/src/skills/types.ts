@@ -161,13 +161,21 @@ export type TargetCountFields = {
 };
 
 /**
- * アニス：スター編: 部隊構成の条件（plan/design-anis-star-s1.md 2.1 節）。自分を除く編成の枠（空枠を除く）に、基本バースト段階
- * （CharacterData.burstStep）が otherBurstStep のキャラが 1 体以上いる（present: true）/ 1 体もいない（false）ときだけ効果を持つ。
- * 編成で決まる静的な条件で、満たさない効果は最上位で外す（skills/squad.ts）。AllStep は段階 1〜3 のどれにも数えない（同 5 節の論点 1）
+ * アニス：スター編: バースト段階の構成の条件（plan/design-anis-star-s1.md 2.1 節。plan/design-ram-s1.md で squad から改名）。
+ * 自分を除く編成の枠（空枠を除く）に、基本バースト段階（CharacterData.burstStep）が otherBurstStep のキャラが 1 体以上いる
+ * （present: true）/ 1 体もいない（false）ときだけ効果を持つ。編成で決まる静的な条件で、満たさない効果は最上位で外す
+ * （skills/composition.ts）。AllStep は段階 1〜3 のどれにも数えない（同 5 節の論点 1）
  */
-export type SquadCondition = { otherBurstStep: SquadBurstStep; present: boolean };
-export type SquadBurstStep = 'Step1' | 'Step2' | 'Step3';
-export const SQUAD_BURST_STEPS = ['Step1', 'Step2', 'Step3'] as const satisfies readonly SquadBurstStep[];
+export type BurstStepMixCondition = { otherBurstStep: BasicBurstStep; present: boolean };
+export type BasicBurstStep = 'Step1' | 'Step2' | 'Step3';
+export const BASIC_BURST_STEPS = ['Step1', 'Step2', 'Step3'] as const satisfies readonly BasicBurstStep[];
+
+/**
+ * ラム編: 同じ部隊の味方の条件（plan/design-ram-s1.md 2.1 節）。自分を除く編成の枠（空枠を除く）に、ゲーム内の部隊
+ * （CharacterData.squad）が自分と同じキャラが 1 体以上いる（present: true）/ 1 体もいない（false）ときだけ効果を持つ。
+ * バースト段階の構成の条件と同じく、編成で決まる静的な条件で、満たさない効果は最上位で外す（skills/composition.ts）
+ */
+export type SquadCondition = { present: boolean };
 
 export type SkillSupport = 'supported' | 'partial' | 'unsupported';
 export const SKILL_SUPPORTS = ['supported', 'partial', 'unsupported'] as const satisfies readonly SkillSupport[];
@@ -187,7 +195,9 @@ export type PassiveEffect = {
   ref: number;
   /** Stage 11 モダニア: 「▼」。値の符号を反転する（scaling が ratio / flat のときだけ） */
   decrease?: true;
-  /** アニス：スター編: 部隊構成の条件 */
+  /** アニス：スター編: バースト段階の構成の条件 */
+  burstStepMix?: BurstStepMixCondition;
+  /** ラム編: 同じ部隊の味方の条件 */
   squad?: SquadCondition;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
@@ -320,7 +330,9 @@ export type TimedEffect = TargetCountFields & {
    * 効いている窓で合計 > 0。同じフレームに付いた窓も入れる）なら発火する。カウンタは状態に関係なく数える
    */
   condition?: EffectCondition;
-  /** アニス：スター編: 部隊構成の条件 */
+  /** アニス：スター編: バースト段階の構成の条件 */
+  burstStepMix?: BurstStepMixCondition;
+  /** ラム編: 同じ部隊の味方の条件 */
   squad?: SquadCondition;
   /** 維持秒数の description_value_NN。durationSeconds・durationShots・durationShotsRef とちょうど 1 つ */
   durationRef?: number;
@@ -393,7 +405,9 @@ export type CooldownReductionEffect = TargetCountFields & {
   targetElement?: Element;
   /** 秒数の description_value_NN */
   ref: number;
-  /** アニス：スター編: 部隊構成の条件 */
+  /** アニス：スター編: バースト段階の構成の条件 */
+  burstStepMix?: BurstStepMixCondition;
+  /** ラム編: 同じ部隊の味方の条件 */
   squad?: SquadCondition;
   assumes?: LocalizedText;
 };
@@ -621,11 +635,12 @@ export type BurstGaugeHitEffect = {
 /**
  * アニス：スター編: 「バースト再突入 N 段階に変更」（plan/design-anis-star-rest.md 3 節）。持つ枠のバーストの次の段階（CDN の
  * change_burst_step。BurstUnit.nextStep）を step に差し替える。I を撃った後にもう一度 I に入れば、このチェーンで未使用の
- * 別の I の枠が撃つ。部隊構成の条件（squad）を付けられる。どのスロットにも書けるが、1 つの定義に 1 つまで
+ * 別の I の枠が撃つ。編成の条件（burstStepMix・squad）を付けられる。どのスロットにも書けるが、1 つの定義に 1 つまで
  */
 export type BurstReentryEffect = {
   kind: 'burstReentry';
-  step: SquadBurstStep;
+  step: BasicBurstStep;
+  burstStepMix?: BurstStepMixCondition;
   squad?: SquadCondition;
   assumes?: LocalizedText;
 };
@@ -653,8 +668,8 @@ export type SkillEffect = (
 ) &
   ClaimRefs;
 
-/** アニス：スター編: 定義のバースト再突入の段階（部隊構成の条件で外した後の定義を渡す）。無ければ null */
-export function burstReentryStepOf(definition: SkillDefinition | null | undefined): SquadBurstStep | null {
+/** アニス：スター編: 定義のバースト再突入の段階（編成の条件で外した後の定義を渡す）。無ければ null */
+export function burstReentryStepOf(definition: SkillDefinition | null | undefined): BasicBurstStep | null {
   if (!definition) return null;
   for (const slot of SKILL_SLOTS) {
     if (definition.skills[slot].support === 'unsupported') continue;
@@ -1278,9 +1293,11 @@ function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstG
 
 function parseBurstReentryEffect(v: Record<string, Json>, path: string): BurstReentryEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'step', 'squad', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+    if (!['kind', 'step', 'burstStepMix', 'squad', 'assumes', 'claims'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
   }
-  const effect: BurstReentryEffect = { kind: 'burstReentry', step: oneOf(SQUAD_BURST_STEPS, v.step, `${path}.step`) };
+  const effect: BurstReentryEffect = { kind: 'burstReentry', step: oneOf(BASIC_BURST_STEPS, v.step, `${path}.step`) };
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -1288,7 +1305,7 @@ function parseBurstReentryEffect(v: Record<string, Json>, path: string): BurstRe
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
   // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）
   const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds'] : [];
-  const squadKeys = kind === 'cooldownReduction' ? ['squad'] : [];
+  const compositionKeys = kind === 'cooldownReduction' ? ['burstStepMix', 'squad'] : [];
   for (const key of Object.keys(v)) {
     if (
       ![
@@ -1301,7 +1318,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
         'targetCountRef',
         'ref',
         ...durationKeys,
-        ...squadKeys,
+        ...compositionKeys,
         'assumes',
         'claims',
       ].includes(key)
@@ -1351,7 +1368,8 @@ function parseRef(v: Json, path: string): number {
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
   const effect: SkillEffect = parseEffectBody(v, path, slot);
-  if (v.squad !== undefined) {
+  for (const key of ['burstStepMix', 'squad'] as const) {
+    if (v[key] === undefined) continue;
     if (
       effect.kind !== 'passive' &&
       effect.kind !== 'timed' &&
@@ -1359,25 +1377,34 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
       effect.kind !== 'burstReentry'
     ) {
       fail(
-        `${path}.squad`,
+        `${path}.${key}`,
         `only allowed in passive, timed, cooldownReduction and burstReentry, found in ${effect.kind}`,
       );
     }
-    effect.squad = parseSquadCondition(v.squad, `${path}.squad`);
+    if (key === 'burstStepMix') effect.burstStepMix = parseBurstStepMixCondition(v[key], `${path}.${key}`);
+    else effect.squad = parseSquadCondition(v[key], `${path}.${key}`);
   }
   if (v.claims !== undefined) effect.claims = parseClaimRefs(v.claims, `${path}.claims`);
   return effect;
 }
 
-/** アニス：スター編: 部隊構成の条件 */
-function parseSquadCondition(v: Json, path: string): SquadCondition {
+/** アニス：スター編: バースト段階の構成の条件 */
+function parseBurstStepMixCondition(v: Json, path: string): BurstStepMixCondition {
   if (!isRecord(v)) fail(path, 'expected an object');
   for (const key of Object.keys(v)) {
     if (key !== 'otherBurstStep' && key !== 'present') fail(`${path}.${key}`, 'unknown field');
   }
-  const otherBurstStep = oneOf(SQUAD_BURST_STEPS, v.otherBurstStep, `${path}.otherBurstStep`);
+  const otherBurstStep = oneOf(BASIC_BURST_STEPS, v.otherBurstStep, `${path}.otherBurstStep`);
   if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
   return { otherBurstStep, present: v.present };
+}
+
+/** ラム編: 同じ部隊の味方の条件 */
+function parseSquadCondition(v: Json, path: string): SquadCondition {
+  if (!isRecord(v)) fail(path, 'expected an object');
+  for (const key of Object.keys(v)) if (key !== 'present') fail(`${path}.${key}`, 'unknown field');
+  if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
+  return { present: v.present };
 }
 
 function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot): SkillEffect {

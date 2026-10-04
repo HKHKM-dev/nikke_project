@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Absolute",
+  "squadName": {
+    "ja": "アブソルート",
+    "en": "Absolute"
+  },
   "element": "Fire",
   "weaponType": "MG",
   "burstStep": "Step1",

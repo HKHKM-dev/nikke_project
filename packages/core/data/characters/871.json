@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE009_02",
+  "squadName": {
+    "ja": "自称特別捜査隊",
+    "en": "Investigation Team"
+  },
   "element": "Fire",
   "weaponType": "MG",
   "burstStep": "Step3",

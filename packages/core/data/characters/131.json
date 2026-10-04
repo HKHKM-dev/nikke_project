@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "Seraphim",
+  "squadName": {
+    "ja": "セラフィム",
+    "en": "Seraphim"
+  },
   "element": "Wind",
   "weaponType": "SG",
   "burstStep": "Step1",

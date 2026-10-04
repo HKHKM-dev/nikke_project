@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Replace",
+  "squadName": {
+    "ja": "リプレイス",
+    "en": "Replace"
+  },
   "element": "Iron",
   "weaponType": "SG",
   "burstStep": "Step2",

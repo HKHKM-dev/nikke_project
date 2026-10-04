@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "InfinityRail",
+  "squadName": {
+    "ja": "インフィニティレール",
+    "en": "Infinity Rail"
+  },
   "element": "Water",
   "weaponType": "SG",
   "burstStep": "Step1",

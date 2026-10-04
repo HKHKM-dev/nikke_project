@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "MISSILIS",
   "corporationSubType": "OVERSPEC",
+  "squad": "Counters",
+  "squadName": {
+    "ja": "カウンターズ",
+    "en": "Counters"
+  },
   "element": "Electronic",
   "weaponType": "RL",
   "burstStep": "Step3",

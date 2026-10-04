@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "Replace",
+  "squadName": {
+    "ja": "リプレイス",
+    "en": "Replace"
+  },
   "element": "Wind",
   "weaponType": "SG",
   "burstStep": "Step2",

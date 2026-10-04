@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Seraphim",
+  "squadName": {
+    "ja": "セラフィム",
+    "en": "Seraphim"
+  },
   "element": "Water",
   "weaponType": "SG",
   "burstStep": "Step1",

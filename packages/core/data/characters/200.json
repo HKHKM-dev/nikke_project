@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Talentum",
+  "squadName": {
+    "ja": "タレント",
+    "en": "Talentum"
+  },
   "element": "Iron",
   "weaponType": "AR",
   "burstStep": "Step2",

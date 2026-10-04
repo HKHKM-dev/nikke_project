@@ -33,7 +33,7 @@ import {
 } from '../frame/landing.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect } from '../skills/resolve.ts';
 import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
-import { applySquadToTeam } from '../skills/squad.ts';
+import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { BuffTotals } from '../skills/buffs.ts';
 import type { BuildEffect } from '../buildEffects.ts';
@@ -156,7 +156,7 @@ type Runner = {
 
 export function runSimulation(simInput: SimInput): SimResult {
   // Stage 9: 宝物版への差し替えは最上位で 1 回だけ（planTeamRun の外でもバーストの定義と character を読むため）
-  const input = applySquadToTeam(applyTreasureToTeam(simInput));
+  const input = applyCompositionToTeam(applyTreasureToTeam(simInput));
   const { slots, enemy } = input;
   const model = input.model ?? DEFAULT_WEAPON_MODEL;
   const trace = input.trace ?? false;

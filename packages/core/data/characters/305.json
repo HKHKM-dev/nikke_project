@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Replace",
+  "squadName": {
+    "ja": "リプレイス",
+    "en": "Replace"
+  },
   "element": "Water",
   "weaponType": "SMG",
   "burstStep": "Step1",

@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "ce002_02",
+  "squadName": {
+    "ja": "機械生命体",
+    "en": "Machine Lifeform"
+  },
   "element": "Iron",
   "weaponType": "RL",
   "burstStep": "Step1",

@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "Matis",
+  "squadName": {
+    "ja": "メティス",
+    "en": "Matis"
+  },
   "element": "Iron",
   "weaponType": "SR",
   "burstStep": "Step3",

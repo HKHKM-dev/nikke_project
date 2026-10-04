@@ -1,20 +1,30 @@
 {
   "formatVersion": 1,
   "resourceId": 822,
-  "checkedAt": "2026-09-28",
+  "checkedAt": "2026-10-04",
   "skills": {
     "skill1": {
-      "support": "unsupported",
-      "effects": [],
+      "support": "supported",
+      "effects": [
+        {
+          "kind": "cooldownReduction",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "ref": 4,
+          "squad": {
+            "present": true
+          },
+          "assumes": {
+            "ja": "同じ部隊の味方は、ゲームのデータの部隊（エミリア陣営: レム・エミリア）が同じキャラと読んだ（仮説。同じ部隊の味方がいる編成は未実測）",
+            "en": "An ally from the same squad is read as a unit whose squad in the game data is the same (Emilia's Faction: Rem, Emilia). Hypothesis, not measured with such an ally"
+          },
+          "claims": ["C-0080", "C-0235"]
+        }
+      ],
       "notes": [
         {
           "ja": "通常攻撃 5 回命中で対象に付く攻撃力▼は、敵の攻撃力を下げるだけでダメージに関係しない",
           "en": "ATK down on the target after 5 normal attack hits only lowers the enemy's ATK and does not affect damage"
-        },
-        {
-          "ja": "「フルバースト終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼」は未対応（部隊を扱わない）。同じ部隊の味方がいない編成では起きない（C-0080）",
-          "en": "Burst Skill cooldown down at the end of Full Burst is not modeled (squads are not tracked). It does not happen without an ally from the same squad (C-0080)",
-          "claims": ["C-0080"]
         }
       ]
     },

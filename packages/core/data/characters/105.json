@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "Matis",
+  "squadName": {
+    "ja": "メティス",
+    "en": "Matis"
+  },
   "element": "Wind",
   "weaponType": "SR",
   "burstStep": "Step2",

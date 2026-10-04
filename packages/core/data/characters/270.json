@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "777",
+  "squadName": {
+    "ja": "777",
+    "en": "777"
+  },
   "element": "Wind",
   "weaponType": "AR",
   "burstStep": "Step2",

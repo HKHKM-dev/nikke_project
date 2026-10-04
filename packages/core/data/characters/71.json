@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "InfinityRail",
+  "squadName": {
+    "ja": "インフィニティレール",
+    "en": "Infinity Rail"
+  },
   "element": "Iron",
   "weaponType": "SMG",
   "burstStep": "Step3",

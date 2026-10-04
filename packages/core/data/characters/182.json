@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "External",
+  "squadName": {
+    "ja": "エクスターナー",
+    "en": "Extrinsic"
+  },
   "element": "Water",
   "weaponType": "AR",
   "burstStep": "Step3",

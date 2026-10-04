@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ABNORMAL",
   "corporationSubType": null,
+  "squad": "CE009_01",
+  "squadName": {
+    "ja": "心の怪盗団",
+    "en": "Phantom Thieves of Hearts"
+  },
   "element": "Fire",
   "weaponType": "SG",
   "burstStep": "Step3",

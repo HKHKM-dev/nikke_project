@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "MISSILIS",
   "corporationSubType": null,
+  "squad": "ElectricShock",
+  "squadName": {
+    "ja": "エレクトリックショック",
+    "en": "Electric Shock"
+  },
   "element": "Fire",
   "weaponType": "SR",
   "burstStep": "Step3",

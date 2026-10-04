@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Protocol",
+  "squadName": {
+    "ja": "プロトコール",
+    "en": "Protocol"
+  },
   "element": "Iron",
   "weaponType": "SMG",
   "burstStep": "Step2",

@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Aegis",
+  "squadName": {
+    "ja": "イージス",
+    "en": "Aegis"
+  },
   "element": "Electronic",
   "weaponType": "SMG",
   "burstStep": "Step2",

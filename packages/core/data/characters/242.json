@@ -8,6 +8,11 @@
   "class": "Defender",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "LifeTonic",
+  "squadName": {
+    "ja": "ライフトニック",
+    "en": "Nepenthe"
+  },
   "element": "Water",
   "weaponType": "AR",
   "burstStep": "Step2",

@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "TETRA",
   "corporationSubType": null,
+  "squad": "Unlimited",
+  "squadName": {
+    "ja": "アンリミテッド",
+    "en": "Unlimited"
+  },
   "element": "Fire",
   "weaponType": "SR",
   "burstStep": "Step3",

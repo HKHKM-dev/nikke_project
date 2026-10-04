@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "ACPU",
+  "squadName": {
+    "ja": "A.C.P.U.",
+    "en": "A.C.P.U."
+  },
   "element": "Fire",
   "weaponType": "SMG",
   "burstStep": "Step1",

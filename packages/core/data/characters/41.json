@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "SiegePerilous",
+  "squadName": {
+    "ja": "シージペリラス",
+    "en": "Perilous Siege"
+  },
   "element": "Electronic",
   "weaponType": "SMG",
   "burstStep": "Step3",

@@ -32,7 +32,7 @@ import {
   type SlotBuffState,
 } from '../skills/timeline.ts';
 import { applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
-import { applySquadToTeam } from '../skills/squad.ts';
+import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import {
   toTimelineSlots,
@@ -116,7 +116,7 @@ export type TeamPlan = {
  */
 export function planTeamRun(teamInput: TeamInput): TeamPlan {
   // Stage 9: 直接呼ばれても宝物の段階が効くように。最上位で適用済みなら何もしない（同じオブジェクト）
-  const input = applySquadToTeam(applyTreasureToTeam(teamInput));
+  const input = applyCompositionToTeam(applyTreasureToTeam(teamInput));
   const { slots, enemy, model } = input;
   validateTeamSlots(slots);
   validateControlledSlot(slots, input.controlledSlot);

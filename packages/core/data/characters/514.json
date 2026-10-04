@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "OldTales",
+  "squadName": {
+    "ja": "オールドテイルズ",
+    "en": "Old Tales"
+  },
   "element": "Fire",
   "weaponType": "AR",
   "burstStep": "Step2",

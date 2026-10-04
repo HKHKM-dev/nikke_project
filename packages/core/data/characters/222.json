@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "PILGRIM",
   "corporationSubType": "OVERSPEC",
+  "squad": "Pioneer",
+  "squadName": {
+    "ja": "パイオニア",
+    "en": "Pioneer"
+  },
   "element": "Electronic",
   "weaponType": "AR",
   "burstStep": "Step3",

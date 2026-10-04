@@ -8,6 +8,11 @@
   "class": "Supporter",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Akademeia",
+  "squadName": {
+    "ja": "アカデミア",
+    "en": "Academia"
+  },
   "element": "Iron",
   "weaponType": "SG",
   "burstStep": "Step2",

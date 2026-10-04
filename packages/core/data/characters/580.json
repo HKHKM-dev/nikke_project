@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "BestSeller",
+  "squadName": {
+    "ja": "ベストセラー",
+    "en": "Best Seller"
+  },
   "element": "Water",
   "weaponType": "AR",
   "burstStep": "Step3",

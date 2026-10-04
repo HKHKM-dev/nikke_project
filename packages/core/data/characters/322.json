@@ -8,6 +8,11 @@
   "class": "Attacker",
   "corporation": "ELYSION",
   "corporationSubType": null,
+  "squad": "Akademeia",
+  "squadName": {
+    "ja": "アカデミア",
+    "en": "Academia"
+  },
   "element": "Iron",
   "weaponType": "AR",
   "burstStep": "Step3",
