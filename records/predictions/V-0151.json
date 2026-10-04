@@ -1,0 +1,73 @@
+{
+  "verification": "V-0151",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（ゲージは本当の満タン = BURST バーが消えるヒット（C-0083）。1 発のゲージはフルチャージの発と S1 の追加ダメージのヒットの和、戦闘開始は 0 から）。どちらの指標も 1 回目のバーストより前なので、オートバーストの ON・OFF に依らない。発動を跨ぐ間隔の仮説（P1・P4・S・A29）と、2 回目からの満タンの仮説（Gp・G2・G0）は、コードか読み方の切り替えなので検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-shot-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮る録画（手でバースト）の、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えたアニス：スターの発の番号"
+    },
+    {
+      "id": "gauge-full-frame-0",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮る録画の、残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えたフレームまでの動画のフレーム数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "aaf4d026d1546c3beb7e027c79370177c2abb713",
+    "values": {
+      "H0": {
+        "gauge-full-shot-0": 10,
+        "gauge-full-frame-0": 741
+      }
+    },
+    "seen": {
+      "164": [
+        "164-01",
+        "164-02",
+        "164-03",
+        "164-04",
+        "164-05",
+        "164-06",
+        "164-07",
+        "164-08",
+        "164-09",
+        "164-10",
+        "164-11",
+        "164-12",
+        "164-13",
+        "164-14"
+      ]
+    }
+  }
+}
