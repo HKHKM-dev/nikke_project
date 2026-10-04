@@ -26,7 +26,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "録画 161 の、戦闘の最初の着弾から数えて、1 回目に BURST バーが消えたアニス：スターの発の番号"
+      "note": "録画 161 の、戦闘の最初の着弾から数えて、1 回目に BURST バーが消えたアニス：スターの発の番号",
+      "observations": ["161-13"]
     }
   ],
   "predicted": {

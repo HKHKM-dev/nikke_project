@@ -349,7 +349,8 @@ describe('照合の部品', () => {
     const rec54 = recordings.get('054') as ProjectRecording;
     const manual = buildTeamInput(rec54, { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] }, data);
     expect(manual.slots[0]!.conditionMode).toBeUndefined();
-    expect(manual.enemy.target).toBeUndefined();
+    // 的の表は手入力の枠にも付ける（飛ぶ時間。plan/design-anis-star-gauge-timing.md 3.3 節）。命中率・コアは手入力のまま
+    expect(manual.enemy.target?.id).toBe('range-bigarms');
     const auto = buildTeamInput(
       rec54,
       { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto', midFarLanding: 'A' },
@@ -371,6 +372,33 @@ describe('照合の部品', () => {
       'midFar',
       'nearB',
       'far',
+    ]);
+  });
+
+  it('builds the obstacle breaks from input observations, and reports bad ones (plan/design-anis-star-gauge-timing.md 2.2 節)', () => {
+    const o = observations.find((x) => x.id === '161-13')!;
+    const input = buildTeamInput(recordings.get('161') as ProjectRecording, o.compare!.setup, data);
+    expect(input.obstacleBreaks).toEqual([{ slotIndex: 0, shot: 1, count: 2 }]);
+    const withObstacles = (count: string, id: string): Observation => ({
+      ...o,
+      id,
+      compare: { ...o.compare!, setup: { ...o.compare!.setup, obstacles: [{ slot: 1, shot: 1, count }] } },
+    });
+    expect(
+      validateObservations(
+        [
+          ...observations.filter((x) => x.recording === '161' || x.id === '181-04'),
+          withObstacles('161-99', '161-91'),
+          withObstacles('161-13', '161-92'),
+          withObstacles('181-04', '161-93'),
+        ],
+        recordings,
+        data.enemies,
+      ),
+    ).toEqual([
+      '161-91: obstacles の観測値 161-99 が無い',
+      '161-92: obstacles の観測値 161-13 の use は input',
+      '161-93: obstacles の観測値は同じ録画のもの',
     ]);
   });
 

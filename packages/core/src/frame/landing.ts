@@ -19,12 +19,14 @@ import {
   type TriggerDamageInput,
 } from '../damage.ts';
 import { LANDING_BAND_LABEL, LANDING_BANDS } from '../enemies.ts';
+import { SKILL_SLOTS } from '../skills/types.ts';
 import type { SlotBuffState } from '../skills/timeline.ts';
 import type { SlotCondition, TeamSlotInput } from '../team.ts';
 import type {
   CharacterData,
   LandingBand,
   LandingPoint,
+  SkillSlot,
   TargetProfile,
   TargetRateByProjectile,
   TargetRateRow,
@@ -670,4 +672,69 @@ export function landingNotes(
     });
   }
   return notes;
+}
+
+// ---- 飛ぶ時間（plan/design-anis-star-gauge-timing.md 3・4 節） ----
+
+/** 飛ぶ時間の区間（フレーム）。[start, end) に撃った発・刻みのヒットは、frames 後に着く */
+export type FlightFrameSpan = { start: number; end: number; frames: number };
+
+/** 枠の飛ぶ時間。shot は通常攻撃の発、autoAttacks はスキルのスロットごとの周期の自動攻撃（無いもの・どこも 0 のものは省く） */
+export type SlotFlight = {
+  shot: FlightFrameSpan[] | null;
+  autoAttacks: Partial<Record<SkillSlot, FlightFrameSpan[]>>;
+};
+
+/** 着地点の区間ごとに、行の値（着地点・配分の id → 帯 → all の順。無ければ 0）を引く。どこも 0 なら null */
+function flightSpansOf(
+  spans: readonly LandingFrameSpan[],
+  row: TargetRateRow | null | undefined,
+): FlightFrameSpan[] | null {
+  if (row === null || row === undefined) return null;
+  const out = spans.map((s) => ({
+    start: s.start,
+    end: s.end,
+    frames:
+      (s.landing === null ? undefined : row[s.landing]) ?? (s.band === null ? undefined : row[s.band]) ?? row.all ?? 0,
+  }));
+  return out.some((s) => s.frames > 0) ? out : null;
+}
+
+/**
+ * 枠ごとの飛ぶ時間。的の表の flightFrames と着地点の時間割り（landingFrameSpans）で決まり、条件の決め方（自動・手入力）には
+ * 依らない（3.3 節）。的の表の無い敵・表の無い枠は null（飛ぶ時間 0。発射・刻みのフレームに着く）
+ */
+export function slotFlightsOf(
+  slots: readonly (Pick<TeamSlotInput, 'character'> | null)[],
+  enemy: EnemyInput,
+  frames: number,
+): (SlotFlight | null)[] {
+  const table = enemy.target?.flightFrames;
+  if (table === undefined) return slots.map(() => null);
+  const spans = landingFrameSpans(enemy, frames);
+  return slots.map((slot) => {
+    if (slot === null) return null;
+    const shot = table.shots === undefined ? null : flightSpansOf(spans, rateRowOf(table.shots, slot.character));
+    const autoAttacks: SlotFlight['autoAttacks'] = {};
+    for (const skill of SKILL_SLOTS) {
+      const s = flightSpansOf(spans, table.autoAttacks?.[`${slot.character.resourceId}:${skill}`]);
+      if (s !== null) autoAttacks[skill] = s;
+    }
+    return shot === null && Object.keys(autoAttacks).length === 0 ? null : { shot, autoAttacks };
+  });
+}
+
+/** フレーム frame に撃った発・刻みのヒットの飛ぶ時間（区間の外・spans なしは 0） */
+export function flightFramesAt(spans: readonly FlightFrameSpan[] | null | undefined, frame: number): number {
+  if (!spans) return 0;
+  let lo = 0;
+  let hi = spans.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    const s = spans[mid]!;
+    if (frame < s.start) hi = mid - 1;
+    else if (frame >= s.end) lo = mid + 1;
+    else return s.frames;
+  }
+  return 0;
 }

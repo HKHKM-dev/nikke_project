@@ -6,9 +6,9 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 29・効果 130（根拠あり 68）・notes 85（根拠あり 28）
+件数: キャラ 29・効果 130（根拠あり 68）・notes 86（根拠あり 29）
 
-notes の種類: 未対応 37・前提の外 19・計算に無関係 24・補足 5
+notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足 5
 
 スロット: supported 47・partial 17・unsupported 15・noEffect 17
 
@@ -30,16 +30,17 @@ notes の種類: 未対応 37・前提の外 19・計算に無関係 24・補足
   - effects[1] passive・attack: C-0189（確定）、C-0203（仮説）
   - effects[2] cooldownReduction・battleStart: C-0202（確定）、C-0203（仮説）
   - effects[3] cooldownReduction・fullBurstEnd: C-0202（確定）、C-0203（仮説）
-  - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）
+  - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）、C-0237（仮説）
   - effects[5] burstReentry: C-0201（確定）、C-0203（仮説）
   - notes[0] 未対応: 味方のゲージへの効き方は、実測では ×1.06 ではなく、味方のゲージ 1 回（弾・追加ダメージのヒット）ごとに一定量を足す形（アニス：スターが撃っているとき約 1,680、操作で撃たないとき約 840）。モデルはまだ ×1.06 のまま（未反映）: C-0245（仮説）、C-0246（仮説）
+  - notes[1] 未対応: 誘導弾の飛ぶ時間（ゲージが着弾で溜まる分）は、射撃場の的の距離帯ごとの代表値だけ。的の表の無い敵では 0（発射のフレームに溜まる）。着地点ごとの値、ダメージを置くフレームとバフの判定を着弾の時刻にすること（発動に重なる発の追加ダメージだけにバーストの攻撃ダメージ▲が乗る分）は未実装（plan/design-anis-star-gauge-timing.md 3 節）: C-0237（仮説）
 - **skill2**: partial
   - effects[0] timed・fullBurstStart・attack: C-0204（確定）、C-0203（仮説）
   - effects[1] timed・fullBurstStart・projectileExplosionDamage: C-0205（確定）、C-0210（仮説）
   - effects[2] timed・fullBurstStart・attackDamage: C-0204（確定）
   - notes[0] 未対応: みんなの星のときのフルチャージ攻撃時の味方全体の回復（回復を受けた時に発動する味方のスキルには効く）: 根拠なし
 - **burst**: partial
-  - effects[0] autoAttack・burstUse: C-0211（確定）、C-0213（確定）、C-0207（確定）
+  - effects[0] autoAttack・burstUse: C-0211（確定）、C-0213（確定）、C-0207（確定）、C-0240（仮説）
   - effects[1] timed・burstUse・fixedChargeTime: C-0214（仮説）
   - effects[2] timed・burstUse・attackDamage: C-0209（確定）、C-0203（仮説）
   - notes[0] 未対応: シューティングスターのコアに当たる分（コアの補正 +1 が乗る。当たる割合は距離帯ごとに未測定。plan/design-anis-star-s2-burst.md 9.3 節の b）: C-0212（仮説）
