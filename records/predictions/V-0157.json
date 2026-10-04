@@ -1,0 +1,44 @@
+{
+  "verification": "V-0157",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（戦闘開始のゲージ 0・物の分なし）。最初の 1 発を柱に撃つので、この指標とは比べない見込み（形だけ）。O・F・F0 は検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-shot-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 186 の、的に当たった 1 発目から数えて、1 回目に BURST バーが消えた発の番号（柱への 1 発は数えない。比べない見込み）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "36863823c31f6453fdf85adeaa11b4bf2fe3183a",
+    "values": {
+      "H0": {
+        "gauge-full-shot-0": 10
+      }
+    },
+    "seen": {
+      "186": []
+    }
+  }
+}
