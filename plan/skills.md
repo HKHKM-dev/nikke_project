@@ -4,7 +4,7 @@
 - キャラ × スロットごとに、対応状況（`supported`・`partial`・`unsupported`）と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 27・効果 122（根拠あり 55）・notes 69（根拠あり 22）
+件数: キャラ 27・効果 122（根拠あり 57）・notes 69（根拠あり 22）
 
 ## 10 ラピ
 
@@ -13,7 +13,7 @@
 - **skill2**: unsupported
   - notes[0] 単体大ダメージ（最終攻撃力の 528.97%）と挑発は未対応。倍率ダメージは burst スロットの burstDamage だけが扱える: 根拠なし
 - **burst**: supported
-  - effects[0] burstDamage・skill: 根拠なし
+  - effects[0] burstDamage・skill: C-0227（仮説）
   - effects[1] timed・burstUse・attack: 根拠なし
 
 ## 17 アニス：スター
@@ -122,7 +122,7 @@
   - effects[0] damage・normalShot・skill: 根拠なし
   - effects[1] damage・normalShot・skill: 根拠なし
 - **宝物版 burst**: supported
-  - effects[0] burstDamage・skill: 根拠なし
+  - effects[0] burstDamage・skill: C-0228（仮説）
   - effects[1] timed・burstUse・attackDamage: 根拠なし
   - effects[2] timed・burstUse・maxAmmo: 根拠なし
 

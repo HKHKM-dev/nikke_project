@@ -264,5 +264,155 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "018-13",
+    "recording": "018",
+    "source": "V-0143",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 7, 14],
+    "unit": "f",
+    "description": "エーテル（I）+ デルタ（II）+ ラピ（III）で、1 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f1578・1585・1592）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0138・018-12 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "018-14",
+    "recording": "018",
+    "source": "V-0143",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 7, 14],
+    "unit": "f",
+    "description": "エーテル（I）+ デルタ（II）+ ラピ（III）で、2 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f3955・3962・3969）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0138・018-12 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "018-15",
+    "recording": "018",
+    "source": "V-0143",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 7, 14],
+    "unit": "f",
+    "description": "エーテル（I）+ デルタ（II）+ ラピ（III）で、3 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f6334・6341・6348）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0138・018-12 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "018-16",
+    "recording": "018",
+    "source": "V-0143",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 7, 14],
+    "unit": "f",
+    "description": "エーテル（I）+ デルタ（II）+ ラピ（III）で、4 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f8711・8718・8725）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0138・018-12 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "018-17",
+    "recording": "018",
+    "source": "V-0143",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 8, 15],
+    "unit": "f",
+    "description": "エーテル（I）+ デルタ（II）+ ラピ（III）で、5 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f11088・11096・11103）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0138・018-12 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
