@@ -1,0 +1,114 @@
+{
+  "verification": "V-0146",
+  "note": "ミサト単騎・スペック固定 ON・AUTO・オートバースト OFF の予測（V-0118 の群 2 と同じ編成）。判定に使う遠の外れの比 q は METRICS に指標が無いので、式と値は検証記録の「予測」に手で書いた。ここの指標は、増分を分ける格子の基準にする 1 ヒットの値（どの仮説でも同じ）と、180 秒の撃った数・総ダメージ（いまのモデル = H2）。対照のリターは編成が違うので、このファイルに入れていない",
+  "team": [
+    {
+      "rid": 833,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H2",
+      "note": "命中率▲は弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にする（いまのモデル。C-0192 を 2026-10-04 に仮説として反映）。H0・H1・H3 はモデルのコードの切り替えで override で表せないので、このファイルに入れず、q の値は検証記録の「予測」に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "misato-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "ミサト（SMG・単騎 AUTO）の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし）。遠の格子の基準"
+    },
+    {
+      "id": "misato-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットのコア"
+    },
+    {
+      "id": "misato-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ 1 ヒットの会心"
+    },
+    {
+      "id": "misato-shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "180 秒にミサトが撃った発の数（当たらなかった発も数える）。副次の指標（V-0110「分からないこと 3」の当たった数の多さが、撃った数の差か弾丸命中率の差かを分ける）。的のジャンプの時刻（代表値）で動くので、判定には使わない"
+    },
+    {
+      "id": "misato-total",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "180 秒のミサトの総ダメージ（H2）。的のジャンプの時刻とリロードの位置でも動くので、判定には使わない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "44c002e519d73c79b6a9d01b6bfaf5f80a2895f7",
+    "values": {
+      "H2": {
+        "misato-body": 6407.1810000000005,
+        "misato-core": 12814.362000000001,
+        "misato-crit": 9610.7715,
+        "misato-shots": 3237,
+        "misato-total": 29143461.89042564
+      }
+    },
+    "seen": {}
+  }
+}
