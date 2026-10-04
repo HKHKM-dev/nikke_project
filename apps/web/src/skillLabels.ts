@@ -31,6 +31,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   chargeDamageMultiplier: 'チャージダメージ倍率',
   distributedDamage: '分配ダメージ',
   damageTaken: '敵の受けるダメージ',
+  projectileExplosionDamage: '発射体爆発ダメージ',
   burstGaugeSpeed: 'バーストゲージのチャージ速度',
   maxAmmo: '最大装弾数',
   reloadSpeed: 'リロード速度',
@@ -41,6 +42,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   coreDamage: 'コアダメージ',
   normalAttackDamage: '通常攻撃ダメージ倍率',
   normalCritRate: '通常攻撃のクリティカル確率',
+  fixedChargeTime: 'チャージ時間の固定',
 };
 
 export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
@@ -118,6 +120,8 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
   }
   const stat = BUFF_STAT_LABEL[effect.stat];
   if (effect.stat === 'infiniteAmmo') return stat;
+  // アニス：スター編: チャージ時間の固定は秒
+  if (effect.stat === 'fixedChargeTime') return `チャージ時間 ${formatNumber(effect.appliedAmount, 2)} 秒に固定`;
   const sign = effect.appliedAmount < 0 ? '−' : '+';
   const amount = Math.abs(effect.appliedAmount);
   if (effect.scaling === 'casterAttack') {

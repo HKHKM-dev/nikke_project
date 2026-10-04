@@ -49,6 +49,10 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * chargeDamage で、その後に足す（C-0020・C-0122・C-0134）。
  * 受けるダメージ編: damageTaken = 敵の受けるダメージ▲（敵へのデバフ）。敵 1 体の前提なので、味方全体（target 'allies' だけ）の
  * 与ダメージに別枠の乗数 (1 + Σ) で掛ける（通常攻撃・射撃ごとの倍率ダメージ・倍率ダメージ・持続ダメージ。C-0138。plan/design-damage-taken.md）
+ * アニス：スター S2・バースト編（plan/design-anis-star-s2-burst.md 2.1・2.3 節）:
+ * projectileExplosionDamage = 発射体爆発ダメージ▲。発射体の爆発を持つ武器（RL）の通常攻撃にだけ掛ける（式の中の置き場所は
+ * damage.ts の PROJECTILE_EXPLOSION_BUCKET）。
+ * fixedChargeTime = 「チャージ時間 N 秒に固定」。射撃に効く。値は秒（100 で割らない）。timed の self だけ
  */
 export type BuffStat =
   | 'attack'
@@ -68,7 +72,9 @@ export type BuffStat =
   | 'normalAttackDamage'
   | 'normalCritRate'
   | 'chargeDamageMultiplier'
-  | 'damageTaken';
+  | 'damageTaken'
+  | 'projectileExplosionDamage'
+  | 'fixedChargeTime';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -88,14 +94,17 @@ export const BUFF_STATS = [
   'normalCritRate',
   'chargeDamageMultiplier',
   'damageTaken',
+  'projectileExplosionDamage',
+  'fixedChargeTime',
 ] as const satisfies readonly BuffStat[];
 
-/** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限を足した */
+/** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限、アニス：スター編でチャージ時間の固定を足した */
 export const FIRING_STATS = [
   'maxAmmo',
   'reloadSpeed',
   'chargeSpeed',
   'infiniteAmmo',
+  'fixedChargeTime',
 ] as const satisfies readonly BuffStat[];
 
 /** 射撃に効くか。Stage 11 モダニア: 解決後の使用武器の変更（stat 'weapon'。skills/resolve.ts の EffectStat）も射撃に効く */
@@ -568,6 +577,37 @@ export type DotEffect = {
 };
 
 /**
+ * アニス：スター S2・バースト編: 周期の自動攻撃（「機能：…自動攻撃する／ダメージ：最終攻撃力の X%／攻撃間隔：N 秒／維持時間：Y 秒」。
+ * アニス：スターのシューティングスター、ベスティーのミサイルコンテナ。plan/design-anis-star-s2-burst.md 2.2 節）。
+ * 1 ヒットの式と刻みは dot と同じ（解決で dot の形にして流す。skills/burstDamage.ts の resolveDotEffects）。持続ダメージではないので
+ * 種類を分け、画面のラベルを「自動攻撃」にする。対象は敵 1 体の前提
+ */
+export type AutoAttackEffect = {
+  kind: 'autoAttack';
+  trigger: EffectTrigger;
+  /** 1 ヒットの倍率（%）の description_value_NN */
+  ref: number;
+  /** 攻撃間隔（秒の即値。説明文の「攻撃間隔：0.25秒」は直書き）。維持時間以下 */
+  intervalSeconds: number;
+  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
+  durationRef?: number;
+  durationSeconds?: number;
+  /** 最初のヒットの時刻の形（dot と同じ値）。省略は afterInterval（付いた 1 間隔後から間隔ごと） */
+  firstTick?: DotFirstTick;
+  /**
+   * ヒットごとに射手の 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ倍率なし）をヒットのフレームに足す
+   * （dot の gaugeOnTick と同じ。firstTick: afterInterval で、トリガーは射撃の回数トリガーか burstUse）
+   */
+  gaugePerHit?: true;
+  /**
+   * ヒットが発射体の爆発か。発射体爆発ダメージ▲を、RL の通常攻撃と同じ形（damage.ts の explosionHitMultiplier）で掛ける
+   * （アニス：スターのシューティングスター。V-0124 の 162-12。plan/design-anis-star-s2-burst.md 9.3 節の a）
+   */
+  projectileExplosion?: true;
+  assumes?: LocalizedText;
+};
+
+/**
  * フラワー編: トリガーが発火するたびに、射手の 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ倍率は
  * 乗らない）を発火のフレームのゲージに足す。ダメージは出さない（I-DOLL・フラワーの S2。C-0178）。
  * トリガーは時間の周期のトリガー（{ everySeconds }）だけ（plan/design-flower-s2-gauge.md 2 節）
@@ -607,6 +647,7 @@ export type SkillEffect = (
   | CycleEffect
   | CycleEveryEffect
   | DotEffect
+  | AutoAttackEffect
   | BurstGaugeHitEffect
   | BurstReentryEffect
 ) &
@@ -779,7 +820,7 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
-  if (isFlagStat(stat)) fail(`${path}.stat`, `${stat} is only allowed in timed`);
+  if (isFlagStat(stat) || stat === 'fixedChargeTime') fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
   validateDamageTaken(stat, target, v, path);
@@ -817,7 +858,8 @@ function parseTrigger(v: Json, path: string, allowTimer = false): EffectTrigger 
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
   if (v.everySeconds !== undefined) {
-    if (!allowTimer) fail(path, 'a timer trigger ({ everySeconds }) is only allowed in damage, dot and burstGaugeHit');
+    if (!allowTimer)
+      fail(path, 'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack and burstGaugeHit');
     for (const key of Object.keys(v)) if (key !== 'everySeconds') fail(`${path}.${key}`, 'unknown field');
     const seconds = v.everySeconds;
     if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
@@ -910,8 +952,22 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
     if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
     effect.condition = { selfBuffed };
   }
+  validateFixedChargeTime(effect, path);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
+}
+
+/**
+ * アニス：スター S2・バースト編: fixedChargeTime（チャージ時間の固定）は値が秒で、足し合わせると意味が無くなるので、
+ * 自分にだけ・倍率の書き方なし・スタックなし・条件なしで書ける（plan/design-anis-star-s2-burst.md 2.3 節）
+ */
+function validateFixedChargeTime(effect: TimedEffect, path: string): void {
+  if (effect.stat !== 'fixedChargeTime') return;
+  if (effect.target !== 'self') fail(`${path}.target`, `fixedChargeTime is only allowed with target "self"`);
+  if (effect.scaling !== undefined) fail(`${path}.scaling`, 'fixedChargeTime is in seconds (do not write scaling)');
+  if (effect.decrease) fail(`${path}.decrease`, 'fixedChargeTime cannot be decreased');
+  if (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined) fail(path, 'fixedChargeTime cannot stack');
+  if (effect.condition !== undefined) fail(`${path}.condition`, 'fixedChargeTime cannot have a condition');
 }
 
 /** durationRef / durationSeconds のちょうど片方 */
@@ -1150,6 +1206,65 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   return effect;
 }
 
+/** アニス：スター S2・バースト編: 周期の自動攻撃。検証の規則は dot の同じ欄と同じ */
+function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttackEffect {
+  for (const key of Object.keys(v)) {
+    if (
+      ![
+        'kind',
+        'trigger',
+        'ref',
+        'intervalSeconds',
+        'durationRef',
+        'durationSeconds',
+        'firstTick',
+        'gaugePerHit',
+        'projectileExplosion',
+        'assumes',
+        'claims',
+      ].includes(key)
+    ) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const interval = v.intervalSeconds;
+  if (typeof interval !== 'number' || !Number.isFinite(interval) || interval <= 0) {
+    fail(`${path}.intervalSeconds`, `expected a positive finite number, got ${JSON.stringify(interval)}`);
+  }
+  const effect: AutoAttackEffect = {
+    kind: 'autoAttack',
+    trigger: parseTrigger(v.trigger, `${path}.trigger`, true),
+    ref: parseRef(v.ref, `${path}.ref`),
+    intervalSeconds: interval,
+    ...parseDuration(v, path),
+  };
+  if (effect.durationSeconds !== undefined && effect.durationSeconds < interval) {
+    fail(`${path}.intervalSeconds`, `must not exceed the duration (${effect.durationSeconds} s)`);
+  }
+  if (v.firstTick !== undefined) {
+    if (typeof v.firstTick !== 'string' || !(DOT_FIRST_TICKS as readonly string[]).includes(v.firstTick)) {
+      fail(`${path}.firstTick`, `expected one of ${DOT_FIRST_TICKS.join(', ')}, got ${JSON.stringify(v.firstTick)}`);
+    }
+    effect.firstTick = v.firstTick as DotFirstTick;
+  }
+  if (v.gaugePerHit !== undefined) {
+    if (v.gaugePerHit !== true) fail(`${path}.gaugePerHit`, 'expected true');
+    if (effect.trigger !== 'burstUse' && !isShotCountTrigger(effect.trigger)) {
+      fail(`${path}.gaugePerHit`, 'needs a shot count trigger or burstUse');
+    }
+    if ((effect.firstTick ?? 'afterInterval') !== 'afterInterval') {
+      fail(`${path}.gaugePerHit`, 'needs firstTick afterInterval');
+    }
+    effect.gaugePerHit = true;
+  }
+  if (v.projectileExplosion !== undefined) {
+    if (v.projectileExplosion !== true) fail(`${path}.projectileExplosion`, 'expected true');
+    effect.projectileExplosion = true;
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
 function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstGaugeHitEffect {
   for (const key of Object.keys(v)) {
     if (!['kind', 'trigger', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
@@ -1284,11 +1399,12 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'cycle') return parseCycleEffect(v, path);
   if (v.kind === 'cycleEvery') return parseCycleEveryEffect(v, path);
   if (v.kind === 'dot') return parseDotEffect(v, path);
+  if (v.kind === 'autoAttack') return parseAutoAttackEffect(v, path);
   if (v.kind === 'burstGaugeHit') return parseBurstGaugeHitEffect(v, path);
   if (v.kind === 'burstReentry') return parseBurstReentryEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "burstGaugeHit" or "burstReentry", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit" or "burstReentry", got ${JSON.stringify(v.kind)}`,
   );
 }
 
@@ -1338,6 +1454,14 @@ function validateCycles(entries: Partial<Record<SkillSlot, SkillEntry>>, root: s
   }
 }
 
+/** アニス：スター S2・バースト編: チャージ時間の固定は 1 つの定義に 1 つまで（重なると秒が足し合わされる） */
+function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const count = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e) => e.kind === 'timed' && e.stat === 'fixedChargeTime',
+  ).length;
+  if (count > 1) fail(root, 'at most one fixedChargeTime effect per definition');
+}
+
 /** JSON.parse 済みの値を検証して SkillDefinition にする。不正なら Error */
 export function parseSkillDefinition(raw: Json): SkillDefinition {
   if (!isRecord(raw)) fail('', 'expected an object');
@@ -1359,6 +1483,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     fail('skills', 'at most one burstReentry effect per definition');
   }
   validateCycles(skills, 'skills');
+  validateFixedChargeTimeCount(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   if (raw.treasureSkills !== undefined) {
     const treasure = raw.treasureSkills;
@@ -1370,6 +1495,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
       treasureSkills[slot] = parseEntry(treasure[slot], slot, 'treasureSkills');
     }
     validateCycles({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateFixedChargeTimeCount({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;

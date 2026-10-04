@@ -114,15 +114,18 @@ export function skillValue(skill: SkillRaw, ref: number, level: number): number 
 /**
  * % 表記の値を比率にする。flat（Stage 10。最大装弾数の発数）はそのまま。
  * casterChargeTime（Stage 11 アリス編）は 発動者の基礎チャージ時間 × 比率 の秒数にする。
- * Stage 11 モダニア: decrease（「▼」）なら符号を反転する
+ * Stage 11 モダニア: decrease（「▼」）なら符号を反転する。
+ * アニス：スター編: fixedChargeTime（チャージ時間の固定）は秒のまま
  */
 function scaledValue(
   raw: number,
+  stat: BuffStat,
   scaling: BuffScaling | undefined,
   caster: CharacterData,
   decrease: boolean | undefined,
 ): number {
   const sign = decrease ? -1 : 1;
+  if (stat === 'fixedChargeTime') return raw;
   if (scaling === 'flat') return sign * raw;
   if (scaling === 'casterChargeTime') return (raw / 100) * caster.shot.chargeTime;
   return (sign * raw) / 100;
@@ -181,7 +184,13 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
         target: effect.target,
         stat: effect.stat,
         scaling: effect.scaling ?? 'ratio',
-        value: scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character, effect.decrease),
+        value: scaledValue(
+          skillValue(skill, effect.ref, levels[slot]),
+          effect.stat,
+          effect.scaling,
+          character,
+          effect.decrease,
+        ),
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.targetElement) r.targetElement = effect.targetElement;
@@ -241,7 +250,13 @@ export function resolveTimed(
       const value =
         effect.ref === undefined
           ? 1 // フラグの stat（装弾数無限）
-          : scaledValue(skillValue(skill, effect.ref, levels[slot]), effect.scaling, character, effect.decrease);
+          : scaledValue(
+              skillValue(skill, effect.ref, levels[slot]),
+              effect.stat,
+              effect.scaling,
+              character,
+              effect.decrease,
+            );
       if (effect.ref === undefined && !isFlagStat(effect.stat)) {
         throw new RangeError(`skill ${skill.id}: timed ${effect.stat} needs ref`);
       }

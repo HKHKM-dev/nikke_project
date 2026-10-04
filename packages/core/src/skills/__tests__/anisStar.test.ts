@@ -57,11 +57,9 @@ describe('アニス：スター（17）の定義', () => {
     expect(lv1[0]!.multiplier).toBeCloseTo(0.71, 12);
   });
 
-  it('keeps S2 and the burst as not implemented', () => {
+  it('defines every line of S1 (S2 and the burst are in anisStarS2Burst.test.ts)', () => {
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill1.notes).toBeUndefined();
-    expect(def.skills.skill2.support).toBe('unsupported');
-    expect(def.skills.burst.support).toBe('unsupported');
   });
 
   it('re-enters Burst Stage I only with Everyone’s Star', () => {

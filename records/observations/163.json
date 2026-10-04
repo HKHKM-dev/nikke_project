@@ -74,5 +74,163 @@
       "tool": "使い捨てのスクリプト（右のバースト欄の段のアイコンの色（I 緑・II 黄・III 赤）と、フルバーストの桃色のバーを毎フレーム読む）+ 欄の切り出しの目視",
       "note": "f1498 → 1527 ごろ、f2701 → 2733 ごろ（2 回目はフラワーの CT が f2730 ごろに明けるのを待った）。3f おきの切り出しで読んだので ±3f"
     }
+  },
+  {
+    "id": "163-04",
+    "recording": "163",
+    "source": "V-0124",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 469498,
+    "description": "1 回目のフルバーストの I-DOLL・フラワー（RL・誘導弾）のコアの 1 ヒット（会心なし）。みんなの星なので S2 の攻撃力▲は無く、攻撃ダメージ▲と発射体爆発ダメージ▲（味方の RL）が乗る",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f1650・1732 の 469,498。E0 のモデルは 278,334"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 531,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "163-05",
+    "recording": "163",
+    "source": "V-0124",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 349449,
+    "description": "同じフルバーストのデルタのコアの 1 ヒット（会心なし）。攻撃ダメージ▲だけ（みんなの星）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f1635・1717・1888・1970 の 349,449"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 531,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "163-06",
+    "recording": "163",
+    "source": "V-0124",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 696116,
+    "description": "同じフルバーストのアニス：スターの発のコアの 1 ヒット（会心なし）。増分 890,215 から追加ダメージ（モデル 194,098.7）を引いた値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f1765・1807・1849・1892 の 890,215（42〜43f ごと）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 531,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "163-07",
+    "recording": "163",
+    "source": "V-0124",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "record",
+    "value": [64324, 181740],
+    "description": "シューティングスターのコアの 1 ヒット（会心なし）。フルバーストの前（S2 なし）と、1 回目のフルバーストの中（攻撃ダメージ▲・発射体爆発ダメージ▲）。胴体の値に直すと 32,162（モデルと同じ）と 109,044 = モデル 64,645.7 × 1.6868",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f1525・1556・1572・1586 の 64,324。f1638 から 15f ごとの 181,740"
+    }
+  },
+  {
+    "id": "163-08",
+    "recording": "163",
+    "source": "V-0124",
+    "readAt": "2026-10-04",
+    "kind": "gauge",
+    "use": "record",
+    "value": [2014, 2022, 2036, 2051, 2066, 2081, 2096, 2097],
+    "unit": "f",
+    "description": "1 回目のフルバーストの後（f1930〜2110。アニス：スターのバーストの残り）の BURST バーが +3.5%（4px）ずつ伸びたフレーム。シューティングスターのヒット（f2022・2036・2051・2081 の 145,392 などの増分）と同じフレームで、1 ヒット 28,000（C-0084 の縮尺で 4px）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode jumps --from 1920 --to 2140",
+      "note": "発（f2008・2052）の伸びは 6〜9%。バーは f2110 に 100%（本当の約 96%）。162-15 と同じ読み"
+    }
+  },
+  {
+    "id": "163-09",
+    "recording": "163",
+    "source": "V-0124",
+    "readAt": "2026-10-04",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 505,
+    "unit": "f",
+    "description": "1 回目のフルバーストの入り（f1616）から、その後に BURST バーが消えた（本当の満タン）フレーム（f2121）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・events",
+      "note": "gauge.ts の events で f2110 満タン（100%）・f2121 バー消失。G0 のモデルは 650f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
   }
 ]

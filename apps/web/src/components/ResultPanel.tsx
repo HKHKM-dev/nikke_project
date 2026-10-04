@@ -38,6 +38,11 @@ function dotTriggerText(e: NonNullable<TeamSlotResult['skillHits']['activations'
     d.maxStacks > 1 ? `（1 回で 1 スタック・最大 ${d.maxStacks}。付け直すと全スタックの時間が付け直される）` : '';
   const gauge = [d.gaugeOnApply ? '付けたとき' : null, d.gaugeOnTick ? 'tick ごと' : null].filter((x) => x !== null);
   const gaugeText = gauge.length > 0 ? `。${gauge.join('と ')}に射手の 1 ヒットぶんのゲージ` : '';
+  // アニス：スター S2・バースト編: 周期の自動攻撃
+  if (d.autoAttack) {
+    const hitGauge = d.gaugeOnTick ? '。ヒットごとに射手の 1 ヒットぶんのゲージ' : '';
+    return `${formatTrigger(e.trigger)}から ${d.durationSeconds} 秒間、${d.intervalSeconds} 秒ごとに自動攻撃。回数はヒットの数${hitGauge}`;
+  }
   return `${formatTrigger(e.trigger)}に付き${stacks}、${d.intervalSeconds} 秒ごとに ${d.durationSeconds} 秒間。回数は tick の数${gaugeText}`;
 }
 
@@ -64,7 +69,7 @@ function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
     }
     groups.set(key, {
       // ニヒリスター編: 持続ダメージは 1 tick を 1 回に数える
-      label: `${SKILL_SLOT_LABEL[e.source.skill]} ${e.dot ? '持続ダメージ' : SKILL_DAMAGE_TYPE_LABEL[e.damageType]}${
+      label: `${SKILL_SLOT_LABEL[e.source.skill]} ${e.dot ? (e.dot.autoAttack ? '自動攻撃' : '持続ダメージ') : SKILL_DAMAGE_TYPE_LABEL[e.damageType]}${
         e.cycle ? `（段 ${String.fromCharCode(65 + e.cycle.step)}）` : ''
       }`,
       trigger: e.cycle

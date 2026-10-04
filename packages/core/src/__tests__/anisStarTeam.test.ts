@@ -96,6 +96,45 @@ const REENTRY: TeamInput = {
   controlledSlot: 0,
 };
 
+// V-0122 の撮影（録画 162）と同じ: アニス：スター（操作）+ デルタ + イサベル、オートバースト ON（私だけの星）
+const CT_CUT: TeamInput = {
+  slots: [fixedSlot(17, true), fixedSlot(20, true), fixedSlot(231, true)],
+  enemy: rangeEnemy,
+  durationSeconds: 180,
+  burst: true,
+  controlledSlot: 0,
+};
+// plan/design-anis-star-s2-burst.md 4.2 節の R1: アニス：スター単騎・オートバースト ON（I だけ撃ってチェーンは切れる）
+const SOLO_BURST: TeamInput = { ...SOLO, burst: true };
+
+describe('S2 とバースト（plan/design-anis-star-s2-burst.md）', () => {
+  it('fires Shooting Stars every 0.25 s for 10 s after each Burst (40 hits)', () => {
+    const calc = computeTeamDamage(SOLO_BURST);
+    const uses = calc.schedule!.activations.filter((a) => a.slotIndex === 0);
+    expect(uses.length).toBeGreaterThan(0);
+    const stars = calc.slots[0]!.skillHits.activations.filter((a) => a.effect.dot?.autoAttack === true);
+    // 戦闘の終わりで切れる最後の回を除いて、1 回のバーストに 40 ヒット
+    expect(stars.length).toBeGreaterThan(40 * (uses.length - 1));
+    expect(stars.length).toBeLessThanOrEqual(40 * uses.length);
+  });
+
+  it('shortens the shot interval during her Burst (charge time fixed at 0.7 s)', () => {
+    const plan = planTeamRun(SOLO);
+    const planBurst = planTeamRun(SOLO_BURST);
+    expect(planBurst.shots[0]!.frames.length).toBeGreaterThan(plan.shots[0]!.frames.length);
+  });
+
+  it('gives the S2 buffs to all allies on Full Burst only with My Own Star for the ATK up', () => {
+    const sim = runSimulation(CT_CUT);
+    const fullBurst = sim.slots[1]!.segments.find((g) => g.fullBurst)!;
+    expect(fullBurst.trigger.attack).toBeGreaterThan(fullBurst.trigger.baseAttack);
+    expect(fullBurst.trigger.attackDamageMultiplier).toBeCloseTo(1.34, 12);
+    expect(fullBurst.trigger.projectileExplosionMultiplier).toBe(1);
+    const anisFb = sim.slots[0]!.segments.find((g) => g.fullBurst)!;
+    expect(anisFb.trigger.projectileExplosionMultiplier).toBeGreaterThan(1);
+  });
+});
+
 describe('みんなの星のバースト再突入 I 段階（V-0121）', () => {
   it('lets another Burst I ally fire after her Burst I in the same chain', () => {
     const activations = runSimulation(REENTRY).schedule!.activations;
@@ -147,6 +186,8 @@ describe.each([
   ['実戦寄り（アニス：スター + クラウン + デルタ + アリス + モダニア）', PRACTICAL, true],
   ['実戦寄り（クラウンをリターに替えた編成）', PRACTICAL_WITH_LITER, false],
   ['バースト再突入（V-0121 の撮影の条件）', REENTRY, true],
+  ['私だけの星のフルバースト（V-0122 の撮影の条件）', CT_CUT, true],
+  ['アニス：スター単騎・オートバースト ON（R1 の条件）', SOLO_BURST, true],
 ] as const)('sim vs calc: %s', (_name, input, checkTotals) => {
   const sim = runSimulation(input);
   const calc = computeTeamDamage(input);

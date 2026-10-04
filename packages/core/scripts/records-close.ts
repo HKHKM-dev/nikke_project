@@ -78,14 +78,21 @@ const git = (args: string[]): string => execFileSync('git', args, { cwd: ROOT, e
 function gitOrderOf(prediction: PredictionFile, own: readonly Observation[]): GitOrder | undefined {
   const path = `records/predictions/${prediction.verification}.json`;
   try {
+    // 控え（seen）は予測の値ではなく、後から足せる記録なので、予測の commit を探すときは除いて比べる
+    // （2026-10-04 より前の予測ファイルに後から控えを足した V-0124。plan/design-reread-prediction.md 7.2 節）
+    const withoutSeen = (predicted: PredictionFile['predicted']): string => {
+      if (predicted === undefined || predicted === null) return JSON.stringify(null);
+      const { seen: _seen, ...rest } = predicted;
+      return JSON.stringify(rest);
+    };
     const predictedAt = (rev: string): string | undefined => {
       try {
-        return JSON.stringify((JSON.parse(git(['show', `${rev}:${path}`])) as PredictionFile).predicted ?? null);
+        return withoutSeen((JSON.parse(git(['show', `${rev}:${path}`])) as PredictionFile).predicted);
       } catch {
         return undefined;
       }
     };
-    const current = JSON.stringify(prediction.predicted);
+    const current = withoutSeen(prediction.predicted);
     const uncommitted = predictedAt('HEAD') !== current;
     // いまの predicted を入れた commit: 新しい順にたどり、predicted がいまと同じ中身の続く最も古い commit
     // （手書きの部分（targets の observations など）を後で直した commit は、predicted が同じなので飛ばす）

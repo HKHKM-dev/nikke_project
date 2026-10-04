@@ -40,6 +40,38 @@ export const SKILL_HIT_FULL_BURST_BONUS = true;
 export const PER_SHOT_DAMAGE_CORE = false;
 
 /**
+ * アニス：スター S2・バースト編: 発射体爆発ダメージ▲（projectileExplosionDamage）の式の中の置き場所（plan/design-anis-star-s2-burst.md 2.1 節）。
+ * attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ)（E1）、separate = 別の乗数 (1 + Σ発射体爆発ダメージ)（E2）、
+ * none = RL の通常攻撃には掛けない（E0）。**E1 と確定**: 録画 162・163 のフルバーストの 1 ヒット（V-0124。C-0205）
+ */
+export const PROJECTILE_EXPLOSION_BUCKET: 'attackDamage' | 'separate' | 'none' = 'attackDamage';
+
+/** 発射体の爆発を持つ武器か（shot.projectile.explosionRange > 0。RL）。発射体爆発ダメージ▲はこの武器の通常攻撃にだけ掛ける */
+export function hasProjectileExplosion(shot: ShotParams): boolean {
+  return (shot.projectile?.explosionRange ?? 0) > 0;
+}
+
+/**
+ * 発射体爆発ダメージ▲の乗数。通常攻撃の値に、攻撃ダメージ▲の乗数とは別に掛ける形にそろえる（E1 は
+ * (1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ) ÷ (1 + Σ攻撃ダメージ)）。爆発の無い武器と▲の無いときは 1
+ */
+export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotals): number {
+  return hasProjectileExplosion(shot) ? explosionHitMultiplier(buffs) : 1;
+}
+
+/**
+ * 発射体の爆発のヒット 1 つに掛ける、発射体爆発ダメージ▲の乗数（武器によらない形）。通常攻撃（爆発を持つ武器）と、
+ * 発射体の爆発の自動攻撃（autoAttack の projectileExplosion。V-0124 の 162-12）で使う
+ */
+export function explosionHitMultiplier(buffs: BuffTotals): number {
+  const up = buffs.projectileExplosionDamage;
+  if (up === 0 || PROJECTILE_EXPLOSION_BUCKET === 'none') return 1;
+  if (PROJECTILE_EXPLOSION_BUCKET === 'separate') return 1 + up;
+  const attackDamage = applyAttackDamageBuffs(buffs);
+  return (attackDamage + up) / attackDamage;
+}
+
+/**
  * Stage 13: 有利コードの攻撃ダメージ▲（elementDamage）を倍率ダメージ（damage / perShot / burstDamage）にも乗せるか（仮定）。
  * 設計時点の仮定は「乗る」（plan/design-stage12.md 3.3 節）。射撃場の実測 3.5 節の 7 で確かめる
  */
@@ -153,6 +185,8 @@ export type TriggerDamage = {
   attackDamageMultiplier: number;
   /** 受けるダメージ編: 敵の受けるダメージ▲の乗数 1 + Σ damageTaken（ほかのどの群とも別枠。C-0138） */
   damageTakenMultiplier: number;
+  /** アニス：スター S2・バースト編: 発射体爆発ダメージ▲の乗数（通常攻撃だけ。projectileExplosionMultiplier） */
+  projectileExplosionMultiplier: number;
   elementMultiplier: number;
   /** Stage 11 モダニア: 通常攻撃の分（Stage 10 までの perTrigger） */
   normal: number;
@@ -287,6 +321,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const boostTotal = 1 + boostCore + boostCrit + boostDistance + boostFullBurst;
   const attackDamageMultiplier = applyAttackDamageBuffs(buffs);
   const damageTakenMultiplier = 1 + buffs.damageTaken;
+  const explosionMultiplier = projectileExplosionMultiplier(shot, buffs);
 
   const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage);
   const hitsPerShot = hitsPerShotOf(condition);
@@ -299,6 +334,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     chargeMultiplier *
     boostTotal *
     attackDamageMultiplier *
+    explosionMultiplier *
     damageTakenMultiplier *
     element;
   const perShot =
@@ -330,6 +366,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     },
     attackDamageMultiplier,
     damageTakenMultiplier,
+    projectileExplosionMultiplier: explosionMultiplier,
     elementMultiplier: element,
     normal,
     perShot,

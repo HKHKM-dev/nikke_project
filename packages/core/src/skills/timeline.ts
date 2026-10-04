@@ -171,12 +171,15 @@ const BUFF_FIELDS = [
   'distributedDamage',
   // 受けるダメージ編: 敵の受けるダメージ▲
   'damageTaken',
+  // アニス：スター S2・バースト編: 発射体爆発ダメージ▲とチャージ時間の固定
+  'projectileExplosionDamage',
   'burstGaugeSpeed',
   'maxAmmoRatio',
   'maxAmmoFlat',
   'reloadSpeed',
   'chargeSpeed',
   'chargeTimeFlat',
+  'fixedChargeTime',
   // Stage 11 モダニア: 装弾数無限は射撃が変わるので鍵に入れる。命中率（hitRate）は条件が自動の枠だけ keyOf で足す
   'infiniteAmmo',
   // Stage 13: 効果層（常時）では区間を割らないが、スキルの timed にも書けるので鍵に入れる

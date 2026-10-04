@@ -1,0 +1,190 @@
+[
+  {
+    "id": "164-01",
+    "recording": "164",
+    "source": "V-0123",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 233273,
+    "description": "バーストの窓の通常攻撃の胴体の 1 ヒット（会心なし）。1 ヒットだけの発の増分 416,132 から S1 の追加ダメージ（モデル 182,859.1）を引いた値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "f1910・2262 の 416,132（胴体 1 ヒット + 追加ダメージ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1007,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "164-02",
+    "recording": "164",
+    "source": "V-0123",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 349910,
+    "description": "同じ 1 ヒットの会心。会心の 1 ヒットだけの発の増分 532,769 から追加ダメージを引いた値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "532,769 の増分（1 回）。胴体 2 ヒットのうち 1 つが会心の発は 766,043（5 回）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1007,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "164-03",
+    "recording": "164",
+    "source": "V-0123",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 60902,
+    "description": "シューティングスターの胴体の 1 ヒット（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "60,902 の増分（49 回）。コアの 1 ヒットは 121,805（179 回）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "164-04",
+    "recording": "164",
+    "source": "V-0123",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 91353,
+    "description": "シューティングスターの胴体の 1 ヒットの会心",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "91,353 の増分（8 回）。コアの会心は 152,256（28 回）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "164-05",
+    "recording": "164",
+    "source": "V-0123",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "record",
+    "value": [41, 42, 185, 42, 42, 42, 41, 43],
+    "unit": "f",
+    "description": "1 回目のバーストの窓（発動 f1898 から 10 秒）のアニス：スターの発の間隔。リロードを挟む間隔は 185f。窓の外の発の間隔は 59f（164-08）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分） + 使い捨てのスクリプト（増分を候補の値の和に分けた）",
+      "note": "発は f1910・1951・1993・2178・2220・2262・2304・2345・2388。モデルは窓の中の発の位相が違い（発動から最初の発まで 53f。実測は 12f）、間隔の数が合わないので比べない（C-0214 は 165-09 で比べた）"
+    }
+  },
+  {
+    "id": "164-06",
+    "recording": "164",
+    "source": "V-0123",
+    "readAt": "2026-10-04",
+    "kind": "count",
+    "use": "record",
+    "value": [40, 39, 35, 40, 35, 40, 40],
+    "unit": "回",
+    "description": "7 回のバースト（発動 f1898・3338・4714・6035・7440・8813・10313）ごとのシューティングスターのヒットの数。35 の 2 回は的のジャンプ（狙えない窓）で途切れた回。モデルのバーストは 6 回（窓の外の発の間隔の違いでゲージが遅い。164-08）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分） + 使い捨てのスクリプト（値の組で拾い、刻みから数を出す）",
+      "note": "読めた数は 40・38・34・39・34・38・40。途切れない回は 40（39 は最後の 1 ヒットが読めない）"
+    }
+  },
+  {
+    "id": "164-07",
+    "recording": "164",
+    "source": "V-0123",
+    "readAt": "2026-10-04",
+    "kind": "count",
+    "use": "record",
+    "value": [35, 40, 104, 112, 25, 46, 43, 65],
+    "unit": "回",
+    "description": "シューティングスターのコアのヒット / 読めたヒットの数を、距離帯ごとに並べたもの（中近・近・遠・中遠の順に、コア, 読めた数）。割合は中近 0.88・近 0.93・遠 0.54・中遠 0.66",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分） + 使い捨てのスクリプト",
+      "note": "距離帯は HUD の止まり（的のジャンプ）で区切った。中近は 1 回目、近は 2・3・7 回目、遠は 4 回目と 5 回目のジャンプの前、中遠は 5 回目のジャンプの後と 6 回目。コアの値は胴体の 2 倍（会心は 2.5 倍）"
+    }
+  },
+  {
+    "id": "164-08",
+    "recording": "164",
+    "source": "V-0123",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "record",
+    "value": [59, 59, 60, 58, 59],
+    "unit": "f",
+    "description": "バーストの窓の外のアニス：スターの発の間隔（f2589〜2884）。1 秒チャージ（59f）だけで、モデルの 82f（チャージ + 解放 23f）より 23f 短い。リロードを挟む間隔は 201〜203f",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分）",
+      "note": "録画 161（V-0116。オートバースト OFF）でも 59f（f1562〜1857）。アニス：スターの武器は押下チャージ型（DOWN_Charge。モデルでは未対応の武器）"
+    }
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "id": "C-0213",
+  "text": "アニス：スターのシューティングスターのヒットは発射体の爆発で、発射体爆発ダメージ▲が攻撃ダメージ▲と同じ枠で乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`165-06`・`165-07`（撮り直しの録画 165。撮る前に固定した予測 records/predictions/V-0125.json の H1 と差 1 未満）、`162-11`・`162-12`（録画 162 の読み直しで見えた値。乗せないモデルは 142,940・95,293）、`163-07`。V-0124・V-0125",
+  "model": "`data/skills/17.json`（burst の autoAttack の projectileExplosion）、`damage.ts` の `explosionHitMultiplier`",
+  "replaces": [],
+  "updated": "2026-10-04"
+}

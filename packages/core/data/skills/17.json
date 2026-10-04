@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 17,
-  "checkedAt": "2026-10-03",
+  "checkedAt": "2026-10-04",
   "skills": {
     "skill1": {
       "support": "supported",
@@ -108,22 +108,136 @@
       ]
     },
     "skill2": {
-      "support": "unsupported",
-      "effects": [],
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2,
+          "squad": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "私だけの星のとき。値は発動者（アニス：スター）のバフ前攻撃力の割合",
+            "en": "With My Own Star. The value is a share of the caster’s (Anis: Star) pre-buff ATK"
+          },
+          "claims": [
+            "C-0204",
+            "C-0203"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "projectileExplosionDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "対象は「自分と、自分より最終防御力が低い味方」。味方全員の最終防御力が自分より低いとみなす（効くのは発射体の爆発を持つ RL の通常攻撃だけ）",
+            "en": "Targets self and allies with lower final DEF. All allies are assumed to have lower final DEF (it only affects normal attacks of RLs with projectile explosions)"
+          },
+          "claims": [
+            "C-0205",
+            "C-0210"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 6,
+          "durationRef": 7,
+          "claims": [
+            "C-0204"
+          ]
+        }
+      ],
       "notes": [
         {
-          "ja": "未実装: フルバースト発動時の味方全体の攻撃力▲（私だけの星のとき・スキル発動者基準）・攻撃ダメージ▲、自分と防御力が低い味方の発射体爆発ダメージ▲。みんなの星のときのフルチャージ時の味方全体の回復はダメージに関係しない",
-          "en": "Not implemented: ATK up for all allies on Full Burst (with My Own Star, based on the caster), Attack Damage up, and Projectile Explosion Damage up for self and allies with lower DEF. The heal on Full Charge with Everyone's Star does not affect damage"
+          "ja": "未対応: みんなの星のときのフルチャージ攻撃時の味方全体の回復（回復を受けた時に発動する味方のスキルには効く）",
+          "en": "Not modeled: the heal for all allies on Full Charge attacks with Everyone's Star (it matters for allies whose skills trigger on being healed)"
         }
       ]
     },
     "burst": {
-      "support": "unsupported",
-      "effects": [],
+      "support": "partial",
+      "effects": [
+        {
+          "kind": "autoAttack",
+          "trigger": "burstUse",
+          "ref": 1,
+          "intervalSeconds": 0.25,
+          "durationRef": 2,
+          "firstTick": "afterInterval",
+          "gaugePerHit": true,
+          "projectileExplosion": true,
+          "assumes": {
+            "ja": "シューティングスター。「ランダムな対象」はすべて敵 1 体に当たるとみなす。1 ヒットの式は倍率ダメージと同じで、発射体爆発ダメージ▲も乗る。コアに当たる分は未実装（notes）",
+            "en": "Shooting Stars. All hits on “random targets” are assumed to land on a single enemy. Each hit uses the skill damage formula and also takes Projectile Explosion Damage up. Core hits are not modeled (see notes)"
+          },
+          "claims": [
+            "C-0211",
+            "C-0213",
+            "C-0207"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "fixedChargeTime",
+          "ref": 10,
+          "durationRef": 2,
+          "claims": [
+            "C-0214"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 6,
+          "durationRef": 7,
+          "squad": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "私だけの星のとき",
+            "en": "With My Own Star"
+          },
+          "claims": [
+            "C-0209",
+            "C-0203"
+          ]
+        }
+      ],
       "notes": [
         {
-          "ja": "未実装: シューティングスター（最終攻撃力の割合の自動攻撃・0.25 秒間隔・10 秒）とチャージ時間の固定、私だけの星のときの自分の攻撃ダメージ▲。爆発範囲▲・防御力▲・みんなの星のときの最大HP▲はダメージに関係しない",
-          "en": "Not implemented: Shooting Stars (automatic attacks for a share of final ATK every 0.25 s for 10 s), the fixed charge time, and Attack Damage up for self with My Own Star. Explosion radius, DEF and max HP (with Everyone's Star) do not affect damage"
+          "ja": "未実装: シューティングスターのコアに当たる分（コアの補正 +1 が乗る。当たる割合は距離帯ごとに未測定。plan/design-anis-star-s2-burst.md 9.3 節の b）",
+          "en": "Not implemented: Shooting Star core hits (the core bonus applies; the core hit rate per distance band is not measured yet. plan/design-anis-star-s2-burst.md 9.3 b)",
+          "claims": [
+            "C-0212"
+          ]
+        },
+        {
+          "ja": "未実装: バーストの窓の通常攻撃がコアに当たる分（フルバースト中はコアの 1 ヒット。割合と、爆発範囲▲が 1 発のヒット数を変えるかは未測定。モデルは窓の外と同じ表の行。同 9.3 節の d・2.4 節）",
+          "en": "Not implemented: core hits of normal attacks during her Burst (a single core hit during Full Burst; the rate and whether the Explosion Radius increase changes hits per shot are not measured yet. The model uses the same table row as outside the Burst. 9.3 d and 2.4)",
+          "claims": [
+            "C-0215"
+          ]
+        },
+        {
+          "ja": "防御力▲・みんなの星のときの最大 HP▲はダメージに関係しない（防御力▲は S2 の対象の比べに効く）",
+          "en": "DEF up and max HP up (with Everyone's Star) do not affect damage (DEF up matters for S2 target selection)"
         }
       ]
     }

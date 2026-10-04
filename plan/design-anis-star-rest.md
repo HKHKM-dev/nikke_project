@@ -2,7 +2,7 @@
 
 - 関連: [design-anis-star-s1.md](design-anis-star-s1.md)（S1。`squad`）、[backlog.md](backlog.md) 2-17・6 節、C-0174（誘導弾・弾速 100 の RL のコア命中率）、C-0189〜C-0191
 - 作成日: 2026-10-04
-- 状態: オーナーの承認（2026-10-04「推奨どおりで進める」）。A は実装した（V-0119、C-0197・C-0198）。B・C も済んだ（V-0122 の CT▼ は C-0202、V-0121 の再突入は C-0201。語彙 `burstReentry`）。D はこれから
+- 状態: オーナーの承認（2026-10-04「推奨どおりで進める」）。A は実装した（V-0119、C-0197・C-0198）。B・C も済んだ（V-0122 の CT▼ は C-0202、V-0121 の再突入は C-0201。語彙 `burstReentry`）。D は [design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) で起案した
 
 ## 1. 何が残っているか
 

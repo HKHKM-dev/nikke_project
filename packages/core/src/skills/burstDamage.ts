@@ -5,7 +5,7 @@
 // Stage 8: トリガー付きの倍率ダメージ（damage。「10 回攻撃した時 X% のダメージ」など）も同じ式で計算する（computeSkillHit）。
 // 分配ダメージには (1 + Σ distributedDamage) を別の乗数で掛ける（録画 21 のクイーン（真）の 1.9001 倍。plan/design-stage8.md 2.4 節）。
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
-import { FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
+import { explosionHitMultiplier, FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
 import { SKILL_SLOTS, type DotFirstTick, type SkillDamageType, type SkillDefinition, type SkillSlot } from './types.ts';
@@ -37,6 +37,8 @@ export type ResolvedSkillDamage = {
   damageType: SkillDamageType;
   /** X/100。3.5164 など */
   multiplier: number;
+  /** アニス：スター編: 発射体の爆発のヒット（自動攻撃の projectileExplosion）。発射体爆発ダメージ▲を掛ける（V-0124） */
+  projectileExplosion?: true;
   assumes?: LocalizedText;
 };
 
@@ -66,6 +68,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     /** レイヴン編: 付けたとき・tick ごとに射手の 1 ヒットぶんのゲージを溜める（C-0181。frame/firstPass.ts） */
     gaugeOnApply?: true;
     gaugeOnTick?: true;
+    /** アニス：スター S2・バースト編: 周期の自動攻撃（autoAttack）を dot の形にしたもの。表示のラベルだけが変わる */
+    autoAttack?: true;
   };
 };
 
@@ -183,20 +187,24 @@ export function resolveDotEffects(
     if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
-      if (effect.kind !== 'dot') return;
+      // アニス：スター S2・バースト編: 周期の自動攻撃も、刻みと 1 ヒットの式は dot と同じ（plan/design-anis-star-s2-burst.md 2.2 節）
+      if (effect.kind !== 'dot' && effect.kind !== 'autoAttack') return;
+      const auto = effect.kind === 'autoAttack';
+      const gaugeOnTick = auto ? effect.gaugePerHit === true : effect.gaugeOnTick === true;
       const durationSeconds = effect.durationSeconds ?? skillValue(skill, effect.durationRef!, levels[slot]);
       if (durationSeconds < effect.intervalSeconds) {
         throw new RangeError(
           `skill ${skill.id}: dot interval ${effect.intervalSeconds} s exceeds the duration ${durationSeconds} s`,
         );
       }
-      const maxStacks = effect.maxStacksRef === undefined ? 1 : skillValue(skill, effect.maxStacksRef, levels[slot]);
+      const maxStacksRef = auto ? undefined : effect.maxStacksRef;
+      const maxStacks = maxStacksRef === undefined ? 1 : skillValue(skill, maxStacksRef, levels[slot]);
       if (!Number.isInteger(maxStacks) || maxStacks < 1) {
         throw new RangeError(`skill ${skill.id}: dot max stacks must be a positive integer, got ${maxStacks}`);
       }
       // レイヴン編（plan/design-raven-s1.md 8 節の 2）: tick のゲージは 1 パス目で発火のたびに後の tick を予約するので、
       // 付け直しで延びた tick が付け直しより後に出る形（afterInterval で、維持が間隔の整数倍）だけを許す
-      if (effect.gaugeOnTick === true) {
+      if (gaugeOnTick) {
         const ratio = durationSeconds / effect.intervalSeconds;
         if (Math.abs(ratio - Math.round(ratio)) > 1e-9) {
           throw new RangeError(
@@ -213,13 +221,15 @@ export function resolveDotEffects(
         dot: {
           intervalSeconds: effect.intervalSeconds,
           durationSeconds,
-          firstTick: effect.firstTick ?? 'atApplication',
-          ...(effect.status !== undefined ? { status: effect.status } : {}),
+          firstTick: effect.firstTick ?? (auto ? 'afterInterval' : 'atApplication'),
+          ...(!auto && effect.status !== undefined ? { status: effect.status } : {}),
           maxStacks,
-          ...(effect.gaugeOnApply === true ? { gaugeOnApply: true as const } : {}),
-          ...(effect.gaugeOnTick === true ? { gaugeOnTick: true as const } : {}),
+          ...(!auto && effect.gaugeOnApply === true ? { gaugeOnApply: true as const } : {}),
+          ...(gaugeOnTick ? { gaugeOnTick: true as const } : {}),
+          ...(auto ? { autoAttack: true as const } : {}),
         },
       };
+      if (auto && effect.projectileExplosion === true) r.projectileExplosion = true;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
@@ -287,6 +297,8 @@ export type BurstHitInput = {
   distributedDamageMultiplier?: number;
   /** 受けるダメージ編: 1 + Σ damageTaken（敵の受けるダメージ▲。別枠。C-0138）。省略 1 */
   damageTakenMultiplier?: number;
+  /** アニス：スター編: 発射体爆発ダメージ▲の乗数（damage.ts の explosionHitMultiplier）。projectileExplosion の効果にだけ掛ける。省略 1 */
+  projectileExplosionMultiplier?: number;
 };
 
 export type BurstHitResult = {
@@ -317,6 +329,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const fullBurstBonus = input.fullBurstBonus ?? BURST_SKILL_FULL_BURST_BONUS;
   const distributed = input.distributedDamageMultiplier ?? 1;
   const damageTaken = input.damageTakenMultiplier ?? 1;
+  const explosion = input.projectileExplosionMultiplier ?? 1;
   const baseHit = Math.max(1, input.attack - input.enemy.defence);
   const boostCrit = input.crit.rate * (input.crit.damage - 1);
   const boostFullBurst = fullBurstBonus ? FULL_BURST_BOOST : 0;
@@ -324,7 +337,11 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const common = baseHit * boostTotal * input.attackDamageMultiplier * damageTaken * input.elementMultiplier;
   const perEffect = input.effects.map((effect) => ({
     effect,
-    expected: common * effect.multiplier * (effect.damageType === 'distributed' ? distributed : 1),
+    expected:
+      common *
+      effect.multiplier *
+      (effect.damageType === 'distributed' ? distributed : 1) *
+      (effect.projectileExplosion === true ? explosion : 1),
   }));
   let multiplier = 0;
   let perActivation = 0;
@@ -367,6 +384,7 @@ export function computeSkillHit(
     fullBurstBonus,
     distributedDamageMultiplier: 1 + buffs.distributedDamage,
     damageTakenMultiplier: 1 + buffs.damageTaken,
+    projectileExplosionMultiplier: explosionHitMultiplier(buffs),
   });
 }
 
