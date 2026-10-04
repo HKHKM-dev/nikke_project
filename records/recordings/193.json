@@ -1,0 +1,29 @@
+{
+  "id": "193",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-193_smg_idoll-ocean_solo-idle.mp4",
+  "original": "2026-10-04_23-58-26.mp4",
+  "durationSec": 199.8,
+  "frames": 11987,
+  "fps": 60,
+  "sizeMB": 240.5,
+  "sha256": "ec5a24ab15cd",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 305,
+      "name": "I-DOLL・オーシャン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0162。I-DOLL・オーシャン単騎（操作・AUTO 射撃 OFF・オートバースト ON）。オーナーの添え書き: 残り時間 2:45〜0:45 くらいの間は撃っていない"
+}
