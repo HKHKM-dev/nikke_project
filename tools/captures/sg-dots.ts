@@ -1,7 +1,7 @@
 // SG の着弾点（ペレットの落ちた所に出る点。当たりは白く光り、外れは暗い灰色）を読み、直前のコマの的のマスクと重ねる
 // （plan/design-bullet-hit-rate-frame-coverage-verify.md 5.3 の主。V-0127）。
 //   node tools/captures/sg-dots.ts <録画 id> --pellets <sg-pellets の debug 出力> [--k 10] [--k2 15] [--debug-dir DIR]
-//                                  [--debug-every 10] [--sections 遠,中遠] [--triggers f,f] [--dump] [--verbose]
+//                                  [--debug-every 10] [--sections 遠,中遠] [--triggers f,f] [--pellet 胴体] [--dump] [--verbose]
 //
 // - トリガー（発）と当たったペレットの数は、read.ts --recipe sg-pellets --opt debug=1 の標準エラーの行
 //   （「  <区間> f<フレーム> +<増分>: h <数> …」）から取る。
@@ -38,6 +38,7 @@ const { values, positionals } = parseArgs({
     before: { type: 'string', default: '6' },
     sections: { type: 'string' },
     triggers: { type: 'string' },
+    pellet: { type: 'string' },
     'debug-dir': { type: 'string' },
     'debug-every': { type: 'string', default: '10' },
     dump: { type: 'boolean', default: false },
@@ -79,12 +80,22 @@ const recording = JSON.parse(readFileSync(new URL(`records/recordings/${id}.json
 };
 const video = join(capturesDir(), recording.folder, recording.file);
 
-// トリガーと当たったペレットの数
-type Trigger = { section: string; frame: number; hits: number };
+// トリガーと当たったペレットの数。スペック固定 ON の近以外は当たった数が決まらない（「h は見積もり」）ので、--pellet
+// （1 ペレットの胴体）を与えたときだけ、増分 ÷ 胴体の切り捨てを当たった数の上限として使う（upper）
+type Trigger = { section: string; frame: number; hits: number; upper: boolean };
 const triggers: Trigger[] = [];
+const pelletBody = values.pellet !== undefined ? Number(values.pellet) : NaN;
 for (const line of readFileSync(values.pellets, 'utf8').split(/\r?\n/)) {
-  const m = /^\s+(.+?) f(\d+) \+[\d,]+: h (\d+)/.exec(line);
-  if (m) triggers.push({ section: m[1]!, frame: Number(m[2]), hits: Number(m[3]) });
+  const m = /^\s+(.+?) f(\d+) \+([\d,]+): (?:h (\d+)|近以外（h は見積もり）)/.exec(line);
+  if (!m) continue;
+  if (m[4] !== undefined) triggers.push({ section: m[1]!, frame: Number(m[2]), hits: Number(m[4]), upper: false });
+  else if (Number.isFinite(pelletBody))
+    triggers.push({
+      section: m[1]!,
+      frame: Number(m[2]),
+      hits: Math.floor(Number(m[3]!.replace(/,/g, '')) / pelletBody + 1e-6),
+      upper: true,
+    });
 }
 const wanted = values.sections ? new Set(values.sections.split(',')) : null;
 const only = values.triggers ? new Set(values.triggers.split(',').map(Number)) : null;
@@ -524,6 +535,7 @@ for (const s of sections) {
   log(
     `${s}: トリガー ${pt.length} / ${all.length}・当たったペレット（HUD）${hits}・白 ${hit}（${(hit / hits).toFixed(3)}）・灰 ${miss}` +
       `・白 = HUD の発 ${eq}・白 > HUD の発 ${over}・白 + 灰 = 10 の発 ${ten}・> 10 の発 ${over10}` +
+      (pt.some((p) => p.t.upper) ? '（HUD は増分 ÷ 胴体の切り捨て。当たった数の上限）' : '') +
       `｜白のマスク: ${lab('hit')}｜灰のマスク: ${lab('miss')}` +
       `・HUD の遅れ ${median(pt.map((p) => p.t.frame - p.fired))}f（最大 ${Math.max(...pt.map((p) => p.t.frame - p.fired))}f）`,
   );
