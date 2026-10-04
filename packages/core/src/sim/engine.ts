@@ -12,7 +12,7 @@
 // 2 パス目は変えない（射撃の列を読み、区間ごとの 1 トリガー値を足す）。
 // Stage 16-B（plan/design-stage16.md 9 節）: 敵の出来事は 1 パス目で効く。タイムラインの表示用に 1 秒ごとのダメージを足し上げる。
 // Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す（calc と同じ関数）。
-import { hitFrameOf, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
+import { hitFramesOf, type BurstActivation, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
 import {
   baseAttackOf,
@@ -32,7 +32,7 @@ import {
   type LandingFrameSpan,
 } from '../frame/landing.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect } from '../skills/resolve.ts';
-import { slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
+import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { applySquadToTeam } from '../skills/squad.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { BuffTotals } from '../skills/buffs.ts';
@@ -256,11 +256,17 @@ export function runSimulation(simInput: SimInput): SimResult {
   });
 
   const events: SimEvent[] = [];
-  // 着弾編: バーストの倍率ダメージはヒットのフレーム（発動 + 遅れ）に出す。遅れの無いキャラは発動のフレーム（時刻表の順のまま）
+  // 着弾編: バーストの倍率ダメージはヒットのフレーム（発動 + 遅れ）に出す。遅れの無いキャラは発動のフレーム（時刻表の順のまま）。
+  // 分かれたヒット編: 分かれたヒットはヒットごとに、倍率の share ぶんを出す（plan/design-burst-split-hits.md 4 節）
   const burstHits = (schedule?.activations ?? [])
-    .map((activation) => ({ activation, frame: hitFrameOf(activation) }))
+    .flatMap((activation) => {
+      const hitFrames = hitFramesOf(activation);
+      return hitFrames.map((frame) => ({ activation, frame, share: 1 / hitFrames.length }));
+    })
     .filter((h) => h.frame < frames)
     .sort((a, b) => a.frame - b.frame);
+  // 分かれたヒット編: 発動ごとの、当たったヒットの部分（結果の burst.hits は発動ごとに 1 つで、値はその和）
+  const burstParts = new Map<BurstActivation, { index: number; parts: { hit: BurstHitResult; share: number }[] }>();
   const fullBurstWindows = schedule?.fullBurstWindows ?? [];
   const gaugeFull = new Set(schedule?.gaugeFullFrames ?? []);
   const chainTimeouts = new Set(schedule?.chainTimeouts ?? []);
@@ -288,7 +294,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     }
     // バーストのヒット（そのフレームの通常攻撃より先。同じフレームなら時刻表の順 = I → II → III）
     while (burstHits[nextActivation]?.frame === f) {
-      const { activation } = burstHits[nextActivation]!;
+      const { activation, share } = burstHits[nextActivation]!;
       nextActivation += 1;
       const { slotIndex: index, step } = activation;
       const runner = runners[index];
@@ -312,12 +318,20 @@ export function runSimulation(simInput: SimInput): SimResult {
         buffs,
       );
       if (hit === null) continue;
-      if (runner.result.burst.activations.length === 0) runner.result.burst.hit = hit;
-      runner.result.burst.activations.push(f);
-      runner.result.burst.hits.push(hit);
-      runner.result.burst.damage += hit.perActivation;
-      addPerSecond(index, f, hit.perActivation);
-      if (trace) events.push({ frame: f, kind: 'burst', slot: index, step, damage: hit.perActivation });
+      const result = runner.result.burst;
+      let entry = burstParts.get(activation);
+      if (entry === undefined) {
+        entry = { index: result.activations.length, parts: [] };
+        burstParts.set(activation, entry);
+        result.activations.push(f);
+      }
+      entry.parts.push({ hit, share });
+      const combined = combineBurstHitParts(entry.parts);
+      result.hits[entry.index] = combined;
+      if (entry.index === 0) result.hit = combined;
+      const damage = hit.perActivation * share;
+      addPerSecond(index, f, damage);
+      if (trace) events.push({ frame: f, kind: 'burst', slot: index, step, damage });
     }
     // Stage 8: 倍率ダメージ（damage）。値は 1 パス目で計算済み（calc と同じ）
     while (skillHits[nextSkillHit]?.frame === f) {
@@ -376,6 +390,8 @@ export function runSimulation(simInput: SimInput): SimResult {
     if (runner === null) return null;
     const r = runner.result;
     for (const segment of r.segments) r.normalDamage += segment.damage;
+    // 分かれたヒット編: バーストの合計は発動ごとの値（当たったヒットの和）を順に足す（calc と同じ足し方）
+    for (const hit of r.burst.hits) r.burst.damage += hit.perActivation;
     r.totalDamage = r.normalDamage + r.burst.damage + r.skillHits.damage;
     totalDamage += r.totalDamage;
     return r;

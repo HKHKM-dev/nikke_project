@@ -72,7 +72,7 @@ export function burstUnitOf(
     cooldownFrames: gameSecondsToFrames(character.burstSkill.cooldownSeconds),
     // Stage 8: フルバースト時間は StepFull に入る発動をしたニケの burst_duration（イサベル 5 秒、モダニア 15 秒）
     fullBurstFrames: gameSecondsToFrames(character.burstSkill.durationSeconds),
-    ...burstDelaysFieldOf(character.resourceId),
+    ...burstDelaysFieldOf(character),
   };
 }
 

@@ -38,7 +38,7 @@ import {
 } from '../frame/landing.ts';
 import { firingParams } from '../frame/firing.ts';
 import { BURST_HIT_USES_PRE_ACTIVATION_BUFFS, burstHitBuffs, perShotDamageOf, planTeamRun } from '../frame/plan.ts';
-import { slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
+import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges, type SlotBuffState } from '../skills/timeline.ts';
 import { applySquadToTeam } from '../skills/squad.ts';
@@ -194,7 +194,9 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     const activations: { seconds: number; hit: BurstHitResult }[] = [];
     let burstDamage = 0;
     if (schedule !== null) {
-      for (const { activationFrame, frame } of burstHitsOfSlot(schedule, index, timeline.frames)) {
+      // 分かれたヒット編: ヒットごとに倍率の share ぶんを計算し、発動ごとに足し合わせる（秒は 1 ヒット目。plan/design-burst-split-hits.md 4.3 節）
+      const groups: { activationFrame: number; seconds: number; parts: { hit: BurstHitResult; share: number }[] }[] = [];
+      for (const { activationFrame, frame, share } of burstHitsOfSlot(schedule, index, timeline.frames)) {
         const buffs = burstHitBuffs(timeline, activationFrame, frame, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
         const trigger = computeTriggerDamage({
           ...base,
@@ -210,7 +212,16 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
           buffs,
         );
         if (hit === null) break;
-        activations.push({ seconds: framesToGameSeconds(frame), hit });
+        let group = groups.at(-1);
+        if (group?.activationFrame !== activationFrame) {
+          group = { activationFrame, seconds: framesToGameSeconds(frame), parts: [] };
+          groups.push(group);
+        }
+        group.parts.push({ hit, share });
+      }
+      for (const { seconds, parts } of groups) {
+        const hit = combineBurstHitParts(parts);
+        activations.push({ seconds, hit });
         burstDamage += hit.perActivation;
       }
     }

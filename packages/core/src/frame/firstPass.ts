@@ -430,7 +430,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
             );
           }
           // 着弾編: 循環の窓は発動のフレームから数えるので、効果の発火が遅れるキャラ（burst/landing.ts）には使えない
-          if (burstDelaysOf(slot.character.resourceId).effectFrames !== 0) {
+          if (burstDelaysOf(slot.character).effectFrames !== 0) {
             throw new RangeError('cycleEvery is not supported for a character with a burst effect delay');
           }
           return { every: e.every, durationFrames: e.durationFrames };
@@ -543,7 +543,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     if (burstModel === 'fixed') {
       fixed = planFixedCycle(
         slots.map((s) =>
-          s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character.resourceId) },
+          s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) },
         ),
         frames,
       );

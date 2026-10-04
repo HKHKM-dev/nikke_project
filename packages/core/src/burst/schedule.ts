@@ -35,11 +35,22 @@ export type BurstActivation = {
   hitFrame?: number;
   /** 着弾編: 自分の burstUse・{ count: burstUse } のトリガーが発火するフレーム。省略は frame（遅れ 0） */
   effectFrame?: number;
+  /**
+   * 分かれたヒット編（plan/design-burst-split-hits.md）: 1 ヒット目（hitFrame）から各ヒットまでのずれ（昇順・先頭は 0）。
+   * 省略は [0]（1 ヒット）。倍率は等分する
+   */
+  hitOffsets?: readonly number[];
 };
 
 /** 着弾編: 発動のヒットのフレーム */
 export function hitFrameOf(a: BurstActivation): number {
   return a.hitFrame ?? a.frame;
+}
+
+/** 分かれたヒット編: 発動のヒットのフレームの列（1 ヒットなら [hitFrameOf(a)]。戦闘時間を超えるものも含む） */
+export function hitFramesOf(a: BurstActivation): number[] {
+  const first = hitFrameOf(a);
+  return (a.hitOffsets ?? [0]).map((offset) => first + offset);
 }
 
 /** 着弾編: 発動の効果の発火のフレーム */
@@ -88,15 +99,21 @@ export function hitFramesOfSlot(schedule: BurstSchedule, slotIndex: number, fram
   return burstHitsOfSlot(schedule, slotIndex, frames).map((h) => h.frame);
 }
 
-/** 着弾編: 枠 slotIndex のバーストのヒットと、その発動のフレーム（発生順。戦闘時間 frames 以降のヒットは除く） */
+/**
+ * 着弾編: 枠 slotIndex のバーストのヒットと、その発動のフレーム（発生順。戦闘時間 frames 以降のヒットは除く）。
+ * 分かれたヒット編: ヒットごとに 1 つ。share はそのヒットの倍率の割合（等分。1 ヒットなら 1）
+ */
 export function burstHitsOfSlot(
   schedule: BurstSchedule,
   slotIndex: number,
   frames: number,
-): { activationFrame: number; frame: number }[] {
+): { activationFrame: number; frame: number; share: number }[] {
   return schedule.activations
     .filter((a) => a.slotIndex === slotIndex)
-    .map((a) => ({ activationFrame: a.frame, frame: hitFrameOf(a) }))
+    .flatMap((a) => {
+      const hits = hitFramesOf(a);
+      return hits.map((frame) => ({ activationFrame: a.frame, frame, share: 1 / hits.length }));
+    })
     .filter((h) => h.frame < frames);
 }
 

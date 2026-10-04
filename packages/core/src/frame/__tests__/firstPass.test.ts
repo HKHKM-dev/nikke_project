@@ -10,6 +10,7 @@ import {
 } from '../../burst/controller.ts';
 import { planDynamicSchedule } from '../../burst/dynamic.ts';
 import { planFixedCycle } from '../../burst/fixedCycle.ts';
+import { burstDelaysFieldOf } from '../../burst/landing.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
@@ -113,7 +114,7 @@ describe('runFirstPass: degeneration (1.3)', () => {
     const fixed = runFirstPass(slots, { frames: FRAMES, burst: true, burstModel: 'fixed' });
     expect(fixed.schedule).toEqual(
       planFixedCycle(
-        characters.map((c) => ({ burstStep: c.burstStep })),
+        characters.map((c) => ({ burstStep: c.burstStep, ...burstDelaysFieldOf(c) })),
         FRAMES,
       ),
     );
