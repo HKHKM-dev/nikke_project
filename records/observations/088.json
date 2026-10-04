@@ -42,5 +42,20 @@
     },
     "source": "V-0057",
     "readAt": "2026-09-30"
+  },
+  {
+    "recording": "088",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "source": "V-0145",
+    "readAt": "2026-10-04",
+    "id": "088-04",
+    "value": [69],
+    "description": "ヘルム（SR）単騎・AUTO（スペック固定 OFF）で、戦闘開始（残り時間 02:59 が出たフレーム。V-0007 の定義）から最初の発の総ダメージの増分まで",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes + ffmpeg（残り時間の表示を目で読む）+ recipe:hud-jumps@2（キャッシュ hud-jumps@1）",
+      "note": "残り時間の変わり目は 1506（+319）・1596（+90）・1655。f1596 に 03:00 が 1 フレームだけ出て、f1597 から 02:59。最初の増分は f1666。03:00 のフレームから数えると 70f"
+    }
   }
 ]
