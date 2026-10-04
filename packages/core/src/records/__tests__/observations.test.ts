@@ -406,13 +406,14 @@ describe('照合の部品', () => {
   it('reads the core hit rate of a segment, with or without the timed hit rate and the treasure (V-0165)', () => {
     const rec132 = recordings.get('132') as ProjectRecording;
     const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto' as const };
-    const rate = (extra: Record<string, unknown>, frame: number, baseFrame?: number) => {
+    const rate = (extra: Record<string, unknown>, frame: number, baseFrame?: number): number => {
       const input = buildTeamInput(rec132, { ...setup, ...extra }, data);
       const sim = runSimulation(input);
       const fb = sim.schedule!.fullBurstWindows[0]!;
       const f = frame < 0 ? fb.start + 10 : frame;
       const args = { slot: 1, frame: f, ...(baseFrame === undefined ? {} : { baseFrame }) };
-      return (baseFrame === undefined ? METRICS.coreHitRate! : METRICS.coreHitRateDiff!).sim(sim, { args, input });
+      const metric = baseFrame === undefined ? METRICS.coreHitRate! : METRICS.coreHitRateDiff!;
+      return metric.sim(sim, { args, input }) as number;
     };
     // 中近（1 区間目）の▲の外は的の表の値、▲の窓はドレイクの S1 の N で出し直した値
     const out = rate({}, 10);

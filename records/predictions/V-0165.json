@@ -1,0 +1,110 @@
+{
+  "verification": "V-0165",
+  "note": "▲あり（ドレイク S1 だけ）の新しい 2 本（撮る前）の予測。判定に使うのは kurumi-midnear-core-diff（中近の▲の窓の中 − 外）。録画のフルバーストの時刻は sim と違うが、中近（1 区間目）の中ではモデルのコア命中率は▲の窓の中と外でそれぞれ一定なので、sim の最初のフルバーストの中（f500）と、その前（f200）の値で代表させる。録画 125・132・133 の中近は予測の前に読んでいる（125-05・132-05・133-05・132-09）ので、この予測の判定には入れない（検証記録の「予測」）。対照（ドレイクを I-DOLL・サンに替える 1 本）は編成が違うのでこのファイルに入れず、検証記録に書いた（▲を配らないので差は 0）",
+  "team": [
+    {
+      "rid": 862,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 101,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "持続の命中率▲はコア命中率を変えない（C-0170 の前のモデルの形）。中近のコア命中率は▲の窓の中も外も的の表の AR の中近の値のまま",
+      "override": {
+        "sustainedHitRateUp": false
+      }
+    },
+    {
+      "id": "H1",
+      "note": "持続の命中率▲も C-0036 の式（p ÷ (1 − N)²、上限 1）でコア命中率を上げる（C-0170。いまのモデル）。N はドレイクの宝物版 S1 の 20.09%"
+    },
+    {
+      "id": "H2",
+      "note": "参考（V-0103 の「参考」）: 式は C-0170 のまま、N が基礎版 S1 の 11.85%（スペック固定で S1 の命中率▲だけ基礎版になる、か、持続の▲が宝物版の N より弱く効く）。ほかの枠の宝物の段階も 0 にするが、中近のコア命中率に効くのはドレイクの S1 の N だけ",
+      "override": {
+        "treasure": false
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "kurumi-midnear-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 500,
+        "baseFrame": 200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "判定の指標。クルミ（AR・AI）の中近（1 区間目）のコア命中率の、▲の窓（フルバーストの入りから 589f）の中 − 外。録画では▲ありの新しい 2 本を合わせた差を観測値にし、spread に ± 1.96σ（σ は検証記録の「予測」の取り方）を付ける"
+    },
+    {
+      "id": "kurumi-midnear-core-fb",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "▲の窓の中の中近のコア命中率（sim の最初のフルバーストの中。ドレイク S1 の N が乗る区間）。検算と、差の σ の見込みに使う"
+    },
+    {
+      "id": "kurumi-midnear-core-out",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "▲の窓の外の中近のコア命中率（sim の最初のフルバーストの前）。的の表の AR の中近の値（C-0034）。外の検算に使う"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "332f5f46b13c158f2d5d65c50752a4e8bc15e0b3",
+    "values": {
+      "H0": {
+        "kurumi-midnear-core-diff": 0,
+        "kurumi-midnear-core-fb": 0.2281,
+        "kurumi-midnear-core-out": 0.2281
+      },
+      "H1": {
+        "kurumi-midnear-core-diff": 0.1291095193251837,
+        "kurumi-midnear-core-fb": 0.3572095193251837,
+        "kurumi-midnear-core-out": 0.2281
+      },
+      "H2": {
+        "kurumi-midnear-core-diff": 0.06544903160027657,
+        "kurumi-midnear-core-fb": 0.29354903160027657,
+        "kurumi-midnear-core-out": 0.2281
+      }
+    },
+    "seen": {}
+  }
+}
