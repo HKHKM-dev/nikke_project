@@ -6,7 +6,7 @@
 //   （C-0036・C-0037）。計画（planLandings）は枠の常時の BuffTotals.hitRate（育成の効果層・常時パッシブ）で出し、
 //   持続の▲（フルバーストの頭などで配られるもの。C-0170）が効いている区間は、使う時点で区間の N で出し直す（landingPartsWith）。
 // - 弾丸命中率: 的の表の値。通常攻撃のダメージと 1 パス目のゲージに掛ける（Stage 15 の condition.hitRate と同じ扱い）。
-//   AR・SMG・MG は命中率▲ N で外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にする（C-0192。仮説。plan/design-hit-rate-up-bullet-h2.md）。
+//   AR・SMG・MG は命中率▲ N で外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にする（C-0192。確かめたのは SMG の遠だけ。plan/design-hit-rate-up-bullet-h2.md）。
 //   コア命中率と同じく、計画は常時の N で出し、持続の▲の区間は landingPartsWith で出し直す（1 パス目のゲージは計画の値のまま）。
 // - 表が null（未測定）の項目・的の表の無い敵・並びより後の区間は、手入力の値（slot.condition）を使い、注記を出す。
 // - 配分（中遠の 3 か所）の区間は、着地点ごとの 1 トリガーの値を重みで足す（Σ w_k × T_k）。
@@ -159,7 +159,7 @@ export function coreHitRateWithHitRateUp(p: number, hitRateUp: number): number {
 }
 
 /**
- * C-0192（仮説）: 命中率▲ N で、弾丸命中率 p の外れの割合 1 − p を (1 − p) ^ (1 ÷ (1 − N)²) にする（H2）。N ≥ 1 なら 1。
+ * C-0192: 命中率▲ N で、弾丸命中率 p の外れの割合 1 − p を (1 − p) ^ (1 ÷ (1 − N)²) にする（H2）。N ≥ 1 なら 1。
  * N ≤ 0 は変えない（命中率▼の効き方は測っていない）。確かめたのは SMG の遠だけ（plan/design-hit-rate-up-bullet-h2.md）
  */
 export function bulletHitRateWithHitRateUp(p: number, hitRateUp: number): number {
@@ -319,7 +319,7 @@ const PARTS_WITH_CACHE = new WeakMap<LandingPlan, Map<string, readonly LandingPa
 
 /**
  * C-0170: landingPartsOf の条件のコア命中率を、命中率▲ hitRateUp（常時 + その区間の持続の▲。区間の状態の buffs.hitRate）で
- * 出し直す。C-0192（仮説）: ▲を効かせる武器種は弾丸命中率も出し直す。計画の常時の N と同じなら計画の配分をそのまま返す。
+ * 出し直す。C-0192: ▲を効かせる武器種は弾丸命中率も出し直す。計画の常時の N と同じなら計画の配分をそのまま返す。
  * 距離ボーナスは変えない
  */
 export function landingPartsWith(
@@ -568,7 +568,7 @@ export function landingNotes(
     ...(n > 0 ? [`常時の命中率▲ ${pct(n)} でコア命中率を 1/(1 − N)² 倍（上限 1）`] : []),
     'フルバースト中などに配られる持続の命中率▲も、効いている区間で N に足してコア命中率に効かせた（C-0170。仮説）',
     raisesBullet
-      ? '命中率▲（常時 + 持続）で弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0192。仮説。確かめたのは SMG の遠だけ）。持続の▲による上がりは 1 パス目のゲージには入れていない（未実装）'
+      ? '命中率▲（常時 + 持続）で弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0192。確かめたのは SMG の遠だけで、ほかの帯と AR・MG には同じ式を当てた）。持続の▲による上がりは 1 パス目のゲージには入れていない（未実装）'
       : '命中率▲は弾丸命中率に効かせていない（未実装。SG の近 A では上がるが（C-0157）、効き方の式が決まっていない）',
   ];
   const en = [
@@ -577,7 +577,7 @@ export function landingNotes(
     ...(n > 0 ? [`constant hit rate up ${pct(n)} scales core hit rate by 1/(1 − N)² (max 1)`] : []),
     'timed hit rate buffs (e.g. given at full burst) are added to N while active and change core hit rate (C-0170; hypothesis)',
     raisesBullet
-      ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) (C-0192; hypothesis, checked only for SMG at far range); the rise from timed buffs is not fed into the burst gauge (not modeled)'
+      ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) (C-0192; checked only for SMG at far range, and the same formula is used for the other bands and for AR and MG); the rise from timed buffs is not fed into the burst gauge (not modeled)'
       : 'hit rate buffs do not change bullet hit rate (not modeled; they raise it for SG at near A (C-0157), but the formula is unknown)',
   ];
   notes.push({ level: 'approx', code: 'auto-condition', message: { ja: ja.join('。'), en: en.join('; ') } });

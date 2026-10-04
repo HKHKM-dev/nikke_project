@@ -1,0 +1,29 @@
+{
+  "id": "170",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-170_smg_misato_auto.mp4",
+  "original": "2026-10-04_17-31-42.mp4",
+  "durationSec": 196.9,
+  "frames": 11811,
+  "fps": 60,
+  "sizeMB": 239.2,
+  "sha256": "a1c4b15785b3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 833,
+      "name": "ミサト",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0148 のミサト単騎・スペック固定 ONの2 本目。AUTO 射撃 ON・オートバースト OFF（画面左上の照準のボタンが橙、AUTO が灰。f3000）。出撃画面（f30）でスペック固定 ON と編成（真ん中の枠にミサト 1 体・Lv400）、戦闘履歴のパネル（f11783）で与ダメージを確かめた"
+}

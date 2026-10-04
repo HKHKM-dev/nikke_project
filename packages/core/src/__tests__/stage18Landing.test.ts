@@ -328,7 +328,7 @@ describe('命中率▲（C-0036・C-0037）', () => {
   });
 });
 
-describe('命中率▲と弾丸命中率（C-0192。仮説。plan/design-hit-rate-up-bullet-h2.md）', () => {
+describe('命中率▲と弾丸命中率（C-0192。plan/design-hit-rate-up-bullet-h2.md）', () => {
   it('turns the miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²), gives 1 at N ≥ 1, and keeps p at N ≤ 0 or p = 1', () => {
     // 表の SMG の遠とミサト S1 の 3 スタック（C-0183）
     expect(bulletHitRateWithHitRateUp(0.76, 0.1512)).toBeCloseTo(1 - 0.24 ** (1 / 0.8488 ** 2), 12);
@@ -489,7 +489,7 @@ describe('編成（自動の条件）', () => {
     const withCube = computeTeamDamage(input([slot(AR, true, { buildEffects: cube })], e)).slots[0]!.autoCondition!;
     expect(withCube.hitRateUp).toBe(0.0509);
     expect(withCube.coreHitRate / plain.coreHitRate).toBeCloseTo(1 / 0.9491 ** 2, 9);
-    // C-0192（仮説）: AR の弾丸命中率も上がる
+    // C-0192: AR の弾丸命中率も上がる
     expect(withCube.hitRate).toBeGreaterThan(plain.hitRate);
     expect(withCube.hitRate).toBeLessThan(1);
   });
