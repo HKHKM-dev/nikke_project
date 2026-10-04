@@ -78,15 +78,24 @@ const git = (args: string[]): string => execFileSync('git', args, { cwd: ROOT, e
 function gitOrderOf(prediction: PredictionFile, own: readonly Observation[]): GitOrder | undefined {
   const path = `records/predictions/${prediction.verification}.json`;
   try {
-    let committed: PredictionFile | undefined;
-    try {
-      committed = JSON.parse(git(['show', `HEAD:${path}`])) as PredictionFile;
-    } catch {
-      committed = undefined;
+    const predictedAt = (rev: string): string | undefined => {
+      try {
+        return JSON.stringify((JSON.parse(git(['show', `${rev}:${path}`])) as PredictionFile).predicted ?? null);
+      } catch {
+        return undefined;
+      }
+    };
+    const current = JSON.stringify(prediction.predicted);
+    const uncommitted = predictedAt('HEAD') !== current;
+    // いまの predicted を入れた commit: 新しい順にたどり、predicted がいまと同じ中身の続く最も古い commit
+    // （手書きの部分（targets の observations など）を後で直した commit は、predicted が同じなので飛ばす）
+    let predictionCommit: string | null = null;
+    if (!uncommitted) {
+      for (const c of git(['log', '--format=%H', '--', path]).split('\n')) {
+        if (!c || predictedAt(c) !== current) break;
+        predictionCommit = c;
+      }
     }
-    const uncommitted = JSON.stringify(committed?.predicted ?? null) !== JSON.stringify(prediction.predicted);
-    // いまの predicted を入れた commit: 日付か commit の行が最後に変わった commit
-    const predictionCommit = git(['log', '-1', '--format=%H', '-G', '"(at|commit)": "', '--', path]) || null;
     const notAfter: string[] = [];
     if (predictionCommit !== null) {
       for (const o of own) {
