@@ -594,7 +594,15 @@ function printDots(c: NonNullable<(typeof calc.slots)[number]>): void {
   if (ticks.length === 0) return;
   const byEffect = new Map<
     string,
-    { n: number; damage: number; multiplier: number; seconds: number[]; stacks: number[]; maxStacks: number }
+    {
+      n: number;
+      damage: number;
+      multiplier: number;
+      seconds: number[];
+      stacks: number[];
+      maxStacks: number;
+      label: string;
+    }
   >();
   for (const a of ticks) {
     const key = `${a.effect.source.skill}.${a.effect.effectIndex}`;
@@ -605,6 +613,8 @@ function printDots(c: NonNullable<(typeof calc.slots)[number]>): void {
       seconds: [],
       stacks: [],
       maxStacks: a.effect.dot!.maxStacks,
+      // アニス：スター S2・バースト編: 周期の自動攻撃も dot の形で出す
+      label: a.effect.dot!.autoAttack ? 'autoAttack' : 'dot',
     };
     d.n += 1;
     d.damage += a.hit.perActivation;
@@ -617,7 +627,7 @@ function printDots(c: NonNullable<(typeof calc.slots)[number]>): void {
     const perStack = d.maxStacks > 1 ? `/stack (max ${d.maxStacks})` : '';
     const stacks = d.stacks.length > 0 ? ` (stacks ${d.stacks.join(', ')})` : '';
     console.log(
-      `dot ${key}: ${(d.multiplier * 100).toFixed(2)}%${perStack} ×${d.n} ticks = ${fmt(d.damage)} (ticks at ${d.seconds.map((x) => x.toFixed(2)).join(', ')}s)${stacks}`,
+      `${d.label} ${key}: ${(d.multiplier * 100).toFixed(2)}%${perStack} ×${d.n} ticks = ${fmt(d.damage)} (ticks at ${d.seconds.map((x) => x.toFixed(2)).join(', ')}s)${stacks}`,
     );
   }
 }

@@ -4,7 +4,7 @@
 - キャラ × スロットごとに、対応状況（`supported`・`partial`・`unsupported`）と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 27・効果 116（根拠あり 48）・notes 67（根拠あり 20）
+件数: キャラ 27・効果 122（根拠あり 54）・notes 68（根拠あり 20）
 
 ## 10 ラピ
 
@@ -25,10 +25,17 @@
   - effects[3] cooldownReduction・fullBurstEnd: C-0202（確定）、C-0203（仮説）
   - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）
   - effects[5] burstReentry: C-0201（確定）、C-0203（仮説）
-- **skill2**: unsupported
-  - notes[0] 未実装: フルバースト発動時の味方全体の攻撃力▲（私だけの星のとき・スキル発動者基準）・攻撃ダメージ▲、自分と防御力が低い味方の発射体爆発ダメージ▲。みんなの星のときのフルチャージ時の味方全体の回復はダメージに関係しない: 根拠なし
-- **burst**: unsupported
-  - notes[0] 未実装: シューティングスター（最終攻撃力の割合の自動攻撃・0.25 秒間隔・10 秒）とチャージ時間の固定、私だけの星のときの自分の攻撃ダメージ▲。爆発範囲▲・防御力▲・みんなの星のときの最大HP▲はダメージに関係しない: 根拠なし
+- **skill2**: partial
+  - effects[0] timed・fullBurstStart・attack: C-0204（仮説）、C-0203（仮説）
+  - effects[1] timed・fullBurstStart・projectileExplosionDamage: C-0205（仮説）
+  - effects[2] timed・fullBurstStart・attackDamage: C-0204（仮説）
+  - notes[0] 未対応: みんなの星のときのフルチャージ攻撃時の味方全体の回復（回復を受けた時に発動する味方のスキルには効く）: 根拠なし
+- **burst**: partial
+  - effects[0] autoAttack・burstUse: C-0206（仮説）、C-0207（仮説）
+  - effects[1] timed・burstUse・fixedChargeTime: C-0208（仮説）
+  - effects[2] timed・burstUse・attackDamage: C-0209（仮説）、C-0203（仮説）
+  - notes[0] 未確認: 爆発範囲▲が 1 発の胴体 2 ヒットの割合を変えるか（変わるなら語彙を足す。plan/design-anis-star-s2-burst.md 2.4 節）: 根拠なし
+  - notes[1] 防御力▲・みんなの星のときの最大 HP▲はダメージに関係しない（防御力▲は S2 の対象の比べに効く）: 根拠なし
 
 ## 20 デルタ
 

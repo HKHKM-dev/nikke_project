@@ -1,0 +1,137 @@
+{
+  "verification": "V-0123",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（plan/design-anis-star-s2-burst.md 3 節）。シューティングスターは倍率ダメージの式（会心あり・コアなし・攻撃ダメージ▲が乗る）で、バースト使用の 1 間隔後から 0.25 秒ごとに 10 秒（40 ヒット）。チャージ時間は 0.7 秒に固定。私だけの星なので自分の攻撃ダメージ 35.2%▲。切り替える仮説（▲が乗らない・最初のヒットの時刻）は検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1007,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "バーストの窓（I の後 10 秒）の通常攻撃の胴体の 1 ヒット（会心なし）。窓の外の値（161-03）× 攻撃ダメージ▲"
+    },
+    {
+      "id": "burst-hit-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1007,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "同じ 1 ヒットの会心"
+    },
+    {
+      "id": "star-hit",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "シューティングスターの 1 ヒット（会心なし）"
+    },
+    {
+      "id": "star-hit-crit",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "シューティングスターの 1 ヒットの会心"
+    },
+    {
+      "id": "burst-shot-intervals",
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 954,
+        "to": 1542
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "1 回目のバーストの窓（モデルのフレーム 954〜1542）の発の間隔（f）。リロードを挟む間隔も入る。窓の外の間隔は 82f"
+    },
+    {
+      "id": "star-count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "戦闘中のシューティングスターのヒットの数（1 回のバーストに 40。最後の回は戦闘の終わりで切れる）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "df4bb5d7df8a24d70088c740ddf8d04d425c378b",
+    "values": {
+      "H1": {
+        "burst-hit": 233273.60926909003,
+        "burst-hit-crit": 349910.41390363505,
+        "star-hit": 60902.2975977572,
+        "star-hit-crit": 91353.4463966358,
+        "burst-shot-intervals": [65, 182, 65, 65, 65, 65],
+        "star-count": 240
+      }
+    }
+  }
+}

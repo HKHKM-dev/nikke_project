@@ -9,7 +9,14 @@ import { chargeSecondsToFrames, isChargeWeapon, reloadSecondsToFrames } from '..
 /** 射撃に効くバフの合計（BuffTotals のうち射撃に効くフィールド） */
 export type FiringBuffs = Pick<
   BuffTotals,
-  'maxAmmoRatio' | 'maxAmmoFlat' | 'reloadSpeed' | 'chargeSpeed' | 'chargeTimeFlat' | 'infiniteAmmo' | 'weapon'
+  | 'maxAmmoRatio'
+  | 'maxAmmoFlat'
+  | 'reloadSpeed'
+  | 'chargeSpeed'
+  | 'chargeTimeFlat'
+  | 'fixedChargeTime'
+  | 'infiniteAmmo'
+  | 'weapon'
 >;
 
 export const ZERO_FIRING_BUFFS: Readonly<FiringBuffs> = Object.freeze({
@@ -18,6 +25,7 @@ export const ZERO_FIRING_BUFFS: Readonly<FiringBuffs> = Object.freeze({
   reloadSpeed: 0,
   chargeSpeed: 0,
   chargeTimeFlat: 0,
+  fixedChargeTime: 0,
   infiniteAmmo: 0,
   weapon: null,
 });
@@ -69,6 +77,7 @@ export function isZeroFiring(buffs: FiringBuffs): boolean {
     buffs.reloadSpeed === 0 &&
     buffs.chargeSpeed === 0 &&
     buffs.chargeTimeFlat === 0 &&
+    buffs.fixedChargeTime === 0 &&
     buffs.infiniteAmmo === 0 &&
     buffs.weapon === null
   );
@@ -139,15 +148,21 @@ export function firingParams(base: ShotParams, buffs: FiringBuffs = ZERO_FIRING_
       reloadSecondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)) +
       (measured?.reloadExtraFrames ?? 0),
     splitReload: shot.reloadBullet < 1,
-    // Stage 11 アリス編: 発動者基準のチャージ速度は、比率で縮めた後の秒数からさらに引く（アリス自身は比率と同じ値になる）
     chargeFrames: isChargeWeapon(shot)
-      ? chargeSecondsToFrames(
-          Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat),
-        ) + (measured?.chargeExtraFrames ?? 0)
+      ? chargeSecondsToFrames(chargeSecondsOf(shot, buffs)) + (measured?.chargeExtraFrames ?? 0)
       : 0,
     infiniteAmmo: buffs.infiniteAmmo > 0,
     weapon: buffs.weapon,
   };
+}
+
+/**
+ * チャージ時間の秒数。Stage 11 アリス編: 発動者基準のチャージ速度は、比率で縮めた後の秒数からさらに引く（アリス自身は比率と同じ値になる）。
+ * アニス：スター編: チャージ時間の固定が効いていれば、チャージ速度を無視してその秒数（plan/design-anis-star-s2-burst.md 2.3 節）
+ */
+function chargeSecondsOf(shot: ShotParams, buffs: FiringBuffs): number {
+  if (buffs.fixedChargeTime > 0) return buffs.fixedChargeTime;
+  return Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat);
 }
 
 /** 分割リロードの 1 回分の弾数: max(1, round(最大 × reloadBullet))。reloadBullet ≥ 1 は満タン（録画 37・19: 9 → 3、20 → 7、14 → 5） */

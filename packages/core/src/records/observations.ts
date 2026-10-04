@@ -202,6 +202,21 @@ function fullBurstStartIntervals(result: { schedule: BurstSchedule | null }, ctx
   return starts.slice(1, n + 1).map((s, i) => s - starts[i]!);
 }
 
+/**
+ * アニス：スター S2・バースト編（V-0124）: n 回目（0 始まり）のフルバーストの入りから、その後の最初のバーストの発動までの動画のフレーム数
+ * （フルバーストの後に I だけ撃って切れる発動の時刻。ゲージの溜まり方と CT で決まる）。入りの止まり（C-0069）は videoFrameOf で足す
+ */
+function fullBurstToNextActivation(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const n = Number(ctx.args.n);
+  const window = schedule.fullBurstWindows[n];
+  if (window === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
+  const next = schedule.activations.find((a) => a.frame > window.start);
+  if (next === undefined) throw new Error(`${n} 回目のフルバーストの後に発動が無い`);
+  return videoFrameOf(schedule, next.frame) - videoFrameOf(schedule, window.start);
+}
+
 function burstActivationSlots(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
@@ -264,6 +279,11 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     args: ['n'],
     sim: (r, c) => burstActivationSlots(r, c),
     calc: (r, c) => burstActivationSlots(r, c),
+  },
+  fullBurstToNextActivation: {
+    args: ['n'],
+    sim: (r, c) => fullBurstToNextActivation(r, c),
+    calc: (r, c) => fullBurstToNextActivation(r, c),
   },
   fullBurstStarts: {
     args: [],

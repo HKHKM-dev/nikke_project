@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 136・仮説 36・棄却 30・範囲外 1（計 203）
+件数: 確定 136・仮説 42・棄却 30・範囲外 1（計 209）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -983,7 +983,37 @@
   - モデル側: `skills/squad.ts` の `squadAllows`（burstStep が otherBurstStep と一致するキャラだけを数える）
   - 置き換え: C-0191
   - 検証記録: V-0122
-  - 定義: `data/skills/17.json` の skill1 の effects[1]、`data/skills/17.json` の skill1 の effects[2]、`data/skills/17.json` の skill1 の effects[3]、`data/skills/17.json` の skill1 の effects[5]
+  - 定義: `data/skills/17.json` の skill1 の effects[1]、`data/skills/17.json` の skill1 の effects[2]、`data/skills/17.json` の skill1 の effects[3]、`data/skills/17.json` の skill1 の effects[5]、`data/skills/17.json` の skill2 の effects[0]、`data/skills/17.json` の burst の effects[2]
+- **C-0204** アニス：スターの S2 は、フルバースト発動時に味方全体へ攻撃ダメージ▲を 10 秒付け、私だけの星のときは発動者（アニス：スター）のバフ前攻撃力の割合の攻撃力▲も 10 秒付ける
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
+  - 根拠: 説明文の解釈（plan/design-anis-star-s2-burst.md 1 節）。撮る前の予測は V-0124（録画 162 の読み直しと撮影 R2）
+  - モデル側: `data/skills/17.json`（skill2）。攻撃力▲は `scaling: casterAttack`、私だけの星は `squad`
+  - 定義: `data/skills/17.json` の skill2 の effects[0]、`data/skills/17.json` の skill2 の effects[2]
+- **C-0205** 発射体爆発ダメージ▲は、発射体の爆発を持つ武器（RL）の通常攻撃のヒットにだけ掛かり、攻撃ダメージ▲と同じ枠に足す（1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ）。アニス：スターの S2 の対象「自分と、自分より最終防御力が低い味方」は、味方全員が低いとみなす
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
+  - 根拠: 解釈（plan/design-anis-star-s2-burst.md 2.1 節の E1。E0・E2 と見分ける）。撮る前の予測は V-0124
+  - モデル側: `damage.ts` の `PROJECTILE_EXPLOSION_BUCKET`（attackDamage）と `projectileExplosionMultiplier`、`data/skills/17.json`（skill2 の assumes）
+  - 定義: `data/skills/17.json` の skill2 の effects[1]
+- **C-0206** アニス：スターのバーストのシューティングスターは、バースト使用の 0.25 秒後から 0.25 秒ごとに 10 秒（40 ヒット）、最終攻撃力の割合の倍率ダメージ（会心あり・コアなし・攻撃ダメージ▲が乗る）を与える
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
+  - 根拠: 説明文の解釈（plan/design-anis-star-s2-burst.md 2.2 節）。撮る前の予測は V-0123（撮影 R1）と V-0124
+  - モデル側: `data/skills/17.json`（burst の autoAttack）、`skills/burstDamage.ts` の `resolveDotEffects`（dot と同じ刻みと式）
+  - 定義: `data/skills/17.json` の burst の effects[0]
+- **C-0207** アニス：スターのシューティングスターは、ヒットごとに射手の `target_burst_energy_pershot`（28,000。フルチャージ倍率なし）のバーストゲージを溜める
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
+  - 根拠: 仮説（V-0122 のフルバーストの後のゲージの速さの出どころ。持続ダメージの tick（C-0181・C-0196）と同じ量と置いた）。撮る前の予測は V-0124
+  - モデル側: `data/skills/17.json`（burst の autoAttack の gaugePerHit）
+  - 定義: `data/skills/17.json` の burst の effects[0]
+- **C-0208** アニス：スターのバーストの「チャージ時間 0.7 秒に固定」は、バースト使用から 10 秒、チャージ速度によらずチャージを 0.7 秒にする（解放の分は変えない）
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
+  - 根拠: 説明文の解釈（plan/design-anis-star-s2-burst.md 2.3 節）。撮る前の予測は V-0123（撮影 R1）
+  - モデル側: `frame/firing.ts` の `firingParams`（fixedChargeTime）、`data/skills/17.json`（burst）
+  - 定義: `data/skills/17.json` の burst の effects[1]
+- **C-0209** アニス：スターのバーストは、私だけの星のとき自分に攻撃ダメージ▲を 10 秒付ける
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
+  - 根拠: 説明文の解釈。撮る前の予測は V-0123（撮影 R1）と V-0124
+  - モデル側: `data/skills/17.json`（burst。`squad`）
+  - 定義: `data/skills/17.json` の burst の effects[2]
 
 ## 敵・的・場面
 

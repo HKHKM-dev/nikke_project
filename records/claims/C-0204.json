@@ -1,0 +1,11 @@
+{
+  "id": "C-0204",
+  "text": "アニス：スターの S2 は、フルバースト発動時に味方全体へ攻撃ダメージ▲を 10 秒付け、私だけの星のときは発動者（アニス：スター）のバフ前攻撃力の割合の攻撃力▲も 10 秒付ける",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文の解釈（plan/design-anis-star-s2-burst.md 1 節）。撮る前の予測は V-0124（録画 162 の読み直しと撮影 R2）",
+  "model": "`data/skills/17.json`（skill2）。攻撃力▲は `scaling: casterAttack`、私だけの星は `squad`",
+  "replaces": [],
+  "updated": "2026-10-04"
+}

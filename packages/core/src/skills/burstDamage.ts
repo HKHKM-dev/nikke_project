@@ -66,6 +66,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     /** レイヴン編: 付けたとき・tick ごとに射手の 1 ヒットぶんのゲージを溜める（C-0181。frame/firstPass.ts） */
     gaugeOnApply?: true;
     gaugeOnTick?: true;
+    /** アニス：スター S2・バースト編: 周期の自動攻撃（autoAttack）を dot の形にしたもの。表示のラベルだけが変わる */
+    autoAttack?: true;
   };
 };
 
@@ -183,20 +185,24 @@ export function resolveDotEffects(
     if (entry.support === 'unsupported') continue;
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
-      if (effect.kind !== 'dot') return;
+      // アニス：スター S2・バースト編: 周期の自動攻撃も、刻みと 1 ヒットの式は dot と同じ（plan/design-anis-star-s2-burst.md 2.2 節）
+      if (effect.kind !== 'dot' && effect.kind !== 'autoAttack') return;
+      const auto = effect.kind === 'autoAttack';
+      const gaugeOnTick = auto ? effect.gaugePerHit === true : effect.gaugeOnTick === true;
       const durationSeconds = effect.durationSeconds ?? skillValue(skill, effect.durationRef!, levels[slot]);
       if (durationSeconds < effect.intervalSeconds) {
         throw new RangeError(
           `skill ${skill.id}: dot interval ${effect.intervalSeconds} s exceeds the duration ${durationSeconds} s`,
         );
       }
-      const maxStacks = effect.maxStacksRef === undefined ? 1 : skillValue(skill, effect.maxStacksRef, levels[slot]);
+      const maxStacksRef = auto ? undefined : effect.maxStacksRef;
+      const maxStacks = maxStacksRef === undefined ? 1 : skillValue(skill, maxStacksRef, levels[slot]);
       if (!Number.isInteger(maxStacks) || maxStacks < 1) {
         throw new RangeError(`skill ${skill.id}: dot max stacks must be a positive integer, got ${maxStacks}`);
       }
       // レイヴン編（plan/design-raven-s1.md 8 節の 2）: tick のゲージは 1 パス目で発火のたびに後の tick を予約するので、
       // 付け直しで延びた tick が付け直しより後に出る形（afterInterval で、維持が間隔の整数倍）だけを許す
-      if (effect.gaugeOnTick === true) {
+      if (gaugeOnTick) {
         const ratio = durationSeconds / effect.intervalSeconds;
         if (Math.abs(ratio - Math.round(ratio)) > 1e-9) {
           throw new RangeError(
@@ -213,11 +219,12 @@ export function resolveDotEffects(
         dot: {
           intervalSeconds: effect.intervalSeconds,
           durationSeconds,
-          firstTick: effect.firstTick ?? 'atApplication',
-          ...(effect.status !== undefined ? { status: effect.status } : {}),
+          firstTick: effect.firstTick ?? (auto ? 'afterInterval' : 'atApplication'),
+          ...(!auto && effect.status !== undefined ? { status: effect.status } : {}),
           maxStacks,
-          ...(effect.gaugeOnApply === true ? { gaugeOnApply: true as const } : {}),
-          ...(effect.gaugeOnTick === true ? { gaugeOnTick: true as const } : {}),
+          ...(!auto && effect.gaugeOnApply === true ? { gaugeOnApply: true as const } : {}),
+          ...(gaugeOnTick ? { gaugeOnTick: true as const } : {}),
+          ...(auto ? { autoAttack: true as const } : {}),
         },
       };
       if (effect.assumes) r.assumes = effect.assumes;

@@ -1,0 +1,11 @@
+{
+  "id": "C-0206",
+  "text": "アニス：スターのバーストのシューティングスターは、バースト使用の 0.25 秒後から 0.25 秒ごとに 10 秒（40 ヒット）、最終攻撃力の割合の倍率ダメージ（会心あり・コアなし・攻撃ダメージ▲が乗る）を与える",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文の解釈（plan/design-anis-star-s2-burst.md 2.2 節）。撮る前の予測は V-0123（撮影 R1）と V-0124",
+  "model": "`data/skills/17.json`（burst の autoAttack）、`skills/burstDamage.ts` の `resolveDotEffects`（dot と同じ刻みと式）",
+  "replaces": [],
+  "updated": "2026-10-04"
+}
