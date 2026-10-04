@@ -91,6 +91,7 @@ import {
   hideShooter,
   initialShooter,
   refillAmmo,
+  resumeAfterLastShotRefill,
   resumeShooter,
   partialChargeShot,
   stepShooter,
@@ -900,6 +901,13 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         const rounds =
           src.effect.scaling === 'flat' ? src.effect.value : refillRounds(params.maxAmmo, src.effect.value);
         refillAmmo(state, rounds, slot.character.shot, model, params);
+        // V-0163: このフレームの最後の弾丸と同じ発の弾丸チャージは、リロードを取り消して撃ち続ける（その発は最後の弾丸に数えない）
+        const fired = shotEvents[target];
+        if (fired?.lastShot === true && resumeAfterLastShotRefill(state, slot.character.shot, model, params)) {
+          fired.lastShot = false;
+          const log = logs[target]!;
+          if (log.lastShotFrames![log.lastShotFrames!.length - 1] === f) log.lastShotFrames!.pop();
+        }
         instants.push({
           frame: f,
           sourceSlotIndex: src.sourceSlotIndex,

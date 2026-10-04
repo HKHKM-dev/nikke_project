@@ -1,0 +1,46 @@
+{
+  "verification": "V-0163",
+  "team": [
+    {
+      "rid": 194,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "M1",
+      "note": "いまのモデル: 60 回目の命中が最後の弾丸と同じ発なら、その発の弾丸チャージはリロードに間に合わない（C-0248）。M2（間に合って撃ち続ける）は検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "magazines",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "録画 099 の最初の 4 本のマガジンの発数（残弾の表示の減った量の合計）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "583a5ae2ba65295b3739520c5ca7195ecf91b7ea",
+    "values": {
+      "M1": {
+        "magazines": [420, 421, 421, 421]
+      }
+    },
+    "seen": {
+      "192": ["192-01", "192-02", "192-03", "192-04", "192-05", "192-06"],
+      "099": ["099-01", "099-02", "099-03", "099-04", "099-05", "099-06", "099-07", "099-08"]
+    }
+  }
+}
