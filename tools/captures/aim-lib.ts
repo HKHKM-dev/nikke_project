@@ -815,6 +815,33 @@ export function fitTint(half: Uint8Array, bg: Uint8Array): { a: number; b: numbe
  * 12px（半分の解像度で 6px）以内にある面積 40 以上の成分を足していく（ポップアップで分かれた部分をつなぐ）。
  * 照準の左の残弾の箱（暗い灰色）は照準からの位置で除く。座標は全解像度で返す。
  */
+/**
+ * 被覆率の基準点の x: findTarget の的の画素（半分の解像度）のうち、照準の中心から exclude px より外のものの x の中央値
+ * （全解像度の座標）。照準の周りは、発のフレームでは着弾の光、撃っていないコマでは照準の印で隠れるので数えない
+ */
+export function targetMedianX(mask: Uint8Array, aim: { x: number; y: number }, exclude: number): number | undefined {
+  const r2 = exclude * exclude;
+  const count = new Uint32Array(HALF_W);
+  let n = 0;
+  for (let hy = 0; hy < HALF_H; hy++) {
+    for (let hx = 0; hx < HALF_W; hx++) {
+      if (!mask[hy * HALF_W + hx]) continue;
+      const x = hx * 2 + 1;
+      const y = FIELD.y0 + hy * 2 + 1;
+      if ((x - aim.x) ** 2 + (y - aim.y) ** 2 <= r2) continue;
+      count[hx] = count[hx]! + 1;
+      n += 1;
+    }
+  }
+  if (n < 50) return undefined;
+  let acc = 0;
+  for (let hx = 0; hx < HALF_W; hx++) {
+    acc += count[hx]!;
+    if (acc * 2 >= n) return hx * 2 + 1;
+  }
+  return undefined;
+}
+
 export function findTarget(half: Uint8Array, bg: Uint8Array, aim: Aim | null): Target | null {
   const DARK = 22;
   const n = HALF_W * HALF_H;

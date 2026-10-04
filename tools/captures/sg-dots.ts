@@ -13,7 +13,18 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
-import { FIELD, H, W, findAim, findTarget, readFrames, toHalfField, writeJpeg, type Rgb } from './aim-lib.ts';
+import {
+  FIELD,
+  H,
+  W,
+  findAim,
+  findTarget,
+  readFrames,
+  targetMedianX,
+  toHalfField,
+  writeJpeg,
+  type Rgb,
+} from './aim-lib.ts';
 import {
   BG,
   CIRCLE_PX_PER_SCALE,
@@ -27,6 +38,7 @@ import {
 } from './coverage-lib.ts';
 import { capturesDir } from './dirs.ts';
 import { FIELD_H, fieldBackground, fitTintAround } from './field-bg.ts';
+import { MARGIN, SEARCH_R, exclusionOf } from './sg-dots-lib.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -66,10 +78,6 @@ const BEFORE = Number(values.before);
  * 照準の動きだけずらした 1 コマ前の所よりも rise 以上明るいことを求める。近い候補（< sep px）は、差の大きい方だけ残す
  */
 const ONSET = { center: 215, rise: 40, ring: 5, contrast: 35, contrastHi: 15, sep: 5 };
-/** 点を探す範囲（照準の中心から。SG の照準円の半径 約 71px と余白 15px。上に流れる数字を拾わないよう、広げすぎない） */
-const SEARCH_R = 86;
-/** 窓の余白 */
-const MARGIN = 140;
 /** SG の照準円の CDN の値（ふつうの SG は 250。C-0038） */
 const ACCURACY = 250;
 
@@ -249,6 +257,22 @@ type DotRow = {
   dist: number;
 };
 const rows: DotRow[] = [];
+/** 発ごとの照準（撃つ 1 コマ前）と、被覆率の基準点の x・的の外接矩形の下端（同じコマ。sg-map.ts が使う） */
+type ShotRow = {
+  section: string;
+  trigger: number;
+  fired: number;
+  hits: number;
+  upper: boolean;
+  aim: { x: number; y: number; type: string; size: number };
+  anchorX: number;
+  y1: number;
+  fx: number;
+  clipped: boolean;
+  hit: number;
+  miss: number;
+};
+const shotRows: ShotRow[] = [];
 type PerTrigger = { t: Trigger; fired: number; hit: number; miss: number; aimOk: boolean };
 const perTrigger: PerTrigger[] = [];
 
@@ -324,28 +348,6 @@ function dotsAt(f: number, aim: { x: number; y: number }, move: { x: number; y: 
   return out;
 }
 
-/** 照準の印と残弾の箱を除く画素（窓の座標。不明 = 除く） */
-function exclusionOf(aim: NonNullable<ReturnType<typeof findAim>['aim']>): Window {
-  const rect = { x0: Math.round(aim.x) - MARGIN, y0: Math.round(aim.y) - MARGIN, w: 2 * MARGIN + 1, h: 2 * MARGIN + 1 };
-  const excl: Window = { ...rect, labels: new Int8Array(rect.w * rect.h) };
-  maskReticle(excl, aim, aim.type, aim.size);
-  for (let j = 0; j < excl.h; j++)
-    for (let i = 0; i < excl.w; i++) {
-      const dx = excl.x0 + i - aim.x;
-      const dy = excl.y0 + j - aim.y;
-      if (DOT_HUD.some((b) => dx >= b.x0 && dx <= b.x1 && dy >= b.y0 && dy <= b.y1))
-        excl.labels[j * excl.w + i] = UNKNOWN;
-    }
-  return excl;
-}
-/**
- * 点を探さない HUD（照準からの相対）: 残弾の箱とスキルのアイコン、その下の白いゲージ。ゲージは光ったり伸びたりして
- * 点と取り違える（録画 109 の f6248。2026-10-04）
- */
-const DOT_HUD = [
-  { x0: -135, x1: -30, y0: -32, y1: 36 },
-  { x0: -140, x1: 5, y0: 36, y1: 60 },
-];
 function hudOf(aim: { x: number; y: number }): { x0: number; x1: number; y0: number; y1: number } {
   return { x0: aim.x - 112, x1: aim.x - 36, y0: aim.y - 28, y1: aim.y + 28 };
 }
@@ -398,6 +400,24 @@ for await (const { frame, img } of readFrames(video, firstF, lastF, 1)) {
       miss: dots.filter((d) => d.kind === 'miss').length,
       aimOk: true,
     });
+    {
+      const prev = frames.get(fired - 1)!;
+      const tP = findTarget(toHalfField(prev, 0), bgHalf, found.aim);
+      shotRows.push({
+        section: t.section,
+        trigger: t.frame,
+        fired,
+        hits: t.hits,
+        upper: t.upper,
+        aim: { x: found.aim.x, y: found.aim.y, type: found.aim.type, size: found.aim.size },
+        anchorX: tP ? (targetMedianX(tP.mask, found.aim, cfg.anchorExclude) ?? NaN) : NaN,
+        y1: tP ? tP.y1 : NaN,
+        fx: tP ? tP.fx : NaN,
+        clipped: tP ? tP.clipped : true,
+        hit: dots.filter((d) => d.kind === 'hit').length,
+        miss: dots.filter((d) => d.kind === 'miss').length,
+      });
+    }
     // 撃つ前のコマの的のマスク（不明は埋めない）
     const rect = {
       x0: Math.round(aim.x) - MARGIN,
@@ -511,6 +531,31 @@ writeFileSync(
         r.kind,
         r.label,
         r.dist.toFixed(1),
+      ].join('\t'),
+    ),
+  ].join('\n') + '\n',
+);
+writeFileSync(
+  join(dir, `${key}.shots.tsv`),
+  [
+    'section\ttrigger\tfired\thits\tupper\taim_x\taim_y\taim_type\taim_size\tanchor_x\ty1\tfx\tclipped\thit\tmiss',
+    ...shotRows.map((r) =>
+      [
+        r.section,
+        r.trigger,
+        r.fired,
+        r.hits,
+        r.upper ? 1 : 0,
+        r.aim.x.toFixed(1),
+        r.aim.y.toFixed(1),
+        r.aim.type,
+        r.aim.size.toFixed(1),
+        r.anchorX,
+        r.y1,
+        r.fx.toFixed(3),
+        r.clipped ? 1 : 0,
+        r.hit,
+        r.miss,
       ].join('\t'),
     ),
   ].join('\n') + '\n',

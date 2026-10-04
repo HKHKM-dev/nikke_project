@@ -27,12 +27,11 @@ import { parseArgs } from 'node:util';
 import {
   FIELD,
   H,
-  HALF_H,
-  HALF_W,
   W,
   findAim,
   findTarget,
   readFrames,
+  targetMedianX,
   toHalfField,
   writeJpeg,
   type Rgb,
@@ -158,29 +157,9 @@ type Clean = {
   aim?: { x: number; y: number };
   unknown: number;
 };
-/** 的の画素（半分の解像度）のうち、照準の中心から anchorExclude px より外のものの x の中央値（全解像度の座標） */
-function anchorXOf(mask: Uint8Array, aim: { x: number; y: number }): number | undefined {
-  const r2 = cfg.anchorExclude * cfg.anchorExclude;
-  const count = new Uint32Array(HALF_W);
-  let n = 0;
-  for (let hy = 0; hy < HALF_H; hy++) {
-    for (let hx = 0; hx < HALF_W; hx++) {
-      if (!mask[hy * HALF_W + hx]) continue;
-      const x = hx * 2 + 1;
-      const y = FIELD.y0 + hy * 2 + 1;
-      if ((x - aim.x) ** 2 + (y - aim.y) ** 2 <= r2) continue;
-      count[hx] = count[hx]! + 1;
-      n += 1;
-    }
-  }
-  if (n < 50) return undefined;
-  let acc = 0;
-  for (let hx = 0; hx < HALF_W; hx++) {
-    acc += count[hx]!;
-    if (acc * 2 >= n) return hx * 2 + 1;
-  }
-  return undefined;
-}
+/** 基準点の x（aim-lib の targetMedianX。照準の周り anchorExclude px は数えない） */
+const anchorXOf = (mask: Uint8Array, aim: { x: number; y: number }): number | undefined =>
+  targetMedianX(mask, aim, cfg.anchorExclude);
 const shotRows: Shot[] = [];
 const cleans: Clean[] = [];
 const debugDir = values['debug-dir'];
