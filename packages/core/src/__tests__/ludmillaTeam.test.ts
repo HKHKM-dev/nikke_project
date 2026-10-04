@@ -76,7 +76,7 @@ describe('ルドミラ：ウィンターオーナー単騎（手入力の条件�
     expect(hitFrames(input, 'skill2')).toEqual(every60);
   });
 
-  it('refills 20 rounds every 60 hits, also on the shot that empties the magazine (V-0161, M2)', () => {
+  it('refills 20 rounds every 60 hits, also on the shot that empties the magazine (V-0163, M2)', () => {
     const refills = plan.instants.filter((x) => x.effect.kind === 'ammoRefill');
     expect(refills[0]).toMatchObject({ frame: shots[59], amount: 20 });
     // 419 発で残り 1（300 − 419 + 6 × 20）。420 発目で 0 になるが、同じ発の弾丸チャージで 20 に戻り、リロードせずに撃ち続ける。

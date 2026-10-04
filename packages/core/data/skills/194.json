@@ -22,7 +22,7 @@
           },
           "claims": [
             "C-0138",
-            "C-0254",
+            "C-0257",
             "C-0251"
           ]
         },
@@ -43,7 +43,7 @@
           },
           "claims": [
             "C-0163",
-            "C-0254",
+            "C-0257",
             "C-0251"
           ]
         },
@@ -61,9 +61,9 @@
             "en": "Hits are counted for the whole battle and not reset by reloads. Capped at max ammo. A refill on the shot that empties the magazine still applies, and firing continues without reloading"
           },
           "claims": [
-            "C-0254",
+            "C-0257",
             "C-0251",
-            "C-0253"
+            "C-0256"
           ]
         }
       ]
