@@ -1,0 +1,62 @@
+[
+  {
+    "id": "173-01",
+    "recording": "173",
+    "source": "V-0150",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [64, 64, 65, 65, 65],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ レイヴン（III・操作）で、1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1442・3820・6197・8575・10953）から、レイヴンのバーストの倍率ダメージのヒット（HUD の 589,756 の増分。f1506・3884・6262・8640・11018）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧・hud.ts --mode jumps",
+      "note": "64f の 1・2 回目は、始まりの前に III のタイマーの 09.52 が 2 フレーム続く（録画の重複フレームの位置）。ヒットは止まりの明けた後で、hud.ts で単独の増分として読める"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "173-02",
+    "recording": "173",
+    "source": "V-0150",
+    "readAt": "2026-10-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 589756,
+    "description": "レイヴンのバーストの倍率ダメージの 1 ヒット（会心なし）。1 回目の発動（ヒットは f1506）。2〜5 回目も同じ値",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "単独の増分。5 回とも 589,756（会心なし）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]
