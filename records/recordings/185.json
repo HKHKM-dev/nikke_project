@@ -1,0 +1,35 @@
+{
+  "id": "185",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-185_rl_anis-star_kurumi.mp4",
+  "original": "2026-10-04_20-33-15.mp4",
+  "durationSec": 28.8,
+  "frames": 1729,
+  "fps": 60,
+  "sizeMB": 34.9,
+  "sha256": "2246296a826b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0156。アニス：スター（AI）とクルミ（操作・手で撃つ）。クルミでアニス：スターの発射より前に障害物を壊し、アニス：スターの 1 発目のバーの伸びを見る。出撃画面は写っていない（LV400 からスペック固定 ON とみた）。一時停止画面でキャラ名を確かめた"
+}
