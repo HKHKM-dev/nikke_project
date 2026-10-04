@@ -10,6 +10,7 @@ import type {
   EnemyEventSpec,
   EnemyPreset,
   EnemyPresetMaster,
+  FlightFramesTable,
   LandingBand,
   LandingPoint,
   TargetProfile,
@@ -282,6 +283,35 @@ function parseMixes(v: unknown, path: string, landingIds: ReadonlySet<string>): 
   return mixes;
 }
 
+/** 飛ぶ時間（フレーム。0 以上の整数） */
+const FRAMES: RateValue = {
+  check: (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 0,
+  message: 'must be a non-negative integer (frames)',
+};
+
+/** 自動攻撃の行のキー `<resourceId>:<スキルのスロット>` */
+const AUTO_ATTACK_KEY = /^\d+:(skill1|skill2|burst)$/;
+
+function parseFlightFrames(v: unknown, path: string, keys: ReadonlySet<string>): FlightFramesTable {
+  if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
+  for (const key of Object.keys(v)) {
+    if (key !== 'shots' && key !== 'autoAttacks') throw new TypeError(`${path}.${key}: unknown key`);
+  }
+  const table: FlightFramesTable = {};
+  if (v.shots !== undefined) table.shots = parseRateTable(v.shots, `${path}.shots`, keys, FRAMES);
+  if (v.autoAttacks !== undefined) {
+    if (!isRecord(v.autoAttacks)) throw new TypeError(`${path}.autoAttacks: must be an object`);
+    const rows: Record<string, TargetRateRow | null> = {};
+    for (const [key, row] of Object.entries(v.autoAttacks)) {
+      const at = `${path}.autoAttacks.${key}`;
+      if (!AUTO_ATTACK_KEY.test(key)) throw new TypeError(`${at}: key must be <resourceId>:<skill slot>`);
+      rows[key] = row === null ? null : parseRateRow(row, at, keys, FRAMES);
+    }
+    table.autoAttacks = rows;
+  }
+  return table;
+}
+
 function parseTargetProfile(v: unknown, path: string): TargetProfile {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
   const name = v.name;
@@ -318,6 +348,9 @@ function parseTargetProfile(v: unknown, path: string): TargetProfile {
     ...(v.hitsPerShot === undefined
       ? {}
       : { hitsPerShot: parseRateTable(v.hitsPerShot, `${path}.hitsPerShot`, keys, HITS) }),
+    ...(v.flightFrames === undefined
+      ? {}
+      : { flightFrames: parseFlightFrames(v.flightFrames, `${path}.flightFrames`, keys) }),
     source: v.source,
   };
 }

@@ -63,6 +63,11 @@ export type CompareSetup = {
    * 出来事のセットの狙えない窓（代表値。C-0057）と、着地点の区間の切れ目をこれで置き換える。省略は代表値
    */
   jumpWindows?: string;
+  /**
+   * 録画の画で数えた、発が壊した障害物（plan/design-anis-star-gauge-timing.md 2.2 節）。slot は枠（1 始まり）、shot はその枠の
+   * モデルの発の番号（1 始まり）、count は個数を持つ観測値の id（同じ録画・use が input・値は正の整数）。省略は無し
+   */
+  obstacles?: { slot: number; shot: number; count: string }[];
 };
 
 /** Stage 18-C: 中遠の 3 か所（足元 584・571・561。C-0044） */
@@ -543,6 +548,19 @@ export function validateObservations(
           errors.push(`${at}: jumpWindows の観測値 ${ref.id} は [始まり, 終わり, …] の昇順の窓の並びでない`);
       }
     }
+    for (const ob of c.setup.obstacles ?? []) {
+      if (!Number.isInteger(ob.slot) || ob.slot < 1 || !Number.isInteger(ob.shot) || ob.shot < 1)
+        errors.push(`${at}: obstacles の slot・shot は 1 以上の整数`);
+      const ref = observations.find((x) => x.id === ob.count);
+      if (ref === undefined) errors.push(`${at}: obstacles の観測値 ${ob.count} が無い`);
+      else {
+        if (ref.recording !== o.recording) errors.push(`${at}: obstacles の観測値は同じ録画のもの`);
+        if (ref.use !== 'input') errors.push(`${at}: obstacles の観測値 ${ref.id} の use は input`);
+        if (ref.invalid !== undefined) errors.push(`${at}: obstacles の観測値 ${ref.id} は失効している`);
+        if (!(typeof ref.value === 'number' && Number.isInteger(ref.value) && ref.value >= 1))
+          errors.push(`${at}: obstacles の観測値 ${ref.id} の値は正の整数（個数）`);
+      }
+    }
     const tol = 'rel' in c.tolerance ? c.tolerance.rel : c.tolerance.abs;
     if (!(tol >= 0)) errors.push(`${at}: 許容幅は 0 以上`);
   }
@@ -585,7 +603,9 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     if (windows === undefined) throw new Error(`jumpWindows の観測値 ${setup.jumpWindows} が無いか、窓の並びでない`);
   }
   const auto = setup.condition === 'auto';
-  const target = auto ? targetProfileOf(data.enemies, preset) : undefined;
+  // 的の表は条件の決め方に依らず付ける（apps/web の enemyForCalc と同じ）。手入力の枠の命中率・コアは変わらず、飛ぶ時間
+  // （plan/design-anis-star-gauge-timing.md 3.3 節）だけが着地点で決まる
+  const target = targetProfileOf(data.enemies, preset);
   const condition = {
     coreHitRate: setup.coreHitRate ?? 1,
     distanceBonus: setup.distanceBonus ?? true,
@@ -610,6 +630,11 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     };
   });
   const controlled = recording.team.findIndex((m) => m.controlled === true);
+  const obstacleBreaks = (setup.obstacles ?? []).map((ob) => {
+    const count = data.observationValues?.get(ob.count);
+    if (typeof count !== 'number') throw new Error(`obstacles の観測値 ${ob.count} が無いか、個数でない`);
+    return { slotIndex: ob.slot - 1, shot: ob.shot, count };
+  });
   return {
     slots,
     enemy: {
@@ -633,6 +658,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     burst: setup.burst ?? true,
     burstModel: 'dynamic',
     controlledSlot: controlled < 0 ? null : controlled,
+    ...(obstacleBreaks.length === 0 ? {} : { obstacleBreaks }),
   };
 }
 

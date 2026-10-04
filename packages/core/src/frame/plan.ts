@@ -42,6 +42,7 @@ import { applyTreasureToTeam } from '../skills/treasure.ts';
 import {
   toTimelineSlots,
   validateControlledSlot,
+  validateObstacleBreaks,
   validateTeamSlots,
   type TeamInput,
   type TeamSlotInput,
@@ -60,7 +61,7 @@ export {
   type DotTickTracker,
 } from './dot.ts';
 import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
-import { hitRateSpansOf, planLandings, type LandingPlan } from './landing.ts';
+import { hitRateSpansOf, planLandings, slotFlightsOf, type LandingPlan } from './landing.ts';
 import type { ShotLog } from './shots.ts';
 import type { SkillSlot } from '../types.ts';
 
@@ -126,6 +127,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const { slots, enemy, model } = input;
   validateTeamSlots(slots);
   validateControlledSlot(slots, input.controlledSlot);
+  validateObstacleBreaks(slots, input.obstacleBreaks);
   const frames = battleSecondsToFrames(input.durationSeconds);
   const timelineSlots = toTimelineSlots(slots);
   const untargetable = untargetableRanges(enemy.events, frames);
@@ -140,6 +142,9 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     untargetable,
     hitRates: landing === null ? undefined : hitRateSpansOf(landing, slots.length),
     enemyHasCore: enemy.hasCore,
+    // plan/design-anis-star-gauge-timing.md: 飛ぶ時間（的の表）と、発が壊した障害物（録画で数えた入力）
+    flights: slotFlightsOf(slots, enemy, frames),
+    obstacleBreaks: input.obstacleBreaks ?? [],
   });
   const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing);
   const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);

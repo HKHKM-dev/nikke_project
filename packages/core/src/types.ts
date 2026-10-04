@@ -353,6 +353,15 @@ export type TargetRateByProjectile = { byProjectile: Readonly<Record<string, Tar
  */
 export type TargetRateTable = Partial<Record<WeaponType, TargetRateRow | TargetRateByProjectile | null>>;
 
+/**
+ * 飛ぶ時間の表（フレーム。0 以上の整数）。shots は通常攻撃の発（武器種 → 弾の種類の行）、autoAttacks は周期の自動攻撃の
+ * ヒット（キーは `<resourceId>:<スキルのスロット>`。アニス：スターのシューティングスターは `17:burst`）。行は着地点の id・帯・all の順で引く
+ */
+export type FlightFramesTable = {
+  shots?: TargetRateTable;
+  autoAttacks?: Readonly<Record<string, TargetRateRow | null>>;
+};
+
 /** 的の条件の表。射撃場の BigArms のように、属性だけ違う敵で 1 つを共有する */
 export type TargetProfile = {
   id: string;
@@ -371,6 +380,11 @@ export type TargetProfile = {
    * 当たる分（C-0197）
    */
   hitsPerShot?: TargetRateTable;
+  /**
+   * 飛ぶ弾の発射から着弾までのフレーム（plan/design-anis-star-gauge-timing.md 3.2・4.2 節）。ゲージは着弾のフレームに溜まる。
+   * 省略・表に無い行は 0（発射のフレーム）
+   */
+  flightFrames?: FlightFramesTable;
   /** セルごとの出どころ（verification.md の節・claims.md の ID） */
   source: string;
 };

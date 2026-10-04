@@ -100,7 +100,8 @@ import {
   type ShooterState,
 } from './shooter.ts';
 import type { ShotLog } from './shots.ts';
-import type { LandingHitRateSpan } from './landing.ts';
+import { flightFramesAt, type FlightFrameSpan, type LandingHitRateSpan, type SlotFlight } from './landing.ts';
+import type { ObstacleBreak } from '../team.ts';
 
 export type FirstPassOptions = {
   frames: number;
@@ -120,6 +121,13 @@ export type FirstPassOptions = {
   hitRates?: readonly (readonly LandingHitRateSpan[] | null)[];
   /** ルドミラ：ウィンターオーナー編: 敵にコアがあるか（省略 true）。無ければ coreHit の回数は増えない */
   enemyHasCore?: boolean;
+  /**
+   * plan/design-anis-star-gauge-timing.md 3・4 節: 枠ごとの飛ぶ時間（frame/landing.ts の slotFlightsOf）。発のゲージ（弾と射撃ごとの
+   * 倍率ダメージのヒット）と自動攻撃のヒットのゲージを、着弾のフレーム（発射・刻み + 飛ぶ時間）に溜める。省略・null の枠は 0
+   */
+  flights?: readonly (SlotFlight | null)[];
+  /** 同 2 節: 発が壊した障害物（録画で数えた入力）。その発のゲージに物の分を足す。省略は無し */
+  obstacleBreaks?: readonly ObstacleBreak[];
 };
 
 /** 射撃に効く timed 効果の窓（Stage 11 から対象の枠ごと。発火ごとに対象が変わる効果があるため） */
@@ -425,6 +433,20 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     const pelletRate = pellets[i] && span?.measured !== true ? SG_PELLET_GAUGE_HIT_RATE : 1;
     return energies[i]! * (span?.hitRate ?? 1) * pelletRate;
   };
+  // plan/design-anis-star-gauge-timing.md 3 節: 枠 i がフレーム f に撃った発の飛ぶ時間（ゲージはその後のフレームに溜まる）
+  const flights = slots.map((_, i) => options.flights?.[i] ?? null);
+  const shotFlightAt = (i: number, f: number): number => flightFramesAt(flights[i]?.shot, f);
+  // 同 2 節（C-0177・C-0243）: 枠ごとの「発の番号 → 壊した障害物の数」と、物 1 個のゲージ
+  const obstacles = slots.map(() => new Map<number, number>());
+  for (const b of options.obstacleBreaks ?? []) obstacles[b.slotIndex]?.set(b.shot, b.count);
+  const obstacleEnergies = slots.map((slot, i) =>
+    slot === null
+      ? 0
+      : slot.character.shot.burstEnergyPerShot *
+        (i === controlledSlot && slot.character.shot.chargeTime > 0 ? slot.character.shot.fullChargeBurstEnergy : 1) *
+        (1 + gaugeSpeed[i]!),
+  );
+  const shotCounts = slots.map(() => 0);
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: 発ごとの命中・コアの命中の期待値。
   // 区間はゲージと同じ計画の値（常時の命中率▲だけ）。SG の命中は 1 トリガーを 1 回（ペレットのどれかが当たる）
   const enemyHasCore = options.enemyHasCore ?? true;
@@ -503,6 +525,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     tracker: DotTickTracker;
     onTick: boolean;
     energy: number;
+    /** 自動攻撃のヒットの飛ぶ時間（plan/design-anis-star-gauge-timing.md 4 節。持続ダメージ・表に無いものは null） */
+    flight: FlightFrameSpan[] | null;
   }[] = [];
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
@@ -530,18 +554,27 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         tracker: dotTickTracker(dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick),
         onTick,
         energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
+        flight: dot.autoAttack === true ? (flights[i]?.autoAttacks[group[0]!.source.skill] ?? null) : null,
       });
     }
   });
   const dotGauges: FirstPassResult['dotGauges'] = [];
   const pendingGauge = new Map<number, number>();
+  /** 発のゲージを、着弾のフレーム（f + 飛ぶ時間）に入れる。f のフレームならこのフレームのゲージに返す */
+  const landingGauge = (at: number, f: number, energy: number): number => {
+    if (at === f) return energy;
+    if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+    return 0;
+  };
   const trackDotBurstUse = dotGaugeTrackers.some((t) => t.onBurstUse);
   /** 持続ダメージがフレーム f に付いた。新しく決まった tick の分を、tick のフレームに予約する（どれも f より後） */
   const reserveDotTicks = (t: (typeof dotGaugeTrackers)[number], f: number): void => {
     const { ticks } = t.tracker.fire(f);
     if (!t.onTick) return;
-    for (const at of ticks) {
-      if (at <= f) throw new RangeError(`dot gauge tick at ${at} is not after the fire at ${f}`);
+    for (const tick of ticks) {
+      if (tick <= f) throw new RangeError(`dot gauge tick at ${tick} is not after the fire at ${f}`);
+      // 自動攻撃のヒットは、刻みのフレーム + 飛ぶ時間に着く（C-0240。ダメージの tick のフレームは変えない）
+      const at = tick + flightFramesAt(t.flight, tick);
       pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
       dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy: t.energy });
     }
@@ -640,7 +673,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       log.hits!.push(hits);
       log.coreHits!.push(coreHits);
       shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge && !isPartial, hits, coreHits };
-      gauge += energyAt(i, f) * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1);
+      shotCounts[i]! += 1;
+      const energy =
+        energyAt(i, f) * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +
+        (obstacles[i]!.get(shotCounts[i]!) ?? 0) * obstacleEnergies[i]!;
+      gauge += landingGauge(f + shotFlightAt(i, f), f, energy);
     });
     // ヘルム編: ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
     for (const t of damageGaugeTrackers) {
@@ -649,11 +686,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
       t.n = counted.count;
       if (!counted.fired) continue;
-      for (const d of t.gaugeHits) {
-        const at = f + d;
-        if (d === 0) gauge += t.energy;
-        else if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
-      }
+      // 射撃ごとの倍率ダメージのヒット（S1 の追加ダメージなど）も、発の着弾から数える（飛ぶ時間。plan/design-anis-star-gauge-timing.md 3.1 節）
+      const flight = shotFlightAt(t.slotIndex, f);
+      for (const d of t.gaugeHits) gauge += landingGauge(f + flight + d, f, t.energy);
     }
     // レイヴン編: ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
     // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）

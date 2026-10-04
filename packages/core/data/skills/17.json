@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 17,
-  "checkedAt": "2026-10-04",
+  "checkedAt": "2026-10-05",
   "skills": {
     "skill1": {
       "effects": [
@@ -83,12 +83,13 @@
             0
           ],
           "assumes": {
-            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発と同じフレームに、倍率の乗らない 1 ヒットのゲージ（28,000）を溜める",
-            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit charges the Burst Gauge by one unmultiplied hit (28,000) on the same frame as the shot"
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発の着弾のフレーム（射撃場の的では発射 + 飛ぶ時間。的の表の flightFrames。表の無い敵では発と同じフレーム）に、倍率の乗らない 1 ヒットのゲージ（28,000）を溜める",
+            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit charges the Burst Gauge by one unmultiplied hit (28,000) on the frame the shot lands (on the shooting range target: firing frame + flight time from the target table's flightFrames; on enemies without the table: the firing frame)"
           },
           "claims": [
             "C-0190",
-            "C-0198"
+            "C-0198",
+            "C-0237"
           ]
         },
         {
@@ -116,6 +117,14 @@
           "claims": [
             "C-0245",
             "C-0246"
+          ]
+        },
+        {
+          "ja": "誘導弾の飛ぶ時間（ゲージが着弾で溜まる分）は、射撃場の的の距離帯ごとの代表値だけ。的の表の無い敵では 0（発射のフレームに溜まる）。着地点ごとの値、ダメージを置くフレームとバフの判定を着弾の時刻にすること（発動に重なる発の追加ダメージだけにバーストの攻撃ダメージ▲が乗る分）は未実装（plan/design-anis-star-gauge-timing.md 3 節）",
+          "en": "Homing projectile flight time (the gauge charges on landing) uses per-distance-band representative values on the shooting range target only; on enemies without the table it is 0 (charged on the firing frame). Per-landing-point values, and placing damage and buff checks at landing time (only the additional damage of a shot overlapping her Burst activation takes the Burst ATK damage up), are not modeled (plan/design-anis-star-gauge-timing.md 3)",
+          "kind": "unimplemented",
+          "claims": [
+            "C-0237"
           ]
         }
       ]
@@ -191,13 +200,14 @@
           "gaugePerHit": true,
           "projectileExplosion": true,
           "assumes": {
-            "ja": "シューティングスター。「ランダムな対象」はすべて敵 1 体に当たるとみなす。1 ヒットの式は倍率ダメージと同じで、発射体爆発ダメージ▲も乗る。コアに当たる分は未実装（notes）",
-            "en": "Shooting Stars. All hits on “random targets” are assumed to land on a single enemy. Each hit uses the skill damage formula and also takes Projectile Explosion Damage up. Core hits are not modeled (see notes)"
+            "ja": "シューティングスター。「ランダムな対象」はすべて敵 1 体に当たるとみなす。1 ヒットの式は倍率ダメージと同じで、発射体爆発ダメージ▲も乗る。コアに当たる分は未実装（notes）。ヒットのゲージは刻み + 飛ぶ時間（射撃場の的の表。表の無い敵では 0）のフレームに溜まり、チェーンの待ちの明けの後に着いたヒットは次の回のゲージになる。ダメージは刻みのフレームに置く",
+            "en": "Shooting Stars. All hits on “random targets” are assumed to land on a single enemy. Each hit uses the skill damage formula and also takes Projectile Explosion Damage up. Core hits are not modeled (see notes). Each hit charges the gauge at the tick frame + flight time (shooting range target table; 0 on enemies without it), so hits landing after the chain wait ends count toward the next gauge. Damage stays on the tick frame"
           },
           "claims": [
             "C-0211",
             "C-0213",
-            "C-0207"
+            "C-0207",
+            "C-0240"
           ]
         },
         {

@@ -26,7 +26,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "撮る録画の、空に撃った後の最初の的への着弾から数えて、1 回目に BURST バーが消えたアニス：スターの発の番号"
+      "note": "撮る録画の、空に撃った後の最初の的への着弾から数えて、1 回目に BURST バーが消えたアニス：スターの発の番号",
+      "observations": ["181-03"]
     }
   ],
   "predicted": {

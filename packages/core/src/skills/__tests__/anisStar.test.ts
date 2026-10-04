@@ -59,7 +59,8 @@ describe('アニス：スター（17）の定義', () => {
 
   it('defines every line of S1, with the measured ally gauge bonus noted as unimplemented (V-0158)', () => {
     expect(def.skills.skill1.support).toBe('partial');
-    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['unimplemented']);
+    // V-0158 の味方のゲージと、誘導弾の飛ぶ時間の未実装の分（plan/design-anis-star-gauge-timing.md 3 節）
+    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['unimplemented', 'unimplemented']);
   });
 
   it('re-enters Burst Stage I only with Everyone’s Star', () => {

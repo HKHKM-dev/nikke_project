@@ -86,7 +86,42 @@ export type TeamInput = {
    * 省略・null は全員 AI 扱い。ダメージには影響しない（ゲージと時刻表だけ）
    */
   controlledSlot?: number | null;
+  /**
+   * 発が壊した障害物（射撃場のコンテナの柱など）。録画の画で数えた個数を入れる（plan/design-anis-star-gauge-timing.md 2 節）。
+   * その発のゲージに、物 1 個につき burstEnergyPerShot ×（操作のチャージ武器ならフルチャージ倍率）×（1 + ゲージ速度）を足す（C-0177・C-0243）。
+   * 省略は無し（どの発も物を壊さない）。利用者の計算には出さない
+   */
+  obstacleBreaks?: readonly ObstacleBreak[];
 };
+
+/** 枠 slotIndex の shot 発目（1 始まり）が、障害物を count 個壊した */
+export type ObstacleBreak = { slotIndex: number; shot: number; count: number };
+
+/** obstacleBreaks の枠・発の番号・個数を検証する。同じ枠の同じ発は 1 つだけ */
+export function validateObstacleBreaks(
+  slots: readonly (TeamSlotInput | null)[],
+  breaks: readonly ObstacleBreak[] | undefined,
+): void {
+  const seen = new Set<string>();
+  for (const b of breaks ?? []) {
+    if (
+      !Number.isInteger(b.slotIndex) ||
+      b.slotIndex < 0 ||
+      b.slotIndex >= slots.length ||
+      slots[b.slotIndex] === null
+    ) {
+      throw new RangeError(`obstacleBreaks: slotIndex must be a filled slot, got ${b.slotIndex}`);
+    }
+    if (!Number.isInteger(b.shot) || b.shot < 1)
+      throw new RangeError(`obstacleBreaks: shot must be >= 1, got ${b.shot}`);
+    if (!Number.isInteger(b.count) || b.count < 1) {
+      throw new RangeError(`obstacleBreaks: count must be a positive integer, got ${b.count}`);
+    }
+    const key = `${b.slotIndex}:${b.shot}`;
+    if (seen.has(key)) throw new RangeError(`obstacleBreaks: duplicate shot ${b.shot} of slot ${b.slotIndex}`);
+    seen.add(key);
+  }
+}
 
 export type { AppliedEffect, AppliedTimedEffect };
 
