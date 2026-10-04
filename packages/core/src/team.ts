@@ -237,6 +237,7 @@ export function toTimelineSlots(slots: readonly (TeamSlotInput | null)[]): Timel
           casterBaseAttack: baseAttackOf(slot),
           buildEffects: slot.buildEffects,
           hitRate: hitRateOf(slot.condition),
+          coreHitRate: slot.condition.coreHitRate,
         },
   );
 }

@@ -24,6 +24,12 @@ export type ShotLog = {
   partialShots?: PartialShot[];
   /** Stage 10: 残弾を 0 にした射撃のフレーム（frames の部分列。「最後の弾丸」）。省略は無し（手で作る列のため） */
   lastShotFrames?: number[];
+  /**
+   * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: frames と同じ並びの、発ごとの命中の期待値と
+   * コアの命中の期待値（1 パス目が書く）。省略は命中 1・コア 0（手で作る列・planShots の列）
+   */
+  hits?: number[];
+  coreHits?: number[];
 };
 
 export type PartialShot = { frame: number; progress: number };

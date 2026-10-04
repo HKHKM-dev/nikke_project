@@ -21,7 +21,12 @@ import {
   type SkillHitResult,
 } from '../skills/burstDamage.ts';
 import { cycleFires, cycleShotFrames, resolveCycles } from '../skills/cycles.ts';
-import { MAX_SKILL_LEVELS, isResolvedEventCount, type ResolvedTrigger } from '../skills/resolve.ts';
+import {
+  MAX_SKILL_LEVELS,
+  isResolvedEventCount,
+  isResolvedShotCount,
+  type ResolvedTrigger,
+} from '../skills/resolve.ts';
 import {
   EMPTY_BUFF_STATE,
   planBuffTimeline,
@@ -57,6 +62,7 @@ export {
 import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
 import { hitRateSpansOf, planLandings, type LandingPlan } from './landing.ts';
 import type { ShotLog } from './shots.ts';
+import type { SkillSlot } from '../types.ts';
 
 /** Stage 8: 倍率ダメージ 1 回の発動（1 パス目で決まる。sim と calc で共通） */
 export type SkillHitEvent = {
@@ -133,6 +139,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     controlledSlot: input.controlledSlot ?? null,
     untargetable,
     hitRates: landing === null ? undefined : hitRateSpansOf(landing, slots.length),
+    enemyHasCore: enemy.hasCore,
   });
   const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing);
   const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
@@ -182,10 +189,15 @@ export function planSkillHits(
       const atHit = pre
         ? burstHitBuffs(timeline, frame - delays.effectFrames, frame, slotIndex, pre)
         : burstSnapshotState(timeline, frame, slotIndex, pre).buffs;
+      // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
+      // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
+      const skill = effect.source.skill;
       const buffs =
-        pre && sequential && effect.source.skill === 'burst'
-          ? withEarlierSequentialEffects(timeline, atHit, frame, slotIndex, effect.effectIndex)
-          : atHit;
+        pre && sequential && skill === 'burst'
+          ? withEarlierSequentialEffects(timeline, atHit, frame, slotIndex, skill, effect.effectIndex)
+          : skill !== 'burst' && definition.skills[skill].sequential === true && isResolvedShotCount(effect.trigger)
+            ? withEarlierSequentialEffects(timeline, atHit, frame + 1, slotIndex, skill, effect.effectIndex)
+            : atHit;
       const trigger = computeTriggerDamage({
         character: slot.character,
         growth: slot.growth,
@@ -246,22 +258,24 @@ export function planSkillHits(
 }
 
 /**
- * 着弾編（plan/design-burst-landing.md 3.2 節）: 「下位効果のスタック適用」（burst スロットの sequential）の damage が見るバフ。
- * 発動の直前のバフに、同じ枠の burst スロットで前に書いた timed のうち、このフレーム（同じ発動の効果の発火）に始まって
+ * 着弾編（plan/design-burst-landing.md 3.2 節）: 「下位効果のスタック適用」（sequential）の damage が見るバフ。
+ * 発動の直前のバフに、同じ枠の同じスロットで前に書いた timed のうち、start（同じ発動の効果の窓の始まり）に始まって
  * この枠に掛かる窓の値を足す（イサベルの段階 2・3 の追加ダメージに、同じ発動の段階 1 の受けるダメージ▲が乗る。C-0163）。
- * 前の発動の窓が続いていれば、直前のバフにもう入っている（窓が和集合で、このフレームに始まらない）
+ * 前の発動の窓が続いていれば、直前のバフにもう入っている（窓が和集合で、start に始まらない）。
+ * ルドミラ：ウィンターオーナー編: スキルのスロットでは、射撃の回数トリガーの窓の始まり（発火の次のフレーム）を start に渡す
  */
 function withEarlierSequentialEffects(
   timeline: BuffTimeline,
   buffs: BuffTotals,
-  frame: number,
+  start: number,
   slotIndex: number,
+  skill: SkillSlot,
   effectIndex: number,
 ): BuffTotals {
   let out = buffs;
   for (const w of timeline.windows) {
-    if (w.start !== frame || w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex) continue;
-    if (w.effect.source.skill !== 'burst' || w.effect.effectIndex >= effectIndex) continue;
+    if (w.start !== start || w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex) continue;
+    if (w.effect.source.skill !== skill || w.effect.effectIndex >= effectIndex) continue;
     if (w.stack !== undefined || w.effect.scaling === 'casterAttack' || w.effect.stat === 'weapon') {
       throw new RangeError('a sequential burst supports only plain timed effects (no stacks, casterAttack or weapon)');
     }

@@ -1,0 +1,11 @@
+{
+  "id": "C-0251",
+  "text": "ルドミラ：ウィンターオーナーの S1 は通常攻撃の命中 60 回ごとに発火し（リロードで数え直さない）、同じ発火の追加ダメージには同じ発火の受けるダメージ▲（12.56%）が乗り、発火した発の通常攻撃には乗らない。S2 の追加ダメージはコアの実際の命中 60 回ごとに出る（胴体の命中は数えない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`099-04`・`099-06`・`099-07`・`099-08`。V-0159",
+  "model": "`data/skills/194.json`（skill1 の `sequential`、回数トリガー `normalHit`・`coreHit`）。順は `frame/plan.ts` の `withEarlierSequentialEffects`、窓は発火の次のフレームから（`skills/timeline.ts` の `buffStartFires`）。コアの命中の回数は、モデルでは期待値で数える近似（`skills/triggers.ts` の `shotCountWeight`。plan/design-ludmilla-wo.md 2.2 節）",
+  "replaces": [],
+  "updated": "2026-10-04"
+}

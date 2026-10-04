@@ -144,13 +144,14 @@ describe('burst スロットの sequential の検証', () => {
     expect(parseSkillDefinition(raw).skills.burst.sequential).toBe(true);
   });
 
-  it('rejects sequential outside the burst slot, without burstDamage first, or other than true', () => {
+  it('accepts sequential in skill slots, and rejects a burst without burstDamage first or other than true', () => {
+    // ルドミラ：ウィンターオーナー編: スキルのスロットにも書ける（plan/design-ludmilla-wo.md 2.4 節）
     const copy = structuredClone(raw);
     copy.skills.skill1!.sequential = true;
-    expect(() => parseSkillDefinition(copy)).toThrow(/only allowed in the burst slot/);
+    expect(parseSkillDefinition(copy).skills.skill1.sequential).toBe(true);
     const swapped = structuredClone(raw);
     swapped.skills.burst!.effects = [...swapped.skills.burst!.effects.slice(1), swapped.skills.burst!.effects[0]];
-    expect(() => parseSkillDefinition(swapped)).toThrow(/the first effect must be burstDamage/);
+    expect(() => parseSkillDefinition(swapped)).toThrow(/the first effect of a sequential burst must be burstDamage/);
     const notTrue = structuredClone(raw);
     notTrue.skills.burst!.sequential = false;
     expect(() => parseSkillDefinition(notTrue)).toThrow(/expected true/);

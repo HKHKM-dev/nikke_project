@@ -55,8 +55,10 @@ export type TimelineSlot = {
   casterBaseAttack: number;
   /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。自分だけに効く常時バフ。省略は無し */
   buildEffects?: readonly BuildEffect[];
-  /** Stage 15: 命中率（射撃場 = 1 の相対値。省略 1）。1 パス目のゲージにだけ使う */
+  /** Stage 15: 命中率（射撃場 = 1 の相対値。省略 1）。1 パス目のゲージと normalHit の回数に使う */
   hitRate?: number;
+  /** ルドミラ：ウィンターオーナー編: 手入力のコア命中率（省略 0）。coreHit の回数に使う（plan/design-ludmilla-wo.md 2.2 節） */
+  coreHitRate?: number;
 } | null;
 
 /** 1 つの効果が 1 人に効いているフレーム区間 */

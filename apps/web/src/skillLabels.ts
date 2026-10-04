@@ -66,6 +66,7 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
     const what = {
       normalShot: '通常攻撃',
       normalHit: '通常攻撃の命中',
+      coreHit: 'コアの命中',
       fullChargeShot: 'フルチャージ攻撃',
       lastShot: '最後の弾丸',
     }[trigger.count];
@@ -163,7 +164,10 @@ export function formatInstant(effect: ResolvedInstantEffect): string {
     case 'cooldownReduction':
       return `バースト CT −${formatNumber(effect.value, 2)} 秒`;
     case 'ammoRefill':
-      return `弾丸チャージ ${formatPercent(effect.value, 2)}`;
+      // ルドミラ：ウィンターオーナー編: 発数の弾丸チャージ（scaling 'flat'）
+      return effect.scaling === 'flat'
+        ? `弾丸チャージ ${formatNumber(effect.value)} 発`
+        : `弾丸チャージ ${formatPercent(effect.value, 2)}`;
     case 'heal':
       return effect.durationFrames === undefined
         ? `回復（最大 HP の ${formatPercent(effect.value, 2)}）`

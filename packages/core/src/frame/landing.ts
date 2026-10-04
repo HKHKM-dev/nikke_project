@@ -361,6 +361,14 @@ export function landingPartsWith(
   return found;
 }
 
+/**
+ * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2 節）: 配分の 1 発のコアの命中の期待値
+ * （Σ w × 弾丸命中率 × コア命中率）。敵のコアの有無は見ない（1 パス目が掛ける）
+ */
+export function mixedCoreHits(parts: readonly LandingPart[]): number {
+  return parts.reduce((sum, p) => sum + p.weight * (p.condition.hitRate ?? 1) * p.condition.coreHitRate, 0);
+}
+
 /** 配分の弾丸命中率（Σ w × 弾丸命中率）。1 パス目のゲージに使う */
 export function mixedHitRate(parts: readonly LandingPart[]): number {
   if (parts.length === 1) return parts[0]!.condition.hitRate ?? 1;
@@ -381,14 +389,18 @@ export function hitRateSpansOf(plan: LandingPlan | null, slotCount: number): (La
         start: s.start,
         end: s.end,
         hitRate: mixedHitRate(landingParts),
+        coreHits: mixedCoreHits(landingParts),
         measured: landingParts.every((p) => p.measuredHitRate === true),
       };
     });
   });
 }
 
-/** measured: 区間の弾丸命中率を的の表から取ったか（配分は全部の着地点で）。SG のゲージの割合を決める */
-export type LandingHitRateSpan = { start: number; end: number; hitRate: number; measured: boolean };
+/**
+ * measured: 区間の弾丸命中率を的の表から取ったか（配分は全部の着地点で）。SG のゲージの割合を決める。
+ * coreHits: 1 発のコアの命中の期待値（mixedCoreHits。coreHit の回数トリガーに使う）
+ */
+export type LandingHitRateSpan = { start: number; end: number; hitRate: number; coreHits: number; measured: boolean };
 
 /**
  * 条件の配分で 1 トリガーの値を出す。配分が 1 つならそのまま computeTriggerDamage（手入力と 1 の位まで同じ）、

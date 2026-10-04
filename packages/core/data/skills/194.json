@@ -1,0 +1,134 @@
+{
+  "formatVersion": 1,
+  "resourceId": 194,
+  "checkedAt": "2026-10-04",
+  "skills": {
+    "skill1": {
+      "sequential": true,
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "敵 1 体。通常攻撃の命中は期待値で数える（1 発ごとに弾丸命中率を足す）。付き直しは窓を延ばすだけで重ならない。同じ発火の追加ダメージには乗り、発火した発の通常攻撃には乗らない",
+            "en": "One enemy. Normal-attack hits are counted as expected hits (each shot adds its bullet hit rate). Reapplying extends the window without stacking. The additional damage of the same trigger gets it; the triggering shot itself does not"
+          },
+          "claims": [
+            "C-0138",
+            "C-0248",
+            "C-0251"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "damageType": "additional",
+          "ref": 4,
+          "gaugeHits": [
+            0
+          ],
+          "assumes": {
+            "ja": "同じ発火の受けるダメージ▲が乗る（下位効果のスタック適用と同じ順）。コア・距離は乗らない。1 ヒットで射手の 1 発ぶんのゲージを溜める",
+            "en": "Gets the Damage Taken increase of the same trigger (same order as stacked lower effects). No core or distance bonus. One hit charges the shooter's per-shot gauge"
+          },
+          "claims": [
+            "C-0163",
+            "C-0248",
+            "C-0251"
+          ]
+        },
+        {
+          "kind": "ammoRefill",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 5
+          },
+          "target": "self",
+          "scaling": "flat",
+          "ref": 6,
+          "assumes": {
+            "ja": "命中の回数は戦闘中ずっと数え、リロードでも数え直さない。最大装弾数で止める",
+            "en": "Hits are counted for the whole battle and not reset by reloads. Capped at max ammo"
+          },
+          "claims": [
+            "C-0248",
+            "C-0251"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "coreHit",
+            "everyRef": 1
+          },
+          "damageType": "additional",
+          "ref": 2,
+          "gaugeHits": [
+            0
+          ],
+          "assumes": {
+            "ja": "コアの命中は期待値で数える（1 発ごとに弾丸命中率 × コア命中率を足し、累計が 60 の倍数を越えた発で発火）。コア・距離は乗らない。1 ヒットで射手の 1 発ぶんのゲージを溜める",
+            "en": "Core hits are counted as expected values (each shot adds bullet hit rate × core hit rate; fires on the shot where the total passes a multiple of 60). No core or distance bonus. One hit charges the shooter's per-shot gauge"
+          },
+          "claims": [
+            "C-0249",
+            "C-0251"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "critRate",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0249"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0250",
+            "C-0252"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "reloadSpeed",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0250",
+            "C-0252"
+          ]
+        }
+      ]
+    }
+  }
+}

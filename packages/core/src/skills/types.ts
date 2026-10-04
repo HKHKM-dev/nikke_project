@@ -253,14 +253,18 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
 
 /**
  * Stage 8: 自分の射撃の回数で発火するトリガー。1 回 = 弾薬を 1 消費する 1 トリガー（SG もペレットではなくトリガー）。
- * 全弾命中の前提なので normalShot と normalHit は同じ列になる。fullChargeShot はチャージ武器の射撃のうち、部分チャージの発（Stage 22-B）を除いたもの。
+ * fullChargeShot はチャージ武器の射撃のうち、部分チャージの発（Stage 22-B）を除いたもの。
+ * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: normalHit は命中の期待値（1 発ごとにその発の弾丸命中率。
+ * SG は 1 トリガーを 1 回）、coreHit はコアの命中の期待値（弾丸命中率 × コア命中率）を足し、累計が N の倍数を越えた発で発火する
+ * （skills/triggers.ts）。弾丸命中率が 1 の枠では normalHit は normalShot と同じ列になる。
  * カウンタはリロードでも戦闘中ずっとリセットしない（every: 10 は通算 10・20・30…回目）。
  * Stage 10: lastShot = 残弾を 0 にした射撃（「最後の弾丸で攻撃した時 / 命中した時」）。最大装弾数▲で遅れ、弾丸チャージで出なくなる。
  */
-export type ShotCountKind = 'normalShot' | 'normalHit' | 'fullChargeShot' | 'lastShot';
+export type ShotCountKind = 'normalShot' | 'normalHit' | 'coreHit' | 'fullChargeShot' | 'lastShot';
 export const SHOT_COUNT_KINDS = [
   'normalShot',
   'normalHit',
+  'coreHit',
   'fullChargeShot',
   'lastShot',
 ] as const satisfies readonly ShotCountKind[];
@@ -428,15 +432,19 @@ export type CooldownReductionEffect = TargetCountFields & {
   assumes?: LocalizedText;
 };
 
-/** Stage 10: 「弾丸チャージ X%」。発火の瞬間に対象の残弾へ 最大装弾数 × X% を足す（最大で止める。即時効果） */
+/**
+ * Stage 10: 「弾丸チャージ X%」。発火の瞬間に対象の残弾へ 最大装弾数 × X% を足す（最大で止める。即時効果）。
+ * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.1 節）: scaling 'flat' は「弾丸チャージ N 発」で、値を発数のまま足す
+ */
 export type AmmoRefillEffect = TargetCountFields & {
   kind: 'ammoRefill';
   trigger: EffectTrigger;
   target: BuffTarget;
   targetWeapon?: WeaponType;
   targetElement?: Element;
-  /** % の description_value_NN */
+  /** % の description_value_NN（scaling 'flat' なら発数） */
   ref: number;
+  scaling?: 'flat';
   assumes?: LocalizedText;
 };
 
@@ -713,9 +721,10 @@ export type SkillEntry = {
   /** 扱わなかった効果や扱い方の説明。種類は kind */
   notes?: SkillNote[];
   /**
-   * 着弾編（plan/design-burst-landing.md 3 節）: 「下位効果のスタック適用」。burst スロットだけに書ける。同じ発動で発火する
-   * 効果を書いた順に当て、後の damage は、同じ発動で前に書いた timed の値を足したバフで計算する（C-0163）。
-   * 先頭は burstDamage（ヒットの直前のバフのまま）。別スロットの効果は見ない
+   * 着弾編（plan/design-burst-landing.md 3 節）: 「下位効果のスタック適用」。同じ発動で発火する効果を書いた順に当て、
+   * 後の damage は、同じ発動で前に書いた timed の値を足したバフで計算する（C-0163）。ルドミラ：ウィンターオーナー編で
+   * スキルのスロットにも書けるようにした（plan/design-ludmilla-wo.md 2.4 節。射撃の回数トリガーの窓は発火の次のフレームから）。
+   * burst スロットでは先頭は burstDamage（ヒットの直前のバフのまま）。別スロットの効果は見ない
    */
   sequential?: true;
 };
@@ -1333,6 +1342,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）
   const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds'] : [];
   const compositionKeys = kind === 'cooldownReduction' ? ['burstStepMix', 'squad'] : [];
+  const scalingKeys = kind === 'ammoRefill' ? ['scaling'] : [];
   for (const key of Object.keys(v)) {
     if (
       ![
@@ -1346,6 +1356,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
         'ref',
         ...durationKeys,
         ...compositionKeys,
+        ...scalingKeys,
         'assumes',
         'claims',
       ].includes(key)
@@ -1377,6 +1388,10 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (kind !== 'heal') Object.assign(effect, count);
   if (hasDuration) Object.assign(effect, parseDuration(v, path));
+  if (v.scaling !== undefined) {
+    if (v.scaling !== 'flat') fail(`${path}.scaling`, `ammoRefill only takes "flat", got ${JSON.stringify(v.scaling)}`);
+    (effect as AmmoRefillEffect).scaling = 'flat';
+  }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -1479,8 +1494,10 @@ function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' 
   const entry: SkillEntry = { support: deriveSkillSupport(effects, notes), effects };
   if (v.sequential !== undefined) {
     if (v.sequential !== true) fail(`${path}.sequential`, 'expected true');
-    if (slot !== 'burst') fail(`${path}.sequential`, 'only allowed in the burst slot');
-    if (effects[0]?.kind !== 'burstDamage') fail(`${path}.sequential`, 'the first effect must be burstDamage');
+    // ルドミラ：ウィンターオーナー編: スキルのスロットにも書ける（plan/design-ludmilla-wo.md 2.4 節）。burst は先頭が burstDamage
+    if (slot === 'burst' && effects[0]?.kind !== 'burstDamage') {
+      fail(`${path}.sequential`, 'the first effect of a sequential burst must be burstDamage');
+    }
     entry.sequential = true;
   }
   if (notes !== undefined) entry.notes = notes;

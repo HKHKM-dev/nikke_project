@@ -560,7 +560,7 @@ describe('編成（自動の条件）', () => {
     const spans = runFirstPass([timelineSlot(1)], {
       frames,
       burst: true,
-      hitRates: [[{ start: 0, end: frames, hitRate: 0.5, measured: true }]],
+      hitRates: [[{ start: 0, end: frames, hitRate: 0.5, coreHits: 0, measured: true }]],
     });
     expect(spans.schedule!.gaugeFullFrames).toEqual(constant.schedule!.gaugeFullFrames);
     const full = runFirstPass([timelineSlot(1)], { frames, burst: true });
@@ -583,7 +583,7 @@ describe('編成（自動の条件）', () => {
       runFirstPass([timelineSlot], {
         frames,
         burst: true,
-        ...(span ? { hitRates: [[{ start: 0, end: frames, ...span }]] } : {}),
+        ...(span ? { hitRates: [[{ start: 0, end: frames, coreHits: 0, ...span }]] } : {}),
       });
     // 表の値 0.9: 1 トリガー 81,000 で 13 トリガー目（972,000 → 1,053,000）
     const measured = run({ hitRate: 0.9, measured: true });
