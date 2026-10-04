@@ -1,0 +1,17 @@
+[
+  {
+    "id": "189-01",
+    "recording": "189",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "rate",
+    "unit": "px/ヒット",
+    "value": [0.703, 0.719, 0.69],
+    "description": "アニス：スター（AI・みんなの星）・モダニア（AI）・I-DOLL・オーシャン（操作・撃たない）の、アニス：スターの着弾を含まない区間の、モダニアの 1 ヒットあたりのバーの伸び。f947〜1004（26px・37 ヒット。始まりは 0px からなので参考）、f1006〜1063（41px・57）、f1065〜1094（20px・29）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "アニス：スターの着弾は f946・1005・1064。満タン（消失）は f1110"
+    }
+  }
+]

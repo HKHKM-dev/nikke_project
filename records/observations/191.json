@@ -1,0 +1,17 @@
+[
+  {
+    "id": "191-01",
+    "recording": "191",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "count",
+    "unit": "ヒット",
+    "value": [36, 260, 262, 272],
+    "description": "録画 188 の撮り直し（アニス：スター操作・撃たない、モダニア AI）。モダニアのヒットで数えて、バーが 1px・112px・113px になったヒットと、本当の満タン（バー消失）のヒット。読む前の予測（K840: 36・260・272）と同じ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "1px は f923、113px は f1149、消失は f1159。f969・f1066 の 71,470 はそれぞれ 3 ヒット（22,274 × 2 + 26,922）として数えた"
+    }
+  }
+]

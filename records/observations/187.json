@@ -1,0 +1,62 @@
+[
+  {
+    "id": "187-01",
+    "recording": "187",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "gauge",
+    "unit": "px",
+    "value": [0, 0, 5, 12, 19, 26, 34, 41, 52, 59, 66, 74, 81, 88, 95, 103, 110, 113],
+    "description": "デルタ（AI）の、的に当たった 1〜18 発目の着弾の後の BURST バーの px（アニス：スターは操作・AUTO 射撃 OFF で撃たない）。N（S1 のゲージ速度が味方に掛からない）の予測 4・12・19・26（3〜6 発目）と合い、A（×1.06）の 6・13・21・28 と合わない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "着弾（総ダメージの増分 208,626・260,783）は f897・978・1060・1142・1224・1306・1477・1559・1723・1805・1887・2058・2141・2223・2305・2492・2574・2655。19 発目 f2738 でバーが消えた"
+    }
+  },
+  {
+    "id": "187-02",
+    "recording": "187",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "count",
+    "unit": "発",
+    "value": 19,
+    "description": "同じ録画で、的に当たったデルタの発で数えて、本当の満タン（BURST バーの消失）になった発の番号。撃った発では 20 発目（9 発目はコンテナに当たった。187-03）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "f2738 でバー消失。18 発目（f2655）の後は 113px で、まだ消えない"
+    }
+  },
+  {
+    "id": "187-03",
+    "recording": "187",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "gauge",
+    "unit": "px",
+    "value": [1, 4],
+    "description": "同じ録画で、総ダメージが増えないのにバーが伸びた 2 回の伸び（f1439 と f1641）。f1641 はデルタの 9 発目がコンテナに当たった分（26,500 = burst_energy_pershot。C-0177 と同じ種類。約 3.6px）。f1439（6 発目と 7 発目の間のリロード中）は出どころが分からない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "f1439: 26 → 27px。f1641: 41 → 45px"
+    }
+  },
+  {
+    "id": "187-04",
+    "recording": "187",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [827, 2738],
+    "description": "同じ録画の戦闘開始（残り時間 02:59 が出たフレーム）と、1 回目に BURST バーが消えたフレーム（差 1,911f）。デルタ単騎のモデル（予測ファイルの N）の 1,811f より 100f 遅いのは、的のジャンプ（f2387 前後）でデルタの 3 本目のマガジンが 4 発で切れ、リロードしたため",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "timer.ts --mode changes の +320f の次の +89f の変わり目が f827"
+    }
+  }
+]

@@ -28,5 +28,20 @@
     },
     "source": "V-0058",
     "readAt": "2026-10-01"
+  },
+  {
+    "id": "099-03",
+    "recording": "099",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "rate",
+    "unit": "px/ヒット",
+    "value": 0.143,
+    "description": "ルドミラ：ウィンターオーナー（操作）単騎の、f1600〜1950 の弾の 1 ヒットあたりのバーの伸び（42 → 89px・328 ヒット。ほかに S1・S2 の追加ダメージ 11 回）。弾と追加ダメージを 1 回 1,000 とすると 45.7px で、実測の 47px と合う",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "V-0158 の読み直し（比べの基準）。弾 1 ヒットは 15,444〜21,810"
+    }
   }
 ]

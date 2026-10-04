@@ -1,0 +1,17 @@
+[
+  {
+    "id": "190-01",
+    "recording": "190",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "rate",
+    "unit": "px/ヒット",
+    "value": 0.714,
+    "description": "アニス：スター（操作・AUTO 射撃 ON で撃つ）とモダニア（AI）の、アニス：スターの着弾（f969・1028）の間 f970〜1026 の、モダニアの 1 ヒットあたりのバーの伸び（54 → 94px・56 ヒット）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "f992 の 90,935 は 4 ヒット、f965 の 71,470 は 3 ヒット（22,274 × 2 + 26,922）。その前の区間 f911〜962 も約 0.70（バーの表示がちらつくので参考）。満タン（消失）は f1041"
+    }
+  }
+]

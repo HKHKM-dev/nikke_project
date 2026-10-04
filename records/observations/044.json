@@ -134,5 +134,20 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "044-09",
+    "recording": "044",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "rate",
+    "unit": "px/ヒット",
+    "value": [0.262, 0.262, 0.258],
+    "description": "I-DOLL・フラワー（AI）・デルタ（AI）・モダニア（操作）の、ほかの 2 人の着弾を含まない区間の、モダニアの 1 ヒットあたりのバーの伸び。f1081〜1146（17px・65 ヒット）、f1163〜1228（17px・65）、f1244〜1310（17px・66）。アニス：スターのいない編成の基準",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "V-0158 の読み直し（比べの基準）"
+    }
   }
 ]
