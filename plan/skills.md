@@ -175,11 +175,11 @@ notes の種類: 未対応 33・前提の外 19・計算に無関係 24・補足
 ## 194 ルドミラ：ウィンターオーナー
 
 - **skill1**: supported
-  - effects[0] timed・normalHit・damageTaken: C-0138（確定）、C-0244（仮説）
-  - effects[1] damage・normalHit・additional: C-0163（確定）、C-0244（仮説）
-  - effects[2] ammoRefill・normalHit: C-0244（仮説）
+  - effects[0] timed・normalHit・damageTaken: C-0138（確定）、C-0244（仮説）、C-0247（確定）
+  - effects[1] damage・normalHit・additional: C-0163（確定）、C-0244（仮説）、C-0247（確定）
+  - effects[2] ammoRefill・normalHit: C-0244（仮説）、C-0247（確定）
 - **skill2**: supported
-  - effects[0] damage・coreHit・additional: C-0245（仮説）
+  - effects[0] damage・coreHit・additional: C-0245（仮説）、C-0247（確定）
   - effects[1] timed・fullBurstStart・critRate: C-0245（仮説）
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0246（仮説）

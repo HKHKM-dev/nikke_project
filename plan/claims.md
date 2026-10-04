@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 152・仮説 56・棄却 37・範囲外 1（計 246）
+件数: 確定 153・仮説 56・棄却 37・範囲外 1（計 247）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1239,6 +1239,11 @@
   - 根拠: 説明文（`data/characters/194.json` の burst）の読み。単騎ではバーストを撃てないので段 B で撮る。V-0158
   - モデル側: `data/skills/194.json`（burst）
   - 定義: `data/skills/194.json` の burst の effects[0]、`data/skills/194.json` の burst の effects[1]
+- **C-0247** ルドミラ：ウィンターオーナーの S1 は通常攻撃の命中 60 回ごとに発火し（リロードで数え直さない）、同じ発火の追加ダメージには同じ発火の受けるダメージ▲（12.56%）が乗り、発火した発の通常攻撃には乗らない。S2 の追加ダメージはコアの実際の命中 60 回ごとに出る（胴体の命中は数えない）
+  - 状態: 確定・等級: 厳密一致・読み直し・更新日: 2026-10-04
+  - 根拠: `099-03`・`099-05`・`099-06`・`099-07`。V-0158
+  - モデル側: `data/skills/194.json`（skill1 の `sequential`、回数トリガー `normalHit`・`coreHit`）。順は `frame/plan.ts` の `withEarlierSequentialEffects`、窓は発火の次のフレームから（`skills/timeline.ts` の `buffStartFires`）。コアの命中の回数は、モデルでは期待値で数える近似（`skills/triggers.ts` の `shotCountWeight`。plan/design-ludmilla-wo.md 2.2 節）
+  - 定義: `data/skills/194.json` の skill1 の effects[0]、`data/skills/194.json` の skill1 の effects[1]、`data/skills/194.json` の skill1 の effects[2]、`data/skills/194.json` の skill2 の effects[0]
 
 ## 敵・的・場面
 
