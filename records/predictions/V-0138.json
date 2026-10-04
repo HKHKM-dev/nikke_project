@@ -1,0 +1,64 @@
+{
+  "verification": "V-0138",
+  "team": [
+    {
+      "rid": 291,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 10,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（遅れの表に無く、ヒットは III の発動と同じフレーム。動画のフレームでは 0）。遅れの値の仮説（D1）は遅れの表の行で切り替わるので、このファイルの範囲外（検証記録に手で書く）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "rapi-018",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 018 の 1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム）から、バーストの倍率ダメージのヒットまでの動画のフレーム数（フルバーストの入りの止まりを含む）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "b4adca1b774d30f181b2499ab0ecab76ca4d18cc",
+    "values": {
+      "H0": {
+        "rapi-018": [0, 0, 0, 0, 0]
+      }
+    },
+    "seen": {
+      "018": [
+        "018-01",
+        "018-02",
+        "018-03",
+        "018-04",
+        "018-05",
+        "018-06",
+        "018-07",
+        "018-08",
+        "018-09",
+        "018-10",
+        "018-11"
+      ]
+    }
+  }
+}

@@ -190,5 +190,35 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "019-11",
+    "recording": "019",
+    "source": "V-0137",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [94, 93, 94, 94, 94],
+    "unit": "f",
+    "description": "エーテル（I）+ デルタ（II）+ ノワール（III）で、1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1264・3642・6019・8397・10774）から、ノワールのバーストの倍率ダメージのヒット（HUD の 480,611 の増分。f1358・3735・6113・8491・10868）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧・hud.ts --mode jumps",
+      "note": "93f の 2 回目は、FB の始まりの前に III のタイマーの表示が 1 つ飛ぶ（09.59 → 09.54。録画の重複フレームの位置）。4 回目のヒットは HUD が 1 フレーム読めなかった後の読み（gap 2）。FB の始まりは、どの回も六角形が II から III に替わった 29f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

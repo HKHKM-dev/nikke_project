@@ -45,7 +45,8 @@
         {
           "kind": "burstDamage",
           "ref": 1,
-          "damageType": "skill"
+          "damageType": "skill",
+          "claims": ["C-0226"]
         },
         {
           "kind": "timed",
