@@ -1,0 +1,44 @@
+{
+  "verification": "V-0142",
+  "team": [
+    {
+      "rid": 352,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（リロードの完了から発と発の間 82f で撃つ分け方）。H1（完了から待ちからの 1 発目と同じ）は予測ファイルで切り替えられないので、検証記録の「予測」に手で書いた。この指標は形の確かめで、仮説を見分けない"
+    }
+  ],
+  "targets": [
+    {
+      "id": "shots-082",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ヘルム単騎（082 の組み方）の 180 秒に撃った発の数。形の確かめ（照合の観測値は無い）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "57816ad32f9ff8b162e987de8c8c8d6fe87f5392",
+    "values": {
+      "H0": {
+        "shots-082": 100
+      }
+    },
+    "seen": {
+      "082": ["082-01", "082-02", "082-03", "082-04", "082-05", "082-06", "082-07", "082-08"]
+    }
+  }
+}
