@@ -83,7 +83,7 @@ describe('アニス：スター（17）の S2 とバースト', () => {
     const [star] = resolveDotEffects(def, anis, MAX_SKILL_LEVELS);
     const trigger = computeTriggerDamage({
       character: anis,
-      growth: { level: 200, coreLevel: 0, grade: 3 },
+      growth: { level: 200, grade: 3, core: 0 },
       enemy: { defence: 100, element: null, hasCore: true },
       attackOverride: 100000,
       buffs,

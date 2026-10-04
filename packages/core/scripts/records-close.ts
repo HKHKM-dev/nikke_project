@@ -81,7 +81,7 @@ function gitOrderOf(prediction: PredictionFile, own: readonly Observation[]): Gi
     // 控え（seen）は予測の値ではなく、後から足せる記録なので、予測の commit を探すときは除いて比べる
     // （2026-10-04 より前の予測ファイルに後から控えを足した V-0124。plan/design-reread-prediction.md 7.2 節）
     const withoutSeen = (predicted: PredictionFile['predicted']): string => {
-      if (predicted === undefined) return JSON.stringify(null);
+      if (predicted === undefined || predicted === null) return JSON.stringify(null);
       const { seen: _seen, ...rest } = predicted;
       return JSON.stringify(rest);
     };
