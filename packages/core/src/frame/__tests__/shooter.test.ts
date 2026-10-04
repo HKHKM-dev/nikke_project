@@ -39,7 +39,7 @@ describe('stepShooter', () => {
     });
   });
 
-  // Stage 21-C3: rpm はゲーム内の時計（C-0058）。Stage 22-A: SR の戦闘開始の 1 発目は構え解除 13f の無いぶん 69f（C-0218）。
+  // Stage 21-C3: rpm はゲーム内の時計（C-0058）。Stage 22-A: SR の戦闘開始の 1 発目は構え解除 13f の無いぶん 69f（C-0225）。
   // Stage 24: リロードはゲーム内の時計で端数つき（1 回目は四捨五入。AR 59f・SR 88f・MG 147f）、リロード明けは 24f（C-0148）
   it('matches the absolute frames fixed in the design (AR 12…302 → 385, SR 69…479 → 649, MG 12…400 → 571)', () => {
     // Stage 22-C: チャージの無い武器は戦闘開始から構え 12f の後に撃つ
