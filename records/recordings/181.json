@@ -1,0 +1,29 @@
+{
+  "id": "181",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-181_rl_anis-star_sky-start-auto.mp4",
+  "original": "2026-10-04_20-05-51.mp4",
+  "durationSec": 47,
+  "frames": 2819,
+  "fps": 60,
+  "sizeMB": 56.7,
+  "sha256": "65307e30e203",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0154。戦闘開始の直後に空に 3 発撃ってから AUTO 射撃 ON（録画 180 の撮り直し）"
+}
