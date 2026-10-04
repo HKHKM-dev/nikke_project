@@ -17,8 +17,10 @@ import {
 import { runFirstPass } from '../frame/firstPass.ts';
 import {
   autoConditionAt,
+  bulletHitRateWithHitRateUp,
   coreHitRateWithHitRateUp,
   distanceBonusAt,
+  hitRateUpRaisesBulletHitRate,
   landingBandOf,
   landingMix,
   projectileKeyOf,
@@ -314,15 +316,40 @@ describe('命中率▲（C-0036・C-0037）', () => {
     expect(coreHitRateWithHitRateUp(0.2281, -0.2)).toBe(0.2281);
   });
 
-  it('applies to the table value only; the manual value and the bullet hit rate are kept as they are', () => {
+  it('applies to the table value only; the manual value is kept as it is', () => {
     const near = profile.landings.find((l) => l.id === 'nearA')!;
     const withUp = autoConditionAt(profile, near, SMG, 0.0509, MANUAL);
     expect(withUp.coreHitRate).toBeCloseTo(0.2644 / 0.9491 ** 2, 12);
-    expect(withUp.hitRate).toBe(0.9763);
+    expect(withUp.hitRate).toBe(bulletHitRateWithHitRateUp(0.9763, 0.0509));
     expect(withUp.distanceBonus).toBe(true);
     const unmeasured = { ...profile, coreHitRate: { ...profile.coreHitRate, SG: null } };
     const sg = autoConditionAt(unmeasured, near, SG, 0.5, { ...MANUAL, coreHitRate: 0.4 });
     expect(sg.coreHitRate).toBe(0.4);
+  });
+});
+
+describe('命中率▲と弾丸命中率（C-0192。仮説。plan/design-hit-rate-up-bullet-h2.md）', () => {
+  it('turns the miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²), gives 1 at N ≥ 1, and keeps p at N ≤ 0 or p = 1', () => {
+    // 表の SMG の遠とミサト S1 の 3 スタック（C-0183）
+    expect(bulletHitRateWithHitRateUp(0.76, 0.1512)).toBeCloseTo(1 - 0.24 ** (1 / 0.8488 ** 2), 12);
+    expect(bulletHitRateWithHitRateUp(0.76, 1)).toBe(1);
+    expect(bulletHitRateWithHitRateUp(0.76, 1.0137)).toBe(1);
+    expect(bulletHitRateWithHitRateUp(0.76, 0)).toBe(0.76);
+    expect(bulletHitRateWithHitRateUp(0.76, -0.2)).toBe(0.76);
+    expect(bulletHitRateWithHitRateUp(1, 0.3)).toBe(1);
+  });
+
+  it('raises AR, SMG and MG only; SG, SR and RL keep the table value', () => {
+    expect([AR, SMG, MG].every(hitRateUpRaisesBulletHitRate)).toBe(true);
+    expect([SG, SR, RL].some(hitRateUpRaisesBulletHitRate)).toBe(false);
+    const far = profile.landings.find((l) => l.band === 'far')!;
+    const nearA = profile.landings.find((l) => l.id === 'nearA')!;
+    expect(autoConditionAt(profile, far, SMG, 0.1512, MANUAL).hitRate).toBe(bulletHitRateWithHitRateUp(0.76, 0.1512));
+    expect(autoConditionAt(profile, nearA, SG, 0.1512, MANUAL).hitRate).toBe(0.845);
+    expect(autoConditionAt(profile, far, SR, 0.1512, MANUAL).hitRate).toBe(1);
+    // 表が null（未測定）なら手入力の値のまま
+    const unmeasured = { ...profile, bulletHitRate: { ...profile.bulletHitRate, SMG: null } };
+    expect(autoConditionAt(unmeasured, far, SMG, 0.1512, { ...MANUAL, hitRate: 0.5 }).hitRate).toBe(0.5);
   });
 });
 
@@ -462,7 +489,9 @@ describe('編成（自動の条件）', () => {
     const withCube = computeTeamDamage(input([slot(AR, true, { buildEffects: cube })], e)).slots[0]!.autoCondition!;
     expect(withCube.hitRateUp).toBe(0.0509);
     expect(withCube.coreHitRate / plain.coreHitRate).toBeCloseTo(1 / 0.9491 ** 2, 9);
-    expect(withCube.hitRate).toBe(plain.hitRate);
+    // C-0192（仮説）: AR の弾丸命中率も上がる
+    expect(withCube.hitRate).toBeGreaterThan(plain.hitRate);
+    expect(withCube.hitRate).toBeLessThan(1);
   });
 
   it('writes the notes: table, mix, unmeasured cells, RL/SR first shot, MG spin-up, and unmeasured landings', () => {
