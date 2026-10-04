@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 27・効果 123（根拠あり 60）・notes 81（根拠あり 21）
+件数: キャラ 28・効果 130（根拠あり 67）・notes 81（根拠あり 21）
 
 notes の種類: 未対応 33・前提の外 19・計算に無関係 24・補足 5
 
-スロット: supported 45・partial 16・unsupported 12・noEffect 17
+スロット: supported 48・partial 16・unsupported 12・noEffect 17
 
 ## 10 ラピ
 
@@ -171,6 +171,19 @@ notes の種類: 未対応 33・前提の外 19・計算に無関係 24・補足
 - **burst**: supported
   - effects[0] timed・burstUse・chargeSpeed: 根拠なし
   - effects[1] timed・burstUse・attack: 根拠なし
+
+## 194 ルドミラ：ウィンターオーナー
+
+- **skill1**: supported
+  - effects[0] timed・normalHit・damageTaken: C-0138（確定）、C-0244（仮説）
+  - effects[1] damage・normalHit・additional: C-0163（確定）、C-0244（仮説）
+  - effects[2] ammoRefill・normalHit: C-0244（仮説）
+- **skill2**: supported
+  - effects[0] damage・coreHit・additional: C-0245（仮説）
+  - effects[1] timed・fullBurstStart・critRate: C-0245（仮説）
+- **burst**: supported
+  - effects[0] timed・burstUse・attack: C-0246（仮説）
+  - effects[1] timed・burstUse・reloadSpeed: C-0246（仮説）
 
 ## 225 紅蓮：ブラックシャドウ
 

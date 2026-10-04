@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 152・仮説 53・棄却 37・範囲外 1（計 243）
+件数: 確定 152・仮説 56・棄却 37・範囲外 1（計 246）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -936,7 +936,7 @@
   - 根拠: `095-03`（tick 48,785 = 41,322.36 × 1.1806）、`095-04`（1 発 12,747 = 10,797.29 × 1.1806）。どちらも合わせ込みなしの値と 1 未満の差。`095-05`（B の 584f 後まで乗り、589f 後には乗らない）。モデルに入れた後の値は、録画 095 の 1 発・tick とも差が 1 未満（`095-06`・`095-07`）。V-0054・V-0067
   - モデル側: `data/skills/862.json` の burst（`timed`・`damageTaken`・`allies`）。stat `damageTaken` は `damage.ts`（通常攻撃・射撃ごとの倍率ダメージ）と `skills/burstDamage.ts` の `computeBurstHit`（倍率ダメージ・持続ダメージ）で別枠の乗数として掛ける
   - 検証記録: V-0054、V-0067
-  - 定義: `data/skills/862.json` の burst の effects[0]
+  - 定義: `data/skills/194.json` の skill1 の effects[0]、`data/skills/862.json` の burst の effects[0]
 - **C-0146** 命中で付くハッキングが付いている最中にクルミがバーストを使うと、tick の刻みは命中のハッキングの刻みのまま続く（バーストの 1 秒後から数え直さない。付き直しと同じ）
   - 状態: 確定・等級: 反復実測・更新日: 2026-10-01
   - 根拠: `100-01`（録画 100 の 3 回。B の後の最初の tick が、前の刻みの続きと ±2f で合い、B の約 1 秒後ではない）、`095-02`（録画 095 の 1 回）。V-0054・V-0060
@@ -980,7 +980,7 @@
   - 根拠: `038-14`（3 回目の段階 2 は、▲なしのモデルの値のちょうど 1.3996 倍で、段階 3 の攻撃力は乗っていない。4 回目の段階 2・3 も 1.3996 倍）。verification.md Stage 8「射撃場の実測（録画 36〜38）」の 4。モデルに入れた後の値は `038-24`〜`038-26` で差が 1 未満。V-0075・V-0080
   - モデル側: `data/skills/231.json` の burst の `sequential` と effects[2]・effects[3]。`frame/plan.ts` の `withEarlierSequentialEffects`（同じ発動で前に書いた timed の値を足す。plan/design-burst-landing.md 3 節）
   - 検証記録: V-0075、V-0080
-  - 定義: `data/skills/231.json` の burst の effects[2]、`data/skills/231.json` の burst の effects[3]
+  - 定義: `data/skills/194.json` の skill1 の effects[1]、`data/skills/231.json` の burst の effects[2]、`data/skills/231.json` の burst の effects[3]
 - **C-0165** イサベルのバーストのヒット（バーストスキルダメージ）と、バーストスキル使用時の効果の発火は、III の発動（フルバーストの始まり）から、モデルのフレームで 134f 遅れる（動画のフレームで 156f。フルバーストの入りの止まり 22f を含む）
   - 状態: 確定・等級: 反復実測・更新日: 2026-10-02
   - 根拠: `038-23`（1〜4 回目とも同じ長さ）、`038-22`。効果の発火がヒットと同じフレームなことは `038-15`（C-0162）。止まりは `videoFrameOf` と同じ 22f で差し引いた（この録画の止まりは `038-03`）。モデルに入れた後は `038-27` で一致。V-0078・V-0080
@@ -1224,6 +1224,21 @@
   - 根拠: 解釈（plan/design-ram-s1.md 5 節の論点 2。2026-10-04 にオーナーが仮説での実装を承認）。同じ部隊の味方がいない編成で起きないことは C-0080。同じ部隊の味方がいる編成の録画は無い（オーナーの所持キャラに、ラムと同じ部隊の味方はいない）
   - モデル側: `skills/composition.ts` の `squadAllows`（CharacterData.squad が自分と同じキャラを数える）と、`data/skills/822.json` の skill1 の `squad`
   - 定義: `data/skills/822.json` の skill1 の effects[0]
+- **C-0244** ルドミラ：ウィンターオーナーの S1 は、通常攻撃の命中 60 回ごと（命中の期待値で数え、戦闘中ずっと数える）に、対象の受けるダメージ▲（3 秒。付き直しは延ばすだけ）を付け、同じ発火の▲が乗る追加ダメージ（コア・距離なし。1 ヒットで 1 発ぶんのゲージ）を与え、自分に弾丸チャージ 20 発（最大装弾数で止める。60 回目が最後の弾丸ならリロードに間に合わない）
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
+  - 根拠: 説明文（`data/characters/194.json` の skill1）の読み。同じ発火の▲が乗る順はイサベル（C-0163）と同じ形、追加ダメージのゲージはモダニア（C-0105）と同じ形とみなした。録画 099 の読み直しで確かめる（予測は records/predictions/V-0158.json）。V-0158
+  - モデル側: `data/skills/194.json`（skill1。`sequential`）。数えは `skills/triggers.ts` の `shotCountWeight`・`advanceShotCount`、命中の期待値は `frame/firstPass.ts` の `hitsAt`、弾丸チャージの発数は `frame/firstPass.ts`（`scaling: flat`）、同じ発火の順は `frame/plan.ts` の `withEarlierSequentialEffects`（plan/design-ludmilla-wo.md 2 節）
+  - 定義: `data/skills/194.json` の skill1 の effects[0]、`data/skills/194.json` の skill1 の effects[1]、`data/skills/194.json` の skill1 の effects[2]
+- **C-0245** ルドミラ：ウィンターオーナーの S2 は、コアの命中 60 回ごと（弾丸命中率 × コア命中率の期待値で数える）に追加ダメージ（コア・距離なし。1 ヒットで 1 発ぶんのゲージ）を与え、フルバースト開始時に自分のクリティカル確率▲（10 秒）
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
+  - 根拠: 説明文（`data/characters/194.json` の skill2）の読み。コアの命中の回数を期待値で数えるのはモデルの近似（2026-10-04 オーナー決定。plan/design-ludmilla-wo.md 5 節の論点 1）。録画 099 の読み直しで確かめる（フルバーストの分は段 B）。V-0158
+  - モデル側: `data/skills/194.json`（skill2）。数えは `skills/triggers.ts` の `shotCountWeight`（`coreHit`）、発ごとの値は `frame/firstPass.ts` の `hitsAt` と `frame/landing.ts` の `mixedCoreHits`
+  - 定義: `data/skills/194.json` の skill2 の effects[0]、`data/skills/194.json` の skill2 の effects[1]
+- **C-0246** ルドミラ：ウィンターオーナーのバーストは、自分の攻撃力▲（10 秒）とリロード速度▲（20 秒）で、説明文どおり
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
+  - 根拠: 説明文（`data/characters/194.json` の burst）の読み。単騎ではバーストを撃てないので段 B で撮る。V-0158
+  - モデル側: `data/skills/194.json`（burst）
+  - 定義: `data/skills/194.json` の burst の effects[0]、`data/skills/194.json` の burst の effects[1]
 
 ## 敵・的・場面
 

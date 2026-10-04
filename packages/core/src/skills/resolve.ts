@@ -396,6 +396,8 @@ export type ResolvedInstantEffect = {
   targetCount?: number;
   /** V-0024: heal の維持時間（フレーム）。あれば、同じ効果の窓が付いている対象への付き直しでは回復の記録を作らない */
   durationFrames?: number;
+  /** ルドミラ：ウィンターオーナー編: 弾丸チャージの発数（ammoRefill の scaling 'flat'）。value は発数のまま */
+  scaling?: 'flat';
   value: number;
   /** 同じスロットの何番目の効果か（識別用） */
   effectIndex: number;
@@ -430,9 +432,14 @@ export function resolveInstant(
         kind: effect.kind,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         target: effect.target,
-        value: effect.kind === 'cooldownReduction' ? raw : raw / 100,
+        // CT 短縮は秒、発数の弾丸チャージは発のまま。ほかは % を割合に
+        value:
+          effect.kind === 'cooldownReduction' || (effect.kind === 'ammoRefill' && effect.scaling === 'flat')
+            ? raw
+            : raw / 100,
         effectIndex,
       };
+      if (effect.kind === 'ammoRefill' && effect.scaling === 'flat') r.scaling = 'flat';
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.targetElement) r.targetElement = effect.targetElement;
       const count = effect.kind === 'heal' ? undefined : resolveTargetCount(effect, skill, levels[slot]);

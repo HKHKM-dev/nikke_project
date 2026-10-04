@@ -18,7 +18,7 @@ import { planBuffTimeline, resolvePassiveStates, type TimelineSlot } from '../..
 import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
 import type { CharacterData, ShotParams, SkillRaw } from '../../types.ts';
 import { runFirstPass } from '../firstPass.ts';
-import { planShots } from '../shots.ts';
+import { planShots, type ShotLog } from '../shots.ts';
 
 const FRAMES = gameSecondsToFrames(180);
 
@@ -73,6 +73,15 @@ function synthetic(
   };
 }
 
+/** ルドミラ：ウィンターオーナー編: 1 パス目の射撃の列は発ごとの命中の期待値を持つ（planShots の列には無い）。射撃の列だけを比べる */
+function withoutHits(logs: readonly (ShotLog | null)[]): (Omit<ShotLog, 'hits' | 'coreHits'> | null)[] {
+  return logs.map((log) => {
+    if (log === null) return null;
+    const { hits: _hits, coreHits: _coreHits, ...rest } = log;
+    return rest;
+  });
+}
+
 describe('runFirstPass: degeneration (1.3)', () => {
   const teams: number[][] = [
     [291, 20, 10],
@@ -102,7 +111,7 @@ describe('runFirstPass: degeneration (1.3)', () => {
         controlledSlot,
         { shots, gaugeSpeed },
       );
-      expect(pass.shots).toEqual(shots);
+      expect(withoutHits(pass.shots)).toEqual(shots);
       expect(pass.schedule).toEqual(schedule);
       expect(pass.instants).toEqual([]);
     }
@@ -120,7 +129,7 @@ describe('runFirstPass: degeneration (1.3)', () => {
     );
     const none = runFirstPass(slots, { frames: FRAMES, burst: false });
     expect(none.schedule).toBeNull();
-    expect(none.shots).toEqual(
+    expect(withoutHits(none.shots)).toEqual(
       planShots(
         characters.map((character) => ({ character })),
         FRAMES,

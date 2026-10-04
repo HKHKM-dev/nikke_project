@@ -1,0 +1,11 @@
+{
+  "id": "C-0245",
+  "text": "ルドミラ：ウィンターオーナーの S2 は、コアの命中 60 回ごと（弾丸命中率 × コア命中率の期待値で数える）に追加ダメージ（コア・距離なし。1 ヒットで 1 発ぶんのゲージ）を与え、フルバースト開始時に自分のクリティカル確率▲（10 秒）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/194.json` の skill2）の読み。コアの命中の回数を期待値で数えるのはモデルの近似（2026-10-04 オーナー決定。plan/design-ludmilla-wo.md 5 節の論点 1）。録画 099 の読み直しで確かめる（フルバーストの分は段 B）。V-0158",
+  "model": "`data/skills/194.json`（skill2）。数えは `skills/triggers.ts` の `shotCountWeight`（`coreHit`）、発ごとの値は `frame/firstPass.ts` の `hitsAt` と `frame/landing.ts` の `mixedCoreHits`",
+  "replaces": [],
+  "updated": "2026-10-04"
+}

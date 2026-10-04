@@ -129,7 +129,8 @@ export type TriggerCondition = {
   /**
    * Stage 15: 弾丸命中率 0..1（省略 1。Stage 18 で「命中率」から呼び名を変えた。命中率▲とは別物）。**射撃場（静止の的）を 1 とした相対値**で、通常攻撃の期待ダメージ（射撃ごとの倍率ダメージを含む）と
    * ゲージ（burst/dynamic.ts の energyPerTrigger）に掛ける。SG では当たったペレットの割合（C-0150）。手入力の枠のゲージだけ、SG のペレットの割合の置き値（SG_PELLET_GAUGE_HIT_RATE）を外側に掛ける。
-   * スキルの倍率ダメージ・バーストスキルには掛けない。命中を数えるトリガーは全弾命中で数える（近似。conditionNotes）
+   * スキルの倍率ダメージ・バーストスキルには掛けない。命中を数えるトリガーは命中の期待値で数える（ルドミラ：ウィンターオーナー編。
+   * skills/triggers.ts の shotCountWeight。SG は 1 トリガーを 1 回）
    */
   hitRate?: number;
   /**
@@ -270,7 +271,7 @@ export function hitsPerShotOf(condition: Pick<TriggerCondition, 'hitsPerShot'>):
   return hits;
 }
 
-/** Stage 15: 条件から来る注記。弾丸命中率が 1 未満なら、命中を数えるトリガーを全弾命中で数える近似を知らせる */
+/** Stage 15: 条件から来る注記。弾丸命中率が 1 未満なら、どこに掛けたか（命中を数えるトリガーは期待値で数える）を知らせる */
 export function conditionNotes(condition: Pick<TriggerCondition, 'hitRate'>): ModelNote[] {
   const hitRate = hitRateOf(condition);
   if (hitRate >= 1) return [];
@@ -279,8 +280,8 @@ export function conditionNotes(condition: Pick<TriggerCondition, 'hitRate'>): Mo
       level: 'approx',
       code: 'hit-rate',
       message: {
-        ja: `弾丸命中率 ${Math.round(hitRate * 1000) / 10}%: 通常攻撃のダメージとゲージに掛ける。命中を数えるトリガー（通常攻撃の命中 N 回ごと等）とスキルの倍率ダメージは全弾命中のまま`,
-        en: `Bullet hit rate ${Math.round(hitRate * 1000) / 10}%: applied to normal-attack damage and gauge; hit-count triggers and skill damage assume every shot hits`,
+        ja: `弾丸命中率 ${Math.round(hitRate * 1000) / 10}%: 通常攻撃のダメージとゲージに掛ける。命中を数えるトリガー（通常攻撃の命中 N 回ごと等）は命中の期待値で数える。スキルの倍率ダメージは全弾命中のまま`,
+        en: `Bullet hit rate ${Math.round(hitRate * 1000) / 10}%: applied to normal-attack damage and gauge; hit-count triggers count expected hits; skill damage assumes every shot hits`,
       },
     },
   ];
