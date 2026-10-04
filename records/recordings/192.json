@@ -1,0 +1,41 @@
+{
+  "id": "192",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-192_sr_ram_delta_ludmilla-wo.mp4",
+  "original": "2026-10-04_23-28-27.mp4",
+  "durationSec": 204.1,
+  "frames": 12248,
+  "fps": 60,
+  "sizeMB": 247.3,
+  "sha256": "13726b4607d1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 194,
+      "name": "ルドミラ：ウィンターオーナー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0159。ラム（I）・デルタ（II）・ルドミラ：ウィンターオーナー（III・操作）。段 B（バーストと S2 のフルバースト）"
+}
