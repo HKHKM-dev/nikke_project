@@ -10,7 +10,9 @@
           "ja": "最後の弾丸が命中した時の、残りの HP の割合が最も低い味方 1 機の HP 回復は未対応（HP を持たないので対象が決まらない。回復を受けた時の効果を起こさない。ほかにダメージとゲージには関係しない）",
           "en": "The HP restore on the 1 ally with the lowest HP ratio when the last bullet hits is not modeled (HP is not modeled, so the target is undetermined; it does not trigger effects on being healed; it does not otherwise affect damage or the burst gauge)",
           "kind": "unimplemented",
-          "claims": ["C-0254"]
+          "claims": [
+            "C-0254"
+          ]
         }
       ]
     },
@@ -18,10 +20,12 @@
       "effects": [],
       "notes": [
         {
-          "ja": "残りの HP の割合が最も低い味方 1 機の HP 回復は未対応（説明文にきっかけが無い。HP を持たないので対象が決まらない。回復を受けた時の効果を起こさない。ほかにダメージとゲージには関係しない）",
-          "en": "The HP restore on the 1 ally with the lowest HP ratio is not modeled (the description gives no trigger; HP is not modeled, so the target is undetermined; it does not trigger effects on being healed; it does not otherwise affect damage or the burst gauge)",
+          "ja": "残りの HP の割合が最も低い味方 1 機の HP 回復は未対応（説明文にきっかけが無く、録画では戦闘開始から約 15 秒、その後 15 秒ごとに発動した。HP を持たないので対象が決まらない。回復を受けた時の効果を起こさない。ほかにダメージとゲージには関係しない）",
+          "en": "The HP restore on the 1 ally with the lowest HP ratio is not modeled (the description gives no trigger; recordings show it about 15 s into combat and every 15 s after; HP is not modeled, so the target is undetermined; it does not trigger effects on being healed; it does not otherwise affect damage or the burst gauge)",
           "kind": "unimplemented",
-          "claims": ["C-0254"]
+          "claims": [
+            "C-0254"
+          ]
         }
       ]
     },
@@ -32,7 +36,9 @@
           "ja": "味方全体の HP 回復は未対応（回復を受けた時の効果を起こさない。ほかにダメージとゲージには関係しない）",
           "en": "The HP restore on all allies is not modeled (it does not trigger effects on being healed; it does not otherwise affect damage or the burst gauge)",
           "kind": "unimplemented",
-          "claims": ["C-0254"]
+          "claims": [
+            "C-0254"
+          ]
         }
       ]
     }
