@@ -116,7 +116,7 @@ describe('computeCadence (calibrated against recordings)', () => {
   it('SR: 82f per full-charge shot (59f charge + 23f release), reload 88.2f → 580.2f cycle (measured 577f; 001 drops frames early)', () => {
     const c = computeCadence(SR);
     expect(c.shotFrames).toEqual([0, 82, 164, 246, 328, 410]);
-    // Stage 22-A: 戦闘開始の 1 発目は構え解除（13f）が無いぶん早い（C-0110）。リロードの後は 82f のまま
+    // Stage 22-A: 戦闘開始の 1 発目は構え解除（13f）が無いぶん早い（C-0218）。リロードの後は 82f のまま
     expect(c.firstShotFrames).toBe(69);
     expect(c.reloadFirstShotFrames).toBe(82);
     expect(c.cycleFrames).toBeCloseTo(82 + 410 + R(1.5), 9);
@@ -239,7 +239,7 @@ describe('reloadChunks', () => {
   });
 });
 
-// Stage 22-A（C-0110）: チャージ武器は、ハイドしていた状態（戦闘開始・窓の明け）からは構え解除（13f）が無いぶん早く撃つ。
+// Stage 22-A（C-0218）: チャージ武器は、ハイドしていた状態（戦闘開始・窓の明け）からは構え解除（13f）が無いぶん早く撃つ。
 // ラム（822、SR）: 発と発の間 82f、戦闘開始から 1 発目は実測 70f（075-04・075-06）。紅蓮BS は stage11ScarletBsTeam.test.ts（30f）
 describe('first shot from hiding (Stage 22-A)', () => {
   it('ラム fires the first shot 13f earlier than the interval, and after a reload at the full interval', () => {

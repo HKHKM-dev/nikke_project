@@ -83,7 +83,7 @@ export function firstShotFrames(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number {
-  // Stage 22-A: チャージ武器はハイドから構えてチャージするので、発と発の間から構え解除のぶんを引く（C-0110）
+  // Stage 22-A: チャージ武器はハイドから構えてチャージするので、発と発の間から構え解除のぶんを引く（C-0218）
   if (isChargeWeapon(shot)) return Math.max(0, params.chargeFrames + model.chargeReleaseFrames - model.aimOutFrames);
   // Stage 22-C: チャージの無い武器（MG を含む）も、ハイドから構えてから撃つ（C-0114）
   return model.aimInFrames;
