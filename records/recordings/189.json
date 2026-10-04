@@ -1,0 +1,41 @@
+{
+  "id": "189",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-189_rl_anis-star_modernia-ai_ocean-idle.mp4",
+  "original": "2026-10-04_22-12-18.mp4",
+  "durationSec": 22.7,
+  "frames": 1361,
+  "fps": 60,
+  "sizeMB": 27.5,
+  "sha256": "0e382f8bcfb0",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 305,
+      "name": "I-DOLL・オーシャン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0158。アニス：スター（AI）・モダニア（AI）・I-DOLL・オーシャン（操作・AUTO 射撃 OFF・撃たない）。モダニアの 1 ヒットあたりのゲージの上乗せが、受ける味方が操作でなくても出るかを見る。オーシャンが基本バースト段階 I なので、アニス：スターはみんなの星。一時停止画面でキャラ名を確かめた"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "188",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-188_rl_anis-star-idle_modernia-ai.mp4",
+  "original": "2026-10-04_22-11-30.mp4",
+  "durationSec": 25,
+  "frames": 1499,
+  "fps": 60,
+  "sizeMB": 30.2,
+  "sha256": "f8714a30324a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0158。アニス：スター（操作・AUTO 射撃 OFF・撃たない）とモダニア（AI）。モダニアの 1 ヒットあたりのゲージの上乗せが、アニス：スターが AI でなくても出るかを見る。一時停止画面でキャラ名を確かめた"
+}

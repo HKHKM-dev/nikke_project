@@ -1,0 +1,35 @@
+{
+  "id": "191",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-191_rl_anis-star-idle_modernia-ai_2.mp4",
+  "original": "2026-10-04_22-55-24.mp4",
+  "durationSec": 24,
+  "frames": 1441,
+  "fps": 60,
+  "sizeMB": 29.2,
+  "sha256": "ddda7d8d5f59",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0158。録画 188 の撮り直し。アニス：スター（操作・AUTO 射撃 OFF・撃たない）とモダニア（AI）。一時停止画面でキャラ名を確かめた"
+}

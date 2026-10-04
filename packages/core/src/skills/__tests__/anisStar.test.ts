@@ -57,9 +57,9 @@ describe('アニス：スター（17）の定義', () => {
     expect(lv1[0]!.multiplier).toBeCloseTo(0.71, 12);
   });
 
-  it('defines every line of S1 (S2 and the burst are in anisStarS2Burst.test.ts)', () => {
-    expect(def.skills.skill1.support).toBe('supported');
-    expect(def.skills.skill1.notes).toBeUndefined();
+  it('defines every line of S1, with the measured ally gauge bonus noted as unimplemented (V-0158)', () => {
+    expect(def.skills.skill1.support).toBe('partial');
+    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['unimplemented']);
   });
 
   it('re-enters Burst Stage I only with Everyone’s Star', () => {

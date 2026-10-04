@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 27・効果 123（根拠あり 60）・notes 81（根拠あり 21）
+件数: キャラ 27・効果 123（根拠あり 61）・notes 82（根拠あり 22）
 
-notes の種類: 未対応 33・前提の外 19・計算に無関係 24・補足 5
+notes の種類: 未対応 34・前提の外 19・計算に無関係 24・補足 5
 
-スロット: supported 45・partial 16・unsupported 12・noEffect 17
+スロット: supported 44・partial 17・unsupported 12・noEffect 17
 
 ## 10 ラピ
 
@@ -25,13 +25,14 @@ notes の種類: 未対応 33・前提の外 19・計算に無関係 24・補足
 
 ## 17 アニス：スター
 
-- **skill1**: supported
-  - effects[0] passive・burstGaugeSpeed: 根拠なし
+- **skill1**: partial
+  - effects[0] passive・burstGaugeSpeed: C-0244（仮説）
   - effects[1] passive・attack: C-0189（確定）、C-0203（仮説）
   - effects[2] cooldownReduction・battleStart: C-0202（確定）、C-0203（仮説）
   - effects[3] cooldownReduction・fullBurstEnd: C-0202（確定）、C-0203（仮説）
   - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）
   - effects[5] burstReentry: C-0201（確定）、C-0203（仮説）
+  - notes[0] 未対応: 味方のゲージへの効き方は、実測では ×1.06 ではなく、味方のゲージ 1 回（弾・追加ダメージのヒット）ごとに一定量を足す形（アニス：スターが撃っているとき約 1,680、操作で撃たないとき約 840）。モデルはまだ ×1.06 のまま（未反映）: C-0245（仮説）、C-0246（仮説）
 - **skill2**: partial
   - effects[0] timed・fullBurstStart・attack: C-0204（確定）、C-0203（仮説）
   - effects[1] timed・fullBurstStart・projectileExplosionDamage: C-0205（確定）、C-0210（仮説）

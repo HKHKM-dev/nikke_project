@@ -1,0 +1,35 @@
+{
+  "id": "187",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-187_sr_delta_anis-star-idle.mp4",
+  "original": "2026-10-04_21-39-15.mp4",
+  "durationSec": 50.7,
+  "frames": 3044,
+  "fps": 60,
+  "sizeMB": 61.5,
+  "sha256": "a54457cc3047",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0158。デルタ（AI）とアニス：スター（操作・AUTO 射撃 OFF・撃たない）。アニス：スターの S1 のゲージ速度がデルタのゲージに掛かるかを、デルタの発ごとのバーで見る"
+}

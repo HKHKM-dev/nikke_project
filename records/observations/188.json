@@ -1,0 +1,17 @@
+[
+  {
+    "id": "188-01",
+    "recording": "188",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "count",
+    "unit": "ヒット",
+    "value": [37, 259, 262, 273],
+    "description": "アニス：スター（操作・撃たない）とモダニア（AI）の、モダニアのヒットで数えて、バーが 1px・112px・113px になったヒットと、本当の満タン（バー消失）のヒット。1 ヒットのゲージ約 3,700（単騎は 2,000。045-03）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "1px は f969、113px は f1194、消失は f1205。37〜259 ヒットのあいだ、2 ヒットごとに 1px（0.50px/ヒット）"
+    }
+  }
+]

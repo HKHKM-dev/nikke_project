@@ -13,7 +13,10 @@
           "assumes": {
             "ja": "自分が生存している（戦闘不能は扱わない）",
             "en": "The skill user stays alive (incapacitation is not modeled)"
-          }
+          },
+          "claims": [
+            "C-0244"
+          ]
         },
         {
           "kind": "passive",
@@ -102,6 +105,17 @@
           "claims": [
             "C-0201",
             "C-0203"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方のゲージへの効き方は、実測では ×1.06 ではなく、味方のゲージ 1 回（弾・追加ダメージのヒット）ごとに一定量を足す形（アニス：スターが撃っているとき約 1,680、操作で撃たないとき約 840）。モデルはまだ ×1.06 のまま（未反映）",
+          "en": "Measured effect on allies is not ×1.06: each ally gauge event (bullet or additional-damage hit) gets a fixed amount added (about 1,680 while Anis: Star is firing, about 840 while she is controlled and not firing). The model still applies ×1.06 (not yet reflected)",
+          "kind": "unimplemented",
+          "claims": [
+            "C-0245",
+            "C-0246"
           ]
         }
       ]
