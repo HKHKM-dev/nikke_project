@@ -102,7 +102,7 @@ describe('持続の命中率▲（C-0170）', () => {
     const parts = landingPartsWith(plan.landing, slot, LITER, seg.landing, buffs.hitRate);
     for (const p of parts) {
       expect(p.condition.coreHitRate).toBe(coreHitRateWithHitRateUp(p.tableCoreHitRate!, MODERNIA_S2 + DRAKE_S1));
-      // C-0192（仮説）: リターは SMG なので弾丸命中率も区間の N で出し直す
+      // C-0192: リターは SMG なので弾丸命中率も区間の N で出し直す
       expect(p.condition.hitRate).toBe(bulletHitRateWithHitRateUp(p.tableBulletHitRate!, MODERNIA_S2 + DRAKE_S1));
       expect(p.condition.hitRate).toBeGreaterThan(p.tableBulletHitRate!);
     }
