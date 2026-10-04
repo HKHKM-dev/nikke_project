@@ -35,7 +35,7 @@ const index = JSON.parse(readFileSync(join(dir, 'sg-dots-dump.json'), 'utf8')) a
     tintOut: { a: number; b: number }[];
     tintIn: { a: number; b: number }[];
     bbox: { x0: number; y0: number; x1: number; y1: number } | null;
-    dots: { x: number; y: number }[];
+    dots: { x: number; y: number; kind?: 'hit' | 'miss' }[];
     offset: number;
   }[];
 };
@@ -85,7 +85,8 @@ for (const p of grid) {
     }
     maskReticle(win, aim, e.aim.type, e.aim.size);
     const c = bySection[e.section.replace(/ \d 回目$/, '')]!;
-    for (const d of e.dots) {
+    // 再現率は当たりの点（白）だけで見る（kind の無い古い dump の点は、全部当たり）
+    for (const d of e.dots.filter((d) => d.kind !== 'miss')) {
       const q = local(Math.round(d.x), Math.round(d.y));
       if (q.x < 0 || q.x >= rect.w || q.y < 0 || q.y >= rect.h) continue;
       const l = win.labels[q.y * rect.w + q.x];

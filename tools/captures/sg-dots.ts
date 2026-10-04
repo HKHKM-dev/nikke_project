@@ -1,16 +1,14 @@
-// SG の着弾点（ペレットが的に当たった所に出る白い点）を読み、直前のコマの的のマスクと重ねる
-// （plan/design-bullet-hit-rate-frame-coverage-verify.md 5.3 の主）。
-//   node tools/captures/sg-dots.ts <録画 id> --pellets <sg-pellets の debug 出力> [--k 10] [--k2 25] [--debug-dir DIR]
-//                                  [--debug-every 10] [--sections 遠,中遠]
+// SG の着弾点（ペレットの落ちた所に出る点。当たりは白く光り、外れは暗い灰色）を読み、直前のコマの的のマスクと重ねる
+// （plan/design-bullet-hit-rate-frame-coverage-verify.md 5.3 の主。V-0120）。
+//   node tools/captures/sg-dots.ts <録画 id> --pellets <sg-pellets の debug 出力> [--k 10] [--k2 15] [--debug-dir DIR]
+//                                  [--debug-every 10] [--sections 遠,中遠] [--triggers f,f] [--dump] [--verbose]
 //
 // - トリガー（発）と当たったペレットの数は、read.ts --recipe sg-pellets --opt debug=1 の標準エラーの行
 //   （「  <区間> f<フレーム> +<増分>: h <数> …」）から取る。
-// - 点は、トリガーのフレームで小さく現れ、数フレーム大きく光ってから小さくなって残り、次のトリガー（約 40f 後）までに消える
-//   （2026-10-04、録画 074 で目で見た）。そこで、トリガーの k フレーム後の「小さく残った点」を、白くて丸い小さな塊として探す。
-//   トリガーの 1 フレーム前に白かった画素（数字の残り・照準）は除き、照準の形（maskReticle）と残弾の箱も除く。
-// - 的のマスクは、トリガーの before フレーム前（前のトリガーの点が消え、まだ着弾の光が無い）のコマで、coverage.ts と同じ分け方。
-//   点は画面に固定なので、同じ画面の座標で重ねる。
-// - 点が画面に固定か的と一緒に動くかは、k と k2 の点の位置の動きと、的の外接矩形の動きを並べて確かめる。
+// - 点は撃った瞬間に白い小さな丸で現れ、次のコマから、当たりは大きく光ってから小さな白い点になって約 25f 残り、
+//   外れは暗い灰色の丸のまま小さくなって消える。画面に固定で、的と一緒には動かない（2026-10-04、録画 074・109）。
+//   撃った瞬間と点の分け方は dotsAt・firedOf。照準の形（maskReticle）と残弾の箱の所は探さない。
+// - 的のマスクは、撃つ before フレーム前のコマで、coverage.ts と同じ分け方。点は同じ画面の座標で重ねる。
 // - 出力: derived/<id>/sg-dots@<設定の版>.tsv（点ごと）と、区間ごとのまとめ（標準エラー）。
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -39,9 +37,11 @@ const { values, positionals } = parseArgs({
     k2: { type: 'string', default: '15' },
     before: { type: 'string', default: '6' },
     sections: { type: 'string' },
+    triggers: { type: 'string' },
     'debug-dir': { type: 'string' },
     'debug-every': { type: 'string', default: '10' },
     dump: { type: 'boolean', default: false },
+    verbose: { type: 'boolean', default: false },
   },
 });
 const id = positionals[0];
@@ -58,14 +58,17 @@ const K2 = Number(values.k2);
 /** マスクを取るコマ（トリガーの before フレーム前）。HUD の増分は撃った瞬間より数フレーム遅れることがあり、1 フレーム前には
  * もう点が光っていることがある（録画 109 の f6255）。前のトリガー（約 40f 前）の点は約 27f で消える */
 const BEFORE = Number(values.before);
-/** 点の大きさ（小さく残った点。録画 074 の遠で直径 5〜8px） */
-const DOT = { minArea: 6, maxArea: 90, maxSize: 13, minFill: 0.45, white: 205, spread: 40 };
+/**
+ * 現れたばかりの点（撃ったコマ）: 白い中心（3×3 の明るさ ≥ center）を灰色の縁が囲む、直径 5〜9px の丸
+ * （2026-10-04、録画 074・109 の拡大で見た）。中心は 1 コマ前より rise 以上明るく、半径 ring の円周の明るさの下から
+ * 4 分の 1 の値より contrast 以上、上から 4 分の 1 の値より contrastHi 以上明るい（縁がほぼ一周暗い。隣の点と重なっても測れる）。照準と一緒に動く HUD を除くため、
+ * 照準の動きだけずらした 1 コマ前の所よりも rise 以上明るいことを求める。近い候補（< sep px）は、差の大きい方だけ残す
+ */
+const ONSET = { center: 215, rise: 40, ring: 5, contrast: 35, contrastHi: 15, sep: 5 };
 /** 点を探す範囲（照準の中心から。SG の照準円の半径 約 71px と余白 15px。上に流れる数字を拾わないよう、広げすぎない） */
 const SEARCH_R = 86;
 /** 窓の余白 */
 const MARGIN = 140;
-/** k と k2 で同じ点とみなす距離（px） */
-const PERSIST = 2.5;
 /** SG の照準円の CDN の値（ふつうの SG は 250。C-0038） */
 const ACCURACY = 250;
 
@@ -84,7 +87,12 @@ for (const line of readFileSync(values.pellets, 'utf8').split(/\r?\n/)) {
   if (m) triggers.push({ section: m[1]!, frame: Number(m[2]), hits: Number(m[3]) });
 }
 const wanted = values.sections ? new Set(values.sections.split(',')) : null;
-const use = triggers.filter((t) => !wanted || wanted.has(t.section) || wanted.has(t.section.replace(/ \d 回目$/, '')));
+const only = values.triggers ? new Set(values.triggers.split(',').map(Number)) : null;
+const use = triggers.filter(
+  (t) =>
+    (!wanted || wanted.has(t.section) || wanted.has(t.section.replace(/ \d 回目$/, ''))) &&
+    (!only || only.has(t.frame)),
+);
 log(`トリガー ${use.length} / ${triggers.length}`);
 if (use.length === 0) process.exit(1);
 
@@ -106,7 +114,7 @@ type DumpEntry = {
   tintOut: { a: number; b: number }[];
   tintIn: { a: number; b: number }[];
   bbox: { x0: number; y0: number; x1: number; y1: number } | null;
-  dots: { x: number; y: number }[];
+  dots: { x: number; y: number; kind: 'hit' | 'miss' }[];
   offset: number;
 };
 const dumpEntries: DumpEntry[] = [];
@@ -131,72 +139,51 @@ function cropOf(
   return out;
 }
 
-/** 白くて丸い小さな塊（点）を探す。before で白かった画素は除く。exclude は除く画素（窓の座標） */
-function findDots(
+/**
+ * 撃ったコマ img で現れた点（ONSET）を探す。before は 1 コマ前、center はその照準、move は 1 コマ前から img への
+ * 照準の動き。exclude は除く画素（窓の座標）
+ */
+function findOnset(
   img: Rgb,
   before: Rgb,
   center: { x: number; y: number },
+  move: { x: number; y: number },
   exclude: Window,
-): { x: number; y: number; area: number }[] {
-  const x0 = Math.round(center.x) - SEARCH_R;
-  const y0 = Math.round(center.y) - SEARCH_R;
-  const n = 2 * SEARCH_R + 1;
-  const white = new Uint8Array(n * n);
-  const isW = (d: Buffer, x: number, y: number): boolean => {
-    const i = (y * W + x) * 3;
-    const mn = Math.min(d[i]!, d[i + 1]!, d[i + 2]!);
-    const mx = Math.max(d[i]!, d[i + 1]!, d[i + 2]!);
-    return mn > DOT.white && mx - mn < DOT.spread;
-  };
-  for (let j = 0; j < n; j++) {
-    for (let i = 0; i < n; i++) {
-      const x = x0 + i;
-      const y = y0 + j;
-      if (x < 0 || x >= W || y < 0 || y >= H || Math.hypot(i - SEARCH_R, j - SEARCH_R) > SEARCH_R) continue;
-      if (!isW(img.data, x, y) || isW(before.data, x, y)) continue;
+): { x: number; y: number; contrast: number }[] {
+  const ring = Array.from({ length: 16 }, (_, k) => [
+    Math.round(ONSET.ring * Math.cos((k * Math.PI) / 8)),
+    Math.round(ONSET.ring * Math.sin((k * Math.PI) / 8)),
+  ]);
+  const cands: { x: number; y: number; contrast: number }[] = [];
+  const cx = Math.round(center.x);
+  const cy = Math.round(center.y);
+  const lim = ONSET.ring + 2;
+  for (let y = cy - SEARCH_R; y <= cy + SEARCH_R; y++) {
+    for (let x = cx - SEARCH_R; x <= cx + SEARCH_R; x++) {
+      if (x < lim || x >= W - lim || y < lim || y >= H - lim || Math.hypot(x - cx, y - cy) > SEARCH_R) continue;
       const ei = x - exclude.x0;
       const ej = y - exclude.y0;
       if (ei >= 0 && ei < exclude.w && ej >= 0 && ej < exclude.h && exclude.labels[ej * exclude.w + ei] === UNKNOWN)
         continue;
-      white[j * n + i] = 1;
+      const c = lum3(img, x, y);
+      if (c < ONSET.center || c - lum3(before, x, y) < ONSET.rise) continue;
+      const bx = x - move.x;
+      const by = y - move.y;
+      if (bx >= 1 && bx < W - 1 && by >= 1 && by < H - 1 && c - lum3(before, bx, by) < ONSET.rise) continue;
+      const r = ring
+        .map(([dx, dy]) => {
+          const i = ((y + dy!) * W + x + dx!) * 3;
+          return (img.data[i]! + img.data[i + 1]! + img.data[i + 2]!) / 3;
+        })
+        .sort((a, b) => a - b);
+      const contrast = c - r[Math.floor(r.length / 4)]!;
+      if (contrast >= ONSET.contrast && c - r[Math.floor((r.length * 3) / 4)]! >= ONSET.contrastHi)
+        cands.push({ x, y, contrast });
     }
   }
-  const seen = new Uint8Array(n * n);
-  const out: { x: number; y: number; area: number }[] = [];
-  for (let p0 = 0; p0 < n * n; p0++) {
-    if (!white[p0] || seen[p0]) continue;
-    const stack = [p0];
-    seen[p0] = 1;
-    let area = 0;
-    let sx = 0;
-    let sy = 0;
-    let ix0 = Infinity;
-    let ix1 = -Infinity;
-    let iy0 = Infinity;
-    let iy1 = -Infinity;
-    while (stack.length) {
-      const p = stack.pop()!;
-      const i = p % n;
-      const j = (p - i) / n;
-      area += 1;
-      sx += i;
-      sy += j;
-      ix0 = Math.min(ix0, i);
-      ix1 = Math.max(ix1, i);
-      iy0 = Math.min(iy0, j);
-      iy1 = Math.max(iy1, j);
-      for (const q of [i > 0 ? p - 1 : -1, i < n - 1 ? p + 1 : -1, p - n, p + n]) {
-        if (q < 0 || q >= n * n || seen[q] || !white[q]) continue;
-        seen[q] = 1;
-        stack.push(q);
-      }
-    }
-    const bw = ix1 - ix0 + 1;
-    const bh = iy1 - iy0 + 1;
-    if (area < DOT.minArea || area > DOT.maxArea || bw > DOT.maxSize || bh > DOT.maxSize) continue;
-    if (area / (bw * bh) < DOT.minFill) continue;
-    out.push({ x: x0 + sx / area, y: y0 + sy / area, area });
-  }
+  cands.sort((a, b) => b.contrast - a.contrast);
+  const out: typeof cands = [];
+  for (const d of cands) if (!out.some((o) => Math.hypot(o.x - d.x, o.y - d.y) < ONSET.sep)) out.push(d);
   return out;
 }
 
@@ -230,88 +217,176 @@ function distanceToTarget(win: Window, lim: number): Float32Array {
   return d;
 }
 
-// 読むフレーム: HUD の増分のフレーム t の SEARCH フレーム前から、t と撃った瞬間の K2 フレーム後まで
-const SEARCH = 20;
+// 読むフレーム: HUD の増分のフレーム t の SEARCH + BEFORE フレーム前から、t + K2 まで（撃った瞬間は t より後にならない）
+const SEARCH = 24;
 const need = new Set<number>();
-for (const t of use) for (let f = t.frame - SEARCH - BEFORE; f <= t.frame + K2; f++) need.add(f);
+for (const t of use) for (let f = t.frame - SEARCH - BEFORE - 1; f <= t.frame + K2 + 1; f++) need.add(f);
 const frames = new Map<number, Rgb>();
 const debugDir = values['debug-dir'];
 if (debugDir) mkdirSync(debugDir, { recursive: true });
+type Kind = 'hit' | 'miss';
+type Dot = { x: number; y: number; contrast: number; kind: Kind };
 type DotRow = {
   section: string;
   trigger: number;
   fired: number;
   x: number;
   y: number;
-  area: number;
+  contrast: number;
+  kind: Kind;
   label: number;
   dist: number;
 };
 const rows: DotRow[] = [];
-const perTrigger: { t: Trigger; fired: number; dots: number; dotShift: number; aimOk: boolean }[] = [];
+type PerTrigger = { t: Trigger; fired: number; hit: number; miss: number; aimOk: boolean };
+const perTrigger: PerTrigger[] = [];
 
-/** 照準の左の残弾の箱の明るさの、前のコマとの差の和（箱は照準の中心から x −118〜−30・y −34〜+34） */
-function ammoBoxChange(cur: Rgb, prev: Rgb, aim: { x: number; y: number }): number {
-  let sum = 0;
-  for (let y = Math.round(aim.y) - 34; y <= Math.round(aim.y) + 34; y++)
-    for (let x = Math.round(aim.x) - 118; x <= Math.round(aim.x) - 30; x++) {
-      if (x < 0 || y < 0 || x >= W || y >= H) continue;
-      const i = (y * W + x) * 3;
-      sum += Math.abs(
-        cur.data[i]! + cur.data[i + 1]! + cur.data[i + 2]! - prev.data[i]! - prev.data[i + 1]! - prev.data[i + 2]!,
-      );
+/** 照準の周り 3×3 の明るさの平均 */
+function lum3(img: Rgb, x: number, y: number): number {
+  let s = 0;
+  for (let j = -1; j <= 1; j++)
+    for (let i = -1; i <= 1; i++) {
+      const k = ((y + j) * W + x + i) * 3;
+      s += img.data[k]! + img.data[k + 1]! + img.data[k + 2]!;
     }
-  return sum;
+  return s / 27;
 }
 
-type Pending = { t: Trigger; fired: number; aim: ReturnType<typeof findAim>['aim'] };
-const pending: Pending[] = [];
-let done = 0;
+/**
+ * コマ f で現れた点を、当たり・外れに分ける（2026-10-04 にオーナーが録画 074 で目で確かめた: 当たったペレットの点は白く光り、
+ * 外れたペレットの点は暗い灰色で光らない。白と灰色で 1 発 10 個、白の数は当たったペレットの数と同じ）。
+ * 現れた直後の点は、当たりも外れも白い中心と灰色の縁の小さな丸（findOnset）。
+ * 当たりの光は周りに暗い縁を持ち、点が固まると隣の点の縁が重なって 1〜3 コマ後の明るさでは外れと見分けにくい
+ * （録画 109 の f6248）。そこで当たりは、光ったあと小さく残る白い点で決める。
+ * - 当たり: 1 コマ後に周り 5×5 のどこかが光り（≥ HIT.glow）、K コマ後も白い（3×3 の平均 ≥ HIT.after）
+ * - 外れ: K コマ後に白くなく（< MISS.after）、1〜3 コマ後が暗い灰色（MISS.lo〜MISS.hi）でほぼ一定（幅 ≤ MISS.spread）、
+ *   かつ 2 コマ後に周り（半径 6 の円周の明るい側の 4 分の 1）より MISS.darker 以上暗い丸。当たりの光の暗い縁やダメージの
+ *   数字の縁と取り違えないよう、1 コマ後に MISS.clear px 以内が光っている（≥ HIT.glow）所は数えない
+ */
+const HIT = { glow: 240, after: 205 };
+const MISS = { after: 170, lo: 50, hi: 150, spread: 30, darker: 20, clear: 12 };
+/** 周り (2r + 1)² の明るさの最大 */
+function lumMax(img: Rgb, x: number, y: number, r: number): number {
+  let m = 0;
+  for (let j = -r; j <= r; j++)
+    for (let i = -r; i <= r; i++) {
+      const k = ((y + j) * W + x + i) * 3;
+      m = Math.max(m, (img.data[k]! + img.data[k + 1]! + img.data[k + 2]!) / 3);
+    }
+  return m;
+}
+/** 半径 r の円周の明るさの、明るい側から 4 分の 1 の値 */
+function ringHigh(img: Rgb, x: number, y: number, r: number): number {
+  const v = Array.from({ length: 16 }, (_, k) => {
+    const i =
+      ((y + Math.round(r * Math.sin((k * Math.PI) / 8))) * W + x + Math.round(r * Math.cos((k * Math.PI) / 8))) * 3;
+    return (img.data[i]! + img.data[i + 1]! + img.data[i + 2]!) / 3;
+  }).sort((a, b) => b - a);
+  return v[4]!;
+}
+function dotsAt(f: number, aim: { x: number; y: number }, move: { x: number; y: number }, excl: Window): Dot[] {
+  const before = frames.get(f - 1);
+  if (!before) return [];
+  const img = frames.get(f);
+  const later = [1, 2, 3, K].map((k) => frames.get(f + k));
+  if (!img || later.some((l) => !l)) return [];
+  const out: Dot[] = [];
+  const onset = findOnset(img, before, aim, move, excl);
+  if (values.verbose) log(`  f${f} 候補 ${onset.length}`);
+  for (const d of onset) {
+    const L = later.map((l) => lum3(l!, d.x, d.y));
+    if (values.verbose)
+      log(`  f${f} (${d.x},${d.y}) c ${d.contrast.toFixed(0)} L ${L.map((v) => v.toFixed(0)).join(' ')}`);
+    if (lumMax(later[0]!, d.x, d.y, 2) >= HIT.glow && L[3]! >= HIT.after) out.push({ ...d, kind: 'hit' });
+    else if (L[3]! < MISS.after) {
+      const g = L.slice(0, 3);
+      if (
+        Math.min(...g) >= MISS.lo &&
+        Math.max(...g) <= MISS.hi &&
+        Math.max(...g) - Math.min(...g) <= MISS.spread &&
+        L[1]! <= ringHigh(later[1]!, d.x, d.y, 6) - MISS.darker &&
+        lumMax(later[0]!, d.x, d.y, MISS.clear) < HIT.glow
+      )
+        out.push({ ...d, kind: 'miss' });
+    }
+  }
+  return out;
+}
+
+/** 照準の印と残弾の箱を除く画素（窓の座標。不明 = 除く） */
+function exclusionOf(aim: NonNullable<ReturnType<typeof findAim>['aim']>): Window {
+  const rect = { x0: Math.round(aim.x) - MARGIN, y0: Math.round(aim.y) - MARGIN, w: 2 * MARGIN + 1, h: 2 * MARGIN + 1 };
+  const excl: Window = { ...rect, labels: new Int8Array(rect.w * rect.h) };
+  maskReticle(excl, aim, aim.type, aim.size);
+  for (let j = 0; j < excl.h; j++)
+    for (let i = 0; i < excl.w; i++) {
+      const dx = excl.x0 + i - aim.x;
+      const dy = excl.y0 + j - aim.y;
+      if (DOT_HUD.some((b) => dx >= b.x0 && dx <= b.x1 && dy >= b.y0 && dy <= b.y1))
+        excl.labels[j * excl.w + i] = UNKNOWN;
+    }
+  return excl;
+}
+/**
+ * 点を探さない HUD（照準からの相対）: 残弾の箱とスキルのアイコン、その下の白いゲージ。ゲージは光ったり伸びたりして
+ * 点と取り違える（録画 109 の f6248。2026-10-04）
+ */
+const DOT_HUD = [
+  { x0: -135, x1: -30, y0: -32, y1: 36 },
+  { x0: -140, x1: 5, y0: 36, y1: 60 },
+];
+function hudOf(aim: { x: number; y: number }): { x0: number; x1: number; y0: number; y1: number } {
+  return { x0: aim.x - 112, x1: aim.x - 36, y0: aim.y - 28, y1: aim.y + 28 };
+}
+
+/**
+ * 撃った瞬間: t − SEARCH〜t のコマ f のうち、当たり・外れに分けられた点が最も多いコマ（同数なら早い方）。残弾の箱の明るさの変化で取ると、リロードの直後に照準と箱が動いたコマと取り違える
+ * （録画 109 の f5568。2026-10-04）
+ */
+function firedOf(
+  t: Trigger,
+): { fired: number; dots: Dot[]; aim: NonNullable<ReturnType<typeof findAim>['aim']> } | null {
+  const found: { fired: number; dots: Dot[]; aim: NonNullable<ReturnType<typeof findAim>['aim']> }[] = [];
+  for (let f = t.frame - SEARCH; f <= t.frame; f++) {
+    const prev = frames.get(f - 1);
+    const aim = prev ? findAim(prev).aim : null;
+    if (!aim) continue;
+    const cur = frames.get(f);
+    const aimF = cur ? findAim(cur).aim : null;
+    const move = aimF ? { x: Math.round(aimF.x - aim.x), y: Math.round(aimF.y - aim.y) } : { x: 0, y: 0 };
+    const dots = dotsAt(f, aim, move, exclusionOf(aim));
+    found.push({ fired: f, dots, aim });
+  }
+  const most = Math.max(0, ...found.map((c) => c.dots.length));
+  return found.find((c) => c.dots.length === most && most > 0) ?? null;
+}
+
 const firstF = Math.min(...need);
 const lastF = Math.max(...need);
+let done = 0;
+const queue = [...use].sort((a, b) => a.frame - b.frame);
 for await (const { frame, img } of readFrames(video, firstF, lastF, 1)) {
   if (!need.has(frame)) continue;
   frames.set(frame, { data: Buffer.from(img.data), w: img.w, h: img.h });
-  // HUD の増分のフレームに着いたら、撃った瞬間（残弾の箱の数字が変わったコマ）を探す
-  for (const t of use) {
-    if (t.frame !== frame) continue;
-    const base = frames.get(t.frame - SEARCH);
-    const aim0 = base ? findAim(base).aim : null;
-    let fired = NaN;
-    if (aim0) {
-      let best = -1;
-      for (let f = t.frame - SEARCH + 1; f <= t.frame; f++) {
-        const cur = frames.get(f);
-        const prev = frames.get(f - 1);
-        if (!cur || !prev) continue;
-        const v = ammoBoxChange(cur, prev, aim0);
-        if (v > best) {
-          best = v;
-          fired = f;
-        }
-      }
-    }
-    pending.push({ t, fired, aim: aim0 });
-  }
-  // そろった発から処理する
-  for (let pi = pending.length - 1; pi >= 0; pi--) {
-    const { t, fired } = pending[pi]!;
-    if (!Number.isFinite(fired)) {
-      perTrigger.push({ t, fired, dots: 0, dotShift: NaN, aimOk: false });
-      pending.splice(pi, 1);
-      continue;
-    }
-    if (frame < fired + K2) continue;
-    pending.splice(pi, 1);
-    const a = frames.get(fired - BEFORE);
-    const b = frames.get(fired + K);
-    const c = frames.get(fired + K2);
+  // t + K2 + 1 まで読んだ発から処理する
+  while (queue.length && queue[0]!.frame + K2 + 1 <= frame) {
+    const t = queue.shift()!;
     done += 1;
+    const found = firedOf(t);
+    const a = found ? frames.get(found.fired - BEFORE) : undefined;
     const aim = a ? findAim(a).aim : null;
-    if (!a || !b || !c || !aim) {
-      perTrigger.push({ t, fired, dots: 0, dotShift: NaN, aimOk: false });
+    if (!found || !a || !aim) {
+      perTrigger.push({ t, fired: found?.fired ?? NaN, hit: 0, miss: 0, aimOk: false });
       continue;
     }
+    const { fired, dots } = found;
+    perTrigger.push({
+      t,
+      fired,
+      hit: dots.filter((d) => d.kind === 'hit').length,
+      miss: dots.filter((d) => d.kind === 'miss').length,
+      aimOk: true,
+    });
     // 撃つ前のコマの的のマスク（不明は埋めない）
     const rect = {
       x0: Math.round(aim.x) - MARGIN,
@@ -319,7 +394,7 @@ for await (const { frame, img } of readFrames(video, firstF, lastF, 1)) {
       w: 2 * MARGIN + 1,
       h: 2 * MARGIN + 1,
     };
-    const hud = [{ x0: aim.x - 112, x1: aim.x - 36, y0: aim.y - 28, y1: aim.y + 28 }];
+    const hud = [hudOf(aim)];
     // SG の照準円（CDN の 250）の中は、円の中の画素で色の係数を当てはめる
     const R = CIRCLE_PX_PER_SCALE * ACCURACY;
     const outside = fitTintAround(a, bg, aim.x, aim.y, (x, y) => Math.hypot(x - aim.x, y - aim.y) > R + 4);
@@ -327,30 +402,7 @@ for await (const { frame, img } of readFrames(video, firstF, lastF, 1)) {
     const disk = { x: aim.x, y: aim.y, r: R, edge: 3, tint: inside };
     const win = classifyRect(a.data, W, bg, FIELD, outside, rect, cfg, hud, disk);
     maskReticle(win, aim, aim.type, aim.size);
-    const excl: Window = { ...win, labels: new Int8Array(win.w * win.h) };
-    maskReticle(excl, aim, aim.type, aim.size);
-    for (let j = 0; j < excl.h; j++)
-      for (let i = 0; i < excl.w; i++) {
-        const x = excl.x0 + i;
-        const y = excl.y0 + j;
-        if (x >= hud[0]!.x0 && x <= hud[0]!.x1 && y >= hud[0]!.y0 && y <= hud[0]!.y1)
-          excl.labels[j * excl.w + i] = UNKNOWN;
-      }
     const dist = distanceToTarget(win, 60);
-    const dotsB = findDots(b, a, aim, excl);
-    const dotsC = findDots(c, a, aim, excl);
-    // 点は画面に固定（2026-10-04、録画 109 の遠）。数字の欠片は上へ流れるので、k と k2 の両方で同じ所にある点だけを残す
-    const moves: number[] = [];
-    const kept = dotsB.filter((d) => {
-      let best: { dx: number; dist: number } | null = null;
-      for (const e of dotsC) {
-        const dd = Math.hypot(e.x - d.x, e.y - d.y);
-        if (dd <= 12 && (!best || dd < best.dist)) best = { dx: e.x - d.x, dist: dd };
-      }
-      if (best) moves.push(best.dx);
-      return best !== null && best.dist <= PERSIST;
-    });
-    perTrigger.push({ t, fired, dots: kept.length, dotShift: median(moves), aimOk: true });
     if (values.dump) {
       const tA = findTarget(toHalfField(a, 0), bgHalf, aim);
       const fc = cropOf(a.data, 0, H, rect);
@@ -366,13 +418,13 @@ for await (const { frame, img } of readFrames(video, firstF, lastF, 1)) {
         tintOut: outside,
         tintIn: inside,
         bbox: tA ? { x0: tA.x0, y0: tA.y0, x1: tA.x1, y1: tA.y1 } : null,
-        dots: kept.map((d) => ({ x: d.x, y: d.y })),
+        dots: dots.map((d) => ({ x: d.x, y: d.y, kind: d.kind })),
         offset: dumpOffset,
       });
       dumpChunks.push(fc, bc);
       dumpOffset += fc.length + bc.length;
     }
-    for (const d of kept) {
+    for (const d of dots) {
       // 点は画面に固定なので、撃つ前のマスクの同じ画面の座標で見る
       const mx = Math.round(d.x) - win.x0;
       const my = Math.round(d.y) - win.y0;
@@ -383,18 +435,20 @@ for await (const { frame, img } of readFrames(video, firstF, lastF, 1)) {
         fired,
         x: d.x,
         y: d.y,
-        area: d.area,
+        contrast: d.contrast,
+        kind: d.kind,
         label: ok ? win.labels[my * win.w + mx]! : BG,
         dist: ok ? dist[my * win.w + mx]! : 60,
       });
     }
-    if (debugDir && done % Number(values['debug-every']) === 0) drawDebug(b, win, kept, fired);
+    const shown = frames.get(fired + 2);
+    if (debugDir && shown && done % Number(values['debug-every']) === 0) drawDebug(shown, win, dots, fired);
   }
-  for (const f of [...frames.keys()]) if (f < frame - SEARCH - K2 - BEFORE - 2) frames.delete(f);
+  for (const f of [...frames.keys()]) if (f < frame - SEARCH - K2 - BEFORE - 4) frames.delete(f);
 }
 
-/** 点（緑の丸）と撃つ前のコマのマスク（右: 的を青・不明をマゼンタ） */
-function drawDebug(img: Rgb, win: Window, dots: { x: number; y: number }[], frame: number): void {
+/** 点（当たりを緑・外れを赤の丸。左は撃った 2 コマ後）と撃つ前のコマのマスク（右: 的を青・不明をマゼンタ） */
+function drawDebug(img: Rgb, win: Window, dots: Dot[], frame: number): void {
   const WW = win.w * 2;
   const out = Buffer.alloc(WW * win.h * 3);
   for (let j = 0; j < win.h; j++)
@@ -419,7 +473,8 @@ function drawDebug(img: Rgb, win: Window, dots: { x: number; y: number }[], fram
       for (let k = 0; k < 64; k++) {
         const x = Math.round(cx + 6 * Math.cos((k * Math.PI) / 32)) + off;
         const y = Math.round(cy + 6 * Math.sin((k * Math.PI) / 32));
-        if (x >= off && x < off + win.w && y >= 0 && y < win.h) out.set([0, 255, 0], (y * WW + x) * 3);
+        if (x >= off && x < off + win.w && y >= 0 && y < win.h)
+          out.set(d.kind === 'hit' ? [0, 255, 0] : [255, 40, 40], (y * WW + x) * 3);
       }
     }
   }
@@ -433,28 +488,51 @@ if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 writeFileSync(
   join(dir, `${key}.tsv`),
   [
-    'section\ttrigger\tx\ty\tarea\tlabel\tdist',
+    'section\ttrigger\tfired\tx\ty\tcontrast\tkind\tlabel\tdist',
     ...rows.map((r) =>
-      [r.section, r.trigger, r.fired, r.x.toFixed(1), r.y.toFixed(1), r.area, r.label, r.dist.toFixed(1)].join('\t'),
+      [
+        r.section,
+        r.trigger,
+        r.fired,
+        r.x.toFixed(1),
+        r.y.toFixed(1),
+        r.contrast.toFixed(0),
+        r.kind,
+        r.label,
+        r.dist.toFixed(1),
+      ].join('\t'),
     ),
   ].join('\n') + '\n',
 );
 const sections = [...new Set(use.map((t) => t.section))];
 for (const s of sections) {
-  const pt = perTrigger.filter((p) => p.t.section === s && p.aimOk);
+  const all = perTrigger.filter((p) => p.t.section === s);
+  const pt = all.filter((p) => p.aimOk);
   const rs = rows.filter((r) => r.section === s);
   const hits = pt.reduce((a, p) => a + p.t.hits, 0);
-  const dots = pt.reduce((a, p) => a + p.dots, 0);
-  const inT = rs.filter((r) => r.label === TARGET).length;
-  const unk = rs.filter((r) => r.label === UNKNOWN).length;
-  const bgR = rs.filter((r) => r.label === BG);
-  const near = (lim: number): number => bgR.filter((r) => r.dist <= lim).length;
+  const hit = pt.reduce((a, p) => a + p.hit, 0);
+  const miss = pt.reduce((a, p) => a + p.miss, 0);
+  const eq = pt.filter((p) => p.hit === p.t.hits).length;
+  const over = pt.filter((p) => p.hit > p.t.hits).length;
+  const ten = pt.filter((p) => p.hit + p.miss === 10).length;
+  const over10 = pt.filter((p) => p.hit + p.miss > 10).length;
+  const lab = (k: Kind): string => {
+    const r = rs.filter((x) => x.kind === k);
+    const n = (l: number): number => r.filter((x) => x.label === l).length;
+    return `的 ${n(TARGET)}・不明 ${n(UNKNOWN)}・背景 ${n(BG)}`;
+  };
   log(
-    `${s}: トリガー ${pt.length}・当たったペレット ${hits}・点 ${dots}（${(dots / hits).toFixed(3)}）・的 ${inT}・不明 ${unk}・背景 ${bgR.length}` +
-      `（的まで ≤2px ${near(2)}・≤5px ${near(5)}・≤10px ${near(10)}・>10px ${bgR.length - near(10)}）` +
-      `・k→k2 の点の動き ${median(pt.map((p) => p.dotShift)).toFixed(1)}px・HUD の遅れ ${median(pt.map((p) => p.t.frame - p.fired))}f（最大 ${Math.max(...pt.map((p) => p.t.frame - p.fired))}f）`,
+    `${s}: トリガー ${pt.length} / ${all.length}・当たったペレット（HUD）${hits}・白 ${hit}（${(hit / hits).toFixed(3)}）・灰 ${miss}` +
+      `・白 = HUD の発 ${eq}・白 > HUD の発 ${over}・白 + 灰 = 10 の発 ${ten}・> 10 の発 ${over10}` +
+      `｜白のマスク: ${lab('hit')}｜灰のマスク: ${lab('miss')}` +
+      `・HUD の遅れ ${median(pt.map((p) => p.t.frame - p.fired))}f（最大 ${Math.max(...pt.map((p) => p.t.frame - p.fired))}f）`,
   );
 }
+if (values.verbose)
+  for (const p of perTrigger)
+    log(
+      `  ${p.t.section} t ${p.t.frame} fired ${p.fired} 遅れ ${p.t.frame - p.fired} HUD ${p.t.hits} 白 ${p.hit} 灰 ${p.miss}`,
+    );
 if (values.dump) {
   writeFileSync(join(dir, 'sg-dots-dump.bin'), Buffer.concat(dumpChunks));
   writeFileSync(join(dir, 'sg-dots-dump.json'), `${JSON.stringify({ id, field: FIELD, entries: dumpEntries })}\n`);
