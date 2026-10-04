@@ -199,5 +199,35 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "063-10",
+    "recording": "063",
+    "source": "V-0133",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [14, 14, 13, 14],
+    "unit": "f",
+    "description": "フラワー（I）+ デルタ（II）+ アスカ（III）で、I の発動（右のバースト欄の六角形が I から II に替わったフレーム。f1579・3017・4283・5677）から、フラワーのバーストのヒット（HUD の 179,244 の増分。f1593・3031・4296・5691）までの動画のフレーム数（1〜4 回目）",
+    "method": {
+      "tool": "still.ts・右のバースト欄を 1 フレームずつ並べた一覧・hud.ts --mode jumps",
+      "note": "5〜8 回目（I の発動 f6980・8300・9603・10949、ヒット f6994・8314・9617・10963）も 14・14・14・14f。13f の回（f4283）と 6980・9603 は、六角形が白く光った中に II が薄く出たフレームで読んだ。1f の揺れは録画の重複フレームの位置とみる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

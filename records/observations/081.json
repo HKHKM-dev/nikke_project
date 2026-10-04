@@ -454,5 +454,35 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "081-20",
+    "recording": "081",
+    "source": "V-0131",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [9, 9, 8, 9, 8, 9, 9, 10, 9],
+    "unit": "f",
+    "description": "ココア（I）+ ニヒリスター（II）で、II の発動（右のバースト欄の六角形が II から III に替わったフレーム。f1363・2543・3728・4997・6176・7359・8538・9717・10897）から、ニヒリスターのバーストの倍率ダメージのヒット（081-14 のフレーム）までの動画のフレーム数（1〜9 回目）",
+    "method": {
+      "tool": "still.ts・右のバースト欄を 1 フレームずつ並べた一覧・hud.ts --mode jumps",
+      "note": "どの回も、ニヒリスターの顔が CT の 20 に替わってから 3f 後に六角形が替わる。8f・10f の回は、替わり目の前後で II のタイマーの表示が 2 フレーム続く（録画の重複フレーム）ので、1f の揺れは録画の側とみる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 2,
+        "count": 9
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
