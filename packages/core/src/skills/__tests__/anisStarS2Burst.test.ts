@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { simulateShotFrames } from '../../cadence.ts';
 import { computeTriggerDamage, PROJECTILE_EXPLOSION_BUCKET, projectileExplosionMultiplier } from '../../damage.ts';
 import { chargeShotIntervalFrames, firingParams } from '../../frame/firing.ts';
+import { initialShooter, stepShooter } from '../../frame/shooter.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import type { CharacterData } from '../../types.ts';
 import { chargeSecondsToFrames, DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
@@ -118,15 +119,38 @@ describe('fixedChargeTime（チャージ時間の固定）', () => {
     expect(fixed.chargeFrames).toBe(chargeSecondsToFrames(0.7));
   });
 
-  it('drops the release frames between shots while fixed (C-0214)', () => {
+  it('drops the release frames between shots for DOWN_Charge, fixed or not (C-0222・C-0214)', () => {
     const base = firingParams(anis.shot);
-    expect(base.fixedCharge).toBe(false);
-    expect(chargeShotIntervalFrames(base, DEFAULT_WEAPON_MODEL.chargeReleaseFrames)).toBe(59 + 23);
+    expect(base.downCharge).toBe(true);
+    expect(chargeShotIntervalFrames(base, DEFAULT_WEAPON_MODEL.chargeReleaseFrames)).toBe(59);
     const fixed = firingParams(anis.shot, { ...ZERO_BUFFS, fixedChargeTime: 0.7 });
-    expect(fixed.fixedCharge).toBe(true);
     expect(chargeShotIntervalFrames(fixed, DEFAULT_WEAPON_MODEL.chargeReleaseFrames)).toBe(42);
     const frames = simulateShotFrames(anis.shot, DEFAULT_WEAPON_MODEL, fixed);
     expect(frames.slice(1).map((f, i) => f - frames[i]!)).toEqual([42, 42, 42, 42, 42]);
+    // 入力が UP のチャージ武器（デルタ）は今までどおり解放を足す（C-0143）
+    const up = firingParams(delta.shot);
+    expect(up.downCharge).toBe(false);
+    expect(chargeShotIntervalFrames(up, DEFAULT_WEAPON_MODEL.chargeReleaseFrames)).toBe(59 + 23);
+  });
+
+  it('carries the charge elapsed over when the charge time changes mid-charge (C-0223)', () => {
+    const slow = firingParams(anis.shot);
+    const fixed = firingParams(anis.shot, { ...ZERO_BUFFS, fixedChargeTime: 0.7 });
+    /** 1 発目の後、switchAt フレーム目から 0.7 秒の固定に切り替えたときの、1 発目から 2 発目までのフレーム数 */
+    const secondShotAfter = (switchAt: number): number => {
+      const state = initialShooter(anis.shot, DEFAULT_WEAPON_MODEL, slow);
+      const fired: number[] = [];
+      for (let f = 0; fired.length < 2; f++) {
+        const params = fired.length === 1 && f - fired[0]! >= switchAt ? fixed : slow;
+        if (stepShooter(state, anis.shot, DEFAULT_WEAPON_MODEL, params)) fired.push(f);
+      }
+      return fired[1]! - fired[0]!;
+    };
+    expect(secondShotAfter(1000)).toBe(59);
+    // 経過 30f で切り替え: 0.7 秒（42f）に届いたところで撃つ
+    expect(secondShotAfter(30)).toBe(42);
+    // 経過 50f で切り替え: もう届いているので、切り替えのフレームに撃つ
+    expect(secondShotAfter(50)).toBe(50);
   });
 
   it('is only allowed in timed, on self, without scaling, once per definition', () => {

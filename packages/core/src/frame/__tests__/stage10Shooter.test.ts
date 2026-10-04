@@ -139,10 +139,15 @@ describe('stage 10 shooter: degeneration (8.2)', () => {
       const actual = shotFramesUpTo(c.shot, 10_800);
       if (actual.length !== expected.length || actual.some((f, i) => f !== expected[i])) mismatched.push(c.resourceId);
     }
-    // Stage 11 紅蓮BS: 射撃の刻みを実測で較正した武器（MEASURED_CHARGE_CADENCE）だけは Stage 9 と違う（意図した差分）
+    // Stage 11 紅蓮BS: 射撃の刻みを実測で較正した武器（MEASURED_CHARGE_CADENCE）は Stage 9 と違う（意図した差分）。
+    // V-0134: 押下チャージ型（DOWN_Charge）も、発と発の間に解放を足さないので違う（意図した差分。C-0222）
     const calibrated = characters.filter((c) => measuredChargeCadence(c.shot) !== null).map((c) => c.resourceId);
     expect(calibrated).toEqual([225]);
-    expect(mismatched).toEqual(calibrated);
+    const downCharge = characters.filter((c) => c.shot.inputType === 'DOWN_Charge').map((c) => c.resourceId);
+    expect(downCharge).toHaveLength(6);
+    expect(mismatched).toEqual(
+      characters.map((c) => c.resourceId).filter((id) => calibrated.includes(id) || downCharge.includes(id)),
+    );
   });
 
   it('includes the chunked-reload weapons (reloadBullet < 1), which match too', () => {

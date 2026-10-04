@@ -50,11 +50,12 @@ export type FiringParams = {
    */
   chargeFrames: number;
   /**
-   * アニス：スター編: チャージ時間の固定（fixedChargeTime）が効いているか。効いていれば、発と発の間はチャージ時間だけで、
-   * 解放の分（WeaponModel.chargeReleaseFrames）を足さない（録画 162 のバーストの窓で 42f = chargeSecondsToFrames(0.7)。162-14）。
-   * リロードの後の 1 発目は今までどおり足す（plan/design-anis-star-s2-burst.md 9.3 節の c）
+   * 押下チャージ型（inputType が DOWN_Charge）のチャージ武器か。押下チャージ型は、発と発の間がチャージ時間だけで、
+   * 解放の分（WeaponModel.chargeReleaseFrames）を足さない（アニス：スターで、窓の外 59f・チャージ時間の固定の窓 42f。C-0222）。
+   * リロードの後の 1 発目は今までどおり足す。チャージの途中でチャージ時間が変わったら、前の発からの経過を持ち越す
+   * （frame/shooter.ts の chargeElapsed。C-0223）。ほかの 5 体はアニス：スターの形を当てている（未確認。V-0134）
    */
-  fixedCharge: boolean;
+  downCharge: boolean;
   /** Stage 11 モダニア: 装弾数無限（撃っても残弾を減らさない） */
   infiniteAmmo: boolean;
   /** Stage 11 モダニア: 使用武器の変更（無ければ null = 基礎の武器）。射手は変更後の武器を別の状態で撃つ（frame/firstPass.ts） */
@@ -157,15 +158,15 @@ export function firingParams(base: ShotParams, buffs: FiringBuffs = ZERO_FIRING_
     chargeFrames: isChargeWeapon(shot)
       ? chargeSecondsToFrames(chargeSecondsOf(shot, buffs)) + (measured?.chargeExtraFrames ?? 0)
       : 0,
-    fixedCharge: isChargeWeapon(shot) && buffs.fixedChargeTime > 0,
+    downCharge: isChargeWeapon(shot) && shot.inputType === 'DOWN_Charge',
     infiniteAmmo: buffs.infiniteAmmo > 0,
     weapon: buffs.weapon,
   };
 }
 
-/** チャージ武器の発と発の間（チャージ + 解放）。チャージ時間の固定の窓では解放を足さない（FiringParams.fixedCharge） */
+/** チャージ武器の発と発の間（チャージ + 解放）。押下チャージ型は解放を足さない（FiringParams.downCharge。C-0222） */
 export function chargeShotIntervalFrames(params: FiringParams, chargeReleaseFrames: number): number {
-  return params.chargeFrames + (params.fixedCharge ? 0 : chargeReleaseFrames);
+  return params.chargeFrames + (params.downCharge ? 0 : chargeReleaseFrames);
 }
 
 /**

@@ -223,7 +223,11 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
   if (shot.muzzleCount !== 1)
     unsupported('multi-muzzle', '複数銃口（二丁持ち）は未対応', 'Multiple muzzles not modeled');
   if (shot.inputType === 'DOWN_Charge')
-    unsupported('down-charge', '押下チャージ型の入力は未対応', 'DOWN_Charge input not modeled');
+    unsupported(
+      'down-charge',
+      '押下チャージ型の入力は一部だけ対応（発と発の間に解放を足さない刻みは、アニス：スターで確かめた形をほかの押下チャージ型にも当てている。C-0222）',
+      'DOWN_Charge input only partly modeled (no release frames between shots, verified on Anis: Star only)',
+    );
   // Stage 11 紅蓮BS: 射撃の刻みを実測で較正した武器（frame/firing.ts の MEASURED_CHARGE_CADENCE）は近似として扱う
   if (shot.maintainFireStance !== 0 && measuredChargeCadence(shot) !== null)
     approx(
