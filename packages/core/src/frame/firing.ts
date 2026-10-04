@@ -1,10 +1,18 @@
 // Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）から、射手が使う実効値を作る（plan/design-stage10.md 3 節）。
 // 最大装弾数は録画 37・39（比率は加算、端数は四捨五入）、速度の式は録画 40（時間 × (1 − 速度)）で確定した。
 // Stage 11 モダニア: 装弾数無限と使用武器の変更（殲滅モード）も射撃の実効値に入れた（plan/design-stage11-modernia.md 3.4 節）。
-// Stage 11 紅蓮BS: 射撃の刻みを実測で較正する武器（MEASURED_CHARGE_CADENCE）の分もここで足す（plan/design-stage11-scarlet-bs.md 3.3 節）。
+// 射撃姿勢維持型（maintainFireStance > 0）の刻みも、CDN の項目からここで作る（plan/design-fire-stance-cadence.md。
+// Stage 11 の紅蓮BS の較正表 MEASURED_CHARGE_CADENCE を置き換えた）。
 import type { BuffTotals, ChangedWeapon } from '../skills/buffs.ts';
+import { GAME_SECONDS_PER_FRAME } from '../time.ts';
 import type { ShotParams } from '../types.ts';
-import { chargeSecondsToFrames, isChargeWeapon, reloadSecondsToFrames } from '../weapons.ts';
+import {
+  chargeSecondsToFrames,
+  DEFAULT_WEAPON_MODEL,
+  isChargeWeapon,
+  reloadSecondsToFrames,
+  type WeaponModel,
+} from '../weapons.ts';
 
 /** 射撃に効くバフの合計（BuffTotals のうち射撃に効くフィールド） */
 export type FiringBuffs = Pick<
@@ -36,7 +44,8 @@ export type FiringParams = {
   maxAmmo: number;
   /**
    * 分割リロードの 1 回分（reloadBullet ≥ 1 の武器は 1 回で満タン）のフレーム数。Stage 24: 端数つき（reloadSecondsToFrames）。
-   * 射手は端数を持ち越して整数の待ちにする（frame/shooter.ts の nextChunkFrames）。分割リロードは段ごとに切り上げる（C-0154）
+   * 射手は端数を持ち越して整数の待ちにする（frame/shooter.ts の nextChunkFrames）。分割リロードは段ごとに切り上げる（C-0154）。
+   * 射撃姿勢維持型は WeaponModel.stanceReloadExtraFrames を足した値（C-0149。plan/design-fire-stance-cadence.md 3.4 節）
    */
   reloadChunkFrames: number;
   /**
@@ -44,11 +53,10 @@ export type FiringParams = {
    * plan/design-sg-split-reload.md）
    */
   splitReload: boolean;
-  /**
-   * チャージ時間のフレーム数（チャージ武器だけ意味を持つ。解放遅延は含まない）。
-   * Stage 11 紅蓮BS: 較正表（MEASURED_CHARGE_CADENCE）の武器は chargeExtraFrames を足した値（チャージ速度はチャージ時間の側にだけ効く）
-   */
+  /** チャージ時間のフレーム数（チャージ武器だけ意味を持つ。解放遅延は含まない。チャージ速度はここにだけ効く） */
   chargeFrames: number;
+  /** 射撃姿勢維持型のチャージ武器の姿勢（stanceFrames）。ほかの武器は null */
+  stance: StanceFrames | null;
   /**
    * 押下チャージ型（inputType が DOWN_Charge）のチャージ武器か。押下チャージ型は、発と発の間がチャージ時間だけで、
    * 解放の分（WeaponModel.chargeReleaseFrames）を足さない（アニス：スターで、窓の外 59f・チャージ時間の固定の窓 42f。C-0222）。
@@ -90,41 +98,27 @@ export function isZeroFiring(buffs: FiringBuffs): boolean {
   );
 }
 
-/** Stage 11 紅蓮BS: 実測の較正値。チャージの後に足すフレームと、リロード 1 回分に足すフレーム（どちらも速度のバフで縮まない） */
-export type MeasuredChargeCadence = { chargeExtraFrames: number; reloadExtraFrames: number };
+/** 射撃姿勢維持型の姿勢（plan/design-fire-stance-cadence.md 3.2 節。C-0217） */
+export type StanceFrames = {
+  /** 姿勢の長さ ⌈S⌉。S = maintainFireStance ÷ 100 秒をゲーム内の時計で数えた長さ。満ちたフレームから表示が 100% に戻るまで */
+  frames: number;
+  /** 満ちてから撃つまで H = max(1, ⌈S × uptypeFireTiming ÷ 10000⌉)。射撃姿勢維持型でない武器は 1f（075-05） */
+  holdFrames: number;
+};
 
 /**
- * Stage 11 紅蓮BS: 射撃の刻みを実測で較正する武器（plan/design-stage11-scarlet-bs.md 3.3 節）。
- * 202 体で射撃のパラメータ（チャージ 0.3 秒・maintainFireStance 23・uptypeFireTiming 1）が紅蓮：ブラックシャドウだけ違い、
- * 1 秒チャージの較正（チャージ 59f + 解放 23f = 82f）が当てはまらない。**録画 46・55・70・71** で間隔 43f = チャージ 18f + 2f + 23f、
- * 9 発目 → 次の 1 発目 172f = リロード 117.6f + 11f + 43f（`046-21`。C-0149）。Stage 23 でチャージをゲーム内の時計で数えるように
- * したので、チャージの分を 3f → 2f にした（解放遅延が 22f → 23f になったぶん。C-0144）。Stage 24 でリロードもゲーム内の時計で
- * 数えるようにしたので、リロードの分を 9f → 11f にした（リロード 120f → 117.6f のぶん）
- * ShotParams に resourceId が無く、キャラの読み込みの経路（アプリ・テスト・CLI）も複数あるので、射撃のパラメータの組で引く
- * （resourceIds は出どころの記録）。同じ組のキャラが出たら実測で確かめる
+ * 射撃姿勢維持型（maintainFireStance > 0）のチャージ武器の姿勢。ほかは null。
+ * 項目を持つのは紅蓮：ブラックシャドウ（13.53f → 14・1）・A2（49.41f → 50・24）・レイヴン（48.82f → 49・16）の 3 体だけで、
+ * 3 体とも発と発の間・ハイドからの 1 発目が実測とフレーム単位で合う（C-0149・C-0216・C-0218）。丸め（切り上げ）は 3 体に合うものを
+ * 選んだ（四捨五入では A2 が 1f 合わない。設計書 3.3 節）。割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く
  */
-export const MEASURED_CHARGE_CADENCE: readonly {
-  resourceIds: readonly number[];
-  match: Pick<ShotParams, 'chargeTime' | 'maintainFireStance' | 'uptypeFireTiming'>;
-  cadence: MeasuredChargeCadence;
-}[] = [
-  {
-    resourceIds: [225],
-    match: { chargeTime: 0.3, maintainFireStance: 23, uptypeFireTiming: 1 },
-    cadence: { chargeExtraFrames: 2, reloadExtraFrames: 11 },
-  },
-];
-
-/** 較正表に載っている武器ならその較正値、無ければ null */
-export function measuredChargeCadence(shot: ShotParams): MeasuredChargeCadence | null {
-  if (!isChargeWeapon(shot)) return null;
-  const row = MEASURED_CHARGE_CADENCE.find(
-    (r) =>
-      r.match.chargeTime === shot.chargeTime &&
-      r.match.maintainFireStance === shot.maintainFireStance &&
-      r.match.uptypeFireTiming === shot.uptypeFireTiming,
-  );
-  return row?.cadence ?? null;
+export function stanceFrames(shot: ShotParams): StanceFrames | null {
+  if (!isChargeWeapon(shot) || shot.maintainFireStance <= 0) return null;
+  const s = shot.maintainFireStance / 100 / GAME_SECONDS_PER_FRAME;
+  return {
+    frames: Math.ceil(s - 1e-9),
+    holdFrames: Math.max(1, Math.ceil((s * shot.uptypeFireTiming) / 10000 - 1e-9)),
+  };
 }
 
 /** 速度のバフで縮めた秒数 */
@@ -146,27 +140,41 @@ export function effectiveMaxAmmo(baseMaxAmmo: number, buffs: FiringBuffs): numbe
  * バフ込みの実効値。buffs 省略は基礎値（Stage 9 までの射手と同じ）。
  * Stage 11 モダニア: 使用武器の変更が効いていれば、装弾数・リロード・チャージは変更後の武器から取る
  */
-export function firingParams(base: ShotParams, buffs: FiringBuffs = ZERO_FIRING_BUFFS): FiringParams {
+export function firingParams(
+  base: ShotParams,
+  buffs: FiringBuffs = ZERO_FIRING_BUFFS,
+  model: Pick<WeaponModel, 'stanceReloadExtraFrames'> = DEFAULT_WEAPON_MODEL,
+): FiringParams {
   const shot = buffs.weapon?.shot ?? base;
-  const measured = measuredChargeCadence(shot);
+  const stance = stanceFrames(shot);
   return {
     maxAmmo: effectiveMaxAmmo(shot.maxAmmo, buffs),
     reloadChunkFrames:
       reloadSecondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)) +
-      (measured?.reloadExtraFrames ?? 0),
+      (stance === null ? 0 : model.stanceReloadExtraFrames),
     splitReload: shot.reloadBullet < 1,
-    chargeFrames: isChargeWeapon(shot)
-      ? chargeSecondsToFrames(chargeSecondsOf(shot, buffs)) + (measured?.chargeExtraFrames ?? 0)
-      : 0,
+    // max(0, …) は、0 秒のチャージで切り上げが −0 を出すのを 0 にそろえる
+    chargeFrames: isChargeWeapon(shot) ? Math.max(0, chargeSecondsToFrames(chargeSecondsOf(shot, buffs))) : 0,
+    stance,
     downCharge: isChargeWeapon(shot) && shot.inputType === 'DOWN_Charge',
     infiniteAmmo: buffs.infiniteAmmo > 0,
     weapon: buffs.weapon,
   };
 }
 
-/** チャージ武器の発と発の間（チャージ + 解放）。押下チャージ型は解放を足さない（FiringParams.downCharge。C-0222） */
-export function chargeShotIntervalFrames(params: FiringParams, chargeReleaseFrames: number): number {
-  return params.chargeFrames + (params.downCharge ? 0 : chargeReleaseFrames);
+/**
+ * チャージ武器の発と発の間。
+ * - 射撃姿勢維持型: 姿勢の長さ ⌈S⌉ + 構え（aimInFrames）+ チャージ − 1（姿勢の残り ⌈S⌉ − H・構え・チャージの伸び C − 1・
+ *   満ちてから撃つまで H の和。plan/design-fire-stance-cadence.md 3.2 節。紅蓮BS 43f・レイヴン 119f・A2 120f）。
+ *   押下チャージ型と重なるキャラはいない（重なれば姿勢を優先する）
+ * - ほか: チャージ + 解放（chargeReleaseFrames）。押下チャージ型は解放を足さない（FiringParams.downCharge。C-0222）
+ */
+export function chargeShotIntervalFrames(
+  params: FiringParams,
+  model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
+): number {
+  if (params.stance !== null) return params.stance.frames + model.aimInFrames + params.chargeFrames - 1;
+  return params.chargeFrames + (params.downCharge ? 0 : model.chargeReleaseFrames);
 }
 
 /**

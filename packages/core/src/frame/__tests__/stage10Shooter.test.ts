@@ -20,13 +20,7 @@ import {
   reloadSecondsToFrames,
   type WeaponModel,
 } from '../../weapons.ts';
-import {
-  ZERO_FIRING_BUFFS,
-  effectiveMaxAmmo,
-  firingParams,
-  measuredChargeCadence,
-  type FiringBuffs,
-} from '../firing.ts';
+import { ZERO_FIRING_BUFFS, effectiveMaxAmmo, firingParams, stanceFrames, type FiringBuffs } from '../firing.ts';
 import { initialShooter, refillAmmo, shotFramesUpTo, stepShooter } from '../shooter.ts';
 
 const CHARACTERS_DIR = new URL('../../../data/characters/', import.meta.url);
@@ -139,14 +133,15 @@ describe('stage 10 shooter: degeneration (8.2)', () => {
       const actual = shotFramesUpTo(c.shot, 10_800);
       if (actual.length !== expected.length || actual.some((f, i) => f !== expected[i])) mismatched.push(c.resourceId);
     }
-    // Stage 11 紅蓮BS: 射撃の刻みを実測で較正した武器（MEASURED_CHARGE_CADENCE）は Stage 9 と違う（意図した差分）。
+    // 射撃姿勢維持型（frame/firing.ts の stanceFrames。Stage 11 の紅蓮BS の較正表を置き換えた）は Stage 9 と違う（意図した差分。
+    // plan/design-fire-stance-cadence.md）。項目を持つのは 3 体だけで、増えたら式の外挿になるので気づけるようにする。
     // V-0134: 押下チャージ型（DOWN_Charge）も、発と発の間に解放を足さないので違う（意図した差分。C-0222）
-    const calibrated = characters.filter((c) => measuredChargeCadence(c.shot) !== null).map((c) => c.resourceId);
-    expect(calibrated).toEqual([225]);
+    const stance = characters.filter((c) => stanceFrames(c.shot) !== null).map((c) => c.resourceId);
+    expect([...stance].sort((a, b) => a - b)).toEqual([225, 811, 851]);
     const downCharge = characters.filter((c) => c.shot.inputType === 'DOWN_Charge').map((c) => c.resourceId);
     expect(downCharge).toHaveLength(6);
     expect(mismatched).toEqual(
-      characters.map((c) => c.resourceId).filter((id) => calibrated.includes(id) || downCharge.includes(id)),
+      characters.map((c) => c.resourceId).filter((id) => stance.includes(id) || downCharge.includes(id)),
     );
   });
 

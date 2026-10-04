@@ -4,7 +4,7 @@
 // Stage 11 モダニア: 射撃ごとの倍率ダメージ（「通常攻撃が命中した時、最終攻撃力の X% の追加ダメージ」）を 1 トリガーの値に足す（perShot）。
 // 使用武器の変更（殲滅モード）が効いている区間は、武器倍率・コア倍率を変更後の武器（buffs.weapon）から取る。
 import { computeCadence, type CadenceResult } from './cadence.ts';
-import { measuredChargeCadence, type FiringParams } from './frame/firing.ts';
+import type { FiringParams } from './frame/firing.ts';
 import { elementMultiplier } from './element.ts';
 import type { ResolvedSkillDamage } from './skills/burstDamage.ts';
 import {
@@ -228,15 +228,14 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
       '押下チャージ型の入力は一部だけ対応（発と発の間に解放を足さない刻みは、アニス：スターで確かめた形をほかの押下チャージ型にも当てている。C-0222）',
       'DOWN_Charge input only partly modeled (no release frames between shots, verified on Anis: Star only)',
     );
-  // Stage 11 紅蓮BS: 射撃の刻みを実測で較正した武器（frame/firing.ts の MEASURED_CHARGE_CADENCE）は近似として扱う
-  if (shot.maintainFireStance !== 0 && measuredChargeCadence(shot) !== null)
+  // 射撃姿勢維持型の刻みは CDN の項目からの式（frame/firing.ts の stanceFrames。C-0217 は仮説）なので近似として扱う。
+  // Stage 11 の紅蓮BS の較正表（measured-cadence）と、レイヴン・A2 の未対応（fire-stance）を 1 つにした（plan/design-fire-stance-cadence.md 5.4 節）
+  if (shot.maintainFireStance !== 0)
     approx(
-      'measured-cadence',
-      '射撃の刻みは射撃場の実測で較正（射撃姿勢維持型。紅蓮：ブラックシャドウは 43f 間隔・リロードをまたいで 172f）',
-      'Shot cadence calibrated on range recordings (fire-stance weapon)',
+      'fire-stance',
+      '射撃姿勢維持型の刻みは、CDN の射撃姿勢維持の項目からの式（仮説。射撃場の AUTO で紅蓮：ブラックシャドウ・レイヴン・A2 を実測）',
+      'Fire-stance weapon cadence from the CDN stance parameters (hypothesis; measured on range AUTO for 3 characters)',
     );
-  else if (shot.maintainFireStance !== 0)
-    unsupported('fire-stance', '射撃姿勢維持型の武器は未対応', 'Fire-stance weapons not modeled');
   if (shot.fireType === 'ProjectileCurve')
     unsupported('projectile-curve', '曲射型の弾は未対応', 'Curved projectiles not modeled');
   if (shot.penetration > 0) unsupported('penetration', '貫通は未対応', 'Penetration not modeled');
