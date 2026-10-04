@@ -1,0 +1,99 @@
+{
+  "verification": "V-0162",
+  "team": [
+    {
+      "rid": 305,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "スキルの効果なし（定義は notes だけ）。ゲージの仮説（S2 がフラワーと同じくゲージを溜めるか）は 1 ヒットの値に出ないので、検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-body-nocrit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "手順 1 の発（中近・距離ボーナスあり）の、コア以外・会心なしの 1 ヒットの的の上の数値"
+    },
+    {
+      "id": "hit-body-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "手順 1 の発（中近・距離ボーナスあり）の、コア以外・会心の 1 ヒットの的の上の数値"
+    },
+    {
+      "id": "hit-core-nocrit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "手順 1 の発（中近・距離ボーナスあり）の、コア・会心なしの 1 ヒットの的の上の数値"
+    },
+    {
+      "id": "hit-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "手順 1 の発（中近・距離ボーナスあり）の、コア・会心の 1 ヒットの的の上の数値"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "583a5ae2ba65295b3739520c5ca7195ecf91b7ea",
+    "values": {
+      "H0": {
+        "hit-body-nocrit": 8463.460005,
+        "hit-body-crit": 11718.63693,
+        "hit-core-nocrit": 14973.813855,
+        "hit-core-crit": 18228.99078
+      }
+    },
+    "seen": {}
+  }
+}

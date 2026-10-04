@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 155・仮説 60・棄却 37・範囲外 1（計 253）
+件数: 確定 155・仮説 61・棄却 37・範囲外 1（計 254）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1280,6 +1280,11 @@
   - モデル側: `data/skills/822.json` の skill1・skill2・burst の notes（効果なし）
   - 検証記録: V-0161
   - 定義: `data/skills/822.json` の skill1 の notes[0]、`data/skills/822.json` の skill2 の notes[0]、`data/skills/822.json` の burst の notes[0]
+- **C-0254** I-DOLL・オーシャンのスキル（S1 の最後の弾丸の命中時・S2・バーストの、味方の HP 回復）は、オーシャンと味方の与ダメージとバーストゲージを変えない（回復を受けた時に発動するスキルを持つ味方のいない編成で）
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
+  - 根拠: 撮る前の解釈（説明文の 3 行とも、味方の HP の回復だけ）。V-0162
+  - モデル側: `data/skills/305.json` の全スロットの notes（効果なし。回復は未対応）
+  - 定義: `data/skills/305.json` の skill1 の notes[0]、`data/skills/305.json` の skill2 の notes[0]、`data/skills/305.json` の burst の notes[0]
 
 ## 敵・的・場面
 
