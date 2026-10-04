@@ -105,5 +105,35 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "040-06",
+    "recording": "040",
+    "source": "V-0147",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [23, 23, 23, 23, 23],
+    "unit": "f",
+    "description": "アドミ（II）+ ユニ + ラム（I・操作）+ クイーン（真）（III）で、1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1327・3706・6083・8460・10838）から、クイーン（真）のバーストの倍率ダメージのヒット（HUD の約 420 万〜632 万の増分。f1350・3729・6106・8483・10861）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄・HUD を 1 フレームずつ並べた一覧・hud.ts --mode jumps",
+      "note": "ヒットは FULL BURST の表示の中で、HUD の数字を拡大して 1 フレームずつ目で読んだ（hud.ts は gap 24〜26 で拾えない）。2・3・4 回目は、クイーン（真）の増分の前か後ろの 1 フレームに、別の小さい増分がある。II はどの回もアドミで、ユニは発動していない（モデルと同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 4,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
