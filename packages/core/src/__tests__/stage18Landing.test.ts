@@ -127,11 +127,17 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(targetRateOf(profile.coreHitRate, RL_HOMING, at('far'))).toBe(0.5914);
     expect(targetRateOf(profile.coreHitRate, RL_HOMING, at('midFarA'))).toBe(0.7424);
     for (const c of [direct100, RL_HOMING]) expect(projectileRowListedUnmeasured(profile.coreHitRate, c)).toBe(false);
-    // 曲射 1500 は未測定
+    // 曲射 1500 も 4 つの距離帯の値（C-0242）
     const curve = rl('ProjectileCurve', 1500);
-    expect(rateRowOf(profile.coreHitRate, curve)).toBeNull();
-    expect(targetRateOf(profile.coreHitRate, curve, at('far'))).toBeNull();
-    expect(projectileRowListedUnmeasured(profile.coreHitRate, curve)).toBe(true);
+    expect(rateRowOf(profile.coreHitRate, curve)).toEqual({
+      near: 0.9904,
+      midNear: 0.9267,
+      far: 0.8143,
+      midFar: 0.8667,
+    });
+    expect(targetRateOf(profile.coreHitRate, curve, at('far'))).toBe(0.8143);
+    expect(targetRateOf(profile.coreHitRate, curve, at('midFarC'))).toBe(0.8667);
+    expect(projectileRowListedUnmeasured(profile.coreHitRate, curve)).toBe(false);
     // 表に無い弾の種類と、飛ぶ弾でない RL も未測定。こちらは「外す側」とは書いていない
     for (const c of [rl('ProjectileDirect', 250), rl('Instant', null)]) {
       expect(targetRateOf(profile.coreHitRate, c, at('far'))).toBeNull();
@@ -495,7 +501,7 @@ describe('編成（自動の条件）', () => {
   });
 
   it('writes the notes: table, mix, unmeasured cells, RL/SR first shot, MG spin-up, and unmeasured landings', () => {
-    const codes = (c: CharacterData, duration = 180) =>
+    const codes = (c: CharacterData, duration = 180, target = profile) =>
       computeTeamDamage({
         slots: [slot(c, true)],
         enemy: {
@@ -503,8 +509,8 @@ describe('編成（自動の条件）', () => {
           element: 'Fire',
           hasCore: true,
           events: enemyEventsOf(master, ['range-3min-jump'], duration),
-          target: profile,
-          landings: enemyLandingsOf(master, ['range-3min-jump'], duration, profile),
+          target,
+          landings: enemyLandingsOf(master, ['range-3min-jump'], duration, target),
         },
         durationSeconds: duration,
       }).slots[0]!.notes.map((n) => n.code);
@@ -514,10 +520,21 @@ describe('編成（自動の条件）', () => {
     expect(codes(RL)).toContain('landing-first-shot-miss');
     // SR・RL の弾丸命中率は 1（C-0168）なので、未測定の注記は出ない
     expect(codes(RL)).not.toContain('auto-condition-unmeasured');
-    // C-0171: 外す側の弾の種類の RL で行が未測定（曲射）なら、コア命中率が未測定で、遠で外す注記が出る。直進弾 400 には出ない
+    // C-0171: 外す側の弾の種類の RL で行が未測定（null と明記）なら、コア命中率が未測定で、遠で外す注記が出る。直進弾 400 には出ない。
+    // 表の外す側の行は C-0242 で全部測ったので、曲射の行を null に戻した表で確かめる
     const curve = rl('ProjectileCurve', 1500);
-    expect(codes(curve)).toContain('auto-condition-unmeasured');
-    expect(codes(curve)).toContain('core-miss-by-projectile');
+    const rlRow = profile.coreHitRate.RL as { byProjectile: Record<string, unknown> };
+    const curveUnmeasured = {
+      ...profile,
+      coreHitRate: {
+        ...profile.coreHitRate,
+        RL: { byProjectile: { ...rlRow.byProjectile, 'ProjectileCurve:1500': null } },
+      },
+    } as typeof profile;
+    expect(codes(curve, 180, curveUnmeasured)).toContain('auto-condition-unmeasured');
+    expect(codes(curve, 180, curveUnmeasured)).toContain('core-miss-by-projectile');
+    expect(codes(curve)).not.toContain('auto-condition-unmeasured');
+    expect(codes(curve)).not.toContain('core-miss-by-projectile');
     expect(codes(RL)).not.toContain('core-miss-by-projectile');
     // C-0174・C-0241: 誘導弾 100 と直進弾 100 は 4 つの距離帯とも測った
     expect(codes(RL_HOMING)).not.toContain('auto-condition-unmeasured');
