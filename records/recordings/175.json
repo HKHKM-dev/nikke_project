@@ -1,0 +1,29 @@
+{
+  "id": "175",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-175_rl_uni.mp4",
+  "original": "2026-10-04_18-43-05.mp4",
+  "durationSec": 202,
+  "frames": 12118,
+  "fps": 60,
+  "sizeMB": 244.8,
+  "sha256": "763b11bcbe30",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。V-0151"
+}
