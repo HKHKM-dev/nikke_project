@@ -39,7 +39,7 @@ import {
 import { firingParams } from '../frame/firing.ts';
 import { BURST_HIT_USES_PRE_ACTIVATION_BUFFS, burstHitBuffs, perShotDamageOf, planTeamRun } from '../frame/plan.ts';
 import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
+import { MAX_SKILL_LEVELS, isResolvedShotCount } from '../skills/resolve.ts';
 import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges, type SlotBuffState } from '../skills/timeline.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
@@ -96,6 +96,14 @@ function hasFiringWindow(state: SlotBuffState): boolean {
 }
 
 /**
+ * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.5 節）: 枠自身の射撃の回数で開いた窓が効いているか。
+ * その窓は撃っている間にだけ開き直るので、窓の中と外の発数の割合は時間の割合と大きく違う（リロード・MG のスピンアップ）
+ */
+function hasOwnShotCountWindow(state: SlotBuffState, slotIndex: number): boolean {
+  return state.timedEffects.some((e) => e.sourceSlotIndex === slotIndex && isResolvedShotCount(e.trigger));
+}
+
+/**
  * 通常攻撃のトリガー数を射撃の列から数える範囲（plan/design-calc-hybrid.md）。
  * - 'hybrid'（既定）: 持続の射撃バフが掛かっているグループだけ（plan/design-stage10.md 5 節）
  * - 'average'（design-stage10.md 5 節の案 (a)）: 数えない。持続の射撃バフもグループのバフ込みの平均レートに畳み込む
@@ -138,7 +146,11 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     const groups = groupTimeline(timeline, index);
     // 案 (b)（plan/design-calc-hybrid.md）: 射撃の窓を持つ枠は、窓の外のグループも射撃の列から数える
     const shotCounting = options.shotCounting ?? 'hybrid';
-    const countSlotShots = shotCounting === 'firingSlots' && groups.some((g) => hasFiringWindow(g.state));
+    // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.5 節）: 自分の射撃の回数で開く窓を持つ枠は、'hybrid' でも
+    // 全グループを射撃の列から数える（窓の中だけ数えると、窓の外の平均レートが残りの発数を外す）
+    const countSlotShots =
+      (shotCounting === 'firingSlots' && groups.some((g) => hasFiringWindow(g.state))) ||
+      (shotCounting === 'hybrid' && groups.some((g) => hasOwnShotCountWindow(g.state, index)));
     for (const group of groups) {
       const state = group.state;
       // C-0170: 持続の命中率▲が効いているグループは、その N でコア命中率を出し直す（自動の枠は N が鍵に入るのでグループ内で同じ）

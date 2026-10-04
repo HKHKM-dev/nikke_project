@@ -74,10 +74,12 @@ import {
   type TimelineSlot,
 } from '../skills/timeline.ts';
 import {
+  advanceShotCount,
   createTriggerTracker,
   fireContextOf,
   type FrameEvents,
   type ShotEvent,
+  shotCountWeight,
   type TriggerTracker,
 } from '../skills/triggers.ts';
 import { isFiringStat, type BuffStat, type ShotCountKind } from '../skills/types.ts';
@@ -115,6 +117,8 @@ export type FirstPassOptions = {
    * TimelineSlot.hitRate の定数のまま。区間は昇順で [0, frames) を覆う
    */
   hitRates?: readonly (readonly LandingHitRateSpan[] | null)[];
+  /** ルドミラ：ウィンターオーナー編: 敵にコアがあるか（省略 true）。無ければ coreHit の回数は増えない */
+  enemyHasCore?: boolean;
 };
 
 /** 射撃に効く timed 効果の窓（Stage 11 から対象の枠ごと。発火ごとに対象が変わる効果があるため） */
@@ -385,7 +389,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const changedShooters: (ShooterState | null)[] = slots.map(() => null);
   const activeWeapon: (string | null)[] = slots.map(() => null);
   const logs: (ShotLog | null)[] = slots.map((slot) =>
-    slot === null ? null : { frames: [], fullCharge: isChargeWeapon(slot.character.shot), lastShotFrames: [] },
+    slot === null
+      ? null
+      : { frames: [], fullCharge: isChargeWeapon(slot.character.shot), lastShotFrames: [], hits: [], coreHits: [] },
   );
 
   // ---- バースト ----
@@ -404,14 +410,29 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         (1 + gaugeSpeed[i]!),
   );
   const pellets = slots.map((slot) => slot !== null && slot.character.shot.shotCount > 1);
-  /** 枠 i がフレーム f に撃った 1 発のゲージ（f は単調に増える） */
-  const energyAt = (i: number, f: number): number => {
+  /** 枠 i のフレーム f の弾丸命中率の区間（自動でない枠は undefined。f は単調に増える） */
+  const spanAt = (i: number, f: number): LandingHitRateSpan | undefined => {
     const spans = hitRateSpans[i];
-    if (!spans) return energies[i]!;
+    if (!spans) return undefined;
     while (hitRateAt[i]! + 1 < spans.length && spans[hitRateAt[i]!]!.end <= f) hitRateAt[i]! += 1;
-    const span = spans[hitRateAt[i]!];
+    return spans[hitRateAt[i]!];
+  };
+  /** 枠 i がフレーム f に撃った 1 発のゲージ */
+  const energyAt = (i: number, f: number): number => {
+    if (!hitRateSpans[i]) return energies[i]!;
+    const span = spanAt(i, f);
     const pelletRate = pellets[i] && span?.measured !== true ? SG_PELLET_GAUGE_HIT_RATE : 1;
     return energies[i]! * (span?.hitRate ?? 1) * pelletRate;
+  };
+  // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: 発ごとの命中・コアの命中の期待値。
+  // 区間はゲージと同じ計画の値（常時の命中率▲だけ）。SG の命中は 1 トリガーを 1 回（ペレットのどれかが当たる）
+  const enemyHasCore = options.enemyHasCore ?? true;
+  const hitsAt = (i: number, f: number): { hits: number; coreHits: number } => {
+    const slot = slots[i]!;
+    const span = spanAt(i, f);
+    const hitRate = span?.hitRate ?? slot.hitRate ?? 1;
+    const coreHits = span !== undefined ? span.coreHits : (slot.hitRate ?? 1) * (slot.coreHitRate ?? 0);
+    return { hits: pellets[i] ? 1 : hitRate, coreHits: enemyHasCore ? coreHits : 0 };
   };
   // V-0030: 段のヒットでゲージを溜める循環。溜めるゲージは当たるフレームに予約する（pendingGauge）
   const cycleTrackers: CycleGaugeTracker[] = [];
@@ -614,17 +635,19 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (state.lastShot) log.lastShotFrames!.push(f);
       const isPartial = partial !== null && partial < 1;
       if (isPartial) (log.partialShots ??= []).push({ frame: f, progress: partial });
-      shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge && !isPartial };
+      const { hits, coreHits } = hitsAt(i, f);
+      log.hits!.push(hits);
+      log.coreHits!.push(coreHits);
+      shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge && !isPartial, hits, coreHits };
       gauge += energyAt(i, f) * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1);
     });
     // ヘルム編: ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
     for (const t of damageGaugeTrackers) {
       const shot = shotEvents[t.slotIndex];
       if (shot === null || shot === undefined) continue;
-      if (t.count === 'lastShot' && !shot.lastShot) continue;
-      if (t.count === 'fullChargeShot' && !shot.fullCharge) continue;
-      t.n += 1;
-      if (t.n % t.every !== 0) continue;
+      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
+      t.n = counted.count;
+      if (!counted.fired) continue;
       for (const d of t.gaugeHits) {
         const at = f + d;
         if (d === 0) gauge += t.energy;
@@ -639,10 +662,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       let fired = false;
       let apply = false;
       for (const e of t.effects) {
-        if (e.count === 'lastShot' && !shot.lastShot) continue;
-        if (e.count === 'fullChargeShot' && !shot.fullCharge) continue;
-        e.n += 1;
-        if (e.n % e.every !== 0) continue;
+        const counted = advanceShotCount(e.n, shotCountWeight(e.count, shot), e.every);
+        e.n = counted.count;
+        if (!counted.fired) continue;
         fired = true;
         if (e.onApply) apply = true;
       }
@@ -874,7 +896,10 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         if (!state || !slot) continue;
         const params = paramsAt(target, f);
         const before = state.ammo;
-        refillAmmo(state, refillRounds(params.maxAmmo, src.effect.value), slot.character.shot, model, params);
+        // ルドミラ：ウィンターオーナー編: 発数の弾丸チャージ（scaling 'flat'）は値をそのまま足す
+        const rounds =
+          src.effect.scaling === 'flat' ? src.effect.value : refillRounds(params.maxAmmo, src.effect.value);
+        refillAmmo(state, rounds, slot.character.shot, model, params);
         instants.push({
           frame: f,
           sourceSlotIndex: src.sourceSlotIndex,

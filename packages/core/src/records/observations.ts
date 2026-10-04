@@ -161,6 +161,20 @@ function slotOf<T>(slots: readonly (T | null)[], ctx: MetricContext): T {
   return slot;
 }
 
+function magazineShots(result: SimResult, ctx: MetricContext): number[] {
+  const log = slotOf(result.shots, ctx);
+  const count = Number(ctx.args.count);
+  const ends = (log.lastShotFrames ?? []).slice(0, count);
+  if (ends.length < count) throw new Error(`マガジンが ${ends.length} 本しか撃ち切られていない`);
+  let first = 0;
+  return ends.map((end) => {
+    const last = log.frames.indexOf(end);
+    const shots = last - first + 1;
+    first = last + 1;
+    return shots;
+  });
+}
+
 function shotFramesIn(result: SimResult, ctx: MetricContext): number[] {
   const log = slotOf(result.shots, ctx);
   const from = ctx.args.from === undefined ? 0 : Number(ctx.args.from);
@@ -352,6 +366,9 @@ export const METRICS: Readonly<Record<string, Metric>> = {
       ).length,
   },
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
+  // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 3 節）: 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
+  // 最後の弾丸の発を含む）。弾丸チャージでマガジンが延びるかを見る
+  magazineShots: { args: ['slot', 'count'], sim: magazineShots },
   shotIntervals: {
     args: ['slot'],
     sim: (r, c) => {

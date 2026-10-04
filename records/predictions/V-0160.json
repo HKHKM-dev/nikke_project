@@ -1,0 +1,63 @@
+{
+  "verification": "V-0160",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 194,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "B",
+      "note": "いまのモデル: バーストは自分の攻撃力▲ 10 秒・リロード速度▲ 20 秒、S2 はフルバースト開始時に自分のクリティカル確率▲ 10 秒（C-0249・C-0250）。S1・S2 の数え方と順は C-0251。クリティカル確率とリロードの長さは検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "full-bursts",
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "180 秒のフルバーストの回数（ラム → デルタ → ルドミラの順で回る）"
+    },
+    {
+      "id": "s1-in-burst",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 14,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストの後の最初の S1 の追加ダメージ（会心なし）。攻撃力▲・フルバースト・受けるダメージ▲が乗る。モデルではその前に S1・S2 の追加ダメージが 14 回ある（手入力のコア命中率 1 では S1 と S2 が同じ発に出る）（n は回数の通し番号。録画では『1 回目のバーストの後の最初の S1』で読む）。手入力の条件（コア命中率 1）で比べる"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "380d45a5fb4d175276569ac0f0be368130993abe",
+    "values": {
+      "B": {
+        "full-bursts": 5,
+        "s1-in-burst": 573122.5413367342
+      }
+    },
+    "seen": {}
+  }
+}

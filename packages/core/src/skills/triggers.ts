@@ -16,6 +16,7 @@ import {
 import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import { isResolvedEventCount, isResolvedTimer, isResolvedShotCount, type ResolvedTrigger } from './resolve.ts';
 import type { FireContext } from './targets.ts';
+import type { ShotCountKind } from './types.ts';
 
 /** 1 枠の 1 回の射撃 */
 export type ShotEvent = {
@@ -23,7 +24,44 @@ export type ShotEvent = {
   lastShot: boolean;
   /** チャージ武器の射撃か（常にフルチャージのモデルなので fullChargeShot になる） */
   fullCharge: boolean;
+  /**
+   * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.3 節）: この射撃の命中の期待値（弾丸命中率。SG は 1）。
+   * normalHit の回数に足す
+   */
+  hits: number;
+  /** 同 2.2 節: この射撃のコアの命中の期待値（弾丸命中率 × コア命中率。敵にコアが無ければ 0）。coreHit の回数に足す */
+  coreHits: number;
 };
+
+/** 1 回の射撃が、その回数トリガーの回数に足す量（plan/design-ludmilla-wo.md 2.2・2.3 節） */
+export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
+  switch (kind) {
+    case 'normalShot':
+      return 1;
+    case 'normalHit':
+      return shot.hits;
+    case 'coreHit':
+      return shot.coreHits;
+    case 'fullChargeShot':
+      return shot.fullCharge ? 1 : 0;
+    case 'lastShot':
+      return shot.lastShot ? 1 : 0;
+  }
+}
+
+/** 期待値の累計の端数の誤差の許し（1 発の量は 1 以下なので、N の倍数をまたいだかの判定にだけ使う） */
+const COUNT_EPSILON = 1e-9;
+
+/**
+ * 回数の累計 count に weight を足した値と、この射撃で N（every）の倍数を越えたか。整数の量（射撃の回数）なら
+ * 「累計が every の倍数になった射撃」と同じ。期待値の量は、累計が every の倍数を越えた射撃で 1 回発火する（1 発の量は 1 以下）
+ */
+export function advanceShotCount(count: number, weight: number, every: number): { count: number; fired: boolean } {
+  if (weight <= 0) return { count, fired: false };
+  const next = count + weight;
+  const fired = Math.floor(next / every + COUNT_EPSILON) > Math.floor(count / every + COUNT_EPSILON);
+  return { count: next, fired };
+}
 
 /** 1 フレームの出来事 */
 export type FrameEvents = {
@@ -79,10 +117,9 @@ export function createTriggerTracker(
     return (ev) => {
       const shot = ev.shots[slotIndex];
       if (!shot) return false;
-      if (t.count === 'fullChargeShot' && !shot.fullCharge) return false;
-      if (t.count === 'lastShot' && !shot.lastShot) return false;
-      count += 1;
-      return count % t.every === 0;
+      const next = advanceShotCount(count, shotCountWeight(t.count, shot), t.every);
+      count = next.count;
+      return next.fired;
     };
   }
   // ニヒリスター編: 時間の周期のトリガーは出来事の列に無いフレームで起きるので、ここでは追わない（skills/timeline.ts の triggerFires が並べる）
@@ -171,10 +208,15 @@ export function replayEvents(
     if (!log) return;
     const last = new Set(log.lastShotFrames ?? []);
     const full = fullChargeFrameSet(log);
-    for (const f of log.frames) {
-      if (f >= frames) break;
-      (at(f).shots as (ShotEvent | null)[])[slotIndex] = { lastShot: last.has(f), fullCharge: full(f) };
-    }
+    log.frames.forEach((f, k) => {
+      if (f >= frames) return;
+      (at(f).shots as (ShotEvent | null)[])[slotIndex] = {
+        lastShot: last.has(f),
+        fullCharge: full(f),
+        hits: log.hits?.[k] ?? 1,
+        coreHits: log.coreHits?.[k] ?? 0,
+      };
+    });
   });
   if (schedule !== null) {
     for (const a of schedule.activations) if (a.frame < frames) (at(a.frame).activations as BurstActivation[]).push(a);
