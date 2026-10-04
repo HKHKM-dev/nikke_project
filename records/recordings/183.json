@@ -1,0 +1,35 @@
+{
+  "id": "183",
+  "date": "2026-10-04",
+  "folder": "range",
+  "file": "20261004-183_rl_anis-star_modernia.mp4",
+  "original": "2026-10-04_20-19-27.mp4",
+  "durationSec": 21.3,
+  "frames": 1277,
+  "fps": 60,
+  "sizeMB": 25.7,
+  "sha256": "2257a77b6826",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0155。アニス：スター（AI）とモダニア（操作）。モダニアの弾でバーを 12.6% より上に上げてから、アニス：スターの 1 発目の伸びを見るつもりだったが、アニス：スターの 1 発目はバーが映る前に当たった。AUTO 射撃 ON・オートバースト OFF（左上のボタン）。一時停止画面でキャラ名を確かめた"
+}
