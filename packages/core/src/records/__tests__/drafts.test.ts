@@ -226,9 +226,10 @@ describe('最小構成の警告', () => {
     // SR の弾丸命中率も表にある（C-0168）
     const sr = [...data.characters.values()].find((c) => c.weaponType === 'SR');
     if (sr) expect(normalConditionMeasured(sr, recording, data.enemies)).toBe(true);
-    // RL は弾の種類ごとの行で、的のどの着地点でも値があるときだけ測られている。誘導弾 100（フラワー）は中遠が未測定（C-0174）、
-    // 直進弾 100（ラプラス：アルティメットヒーロー）は 4 つの距離帯とも測った（C-0175）
-    expect(normalConditionMeasured(data.characters.get(304)!, recording, data.enemies)).toBe(false);
+    // RL は弾の種類ごとの行で、的のどの着地点でも値があるときだけ測られている。誘導弾 100（フラワー）は中遠も測った（C-0174・C-0241）、
+    // 直進弾 100（ラプラス：アルティメットヒーロー）は 4 つの距離帯とも測った（C-0175）。曲射 1500（シンデレラ）は未測定
+    expect(normalConditionMeasured(data.characters.get(304)!, recording, data.enemies)).toBe(true);
+    expect(normalConditionMeasured(data.characters.get(511)!, recording, data.enemies)).toBe(false);
     expect(normalConditionMeasured(data.characters.get(103)!, recording, data.enemies)).toBe(true);
     const raid = { ...recording, target: { name: 'boss', element: null } };
     expect(normalConditionMeasured(data.characters.get(307)!, raid, data.enemies)).toBe(false);
