@@ -61,7 +61,7 @@ export function simulateShotFrames(
   if (shot.rateOfFire <= 0) throw new RangeError(`rateOfFire must be positive, got ${shot.rateOfFire}`);
   const frames: number[] = [0];
   if (isChargeWeapon(shot)) {
-    const interval = chargeShotIntervalFrames(params, model.chargeReleaseFrames);
+    const interval = chargeShotIntervalFrames(params, model);
     for (let i = 1; i < params.maxAmmo; i++) frames.push(i * interval);
     return frames;
   }
@@ -83,6 +83,9 @@ export function firstShotFrames(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number {
+  // 射撃姿勢維持型: ハイドからは姿勢の残りが無く、構え + チャージ + 満ちてから撃つまで − 1（C-0225。紅蓮BS 30f・レイヴン 86f・A2 94f。
+  // plan/design-fire-stance-cadence.md 3.2 節）
+  if (params.stance !== null) return model.aimInFrames + params.chargeFrames + params.stance.holdFrames - 1;
   // Stage 22-A: チャージ武器はハイドから構えてチャージするので、発と発の間から構え解除のぶんを引く（C-0225）
   if (isChargeWeapon(shot)) return Math.max(0, params.chargeFrames + model.chargeReleaseFrames - model.aimOutFrames);
   // Stage 22-C: チャージの無い武器（MG を含む）も、ハイドから構えてから撃つ（C-0114）
@@ -98,6 +101,9 @@ export function reloadFirstShotFrames(
   // Stage 22-A: チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0149 の紅蓮BS 172f・ラム 200f）。
   // ゲームの完了（RELOADING のバーが消える）は構え解除のぶん遅く、完了からは firstShotFrames で撃つ（C-0225）。
   // 最後の発からの長さは同じなので分け方はそのままにし、窓の明けだけ unhideShooter で合わせる（V-0135）
+  // 射撃姿勢維持型も発と発の間と同じ（リロードの側に stanceReloadExtraFrames を足してある。C-0149）
+  if (params.stance !== null) return chargeShotIntervalFrames(params, model);
+  // 押下チャージ型でも、リロードの後は解放を足す（C-0222）
   if (isChargeWeapon(shot)) return params.chargeFrames + model.chargeReleaseFrames;
   // Stage 24: MG も AR・SMG・SG と同じ（22 までは MG だけ初弾遅延 20f。C-0002）
   return model.reloadFirstShotFrames;

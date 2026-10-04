@@ -6,7 +6,7 @@ import { computeCadence } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
-import { measuredChargeCadence } from '../frame/firing.ts';
+import { stanceFrames } from '../frame/firing.ts';
 import { planShots } from '../frame/shots.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -80,7 +80,7 @@ describe('射撃の刻みの較正（3.3・7.3）', () => {
 
   it('leaves the other charge weapons as they were (82f)', () => {
     for (const id of [304, 20, 822, 191, 172]) {
-      expect(measuredChargeCadence(character(id).shot)).toBeNull();
+      expect(stanceFrames(character(id).shot)).toBeNull();
     }
     expect(computeCadence(character(304).shot).shotFrames[1]).toBe(82);
   });

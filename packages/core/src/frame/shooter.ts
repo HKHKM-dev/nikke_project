@@ -169,7 +169,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
     // Stage 11 モダニア: 装弾数無限。残弾は減らず、リロードも最後の弾丸も起きない
     state.lastShot = false;
     if (isChargeWeapon(shot)) {
-      state.wait = Math.max(0, chargeShotIntervalFrames(params, model.chargeReleaseFrames) - 1);
+      state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - 1);
       if (params.downCharge) state.chargeElapsed = 0;
     }
     return;
@@ -190,7 +190,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
     return;
   }
   if (isChargeWeapon(shot)) {
-    state.wait = Math.max(0, chargeShotIntervalFrames(params, model.chargeReleaseFrames) - 1);
+    state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - 1);
     if (params.downCharge) state.chargeElapsed = 0;
   }
 }
@@ -218,7 +218,7 @@ export function stepShooter(
   if (state.chargeElapsed !== undefined) {
     // 押下チャージ型: 前の発からの経過と、このフレームのチャージ時間で待ちを決め直す（C-0223）
     state.chargeElapsed += 1;
-    state.wait = Math.max(0, chargeShotIntervalFrames(params, model.chargeReleaseFrames) - state.chargeElapsed);
+    state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - state.chargeElapsed);
   }
   if (state.wait > 0) {
     state.wait -= 1;
@@ -288,8 +288,9 @@ export function resumeShooter(
 /**
  * Stage 22-B: 攻撃できる的がいなくなったフレーム（窓の始まり。hideShooter の前に呼ぶ）に、チャージの途中なら、
  * その時点のチャージで撃つ（部分チャージ。C-0109）。撃ったらチャージの進み p（0 < p ≤ 1）を返し、撃たなければ null。
- * - 次の発までの残りの待ちが k のとき、p = (C + 1 − k) / C（C はチャージのフレーム数。チャージは撃つ前の C フレームで進み、
- *   満ちた次のフレームで撃つ）。構え解除・構えの間（p ≤ 0）は撃たない。k = 0（このフレームに撃つはずだった）は p = 1。
+ * - 次の発までの残りの待ちが k のとき、p = min(1, (C + H − k) / C)（C はチャージのフレーム数、H は満ちてから撃つまで。
+ *   ほかのチャージ武器は H = 1 で、満ちた次のフレームで撃つ。射撃姿勢維持型は満ちてから H フレーム待つので、その間は p = 1。
+ *   plan/design-fire-stance-cadence.md 3.2 節）。構え解除・構えの間（p ≤ 0）は撃たない。k = 0（このフレームに撃つはずだった）は p = 1。
  * - 押下チャージ型（DOWN_Charge）は撃たない（design-stage22.md 0.4 節。アニス：スター単騎の録画 161 でも、的のジャンプの前に
  *   フルチャージでない発は無い。V-0134）。
  * - リロード中は撃たない。込め終えて 1 発目を待っている（priming）枠は、そのマガジンの 1 発目として撃つ
@@ -303,7 +304,8 @@ export function partialChargeShot(
   if (!isChargeWeapon(shot) || shot.inputType === 'DOWN_Charge') return null;
   if (state.phase === 'reloading') return null;
   const charge = params.chargeFrames;
-  const progress = charge <= 0 ? 1 : Math.min(1, (charge + 1 - state.wait) / charge);
+  const hold = params.stance?.holdFrames ?? 1;
+  const progress = charge <= 0 ? 1 : Math.min(1, (charge + hold - state.wait) / charge);
   if (progress <= 0) return null;
   if (state.phase === 'priming') startMagazine(state);
   fire(state, shot, model, params);

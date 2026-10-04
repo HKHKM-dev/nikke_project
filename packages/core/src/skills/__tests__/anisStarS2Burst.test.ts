@@ -122,15 +122,15 @@ describe('fixedChargeTime（チャージ時間の固定）', () => {
   it('drops the release frames between shots for DOWN_Charge, fixed or not (C-0222・C-0214)', () => {
     const base = firingParams(anis.shot);
     expect(base.downCharge).toBe(true);
-    expect(chargeShotIntervalFrames(base, DEFAULT_WEAPON_MODEL.chargeReleaseFrames)).toBe(59);
+    expect(chargeShotIntervalFrames(base, DEFAULT_WEAPON_MODEL)).toBe(59);
     const fixed = firingParams(anis.shot, { ...ZERO_BUFFS, fixedChargeTime: 0.7 });
-    expect(chargeShotIntervalFrames(fixed, DEFAULT_WEAPON_MODEL.chargeReleaseFrames)).toBe(42);
+    expect(chargeShotIntervalFrames(fixed, DEFAULT_WEAPON_MODEL)).toBe(42);
     const frames = simulateShotFrames(anis.shot, DEFAULT_WEAPON_MODEL, fixed);
     expect(frames.slice(1).map((f, i) => f - frames[i]!)).toEqual([42, 42, 42, 42, 42]);
     // 入力が UP のチャージ武器（デルタ）は今までどおり解放を足す（C-0143）
     const up = firingParams(delta.shot);
     expect(up.downCharge).toBe(false);
-    expect(chargeShotIntervalFrames(up, DEFAULT_WEAPON_MODEL.chargeReleaseFrames)).toBe(59 + 23);
+    expect(chargeShotIntervalFrames(up, DEFAULT_WEAPON_MODEL)).toBe(59 + 23);
   });
 
   it('carries the charge elapsed over when the charge time changes mid-charge (C-0223)', () => {

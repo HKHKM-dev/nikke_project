@@ -29,6 +29,7 @@ export type WeaponModel = {
    * 撃った後に表示が出ない 13f・100% のまま待つ 9f・満ちてから撃つまで 1f の和（075-05）。発と発の間は
    * 1 秒チャージで 59 + 23 = 82f、1.5 秒チャージで 89 + 23 = 112f。22 までは 1 秒 = 60f のチャージとの差だった（C-0001）。
    * 押下チャージ型（DOWN_Charge）は発と発の間に足さない（C-0222。frame/firing.ts の chargeShotIntervalFrames）
+   * 射撃姿勢維持型（frame/firing.ts の stanceFrames）には使わない（姿勢の長さ + aimInFrames。plan/design-fire-stance-cadence.md）
    */
   chargeReleaseFrames: number;
   /**
@@ -49,15 +50,22 @@ export type WeaponModel = {
    * （チャージ + chargeReleaseFrames）は「構え解除 → 構え → チャージ → 射撃」で、ハイドしていた状態（戦闘開始・窓の明け）からの
    * 1 発目は構え解除が無いぶん早い（C-0225。紅蓮BS 43f → 30f、ラム 82f → 70f）。リロードの完了から 1 発目までも同じく
    * 構え解除が無い長さだが、モデルは最後の発からの長さ（C-0149）を「完了まで + 完了から発と発の間」に分けたままにし、
-   * 窓の明けにだけ frame/shooter.ts の unhideShooter で扱う（V-0135）
+   * 窓の明けにだけ frame/shooter.ts の unhideShooter で扱う（V-0135）。
+   * 射撃姿勢維持型には使わない（ハイドからは aimInFrames + チャージ + 満ちてから撃つまで − 1。plan/design-fire-stance-cadence.md）
    */
   aimOutFrames: number;
   /**
    * Stage 22-C: チャージの無い武器（AR・SMG・SG・MG）の構えモーションのフレーム。ハイドしていた状態（戦闘開始・窓の明け）から
    * 1 発目を撃つまで（C-0114。戦闘開始は 11〜13f、窓の明けは MG 11f。SG はノワール 12f）。武器種で分けない
-   * （plan/design-stage22.md 8 節）。チャージ武器の構えは発と発の間から aimOutFrames を引いた長さに含まれる（Stage 22-A）
+   * （plan/design-stage22.md 8 節）。チャージ武器の構えは発と発の間から aimOutFrames を引いた長さに含まれる（Stage 22-A）。
+   * 射撃姿勢維持型のチャージ武器は、姿勢が終わってから 100% のまま待つ構えにも使う（紅蓮BS・レイヴン・A2 とも 12f。C-0216）
    */
   aimInFrames: number;
+  /**
+   * 射撃姿勢維持型のリロードに足すフレーム（最終弾から次のマガジンの 1 発目までが、リロード + これ + 発と発の間）。
+   * 紅蓮BS 11f（C-0149）。レイヴン・A2 も約 11〜12f（V-0130「条件」）。内訳は分かっていない（plan/design-fire-stance-cadence.md 3.4 節）
+   */
+  stanceReloadExtraFrames: number;
 };
 
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
@@ -66,6 +74,7 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   reloadFirstShotFrames: 24,
   aimOutFrames: 13,
   aimInFrames: 12,
+  stanceReloadExtraFrames: 11,
 };
 
 /**
