@@ -91,7 +91,7 @@ describe('ラムの定義', () => {
     // 同じ部隊の読みは仮説（C-0235）なので、画面に「仮定」として出す
     expect(def.skills.skill1.effects[0]!.assumes?.ja).toContain('仮説');
     for (const slot of ['skill2', 'burst'] as const) {
-      expect(def.skills[slot].support).toBe('unsupported');
+      expect(def.skills[slot].support).toBe('noEffect');
       expect(def.skills[slot].effects).toEqual([]);
     }
   });

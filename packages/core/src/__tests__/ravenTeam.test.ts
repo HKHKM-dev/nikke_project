@@ -76,7 +76,7 @@ describe('レイヴンの定義', () => {
       },
       { kind: 'timed', trigger: 'fullBurstStart', target: 'self', stat: 'attack', scaling: 'casterAttack' },
     ]);
-    expect(def.skills.skill2.support).toBe('unsupported');
+    expect(def.skills.skill2.support).toBe('noEffect');
     expect(def.skills.burst.support).toBe('partial');
     expect(def.skills.burst.effects).toMatchObject([{ kind: 'burstDamage', damageType: 'skill' }]);
   });

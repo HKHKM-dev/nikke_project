@@ -18,7 +18,7 @@ import { canEverTarget, dependsOnContext, dependsOnRank, isEffectTarget } from '
 import { parseSkillDefinition } from '../types.ts';
 
 function definition(skills: Record<string, unknown>, resourceId = 1): unknown {
-  const none = { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] };
+  const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
   return {
     formatVersion: 1,
     resourceId,
@@ -27,7 +27,7 @@ function definition(skills: Record<string, unknown>, resourceId = 1): unknown {
   };
 }
 
-const supported = (...effects: unknown[]) => ({ support: 'supported', effects });
+const supported = (...effects: unknown[]) => ({ effects });
 
 const aliceS1 = {
   kind: 'timed',

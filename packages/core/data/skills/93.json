@@ -4,17 +4,26 @@
   "checkedAt": "2026-09-22",
   "skills": {
     "skill1": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "環境コントロール（敵の受けるダメージ増加・味方回復・再発動周期）と陽動は未対応。敵デバフは要件でスコープ外",
-          "en": "Environment Setup (Damage Taken on enemies, ally heal, recurring interval) and Exposure are not modeled; enemy debuffs are out of scope"
+          "ja": "環境コントロールの敵全体の受けるダメージ▲（再発動周期つき）は未対応（語彙 damageTaken はあるが、再発動周期と撮影が要る）",
+          "en": "Environment Setup's Damage Taken up on all enemies (with a recurring interval) is not modeled (damageTaken exists, but the recurring interval and a recording are needed)",
+          "kind": "unimplemented"
+        },
+        {
+          "ja": "環境コントロールの味方全体の持続回復は未対応（回復を受けた時の効果を起こさない）",
+          "en": "Environment Setup's heal over time on all allies is not modeled (it does not trigger effects on being healed)",
+          "kind": "unimplemented"
+        },
+        {
+          "ja": "陽動はダメージに関係しない",
+          "en": "Exposure does not affect damage",
+          "kind": "noDamage"
         }
       ]
     },
     "skill2": {
-      "support": "partial",
       "effects": [
         {
           "kind": "passive",
@@ -25,17 +34,23 @@
       ],
       "notes": [
         {
-          "ja": "発射体爆発ダメージは未対応",
-          "en": "Projectile Explosion Damage is not modeled"
+          "ja": "味方全体の発射体爆発ダメージ▲は未対応（語彙 projectileExplosionDamage はある）",
+          "en": "Projectile Explosion Damage up for all allies is not modeled (projectileExplosionDamage exists)",
+          "kind": "unimplemented"
         },
         {
           "ja": "フォーメーションAS 併用時の追加効果（防御力無視ダメージ・再発動周期短縮）は未対応",
-          "en": "Bonus effects while in AS Formation (True Damage, recurring interval) are not modeled"
+          "en": "Bonus effects while in AS Formation (True Damage, recurring interval) are not modeled",
+          "kind": "unimplemented"
+        },
+        {
+          "ja": "クリティカルダメージ▲の対象は「同じ部隊の味方全体」だが、対象を部隊で絞るのは未実装（いまは味方全体に付ける）",
+          "en": "Critical Damage up targets allies in the same squad, but narrowing the target by squad is not implemented (all allies get it for now)",
+          "kind": "unimplemented"
         }
       ]
     },
     "burst": {
-      "support": "partial",
       "effects": [
         {
           "kind": "timed",
@@ -49,8 +64,14 @@
       ],
       "notes": [
         {
-          "ja": "環境コントロール強化（環境コントロールのダメージ増加倍率・受ける HP 回復量▲）は未対応",
-          "en": "Enhanced Environment Setup (damage multiplier, HP recovery taken) is not modeled"
+          "ja": "環境コントロール強化（環境コントロールのダメージ増加倍率が増える）は未対応",
+          "en": "Enhanced Environment Setup (a larger damage increase from Environment Setup) is not modeled",
+          "kind": "unimplemented"
+        },
+        {
+          "ja": "味方全体の受ける HP 回復量▲はダメージに関係しない",
+          "en": "HP recovery taken up for all allies does not affect damage",
+          "kind": "noDamage"
         }
       ]
     }

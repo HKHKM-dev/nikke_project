@@ -4,23 +4,27 @@
   "checkedAt": "2026-09-28",
   "skills": {
     "skill1": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
           "ja": "フルチャージ攻撃時の貫通特化・貫通範囲の拡張は、敵 1 体ではダメージに関係しない",
           "en": "Pierce and the wider piercing radius after a Full Charge attack do not affect damage against a single enemy",
-          "claims": ["C-0088"]
+          "kind": "outOfScope",
+          "claims": [
+            "C-0088"
+          ]
         },
         {
-          "ja": "2 機以上に同時に命中した時の追加ダメージは未対応（敵 1 体の前提）",
-          "en": "The additional damage when 2 or more enemies are hit at once is not modeled (a single enemy is assumed)",
-          "claims": ["C-0088"]
+          "ja": "2 機以上に同時に命中した時の追加ダメージは、敵 1 体では起きない",
+          "en": "The additional damage when 2 or more enemies are hit at once does not occur against a single enemy",
+          "kind": "outOfScope",
+          "claims": [
+            "C-0088"
+          ]
         }
       ]
     },
     "skill2": {
-      "support": "supported",
       "effects": [
         {
           "kind": "damage",
@@ -33,12 +37,14 @@
             "ja": "戦闘開始から 10 秒ごと（CT 10 秒は録画 081 から読んだ値。C-0091）。攻撃範囲内の敵は 1 体",
             "en": "Every 10 s from the start of battle (the 10 s cooldown was read from recording 081; C-0091). There is one enemy within attack range"
           },
-          "claims": ["C-0091", "C-0102"]
+          "claims": [
+            "C-0091",
+            "C-0102"
+          ]
         }
       ]
     },
     "burst": {
-      "support": "supported",
       "effects": [
         {
           "kind": "burstDamage",
@@ -48,7 +54,10 @@
             "ja": "攻撃範囲内の敵は 1 体",
             "en": "There is one enemy within attack range"
           },
-          "claims": ["C-0089", "C-0219"]
+          "claims": [
+            "C-0089",
+            "C-0219"
+          ]
         },
         {
           "kind": "dot",
@@ -60,7 +69,14 @@
             "ja": "持続中に付き直すと、tick の刻みはそのままで終わりが延びる（クルミのハッキングの C-0129 から推す。ニヒリスター単体では付き直しは起きない）。tick の時刻は付いた瞬間と 1.5 秒後から 1 秒ごとの計 10 回（C-0101）。フルバースト補正（C-0111）と攻撃ダメージ▲（C-0112）は tick ごとに、その時点の状態で乗る",
             "en": "Re-applying it while active keeps the tick cadence and extends the end (inferred from Kurumi's hacking, C-0129; Nihilister alone cannot re-apply it). Ticks at application and every second from 1.5 s, 10 in total (C-0101). The Full Burst bonus (C-0111) and ATK damage up (C-0112) apply per tick, by the state at that tick"
           },
-          "claims": ["C-0100", "C-0101", "C-0111", "C-0112", "C-0129", "C-0219"]
+          "claims": [
+            "C-0100",
+            "C-0101",
+            "C-0111",
+            "C-0112",
+            "C-0129",
+            "C-0219"
+          ]
         },
         {
           "kind": "timed",
@@ -70,7 +86,10 @@
           "scaling": "flat",
           "ref": 4,
           "durationRef": 5,
-          "claims": ["C-0089", "C-0219"]
+          "claims": [
+            "C-0089",
+            "C-0219"
+          ]
         }
       ]
     }

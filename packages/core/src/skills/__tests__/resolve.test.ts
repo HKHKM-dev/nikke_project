@@ -34,7 +34,7 @@ function definition(overrides: Partial<SkillDefinition> = {}): SkillDefinition {
     resourceId: 7,
     checkedAt: '2026-09-22',
     skills: {
-      skill1: { support: 'partial', effects: [{ kind: 'passive', target: 'self', stat: 'attack', ref: 1 }] },
+      skill1: { support: 'supported', effects: [{ kind: 'passive', target: 'self', stat: 'attack', ref: 1 }] },
       skill2: {
         support: 'supported',
         effects: [
@@ -48,7 +48,7 @@ function definition(overrides: Partial<SkillDefinition> = {}): SkillDefinition {
           },
         ],
       },
-      burst: { support: 'unsupported', effects: [] },
+      burst: { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
     },
     ...overrides,
   };
@@ -119,9 +119,9 @@ describe('resolvePassives', () => {
   it('skips unsupported skills and rejects a definition for another character', () => {
     const none = definition({
       skills: {
-        skill1: { support: 'unsupported', effects: [] },
-        skill2: { support: 'unsupported', effects: [] },
-        burst: { support: 'unsupported', effects: [] },
+        skill1: { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+        skill2: { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+        burst: { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
       },
     });
     expect(resolvePassives(none, character, MAX_SKILL_LEVELS)).toEqual([]);
@@ -130,7 +130,12 @@ describe('resolvePassives', () => {
 });
 
 describe('parseSkillDefinition', () => {
-  const raw = () => JSON.parse(JSON.stringify(definition())) as Record<string, unknown>;
+  /** 定義の JSON の形（support は効果と notes から読み込みで決まるので書かない） */
+  const raw = () => {
+    const r = JSON.parse(JSON.stringify(definition())) as { skills: Record<string, Record<string, unknown>> };
+    for (const entry of Object.values(r.skills)) delete entry.support;
+    return r as unknown as Record<string, unknown>;
+  };
 
   it('accepts a valid definition and returns a normalized copy', () => {
     expect(parseSkillDefinition(raw())).toEqual(definition());
@@ -157,11 +162,13 @@ describe('parseSkillDefinition', () => {
     (badRef.skills as Record<string, { effects: Record<string, unknown>[] }>).skill1!.effects[0]!.ref = 0;
     expect(() => parseSkillDefinition(badRef)).toThrow(/ref/);
     const extra = raw();
-    (extra.skills as Record<string, unknown>).skill3 = { support: 'unsupported', effects: [] };
+    (extra.skills as Record<string, unknown>).skill3 = {
+      effects: [],
+      notes: [{ ja: '-', en: '-', kind: 'unimplemented' }],
+    };
     expect(() => parseSkillDefinition(extra)).toThrow(/skill3/);
     const burstPassive = raw();
     (burstPassive.skills as Record<string, unknown>).burst = {
-      support: 'supported',
       effects: [{ kind: 'passive', target: 'self', stat: 'attack', ref: 1 }],
     };
     expect(() => parseSkillDefinition(burstPassive)).toThrow(/passive effects are not allowed in burst/);
@@ -170,12 +177,11 @@ describe('parseSkillDefinition', () => {
   it('accepts burstDamage only in the burst slot (Stage 5)', () => {
     const ok = raw();
     (ok.skills as Record<string, unknown>).burst = {
-      support: 'partial',
       effects: [
         { kind: 'burstDamage', ref: 1, damageType: 'skill' },
         { kind: 'burstDamage', ref: 2, damageType: 'distributed', assumes: { ja: '単体', en: 'single target' } },
       ],
-      notes: [{ ja: 'バフは Stage 6', en: 'buffs are Stage 6' }],
+      notes: [{ ja: 'バフは Stage 6', en: 'buffs are Stage 6', kind: 'unimplemented' }],
     };
     expect(parseSkillDefinition(ok).skills.burst.effects).toEqual([
       { kind: 'burstDamage', ref: 1, damageType: 'skill' },
@@ -190,26 +196,33 @@ describe('parseSkillDefinition', () => {
 
     const badType = raw();
     (badType.skills as Record<string, unknown>).burst = {
-      support: 'supported',
       effects: [{ kind: 'burstDamage', ref: 1, damageType: 'dot' }],
     };
     expect(() => parseSkillDefinition(badType)).toThrow(/damageType/);
 
     const badKind = raw();
     (badKind.skills as Record<string, unknown>).burst = {
-      support: 'supported',
       effects: [{ kind: 'barrier', ref: 1 }],
     };
     expect(() => parseSkillDefinition(badKind)).toThrow(/kind/);
   });
 
-  it('requires effects to match support', () => {
-    const emptySupported = raw();
-    (emptySupported.skills as Record<string, Record<string, unknown>>).skill1!.effects = [];
-    expect(() => parseSkillDefinition(emptySupported)).toThrow(/at least one effect/);
-    const unsupportedWithEffects = raw();
-    (unsupportedWithEffects.skills as Record<string, Record<string, unknown>>).skill1!.support = 'unsupported';
-    expect(() => parseSkillDefinition(unsupportedWithEffects)).toThrow(/no effects/);
+  it('derives support from effects and the kinds of notes, and refuses a written support', () => {
+    const slot = (entry: Record<string, unknown>) => {
+      const r = raw();
+      (r.skills as Record<string, unknown>).skill1 = entry;
+      return parseSkillDefinition(r).skills.skill1.support;
+    };
+    const effects = [{ kind: 'passive', target: 'self', stat: 'attack', ref: 1 }];
+    const note = (kind: string) => ({ ja: '-', en: '-', kind });
+    expect(slot({ effects, notes: [note('noDamage'), note('modeling')] })).toBe('supported');
+    expect(slot({ effects, notes: [note('outOfScope'), note('unimplemented')] })).toBe('partial');
+    expect(slot({ effects: [], notes: [note('noDamage'), note('unimplemented')] })).toBe('unsupported');
+    expect(slot({ effects: [], notes: [note('noDamage'), note('outOfScope')] })).toBe('noEffect');
+    expect(() => slot({ effects: [] })).toThrow(/needs notes/);
+    expect(() => slot({ effects: [], notes: [{ ja: '-', en: '-' }] })).toThrow(/kind/);
+    expect(() => slot({ effects: [], notes: [note('todo')] })).toThrow(/kind/);
+    expect(() => slot({ support: 'supported', effects })).toThrow(/support is derived/);
   });
 
   it('parses the index', () => {
@@ -229,7 +242,7 @@ describe('resolveTimed', () => {
     resourceId: 7,
     checkedAt: '2026-09-22',
     skills: {
-      skill1: { support: 'unsupported', effects: [] },
+      skill1: { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
       skill2: {
         support: 'supported',
         effects: [
@@ -237,7 +250,7 @@ describe('resolveTimed', () => {
           { kind: 'timed', trigger: 'fullBurstStart', target: 'self', stat: 'attack', ref: 1, durationRef: 2 },
         ],
       },
-      burst: { support: 'unsupported', effects: [] },
+      burst: { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
     },
   });
 
@@ -291,12 +304,12 @@ describe('parseSkillDefinition with timed', () => {
       resourceId: 7,
       checkedAt: '2026-09-22',
       skills: {
-        skill1: { support: 'unsupported', effects: [] },
-        skill2: { support: 'unsupported', effects: [] },
-        burst: { support: 'unsupported', effects: [] },
+        skill1: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+        skill2: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+        burst: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
       },
     };
-    (raw.skills as Record<string, unknown>)[slot] = { support: 'supported', effects: [effect] };
+    (raw.skills as Record<string, unknown>)[slot] = { effects: [effect] };
     return raw;
   };
   const base = { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 1, durationRef: 2 };

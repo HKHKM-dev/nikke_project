@@ -34,21 +34,19 @@ const definition = (): Record<string, unknown> => ({
   checkedAt: '2026-09-28',
   skills: {
     skill1: {
-      support: 'supported',
       effects: [
         { kind: 'passive', target: 'self', stat: 'attack', ref: 1, claims: ['C-0001'] },
         { kind: 'dot', trigger: 'burstUse', ref: 2, intervalSeconds: 1, durationSeconds: 10 },
       ],
     },
     skill2: {
-      support: 'unsupported',
       effects: [],
       notes: [
-        { ja: 'a', en: 'a' },
-        { ja: 'b', en: 'b', claims: ['C-0002', 'C-0003'] },
+        { ja: 'a', en: 'a', kind: 'unimplemented' },
+        { ja: 'b', en: 'b', kind: 'noDamage', claims: ['C-0002', 'C-0003'] },
       ],
     },
-    burst: { support: 'supported', effects: [{ kind: 'burstDamage', ref: 1, damageType: 'skill' }] },
+    burst: { effects: [{ kind: 'burstDamage', ref: 1, damageType: 'skill' }] },
   },
 });
 
@@ -74,7 +72,7 @@ describe('定義の claims の読み込み', () => {
     const def: SkillDefinition = parseSkillDefinition(definition());
     expect(def.skills.skill1.effects[0]!.claims).toEqual(['C-0001']);
     expect(def.skills.skill1.effects[1]!.claims).toBeUndefined();
-    expect(def.skills.skill2.notes?.[1]).toEqual({ ja: 'b', en: 'b', claims: ['C-0002', 'C-0003'] });
+    expect(def.skills.skill2.notes?.[1]).toEqual({ ja: 'b', en: 'b', kind: 'noDamage', claims: ['C-0002', 'C-0003'] });
     expect(claimCitations(def).map((c) => [formatPlace(c.place), c.claims])).toEqual([
       ['`data/skills/9001.json` の skill1 の effects[0]', ['C-0001']],
       ['`data/skills/9001.json` の skill2 の notes[1]', ['C-0002', 'C-0003']],
@@ -177,7 +175,8 @@ describe('定義の claims と結論の突き合わせ', () => {
     expect(doc).toContain('## 9001 試し');
     expect(doc).toContain('  - effects[0] passive・attack: C-0001（仮説）');
     expect(doc).toContain('  - effects[1] dot・burstUse: 根拠なし');
-    expect(doc).toContain('  - notes[1] b: C-0002（不明）、C-0003（不明）');
+    expect(doc).toContain('  - notes[1] 計算に無関係: b: C-0002（不明）、C-0003（不明）');
+    expect(doc).toContain('- **skill2**: unsupported');
     expect(doc).toContain('- **burst**: supported');
   });
 });

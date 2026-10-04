@@ -4,35 +4,41 @@
   "checkedAt": "2026-09-28",
   "skills": {
     "skill1": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃時の自分の最大HP▲は、ダメージに関係しない（C-0081）",
-          "en": "Max HP up on self after a Full Charge attack does not affect damage (C-0081)",
-          "claims": ["C-0081"]
+          "ja": "フルチャージ攻撃時の自分の最大HP▲は、ダメージに関係しない",
+          "en": "Max HP up on self after a Full Charge attack does not affect damage",
+          "kind": "noDamage",
+          "claims": [
+            "C-0081"
+          ]
         }
       ]
     },
     "skill2": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "バーストスキル使用時の自分の防御力▲は、ダメージに関係しない（C-0081）",
-          "en": "DEF up on self when using the Burst Skill does not affect damage (C-0081)",
-          "claims": ["C-0081"]
+          "ja": "バーストスキル使用時の自分の防御力▲は、ダメージに関係しない",
+          "en": "DEF up on self when using the Burst Skill does not affect damage",
+          "kind": "noDamage",
+          "claims": [
+            "C-0081"
+          ]
         }
       ]
     },
     "burst": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "デコイ（分身）と挑発は、ダメージに関係しない（C-0081）",
-          "en": "The decoy and the taunt do not affect damage (C-0081)",
-          "claims": ["C-0081"]
+          "ja": "デコイ（分身）と挑発は、ダメージに関係しない",
+          "en": "The decoy and the taunt do not affect damage",
+          "kind": "noDamage",
+          "claims": [
+            "C-0081"
+          ]
         }
       ]
     }

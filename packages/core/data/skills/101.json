@@ -4,7 +4,6 @@
   "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -25,7 +24,6 @@
       ]
     },
     "skill2": {
-      "support": "supported",
       "effects": [
         {
           "kind": "damage",
@@ -43,7 +41,6 @@
       ]
     },
     "burst": {
-      "support": "supported",
       "effects": [
         {
           "kind": "burstDamage",
@@ -67,7 +64,6 @@
   },
   "treasureSkills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -106,7 +102,6 @@
       ]
     },
     "skill2": {
-      "support": "supported",
       "effects": [
         {
           "kind": "damage",
@@ -137,7 +132,6 @@
       ]
     },
     "burst": {
-      "support": "supported",
       "effects": [
         {
           "kind": "burstDamage",
@@ -147,7 +141,9 @@
             "ja": "攻撃範囲内の敵は単体ボス。合計 3009.6% を 3 ヒットに等分し、遅れの表（burst/landing.ts）の時刻に出す（録画 37: 1,201,793 × 3）",
             "en": "Enemies in range are a lone boss. The total 3009.6% is split equally into 3 hits at the times in the delay table (burst/landing.ts) (recording 37: 1,201,793 × 3)"
           },
-          "claims": ["C-0228"]
+          "claims": [
+            "C-0228"
+          ]
         },
         {
           "kind": "timed",

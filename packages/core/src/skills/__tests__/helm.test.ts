@@ -16,7 +16,7 @@ function readJson<T>(path: string): T {
 }
 
 function definition(skills: Partial<Record<keyof SkillDefinition['skills'], unknown>>): unknown {
-  const none = { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] };
+  const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
   return {
     formatVersion: 1,
     resourceId: 1,
@@ -25,7 +25,7 @@ function definition(skills: Partial<Record<keyof SkillDefinition['skills'], unkn
   };
 }
 
-const supported = (...effects: unknown[]) => ({ support: 'supported', effects });
+const supported = (...effects: unknown[]) => ({ effects });
 const parseOne = (effect: unknown) => () => parseSkillDefinition(definition({ skill1: supported(effect) }));
 
 describe('parseSkillDefinition（ヘルム編）', () => {

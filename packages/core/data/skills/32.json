@@ -4,7 +4,6 @@
   "checkedAt": "2026-10-03",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -20,7 +19,9 @@
             "ja": "「通常攻撃が 30 回命中した時」は当たった通常攻撃の通算で数え、30 ヒットごとに発火する。発火のたびに 5 秒を数え直す（重ならない）",
             "en": "\"When normal attacks hit 30 times\" counts every normal hit; each 30th hit fires it and restarts the 5 s (no stacking)"
           },
-          "claims": ["C-0186"]
+          "claims": [
+            "C-0186"
+          ]
         },
         {
           "kind": "timed",
@@ -33,34 +34,35 @@
           "stat": "hitRate",
           "ref": 5,
           "durationRef": 6,
-          "claims": ["C-0186"]
+          "claims": [
+            "C-0186"
+          ]
         }
       ]
     },
     "skill2": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "未実装: フルバースト開始時の味方全体のクリティカルダメージ▲（10 秒）。撮影で確かめていない（単騎ではフルバーストにならない）",
-          "en": "Not implemented: Critical Damage up for all allies at the start of Full Burst (10 s). Not verified by recording yet (a solo unit never reaches Full Burst)"
+          "ja": "フルバースト開始時の味方全体のクリティカルダメージ▲（10 秒）。撮影で確かめていない（単騎ではフルバーストにならない）",
+          "en": "Critical Damage up for all allies at the start of Full Burst (10 s). Not verified by recording yet (a solo unit never reaches Full Burst)",
+          "kind": "unimplemented"
         }
       ]
     },
     "burst": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "未実装: 「自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。自分を除く対象は語彙に無い（topAttack は自分も候補）",
-          "en": "Not implemented: ATK up and Critical Damage up (10 s) on the 1 ally with the highest final ATK except the skill user (the user only if there are not enough allies). The except-self target is not in the vocabulary (topAttack includes the user)"
+          "ja": "「自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。自分を除く対象は語彙に無い（topAttack は自分も候補）",
+          "en": "ATK up and Critical Damage up (10 s) on the 1 ally with the highest final ATK except the skill user (the user only if there are not enough allies). The except-self target is not in the vocabulary (topAttack includes the user)",
+          "kind": "unimplemented"
         }
       ]
     }
   },
   "treasureSkills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -76,7 +78,9 @@
             "ja": "「通常攻撃が 30 回命中した時」は当たった通常攻撃の通算で数え、30 ヒットごとに発火する。発火のたびに 5 秒を数え直す（重ならない）",
             "en": "\"When normal attacks hit 30 times\" counts every normal hit; each 30th hit fires it and restarts the 5 s (no stacking)"
           },
-          "claims": ["C-0186"]
+          "claims": [
+            "C-0186"
+          ]
         },
         {
           "kind": "timed",
@@ -89,7 +93,9 @@
           "stat": "hitRate",
           "ref": 5,
           "durationRef": 6,
-          "claims": ["C-0186"]
+          "claims": [
+            "C-0186"
+          ]
         },
         {
           "kind": "timed",
@@ -101,27 +107,29 @@
           "stat": "attack",
           "ref": 8,
           "durationRef": 9,
-          "claims": ["C-0187"]
+          "claims": [
+            "C-0187"
+          ]
         }
       ]
     },
     "skill2": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "未実装: フルバースト開始時の味方全体のクリティカルダメージ▲、自分のクリティカル確率▲・攻撃ダメージ▲（10 秒）、自分を除く最終攻撃力が最も高い味方 1 機のクリティカル確率▲（1 発間）。撮影で確かめていない（単騎ではフルバーストにならない）。自分を除く対象と、その対象への発数の維持は語彙に無い",
-          "en": "Not implemented: at the start of Full Burst, Critical Damage up for all allies, Critical Rate up and Damage up on self (10 s), and Critical Rate up for 1 shot on the 1 ally with the highest final ATK except the user. Not verified by recording (a solo unit never reaches Full Burst); the except-self target and a duration in shots on it are not in the vocabulary"
+          "ja": "フルバースト開始時の味方全体のクリティカルダメージ▲、自分のクリティカル確率▲・攻撃ダメージ▲（10 秒）、自分を除く最終攻撃力が最も高い味方 1 機のクリティカル確率▲（1 発間）。撮影で確かめていない（単騎ではフルバーストにならない）。自分を除く対象と、その対象への発数の維持は語彙に無い",
+          "en": "At the start of Full Burst, Critical Damage up for all allies, Critical Rate up and Damage up on self (10 s), and Critical Rate up for 1 shot on the 1 ally with the highest final ATK except the user. Not verified by recording (a solo unit never reaches Full Burst); the except-self target and a duration in shots on it are not in the vocabulary",
+          "kind": "unimplemented"
         }
       ]
     },
     "burst": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "未実装: 「自分を除く最終攻撃力が最も高い味方 2 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。自分を除く対象は語彙に無い",
-          "en": "Not implemented: ATK up and Critical Damage up (10 s) on the 2 allies with the highest final ATK except the user (the user only if there are not enough allies). The except-self target is not in the vocabulary"
+          "ja": "「自分を除く最終攻撃力が最も高い味方 2 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。自分を除く対象は語彙に無い",
+          "en": "ATK up and Critical Damage up (10 s) on the 2 allies with the highest final ATK except the user (the user only if there are not enough allies). The except-self target is not in the vocabulary",
+          "kind": "unimplemented"
         }
       ]
     }

@@ -28,7 +28,7 @@ const skillRaw = (values: string[]): SkillRaw => ({
 });
 
 function definition(skills: Record<string, unknown>, resourceId = 1): unknown {
-  const none = { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] };
+  const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
   return {
     formatVersion: 1,
     resourceId,
@@ -37,7 +37,7 @@ function definition(skills: Record<string, unknown>, resourceId = 1): unknown {
   };
 }
 
-const supported = (...effects: unknown[]) => ({ support: 'supported', effects });
+const supported = (...effects: unknown[]) => ({ effects });
 
 describe('parseSkillDefinition (Stage 11, 7.1)', () => {
   it('accepts burstUsers with full burst triggers (also with a weapon), stacksRef, heal and healed', () => {

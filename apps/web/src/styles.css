@@ -213,6 +213,16 @@ header p {
   background: #ef6c00;
   color: #fff;
 }
+/* スキル定義の notes の種類（plan/design-skill-note-kinds.md 2.3 節） */
+.note.out-of-scope .badge {
+  background: #455a64;
+  color: #fff;
+}
+.note.no-damage .badge,
+.note.modeling .badge {
+  background: #757575;
+  color: #fff;
+}
 .breakdown {
   border-collapse: collapse;
   width: 100%;
@@ -362,6 +372,10 @@ header p {
 }
 .badge.unsupported {
   background: #c62828;
+  color: #fff;
+}
+.badge.no-effect {
+  background: #757575;
   color: #fff;
 }
 /* Stage 9: 宝物版で計算しているスロット */

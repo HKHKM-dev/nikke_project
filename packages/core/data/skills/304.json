@@ -4,12 +4,12 @@
   "checkedAt": "2026-10-03",
   "skills": {
     "skill1": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
           "ja": "最後の弾丸が命中した対象（敵）の攻撃力▼はダメージに関係しない",
           "en": "ATK down on the enemy hit by the last bullet does not affect damage",
+          "kind": "noDamage",
           "claims": [
             "C-0072"
           ]
@@ -17,7 +17,6 @@
       ]
     },
     "skill2": {
-      "support": "supported",
       "effects": [
         {
           "kind": "burstGaugeHit",
@@ -38,6 +37,7 @@
         {
           "ja": "最終攻撃力が最も高い敵の攻撃力▼はダメージに関係しない",
           "en": "ATK down on the enemy with the highest final ATK does not affect damage",
+          "kind": "noDamage",
           "claims": [
             "C-0072"
           ]
@@ -45,7 +45,6 @@
       ]
     },
     "burst": {
-      "support": "supported",
       "effects": [
         {
           "kind": "burstDamage",
@@ -65,6 +64,7 @@
         {
           "ja": "挑発はダメージに関係しない",
           "en": "Taunt does not affect damage",
+          "kind": "noDamage",
           "claims": [
             "C-0072"
           ]

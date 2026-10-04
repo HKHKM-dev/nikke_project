@@ -38,7 +38,6 @@ function treasureCharacter(): CharacterData {
 }
 
 const passive = (ref: number) => ({
-  support: 'supported',
   effects: [{ kind: 'passive', target: 'self', stat: 'attack', ref }],
 });
 
@@ -50,7 +49,7 @@ function definition(treasureSkills?: object): SkillDefinition {
     skills: {
       skill1: passive(1),
       skill2: passive(1),
-      burst: { support: 'supported', effects: [{ kind: 'burstDamage', ref: 1, damageType: 'skill' }] },
+      burst: { effects: [{ kind: 'burstDamage', ref: 1, damageType: 'skill' }] },
     },
     ...(treasureSkills === undefined ? {} : { treasureSkills }),
   });
@@ -170,10 +169,13 @@ describe('parseSkillDefinition (Stage 9)', () => {
     formatVersion: 1,
     resourceId: 1,
     checkedAt: '2026-09-23',
-    skills: { skill1: passive(1), skill2: passive(1), burst: { support: 'unsupported', effects: [] } },
+    skills: {
+      skill1: passive(1),
+      skill2: passive(1),
+      burst: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+    },
   };
   const timedFor = (target: string, targetWeapon?: string) => ({
-    support: 'supported',
     effects: [
       { kind: 'timed', trigger: 'fullBurstStart', target, stat: 'attack', ref: 1, durationSeconds: 10, targetWeapon },
     ],
@@ -211,16 +213,14 @@ describe('resolved effects carry targetWeapon (Stage 9)', () => {
       checkedAt: '2026-09-23',
       skills: {
         skill1: {
-          support: 'supported',
           effects: [{ kind: 'passive', target: 'allies', targetWeapon: 'SG', stat: 'attack', ref: 1 }],
         },
         skill2: {
-          support: 'supported',
           effects: [
             { kind: 'timed', trigger: 'battleStart', target: 'allies', stat: 'attack', ref: 1, durationSeconds: 5 },
           ],
         },
-        burst: { support: 'unsupported', effects: [] },
+        burst: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
       },
     });
     const [p] = resolvePassives(def, character, MAX_SKILL_LEVELS);

@@ -4,7 +4,6 @@
   "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
-      "support": "partial",
       "effects": [
         {
           "kind": "passive",
@@ -15,13 +14,18 @@
       ],
       "notes": [
         {
-          "ja": "10 回攻撃ごとの味方回復、味方戦闘不能時の復活とマターガンマ解除は未対応（静止ボス・被弾なし前提では起きない）",
-          "en": "Ally heal every 10 attacks, revive on ally incapacitation and Metal γ removal are not modeled (they do not occur against a stationary boss with no damage taken)"
+          "ja": "通常攻撃 10 回ごとの味方全体の回復は未対応（回復を受けた時の効果を起こさない）",
+          "en": "The heal on all allies every 10 normal attacks is not modeled (it does not trigger effects on being healed)",
+          "kind": "unimplemented"
+        },
+        {
+          "ja": "味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない",
+          "en": "Revive and Matter γ removal on ally incapacitation do not occur because allies are never incapacitated",
+          "kind": "outOfScope"
         }
       ]
     },
     "skill2": {
-      "support": "partial",
       "effects": [
         {
           "kind": "passive",
@@ -60,18 +64,19 @@
       ],
       "notes": [
         {
-          "ja": "フルバースト時の「基本チャージ時間が一番長い味方 1 機」のチャージ時間 0.18 秒▼は未対応（対象が語彙外。主力キャラの Stage 以降）",
-          "en": "Charge time −0.18 s on Full Burst for the ally with the longest base charge time is not modeled (the target is not in the vocabulary yet)"
+          "ja": "フルバースト時の「基本チャージ時間が一番長い味方 1 機」のチャージ時間▼は未対応（対象が語彙に無い）",
+          "en": "Charge time down on Full Burst for the ally with the longest base charge time is not modeled (the target is not in the vocabulary)",
+          "kind": "unimplemented"
         }
       ]
     },
     "burst": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
-          "ja": "持続ダメージ（最終攻撃力の 396% × 1 秒間隔 × 10 秒）と自分の持続ダメージ▲は未対応（tick 数が未検証）",
-          "en": "Damage over time (396% every 1 s for 10 s) and own DoT up are not modeled (tick count unverified)"
+          "ja": "持続ダメージと自分の持続ダメージ▲は未対応（持続ダメージ dot はあるが、持続ダメージ▲の stat が無く、撮影していない）",
+          "en": "Damage over time and own sustained damage up are not modeled (dot exists, but there is no sustained damage up stat and no recording yet)",
+          "kind": "unimplemented"
         }
       ]
     }

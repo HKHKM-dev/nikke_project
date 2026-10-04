@@ -4,7 +4,6 @@
   "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
-      "support": "partial",
       "effects": [
         {
           "kind": "timed",
@@ -31,12 +30,12 @@
       "notes": [
         {
           "ja": "直前にバーストスキルを使用していない味方への防御力▲はダメージに関係しない",
-          "en": "The DEF buff on allies who did not just use their Burst does not affect damage"
+          "en": "The DEF buff on allies who did not just use their Burst does not affect damage",
+          "kind": "noDamage"
         }
       ]
     },
     "skill2": {
-      "support": "partial",
       "effects": [
         {
           "kind": "heal",
@@ -63,13 +62,18 @@
       ],
       "notes": [
         {
-          "ja": "リラックス（受ける HP 回復量▲）・無敵・挑発はダメージに関係しない。リラックスは 20 スタックで回復するまでの数え上げにだけ使う",
-          "en": "Relax (Incoming Healing up), Invulnerable and Attract do not affect damage; Relax only counts shots until the heal at 20 stacks"
+          "ja": "リラックス（受ける HP 回復量▲）・無敵・挑発はダメージに関係しない",
+          "en": "Relax (Incoming Healing up), Invulnerable and Attract do not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "リラックスは 20 スタックで回復するまでの数え上げにだけ使う",
+          "en": "Relax only counts shots until the heal at 20 stacks",
+          "kind": "modeling"
         }
       ]
     },
     "burst": {
-      "support": "partial",
       "effects": [
         {
           "kind": "timed",
@@ -82,8 +86,9 @@
       ],
       "notes": [
         {
-          "ja": "バリアはダメージに関係しない",
-          "en": "The shield does not affect damage"
+          "ja": "バリアは扱わない（要件 5.2 節）",
+          "en": "Shields are not modeled (requirements 5.2)",
+          "kind": "outOfScope"
         }
       ]
     }

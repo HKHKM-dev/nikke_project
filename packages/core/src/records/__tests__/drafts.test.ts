@@ -206,7 +206,6 @@ describe('最小構成の警告', () => {
         checkedAt: '2026-10-02',
         skills: {
           skill1: {
-            support: 'unsupported',
             effects: [],
             notes: [{ ja: 'n', en: 'n', ...(claimsOf ? { claims: claimsOf } : {}) }],
           },

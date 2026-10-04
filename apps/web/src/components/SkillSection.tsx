@@ -19,7 +19,7 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import { useState, type Dispatch } from 'react';
-import { SKILL_SLOT_LABEL, SUPPORT_BADGE, treasurePhaseLabel } from '../skillLabels.ts';
+import { NOTE_KIND_BADGE, SKILL_SLOT_LABEL, SUPPORT_BADGE, treasurePhaseLabel } from '../skillLabels.ts';
 import { clampSkillLevel, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 
@@ -256,8 +256,8 @@ export function SkillSection({
               {entry?.notes && entry.notes.length > 0 && (
                 <ul className="notes">
                   {entry.notes.map((n, i) => (
-                    <li key={i} className="note unsupported">
-                      <span className="badge">未対応</span> {n.ja}
+                    <li key={i} className={`note ${NOTE_KIND_BADGE[n.kind].className}`}>
+                      <span className="badge">{NOTE_KIND_BADGE[n.kind].label}</span> {n.ja}
                     </li>
                   ))}
                 </ul>

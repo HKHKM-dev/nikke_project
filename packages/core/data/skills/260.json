@@ -4,7 +4,6 @@
   "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "damage",
@@ -13,12 +12,16 @@
           },
           "damageType": "additional",
           "ref": 1,
-          "gaugeHits": [0],
+          "gaugeHits": [
+            0
+          ],
           "assumes": {
             "ja": "通常攻撃 1 発ごとに 1 回（全弾命中の前提。殲滅モードの 2 ヒットでも 1 回）。コア・距離は乗らない（録画 44 で確認）",
             "en": "Once per normal shot (every shot is assumed to hit; once even for the 2 hits of Annihilation Mode). Core and distance do not boost it (recording 44)"
           },
-          "claims": ["C-0105"]
+          "claims": [
+            "C-0105"
+          ]
         },
         {
           "kind": "timed",
@@ -48,7 +51,6 @@
       ]
     },
     "skill2": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -75,12 +77,13 @@
             "ja": "回数は命中率増加状態に関係なく通算で数え、200 回目の瞬間に命中率増加状態かを見る",
             "en": "Hits are counted regardless of the hit rate state; the state is checked at every 200th hit"
           },
-          "claims": ["C-0124"]
+          "claims": [
+            "C-0124"
+          ]
         }
       ]
     },
     "burst": {
-      "support": "partial",
       "effects": [
         {
           "kind": "timed",
@@ -104,11 +107,13 @@
       "notes": [
         {
           "ja": "「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている",
-          "en": "Full Burst Time +5 s is already in burst_duration (a 15 s full burst)"
+          "en": "Full Burst Time +5 s is already in burst_duration (a 15 s full burst)",
+          "kind": "modeling"
         },
         {
           "ja": "殲滅モードの照準線拡張・照準範囲内のすべての敵を同時に照準は、単体の的では関係しない",
-          "en": "Annihilation Mode's wider aim and targeting every enemy in range do not matter against a single target"
+          "en": "Annihilation Mode's wider aim and targeting every enemy in range do not matter against a single target",
+          "kind": "outOfScope"
         }
       ]
     }

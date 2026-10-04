@@ -4,7 +4,6 @@
   "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "cooldownReduction",
@@ -69,17 +68,16 @@
       ]
     },
     "skill2": {
-      "support": "unsupported",
       "effects": [],
       "notes": [
         {
           "ja": "遮蔽物の HP 回復はダメージに関係しない",
-          "en": "Cover HP recovery does not affect damage"
+          "en": "Cover HP recovery does not affect damage",
+          "kind": "noDamage"
         }
       ]
     },
     "burst": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",

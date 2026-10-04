@@ -12,6 +12,7 @@ import type {
   ResolvedTrigger,
   SkillDamageType,
   SkillSlot,
+  SkillNoteKind,
   SkillSupport,
 } from '@nikke/core';
 import { formatNumber, formatPercent } from './format.ts';
@@ -103,9 +104,18 @@ export const SUPPORT_BADGE: Record<SkillSupport | 'undefined' | 'loading' | 'err
   supported: { label: '対応', className: 'supported' },
   partial: { label: '一部対応', className: 'partial' },
   unsupported: { label: '未対応', className: 'unsupported' },
+  noEffect: { label: '対象外', className: 'no-effect' },
   undefined: { label: '未定義', className: 'undefined' },
   loading: { label: '読み込み中', className: 'loading' },
   error: { label: '読み込み失敗', className: 'unsupported' },
+};
+
+/** スキル定義の notes の種類の印（plan/design-skill-note-kinds.md 2.1 節）。className は .note に付ける */
+export const NOTE_KIND_BADGE: Record<SkillNoteKind, SupportBadge> = {
+  unimplemented: { label: '未対応', className: 'unsupported' },
+  outOfScope: { label: '前提の外', className: 'out-of-scope' },
+  noDamage: { label: '計算に無関係', className: 'no-damage' },
+  modeling: { label: '補足', className: 'modeling' },
 };
 
 /**

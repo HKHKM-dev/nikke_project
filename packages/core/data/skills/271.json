@@ -4,7 +4,6 @@
   "checkedAt": "2026-09-23",
   "skills": {
     "skill1": {
-      "support": "supported",
       "effects": [
         {
           "kind": "passive",
@@ -20,7 +19,6 @@
       ]
     },
     "skill2": {
-      "support": "supported",
       "effects": [
         {
           "kind": "timed",
@@ -40,13 +38,14 @@
       ]
     },
     "burst": {
-      "support": "partial",
       "effects": [
         {
           "kind": "burstDamage",
           "ref": 1,
           "damageType": "skill",
-          "claims": ["C-0226"]
+          "claims": [
+            "C-0226"
+          ]
         },
         {
           "kind": "timed",
@@ -60,8 +59,14 @@
       ],
       "notes": [
         {
-          "ja": "SG 味方の阻止部位の攻撃ダメージ▲（10 秒間維持）は未対応（阻止部位ダメージは単体の的では関係しない）。「同じ部隊の味方がいれば」味方全体の命中率▲・阻止部位の攻撃ダメージ▲（30 秒間維持）は未対応（部隊の条件は語彙外）",
-          "en": "Parts damage up for SG allies (10 s) is not modeled (parts damage does not apply to a single target). The same-squad hit rate and parts damage up for all allies (30 s) are not modeled (squad conditions are out of vocabulary)"
+          "ja": "阻止部位の攻撃ダメージ▲（SG の味方に 10 秒、同じ部隊の味方がいれば味方全体に 30 秒）は、射撃場の敵に阻止部位が無いのでダメージに関係しない",
+          "en": "Damage to interruption parts up (SG allies for 10 s; all allies for 30 s with a same-squad ally) does not affect damage (the shooting range enemy has no interruption part)",
+          "kind": "outOfScope"
+        },
+        {
+          "ja": "同じ部隊の味方がいれば味方全体の命中率▲（30 秒間維持）は未対応（部隊の条件 squad はあるが、撮影していない）",
+          "en": "Hit Rate up for all allies (30 s) with a same-squad ally is not modeled (the squad condition exists, but no recording yet)",
+          "kind": "unimplemented"
         }
       ]
     }

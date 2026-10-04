@@ -48,12 +48,12 @@ const skillRaw = (values: string[]): SkillRaw => ({
 
 /** skill1 に効果を書いた定義（値は skill1 の description_value を ref で引く） */
 function defWith(resourceId: number, effects: unknown[]): SkillDefinition {
-  const none = { support: 'unsupported', effects: [], notes: [{ ja: '-', en: '-' }] };
+  const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
   return parseSkillDefinition({
     formatVersion: 1,
     resourceId,
     checkedAt: '2026-09-23',
-    skills: { skill1: { support: 'supported', effects }, skill2: none, burst: none },
+    skills: { skill1: { effects }, skill2: none, burst: none },
   });
 }
 
