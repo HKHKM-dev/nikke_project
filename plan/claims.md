@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 153・仮説 56・棄却 37・範囲外 1（計 247）
+件数: 確定 153・仮説 57・棄却 37・範囲外 1（計 248）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1231,7 +1231,7 @@
   - 定義: `data/skills/194.json` の skill1 の effects[0]、`data/skills/194.json` の skill1 の effects[1]、`data/skills/194.json` の skill1 の effects[2]
 - **C-0245** ルドミラ：ウィンターオーナーの S2 は、コアの命中 60 回ごと（弾丸命中率 × コア命中率の期待値で数える）に追加ダメージ（コア・距離なし。1 ヒットで 1 発ぶんのゲージ）を与え、フルバースト開始時に自分のクリティカル確率▲（10 秒）
   - 状態: 仮説・等級: 推論・更新日: 2026-10-04
-  - 根拠: 説明文（`data/characters/194.json` の skill2）の読み。コアの命中の回数を期待値で数えるのはモデルの近似（2026-10-04 オーナー決定。plan/design-ludmilla-wo.md 5 節の論点 1）。録画 099 の読み直しで確かめる（フルバーストの分は段 B）。V-0158
+  - 根拠: 説明文（`data/characters/194.json` の skill2）の読み。コアの命中の回数を期待値で数えるのはモデルの近似（2026-10-04 オーナー決定。plan/design-ludmilla-wo.md 5 節の論点 1）。録画 099 の読み直しで確かめる（フルバーストの分は段 B）。V-0158。フルバースト開始時のクリティカル確率▲は、録画 192 の窓の中と外の会心の割合の差 15.2%（±1.3%。`192-05`）と合う（統計の読みで、1 本の録画なので仮説のまま。V-0159）
   - モデル側: `data/skills/194.json`（skill2）。数えは `skills/triggers.ts` の `shotCountWeight`（`coreHit`）、発ごとの値は `frame/firstPass.ts` の `hitsAt` と `frame/landing.ts` の `mixedCoreHits`
   - 定義: `data/skills/194.json` の skill2 の effects[0]、`data/skills/194.json` の skill2 の effects[1]
 - **C-0246** ルドミラ：ウィンターオーナーのバーストは、自分の攻撃力▲（10 秒）とリロード速度▲（20 秒）で、説明文どおり
@@ -1243,7 +1243,14 @@
   - 状態: 確定・等級: 厳密一致・読み直し・更新日: 2026-10-04
   - 根拠: `099-03`・`099-05`・`099-06`・`099-07`。V-0158
   - モデル側: `data/skills/194.json`（skill1 の `sequential`、回数トリガー `normalHit`・`coreHit`）。順は `frame/plan.ts` の `withEarlierSequentialEffects`、窓は発火の次のフレームから（`skills/timeline.ts` の `buffStartFires`）。コアの命中の回数は、モデルでは期待値で数える近似（`skills/triggers.ts` の `shotCountWeight`。plan/design-ludmilla-wo.md 2.2 節）
+  - 検証記録: V-0158
   - 定義: `data/skills/194.json` の skill1 の effects[0]、`data/skills/194.json` の skill1 の effects[1]、`data/skills/194.json` の skill1 の effects[2]、`data/skills/194.json` の skill2 の effects[0]
+- **C-0248** ルドミラ：ウィンターオーナーのバーストの自分の攻撃力▲（62.54%・10 秒）は通常攻撃と S1・S2 の追加ダメージに乗り、リロード速度▲（67.2%・20 秒）はリロードを 時間 × (1 − 速度)（C-0013）で縮める
+  - 状態: 仮説・等級: 厳密一致・更新日: 2026-10-04
+  - 根拠: `192-01`・`192-03`（リロード: 窓の中 67〜70f・外 188〜189f。MG の切片 + 3 秒 × (1 − 0.672) の約 70f と合い、割り算なら約 118f）・`192-04`（予測 V-0159 と 1 未満で一致）・`192-06`。仮説にとどめたのは、録画 192 がラム・デルタとの 3 人編成で、ラムの S2・バーストの notes が確定の結論に結び付いておらず、最小構成の警告が出るため（AGENTS.md「事実と記録」）。V-0159
+  - モデル側: `data/skills/194.json`（burst の 2 効果）。リロード速度は `frame/firing.ts`（C-0013）
+  - 検証記録: V-0159
+  - 定義: `data/skills/194.json` の burst の effects[0]、`data/skills/194.json` の burst の effects[1]
 
 ## 敵・的・場面
 

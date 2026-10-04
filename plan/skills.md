@@ -182,8 +182,8 @@ notes の種類: 未対応 33・前提の外 19・計算に無関係 24・補足
   - effects[0] damage・coreHit・additional: C-0245（仮説）、C-0247（確定）
   - effects[1] timed・fullBurstStart・critRate: C-0245（仮説）
 - **burst**: supported
-  - effects[0] timed・burstUse・attack: C-0246（仮説）
-  - effects[1] timed・burstUse・reloadSpeed: C-0246（仮説）
+  - effects[0] timed・burstUse・attack: C-0246（仮説）、C-0248（仮説）
+  - effects[1] timed・burstUse・reloadSpeed: C-0246（仮説）、C-0248（仮説）
 
 ## 225 紅蓮：ブラックシャドウ
 
