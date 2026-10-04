@@ -1,0 +1,84 @@
+{
+  "verification": "V-0133",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 830,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（フラワーは遅れの表に無く、ヒットは I の発動と同じフレーム）。検証記録の仮説 L1（11f）・L2（13〜14f）は遅れの表の行で切り替わるので、このファイルの範囲外（検証記録に手で書く）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "flower-063",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 063（フラワー（I）+ デルタ（II）+ アスカ（III・操作））の 1〜4 回目の、I のアイコンが II のアイコンに替わったフレームから、フラワーのバーストのヒットまで（動画のフレーム）"
+    },
+    {
+      "id": "flower-080",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 080（フラワー（I）+ ユニ（II）+ アスカ（III・操作））の 1〜3 回目。値は編成によらない（遅れの表だけで決まる）ので、063 の編成で出す"
+    },
+    {
+      "id": "flower-134",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 134（フラワー単騎・操作）の 1 回目の、BURST バーの位置がチェーンの UI に替わったフレーム（134-03 の起点）から、バーストのヒットまで"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "aa84e11aa15055b47c5a4173a6a902dd8903956e",
+    "values": {
+      "H0": {
+        "flower-063": [0, 0, 0, 0],
+        "flower-080": [0, 0, 0],
+        "flower-134": [0]
+      }
+    },
+    "seen": {
+      "134": ["134-01", "134-02", "134-03", "134-04"],
+      "063": ["018-02", "063-01", "063-02", "063-03", "063-04", "063-05", "063-06", "063-07", "063-08", "063-09"],
+      "080": ["080-01", "080-02", "080-03", "080-04", "080-05", "080-06", "080-07"]
+    }
+  }
+}
