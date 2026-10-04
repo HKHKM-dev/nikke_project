@@ -57,6 +57,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // クイーン（真）: III の発動からヒットまで 1f（動画で 22〜23f。止まり 22f を含む）。効果（自分の攻撃力▲）の遅れは未測定。
   // 最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
   { resourceIds: [870], delays: { hitFrames: 1, effectFrames: 0 }, claim: 'C-0231' },
+  // レイヴン: III の発動からヒットまで 43f（動画で 64〜65f。止まり 22f を含む）。効果（A.N.モード）は持続ダメージ▲で語彙に無い。
+  // 最小構成でない録画の仮説
+  { resourceIds: [851], delays: { hitFrames: 43, effectFrames: 0 }, claim: 'C-NNNN' },
 ];
 
 type DelayKey = Pick<CharacterData, 'resourceId' | 'skills' | 'treasure'>;
