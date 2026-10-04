@@ -74,6 +74,9 @@ export function isOverlayColor(r: number, g: number, b: number): boolean {
   return false;
 }
 
+/** 照準円の円（半透明の灰色で背景を暗くする）。中は tint で背景と比べ、縁の ±edge px は不明にする */
+export type AimDisk = { x: number; y: number; r: number; edge: number; tint: { a: number; b: number }[] };
+
 /** 窓（照準の周りの正方形）の画素の分類。x0・y0 は窓の左上の画面の座標 */
 export type Window = { x0: number; y0: number; w: number; h: number; labels: Int8Array };
 
@@ -106,6 +109,7 @@ export function classifyRect(
   rect: { x0: number; y0: number; w: number; h: number },
   cfg: Pick<CoverageConfig, 'dark' | 'overlayDilate' | 'openTarget' | 'closeTarget' | 'fillHoles' | 'whiteOverBg'>,
   hudBoxes: { x0: number; y0: number; x1: number; y1: number }[] = [],
+  disk?: AimDisk,
 ): Window {
   const { x0, y0, w, h } = rect;
   const labels = new Int8Array(w * h);
@@ -124,10 +128,20 @@ export function classifyRect(
       const g = frame[fi + 1]!;
       const b = frame[fi + 2]!;
       const bi = ((y - field.y0) * frameW + x) * 3;
+      // 照準円（半透明の灰色の円）の中は、円の中で当てはめた係数で背景と比べる。縁の帯は不明
+      let tt = tint;
+      if (disk) {
+        const dr = Math.hypot(x - disk.x, y - disk.y) - disk.r;
+        if (Math.abs(dr) <= disk.edge) {
+          labels[p] = UNKNOWN;
+          continue;
+        }
+        if (dr < 0) tt = disk.tint;
+      }
       let d = 0;
-      d += r - (tint[0]!.a * bg[bi]! + tint[0]!.b);
-      d += g - (tint[1]!.a * bg[bi + 1]! + tint[1]!.b);
-      d += b - (tint[2]!.a * bg[bi + 2]! + tint[2]!.b);
+      d += r - (tt[0]!.a * bg[bi]! + tt[0]!.b);
+      d += g - (tt[1]!.a * bg[bi + 1]! + tt[1]!.b);
+      d += b - (tt[2]!.a * bg[bi + 2]! + tt[2]!.b);
       d /= 3;
       const over = isWhite(r, g, b) ? d > cfg.whiteOverBg : isOverlayColor(r, g, b);
       if (over || hudBoxes.some((q) => x >= q.x0 && x <= q.x1 && y >= q.y0 && y <= q.y1)) {

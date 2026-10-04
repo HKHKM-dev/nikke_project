@@ -31,9 +31,7 @@ import {
   HALF_W,
   W,
   findAim,
-  findLines,
   findTarget,
-  linesVisible,
   readFrames,
   toHalfField,
   writeJpeg,
@@ -46,7 +44,6 @@ import {
   accumulate,
   classifyRect,
   coverageOf,
-  isOverlayColor,
   landingOf,
   magazinesOf,
   mapHistogram,
@@ -61,6 +58,7 @@ import {
   type Window,
 } from './coverage-lib.ts';
 import { capturesDir } from './dirs.ts';
+import { FIELD_H, fieldBackground, fitTintAround } from './field-bg.ts';
 import { parseHudJumpsTsv } from './recipes/triggers.ts';
 
 const { values, positionals } = parseArgs({
@@ -133,67 +131,8 @@ log(
 // ---------------------------------------------------------------------------------------------------------------------
 // 背景（戦場の全解像度の中央値。発の範囲を絞っても、戦闘の全体から作る）
 
-const FIELD_H = FIELD.y1 - FIELD.y0;
-async function fieldBackground(first: number, last: number, step: number): Promise<Uint8Array> {
-  const frames: Uint8Array[] = [];
-  for await (const { img } of readFrames(video, first, last, step, { y: FIELD.y0, h: FIELD_H })) {
-    if (linesVisible(findLines(img, FIELD.y0))) frames.push(img.data);
-  }
-  const n = frames.length;
-  log(`背景: 戦闘中のフレーム ${n} の中央値`);
-  const out = new Uint8Array(W * FIELD_H * 3);
-  const col = new Uint8Array(n);
-  for (let i = 0; i < out.length; i++) {
-    for (let k = 0; k < n; k++) col[k] = frames[k]![i]!;
-    col.sort();
-    out[i] = col[n >> 1] ?? 0;
-  }
-  return out;
-}
-const bg = await fieldBackground(mags[0]!.first, mags[mags.length - 1]!.last, Number(values['bg-step']));
+const bg = await fieldBackground(video, mags[0]!.first, mags[mags.length - 1]!.last, Number(values['bg-step']), log);
 const bgHalf = toHalfField({ data: Buffer.from(bg), w: W, h: FIELD_H }, FIELD.y0);
-
-/** 背景を今のフレームの色に合わせる係数（点 (cx, cy) の周り ±200px の、重なりでない画素で。aim-lib の fitTint と同じ当てはめ） */
-function fitTintAround(img: Rgb, cx: number, cy: number): { a: number; b: number }[] {
-  const out: { a: number; b: number }[] = [];
-  for (let c = 0; c < 3; c++) {
-    const xs: number[] = [];
-    const ys: number[] = [];
-    for (let y = Math.max(FIELD.y0, Math.round(cy) - 200); y < Math.min(FIELD.y1, Math.round(cy) + 200); y += 5) {
-      for (let x = Math.max(0, Math.round(cx) - 200); x < Math.min(W, Math.round(cx) + 200); x += 5) {
-        const fi = (y * W + x) * 3;
-        if (isOverlayColor(img.data[fi]!, img.data[fi + 1]!, img.data[fi + 2]!)) continue;
-        xs.push(bg[((y - FIELD.y0) * W + x) * 3 + c]!);
-        ys.push(img.data[fi + c]!);
-      }
-    }
-    let a = 1;
-    let b = median(ys.map((y, k) => y - xs[k]!));
-    for (const cut of [40, 20]) {
-      let n = 0;
-      let sx = 0;
-      let sy = 0;
-      let sxx = 0;
-      let sxy = 0;
-      for (let k = 0; k < xs.length; k++) {
-        const x = xs[k]!;
-        const y = ys[k]!;
-        if (Math.abs(y - (a * x + b)) > cut) continue;
-        n += 1;
-        sx += x;
-        sy += y;
-        sxx += x * x;
-        sxy += x * y;
-      }
-      const den = n * sxx - sx * sx;
-      if (n < 100 || den <= 0) break;
-      a = (n * sxy - sx * sy) / den;
-      b = (sy - a * sx) / n;
-    }
-    out.push({ a, b });
-  }
-  return out;
-}
 
 // ---------------------------------------------------------------------------------------------------------------------
 // 1 パス: 発のずれと、撃っていないコマのマスク
@@ -285,9 +224,19 @@ for await (const { frame, img } of readFrames(video, first, last, 1)) {
     w: t.x1 - t.x0 + 2 * MARGIN + 1,
     h: t.y1 - t.y0 + 2 * MARGIN + 1,
   };
-  const tint = fitTintAround(img, (t.x0 + t.x1) / 2, (t.y0 + t.y1) / 2);
+  // 照準円（半透明の灰色の円。半径 0.285 × CDN の値）の中は、円の中の画素で色の係数を当てはめる
+  const R = CIRCLE_PX_PER_SCALE * character.shot.accuracy.autoStart;
+  const tint = fitTintAround(
+    img,
+    bg,
+    (t.x0 + t.x1) / 2,
+    (t.y0 + t.y1) / 2,
+    (x, y) => Math.hypot(x - aimOk.x, y - aimOk.y) > R + 4,
+  );
+  const inside = fitTintAround(img, bg, aimOk.x, aimOk.y, (x, y) => Math.hypot(x - aimOk.x, y - aimOk.y) < R - 4);
+  const disk = { x: aimOk.x, y: aimOk.y, r: R, edge: 3, tint: inside };
   const hudBox = [{ x0: aimOk.x - 112, x1: aimOk.x - 36, y0: aimOk.y - 28, y1: aimOk.y + 28 }];
-  const win = classifyRect(img.data, W, bg, FIELD, tint, rect, cfg, hudBox);
+  const win = classifyRect(img.data, W, bg, FIELD, tint, rect, cfg, hudBox, disk);
   maskReticle(win, aimOk, aim.type, aim.size);
   let unknown = 0;
   for (const l of win.labels) if (l === UNKNOWN) unknown += 1;
