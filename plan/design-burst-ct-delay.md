@@ -1,7 +1,7 @@
 # 設計書: バーストの CT 明けから発動までの遅れ（backlog 2-10）
 
 - 対象: `D:\nikke_project`
-- 状態: **起案**（2026-10-05）。2 節の論点はオーナーの判断待ち
+- 状態: **決定**（2026-10-05 起案・オーナーの判断。2.1 は A（モデルは変えない）、2.2 は確定・反復実測、2.3 は 2 つとも起票）
 - 関連: [design-burst-landing.md](design-burst-landing.md)（バーストの着弾の遅れ）、[design-stage7.md](design-stage7.md)（バーストの状態機械）、[design-stage21.md](design-stage21.md)（ゲーム内の時計）
 - 根拠: C-0258（仮説。V-0164）。比べた結論: C-0073・C-0069・C-0070・C-0048。課題は `plan/backlog.md` 2-10、roadmap「今後の課題」の「バーストの段の間隔」
 
