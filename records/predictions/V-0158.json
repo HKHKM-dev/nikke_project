@@ -1,0 +1,60 @@
+{
+  "verification": "V-0158",
+  "team": [
+    {
+      "rid": 20,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "N",
+      "note": "デルタ単騎（AI）。アニス：スター（操作・撃たない）の S1 のゲージ速度が味方に掛からない場合と同じ。A（味方に ×1.06。いまのモデルの扱い）は、モデルに撃たない操作枠が無いので、検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-frame-0",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 187 の、残り時間 02:59 になったフレームから、1 回目に BURST バーが消えたフレームまでの動画のフレーム数"
+    },
+    {
+      "id": "gauge-full-shot-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 187 の、戦闘の最初のデルタの発から数えて、1 回目に BURST バーが消えた発の番号（当たった発で数える）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "56db732474acf5963d8f3f362085a6ef4ce81693",
+    "values": {
+      "N": {
+        "gauge-full-frame-0": 1811,
+        "gauge-full-shot-0": 19
+      }
+    },
+    "seen": {
+      "183": ["183-01"],
+      "184": ["184-01"],
+      "187": []
+    }
+  }
+}
