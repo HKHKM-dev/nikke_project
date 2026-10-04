@@ -2,7 +2,7 @@
 import { gradeAboveCandidate, type Claim, type ClaimGrade } from './claims.ts';
 import type { MinimalWarning } from './minimal.ts';
 import type { Observation } from './observations.ts';
-import type { PredictionFile } from './predictions.ts';
+import { seenObservationIds, type PredictionFile } from './predictions.ts';
 import type { RecordingEntry } from './recordings.ts';
 import type { Verification } from './verifications.ts';
 
@@ -16,6 +16,20 @@ export type CloseInput = {
   /** 結論 ID → 機械の等級の候補 */
   gradeCandidates: ReadonlyMap<string, ClaimGrade>;
   warnings: readonly MinimalWarning[];
+  /**
+   * git の履歴で見た、予測と読みの順（plan/design-reread-prediction.md 5 節の B1。ブランチの上で records:close が調べる）。
+   * 調べられなかったら undefined
+   */
+  gitOrder?: GitOrder;
+};
+
+export type GitOrder = {
+  /** 予測ファイルの predicted に手元の変更がある（予測を commit していない） */
+  uncommitted: boolean;
+  /** いまの predicted を入れた commit（無ければ null） */
+  predictionCommit: string | null;
+  /** この検証記録の観測値のうち、予測の commit より前か同じ commit で足したもの */
+  notAfter: string[];
 };
 
 export type CloseResult = { errors: string[]; warnings: string[] };
@@ -50,7 +64,8 @@ export function closeChecks(input: CloseInput): CloseResult {
       );
     }
   }
-  // 予測は撮る前に書く。起票より前に撮った録画（読み直し）は撮る前に予測を書けないので、録画の日は見ず、読んだ日とだけ比べる
+  // 予測は撮る前に書く。起票より前に撮った録画（読み直し）は撮る前に予測を書けないので、録画の日は見ず、読んだ日とだけ比べる。
+  // 読み直しは「比べる値を読む前」でよい（plan/design-reread-prediction.md）。控え（seen）があれば、それと git の順で確かめる
   const dates = [
     ...v.recordings.flatMap((r) => {
       const e = input.recordings.get(r);
@@ -68,10 +83,37 @@ export function closeChecks(input: CloseInput): CloseResult {
     }
   } else if (input.prediction.predicted === null) {
     errors.push(`${at}: 予測ファイルはあるが、予測を出していない（npm run records:predict -- ${v.id}）`);
-  } else if (earliest !== undefined && input.prediction.predicted.at > earliest) {
-    errors.push(
-      `${at}: 予測の日付（${input.prediction.predicted.at}）が、録画の日か観測値を読んだ日（${earliest}）より後`,
-    );
+  } else {
+    const predicted = input.prediction.predicted;
+    if (earliest !== undefined && predicted.at > earliest) {
+      errors.push(`${at}: 予測の日付（${predicted.at}）が、録画の日か観測値を読んだ日（${earliest}）より後`);
+    }
+    if (predicted.seen !== undefined) {
+      const seen = seenObservationIds(input.prediction);
+      const early = input.observations.filter((o) => seen.has(o.id)).map((o) => o.id);
+      if (early.length > 0) {
+        errors.push(`${at}: 観測値 ${early.join('・')} は予測の時点で既にあった（予測の控え seen に入っている）`);
+      }
+      for (const r of v.recordings) {
+        const e = input.recordings.get(r);
+        if (e !== undefined && 'date' in e && e.date < predicted.at && !(r in predicted.seen)) {
+          errors.push(
+            `${at}: 録画 ${r}（${e.date}）は予測より前に撮ったのに、予測の控え（seen）に無い。読み直しなら「録画」に挙げてから records:predict を出し直す`,
+          );
+        }
+      }
+      // git の順は控えのある予測ファイルだけ見る（控えの無い古い記録は、録画を足しながら予測を出し直したものがある）
+      const g = input.gitOrder;
+      if (g !== undefined) {
+        if (g.uncommitted || g.predictionCommit === null) {
+          errors.push(`${at}: 予測ファイルの predicted が commit されていない。予測を commit してから読む`);
+        } else if (g.notAfter.length > 0) {
+          errors.push(
+            `${at}: 観測値 ${g.notAfter.join('・')} を、予測の commit（${g.predictionCommit.slice(0, 7)}）より前か同じ commit で足した`,
+          );
+        }
+      }
+    }
   }
   if ((v.sections.get('次に撮るもの') ?? '').trim() === '')
     errors.push(`${at}: 「次に撮るもの」が空（「なし」でもよい）`);

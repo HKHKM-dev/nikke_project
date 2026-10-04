@@ -43,6 +43,7 @@ import {
   misplacedObservations,
   misplacedPredictions,
   recordingMap,
+  rereadOnlyClaimsOf,
   verificationPath,
 } from './records-data.ts';
 
@@ -103,6 +104,7 @@ writeFileSync(
     invalidReasons,
     definitionPlacesByClaim(skills),
     gradeCandidates,
+    rereadOnlyClaimsOf(claims, observations, predictions, verifications, recordings),
   ),
 );
 // 予測との突き合わせ（3.5 節）と最小構成の警告（3.5 節）

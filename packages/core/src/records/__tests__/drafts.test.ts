@@ -155,6 +155,17 @@ describe('claimDraft（結論の下書きの状態）', () => {
     expect(claimDraft({ ...base, prediction: { file: early, targets: [], score: score(0, 0) } }).reasons[0]).toContain(
       '合う仮説が無い',
     );
+    // 読み直し: 予測の時点で既にあった観測値（控え seen）を根拠にしていれば仮説（design-reread-prediction.md）
+    const seen = (ids: string[]) => ({
+      ...file,
+      predicted: { at: '2026-10-01', commit: 'abc1234', values: {}, seen: { '101': ids } },
+    });
+    expect(claimDraft({ ...base, prediction: { file: seen([]), targets: [], score: score(1, 0) } }).file.state).toBe(
+      '確定',
+    );
+    expect(
+      claimDraft({ ...base, prediction: { file: seen(['101-01']), targets: [], score: score(1, 0) } }).reasons[0],
+    ).toContain('既にあった観測値がある（101-01）');
   });
 });
 

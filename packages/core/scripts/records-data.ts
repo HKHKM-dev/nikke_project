@@ -6,7 +6,7 @@ import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
 import type { DefinedCharacter } from '../src/records/skills.ts';
-import type { PredictionFile } from '../src/records/predictions.ts';
+import { rereadOnlyClaims, type PredictionFile } from '../src/records/predictions.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
 import type { CharacterData } from '../src/types.ts';
@@ -98,6 +98,22 @@ export function misplacedRecordings(): string[] {
 
 export function recordingMap(file: RecordingsFile): Map<string, RecordingEntry> {
   return new Map(file.recordings.map((r) => [r.id, r]));
+}
+
+/** 読み直しだけに立つ確定の結論（claims.md の印。plan/design-reread-prediction.md 5 節の C1）を、記録の日付から引く */
+export function rereadOnlyClaimsOf(
+  claims: readonly Claim[],
+  observations: readonly Observation[],
+  predictions: readonly PredictionFile[],
+  verifications: readonly Verification[],
+  recordings: ReadonlyMap<string, RecordingEntry>,
+): Set<string> {
+  return rereadOnlyClaims(claims, observations, predictions, {
+    verifications: new Map(verifications.map((v) => [v.id, v.date])),
+    recordings: new Map(
+      [...recordings.values()].flatMap((r) => ('date' in r && r.date !== undefined ? [[r.id, r.date] as const] : [])),
+    ),
+  });
 }
 
 /** records/observations/*.json（ファイル名の順、ファイルの中は書いた順） */

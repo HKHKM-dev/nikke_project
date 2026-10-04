@@ -120,6 +120,31 @@ describe('closeChecks', () => {
     expect(closeChecks(lateInput).errors[0]).toContain('より後');
   });
 
+  it('読み直し: 控え（seen）に入った観測値・控えに無い前の録画・git の順で落ちる（design-reread-prediction.md）', () => {
+    const seen = (s: Record<string, string[]>) => ({
+      ...base.prediction!,
+      predicted: { at: '2026-10-02', commit: 'abc1234', values: {}, seen: s },
+    });
+    // 録画 101（2026-10-01）を控えに挙げ、そのときの観測値は無かった: 通る
+    expect(closeChecks({ ...base, prediction: seen({ '101': [] }) }).errors).toEqual([]);
+    // 101-01 は予測の時点で既にあった
+    expect(closeChecks({ ...base, prediction: seen({ '101': ['101-01'] }) }).errors[0]).toContain('既にあった');
+    // 予測より前の録画が控えに無い
+    expect(closeChecks({ ...base, prediction: seen({}) }).errors[0]).toContain('控え（seen）に無い');
+    const order = (g: Partial<CloseInput['gitOrder'] & object>) => ({
+      ...base,
+      prediction: seen({ '101': [] }),
+      gitOrder: { uncommitted: false, predictionCommit: 'def5678', notAfter: [], ...g },
+    });
+    expect(closeChecks(order({})).errors).toEqual([]);
+    expect(closeChecks(order({ uncommitted: true })).errors[0]).toContain('commit されていない');
+    expect(closeChecks(order({ predictionCommit: null })).errors[0]).toContain('commit されていない');
+    expect(closeChecks(order({ notAfter: ['101-01'] })).errors[0]).toContain('101-01 を、予測の commit（def5678）');
+    // 控えの無い古い予測ファイルでは git の順を見ない
+    const old = { ...base, gitOrder: { uncommitted: true, predictionCommit: null, notAfter: ['101-01'] } };
+    expect(closeChecks(old).errors).toEqual([]);
+  });
+
   it('本文の節が空、既に完了、最小構成の警告、失効は注意', () => {
     expect(closeChecks({ ...base, verification: doc([], { 次: '' }) }).errors[0]).toContain('次に撮るもの');
     expect(closeChecks({ ...base, verification: doc([], { 分かったこと: '' }) }).errors[0]).toContain('分かったこと');

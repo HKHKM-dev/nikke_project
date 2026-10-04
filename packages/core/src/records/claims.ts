@@ -210,6 +210,7 @@ const CLAIMS_HEADER = `# 結論の台帳
   4. \`単独実測\`: 実測はあるが、1 回だけか、値をその実測に合わせて決めただけ
   5. \`推論\`: 上のどれでもない（解釈の余地のある読み・推論・推定・外部資料・観測できない約束）
 - 訂正は、古い結論を消さずに状態を \`棄却\` にし、新しい結論の「置き換え」に古い ID を書く。ID は変えない・使い回さない。
+- 「読み直し」の印は、根拠が予測の後に既存の録画を読んだ観測値だけで、予測の後に撮った録画を含まない確定の結論（[design-reread-prediction.md](design-reread-prediction.md)。比べる値を読む前の予測で確定にしたもの）。
 - 根拠の \`010-01\` などは観測値の ID（\`records/observations/<録画 id>.json\`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）`;
 
@@ -226,6 +227,8 @@ export function renderClaims(
   definitionPlaces: ReadonlyMap<string, readonly string[]> = new Map(),
   /** 結論 ID → 機械が出した等級の候補（plan/design-records-automation.md 3.5 節。書いた等級と違うときだけ出す） */
   gradeCandidates: ReadonlyMap<string, ClaimGrade> = new Map(),
+  /** 読み直しだけに立つ確定の結論（plan/design-reread-prediction.md 5 節の C1） */
+  rereadOnly: ReadonlySet<string> = new Set(),
 ): string {
   const replacedBy = new Map<string, string[]>();
   for (const c of claims) for (const r of c.replaces) replacedBy.set(r, [...(replacedBy.get(r) ?? []), c.id]);
@@ -240,7 +243,12 @@ export function renderClaims(
     if (inTopic.length === 0) continue;
     lines.push('', `## ${topic}`, '');
     for (const c of inTopic) {
-      const meta = [`状態: ${c.state}`, ...(c.grade ? [`等級: ${c.grade}`] : []), `更新日: ${c.updated}`];
+      const meta = [
+        `状態: ${c.state}`,
+        ...(c.grade ? [`等級: ${c.grade}`] : []),
+        ...(rereadOnly.has(c.id) ? ['読み直し'] : []),
+        `更新日: ${c.updated}`,
+      ];
       lines.push(
         `- **${c.id}** ${c.text}`,
         `  - ${meta.join('・')}`,
