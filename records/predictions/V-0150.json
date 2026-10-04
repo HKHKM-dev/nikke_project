@@ -1,0 +1,82 @@
+{
+  "verification": "V-0150",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 851,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（遅れの表に無く、ヒットは III の発動と同じフレーム。動画のフレームでは 0）。ヒットの値は説明文どおりの倍率（C-0185）で、撃つ側のバフは発動の直前で固定するので、同じ発動の S1 の攻撃力▲（フルバーストの始まり）は乗らない。遅れの値の仮説（D1）と、S1 の▲が乗る仮説（S1）は、表の行とコードで切り替わるので、このファイルの範囲外（検証記録に手で書く）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "raven-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム）から、バーストの倍率ダメージのヒットまでの動画のフレーム数（フルバーストの入りの止まりを含む）"
+    },
+    {
+      "id": "raven-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストの倍率ダメージの 1 ヒット（会心なし。フルバースト補正もコアも乗らない）"
+    },
+    {
+      "id": "raven-burst-hit-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストの倍率ダメージの 1 ヒット（会心）。1 回目が会心ならこちらと比べる"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-04",
+    "commit": "7a038004b5e16ff3f4e7a1d392e207d96a526dd2",
+    "values": {
+      "H0": {
+        "raven-delays": [0, 0, 0, 0, 0],
+        "raven-burst-hit": 589755.708,
+        "raven-burst-hit-crit": 884633.5619999999
+      }
+    },
+    "seen": {}
+  }
+}
