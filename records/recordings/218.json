@@ -1,0 +1,29 @@
+{
+  "id": "218",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-218_smg_liter_auto.mp4",
+  "original": "2026-10-05_22-40-03.mp4",
+  "durationSec": 205,
+  "frames": 12299,
+  "fps": 60,
+  "sizeMB": 248.1,
+  "sha256": "624a176f35ff",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。単騎・操作キャラ・AUTO 射撃 ON・オートバースト OFF）。戦闘履歴のパネルでリター 1 体（LV.400）を確かめた。V-0201（1 日目の 8 本）"
+}
