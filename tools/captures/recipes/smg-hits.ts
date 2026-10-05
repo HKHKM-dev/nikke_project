@@ -112,16 +112,138 @@ export type SplitIncrement = {
 };
 
 /**
+ * バーストの効果の窓（V-0201）。バースト中は攻撃力▲・クリティカルダメージ▲で 1 ヒットの値が変わり、胴体の格子に乗らない。
+ * start・end は窓の中の、胴体の格子に乗らない増分の最初と最後のフレーム。grid はその窓の増分から測った格子
+ */
+export type BuffWindow = { start: number; end: number; grid: HitGrid; fit: number; total: number };
+
+/**
+ * 窓の格子を、窓の中の前のフレームも読めた増分から測る。胴体は一番多い値（距離ボーナスの付き方で割る）、会心の倍率は
+ * 窓の中の値から出る候補のうち、1 ヒットとして格子に乗る増分が一番多くなるもの（並んだら base に近いもの）。距離ボーナスとコアの倍率は base のまま。
+ * increments は窓の中の、前のフレームも読めた、胴体の格子に乗らない増分
+ */
+export function estimateWindowGrid(
+  increments: readonly number[],
+  base: HitGrid,
+  mode: DistanceMode,
+): { grid: HitGrid; fit: number } {
+  const freq = new Map<number, number>();
+  for (const v of increments) freq.set(v, (freq.get(v) ?? 0) + 1);
+  const top = [...freq].sort((a, b) => b[1] - a[1])[0]?.[0];
+  if (top === undefined) return { grid: base, fit: 0 };
+  const ds = mode === 'all' ? [1] : mode === 'none' ? [0] : [0, 1];
+  let best = { grid: base, fit: -1 };
+  for (const d of ds) {
+    const body = top / (1 + base.distance * d);
+    const crits = new Set<number>([base.crit]);
+    for (const u of freq.keys()) {
+      for (const d2 of ds) {
+        for (const c of [0, 1]) {
+          const x = u / body - 1 - base.distance * d2 - base.core * c;
+          if (x >= 0.3 && x <= 0.95) crits.add(x);
+        }
+      }
+    }
+    for (const crit of crits) {
+      const grid = { ...base, body, crit };
+      const fit = increments.filter((v) => hitCountCandidates(v, grid, 1, mode).length > 0).length;
+      // 並んだら base の会心の倍率に近いほう（中遠 A では「会心▲ + 距離ボーナス」と「会心▲」が同じだけ乗る）
+      const closer = Math.abs(crit - base.crit) < Math.abs(best.grid.crit - base.crit);
+      if (fit > best.fit || (fit === best.fit && closer)) best = { grid, fit };
+    }
+  }
+  return best;
+}
+
+/**
+ * バーストの効果の窓を探す。前のフレームも読めた増分のうち、胴体の格子に 2 ヒットまでで乗らないものを、空きが gap（f）以下で
+ * まとめ、minCount 個以上のまとまりを窓にする（読み違いの単発は窓にしない）。gap はリロードの空き（約 110f）を跨ぐ長さにする
+ * （窓の中でリロードしても 1 つの窓にする）。窓の端に読み違いの単発が付いても、splitHits で胴体の格子に戻せる
+ */
+export function detectBuffWindows(
+  rows: readonly HudIncrement[],
+  grid: HitGrid,
+  modeAt: (frame: number) => DistanceMode,
+  gap = 150,
+  minCount = 20,
+): BuffWindow[] {
+  const off = rows.filter(
+    (r) => r.readGap === 1 && hitCountCandidates(r.increment, grid, 2, modeAt(r.frame)).length === 0,
+  );
+  const clusters: HudIncrement[][] = [];
+  for (const r of off) {
+    const last = clusters.at(-1)?.at(-1);
+    if (last === undefined || r.frame - last.frame > gap) clusters.push([]);
+    clusters.at(-1)!.push(r);
+  }
+  return clusters
+    .filter((c) => c.length >= minCount)
+    .map((c) => {
+      // 格子は、胴体の格子に乗らない増分だけで測る（窓の中にも胴体の格子の増分が混ざりうる）
+      const inside = c.map((r) => r.increment);
+      const { grid: g, fit } = estimateWindowGrid(inside, grid, modeAt(c[0]!.frame));
+      return { start: c[0]!.frame, end: c.at(-1)!.frame, grid: g, fit, total: inside.length };
+    });
+}
+
+/**
+ * [start, end] の間に撃った発の数を、照準の横の残弾の読みから数える（V-0201。バーストの効果の窓にかかるマガジン用）。
+ * 完全なマガジンは撃ち切ってからリロードするので、撃った数 = 最初の残弾 − 撃たずに消えた弾。撃たずに消えた弾は、隣の読みどうしの
+ * 減りが刻みから撃てる数（⌈Δf / interval⌉ + 1）を超え、その後 10f の間に戻らない所（最大装弾数▲が切れたときなど。capped に数える）の、
+ * 減りから「その間に撃った数」（間のフレーム数を刻みで割った数（四捨五入）と、間にヒットのあったフレーム hitFrames の数の大きいほう）を
+ * 引いたもの。減って戻る所は読み違いとして使わない。1 点の跳ねは、前後 3 点の中央値でならす
+ */
+export function shotsFromAmmo(
+  ammo: readonly AmmoRow[],
+  start: number,
+  end: number,
+  interval: number,
+  hitFrames: readonly number[] = [],
+  margin = 15,
+): { shots: number; first: number; last: number; capped: number } | undefined {
+  const raw = ammo.filter((a) => a.frame >= start - margin && a.frame <= end + margin);
+  if (raw.length < 2) return undefined;
+  const rows = raw.map((a, i) => {
+    if (i === 0 || i === raw.length - 1) return a;
+    const vs = [raw[i - 1]!.value, a.value, raw[i + 1]!.value].sort((x, y) => x - y);
+    return { frame: a.frame, value: vs[1]! };
+  });
+  let removed = 0;
+  let capped = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const a = rows[i - 1]!;
+    const b = rows[i]!;
+    const drop = a.value - b.value;
+    const cap = Math.ceil((b.frame - a.frame) / interval) + 1;
+    if (drop <= cap) continue;
+    if (rows.some((r) => r.frame > b.frame && r.frame <= b.frame + 10 && r.value > b.value + cap)) continue;
+    capped++;
+    const fired = Math.max(
+      Math.round((b.frame - a.frame) / interval),
+      hitFrames.filter((h) => h > a.frame && h <= b.frame).length,
+    );
+    removed += drop - fired;
+  }
+  const first = rows[0]!.value;
+  return { shots: first - removed, first, last: rows.at(-1)!.value, capped };
+}
+
+/**
  * 増分の列をヒットの数に分ける。格子に乗らない増分は次の増分と足す（3 つまで。足しても乗らなければ捨てて unfit に数える）。
- * interval は発の刻み（f）。残弾で上限を出せないときの見積もりに使う
+ * interval は発の刻み（f）。残弾で上限を出せないときの見積もりに使う。grid はフレームごとに替えてもよい（バーストの効果の窓）。
+ * 格子を並びで返したときは、候補が出る最初の格子を使う
  */
 export function splitHits(
   rows: readonly HudIncrement[],
-  grid: HitGrid,
+  grid: HitGrid | ((frame: number) => HitGrid | readonly HitGrid[]),
   modeAt: (frame: number) => DistanceMode,
   ammo: readonly AmmoRow[],
   interval: number,
 ): { increments: SplitIncrement[]; unfit: number[] } {
+  const gridsAt = (frame: number): readonly HitGrid[] => {
+    const g = typeof grid === 'function' ? grid(frame) : grid;
+    return Array.isArray(g) ? g : [g as HitGrid];
+  };
   const out: SplitIncrement[] = [];
   const unfit: number[] = [];
   let pending: { increment: number; readGap: number; count: number } | undefined;
@@ -129,7 +251,11 @@ export function splitHits(
     const increment = row.increment + (pending?.increment ?? 0);
     const readGap = row.readGap + (pending?.readGap ?? 0);
     const maxHits = Math.max(2, Math.floor(readGap / 2) + 2);
-    const candidates = hitCountCandidates(increment, grid, maxHits, modeAt(row.frame));
+    let candidates: number[] = [];
+    for (const g of gridsAt(row.frame)) {
+      candidates = hitCountCandidates(increment, g, maxHits, modeAt(row.frame));
+      if (candidates.length > 0) break;
+    }
     if (candidates.length === 0) {
       if (pending !== undefined && pending.count >= 3) {
         unfit.push(row.frame);

@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
+  detectBuffWindows,
   detectCuts,
+  estimateWindowGrid,
   fixedSpecGrid,
   groupMagazines,
   hitCountCandidates,
   parseAmmoSeries,
   segmentOf,
+  shotsFromAmmo,
   shotsUpperBound,
   singleHitDistance,
   splitHits,
@@ -119,5 +122,76 @@ describe('detectCuts', () => {
       ...mag(900, 10, false), // 遠
     ];
     expect(detectCuts(rows, grid, 10, 2, [200, 200, 150, 150])).toEqual([66, 278, 470, 618, 768]);
+  });
+});
+
+describe('バーストの効果の窓（V-0201）', () => {
+  // 録画 213 の値。近（距離ボーナス）で攻撃力▲の窓は胴体 14,472（1 ヒット 18,814・会心 26,050・コア 33,286）、
+  // 遠（距離ボーナスなし）でクリティカルダメージ▲も乗る窓は会心の倍率 0.6246（会心 23,512）
+  it('窓の増分から胴体と会心の倍率を測る', () => {
+    const near = estimateWindowGrid([18814, 18814, 18814, 26050, 33286, 18814], grid, 'all');
+    expect(near.grid.body).toBeCloseTo(14472.3, 0);
+    expect(near.grid.crit).toBe(0.5);
+    expect(near.fit).toBe(6);
+    const far = estimateWindowGrid([14472, 14472, 23512, 14472, 28944, 14472], grid, 'none');
+    expect(far.grid.body).toBe(14472);
+    expect(far.grid.crit).toBeCloseTo(0.6246, 3);
+    expect(far.fit).toBe(6);
+  });
+
+  it('中遠 A（距離ボーナスが混ざる）では、会心の倍率が並べば base に近いほう', () => {
+    const { grid: g } = estimateWindowGrid([15730, 15730, 25555, 20449, 15730], grid, 'mixed');
+    expect(g.body).toBe(15730);
+    expect(g.crit).toBeCloseTo(0.6246, 3);
+  });
+
+  it('胴体の格子に乗らない増分のまとまりを窓にし、読み違いの単発は窓にしない', () => {
+    const base = (from: number, n: number) =>
+      Array.from({ length: n }, (_, i) => ({ frame: from + 2 * i, increment: 11329, readGap: 1 }));
+    const rows = [
+      ...base(0, 50),
+      { frame: 100, increment: 8000, readGap: 1 }, // 読み違いの単発（前後 150f に窓の増分が無い）
+      ...base(102, 100),
+      ...Array.from({ length: 30 }, (_, i) => ({
+        frame: 400 + 2 * i,
+        increment: i % 5 === 0 ? 26050 : 18814,
+        readGap: 1,
+      })),
+      ...base(460, 50),
+    ];
+    const windows = detectBuffWindows(rows, grid, () => 'all');
+    expect(windows.map((w) => [w.start, w.end, w.fit, w.total])).toEqual([[400, 458, 30, 30]]);
+    expect(windows[0]!.grid.body).toBeCloseTo(14472.3, 0);
+  });
+
+  it('splitHits は窓の格子、乗らなければ胴体の格子で分ける', () => {
+    const near = estimateWindowGrid([18814], grid, 'all').grid;
+    const rows = [
+      { frame: 10, increment: 18814, readGap: 1 },
+      { frame: 12, increment: 11329, readGap: 1 },
+    ];
+    const { increments, unfit } = splitHits(
+      rows,
+      () => [near, grid],
+      () => 'all',
+      [],
+      2.45,
+    );
+    expect(increments.map((x) => x.hits)).toEqual([1, 1]);
+    expect(unfit).toEqual([]);
+  });
+
+  it('撃った数 = 最初の残弾 − 撃たずに消えた弾（最大装弾数▲が切れた減り）。減って戻る読み違いは使わない', () => {
+    // 174 から撃ち始め、173 のときに効果が切れて 120 になり、同じフレームで 1 発撃って 119。そこから 2.45f ごとに 1 発ずつ 1 まで
+    // （最後の 0 は読めない）。途中の 18 を 10 と 2 フレーム読み違える
+    const rows: string[] = ['100\t174', '101\t174', '103\t173', '104\t173'];
+    let glitch = 0;
+    for (let f = 105; ; f++) {
+      const v = 119 - Math.floor((f - 105) / 2.45);
+      if (v < 1) break;
+      rows.push(`${f}\t${v === 18 && glitch++ < 2 ? 10 : v}`);
+    }
+    const r = shotsFromAmmo(parseAmmoSeries(rows.join('\n')), 100, 395, 2.45, [103, 105]);
+    expect(r).toEqual({ shots: 121, first: 174, last: 1, capped: 1 });
   });
 });

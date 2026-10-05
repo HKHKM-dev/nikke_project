@@ -4,16 +4,21 @@
 // 区間の切れ目（ジャンプの前の最後の増分のフレーム）は、マガジンの切れ方と距離ボーナスの替わり目から決める（detectCuts。
 // --opt cuts で与えてもよい）。区間の並びは 中近 → 近 → 遠 → 中遠 → 近 → 遠。
 // 完全なマガジン = 前後をリロードの空きで区切られたマガジン（区間の最初と最後のまとまりは使わない）。撃った数は装弾数。
+// @2（V-0201）: バーストの効果の窓（胴体の格子に乗らない増分のまとまり。detectBuffWindows）の中は、窓の増分から測った格子で
+// 分ける。窓にかかるマガジンは、最大装弾数▲で装弾数が変わるので、撃った数を残弾の読みから数える（shotsFromAmmo）。
+// 窓にかかるマガジンを除いた値も説明に書く。窓の無い録画は @1 と同じ読み。--opt windows=off で窓を探さない。
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { derived } from './cache.ts';
 import { loadHudJumps } from './hud-jumps.ts';
 import {
+  detectBuffWindows,
   detectCuts,
   fixedSpecGrid,
   groupMagazines,
   parseAmmoSeries,
   segmentOf,
+  shotsFromAmmo,
   singleHitDistance,
   splitHits,
   type AmmoRow,
@@ -56,13 +61,14 @@ function ammoConfirms(ammo: readonly AmmoRow[], start: number, end: number, mag:
 
 export const smgMags: Recipe = {
   name: 'smg-mags',
-  version: 1,
+  version: 2,
   describe:
     'SMG 単騎・射撃場 3 分モードの、距離帯ごと（中近・近・遠・中遠）の完全なマガジンの弾丸命中率（rate）。中遠は着地点（A か B・C）を説明に書く',
   options: {
     body: '1 ヒットの胴体（距離ボーナスなし・非会心）。スペック固定 ON の格子（距離 0.3・会心 0.5・コア 1.0）で分ける',
     cuts: '区間の切れ目（ジャンプの前の最後の増分のフレーム）をカンマ区切りで（5 つ）。省けば smg-hits.ts の detectCuts で決める',
     mag: '装弾数（既定 120）',
+    windows: 'off でバーストの効果の窓を探さない（@1 と同じ読み）',
   },
   async run(ctx) {
     const body = Number(ctx.options.body);
@@ -99,7 +105,22 @@ export const smgMags: Recipe = {
       const band = BANDS[segmentOf(frame, cuts)] ?? 'far';
       return band === 'far' ? 'none' : band === 'midFar' ? midFarMode : 'all';
     };
-    const { increments, unfit } = splitHits(rows, grid, modeAt, ammo, interval);
+    const windows = ctx.options.windows === 'off' ? [] : detectBuffWindows(rows, grid, modeAt);
+    // 窓の中は窓の格子、乗らなければ胴体の格子（窓の端に付いた読み違いの単発の後ろなど）
+    const gridAt = (frame: number) => {
+      const w = windows.find((x) => frame >= x.start && frame <= x.end);
+      return w === undefined ? grid : [w.grid, grid];
+    };
+    const { increments, unfit } = splitHits(rows, gridAt, modeAt, ammo, interval);
+    const windowNote =
+      windows.length === 0
+        ? 'バーストの効果の窓 なし'
+        : `バーストの効果の窓 ${windows
+            .map(
+              (w) =>
+                `f${w.start}〜f${w.end}（胴体 ${roundTo(w.grid.body, 1)}・会心 ${roundTo(w.grid.crit, 4)}。1 ヒットとして乗る増分 ${w.fit} / ${w.total}）`,
+            )
+            .join('・')}`;
 
     const bySegment = new Map<number, SplitIncrement[][]>();
     for (const g of groupMagazines(increments)) {
@@ -114,21 +135,70 @@ export const smgMags: Recipe = {
       let n = 0;
       let amb = 0;
       let confirmed = 0;
+      let mags = 0;
+      // バーストの効果の窓にかかるマガジン（本数・当たった数・撃った数・撃たずに消えた弾として引いた減り・読めずに除いた本数）
+      const inWindow = { mags: 0, hits: 0, n: 0, capped: 0, dropped: 0 };
       const bounds = { frame: 0, ammo: 0, interval: 0 };
       for (const s of segs) {
-        const mags = (bySegment.get(s) ?? []).slice(1, -1);
-        if (mags.length === 0) continue;
-        const counts = mags.map((m) => m.reduce((a, x) => a + x.hits, 0));
-        parts.push(`${s + 1} 区間目 ${counts.join('・')}`);
-        for (const [i, m] of mags.entries()) {
-          hits += counts[i]!;
-          n += mag;
+        const segMags = (bySegment.get(s) ?? []).slice(1, -1);
+        if (segMags.length === 0) continue;
+        const labels: string[] = [];
+        for (const m of segMags) {
+          const count = m.reduce((a, x) => a + x.hits, 0);
+          const first = m[0]!.frame;
+          const last = m.at(-1)!.frame;
+          const windowed = windows.some((w) => first <= w.end && last >= w.start);
+          const shots = windowed
+            ? shotsFromAmmo(
+                ammo,
+                first,
+                last,
+                interval,
+                m.map((x) => x.frame),
+              )
+            : undefined;
+          // 窓にかかるマガジンは、最初の残弾が満タンと読めない（撃ち始めが読めていない）、捨てた増分がある、当たった数が撃った数を
+          // 超える（どちらかの読み違い）のどれかなら使わない
+          if (
+            windowed &&
+            (shots === undefined ||
+              shots.first < mag - 3 ||
+              count > shots.shots ||
+              unfit.some((u) => u >= first - 40 && u <= last))
+          ) {
+            labels.push(`${count}/${shots?.shots ?? '—'}×`);
+            inWindow.dropped++;
+            continue;
+          }
+          hits += count;
+          mags++;
+          if (shots === undefined) {
+            n += mag;
+            labels.push(String(count));
+            if (ammoConfirms(ammo, first, last, mag)) confirmed++;
+          } else {
+            n += shots.shots;
+            labels.push(`${count}/${shots.shots}*`);
+            inWindow.mags++;
+            inWindow.hits += count;
+            inWindow.n += shots.shots;
+            inWindow.capped += shots.capped;
+            if (shots.first >= mag - 3 && shots.last <= 3) confirmed++;
+          }
           amb += m.filter((x) => x.ambiguous).length;
           for (const x of m) if (x.candidates.length > 1) bounds[x.boundFrom]++;
-          if (ammoConfirms(ammo, m[0]!.frame, m.at(-1)!.frame, mag)) confirmed++;
         }
+        parts.push(`${s + 1} 区間目 ${labels.join('・')}`);
       }
       if (n === 0) continue;
+      const droppedPart =
+        inWindow.dropped > 0
+          ? `、× はそのうち撃ち始めが読めていない・捨てた増分がある・当たった数が撃った数を超えるので使わないもの（${inWindow.dropped} 本）`
+          : '';
+      const windowPart =
+        inWindow.mags === 0 && inWindow.dropped === 0
+          ? ''
+          : `。* はバーストの効果の窓にかかるマガジン（当たった数 / 残弾の読みから数えた撃った数）${droppedPart}。* と × を除くと ${hits - inWindow.hits} ÷ ${n - inWindow.n} = ${n - inWindow.n > 0 ? roundTo((hits - inWindow.hits) / (n - inWindow.n), 4) : '—'}`;
       const landing =
         band === 'midFar'
           ? `。着地点は ${midFarMode === 'none' ? 'B・C（35 以上）' : 'A（35 未満）'}（4 区間目の 1 ヒットの増分のうち距離ボーナスの付いたもの ${d1}、付かないもの ${d0}）`
@@ -138,10 +208,10 @@ export const smgMags: Recipe = {
           this,
           'rate',
           roundTo(hits / n, 4),
-          `${who}（SMG）単騎の${BAND_JA[band]}（${segs.map((s) => s + 1).join('・')} 区間目）の完全なマガジンの弾丸命中率 = 当たった数 ${hits} ÷ 撃った数 ${n}（外れ ${n - hits}）。マガジンごとの当たった数は ${parts.join('、')}（各 ${mag} 発）${landing}`,
-          `胴体 ${body} の格子。区間の切れ目は ${cuts.map((c) => `f${c}`).join('・')}（${given.length > 0 ? '--opt cuts' : 'detectCuts'}）。` +
+          `${who}（SMG）単騎の${BAND_JA[band]}（${segs.map((s) => s + 1).join('・')} 区間目）の完全なマガジンの弾丸命中率 = 当たった数 ${hits} ÷ 撃った数 ${n}（外れ ${n - hits}）。マガジンごとの当たった数は ${parts.join('、')}（各 ${mag} 発${windowPart}）${landing}`,
+          `胴体 ${body} の格子。${windowNote}。窓にかかるマガジンの残弾の減りのうち、撃たずに消えた弾として引いたもの ${inWindow.capped}。区間の切れ目は ${cuts.map((c) => `f${c}`).join('・')}（${given.length > 0 ? '--opt cuts' : 'detectCuts'}）。` +
             `ヒットの数の候補が 2 つ以上あった増分の上限の出どころ: 前のフレームも読めた ${bounds.frame}・残弾 ${bounds.ammo}・刻み（${roundTo(interval, 3)}f）からの見積もり ${bounds.interval}。` +
-            `上限を当てても決まらなかった増分 ${amb}。残弾の読みで ${mag} → 0 を確かめたマガジン ${confirmed} / ${n / mag}。` +
+            `上限を当てても決まらなかった増分 ${amb}。残弾の読みで ${mag} → 0 を確かめたマガジン ${confirmed} / ${mags}。` +
             `次の増分と足しても格子に乗らず捨てた増分は録画全体で ${unfit.length}`,
         ),
       );
