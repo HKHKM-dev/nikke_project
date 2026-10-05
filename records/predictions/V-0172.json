@@ -177,7 +177,7 @@
   ],
   "predicted": {
     "at": "2026-10-05",
-    "commit": "910134d6bdde0ca2624d1d9f51105a8912c6c67f",
+    "commit": "e25a6f22acbe79bc24a25ee92cd84e2ab3840d50",
     "values": {
       "H1": {
         "hit-body-nocrit-nodist": 5560.2525,
