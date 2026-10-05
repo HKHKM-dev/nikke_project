@@ -190,7 +190,7 @@ function magazineShots(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * クラウン編（V-0171）: その枠が出した回復（heal）ごとに、前の回復（初回は戦闘の始め）からその回復までに撃った通常攻撃の
+ * クラウン編（V-0178）: その枠が出した回復（heal）ごとに、前の回復（初回は戦闘の始め）からその回復までに撃った通常攻撃の
  * 当たる数の期待値（発ごとの区間の弾丸命中率の和）。録画の総ダメージの増分から数えたヒット数と比べる
  */
 function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
