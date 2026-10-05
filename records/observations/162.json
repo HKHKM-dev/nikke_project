@@ -26,7 +26,14 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "condition": "auto"
+        "condition": "auto",
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -56,7 +63,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -104,7 +118,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -137,7 +158,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -170,7 +198,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -201,7 +236,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -234,7 +276,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -267,7 +316,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -298,7 +354,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -329,7 +392,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -360,7 +430,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -435,7 +512,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -465,7 +549,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -495,7 +586,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -667,7 +765,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -699,7 +804,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -731,7 +843,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
@@ -763,7 +882,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "162-22"
+          }
+        ]
       }
     }
   },
