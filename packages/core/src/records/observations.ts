@@ -239,19 +239,6 @@ function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
     .map((w) => w.end);
 }
 
-/**
- * 5-2 の撮影計画（V-0175）: そのフレームの区間の、通常攻撃の会心率（素の会心率 + クリティカル確率▲）。録画では、その区間の
- * ヒットのうち会心だった割合と比べる
- */
-function critRateAt(result: SimResult, ctx: MetricContext): number {
-  const slot = slotOf(result.slots, ctx);
-  const input = slotOf(ctx.input.slots, ctx);
-  const frame = Number(ctx.args.frame);
-  const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
-  if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
-  return applyCritBuffs(input.character.crit, segment.trigger.buffs).rate;
-}
-
 function shotFramesIn(result: SimResult, ctx: MetricContext): number[] {
   const log = slotOf(result.shots, ctx);
   const from = ctx.args.from === undefined ? 0 : Number(ctx.args.from);
@@ -463,7 +450,6 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   healHitCounts: { args: ['slot'], sim: healHitCounts },
   maxAmmoAt: { args: ['slot', 'frame'], sim: maxAmmoAt },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
-  critRateAt: { args: ['slot', 'frame'], sim: critRateAt },
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 3 節）: 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
   // 最後の弾丸の発を含む）。弾丸チャージでマガジンが延びるかを見る
   magazineShots: { args: ['slot', 'count'], sim: magazineShots },
