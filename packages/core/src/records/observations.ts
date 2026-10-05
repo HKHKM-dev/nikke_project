@@ -5,6 +5,7 @@ import { hitFrameOf, hitFramesOf, videoFrameOf, type BurstSchedule } from '../bu
 import { computeTeamDamage } from '../calc/model.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
+import { effectiveMaxAmmo } from '../frame/firing.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs } from '../skills/buffs.ts';
@@ -210,6 +211,19 @@ function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
     from = to;
     return Math.round(hits * 100) / 100;
   });
+}
+
+/**
+ * モダニア編（V-0170）: そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017）。録画ではリロードを終えた直後の
+ * 照準の横の残弾と比べる
+ */
+function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
+  const slot = slotOf(result.slots, ctx);
+  const input = slotOf(ctx.input.slots, ctx);
+  const frame = Number(ctx.args.frame);
+  const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
+  if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
+  return effectiveMaxAmmo(input.character.shot.maxAmmo, segment.trigger.buffs);
 }
 
 function shotFramesIn(result: SimResult, ctx: MetricContext): number[] {
@@ -421,6 +435,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
   healHitCounts: { args: ['slot'], sim: healHitCounts },
+  maxAmmoAt: { args: ['slot', 'frame'], sim: maxAmmoAt },
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 3 節）: 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
   // 最後の弾丸の発を含む）。弾丸チャージでマガジンが延びるかを見る
   magazineShots: { args: ['slot', 'count'], sim: magazineShots },

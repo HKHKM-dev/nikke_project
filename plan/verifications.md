@@ -5,11 +5,13 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 1・保留 0・完了 153・打ち切り 15（計 169）
+件数: 調査中 3・保留 0・完了 153・打ち切り 15（計 171）
 
 ## 開いている検証
 
 - **V-0169** クラウンの S2（リラックスの回復と攻撃ダメージ▲）は説明文どおりか（録画 056 の読み直し）（状態: 調査中）
+- **V-0170** モダニアの S1（クリティカルダメージ▲・最大装弾数▼のスタック）は説明文どおりか（録画 045 の読み直し）（状態: 調査中）
+- **V-0171** モダニアのバースト（装弾数無限・殲滅モード）は説明文どおりか（録画 044 の読み直し）（状態: 調査中）
 
 ## 全件
 
@@ -1567,7 +1569,7 @@
   - 問い: クラウンの S2 を「通常攻撃 43 発ごとにリラックスを 1 スタック、20 スタックで解除して自分を回復し、回復が適用された時に味方全体へ攻撃ダメージ▲（7 秒）」と読んで、モデルは単騎 AUTO の録画 056 と合うか
   - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中
   - 録画: 056
-  - 予測（2026-10-05、commit f8d379f）との比べ:
+  - 予測（2026-10-05、commit 0db7715）との比べ:
     - s2-body-nocrit-nodist（hitDamage）: 実測なし。H1 5,417.26
     - s2-body-crit-nodist（hitDamage）: 実測なし。H1 8,125.89
     - s2-core-nocrit-nodist（hitDamage）: 実測なし。H1 10,834.52
@@ -1577,3 +1579,40 @@
     - s2-core-nocrit-dist（hitDamage）: 実測なし。H1 12,459.698
     - s2-core-crit-dist（hitDamage）: 実測なし。H1 15,168.328
     - heal-hits（healHitCounts）: 実測なし。H1 [858.45, 857.96, 854.86, 853.79, 855.58, 857.92]
+- **[V-0170](../records/verifications/V-0170-modernia-s1-reread.md)** モダニアの S1（クリティカルダメージ▲・最大装弾数▼のスタック）は説明文どおりか（録画 045 の読み直し）
+  - 問い: モダニアの S1 を「通常攻撃 200 回命中ごとに、自分にクリティカルダメージ▲と最大装弾数▼を 1 スタック（最大 5）」と読んで、モデルは単騎・操作の録画 045 の会心の 1 ヒットとリロード明けの残弾に合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中
+  - 録画: 045
+  - 予測（2026-10-05、commit d701b45）との比べ:
+    - s1-k1-body-crit-nodist（hitDamage）: 実測なし。H1 15,271.632
+    - s1-k1-core-crit-nodist（hitDamage）: 実測なし。H1 24,569.43
+    - s1-k1-body-crit-dist（hitDamage）: 実測なし。H1 18,060.971
+    - s1-k1-core-crit-dist（hitDamage）: 実測なし。H1 27,358.769
+    - s1-k2-body-crit-nodist（hitDamage）: 実測なし。H1 16,596.568
+    - s1-k2-core-crit-nodist（hitDamage）: 実測なし。H1 25,894.366
+    - s1-k2-body-crit-dist（hitDamage）: 実測なし。H1 19,385.908
+    - s1-k2-core-crit-dist（hitDamage）: 実測なし。H1 28,683.705
+    - s1-k3-body-crit-nodist（hitDamage）: 実測なし。H1 17,921.504
+    - s1-k3-core-crit-nodist（hitDamage）: 実測なし。H1 27,219.302
+    - s1-k3-body-crit-dist（hitDamage）: 実測なし。H1 20,710.844
+    - s1-k3-core-crit-dist（hitDamage）: 実測なし。H1 30,008.641
+    - s1-k4-body-crit-nodist（hitDamage）: 実測なし。H1 19,246.441
+    - s1-k4-core-crit-nodist（hitDamage）: 実測なし。H1 28,544.238
+    - s1-k4-body-crit-dist（hitDamage）: 実測なし。H1 22,035.78
+    - s1-k4-core-crit-dist（hitDamage）: 実測なし。H1 31,333.577
+    - s1-k5-body-crit-nodist（hitDamage）: 実測なし。H1 20,571.377
+    - s1-k5-core-crit-nodist（hitDamage）: 実測なし。H1 29,869.174
+    - s1-k5-body-crit-dist（hitDamage）: 実測なし。H1 23,360.716
+    - s1-k5-core-crit-dist（hitDamage）: 実測なし。H1 32,658.513
+    - s1-k0-maxammo（maxAmmoAt）: 実測なし。H1 300
+    - s1-k1-maxammo（maxAmmoAt）: 実測なし。H1 285
+    - s1-k2-maxammo（maxAmmoAt）: 実測なし。H1 270
+    - s1-k3-maxammo（maxAmmoAt）: 実測なし。H1 255
+    - s1-k4-maxammo（maxAmmoAt）: 実測なし。H1 240
+    - s1-k5-maxammo（maxAmmoAt）: 実測なし。H1 224
+- **[V-0171](../records/verifications/V-0171-modernia-burst-reread.md)** モダニアのバースト（装弾数無限・殲滅モード）は説明文どおりか（録画 044 の読み直し）
+  - 問い: モダニアのバーストを「フルバースト（15 秒）のあいだ装弾数無限で殲滅モードに武器を変え、1 フレーム 1 発（1 発 2 ヒット）で撃ち続ける」と読んで、モデルは録画 044 の 2〜4 回目のフルバーストの発数と殲滅モードの会心の 1 ヒットに合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中
+  - 録画: 044
+  - 予測: 予測ファイルはあるが、まだ出していない（`npm run records:predict`）
+  - **最小構成の警告**: 録画 044（I-DOLL・フラワー・デルタ・モダニア が未確定）。未確定の要素が 2 つ以上混ざる録画では結論を作らない（AGENTS.md「事実と記録」）

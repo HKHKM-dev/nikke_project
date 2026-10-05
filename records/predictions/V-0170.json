@@ -1,0 +1,541 @@
+{
+  "verification": "V-0170",
+  "team": [
+    {
+      "rid": 260,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "説明文どおり（200 回命中ごとにクリティカルダメージ 14.25%▲・最大装弾数 5.04%▼ を 1 スタック、最大 5）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "s1-k1-body-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 500,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 1 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）。frame はモデルでスタック 1 の区間"
+    },
+    {
+      "id": "s1-k1-core-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 500,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 1 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）。frame はモデルでスタック 1 の区間"
+    },
+    {
+      "id": "s1-k1-body-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 500,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 1 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）。frame はモデルでスタック 1 の区間"
+    },
+    {
+      "id": "s1-k1-core-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 500,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 1 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）。frame はモデルでスタック 1 の区間"
+    },
+    {
+      "id": "s1-k2-body-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 2 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）。frame はモデルでスタック 2 の区間"
+    },
+    {
+      "id": "s1-k2-core-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 2 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）。frame はモデルでスタック 2 の区間"
+    },
+    {
+      "id": "s1-k2-body-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 2 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）。frame はモデルでスタック 2 の区間"
+    },
+    {
+      "id": "s1-k2-core-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 2 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）。frame はモデルでスタック 2 の区間"
+    },
+    {
+      "id": "s1-k3-body-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 3 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）。frame はモデルでスタック 3 の区間"
+    },
+    {
+      "id": "s1-k3-core-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 3 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）。frame はモデルでスタック 3 の区間"
+    },
+    {
+      "id": "s1-k3-body-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 3 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）。frame はモデルでスタック 3 の区間"
+    },
+    {
+      "id": "s1-k3-core-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 3 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）。frame はモデルでスタック 3 の区間"
+    },
+    {
+      "id": "s1-k4-body-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 4 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）。frame はモデルでスタック 4 の区間"
+    },
+    {
+      "id": "s1-k4-core-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 4 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）。frame はモデルでスタック 4 の区間"
+    },
+    {
+      "id": "s1-k4-body-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 4 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）。frame はモデルでスタック 4 の区間"
+    },
+    {
+      "id": "s1-k4-core-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 4 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）。frame はモデルでスタック 4 の区間"
+    },
+    {
+      "id": "s1-k5-body-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2000,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 5 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）。frame はモデルでスタック 5 の区間"
+    },
+    {
+      "id": "s1-k5-core-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2000,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 5 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）。frame はモデルでスタック 5 の区間"
+    },
+    {
+      "id": "s1-k5-body-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2000,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 5 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）。frame はモデルでスタック 5 の区間"
+    },
+    {
+      "id": "s1-k5-core-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2000,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 5 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）。frame はモデルでスタック 5 の区間"
+    },
+    {
+      "id": "s1-k0-maxammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 0 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
+    },
+    {
+      "id": "s1-k1-maxammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 1 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
+    },
+    {
+      "id": "s1-k2-maxammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 2 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
+    },
+    {
+      "id": "s1-k3-maxammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 3 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
+    },
+    {
+      "id": "s1-k4-maxammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 4 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
+    },
+    {
+      "id": "s1-k5-maxammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 2000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "S1 のスタック 5 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "d701b45201b22624c35f0a2ce4ab167fd117cb2e",
+    "values": {
+      "H1": {
+        "s1-k1-body-crit-nodist": 15271.632229499999,
+        "s1-k1-core-crit-nodist": 24569.4296295,
+        "s1-k1-body-crit-dist": 18060.9714495,
+        "s1-k1-core-crit-dist": 27358.768849499997,
+        "s1-k2-body-crit-nodist": 16596.568358999997,
+        "s1-k2-core-crit-nodist": 25894.365759,
+        "s1-k2-body-crit-dist": 19385.907579,
+        "s1-k2-core-crit-dist": 28683.704979,
+        "s1-k3-body-crit-nodist": 17921.5044885,
+        "s1-k3-core-crit-nodist": 27219.301888500002,
+        "s1-k3-body-crit-dist": 20710.8437085,
+        "s1-k3-core-crit-dist": 30008.6411085,
+        "s1-k4-body-crit-nodist": 19246.440617999997,
+        "s1-k4-core-crit-nodist": 28544.238017999996,
+        "s1-k4-body-crit-dist": 22035.779837999995,
+        "s1-k4-core-crit-dist": 31333.577237999994,
+        "s1-k5-body-crit-nodist": 20571.3767475,
+        "s1-k5-core-crit-nodist": 29869.174147499998,
+        "s1-k5-body-crit-dist": 23360.715967499997,
+        "s1-k5-core-crit-dist": 32658.513367499996,
+        "s1-k0-maxammo": 300,
+        "s1-k1-maxammo": 285,
+        "s1-k2-maxammo": 270,
+        "s1-k3-maxammo": 255,
+        "s1-k4-maxammo": 240,
+        "s1-k5-maxammo": 224
+      }
+    },
+    "seen": {
+      "045": [
+        "023-01",
+        "045-01",
+        "045-02",
+        "045-03",
+        "045-04",
+        "045-05",
+        "045-06",
+        "045-07",
+        "045-08"
+      ]
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "verification": "V-0171",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 260,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "説明文どおり（フルバースト 15 秒のあいだ装弾数無限・殲滅モード。殲滅モードは 1 発 2 ヒット・4,200 rpm・スピンアップなし）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "fb2-shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "from": 3355,
+        "to": 4236
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "2 回目のフルバーストの殲滅モードの発の数（モデルの殲滅モードの窓 f3355〜4236）。録画では、殲滅モードの最初の発から最後の発までの総ダメージの増分の数（1 発 = 1 増分）。的のジャンプは操作の録画と時刻が合わないので、モデルはジャンプなしで出す（録画でジャンプが重なった回は、止まった間を結果に書いて比べない）"
+    },
+    {
+      "id": "fb3-shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "from": 6139,
+        "to": 7020
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "3 回目のフルバーストの殲滅モードの発の数（モデルの殲滅モードの窓 f6139〜7020）。録画では、殲滅モードの最初の発から最後の発までの総ダメージの増分の数（1 発 = 1 増分）。的のジャンプは操作の録画と時刻が合わないので、モデルはジャンプなしで出す（録画でジャンプが重なった回は、止まった間を結果に書いて比べない）"
+    },
+    {
+      "id": "fb4-shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "from": 8953,
+        "to": 9834
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "4 回目のフルバーストの殲滅モードの発の数（モデルの殲滅モードの窓 f8953〜9834）。録画では、殲滅モードの最初の発から最後の発までの総ダメージの増分の数（1 発 = 1 増分）。的のジャンプは操作の録画と時刻が合わないので、モデルはジャンプなしで出す（録画でジャンプが重なった回は、止まった間を結果に書いて比べない）"
+    },
+    {
+      "id": "anni-body-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "殲滅モードの 1 ヒットの会心（コア以外・距離ボーナスなし）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
+    },
+    {
+      "id": "anni-core-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "殲滅モードの 1 ヒットの会心（コア・距離ボーナスなし）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
+    },
+    {
+      "id": "anni-body-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "殲滅モードの 1 ヒットの会心（コア以外・距離ボーナスあり）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
+    },
+    {
+      "id": "anni-core-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "殲滅モードの 1 ヒットの会心（コア・距離ボーナスあり）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
+    }
+  ],
+  "predicted": null
+}
