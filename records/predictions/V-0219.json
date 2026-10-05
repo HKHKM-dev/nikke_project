@@ -1,0 +1,226 @@
+{
+  "verification": "V-0219",
+  "note": "部隊あり（ブランを操作枠に置く）の録画の予測。判定に使うのは、サクラ（836。SMG・AI）のコア命中率の、帯ごとの▲の窓（ノワールのバースト使用から 30 秒）の中 − 外（coreHitRateDiff）。sim の窓は録画と時刻が違うが、帯の中ではモデルのコア命中率は窓の中と外でそれぞれ一定なので、sim の窓の中と外の 1 フレームずつで代表させる。録画のブランは撃たないが、モデルはブランを撃たせる（撃たない枠を表せない）。オートバースト ON（モデルの既定と同じ）。サクラのコア命中率は、どの帯でも窓の中か外かだけで決まり、ブランの射撃やバーストには関わらない。サクラの定義は V-0213 のもの（S1 の受けるダメージ▲は 1 ヒットの値だけを変え、コア命中率には効かない）。部隊なしの対照（ブランをユニに替えた録画。V-0220 と兼ねる）は編成が違うのでこのファイルに入れず、検証記録に書いた（▲が付かないので差は 0）",
+  "team": [
+    {
+      "rid": 836,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 270,
+      "controlled": true
+    },
+    {
+      "rid": 271,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "部隊の命中率▲は付かない（いまの定義。burst の notes[1] が未対応のまま）。サクラのコア命中率は、窓の中も外も的の表の SMG の値のまま"
+    },
+    {
+      "id": "H1",
+      "note": "部隊の命中率▲（説明文の値 6・7。Lv10 で 11.61%・30 秒）を、バースト使用時（burstUse）に味方全体に配る持続の命中率▲として足し、squad（present: true）で同じ部隊の味方（ブラン）がいるときだけ効かせる。コア命中率への効き方は C-0170 の式（p ÷ (1 − N)²）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 271,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "hitRate",
+              "ref": 6,
+              "durationRef": 7,
+              "squad": {
+                "present": true
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "sakura-midnear-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 1176,
+        "baseFrame": 200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "中近（1 区間目）の窓の中（sim の 20 秒）− 外（3.4 秒。1 回目のノワールのバーストより前）"
+    },
+    {
+      "id": "sakura-near1-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 3235,
+        "baseFrame": 2353
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "近（2 区間目）の窓の中（55 秒）− 外（40 秒。1 回目の窓の終わりと 2 回目のバーストの間）"
+    },
+    {
+      "id": "sakura-far-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 5588,
+        "baseFrame": 4706
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "遠（3 区間目）の窓の中（95 秒）− 外（80 秒）"
+    },
+    {
+      "id": "sakura-midfar-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 7941,
+        "baseFrame": 6941
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "中遠（4 区間目）の窓の中（135 秒）− 外（118 秒）"
+    },
+    {
+      "id": "sakura-near2-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 10117,
+        "baseFrame": 9411
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "近（5 区間目）の窓の中（172 秒）− 外（160 秒。4 回目の窓の終わりと 5 回目のバーストの間）"
+    },
+    {
+      "id": "sakura-far-core-in",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5588
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "検算と σ の見込み用。遠の窓の中のコア命中率"
+    },
+    {
+      "id": "sakura-far-bullet-in",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5588
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "参考（判定に使わない）。遠の窓の中の弾丸命中率（C-0192 の H2 の形。SMG の遠は確定）"
+    },
+    {
+      "id": "sakura-far-bullet-out",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 4706
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "参考（判定に使わない）。遠の窓の外の弾丸命中率"
+    },
+    {
+      "id": "sakura-body-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "読み取りの格子の基（判定に使わない）。サクラの胴体・会心なし・距離ボーナスなしの 1 ヒット（ノワール S1 の攻撃力▲を含む。フルバーストの外）。窓の中と外で変わらない（命中率▲は 1 ヒットの値に出ない）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "29df1560759f0be37536e519862fcc41138ede20",
+    "values": {
+      "H0": {
+        "sakura-midnear-core-diff": 0,
+        "sakura-near1-core-diff": 0,
+        "sakura-far-core-diff": 0,
+        "sakura-midfar-core-diff": 0,
+        "sakura-near2-core-diff": 0,
+        "sakura-far-core-in": 0.0342,
+        "sakura-far-bullet-in": 0.76,
+        "sakura-far-bullet-out": 0.76,
+        "sakura-body-hit": 8551.996200000003
+      },
+      "H1": {
+        "sakura-midnear-core-diff": 0.03300635779236977,
+        "sakura-near1-core-diff": 0.0740193469067224,
+        "sakura-far-core-diff": 0.00957436332908436,
+        "sakura-midfar-core-diff": 0.014445530636864122,
+        "sakura-near2-core-diff": 0.0740193469067224,
+        "sakura-far-core-in": 0.04377436332908436,
+        "sakura-far-bullet-in": 0.8390466390199698,
+        "sakura-far-bullet-out": 0.76,
+        "sakura-body-hit": 8551.996200000003
+      }
+    },
+    "seen": {}
+  }
+}
