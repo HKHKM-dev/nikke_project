@@ -297,6 +297,30 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 2, n: 1, crit: false })).toThrow('1 回目');
   });
 
+  it('sums the gauge of the first shot fired in a full burst window and landing after it (plan/design-anis-star-gauge-timing.md 3.5 節)', () => {
+    const result = {
+      schedule: {
+        fullBurstWindows: [
+          { start: 100, end: 400 },
+          { start: 1000, end: 1300 },
+        ],
+      },
+      shotGauges: [
+        { slotIndex: 0, shotFrame: 380, frame: 390, energy: 74200 },
+        { slotIndex: 1, shotFrame: 1290, frame: 1305, energy: 50000 },
+        { slotIndex: 0, shotFrame: 1295, frame: 1309, energy: 74200 },
+        { slotIndex: 0, shotFrame: 1295, frame: 1309, energy: 29680 },
+        { slotIndex: 0, shotFrame: 1337, frame: 1351, energy: 74200 },
+      ],
+    } as unknown as SimResult;
+    const metric = METRICS.fullBurstCrossingShotGauge!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 1 })).toBe(10.39);
+    expect(value({ slot: 2 })).toBe(5);
+    expect(() => value({ slot: 3 })).toThrow('跨ぐ発が無い');
+  });
+
   it('reports unknown metrics, missing args, calc-less metrics and unknown presets', () => {
     const base = observations.find((o) => o.id === '047-02')!;
     const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '047-99'): Observation => ({
