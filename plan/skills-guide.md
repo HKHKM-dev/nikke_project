@@ -77,7 +77,7 @@
 
 - 撮影プロトコルは [captures/index.md](captures/index.md)「撮影プロトコル」、読み取りの落とし穴は [captures/guide.md](captures/guide.md)。
 - 撮り終えたら、すぐに取り込む: `node tools/captures/intake.ts <元ファイル> --id NNN --name <識別子> --rid ... --controlled ... --target BigArms --element Fire --mode range-3min --fixed-spec on|off ...`（リネーム・移動・素性・`records/recordings/<録画 id>.json`・Drive への同期と sha256 の突き合わせ・backup-log.md への記録）。空いた項目を埋めて `npm run records:table`。
-- 読み取りはレシピで: `npm run records:read -- <録画 id> --recipe <名前> --source V-NNNN --write`（`--list` でレシピと `--opt` の一覧。`hud-jumps`・`sg-pellets`・`reload-segments`。[captures/index.md](captures/index.md)「解析ツール」）。観測値が `records/observations/<録画 id>.json` に足され、`source` に検証記録の ID、`method.tool` にレシピ名と版が入る。
+- 読み取りはレシピで: `npm run records:read -- <録画 id> --recipe <名前> --source V-NNNN --write`（`--list` でレシピと `--opt` の一覧。`hud-jumps`・`sg-pellets`・`reload-segments`・`smg-mags`。[captures/index.md](captures/index.md)「解析ツール」）。観測値が `records/observations/<録画 id>.json` に足され、`source` に検証記録の ID、`method.tool` にレシピ名と版が入る。
 - レシピに無い値は、ほかの解析ツールか目で読み、同じファイルに手で書く（`method.note` に読み方）。
   - 比べる指標は照合ランナー（`packages/core/src/records/observations.ts` の `METRICS`）から選ぶ。予測ファイルの指標と `metric`・`args`・`setup` を同じにすると、予測と自動で結び付く（違うときは予測ファイルの `observations` で明示）。
   - 要る指標が無ければ `METRICS` に足す。これも語彙の追加と同じ PR に入れる。繰り返し使う読み方はレシピにする（`tools/captures/recipes/`）。

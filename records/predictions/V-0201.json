@@ -1,0 +1,85 @@
+{
+  "verification": "V-0201",
+  "note": "撮る前の予測（リター単騎・スペック固定 ON の新しい撮影）。H1-* は帯ごとの対立仮説で、hitRate を一様に置き換える形でしか書けないので、帯 x の指標だけで比べる（検証記録の「予測」）",
+  "team": [
+    {
+      "rid": 82,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "的の表のとおり（C-0295）。中遠はどの着地点も 0.9210、遠 0.7600"
+    },
+    {
+      "id": "H1-midFarA",
+      "note": "中遠の着地点 A は V-0200 の 6 本の値（2,125 / 2,160）。midfar-a の指標だけで比べる",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.9838
+      }
+    },
+    {
+      "id": "H1-far",
+      "note": "遠は V-0200 の 25 本の値（9,559 / 12,120）。far の指標だけで比べる",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.7887
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "midfar-a",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "midFarLanding": "A"
+      },
+      "note": "判定の指標。中遠（4 区間目）の着地点が A の録画の、完全なマガジンの弾丸命中率の平均"
+    },
+    {
+      "id": "far",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5400
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "判定の指標。遠（3・6 区間目）の完全なマガジンの弾丸命中率の録画ごとの平均"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "d401284248b3275d43983ad0b456d1e62ed5e2f7",
+    "values": {
+      "H0": {
+        "midfar-a": 0.921,
+        "far": 0.76
+      },
+      "H1-midFarA": {
+        "midfar-a": 0.9838,
+        "far": 0.9838
+      },
+      "H1-far": {
+        "midfar-a": 0.7887,
+        "far": 0.7887
+      }
+    },
+    "seen": {}
+  }
+}
