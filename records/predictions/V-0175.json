@@ -2,7 +2,7 @@
   "verification": "V-0175",
   "team": [
     {
-      "rid": 870,
+      "rid": 95,
       "controlled": true
     }
   ],
@@ -10,18 +10,17 @@
   "hypotheses": [
     {
       "id": "H1",
-      "note": "S1 の戦闘開始時の攻撃力▲（50.28%）は、戦闘開始からゲーム内の時計で 15 秒（C-0050 の切り捨てで 882f）"
+      "note": "S2 のクリティカル確率▲（8.16%）は自分にも常時乗る"
     }
   ],
   "targets": [
     {
-      "id": "s1-end",
+      "id": "crit-rate",
       "model": "sim",
-      "metric": "buffWindowEnds",
+      "metric": "critRateAt",
       "args": {
         "slot": 1,
-        "skill": "skill1",
-        "stat": "attack"
+        "frame": 300
       },
       "setup": {
         "enemy": "range-bigarms-fire",
@@ -30,47 +29,7 @@
         ],
         "burst": false
       },
-      "note": "S1 の攻撃力▲の窓の終わり（戦闘開始からのモデルのフレーム）。録画では、戦闘開始（残り時間 02:59 が出たフレーム）から、1 ペレットの値が下がる前の最後のトリガーと下がった後の最初のトリガーのあいだ（ゲーム内の 1 フレーム 0.017 秒で数える）"
-    },
-    {
-      "id": "hit-before",
-      "model": "sim",
-      "metric": "hitDamage",
-      "args": {
-        "slot": 1,
-        "frame": 300,
-        "core": false,
-        "crit": false,
-        "distance": false
-      },
-      "setup": {
-        "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "burst": false
-      },
-      "note": "窓の中の 1 ペレット（胴体・会心なし）。012-01 と同じ値の見込み（前の録画の値。窓の切れ目の見分けに使うだけ）"
-    },
-    {
-      "id": "hit-after",
-      "model": "sim",
-      "metric": "hitDamage",
-      "args": {
-        "slot": 1,
-        "frame": 1000,
-        "core": false,
-        "crit": false,
-        "distance": false
-      },
-      "setup": {
-        "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "burst": false
-      },
-      "note": "窓の後の 1 ペレット（胴体・会心なし）。014-01 と同じ値の見込み"
+      "note": "通常攻撃の会心率。録画では、戦闘の全部のヒットのうち会心だった割合（的の上の数値の色か、1 ヒットの値の格子で分ける）"
     }
   ],
   "predicted": {
@@ -78,22 +37,9 @@
     "commit": "e25a6f22acbe79bc24a25ee92cd84e2ab3840d50",
     "values": {
       "H1": {
-        "s1-end": [
-          882
-        ],
-        "hit-before": 47171.87972016001,
-        "hit-after": 31380.562200000004
+        "crit-rate": 0.2316
       }
     },
-    "seen": {
-      "014": [
-        "012-06",
-        "014-01",
-        "014-02",
-        "014-03",
-        "014-04",
-        "014-05"
-      ]
-    }
+    "seen": {}
   }
 }

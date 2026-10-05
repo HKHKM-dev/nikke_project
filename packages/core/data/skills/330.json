@@ -51,7 +51,7 @@
             "en": "Healing from outside the modeled skills (e.g. undefined healers) is not counted; a heal at full HP still counts as applied"
           },
           "claims": [
-            "C-0265"
+            "C-0268"
           ]
         },
         {
@@ -63,7 +63,7 @@
           "durationRef": 8,
           "claims": [
             "C-0050",
-            "C-0265"
+            "C-0268"
           ]
         }
       ],
@@ -78,7 +78,7 @@
           "en": "Relax only counts shots until the heal at 20 stacks",
           "kind": "modeling",
           "claims": [
-            "C-0265"
+            "C-0268"
           ]
         }
       ]

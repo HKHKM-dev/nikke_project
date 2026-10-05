@@ -36,7 +36,7 @@
           "maxStacksRef": 4,
           "durationRef": 5,
           "claims": [
-            "C-0266"
+            "C-0269"
           ]
         },
         {
@@ -52,7 +52,7 @@
           "maxStacksRef": 7,
           "durationRef": 8,
           "claims": [
-            "C-0266"
+            "C-0269"
           ]
         }
       ]
@@ -103,7 +103,7 @@
           "stat": "infiniteAmmo",
           "durationRef": 2,
           "claims": [
-            "C-0268"
+            "C-0271"
           ]
         },
         {
@@ -117,8 +117,8 @@
             "en": "Annihilation Mode lands 2 hits per shot (measured on the range target; whether it is per enemy in range or per bullet is unknown). Base MG core multiplier, no spin-up (one shot per frame), and the base MG comes back fully reloaded (recording 44)"
           },
           "claims": [
-            "C-0267",
-            "C-0268"
+            "C-0270",
+            "C-0271"
           ]
         }
       ],
@@ -128,7 +128,7 @@
           "en": "Full Burst Time +5 s is already in burst_duration (a 15 s full burst)",
           "kind": "modeling",
           "claims": [
-            "C-0268"
+            "C-0271"
           ]
         },
         {

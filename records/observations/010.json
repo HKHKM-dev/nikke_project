@@ -161,7 +161,7 @@
     "value": 118,
     "unit": "ヒット",
     "description": "マナ（AR・操作）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号",
-    "source": "V-0174",
+    "source": "V-0176",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",

@@ -2,7 +2,15 @@
   "verification": "V-0173",
   "team": [
     {
-      "rid": 95,
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 260,
       "controlled": true
     }
   ],
@@ -10,36 +18,156 @@
   "hypotheses": [
     {
       "id": "H1",
-      "note": "S2 のクリティカル確率▲（8.16%）は自分にも常時乗る"
+      "note": "説明文どおり（フルバースト 15 秒のあいだ装弾数無限・殲滅モード。殲滅モードは 1 発 2 ヒット・4,200 rpm・スピンアップなし）"
     }
   ],
   "targets": [
     {
-      "id": "crit-rate",
+      "id": "fb2-shots",
       "model": "sim",
-      "metric": "critRateAt",
+      "metric": "shotCount",
       "args": {
-        "slot": 1,
-        "frame": 300
+        "slot": 3,
+        "from": 3229,
+        "to": 4110
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "2 回目のフルバーストの殲滅モードの発の数（モデルの殲滅モードの窓 f3229〜4110。ジャンプなしのモデル）。録画では、殲滅モードの最初の発から最後の発までの総ダメージの増分の数（1 発 = 1 増分）。的のジャンプは操作の録画と時刻が合わないので、モデルはジャンプなしで出す（録画でジャンプが重なった回は、止まった間を結果に書いて比べない）"
+    },
+    {
+      "id": "fb3-shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "from": 5971,
+        "to": 6852
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "3 回目のフルバーストの殲滅モードの発の数（モデルの殲滅モードの窓 f5971〜6852。ジャンプなしのモデル）。録画では、殲滅モードの最初の発から最後の発までの総ダメージの増分の数（1 発 = 1 増分）。的のジャンプは操作の録画と時刻が合わないので、モデルはジャンプなしで出す（録画でジャンプが重なった回は、止まった間を結果に書いて比べない）"
+    },
+    {
+      "id": "fb4-shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "from": 8707,
+        "to": 9588
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "4 回目のフルバーストの殲滅モードの発の数（モデルの殲滅モードの窓 f8707〜9588。ジャンプなしのモデル）。録画では、殲滅モードの最初の発から最後の発までの総ダメージの増分の数（1 発 = 1 増分）。的のジャンプは操作の録画と時刻が合わないので、モデルはジャンプなしで出す（録画でジャンプが重なった回は、止まった間を結果に書いて比べない）"
+    },
+    {
+      "id": "anni-body-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": true,
+        "distance": false
       },
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": [
           "range-3min-jump"
-        ],
-        "burst": false
+        ]
       },
-      "note": "通常攻撃の会心率。録画では、戦闘の全部のヒットのうち会心だった割合（的の上の数値の色か、1 ヒットの値の格子で分ける）"
+      "note": "殲滅モードの 1 ヒットの会心（コア以外・距離ボーナスなし）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
+    },
+    {
+      "id": "anni-core-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "殲滅モードの 1 ヒットの会心（コア・距離ボーナスなし）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
+    },
+    {
+      "id": "anni-body-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "殲滅モードの 1 ヒットの会心（コア以外・距離ボーナスあり）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
+    },
+    {
+      "id": "anni-core-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "殲滅モードの 1 ヒットの会心（コア・距離ボーナスあり）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
     }
   ],
   "predicted": {
     "at": "2026-10-05",
-    "commit": "e25a6f22acbe79bc24a25ee92cd84e2ab3840d50",
+    "commit": "6188f9c6d6c100d3ce24f8558d0bb30bf932edf7",
     "values": {
       "H1": {
-        "crit-rate": 0.2316
+        "fb2-shots": 881,
+        "fb3-shots": 881,
+        "fb4-shots": 881,
+        "anni-body-crit-nodist": 18963.669587744,
+        "anni-core-crit-nodist": 25954.884182304002,
+        "anni-body-crit-dist": 21061.033966111998,
+        "anni-core-crit-dist": 28052.248560671997
       }
     },
-    "seen": {}
+    "seen": {
+      "044": [
+        "018-02",
+        "044-01",
+        "044-02",
+        "044-03",
+        "044-04",
+        "044-05",
+        "044-06",
+        "044-07",
+        "044-08",
+        "044-09"
+      ]
+    }
   }
 }

@@ -112,7 +112,7 @@
     "value": [884],
     "unit": "f",
     "description": "クイーン（真）（SG・操作）単騎で、S1 の戦闘開始時の攻撃力▲が切れたフレーム（戦闘開始からのゲーム内のフレーム）。▲の中の最後のトリガーと、▲の外の最初のトリガーのあいだの中点",
-    "source": "V-0175",
+    "source": "V-0177",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/timer.ts --mode changes・tools/captures/hud.ts --mode jumps",

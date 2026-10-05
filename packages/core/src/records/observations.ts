@@ -190,7 +190,7 @@ function magazineShots(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * クラウン編（V-0169）: その枠が出した回復（heal）ごとに、前の回復（初回は戦闘の始め）からその回復までに撃った通常攻撃の
+ * クラウン編（V-0171）: その枠が出した回復（heal）ごとに、前の回復（初回は戦闘の始め）からその回復までに撃った通常攻撃の
  * 当たる数の期待値（発ごとの区間の弾丸命中率の和）。録画の総ダメージの増分から数えたヒット数と比べる
  */
 function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
@@ -214,7 +214,7 @@ function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * モダニア編（V-0170）: そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017）。録画ではリロードを終えた直後の
+ * モダニア編（V-0172）: そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017）。録画ではリロードを終えた直後の
  * 照準の横の残弾と比べる
  */
 function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
@@ -227,7 +227,7 @@ function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * 5-2 の撮影計画（V-0175）: その枠が受ける timed の効果の窓の終わり（モデルのフレーム。戦闘時間で切った窓は戦闘の終わり）。
+ * 5-2 の撮影計画（V-0177）: その枠が受ける timed の効果の窓の終わり（モデルのフレーム。戦闘時間で切った窓は戦闘の終わり）。
  * skill（'skill1' | 'skill2' | 'burst'）と stat で絞る
  */
 function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
@@ -240,7 +240,7 @@ function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * 5-2 の撮影計画（V-0173）: そのフレームの区間の、通常攻撃の会心率（素の会心率 + クリティカル確率▲）。録画では、その区間の
+ * 5-2 の撮影計画（V-0175）: そのフレームの区間の、通常攻撃の会心率（素の会心率 + クリティカル確率▲）。録画では、その区間の
  * ヒットのうち会心だった割合と比べる
  */
 function critRateAt(result: SimResult, ctx: MetricContext): number {
