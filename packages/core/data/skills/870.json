@@ -32,14 +32,24 @@
           "claims": [
             "C-0296"
           ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 3,
+          "damageType": "distributed",
+          "enemyElement": "Wind",
+          "delayFrames": 24,
+          "assumes": {
+            "ja": "単体ボスなので分配ダメージは全額 1 ヒット",
+            "en": "Distributed damage lands in full as one hit on a lone boss"
+          },
+          "claims": [
+            "C-0310"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "1more が適用された時の分配ダメージは未対応（語彙 damage・enemyElement はあるが、根拠の結論が無い）",
-          "en": "The distributed damage when 1 More takes effect is not modeled (damage and enemyElement exist, but there is no supporting claim)",
-          "kind": "unimplemented"
-        },
         {
           "ja": "追撃が適用された時の分配ダメージは未対応（ほかのペルソナのキャラがいる編成で起きる。きっかけが説明文と CDN から分からない）",
           "en": "The distributed damage when Follow Up takes effect is not modeled (it happens with other Persona characters on the team; the trigger is not known from the description or the CDN data)",
@@ -70,14 +80,20 @@
           "stat": "distributedDamage",
           "ref": 3,
           "durationRef": 4
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 1,
+          "durationUntil": "fullBurstEnd",
+          "claims": [
+            "C-0307"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "バースト使用時の鉄・拳・制・裁！の有利コードの攻撃ダメージ▲（フルバースト終了で解除）は未対応（語彙 elementDamage・durationUntil はあるが、根拠の結論が無い。S1 の▲の結論 C-0296 はこの効果を撮っていない）",
-          "en": "Elemental Advantage Attack Damage up from Fist of Justice! on Burst Skill use (removed when Full Burst ends) is not modeled (elementDamage and durationUntil exist, but there is no supporting claim; C-0296 for the S1 up did not capture this effect)",
-          "kind": "unimplemented"
-        },
         {
           "ja": "1more 時のバトンタッチ（自分を除く基本バースト段階 3 のペルソナ状態の味方に攻撃力▲・スタック）は未対応（ほかのペルソナのキャラがいる編成で起きる。その対象の語彙も無い）",
           "en": "Baton Pass on 1 More (ATK up with stacks for standard Burst III allies in the Persona state, except the skill user) is not modeled (it happens with other Persona characters on the team; there is no vocabulary for that target either)",
@@ -111,7 +127,10 @@
           "stat": "attack",
           "ref": 2,
           "durationRef": 3,
-          "enemyElement": "Wind"
+          "enemyElement": "Wind",
+          "claims": [
+            "C-0308"
+          ]
         }
       ]
     }

@@ -1,0 +1,157 @@
+[
+  {
+    "id": "230-01",
+    "recording": "230",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0211",
+    "readAt": "2026-10-06",
+    "value": 47070.9,
+    "description": "ラム + デルタ + クイーン（真）・灼熱の的の、2〜4 回目のフルバーストの中のクイーン（真）の 1 ペレット（胴体）。単位 15,690.30（30 トリガー・822 単位）の 3 倍",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、窓ごとにクイーン（真）の 1 ペレットの単位（倍率グループ 0.5 分。胴体はフルバースト中 3 単位・外 2 単位、会心・コア・コア会心はそれぞれ 1・2・3 単位多い）で割り、整数に乗った増分（ラム・デルタの SR が混ざらないトリガー）から単位を Σ増分 / Σ単位数 で出した。窓はバーストのヒットのフレーム h から、フルバースト中 h+1〜h+590・フルバースト後の 15 秒の中 h+640〜h+1480・15 秒の後 h+1560〜次のヒットの 30f 前（2〜4 回目のバースト）。ほかの仮説の単位（検証記録の表）に乗った増分は 0 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3240,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "230-02",
+    "recording": "230",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0211",
+    "readAt": "2026-10-06",
+    "value": 47172.1,
+    "description": "同じ録画の、フルバースト終了から 15 秒の中（S1 のフルバースト終了時の攻撃力▲の中）の 1 ペレット（胴体）。単位 23,586.05（41 トリガー・813 単位）の 2 倍",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、窓ごとにクイーン（真）の 1 ペレットの単位（倍率グループ 0.5 分。胴体はフルバースト中 3 単位・外 2 単位、会心・コア・コア会心はそれぞれ 1・2・3 単位多い）で割り、整数に乗った増分（ラム・デルタの SR が混ざらないトリガー）から単位を Σ増分 / Σ単位数 で出した。窓はバーストのヒットのフレーム h から、フルバースト中 h+1〜h+590・フルバースト後の 15 秒の中 h+640〜h+1480・15 秒の後 h+1560〜次のヒットの 30f 前（2〜4 回目のバースト）。ほかの仮説の単位（検証記録の表）に乗った増分は 0 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "230-03",
+    "recording": "230",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0211",
+    "readAt": "2026-10-06",
+    "value": 31380.8,
+    "description": "同じ録画の、フルバースト終了から 15 秒の後から次の III の前までの 1 ペレット（胴体）。単位 15,690.40（42 トリガー・852 単位）の 2 倍",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、窓ごとにクイーン（真）の 1 ペレットの単位（倍率グループ 0.5 分。胴体はフルバースト中 3 単位・外 2 単位、会心・コア・コア会心はそれぞれ 1・2・3 単位多い）で割り、整数に乗った増分（ラム・デルタの SR が混ざらないトリガー）から単位を Σ増分 / Σ単位数 で出した。窓はバーストのヒットのフレーム h から、フルバースト中 h+1〜h+590・フルバースト後の 15 秒の中 h+640〜h+1480・15 秒の後 h+1560〜次のヒットの 30f 前（2〜4 回目のバースト）。ほかの仮説の単位（検証記録の表）に乗った増分は 0 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4860,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "230-04",
+    "recording": "230",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0212",
+    "readAt": "2026-10-06",
+    "value": 4206947,
+    "description": "同じ録画の、2 回目のバーストの倍率ダメージのヒット（f3874）。3・4 回目（f6252・f8629）は 4,552,134・4,536,444 で、4,206,947 とデルタかラムの 1 発（345,187・329,497。どちらもこの録画のほかのフレームに単独で出る値）の和",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の 100 万を超える増分。1 回目（f1497）は 6,323,975（S1 の戦闘開始時の攻撃力▲の中）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "230-05",
+    "recording": "230",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0212",
+    "readAt": "2026-10-06",
+    "value": 0,
+    "description": "同じ録画の 180 秒の、1more の分配ダメージのヒットの数（100 万を超える増分はバーストのヒットの 5 つだけ。f1497・3874・6252・8629・11007）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の 100 万を超える増分を数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]
