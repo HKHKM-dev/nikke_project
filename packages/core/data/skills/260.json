@@ -34,7 +34,10 @@
           "stat": "critDamage",
           "ref": 3,
           "maxStacksRef": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-0266"
+          ]
         },
         {
           "kind": "timed",
@@ -47,7 +50,10 @@
           "decrease": true,
           "ref": 6,
           "maxStacksRef": 7,
-          "durationRef": 8
+          "durationRef": 8,
+          "claims": [
+            "C-0266"
+          ]
         }
       ]
     },

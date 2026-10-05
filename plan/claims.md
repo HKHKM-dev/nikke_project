@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 162・仮説 63・棄却 39・範囲外 1（計 265）
+件数: 確定 163・仮説 63・棄却 39・範囲外 1（計 266）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1343,6 +1343,12 @@
   - モデル側: `data/skills/330.json` の skill2 の effects[0]（heal・count normalShot・everyRef・stacksRef）・effects[1]（timed・healed・attackDamage）・notes[1]。回復と窓は `skills/heals.ts`（plan/design-heal-window.md）、攻撃ダメージ▲の乗数は `damage.ts` の `attackDamageMultiplier`（C-0018）
   - 検証記録: V-0169
   - 定義: `data/skills/330.json` の skill2 の effects[0]、`data/skills/330.json` の skill2 の effects[1]、`data/skills/330.json` の skill2 の notes[1]
+- **C-0266** モダニアの S1 のスタックは、1 つごとに自分の会心の倍率に 0.1425（クリティカルダメージ 14.25%▲）を足し、最大装弾数を 300 ×（1 − 0.0504 × スタック）の四捨五入にする（285・270・255・240・224）。単騎の録画で、スタック 1〜5 の会心の 1 ヒットと、スタック 1・2・4・5 のリロード明けの残弾が、どれも式どおり
+  - 状態: 確定・等級: 厳密一致・読み直し・更新日: 2026-10-05
+  - 根拠: `045-09`〜`045-19`（スタック 1〜5 の通常攻撃の会心の 1 ヒット 11 通り。差 0.5 未満）・`045-20`〜`045-24`（スタック 0・1・2・4・5 の最大装弾数。リロード明けの残弾が何回でも同じ値）。録画 045 はモダニア単騎・スペック固定 ON（最小構成）。予測は読む前に固定（四捨五入でなく切り捨てなら 284・269・239 になる）。V-0170。スタックの規則（付与のたびに全スタックを更新）は凍結の記録で 045 から読んだので、この結論の根拠にしない
+  - モデル側: `data/skills/260.json` の skill1 の effects[1]（timed・critDamage・stacks）・effects[2]（timed・maxAmmo・stacks）。最大装弾数の丸めは `frame/firing.ts` の `effectiveMaxAmmo`（C-0017）
+  - 検証記録: V-0170
+  - 定義: `data/skills/260.json` の skill1 の effects[1]、`data/skills/260.json` の skill1 の effects[2]
 
 ## 敵・的・場面
 

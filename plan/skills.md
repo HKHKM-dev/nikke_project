@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 29・効果 130（根拠あり 79）・notes 86（根拠あり 30）
+件数: キャラ 29・効果 130（根拠あり 81）・notes 86（根拠あり 30）
 
 notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足 5
 
@@ -218,8 +218,8 @@ notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足
 
 - **skill1**: supported
   - effects[0] damage・normalHit・additional: C-0105（確定）、C-0119（確定）
-  - effects[1] timed・normalHit・critDamage: 根拠なし
-  - effects[2] timed・normalHit・maxAmmo: 根拠なし
+  - effects[1] timed・normalHit・critDamage: C-0266（確定）
+  - effects[2] timed・normalHit・maxAmmo: C-0266（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・hitRate: C-0170（仮説）
   - effects[1] timed・normalHit・attack: C-0124（確定）、C-0118（確定）
