@@ -1,0 +1,167 @@
+{
+  "verification": "V-0225",
+  "team": [
+    {
+      "rid": 271,
+      "controlled": true,
+      "build": {
+        "attack": 448870,
+        "overload": {
+          "head": [
+            {
+              "option": "chargeDamage",
+              "level": 7
+            },
+            {
+              "option": "chargeSpeed",
+              "level": 15
+            }
+          ],
+          "body": [
+            {
+              "option": "defence",
+              "level": 9
+            },
+            {
+              "option": "attack",
+              "level": 9
+            }
+          ],
+          "arm": [
+            {
+              "option": "maxAmmo",
+              "level": 11
+            },
+            {
+              "option": "critDamage",
+              "level": 11
+            }
+          ],
+          "leg": [
+            {
+              "option": "chargeDamage",
+              "level": 11
+            },
+            {
+              "option": "elementDamage",
+              "level": 11
+            }
+          ]
+        },
+        "cube": null,
+        "collection": {
+          "rarity": "SR",
+          "level": 5
+        },
+        "skillLevels": {
+          "skill1": 4,
+          "skill2": 5,
+          "burst": 4
+        }
+      }
+    }
+  ],
+  "fixedSpec": false,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（1 トリガーの武器倍率 20460 に (1 + 値) を掛けて四捨五入。C-0121・C-0127 の SMG と同じ形）。H2（1 ペレットの武器倍率 2046 で丸める）は検証記録に手で書いた"
+    },
+    {
+      "id": "H0",
+      "note": "コレクションの効果が乗らない",
+      "override": {
+        "buildEffectsOff": ["collection"]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "pellet-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "録画 4（ノワール単騎・キューブなし）の 1 ペレット（胴体・非会心・距離ボーナスなし）"
+    },
+    {
+      "id": "pellet-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ録画の 1 ペレット（胴体・会心・距離ボーナスなし）"
+    },
+    {
+      "id": "pellet-body-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ録画の 1 ペレット（胴体・非会心・距離ボーナスあり。近）"
+    },
+    {
+      "id": "pellet-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ録画の 1 ペレット（胴体・会心・距離ボーナスあり。近）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "0efa56a526e23d55b96e782c1d6de135fb61aabc",
+    "values": {
+      "H1": {
+        "pellet-body": 117752.78332999998,
+        "pellet-crit": 195987.732574452,
+        "pellet-body-dist": 153078.618329,
+        "pellet-crit-dist": 231313.567573452
+      },
+      "H0": {
+        "pellet-body": 110773.91819999999,
+        "pellet-crit": 184372.10945207998,
+        "pellet-body-dist": 144006.09365999998,
+        "pellet-crit-dist": 217604.28491207998
+      }
+    },
+    "seen": {}
+  }
+}

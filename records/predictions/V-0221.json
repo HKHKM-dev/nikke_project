@@ -1,0 +1,179 @@
+{
+  "verification": "V-0221",
+  "team": [
+    {
+      "rid": 290,
+      "controlled": true,
+      "build": {
+        "attack": 441817,
+        "overload": {
+          "head": [
+            {
+              "option": "chargeDamage",
+              "level": 1
+            },
+            {
+              "option": "elementDamage",
+              "level": 9
+            },
+            {
+              "option": "critDamage",
+              "level": 3
+            }
+          ],
+          "body": [
+            {
+              "option": "attack",
+              "level": 1
+            },
+            {
+              "option": "elementDamage",
+              "level": 9
+            },
+            {
+              "option": "maxAmmo",
+              "level": 10
+            }
+          ],
+          "arm": [
+            {
+              "option": "attack",
+              "level": 11
+            },
+            {
+              "option": "maxAmmo",
+              "level": 11
+            },
+            {
+              "option": "hitRate",
+              "level": 11
+            }
+          ],
+          "leg": [
+            {
+              "option": "elementDamage",
+              "level": 11
+            },
+            {
+              "option": "critDamage",
+              "level": 11
+            }
+          ]
+        },
+        "cube": null,
+        "collection": {
+          "rarity": "SR",
+          "level": 5
+        },
+        "skillLevels": {
+          "skill1": 7,
+          "skill2": 10,
+          "burst": 7
+        }
+      }
+    }
+  ],
+  "fixedSpec": false,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（コアダメージ▲を倍率グループのコアの項に足す: 1 + (2 − 1 + 値)）。H2（コア倍率に (1 + 値) を掛ける）は式を切り替える仮説なので、検証記録に手で書いた"
+    },
+    {
+      "id": "H0",
+      "note": "コレクションの効果が乗らない（コアの項は 1 のまま）",
+      "override": {
+        "buildEffectsOff": ["collection"]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "録画 1（マナ単騎・キューブなし）の 1 ヒット（胴体・非会心・距離ボーナスなし）。H1 と H0 で同じ値になる（対照）"
+    },
+    {
+      "id": "core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ録画の 1 ヒット（コア・非会心・距離ボーナスなし）"
+    },
+    {
+      "id": "body-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ録画の 1 ヒット（胴体・非会心・距離ボーナスあり）。対照"
+    },
+    {
+      "id": "core-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ録画の 1 ヒット（コア・非会心・距離ボーナスあり）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "0efa56a526e23d55b96e782c1d6de135fb61aabc",
+    "values": {
+      "H1": {
+        "body": 111003.5102,
+        "core": 235871.35882398003,
+        "body-dist": 144304.56326000002,
+        "core-dist": 269172.41188398004
+      },
+      "H0": {
+        "body": 111003.51020000002,
+        "core": 222007.02040000004,
+        "body-dist": 144304.56326000002,
+        "core-dist": 255308.07346
+      }
+    },
+    "seen": {}
+  }
+}

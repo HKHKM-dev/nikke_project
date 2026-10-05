@@ -1,0 +1,119 @@
+{
+  "verification": "V-0222",
+  "team": [
+    {
+      "rid": 290,
+      "controlled": true,
+      "build": {
+        "attack": 441817,
+        "overload": {
+          "head": [
+            {
+              "option": "chargeDamage",
+              "level": 1
+            },
+            {
+              "option": "elementDamage",
+              "level": 9
+            },
+            {
+              "option": "critDamage",
+              "level": 3
+            }
+          ],
+          "body": [
+            {
+              "option": "attack",
+              "level": 1
+            },
+            {
+              "option": "elementDamage",
+              "level": 9
+            },
+            {
+              "option": "maxAmmo",
+              "level": 10
+            }
+          ],
+          "arm": [
+            {
+              "option": "attack",
+              "level": 11
+            },
+            {
+              "option": "maxAmmo",
+              "level": 11
+            },
+            {
+              "option": "hitRate",
+              "level": 11
+            }
+          ],
+          "leg": [
+            {
+              "option": "elementDamage",
+              "level": 11
+            },
+            {
+              "option": "critDamage",
+              "level": 11
+            }
+          ]
+        },
+        "cube": null,
+        "collection": {
+          "rarity": "SR",
+          "level": 5
+        },
+        "skillLevels": {
+          "skill1": 7,
+          "skill2": 10,
+          "burst": 7
+        }
+      }
+    }
+  ],
+  "fixedSpec": false,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（OL の 2 行を足して round(60 × (1 + Σ))。スキルの最大装弾数▲と同じ C-0017 の形）。H2（行ごとに掛け合わせる）は検証記録に手で書いた"
+    },
+    {
+      "id": "H0",
+      "note": "OL の最大装弾数増加が乗らない",
+      "override": {
+        "buildEffectsOff": ["overload"]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "max-ammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "録画 1（マナ単騎・キューブなし）のリロードを終えた直後の照準の横の残弾"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "0efa56a526e23d55b96e782c1d6de135fb61aabc",
+    "values": {
+      "H1": {
+        "max-ammo": 140
+      },
+      "H0": {
+        "max-ammo": 60
+      }
+    },
+    "seen": {}
+  }
+}
