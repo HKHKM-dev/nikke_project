@@ -258,11 +258,11 @@
           "kind": "unimplemented"
         },
         {
-          "ja": "爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0279。単騎の録画 164 では遠で高く中遠で低く、向きが揃わない。plan/design-anis-star-core-path.md 9 節）",
-          "en": "Whether the Explosion Radius increase changes the core hit rate of normal attacks during her Burst (inside and outside the Burst the same table row applies, C-0279; on the solo recording 164 it was higher at far and lower at mid-far, so the direction is not consistent. plan/design-anis-star-core-path.md 9)",
+          "ja": "爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0282。単騎の録画 164 では遠で高く中遠で低く、向きが揃わない。plan/design-anis-star-core-path.md 9 節）",
+          "en": "Whether the Explosion Radius increase changes the core hit rate of normal attacks during her Burst (inside and outside the Burst the same table row applies, C-0282; on the solo recording 164 it was higher at far and lower at mid-far, so the direction is not consistent. plan/design-anis-star-core-path.md 9)",
           "kind": "unimplemented",
           "claims": [
-            "C-0279"
+            "C-0282"
           ]
         },
         {

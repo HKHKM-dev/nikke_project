@@ -110,7 +110,7 @@ export function projectileKeyOf(character: CharacterData): string | null {
 
 /**
  * V-0119: 弾の種類の行のキー。爆発の範囲まで書いた `<fireType>:<弾速>:<爆発の範囲>` の行があればそれ、無ければ
- * `<fireType>:<弾速>`（爆発の範囲で振る舞いの違う弾だけ、行を分ける。C-0279）。飛ぶ弾でなければ null
+ * `<fireType>:<弾速>`（爆発の範囲で振る舞いの違う弾だけ、行を分ける。C-0282）。飛ぶ弾でなければ null
  */
 function projectileRowKeyOf(by: TargetRateByProjectile['byProjectile'], character: CharacterData): string | null {
   const key = projectileKeyOf(character);

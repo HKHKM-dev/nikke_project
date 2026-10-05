@@ -1,5 +1,5 @@
 // V-0119: 1 発の通常攻撃のヒット数（的の表の hitsPerShot）と、爆発の範囲まで書いた弾の種類の行。
-// V-0186（C-0279）: アニス：スターの 2 ヒットはコアの 1 ヒットだったので、実データの表に hitsPerShot の行は無い。語彙はテスト用の表で見る。
+// V-0186（C-0282）: アニス：スターの 2 ヒットはコアの 1 ヒットだったので、実データの表に hitsPerShot の行は無い。語彙はテスト用の表で見る。
 //   1. データと検証: `<fireType>:<弾速>:<爆発の範囲>` の行は範囲が合うキャラだけが先に引き、ほかは今までの行のまま
 //   2. 自動の条件: 範囲 750 の誘導弾はコア 0・距離帯ごとのヒット数、範囲 500 は今までどおり（ヒット数なし）
 //   3. 1 トリガーの式: ヒット数は通常攻撃の分にだけ掛かり、射撃ごとの倍率ダメージとゲージには掛からない
@@ -44,7 +44,7 @@ describe('爆発の範囲まで書いた弾の種類の行', () => {
     expect(targetRateOf(profile.coreHitRate, anis, at('far'))).toBeCloseTo(0.3922, 12);
   });
 
-  it('has no hits per shot row in the data (C-0279), and looks up a test row like the other tables', () => {
+  it('has no hits per shot row in the data (C-0282), and looks up a test row like the other tables', () => {
     expect(profile.hitsPerShot).toBeUndefined();
     const hits = TEST_HITS;
     expect(targetRateOf(hits, R750, at('near'))).toBe(2);
