@@ -4,13 +4,54 @@
   "checkedAt": "2026-10-05",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "環境コントロールの敵全体の受けるダメージ▲（戦闘開始時と再発動周期ごと）は未対応（語彙 damageTaken・周期のトリガーの atStart はあるが、再発動周期の起点が説明文から一意に読めず、撮影していない）",
-          "en": "Environment Setup's Damage Taken up on all enemies (at battle start and every recurring interval) is not modeled (damageTaken and the atStart timer trigger exist, but where the recurring interval starts is ambiguous and there is no recording yet)",
-          "kind": "unimplemented"
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 30,
+            "atStart": true
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 1,
+          "durationRef": 2,
+          "withCharacter": {
+            "rid": 95,
+            "present": false
+          },
+          "assumes": {
+            "ja": "敵 1 体。戦闘開始時（フレーム 0）と、そこから 30 秒ごと（発動の時刻から数える）に付き、10 秒続く。味方全体の与ダメージに、ほかのどの群とも別の乗数 (1 + 3.9%) で掛かる。編成にウンファ：タクティカル・アップがいないとき（いるときは S2 のフォーメーションAS で周期が 10 秒になる。下の効果）",
+            "en": "One enemy. Applied at battle start (frame 0) and every 30 s after (counted from each application) for 10 s. Applies to all allies' damage as a multiplier separate from every other group (1 + 3.9%). Only when Eunhwa: Tactical Upgrade is not in the team (with her, S2's AS Formation makes the interval 10 s; next effect)"
+          },
+          "claims": [
+            "C-0302"
+          ]
         },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 10,
+            "atStart": true
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 1,
+          "durationRef": 2,
+          "withCharacter": {
+            "rid": 95,
+            "present": true
+          },
+          "assumes": {
+            "ja": "S2 の「自分にフォーメーションAS 適用中」の効果 4（再発動周期 20 秒▼）を、編成にウンファ：タクティカル・アップがいることと読み、周期を 30 − 20 = 10 秒にした。10 秒ごとに 10 秒付くので切れ目なく続く。掛かり方は上の効果と同じ",
+            "en": "Reads S2's \"while this unit is in the AS Formation state\" Effect 4 (recurring interval −20 s) as Eunhwa: Tactical Upgrade being in the team, so the interval is 30 − 20 = 10 s. Applied for 10 s every 10 s, so it never lapses. Applies the same way as the previous effect"
+          },
+          "claims": [
+            "C-0302",
+            "C-0303"
+          ]
+        }
+      ],
+      "notes": [
         {
           "ja": "環境コントロールの味方全体の持続回復は未対応（回復を受けた時の効果を起こさない）",
           "en": "Environment Setup's heal over time on all allies is not modeled (it does not trigger effects on being healed)",
@@ -44,8 +85,8 @@
           "kind": "unimplemented"
         },
         {
-          "ja": "フォーメーションAS 適用中の追加効果（味方全体の防御力無視ダメージ▲・発射体爆発ダメージ▲、環境コントロールの再発動周期 20 秒▼）は未対応（語彙 withCharacter・trueDamage・projectileExplosionDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）",
-          "en": "Bonus effects while in AS Formation (True Damage up and Projectile Explosion Damage up for all allies, Environment Setup's recurring interval −20 s) are not modeled (withCharacter, trueDamage and projectileExplosionDamage exist, but there is no supporting claim; the skills of Emma: TU and Eunhwa: TU must be confirmed first)",
+          "ja": "フォーメーションAS 適用中の追加効果のうち、味方全体の防御力無視ダメージ▲・発射体爆発ダメージ▲は未対応（語彙 withCharacter・trueDamage・projectileExplosionDamage はあるが、根拠の結論が無い。防御力無視ダメージの発か RL のいる編成で撮る必要がある）。環境コントロールの再発動周期 20 秒▼は S1 の効果に書いた",
+          "en": "Of the bonus effects while in AS Formation, True Damage up and Projectile Explosion Damage up for all allies are not modeled (withCharacter, trueDamage and projectileExplosionDamage exist, but there is no supporting claim; a recording with true-damage shots or an RL is needed). The −20 s to Environment Setup's recurring interval is written in S1's effects",
           "kind": "unimplemented"
         },
         {
@@ -69,8 +110,8 @@
       ],
       "notes": [
         {
-          "ja": "環境コントロール強化（環境コントロールの受けるダメージ▲を 10 秒間 2 倍にする）は未対応（環境コントロールの窓に重ねて切り取る語彙が無い。エマ：TU S1 の結論が出てから作る）",
-          "en": "Enhanced Environment Setup (doubling Environment Setup's Damage Taken up for 10 s) is not modeled (no vocabulary to clip it to the Environment Setup window; it will be added after Emma: TU's S1 is confirmed)",
+          "ja": "環境コントロール強化（環境コントロールの受けるダメージ▲を 10 秒間 2 倍にする）は未対応（環境コントロールの窓に重ねて切り取る語彙が無い。plan/design-true-damage-element.md 6 節の論点 6）",
+          "en": "Enhanced Environment Setup (doubling Environment Setup's Damage Taken up for 10 s) is not modeled (no vocabulary to clip it to the Environment Setup window; plan/design-true-damage-element.md section 6, item 6)",
           "kind": "unimplemented"
         },
         {
