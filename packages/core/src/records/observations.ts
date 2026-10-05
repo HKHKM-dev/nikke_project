@@ -397,6 +397,21 @@ function fullBurstToGaugeFull(result: { schedule: BurstSchedule | null }, ctx: M
   return videoFrameOf(schedule, full) - videoFrameOf(schedule, window.start);
 }
 
+/**
+ * V-0189: n 回目（0 始まり）にゲージが満タンになった（BURST バーが消えた）フレームから、その後の最初の発動（I）までの動画のフレーム数。
+ * ゲージが律速の回の I の段の長さ（C-0073）を比べる
+ */
+function gaugeFullToActivation(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const n = Number(ctx.args.n);
+  const full = schedule.gaugeFullFrames[n];
+  if (full === undefined) throw new Error(`${n} 回目の満タンが無い`);
+  const next = schedule.activations.find((a) => a.frame >= full);
+  if (next === undefined) throw new Error(`${n} 回目の満タンの後に発動が無い`);
+  return videoFrameOf(schedule, next.frame) - videoFrameOf(schedule, full);
+}
+
 function burstActivationSlots(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
@@ -469,6 +484,11 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     args: ['n'],
     sim: (r, c) => fullBurstToGaugeFull(r, c),
     calc: (r, c) => fullBurstToGaugeFull(r, c),
+  },
+  gaugeFullToActivation: {
+    args: ['n'],
+    sim: (r, c) => gaugeFullToActivation(r, c),
+    calc: (r, c) => gaugeFullToActivation(r, c),
   },
   fullBurstStarts: {
     args: [],
