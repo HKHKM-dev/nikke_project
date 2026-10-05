@@ -1,0 +1,195 @@
+{
+  "verification": "V-0172",
+  "team": [
+    {
+      "rid": 93,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S2 のクリティカルダメージ▲（23.51%）は自分にも常時乗る（定義のとおり。対象を部隊で絞るのは未実装だが、単騎では自分だけ）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-body-nocrit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "通常攻撃の 1 ヒット（コア以外・会心なし・距離ボーナスなし）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
+    },
+    {
+      "id": "hit-body-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "通常攻撃の 1 ヒット（コア以外・会心・距離ボーナスなし）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
+    },
+    {
+      "id": "hit-core-nocrit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスなし）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
+    },
+    {
+      "id": "hit-core-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "通常攻撃の 1 ヒット（コア・会心・距離ボーナスなし）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
+    },
+    {
+      "id": "hit-body-nocrit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "通常攻撃の 1 ヒット（コア以外・会心なし・距離ボーナスあり）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
+    },
+    {
+      "id": "hit-body-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "通常攻撃の 1 ヒット（コア以外・会心・距離ボーナスあり）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
+    },
+    {
+      "id": "hit-core-nocrit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスあり）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
+    },
+    {
+      "id": "hit-core-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "通常攻撃の 1 ヒット（コア・会心・距離ボーナスあり）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "910134d6bdde0ca2624d1d9f51105a8912c6c67f",
+    "values": {
+      "H1": {
+        "hit-body-nocrit-nodist": 5560.2525,
+        "hit-body-crit-nodist": 9647.59411275,
+        "hit-core-nocrit-nodist": 11120.505,
+        "hit-core-crit-nodist": 15207.84661275,
+        "hit-body-nocrit-dist": 7228.32825,
+        "hit-body-crit-dist": 11315.669862749999,
+        "hit-core-nocrit-dist": 12788.580749999997,
+        "hit-core-crit-dist": 16875.92236275
+      }
+    },
+    "seen": {}
+  }
+}

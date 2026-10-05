@@ -1,0 +1,53 @@
+{
+  "verification": "V-0174",
+  "team": [
+    {
+      "rid": 290,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S2 のマターシグマ（バーストゲージのチャージ速度 70.4%▲）は、自分の 1 ヒットのゲージに 1.704 を掛ける"
+    }
+  ],
+  "targets": [
+    {
+      "id": "first-full-hit",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号（045-03 と同じ読み方）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "910134d6bdde0ca2624d1d9f51105a8912c6c67f",
+    "values": {
+      "H1": {
+        "first-full-hit": 118
+      }
+    },
+    "seen": {
+      "010": [
+        "010-01",
+        "010-02",
+        "010-03",
+        "010-04",
+        "010-05",
+        "010-06"
+      ]
+    }
+  }
+}

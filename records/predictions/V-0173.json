@@ -1,0 +1,45 @@
+{
+  "verification": "V-0173",
+  "team": [
+    {
+      "rid": 95,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S2 のクリティカル確率▲（8.16%）は自分にも常時乗る"
+    }
+  ],
+  "targets": [
+    {
+      "id": "crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "通常攻撃の会心率。録画では、戦闘の全部のヒットのうち会心だった割合（的の上の数値の色か、1 ヒットの値の格子で分ける）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "910134d6bdde0ca2624d1d9f51105a8912c6c67f",
+    "values": {
+      "H1": {
+        "crit-rate": 0.2316
+      }
+    },
+    "seen": {}
+  }
+}
