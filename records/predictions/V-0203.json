@@ -1,0 +1,198 @@
+{
+  "verification": "V-0203",
+  "note": "エマ：TU（93・MG・操作。AUTO 射撃 ON）+ ウンファ：TU（95・SR・AI）・オートバースト OFF・灼熱タブの BigArms・射撃場 3 分・スペック固定 ON。バーストを撃たないので、エマの環境コントロール強化・攻撃力▲と、ウンファのカモフラージュ（防御力無視ダメージ）・武器変更・受けるダメージ▲は起きない。ウンファの S2 の基礎の効果（同じ部隊のクリティカル確率▲・味方全体のチャージダメージ▲・自分の攻撃力▲）は、エマの会心でない 1 ヒットに効かない。フォーメーションの追加効果のうち防御力無視ダメージ▲・発射体爆発ダメージ▲は、防御力無視ダメージの発も RL もいないので見えない。見るのはエマの S2 の効果 4（環境コントロールの再発動周期 20 秒▼）だけ。仮説の再発動周期の起点（発動から / 切れてから）は V-0202 と同じ 2 通りを、20 秒▼の有無と組み合わせた",
+  "team": [
+    {
+      "rid": 93,
+      "controlled": true
+    },
+    {
+      "rid": 95,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "A0-H1",
+      "note": "20 秒▼は効かない（フォーメーションAS が付かない、または周期に効かない）。周期は発動から 30 秒（V-0202 の H1 と同じ窓）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 30,
+                "atStart": true
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "A0-H2",
+      "note": "20 秒▼は効かない。周期は切れてから 30 秒（V-0202 の H2 と同じ窓）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 40,
+                "atStart": true
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "A1",
+      "note": "「自分にフォーメーションAS 適用中」を「編成にウンファ：TU がいる」と読み（withCharacter）、周期は発動から 30 − 20 = 10 秒。10 秒の窓が切れ目なく続く",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 10,
+                "atStart": true
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 1,
+              "durationRef": 2,
+              "withCharacter": {
+                "rid": 95,
+                "present": true
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "A2",
+      "note": "withCharacter の読みで、周期は切れてから 10 秒（発動から 20 秒）。窓は 0〜10・20〜30・…・160〜170 秒",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 20,
+                "atStart": true
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 1,
+              "durationRef": 2,
+              "withCharacter": {
+                "rid": 95,
+                "present": true
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "s1-window-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "damageTaken"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "判定の指標。環境コントロールの受けるダメージ▲の窓の終わり（戦闘開始からのモデルのフレーム）の並び。読み方は V-0202 と同じ（エマの MG の 1 ヒットが▲の系列から▲なしの系列に戻る前後のヒットの中点）。A1 は窓が戦闘の終わりまで続く"
+    },
+    {
+      "id": "hit-15s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "戦闘開始から 15 秒ほど（A1 だけ窓の中）のエマの 1 ヒット（コア・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "hit-20s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "戦闘開始から 20 秒ほど（A1・A2 は窓の中、A0 は外）のエマの 1 ヒット（コア・会心なし・距離ボーナスなし）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "ce342b1055619210ebcb51f50a8f0b5de1cb61e9",
+    "values": {
+      "A0-H1": {
+        "s1-window-ends": [588, 2353, 4117, 5882, 7647, 9412],
+        "hit-15s": 11120.505,
+        "hit-20s": 11120.505
+      },
+      "A0-H2": {
+        "s1-window-ends": [588, 2941, 5294, 7647, 10000],
+        "hit-15s": 11120.505,
+        "hit-20s": 11120.505
+      },
+      "A1": {
+        "s1-window-ends": [1764, 4117, 6470, 8823, 10588],
+        "hit-15s": 11554.204694999999,
+        "hit-20s": 11554.204694999999
+      },
+      "A2": {
+        "s1-window-ends": [588, 1764, 2941, 4117, 5294, 6470, 7647, 8823, 10000],
+        "hit-15s": 11120.505,
+        "hit-20s": 11554.204694999999
+      }
+    },
+    "seen": {}
+  }
+}
