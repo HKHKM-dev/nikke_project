@@ -51,6 +51,11 @@ export type BuffTotals = {
    * damage.ts の PROJECTILE_EXPLOSION_BUCKET。plan/design-anis-star-s2-burst.md 2.1 節）
    */
   projectileExplosionDamage: number;
+  /**
+   * 持続ダメージ▲編: 持続ダメージの加算。その枠の持続ダメージ（dot）の tick にだけ掛ける（式の中の置き場所は skills/burstDamage.ts の
+   * SUSTAINED_DAMAGE_PLACEMENT。plan/design-sustained-damage-up.md 3 節）
+   */
+  sustainedDamage: number;
   /** Stage 8: バーストゲージのチャージ速度の加算。この枠の射撃で溜まるゲージに (1 + burstGaugeSpeed) を掛ける（passive のみ） */
   burstGaugeSpeed: number;
   /** Stage 10: 最大装弾数の比率の加算（frame/firing.ts の effectiveMaxAmmo）。ダメージの式は読まない */
@@ -105,6 +110,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   distributedDamage: 0,
   damageTaken: 0,
   projectileExplosionDamage: 0,
+  sustainedDamage: 0,
   burstGaugeSpeed: 0,
   maxAmmoRatio: 0,
   maxAmmoFlat: 0,
@@ -134,6 +140,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon'>> = {
   distributedDamage: 'distributedDamage',
   damageTaken: 'damageTaken',
   projectileExplosionDamage: 'projectileExplosionDamage',
+  sustainedDamage: 'sustainedDamage',
   fixedChargeTime: 'fixedChargeTime',
   burstGaugeSpeed: 'burstGaugeSpeed',
   maxAmmo: 'maxAmmoRatio',

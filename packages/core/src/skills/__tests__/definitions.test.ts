@@ -89,8 +89,9 @@ describe('data/skills', () => {
               if (effect.kind === 'burstDamage') {
                 if (lv === SKILL_LEVEL_MAX) expect(v).toBeGreaterThanOrEqual(100);
               }
-              // Stage 8 の倍率ダメージは 100% 未満もある（ドレイク S2 98.55%）ので上限を見ない
-              else if (effect.kind !== 'damage' && effect.kind !== 'cycle') {
+              // Stage 8 の倍率ダメージは 100% 未満もある（ドレイク S2 98.55%）ので上限を見ない。持続ダメージの 1 tick も倍率
+              // ダメージなので上限を見ない（マナのバーストは Lv10 で 396%）
+              else if (effect.kind !== 'damage' && effect.kind !== 'cycle' && effect.kind !== 'dot') {
                 // Stage 11 紅蓮BS: バーストの攻撃力 115.12%・チャージダメージ 169.63% は 100% を超える（上限は 200% で見る）
                 // アスカ: バーストの攻撃ダメージ 150.04%・命中率 101.37% も同じ。ヘルム: チャージダメージ倍率 158.4% も同じ
                 const limit =

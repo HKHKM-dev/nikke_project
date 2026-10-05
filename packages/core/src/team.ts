@@ -15,7 +15,12 @@ import type { BuildEffect } from './buildEffects.ts';
 import type { InstantApplication } from './frame/firstPass.ts';
 import type { AutoConditionSummary, ConditionMode, LandingFrameSpan } from './frame/landing.ts';
 import type { BuffTotals } from './skills/buffs.ts';
-import type { BurstHitResult, ResolvedDamageEffect, SkillHitResult } from './skills/burstDamage.ts';
+import type {
+  BurstHitResult,
+  ResolvedDamageEffect,
+  SkillHitResult,
+  SustainedDamagePlacement,
+} from './skills/burstDamage.ts';
 import type { CycleWindow } from './skills/cycles.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type SkillLevels } from './skills/resolve.ts';
 import {
@@ -98,6 +103,11 @@ export type TeamInput = {
    * 常時の命中率▲には関わらない
    */
   sustainedHitRateUp?: boolean;
+  /**
+   * 持続ダメージ▲編（plan/design-sustained-damage-up.md 3.3 節）: 持続ダメージ▲の式の中の置き場所。省略は
+   * SUSTAINED_DAMAGE_PLACEMENT（いまのモデル）。検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
+   */
+  sustainedDamagePlacement?: SustainedDamagePlacement;
 };
 
 /** 枠 slotIndex の shot 発目（1 始まり）が、障害物を count 個壊した */

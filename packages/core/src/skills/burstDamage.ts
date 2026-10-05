@@ -4,6 +4,7 @@
 // 武器倍率・チャージ倍率・コア・距離は掛けない。
 // Stage 8: トリガー付きの倍率ダメージ（damage。「10 回攻撃した時 X% のダメージ」など）も同じ式で計算する（computeSkillHit）。
 // 分配ダメージには (1 + Σ distributedDamage) を別の乗数で掛ける（録画 21 のクイーン（真）の 1.9001 倍。plan/design-stage8.md 2.4 節）。
+// 持続ダメージ▲編: 持続ダメージ（dot）の tick には Σ sustainedDamage を SUSTAINED_DAMAGE_PLACEMENT の置き場所で掛ける。
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
 import { explosionHitMultiplier, FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
@@ -38,6 +39,24 @@ export const BURST_SKILL_FULL_BURST_BONUS = false;
 // （damage.ts の射撃ごとの倍率ダメージ）も使うので damage.ts に移した（循環 import を避けるため）。ここからも export する
 export { SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 
+/**
+ * 持続ダメージ▲編（plan/design-sustained-damage-up.md 3.3 節）: 持続ダメージ▲（sustainedDamage）の式の中の置き場所。
+ * separate = 別枠の乗数 (1 + Σ)（H1）、attackDamage = 攻撃ダメージ▲と同じ群 (1 + Σ攻撃ダメージ + Σ持続ダメージ)（H2）、
+ * boost = 倍率グループに足す (1 + 会心 + フルバースト補正 + Σ)（H3）
+ */
+export type SustainedDamagePlacement = 'separate' | 'attackDamage' | 'boost';
+export const SUSTAINED_DAMAGE_PLACEMENTS = [
+  'separate',
+  'attackDamage',
+  'boost',
+] as const satisfies readonly SustainedDamagePlacement[];
+
+/**
+ * いまのモデルの置き場所。H1 は分配ダメージ▲・受けるダメージ▲と同じ形で、解釈の結論（C-0279。仮説・推論）に立つ。
+ * マナの録画（V-0185）で H1〜H3 を見分ける。検証の予測は TeamInput.sustainedDamagePlacement で切り替える
+ */
+export const SUSTAINED_DAMAGE_PLACEMENT: SustainedDamagePlacement = 'separate';
+
 /** 解決済みの倍率ダメージ 1 件。burstDamage（burst スロット）と damage（Stage 8）で共通 */
 export type ResolvedSkillDamage = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
@@ -46,6 +65,8 @@ export type ResolvedSkillDamage = {
   multiplier: number;
   /** アニス：スター編: 発射体の爆発のヒット（自動攻撃の projectileExplosion）。発射体爆発ダメージ▲を掛ける（V-0124） */
   projectileExplosion?: true;
+  /** 持続ダメージ▲編: 持続ダメージ（dot。autoAttack は除く）の tick。持続ダメージ▲（sustainedDamage）を掛ける */
+  sustained?: true;
   assumes?: LocalizedText;
 };
 
@@ -242,6 +263,8 @@ export function resolveDotEffects(
         },
       };
       if (auto && effect.projectileExplosion === true) r.projectileExplosion = true;
+      // 持続ダメージ▲編: 持続ダメージ▲は「持続ダメージ」にだけ掛ける。自動攻撃は持続ダメージではない（plan/design-sustained-damage-up.md 3.2 節）
+      if (!auto) r.sustained = true;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
@@ -316,6 +339,10 @@ export type BurstHitInput = {
   damageTakenMultiplier?: number;
   /** アニス：スター編: 発射体爆発ダメージ▲の乗数（damage.ts の explosionHitMultiplier）。projectileExplosion の効果にだけ掛ける。省略 1 */
   projectileExplosionMultiplier?: number;
+  /** 持続ダメージ▲編: Σ sustainedDamage。sustained の効果にだけ、sustainedDamagePlacement の置き場所で掛ける。省略 0 */
+  sustainedDamage?: number;
+  /** 持続ダメージ▲編: 省略は SUSTAINED_DAMAGE_PLACEMENT */
+  sustainedDamagePlacement?: SustainedDamagePlacement;
 };
 
 export type BurstHitResult = {
@@ -325,15 +352,19 @@ export type BurstHitResult = {
   multiplier: number;
   /**
    * 1 + 会心期待値 + フルバースト補正（乗せる設定のときだけ 0.5）。コア・距離は入らない。
-   * critDamage はバフ後の会心ダメージ倍率（会心した 1 ヒットを組み直すのに使う）
+   * critDamage はバフ後の会心ダメージ倍率（会心した 1 ヒットを組み直すのに使う）。
+   * sustained は持続ダメージ▲編: 置き場所が boost のとき sustained の効果の倍率グループに足した Σ sustainedDamage（ほかは 0。
+   * total には入れない。持続ダメージの tick は効果 1 つずつ計算するので、1 回の結果に sustained の効果とほかの効果は混ざらない）
    */
-  boost: { crit: number; critDamage: number; fullBurst: number; total: number };
+  boost: { crit: number; critDamage: number; fullBurst: number; total: number; sustained: number };
   attackDamageMultiplier: number;
   elementMultiplier: number;
   /** 1 + Σ distributedDamage（distributed の効果にだけ掛かる） */
   distributedDamageMultiplier: number;
   /** 受けるダメージ編: 1 + Σ damageTaken（すべての効果に掛かる） */
   damageTakenMultiplier: number;
+  /** 持続ダメージ▲編: sustained の効果に掛けた乗数（置き場所によらず、▲なしに対する比）。sustained の効果が無ければ 1 */
+  sustainedDamageMultiplier: number;
   /** 効果ごとの 1 発動あたり期待ダメージ */
   perEffect: { effect: ResolvedSkillDamage; expected: number }[];
   /** 1 発動あたりの合計 */
@@ -352,13 +383,22 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const boostFullBurst = fullBurstBonus ? FULL_BURST_BOOST : 0;
   const boostTotal = 1 + boostCrit + boostFullBurst;
   const common = baseHit * boostTotal * input.attackDamageMultiplier * damageTaken * input.elementMultiplier;
+  const placement = input.sustainedDamagePlacement ?? SUSTAINED_DAMAGE_PLACEMENT;
+  const sustained = sustainedMultiplier(
+    input.sustainedDamage ?? 0,
+    placement,
+    boostTotal,
+    input.attackDamageMultiplier,
+  );
+  const hasSustained = input.effects.some((e) => e.sustained === true);
   const perEffect = input.effects.map((effect) => ({
     effect,
     expected:
       common *
       effect.multiplier *
       (effect.damageType === 'distributed' ? distributed : 1) *
-      (effect.projectileExplosion === true ? explosion : 1),
+      (effect.projectileExplosion === true ? explosion : 1) *
+      (effect.sustained === true ? sustained : 1),
   }));
   let multiplier = 0;
   let perActivation = 0;
@@ -369,14 +409,47 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   return {
     baseHit,
     multiplier,
-    boost: { crit: boostCrit, critDamage: input.crit.damage, fullBurst: boostFullBurst, total: boostTotal },
+    boost: {
+      crit: boostCrit,
+      critDamage: input.crit.damage,
+      fullBurst: boostFullBurst,
+      total: boostTotal,
+      sustained: hasSustained && placement === 'boost' ? (input.sustainedDamage ?? 0) : 0,
+    },
     attackDamageMultiplier: input.attackDamageMultiplier,
     elementMultiplier: input.elementMultiplier,
     distributedDamageMultiplier: distributed,
     damageTakenMultiplier: damageTaken,
+    sustainedDamageMultiplier: hasSustained ? sustained : 1,
     perEffect,
     perActivation,
   };
+}
+
+/**
+ * 持続ダメージ▲編: 持続ダメージの tick に掛ける、▲なしに対する比。置き場所ごとに
+ * separate = 1 + up、attackDamage = (攻撃ダメージの乗数 + up) / 攻撃ダメージの乗数、boost = (倍率グループ + up) / 倍率グループ
+ */
+export function sustainedMultiplier(
+  up: number,
+  placement: SustainedDamagePlacement,
+  boostTotal: number,
+  attackDamageMultiplier: number,
+): number {
+  if (up === 0) return 1;
+  if (placement === 'separate') return 1 + up;
+  if (placement === 'attackDamage') return (attackDamageMultiplier + up) / attackDamageMultiplier;
+  return (boostTotal + up) / boostTotal;
+}
+
+/**
+ * 1 回の結果を、会心の期待値を外して会心したか（crit）で組み直した 1 ヒットの値（観測値と比べる指標が使う）。
+ * 持続ダメージ▲が倍率グループにある（boost.sustained > 0）ときは、それも倍率グループに入れて組み直す
+ */
+export function oneHitValue(hit: BurstHitResult, crit: boolean): number {
+  const critTerm = crit ? hit.boost.critDamage - 1 : 0;
+  const expectedGroup = hit.boost.total + hit.boost.sustained;
+  return (hit.perActivation / expectedGroup) * (1 + critTerm + hit.boost.fullBurst + hit.boost.sustained);
 }
 
 /**
@@ -413,6 +486,7 @@ export function computeSkillHit(
   trigger: Pick<TriggerDamage, 'attack' | 'attackDamageMultiplier'>,
   buffs: BuffTotals,
   fullBurstBonus: boolean,
+  sustainedDamagePlacement: SustainedDamagePlacement = SUSTAINED_DAMAGE_PLACEMENT,
 ): SkillHitResult {
   return computeBurstHit({
     attack: trigger.attack,
@@ -425,6 +499,8 @@ export function computeSkillHit(
     distributedDamageMultiplier: 1 + buffs.distributedDamage,
     damageTakenMultiplier: 1 + buffs.damageTaken,
     projectileExplosionMultiplier: explosionHitMultiplier(buffs),
+    sustainedDamage: buffs.sustainedDamage,
+    sustainedDamagePlacement,
   });
 }
 

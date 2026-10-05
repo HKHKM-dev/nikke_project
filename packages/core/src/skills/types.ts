@@ -59,6 +59,8 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * にだけ乗る（式の中の置き場所は damage.ts の TRUE_DAMAGE_BUCKET）。
  * trueDamageConversion = 「通常攻撃が防御力無視ダメージに変化」。値を持たないフラグ（ref を書かない。timed の self だけ）。
  * 窓のあいだ、自分の通常攻撃の 1 発の基礎を max(1, 攻撃力 − 防御力) から max(1, 攻撃力) にする
+ * 持続ダメージ▲編（plan/design-sustained-damage-up.md 3 節）: sustainedDamage = 持続ダメージ▲。その枠の持続ダメージ（dot）の tick に
+ * だけ掛ける（autoAttack には掛けない）。式の中の置き場所は skills/burstDamage.ts の SUSTAINED_DAMAGE_PLACEMENT
  */
 export type BuffStat =
   | 'attack'
@@ -82,7 +84,8 @@ export type BuffStat =
   | 'projectileExplosionDamage'
   | 'fixedChargeTime'
   | 'trueDamage'
-  | 'trueDamageConversion';
+  | 'trueDamageConversion'
+  | 'sustainedDamage';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -106,6 +109,7 @@ export const BUFF_STATS = [
   'fixedChargeTime',
   'trueDamage',
   'trueDamageConversion',
+  'sustainedDamage',
 ] as const satisfies readonly BuffStat[];
 
 /** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限、アニス：スター編でチャージ時間の固定を足した */

@@ -19,6 +19,7 @@ import {
   type ResolvedDamageEffect,
   type ResolvedSkillDamage,
   type SkillHitResult,
+  type SustainedDamagePlacement,
 } from '../skills/burstDamage.ts';
 import { cycleFires, cycleShotFrames, resolveCycles } from '../skills/cycles.ts';
 import {
@@ -164,7 +165,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
         }),
   });
   const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing, input.sustainedHitRateUp ?? true);
-  const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
+  const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots, input.sustainedDamagePlacement);
   return {
     frames,
     shots,
@@ -204,6 +205,7 @@ export function planSkillHits(
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
+  sustainedDamagePlacement?: SustainedDamagePlacement,
 ): SkillHitEvent[] {
   const hits: SkillHitEvent[] = [];
   // クルミ S2 編: damage の条件 targetStatus が見る、status ごとの「付いている」区間（編成の全枠の dot から先に出しておく）
@@ -246,7 +248,7 @@ export function planSkillHits(
       const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, frame);
       // レイヴン編: スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）
       const scaled = stacks === undefined ? effect : { ...effect, multiplier: effect.multiplier * stacks };
-      const hit = computeSkillHit([scaled], slot.character, enemy, trigger, buffs, fullBurst);
+      const hit = computeSkillHit([scaled], slot.character, enemy, trigger, buffs, fullBurst, sustainedDamagePlacement);
       hits.push({ frame, slotIndex, effect, hit, ...(stacks === undefined ? {} : { stacks }) });
     };
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
