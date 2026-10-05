@@ -30,10 +30,10 @@ notes の種類: 未対応 38・前提の外 21・計算に無関係 26・補足
   - effects[1] passive・attack: C-0189（確定）、C-0203（仮説）
   - effects[2] cooldownReduction・battleStart: C-0202（確定）、C-0203（仮説）
   - effects[3] cooldownReduction・fullBurstEnd: C-0202（確定）、C-0203（仮説）
-  - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）、C-0237（仮説）
+  - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）、C-0293（仮説）
   - effects[5] burstReentry: C-0201（確定）、C-0203（仮説）
   - notes[0] 未対応: 味方のゲージへの効き方は、実測では ×1.06 ではなく、味方のゲージ 1 回（弾・追加ダメージのヒット）ごとに一定量を足す形（アニス：スターが撃っているとき約 1,680、操作で撃たないとき約 840）。モデルはまだ ×1.06 のまま（未反映）: C-0245（仮説）、C-0246（仮説）
-  - notes[1] 未対応: 誘導弾の飛ぶ時間（ゲージが着弾で溜まる分）は、射撃場の的の距離帯ごとの代表値だけ。的の表の無い敵では 0（発射のフレームに溜まる）。着地点ごとの値、ダメージを置くフレームとバフの判定を着弾の時刻にすること（発動に重なる発の追加ダメージだけにバーストの攻撃ダメージ▲が乗る分）は未実装（plan/design-anis-star-gauge-timing.md 3 節）: C-0237（仮説）
+  - notes[1] 未対応: 誘導弾の飛ぶ時間（ゲージが着弾で溜まる分）は、射撃場の的の距離帯ごとの代表値だけ。的の表の無い敵では 0（発射のフレームに溜まる）。着地点ごとの値、ダメージを置くフレームとバフの判定を着弾の時刻にすること（発動に重なる発の追加ダメージだけにバーストの攻撃ダメージ▲が乗る分）は未実装（plan/design-anis-star-gauge-timing.md 3 節）: C-0293（仮説）
 - **skill2**: partial
   - effects[0] timed・fullBurstStart・attack: C-0204（確定）、C-0203（仮説）
   - effects[1] timed・fullBurstStart・projectileExplosionDamage: C-0205（確定）、C-0210（仮説）

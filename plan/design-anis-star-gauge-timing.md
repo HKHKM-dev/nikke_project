@@ -1,7 +1,7 @@
 # アニス：スター（17）の満タンと発動の時刻: 最初の発の物のゲージ・誘導弾とシューティングスターの飛ぶ時間
 
 - 関連: [backlog.md](backlog.md) 2-18・3 節（`165-09`・`165-10`）、[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) 10 節、[design-rl-core-by-projectile.md](design-rl-core-by-projectile.md)（弾の種類の行）、[design-burst-landing.md](design-burst-landing.md)（バーストの着弾の遅れ。この文書の「着弾」とは別の機構）
-- 根拠: C-0243（量は C-0177）、C-0237、C-0240、C-0236・C-0083（満タンは着弾のフレーム）、V-0151・V-0152・V-0154・V-0157
+- 根拠: C-0243（量は C-0177）、C-0237（2026-10-05 棄却。C-0293 に置き換え）、C-0240、C-0236・C-0083（満タンは着弾のフレーム）、V-0151・V-0152・V-0154・V-0157
 - 作成日: 2026-10-05
 - 状態: オーナーの承認（2026-10-05「推奨どおりで進めて」。9 節の論点 1〜8）。同日に実装し、`npm run records:check` で 6 節の動きを確かめた（10 節）
 
@@ -196,3 +196,4 @@
 - 照合: 6 節の表の A + B + C の列のとおりに動いた（`161-13`・`181-03` が許容内、`162-17`・`163-09` は許容内のまま、`165-10` と `165-13` が許容外）。ほかの観測値は変わらない（的の表を手入力の枠にも付けた変更を含む）。
 - 予測ファイル V-0152・V-0154 の指標に、結び付ける観測値（`161-13`・`181-03`）を書き足した。照合の条件に `obstacles` を足したので、条件の一致では結び付かなくなったため（予測の値は変えていない）。
 - 実装の場所: 表は `data/enemies.json` の `flightFrames`（`types.ts` の `FlightFramesTable`、検証は `enemies.ts`）、区間は `frame/landing.ts` の `slotFlightsOf`、ゲージは `frame/firstPass.ts`、入力は `team.ts` の `obstacleBreaks`、照合は `records/observations.ts` の `CompareSetup.obstacles`。テストは `__tests__/anisStarGaugeTiming.test.ts`。
+- 2026-10-05: 着地点ごとの飛ぶ時間を V-0197 で読んだ（録画 161・164）。中遠 A 17・中遠 B 20f、遠は足元 532 で 29・542 で 26f と着地点で違うが、どれも 1 区間ずつで、近は判定なし。オーナーの判断で 3.2 節の帯の代表値のまま（案 A）。C-0237 は棄却し、C-0293（仮説）に置き換えた。
