@@ -37,6 +37,7 @@ import {
   type SlotBuffState,
 } from '../skills/timeline.ts';
 import { applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
+import type { DamageCondition } from '../skills/types.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import {
@@ -50,7 +51,7 @@ import {
 import type { WeaponModel } from '../weapons.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { dotTicks, groupDotsByStatus } from './dot.ts';
+import { dotActiveSpans, dotTicks, groupDotsByStatus } from './dot.ts';
 export {
   DOT_LATER_TICK_DELAY_SECONDS,
   dotTickFrames,
@@ -205,6 +206,8 @@ export function planSkillHits(
   shots: readonly (ShotLog | null)[],
 ): SkillHitEvent[] {
   const hits: SkillHitEvent[] = [];
+  // クルミ S2 編: damage の条件 targetStatus が見る、status ごとの「付いている」区間（編成の全枠の dot から先に出しておく）
+  const statusSpans = dotStatusSpans(slots, schedule, frames, shots);
   slots.forEach((slot, slotIndex) => {
     const definition = slot?.skills?.definition;
     if (!slot || !definition) return;
@@ -248,7 +251,10 @@ export function planSkillHits(
     };
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
       const pre = isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
-      for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) push(frame, effect, pre);
+      for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) {
+        if (!damageConditionHolds(effect.condition, frame, schedule, statusSpans)) continue;
+        push(frame, effect, pre);
+      }
     }
     // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。
     // クルミ編: 同じ status の dot は 1 つの持続ダメージとして、発火をまとめて tick を出す（C-0136）。tick は、その時点で
@@ -288,6 +294,51 @@ export function planSkillHits(
   });
   // フレーム順（同じフレームは枠順・定義順。sort は安定）
   return hits.sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
+}
+
+/**
+ * クルミ S2 編（plan/design-kurumi-s2.md 2.3 節）: 編成の全枠の status つきの dot について、status ごとの「付いている」区間の列。
+ * 発火は planSkillHits の tick と同じ（同じ status の効果の発火をまとめる）。別の枠の同じ名前は同じ状態とみなして区間を並べる
+ */
+function dotStatusSpans(
+  slots: readonly (TeamSlotInput | null)[],
+  schedule: BurstSchedule | null,
+  frames: number,
+  shots: readonly (ShotLog | null)[],
+): Map<string, { start: number; end: number }[]> {
+  const out = new Map<string, { start: number; end: number }[]>();
+  slots.forEach((slot, slotIndex) => {
+    const definition = slot?.skills?.definition;
+    if (!slot || !definition) return;
+    const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
+    for (const group of groupDotsByStatus(resolveDotEffects(definition, slot.character, levels))) {
+      const status = group[0]!.dot!.status;
+      if (status === undefined) continue;
+      const fires = group
+        .flatMap((effect) => triggerFrames(effect.trigger, schedule, slotIndex, frames, shots))
+        .sort((a, b) => a - b);
+      const { intervalSeconds, durationSeconds, firstTick } = group[0]!.dot!;
+      const spans = dotActiveSpans(fires, intervalSeconds, durationSeconds, firstTick);
+      out.set(status, [...(out.get(status) ?? []), ...spans]);
+    }
+  });
+  return out;
+}
+
+/** クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。条件が無ければ true。キーはすべてを満たすこと */
+function damageConditionHolds(
+  condition: DamageCondition | undefined,
+  frame: number,
+  schedule: BurstSchedule | null,
+  statusSpans: ReadonlyMap<string, readonly { start: number; end: number }[]>,
+): boolean {
+  if (condition === undefined) return true;
+  if (condition.fullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
+  if (condition.targetStatus !== undefined) {
+    const spans = statusSpans.get(condition.targetStatus) ?? [];
+    if (!spans.some((s) => s.start <= frame && frame <= s.end)) return false;
+  }
+  return true;
 }
 
 /**

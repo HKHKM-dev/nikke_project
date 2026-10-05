@@ -346,7 +346,20 @@ export type ShotCountTrigger = {
    * スタック自体に効果が無い場合だけ使う（クラウン S2 のリラックス）
    */
   stacksRef?: number;
+  /**
+   * クルミ S2 編（plan/design-kurumi-s2.md 2.1 節）: 'fullBurst' ならフルバーストの窓（isInFullBurst と同じ [start, end)）の中の
+   * 射撃だけを数える。damage にだけ書ける（gaugeHits・射撃ごとの畳み込み（every = 1）・stacksRef とは組み合わせない）
+   */
+  during?: ShotCountWindow;
+  /** 同 2.1 節: during を書くときは必須。fullBurstStart = フルバーストが始まるフレームで 0 に戻す、never = 戻さない */
+  reset?: ShotCountReset;
 };
+
+/** クルミ S2 編: 回数トリガーの数える窓と、数え直し（plan/design-kurumi-s2.md 2.1 節） */
+export type ShotCountWindow = 'fullBurst';
+export const SHOT_COUNT_WINDOWS = ['fullBurst'] as const satisfies readonly ShotCountWindow[];
+export type ShotCountReset = 'fullBurstStart' | 'never';
+export const SHOT_COUNT_RESETS = ['fullBurstStart', 'never'] as const satisfies readonly ShotCountReset[];
 
 /**
  * Stage 8: 発動の回数の段階（「使用回数別の効果」「開始回数別の効果」、下位効果のスタック適用）。
@@ -481,6 +494,14 @@ export function isFirstPassTrackedStat(stat: BuffStat): boolean {
   return stat === 'attack' || isFiringStat(stat) || isStateStat(stat);
 }
 
+/**
+ * クルミ S2 編（plan/design-kurumi-s2.md 2.2〜2.4 節）: damage の発火の条件。キーは 1 つ以上で、すべてを満たすときだけ発火する。
+ * fullBurst = 発火のフレームがフルバーストの窓（[start, end)）の中なら（カウンタは窓によらず数える）、
+ * targetStatus = 敵（1 体の前提）にその status の持続ダメージ（dot）が付いているなら。付いているのは、同じ status のまとまりの
+ * 最初の発火のフレームから最後の tick のフレームまで（両端を含む。編成のどの枠の dot でもよい）
+ */
+export type DamageCondition = { fullBurst?: true; targetStatus?: string };
+
 /** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */
 export type BurstDamageType = 'skill' | 'distributed';
 export const BURST_DAMAGE_TYPES = ['skill', 'distributed'] as const satisfies readonly BurstDamageType[];
@@ -521,6 +542,8 @@ export type DamageEffect = {
   withCharacter?: WithCharacterCondition;
   /** 防御力無視ダメージ編: 敵の属性の条件（クイーン（真）S1 の「1more が適用された時」） */
   enemyElement?: Element;
+  /** クルミ S2 編: 発火の条件（gaugeHits とは組み合わせない） */
+  condition?: DamageCondition;
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -1050,7 +1073,12 @@ function parsePositiveInt(v: Json, path: string): number {
  * 文字列なら BuffTrigger、オブジェクトなら回数トリガー。時間の周期のトリガー（{ everySeconds }）は allowTimer のとき
  * （damage・dot・burstGaugeHit）だけ
  */
-function parseTrigger(v: Json, path: string, allowTimer: boolean | 'withStart' = false): EffectTrigger {
+function parseTrigger(
+  v: Json,
+  path: string,
+  allowTimer: boolean | 'withStart' = false,
+  allowDuring = false,
+): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
   if (v.everySeconds !== undefined) {
@@ -1071,13 +1099,25 @@ function parseTrigger(v: Json, path: string, allowTimer: boolean | 'withStart' =
   }
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
-      if (!['count', 'every', 'everyRef', 'stacksRef'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+      if (!['count', 'every', 'everyRef', 'stacksRef', 'during', 'reset'].includes(key)) {
+        fail(`${path}.${key}`, 'unknown field');
+      }
     }
     if (v.every !== undefined && v.everyRef !== undefined) fail(path, 'at most one of every and everyRef');
     const trigger: ShotCountTrigger = { count: v.count as ShotCountKind };
     if (v.every !== undefined) trigger.every = parsePositiveInt(v.every, `${path}.every`);
     if (v.everyRef !== undefined) trigger.everyRef = parseRef(v.everyRef, `${path}.everyRef`);
     if (v.stacksRef !== undefined) trigger.stacksRef = parseRef(v.stacksRef, `${path}.stacksRef`);
+    // クルミ S2 編: フルバースト中だけ数える回数トリガー（plan/design-kurumi-s2.md 2.1 節）
+    if (v.during !== undefined || v.reset !== undefined) {
+      if (!allowDuring) fail(`${path}.during`, 'a counting window (during) is only allowed in damage');
+      if (v.during === undefined) fail(`${path}.reset`, 'reset needs during');
+      trigger.during = oneOf(SHOT_COUNT_WINDOWS, v.during, `${path}.during`);
+      if (v.reset === undefined) fail(`${path}.reset`, 'during needs reset (fullBurstStart or never)');
+      trigger.reset = oneOf(SHOT_COUNT_RESETS, v.reset, `${path}.reset`);
+      if (trigger.stacksRef !== undefined) fail(`${path}.during`, 'during cannot be used with stacksRef');
+      if (trigger.count === 'lastShot') fail(`${path}.during`, 'during cannot be used with lastShot');
+    }
     return trigger;
   }
   if ((EVENT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
@@ -1378,7 +1418,7 @@ function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDam
 }
 
 function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true, true);
   // Stage 11 モダニア: 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
   const damageType = oneOf(SKILL_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
@@ -1388,8 +1428,38 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     if (trigger.stacksRef !== undefined) fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with stacksRef');
     effect.gaugeHits = parseGaugeHits(v.gaugeHits, `${path}.gaugeHits`, 0);
   }
+  if (v.condition !== undefined) effect.condition = parseDamageCondition(v.condition, `${path}.condition`);
+  // クルミ S2 編: ゲージは 1 パス目で溜めるので、1 パス目の後に決まる窓・条件とは組み合わせない（plan/design-kurumi-s2.md 2.4 節）
+  if (effect.gaugeHits !== undefined && (effect.condition !== undefined || hasCountingWindow(trigger))) {
+    fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a condition or a counting window (during)');
+  }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
+}
+
+/** クルミ S2 編: 回数トリガーに数える窓（during）があるか */
+export function hasCountingWindow(trigger: EffectTrigger): boolean {
+  return typeof trigger === 'object' && 'count' in trigger && 'during' in trigger && trigger.during !== undefined;
+}
+
+/** クルミ S2 編: damage の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。キーは 1 つ以上 */
+function parseDamageCondition(c: Json, path: string): DamageCondition {
+  if (!isRecord(c)) fail(path, 'expected { fullBurst?: true, targetStatus?: name }');
+  for (const key of Object.keys(c)) {
+    if (key !== 'fullBurst' && key !== 'targetStatus') fail(`${path}.${key}`, 'unknown field');
+  }
+  const condition: DamageCondition = {};
+  if (c.fullBurst !== undefined) {
+    if (c.fullBurst !== true) fail(`${path}.fullBurst`, 'expected true');
+    condition.fullBurst = true;
+  }
+  if (c.targetStatus !== undefined) {
+    if (typeof c.targetStatus !== 'string' || c.targetStatus === '')
+      fail(`${path}.targetStatus`, 'expected a status name');
+    condition.targetStatus = c.targetStatus;
+  }
+  if (Object.keys(condition).length === 0) fail(path, 'expected at least one of fullBurst and targetStatus');
+  return condition;
 }
 
 /**

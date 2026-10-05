@@ -9,6 +9,7 @@ import type {
   ResolvedInstantEffect,
   BuffStat,
   BuffTrigger,
+  DamageCondition,
   ResolvedTrigger,
   SkillDamageType,
   SkillSlot,
@@ -76,10 +77,24 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
     if (trigger.stacks !== undefined) {
       return `${what} ${formatNumber(trigger.every / trigger.stacks)} 回 × ${trigger.stacks} スタックごと`;
     }
-    return trigger.every === 1 ? `${what}ごと` : `${what} ${trigger.every} 回ごと`;
+    const base = trigger.every === 1 ? `${what}ごと` : `${what} ${trigger.every} 回ごと`;
+    // クルミ S2 編: フルバースト中だけ数える回数トリガー（plan/design-kurumi-s2.md 2.1 節）
+    if (trigger.during === 'fullBurst') {
+      return `フルバースト中の${base}（${trigger.reset === 'fullBurstStart' ? 'フルバーストごとに数え直す' : '持ち越す'}）`;
+    }
+    return base;
   }
   const what = trigger.count === 'burstUse' ? 'バースト使用' : 'フルバースト';
   return trigger.atLeast === 1 ? `${what}時` : `${what} ${trigger.atLeast} 回目以降`;
+}
+
+/** クルミ S2 編: damage の発火の条件。「（フルバースト中・対象が hacking 状態なら）」。無ければ空文字 */
+export function formatDamageCondition(condition: DamageCondition | undefined): string {
+  if (condition === undefined) return '';
+  const parts: string[] = [];
+  if (condition.fullBurst === true) parts.push('フルバースト中');
+  if (condition.targetStatus !== undefined) parts.push(`対象が ${condition.targetStatus} 状態`);
+  return `（${parts.join('・')}なら）`;
 }
 
 /** 「バースト使用時 →」 */
