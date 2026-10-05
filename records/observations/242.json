@@ -1,0 +1,46 @@
+[
+  {
+    "id": "242-01",
+    "recording": "242",
+    "source": "V-0206",
+    "readAt": "2026-10-06",
+    "kind": "count",
+    "use": "record",
+    "value": [24, 98],
+    "description": "ウンファ：TU 単騎（操作・AUTO）の通常攻撃の 1 発のうち、会心の数と全体の数（2 本目）。割合は 0.245",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "格子（コア 686,756・コアの会心 858,445・コアの距離 789,769・コアの会心の距離 961,458）に乗った 98 発。内訳はコア 54・コアの会心 17・コアの距離 20・コアの会心の距離 7。f4226・4244・4245 の 3 つの増分（8,000・8・850,437）は数字の読み違いで 1 発（22,690,490 → 23,548,935 の 858,445。コアの会心）が割れたもので、1 発に数えた。乗らない 3 発（f2400 370,920・f6869 711,901・f10960 243,018。チャージ途中の発とみる）は数えない"
+    }
+  },
+  {
+    "id": "242-02",
+    "recording": "242",
+    "source": "V-0206",
+    "readAt": "2026-10-06",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.2449,
+    "description": "ウンファ：TU 単騎（操作・AUTO）の通常攻撃の会心の割合（2 本目。24 ÷ 98）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "242-01 の割合。許容は 231-02 と同じ ±0.085。判定は 2 本の合計（231-03）で行う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.085
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  }
+]

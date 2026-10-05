@@ -85,10 +85,11 @@
           "stat": "critRate",
           "ref": 1,
           "assumes": {
-            "ja": "「同じ部隊の味方全体」は、ゲームのデータの部隊（アブソルート）が同じ枠（自分を含む）と読んだ。エマ：タクティカル・アップの S2 の同じ言い回しで確かめた読み（C-0266）を当てた仮説で、ウンファ：タクティカル・アップでは撮っていない",
-            "en": "\"All allies in the same squad\" is read as the slots whose game squad (Absolute) matches, the user included. A hypothesis carried over from the same wording on Emma: Tactical Upgrade's S2 (C-0266); not recorded for Eunhwa: Tactical Upgrade"
+            "ja": "「同じ部隊の味方全体」は、ゲームのデータの部隊（アブソルート）が同じ枠（自分を含む）と読んだ。自分に乗ることは単騎で確かめた（C-0317）。同じ部隊でない味方に付かないことは、エマ：タクティカル・アップの S2 の同じ言い回しで確かめた読み（C-0266）を当てた仮説（C-0268）",
+            "en": "\"All allies in the same squad\" is read as the slots whose game squad (Absolute) matches, the user included. That it applies to the user was confirmed solo (C-0317). That it does not reach allies from other squads is a hypothesis carried over from the same wording on Emma: Tactical Upgrade's S2 (C-0266) (C-0268)"
           },
           "claims": [
+            "C-0317",
             "C-0268",
             "C-0235"
           ]
