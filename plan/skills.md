@@ -399,7 +399,7 @@ notes の種類: 未対応 37・前提の外 21・計算に無関係 26・補足
   - effects[0] dot・normalHit: C-0129（確定）、C-0130（確定）、C-0131（確定）、C-0133（確定）、C-0136（確定）、C-0196（確定）
   - effects[1] dot・burstUse: C-0136（確定）、C-0146（確定）、C-0147（確定）、C-0196（確定）
 - **skill2**: supported
-  - effects[0] damage・normalHit・additional: C-0276（仮説）、C-0277（仮説）
+  - effects[0] damage・normalHit・additional: C-0276（確定）、C-0277（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・damageTaken: C-0138（確定）、C-0152（確定）、C-0153（仮説）
 
