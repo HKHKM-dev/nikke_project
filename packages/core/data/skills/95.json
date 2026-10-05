@@ -12,7 +12,7 @@
           "stat": "trueDamageConversion",
           "durationRef": 1,
           "claims": [
-            "C-0307"
+            "C-0311"
           ],
           "assumes": {
             "ja": "カモフラージュは「バースト使用時」と「フルバーストタイムのフルチャージ時」の 2 つのきっかけで付く同じ状態で、中身（通常攻撃の防御力無視ダメージへの変化と▲）を、きっかけごとに直接付ける（窓は和集合）。被弾では解除されない（前提の外）",
@@ -27,7 +27,7 @@
           "ref": 2,
           "durationRef": 1,
           "claims": [
-            "C-0307"
+            "C-0311"
           ]
         },
         {
@@ -42,8 +42,8 @@
           "stat": "trueDamageConversion",
           "durationRef": 1,
           "claims": [
-            "C-0310",
-            "C-0307"
+            "C-0314",
+            "C-0311"
           ],
           "assumes": {
             "ja": "フルバーストの中のフルチャージの発の後から付く（その発自身には乗らない）。チャージ途中の発で付くかは確かめていない（モデルはチャージ途中の発を撃たない）",
@@ -63,8 +63,8 @@
           "ref": 2,
           "durationRef": 1,
           "claims": [
-            "C-0310",
-            "C-0307"
+            "C-0314",
+            "C-0311"
           ]
         }
       ],
@@ -130,7 +130,7 @@
           "ref": 3,
           "durationRef": 4,
           "claims": [
-            "C-0308",
+            "C-0312",
             "C-0138"
           ],
           "assumes": {
@@ -145,7 +145,7 @@
           "en": "The weapon-change shot (Explosive Round: max(1, ATK) × 105.6% × (300% + Charge Damage up) × (1 + True Damage up), one shot then back to the base SR) is not modeled (its value is confirmed, but weaponChange copies the base weapon's charge time, full-charge multiplier and max ammo, so it cannot express a 0.3 s / 300% / 1-round weapon; new vocabulary is needed)",
           "kind": "unimplemented",
           "claims": [
-            "C-0309"
+            "C-0313"
           ]
         }
       ]

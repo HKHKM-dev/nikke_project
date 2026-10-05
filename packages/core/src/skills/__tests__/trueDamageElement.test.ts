@@ -1,5 +1,5 @@
 // 防御力無視ダメージ・有利コードの攻撃ダメージ等の語彙（plan/design-true-damage-element.md 3 節）。
-// 定義の検証、編成の条件、窓、1 発の式を見る。定義に使ったのはウンファ：TU の S1・バースト（V-0207・V-0208。C-0307・C-0308・C-0310）。
+// 定義の検証、編成の条件、窓、1 発の式を見る。定義に使ったのはウンファ：TU の S1・バースト（V-0207・V-0208。C-0311・C-0312・C-0314）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
@@ -340,7 +340,7 @@ describe('ウンファ：TU の定義（data/skills/95.json）', () => {
   );
   const timed = resolveTimed(definition, character, MAX_SKILL_LEVELS);
 
-  it('gives the Camouflage contents for 5 s on Burst Skill use and on Full Charge during Full Burst (C-0307・C-0310)', () => {
+  it('gives the Camouflage contents for 5 s on Burst Skill use and on Full Charge during Full Burst (C-0311・C-0314)', () => {
     const camo = timed.filter((e) => e.source.skill === 'skill1');
     expect(camo.map((e) => [e.stat, e.value, e.durationFrames, e.condition])).toEqual([
       ['trueDamageConversion', 1, gameSecondsToFrames(5), undefined],
@@ -350,7 +350,7 @@ describe('ウンファ：TU の定義（data/skills/95.json）', () => {
     ]);
   });
 
-  it('gives Damage Taken up for 10 s on Burst Skill use (C-0308)', () => {
+  it('gives Damage Taken up for 10 s on Burst Skill use (C-0312)', () => {
     const burst = timed.filter((e) => e.source.skill === 'burst');
     expect(burst.map((e) => [e.stat, e.target, e.value, e.durationFrames])).toEqual([
       ['damageTaken', 'allies', 0.2787, gameSecondsToFrames(10)],
