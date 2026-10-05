@@ -1,5 +1,5 @@
-// エマ：TU（93）の S1 の環境コントロール（敵全体の受けるダメージ▲。戦闘開始時と、そこから 30 秒ごと。C-0302）と、
-// S2 のフォーメーションAS の再発動周期 20 秒▼（編成にウンファ：TU がいれば 10 秒ごと。C-0303）。窓の時刻と、sim と calc の整合
+// エマ：TU（93）の S1 の環境コントロール（敵全体の受けるダメージ▲。戦闘開始時と、そこから 30 秒ごと。C-0305）と、
+// S2 のフォーメーションAS の再発動周期 20 秒▼（編成にウンファ：TU がいれば 10 秒ごと。C-0306）。窓の時刻と、sim と calc の整合
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -55,7 +55,7 @@ function environmentWindows(input: TeamInput) {
 }
 
 describe('環境コントロールの窓', () => {
-  it('opens at battle start and every 30 s after, for 10 s each, without Eunhwa: TU (録画 226 の編成。C-0302)', () => {
+  it('opens at battle start and every 30 s after, for 10 s each, without Eunhwa: TU (録画 226 の編成。C-0305)', () => {
     const windows = environmentWindows(team([fixedSlot(EMMA)], 0, false));
     expect(windows.map((w) => w.start)).toEqual(
       [0, 30, 60, 90, 120, 150].map((s) => (s === 0 ? 0 : gameSecondsToFrame(s))),
@@ -66,7 +66,7 @@ describe('環境コントロールの窓', () => {
     }
   });
 
-  it('opens every 10 s with Eunhwa: TU, so it covers the whole battle but for rounding gaps of 1 frame (録画 227 の編成。C-0303)', () => {
+  it('opens every 10 s with Eunhwa: TU, so it covers the whole battle but for rounding gaps of 1 frame (録画 227 の編成。C-0306)', () => {
     const input = team([fixedSlot(EMMA), fixedSlot(EUNHWA)], 0, false);
     const windows = environmentWindows(input);
     expect(windows[0]!.start).toBe(0);

@@ -1,12 +1,16 @@
 {
-  "verification": "V-0203",
+  "verification": "V-0205",
   "team": [
     {
       "rid": 311,
       "controlled": false
     },
     {
-      "rid": 160,
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 851,
       "controlled": true
     }
   ],
@@ -14,30 +18,30 @@
   "hypotheses": [
     {
       "id": "H0",
-      "note": "いまのモデル（ユニの遅れは遅れの表の行（C-0230。仮説）のまま）。ヒットの値は、撃つ側のバフをIIの発動の直前で固定する規則（plan/design-burst-landing.md 9 節）のまま。遅れが表の行と違う仮説は、表の行で切り替わるので、このファイルの範囲外（検証記録に手で書く）"
+      "note": "いまのモデル（レイヴンの遅れは遅れの表の行（C-0233。仮説）のまま）。ヒットの値は、撃つ側のバフをIIIの発動の直前で固定する規則（plan/design-burst-landing.md 9 節）のまま。遅れが表の行と違う仮説は、表の行で切り替わるので、このファイルの範囲外（検証記録に手で書く）"
     }
   ],
   "targets": [
     {
-      "id": "yuni-delays",
+      "id": "raven-delays",
       "model": "sim",
       "metric": "burstHitDelays",
       "args": {
-        "slot": 2,
-        "count": 7
+        "slot": 3,
+        "count": 5
       },
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "1〜7 回目の II の発動（右のバースト欄の六角形が II から次の表示に替わったフレーム）から、バーストの倍率ダメージのヒットまでの動画のフレーム数（III がいないのでフルバーストは起きず、止まりは入らない）"
+      "note": "1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム）から、バーストの倍率ダメージのヒットまでの動画のフレーム数（フルバーストの入りの止まりを含む）"
     },
     {
-      "id": "yuni-burst-hit",
+      "id": "raven-burst-hit",
       "model": "sim",
       "metric": "burstHitDamage",
       "args": {
-        "slot": 2,
+        "slot": 3,
         "n": 0,
         "crit": false
       },
@@ -48,11 +52,11 @@
       "note": "1 回目のバーストの倍率ダメージの値（会心なし。フルバースト補正もコアも乗らない）"
     },
     {
-      "id": "yuni-burst-hit-crit",
+      "id": "raven-burst-hit-crit",
       "model": "sim",
       "metric": "burstHitDamage",
       "args": {
-        "slot": 2,
+        "slot": 3,
         "n": 0,
         "crit": true
       },
@@ -68,9 +72,9 @@
     "commit": "ce342b1055619210ebcb51f50a8f0b5de1cb61e9",
     "values": {
       "H0": {
-        "yuni-delays": [124, 124, 124, 124, 124, 124, 124],
-        "yuni-burst-hit": 278474.85420000006,
-        "yuni-burst-hit-crit": 417712.2813000001
+        "raven-delays": [65, 65, 65, 65, 65],
+        "raven-burst-hit": 589755.708,
+        "raven-burst-hit-crit": 884633.5619999999
       }
     },
     "seen": {}

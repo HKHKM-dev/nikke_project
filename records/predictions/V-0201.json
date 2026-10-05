@@ -1,5 +1,5 @@
 {
-  "verification": "V-0202",
+  "verification": "V-0201",
   "team": [
     {
       "rid": 311,
@@ -10,21 +10,20 @@
       "controlled": false
     },
     {
-      "rid": 101,
-      "controlled": true,
-      "treasurePhase": 3
+      "rid": 10,
+      "controlled": true
     }
   ],
   "fixedSpec": true,
   "hypotheses": [
     {
       "id": "H0",
-      "note": "いまのモデル（ドレイク（宝物あり）の遅れは遅れの表の行（C-0228。仮説）のまま）。ヒットの値は、撃つ側のバフをIIIの発動の直前で固定する規則（plan/design-burst-landing.md 9 節）のまま。遅れが表の行と違う仮説は、表の行で切り替わるので、このファイルの範囲外（検証記録に手で書く）"
+      "note": "いまのモデル（ラピの遅れは遅れの表の行（C-0227。仮説）のまま）。ヒットの値は、撃つ側のバフをIIIの発動の直前で固定する規則（plan/design-burst-landing.md 9 節）のまま。遅れが表の行と違う仮説は、表の行で切り替わるので、このファイルの範囲外（検証記録に手で書く）"
     }
   ],
   "targets": [
     {
-      "id": "drake-delays",
+      "id": "rapi-delays",
       "model": "sim",
       "metric": "burstHitDelays",
       "args": {
@@ -38,7 +37,7 @@
       "note": "1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム）から、バーストの倍率ダメージの 1 ヒットまでの動画のフレーム数（フルバーストの入りの止まりを含む）"
     },
     {
-      "id": "drake-offsets-1",
+      "id": "rapi-offsets-1",
       "model": "sim",
       "metric": "burstHitOffsets",
       "args": {
@@ -52,7 +51,7 @@
       "note": "1 回目の発動の、1 ヒット目から 2・3 ヒット目までの動画のフレーム数（先頭は 0）"
     },
     {
-      "id": "drake-offsets-2",
+      "id": "rapi-offsets-2",
       "model": "sim",
       "metric": "burstHitOffsets",
       "args": {
@@ -66,7 +65,7 @@
       "note": "2 回目の発動の、1 ヒット目から 2・3 ヒット目までの動画のフレーム数（先頭は 0）"
     },
     {
-      "id": "drake-offsets-3",
+      "id": "rapi-offsets-3",
       "model": "sim",
       "metric": "burstHitOffsets",
       "args": {
@@ -80,7 +79,7 @@
       "note": "3 回目の発動の、1 ヒット目から 2・3 ヒット目までの動画のフレーム数（先頭は 0）"
     },
     {
-      "id": "drake-offsets-4",
+      "id": "rapi-offsets-4",
       "model": "sim",
       "metric": "burstHitOffsets",
       "args": {
@@ -94,7 +93,7 @@
       "note": "4 回目の発動の、1 ヒット目から 2・3 ヒット目までの動画のフレーム数（先頭は 0）"
     },
     {
-      "id": "drake-offsets-5",
+      "id": "rapi-offsets-5",
       "model": "sim",
       "metric": "burstHitOffsets",
       "args": {
@@ -108,7 +107,7 @@
       "note": "5 回目の発動の、1 ヒット目から 2・3 ヒット目までの動画のフレーム数（先頭は 0）"
     },
     {
-      "id": "drake-burst-hit",
+      "id": "rapi-burst-hit",
       "model": "sim",
       "metric": "burstHitDamage",
       "args": {
@@ -123,7 +122,7 @@
       "note": "1 回目のバーストの倍率ダメージの 3 ヒットの合計の値（会心なし。フルバースト補正もコアも乗らない）"
     },
     {
-      "id": "drake-burst-hit-crit",
+      "id": "rapi-burst-hit-crit",
       "model": "sim",
       "metric": "burstHitDamage",
       "args": {
@@ -143,14 +142,14 @@
     "commit": "ce342b1055619210ebcb51f50a8f0b5de1cb61e9",
     "values": {
       "H0": {
-        "drake-delays": [26, 26, 26, 26, 26],
-        "drake-offsets-1": [0, 27, 55],
-        "drake-offsets-2": [0, 27, 55],
-        "drake-offsets-3": [0, 27, 55],
-        "drake-offsets-4": [0, 27, 55],
-        "drake-offsets-5": [0, 27, 55],
-        "drake-burst-hit": 3605380.4159999997,
-        "drake-burst-hit-crit": 5408070.624
+        "rapi-delays": [112, 112, 112, 112, 112],
+        "rapi-offsets-1": [0, 7, 14],
+        "rapi-offsets-2": [0, 7, 14],
+        "rapi-offsets-3": [0, 7, 14],
+        "rapi-offsets-4": [0, 7, 14],
+        "rapi-offsets-5": [0, 7, 14],
+        "rapi-burst-hit": 624393.3276,
+        "rapi-burst-hit-crit": 936589.9913999999
       }
     },
     "seen": {}

@@ -7,7 +7,7 @@
     "value": [592, 2287, 4166, 5837, 7727, 9455],
     "unit": "f",
     "description": "エマ：TU（MG・操作）単騎で、S1 の環境コントロールの受けるダメージ▲が切れたフレーム（戦闘開始からのゲーム内のフレーム）の並び。▲の中の最後のヒットと、▲の外の最初のヒットのあいだの中点",
-    "source": "V-0202",
+    "source": "V-0209",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/timer.ts --mode changes・tools/captures/hud.ts --mode jumps・使い捨てのスクリプト",
@@ -38,7 +38,7 @@
     "use": "compare",
     "value": 11554,
     "description": "エマ：TU 単騎の、戦闘開始から 280〜320f（環境コントロールの窓の中・着地点 midNear）のコアの会心でない 1 ヒット",
-    "source": "V-0202",
+    "source": "V-0209",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",
@@ -71,7 +71,7 @@
     "use": "compare",
     "value": 11121,
     "description": "エマ：TU 単騎の、戦闘開始から 1191〜1220f（環境コントロールの窓の外・着地点 midNear）のコアの会心でない 1 ヒット",
-    "source": "V-0202",
+    "source": "V-0209",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",

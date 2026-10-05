@@ -24,7 +24,7 @@
             "en": "One enemy. Applied at battle start (frame 0) and every 30 s after (counted from each application) for 10 s. Applies to all allies' damage as a multiplier separate from every other group (1 + 3.9%). Only when Eunhwa: Tactical Upgrade is not in the team (with her, S2's AS Formation makes the interval 10 s; next effect)"
           },
           "claims": [
-            "C-0302"
+            "C-0305"
           ]
         },
         {
@@ -46,8 +46,8 @@
             "en": "Reads S2's \"while this unit is in the AS Formation state\" Effect 4 (recurring interval −20 s) as Eunhwa: Tactical Upgrade being in the team, so the interval is 30 − 20 = 10 s. Applied for 10 s every 10 s, so it never lapses. Applies the same way as the previous effect"
           },
           "claims": [
-            "C-0302",
-            "C-0303"
+            "C-0305",
+            "C-0306"
           ]
         }
       ],

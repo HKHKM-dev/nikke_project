@@ -1,0 +1,130 @@
+{
+  "verification": "V-0209",
+  "note": "エマ：TU（93・MG）単騎・操作（AUTO 射撃 ON）・オートバースト OFF・灼熱タブの BigArms・射撃場 3 分・スペック固定 ON。バーストを撃たないので、環境コントロール強化（バースト）と発動者基準の攻撃力▲は起きない。S2 の効果 1（クリティカルダメージ▲。C-0266）は会心のヒットにだけ乗り、会心でないヒットには効かない。効果 2（発射体爆発ダメージ▲）は RL の通常攻撃にだけ掛かる（C-0205）。いまの定義は S1 に効果が無いので、仮説はどちらも S1 に環境コントロールの受けるダメージ▲を足す。ID は V-0202 から振り直した（main の V-0202 と重なったため。predicted.commit と予測の commit cb2ff48 は振り直す前のブランチのもの）",
+  "team": [
+    {
+      "rid": 93,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "再発動周期は発動から数える: 戦闘開始時（フレーム 0）と、その後 30 秒ごとに付き、10 秒続く（窓は 0〜10・30〜40・…・150〜160 秒）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 30,
+                "atStart": true
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "再発動周期は効果が切れてから数える: 戦闘開始時と、その後 10 + 30 = 40 秒ごとに付き、10 秒続く（窓は 0〜10・40〜50・…・160〜170 秒）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 40,
+                "atStart": true
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "s1-window-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "damageTaken"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "判定の指標。環境コントロールの受けるダメージ▲の窓の終わり（戦闘開始からのモデルのフレーム）の並び。録画では、戦闘開始（残り時間 02:59 が出たフレーム）から、エマの 1 ヒットの値が▲の系列から▲なしの系列に戻る前の最後のヒットと戻った後の最初のヒットのあいだ（ゲーム内の 1 フレーム 0.017 秒で数える）"
+    },
+    {
+      "id": "hit-in-window",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "窓の中（戦闘開始から 5 秒ほど）のエマの 1 ヒット（コア・会心なし・距離ボーナスなし）。仮説で同じ値。▲の大きさ（3.9%）と、▲が別枠の乗数で掛かること（C-0138）の確かめ"
+    },
+    {
+      "id": "hit-out-window",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "窓の外（戦闘開始から 20 秒ほど。H1・H2 とも窓の外）のエマの 1 ヒット（コア・会心なし・距離ボーナスなし）。hit-in-window との比が 1.039"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "ce342b1055619210ebcb51f50a8f0b5de1cb61e9",
+    "values": {
+      "H1": {
+        "s1-window-ends": [588, 2353, 4117, 5882, 7647, 9412],
+        "hit-in-window": 11554.204694999999,
+        "hit-out-window": 11120.505
+      },
+      "H2": {
+        "s1-window-ends": [588, 2941, 5294, 7647, 10000],
+        "hit-in-window": 11554.204694999999,
+        "hit-out-window": 11120.505
+      }
+    },
+    "seen": {}
+  }
+}

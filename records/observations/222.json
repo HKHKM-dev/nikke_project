@@ -1,0 +1,209 @@
+[
+  {
+    "id": "222-01",
+    "recording": "222",
+    "source": "V-0202",
+    "readAt": "2026-10-05",
+    "kind": "interval",
+    "use": "compare",
+    "value": [26, 26, 26, 26, 26],
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ ドレイク（III・宝物あり・操作）で、1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1255・3636・6016・8395・10810）から、ドレイクのバーストの倍率ダメージの 1 ヒット目（f1281・3662・6042・8421・10836）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop・tile）・hud.ts --mode jumps と、HUD を 1 フレームずつ並べた一覧（FULL BURST の表示の中は目で読んだ）",
+      "note": "1 ヒット目は FULL BURST の表示の中なので、HUD を 1 フレームずつ並べて目で読んだ（hud.ts は gap 25〜31 の後の読みになる）。総ダメージの差が 1 ヒットの値（1,201,793。1 回目は会心の 1,802,690）になるフレーム。2・3・5 回目は、同じ止まりの中で、ほかの発の増分が 1〜5f 前後に出る。1 回目は始まりの前に III のタイマーの 09.52 が 2 フレーム続く（録画の重複フレームの位置）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "222-02",
+    "recording": "222",
+    "source": "V-0202",
+    "readAt": "2026-10-05",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 28, 57],
+    "unit": "f",
+    "description": "ココア + デルタ + ドレイク（宝物あり）で、1 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f1281・1309・1338）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、HUD を 1 フレームずつ並べた一覧（FULL BURST の表示の中は目で読んだ）",
+      "note": "1 ヒット目から 3 ヒット目の間に重複フレームが 5 つある（f1302・1326・1329・1330・1333。dups.ts --mode list）。57f はその分の揺れとみる（確かめていない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "222-03",
+    "recording": "222",
+    "source": "V-0202",
+    "readAt": "2026-10-05",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 28, 56],
+    "unit": "f",
+    "description": "ココア + デルタ + ドレイク（宝物あり）で、2 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f3662・3690・3718）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、HUD を 1 フレームずつ並べた一覧（FULL BURST の表示の中は目で読んだ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "222-04",
+    "recording": "222",
+    "source": "V-0202",
+    "readAt": "2026-10-05",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 28, 56],
+    "unit": "f",
+    "description": "ココア + デルタ + ドレイク（宝物あり）で、3 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f6042・6070・6098）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、HUD を 1 フレームずつ並べた一覧（FULL BURST の表示の中は目で読んだ）",
+      "note": "3 ヒット目は画面が暗く、hud.ts は f6108 と読んだ。並べた一覧で f6098 と読み直した"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "222-05",
+    "recording": "222",
+    "source": "V-0202",
+    "readAt": "2026-10-05",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 28, 56],
+    "unit": "f",
+    "description": "ココア + デルタ + ドレイク（宝物あり）で、4 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f8421・8449・8477）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、HUD を 1 フレームずつ並べた一覧（FULL BURST の表示の中は目で読んだ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "222-06",
+    "recording": "222",
+    "source": "V-0202",
+    "readAt": "2026-10-05",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 28, 56],
+    "unit": "f",
+    "description": "ココア + デルタ + ドレイク（宝物あり）で、5 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f10836・10864・10892）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、HUD を 1 フレームずつ並べた一覧（FULL BURST の表示の中は目で読んだ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "222-07",
+    "recording": "222",
+    "source": "V-0202",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5408070,
+    "description": "ドレイク（宝物あり）の 1 回目のバーストの倍率ダメージの 3 ヒットの和（3 ヒットとも会心の 1,802,690）。ヒットは f1281・1309・1338",
+    "method": {
+      "tool": "hud.ts --mode jumps と、HUD を 1 フレームずつ並べた一覧（FULL BURST の表示の中は目で読んだ）",
+      "note": "2〜5 回目は 3 ヒットとも 1,201,793（会心なし）。1 回の発動の 3 ヒットは、会心かどうかが揃う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

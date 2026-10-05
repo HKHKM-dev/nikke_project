@@ -6,7 +6,7 @@
     "use": "compare",
     "value": 11554,
     "description": "エマ：TU（操作）+ ウンファ：TU（AI）の、戦闘開始から 890〜908f のエマのコアの会心でない 1 ヒット",
-    "source": "V-0203",
+    "source": "V-0210",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",
@@ -39,7 +39,7 @@
     "use": "compare",
     "value": 11554,
     "description": "エマ：TU（操作）+ ウンファ：TU（AI）の、戦闘開始から 1212〜1260f のエマのコアの会心でない 1 ヒット",
-    "source": "V-0203",
+    "source": "V-0210",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",
@@ -72,7 +72,7 @@
     "use": "record",
     "value": 0,
     "description": "エマ：TU（操作）+ ウンファ：TU（AI）で、戦闘開始から終わりまでのエマのヒットのうち、▲なしの系列（× 1.039 の乗らない値）に乗ったものの数。▲ありの系列は 4,874 増分",
-    "source": "V-0203",
+    "source": "V-0210",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps・使い捨てのスクリプト",
