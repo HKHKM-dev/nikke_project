@@ -15,12 +15,14 @@ import {
   type EffectCondition,
   type EffectTrigger,
   type EventCountKind,
+  type ExcludeSelf,
   type InstantKind,
   type ShotCountKind,
   type SkillDefinition,
   type SkillSlot,
   type TargetCountFields,
   type TimerTrigger,
+  type TargetSquad,
 } from './types.ts';
 
 /**
@@ -146,8 +148,14 @@ export type ResolvedEffect = {
   targetWeapon?: WeaponType;
   /** アスカ: 「〈コード〉コードの味方」。定義に無ければキーごと無い */
   targetElement?: Element;
-  /** Stage 11 アリス編: target が topAttack のときの N（解決済み）。それ以外はキーごと無い */
+  /** Stage 11 アリス編: target が topAttack・longestChargeTime のときの N（解決済み）。それ以外はキーごと無い */
   targetCount?: number;
+  /** 対象の語彙編: 「同じ部隊の味方全体に」。定義に無ければキーごと無い */
+  targetSquad?: TargetSquad;
+  /** 対象の語彙編: 「自分を除く」（topAttack）。定義に無ければキーごと無い */
+  excludeSelf?: ExcludeSelf;
+  /** 対象の語彙編: 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの）。無ければキーごと無い */
+  fixedTargets?: readonly number[];
   stat: EffectStat;
   /** 省略を 'ratio' に埋めた後の値 */
   scaling: BuffScaling;
@@ -195,6 +203,8 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.targetElement) r.targetElement = effect.targetElement;
+      if (effect.targetSquad) r.targetSquad = effect.targetSquad;
+      if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     }
@@ -277,6 +287,9 @@ export function resolveTimed(
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.targetElement) r.targetElement = effect.targetElement;
+      if (effect.targetSquad) r.targetSquad = effect.targetSquad;
+      if (effect.excludeSelf) r.excludeSelf = effect.excludeSelf;
+      if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
       const count = resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
       const maxStacks = resolveMaxStacks(effect, skill, levels[slot]);

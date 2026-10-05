@@ -140,6 +140,9 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
   if (effect.scaling === 'casterAttack') {
     return `${stat} +${formatNumber(effect.appliedAmount)}（発動者基準 ${formatPercent(effect.value, 2)}）`;
   }
+  // 対象の語彙編: 「チャージ時間 X 秒▼」（chargeSpeed の flat）は秒数でチャージ時間から引く
+  if (effect.scaling === 'flat' && effect.stat === 'chargeSpeed')
+    return `チャージ時間 −${formatNumber(effect.appliedAmount, 2)} 秒`;
   if (effect.scaling === 'flat') return `${stat} ${sign}${formatNumber(amount)} 発`;
   // Stage 11 アリス編: 発動者基準のチャージ速度は秒数でチャージ時間から引く
   if (effect.scaling === 'casterChargeTime')
@@ -191,15 +194,25 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
   // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果。Stage 11: 「直前にバーストを使った味方」「最終攻撃力が最も高い味方 N 機」
   // アスカ: 「〈コード〉コードの味方」（「灼熱コードの SG の味方」のように武器種と並べる）
   const element = effect.targetElement ? `${ELEMENT_LABEL[effect.targetElement].ja}コードの` : '';
-  const weapon = `${element}${effect.targetWeapon ? `${effect.targetWeapon} の` : ''}`;
+  // 対象の語彙編: 「同じ部隊の味方」「自分を除く」「基本チャージ時間が最も長い味方 N 機」
+  const squad = effect.targetSquad === 'same' ? '同じ部隊の' : '';
+  const weapon = `${squad}${element}${effect.targetWeapon ? `${effect.targetWeapon} の` : ''}`;
+  const exclude =
+    effect.excludeSelf === 'always'
+      ? '自分を除く'
+      : effect.excludeSelf === 'unlessShort'
+        ? '自分を除く（足りなければ自分も）'
+        : '';
   const only =
     effect.target === 'burstUsers'
       ? `（直前にバーストを使った${weapon}味方）`
       : effect.target === 'topAttack'
-        ? `（最終攻撃力が最も高い${weapon}味方 ${effect.targetCount ?? 1} 機）`
-        : weapon !== ''
-          ? `（${weapon}味方）`
-          : '';
+        ? `（${exclude}最終攻撃力が最も高い${weapon}味方 ${effect.targetCount ?? 1} 機）`
+        : effect.target === 'longestChargeTime'
+          ? `（基本チャージ時間が最も長い${weapon}味方 ${effect.targetCount ?? 1} 機）`
+          : weapon !== ''
+            ? `（${weapon}味方）`
+            : '';
   return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}`;
 }
 

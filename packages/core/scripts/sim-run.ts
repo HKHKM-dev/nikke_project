@@ -580,7 +580,7 @@ for (const [i, slot] of slots.entries()) {
       timed: compactTimed(g.timedEffects)
         .map(
           ({ e, n }) =>
-            `${triggerLabel(e.trigger)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
+            `${triggerLabel(e.trigger)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
         )
         .join(', '),
     })),

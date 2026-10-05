@@ -68,16 +68,23 @@ export function rankByFinalAttack(finalAttacks: readonly (number | null)[]): num
   return indices.sort((a, b) => finalAttacks[b]! - finalAttacks[a]! || a - b);
 }
 
-/** 効果の対象になりうる枠（targetWeapon・targetElement で絞る）を順位の順に。FireContext.attackRank に入れる */
+/**
+ * 効果の対象になりうる枠（targetWeapon・targetElement で絞る）を順位の順に。FireContext.attackRank に入れる。
+ * 対象の語彙編（plan/design-target-vocab.md 2.1 節）: excludeSelf なら発動者の枠（sourceSlotIndex）を外し、unlessShort なら
+ * 末尾に足す（上位 N に足りないときだけ対象に入る）
+ */
 export function attackRankFor(
-  effect: Pick<TargetedEffect, 'targetWeapon' | 'targetElement'>,
+  effect: Pick<TargetedEffect, 'targetWeapon' | 'targetElement' | 'excludeSelf'>,
   slots: readonly RankSlot[],
   finalAttacks: readonly (number | null)[],
+  sourceSlotIndex: number,
 ): number[] {
-  return rankByFinalAttack(finalAttacks).filter((i) => {
+  const rank = rankByFinalAttack(finalAttacks).filter((i) => {
     const slot = slots[i];
+    if (effect.excludeSelf !== undefined && i === sourceSlotIndex) return false;
     return slot !== null && slot !== undefined && matchesTargetFilter(effect, slot);
   });
+  return effect.excludeSelf === 'unlessShort' ? [...rank, sourceSlotIndex] : rank;
 }
 
 /** 順位の上位に同値があったか（N 位と N+1 位が同じ攻撃力なら、枠の順の仮定で対象が決まった） */
