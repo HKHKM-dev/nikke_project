@@ -6,6 +6,7 @@ import {
   SKILL_SLOT_LABEL,
   formatAppliedAmount,
   formatTimedTrigger,
+  formatDamageCondition,
   formatTrigger,
 } from '../skillLabels.ts';
 import { framesToGameSeconds } from '@nikke/core';
@@ -76,7 +77,7 @@ function groupSkillHits(slot: TeamSlotResult): SkillHitGroup[] {
         ? `${formatTrigger(e.trigger)}に ${e.cycle.steps} 段を循環（${e.cycle.step + 1} 段目。窓の中は間隔の変更に従う）`
         : e.dot
           ? dotTriggerText(e)
-          : formatTrigger(e.trigger),
+          : `${formatTrigger(e.trigger)}${formatDamageCondition(e.condition)}`,
       multiplier: e.multiplier,
       assumes: e.assumes?.ja ?? null,
       count: 1,

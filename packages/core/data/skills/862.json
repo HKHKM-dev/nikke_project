@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 862,
-  "checkedAt": "2026-10-01",
+  "checkedAt": "2026-10-05",
   "skills": {
     "skill1": {
       "effects": [
@@ -53,12 +53,27 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "フルバーストタイム中に通常攻撃が 36 回命中した時、対象がハッキング状態なら 86.17% の追加ダメージは未実装（フルバースト中だけの命中の数え方と、対象がハッキング状態かの条件が語彙に無い）",
-          "en": "The 86.17% additional damage on 36 normal hits during Full Burst to a hacked target is not implemented (no vocabulary for counting hits only during Full Burst or for the target's hacked state)",
-          "kind": "unimplemented"
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "condition": {
+            "fullBurst": true,
+            "targetStatus": "hacking"
+          },
+          "ref": 2,
+          "damageType": "additional",
+          "assumes": {
+            "ja": "撃った弾はすべて命中する（命中の回数は S1 と同じ通算の列）。対象は敵 1 体。ハッキング状態は、ハッキングが付いた命中から最後の tick まで（両端を含む。同じ命中で付くハッキングも入れる）。境界は確かめていない（フルバースト中はハッキングがずっと付いていて、録画では効かなかった）",
+            "en": "Every shot hits (hits follow the same battle-wide count as S1). One enemy. The target counts as hacked from the hit that applies the hacking to its last tick (both ends, including hacking applied by the same hit). The boundary is unchecked (the hacking stayed on during Full Burst in the recording)"
+          },
+          "claims": [
+            "C-0276",
+            "C-0277"
+          ]
         }
       ]
     },

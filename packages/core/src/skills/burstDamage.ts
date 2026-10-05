@@ -8,7 +8,14 @@ import type { EnemyInput, TriggerDamage } from '../damage.ts';
 import { explosionHitMultiplier, FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
-import { SKILL_SLOTS, type DotFirstTick, type SkillDamageType, type SkillDefinition, type SkillSlot } from './types.ts';
+import {
+  SKILL_SLOTS,
+  type DamageCondition,
+  type DotFirstTick,
+  type SkillDamageType,
+  type SkillDefinition,
+  type SkillSlot,
+} from './types.ts';
 import {
   isResolvedShotCount,
   resolveTrigger,
@@ -54,6 +61,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    * （窓の外の間隔）で、実際の発動は skills/cycles.ts の cycleFires が決める。damage 効果ではキーごと無い
    */
   cycle?: { step: number; steps: number };
+  /** クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。frame/plan.ts の planSkillHits が絞る */
+  condition?: DamageCondition;
   /**
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
@@ -115,8 +124,14 @@ export function resolveDamageEffects(
     entry.effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'damage') return;
       const trigger = resolveTrigger(effect.trigger, skill, levels[slot]);
-      // 射撃ごとの倍率ダメージは発動を作らず、1 トリガーの値に畳み込む（resolvePerShotDamage）
-      if (isPerShotTrigger(trigger)) return;
+      // 射撃ごとの倍率ダメージは発動を作らず、1 トリガーの値に畳み込む（resolvePerShotDamage）。
+      // クルミ S2 編: 条件つきは畳み込まない（1 パス目の後に絞るので）。使うキャラが無いので拒否する
+      if (isPerShotTrigger(trigger)) {
+        if (effect.condition !== undefined) {
+          throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot have a condition`);
+        }
+        return;
+      }
       const r: ResolvedDamageEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         damageType: effect.damageType,
@@ -124,6 +139,7 @@ export function resolveDamageEffects(
         trigger,
         effectIndex,
       };
+      if (effect.condition) r.condition = { ...effect.condition };
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
@@ -238,7 +254,13 @@ export function resolveDotEffects(
  * 「通常攻撃が命中した時」の倍率ダメージは射撃と 1 対 1 で、同じ区間では毎回同じ値なので、1 トリガーの値に畳み込む
  */
 export function isPerShotTrigger(trigger: ResolvedTrigger): boolean {
-  return typeof trigger === 'object' && 'every' in trigger && trigger.every === 1 && trigger.count !== 'lastShot';
+  return (
+    typeof trigger === 'object' &&
+    'every' in trigger &&
+    trigger.every === 1 &&
+    trigger.count !== 'lastShot' &&
+    trigger.during === undefined
+  );
 }
 
 /**

@@ -18,6 +18,8 @@ import {
   type ExcludeSelf,
   type InstantKind,
   type ShotCountKind,
+  type ShotCountReset,
+  type ShotCountWindow,
   type SkillDefinition,
   type SkillSlot,
   type TargetCountFields,
@@ -36,7 +38,14 @@ export type ResolvedTrigger =
  * 射撃の回数トリガー（解決済み）。every は発火の間隔（回）。
  * Stage 11: stacksRef があれば every = 1 スタックの回数 × スタック数 で、stacks にスタック数を残す（表示用）
  */
-export type ResolvedShotCountTrigger = { count: ShotCountKind; every: number; stacks?: number };
+export type ResolvedShotCountTrigger = {
+  count: ShotCountKind;
+  every: number;
+  stacks?: number;
+  /** クルミ S2 編: 数える窓と数え直し（plan/design-kurumi-s2.md 2.1 節）。有ればどちらも有る */
+  during?: ShotCountWindow;
+  reset?: ShotCountReset;
+};
 
 export function isResolvedShotCount(t: ResolvedTrigger): t is ResolvedShotCountTrigger {
   return typeof t === 'object' && 'every' in t;
@@ -58,6 +67,8 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   if (!Number.isInteger(every) || every < 1) {
     throw new RangeError(`skill ${skill.id}: count trigger must be a positive integer, got ${every}`);
   }
+  if (trigger.during !== undefined)
+    return { count: trigger.count, every, during: trigger.during, reset: trigger.reset! };
   if (trigger.stacksRef === undefined) return { count: trigger.count, every };
   const stacks = skillValue(skill, trigger.stacksRef, level);
   if (!Number.isInteger(stacks) || stacks < 1) {

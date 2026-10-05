@@ -1,0 +1,39 @@
+{
+  "formatVersion": 1,
+  "resourceId": 308,
+  "checkedAt": "2026-10-05",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃が 10 回命中した時の自分の防御力▲は、ダメージに関係しない",
+          "en": "DEF up on self after 10 normal hits does not affect damage",
+          "kind": "noDamage",
+          "claims": ["C-0275"]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "攻撃を受けた時（確率）の自分の攻撃力▲は、被弾を扱わないので起きない",
+          "en": "The chance-based ATK up on self when attacked never happens (taking hits is not modelled)",
+          "kind": "outOfScope",
+          "claims": ["C-0275"]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の最大装弾数▲（10 秒間維持）は未実装（自分の射撃にだけ効く。値の丸めを確かめていない）",
+          "en": "Max Ammo up on self (10 s) is not implemented (it only affects her own firing; the rounding is unchecked)",
+          "kind": "unimplemented"
+        }
+      ]
+    }
+  }
+}

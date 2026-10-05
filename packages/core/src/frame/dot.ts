@@ -111,6 +111,28 @@ export function dotTicks(
   return out;
 }
 
+/**
+ * クルミ S2 編（plan/design-kurumi-s2.md 2.3 節）: 持続ダメージが敵に「付いている」区間の列。まとまり（維持の途中の付け直しで
+ * つながった発火の列。dotTickTracker と同じ規則）ごとに、最初の発火のフレームから最後の tick のフレームまで（両端を含む）。
+ * 最後の tick は戦闘の終わりで切らない（終わりの後の判定は起きないので）。fires は昇順
+ */
+export function dotActiveSpans(
+  fires: readonly number[],
+  intervalSeconds: number,
+  durationSeconds: number,
+  firstTick: DotFirstTick = 'atApplication',
+): { start: number; end: number }[] {
+  const tracker = dotTickTracker(intervalSeconds, durationSeconds, Number.POSITIVE_INFINITY, firstTick);
+  const spans: { start: number; end: number }[] = [];
+  for (const f of fires) {
+    const r = tracker.fire(f);
+    if (r.newGroup) spans.push({ start: f, end: f });
+    const span = spans[spans.length - 1]!;
+    span.end = Math.max(span.end, f, ...r.ticks);
+  }
+  return spans;
+}
+
 /** レイヴン編: 発火を 1 つずつ受けて、新しく決まった tick のフレームを返す（newGroup は新しいまとまりの最初の発火か） */
 export type DotTickTracker = { fire(frame: number): { ticks: number[]; newGroup: boolean } };
 

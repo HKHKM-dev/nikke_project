@@ -57,11 +57,14 @@ const TEAMS: Record<string, { input: TeamInput; kurumi: number }> = {
 };
 
 describe('クルミの定義', () => {
-  it('supports S1 (two hackings) and the burst (damage taken up); S2 is notes', () => {
+  it('supports S1 (two hackings), S2 (additional damage in full burst, V-0181) and the burst (damage taken up)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${KURUMI}.json`));
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['dot', 'dot']);
-    expect(def.skills.skill2.support).toBe('unsupported');
+    expect(def.skills.skill2.support).toBe('supported');
+    expect(def.skills.skill2.effects).toMatchObject([
+      { kind: 'damage', trigger: { count: 'normalHit' }, condition: { fullBurst: true, targetStatus: 'hacking' } },
+    ]);
     expect(def.skills.burst.support).toBe('supported');
     expect(def.skills.burst.effects).toMatchObject([
       { kind: 'timed', trigger: 'burstUse', target: 'allies', stat: 'damageTaken' },
@@ -123,7 +126,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, kurumi 
   });
 
   it('uses 52.24% per tick at skill Lv10', () => {
-    for (const h of plan.skillHits.filter((x) => x.slotIndex === kurumi)) {
+    for (const h of plan.skillHits.filter((x) => x.slotIndex === kurumi && x.effect.dot !== undefined)) {
       expect(h.effect.multiplier).toBeCloseTo(0.5224, 10);
     }
   });
