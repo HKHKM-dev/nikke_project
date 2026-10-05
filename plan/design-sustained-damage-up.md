@@ -3,7 +3,7 @@
 - 関連: [backlog.md](backlog.md) 6 節「持続ダメージ▲の stat」、[design-skill-note-kinds.md](design-skill-note-kinds.md)（notes の種類）、[design-nihilister.md](design-nihilister.md) 2 節（持続ダメージ `dot`。2.3 節で▲は後回しにした）、[design-raven-s1.md](design-raven-s1.md) 1.1 節、[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) 2.2 節（`autoAttack` を `dot` と分けた理由）、[skills-guide.md](skills-guide.md) 1 節
 - 作成日: 2026-10-05
 - 根拠: 持続ダメージの 1 tick の式（C-0100・C-0131）、tick に乗るフルバースト補正（C-0111）と攻撃ダメージ▲（C-0112）、レイヴンのスタック（C-0182）。**持続ダメージ▲そのものの結論は無い**（2 節）
-- 状態: オーナーの承認（2026-10-05「論点は推奨どおりで、実装して予測を固定して」）で、stat と置き場所の切り替え（3 節）、マナの定義（4 節。解釈の結論 C-0264・C-0265・C-0266 に結び付けた）、指標 `dotTickOffsets` を実装し、V-0170 の予測を固定した。マナの録画（5.1 節）の撮影待ち。レイヴンの定義（5.2 節）はマナの結果の後
+- 状態: オーナーの承認（2026-10-05「論点は推奨どおりで、実装して予測を固定して」）で、stat と置き場所の切り替え（3 節）、マナの定義（4 節。解釈の結論 C-0279・C-0280・C-0281 に結び付けた）、指標 `dotTickOffsets` を実装し、V-0185 の予測を固定した。マナの録画（5.1 節）の撮影待ち。レイヴンの定義（5.2 節）はマナの結果の後
 
 ## 1. 何が困っているか
 
