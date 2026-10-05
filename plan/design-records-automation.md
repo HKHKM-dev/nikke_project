@@ -89,6 +89,7 @@
 
 - 引数は元ファイルのパスと録画 id。命名規約（captures/index.md）でリネームし、`probe.ts` と同じ素性（長さ・フレーム数・fps・大きさ・sha256）を取り、`records/recordings/NNN.json` を書き出す。`team`・`target`・`mode`・`fixedSpec`・`conditionNote` は空で出し、`probe-result.ts` のキャラ同定の候補を標準出力に添える。人はそれを見て埋める。
 - Drive への同期と台帳（`records:table`）はいまのまま。
+  - 2026-10-05: 録画の Drive への同期と sha256 の突き合わせは `intake.ts` が行うようにした（手での同期から漏れた録画があったため。backup-log.md の 2026-10-05 13:24）。台帳はいまのまま。
 - 録画の sha256 は 3.4 節のキャッシュの鍵にも使う。
 
 ### 3.4 読み取りのレシピ（`read.ts`）
