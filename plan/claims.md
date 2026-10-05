@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 163・仮説 63・棄却 39・範囲外 1（計 266）
+件数: 確定 164・仮説 64・棄却 39・範囲外 1（計 268）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1349,6 +1349,18 @@
   - モデル側: `data/skills/260.json` の skill1 の effects[1]（timed・critDamage・stacks）・effects[2]（timed・maxAmmo・stacks）。最大装弾数の丸めは `frame/firing.ts` の `effectiveMaxAmmo`（C-0017）
   - 検証記録: V-0170
   - 定義: `data/skills/260.json` の skill1 の effects[1]、`data/skills/260.json` の skill1 の effects[2]
+- **C-0267** モダニアのバーストの殲滅モードの 1 発は、2.24% の 2 ヒット（と S1 の追加ダメージ 1 ヒット）で、各ヒットに S1 のスタックの会心の倍率（C-0266）・S2 の攻撃力▲・フルバースト補正（+0.5）が乗り、会心はヒットごとに判定する。2 ヒットとも会心の 1 発の値が、スタック 5・S2 ありで式どおり
+  - 状態: 確定・等級: 厳密一致・読み直し・更新日: 2026-10-05
+  - 根拠: `044-11`（2 ヒットともコア・会心・距離なしの和。25 回）・`044-12`（距離あり。2 回）。予測は読む前に固定。録画 044 は I-DOLL・フラワー・デルタ（機構が確定）とモダニア（最小構成。的の属性は 2026-10-05 にロビーの画面で灼熱と確かめた）。V-0171。殲滅モードの胴体・コアの非会心の値は凍結の記録で同じ録画から読んだ（1 発 2 ヒットの出どころ）ので根拠にしない
+  - モデル側: `data/skills/260.json` の burst の effects[1]（weaponChange。1 発の武器倍率に 2 ヒットを入れる。`skills/resolve.ts` の weaponChange の `hitsPerShot`）と、データの `burstSkill.changeWeapon`
+  - 検証記録: V-0171
+  - 定義: `data/skills/260.json` の burst の effects[1]
+- **C-0268** モダニアのバーストの殲滅モードと装弾数無限は、フルバースト（モダニアの III で 15 秒）のあいだ続く。殲滅モードの最初の発はフルバーストの始まりの約 10f 後で、そこから終わりまで 1 フレーム 1 発、最大装弾数を超えてもリロードしない（4 回目のフルバーストで 872 発。殲滅モードが 10 秒なら約 590 発）
+  - 状態: 仮説・等級: 単独実測・更新日: 2026-10-05
+  - 根拠: `044-10`（4 回目のフルバーストの殲滅モードの発の数 872。予測 881 と ±15 の許容の中。始まりの約 10f の遅れはモデルに無い）。比べたのは 1 回だけ（2・3 回目は的のジャンプが重なり、1 回目は凍結の記録で読んだ）なので仮説にとどめた。V-0171
+  - モデル側: `data/skills/260.json` の burst の effects[0]（timed・infiniteAmmo）・effects[1]（weaponChange）・notes[0]（フルバースト 15 秒は burst_duration）。殲滅モードの最初の発の約 10f の遅れは未実装
+  - 検証記録: V-0171
+  - 定義: `data/skills/260.json` の burst の effects[0]、`data/skills/260.json` の burst の effects[1]、`data/skills/260.json` の burst の notes[0]
 
 ## 敵・的・場面
 

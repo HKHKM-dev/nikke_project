@@ -32,11 +32,11 @@
   ],
   "target": {
     "name": "BigArms",
-    "element": null
+    "element": "Fire"
   },
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": null,
   "autoBurst": null,
-  "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）"
+  "conditionNote": "BigArms（**灼熱**。3 分モード・スペック固定。2026-10-05 に録画の始めのロビーの画面（約 2 秒）で、灼熱のタブ・WEAK POINT の水冷の印を確かめた。V-0171。読んだ数値はどれも属性有利なしで一致）"
 }
