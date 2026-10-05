@@ -92,7 +92,7 @@
 - 対象の語彙（2026-10-05）→ 一部完了: V-0172・V-0173、C-0266〜C-0268、[design-target-vocab.md](design-target-vocab.md)。残りは backlog 6 節
 - I-DOLL・オーシャン（305）（2026-10-05）→ 完了: V-0162、C-0254・C-0255
 - RL の 1 発で胴体が 2 ヒットする（2026-10-03 起票）→ 完了（2 ヒットではなかった）: V-0116・V-0119・V-0186、C-0282（C-0197 は棄却）
-- 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: V-0134・V-0151〜V-0157・V-0167・V-0169・V-0183・V-0184・V-0193、C-0222・C-0223・C-0283・C-0284、[design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは backlog 2-18・3 節
+- 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: V-0134・V-0151〜V-0157・V-0167・V-0169・V-0183・V-0184・V-0193・V-0197、C-0222・C-0223・C-0283・C-0284・C-0293、[design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは backlog 2-18・3 節
 
 ---
 

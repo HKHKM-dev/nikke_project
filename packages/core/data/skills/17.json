@@ -89,7 +89,7 @@
           "claims": [
             "C-0190",
             "C-0198",
-            "C-0237"
+            "C-0293"
           ]
         },
         {
@@ -124,7 +124,7 @@
           "en": "Homing projectile flight time (the gauge charges on landing) uses per-distance-band representative values on the shooting range target only; on enemies without the table it is 0 (charged on the firing frame). Per-landing-point values, and placing damage and buff checks at landing time (only the additional damage of a shot overlapping her Burst activation takes the Burst ATK damage up), are not modeled (plan/design-anis-star-gauge-timing.md 3)",
           "kind": "unimplemented",
           "claims": [
-            "C-0237"
+            "C-0293"
           ]
         }
       ]
