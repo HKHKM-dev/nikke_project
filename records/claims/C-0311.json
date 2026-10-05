@@ -1,0 +1,11 @@
+{
+  "id": "C-0311",
+  "text": "ウンファ：タクティカル・アップの S1 のバースト使用時のカモフラージュ（5 秒）の中では、通常攻撃の 1 発の基礎が防御力を引かない max(1, 攻撃力) になり、防御力無視ダメージ 42.24%▲（Lv10）が乗る。攻撃ダメージ▲が無いとき、▲は別の乗数 (1 + 42.24%) と同じ値になる（攻撃ダメージ▲の群に足すかは区別していない）。窓はバースト使用時から数えて 5 秒で、炸裂弾の着弾から 2 発目まで（296f 後の発は外）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`232-01`〜`232-03`（カモフラージュの中のコアの 1 発が、変化 × ▲ × 受けるダメージ▲のモデルと 1 未満の差。3 回のバーストで同じ値）・`232-09`（効果の外は 013-05 と同じ値）・`232-11`（どの回もカモフラージュの値は 2 発で、着弾から 296〜302f の発は外の値）。予測（records/predictions/V-0207.json の H1）は撮る前に commit した。変化の分（防御力 100 ÷ 攻撃力）だけ離れた値で合い、変化なし・▲なしの値は出ていない。V-0207",
+  "model": "`data/skills/95.json` の skill1 の effects[0]・effects[1]（`timed`・`burstUse`・`self`・`trueDamageConversion`・`trueDamage`）。1 発の式は `damage.ts` の `isTrueDamageShot`・`trueDamageMultiplier`（置き場所 `TRUE_DAMAGE_BUCKET` は `separate` のまま。plan/design-true-damage-element.md 6 節の論点 1）",
+  "replaces": [],
+  "updated": "2026-10-06"
+}

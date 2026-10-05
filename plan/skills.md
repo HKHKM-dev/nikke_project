@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 30・効果 139（根拠あり 97）・notes 85（根拠あり 33）
+件数: キャラ 30・効果 144（根拠あり 102）・notes 84（根拠あり 34）
 
-notes の種類: 未対応 33・前提の外 21・計算に無関係 26・補足 5
+notes の種類: 未対応 32・前提の外 21・計算に無関係 26・補足 5
 
-スロット: supported 51・partial 16・unsupported 13・noEffect 19
+スロット: supported 52・partial 17・unsupported 11・noEffect 19
 
 ## 10 ラピ
 
@@ -108,16 +108,20 @@ notes の種類: 未対応 33・前提の外 21・計算に無関係 26・補足
 
 ## 95 ウンファ：タクティカル・アップ
 
-- **skill1**: unsupported
-  - notes[0] 未対応: カモフラージュ状態（バースト使用時・フルバースト中のフルチャージ時）の防御力無視ダメージ（通常攻撃の変化と▲）は未対応（語彙 trueDamageConversion・trueDamage・条件 inFullBurst はあるが、根拠の結論が無い。撮影が要る）: 根拠なし
-  - notes[1] 前提の外: カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）: 根拠なし
+- **skill1**: supported
+  - effects[0] timed・burstUse・trueDamageConversion: C-0311（確定）
+  - effects[1] timed・burstUse・trueDamage: C-0311（確定）
+  - effects[2] timed・fullChargeShot・trueDamageConversion: C-0314（確定）、C-0311（確定）
+  - effects[3] timed・fullChargeShot・trueDamage: C-0314（確定）、C-0311（確定）
+  - notes[0] 前提の外: カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）: 根拠なし
 - **skill2**: partial
   - effects[0] passive・critRate: C-0268（仮説）、C-0235（仮説）
   - effects[1] passive・chargeDamage: C-0020（確定）
   - effects[2] passive・attack: C-0020（確定）
   - notes[0] 未対応: フォーメーションLT 適用中の追加効果（味方全体の発射体爆発ダメージ▲・防御力無視ダメージ▲）は未対応（語彙 withCharacter・projectileExplosionDamage・trueDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）: 根拠なし
-- **burst**: unsupported
-  - notes[0] 未対応: 使用武器変更（1 発の防御力無視ダメージ）と、命中した敵の受けるダメージ▲（10 秒間維持）は未対応（語彙 weaponChange（trueDamage）・damageTaken はあるが、撮影していない）: 根拠なし
+- **burst**: partial
+  - effects[0] timed・burstUse・damageTaken: C-0312（確定）、C-0138（確定）
+  - notes[0] 未対応: 使用武器変更の 1 発（徹甲炸裂弾。max(1, 攻撃力) × 105.6% × (300% + チャージダメージ▲) × (1 + 防御力無視ダメージ▲)、1 発で基礎の SR に戻る）は未対応（値は確かめたが、weaponChange が基礎の武器のチャージ時間・フルチャージ倍率・最大装弾数を写すので、チャージ 0.3 秒・300%・1 発の武器を表せない。語彙が要る）: C-0313（確定）
 
 ## 101 ドレイク
 

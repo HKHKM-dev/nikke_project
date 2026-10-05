@@ -1,0 +1,348 @@
+[
+  {
+    "id": "232-01",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1249820,
+    "description": "ウンファ：TU（AI）のバーストの後のカモフラージュの中の、コアの非会心の 1 発（受けるダメージ▲の中・距離ボーナスなし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f2923・7819・10247 の 3 回とも 1,249,820。炸裂弾の着弾（f2704・7603・10027）から 1・2 発目。予測ファイル V-0207 を commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 875,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-02",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1562276,
+    "description": "同じ区間のコアの会心の 1 発",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f2841・7737・10165 の 3 回とも 1,562,276（炸裂弾の着弾の次の発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 875,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-03",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1749749,
+    "description": "同じ区間のコアの会心の 1 発（距離ボーナスの中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f5324・5406 の 2 回とも 1,749,749（2 回目のバースト。的の着地点が距離ボーナスの中）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 875,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-04",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 878155,
+    "description": "カモフラージュの外で、徹甲炸裂弾の受けるダメージ▲の中の、コアの非会心の 1 発",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f3005・3087・3169・3251・7901・7983・8065・8150・10329・10411 の 10 回とも 878,155（炸裂弾の着弾から 3〜6 発目）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1235,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-05",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1009878,
+    "description": "同じ区間のコアの非会心の 1 発（距離ボーナスの中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f5488・5734 の 2 回とも 1,009,878"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1235,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-06",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1229417,
+    "description": "同じ区間のコアの会心の 1 発（距離ボーナスの中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f5570・5652 の 2 回とも 1,229,417"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1235,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-07",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1097694,
+    "description": "同じ区間のコアの会心の 1 発",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f10493 の 1,097,694"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1235,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-08",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 439077,
+    "description": "同じ区間の胴体の非会心の 1 発",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f10575 の 439,077"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1235,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-09",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 686756,
+    "description": "効果の外（炸裂弾の着弾から 10 秒より後）の、コアの非会心の 1 発（対照。013-05 と同じ値）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f3615・3697 ほか 30 回以上。会心は 858,445、距離ボーナスの中は 789,769・961,458"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1595,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-10",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "record",
+    "value": [875582, 2013838, 2188954, 1751163],
+    "description": "バーストの使用武器変更の 1 発（徹甲炸裂弾）の値。1 回目から順に、胴体・コア（距離ボーナスの中）・コアの会心・コア",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f2704・5192・7603・10027。V-0207 の手で書いた予測の Hb1（max(1, 攻撃力) × 105.6% × (300% + チャージダメージ▲ 41.81%) × (1 + 防御力無視ダメージ▲ 42.24%)、倍率グループは基礎の SR と同じ）と、4 回とも 1 未満の差。受けるダメージ▲は炸裂弾自身には乗らない。どの回も 1 発だけで、次の発から基礎の SR の値に戻る。各回の直前の 179,244（会心 268,865）はフラワーのバーストの倍率ダメージ"
+    }
+  },
+  {
+    "id": "232-11",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "timing",
+    "use": "record",
+    "value": [219, 301, 214, 296, 216, 298, 220, 302],
+    "unit": "f",
+    "description": "炸裂弾の着弾から、カモフラージュの値の最後の発までと、カモフラージュの外の値の最初の発までのフレーム（バーストの回ごと）（回ごとに 2 つずつ、最後の発・最初の発の順）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "どの回もカモフラージュの値は 2 発で、着弾から 296〜302f の発はもう外の値。カモフラージュの 5 秒（300f）は着弾より前（バースト使用時）から数えると合う"
+    }
+  },
+  {
+    "id": "232-12",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "timing",
+    "use": "record",
+    "value": [547, 747, 542, 742, 547, 750, 548, 748],
+    "unit": "f",
+    "description": "炸裂弾の着弾から、受けるダメージ▲の値の最後の発までと、効果の外の値の最初の発までのフレーム（バーストの回ごと）（回ごとに 2 つずつ、最後の発・最初の発の順）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "どの回も、外の最初の発はリロードの後。窓の 10 秒（600f）はこの間に入る（細かい切れ目は読めない）"
+    }
+  },
+  {
+    "id": "232-13",
+    "recording": "232",
+    "source": "V-0207",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "record",
+    "value": [649740, 352299],
+    "description": "どの系列にも乗らない増分（ウンファのチャージ途中の発とみる）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f2538（前の発から 77f。バーストの直前）と f9159（前の発から 29f）。値はコアの非会心の 0.946 倍と 0.513 倍。比べには使わない。戦闘履歴のパネルではウンファの被弾は 4 回だが、カモフラージュの値はどの回も 2 発で揃い、途中で解けた回は無い"
+    }
+  }
+]

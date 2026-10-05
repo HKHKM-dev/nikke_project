@@ -1,0 +1,29 @@
+{
+  "id": "231",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-231_sr_eunhwa-tu_crit-rate.mp4",
+  "original": "2026-10-05_23-57-16.mp4",
+  "durationSec": 200.6,
+  "frames": 12037,
+  "fps": 60,
+  "sizeMB": 243.3,
+  "sha256": "1f561119cc89",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0206 の 1 本目。単騎ではバーストは撃てない（オートバーストは ON だった）"
+}

@@ -1,16 +1,74 @@
 {
   "formatVersion": 1,
   "resourceId": 95,
-  "checkedAt": "2026-10-05",
+  "checkedAt": "2026-10-06",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "カモフラージュ状態（バースト使用時・フルバースト中のフルチャージ時）の防御力無視ダメージ（通常攻撃の変化と▲）は未対応（語彙 trueDamageConversion・trueDamage・条件 inFullBurst はあるが、根拠の結論が無い。撮影が要る）",
-          "en": "True damage while in Camouflage (after Burst Skill / Full Charge during Full Burst; the normal-attack conversion and the up) is not modeled (trueDamageConversion, trueDamage and the inFullBurst condition exist, but there is no supporting claim; a recording is needed)",
-          "kind": "unimplemented"
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "trueDamageConversion",
+          "durationRef": 1,
+          "claims": [
+            "C-0311"
+          ],
+          "assumes": {
+            "ja": "カモフラージュは「バースト使用時」と「フルバーストタイムのフルチャージ時」の 2 つのきっかけで付く同じ状態で、中身（通常攻撃の防御力無視ダメージへの変化と▲）を、きっかけごとに直接付ける（窓は和集合）。被弾では解除されない（前提の外）",
+            "en": "Camouflage is one state granted by two triggers (Burst Skill use and Full Charge during Full Burst); its contents (normal attacks become true damage, plus the up) are granted directly per trigger (windows merge). It is not removed by hits (outside the model's assumptions)"
+          }
         },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "trueDamage",
+          "ref": 2,
+          "durationRef": 1,
+          "claims": [
+            "C-0311"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "inFullBurst": true
+          },
+          "target": "self",
+          "stat": "trueDamageConversion",
+          "durationRef": 1,
+          "claims": [
+            "C-0314",
+            "C-0311"
+          ],
+          "assumes": {
+            "ja": "フルバーストの中のフルチャージの発の後から付く（その発自身には乗らない）。チャージ途中の発で付くかは確かめていない（モデルはチャージ途中の発を撃たない）",
+            "en": "Granted after each Full Charge shot during Full Burst (not on that shot itself). Whether a partially charged shot grants it is unverified (the model never fires partial charges)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "inFullBurst": true
+          },
+          "target": "self",
+          "stat": "trueDamage",
+          "ref": 2,
+          "durationRef": 1,
+          "claims": [
+            "C-0314",
+            "C-0311"
+          ]
+        }
+      ],
+      "notes": [
         {
           "ja": "カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）",
           "en": "Camouflage's exclusion from single-target attacks and its removal on a direct hit do not happen (no damage taken is assumed; Camouflage lasts 5 s)",
@@ -63,12 +121,32 @@
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0312",
+            "C-0138"
+          ],
+          "assumes": {
+            "ja": "敵 1 体。ほかのどの群とも別の乗数 (1 + 27.87%) で味方の与ダメージに掛かる。実機の窓は炸裂弾の着弾から 10 秒で、モデルはバースト使用時から 10 秒（20f ほど早い）。炸裂弾自身には乗らない",
+            "en": "One enemy. Multiplies allies' damage as a separate multiplier (1 + 27.87%). In game the window is 10 s from the Explosive Round's hit; the model starts it at Burst Skill use (about 20 frames early). The Explosive Round itself does not get it"
+          }
+        }
+      ],
       "notes": [
         {
-          "ja": "使用武器変更（1 発の防御力無視ダメージ）と、命中した敵の受けるダメージ▲（10 秒間維持）は未対応（語彙 weaponChange（trueDamage）・damageTaken はあるが、撮影していない）",
-          "en": "The weapon change (one shot of true damage) and Damage Taken up on enemies hit (10 s) are not modeled (weaponChange with trueDamage and damageTaken exist, but no recording yet)",
-          "kind": "unimplemented"
+          "ja": "使用武器変更の 1 発（徹甲炸裂弾。max(1, 攻撃力) × 105.6% × (300% + チャージダメージ▲) × (1 + 防御力無視ダメージ▲)、1 発で基礎の SR に戻る）は未対応（値は確かめたが、weaponChange が基礎の武器のチャージ時間・フルチャージ倍率・最大装弾数を写すので、チャージ 0.3 秒・300%・1 発の武器を表せない。語彙が要る）",
+          "en": "The weapon-change shot (Explosive Round: max(1, ATK) × 105.6% × (300% + Charge Damage up) × (1 + True Damage up), one shot then back to the base SR) is not modeled (its value is confirmed, but weaponChange copies the base weapon's charge time, full-charge multiplier and max ammo, so it cannot express a 0.3 s / 300% / 1-round weapon; new vocabulary is needed)",
+          "kind": "unimplemented",
+          "claims": [
+            "C-0313"
+          ]
         }
       ]
     }

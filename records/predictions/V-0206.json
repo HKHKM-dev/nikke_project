@@ -1,0 +1,43 @@
+{
+  "verification": "V-0206",
+  "team": [
+    {
+      "rid": 95,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（C-0268。仮説）。S2 の効果 1 のクリティカル確率▲は、同じ部隊の味方全体（自分を含む）に常時乗る。H2（自分には乗らない）は単騎では効果が無くなる読みで、定義を切り替える仮説なので検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "ウンファ：TU 単騎の通常攻撃の会心率。録画では、通常攻撃のヒットのうち会心だった割合（2 本の合計）と比べる。効果は常時なので frame は区間の中ならどこでもよい"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "7bfe16e1dcfb864b32cd346f9b650da38b27a1eb",
+    "values": {
+      "H1": {
+        "crit-rate": 0.2316
+      }
+    },
+    "seen": {}
+  }
+}

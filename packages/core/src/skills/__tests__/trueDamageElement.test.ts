@@ -1,14 +1,15 @@
 // 防御力無視ダメージ・有利コードの攻撃ダメージ等の語彙（plan/design-true-damage-element.md 3 節）。
-// 定義の検証、編成の条件、窓、1 発の式を見る。どの効果もまだ定義には使っていない（根拠の結論が無い）。
+// 定義の検証、編成の条件、窓、1 発の式を見る。定義に使ったのはウンファ：TU の S1・バースト（V-0207・V-0208。C-0311・C-0312・C-0314）。
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { FIXED_BURST_CYCLE, planFixedCycle } from '../../burst/fixedCycle.ts';
 import { computeTriggerDamage, TRUE_DAMAGE_BUCKET, type TriggerDamageInput } from '../../damage.ts';
-import type { BurstStep, SkillRaw } from '../../types.ts';
+import type { BurstStep, CharacterData, SkillRaw } from '../../types.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
 import { ZERO_BUFFS, type ChangedWeapon } from '../buffs.ts';
 import { applyComposition, compositionAllows, enemyElementAllows, withCharacterAllows } from '../composition.ts';
-import { MAX_SKILL_LEVELS } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import {
   inFullBurstAt,
   planBuffTimeline,
@@ -327,5 +328,32 @@ describe('1 発の式の防御力無視ダメージ', () => {
     const changed = computeTriggerDamage(input({ ...ZERO_BUFFS, weapon }));
     expect(changed.trueDamage).toBe(true);
     expect(changed.normal / base.normal).toBeCloseTo(1000 / 900, 12);
+  });
+});
+
+describe('ウンファ：TU の定義（data/skills/95.json）', () => {
+  const character = JSON.parse(
+    readFileSync(new URL('../../../data/characters/95.json', import.meta.url), 'utf8'),
+  ) as CharacterData;
+  const definition = parseSkillDefinition(
+    JSON.parse(readFileSync(new URL('../../../data/skills/95.json', import.meta.url), 'utf8')),
+  );
+  const timed = resolveTimed(definition, character, MAX_SKILL_LEVELS);
+
+  it('gives the Camouflage contents for 5 s on Burst Skill use and on Full Charge during Full Burst (C-0311・C-0314)', () => {
+    const camo = timed.filter((e) => e.source.skill === 'skill1');
+    expect(camo.map((e) => [e.stat, e.value, e.durationFrames, e.condition])).toEqual([
+      ['trueDamageConversion', 1, gameSecondsToFrames(5), undefined],
+      ['trueDamage', 0.4224, gameSecondsToFrames(5), undefined],
+      ['trueDamageConversion', 1, gameSecondsToFrames(5), { inFullBurst: true }],
+      ['trueDamage', 0.4224, gameSecondsToFrames(5), { inFullBurst: true }],
+    ]);
+  });
+
+  it('gives Damage Taken up for 10 s on Burst Skill use (C-0312)', () => {
+    const burst = timed.filter((e) => e.source.skill === 'burst');
+    expect(burst.map((e) => [e.stat, e.target, e.value, e.durationFrames])).toEqual([
+      ['damageTaken', 'allies', 0.2787, gameSecondsToFrames(10)],
+    ]);
   });
 });
