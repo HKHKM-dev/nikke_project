@@ -1,0 +1,47 @@
+{
+  "id": "248",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-248_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4",
+  "original": "2026-10-06_01-16-20.mp4",
+  "durationSec": 203.2,
+  "frames": 12192,
+  "fps": 60,
+  "sizeMB": 246.1,
+  "sha256": "607d6eb0e4c8",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0219 の録画 B（部隊なし。V-0220 と兼ねる）。サクラ（AI）・デルタ（AI）・ユニ（操作・撃たない）・ノワール（AI）。オートバースト ON"
+}

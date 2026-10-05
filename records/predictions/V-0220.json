@@ -1,0 +1,55 @@
+{
+  "verification": "V-0220",
+  "note": "部隊なしの録画（V-0219 の対照と兼ねる）の予測。録画のユニは操作枠で撃たないが、モデルはユニを撃たせる（撃たない枠を表せない）。オートバースト ON。ノワールのバーストのヒットの遅れは III の発動から数えるので、II をどちらが撃つかには関わらない",
+  "team": [
+    {
+      "rid": 836,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 160,
+      "controlled": true
+    },
+    {
+      "rid": 271,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（C-0226。遅れの表のノワールの行でヒット 72f。動画のフレームでは、フルバーストの入りの止まり 22f を足して 94f）。遅れが回や録画で揃わない仮説（D0）は、遅れの表の行の形の外なので、検証記録に手で書く"
+    }
+  ],
+  "targets": [
+    {
+      "id": "noir-delay",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 4,
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム）から、ノワールのバーストの倍率ダメージのヒットまでの動画のフレーム数（フルバーストの入りの止まりを含む）。録画ごとに 1 つの観測値にする"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "29df1560759f0be37536e519862fcc41138ede20",
+    "values": {
+      "H0": {
+        "noir-delay": [94, 94, 94, 94, 94]
+      }
+    },
+    "seen": {}
+  }
+}
