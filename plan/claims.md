@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 203・仮説 66・棄却 54・範囲外 1（計 324）
+件数: 確定 207・仮説 67・棄却 54・範囲外 1（計 329）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -232,6 +232,21 @@
   - 置き換え: C-0237
   - 検証記録: V-0197
   - 定義: `data/skills/17.json` の skill1 の effects[4]、`data/skills/17.json` の skill1 の notes[1]
+- **C-0328** OL の「最大装弾数増加」は、行の値を足して、最大装弾数 = round(CDN の最大装弾数 × (1 + Σ))（スキルの最大装弾数▲と同じ C-0017 の形）。行ごとに掛け合わせるのではない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-06
+  - 根拠: `250-05`。V-0222
+  - モデル側: frame/firing.ts の effectiveMaxAmmo（maxAmmoRatio の和で四捨五入）。OL の行は buildEffects.ts の OVERLOAD_OPTION_STAT（Stage 13）
+  - 検証記録: V-0222
+- **C-0329** キューブ（タクティカルブースト）の「最大装弾数▲」は、OL の最大装弾数増加と同じ和に入り、最大装弾数 = round(CDN の最大装弾数 × (1 + OL の行 + キューブ))。OL で丸めた数に掛けるのではない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-06
+  - 根拠: `251-01`。V-0223
+  - モデル側: frame/firing.ts の effectiveMaxAmmo（OL・キューブ・スキルの maxAmmoRatio の和で四捨五入）。キューブの写像は buildEffects.ts の CUBE_SKILL_EFFECTS（Stage 13）
+  - 検証記録: V-0223
+- **C-0331** キューブ（レリックベアー）の「リロード速度▲」は、スキルのリロード速度▲（C-0013）と同じく、リロードの秒 × (1 − 値) の形で効く（÷ (1 + 値) ではなく、乗らないのでもない）。マナ（1.67 秒）で 29.69% のとき、リロードの短縮は予測の 29.2f より約 0.3〜1f 大きく、その差は分からない
+  - 状態: 仮説・等級: 単独実測・更新日: 2026-10-06
+  - 根拠: `250-06`・`250-07`・`250-08`・`251-02`・`251-03`・`251-04`・`252-01`・`252-02`・`252-03`。V-0224
+  - モデル側: frame/firing.ts の firingParams（speedScaledSeconds の subtract）。キューブの写像は buildEffects.ts の CUBE_SKILL_EFFECTS（Stage 13）。約 1% の残差は埋めていない
+  - 検証記録: V-0224
 
 ## バーストゲージ
 
@@ -642,6 +657,16 @@
   - 根拠: 根拠となる実測は無い。モデルのほかの別枠の乗数（攻撃ダメージ▲・分配ダメージ▲）と同じ扱いにした（plan/design-damage-taken.md 2 節）。受けるダメージ▲を持つ 2 体（クルミとイサベルなど）を同時に撮れば確かめられる。録画 038（V-0075）はイサベルの▲だけで、重なりは見えない
   - モデル側: `skills/buffs.ts` の `damageTaken`（同じ stat の値を足す）。`data/skills/862.json`、`data/skills/231.json`
   - 定義: `data/skills/231.json` の burst の effects[1]、`data/skills/862.json` の burst の effects[0]
+- **C-0327** コレクション（AR）の「コアダメージ▲」は、倍率グループのコアの項に足す（コアの 1 ヒットの倍率グループは 1 + (コア倍率 2 − 1 + 値) + 距離）。コア倍率に (1 + 値) を掛けるのではない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-06
+  - 根拠: `250-01`・`250-02`・`250-03`・`250-04`。V-0221
+  - モデル側: damage.ts の boostCore（コア命中率 × (coreDamageRate − 1 + buffs.coreDamage)）。コレクションの写像は buildEffects.ts の COLLECTION_SKILL_EFFECTS（Stage 13）
+  - 検証記録: V-0221
+- **C-0330** コレクション（SG）の「通常攻撃ダメージ倍率▲」は、1 トリガーの武器倍率（CDN の damage。10 ペレットの合計の 1e-4 単位の整数）に (1 + 値) を掛けて四捨五入した値に置き換える（SMG の C-0121・C-0127 と同じ形）。1 ペレットの倍率で丸めるのではない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-06
+  - 根拠: `253-01`。V-0225
+  - モデル側: damage.ts の normalAttackMultiplier（scaleBasisPoints(shot.damage, buffs.normalAttackDamage)。SG は 1 トリガーの値で丸める）
+  - 検証記録: V-0225
 
 ## 育成・ステータス
 

@@ -156,5 +156,50 @@
         "burst": false
       }
     }
+  },
+  {
+    "id": "250-06",
+    "recording": "250",
+    "kind": "interval",
+    "use": "record",
+    "value": [109, 112, 110, 110, 110, 110, 110, 110, 110, 109, 110],
+    "unit": "f",
+    "description": "マナ のマガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで（取り消し 6 回・窓をまたいだ回 3 回・最終弾の読み違い 1 回を除いた全部の回）",
+    "method": {
+      "tool": "recipe:reload-segments@1",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 2265・3057・3194・3998・5746・6550・7526・8275・9079・10003・10807。窓をまたいだ回は、完了 → 次の増分がこの録画の中央値 + 5f を超える回"
+    },
+    "source": "V-0224",
+    "readAt": "2026-10-06"
+  },
+  {
+    "id": "250-07",
+    "recording": "250",
+    "kind": "interval",
+    "use": "record",
+    "value": [17, 17, 12, 12, 12, 12, 12, 16, 12, 12, 12, 12],
+    "unit": "f",
+    "description": "マナ のリロード完了から次の発（総ダメージの増分）まで（取り消し・窓をまたいだ回を除いた全部の回）",
+    "method": {
+      "tool": "recipe:reload-segments@1",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 2265・3057・3194・3998・5746・6550・7354・7526・8275・9079・10003・10807"
+    },
+    "source": "V-0224",
+    "readAt": "2026-10-06"
+  },
+  {
+    "id": "250-08",
+    "recording": "250",
+    "kind": "interval",
+    "use": "record",
+    "value": [109.58, 109.97, 110.03, 110.04, 109.83, 109.87, 109.94, 109.97, 110.14, 110.12, 110.04, 110.14],
+    "unit": "f",
+    "description": "マナ のリロードのバーが 0 から満ちるまでの長さ（溝の幅 ÷ バーの伸び。直線の当てはめ）",
+    "method": {
+      "tool": "recipe:reload-segments@1",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。当てはめの残差が 3px を超える回は除いた。取り消し・窓をまたいだ回も除いた"
+    },
+    "source": "V-0224",
+    "readAt": "2026-10-06"
   }
 ]

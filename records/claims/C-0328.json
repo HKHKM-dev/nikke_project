@@ -5,7 +5,7 @@
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "厳密一致",
   "basis": "`250-05`。V-0222",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "frame/firing.ts の effectiveMaxAmmo（maxAmmoRatio の和で四捨五入）。OL の行は buildEffects.ts の OVERLOAD_OPTION_STAT（Stage 13）",
   "replaces": [],
   "updated": "2026-10-06"
 }
