@@ -82,7 +82,7 @@
 - 照準の動く速さとコアへの跳び（2026-10-04 起票）→ 完了: V-0120、C-0199・C-0200。続きは backlog 2-8
 - AR・SMG・MG の撃ち始めの待ちの読み直し（2026-10-05）→ 完了: V-0196、C-0291・C-0292（C-0195 を棄却）。続きは backlog 2-8
 - 着地の後の照準をモデルに入れるかの設計（2026-10-05）→ 完了: [design-landing-aim.md](design-landing-aim.md)。続きは backlog 2-8
-- バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 一部完了: V-0075・V-0080・V-0082・V-0144・V-0201〜V-0205、C-0162・C-0163・C-0165・C-0167・C-0227・C-0228・C-0230・C-0231・C-0233（最小構成で確定）、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)。残りは backlog 2-4
+- バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 一部完了: V-0075・V-0080・V-0082・V-0144・V-0201〜V-0205・V-0220、C-0162・C-0163・C-0165・C-0167・C-0226・C-0227・C-0228・C-0230・C-0231・C-0233（最小構成で確定）、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)。残りは backlog 2-4
 - 15-A の出し直し（2026-10-01 起票）→ 完了: V-0065・V-0087・V-0117（候補ごとの記録は V-0074・V-0088〜V-0092）
 - 検証の自動化（2026-10-01 起票）→ 一部完了: V-0079・V-0170、[design-records-automation.md](design-records-automation.md) 8 節。残りは backlog 4-1・4-2
 - アニス：スター（17）の S1（2026-10-03）→ 一部完了: V-0116・V-0121〜V-0125、C-0189・C-0190・C-0202・C-0213、[design-anis-star-s1.md](design-anis-star-s1.md)・[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md)。残りは backlog 6 節・2-18

@@ -64,7 +64,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "中近（1 区間目）の窓の中（sim の 20 秒）− 外（3.4 秒。1 回目のノワールのバーストより前）"
+      "note": "中近（1 区間目）の窓の中（sim の 20 秒）− 外（3.4 秒。1 回目のノワールのバーストより前）",
+      "observations": ["246-03"]
     },
     {
       "id": "sakura-near1-core-diff",
@@ -80,7 +81,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "近（2 区間目）の窓の中（55 秒）− 外（40 秒。1 回目の窓の終わりと 2 回目のバーストの間）"
+      "note": "近（2 区間目）の窓の中（55 秒）− 外（40 秒。1 回目の窓の終わりと 2 回目のバーストの間）",
+      "observations": ["246-04"]
     },
     {
       "id": "sakura-far-core-diff",
@@ -96,7 +98,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "遠（3 区間目）の窓の中（95 秒）− 外（80 秒）"
+      "note": "遠（3 区間目）の窓の中（95 秒）− 外（80 秒）",
+      "observations": ["246-05"]
     },
     {
       "id": "sakura-midfar-core-diff",
@@ -112,7 +115,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "中遠（4 区間目）の窓の中（135 秒）− 外（118 秒）"
+      "note": "中遠（4 区間目）の窓の中（135 秒）− 外（118 秒）",
+      "observations": ["246-06"]
     },
     {
       "id": "sakura-near2-core-diff",
@@ -128,7 +132,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "近（5 区間目）の窓の中（172 秒）− 外（160 秒。4 回目の窓の終わりと 5 回目のバーストの間）"
+      "note": "近（5 区間目）の窓の中（172 秒）− 外（160 秒。4 回目の窓の終わりと 5 回目のバーストの間）",
+      "observations": ["246-07"]
     },
     {
       "id": "sakura-far-core-in",
