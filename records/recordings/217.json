@@ -1,0 +1,41 @@
+{
+  "id": "217",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-217_sr+sr+rl_cocoa+delta+raven_raven-auto.mp4",
+  "original": "2026-10-05_23-19-22.mp4",
+  "durationSec": 202.7,
+  "frames": 12163,
+  "fps": 60,
+  "sizeMB": 245.6,
+  "sha256": "9783edb05328",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0205。ココア（I）+ デルタ（II）+ レイヴン（III・操作・AUTO 射撃 ON）、オートバースト ON。出撃画面で灼熱タブ・3 分モード・スペック固定 ON、戦闘履歴で枠順・キャラ名・Lv.400・交戦時間 03:00 を確かめた"
+}
