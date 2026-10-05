@@ -1,0 +1,119 @@
+{
+  "verification": "V-0213",
+  "team": [
+    {
+      "rid": 836,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（data/skills/836.json）: S1 は通常攻撃の命中 120 回ごと（期待値で数え、リロードで数え直さない）に受けるダメージ 17.18%▲ 5 秒。付き直しは延ばすだけ。発火した発には乗らない。S2・バーストは効果なし"
+    },
+    {
+      "id": "H2",
+      "note": "S1 を射撃 120 回ごと（外れた発も数える）と読む。ほかは H1 と同じ。H3（マガジンごとに数え直す）・H4（1 回だけ）は検証記録に手で書いた",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "normalShot",
+                "everyRef": 1
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "body-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "▲の窓の外のサクラの 1 ヒット（胴体・会心なし・距離ボーナスなし）。戦闘開始から最初の発火まで（3.4 秒）",
+      "observations": ["243-02"]
+    },
+    {
+      "id": "body-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 470,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "▲の窓の中のサクラの 1 ヒット（胴体・会心なし・距離ボーナスなし。8.0 秒。H1・H2 とも最初の窓の中）。body-out の 1.1718 倍",
+      "observations": ["243-03"]
+    },
+    {
+      "id": "s1-window-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "damageTaken"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "参考（判定に使わない）: ▲の窓の終わりのフレーム。モデルは的のジャンプの後に早く撃ち始める（C-0291）ので、録画の時刻とは少しずつずれる。窓の数と、遠の帯の間隔（H1 は H2 より長い）を見る"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "aa657bb608a4297ce9472cfae2af1ccd665a65c8",
+    "values": {
+      "H1": {
+        "body-out": 7047.8991000000005,
+        "body-in": 8258.72816538,
+        "s1-window-ends": [
+          685, 1062, 1439, 1816, 2194, 2618, 2995, 3370, 3744, 4119, 4674, 5223, 5688, 6156, 6624, 7191, 7589, 7991,
+          8391, 8790, 9216, 9591, 9965, 10340, 10589
+        ]
+      },
+      "H2": {
+        "body-out": 7047.8991000000005,
+        "body-in": 8258.72816538,
+        "s1-window-ends": [
+          599, 974, 1349, 1723, 2098, 2603, 2978, 3353, 3727, 4102, 4605, 4980, 5355, 5729, 6104, 6479, 6938, 7313,
+          7687, 8062, 8437, 8941, 9316, 9690, 10065, 10440
+        ]
+      }
+    },
+    "seen": {}
+  }
+}
