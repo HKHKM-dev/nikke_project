@@ -1,0 +1,11 @@
+{
+  "id": "C-0308",
+  "text": "クイーン（真）のバーストの 1more の攻撃力▲は、風圧の敵にバーストを撃った時だけ付き、バーストの使用から 10 秒続く（灼熱の敵では付かない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "解釈（説明文の読み。plan/design-true-damage-element.md 3.6 節）。撮る前の予測で、観測値はまだ無い。フルバースト中の 1 ペレットでは S2 の▲（C-0307）と同時に効き、録画では分けられない。V-0211",
+  "model": "`data/skills/870.json`（burst の `timed`・`burstUse`・`attack`・`enemyElement: Wind`）",
+  "replaces": [],
+  "updated": "2026-10-05"
+}

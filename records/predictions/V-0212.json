@@ -1,0 +1,119 @@
+{
+  "verification": "V-0212",
+  "note": "V-0211 と同じ 2 本の録画（撮る前）の予測。定義は S1 の 1more の分配ダメージ（C-0309）を入れた形。ほかの仮説（同じフレームに付く効果とフルバースト補正の乗り方）は検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 870,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（1more の分配ダメージはバースト使用のフレームに 1 回。バースト使用の前のバフで固定し、フルバースト補正が乗る）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-fire",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "灼熱・2 回目のバーストの倍率ダメージのヒット（分配ダメージ▲込み。基準）。どの回でも、S1 の戦闘開始時とフルバースト終了時の攻撃力▲の外なら同じ値"
+    },
+    {
+      "id": "burst-wind",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "風圧・2 回目のバーストの倍率ダメージのヒット。S1 の▲（C-0296）だけが灼熱と違う"
+    },
+    {
+      "id": "onemore-wind",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "風圧・2 回目のバーストの S1 の 1more の分配ダメージのヒット"
+    },
+    {
+      "id": "onemore-count-wind",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "風圧・180 秒の S1 の倍率ダメージの回数（1more の分配ダメージ。バーストの回数と同じ）"
+    },
+    {
+      "id": "onemore-count-fire",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "灼熱・180 秒の S1 の倍率ダメージの回数（1more が無いので 0）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "ce342b1055619210ebcb51f50a8f0b5de1cb61e9",
+    "values": {
+      "H1": {
+        "burst-fire": 4206946.955035812,
+        "burst-wind": 5199365.741728761,
+        "onemore-wind": 3011626.7947495645,
+        "onemore-count-wind": 5,
+        "onemore-count-fire": 0
+      }
+    },
+    "seen": {}
+  }
+}

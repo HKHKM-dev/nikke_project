@@ -1,0 +1,264 @@
+{
+  "verification": "V-0211",
+  "note": "ラム（I・AI）+ デルタ（II・AI）+ クイーン（真）（III・操作・AUTO 射撃 ON）、オートバースト ON、スペック固定 ON、3 分モードの新しい録画 2 本（風圧タブ・灼熱タブ。撮る前）の予測。定義は S1 の▲（C-0296。V-0171 の H1）・S2 の▲（C-0307）・1more の攻撃力▲（C-0308）を入れた形。ほかの仮説は定義の切り替えなので、検証記録に手で書いた。frame はモデルのフレーム（2 回目のフルバーストとその後）で、録画ではどの回でも同じ窓のペレットを読む",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 870,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 の▲は S1 の▲と同じく 1.1 に足し、フルバースト終了で外れる。1more の攻撃力▲はバースト使用から 10 秒）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "fb-wind-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3240,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "風圧・2 回目以降のフルバーストの中（S1 の戦闘開始時の攻撃力▲の後）の 1 ペレット（胴体）。S1 の▲・S2 の▲・1more の攻撃力▲・フルバースト補正"
+    },
+    {
+      "id": "fb-wind-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3240,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "風圧・2 回目以降のフルバーストの中（S1 の戦闘開始時の攻撃力▲の後）の 1 ペレット（会心）"
+    },
+    {
+      "id": "fb-wind-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3240,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "風圧・2 回目以降のフルバーストの中（S1 の戦闘開始時の攻撃力▲の後）の 1 ペレット（コア）"
+    },
+    {
+      "id": "fb-wind-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3240,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "風圧・2 回目以降のフルバーストの中（S1 の戦闘開始時の攻撃力▲の後）の 1 ペレット（コア会心）"
+    },
+    {
+      "id": "clean-wind-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4860,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "風圧・フルバースト終了から 15 秒後（S1 のフルバースト終了時の攻撃力▲の後）から次の III の前までの 1 ペレット（胴体）。S2 の▲が外れていれば、S1 の▲だけ（durationUntil の判定）"
+    },
+    {
+      "id": "clean-wind-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4860,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "風圧・フルバースト終了から 15 秒後（S1 のフルバースト終了時の攻撃力▲の後）から次の III の前までの 1 ペレット（会心）"
+    },
+    {
+      "id": "post-wind-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "風圧・フルバースト終了から 15 秒以内（S1 のフルバースト終了時の攻撃力▲の中）の 1 ペレット（胴体）。副次（S1 の effects[1] と S2 の▲が外れたことの両方が乗る）"
+    },
+    {
+      "id": "fb-fire-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3240,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "灼熱・2 回目以降のフルバーストの中（S1 の戦闘開始時の攻撃力▲の後）の 1 ペレット（胴体）。有利でないので S1・S2 の▲は乗らず、1more も無い（基準）"
+    },
+    {
+      "id": "fb-fire-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3240,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "灼熱・2 回目以降のフルバーストの中（S1 の戦闘開始時の攻撃力▲の後）の 1 ペレット（会心）"
+    },
+    {
+      "id": "clean-fire-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4860,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "灼熱・フルバースト終了から 15 秒後（S1 のフルバースト終了時の攻撃力▲の後）から次の III の前までの 1 ペレット（胴体）。録画 014 の 014-01 と同じ値のはず（基準）"
+    },
+    {
+      "id": "post-fire-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "灼熱・フルバースト終了から 15 秒以内（S1 のフルバースト終了時の攻撃力▲の中）の 1 ペレット（胴体）。S1 のフルバースト終了時の攻撃力▲（effects[1]。根拠なし）だけ"
+    },
+    {
+      "id": "post-fire-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4000,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "灼熱・フルバースト終了から 15 秒以内（S1 のフルバースト終了時の攻撃力▲の中）の 1 ペレット（会心）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "ce342b1055619210ebcb51f50a8f0b5de1cb61e9",
+    "values": {
+      "H1": {
+        "fb-wind-body": 91475.3079180334,
+        "fb-wind-crit": 121967.07722404452,
+        "fb-wind-core": 152458.84653005566,
+        "fb-wind-core-crit": 182950.6158360668,
+        "clean-wind-body": 38783.236822980005,
+        "clean-wind-crit": 58174.85523447001,
+        "post-wind-body": 58299.72614614576,
+        "fb-fire-body": 47070.84330000001,
+        "fb-fire-crit": 62761.12440000001,
+        "clean-fire-body": 31380.562199999997,
+        "post-fire-body": 47171.87972016001,
+        "post-fire-crit": 70757.81958024002
+      }
+    },
+    "seen": {}
+  }
+}

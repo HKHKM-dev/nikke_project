@@ -6,9 +6,9 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 30・効果 137（根拠あり 94）・notes 87（根拠あり 33）
+件数: キャラ 30・効果 139（根拠あり 97）・notes 85（根拠あり 33）
 
-notes の種類: 未対応 35・前提の外 21・計算に無関係 26・補足 5
+notes の種類: 未対応 33・前提の外 21・計算に無関係 26・補足 5
 
 スロット: supported 51・partial 16・unsupported 13・noEffect 19
 
@@ -412,15 +412,15 @@ notes の種類: 未対応 35・前提の外 21・計算に無関係 26・補足
   - effects[0] timed・battleStart・attack: C-0270（仮説）
   - effects[1] timed・fullBurstEnd・attack: 根拠なし
   - effects[2] passive・elementDamage: C-0296（確定）
-  - notes[0] 未対応: 1more が適用された時の分配ダメージは未対応（語彙 damage・enemyElement はあるが、根拠の結論が無い）: 根拠なし
-  - notes[1] 未対応: 追撃が適用された時の分配ダメージは未対応（ほかのペルソナのキャラがいる編成で起きる。きっかけが説明文と CDN から分からない）: 根拠なし
-  - notes[2] 計算に無関係: 防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない: 根拠なし
+  - effects[3] damage・burstUse・distributed: C-0309（仮説）
+  - notes[0] 未対応: 追撃が適用された時の分配ダメージは未対応（ほかのペルソナのキャラがいる編成で起きる。きっかけが説明文と CDN から分からない）: 根拠なし
+  - notes[1] 計算に無関係: 防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない: 根拠なし
 - **skill2**: partial
   - effects[0] passive・attackDamage: C-0018（確定）
   - effects[1] timed・burstStage3Enter・distributedDamage: 根拠なし
-  - notes[0] 未対応: バースト使用時の鉄・拳・制・裁！の有利コードの攻撃ダメージ▲（フルバースト終了で解除）は未対応（語彙 elementDamage・durationUntil はあるが、根拠の結論が無い。S1 の▲の結論 C-0296 はこの効果を撮っていない）: 根拠なし
-  - notes[1] 未対応: 1more 時のバトンタッチ（自分を除く基本バースト段階 3 のペルソナ状態の味方に攻撃力▲・スタック）は未対応（ほかのペルソナのキャラがいる編成で起きる。その対象の語彙も無い）: 根拠なし
-  - notes[2] 計算に無関係: 鉄・拳・制・裁！の防御力▲はダメージに関係しない: 根拠なし
+  - effects[2] timed・burstUse・elementDamage: C-0307（仮説）
+  - notes[0] 未対応: 1more 時のバトンタッチ（自分を除く基本バースト段階 3 のペルソナ状態の味方に攻撃力▲・スタック）は未対応（ほかのペルソナのキャラがいる編成で起きる。その対象の語彙も無い）: 根拠なし
+  - notes[1] 計算に無関係: 鉄・拳・制・裁！の防御力▲はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-0231（確定）
-  - effects[1] timed・burstUse・attack: 根拠なし
+  - effects[1] timed・burstUse・attack: C-0308（仮説）

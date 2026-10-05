@@ -5,11 +5,13 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 1・保留 0・完了 189・打ち切り 16（計 206）
+件数: 調査中 3・保留 0・完了 189・打ち切り 16（計 208）
 
 ## 開いている検証
 
 - **V-0174** シューティングスターのコアの 1 ヒットの形（録画 162・165 の読み直し）（状態: 調査中）
+- **V-0211** クイーン（真）の S2 の鉄・拳・制・裁！とバーストの 1more の攻撃力▲（状態: 調査中）
+- **V-0212** クイーン（真）の S1 の 1more の分配ダメージ（状態: 調査中）
 
 ## 全件
 
@@ -2020,3 +2022,28 @@
     - hit-20s（hitDamage）: 実測 11,554（227-02）。A0-H1 11,120.505（-433.495、**許容外**）、A0-H2 11,120.505（-433.495、**許容外**）、A1 11,554.205（+0.205、許容内）、A2 11,554.205（+0.205、許容内）
     - 許容内の指標: A0-H1 0/2・A0-H2 0/2・A1 2/2・A2 1/2。合う仮説は A1 だけ
   - **最小構成の警告**: 録画 227（エマ：タクティカル・アップ・ウンファ：タクティカル・アップ が未確定）。未確定の要素が 2 つ以上混ざる録画では結論を作らない（AGENTS.md「事実と記録」）
+- **[V-0211](../records/verifications/V-0211-queen-s2-fist-1more.md)** クイーン（真）の S2 の鉄・拳・制・裁！とバーストの 1more の攻撃力▲
+  - 問い: 風圧の敵にバーストを撃った後のクイーン（真）に、S2 の鉄・拳・制・裁！の有利コードの攻撃ダメージ▲（S1 の▲と同じ群に足し、フルバースト終了で解除）とバーストの 1more の攻撃力▲（10 秒）が付くと読んで、モデルはフルバースト中とその後の 1 ペレットと合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-true-damage-element.md 5 節の 2（plan/backlog.md 6 節「撮影（語彙はある）」）
+  - 予測（2026-10-05、commit ce342b1）との比べ:
+    - fb-wind-body（hitDamage）: 実測なし。H1 91,475.308
+    - fb-wind-crit（hitDamage）: 実測なし。H1 121,967.077
+    - fb-wind-core（hitDamage）: 実測なし。H1 152,458.847
+    - fb-wind-core-crit（hitDamage）: 実測なし。H1 182,950.616
+    - clean-wind-body（hitDamage）: 実測なし。H1 38,783.237
+    - clean-wind-crit（hitDamage）: 実測なし。H1 58,174.855
+    - post-wind-body（hitDamage）: 実測なし。H1 58,299.726
+    - fb-fire-body（hitDamage）: 実測なし。H1 47,070.843
+    - fb-fire-crit（hitDamage）: 実測なし。H1 62,761.124
+    - clean-fire-body（hitDamage）: 実測なし。H1 31,380.562
+    - post-fire-body（hitDamage）: 実測なし。H1 47,171.88
+    - post-fire-crit（hitDamage）: 実測なし。H1 70,757.82
+- **[V-0212](../records/verifications/V-0212-queen-s1-1more-damage.md)** クイーン（真）の S1 の 1more の分配ダメージ
+  - 問い: クイーン（真）の S1 の「1more が適用された時、敵全体に最終攻撃力の X% の分配ダメージ」を、風圧の敵にバーストを撃つたびに 1 回出る、バーストのヒットと同じ式の分配ダメージ（分配ダメージ▲が乗る）にフルバースト補正を足したものと読んで、モデルは 1 ヒットの値と回数と合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-true-damage-element.md 3.6 節（plan/backlog.md 6 節「撮影（語彙はある）」）
+  - 予測（2026-10-05、commit ce342b1）との比べ:
+    - burst-fire（burstHitDamage）: 実測なし。H1 4,206,946.955
+    - burst-wind（burstHitDamage）: 実測なし。H1 5,199,365.742
+    - onemore-wind（skillHitDamage）: 実測なし。H1 3,011,626.795
+    - onemore-count-wind（skillHitCount）: 実測なし。H1 5
+    - onemore-count-fire（skillHitCount）: 実測なし。H1 0

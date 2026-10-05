@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 189・仮説 62・棄却 52・範囲外 1（計 304）
+件数: 確定 189・仮説 65・棄却 52・範囲外 1（計 307）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1581,6 +1581,21 @@
   - モデル側: `data/skills/93.json` の skill1 の effects[1]（`withCharacter` の rid 95。編成の条件は `skills/composition.ts`）
   - 検証記録: V-0210
   - 定義: `data/skills/93.json` の skill1 の effects[1]
+- **C-0307** クイーン（真）の S2 の鉄・拳・制・裁！の有利コードの攻撃ダメージ▲は、バーストを使った時に付き、S1 の▲と同じく有利の敵にだけ属性の倍率 1.1 に足し、フルバースト終了のフレームで外れる
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-05
+  - 根拠: 解釈（説明文の読み。plan/design-true-damage-element.md 3.2 節）。撮る前の予測で、観測値はまだ無い。S1 の▲の形（C-0296。確定）が前提。フルバースト中の 1 ペレットでは 1more の攻撃力▲（C-0308）と同時に効き、録画では分けられない。V-0211
+  - モデル側: `data/skills/870.json`（skill2 の `timed`・`burstUse`・`elementDamage`・`durationUntil: fullBurstEnd`）。窓は `skills/timeline.ts` の durationUntil の扱い
+  - 定義: `data/skills/870.json` の skill2 の effects[2]
+- **C-0308** クイーン（真）のバーストの 1more の攻撃力▲は、風圧の敵にバーストを撃った時だけ付き、バーストの使用から 10 秒続く（灼熱の敵では付かない）
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-05
+  - 根拠: 解釈（説明文の読み。plan/design-true-damage-element.md 3.6 節）。撮る前の予測で、観測値はまだ無い。フルバースト中の 1 ペレットでは S2 の▲（C-0307）と同時に効き、録画では分けられない。V-0211
+  - モデル側: `data/skills/870.json`（burst の `timed`・`burstUse`・`attack`・`enemyElement: Wind`）
+  - 定義: `data/skills/870.json` の burst の effects[1]
+- **C-0309** クイーン（真）の S1 の 1more の分配ダメージは、風圧の敵にバーストを撃つたびに 1 回、バーストの使用のフレームに出る。式はバーストのヒットと同じ分配ダメージ（分配ダメージ▲が乗る）で、フルバースト補正 +0.5 が乗る。同じフレームに付く 1more の攻撃力▲と S2 の▲は乗らない
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-05
+  - 根拠: 解釈（説明文の読み。plan/design-true-damage-element.md 3.6 節）。撮る前の予測で、観測値はまだ無い。フルバースト補正は倍率ダメージの規則（damage.ts の SKILL_HIT_FULL_BURST_BONUS）、同じ発動で付く攻撃力▲・S2 の▲が乗らないのは、バースト使用時の倍率ダメージの規則（frame/plan.ts の BURST_HIT_USES_PRE_ACTIVATION_BUFFS。発動の直前のバフで固定）を当てた読み。どちらもこのヒットでは確かめていないので、V-0212 の仮説で分ける。V-0212
+  - モデル側: `data/skills/870.json`（skill1 の `damage`・`burstUse`・`distributed`・`enemyElement: Wind`）。フルバースト補正は `damage.ts` の `SKILL_HIT_FULL_BURST_BONUS`、バフの固定は `frame/plan.ts` の `BURST_HIT_USES_PRE_ACTIVATION_BUFFS`
+  - 定義: `data/skills/870.json` の skill1 の effects[3]
 
 ## 敵・的・場面
 
