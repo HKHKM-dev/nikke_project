@@ -1,0 +1,47 @@
+{
+  "id": "246",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-246_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4",
+  "original": "2026-10-06_01-09-14.mp4",
+  "durationSec": 206.3,
+  "frames": 12375,
+  "fps": 60,
+  "sizeMB": 249.7,
+  "sha256": "7247098dc40a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 270,
+      "name": "ブラン",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0219 の録画 A（部隊あり）。サクラ（AI）・デルタ（AI）・ブラン（操作・撃たない）・ノワール（AI）。オートバースト ON"
+}
