@@ -24,6 +24,6 @@
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": true,
-  "autoBurst": false,
-  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。単騎・操作キャラ・AUTO 射撃 ON・オートバースト OFF）。戦闘履歴のパネルでリター 1 体（LV.400）を確かめた。V-0201（1 日目の 8 本）"
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。単騎・操作キャラ・AUTO 射撃 ON・**オートバースト ON**）。戦闘履歴のパネルでリター 1 体（LV.400）を確かめた。V-0201（1 日目の 8 本）の撮影だが、左上のオートバーストのボタンが点いていて、バーストを 3 回使っている（3 区間目の 1 本目・4 区間目の 2 本目・5 区間目の 3 本目のマガジン）。V-0201 の条件（オートバースト OFF）を満たさない"
 }
