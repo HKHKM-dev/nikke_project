@@ -23,14 +23,18 @@
           "stat": "attack",
           "ref": 5,
           "durationRef": 6
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 1,
+          "claims": [
+            "C-0296"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "有利コードの攻撃ダメージ▲（ペルソナ - ヨハンナ）は未対応（語彙 elementDamage はあるが、スキルの▲が OL・キューブと同じく 1.1 に足すかの根拠の結論が無い。V-0171 で撮影待ち）",
-          "en": "Elemental Advantage Attack Damage up (Persona - Johanna) is not modeled (elementDamage exists, but there is no claim that the skill's up adds to 1.1 like OL and cubes; V-0171 awaits a recording)",
-          "kind": "unimplemented"
-        },
         {
           "ja": "1more が適用された時の分配ダメージは未対応（語彙 damage・enemyElement はあるが、根拠の結論が無い）",
           "en": "The distributed damage when 1 More takes effect is not modeled (damage and enemyElement exist, but there is no supporting claim)",
@@ -70,8 +74,8 @@
       ],
       "notes": [
         {
-          "ja": "バースト使用時の鉄・拳・制・裁！の有利コードの攻撃ダメージ▲（フルバースト終了で解除）は未対応（語彙 elementDamage・durationUntil はあるが、根拠の結論が無い。V-0171 の結論が先に要る）",
-          "en": "Elemental Advantage Attack Damage up from Fist of Justice! on Burst Skill use (removed when Full Burst ends) is not modeled (elementDamage and durationUntil exist, but there is no supporting claim; V-0171 must be concluded first)",
+          "ja": "バースト使用時の鉄・拳・制・裁！の有利コードの攻撃ダメージ▲（フルバースト終了で解除）は未対応（語彙 elementDamage・durationUntil はあるが、根拠の結論が無い。S1 の▲の結論 C-0296 はこの効果を撮っていない）",
+          "en": "Elemental Advantage Attack Damage up from Fist of Justice! on Burst Skill use (removed when Full Burst ends) is not modeled (elementDamage and durationUntil exist, but there is no supporting claim; C-0296 for the S1 up did not capture this effect)",
           "kind": "unimplemented"
         },
         {

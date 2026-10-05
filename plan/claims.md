@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 175・仮説 70・棄却 49・範囲外 1（計 295）
+件数: 確定 176・仮説 70・棄却 49・範囲外 1（計 296）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1522,6 +1522,12 @@
   - 根拠: 解釈（説明文の読み）。録画 020（エーテルが未定義で最小構成でない）のフルバースト中の 1 ヒットで、2026-09-22 に 1 の位まで合っている（plan/verification.md Stage 6。凍結）。V-0185 の録画のフルバースト中の通常攻撃で確かめ直す。V-0185
   - モデル側: `data/skills/290.json`（skill2 の `timed`・`fullBurstStart`・`attackDamage`・`attack`）
   - 定義: `data/skills/290.json` の skill2 の effects[1]、`data/skills/290.json` の skill2 の effects[2]
+- **C-0296** クイーン（真）の S1 の「核熱ブースタ：有利コードの攻撃ダメージ▲（持続）」は、OL・キューブの有利コードダメージ（C-0119）と同じく、有利の敵にだけ属性の倍率 1.1 に足す（風圧の的で 1.1 + 0.1359）
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-05
+  - 根拠: `210-01`・`210-02`・`210-03`・`210-04`。V-0171
+  - モデル側: `data/skills/870.json`（skill1 の stat `elementDamage`）。属性の倍率は C-0119 と同じ `element.ts` の `elementMultiplier`（モデルのコードは変えていない）
+  - 検証記録: V-0171
+  - 定義: `data/skills/870.json` の skill1 の effects[2]
 
 ## 敵・的・場面
 
