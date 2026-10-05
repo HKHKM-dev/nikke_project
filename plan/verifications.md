@@ -1587,33 +1587,35 @@
   - 問い: モダニアの S1 を「通常攻撃 200 回命中ごとに、自分にクリティカルダメージ▲と最大装弾数▼を 1 スタック（最大 5）」と読んで、モデルは単騎・操作の録画 045 の会心の 1 ヒットとリロード明けの残弾に合うか
   - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中
   - 録画: 045
+  - 観測値: 045-09、045-10、045-11、045-12、045-13、045-14、045-15、045-16、045-17、045-18、045-19、045-20、045-21、045-22、045-23、045-24
   - 予測（2026-10-05、commit 6320185）との比べ:
-    - s1-k1-body-crit-nodist（hitDamage）: 実測なし。H1 15,271.632
-    - s1-k1-core-crit-nodist（hitDamage）: 実測なし。H1 24,569.43
+    - s1-k1-body-crit-nodist（hitDamage）: 実測 15,272（045-09）。H1 15,271.632（-0.368、許容内）
+    - s1-k1-core-crit-nodist（hitDamage）: 実測 24,569（045-10）。H1 24,569.43（+0.43、許容内）
     - s1-k1-body-crit-dist（hitDamage）: 実測なし。H1 18,060.971
     - s1-k1-core-crit-dist（hitDamage）: 実測なし。H1 27,358.769
-    - s1-k2-body-crit-nodist（hitDamage）: 実測なし。H1 16,596.568
-    - s1-k2-core-crit-nodist（hitDamage）: 実測なし。H1 25,894.366
+    - s1-k2-body-crit-nodist（hitDamage）: 実測 16,597（045-11）。H1 16,596.568（-0.432、許容内）
+    - s1-k2-core-crit-nodist（hitDamage）: 実測 25,894（045-12）。H1 25,894.366（+0.366、許容内）
     - s1-k2-body-crit-dist（hitDamage）: 実測なし。H1 19,385.908
     - s1-k2-core-crit-dist（hitDamage）: 実測なし。H1 28,683.705
     - s1-k3-body-crit-nodist（hitDamage）: 実測なし。H1 17,921.504
-    - s1-k3-core-crit-nodist（hitDamage）: 実測なし。H1 27,219.302
+    - s1-k3-core-crit-nodist（hitDamage）: 実測 27,219（045-13）。H1 27,219.302（+0.302、許容内）
     - s1-k3-body-crit-dist（hitDamage）: 実測なし。H1 20,710.844
     - s1-k3-core-crit-dist（hitDamage）: 実測なし。H1 30,008.641
-    - s1-k4-body-crit-nodist（hitDamage）: 実測なし。H1 19,246.441
-    - s1-k4-core-crit-nodist（hitDamage）: 実測なし。H1 28,544.238
+    - s1-k4-body-crit-nodist（hitDamage）: 実測 19,246（045-14）。H1 19,246.441（+0.441、許容内）
+    - s1-k4-core-crit-nodist（hitDamage）: 実測 28,544（045-15）。H1 28,544.238（+0.238、許容内）
     - s1-k4-body-crit-dist（hitDamage）: 実測なし。H1 22,035.78
     - s1-k4-core-crit-dist（hitDamage）: 実測なし。H1 31,333.577
-    - s1-k5-body-crit-nodist（hitDamage）: 実測なし。H1 20,571.377
-    - s1-k5-core-crit-nodist（hitDamage）: 実測なし。H1 29,869.174
-    - s1-k5-body-crit-dist（hitDamage）: 実測なし。H1 23,360.716
-    - s1-k5-core-crit-dist（hitDamage）: 実測なし。H1 32,658.513
-    - s1-k0-maxammo（maxAmmoAt）: 実測なし。H1 300
-    - s1-k1-maxammo（maxAmmoAt）: 実測なし。H1 285
-    - s1-k2-maxammo（maxAmmoAt）: 実測なし。H1 270
+    - s1-k5-body-crit-nodist（hitDamage）: 実測 20,571（045-16）。H1 20,571.377（+0.377、許容内）
+    - s1-k5-core-crit-nodist（hitDamage）: 実測 29,869（045-17）。H1 29,869.174（+0.174、許容内）
+    - s1-k5-body-crit-dist（hitDamage）: 実測 23,361（045-18）。H1 23,360.716（-0.284、許容内）
+    - s1-k5-core-crit-dist（hitDamage）: 実測 32,659（045-19）。H1 32,658.513（-0.487、許容内）
+    - s1-k0-maxammo（maxAmmoAt）: 実測 300（045-20）。H1 300（+0、許容内）
+    - s1-k1-maxammo（maxAmmoAt）: 実測 285（045-21）。H1 285（+0、許容内）
+    - s1-k2-maxammo（maxAmmoAt）: 実測 270（045-22）。H1 270（+0、許容内）
     - s1-k3-maxammo（maxAmmoAt）: 実測なし。H1 255
-    - s1-k4-maxammo（maxAmmoAt）: 実測なし。H1 240
-    - s1-k5-maxammo（maxAmmoAt）: 実測なし。H1 224
+    - s1-k4-maxammo（maxAmmoAt）: 実測 240（045-23）。H1 240（+0、許容内）
+    - s1-k5-maxammo（maxAmmoAt）: 実測 224（045-24）。H1 224（+0、許容内）
+    - 許容内の指標: H1 16/16。合う仮説は H1 だけ
 - **[V-0171](../records/verifications/V-0171-modernia-burst-reread.md)** モダニアのバースト（装弾数無限・殲滅モード）は説明文どおりか（録画 044 の読み直し）
   - 問い: モダニアのバーストを「フルバースト（15 秒）のあいだ装弾数無限で殲滅モードに武器を変え、1 フレーム 1 発（1 発 2 ヒット）で撃ち続ける」と読んで、モデルは録画 044 の 2〜4 回目のフルバーストの発数と殲滅モードの会心の 1 ヒットに合うか
   - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中
