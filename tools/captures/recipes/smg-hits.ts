@@ -1,0 +1,179 @@
+// SMG 単騎の総ダメージの増分を、ヒットの数に分ける（純粋な関数。V-0200 の読み方）。
+//
+// 1 ヒットの値 = 胴体 × (1 + 距離ボーナス × d + 会心 × r + コア × c)（d・r・c は 0 か 1）。スペック固定 ON なら
+// 距離ボーナス 0.3・会心 0.5・コア 1.0 で、距離ボーナスの無い所では「コア 1 = 胴体 2」のように、1 つの増分に入るヒットの数が
+// 一通りに決まらないことがある。そこで、その増分の間（前に読めたフレームから増分のフレームまで）に撃った発の数で上から抑える。
+//   - 総ダメージは、撃ったのと同じフレームで増える（V-0200。残弾が減ったフレームと増分のフレームが、読めた 501 発すべてで一致）。
+//     発は 1 フレームに 1 発まで（SMG の刻みは約 2.4f）。なので前のフレームも読めていた増分（readGap 1）は 1 ヒットまで。
+//   - 前のフレームが読めていない増分は、照準の横の残弾（reticle-ammo.ts）の読みから、その間に撃った発の数の上限を出す。
+//   - 上限以下の候補のうち最大を取る（当たる割合が高いので）。上限以下の候補が 2 つ以上残れば「決まらない」と数える。
+
+export type HitGrid = { body: number; distance: number; crit: number; core: number };
+
+/** スペック固定 ON の格子（胴体だけ録画から） */
+export function fixedSpecGrid(body: number): HitGrid {
+  return { body, distance: 0.3, crit: 0.5, core: 1.0 };
+}
+
+/** 距離ボーナスの付き方: all（近・中近）、none（遠・中遠の B・C）、mixed（中遠の A。35 の境目で散らばる） */
+export type DistanceMode = 'all' | 'none' | 'mixed';
+
+/** 増分に乗るヒットの数の候補（昇順）。許しは 1 ヒットあたり 1.5 と 1（表示の丸め） */
+export function hitCountCandidates(increment: number, grid: HitGrid, maxHits: number, mode: DistanceMode): number[] {
+  const out: number[] = [];
+  for (let k = 1; k <= maxHits; k++) {
+    const tol = 1.5 * k + 1;
+    const ds = mode === 'all' ? [k] : mode === 'none' ? [0] : Array.from({ length: k + 1 }, (_, i) => i);
+    let ok = false;
+    for (const d of ds) {
+      for (let c = 0; c <= k && !ok; c++) {
+        const rest = increment / grid.body - k - grid.distance * d - grid.core * c;
+        const r = Math.round(rest / grid.crit);
+        if (r < 0 || r > k) continue;
+        if (Math.abs(increment - grid.body * (k + grid.distance * d + grid.crit * r + grid.core * c)) <= tol) ok = true;
+      }
+      if (ok) break;
+    }
+    if (ok) out.push(k);
+  }
+  return out;
+}
+
+/** 1 ヒットの増分か。距離ボーナスが付いていれば 1、付いていなければ 0、1 ヒットでなければ undefined */
+export function singleHitDistance(increment: number, grid: HitGrid): 0 | 1 | undefined {
+  for (const d of [0, 1] as const) {
+    for (const c of [0, 1]) {
+      for (const r of [0, 1]) {
+        if (Math.abs(increment - grid.body * (1 + grid.distance * d + grid.crit * r + grid.core * c)) <= 2) return d;
+      }
+    }
+  }
+  return undefined;
+}
+
+export type AmmoRow = { frame: number; value: number };
+
+/** reticle-ammo.ts --mode series の出力（frame・value・score・x・y） */
+export function parseAmmoSeries(text: string): AmmoRow[] {
+  const rows: AmmoRow[] = [];
+  for (const line of text.split(/\r?\n/)) {
+    const [f, v] = line.split('\t');
+    const frame = Number(f);
+    const value = Number(v);
+    if (line === '' || !Number.isInteger(frame) || !Number.isFinite(value)) continue;
+    rows.push({ frame, value });
+  }
+  return rows.sort((a, b) => a.frame - b.frame);
+}
+
+/**
+ * (from, to] に撃った発の数の上限。from 以前で読めた最後の残弾と、to 以後で読めた最初の残弾の差（間にリロードの増えがあれば
+ * 使えないので undefined）。読めた所が from・to から離れるほど上限はゆるくなる
+ */
+export function shotsUpperBound(ammo: readonly AmmoRow[], from: number, to: number, slack = 6): number | undefined {
+  let lo = -1;
+  let hi = ammo.length;
+  let a = 0;
+  let b = ammo.length - 1;
+  while (a <= b) {
+    const m = (a + b) >> 1;
+    if (ammo[m]!.frame <= from) {
+      lo = m;
+      a = m + 1;
+    } else b = m - 1;
+  }
+  a = 0;
+  b = ammo.length - 1;
+  while (a <= b) {
+    const m = (a + b) >> 1;
+    if (ammo[m]!.frame >= to) {
+      hi = m;
+      b = m - 1;
+    } else a = m + 1;
+  }
+  if (lo < 0 || hi >= ammo.length) return undefined;
+  if (from - ammo[lo]!.frame > slack || ammo[hi]!.frame - to > slack) return undefined;
+  for (let i = lo + 1; i <= hi; i++) if (ammo[i]!.value > ammo[i - 1]!.value) return undefined;
+  return ammo[lo]!.value - ammo[hi]!.value;
+}
+
+export type HudIncrement = { frame: number; increment: number; readGap: number };
+
+export type SplitIncrement = {
+  frame: number;
+  increment: number;
+  hits: number;
+  candidates: number[];
+  /** その増分の間に撃った発の数の上限（readGap 1 なら 1。残弾で出せなければ刻みからの見積もり） */
+  bound: number;
+  boundFrom: 'frame' | 'ammo' | 'interval';
+  /** 上限以下の候補が 2 つ以上あった */
+  ambiguous: boolean;
+};
+
+/**
+ * 増分の列をヒットの数に分ける。格子に乗らない増分は次の増分と足す（3 つまで。足しても乗らなければ捨てて unfit に数える）。
+ * interval は発の刻み（f）。残弾で上限を出せないときの見積もりに使う
+ */
+export function splitHits(
+  rows: readonly HudIncrement[],
+  grid: HitGrid,
+  modeAt: (frame: number) => DistanceMode,
+  ammo: readonly AmmoRow[],
+  interval: number,
+): { increments: SplitIncrement[]; unfit: number[] } {
+  const out: SplitIncrement[] = [];
+  const unfit: number[] = [];
+  let pending: { increment: number; readGap: number; count: number } | undefined;
+  for (const row of rows) {
+    const increment = row.increment + (pending?.increment ?? 0);
+    const readGap = row.readGap + (pending?.readGap ?? 0);
+    const maxHits = Math.max(2, Math.floor(readGap / 2) + 2);
+    const candidates = hitCountCandidates(increment, grid, maxHits, modeAt(row.frame));
+    if (candidates.length === 0) {
+      if (pending !== undefined && pending.count >= 3) {
+        unfit.push(row.frame);
+        pending = undefined;
+      } else pending = { increment, readGap, count: (pending?.count ?? 0) + 1 };
+      continue;
+    }
+    pending = undefined;
+    let bound: number;
+    let boundFrom: SplitIncrement['boundFrom'];
+    if (readGap === 1) {
+      bound = 1;
+      boundFrom = 'frame';
+    } else {
+      const fromAmmo = shotsUpperBound(ammo, row.frame - readGap, row.frame);
+      if (fromAmmo !== undefined) {
+        bound = Math.max(1, fromAmmo);
+        boundFrom = 'ammo';
+      } else {
+        bound = Math.max(1, Math.round(readGap / interval));
+        boundFrom = 'interval';
+      }
+    }
+    const below = candidates.filter((k) => k <= bound);
+    const hits = below.length > 0 ? below.at(-1)! : candidates[0]!;
+    out.push({ frame: row.frame, increment, hits, candidates, bound, boundFrom, ambiguous: below.length > 1 });
+  }
+  return { increments: out, unfit };
+}
+
+/** ヒットのある増分を、空きが gap（f）を超える所でまとまり（マガジン）に分ける */
+export function groupMagazines<T extends { frame: number }>(items: readonly T[], gap = 40): T[][] {
+  const groups: T[][] = [];
+  for (const it of items) {
+    const last = groups.at(-1)?.at(-1);
+    if (last === undefined || it.frame - last.frame > gap) groups.push([]);
+    groups.at(-1)!.push(it);
+  }
+  return groups;
+}
+
+/** 区間の番号（0 始まり）。cuts はジャンプの前の最後の増分のフレーム（昇順） */
+export function segmentOf(frame: number, cuts: readonly number[]): number {
+  let i = 0;
+  while (i < cuts.length && frame > cuts[i]!) i++;
+  return i;
+}
