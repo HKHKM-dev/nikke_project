@@ -20,7 +20,7 @@ notes の種類: 未対応 36・前提の外 21・計算に無関係 26・補足
   - notes[0] 未対応: 最終攻撃力が最も高い敵への倍率ダメージは未対応（説明文にきっかけ（いつ出るか）が書かれていない）: 根拠なし
   - notes[1] 計算に無関係: 挑発はダメージに関係しない: 根拠なし
 - **burst**: supported
-  - effects[0] burstDamage・skill: C-0227（仮説）
+  - effects[0] burstDamage・skill: C-0227（確定）
   - effects[1] timed・burstUse・attack: 根拠なし
 
 ## 17 アニス：スター
@@ -137,7 +137,7 @@ notes の種類: 未対応 36・前提の外 21・計算に無関係 26・補足
   - effects[0] damage・normalShot・skill: 根拠なし
   - effects[1] damage・normalShot・skill: 根拠なし
 - **宝物版 burst**: supported
-  - effects[0] burstDamage・skill: C-0228（仮説）
+  - effects[0] burstDamage・skill: C-0228（確定）
   - effects[1] timed・burstUse・attackDamage: 根拠なし
   - effects[2] timed・burstUse・maxAmmo: 根拠なし
 
@@ -150,7 +150,7 @@ notes の種類: 未対応 36・前提の外 21・計算に無関係 26・補足
   - effects[1] heal・fullChargeShot: C-0082（確定）
   - notes[0] 計算に無関係: 味方全体の防御力▲はダメージに関係しない: 根拠なし
 - **burst**: supported
-  - effects[0] burstDamage・skill: C-0230（仮説）
+  - effects[0] burstDamage・skill: C-0230（確定）
   - notes[0] 計算に無関係: 移動不可（5 秒間維持）はダメージに関係しない: 根拠なし
 
 ## 172 アドミ
@@ -392,7 +392,7 @@ notes の種類: 未対応 36・前提の外 21・計算に無関係 26・補足
   - notes[0] 前提の外: 戦闘開始時とフルバーストタイム発動時の自分のパーツダメージ▲（急所攻略）は、射撃場の的にパーツが無いので効かない: 根拠なし
   - notes[1] 前提の外: 味方がパーツを破壊した時の、自分の持続ダメージ▲（一点集中）は、射撃場の的にパーツが無いので起きない: 根拠なし
 - **burst**: partial
-  - effects[0] burstDamage・skill: C-0185（仮説）、C-0233（仮説）、C-0234（仮説）
+  - effects[0] burstDamage・skill: C-0185（仮説）、C-0233（確定）、C-0234（確定）
   - notes[0] 未対応: 自分の A.N.モード（一点集中の解除と、持続ダメージ▲ 10 秒）は未対応（持続ダメージ▲の stat が無い）。S1 の持続ダメージに効くので、バーストの後の tick は過小になる: 根拠なし
 
 ## 862 クルミ
@@ -421,5 +421,5 @@ notes の種類: 未対応 36・前提の外 21・計算に無関係 26・補足
   - notes[1] 未対応: 1more 時のバトンタッチ（自分を除く基本バースト段階 3 のペルソナ状態の味方に攻撃力▲・スタック）は未対応（ほかのペルソナのキャラがいる編成で起きる。その対象の語彙も無い）: 根拠なし
   - notes[2] 計算に無関係: 鉄・拳・制・裁！の防御力▲はダメージに関係しない: 根拠なし
 - **burst**: supported
-  - effects[0] burstDamage・distributed: C-0231（仮説）
+  - effects[0] burstDamage・distributed: C-0231（確定）
   - effects[1] timed・burstUse・attack: 根拠なし

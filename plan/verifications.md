@@ -5,16 +5,11 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 6・保留 0・完了 182・打ち切り 16（計 204）
+件数: 調査中 1・保留 0・完了 187・打ち切り 16（計 204）
 
 ## 開いている検証
 
 - **V-0174** シューティングスターのコアの 1 ヒットの形（録画 162・165 の読み直し）（状態: 調査中）
-- **V-0201** ラピのバーストの 3 ヒットの遅れを最小構成で確かめる（ココア + デルタ + ラピ）（状態: 調査中）
-- **V-0202** ドレイク（宝物あり）のバーストの 3 ヒットの遅れを最小構成で確かめる（ココア + デルタ + ドレイク）（状態: 調査中）
-- **V-0203** ユニのバーストのヒットの遅れを最小構成で確かめる（ココア + ユニ）（状態: 調査中）
-- **V-0204** クイーン（真）のバーストのヒットの遅れを最小構成で確かめる（ココア + デルタ + クイーン（真））（状態: 調査中）
-- **V-0205** レイヴンのバーストのヒットの遅れを最小構成で確かめる（ココア + デルタ + レイヴン）（状態: 調査中）
 
 ## 全件
 
@@ -1934,56 +1929,71 @@
     - 許容内の指標: H0 1/4・H1-near 1/4・H1-midFarA 0/4・H1-midFarBC 1/4・H1-far 0/4。合う仮説は無い
 - **[V-0201](../records/verifications/V-0201-rapi-burst-delay-minimal.md)** ラピのバーストの 3 ヒットの遅れを最小構成で確かめる（ココア + デルタ + ラピ）
   - 問い: ラピ（III）のバーストの倍率ダメージは、I・II が機構の確定したキャラの編成でも、III の発動からモデルのフレームで 90f の 1 ヒット目と、その 7f・14f 後の 2・3 ヒット目に分かれるか（C-0227）
-  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）、plan/design-burst-split-hits.md。backlog 2-4
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 完了・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）、plan/design-burst-split-hits.md。backlog 2-4
   - 録画: 221
+  - 観測値: 221-01、221-02、221-03、221-04、221-05、221-06、221-07、221-08
+  - 結論: C-0227
   - 派生元: V-0138
   - 予測（2026-10-05、commit ce342b1）との比べ:
     - rapi-delays（burstHitDelays）: 実測なし。H0 [112, 112, 112, 112, 112]
-    - rapi-offsets-1（burstHitOffsets）: 実測なし。H0 [0, 7, 14]
-    - rapi-offsets-2（burstHitOffsets）: 実測なし。H0 [0, 7, 14]
-    - rapi-offsets-3（burstHitOffsets）: 実測なし。H0 [0, 7, 14]
-    - rapi-offsets-4（burstHitOffsets）: 実測なし。H0 [0, 7, 14]
+    - rapi-offsets-1（burstHitOffsets）: 実測 [0, 7, 14]（221-02）。H0 [0, 7, 14]（+0、許容内）
+    - rapi-offsets-2（burstHitOffsets）: 実測 [0, 8, 14]（221-03）。H0 [0, 7, 14]（-1、許容内）
+    - rapi-offsets-3（burstHitOffsets）: 実測 [0, 7, 14]（221-04）。H0 [0, 7, 14]（+0、許容内）
+    - rapi-offsets-4（burstHitOffsets）: 実測 [0, 7, 14]（221-05）。H0 [0, 7, 14]（+0、許容内）
     - rapi-offsets-5（burstHitOffsets）: 実測なし。H0 [0, 7, 14]
-    - rapi-burst-hit（burstHitDamage）: 実測なし。H0 624,393.328
+    - rapi-burst-hit（burstHitDamage）: 実測 624,393（221-06）。H0 624,393.328（+0.328、許容内）
     - rapi-burst-hit-crit（burstHitDamage）: 実測なし。H0 936,589.991
+    - 許容内の指標: H0 5/5。合う仮説は H0 だけ
 - **[V-0202](../records/verifications/V-0202-drake-burst-delay-minimal.md)** ドレイク（宝物あり）のバーストの 3 ヒットの遅れを最小構成で確かめる（ココア + デルタ + ドレイク）
   - 問い: ドレイク（III・宝物あり）のバーストの倍率ダメージは、I・II が機構の確定したキャラの編成でも、III の発動からモデルのフレームで 4〜5f の 1 ヒット目と、その 27〜28f・55f 後の 2・3 ヒット目に分かれるか（C-0228）
-  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）、plan/design-burst-split-hits.md。backlog 2-4
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 完了・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）、plan/design-burst-split-hits.md。backlog 2-4
   - 録画: 222
+  - 観測値: 222-01、222-02、222-03、222-04、222-05、222-06、222-07
+  - 結論: C-0228、C-0302
   - 派生元: V-0140
   - 予測（2026-10-05、commit ce342b1）との比べ:
-    - drake-delays（burstHitDelays）: 実測なし。H0 [26, 26, 26, 26, 26]
-    - drake-offsets-1（burstHitOffsets）: 実測なし。H0 [0, 27, 55]
-    - drake-offsets-2（burstHitOffsets）: 実測なし。H0 [0, 27, 55]
-    - drake-offsets-3（burstHitOffsets）: 実測なし。H0 [0, 27, 55]
-    - drake-offsets-4（burstHitOffsets）: 実測なし。H0 [0, 27, 55]
-    - drake-offsets-5（burstHitOffsets）: 実測なし。H0 [0, 27, 55]
+    - drake-delays（burstHitDelays）: 実測 [26, 26, 26, 26, 26]（222-01）。H0 [26, 26, 26, 26, 26]（+0、許容内）
+    - drake-offsets-1（burstHitOffsets）: 実測 [0, 28, 57]（222-02）。H0 [0, 27, 55]（-2、**許容外**）
+    - drake-offsets-2（burstHitOffsets）: 実測 [0, 28, 56]（222-03）。H0 [0, 27, 55]（-1、許容内）
+    - drake-offsets-3（burstHitOffsets）: 実測 [0, 28, 56]（222-04）。H0 [0, 27, 55]（-1、許容内）
+    - drake-offsets-4（burstHitOffsets）: 実測 [0, 28, 56]（222-05）。H0 [0, 27, 55]（-1、許容内）
+    - drake-offsets-5（burstHitOffsets）: 実測 [0, 28, 56]（222-06）。H0 [0, 27, 55]（-1、許容内）
     - drake-burst-hit（burstHitDamage）: 実測なし。H0 3,605,380.416
-    - drake-burst-hit-crit（burstHitDamage）: 実測なし。H0 5,408,070.624
+    - drake-burst-hit-crit（burstHitDamage）: 実測 5,408,070（222-07）。H0 5,408,070.624（+0.624、許容内）
+    - 許容内の指標: H0 6/7。合う仮説は無い
 - **[V-0203](../records/verifications/V-0203-yuni-burst-delay-minimal.md)** ユニのバーストのヒットの遅れを最小構成で確かめる（ココア + ユニ）
   - 問い: ユニ（II）のバーストの倍率ダメージのヒットは、機構の確定した I との 2 体の編成でも、II の発動からモデルのフレームで 124f（C-0230）遅れるか
-  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）。backlog 2-4
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 完了・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）。backlog 2-4
   - 録画: 223
+  - 観測値: 223-01、223-02
+  - 結論: C-0230
   - 派生元: V-0146
   - 予測（2026-10-05、commit ce342b1）との比べ:
-    - yuni-delays（burstHitDelays）: 実測なし。H0 [124, 124, 124, 124, 124, 124, 124]
-    - yuni-burst-hit（burstHitDamage）: 実測なし。H0 278,474.854
+    - yuni-delays（burstHitDelays）: 実測 [125, 124, 125, 125, 125, 125, 125]（223-01）。H0 [124, 124, 124, 124, 124, 124, 124]（-1、許容内）
+    - yuni-burst-hit（burstHitDamage）: 実測 278,475（223-02）。H0 278,474.854（-0.146、許容内）
     - yuni-burst-hit-crit（burstHitDamage）: 実測なし。H0 417,712.281
+    - 許容内の指標: H0 2/2。合う仮説は H0 だけ
 - **[V-0204](../records/verifications/V-0204-queen-burst-delay-minimal.md)** クイーン（真）のバーストのヒットの遅れを最小構成で確かめる（ココア + デルタ + クイーン（真））
   - 問い: クイーン（真）（III）のバーストの倍率ダメージのヒットは、I・II が機構の確定したキャラの編成でも、III の発動からモデルのフレームで 1f（C-0231）遅れるか
-  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）。backlog 2-4
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 完了・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）。backlog 2-4
   - 録画: 224
+  - 観測値: 224-01、224-02、224-03
+  - 結論: C-0231
   - 派生元: V-0147
   - 予測（2026-10-05、commit ce342b1）との比べ:
-    - queen-delays（burstHitDelays）: 実測なし。H0 [23, 23, 23, 23, 23]
-    - queen-burst-hit（burstHitDamage）: 実測なし。H0 6,323,965.597
+    - queen-delays（burstHitDelays）: 実測 [24, 23, 23, 23, 22]（224-01）。H0 [23, 23, 23, 23, 23]（-1、許容内）
+    - queen-burst-hit（burstHitDamage）: 実測 6,323,975（224-02）。H0 6,323,965.597（-9.403、**許容外**）
     - queen-burst-hit-crit（burstHitDamage）: 実測なし。H0 9,485,948.395
+    - 許容内の指標: H0 1/2。合う仮説は無い
 - **[V-0205](../records/verifications/V-0205-raven-burst-delay-minimal.md)** レイヴンのバーストのヒットの遅れを最小構成で確かめる（ココア + デルタ + レイヴン）
   - 問い: レイヴン（III）のバーストの倍率ダメージのヒットは、I・II が機構の確定したキャラの編成でも、III の発動からモデルのフレームで 43f（C-0233）遅れるか
-  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）。backlog 2-4
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 完了・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）。backlog 2-4
   - 録画: 225
+  - 観測値: 225-01、225-02
+  - 結論: C-0233、C-0234
   - 派生元: V-0150
   - 予測（2026-10-05、commit ce342b1）との比べ:
-    - raven-delays（burstHitDelays）: 実測なし。H0 [65, 65, 65, 65, 65]
+    - raven-delays（burstHitDelays）: 実測 [65, 64, 65, 65, 65]（225-01）。H0 [65, 65, 65, 65, 65]（+1、許容内）
     - raven-burst-hit（burstHitDamage）: 実測なし。H0 589,755.708
-    - raven-burst-hit-crit（burstHitDamage）: 実測なし。H0 884,633.562
+    - raven-burst-hit-crit（burstHitDamage）: 実測 884,634（225-02）。H0 884,633.562（-0.438、許容内）
+    - 許容内の指標: H0 2/2。合う仮説は H0 だけ

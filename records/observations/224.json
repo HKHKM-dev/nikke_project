@@ -1,0 +1,76 @@
+[
+  {
+    "id": "224-01",
+    "recording": "224",
+    "source": "V-0204",
+    "readAt": "2026-10-05",
+    "kind": "interval",
+    "use": "compare",
+    "value": [24, 23, 23, 23, 22],
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ クイーン（真）（III・操作）で、1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1511・3931・6514・9084・11464）から、クイーン（真）のバーストの倍率ダメージのヒット（f1535・3954・6537・9107・11486）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop・tile）・HUD を 1 フレームずつ並べた一覧（FULL BURST の表示の中なので目で読んだ）",
+      "note": "22f の 5 回目は、始まりの前に III のタイマーの 09.52 が 2 フレーム続く（録画の重複フレームの位置）。ヒットのフレームは、総ダメージの差がちょうどヒットの値（1 回目 6,323,975、2〜5 回目 4,206,947）になるフレーム"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "224-02",
+    "recording": "224",
+    "source": "V-0204",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 6323975,
+    "description": "クイーン（真）の 1 回目のバーストの倍率ダメージの 1 ヒット（会心なし。ヒットは f1535）",
+    "method": {
+      "tool": "HUD を 1 フレームずつ並べた一覧",
+      "note": "ヒットの前後の総ダメージ 9,032,129 → 15,356,104"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "224-03",
+    "recording": "224",
+    "source": "V-0204",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "record",
+    "value": 4206947,
+    "description": "クイーン（真）の 2 回目のバーストの倍率ダメージの 1 ヒット（会心なし。ヒットは f3954）。3〜5 回目も同じ値",
+    "method": {
+      "tool": "HUD を 1 フレームずつ並べた一覧",
+      "note": "比べる観測値にしない（遅れの検証の問いの外。値の違いは S2 のバースト 3 段階突入時の分配ダメージ▲の効き方による）。2026-10-05 のいまのモデルも 2 回目以降をこの値（4,206,946.955）で出し、端数まで合う。1 回目より小さい"
+    }
+  }
+]
