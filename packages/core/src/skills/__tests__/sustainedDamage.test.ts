@@ -58,8 +58,8 @@ describe('sustainedMultiplier', () => {
     expect(sustainedMultiplier(0, 'boost', 1.5, 1.2112)).toBe(1);
   });
 
-  it('defaults to the separate multiplier (H1)', () => {
-    expect(SUSTAINED_DAMAGE_PLACEMENT).toBe('separate');
+  it('defaults to the attack damage group (H2, C-0299)', () => {
+    expect(SUSTAINED_DAMAGE_PLACEMENT).toBe('attackDamage');
   });
 });
 
@@ -68,8 +68,8 @@ describe('computeBurstHit with sustained damage', () => {
 
   it('multiplies only sustained (dot) effects, not auto attacks', () => {
     const r = computeBurstHit({ ...base, effects: [tick] });
-    expect(r.perActivation / none.perActivation).toBeCloseTo(1.528, 12);
-    expect(r.sustainedDamageMultiplier).toBeCloseTo(1.528, 12);
+    expect(r.perActivation / none.perActivation).toBeCloseTo(1.7392 / 1.2112, 12);
+    expect(r.sustainedDamageMultiplier).toBeCloseTo(1.7392 / 1.2112, 12);
     const a = computeBurstHit({ ...base, effects: [auto] });
     expect(a.perActivation).toBeCloseTo(none.perActivation, 6);
     expect(a.sustainedDamageMultiplier).toBe(1);

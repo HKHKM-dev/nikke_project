@@ -52,10 +52,10 @@ export const SUSTAINED_DAMAGE_PLACEMENTS = [
 ] as const satisfies readonly SustainedDamagePlacement[];
 
 /**
- * いまのモデルの置き場所。H1 は分配ダメージ▲・受けるダメージ▲と同じ形で、解釈の結論（C-0279。仮説・推論）に立つ。
- * マナの録画（V-0185）で H1〜H3 を見分ける。検証の予測は TeamInput.sustainedDamagePlacement で切り替える
+ * いまのモデルの置き場所。マナの録画（V-0185）の tick が H2 と合った（C-0299。H1 の C-0279 は棄却）。
+ * 検証の予測は TeamInput.sustainedDamagePlacement で切り替える
  */
-export const SUSTAINED_DAMAGE_PLACEMENT: SustainedDamagePlacement = 'separate';
+export const SUSTAINED_DAMAGE_PLACEMENT: SustainedDamagePlacement = 'attackDamage';
 
 /** 解決済みの倍率ダメージ 1 件。burstDamage（burst スロット）と damage（Stage 8）で共通 */
 export type ResolvedSkillDamage = {

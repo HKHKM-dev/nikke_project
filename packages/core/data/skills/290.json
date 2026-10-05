@@ -102,7 +102,8 @@
           "ref": 1,
           "durationRef": 2,
           "claims": [
-            "C-0279"
+            "C-0299",
+            "C-0301"
           ]
         },
         {
@@ -111,13 +112,14 @@
           "ref": 4,
           "intervalSeconds": 1,
           "durationRef": 5,
-          "firstTick": "afterInterval",
+          "firstTick": "atApplication",
           "assumes": {
-            "ja": "照準線に最も近い敵 1 機は敵 1 体。tick は付いた 1 秒後から 1 秒ごと。フルバースト補正・攻撃ダメージ▲・持続ダメージ▲は tick ごとにその時点の状態で乗る",
-            "en": "The one enemy nearest the crosshair is the single enemy. Ticks every second from 1 s after application. The Full Burst bonus, ATK damage up and sustained damage up apply per tick by the state at that tick"
+            "ja": "照準線に最も近い敵 1 機は敵 1 体。付くのは発動の 2f 後で、tick は付いた瞬間と、その 1.5 秒後から 1 秒ごと（計 10 回）。フルバースト補正・攻撃ダメージ▲・持続ダメージ▲は tick ごとにその時点の状態で乗る",
+            "en": "The one enemy nearest the crosshair is the single enemy. It is applied 2 frames after activation and ticks on application, then every second from 1.5 s after (10 ticks). The Full Burst bonus, ATK damage up and sustained damage up apply per tick by the state at that tick"
           },
           "claims": [
-            "C-0280"
+            "C-0300",
+            "C-0301"
           ]
         }
       ]
