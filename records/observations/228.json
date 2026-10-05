@@ -1,0 +1,66 @@
+[
+  {
+    "id": "228-01",
+    "recording": "228",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0214",
+    "readAt": "2026-10-06",
+    "value": 58300,
+    "description": "クイーン（真）単騎・風圧の的の、戦闘開始から 15 秒以内（S1 の攻撃力▲の窓）の 1 ペレット（胴体）。単位 29,150.00（18 トリガーのすべて・293 単位）の 2 倍",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、1 ペレットの胴体の半分の単位（会心・コア・コア会心は 1・2・3 単位多い）で割り、整数に乗った増分から単位を Σ増分 / Σ単位数 で出した。戦闘開始は f776（timer.ts --mode changes の +319f の次の +89f の変わり目）。窓の中は f776〜1635、窓の後は f1697 から。H2（1.1 と別の乗数）の単位には、どちらの窓の増分も 1 つも乗らなかった"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "228-02",
+    "recording": "228",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0214",
+    "readAt": "2026-10-06",
+    "value": 38783.1,
+    "description": "同じ録画の、戦闘開始 15 秒の後（S1 の攻撃力▲の外）の 1 ペレット（胴体）。単位 19,391.55（199 トリガーのうち 165・3,281 単位。乗らなかった 34 は HUD の読みが 2 トリガーにまたがった所など）の 2 倍",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、1 ペレットの胴体の半分の単位（会心・コア・コア会心は 1・2・3 単位多い）で割り、整数に乗った増分から単位を Σ増分 / Σ単位数 で出した。戦闘開始は f776（timer.ts --mode changes の +319f の次の +89f の変わり目）。窓の中は f776〜1635、窓の後は f1697 から。H2（1.1 と別の乗数）の単位には、どちらの窓の増分も 1 つも乗らなかった"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      }
+    }
+  }
+]
