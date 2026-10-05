@@ -1,0 +1,29 @@
+{
+  "id": "199",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-199_smg_liter_auto.mp4",
+  "original": "2026-10-05_19-37-23.mp4",
+  "durationSec": 206.4,
+  "frames": 12381,
+  "fps": 60,
+  "sizeMB": 249.8,
+  "sha256": "05a3b1f3889a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "backlog 2-25（SMG の近・中遠・遠の弾丸命中率の再現）の撮影。リター単騎・3 分モードを撃ち切る 12 本の 2 本目。条件（スペック固定 ON・AUTO 射撃 ON・オートバースト OFF・灼熱タブ）は撮影の計画の値で、取り込みのときに画で確かめたのは、冒頭の出撃画面（射撃場・リター 1 体）と末尾の戦闘履歴か結果の画面だけ"
+}
