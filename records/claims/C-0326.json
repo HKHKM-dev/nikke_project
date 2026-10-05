@@ -1,0 +1,11 @@
+{
+  "id": "C-0326",
+  "text": "基礎版のミランダの S2 は、宝物版の 1 行目（C-0323）と同じ読みで、フルバーストタイムの発動時から味方全体にクリティカルダメージ 32.99%▲（Lv10・10 秒）を付ける",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "基礎版の説明文は、宝物版の S2 の 1 行目と同じ文・同じ値（`data/characters/32.json` の skills.skill2 と treasure.skills.skill2）。宝物版の読みは C-0323（確定）。基礎版は撮っていない（2026-10-06 のオーナーの判断で、推論の仮説として定義に書いた）。V-0217",
+  "model": "`data/skills/32.json` の skills.skill2 の effects[0]（`timed`・`fullBurstStart`・`allies`・`critDamage`）",
+  "replaces": [],
+  "updated": "2026-10-06"
+}

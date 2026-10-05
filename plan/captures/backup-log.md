@@ -136,3 +136,7 @@
 2026-10-06 00:56 に録画 235（リター単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-235_smg_liter_auto-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`23e17608f373`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-06 01:03 に録画 243（サクラ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-243_smg_sakura_skills.mp4`）だけを同期した。E: と I: で sha256 が一致（`4ba1f8497b84`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 07:34 に録画 244（ミランダ + デルタ）を `intake.ts` で取り込み、この 1 本（`range/20261006-244_smg+sr_miranda+delta_burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`d560aa216f98`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 07:34 に録画 245（ミランダ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261006-245_smg+sr+ar_miranda+delta+sun_full-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`c336fa3bc89a`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。

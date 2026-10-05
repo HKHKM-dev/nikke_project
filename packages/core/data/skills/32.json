@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 32,
-  "checkedAt": "2026-10-03",
+  "checkedAt": "2026-10-06",
   "skills": {
     "skill1": {
       "effects": [
@@ -41,22 +41,55 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "フルバースト開始時の味方全体のクリティカルダメージ▲（10 秒）。撮影で確かめていない（単騎ではフルバーストにならない）",
-          "en": "Critical Damage up for all allies at the start of Full Burst (10 s). Not verified by recording yet (a solo unit never reaches Full Burst)",
-          "kind": "unimplemented"
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "宝物版の S2 の 1 行目（C-0323）と同じ読み（推論の仮説。基礎版は撮っていない）",
+            "en": "Read the same way as line 1 of the Treasure S2 (C-0323). Inferred hypothesis; the base version is not recorded"
+          },
+          "claims": [
+            "C-0326"
+          ]
         }
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "「自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。対象の語彙（topAttack の excludeSelf: unlessShort）はあるが、撮っていない（plan/design-target-vocab.md 4.3 節）",
-          "en": "ATK up and Critical Damage up (10 s) on the 1 ally with the highest final ATK except the skill user (the user only if there are not enough allies). The target is in the vocabulary (topAttack with excludeSelf: unlessShort), but not recorded yet",
-          "kind": "unimplemented"
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "excludeSelf": "unlessShort",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-0325"
+          ],
+          "assumes": {
+            "ja": "宝物版のバースト（C-0322）と同じ読み（推論の仮説。基礎版は撮っていない）",
+            "en": "Read the same way as the Treasure burst (C-0322). Inferred hypothesis; the base version is not recorded"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "excludeSelf": "unlessShort",
+          "stat": "critDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "claims": [
+            "C-0325"
+          ]
         }
       ]
     }
@@ -114,22 +147,76 @@
       ]
     },
     "skill2": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0323"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "critRate",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0324"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "claims": [
+            "C-0323"
+          ]
+        }
+      ],
       "notes": [
         {
-          "ja": "フルバースト開始時の味方全体のクリティカルダメージ▲、自分のクリティカル確率▲・攻撃ダメージ▲（10 秒）、自分を除く最終攻撃力が最も高い味方 1 機のクリティカル確率▲（1 発間）。撮影で確かめていない（単騎ではフルバーストにならない）。順位で決まる対象への発数の維持（topAttack と durationShots）は語彙に無い",
-          "en": "At the start of Full Burst, Critical Damage up for all allies, Critical Rate up and Damage up on self (10 s), and Critical Rate up for 1 shot on the 1 ally with the highest final ATK except the user. Not verified by recording (a solo unit never reaches Full Burst); a duration in shots on a ranked target (topAttack with durationShots) is not in the vocabulary",
+          "ja": "フルバーストタイムの発動時に、自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）に付くクリティカル確率▲（1 発間）は未対応。順位で決まる対象への発数の維持（topAttack と durationShots）が語彙に無い",
+          "en": "Critical Rate up for 1 shot on the 1 ally with the highest final ATK except the user (the user only if there are not enough allies) at the start of Full Burst is not supported: a duration in shots on a ranked target (topAttack with durationShots) is not in the vocabulary",
           "kind": "unimplemented"
         }
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "「自分を除く最終攻撃力が最も高い味方 2 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。対象の語彙（topAttack の excludeSelf: unlessShort）はあるが、撮っていない（plan/design-target-vocab.md 4.3 節）",
-          "en": "ATK up and Critical Damage up (10 s) on the 2 allies with the highest final ATK except the user (the user only if there are not enough allies). The target is in the vocabulary (topAttack with excludeSelf: unlessShort), but not recorded yet",
-          "kind": "unimplemented"
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "excludeSelf": "unlessShort",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-0322"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "excludeSelf": "unlessShort",
+          "stat": "critDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "claims": [
+            "C-0322"
+          ]
         }
       ]
     }

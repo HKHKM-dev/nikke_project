@@ -1,0 +1,234 @@
+{
+  "verification": "V-0216",
+  "team": [
+    {
+      "rid": 32,
+      "controlled": true,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの定義（宝物版のバーストに効果なし）。バーストの後も通常攻撃の 1 発は変わらない"
+    },
+    {
+      "id": "H1",
+      "note": "plan/design-target-vocab.md 2.1 節の読み。自分を除いて最終攻撃力の上位 2 機、足りなければ自分を足す（excludeSelf: unlessShort）。2 人の編成ではデルタとミランダの両方に付く",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "unlessShort",
+              "stat": "attack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "unlessShort",
+              "stat": "critDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "自分は足りなくても対象にならない（excludeSelf: always。姫野の型）。2 人の編成ではデルタだけに付く",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "always",
+              "stat": "attack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "always",
+              "stat": "critDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "自分を除かない（excludeSelf なしの topAttack 2 機）。2 人の編成では H1 と同じ値になる（V-0218 の 3 人の編成で見分ける）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "stat": "attack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "stat": "critDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "duo-miranda-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1009,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 人の編成（ミランダ + デルタ）。ミランダのバースト（モデルは 889f）から 2 秒後の、ミランダの通常攻撃の 1 発（胴体・会心なし・距離ボーナスなし。宝物版 S1 の攻撃力▲の中）。H1・H3 では攻撃力▲の中、H0・H2 では外"
+    },
+    {
+      "id": "duo-miranda-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1009,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "duo-miranda-body と同じ発の会心。H1・H3 ではクリティカルダメージ▲も乗る"
+    },
+    {
+      "id": "duo-delta-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1009,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 人の編成。ミランダのバーストから 2 秒後の、デルタの通常攻撃の 1 発（コア・会心なし・距離ボーナスなし）。H1〜H3 で攻撃力▲の中、H0 で外"
+    },
+    {
+      "id": "duo-miranda-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1549,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 人の編成。ミランダのバーストの窓（モデルは 1489f まで）の 1 秒後の、ミランダの 1 発（胴体）。どの仮説でも外（対照。宝物版 S1 の攻撃力▲の中。V-0114 の 144-07 と同じ値）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "52970c421ff9b490a8e181e4da59390ad64492d2",
+    "values": {
+      "H0": {
+        "duo-miranda-body": 16183.476,
+        "duo-miranda-crit": 24275.214,
+        "duo-delta-core": 208626.22999999998,
+        "duo-miranda-after": 16183.476
+      },
+      "H1": {
+        "duo-miranda-body": 20543.436,
+        "duo-miranda-crit": 42366.7280628,
+        "duo-delta-core": 293045.52749999997,
+        "duo-miranda-after": 16183.476
+      },
+      "H2": {
+        "duo-miranda-body": 16183.476,
+        "duo-miranda-crit": 24275.214,
+        "duo-delta-core": 293045.52749999997,
+        "duo-miranda-after": 16183.476
+      },
+      "H3": {
+        "duo-miranda-body": 20543.436,
+        "duo-miranda-crit": 42366.7280628,
+        "duo-delta-core": 293045.52749999997,
+        "duo-miranda-after": 16183.476
+      }
+    },
+    "seen": {}
+  }
+}
