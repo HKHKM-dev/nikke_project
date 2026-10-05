@@ -123,8 +123,14 @@ describe('録画 42: アリスの S1 は自分とアドミに付く（22.5、実
       expect(list.every((d) => d === mode(list) || d > mode(list) + 40)).toBe(true);
     });
     for (const list of intervalsInFullBursts(plan.shots[1]!.frames, windows)) {
+      // 窓の最初の間隔は、窓の入りより前に始めたチャージの発（外の 82f）になりうるので除く（C-0285 で 1 回目の窓の位相が動いた）
       // 発動者基準: アリスの基礎チャージ時間 1.5 秒 × 11.67% = 0.175 秒を引く（0.825 秒 → 48.5 → 49f + 23f）
-      expect(list.filter((d) => d < 100).every((d) => d === 72)).toBe(true);
+      expect(
+        list
+          .slice(1)
+          .filter((d) => d < 100)
+          .every((d) => d === 72),
+      ).toBe(true);
     }
     for (const list of intervalsInFullBursts(plan.shots[0]!.frames, windows)) {
       expect(list.filter((d) => d < 100).every((d) => d === 82)).toBe(true);

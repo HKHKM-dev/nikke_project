@@ -60,8 +60,8 @@ describe('BurstController', () => {
     expect(gameSecondsToFrames(10)).toBe(588);
   });
 
-  it('uses 29f for each burst stage: full → I → II → III (C-0073)', () => {
-    expect(DEFAULT_BURST_TIMING.readyDelayFrames).toBe(29);
+  it('uses 23f for full → I and 29f for I → II → III (C-0285)', () => {
+    expect(DEFAULT_BURST_TIMING.readyDelayFrames).toBe(23);
     expect(DEFAULT_BURST_TIMING.step1ToStep2Frames).toBe(29);
     expect(DEFAULT_BURST_TIMING.step2ToStep3Frames).toBe(29);
   });

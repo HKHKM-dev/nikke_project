@@ -332,8 +332,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     }
   }
