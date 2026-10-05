@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 169・仮説 67・棄却 41・範囲外 1（計 278）
+件数: 確定 169・仮説 70・棄却 41・範囲外 1（計 281）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1420,6 +1420,21 @@
   - モデル側: `data/skills/862.json` の skill2（`damageType: additional`・`ref` 2）。1 ヒットの値は `skills/burstDamage.ts` の `computeSkillHit`（倍率ダメージと同じ式。フルバースト補正は `SKILL_HIT_FULL_BURST_BONUS`）
   - 検証記録: V-0181、V-0182
   - 定義: `data/skills/862.json` の skill2 の effects[0]
+- **C-0279** マナのバーストの「自分に持続ダメージ X%▲・10 秒間維持」は、バーストを使った時に付き、10 秒のあいだ自分の持続ダメージの tick にだけ、別枠の乗数 (1 + X) で乗る（H1。分配ダメージ▲・受けるダメージ▲と同じ形）。乗るかは tick ごとにその時点の▲で決まる
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-05
+  - 根拠: 解釈（説明文の読み。plan/design-sustained-damage-up.md 3〜5 節）。撮る前の予測で、観測値はまだ無い。V-0185
+  - モデル側: 未反映。data/skills/290.json の burst は未対応の notes のまま（V-0185 の結果を待つ）。確かめたら burst に `timed`・`burstUse`・`self`・`sustainedDamage`（ref 1・durationRef 2）を書く。置き場所は `skills/burstDamage.ts` の `SUSTAINED_DAMAGE_PLACEMENT`（`separate`）、tick への掛け方は `computeBurstHit`（`sustained` の効果だけ）、乗るかは `frame/plan.ts` の `planSkillHits` が tick のフレームのバフで決める
+  - 定義: `data/skills/290.json` の burst の notes[0]
+- **C-0280** マナのバーストの「照準線に最も近い敵 1 機に、最終攻撃力の X% の持続ダメージ・1 秒間隔・10 秒間維持」は、バーストを使った時に付き、付いた 1 秒後から 1 秒ごとに 10 回の tick を出す（D1。クルミのバースト使用時のハッキング C-0132 と同じ形）。1 tick の式はほかの持続ダメージと同じ（C-0100・C-0131・C-0111・C-0112）
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-05
+  - 根拠: 解釈（説明文の読み。plan/design-sustained-damage-up.md 3〜5 節）。撮る前の予測で、観測値はまだ無い。V-0185
+  - モデル側: 未反映。data/skills/290.json の burst は未対応の notes のまま（V-0185 の結果を待つ）。確かめたら burst に `dot`・`burstUse`・`firstTick: afterInterval`（ref 4・durationRef 5）を書く。tick のフレームは `frame/dot.ts` の `dotTicks`
+  - 定義: `data/skills/290.json` の burst の notes[0]
+- **C-0281** マナの S2 のフルバーストタイム発動時の自分の攻撃ダメージ▲・攻撃力▲（10 秒）は説明文どおり（攻撃ダメージ▲は別枠の乗数）
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-05
+  - 根拠: 解釈（説明文の読み）。録画 020（エーテルが未定義で最小構成でない）のフルバースト中の 1 ヒットで、2026-09-22 に 1 の位まで合っている（plan/verification.md Stage 6。凍結）。V-0185 の録画のフルバースト中の通常攻撃で確かめ直す。V-0185
+  - モデル側: `data/skills/290.json`（skill2 の `timed`・`fullBurstStart`・`attackDamage`・`attack`）
+  - 定義: `data/skills/290.json` の skill2 の effects[1]、`data/skills/290.json` の skill2 の effects[2]
 
 ## 敵・的・場面
 

@@ -1,0 +1,11 @@
+{
+  "id": "C-0279",
+  "text": "マナのバーストの「自分に持続ダメージ X%▲・10 秒間維持」は、バーストを使った時に付き、10 秒のあいだ自分の持続ダメージの tick にだけ、別枠の乗数 (1 + X) で乗る（H1。分配ダメージ▲・受けるダメージ▲と同じ形）。乗るかは tick ごとにその時点の▲で決まる",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "解釈（説明文の読み。plan/design-sustained-damage-up.md 3〜5 節）。撮る前の予測で、観測値はまだ無い。V-0185",
+  "model": "未反映。data/skills/290.json の burst は未対応の notes のまま（V-0185 の結果を待つ）。確かめたら burst に `timed`・`burstUse`・`self`・`sustainedDamage`（ref 1・durationRef 2）を書く。置き場所は `skills/burstDamage.ts` の `SUSTAINED_DAMAGE_PLACEMENT`（`separate`）、tick への掛け方は `computeBurstHit`（`sustained` の効果だけ）、乗るかは `frame/plan.ts` の `planSkillHits` が tick のフレームのバフで決める",
+  "replaces": [],
+  "updated": "2026-10-05"
+}

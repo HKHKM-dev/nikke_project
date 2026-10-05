@@ -175,6 +175,8 @@ const BUFF_FIELDS = [
   'damageTaken',
   // アニス：スター S2・バースト編: 発射体爆発ダメージ▲とチャージ時間の固定
   'projectileExplosionDamage',
+  // 持続ダメージ▲編
+  'sustainedDamage',
   'burstGaugeSpeed',
   'maxAmmoRatio',
   'maxAmmoFlat',

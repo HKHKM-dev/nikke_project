@@ -1,0 +1,11 @@
+{
+  "id": "C-0280",
+  "text": "マナのバーストの「照準線に最も近い敵 1 機に、最終攻撃力の X% の持続ダメージ・1 秒間隔・10 秒間維持」は、バーストを使った時に付き、付いた 1 秒後から 1 秒ごとに 10 回の tick を出す（D1。クルミのバースト使用時のハッキング C-0132 と同じ形）。1 tick の式はほかの持続ダメージと同じ（C-0100・C-0131・C-0111・C-0112）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "解釈（説明文の読み。plan/design-sustained-damage-up.md 3〜5 節）。撮る前の予測で、観測値はまだ無い。V-0185",
+  "model": "未反映。data/skills/290.json の burst は未対応の notes のまま（V-0185 の結果を待つ）。確かめたら burst に `dot`・`burstUse`・`firstTick: afterInterval`（ref 4・durationRef 5）を書く。tick のフレームは `frame/dot.ts` の `dotTicks`",
+  "replaces": [],
+  "updated": "2026-10-05"
+}

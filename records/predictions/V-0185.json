@@ -1,0 +1,184 @@
+{
+  "verification": "V-0185",
+  "note": "ラム（I）+ デルタ（II）+ マナ（III・操作・AUTO 射撃 ON）、オートバースト ON の新しい録画（撮る前）の予測。置き場所 H1〜H3 は override（TeamInput.sustainedDamagePlacement）で切り替える。tick の形 D1〜D3 は定義の firstTick なので、このファイルは D1（いまの定義）の値で、D2・D3 の見え方は検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 290,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "持続ダメージ▲は別枠の乗数 (1 + X)（C-0279。いまのモデル）"
+    },
+    {
+      "id": "H2",
+      "note": "持続ダメージ▲は攻撃ダメージ▲と同じ群 (1 + Σ攻撃ダメージ + X)。S2 の攻撃ダメージ▲と足し合わさる",
+      "override": {
+        "sustainedDamagePlacement": "attackDamage"
+      }
+    },
+    {
+      "id": "H3",
+      "note": "持続ダメージ▲は倍率グループに足す (1 + 会心 + フルバースト補正 + X)",
+      "override": {
+        "sustainedDamagePlacement": "boost"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "mana-dot-tick",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "判定の指標。1 回目のバーストの持続ダメージの 5 回目の tick（会心なし）。▲・フルバースト・S2 の攻撃力▲と攻撃ダメージ▲の窓の真ん中。録画では、どの回のバーストでも窓の真ん中（2〜8 回目）の tick を読み、会心なしの値で比べる"
+    },
+    {
+      "id": "mana-dot-tick-crit",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ tick が会心したときの値。H3 では会心なしとの比が H1・H2 と違う"
+    },
+    {
+      "id": "mana-hit-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの中のマナの通常攻撃の 1 ヒット（胴体・会心なし・距離あり）。S2 の攻撃力▲・攻撃ダメージ▲（C-0281）と、持続ダメージ▲が通常攻撃に乗らないことを先に見る（どの仮説でも同じ値）"
+    },
+    {
+      "id": "mana-hit-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のバーストの前のマナの通常攻撃の 1 ヒット（胴体・会心なし・距離あり）。S1 の攻撃力▲だけが乗る（録画 010 の 010-01 と同じ値のはず）"
+    },
+    {
+      "id": "mana-dot-ticks",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "180 秒の持続ダメージの tick の数（D1 では 1 回のバーストに 10 回 × バーストの回数）"
+    },
+    {
+      "id": "mana-dot-offsets",
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のマナのバーストの発動（III のタイマーが 00.00 になったフレーム）から、その持続ダメージの各 tick までの動画のフレーム数（フルバーストの入りの止まりを含む）。D1 の形"
+    },
+    {
+      "id": "full-bursts",
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "180 秒のフルバーストの回数（ラム → デルタ → マナの順で回る）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "8144dc2ab3e8d543de961674de6d013492eb01c1",
+    "values": {
+      "H1": {
+        "mana-dot-tick": 2917580.3152081706,
+        "mana-dot-tick-crit": 3890107.086944227,
+        "mana-hit-fb": 87196.44484806267,
+        "mana-hit-out": 37111.544129088,
+        "mana-dot-ticks": 50,
+        "mana-dot-offsets": [81, 140, 198, 257, 316, 375, 434, 493, 551, 610],
+        "full-bursts": 5
+      },
+      "H2": {
+        "mana-dot-tick": 2741783.3230436356,
+        "mana-dot-tick-crit": 3655711.097391514,
+        "mana-hit-fb": 87196.44484806267,
+        "mana-hit-out": 37111.544129088,
+        "mana-dot-ticks": 50,
+        "mana-dot-offsets": [81, 140, 198, 257, 316, 375, 434, 493, 551, 610],
+        "full-bursts": 5
+      },
+      "H3": {
+        "mana-dot-tick": 2581523.943822936,
+        "mana-dot-tick-crit": 3217994.3441737583,
+        "mana-hit-fb": 87196.44484806267,
+        "mana-hit-out": 37111.544129088,
+        "mana-dot-ticks": 50,
+        "mana-dot-offsets": [81, 140, 198, 257, 316, 375, 434, 493, 551, 610],
+        "full-bursts": 5
+      }
+    },
+    "seen": {}
+  }
+}

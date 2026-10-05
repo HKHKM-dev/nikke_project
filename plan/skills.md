@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 30・効果 132（根拠あり 87）・notes 89（根拠あり 33）
+件数: キャラ 30・効果 132（根拠あり 89）・notes 89（根拠あり 34）
 
 notes の種類: 未対応 37・前提の外 21・計算に無関係 26・補足 5
 
@@ -262,11 +262,11 @@ notes の種類: 未対応 37・前提の外 21・計算に無関係 26・補足
   - notes[1] 前提の外: 味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない: 根拠なし
 - **skill2**: supported
   - effects[0] passive・burstGaugeSpeed: C-0269（確定）
-  - effects[1] timed・fullBurstStart・attackDamage: 根拠なし
-  - effects[2] timed・fullBurstStart・attack: 根拠なし
+  - effects[1] timed・fullBurstStart・attackDamage: C-0281（仮説）
+  - effects[2] timed・fullBurstStart・attack: C-0281（仮説）
   - effects[3] timed・fullBurstStart・chargeSpeed: C-0267（確定）
 - **burst**: unsupported
-  - notes[0] 未対応: 持続ダメージと自分の持続ダメージ▲は未対応（持続ダメージ dot はあるが、持続ダメージ▲の stat が無く、撮影していない）: 根拠なし
+  - notes[0] 未対応: 持続ダメージと自分の持続ダメージ▲は未対応（語彙 dot・sustainedDamage はあるが、解釈（tick の形と▲の置き場所）を撮影で確かめていない。V-0185 の予測は固定済みで、録画の読みを待つ）: C-0279（仮説）、C-0280（仮説）
 
 ## 304 I-DOLL・フラワー
 

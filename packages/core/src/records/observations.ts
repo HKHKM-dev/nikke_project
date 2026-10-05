@@ -9,6 +9,7 @@ import { effectiveMaxAmmo } from '../frame/firing.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs } from '../skills/buffs.ts';
+import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame } from '../time.ts';
@@ -75,6 +76,11 @@ export type CompareSetup = {
    * false は C-0170 の前の形で、予測の仮説（H0）の override に使う
    */
   sustainedHitRateUp?: boolean;
+  /**
+   * 持続ダメージ▲編（plan/design-sustained-damage-up.md 3.3 節）: 持続ダメージ▲の式の中の置き場所（TeamInput.sustainedDamagePlacement）。
+   * 省略はいまのモデル。予測の仮説（H1〜H3）の override に使う
+   */
+  sustainedDamagePlacement?: SustainedDamagePlacement;
   /** V-0165: false なら、録画（予測の編成）の宝物の段階を使わず、どの枠も基礎版のスキルにする。省略 true */
   treasure?: boolean;
   /**
@@ -544,6 +550,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   perShotHitDamage: { args: ['slot', 'frame', 'crit'], sim: perShotHitDamage },
   burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
   dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
+  dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
   skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
@@ -600,8 +607,7 @@ function videoFramesBetween(schedule: SimResult['schedule'], ctx: MetricContext)
 function burstHitDamage(result: SimResult, ctx: MetricContext): number {
   const hit = slotOf(result.slots, ctx).burst.hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目のバーストの倍率ダメージが無い`);
-  const crit = ctx.args.crit === true ? hit.boost.critDamage - 1 : 0;
-  return (hit.perActivation / hit.boost.total) * (1 + crit + hit.boost.fullBurst);
+  return oneHitValue(hit, ctx.args.crit === true);
 }
 
 /**
@@ -612,8 +618,7 @@ function dotHitDamage(result: SimResult, ctx: MetricContext): number {
   const ticks = result.skillHits.filter((h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined);
   const tick = ticks[Number(ctx.args.n)];
   if (tick === undefined) throw new Error(`${String(ctx.args.n)} 回目の持続ダメージの tick が無い`);
-  const crit = ctx.args.crit === true ? tick.hit.boost.critDamage - 1 : 0;
-  return (tick.hit.perActivation / tick.hit.boost.total) * (1 + crit + tick.hit.boost.fullBurst);
+  return oneHitValue(tick.hit, ctx.args.crit === true);
 }
 
 /**
@@ -624,8 +629,7 @@ function skillHitDamage(result: SimResult, ctx: MetricContext): number {
   const hits = result.skillHits.filter((h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot === undefined);
   const hit = hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目の倍率ダメージが無い`);
-  const crit = ctx.args.crit === true ? hit.hit.boost.critDamage - 1 : 0;
-  return (hit.hit.perActivation / hit.hit.boost.total) * (1 + crit + hit.hit.boost.fullBurst);
+  return oneHitValue(hit.hit, ctx.args.crit === true);
 }
 
 /**
@@ -639,6 +643,32 @@ function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
   const count = Number(ctx.args.count);
   if (mine.length < count) throw new Error(`発動が ${mine.length} 回しかない`);
   return mine.slice(0, count).map((a) => videoFrameOf(schedule, hitFrameOf(a)) - videoFrameOf(schedule, a.frame));
+}
+
+/**
+ * 持続ダメージ▲編（plan/design-sustained-damage-up.md 5.1 節）: 枠の n 回目（0 始まり）のバーストの発動から、その発動の後に出た
+ * バーストのスロットの持続ダメージの tick（次の発動の前まで）までの動画のフレーム数の列（フルバーストの入りの止まりを含む）
+ */
+function dotTickOffsets(result: SimResult, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndex);
+  const n = Number(ctx.args.n);
+  const activation = mine[n];
+  if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
+  const end = mine[n + 1]?.frame ?? Number.POSITIVE_INFINITY;
+  const ticks = result.skillHits.filter(
+    (h) =>
+      h.slotIndex === slotIndex &&
+      h.effect.dot !== undefined &&
+      h.effect.source.skill === 'burst' &&
+      h.frame >= activation.frame &&
+      h.frame < end,
+  );
+  if (ticks.length === 0) throw new Error(`${String(ctx.args.n)} 回目の発動の後に持続ダメージの tick が無い`);
+  const from = videoFrameOf(schedule, activation.frame);
+  return ticks.map((h) => videoFrameOf(schedule, h.frame) - from);
 }
 
 /**
@@ -860,6 +890,9 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     controlledSlot: controlled < 0 ? null : controlled,
     ...(obstacleBreaks.length === 0 ? {} : { obstacleBreaks }),
     ...(setup.sustainedHitRateUp === false ? { sustainedHitRateUp: false } : {}),
+    ...(setup.sustainedDamagePlacement === undefined
+      ? {}
+      : { sustainedDamagePlacement: setup.sustainedDamagePlacement }),
   };
 }
 

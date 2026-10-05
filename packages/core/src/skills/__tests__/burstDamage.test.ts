@@ -76,7 +76,7 @@ describe('computeBurstHit', () => {
       fullBurstBonus: false,
     });
     expect(r.baseHit).toBe(1200);
-    expect(r.boost).toEqual({ crit: 0.2, critDamage: 2, fullBurst: 0, total: 1.2 });
+    expect(r.boost).toEqual({ crit: 0.2, critDamage: 2, fullBurst: 0, sustained: 0, total: 1.2 });
     expect(r.multiplier).toBeCloseTo(3.5164 + 2.664, 12);
     expect(r.perEffect[0]?.expected).toBeCloseTo(1200 * 3.5164 * 1.2 * 1.3 * 1.1, 8);
     expect(r.perEffect[1]?.expected).toBeCloseTo(1200 * 2.664 * 1.2 * 1.3 * 1.1, 8);
