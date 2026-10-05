@@ -1,7 +1,9 @@
 // Stage 19-A: 録画の台帳の型・検証・台帳の表の生成（plan/design-stage19.md 2.2 節）。
 // Stage 20-C: 録画は records/recordings/<録画 id>.json に 1 本 1 ファイルで置き、表は plan/captures/recordings.md に
 // 丸ごと生成する（前の中身は読まない。plan/design-stage20.md 3.5 節）。手で書かない。
-import type { CharacterData, Element } from '../types.ts';
+import type { CollectionInput, CubeInput, OverloadLine } from '../build.ts';
+import type { SkillLevels } from '../skills/resolve.ts';
+import type { CharacterData, Element, GearPart } from '../types.ts';
 
 /** 録画を置く種別フォルダ（台帳の「置き場所」の語彙） */
 export const RECORDING_FOLDERS = ['range', 'interception', 'raid', 'skill', 'burst', 'ui'] as const;
@@ -26,7 +28,40 @@ export type RecordingMember = {
   treasurePhase?: number;
   /** キューブ（付けていた枠だけ。例: assault-7） */
   cube?: string;
+  /** スペック固定 OFF の録画の育成（録画に映した値）。照合ランナーはこれでモデルの入力を組む。無ければ固定 OFF の録画は比べられない */
+  build?: RecordingBuild;
 };
+
+/**
+ * スペック固定 OFF の録画の育成（Stage 13 の残り）。録画に映した値を書く（オーナー決定 2026-10-06: 録画の素性に公開で書く）。
+ * 攻撃力はキャラ画面の値（C-0118: OL の攻撃力増加とスキルの攻撃力▲は、これに同じ足し算の群で掛かる）。OL の行・キューブ・
+ * コレクションは効果層（buildEffects.ts）に、スキルの Lv は定義の解決に渡す
+ */
+export type RecordingBuild = {
+  /** キャラ画面の攻撃力 */
+  attack: number;
+  /** 部位ごとの OL の行（書かない部位は行なし） */
+  overload?: Partial<Record<GearPart, OverloadLine[]>>;
+  /** 省略・null はキューブなし */
+  cube?: CubeInput;
+  /** 省略・null はコレクションなし（宝物を持つ枠は treasurePhase で決まる） */
+  collection?: CollectionInput;
+  /** 省略したスロットは Lv10 */
+  skillLevels?: Partial<SkillLevels>;
+};
+
+/** 育成の形の検証（値の範囲・マスタとの照合は、照合ランナーが resolveBuildEffects で行う）。問題があれば 1 件 1 行 */
+export function validateRecordingBuild(build: RecordingBuild, at: string): string[] {
+  const errors: string[] = [];
+  if (!Number.isInteger(build.attack) || build.attack <= 0) errors.push(`${at}: build.attack は正の整数`);
+  for (const [slot, level] of Object.entries(build.skillLevels ?? {})) {
+    if (!['skill1', 'skill2', 'burst'].includes(slot))
+      errors.push(`${at}: build.skillLevels の ${slot} はスロットでない`);
+    else if (!Number.isInteger(level) || level < 1 || level > 10)
+      errors.push(`${at}: build.skillLevels.${slot} は 1〜10 の整数`);
+  }
+  return errors;
+}
 
 export type RecordingTarget = {
   name: string;
@@ -120,6 +155,10 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
     entry.team.forEach((member, i) => {
       if (member.slot !== i + 1) errors.push(`${at}: 枠は 1 から枠順に並べる（${i + 1} 番目が ${member.slot}）`);
       if (!knownRids.has(member.rid)) errors.push(`${at}: rid ${member.rid} のキャラのデータが無い`);
+      if (member.build !== undefined) {
+        if (entry.fixedSpec !== false) errors.push(`${at}: 育成（build）はスペック固定 OFF の録画にだけ書く`);
+        errors.push(...validateRecordingBuild(member.build, `${at} 枠 ${member.slot}`));
+      }
     });
     if (entry.team.filter((m) => m.controlled === true).length > 1) errors.push(`${at}: 操作した枠が 2 つ以上ある`);
   }
@@ -163,6 +202,7 @@ function memberText(member: RecordingMember, characters: ReadonlyMap<number, Cha
     c ? `${c.weaponType}・${ELEMENT_JA[c.element]}・${c.rarity}` : '',
     member.treasurePhase !== undefined ? `宝物 ${member.treasurePhase}` : '',
     member.cube ?? '',
+    member.build !== undefined ? '育成あり' : '',
   ].filter((x) => x !== '');
   return `${mark}${member.name}（${member.rid}、${extras.join('、')}）`;
 }

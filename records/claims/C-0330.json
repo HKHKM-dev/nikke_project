@@ -1,0 +1,11 @@
+{
+  "id": "C-0330",
+  "text": "コレクション（SG）の「通常攻撃ダメージ倍率▲」は、1 トリガーの武器倍率（CDN の damage。10 ペレットの合計の 1e-4 単位の整数）に (1 + 値) を掛けて四捨五入した値に置き換える（SMG の C-0121・C-0127 と同じ形）。1 ペレットの倍率で丸めるのではない",
+  "state": "確定",
+  "topic": "1 発の式・バフの掛かり方",
+  "grade": "厳密一致",
+  "basis": "`253-01`。V-0225",
+  "model": "damage.ts の normalAttackMultiplier（scaleBasisPoints(shot.damage, buffs.normalAttackDamage)。SG は 1 トリガーの値で丸める）",
+  "replaces": [],
+  "updated": "2026-10-06"
+}

@@ -1,0 +1,123 @@
+{
+  "verification": "V-0224",
+  "note": "攻撃力はキューブなしのキャラ画面の値（オーナー 2026-10-06）にキューブの攻撃力を足した見込み。比べる指標（弾数・リロードの長さ）は攻撃力によらない。録画の素性には撮影の日のキャラ画面の値を書く",
+  "team": [
+    {
+      "rid": 290,
+      "controlled": true,
+      "build": {
+        "attack": 444597,
+        "overload": {
+          "head": [
+            {
+              "option": "chargeDamage",
+              "level": 1
+            },
+            {
+              "option": "elementDamage",
+              "level": 9
+            },
+            {
+              "option": "critDamage",
+              "level": 3
+            }
+          ],
+          "body": [
+            {
+              "option": "attack",
+              "level": 1
+            },
+            {
+              "option": "elementDamage",
+              "level": 9
+            },
+            {
+              "option": "maxAmmo",
+              "level": 10
+            }
+          ],
+          "arm": [
+            {
+              "option": "attack",
+              "level": 11
+            },
+            {
+              "option": "maxAmmo",
+              "level": 11
+            },
+            {
+              "option": "hitRate",
+              "level": 11
+            }
+          ],
+          "leg": [
+            {
+              "option": "elementDamage",
+              "level": 11
+            },
+            {
+              "option": "critDamage",
+              "level": 11
+            }
+          ]
+        },
+        "cube": {
+          "id": 1000303,
+          "level": 15
+        },
+        "collection": {
+          "rarity": "SR",
+          "level": 5
+        },
+        "skillLevels": {
+          "skill1": 7,
+          "skill2": 10,
+          "burst": 7
+        }
+      }
+    }
+  ],
+  "fixedSpec": false,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（リロードの秒 × (1 − 値)。スキルのリロード速度▲と同じ C-0013 の形）。H2（÷ (1 + 値)）は検証記録に手で書いた"
+    },
+    {
+      "id": "H0",
+      "note": "キューブのリロード速度▲が乗らない",
+      "override": {
+        "buildEffectsOff": ["cube"]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "reload-bar",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 1,
+        "frame": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "録画 3（マナ単騎・レリックベアーキューブ）の RELOADING のバーが 0 から満ちるまでの長さ（動画のフレーム。reload-segments のバーの長さの中央値）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "0efa56a526e23d55b96e782c1d6de135fb61aabc",
+    "values": {
+      "H1": {
+        "reload-bar": 69.06923529411765
+      },
+      "H0": {
+        "reload-bar": 98.23529411764704
+      }
+    },
+    "seen": {}
+  }
+}

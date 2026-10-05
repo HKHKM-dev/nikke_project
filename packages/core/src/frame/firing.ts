@@ -127,7 +127,7 @@ export function speedScaledSeconds(seconds: number, speed: number): number {
   return SPEED_FORMULA === 'subtract' ? seconds * Math.max(0, 1 - speed) : seconds / (1 + Math.max(0, speed));
 }
 
-/** max(1, 丸め(基礎 × (1 + Σ比率)) + Σ固定)。比率は加算（録画 37） */
+/** max(1, 丸め(基礎 × (1 + Σ比率)) + Σ固定)。比率は加算（録画 37。OL の行とキューブも同じ和に入る: C-0328・C-0329） */
 export function effectiveMaxAmmo(baseMaxAmmo: number, buffs: FiringBuffs): number {
   if (buffs.maxAmmoRatio === 0 && buffs.maxAmmoFlat === 0) return baseMaxAmmo;
   const scaled = baseMaxAmmo * (1 + buffs.maxAmmoRatio);

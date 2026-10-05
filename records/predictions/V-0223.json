@@ -1,0 +1,123 @@
+{
+  "verification": "V-0223",
+  "note": "攻撃力はキューブなしのキャラ画面の値（オーナー 2026-10-06）にキューブの攻撃力を足した見込み。比べる指標（弾数・リロードの長さ）は攻撃力によらない。録画の素性には撮影の日のキャラ画面の値を書く",
+  "team": [
+    {
+      "rid": 290,
+      "controlled": true,
+      "build": {
+        "attack": 442867,
+        "overload": {
+          "head": [
+            {
+              "option": "chargeDamage",
+              "level": 1
+            },
+            {
+              "option": "elementDamage",
+              "level": 9
+            },
+            {
+              "option": "critDamage",
+              "level": 3
+            }
+          ],
+          "body": [
+            {
+              "option": "attack",
+              "level": 1
+            },
+            {
+              "option": "elementDamage",
+              "level": 9
+            },
+            {
+              "option": "maxAmmo",
+              "level": 10
+            }
+          ],
+          "arm": [
+            {
+              "option": "attack",
+              "level": 11
+            },
+            {
+              "option": "maxAmmo",
+              "level": 11
+            },
+            {
+              "option": "hitRate",
+              "level": 11
+            }
+          ],
+          "leg": [
+            {
+              "option": "elementDamage",
+              "level": 11
+            },
+            {
+              "option": "critDamage",
+              "level": 11
+            }
+          ]
+        },
+        "cube": {
+          "id": 1000306,
+          "level": 8
+        },
+        "collection": {
+          "rarity": "SR",
+          "level": 5
+        },
+        "skillLevels": {
+          "skill1": 7,
+          "skill2": 10,
+          "burst": 7
+        }
+      }
+    }
+  ],
+  "fixedSpec": false,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（OL の 2 行とキューブの値を足して round(60 × (1 + Σ))）。H2（OL で丸めた数にキューブを掛ける）は検証記録に手で書いた"
+    },
+    {
+      "id": "H0",
+      "note": "キューブの最大装弾数▲が乗らない（OL だけ）",
+      "override": {
+        "buildEffectsOff": ["cube"]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "max-ammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "録画 2（マナ単騎・タクティカルブーストキューブ）のリロードを終えた直後の照準の横の残弾"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "0efa56a526e23d55b96e782c1d6de135fb61aabc",
+    "values": {
+      "H1": {
+        "max-ammo": 158
+      },
+      "H0": {
+        "max-ammo": 140
+      }
+    },
+    "seen": {}
+  }
+}

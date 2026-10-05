@@ -1,0 +1,34 @@
+[
+  {
+    "id": "253-01",
+    "recording": "253",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0225",
+    "readAt": "2026-10-06",
+    "value": 117753,
+    "description": "ノワール単騎（スペック固定 OFF・キューブなし）の 1 ペレット（胴体・非会心・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "HUD の総ダメージの増分（hud-jumps のキャッシュ。244 個）を、1 ペレットの 8 種（胴体・会心・コア・コア会心 × 距離ボーナスの有無。胴体を四捨五入した整数 117,753 から各倍率で出して四捨五入）の 10 個までの和で表し、差が 3 以下になった増分を数えた。H1（117,753）で 141 個、H2（117,758）で 0 個、H0（110,774）で 1 個。例: 471,012 = 4 × 117,753、588,765 = 5 × 117,753。合わない 103 個は、2 トリガーにまたがった読みや、1 トリガーの読みが割れたものとみる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  }
+]

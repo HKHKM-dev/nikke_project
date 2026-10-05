@@ -1,0 +1,77 @@
+[
+  {
+    "id": "251-01",
+    "recording": "251",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0223",
+    "readAt": "2026-10-06",
+    "value": 158,
+    "unit": "発",
+    "description": "マナ単騎（タクティカルブーストキューブ Lv8）のリロードを終えた直後の照準の横の残弾（最大装弾数）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode mags",
+      "note": "node tools/captures/reticle-ammo.ts --mode mags。マガジンの最大の表示は、戦闘の始め（f2487）と 11 回のリロード明けのすべてで 158（ほかの増えは数字の読み違い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 100
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "251-02",
+    "recording": "251",
+    "kind": "interval",
+    "use": "record",
+    "value": [111, 110, 109, 110, 110, 110, 110, 112, 110, 109, 110],
+    "unit": "f",
+    "description": "マナ のマガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで（取り消し 5 回・窓をまたいだ回 3 回・最終弾の読み違い 1 回を除いた全部の回）",
+    "method": {
+      "tool": "recipe:reload-segments@1",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 4079・4393・5285・7117・8009・9025・9917・10689・10928・11820・12842。窓をまたいだ回は、完了 → 次の増分がこの録画の中央値 + 5f を超える回"
+    },
+    "source": "V-0224",
+    "readAt": "2026-10-06"
+  },
+  {
+    "id": "251-03",
+    "recording": "251",
+    "kind": "interval",
+    "use": "record",
+    "value": [17, 17, 12, 13, 12, 12, 12, 12, 11, 12, 13, 12],
+    "unit": "f",
+    "description": "マナ のリロード完了から次の発（総ダメージの増分）まで（取り消し・窓をまたいだ回を除いた全部の回）",
+    "method": {
+      "tool": "recipe:reload-segments@1",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 3377・4079・4393・5285・7117・8009・9025・9917・10689・10928・11820・12842"
+    },
+    "source": "V-0224",
+    "readAt": "2026-10-06"
+  },
+  {
+    "id": "251-04",
+    "recording": "251",
+    "kind": "interval",
+    "use": "record",
+    "value": [109.95, 111.21, 110.02, 110.07, 109.96, 109.85, 110.12, 109.96, 109.86, 110.04, 110.29, 109.94],
+    "unit": "f",
+    "description": "マナ のリロードのバーが 0 から満ちるまでの長さ（溝の幅 ÷ バーの伸び。直線の当てはめ）",
+    "method": {
+      "tool": "recipe:reload-segments@1",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。当てはめの残差が 3px を超える回は除いた。取り消し・窓をまたいだ回も除いた"
+    },
+    "source": "V-0224",
+    "readAt": "2026-10-06"
+  }
+]

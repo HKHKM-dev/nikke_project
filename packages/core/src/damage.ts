@@ -343,12 +343,12 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const chargeMultiplier = applyChargeBuffs(shot.fullChargeDamage, charge, buffs);
 
   // Stage 13: 通常攻撃ダメージ倍率▲（SG・SMG のコレクション）は、通常攻撃の武器倍率（1e-4 単位の整数）に (1 + Σ) を掛けて
-  // 四捨五入した値に置き換える（C-0121・C-0127。SG は 1 トリガーの値で丸める）。乗数はその比
+  // 四捨五入した値に置き換える（C-0121・C-0127。SG は 1 トリガーの値で丸める。C-0330）。乗数はその比
   const normalAttackMultiplier =
     buffs.normalAttackDamage === 0 ? 1 : scaleBasisPoints(shot.damage, buffs.normalAttackDamage) / shot.damage;
 
   const coreRate = enemy.hasCore ? condition.coreHitRate : 0;
-  // Stage 13: コアダメージ▲はコア倍率に加算する（殲滅モードなら変更後の武器のコア倍率が基点）
+  // Stage 13: コアダメージ▲はコア倍率に加算する（コレクション（AR）は C-0327。殲滅モードなら変更後の武器のコア倍率が基点）
   const boostCore = coreRate * (shot.coreDamageRate - 1 + buffs.coreDamage);
   const crit = applyCritBuffs(character.crit, buffs);
   // ヘルム編: 通常攻撃のクリティカル確率▲は通常攻撃の会心率にだけ足す（射撃ごとの倍率ダメージは boostSkillCrit）

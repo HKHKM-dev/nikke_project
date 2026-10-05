@@ -1,0 +1,11 @@
+{
+  "id": "C-0327",
+  "text": "コレクション（AR）の「コアダメージ▲」は、倍率グループのコアの項に足す（コアの 1 ヒットの倍率グループは 1 + (コア倍率 2 − 1 + 値) + 距離）。コア倍率に (1 + 値) を掛けるのではない",
+  "state": "確定",
+  "topic": "1 発の式・バフの掛かり方",
+  "grade": "厳密一致",
+  "basis": "`250-01`・`250-02`・`250-03`・`250-04`。V-0221",
+  "model": "damage.ts の boostCore（コア命中率 × (coreDamageRate − 1 + buffs.coreDamage)）。コレクションの写像は buildEffects.ts の COLLECTION_SKILL_EFFECTS（Stage 13）",
+  "replaces": [],
+  "updated": "2026-10-06"
+}

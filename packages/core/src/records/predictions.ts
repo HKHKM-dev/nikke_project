@@ -17,13 +17,20 @@ import {
   type RecordsData,
 } from './observations.ts';
 import type { Claim } from './claims.ts';
-import type { LegacyRecording, RecordingMember } from './recordings.ts';
+import {
+  validateRecordingBuild,
+  type LegacyRecording,
+  type RecordingBuild,
+  type RecordingMember,
+} from './recordings.ts';
 
 export type PredictionMember = {
   rid: number;
   /** 操作した枠なら true */
   controlled?: boolean;
   treasurePhase?: number;
+  /** スペック固定 OFF の育成（撮る前に分かっている値。録画の素性の build と同じ形） */
+  build?: RecordingBuild;
 };
 
 export type PredictionHypothesis = {
@@ -98,6 +105,11 @@ export function validatePredictions(
     seen.add(f.verification);
     if (f.team.length === 0 || f.team.length > 5) errors.push(`${at}: 編成は 1〜5 体`);
     for (const m of f.team) if (!ctx.knownRids.has(m.rid)) errors.push(`${at}: rid ${m.rid} のキャラのデータが無い`);
+    f.team.forEach((m, i) => {
+      if (m.build === undefined) return;
+      if (f.fixedSpec !== false) errors.push(`${at}: 育成（build）はスペック固定 OFF の予測にだけ書く`);
+      errors.push(...validateRecordingBuild(m.build, `${at} 枠 ${i + 1}`));
+    });
     if (f.team.filter((m) => m.controlled === true).length > 1) errors.push(`${at}: 操作した枠が 2 つ以上ある`);
     if (typeof f.fixedSpec !== 'boolean') errors.push(`${at}: fixedSpec は true か false`);
     if (f.hypotheses.length === 0) errors.push(`${at}: 仮説が 1 つ以上要る`);
@@ -208,6 +220,7 @@ function asRecording(file: PredictionFile): LegacyRecording {
     name: String(m.rid),
     controlled: m.controlled ?? false,
     ...(m.treasurePhase === undefined ? {} : { treasurePhase: m.treasurePhase }),
+    ...(m.build === undefined ? {} : { build: m.build }),
   }));
   return {
     id: `prediction:${file.verification}`,

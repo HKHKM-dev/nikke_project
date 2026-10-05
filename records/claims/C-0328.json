@@ -1,0 +1,11 @@
+{
+  "id": "C-0328",
+  "text": "OL の「最大装弾数増加」は、行の値を足して、最大装弾数 = round(CDN の最大装弾数 × (1 + Σ))（スキルの最大装弾数▲と同じ C-0017 の形）。行ごとに掛け合わせるのではない",
+  "state": "確定",
+  "topic": "射撃（間隔・リロード・チャージ）",
+  "grade": "厳密一致",
+  "basis": "`250-05`。V-0222",
+  "model": "frame/firing.ts の effectiveMaxAmmo（maxAmmoRatio の和で四捨五入）。OL の行は buildEffects.ts の OVERLOAD_OPTION_STAT（Stage 13）",
+  "replaces": [],
+  "updated": "2026-10-06"
+}

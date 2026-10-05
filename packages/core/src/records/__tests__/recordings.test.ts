@@ -18,6 +18,7 @@ import {
   sortRecordings,
   validateRecordings,
   type ProjectRecording,
+  type RecordingBuild,
   type RecordingEntry,
 } from '../recordings.ts';
 
@@ -76,6 +77,34 @@ describe('records/recordings', () => {
     expect(errors).toContainEqual('001: 枠は 1 から枠順に並べる（2 番目が 3）');
     expect(errors).toContainEqual('001: rid 999999 のキャラのデータが無い');
     expect(errors).toContainEqual('001: 操作した枠が 2 つ以上ある');
+  });
+
+  it('accepts a build only on fixed-spec OFF recordings and checks its shape (Stage 13 の残り)', () => {
+    const member = { slot: 1, rid: 290, name: 'マナ', controlled: true };
+    const off = {
+      ...first,
+      fixedSpec: false,
+      team: [{ ...member, build: { attack: 400000, skillLevels: { skill1: 7 } } }],
+    };
+    expect(validateRecordings({ recordings: [off] }, knownRids)).toEqual([]);
+    const errors = validateRecordings(
+      {
+        recordings: [
+          { ...first, fixedSpec: true, team: [{ ...member, build: { attack: 400000 } }] },
+          {
+            ...first,
+            id: '002',
+            fixedSpec: false,
+            // 型の外の値（JSON から読んだ壊れた育成）
+            team: [{ ...member, build: { attack: 0.5, skillLevels: { skill3: 1 } } as unknown as RecordingBuild }],
+          },
+        ],
+      },
+      knownRids,
+    );
+    expect(errors).toContainEqual('001: 育成（build）はスペック固定 OFF の録画にだけ書く');
+    expect(errors).toContainEqual('002 枠 1: build.attack は正の整数');
+    expect(errors).toContainEqual('002 枠 1: build.skillLevels の skill3 はスロットでない');
   });
 });
 

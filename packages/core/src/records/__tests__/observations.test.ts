@@ -401,6 +401,56 @@ describe('照合の部品', () => {
     );
   });
 
+  it('builds a fixed-spec OFF slot from the recorded build (Stage 13 の残り)', () => {
+    const rec086 = recordings.get('086') as ProjectRecording;
+    const mana = data.characters.get(290) ?? loadRecordsData(file, [290]).characters.get(290)!;
+    const withMana = { ...data, characters: new Map([...data.characters, [290, mana]]) };
+    const build = {
+      attack: 400000,
+      overload: {
+        arm: [
+          { option: 'attack' as const, level: 15 },
+          { option: 'maxAmmo' as const, level: 11 },
+        ],
+      },
+      cube: { id: 1000303, level: 15 },
+      collection: { rarity: 'SR' as const, level: 5 },
+      skillLevels: { skill1: 7 },
+    };
+    const rec = { ...rec086, team: [{ slot: 1, rid: 290, name: 'マナ', controlled: true, build }] };
+    const setup = { enemy: 'range-bigarms-fire', durationSeconds: 20 };
+    const input = buildTeamInput(rec, setup, withMana);
+    const slot = input.slots[0]!;
+    expect(slot.attackOverride).toBe(400000);
+    expect(slot.skills!.levels).toEqual({ skill1: 7, skill2: 10, burst: 10 });
+    expect(slot.buildEffects!.map((e) => `${e.source.kind}:${e.stat}`)).toEqual([
+      'overload:attack',
+      'overload:maxAmmo',
+      'cube:reloadSpeed',
+      'cube:elementDamage',
+      'collection:coreDamage',
+    ]);
+    const off = buildTeamInput(rec, { ...setup, buildEffectsOff: ['cube'] }, withMana);
+    expect(off.slots[0]!.buildEffects!.some((e) => e.source.kind === 'cube')).toBe(false);
+    expect(off.slots[0]!.attackOverride).toBe(400000);
+
+    // リロード 1 回分の長さ（reloadFramesAt）と最大装弾数（maxAmmoAt）に、キューブと OL の行が効く
+    const ctx = (i: TeamInput) => ({ args: { slot: 1, frame: 100 }, input: i });
+    const reload = mana.shot.reloadTime / 0.017;
+    expect(METRICS.reloadFramesAt!.sim(runSimulation(input), ctx(input))).toBeCloseTo(reload * (1 - 0.2969), 6);
+    expect(METRICS.reloadFramesAt!.sim(runSimulation(off), ctx(off))).toBeCloseTo(reload, 6);
+    const olAmmo = data.buildMasters!.overload.options.find((o) => o.option === 'maxAmmo')!.values[10]! / 100;
+    expect(METRICS.maxAmmoAt!.sim(runSimulation(input), ctx(input))).toBe(Math.round(60 * (1 + olAmmo)));
+
+    expect(() => buildTeamInput({ ...rec, team: [{ ...rec.team[0]!, build: undefined }] }, setup, withMana)).toThrow(
+      /枠 1 の育成/,
+    );
+    expect(() => buildTeamInput(rec, setup, { ...withMana, buildMasters: undefined })).toThrow(/マスタ/);
+    expect(() =>
+      buildTeamInput(recordings.get('047')!, { enemy: 'range-bigarms-fire', buildEffectsOff: ['cube'] }, data),
+    ).toThrow(/buildEffectsOff/);
+  });
+
   it('builds automatic conditions with the target profile and a fixed mid-far landing (Stage 18-C)', () => {
     const rec54 = recordings.get('054') as ProjectRecording;
     const manual = buildTeamInput(rec54, { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] }, data);

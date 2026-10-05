@@ -1,0 +1,84 @@
+{
+  "id": "253",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-253_sg_noir_fixed-off.mp4",
+  "original": "2026-10-06_07-58-14.mp4",
+  "durationSec": 214.7,
+  "frames": 12881,
+  "fps": 60,
+  "sizeMB": 259.9,
+  "sha256": "cfa55d7a2e39",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true,
+      "build": {
+        "attack": 448870,
+        "overload": {
+          "head": [
+            {
+              "option": "chargeDamage",
+              "level": 7
+            },
+            {
+              "option": "chargeSpeed",
+              "level": 15
+            }
+          ],
+          "body": [
+            {
+              "option": "defence",
+              "level": 9
+            },
+            {
+              "option": "attack",
+              "level": 9
+            }
+          ],
+          "arm": [
+            {
+              "option": "maxAmmo",
+              "level": 11
+            },
+            {
+              "option": "critDamage",
+              "level": 11
+            }
+          ],
+          "leg": [
+            {
+              "option": "chargeDamage",
+              "level": 11
+            },
+            {
+              "option": "elementDamage",
+              "level": 11
+            }
+          ]
+        },
+        "cube": null,
+        "collection": {
+          "rarity": "SR",
+          "level": 5
+        },
+        "skillLevels": {
+          "skill1": 4,
+          "skill2": 5,
+          "burst": 4
+        }
+      }
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。キューブなし。コレクション SR Lv5。V-0225"
+}
