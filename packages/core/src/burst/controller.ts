@@ -18,12 +18,15 @@ import type { BurstActivation, BurstSchedule, BurstStepKey, CooldownReduction, F
 /** バーストゲージの上限（CDN の target_burst_energy_pershot と同じ単位） */
 export const BURST_GAUGE_MAX = 1_000_000;
 /**
- * バーストの段の長さ（フレーム）。満タン（BURST バーが消えて I のアイコンに替わる）→ I、I → II、II → III の発動は、
- * どれも 29f（ゲーム内の約 0.5 秒）。キャラによらない（C-0073。V-0021 で 9 本・28〜30f）
+ * バーストの段の長さ（フレーム）。I → II、II → III の発動は、どれも 29f（ゲーム内の約 0.5 秒）。キャラによらない
+ * （C-0285。V-0021 で 9 本・28〜30f。両端とも次の段の印で数えたので、表示の遅れは打ち消し合う）
  */
 const BURST_STAGE_FRAMES = 29;
-/** ゲージ満タンから I の発動までのフレーム（満タン後に I の CT 明けを待った場合は、CT 明けのフレームですぐ撃つ） */
-export const BURST_READY_DELAY_FRAMES = BURST_STAGE_FRAMES;
+/**
+ * ゲージ満タン（BURST バーが消えた発）から I の発動（CT が走り出す）までのフレーム。約 23f（22.6〜23.9f。C-0285。V-0189）。
+ * 満タン後に I の CT 明けを待った場合は、CT 明けのフレームですぐ撃つ
+ */
+export const BURST_READY_DELAY_FRAMES = 23;
 /** I → II の発動の間隔（フレーム） */
 export const BURST_STEP1_TO_STEP2_FRAMES = BURST_STAGE_FRAMES;
 /** II → III の発動の間隔（フレーム） */

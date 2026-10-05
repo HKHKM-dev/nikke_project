@@ -102,7 +102,7 @@ describe('ゲージの時刻（1 パス目）', () => {
     const tenth = before.shots[0]!.frames[9]!;
     expect(before.schedule!.gaugeFullFrames[0]).toBe(tenth);
     expect(after.schedule!.gaugeFullFrames[0]).toBe(tenth + 14);
-    expect(after.schedule!.activations[0]!.frame).toBe(tenth + 14 + 29);
+    expect(after.schedule!.activations[0]!.frame).toBe(tenth + 14 + 23);
   });
 
   it('adds the obstacle gauge to the shot that broke them (C-0177・C-0243)', () => {

@@ -60,8 +60,8 @@ describe('BurstController', () => {
     expect(gameSecondsToFrames(10)).toBe(588);
   });
 
-  it('uses 29f for each burst stage: full → I → II → III (C-0073)', () => {
-    expect(DEFAULT_BURST_TIMING.readyDelayFrames).toBe(29);
+  it('uses 23f for full → I and 29f for I → II → III (C-0285)', () => {
+    expect(DEFAULT_BURST_TIMING.readyDelayFrames).toBe(23);
     expect(DEFAULT_BURST_TIMING.step1ToStep2Frames).toBe(29);
     expect(DEFAULT_BURST_TIMING.step2ToStep3Frames).toBe(29);
   });
@@ -91,6 +91,19 @@ describe('BurstController', () => {
     // 満タンまで 200f。フルバースト終了（859）から数え直すので 2 回目の満タンは 859 + 199
     const s = run([unit('Step1', 0), unit('Step2', 0), unit('Step3', 0)], 1100, 5000);
     expect(s.gaugeFullFrames[1]).toBe(859 + 199);
+  });
+
+  it('counts the gauge of a shot crossing the window end on its landing frame (C-0259)', () => {
+    // 1 パス目は発のゲージを着弾のフレームに入れる。窓 [60, 660) の中に着いた分は捨て、終わりのフレーム以降に着いた分は溜める
+    const units = [unit('Step1', 0), unit('Step2', 0), unit('Step3', 0)];
+    const gaugeAt = (landing: number): number => {
+      const state = initialBurstController(units, TIMING_600);
+      for (let f = 0; f <= landing; f++) stepBurstController(state, f, f === 0 ? FAST : f === landing ? 103880 : 0);
+      return state.gauge;
+    };
+    expect(gaugeAt(659)).toBe(0);
+    expect(gaugeAt(660)).toBe(103880);
+    expect(gaugeAt(664)).toBe(103880);
   });
 
   it('is cooldown-bound with a single III of 40 s: full bursts exactly 2,400f apart, 5 in 180 s', () => {

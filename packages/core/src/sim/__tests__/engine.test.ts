@@ -199,7 +199,7 @@ describe('runSimulation on the dynamic cycle (Stage 7)', () => {
     expect(shots(true)).toEqual(shots(false));
   });
 
-  it('traces gauge full, the chain I → II → III 29f apart and the full burst from III', () => {
+  it('traces gauge full, I 23f after it, II・III 29f apart and the full burst from III', () => {
     const sim = runSimulation({ slots: team, enemy, durationSeconds: 60, burst: true, trace: true });
     const schedule = sim.schedule!;
     expect(schedule.model).toBe('dynamic');
@@ -207,13 +207,13 @@ describe('runSimulation on the dynamic cycle (Stage 7)', () => {
     expect(sim.events.find((e) => e.kind === 'gaugeFull')?.frame).toBe(full);
     const bursts = sim.events.filter((e) => e.kind === 'burst').slice(0, 3);
     expect(bursts.map((e) => (e.kind === 'burst' ? [e.frame, e.step, e.slot] : null))).toEqual([
-      [full + 29, 'Step1', 1],
-      [full + 58, 'Step2', 2],
-      [full + 87, 'Step3', 0],
+      [full + 23, 'Step1', 1],
+      [full + 52, 'Step2', 2],
+      [full + 81, 'Step3', 0],
     ]);
-    expect(sim.events.find((e) => e.kind === 'fullBurstStart')?.frame).toBe(full + 87);
-    expect(sim.events.find((e) => e.kind === 'fullBurstEnd')?.frame).toBe(full + 87 + gameSecondsToFrames(10));
+    expect(sim.events.find((e) => e.kind === 'fullBurstStart')?.frame).toBe(full + 81);
+    expect(sim.events.find((e) => e.kind === 'fullBurstEnd')?.frame).toBe(full + 81 + gameSecondsToFrames(10));
     // 全員 CT 40 秒なので 2 回目は 1 回目の I から 40 秒後
-    expect(sim.slots[1]!.burst.activations).toEqual([full + 29, full + 29 + gameSecondsToFrames(40)]);
+    expect(sim.slots[1]!.burst.activations).toEqual([full + 23, full + 23 + gameSecondsToFrames(40)]);
   });
 });
