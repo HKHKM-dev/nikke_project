@@ -1,0 +1,160 @@
+{
+  "verification": "V-0170",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 231,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-add",
+      "note": "いまのモデル（plan/design-anis-star-core-path.md 3.1 節）。H-mul は検証記録に手で書く（コード・定義の切り替えはこのファイルの範囲外）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "fb-core",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 83,
+        "crit": false,
+        "core": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "フルバースト中のシューティングスターのコアの 1 ヒット（会心なし）。受けるダメージ▲の無い組（モデルの 2 回目のフルバーストの最初の刻み）"
+    },
+    {
+      "id": "fb-core-crit",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 83,
+        "crit": true,
+        "core": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "同じ組のコアの会心（H-mul のコア（会心なし）と同じ値になる）"
+    },
+    {
+      "id": "fb-dt-core",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 93,
+        "crit": false,
+        "core": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "フルバースト中のコアの 1 ヒット（会心なし）。イサベルの受けるダメージ▲が乗った組"
+    },
+    {
+      "id": "fb-dt-core-crit",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 93,
+        "crit": true,
+        "core": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "同じ組のコアの会心"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "dca8800a600f3e91a8acc3bad828010b24327abb",
+    "values": {
+      "H-add": {
+        "fb-core": 367811.93982055446,
+        "fb-core-crit": 441374.3277846654,
+        "fb-dt-core": 514789.59097284795,
+        "fb-dt-core-crit": 617747.5091674175
+      }
+    },
+    "seen": {
+      "162": [
+        "162-01",
+        "162-02",
+        "162-03",
+        "162-04",
+        "162-05",
+        "162-06",
+        "162-07",
+        "162-08",
+        "162-09",
+        "162-10",
+        "162-11",
+        "162-12",
+        "162-13",
+        "162-14",
+        "162-15",
+        "162-16",
+        "162-17",
+        "162-18",
+        "162-19",
+        "162-20",
+        "162-21",
+        "162-22",
+        "162-23",
+        "162-24"
+      ],
+      "165": [
+        "165-01",
+        "165-02",
+        "165-03",
+        "165-04",
+        "165-05",
+        "165-06",
+        "165-07",
+        "165-08",
+        "165-09",
+        "165-10",
+        "165-11",
+        "165-12",
+        "165-13",
+        "165-14",
+        "165-15",
+        "165-16",
+        "165-17",
+        "165-18",
+        "165-19",
+        "165-20",
+        "165-21",
+        "165-22",
+        "165-23",
+        "165-24"
+      ]
+    }
+  }
+}
