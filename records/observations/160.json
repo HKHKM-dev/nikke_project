@@ -58,5 +58,36 @@
         "condition": "auto"
       }
     }
+  },
+  {
+    "id": "160-04",
+    "recording": "160",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0188",
+    "readAt": "2026-10-05",
+    "value": 504,
+    "unit": "発",
+    "description": "ミサト（SMG）単騎・スペック固定 ON・オートバースト OFF の、1 回目に BURST バーが消えた（本当の満タン。f2362）発の番号（その発までに撃った発の数）。1〜4 つ目のマガジン（各 120 発）の当たった数 118・119・119・120、5 つ目は満タンの発の後の残弾 96 から 24 発目。満タンまでの的への当たりは 500（C-0083 のとおりなら 500）。満タンは 1 区間目（中近）。V-0188 の判定の指標",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events（バー消失）・tools/captures/hud.ts --mode jumps（当たった数）・tools/captures/reticle-ammo.ts --mode series（残弾）・使い捨てのスクリプト",
+      "note": "当たった数は総ダメージの増分を 1 ヒットの値の格子（ミサトは中近の胴体 8,329 + 3,204 の倍数、リターは 11,329 + 4,357 の倍数）で分解して数えた。格子に乗らない増分（読み誤りの 2 つ組や、読めないフレームのまとまり）は次の増分と足して分解した（一通りに決まらない増分は無かった）。マガジンはヒットの 40f を超える空きで区切った。満タンの発は、バーの消えたフレームのヒット（同じフレームに残弾が 1 減る）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
   }
 ]
