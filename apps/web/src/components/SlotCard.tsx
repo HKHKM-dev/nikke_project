@@ -7,6 +7,7 @@ import {
   isChargeWeapon,
   type BurstStep,
   type CharacterData,
+  type Element,
   type CharacterIndexEntry,
   type GrowthInput,
   type NikkeClass,
@@ -60,6 +61,8 @@ type Props = {
   slotNames: readonly (string | undefined)[];
   /** 枠番号 → キャラ（編成の条件の表示用）。空枠・読み込み中は null */
   teamCharacters: readonly (CharacterData | null)[];
+  /** 敵の属性（属性なしは null）。敵の属性の条件（enemyElement）が今の敵で効くかの表示用 */
+  enemyElement: Element | null;
   slotResult: TeamSlotResult | null;
   dispatch: Dispatch<TeamAction>;
 };
@@ -81,6 +84,7 @@ export function SlotCard({
   skillsStatus,
   slotNames,
   teamCharacters,
+  enemyElement,
   slotResult,
   dispatch,
 }: Props) {
@@ -349,6 +353,7 @@ export function SlotCard({
             disabled={fixedSpec}
             status={skillsStatus}
             teamCharacters={teamCharacters}
+            enemyElement={enemyElement}
             dispatch={dispatch}
           />
           {slotResult && (

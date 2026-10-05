@@ -306,6 +306,7 @@ export function App() {
                   skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
                   slotNames={slotNames}
                   teamCharacters={teamCharacters}
+                  enemyElement={team.enemy.element}
                   slotResult={shown.ok ? (shown.result.slots[i] ?? null) : null}
                   dispatch={dispatch}
                 />

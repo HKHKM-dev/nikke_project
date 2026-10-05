@@ -43,7 +43,7 @@ import { attackRankFor, finalAttacksAt, tiedAtCutoff, type RankSlot, type Rankin
 import { stackWindows } from './stacks.ts';
 import { dependsOnContext, dependsOnRank, isEffectTarget } from './targets.ts';
 import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
-import { isStateStat, type BuffStat, type SkillDefinition } from './types.ts';
+import { isStateStat, selfBuffedStatOf, type BuffStat, type SkillDefinition } from './types.ts';
 
 /** 枠 1 つ分の入力。TeamSlotInput ではなく必要な情報だけを受けて循環 import を避ける（planFixedCycle と同じ流儀） */
 export type TimelineSlot = {
@@ -265,8 +265,12 @@ export function triggerFires(
   heals: readonly HealRecord[] = NO_HEALS,
 ): TriggerFire[] {
   // ニヒリスター編: 時間の周期のトリガーは、出来事の列を使わずに戦闘開始から k × N 秒のフレームを並べる
-  if (isResolvedTimer(trigger))
-    return timerFrames(trigger.everySeconds, frames).map((frame) => ({ frame, context: null }));
+  // 防御力無視ダメージ編: atStart なら戦闘開始時（フレーム 0）にも発火する
+  if (isResolvedTimer(trigger)) {
+    const timer = timerFrames(trigger.everySeconds, frames);
+    const all = 'atStart' in trigger && trigger.atStart === true && frames > 0 ? [0, ...timer] : timer;
+    return all.map((frame) => ({ frame, context: null }));
+  }
   return trackTriggerFires(trigger, slotIndex, schedule, eventsOf(schedule, shots, frames, heals));
 }
 
@@ -385,6 +389,35 @@ export function shotCountWindows(
   return merged;
 }
 
+/**
+ * 防御力無視ダメージ編: 「解除条件：フルバーストタイムが終了した時」の窓。始まり s から、s より後に終わる最初のフルバーストの終わりまで
+ * （無ければ frames まで）。維持中にまた付いたら和集合（plan/design-true-damage-element.md 3.2 節）
+ */
+export function untilFullBurstEndWindows(
+  starts: readonly number[],
+  schedule: BurstSchedule | null,
+  frames: number,
+): [number, number][] {
+  const ends = (schedule?.fullBurstWindows ?? []).map((w) => w.end);
+  const merged: [number, number][] = [];
+  for (const s of [...starts].sort((a, b) => a - b)) {
+    if (s >= frames) continue;
+    const end = Math.min(ends.find((e) => e > s) ?? frames, frames);
+    const last = merged[merged.length - 1];
+    if (last !== undefined && s <= last[1]) {
+      if (end > last[1]) last[1] = end;
+      continue;
+    }
+    merged.push([s, end]);
+  }
+  return merged;
+}
+
+/** 防御力無視ダメージ編: フレーム frame がフルバーストタイムの中か（条件 inFullBurst） */
+export function inFullBurstAt(schedule: BurstSchedule | null, frame: number): boolean {
+  return (schedule?.fullBurstWindows ?? []).some((w) => w.start <= frame && frame < w.end);
+}
+
 /** 同一効果の窓を和集合にする（上書き延長。重ねない）。frames が上限 */
 function unionWindows(fireFrames: readonly number[], durationFrames: number, frames: number): [number, number][] {
   if (durationFrames <= 0) return [];
@@ -486,6 +519,19 @@ export function planBuffTimeline(
       });
       return;
     }
+    // 防御力無視ダメージ編: 「解除条件：フルバーストタイムが終了した時」は時刻表のフルバーストの終わりで窓を閉じる
+    if (effect.durationUntil === 'fullBurstEnd') {
+      slots.forEach((target, slotIndex) => {
+        if (target === null) return;
+        const mine = fires
+          .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, f.context))
+          .map((f) => f.frame);
+        for (const [start, end] of untilFullBurstEndWindows(mine, schedule, frames)) {
+          out.push(windowOf(slotIndex, sourceSlotIndex, effect, { start, end }));
+        }
+      });
+      return;
+    }
     if (!dependsOnContext(effect)) {
       const merged = effectWindows(
         fires.map((f) => f.frame),
@@ -534,7 +580,12 @@ export function planBuffTimeline(
     for (const { sourceSlotIndex, effect } of conditional) {
       const accepted: TriggerFire[] = [];
       for (const fire of triggerFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey)) {
-        if (!selfBuffedAt(passive, stateSources, sourceSlotIndex, effect.condition!.selfBuffed, fire.frame)) {
+        const selfBuffed = selfBuffedStatOf(effect.condition);
+        const ok =
+          selfBuffed === undefined
+            ? inFullBurstAt(schedule, fire.frame)
+            : selfBuffedAt(passive, stateSources, sourceSlotIndex, selfBuffed, fire.frame);
+        if (!ok) {
           conditionSkips.push({
             frame: fire.frame,
             sourceSlotIndex,

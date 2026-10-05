@@ -36,6 +36,8 @@ const buffs: BuffTotals = {
   coreDamage: 0,
   normalAttackDamage: 0,
   normalCritRate: 0,
+  trueDamage: 0,
+  trueDamageConversion: 0,
   weapon: null,
 };
 
@@ -114,6 +116,8 @@ describe('addRatioBuff / addFlatAttack', () => {
       coreDamage: 0,
       normalAttackDamage: 0,
       normalCritRate: 0,
+      trueDamage: 0,
+      trueDamageConversion: 0,
       weapon: null,
     });
     expect(d).toEqual({
@@ -140,6 +144,8 @@ describe('addRatioBuff / addFlatAttack', () => {
       coreDamage: 0,
       normalAttackDamage: 0,
       normalCritRate: 0,
+      trueDamage: 0,
+      trueDamageConversion: 0,
       weapon: null,
     });
     // Stage 8 の 2 つもそれぞれのフィールドへ

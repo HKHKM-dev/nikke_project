@@ -4,7 +4,7 @@
 - 関連: [backlog.md](backlog.md) 6 節の「防御力無視ダメージ・有利コードの攻撃ダメージ等の語彙」の行、[design-skill-note-kinds.md](design-skill-note-kinds.md)（notes の種類）、[design-damage-taken.md](design-damage-taken.md)（敵の受けるダメージ▲）、[design-ram-s1.md](design-ram-s1.md)（編成で決まる静的な条件 `squad`）、[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) 2.1 節（発射体爆発ダメージ▲）
 - 対象: ウンファ：TU（95）S1・S2・バースト、エマ：TU（93）S1・S2・バースト、クイーン（真）（870）S1・S2
 - 検証記録: V-0171（クイーン（真）S1 の有利コードの攻撃ダメージ▲。語彙を足さずに確かめられる部分。撮影待ち）
-- 状態: 起案（オーナーの判断待ち。6 節の論点）。実装はしていない。どの効果も根拠の結論が無いので、定義は今の「未対応」の notes のまま
+- 状態: 2026-10-05 にオーナーが承認（6 節の論点はすべて推奨どおり）し、同日に語彙を実装した（8 節）。どの効果も根拠の結論が無いので、定義には使っていない（notes は「語彙はあるが根拠が無い」に直した）。クイーン（真）のバーストの 1more の `assumes` だけ `enemyElement` に置き換えた
 
 ## 1. 何が困っているか
 
@@ -179,7 +179,7 @@
 - 2・3 の連鎖の I・III に何を使うかは、所持と育成（`private/owner.md`）で決まる。機構が確定したキャラ（AGENTS.md の定義）から選ぶ。
 - ウンファ：TU S1 は、カモフラージュの中で「変化」と「▲」が同時に起きる。1 発の値で見えるのは (攻撃力 / (攻撃力 − 100)) × (▲の乗数) の積で、変化の分（防御力 100 ÷ 攻撃力ほど）と▲の分（数十 %）は大きさが桁違いなので、積からどちらも読める。ただし、▲の置き場所 (a)・(b) は、ウンファ：TU に攻撃ダメージ▲が乗っていないと同じ値になる（論点 1）。
 
-## 6. 論点（オーナーに決めてほしいこと）
+## 6. 論点（2026-10-05 にオーナーがすべて推奨どおりと決めた）
 
 1. **防御力無視ダメージ▲の置き場所**: (a) 別の乗数 (1 + Σ)、(b) 攻撃ダメージ▲の群に足す。
    - 推奨: 置き場所を表の 1 行にして語彙を作り、値は検証で決める。最初の検証（5 節の 3）は攻撃ダメージ▲の乗らない編成で撮り、(a)・(b) は区別しない（結論の文に「攻撃ダメージ▲が無いとき」と書く）。区別は、攻撃ダメージ▲を持つ機構が確定したキャラを足した 2 本目で行う。
@@ -201,3 +201,14 @@
 - 同じ部隊の味方全体への対象の絞り込み（エマ S2・ウンファ S2 のクリティカル系）。backlog.md 6 節の「対象の語彙」の行で扱う。
 - 回復（エマ S1 の持続回復）。「回復の定義」の行で扱う。
 - 被弾による解除（カモフラージュ）・単一攻撃対象からの除外。前提の外。
+
+## 8. 実装の記録（2026-10-05）
+
+- 型と検証（`skills/types.ts`）: stat `trueDamage`・`trueDamageConversion`（フラグ。`timed` の `self` だけ）、`weaponChange` の `trueDamage`、`timed` の `durationUntil: 'fullBurstEnd'`、条件 `{ inFullBurst: true }`、周期のトリガーの `atStart`、静的な条件 `withCharacter`・`enemyElement`（`passive`・`timed`・`damage`）。`durationUntil`・`inFullBurst`・周期のトリガーは、1 パス目で窓を追わない stat にだけ書ける（`isFirstPassTrackedStat`。攻撃力・射撃に効く stat・状態の stat は不可）。`durationUntil` はスタックと組み合わせられない。
+- 窓（`skills/timeline.ts`）: `untilFullBurstEndWindows`（次のフルバーストの終わりまで）、`inFullBurstAt`（条件の判定。満たさない発火は `conditionSkips` に出る）、周期のトリガーの `atStart`（フレーム 0 にも発火）。1 パス目（`frame/firstPass.ts`）は変えていない（条件の stat は `selfBuffedStatOf` で取る）。
+- 1 発の式（`damage.ts`）: `isTrueDamageShot`（`trueDamageConversion` の窓か、`trueDamage` の使用武器の変更）なら、通常攻撃の基礎を max(1, 攻撃力) にし、`trueDamageMultiplier` を掛ける。置き場所は `TRUE_DAMAGE_BUCKET`（いまは `separate`。未確定の仮定で、使う定義は無い）。射撃ごとの倍率ダメージの基礎は変えない。
+- 編成の条件（`skills/composition.ts`）: `withCharacterAllows`・`enemyElementAllows`。敵の属性は `TeamInput.enemy.element`（最小構成の警告 `records/minimal.ts` では録画の的の属性）。
+- 表示: スキル欄の編成の条件に「編成」「敵の属性」、持続効果の補足に「フルバーストタイムなら」「フルバーストタイムの終了まで」、stat のラベル。CLI（`sim-run.ts`）の編成の条件の表にも出す。
+- 退化: 既存のテストと照合は数値を変えずに通った。
+- クイーン（真）のバーストの 1more の攻撃力▲: `assumes`（対象が風圧コード）を `enemyElement: 'Wind'` に置き換えた。灼熱の的の録画 021・040 には、この▲が効くダメージの観測値が無く、`npm run records:check` の残差の一覧は 1 件も変わらなかった。
+- notes: ウンファ：TU・エマ：TU・クイーン（真）の未対応の理由を「語彙はあるが根拠の結論が無い（撮影が要る）」に直した。カモフラージュの被弾での解除を `outOfScope`、エマ S2 の陽動発動不可を `noDamage` で足した。追撃・バトンタッチは論点 5 のとおり `unimplemented` のまま、理由を「ほかのペルソナのキャラがいる編成で起きる」にした。

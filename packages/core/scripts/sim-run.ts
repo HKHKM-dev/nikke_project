@@ -325,24 +325,29 @@ if (
   console.error(`--shot-counting takes hybrid, firingSlots or average, got ${shotCounting}`);
   process.exit(2);
 }
-// 編成の条件（burstStepMix・squad）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
+// 編成の条件（burstStepMix・squad・withCharacter・enemyElement）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
 const compositionCharacters = slots.map((s) => s.character);
 const compositionRows = slots.flatMap((slot, i) =>
   SKILL_SLOTS.flatMap((skill) =>
     (slot.skills?.definition?.skills[skill].effects ?? []).flatMap((e, effectIndex) => {
       const mix = 'burstStepMix' in e ? e.burstStepMix : undefined;
       const squad = 'squad' in e ? e.squad : undefined;
-      if (mix === undefined && squad === undefined) return [];
+      const withCharacter = 'withCharacter' in e ? e.withCharacter : undefined;
+      const enemyElement = 'enemyElement' in e ? e.enemyElement : undefined;
+      if (mix === undefined && squad === undefined && withCharacter === undefined && enemyElement === undefined)
+        return [];
       const conditions = [
         mix && `other ${mix.otherBurstStep} ${mix.present ? 'present' : 'absent'}`,
         squad && `same squad (${slot.character.squad}) ${squad.present ? 'present' : 'absent'}`,
+        withCharacter && `character ${withCharacter.rid} ${withCharacter.present ? 'present' : 'absent'}`,
+        enemyElement && `enemy ${enemyElement}`,
       ].filter(Boolean);
       return [
         {
           slot: `slot ${i + 1} ${slot.character.name.ja}`,
           effect: `${skill}[${effectIndex}] ${e.kind}`,
           condition: conditions.join(' & '),
-          applies: compositionAllows(e, compositionCharacters, i),
+          applies: compositionAllows(e, compositionCharacters, i, input.enemy.element),
         },
       ];
     }),
