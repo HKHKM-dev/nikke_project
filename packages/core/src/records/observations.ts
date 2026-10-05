@@ -1,5 +1,6 @@
 // Stage 19-B: 観測値（records/observations/<録画 id>.json）の型・検証と、照合ランナー（モデルと比べて残差を出す）。
 // plan/design-stage19.md 2.3・2.3.1・2.5 節。
+import { BURST_GAUGE_MAX } from '../burst/controller.ts';
 import { hitFrameOf, hitFramesOf, videoFrameOf, type BurstSchedule } from '../burst/schedule.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
@@ -417,7 +418,29 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
+  fullBurstCrossingShotGauge: { args: ['slot'], sim: fullBurstCrossingShotGauge },
 };
+
+/**
+ * アニス：スター編（plan/design-anis-star-gauge-timing.md 3.5 節・7 節の V-A）: フルバーストの窓の中で撃ち、窓の後に着いた枠の発
+ * （窓の終わりを跨ぐ発）が溜めたゲージ（バーの最大に対する %。発と射撃ごとの倍率ダメージのヒットの合計）。モデルの最初の跨ぐ発の値。
+ * 跨ぐ発が無ければ誤り
+ */
+function fullBurstCrossingShotGauge(result: SimResult, ctx: MetricContext): number {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  for (const w of schedule.fullBurstWindows) {
+    const crossing = result.shotGauges.filter(
+      (g) => g.slotIndex === slotIndex && w.start <= g.shotFrame && g.shotFrame < w.end && g.frame >= w.end,
+    );
+    if (crossing.length === 0) continue;
+    const first = crossing[0]!.shotFrame;
+    const energy = crossing.filter((g) => g.shotFrame === first).reduce((a, g) => a + g.energy, 0);
+    return Math.round((energy / BURST_GAUGE_MAX) * 10_000) / 100;
+  }
+  throw new Error('フルバーストの終わりを跨ぐ発が無い');
+}
 
 function videoFramesBetween(schedule: SimResult['schedule'], ctx: MetricContext): number {
   const from = gameSecondsToFrame(Number(ctx.args.fromSec));

@@ -114,6 +114,8 @@ export type TeamPlan = {
   cycleGaugeHits: FirstPassResult['cycleGaugeHits'];
   /** レイヴン編: 持続ダメージで溜めたゲージ（1 パス目。テスト用） */
   dotGauges: FirstPassResult['dotGauges'];
+  /** 発のゲージ（着弾のフレーム。1 パス目の記録。frame/firstPass.ts） */
+  shotGauges: FirstPassResult['shotGauges'];
 };
 
 /**
@@ -133,7 +135,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const untargetable = untargetableRanges(enemy.events, frames);
   // Stage 18-C: 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）
   const landing = planLandings(slots, enemy, frames, resolvePassiveStates(timelineSlots));
-  const { shots, schedule, instants, cycleGaugeHits, dotGauges } = runFirstPass(timelineSlots, {
+  const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges } = runFirstPass(timelineSlots, {
     frames,
     model,
     burst: input.burst ?? false,
@@ -148,7 +150,19 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   });
   const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing, input.sustainedHitRateUp ?? true);
   const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
-  return { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, cycleGaugeHits, dotGauges };
+  return {
+    frames,
+    shots,
+    schedule,
+    timeline,
+    skillHits,
+    instants,
+    untargetable,
+    landing,
+    cycleGaugeHits,
+    dotGauges,
+    shotGauges,
+  };
 }
 
 /** Stage 11 モダニア: その枠の射撃ごとの倍率ダメージ（1 トリガーの値に畳み込む）。定義が無ければ空 */

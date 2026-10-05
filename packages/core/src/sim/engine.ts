@@ -44,6 +44,7 @@ import {
   perShotDamageOf,
   planTeamRun,
   type SkillHitEvent,
+  type TeamPlan,
 } from '../frame/plan.ts';
 import { type DamagePerSecond, type PartialChargeTotals, type TeamInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -139,6 +140,8 @@ export type SimResult = {
   landings: LandingFrameSpan[];
   /** Stage 16-B: 1 秒ごとのダメージ（通常攻撃・バーストスキル・倍率ダメージの合計） */
   damagePerSecond: DamagePerSecond;
+  /** 発のゲージ（着弾のフレーム。1 パス目の記録。照合用） */
+  shotGauges: TeamPlan['shotGauges'];
   /** trace: false なら空 */
   events: SimEvent[];
 };
@@ -162,7 +165,7 @@ export function runSimulation(simInput: SimInput): SimResult {
   const trace = input.trace ?? false;
 
   // 1 パス目（calc と共通）: 射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動。2 パス目がこの下のフレームループ
-  const { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing } = planTeamRun({
+  const { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, shotGauges } = planTeamRun({
     ...input,
     model,
   });
@@ -409,6 +412,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     untargetable,
     landings: landing?.spans ?? [],
     damagePerSecond: perSecond,
+    shotGauges,
     events,
   };
 }

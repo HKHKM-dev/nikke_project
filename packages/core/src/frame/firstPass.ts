@@ -168,6 +168,11 @@ export type FirstPassResult = {
    * レイヴン編: 持続ダメージで溜めたゲージ（発生順）。apply は付けたとき（発火のフレーム）、tick は予約した tick のフレーム。テスト用
    */
   dotGauges: { slotIndex: number; kind: 'apply' | 'tick'; frame: number; energy: number }[];
+  /**
+   * 発と、射撃ごとの倍率ダメージのヒットで溜めたゲージ（予約した順）。shotFrame は発射、frame は着弾（飛ぶ時間を足したフレーム）。
+   * フルバーストの終わりを跨ぐ発の照合用（plan/design-anis-star-gauge-timing.md 3.5 節）
+   */
+  shotGauges: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
 };
 
 /**
@@ -560,8 +565,10 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   });
   const dotGauges: FirstPassResult['dotGauges'] = [];
   const pendingGauge = new Map<number, number>();
-  /** 発のゲージを、着弾のフレーム（f + 飛ぶ時間）に入れる。f のフレームならこのフレームのゲージに返す */
-  const landingGauge = (at: number, f: number, energy: number): number => {
+  const shotGauges: FirstPassResult['shotGauges'] = [];
+  /** 枠 i の発のゲージを、着弾のフレーム（f + 飛ぶ時間）に入れる。f のフレームならこのフレームのゲージに返す */
+  const landingGauge = (i: number, at: number, f: number, energy: number): number => {
+    if (energy > 0 && at < frames) shotGauges.push({ slotIndex: i, shotFrame: f, frame: at, energy });
     if (at === f) return energy;
     if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
     return 0;
@@ -677,7 +684,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const energy =
         energyAt(i, f) * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +
         (obstacles[i]!.get(shotCounts[i]!) ?? 0) * obstacleEnergies[i]!;
-      gauge += landingGauge(f + shotFlightAt(i, f), f, energy);
+      gauge += landingGauge(i, f + shotFlightAt(i, f), f, energy);
     });
     // ヘルム編: ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
     for (const t of damageGaugeTrackers) {
@@ -688,7 +695,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (!counted.fired) continue;
       // 射撃ごとの倍率ダメージのヒット（S1 の追加ダメージなど）も、発の着弾から数える（飛ぶ時間。plan/design-anis-star-gauge-timing.md 3.1 節）
       const flight = shotFlightAt(t.slotIndex, f);
-      for (const d of t.gaugeHits) gauge += landingGauge(f + flight + d, f, t.energy);
+      for (const d of t.gaugeHits) gauge += landingGauge(t.slotIndex, f + flight + d, f, t.energy);
     }
     // レイヴン編: ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
     // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）
@@ -974,5 +981,6 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     rankAttackWindows: windowsOfSources(attackTrack),
     cycleGaugeHits,
     dotGauges,
+    shotGauges,
   };
 }
