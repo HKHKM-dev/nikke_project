@@ -25,7 +25,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 2,
+            "shot": 1,
+            "count": "163-13"
+          }
+        ]
       }
     }
   },
@@ -56,7 +63,14 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "condition": "auto"
+        "condition": "auto",
+        "obstacles": [
+          {
+            "slot": 2,
+            "shot": 1,
+            "count": "163-13"
+          }
+        ]
       }
     }
   },
@@ -104,7 +118,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 2,
+            "shot": 1,
+            "count": "163-13"
+          }
+        ]
       }
     }
   },
@@ -137,7 +158,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 2,
+            "shot": 1,
+            "count": "163-13"
+          }
+        ]
       }
     }
   },
@@ -170,7 +198,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 2,
+            "shot": 1,
+            "count": "163-13"
+          }
+        ]
       }
     }
   },
@@ -229,7 +264,14 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 2,
+            "shot": 1,
+            "count": "163-13"
+          }
+        ]
       }
     }
   },
@@ -286,10 +328,10 @@
   {
     "id": "163-13",
     "recording": "163",
-    "source": "V-0192",
+    "source": "V-0193",
     "readAt": "2026-10-05",
     "kind": "count",
-    "use": "record",
+    "use": "input",
     "value": 2,
     "unit": "個",
     "description": "アニス：スター（操作）の最初の発（f1281 に撃ち、f1295 に着弾。戦闘の最初のアニス：スターの発）の爆発で崩れた物の数。的の右の縦長のコンテナの柱と、柱の左の小さい樽",

@@ -38,7 +38,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "1 回目のフルバーストのデルタのコアの 1 ヒット（会心なし）。162-04 の撮り直し"
+      "note": "1 回目のフルバーストのデルタのコアの 1 ヒット（会心なし）。162-04 の撮り直し",
+      "observations": ["165-01"]
     },
     {
       "id": "isabel-fb-hit",
@@ -56,7 +57,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "同じフルバーストのイサベルの胴体の 1 ペレット（会心なし）"
+      "note": "同じフルバーストのイサベルの胴体の 1 ペレット（会心なし）",
+      "observations": ["165-02"]
     },
     {
       "id": "anis-fb-core",
@@ -74,7 +76,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "同じフルバーストのアニス：スターの発のコアの 1 ヒット（会心なし。CORE HIT）"
+      "note": "同じフルバーストのアニス：スターの発のコアの 1 ヒット（会心なし。CORE HIT）",
+      "observations": ["165-03"]
     },
     {
       "id": "anis-fb-add",
@@ -90,7 +93,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "同じ発の S1 の追加ダメージ（会心なし）"
+      "note": "同じ発の S1 の追加ダメージ（会心なし）",
+      "observations": ["165-04"]
     },
     {
       "id": "anis-after-fb-hit",
@@ -108,7 +112,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "フルバーストの後の S2 の窓のアニス：スターの胴体の 1 ヒット（会心なし）"
+      "note": "フルバーストの後の S2 の窓のアニス：スターの胴体の 1 ヒット（会心なし）",
+      "observations": ["165-05"]
     },
     {
       "id": "anis-fb-star",
@@ -124,7 +129,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "1 回目のフルバーストの中のシューティングスターの胴体の 1 ヒット（会心なし）。C-0213"
+      "note": "1 回目のフルバーストの中のシューティングスターの胴体の 1 ヒット（会心なし）。C-0213",
+      "observations": ["165-06"]
     },
     {
       "id": "anis-after-fb-star",
@@ -140,7 +146,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "フルバーストの後の S2 の窓のシューティングスターの胴体の 1 ヒット（会心なし）。C-0213"
+      "note": "フルバーストの後の S2 の窓のシューティングスターの胴体の 1 ヒット（会心なし）。C-0213",
+      "observations": ["165-07"]
     },
     {
       "id": "lone-star",
@@ -156,7 +163,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "単独の I のバーストの窓のシューティングスターの胴体の 1 ヒット（会心なし。S2 なし）"
+      "note": "単独の I のバーストの窓のシューティングスターの胴体の 1 ヒット（会心なし。S2 なし）",
+      "observations": ["165-08"]
     },
     {
       "id": "lone-shot-intervals",
@@ -172,7 +180,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "単独の I のバーストの窓（モデルのフレーム 1162〜1750）のアニス：スターの発の間隔。C-0214（リロードを挟む間隔も入る）"
+      "note": "単独の I のバーストの窓（モデルのフレーム 1162〜1750）のアニス：スターの発の間隔。C-0214（リロードを挟む間隔も入る）",
+      "observations": ["165-09"]
     },
     {
       "id": "gauge-full",
@@ -186,7 +195,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "1 回目のフルバーストの入りから、BURST バーが消える（満タン）までの動画のフレーム数。C-0207"
+      "note": "1 回目のフルバーストの入りから、BURST バーが消える（満タン）までの動画のフレーム数。C-0207",
+      "observations": ["165-10"]
     },
     {
       "id": "lone-burst-delay",
@@ -200,7 +210,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "1 回目のフルバーストの入りから、アニス：スターが I だけ撃って切れる発動までの動画のフレーム数"
+      "note": "1 回目のフルバーストの入りから、アニス：スターが I だけ撃って切れる発動までの動画のフレーム数",
+      "observations": ["165-11"]
     },
     {
       "id": "full-burst-intervals",
@@ -214,7 +225,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "フルバーストの入りどうしの間隔（動画のフレーム）の最初の 3 つ"
+      "note": "フルバーストの入りどうしの間隔（動画のフレーム）の最初の 3 つ",
+      "observations": ["165-12"]
     }
   ],
   "predicted": {
