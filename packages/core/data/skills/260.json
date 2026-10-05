@@ -20,7 +20,8 @@
             "en": "Once per normal shot (every shot is assumed to hit; once even for the 2 hits of Annihilation Mode). Core and distance do not boost it (recording 44)"
           },
           "claims": [
-            "C-0105"
+            "C-0105",
+            "C-0119"
           ]
         },
         {
@@ -58,7 +59,10 @@
           "target": "allies",
           "stat": "hitRate",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0170"
+          ]
         },
         {
           "kind": "timed",
@@ -78,7 +82,8 @@
             "en": "Hits are counted regardless of the hit rate state; the state is checked at every 200th hit"
           },
           "claims": [
-            "C-0124"
+            "C-0124",
+            "C-0118"
           ]
         }
       ]

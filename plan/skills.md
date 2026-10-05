@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 29・効果 130（根拠あり 68）・notes 86（根拠あり 29）
+件数: キャラ 29・効果 130（根拠あり 71）・notes 86（根拠あり 29）
 
 notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足 5
 
@@ -143,7 +143,7 @@ notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足
 ## 160 ユニ
 
 - **skill1**: supported
-  - effects[0] timed・fullBurstStart・chargeSpeed: 根拠なし
+  - effects[0] timed・fullBurstStart・chargeSpeed: C-0013（確定）
 - **skill2**: supported
   - effects[0] timed・fullChargeShot・maxAmmo: 根拠なし
   - effects[1] heal・fullChargeShot: C-0082（確定）
@@ -217,12 +217,12 @@ notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足
 ## 260 モダニア
 
 - **skill1**: supported
-  - effects[0] damage・normalHit・additional: C-0105（確定）
+  - effects[0] damage・normalHit・additional: C-0105（確定）、C-0119（確定）
   - effects[1] timed・normalHit・critDamage: 根拠なし
   - effects[2] timed・normalHit・maxAmmo: 根拠なし
 - **skill2**: supported
-  - effects[0] timed・fullBurstStart・hitRate: 根拠なし
-  - effects[1] timed・normalHit・attack: C-0124（確定）
+  - effects[0] timed・fullBurstStart・hitRate: C-0170（仮説）
+  - effects[1] timed・normalHit・attack: C-0124（確定）、C-0118（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・infiniteAmmo: 根拠なし
   - effects[1] weaponChange・burstUse: 根拠なし
@@ -305,7 +305,7 @@ notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足
   - notes[0] 計算に無関係: 直前にバーストスキルを使用していない味方への防御力▲はダメージに関係しない: 根拠なし
 - **skill2**: supported
   - effects[0] heal・normalShot: 根拠なし
-  - effects[1] timed・healed・attackDamage: 根拠なし
+  - effects[1] timed・healed・attackDamage: C-0050（確定）
   - notes[0] 計算に無関係: リラックス（受ける HP 回復量▲）・無敵・挑発はダメージに関係しない: 根拠なし
   - notes[1] 補足: リラックスは 20 スタックで回復するまでの数え上げにだけ使う: 根拠なし
 - **burst**: supported

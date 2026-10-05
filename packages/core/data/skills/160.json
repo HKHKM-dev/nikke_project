@@ -11,7 +11,10 @@
           "target": "allies",
           "stat": "chargeSpeed",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0013"
+          ]
         }
       ]
     },
