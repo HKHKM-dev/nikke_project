@@ -1,7 +1,7 @@
 # 設計書: 着地の後の照準をモデルに入れるか（C-0194・C-0195・C-0199・C-0200）
 
 - 対象: `D:\nikke_project`
-- 状態: **起案（オーナーの判断待ち）**（2026-10-05 起案。6 節の論点）
+- 状態: **実装済み**（2026-10-05 起案。同日、オーナーが 6 節で案 A・B-3 を選び、4.1 節の注記の直しを実装した）
 - 関連: [design-stage18.md](design-stage18.md) 12.9 節の 6（着地直後の外れを注記にした所）、[design-rl-core-by-projectile.md](design-rl-core-by-projectile.md)（RL の弾の種類ごとの行）、[design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)（仮説を明記して入れた前例）
 - 根拠: C-0193・C-0194（確定）、C-0199（確定）、C-0195・C-0200（仮説）。検証記録は V-0091・V-0120。課題は `plan/backlog.md` 2-8
 
@@ -157,6 +157,8 @@ C-0200 は、案 B で「着くフレーム」を出すときにだけ使う（�
    - 推奨: **案 A なら決めなくてよい**（使わない）。案 B を選ぶなら **J-1（仮説と明記して入れる）**。J-2 は紅蓮BS の 20 回の当てはめで 2 回外し、外れを多めに出す。
 4. **注記の直し（4.1 節）を、この設計の承認と同じ PR で実装してよいか**
    - 推奨: する（計算は変えず、注記の文と出す条件だけ）。
+
+**オーナーの判断（2026-10-05）**: 1 は案 A、2 は B-3、3 は決めない（案 A では使わない）、4 は同じ PR で実装する。4.1 節のとおり実装した（`frame/landing.ts` の `landingNotes`・`LANDING_AIM_MISS_FRAMES`、`frame/shooter.ts` の `windowEndFirstShotFrames`。注記の code は `landing-first-shot-miss`・`landing-first-shot-excluded`・`landing-aim-wait`）。
 
 ## 7. 決めた後の進め方
 

@@ -375,6 +375,20 @@ export function hideShooter(
  *   （V-0135。071 の 1 回目の明け）。
  * - 弾切れのリロード中はそのまま続ける
  */
+/**
+ * 窓の明けに、止まっていた（ready の）枠が 1 発目を撃つまで（フレーム）。チャージ武器は構え + チャージ（入力が UP の RL は 1f 短い。
+ * C-0229）、そうでない武器は構え（C-0114）。unhideShooter と、着地の後の照準の注記（frame/landing.ts。plan/design-landing-aim.md）で使う
+ */
+export function windowEndFirstShotFrames(
+  shot: ShotParams,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): number {
+  return isChargeWeapon(shot)
+    ? Math.max(0, firstShotFrames(shot, model, params) - windowEndShorterFrames(shot, model))
+    : model.aimInFrames;
+}
+
 export function unhideShooter(
   state: ShooterState,
   shot: ShotParams,
@@ -400,7 +414,7 @@ export function unhideShooter(
   delete state.chargeElapsed;
   if (isChargeWeapon(shot)) {
     // 入力が UP の RL は、明けの構えが戦闘開始より 1f 短い（C-0229。V-0143）
-    const first = Math.max(0, firstShotFrames(shot, model, params) - windowEndShorterFrames(shot, model));
+    const first = windowEndFirstShotFrames(shot, model, params);
     state.wait = state.phase === 'priming' && shot.inputType !== 'DOWN_Charge' ? Math.max(state.wait, first) : first;
   } else if (state.phase === 'ready') state.wait = model.aimInFrames;
   else state.wait = Math.max(state.wait, model.aimInFrames);

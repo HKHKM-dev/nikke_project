@@ -514,7 +514,7 @@ describe('編成（自動の条件）', () => {
         },
         durationSeconds: duration,
       }).slots[0]!.notes.map((n) => n.code);
-    expect(codes(AR)).toEqual(['hit-rate', 'auto-condition']);
+    expect(codes(AR)).toEqual(['hit-rate', 'auto-condition', 'landing-aim-wait']);
     expect(codes(RL)).not.toContain('hit-rate');
     expect(codes(SG)).toEqual(['hit-rate', 'auto-condition']);
     expect(codes(RL)).toContain('landing-first-shot-miss');
@@ -544,6 +544,35 @@ describe('編成（自動の条件）', () => {
     expect(codes(MG)).toContain('mg-spin-up-core');
     expect(codes(AR, 240)).toContain('landing-unmeasured');
     expect(codes(SMG)).toContain('hit-rate');
+    // plan/design-landing-aim.md 4.1 節: 照準による 1 発目の外れは、窓の明けから 1 発目までが 50f 未満の RL・SR だけ（C-0194）。
+    // 紅蓮：ブラックシャドウ（チャージ 0.3 秒・射撃姿勢維持）は出し、チャージ 1 秒の RL・SR（明けから約 70f）には出さない
+    const scarlet = weapon('RL', null, 1, {
+      fireType: 'ProjectileDirect',
+      projectile: { speed: 400, homing: 'lv1', radius: 50, explosionRange: 500 },
+      chargeTime: 0.3,
+      inputType: 'UP',
+      maintainFireStance: 23,
+      uptypeFireTiming: 1,
+    });
+    const slowRl = weapon('RL', null, 1, {
+      fireType: 'ProjectileDirect',
+      projectile: { speed: 400, homing: 'lv1', radius: 50, explosionRange: 500 },
+      chargeTime: 1,
+      inputType: 'UP',
+    });
+    const slowSr = weapon('SR', { min: 45, max: 100 }, 1, { chargeTime: 1, inputType: 'UP' });
+    expect(codes(scarlet)).toContain('landing-first-shot-miss');
+    expect(codes(slowRl)).not.toContain('landing-first-shot-miss');
+    expect(codes(slowSr)).not.toContain('landing-first-shot-miss');
+    // 着地の後の 1 発目を除いて決めた行（直進弾 100・誘導弾 100）は別の注記。直進弾 400 には出さない
+    expect(codes(RL_HOMING)).toContain('landing-first-shot-excluded');
+    expect(codes(rl('ProjectileDirect', 100))).toContain('landing-first-shot-excluded');
+    expect(codes(slowRl)).not.toContain('landing-first-shot-excluded');
+    // C-0195（仮説）: AR・SMG の撃ち始めの待ちは未実装の注記。MG・SG・RL には出さない
+    expect(codes(SMG)).toContain('landing-aim-wait');
+    expect(codes(MG)).not.toContain('landing-aim-wait');
+    expect(codes(SG)).not.toContain('landing-aim-wait');
+    expect(codes(scarlet)).not.toContain('landing-aim-wait');
   });
 
   it('feeds the landing bullet hit rate to the gauge of the first pass', () => {
