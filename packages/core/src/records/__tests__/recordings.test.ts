@@ -18,6 +18,7 @@ import {
   sortRecordings,
   validateRecordings,
   type ProjectRecording,
+  type RecordingBuild,
   type RecordingEntry,
 } from '../recordings.ts';
 
@@ -94,7 +95,8 @@ describe('records/recordings', () => {
             ...first,
             id: '002',
             fixedSpec: false,
-            team: [{ ...member, build: { attack: 0.5, skillLevels: { skill3: 1 } } }],
+            // 型の外の値（JSON から読んだ壊れた育成）
+            team: [{ ...member, build: { attack: 0.5, skillLevels: { skill3: 1 } } as unknown as RecordingBuild }],
           },
         ],
       },
