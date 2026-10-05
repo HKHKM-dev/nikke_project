@@ -4,7 +4,7 @@
 - 話題: スキル・キャラ固有
 - 日付: 2026-10-05
 - Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）、plan/design-burst-split-hits.md。backlog 2-4
-- 録画: `213`
+- 録画: `221`
 - 状態: 調査中
 - 派生元: `V-0138`
 

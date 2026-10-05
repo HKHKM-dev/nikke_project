@@ -1935,7 +1935,7 @@
 - **[V-0201](../records/verifications/V-0201-rapi-burst-delay-minimal.md)** ラピのバーストの 3 ヒットの遅れを最小構成で確かめる（ココア + デルタ + ラピ）
   - 問い: ラピ（III）のバーストの倍率ダメージは、I・II が機構の確定したキャラの編成でも、III の発動からモデルのフレームで 90f の 1 ヒット目と、その 7f・14f 後の 2・3 ヒット目に分かれるか（C-0227）
   - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）、plan/design-burst-split-hits.md。backlog 2-4
-  - 録画: 213
+  - 録画: 221
   - 派生元: V-0138
   - 予測（2026-10-05、commit ce342b1）との比べ:
     - rapi-delays（burstHitDelays）: 実測なし。H0 [112, 112, 112, 112, 112]
@@ -1949,7 +1949,7 @@
 - **[V-0202](../records/verifications/V-0202-drake-burst-delay-minimal.md)** ドレイク（宝物あり）のバーストの 3 ヒットの遅れを最小構成で確かめる（ココア + デルタ + ドレイク）
   - 問い: ドレイク（III・宝物あり）のバーストの倍率ダメージは、I・II が機構の確定したキャラの編成でも、III の発動からモデルのフレームで 4〜5f の 1 ヒット目と、その 27〜28f・55f 後の 2・3 ヒット目に分かれるか（C-0228）
   - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）、plan/design-burst-split-hits.md。backlog 2-4
-  - 録画: 214
+  - 録画: 222
   - 派生元: V-0140
   - 予測（2026-10-05、commit ce342b1）との比べ:
     - drake-delays（burstHitDelays）: 実測なし。H0 [26, 26, 26, 26, 26]
@@ -1963,7 +1963,7 @@
 - **[V-0203](../records/verifications/V-0203-yuni-burst-delay-minimal.md)** ユニのバーストのヒットの遅れを最小構成で確かめる（ココア + ユニ）
   - 問い: ユニ（II）のバーストの倍率ダメージのヒットは、機構の確定した I との 2 体の編成でも、II の発動からモデルのフレームで 124f（C-0230）遅れるか
   - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）。backlog 2-4
-  - 録画: 215
+  - 録画: 223
   - 派生元: V-0146
   - 予測（2026-10-05、commit ce342b1）との比べ:
     - yuni-delays（burstHitDelays）: 実測なし。H0 [124, 124, 124, 124, 124, 124, 124]
@@ -1972,7 +1972,7 @@
 - **[V-0204](../records/verifications/V-0204-queen-burst-delay-minimal.md)** クイーン（真）のバーストのヒットの遅れを最小構成で確かめる（ココア + デルタ + クイーン（真））
   - 問い: クイーン（真）（III）のバーストの倍率ダメージのヒットは、I・II が機構の確定したキャラの編成でも、III の発動からモデルのフレームで 1f（C-0231）遅れるか
   - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）。backlog 2-4
-  - 録画: 216
+  - 録画: 224
   - 派生元: V-0147
   - 予測（2026-10-05、commit ce342b1）との比べ:
     - queen-delays（burstHitDelays）: 実測なし。H0 [23, 23, 23, 23, 23]
@@ -1981,7 +1981,7 @@
 - **[V-0205](../records/verifications/V-0205-raven-burst-delay-minimal.md)** レイヴンのバーストのヒットの遅れを最小構成で確かめる（ココア + デルタ + レイヴン）
   - 問い: レイヴン（III）のバーストの倍率ダメージのヒットは、I・II が機構の確定したキャラの編成でも、III の発動からモデルのフレームで 43f（C-0233）遅れるか
   - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）。backlog 2-4
-  - 録画: 217
+  - 録画: 225
   - 派生元: V-0150
   - 予測（2026-10-05、commit ce342b1）との比べ:
     - raven-delays（burstHitDelays）: 実測なし。H0 [65, 65, 65, 65, 65]
