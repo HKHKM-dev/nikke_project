@@ -783,6 +783,11 @@ export type AutoAttackEffect = {
    * （アニス：スターのシューティングスター。V-0124 の 162-12。plan/design-anis-star-s2-burst.md 9.3 節の a）
    */
   projectileExplosion?: true;
+  /**
+   * ヒットがコアに当たりうるか。当たる割合は的の表の coreHitRate.autoAttacks（`<resourceId>:<スロット>` の行。無ければ 0）、
+   * 当たったヒットは boost に (コア倍率 − 1) を足す（通常攻撃のコアと同じ加算の枠。plan/design-anis-star-core-path.md 3.1 節）
+   */
+  core?: true;
   assumes?: LocalizedText;
 };
 
@@ -1559,6 +1564,7 @@ function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttac
         'firstTick',
         'gaugePerHit',
         'projectileExplosion',
+        'core',
         'assumes',
         'claims',
       ].includes(key)
@@ -1599,6 +1605,10 @@ function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttac
   if (v.projectileExplosion !== undefined) {
     if (v.projectileExplosion !== true) fail(`${path}.projectileExplosion`, 'expected true');
     effect.projectileExplosion = true;
+  }
+  if (v.core !== undefined) {
+    if (v.core !== true) fail(`${path}.core`, 'expected true');
+    effect.core = true;
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

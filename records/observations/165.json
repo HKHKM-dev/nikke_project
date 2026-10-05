@@ -651,5 +651,148 @@
         ]
       }
     }
+  },
+  {
+    "id": "165-25",
+    "recording": "165",
+    "source": "V-0174",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 367812,
+    "description": "フルバースト中のシューティングスターのコアの 1 ヒット（会心なし。受けるダメージ▲の無い組）。2 回目以降のフルバーストの窓（f2300 以降）で最初に読めた単独の増分",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分。f2100〜12100）",
+      "note": "同じ値の単独の増分は f2300 以降に 17 個（最初の 3 つ: f3676, f3691, f3706）。差の 1〜2 は最終攻撃力の端数（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 83,
+        "crit": false,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-26",
+    "recording": "165",
+    "source": "V-0174",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 441375,
+    "description": "同じ組のコアの会心（H-mul のコア（会心なし）と同じ値）。2 回目以降のフルバーストの窓（f2300 以降）で最初に読めた単独の増分",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分。f2100〜12100）",
+      "note": "同じ値の単独の増分は f2300 以降に 6 個（最初の 3 つ: f3735, f3781, f5678）。差の 1〜2 は最終攻撃力の端数（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 83,
+        "crit": true,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-27",
+    "recording": "165",
+    "source": "V-0174",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 514790,
+    "description": "フルバースト中のコアの 1 ヒット（会心なし。イサベルの受けるダメージ▲が乗った組）。2 回目以降のフルバーストの窓（f2300 以降）で最初に読めた単独の増分",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分。f2100〜12100）",
+      "note": "同じ値の単独の増分は f2300 以降に 37 個（最初の 3 つ: f3794, f3809, f3824）。差の 1〜2 は最終攻撃力の端数（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 93,
+        "crit": false,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-28",
+    "recording": "165",
+    "source": "V-0174",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 617748,
+    "description": "同じ組のコアの会心。2 回目以降のフルバーストの窓（f2300 以降）で最初に読めた単独の増分",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（総ダメージの増分。f2100〜12100）",
+      "note": "同じ値の単独の増分は f2300 以降に 9 個（最初の 3 つ: f5811, f5899, f7751）。差の 1〜2 は最終攻撃力の端数（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 93,
+        "crit": true,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "165-29",
+    "recording": "165",
+    "source": "V-0174",
+    "readAt": "2026-10-05",
+    "kind": "count",
+    "use": "record",
+    "unit": "個",
+    "value": [17, 6, 37, 9, 0, 0],
+    "description": "f2300 以降（2 回目以降のフルバースト）の総ダメージの単独の増分のうち、H-add のコア（受けるダメージ▲なし・あり）、コアの会心（なし・あり）、H-mul にしか出ないコアの会心（なし・あり）の値に ±3 で一致した数。並びは 367,812・441,374・514,790・617,748・588,499・823,663",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series（f2100〜12100）+ 使い捨てのスクリプト",
+      "note": "441,374 と 617,748 は H-add のコアの会心と H-mul のコア（会心なし）が同じ値なので見分けに使わない。見分けに使うのは H-add だけの 367,812・514,790 と、H-mul だけの 588,499・823,663"
+    }
   }
 ]

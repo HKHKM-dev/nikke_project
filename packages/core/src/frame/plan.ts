@@ -64,10 +64,13 @@ export {
 } from './dot.ts';
 import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
 import {
+  flightFramesAt,
   hitRateSpanWith,
   hitRateSpansOf,
   planLandings,
+  slotAutoAttackCoreRatesOf,
   slotFlightsOf,
+  type FlightFrameSpan,
   type LandingHitRateSpan,
   type LandingPlan,
 } from './landing.ts';
@@ -165,7 +168,16 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
         }),
   });
   const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing, input.sustainedHitRateUp ?? true);
-  const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots, input.sustainedDamagePlacement);
+  const skillHits = planSkillHits(
+    slots,
+    enemy,
+    timeline,
+    schedule,
+    frames,
+    shots,
+    input.sustainedDamagePlacement,
+    slotAutoAttackCoreRatesOf(slots, enemy, frames),
+  );
   return {
     frames,
     shots,
@@ -206,6 +218,8 @@ export function planSkillHits(
   frames: number,
   shots: readonly (ShotLog | null)[],
   sustainedDamagePlacement?: SustainedDamagePlacement,
+  /** コアの経路編: 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf）。省略はコアなし */
+  autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] = [],
 ): SkillHitEvent[] {
   const hits: SkillHitEvent[] = [];
   // クルミ S2 編: damage の条件 targetStatus が見る、status ごとの「付いている」区間（編成の全枠の dot から先に出しておく）
@@ -248,7 +262,19 @@ export function planSkillHits(
       const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, frame);
       // レイヴン編: スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）
       const scaled = stacks === undefined ? effect : { ...effect, multiplier: effect.multiplier * stacks };
-      const hit = computeSkillHit([scaled], slot.character, enemy, trigger, buffs, fullBurst, sustainedDamagePlacement);
+      // コアの経路編（plan/design-anis-star-core-path.md 3.2 節）: core の自動攻撃は、ヒットのフレームの着地点の行の割合
+      const coreRate =
+        effect.core === true ? flightFramesAt(autoAttackCoreRates[slotIndex]?.[effect.source.skill], frame) : 0;
+      const hit = computeSkillHit(
+        [scaled],
+        slot.character,
+        enemy,
+        trigger,
+        buffs,
+        fullBurst,
+        sustainedDamagePlacement,
+        coreRate,
+      );
       hits.push({ frame, slotIndex, effect, hit, ...(stacks === undefined ? {} : { stacks }) });
     };
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {

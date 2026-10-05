@@ -1,0 +1,132 @@
+{
+  "verification": "V-0187",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-add-W0",
+      "note": "いまのモデル（シューティングスターのコアは boost に +1。通常攻撃は窓の中も外も C-0282 の行）。H-mul・H-b1・H-b2・W1 は検証記録に手で書く"
+    }
+  ],
+  "targets": [
+    {
+      "id": "star-body",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": false,
+        "core": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "1 回目の窓のシューティングスターの胴体（会心なし。フルバーストなし）"
+    },
+    {
+      "id": "star-core",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": false,
+        "core": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "同じヒットのコア（会心なし。H-add と H-mul で同じ値）"
+    },
+    {
+      "id": "star-core-crit",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": true,
+        "core": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "同じヒットのコアの会心（H-add は胴体 × 2.5。H-mul は胴体 × 3）"
+    },
+    {
+      "id": "shot-core-midnear",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 1000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "中近の区間の通常攻撃のコア命中率（窓の中も外も同じ行）"
+    },
+    {
+      "id": "shot-core-near",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "近の区間"
+    },
+    {
+      "id": "shot-core-far",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "遠の区間"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "26ab5d9cd8e168d93188f4f8824fa5839d2d97c6",
+    "values": {
+      "H-add-W0": {
+        "star-body": 60902.2975977572,
+        "star-core": 121804.5951955144,
+        "star-core-crit": 152255.743994393,
+        "shot-core-midnear": 0.8958,
+        "shot-core-near": 1,
+        "shot-core-far": 0.3922
+      }
+    },
+    "seen": {}
+  }
+}

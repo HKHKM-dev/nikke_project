@@ -362,6 +362,12 @@ export type FlightFramesTable = {
   autoAttacks?: Readonly<Record<string, TargetRateRow | null>>;
 };
 
+/**
+ * コア命中率の表。武器種の行（通常攻撃）に、周期の自動攻撃のヒットの行 autoAttacks（キーは flightFrames.autoAttacks と同じ
+ * `<resourceId>:<スキルのスロット>`）を足したもの。自動攻撃の行が無い・null はコアに当たらない（0。手入力の値は使わない）
+ */
+export type CoreHitRateTable = TargetRateTable & { autoAttacks?: Readonly<Record<string, TargetRateRow | null>> };
+
 /** 的の条件の表。射撃場の BigArms のように、属性だけ違う敵で 1 つを共有する */
 export type TargetProfile = {
   id: string;
@@ -371,13 +377,13 @@ export type TargetProfile = {
   landings: LandingPoint[];
   /** 配分の id → [着地点の id, 重み] の列（重みの和は 1）。中遠の 3 か所など */
   mixes: Record<string, [string, number][]>;
-  /** コア命中率 P(コア｜命中) */
-  coreHitRate: TargetRateTable;
+  /** コア命中率 P(コア｜命中)。autoAttacks は周期の自動攻撃のヒットの行（plan/design-anis-star-core-path.md 3.2 節） */
+  coreHitRate: CoreHitRateTable;
   /** 弾丸命中率 */
   bulletHitRate: TargetRateTable;
   /**
-   * V-0119: 1 発の通常攻撃のヒット数の期待値（1 以上。省略・null・表に無いキーは 1）。誘導弾・爆発の範囲 750 の RL が的の 2 か所に
-   * 当たる分（C-0197）
+   * V-0119: 1 発の通常攻撃のヒット数の期待値（1 以上。省略・null・表に無いキーは 1）。いまの実データに行は無い（誘導弾・爆発の範囲
+   * 750 の RL の 2 ヒットは、コアの 1 ヒットだった。C-0282）
    */
   hitsPerShot?: TargetRateTable;
   /**

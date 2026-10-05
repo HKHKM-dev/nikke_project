@@ -110,7 +110,7 @@ export function projectileKeyOf(character: CharacterData): string | null {
 
 /**
  * V-0119: 弾の種類の行のキー。爆発の範囲まで書いた `<fireType>:<弾速>:<爆発の範囲>` の行があればそれ、無ければ
- * `<fireType>:<弾速>`（爆発の範囲で振る舞いの違う弾だけ、行を分ける。C-0197）。飛ぶ弾でなければ null
+ * `<fireType>:<弾速>`（爆発の範囲で振る舞いの違う弾だけ、行を分ける。C-0282）。飛ぶ弾でなければ null
  */
 function projectileRowKeyOf(by: TargetRateByProjectile['byProjectile'], character: CharacterData): string | null {
   const key = projectileKeyOf(character);
@@ -799,6 +799,30 @@ export function slotFlightsOf(
       if (s !== null) autoAttacks[skill] = s;
     }
     return shot === null && Object.keys(autoAttacks).length === 0 ? null : { shot, autoAttacks };
+  });
+}
+
+/**
+ * コアの経路編（plan/design-anis-star-core-path.md 3.2 節）: 枠ごと・スキルのスロットごとの、周期の自動攻撃のヒットのコアに
+ * 当たる割合の区間。的の表の coreHitRate.autoAttacks と着地点の時間割りで決まる（飛ぶ時間と同じ引き方。値は frames に入れる）。
+ * 行の無いスロットは省き、どこにも無ければ null（コアに当たらない）
+ */
+export function slotAutoAttackCoreRatesOf(
+  slots: readonly (Pick<TeamSlotInput, 'character'> | null)[],
+  enemy: EnemyInput,
+  frames: number,
+): (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] {
+  const rows = enemy.target?.coreHitRate.autoAttacks;
+  if (rows === undefined) return slots.map(() => null);
+  const spans = landingFrameSpans(enemy, frames);
+  return slots.map((slot) => {
+    if (slot === null) return null;
+    const out: Partial<Record<SkillSlot, FlightFrameSpan[]>> = {};
+    for (const skill of SKILL_SLOTS) {
+      const s = flightSpansOf(spans, rows[`${slot.character.resourceId}:${skill}`]);
+      if (s !== null) out[skill] = s;
+    }
+    return Object.keys(out).length === 0 ? null : out;
   });
 }
 

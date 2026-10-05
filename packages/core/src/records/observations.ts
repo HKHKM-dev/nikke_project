@@ -612,13 +612,16 @@ function burstHitDamage(result: SimResult, ctx: MetricContext): number {
 
 /**
  * ニヒリスター編: 持続ダメージ（dot）の n 回目（0 始まり。枠の全 tick を通した順）の 1 tick の値。burstHitDamage と同じく、
- * 会心の期待値を外して、会心したか（crit）で組み直す（plan/design-nihilister.md 4 節）
+ * 会心の期待値を外して、会心したか（crit）で組み直す（plan/design-nihilister.md 4 節）。
+ * コアの経路編（plan/design-anis-star-core-path.md 3.1 節）: 省略できる引数 core が true なら、コアに当たったヒットの値
+ * （boost に コア倍率 − 1 を足す）。core の効果でないヒットに core: true は拒否する
  */
 function dotHitDamage(result: SimResult, ctx: MetricContext): number {
   const ticks = result.skillHits.filter((h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined);
   const tick = ticks[Number(ctx.args.n)];
   if (tick === undefined) throw new Error(`${String(ctx.args.n)} 回目の持続ダメージの tick が無い`);
-  return oneHitValue(tick.hit, ctx.args.crit === true);
+  if (ctx.args.core === true && tick.effect.core !== true) throw new Error('コアに当たらない効果の tick に core: true');
+  return oneHitValue(tick.hit, ctx.args.crit === true, ctx.args.core === true);
 }
 
 /**

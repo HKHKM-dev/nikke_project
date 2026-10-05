@@ -67,6 +67,8 @@ export type ResolvedSkillDamage = {
   projectileExplosion?: true;
   /** 持続ダメージ▲編: 持続ダメージ（dot。autoAttack は除く）の tick。持続ダメージ▲（sustainedDamage）を掛ける */
   sustained?: true;
+  /** コアの経路編: コアに当たりうるヒット（自動攻撃の core）。plan/design-anis-star-core-path.md 3.1 節 */
+  core?: true;
   assumes?: LocalizedText;
 };
 
@@ -265,6 +267,7 @@ export function resolveDotEffects(
       if (auto && effect.projectileExplosion === true) r.projectileExplosion = true;
       // 持続ダメージ▲編: 持続ダメージ▲は「持続ダメージ」にだけ掛ける。自動攻撃は持続ダメージではない（plan/design-sustained-damage-up.md 3.2 節）
       if (!auto) r.sustained = true;
+      if (auto && effect.core === true) r.core = true;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
@@ -343,6 +346,11 @@ export type BurstHitInput = {
   sustainedDamage?: number;
   /** 持続ダメージ▲編: 省略は SUSTAINED_DAMAGE_PLACEMENT */
   sustainedDamagePlacement?: SustainedDamagePlacement;
+  /**
+   * コアの経路編（plan/design-anis-star-core-path.md 3.1 節）: core の効果のコア。rate はコアに当たる割合（敵にコアが無ければ 0）、
+   * damage は当たったときに boost に足す値（コア倍率 − 1）。省略はコアなし
+   */
+  core?: { rate: number; damage: number };
 };
 
 export type BurstHitResult = {
@@ -351,12 +359,22 @@ export type BurstHitResult = {
   /** 効果の倍率の合計（X/100 の和） */
   multiplier: number;
   /**
-   * 1 + 会心期待値 + フルバースト補正（乗せる設定のときだけ 0.5）。コア・距離は入らない。
+   * 1 + 会心期待値 + フルバースト補正（乗せる設定のときだけ 0.5）+ コアの期待値。距離は入らない。
    * critDamage はバフ後の会心ダメージ倍率（会心した 1 ヒットを組み直すのに使う）。
+   * core はコアの経路編: コアの期待値（割合 × coreDamage）、coreDamage はコアに当たったときに足す値（コア倍率 − 1）。どちらも core の
+   * 効果があるときだけで、無ければ 0（core の効果と無い効果を 1 回の結果に混ぜる定義は無い）。
    * sustained は持続ダメージ▲編: 置き場所が boost のとき sustained の効果の倍率グループに足した Σ sustainedDamage（ほかは 0。
    * total には入れない。持続ダメージの tick は効果 1 つずつ計算するので、1 回の結果に sustained の効果とほかの効果は混ざらない）
    */
-  boost: { crit: number; critDamage: number; fullBurst: number; total: number; sustained: number };
+  boost: {
+    crit: number;
+    critDamage: number;
+    fullBurst: number;
+    core: number;
+    coreDamage: number;
+    total: number;
+    sustained: number;
+  };
   attackDamageMultiplier: number;
   elementMultiplier: number;
   /** 1 + Σ distributedDamage（distributed の効果にだけ掛かる） */
@@ -381,20 +399,21 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const baseHit = Math.max(1, input.attack - input.enemy.defence);
   const boostCrit = input.crit.rate * (input.crit.damage - 1);
   const boostFullBurst = fullBurstBonus ? FULL_BURST_BOOST : 0;
-  const boostTotal = 1 + boostCrit + boostFullBurst;
-  const common = baseHit * boostTotal * input.attackDamageMultiplier * damageTaken * input.elementMultiplier;
+  const boostBase = 1 + boostCrit + boostFullBurst;
+  const anyCore = input.core !== undefined && input.effects.some((e) => e.core === true);
+  const coreDamage = anyCore ? input.core!.damage : 0;
+  const boostCore = anyCore ? input.core!.rate * input.core!.damage : 0;
+  const boostTotal = boostBase + boostCore;
+  const common = baseHit * input.attackDamageMultiplier * damageTaken * input.elementMultiplier;
+  // 持続ダメージ▲は持続ダメージ（自動攻撃を除く）にだけ掛かり、コアは自動攻撃にだけ掛かるので、持続ダメージ▲の倍率グループはコアなし
   const placement = input.sustainedDamagePlacement ?? SUSTAINED_DAMAGE_PLACEMENT;
-  const sustained = sustainedMultiplier(
-    input.sustainedDamage ?? 0,
-    placement,
-    boostTotal,
-    input.attackDamageMultiplier,
-  );
+  const sustained = sustainedMultiplier(input.sustainedDamage ?? 0, placement, boostBase, input.attackDamageMultiplier);
   const hasSustained = input.effects.some((e) => e.sustained === true);
   const perEffect = input.effects.map((effect) => ({
     effect,
     expected:
       common *
+      (effect.core === true ? boostTotal : boostBase) *
       effect.multiplier *
       (effect.damageType === 'distributed' ? distributed : 1) *
       (effect.projectileExplosion === true ? explosion : 1) *
@@ -413,6 +432,8 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
       crit: boostCrit,
       critDamage: input.crit.damage,
       fullBurst: boostFullBurst,
+      core: boostCore,
+      coreDamage,
       total: boostTotal,
       sustained: hasSustained && placement === 'boost' ? (input.sustainedDamage ?? 0) : 0,
     },
@@ -444,12 +465,15 @@ export function sustainedMultiplier(
 
 /**
  * 1 回の結果を、会心の期待値を外して会心したか（crit）で組み直した 1 ヒットの値（観測値と比べる指標が使う）。
- * 持続ダメージ▲が倍率グループにある（boost.sustained > 0）ときは、それも倍率グループに入れて組み直す
+ * 持続ダメージ▲が倍率グループにある（boost.sustained > 0）ときは、それも倍率グループに入れて組み直す。
+ * core はコアの経路編: コアに当たったヒットの値（plan/design-anis-star-core-path.md 3.1 節）
  */
-export function oneHitValue(hit: BurstHitResult, crit: boolean): number {
+export function oneHitValue(hit: BurstHitResult, crit: boolean, core = false): number {
   const critTerm = crit ? hit.boost.critDamage - 1 : 0;
+  // コアの経路編: total はコアの期待値を含むので、割ってから、コアに当たったとき（core）だけ coreDamage を足して組み直す
+  const coreTerm = core ? hit.boost.coreDamage : 0;
   const expectedGroup = hit.boost.total + hit.boost.sustained;
-  return (hit.perActivation / expectedGroup) * (1 + critTerm + hit.boost.fullBurst + hit.boost.sustained);
+  return (hit.perActivation / expectedGroup) * (1 + critTerm + hit.boost.fullBurst + hit.boost.sustained + coreTerm);
 }
 
 /**
@@ -487,6 +511,7 @@ export function computeSkillHit(
   buffs: BuffTotals,
   fullBurstBonus: boolean,
   sustainedDamagePlacement: SustainedDamagePlacement = SUSTAINED_DAMAGE_PLACEMENT,
+  coreHitRate = 0,
 ): SkillHitResult {
   return computeBurstHit({
     attack: trigger.attack,
@@ -501,6 +526,8 @@ export function computeSkillHit(
     projectileExplosionMultiplier: explosionHitMultiplier(buffs),
     sustainedDamage: buffs.sustainedDamage,
     sustainedDamagePlacement,
+    // コアの経路編（plan/design-anis-star-core-path.md 3.1 節）: コアダメージ▲（buffs.coreDamage）は足さない（論点 4。未確認）
+    core: { rate: enemy.hasCore ? coreHitRate : 0, damage: character.shot.coreDamageRate - 1 },
   });
 }
 
