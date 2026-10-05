@@ -170,6 +170,17 @@ describe('computeDamage', () => {
     expect(r.attack).toBeCloseTo(5550, 10);
   });
 
+  it('rounds the buffed attack to the nearest integer before subtracting defence (C-0027)', () => {
+    // ノワール: 119,896 × 1.1408 = 136,777.36 → 136,777（C-0027 の根拠）
+    const down = computeDamage(input({ attackOverride: 119896, buffs: { ...ZERO_BUFFS, attackRatio: 0.1408 } }));
+    expect(down.attack).toBe(136777);
+    expect(down.baseHit).toBe(136677);
+    // マナのフルバースト中: 119,896 × (1 + 0.5808 + 0.6336) = 265,497.70 → 265,498（V-0185）
+    const up = computeDamage(input({ attackOverride: 119896, buffs: { ...ZERO_BUFFS, attackRatio: 0.5808 + 0.6336 } }));
+    expect(up.attack).toBe(265498);
+    expect(up.baseHit).toBe(265398);
+  });
+
   it('rejects invalid core hit rate', () => {
     expect(() =>
       computeDamage(

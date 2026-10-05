@@ -40,8 +40,8 @@ function countsAt(w: Pick<AttackWindow, 'start' | 'end'>, frame: number): boolea
 }
 
 /**
- * 枠ごとの最終攻撃力（空枠は null）。base × (1 + Σ攻撃力%) + Σ発動者基準の固定加算。整数に丸めない
- * （順位は丸めで変わらない。同値のときだけ差が出うる）。windows の攻撃力以外の stat は無視する
+ * 枠ごとの最終攻撃力（空枠は null）。base × (1 + Σ攻撃力%) + Σ発動者基準の固定加算。ダメージの式（C-0027）と違い
+ * 整数に丸めない（順位の比べ方が丸めた値かの根拠は無い。順位は丸めで変わらず、同値のときだけ差が出うる）。windows の攻撃力以外の stat は無視する
  */
 export function finalAttacksAt(
   slots: readonly RankSlot[],
