@@ -568,7 +568,7 @@ describe('編成（自動の条件）', () => {
     expect(codes(RL_HOMING)).toContain('landing-first-shot-excluded');
     expect(codes(rl('ProjectileDirect', 100))).toContain('landing-first-shot-excluded');
     expect(codes(slowRl)).not.toContain('landing-first-shot-excluded');
-    // C-0195（仮説）: AR・SMG の撃ち始めの待ちは未実装の注記。MG・SG・RL には出さない
+    // C-0291: AR・SMG の撃ち始めの待ちは未実装の注記。MG・SG・RL には出さない
     expect(codes(SMG)).toContain('landing-aim-wait');
     expect(codes(MG)).not.toContain('landing-aim-wait');
     expect(codes(SG)).not.toContain('landing-aim-wait');

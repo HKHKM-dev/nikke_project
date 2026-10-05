@@ -80,6 +80,7 @@
 - 命中率▲が弾丸命中率に効く式（2026-10-03 起票）→ 一部完了: V-0118・V-0148、C-0192、[design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)。残りは backlog 2-1
 - 着地直後の 1 発のコアの外れ（2026-10-02 起票）→ 完了: V-0091、C-0193〜C-0195。続きは backlog 2-8
 - 照準の動く速さとコアへの跳び（2026-10-04 起票）→ 完了: V-0120、C-0199・C-0200。続きは backlog 2-8
+- AR・SMG・MG の撃ち始めの待ちの読み直し（2026-10-05）→ 完了: V-0196、C-0291・C-0292（C-0195 を棄却）。続きは backlog 2-8
 - 着地の後の照準をモデルに入れるかの設計（2026-10-05）→ 完了: [design-landing-aim.md](design-landing-aim.md)。続きは backlog 2-8
 - バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 一部完了: V-0075・V-0080・V-0082・V-0144、C-0162・C-0163・C-0165・C-0167、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)。残りは backlog 2-4
 - 15-A の出し直し（2026-10-01 起票）→ 完了: V-0065・V-0087・V-0117（候補ごとの記録は V-0074・V-0088〜V-0092）
