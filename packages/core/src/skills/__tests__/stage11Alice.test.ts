@@ -165,7 +165,7 @@ describe('順位（skills/ranking.ts、18 節）', () => {
     expect(tiedAtCutoff([1, 2, 0], [100, 200, 200], 1)).toBe(true);
     expect(tiedAtCutoff([1, 2, 0], [100, 200, 200], 2)).toBe(false);
     // 武器種で絞ってから並べる
-    expect(attackRankFor({ targetWeapon: 'SR' }, slots, finals)).toEqual([2, 1]);
+    expect(attackRankFor({ targetWeapon: 'SR' }, slots, finals, 0)).toEqual([2, 1]);
   });
 
   it('includes passive attack in the final attack', () => {

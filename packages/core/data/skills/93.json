@@ -28,8 +28,13 @@
         {
           "kind": "passive",
           "target": "allies",
+          "targetSquad": "same",
           "stat": "critDamage",
-          "ref": 1
+          "ref": 1,
+          "claims": [
+            "C-0266",
+            "C-0235"
+          ]
         }
       ],
       "notes": [
@@ -47,11 +52,6 @@
           "ja": "フォーメーションAS 適用中の陽動発動不可はダメージに関係しない",
           "en": "Exposure being disabled while in AS Formation does not affect damage",
           "kind": "noDamage"
-        },
-        {
-          "ja": "クリティカルダメージ▲の対象は「同じ部隊の味方全体」だが、対象を部隊で絞るのは未実装（いまは味方全体に付ける）",
-          "en": "Critical Damage up targets allies in the same squad, but narrowing the target by squad is not implemented (all allies get it for now)",
-          "kind": "unimplemented"
         }
       ]
     },

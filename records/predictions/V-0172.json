@@ -1,0 +1,92 @@
+{
+  "verification": "V-0172",
+  "note": "録画 022（エマ：TU（AI）+ デルタ（操作）、III なしでフルバーストは起きない）の読み直し。デルタ（Scouting）はエマ（Absolute）と同じ部隊でない。比べるのは、デルタの同じ状態（同じ時刻の近く・同じ部位）の会心した 1 ヒットと会心しない 1 ヒットの比。エマの S1・バーストの敵の受けるダメージ▲（定義なし）と、エマのバーストの発動者基準の攻撃力▲は比で消える。frame 300 はフルバーストもエマのバーストも無い区間の代表（比はどの区間でも同じ）。ID は V-0169 から振り直した（main の V-0169 と重なったため。predicted.commit は振り直す前のブランチの commit）",
+  "team": [
+    {
+      "rid": 93,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの定義: エマの S2 の効果 1（クリティカルダメージ▲）は味方全体に付く（デルタにも付く）"
+    },
+    {
+      "id": "H1",
+      "note": "説明文どおり「同じ部隊の味方全体」だけに付く（targetSquad same。デルタには付かない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "targetSquad": "same",
+              "stat": "critDamage",
+              "ref": 1
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "delta-core-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "判定の指標。デルタのコアの 1 ヒットの、会心 ÷ 非会心。録画では、同じ受けるダメージ▲・同じ攻撃力の区間の中で読んだ組の比を観測値にする（距離ボーナスは乗っていない。verification.md Stage 6 の 5 の 216,763 = 104,313 × 2 × 1.039）"
+    },
+    {
+      "id": "delta-body-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "胴体（コア以外）のヒットが読めたときの同じ比"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "0bc69550e3f608d75a379f5be9bbda3f65b9bc4d",
+    "values": {
+      "H0": {
+        "delta-core-crit-ratio": 1.3675499999999998,
+        "delta-body-crit-ratio": 1.7351
+      },
+      "H1": {
+        "delta-core-crit-ratio": 1.25,
+        "delta-body-crit-ratio": 1.5
+      }
+    },
+    "seen": {
+      "022": ["018-02", "022-01", "022-02", "022-03"]
+    }
+  }
+}

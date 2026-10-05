@@ -167,10 +167,44 @@ export const BUFF_SCALINGS = [
  * 効果の対象。Stage 11: burstUsers = 「直前にバーストスキルを使用した味方」（そのフルバーストを開いたチェーンでバーストを撃った枠）。
  * トリガーが fullBurstStart / fullBurstEnd のときだけ書ける（発火のたびに対象が変わる。skills/targets.ts）。
  * Stage 11 アリス編: topAttack = 「最終攻撃力が最も高い味方 N 機」（発火のフレームの最終攻撃力の順位。自分も候補。skills/ranking.ts）。
- * N は targetCount / targetCountRef。passive と heal には書けない
+ * N は targetCount / targetCountRef。passive と heal には書けない。
+ * 対象の語彙編（plan/design-target-vocab.md 2.2 節）: longestChargeTime = 「基本チャージ時間が一番長い味方 N 機」
+ * （CharacterData.shot.chargeTime の長い順。同値は枠の若い順。編成で決まるので最上位の skills/composition.ts で対象の枠を決める）。
+ * N は topAttack と同じ欄。timed にだけ書ける
  */
-export type BuffTarget = 'self' | 'allies' | 'burstUsers' | 'topAttack';
-export const BUFF_TARGETS = ['self', 'allies', 'burstUsers', 'topAttack'] as const satisfies readonly BuffTarget[];
+export type BuffTarget = 'self' | 'allies' | 'burstUsers' | 'topAttack' | 'longestChargeTime';
+export const BUFF_TARGETS = [
+  'self',
+  'allies',
+  'burstUsers',
+  'topAttack',
+  'longestChargeTime',
+] as const satisfies readonly BuffTarget[];
+
+/** 対象の語彙編: N 機を選ぶ対象（targetCount / targetCountRef を持つ） */
+export function isCountedTarget(target: BuffTarget): boolean {
+  return target === 'topAttack' || target === 'longestChargeTime';
+}
+
+/**
+ * 対象の語彙編（plan/design-target-vocab.md 2.1 節）: 「自分を除く」。topAttack の順位から発動者の枠を外す。
+ * always = 外したまま、unlessShort = 外して N に足りなければ自分を足す（「対象が足りない場合、自分も対象となる」）
+ */
+export type ExcludeSelf = 'always' | 'unlessShort';
+export const EXCLUDE_SELF = ['always', 'unlessShort'] as const satisfies readonly ExcludeSelf[];
+
+/**
+ * 対象の語彙編（同 2.3 節）: 「同じ部隊の味方全体に」。same = 対象の枠のキャラの CharacterData.squad が発動者と同じ枠だけ
+ * （発動者自身も入る）。target が allies のときだけ書ける。編成で決まるので最上位の skills/composition.ts で対象の枠を決める
+ */
+export type TargetSquad = 'same';
+export const TARGET_SQUADS = ['same'] as const satisfies readonly TargetSquad[];
+
+/**
+ * 対象の語彙編: 編成で決まる対象（targetSquad・longestChargeTime）の、最上位で決めた枠（skills/composition.ts の
+ * applyComposition が書く。JSON には書かない）。有れば、対象はこの枠だけに絞られる
+ */
+export type FixedTargetFields = { fixedTargets?: readonly number[] };
 
 /** Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」の N。target が topAttack のときだけ、ちょうど片方 */
 export type TargetCountFields = {
@@ -222,10 +256,12 @@ export const SKILL_NOTE_KINDS = [
   'modeling',
 ] as const satisfies readonly SkillNoteKind[];
 
-export type PassiveEffect = {
+export type PassiveEffect = FixedTargetFields & {
   /** 無条件・常時（段階 A）。トリガー付きの持続バフは 'timed'（段階 B） */
   kind: 'passive';
   target: BuffTarget;
+  /** 対象の語彙編: 「同じ部隊の味方全体に」。target が 'allies' のときだけ書ける */
+  targetSquad?: TargetSquad;
   /** Stage 9: 「〈武器〉を所持する味方」。target が 'allies' のときだけ書ける */
   targetWeapon?: WeaponType;
   /** アスカ: 「〈コード〉コードの味方」。targetWeapon と同じ場所に書ける（plan/design-asuka.md 2.2 節） */
@@ -357,64 +393,69 @@ export function isEventCountTrigger(t: EffectTrigger): t is EventCountTrigger {
 }
 
 /** Stage 6: 「（トリガー）時、（対象）に （stat）X%▲、Y 秒間維持」。同じ効果が持続中に再発火したら上書き延長（窓の和集合） */
-export type TimedEffect = TargetCountFields & {
-  kind: 'timed';
-  trigger: EffectTrigger;
-  target: BuffTarget;
-  /** Stage 9: 「〈武器〉を所持する味方」。target が self 以外（allies・Stage 11 の burstUsers）のときだけ書ける */
-  targetWeapon?: WeaponType;
-  /** アスカ: 「〈コード〉コードの味方」 */
-  targetElement?: Element;
-  stat: BuffStat;
-  /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す（passive と同じ規則） */
-  scaling?: BuffScaling;
-  /**
-   * description_value_NN の NN（1 始まり）。値は % 表記。100 で割るのは resolveTimed の責務。
-   * Stage 11 モダニア: フラグの stat（infiniteAmmo）だけは書かない（値 1）
-   */
-  ref?: number;
-  /** Stage 11 モダニア: 「▼」。値の符号を反転する（scaling が ratio / flat のときだけ） */
-  decrease?: true;
-  /**
-   * Stage 11 モダニア: 効果のあるスタックの最大数（即値）。有れば発火のたびに 1 スタック足し（上限で止める）、値は 1 スタックあたり。
-   * 維持時間の数え方は skills/stacks.ts の STACK_REFRESH。クラウンの ShotCountTrigger.stacksRef（数えるだけのスタックが満ちたら発火）とは別物
-   */
-  maxStacks?: number;
-  /** 最大スタック数の description_value_NN。maxStacks と片方まで */
-  maxStacksRef?: number;
-  /**
-   * Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」。発火の瞬間に、効果を持つ枠がその stat の増加状態（常時パッシブか、
-   * 効いている窓で合計 > 0。同じフレームに付いた窓も入れる）なら発火する。カウンタは状態に関係なく数える
-   */
-  condition?: EffectCondition;
-  /** アニス：スター編: バースト段階の構成の条件 */
-  burstStepMix?: BurstStepMixCondition;
-  /** ラム編: 同じ部隊の味方の条件 */
-  squad?: SquadCondition;
-  /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
-  withCharacter?: WithCharacterCondition;
-  /** 防御力無視ダメージ編: 敵の属性の条件 */
-  enemyElement?: Element;
-  /** 維持秒数の description_value_NN。durationSeconds・durationShots・durationShotsRef・durationUntil とちょうど 1 つ */
-  durationRef?: number;
-  /** 維持秒数の即値（説明文に「維持時間：10秒」と直書きされている場合） */
-  durationSeconds?: number;
-  /**
-   * ヘルム編: 「N 発間維持」の N の即値。付いたフレームから、対象の枠の N 発目の通常攻撃まで続く（N 発目にも効く）。
-   * 対象ごとにその枠の射撃を数え、維持中にまた付いたら数え直す。窓は 1 パス目の射撃の列で決まるので、
-   * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）と、スタック・条件・順位の対象には書けない
-   */
-  durationShots?: number;
-  /** ヘルム編: 「N 発間維持」の N の description_value_NN */
-  durationShotsRef?: number;
-  /**
-   * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.2 節）: 「解除条件：フルバーストタイムが終了した時」。付いたフレームから
-   * 次のフルバースト終了のフレームまで続く（無ければ戦闘の終わりまで）。1 パス目で窓を追う stat と、スタック・順位の対象には書けない
-   */
-  durationUntil?: DurationUntil;
-  /** 常に満たすとみなした条件。UI に「仮定」として出す */
-  assumes?: LocalizedText;
-};
+export type TimedEffect = TargetCountFields &
+  FixedTargetFields & {
+    kind: 'timed';
+    trigger: EffectTrigger;
+    target: BuffTarget;
+    /** 対象の語彙編: 「同じ部隊の味方全体に」。target が 'allies' のときだけ書ける */
+    targetSquad?: TargetSquad;
+    /** 対象の語彙編: 「自分を除く」。target が 'topAttack' のときだけ書ける */
+    excludeSelf?: ExcludeSelf;
+    /** Stage 9: 「〈武器〉を所持する味方」。target が self 以外（allies・Stage 11 の burstUsers）のときだけ書ける */
+    targetWeapon?: WeaponType;
+    /** アスカ: 「〈コード〉コードの味方」 */
+    targetElement?: Element;
+    stat: BuffStat;
+    /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す（passive と同じ規則） */
+    scaling?: BuffScaling;
+    /**
+     * description_value_NN の NN（1 始まり）。値は % 表記。100 で割るのは resolveTimed の責務。
+     * Stage 11 モダニア: フラグの stat（infiniteAmmo）だけは書かない（値 1）
+     */
+    ref?: number;
+    /** Stage 11 モダニア: 「▼」。値の符号を反転する（scaling が ratio / flat のときだけ） */
+    decrease?: true;
+    /**
+     * Stage 11 モダニア: 効果のあるスタックの最大数（即値）。有れば発火のたびに 1 スタック足し（上限で止める）、値は 1 スタックあたり。
+     * 維持時間の数え方は skills/stacks.ts の STACK_REFRESH。クラウンの ShotCountTrigger.stacksRef（数えるだけのスタックが満ちたら発火）とは別物
+     */
+    maxStacks?: number;
+    /** 最大スタック数の description_value_NN。maxStacks と片方まで */
+    maxStacksRef?: number;
+    /**
+     * Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」。発火の瞬間に、効果を持つ枠がその stat の増加状態（常時パッシブか、
+     * 効いている窓で合計 > 0。同じフレームに付いた窓も入れる）なら発火する。カウンタは状態に関係なく数える
+     */
+    condition?: EffectCondition;
+    /** アニス：スター編: バースト段階の構成の条件 */
+    burstStepMix?: BurstStepMixCondition;
+    /** ラム編: 同じ部隊の味方の条件 */
+    squad?: SquadCondition;
+    /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
+    withCharacter?: WithCharacterCondition;
+    /** 防御力無視ダメージ編: 敵の属性の条件 */
+    enemyElement?: Element;
+    /** 維持秒数の description_value_NN。durationSeconds・durationShots・durationShotsRef・durationUntil とちょうど 1 つ */
+    durationRef?: number;
+    /** 維持秒数の即値（説明文に「維持時間：10秒」と直書きされている場合） */
+    durationSeconds?: number;
+    /**
+     * ヘルム編: 「N 発間維持」の N の即値。付いたフレームから、対象の枠の N 発目の通常攻撃まで続く（N 発目にも効く）。
+     * 対象ごとにその枠の射撃を数え、維持中にまた付いたら数え直す。窓は 1 パス目の射撃の列で決まるので、
+     * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）と、スタック・条件・順位の対象には書けない
+     */
+    durationShots?: number;
+    /** ヘルム編: 「N 発間維持」の N の description_value_NN */
+    durationShotsRef?: number;
+    /**
+     * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.2 節）: 「解除条件：フルバーストタイムが終了した時」。付いたフレームから
+     * 次のフルバースト終了のフレームまで続く（無ければ戦闘の終わりまで）。1 パス目で窓を追う stat と、スタック・順位の対象には書けない
+     */
+    durationUntil?: DurationUntil;
+    /** 常に満たすとみなした条件。UI に「仮定」として出す */
+    assumes?: LocalizedText;
+  };
 
 /** 防御力無視ダメージ編: 維持の終わりの出来事 */
 export type DurationUntil = 'fullBurstEnd';
@@ -866,7 +907,7 @@ function parseNote(v: Json, path: string): SkillNote {
   return note;
 }
 
-/** casterAttack は attack だけ、flat（Stage 10）は maxAmmo だけ */
+/** casterAttack は attack だけ、flat（Stage 10）は maxAmmo（発数）と chargeSpeed（対象の語彙編。「チャージ時間 X 秒▼」の秒） */
 function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path: string): void {
   if (scaling === 'casterAttack' && stat !== 'attack') {
     fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
@@ -874,9 +915,32 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   if (scaling === 'casterChargeTime' && stat !== 'chargeSpeed') {
     fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
   }
-  if (scaling === 'flat' && stat !== 'maxAmmo') {
-    fail(`${path}.scaling`, `flat is only allowed with stat "maxAmmo", got "${stat}"`);
+  if (scaling === 'flat' && stat !== 'maxAmmo' && stat !== 'chargeSpeed') {
+    fail(`${path}.scaling`, `flat is only allowed with stat "maxAmmo" or "chargeSpeed", got "${stat}"`);
   }
+}
+
+/** 対象の語彙編: chargeSpeed の flat は「チャージ時間 X 秒▼」で、正の値が縮める秒数。▼（decrease）は書かない */
+function validateFlatChargeTime(
+  stat: BuffStat,
+  scaling: BuffScaling | undefined,
+  v: Record<string, Json>,
+  path: string,
+) {
+  if (stat === 'chargeSpeed' && scaling === 'flat' && v.decrease !== undefined) {
+    fail(
+      `${path}.decrease`,
+      'chargeSpeed with scaling "flat" is already a reduction in seconds (do not write decrease)',
+    );
+  }
+}
+
+/** 対象の語彙編: targetSquad は target が allies のときだけ */
+function parseTargetSquad(v: Record<string, Json>, target: BuffTarget, path: string): TargetSquad | undefined {
+  if (v.targetSquad === undefined) return undefined;
+  const squad = oneOf(TARGET_SQUADS, v.targetSquad, `${path}.targetSquad`);
+  if (target !== 'allies') fail(`${path}.targetSquad`, `only allowed with target "allies", got "${target}"`);
+  return squad;
 }
 
 /**
@@ -887,8 +951,8 @@ function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Record<strin
   if (stat !== 'damageTaken') return;
   if (target !== 'allies')
     fail(`${path}.target`, `damageTaken must target "allies" (an enemy debuff), got "${target}"`);
-  if (v.targetWeapon !== undefined || v.targetElement !== undefined)
-    fail(path, 'damageTaken cannot narrow its target by weapon or element (an enemy debuff)');
+  if (v.targetWeapon !== undefined || v.targetElement !== undefined || v.targetSquad !== undefined)
+    fail(path, 'damageTaken cannot narrow its target by weapon, element or squad (an enemy debuff)');
 }
 
 /** Stage 9: targetWeapon は target が self 以外のときだけ（Stage 11 で burstUsers・topAttack にも広げた） */
@@ -919,17 +983,20 @@ function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrigger, pa
   );
 }
 
-/** Stage 11 アリス編: topAttack の N（targetCount / targetCountRef）。topAttack のときだけ、ちょうど片方 */
+/** Stage 11 アリス編: topAttack の N（targetCount / targetCountRef）。topAttack・longestChargeTime（対象の語彙編）のときだけ、ちょうど片方 */
 function parseTargetCount(v: Record<string, Json>, target: BuffTarget, path: string): TargetCountFields {
   const hasCount = v.targetCount !== undefined;
   const hasRef = v.targetCountRef !== undefined;
-  if (target !== 'topAttack') {
+  if (!isCountedTarget(target)) {
     if (hasCount || hasRef)
-      fail(path, `targetCount / targetCountRef are only allowed with target "topAttack", got "${target}"`);
+      fail(
+        path,
+        `targetCount / targetCountRef are only allowed with target "topAttack" or "longestChargeTime", got "${target}"`,
+      );
     return {};
   }
   if (hasCount === hasRef)
-    fail(path, 'exactly one of targetCount and targetCountRef is required with target "topAttack"');
+    fail(path, `exactly one of targetCount and targetCountRef is required with target "${target}"`);
   return hasCount
     ? { targetCount: parsePositiveInt(v.targetCount, `${path}.targetCount`) }
     : { targetCountRef: parseRef(v.targetCountRef, `${path}.targetCountRef`) };
@@ -941,16 +1008,21 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   // 常時の効果の対象が戦闘中に入れ替わるのは持続バフの窓の仕組みの外（plan/design-stage11.md 17 節）
   if (target === 'topAttack')
     fail(`${path}.target`, 'topAttack is not allowed in passive (the ranking changes during battle)');
+  if (target === 'longestChargeTime') fail(`${path}.target`, 'longestChargeTime is only allowed in timed');
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
+  const targetSquad = parseTargetSquad(v, target, path);
+  if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   if (isFlagStat(stat) || stat === 'fixedChargeTime') fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
+  validateFlatChargeTime(stat, scaling, v, path);
   validateDamageTaken(stat, target, v, path);
   const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
+  if (targetSquad !== undefined) effect.targetSquad = targetSquad;
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) effect.decrease = true;
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
@@ -1028,7 +1100,13 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
+  const targetSquad = parseTargetSquad(v, target, path);
   const count = parseTargetCount(v, target, path);
+  let excludeSelf: ExcludeSelf | undefined;
+  if (v.excludeSelf !== undefined) {
+    excludeSelf = oneOf(EXCLUDE_SELF, v.excludeSelf, `${path}.excludeSelf`);
+    if (target !== 'topAttack') fail(`${path}.excludeSelf`, `only allowed with target "topAttack", got "${target}"`);
+  }
   if (stat === 'trueDamageConversion' && target !== 'self') {
     fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
   }
@@ -1040,6 +1118,7 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   }
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
+  validateFlatChargeTime(stat, scaling, v, path);
   validateDamageTaken(stat, target, v, path);
   const effect: TimedEffect = { kind: 'timed', trigger, target, stat };
   // Stage 11 モダニア: フラグの stat（装弾数無限）は値を持たないので ref も scaling も書かない
@@ -1051,6 +1130,8 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   }
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
+  if (targetSquad !== undefined) effect.targetSquad = targetSquad;
+  if (excludeSelf !== undefined) effect.excludeSelf = excludeSelf;
   Object.assign(effect, count);
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) {
@@ -1505,6 +1586,8 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   validateBurstUsersTarget(target, trigger, path);
   // 回復 → healed の攻撃力の窓 → 順位 → 回復の対象、と循環するので heal には書けない（plan/design-stage11.md 19.3 節）
   if (kind === 'heal' && target === 'topAttack') fail(`${path}.target`, 'heal cannot target "topAttack"');
+  // 対象の語彙編: 基本チャージ時間の順位は timed だけ（plan/design-target-vocab.md 2.2 節）
+  if (target === 'longestChargeTime') fail(`${path}.target`, 'longestChargeTime is only allowed in timed');
   // ヘルム編: ゲージは編成で 1 本なので、対象は味方全体だけ（絞り込みも書けない）
   if (kind === 'burstGauge') {
     if (target !== 'allies') fail(`${path}.target`, 'burstGauge must target "allies" (the team shares one gauge)');
