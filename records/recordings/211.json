@@ -1,0 +1,29 @@
+{
+  "id": "211",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-211_rl_anis-star_solo_auto-burst.mp4",
+  "original": "2026-10-05_22-16-52.mp4",
+  "durationSec": 196.8,
+  "frames": 11805,
+  "fps": 60,
+  "sizeMB": 239,
+  "sha256": "7228e985da98",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0187。アニス：スター単騎・操作（AUTO 射撃 ON・オートバースト ON）。録画 164 と同じ条件"
+}
