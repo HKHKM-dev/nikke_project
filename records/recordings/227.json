@@ -1,0 +1,35 @@
+{
+  "id": "227",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-227_mg+sr_emma-tu+eunhwa-tu_auto.mp4",
+  "original": "2026-10-05_23-27-15.mp4",
+  "durationSec": 246.8,
+  "frames": 14805,
+  "fps": 60,
+  "sizeMB": 298.3,
+  "sha256": "c115cdc30888",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0210（エマ：TU S2 のフォーメーションAS の再発動周期 20 秒▼）の撮影。エマ：TU（枠 1・操作）+ ウンファ：TU（枠 2・AI）・3 分モードを撃ち切る。条件（スペック固定 ON・AUTO 射撃 ON・オートバースト OFF・灼熱タブ）は撮影の計画の値で、取り込みのときに画で確かめたのは末尾の戦闘履歴（エマ：タクティカル・アップ・ウンファ：タクティカル・アップの 2 体・交戦 03:00）だけ"
+}

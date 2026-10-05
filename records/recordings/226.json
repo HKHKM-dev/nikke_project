@@ -1,0 +1,29 @@
+{
+  "id": "226",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-226_mg_emma-tu_auto.mp4",
+  "original": "2026-10-05_23-23-37.mp4",
+  "durationSec": 199.5,
+  "frames": 11971,
+  "fps": 60,
+  "sizeMB": 241.6,
+  "sha256": "9bc6f4150edf",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0209（エマ：TU S1 の環境コントロールの再発動周期の起点）の撮影。エマ：TU 単騎・3 分モードを撃ち切る。条件（スペック固定 ON・AUTO 射撃 ON・オートバースト OFF・灼熱タブ）は撮影の計画の値で、取り込みのときに画で確かめたのは末尾の戦闘履歴（エマ：タクティカル・アップ 1 体・交戦 03:00）だけ"
+}
