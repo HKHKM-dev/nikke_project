@@ -94,7 +94,15 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
     const on = planTeamRun(team([fixedSlot(833)]));
     const off = planTeamRun(team([fixedSlot(833)], false));
     const spans = hitRateSpansOf(on.landing, 1)[0]!;
-    const planned = (frame: number) => spans.find((s) => s.start <= frame && frame < s.end)!.hitRate;
+    const spanAt = (frame: number) => spans.find((s) => s.start <= frame && frame < s.end)!;
+    const misato = fixedSlot(833);
+    const planned = (frame: number) => spanAt(frame).hitRate;
+    /**
+     * 持続の▲ k 段での、計画の値に対する比。中遠のような配分の区間は着地点ごとに H2 を当ててから混ぜる（SMG の中遠は
+     * 着地点 A だけ値が違う。C-0319）ので、モデルと同じ hitRateSpanWith で出す
+     */
+    const ratioWith = (frame: number, k: number) =>
+      hitRateSpanWith(on.landing!, misato, 0, spanAt(frame), k * MISATO_S1).hitRate / planned(frame);
 
     it('does not change the shot frames', () => {
       expect(on.shots[0]!.frames).toEqual(off.shots[0]!.frames);
@@ -107,10 +115,15 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
       const raised = ratios.filter(({ r }) => r > 1 + 1e-12);
       expect(raised.length).toBeGreaterThan(0);
       for (const { frame, r } of raised) {
-        const p = planned(frame);
-        const candidates = [1, 2, 3].map((k) => bulletHitRateWithHitRateUp(p, k * MISATO_S1) / p);
+        const candidates = [1, 2, 3].map((k) => ratioWith(frame, k));
         expect(candidates.some((c) => Math.abs(c - r) < 1e-9)).toBe(true);
       }
+      // 帯の値 1 つの区間（遠など）では、H2 の比そのもの
+      const p = planned(raised.find(({ frame }) => planned(frame) < 0.8)!.frame);
+      expect(ratioWith(raised.find(({ frame }) => planned(frame) < 0.8)!.frame, 2)).toBeCloseTo(
+        bulletHitRateWithHitRateUp(p, 2 * MISATO_S1) / p,
+        12,
+      );
       // 3 段が重なる発がある（SMG の遠では約 1.13 倍）
       const far = raised.filter(({ frame }) => planned(frame) < 0.8);
       expect(

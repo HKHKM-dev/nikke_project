@@ -1,0 +1,29 @@
+{
+  "id": "220",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-220_smg_liter_auto.mp4",
+  "original": "2026-10-05_22-47-05.mp4",
+  "durationSec": 198.3,
+  "frames": 11900,
+  "fps": 60,
+  "sizeMB": 240.5,
+  "sha256": "ce3b3559b0d7",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。単騎・操作キャラ・AUTO 射撃 ON・**オートバースト ON**）。戦闘履歴のパネルでリター 1 体（LV.400）を確かめた。V-0215（1 日目の 8 本）の撮影だが、左上のオートバーストのボタンが点いていて、バーストを 4 回使っている（総ダメージの増分が胴体 8714.7 の格子から外れる約 5 秒のまとまりが、2・3・4・5 区間目に 1 つずつ）。V-0215 の条件（オートバースト OFF）を満たさない"
+}
