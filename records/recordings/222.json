@@ -1,0 +1,42 @@
+{
+  "id": "222",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-222_sr+sr+sg_cocoa+delta+drake_drake-auto.mp4",
+  "original": "2026-10-05_23-08-10.mp4",
+  "durationSec": 203.6,
+  "frames": 12218,
+  "fps": 60,
+  "sizeMB": 246.8,
+  "sha256": "a049a7e5febd",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0202。ココア（I）+ デルタ（II）+ ドレイク（III・宝物あり・操作・AUTO 射撃 ON）、オートバースト ON。出撃画面で灼熱タブ・3 分モード・スペック固定 ON、戦闘履歴で枠順・キャラ名・Lv.400・交戦時間 03:00 を確かめた"
+}

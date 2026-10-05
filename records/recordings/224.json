@@ -1,0 +1,41 @@
+{
+  "id": "224",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-224_sr+sr+sg_cocoa+delta+queen_queen-auto.mp4",
+  "original": "2026-10-05_23-15-42.mp4",
+  "durationSec": 209.9,
+  "frames": 12595,
+  "fps": 60,
+  "sizeMB": 254.3,
+  "sha256": "b5368c607d35",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0204。ココア（I）+ デルタ（II）+ クイーン（真）（III・操作・AUTO 射撃 ON）、オートバースト ON。出撃画面で灼熱タブ・3 分モード・スペック固定 ON、戦闘履歴で枠順・キャラ名・Lv.400・交戦時間 03:00 を確かめた"
+}
