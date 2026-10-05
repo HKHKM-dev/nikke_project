@@ -1,0 +1,35 @@
+{
+  "id": "232",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-232_rl+sr_flower+eunhwa-tu_burst.mp4",
+  "original": "2026-10-06_00-01-13.mp4",
+  "durationSec": 201.4,
+  "frames": 12085,
+  "fps": 60,
+  "sizeMB": 243.5,
+  "sha256": "1ddec6a23b68",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0207。操作のフラワーは撃たない"
+}

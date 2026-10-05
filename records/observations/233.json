@@ -1,0 +1,298 @@
+[
+  {
+    "id": "233-01",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1562276,
+    "description": "フルバーストの中で、バースト使用時のカモフラージュ（5 秒）が切れた後の、コアの非会心の 1 発（受けるダメージ▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f2457・2539（1 回目のフルバースト。炸裂弾の着弾 f1972 から 485・567f）の 2 回とも 1,562,276 = カモフラージュ × 受けるダメージ▲ × フルバースト。H1（付き直さない）なら 1,097,694。予測ファイル V-0208 を commit してから撮った（撮る前の予測）。フルバーストの窓は画面の縁の色（橙・赤）が付く区間で読んだ（233-11）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1058,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "233-02",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1874731,
+    "description": "同じ区間のコアの会心の 1 発",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f2375 の 1,874,731 と、f2293 の 2,184,756 からフラワーのヒット 310,025 を引いた 1,874,731（着弾から 321・403f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1058,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "233-03",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1221769,
+    "description": "フルバーストの中で、受けるダメージ▲の外の、フルチャージで付き直したカモフラージュの中のコアの非会心の 1 発",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f4619・4701・4783・4865（2 回目のフルバースト。炸裂弾の着弾 f3849 から 770f 以上）の 4 回とも 1,221,769。f9673・9755（4 回目）も同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1260,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "233-04",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1612735,
+    "description": "同じ区間のコアの会心の 1 発（距離ボーナスの中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f7008（3 回目のフルバースト）の 1,612,735"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1260,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "233-05",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 977415,
+    "description": "フルバーストの終わりの後で、フルバーストの中の最後のフルチャージから 5 秒以内の、コアの非会心の 1 発（カモフラージュの中・受けるダメージ▲の外）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f7428（3 回目のフルバーストの終わり f7358 の後。最後のフルチャージ f7172 から 256f）、f9837・9919（4 回目。最後のフルチャージ f9755 から 82・164f）の 3 回とも 977,415"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1330,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "233-06",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1368381,
+    "description": "同じ区間のコアの会心の 1 発（距離ボーナスの中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f5070（2 回目のフルバーストの終わり f4976 の後。最後のフルチャージ f4865 から 205f）の 1,368,381"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1330,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "233-07",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 686756,
+    "description": "フルバーストの後で、カモフラージュの外のコアの非会心の 1 発（対照）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f2907・7510・10119 ほか"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1765,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "233-08",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "record",
+    "value": [1317232, 790339, 1097694],
+    "description": "フルバーストに入って最初のフルチャージの発（カモフラージュの外。受けるダメージ▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f4419（コアの会心 1,317,232）・f6808（胴体・距離ボーナスの中 790,339）・f9139（1,407,719 からフラワーの 310,025 を引いたコアの非会心 1,097,694）。どれもカモフラージュの値ではなく、次の発から付く（付けた発には乗らない）。予測のモデルではフルバーストの入りがバースト使用時のカモフラージュに重なり、この状態が無い"
+    }
+  },
+  {
+    "id": "233-09",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "timing",
+    "use": "record",
+    "value": [205, 407, 256, 338, 164, 364],
+    "unit": "f",
+    "description": "フルバーストの中の最後のフルチャージの発から、カモフラージュの値の最後の発までと、外の値の最初の発までのフレーム（2・3・4 回目のフルバースト）（回ごとに 2 つずつ、最後の発・最初の発の順）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "2 回目は f4865 → f5070・f5272、3 回目は f7172 → f7428・f7510、4 回目は f9755 → f9919・f10119。どれも 5 秒（300f）と矛盾しない。1 回目は最後の発の後の f2727（848,279）がチャージ途中とみられ、読めない"
+    }
+  },
+  {
+    "id": "233-10",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "record",
+    "value": [2188954, 2188954, 2013838, 1751163, 1751163],
+    "description": "徹甲炸裂弾の 1 発（1〜5 回目のバースト）。コアの会心・コアの会心・コア（距離ボーナスの中）・コア・コア",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f1972・3849・6243・8649・10901。232-10 と同じ式（Hb1）で 1 未満の差。フルバーストの前に撃たれ、フルバーストの +0.5 は乗っていない"
+    }
+  },
+  {
+    "id": "233-11",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "timing",
+    "use": "record",
+    "value": [2062, 2596, 4442, 4976, 6822, 7358, 9196, 9732],
+    "unit": "f",
+    "description": "画面の縁に色が付いている区間（フルバーストの表示）の始まりと終わり。どの回も直前の 0.4 秒にもう 1 つ短い区間（f1977・4354・6734・9111 から。III のカットイン）がある",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "画面右上の縁（1740,110 から 160×80px）の R − B の平均が 35 を超えるフレーム。終わりの表示は実際の窓より遅れる（C-0288）"
+    }
+  },
+  {
+    "id": "233-12",
+    "recording": "233",
+    "source": "V-0208",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "record",
+    "value": [848279, 1169569, 870074],
+    "description": "どの系列にも乗らない増分（チャージ途中の発とみる）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "f2727・9412・11365。f9412 は 4 回目のフルバーストの中で、次のフルチャージの発 f9591（858,445 = カモフラージュの外のコア + フルバースト）の前のカモフラージュが切れていたので、チャージ途中の発ではカモフラージュは付き直さないとみる（確かめていない）"
+    }
+  }
+]

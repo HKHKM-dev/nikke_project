@@ -1,0 +1,218 @@
+{
+  "verification": "V-0208",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 95,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの定義（S1・バーストの効果を定義していない）"
+    },
+    {
+      "id": "H1",
+      "note": "V-0207 の H1 だけ（S1 のカモフラージュはバースト使用時の 5 秒だけ。フルバースト中のフルチャージでは付かない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 95,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "trueDamageConversion",
+              "durationRef": 1
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "trueDamage",
+              "ref": 2,
+              "durationRef": 1
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "H1 に、plan/design-true-damage-element.md 3.4 節の読みを足す。フルチャージの発で、発火の瞬間がフルバーストタイムの中ならカモフラージュ（5 秒）が付き直す（条件 inFullBurst。窓は和集合）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 95,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "trueDamageConversion",
+              "durationRef": 1
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "trueDamage",
+              "ref": 2,
+              "durationRef": 1
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "condition": {
+                "inFullBurst": true
+              },
+              "target": "self",
+              "stat": "trueDamageConversion",
+              "durationRef": 1
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "condition": {
+                "inFullBurst": true
+              },
+              "target": "self",
+              "stat": "trueDamage",
+              "ref": 2,
+              "durationRef": 1
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "fb-late-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1058,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバースト（モデルは 687〜1275f。ウンファ：TU のバーストは 658f）の中で、バーストから 6.7 秒後の通常攻撃の 1 発（コア）。H1 ではバースト使用時のカモフラージュの後、H2 ではフルチャージで付き直したカモフラージュの中"
+    },
+    {
+      "id": "after-fb-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1330,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバーストの終わり（モデルは 1275f）から 1 秒後の通常攻撃の 1 発（コア）。受けるダメージ▲（モデルは 1246f まで）の外。H2 ではフルバーストの最後のフルチャージ（モデルは 1091f）から 5 秒（1385f まで）のカモフラージュの中"
+    },
+    {
+      "id": "after-fb-late-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1765,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "フルバーストの終わりから 8.3 秒後の通常攻撃の 1 発（コア）。どの仮説でも効果の外（対照）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "7bfe16e1dcfb864b32cd346f9b650da38b27a1eb",
+    "values": {
+      "H0": {
+        "fb-late-core": 858445.3784434984,
+        "after-fb-core": 686756.3027547987,
+        "after-fb-late-core": 686756.3027547987
+      },
+      "H1": {
+        "fb-late-core": 1097694.1054157012,
+        "after-fb-core": 686756.3027547987,
+        "after-fb-late-core": 686756.3027547987
+      },
+      "H2": {
+        "fb-late-core": 1562276.1712594554,
+        "after-fb-core": 977415.2944455809,
+        "after-fb-late-core": 686756.3027547987
+      }
+    },
+    "seen": {}
+  }
+}

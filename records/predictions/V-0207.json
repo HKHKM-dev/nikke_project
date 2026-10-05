@@ -1,0 +1,190 @@
+{
+  "verification": "V-0207",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": true
+    },
+    {
+      "rid": 95,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの定義（S1・バーストの効果を定義していない）。バーストの後も通常攻撃の 1 発は変わらない"
+    },
+    {
+      "id": "H1",
+      "note": "plan/design-true-damage-element.md 3.1 節の読み。S1: バースト使用時、自分に通常攻撃の防御力無視ダメージへの変化と防御力無視ダメージ▲（5 秒。置き場所は TRUE_DAMAGE_BUCKET の separate。攻撃ダメージ▲が無いので attackDamage でも同じ値）。バースト: 敵の受けるダメージ▲（10 秒。C-0138 の別枠の乗数）。使用武器変更の 1 発は語彙で表せない（チャージ時間・フルチャージ倍率・最大装弾数が基礎の武器と違う）ので、検証記録に手で書いた",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 95,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "trueDamageConversion",
+              "durationRef": 1
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "trueDamage",
+              "ref": 2,
+              "durationRef": 1
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "camo-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 875,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ウンファ：TU のバースト（モデルは 815f）から 1 秒後の通常攻撃の 1 発（コア）。H1 ではカモフラージュ（5 秒）と受けるダメージ▲（10 秒）の中"
+    },
+    {
+      "id": "camo-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 875,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ区間のコア会心"
+    },
+    {
+      "id": "camo-core-distance",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 875,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ区間のコア（距離ボーナスの中）"
+    },
+    {
+      "id": "taken-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1235,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "バーストから 7 秒後の通常攻撃の 1 発（コア）。H1 ではカモフラージュの外で、受けるダメージ▲の中"
+    },
+    {
+      "id": "taken-core-distance",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1235,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ区間のコア（距離ボーナスの中）"
+    },
+    {
+      "id": "after-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1595,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "バーストから 13 秒後の通常攻撃の 1 発（コア）。どの仮説でも効果の外（対照。013-05 と同じ条件の値）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "7bfe16e1dcfb864b32cd346f9b650da38b27a1eb",
+    "values": {
+      "H0": {
+        "camo-core": 686756.3027547987,
+        "camo-core-crit": 858445.3784434984,
+        "camo-core-distance": 789769.7481680184,
+        "taken-core": 686756.3027547987,
+        "taken-core-distance": 789769.7481680184,
+        "after-core": 686756.3027547987
+      },
+      "H1": {
+        "camo-core": 1249820.9370075644,
+        "camo-core-crit": 1562276.1712594554,
+        "camo-core-distance": 1437294.0775586988,
+        "taken-core": 878155.2843325611,
+        "taken-core-distance": 1009878.5769824452,
+        "after-core": 686756.3027547987
+      }
+    },
+    "seen": {}
+  }
+}
