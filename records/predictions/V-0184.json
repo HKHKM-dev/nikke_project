@@ -1,0 +1,112 @@
+{
+  "verification": "V-0184",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-body2",
+      "note": "いまのモデル（C-0197）。H-core は検証記録に手で書く（的の表の行の切り替え）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "core-midnear",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 1000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "中近の区間のアニス：スターの通常攻撃のコア命中率（いまのモデルは HomingProjectile:100:750 の行でコア 0）"
+    },
+    {
+      "id": "core-near",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "近の区間のアニス：スターの通常攻撃のコア命中率（いまのモデルは HomingProjectile:100:750 の行でコア 0）"
+    },
+    {
+      "id": "core-far",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "遠の区間のアニス：スターの通常攻撃のコア命中率（いまのモデルは HomingProjectile:100:750 の行でコア 0）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "bfac9b9c9445e29bc4ff722f4a51eb758071559a",
+    "values": {
+      "H-body2": {
+        "core-midnear": 0,
+        "core-near": 0,
+        "core-far": 0
+      }
+    },
+    "seen": {
+      "150": [
+        "150-01",
+        "150-02",
+        "150-03",
+        "150-04",
+        "150-05",
+        "150-06",
+        "150-07",
+        "150-08",
+        "150-09",
+        "150-10",
+        "150-11",
+        "150-12",
+        "150-13"
+      ],
+      "161": [
+        "161-01",
+        "161-02",
+        "161-03",
+        "161-04",
+        "161-05",
+        "161-06",
+        "161-07",
+        "161-08",
+        "161-09",
+        "161-10",
+        "161-11",
+        "161-12",
+        "161-13",
+        "161-14",
+        "161-15",
+        "161-16"
+      ]
+    }
+  }
+}
