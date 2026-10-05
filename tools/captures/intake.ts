@@ -2,9 +2,11 @@
 // 大きさ・sha256）を取り、records/recordings/<録画 id>.json を書く。編成・的・条件は引数で受け、無ければ空で出す（人が埋める）。
 //   node tools/captures/intake.ts <元ファイル> --id NNN --name <種別内の識別子> [--folder range] [--date YYYY-MM-DD]
 //        [--rid 271,870] [--controlled 1] [--target BigArms --element Fire] [--mode range-3min]
-//        [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."] [--copy]
+//        [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."] [--copy] [--no-backup]
 // 命名規約は plan/captures/index.md「命名規約」（<YYYYMMDD>-<番号 3 桁>_<識別子>.mp4。識別子は英小文字・数字・-・_・+）。
 // 日付は --date、無ければ元のファイル名の YYYY-MM-DD、無ければファイルの更新日時。既定は移動（--copy で元を残す）。
+// 最後に、移した録画を Google Drive のバックアップ先（dirs.ts の backupDir()）へ robocopy で同期し、両方の sha256 を突き合わせる
+// （plan/captures/index.md「バックアップ」）。バックアップ先が無い環境と --no-backup では同期しない。同期に失敗したら終了コード 1。
 // 取り込んだ後は npm run records:table（台帳の表）と、キャラの確かめに node tools/captures/probe-result.ts <動画> --list。
 import {
   copyFileSync,
@@ -16,7 +18,8 @@ import {
   unlinkSync,
   writeFileSync,
 } from 'node:fs';
-import { basename, join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import {
@@ -27,7 +30,7 @@ import {
   type RecordingMode,
 } from '../../packages/core/src/records/recordings.ts';
 import type { CharacterData, Element } from '../../packages/core/src/types.ts';
-import { capturesDir } from './dirs.ts';
+import { backupDir, capturesDir } from './dirs.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
@@ -50,13 +53,14 @@ const { values, positionals } = parseArgs({
     'auto-burst': { type: 'string' },
     note: { type: 'string', default: '' },
     copy: { type: 'boolean', default: false },
+    'no-backup': { type: 'boolean', default: false },
   },
 });
 
 const USAGE =
   'usage: node tools/captures/intake.ts <元ファイル> --id NNN --name <識別子> [--folder range] [--date YYYY-MM-DD]\n' +
   '       [--rid 271,870] [--controlled 1] [--target BigArms --element Fire] [--mode range-3min]\n' +
-  '       [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."] [--copy]';
+  '       [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."] [--copy] [--no-backup]';
 
 function fail(message: string): never {
   console.error(message);
@@ -124,7 +128,8 @@ else {
 console.error(`${source} → ${dest}（${values.copy ? '複製' : '移動'}）`);
 
 const probe = ffprobe(dest);
-const digest = (await sha256(dest)).slice(0, 12);
+const fullDigest = await sha256(dest);
+const digest = fullDigest.slice(0, 12);
 const rids = values.rid === undefined ? [] : values.rid.split(',').map((s) => Number(s.trim()));
 const controlled = values.controlled === undefined ? null : Number(values.controlled);
 const entry: ProjectRecording = {
@@ -167,3 +172,59 @@ const missing = [
 ];
 if (missing.length > 0) console.log(`人が埋める項目: ${missing.join('、')}`);
 console.log(`次: npm run records:table、キャラの確かめは node tools/captures/probe-result.ts "${dest}" --list`);
+
+// バックアップ先の同じ種別フォルダへこの 1 本だけを robocopy し（/E は付けない）、sha256 を突き合わせる。
+async function backup(): Promise<boolean> {
+  const root = backupDir();
+  if (values['no-backup'] || root === null) {
+    console.log(`Drive への同期はしていない（${values['no-backup'] ? '--no-backup' : 'バックアップ先が無い環境'}）`);
+    return true;
+  }
+  if (!existsSync(root)) {
+    console.error(`バックアップ先 ${root} が無い（Google Drive for desktop がマウントされていない？）`);
+    return false;
+  }
+  const backupFile = join(root, folder, file);
+  if (existsSync(backupFile)) {
+    console.error(`${backupFile} が既にある（上書きしない）`);
+    return false;
+  }
+  if (process.platform === 'win32') {
+    // Git Bash の中で動かしても、node から直に起動するので /R:1 などはパスに変換されない
+    const r = spawnSync(
+      'robocopy',
+      [dirname(dest), join(root, folder), file, '/R:1', '/W:1', '/NP', '/NJH', '/NJS', '/NFL', '/NDL'],
+      {
+        stdio: 'inherit',
+      },
+    );
+    // 終了コードは 0〜7 が正常、8 以上が失敗
+    if (r.error || r.status === null || r.status >= 8) {
+      console.error(`robocopy が失敗した（終了コード ${r.status ?? r.error?.message}）`);
+      return false;
+    }
+  } else {
+    mkdirSync(join(root, folder), { recursive: true });
+    copyFileSync(dest, backupFile);
+  }
+  if (!existsSync(backupFile)) {
+    console.error(`${backupFile} ができていない`);
+    return false;
+  }
+  const backupDigest = await sha256(backupFile);
+  if (backupDigest !== fullDigest) {
+    console.error(
+      `sha256 が一致しない（${dest}: ${fullDigest.slice(0, 12)}、${backupFile}: ${backupDigest.slice(0, 12)}）`,
+    );
+    return false;
+  }
+  console.log(`${backupFile} に同期した（sha256 ${digest} が一致）`);
+  return true;
+}
+
+if (!(await backup())) {
+  console.error(
+    '取り込み（移動と records/recordings の JSON）は済んでいる。同期は plan/captures/index.md「バックアップ」の手順で手で行う',
+  );
+  process.exit(1);
+}

@@ -20,6 +20,16 @@ export function legacyDir(): string {
   return dir('NIKKE_LEGACY_DIR', 'old_nikkecalc');
 }
 
+/**
+ * capturesDir() のバックアップ先（NIKKE_BACKUP_DIR。plan/captures/index.md「バックアップ」）。無ければ Windows（オーナーの手元）は
+ * Google Drive for desktop のメインアカウント側の I:、それ以外（クラウド環境）は null（同期しない）
+ */
+export function backupDir(): string | null {
+  const fromEnv = process.env['NIKKE_BACKUP_DIR'];
+  if (fromEnv) return fromEnv;
+  return process.platform === 'win32' ? 'I:/マイドライブ/nikke_project_captures' : null;
+}
+
 /** 台帳の L- の録画の path の頭（オーナーの手元の置き場所。この下が legacyDir() と Drive の old_nikkecalc の下と同じ構成） */
 export const LEGACY_PREFIX = 'E:/old_nikkecalc/';
 
