@@ -72,6 +72,31 @@ export function explosionHitMultiplier(buffs: BuffTotals): number {
 }
 
 /**
+ * 防御力無視ダメージ編: 防御力無視ダメージ▲（trueDamage）の式の中の置き場所（plan/design-true-damage-element.md 3.1 節・6 節の論点 1）。
+ * separate = 別の乗数 (1 + Σ防御力無視ダメージ)、attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ)。
+ * **未確定（仮定）**: 根拠の結論が無い。いまは trueDamage を書いた定義が無いので、どちらでも計算は変わらない。攻撃ダメージ▲が無ければ
+ * 2 つは同じ値になる（区別は攻撃ダメージ▲を持つ機構が確定したキャラを足した録画で行う）
+ */
+export const TRUE_DAMAGE_BUCKET: 'separate' | 'attackDamage' = 'separate';
+
+/** 防御力無視ダメージ編: 通常攻撃の 1 発が防御力無視ダメージか（「通常攻撃が防御力無視ダメージに変化」の窓か、防御力無視の使用武器の変更） */
+export function isTrueDamageShot(buffs: BuffTotals): boolean {
+  return buffs.trueDamageConversion > 0 || buffs.weapon?.trueDamage === true;
+}
+
+/**
+ * 防御力無視ダメージ▲の乗数。攻撃ダメージ▲の乗数とは別に掛ける形にそろえる（attackDamage の枠は
+ * (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ) ÷ (1 + Σ攻撃ダメージ)）。防御力無視ダメージでない発と▲の無いときは 1
+ */
+export function trueDamageMultiplier(buffs: BuffTotals): number {
+  const up = buffs.trueDamage;
+  if (!isTrueDamageShot(buffs) || up === 0) return 1;
+  if (TRUE_DAMAGE_BUCKET === 'separate') return 1 + up;
+  const attackDamage = applyAttackDamageBuffs(buffs);
+  return (attackDamage + up) / attackDamage;
+}
+
+/**
  * Stage 13: 有利コードの攻撃ダメージ▲（elementDamage）を倍率ダメージ（damage / perShot / burstDamage）にも乗せるか（仮定）。
  * 設計時点の仮定は「乗る」（plan/design-stage12.md 3.3 節）。射撃場の実測 3.5 節の 7 で確かめる
  */
@@ -188,6 +213,13 @@ export type TriggerDamage = {
   damageTakenMultiplier: number;
   /** アニス：スター S2・バースト編: 発射体爆発ダメージ▲の乗数（通常攻撃だけ。projectileExplosionMultiplier） */
   projectileExplosionMultiplier: number;
+  /**
+   * 防御力無視ダメージ編: 通常攻撃の 1 発が防御力無視ダメージか（isTrueDamageShot）。true なら normal の基礎は max(1, 攻撃力)
+   * （baseHit は射撃ごとの倍率ダメージが使う max(1, 攻撃力 − 防御力) のまま）
+   */
+  trueDamage: boolean;
+  /** 防御力無視ダメージ編: 防御力無視ダメージ▲の乗数（通常攻撃だけ。trueDamageMultiplier） */
+  trueDamageMultiplier: number;
   elementMultiplier: number;
   /** Stage 11 モダニア: 通常攻撃の分（Stage 10 までの perTrigger） */
   normal: number;
@@ -326,19 +358,24 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const attackDamageMultiplier = applyAttackDamageBuffs(buffs);
   const damageTakenMultiplier = 1 + buffs.damageTaken;
   const explosionMultiplier = projectileExplosionMultiplier(shot, buffs);
+  // 防御力無視ダメージ編: 通常攻撃だけ、防御力を引かない基礎と▲の乗数（射撃ごとの倍率ダメージは baseHit のまま）
+  const trueDamage = isTrueDamageShot(buffs);
+  const normalBaseHit = trueDamage ? Math.max(1, attack) : baseHit;
+  const trueMultiplier = trueDamageMultiplier(buffs);
 
   const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage);
   const hitsPerShot = hitsPerShotOf(condition);
   const normal =
     hitRate *
     hitsPerShot *
-    baseHit *
+    normalBaseHit *
     weaponMultiplier *
     normalAttackMultiplier *
     chargeMultiplier *
     boostTotal *
     attackDamageMultiplier *
     explosionMultiplier *
+    trueMultiplier *
     damageTakenMultiplier *
     element;
   const perShot =
@@ -371,6 +408,8 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     attackDamageMultiplier,
     damageTakenMultiplier,
     projectileExplosionMultiplier: explosionMultiplier,
+    trueDamage,
+    trueDamageMultiplier: trueMultiplier,
     elementMultiplier: element,
     normal,
     perShot,

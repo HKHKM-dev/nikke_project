@@ -1,14 +1,14 @@
 {
   "formatVersion": 1,
   "resourceId": 93,
-  "checkedAt": "2026-09-22",
+  "checkedAt": "2026-10-05",
   "skills": {
     "skill1": {
       "effects": [],
       "notes": [
         {
-          "ja": "環境コントロールの敵全体の受けるダメージ▲（再発動周期つき）は未対応（語彙 damageTaken はあるが、再発動周期と撮影が要る）",
-          "en": "Environment Setup's Damage Taken up on all enemies (with a recurring interval) is not modeled (damageTaken exists, but the recurring interval and a recording are needed)",
+          "ja": "環境コントロールの敵全体の受けるダメージ▲（戦闘開始時と再発動周期ごと）は未対応（語彙 damageTaken・周期のトリガーの atStart はあるが、再発動周期の起点が説明文から一意に読めず、撮影していない）",
+          "en": "Environment Setup's Damage Taken up on all enemies (at battle start and every recurring interval) is not modeled (damageTaken and the atStart timer trigger exist, but where the recurring interval starts is ambiguous and there is no recording yet)",
           "kind": "unimplemented"
         },
         {
@@ -39,9 +39,14 @@
           "kind": "unimplemented"
         },
         {
-          "ja": "フォーメーションAS 併用時の追加効果（防御力無視ダメージ・再発動周期短縮）は未対応",
-          "en": "Bonus effects while in AS Formation (True Damage, recurring interval) are not modeled",
+          "ja": "フォーメーションAS 適用中の追加効果（味方全体の防御力無視ダメージ▲・発射体爆発ダメージ▲、環境コントロールの再発動周期 20 秒▼）は未対応（語彙 withCharacter・trueDamage・projectileExplosionDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）",
+          "en": "Bonus effects while in AS Formation (True Damage up and Projectile Explosion Damage up for all allies, Environment Setup's recurring interval −20 s) are not modeled (withCharacter, trueDamage and projectileExplosionDamage exist, but there is no supporting claim; the skills of Emma: TU and Eunhwa: TU must be confirmed first)",
           "kind": "unimplemented"
+        },
+        {
+          "ja": "フォーメーションAS 適用中の陽動発動不可はダメージに関係しない",
+          "en": "Exposure being disabled while in AS Formation does not affect damage",
+          "kind": "noDamage"
         },
         {
           "ja": "クリティカルダメージ▲の対象は「同じ部隊の味方全体」だが、対象を部隊で絞るのは未実装（いまは味方全体に付ける）",
@@ -64,8 +69,8 @@
       ],
       "notes": [
         {
-          "ja": "環境コントロール強化（環境コントロールのダメージ増加倍率が増える）は未対応",
-          "en": "Enhanced Environment Setup (a larger damage increase from Environment Setup) is not modeled",
+          "ja": "環境コントロール強化（環境コントロールの受けるダメージ▲を 10 秒間 2 倍にする）は未対応（環境コントロールの窓に重ねて切り取る語彙が無い。エマ：TU S1 の結論が出てから作る）",
+          "en": "Enhanced Environment Setup (doubling Environment Setup's Damage Taken up for 10 s) is not modeled (no vocabulary to clip it to the Environment Setup window; it will be added after Emma: TU's S1 is confirmed)",
           "kind": "unimplemented"
         },
         {

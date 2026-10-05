@@ -54,6 +54,11 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * projectileExplosionDamage = 発射体爆発ダメージ▲。発射体の爆発を持つ武器（RL）の通常攻撃にだけ掛ける（式の中の置き場所は
  * damage.ts の PROJECTILE_EXPLOSION_BUCKET）。
  * fixedChargeTime = 「チャージ時間 N 秒に固定」。射撃に効く。値は秒（100 で割らない）。timed の self だけ
+ * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.1 節）:
+ * trueDamage = 防御力無視ダメージ▲。防御力無視ダメージの発（trueDamageConversion の窓の通常攻撃と、trueDamage の使用武器の変更）
+ * にだけ乗る（式の中の置き場所は damage.ts の TRUE_DAMAGE_BUCKET）。
+ * trueDamageConversion = 「通常攻撃が防御力無視ダメージに変化」。値を持たないフラグ（ref を書かない。timed の self だけ）。
+ * 窓のあいだ、自分の通常攻撃の 1 発の基礎を max(1, 攻撃力 − 防御力) から max(1, 攻撃力) にする
  */
 export type BuffStat =
   | 'attack'
@@ -75,7 +80,9 @@ export type BuffStat =
   | 'chargeDamageMultiplier'
   | 'damageTaken'
   | 'projectileExplosionDamage'
-  | 'fixedChargeTime';
+  | 'fixedChargeTime'
+  | 'trueDamage'
+  | 'trueDamageConversion';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -97,6 +104,8 @@ export const BUFF_STATS = [
   'damageTaken',
   'projectileExplosionDamage',
   'fixedChargeTime',
+  'trueDamage',
+  'trueDamageConversion',
 ] as const satisfies readonly BuffStat[];
 
 /** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限、アニス：スター編でチャージ時間の固定を足した */
@@ -133,8 +142,8 @@ export function isHitStateStat(stat: BuffStat | 'weapon'): boolean {
   return (HIT_STATE_STATS as readonly string[]).includes(stat);
 }
 
-/** Stage 11 モダニア: 値を持たないフラグの stat（ref を書かない） */
-export const FLAG_STATS = ['infiniteAmmo'] as const satisfies readonly BuffStat[];
+/** Stage 11 モダニア: 値を持たないフラグの stat（ref を書かない）。防御力無視ダメージ編で trueDamageConversion を足した */
+export const FLAG_STATS = ['infiniteAmmo', 'trueDamageConversion'] as const satisfies readonly BuffStat[];
 
 export function isFlagStat(stat: BuffStat): boolean {
   return (FLAG_STATS as readonly string[]).includes(stat);
@@ -189,6 +198,12 @@ export const BASIC_BURST_STEPS = ['Step1', 'Step2', 'Step3'] as const satisfies 
 export type SquadCondition = { present: boolean };
 
 /**
+ * 防御力無視ダメージ編: 編成に特定のキャラがいる条件（plan/design-true-damage-element.md 3.3 節）。自分を除く編成の枠（空枠を除く）に、
+ * resourceId が rid のキャラが 1 体以上いる（present: true）/ いない（false）ときだけ効果を持つ。squad と同じく編成で決まる静的な条件
+ */
+export type WithCharacterCondition = { rid: number; present: boolean };
+
+/**
  * スロットの対応状況（plan/design-skill-note-kinds.md 2.2 節）。定義には書かず、効果の有無と unimplemented の notes の有無から
  * 読み込みで決める（deriveSkillSupport）。noEffect = モデルの前提の中でダメージに効く効果が無い（notes が noDamage・outOfScope・modeling だけ）
  */
@@ -226,6 +241,10 @@ export type PassiveEffect = {
   burstStepMix?: BurstStepMixCondition;
   /** ラム編: 同じ部隊の味方の条件 */
   squad?: SquadCondition;
+  /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
+  withCharacter?: WithCharacterCondition;
+  /** 防御力無視ダメージ編: 敵の属性の条件（敵の属性がこれのときだけ効果を持つ。静的な条件） */
+  enemyElement?: Element;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -313,7 +332,14 @@ export type EventCountTrigger = {
  * 値は実測の即値。射撃に効かない damage と dot にだけ書ける（1 パス目の出来事の列にタイマーのフレームが無いため。
  * plan/design-nihilister.md 8.1 節）
  */
-export type TimerTrigger = { everySeconds: number };
+export type TimerTrigger = {
+  everySeconds: number;
+  /**
+   * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.5 節）: 戦闘開始時（フレーム 0）にも 1 回発火する
+   * （「戦闘開始時、… 再発動周期 N 秒」）。timed の、1 パス目で窓を追わない stat にだけ書ける
+   */
+  atStart?: true;
+};
 
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガーか時間の周期のトリガー */
 export type EffectTrigger = BuffTrigger | ShotCountTrigger | EventCountTrigger | TimerTrigger;
@@ -365,7 +391,11 @@ export type TimedEffect = TargetCountFields & {
   burstStepMix?: BurstStepMixCondition;
   /** ラム編: 同じ部隊の味方の条件 */
   squad?: SquadCondition;
-  /** 維持秒数の description_value_NN。durationSeconds・durationShots・durationShotsRef とちょうど 1 つ */
+  /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
+  withCharacter?: WithCharacterCondition;
+  /** 防御力無視ダメージ編: 敵の属性の条件 */
+  enemyElement?: Element;
+  /** 維持秒数の description_value_NN。durationSeconds・durationShots・durationShotsRef・durationUntil とちょうど 1 つ */
   durationRef?: number;
   /** 維持秒数の即値（説明文に「維持時間：10秒」と直書きされている場合） */
   durationSeconds?: number;
@@ -377,12 +407,38 @@ export type TimedEffect = TargetCountFields & {
   durationShots?: number;
   /** ヘルム編: 「N 発間維持」の N の description_value_NN */
   durationShotsRef?: number;
+  /**
+   * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.2 節）: 「解除条件：フルバーストタイムが終了した時」。付いたフレームから
+   * 次のフルバースト終了のフレームまで続く（無ければ戦闘の終わりまで）。1 パス目で窓を追う stat と、スタック・順位の対象には書けない
+   */
+  durationUntil?: DurationUntil;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
 
-/** Stage 11 モダニア: 発火の条件。selfBuffed = 自分がその stat の増加状態なら */
-export type EffectCondition = { selfBuffed: BuffStat };
+/** 防御力無視ダメージ編: 維持の終わりの出来事 */
+export type DurationUntil = 'fullBurstEnd';
+export const DURATION_UNTILS = ['fullBurstEnd'] as const satisfies readonly DurationUntil[];
+
+/**
+ * Stage 11 モダニア: 発火の条件。selfBuffed = 自分がその stat の増加状態なら。
+ * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.4 節）: inFullBurst = 発火の瞬間がフルバーストタイムの中なら
+ * （「フルバーストタイムなら」。1 パス目で窓を追う stat には書けない）
+ */
+export type EffectCondition = { selfBuffed: BuffStat } | { inFullBurst: true };
+
+/** 条件が「自分が 〈stat〉 増加状態なら」ならその stat、それ以外は undefined */
+export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffStat | undefined {
+  return condition !== undefined && 'selfBuffed' in condition ? condition.selfBuffed : undefined;
+}
+
+/**
+ * 防御力無視ダメージ編: 1 パス目のループで窓を追う stat か（攻撃力・射撃に効く stat・状態の stat）。追わない stat の窓は
+ * planBuffTimeline だけが作るので、durationShots・durationUntil・条件 inFullBurst・周期のトリガーの atStart はそちらにだけ書ける
+ */
+export function isFirstPassTrackedStat(stat: BuffStat): boolean {
+  return stat === 'attack' || isFiringStat(stat) || isStateStat(stat);
+}
 
 /** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */
 export type BurstDamageType = 'skill' | 'distributed';
@@ -420,6 +476,10 @@ export type DamageEffect = {
    * 射撃の回数トリガーのときだけ書ける。省略は溜めない
    */
   gaugeHits?: number[];
+  /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
+  withCharacter?: WithCharacterCondition;
+  /** 防御力無視ダメージ編: 敵の属性の条件（クイーン（真）S1 の「1more が適用された時」） */
+  enemyElement?: Element;
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -521,6 +581,8 @@ export type WeaponChangeEffect = {
    * （録画 44。照準範囲内の敵の数か弾の数かは未確定）。会心はヒットごとに判定されるので、期待値は武器倍率 × ヒット数と同じ
    */
   hitsPerShot?: number;
+  /** 防御力無視ダメージ編: 変更後の武器の 1 発を防御力無視ダメージにする（「最終攻撃力の X% の防御力無視ダメージ」） */
+  trueDamage?: true;
   /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
   durationRef?: number;
   durationSeconds?: number;
@@ -916,18 +978,24 @@ function parsePositiveInt(v: Json, path: string): number {
  * 文字列なら BuffTrigger、オブジェクトなら回数トリガー。時間の周期のトリガー（{ everySeconds }）は allowTimer のとき
  * （damage・dot・burstGaugeHit）だけ
  */
-function parseTrigger(v: Json, path: string, allowTimer = false): EffectTrigger {
+function parseTrigger(v: Json, path: string, allowTimer: boolean | 'withStart' = false): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
   if (v.everySeconds !== undefined) {
     if (!allowTimer)
-      fail(path, 'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack and burstGaugeHit');
-    for (const key of Object.keys(v)) if (key !== 'everySeconds') fail(`${path}.${key}`, 'unknown field');
+      fail(
+        path,
+        'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit and timed (stats not tracked in the first pass)',
+      );
+    const keys = allowTimer === 'withStart' ? ['everySeconds', 'atStart'] : ['everySeconds'];
+    for (const key of Object.keys(v)) if (!keys.includes(key)) fail(`${path}.${key}`, 'unknown field');
     const seconds = v.everySeconds;
     if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
       fail(`${path}.everySeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
     }
-    return { everySeconds: seconds };
+    if (v.atStart === undefined) return { everySeconds: seconds };
+    if (v.atStart !== true) fail(`${path}.atStart`, `expected true, got ${JSON.stringify(v.atStart)}`);
+    return { everySeconds: seconds, atStart: true };
   }
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
@@ -953,13 +1021,17 @@ function parseTrigger(v: Json, path: string, allowTimer = false): EffectTrigger 
 }
 
 function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
+  // 防御力無視ダメージ編: 周期のトリガーは、1 パス目で窓を追わない stat だけ（1 パス目の出来事の列にタイマーのフレームが無いため）
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, isFirstPassTrackedStat(stat) ? false : 'withStart');
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
   const count = parseTargetCount(v, target, path);
-  const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
+  if (stat === 'trueDamageConversion' && target !== 'self') {
+    fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
+  }
   if (stat === 'burstGaugeSpeed') {
     fail(
       `${path}.stat`,
@@ -999,11 +1071,29 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
     fail(path, 'a duration in shots cannot stack');
   }
   if (byShots && v.condition !== undefined) fail(`${path}.condition`, 'a duration in shots cannot have a condition');
+  if (effect.durationUntil !== undefined && (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)) {
+    fail(path, 'a duration until an event cannot stack');
+  }
+  // 防御力無視ダメージ編: 「フルバーストタイムなら」
+  if (isRecord(v.condition) && v.condition.inFullBurst !== undefined) {
+    const c = v.condition;
+    if (Object.keys(c).some((k) => k !== 'inFullBurst') || c.inFullBurst !== true) {
+      fail(`${path}.condition`, 'expected { inFullBurst: true }');
+    }
+    if (isFirstPassTrackedStat(stat)) {
+      fail(
+        `${path}.condition`,
+        `inFullBurst is not supported for "${stat}" (its window is tracked inside the first pass)`,
+      );
+    }
+    if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
+    effect.condition = { inFullBurst: true };
+  }
   // Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」
-  if (v.condition !== undefined) {
+  else if (v.condition !== undefined) {
     const c = v.condition;
     if (!isRecord(c) || Object.keys(c).some((k) => k !== 'selfBuffed')) {
-      fail(`${path}.condition`, 'expected { selfBuffed: stat }');
+      fail(`${path}.condition`, 'expected { selfBuffed: stat } or { inFullBurst: true }');
     }
     const selfBuffed = oneOf(BUFF_STATS, c.selfBuffed, `${path}.condition.selfBuffed`);
     if (isFlagStat(selfBuffed)) fail(`${path}.condition.selfBuffed`, `${selfBuffed} is not a buff state`);
@@ -1042,9 +1132,29 @@ function parseTimedDuration(
   stat: BuffStat,
   target: BuffTarget,
   path: string,
-): { durationRef?: number; durationSeconds?: number; durationShots?: number; durationShotsRef?: number } {
+): {
+  durationRef?: number;
+  durationSeconds?: number;
+  durationShots?: number;
+  durationShotsRef?: number;
+  durationUntil?: DurationUntil;
+} {
   const hasShots = v.durationShots !== undefined;
   const hasShotsRef = v.durationShotsRef !== undefined;
+  // 防御力無視ダメージ編: 「解除条件：フルバーストタイムが終了した時」
+  if (v.durationUntil !== undefined) {
+    if (hasShots || hasShotsRef || v.durationRef !== undefined || v.durationSeconds !== undefined) {
+      fail(path, 'durationUntil cannot be combined with another duration');
+    }
+    if (isFirstPassTrackedStat(stat) || isFlagStat(stat)) {
+      fail(
+        `${path}.stat`,
+        `a duration until an event is not supported for "${stat}" (its window is tracked inside the first pass)`,
+      );
+    }
+    if (target === 'topAttack') fail(`${path}.target`, 'a duration until an event cannot target "topAttack"');
+    return { durationUntil: oneOf(DURATION_UNTILS, v.durationUntil, `${path}.durationUntil`) };
+  }
   if (!hasShots && !hasShotsRef) return parseDuration(v, path);
   if (hasShots && hasShotsRef) fail(path, 'at most one of durationShots and durationShotsRef');
   if (v.durationRef !== undefined || v.durationSeconds !== undefined) {
@@ -1079,9 +1189,17 @@ function parseDuration(v: Record<string, Json>, path: string): { durationRef?: n
 function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponChangeEffect {
   for (const key of Object.keys(v)) {
     if (
-      !['kind', 'trigger', 'damageRef', 'hitsPerShot', 'durationRef', 'durationSeconds', 'assumes', 'claims'].includes(
-        key,
-      )
+      ![
+        'kind',
+        'trigger',
+        'damageRef',
+        'hitsPerShot',
+        'trueDamage',
+        'durationRef',
+        'durationSeconds',
+        'assumes',
+        'claims',
+      ].includes(key)
     ) {
       fail(`${path}.${key}`, 'unknown field');
     }
@@ -1093,6 +1211,10 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
     ...parseDuration(v, path),
   };
   if (v.hitsPerShot !== undefined) effect.hitsPerShot = parsePositiveInt(v.hitsPerShot, `${path}.hitsPerShot`);
+  if (v.trueDamage !== undefined) {
+    if (v.trueDamage !== true) fail(`${path}.trueDamage`, `expected true, got ${JSON.stringify(v.trueDamage)}`);
+    effect.trueDamage = true;
+  }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -1437,8 +1559,26 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
     if (key === 'burstStepMix') effect.burstStepMix = parseBurstStepMixCondition(v[key], `${path}.${key}`);
     else effect.squad = parseSquadCondition(v[key], `${path}.${key}`);
   }
+  // 防御力無視ダメージ編: 編成に特定のキャラがいる条件・敵の属性の条件（passive・timed・damage）
+  for (const key of ['withCharacter', 'enemyElement'] as const) {
+    if (v[key] === undefined) continue;
+    if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'damage') {
+      fail(`${path}.${key}`, `only allowed in passive, timed and damage, found in ${effect.kind}`);
+    }
+    if (key === 'withCharacter') effect.withCharacter = parseWithCharacterCondition(v[key], `${path}.${key}`);
+    else effect.enemyElement = oneOf(ELEMENTS, v[key], `${path}.${key}`);
+  }
   if (v.claims !== undefined) effect.claims = parseClaimRefs(v.claims, `${path}.claims`);
   return effect;
+}
+
+/** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
+function parseWithCharacterCondition(v: Json, path: string): WithCharacterCondition {
+  if (!isRecord(v)) fail(path, 'expected an object');
+  for (const key of Object.keys(v)) if (key !== 'rid' && key !== 'present') fail(`${path}.${key}`, 'unknown field');
+  const rid = parsePositiveInt(v.rid, `${path}.rid`);
+  if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
+  return { rid, present: v.present };
 }
 
 /** アニス：スター編: バースト段階の構成の条件 */

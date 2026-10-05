@@ -1,5 +1,5 @@
 // スキル関連の表示用ラベル（React 非依存）
-import { ELEMENT_LABEL, framesToGameSeconds } from '@nikke/core';
+import { ELEMENT_LABEL, framesToGameSeconds, selfBuffedStatOf } from '@nikke/core';
 import type {
   AppliedEffect,
   BuildEffect,
@@ -44,6 +44,8 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   normalAttackDamage: '通常攻撃ダメージ倍率',
   normalCritRate: '通常攻撃のクリティカル確率',
   fixedChargeTime: 'チャージ時間の固定',
+  trueDamage: '防御力無視ダメージ',
+  trueDamageConversion: '通常攻撃が防御力無視ダメージに変化',
 };
 
 export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
@@ -151,7 +153,10 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
 export function formatTimedExtras(effect: AppliedTimedEffect): string {
   const parts: string[] = [];
   if (effect.maxStacks !== undefined) parts.push(`最大 ${effect.maxStacks} スタック`);
-  if (effect.condition !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[effect.condition.selfBuffed]}増加状態なら`);
+  const selfBuffed = selfBuffedStatOf(effect.condition);
+  if (selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[selfBuffed]}増加状態なら`);
+  else if (effect.condition !== undefined) parts.push('フルバーストタイムなら');
+  if (effect.durationUntil === 'fullBurstEnd') parts.push('フルバーストタイムの終了まで');
   return parts.length === 0 ? '' : `（${parts.join('・')}）`;
 }
 

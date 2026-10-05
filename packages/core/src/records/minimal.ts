@@ -84,7 +84,8 @@ export function minimalWarnings(verifications: readonly Verification[], ctx: Min
           const character = ctx.characters.get(m.rid);
           if (character === undefined) return true;
           const def = ctx.skills.get(m.rid);
-          const inTeam = def === undefined ? undefined : applyComposition(def, teamCharacters, i);
+          const inTeam =
+            def === undefined ? undefined : applyComposition(def, teamCharacters, i, recording.target.element);
           return !(mechanismConfirmed(inTeam, states) && normalConditionMeasured(character, recording, ctx.enemies));
         })
         .map((m) => m.name);

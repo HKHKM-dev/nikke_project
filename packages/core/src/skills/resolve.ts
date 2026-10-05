@@ -11,6 +11,7 @@ import {
   type BuffStat,
   type BuffTarget,
   type BuffTrigger,
+  type DurationUntil,
   type EffectCondition,
   type EffectTrigger,
   type EventCountKind,
@@ -19,6 +20,7 @@ import {
   type SkillDefinition,
   type SkillSlot,
   type TargetCountFields,
+  type TimerTrigger,
 } from './types.ts';
 
 /**
@@ -26,7 +28,7 @@ import {
  * 文字列のトリガーと発動回数のトリガーはそのまま。ニヒリスター編の時間の周期のトリガー（{ everySeconds }）もそのまま。
  */
 export type ResolvedTrigger =
-  BuffTrigger | ResolvedShotCountTrigger | { count: EventCountKind; atLeast: number } | { everySeconds: number };
+  BuffTrigger | ResolvedShotCountTrigger | { count: EventCountKind; atLeast: number } | TimerTrigger;
 
 /**
  * 射撃の回数トリガー（解決済み）。every は発火の間隔（回）。
@@ -214,8 +216,13 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   effectIndex: number;
   /** Stage 11 モダニア: 効果のあるスタックの最大数（解決済み）。無ければスタックしない（和集合 = 上書き延長） */
   maxStacks?: number;
-  /** Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」 */
+  /** Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」。防御力無視ダメージ編: 「フルバーストタイムなら」 */
   condition?: EffectCondition;
+  /**
+   * 防御力無視ダメージ編: 維持の終わりの出来事（「解除条件：フルバーストタイムが終了した時」）。有れば durationFrames は 0
+   * （1 パス目のループでは追わず、窓は planBuffTimeline が時刻表から作る）
+   */
+  durationUntil?: DurationUntil;
 };
 
 /** 持続バフが枠へ適用された記録 */
@@ -276,6 +283,7 @@ export function resolveTimed(
       if (maxStacks !== undefined) r.maxStacks = maxStacks;
       if (effect.condition) r.condition = effect.condition;
       if (shots !== undefined) r.durationShots = shots;
+      if (effect.durationUntil !== undefined) r.durationUntil = effect.durationUntil;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
@@ -372,6 +380,7 @@ function resolveWeaponChange(
       id: `${character.resourceId}.${slot}.${effectIndex}`,
       hits,
       shot: changedWeaponShot(character.shot, damage, change.rateOfFire, hits),
+      ...(effect.trueDamage ? { trueDamage: true as const } : {}),
     },
     trigger: resolveTrigger(effect.trigger, skill, level),
     durationFrames: gameSecondsToFrames(durationSecondsOf(effect, skill, level)),

@@ -87,7 +87,7 @@ import {
   shotCountWeight,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import { isFiringStat, isHitStateStat, type BuffStat, type ShotCountKind } from '../skills/types.ts';
+import { isFiringStat, isHitStateStat, selfBuffedStatOf, type BuffStat, type ShotCountKind } from '../skills/types.ts';
 import { dotTickTracker, groupDotsByStatus, type DotTickTracker } from './dot.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { timerFrames, type FrameRange } from '../skills/timeline.ts';
@@ -320,8 +320,10 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const rankSlots = needsRank ? rankSlotsOf(slots, passive) : [];
   // Stage 11 モダニア: ループで追う条件付きの効果（射撃に効くもの、順位のために追う攻撃力のもの）があるときだけ、条件の stat の窓を追う
   const conditionStats = new Set<BuffStat>(
-    [...firing, ...attackTrack].flatMap((src) =>
-      src.effect.condition === undefined ? [] : [src.effect.condition.selfBuffed],
+    [...firing, ...attackTrack].flatMap(
+      (src) =>
+        // 防御力無視ダメージ編: ループで追う効果には inFullBurst を書けない（skills/types.ts の parseTimedEffect）
+        selfBuffedStatOf(src.effect.condition) ?? [],
     ),
   );
   const stateTrack: FiringSource[] = plainTimed
@@ -329,14 +331,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     .map(({ effect, sourceSlotIndex, casterBaseAttack }) => sourceOf(effect, sourceSlotIndex, casterBaseAttack));
   /** 効果 src の条件を、フレーム f の状態の窓（同じフレームに付いたものも入れる）で判定する。条件の無い効果は常に true */
   const conditionOk = (src: FiringSource, f: number): boolean => {
-    const condition = src.effect.condition;
+    const condition = selfBuffedStatOf(src.effect.condition);
     if (condition === undefined) return true;
     const windows = stateTrack.flatMap((st) =>
       st.windows.flatMap((list, slotIndex) =>
         list.map(([start, end]) => ({ slotIndex, effect: st.effect, start, end })),
       ),
     );
-    return selfBuffedAt(passive, windows, src.sourceSlotIndex, condition.selfBuffed, f);
+    return selfBuffedAt(passive, windows, src.sourceSlotIndex, condition, f);
   };
   /** 効果 e の発火の文脈に、フレーム f の攻撃力の順位を足す（topAttack の効果だけ） */
   const withRank = (e: ResolvedTimedEffect | ResolvedInstantEffect, context: FireContext, f: number): FireContext => {

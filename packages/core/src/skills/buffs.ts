@@ -13,6 +13,8 @@ export type ChangedWeapon = {
   /** 1 発のヒット数（shot.damage はヒット数ぶんを合計した武器倍率。表示用に残す） */
   hits: number;
   shot: ShotParams;
+  /** 防御力無視ダメージ編: 変更後の武器の 1 発が防御力無視ダメージか（WeaponChangeEffect.trueDamage） */
+  trueDamage?: true;
 };
 
 /** 1 体が受けるバフの合計。attackFlat 以外はすべて比率の加算（0.2 = +20%） */
@@ -81,6 +83,13 @@ export type BuffTotals = {
   normalAttackDamage: number;
   /** ヘルム編: 通常攻撃のクリティカル確率の加算。通常攻撃の会心率にだけ足す（倍率ダメージ・バーストスキルには足さない。damage.ts） */
   normalCritRate: number;
+  /**
+   * 防御力無視ダメージ編: 防御力無視ダメージ▲の加算。防御力無視ダメージの発（trueDamageConversion の窓の通常攻撃・trueDamage の
+   * 使用武器の変更）にだけ掛ける（式の中の置き場所は damage.ts の TRUE_DAMAGE_BUCKET。plan/design-true-damage-element.md 3.1 節）
+   */
+  trueDamage: number;
+  /** 防御力無視ダメージ編: 「通常攻撃が防御力無視ダメージに変化」の窓の数（> 0 なら通常攻撃の基礎に防御力を引かない） */
+  trueDamageConversion: number;
   /** Stage 11 モダニア: 使用武器の変更（無ければ null）。射手とダメージの式が基礎の武器の代わりに使う */
   weapon: ChangedWeapon | null;
 };
@@ -109,6 +118,8 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   coreDamage: 0,
   normalAttackDamage: 0,
   normalCritRate: 0,
+  trueDamage: 0,
+  trueDamageConversion: 0,
   weapon: null,
 });
 
@@ -134,6 +145,8 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon'>> = {
   coreDamage: 'coreDamage',
   normalAttackDamage: 'normalAttackDamage',
   normalCritRate: 'normalCritRate',
+  trueDamage: 'trueDamage',
+  trueDamageConversion: 'trueDamageConversion',
 };
 
 /** Stage 11 モダニア: stat の合計（「自分が 〈stat〉 増加状態なら」の判定用） */

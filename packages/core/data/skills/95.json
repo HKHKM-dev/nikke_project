@@ -1,15 +1,20 @@
 {
   "formatVersion": 1,
   "resourceId": 95,
-  "checkedAt": "2026-09-22",
+  "checkedAt": "2026-10-05",
   "skills": {
     "skill1": {
       "effects": [],
       "notes": [
         {
-          "ja": "カモフラージュ状態（バースト使用時・フルバースト中のフルチャージ時）の防御力無視ダメージは未対応",
-          "en": "True damage while in Camouflage (after Burst Skill / Full Charge during Full Burst) is not modeled",
+          "ja": "カモフラージュ状態（バースト使用時・フルバースト中のフルチャージ時）の防御力無視ダメージ（通常攻撃の変化と▲）は未対応（語彙 trueDamageConversion・trueDamage・条件 inFullBurst はあるが、根拠の結論が無い。撮影が要る）",
+          "en": "True damage while in Camouflage (after Burst Skill / Full Charge during Full Burst; the normal-attack conversion and the up) is not modeled (trueDamageConversion, trueDamage and the inFullBurst condition exist, but there is no supporting claim; a recording is needed)",
           "kind": "unimplemented"
+        },
+        {
+          "ja": "カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）",
+          "en": "Camouflage's exclusion from single-target attacks and its removal on a direct hit do not happen (no damage taken is assumed; Camouflage lasts 5 s)",
+          "kind": "outOfScope"
         }
       ]
     },
@@ -36,8 +41,8 @@
       ],
       "notes": [
         {
-          "ja": "フォーメーションLT 併用時の追加効果（発射体爆発ダメージ・防御力無視ダメージ）は未対応",
-          "en": "Bonus effects while in LT Formation (Projectile Explosion Damage, True Damage) are not modeled",
+          "ja": "フォーメーションLT 適用中の追加効果（味方全体の発射体爆発ダメージ▲・防御力無視ダメージ▲）は未対応（語彙 withCharacter・projectileExplosionDamage・trueDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）",
+          "en": "Bonus effects while in LT Formation (Projectile Explosion Damage up and True Damage up for all allies) are not modeled (withCharacter, projectileExplosionDamage and trueDamage exist, but there is no supporting claim; the skills of Emma: TU and Eunhwa: TU must be confirmed first)",
           "kind": "unimplemented"
         },
         {
@@ -51,8 +56,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "武器変更（1 発のみ）と、命中した敵の受けるダメージ▲（10 秒間維持）は未対応（語彙 weaponChange・damageTaken はあるが、撮影していない）",
-          "en": "The weapon change (one shot) and Damage Taken up on enemies hit (10 s) are not modeled (weaponChange and damageTaken exist, but no recording yet)",
+          "ja": "使用武器変更（1 発の防御力無視ダメージ）と、命中した敵の受けるダメージ▲（10 秒間維持）は未対応（語彙 weaponChange（trueDamage）・damageTaken はあるが、撮影していない）",
+          "en": "The weapon change (one shot of true damage) and Damage Taken up on enemies hit (10 s) are not modeled (weaponChange with trueDamage and damageTaken exist, but no recording yet)",
           "kind": "unimplemented"
         }
       ]
