@@ -1,0 +1,41 @@
+{
+  "id": "212",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-212_sr_ram_delta_mana.mp4",
+  "original": "2026-10-05_22-13-11.mp4",
+  "durationSec": 201.8,
+  "frames": 12108,
+  "fps": 60,
+  "sizeMB": 244.6,
+  "sha256": "18080900b30a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 290,
+      "name": "マナ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0185。ラム（I）・デルタ（II）・マナ（III・操作）。マナのバーストの持続ダメージと持続ダメージ▲"
+}

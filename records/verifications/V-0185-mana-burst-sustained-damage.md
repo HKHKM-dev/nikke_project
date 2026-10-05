@@ -5,7 +5,7 @@
 - 日付: 2026-10-05
 - Stage: plan/design-sustained-damage-up.md 5.1 節（plan/backlog.md 6 節「持続ダメージ▲の stat」）
 - 状態: 調査中
-- 待ち: 録画の取り寄せ（2026-10-05 にオーナーが撮影済み。クラウドの Drive にまだ見えない）
+- 録画: `212`
 
 ## 条件
 

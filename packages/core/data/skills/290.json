@@ -93,14 +93,30 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "持続ダメージと自分の持続ダメージ▲は未対応（語彙 dot・sustainedDamage はあるが、解釈（tick の形と▲の置き場所）を撮影で確かめていない。V-0185 の予測は固定済みで、録画の読みを待つ）",
-          "en": "Damage over time and own sustained damage up are not modeled (dot and sustainedDamage exist, but the interpretation — tick shape and where the buff goes — is not yet checked by a recording. V-0185's predictions are fixed and await the recording)",
-          "kind": "unimplemented",
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "sustainedDamage",
+          "ref": 1,
+          "durationRef": 2,
           "claims": [
-            "C-0279",
+            "C-0279"
+          ]
+        },
+        {
+          "kind": "dot",
+          "trigger": "burstUse",
+          "ref": 4,
+          "intervalSeconds": 1,
+          "durationRef": 5,
+          "firstTick": "afterInterval",
+          "assumes": {
+            "ja": "照準線に最も近い敵 1 機は敵 1 体。tick は付いた 1 秒後から 1 秒ごと。フルバースト補正・攻撃ダメージ▲・持続ダメージ▲は tick ごとにその時点の状態で乗る",
+            "en": "The one enemy nearest the crosshair is the single enemy. Ticks every second from 1 s after application. The Full Burst bonus, ATK damage up and sustained damage up apply per tick by the state at that tick"
+          },
+          "claims": [
             "C-0280"
           ]
         }
