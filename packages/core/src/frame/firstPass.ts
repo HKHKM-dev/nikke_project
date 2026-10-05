@@ -341,7 +341,12 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     return selfBuffedAt(passive, windows, src.sourceSlotIndex, condition, f);
   };
   /** 効果 e の発火の文脈に、フレーム f の攻撃力の順位を足す（topAttack の効果だけ） */
-  const withRank = (e: ResolvedTimedEffect | ResolvedInstantEffect, context: FireContext, f: number): FireContext => {
+  const withRank = (
+    e: ResolvedTimedEffect | ResolvedInstantEffect,
+    sourceSlotIndex: number,
+    context: FireContext,
+    f: number,
+  ): FireContext => {
     if (!dependsOnRank(e)) return context;
     const attackWindows: AttackWindow[] = attackTrack.flatMap((src) =>
       src.windows.flatMap((list, slotIndex) =>
@@ -355,7 +360,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       ),
     );
     const finalAttacks = finalAttacksAt(rankSlots, attackWindows, f);
-    return { ...context, attackRank: attackRankFor(e, rankSlots, finalAttacks) };
+    return { ...context, attackRank: attackRankFor(e, rankSlots, finalAttacks, sourceSlotIndex) };
   };
 
   /**
@@ -391,7 +396,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   for (const src of [...stateTrack, ...hitTrack, ...attackTrack, ...firing]) {
     if (src.effect.trigger !== 'battleStart' || frames <= 0) continue;
     if (!conditionOk(src, 0)) continue;
-    register(src, 0, withRank(src.effect, null, 0));
+    register(src, 0, withRank(src.effect, src.sourceSlotIndex, null, 0));
   }
 
   // ---- 射手 ----
@@ -956,7 +961,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     for (const src of firing) {
       if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
       if (!src.fires(ev) || !conditionOk(src, f)) continue;
-      const context = withRank(src.effect, fireContextOf(src.effect.trigger, ev), f);
+      const context = withRank(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
       register(src, startOf(src, f), context);
     }
     for (const src of otherInstants) {
@@ -969,7 +974,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         pendingGaugeCharges.set(f + 1, list);
         continue;
       }
-      const context = withRank(src.effect, fireContextOf(src.effect.trigger, ev), f);
+      const context = withRank(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, context)) {
         if (src.effect.kind === 'cooldownReduction') {
           if (controller === null) continue; // 固定サイクル・バーストなしでは CT を見ない

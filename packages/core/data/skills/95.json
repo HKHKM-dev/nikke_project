@@ -23,8 +23,17 @@
         {
           "kind": "passive",
           "target": "allies",
+          "targetSquad": "same",
           "stat": "critRate",
-          "ref": 1
+          "ref": 1,
+          "assumes": {
+            "ja": "「同じ部隊の味方全体」は、ゲームのデータの部隊（アブソルート）が同じ枠（自分を含む）と読んだ。エマ：タクティカル・アップの S2 の同じ言い回しで確かめた読み（C-0266）を当てた仮説で、ウンファ：タクティカル・アップでは撮っていない",
+            "en": "\"All allies in the same squad\" is read as the slots whose game squad (Absolute) matches, the user included. A hypothesis carried over from the same wording on Emma: Tactical Upgrade's S2 (C-0266); not recorded for Eunhwa: Tactical Upgrade"
+          },
+          "claims": [
+            "C-0268",
+            "C-0235"
+          ]
         },
         {
           "kind": "passive",
@@ -49,11 +58,6 @@
         {
           "ja": "フォーメーションLT 適用中の追加効果（味方全体の発射体爆発ダメージ▲・防御力無視ダメージ▲）は未対応（語彙 withCharacter・projectileExplosionDamage・trueDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）",
           "en": "Bonus effects while in LT Formation (Projectile Explosion Damage up and True Damage up for all allies) are not modeled (withCharacter, projectileExplosionDamage and trueDamage exist, but there is no supporting claim; the skills of Emma: TU and Eunhwa: TU must be confirmed first)",
-          "kind": "unimplemented"
-        },
-        {
-          "ja": "クリティカル確率▲の対象は「同じ部隊の味方全体」だが、対象を部隊で絞るのは未実装（いまは味方全体に付ける）",
-          "en": "Critical Rate up targets allies in the same squad, but narrowing the target by squad is not implemented (all allies get it for now)",
           "kind": "unimplemented"
         }
       ]

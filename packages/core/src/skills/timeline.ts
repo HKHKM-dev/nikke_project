@@ -614,7 +614,7 @@ export function planBuffTimeline(
         const start = isResolvedShotCount(effect.trigger) ? fire.frame + 1 : fire.frame;
         if (start >= frames) continue;
         const finalAttacks = finalAttacksAt(rankSlots, attackWindows, fire.frame);
-        const attackRank = attackRankFor(effect, rankSlots, finalAttacks);
+        const attackRank = attackRankFor(effect, rankSlots, finalAttacks, sourceSlotIndex);
         const context = { ...fire.context, attackRank };
         const targets: number[] = [];
         slots.forEach((target, slotIndex) => {
@@ -629,7 +629,12 @@ export function planBuffTimeline(
           effect: { source: effect.source, effectIndex: effect.effectIndex },
           finalAttacks,
           targets: attackRank.filter((i) => targets.includes(i)),
-          tied: tiedAtCutoff(attackRank, finalAttacks, effect.targetCount ?? 1),
+          // 対象の語彙編: unlessShort で末尾に足した自分は、同値の比べに入れない（順位ではなく足りない分の補い）
+          tied: tiedAtCutoff(
+            effect.excludeSelf === 'unlessShort' ? attackRank.slice(0, -1) : attackRank,
+            finalAttacks,
+            effect.targetCount ?? 1,
+          ),
         });
       }
       perTarget.forEach((starts, slotIndex) => {

@@ -66,13 +66,23 @@
             "ja": "毎サイクル自分がバーストするのでマターシグマが再付与され、毎回発動する",
             "en": "Metal σ is re-applied every cycle because she bursts each cycle, so this triggers every time"
           }
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "フルバースト時の「基本チャージ時間が一番長い味方 1 機」のチャージ時間▼は未対応（対象が語彙に無い）",
-          "en": "Charge time down on Full Burst for the ally with the longest base charge time is not modeled (the target is not in the vocabulary)",
-          "kind": "unimplemented"
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "longestChargeTime",
+          "targetCountRef": 6,
+          "stat": "chargeSpeed",
+          "scaling": "flat",
+          "ref": 7,
+          "durationRef": 8,
+          "assumes": {
+            "ja": "基本チャージ時間はゲームのデータのチャージ時間（バフ・使用武器の変更を入れない）。同値は枠の若い順（未検証）。チャージ時間▼は、チャージ速度で縮めた後の秒数から引く（発動者基準のチャージ速度と同じ置き場所）",
+            "en": "Base charge time is the game data's charge time (no buffs, no weapon change). Ties go to the earlier slot (unverified). The reduction is subtracted from the charge seconds after charge speed (same place as caster-based charge speed)"
+          },
+          "claims": [
+            "C-0267"
+          ]
         }
       ]
     },

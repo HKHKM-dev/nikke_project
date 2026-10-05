@@ -3,8 +3,10 @@
 // Stage 11: 発火のたびに対象が変わるもの（「直前にバーストスキルを使用した味方」）のために、発火の文脈を受ける。
 // Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」（topAttack）も文脈（攻撃力の順位）で決める（skills/ranking.ts）。
 // アスカ（plan/design-asuka.md 2.2 節）: 「〈コード〉コードの味方」（targetElement）。武器種と同じく、対象の枠のキャラで絞る。
+// 対象の語彙編（plan/design-target-vocab.md 2 節）: 編成で決まる対象（targetSquad・longestChargeTime）は、最上位の
+// skills/composition.ts が決めた枠（fixedTargets）で絞る。「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
 import type { Element, WeaponType } from '../types.ts';
-import type { BuffTarget } from './types.ts';
+import type { BuffTarget, ExcludeSelf, TargetSquad } from './types.ts';
 
 /**
  * 発火の文脈。
@@ -21,7 +23,27 @@ export type TargetedEffect = {
   targetWeapon?: WeaponType;
   targetElement?: Element;
   targetCount?: number;
+  targetSquad?: TargetSquad;
+  excludeSelf?: ExcludeSelf;
+  fixedTargets?: readonly number[];
 };
+
+/**
+ * 対象の語彙編: 編成で決まる対象の絞り込み。fixedTargets が有ればその枠だけ（longestChargeTime は順位の順の先頭 targetCount 枠）。
+ * targetSquad・longestChargeTime なのに
+ * fixedTargets が無いのは、最上位の applyCompositionToTeam を通していない呼び出しなので落とす（黙って全員へ掛けない）
+ */
+function fixedTargetOk(effect: TargetedEffect, targetSlotIndex: number): boolean {
+  if (effect.fixedTargets === undefined) {
+    if (effect.targetSquad !== undefined || effect.target === 'longestChargeTime') {
+      throw new Error(`target ${effect.target} needs fixedTargets (apply skills/composition.ts first)`);
+    }
+    return true;
+  }
+  const candidates =
+    effect.target === 'longestChargeTime' ? effect.fixedTargets.slice(0, effect.targetCount ?? 1) : effect.fixedTargets;
+  return candidates.includes(targetSlotIndex);
+}
 
 /** 対象の枠のキャラのうち、絞り込みに使う項目（CharacterData をそのまま渡せる） */
 export type TargetSlot = { weaponType: WeaponType; element: Element };
@@ -51,11 +73,12 @@ export function isEffectTarget(
   targetSlot: TargetSlot,
   context: FireContext = null,
 ): boolean {
-  const weaponOk = matchesTargetFilter(effect, targetSlot);
+  const weaponOk = matchesTargetFilter(effect, targetSlot) && fixedTargetOk(effect, targetSlotIndex);
   switch (effect.target) {
     case 'self':
       return sourceSlotIndex === targetSlotIndex;
     case 'allies':
+    case 'longestChargeTime':
       return weaponOk;
     case 'burstUsers':
       return weaponOk && context?.burstUsers?.includes(targetSlotIndex) === true;
@@ -75,7 +98,10 @@ export function canEverTarget(
   targetSlot: TargetSlot,
 ): boolean {
   if (effect.target === 'self') return sourceSlotIndex === targetSlotIndex;
-  return matchesTargetFilter(effect, targetSlot);
+  if (effect.excludeSelf === 'always' && sourceSlotIndex === targetSlotIndex) return false;
+  // 対象の語彙編: 「足りなければ自分も」は、武器種・属性の条件に依らず自分に付きうる
+  if (effect.excludeSelf === 'unlessShort' && sourceSlotIndex === targetSlotIndex) return true;
+  return matchesTargetFilter(effect, targetSlot) && fixedTargetOk(effect, targetSlotIndex);
 }
 
 /** 対象が発火の文脈で変わるか（変わらなければ効果ごとに 1 回だけ対象を決めてよい） */
