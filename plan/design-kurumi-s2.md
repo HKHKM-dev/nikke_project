@@ -2,7 +2,7 @@
 
 - 日付: 2026-10-05
 - 関連: [design-kurumi.md](design-kurumi.md) 3 節の論点 3（S2 を未実装にした理由）、[design-skill-note-kinds.md](design-skill-note-kinds.md)（notes の種類）、[design-stage11-modernia.md](design-stage11-modernia.md)（条件 `condition` の `selfBuffed`）、[design-ludmilla-wo.md](design-ludmilla-wo.md) 2.2・2.3 節（回数トリガーの数え方）、[backlog.md](backlog.md) 6 節「回数トリガー + 状態の条件の語彙」
-- 状態: オーナーの承認（2026-10-05。6 節の論点はすべて推奨どおり）で 2 節の語彙を実装し、V-0181（録画 125 の読み直し）で H3 が合ったので、クルミの skill2 に H3 を書いた（C-0276・C-0277。どちらも仮説）
+- 状態: オーナーの承認（2026-10-05。6 節の論点はすべて推奨どおり）で 2 節の語彙を実装し、V-0181（録画 125 の読み直し）で H3 が合ったので、クルミの skill2 に H3 を書いた（C-0276・C-0277。録画 196 の V-0182 でも再現。どちらも仮説）
 - 根拠: 起案の時点では、クルミの S2 に根拠の結論は無かった。数え方は V-0181 の C-0276、1 ヒットの式は C-0277。ハッキング状態の条件の境界は根拠が無く、定義の `assumes` に書いた仮定
 
 ## 1. 何が足りないか
