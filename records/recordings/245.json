@@ -1,0 +1,42 @@
+{
+  "id": "245",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-245_smg+sr+ar_miranda+delta+sun_full-burst.mp4",
+  "original": "2026-10-06_07-28-56.mp4",
+  "durationSec": 220.6,
+  "frames": 13238,
+  "fps": 60,
+  "sizeMB": 266.8,
+  "sha256": "c336fa3bc89a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 32,
+      "name": "ミランダ",
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0218・V-0217。ミランダは宝物 3 段階。操作のサンは撃たない。戦闘履歴のパネル（f13170）で編成（ミランダ・デルタ・I-DOLL・サン）と交戦時間 03:00、サンの与ダメージ 0 を確かめた"
+}

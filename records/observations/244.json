@@ -1,0 +1,144 @@
+[
+  {
+    "id": "244-01",
+    "recording": "244",
+    "kind": "total",
+    "use": "record",
+    "value": 108885256,
+    "description": "ミランダ・デルタ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "最後の増分は f11419。増分は 2977 個"
+    },
+    "source": "V-0216",
+    "readAt": "2026-10-06"
+  },
+  {
+    "id": "244-02",
+    "recording": "244",
+    "source": "V-0216",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 20543,
+    "description": "ミランダのバーストの窓の中の、ミランダの胴体の非会心の 1 発（距離ボーナスなし。宝物版 S1 の攻撃力▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "ミランダのバーストの窓（その値の系列が続く区間）は f1716–2303・3460–3944・4949–5472・6475–6987・8013–8600・9671–10257・11276–11419（戦闘の終わりで切れた）の 7 回。前の 6 回は 484〜587f。窓の中で 20,543 が 408 発（距離ボーナスありの 26,706 が 307 発）。窓の外の同じ発は 16,183（244-05）。20,543 = 攻撃力 × (1 + 50.06% + 40.4%) の値（H1・H3）。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1009,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "244-03",
+    "recording": "244",
+    "source": "V-0216",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 42367,
+    "description": "ミランダのバーストの窓の中の、ミランダの胴体の会心の 1 発（距離ボーナスなし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "244-02 と同じ窓で 108 発（距離ボーナスありの 48,530 が 76 発）。クリティカルダメージ▲の無い会心の値（32,366 系）は窓の中に出ない。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1009,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "244-04",
+    "recording": "244",
+    "source": "V-0216",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 293046,
+    "description": "ミランダのバーストの窓の中の、デルタのコアの非会心の 1 発（距離ボーナスなし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "窓の中のデルタの発は 29 発で、どれも攻撃力▲の値（距離ボーナスなしの 293,046 が 19 発・ありの 337,002 が 10 発）。窓の外は 208,626・239,920。窓の中の会心は無かった。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1009,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "244-05",
+    "recording": "244",
+    "source": "V-0216",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 16183,
+    "description": "ミランダのバーストの窓の外の、ミランダの胴体の非会心の 1 発（距離ボーナスなし。宝物版 S1 の攻撃力▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "窓の外で 559 発。V-0114 の 144-07 と同じ値（対照）。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1549,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

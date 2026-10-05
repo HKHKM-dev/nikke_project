@@ -1,0 +1,237 @@
+[
+  {
+    "id": "245-01",
+    "recording": "245",
+    "kind": "total",
+    "use": "record",
+    "value": 109341406,
+    "description": "ミランダ・デルタ・I-DOLL・サン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "最後の増分は f11499。増分は 3013 個"
+    },
+    "source": "V-0218",
+    "readAt": "2026-10-06"
+  },
+  {
+    "id": "245-02",
+    "recording": "245",
+    "source": "V-0218",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 366307,
+    "description": "フルバーストの中（ミランダのバーストの窓の中）の、デルタのコアの非会心の 1 発（距離ボーナスなし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "f2074・2238・2320・8241・8323・8494・8576・8658 の 8 発。攻撃力▲ × フルバーストの値（H1・H2）。攻撃力▲の無いフルバーストの値（260,783）は、フルバーストの中のデルタの発に出ない。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 694,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "245-03",
+    "recording": "245",
+    "source": "V-0218",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 16183,
+    "description": "I だけで切れたチェーン（フルバーストなし）のミランダのバーストの窓の中の、ミランダの胴体の非会心の 1 発（距離ボーナスなし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "デルタの発が攻撃力▲の値（293,046）でフルバーストの無い区間（f3416–3915・6727–7137・9718–10299 の 3 回）のミランダの 490 発は、どれも宝物版 S1 の攻撃力▲だけの値（16,183・21,039・40,459・45,314 ほか）。録画の全体で、ミランダの発にバーストの攻撃力▲の値は 1 発も出ない。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1838,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "245-04",
+    "recording": "245",
+    "source": "V-0217",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 30028,
+    "description": "フルバーストの中の、ミランダの胴体の非会心の 1 発（距離ボーナスなし。宝物版 S1 の攻撃力▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "フルバーストの窓（ミランダの S2 の値の系列が続く区間）は f1830–2323・5023–5586・8292–8710 と、戦闘の終わりで切れた f11378–11499 の 4 回。窓の中で 153 発（距離ボーナスありの 36,034 が 80 発）。30,028 = 攻撃力▲（S1）× フルバースト × 攻撃ダメージ 23.7%▲ の値（H1）。S2 の無いフルバーストの値（24,275）は窓の中に出ない。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 694,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "245-05",
+    "recording": "245",
+    "source": "V-0217",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 46642,
+    "description": "フルバーストの中の、ミランダの胴体の会心の 1 発（距離ボーナスなし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "245-04 と同じ窓で 129 発（距離ボーナスありの 52,648 が 60 発）。攻撃ダメージ▲とクリティカルダメージ 32.99%▲の値（H1）。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 694,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "245-06",
+    "recording": "245",
+    "source": "V-0217",
+    "readAt": "2026-10-06",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.4512,
+    "description": "フルバーストの中の、ミランダの通常攻撃の会心の割合（208 ÷ 461）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "フルバーストの窓（ミランダの S2 の値の系列が続く区間）は f1830–2323・5023–5586・8292–8710 と、戦闘の終わりで切れた f11378–11499 の 4 回。窓ごとの会心 ÷ 発は 68/157・67/150・62/128・11/26。会心かどうかは格子で 1 発ずつ決まる（あいまいな発は無い）。許容 ±0.05 は 461 発の標準誤差（0.023）の約 2 倍。H0（0.15）からは約 13σ。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 694
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "245-07",
+    "recording": "245",
+    "source": "V-0217",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 614253,
+    "description": "フルバーストの中の、デルタのコアの会心の 1 発（距離ボーナスあり）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "f5415 の 1 発。攻撃力▲ × (コア + 会心 + バーストのクリティカルダメージ▲ + S2 の 1 行目のクリティカルダメージ▲ + 距離ボーナス + フルバースト) の値。S2 の 1 行目が無ければ 565,920 前後。f1903 の増分 606,330 も、距離ボーナスなしの同じ値（570,296）とミランダの 36,034（245-04 の距離ボーナスあり）の和で説明できる。比べるのはモデルの 1 回目のフルバーストの同じ 1 発（694f。予測ファイルの指標は距離ボーナスなしで args が違うので、自動では結び付かない）。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 694,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "245-08",
+    "recording": "245",
+    "source": "V-0217",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 16183,
+    "description": "フルバーストとミランダのバーストの窓の外の、ミランダの胴体の非会心の 1 発（距離ボーナスなし。宝物版 S1 の攻撃力▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（レシピ hud-jumps のキャッシュの総ダメージの増分。格子への分解は使い捨てのスクリプト）",
+      "note": "窓の外で 758 発。244-05・144-07 と同じ値（対照）。予測ファイルを commit してから撮った（撮る前の予測）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1232,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

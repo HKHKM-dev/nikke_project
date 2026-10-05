@@ -1,6 +1,7 @@
 // ミランダ（32）を含む編成: S1 の 2 つの命中率▲（味方全体 5.44%・SMG の味方 3.79%）が SMG の自分には和で区間の N に入り、
 // 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0186。持続の▲の入れ方は C-0170）、宝物版 S1 の攻撃力▲（C-0187）、
-// sim と calc の整合。V-0114。
+// sim と calc の整合。V-0114。宝物版のバーストの対象（自分を除く上位 2 機、足りなければ自分。C-0322）と、宝物版 S2 の
+// フルバーストタイムの発動時の効果（C-0323・C-0324）を、録画 244・245 と同じ編成で見る（V-0216〜V-0218）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
@@ -75,6 +76,76 @@ const PRACTICAL: TeamInput = {
   controlledSlot: 0,
 };
 
+// V-0216 の撮影と同じ: ミランダ（宝物 3 段階・操作）+ デルタ。AUTO・オートバースト ON・BigArms 灼熱の 3 分モード。III なし
+const DUO: TeamInput = {
+  slots: [fixedSlot(32, true, 3), fixedSlot(20, true)],
+  enemy: rangeEnemy,
+  durationSeconds: 180,
+  burst: true,
+  controlledSlot: 0,
+};
+// V-0217・V-0218 の撮影と同じ: ミランダ（宝物 3 段階）+ デルタ + I-DOLL・サン（操作）。フルバーストあり
+const TRIO: TeamInput = {
+  slots: [fixedSlot(32, true, 3), fixedSlot(20, true), fixedSlot(308, true)],
+  enemy: rangeEnemy,
+  durationSeconds: 180,
+  burst: true,
+  controlledSlot: 2,
+};
+
+/** フルバーストに入らなかったミランダのバースト（fullBurst false）か、フルバーストの始まり（true）から 2 秒後の区間 */
+function after(input: TeamInput, fullBurst: boolean) {
+  const sim = runSimulation(input);
+  const acts = sim.schedule!.activations;
+  const start = fullBurst
+    ? acts.find((a) => a.startsFullBurst)
+    : acts.find(
+        (a) =>
+          a.slotIndex === 0 && !acts.some((b) => b.startsFullBurst && b.frame >= a.frame && b.frame < a.frame + 600),
+      );
+  expect(start).toBeDefined();
+  const frame = start!.frame + 120;
+  return sim.timeline.segments.find((s) => s.start <= frame && frame < s.end)!;
+}
+
+describe('パワーアップ！（宝物版）の対象', () => {
+  it('reaches Miranda herself in the duo (only 1 candidate except self)', () => {
+    const seg = after(DUO, false);
+    expect(seg.slots[0]!.buffs.attackRatio).toBeCloseTo(0.5006 + 0.404, 12);
+    expect(seg.slots[0]!.buffs.critDamage).toBeCloseTo(0.5623, 12);
+    expect(seg.slots[1]!.buffs.attackRatio).toBeCloseTo(0.404, 12);
+    expect(seg.slots[1]!.buffs.critDamage).toBeCloseTo(0.5623, 12);
+  });
+
+  it('skips Miranda in the trio (Delta and Sun are the 2 candidates except self)', () => {
+    const seg = after(TRIO, false);
+    expect(seg.fullBurst).toBe(false);
+    expect(seg.slots[0]!.buffs.attackRatio).toBeCloseTo(0.5006, 12);
+    expect(seg.slots[0]!.buffs.critDamage).toBe(0);
+    for (const i of [1, 2]) {
+      expect(seg.slots[i]!.buffs.attackRatio).toBeCloseTo(0.404, 12);
+      expect(seg.slots[i]!.buffs.critDamage).toBeCloseTo(0.5623, 12);
+    }
+  });
+});
+
+describe('ウェイクアップ！（宝物版）のフルバーストタイムの発動時の効果', () => {
+  const seg = after(TRIO, true);
+
+  it('gives Critical Rate up and Damage up to Miranda and Critical Damage up to all allies', () => {
+    expect(seg.fullBurst).toBe(true);
+    const m = seg.slots[0]!.buffs;
+    expect(m.critRate).toBeCloseTo(0.301, 12);
+    expect(m.attackDamage).toBeCloseTo(0.237, 12);
+    expect(m.critDamage).toBeCloseTo(0.3299, 12);
+    expect(m.attackRatio).toBeCloseTo(0.5006, 12);
+    const d = seg.slots[1]!.buffs;
+    expect(d.critDamage).toBeCloseTo(0.5623 + 0.3299, 12);
+    expect(d.critRate).toBe(0);
+    expect(d.attackDamage).toBe(0);
+  });
+});
+
 describe('ヘルスアップ！の命中率▲（ミランダ単騎・条件は自動）', () => {
   const plan = planTeamRun(SOLO);
   const sim = runSimulation(SOLO);
@@ -110,6 +181,8 @@ describe('ヘルスアップ！の命中率▲（ミランダ単騎・条件は�
 
 describe.each([
   ['ミランダ単騎（V-0114 の撮影の条件）', SOLO],
+  ['ミランダ + デルタ（V-0216 の撮影の条件）', DUO],
+  ['ミランダ + デルタ + I-DOLL・サン（V-0217・V-0218 の撮影の条件）', TRIO],
   ['実戦寄り（ミランダ + リター + デルタ + アリス + モダニア）', PRACTICAL],
 ] as const)('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
