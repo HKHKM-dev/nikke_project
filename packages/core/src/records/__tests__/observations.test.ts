@@ -481,6 +481,23 @@ describe('照合の部品', () => {
     expect(buildTeamInput(rec132, setup, data).slots[2]!.skills!.treasurePhase).toBe(3);
   });
 
+  it('reads the bullet hit rate of a segment from the target table (backlog 2-25)', () => {
+    const rec145 = recordings.get('145') as ProjectRecording;
+    const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto' as const };
+    const rate = (frame: number, extra: Record<string, unknown> = {}): number => {
+      const input = buildTeamInput(rec145, { ...setup, ...extra }, data);
+      return METRICS.bulletHitRate!.sim(runSimulation(input), { args: { slot: 1, frame }, input }) as number;
+    };
+    const smg = data.enemies.targetProfiles.find((p) => p.id === 'range-bigarms')!.bulletHitRate.SMG as Record<
+      string,
+      number
+    >;
+    expect(rate(1000)).toBeCloseTo(smg.midNear!, 9);
+    expect(rate(3000)).toBeCloseTo(smg.near!, 9);
+    expect(rate(7500)).toBeCloseTo(smg.midFar!, 9);
+    expect(rate(3000, { condition: 'manual', hitRate: 0.95 })).toBeCloseTo(0.95, 9);
+  });
+
   it('reports a mid-far or near landing without automatic conditions, or an unknown one', () => {
     const base = observations.find((o) => o.id === '054-02')!;
     const withSetup = (setup: Record<string, unknown>, id: string): Observation => ({

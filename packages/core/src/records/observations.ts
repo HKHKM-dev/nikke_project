@@ -333,6 +333,15 @@ function coreHitRate(result: SimResult, ctx: MetricContext): number {
   return t.boost.core / (shot.coreDamageRate - 1 + t.buffs.coreDamage);
 }
 
+/** その時点の区間の弾丸命中率（1 トリガーの命中の期待値。条件が自動なら的の表と着地点の値。backlog 2-25） */
+function bulletHitRate(result: SimResult, ctx: MetricContext): number {
+  const slot = slotOf(result.slots, ctx);
+  const frame = Number(ctx.args.frame);
+  const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
+  if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
+  return segment.trigger.hitRate;
+}
+
 function median(values: readonly number[]): number {
   if (values.length === 0) throw new Error('値が無い');
   const sorted = [...values].sort((a, b) => a - b);
@@ -563,6 +572,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   // 引いたもの（動画のフレーム）。チャージ時間▼が窓の間だけ効くかを見る
   fullBurstShotIntervalDiff: { args: ['slot', 'n'], sim: fullBurstShotIntervalDiff },
   coreHitRate: { args: ['slot', 'frame'], sim: coreHitRate },
+  bulletHitRate: { args: ['slot', 'frame'], sim: bulletHitRate },
   coreHitRateDiff: {
     args: ['slot', 'frame', 'baseFrame'],
     sim: (r, c) => coreHitRate(r, c) - coreHitRate(r, { ...c, args: { ...c.args, frame: c.args.baseFrame! } }),
