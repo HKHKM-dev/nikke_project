@@ -1,0 +1,153 @@
+{
+  "verification": "V-0199",
+  "note": "既存の録画（リター 086・087。スペック固定 OFF）の読み直し。読む前に出した予測。H1-* は帯ごとの対立仮説で、hitRate を一様に置き換える形でしか書けないので、帯 x の指標だけで比べる（検証記録の「予測」）。編成はスペック固定で出すが、比べる値（的の表の弾丸命中率）は育成に依らない",
+  "team": [
+    {
+      "rid": 82,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "的の表のとおり（C-0286）。近 0.9763、中遠はどの着地点も 0.9210、遠 0.7600"
+    },
+    {
+      "id": "H1-near",
+      "note": "近は V-0198 の 13 本の値（145-10）。near の指標だけで比べる",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.9986
+      }
+    },
+    {
+      "id": "H1-midFarA",
+      "note": "中遠の着地点 A は V-0198 の 2 本の値（147-09）。midfar-a の指標だけで比べる",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.9708
+      }
+    },
+    {
+      "id": "H1-midFarBC",
+      "note": "中遠の着地点 B・C は V-0198 の 11 本の値（145-11）。midfar-bc の指標だけで比べる",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.9369
+      }
+    },
+    {
+      "id": "H1-far",
+      "note": "遠は V-0118・V-0148 のリター 12 本の 3 区間目の値（4,533 / 5,760）。far の指標だけで比べる",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.787
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "near",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "判定の指標。近（2・5 区間目）の完全なマガジンの弾丸命中率の録画ごとの平均"
+    },
+    {
+      "id": "midfar-a",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "midFarLanding": "A"
+      },
+      "note": "判定の指標。中遠（4 区間目）の着地点が A の録画の平均"
+    },
+    {
+      "id": "midfar-bc",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "midFarLanding": "B"
+      },
+      "note": "判定の指標。中遠（4 区間目）の着地点が B・C の録画の平均"
+    },
+    {
+      "id": "far",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5400
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "判定の指標。遠（3・6 区間目）の完全なマガジンの弾丸命中率の録画ごとの平均。frame 5400 は代表値の 3 区間目の中"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "3b6e83817f2beacdb5b5e3548907467903fe9924",
+    "values": {
+      "H0": {
+        "near": 0.9763,
+        "midfar-a": 0.921,
+        "midfar-bc": 0.921,
+        "far": 0.76
+      },
+      "H1-near": {
+        "near": 0.9986,
+        "midfar-a": 0.9986,
+        "midfar-bc": 0.9986,
+        "far": 0.9986
+      },
+      "H1-midFarA": {
+        "near": 0.9708,
+        "midfar-a": 0.9708,
+        "midfar-bc": 0.9708,
+        "far": 0.9708
+      },
+      "H1-midFarBC": {
+        "near": 0.9369,
+        "midfar-a": 0.9369,
+        "midfar-bc": 0.9369,
+        "far": 0.9369
+      },
+      "H1-far": {
+        "near": 0.787,
+        "midfar-a": 0.787,
+        "midfar-bc": 0.787,
+        "far": 0.787
+      }
+    },
+    "seen": {
+      "086": ["086-01", "086-02", "086-03", "086-04", "086-05", "086-06"],
+      "087": ["087-01", "087-02", "087-03", "087-04"]
+    }
+  }
+}
