@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 29・効果 130（根拠あり 78）・notes 86（根拠あり 29）
+件数: キャラ 29・効果 130（根拠あり 79）・notes 86（根拠あり 30）
 
 notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足 5
 
@@ -304,10 +304,10 @@ notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足
   - effects[1] timed・fullBurstStart・reloadSpeed: 根拠なし
   - notes[0] 計算に無関係: 直前にバーストスキルを使用していない味方への防御力▲はダメージに関係しない: 根拠なし
 - **skill2**: supported
-  - effects[0] heal・normalShot: 根拠なし
-  - effects[1] timed・healed・attackDamage: C-0050（確定）
+  - effects[0] heal・normalShot: C-0265（確定）
+  - effects[1] timed・healed・attackDamage: C-0050（確定）、C-0265（確定）
   - notes[0] 計算に無関係: リラックス（受ける HP 回復量▲）・無敵・挑発はダメージに関係しない: 根拠なし
-  - notes[1] 補足: リラックスは 20 スタックで回復するまでの数え上げにだけ使う: 根拠なし
+  - notes[1] 補足: リラックスは 20 スタックで回復するまでの数え上げにだけ使う: C-0265（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・attackDamage: 根拠なし
   - notes[0] 前提の外: バリアは扱わない（要件 5.2 節）: 根拠なし

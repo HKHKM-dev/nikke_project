@@ -49,7 +49,10 @@
           "assumes": {
             "ja": "編成の外（定義の無いヒーラーなど）からの回復は数えない。HP が満タンでも回復は適用されたとみなす",
             "en": "Healing from outside the modeled skills (e.g. undefined healers) is not counted; a heal at full HP still counts as applied"
-          }
+          },
+          "claims": [
+            "C-0265"
+          ]
         },
         {
           "kind": "timed",
@@ -59,7 +62,8 @@
           "ref": 7,
           "durationRef": 8,
           "claims": [
-            "C-0050"
+            "C-0050",
+            "C-0265"
           ]
         }
       ],
@@ -72,7 +76,10 @@
         {
           "ja": "リラックスは 20 スタックで回復するまでの数え上げにだけ使う",
           "en": "Relax only counts shots until the heal at 20 stacks",
-          "kind": "modeling"
+          "kind": "modeling",
+          "claims": [
+            "C-0265"
+          ]
         }
       ]
     },
