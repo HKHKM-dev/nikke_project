@@ -24,9 +24,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "通常攻撃の会心率。録画では、戦闘の全部のヒットのうち会心だった割合（的の上の数値の色か、1 ヒットの値の格子で分ける）"

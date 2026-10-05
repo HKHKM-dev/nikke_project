@@ -27,9 +27,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 1 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）。frame はモデルでスタック 1 の区間"
     },
@@ -46,9 +44,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 1 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）。frame はモデルでスタック 1 の区間"
     },
@@ -65,9 +61,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 1 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）。frame はモデルでスタック 1 の区間"
     },
@@ -84,9 +78,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 1 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）。frame はモデルでスタック 1 の区間"
     },
@@ -103,9 +95,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 2 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）。frame はモデルでスタック 2 の区間"
     },
@@ -122,9 +112,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 2 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）。frame はモデルでスタック 2 の区間"
     },
@@ -141,9 +129,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 2 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）。frame はモデルでスタック 2 の区間"
     },
@@ -160,9 +146,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 2 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）。frame はモデルでスタック 2 の区間"
     },
@@ -179,9 +163,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 3 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）。frame はモデルでスタック 3 の区間"
     },
@@ -198,9 +180,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 3 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）。frame はモデルでスタック 3 の区間"
     },
@@ -217,9 +197,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 3 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）。frame はモデルでスタック 3 の区間"
     },
@@ -236,9 +214,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 3 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）。frame はモデルでスタック 3 の区間"
     },
@@ -255,9 +231,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 4 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）。frame はモデルでスタック 4 の区間"
     },
@@ -274,9 +248,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 4 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）。frame はモデルでスタック 4 の区間"
     },
@@ -293,9 +265,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 4 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）。frame はモデルでスタック 4 の区間"
     },
@@ -312,9 +282,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 4 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）。frame はモデルでスタック 4 の区間"
     },
@@ -331,9 +299,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 5 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）。frame はモデルでスタック 5 の区間"
     },
@@ -350,9 +316,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 5 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）。frame はモデルでスタック 5 の区間"
     },
@@ -369,9 +333,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 5 のときの通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）。frame はモデルでスタック 5 の区間"
     },
@@ -388,9 +350,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 5 のときの通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）。frame はモデルでスタック 5 の区間"
     },
@@ -404,9 +364,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 0 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
     },
@@ -420,9 +378,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 1 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
     },
@@ -436,9 +392,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 2 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
     },
@@ -452,9 +406,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 3 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
     },
@@ -468,9 +420,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 4 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
     },
@@ -484,9 +434,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "S1 のスタック 5 のときの最大装弾数。録画ではそのスタックの間にリロードを終えた直後の照準の横の残弾"
     }
@@ -525,17 +473,7 @@
       }
     },
     "seen": {
-      "045": [
-        "023-01",
-        "045-01",
-        "045-02",
-        "045-03",
-        "045-04",
-        "045-05",
-        "045-06",
-        "045-07",
-        "045-08"
-      ]
+      "045": ["023-01", "045-01", "045-02", "045-03", "045-04", "045-05", "045-06", "045-07", "045-08"]
     }
   }
 }

@@ -27,9 +27,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "通常攻撃の 1 ヒット（コア以外・会心なし・距離ボーナスなし）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
@@ -47,9 +45,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "通常攻撃の 1 ヒット（コア以外・会心・距離ボーナスなし）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
@@ -67,9 +63,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスなし）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
@@ -87,9 +81,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "通常攻撃の 1 ヒット（コア・会心・距離ボーナスなし）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
@@ -107,9 +99,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "通常攻撃の 1 ヒット（コア以外・会心なし・距離ボーナスあり）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
@@ -127,9 +117,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "通常攻撃の 1 ヒット（コア以外・会心・距離ボーナスあり）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
@@ -147,9 +135,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスあり）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"
@@ -167,9 +153,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "通常攻撃の 1 ヒット（コア・会心・距離ボーナスあり）。S1 の環境コントロールの窓の外の発（会心なしの値がこの予測と合う発）から拾う"

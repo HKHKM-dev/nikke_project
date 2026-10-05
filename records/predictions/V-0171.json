@@ -27,9 +27,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
         "midFarLanding": "A",
@@ -50,9 +48,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
         "midFarLanding": "A",
@@ -73,9 +69,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
         "midFarLanding": "A",
@@ -96,9 +90,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
         "midFarLanding": "A",
@@ -119,9 +111,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
         "midFarLanding": "A",
@@ -142,9 +132,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
         "midFarLanding": "A",
@@ -165,9 +153,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
         "midFarLanding": "A",
@@ -188,9 +174,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
         "midFarLanding": "A",
@@ -207,9 +191,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
         "midFarLanding": "A",
@@ -231,14 +213,7 @@
         "s2-body-crit-dist": 9751.06818099,
         "s2-core-nocrit-dist": 12459.698231265,
         "s2-core-crit-dist": 15168.32828154,
-        "heal-hits": [
-          858.45,
-          857.96,
-          854.86,
-          853.79,
-          855.58,
-          857.92
-        ]
+        "heal-hits": [858.45, 857.96, 854.86, 853.79, 855.58, 857.92]
       }
     },
     "seen": {

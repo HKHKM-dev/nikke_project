@@ -25,9 +25,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "S1 の攻撃力▲の窓の終わり（戦闘開始からのモデルのフレーム）。録画では、戦闘開始（残り時間 02:59 が出たフレーム）から、1 ペレットの値が下がる前の最後のトリガーと下がった後の最初のトリガーのあいだ（ゲーム内の 1 フレーム 0.017 秒で数える）"
@@ -45,9 +43,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "窓の中の 1 ペレット（胴体・会心なし）。012-01 と同じ値の見込み（前の録画の値。窓の切れ目の見分けに使うだけ）"
@@ -65,9 +61,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "窓の後の 1 ペレット（胴体・会心なし）。014-01 と同じ値の見込み"
@@ -78,22 +72,13 @@
     "commit": "e25a6f22acbe79bc24a25ee92cd84e2ab3840d50",
     "values": {
       "H1": {
-        "s1-end": [
-          882
-        ],
+        "s1-end": [882],
         "hit-before": 47171.87972016001,
         "hit-after": 31380.562200000004
       }
     },
     "seen": {
-      "014": [
-        "012-06",
-        "014-01",
-        "014-02",
-        "014-03",
-        "014-04",
-        "014-05"
-      ]
+      "014": ["012-06", "014-01", "014-02", "014-03", "014-04", "014-05"]
     }
   }
 }
