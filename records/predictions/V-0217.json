@@ -1,0 +1,241 @@
+{
+  "verification": "V-0217",
+  "team": [
+    {
+      "rid": 32,
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "S2 の効果なし（いまの定義）。宝物版のバーストは V-0218 の H1（自分を除く上位 2 機。足りなければ自分）を足してある",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "unlessShort",
+              "stat": "attack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "unlessShort",
+              "stat": "critDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H1",
+      "note": "S2 の 1 行目（味方全体のクリティカルダメージ▲）と 2 行目（自分のクリティカル確率▲・攻撃ダメージ▲）を、フルバーストタイムの発動時（fullBurstStart）から 10 秒の timed と読む。3 行目（1 発間のクリティカル確率▲）は語彙に無いので入れない。バーストは H0 と同じ",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "unlessShort",
+              "stat": "attack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "unlessShort",
+              "stat": "critDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "skill2",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "stat": "critDamage",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "skill2",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "critRate",
+              "ref": 3,
+              "durationRef": 4
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "skill2",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attackDamage",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "fb-miranda-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 694,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバースト（モデルは 572〜1172f。ミランダのバーストは 514f）の開始から 2 秒後の、ミランダの通常攻撃の 1 発（胴体・会心なし・距離ボーナスなし。宝物版 S1 の攻撃力▲の中）。H1 では攻撃ダメージ▲が乗る"
+    },
+    {
+      "id": "fb-miranda-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 694,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "fb-miranda-body と同じ発の会心。H1 では攻撃ダメージ▲とクリティカルダメージ▲が乗る"
+    },
+    {
+      "id": "fb-miranda-crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 694
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "フルバーストの中のミランダの会心率。H1 ではクリティカル確率▲が足される。録画では、フルバーストの中のミランダの発のうち会心の割合を数える"
+    },
+    {
+      "id": "after-fb-miranda-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1232,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバーストの終わり（1172f）の 1 秒後の、ミランダの 1 発（胴体）。どの仮説でも S2 とバーストの外（対照。V-0114 の 144-07 と同じ値）"
+    },
+    {
+      "id": "fb-delta-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 694,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "フルバーストの開始から 2 秒後の、デルタの 1 発（コア・会心）。H1 では味方全体のクリティカルダメージ▲（1 行目）が、バーストのクリティカルダメージ▲（V-0218 の H1）に足される。デルタの会心は数が少ない（参考）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "52970c421ff9b490a8e181e4da59390ad64492d2",
+    "values": {
+      "H0": {
+        "fb-miranda-body": 24275.214,
+        "fb-miranda-crit": 32366.952,
+        "fb-miranda-crit-rate": 0.15,
+        "after-fb-miranda-body": 16183.476,
+        "fb-delta-core-crit": 521958.04130662495
+      },
+      "H1": {
+        "fb-miranda-body": 30028.43971800001,
+        "fb-miranda-crit": 46642.17446597882,
+        "fb-miranda-crit-rate": 0.45099999999999996,
+        "after-fb-miranda-body": 16183.476,
+        "fb-delta-core-crit": 570295.90106775
+      }
+    },
+    "seen": {}
+  }
+}

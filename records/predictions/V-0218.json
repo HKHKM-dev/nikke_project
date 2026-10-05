@@ -1,0 +1,196 @@
+{
+  "verification": "V-0218",
+  "team": [
+    {
+      "rid": 32,
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの定義（宝物版のバーストに効果なし）。バーストの後も通常攻撃の 1 発は変わらない"
+    },
+    {
+      "id": "H1",
+      "note": "plan/design-target-vocab.md 2.1 節の読み。自分を除いて最終攻撃力の上位 2 機、足りなければ自分を足す（excludeSelf: unlessShort）。3 人の編成では候補が 2 機（デルタ・サン）いるので、ミランダには付かない",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "unlessShort",
+              "stat": "attack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "unlessShort",
+              "stat": "critDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "自分は足りなくても対象にならない（excludeSelf: always）。3 人の編成では H1 と同じ値になる（V-0216 の 2 人の編成で見分ける）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "always",
+              "stat": "attack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "always",
+              "stat": "critDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "自分を除かない（excludeSelf なしの topAttack 2 機）。3 人の編成では最終攻撃力の上位 2 機のミランダとサンに付き、デルタには付かない",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "stat": "attack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "stat": "critDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "trio-delta-core-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 694,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバースト（モデルは 572〜1172f。ミランダのバーストは 514f）の中で、バーストから 3 秒後のデルタの 1 発（コア・会心なし・距離ボーナスなし）。H1・H2 では攻撃力▲の中、H0・H3 では外。ミランダの S2（V-0217）は会心とミランダ自身の値にだけ効くので、この値には効かない"
+    },
+    {
+      "id": "trio-miranda-body-solo-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1838,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "I だけで切れるチェーン（モデルは 1718f にミランダのバースト、フルバーストなし）の 2 秒後の、ミランダの 1 発（胴体・会心なし・距離ボーナスなし）。H3 だけ攻撃力▲の中。録画でこの形の回が無ければ使わない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "52970c421ff9b490a8e181e4da59390ad64492d2",
+    "values": {
+      "H0": {
+        "trio-delta-core-fb": 260782.78749999995,
+        "trio-miranda-body-solo-burst": 16183.476
+      },
+      "H1": {
+        "trio-delta-core-fb": 366306.90937499993,
+        "trio-miranda-body-solo-burst": 16183.476
+      },
+      "H2": {
+        "trio-delta-core-fb": 366306.90937499993,
+        "trio-miranda-body-solo-burst": 16183.476
+      },
+      "H3": {
+        "trio-delta-core-fb": 260782.78749999995,
+        "trio-miranda-body-solo-burst": 20543.436
+      }
+    },
+    "seen": {}
+  }
+}
