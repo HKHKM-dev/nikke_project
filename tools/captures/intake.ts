@@ -7,8 +7,10 @@
 // 日付は --date、無ければ元のファイル名の YYYY-MM-DD、無ければファイルの更新日時。既定は移動（--copy で元を残す）。
 // 最後に、移した録画を Google Drive のバックアップ先（dirs.ts の backupDir()）へ robocopy で同期し、両方の sha256 を突き合わせる
 // （plan/captures/index.md「バックアップ」）。バックアップ先が無い環境と --no-backup では同期しない。同期に失敗したら終了コード 1。
+// 同期できたら plan/captures/backup-log.md に 1 段落足す。
 // 取り込んだ後は npm run records:table（台帳の表）と、キャラの確かめに node tools/captures/probe-result.ts <動画> --list。
 import {
+  appendFileSync,
   copyFileSync,
   existsSync,
   mkdirSync,
@@ -219,7 +221,39 @@ async function backup(): Promise<boolean> {
     return false;
   }
   console.log(`${backupFile} に同期した（sha256 ${digest} が一致）`);
+  appendBackupLog(root);
   return true;
+}
+
+// 置き場所の呼び名。ドライブ文字で始まれば E: のようにドライブだけ、それ以外はパスのまま
+function placeLabel(path: string): string {
+  return /^[A-Za-z]:/.exec(path)?.[0] ?? path;
+}
+
+// backup-log.md に 1 段落足す（日付・足したもの・sha256 の突き合わせの結果。backup-log.md の冒頭の決まり）
+function appendBackupLog(root: string): void {
+  const logPath = `${ROOT}plan/captures/backup-log.md`;
+  if (!existsSync(logPath)) {
+    console.error(`${logPath} が無いので、同期の記録は足していない`);
+    return;
+  }
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const stamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const team =
+    entry.team.length === 0
+      ? ''
+      : `（${entry.team.map((m) => m.name).join(' + ')}${entry.team.length === 1 ? '単騎' : ''}）`;
+  const from = placeLabel(capturesDir());
+  const to = placeLabel(root);
+  const origin = values.copy
+    ? '取り込み元の元ファイルは残した（`--copy`）'
+    : `取り込み元の元ファイルは \`intake.ts\` が ${from} へ移した`;
+  const paragraph =
+    `${stamp} に録画 ${values.id}${team}を \`intake.ts\` で取り込み、この 1 本（\`${folder}/${file}\`）だけを同期した。` +
+    `${from} と ${to} で sha256 が一致（\`${digest}\`）。${origin}。`;
+  appendFileSync(logPath, `\n${paragraph}\n`);
+  console.log(`${logPath} に同期の記録を足した`);
 }
 
 if (!(await backup())) {
