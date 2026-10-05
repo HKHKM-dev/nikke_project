@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 30・効果 134（根拠あり 91）・notes 88（根拠あり 33）
+件数: キャラ 30・効果 132（根拠あり 89）・notes 89（根拠あり 34）
 
-notes の種類: 未対応 36・前提の外 21・計算に無関係 26・補足 5
+notes の種類: 未対応 37・前提の外 21・計算に無関係 26・補足 5
 
-スロット: supported 51・partial 15・unsupported 14・noEffect 19
+スロット: supported 50・partial 15・unsupported 15・noEffect 19
 
 ## 10 ラピ
 
@@ -265,9 +265,8 @@ notes の種類: 未対応 36・前提の外 21・計算に無関係 26・補足
   - effects[1] timed・fullBurstStart・attackDamage: C-0281（仮説）
   - effects[2] timed・fullBurstStart・attack: C-0281（仮説）
   - effects[3] timed・fullBurstStart・chargeSpeed: C-0267（確定）
-- **burst**: supported
-  - effects[0] timed・burstUse・sustainedDamage: C-0279（仮説）
-  - effects[1] dot・burstUse: C-0280（仮説）、C-0100（確定）、C-0131（確定）、C-0111（確定）、C-0112（確定）
+- **burst**: unsupported
+  - notes[0] 未対応: 持続ダメージと自分の持続ダメージ▲は未対応（語彙 dot・sustainedDamage はあるが、解釈（tick の形と▲の置き場所）を撮影で確かめていない。V-0185 の予測は固定済みで、録画の読みを待つ）: C-0279（仮説）、C-0280（仮説）
 
 ## 304 I-DOLL・フラワー
 

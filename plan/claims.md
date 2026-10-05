@@ -923,7 +923,7 @@
   - モデル側: `data/skills/261.json` の burst の effects[1]（`dot`）。値は `skills/burstDamage.ts` の `computeSkillHit`
   - 置き換え: C-0090
   - 検証記録: V-0032
-  - 定義: `data/skills/261.json` の burst の effects[1]、`data/skills/290.json` の burst の effects[1]
+  - 定義: `data/skills/261.json` の burst の effects[1]
 - **C-0101** ニヒリスターのバーストの火傷は、付いた瞬間（バーストの倍率ダメージと同じフレーム）に 1 tick、その 1.5 秒後から 1 秒ごとに出て、計 10 tick（0・1.5・2.5 … 9.5 秒）。1 秒間隔でない持続ダメージで、2 回目以降の遅れが同じ 0.5 秒かは分からない
   - 状態: 確定・等級: 反復実測・更新日: 2026-09-28
   - 根拠: `081-12`（録画 081 の 1 回目のバーストの tick の列。これで決めた）。2〜9 回目のバーストでも ±2f 以内で同じ列で、1 回目の tick はどの回もバーストのヒットと同じフレーム（`081-12` の注）。tick の数は `081-13`（10 回。9 回目は戦闘の終わりで 9 回）。V-0032
@@ -942,13 +942,13 @@
   - 根拠: `084-01`（フルバースト中の tick の会心なし 23,860）・`084-02`（会心 31,813）・`084-03`（フルバーストの外の tick 15,906）。どれもモデルとの差は 1 未満。`084-04`（フルバーストにつながった 5 回の火傷の 2〜10 回目の tick 45 回が、すべて 23,860 か 31,813。15,906 と、補正を別に掛けた会心の 35,789 は 1 回も出ない）、`084-06`（つながらなかった 4 回の火傷は 15,906 と 23,860）。1 回目の tick はバーストの倍率ダメージと同じフレームで、III のバーストより前（フルバーストの外）。V-0039
   - モデル側: `frame/plan.ts` の `planSkillHits` の push（tick のフレームで `isInFullBurst` を見て `computeSkillHit` の fullBurstBonus に渡す）。`damage.ts` の `SKILL_HIT_FULL_BURST_BONUS`
   - 検証記録: V-0039
-  - 定義: `data/skills/261.json` の burst の effects[1]、`data/skills/290.json` の burst の effects[1]、`data/skills/851.json` の skill1 の effects[0]
+  - 定義: `data/skills/261.json` の burst の effects[1]、`data/skills/851.json` の skill1 の effects[0]
 - **C-0112** ニヒリスターのバーストの火傷の tick に、味方から配られた攻撃ダメージ▲は乗る（倍率ダメージと同じく、攻撃ダメージの乗数 1 + X を掛ける）。乗るかは tick ごとに、その時点で▲が付いているかで決まる（火傷が付いた時点で▲が付いていても、▲が切れた後の tick には乗らない）
   - 状態: 確定・等級: 厳密一致・更新日: 2026-09-29
   - 根拠: `085-01`（▲の中の tick の会心なし 18,330）・`085-02`（会心 27,496）。C-0100 の式に、ラプンツェル：ピュアグレイスのバーストの攻撃ダメージ 15.24%▲（Lv10）の乗数 1.1524 を掛けた値と端数まで一致。`085-03`〜`085-05`（▲の付いた 5 回の火傷で、どれも前の 3〜6 tick が▲あり、残りが▲なし。切り替わりは、ココア・ニヒリスターの 1 発が ×1.1524 から素の値に戻る区間と同じ位置）。V-0040
   - モデル側: `frame/plan.ts` の `planSkillHits`（tick のフレームのバフ（state.buffs）で `computeSkillHit` を呼ぶ）。乗数は `skills/burstDamage.ts` の `computeBurstHit` の attackDamageMultiplier
   - 検証記録: V-0040
-  - 定義: `data/skills/261.json` の burst の effects[1]、`data/skills/290.json` の burst の effects[1]、`data/skills/851.json` の skill1 の effects[0]
+  - 定義: `data/skills/261.json` の burst の effects[1]、`data/skills/851.json` の skill1 の effects[0]
 - **C-0124** モダニアの S2 の「通常攻撃が 200 回命中した時、自分が命中率増加状態なら攻撃力▲」は、キューブの命中率▲（戦闘開始時の常時の効果）でも満たされる。攻撃力▲は 201 ヒット目から乗る
   - 状態: 確定・等級: 厳密一致・更新日: 2026-09-29
   - 根拠: `090-01`〜`090-03`（アサルトキューブ Lv7 の単騎。単騎ではフルバーストが無く、S2 の命中率▲は付かない。200 ヒット目までと 201 ヒット目からの比が、攻撃力▲ 29.38% を OL と同じ群に足した値で合う）。V-0047
@@ -976,7 +976,7 @@
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-02
   - 根拠: verification.md Stage 18-B「撮影 1」（録画 057〜062。1 tick はキューブなし 92,507・あり 92,788、会心はその 1.5 倍。同じ録画の 1 発の素の値を武器倍率で割った 最終攻撃力 − 防御 に、録画のビルドのスキル Lv の X% を掛けた値と、キューブあり・なしの 2 つとも 1 の位まで一致）。V-0051 の読み直しでも、tick の値はこの 2 つ（とその 1.5 倍）だけ。スペック固定の録画 093 でも、1 tick は 41,322・会心 61,984 で、モデルとの差は 1 未満（`093-01`・`093-02`）。録画 125（3 体の編成）でも 41,322（`125-10`。V-0103）。V-0052
   - モデル側: `data/skills/862.json`。値は `skills/burstDamage.ts` の `computeSkillHit`
-  - 定義: `data/skills/290.json` の burst の effects[1]、`data/skills/862.json` の skill1 の effects[0]
+  - 定義: `data/skills/862.json` の skill1 の effects[0]
 - **C-0132** クルミの S1 の「バーストスキルを使用した時、敵全体にハッキング（最終攻撃力の 52.24% の持続ダメージ・1 秒間隔・5 秒間維持）」は、バーストを使うたびに敵に付き、tick の時刻の形は通常攻撃の命中で付くハッキングと同じ（付いた 1 秒後から 1 秒ごと）
   - 状態: 棄却・等級: 推論・更新日: 2026-09-30
   - 根拠: 説明文（`data/characters/862.json` の skill1 の description_value_02・03）。tick の時刻の形は、同じスロットの命中で付くハッキング（C-0130）から推す。単騎の録画 057〜062 では、クルミはバーストを使っていない（tick の値が命中で付くハッキングの値だけ）。V-0052。V-0054 で外れた: 命中のハッキングが付いている最中に使っても tick は増えず（`095-02`）、別のハッキングとしては重ならない。形は合った（`095-01`）。C-0136 に置き換え
@@ -1423,13 +1423,13 @@
 - **C-0279** マナのバーストの「自分に持続ダメージ X%▲・10 秒間維持」は、バーストを使った時に付き、10 秒のあいだ自分の持続ダメージの tick にだけ、別枠の乗数 (1 + X) で乗る（H1。分配ダメージ▲・受けるダメージ▲と同じ形）。乗るかは tick ごとにその時点の▲で決まる
   - 状態: 仮説・等級: 推論・更新日: 2026-10-05
   - 根拠: 解釈（説明文の読み。plan/design-sustained-damage-up.md 3〜5 節）。撮る前の予測で、観測値はまだ無い。V-0185
-  - モデル側: `data/skills/290.json`（burst の `timed`・`burstUse`・`sustainedDamage`）。置き場所は `skills/burstDamage.ts` の `SUSTAINED_DAMAGE_PLACEMENT`（`separate`）、tick への掛け方は `computeBurstHit`（`sustained` の効果だけ）。乗るかは `frame/plan.ts` の `planSkillHits` が tick のフレームのバフで決める
-  - 定義: `data/skills/290.json` の burst の effects[0]
+  - モデル側: 未反映。data/skills/290.json の burst は未対応の notes のまま（V-0185 の結果を待つ）。確かめたら burst に `timed`・`burstUse`・`self`・`sustainedDamage`（ref 1・durationRef 2）を書く。置き場所は `skills/burstDamage.ts` の `SUSTAINED_DAMAGE_PLACEMENT`（`separate`）、tick への掛け方は `computeBurstHit`（`sustained` の効果だけ）、乗るかは `frame/plan.ts` の `planSkillHits` が tick のフレームのバフで決める
+  - 定義: `data/skills/290.json` の burst の notes[0]
 - **C-0280** マナのバーストの「照準線に最も近い敵 1 機に、最終攻撃力の X% の持続ダメージ・1 秒間隔・10 秒間維持」は、バーストを使った時に付き、付いた 1 秒後から 1 秒ごとに 10 回の tick を出す（D1。クルミのバースト使用時のハッキング C-0132 と同じ形）。1 tick の式はほかの持続ダメージと同じ（C-0100・C-0131・C-0111・C-0112）
   - 状態: 仮説・等級: 推論・更新日: 2026-10-05
   - 根拠: 解釈（説明文の読み。plan/design-sustained-damage-up.md 3〜5 節）。撮る前の予測で、観測値はまだ無い。V-0185
-  - モデル側: `data/skills/290.json`（burst の `dot`・`burstUse`・`firstTick: afterInterval`）。tick のフレームは `frame/dot.ts` の `dotTicks`
-  - 定義: `data/skills/290.json` の burst の effects[1]
+  - モデル側: 未反映。data/skills/290.json の burst は未対応の notes のまま（V-0185 の結果を待つ）。確かめたら burst に `dot`・`burstUse`・`firstTick: afterInterval`（ref 4・durationRef 5）を書く。tick のフレームは `frame/dot.ts` の `dotTicks`
+  - 定義: `data/skills/290.json` の burst の notes[0]
 - **C-0281** マナの S2 のフルバーストタイム発動時の自分の攻撃ダメージ▲・攻撃力▲（10 秒）は説明文どおり（攻撃ダメージ▲は別枠の乗数）
   - 状態: 仮説・等級: 推論・更新日: 2026-10-05
   - 根拠: 解釈（説明文の読み）。録画 020（エーテルが未定義で最小構成でない）のフルバースト中の 1 ヒットで、2026-09-22 に 1 の位まで合っている（plan/verification.md Stage 6。凍結）。V-0185 の録画のフルバースト中の通常攻撃で確かめ直す。V-0185

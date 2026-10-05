@@ -93,39 +93,15 @@
       ]
     },
     "burst": {
-      "effects": [
+      "effects": [],
+      "notes": [
         {
-          "kind": "timed",
-          "trigger": "burstUse",
-          "target": "self",
-          "stat": "sustainedDamage",
-          "ref": 1,
-          "durationRef": 2,
-          "assumes": {
-            "ja": "自分の持続ダメージ（このバーストの持続ダメージ）の tick にだけ、別枠の乗数で乗る（置き場所は仮説。V-0185 で確かめる）。バーストの効果の遅れは未測定で、発動と同じフレームに付く",
-            "en": "Applies only to ticks of her own damage over time (this burst's), as a separate multiplier (placement is a hypothesis checked in V-0185). The burst effect delay is unmeasured; it applies on the activation frame"
-          },
+          "ja": "持続ダメージと自分の持続ダメージ▲は未対応（語彙 dot・sustainedDamage はあるが、解釈（tick の形と▲の置き場所）を撮影で確かめていない。V-0185 の予測は固定済みで、録画の読みを待つ）",
+          "en": "Damage over time and own sustained damage up are not modeled (dot and sustainedDamage exist, but the interpretation — tick shape and where the buff goes — is not yet checked by a recording. V-0185's predictions are fixed and await the recording)",
+          "kind": "unimplemented",
           "claims": [
-            "C-0279"
-          ]
-        },
-        {
-          "kind": "dot",
-          "trigger": "burstUse",
-          "ref": 4,
-          "intervalSeconds": 1,
-          "durationRef": 5,
-          "firstTick": "afterInterval",
-          "assumes": {
-            "ja": "照準線に最も近い敵 1 機は敵 1 体。tick は付いた 1 秒後から 1 秒ごとに 10 回（クルミのバースト使用時のハッキングと同じ形。仮説。V-0185 で確かめる）。フルバースト補正と攻撃ダメージ▲は tick ごとにその時点の状態で乗る（C-0111・C-0112）。tick でバーストゲージは溜めない（確かめていない）",
-            "en": "The enemy nearest the crosshair is the one enemy. Ticks every second from 1 s after application, 10 in total (same shape as Kurumi's hacking on burst use; a hypothesis checked in V-0185). The Full Burst bonus and ATK damage up apply per tick by the state at that tick (C-0111, C-0112). Ticks do not charge the Burst gauge (not checked)"
-          },
-          "claims": [
-            "C-0280",
-            "C-0100",
-            "C-0131",
-            "C-0111",
-            "C-0112"
+            "C-0279",
+            "C-0280"
           ]
         }
       ]

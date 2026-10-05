@@ -5,6 +5,7 @@
 - 日付: 2026-10-05
 - Stage: plan/design-sustained-damage-up.md 5.1 節（plan/backlog.md 6 節「持続ダメージ▲の stat」）
 - 状態: 調査中
+- 待ち: 録画の取り寄せ（2026-10-05 にオーナーが撮影済み。クラウドの Drive にまだ見えない）
 
 ## 条件
 
@@ -77,3 +78,8 @@
 - 操作: 照準は動かさない（AUTO 射撃のまま）。バーストは手で押さない。
 - tick の時刻が 1 本で決まらない（止まりや演出で HUD が読めない回が多い）ときは、同じ撮り方でもう 1 本足す。
 - この後: マナで置き場所が決まったら、レイヴンのバーストの A.N.モードを録画 173 の読み直しで確かめる（設計書 5.2 節。予測を読む前に commit する）。
+- 2026-10-05 にオーナーの判断でいったん区切り、語彙・指標・予測だけを PR で main に入れた。main のマナのバーストは未対応の notes のまま（plan/design-sustained-damage-up.md 7 節の論点 2）。
+- 再開の手順:
+  1. 録画を取り寄せて取り込む（`tools/captures/fetch.ts`・`tools/captures/intake.ts`）。冒頭に「録画」の行を足す。
+  2. マナの定義（`data/skills/290.json`）の burst を、設計書 4 節の形（`timed`・`burstUse`・`sustainedDamage` に C-0279、`dot`・`burstUse`・`firstTick: afterInterval` に C-0280）に戻す。予測ファイルの値はこの形で出してある（予測は出し直さない）。
+  3. 「読み方」のとおりに読み、`npm run records:check` で予測と比べ、結論を確定か棄却にして `npm run records:close -- V-0185 --mark` で閉じる。

@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "推論",
   "basis": "解釈（説明文の読み。plan/design-sustained-damage-up.md 3〜5 節）。撮る前の予測で、観測値はまだ無い。V-0185",
-  "model": "`data/skills/290.json`（burst の `dot`・`burstUse`・`firstTick: afterInterval`）。tick のフレームは `frame/dot.ts` の `dotTicks`",
+  "model": "未反映。data/skills/290.json の burst は未対応の notes のまま（V-0185 の結果を待つ）。確かめたら burst に `dot`・`burstUse`・`firstTick: afterInterval`（ref 4・durationRef 5）を書く。tick のフレームは `frame/dot.ts` の `dotTicks`",
   "replaces": [],
   "updated": "2026-10-05"
 }
