@@ -107,7 +107,10 @@ describe('基本チャージ時間が一番長い味方（longestChargeTime）',
     const def = applyComposition(parseSkillDefinition(definitionWith({ ...effect })), [ar, sr, alice], 0);
     const fixed = def.skills.skill1.effects[0]!;
     expect(fixed).toMatchObject({ fixedTargets: [2, 1, 0] });
-    const resolved = { ...(fixed as { target: 'longestChargeTime'; fixedTargets: number[] }), targetCount: 1 };
+    const resolved = {
+      ...(fixed as unknown as { target: 'longestChargeTime'; fixedTargets: number[] }),
+      targetCount: 1,
+    };
     expect([0, 1, 2].filter((i) => isEffectTarget(resolved, 0, i, ar))).toEqual([2]);
     expect([0, 1, 2].filter((i) => isEffectTarget({ ...resolved, targetCount: 2 }, 0, i, ar))).toEqual([1, 2]);
     // 2 回通しても同じ
@@ -160,7 +163,7 @@ describe('同じ部隊に絞る（targetSquad）', () => {
 
   it('targets the slots of the caster squad, the caster included', () => {
     const def = applyComposition(parseSkillDefinition(definitionWith(passive)), [emma, delta, eunhwa], 0);
-    const effect = def.skills.skill1.effects[0] as { target: 'allies'; fixedTargets: number[] };
+    const effect = def.skills.skill1.effects[0] as unknown as { target: 'allies'; fixedTargets: number[] };
     expect(effect.fixedTargets).toEqual([0, 2]);
     const chars = [emma, delta, eunhwa];
     expect([0, 1, 2].filter((i) => isEffectTarget(effect, 0, i, chars[i]!))).toEqual([0, 2]);

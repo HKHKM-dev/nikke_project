@@ -5,11 +5,13 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 1・保留 0・完了 155・打ち切り 15（計 171）
+件数: 調査中 3・保留 0・完了 155・打ち切り 15（計 173）
 
 ## 開いている検証
 
 - **V-0171** クイーン（真）S1 の有利コードの攻撃ダメージ▲は、属性の倍率 1.1 に足すか（状態: 調査中）
+- **V-0172** エマ：TU S2 のクリティカルダメージ▲は同じ部隊の味方だけに付くか（録画 022 の読み直し）（状態: 調査中）
+- **V-0173** マナ S2 のチャージ時間▼は基本チャージ時間が最も長い味方に付くか（録画 020 の読み直し）（状態: 調査中）
 
 ## 全件
 
@@ -1592,3 +1594,21 @@
     - pellet-crit（hitDamage）: 実測なし。H0 77,833.602
     - pellet-core（hitDamage）: 実測なし。H0 103,778.135
     - pellet-core-crit（hitDamage）: 実測なし。H0 129,722.669
+- **[V-0172](../records/verifications/V-0172-emma-tu-s2-squad.md)** エマ：TU S2 のクリティカルダメージ▲は同じ部隊の味方だけに付くか（録画 022 の読み直し）
+  - 問い: エマ：タクティカル・アップの S2（フォーメーションLT）の効果 1「同じ部隊の味方全体にクリティカルダメージ 23.51%▲」は、同じ部隊でない味方（デルタ）には付かないか
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中
+  - 録画: 022
+  - 予測（2026-10-05、commit 0bc6955）との比べ:
+    - delta-core-crit-ratio（critHitRatio）: 実測なし。H0 1.368、H1 1.25
+    - delta-body-crit-ratio（critHitRatio）: 実測なし。H0 1.735、H1 1.5
+- **[V-0173](../records/verifications/V-0173-mana-s2-charge-time.md)** マナ S2 のチャージ時間▼は基本チャージ時間が最も長い味方に付くか（録画 020 の読み直し）
+  - 問い: マナの S2（マターシグマ）の「フルバーストタイムが発動した時、基本チャージ時間が一番長い味方 1 機にチャージ時間 0.18 秒▼（10 秒）」は、チャージを持つ唯一の味方（デルタ）のフルバースト中の発と発の間を縮めるか
+  - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 調査中
+  - 録画: 020
+  - 予測（2026-10-05、commit 0bc6955）との比べ:
+    - delta-fb0-interval-diff（fullBurstShotIntervalDiff）: 実測なし。H0 0、H1 -10
+    - delta-fb1-interval-diff（fullBurstShotIntervalDiff）: 実測なし。H0 0、H1 -10
+    - delta-fb2-interval-diff（fullBurstShotIntervalDiff）: 実測なし。H0 0、H1 -10
+    - delta-fb3-interval-diff（fullBurstShotIntervalDiff）: 実測なし。H0 0、H1 -10
+    - delta-fb4-interval-diff（fullBurstShotIntervalDiff）: 実測なし。H0 0、H1 -10
+  - **最小構成の警告**: 録画 020（エーテル・マナ が未確定）。未確定の要素が 2 つ以上混ざる録画では結論を作らない（AGENTS.md「事実と記録」）

@@ -1,0 +1,142 @@
+{
+  "verification": "V-0173",
+  "note": "録画 020（エーテル + デルタ（AI）+ マナ（操作）。フルバースト 5 回）の読み直し。チャージを持つ枠はデルタ（SR・1 秒）だけ。比べるのは、n 回目のフルバーストの窓の中のデルタの発と発の間の中央値 − 窓の前の同じ長さの中央値（動画のフレーム）。エーテル（定義なし）・デルタ（C-0081）・マナのほかの効果はデルタの射撃の間隔に効かない（検証記録の「条件」）。ID は V-0170 から振り直した（main の V-0170 と重なったため。predicted.commit は振り直す前のブランチの commit）",
+  "team": [
+    {
+      "rid": 291,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 290,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの定義: マナの S2 のチャージ時間▼は無い（デルタの間隔はフルバーストの中も外も同じ）"
+    },
+    {
+      "id": "H1",
+      "note": "説明文どおり、フルバーストの開始に基本チャージ時間が最も長い 1 機（デルタ）のチャージ時間が 0.18 秒（Lv10）縮み、10 秒続く（longestChargeTime・chargeSpeed の flat）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 290,
+            "skill": "skill2",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "longestChargeTime",
+              "targetCountRef": 6,
+              "stat": "chargeSpeed",
+              "scaling": "flat",
+              "ref": 7,
+              "durationRef": 8
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "delta-fb0-interval-diff",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバースト。窓の中と前の、デルタの発と発の間の中央値の差（動画のフレーム）。判定の指標（5 回とも同じ向きに出るかを見る）"
+    },
+    {
+      "id": "delta-fb1-interval-diff",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 2,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のフルバースト。窓の中と前の、デルタの発と発の間の中央値の差（動画のフレーム）"
+    },
+    {
+      "id": "delta-fb2-interval-diff",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 2,
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目のフルバースト。窓の中と前の、デルタの発と発の間の中央値の差（動画のフレーム）"
+    },
+    {
+      "id": "delta-fb3-interval-diff",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 2,
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目のフルバースト。窓の中と前の、デルタの発と発の間の中央値の差（動画のフレーム）"
+    },
+    {
+      "id": "delta-fb4-interval-diff",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 2,
+        "n": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "5 回目のフルバースト。窓の中と前の、デルタの発と発の間の中央値の差（動画のフレーム）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "0bc69550e3f608d75a379f5be9bbda3f65b9bc4d",
+    "values": {
+      "H0": {
+        "delta-fb0-interval-diff": 0,
+        "delta-fb1-interval-diff": 0,
+        "delta-fb2-interval-diff": 0,
+        "delta-fb3-interval-diff": 0,
+        "delta-fb4-interval-diff": 0
+      },
+      "H1": {
+        "delta-fb0-interval-diff": -10,
+        "delta-fb1-interval-diff": -10,
+        "delta-fb2-interval-diff": -10,
+        "delta-fb3-interval-diff": -10,
+        "delta-fb4-interval-diff": -10
+      }
+    },
+    "seen": {
+      "020": ["018-02", "020-01", "020-02", "020-03", "020-04", "020-05", "020-06", "020-07"]
+    }
+  }
+}

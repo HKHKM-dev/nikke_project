@@ -11,7 +11,7 @@ import { applyCritBuffs } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame } from '../time.ts';
-import type { SkillDefinition } from '../skills/types.ts';
+import { SKILL_SLOTS, parseSkillDefinition, type SkillDefinition, type SkillSlot } from '../skills/types.ts';
 import type { TeamInput, TeamResult, TeamSlotInput } from '../team.ts';
 import type { CharacterData, EnemyPresetMaster } from '../types.ts';
 import type { RecordingEntry } from './recordings.ts';
@@ -76,7 +76,46 @@ export type CompareSetup = {
   sustainedHitRateUp?: boolean;
   /** V-0165: false なら、録画（予測の編成）の宝物の段階を使わず、どの枠も基礎版のスキルにする。省略 true */
   treasure?: boolean;
+  /**
+   * 対象の語彙編（plan/design-target-vocab.md 4 節）: 定義に効果を足す。結論の無い効果を、定義のファイルを変えずに予測の仮説の
+   * override でだけ入れる。rid のキャラの skill（treasure なら宝物版）の effects の末尾に、effect（定義の JSON の書き方）を足す。
+   * replace（0 始まり）があれば、末尾に足さずにその位置の効果を置き換える（対象を絞るなど、定義の効果の読みを替える仮説）
+   */
+  addEffects?: AddedEffect[];
 };
+
+/** CompareSetup.addEffects の 1 件 */
+export type AddedEffect = {
+  rid: number;
+  skill: SkillSlot;
+  treasure?: boolean;
+  effect: Record<string, unknown>;
+  replace?: number;
+};
+
+/**
+ * 定義に効果を足して読み直す（読み込みの検査をそのまま通す）。support は読み込みで決まる欄なので、JSON に戻すときに外す
+ */
+export function withAddedEffects(definition: SkillDefinition, adds: readonly AddedEffect[]): SkillDefinition {
+  if (adds.length === 0) return definition;
+  const json = JSON.parse(JSON.stringify(definition)) as {
+    skills: Record<string, { support?: unknown; effects: unknown[] }>;
+    treasureSkills?: Record<string, { support?: unknown; effects: unknown[] }>;
+  };
+  for (const group of [json.skills, json.treasureSkills ?? {}]) {
+    for (const slot of SKILL_SLOTS) delete group[slot]?.support;
+  }
+  for (const add of adds) {
+    const group = add.treasure === true ? json.treasureSkills : json.skills;
+    const entry = group?.[add.skill];
+    if (entry === undefined)
+      throw new Error(`rid ${add.rid} の ${add.treasure === true ? '宝物版の ' : ''}${add.skill} が無い`);
+    if (add.replace === undefined) entry.effects.push(add.effect);
+    else if (add.replace in entry.effects) entry.effects[add.replace] = add.effect;
+    else throw new Error(`rid ${add.rid} の ${add.skill} に ${add.replace} 番目の効果が無い`);
+  }
+  return parseSkillDefinition(json);
+}
 
 /** Stage 18-C: 中遠の 3 か所（足元 584・571・561。C-0044） */
 export const MID_FAR_LANDINGS = ['A', 'B', 'C'] as const;
@@ -235,6 +274,31 @@ function coreHitRate(result: SimResult, ctx: MetricContext): number {
   const t = segment.trigger;
   const shot = t.buffs.weapon?.shot ?? input.character.shot;
   return t.boost.core / (shot.coreDamageRate - 1 + t.buffs.coreDamage);
+}
+
+function median(values: readonly number[]): number {
+  if (values.length === 0) throw new Error('値が無い');
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 1 ? sorted[mid]! : (sorted[mid - 1]! + sorted[mid]!) / 2;
+}
+
+/** 発の列（モデルのフレーム）のうち、両端が [from, to) に入る発と発の間（動画のフレーム） */
+function videoIntervalsIn(schedule: BurstSchedule, frames: readonly number[], from: number, to: number): number[] {
+  const inside = frames.filter((f) => f >= from && f < to).map((f) => videoFrameOf(schedule, f));
+  return inside.slice(1).map((f, i) => f - inside[i]!);
+}
+
+function fullBurstShotIntervalDiff(result: SimResult, ctx: MetricContext): number {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const window = schedule.fullBurstWindows[Number(ctx.args.n)];
+  if (window === undefined) throw new Error(`${String(ctx.args.n)} 回目のフルバーストが無い`);
+  const frames = slotOf(result.shots, ctx).frames;
+  const length = window.end - window.start;
+  const inside = videoIntervalsIn(schedule, frames, window.start, window.end);
+  const before = videoIntervalsIn(schedule, frames, window.start - length, window.start);
+  return median(inside) - median(before);
 }
 
 function fullBurstStartIntervals(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
@@ -407,6 +471,17 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     },
   },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
+  // 対象の語彙編（plan/design-target-vocab.md 4.1 節）: 同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比。
+  // 敵に掛かる別枠の乗数（受けるダメージ▲）と攻撃力は比で消え、倍率グループの会心の項（クリティカルダメージ）だけが残る
+  critHitRatio: {
+    args: ['slot', 'frame', 'core', 'distance'],
+    sim: (r, c) =>
+      hitDamage(r, { ...c, args: { ...c.args, crit: true } }) /
+      hitDamage(r, { ...c, args: { ...c.args, crit: false } }),
+  },
+  // 対象の語彙編（同 4.2 節）: n 回目（0 始まり）のフルバーストの窓の中の、枠の発と発の間の中央値から、窓の前の同じ長さの中央値を
+  // 引いたもの（動画のフレーム）。チャージ時間▼が窓の間だけ効くかを見る
+  fullBurstShotIntervalDiff: { args: ['slot', 'n'], sim: fullBurstShotIntervalDiff },
   coreHitRate: { args: ['slot', 'frame'], sim: coreHitRate },
   coreHitRateDiff: {
     args: ['slot', 'frame', 'baseFrame'],
@@ -683,6 +758,9 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
   const slots: TeamSlotInput[] = recording.team.map((member) => {
     const character = data.characters.get(member.rid);
     if (character === undefined) throw new Error(`rid ${member.rid} のデータが無い`);
+    const definition = data.skills.get(member.rid) ?? null;
+    const adds = (setup.addEffects ?? []).filter((a) => a.rid === member.rid);
+    if (adds.length > 0 && definition === null) throw new Error(`addEffects: rid ${member.rid} の定義が無い`);
     if (member.cube !== undefined) throw new Error('キューブを付けた枠は未対応（スペック固定では乗らない）');
     return {
       character,
@@ -691,7 +769,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       ...(auto ? { conditionMode: 'auto' as const } : {}),
       attackOverride: computeFixedSpecAttack(character).attack,
       skills: {
-        definition: data.skills.get(member.rid) ?? null,
+        definition: definition === null ? null : withAddedEffects(definition, adds),
         levels: MAX_SKILL_LEVELS,
         treasurePhase: (setup.treasure === false ? 0 : (member.treasurePhase ?? 0)) as TreasurePhase,
       },
