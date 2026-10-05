@@ -164,8 +164,10 @@ describe('持続の命中率▲（C-0170）', () => {
     const a = runSimulation(off);
     const at = (frame: number) => a.timeline.segments.find((s) => s.start <= frame && frame < s.end)!;
     expect(at(nearFb.start + 10).slots[LITER]!.buffs.hitRate).toBe(0);
-    // 時刻表（1 パス目のゲージは計画の値）は変わらず、持続の▲の分だけダメージが減る
-    expect(a.schedule!.fullBurstWindows).toEqual(sim.schedule!.fullBurstWindows);
+    // plan/design-sustained-hit-rate-gauge.md: 1 パス目も持続の▲を落とすので時刻表が動く（この編成では、▲の窓の中の
+    // モダニア（MG）の命中の期待値が変わり、S1 の normalHit の数えの位相が動く。向きは決まらない）。持続の▲の分だけダメージが減る
+    expect(a.schedule!.fullBurstWindows.length).toBe(sim.schedule!.fullBurstWindows.length);
+    expect(a.schedule!.fullBurstWindows).not.toEqual(sim.schedule!.fullBurstWindows);
     expect(a.totalDamage).toBeLessThan(sim.totalDamage);
     expect(computeTeamDamage(off).totalDamage).toBeLessThan(calc.totalDamage);
   });

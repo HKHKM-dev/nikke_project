@@ -38,6 +38,11 @@
 //
 // フラワー編（plan/design-flower-s2-gauge.md 3 節）: 周期でゲージだけを溜める効果（burstGaugeHit）は、ループの前に発火のフレームへ
 // 射手の 1 ヒットぶんのゲージを予約し、段のヒットと同じく手順 2 で足す（I-DOLL・フラワーの S2。C-0178）。
+//
+// 持続の命中率▲（plan/design-sustained-hit-rate-gauge.md）: 当たりに効く状態の stat（HIT_STATE_STATS）の timed 効果の窓（当たりの窓）
+// を追い、条件が自動の枠の発のゲージと命中の期待値を、常時の N + 効いている持続の▲で出し直す（options.hitRateWith。2 パス目の
+// landingPartsWith と同じ式）。窓は射撃に効く窓と同じく「f − 1 までに登録済み」のものが f の発に効く。手順 3 の順番は
+// 回復 → 状態の窓 → 当たりの窓 → 攻撃力の窓 → 射撃に効く窓 → 即時効果。
 import { burstDelaysFieldOf, burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { gameSecondsToFrames } from '../time.ts';
@@ -82,7 +87,7 @@ import {
   shotCountWeight,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import { isFiringStat, type BuffStat, type ShotCountKind } from '../skills/types.ts';
+import { isFiringStat, isHitStateStat, type BuffStat, type ShotCountKind } from '../skills/types.ts';
 import { dotTickTracker, groupDotsByStatus, type DotTickTracker } from './dot.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { timerFrames, type FrameRange } from '../skills/timeline.ts';
@@ -128,6 +133,15 @@ export type FirstPassOptions = {
   flights?: readonly (SlotFlight | null)[];
   /** 同 2 節: 発が壊した障害物（録画で数えた入力）。その発のゲージに物の分を足す。省略は無し */
   obstacleBreaks?: readonly ObstacleBreak[];
+  /**
+   * plan/design-sustained-hit-rate-gauge.md: 枠 slotIndex の区間 span の弾丸命中率とコアの命中の期待値を、持続の命中率▲
+   * timedHitRateUp を足した N で出し直す（frame/landing.ts の hitRateSpanWith）。省略なら持続の▲の窓を追わない（計画の値のまま）
+   */
+  hitRateWith?: (
+    slotIndex: number,
+    span: LandingHitRateSpan,
+    timedHitRateUp: number,
+  ) => { hitRate: number; coreHits: number };
 };
 
 /** 射撃に効く timed 効果の窓（Stage 11 から対象の枠ごと。発火ごとに対象が変わる効果があるため） */
@@ -162,6 +176,8 @@ export type FirstPassResult = {
   instants: InstantApplication[];
   /** Stage 11 アリス編: 順位のためだけに追った攻撃力の窓（topAttack の射撃系・即時効果が無ければ空）。テスト用 */
   rankAttackWindows: FiringWindow[];
+  /** 持続の命中率▲の窓（当たりの窓。options.hitRateWith が無い・条件が自動の枠に掛からなければ空）。テスト用 */
+  hitWindows: FiringWindow[];
   /** V-0030: 段の循環のヒットで溜めたゲージ（予約した順）。frame は当たるフレーム、shotFrame は段を出した射撃。テスト用 */
   cycleGaugeHits: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
   /**
@@ -288,7 +304,15 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     src.effect.kind === 'burstGauge' && isResolvedShotCount(src.effect.trigger);
   const shotGaugeCharges = instant.filter(isShotGaugeCharge);
   const otherInstants = instant.filter((src) => src.effect.kind !== 'heal' && !isShotGaugeCharge(src));
-  const trackEvents = firing.length > 0 || instant.length > 0;
+  // 持続の命中率▲: 弾丸命中率の区間を持つ枠（条件が自動）に掛かりうる当たりの stat の効果だけを追う
+  const hitTrack: FiringSource[] =
+    options.hitRateWith === undefined
+      ? []
+      : plainTimed
+          .filter(({ effect }) => isHitStateStat(effect.stat))
+          .map(({ effect, sourceSlotIndex, casterBaseAttack }) => sourceOf(effect, sourceSlotIndex, casterBaseAttack))
+          .filter((src) => src.canTarget.some((can, i) => can && (options.hitRates?.[i] ?? null) !== null));
+  const trackEvents = firing.length > 0 || instant.length > 0 || hitTrack.length > 0;
   // Stage 11 アリス編: 順位が要るときだけ攻撃力の窓を追う（無ければクラウン編までのループと同じ）
   const needsRank =
     firing.some((src) => dependsOnRank(src.effect)) || otherInstants.some((src) => dependsOnRank(src.effect));
@@ -362,7 +386,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   /** フレーム f の発火で付く窓の始まり。射撃の回数トリガーは次のフレームから（Stage 8） */
   const startOf = (src: FiringSource, f: number): number => (isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
   // 戦闘開始時の窓はループの前に登録する（1 発目のマガジンから効く）
-  for (const src of [...stateTrack, ...attackTrack, ...firing]) {
+  for (const src of [...stateTrack, ...hitTrack, ...attackTrack, ...firing]) {
     if (src.effect.trigger !== 'battleStart' || frames <= 0) continue;
     if (!conditionOk(src, 0)) continue;
     register(src, 0, withRank(src.effect, null, 0));
@@ -431,12 +455,31 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     while (hitRateAt[i]! + 1 < spans.length && spans[hitRateAt[i]!]!.end <= f) hitRateAt[i]! += 1;
     return spans[hitRateAt[i]!];
   };
+  /** 枠 i がフレーム f に効いている持続の命中率▲の和（登録済みの当たりの窓のうち start ≤ f < end。スタックは段の数だけ） */
+  const timedHitUpAt = (i: number, f: number): number => {
+    let sum = 0;
+    for (const src of hitTrack) {
+      if (!src.canTarget[i]) continue;
+      for (const [s, e] of src.windows[i]!) if (s <= f && f < e) sum += src.effect.value;
+    }
+    return sum;
+  };
+  /** 枠 i のフレーム f の区間の値（持続の命中率▲が効いていれば出し直した値） */
+  const spanValueAt = (
+    i: number,
+    f: number,
+  ): LandingHitRateSpan | { hitRate: number; coreHits: number } | undefined => {
+    const span = spanAt(i, f);
+    if (span === undefined || hitTrack.length === 0) return span;
+    const up = timedHitUpAt(i, f);
+    return up === 0 ? span : options.hitRateWith!(i, span, up);
+  };
   /** 枠 i がフレーム f に撃った 1 発のゲージ */
   const energyAt = (i: number, f: number): number => {
     if (!hitRateSpans[i]) return energies[i]!;
     const span = spanAt(i, f);
     const pelletRate = pellets[i] && span?.measured !== true ? SG_PELLET_GAUGE_HIT_RATE : 1;
-    return energies[i]! * (span?.hitRate ?? 1) * pelletRate;
+    return energies[i]! * (spanValueAt(i, f)?.hitRate ?? 1) * pelletRate;
   };
   // plan/design-anis-star-gauge-timing.md 3 節: 枠 i がフレーム f に撃った発の飛ぶ時間（ゲージはその後のフレームに溜まる）
   const flights = slots.map((_, i) => options.flights?.[i] ?? null);
@@ -453,11 +496,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   );
   const shotCounts = slots.map(() => 0);
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: 発ごとの命中・コアの命中の期待値。
-  // 区間はゲージと同じ計画の値（常時の命中率▲だけ）。SG の命中は 1 トリガーを 1 回（ペレットのどれかが当たる）
+  // 区間はゲージと同じ値（常時の命中率▲ + 効いている持続の▲）。SG の命中は 1 トリガーを 1 回（ペレットのどれかが当たる）
   const enemyHasCore = options.enemyHasCore ?? true;
   const hitsAt = (i: number, f: number): { hits: number; coreHits: number } => {
     const slot = slots[i]!;
-    const span = spanAt(i, f);
+    const span = spanValueAt(i, f);
     const hitRate = span?.hitRate ?? slot.hitRate ?? 1;
     const coreHits = span !== undefined ? span.coreHits : (slot.hitRate ?? 1) * (slot.coreHitRate ?? 0);
     return { hits: pellets[i] ? 1 : hitRate, coreHits: enemyHasCore ? coreHits : 0 };
@@ -896,6 +939,12 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (!src.fires(ev)) continue;
       register(src, startOf(src, f), fireContextOf(src.effect.trigger, ev));
     }
+    // 当たりの窓（持続の命中率▲）。このフレームの発には効かず、次のフレームの発から効く
+    for (const src of hitTrack) {
+      if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
+      if (!src.fires(ev)) continue;
+      register(src, startOf(src, f), fireContextOf(src.effect.trigger, ev));
+    }
     // 攻撃力の窓（順位のためだけ）を先に登録し、同じフレームに付いたものも順位に入れる
     for (const src of attackTrack) {
       if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
@@ -979,6 +1028,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     firingWindows: windowsOfSources(firing),
     instants,
     rankAttackWindows: windowsOfSources(attackTrack),
+    hitWindows: windowsOfSources(hitTrack),
     cycleGaugeHits,
     dotGauges,
     shotGauges,

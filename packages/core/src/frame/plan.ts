@@ -61,7 +61,14 @@ export {
   type DotTickTracker,
 } from './dot.ts';
 import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
-import { hitRateSpansOf, planLandings, slotFlightsOf, type LandingPlan } from './landing.ts';
+import {
+  hitRateSpanWith,
+  hitRateSpansOf,
+  planLandings,
+  slotFlightsOf,
+  type LandingHitRateSpan,
+  type LandingPlan,
+} from './landing.ts';
 import type { ShotLog } from './shots.ts';
 import type { SkillSlot } from '../types.ts';
 
@@ -147,6 +154,13 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     // plan/design-anis-star-gauge-timing.md: 飛ぶ時間（的の表）と、発が壊した障害物（録画で数えた入力）
     flights: slotFlightsOf(slots, enemy, frames),
     obstacleBreaks: input.obstacleBreaks ?? [],
+    // plan/design-sustained-hit-rate-gauge.md: 持続の命中率▲を 1 パス目のゲージと命中の期待値にも効かせる（2 パス目と同じ切り替え）
+    ...(landing === null || input.sustainedHitRateUp === false
+      ? {}
+      : {
+          hitRateWith: (slotIndex: number, span: LandingHitRateSpan, up: number) =>
+            hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, up),
+        }),
   });
   const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing, input.sustainedHitRateUp ?? true);
   const skillHits = planSkillHits(slots, enemy, timeline, schedule, frames, shots);
