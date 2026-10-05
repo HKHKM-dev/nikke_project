@@ -30,15 +30,11 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "midFarLanding": "B"
       },
-      "observations": [
-        "L-AN-01"
-      ],
+      "observations": ["L-AN-01"],
       "note": "エレグ（MG）単騎 AUTO の与ダメージ（通常攻撃だけ。スキル定義なし）。L-AN-01 のいまの照合と同じ組み方"
     },
     {
@@ -50,9 +46,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "midFarLanding": "B"
       },
@@ -73,15 +67,7 @@
       }
     },
     "seen": {
-      "L-AN": [
-        "L-AN-01",
-        "L-AN-02",
-        "L-AN-03",
-        "L-AN-04",
-        "L-AN-05",
-        "L-AN-06",
-        "L-AN-07"
-      ]
+      "L-AN": ["L-AN-01", "L-AN-02", "L-AN-03", "L-AN-04", "L-AN-05", "L-AN-06", "L-AN-07"]
     }
   }
 }
