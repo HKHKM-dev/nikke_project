@@ -1,0 +1,99 @@
+{
+  "verification": "V-0171",
+  "team": [
+    {
+      "rid": 870,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（S1 の有利コードの攻撃ダメージ▲を定義していない。属性の倍率は 1.1）。H1（1.1 に足す）・H2（1.1 と別の乗数）は定義を切り替える仮説なので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "pellet-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      },
+      "note": "クイーン（真）単騎・風圧の的の、戦闘開始 15 秒以内（S1 の攻撃力▲の窓）の 1 ペレット（胴体）。灼熱の的の同じ 1 ペレットは 012-01〜012-04"
+    },
+    {
+      "id": "pellet-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      },
+      "note": "クイーン（真）単騎・風圧の的の、戦闘開始 15 秒以内（S1 の攻撃力▲の窓）の 1 ペレット（会心）。灼熱の的の同じ 1 ペレットは 012-01〜012-04"
+    },
+    {
+      "id": "pellet-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      },
+      "note": "クイーン（真）単騎・風圧の的の、戦闘開始 15 秒以内（S1 の攻撃力▲の窓）の 1 ペレット（コア）。灼熱の的の同じ 1 ペレットは 012-01〜012-04"
+    },
+    {
+      "id": "pellet-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      },
+      "note": "クイーン（真）単騎・風圧の的の、戦闘開始 15 秒以内（S1 の攻撃力▲の窓）の 1 ペレット（コア会心）。灼熱の的の同じ 1 ペレットは 012-01〜012-04"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "f315ea21314a589f315904e2cf7c3cb3239bd230",
+    "values": {
+      "H0": {
+        "pellet-body": 51889.06769217602,
+        "pellet-crit": 77833.60153826403,
+        "pellet-core": 103778.13538435203,
+        "pellet-core-crit": 129722.66923044005
+      }
+    },
+    "seen": {}
+  }
+}
