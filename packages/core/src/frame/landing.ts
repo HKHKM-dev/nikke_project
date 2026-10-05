@@ -802,6 +802,30 @@ export function slotFlightsOf(
   });
 }
 
+/**
+ * コアの経路編（plan/design-anis-star-core-path.md 3.2 節）: 枠ごと・スキルのスロットごとの、周期の自動攻撃のヒットのコアに
+ * 当たる割合の区間。的の表の coreHitRate.autoAttacks と着地点の時間割りで決まる（飛ぶ時間と同じ引き方。値は frames に入れる）。
+ * 行の無いスロットは省き、どこにも無ければ null（コアに当たらない）
+ */
+export function slotAutoAttackCoreRatesOf(
+  slots: readonly (Pick<TeamSlotInput, 'character'> | null)[],
+  enemy: EnemyInput,
+  frames: number,
+): (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] {
+  const rows = enemy.target?.coreHitRate.autoAttacks;
+  if (rows === undefined) return slots.map(() => null);
+  const spans = landingFrameSpans(enemy, frames);
+  return slots.map((slot) => {
+    if (slot === null) return null;
+    const out: Partial<Record<SkillSlot, FlightFrameSpan[]>> = {};
+    for (const skill of SKILL_SLOTS) {
+      const s = flightSpansOf(spans, rows[`${slot.character.resourceId}:${skill}`]);
+      if (s !== null) out[skill] = s;
+    }
+    return Object.keys(out).length === 0 ? null : out;
+  });
+}
+
 /** フレーム frame に撃った発・刻みのヒットの飛ぶ時間（区間の外・spans なしは 0） */
 export function flightFramesAt(spans: readonly FlightFrameSpan[] | null | undefined, frame: number): number {
   if (!spans) return 0;

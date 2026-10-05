@@ -362,6 +362,12 @@ export type FlightFramesTable = {
   autoAttacks?: Readonly<Record<string, TargetRateRow | null>>;
 };
 
+/**
+ * コア命中率の表。武器種の行（通常攻撃）に、周期の自動攻撃のヒットの行 autoAttacks（キーは flightFrames.autoAttacks と同じ
+ * `<resourceId>:<スキルのスロット>`）を足したもの。自動攻撃の行が無い・null はコアに当たらない（0。手入力の値は使わない）
+ */
+export type CoreHitRateTable = TargetRateTable & { autoAttacks?: Readonly<Record<string, TargetRateRow | null>> };
+
 /** 的の条件の表。射撃場の BigArms のように、属性だけ違う敵で 1 つを共有する */
 export type TargetProfile = {
   id: string;
@@ -371,8 +377,8 @@ export type TargetProfile = {
   landings: LandingPoint[];
   /** 配分の id → [着地点の id, 重み] の列（重みの和は 1）。中遠の 3 か所など */
   mixes: Record<string, [string, number][]>;
-  /** コア命中率 P(コア｜命中) */
-  coreHitRate: TargetRateTable;
+  /** コア命中率 P(コア｜命中)。autoAttacks は周期の自動攻撃のヒットの行（plan/design-anis-star-core-path.md 3.2 節） */
+  coreHitRate: CoreHitRateTable;
   /** 弾丸命中率 */
   bulletHitRate: TargetRateTable;
   /**

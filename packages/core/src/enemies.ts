@@ -10,6 +10,7 @@ import type {
   EnemyEventSpec,
   EnemyPreset,
   EnemyPresetMaster,
+  CoreHitRateTable,
   FlightFramesTable,
   LandingBand,
   LandingPoint,
@@ -292,6 +293,33 @@ const FRAMES: RateValue = {
 /** 自動攻撃の行のキー `<resourceId>:<スキルのスロット>` */
 const AUTO_ATTACK_KEY = /^\d+:(skill1|skill2|burst)$/;
 
+/** 自動攻撃の行（キー `<resourceId>:<スキルのスロット>` → 行か null） */
+function parseAutoAttackRows(
+  v: unknown,
+  path: string,
+  keys: ReadonlySet<string>,
+  check: RateValue,
+): Record<string, TargetRateRow | null> {
+  if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
+  const rows: Record<string, TargetRateRow | null> = {};
+  for (const [key, row] of Object.entries(v)) {
+    const at = `${path}.${key}`;
+    if (!AUTO_ATTACK_KEY.test(key)) throw new TypeError(`${at}: key must be <resourceId>:<skill slot>`);
+    rows[key] = row === null ? null : parseRateRow(row, at, keys, check);
+  }
+  return rows;
+}
+
+/** コア命中率の表（武器種の行と、自動攻撃の行 autoAttacks。plan/design-anis-star-core-path.md 3.2 節） */
+function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<string>): CoreHitRateTable {
+  if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
+  const { autoAttacks, ...weapons } = v;
+  const table: CoreHitRateTable = parseRateTable(weapons, path, keys);
+  if (autoAttacks !== undefined)
+    table.autoAttacks = parseAutoAttackRows(autoAttacks, `${path}.autoAttacks`, keys, RATE);
+  return table;
+}
+
 function parseFlightFrames(v: unknown, path: string, keys: ReadonlySet<string>): FlightFramesTable {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
   for (const key of Object.keys(v)) {
@@ -300,14 +328,7 @@ function parseFlightFrames(v: unknown, path: string, keys: ReadonlySet<string>):
   const table: FlightFramesTable = {};
   if (v.shots !== undefined) table.shots = parseRateTable(v.shots, `${path}.shots`, keys, FRAMES);
   if (v.autoAttacks !== undefined) {
-    if (!isRecord(v.autoAttacks)) throw new TypeError(`${path}.autoAttacks: must be an object`);
-    const rows: Record<string, TargetRateRow | null> = {};
-    for (const [key, row] of Object.entries(v.autoAttacks)) {
-      const at = `${path}.autoAttacks.${key}`;
-      if (!AUTO_ATTACK_KEY.test(key)) throw new TypeError(`${at}: key must be <resourceId>:<skill slot>`);
-      rows[key] = row === null ? null : parseRateRow(row, at, keys, FRAMES);
-    }
-    table.autoAttacks = rows;
+    table.autoAttacks = parseAutoAttackRows(v.autoAttacks, `${path}.autoAttacks`, keys, FRAMES);
   }
   return table;
 }
@@ -343,7 +364,7 @@ function parseTargetProfile(v: unknown, path: string): TargetProfile {
     initialLanding,
     landings,
     mixes,
-    coreHitRate: parseRateTable(v.coreHitRate, `${path}.coreHitRate`, keys),
+    coreHitRate: parseCoreHitRateTable(v.coreHitRate, `${path}.coreHitRate`, keys),
     bulletHitRate: parseRateTable(v.bulletHitRate, `${path}.bulletHitRate`, keys),
     ...(v.hitsPerShot === undefined
       ? {}
