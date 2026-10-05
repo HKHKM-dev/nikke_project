@@ -158,7 +158,7 @@
     "value": 872,
     "unit": "発",
     "description": "モダニア（操作）の 4 回目のフルバーストの、殲滅モードの最初の発から最後の発までの発の数",
-    "source": "V-0173",
+    "source": "V-0180",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",
@@ -188,7 +188,7 @@
     "value": 25954,
     "unit": "ダメージ",
     "description": "モダニアの殲滅モードの 1 発（2 ヒット）の、2 ヒットともコア・会心・距離ボーナスなしの和（S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中）",
-    "source": "V-0173",
+    "source": "V-0180",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",
@@ -221,7 +221,7 @@
     "value": 28052,
     "unit": "ダメージ",
     "description": "モダニアの殲滅モードの 1 発（2 ヒット）の、2 ヒットともコア・会心・距離ボーナスありの和（S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中）",
-    "source": "V-0173",
+    "source": "V-0180",
     "readAt": "2026-10-05",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",

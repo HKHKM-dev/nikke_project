@@ -220,15 +220,15 @@ notes の種類: 未対応 40・前提の外 20・計算に無関係 25・補足
 
 - **skill1**: supported
   - effects[0] damage・normalHit・additional: C-0105（確定）、C-0119（確定）
-  - effects[1] timed・normalHit・critDamage: C-0269（確定）
-  - effects[2] timed・normalHit・maxAmmo: C-0269（確定）
+  - effects[1] timed・normalHit・critDamage: C-0272（確定）
+  - effects[2] timed・normalHit・maxAmmo: C-0272（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・hitRate: C-0170（仮説）
   - effects[1] timed・normalHit・attack: C-0124（確定）、C-0118（確定）
 - **burst**: supported
-  - effects[0] timed・burstUse・infiniteAmmo: C-0271（仮説）
-  - effects[1] weaponChange・burstUse: C-0270（確定）、C-0271（仮説）
-  - notes[0] 補足: 「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている: C-0271（仮説）
+  - effects[0] timed・burstUse・infiniteAmmo: C-0274（仮説）
+  - effects[1] weaponChange・burstUse: C-0273（確定）、C-0274（仮説）
+  - notes[0] 補足: 「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている: C-0274（仮説）
   - notes[1] 前提の外: 殲滅モードの照準線拡張・照準範囲内のすべての敵を同時に照準は、単体の的では関係しない: 根拠なし
 
 ## 261 ニヒリスター
@@ -263,7 +263,7 @@ notes の種類: 未対応 40・前提の外 20・計算に無関係 25・補足
   - notes[0] 未対応: 通常攻撃 10 回ごとの味方全体の回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
   - notes[1] 前提の外: 味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない: 根拠なし
 - **skill2**: partial
-  - effects[0] passive・burstGaugeSpeed: C-0266（確定）
+  - effects[0] passive・burstGaugeSpeed: C-0269（確定）
   - effects[1] timed・fullBurstStart・attackDamage: 根拠なし
   - effects[2] timed・fullBurstStart・attack: 根拠なし
   - notes[0] 未対応: フルバースト時の「基本チャージ時間が一番長い味方 1 機」のチャージ時間▼は未対応（対象が語彙に無い）: 根拠なし
@@ -306,10 +306,10 @@ notes の種類: 未対応 40・前提の外 20・計算に無関係 25・補足
   - effects[1] timed・fullBurstStart・reloadSpeed: 根拠なし
   - notes[0] 計算に無関係: 直前にバーストスキルを使用していない味方への防御力▲はダメージに関係しない: 根拠なし
 - **skill2**: supported
-  - effects[0] heal・normalShot: C-0268（確定）
-  - effects[1] timed・healed・attackDamage: C-0050（確定）、C-0268（確定）
+  - effects[0] heal・normalShot: C-0271（確定）
+  - effects[1] timed・healed・attackDamage: C-0050（確定）、C-0271（確定）
   - notes[0] 計算に無関係: リラックス（受ける HP 回復量▲）・無敵・挑発はダメージに関係しない: 根拠なし
-  - notes[1] 補足: リラックスは 20 スタックで回復するまでの数え上げにだけ使う: C-0268（確定）
+  - notes[1] 補足: リラックスは 20 スタックで回復するまでの数え上げにだけ使う: C-0271（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・attackDamage: 根拠なし
   - notes[0] 前提の外: バリアは扱わない（要件 5.2 節）: 根拠なし
@@ -399,7 +399,7 @@ notes の種類: 未対応 40・前提の外 20・計算に無関係 25・補足
 ## 870 クイーン（真）
 
 - **skill1**: partial
-  - effects[0] timed・battleStart・attack: C-0267（仮説）
+  - effects[0] timed・battleStart・attack: C-0270（仮説）
   - effects[1] timed・fullBurstEnd・attack: 根拠なし
   - notes[0] 未対応: 有利コードの攻撃ダメージ▲（ペルソナ - ヨハンナ）は未対応（語彙 elementDamage はあるが、スキルの▲が OL・キューブと同じく 1.1 に足すかの根拠の結論が無い。V-0171 で撮影待ち）: 根拠なし
   - notes[1] 未対応: 1more が適用された時の分配ダメージは未対応（語彙 damage・enemyElement はあるが、根拠の結論が無い）: 根拠なし

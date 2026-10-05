@@ -214,7 +214,7 @@ function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * モダニア編（V-0172）: そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017）。録画ではリロードを終えた直後の
+ * モダニア編（V-0179）: そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017）。録画ではリロードを終えた直後の
  * 照準の横の残弾と比べる
  */
 function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
