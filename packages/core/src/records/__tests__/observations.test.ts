@@ -492,9 +492,13 @@ describe('照合の部品', () => {
       string,
       number
     >;
+    const profile = data.enemies.targetProfiles.find((p) => p.id === 'range-bigarms')!;
     expect(rate(1000)).toBeCloseTo(smg.midNear!, 9);
     expect(rate(3000)).toBeCloseTo(smg.near!, 9);
-    expect(rate(7500)).toBeCloseTo(smg.midFar!, 9);
+    // 中遠は 3 か所の配分の期待値。SMG は着地点 A だけ着地点の値（C-0319）で、B・C は帯の値
+    const mixed = profile.mixes.midFar!.reduce((a, [id, w]) => a + w * (smg[id] ?? smg.midFar!), 0);
+    expect(rate(7500)).toBeCloseTo(mixed, 9);
+    expect(rate(7500, { midFarLanding: 'A' })).toBeCloseTo(smg.midFarA!, 9);
     expect(rate(3000, { condition: 'manual', hitRate: 0.95 })).toBeCloseTo(0.95, 9);
   });
 
