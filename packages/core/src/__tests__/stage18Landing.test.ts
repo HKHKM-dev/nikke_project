@@ -91,7 +91,7 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     ]);
   });
 
-  it('reads the band values (C-0034・V-0056・V-0069・V-0072) through the landing, the band or all, and leaves the unmeasured cells null', () => {
+  it('reads the band values (C-0286・C-0287・V-0056・V-0069・V-0072) through the landing, the band or all, and leaves the unmeasured cells null', () => {
     const at = (id: string) => profile.landings.find((l) => l.id === id)!;
     expect(targetRateOf(profile.coreHitRate, AR, at('midNear'))).toBe(0.2281);
     expect(targetRateOf(profile.coreHitRate, SMG, at('midFarA'))).toBe(0.0516);
