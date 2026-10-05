@@ -54,8 +54,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "「自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。自分を除く対象は語彙に無い（topAttack は自分も候補）",
-          "en": "ATK up and Critical Damage up (10 s) on the 1 ally with the highest final ATK except the skill user (the user only if there are not enough allies). The except-self target is not in the vocabulary (topAttack includes the user)",
+          "ja": "「自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。対象の語彙（topAttack の excludeSelf: unlessShort）はあるが、撮っていない（plan/design-target-vocab.md 4.3 節）",
+          "en": "ATK up and Critical Damage up (10 s) on the 1 ally with the highest final ATK except the skill user (the user only if there are not enough allies). The target is in the vocabulary (topAttack with excludeSelf: unlessShort), but not recorded yet",
           "kind": "unimplemented"
         }
       ]
@@ -117,8 +117,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルバースト開始時の味方全体のクリティカルダメージ▲、自分のクリティカル確率▲・攻撃ダメージ▲（10 秒）、自分を除く最終攻撃力が最も高い味方 1 機のクリティカル確率▲（1 発間）。撮影で確かめていない（単騎ではフルバーストにならない）。自分を除く対象と、その対象への発数の維持は語彙に無い",
-          "en": "At the start of Full Burst, Critical Damage up for all allies, Critical Rate up and Damage up on self (10 s), and Critical Rate up for 1 shot on the 1 ally with the highest final ATK except the user. Not verified by recording (a solo unit never reaches Full Burst); the except-self target and a duration in shots on it are not in the vocabulary",
+          "ja": "フルバースト開始時の味方全体のクリティカルダメージ▲、自分のクリティカル確率▲・攻撃ダメージ▲（10 秒）、自分を除く最終攻撃力が最も高い味方 1 機のクリティカル確率▲（1 発間）。撮影で確かめていない（単騎ではフルバーストにならない）。順位で決まる対象への発数の維持（topAttack と durationShots）は語彙に無い",
+          "en": "At the start of Full Burst, Critical Damage up for all allies, Critical Rate up and Damage up on self (10 s), and Critical Rate up for 1 shot on the 1 ally with the highest final ATK except the user. Not verified by recording (a solo unit never reaches Full Burst); a duration in shots on a ranked target (topAttack with durationShots) is not in the vocabulary",
           "kind": "unimplemented"
         }
       ]
@@ -127,8 +127,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "「自分を除く最終攻撃力が最も高い味方 2 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。自分を除く対象は語彙に無い",
-          "en": "ATK up and Critical Damage up (10 s) on the 2 allies with the highest final ATK except the user (the user only if there are not enough allies). The except-self target is not in the vocabulary",
+          "ja": "「自分を除く最終攻撃力が最も高い味方 2 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。対象の語彙（topAttack の excludeSelf: unlessShort）はあるが、撮っていない（plan/design-target-vocab.md 4.3 節）",
+          "en": "ATK up and Critical Damage up (10 s) on the 2 allies with the highest final ATK except the user (the user only if there are not enough allies). The target is in the vocabulary (topAttack with excludeSelf: unlessShort), but not recorded yet",
           "kind": "unimplemented"
         }
       ]

@@ -82,6 +82,15 @@ function withoutHits(logs: readonly (ShotLog | null)[]): (Omit<ShotLog, 'hits' |
   });
 }
 
+/** マナの定義から、射撃に効く効果（S2 のチャージ時間▼）を外したもの */
+function manaWithoutFiring() {
+  const def = loadDefinition(290);
+  const skill2 = def.skills.skill2;
+  const effects = skill2.effects.filter((e) => !(e.kind === 'timed' && e.stat === 'chargeSpeed'));
+  expect(effects).toHaveLength(skill2.effects.length - 1);
+  return { ...def, skills: { ...def.skills, skill2: { ...skill2, effects } } };
+}
+
 describe('runFirstPass: degeneration (1.3)', () => {
   const teams: number[][] = [
     [291, 20, 10],
@@ -94,8 +103,9 @@ describe('runFirstPass: degeneration (1.3)', () => {
 
   it.each(teams)('matches planShots + planDynamicSchedule without firing / instant effects (%s)', (...ids) => {
     const characters = ids.map(load);
-    // 射撃に効く効果の無い定義（またはなし）。常時のゲージ速度（マナ S2）は入れて、時刻表の受け渡しも確かめる
-    const slots = characters.map((c) => slotOf(c, c.resourceId === 290 ? loadDefinition(290) : null));
+    // 射撃に効く効果の無い定義（またはなし）。常時のゲージ速度（マナ S2）は入れて、時刻表の受け渡しも確かめる。
+    // マナ S2 のチャージ時間▼（C-0267。射撃に効く）は外す
+    const slots = characters.map((c) => slotOf(c, c.resourceId === 290 ? manaWithoutFiring() : null));
     for (const controlledSlot of [null, 1]) {
       const pass = runFirstPass(slots, { frames: FRAMES, burst: true, controlledSlot });
       const shots = planShots(

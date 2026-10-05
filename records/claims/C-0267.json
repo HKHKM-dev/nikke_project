@@ -1,0 +1,11 @@
+{
+  "id": "C-0267",
+  "text": "マナの S2（マターシグマ）の「フルバーストタイムが発動した時、基本チャージ時間が一番長い味方 1 機にチャージ時間 0.18 秒▼（10 秒間維持）」（Lv10）は、フルバーストの入りから 10 秒、チャージを持つ唯一の味方（デルタ。SR・1 秒）のチャージの秒数を 0.18 秒短くする（AI のデルタの発と発の間が 82f から 72f になる）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`020-08`〜`020-12`（フルバースト 5 回とも、デルタの発と発の間の中央値が窓の中 72f・前 82f で、差 −10f。0.18 秒を引くモデルの差と 5 回とも同じ。引かなければ 0）。予測（records/predictions/V-0173.json）は読む前に commit した（読み直し）。録画 020 はエーテル（定義なし）とマナの最小構成の警告が出るが、どちらの定義の無い効果もデルタの射撃の間隔に効かないという読みで、オーナーの判断（plan/design-target-vocab.md 7 節の論点 4。2026-10-05）で通した。チャージを持つ枠が 2 つ以上の編成（基本チャージ時間の順位・同値）は見ていない。V-0173",
+  "model": "`data/skills/290.json` の skill2 の effects[3]（`target: \"longestChargeTime\"`・`stat: \"chargeSpeed\"`・`scaling: \"flat\"`）。秒数は `skills/buffs.ts` の `applyResolvedEffect` で `chargeTimeFlat` に足し、`frame/firing.ts` の `chargeSecondsOf` で引く。対象の枠は `skills/composition.ts` の `fixedTargetsOf`",
+  "replaces": [],
+  "updated": "2026-10-05"
+}

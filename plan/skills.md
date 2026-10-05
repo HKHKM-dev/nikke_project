@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 29・効果 130（根拠あり 68）・notes 90（根拠あり 29）
+件数: キャラ 29・効果 131（根拠あり 71）・notes 87（根拠あり 29）
 
-notes の種類: 未対応 40・前提の外 20・計算に無関係 25・補足 5
+notes の種類: 未対応 37・前提の外 20・計算に無関係 25・補足 5
 
-スロット: supported 48・partial 16・unsupported 15・noEffect 17
+スロット: supported 49・partial 15・unsupported 15・noEffect 17
 
 ## 10 ラピ
 
@@ -64,15 +64,15 @@ notes の種類: 未対応 40・前提の外 20・計算に無関係 25・補足
 - **skill2**: unsupported
   - notes[0] 未対応: フルバースト開始時の味方全体のクリティカルダメージ▲（10 秒）。撮影で確かめていない（単騎ではフルバーストにならない）: 根拠なし
 - **burst**: unsupported
-  - notes[0] 未対応: 「自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。自分を除く対象は語彙に無い（topAttack は自分も候補）: 根拠なし
+  - notes[0] 未対応: 「自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。対象の語彙（topAttack の excludeSelf: unlessShort）はあるが、撮っていない（plan/design-target-vocab.md 4.3 節）: 根拠なし
 - **宝物版 skill1**: supported
   - effects[0] timed・normalHit・hitRate: C-0186（仮説）
   - effects[1] timed・normalHit・hitRate: C-0186（仮説）
   - effects[2] timed・normalHit・attack: C-0187（確定）
 - **宝物版 skill2**: unsupported
-  - notes[0] 未対応: フルバースト開始時の味方全体のクリティカルダメージ▲、自分のクリティカル確率▲・攻撃ダメージ▲（10 秒）、自分を除く最終攻撃力が最も高い味方 1 機のクリティカル確率▲（1 発間）。撮影で確かめていない（単騎ではフルバーストにならない）。自分を除く対象と、その対象への発数の維持は語彙に無い: 根拠なし
+  - notes[0] 未対応: フルバースト開始時の味方全体のクリティカルダメージ▲、自分のクリティカル確率▲・攻撃ダメージ▲（10 秒）、自分を除く最終攻撃力が最も高い味方 1 機のクリティカル確率▲（1 発間）。撮影で確かめていない（単騎ではフルバーストにならない）。順位で決まる対象への発数の維持（topAttack と durationShots）は語彙に無い: 根拠なし
 - **宝物版 burst**: unsupported
-  - notes[0] 未対応: 「自分を除く最終攻撃力が最も高い味方 2 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。自分を除く対象は語彙に無い: 根拠なし
+  - notes[0] 未対応: 「自分を除く最終攻撃力が最も高い味方 2 機（足りなければ自分）」への攻撃力▲・クリティカルダメージ▲（10 秒）。対象の語彙（topAttack の excludeSelf: unlessShort）はあるが、撮っていない（plan/design-target-vocab.md 4.3 節）: 根拠なし
 
 ## 82 リター
 
@@ -95,11 +95,10 @@ notes の種類: 未対応 40・前提の外 20・計算に無関係 25・補足
   - notes[1] 未対応: 環境コントロールの味方全体の持続回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
   - notes[2] 計算に無関係: 陽動はダメージに関係しない: 根拠なし
 - **skill2**: partial
-  - effects[0] passive・critDamage: 根拠なし
+  - effects[0] passive・critDamage: C-0266（確定）、C-0235（仮説）
   - notes[0] 未対応: 味方全体の発射体爆発ダメージ▲は未対応（語彙 projectileExplosionDamage はある）: 根拠なし
   - notes[1] 未対応: フォーメーションAS 適用中の追加効果（味方全体の防御力無視ダメージ▲・発射体爆発ダメージ▲、環境コントロールの再発動周期 20 秒▼）は未対応（語彙 withCharacter・trueDamage・projectileExplosionDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）: 根拠なし
   - notes[2] 計算に無関係: フォーメーションAS 適用中の陽動発動不可はダメージに関係しない: 根拠なし
-  - notes[3] 未対応: クリティカルダメージ▲の対象は「同じ部隊の味方全体」だが、対象を部隊で絞るのは未実装（いまは味方全体に付ける）: 根拠なし
 - **burst**: partial
   - effects[0] timed・burstUse・attack: 根拠なし
   - notes[0] 未対応: 環境コントロール強化（環境コントロールの受けるダメージ▲を 10 秒間 2 倍にする）は未対応（環境コントロールの窓に重ねて切り取る語彙が無い。エマ：TU S1 の結論が出てから作る）: 根拠なし
@@ -111,11 +110,10 @@ notes の種類: 未対応 40・前提の外 20・計算に無関係 25・補足
   - notes[0] 未対応: カモフラージュ状態（バースト使用時・フルバースト中のフルチャージ時）の防御力無視ダメージ（通常攻撃の変化と▲）は未対応（語彙 trueDamageConversion・trueDamage・条件 inFullBurst はあるが、根拠の結論が無い。撮影が要る）: 根拠なし
   - notes[1] 前提の外: カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）: 根拠なし
 - **skill2**: partial
-  - effects[0] passive・critRate: 根拠なし
+  - effects[0] passive・critRate: C-0268（仮説）、C-0235（仮説）
   - effects[1] passive・chargeDamage: 根拠なし
   - effects[2] passive・attack: 根拠なし
   - notes[0] 未対応: フォーメーションLT 適用中の追加効果（味方全体の発射体爆発ダメージ▲・防御力無視ダメージ▲）は未対応（語彙 withCharacter・projectileExplosionDamage・trueDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）: 根拠なし
-  - notes[1] 未対応: クリティカル確率▲の対象は「同じ部隊の味方全体」だが、対象を部隊で絞るのは未実装（いまは味方全体に付ける）: 根拠なし
 - **burst**: unsupported
   - notes[0] 未対応: 使用武器変更（1 発の防御力無視ダメージ）と、命中した敵の受けるダメージ▲（10 秒間維持）は未対応（語彙 weaponChange（trueDamage）・damageTaken はあるが、撮影していない）: 根拠なし
 
@@ -262,11 +260,11 @@ notes の種類: 未対応 40・前提の外 20・計算に無関係 25・補足
   - effects[0] passive・attack: 根拠なし
   - notes[0] 未対応: 通常攻撃 10 回ごとの味方全体の回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
   - notes[1] 前提の外: 味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない: 根拠なし
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] passive・burstGaugeSpeed: 根拠なし
   - effects[1] timed・fullBurstStart・attackDamage: 根拠なし
   - effects[2] timed・fullBurstStart・attack: 根拠なし
-  - notes[0] 未対応: フルバースト時の「基本チャージ時間が一番長い味方 1 機」のチャージ時間▼は未対応（対象が語彙に無い）: 根拠なし
+  - effects[3] timed・fullBurstStart・chargeSpeed: C-0267（確定）
 - **burst**: unsupported
   - notes[0] 未対応: 持続ダメージと自分の持続ダメージ▲は未対応（持続ダメージ dot はあるが、持続ダメージ▲の stat が無く、撮影していない）: 根拠なし
 
