@@ -1,0 +1,73 @@
+{
+  "verification": "V-0192",
+  "team": [
+    {
+      "rid": 500,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの照合の組み方（的のジャンプは代表値 C-0057。窓なし）"
+    },
+    {
+      "id": "H1",
+      "note": "録画 L-AN の窓（L-AN-07。V-0086 の読み方で、フレームは録画の残り時間の表示でゲーム内の秒に直した）を jumpWindows で与える。L-AN-01 のいまの照合と同じ組み方",
+      "override": {
+        "jumpWindows": "L-AN-07"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "total-L-AN",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "midFarLanding": "B"
+      },
+      "observations": ["L-AN-01"],
+      "note": "エレグ（MG）単騎 AUTO の与ダメージ（通常攻撃だけ。スキル定義なし）。L-AN-01 のいまの照合と同じ組み方"
+    },
+    {
+      "id": "shots-L-AN",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "midFarLanding": "B"
+      },
+      "note": "同じ組み方の 180 秒の射撃の数（参考。実測と比べる観測値は無い）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "fb5223b131d38edecf64a69ddea9aecee4c4d44c",
+    "values": {
+      "H0": {
+        "total-L-AN": 64746061.297058985,
+        "shots-L-AN": 5397
+      },
+      "H1": {
+        "total-L-AN": 61420266.92409477,
+        "shots-L-AN": 5142
+      }
+    },
+    "seen": {
+      "L-AN": ["L-AN-01", "L-AN-02", "L-AN-03", "L-AN-04", "L-AN-05", "L-AN-06", "L-AN-07"]
+    }
+  }
+}
