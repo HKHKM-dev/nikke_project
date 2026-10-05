@@ -119,7 +119,12 @@ describe('ヘルム（352）の定義の解決', () => {
   it('resolves the base version with the same vocabulary (C-0098)', () => {
     const timed = resolveTimed(base, character, MAX_SKILL_LEVELS);
     expect(timed.map((e) => e.stat).sort()).toEqual(['attackDamage', 'normalCritRate']);
-    expect(resolveInstant(base, character, MAX_SKILL_LEVELS)).toEqual([]);
+    // バーストの吸収回復（C-0346）。宝物版の S1 のフルチャージ時の回復（C-0345）は基礎版に無い
+    expect(
+      resolveInstant(base, character, MAX_SKILL_LEVELS).map((e) => [e.source.skill, e.kind, e.durationFrames]),
+    ).toEqual([
+      ['burst', 'heal', 588], // 10 秒（ゲーム内の時計。C-0048）
+    ]);
   });
 });
 

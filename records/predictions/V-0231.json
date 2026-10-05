@@ -1,0 +1,119 @@
+{
+  "verification": "V-0231",
+  "note": "撮る前の予測（plan/design-heal-vocabulary.md 5 節の F1）。ヘルム（操作・宝物 3）とアスカ（AI）の 2 体で、どちらもバースト段階 III なのでバーストは撃たない（オートバースト OFF。setup の burst: false）。見るのはアスカの S1（回復効果が適用された時、攻撃力▲ 25 秒）が付いているかで、アスカの 1 発（コア・会心・距離なし）で比べる",
+  "team": [
+    {
+      "rid": 352,
+      "controlled": true,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 830,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "ヘルムの回復が「回復効果が適用された時」を起こさない（回復を定義する前のモデルの形。満タンの味方への回復は適用とみなされない、など）。アスカの S1 は一度も付かない",
+      "override": {
+        "dropHeals": [352]
+      }
+    },
+    {
+      "id": "H1",
+      "note": "ヘルムの宝物版 S1 のフルチャージの発ごとの回復が、満タンのアスカにも「回復効果が適用された時」を起こす（C-0345。いまのモデル）。S1 はヘルムの最初のフルチャージの発から付き、発の間隔は 25 秒よりずっと短いので、戦闘の終わりまで切れない"
+    }
+  ],
+  "targets": [
+    {
+      "id": "asuka-hit-before-first-heal",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 30,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "ヘルムの最初のフルチャージの発より前のアスカの 1 発。どの仮説でも S1 なし（読みの基準）"
+    },
+    {
+      "id": "asuka-hit-50s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "判定の指標。最初の回復から 25 秒（S1 の 1 回分）を過ぎた所のアスカの 1 発。H1 は S1 あり、H0 は S1 なし"
+    },
+    {
+      "id": "asuka-hit-150s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 9000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "戦闘の終わり近くのアスカの 1 発（S1 が付き続けるかの確かめ）"
+    },
+    {
+      "id": "asuka-total",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "アスカの与ダメージ（180 秒。戦闘履歴）。参考（コア命中率と的のジャンプの窓の残差が乗る）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "548eb424d91df6f7542ee94c783870015a950364",
+    "values": {
+      "H0": {
+        "asuka-hit-before-first-heal": 22473.7296,
+        "asuka-hit-50s": 22473.7296,
+        "asuka-hit-150s": 22473.7296,
+        "asuka-total": 37834030.7455037
+      },
+      "H1": {
+        "asuka-hit-before-first-heal": 22473.7296,
+        "asuka-hit-50s": 44286.919599999994,
+        "asuka-hit-150s": 44286.919599999994,
+        "asuka-total": 74137985.4782602
+      }
+    },
+    "seen": {}
+  }
+}

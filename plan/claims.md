@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 211・仮説 69・棄却 55・範囲外 1（計 336）
+件数: 確定 211・仮説 71・棄却 55・範囲外 1（計 338）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1765,6 +1765,16 @@
   - 根拠: 説明文（`data/characters/93.json` の burst。「自分が環境コントロール状態なら」「維持時間：10秒」「環境コントロール効果によるダメージの増加倍率が100％効果量に対し増加」）の読み。観測値は無い（撮影待ち）。環境コントロールの窓は C-0305。V-0230。録画 263（V-0230）: 条件は `263-05`（窓の外で撃ったバーストの 10 秒の中で始まった環境コントロールは強化されない。端数まで合う）、値の対照は `263-04`・`263-06`・`263-07` で合う。窓の中は `263-02`（モデル −1.7）。**窓の部分は `263-03` と合わない**（環境コントロールの窓の終わりの後も強化が発動から 10 秒続く）。2026-10-06 にオーナーの判断（V-0230 の論点 3）で棄却し、C-0335（条件）と C-0336（窓と値）に置き換えた
   - モデル側: `data/skills/93.json` の burst の effects[1]（`amplifies`。窓は `skills/timeline.ts` の planBuffTimeline の 2.5 段目、語彙の検証は `skills/types.ts` の parseAmplifies）
   - 置き換えた結論: C-0335、C-0336
+- **C-0345** ヘルムの宝物版 S1 の「フルチャージして攻撃した時、味方全体に発動者の最大 HP の X% 回復」は 1 回の回復で、フルチャージの発ごとに、HP が満タンの味方にも「回復効果が適用された時」を起こす
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-05
+  - 根拠: 説明文の読み（plan/design-heal-vocabulary.md 1 節の表の 1）。録画 F1（ヘルム + アスカ）の予測は V-0231
+  - モデル側: `data/skills/352.json` の treasureSkills.skill1 の effects[2]（`heal`・`fullChargeShot`・`allies`）
+  - 定義: `data/skills/352.json` の treasureSkills.skill1 の effects[2]
+- **C-0346** ヘルムのバースト（基礎版・宝物版）の「味方全体に攻撃ダメージの X% 回復・10 秒間維持」は吸収回復で、ユニの S2・アスカのバーストと同じく、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082・C-0087 からの類推。宝物版はフルチャージの発ごとの S1 の回復が先に起こし続けるので撮って見分けられず、基礎版は撮れない）
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-05
+  - 根拠: 説明文の読み（plan/design-heal-vocabulary.md 1 節の表の 2・5 節）。同じ言い回しのユニの S2・アスカのバーストの C-0082・C-0087。V-0231 では見分けない
+  - モデル側: `data/skills/352.json` の skills.burst の effects[1] と treasureSkills.burst の effects[2]（`heal`・`burstUse`・`allies`・`durationRef: 3`）
+  - 定義: `data/skills/352.json` の burst の effects[1]、`data/skills/352.json` の treasureSkills.burst の effects[2]
 
 ## 敵・的・場面
 

@@ -21,7 +21,13 @@ import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamag
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame } from '../time.ts';
-import { SKILL_SLOTS, parseSkillDefinition, type SkillDefinition, type SkillSlot } from '../skills/types.ts';
+import {
+  SKILL_SLOTS,
+  parseSkillDefinition,
+  type SkillDefinition,
+  type SkillEntry,
+  type SkillSlot,
+} from '../skills/types.ts';
 import type { TeamInput, TeamResult, TeamSlotInput } from '../team.ts';
 import type { BuildMasters, CharacterData, EnemyPresetMaster } from '../types.ts';
 import type { RecordingBuild, RecordingEntry } from './recordings.ts';
@@ -102,6 +108,11 @@ export type CompareSetup = {
    * replace（0 始まり）があれば、末尾に足さずにその位置の効果を置き換える（対象を絞るなど、定義の効果の読みを替える仮説）
    */
   addEffects?: AddedEffect[];
+  /**
+   * V-0231: これらの rid の定義（基礎版・宝物版）から回復（heal）を落とす。回復を定義する前のモデルの形で、予測の仮説（H0）の
+   * override に使う（plan/design-heal-vocabulary.md 6 節の論点 2）。省略は無し
+   */
+  dropHeals?: number[];
 };
 
 /** CompareSetup.addEffects の 1 件 */
@@ -942,6 +953,27 @@ export function jumpWindowsOf(value: number | number[] | undefined): { start: nu
   return out;
 }
 
+/** drop なら、定義の各スロット（基礎版・宝物版）から回復（heal）を落とした写しを返す（CompareSetup.dropHeals） */
+function withoutHealsIf(definition: SkillDefinition | null, drop: boolean): SkillDefinition | null {
+  if (definition === null || !drop) return definition;
+  const strip = (entry: SkillEntry): SkillEntry => ({
+    ...entry,
+    effects: entry.effects.filter((e) => e.kind !== 'heal'),
+  });
+  const skills = { ...definition.skills };
+  for (const slot of SKILL_SLOTS) skills[slot] = strip(skills[slot]);
+  const out: SkillDefinition = { ...definition, skills };
+  if (definition.treasureSkills !== undefined) {
+    const treasureSkills: SkillDefinition['treasureSkills'] = {};
+    for (const slot of SKILL_SLOTS) {
+      const entry = definition.treasureSkills[slot];
+      if (entry !== undefined) treasureSkills[slot] = strip(entry);
+    }
+    out.treasureSkills = treasureSkills;
+  }
+  return out;
+}
+
 /** 録画の条件と予測の条件から、モデルの入力を組む（npm run sim の --fixed-spec と同じ組み方） */
 export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, data: RecordsData): TeamInput {
   if (recording.fixedSpec === null) throw new Error('スペック固定かどうか記録が無い');
@@ -974,7 +1006,10 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
   const slots: TeamSlotInput[] = recording.team.map((member) => {
     const character = data.characters.get(member.rid);
     if (character === undefined) throw new Error(`rid ${member.rid} のデータが無い`);
-    const definition = data.skills.get(member.rid) ?? null;
+    const definition = withoutHealsIf(
+      data.skills.get(member.rid) ?? null,
+      setup.dropHeals?.includes(member.rid) === true,
+    );
     const adds = (setup.addEffects ?? []).filter((a) => a.rid === member.rid);
     if (adds.length > 0 && definition === null) throw new Error(`addEffects: rid ${member.rid} の定義が無い`);
     if (fixedSpec && member.cube !== undefined)

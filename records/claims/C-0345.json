@@ -1,0 +1,11 @@
+{
+  "id": "C-0345",
+  "text": "ヘルムの宝物版 S1 の「フルチャージして攻撃した時、味方全体に発動者の最大 HP の X% 回復」は 1 回の回復で、フルチャージの発ごとに、HP が満タンの味方にも「回復効果が適用された時」を起こす",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文の読み（plan/design-heal-vocabulary.md 1 節の表の 1）。録画 F1（ヘルム + アスカ）の予測は V-0231",
+  "model": "`data/skills/352.json` の treasureSkills.skill1 の effects[2]（`heal`・`fullChargeShot`・`allies`）",
+  "replaces": [],
+  "updated": "2026-10-05"
+}
