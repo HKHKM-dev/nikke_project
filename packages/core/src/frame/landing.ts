@@ -379,8 +379,9 @@ export function mixedHitRate(parts: readonly LandingPart[]): number {
 }
 
 /**
- * 枠ごとの弾丸命中率の区間（1 パス目のゲージ用）。自動でない枠は null（TimelineSlot.hitRate の定数のまま）。
- * 計画の値（常時の命中率▲だけ）を使う。持続の▲の弾丸命中率の上がり（C-0192）はゲージに入れない（未実装。注記を出す）
+ * 枠ごとの弾丸命中率の区間（1 パス目のゲージ・命中の期待値用）。自動でない枠は null（TimelineSlot.hitRate の定数のまま）。
+ * 値は計画の値（常時の命中率▲だけ）。持続の▲の効いているフレームは、1 パス目が hitRateSpanWith で出し直す
+ * （plan/design-sustained-hit-rate-gauge.md）
  */
 export function hitRateSpansOf(plan: LandingPlan | null, slotCount: number): (LandingHitRateSpan[] | null)[] {
   return Array.from({ length: slotCount }, (_, i) => {
@@ -391,6 +392,7 @@ export function hitRateSpansOf(plan: LandingPlan | null, slotCount: number): (La
       return {
         start: s.start,
         end: s.end,
+        landing: s.landing,
         hitRate: mixedHitRate(landingParts),
         coreHits: mixedCoreHits(landingParts),
         measured: landingParts.every((p) => p.measuredHitRate === true),
@@ -401,9 +403,39 @@ export function hitRateSpansOf(plan: LandingPlan | null, slotCount: number): (La
 
 /**
  * measured: 区間の弾丸命中率を的の表から取ったか（配分は全部の着地点で）。SG のゲージの割合を決める。
- * coreHits: 1 発のコアの命中の期待値（mixedCoreHits。coreHit の回数トリガーに使う）
+ * coreHits: 1 発のコアの命中の期待値（mixedCoreHits。coreHit の回数トリガーに使う）。
+ * landing: 区間の着地点（hitRateSpanWith で出し直すときの鍵。省略は着地点なし）
  */
-export type LandingHitRateSpan = { start: number; end: number; hitRate: number; coreHits: number; measured: boolean };
+export type LandingHitRateSpan = {
+  start: number;
+  end: number;
+  landing?: string | null;
+  hitRate: number;
+  coreHits: number;
+  measured: boolean;
+};
+
+/**
+ * plan/design-sustained-hit-rate-gauge.md: 区間 span の弾丸命中率とコアの命中の期待値を、計画の常時の N に持続の命中率▲
+ * timedHitRateUp を足した N で出し直す（2 パス目の landingPartsWith と同じ式。C-0170・C-0192）。▲が 0 なら span の値のまま
+ */
+export function hitRateSpanWith(
+  plan: LandingPlan,
+  slot: Pick<TeamSlotInput, 'condition'>,
+  slotIndex: number,
+  span: LandingHitRateSpan,
+  timedHitRateUp: number,
+): { hitRate: number; coreHits: number } {
+  if (timedHitRateUp === 0) return span;
+  const parts = landingPartsWith(
+    plan,
+    slot,
+    slotIndex,
+    span.landing ?? null,
+    (plan.hitRateUp[slotIndex] ?? 0) + timedHitRateUp,
+  );
+  return { hitRate: mixedHitRate(parts), coreHits: mixedCoreHits(parts) };
+}
 
 /**
  * 条件の配分で 1 トリガーの値を出す。配分が 1 つならそのまま computeTriggerDamage（手入力と 1 の位まで同じ）、
@@ -606,7 +638,7 @@ export function landingNotes(
     ...(n > 0 ? [`常時の命中率▲ ${pct(n)} でコア命中率を 1/(1 − N)² 倍（上限 1）`] : []),
     'フルバースト中などに配られる持続の命中率▲も、効いている区間で N に足してコア命中率に効かせた（C-0170。仮説）',
     raisesBullet
-      ? '命中率▲（常時 + 持続）で弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0192。確かめたのは SMG の遠だけで、ほかの帯と AR・MG には同じ式を当てた）。持続の▲による上がりは 1 パス目のゲージには入れていない（未実装）'
+      ? '命中率▲（常時 + 持続）で弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0192。確かめたのは SMG の遠だけで、ほかの帯と AR・MG には同じ式を当てた）。持続の▲による上がりも、1 パス目のゲージと命中の回数に入れた（C-0265。仮説）'
       : '命中率▲は弾丸命中率に効かせていない（未実装。SG の近 A では上がるが（C-0157）、効き方の式が決まっていない）',
   ];
   const en = [
@@ -615,7 +647,7 @@ export function landingNotes(
     ...(n > 0 ? [`constant hit rate up ${pct(n)} scales core hit rate by 1/(1 − N)² (max 1)`] : []),
     'timed hit rate buffs (e.g. given at full burst) are added to N while active and change core hit rate (C-0170; hypothesis)',
     raisesBullet
-      ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) (C-0192; checked only for SMG at far range, and the same formula is used for the other bands and for AR and MG); the rise from timed buffs is not fed into the burst gauge (not modeled)'
+      ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) (C-0192; checked only for SMG at far range, and the same formula is used for the other bands and for AR and MG); the rise from timed buffs is also fed into the burst gauge and the hit counts (C-0265; hypothesis)'
       : 'hit rate buffs do not change bullet hit rate (not modeled; they raise it for SG at near A (C-0157), but the formula is unknown)',
   ];
   notes.push({ level: 'approx', code: 'auto-condition', message: { ja: ja.join('。'), en: en.join('; ') } });
