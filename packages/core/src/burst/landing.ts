@@ -60,6 +60,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // レイヴン: III の発動からヒットまで 43f（動画で 64〜65f。止まり 22f を含む）。効果（A.N.モード）は持続ダメージ▲で語彙に無い。
   // 最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
   { resourceIds: [851], delays: { hitFrames: 43, effectFrames: 0 }, claim: 'C-0233' },
+  // マナ: III の発動から効果（持続ダメージの付与と 1 回目の tick・持続ダメージ▲）まで 2f（動画で 24f。止まり 22f を含む）。
+  // バーストの倍率ダメージは無い
+  { resourceIds: [290], delays: { hitFrames: 0, effectFrames: 2 }, claim: 'C-0301' },
 ];
 
 type DelayKey = Pick<CharacterData, 'resourceId' | 'skills' | 'treasure'>;

@@ -1,0 +1,211 @@
+[
+  {
+    "id": "212-01",
+    "recording": "212",
+    "source": "V-0185",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 37112,
+    "description": "マナ（III）の通常攻撃の 1 ヒット（胴体・会心なし・距離あり）。1 回目のバーストの前（f838〜1311）。S1 の攻撃力▲だけが乗る。予測ファイル V-0185 の mana-hit-out と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "マナだけが当たったフレームの増分（録画全体で 239 回）。最終攻撃力を整数に丸めると (189,532 − 100) から 37,111.62 で、表示の 37,112 と合う（C-0027）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "212-02",
+    "recording": "212",
+    "source": "V-0185",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 87197,
+    "description": "フルバースト中のマナの通常攻撃の 1 ヒット（胴体・会心なし・距離あり）。S1 と S2 の攻撃力▲・S2 の攻撃ダメージ▲が乗り、バーストの持続ダメージ▲は乗らない。予測ファイル V-0185 の mana-hit-fb と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "フルバーストの窓の中のマナだけが当たったフレームの増分（録画全体で 62 回）。モデル（丸めなし）は 87,196.445。最終攻撃力を整数に丸めると (265,498 − 100) から 87,196.54 で、表示の 87,197 と合う（C-0027）。同じ窓の距離なしは 72,664、会心は 111,418（距離あり）・96,885（距離なし）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "212-03",
+    "recording": "212",
+    "source": "V-0185",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2741786,
+    "description": "マナのバーストの持続ダメージの 1 tick（会心なし）。5 回のバーストの 50 tick のうち、単独で出た 25 回と、マナの 1 ヒットと足し合わさって差し引けた 9 回が、どれもこの値。予測ファイル V-0185 の mana-dot-tick と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + 1 回目の tick は HUD を 1 フレームずつ目で読む",
+      "note": "許容 6 は、C-0027（最終攻撃力は整数に丸めてから防御力を引く）はモデルに未実装で、攻撃力の端数（0.5 以下）が 1 ヒットの値に (値 ÷ (最終攻撃力 − 防御)) 倍で効くぶん（tick は 3.96 × 1.5 × 1.7392 = 10.33 倍で最大 5.2）と、表示の丸め 0.5 の和。最終攻撃力を整数に丸めると (265,498 − 100) × 3.96 × (1 + 0.5) × (1 + 0.2112 + 0.528) = 2,741,786.40 で、表示と合う（H2）。H1 は 2,917,580、H3 は 2,581,524 で、6% 以上離れる。各回の 1 回目の tick は止まりの明けの HUD が読めない区間に入るので目で読んだ（f1337: 6,027,664 → 8,769,450、f3714: 65,788,208 → 68,529,994、f6091: 122,524,828 → 125,266,614、f8468: 183,898,311 → 186,640,097、f10846: 240,680,735 → 243,422,521）。足し合わさった増分は 2,814,450（+ 72,664 が 6 回）・2,838,671（+ 96,885 が 2 回）・2,862,892（+ 121,106 が 1 回）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "212-04",
+    "recording": "212",
+    "source": "V-0185",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3655715,
+    "description": "同じ tick の会心（単独で 8 回、マナの 1 ヒットと足し合わさって差し引けた 7 回）。会心なしとの比は 4 : 3（H1・H2 の形。H3 なら 2.528 : 2.028）。予測ファイル V-0185 の mana-dot-tick-crit と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "許容 8 は 212-03 と同じ考え方（tick の会心は 13.77 倍で最大 6.9 と、表示の丸め 0.5）。最終攻撃力を整数に丸めると 3,655,715.20 で、表示と合う。足し合わさった増分は 3,728,379（+ 72,664 が 6 回）と、f6649 の 3,752,600（+ 96,885。hud.ts は 25f の読めない区間の後の 4,373,239 と出したが、目で読むと f6648 の 160,966,104 から増えた 1 回の増分）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "212-05",
+    "recording": "212",
+    "source": "V-0185",
+    "readAt": "2026-10-05",
+    "kind": "count",
+    "use": "compare",
+    "value": 50,
+    "description": "180 秒のマナのバーストの持続ダメージの tick の数（5 回のバーストで 10 回ずつ）。予測ファイル V-0185 の mana-dot-ticks と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + 目視",
+      "note": "212-06 の時刻の列の 10 か所すべてに、5 回とも tick の値（会心なし・会心、またはマナの 1 ヒットとの和）の増分がある。f10934 の 3,033,863 だけは、2,741,786 との差 292,077 がマナの 1 ヒットの組み合わせに合わず、値は数えていない（時刻だけ数えた）。49 回のうち会心は 15 回"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "212-06",
+    "recording": "212",
+    "source": "V-0185",
+    "readAt": "2026-10-05",
+    "kind": "timing",
+    "use": "compare",
+    "value": [24, 112, 171, 229, 288, 347, 406, 465, 523, 582],
+    "unit": "f",
+    "description": "1 回目のマナのバーストの発動（III のタイマーが 00.00 になったフレーム f1313）から、その持続ダメージの各 tick までの動画のフレーム数（フルバーストの入りの止まりを含む）。予測ファイル V-0185 の mana-dot-offsets と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + 右のバースト欄と HUD を 1 フレームずつ目で読む",
+      "note": "発動は f1313・3690・6067・8444・10822（10822 の前は 09.59・09.54 が 2 フレームずつ続く録画の重複フレーム）。2〜4 回目も同じ列で、5 回目だけ 2 回目と 8 回目が 1f 早い（170・522）。1 回目の tick は止まり（22f）の明けの 2f 後、2 回目はその 88f（1.5 秒）後、以後 58〜59f（1 秒）ごと。ニヒリスターの火傷のフルバーストにつながらなかった回の列（084-01 の注の +88・147・205…558f）と同じ形（D2）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "212-07",
+    "recording": "212",
+    "source": "V-0185",
+    "readAt": "2026-10-05",
+    "kind": "count",
+    "use": "compare",
+    "value": 5,
+    "description": "180 秒のフルバーストの回数（どれもラム → デルタ → マナの順）。予測ファイル V-0185 の full-bursts と同じ指標",
+    "method": {
+      "tool": "右のバースト欄を目で読む",
+      "note": "III の発動は 212-06 の注の 5 回"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]
