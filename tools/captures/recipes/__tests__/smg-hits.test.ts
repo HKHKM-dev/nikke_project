@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  detectCuts,
   fixedSpecGrid,
   groupMagazines,
   hitCountCandidates,
@@ -97,5 +98,26 @@ describe('groupMagazines・segmentOf', () => {
     const items = [10, 12, 15, 100, 103].map((frame) => ({ frame }));
     expect(groupMagazines(items).map((g) => g.length)).toEqual([3, 2]);
     expect([10, 15, 16, 100].map((f) => segmentOf(f, [15, 90]))).toEqual([0, 0, 1, 2]);
+  });
+});
+
+describe('detectCuts', () => {
+  // 装弾数 10・刻み 2f のマガジン（満タンの長さ 18f）。dist は距離ボーナスの付いた胴体（11,329）か、付かない胴体（8,715）
+  const mag = (start: number, shots: number, dist: boolean) =>
+    Array.from({ length: shots }, (_, i) => ({ frame: start + 2 * i, increment: dist ? 11329 : 8715, readGap: 1 }));
+  it('切れたマガジンと距離ボーナスの替わり目から、5 つの切れ目を決める', () => {
+    const rows = [
+      ...mag(0, 10, true), // 中近
+      ...mag(60, 4, true), // 中近（ジャンプで切れる）→ 1 回目 f66
+      ...mag(200, 10, true), // 近
+      ...mag(260, 10, true), // 近（ジャンプがマガジンの終わりと重なる）→ 2 回目 f278
+      ...mag(400, 10, false), // 遠
+      ...mag(460, 6, false), // 遠（切れる）→ 3 回目 f470
+      ...mag(600, 10, false), // 中遠（B・C）→ 4 回目 f618（次から近）
+      ...mag(700, 10, true), // 近
+      ...mag(760, 5, true), // 近（切れる）→ 5 回目 f768
+      ...mag(900, 10, false), // 遠
+    ];
+    expect(detectCuts(rows, grid, 10, 2, [200, 200, 150, 150])).toEqual([66, 278, 470, 618, 768]);
   });
 });

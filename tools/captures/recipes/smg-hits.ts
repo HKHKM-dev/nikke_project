@@ -177,3 +177,70 @@ export function segmentOf(frame: number, cuts: readonly number[]): number {
   while (i < cuts.length && frame > cuts[i]!) i++;
   return i;
 }
+
+/**
+ * 射撃場 3 分モードの区間の切れ目（ジャンプの前の最後の増分のフレーム）を、ヒットのまとまり（マガジン）から決める
+ * （V-0198・V-0199 の切れ目と同じになる。区間の並びは 中近 → 近 → 遠 → 中遠 → 近 → 遠）。
+ * - ジャンプで切れたマガジンは、満タンの長さ（(装弾数 − 1) × 刻み）の 93% に届かない（切れたまとまり）。
+ * - 1 回目は最初の切れたまとまりの終わり。
+ * - 近に出入りする切れ目（2・4・5 回目）は、まとまりの距離ボーナス（1 ヒットの増分の多いほう）が替わる所。4 回目は中遠が
+ *   距離ボーナスの付かない着地点（B・C）のときだけで、付く着地点（A）なら 3 回目と同じ決め方。
+ * - 3 回目（遠 → 中遠）は、前の切れ目から間隔（offsets）の 0.6〜1.15 倍の所に切れたまとまりがあればそれ、無ければ
+ *   前の切れ目 + 間隔に一番近いまとまりの終わり。
+ * offsets はジャンプの間隔の代表値（f。録画 138 の 2,037・2,432・2,032・2,061）
+ */
+export function detectCuts(
+  rows: readonly HudIncrement[],
+  grid: HitGrid,
+  mag: number,
+  interval: number,
+  offsets: readonly number[] = [2037, 2432, 2032, 2061],
+): number[] {
+  // 最後のまとまりは切れ目にならないが、距離ボーナスの替わり目を見るのに使う
+  const groups = groupMagazines(rows);
+  const info = groups.map((g, i) => {
+    let d1 = 0;
+    let d0 = 0;
+    for (const r of g) {
+      if (r.readGap !== 1) continue;
+      const d = singleHitDistance(r.increment, grid);
+      if (d === 1) d1++;
+      if (d === 0) d0++;
+    }
+    return {
+      end: g.at(-1)!.frame,
+      short: i < groups.length - 1 && g.at(-1)!.frame - g[0]!.frame < 0.93 * (mag - 1) * interval,
+      last: i === groups.length - 1,
+      dist: d1 > d0,
+    };
+  });
+  const first = info.find((g) => g.short);
+  if (first === undefined) return [];
+  const cuts = [first.end];
+  const byInterval = (prev: number, off: number): number | undefined =>
+    info.find((g) => g.short && g.end > prev + 0.6 * off && g.end < prev + 1.15 * off)?.end ??
+    info
+      .filter((g) => g.end > prev && !g.last)
+      .sort((a, b) => Math.abs(a.end - prev - off) - Math.abs(b.end - prev - off))[0]?.end;
+  /** prev の後で、距離ボーナスが from から替わる直前のまとまりの終わり */
+  const bySwitch = (prev: number, from: boolean): number | undefined => {
+    const after = info.filter((g) => g.end > prev);
+    const k = after.findIndex((g) => g.dist !== from);
+    return k > 0 ? after[k - 1]!.end : undefined;
+  };
+  const steps: ((prev: number) => number | undefined)[] = [
+    (prev) => bySwitch(prev, true),
+    (prev) => byInterval(prev, offsets[1]!),
+    (prev) => {
+      const midFar = info.filter((g) => g.end > prev).slice(0, 2);
+      return midFar.length > 0 && midFar.every((g) => !g.dist) ? bySwitch(prev, false) : byInterval(prev, offsets[2]!);
+    },
+    (prev) => bySwitch(prev, true),
+  ];
+  for (const step of steps) {
+    const next = step(cuts.at(-1)!);
+    if (next === undefined) break;
+    cuts.push(next);
+  }
+  return cuts;
+}
