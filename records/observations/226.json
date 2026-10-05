@@ -1,0 +1,100 @@
+[
+  {
+    "id": "226-01",
+    "recording": "226",
+    "kind": "timing",
+    "use": "compare",
+    "value": [592, 2287, 4166, 5837, 7727, 9455],
+    "unit": "f",
+    "description": "エマ：TU（MG・操作）単騎で、S1 の環境コントロールの受けるダメージ▲が切れたフレーム（戦闘開始からのゲーム内のフレーム）の並び。▲の中の最後のヒットと、▲の外の最初のヒットのあいだの中点",
+    "source": "V-0202",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/hud.ts --mode jumps・使い捨てのスクリプト",
+      "note": "戦闘開始は f792（timer.ts の +320f の次の +90f の変わり目）。増分を、▲なしの胴体 5,560.25 と▲ありの胴体 5,777（× 1.039）の 2 つの格子（1 ヒット = 胴体 ×(1 + 1.0×コア + 0.3×距離ボーナス + 0.7351×会心)。会心の項は S2 の効果 1 の▲込み。C-0266）に当て、どちらか一方にだけ乗る増分（同じ値の 2 ヒットの和を含む）で分けた。▲の中の最後のヒットと▲の外の最初のヒット（戦闘開始から）は 569・615、2201・2372、4080・4251、5751・5922、7630・7823、9369・9540。2 回目以降はどれもリロードの空き（約 171f。画面に RELOADING）を挟むので、中点の幅は最大 ±97f。許容はその幅。動画のフレームはゲーム内のフレームと 1 対 1 とみた（バーストが無く、残り時間の秒の変わり目は 58〜59f ごと）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "damageTaken"
+      },
+      "tolerance": {
+        "abs": 97
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "226-02",
+    "recording": "226",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11554,
+    "description": "エマ：TU 単騎の、戦闘開始から 280〜320f（環境コントロールの窓の中・着地点 midNear）のコアの会心でない 1 ヒット",
+    "source": "V-0202",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1 フレームに 1 ヒットの増分。この間の会心でないコアの増分はすべて 11,554（f294・f295 の 11,562・11,546 は HUD の読みの揺れで、和が 2 × 11,554）。会心は 15,801"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "226-03",
+    "recording": "226",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11121,
+    "description": "エマ：TU 単騎の、戦闘開始から 1191〜1220f（環境コントロールの窓の外・着地点 midNear）のコアの会心でない 1 ヒット",
+    "source": "V-0202",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1 フレームに 1 ヒットの増分。胴体は 5,560、胴体の会心は 9,648。226-02 との比は 1.0390"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  }
+]
