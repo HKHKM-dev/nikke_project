@@ -123,6 +123,8 @@ describe('computeDamage', () => {
       coreDamage: 0,
       normalAttackDamage: 0,
       normalCritRate: 0,
+      trueDamage: 0,
+      trueDamageConversion: 0,
       weapon: null,
     };
     const r = computeDamage(input({ buffs }));

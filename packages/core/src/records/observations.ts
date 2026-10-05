@@ -473,7 +473,23 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
   fullBurstCrossingShotGauge: { args: ['slot'], sim: fullBurstCrossingShotGauge },
+  shotGauge: { args: ['slot', 'n'], sim: shotGauge },
 };
+
+/**
+ * アニス：スター編（plan/design-anis-star-gauge-timing.md 7 節の V-B）: 枠の n 発目（1 始まり）が溜めたゲージ（バーの最大に対する %。
+ * 発・射撃ごとの倍率ダメージのヒット・その発が壊した障害物の物のゲージの合計。着弾のフレームは問わない）
+ */
+function shotGauge(result: SimResult, ctx: MetricContext): number {
+  const slotIndex = slotIndexOf(ctx);
+  const n = Number(ctx.args.n);
+  const frame = result.shots[slotIndex]?.frames[n - 1];
+  if (frame === undefined) throw new Error(`${n} 発目が無い`);
+  const energy = result.shotGauges
+    .filter((g) => g.slotIndex === slotIndex && g.shotFrame === frame)
+    .reduce((a, g) => a + g.energy, 0);
+  return Math.round((energy / BURST_GAUGE_MAX) * 10_000) / 100;
+}
 
 /**
  * アニス：スター編（plan/design-anis-star-gauge-timing.md 3.5 節・7 節の V-A）: フルバーストの窓の中で撃ち、窓の後に着いた枠の発

@@ -321,6 +321,25 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 3 })).toThrow('跨ぐ発が無い');
   });
 
+  it('sums the gauge of the n-th shot of a slot (plan/design-anis-star-gauge-timing.md 7 節の V-B)', () => {
+    const result = {
+      shots: [{ frames: [69, 128] }, { frames: [70] }],
+      shotGauges: [
+        { slotIndex: 0, shotFrame: 69, frame: 83, energy: 74200 + 74200 },
+        { slotIndex: 0, shotFrame: 69, frame: 83, energy: 29680 },
+        { slotIndex: 1, shotFrame: 70, frame: 70, energy: 56180 },
+        { slotIndex: 0, shotFrame: 128, frame: 142, energy: 74200 },
+      ],
+    } as unknown as SimResult;
+    const metric = METRICS.shotGauge!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 1, n: 1 })).toBe(17.81);
+    expect(value({ slot: 1, n: 2 })).toBe(7.42);
+    expect(value({ slot: 2, n: 1 })).toBe(5.62);
+    expect(() => value({ slot: 2, n: 2 })).toThrow('2 発目が無い');
+  });
+
   it('reports unknown metrics, missing args, calc-less metrics and unknown presets', () => {
     const base = observations.find((o) => o.id === '047-02')!;
     const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '047-99'): Observation => ({

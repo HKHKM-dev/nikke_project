@@ -30,7 +30,7 @@ describe('everySeconds の検証', () => {
     expect(def.skills.skill2.effects[0]).toMatchObject(S2);
   });
 
-  it('is allowed in damage, dot, autoAttack and burstGaugeHit only', () => {
+  it('is allowed in damage, dot, autoAttack, burstGaugeHit and timed of stats not tracked in the first pass only', () => {
     const dot = { kind: 'dot', trigger: { everySeconds: 10 }, ref: 1, intervalSeconds: 1, durationSeconds: 5 };
     expect(() => parseSkillDefinition(withSkill2([dot]))).not.toThrow();
     const timed = {
@@ -42,11 +42,11 @@ describe('everySeconds の検証', () => {
       durationSeconds: 5,
     };
     expect(() => parseSkillDefinition(withSkill2([timed]))).toThrow(
-      /only allowed in damage, dot, autoAttack and burstGaugeHit/,
+      /only allowed in damage, dot, autoAttack, burstGaugeHit and timed/,
     );
     const heal = { kind: 'heal', trigger: { everySeconds: 10 }, target: 'self', ref: 1 };
     expect(() => parseSkillDefinition(withSkill2([heal]))).toThrow(
-      /only allowed in damage, dot, autoAttack and burstGaugeHit/,
+      /only allowed in damage, dot, autoAttack, burstGaugeHit and timed/,
     );
   });
 

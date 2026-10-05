@@ -77,7 +77,7 @@ type IntervalStats = {
 
 export const sgPellets: Recipe = {
   name: 'sg-pellets',
-  version: 3,
+  version: 4,
   describe:
     'SG 単騎の区間ごとの当たったペレットの割合（rate）、近の当たった数の分布（count）、近の「会心 + 2 × コア」（rate）、' +
     'スペック固定 OFF ならコア命中率と会心率（rate）',
@@ -94,50 +94,7 @@ export const sgPellets: Recipe = {
     debug: '発ごとの分解を標準エラーに出す',
   },
   async run(ctx) {
-    const fixed = ctx.recording.fixedSpec;
-    if (fixed === null) throw new Error('録画の fixedSpec が無い');
-    const fromObs = pelletFromObservations(ctx.recording.id);
-    const body = ctx.options.pellet !== undefined ? Number(ctx.options.pellet) : fromObs?.body;
-    if (body === undefined) throw new Error('1 ペレットの胴体が分からない。--opt pellet=<胴体> を与える');
-    const bodySource = ctx.options.pellet !== undefined ? '--opt pellet' : `観測値 ${fromObs!.id}`;
-    const until = parseUntil(ctx.options.pelletUntil);
-    const bodyOf = (g: TriggerGroup): number => (until !== undefined && g.frame < until.frame ? until.body : body);
-    const { groups } = await loadHudJumps(ctx);
-    const cuts = ctx.options.cuts?.split(',').map((s) => Number(s.trim()));
-
-    const mode = fixed ? 'units' : 'exact';
-    let exact: { near: ExactValues; far: ExactValues; note: string } | undefined;
-    if (mode === 'exact') {
-      const crit = ctx.options.crit !== undefined ? Number(ctx.options.crit) : fromObs?.crit;
-      const core = ctx.options.core !== undefined ? Number(ctx.options.core) : fromObs?.core;
-      if (crit === undefined || core === undefined) {
-        throw new Error('スペック固定 OFF は会心・コアの 1 ペレットの値が要る（--opt crit= core=）');
-      }
-      const slack = Number(ctx.options.slack ?? '2');
-      const samples = groups.map((g) => ({ increment: g.increment, maxPellets: g.shots * 10 }));
-      const far = calibrateExact(samples, [body], crit - body, core - body, slack);
-      const nearBodies =
-        ctx.options.nearBody !== undefined
-          ? [Number(ctx.options.nearBody)]
-          : [...new Set([Math.floor(body * 1.3), Math.ceil(body * 1.3)])];
-      const near = calibrateExact(samples, nearBodies, crit - body, core - body, slack);
-      exact = {
-        near,
-        far,
-        note:
-          `1 ペレットの胴体 ${fmt(body)}・会心 ${fmt(crit)}・コア ${fmt(core)}〜${fmt(core + slack)}（${bodySource}）。会心の上乗せは、` +
-          `増分に厳密に合う発が最も多い値に ±3 の範囲で合わせた: 近以外 +${fmt(far.critAdd)}（${far.fits} 発が合う）、` +
-          `近は胴体 ${fmt(near.body)}・会心 +${fmt(near.critAdd)}（${near.fits} 発）`,
-      };
-    }
-    const regimeOf = (g: TriggerGroup) =>
-      mode === 'units'
-        ? regimeOfUnits(g.increment, bodyOf(g) / 10, g.shots * 10)
-        : regimeOfExact(g.increment, exact!.near, exact!.far, g.shots * 10);
-    const found = findJumpBoundaries(groups, regimeOf, cuts);
-    for (const n of found.notes) ctx.log(n);
-    if (found.errors.length > 0) throw new Error(found.errors.join('\n'));
-    const intervals = splitIntervals(groups, found.boundaries);
+    const { mode, exact, body, bodySource, bodyOf, found, intervals } = await sgIntervals(ctx);
     const critRate = Number(ctx.options.critRate ?? '0.154');
     const coreRates = (ctx.options.coreRates ?? '0.026,0.006,0.016').split(',').map(Number) as [number, number, number];
     const coreRateOf = (label: Interval['label']): number =>
@@ -223,6 +180,73 @@ export const sgPellets: Recipe = {
     ];
   },
 };
+
+type ExactCalibration = { near: ExactValues; far: ExactValues; note: string };
+
+/**
+ * 増分の組と、的のジャンプで分けた区間（--opt の pellet・crit・core・nearBody・slack・pelletUntil・cuts を読む）。
+ * near-landing も近の区間をここから取る。
+ */
+export async function sgIntervals(ctx: RecipeContext): Promise<{
+  mode: 'units' | 'exact';
+  exact: ExactCalibration | undefined;
+  body: number;
+  bodySource: string;
+  bodyOf: (g: TriggerGroup) => number;
+  found: ReturnType<typeof findJumpBoundaries>;
+  intervals: Interval[];
+}> {
+  const fixed = ctx.recording.fixedSpec;
+  if (fixed === null) throw new Error('録画の fixedSpec が無い');
+  const fromObs = pelletFromObservations(ctx.recording.id);
+  const body = ctx.options.pellet !== undefined ? Number(ctx.options.pellet) : fromObs?.body;
+  if (body === undefined) throw new Error('1 ペレットの胴体が分からない。--opt pellet=<胴体> を与える');
+  const bodySource = ctx.options.pellet !== undefined ? '--opt pellet' : `観測値 ${fromObs!.id}`;
+  const until = parseUntil(ctx.options.pelletUntil);
+  const bodyOf = (g: TriggerGroup): number => (until !== undefined && g.frame < until.frame ? until.body : body);
+  const { groups } = await loadHudJumps(ctx);
+  const cuts = ctx.options.cuts?.split(',').map((s) => Number(s.trim()));
+
+  const mode = fixed ? 'units' : 'exact';
+  let exact: ExactCalibration | undefined;
+  if (mode === 'exact') {
+    const crit = ctx.options.crit !== undefined ? Number(ctx.options.crit) : fromObs?.crit;
+    const core = ctx.options.core !== undefined ? Number(ctx.options.core) : fromObs?.core;
+    if (crit === undefined || core === undefined) {
+      throw new Error('スペック固定 OFF は会心・コアの 1 ペレットの値が要る（--opt crit= core=）');
+    }
+    const slack = Number(ctx.options.slack ?? '2');
+    const samples = groups.map((g) => ({ increment: g.increment, maxPellets: g.shots * 10 }));
+    const far = calibrateExact(samples, [body], crit - body, core - body, slack);
+    const nearBodies =
+      ctx.options.nearBody !== undefined
+        ? [Number(ctx.options.nearBody)]
+        : [...new Set([Math.floor(body * 1.3), Math.ceil(body * 1.3)])];
+    const near = calibrateExact(samples, nearBodies, crit - body, core - body, slack);
+    exact = {
+      near,
+      far,
+      note:
+        `1 ペレットの胴体 ${fmt(body)}・会心 ${fmt(crit)}・コア ${fmt(core)}〜${fmt(core + slack)}（${bodySource}）。会心の上乗せは、` +
+        `増分に厳密に合う発が最も多い値に ±3 の範囲で合わせた: 近以外 +${fmt(far.critAdd)}（${far.fits} 発が合う）、` +
+        `近は胴体 ${fmt(near.body)}・会心 +${fmt(near.critAdd)}（${near.fits} 発）`,
+    };
+  }
+  const regimeOf = (g: TriggerGroup) =>
+    mode === 'units'
+      ? regimeOfUnits(g.increment, bodyOf(g) / 10, g.shots * 10)
+      : regimeOfExact(g.increment, exact!.near, exact!.far, g.shots * 10);
+  // 近として解けない発（5 番目の切れ目の後ろが 1 発だけのときに使う）
+  const notNear = (g: TriggerGroup): boolean =>
+    mode === 'units'
+      ? solveUnits(g.increment, bodyOf(g) / 10, true, g.shots * 10).kind !== 'near'
+      : solveExact(g.increment, exact!.near, g.shots * 10).kind !== 'ok';
+  const found = findJumpBoundaries(groups, regimeOf, cuts, undefined, notNear);
+  for (const n of found.notes) ctx.log(n);
+  if (found.errors.length > 0) throw new Error(found.errors.join('\n'));
+  const intervals = splitIntervals(groups, found.boundaries);
+  return { mode, exact, body, bodySource, bodyOf, found, intervals };
+}
 
 function parseUntil(spec: string | undefined): { frame: number; body: number } | undefined {
   if (spec === undefined) return undefined;

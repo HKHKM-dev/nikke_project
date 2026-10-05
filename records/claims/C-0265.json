@@ -1,0 +1,11 @@
+{
+  "id": "C-0265",
+  "text": "持続の命中率▲で上がった弾丸命中率とコア命中率のぶんも、常時の▲と同じく、的に当たった弾のバーストゲージと、命中・コアの命中の回数が増える",
+  "state": "仮説",
+  "topic": "バーストゲージ",
+  "grade": "推論",
+  "basis": "次の結論をつないだもの（直接には測っていない）: C-0083（的に 1 回当たるごとに `target_burst_energy_pershot`）、C-0139（何にも当たらない弾は溜めない）、C-0192（命中率▲は弾丸命中率を H2 の形で上げる。根拠の▲はミサト S1 の持続のスタック）、C-0170（配られた持続の▲も常時の▲と同じ式。仮説）。弱い所: C-0083 は SMG を確かめていない。外れた弾のうちコンテナに当たった分（C-0139 の半分のゲージ）はモデルに入れていない（常時の▲と同じ扱い）。確かめるなら、ミサト単騎（スペック固定 ON・オートバースト OFF）の 1 回目の満タンのフレーム（plan/design-sustained-hit-rate-gauge.md 4 節）。2026-10-05 のオーナーの判断で、仮説として入れた",
+  "model": "`frame/firstPass.ts`（当たりの窓 `hitWindows`。持続の `hitRate` の窓を追い、条件が自動の枠の発のゲージと命中の期待値を `options.hitRateWith` → `frame/landing.ts` の `hitRateSpanWith` で出し直す。2 パス目の `landingPartsWith` と同じ式）。SG は弾丸命中率に効かせない（C-0157）。`TeamInput.sustainedHitRateUp` が false なら足さない。plan/design-sustained-hit-rate-gauge.md",
+  "replaces": [],
+  "updated": "2026-10-05"
+}

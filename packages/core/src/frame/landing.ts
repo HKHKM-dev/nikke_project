@@ -33,6 +33,7 @@ import type {
   TargetRateTable,
 } from '../types.ts';
 import { endSecondsToFrame, framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
+import { windowEndFirstShotFrames } from './shooter.ts';
 
 export type ConditionMode = 'manual' | 'auto';
 
@@ -378,8 +379,9 @@ export function mixedHitRate(parts: readonly LandingPart[]): number {
 }
 
 /**
- * 枠ごとの弾丸命中率の区間（1 パス目のゲージ用）。自動でない枠は null（TimelineSlot.hitRate の定数のまま）。
- * 計画の値（常時の命中率▲だけ）を使う。持続の▲の弾丸命中率の上がり（C-0192）はゲージに入れない（未実装。注記を出す）
+ * 枠ごとの弾丸命中率の区間（1 パス目のゲージ・命中の期待値用）。自動でない枠は null（TimelineSlot.hitRate の定数のまま）。
+ * 値は計画の値（常時の命中率▲だけ）。持続の▲の効いているフレームは、1 パス目が hitRateSpanWith で出し直す
+ * （plan/design-sustained-hit-rate-gauge.md）
  */
 export function hitRateSpansOf(plan: LandingPlan | null, slotCount: number): (LandingHitRateSpan[] | null)[] {
   return Array.from({ length: slotCount }, (_, i) => {
@@ -390,6 +392,7 @@ export function hitRateSpansOf(plan: LandingPlan | null, slotCount: number): (La
       return {
         start: s.start,
         end: s.end,
+        landing: s.landing,
         hitRate: mixedHitRate(landingParts),
         coreHits: mixedCoreHits(landingParts),
         measured: landingParts.every((p) => p.measuredHitRate === true),
@@ -400,9 +403,39 @@ export function hitRateSpansOf(plan: LandingPlan | null, slotCount: number): (La
 
 /**
  * measured: 区間の弾丸命中率を的の表から取ったか（配分は全部の着地点で）。SG のゲージの割合を決める。
- * coreHits: 1 発のコアの命中の期待値（mixedCoreHits。coreHit の回数トリガーに使う）
+ * coreHits: 1 発のコアの命中の期待値（mixedCoreHits。coreHit の回数トリガーに使う）。
+ * landing: 区間の着地点（hitRateSpanWith で出し直すときの鍵。省略は着地点なし）
  */
-export type LandingHitRateSpan = { start: number; end: number; hitRate: number; coreHits: number; measured: boolean };
+export type LandingHitRateSpan = {
+  start: number;
+  end: number;
+  landing?: string | null;
+  hitRate: number;
+  coreHits: number;
+  measured: boolean;
+};
+
+/**
+ * plan/design-sustained-hit-rate-gauge.md: 区間 span の弾丸命中率とコアの命中の期待値を、計画の常時の N に持続の命中率▲
+ * timedHitRateUp を足した N で出し直す（2 パス目の landingPartsWith と同じ式。C-0170・C-0192）。▲が 0 なら span の値のまま
+ */
+export function hitRateSpanWith(
+  plan: LandingPlan,
+  slot: Pick<TeamSlotInput, 'condition'>,
+  slotIndex: number,
+  span: LandingHitRateSpan,
+  timedHitRateUp: number,
+): { hitRate: number; coreHits: number } {
+  if (timedHitRateUp === 0) return span;
+  const parts = landingPartsWith(
+    plan,
+    slot,
+    slotIndex,
+    span.landing ?? null,
+    (plan.hitRateUp[slotIndex] ?? 0) + timedHitRateUp,
+  );
+  return { hitRate: mixedHitRate(parts), coreHits: mixedCoreHits(parts) };
+}
 
 /**
  * 条件の配分で 1 トリガーの値を出す。配分が 1 つならそのまま computeTriggerDamage（手入力と 1 の位まで同じ）、
@@ -540,8 +573,31 @@ function mixLabel(profile: TargetProfile, id: string): { ja: string; en: string 
 }
 
 /**
+ * plan/design-landing-aim.md 4.1 節: 窓の明けから 1 発目までがこれより短い RL・SR は、照準がコアに着く前に撃つ回がある
+ * （C-0193・C-0194・C-0199。着く時刻の実測の最長は 42f）。注記を出す条件だけに使い、結論にはしない
+ */
+export const LANDING_AIM_MISS_FRAMES = 50;
+
+/**
+ * 着地の後の 1 発目を除いて決めた RL の弾の種類の行（直進弾 100・誘導弾 100・曲射 1500。C-0174・C-0175・C-0242）。
+ * その 1 発目は遠・中遠の区間で外すことがあり（V-0097 の 077-18・121-05）、モデルに入っていない
+ */
+const FIRST_SHOT_EXCLUDED_ROWS: ReadonlySet<string> = new Set([
+  'ProjectileDirect:100',
+  'HomingProjectile:100',
+  'ProjectileCurve:1500',
+]);
+
+/** キャラが引く RL の弾の種類の行のキー（弾の種類ごとの行でなければ null） */
+function rateRowKeyOf(table: TargetRateTable, character: CharacterData): string | null {
+  const cell = table[character.weaponType];
+  if (cell === null || cell === undefined || !isByProjectile(cell)) return null;
+  return projectileRowKeyOf(cell.byProjectile, character);
+}
+
+/**
  * 自動の枠の注記。的の表が無い敵では「この敵の条件は未測定」、未測定の項目・区間は手入力の値を使ったこと、
- * 着地直後の外れ（RL・SR）・MG の撃ち始めを未実装・近似として知らせる。自動でない枠は空
+ * 着地の後の照準（RL・SR の 1 発目の外れ、AR・SMG の撃ち始めの待ち）・MG の撃ち始めを未実装・近似として知らせる。自動でない枠は空
  */
 export function landingNotes(
   plan: LandingPlan | null,
@@ -582,7 +638,7 @@ export function landingNotes(
     ...(n > 0 ? [`常時の命中率▲ ${pct(n)} でコア命中率を 1/(1 − N)² 倍（上限 1）`] : []),
     'フルバースト中などに配られる持続の命中率▲も、効いている区間で N に足してコア命中率に効かせた（C-0170。仮説）',
     raisesBullet
-      ? '命中率▲（常時 + 持続）で弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0192。確かめたのは SMG の遠だけで、ほかの帯と AR・MG には同じ式を当てた）。持続の▲による上がりは 1 パス目のゲージには入れていない（未実装）'
+      ? '命中率▲（常時 + 持続）で弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0192。確かめたのは SMG の遠だけで、ほかの帯と AR・MG には同じ式を当てた）。持続の▲による上がりも、1 パス目のゲージと命中の回数に入れた（C-0265。仮説）'
       : '命中率▲は弾丸命中率に効かせていない（未実装。SG の近 A では上がるが（C-0157）、効き方の式が決まっていない）',
   ];
   const en = [
@@ -591,7 +647,7 @@ export function landingNotes(
     ...(n > 0 ? [`constant hit rate up ${pct(n)} scales core hit rate by 1/(1 − N)² (max 1)`] : []),
     'timed hit rate buffs (e.g. given at full burst) are added to N while active and change core hit rate (C-0170; hypothesis)',
     raisesBullet
-      ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) (C-0192; checked only for SMG at far range, and the same formula is used for the other bands and for AR and MG); the rise from timed buffs is not fed into the burst gauge (not modeled)'
+      ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) (C-0192; checked only for SMG at far range, and the same formula is used for the other bands and for AR and MG); the rise from timed buffs is also fed into the burst gauge and the hit counts (C-0265; hypothesis)'
       : 'hit rate buffs do not change bullet hit rate (not modeled; they raise it for SG at near A (C-0157), but the formula is unknown)',
   ];
   notes.push({ level: 'approx', code: 'auto-condition', message: { ja: ja.join('。'), en: en.join('; ') } });
@@ -651,13 +707,35 @@ export function landingNotes(
       },
     });
   }
-  if (weapon === 'RL' || weapon === 'SR') {
+  // plan/design-landing-aim.md 4.1 節（2026-10-05 オーナー承認。案 A・B-3）
+  if ((weapon === 'RL' || weapon === 'SR') && windowEndFirstShotFrames(slot.character.shot) < LANDING_AIM_MISS_FRAMES) {
     notes.push({
       level: 'unsupported',
       code: 'landing-first-shot-miss',
       message: {
-        ja: '着地直後の 1 発はコアを外すことがある（紅蓮：ブラックシャドウ単騎で 180 秒に 2 発、約 1%）。未実装',
-        en: 'The first shot after a landing can miss the core (2 shots in 180 s, about 1%, on a solo RL); not modeled',
+        ja: '着地の後の 1 発目は、照準がまだコアに着いていないとコアを外す（C-0194。照準は窓の明けから動き出す。C-0193・C-0199）。紅蓮：ブラックシャドウ単騎で 180 秒に 0〜2 発。未実装',
+        en: 'The first shot after a landing misses the core if the aim has not reached it yet (C-0194; the aim starts moving when the window ends, C-0193, C-0199); 0-2 shots in 180 s on a solo Scarlet: Black Shadow; not modeled',
+      },
+    });
+  }
+  const rowKey = weapon === 'RL' ? rateRowKeyOf(profile.coreHitRate, slot.character) : null;
+  if (rowKey !== null && FIRST_SHOT_EXCLUDED_ROWS.has(rowKey)) {
+    notes.push({
+      level: 'unsupported',
+      code: 'landing-first-shot-excluded',
+      message: {
+        ja: `この弾の種類（${rowKey}）のコア命中率は、着地の後の 1 発目を除いて決めた（C-0174・C-0175・C-0242）。その 1 発目は遠・中遠の区間で外すことがある。未実装`,
+        en: `The core hit rate of this projectile (${rowKey}) excludes the first shot after each landing (C-0174, C-0175, C-0242); that shot can miss the core at far and mid-far landings; not modeled`,
+      },
+    });
+  }
+  if (weapon === 'AR' || weapon === 'SMG') {
+    notes.push({
+      level: 'unsupported',
+      code: 'landing-aim-wait',
+      message: {
+        ja: '着地の後、照準が的に掛かるまで撃たない（C-0195、仮説。操作キャラで確かめた）。モデルは窓の明けから構えの 12f で撃ち始めるので、通常攻撃の発の数が多めに出る。未実装',
+        en: 'After a landing, the character does not fire until the aim is on the target (C-0195; hypothesis, seen on the controlled character); the model starts firing 12 frames after the window, so it counts slightly more normal shots; not modeled',
       },
     });
   }

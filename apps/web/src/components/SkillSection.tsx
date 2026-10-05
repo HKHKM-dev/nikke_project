@@ -1,4 +1,5 @@
 import {
+  ELEMENT_LABEL,
   SKILL_LEVEL_MAX,
   SKILL_LEVEL_MIN,
   SKILL_SLOTS,
@@ -7,16 +8,20 @@ import {
   framesToGameSeconds,
   measuredBurstDelayRow,
   burstStepMixAllows,
+  enemyElementAllows,
   renderSkillDescription,
   squadAllows,
   treasureSlots,
+  withCharacterAllows,
   type CharacterData,
+  type Element,
   type SkillLevels,
   type BurstStepMixCondition,
   type SkillEffect,
   type SkillSlot,
   type SquadCondition,
   type TreasurePhase,
+  type WithCharacterCondition,
 } from '@nikke/core';
 import { useState, type Dispatch } from 'react';
 import { NOTE_KIND_BADGE, SKILL_SLOT_LABEL, SUPPORT_BADGE, treasurePhaseLabel } from '../skillLabels.ts';
@@ -122,8 +127,19 @@ function squadText(squad: SquadCondition, character: CharacterData): string {
   return `同じ部隊（${character.squadName.ja}）の味方が${squad.present ? 'いる' : 'いない'}`;
 }
 
+/** 防御力無視ダメージ編: 編成に特定のキャラがいる条件（名前は読み込んだ編成のキャラから引く。いなければ番号） */
+function withCharacterText(condition: WithCharacterCondition, characters: readonly (CharacterData | null)[]): string {
+  const name = characters.find((c) => c?.resourceId === condition.rid)?.name.ja ?? `キャラ ${condition.rid}`;
+  return `${name}が編成に${condition.present ? 'いる' : 'いない'}`;
+}
+
 function hasComposition(e: SkillEffect): boolean {
-  return ('burstStepMix' in e && e.burstStepMix !== undefined) || ('squad' in e && e.squad !== undefined);
+  return (
+    ('burstStepMix' in e && e.burstStepMix !== undefined) ||
+    ('squad' in e && e.squad !== undefined) ||
+    ('withCharacter' in e && e.withCharacter !== undefined) ||
+    ('enemyElement' in e && e.enemyElement !== undefined)
+  );
 }
 
 type Props = {
@@ -137,6 +153,8 @@ type Props = {
   status: SlotSkillsStatus;
   /** 枠番号 → キャラ（編成の条件が今の編成で効くかの表示用）。空枠・読み込み中は null */
   teamCharacters: readonly (CharacterData | null)[];
+  /** 敵の属性（属性なしは null）。敵の属性の条件の表示用 */
+  enemyElement: Element | null;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -149,6 +167,7 @@ export function SkillSection({
   disabled,
   status,
   teamCharacters,
+  enemyElement,
   dispatch,
 }: Props) {
   // Stage 9: 宝物版に差し替えた説明文と定義を出す（計算と同じ applyTreasure を通す）
@@ -247,6 +266,22 @@ export function SkillSection({
                         badge="部隊"
                         condition={squadText(e.squad, character)}
                         applies={squadAllows(e.squad, compositionCharacters, slotIndex)}
+                      />
+                    ) : null,
+                    'withCharacter' in e && e.withCharacter ? (
+                      <CompositionNote
+                        key={`${i}-with`}
+                        badge="編成"
+                        condition={withCharacterText(e.withCharacter, compositionCharacters)}
+                        applies={withCharacterAllows(e.withCharacter, compositionCharacters, slotIndex)}
+                      />
+                    ) : null,
+                    'enemyElement' in e && e.enemyElement ? (
+                      <CompositionNote
+                        key={`${i}-enemy`}
+                        badge="敵の属性"
+                        condition={`敵が${ELEMENT_LABEL[e.enemyElement]}コードの`}
+                        applies={enemyElementAllows(e.enemyElement, enemyElement)}
                       />
                     ) : null,
                   ])}

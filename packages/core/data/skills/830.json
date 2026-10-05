@@ -106,19 +106,17 @@
           ]
         },
         {
-          "ja": "命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。AR の弾丸命中率にも同じ式で効かせる（確かめたのは SMG だけ）",
-          "en": "With automatic conditions the Hit Rate buff makes the core hit rate 1 during the burst (N ≥ 1; timed buffs use the same formula as constant ones). It also raises the AR bullet hit rate with the same formula (verified only for SMG)",
+          "ja": "命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。AR の弾丸命中率にも同じ式で効かせる（確かめたのは SMG だけ）。バーストゲージにも同じ N で効かせるが、▲の窓（10 秒）はフルバーストの窓に収まり、ゲージの溜まる時間と重ならない（きっかけの遅れは未測定で 0）",
+          "en": "With automatic conditions the Hit Rate buff makes the core hit rate 1 during the burst (N ≥ 1; timed buffs use the same formula as constant ones). It also raises the AR bullet hit rate with the same formula (verified only for SMG). The burst gauge uses the same N, but the 10 s buff lies inside the full burst window, when the gauge does not charge (the trigger delay is unmeasured and taken as 0)",
           "kind": "modeling",
           "claims": [
             "C-0037",
             "C-0170",
-            "C-0192"
+            "C-0192",
+            "C-0011",
+            "C-0264",
+            "C-0265"
           ]
-        },
-        {
-          "ja": "持続の命中率▲による弾丸命中率の上がりは、バーストゲージに入れていない",
-          "en": "The bullet hit rate gain from the timed Hit Rate buff is not added to the burst gauge",
-          "kind": "unimplemented"
         }
       ]
     }
