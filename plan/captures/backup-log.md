@@ -66,3 +66,5 @@
 2026-10-05 に録画 198〜209（リター単騎・AUTO・3 分モードの 12 本。backlog 2-25（SMG の近・中遠・遠の弾丸命中率の再現）の撮影。検証記録はクラウドのブランチ `claude/serene-wright-f1ny8t` にあり、main の V-0196 と番号が重なっているので、マージのときに振り直す）を `intake.ts` で取り込み、この 12 ファイルだけを指定して robocopy した。E: と I: で sha256 が一致（`edf8e5dd3a3a`・`05a3b1f3889a`・`75112ee5d74f`・`ecc230060c9d`・`76d10e016641`・`cfa4c8fbd146`・`a3380d23104c`・`d18f45cb27f2`・`f6b94325cf06`・`1ea59fdd6ff4`・`d7ba5420cd45`・`b406dc920174`）。取り込み元（`H:/record/`）の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-05 22:23 に録画 210（クイーン（真）単騎）を `intake.ts` で取り込み、この 1 本（`range/20261005-210_sg_queen-makoto_wind_auto.mp4`）だけを同期した。E: と I: で sha256 が一致（`a9baad6ac181`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-05 22:24 に録画 211（アニス：スター単騎）を `intake.ts` で取り込み、この 1 本（`range/20261005-211_rl_anis-star_solo_auto-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`7228e985da98`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。

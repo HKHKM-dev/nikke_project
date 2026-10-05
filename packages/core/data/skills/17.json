@@ -208,7 +208,9 @@
             "C-0211",
             "C-0213",
             "C-0207",
-            "C-0240"
+            "C-0240",
+            "C-0297",
+            "C-0298"
           ]
         },
         {
@@ -245,11 +247,11 @@
       ],
       "notes": [
         {
-          "ja": "シューティングスターのコアに当たる割合（距離帯ごと）。反復の実測が無いので的の表に行が無く、モデルのシューティングスターはコアに当たらない（plan/design-anis-star-core-path.md 3.2 節）",
-          "en": "Shooting Star core hit rate per distance band. Without a repeated measurement there is no target table row, so Shooting Stars never hit the core in the model (plan/design-anis-star-core-path.md 3.2)",
+          "ja": "シューティングスターのコアに当たる割合は射撃場の的でしか測っていない。的の表に行の無い敵では、モデルのシューティングスターはコアに当たらない（plan/design-anis-star-core-path.md 3.2 節）",
+          "en": "The Shooting Star core hit rate is measured only on the shooting range target. On enemies without a target table row, Shooting Stars never hit the core in the model (plan/design-anis-star-core-path.md 3.2)",
           "kind": "unimplemented",
           "claims": [
-            "C-0212"
+            "C-0298"
           ]
         },
         {
@@ -258,8 +260,8 @@
           "kind": "unimplemented"
         },
         {
-          "ja": "爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0282。単騎の録画 164 では遠で高く中遠で低く、向きが揃わない。plan/design-anis-star-core-path.md 9 節）",
-          "en": "Whether the Explosion Radius increase changes the core hit rate of normal attacks during her Burst (inside and outside the Burst the same table row applies, C-0282; on the solo recording 164 it was higher at far and lower at mid-far, so the direction is not consistent. plan/design-anis-star-core-path.md 9)",
+          "ja": "爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0282。単騎の録画 164 では遠で高く中遠で低く、向きが揃わない。録画 211 では帯ごとの窓の中と外の差が小さい標本で見分けられない（V-0187）。plan/design-anis-star-core-path.md 9 節）",
+          "en": "Whether the Explosion Radius increase changes the core hit rate of normal attacks during her Burst (inside and outside the Burst the same table row applies, C-0282; on the solo recording 164 it was higher at far and lower at mid-far, so the direction is not consistent; on recording 211 the in/out difference per band is not distinguishable with the small samples (V-0187). plan/design-anis-star-core-path.md 9)",
           "kind": "unimplemented",
           "claims": [
             "C-0282"

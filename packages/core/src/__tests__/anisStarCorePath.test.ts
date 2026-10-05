@@ -1,6 +1,6 @@
 // アニス：スター（17）のバーストのコアの経路（plan/design-anis-star-core-path.md 3.1・3.2 節）: 自動攻撃の core と、的の表の
 // coreHitRate.autoAttacks。行が無いあいだは数値が変わらないこと（退化）と、行があるときの式（boost に 割合 × (コア倍率 − 1)）を見る。
-// 行の値はテスト用（実データの表には行が無い。割合は未測定）
+// 実データの行は C-0298（単騎の録画 164・211 の合計）。式と引き方のテストの行の値はテスト用
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage } from '../calc/model.ts';
@@ -39,7 +39,13 @@ function rangeEnemy(target: TargetProfile, hasCore = true): EnemyInput {
   };
 }
 
-/** シューティングスターの行を足した的（テスト用の値） */
+/** シューティングスターの行を外した的（行が入る前のモデル） */
+function withoutStarRow(): TargetProfile {
+  const { autoAttacks: _, ...rest } = profile.coreHitRate;
+  return { ...profile, coreHitRate: rest };
+}
+
+/** シューティングスターの行を差し替えた的（テスト用の値） */
 function withStarRow(row: TargetRateRow): TargetProfile {
   return { ...profile, coreHitRate: { ...profile.coreHitRate, autoAttacks: { '17:burst': row } } };
 }
@@ -101,9 +107,14 @@ describe('自動攻撃の core（plan/design-anis-star-core-path.md 3.1 節）',
 });
 
 describe('的の表の coreHitRate.autoAttacks（3.2 節）', () => {
-  it('has no Shooting Star row in the data, so nothing changes (unmeasured rate = 0)', () => {
-    expect(profile.coreHitRate.autoAttacks).toBeUndefined();
-    const enemy = rangeEnemy(profile);
+  it('has the Shooting Star row of C-0298 in the data', () => {
+    expect(profile.coreHitRate.autoAttacks).toEqual({
+      '17:burst': { near: 0.9464, midNear: 0.8442, far: 0.5667, midFar: 0.7266 },
+    });
+  });
+
+  it('changes nothing without a row (unmeasured rate = 0)', () => {
+    const enemy = rangeEnemy(withoutStarRow());
     const now = starTicks(solo(enemy));
     const before = starTicks(solo(enemy, definitionWithoutCore()));
     expect(now).toHaveLength(before.length);
@@ -124,7 +135,7 @@ describe('的の表の coreHitRate.autoAttacks（3.2 節）', () => {
       spans.map((s) => (s.band === 'near' ? 1 : s.band === 'far' ? 0.25 : 0)),
     );
     // 行の無い的・コアの無い敵ではコアに当たらない
-    expect(slotAutoAttackCoreRatesOf([soloSlot(raw)], rangeEnemy(profile), frames)).toEqual([null]);
+    expect(slotAutoAttackCoreRatesOf([soloSlot(raw)], rangeEnemy(withoutStarRow()), frames)).toEqual([null]);
     const ticks = starTicks(solo(enemy));
     const bandAt = (f: number) => spans.find((s) => f >= s.start && f < s.end)?.band;
     for (const h of ticks) {
@@ -137,12 +148,14 @@ describe('的の表の coreHitRate.autoAttacks（3.2 節）', () => {
   });
 
   it('raises the Shooting Star damage the same way in sim and calc', () => {
-    const before = solo(rangeEnemy(profile));
-    const after = solo(rangeEnemy(withStarRow({ all: 1 })));
-    const sim = runSimulation(after);
-    const calc = computeTeamDamage(after);
-    expect(calc.totalDamage).toBeCloseTo(sim.totalDamage, 0);
-    expect(sim.totalDamage).toBeGreaterThan(runSimulation(before).totalDamage);
+    const before = solo(rangeEnemy(withoutStarRow()));
+    for (const target of [withStarRow({ all: 1 }), profile]) {
+      const after = solo(rangeEnemy(target));
+      const sim = runSimulation(after);
+      const calc = computeTeamDamage(after);
+      expect(calc.totalDamage).toBeCloseTo(sim.totalDamage, 0);
+      expect(sim.totalDamage).toBeGreaterThan(runSimulation(before).totalDamage);
+    }
   });
 
   it('rejects a broken row or a non-true core', () => {
