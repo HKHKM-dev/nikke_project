@@ -2,6 +2,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseEnemyPresets } from '../src/enemies.ts';
+import { MASTER_FILES } from '../src/load.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
@@ -9,7 +10,7 @@ import type { DefinedCharacter } from '../src/records/skills.ts';
 import { rereadOnlyClaims, type PredictionFile } from '../src/records/predictions.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
-import type { CharacterData } from '../src/types.ts';
+import type { BuildMasters, CharacterData } from '../src/types.ts';
 
 export const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 const DATA = `${ROOT}packages/core/data/`;
@@ -160,6 +161,9 @@ export function loadRecordsData(file: RecordingsFile, extraRids: readonly number
     skills,
     enemies: parseEnemyPresets(readJson<unknown>(`${DATA}enemies.json`)),
     observationValues: new Map(loadObservations().map((o) => [o.id, o.value])),
+    buildMasters: Object.fromEntries(
+      Object.entries(MASTER_FILES).map(([name, file]) => [name, readJson<unknown>(`${DATA}masters/${file}`)]),
+    ) as BuildMasters,
   };
 }
 

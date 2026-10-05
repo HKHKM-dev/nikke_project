@@ -5,7 +5,9 @@ import { hitFrameOf, hitFramesOf, videoFrameOf, type BurstSchedule } from '../bu
 import { computeTeamDamage } from '../calc/model.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
-import { effectiveMaxAmmo } from '../frame/firing.ts';
+import { GEAR_PARTS, emptyBuild, type BuildInput } from '../build.ts';
+import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
+import { effectiveMaxAmmo, firingParams } from '../frame/firing.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs } from '../skills/buffs.ts';
@@ -15,8 +17,8 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import { SKILL_SLOTS, parseSkillDefinition, type SkillDefinition, type SkillSlot } from '../skills/types.ts';
 import type { TeamInput, TeamResult, TeamSlotInput } from '../team.ts';
-import type { CharacterData, EnemyPresetMaster } from '../types.ts';
-import type { RecordingEntry } from './recordings.ts';
+import type { BuildMasters, CharacterData, EnemyPresetMaster } from '../types.ts';
+import type { RecordingBuild, RecordingEntry } from './recordings.ts';
 
 /** 何を読んだか（人と検索のため）。Stage 20-E: 大きさ（照準円の半径など）・位置（着地点の y など）・ゲージを足した */
 export const OBSERVATION_KINDS = [
@@ -83,6 +85,11 @@ export type CompareSetup = {
   sustainedDamagePlacement?: SustainedDamagePlacement;
   /** V-0165: false なら、録画（予測の編成）の宝物の段階を使わず、どの枠も基礎版のスキルにする。省略 true */
   treasure?: boolean;
+  /**
+   * Stage 13 の残り: スペック固定 OFF の録画で、育成の効果層のうちこの種類（overload・cube・collection）を外す。
+   * 「その効果は乗らない」という予測の仮説（H0）の override に使う。攻撃力（キャラ画面の値）は変えない。省略は外さない
+   */
+  buildEffectsOff?: BuildEffectKind[];
   /**
    * 対象の語彙編（plan/design-target-vocab.md 4 節）: 定義に効果を足す。結論の無い効果を、定義のファイルを変えずに予測の仮説の
    * override でだけ入れる。rid のキャラの skill（treasure なら宝物版）の effects の末尾に、effect（定義の JSON の書き方）を足す。
@@ -262,6 +269,19 @@ function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
  * モダニア編（V-0179）: そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017）。録画ではリロードを終えた直後の
  * 照準の横の残弾と比べる
  */
+/**
+ * Stage 13 の残り（キューブのリロード速度▲）: そのフレームの区間の、リロード 1 回分の長さ（動画のフレーム。ゲーム内の時計で数えた
+ * 端数つきの値。C-0145）。録画では、RELOADING のバーが 0 から満ちるまでの長さ（レシピ reload-segments のバーの長さ）と比べる
+ */
+function reloadFramesAt(result: SimResult, ctx: MetricContext): number {
+  const slot = slotOf(result.slots, ctx);
+  const input = slotOf(ctx.input.slots, ctx);
+  const frame = Number(ctx.args.frame);
+  const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
+  if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
+  return firingParams(input.character.shot, segment.trigger.buffs).reloadChunkFrames;
+}
+
 function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
   const slot = slotOf(result.slots, ctx);
   const input = slotOf(ctx.input.slots, ctx);
@@ -561,6 +581,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
   healHitCounts: { args: ['slot'], sim: healHitCounts },
   maxAmmoAt: { args: ['slot', 'frame'], sim: maxAmmoAt },
+  reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   critRateAt: { args: ['slot', 'frame'], sim: critRateAt },
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 3 節）: 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
@@ -853,7 +874,24 @@ export type RecordsData = {
   enemies: EnemyPresetMaster;
   /** 観測値の id → 値（setup.jumpWindows を引く。無ければ jumpWindows は使えない） */
   observationValues?: ReadonlyMap<string, number | number[]>;
+  /** 育成のマスタ（スペック固定 OFF の録画の効果層を引く。無ければ固定 OFF の録画は比べられない） */
+  buildMasters?: BuildMasters;
 };
+
+/**
+ * 録画の育成（RecordingBuild）を効果層の入力（BuildInput）にする。攻撃力はキャラ画面の値を attackOverride に入れるので、
+ * ステータス層の項目（装備のティア・Lv・好感度など）は効かない。OL の行は OL 装備の部位に置く（Lv は検証を通す 0）
+ */
+function buildInputOf(build: RecordingBuild): BuildInput {
+  const out = emptyBuild();
+  for (const part of GEAR_PARTS) {
+    const lines = build.overload?.[part];
+    if (lines !== undefined && lines.length > 0) out.gear[part] = { type: 'OL', level: 0, overload: lines };
+  }
+  out.cube = build.cube ?? null;
+  out.collection = build.collection ?? null;
+  return out;
+}
 
 /** setup.jumpWindows の観測値の値（[始まり, 終わり, …] の秒）を窓の列にする */
 export function jumpWindowsOf(value: number | number[] | undefined): { start: number; end: number }[] | undefined {
@@ -870,8 +908,15 @@ export function jumpWindowsOf(value: number | number[] | undefined): { start: nu
 
 /** 録画の条件と予測の条件から、モデルの入力を組む（npm run sim の --fixed-spec と同じ組み方） */
 export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, data: RecordsData): TeamInput {
-  if (recording.fixedSpec === false) throw new Error('スペック固定 OFF の録画は未対応（育成入力が要る）');
   if (recording.fixedSpec === null) throw new Error('スペック固定かどうか記録が無い');
+  const fixedSpec = recording.fixedSpec;
+  if (!fixedSpec) {
+    // Stage 13 の残り: 固定 OFF は、枠ごとの育成（録画に映した値）で組む
+    const missing = recording.team.filter((m) => m.build === undefined).map((m) => m.slot);
+    if (missing.length > 0)
+      throw new Error(`スペック固定 OFF の録画で、枠 ${missing.join('・')} の育成（build）が無い`);
+    if (data.buildMasters === undefined) throw new Error('スペック固定 OFF の録画には育成のマスタが要る');
+  } else if (setup.buildEffectsOff !== undefined) throw new Error('buildEffectsOff はスペック固定 OFF の録画だけ');
   const preset = data.enemies.enemies.find((e) => e.id === setup.enemy);
   if (preset === undefined) throw new Error(`敵のプリセット ${setup.enemy} が無い`);
   const durationSeconds = setup.durationSeconds ?? 180;
@@ -896,17 +941,28 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     const definition = data.skills.get(member.rid) ?? null;
     const adds = (setup.addEffects ?? []).filter((a) => a.rid === member.rid);
     if (adds.length > 0 && definition === null) throw new Error(`addEffects: rid ${member.rid} の定義が無い`);
-    if (member.cube !== undefined) throw new Error('キューブを付けた枠は未対応（スペック固定では乗らない）');
+    if (fixedSpec && member.cube !== undefined)
+      throw new Error('キューブを付けた枠は未対応（スペック固定では乗らない）');
+    const treasurePhase = (setup.treasure === false ? 0 : (member.treasurePhase ?? 0)) as TreasurePhase;
+    const build = fixedSpec ? undefined : member.build!;
+    const off = new Set(setup.buildEffectsOff ?? []);
+    const buildEffects =
+      build === undefined
+        ? undefined
+        : resolveBuildEffects(character, buildInputOf(build), data.buildMasters!, { treasurePhase }).effects.filter(
+            (e) => !off.has(e.source.kind),
+          );
     return {
       character,
       growth: fixedSpecGrowth(character),
       condition,
       ...(auto ? { conditionMode: 'auto' as const } : {}),
-      attackOverride: computeFixedSpecAttack(character).attack,
+      attackOverride: build === undefined ? computeFixedSpecAttack(character).attack : build.attack,
+      ...(buildEffects === undefined ? {} : { buildEffects }),
       skills: {
         definition: definition === null ? null : withAddedEffects(definition, adds),
-        levels: MAX_SKILL_LEVELS,
-        treasurePhase: (setup.treasure === false ? 0 : (member.treasurePhase ?? 0)) as TreasurePhase,
+        levels: { ...MAX_SKILL_LEVELS, ...(build?.skillLevels ?? {}) },
+        treasurePhase,
       },
     };
   });
