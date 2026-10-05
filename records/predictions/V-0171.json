@@ -77,7 +77,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "note": "殲滅モードの 1 ヒットの会心（コア以外・距離ボーナスなし）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
     },
@@ -94,7 +96,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "note": "殲滅モードの 1 ヒットの会心（コア・距離ボーナスなし）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
     },
@@ -111,7 +115,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "note": "殲滅モードの 1 ヒットの会心（コア以外・距離ボーナスあり）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
     },
@@ -128,10 +134,40 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "note": "殲滅モードの 1 ヒットの会心（コア・距離ボーナスあり）。モデルの f1300 は S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中"
     }
   ],
-  "predicted": null
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "6320185c15868e1841e6f50b20063dca426716f6",
+    "values": {
+      "H1": {
+        "fb2-shots": 774,
+        "fb3-shots": 768,
+        "fb4-shots": 768,
+        "anni-body-crit-nodist": 18963.669587744,
+        "anni-core-crit-nodist": 25954.884182304002,
+        "anni-body-crit-dist": 21061.033966111998,
+        "anni-core-crit-dist": 28052.248560671997
+      }
+    },
+    "seen": {
+      "044": [
+        "018-02",
+        "044-01",
+        "044-02",
+        "044-03",
+        "044-04",
+        "044-05",
+        "044-06",
+        "044-07",
+        "044-08",
+        "044-09"
+      ]
+    }
+  }
 }
