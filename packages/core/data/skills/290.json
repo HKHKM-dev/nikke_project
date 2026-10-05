@@ -9,7 +9,10 @@
           "kind": "passive",
           "target": "self",
           "stat": "attack",
-          "ref": 1
+          "ref": 1,
+          "claims": [
+            "C-0020"
+          ]
         }
       ],
       "notes": [

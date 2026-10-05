@@ -25,13 +25,19 @@
           "kind": "passive",
           "target": "allies",
           "stat": "chargeDamage",
-          "ref": 2
+          "ref": 2,
+          "claims": [
+            "C-0020"
+          ]
         },
         {
           "kind": "passive",
           "target": "self",
           "stat": "attack",
-          "ref": 5
+          "ref": 5,
+          "claims": [
+            "C-0020"
+          ]
         }
       ],
       "notes": [

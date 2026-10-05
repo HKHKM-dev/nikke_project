@@ -496,6 +496,7 @@
   - 根拠: `012-01`〜`012-04`・`014-01`・`014-02`、verification.md Stage 4「attackDamage の置き場所」
   - モデル側: `damage.ts` の `attackDamageMultiplier`
   - 置き換え: C-0019
+  - 定義: `data/skills/870.json` の skill2 の effects[0]
 - **C-0019** 攻撃ダメージ▲は、会心・コアと同じ加算グループに入る
   - 状態: 棄却・更新日: 2026-09-22
   - 根拠: verification.md Stage 4「attackDamage の置き場所」（クイーン（真）の 4 パターンの比が 1 : 1.5 : 2 : 2.5）
@@ -505,6 +506,7 @@
   - 状態: 確定・等級: 厳密一致・更新日: 2026-09-22
   - 根拠: `010-01`〜`010-04`・`013-01`〜`013-06`、verification.md Stage 4「射撃場の実測」
   - モデル側: `damage.ts` の `computeTriggerDamage`
+  - 定義: `data/skills/95.json` の skill2 の effects[1]、`data/skills/95.json` の skill2 の effects[2]、`data/skills/271.json` の skill1 の effects[0]、`data/skills/290.json` の skill1 の effects[0]
 - **C-0021** フルバースト補正は、倍率グループ（1 + コア + 会心 + 距離）に +0.5 を足す（別枠の乗算ではない）
   - 状態: 確定・等級: 厳密一致・更新日: 2026-09-22
   - 根拠: verification.md Stage 5「録画 15: フルバースト補正は加算だった」

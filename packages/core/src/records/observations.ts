@@ -188,6 +188,30 @@ function magazineShots(result: SimResult, ctx: MetricContext): number[] {
   });
 }
 
+/**
+ * クラウン編（V-0169）: その枠が出した回復（heal）ごとに、前の回復（初回は戦闘の始め）からその回復までに撃った通常攻撃の
+ * 当たる数の期待値（発ごとの区間の弾丸命中率の和）。録画の総ダメージの増分から数えたヒット数と比べる
+ */
+function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const slot = slotOf(result.slots, ctx);
+  const frames = slotOf(result.shots, ctx).frames;
+  const heals = result.timeline.heals.filter((h) => h.sourceSlotIndex === slotIndex).map((h) => h.frame);
+  const starts = [...new Set(heals)].sort((a, b) => a - b);
+  let from = 0;
+  return starts.map((to) => {
+    let hits = 0;
+    for (const f of frames) {
+      if (f < from || f >= to) continue;
+      const segment = slot.segments.find((s) => s.start <= f && f < s.end);
+      if (!segment) throw new Error(`フレーム ${f} の区間が無い`);
+      hits += segment.trigger.hitRate;
+    }
+    from = to;
+    return Math.round(hits * 100) / 100;
+  });
+}
+
 function shotFramesIn(result: SimResult, ctx: MetricContext): number[] {
   const log = slotOf(result.shots, ctx);
   const from = ctx.args.from === undefined ? 0 : Number(ctx.args.from);
@@ -396,6 +420,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
       ).length,
   },
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
+  healHitCounts: { args: ['slot'], sim: healHitCounts },
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 3 節）: 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
   // 最後の弾丸の発を含む）。弾丸チャージでマガジンが延びるかを見る
   magazineShots: { args: ['slot', 'count'], sim: magazineShots },

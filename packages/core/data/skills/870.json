@@ -41,7 +41,10 @@
           "kind": "passive",
           "target": "self",
           "stat": "attackDamage",
-          "ref": 9
+          "ref": 9,
+          "claims": [
+            "C-0018"
+          ]
         },
         {
           "kind": "timed",

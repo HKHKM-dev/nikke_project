@@ -4,9 +4,9 @@
 - キャラ × スロットごとに、対応状況と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 対応状況は効果と notes の種類から決まる（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）: `supported`（効果あり・未対応なし）・`partial`（効果あり・未対応あり）・`unsupported`（効果なし・未対応あり）・`noEffect`（前提の中でダメージに効く効果なし）。
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
-- 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
+- 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 29・効果 130（根拠あり 71）・notes 86（根拠あり 29）
+件数: キャラ 29・効果 130（根拠あり 76）・notes 86（根拠あり 29）
 
 notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足 5
 
@@ -110,8 +110,8 @@ notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足
   - notes[0] 未対応: カモフラージュ状態（バースト使用時・フルバースト中のフルチャージ時）の防御力無視ダメージは未対応: 根拠なし
 - **skill2**: partial
   - effects[0] passive・critRate: 根拠なし
-  - effects[1] passive・chargeDamage: 根拠なし
-  - effects[2] passive・attack: 根拠なし
+  - effects[1] passive・chargeDamage: C-0020（確定）
+  - effects[2] passive・attack: C-0020（確定）
   - notes[0] 未対応: フォーメーションLT 併用時の追加効果（発射体爆発ダメージ・防御力無視ダメージ）は未対応: 根拠なし
   - notes[1] 未対応: クリティカル確率▲の対象は「同じ部隊の味方全体」だが、対象を部隊で絞るのは未実装（いまは味方全体に付ける）: 根拠なし
 - **burst**: unsupported
@@ -244,7 +244,7 @@ notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足
 ## 271 ノワール
 
 - **skill1**: supported
-  - effects[0] passive・attack: 根拠なし
+  - effects[0] passive・attack: C-0020（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・maxAmmo: 根拠なし
   - effects[1] ammoRefill・fullBurstStart: 根拠なし
@@ -257,7 +257,7 @@ notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足
 ## 290 マナ
 
 - **skill1**: partial
-  - effects[0] passive・attack: 根拠なし
+  - effects[0] passive・attack: C-0020（確定）
   - notes[0] 未対応: 通常攻撃 10 回ごとの味方全体の回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
   - notes[1] 前提の外: 味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない: 根拠なし
 - **skill2**: partial
@@ -403,7 +403,7 @@ notes の種類: 未対応 38・前提の外 19・計算に無関係 24・補足
   - notes[0] 未対応: 有利コードの攻撃ダメージ▲（ペルソナ - ヨハンナ）と、1more・追撃の分配ダメージは未対応: 根拠なし
   - notes[1] 計算に無関係: 防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない: 根拠なし
 - **skill2**: partial
-  - effects[0] passive・attackDamage: 根拠なし
+  - effects[0] passive・attackDamage: C-0018（確定）
   - effects[1] timed・burstStage3Enter・distributedDamage: 根拠なし
   - notes[0] 未対応: バースト使用時の鉄・拳・制・裁！の有利コードの攻撃ダメージ▲と、1more 時のバトンタッチ（スタック）は未対応: 根拠なし
   - notes[1] 計算に無関係: 鉄・拳・制・裁！の防御力▲はダメージに関係しない: 根拠なし
