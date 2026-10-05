@@ -72,7 +72,7 @@ describe('録画 14: クイーン（真）の戦闘開始時 攻撃力 +50.28%�
     expect(s.segments[0]!.buffs.attackRatio).toBeCloseTo(0.5028, 12);
     expect(s.segments[1]!.buffs.attackRatio).toBe(0);
     for (const g of s.segments) expect(g.trigger.attackDamageMultiplier).toBeCloseTo(1.3, 12);
-    expect(s.segments[0]!.trigger.attack).toBeCloseTo(119896 * 1.5028, 6);
+    expect(s.segments[0]!.trigger.attack).toBe(Math.round(119896 * 1.5028)); // C-0027
     expect(s.segments[1]!.trigger.baseHit).toBe(119796);
   });
 
@@ -101,8 +101,8 @@ describe('録画 14: クイーン（真）の戦闘開始時 攻撃力 +50.28%�
     // 前サイクルの 15 秒窓（C·k〜C·k + 15 秒）が発動フレーム C·k + H に生きているので、2 回目以降のバーストヒットは強い
     // （固定サイクルの 1 サイクル C = 1,176f、通常 H = 588f、15 秒 = 882f）
     const hits = b.burst.activations.map((a) => a.hit.baseHit);
-    expect(hits[0]).toBeCloseTo(119896 * 1.5028 - 100, 6); // battleStart の窓 [0, 882) に 588f が入る
-    expect(hits[1]).toBeCloseTo(119896 * 1.5028 - 100, 6); // fullBurstEnd の窓 [1176, 2058) に 1764f が入る
+    expect(hits[0]).toBe(Math.round(119896 * 1.5028) - 100); // battleStart の窓 [0, 882) に 588f が入る
+    expect(hits[1]).toBe(Math.round(119896 * 1.5028) - 100); // fullBurstEnd の窓 [1176, 2058) に 1764f が入る
     expect(new Set(hits.map((h) => Math.round(h))).size).toBe(1);
   });
 });

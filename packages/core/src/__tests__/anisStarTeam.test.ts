@@ -157,7 +157,7 @@ describe('私だけの星とみんなの星（バースト段階の構成の分�
   const attackOf = (input: TeamInput) => computeTeamDamage(input).slots[0]!.segments[0]!.trigger.attack;
 
   it('gives My Own Star ATK up (40.01%) only without another Burst I ally', () => {
-    expect(attackOf(SOLO)).toBeCloseTo(80485 * 1.4001, 6);
+    expect(attackOf(SOLO)).toBe(Math.round(80485 * 1.4001)); // C-0027
     expect(attackOf(WITH_FLOWER)).toBe(80485);
   });
 

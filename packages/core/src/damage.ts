@@ -196,7 +196,7 @@ export type ModelNote = { level: ModelNoteLevel; code: string; message: Localize
 export type TriggerDamage = {
   /** バフ前の攻撃力（素、またはスペック固定値） */
   baseAttack: number;
-  /** バフ後の攻撃力 */
+  /** バフ後の最終攻撃力。バフを全部足してから整数に四捨五入する（C-0027） */
   attack: number;
   buffs: BuffTotals;
   /** max(1, 攻撃力 − 防御力) */
@@ -334,7 +334,9 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const hitRate = hitRateOf(condition);
 
   const baseAttack = baseAttackOf(input);
-  const attack = applyAttackBuffs(baseAttack, buffs);
+  // C-0027: 最終攻撃力は整数に丸めてから防御力を引く。向きは四捨五入（136,777.36 → 136,777 が切り上げを、
+  // 265,497.70 → 265,498 が切り捨てを否定する。V-0185）。倍率ダメージ・持続ダメージもこの値を使う
+  const attack = Math.round(applyAttackBuffs(baseAttack, buffs));
   const baseHit = Math.max(1, attack - enemy.defence);
   const weaponMultiplier = shot.damage / 10000;
   const charge = isChargeWeapon(shot) && condition.fullCharge;
