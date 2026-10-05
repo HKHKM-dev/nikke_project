@@ -144,6 +144,29 @@ describe('summarizeGaps・findJumpBoundaries', () => {
     ]);
   });
 
+  it('プロダクト23: 5 番目の切れ目の後ろが 1 発だけなら、その発が近として解けないときだけ切れ目にする（102 の f11354）', () => {
+    const { groups, regimeOf } = sequence([
+      ...magazines(32, 183, 'far', 0),
+      { shots: 7, gapBefore: 162, regime: 'near' },
+      ...magazines(30, 183, 'near', 181),
+      { shots: 3, gapBefore: 144, regime: 'far' },
+      ...magazines(39, 183, 'far', 183),
+      { shots: 6, gapBefore: 151, regime: 'far' },
+      ...magazines(31, 183, 'far', 183),
+      { shots: 4, gapBefore: 144, regime: 'near' },
+      ...magazines(31, 183, 'near', 183),
+      { shots: 1, gapBefore: 185, regime: 'far' },
+    ]);
+    const last = groups.at(-1)!;
+    const cut = findJumpBoundaries(groups, regimeOf, undefined, undefined, (g) => g === last);
+    expect(cut.errors).toEqual([]);
+    expect(cut.boundaries.map((b) => [b.gap, b.how]).at(-1)).toEqual([185, 'regime']);
+    expect(cut.boundaries).toHaveLength(5);
+    // 近として解ける（10 ペレット全部が当たった近の発も far になりうる）なら、1 発では切らない
+    const kept = findJumpBoundaries(groups, regimeOf, undefined);
+    expect(kept.boundaries).toHaveLength(4);
+  });
+
   it('近の区間の中の長いリロード（+16f）は、前後の刻みが変わらないので切れ目にしない', () => {
     const { groups, regimeOf } = sequence([
       ...magazines(40, 112, 'far', 0),

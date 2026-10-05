@@ -158,7 +158,9 @@ const FIFTH_JUMP_AFTER: readonly [number, number] = [1500, 2600];
  * 的のジャンプの切れ目を見つける。区間の並びは 中近 → 近 → 遠 → 中遠 → 近 → 遠（C-0031。最後の遠は録画の終わりで無いことがある）。
  * 候補は 100f 以上の空きのうちリロードでないもの（リロードの空き ±15f でないもの）。候補は並びの順に当てはめ、
  * 前後の窓の regime が並びどおりの反転（近との境）か、近でない（遠 → 中遠）ことを確かめ、合わないものは落とす。5 番目の切れ目がリロードと重なる（プロダクト23 の 183f など）
- * ときは、4 番目から 1,500〜2,600f 後のリロードの空きのうち、後ろが全部 far・前に near があるものを 5 番目にする。
+ * ときは、4 番目から 1,500〜2,600f 後のリロードの空きのうち、後ろが全部 far・前に near があるものを 5 番目にする。後ろが 1 発だけ
+ * のときは、その発が近として解けない（notNear）ことを求める（far は「近以外として解ける」で、10 ペレット全部が当たった近の発も
+ * far になりうるので、1 発の far では近の終わりと決められない。102 の f11354。plan/design-records-automation.md 8.7 節）。
  * cuts（切れ目の後の最初の発のフレーム）が与えられていれば、それをそのまま使う。
  */
 export function findJumpBoundaries(
@@ -166,6 +168,7 @@ export function findJumpBoundaries(
   regimeOf: (g: TriggerGroup) => Regime,
   cuts: readonly number[] | undefined,
   window = 16,
+  notNear: (g: TriggerGroup) => boolean = () => false,
 ): BoundaryResult {
   const shotInterval = shotIntervalOf(groups.map((g) => g.frame));
   const summary = summarizeGaps(groups, shotInterval);
@@ -228,10 +231,13 @@ export function findJumpBoundaries(
       if (gap <= summary.bigThreshold || dt < FIFTH_JUMP_AFTER[0] || dt > FIFTH_JUMP_AFTER[1]) continue;
       const after = regimes.slice(i);
       const before = regimes.slice(Math.max(0, i - window), i);
-      if (after.length >= 2 && after.every((r) => r !== 'near') && before.some((r) => r === 'near')) {
+      const afterFar = after.length >= 2 ? after.every((r) => r !== 'near') : after.length === 1 && notNear(groups[i]!);
+      if (afterFar && before.some((r) => r === 'near')) {
         boundaries.push({ index: i, gap, how: 'regime' });
         notes.push(
-          `5 番目の切れ目はリロードと重なる空き ${label(boundaries[4]!)}（後ろの ${after.length} 発が全部 近以外の刻み）`,
+          after.length === 1
+            ? `5 番目の切れ目はリロードと重なる空き ${label(boundaries[4]!)}（後ろの 1 発が近として解けない）`
+            : `5 番目の切れ目はリロードと重なる空き ${label(boundaries[4]!)}（後ろの ${after.length} 発が全部 近以外の刻み）`,
         );
         break;
       }

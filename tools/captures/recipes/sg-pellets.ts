@@ -77,7 +77,7 @@ type IntervalStats = {
 
 export const sgPellets: Recipe = {
   name: 'sg-pellets',
-  version: 3,
+  version: 4,
   describe:
     'SG 単騎の区間ごとの当たったペレットの割合（rate）、近の当たった数の分布（count）、近の「会心 + 2 × コア」（rate）、' +
     'スペック固定 OFF ならコア命中率と会心率（rate）',
@@ -236,7 +236,12 @@ export async function sgIntervals(ctx: RecipeContext): Promise<{
     mode === 'units'
       ? regimeOfUnits(g.increment, bodyOf(g) / 10, g.shots * 10)
       : regimeOfExact(g.increment, exact!.near, exact!.far, g.shots * 10);
-  const found = findJumpBoundaries(groups, regimeOf, cuts);
+  // 近として解けない発（5 番目の切れ目の後ろが 1 発だけのときに使う）
+  const notNear = (g: TriggerGroup): boolean =>
+    mode === 'units'
+      ? solveUnits(g.increment, bodyOf(g) / 10, true, g.shots * 10).kind !== 'near'
+      : solveExact(g.increment, exact!.near, g.shots * 10).kind !== 'ok';
+  const found = findJumpBoundaries(groups, regimeOf, cuts, undefined, notNear);
   for (const n of found.notes) ctx.log(n);
   if (found.errors.length > 0) throw new Error(found.errors.join('\n'));
   const intervals = splitIntervals(groups, found.boundaries);
