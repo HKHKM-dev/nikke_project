@@ -1,0 +1,29 @@
+{
+  "id": "236",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-236_smg_liter_auto-burst.mp4",
+  "original": "2026-10-06_00-27-09.mp4",
+  "durationSec": 199.4,
+  "frames": 11964,
+  "fps": 60,
+  "sizeMB": 241.4,
+  "sha256": "1246042d08be",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。単騎・操作キャラ・AUTO 射撃 ON・オートバースト ON）。戦闘履歴のパネルでリター 1 体（LV.400）を、左上のボタンでオートバースト ON を確かめた。V-0201（2 日目の 8 本。オーナーの判断で 1 日目の録画 213〜220 と同じくオートバースト ON）"
+}
