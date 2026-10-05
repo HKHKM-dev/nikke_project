@@ -93,6 +93,19 @@ describe('BurstController', () => {
     expect(s.gaugeFullFrames[1]).toBe(859 + 199);
   });
 
+  it('counts the gauge of a shot crossing the window end on its landing frame (C-0259)', () => {
+    // 1 パス目は発のゲージを着弾のフレームに入れる。窓 [60, 660) の中に着いた分は捨て、終わりのフレーム以降に着いた分は溜める
+    const units = [unit('Step1', 0), unit('Step2', 0), unit('Step3', 0)];
+    const gaugeAt = (landing: number): number => {
+      const state = initialBurstController(units, TIMING_600);
+      for (let f = 0; f <= landing; f++) stepBurstController(state, f, f === 0 ? FAST : f === landing ? 103880 : 0);
+      return state.gauge;
+    };
+    expect(gaugeAt(659)).toBe(0);
+    expect(gaugeAt(660)).toBe(103880);
+    expect(gaugeAt(664)).toBe(103880);
+  });
+
   it('is cooldown-bound with a single III of 40 s: full bursts exactly 2,400f apart, 5 in 180 s', () => {
     const s = run([unit('Step1', 2400), unit('Step2', 2400), unit('Step3', 2400)], 10800, FAST);
     expect(starts(s)).toEqual([60, 2460, 4860, 7260, 9660]);

@@ -297,7 +297,7 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 2, n: 1, crit: false })).toThrow('1 回目');
   });
 
-  it('sums the gauge of the first shot fired in a full burst window and landing after it (plan/design-anis-star-gauge-timing.md 3.5 節)', () => {
+  it('sums the gauge of the first shot fired in or after a full burst window and landing after it (plan/design-anis-star-gauge-timing.md 3.5 節、V-0189 の X1)', () => {
     const result = {
       schedule: {
         fullBurstWindows: [
@@ -318,7 +318,19 @@ describe('照合の部品', () => {
       metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
     expect(value({ slot: 1 })).toBe(10.39);
     expect(value({ slot: 2 })).toBe(5);
-    expect(() => value({ slot: 3 })).toThrow('跨ぐ発が無い');
+    expect(() => value({ slot: 3 })).toThrow('窓の後に着く発が無い');
+    // 跨ぐ発が無くても、窓の終わりのフレームに撃った発（窓の外の発）の 1 発分を返す（発の位相に依らない）
+    const atEnd = {
+      ...result,
+      shotGauges: [
+        { slotIndex: 0, shotFrame: 380, frame: 390, energy: 74200 },
+        { slotIndex: 0, shotFrame: 400, frame: 414, energy: 74200 },
+        { slotIndex: 0, shotFrame: 400, frame: 414, energy: 29680 },
+      ],
+    } as unknown as SimResult;
+    expect(metric.sim(atEnd, { args: { slot: 1 }, input: {} as TeamInput } as Parameters<typeof metric.sim>[1])).toBe(
+      10.39,
+    );
   });
 
   it('sums the gauge of the n-th shot of a slot (plan/design-anis-star-gauge-timing.md 7 節の V-B)', () => {

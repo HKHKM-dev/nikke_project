@@ -594,24 +594,28 @@ function shotGauge(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * アニス：スター編（plan/design-anis-star-gauge-timing.md 3.5 節・7 節の V-A）: フルバーストの窓の中で撃ち、窓の後に着いた枠の発
- * （窓の終わりを跨ぐ発）が溜めたゲージ（バーの最大に対する %。発と射撃ごとの倍率ダメージのヒットの合計）。モデルの最初の跨ぐ発の値。
- * 跨ぐ発が無ければ誤り
+ * アニス：スター編（plan/design-anis-star-gauge-timing.md 3.5 節・7 節の V-A）: 録画の窓の終わりを跨ぐ発（窓の中で撃ち、窓の後に着いた発）が
+ * 溜めたゲージ（バーの最大に対する %。発と射撃ごとの倍率ダメージのヒットの合計）と比べる、モデルの発 1 つ分のゲージ。
+ * 窓の順に、窓の始まりより後に撃って窓の終わりより後（終わりのフレームを含む）に着いた最初の発（跨ぐ発か、窓の後に撃った発）の値。
+ * モデルにどの窓の終わりを跨ぐ発があるかは発の位相で 1f ごとに入れ替わるので、跨ぐ発に限らない（V-0189 の論点 3 の X1）。
+ * 跨ぐ発も着弾のフレームに溜めること（C-0259）は、1 パス目の単体テストで見る。窓の後に着く発が無ければ誤り
  */
 function fullBurstCrossingShotGauge(result: SimResult, ctx: MetricContext): number {
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
   const slotIndex = slotIndexOf(ctx);
-  for (const w of schedule.fullBurstWindows) {
-    const crossing = result.shotGauges.filter(
-      (g) => g.slotIndex === slotIndex && w.start <= g.shotFrame && g.shotFrame < w.end && g.frame >= w.end,
+  const windows = schedule.fullBurstWindows;
+  for (const [k, w] of windows.entries()) {
+    const next = windows[k + 1]?.start ?? Infinity;
+    const after = result.shotGauges.filter(
+      (g) => g.slotIndex === slotIndex && w.start <= g.shotFrame && g.shotFrame < next && g.frame >= w.end,
     );
-    if (crossing.length === 0) continue;
-    const first = crossing[0]!.shotFrame;
-    const energy = crossing.filter((g) => g.shotFrame === first).reduce((a, g) => a + g.energy, 0);
+    if (after.length === 0) continue;
+    const first = Math.min(...after.map((g) => g.shotFrame));
+    const energy = after.filter((g) => g.shotFrame === first).reduce((a, g) => a + g.energy, 0);
     return Math.round((energy / BURST_GAUGE_MAX) * 10_000) / 100;
   }
-  throw new Error('フルバーストの終わりを跨ぐ発が無い');
+  throw new Error('フルバーストの窓の後に着く発が無い');
 }
 
 function videoFramesBetween(schedule: SimResult['schedule'], ctx: MetricContext): number {
