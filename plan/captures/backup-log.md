@@ -100,3 +100,5 @@
 2026-10-06 00:13 に録画 232（I-DOLL・フラワー + ウンファ：タクティカル・アップ）を `intake.ts` で取り込み、この 1 本（`range/20261006-232_rl+sr_flower+eunhwa-tu_burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`1ddec6a23b68`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-06 00:13 に録画 233（I-DOLL・フラワー + ウンファ：タクティカル・アップ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261006-233_rl+sr+ar_flower+eunhwa-tu+sun_full-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`c114aabf159b`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 00:58 に録画 242（ウンファ：タクティカル・アップ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-242_sr_eunhwa-tu_crit-rate.mp4`）だけを同期した。E: と I: で sha256 が一致（`43c4d87170ab`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。

@@ -115,7 +115,7 @@ notes の種類: 未対応 32・前提の外 21・計算に無関係 26・補足
   - effects[3] timed・fullChargeShot・trueDamage: C-0314（確定）、C-0311（確定）
   - notes[0] 前提の外: カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）: 根拠なし
 - **skill2**: partial
-  - effects[0] passive・critRate: C-0268（仮説）、C-0235（仮説）
+  - effects[0] passive・critRate: C-0317（確定）、C-0268（仮説）、C-0235（仮説）
   - effects[1] passive・chargeDamage: C-0020（確定）
   - effects[2] passive・attack: C-0020（確定）
   - notes[0] 未対応: フォーメーションLT 適用中の追加効果（味方全体の発射体爆発ダメージ▲・防御力無視ダメージ▲）は未対応（語彙 withCharacter・projectileExplosionDamage・trueDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）: 根拠なし

@@ -1,0 +1,29 @@
+{
+  "id": "242",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-242_sr_eunhwa-tu_crit-rate.mp4",
+  "original": "2026-10-06_00-51-36.mp4",
+  "durationSec": 201.2,
+  "frames": 12069,
+  "fps": 60,
+  "sizeMB": 243.9,
+  "sha256": "43c4d87170ab",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0206 の 2 本目。録画 231 と同じ条件（単騎ではバーストは撃てない）"
+}
