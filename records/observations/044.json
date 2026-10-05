@@ -149,5 +149,101 @@
       "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
       "note": "V-0158 の読み直し（比べの基準）"
     }
+  },
+  {
+    "id": "044-10",
+    "recording": "044",
+    "kind": "count",
+    "use": "compare",
+    "value": 872,
+    "unit": "発",
+    "description": "モダニア（操作）の 4 回目のフルバーストの、殲滅モードの最初の発から最後の発までの発の数",
+    "source": "V-0171",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "殲滅モードの増分（2 ヒット + S1 の追加ダメージ。非会心で 24,617）の最初は f9846、最後は f10717。その後の 18 フレームは増分が無く、次からは通常攻撃の値（28,824）。殲滅モードは 1 フレーム 1 発で、増分の抜けたフレームの次は 2 発分（動画のフレームとゲーム内のフレームは 1 対 1 とみた。V-0162 と同じ）なので、発の数 = 最後 − 最初 + 1。途中の 4 か所（f10143〜10165 など）は HUD が読めない区間で、和が大きく撃ち続けている。2・3 回目のフルバーストは、増分の止まる長い間（f5011〜5148・f7390〜7481。的のジャンプとみる）が重なったので、読む前に決めたとおり比べない。1 回目（f1443〜2313）は凍結の記録で読んだので比べない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "from": 8707,
+        "to": 9588
+      },
+      "tolerance": {
+        "abs": 15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "044-11",
+    "recording": "044",
+    "kind": "hit",
+    "use": "compare",
+    "value": 25954,
+    "unit": "ダメージ",
+    "description": "モダニアの殲滅モードの 1 発（2 ヒット）の、2 ヒットともコア・会心・距離ボーナスなしの和（S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中）",
+    "source": "V-0171",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分 33,093（25 回のうち 21 回。最初は f2226）から S1 の追加ダメージ（非会心 7,139）を、38,865（4 回。f4599 など）から追加ダメージの会心 12,911 を引いた。予測ファイルの指標 hitDamage は殲滅モードの 1 発 2 ヒットを武器倍率に入れた 1 発の値を返す（skills/resolve.ts の weaponChange）ので、2 ヒットとも会心の和と比べる（読むときに気づいた。予測ファイルの note の「1 ヒット」は 1 発の意味になる）。許容は 2 ヒットの丸めの和なので ±2"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "044-12",
+    "recording": "044",
+    "kind": "hit",
+    "use": "compare",
+    "value": 28052,
+    "unit": "ダメージ",
+    "description": "モダニアの殲滅モードの 1 発（2 ヒット）の、2 ヒットともコア・会心・距離ボーナスありの和（S1 のスタック 5・S2 の攻撃力▲あり・フルバースト中）",
+    "source": "V-0171",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分 35,191（2 回。最初は f7255）から S1 の追加ダメージ（非会心 7,139）を引いた。044-11 と同じ読み方"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
