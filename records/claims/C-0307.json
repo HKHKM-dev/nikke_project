@@ -1,11 +1,11 @@
 {
   "id": "C-0307",
   "text": "クイーン（真）の S2 の鉄・拳・制・裁！の有利コードの攻撃ダメージ▲は、バーストを使った時に付き、S1 の▲と同じく有利の敵にだけ属性の倍率 1.1 に足し、フルバースト終了のフレームで外れる",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
-  "grade": "推論",
-  "basis": "解釈（説明文の読み。plan/design-true-damage-element.md 3.2 節）。撮る前の予測で、観測値はまだ無い。S1 の▲の形（C-0296。確定）が前提。フルバースト中の 1 ペレットでは 1more の攻撃力▲（C-0308）と同時に効き、録画では分けられない。V-0211",
-  "model": "`data/skills/870.json`（skill2 の `timed`・`burstUse`・`elementDamage`・`durationUntil: fullBurstEnd`）。窓は `skills/timeline.ts` の durationUntil の扱い",
+  "grade": "厳密一致",
+  "basis": "`229-01`（フルバースト中。S2 の▲と 1more の攻撃力▲の積が H1 だけに乗る）・`229-02`・`229-03`（フルバースト終了の後。S2 の▲が外れている）。灼熱の `230-01`〜`230-03` では乗らない。HUD の増分の 21〜42 トリガーが窓ごとに H1 の単位のちょうどの倍数に乗り、手書きのほかの仮説の単位には 1 つも乗らない。録画 229・230 は最小構成の警告なし。予測は撮る前に commit した。フルバースト中の値は 1more の攻撃力▲（C-0308）と分けられないが、2026-10-06 のオーナーの判断で確定にした（C-0258・C-0289 と同じ扱い）。V-0211",
+  "model": "`data/skills/870.json`（skill2 の `timed`・`burstUse`・`elementDamage`・`durationUntil: fullBurstEnd`）。属性の倍率は C-0296 と同じ `element.ts` の `elementMultiplier`",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-06"
 }

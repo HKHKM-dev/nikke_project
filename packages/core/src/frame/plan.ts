@@ -278,10 +278,14 @@ export function planSkillHits(
       hits.push({ frame, slotIndex, effect, hit, ...(stacks === undefined ? {} : { stacks }) });
     };
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
-      const pre = isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
+      // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: delayFrames があれば、きっかけの後のフレームに
+      // そのフレームのバフで出す（発動の直前のバフで固定しない）。戦闘の終わりを越えるヒットは出さない
+      const delay = effect.delayFrames ?? 0;
+      const pre = delay === 0 && isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
       for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) {
         if (!damageConditionHolds(effect.condition, frame, schedule, statusSpans)) continue;
-        push(frame, effect, pre);
+        if (frame + delay >= frames) continue;
+        push(frame + delay, effect, pre);
       }
     }
     // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。

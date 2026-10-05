@@ -1,11 +1,11 @@
 {
   "id": "C-0309",
   "text": "クイーン（真）の S1 の 1more の分配ダメージは、風圧の敵にバーストを撃つたびに 1 回、バーストの使用のフレームに出る。式はバーストのヒットと同じ分配ダメージ（分配ダメージ▲が乗る）で、フルバースト補正 +0.5 が乗る。同じフレームに付く 1more の攻撃力▲と S2 の▲は乗らない",
-  "state": "仮説",
+  "state": "棄却",
   "topic": "スキル・キャラ固有",
   "grade": "推論",
-  "basis": "解釈（説明文の読み。plan/design-true-damage-element.md 3.6 節）。撮る前の予測で、観測値はまだ無い。フルバースト補正は倍率ダメージの規則（damage.ts の SKILL_HIT_FULL_BURST_BONUS）、同じ発動で付く攻撃力▲・S2 の▲が乗らないのは、バースト使用時の倍率ダメージの規則（frame/plan.ts の BURST_HIT_USES_PRE_ACTIVATION_BUFFS。発動の直前のバフで固定）を当てた読み。どちらもこのヒットでは確かめていないので、V-0212 の仮説で分ける。V-0212",
+  "basis": "解釈（撮る前の予測）。`229-05` の 1more のヒット（4,735,556）は、この読み（3,011,626.8）と合わず、フルバースト補正・攻撃力▲・S2 の▲がすべて乗る形（G3）と端数まで合った。ヒットはバーストのヒットの 23〜24f 後（`229-07`）。V-0212",
   "model": "`data/skills/870.json`（skill1 の `damage`・`burstUse`・`distributed`・`enemyElement: Wind`）。フルバースト補正は `damage.ts` の `SKILL_HIT_FULL_BURST_BONUS`、バフの固定は `frame/plan.ts` の `BURST_HIT_USES_PRE_ACTIVATION_BUFFS`",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-06"
 }

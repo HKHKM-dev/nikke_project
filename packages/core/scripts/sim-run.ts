@@ -596,6 +596,24 @@ for (const [i, slot] of slots.entries()) {
   }
   printCycles(i, c);
   printDots(c);
+  printDelayedHits(c);
+}
+
+/** 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md）: delayFrames のある倍率ダメージの遅れと、出た秒・1 回の値 */
+function printDelayedHits(c: NonNullable<(typeof calc.slots)[number]>): void {
+  const delayed = c.skillHits.activations.filter((a) => a.effect.delayFrames !== undefined);
+  if (delayed.length === 0) return;
+  const byEffect = new Map<string, typeof delayed>();
+  for (const a of delayed) {
+    const key = `${a.effect.source.skill}.${a.effect.effectIndex}`;
+    byEffect.set(key, [...(byEffect.get(key) ?? []), a]);
+  }
+  for (const [key, list] of byEffect) {
+    const e = list[0]!.effect;
+    console.log(
+      `delayed hit ${key}: ${(e.multiplier * 100).toFixed(2)}% +${e.delayFrames}f after ${triggerLabel(e.trigger)} ×${list.length} = ${fmt(list.reduce((t, a) => t + a.hit.perActivation, 0))} (at ${list.map((a) => a.seconds.toFixed(2)).join(', ')}s)`,
+    );
+  }
 }
 
 /** ニヒリスター編: 持続ダメージの内訳（効果ごとの tick の数・合計と、付いた回ごとの最初の tick の秒。plan/design-nihilister.md 2.1 節） */

@@ -37,7 +37,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "灼熱・2 回目のバーストの倍率ダメージのヒット（分配ダメージ▲込み。基準）。どの回でも、S1 の戦闘開始時とフルバースト終了時の攻撃力▲の外なら同じ値"
+      "note": "灼熱・2 回目のバーストの倍率ダメージのヒット（分配ダメージ▲込み。基準）。どの回でも、S1 の戦闘開始時とフルバースト終了時の攻撃力▲の外なら同じ値",
+      "observations": ["230-04"]
     },
     {
       "id": "burst-wind",
@@ -53,7 +54,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "風圧・2 回目のバーストの倍率ダメージのヒット。S1 の▲（C-0296）だけが灼熱と違う"
+      "note": "風圧・2 回目のバーストの倍率ダメージのヒット。S1 の▲（C-0296）だけが灼熱と違う",
+      "observations": ["229-04"]
     },
     {
       "id": "onemore-wind",
@@ -69,7 +71,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "風圧・2 回目のバーストの S1 の 1more の分配ダメージのヒット"
+      "note": "風圧・2 回目のバーストの S1 の 1more の分配ダメージのヒット",
+      "observations": ["229-05"]
     },
     {
       "id": "onemore-count-wind",
@@ -84,7 +87,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "風圧・180 秒の S1 の倍率ダメージの回数（1more の分配ダメージ。バーストの回数と同じ）"
+      "note": "風圧・180 秒の S1 の倍率ダメージの回数（1more の分配ダメージ。バーストの回数と同じ）",
+      "observations": ["229-06"]
     },
     {
       "id": "onemore-count-fire",
@@ -99,7 +103,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "灼熱・180 秒の S1 の倍率ダメージの回数（1more が無いので 0）"
+      "note": "灼熱・180 秒の S1 の倍率ダメージの回数（1more が無いので 0）",
+      "observations": ["230-05"]
     }
   ],
   "predicted": {

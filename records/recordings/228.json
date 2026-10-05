@@ -1,0 +1,29 @@
+{
+  "id": "228",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-228_sg_queen-makoto_wind_auto.mp4",
+  "original": "2026-10-05_23-40-24.mp4",
+  "durationSec": 213.3,
+  "frames": 12800,
+  "fps": 60,
+  "sizeMB": 258.5,
+  "sha256": "d5fdad0ddd73",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "クイーン（真）単騎・風圧タブ（V-0171 と同じ条件の 2 本目。V-0171 は録画 210 で完了）"
+}

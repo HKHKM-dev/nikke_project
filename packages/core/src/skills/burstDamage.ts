@@ -86,6 +86,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   cycle?: { step: number; steps: number };
   /** クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。frame/plan.ts の planSkillHits が絞る */
   condition?: DamageCondition;
+  /** 遅れて出る倍率ダメージ編: きっかけからの遅れ（フレーム）。frame/plan.ts の planSkillHits がそのフレームのバフで出す */
+  delayFrames?: number;
   /**
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
@@ -163,6 +165,7 @@ export function resolveDamageEffects(
         effectIndex,
       };
       if (effect.condition) r.condition = { ...effect.condition };
+      if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
