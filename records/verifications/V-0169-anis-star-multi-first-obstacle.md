@@ -48,12 +48,12 @@
 
 予測は 2026-10-05（commit 307ff46）に出した。
 
-| 指標                                  | 実測         | 予測 A0 |
-| ------------------------------------- | ------------ | ------- |
-| anis-shot1（shotGauge）               | （実測なし） | 10.39   |
-| delta-shot1（shotGauge）              | （実測なし） | 5.62    |
-| isabel-shot1（shotGauge）             | （実測なし） | 3.18    |
-| full-shot-index（gaugeFullShotIndex） | （実測なし） | 5       |
+| 指標                                  | 実測              | 予測 A0                     |
+| ------------------------------------- | ----------------- | --------------------------- |
+| anis-shot1（shotGauge）               | 22.25（`165-23`） | 10.39（-11.86、**許容外**） |
+| delta-shot1（shotGauge）              | （実測なし）      | 5.62                        |
+| isabel-shot1（shotGauge）             | （実測なし）      | 3.18                        |
+| full-shot-index（gaugeFullShotIndex） | 5（`162-24`）     | 5（+0、許容内）             |
 
 <!-- records:predictions:end -->
 
