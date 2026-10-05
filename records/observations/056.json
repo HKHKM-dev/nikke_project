@@ -188,5 +188,349 @@
       "tool": "recipe:hud-jumps@2（hud-jumps@1 のキャッシュ）",
       "note": "着地の後の最初の発は動画 f2683・4834・7140・9280・11233。その後の間隔は 1 回目 10・8・6・5、2 回目 8・6・5・5、3 回目 13・10・8・6、4 回目 13・10・8・11、5 回目 31・6・5・5。戦闘開始（f842）の後は 23・13・18・6、リロード明けの多くは 23・13・10・8 か 36・10・8・6（読みがまとまって崩れた回もある）。5 回目の最初の発の増分（9,751）は 1 ヒットの値の組に当てはまらず、読みが割れているかもしれない"
     }
+  },
+  {
+    "id": "056-13",
+    "recording": "056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5417,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア以外・会心なし・距離ボーナスなし）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f2683）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      }
+    }
+  },
+  {
+    "id": "056-14",
+    "recording": "056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 8126,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア以外・会心・距離ボーナスなし）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f2515）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      }
+    }
+  },
+  {
+    "id": "056-15",
+    "recording": "056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 10835,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスなし）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f2305）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      }
+    }
+  },
+  {
+    "id": "056-16",
+    "recording": "056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13543,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア・会心・距離ボーナスなし）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f2323）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      }
+    }
+  },
+  {
+    "id": "056-17",
+    "recording": "056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 7042,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア以外・会心なし・距離ボーナスあり）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f6197）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      }
+    }
+  },
+  {
+    "id": "056-18",
+    "recording": "056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 9751,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア以外・会心・距離ボーナスあり）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f11233）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      }
+    }
+  },
+  {
+    "id": "056-19",
+    "recording": "056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 12460,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスあり）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f5907）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      }
+    }
+  },
+  {
+    "id": "056-20",
+    "recording": "056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15168,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア・会心・距離ボーナスあり）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f5913）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      }
+    }
+  },
+  {
+    "id": "056-21",
+    "recording": "056",
+    "kind": "count",
+    "use": "compare",
+    "value": [857, 855.6, 847, 851.3, 850.3, 858.5],
+    "unit": "ヒット",
+    "description": "クラウンの S2 の回復ごとの、前の回復（1 回目は戦闘の最初のヒット）から次の窓の最初の▲のヒットの手前までの、通常攻撃のヒットの数（6 回）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓の最初の▲のヒットは f2304（▲なしのコアと▲ありのコアの 2 ヒットの増分 19,790 の後の方）・4068・5907・7745・9446（f2304 と同じ形）・11077。増分は格子の 1〜3 ヒットの和に分けて数え、隣り合う 2 フレームに割れた読み（和が 2 ヒットの値）は 2 ヒット。HUD が 18〜20 フレーム読めない区間（各回 1〜3 か所）は、増分の和を前後 400f の 1 ヒットの平均で割って見積もった（1 か所あたり ±0.5〜1 ヒット）ので、小数。許容 ±5 は読んだ後に、見積もりの幅と外れの数のばらつき（860 発で約 ±2）から決めた（撮る前・読む前には決めていない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "healHitCounts",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      }
+    }
+  },
+  {
+    "id": "056-22",
+    "recording": "056",
+    "kind": "count",
+    "use": "record",
+    "value": [860, 860, 860, 860, 860, 860],
+    "unit": "発",
+    "description": "クラウンの S2 の回復ごとの、前の回復（1 回目は戦闘の最初の発）から次の窓の最初の▲の発の手前までに撃った発の数（6 回）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "照準の横の残弾を 7,433 フレーム読み、減った量を足した。リロードは 17 回とも、直前に読めた残弾が 001（1 回だけ 002）で、000 は読めていない。マガジンは 300 発なので、リロードごとに読めなかった最後の発を足した（1 回目は戦闘開始の 300 から）。窓の最初の▲のヒットのフレームまでの発の数は 861・1,721・2,581・3,441・4,301・5,161（その発を含む）で、間はどれもちょうど 860。孤立した読み違い（前後より大きいか小さい 1 フレーム）は落とした"
+    }
   }
 ]

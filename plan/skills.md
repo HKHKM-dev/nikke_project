@@ -4,9 +4,9 @@
 - キャラ × スロットごとに、対応状況と、効果・notes と、その根拠の結論（定義の `claims`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 対応状況は効果と notes の種類から決まる（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）: `supported`（効果あり・未対応なし）・`partial`（効果あり・未対応あり）・`unsupported`（効果なし・未対応あり）・`noEffect`（前提の中でダメージに効く効果なし）。
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
-- 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。
+- 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 29・効果 131（根拠あり 71）・notes 87（根拠あり 29）
+件数: キャラ 29・効果 131（根拠あり 86）・notes 87（根拠あり 31）
 
 notes の種類: 未対応 37・前提の外 20・計算に無関係 25・補足 5
 
@@ -111,8 +111,8 @@ notes の種類: 未対応 37・前提の外 20・計算に無関係 25・補足
   - notes[1] 前提の外: カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）: 根拠なし
 - **skill2**: partial
   - effects[0] passive・critRate: C-0268（仮説）、C-0235（仮説）
-  - effects[1] passive・chargeDamage: 根拠なし
-  - effects[2] passive・attack: 根拠なし
+  - effects[1] passive・chargeDamage: C-0020（確定）
+  - effects[2] passive・attack: C-0020（確定）
   - notes[0] 未対応: フォーメーションLT 適用中の追加効果（味方全体の発射体爆発ダメージ▲・防御力無視ダメージ▲）は未対応（語彙 withCharacter・projectileExplosionDamage・trueDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）: 根拠なし
 - **burst**: unsupported
   - notes[0] 未対応: 使用武器変更（1 発の防御力無視ダメージ）と、命中した敵の受けるダメージ▲（10 秒間維持）は未対応（語彙 weaponChange（trueDamage）・damageTaken はあるが、撮影していない）: 根拠なし
@@ -143,7 +143,7 @@ notes の種類: 未対応 37・前提の外 20・計算に無関係 25・補足
 ## 160 ユニ
 
 - **skill1**: supported
-  - effects[0] timed・fullBurstStart・chargeSpeed: 根拠なし
+  - effects[0] timed・fullBurstStart・chargeSpeed: C-0013（確定）
 - **skill2**: supported
   - effects[0] timed・fullChargeShot・maxAmmo: 根拠なし
   - effects[1] heal・fullChargeShot: C-0082（確定）
@@ -217,16 +217,16 @@ notes の種類: 未対応 37・前提の外 20・計算に無関係 25・補足
 ## 260 モダニア
 
 - **skill1**: supported
-  - effects[0] damage・normalHit・additional: C-0105（確定）
-  - effects[1] timed・normalHit・critDamage: 根拠なし
-  - effects[2] timed・normalHit・maxAmmo: 根拠なし
+  - effects[0] damage・normalHit・additional: C-0105（確定）、C-0119（確定）
+  - effects[1] timed・normalHit・critDamage: C-0272（確定）
+  - effects[2] timed・normalHit・maxAmmo: C-0272（確定）
 - **skill2**: supported
-  - effects[0] timed・fullBurstStart・hitRate: 根拠なし
-  - effects[1] timed・normalHit・attack: C-0124（確定）
+  - effects[0] timed・fullBurstStart・hitRate: C-0170（仮説）
+  - effects[1] timed・normalHit・attack: C-0124（確定）、C-0118（確定）
 - **burst**: supported
-  - effects[0] timed・burstUse・infiniteAmmo: 根拠なし
-  - effects[1] weaponChange・burstUse: 根拠なし
-  - notes[0] 補足: 「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている: 根拠なし
+  - effects[0] timed・burstUse・infiniteAmmo: C-0274（仮説）
+  - effects[1] weaponChange・burstUse: C-0273（確定）、C-0274（仮説）
+  - notes[0] 補足: 「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている: C-0274（仮説）
   - notes[1] 前提の外: 殲滅モードの照準線拡張・照準範囲内のすべての敵を同時に照準は、単体の的では関係しない: 根拠なし
 
 ## 261 ニヒリスター
@@ -244,7 +244,7 @@ notes の種類: 未対応 37・前提の外 20・計算に無関係 25・補足
 ## 271 ノワール
 
 - **skill1**: supported
-  - effects[0] passive・attack: 根拠なし
+  - effects[0] passive・attack: C-0020（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・maxAmmo: 根拠なし
   - effects[1] ammoRefill・fullBurstStart: 根拠なし
@@ -257,11 +257,11 @@ notes の種類: 未対応 37・前提の外 20・計算に無関係 25・補足
 ## 290 マナ
 
 - **skill1**: partial
-  - effects[0] passive・attack: 根拠なし
+  - effects[0] passive・attack: C-0020（確定）
   - notes[0] 未対応: 通常攻撃 10 回ごとの味方全体の回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
   - notes[1] 前提の外: 味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない: 根拠なし
 - **skill2**: supported
-  - effects[0] passive・burstGaugeSpeed: 根拠なし
+  - effects[0] passive・burstGaugeSpeed: C-0269（確定）
   - effects[1] timed・fullBurstStart・attackDamage: 根拠なし
   - effects[2] timed・fullBurstStart・attack: 根拠なし
   - effects[3] timed・fullBurstStart・chargeSpeed: C-0267（確定）
@@ -304,10 +304,10 @@ notes の種類: 未対応 37・前提の外 20・計算に無関係 25・補足
   - effects[1] timed・fullBurstStart・reloadSpeed: 根拠なし
   - notes[0] 計算に無関係: 直前にバーストスキルを使用していない味方への防御力▲はダメージに関係しない: 根拠なし
 - **skill2**: supported
-  - effects[0] heal・normalShot: 根拠なし
-  - effects[1] timed・healed・attackDamage: 根拠なし
+  - effects[0] heal・normalShot: C-0271（確定）
+  - effects[1] timed・healed・attackDamage: C-0050（確定）、C-0271（確定）
   - notes[0] 計算に無関係: リラックス（受ける HP 回復量▲）・無敵・挑発はダメージに関係しない: 根拠なし
-  - notes[1] 補足: リラックスは 20 スタックで回復するまでの数え上げにだけ使う: 根拠なし
+  - notes[1] 補足: リラックスは 20 スタックで回復するまでの数え上げにだけ使う: C-0271（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・attackDamage: 根拠なし
   - notes[0] 前提の外: バリアは扱わない（要件 5.2 節）: 根拠なし
@@ -397,14 +397,14 @@ notes の種類: 未対応 37・前提の外 20・計算に無関係 25・補足
 ## 870 クイーン（真）
 
 - **skill1**: partial
-  - effects[0] timed・battleStart・attack: 根拠なし
+  - effects[0] timed・battleStart・attack: C-0270（仮説）
   - effects[1] timed・fullBurstEnd・attack: 根拠なし
   - notes[0] 未対応: 有利コードの攻撃ダメージ▲（ペルソナ - ヨハンナ）は未対応（語彙 elementDamage はあるが、スキルの▲が OL・キューブと同じく 1.1 に足すかの根拠の結論が無い。V-0171 で撮影待ち）: 根拠なし
   - notes[1] 未対応: 1more が適用された時の分配ダメージは未対応（語彙 damage・enemyElement はあるが、根拠の結論が無い）: 根拠なし
   - notes[2] 未対応: 追撃が適用された時の分配ダメージは未対応（ほかのペルソナのキャラがいる編成で起きる。きっかけが説明文と CDN から分からない）: 根拠なし
   - notes[3] 計算に無関係: 防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない: 根拠なし
 - **skill2**: partial
-  - effects[0] passive・attackDamage: 根拠なし
+  - effects[0] passive・attackDamage: C-0018（確定）
   - effects[1] timed・burstStage3Enter・distributedDamage: 根拠なし
   - notes[0] 未対応: バースト使用時の鉄・拳・制・裁！の有利コードの攻撃ダメージ▲（フルバースト終了で解除）は未対応（語彙 elementDamage・durationUntil はあるが、根拠の結論が無い。V-0171 の結論が先に要る）: 根拠なし
   - notes[1] 未対応: 1more 時のバトンタッチ（自分を除く基本バースト段階 3 のペルソナ状態の味方に攻撃力▲・スタック）は未対応（ほかのペルソナのキャラがいる編成で起きる。その対象の語彙も無い）: 根拠なし

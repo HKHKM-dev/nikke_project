@@ -152,5 +152,35 @@
     },
     "source": "V-0057",
     "readAt": "2026-09-30"
+  },
+  {
+    "id": "010-07",
+    "recording": "010",
+    "kind": "count",
+    "use": "compare",
+    "value": 118,
+    "unit": "ヒット",
+    "description": "マナ（AR・操作）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号",
+    "source": "V-0176",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "最初のヒットは f556（総ダメージが 0 から 37,112）。バーが消えたのは f1249 で、そのフレームのヒットが 118 番目（113px の満タンは f1224 = 113 番目）。増分は 124 個とも 1 ヒットの格子の値（胴体 37,112・コア 65,659・会心 51,385・コア会心 79,933）で、読めないフレームを挟んだ増分は無い。gauge.ts の f141〜415 の溜め始め・満タン・消失は、最初のヒットより前（戦闘の前の表示）なので数えない。外れた発は数えない（総ダメージが増えない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

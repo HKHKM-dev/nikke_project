@@ -9,7 +9,10 @@
           "kind": "passive",
           "target": "self",
           "stat": "attack",
-          "ref": 1
+          "ref": 1,
+          "claims": [
+            "C-0020"
+          ]
         }
       ],
       "notes": [
@@ -35,7 +38,10 @@
           "assumes": {
             "ja": "マターシグマはフルバースト開始で解除されるが、毎サイクル自分がバーストするのでフルバースト終了時に再付与され、ゲージが溜まる区間にはいつも付いている",
             "en": "Metal σ is removed at Full Burst start but re-applied at its end because she bursts each cycle, so it is always on while the gauge charges"
-          }
+          },
+          "claims": [
+            "C-0269"
+          ]
         },
         {
           "kind": "timed",

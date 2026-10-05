@@ -1,0 +1,237 @@
+{
+  "verification": "V-0178",
+  "team": [
+    {
+      "rid": 330,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "説明文どおり（通常攻撃 43 発ごとに 1 スタック、20 スタック = 860 発で回復。回復で攻撃ダメージ 20.99%▲・7 秒）。命中ではなく発を数える"
+    }
+  ],
+  "targets": [
+    {
+      "id": "s2-body-nocrit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      },
+      "note": "S2 の攻撃ダメージ▲の窓の中（モデルの 1 回目の窓 f1479〜1890 の中の f1600）の 1 ヒット。コア以外・会心なし・距離ボーナスなし。録画のどの窓の発でもよい（スペック固定なので窓の中の値は同じ）"
+    },
+    {
+      "id": "s2-body-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      },
+      "note": "S2 の攻撃ダメージ▲の窓の中（モデルの 1 回目の窓 f1479〜1890 の中の f1600）の 1 ヒット。コア以外・会心・距離ボーナスなし。録画のどの窓の発でもよい（スペック固定なので窓の中の値は同じ）"
+    },
+    {
+      "id": "s2-core-nocrit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      },
+      "note": "S2 の攻撃ダメージ▲の窓の中（モデルの 1 回目の窓 f1479〜1890 の中の f1600）の 1 ヒット。コア・会心なし・距離ボーナスなし。録画のどの窓の発でもよい（スペック固定なので窓の中の値は同じ）"
+    },
+    {
+      "id": "s2-core-crit-nodist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      },
+      "note": "S2 の攻撃ダメージ▲の窓の中（モデルの 1 回目の窓 f1479〜1890 の中の f1600）の 1 ヒット。コア・会心・距離ボーナスなし。録画のどの窓の発でもよい（スペック固定なので窓の中の値は同じ）"
+    },
+    {
+      "id": "s2-body-nocrit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      },
+      "note": "S2 の攻撃ダメージ▲の窓の中（モデルの 1 回目の窓 f1479〜1890 の中の f1600）の 1 ヒット。コア以外・会心なし・距離ボーナスあり。録画のどの窓の発でもよい（スペック固定なので窓の中の値は同じ）"
+    },
+    {
+      "id": "s2-body-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      },
+      "note": "S2 の攻撃ダメージ▲の窓の中（モデルの 1 回目の窓 f1479〜1890 の中の f1600）の 1 ヒット。コア以外・会心・距離ボーナスあり。録画のどの窓の発でもよい（スペック固定なので窓の中の値は同じ）"
+    },
+    {
+      "id": "s2-core-nocrit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      },
+      "note": "S2 の攻撃ダメージ▲の窓の中（モデルの 1 回目の窓 f1479〜1890 の中の f1600）の 1 ヒット。コア・会心なし・距離ボーナスあり。録画のどの窓の発でもよい（スペック固定なので窓の中の値は同じ）"
+    },
+    {
+      "id": "s2-core-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      },
+      "note": "S2 の攻撃ダメージ▲の窓の中（モデルの 1 回目の窓 f1479〜1890 の中の f1600）の 1 ヒット。コア・会心・距離ボーナスあり。録画のどの窓の発でもよい（スペック固定なので窓の中の値は同じ）"
+    },
+    {
+      "id": "heal-hits",
+      "model": "sim",
+      "metric": "healHitCounts",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "056-11"
+      },
+      "note": "回復ごとの、前の回復（初回は戦闘の始め）から回復までの通常攻撃の当たる数（期待値）。録画では、総ダメージの増分を 1 ヒットの値に分解して、戦闘の最初のヒットから 1 回目の窓の最初の▲のヒットの手前まで、以後は窓の最初の▲のヒットどうしの間のヒットを数える"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "0db7715dd52a792be133af279a0c74e781d05b22",
+    "values": {
+      "H1": {
+        "s2-body-nocrit-nodist": 5417.26010055,
+        "s2-body-crit-nodist": 8125.890150825,
+        "s2-core-nocrit-nodist": 10834.5202011,
+        "s2-core-crit-nodist": 13543.150251375,
+        "s2-body-nocrit-dist": 7042.438130715001,
+        "s2-body-crit-dist": 9751.06818099,
+        "s2-core-nocrit-dist": 12459.698231265,
+        "s2-core-crit-dist": 15168.32828154,
+        "heal-hits": [858.45, 857.96, 854.86, 853.79, 855.58, 857.92]
+      }
+    },
+    "seen": {
+      "056": [
+        "023-01",
+        "056-01",
+        "056-02",
+        "056-03",
+        "056-04",
+        "056-05",
+        "056-06",
+        "056-07",
+        "056-08",
+        "056-09",
+        "056-10",
+        "056-11",
+        "056-12"
+      ]
+    }
+  }
+}

@@ -14,7 +14,10 @@
           "assumes": {
             "ja": "自分の HP が 70% 以上",
             "en": "Own HP is 70% or above"
-          }
+          },
+          "claims": [
+            "C-0020"
+          ]
         }
       ]
     },

@@ -20,7 +20,8 @@
             "en": "Once per normal shot (every shot is assumed to hit; once even for the 2 hits of Annihilation Mode). Core and distance do not boost it (recording 44)"
           },
           "claims": [
-            "C-0105"
+            "C-0105",
+            "C-0119"
           ]
         },
         {
@@ -33,7 +34,10 @@
           "stat": "critDamage",
           "ref": 3,
           "maxStacksRef": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-0272"
+          ]
         },
         {
           "kind": "timed",
@@ -46,7 +50,10 @@
           "decrease": true,
           "ref": 6,
           "maxStacksRef": 7,
-          "durationRef": 8
+          "durationRef": 8,
+          "claims": [
+            "C-0272"
+          ]
         }
       ]
     },
@@ -58,7 +65,10 @@
           "target": "allies",
           "stat": "hitRate",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0170"
+          ]
         },
         {
           "kind": "timed",
@@ -78,7 +88,8 @@
             "en": "Hits are counted regardless of the hit rate state; the state is checked at every 200th hit"
           },
           "claims": [
-            "C-0124"
+            "C-0124",
+            "C-0118"
           ]
         }
       ]
@@ -90,7 +101,10 @@
           "trigger": "burstUse",
           "target": "self",
           "stat": "infiniteAmmo",
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0274"
+          ]
         },
         {
           "kind": "weaponChange",
@@ -101,14 +115,21 @@
           "assumes": {
             "ja": "殲滅モードは 1 発に 2 ヒット（射撃場の的で実測。照準範囲内の敵の数か弾の数かは未確定）。コア倍率は基礎の MG と同じ、スピンアップなしで毎フレーム 1 発、終わると基礎の MG を最大装弾数まで込め直して戻る（録画 44）",
             "en": "Annihilation Mode lands 2 hits per shot (measured on the range target; whether it is per enemy in range or per bullet is unknown). Base MG core multiplier, no spin-up (one shot per frame), and the base MG comes back fully reloaded (recording 44)"
-          }
+          },
+          "claims": [
+            "C-0273",
+            "C-0274"
+          ]
         }
       ],
       "notes": [
         {
           "ja": "「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている",
           "en": "Full Burst Time +5 s is already in burst_duration (a 15 s full burst)",
-          "kind": "modeling"
+          "kind": "modeling",
+          "claims": [
+            "C-0274"
+          ]
         },
         {
           "ja": "殲滅モードの照準線拡張・照準範囲内のすべての敵を同時に照準は、単体の的では関係しない",

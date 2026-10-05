@@ -5,6 +5,7 @@ import { hitFrameOf, hitFramesOf, videoFrameOf, type BurstSchedule } from '../bu
 import { computeTeamDamage } from '../calc/model.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
+import { effectiveMaxAmmo } from '../frame/firing.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs } from '../skills/buffs.ts';
@@ -225,6 +226,56 @@ function magazineShots(result: SimResult, ctx: MetricContext): number[] {
     first = last + 1;
     return shots;
   });
+}
+
+/**
+ * クラウン編（V-0178）: その枠が出した回復（heal）ごとに、前の回復（初回は戦闘の始め）からその回復までに撃った通常攻撃の
+ * 当たる数の期待値（発ごとの区間の弾丸命中率の和）。録画の総ダメージの増分から数えたヒット数と比べる
+ */
+function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const slot = slotOf(result.slots, ctx);
+  const frames = slotOf(result.shots, ctx).frames;
+  const heals = result.timeline.heals.filter((h) => h.sourceSlotIndex === slotIndex).map((h) => h.frame);
+  const starts = [...new Set(heals)].sort((a, b) => a - b);
+  let from = 0;
+  return starts.map((to) => {
+    let hits = 0;
+    for (const f of frames) {
+      if (f < from || f >= to) continue;
+      const segment = slot.segments.find((s) => s.start <= f && f < s.end);
+      if (!segment) throw new Error(`フレーム ${f} の区間が無い`);
+      hits += segment.trigger.hitRate;
+    }
+    from = to;
+    return Math.round(hits * 100) / 100;
+  });
+}
+
+/**
+ * モダニア編（V-0179）: そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017）。録画ではリロードを終えた直後の
+ * 照準の横の残弾と比べる
+ */
+function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
+  const slot = slotOf(result.slots, ctx);
+  const input = slotOf(ctx.input.slots, ctx);
+  const frame = Number(ctx.args.frame);
+  const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
+  if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
+  return effectiveMaxAmmo(input.character.shot.maxAmmo, segment.trigger.buffs);
+}
+
+/**
+ * 5-2 の撮影計画（V-0177）: その枠が受ける timed の効果の窓の終わり（モデルのフレーム。戦闘時間で切った窓は戦闘の終わり）。
+ * skill（'skill1' | 'skill2' | 'burst'）と stat で絞る
+ */
+function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  return result.timeline.windows
+    .filter(
+      (w) => w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
+    )
+    .map((w) => w.end);
 }
 
 function shotFramesIn(result: SimResult, ctx: MetricContext): number[] {
@@ -460,6 +511,9 @@ export const METRICS: Readonly<Record<string, Metric>> = {
       ).length,
   },
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
+  healHitCounts: { args: ['slot'], sim: healHitCounts },
+  maxAmmoAt: { args: ['slot', 'frame'], sim: maxAmmoAt },
+  buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 3 節）: 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
   // 最後の弾丸の発を含む）。弾丸チャージでマガジンが延びるかを見る
   magazineShots: { args: ['slot', 'count'], sim: magazineShots },

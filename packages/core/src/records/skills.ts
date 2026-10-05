@@ -179,7 +179,7 @@ const SKILLS_HEADER = `# スキル定義の対応状況
 - キャラ × スロットごとに、対応状況と、効果・notes と、その根拠の結論（定義の \`claims\`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 対応状況は効果と notes の種類から決まる（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）: \`supported\`（効果あり・未対応なし）・\`partial\`（効果あり・未対応あり）・\`unsupported\`（効果なし・未対応あり）・\`noEffect\`（前提の中でダメージに効く効果なし）。
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
-- 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義には、さかのぼって結論を作らない（[skills-guide.md](skills-guide.md) 0 節）。`;
+- 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。`;
 
 function triggerLabel(e: SkillEffect): string | undefined {
   if (!('trigger' in e)) return undefined;
