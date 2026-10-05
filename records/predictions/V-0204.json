@@ -1,0 +1,82 @@
+{
+  "verification": "V-0204",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 870,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（クイーン（真）の遅れは遅れの表の行（C-0231。仮説）のまま）。ヒットの値は、撃つ側のバフをIIIの発動の直前で固定する規則（plan/design-burst-landing.md 9 節）のまま。遅れが表の行と違う仮説は、表の行で切り替わるので、このファイルの範囲外（検証記録に手で書く）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "queen-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム）から、バーストの倍率ダメージのヒットまでの動画のフレーム数（フルバーストの入りの止まりを含む）"
+    },
+    {
+      "id": "queen-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストの倍率ダメージの値（会心なし。フルバースト補正もコアも乗らない）"
+    },
+    {
+      "id": "queen-burst-hit-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストの倍率ダメージの値（会心。フルバースト補正もコアも乗らない）。1 回目が会心ならこちらと比べる"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "ce342b1055619210ebcb51f50a8f0b5de1cb61e9",
+    "values": {
+      "H0": {
+        "queen-delays": [23, 23, 23, 23, 23],
+        "queen-burst-hit": 6323965.596513205,
+        "queen-burst-hit-crit": 9485948.394769808
+      }
+    },
+    "seen": {}
+  }
+}

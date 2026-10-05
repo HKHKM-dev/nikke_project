@@ -1,0 +1,157 @@
+{
+  "verification": "V-0201",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 10,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（ラピの遅れは遅れの表の行（C-0227。仮説）のまま）。ヒットの値は、撃つ側のバフをIIIの発動の直前で固定する規則（plan/design-burst-landing.md 9 節）のまま。遅れが表の行と違う仮説は、表の行で切り替わるので、このファイルの範囲外（検証記録に手で書く）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "rapi-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム）から、バーストの倍率ダメージの 1 ヒットまでの動画のフレーム数（フルバーストの入りの止まりを含む）"
+    },
+    {
+      "id": "rapi-offsets-1",
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目の発動の、1 ヒット目から 2・3 ヒット目までの動画のフレーム数（先頭は 0）"
+    },
+    {
+      "id": "rapi-offsets-2",
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目の発動の、1 ヒット目から 2・3 ヒット目までの動画のフレーム数（先頭は 0）"
+    },
+    {
+      "id": "rapi-offsets-3",
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目の発動の、1 ヒット目から 2・3 ヒット目までの動画のフレーム数（先頭は 0）"
+    },
+    {
+      "id": "rapi-offsets-4",
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目の発動の、1 ヒット目から 2・3 ヒット目までの動画のフレーム数（先頭は 0）"
+    },
+    {
+      "id": "rapi-offsets-5",
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "5 回目の発動の、1 ヒット目から 2・3 ヒット目までの動画のフレーム数（先頭は 0）"
+    },
+    {
+      "id": "rapi-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストの倍率ダメージの 3 ヒットの合計の値（会心なし。フルバースト補正もコアも乗らない）"
+    },
+    {
+      "id": "rapi-burst-hit-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストの倍率ダメージの 3 ヒットの合計の値（会心。フルバースト補正もコアも乗らない）。1 回目が会心ならこちらと比べる"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-05",
+    "commit": "ce342b1055619210ebcb51f50a8f0b5de1cb61e9",
+    "values": {
+      "H0": {
+        "rapi-delays": [112, 112, 112, 112, 112],
+        "rapi-offsets-1": [0, 7, 14],
+        "rapi-offsets-2": [0, 7, 14],
+        "rapi-offsets-3": [0, 7, 14],
+        "rapi-offsets-4": [0, 7, 14],
+        "rapi-offsets-5": [0, 7, 14],
+        "rapi-burst-hit": 624393.3276,
+        "rapi-burst-hit-crit": 936589.9913999999
+      }
+    },
+    "seen": {}
+  }
+}
