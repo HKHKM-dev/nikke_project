@@ -1,0 +1,137 @@
+{
+  "verification": "V-0214",
+  "team": [
+    {
+      "rid": 870,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（C-0296。S1 の有利コードの攻撃ダメージ▲を 1.1 に足す）。H2（1.1 と別の乗数）は定義を切り替える仮説なので、検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "pellet-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      },
+      "note": "録画 228・戦闘開始 15 秒以内（S1 の攻撃力▲の窓）の 1 ペレット（胴体）。V-0171 の 210-01 と同じ指標"
+    },
+    {
+      "id": "pellet-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      },
+      "note": "同じ窓の 1 ペレット（会心）"
+    },
+    {
+      "id": "pellet-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      },
+      "note": "同じ窓の 1 ペレット（コア）"
+    },
+    {
+      "id": "pellet-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      },
+      "note": "同じ窓の 1 ペレット（コア会心）"
+    },
+    {
+      "id": "after-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      },
+      "note": "録画 228・戦闘開始 15 秒の後（S1 の攻撃力▲の外）の 1 ペレット（胴体）"
+    },
+    {
+      "id": "after-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      },
+      "note": "同じ窓の 1 ペレット（会心）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "aa657bb608a4297ce9472cfae2af1ccd665a65c8",
+    "values": {
+      "H1": {
+        "pellet-body": 58299.82042040001,
+        "pellet-crit": 87449.73063060001,
+        "pellet-core": 116599.64084080001,
+        "pellet-core-crit": 145749.55105100002,
+        "after-body": 38783.236822980005,
+        "after-crit": 58174.85523447001
+      }
+    },
+    "seen": {
+      "228": []
+    }
+  }
+}
