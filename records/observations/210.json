@@ -1,0 +1,126 @@
+[
+  {
+    "id": "210-01",
+    "recording": "210",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0171",
+    "readAt": "2026-10-05",
+    "value": 58300,
+    "description": "クイーン（真）単騎・風圧の的の 1 ペレット（胴体）。戦闘開始（f752）から 15 秒以内（S1 の攻撃力▲の窓）・距離ボーナスなし（遠）。f764 の発（HUD の増分 583,000 = 10 ペレットとも 58300 と読めた）。V-0171",
+    "method": {
+      "note": "012 と同じ読み方: 的の上の 1 ペレットの数値を目で読み、HUD の総ダメージのフレーム間差分（hud.ts --mode jumps）で確かめた。f752〜1652 の発の増分はどれも 29,150（胴体の半分）の倍数（胴体 2・会心 3・コア 4・コア会心 5 の格子に乗る）。戦闘開始は timer.ts --mode changes の +320f の次の +89f の変わり目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "210-02",
+    "recording": "210",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0171",
+    "readAt": "2026-10-05",
+    "value": 87450,
+    "description": "クイーン（真）単騎・風圧の的の 1 ペレット（会心）。戦闘開始（f752）から 15 秒以内（S1 の攻撃力▲の窓）・距離ボーナスなし（遠）。f804 の発（的の上の橙の 87450。HUD の増分 437,250）。V-0171",
+    "method": {
+      "note": "012 と同じ読み方: 的の上の 1 ペレットの数値を目で読み、HUD の総ダメージのフレーム間差分（hud.ts --mode jumps）で確かめた。f752〜1652 の発の増分はどれも 29,150（胴体の半分）の倍数（胴体 2・会心 3・コア 4・コア会心 5 の格子に乗る）。戦闘開始は timer.ts --mode changes の +320f の次の +89f の変わり目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "210-03",
+    "recording": "210",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0171",
+    "readAt": "2026-10-05",
+    "value": 116600,
+    "description": "クイーン（真）単騎・風圧の的の 1 ペレット（コア）。戦闘開始（f752）から 15 秒以内（S1 の攻撃力▲の窓）・距離ボーナスなし（遠）。f1190 の発（的の上の CORE HIT の 116600。f1191〜1214 で読めた。HUD の増分 553,850）。V-0171",
+    "method": {
+      "note": "012 と同じ読み方: 的の上の 1 ペレットの数値を目で読み、HUD の総ダメージのフレーム間差分（hud.ts --mode jumps）で確かめた。f752〜1652 の発の増分はどれも 29,150（胴体の半分）の倍数（胴体 2・会心 3・コア 4・コア会心 5 の格子に乗る）。戦闘開始は timer.ts --mode changes の +320f の次の +89f の変わり目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "210-04",
+    "recording": "210",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0171",
+    "readAt": "2026-10-05",
+    "value": 145750,
+    "description": "クイーン（真）単騎・風圧の的の 1 ペレット（コア会心）。戦闘開始（f752）から 15 秒以内（S1 の攻撃力▲の窓）・距離ボーナスなし（遠）。f843 の発（的の上の CORE HIT の 145750。HUD の増分 553,850）。V-0171",
+    "method": {
+      "note": "012 と同じ読み方: 的の上の 1 ペレットの数値を目で読み、HUD の総ダメージのフレーム間差分（hud.ts --mode jumps）で確かめた。f752〜1652 の発の増分はどれも 29,150（胴体の半分）の倍数（胴体 2・会心 3・コア 4・コア会心 5 の格子に乗る）。戦闘開始は timer.ts --mode changes の +320f の次の +89f の変わり目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "burst": false
+      }
+    }
+  }
+]

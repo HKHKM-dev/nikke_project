@@ -1,0 +1,30 @@
+{
+  "id": "210",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-210_sg_queen-makoto_wind_auto.mp4",
+  "original": "2026-10-05_22-08-07.mp4",
+  "durationSec": 197.5,
+  "frames": 11847,
+  "fps": 60,
+  "sizeMB": 239.5,
+  "sha256": "a9baad6ac181",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": true,
+      "note": "単騎・AUTO 射撃 ON・オートバースト OFF（撮影の計画の値）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（風圧タブ・3 分モード・スペック固定 ON）。クイーン（真）単騎（V-0171 の撮影）。冒頭の出撃画面（風圧タブ・スペック固定 ON・1 体）と末尾の戦闘履歴（クイーン（真））を画で確かめた。AUTO 射撃・オートバーストは撮影の計画の値。戦闘開始は f752（timer.ts --mode changes の +320f の次の +89f の変わり目）。V-0171"
+}
