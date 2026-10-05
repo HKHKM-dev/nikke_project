@@ -103,5 +103,37 @@
     },
     "source": "V-0057",
     "readAt": "2026-09-30"
+  },
+  {
+    "id": "014-06",
+    "recording": "014",
+    "kind": "timing",
+    "use": "compare",
+    "value": [884],
+    "unit": "f",
+    "description": "クイーン（真）（SG・操作）単騎で、S1 の戦闘開始時の攻撃力▲が切れたフレーム（戦闘開始からのゲーム内のフレーム）。▲の中の最後のトリガーと、▲の外の最初のトリガーのあいだの中点",
+    "source": "V-0175",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f836（timer.ts の +88f の変わり目。最初のヒットはその 12f 後の f848）。▲の中の最後のトリガーは f1700（増分 353,790 = 47,172 × 6 + 70,758。1 ペレットの胴体 47,172 は 012-01 と同じ）、▲の外の最初のトリガーは f1740（282,428 = 31,381 × 9 の丸め。014-01 と同じ）。戦闘開始から 864f と 904f のあいだで、中点 884f。幅が ±20f あるので、許容は ±20。動画のフレームはゲーム内のフレームと 1 対 1 とみた（この間の残り時間の秒の変わり目は 58〜59f ごと）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "tolerance": {
+        "abs": 20
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
   }
 ]
