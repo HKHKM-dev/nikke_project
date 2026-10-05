@@ -1,0 +1,65 @@
+{
+  "formatVersion": 1,
+  "resourceId": 836,
+  "checkedAt": "2026-10-06",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "敵 1 体。通常攻撃の命中 120 回ごとに発火する（命中は期待値で数え、リロードでも数え直さない）。発火した発の通常攻撃には乗らず、次の発から乗る。次の発火は 120 ヒット（5 秒の射撃とリロード）より後なので、窓は重ならない",
+            "en": "One enemy. Fires on every 120th normal-attack hit (hits are counted as expected hits and not reset by reloads). The triggering shot itself does not get it; the next shot does. The next trigger comes after 120 more hits (5 s of firing plus a reload), so windows never overlap"
+          },
+          "claims": [
+            "C-0138",
+            "C-0152",
+            "C-0315"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃 60 回ごとの、残りの HP の割合が最も低い味方 2 機の受ける HP 回復量▲は、ダメージに関係しない",
+          "en": "Incoming Healing up on the 2 allies with the lowest HP ratio every 60 normal attacks does not affect damage",
+          "kind": "noDamage",
+          "claims": [
+            "C-0316"
+          ]
+        },
+        {
+          "ja": "通常攻撃 120 回ごとの、残りの HP の割合が最も低い味方 2 機の受けるダメージ▼は、防御系でダメージに関係しない",
+          "en": "Damage Taken down on the 2 allies with the lowest HP ratio every 120 normal attacks is defensive and does not affect damage",
+          "kind": "noDamage",
+          "claims": [
+            "C-0316"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "残りの HP の割合が最も低い味方 2 機の持続回復は未対応（HP を持たないので対象が決まらない。回復を受けた時の効果を起こさない。ほかにダメージとゲージには関係しない）",
+          "en": "The heal over time on the 2 allies with the lowest HP ratio is not modeled (HP is not modeled, so the targets are undetermined; it does not trigger effects on being healed; it does not otherwise affect damage or the burst gauge)",
+          "kind": "unimplemented",
+          "claims": [
+            "C-0316"
+          ]
+        }
+      ]
+    }
+  }
+}

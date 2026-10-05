@@ -1,0 +1,11 @@
+{
+  "id": "C-0315",
+  "text": "サクラの S1 は、通常攻撃の命中 120 回ごと（外れた発は数えない。リロードで数え直さない）に、敵に受けるダメージ 17.18%▲（5 秒）を付ける。発火した発の通常攻撃には乗らず、次の発から乗る（モデルは命中を期待値で数える）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "撮る前の解釈（説明文の読み）。予測は V-0213（予測ファイル `records/predictions/V-0213.json`）",
+  "model": "`data/skills/836.json` の skill1（`timed`・`damageTaken`・`allies`、回数トリガー `normalHit` 120）。命中の数えは `skills/triggers.ts` の `shotCountWeight`（期待値の近似。plan/design-ludmilla-wo.md 2.2 節）、窓は発火の次のフレームから（`skills/timeline.ts` の `buffStartFires`）",
+  "replaces": [],
+  "updated": "2026-10-06"
+}
