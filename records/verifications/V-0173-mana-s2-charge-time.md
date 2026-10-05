@@ -39,13 +39,13 @@
 
 予測は 2026-10-05（commit 0bc6955）に出した。
 
-| 指標                                                 | 実測         | 予測 H0 | 予測 H1 |
-| ---------------------------------------------------- | ------------ | ------- | ------- |
-| delta-fb0-interval-diff（fullBurstShotIntervalDiff） | （実測なし） | 0       | -10     |
-| delta-fb1-interval-diff（fullBurstShotIntervalDiff） | （実測なし） | 0       | -10     |
-| delta-fb2-interval-diff（fullBurstShotIntervalDiff） | （実測なし） | 0       | -10     |
-| delta-fb3-interval-diff（fullBurstShotIntervalDiff） | （実測なし） | 0       | -10     |
-| delta-fb4-interval-diff（fullBurstShotIntervalDiff） | （実測なし） | 0       | -10     |
+| 指標                                                 | 実測            | 予測 H0              | 予測 H1           |
+| ---------------------------------------------------- | --------------- | -------------------- | ----------------- |
+| delta-fb0-interval-diff（fullBurstShotIntervalDiff） | -10（`020-08`） | 0（+10、**許容外**） | -10（+0、許容内） |
+| delta-fb1-interval-diff（fullBurstShotIntervalDiff） | -10（`020-09`） | 0（+10、**許容外**） | -10（+0、許容内） |
+| delta-fb2-interval-diff（fullBurstShotIntervalDiff） | -10（`020-10`） | 0（+10、**許容外**） | -10（+0、許容内） |
+| delta-fb3-interval-diff（fullBurstShotIntervalDiff） | -10（`020-11`） | 0（+10、**許容外**） | -10（+0、許容内） |
+| delta-fb4-interval-diff（fullBurstShotIntervalDiff） | -10（`020-12`） | 0（+10、**許容外**） | -10（+0、許容内） |
 
 <!-- records:predictions:end -->
 
