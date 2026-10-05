@@ -1,0 +1,32 @@
+[
+  {
+    "id": "251-01",
+    "recording": "251",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0223",
+    "readAt": "2026-10-06",
+    "value": 158,
+    "unit": "発",
+    "description": "マナ単騎（タクティカルブーストキューブ Lv8）のリロードを終えた直後の照準の横の残弾（最大装弾数）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode mags",
+      "note": "node tools/captures/reticle-ammo.ts --mode mags。マガジンの最大の表示は、戦闘の始め（f2487）と 11 回のリロード明けのすべてで 158（ほかの増えは数字の読み違い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 100
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  }
+]

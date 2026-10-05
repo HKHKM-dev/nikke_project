@@ -1,0 +1,99 @@
+{
+  "id": "252",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-252_ar_mana_bear-cube_fixed-off.mp4",
+  "original": "2026-10-06_07-54-26.mp4",
+  "durationSec": 211.7,
+  "frames": 12701,
+  "fps": 60,
+  "sizeMB": 256.4,
+  "sha256": "c4edbfa3feed",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 290,
+      "name": "マナ",
+      "controlled": true,
+      "build": {
+        "attack": 444597,
+        "overload": {
+          "head": [
+            {
+              "option": "chargeDamage",
+              "level": 1
+            },
+            {
+              "option": "elementDamage",
+              "level": 9
+            },
+            {
+              "option": "critDamage",
+              "level": 3
+            }
+          ],
+          "body": [
+            {
+              "option": "attack",
+              "level": 1
+            },
+            {
+              "option": "elementDamage",
+              "level": 9
+            },
+            {
+              "option": "maxAmmo",
+              "level": 10
+            }
+          ],
+          "arm": [
+            {
+              "option": "attack",
+              "level": 11
+            },
+            {
+              "option": "maxAmmo",
+              "level": 11
+            },
+            {
+              "option": "hitRate",
+              "level": 11
+            }
+          ],
+          "leg": [
+            {
+              "option": "elementDamage",
+              "level": 11
+            },
+            {
+              "option": "critDamage",
+              "level": 11
+            }
+          ]
+        },
+        "cube": {
+          "id": 1000303,
+          "level": 15
+        },
+        "collection": {
+          "rarity": "SR",
+          "level": 5
+        },
+        "skillLevels": {
+          "skill1": 7,
+          "skill2": 10,
+          "burst": 7
+        }
+      }
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。レリックベアーキューブ Lv15。コレクション SR Lv5。V-0224"
+}
