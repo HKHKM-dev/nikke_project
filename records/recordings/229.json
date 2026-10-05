@@ -1,0 +1,41 @@
+{
+  "id": "229",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-229_sr_ram_delta_queen-makoto_wind.mp4",
+  "original": "2026-10-05_23-44-17.mp4",
+  "durationSec": 200.2,
+  "frames": 12013,
+  "fps": 60,
+  "sizeMB": 242.6,
+  "sha256": "8d7c88c8decb",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "ラム（I）+ デルタ（II）+ クイーン（真）（III・操作）・風圧タブ。V-0211・V-0212"
+}

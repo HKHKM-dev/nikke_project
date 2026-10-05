@@ -14,6 +14,7 @@ import {
   treasureSlots,
   withCharacterAllows,
   type CharacterData,
+  type DamageEffect,
   type Element,
   type SkillLevels,
   type BurstStepMixCondition,
@@ -49,6 +50,25 @@ function BurstDelayNote({ character }: { character: CharacterData }) {
         <span className="badge">実測</span>{' '}
         {`バーストスキルダメージは${hits}、バーストスキル使用時の効果は ${sec(effectFrames)} 秒後に出る（${row.claim}）`}
       </li>
+    </ul>
+  );
+}
+
+/** 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md）: delayFrames のある damage の時刻とバフの扱い */
+function DelayedHitNotes({ effects }: { effects: readonly SkillEffect[] }) {
+  const delayed = effects.filter(
+    (e): e is SkillEffect & DamageEffect & { delayFrames: number } =>
+      e.kind === 'damage' && e.delayFrames !== undefined,
+  );
+  if (delayed.length === 0) return null;
+  return (
+    <ul className="notes">
+      {delayed.map((e, i) => (
+        <li key={i} className="note approx">
+          <span className="badge">実測</span>{' '}
+          {`倍率ダメージはバーストスキル使用の ${framesToGameSeconds(e.delayFrames).toFixed(2)} 秒後に、そのときのバフ（同じ発動で付いた効果を含む）で出る${e.claims ? `（${e.claims.join('・')}）` : ''}`}
+        </li>
+      ))}
     </ul>
   );
 }
@@ -288,6 +308,7 @@ export function SkillSection({
                 </ul>
               )}
               {slot === 'burst' && <BurstDelayNote character={shown.character} />}
+              {entry && <DelayedHitNotes effects={entry.effects} />}
               {entry?.notes && entry.notes.length > 0 && (
                 <ul className="notes">
                   {entry.notes.map((n, i) => (

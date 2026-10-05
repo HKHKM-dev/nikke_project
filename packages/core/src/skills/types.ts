@@ -548,6 +548,12 @@ export type DamageEffect = {
   enemyElement?: Element;
   /** クルミ S2 編: 発火の条件（gaugeHits とは組み合わせない） */
   condition?: DamageCondition;
+  /**
+   * 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3 節）: きっかけのフレームの delayFrames 後に出す（1 以上の整数）。
+   * バフとフルバースト補正はそのフレームのもの（同じ発動で付いた効果も入る。発動の直前のバフで固定する規則は当てない）。
+   * きっかけは burstUse だけ（クイーン（真）S1 の「1more が適用された時」。C-0310）
+   */
+  delayFrames?: number;
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -1441,6 +1447,15 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   // クルミ S2 編: ゲージは 1 パス目で溜めるので、1 パス目の後に決まる窓・条件とは組み合わせない（plan/design-kurumi-s2.md 2.4 節）
   if (effect.gaugeHits !== undefined && (effect.condition !== undefined || hasCountingWindow(trigger))) {
     fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a condition or a counting window (during)');
+  }
+  if (v.delayFrames !== undefined) {
+    // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: いま要るのはバースト使用時だけ
+    if (trigger !== 'burstUse') fail(`${path}.delayFrames`, 'delayFrames needs the trigger "burstUse"');
+    const d = v.delayFrames;
+    if (typeof d !== 'number' || !Number.isInteger(d) || d < 1) {
+      fail(`${path}.delayFrames`, `expected a positive integer, got ${JSON.stringify(d)}`);
+    }
+    effect.delayFrames = d;
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

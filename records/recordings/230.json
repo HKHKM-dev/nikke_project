@@ -1,0 +1,41 @@
+{
+  "id": "230",
+  "date": "2026-10-05",
+  "folder": "range",
+  "file": "20261005-230_sr_ram_delta_queen-makoto_fire.mp4",
+  "original": "2026-10-05_23-47-57.mp4",
+  "durationSec": 202.7,
+  "frames": 12160,
+  "fps": 60,
+  "sizeMB": 245.6,
+  "sha256": "237cb6e5d4ce",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "ラム（I）+ デルタ（II）+ クイーン（真）（III・操作）・灼熱タブ。V-0211・V-0212 の基準"
+}
