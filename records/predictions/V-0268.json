@@ -1,0 +1,110 @@
+{
+  "verification": "V-0268",
+  "note": "既存の録画 084（ココア（I・AI）+ ニヒリスター（II・操作・AUTO 射撃 ON）+ 紅蓮：ブラックシャドウ（III・AI）・灼熱の的・3 分モード・スペック固定 ON・オートバースト ON）の読み直し。ニヒリスターの S2 のヒットを読む前に出した（V-0039・V-0131 は火傷とバーストの着弾だけを読んだ）。動画のフレームは戦闘開始（f911）から",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 261,
+      "controlled": true
+    },
+    {
+      "rid": 225,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（戦闘開始から 10 秒ごと。C-0091）"
+    },
+    {
+      "id": "H2",
+      "note": "録画 081 の間隔の平均（590.2f = 10.034 秒）ごと。081 で 1 回あたり約 2f ずつ遅れた形が、ほかの編成でも出る",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 261,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 10.034
+              },
+              "ref": 1,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 2,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "180 秒の S2 の回数。H1・H2 とも 17（081 と同じ）"
+    },
+    {
+      "id": "mean-interval",
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "args": {
+        "slot": 2,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "S2 の 1 回目から最後までの動画のフレーム数 ÷ (回数 − 1)。フルバーストの入りの止まり（22f。C-0069〜C-0071）を含む。H1 と H2 は約 2f 離れる"
+    },
+    {
+      "id": "first",
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "S2 の 1 回目の動画のフレーム（戦闘開始から）。081 では 10 秒より 18f 遅かった（C-0091 の「約 10.3 秒」。モデルには入れていない）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "79a82b25374e51dbe019db1fb452bf360a65d587",
+    "values": {
+      "H1": {
+        "count": 17,
+        "mean-interval": 593.75,
+        "first": 610
+      },
+      "H2": {
+        "count": 17,
+        "mean-interval": 595.75,
+        "first": 612
+      }
+    },
+    "seen": {
+      "084": ["084-01", "084-02", "084-03", "084-04", "084-05", "084-06", "084-07"]
+    }
+  }
+}

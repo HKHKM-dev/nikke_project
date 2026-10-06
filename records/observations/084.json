@@ -161,5 +161,110 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "084-08",
+    "recording": "084",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0268",
+    "readAt": "2026-10-07",
+    "value": [628, 1217, 2397, 3599, 4189, 4778, 5391, 5980, 6571, 7160, 7773, 8363, 8954, 9543, 10156],
+    "unit": "f",
+    "description": "ニヒリスター（II・操作）の S2（メギドフレイム）のヒットが出た動画のフレーム（戦闘開始から。値で特定できた 15 回）。隣どうしの間隔は 589〜591f、フルバーストの入りをまたぐと 613f（止まり 22〜23f）、1217 → 2397 と 2397 → 3599 は 2 回分（間の 1 回ずつは読めない）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、モデルの S2 の 1 ヒットの値（135,837・203,756・271,674。会心の有無・フルバースト補正の有無）と、この録画で 4 回以上出る増分（ほかの発の 1 ヒット）の 1 つとの和に突き合わせた。ちょうど一致したのは 15 か所で、どれも前のフレームが読めた単独の増分（ほかの発は乗っていない）。戦闘開始は f911（録画の素性の注）。フレームは戦闘開始から。読めなかった 2 回は、間の位置（戦闘開始から約 1806f・約 3000f）の増分がほかの発と混ざっている（f2723 の 759,393 は前の 20f が読めず、f3904〜3922 はフルバーストの中の複数の発の和）"
+    }
+  },
+  {
+    "id": "084-09",
+    "recording": "084",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0268",
+    "readAt": "2026-10-07",
+    "value": 17,
+    "description": "S2 のヒットの回数（180 秒）。値で特定できた 15 回（`084-08`）と、間隔から位置が決まる 2 回（どちらもその位置の増分がほかの発と混ざっている）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`084-08` の列。間の 2 回は、前後の S2 から 590f の位置（戦闘開始から約 1806f・約 3000f。後者はフルバーストの入りの止まりを足す）に、S2 を含みうる混ざった増分があることだけを確かめた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 2,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "084-10",
+    "recording": "084",
+    "kind": "interval",
+    "use": "compare",
+    "source": "V-0268",
+    "readAt": "2026-10-07",
+    "value": 595.5,
+    "unit": "f",
+    "description": "S2 の 1 回目（戦闘開始から 628f）から 17 回目（10,156f）までの動画のフレーム数 ÷ 16。フルバーストの入りの止まり 4 回を含む",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`084-08` の最初と最後。どちらも値で特定できた単独の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "args": {
+        "slot": 2,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "084-11",
+    "recording": "084",
+    "kind": "timing",
+    "use": "compare",
+    "source": "V-0268",
+    "readAt": "2026-10-07",
+    "value": 628,
+    "unit": "f",
+    "description": "S2 の 1 回目のヒットの動画のフレーム（戦闘開始から。1 回目のフルバーストの入りの止まりの後）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`084-08` の 1 つ目。203,756（フルバースト補正つき・会心なし）の単独の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

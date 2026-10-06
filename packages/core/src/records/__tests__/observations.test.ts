@@ -332,6 +332,26 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 3, n: 2, count: 2, crit: false })).toThrow('3 回目');
   });
 
+  it('lists the video frames of a slot skill and their mean interval (V-0268)', () => {
+    const effect = (skill: string, dot?: object) => ({ source: { resourceId: 261, skill }, ...(dot ? { dot } : {}) });
+    const result = {
+      schedule: null,
+      skillHits: [
+        { frame: 588, slotIndex: 1, effect: effect('skill2') },
+        { frame: 600, slotIndex: 1, effect: effect('burst') },
+        { frame: 700, slotIndex: 1, effect: effect('skill2', { intervalSeconds: 1, durationSeconds: 5 }) },
+        { frame: 1176, slotIndex: 1, effect: effect('skill2') },
+        { frame: 1200, slotIndex: 0, effect: effect('skill2') },
+        { frame: 1766, slotIndex: 1, effect: effect('skill2') },
+      ],
+    } as unknown as SimResult;
+    const value = (metric: string, args: Record<string, unknown>) =>
+      METRICS[metric]!.sim(result, { args, input: {} as TeamInput } as Parameters<(typeof METRICS)[string]['sim']>[1]);
+    expect(value('skillHitVideoFrame', { slot: 2, skill: 'skill2', n: 1 })).toBe(1176);
+    expect(value('skillHitMeanInterval', { slot: 2, skill: 'skill2' })).toBe(589);
+    expect(() => value('skillHitMeanInterval', { slot: 1, skill: 'skill2' })).toThrow('2 回');
+  });
+
   it('rescales the first stacking dot tick at or after a frame to a given stack count (V-0227)', () => {
     const source = { resourceId: 851, skill: 'skill1' as const, name: { ja: '', en: '' } };
     const tick = (multiplier: number) =>

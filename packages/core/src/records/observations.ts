@@ -769,6 +769,11 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
   dotStackTickDamage: { args: ['slot', 'frame', 'stacks', 'crit'], sim: dotStackTickDamage },
   skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
+  skillHitVideoFrame: {
+    args: ['slot', 'skill', 'n'],
+    sim: (r, c) => skillHitVideoFrames(r, c)[Number(c.args.n)] ?? NaN,
+  },
+  skillHitMeanInterval: { args: ['slot', 'skill'], sim: skillHitMeanInterval },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
@@ -882,6 +887,25 @@ function skillHitsDamage(result: SimResult, ctx: MetricContext): number {
   for (let i = n; i < n + Number(ctx.args.count); i++)
     sum += skillHitDamage(result, { ...ctx, args: { ...ctx.args, n: i } });
   return sum;
+}
+
+/**
+ * V-0268: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の発動の、録画の動画のフレーム（戦闘開始から。フルバーストの入りの
+ * 止まりを足す）の列
+ */
+function skillHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
+  return result.skillHits
+    .filter(
+      (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
+    )
+    .map((h) => videoFrameOf(result.schedule, h.frame));
+}
+
+/** V-0268: skillHitVideoFrames の 1 回目から最後までの動画のフレーム数 ÷ (回数 − 1)（発動の間隔の平均） */
+function skillHitMeanInterval(result: SimResult, ctx: MetricContext): number {
+  const frames = skillHitVideoFrames(result, ctx);
+  if (frames.length < 2) throw new Error('発動が 2 回に満たない');
+  return (frames.at(-1)! - frames[0]!) / (frames.length - 1);
 }
 
 /**
