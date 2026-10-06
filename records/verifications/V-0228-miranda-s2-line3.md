@@ -48,7 +48,13 @@
 
 <!-- records:predictions:start -->
 
-予測はまだ出していない（`npm run records:predict`）。
+予測は 2026-10-06（commit bb4a35b）に出した。
+
+| 指標                                | 実測         | 予測 H0 | 予測 H1 |
+| ----------------------------------- | ------------ | ------- | ------- |
+| sun-first-crit-rate（critRateAt）   | （実測なし） | 0.15    | 1       |
+| sun-later-crit-rate（critRateAt）   | （実測なし） | 0.15    | 0.15    |
+| delta-first-crit-rate（critRateAt） | （実測なし） | 0.15    | 0.15    |
 
 <!-- records:predictions:end -->
 
