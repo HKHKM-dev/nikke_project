@@ -11,7 +11,8 @@
           "en": "ATK down on the enemy hit by the last bullet does not affect damage",
           "kind": "noDamage",
           "claims": [
-            "C-0072"
+            "C-0072",
+            "C-0367"
           ]
         }
       ]
