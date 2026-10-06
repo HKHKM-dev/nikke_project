@@ -1,0 +1,243 @@
+[
+  {
+    "id": "301-01",
+    "recording": "301",
+    "source": "V-0261",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 9485963,
+    "unit": "ダメージ",
+    "description": "クイーン（真）の 1 回目のバーストの倍率ダメージのヒット（会心。S1 の戦闘開始時の攻撃力▲の中）。フルバーストの入りの止まりの後の増分（f1490）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）と --mode series（バーストの前後）",
+      "note": "増分は 9,485,963 の 1 つで、会心なし（予測の burst-hit-1）の 1.5 倍（バーストのヒットにはフルバースト補正が乗らず、会心は倍率グループに 0.5 を足す）。H0（分配ダメージ▲なし）の値の 1.5 倍（約 4,992,350）とは合わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "301-02",
+    "recording": "301",
+    "source": "V-0261",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 4206947,
+    "unit": "ダメージ",
+    "description": "2 回目のバーストの倍率ダメージのヒット（会心なし）。止まりの後の増分 4,467,730（f3867）から、同じ止まりに重なった 260,783 を引いた値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）と --mode series（バーストの前後）",
+      "note": "260,783 は、この録画で単独の増分として 20 回出る値（ラムかデルタの 1 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "301-03",
+    "recording": "301",
+    "source": "V-0261",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 4206947,
+    "unit": "ダメージ",
+    "description": "3 回目のバーストの倍率ダメージのヒット（会心なし）。止まりの後の増分 4,457,992（f6245）から、重なった 251,045 を引いた値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）と --mode series（バーストの前後）",
+      "note": "251,045 は、クイーン（真）の▲なしの胴体の単位（301-07）のちょうど 8 倍（胴体 8 ペレットのトリガー）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "301-04",
+    "recording": "301",
+    "source": "V-0261",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 6310420,
+    "unit": "ダメージ",
+    "description": "4 回目のバーストの倍率ダメージのヒット（会心）。止まりの後の増分（f8623）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）と --mode series（バーストの前後）",
+      "note": "会心なし（301-02・301-05）の 1.5 倍（6,310,420.5 の端数を落とした値）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "301-05",
+    "recording": "301",
+    "source": "V-0261",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 4206947,
+    "unit": "ダメージ",
+    "description": "5 回目のバーストの倍率ダメージのヒット（会心なし）。止まりの後の増分（f11001）。ほかのヒットと重なっていない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）と --mode series（バーストの前後）",
+      "note": "予測の burst-hit-2 と同じ値（3〜5 回目も同じ値の見込み）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "301-06",
+    "recording": "301",
+    "source": "V-0261",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 47172.1,
+    "unit": "ダメージ",
+    "description": "1〜4 回目のフルバースト終了（右上の帯が FB の赤から BURST のバーに替わったフレーム。f2072・4449・6827・9205）から 882f の中の、クイーン（真）の 1 ペレット（胴体）。増分のうち 67 トリガーが、単位 47,171.956 の 1/10 の格子（±8）に乗り、その和 ÷ 単位の数（647.6 単位）で出した値。同じ区間で、▲なしの格子（31,380.562）だけに乗る増分は 0",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・右上の帯（crop=200:60:1720:410）を 1 フレームずつ並べた一覧",
+      "note": "胴体 1・距離ボーナス 1.3・会心 1.5・コア 2 の倍率は、どれも単位の 1/10 の整数倍。どちらの格子にも乗らない増分（区間の中で 61）は、ラム・デルタの発として除いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.001
+      }
+    }
+  },
+  {
+    "id": "301-07",
+    "recording": "301",
+    "source": "V-0261",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 31380.765,
+    "unit": "ダメージ",
+    "description": "フルバースト終了から 882f の後、次のフルバーストの前までの、クイーン（真）の 1 ペレット（胴体）。71 トリガー（707.2 単位）が単位 31,380.562 の 1/10 の格子に乗り、▲ありの格子だけに乗る増分は 0",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "フルバーストの中の増分も、フルバースト補正 +0.5 で同じ格子の 1.5 倍に乗る（予測の pellet-fb = 31,380.562 × 1.5）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.001
+      }
+    }
+  },
+  {
+    "id": "301-08",
+    "recording": "301",
+    "source": "V-0261",
+    "readAt": "2026-10-07",
+    "kind": "interval",
+    "use": "record",
+    "value": [
+      [845, 884],
+      [879, 918],
+      [879, 991],
+      [868, 907]
+    ],
+    "unit": "f",
+    "description": "1〜4 回目のフルバースト終了から、S1 の攻撃力▲の中の最後のトリガー（301-06 の格子）と、▲の外の最初のトリガー（▲ありの格子に乗らない最初のクイーン（真）の増分）までの動画のフレーム数。どの回も、ゲーム内の時計の 15 秒（882f。C-0140）がその間に入る。実時間の 15 秒（900f）は 1 回目（884f の増分が▲なし）と合わない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・右上の帯の一覧",
+      "note": "フルバーストの終わりの後は止まりが無いので、動画のフレームはゲーム内の時計のまま"
+    }
+  }
+]

@@ -30,13 +30,19 @@
           "stat": "maxAmmo",
           "scaling": "flat",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0395"
+          ]
         },
         {
           "kind": "ammoRefill",
           "trigger": "fullBurstStart",
           "target": "allies",
-          "ref": 3
+          "ref": 3,
+          "claims": [
+            "C-0395"
+          ]
         }
       ]
     },
@@ -57,7 +63,10 @@
           "targetWeapon": "SG",
           "stat": "hitRate",
           "ref": 2,
-          "durationRef": 3
+          "durationRef": 3,
+          "claims": [
+            "C-0396"
+          ]
         }
       ],
       "notes": [

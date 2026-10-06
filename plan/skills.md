@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 34・効果 180（根拠あり 139）・notes 81（根拠あり 45）
+件数: キャラ 34・効果 180（根拠あり 148）・notes 81（根拠あり 47）
 
 notes の種類: 未対応 20・前提の外 22・計算に無関係 31・補足 8
 
@@ -159,7 +159,7 @@ notes の種類: 未対応 20・前提の外 22・計算に無関係 31・補足
 - **skill1**: supported
   - effects[0] timed・fullBurstStart・chargeSpeed: C-0013（確定）
 - **skill2**: supported
-  - effects[0] timed・fullChargeShot・maxAmmo: 根拠なし
+  - effects[0] timed・fullChargeShot・maxAmmo: C-0390（確定）
   - effects[1] heal・fullChargeShot: C-0082（確定）
   - notes[0] 計算に無関係: 味方全体の防御力▲はダメージに関係しない: 根拠なし
 - **burst**: supported
@@ -260,11 +260,11 @@ notes の種類: 未対応 20・前提の外 22・計算に無関係 31・補足
 - **skill1**: supported
   - effects[0] passive・attack: C-0020（確定）
 - **skill2**: supported
-  - effects[0] timed・fullBurstStart・maxAmmo: 根拠なし
-  - effects[1] ammoRefill・fullBurstStart: 根拠なし
+  - effects[0] timed・fullBurstStart・maxAmmo: C-0395（確定）
+  - effects[1] ammoRefill・fullBurstStart: C-0395（確定）
 - **burst**: partial
   - effects[0] burstDamage・skill: C-0226（確定）
-  - effects[1] timed・burstUse・hitRate: 根拠なし
+  - effects[1] timed・burstUse・hitRate: C-0396（仮説）
   - notes[0] 前提の外: 阻止部位の攻撃ダメージ▲（SG の味方に 10 秒、同じ部隊の味方がいれば味方全体に 30 秒）は、射撃場の敵に阻止部位が無いのでダメージに関係しない: 根拠なし
   - notes[1] 未対応: 同じ部隊の味方がいれば味方全体の命中率▲（30 秒間維持）は未対応（部隊の条件 squad はあるが、AI のサクラのコア命中率の、部隊あり・なしの直の比べ（V-0219。10 本）で R = 1.13 ± 0.08 と、付くかどうかを決められなかった）: 根拠なし
 
@@ -342,17 +342,17 @@ notes の種類: 未対応 20・前提の外 22・計算に無関係 31・補足
 ## 330 クラウン
 
 - **skill1**: supported
-  - effects[0] timed・fullBurstStart・attack: 根拠なし
-  - effects[1] timed・fullBurstStart・reloadSpeed: 根拠なし
-  - notes[0] 計算に無関係: 直前にバーストスキルを使用していない味方への防御力▲はダメージに関係しない: 根拠なし
+  - effects[0] timed・fullBurstStart・attack: C-0393（確定）
+  - effects[1] timed・fullBurstStart・reloadSpeed: C-0394（確定）
+  - notes[0] 計算に無関係: 直前にバーストスキルを使用していない味方への防御力▲はダメージに関係しない: C-0393（確定）
 - **skill2**: supported
   - effects[0] heal・normalShot: C-0271（確定）
   - effects[1] timed・healed・attackDamage: C-0050（確定）、C-0271（確定）
   - notes[0] 計算に無関係: リラックス（受ける HP 回復量▲）・無敵・挑発はダメージに関係しない: 根拠なし
   - notes[1] 補足: リラックスは 20 スタックで回復するまでの数え上げにだけ使う: C-0271（確定）
 - **burst**: supported
-  - effects[0] timed・burstUse・attackDamage: 根拠なし
-  - notes[0] 前提の外: バリアは扱わない（要件 5.2 節）: 根拠なし
+  - effects[0] timed・burstUse・attackDamage: C-0393（確定）
+  - notes[0] 前提の外: バリアは扱わない（要件 5.2 節）: C-0393（確定）
 
 ## 352 ヘルム
 
@@ -451,7 +451,7 @@ notes の種類: 未対応 20・前提の外 22・計算に無関係 31・補足
 
 - **skill1**: supported
   - effects[0] timed・battleStart・attack: C-0270（仮説）
-  - effects[1] timed・fullBurstEnd・attack: 根拠なし
+  - effects[1] timed・fullBurstEnd・attack: C-0392（確定）
   - effects[2] passive・elementDamage: C-0296（確定）
   - effects[3] damage・burstUse・distributed: C-0310（確定）
   - effects[4] damage・followUp が適用された時・distributed: C-0361（仮説）
@@ -459,7 +459,7 @@ notes の種類: 未対応 20・前提の外 22・計算に無関係 31・補足
   - notes[1] 計算に無関係: 防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない: 根拠なし
 - **skill2**: supported
   - effects[0] passive・attackDamage: C-0018（確定）
-  - effects[1] timed・burstStage3Enter・distributedDamage: 根拠なし
+  - effects[1] timed・burstStage3Enter・distributedDamage: C-0391（確定）
   - effects[2] timed・burstUse・elementDamage: C-0307（確定）
   - effects[3] timed・burstUse・attack: C-0357（確定）
   - notes[0] 計算に無関係: 鉄・拳・制・裁！の防御力▲はダメージに関係しない: 根拠なし

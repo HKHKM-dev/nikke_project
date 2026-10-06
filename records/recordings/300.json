@@ -1,0 +1,35 @@
+{
+  "id": "300",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-300_rl+ar_yuni+idoll-sun_sun-control.mp4",
+  "original": "2026-10-07_00-07-31.mp4",
+  "durationSec": 203.8,
+  "frames": 12228,
+  "fps": 60,
+  "sizeMB": 246.3,
+  "sha256": "dcfb46576653",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "ユニ（AI）+ I-DOLL・サン（操作・撃たない）・灼熱タブ。V-0260（案 A）"
+}

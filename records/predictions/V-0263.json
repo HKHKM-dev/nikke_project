@@ -1,0 +1,678 @@
+{
+  "verification": "V-0263",
+  "note": "ノワール（III・AI）+ レイヴン（III・AI）+ ユニ（II・操作・撃たない）+ ココア（I・AI）（撮った枠順。戦闘履歴で確かめて出し直した）・灼熱の的。I・II は CT 20 秒、III は 2 体とも CT 40 秒なので、フルバーストは約 20 秒ごとで III はノワールとレイヴンが交互（モデルでは 1 回目がノワール）。モデルは撃たない枠を表せないのでユニも撃つ。録画で起きないユニの S2（フルチャージの攻撃時）を消すため、どの指標の setup でも dropHeals でユニの回復を落とし、S2 の最大装弾数▲は対象を MG（編成にいない）に絞って誰にも付かないようにした",
+  "team": [
+    {
+      "rid": 271,
+      "controlled": false
+    },
+    {
+      "rid": 851,
+      "controlled": false
+    },
+    {
+      "rid": 160,
+      "controlled": true
+    },
+    {
+      "rid": 311,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（バーストの effects[1]: SG の味方に命中率▲（値 2。Lv10 で 13.93%）を 10 秒。持続の命中率▲としてコア命中率を C-0170 の形で上げ、弾丸命中率には効かせない）"
+    },
+    {
+      "id": "H0",
+      "note": "ノワールのバーストの命中率▲が効かない（対象を MG に絞って誰にも付かないようにした）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          },
+          {
+            "rid": 271,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "hitRate",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "core-midnear-noirfb",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "中近（戦闘開始から 1 回目のジャンプまで）の、ノワールが III を撃った回のフルバーストの中のノワール（AI）のペレットのコア命中率"
+    },
+    {
+      "id": "bullet-midnear-noirfb",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "中近（戦闘開始から 1 回目のジャンプまで）の、ノワールが III を撃った回のフルバーストの中のノワールのペレットの弾丸命中率（モデルは SG の命中率▲を弾丸命中率に効かせていない）"
+    },
+    {
+      "id": "core-midnear-ravenfb",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 1800
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "中近（戦闘開始から 1 回目のジャンプまで）の、レイヴンが III を撃った回（ノワールの▲なし）のフルバーストの中のノワール（AI）のペレットのコア命中率"
+    },
+    {
+      "id": "bullet-midnear-ravenfb",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 1800
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "中近（戦闘開始から 1 回目のジャンプまで）の、レイヴンが III を撃った回（ノワールの▲なし）のフルバーストの中のノワールのペレットの弾丸命中率（モデルは SG の命中率▲を弾丸命中率に効かせていない）"
+    },
+    {
+      "id": "core-near-noirfb",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 2900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "近（2 回目のジャンプまで）の、ノワールが III を撃った回のフルバーストの中のノワール（AI）のペレットのコア命中率"
+    },
+    {
+      "id": "bullet-near-noirfb",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 2900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "近（2 回目のジャンプまで）の、ノワールが III を撃った回のフルバーストの中のノワールのペレットの弾丸命中率（モデルは SG の命中率▲を弾丸命中率に効かせていない）"
+    },
+    {
+      "id": "core-near-ravenfb",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3950
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "近（2 回目のジャンプまで）の、レイヴンが III を撃った回（ノワールの▲なし）のフルバーストの中のノワール（AI）のペレットのコア命中率"
+    },
+    {
+      "id": "bullet-near-ravenfb",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3950
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "近（2 回目のジャンプまで）の、レイヴンが III を撃った回（ノワールの▲なし）のフルバーストの中のノワールのペレットの弾丸命中率（モデルは SG の命中率▲を弾丸命中率に効かせていない）"
+    },
+    {
+      "id": "core-far-noirfb",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "遠（3 回目のジャンプまで）の、ノワールが III を撃った回のフルバーストの中のノワール（AI）のペレットのコア命中率"
+    },
+    {
+      "id": "bullet-far-noirfb",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "遠（3 回目のジャンプまで）の、ノワールが III を撃った回のフルバーストの中のノワールのペレットの弾丸命中率（モデルは SG の命中率▲を弾丸命中率に効かせていない）"
+    },
+    {
+      "id": "core-far-ravenfb",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 6300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "遠（3 回目のジャンプまで）の、レイヴンが III を撃った回（ノワールの▲なし）のフルバーストの中のノワール（AI）のペレットのコア命中率"
+    },
+    {
+      "id": "bullet-far-ravenfb",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 6300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "遠（3 回目のジャンプまで）の、レイヴンが III を撃った回（ノワールの▲なし）のフルバーストの中のノワールのペレットの弾丸命中率（モデルは SG の命中率▲を弾丸命中率に効かせていない）"
+    },
+    {
+      "id": "noir-crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "ノワールの通常攻撃の会心率（窓によらない見込み）。SG の HUD の増分ではコア 1 と会心 2 が分けられないので、「会心 + 2 × コア」の数の期待値（会心率 + 2 × コア命中率）を組むのに使う"
+    },
+    {
+      "id": "pellet-unit-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "フルバーストの中のノワールの 1 ペレット（胴体・会心なし・距離ボーナスなし）。格子の単位を決めるのに使う（ノワールの▲は命中率だけなので、ノワールの回とレイヴンの回で同じ値の見込み）"
+    },
+    {
+      "id": "yuni-max-ammo-in",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "フルバースト開始から 10 秒の中の、撃たない操作枠のユニの最大装弾数（ノワールの S2 の最大装弾数▲）。録画では照準の横の残弾がリロードで満ちた値",
+      "observations": ["304-03"]
+    },
+    {
+      "id": "yuni-max-ammo-out",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 1200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "note": "ノワールの S2 の窓の外のユニの最大装弾数",
+      "observations": ["304-04"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "e324f290916490470761e89eb2596bebe9f0ff83",
+    "values": {
+      "H1": {
+        "core-midnear-noirfb": 0.03509697950129865,
+        "bullet-midnear-noirfb": 0.778,
+        "core-midnear-ravenfb": 0.026,
+        "bullet-midnear-ravenfb": 0.778,
+        "core-near-noirfb": 0.056695120732867046,
+        "bullet-near-noirfb": 0.9086000000000001,
+        "core-near-ravenfb": 0.042,
+        "bullet-near-ravenfb": 0.9086000000000001,
+        "core-far-noirfb": 0.00809930296183815,
+        "bullet-far-noirfb": 0.668,
+        "core-far-ravenfb": 0.006,
+        "bullet-far-ravenfb": 0.668,
+        "noir-crit-rate": 0.15,
+        "pellet-unit-fb": 41946.1713,
+        "yuni-max-ammo-in": 11,
+        "yuni-max-ammo-out": 6
+      },
+      "H0": {
+        "core-midnear-noirfb": 0.026,
+        "bullet-midnear-noirfb": 0.778,
+        "core-midnear-ravenfb": 0.026,
+        "bullet-midnear-ravenfb": 0.778,
+        "core-near-noirfb": 0.042,
+        "bullet-near-noirfb": 0.9086000000000001,
+        "core-near-ravenfb": 0.042,
+        "bullet-near-ravenfb": 0.9086000000000001,
+        "core-far-noirfb": 0.006,
+        "bullet-far-noirfb": 0.668,
+        "core-far-ravenfb": 0.006,
+        "bullet-far-ravenfb": 0.668,
+        "noir-crit-rate": 0.15,
+        "pellet-unit-fb": 41946.1713,
+        "yuni-max-ammo-in": 11,
+        "yuni-max-ammo-out": 6
+      }
+    },
+    "seen": {}
+  }
+}

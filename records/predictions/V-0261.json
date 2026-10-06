@@ -1,0 +1,176 @@
+{
+  "verification": "V-0261",
+  "note": "ラム（I・AI）+ デルタ（II・AI）+ クイーン（真）（III・操作・AUTO 射撃 ON）・灼熱の的（録画 230 と同じ編成。計画はココアだったが、撮ったのはラム。戦闘履歴で確かめて出し直した）。灼熱なので 1more は付かない。モデルの 2 回目のフルバーストは f2950〜3538、S1 のフルバースト終了時の攻撃力▲は f4420 まで、次の I は f5244",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 870,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 の effects[1]: バースト 3 段階突入時に自分に分配ダメージ▲を値 3（Lv10 で 90.01%）だけ値 4（10 秒）。S1 の effects[1]: フルバースト終了時に自分に攻撃力▲を値 5（50.28%）だけ値 6（15 秒））"
+    },
+    {
+      "id": "H0",
+      "note": "S2 の分配ダメージ▲が乗らない。説明文の値 8（0）を値に使って、効果が無いのと同じにする（S1 はいまの定義のまま）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 870,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstStage3Enter",
+              "target": "self",
+              "stat": "distributedDamage",
+              "ref": 8,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のバーストの倍率ダメージのヒット（会心なし）。S1 の戦闘開始時の攻撃力▲の中"
+    },
+    {
+      "id": "burst-hit-2",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "2 回目のバーストの倍率ダメージのヒット（会心なし）。3〜5 回目も同じ値の見込み（5 回目は戦闘の終わりの近くで、録画では出ないことがある）",
+      "observations": ["301-02"]
+    },
+    {
+      "id": "pellet-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの中のクイーン（真）の 1 ペレット（胴体・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "pellet-fb-end-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバースト終了から 15 秒の中（S1 の effects[1] の窓の中）の 1 ペレット（胴体・会心なし・距離ボーナスなし）",
+      "observations": ["301-06"]
+    },
+    {
+      "id": "pellet-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "S1 の effects[1] の窓の後から次の III の前までの 1 ペレット（胴体・会心なし・距離ボーナスなし）。S1 の effects[1] が効かないなら、pellet-fb-end-in もこの値になる",
+      "observations": ["301-07"]
+    },
+    {
+      "id": "s1-attack-window-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "S1 の攻撃力▲（戦闘開始時とフルバースト終了時）の窓の終わり（モデルのフレーム）。録画では、フルバースト終了（III のタイマーが消えたフレーム）から、▲の中の最後のトリガーと外の最初のトリガーまでを数える"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "e324f290916490470761e89eb2596bebe9f0ff83",
+    "values": {
+      "H1": {
+        "burst-hit-1": 6323975.8227557605,
+        "burst-hit-2": 4206946.955035812,
+        "pellet-fb": 47070.84330000001,
+        "pellet-fb-end-in": 47171.956,
+        "pellet-after": 31380.562199999997,
+        "s1-attack-window-ends": [882, 2068, 4420, 6772, 9124]
+      },
+      "H0": {
+        "burst-hit-1": 3328233.1576,
+        "burst-hit-2": 2214066.07812,
+        "pellet-fb": 47070.84330000001,
+        "pellet-fb-end-in": 47171.956,
+        "pellet-after": 31380.562199999997,
+        "s1-attack-window-ends": [882, 2068, 4420, 6772, 9124]
+      }
+    },
+    "seen": {}
+  }
+}

@@ -1,0 +1,292 @@
+[
+  {
+    "id": "302-01",
+    "recording": "302",
+    "source": "V-0262",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 35988,
+    "unit": "ダメージ",
+    "description": "I-DOLL・サン（III・AI）の 1 発（胴体・会心なし・距離なし）の、サンが III を撃った回のフルバーストの中の値。増分のうち 134 がこの値（f2614・4961・9922 などのフルバースト）。レイヴンが III の回のフルバーストには 0",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "フルバーストの始まりは右上の帯の色（crop=120:4:1780:440 の平均が R>200・G<140 になった最初のフレーム。f1412・2614・3789・4961・6234・7514・8746・9922・11150）。III は、レイヴンの A.N. モードの 1 発（5,299,955 など。サンの値と別）が出る回がレイヴンで、CT 40 秒なので 1 回ずつ交互（レイヴン・サン・レイヴン…）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropHeals": [330]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "302-02",
+    "recording": "302",
+    "source": "V-0262",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 20380,
+    "unit": "ダメージ",
+    "description": "同じサンの 1 発の、レイヴンが III を撃った回（サンはその回にバーストを使っていない）のフルバーストの中の値。増分のうち 126 がこの値（f3789・6234・11150 などのフルバースト）。サンが III の回のフルバーストには 0。H2（攻撃力▲が味方全体）なら 35,988 になるはずの所",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "フルバーストの始まりは右上の帯の色（crop=120:4:1780:440 の平均が R>200・G<140 になった最初のフレーム。f1412・2614・3789・4961・6234・7514・8746・9922・11150）。III は、レイヴンの A.N. モードの 1 発（5,299,955 など。サンの値と別）が出る回がレイヴンで、CT 40 秒なので 1 回ずつ交互（レイヴン・サン・レイヴン…）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropHeals": [330]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "302-03",
+    "recording": "302",
+    "source": "V-0262",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 9973,
+    "unit": "ダメージ",
+    "description": "同じサンの 1 発の、クラウンの▲の外の値（102 がフルバーストとその後 15 秒の外）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "フルバーストの始まりは右上の帯の色（crop=120:4:1780:440 の平均が R>200・G<140 になった最初のフレーム。f1412・2614・3789・4961・6234・7514・8746・9922・11150）。III は、レイヴンの A.N. モードの 1 発（5,299,955 など。サンの値と別）が出る回がレイヴンで、CT 40 秒なので 1 回ずつ交互（レイヴン・サン・レイヴン…）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropHeals": [330]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "302-04",
+    "recording": "302",
+    "source": "V-0262",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 344596,
+    "unit": "ダメージ",
+    "description": "ココア（I・AI）のコアの 1 発の、クラウンの▲の外の値（19。どれも▲の外）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "フルバーストの始まりは右上の帯の色（crop=120:4:1780:440 の平均が R>200・G<140 になった最初のフレーム。f1412・2614・3789・4961・6234・7514・8746・9922・11150）。III は、レイヴンの A.N. モードの 1 発（5,299,955 など。サンの値と別）が出る回がレイヴンで、CT 40 秒なので 1 回ずつ交互（レイヴン・サン・レイヴン…）。予測ファイルの指標は胴体だが、ココアは単独の増分ではコアの発がほとんど（胴体の値 172,298 の増分は 0）なので、読んだ後にコアの値を比べた。予測の胴体の値 × コアの倍率（+1）で決まる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropHeals": [330]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "302-05",
+    "recording": "302",
+    "source": "V-0262",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 892078,
+    "unit": "ダメージ",
+    "description": "ココアのコアの 1 発の、フルバーストの中の値（S1 の攻撃力▲・バーストの攻撃ダメージ▲・フルバースト補正。23 がフルバーストの中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "フルバーストの始まりは右上の帯の色（crop=120:4:1780:440 の平均が R>200・G<140 になった最初のフレーム。f1412・2614・3789・4961・6234・7514・8746・9922・11150）。III は、レイヴンの A.N. モードの 1 発（5,299,955 など。サンの値と別）が出る回がレイヴンで、CT 40 秒なので 1 回ずつ交互（レイヴン・サン・レイヴン…）。302-04 と同じく、読んだ後に足した比べ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropHeals": [330]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "302-06",
+    "recording": "302",
+    "source": "V-0262",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 713662,
+    "unit": "ダメージ",
+    "description": "ココアのコアの 1 発の、フルバーストの終わりからクラウンの▲が切れるまでの値（攻撃力▲・攻撃ダメージ▲、フルバースト補正なし。7）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "フルバーストの始まりは右上の帯の色（crop=120:4:1780:440 の平均が R>200・G<140 になった最初のフレーム。f1412・2614・3789・4961・6234・7514・8746・9922・11150）。III は、レイヴンの A.N. モードの 1 発（5,299,955 など。サンの値と別）が出る回がレイヴンで、CT 40 秒なので 1 回ずつ交互（レイヴン・サン・レイヴン…）。302-04 と同じく、読んだ後に足した比べ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1150,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropHeals": [330]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "302-07",
+    "recording": "302",
+    "source": "V-0262",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 23992,
+    "unit": "ダメージ",
+    "description": "サンの 1 発の、サンが III を撃った回のフルバーストの後の▲の中の値（攻撃力▲・攻撃ダメージ▲、補正なし。76）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "フルバーストの始まりは右上の帯の色（crop=120:4:1780:440 の平均が R>200・G<140 になった最初のフレーム。f1412・2614・3789・4961・6234・7514・8746・9922・11150）。III は、レイヴンの A.N. モードの 1 発（5,299,955 など。サンの値と別）が出る回がレイヴンで、CT 40 秒なので 1 回ずつ交互（レイヴン・サン・レイヴン…）。読んだ後に足した比べ（予測の sun-fb-user ÷ 1.5）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropHeals": [330]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "302-08",
+    "recording": "302",
+    "source": "V-0262",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13587,
+    "unit": "ダメージ",
+    "description": "サンの 1 発の、レイヴンが III を撃った回のフルバーストの後の▲の中の値（攻撃ダメージ▲だけ。39）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "フルバーストの始まりは右上の帯の色（crop=120:4:1780:440 の平均が R>200・G<140 になった最初のフレーム。f1412・2614・3789・4961・6234・7514・8746・9922・11150）。III は、レイヴンの A.N. モードの 1 発（5,299,955 など。サンの値と別）が出る回がレイヴンで、CT 40 秒なので 1 回ずつ交互（レイヴン・サン・レイヴン…）。読んだ後に足した比べ（予測の sun-fb-nonuser ÷ 1.5）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1150,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropHeals": [330]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "302-09",
+    "recording": "302",
+    "source": "V-0262",
+    "readAt": "2026-10-07",
+    "kind": "interval",
+    "use": "record",
+    "value": {
+      "out": [112],
+      "in": [72, 72, 77, 72, 72, 76, 72, 69, 71, 72]
+    },
+    "unit": "f",
+    "description": "サンのマガジンの最終弾から次のマガジンの 1 発目までの、HUD の増分（7 万未満をサンの 1 発とした）の空き。前の空きから 50〜60 発の後の空きだけ（マガジン 60 発）。クラウンの▲の外は 112f（1 回。f1126 → 1238）、▲の中は 69〜77f（10 回）。C-0148（最終弾から次の 1 発目まではリロード + 24f）とリロード 1.5 秒（88.2f）から、▲なし 112.2f、▲（44.35%）1 つで 73.1f、2 行の▲が重なる（88.7%）なら 34f。III がレイヴンの回（サンはバーストを使っていない）も 72〜77f",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "空きがフルバーストの入りの止まり・的のジャンプ・窓の境にかかるもの（41〜59f・112f 以上の IN の空き）は除いた。ココアの AI の枠の RELOADING の表示は、▲の外の回がどれも窓の始まりにかかり、基準が取れなかったので読まない"
+    }
+  }
+]

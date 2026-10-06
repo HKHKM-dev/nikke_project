@@ -29,7 +29,10 @@
           "stat": "maxAmmo",
           "scaling": "flat",
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-0390"
+          ]
         },
         {
           "kind": "heal",
