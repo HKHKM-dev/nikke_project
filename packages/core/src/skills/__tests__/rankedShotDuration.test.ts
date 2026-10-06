@@ -31,14 +31,9 @@ const miranda = readJson<CharacterData>('../../../data/characters/32.json');
 const delta = readJson<CharacterData>('../../../data/characters/20.json');
 const sun = readJson<CharacterData>('../../../data/characters/308.json');
 
-/** 32.json の宝物版 S2 に 3 行目を足し、3 行目の notes を外した定義 */
+/** 宝物版のミランダ（S2 の 3 行目は C-0334） */
 function mirandaWithLine3() {
-  const raw = readJson<{ treasureSkills: { skill2: { effects: unknown[]; notes?: unknown[] } } }>(
-    '../../../data/skills/32.json',
-  );
-  raw.treasureSkills.skill2.effects.push(LINE3);
-  delete raw.treasureSkills.skill2.notes;
-  return applyTreasure(miranda, parseSkillDefinition(raw), 3);
+  return applyTreasure(miranda, parseSkillDefinition(readJson<unknown>('../../../data/skills/32.json')), 3);
 }
 
 const FRAMES = gameSecondsToFrames(180);

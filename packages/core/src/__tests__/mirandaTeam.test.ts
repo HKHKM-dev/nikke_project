@@ -2,8 +2,8 @@
 // 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0186。持続の▲の入れ方は C-0170）、宝物版 S1 の攻撃力▲（C-0187）、
 // sim と calc の整合。V-0114。宝物版のバーストの対象（自分を除く上位 2 機、足りなければ自分。C-0322）と、宝物版 S2 の
 // フルバーストタイムの発動時の効果（C-0323・C-0324）を、録画 244・245 と同じ編成で見る（V-0216〜V-0218）。
-// 宝物版 S2 の 3 行目（自分を除く 1 位に「1 発間」のクリティカル確率▲。topAttack × durationShots）は、定義に足した
-// 版で窓と sim・calc の整合を見る（plan/design-ranked-shot-duration.md。定義は撮影の結論の後）。
+// 宝物版 S2 の 3 行目（自分を除く 1 位に「1 発間」のクリティカル確率▲。topAttack × durationShots。C-0334）は、録画 262 と
+// 同じ編成で見る（V-0229。plan/design-ranked-shot-duration.md）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
@@ -55,25 +55,6 @@ function fixedSlot(id: number, auto: boolean, treasurePhase: TreasurePhase = 0):
 
 const N = 0.0544 + 0.0379;
 
-/** 宝物版 S2 の 3 行目を足し、3 行目の notes を外したミランダの枠（設計書 2 節の形） */
-function withLine3(slot: TeamSlotInput): TeamSlotInput {
-  const raw = readJson<{ treasureSkills: { skill2: { effects: unknown[]; notes?: unknown[] } } }>(
-    '../../data/skills/32.json',
-  );
-  raw.treasureSkills.skill2.effects.push({
-    kind: 'timed',
-    trigger: 'fullBurstStart',
-    target: 'topAttack',
-    targetCountRef: 7,
-    excludeSelf: 'unlessShort',
-    stat: 'critRate',
-    ref: 8,
-    durationShotsRef: 9,
-  });
-  delete raw.treasureSkills.skill2.notes;
-  return { ...slot, skills: { ...slot.skills!, definition: parseSkillDefinition(raw) } };
-}
-
 // V-0114 の撮影と同じ: ミランダ単騎（宝物 3 段階）・AUTO（条件は自動）・オートバースト OFF・BigArms 灼熱の 3 分モード
 const SOLO: TeamInput = {
   slots: [fixedSlot(32, true, 3)],
@@ -114,9 +95,9 @@ const TRIO: TeamInput = {
   controlledSlot: 2,
 };
 
-// 設計書 5 節の撮影案: TRIO で操作枠をミランダに替え、宝物版 S2 の 3 行目を足した版
+// V-0229 の撮影（録画 262）と同じ: TRIO で操作枠をミランダ（撃たない）に替えた編成
 const TRIO_LINE3: TeamInput = {
-  slots: [withLine3(fixedSlot(32, true, 3)), fixedSlot(20, true), fixedSlot(308, true)],
+  slots: [fixedSlot(32, true, 3), fixedSlot(20, true), fixedSlot(308, true)],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: true,
@@ -176,7 +157,7 @@ describe('ウェイクアップ！（宝物版）のフルバーストタイム�
   });
 });
 
-describe('ウェイクアップ！（宝物版）の 3 行目（定義に足した版）', () => {
+describe('ウェイクアップ！（宝物版）の 3 行目', () => {
   const sim = runSimulation(TRIO_LINE3);
   const plan = planTeamRun(TRIO_LINE3);
   const segmentAt = (frame: number) => sim.timeline.segments.find((s) => s.start <= frame && frame < s.end)!;
@@ -235,7 +216,7 @@ describe.each([
   ['ミランダ単騎（V-0114 の撮影の条件）', SOLO],
   ['ミランダ + デルタ（V-0216 の撮影の条件）', DUO],
   ['ミランダ + デルタ + I-DOLL・サン（V-0217・V-0218 の撮影の条件）', TRIO],
-  ['ミランダ（操作）+ デルタ + I-DOLL・サン、S2 の 3 行目あり（設計書 5 節の撮影案）', TRIO_LINE3],
+  ['ミランダ（操作）+ デルタ + I-DOLL・サン（V-0229 の撮影の条件）', TRIO_LINE3],
   ['実戦寄り（ミランダ + リター + デルタ + アリス + モダニア）', PRACTICAL],
 ] as const)('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);

@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 31・効果 155（根拠あり 113）・notes 83（根拠あり 36）
+件数: キャラ 31・効果 156（根拠あり 114）・notes 82（根拠あり 36）
 
-notes の種類: 未対応 28・前提の外 21・計算に無関係 28・補足 6
+notes の種類: 未対応 27・前提の外 21・計算に無関係 28・補足 6
 
-スロット: supported 58・partial 16・unsupported 8・noEffect 20
+スロット: supported 59・partial 15・unsupported 8・noEffect 20
 
 ## 10 ラピ
 
@@ -71,11 +71,11 @@ notes の種類: 未対応 28・前提の外 21・計算に無関係 28・補足
   - effects[0] timed・normalHit・hitRate: C-0186（仮説）
   - effects[1] timed・normalHit・hitRate: C-0186（仮説）
   - effects[2] timed・normalHit・attack: C-0187（確定）
-- **宝物版 skill2**: partial
+- **宝物版 skill2**: supported
   - effects[0] timed・fullBurstStart・critDamage: C-0323（確定）
   - effects[1] timed・fullBurstStart・critRate: C-0324（仮説）
   - effects[2] timed・fullBurstStart・attackDamage: C-0323（確定）
-  - notes[0] 未対応: フルバーストタイムの発動時に、自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）に付くクリティカル確率▲（1 発間）は未対応。語彙（topAttack と durationShots の組み合わせ）はあるが、撮っていない（plan/design-ranked-shot-duration.md 5 節）: 根拠なし
+  - effects[3] timed・fullBurstStart・critRate: C-0334（仮説）
 - **宝物版 burst**: supported
   - effects[0] timed・burstUse・attack: C-0322（確定）
   - effects[1] timed・burstUse・critDamage: C-0322（確定）
