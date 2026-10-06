@@ -29,9 +29,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 1, "frame": 0, "core": false, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   },
   {
@@ -50,9 +61,80 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 1, "frame": 0, "core": false, "crit": true, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "120-04",
+    "recording": "120",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0280",
+    "readAt": "2026-10-07",
+    "value": 528178,
+    "description": "ネオン：ビジョン・アイ単騎の、フルチャージの通常攻撃 1 発ごとの S1 の火力爆発（追加ダメージ。会心なし）。1 発の増分から通常攻撃の 1 ヒットを引いた残りで、胴体・コア・胴体会心・コア会心のどの組み合わせでも 528,178",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分 19 個（どれも前のフレームが読めた単独の増分。f1566 だけ前の 19f が読めない）を、モデルの通常攻撃の 1 ヒット 4 通り（胴体 184,810.3・胴体会心 277,215.5・コア 369,620.6・コア会心 462,025.8。`120-02`・`120-03` と合う値）と追加ダメージ（V-0280 の H1・H2 × 会心の有無）の和に突き合わせた。19 個とも H1 の和と ±1.5 以内で一致し、H2 と一致したものは無い。値は、712,988（胴体 + 追加。12 回）・897,799（コア + 追加。3 回）・805,393（胴体会心 + 追加）・990,204（コア会心 + 追加。2 回）・1,069,481（胴体会心 + 追加会心）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "120-05",
+    "recording": "120",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0280",
+    "readAt": "2026-10-07",
+    "value": 792266,
+    "description": "同じ追加ダメージの会心（f2381 の 1,069,481 = 胴体会心 277,215 + 792,266）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分 19 個（どれも前のフレームが読めた単独の増分。f1566 だけ前の 19f が読めない）を、モデルの通常攻撃の 1 ヒット 4 通り（胴体 184,810.3・胴体会心 277,215.5・コア 369,620.6・コア会心 462,025.8。`120-02`・`120-03` と合う値）と追加ダメージ（V-0280 の H1・H2 × 会心の有無）の和に突き合わせた。19 個とも H1 の和と ±1.5 以内で一致し、H2 と一致したものは無い。値は、712,988（胴体 + 追加。12 回）・897,799（コア + 追加。3 回）・805,393（胴体会心 + 追加）・990,204（コア会心 + 追加。2 回）・1,069,481（胴体会心 + 追加会心）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   }
 ]
