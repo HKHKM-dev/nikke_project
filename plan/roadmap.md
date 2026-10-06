@@ -36,7 +36,7 @@
 
 ## 残タスクの棚卸し
 
-- いま残っている仕事を種類ごとに 1 行ずつ並べた一覧は [backlog.md](backlog.md)（2026-10-02 に棚卸し。開いている検証・未解明の機構・許容外の残差・オーナーの判断待ち・道具の整備・スキル定義の未対応・Stage の未完了部分）。課題ごとの経過は下の「今後の課題」と検証記録に置き、backlog.md には経過も数値も書かない。課題が閉じたら backlog.md の行を消す。
+- いま残っている仕事を種類ごとに 1 行ずつ並べた一覧は [backlog.md](backlog.md)（2026-10-06 に棚卸し。開いている検証・未解明の機構・許容外の残差・オーナーの判断待ち・道具の整備・スキル定義の未対応・Stage の未完了部分）。課題ごとの経過は下の「今後の課題」と検証記録に置き、backlog.md には経過も数値も書かない。課題が閉じたら backlog.md の行を消す。
 
 ## 今後の課題
 
@@ -84,7 +84,7 @@
 - 着地の後の照準をモデルに入れるかの設計（2026-10-05）→ 完了: [design-landing-aim.md](design-landing-aim.md)。続きは backlog 2-8
 - バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 一部完了: V-0075・V-0080・V-0082・V-0144・V-0201〜V-0205・V-0220、C-0162・C-0163・C-0165・C-0167・C-0226・C-0227・C-0228・C-0230・C-0231・C-0233（最小構成で確定）、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)。残りは backlog 2-4
 - 15-A の出し直し（2026-10-01 起票）→ 完了: V-0065・V-0087・V-0117（候補ごとの記録は V-0074・V-0088〜V-0092）
-- 検証の自動化（2026-10-01 起票）→ 一部完了: V-0079・V-0170、[design-records-automation.md](design-records-automation.md) 8 節。残りは backlog 4-1・4-2
+- 検証の自動化（2026-10-01 起票）→ 一部完了: V-0079・V-0170、[design-records-automation.md](design-records-automation.md) 8 節。残りは backlog 4-1（4-2 の食い違いは V-0085 までに解消した）
 - アニス：スター（17）の S1（2026-10-03）→ 一部完了: V-0116・V-0121〜V-0125、C-0189・C-0190・C-0202・C-0213、[design-anis-star-s1.md](design-anis-star-s1.md)・[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md)。残りは backlog 6 節・2-18
 - 防御力無視ダメージ・有利コードの攻撃ダメージ等の語彙（2026-10-05）→ 一部完了: V-0171、C-0296（クイーン（真）S1 の有利コードの攻撃ダメージ▲）、V-0211、C-0307・C-0308（S2 の鉄・拳・制・裁！の▲と 1more の攻撃力▲）、V-0212、C-0310（S1 の 1more の分配ダメージ。発動の後に遅れて出る倍率ダメージの語彙 `delayFrames`。[design-delayed-skill-hit.md](design-delayed-skill-hit.md)）、[design-true-damage-element.md](design-true-damage-element.md)。エマ：TU の環境コントロールの周期（`atStart`）とフォーメーションAS の周期 20 秒▼（`withCharacter`）を定義に使った（V-0209・V-0210、C-0305・C-0306）。ウンファ：TU の S1 のカモフラージュとバーストの徹甲炸裂弾を定義に使った（V-0207・V-0208、C-0311〜C-0314。炸裂弾の 1 発は語彙が要る）。エマ：TU のバーストの環境コントロール強化を語彙 `amplifies` で定義に使った（V-0230、C-0335〜C-0337。値の小さな残差は仮説のまま）。残りは backlog 6 節
 - ペルソナのキャラが起こすきっかけ（追撃）と対象（ペルソナ状態の味方）の語彙（2026-10-06）→ 完了: V-0232（雪子の定義。C-0347〜C-0352・C-0358・C-0359）、V-0233（追撃・バトンタッチ・ペルソナ状態。C-0354・C-0355・C-0357・C-0360、追撃の分配ダメージの時刻は C-0361（仮説）。C-0353・C-0356 は棄却）、[design-persona.md](design-persona.md)。攻撃力▲の丸めは backlog 6 節
