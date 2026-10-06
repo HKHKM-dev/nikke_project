@@ -1,0 +1,41 @@
+{
+  "id": "301",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-301_sr+sr+sg_ram+delta+queen-makoto_queen-auto.mp4",
+  "original": "2026-10-07_00-12-04.mp4",
+  "durationSec": 202.9,
+  "frames": 12175,
+  "fps": 60,
+  "sizeMB": 245.8,
+  "sha256": "41e8ecd9c12b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "ラム（I）+ デルタ（II）+ クイーン（真）（III・操作・AUTO 射撃）・灼熱タブ。V-0261（案 B。計画のココアではなくラム）"
+}

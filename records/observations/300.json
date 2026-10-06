@@ -1,0 +1,100 @@
+[
+  {
+    "id": "300-01",
+    "recording": "300",
+    "source": "V-0260",
+    "readAt": "2026-10-07",
+    "kind": "count",
+    "use": "compare",
+    "value": 60,
+    "unit": "発",
+    "description": "操作枠の I-DOLL・サン（撃たない）の、ユニの最初の発（f912。ユニの顔アイコンの上の残弾が 6/6 から 5/6 になったフレーム）より前の最大装弾数（照準の横の残弾。f813〜920 はどれも 060）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series --max 61（戦闘の全フレーム。9,470 フレームを読めた）",
+      "note": "ユニの発のフレームは、ユニの顔アイコンの上の残弾（crop=120:30:790:900）を 1 フレームずつ並べて目で読んだ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 20
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    }
+  },
+  {
+    "id": "300-02",
+    "recording": "300",
+    "source": "V-0260",
+    "readAt": "2026-10-07",
+    "kind": "count",
+    "use": "compare",
+    "value": 61,
+    "unit": "発",
+    "description": "同じ表示の、ユニの発が続いている間の値。f1012〜11411 で読めたフレームは、下の 300-03 の区間を除いてどれも 061（9,255 フレーム）。62 以上にはならなかった（付き直しで重ならない）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series --max 61（戦闘の全フレーム。9,470 フレームを読めた）",
+      "note": "ユニの最初の発の後、サンの照準の下に RELOADING が出て（f920）、f1012 から 061 と読めた。撃たない操作枠が新しい最大までリロードで込める形（V-0236）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    }
+  },
+  {
+    "id": "300-03",
+    "recording": "300",
+    "source": "V-0260",
+    "readAt": "2026-10-07",
+    "kind": "interval",
+    "use": "record",
+    "value": [
+      294
+    ],
+    "unit": "f",
+    "description": "ユニの発の間が 5 秒より空いた唯一の所（最後の発 f7095 → 次の発の HUD の増分 f7414。ほかの発の間は HUD の増分で 200〜244f）で、ユニの最後の発（顔アイコンの残弾が 1/7 から 0/7 になったフレーム）から、サンの照準の横の残弾が 061 から 060 に替わった最初のフレーム（f7389。前のフレーム f7388 は 061）までの動画のフレーム数。ゲーム内の時計の 5 秒（294f。C-0140）と同じ。その後 f7496 に 061 に戻った",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series --max 61（戦闘の全フレーム。9,470 フレームを読めた）・tools/captures/hud.ts --mode jumps・ユニの顔アイコンの上の残弾を 1 フレームずつ並べた一覧",
+      "note": "フルバーストが無いので、動画のフレームはゲーム内の時計のまま（止まりなし）"
+    }
+  },
+  {
+    "id": "300-04",
+    "recording": "300",
+    "source": "V-0260",
+    "readAt": "2026-10-07",
+    "kind": "count",
+    "use": "record",
+    "value": 7,
+    "unit": "発",
+    "description": "ユニ自身の顔アイコンの上の残弾の分母（最大装弾数）。ユニの発が続いている間は 7（f7064〜7127 の 1/7・0/7）。最初の発（f912）の直後の f927 までは 5/6 のままだった（ユニ自身の表示が 7 になったフレームは読んでいない）",
+    "method": {
+      "tool": "顔アイコンの上の残弾（crop=120:30:790:900）を 1 フレームずつ並べた一覧",
+      "note": "「味方全体」にユニ自身も入ることの確かめ"
+    }
+  }
+]

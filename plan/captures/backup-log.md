@@ -234,10 +234,14 @@
 
 2026-10-07 00:42 に録画 288（ユニ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261007-288_rl+ar_yuni+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`dcfb46576653`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
-2026-10-07 00:42 に録画 289（ラム + デルタ + クイーン（真））を `intake.ts` で取り込み、この 1 本（`range/20261007-289_sr+sr+sg_ram+delta+queen-makoto_queen-auto.mp4`）だけを同期した。E: と I: で sha256 が一致（`41e8ecd9c12b`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+2026-10-07 00:42 に録画 300（ユニ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261007-300_rl+ar_yuni+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`dcfb46576653`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
-2026-10-07 00:42 に録画 290（レイヴン + I-DOLL・サン + クラウン + ココア）を `intake.ts` で取り込み、この 1 本（`range/20261007-290_rl+ar+mg+sr_raven+idoll-sun+crown+cocoa_crown-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`e55506bddfe4`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+2026-10-07 00:42 に録画 301（ラム + デルタ + クイーン（真））を `intake.ts` で取り込み、この 1 本（`range/20261007-301_sr+sr+sg_ram+delta+queen-makoto_queen-auto.mp4`）だけを同期した。E: と I: で sha256 が一致（`41e8ecd9c12b`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
-2026-10-07 00:42 に録画 291（ノワール + レイヴン + ユニ + ココア）を `intake.ts` で取り込み、この 1 本（`range/20261007-291_sg+rl+rl+sr_noir+raven+yuni+cocoa_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`7b3e87db512a`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+2026-10-07 00:42 に録画 302（レイヴン + I-DOLL・サン + クラウン + ココア）を `intake.ts` で取り込み、この 1 本（`range/20261007-302_rl+ar+mg+sr_raven+idoll-sun+crown+cocoa_crown-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`e55506bddfe4`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
-2026-10-07 00:42 に録画 292（ノワール + レイヴン + ユニ + ココア）を `intake.ts` で取り込み、この 1 本（`range/20261007-292_sg+rl+rl+sr_noir+raven+yuni+cocoa_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`cec0bc788255`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+2026-10-07 00:42 に録画 303（ノワール + レイヴン + ユニ + ココア）を `intake.ts` で取り込み、この 1 本（`range/20261007-303_sg+rl+rl+sr_noir+raven+yuni+cocoa_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`7b3e87db512a`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-07 00:42 に録画 304（ノワール + レイヴン + ユニ + ココア）を `intake.ts` で取り込み、この 1 本（`range/20261007-304_sg+rl+rl+sr_noir+raven+yuni+cocoa_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`cec0bc788255`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-07 に、上の 5 本（V-0260〜V-0263）を、取り込んだときの番号 288〜292 から 300〜304 に振り直した。別のセッションが同じ時刻に 288・289（アニス：スター）を取り込んでいた（293 も別の録画が使っている）。E: と I: の両方でファイル名を手で書き換えた（中身は変えていないので sha256 は上のまま）。
