@@ -1,5 +1,5 @@
 // アニス：スター（17）の満タンと発動の時刻（plan/design-anis-star-gauge-timing.md）: 最初の発の物のゲージ（入力。C-0243）、
-// 誘導弾の飛ぶ時間（C-0293）、シューティングスターの飛ぶ時間（C-0240）。どれも 1 パス目のゲージの量と時刻だけを変える。
+// 誘導弾の飛ぶ時間（C-0413）、シューティングスターの飛ぶ時間（C-0240）。どれも 1 パス目のゲージの量と時刻だけを変える。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage } from '../calc/model.ts';
@@ -94,7 +94,7 @@ describe('飛ぶ時間の表（plan/design-anis-star-gauge-timing.md 3.2・4.2 �
 });
 
 describe('ゲージの時刻（1 パス目）', () => {
-  it('fills the gauge on the landing frame of the shot (firing frame + flight time, C-0236・C-0293)', () => {
+  it('fills the gauge on the landing frame of the shot (firing frame + flight time, C-0236・C-0413)', () => {
     const before = planTeamRun(solo(withoutFlight));
     const after = planTeamRun(solo(withFlight));
     // 1 回目のバーストまでの射撃の列は変わらない（発動が遅れるので、窓から後は変わる）。満タンは 10 発目の着弾（中近の 14f）
