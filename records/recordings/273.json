@@ -1,0 +1,41 @@
+{
+  "id": "273",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-273_smg+sr+ar_miranda+delta+idoll-sun_miranda-control.mp4",
+  "original": "2026-10-06_20-39-28.mp4",
+  "durationSec": 199.2,
+  "frames": 11954,
+  "fps": 60,
+  "sizeMB": 241.5,
+  "sha256": "c4443d2d31ec",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 32,
+      "name": "ミランダ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0229（ミランダの宝物版 S2 の 3 行目）の反復実測の 2 本目（1 本目は 262）。ミランダ（宝物 3・操作・撃たない）・デルタ（AI）・I-DOLL・サン（AI）。オートバースト ON（左上のボタンで確かめた）。戦闘履歴のミランダの与ダメージは 0（262 は 518,612）"
+}
