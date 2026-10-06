@@ -56,20 +56,20 @@ H1 はいまの定義。値は予測ファイル（records/predictions/V-0125.js
 
 予測は 2026-10-04（commit ccefd77）に出した。
 
-| 指標                                            | 実測                                              | 予測 H1                                             |
-| ----------------------------------------------- | ------------------------------------------------- | --------------------------------------------------- |
-| delta-fb-core（hitDamage）                      | 505,085（`165-01`）                               | 505,083.722（-1.278、許容内）                       |
-| isabel-fb-hit（hitDamage）                      | 63,006（`165-02`）                                | 63,005.898（-0.102、許容内）                        |
-| anis-fb-core（hitDamage）                       | 1,408,829（`165-03`）                             | 1,408,827.288（-1.712、許容内）                     |
-| anis-fb-add（perShotHitDamage）                 | 429,178（`165-04`）                               | 429,177.858（-0.142、許容内）                       |
-| anis-after-fb-hit（hitDamage）                  | 563,532（`165-05`）                               | 563,530.915（-1.085、許容内）                       |
-| anis-fb-star（dotHitDamage）                    | 220,687（`165-06`）                               | 220,687.164（+0.164、許容内）                       |
-| anis-after-fb-star（dotHitDamage）              | 147,125（`165-07`）                               | 147,124.776（-0.224、許容内）                       |
-| lone-star（dotHitDamage）                       | 60,902（`165-08`）                                | 60,902.298（+0.298、許容内）                        |
-| lone-shot-intervals（shotIntervals）            | [43, 41, 43, 184, 42, 43, 41, 42, 43]（`165-09`） | [42, 42, 42, 183, 42, 42, 42, 42, 42]（-1、許容内） |
-| gauge-full（fullBurstToGaugeFull）              | 509（`165-10`）                                   | 524（+15、許容内）                                  |
-| lone-burst-delay（fullBurstToNextActivation）   | 678（`165-11`）                                   | 700（+22、許容内）                                  |
-| full-burst-intervals（fullBurstStartIntervals） | [1,942, 1,952, 1,940]（`165-12`）                 | [1,961, 1,938, 1,934]（+19、許容内）                |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| delta-fb-core（hitDamage） | 505,085（`165-01`） | 505,083.722（-1.278、許容内） |
+| isabel-fb-hit（hitDamage） | 63,006（`165-02`） | 63,005.898（-0.102、許容内） |
+| anis-fb-core（hitDamage） | 1,408,829（`165-03`） | 1,408,827.288（-1.712、許容内） |
+| anis-fb-add（perShotHitDamage） | 429,178（`165-04`） | 429,177.858（-0.142、許容内） |
+| anis-after-fb-hit（hitDamage） | 563,532（`165-05`） | 563,530.915（-1.085、許容内） |
+| anis-fb-star（dotHitDamage） | 220,687（`165-06`） | 220,687.164（+0.164、許容内） |
+| anis-after-fb-star（dotHitDamage） | 147,125（`165-07`） | 147,124.776（-0.224、許容内） |
+| lone-star（dotHitDamage） | 60,902（`165-08`） | 60,902.298（+0.298、許容内） |
+| lone-shot-intervals（shotIntervals） | [43, 41, 43, 184, 42, 43, 41, 42, 43]（`165-09`） | [42, 42, 42, 183, 42, 42, 42, 42, 42]（-1、許容内） |
+| gauge-full（fullBurstToGaugeFull） | 509（`165-10`） | 524（+15、許容内） |
+| lone-burst-delay（fullBurstToNextActivation） | 678（`165-11`） | 700（+22、許容内） |
+| full-burst-intervals（fullBurstStartIntervals） | [1,942, 1,952, 1,940]（`165-12`） | [1,961, 1,938, 1,934]（+19、許容内） |
 
 <!-- records:predictions:end -->
 
