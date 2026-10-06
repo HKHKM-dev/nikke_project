@@ -1,0 +1,384 @@
+{
+  "verification": "V-0262",
+  "note": "ココア（I・AI）+ クラウン（II・操作・撃たない）+ レイヴン（III・AI）+ I-DOLL・サン（III・AI）・灼熱の的。モデルは撃たない枠を表せないのでクラウンも撃つが、setup の dropHeals でクラウンの回復を落とし、S2 の攻撃ダメージ▲（回復時）が起きない録画の形にする。モデルの 1 回目のフルバーストは f405〜993（III はレイヴン。バーストを使ったのはココア・クラウン・レイヴン）、クラウンのバーストは f376、2 回目は f1581〜2169（III はサン。レイヴンは使っていない）。フルバーストは約 20 秒ごとで、III はレイヴンとサンが交互",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 330,
+      "controlled": true
+    },
+    {
+      "rid": 851,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 の effects[0]: フルバースト開始時に、その回にバーストを使った味方（burstUsers）へ発動者基準の攻撃力▲（値 1。Lv10 で 64.51%）を 15 秒。effects[1]: 味方全体のリロード速度▲（値 3。44.35%）を 15 秒。バーストの effects[0]: バースト使用時に味方全体の攻撃ダメージ▲（値 1。36.24%）を 15 秒）"
+    },
+    {
+      "id": "H2",
+      "note": "S1 の攻撃力▲が、その回にバーストを使っていない味方にも付く（対象を味方全体にする）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 330,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "cocoa-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "ココアの 1 発（胴体・会心なし・距離ボーナスなし）。最初のバーストより前（クラウンの▲なし）"
+    },
+    {
+      "id": "cocoa-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "フルバーストの中のココアの 1 発。S1 の攻撃力▲とバーストの攻撃ダメージ▲の両方が乗る"
+    },
+    {
+      "id": "cocoa-tail",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1150,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "フルバースト終了の後、クラウンのバーストから 15 秒の中のココアの 1 発。S1 の攻撃力▲とバーストの攻撃ダメージ▲が乗り、フルバースト補正は無い"
+    },
+    {
+      "id": "cocoa-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "▲が切れた後、次の I より前のココアの 1 発（cocoa-base と同じ値の見込み）"
+    },
+    {
+      "id": "raven-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "レイヴンのフルチャージの 1 発（胴体・会心なし・距離ボーナスなし）。最初のバーストより前"
+    },
+    {
+      "id": "raven-fb-user",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "レイヴンが III を撃った回のフルバーストの中のレイヴンの 1 発（攻撃力▲と攻撃ダメージ▲が乗る）"
+    },
+    {
+      "id": "raven-fb-nonuser",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "サンが III を撃った回のフルバーストの中のレイヴンの 1 発。H1 では攻撃ダメージ▲だけが乗り、H2 では攻撃力▲も乗る"
+    },
+    {
+      "id": "sun-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "サンの 1 発（胴体・会心なし・距離ボーナスなし）。最初のバーストより前"
+    },
+    {
+      "id": "sun-fb-nonuser",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "レイヴンが III を撃った回のフルバーストの中のサンの 1 発。H1 では攻撃ダメージ▲だけが乗り、H2 では攻撃力▲も乗る"
+    },
+    {
+      "id": "sun-fb-user",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "サンが III を撃った回のフルバーストの中のサンの 1 発（攻撃力▲と攻撃ダメージ▲が乗る）"
+    },
+    {
+      "id": "cocoa-reload-base",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 1,
+        "frame": 200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "ココアのリロード 1 回の長さ（モデルのフレーム）。▲の外"
+    },
+    {
+      "id": "cocoa-reload-in",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 1,
+        "frame": 700
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "クラウンの S1 のリロード速度▲の中のココアのリロード 1 回の長さ"
+    },
+    {
+      "id": "raven-reload-base",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 3,
+        "frame": 200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "レイヴンのリロード 1 回の長さ。▲の外"
+    },
+    {
+      "id": "raven-reload-in",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 3,
+        "frame": 1900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "クラウンの S1 のリロード速度▲の中のレイヴンのリロード 1 回の長さ（レイヴンがバーストを使っていない回。リロード速度▲は味方全体）"
+    },
+    {
+      "id": "cocoa-s1-attack-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "ココアが受ける S1 の攻撃力▲の窓の終わり（フルバースト開始から 15 秒）"
+    },
+    {
+      "id": "cocoa-burst-atkdmg-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "stat": "attackDamage"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [330]
+      },
+      "note": "ココアが受けるクラウンのバーストの攻撃ダメージ▲の窓の終わり（クラウンのバーストから 15 秒）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "62f3ae7d4c367eb8670a5e0fffb36ec8966edbd9",
+    "values": {
+      "H1": {
+        "cocoa-base": 172297.95,
+        "cocoa-fb": 535246.6247856,
+        "cocoa-tail": 356831.0831904,
+        "cocoa-after": 172297.95,
+        "raven-base": 183587.37,
+        "raven-fb-user": 716218.361547,
+        "raven-fb-nonuser": 553614.422907,
+        "sun-base": 9972.6445,
+        "sun-fb-nonuser": 20380.0963002,
+        "sun-fb-user": 35988.25294896001,
+        "cocoa-reload-base": 117.6470588235294,
+        "cocoa-reload-in": 65.47058823529412,
+        "raven-reload-base": 128.6470588235294,
+        "raven-reload-in": 76.47058823529412,
+        "cocoa-s1-attack-ends": [1287, 2463, 3639, 4815, 5991, 7167, 8343, 9569, 10589],
+        "cocoa-burst-atkdmg-ends": [1258, 2434, 3610, 4786, 5962, 7138, 8314, 9540, 10589]
+      },
+      "H2": {
+        "cocoa-base": 172297.95,
+        "cocoa-fb": 535246.6247856,
+        "cocoa-tail": 356831.0831904,
+        "cocoa-after": 172297.95,
+        "raven-base": 183587.37,
+        "raven-fb-user": 716218.361547,
+        "raven-fb-nonuser": 716218.361547,
+        "sun-base": 9972.6445,
+        "sun-fb-nonuser": 35988.25294896001,
+        "sun-fb-user": 35988.25294896001,
+        "cocoa-reload-base": 117.6470588235294,
+        "cocoa-reload-in": 65.47058823529412,
+        "raven-reload-base": 128.6470588235294,
+        "raven-reload-in": 76.47058823529412,
+        "cocoa-s1-attack-ends": [1287, 2463, 3639, 4815, 5991, 7167, 8343, 9569, 10589],
+        "cocoa-burst-atkdmg-ends": [1258, 2434, 3610, 4786, 5962, 7138, 8314, 9540, 10589]
+      }
+    },
+    "seen": {}
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "verification": "V-0260",
+  "note": "ユニ（AI）+ I-DOLL・サン（操作・撃たない。照準は画面の中央）。I がいないのでバーストは起きない。モデルは撃たない枠を表せないのでサンも撃つが、サンの最大装弾数はサンの射撃に関わらない",
+  "team": [
+    {
+      "rid": 160,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（フルチャージの攻撃ごとに味方全体の最大装弾数を説明文の値 5（Lv10 で 1 発）だけ値 6（5 秒）上げる。付き直しは窓を延ばすだけで重ならない）"
+    },
+    {
+      "id": "H0",
+      "note": "最大装弾数▲はサンに付かない（ユニ自身にだけ付く。効果が無いのと同じく、サンの最大装弾数はいつも 60）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "self",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "sun-max-ammo-before",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 20
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "ユニの最初の発より前のサンの最大装弾数。録画では、戦闘開始からユニの最初の発までの照準の横の残弾"
+    },
+    {
+      "id": "sun-max-ammo-in",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "ユニの発が続いている間のサンの最大装弾数。録画では、ユニの発の後のリロード明けの照準の横の残弾"
+    },
+    {
+      "id": "sun-max-ammo-window-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "maxAmmo"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "サンが受けるユニの S2 の最大装弾数▲の窓の終わり（モデルのフレーム）。録画では、61 から 60 に戻ったフレームを、その前のユニの最後の発から数える（5 秒 = 294f。C-0140）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "62f3ae7d4c367eb8670a5e0fffb36ec8966edbd9",
+    "values": {
+      "H1": {
+        "sun-max-ammo-before": 60,
+        "sun-max-ammo-in": 61,
+        "sun-max-ammo-window-ends": [4230, 6580, 8689, 10589]
+      },
+      "H0": {
+        "sun-max-ammo-before": 60,
+        "sun-max-ammo-in": 60,
+        "sun-max-ammo-window-ends": []
+      }
+    },
+    "seen": {}
+  }
+}
