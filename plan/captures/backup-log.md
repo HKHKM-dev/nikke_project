@@ -220,4 +220,8 @@
 
 2026-10-06 23:50 に録画 285（ミランダ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261006-285_smg+sr+ar_miranda+delta+idoll-sun_delta-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`fc44b514ec7b`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
+2026-10-06 23:58 に録画 286（I-DOLL・フラワー + エマ：タクティカル・アップ）を `intake.ts` で取り込み、この 1 本（`range/20261006-286_rl+mg_flower+emma-tu_explosion.mp4`）だけを同期した。E: と I: で sha256 が一致（`c327508503ad`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 23:58 に録画 287（I-DOLL・フラワー + ウンファ：タクティカル・アップ + エマ：タクティカル・アップ）を `intake.ts` で取り込み、この 1 本（`range/20261006-287_rl+sr+mg_flower+eunhwa-tu+emma-tu_formation.mp4`）だけを同期した。E: と I: で sha256 が一致（`a5b06863163a`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
 2026-10-07 01:19 に録画 307（ウンファ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261007-307_sr_unfa_manual.mp4`）だけを同期した。E: と I: で sha256 が一致（`d9087579e245`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。

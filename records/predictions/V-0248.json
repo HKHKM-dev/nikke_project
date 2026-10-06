@@ -1,0 +1,152 @@
+{
+  "verification": "V-0248",
+  "note": "I-DOLL・フラワー（304・RL・枠 1・AI）+ エマ：TU（93・MG・枠 2・操作・撃たない）・AUTO 射撃 OFF・オートバースト OFF（バーストは撃たない）・灼熱タブの BigArms・射撃場 3 分・スペック固定 ON。モデルでは操作のエマも撃つ（撃たない操作枠の入力が無い）が、エマの射撃はフラワーの 1 ヒットに効かない。S1 の環境コントロールは C-0305（戦闘開始時と 30 秒ごと・10 秒・× 1.039）。S2 の効果 1 は同じ部隊（Absolute）にだけ付き、フラワー（Replace）には付かない（C-0266）",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 93,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの定義（S2 の効果 2 を定義していない）。フラワーの 1 ヒットに▲は乗らない"
+    },
+    {
+      "id": "H1",
+      "note": "S2 の効果 2 を味方全体の持続の発射体爆発ダメージ▲（Lv10 で 2.32%）として足す。置き場所は C-0205（攻撃ダメージ▲と同じ枠）。攻撃ダメージ▲が無いので × 1.0232",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "projectileExplosionDamage",
+              "ref": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "flower-core-env",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "環境コントロールの窓の中（0〜10 秒）のフラワーの 1 ヒット（コア・会心なし）"
+    },
+    {
+      "id": "flower-body-env",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "同じ区間の胴体"
+    },
+    {
+      "id": "flower-core-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "環境コントロールの窓の外（10〜30 秒）のフラワーの 1 ヒット（コア・会心なし）"
+    },
+    {
+      "id": "flower-body-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "同じ区間の胴体"
+    },
+    {
+      "id": "flower-core-crit-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "同じ区間のコア会心"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "57db64233f6b1098714207c2417ce789284b91f1",
+    "values": {
+      "H0": {
+        "flower-core-env": 172652.74955999997,
+        "flower-body-env": 86326.37477999998,
+        "flower-core-out": 166172.03999999998,
+        "flower-body-out": 83086.01999999999,
+        "flower-core-crit-out": 207715.05
+      },
+      "H1": {
+        "flower-core-env": 176658.293349792,
+        "flower-body-env": 88329.146674896,
+        "flower-core-out": 170027.231328,
+        "flower-body-out": 85013.615664,
+        "flower-core-crit-out": 212534.03916
+      }
+    },
+    "seen": {}
+  }
+}
