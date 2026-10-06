@@ -40,7 +40,7 @@
 | burst-s1on-dton-crit（burstHitDamage）   | （実測なし）          | 1,111,476.673                                                                                                                        |
 | burst-s1on-dtoff（burstHitDamage）       | 632,347（`280-03`）   | 632,347.2（+0.2、許容内）                                                                                                            |
 | burst-s1on-dtoff-crit（burstHitDamage）  | （実測なし）          | 948,520.8                                                                                                                            |
-| burst-s1off-dton（burstHitDamage）       | （実測なし）          | 686,540.746                                                                                                                          |
+| burst-s1off-dton（burstHitDamage）       | 686,541（`281-02`）   | 686,540.746（-0.254、許容内）                                                                                                        |
 | burst-s1off-dton-crit（burstHitDamage）  | 1,029,811（`280-01`） | 1,029,811.119（+0.119、許容内）                                                                                                      |
 | burst-s1off-dtoff（burstHitDamage）      | （実測なし）          | 585,885.6                                                                                                                            |
 | burst-s1off-dtoff-crit（burstHitDamage） | （実測なし）          | 878,828.4                                                                                                                            |

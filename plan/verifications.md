@@ -2464,24 +2464,26 @@
   - 問い: 録画 280 で読んだソルジャーE.G. のバーストのヒットの遅れ（III の発動から動画で 29f。モデルのフレームで 7f）を遅れの表に入れたモデルは、録画 281 の遅れと合うか
   - 話題: スキル・キャラ固有・日付: 2026-10-06・状態: 調査中
   - 録画: 281
+  - 観測値: 281-04
   - 派生元: V-0244
   - 予測（2026-10-06、commit fc5018b）との比べ:
-    - burst-delays（burstHitDelays）: 実測なし。H1 [29, 29, 29, 29, 29]
+    - burst-delays（burstHitDelays）: 実測 [29, 29, 29, 29, 29]（281-04）。H1 [29, 29, 29, 29, 29]（+0、許容内）
+    - 許容内の指標: H1 1/1。合う仮説は H1 だけ
 - **[V-0244](../records/verifications/V-0244-soldier-eg-burst.md)** ソルジャーE.G. のバーストの倍率ダメージのヒットの遅れと値
   - 問い: ソルジャーE.G. のバーストの倍率ダメージは、III の発動から何フレーム遅れて 1 ヒットで出て、値は burstDamage の式（最終攻撃力に S1 の▲が入る）と合うか
   - 話題: スキル・キャラ固有・日付: 2026-10-06・状態: 調査中・Stage: plan/design-soldier-eg.md 5.3 節
   - 録画: 280、281
-  - 観測値: 280-01、280-02、280-03、280-04、280-05、280-06
+  - 観測値: 280-01、280-02、280-03、280-04、280-05、280-06、281-01、281-02、281-03
   - 派生した検証: V-0242
   - 予測（2026-10-06、commit f34bb68）との比べ:
     - burst-s1on-dton（burstHitDamage）: 実測 740,984（280-02）。H1 740,984.449（+0.449、許容内）
     - burst-s1on-dton-crit（burstHitDamage）: 実測なし。H1 1,111,476.673
     - burst-s1on-dtoff（burstHitDamage）: 実測 632,347（280-03）。H1 632,347.2（+0.2、許容内）
     - burst-s1on-dtoff-crit（burstHitDamage）: 実測なし。H1 948,520.8
-    - burst-s1off-dton（burstHitDamage）: 実測なし。H1 686,540.746
+    - burst-s1off-dton（burstHitDamage）: 実測 686,541（281-02）。H1 686,540.746（-0.254、許容内）
     - burst-s1off-dton-crit（burstHitDamage）: 実測 1,029,811（280-01）。H1 1,029,811.119（+0.119、許容内）
     - burst-s1off-dtoff（burstHitDamage）: 実測なし。H1 585,885.6
     - burst-s1off-dtoff-crit（burstHitDamage）: 実測なし。H1 878,828.4
     - burst-delays（burstHitDelays）: 実測なし。H1 [0, 0, 0, 0, 0]
     - s2-starts-team（buffWindowStarts）: 実測なし。H1 [529, 1,081, 1,610, 2,140, 2,669, 3,220, 3,750, 4,279, 4,809, 5,338, 5,890, 6,419, 6,948, 7,478, 8,029, 8,559, 9,088, 9,617, 10,169]
-    - 許容内の指標: H1 3/3。合う仮説は H1 だけ
+    - 許容内の指標: H1 4/4。合う仮説は H1 だけ
