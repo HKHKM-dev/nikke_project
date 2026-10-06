@@ -278,7 +278,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
       // 使用武器変更の武器のパラメータ編: 撃ち切りで終わる変更は durationFrames が 0 でも窓を持つ（register が開け、撃ち切りで閉じる）
       if (effect.durationFrames <= 0 && effect.durationUntil !== 'ammoSpent') continue;
-      if (!dependsOnRank(effect) && effect.condition === undefined) {
+      // 環境コントロール強化編: amplifies の窓は planBuffTimeline が参照する窓から作るので、ここでは追わない
+      if (!dependsOnRank(effect) && effect.condition === undefined && effect.amplifies === undefined) {
         plainTimed.push({ effect, sourceSlotIndex, casterBaseAttack: slot.casterBaseAttack });
       }
       if (effect.stat === 'attack' && !dependsOnRank(effect)) {

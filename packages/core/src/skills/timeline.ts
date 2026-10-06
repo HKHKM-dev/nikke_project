@@ -524,6 +524,8 @@ export function planBuffTimeline(
   const ranked: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
   /** 1.5 段目に回す効果（Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」） */
   const conditional: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
+  /** 2.5 段目に回す効果（環境コントロール強化編: 参照する効果の窓に重なる間だけ、その値を増やす） */
+  const amplifying: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
   /** 窓の始まりの列 fires から効果の窓を作り、対象の枠に配る */
   const distribute = (
     out: BuffWindow[],
@@ -606,6 +608,10 @@ export function planBuffTimeline(
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
+      if (effect.amplifies !== undefined) {
+        amplifying.push({ sourceSlotIndex, effect });
+        continue;
+      }
       if (dependsOnRank(effect)) {
         ranked.push({ sourceSlotIndex, effect });
         continue;
@@ -702,6 +708,82 @@ export function planBuffTimeline(
       });
     }
     windows.push(...rankedWindows);
+  }
+
+  // 2.5 段目（環境コントロール強化編。plan/design-true-damage-element.md 3.5 節、V-0230 の論点 1 (a)）: 発火の瞬間に自分に
+  // 同じ枠の参照するスロットの同じ stat の窓（1〜2 段目のもの）が効いていれば、発動から維持の秒数のあいだ、対象の枠ごとに
+  // 参照する窓が効いている所は「その値 × 割合」を足し、切れた所は「発動の瞬間の参照の値 × (1 + 割合)」を足す（切り取らない）
+  for (const { sourceSlotIndex, effect } of amplifying) {
+    const { skill } = effect.amplifies!;
+    const referenced = windows.filter(
+      (w) =>
+        w.sourceSlotIndex === sourceSlotIndex &&
+        w.effect.source.skill === skill &&
+        w.effect.stat === effect.stat &&
+        w.effect.amplifies === undefined,
+    );
+    const activeAt = (slotIndex: number, frame: number) =>
+      referenced.filter((w) => w.slotIndex === slotIndex && w.start <= frame && frame < w.end);
+    const accepted: number[] = [];
+    for (const { frame } of buffStartFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey)) {
+      if (activeAt(sourceSlotIndex, frame).length === 0) {
+        conditionSkips.push({
+          frame,
+          sourceSlotIndex,
+          effect: { source: effect.source, effectIndex: effect.effectIndex },
+        });
+        continue;
+      }
+      accepted.push(frame);
+    }
+    const amplified: BuffWindow[] = [];
+    // 同じ効果の再発火は上書き延長（和集合）。発動の瞬間の参照の値は、和集合の窓の始まり（その窓を開けた発火）のもの
+    for (const [s, e] of unionWindows(accepted, effect.durationFrames, frames)) {
+      slots.forEach((target, slotIndex) => {
+        if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character)) return;
+        const atStart = activeAt(slotIndex, s);
+        if (atStart.length === 0) return;
+        const startValue = atStart.reduce((sum, w) => sum + w.effect.value, 0);
+        // 参照する窓が効いている所
+        const covered: [number, number][] = [];
+        for (const w of referenced) {
+          if (w.slotIndex !== slotIndex) continue;
+          const start = Math.max(s, w.start);
+          const end = Math.min(e, w.end);
+          if (start >= end) continue;
+          covered.push([start, end]);
+          amplified.push(
+            windowOf(slotIndex, sourceSlotIndex, { ...effect, value: effect.value * w.effect.value }, { start, end }),
+          );
+        }
+        // 切れた所（参照する窓が効いていない所）は、発動の瞬間の値の (1 + 割合) 倍を足す
+        let cursor = s;
+        for (const [start, end] of covered.sort((a, b) => a[0] - b[0])) {
+          if (cursor < start) {
+            amplified.push(
+              windowOf(
+                slotIndex,
+                sourceSlotIndex,
+                { ...effect, value: (1 + effect.value) * startValue },
+                { start: cursor, end: start },
+              ),
+            );
+          }
+          cursor = Math.max(cursor, end);
+        }
+        if (cursor < e) {
+          amplified.push(
+            windowOf(
+              slotIndex,
+              sourceSlotIndex,
+              { ...effect, value: (1 + effect.value) * startValue },
+              { start: cursor, end: e },
+            ),
+          );
+        }
+      });
+    }
+    windows.push(...amplified);
   }
 
   // 3. 境界

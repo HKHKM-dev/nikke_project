@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 93,
-  "checkedAt": "2026-10-05",
+  "checkedAt": "2026-10-06",
   "skills": {
     "skill1": {
       "effects": [
@@ -105,15 +105,32 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0337"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "durationSeconds": 10,
+          "amplifies": {
+            "skill": "skill1",
+            "percent": 100
+          },
+          "assumes": {
+            "ja": "環境コントロール強化（維持時間 10 秒）。バースト使用の瞬間に自分が環境コントロール（S1）の窓の中のときだけ付く。発動から 10 秒、環境コントロールの受けるダメージ▲を同じ群の中で 2 倍（3.9% なら合計 7.8%）に保ち、環境コントロールの窓が先に切れても 10 秒続く。録画では合計が 7.811% で、2 倍より 1 ヒットで +1.7 大きい（出どころは分からない）",
+            "en": "Enhanced Environment Setup (10 s). Applied only if this unit is in an Environment Setup (S1) window at the moment of burst use. For 10 s from activation, keeps Environment Setup's Damage Taken up doubled within the same group (3.9% becomes 7.8% in total), even after the Environment Setup window ends. The recording shows 7.811% in total, +1.7 per hit above doubling (source unknown)"
+          },
+          "claims": [
+            "C-0335",
+            "C-0336"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "環境コントロール強化（環境コントロールの受けるダメージ▲を 10 秒間 2 倍にする）は未対応（環境コントロールの窓に重ねて切り取る語彙が無い。plan/design-true-damage-element.md 6 節の論点 6）",
-          "en": "Enhanced Environment Setup (doubling Environment Setup's Damage Taken up for 10 s) is not modeled (no vocabulary to clip it to the Environment Setup window; plan/design-true-damage-element.md section 6, item 6)",
-          "kind": "unimplemented"
-        },
         {
           "ja": "味方全体の受ける HP 回復量▲はダメージに関係しない",
           "en": "HP recovery taken up for all allies does not affect damage",

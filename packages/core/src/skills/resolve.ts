@@ -12,6 +12,7 @@ import {
   type BuffStat,
   type BuffTarget,
   type BuffTrigger,
+  type Amplifies,
   type DurationUntil,
   type EffectCondition,
   type EffectTrigger,
@@ -245,6 +246,11 @@ export type ResolvedTimedEffect = ResolvedEffect & {
    * （1 パス目のループでは追わず、窓は planBuffTimeline が時刻表から作る）
    */
   durationUntil?: ResolvedDurationUntil;
+  /**
+   * 環境コントロール強化編: 増やす相手の効果。有れば value は割合（percent ÷ 100）で、窓ごとの値（参照する窓が効いている所は
+   * その値 × 割合、切れた所は発動の瞬間の値 × (1 + 割合)）は planBuffTimeline が作る
+   */
+  amplifies?: Amplifies;
 };
 
 /**
@@ -282,16 +288,18 @@ export function resolveTimed(
       const shots = resolveDurationShots(effect, skill, levels[slot]);
       const seconds = shots === undefined ? durationSecondsOf(effect, skill, levels[slot]) : 0;
       const value =
-        effect.ref === undefined
-          ? 1 // フラグの stat（装弾数無限）
-          : scaledValue(
-              skillValue(skill, effect.ref, levels[slot]),
-              effect.stat,
-              effect.scaling,
-              character,
-              effect.decrease,
-            );
-      if (effect.ref === undefined && !isFlagStat(effect.stat)) {
+        effect.amplifies !== undefined
+          ? effect.amplifies.percent / 100 // 環境コントロール強化編: 参照する効果の値に掛ける割合（窓ごとの値は planBuffTimeline）
+          : effect.ref === undefined
+            ? 1 // フラグの stat（装弾数無限）
+            : scaledValue(
+                skillValue(skill, effect.ref, levels[slot]),
+                effect.stat,
+                effect.scaling,
+                character,
+                effect.decrease,
+              );
+      if (effect.ref === undefined && effect.amplifies === undefined && !isFlagStat(effect.stat)) {
         throw new RangeError(`skill ${skill.id}: timed ${effect.stat} needs ref`);
       }
       const r: ResolvedTimedEffect = {
@@ -316,6 +324,7 @@ export function resolveTimed(
       if (effect.condition) r.condition = effect.condition;
       if (shots !== undefined) r.durationShots = shots;
       if (effect.durationUntil !== undefined) r.durationUntil = effect.durationUntil;
+      if (effect.amplifies !== undefined) r.amplifies = effect.amplifies;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
