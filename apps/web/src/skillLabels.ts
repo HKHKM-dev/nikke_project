@@ -73,6 +73,7 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
       coreHit: 'コアの命中',
       fullChargeShot: 'フルチャージ攻撃',
       lastShot: '最後の弾丸',
+      weaponChangeShot: '使用武器の変更の攻撃',
     }[trigger.count];
     // Stage 11: 数えるだけのスタック（クラウン S2）は「通常攻撃 43 回 × 20 スタックごと」
     if (trigger.stacks !== undefined) {
@@ -145,7 +146,18 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
   if (effect.stat === 'weapon') {
     const shot = effect.weapon?.shot;
     const hits = effect.weapon && effect.weapon.hits > 1 ? ` × ${effect.weapon.hits} ヒット` : '';
-    return `使用武器の変更（1 発 ${formatPercent(effect.value, 2)}${hits}${shot ? `・${formatNumber(shot.rateOfFire)} rpm` : ''}）`;
+    // 使用武器変更の武器のパラメータ編: チャージ武器はレートの代わりにチャージ時間・フルチャージ倍率、撃ち切りで終わる変更は装弾数
+    const rate = !shot
+      ? ''
+      : shot.chargeTime > 0
+        ? `・チャージ ${formatNumber(shot.chargeTime, 2)} 秒・フルチャージ ${formatPercent(shot.fullChargeDamage, 0)}`
+        : `・${formatNumber(shot.rateOfFire)} rpm`;
+    const ammo =
+      shot && 'durationUntil' in effect && effect.durationUntil === 'ammoSpent'
+        ? `・最大装弾数 ${formatNumber(shot.maxAmmo)} 発`
+        : '';
+    const trueDamage = effect.weapon?.trueDamage ? '・防御力無視ダメージ' : '';
+    return `使用武器の変更（1 発 ${formatPercent(effect.value, 2)}${hits}${rate}${ammo}${trueDamage}）`;
   }
   const stat = BUFF_STAT_LABEL[effect.stat];
   if (effect.stat === 'infiniteAmmo') return stat;

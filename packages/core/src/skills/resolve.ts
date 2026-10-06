@@ -2,6 +2,7 @@
 // Stage 11 モダニア: スタックの最大数・「▼」・条件・使用武器の変更（stat 'weapon' の持続効果として解決する）を足した。
 import type { CharacterData, Element, Locale, LocalizedText, ShotParams, SkillRaw, WeaponType } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
+import { isChargeWeapon } from '../weapons.ts';
 import type { ChangedWeapon } from './buffs.ts';
 import {
   SKILL_SLOTS,
@@ -243,8 +244,15 @@ export type ResolvedTimedEffect = ResolvedEffect & {
    * 防御力無視ダメージ編: 維持の終わりの出来事（「解除条件：フルバーストタイムが終了した時」）。有れば durationFrames は 0
    * （1 パス目のループでは追わず、窓は planBuffTimeline が時刻表から作る）
    */
-  durationUntil?: DurationUntil;
+  durationUntil?: ResolvedDurationUntil;
 };
+
+/**
+ * 解決後の維持の終わりの出来事。'ammoSpent' は使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）:
+ * 最大装弾数を書いた使用武器の変更（weaponChange の maxAmmoRef）が、最後の弾丸を撃ったフレームの次のフレームに終わる。
+ * DSL の timed には書けない（weaponChange を解決したときだけ付く）
+ */
+export type ResolvedDurationUntil = DurationUntil | 'ammoSpent';
 
 /** 持続バフが枠へ適用された記録 */
 export type AppliedTimedEffect = ResolvedTimedEffect & {
@@ -363,12 +371,25 @@ function resolveMaxStacks(
  */
 export const WEAPON_CHANGE_CORE = 'base' as const;
 
+/**
+ * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 説明文に書かれた変更後の武器のパラメータ。
+ * 省略した欄は基礎の武器のまま
+ */
+export type ChangedWeaponOverrides = {
+  /** チャージ時間（秒） */
+  chargeTime?: number;
+  /** フルチャージダメージ（倍率。3 = 300%） */
+  fullChargeDamage?: number;
+  maxAmmo?: number;
+};
+
 /** 変更後の武器の ShotParams（WEAPON_CHANGE_CORE と、スピンアップなし = rateOfFire と endRateOfFire を同じにする） */
 export function changedWeaponShot(
   base: ShotParams,
   damageRatio: number,
   rateOfFire: number,
   hitsPerShot = 1,
+  overrides: ChangedWeaponOverrides = {},
 ): ShotParams {
   return {
     ...base,
@@ -376,6 +397,9 @@ export function changedWeaponShot(
     rateOfFire,
     endRateOfFire: rateOfFire,
     rateOfFireChangePerShot: 0,
+    ...(overrides.chargeTime !== undefined ? { chargeTime: overrides.chargeTime } : {}),
+    ...(overrides.fullChargeDamage !== undefined ? { fullChargeDamage: overrides.fullChargeDamage } : {}),
+    ...(overrides.maxAmmo !== undefined ? { maxAmmo: overrides.maxAmmo } : {}),
   };
 }
 
@@ -394,6 +418,22 @@ function resolveWeaponChange(
   }
   const damage = skillValue(skill, effect.damageRef, level) / 100;
   const hits = effect.hitsPerShot ?? 1;
+  const overrides: ChangedWeaponOverrides = {};
+  if (effect.chargeTimeSeconds !== undefined || effect.fullChargeDamage !== undefined) {
+    if (!isChargeWeapon(character.shot)) {
+      throw new RangeError(`skill ${skill.id}: chargeTimeSeconds/fullChargeDamage need a charge weapon`);
+    }
+    if (effect.chargeTimeSeconds !== undefined) overrides.chargeTime = effect.chargeTimeSeconds;
+    if (effect.fullChargeDamage !== undefined) overrides.fullChargeDamage = effect.fullChargeDamage / 100;
+  }
+  if (effect.maxAmmoRef !== undefined) {
+    const n = skillValue(skill, effect.maxAmmoRef, level);
+    if (!Number.isInteger(n) || n < 1) {
+      throw new RangeError(`skill ${skill.id}: max ammo must be a positive integer, got ${n}`);
+    }
+    overrides.maxAmmo = n;
+  }
+  const untilEmpty = effect.maxAmmoRef !== undefined;
   const r: ResolvedTimedEffect = {
     source: { resourceId: character.resourceId, skill: slot, name: skill.name },
     target: 'self',
@@ -403,13 +443,15 @@ function resolveWeaponChange(
     weapon: {
       id: `${character.resourceId}.${slot}.${effectIndex}`,
       hits,
-      shot: changedWeaponShot(character.shot, damage, change.rateOfFire, hits),
+      shot: changedWeaponShot(character.shot, damage, change.rateOfFire, hits, overrides),
       ...(effect.trueDamage ? { trueDamage: true as const } : {}),
     },
     trigger: resolveTrigger(effect.trigger, skill, level),
-    durationFrames: gameSecondsToFrames(durationSecondsOf(effect, skill, level)),
+    durationFrames: untilEmpty ? 0 : gameSecondsToFrames(durationSecondsOf(effect, skill, level)),
     effectIndex,
   };
+  // 使用武器変更の武器のパラメータ編: 撃ち切りで終わる変更は、窓の終わりを 1 パス目の最後の弾丸の発で決める（論点 8）
+  if (untilEmpty) r.durationUntil = 'ammoSpent';
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
 }

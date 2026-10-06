@@ -25,6 +25,16 @@ export type ShotLog = {
   /** Stage 10: 残弾を 0 にした射撃のフレーム（frames の部分列。「最後の弾丸」）。省略は無し（手で作る列のため） */
   lastShotFrames?: number[];
   /**
+   * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 撃ち切りで終わる使用武器の変更が終わったフレーム
+   * （最後の弾丸の発 + 1。基礎の武器に戻るフレーム。昇順）。1 パス目が書き、planBuffTimeline が窓の終わりに使う。省略は無し
+   */
+  weaponChangeEnds?: number[];
+  /**
+   * 同 9.6 節: 使用武器の変更で持ち替えた武器で撃った射撃のフレーム（frames の部分列。回数トリガー weaponChangeShot の列）。
+   * 1 パス目が書く。省略は無し
+   */
+  weaponChangeShotFrames?: number[];
+  /**
    * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: frames と同じ並びの、発ごとの命中の期待値と
    * コアの命中の期待値（1 パス目が書く）。省略は命中 1・コア 0（手で作る列・planShots の列）
    */

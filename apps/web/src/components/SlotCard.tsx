@@ -390,7 +390,9 @@ export function SlotCard({
                         {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}・
                         {t.effect.durationShots !== undefined
                           ? `${t.effect.durationShots} 発`
-                          : `${formatNumber(framesToGameSeconds(t.effect.durationFrames), 0)} 秒`}{' '}
+                          : t.effect.durationUntil === 'ammoSpent'
+                            ? '撃ち切りまで'
+                            : `${formatNumber(framesToGameSeconds(t.effect.durationFrames), 0)} 秒`}{' '}
                         × {t.count} 回{formatTimedExtras(t.effect)}
                         {t.effect.condition && skipsOf(t.effect) > 0
                           ? `・状態でなく発動せず ${skipsOf(t.effect)} 回`

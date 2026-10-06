@@ -351,7 +351,8 @@ describe('ウンファ：TU の定義（data/skills/95.json）', () => {
   });
 
   it('gives Damage Taken up for 10 s on Burst Skill use (C-0312)', () => {
-    const burst = timed.filter((e) => e.source.skill === 'burst');
+    // 使用武器の変更（C-0313）は packages/core/src/__tests__/eunhwaTuWeaponChange.test.ts で見る
+    const burst = timed.filter((e) => e.source.skill === 'burst' && e.stat !== 'weapon');
     expect(burst.map((e) => [e.stat, e.target, e.value, e.durationFrames])).toEqual([
       ['damageTaken', 'allies', 0.2787, gameSecondsToFrames(10)],
     ]);

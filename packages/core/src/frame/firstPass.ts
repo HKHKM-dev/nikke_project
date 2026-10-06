@@ -276,7 +276,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
-      if (effect.durationFrames <= 0) continue;
+      // 使用武器変更の武器のパラメータ編: 撃ち切りで終わる変更は durationFrames が 0 でも窓を持つ（register が開け、撃ち切りで閉じる）
+      if (effect.durationFrames <= 0 && effect.durationUntil !== 'ammoSpent') continue;
       if (!dependsOnRank(effect) && effect.condition === undefined) {
         plainTimed.push({ effect, sourceSlotIndex, casterBaseAttack: slot.casterBaseAttack });
       }
@@ -370,7 +371,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
    */
   const register = (src: FiringSource, start: number, context: FireContext): void => {
     if (start >= frames) return;
-    const end = Math.min(start + src.effect.durationFrames, frames);
+    // 使用武器変更の武器のパラメータ編: 撃ち切りで終わる変更は戦闘の終わりまで開けておき、最後の弾丸の発で閉じる（手順 1）
+    const end = src.effect.durationUntil === 'ammoSpent' ? frames : Math.min(start + src.effect.durationFrames, frames);
     for (const i of targetsAt(src.effect, src.sourceSlotIndex, context)) {
       if (src.effect.maxStacks !== undefined) {
         src.starts[i]!.push(start);
@@ -389,6 +391,20 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const trimmed = start + weaponStartTrim(src.effect);
       if (trimmed < end) list.push([trimmed, end]);
     }
+  };
+  /**
+   * 使用武器変更の武器のパラメータ編: 枠 i の、撃ち切りで終わる使用武器の変更（識別子 weaponId）の開いている窓を end で閉じる。
+   * 閉じたら true
+   */
+  const closeWeaponChange = (i: number, weaponId: string, end: number): boolean => {
+    for (const src of firing) {
+      if (src.effect.durationUntil !== 'ammoSpent' || src.effect.weapon?.id !== weaponId) continue;
+      const last = src.windows[i]?.[src.windows[i]!.length - 1];
+      if (last === undefined || last[0] >= end || last[1] < end) continue;
+      last[1] = Math.min(end, frames);
+      return true;
+    }
+    return false;
   };
   /** フレーム f の発火で付く窓の始まり。射撃の回数トリガーは次のフレームから（Stage 8） */
   const startOf = (src: FiringSource, f: number): number => (isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
@@ -724,12 +740,19 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const log = logs[i]!;
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
+      if (params.weapon !== null) (log.weaponChangeShotFrames ??= []).push(f);
+      // 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節の論点 8）: 撃ち切りで終わる変更は、最後の弾丸を
+      // 撃ったら次のフレームで基礎の武器に戻す（変更後の武器はリロードしない）。窓の終わりは planBuffTimeline も同じ列から作る
+      if (params.weapon !== null && state.lastShot && closeWeaponChange(i, params.weapon.id, f + 1)) {
+        (log.weaponChangeEnds ??= []).push(f + 1);
+      }
       const isPartial = partial !== null && partial < 1;
       if (isPartial) (log.partialShots ??= []).push({ frame: f, progress: partial });
       const { hits, coreHits } = hitsAt(i, f);
       log.hits!.push(hits);
       log.coreHits!.push(coreHits);
       shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge && !isPartial, hits, coreHits };
+      if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
       shotCounts[i]! += 1;
       const energy =
         energyAt(i, f) * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +

@@ -160,6 +160,8 @@ export function cycleShotFrames(log: ShotLog | null | undefined, trigger: Resolv
     return log.frames.filter(full);
   }
   if (trigger.count === 'lastShot') return log.lastShotFrames ?? [];
+  // 使用武器変更の武器のパラメータ編: 循環には書けない（skills/types.ts の parseCycleEffect）が、型のために列を返す
+  if (trigger.count === 'weaponChangeShot') return log.weaponChangeShotFrames ?? [];
   return log.frames;
 }
 
