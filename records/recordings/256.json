@@ -1,0 +1,41 @@
+{
+  "id": "256",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-256_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4",
+  "original": "2026-10-06_19-23-30.mp4",
+  "durationSec": 204.4,
+  "frames": 12262,
+  "fps": 60,
+  "sizeMB": 247.8,
+  "sha256": "c805985c2e41",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0230 の録画（V-0229 と兼ねる）。サクラ（AI）・デルタ（AI）・I-DOLL・サン（操作・撃たない）。オートバースト ON"
+}
