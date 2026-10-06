@@ -1,0 +1,41 @@
+{
+  "id": "287",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-287_rl+sr+mg_flower+eunhwa-tu+emma-tu_formation.mp4",
+  "original": "2026-10-06_23-53-29.mp4",
+  "durationSec": 200.3,
+  "frames": 12020,
+  "fps": 60,
+  "sizeMB": 242.9,
+  "sha256": "a5b06863163a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0249（エマ：TU とウンファ：TU のフォーメーションの追加効果）の録画。フラワー（AI）+ ウンファ：TU（AI）+ エマ：TU（操作・撃たない）・AUTO 射撃 OFF・オートバースト OFF（バーストは手でフラワー I → ウンファ II）"
+}

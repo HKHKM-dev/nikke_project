@@ -111,15 +111,43 @@
           "claims": [
             "C-0020"
           ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "projectileExplosionDamage",
+          "ref": 3,
+          "withCharacter": {
+            "rid": 93,
+            "present": true
+          },
+          "assumes": {
+            "ja": "フォーメーションLT 適用中の効果 1。「自分にフォーメーションLT 適用中」を、編成にエマ：タクティカル・アップがいることと読んだ（エマの S2 の同じ言い回しの C-0306 と同じ読み）。RL の通常攻撃にだけ掛かり、ほかの発射体爆発ダメージ▲と同じ stat の和",
+            "en": "LT Formation bonus Effect 1. \"While this unit is in the LT Formation state\" is read as Emma: Tactical Upgrade being in the team (same reading as C-0306 for the same wording on Emma S2). Applies only to RL normal attacks, summed with other Projectile Explosion Damage up"
+          },
+          "claims": [
+            "C-0374"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "trueDamage",
+          "ref": 4,
+          "withCharacter": {
+            "rid": 93,
+            "present": true
+          },
+          "assumes": {
+            "ja": "フォーメーションLT 適用中の効果 2。読みは効果 1 と同じ。防御力無視ダメージの発にだけ乗り、ほかの防御力無視ダメージ▲と同じ stat の和",
+            "en": "LT Formation bonus Effect 2. Same reading as Effect 1. Applies only to true-damage shots, summed with other True Damage up"
+          },
+          "claims": [
+            "C-0375"
+          ]
         }
       ],
-      "notes": [
-        {
-          "ja": "フォーメーションLT 適用中の追加効果（味方全体の発射体爆発ダメージ▲・防御力無視ダメージ▲）は未対応（語彙 withCharacter・projectileExplosionDamage・trueDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）",
-          "en": "Bonus effects while in LT Formation (Projectile Explosion Damage up and True Damage up for all allies) are not modeled (withCharacter, projectileExplosionDamage and trueDamage exist, but there is no supporting claim; the skills of Emma: TU and Eunhwa: TU must be confirmed first)",
-          "kind": "unimplemented"
-        }
-      ]
+      "notes": []
     },
     "burst": {
       "effects": [
@@ -156,6 +184,16 @@
             "ja": "撃ち切ったら（最大装弾数 1 発）、次のフレームに基礎の SR に戻る。戻った基礎の SR は満タンのマガジンで、リロードの後の 1 発目と同じ待ちで撃つ（モダニア由来の決まり。未確定。録画 232 では着弾から基礎の SR の 1 発目まで 137f で、モデルより長い）。炸裂弾の発は持ち替えの次のフレームから、構え + チャージ 0.3 秒の待ちで撃つ（録画の着弾はバースト使用から 20f ほど）。炸裂弾の発のバーストゲージは基礎の SR の 1 発と同じ量（未確定）。変更後の武器の発射レート（CDN）は、チャージ武器の発の間隔には使わない",
             "en": "After the magazine (1 round) is spent, the unit switches back to the base SR on the next frame. The base SR returns with a full magazine and fires after the same wait as the first shot after a reload (rule carried over from Modernia; unverified. In recording 232 the first base SR shot came 137 frames after the round's hit, later than the model). The round is fired from the frame after the switch, after the aim + 0.3 s charge wait (in recordings it hits about 20 frames after Burst Skill use). The round's Burst Gauge gain is the same as one base SR shot (unverified). The changed weapon's rate of fire (CDN) is not used for a charge weapon's shot interval"
           }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "炸裂弾（使用武器変更の 1 発）に発射体爆発ダメージ▲が乗る分は未対応。録画では (1 + 防御力無視ダメージ▲ + 発射体爆発ダメージ▲) の和で掛かっていた（C-0376。変更後の武器の発に発射体の爆発を持たせる語彙と、2 つの▲の置き場所が要る）",
+          "en": "Projectile Explosion Damage up on the Explosive Round (the weapon-change shot) is not modeled. In the recording it applied as (1 + True Damage up + Projectile Explosion Damage up) summed (C-0376; needs vocabulary for an explosion on the changed weapon and a placement for the two ups)",
+          "kind": "unimplemented",
+          "claims": [
+            "C-0376"
+          ]
         }
       ]
     }

@@ -75,7 +75,7 @@ export function explosionHitMultiplier(buffs: BuffTotals): number {
 /**
  * 防御力無視ダメージ編: 防御力無視ダメージ▲（trueDamage）の式の中の置き場所（plan/design-true-damage-element.md 3.1 節・6 節の論点 1）。
  * separate = 別の乗数 (1 + Σ防御力無視ダメージ)、attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ)。
- * **未確定（仮定）**: 根拠の結論が無い。いまは trueDamage を書いた定義が無いので、どちらでも計算は変わらない。攻撃ダメージ▲が無ければ
+ * **未確定（仮定）**: 根拠の結論が無い（炸裂弾で発射体爆発ダメージ▲と 1 つの和だった C-0376 は attackDamage を指すが、攻撃ダメージ▲の無い録画で、2 つだけの別の群と分けていない）。攻撃ダメージ▲が無ければ
  * 2 つは同じ値になる（区別は攻撃ダメージ▲を持つ機構が確定したキャラを足した録画で行う）
  */
 export const TRUE_DAMAGE_BUCKET: 'separate' | 'attackDamage' = 'separate';

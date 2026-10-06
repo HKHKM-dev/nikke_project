@@ -76,19 +76,55 @@
             "C-0266",
             "C-0235"
           ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "projectileExplosionDamage",
+          "ref": 2,
+          "claims": [
+            "C-0373",
+            "C-0205"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "trueDamage",
+          "ref": 3,
+          "withCharacter": {
+            "rid": 95,
+            "present": true
+          },
+          "assumes": {
+            "ja": "フォーメーションAS 適用中の効果 1。「自分にフォーメーションAS 適用中」を、編成にウンファ：タクティカル・アップがいることと読んだ（C-0306）。防御力無視ダメージの発（カモフラージュの通常攻撃・炸裂弾）にだけ乗り、ほかの防御力無視ダメージ▲と同じ stat の和",
+            "en": "AS Formation bonus Effect 1. \"While this unit is in the AS Formation state\" is read as Eunhwa: Tactical Upgrade being in the team (C-0306). Applies only to true-damage shots (Camouflage normal attacks and the Explosive Round), summed with other True Damage up"
+          },
+          "claims": [
+            "C-0375",
+            "C-0306"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "projectileExplosionDamage",
+          "ref": 4,
+          "withCharacter": {
+            "rid": 95,
+            "present": true
+          },
+          "assumes": {
+            "ja": "フォーメーションAS 適用中の効果 2。読みは効果 1 と同じ。RL の通常攻撃にだけ掛かり、効果 2（基礎）と同じ stat の和",
+            "en": "AS Formation bonus Effect 2. Same reading as Effect 1. Applies only to RL normal attacks, summed with the base Effect 2"
+          },
+          "claims": [
+            "C-0374",
+            "C-0306"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "味方全体の発射体爆発ダメージ▲は未対応（語彙 projectileExplosionDamage はある）",
-          "en": "Projectile Explosion Damage up for all allies is not modeled (projectileExplosionDamage exists)",
-          "kind": "unimplemented"
-        },
-        {
-          "ja": "フォーメーションAS 適用中の追加効果のうち、味方全体の防御力無視ダメージ▲・発射体爆発ダメージ▲は未対応（語彙 withCharacter・trueDamage・projectileExplosionDamage はあるが、根拠の結論が無い。防御力無視ダメージの発か RL のいる編成で撮る必要がある）。環境コントロールの再発動周期 20 秒▼は S1 の効果に書いた",
-          "en": "Of the bonus effects while in AS Formation, True Damage up and Projectile Explosion Damage up for all allies are not modeled (withCharacter, trueDamage and projectileExplosionDamage exist, but there is no supporting claim; a recording with true-damage shots or an RL is needed). The −20 s to Environment Setup's recurring interval is written in S1's effects",
-          "kind": "unimplemented"
-        },
         {
           "ja": "フォーメーションAS 適用中の陽動発動不可はダメージに関係しない",
           "en": "Exposure being disabled while in AS Formation does not affect damage",

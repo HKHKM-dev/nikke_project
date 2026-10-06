@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 34・効果 175（根拠あり 134）・notes 83（根拠あり 44）
+件数: キャラ 34・効果 180（根拠あり 139）・notes 81（根拠あり 45）
 
-notes の種類: 未対応 22・前提の外 22・計算に無関係 31・補足 8
+notes の種類: 未対応 20・前提の外 22・計算に無関係 31・補足 8
 
-スロット: supported 70・partial 11・unsupported 7・noEffect 23
+スロット: supported 71・partial 10・unsupported 7・noEffect 23
 
 ## 10 ラピ
 
@@ -101,11 +101,12 @@ notes の種類: 未対応 22・前提の外 22・計算に無関係 31・補足
   - effects[1] timed・10 秒ごと・damageTaken: C-0305（確定）、C-0306（確定）
   - notes[0] 未対応: 環境コントロールの味方全体の持続回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
   - notes[1] 計算に無関係: 陽動はダメージに関係しない: 根拠なし
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] passive・critDamage: C-0266（確定）、C-0235（仮説）
-  - notes[0] 未対応: 味方全体の発射体爆発ダメージ▲は未対応（語彙 projectileExplosionDamage はある）: 根拠なし
-  - notes[1] 未対応: フォーメーションAS 適用中の追加効果のうち、味方全体の防御力無視ダメージ▲・発射体爆発ダメージ▲は未対応（語彙 withCharacter・trueDamage・projectileExplosionDamage はあるが、根拠の結論が無い。防御力無視ダメージの発か RL のいる編成で撮る必要がある）。環境コントロールの再発動周期 20 秒▼は S1 の効果に書いた: 根拠なし
-  - notes[2] 計算に無関係: フォーメーションAS 適用中の陽動発動不可はダメージに関係しない: 根拠なし
+  - effects[1] passive・projectileExplosionDamage: C-0373（確定）、C-0205（確定）
+  - effects[2] passive・trueDamage: C-0375（確定）、C-0306（確定）
+  - effects[3] passive・projectileExplosionDamage: C-0374（確定）、C-0306（確定）
+  - notes[0] 計算に無関係: フォーメーションAS 適用中の陽動発動不可はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0337（確定）
   - effects[1] timed・burstUse・damageTaken: C-0335（確定）、C-0336（仮説）
@@ -119,14 +120,16 @@ notes の種類: 未対応 22・前提の外 22・計算に無関係 31・補足
   - effects[2] timed・fullChargeShot・trueDamageConversion: C-0314（確定）、C-0311（確定）
   - effects[3] timed・fullChargeShot・trueDamage: C-0314（確定）、C-0311（確定）
   - notes[0] 前提の外: カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）: 根拠なし
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] passive・critRate: C-0317（確定）、C-0268（仮説）、C-0235（仮説）
   - effects[1] passive・chargeDamage: C-0020（確定）
   - effects[2] passive・attack: C-0020（確定）
-  - notes[0] 未対応: フォーメーションLT 適用中の追加効果（味方全体の発射体爆発ダメージ▲・防御力無視ダメージ▲）は未対応（語彙 withCharacter・projectileExplosionDamage・trueDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）: 根拠なし
-- **burst**: supported
+  - effects[3] passive・projectileExplosionDamage: C-0374（確定）
+  - effects[4] passive・trueDamage: C-0375（確定）
+- **burst**: partial
   - effects[0] timed・weaponChangeShot・damageTaken: C-0312（確定）、C-0138（確定）
   - effects[1] weaponChange・burstUse: C-0313（確定）
+  - notes[0] 未対応: 炸裂弾（使用武器変更の 1 発）に発射体爆発ダメージ▲が乗る分は未対応。録画では (1 + 防御力無視ダメージ▲ + 発射体爆発ダメージ▲) の和で掛かっていた（C-0376。変更後の武器の発に発射体の爆発を持たせる語彙と、2 つの▲の置き場所が要る）: C-0376（確定）
 
 ## 101 ドレイク
 
