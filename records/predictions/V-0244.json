@@ -1,0 +1,118 @@
+{
+  "verification": "V-0244",
+  "note": "撮る前の予測。録画 080（V-0029）と同じ組み方: フラワー（I）+ ユニ（II）+ アスカ（III・操作）、AUTO 射撃 ON・オートバースト ON。見るのはアスカの S1（回復効果が適用された時、攻撃力▲ 25 秒）が付いているかで、バーストの外のアスカの 1 発（コア・会心・距離なし）で比べる。P2（別の窓だが延びない）はモデルで切り替えられないので、検証記録に手で書く（判定の指標では H0 と同じ値・P1 の指標では H1 と同じ値）",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 160,
+      "controlled": false
+    },
+    {
+      "rid": 830,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "V-0029 の P3: 出どころが違っても吸収回復は同じ「付いている状態」で、ユニの吸収回復が付いている間のアスカのバーストの吸収回復は S1 を起こさない（アスカのバーストの回復を落とした形）。S1 はユニの最初のフルチャージの攻撃から 25 秒だけ",
+      "override": {
+        "dropHeals": [830]
+      }
+    },
+    {
+      "id": "H1",
+      "note": "V-0029 の P1（C-0087。いまのモデル）: 出どころが違えば別の窓で、アスカのバーストの吸収回復で S1 が起き、発動中の S1 はそこから 25 秒に延びる"
+    }
+  ],
+  "targets": [
+    {
+      "id": "asuka-hit-after-uni-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1740,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "判定の指標（延びるか）。1 回目のフルバーストの後で、ユニの最初の攻撃から 25 秒を過ぎ、1 回目のバーストの頭から 25 秒より前のアスカの 1 発（モデルで 29.6 秒）。H1 は S1 あり。H0 と P2 は S1 なし"
+    },
+    {
+      "id": "asuka-hit-between",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "読みの基準。S1 が切れた後、2 回目のフルバーストの前のアスカの 1 発（モデルで 51 秒）。どの仮説でも S1 なし（ユニの吸収回復の付き直しでは起きない。C-0082）"
+    },
+    {
+      "id": "asuka-hit-after-burst2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4710,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "判定の指標（別の窓か）。2 回目のフルバーストの後のアスカの 1 発（モデルで 80 秒）。H1 と P2 は S1 あり、H0 は S1 なし"
+    },
+    {
+      "id": "asuka-total",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "アスカの与ダメージ（180 秒。戦闘履歴）。参考（コア命中率と的のジャンプの窓の残差が乗る）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "57db64233f6b1098714207c2417ce789284b91f1",
+    "values": {
+      "H0": {
+        "asuka-hit-after-uni-s1": 22473.7296,
+        "asuka-hit-between": 22473.7296,
+        "asuka-hit-after-burst2": 22473.7296,
+        "asuka-total": 94271986.87233292
+      },
+      "H1": {
+        "asuka-hit-after-uni-s1": 44286.919599999994,
+        "asuka-hit-between": 22473.7296,
+        "asuka-hit-after-burst2": 44286.919599999994,
+        "asuka-total": 137192286.83940172
+      }
+    },
+    "seen": {}
+  }
+}
