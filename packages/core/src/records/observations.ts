@@ -1,7 +1,13 @@
 // Stage 19-B: 観測値（records/observations/<録画 id>.json）の型・検証と、照合ランナー（モデルと比べて残差を出す）。
 // plan/design-stage19.md 2.3・2.3.1・2.5 節。
 import { BURST_GAUGE_MAX } from '../burst/controller.ts';
-import { hitFrameOf, hitFramesOf, videoFrameOf, type BurstSchedule } from '../burst/schedule.ts';
+import {
+  activationFramesOfSlot,
+  hitFrameOf,
+  hitFramesOf,
+  videoFrameOf,
+  type BurstSchedule,
+} from '../burst/schedule.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
@@ -317,10 +323,22 @@ function critRateAt(result: SimResult, ctx: MetricContext): number {
   return applyCritBuffs(input.character.crit, segment.trigger.buffs).rate + segment.trigger.buffs.normalCritRate;
 }
 
+/**
+ * 枠の発のうち [from, to) のもの（モデルのフレーム）。burst（0 始まり）を書くと、from・to はその枠の burst 回目のバーストの
+ * 発動からの相対になる（モデルが変わって発動が動いても、同じ窓を数える。V-0226）
+ */
 function shotFramesIn(result: SimResult, ctx: MetricContext): number[] {
   const log = slotOf(result.shots, ctx);
-  const from = ctx.args.from === undefined ? 0 : Number(ctx.args.from);
-  const to = ctx.args.to === undefined ? result.frames : Number(ctx.args.to);
+  let base = 0;
+  if (ctx.args.burst !== undefined) {
+    const n = Number(ctx.args.burst);
+    const frames = result.schedule === null ? [] : activationFramesOfSlot(result.schedule, slotIndexOf(ctx));
+    const at = frames[n];
+    if (at === undefined) throw new Error(`枠 ${String(ctx.args.slot)} のバーストの発動 ${n} 回目（0 始まり）が無い`);
+    base = at;
+  }
+  const from = base + (ctx.args.from === undefined ? 0 : Number(ctx.args.from));
+  const to = ctx.args.to === undefined ? result.frames : base + Number(ctx.args.to);
   return log.frames.filter((f) => f >= from && f < to);
 }
 
