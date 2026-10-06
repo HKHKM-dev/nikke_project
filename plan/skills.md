@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 35・効果 180（根拠あり 148）・notes 85（根拠あり 50）
+件数: キャラ 36・効果 182（根拠あり 149）・notes 88（根拠あり 50）
 
-notes の種類: 未対応 22・前提の外 22・計算に無関係 33・補足 8
+notes の種類: 未対応 24・前提の外 23・計算に無関係 33・補足 8
 
-スロット: supported 71・partial 10・unsupported 8・noEffect 25
+スロット: supported 72・partial 11・unsupported 9・noEffect 25
 
 ## 10 ラピ
 
@@ -387,6 +387,17 @@ notes の種類: 未対応 22・前提の外 22・計算に無関係 33・補足
   - effects[0] burstDamage・skill: C-0096（確定）
   - effects[1] timed・burstUse・chargeDamageMultiplier: C-0099（確定）
   - effects[2] heal・burstUse: C-0346（仮説）
+
+## 811 A2
+
+- **skill1**: partial
+  - effects[0] timed・burstUse・chargeDamage: 根拠なし
+  - notes[0] 未対応: バーストスキルを使用した時の爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
+- **skill2**: supported
+  - effects[0] damage・fullChargeShot・additional: C-0407（仮説）
+  - notes[0] 前提の外: パーツダメージ▲はパーツを扱わないので効かない: 根拠なし
+- **burst**: unsupported
+  - notes[0] 未対応: B モード（1 秒ごとに現在の HP▼、攻撃力▲・チャージ速度▲。HP 40% 以下で解除）は未対応（HP を持たないので解除の時刻が決まらない）: 根拠なし
 
 ## 822 ラム
 
