@@ -1,0 +1,86 @@
+{
+  "verification": "V-0280",
+  "note": "既存の録画 120（ネオン：ビジョン・アイ単騎・操作・スペック固定 ON・バーストなし・灼熱の的。44.4 秒）の読み直し。通常攻撃の 1 ヒット（120-02・120-03）は読まれているが、S1 の追加ダメージの値はまだ記録していない。定義（data/skills/18.json）を書いた後、読む前に出した",
+  "team": [
+    {
+      "rid": 18,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 の火力爆発 437.98% の追加ダメージ。フルチャージの通常攻撃 1 発ごと。コア・距離なし）"
+    },
+    {
+      "id": "H2",
+      "note": "超火力状態の追加効果（262.79%）も乗る（バーストを使っていないので超火力にはならない見込みの対照）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 18,
+            "skill": "skill1",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "damageType": "additional",
+              "ref": 8
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "add",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "フルチャージの通常攻撃 1 発の S1 の追加ダメージ（会心なし）。HUD の増分から通常攻撃の 1 ヒット（120-02 など）を引いて出す"
+    },
+    {
+      "id": "add-crit",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "同じ追加ダメージの会心"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "2399d99906aea6d83f2b87ec1251289870f9a585",
+    "values": {
+      "H1": {
+        "add": 528177.6012,
+        "add-crit": 792266.4018000001
+      },
+      "H2": {
+        "add": 845086.5738,
+        "add-crit": 1267629.8607
+      }
+    },
+    "seen": {
+      "120": ["120-01", "120-02", "120-03"]
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "formatVersion": 1,
+  "resourceId": 18,
+  "checkedAt": "2026-10-07",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 7,
+          "assumes": {
+            "ja": "フルチャージの通常攻撃 1 発ごとに 1 回（全弾命中の前提。射撃場の的は「ターゲット」とみる）",
+            "en": "Once per full-charge normal shot (every shot is assumed to hit; the range target is taken as a \"target\")"
+          },
+          "claims": [
+            "C-0410"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "攻撃を受けた時の無敵・デバフ免疫・受けるHP回復量▲は、被弾を扱わないので起きない",
+          "en": "Invincibility, debuff immunity and healing-received up on taking hits do not occur because taking hits is not modeled",
+          "kind": "outOfScope"
+        },
+        {
+          "ja": "超火力状態のときの追加ダメージ（262.79%）は未対応（超火力はバーストの火力ゲージで決まる）",
+          "en": "The extra hit in the Super Firepower state (262.79%) is not modeled (that state depends on the Burst's firepower gauge)",
+          "kind": "unimplemented",
+          "claims": [
+            "C-0410"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 4,
+          "durationRef": 5
+        }
+      ],
+      "notes": [
+        {
+          "ja": "火力ゲージ（戦闘開始時 100、火力チャージ状態の通常攻撃で 2、終了時 45）と、フルバースト終了時のゲージ量に比例するバーストゲージのチャージ速度▲・超火力の攻撃力▲は未対応",
+          "en": "The firepower gauge (100 at battle start, +2 per normal attack in Firepower Charge, +45 when it ends), the burst-gauge charge speed up scaled by it at Full Burst end, and the Super Firepower ATK up are not modeled",
+          "kind": "unimplemented"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 10,
+          "durationRef": 11
+        }
+      ],
+      "notes": [
+        {
+          "ja": "火力ゲージが 100 のときの超火力（攻撃ダメージ▲）と、100 未満のときの火力チャージは未対応",
+          "en": "Super Firepower (attack damage up) when the firepower gauge is 100 and Firepower Charge when it is below 100 are not modeled",
+          "kind": "unimplemented"
+        },
+        {
+          "ja": "爆発範囲▲は未対応（爆発範囲はダメージの式に無い）",
+          "en": "Explosion range up is not modeled (explosion range is not in the damage formula)",
+          "kind": "unimplemented"
+        }
+      ]
+    }
+  }
+}
