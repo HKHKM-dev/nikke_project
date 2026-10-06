@@ -65,7 +65,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "dropHeals": [160],
         "addEffects": [
           {
@@ -115,7 +114,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "dropHeals": [160],
         "addEffects": [
           {

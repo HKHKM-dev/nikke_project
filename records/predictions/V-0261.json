@@ -74,7 +74,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "2 回目のバーストの倍率ダメージのヒット（会心なし）。3〜5 回目も同じ値の見込み（5 回目は戦闘の終わりの近くで、録画では出ないことがある）"
+      "note": "2 回目のバーストの倍率ダメージのヒット（会心なし）。3〜5 回目も同じ値の見込み（5 回目は戦闘の終わりの近くで、録画では出ないことがある）",
+      "observations": ["301-02"]
     },
     {
       "id": "pellet-fb",
@@ -110,7 +111,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "フルバースト終了から 15 秒の中（S1 の effects[1] の窓の中）の 1 ペレット（胴体・会心なし・距離ボーナスなし）"
+      "note": "フルバースト終了から 15 秒の中（S1 の effects[1] の窓の中）の 1 ペレット（胴体・会心なし・距離ボーナスなし）",
+      "observations": ["301-06"]
     },
     {
       "id": "pellet-after",
@@ -128,7 +130,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "S1 の effects[1] の窓の後から次の III の前までの 1 ペレット（胴体・会心なし・距離ボーナスなし）。S1 の effects[1] が効かないなら、pellet-fb-end-in もこの値になる"
+      "note": "S1 の effects[1] の窓の後から次の III の前までの 1 ペレット（胴体・会心なし・距離ボーナスなし）。S1 の effects[1] が効かないなら、pellet-fb-end-in もこの値になる",
+      "observations": ["301-07"]
     },
     {
       "id": "s1-attack-window-ends",
