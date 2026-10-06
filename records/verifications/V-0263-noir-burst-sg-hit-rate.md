@@ -69,24 +69,24 @@
 
 予測は 2026-10-07（commit e324f29）に出した。
 
-| 指標                                    | 実測         | 予測 H1    | 予測 H0    |
-| --------------------------------------- | ------------ | ---------- | ---------- |
-| core-midnear-noirfb（coreHitRate）      | （実測なし） | 0.035      | 0.026      |
-| bullet-midnear-noirfb（bulletHitRate）  | （実測なし） | 0.778      | 0.778      |
-| core-midnear-ravenfb（coreHitRate）     | （実測なし） | 0.026      | 0.026      |
-| bullet-midnear-ravenfb（bulletHitRate） | （実測なし） | 0.778      | 0.778      |
-| core-near-noirfb（coreHitRate）         | （実測なし） | 0.057      | 0.042      |
-| bullet-near-noirfb（bulletHitRate）     | （実測なし） | 0.909      | 0.909      |
-| core-near-ravenfb（coreHitRate）        | （実測なし） | 0.042      | 0.042      |
-| bullet-near-ravenfb（bulletHitRate）    | （実測なし） | 0.909      | 0.909      |
-| core-far-noirfb（coreHitRate）          | （実測なし） | 0.008      | 0.006      |
-| bullet-far-noirfb（bulletHitRate）      | （実測なし） | 0.668      | 0.668      |
-| core-far-ravenfb（coreHitRate）         | （実測なし） | 0.006      | 0.006      |
-| bullet-far-ravenfb（bulletHitRate）     | （実測なし） | 0.668      | 0.668      |
-| noir-crit-rate（critRateAt）            | （実測なし） | 0.15       | 0.15       |
-| pellet-unit-fb（hitDamage）             | （実測なし） | 41,946.171 | 41,946.171 |
-| yuni-max-ammo-in（maxAmmoAt）           | （実測なし） | 11         | 11         |
-| yuni-max-ammo-out（maxAmmoAt）          | （実測なし） | 6          | 6          |
+| 指標                                    | 実測           | 予測 H1          | 予測 H0          |
+| --------------------------------------- | -------------- | ---------------- | ---------------- |
+| core-midnear-noirfb（coreHitRate）      | （実測なし）   | 0.035            | 0.026            |
+| bullet-midnear-noirfb（bulletHitRate）  | （実測なし）   | 0.778            | 0.778            |
+| core-midnear-ravenfb（coreHitRate）     | （実測なし）   | 0.026            | 0.026            |
+| bullet-midnear-ravenfb（bulletHitRate） | （実測なし）   | 0.778            | 0.778            |
+| core-near-noirfb（coreHitRate）         | （実測なし）   | 0.057            | 0.042            |
+| bullet-near-noirfb（bulletHitRate）     | （実測なし）   | 0.909            | 0.909            |
+| core-near-ravenfb（coreHitRate）        | （実測なし）   | 0.042            | 0.042            |
+| bullet-near-ravenfb（bulletHitRate）    | （実測なし）   | 0.909            | 0.909            |
+| core-far-noirfb（coreHitRate）          | （実測なし）   | 0.008            | 0.006            |
+| bullet-far-noirfb（bulletHitRate）      | （実測なし）   | 0.668            | 0.668            |
+| core-far-ravenfb（coreHitRate）         | （実測なし）   | 0.006            | 0.006            |
+| bullet-far-ravenfb（bulletHitRate）     | （実測なし）   | 0.668            | 0.668            |
+| noir-crit-rate（critRateAt）            | （実測なし）   | 0.15             | 0.15             |
+| pellet-unit-fb（hitDamage）             | （実測なし）   | 41,946.171       | 41,946.171       |
+| yuni-max-ammo-in（maxAmmoAt）           | 11（`304-03`） | 11（+0、許容内） | 11（+0、許容内） |
+| yuni-max-ammo-out（maxAmmoAt）          | 6（`304-04`）  | 6（+0、許容内）  | 6（+0、許容内）  |
 
 <!-- records:predictions:end -->
 

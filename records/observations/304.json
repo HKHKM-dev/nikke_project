@@ -1,0 +1,174 @@
+[
+  {
+    "id": "304-01",
+    "recording": "304",
+    "source": "V-0263",
+    "readAt": "2026-10-07",
+    "kind": "rate",
+    "use": "record",
+    "value": {
+      "triggers": 25,
+      "hits": 238,
+      "meanHits": 9.52,
+      "se": 0.246,
+      "critPlus2Core": 86
+    },
+    "unit": "割合",
+    "description": "ノワールが III の回の、近の帯のフルバースト（3・9 回目）の中のノワールのトリガー（303-01 と同じ数え方）。解けない増分（114）は除いた",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）・右上の帯の色の列",
+      "note": "フルバーストの始まりは右上の帯の色（crop=120:4:1780:440 の平均が R>200・G<140 になった最初のフレーム）。f1264・2468・3672・4873・6074・7275・8476・9713・10914。III はノワール・レイヴンが交互（レイヴンの回はレイヴンの A.N. モードの 1 発（3,767,227 など）が約 1 秒ごとに出る。モデルの順と同じ）。ノワールのトリガーは、増分のうち 1 ペレットの単位の 1/10（予測の pellet-unit-fb ÷ 15 = 2,796.41）の整数倍（±7）に乗るもの。近の帯では距離ボーナスが乗るので、倍率の和 k = 18n + 5c（n = 当たったペレット、c = 会心 + 2 × コア）が 1 通りに解ける"
+    }
+  },
+  {
+    "id": "304-02",
+    "recording": "304",
+    "source": "V-0263",
+    "readAt": "2026-10-07",
+    "kind": "rate",
+    "use": "record",
+    "value": {
+      "triggers": 14,
+      "hits": 104,
+      "meanHits": 7.429,
+      "se": 0.441,
+      "critPlus2Core": 31
+    },
+    "unit": "割合",
+    "description": "レイヴンが III の回の、近の帯のフルバースト（8 回目）の中のノワールのトリガー（303-02 と同じ数え方）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）・右上の帯の色の列",
+      "note": "フルバーストの始まりは右上の帯の色（crop=120:4:1780:440 の平均が R>200・G<140 になった最初のフレーム）。f1264・2468・3672・4873・6074・7275・8476・9713・10914。III はノワール・レイヴンが交互（レイヴンの回はレイヴンの A.N. モードの 1 発（3,767,227 など）が約 1 秒ごとに出る。モデルの順と同じ）。ノワールのトリガーは、増分のうち 1 ペレットの単位の 1/10（予測の pellet-unit-fb ÷ 15 = 2,796.41）の整数倍（±7）に乗るもの。近の帯では距離ボーナスが乗るので、倍率の和 k = 18n + 5c（n = 当たったペレット、c = 会心 + 2 × コア）が 1 通りに解ける"
+    }
+  },
+  {
+    "id": "304-03",
+    "recording": "304",
+    "source": "V-0263",
+    "readAt": "2026-10-07",
+    "kind": "count",
+    "use": "compare",
+    "value": 11,
+    "unit": "発",
+    "description": "撃たない操作枠のユニの照準の横の残弾が、9 回目のフルバーストの後のリロードで満ちた値（f11092〜11550 が 011）。ノワールの S2 の最大装弾数▲（5 発）の中の最大装弾数。照準は画面の左端にあり、読めたのはこの回だけ（303 は 0 フレーム）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series --max 12",
+      "note": "読めたのは 755 フレーム"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    }
+  },
+  {
+    "id": "304-04",
+    "recording": "304",
+    "source": "V-0263",
+    "readAt": "2026-10-07",
+    "kind": "count",
+    "use": "compare",
+    "value": 6,
+    "unit": "発",
+    "description": "同じ表示の、窓の外の値（f10820〜10868 と f11551〜11702 が 006）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series --max 12"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 1200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "dropHeals": [160],
+        "addEffects": [
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    }
+  },
+  {
+    "id": "304-05",
+    "recording": "304",
+    "source": "V-0263",
+    "readAt": "2026-10-07",
+    "kind": "count",
+    "use": "record",
+    "value": 10,
+    "unit": "発",
+    "description": "9 回目のフルバーストの始まりで、ユニ（撃たない・6/6）の照準の横の残弾が 006 から 010 に跳んだ（f10936 は 006、f10942 は 010。その後フルバーストの入りの演出の間は読めず、f10972〜11091 は 010、f11092 からリロードで 011）。弾丸チャージ 39.88% を新しい最大 11 に掛けた 4.39 の 4 発を足した値（R1）。元の最大 6 の割合（R2。8）、最大装弾数▲の前の弾丸チャージ（R3。6）とは合わない",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series --max 12・照準の周り（crop=200:70:330:605）を 6 フレームおきに並べた一覧",
+      "note": "切り捨てと四捨五入は、この値（4.39）では分けられない"
+    }
+  },
+  {
+    "id": "304-06",
+    "recording": "304",
+    "source": "V-0263",
+    "readAt": "2026-10-07",
+    "kind": "interval",
+    "use": "record",
+    "value": [611],
+    "unit": "f",
+    "description": "9 回目のフルバーストの始まり（右上の帯が赤くなった f10940 ごろ。照準の残弾が 010 になった f10942 の直前）から、残弾が 011 から 006 に戻った最初のフレーム（f11551）までの動画のフレーム数。ゲーム内の 10 秒（588f）とフルバーストの入りの止まり（約 22f）の和と同じ",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series --max 12"
+    }
+  }
+]
