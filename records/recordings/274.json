@@ -1,0 +1,29 @@
+{
+  "id": "274",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-274_smg_misato_auto-burst.mp4",
+  "original": "2026-10-06_20-43-47.mp4",
+  "durationSec": 196.1,
+  "frames": 11768,
+  "fps": 60,
+  "sizeMB": 238.3,
+  "sha256": "15f1992a0ce8",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 833,
+      "name": "ミサト",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0235 の 2本目。ミサト単騎・AUTO 射撃 ON・オートバースト ON"
+}

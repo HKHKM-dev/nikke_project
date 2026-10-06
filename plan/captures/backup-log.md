@@ -173,3 +173,9 @@
 2026-10-06 20:08 に録画 264（アスカ + ヘルム）を `intake.ts` で取り込み、この 1 本（`range/20261006-264_ar+sr_asuka+helm_helm-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`d1d895d96713`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-06 20:08 に録画 265（アスカ + ヘルム）を `intake.ts` で取り込み、この 1 本（`range/20261006-265_ar+sr_asuka+helm_helm-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`25d6fd4690f7`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 20:12 に録画 266（ミサト単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-266_smg_misato_auto-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`8a0e934c12db`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 20:51 に録画 274（ミサト単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-274_smg_misato_auto-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`15f1992a0ce8`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 20:51 に録画 275（ミサト単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-275_smg_misato_auto-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`fa6f43a5321b`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
