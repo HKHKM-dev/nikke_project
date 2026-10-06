@@ -30,6 +30,11 @@ export type ShotLog = {
    */
   weaponChangeEnds?: number[];
   /**
+   * 同 9.6 節: 使用武器の変更で持ち替えた武器で撃った射撃のフレーム（frames の部分列。回数トリガー weaponChangeShot の列）。
+   * 1 パス目が書く。省略は無し
+   */
+  weaponChangeShotFrames?: number[];
+  /**
    * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: frames と同じ並びの、発ごとの命中の期待値と
    * コアの命中の期待値（1 パス目が書く）。省略は命中 1・コア 0（手で作る列・planShots の列）
    */

@@ -125,7 +125,7 @@ notes の種類: 未対応 28・前提の外 21・計算に無関係 28・補足
   - effects[2] passive・attack: C-0020（確定）
   - notes[0] 未対応: フォーメーションLT 適用中の追加効果（味方全体の発射体爆発ダメージ▲・防御力無視ダメージ▲）は未対応（語彙 withCharacter・projectileExplosionDamage・trueDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）: 根拠なし
 - **burst**: supported
-  - effects[0] timed・burstUse・damageTaken: C-0312（確定）、C-0138（確定）
+  - effects[0] timed・weaponChangeShot・damageTaken: C-0312（確定）、C-0138（確定）
   - effects[1] weaponChange・burstUse: C-0313（確定）
 
 ## 101 ドレイク

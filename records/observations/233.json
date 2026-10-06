@@ -69,30 +69,12 @@
     "source": "V-0208",
     "readAt": "2026-10-06",
     "kind": "hit",
-    "use": "compare",
+    "use": "record",
     "value": 1221769,
     "description": "フルバーストの中で、受けるダメージ▲の外の、フルチャージで付き直したカモフラージュの中のコアの非会心の 1 発",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
-      "note": "f4619・4701・4783・4865（2 回目のフルバースト。炸裂弾の着弾 f3849 から 770f 以上）の 4 回とも 1,221,769。f9673・9755（4 回目）も同じ"
-    },
-    "compare": {
-      "model": "sim",
-      "metric": "hitDamage",
-      "args": {
-        "slot": 2,
-        "frame": 1260,
-        "core": true,
-        "crit": false,
-        "distance": false
-      },
-      "tolerance": {
-        "abs": 1
-      },
-      "setup": {
-        "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
-      }
+      "note": "f4619・4701・4783・4865（2 回目のフルバースト。炸裂弾の着弾 f3849 から 770f 以上）の 4 回とも 1,221,769。f9673・9755（4 回目）も同じ。2026-10-06 に比べ（compare。frame 1260）を外し record にした: 徹甲炸裂弾の受けるダメージ▲（C-0312）の窓を炸裂弾の発の次のフレームからにした（plan/design-true-damage-element.md 9.6 節の論点 12）ので、モデルのフルバーストは 4 回とも▲の窓に覆われ、「フルバーストの中・カモフラージュの中・▲の外」の区間が無くなった（1260 は前のモデルの▲の終わり 1258 とフルバーストの終わり 1275 のあいだ）。録画ではサンの III が遅れてフルバーストの後半が▲の外に出ており、モデルの時刻表との差（モデルは II の 29f 後に III）。値の式は C-0311・C-0314 のまま"
     }
   },
   {
@@ -101,30 +83,12 @@
     "source": "V-0208",
     "readAt": "2026-10-06",
     "kind": "hit",
-    "use": "compare",
+    "use": "record",
     "value": 1612735,
     "description": "同じ区間のコアの会心の 1 発（距離ボーナスの中）",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
-      "note": "f7008（3 回目のフルバースト）の 1,612,735"
-    },
-    "compare": {
-      "model": "sim",
-      "metric": "hitDamage",
-      "args": {
-        "slot": 2,
-        "frame": 1260,
-        "core": true,
-        "crit": true,
-        "distance": true
-      },
-      "tolerance": {
-        "abs": 1
-      },
-      "setup": {
-        "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
-      }
+      "note": "f7008（3 回目のフルバースト）の 1,612,735。2026-10-06 に比べ（compare。frame 1260）を外し record にした: 徹甲炸裂弾の受けるダメージ▲（C-0312）の窓を炸裂弾の発の次のフレームからにした（plan/design-true-damage-element.md 9.6 節の論点 12）ので、モデルのフルバーストは 4 回とも▲の窓に覆われ、「フルバーストの中・カモフラージュの中・▲の外」の区間が無くなった（1260 は前のモデルの▲の終わり 1258 とフルバーストの終わり 1275 のあいだ）。録画ではサンの III が遅れてフルバーストの後半が▲の外に出ており、モデルの時刻表との差（モデルは II の 29f 後に III）。値の式は C-0311・C-0314 のまま"
     }
   },
   {

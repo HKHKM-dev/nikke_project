@@ -329,14 +329,18 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
  * （skills/triggers.ts）。弾丸命中率が 1 の枠では normalHit は normalShot と同じ列になる。
  * カウンタはリロードでも戦闘中ずっとリセットしない（every: 10 は通算 10・20・30…回目）。
  * Stage 10: lastShot = 残弾を 0 にした射撃（「最後の弾丸で攻撃した時 / 命中した時」）。最大装弾数▲で遅れ、弾丸チャージで出なくなる。
+ * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9.6 節の論点 12）: weaponChangeShot = 使用武器の変更
+ * （weaponChange）で持ち替えた武器で撃った射撃（「命中した敵に」付く徹甲炸裂弾の受けるダメージ▲。その発自身には乗らない）。
+ * 循環（cycle）と during には書けない
  */
-export type ShotCountKind = 'normalShot' | 'normalHit' | 'coreHit' | 'fullChargeShot' | 'lastShot';
+export type ShotCountKind = 'normalShot' | 'normalHit' | 'coreHit' | 'fullChargeShot' | 'lastShot' | 'weaponChangeShot';
 export const SHOT_COUNT_KINDS = [
   'normalShot',
   'normalHit',
   'coreHit',
   'fullChargeShot',
   'lastShot',
+  'weaponChangeShot',
 ] as const satisfies readonly ShotCountKind[];
 
 export type ShotCountTrigger = {
@@ -1144,6 +1148,7 @@ function parseTrigger(
       trigger.reset = oneOf(SHOT_COUNT_RESETS, v.reset, `${path}.reset`);
       if (trigger.stacksRef !== undefined) fail(`${path}.during`, 'during cannot be used with stacksRef');
       if (trigger.count === 'lastShot') fail(`${path}.during`, 'during cannot be used with lastShot');
+      if (trigger.count === 'weaponChangeShot') fail(`${path}.during`, 'during cannot be used with weaponChangeShot');
     }
     return trigger;
   }
@@ -1416,6 +1421,7 @@ function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   if (!isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'a cycle needs a shot count trigger');
   if (trigger.count === 'lastShot') fail(`${path}.trigger.count`, 'lastShot is not allowed in a cycle');
+  if (trigger.count === 'weaponChangeShot') fail(`${path}.trigger.count`, 'weaponChangeShot is not allowed in a cycle');
   if (trigger.stacksRef !== undefined) fail(`${path}.trigger.stacksRef`, 'stacksRef is not allowed in a cycle');
   if (!Array.isArray(v.steps) || v.steps.length < 2) fail(`${path}.steps`, 'expected an array of at least 2 steps');
   const steps = v.steps.map((raw, i): CycleStep => {

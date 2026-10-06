@@ -73,6 +73,7 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
       coreHit: 'コアの命中',
       fullChargeShot: 'フルチャージ攻撃',
       lastShot: '最後の弾丸',
+      weaponChangeShot: '使用武器の変更の攻撃',
     }[trigger.count];
     // Stage 11: 数えるだけのスタック（クラウン S2）は「通常攻撃 43 回 × 20 スタックごと」
     if (trigger.stacks !== undefined) {

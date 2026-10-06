@@ -740,6 +740,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const log = logs[i]!;
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
+      if (params.weapon !== null) (log.weaponChangeShotFrames ??= []).push(f);
       // 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節の論点 8）: 撃ち切りで終わる変更は、最後の弾丸を
       // 撃ったら次のフレームで基礎の武器に戻す（変更後の武器はリロードしない）。窓の終わりは planBuffTimeline も同じ列から作る
       if (params.weapon !== null && state.lastShot && closeWeaponChange(i, params.weapon.id, f + 1)) {
@@ -751,6 +752,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       log.hits!.push(hits);
       log.coreHits!.push(coreHits);
       shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge && !isPartial, hits, coreHits };
+      if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
       shotCounts[i]! += 1;
       const energy =
         energyAt(i, f) * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +

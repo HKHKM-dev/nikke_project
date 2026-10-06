@@ -125,7 +125,9 @@
       "effects": [
         {
           "kind": "timed",
-          "trigger": "burstUse",
+          "trigger": {
+            "count": "weaponChangeShot"
+          },
           "target": "allies",
           "stat": "damageTaken",
           "ref": 3,
@@ -135,8 +137,8 @@
             "C-0138"
           ],
           "assumes": {
-            "ja": "敵 1 体。ほかのどの群とも別の乗数 (1 + 27.87%) で味方の与ダメージに掛かる。実機の窓は炸裂弾の着弾から 10 秒で、モデルはバースト使用時から 10 秒（20f ほど早い）。炸裂弾自身には乗らない",
-            "en": "One enemy. Multiplies allies' damage as a separate multiplier (1 + 27.87%). In game the window is 10 s from the Explosive Round's hit; the model starts it at Burst Skill use (about 20 frames early). The Explosive Round itself does not get it"
+            "ja": "敵 1 体。ほかのどの群とも別の乗数 (1 + 27.87%) で味方の与ダメージに掛かる。炸裂弾（使用武器の変更の発）を撃った次のフレームから 10 秒で、炸裂弾自身には乗らない。実機の窓は炸裂弾の着弾から 10 秒（モデルは着弾までの飛ぶ時間を持たない）",
+            "en": "One enemy. Multiplies allies' damage as a separate multiplier (1 + 27.87%). It starts on the frame after the Explosive Round (the weapon-change shot) is fired and lasts 10 s, so the round itself does not get it. In game the window is 10 s from the round's hit (the model has no flight time for it)"
           }
         },
         {

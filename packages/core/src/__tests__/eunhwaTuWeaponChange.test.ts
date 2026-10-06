@@ -9,6 +9,8 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { runFirstPass } from '../frame/firstPass.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { METRICS } from '../records/observations.ts';
+import { shotCountWeight } from '../skills/triggers.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
@@ -16,6 +18,7 @@ import { untilWeaponChangeEndWindows } from '../skills/timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { gameSecondsToFrames } from '../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -71,6 +74,44 @@ describe('語彙の検証', () => {
     for (const bad of [{ chargeTimeSeconds: 0 }, { fullChargeDamage: -1 }, { maxAmmoRef: 0 }]) {
       expect(() => parseSkillDefinition(withBurst({ ...BASE, maxAmmoRef: 2, ...bad }))).toThrow();
     }
+  });
+});
+
+describe('回数トリガー weaponChangeShot（論点 12）', () => {
+  it('counts only the shots of a changed weapon', () => {
+    const shot = { lastShot: true, fullCharge: true, hits: 1, coreHits: 1 };
+    expect(shotCountWeight('weaponChangeShot', shot)).toBe(0);
+    expect(shotCountWeight('weaponChangeShot', { ...shot, weaponChange: true })).toBe(1);
+  });
+
+  it('is allowed in timed, not in a cycle or with during', () => {
+    const taken = {
+      kind: 'timed',
+      trigger: { count: 'weaponChangeShot' },
+      target: 'allies',
+      stat: 'damageTaken',
+      ref: 1,
+      durationRef: 2,
+    };
+    expect(parseSkillDefinition(withBurst(taken)).skills.burst.effects[0]).toMatchObject({
+      trigger: { count: 'weaponChangeShot' },
+    });
+    const cycle = {
+      kind: 'cycle',
+      trigger: { count: 'weaponChangeShot' },
+      steps: [
+        { kind: 'damage', ref: 1, damageType: 'normal' },
+        { kind: 'damage', ref: 2, damageType: 'normal' },
+      ],
+    };
+    expect(() => parseSkillDefinition(withBurst(cycle))).toThrow(/weaponChangeShot/);
+    const during = {
+      kind: 'damage',
+      trigger: { count: 'weaponChangeShot', every: 2, during: 'fullBurst', reset: 'never' },
+      ref: 1,
+      damageType: 'normal',
+    };
+    expect(() => parseSkillDefinition(withBurst(during))).toThrow(/weaponChangeShot/);
   });
 });
 
@@ -187,5 +228,26 @@ describe('録画 232 の編成（フラワー + ウンファ：TU）', () => {
     });
     const total = calc.slots[1]!.segments.reduce((n, g) => n + countShotsInRanges(shots.frames, g.ranges), 0);
     expect(total).toBe(shots.frames.length);
+  });
+
+  it('opens the Explosive Round’s Damage Taken up on the frame after the round, so the round itself does not get it (C-0312・論点 12)', () => {
+    const taken = plan.timeline.windows.filter((w) => w.slotIndex === 1 && w.effect.stat === 'damageTaken');
+    expect(taken.map((w) => w.start)).toEqual(windows.map((w) => w.end));
+    expect(taken.every((w) => w.end - w.start === gameSecondsToFrames(10))).toBe(true);
+  });
+
+  it('matches the Explosive Round of recording 232 within 1: body, core in the distance bonus, core crit, core (232-10。C-0313)', () => {
+    const sim = runSimulation(REC232);
+    const hit = (frame: number, args: Record<string, boolean>) =>
+      METRICS.hitDamage!.sim!(sim, { args: { slot: 2, frame, ...args }, input: REC232 } as never) as number;
+    for (const w of windows.slice(0, 4)) {
+      const round = [
+        hit(w.end - 1, {}),
+        hit(w.end - 1, { core: true, distance: true }),
+        hit(w.end - 1, { core: true, crit: true }),
+        hit(w.end - 1, { core: true }),
+      ];
+      [875582, 2013838, 2188954, 1751163].forEach((v, k) => expect(Math.abs(round[k]! - v)).toBeLessThan(1));
+    }
   });
 });

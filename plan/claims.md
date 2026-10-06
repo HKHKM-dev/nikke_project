@@ -1658,13 +1658,13 @@
 - **C-0312** ウンファ：タクティカル・アップのバーストの徹甲炸裂弾（命中した敵の受けるダメージ 27.87%▲・10 秒。Lv10）は、ほかのどの群とも別の乗数 (1 + 27.87%) で、ウンファの通常攻撃の 1 発に乗る（C-0138 と同じ受けるダメージ▲）。炸裂弾自身には乗らない
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-06
   - 根拠: `232-04`〜`232-08`（カモフラージュの外で受けるダメージ▲の中の 1 発が、コア・会心・距離ボーナスの 5 通りでモデルと 1 未満の差。4 回のバーストで同じ値）・`232-12`（窓の終わりは着弾から 548〜742f の間。10 秒と矛盾しない）・`232-10`（炸裂弾の値は▲なしの式で合う）。予測（records/predictions/V-0207.json の H1）は撮る前に commit した。V-0207
-  - モデル側: `data/skills/95.json` の burst の effects[0]（`timed`・`burstUse`・`allies`・`damageTaken`）。モデルの窓はバースト使用時から 10 秒（実機は炸裂弾の着弾からで、20f ほどずれる。読み取りの幅の中）
+  - モデル側: `data/skills/95.json` の burst の effects[0]（`timed`・`{ count: weaponChangeShot }`・`allies`・`damageTaken`）。モデルの窓は炸裂弾（使用武器の変更の発）を撃った次のフレームから 10 秒で、炸裂弾自身には乗らない（実機は着弾から。モデルは炸裂弾の飛ぶ時間を持たない。plan/design-true-damage-element.md 9.6 節の論点 12）
   - 検証記録: V-0207
   - 定義: `data/skills/95.json` の burst の effects[0]
 - **C-0313** ウンファ：タクティカル・アップのバーストの使用武器変更は 1 発だけ撃ち、その 1 発は max(1, 攻撃力) × 105.6% × (フルチャージ 300% + チャージダメージ▲) × (1 + 防御力無視ダメージ▲)（Lv10。カモフラージュの▲が乗る）。コア・会心・距離ボーナスの倍率グループは基礎の SR と同じ。撃った後は基礎の SR に戻る
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-06
   - 根拠: `232-10`（4 回）・`233-10`（5 回）の炸裂弾の 9 発が、胴体・コア・コアの会心・コアの距離ボーナスの 4 通りで、手で書いた予測（V-0207 の Hb1。撮る前に commit した）と 1 未満の差。▲の乗らない Hb2・チャージダメージ▲の乗らない Hb3・防御力を引く Hb4 の値は出ていない。V-0207・V-0208
-  - モデル側: `data/skills/95.json` の burst の effects[1]（`weaponChange`・`burstUse`・`trueDamage`・`chargeTimeSeconds` 0.3・`fullChargeDamage` 300・`maxAmmoRef`。撃ち切りで終わる）。変更後の武器は `skills/resolve.ts` の `changedWeaponShot`（上書き）、撃ち切りの窓は `frame/firstPass.ts` の `closeWeaponChange` と `skills/timeline.ts` の `untilWeaponChangeEndWindows`。戻った基礎の SR の待ち・炸裂弾の発の時刻・ゲージは未確定（plan/design-true-damage-element.md 9 節の論点 9〜11）。いまは受けるダメージ▲（C-0312）の窓がバースト使用時から開くので、モデルの炸裂弾自身にも ×1.2787 が乗る（C-0312 と矛盾。plan/design-true-damage-element.md 9.6 節の論点 12 でオーナーの判断待ち）
+  - モデル側: `data/skills/95.json` の burst の effects[1]（`weaponChange`・`burstUse`・`trueDamage`・`chargeTimeSeconds` 0.3・`fullChargeDamage` 300・`maxAmmoRef`。撃ち切りで終わる）。変更後の武器は `skills/resolve.ts` の `changedWeaponShot`（上書き）、撃ち切りの窓は `frame/firstPass.ts` の `closeWeaponChange` と `skills/timeline.ts` の `untilWeaponChangeEndWindows`。戻った基礎の SR の待ち・炸裂弾の発の時刻・ゲージは未確定（plan/design-true-damage-element.md 9 節の論点 9〜11）。モデルの炸裂弾は `232-10` の 4 通りと 1 未満の差（`__tests__/eunhwaTuWeaponChange.test.ts`）
   - 検証記録: V-0207、V-0208
   - 定義: `data/skills/95.json` の burst の effects[1]
 - **C-0314** ウンファ：タクティカル・アップの S1 の「フルチャージして攻撃した時、フルバーストタイムなら自分にカモフラージュ（5 秒）」は、フルバーストの中のフルチャージの発ごとに、その発の後からカモフラージュ（C-0311 の中身）を付け直す。付けた発そのものには乗らない。フルバーストが終わっても、最後のフルチャージの発から 5 秒は続く

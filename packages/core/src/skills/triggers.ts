@@ -31,6 +31,11 @@ export type ShotEvent = {
   hits: number;
   /** 同 2.2 節: この射撃のコアの命中の期待値（弾丸命中率 × コア命中率。敵にコアが無ければ 0）。coreHit の回数に足す */
   coreHits: number;
+  /**
+   * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9.6 節）: 使用武器の変更で持ち替えた武器で撃った射撃か
+   * （weaponChangeShot の回数に足す）。省略は false
+   */
+  weaponChange?: boolean;
 };
 
 /** 1 回の射撃が、その回数トリガーの回数に足す量（plan/design-ludmilla-wo.md 2.2・2.3 節） */
@@ -46,6 +51,8 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
       return shot.fullCharge ? 1 : 0;
     case 'lastShot':
       return shot.lastShot ? 1 : 0;
+    case 'weaponChangeShot':
+      return shot.weaponChange === true ? 1 : 0;
   }
 }
 
@@ -218,15 +225,18 @@ export function replayEvents(
   shots.forEach((log, slotIndex) => {
     if (!log) return;
     const last = new Set(log.lastShotFrames ?? []);
+    const changed = new Set(log.weaponChangeShotFrames ?? []);
     const full = fullChargeFrameSet(log);
     log.frames.forEach((f, k) => {
       if (f >= frames) return;
-      (at(f).shots as (ShotEvent | null)[])[slotIndex] = {
+      const shot: ShotEvent = {
         lastShot: last.has(f),
         fullCharge: full(f),
         hits: log.hits?.[k] ?? 1,
         coreHits: log.coreHits?.[k] ?? 0,
       };
+      if (changed.has(f)) shot.weaponChange = true;
+      (at(f).shots as (ShotEvent | null)[])[slotIndex] = shot;
     });
   });
   if (schedule !== null) {
