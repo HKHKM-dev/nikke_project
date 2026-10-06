@@ -79,6 +79,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
+      "observations": ["173-03"],
       "note": "判定の指標。1 回目のフルバーストの窓の真ん中の S1 の持続ダメージの tick（会心なし）を、1 スタックの値に組み直したもの。フルバースト補正・S1 の攻撃力▲・A.N.モードの▲の窓の真ん中。録画では、どの回のバーストでも窓の真ん中の tick を読み、tick の値をスタックの数で割った値で比べる"
     },
     {
@@ -96,6 +97,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
+      "observations": ["173-04"],
       "note": "同じ tick が会心したときの 1 スタックの値。H3 では会心なしとの比が H0・H2 と違う"
     },
     {
@@ -113,6 +115,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
+      "observations": ["173-05"],
       "note": "1 回目のバーストの前の tick の 1 スタックの値（会心なし）。どの仮説でも同じ（C-0182 の 1 スタックの値と同じはず）。スタックの数を数える物差し"
     },
     {
@@ -130,6 +133,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
+      "observations": ["173-06"],
       "note": "1 回目のフルバーストと▲の窓の後の最初の tick の 1 スタックの値（会心なし）。T1 ではどの仮説でも ▲なし（raven-stack-pre と同じ）。T2 では窓の中で付けたスタックの分だけ高い"
     },
     {
@@ -177,6 +181,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
+      "observations": ["173-10"],
       "note": "フルバーストの回数（窓の数）"
     }
   ],
