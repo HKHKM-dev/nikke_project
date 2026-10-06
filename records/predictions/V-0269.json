@@ -72,7 +72,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "180 秒の S2 の回数"
+      "note": "180 秒の S2 の回数",
+      "observations": ["162-33", "165-35"]
     },
     {
       "id": "mean-interval",
@@ -87,7 +88,8 @@
         "events": ["range-3min-jump"],
         "burst": true
       },
-      "note": "S2 の 1 回目から最後までの動画のフレーム数 ÷ (回数 − 1)（フルバーストの入りの止まりを含む）"
+      "note": "S2 の 1 回目から最後までの動画のフレーム数 ÷ (回数 − 1)（フルバーストの入りの止まりを含む）",
+      "observations": ["162-34", "165-36"]
     }
   ],
   "predicted": {
