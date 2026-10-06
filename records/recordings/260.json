@@ -1,0 +1,41 @@
+{
+  "id": "260",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-260_sr+sr+mg_ram+delta+yukiko_fire_yukiko-auto.mp4",
+  "original": "2026-10-06_19-40-38.mp4",
+  "durationSec": 199.6,
+  "frames": 11976,
+  "fps": 60,
+  "sizeMB": 242.1,
+  "sha256": "b035961afbf9",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 871,
+      "name": "雪子",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0232 の灼熱の録画。ラム（AI）・デルタ（AI）・雪子（操作・AUTO 射撃 ON）。オートバースト ON"
+}

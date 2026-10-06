@@ -5,8 +5,10 @@
 // アスカ（plan/design-asuka.md 2.2 節）: 「〈コード〉コードの味方」（targetElement）。武器種と同じく、対象の枠のキャラで絞る。
 // 対象の語彙編（plan/design-target-vocab.md 2 節）: 編成で決まる対象（targetSquad・longestChargeTime）は、最上位の
 // skills/composition.ts が決めた枠（fixedTargets）で絞る。「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
+// ペルソナ編（plan/design-persona.md 3.2 節）: 「ペルソナ状態の」「基本バースト段階が N の」と allies の「自分を除く」も、編成で決まる
+// 対象として fixedTargets で絞る。
 import type { Element, WeaponType } from '../types.ts';
-import type { BuffTarget, ExcludeSelf, TargetSquad } from './types.ts';
+import type { BasicBurstStep, BuffTarget, ExcludeSelf, SkillState, TargetSquad } from './types.ts';
 
 /**
  * 発火の文脈。
@@ -25,8 +27,21 @@ export type TargetedEffect = {
   targetCount?: number;
   targetSquad?: TargetSquad;
   excludeSelf?: ExcludeSelf;
+  targetState?: SkillState;
+  targetBurstStep?: BasicBurstStep;
   fixedTargets?: readonly number[];
 };
+
+/** 編成で決まる対象か（最上位の skills/composition.ts が fixedTargets を書く） */
+function needsFixedTargets(effect: TargetedEffect): boolean {
+  return (
+    effect.targetSquad !== undefined ||
+    effect.target === 'longestChargeTime' ||
+    effect.targetState !== undefined ||
+    effect.targetBurstStep !== undefined ||
+    (effect.target === 'allies' && effect.excludeSelf !== undefined)
+  );
+}
 
 /**
  * 対象の語彙編: 編成で決まる対象の絞り込み。fixedTargets が有ればその枠だけ（longestChargeTime は順位の順の先頭 targetCount 枠）。
@@ -35,7 +50,7 @@ export type TargetedEffect = {
  */
 function fixedTargetOk(effect: TargetedEffect, targetSlotIndex: number): boolean {
   if (effect.fixedTargets === undefined) {
-    if (effect.targetSquad !== undefined || effect.target === 'longestChargeTime') {
+    if (needsFixedTargets(effect)) {
       throw new Error(`target ${effect.target} needs fixedTargets (apply skills/composition.ts first)`);
     }
     return true;

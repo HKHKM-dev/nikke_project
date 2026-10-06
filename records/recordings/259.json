@@ -1,0 +1,47 @@
+{
+  "id": "259",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-259_sr+rl+sg+mg_cocoa+yuni+queen-makoto+yukiko_wind_queen-auto.mp4",
+  "original": "2026-10-06_19-36-52.mp4",
+  "durationSec": 209.5,
+  "frames": 12567,
+  "fps": 60,
+  "sizeMB": 253.7,
+  "sha256": "374069528fa1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 871,
+      "name": "雪子",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0233（ペルソナの組）の風圧の録画。ココア（AI）・ユニ（AI）・クイーン（真）（操作・AUTO 射撃 ON）・雪子（AI）。オートバースト ON"
+}

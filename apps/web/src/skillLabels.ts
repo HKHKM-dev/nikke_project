@@ -1,6 +1,8 @@
 // スキル関連の表示用ラベル（React 非依存）
 import { ELEMENT_LABEL, framesToGameSeconds, selfBuffedStatOf } from '@nikke/core';
 import type {
+  BasicBurstStep,
+  EffectName,
   AppliedEffect,
   BuildEffect,
   BuildEffectSource,
@@ -50,6 +52,11 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   trueDamageConversion: '通常攻撃が防御力無視ダメージに変化',
 };
 
+/** ペルソナ編: 説明文の効果名 */
+export const EFFECT_NAME_LABEL: Record<EffectName, string> = { followUp: '追撃', batonTouch: 'バトンタッチ' };
+
+const BURST_STEP_ROMAN: Record<BasicBurstStep, string> = { Step1: 'I', Step2: 'II', Step3: 'III' };
+
 export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
   battleStart: '戦闘開始時',
   burstUse: 'バースト使用時',
@@ -66,6 +73,8 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
   if (typeof trigger === 'string') return BUFF_TRIGGER_LABEL[trigger];
   // ニヒリスター編: 時間の周期のトリガー（CT ごとに発動するアクティブ型のスキル）
   if ('everySeconds' in trigger) return `戦闘開始から ${formatNumber(trigger.everySeconds)} 秒ごと`;
+  // ペルソナ編: 「追撃が適用された時」
+  if ('applied' in trigger) return `${EFFECT_NAME_LABEL[trigger.applied]}が適用された時`;
   if ('every' in trigger) {
     const what = {
       normalShot: '通常攻撃',
@@ -193,6 +202,8 @@ export function formatTimedExtras(effect: AppliedTimedEffect): string {
       `${SKILL_SLOT_LABEL[effect.amplifies.skill]}の同じ効果の ${formatNumber(effect.amplifies.percent)}% 増し（発動の瞬間に効いていれば）`,
     );
   }
+  if (effect.durationUntil === 'battleEnd') parts.push('戦闘の終わりまで');
+  if (effect.name !== undefined) parts.push(EFFECT_NAME_LABEL[effect.name]);
   return parts.length === 0 ? '' : `（${parts.join('・')}）`;
 }
 
@@ -229,7 +240,10 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
   const element = effect.targetElement ? `${ELEMENT_LABEL[effect.targetElement].ja}コードの` : '';
   // 対象の語彙編: 「同じ部隊の味方」「自分を除く」「基本チャージ時間が最も長い味方 N 機」
   const squad = effect.targetSquad === 'same' ? '同じ部隊の' : '';
-  const weapon = `${squad}${element}${effect.targetWeapon ? `${effect.targetWeapon} の` : ''}`;
+  // ペルソナ編: 「基本バースト段階 III のペルソナ状態の味方」
+  const step = effect.targetBurstStep ? `基本バースト段階 ${BURST_STEP_ROMAN[effect.targetBurstStep]} の` : '';
+  const state = effect.targetState === 'persona' ? 'ペルソナ状態の' : '';
+  const weapon = `${squad}${step}${state}${element}${effect.targetWeapon ? `${effect.targetWeapon} の` : ''}`;
   const exclude =
     effect.excludeSelf === 'always'
       ? '自分を除く'
@@ -243,8 +257,8 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
         ? `（${exclude}最終攻撃力が最も高い${weapon}味方 ${effect.targetCount ?? 1} 機）`
         : effect.target === 'longestChargeTime'
           ? `（基本チャージ時間が最も長い${weapon}味方 ${effect.targetCount ?? 1} 機）`
-          : weapon !== ''
-            ? `（${weapon}味方）`
+          : weapon !== '' || exclude !== ''
+            ? `（${exclude}${weapon}味方）`
             : '';
   return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}`;
 }

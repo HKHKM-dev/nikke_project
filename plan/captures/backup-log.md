@@ -158,6 +158,14 @@
 
 2026-10-06 08:03 に録画 253（ノワール単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-253_sg_noir_fixed-off.mp4`）だけを同期した。E: と I: で sha256 が一致（`cfa55d7a2e39`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
+2026-10-06 19:52 に録画 258（ラム + デルタ + 雪子）を `intake.ts` で取り込み、この 1 本（`range/20261006-258_sr+sr+mg_ram+delta+yukiko_wind_yukiko-auto.mp4`）だけを同期した。E: と I: で sha256 が一致（`f3fec4e25bf2`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 19:52 に録画 259（ココア + ユニ + クイーン（真） + 雪子）を `intake.ts` で取り込み、この 1 本（`range/20261006-259_sr+rl+sg+mg_cocoa+yuni+queen-makoto+yukiko_wind_queen-auto.mp4`）だけを同期した。E: と I: で sha256 が一致（`374069528fa1`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 19:52 に録画 260（ラム + デルタ + 雪子）を `intake.ts` で取り込み、この 1 本（`range/20261006-260_sr+sr+mg_ram+delta+yukiko_fire_yukiko-auto.mp4`）だけを同期した。E: と I: で sha256 が一致（`b035961afbf9`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 19:52 に録画 261（ココア + ユニ + クイーン（真） + 雪子）を `intake.ts` で取り込み、この 1 本（`range/20261006-261_sr+rl+sg+mg_cocoa+yuni+queen-makoto+yukiko_fire_queen-auto.mp4`）だけを同期した。E: と I: で sha256 が一致（`50204838d085`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
 2026-10-06 19:59 に録画 262（ミランダ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261006-262_smg+sr+ar_miranda+delta+idoll-sun_miranda-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`0c59b7307d72`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-06 19:59 に録画 263（エマ：タクティカル・アップ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-263_mg_emma-tu_manual-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`3f01afb1c734`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。

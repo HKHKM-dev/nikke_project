@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
-  "resourceId": 870,
-  "checkedAt": "2026-10-05",
+  "resourceId": 871,
+  "checkedAt": "2026-10-06",
   "states": [
     "persona"
   ],
@@ -13,10 +13,10 @@
           "trigger": "battleStart",
           "target": "self",
           "stat": "attack",
-          "ref": 5,
-          "durationRef": 6,
+          "ref": 4,
+          "durationRef": 5,
           "claims": [
-            "C-0270"
+            "C-0347"
           ]
         },
         {
@@ -24,16 +24,10 @@
           "trigger": "fullBurstEnd",
           "target": "self",
           "stat": "attack",
-          "ref": 5,
-          "durationRef": 6
-        },
-        {
-          "kind": "passive",
-          "target": "self",
-          "stat": "elementDamage",
-          "ref": 1,
+          "ref": 4,
+          "durationRef": 5,
           "claims": [
-            "C-0296"
+            "C-0347"
           ]
         },
         {
@@ -42,45 +36,30 @@
           "ref": 3,
           "damageType": "distributed",
           "enemyElement": "Wind",
-          "delayFrames": 24,
+          "delayFrames": 48,
           "assumes": {
             "ja": "単体ボスなので分配ダメージは全額 1 ヒット",
             "en": "Distributed damage lands in full as one hit on a lone boss"
           },
           "claims": [
-            "C-0310"
+            "C-0358",
+            "C-0359"
           ]
-        },
-        {
-          "kind": "damage",
-          "trigger": {
-            "applied": "followUp"
-          },
-          "ref": 4,
-          "damageType": "distributed",
-          "assumes": {
-            "ja": "単体ボスなので分配ダメージは全額 1 ヒット",
-            "en": "Distributed damage lands in full as one hit on a lone boss"
-          },
-          "claims": [
-            "C-0361"
-          ],
-          "delayFrames": 104
         }
       ],
       "notes": [
         {
-          "ja": "ペルソナ - ヨハンナ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ",
-          "en": "Persona - Johanna (battle start, continuous, cannot be removed) is the persona state in the definition's states",
+          "ja": "ペルソナ - コノハナサクヤ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ",
+          "en": "Persona - Konohana Sakuya (battle start, continuous, cannot be removed) is the persona state in the definition's states",
           "kind": "modeling",
           "claims": [
             "C-0354"
           ]
         },
         {
-          "ja": "防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない",
-          "en": "DEF up (Persona - Johanna) does not affect damage",
-          "kind": "noDamage"
+          "ja": "ペルソナ - コノハナサクヤの 3 秒ごとの味方全体の回復（メディア）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
+          "en": "The ally heal every 3 sec from Persona - Konohana Sakuya (Media) is not modeled (it changes allies' effects triggered by being healed)",
+          "kind": "unimplemented"
         }
       ]
     },
@@ -90,28 +69,32 @@
           "kind": "passive",
           "target": "self",
           "stat": "attackDamage",
-          "ref": 9,
+          "ref": 10,
           "claims": [
-            "C-0018"
+            "C-0348"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "distributedDamage",
+          "ref": 3,
+          "durationUntil": "fullBurstEnd",
+          "claims": [
+            "C-0349"
           ]
         },
         {
           "kind": "timed",
           "trigger": "burstStage3Enter",
           "target": "self",
-          "stat": "distributedDamage",
-          "ref": 3,
-          "durationRef": 4
-        },
-        {
-          "kind": "timed",
-          "trigger": "burstUse",
-          "target": "self",
           "stat": "elementDamage",
-          "ref": 1,
-          "durationUntil": "fullBurstEnd",
+          "ref": 5,
+          "durationRef": 6,
           "claims": [
-            "C-0307"
+            "C-0350",
+            "C-0360"
           ]
         },
         {
@@ -124,19 +107,23 @@
           "targetBurstStep": "Step3",
           "stat": "attack",
           "scaling": "casterAttack",
-          "ref": 6,
-          "maxStacksRef": 7,
-          "durationUntil": "battleEnd",
-          "name": "batonTouch",
+          "ref": 8,
+          "durationRef": 9,
+          "name": "followUp",
           "claims": [
-            "C-0357"
+            "C-0355"
           ]
         }
       ],
       "notes": [
         {
-          "ja": "鉄・拳・制・裁！の防御力▲はダメージに関係しない",
-          "en": "DEF up from Fist of Justice! does not affect damage",
+          "ja": "真紅の華の 3 秒ごとの味方全体の回復（メディラマ）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
+          "en": "The ally heal every 3 sec from Crimson Flower (Mediarama) is not modeled (it changes allies' effects triggered by being healed)",
+          "kind": "unimplemented"
+        },
+        {
+          "ja": "真紅の守護（水冷コードの敵から受けるダメージ▼）はダメージに関係しない",
+          "en": "Crimson Guard (damage taken from Water Code enemies down) does not affect damage",
           "kind": "noDamage"
         }
       ]
@@ -152,7 +139,7 @@
             "en": "Distributed damage lands in full as one hit on a lone boss"
           },
           "claims": [
-            "C-0231"
+            "C-0351"
           ]
         },
         {
@@ -164,7 +151,7 @@
           "durationRef": 3,
           "enemyElement": "Wind",
           "claims": [
-            "C-0308"
+            "C-0352"
           ]
         }
       ]

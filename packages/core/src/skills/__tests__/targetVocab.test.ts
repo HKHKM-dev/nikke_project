@@ -72,12 +72,15 @@ describe('自分を除く（excludeSelf）', () => {
     expect(canEverTarget({ target: 'topAttack', targetWeapon: 'SR', excludeSelf: 'unlessShort' }, 0, 0, ch)).toBe(true);
   });
 
-  it('parses only on timed topAttack', () => {
+  // ペルソナ編（plan/design-persona.md 8 節の論点 3）: allies には always だけ書ける
+  it('parses on timed topAttack, and always on timed allies', () => {
     const effect = parse({ ...timed, target: 'topAttack', targetCountRef: 3, excludeSelf: 'unlessShort' });
     expect(effect).toMatchObject({ target: 'topAttack', excludeSelf: 'unlessShort' });
-    expect(() => parse({ ...timed, target: 'allies', excludeSelf: 'always' })).toThrow(
+    expect(parse({ ...timed, target: 'allies', excludeSelf: 'always' })).toMatchObject({ excludeSelf: 'always' });
+    expect(() => parse({ ...timed, target: 'allies', excludeSelf: 'unlessShort' })).toThrow(
       /excludeSelf: only allowed with target "topAttack"/,
     );
+    expect(() => parse({ ...timed, target: 'self', excludeSelf: 'always' })).toThrow(/excludeSelf/);
     expect(() => parse({ ...timed, target: 'topAttack', targetCount: 1, excludeSelf: 'yes' })).toThrow(/excludeSelf/);
     expect(() => parse({ kind: 'passive', target: 'allies', stat: 'attack', ref: 1, excludeSelf: 'always' })).toThrow(
       /excludeSelf is only allowed in timed/,

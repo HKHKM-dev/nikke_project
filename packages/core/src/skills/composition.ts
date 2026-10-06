@@ -5,6 +5,8 @@
 // 敵の属性の条件 enemyElement も、同じく静的な条件としてここで外す。
 // 対象の語彙編（plan/design-target-vocab.md 2.2・2.3 節）: 編成で決まる対象（targetSquad・longestChargeTime）の枠も、ここで
 // 効果の fixedTargets に書く（skills/targets.ts が絞る）。何度通しても同じ枠になる。
+// ペルソナ編（plan/design-persona.md 3.2 節）: 「ペルソナ状態の」（targetState。枠の定義の states）・「基本バースト段階が N の」
+// （targetBurstStep）・allies の「自分を除く」（excludeSelf: always）も、編成で決まる対象としてここで枠を決める。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, Element } from '../types.ts';
 import { matchesTargetFilter } from './targets.ts';
@@ -13,6 +15,7 @@ import {
   type BurstStepMixCondition,
   type SkillDefinition,
   type SkillEffect,
+  type SkillState,
   type SquadCondition,
   type WithCharacterCondition,
 } from './types.ts';
@@ -90,26 +93,46 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
   return c as Required<CompositionCharacter>;
 }
 
+/** ペルソナ編: 効果の対象が編成で決まる絞り込み（ペルソナ状態・基本バースト段階・allies の自分を除く）を持つか */
+export function hasPersonaTargetFilter(effect: SkillEffect): boolean {
+  return (
+    effect.kind === 'timed' &&
+    (effect.targetState !== undefined ||
+      effect.targetBurstStep !== undefined ||
+      (effect.target === 'allies' && effect.excludeSelf !== undefined))
+  );
+}
+
 /**
  * 対象の語彙編: 編成で決まる対象の枠（順位の順）。targetSquad = 部隊が自分と同じ枠（自分を含む。枠の順）、
  * longestChargeTime = 基本チャージ時間（CharacterData.shot.chargeTime）の長い順（同値は枠の若い順。仮定）。
- * どちらも targetWeapon・targetElement で絞った後。どちらでもない効果は undefined
+ * ペルソナ編: targetState = 枠の状態（states[i]。枠の定義の states）にその名前がある枠、targetBurstStep = 基本バースト段階が N の枠、
+ * allies の excludeSelf = 自分の枠を外す。
+ * どれも targetWeapon・targetElement で絞った後。どれでもない効果は undefined
  */
 export function fixedTargetsOf(
   effect: SkillEffect,
   characters: readonly (CompositionCharacter | null)[],
   selfIndex: number,
+  states: readonly (readonly SkillState[] | undefined)[] = [],
 ): number[] | undefined {
   if (effect.kind !== 'passive' && effect.kind !== 'timed') return undefined;
   const squad = effect.targetSquad !== undefined;
   const longest = effect.target === 'longestChargeTime';
-  if (!squad && !longest) return undefined;
+  const persona = hasPersonaTargetFilter(effect);
+  if (!squad && !longest && !persona) return undefined;
   const self = characters[selfIndex];
   if (!self) throw new Error(`no character in slot ${selfIndex}`);
+  const state = effect.kind === 'timed' ? effect.targetState : undefined;
+  const step = effect.kind === 'timed' ? effect.targetBurstStep : undefined;
+  const excludeSelf = effect.kind === 'timed' && effect.target === 'allies' && effect.excludeSelf !== undefined;
   const candidates: number[] = [];
   characters.forEach((c, i) => {
     if (c === null) return;
     if (squad && c.squad !== self.squad) return;
+    if (state !== undefined && !(states[i] ?? []).includes(state)) return;
+    if (step !== undefined && c.burstStep !== step) return;
+    if (excludeSelf && i === selfIndex) return;
     if (!matchesTargetFilter(effect, fullCharacter(c, i))) return;
     candidates.push(i);
   });
@@ -131,6 +154,8 @@ export function applyComposition(
   characters: readonly (CompositionCharacter | null)[],
   selfIndex: number,
   enemyElement: Element | null = null,
+  /** ペルソナ編: 枠ごとの状態（枠の定義の states。定義の無い枠は undefined） */
+  states: readonly (readonly SkillState[] | undefined)[] = [],
 ): SkillDefinition {
   let changed = false;
   const skills = { ...definition.skills };
@@ -140,7 +165,7 @@ export function applyComposition(
     const effects = entry.effects
       .filter((e) => compositionAllows(e, characters, selfIndex, enemyElement))
       .map((e) => {
-        const fixed = fixedTargetsOf(e, characters, selfIndex);
+        const fixed = fixedTargetsOf(e, characters, selfIndex, states);
         if (
           fixed === undefined ||
           !('target' in e) ||
@@ -163,10 +188,11 @@ function applyCompositionToSlot(
   characters: readonly (CharacterData | null)[],
   selfIndex: number,
   enemyElement: Element | null,
+  states: readonly (readonly SkillState[] | undefined)[],
 ): TeamSlotInput {
   const definition = slot.skills?.definition;
   if (slot.skills === undefined || !definition) return slot;
-  const applied = applyComposition(definition, characters, selfIndex, enemyElement);
+  const applied = applyComposition(definition, characters, selfIndex, enemyElement, states);
   return applied === definition ? slot : { ...slot, skills: { ...slot.skills, definition: applied } };
 }
 
@@ -176,8 +202,9 @@ function applyCompositionToSlot(
  */
 export function applyCompositionToTeam<T extends TeamInput>(input: T): T {
   const characters = input.slots.map((slot) => (slot === null ? null : slot.character));
+  const states = input.slots.map((slot) => slot?.skills?.definition?.states);
   const slots = input.slots.map((slot, i) =>
-    slot === null ? null : applyCompositionToSlot(slot, characters, i, input.enemy.element),
+    slot === null ? null : applyCompositionToSlot(slot, characters, i, input.enemy.element, states),
   );
   if (slots.every((slot, i) => slot === input.slots[i])) return input;
   return { ...input, slots };

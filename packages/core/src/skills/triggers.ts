@@ -14,7 +14,13 @@ import {
   type BurstStepKey,
 } from '../burst/schedule.ts';
 import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
-import { isResolvedEventCount, isResolvedTimer, isResolvedShotCount, type ResolvedTrigger } from './resolve.ts';
+import {
+  isResolvedApplied,
+  isResolvedEventCount,
+  isResolvedTimer,
+  isResolvedShotCount,
+  type ResolvedTrigger,
+} from './resolve.ts';
 import type { FireContext } from './targets.ts';
 import type { ShotCountKind } from './types.ts';
 
@@ -143,6 +149,10 @@ export function createTriggerTracker(
   // ニヒリスター編: 時間の周期のトリガーは出来事の列に無いフレームで起きるので、ここでは追わない（skills/timeline.ts の triggerFires が並べる）
   if (isResolvedTimer(t)) {
     throw new RangeError(`a timer trigger (every ${t.everySeconds} s) is not tracked per event; use triggerFires`);
+  }
+  // ペルソナ編: 効果名のトリガーは planBuffTimeline の記録（BuffTimeline.applications）で決まる。出来事の列では追わない
+  if (isResolvedApplied(t)) {
+    throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);
   }
   if (isResolvedEventCount(t)) {
     return (ev) => {

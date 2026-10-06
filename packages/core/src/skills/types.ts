@@ -205,6 +205,20 @@ export type TargetSquad = 'same';
 export const TARGET_SQUADS = ['same'] as const satisfies readonly TargetSquad[];
 
 /**
+ * ペルソナ編（plan/design-persona.md 3.1 節）: 枠の状態の名前。定義の最上位の states に書く（戦闘の始まりから終わりまでの静的な状態。
+ * 「戦闘開始時、自分に…（持続・解除不可）」）。persona = ペルソナ状態
+ */
+export type SkillState = 'persona';
+export const SKILL_STATES = ['persona'] as const satisfies readonly SkillState[];
+
+/**
+ * ペルソナ編（同 3.3 節）: 説明文の効果名（timed の name）。トリガー { applied: 名前 } が、その名前の効果が付いたフレームで発火する。
+ * followUp = 追撃、batonTouch = バトンタッチ
+ */
+export type EffectName = 'followUp' | 'batonTouch';
+export const EFFECT_NAMES = ['followUp', 'batonTouch'] as const satisfies readonly EffectName[];
+
+/**
  * 対象の語彙編: 編成で決まる対象（targetSquad・longestChargeTime）の、最上位で決めた枠（skills/composition.ts の
  * applyComposition が書く。JSON には書かない）。有れば、対象はこの枠だけに絞られる
  */
@@ -398,8 +412,18 @@ export type TimerTrigger = {
   atStart?: true;
 };
 
-/** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガーか時間の周期のトリガー */
-export type EffectTrigger = BuffTrigger | ShotCountTrigger | EventCountTrigger | TimerTrigger;
+/**
+ * ペルソナ編（plan/design-persona.md 3.3 節）: 「〈効果名〉が適用された時」。編成のどの枠の効果でも、name がこの名前の timed が
+ * この効果を持つ枠に付いたフレーム（窓の始まり。付き直しでも 1 回）で発火する。damage にだけ書ける
+ */
+export type AppliedTrigger = { applied: EffectName };
+
+/** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガーか時間の周期のトリガー（ペルソナ編: 効果名のトリガー） */
+export type EffectTrigger = BuffTrigger | ShotCountTrigger | EventCountTrigger | TimerTrigger | AppliedTrigger;
+
+export function isAppliedTrigger(t: unknown): t is AppliedTrigger {
+  return typeof t === 'object' && t !== null && 'applied' in t;
+}
 
 export function isTimerTrigger(t: unknown): t is TimerTrigger {
   return typeof t === 'object' && t !== null && 'everySeconds' in t;
@@ -421,8 +445,17 @@ export type TimedEffect = TargetCountFields &
     target: BuffTarget;
     /** 対象の語彙編: 「同じ部隊の味方全体に」。target が 'allies' のときだけ書ける */
     targetSquad?: TargetSquad;
-    /** 対象の語彙編: 「自分を除く」。target が 'topAttack' のときだけ書ける */
+    /**
+     * 対象の語彙編: 「自分を除く」。target が 'topAttack' のときだけ書ける。
+     * ペルソナ編（plan/design-persona.md 3.2 節）: 'always' は 'allies' にも書ける（「自分を除く…味方全体」）
+     */
     excludeSelf?: ExcludeSelf;
+    /** ペルソナ編: 「ペルソナ状態の」。対象の枠の定義の states にその名前がある枠だけ。target が 'allies' のときだけ書ける */
+    targetState?: SkillState;
+    /** ペルソナ編: 「基本バースト段階が N の」。対象の枠の CharacterData.burstStep が N の枠だけ。target が 'allies' のときだけ書ける */
+    targetBurstStep?: BasicBurstStep;
+    /** ペルソナ編: 説明文の効果名（「追撃」など）。トリガー { applied: 名前 } のきっかけになる */
+    name?: EffectName;
     /** Stage 9: 「〈武器〉を所持する味方」。target が self 以外（allies・Stage 11 の burstUsers）のときだけ書ける */
     targetWeapon?: WeaponType;
     /** アスカ: 「〈コード〉コードの味方」 */
@@ -490,9 +523,13 @@ export type TimedEffect = TargetCountFields &
 /** 環境コントロール強化編: 増やす相手の効果（同じ枠の skill スロットの、同じ stat の timed 効果）と、その値に対する割合（%） */
 export type Amplifies = { skill: SkillSlot; percent: number };
 
-/** 防御力無視ダメージ編: 維持の終わりの出来事 */
-export type DurationUntil = 'fullBurstEnd';
-export const DURATION_UNTILS = ['fullBurstEnd'] as const satisfies readonly DurationUntil[];
+/**
+ * 防御力無視ダメージ編: 維持の終わりの出来事。
+ * ペルソナ編（plan/design-persona.md 3.4 節）: battleEnd = 戦闘の終わりまで（トリガー付きの「持続」）。窓の終わりが時刻表に依らないので、
+ * fullBurstEnd と違い 1 パス目で窓を追う stat とスタックにも書ける
+ */
+export type DurationUntil = 'fullBurstEnd' | 'battleEnd';
+export const DURATION_UNTILS = ['fullBurstEnd', 'battleEnd'] as const satisfies readonly DurationUntil[];
 
 /**
  * Stage 11 モダニア: 発火の条件。selfBuffed = 自分がその stat の増加状態なら。
@@ -567,7 +604,7 @@ export type DamageEffect = {
   /**
    * 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3 節）: きっかけのフレームの delayFrames 後に出す（1 以上の整数）。
    * バフとフルバースト補正はそのフレームのもの（同じ発動で付いた効果も入る。発動の直前のバフで固定する規則は当てない）。
-   * きっかけは burstUse だけ（クイーン（真）S1 の「1more が適用された時」。C-0310）
+   * きっかけは burstUse（クイーン（真）S1 の「1more が適用された時」。C-0310）と、ペルソナ編の { applied }（追撃が付いたフレームから数える）
    */
   delayFrames?: number;
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
@@ -920,6 +957,8 @@ export type SkillDefinition = {
    * 宝物の段階で宝物版になるスロットにここが無ければ、そのスロットは unsupported として扱う（skills/treasure.ts）
    */
   treasureSkills?: Partial<Record<SkillSlot, SkillEntry>>;
+  /** ペルソナ編（plan/design-persona.md 3.1 節）: 枠の状態（戦闘の始まりから終わりまで）。対象の targetState が見る */
+  states?: SkillState[];
 };
 
 /** 定義済みキャラの一覧（data/skills/index.json） */
@@ -1009,6 +1048,25 @@ function parseTargetSquad(v: Record<string, Json>, target: BuffTarget, path: str
   return squad;
 }
 
+/** ペルソナ編: targetState・targetBurstStep は target が allies のときだけ */
+function parsePersonaTargetFields(
+  v: Record<string, Json>,
+  target: BuffTarget,
+  path: string,
+): { targetState?: SkillState; targetBurstStep?: BasicBurstStep } {
+  const out: { targetState?: SkillState; targetBurstStep?: BasicBurstStep } = {};
+  if (v.targetState !== undefined) out.targetState = oneOf(SKILL_STATES, v.targetState, `${path}.targetState`);
+  if (v.targetBurstStep !== undefined) {
+    out.targetBurstStep = oneOf(BASIC_BURST_STEPS, v.targetBurstStep, `${path}.targetBurstStep`);
+  }
+  for (const key of ['targetState', 'targetBurstStep'] as const) {
+    if (out[key] !== undefined && target !== 'allies') {
+      fail(`${path}.${key}`, `only allowed with target "allies", got "${target}"`);
+    }
+  }
+  return out;
+}
+
 /**
  * 受けるダメージ編: damageTaken（敵の受けるダメージ▲）は敵へのデバフなので、味方全体（target 'allies'）にだけ書ける。
  * 武器種・属性で絞ることもできない（敵 1 体の前提で、敵が受ける全ダメージに掛かる）
@@ -1079,6 +1137,9 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   const targetElement = parseTargetElement(v, target, path);
   const targetSquad = parseTargetSquad(v, target, path);
   if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
+  for (const key of ['targetState', 'targetBurstStep', 'name'] as const) {
+    if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is only allowed in timed`);
+  }
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   if (isFlagStat(stat) || stat === 'fixedChargeTime') fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
@@ -1124,6 +1185,8 @@ function parseTrigger(
 ): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
+  // ペルソナ編: 効果名のトリガーは damage だけ（parseDamageEffect が先に読む）
+  if (v.applied !== undefined) fail(path, 'an applied trigger ({ applied }) is only allowed in damage');
   if (v.everySeconds !== undefined) {
     if (!allowTimer)
       fail(
@@ -1189,8 +1252,16 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   let excludeSelf: ExcludeSelf | undefined;
   if (v.excludeSelf !== undefined) {
     excludeSelf = oneOf(EXCLUDE_SELF, v.excludeSelf, `${path}.excludeSelf`);
-    if (target !== 'topAttack') fail(`${path}.excludeSelf`, `only allowed with target "topAttack", got "${target}"`);
+    // ペルソナ編: 「自分を除く…味方全体」は allies の always
+    const allowed = target === 'topAttack' || (target === 'allies' && excludeSelf === 'always');
+    if (!allowed) {
+      fail(
+        `${path}.excludeSelf`,
+        `only allowed with target "topAttack" (or "always" with "allies"), got "${excludeSelf}" with "${target}"`,
+      );
+    }
   }
+  const persona = parsePersonaTargetFields(v, target, path);
   if (stat === 'trueDamageConversion' && target !== 'self') {
     fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
   }
@@ -1220,6 +1291,11 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (targetSquad !== undefined) effect.targetSquad = targetSquad;
   if (excludeSelf !== undefined) effect.excludeSelf = excludeSelf;
+  Object.assign(effect, persona);
+  if (v.name !== undefined) {
+    effect.name = oneOf(EFFECT_NAMES, v.name, `${path}.name`);
+    if (isTimerTrigger(trigger)) fail(`${path}.name`, 'a named effect cannot have a timer trigger');
+  }
   Object.assign(effect, count);
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) {
@@ -1240,7 +1316,10 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
     fail(path, 'a duration in shots cannot stack');
   }
   if (byShots && v.condition !== undefined) fail(`${path}.condition`, 'a duration in shots cannot have a condition');
-  if (effect.durationUntil !== undefined && (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)) {
+  if (
+    effect.durationUntil === 'fullBurstEnd' &&
+    (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)
+  ) {
     fail(path, 'a duration until an event cannot stack');
   }
   // 防御力無視ダメージ編: 「フルバーストタイムなら」
@@ -1274,6 +1353,10 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
     effect.condition = { selfBuffed };
   }
   validateFixedChargeTime(effect, path);
+  // ペルソナ編: 名前の付いた効果の記録は planBuffTimeline の 1 段目で作るので、条件付き・順位の対象とは組めない
+  if (effect.name !== undefined && (effect.condition !== undefined || effect.target === 'topAttack')) {
+    fail(`${path}.name`, 'a named effect cannot have a condition or target "topAttack"');
+  }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -1349,14 +1432,15 @@ function parseTimedDuration(
     if (hasShots || hasShotsRef || v.durationRef !== undefined || v.durationSeconds !== undefined) {
       fail(path, 'durationUntil cannot be combined with another duration');
     }
-    if (isFirstPassTrackedStat(stat) || isFlagStat(stat)) {
+    const until = oneOf(DURATION_UNTILS, v.durationUntil, `${path}.durationUntil`);
+    if (isFlagStat(stat) || (until === 'fullBurstEnd' && isFirstPassTrackedStat(stat))) {
       fail(
         `${path}.stat`,
         `a duration until an event is not supported for "${stat}" (its window is tracked inside the first pass)`,
       );
     }
     if (target === 'topAttack') fail(`${path}.target`, 'a duration until an event cannot target "topAttack"');
-    return { durationUntil: oneOf(DURATION_UNTILS, v.durationUntil, `${path}.durationUntil`) };
+    return { durationUntil: until };
   }
   if (!hasShots && !hasShotsRef) return parseDuration(v, path);
   if (hasShots && hasShotsRef) fail(path, 'at most one of durationShots and durationShotsRef');
@@ -1526,7 +1610,7 @@ function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDam
 }
 
 function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true, true);
+  const trigger = parseDamageTrigger(v.trigger, `${path}.trigger`);
   // Stage 11 モダニア: 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
   const damageType = oneOf(SKILL_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
@@ -1542,8 +1626,11 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a condition or a counting window (during)');
   }
   if (v.delayFrames !== undefined) {
-    // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: いま要るのはバースト使用時だけ
-    if (trigger !== 'burstUse') fail(`${path}.delayFrames`, 'delayFrames needs the trigger "burstUse"');
+    // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: いま要るのはバースト使用時と、
+    // ペルソナ編の「〈効果名〉が適用された時」（クイーン（真）S1 の追撃。plan/design-persona.md 9.3 節）
+    if (trigger !== 'burstUse' && !isAppliedTrigger(trigger)) {
+      fail(`${path}.delayFrames`, 'delayFrames needs the trigger "burstUse" or { applied }');
+    }
     const d = v.delayFrames;
     if (typeof d !== 'number' || !Number.isInteger(d) || d < 1) {
       fail(`${path}.delayFrames`, `expected a positive integer, got ${JSON.stringify(d)}`);
@@ -1552,6 +1639,13 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
+}
+
+/** ペルソナ編: damage のトリガー。{ applied: 名前 } のほかは parseTrigger と同じ */
+function parseDamageTrigger(v: Json, path: string): EffectTrigger {
+  if (!isRecord(v) || v.applied === undefined) return parseTrigger(v, path, true, true);
+  for (const key of Object.keys(v)) if (key !== 'applied') fail(`${path}.${key}`, 'unknown field');
+  return { applied: oneOf(EFFECT_NAMES, v.applied, `${path}.applied`) };
 }
 
 /** クルミ S2 編: 回数トリガーに数える窓（during）があるか */
@@ -1983,6 +2077,12 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   validateCycles(skills, 'skills');
   validateFixedChargeTimeCount(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
+  if (raw.states !== undefined) {
+    if (!Array.isArray(raw.states) || raw.states.length === 0) fail('states', 'expected a non-empty array');
+    const states = raw.states.map((x, i) => oneOf(SKILL_STATES, x, `states[${i}]`));
+    if (new Set(states).size !== states.length) fail('states', 'duplicate state');
+    def.states = states;
+  }
   if (raw.treasureSkills !== undefined) {
     const treasure = raw.treasureSkills;
     if (!isRecord(treasure)) fail('treasureSkills', 'expected an object');

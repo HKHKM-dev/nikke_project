@@ -67,6 +67,8 @@ function triggerLabel(t: ResolvedTrigger): string {
   if (typeof t === 'string') return t;
   // ニヒリスター編: 時間の周期のトリガー（every10s）
   if ('everySeconds' in t) return `every${t.everySeconds}s`;
+  // ペルソナ編: 効果名のトリガー（applied:followUp）
+  if ('applied' in t) return `applied:${t.applied}`;
   // クルミ S2 編: フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
   if ('every' in t)
     return `${t.count}/${t.every}${t.during ? `@${t.during}${t.reset === 'fullBurstStart' ? '!' : ''}` : ''}`;

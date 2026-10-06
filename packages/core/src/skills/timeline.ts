@@ -43,7 +43,7 @@ import { attackRankFor, finalAttacksAt, tiedAtCutoff, type RankSlot, type Rankin
 import { stackWindows } from './stacks.ts';
 import { dependsOnContext, dependsOnRank, isEffectTarget } from './targets.ts';
 import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
-import { isStateStat, selfBuffedStatOf, type BuffStat, type SkillDefinition } from './types.ts';
+import { isStateStat, selfBuffedStatOf, type BuffStat, type EffectName, type SkillDefinition } from './types.ts';
 
 /** 枠 1 つ分の入力。TeamSlotInput ではなく必要な情報だけを受けて循環 import を避ける（planFixedCycle と同じ流儀） */
 export type TimelineSlot = {
@@ -136,7 +136,25 @@ export type BuffTimeline = {
    * frame/plan.ts の planSkillHits が、射撃がこの窓に入るかで循環の段を決める（plan/design-stage11-scarlet-bs.md 3.2 節）
    */
   cycleWindows: CycleWindow[];
+  /**
+   * ペルソナ編（plan/design-persona.md 3.3 節）: 名前の付いた効果（timed の name）が枠に付いた記録（フレーム・出どころの枠・受けた枠の順）。
+   * 付き直し（窓が続いている間の再発火）も 1 回ずつ記録する。トリガー { applied: 名前 } の発火に使う（frame/plan.ts）
+   */
+  applications: AppliedRecord[];
 };
+
+/** ペルソナ編: 名前の付いた効果が枠に付いた記録 */
+export type AppliedRecord = { frame: number; name: EffectName; sourceSlotIndex: number; slotIndex: number };
+
+/** ペルソナ編: 枠 slotIndex に名前 name の効果が付いたフレーム（昇順。同じフレームに 2 つの出どころから付いても 1 回） */
+export function appliedFrames(
+  timeline: Pick<BuffTimeline, 'applications'>,
+  name: EffectName,
+  slotIndex: number,
+): number[] {
+  const frames = timeline.applications.filter((a) => a.name === name && a.slotIndex === slotIndex).map((a) => a.frame);
+  return [...new Set(frames)].sort((a, b) => a - b);
+}
 
 /** 1 枠ぶんの「同じバフ状態の区間」をまとめたもの。calc はこの単位で computeDamage を呼ぶ */
 export type TimelineGroup = {
@@ -522,6 +540,8 @@ export function planBuffTimeline(
   const stateWindows: BuffWindow[] = [];
   /** 2 段目に回す効果（対象が攻撃力の順位で決まる） */
   const ranked: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
+  /** ペルソナ編: 名前の付いた効果が付いた記録（1 段目の効果だけ。名前は条件・順位の対象と組めない） */
+  const applications: AppliedRecord[] = [];
   /** 1.5 段目に回す効果（Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」） */
   const conditional: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
   /** 2.5 段目に回す効果（環境コントロール強化編: 参照する効果の窓に重なる間だけ、その値を増やす） */
@@ -622,8 +642,18 @@ export function planBuffTimeline(
       }
       const fires = buffStartFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey);
       distribute(isStateStat(effect.stat) ? stateWindows : windows, effect, sourceSlotIndex, fires);
+      const name = effect.name;
+      if (name === undefined) continue;
+      for (const fire of fires) {
+        slots.forEach((target, slotIndex) => {
+          if (target === null) return;
+          if (!isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, fire.context)) return;
+          applications.push({ frame: fire.frame, name, sourceSlotIndex, slotIndex });
+        });
+      }
     }
   });
+  applications.sort((a, b) => a.frame - b.frame || a.sourceSlotIndex - b.sourceSlotIndex || a.slotIndex - b.slotIndex);
 
   // 1.5 段目（Stage 11 モダニア）: 条件付きの効果。発火の瞬間の状態は 1 段目の窓と状態の窓で見る（条件付きの効果どうしは連鎖させない）
   const conditionSkips: ConditionSkip[] = [];
@@ -887,6 +917,7 @@ export function planBuffTimeline(
     stateWindows,
     conditionSkips,
     cycleWindows: planCycleWindows(slots, schedule, frames, shots, healsKey),
+    applications,
   };
 }
 

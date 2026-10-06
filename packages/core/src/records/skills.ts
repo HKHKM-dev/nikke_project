@@ -186,6 +186,7 @@ function triggerLabel(e: SkillEffect): string | undefined {
   const t = e.trigger;
   if (typeof t === 'string') return t;
   if ('everySeconds' in t) return `${t.everySeconds} 秒ごと`;
+  if ('applied' in t) return `${t.applied} が適用された時`;
   return t.count;
 }
 
