@@ -70,7 +70,7 @@ describe('data/skills', () => {
           // フラワー編: 周期のゲージ（burstGaugeHit）は ref を持たない。アニス：スター編: バースト再突入（burstReentry）も
           const refs =
             effect.kind === 'weaponChange'
-              ? [effect.damageRef]
+              ? [effect.damageRef, ...(effect.maxAmmoRef === undefined ? [] : [effect.maxAmmoRef])]
               : effect.kind === 'cycle'
                 ? effect.steps.map((s) => s.ref)
                 : effect.kind === 'cycleEvery' ||
@@ -90,8 +90,14 @@ describe('data/skills', () => {
                 if (lv === SKILL_LEVEL_MAX) expect(v).toBeGreaterThanOrEqual(100);
               }
               // Stage 8 の倍率ダメージは 100% 未満もある（ドレイク S2 98.55%）ので上限を見ない。持続ダメージの 1 tick も倍率
-              // ダメージなので上限を見ない（マナのバーストは Lv10 で 396%）
-              else if (effect.kind !== 'damage' && effect.kind !== 'cycle' && effect.kind !== 'dot') {
+              // ダメージなので上限を見ない（マナのバーストは Lv10 で 396%）。使用武器の変更の 1 発・装弾数も上限を見ない
+              // （ウンファ：TU の徹甲炸裂弾は Lv10 で 105.6%）
+              else if (
+                effect.kind !== 'damage' &&
+                effect.kind !== 'cycle' &&
+                effect.kind !== 'dot' &&
+                effect.kind !== 'weaponChange'
+              ) {
                 // Stage 11 紅蓮BS: バーストの攻撃力 115.12%・チャージダメージ 169.63% は 100% を超える（上限は 200% で見る）
                 // アスカ: バーストの攻撃ダメージ 150.04%・命中率 101.37% も同じ。ヘルム: チャージダメージ倍率 158.4% も同じ
                 const limit =

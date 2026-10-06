@@ -392,6 +392,30 @@ export function shotCountWindows(
 }
 
 /**
+ * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 撃ち切りで終わる使用武器の変更の窓。始まり s から、
+ * s より後の最初の終わり（1 パス目の ShotLog.weaponChangeEnds）まで（無ければ frames まで）。維持中にまた付いたら和集合
+ * （1 パス目は開いている窓に重ねて付いても撃ち切りまで変えない）
+ */
+export function untilWeaponChangeEndWindows(
+  starts: readonly number[],
+  ends: readonly number[],
+  frames: number,
+): [number, number][] {
+  const merged: [number, number][] = [];
+  for (const s of [...starts].sort((a, b) => a - b)) {
+    if (s >= frames) continue;
+    const end = Math.min(ends.find((e) => e > s) ?? frames, frames);
+    const last = merged[merged.length - 1];
+    if (last !== undefined && s <= last[1]) {
+      if (end > last[1]) last[1] = end;
+      continue;
+    }
+    merged.push([s, end]);
+  }
+  return merged;
+}
+
+/**
  * 防御力無視ダメージ編: 「解除条件：フルバーストタイムが終了した時」の窓。始まり s から、s より後に終わる最初のフルバーストの終わりまで
  * （無ければ frames まで）。維持中にまた付いたら和集合（plan/design-true-damage-element.md 3.2 節）
  */
@@ -517,6 +541,26 @@ export function planBuffTimeline(
           .map((f) => f.frame);
         for (const [start, end] of shotCountWindows(mine, shots[slotIndex]?.frames ?? [], n, frames)) {
           out.push(windowOf(slotIndex, sourceSlotIndex, effect, { start, end }));
+        }
+      });
+      return;
+    }
+    // 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節の論点 8）: 撃ち切りで終わる使用武器の変更は、
+    // 持ち替えるフレーム（weaponStartTrim）から、1 パス目が基礎の武器に戻したフレームまで
+    if (effect.durationUntil === 'ammoSpent') {
+      const trim = weaponStartTrim(effect);
+      slots.forEach((target, slotIndex) => {
+        if (target === null) return;
+        const mine = fires
+          .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, f.context))
+          .map((f) => f.frame);
+        // 和集合は発火のフレームで取り、頭は後で削る（effectWindows・1 パス目の register と同じ順）
+        for (const [start, end] of untilWeaponChangeEndWindows(
+          mine,
+          shots[slotIndex]?.weaponChangeEnds ?? [],
+          frames,
+        )) {
+          if (start + trim < end) out.push(windowOf(slotIndex, sourceSlotIndex, effect, { start: start + trim, end }));
         }
       });
       return;

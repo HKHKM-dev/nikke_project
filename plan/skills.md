@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 31・効果 154（根拠あり 112）・notes 84（根拠あり 37）
+件数: キャラ 31・効果 155（根拠あり 113）・notes 83（根拠あり 36）
 
-notes の種類: 未対応 29・前提の外 21・計算に無関係 28・補足 6
+notes の種類: 未対応 28・前提の外 21・計算に無関係 28・補足 6
 
-スロット: supported 57・partial 17・unsupported 8・noEffect 20
+スロット: supported 58・partial 16・unsupported 8・noEffect 20
 
 ## 10 ラピ
 
@@ -124,9 +124,9 @@ notes の種類: 未対応 29・前提の外 21・計算に無関係 28・補足
   - effects[1] passive・chargeDamage: C-0020（確定）
   - effects[2] passive・attack: C-0020（確定）
   - notes[0] 未対応: フォーメーションLT 適用中の追加効果（味方全体の発射体爆発ダメージ▲・防御力無視ダメージ▲）は未対応（語彙 withCharacter・projectileExplosionDamage・trueDamage はあるが、根拠の結論が無い。エマ：TU とウンファ：TU のスキルの結論が先に要る）: 根拠なし
-- **burst**: partial
+- **burst**: supported
   - effects[0] timed・burstUse・damageTaken: C-0312（確定）、C-0138（確定）
-  - notes[0] 未対応: 使用武器変更の 1 発（徹甲炸裂弾。max(1, 攻撃力) × 105.6% × (300% + チャージダメージ▲) × (1 + 防御力無視ダメージ▲)、1 発で基礎の SR に戻る）は未対応（値は確かめたが、weaponChange が基礎の武器のチャージ時間・フルチャージ倍率・最大装弾数を写すので、チャージ 0.3 秒・300%・1 発の武器を表せない。語彙が要る）: C-0313（確定）
+  - effects[1] weaponChange・burstUse: C-0313（確定）
 
 ## 101 ドレイク
 

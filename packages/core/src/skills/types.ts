@@ -657,7 +657,19 @@ export type WeaponChangeEffect = {
   hitsPerShot?: number;
   /** 防御力無視ダメージ編: 変更後の武器の 1 発を防御力無視ダメージにする（「最終攻撃力の X% の防御力無視ダメージ」） */
   trueDamage?: true;
-  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
+  /**
+   * 使用武器変更の武器のパラメータ（plan/design-true-damage-element.md 9 節）: 変更後の武器のチャージ時間（秒・即値）。
+   * 説明文に数字で書かれている（description_value でない）。省略は基礎の武器のまま。チャージ武器にだけ書ける
+   */
+  chargeTimeSeconds?: number;
+  /** 同: 変更後の武器のフルチャージダメージ（%・即値。300 = 300%）。省略は基礎の武器のまま。チャージ武器にだけ書ける */
+  fullChargeDamage?: number;
+  /**
+   * 同: 変更後の武器の最大装弾数の description_value_NN。書いたら維持の欄（durationRef・durationSeconds）は書かず、
+   * 変更後の武器はリロードせず、最後の弾丸を撃ったフレームの次のフレームに基礎の武器に戻る（撃ち切り。論点 8）
+   */
+  maxAmmoRef?: number;
+  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方（maxAmmoRef を書いたらどちらも書かない） */
   durationRef?: number;
   durationSeconds?: number;
   assumes?: LocalizedText;
@@ -1331,6 +1343,9 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
         'damageRef',
         'hitsPerShot',
         'trueDamage',
+        'chargeTimeSeconds',
+        'fullChargeDamage',
+        'maxAmmoRef',
         'durationRef',
         'durationSeconds',
         'assumes',
@@ -1340,12 +1355,34 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
       fail(`${path}.${key}`, 'unknown field');
     }
   }
+  // 使用武器変更の武器のパラメータ編: 最大装弾数を書いた変更は撃ち切りで終わる（維持の欄を書かない。design-true-damage-element.md 9 節）
+  const untilEmpty = v.maxAmmoRef !== undefined;
+  if (untilEmpty && (v.durationRef !== undefined || v.durationSeconds !== undefined)) {
+    fail(
+      path,
+      'a weapon change with maxAmmoRef ends when its magazine is empty; durationRef/durationSeconds are not allowed',
+    );
+  }
   const effect: WeaponChangeEffect = {
     kind: 'weaponChange',
     trigger: parseTrigger(v.trigger, `${path}.trigger`),
     damageRef: parseRef(v.damageRef, `${path}.damageRef`),
-    ...parseDuration(v, path),
+    ...(untilEmpty ? { maxAmmoRef: parseRef(v.maxAmmoRef, `${path}.maxAmmoRef`) } : parseDuration(v, path)),
   };
+  if (v.chargeTimeSeconds !== undefined) {
+    const seconds = v.chargeTimeSeconds;
+    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
+      fail(`${path}.chargeTimeSeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
+    }
+    effect.chargeTimeSeconds = seconds;
+  }
+  if (v.fullChargeDamage !== undefined) {
+    const percent = v.fullChargeDamage;
+    if (typeof percent !== 'number' || !Number.isFinite(percent) || percent <= 0) {
+      fail(`${path}.fullChargeDamage`, `expected a positive finite number, got ${JSON.stringify(percent)}`);
+    }
+    effect.fullChargeDamage = percent;
+  }
   if (v.hitsPerShot !== undefined) effect.hitsPerShot = parsePositiveInt(v.hitsPerShot, `${path}.hitsPerShot`);
   if (v.trueDamage !== undefined) {
     if (v.trueDamage !== true) fail(`${path}.trueDamage`, `expected true, got ${JSON.stringify(v.trueDamage)}`);
