@@ -17,9 +17,12 @@
       "effects": [],
       "notes": [
         {
-          "ja": "最終攻撃力が最も高い敵への倍率ダメージは未対応（説明文にきっかけ（いつ出るか）が書かれていない）",
-          "en": "The hit on the enemy with the highest final ATK is not modeled (the description does not say when it happens)",
-          "kind": "unimplemented"
+          "ja": "最終攻撃力が最も高い敵への倍率ダメージは未対応（説明文にきっかけ（いつ出るか）が書かれていない）。録画では約 20 秒ごとに出る（C-0403、仮説。入れるかはオーナーの判断）",
+          "en": "The hit on the enemy with the highest final ATK is not modeled (the description does not say when it happens). Recordings show it about every 20 s (C-0403, hypothesis; whether to model it is the owner's call)",
+          "kind": "unimplemented",
+          "claims": [
+            "C-0403"
+          ]
         },
         {
           "ja": "挑発はダメージに関係しない",
