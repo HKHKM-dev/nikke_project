@@ -6,7 +6,7 @@
 - Stage: plan/design-sustained-damage-up.md 5.2 節（plan/backlog.md 6 節「持続ダメージ▲の stat」）
 - 録画: `173`
 - 結論: `C-0332`、`C-0185`
-- 状態: 調査中
+- 状態: 完了
 
 ## 条件
 
