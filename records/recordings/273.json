@@ -14,7 +14,8 @@
       "slot": 1,
       "rid": 32,
       "name": "ミランダ",
-      "controlled": true
+      "controlled": true,
+      "treasurePhase": 3
     },
     {
       "slot": 2,
@@ -37,5 +38,5 @@
   "fixedSpec": true,
   "autoFire": false,
   "autoBurst": true,
-  "conditionNote": "V-0229（ミランダの宝物版 S2 の 3 行目）の反復実測の 2 本目（1 本目は 262）。ミランダ（宝物 3・操作・撃たない）・デルタ（AI）・I-DOLL・サン（AI）。オートバースト ON（左上のボタンで確かめた）。戦闘履歴のミランダの与ダメージは 0（262 は 518,612）"
+  "conditionNote": "V-0234（ミランダの宝物版 S2 の 3 行目の反復実測。V-0229 の 2 本目。1 本目は 262）。ミランダ（宝物 3・操作・撃たない）・デルタ（AI）・I-DOLL・サン（AI）。オートバースト ON（左上のボタンで確かめた）。戦闘履歴のミランダの与ダメージは 0（262 は 518,612）"
 }
