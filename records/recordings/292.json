@@ -1,0 +1,47 @@
+{
+  "id": "292",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-292_sg+rl+rl+sr_noir+raven+yuni+cocoa_yuni-control.mp4",
+  "original": "2026-10-07_00-24-22.mp4",
+  "durationSec": 204.7,
+  "frames": 12280,
+  "fps": 60,
+  "sizeMB": 248.1,
+  "sha256": "cec0bc788255",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "ノワール（III）+ レイヴン（III）+ ユニ（II・操作・撃たない）+ ココア（I）・灼熱タブ。V-0263（案 D）の 2 本目"
+}
