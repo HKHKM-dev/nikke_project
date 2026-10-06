@@ -388,7 +388,7 @@ notes の種類: 未対応 22・前提の外 22・計算に無関係 31・補足
 ## 830 アスカ
 
 - **skill1**: supported
-  - effects[0] timed・healed・attack: C-0077（仮説）、C-0087（仮説）
+  - effects[0] timed・healed・attack: C-0077（仮説）、C-0087（確定）
   - notes[0] 前提の外: 戦闘開始時のバリアに与えるダメージ▲は、射撃場の敵にバリアが無いのでダメージに関係しない: 根拠なし
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・coreDamage: C-0075（確定）
