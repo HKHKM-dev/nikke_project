@@ -1,0 +1,35 @@
+{
+  "id": "277",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-277_sg_soldier-fa_burst.mp4",
+  "original": "2026-10-06_22-43-23.mp4",
+  "durationSec": 198.1,
+  "frames": 11886,
+  "fps": 60,
+  "sizeMB": 239.8,
+  "sha256": "224315c3d912",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 305,
+      "name": "I-DOLL・オーシャン",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0238 の録画 2。I-DOLL・オーシャン（I・操作・AUTO 射撃 OFF・撃たない）+ ソルジャーF.A.（II・AI）。オートバースト ON"
+}

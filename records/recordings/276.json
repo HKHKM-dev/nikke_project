@@ -1,0 +1,29 @@
+{
+  "id": "276",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-276_sg_soldier-fa.mp4",
+  "original": "2026-10-06_22-38-41.mp4",
+  "durationSec": 208.4,
+  "frames": 12506,
+  "fps": 60,
+  "sizeMB": 251.1,
+  "sha256": "3353dff0bd7d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0238 の録画 1。ソルジャーF.A. 単騎・操作（AUTO 射撃 OFF）・オートバースト ON。2 マガジン撃ち、撃たずに待ち、残りを撃つ"
+}

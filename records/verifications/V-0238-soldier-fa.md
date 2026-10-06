@@ -4,6 +4,7 @@
 - 話題: スキル・キャラ固有
 - 日付: 2026-10-06
 - Stage: キャラの定義（plan/skills-guide.md 1 節）
+- 録画: `276`、`277`
 - 状態: 調査中
 
 ## 条件
@@ -69,16 +70,16 @@
 
 予測は 2026-10-06（commit 9701f62）に出した。
 
-| 指標                         | 実測         | 予測 H0    |
-| ---------------------------- | ------------ | ---------- |
-| solo-body（hitDamage）       | （実測なし） | 11,618.489 |
-| solo-crit（hitDamage）       | （実測なし） | 17,427.733 |
-| solo-body-dist（hitDamage）  | （実測なし） | 15,104.035 |
-| solo-crit-dist（hitDamage）  | （実測なし） | 20,913.28  |
-| burst-body（hitDamage）      | （実測なし） | 11,618.489 |
-| burst-crit（hitDamage）      | （実測なし） | 17,427.733 |
-| burst-body-dist（hitDamage） | （実測なし） | 15,104.035 |
-| burst-crit-dist（hitDamage） | （実測なし） | 20,913.28  |
+| 指標                         | 実測               | 予測 H0                      |
+| ---------------------------- | ------------------ | ---------------------------- |
+| solo-body（hitDamage）       | 11,618（`276-01`） | 11,618.489（+0.489、許容内） |
+| solo-crit（hitDamage）       | （実測なし）       | 17,427.733                   |
+| solo-body-dist（hitDamage）  | 15,104（`276-02`） | 15,104.035（+0.035、許容内） |
+| solo-crit-dist（hitDamage）  | 20,913（`276-03`） | 20,913.28（+0.28、許容内）   |
+| burst-body（hitDamage）      | 11,618（`277-01`） | 11,618.489（+0.489、許容内） |
+| burst-crit（hitDamage）      | （実測なし）       | 17,427.733                   |
+| burst-body-dist（hitDamage） | 15,104（`277-02`） | 15,104.035（+0.035、許容内） |
+| burst-crit-dist（hitDamage） | 20,913（`277-03`） | 20,913.28（+0.28、許容内）   |
 
 <!-- records:predictions:end -->
 
