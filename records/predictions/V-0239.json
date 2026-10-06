@@ -1,0 +1,102 @@
+{
+  "verification": "V-0239",
+  "team": [
+    {
+      "rid": 32,
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 20,
+      "controlled": true
+    },
+    {
+      "rid": 308,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（宝物版 S2 の 2 行目のクリティカル確率▲を、フルバーストタイムの発動時から 10 秒、自分の会心率に足す。C-0324）。足さない読み（素の 0.15）は予測ファイルの外で検証記録に手で書く"
+    }
+  ],
+  "targets": [
+    {
+      "id": "fb-miranda-crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 517
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "フルバーストの中のミランダの会心率（モデルの 1 回目のフルバーストは 397〜997f。その開始から 2 秒後）。録画では、フルバーストの中のミランダの発のうち会心の割合を数える（V-0217 の fb-miranda-crit-rate と同じ数え方）"
+    },
+    {
+      "id": "after-fb-miranda-crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 1117
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバーストの終わり（997f）の 2 秒後の、ミランダの会心率（対照。S2 の窓の外で素の 0.15）。録画では、フルバーストの外のミランダの発のうち会心の割合を数える"
+    },
+    {
+      "id": "fb-miranda-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 517,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "fb-miranda-crit-rate と同じ発の 1 発（胴体・会心なし・距離ボーナスなし）。格子で会心を決めるときの基準（C-0323 で確定した値。V-0217 の 245-04 と同じ条件）"
+    },
+    {
+      "id": "fb-miranda-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 517,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "fb-miranda-body の会心（同じく格子の基準。V-0217 の 245-05 と同じ条件）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "57db64233f6b1098714207c2417ce789284b91f1",
+    "values": {
+      "H1": {
+        "fb-miranda-crit-rate": 0.45099999999999996,
+        "after-fb-miranda-crit-rate": 0.15,
+        "fb-miranda-body": 30028.43971800001,
+        "fb-miranda-crit": 46642.17446597882
+      }
+    },
+    "seen": {}
+  }
+}
