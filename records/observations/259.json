@@ -324,5 +324,65 @@
       "tool": "hud.ts --mode jumps",
       "note": "hud.ts --mode jumps の増分のフレーム"
     }
+  },
+  {
+    "id": "259-12",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0266",
+    "readAt": "2026-10-07",
+    "value": 17987693,
+    "description": "クイーン（真）の 2 回目のバーストの倍率ダメージのヒット（会心）。フルバーストの入りの止まりの後の増分（f3803。前の 25f は HUD が読めない）。攻撃力▲は S1 のフルバースト終了時と追撃（`259-02` と同じ組み合わせ）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分のうち 500 万以上のものを、予測ファイル（V-0266）のバーストのヒットの値（会心の有無 × 仮説 2 つ）と、この録画で 3 回以上出る増分（ほかの発の 1 ヒット）の 3 つまでの和に突き合わせた。ちょうど一致したのは f1401・f3803 だけ。3〜5 回目（f6307・8853・11369。どれも前の 25〜26f が読めない）は、どちらの仮説でもほかの発の和に分けられなかった"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-13",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0266",
+    "readAt": "2026-10-07",
+    "value": 7815801,
+    "description": "クイーン（真）の 1 回目のバーストの倍率ダメージのヒット（会心なし）。止まりの後の増分（f1401。前の 25f は HUD が読めない）。攻撃力▲は S1 の戦闘開始時だけ",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分のうち 500 万以上のものを、予測ファイル（V-0266）のバーストのヒットの値（会心の有無 × 仮説 2 つ）と、この録画で 3 回以上出る増分（ほかの発の 1 ヒット）の 3 つまでの和に突き合わせた。ちょうど一致したのは f1401・f3803 だけ。3〜5 回目（f6307・8853・11369。どれも前の 25〜26f が読めない）は、どちらの仮説でもほかの発の和に分けられなかった"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

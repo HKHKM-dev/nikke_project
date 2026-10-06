@@ -101,6 +101,46 @@ describe('roundedAttack', () => {
   });
 });
 
+describe('roundedAttack (self)', () => {
+  const source = (rid: number, skill: 'skill1' | 'skill2' | 'burst') => ({
+    resourceId: rid,
+    skill,
+    name: { ja: '', en: '' },
+  });
+  it('rounds only self-targeted effects one by one and the rest with the total (V-0266)', () => {
+    // クイーン（真）: S1（自分）50.28% と雪子の追撃（味方）96,216.54。60,284 + 96,216.54 → 276,396.54 → 276,397
+    const queen = [
+      {
+        stat: 'attack' as const,
+        scaling: 'ratio' as const,
+        value: 0.5028,
+        source: source(870, 'skill1'),
+        target: 'self' as const,
+      },
+      {
+        stat: 'attack' as const,
+        scaling: 'casterAttack' as const,
+        value: 0.8025,
+        source: source(871, 'skill2'),
+        target: 'allies' as const,
+      },
+    ].reduce((t, e) => applyResolvedEffect(t, e, 119896).totals, ZERO_BUFFS);
+    expect(roundedAttack(119896, queen, 'total')).toBe(276396);
+    expect(roundedAttack(119896, queen, 'self')).toBe(276397);
+    // ドレイク（宝物）の S1 は味方全体なので、合計と同じ（V-0265）
+    const drake = [0.1185, 0.6388]
+      .map((value) => ({
+        stat: 'attack' as const,
+        scaling: 'ratio' as const,
+        value,
+        source: source(101, 'skill1'),
+        target: 'allies' as const,
+      }))
+      .reduce((t, e) => applyResolvedEffect(t, e, 119896).totals, ZERO_BUFFS);
+    expect(roundedAttack(119896, drake, 'self')).toBe(210693);
+  });
+});
+
 describe('applyCritBuffs', () => {
   it('adds to rate and damage', () => {
     expect(applyCritBuffs({ rate: 0.15, damage: 1.5 }, ZERO_BUFFS)).toEqual({ rate: 0.15, damage: 1.5 });
