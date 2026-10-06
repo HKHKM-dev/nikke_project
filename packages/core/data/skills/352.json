@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 352,
-  "checkedAt": "2026-09-28",
+  "checkedAt": "2026-10-05",
   "skills": {
     "skill1": {
       "effects": [
@@ -51,14 +51,23 @@
           "claims": [
             "C-0098"
           ]
+        },
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "吸収回復（10 秒間維持）は、ユニの S2・アスカのバーストと同じく、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082・C-0087 からの類推）。回復量はダメージに関係しない",
+            "en": "The lifesteal (10 s) triggers \"when healed\" only when newly applied, as with Yuni's S2 and Asuka's Burst (by analogy with C-0082 and C-0087). The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-0346"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "味方全体の吸収回復（攻撃ダメージの一定割合を回復）は未対応（回復を受けた時の効果を起こさない）",
-          "en": "The lifesteal on all allies is not modeled (it does not trigger effects on being healed)",
-          "kind": "unimplemented"
-        },
         {
           "ja": "説明文に出てこない数値（description_value_04・05）は使っていない",
           "en": "Values not shown in the description (description_value_04 and 05) are not used",
@@ -94,13 +103,21 @@
             "C-0094",
             "C-0103"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "フルチャージ攻撃時の味方全体の回復は未対応（回復を受けた時の効果を起こさない）",
-          "en": "The heal on all allies on a Full Charge attack is not modeled (it does not trigger effects on being healed)",
-          "kind": "unimplemented"
+          "kind": "heal",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "ref": 3,
+          "assumes": {
+            "ja": "フルチャージの発ごとに味方全体が回復を受け、そのたびに「回復効果が適用された時」を起こす（1 回の回復。HP が満タンでも適用とみなす）。回復量はダメージに関係しない",
+            "en": "Each Full Charge shot heals all allies and triggers \"when healed\" each time (a one-off heal; it counts as applied even at full HP). The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-0345"
+          ]
         }
       ]
     },
@@ -162,13 +179,20 @@
           "claims": [
             "C-0099"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "味方全体の吸収回復（攻撃ダメージの一定割合を回復）は未対応（回復を受けた時の効果を起こさない）",
-          "en": "The lifesteal on all allies is not modeled (it does not trigger effects on being healed)",
-          "kind": "unimplemented"
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "吸収回復（10 秒間維持）は、ユニの S2・アスカのバーストと同じく、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082・C-0087 からの類推）。回復量はダメージに関係しない",
+            "en": "The lifesteal (10 s) triggers \"when healed\" only when newly applied, as with Yuni's S2 and Asuka's Burst (by analogy with C-0082 and C-0087). The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-0346"
+          ]
         }
       ]
     }

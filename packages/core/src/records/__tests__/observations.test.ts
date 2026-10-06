@@ -605,6 +605,23 @@ describe('照合の部品', () => {
     expect(rate(3000, { condition: 'manual', hitRate: 0.95 })).toBeCloseTo(0.95, 9);
   });
 
+  it('drops the heal effects of the listed characters only (V-0231)', () => {
+    const rec182 = recordings.get('182') as ProjectRecording;
+    const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] };
+    const heals = (extra: Record<string, unknown>, slot: number): number => {
+      const def = buildTeamInput(rec182, { ...setup, ...extra }, data).slots[slot]!.skills!.definition!;
+      const entries = [...Object.values(def.skills), ...Object.values(def.treasureSkills ?? {})];
+      return entries.flatMap((e) => e.effects).filter((e) => e.kind === 'heal').length;
+    };
+    // ヘルム（枠 2）の宝物版 S1 とバースト（基礎版・宝物版）の回復（C-0345・C-0346）
+    expect(heals({}, 1)).toBe(3);
+    expect(heals({ dropHeals: [352] }, 1)).toBe(0);
+    // 落とすのは指定した rid だけ。ほかの効果は残る
+    expect(heals({ dropHeals: [17] }, 1)).toBe(3);
+    const helm = buildTeamInput(rec182, { ...setup, dropHeals: [352] }, data).slots[1]!.skills!.definition!;
+    expect(helm.treasureSkills!.skill1!.effects.map((e) => e.kind)).toEqual(['timed', 'burstGauge']);
+  });
+
   it('reports a mid-far or near landing without automatic conditions, or an unknown one', () => {
     const base = observations.find((o) => o.id === '054-02')!;
     const withSetup = (setup: Record<string, unknown>, id: string): Observation => ({

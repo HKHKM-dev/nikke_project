@@ -1,0 +1,36 @@
+{
+  "id": "265",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-265_ar+sr_asuka+helm_helm-control.mp4",
+  "original": "2026-10-06_20-02-39.mp4",
+  "durationSec": 199.8,
+  "frames": 11987,
+  "fps": 60,
+  "sizeMB": 242.1,
+  "sha256": "25d6fd4690f7",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0231（ヘルムの回復の F1）の録画。アスカ（AI）・ヘルム（宝物 3・操作・AUTO 射撃 ON）。オートバースト OFF。枠順は計画（ヘルム → アスカ）と逆で、戦闘履歴と画面下の並びはアスカ → ヘルム"
+}

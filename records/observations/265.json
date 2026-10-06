@@ -1,0 +1,181 @@
+[
+  {
+    "id": "265-01",
+    "recording": "265",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0231",
+    "readAt": "2026-10-06",
+    "value": [862, 867, 871],
+    "unit": "f",
+    "description": "アスカの S1（攻撃力▲）が付いた所: S1 なしの最後の 1 発・ヘルムの最初の 1 発（フルチャージ）・S1 ありの最初の 1 発の動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分を、アスカの S1 なし（22,474 の倍率 1・1.3・1.5・1.8・2・2.3・2.5・2.8 の組、±2）・S1 あり（44,287 の同じ組）と、ヘルムの 1 発（150,000 を超える増分）に分けた。戦闘開始は f796（残り時間 03:00 が出た最初のフレーム。timer.ts の +320f の次の変わり目）。アスカの最初の 1 発は f808、ヘルムの最初の 1 発は戦闘開始から 71f"
+    },
+    "note": "S1 はヘルムの最初のフルチャージの 1 発で付いた。それより前のアスカの 1 発はすべて S1 なし"
+  },
+  {
+    "id": "265-02",
+    "recording": "265",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0231",
+    "readAt": "2026-10-06",
+    "value": 0,
+    "description": "ヘルムの最初の 1 発の後（f871〜11386、戦闘の終わりまで）のアスカの 1 発のうち、S1 なしの組の数。S1 ありの組は 1096 件",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "265-01 と同じ分け方。この間のヘルムの 1 発は 105 件（最後は f11250）で、間隔は最長 200f。どの組にも当たらない増分 10 件は、2 フレームに割れた読み（隣どうしの和が S1 ありの組か、その 2 発の和になる）と、1 フレームに 2 発が重なった読み。S1 なしの組になるものは無い"
+    },
+    "note": "S1 は最初に付いてから戦闘の終わりまで一度も切れなかった。ゲーム内の 25 秒（約 1471f）を 7 回ほど跨いでいる"
+  },
+  {
+    "id": "265-03",
+    "recording": "265",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0231",
+    "readAt": "2026-10-06",
+    "value": 29216,
+    "description": "アスカの S1 なしの 1 発（コア・会心なし、距離ボーナスあり。ヘルムの最初の 1 発より前）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "265-01 と同じ分け方。S1 なしの組は 12 件（29216 が 6 件、51690 が 3 件、40453 が 2 件、62926 が 1 件）で、倍率 1（距離なし）は出なかった"
+    },
+    "note": "予測ファイルの asuka-hit-before-first-heal（距離なし）とは args が違うので結び付けない",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 30,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "265-04",
+    "recording": "265",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0231",
+    "readAt": "2026-10-06",
+    "value": 44287,
+    "description": "アスカの S1 ありの 1 発（コア・会心・距離なし）。50 秒ごろ",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "265-01 と同じ分け方。動画の f3600〜4100 にこの値が出ている"
+    },
+    "note": "予測ファイルの asuka-hit-50s に結び付ける（録画の枠順はアスカが 1 枠目で、予測の枠順と逆。枠順を入れ替えても予測の値は同じ）",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "265-05",
+    "recording": "265",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0231",
+    "readAt": "2026-10-06",
+    "value": 44287,
+    "description": "アスカの S1 ありの 1 発（コア・会心・距離なし）。150 秒ごろ",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "265-01 と同じ分け方。動画の f9300〜10200 にこの値が出ている"
+    },
+    "note": "予測ファイルの asuka-hit-150s に結び付ける（265-04 と同じ）",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 9000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "265-06",
+    "recording": "265",
+    "kind": "total",
+    "use": "record",
+    "source": "V-0231",
+    "readAt": "2026-10-06",
+    "value": [73671579, 75435375],
+    "description": "戦闘履歴の与ダメージ（アスカ・ヘルム。180 秒）",
+    "method": {
+      "tool": "probe-result.ts・hud.ts --mode final",
+      "note": "戦闘履歴のパネル（f11903）を目で読んだ。2 体の和 149,106,954 は HUD の最終値と一致"
+    },
+    "note": "同じパネルの 3 段目（緑の ✱ の欄。回復量と読める）は、アスカ 0・ヘルム 207,571"
+  },
+  {
+    "id": "265-07",
+    "recording": "265",
+    "kind": "total",
+    "use": "compare",
+    "source": "V-0231",
+    "readAt": "2026-10-06",
+    "value": 73671579,
+    "description": "アスカの与ダメージ（アスカ + ヘルム・180 秒。戦闘履歴）",
+    "method": {
+      "tool": "probe-result.ts",
+      "note": "265-06 のアスカの値"
+    },
+    "note": "予測ファイルの asuka-total に結び付ける。コア命中率と的のジャンプの窓の残差が乗る（参考）",
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  }
+]

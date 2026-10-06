@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 31・効果 157（根拠あり 116）・notes 81（根拠あり 36）
+件数: キャラ 31・効果 160（根拠あり 119）・notes 78（根拠あり 36）
 
-notes の種類: 未対応 26・前提の外 21・計算に無関係 28・補足 6
+notes の種類: 未対応 23・前提の外 21・計算に無関係 28・補足 6
 
-スロット: supported 60・partial 14・unsupported 8・noEffect 20
+スロット: supported 63・partial 11・unsupported 8・noEffect 20
 
 ## 10 ラピ
 
@@ -340,22 +340,22 @@ notes の種類: 未対応 26・前提の外 21・計算に無関係 28・補足
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・attackDamage: C-0098（仮説）
   - notes[0] 前提の外: 阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない: 根拠なし
-- **burst**: partial
+- **burst**: supported
   - effects[0] burstDamage・skill: C-0098（仮説）
-  - notes[0] 未対応: 味方全体の吸収回復（攻撃ダメージの一定割合を回復）は未対応（回復を受けた時の効果を起こさない）: 根拠なし
-  - notes[1] 補足: 説明文に出てこない数値（description_value_04・05）は使っていない: 根拠なし
-- **宝物版 skill1**: partial
+  - effects[1] heal・burstUse: C-0346（仮説）
+  - notes[0] 補足: 説明文に出てこない数値（description_value_04・05）は使っていない: 根拠なし
+- **宝物版 skill1**: supported
   - effects[0] timed・lastShot・normalCritRate: C-0097（確定）
   - effects[1] burstGauge・fullChargeShot: C-0094（仮説）、C-0103（確定）
-  - notes[0] 未対応: フルチャージ攻撃時の味方全体の回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
+  - effects[2] heal・fullChargeShot: C-0345（仮説）
 - **宝物版 skill2**: supported
   - effects[0] timed・fullBurstStart・attackDamage: C-0096（確定）
   - effects[1] damage・fullChargeShot・additional: C-0093（確定）、C-0103（確定）、C-0104（仮説）
   - notes[0] 前提の外: 阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない: 根拠なし
-- **宝物版 burst**: partial
+- **宝物版 burst**: supported
   - effects[0] burstDamage・skill: C-0096（確定）
   - effects[1] timed・burstUse・chargeDamageMultiplier: C-0099（確定）
-  - notes[0] 未対応: 味方全体の吸収回復（攻撃ダメージの一定割合を回復）は未対応（回復を受けた時の効果を起こさない）: 根拠なし
+  - effects[2] heal・burstUse: C-0346（仮説）
 
 ## 822 ラム
 

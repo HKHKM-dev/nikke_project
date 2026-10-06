@@ -1,0 +1,11 @@
+{
+  "id": "C-0346",
+  "text": "ヘルムのバースト（基礎版・宝物版）の「味方全体に攻撃ダメージの X% 回復・10 秒間維持」は吸収回復で、ユニの S2・アスカのバーストと同じく、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082・C-0087 からの類推。宝物版はフルチャージの発ごとの S1 の回復が先に起こし続けるので撮って見分けられず、基礎版は撮れない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文の読み（plan/design-heal-vocabulary.md 1 節の表の 2・5 節）。同じ言い回しのユニの S2・アスカのバーストの C-0082・C-0087。V-0231 では見分けない",
+  "model": "`data/skills/352.json` の skills.burst の effects[1] と treasureSkills.burst の effects[2]（`heal`・`burstUse`・`allies`・`durationRef: 3`）",
+  "replaces": [],
+  "updated": "2026-10-05"
+}
