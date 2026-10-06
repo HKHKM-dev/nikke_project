@@ -215,3 +215,5 @@
 2026-10-06 23:20 に録画 280（サクラ + デルタ + ソルジャーE.G.）を `intake.ts` で取り込み、この 1 本（`range/20261006-280_smg+sr+ar_sakura+delta+soldier-eg_eg-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`8ab02822b808`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-06 23:20 に録画 281（サクラ + デルタ + ソルジャーE.G.）を `intake.ts` で取り込み、この 1 本（`range/20261006-281_smg+sr+ar_sakura+delta+soldier-eg_eg-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`409b0eec1402`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 23:40 に録画 284（I-DOLL・フラワー + ユニ + アスカ）を `intake.ts` で取り込み、この 1 本（`range/20261006-284_ar_asuka_s1-extend.mp4`）だけを同期した。E: と I: で sha256 が一致（`e12ef525e34f`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。

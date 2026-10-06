@@ -1,0 +1,440 @@
+{
+  "verification": "V-0245",
+  "note": "既存の録画の読み直し（撮影の後、読む前に予測を出した。録画 280・281: サクラ（I・AI）+ デルタ（II・AI）+ ソルジャーE.G.（III・操作・AUTO 射撃）・オートバースト ON・BigArms 灼熱の 3 分モード・スペック固定 ON）。バーストの 1 ヒットの値は、S1 の▲とサクラの受けるダメージ▲の有無を定義の差し替え（setup の addEffects）で決めた格子の値。録画では、ヒットの前後のソルジャーE.G. の通常攻撃の値で S1 の▲の有無を、サクラの S1 の窓の時刻で受けるダメージ▲の有無を決めて、格子のどれかと比べる",
+  "team": [
+    {
+      "rid": 836,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 300,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義: バーストは攻撃範囲内の敵（単体ボス）に最終攻撃力の値 2（Lv10 で 720%）の倍率ダメージを 1 ヒット。式はほかのキャラの burstDamage と同じ（会心は乗り、コア・距離は乗らない）。最終攻撃力に S1 の▲が入る。ヒットの遅れは無い（遅れの表に行が無い）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-s1on-dton",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2
+            }
+          }
+        ]
+      },
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いている・サクラ S1 の敵の受けるダメージ▲が付いている・会心でない。▲の有無は定義の差し替え（addEffects）で決めた格子の値",
+      "observations": ["280-02", "280-04", "281-01"]
+    },
+    {
+      "id": "burst-s1on-dton-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2
+            }
+          }
+        ]
+      },
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いている・サクラ S1 の敵の受けるダメージ▲が付いている・会心。▲の有無は定義の差し替え（addEffects）で決めた格子の値"
+    },
+    {
+      "id": "burst-s1on-dtoff",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      },
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いている・サクラ S1 の敵の受けるダメージ▲が付いていない・会心でない。▲の有無は定義の差し替え（addEffects）で決めた格子の値",
+      "observations": ["280-03"]
+    },
+    {
+      "id": "burst-s1on-dtoff-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      },
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いている・サクラ S1 の敵の受けるダメージ▲が付いていない・会心。▲の有無は定義の差し替え（addEffects）で決めた格子の値"
+    },
+    {
+      "id": "burst-s1off-dton",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2
+            }
+          }
+        ]
+      },
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いていない・サクラ S1 の敵の受けるダメージ▲が付いている・会心でない。▲の有無は定義の差し替え（addEffects）で決めた格子の値",
+      "observations": ["281-02"]
+    },
+    {
+      "id": "burst-s1off-dton-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2
+            }
+          }
+        ]
+      },
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いていない・サクラ S1 の敵の受けるダメージ▲が付いている・会心。▲の有無は定義の差し替え（addEffects）で決めた格子の値",
+      "observations": ["280-01"]
+    },
+    {
+      "id": "burst-s1off-dtoff",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      },
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いていない・サクラ S1 の敵の受けるダメージ▲が付いていない・会心でない。▲の有無は定義の差し替え（addEffects）で決めた格子の値"
+    },
+    {
+      "id": "burst-s1off-dtoff-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      },
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いていない・サクラ S1 の敵の受けるダメージ▲が付いていない・会心。▲の有無は定義の差し替え（addEffects）で決めた格子の値"
+    },
+    {
+      "id": "burst-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "III（ソルジャーE.G.）の発動（右のバースト欄の III のタイマーが 00.00 になった最初のフレーム）から、バーストのヒットの HUD の増分までの動画のフレーム（5 回）。いまのモデルは遅れの表に行が無く 0（止まりの 22f を足した値になる）。録画 280 で読んで遅れの表に入れ、281 は入れた後に読む前の予測を足す"
+    },
+    {
+      "id": "s2-starts-team",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "maxAmmo",
+        "video": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "V-0240 の再現: ソルジャーE.G. の S2 の発動の表示のフレーム（戦闘開始からの動画のフレーム。フルバーストの入りの止まりを含む）。モデルのフルバーストの時刻が録画と違えば、止まりの数の分（1 回 22f）ずれる"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "f34bb68b8e613e0932f70a6c9176335b6fcd5915",
+    "values": {
+      "H1": {
+        "burst-s1on-dton": 740984.44896,
+        "burst-s1on-dton-crit": 1111476.67344,
+        "burst-s1on-dtoff": 632347.2000000001,
+        "burst-s1on-dtoff-crit": 948520.8,
+        "burst-s1off-dton": 686540.74608,
+        "burst-s1off-dton-crit": 1029811.1191199999,
+        "burst-s1off-dtoff": 585885.6,
+        "burst-s1off-dtoff-crit": 878828.3999999999,
+        "burst-delays": [0, 0, 0, 0, 0],
+        "s2-starts-team": [
+          529, 1081, 1610, 2140, 2669, 3220, 3750, 4279, 4809, 5338, 5890, 6419, 6948, 7478, 8029, 8559, 9088, 9617,
+          10169
+        ]
+      }
+    },
+    "seen": {
+      "280": [],
+      "281": []
+    }
+  }
+}
