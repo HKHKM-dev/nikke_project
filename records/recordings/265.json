@@ -20,7 +20,8 @@
       "slot": 2,
       "rid": 352,
       "name": "ヘルム",
-      "controlled": true
+      "controlled": true,
+      "treasurePhase": 3
     }
   ],
   "target": {
