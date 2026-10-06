@@ -352,6 +352,27 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 2, n: 2 })).toThrow('2 発目が無い');
   });
 
+  it('counts the shot intervals from the n-th burst activation of the slot (V-0226)', () => {
+    const result = {
+      frames: 2000,
+      shots: [{ frames: [100, 142, 184, 367, 409, 1200, 1242] }],
+      schedule: {
+        activations: [
+          { slotIndex: 0, frame: 90 },
+          { slotIndex: 1, frame: 95 },
+          { slotIndex: 0, frame: 1190 },
+        ],
+      },
+    } as unknown as SimResult;
+    const metric = METRICS.shotIntervals!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 1, from: 100, to: 400 })).toEqual([42, 42, 183]);
+    expect(value({ slot: 1, burst: 0, from: 0, to: 300 })).toEqual([42, 42, 183]);
+    expect(value({ slot: 1, burst: 1, from: 0, to: 588 })).toEqual([42]);
+    expect(() => value({ slot: 1, burst: 2, from: 0, to: 588 })).toThrow('発動 2 回目');
+  });
+
   it('reports unknown metrics, missing args, calc-less metrics and unknown presets', () => {
     const base = observations.find((o) => o.id === '047-02')!;
     const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '047-99'): Observation => ({
