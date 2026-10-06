@@ -297,6 +297,41 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 2, n: 1, crit: false })).toThrow('1 回目');
   });
 
+  it('sums consecutive skill hits of a slot, skipping dot ticks (V-0265)', () => {
+    const source = { resourceId: 101, skill: 'skill2' as const, name: { ja: '', en: '' } };
+    const hit = (multiplier: number) =>
+      computeBurstHit({
+        attack: 119896,
+        enemy: { defence: 100 } as TeamInput['enemy'],
+        crit: { rate: 0.15, damage: 1.5 },
+        attackDamageMultiplier: 1,
+        elementMultiplier: 1,
+        effects: [{ source, damageType: 'skill', multiplier }],
+        fullBurstBonus: false,
+      });
+    const damage = { source, damageType: 'skill', multiplier: 1, trigger: 'burstUse', effectIndex: 0 };
+    const result = {
+      skillHits: [
+        { frame: 10, slotIndex: 2, effect: damage, hit: hit(0.9855) },
+        {
+          frame: 10,
+          slotIndex: 2,
+          effect: { ...damage, dot: { intervalSeconds: 1, durationSeconds: 5 } },
+          hit: hit(5),
+        },
+        { frame: 10, slotIndex: 1, effect: damage, hit: hit(7) },
+        { frame: 10, slotIndex: 2, effect: damage, hit: hit(2.016) },
+        { frame: 20, slotIndex: 2, effect: damage, hit: hit(3) },
+      ],
+    } as unknown as SimResult;
+    const metric = METRICS.skillHitsDamage!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 3, n: 0, count: 2, crit: false })).toBeCloseTo(119796 * (0.9855 + 2.016), 6);
+    expect(value({ slot: 3, n: 1, count: 1, crit: true })).toBeCloseTo(119796 * 2.016 * 1.5, 6);
+    expect(() => value({ slot: 3, n: 2, count: 2, crit: false })).toThrow('3 回目');
+  });
+
   it('rescales the first stacking dot tick at or after a frame to a given stack count (V-0227)', () => {
     const source = { resourceId: 851, skill: 'skill1' as const, name: { ja: '', en: '' } };
     const tick = (multiplier: number) =>

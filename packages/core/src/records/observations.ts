@@ -769,6 +769,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
   dotStackTickDamage: { args: ['slot', 'frame', 'stacks', 'crit'], sim: dotStackTickDamage },
   skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
+  skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
   fullBurstCrossingShotGauge: { args: ['slot'], sim: fullBurstCrossingShotGauge },
@@ -869,6 +870,18 @@ function skillHitDamage(result: SimResult, ctx: MetricContext): number {
   const hit = hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目の倍率ダメージが無い`);
   return oneHitValue(hit.hit, ctx.args.crit === true);
+}
+
+/**
+ * V-0265: 倍率ダメージの n 回目から count 回（skillHitDamage と同じ通し番号）の和。同じ発で出る 2 つの倍率ダメージ
+ * （ドレイクの S2 の毎回のヒットと「5 回攻撃」）は HUD の総ダメージの 1 つの増分に乗るので、和で比べる
+ */
+function skillHitsDamage(result: SimResult, ctx: MetricContext): number {
+  const n = Number(ctx.args.n);
+  let sum = 0;
+  for (let i = n; i < n + Number(ctx.args.count); i++)
+    sum += skillHitDamage(result, { ...ctx, args: { ...ctx.args, n: i } });
+  return sum;
 }
 
 /**
