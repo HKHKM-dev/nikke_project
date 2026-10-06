@@ -307,7 +307,7 @@ notes の種類: 未対応 22・前提の外 21・計算に無関係 29・補足
 - **skill2**: noEffect
   - notes[0] 前提の外: 攻撃を受けた時（確率）の自分の攻撃力▲は、被弾を扱わないので起きない: C-0275（確定）
 - **burst**: supported
-  - effects[0] timed・burstUse・maxAmmo: C-0362（確定）、C-0017（確定）、C-0275（確定）
+  - effects[0] timed・burstUse・maxAmmo: C-0364（確定）、C-0017（確定）、C-0275（確定）
 
 ## 311 ココア
 
