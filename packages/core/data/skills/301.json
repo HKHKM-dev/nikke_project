@@ -9,7 +9,10 @@
         {
           "ja": "攻撃を受けた時（確率）の自分の防御力▲は、被弾を扱わないので起きない",
           "en": "The chance-based DEF up on self when attacked never happens (taking hits is not modelled)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "claims": [
+            "C-0366"
+          ]
         }
       ]
     },
@@ -19,7 +22,10 @@
         {
           "ja": "自分の吸収回復（攻撃ダメージの一部を回復）は、ダメージに関係しない（自分にだけ付き、ソルジャーF.A. に回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）",
           "en": "The lifesteal on self (restores HP from attack damage) does not affect damage (it applies only to self, and Soldier FA has no effects that trigger on being healed, so it never changes any ally's skill activation)",
-          "kind": "noDamage"
+          "kind": "noDamage",
+          "claims": [
+            "C-0366"
+          ]
         }
       ]
     },
@@ -29,7 +35,10 @@
         {
           "ja": "自分の最大HP▲は、ダメージに関係しない",
           "en": "Max HP up on self does not affect damage",
-          "kind": "noDamage"
+          "kind": "noDamage",
+          "claims": [
+            "C-0366"
+          ]
         }
       ]
     }
