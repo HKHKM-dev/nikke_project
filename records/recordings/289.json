@@ -1,0 +1,29 @@
+{
+  "id": "289",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-289_rl_anis-star_solo_manual-burst.mp4",
+  "original": "2026-10-07_00-32-18.mp4",
+  "durationSec": 197.8,
+  "frames": 11870,
+  "fps": 60,
+  "sizeMB": 240,
+  "sha256": "42bdcd04badd",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0252・V-0253。アニス：スター単騎・操作（AUTO 射撃 ON・オートバースト OFF）。バーストは手で、窓の外のマガジンの 5 発目（照準の横の残弾 2 → 1）の前後に撃つ"
+}
