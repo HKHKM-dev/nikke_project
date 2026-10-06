@@ -40,15 +40,15 @@
 
 予測は 2026-10-05（commit 6188f9c）に出した。
 
-| 指標 | 実測 | 予測 H1 |
-| --- | --- | --- |
-| fb2-shots（shotCount） | （実測なし） | 881 |
-| fb3-shots（shotCount） | （実測なし） | 881 |
-| fb4-shots（shotCount） | 872（`044-10`） | 881（+9、許容内） |
-| anni-body-crit-nodist（hitDamage） | （実測なし） | 18,963.67 |
+| 指標                               | 実測               | 予測 H1                      |
+| ---------------------------------- | ------------------ | ---------------------------- |
+| fb2-shots（shotCount）             | （実測なし）       | 881                          |
+| fb3-shots（shotCount）             | （実測なし）       | 881                          |
+| fb4-shots（shotCount）             | 872（`044-10`）    | 881（+9、許容内）            |
+| anni-body-crit-nodist（hitDamage） | （実測なし）       | 18,963.67                    |
 | anni-core-crit-nodist（hitDamage） | 25,954（`044-11`） | 25,954.884（+0.884、許容内） |
-| anni-body-crit-dist（hitDamage） | （実測なし） | 21,061.034 |
-| anni-core-crit-dist（hitDamage） | 28,052（`044-12`） | 28,052.249（+0.249、許容内） |
+| anni-body-crit-dist（hitDamage）   | （実測なし）       | 21,061.034                   |
+| anni-core-crit-dist（hitDamage）   | 28,052（`044-12`） | 28,052.249（+0.249、許容内） |
 
 <!-- records:predictions:end -->
 
