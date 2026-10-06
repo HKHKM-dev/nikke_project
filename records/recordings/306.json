@@ -1,0 +1,36 @@
+{
+  "id": "306",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-306_smg_ludmilla_bear-cube_fixed-off.mp4",
+  "original": "2026-10-07_00-01-46.mp4",
+  "durationSec": 203,
+  "frames": 12182,
+  "fps": 60,
+  "sizeMB": 245.8,
+  "sha256": "7af3b119b330",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": true,
+      "build": {
+        "attack": 297453,
+        "cube": {
+          "id": 1000303,
+          "level": 15
+        }
+      }
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。レリックベアーキューブ Lv15。コレクションなし。V-0264"
+}

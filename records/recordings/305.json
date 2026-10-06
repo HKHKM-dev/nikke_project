@@ -1,0 +1,32 @@
+{
+  "id": "305",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-305_smg_ludmilla_fixed-off.mp4",
+  "original": "2026-10-06_23-58-05.mp4",
+  "durationSec": 204.8,
+  "frames": 12289,
+  "fps": 60,
+  "sizeMB": 248.1,
+  "sha256": "f168f0b39d0f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": true,
+      "build": {
+        "attack": 294673
+      }
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。キューブなし。コレクションなし。V-0264"
+}
