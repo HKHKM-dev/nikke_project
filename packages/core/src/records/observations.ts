@@ -9,6 +9,7 @@ import {
   type BurstSchedule,
 } from '../burst/schedule.ts';
 import { computeTeamDamage } from '../calc/model.ts';
+import { reloadFirstShotFrames } from '../cadence.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
 import { GEAR_PARTS, emptyBuild, type BuildInput } from '../build.ts';
@@ -30,6 +31,7 @@ import {
   type SkillSlot,
 } from '../skills/types.ts';
 import type { TeamInput, TeamResult, TeamSlotInput } from '../team.ts';
+import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import type { BuildMasters, CharacterData, EnemyPresetMaster } from '../types.ts';
 import type { RecordingBuild, RecordingEntry } from './recordings.ts';
 
@@ -298,6 +300,22 @@ function reloadFramesAt(result: SimResult, ctx: MetricContext): number {
   const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
   return firingParams(input.character.shot, segment.trigger.buffs).reloadChunkFrames;
+}
+
+/**
+ * V-0264（キューブのリロード速度▲の残差）: そのフレームの区間の、マガジンの最終弾から次のマガジンの 1 発目までの長さ（動画のフレーム。
+ * リロード 1 回分の端数つきの長さ + リロード明けの 1 発目まで。C-0148）。録画では、レシピ reload-segments の最終弾 → 完了と
+ * 完了 → 次の増分の和（リロードごと）と比べる。バーの長さと違い、武器種ごとの切片（C-0135）を含まない形で比べられる
+ */
+function reloadToNextShotAt(result: SimResult, ctx: MetricContext): number {
+  const slot = slotOf(result.slots, ctx);
+  const input = slotOf(ctx.input.slots, ctx);
+  const frame = Number(ctx.args.frame);
+  const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
+  if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
+  const shot = input.character.shot;
+  const params = firingParams(shot, segment.trigger.buffs);
+  return params.reloadChunkFrames + reloadFirstShotFrames(shot, DEFAULT_WEAPON_MODEL, params);
 }
 
 function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
@@ -706,6 +724,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   healHitCounts: { args: ['slot'], sim: healHitCounts },
   maxAmmoAt: { args: ['slot', 'frame'], sim: maxAmmoAt },
   reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
+  reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },
   chanceActiveRatio: { args: ['slot', 'skill'], sim: chanceActiveRatio },

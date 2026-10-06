@@ -1,0 +1,79 @@
+{
+  "verification": "V-0264",
+  "note": "攻撃力は ShiftyPad のキャラページの値（2026-09-24。ゲーム内の値ではない）。比べる指標（最終弾 → 次の 1 発目）は攻撃力・スキルの Lv によらない。録画の素性には撮影の日のキャラ画面の値を書く",
+  "team": [
+    {
+      "rid": 190,
+      "controlled": true,
+      "build": {
+        "attack": 293355,
+        "cube": {
+          "id": 1000303,
+          "level": 15
+        }
+      }
+    }
+  ],
+  "fixedSpec": false,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（リロードの秒 × (1 − 値) + 24f。C-0331・C-0148）。残差の形の仮説（Hp・Hc）は検証記録に手で書いた"
+    },
+    {
+      "id": "H0",
+      "note": "キューブのリロード速度▲が乗らない",
+      "override": {
+        "buildEffectsOff": ["cube"]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "gap-cube",
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 1,
+        "frame": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "録画 2（ルドミラ単騎・レリックベアーキューブ Lv15）の、マガジンの最終弾から次のマガジンの 1 発目まで（reload-segments の最終弾 → 完了と完了 → 次の増分の和。リロードごとの値の中央値）",
+      "observations": ["306-04"]
+    },
+    {
+      "id": "gap-base",
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 1,
+        "frame": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false,
+        "buildEffectsOff": ["cube"]
+      },
+      "note": "録画 1（ルドミラ単騎・キューブなし）の同じ長さ。キューブが無いので H1・H0 は同じ値（C-0148 の確かめ）。観測値は録画の育成（キューブなし）で比べるので、setup が違う。読んだ後に observations で結び付ける",
+      "observations": ["305-04"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "57db64233f6b1098714207c2417ce789284b91f1",
+    "values": {
+      "H1": {
+        "gap-cube": 138.15035294117646,
+        "gap-base": 186.35294117647055
+      },
+      "H0": {
+        "gap-cube": 186.35294117647055,
+        "gap-base": 186.35294117647055
+      }
+    },
+    "seen": {}
+  }
+}

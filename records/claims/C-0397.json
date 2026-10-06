@@ -1,0 +1,11 @@
+{
+  "id": "C-0397",
+  "text": "キューブ（レリックベアー）の「リロード速度▲」は、スキルのリロード速度▲（C-0013）と同じく、リロードの秒 × (1 − 値) の形で効く。ルドミラ（SMG・2.76 秒）に 29.69%（Lv15）のとき、最終弾から次の 1 発目までは、リロードの秒をゲーム内の時計で数えた長さ × (1 − 値) + 24f（C-0148）と、キューブの有無のどちらでも 1f 以内で合う。マナ（V-0224）で見えた約 0.3〜1f の超過は、リロードの長いルドミラでは再現しない",
+  "state": "確定",
+  "topic": "射撃（間隔・リロード・チャージ）",
+  "grade": "反復実測",
+  "basis": "`305-01`・`305-02`・`305-03`・`305-04`・`306-01`・`306-02`・`306-03`・`306-04`。V-0264",
+  "model": "frame/firing.ts の firingParams（speedScaledSeconds の subtract）と cadence.ts の reloadFirstShotFrames（24f）。キューブの写像は buildEffects.ts の CUBE_SKILL_EFFECTS。照合は records/observations.ts の reloadToNextShotAt",
+  "replaces": ["C-0331"],
+  "updated": "2026-10-07"
+}
