@@ -1,0 +1,95 @@
+[
+  {
+    "id": "261-01",
+    "recording": "261",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 47070.8,
+    "description": "ココア + ユニ + クイーン（真）+ 雪子・灼熱の的（対照）の、雪子のフルバーストの中（S1 のフルバースト終了時の攻撃力▲の後）のクイーン（真）の 1 ペレット（胴体）。ちょうど整数に乗った 10 トリガー（1,522 単位）から",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）のうち、クイーン（真）の 1 トリガー（10 ペレットの和。39f ごと）の増分を、1 ペレットの単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位、会心 5・コア 10 単位を足す）で割り、ちょうど整数に乗った増分（雪子・ココア・ユニの発が混ざらないもの）から胴体を Σ増分 / Σ単位 × 15 で出した。窓は雪子のバーストのヒット（f2613・5103・7571・9974）の後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2150,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "261-02",
+    "recording": "261",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 15545,
+    "description": "同じ録画の、クイーン（真）の 2 回目のフルバーストの中の雪子の 1 発（胴体相当）。コアの 25,908 ×157・コア会心の 31,090 ×33 が胴体 15,544.9 に乗る（V-0232 の 260-01 と同じ値）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分のうち 20 万未満（雪子の 1 発）を、1 発の単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位、距離 3・会心 5・コア 10 単位を足す）で割り、整数に乗った増分の値を胴体に直した。窓はクイーン（真）のバーストのヒット f3842 の +260〜+560f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 3300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "261-03",
+    "recording": "261",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 0,
+    "description": "同じ録画の 180 秒の、クイーン（真）の S1 の倍率ダメージのヒットの数。100 万を超える増分は、クイーン（真）のバーストのヒット（約 632 万）と雪子のバーストのヒット（3,874,315 ×4）とトリガーの和だけで、1more（約 470 万）と追撃（約 690 万）に当たる増分は無い",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の 100 万を超える増分を数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

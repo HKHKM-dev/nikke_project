@@ -24,12 +24,14 @@ import {
 import { cycleFires, cycleShotFrames, resolveCycles } from '../skills/cycles.ts';
 import {
   MAX_SKILL_LEVELS,
+  isResolvedApplied,
   isResolvedEventCount,
   isResolvedShotCount,
   type ResolvedTrigger,
 } from '../skills/resolve.ts';
 import {
   EMPTY_BUFF_STATE,
+  appliedFrames,
   planBuffTimeline,
   resolvePassiveStates,
   segmentIndexAt,
@@ -282,7 +284,11 @@ export function planSkillHits(
       // そのフレームのバフで出す（発動の直前のバフで固定しない）。戦闘の終わりを越えるヒットは出さない
       const delay = effect.delayFrames ?? 0;
       const pre = delay === 0 && isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
-      for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) {
+      // ペルソナ編（plan/design-persona.md 3.3 節）: 「〈効果名〉が適用された時」は、その名前の効果がこの枠に付いたフレーム
+      const fires = isResolvedApplied(effect.trigger)
+        ? appliedFrames(timeline, effect.trigger.applied, slotIndex)
+        : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
+      for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, statusSpans)) continue;
         if (frame + delay >= frames) continue;
         push(frame + delay, effect, pre);

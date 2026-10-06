@@ -1,0 +1,11 @@
+{
+  "id": "C-0353",
+  "text": "雪子の S1 の 1more の分配ダメージは、風圧の敵にバーストを撃つたびに 1 回、バーストのヒットの 24f 後に、そのフレームのバフ（フルバースト補正・1more の攻撃力▲・有利コードの▲・真紅の華の▲）で出る（C-0310 と同じ）",
+  "state": "棄却",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "遅れの 24f が `258-09`（47〜48f）と合わない（値は合う）。C-0358（値）・C-0359（時刻）に置き換えた。V-0232",
+  "model": "`data/skills/871.json`（skill1 の effects[2]。`damage`・`burstUse`・`distributed`・`enemyElement: Wind`・`delayFrames: 24`）。未検証（V-0232 の撮影待ち）",
+  "replaces": [],
+  "updated": "2026-10-06"
+}

@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 31・効果 160（根拠あり 119）・notes 78（根拠あり 36）
+件数: キャラ 32・効果 171（根拠あり 130）・notes 81（根拠あり 38）
 
-notes の種類: 未対応 23・前提の外 21・計算に無関係 28・補足 6
+notes の種類: 未対応 23・前提の外 21・計算に無関係 29・補足 8
 
-スロット: supported 63・partial 11・unsupported 8・noEffect 20
+スロット: supported 66・partial 11・unsupported 8・noEffect 20
 
 ## 10 ラピ
 
@@ -428,19 +428,39 @@ notes の種類: 未対応 23・前提の外 21・計算に無関係 28・補足
 
 ## 870 クイーン（真）
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] timed・battleStart・attack: C-0270（仮説）
   - effects[1] timed・fullBurstEnd・attack: 根拠なし
   - effects[2] passive・elementDamage: C-0296（確定）
   - effects[3] damage・burstUse・distributed: C-0310（確定）
-  - notes[0] 未対応: 追撃が適用された時の分配ダメージは未対応（ほかのペルソナのキャラがいる編成で起きる。きっかけが説明文と CDN から分からない）: 根拠なし
+  - effects[4] damage・followUp が適用された時・distributed: C-0361（仮説）
+  - notes[0] 補足: ペルソナ - ヨハンナ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ: C-0354（確定）
   - notes[1] 計算に無関係: 防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない: 根拠なし
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] passive・attackDamage: C-0018（確定）
   - effects[1] timed・burstStage3Enter・distributedDamage: 根拠なし
   - effects[2] timed・burstUse・elementDamage: C-0307（確定）
-  - notes[0] 未対応: 1more 時のバトンタッチ（自分を除く基本バースト段階 3 のペルソナ状態の味方に攻撃力▲・スタック）は未対応（ほかのペルソナのキャラがいる編成で起きる。その対象の語彙も無い）: 根拠なし
-  - notes[1] 計算に無関係: 鉄・拳・制・裁！の防御力▲はダメージに関係しない: 根拠なし
+  - effects[3] timed・burstUse・attack: C-0357（確定）
+  - notes[0] 計算に無関係: 鉄・拳・制・裁！の防御力▲はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-0231（確定）
   - effects[1] timed・burstUse・attack: C-0308（確定）
+
+## 871 雪子
+
+- **skill1**: partial
+  - effects[0] timed・battleStart・attack: C-0347（確定）
+  - effects[1] timed・fullBurstEnd・attack: C-0347（確定）
+  - effects[2] damage・burstUse・distributed: C-0358（確定）、C-0359（確定）
+  - notes[0] 補足: ペルソナ - コノハナサクヤ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ: C-0354（確定）
+  - notes[1] 未対応: ペルソナ - コノハナサクヤの 3 秒ごとの味方全体の回復（メディア）は未対応（回復を受けた時の効果を持つ味方の発動を変える）: 根拠なし
+- **skill2**: partial
+  - effects[0] passive・attackDamage: C-0348（確定）
+  - effects[1] timed・burstUse・distributedDamage: C-0349（確定）
+  - effects[2] timed・burstStage3Enter・elementDamage: C-0350（確定）、C-0360（確定）
+  - effects[3] timed・burstUse・attack: C-0355（確定）
+  - notes[0] 未対応: 真紅の華の 3 秒ごとの味方全体の回復（メディラマ）は未対応（回復を受けた時の効果を持つ味方の発動を変える）: 根拠なし
+  - notes[1] 計算に無関係: 真紅の守護（水冷コードの敵から受けるダメージ▼）はダメージに関係しない: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・distributed: C-0351（確定）
+  - effects[1] timed・burstUse・attack: C-0352（確定）

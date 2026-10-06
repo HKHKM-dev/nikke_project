@@ -11,9 +11,12 @@ import {
   type BuffScaling,
   type BuffStat,
   type BuffTarget,
+  type AppliedTrigger,
+  type BasicBurstStep,
   type BuffTrigger,
   type Amplifies,
   type DurationUntil,
+  type EffectName,
   type EffectCondition,
   type EffectTrigger,
   type EventCountKind,
@@ -27,6 +30,7 @@ import {
   type TargetCountFields,
   type TimerTrigger,
   type TargetSquad,
+  type SkillState,
 } from './types.ts';
 
 /**
@@ -34,7 +38,18 @@ import {
  * 文字列のトリガーと発動回数のトリガーはそのまま。ニヒリスター編の時間の周期のトリガー（{ everySeconds }）もそのまま。
  */
 export type ResolvedTrigger =
-  BuffTrigger | ResolvedShotCountTrigger | { count: EventCountKind; atLeast: number } | TimerTrigger;
+  BuffTrigger | ResolvedShotCountTrigger | { count: EventCountKind; atLeast: number } | TimerTrigger | AppliedTrigger;
+
+/** ペルソナ編: 効果名のトリガー（{ applied }）か */
+export function isResolvedApplied(t: ResolvedTrigger): t is AppliedTrigger {
+  return typeof t === 'object' && 'applied' in t;
+}
+
+/**
+ * ペルソナ編（plan/design-persona.md 3.4 節）: 「戦闘の終わりまで」（durationUntil: battleEnd）の維持フレーム。どの戦闘時間より長い値で、
+ * 窓の終わりは戦闘時間（frames）で切られる
+ */
+export const BATTLE_END_FRAMES = Number.MAX_SAFE_INTEGER;
 
 /**
  * 射撃の回数トリガー（解決済み）。every は発火の間隔（回）。
@@ -165,8 +180,12 @@ export type ResolvedEffect = {
   targetCount?: number;
   /** 対象の語彙編: 「同じ部隊の味方全体に」。定義に無ければキーごと無い */
   targetSquad?: TargetSquad;
-  /** 対象の語彙編: 「自分を除く」（topAttack）。定義に無ければキーごと無い */
+  /** 対象の語彙編: 「自分を除く」（topAttack。ペルソナ編: allies の always も）。定義に無ければキーごと無い */
   excludeSelf?: ExcludeSelf;
+  /** ペルソナ編: 「ペルソナ状態の」。定義に無ければキーごと無い */
+  targetState?: SkillState;
+  /** ペルソナ編: 「基本バースト段階が N の」。定義に無ければキーごと無い */
+  targetBurstStep?: BasicBurstStep;
   /** 対象の語彙編: 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの）。無ければキーごと無い */
   fixedTargets?: readonly number[];
   stat: EffectStat;
@@ -243,7 +262,8 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   condition?: EffectCondition;
   /**
    * 防御力無視ダメージ編: 維持の終わりの出来事（「解除条件：フルバーストタイムが終了した時」）。有れば durationFrames は 0
-   * （1 パス目のループでは追わず、窓は planBuffTimeline が時刻表から作る）
+   * （1 パス目のループでは追わず、窓は planBuffTimeline が時刻表から作る）。
+   * ペルソナ編: battleEnd（戦闘の終わりまで）は durationFrames が BATTLE_END_FRAMES で、窓はほかの秒の維持と同じに作る
    */
   durationUntil?: ResolvedDurationUntil;
   /**
@@ -251,6 +271,8 @@ export type ResolvedTimedEffect = ResolvedEffect & {
    * その値 × 割合、切れた所は発動の瞬間の値 × (1 + 割合)）は planBuffTimeline が作る
    */
   amplifies?: Amplifies;
+  /** ペルソナ編: 説明文の効果名。トリガー { applied: 名前 } のきっかけ */
+  name?: EffectName;
 };
 
 /**
@@ -309,13 +331,16 @@ export function resolveTimed(
         scaling: effect.scaling ?? 'ratio',
         value,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
-        durationFrames: gameSecondsToFrames(seconds),
+        durationFrames: effect.durationUntil === 'battleEnd' ? BATTLE_END_FRAMES : gameSecondsToFrames(seconds),
         effectIndex,
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.targetElement) r.targetElement = effect.targetElement;
       if (effect.targetSquad) r.targetSquad = effect.targetSquad;
       if (effect.excludeSelf) r.excludeSelf = effect.excludeSelf;
+      if (effect.targetState) r.targetState = effect.targetState;
+      if (effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
+      if (effect.name) r.name = effect.name;
       if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
       const count = resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
