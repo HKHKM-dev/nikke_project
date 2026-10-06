@@ -1,0 +1,41 @@
+{
+  "id": "284",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-284_ar_asuka_s1-extend.mp4",
+  "original": "2026-10-06_23-36-38.mp4",
+  "durationSec": 203.3,
+  "frames": 12199,
+  "fps": 60,
+  "sizeMB": 246.5,
+  "sha256": "e12ef525e34f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。フラワー + ユニ + アスカの 3 体。AUTO 射撃 ON・オートバースト ON。V-0244（アスカの S1 の延長の反復。録画 080 と同じ組み方）"
+}
