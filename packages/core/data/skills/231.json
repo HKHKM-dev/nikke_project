@@ -53,9 +53,12 @@
       "effects": [],
       "notes": [
         {
-          "ja": "最終防御力が最も高い敵への 170.58% のダメージは、説明文にきっかけ（いつ出るか）が書かれていないので未対応",
-          "en": "The 170.58% hit on the highest-DEF enemies is not modeled because the description does not say when it happens",
-          "kind": "unimplemented"
+          "ja": "最終防御力が最も高い敵への 170.58% のダメージは、説明文にきっかけ（いつ出るか）が書かれていないので未対応。録画では約 15 秒ごとに出る（C-0402、仮説。入れるかはオーナーの判断）",
+          "en": "The 170.58% hit on the highest-DEF enemies is not modeled because the description does not say when it happens. Recordings show it about every 15 s (C-0402, hypothesis; whether to model it is the owner's call)",
+          "kind": "unimplemented",
+          "claims": [
+            "C-0402"
+          ]
         }
       ]
     },
