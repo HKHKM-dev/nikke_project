@@ -5,13 +5,14 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 3・保留 0・完了 235・打ち切り 18（計 256）
+件数: 調査中 4・保留 0・完了 235・打ち切り 18（計 257）
 
 ## 開いている検証
 
 - **V-0260** ユニの S2 の最大装弾数▲は、フルチャージの攻撃ごとに味方全体の最大装弾数を 1 発上げ、5 秒で戻すか（状態: 調査中）
 - **V-0261** クイーン（真）の S2 のバースト 3 段階突入時の分配ダメージ▲と、S1 のフルバースト終了時の攻撃力▲（状態: 調査中）
 - **V-0262** クラウンの S1（バーストを使った味方の攻撃力▲・リロード速度▲）とバーストの攻撃ダメージ▲（状態: 調査中）
+- **V-0263** ノワールのバーストの SG の味方への命中率▲と、S2 の最大装弾数▲・弾丸チャージ（状態: 調査中）
 
 ## 全件
 
@@ -2650,3 +2651,23 @@
     - raven-reload-in（reloadFramesAt）: 実測なし。H1 76.471、H2 76.471
     - cocoa-s1-attack-ends（buffWindowEnds）: 実測なし。H1 [1,287, 2,463, 3,639, 4,815, 5,991, 7,167, 8,343, 9,569, 10,589]、H2 [1,287, 2,463, 3,639, 4,815, 5,991, 7,167, 8,343, 9,569, 10,589]
     - cocoa-burst-atkdmg-ends（buffWindowEnds）: 実測なし。H1 [1,258, 2,434, 3,610, 4,786, 5,962, 7,138, 8,314, 9,540, 10,589]、H2 [1,258, 2,434, 3,610, 4,786, 5,962, 7,138, 8,314, 9,540, 10,589]
+- **[V-0263](../records/verifications/V-0263-noir-burst-sg-hit-rate.md)** ノワールのバーストの SG の味方への命中率▲と、S2 の最大装弾数▲・弾丸チャージ
+  - 問い: ノワール（271）のバーストの「ショットガンを所持する味方全体に命中率 13.93%▲（10 秒）」を持続の命中率▲（C-0170 の形でコア命中率に効く）と読んで、AI のノワールのペレットのコアの当たりは、ノワールが III を撃った回のフルバーストで、レイヴンが III を撃った回より多いか。あわせて S2 の「フルバースト開始時、味方全体に最大装弾数 5 発▲（10 秒）・弾丸チャージ 39.88%」で、撃たない操作枠のユニの最大装弾数は 11 になり、弾丸チャージで何発増えるか
+  - 話題: スキル・キャラ固有・日付: 2026-10-07・状態: 調査中
+  - 予測（2026-10-07、commit 6a48379）との比べ:
+    - core-midnear-noirfb（coreHitRate）: 実測なし。H1 0.035、H0 0.026
+    - bullet-midnear-noirfb（bulletHitRate）: 実測なし。H1 0.778、H0 0.778
+    - core-midnear-ravenfb（coreHitRate）: 実測なし。H1 0.026、H0 0.026
+    - bullet-midnear-ravenfb（bulletHitRate）: 実測なし。H1 0.778、H0 0.778
+    - core-near-noirfb（coreHitRate）: 実測なし。H1 0.057、H0 0.042
+    - bullet-near-noirfb（bulletHitRate）: 実測なし。H1 0.909、H0 0.909
+    - core-near-ravenfb（coreHitRate）: 実測なし。H1 0.042、H0 0.042
+    - bullet-near-ravenfb（bulletHitRate）: 実測なし。H1 0.909、H0 0.909
+    - core-far-noirfb（coreHitRate）: 実測なし。H1 0.008、H0 0.006
+    - bullet-far-noirfb（bulletHitRate）: 実測なし。H1 0.668、H0 0.668
+    - core-far-ravenfb（coreHitRate）: 実測なし。H1 0.006、H0 0.006
+    - bullet-far-ravenfb（bulletHitRate）: 実測なし。H1 0.668、H0 0.668
+    - noir-crit-rate（critRateAt）: 実測なし。H1 0.15、H0 0.15
+    - pellet-unit-fb（hitDamage）: 実測なし。H1 41,946.171、H0 41,946.171
+    - yuni-max-ammo-in（maxAmmoAt）: 実測なし。H1 11、H0 11
+    - yuni-max-ammo-out（maxAmmoAt）: 実測なし。H1 6、H0 6
