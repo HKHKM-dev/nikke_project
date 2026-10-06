@@ -1,0 +1,66 @@
+{
+  "verification": "V-0246",
+  "team": [
+    {
+      "rid": 32,
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 20,
+      "controlled": true
+    },
+    {
+      "rid": 308,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（宝物版 S2 の 3 行目を、フルバーストタイムの発動時の順位で自分を除く 1 位（この編成ではサン）に付け、その枠の次の 1 発まで会心率に足す。会心率は 1 で頭打ち。C-0334）。足さない読み（素の 0.15）は予測ファイルの外で検証記録に手で書く"
+    }
+  ],
+  "targets": [
+    {
+      "id": "sun-first-crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 414
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "フルバーストごとの、サンのフルバースト開始以後の 1 発目の会心率（モデルの 1 回目のフルバーストは 397f 開始・サンの 1 発目 414f）。録画では、フルバーストごとのサンの 1 発目のうち会心だった回の割合を数える（V-0229 の sun-first-crit-rate と同じ数え方）"
+    },
+    {
+      "id": "sun-later-crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 419
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "サンのフルバースト開始以後の 2 発目（モデルの 1 回目は 419f）の会心率。素の 0.15（3 行目は 1 発で切れる）。録画では、フルバーストの中のサンの 2 発目以後の会心の割合を数える"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "57db64233f6b1098714207c2417ce789284b91f1",
+    "values": {
+      "H1": {
+        "sun-first-crit-rate": 1,
+        "sun-later-crit-rate": 0.15
+      }
+    },
+    "seen": {}
+  }
+}

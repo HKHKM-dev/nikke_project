@@ -73,9 +73,9 @@ notes の種類: 未対応 22・前提の外 22・計算に無関係 31・補足
   - effects[2] timed・normalHit・attack: C-0187（確定）
 - **宝物版 skill2**: supported
   - effects[0] timed・fullBurstStart・critDamage: C-0323（確定）
-  - effects[1] timed・fullBurstStart・critRate: C-0324（仮説）
+  - effects[1] timed・fullBurstStart・critRate: C-0324（確定）
   - effects[2] timed・fullBurstStart・attackDamage: C-0323（確定）
-  - effects[3] timed・fullBurstStart・critRate: C-0334（仮説）
+  - effects[3] timed・fullBurstStart・critRate: C-0334（確定）
 - **宝物版 burst**: supported
   - effects[0] timed・burstUse・attack: C-0322（確定）
   - effects[1] timed・burstUse・critDamage: C-0322（確定）

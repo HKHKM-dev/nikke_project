@@ -1,0 +1,42 @@
+{
+  "id": "285",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-285_smg+sr+ar_miranda+delta+idoll-sun_delta-control.mp4",
+  "original": "2026-10-06_23-45-42.mp4",
+  "durationSec": 201.6,
+  "frames": 12094,
+  "fps": 60,
+  "sizeMB": 244.1,
+  "sha256": "fc44b514ec7b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 32,
+      "name": "ミランダ",
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0245・V-0246（ミランダの宝物版 S2 の 2・3 行目の反復実測）。ミランダ（宝物 3・AI）・デルタ（操作・撃たない）・I-DOLL・サン（AI）。オートバースト ON。戦闘履歴のパネル（f12030）で編成（ミランダ・デルタ・I-DOLL・サン）と交戦時間 03:00、デルタの与ダメージ 0 を確かめた"
+}

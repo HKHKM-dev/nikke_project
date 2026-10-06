@@ -144,7 +144,7 @@ describe('順位（アリスの S1。フルバースト時に最終攻撃力が�
 const TEAMS: Record<string, TeamInput> = {
   '単騎（手入力の条件）': team([fixedSlot(SOLDIER)], plainEnemy, false, 0),
   '単騎（射撃場・条件は自動）': team([fixedSlot(SOLDIER, MANUAL, true)], rangeEnemy, false, 0),
-  // V-0245 の撮影と同じ編成（サクラ I・デルタ II・ソルジャーE.G. III。オートバースト）
+  // V-0247 の撮影と同じ編成（サクラ I・デルタ II・ソルジャーE.G. III。オートバースト）
   'サクラ + デルタ + ソルジャーE.G.（射撃場・条件は自動）': team(
     [fixedSlot(836, MANUAL, true), fixedSlot(20, MANUAL, true), fixedSlot(SOLDIER, MANUAL, true)],
     rangeEnemy,
