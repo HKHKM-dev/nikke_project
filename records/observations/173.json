@@ -58,5 +58,266 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "173-03",
+    "recording": "173",
+    "source": "V-0227",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 343883.1,
+    "description": "フルバーストの窓の中のレイヴンの S1 の持続ダメージの tick（会心なし）の 1 スタックの値（tick の値 ÷ スタックの数）。5 回のバーストの窓の中の 50 tick のうち会心なしの 37 回が、どれも 343,883.12 の整数倍。予測ファイル V-0227 の raven-stack-fb と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "2〜5 回目の窓の中は 10 スタックで 3,438,831（26 回。f6244・6455 の 80 と f6251・6486 の 3,438,751 は 1 つの増分の読みが割れたもので、足すと 3,438,831）。1 回目の窓の中はスタックが 4〜8 で、1,375,533（4。f1491 の 800 と f1496 の 1,374,733 の和）・1,719,416（5）・2,063,299（6 が 4 回）・2,407,182（7 が 2 回）・3,024,066（8 の 2,751,065 と、同じフレームのデルタの発 273,001 の和）。スタックの数は、窓の前の tick（173-05）の数から、C-0182 の規則で追った数と合う。1 スタックの読みの幅は 0.5 ÷ スタックの数（ここでは 10 スタックの値から ±0.05）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "stacks": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "173-04",
+    "recording": "173",
+    "source": "V-0227",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 458510.8,
+    "description": "同じ tick の会心の 1 スタックの値。会心なしとの比は 4 : 3（H2・H0 の形。H3 なら 2.8944 : 2.3944）。予測ファイル V-0227 の raven-stack-fb-crit と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "10 スタックで 4,585,108（12 回）と、1 回目の窓の f1614 の 2,292,554（5 スタック）。窓の中の 50 tick のうち会心は 13 回"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "stacks": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "173-05",
+    "recording": "173",
+    "source": "V-0227",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 82012.3,
+    "description": "1 回目のバーストの前の tick（会心なし）の 1 スタックの値。予測ファイル V-0227 の raven-stack-pre と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1059 82,012（1 スタック）・f1176 164,025（2）・f1235・1294・1353 246,037（3）・f1415 328,049（4）。どれも 82,012.34 の整数倍（C-0182 の 1 スタックの値）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "stacks": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "173-06",
+    "recording": "173",
+    "source": "V-0227",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 82012.3,
+    "description": "フルバーストと A.N.モードの窓の後の tick（会心なし）の 1 スタックの値。窓の前に付けたスタックと窓の中で付けたスタックが混ざった tick も、窓の後はどれも▲なしの値の整数倍（T1）。予測ファイル V-0227 の raven-stack-after と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1 回目の窓の後: f2101 656,099（8 スタック。hud.ts の gap 21 の後の読み）・f2143・2202 738,111（9）・f2261 から 820,123（10）。2〜5 回目の窓の後の最初の tick も 820,123（f4462・6839・9217・11600）か会心の 1,230,185（f4521 から 3 回）。窓の中で付けたスタックに▲が残る形（T2）なら、これより大きい"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1150,
+        "stacks": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "173-07",
+    "recording": "173",
+    "source": "V-0227",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 677254,
+    "description": "フルバーストの中のレイヴンのフルチャージの発の 1 ヒット（コア・会心なし。RL に距離ボーナスは無い）。S1 の攻撃力▲（C-0185）とフルバースト補正が乗り、A.N.モードの持続ダメージ▲は乗らない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓の中のレイヴンだけの増分（19 回）。胴体の発は無い（122-02 と同じ）。予測ファイル V-0227 の raven-hit-fb（胴体・会心なし）から倍率グループ（コア +1.0）を組み直した 677,253.89 と 0.11 違い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "173-08",
+    "recording": "173",
+    "source": "V-0227",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 812705,
+    "description": "同じ 1 ヒットのコア・会心（1 回。f2025 の前の窓の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "予測ファイルの raven-hit-fb から組み直した 812,704.67 と 0.33 違い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "173-09",
+    "recording": "173",
+    "source": "V-0227",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 367175,
+    "description": "1 回目のバーストの前と、窓の外のレイヴンのフルチャージの発の 1 ヒット（コア・会心なし）。▲の無い値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓の外のレイヴンだけの増分（38 回）。会心は 458,968（9 回）。予測ファイルの raven-hit-out から組み直した 367,174.74・458,968.43 と 1 未満（122-02・122-03 と同じ値）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "173-10",
+    "recording": "173",
+    "source": "V-0227",
+    "readAt": "2026-10-06",
+    "kind": "count",
+    "use": "compare",
+    "value": 5,
+    "description": "180 秒のフルバーストの回数。予測ファイル V-0227 の full-bursts と同じ指標",
+    "method": {
+      "tool": "右のバースト欄を目で読む（V-0150）",
+      "note": "III の発動は 173-01 の注の 5 回（f1442・3820・6197・8575・10953）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "173-11",
+    "recording": "173",
+    "source": "V-0227",
+    "readAt": "2026-10-06",
+    "kind": "timing",
+    "use": "record",
+    "value": [54, 583, 642],
+    "unit": "f",
+    "description": "III の発動から、A.N.モードの▲の乗った最初の tick・最後の tick・▲の外れた最初の tick までの動画のフレーム数（1 回目のバースト。フルバーストの入りの止まり 22f を含む）。窓の端の手がかり（判定には使わない）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1 回目: 窓の前の最後の tick は発動の 27f 前（f1415）、▲の乗った最初の tick は 54f 後（f1496）、最後は 583f 後（f2025）、外れた最初は 642f 後（f2084 前後。hud.ts の gap の後の f2101 で読んだ）。2〜4 回目も 54・583〜584・642f、5 回目は 54・587・647f（録画の重複フレームの位置）。どの回も窓の中の tick は 10 回"
+    }
   }
 ]

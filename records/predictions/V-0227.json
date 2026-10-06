@@ -1,0 +1,224 @@
+{
+  "verification": "V-0227",
+  "note": "録画 173（ラム（I）+ デルタ（II）+ レイヴン（III・操作・AUTO 射撃 ON）、オートバースト ON）の読み直しの予測。レイヴンのバーストの A.N.モードの持続ダメージ▲は main の定義に無いので、仮説 H2・H3 の override（addEffects）でだけ足す（定義のファイルは変えない）。H0 は main のいま（▲なし）。乗るかを決める時点 T2（スタックを付けた時点）と、S1 の攻撃力▲が tick に乗らない形は、モデルに切り替えが無いので検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 851,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "持続ダメージ▲なし（main のいま。A.N.モードは未対応の notes）"
+    },
+    {
+      "id": "H2",
+      "note": "A.N.モードの持続ダメージ▲（89.44%・10 秒。バーストを使った時に自分に）を、攻撃ダメージ▲と同じ群 (1 + Σ攻撃ダメージ + Σ持続ダメージ) で tick の時点の▲として乗せる（マナの C-0299 と同じ置き場所。T1）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 851,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "sustainedDamage",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "同じ▲を倍率グループに足す (1 + 会心 + フルバースト補正 + Σ持続ダメージ)。T1",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 851,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "sustainedDamage",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ],
+        "sustainedDamagePlacement": "boost"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "raven-stack-fb",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "stacks": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["173-03"],
+      "note": "判定の指標。1 回目のフルバーストの窓の真ん中の S1 の持続ダメージの tick（会心なし）を、1 スタックの値に組み直したもの。フルバースト補正・S1 の攻撃力▲・A.N.モードの▲の窓の真ん中。録画では、どの回のバーストでも窓の真ん中の tick を読み、tick の値をスタックの数で割った値で比べる"
+    },
+    {
+      "id": "raven-stack-fb-crit",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "stacks": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["173-04"],
+      "note": "同じ tick が会心したときの 1 スタックの値。H3 では会心なしとの比が H0・H2 と違う"
+    },
+    {
+      "id": "raven-stack-pre",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "stacks": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["173-05"],
+      "note": "1 回目のバーストの前の tick の 1 スタックの値（会心なし）。どの仮説でも同じ（C-0182 の 1 スタックの値と同じはず）。スタックの数を数える物差し"
+    },
+    {
+      "id": "raven-stack-after",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1150,
+        "stacks": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["173-06"],
+      "note": "1 回目のフルバーストと▲の窓の後の最初の tick の 1 スタックの値（会心なし）。T1 ではどの仮説でも ▲なし（raven-stack-pre と同じ）。T2 では窓の中で付けたスタックの分だけ高い"
+    },
+    {
+      "id": "raven-hit-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "先に見るもの。1 回目のフルバーストの中のレイヴンのフルチャージの発の 1 ヒット（胴体・会心なし・距離なし）。S1 の攻撃力▲（C-0185）と、持続ダメージ▲が通常攻撃に乗らないことを見る（どの仮説でも同じ値）。録画で見えた形（コア・会心・距離）の値は、この値から倍率グループを組み直して手で比べる"
+    },
+    {
+      "id": "raven-hit-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のバーストの前のレイヴンのフルチャージの発の 1 ヒット（胴体・会心なし・距離なし）。▲の無い値"
+    },
+    {
+      "id": "full-bursts",
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "observations": ["173-10"],
+      "note": "フルバーストの回数（窓の数）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "548eb424d91df6f7542ee94c783870015a950364",
+    "values": {
+      "H0": {
+        "raven-stack-fb": 181526.13989999998,
+        "raven-stack-fb-crit": 242034.85319999998,
+        "raven-stack-pre": 82012.3416,
+        "raven-stack-after": 82012.34159999999,
+        "raven-hit-fb": 406352.33625,
+        "raven-hit-out": 183587.37,
+        "full-bursts": 5
+      },
+      "H2": {
+        "raven-stack-fb": 343883.11942656,
+        "raven-stack-fb-crit": 458510.82590208,
+        "raven-stack-pre": 82012.3416,
+        "raven-stack-after": 82012.34159999999,
+        "raven-hit-fb": 406352.33625,
+        "raven-hit-out": 183587.37,
+        "full-bursts": 5
+      },
+      "H3": {
+        "raven-stack-fb": 289764.12625104,
+        "raven-stack-fb-crit": 350272.83955104003,
+        "raven-stack-pre": 82012.3416,
+        "raven-stack-after": 82012.34159999999,
+        "raven-hit-fb": 406352.33625,
+        "raven-hit-out": 183587.37,
+        "full-bursts": 5
+      }
+    },
+    "seen": {
+      "173": ["173-01", "173-02"]
+    }
+  }
+}

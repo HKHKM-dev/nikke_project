@@ -297,6 +297,38 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 2, n: 1, crit: false })).toThrow('1 回目');
   });
 
+  it('rescales the first stacking dot tick at or after a frame to a given stack count (V-0227)', () => {
+    const source = { resourceId: 851, skill: 'skill1' as const, name: { ja: '', en: '' } };
+    const tick = (multiplier: number) =>
+      computeBurstHit({
+        attack: 119896,
+        enemy: { defence: 100 } as TeamInput['enemy'],
+        crit: { rate: 0.15, damage: 1.5 },
+        attackDamageMultiplier: 1,
+        elementMultiplier: 1,
+        effects: [{ source, damageType: 'skill', multiplier }],
+        fullBurstBonus: false,
+      });
+    const dot = { source, damageType: 'skill', multiplier: 0.6846, trigger: 'fullChargeShot', effectIndex: 0 };
+    const withDot = { ...dot, dot: { intervalSeconds: 1, durationSeconds: 5 } };
+    const result = {
+      skillHits: [
+        { frame: 10, slotIndex: 2, effect: withDot, hit: tick(0.6846 * 2), stacks: 2 },
+        { frame: 20, slotIndex: 1, effect: withDot, hit: tick(0.6846 * 9), stacks: 9 },
+        { frame: 30, slotIndex: 2, effect: { ...dot, effectIndex: 1 }, hit: tick(1) },
+        { frame: 40, slotIndex: 2, effect: withDot, hit: tick(0.6846 * 10), stacks: 10 },
+        { frame: 50, slotIndex: 2, effect: { ...dot, dot: { intervalSeconds: 1, durationSeconds: 10 } }, hit: tick(1) },
+      ],
+    } as unknown as SimResult;
+    const metric = METRICS.dotStackTickDamage!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 3, frame: 0, stacks: 3, crit: false })).toBeCloseTo(119796 * 0.6846 * 3, 6);
+    expect(value({ slot: 3, frame: 11, stacks: 7, crit: true })).toBeCloseTo(119796 * 0.6846 * 7 * 1.5, 6);
+    expect(() => value({ slot: 3, frame: 41, stacks: 1, crit: false })).toThrow('スタックしない');
+    expect(() => value({ slot: 3, frame: 51, stacks: 1, crit: false })).toThrow('tick が無い');
+  });
+
   it('sums the gauge of the first shot fired in or after a full burst window and landing after it (plan/design-anis-star-gauge-timing.md 3.5 節、V-0189 の X1)', () => {
     const result = {
       schedule: {
@@ -352,7 +384,7 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 2, n: 2 })).toThrow('2 発目が無い');
   });
 
-  it('counts the shot intervals from the n-th burst activation of the slot (V-0226)', () => {
+  it('counts the shot intervals from the n-th burst activation of the slot (V-0227)', () => {
     const result = {
       frames: 2000,
       shots: [{ frames: [100, 142, 184, 367, 409, 1200, 1242] }],

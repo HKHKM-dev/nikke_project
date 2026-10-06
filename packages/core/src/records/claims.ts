@@ -162,6 +162,7 @@ export const HIT_VALUE_METRICS: ReadonlySet<string> = new Set([
   'hitDamage',
   'burstHitDamage',
   'dotHitDamage',
+  'dotStackTickDamage',
   'skillHitDamage',
   'perShotHitDamage',
 ]);

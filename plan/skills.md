@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 31・効果 153（根拠あり 111）・notes 84（根拠あり 37）
+件数: キャラ 31・効果 154（根拠あり 112）・notes 84（根拠あり 37）
 
-notes の種類: 未対応 30・前提の外 21・計算に無関係 28・補足 5
+notes の種類: 未対応 29・前提の外 21・計算に無関係 28・補足 6
 
-スロット: supported 56・partial 18・unsupported 8・noEffect 20
+スロット: supported 57・partial 17・unsupported 8・noEffect 20
 
 ## 10 ラピ
 
@@ -407,13 +407,14 @@ notes の種類: 未対応 30・前提の外 21・計算に無関係 28・補足
 
 - **skill1**: supported
   - effects[0] dot・fullChargeShot: C-0181（確定）、C-0182（確定）、C-0111（確定）、C-0112（確定）
-  - effects[1] timed・fullBurstStart・attack: C-0185（仮説）
+  - effects[1] timed・fullBurstStart・attack: C-0185（確定）
 - **skill2**: noEffect
   - notes[0] 前提の外: 戦闘開始時とフルバーストタイム発動時の自分のパーツダメージ▲（急所攻略）は、射撃場の的にパーツが無いので効かない: 根拠なし
   - notes[1] 前提の外: 味方がパーツを破壊した時の、自分の持続ダメージ▲（一点集中）は、射撃場の的にパーツが無いので起きない: 根拠なし
-- **burst**: partial
-  - effects[0] burstDamage・skill: C-0185（仮説）、C-0233（確定）、C-0234（確定）
-  - notes[0] 未対応: 自分の A.N.モード（一点集中の解除と、持続ダメージ▲ 10 秒）は未対応（持続ダメージ▲の stat が無い）。S1 の持続ダメージに効くので、バーストの後の tick は過小になる: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-0185（確定）、C-0233（確定）、C-0234（確定）
+  - effects[1] timed・burstUse・sustainedDamage: C-0332（確定）
+  - notes[0] 補足: A.N.モードの一点集中の解除は、一点集中（S2。パーツの破壊で付く）が射撃場の的では起きないので何もしない: 根拠なし
 
 ## 862 クルミ
 

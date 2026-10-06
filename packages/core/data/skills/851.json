@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 851,
-  "checkedAt": "2026-10-03",
+  "checkedAt": "2026-10-06",
   "skills": {
     "skill1": {
       "effects": [
@@ -37,8 +37,8 @@
           "ref": 3,
           "durationRef": 4,
           "assumes": {
-            "ja": "単騎ではバーストを使えないので、録画では確かめていない",
-            "en": "Not checked in recordings (a solo unit cannot use its burst)"
+            "ja": "フルチャージの発と S1 の持続ダメージの tick に乗る（tick にはその時点の▲で）",
+            "en": "Applies to full-charge shots and to S1's damage-over-time ticks (by the state at each tick)"
           },
           "claims": [
             "C-0185"
@@ -76,13 +76,28 @@
             "C-0233",
             "C-0234"
           ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "sustainedDamage",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "A.N.モードの持続ダメージ▲は、S1 の持続ダメージの tick に、tick ごとにその時点の▲で乗る（▲の前に付けたスタックの分も乗る）。付くのは III の発動のフレーム（効果の遅れは未測定）",
+            "en": "A.N. Mode's sustained damage up applies to S1's damage-over-time ticks by the state at each tick (including stacks applied before it). It starts on the III activation frame (the effect delay is unmeasured)"
+          },
+          "claims": [
+            "C-0332"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "自分の A.N.モード（一点集中の解除と、持続ダメージ▲ 10 秒）は未対応（持続ダメージ▲の stat が無い）。S1 の持続ダメージに効くので、バーストの後の tick は過小になる",
-          "en": "A.N. Mode for self (removes Focus; sustained damage up for 10 s) is not supported (no sustained damage up stat). It affects S1's damage over time, so ticks after the burst are underestimated",
-          "kind": "unimplemented"
+          "ja": "A.N.モードの一点集中の解除は、一点集中（S2。パーツの破壊で付く）が射撃場の的では起きないので何もしない",
+          "en": "A.N. Mode's removal of Focus does nothing (Focus, from S2 on part destruction, never occurs on the training target)",
+          "kind": "modeling"
         }
       ]
     }

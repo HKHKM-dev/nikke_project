@@ -62,7 +62,7 @@ const TEAMS: Record<string, { input: TeamInput; raven: number }> = {
 };
 
 describe('レイヴンの定義', () => {
-  it('supports S1 (stacking damage over time with gauge, and ATK up on Full Burst); S2 is notes; the burst is partial', () => {
+  it('supports S1 (stacking damage over time with gauge, and ATK up on Full Burst); S2 is notes; the burst is supported', () => {
     const def = definitionOf(RAVEN);
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill1.effects).toMatchObject([
@@ -77,8 +77,11 @@ describe('レイヴンの定義', () => {
       { kind: 'timed', trigger: 'fullBurstStart', target: 'self', stat: 'attack', scaling: 'casterAttack' },
     ]);
     expect(def.skills.skill2.support).toBe('noEffect');
-    expect(def.skills.burst.support).toBe('partial');
-    expect(def.skills.burst.effects).toMatchObject([{ kind: 'burstDamage', damageType: 'skill' }]);
+    expect(def.skills.burst.support).toBe('supported');
+    expect(def.skills.burst.effects).toMatchObject([
+      { kind: 'burstDamage', damageType: 'skill' },
+      { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'sustainedDamage' },
+    ]);
   });
 });
 

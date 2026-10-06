@@ -325,7 +325,7 @@ function critRateAt(result: SimResult, ctx: MetricContext): number {
 
 /**
  * 枠の発のうち [from, to) のもの（モデルのフレーム）。burst（0 始まり）を書くと、from・to はその枠の burst 回目のバーストの
- * 発動からの相対になる（モデルが変わって発動が動いても、同じ窓を数える。V-0226）
+ * 発動からの相対になる（モデルが変わって発動が動いても、同じ窓を数える。V-0227）
  */
 function shotFramesIn(result: SimResult, ctx: MetricContext): number[] {
   const log = slotOf(result.shots, ctx);
@@ -634,6 +634,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
   dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
   dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
+  dotStackTickDamage: { args: ['slot', 'frame', 'stacks', 'crit'], sim: dotStackTickDamage },
   skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
@@ -709,6 +710,21 @@ function dotHitDamage(result: SimResult, ctx: MetricContext): number {
   if (tick === undefined) throw new Error(`${String(ctx.args.n)} 回目の持続ダメージの tick が無い`);
   if (ctx.args.core === true && tick.effect.core !== true) throw new Error('コアに当たらない効果の tick に core: true');
   return oneHitValue(tick.hit, ctx.args.crit === true, ctx.args.core === true);
+}
+
+/**
+ * 持続ダメージ▲編（レイヴン。V-0227）: スタックする持続ダメージの、フレーム frame 以降の最初の tick を、スタックの数 stacks の tick に
+ * 組み直した値（1 スタックの値 × stacks。会心は dotHitDamage と同じく組み直す）。録画の tick のスタックの数がモデルと違っても、
+ * その時点のバフの乗り方だけを比べられる（tick は全スタックの和が 1 つのダメージ。C-0182）
+ */
+function dotStackTickDamage(result: SimResult, ctx: MetricContext): number {
+  const frame = Number(ctx.args.frame);
+  const tick = result.skillHits.find(
+    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && h.frame >= frame,
+  );
+  if (tick === undefined) throw new Error(`フレーム ${frame} 以降に持続ダメージの tick が無い`);
+  if (tick.stacks === undefined) throw new Error('スタックしない持続ダメージの tick');
+  return (oneHitValue(tick.hit, ctx.args.crit === true) / tick.stacks) * Number(ctx.args.stacks);
 }
 
 /**
