@@ -71,7 +71,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "180 秒の S2 の回数"
+      "note": "180 秒の S2 の回数",
+      "observations": ["221-10"]
     },
     {
       "id": "mean-interval",
@@ -85,7 +86,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "S2 の 1 回目から最後までの動画のフレーム数 ÷ (回数 − 1)（フルバーストの入りの止まりを含む）"
+      "note": "S2 の 1 回目から最後までの動画のフレーム数 ÷ (回数 − 1)（フルバーストの入りの止まりを含む）",
+      "observations": ["221-11"]
     }
   ],
   "predicted": {
