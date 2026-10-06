@@ -201,5 +201,20 @@
       "tool": "tools/captures/hud.ts --mode series・reticle-ammo.ts --mode series（レシピ smg-mags のキャッシュ）・使い捨てのスクリプト",
       "note": "区間の切れ目は V-0200 の観測値（smg-mags）と同じ。撃ったフレームは、残弾の読めたフレームが続いていて値が 1 減ったフレームだけを使った"
     }
+  },
+  {
+    "id": "198-12",
+    "recording": "198",
+    "source": "V-0228",
+    "readAt": "2026-10-06",
+    "kind": "position",
+    "use": "record",
+    "unit": "px",
+    "value": [542, 384, 158, 146],
+    "description": "遠（3 区間目）の的の、足元の y・上端の y・高さ・幅（1920×1080。外接矩形。的だけが取れたコマの中央値）。足元で分けると遠 A（V-0228「結果」）",
+    "method": {
+      "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
+      "note": "使えたコマ 40 / 101。四分位: 足元 542〜542・高さ 154〜162。足元の y は半分の解像度で測るので 2px 刻み"
+    }
   }
 ]
