@@ -260,8 +260,8 @@ notes の種類: 未対応 20・前提の外 22・計算に無関係 31・補足
 - **skill1**: supported
   - effects[0] passive・attack: C-0020（確定）
 - **skill2**: supported
-  - effects[0] timed・fullBurstStart・maxAmmo: C-0395（仮説）
-  - effects[1] ammoRefill・fullBurstStart: C-0395（仮説）
+  - effects[0] timed・fullBurstStart・maxAmmo: C-0395（確定）
+  - effects[1] ammoRefill・fullBurstStart: C-0395（確定）
 - **burst**: partial
   - effects[0] burstDamage・skill: C-0226（確定）
   - effects[1] timed・burstUse・hitRate: C-0396（仮説）
