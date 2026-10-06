@@ -1,0 +1,254 @@
+[
+  {
+    "id": "280-01",
+    "recording": "280",
+    "source": "V-0247",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1029811,
+    "description": "ソルジャーE.G. の 1 回目のバーストの倍率ダメージの 1 ヒット（f1472。前のフレームも読めた増分）。8 つの格子の値（予測ファイル）のうち S1 の▲なし・サクラの受けるダメージ▲あり・会心 の値に乗った",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "増分が 50 万を超える 1 フレームの値をバーストのヒットとした。格子の 8 つの値は最も近い組でも 4 万以上離れるので、値だけで S1 の▲とサクラの受けるダメージ▲の有無と会心が決まる（どれにも差 1 以内で乗った）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "280-02",
+    "recording": "280",
+    "source": "V-0247",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 740984,
+    "description": "ソルジャーE.G. の 2 回目のバーストの倍率ダメージの 1 ヒット（f3849。前のフレームも読めた増分）。8 つの格子の値（予測ファイル）のうち S1 の▲あり・サクラの受けるダメージ▲あり・会心でない の値に乗った",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "増分が 50 万を超える 1 フレームの値をバーストのヒットとした。格子の 8 つの値は最も近い組でも 4 万以上離れるので、値だけで S1 の▲とサクラの受けるダメージ▲の有無と会心が決まる（どれにも差 1 以内で乗った）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "280-03",
+    "recording": "280",
+    "source": "V-0247",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 632347,
+    "description": "ソルジャーE.G. の 3 回目のバーストの倍率ダメージの 1 ヒット（f6226。前のフレームも読めた増分）。8 つの格子の値（予測ファイル）のうち S1 の▲あり・サクラの受けるダメージ▲なし・会心でない の値に乗った",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "増分が 50 万を超える 1 フレームの値をバーストのヒットとした。格子の 8 つの値は最も近い組でも 4 万以上離れるので、値だけで S1 の▲とサクラの受けるダメージ▲の有無と会心が決まる（どれにも差 1 以内で乗った）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "280-04",
+    "recording": "280",
+    "source": "V-0247",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 740984,
+    "description": "ソルジャーE.G. の 4 回目のバーストの倍率ダメージの 1 ヒット（f8608。前のフレームも読めた増分）。8 つの格子の値（予測ファイル）のうち S1 の▲あり・サクラの受けるダメージ▲あり・会心でない の値に乗った",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "増分が 50 万を超える 1 フレームの値をバーストのヒットとした。格子の 8 つの値は最も近い組でも 4 万以上離れるので、値だけで S1 の▲とサクラの受けるダメージ▲の有無と会心が決まる（どれにも差 1 以内で乗った）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "280-05",
+    "recording": "280",
+    "source": "V-0247",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "record",
+    "value": 1126343,
+    "description": "5 回目のバーストのヒットを含む増分（f10986。前のフレームが読めておらず 2 フレーム分）。S1 の▲あり・サクラの受けるダメージ▲あり・会心の格子の値 1,111,477 に、ほかの発の約 1.5 万が足された値とみられる（比べない）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）"
+    }
+  },
+  {
+    "id": "280-06",
+    "recording": "280",
+    "source": "V-0247",
+    "readAt": "2026-10-06",
+    "kind": "interval",
+    "use": "record",
+    "value": [29, 29, 29, 29, 29],
+    "unit": "f",
+    "description": "III（ソルジャーE.G.）の発動（右のバースト欄の III のタイマーが 00.00 になった最初のフレーム。f1443・3820・6197・8579・10957）から、バーストのヒットの HUD の増分（f1472・3849・6226・8608・10986）までの動画のフレーム。5 回目はヒットの前のフレームが読めておらず、28〜29f",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）・ffmpeg（バースト欄 crop=200:60:1720:415 の YAVG）",
+      "note": "バースト欄は、III の六角形が白から赤に替わるフレーム（明るさが 160 前後から 90 前後に落ちる）の 5f 後に 00.00 になる（1 回目と 2〜5 回目の前後を画で確かめた）。ヒットは 5 回ともその落ち込みの 33〜34f 後"
+    }
+  }
+]

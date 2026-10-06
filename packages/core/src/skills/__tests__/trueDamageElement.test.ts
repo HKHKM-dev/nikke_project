@@ -113,7 +113,7 @@ describe('durationUntil・inFullBurst・atStart の検証', () => {
     );
   });
 
-  it('allows a timer trigger with atStart in timed only, for stats not tracked in the first pass', () => {
+  it('allows a timer trigger with atStart in timed only', () => {
     const recurring = {
       kind: 'timed',
       trigger: { everySeconds: 30, atStart: true },

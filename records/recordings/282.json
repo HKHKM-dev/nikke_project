@@ -1,0 +1,29 @@
+{
+  "id": "282",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-282_ar_soldier-eg_s2-no-fire.mp4",
+  "original": "2026-10-06_22-55-02.mp4",
+  "durationSec": 90.8,
+  "frames": 5446,
+  "fps": 60,
+  "sizeMB": 109.2,
+  "sha256": "fe7b6fb34d66",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0243。ソルジャーE.G. 単騎・操作・撃たない（与ダメージ 0）。戦闘の途中（約 80 秒）で抜けた"
+}

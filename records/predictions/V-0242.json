@@ -1,0 +1,55 @@
+{
+  "verification": "V-0242",
+  "note": "既存の録画の読み直し（撮影の後。録画 280 で読んだ遅れを遅れの表に入れた後、281 を読む前に予測を出した）。録画 281: サクラ（I・AI）+ デルタ（II・AI）+ ソルジャーE.G.（III・操作・AUTO 射撃）・オートバースト ON・BigArms 灼熱の 3 分モード・スペック固定 ON",
+  "team": [
+    {
+      "rid": 836,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 300,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "遅れの表のソルジャーE.G. の行（hitFrames 7）: III の発動からヒットまで、動画のフレームで 29f（止まり 22f を含む）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "III（ソルジャーE.G.）の発動（右のバースト欄の III のタイマーが 00.00 になった最初のフレーム）から、バーストのヒットの HUD の増分までの動画のフレーム（5 回）",
+      "observations": ["281-04"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "fc5018b24eab02c29b542104c8092c0b137b04f4",
+    "values": {
+      "H1": {
+        "burst-delays": [29, 29, 29, 29, 29]
+      }
+    },
+    "seen": {
+      "281": []
+    }
+  }
+}

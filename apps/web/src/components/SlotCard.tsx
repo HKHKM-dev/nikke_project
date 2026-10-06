@@ -395,7 +395,11 @@ export function SlotCard({
                             : t.effect.durationUntil === 'battleEnd'
                               ? '持続'
                               : `${formatNumber(framesToGameSeconds(t.effect.durationFrames), 0)} 秒`}{' '}
-                        × {t.count} 回{formatTimedExtras(t.effect)}
+                        {/* ソルジャーE.G. 編: 確率のきっかけの窓は期待値の小片なので、回数ではなく「期待値」と出す */}
+                        {typeof t.effect.trigger === 'object' && 'chance' in t.effect.trigger
+                          ? '（期待値）'
+                          : `× ${t.count} 回`}
+                        {formatTimedExtras(t.effect)}
                         {t.effect.condition && skipsOf(t.effect) > 0
                           ? `・状態でなく発動せず ${skipsOf(t.effect)} 回`
                           : ''}

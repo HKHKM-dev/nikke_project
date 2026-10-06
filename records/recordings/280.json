@@ -1,0 +1,41 @@
+{
+  "id": "280",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-280_smg+sr+ar_sakura+delta+soldier-eg_eg-control.mp4",
+  "original": "2026-10-06_23-07-09.mp4",
+  "durationSec": 201.7,
+  "frames": 12104,
+  "fps": 60,
+  "sizeMB": 244.5,
+  "sha256": "8ab02822b808",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0247 の 1 本目（V-0240・V-0241 にも使う）。サクラ（I・AI）・デルタ（II・AI）・ソルジャーE.G.（III・操作・AUTO 射撃 ON）。オートバースト ON"
+}

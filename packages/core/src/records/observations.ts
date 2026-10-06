@@ -18,7 +18,8 @@ import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs, capCritRate } from '../skills/buffs.ts';
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
+import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
+import { MAX_SKILL_LEVELS, isResolvedChance, resolveTimed } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import {
@@ -319,6 +320,86 @@ function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
       (w) => w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
     )
     .map((w) => w.end);
+}
+
+/**
+ * ソルジャーE.G. 編（V-0240）: その枠が受ける timed の効果の窓の始まり（モデルのフレーム。昇順・重複なし）。skill と stat で絞る。
+ * count を書くと最初の count 個（録画で読めた回数にそろえる）。video が true なら動画のフレーム（フルバーストの入りの止まりを
+ * videoFrameOf で足す。戦闘開始からの数）
+ */
+function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const starts = [
+    ...new Set(
+      result.timeline.windows
+        .filter(
+          (w) =>
+            w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
+        )
+        .map((w) => w.start),
+    ),
+  ]
+    .sort((a, b) => a - b)
+    .map((f) => (ctx.args.video === true ? videoFrameOf(result.schedule, f) : f));
+  return ctx.args.count === undefined ? starts : starts.slice(0, Number(ctx.args.count));
+}
+
+/**
+ * ソルジャーE.G. 編（V-0241）: 枠の、スロット skill の確率のきっかけの効果の機会（発の次のフレームから、確率 = p × その発の回数の量）と
+ * 維持のフレーム。窓の小片（skills/chance.ts）と同じ機会を、射撃の列から作り直す
+ */
+function chanceSourceOf(
+  result: SimResult,
+  ctx: MetricContext,
+): { opportunities: ChanceOpportunity[]; duration: number } {
+  const input = slotOf(ctx.input.slots, ctx);
+  if (input.skills === undefined || input.skills.definition === null)
+    throw new Error(`枠 ${String(ctx.args.slot)} にスキル定義が無い`);
+  const effect = resolveTimed(input.skills.definition, input.character, input.skills.levels).find(
+    (e) => e.source.skill === ctx.args.skill && isResolvedChance(e.trigger),
+  );
+  if (effect === undefined || !isResolvedChance(effect.trigger)) {
+    throw new Error(`枠 ${String(ctx.args.slot)} の ${String(ctx.args.skill)} に確率のきっかけの効果が無い`);
+  }
+  const trigger = effect.trigger;
+  const log = slotOf(result.shots, ctx);
+  const opportunities = log.frames.flatMap((f, k) => {
+    const weight = trigger.count === 'normalHit' ? (log.hits?.[k] ?? 1) : 1;
+    return weight > 0 && f + 1 < result.frames ? [{ start: f + 1, q: Math.min(1, trigger.chance * weight) }] : [];
+  });
+  return { opportunities, duration: effect.durationFrames };
+}
+
+/**
+ * ソルジャーE.G. 編（V-0241）: 枠の発（[from, to)。省略は全部）のうち、スロット skill の確率のきっかけの効果が付いている発の割合の
+ * 期待値（発のフレームの「付いている確率」の平均）。録画では、1 発の値の格子で▲が付いていると読めた発の割合と比べる
+ */
+function chanceActiveRatio(result: SimResult, ctx: MetricContext): number {
+  const { opportunities, duration } = chanceSourceOf(result, ctx);
+  const frames = shotFramesIn(result, ctx);
+  if (frames.length === 0) throw new Error('発が無い');
+  return frames.reduce((sum, f) => sum + chanceScaleAt(opportunities, duration, f), 0) / frames.length;
+}
+
+/**
+ * ソルジャーE.G. 編（V-0241）: 枠の続けて撃った 2 発（どちらも [from, to)）のうち、前の発で付いていて後の発で切れている組の数の期待値。
+ * 付いていない事象は「効いている機会でどれも引かなかった」で、機会は互いに独立なので、
+ * P(前で付き・後で切れ) = P(後で切れ) − P(前でも後でも切れ) = Π_{後}(1 − q) − Π_{前 ∪ 後}(1 − q)。
+ * 録画では、▲が付いていると読めた発の次の発が付いていないと読めた回数と比べる（上書き延長でなければ、ずっと多くなる）
+ */
+function chanceExpiries(result: SimResult, ctx: MetricContext): number {
+  const { opportunities, duration } = chanceSourceOf(result, ctx);
+  const frames = shotFramesIn(result, ctx);
+  const activeAt = (f: number) => opportunities.filter((o) => o.start <= f && f < o.start + duration);
+  const none = (ops: readonly ChanceOpportunity[]) => ops.reduce((p, o) => p * (1 - o.q), 1);
+  let sum = 0;
+  for (let k = 1; k < frames.length; k++) {
+    const before = activeAt(frames[k - 1]!);
+    const after = activeAt(frames[k]!);
+    const union = [...new Set([...before, ...after])];
+    sum += none(after) - none(union);
+  }
+  return sum;
 }
 
 /**
@@ -626,6 +707,9 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   maxAmmoAt: { args: ['slot', 'frame'], sim: maxAmmoAt },
   reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
+  buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },
+  chanceActiveRatio: { args: ['slot', 'skill'], sim: chanceActiveRatio },
+  chanceExpiries: { args: ['slot', 'skill'], sim: chanceExpiries },
   critRateAt: { args: ['slot', 'frame'], sim: critRateAt },
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 3 節）: 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
   // 最後の弾丸の発を含む）。弾丸チャージでマガジンが延びるかを見る

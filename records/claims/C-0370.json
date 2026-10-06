@@ -1,0 +1,11 @@
+{
+  "id": "C-0370",
+  "text": "ソルジャーE.G. のバーストの倍率ダメージのヒットは、III の発動（右のバースト欄の III のタイマーが 00.00 になった最初のフレーム）から、モデルのフレームで 7f 遅れる（動画のフレームで 29f。フルバーストの入りの止まり 22f を含む）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`281-04`（予測を読む前に commit した録画 281 で、5 回とも 29f。予測ファイル records/predictions/V-0242.json の H1 と同じ）。値は録画 280 で読んだ（`280-06`。5 回とも 29f）。どちらもサクラ + デルタ（機構が確定したキャラ）との編成。V-0247・V-0242",
+  "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のソルジャーE.G. の 1 行（hitFrames 7・effectFrames 0。バースト使用時の効果は無い）。`data/skills/300.json` の burst の effects[0]",
+  "replaces": [],
+  "updated": "2026-10-06"
+}

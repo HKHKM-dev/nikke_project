@@ -1,0 +1,157 @@
+[
+  {
+    "id": "281-01",
+    "recording": "281",
+    "source": "V-0247",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 740984,
+    "description": "ソルジャーE.G. の 1 回目のバーストの倍率ダメージの 1 ヒット（f1468。前のフレームも読めた増分）。S1 の▲あり・サクラの受けるダメージ▲あり・会心でないの格子の値に乗った",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "増分が 50 万を超える 1 フレームの値をバーストのヒットとした。格子の 8 つの値は最も近い組でも 4 万以上離れるので、値だけで S1 の▲とサクラの受けるダメージ▲の有無と会心が決まる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "281-02",
+    "recording": "281",
+    "source": "V-0247",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 686541,
+    "description": "2 回目のバーストのヒット（f3846）。S1 の▲なし・サクラの受けるダメージ▲あり・会心でないの格子の値に乗った",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "増分が 50 万を超える 1 フレームの値をバーストのヒットとした。格子の 8 つの値は最も近い組でも 4 万以上離れるので、値だけで S1 の▲とサクラの受けるダメージ▲の有無と会心が決まる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "281-03",
+    "recording": "281",
+    "source": "V-0247",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "record",
+    "value": [650804, 701407, 753372],
+    "description": "3〜5 回目のバーストのヒットを含む 1 フレームの増分（f6223・8657・11035）。どれも格子の値（632,347・686,541・740,984）に、同じフレームのほかの 1 発（18,457・14,866・12,388。録画の中で繰り返し出る通常攻撃の 1 発の値）を足した値とちょうど同じ（比べない）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）"
+    }
+  },
+  {
+    "id": "281-04",
+    "recording": "281",
+    "source": "V-0242",
+    "readAt": "2026-10-06",
+    "kind": "interval",
+    "use": "compare",
+    "value": [29, 29, 29, 29, 29],
+    "unit": "f",
+    "description": "III（ソルジャーE.G.）の発動（右のバースト欄の III のタイマーが 00.00 になった最初のフレーム。f1439・3817・6194・8628・11006）から、バーストのヒットの HUD の増分（f1468・3846・6223・8657・11035）までの動画のフレーム",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）・ffmpeg（バースト欄 crop=200:60:1720:415 の YAVG と、170×40 の切り出しを並べた画）",
+      "note": "III の六角形が白から赤に替わるフレーム（明るさが 160 前後から 90〜130 に落ちる）の後、00.00 になる最初のフレームを画で読んだ（5 回とも、落ち込みの 5f 後）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  }
+]

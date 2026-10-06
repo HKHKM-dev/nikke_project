@@ -1,0 +1,68 @@
+{
+  "formatVersion": 1,
+  "resourceId": 300,
+  "checkedAt": "2026-10-06",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "chanceRef": 3
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "確率で付く効果を期待値で持つ（1 発ごとに値 3 の % × その発の弾丸命中率で付き、持続中に付けば上書き延長）。窓の値は付いている確率 × 値 1",
+            "en": "The chance-based effect is modelled as an expectation (each shot applies it with value 3 % × the shot's bullet hit rate; a new hit while active refreshes it). The window value is the probability of being active × value 1"
+          },
+          "claims": [
+            "C-0372"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 9
+          },
+          "target": "self",
+          "stat": "maxAmmo",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "説明文にきっかけが無いアクティブ型のスキルで、射撃に依らず戦闘開始から 9 秒ごとに付く（CT 9 秒は録画 282 から読んだ値）。最大装弾数は C-0017 の形（加算して四捨五入。Lv10 で 128）。残弾は増やさず、リロードで新しい最大まで込める",
+            "en": "An active skill with no trigger in the description: applied every 9 s from the start of combat regardless of firing (the 9 s cooldown was read from recording 282). Max ammo follows C-0017 (additive ratio, rounded; 128 at Lv10). Current ammo is not increased; a reload fills to the new maximum"
+          },
+          "claims": [
+            "C-0369",
+            "C-0017"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "攻撃範囲内の敵は単体ボスで 1 ヒット。ヒットは遅れの表（burst/landing.ts）の時刻（III の発動から 7f）に出す",
+            "en": "Enemies in range are a lone boss, so it lands once. The hit lands at the time in the delay table (burst/landing.ts; 7 frames after the III activation)"
+          },
+          "claims": [
+            "C-0371",
+            "C-0370"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -18,6 +18,8 @@
 // ニヒリスター編で持続ダメージ（dot。「持続ダメージ」「1秒間隔」「10秒間維持」）を足した（plan/design-nihilister.md 2.1 節）。
 // 撮影の後に、時間の周期のトリガー（{ everySeconds }。CT ごとに発動するアクティブ型のスキル）を足した（同 8 節）。
 // フラワー編で、周期でゲージだけを溜める効果（burstGaugeHit）を足した（plan/design-flower-s2-gauge.md 2 節）。
+// ソルジャーE.G. 編で、確率のきっかけ（回数トリガーの chance / chanceRef。期待値の窓）を足し、時間の周期のトリガーを 1 パス目で
+// 窓を追う stat の timed にも書けるようにした（plan/design-soldier-eg.md 3.1・3.2 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 // 効果と notes には、根拠の結論の ID（claims）を書ける（plan/skills-guide.md 3 節。実在の検査は records/skills.ts）。
 import { ELEMENTS } from '../element.ts';
@@ -375,7 +377,24 @@ export type ShotCountTrigger = {
   during?: ShotCountWindow;
   /** 同 2.1 節: during を書くときは必須。fullBurstStart = フルバーストが始まるフレームで 0 に戻す、never = 戻さない */
   reset?: ShotCountReset;
+  /**
+   * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 「〜した時、p% の確率で」の p（%。0 より大きく 100 以下の即値）。
+   * 1 発ごとに確率 p × その発の回数の量（normalShot は 1、normalHit はその発の弾丸命中率）で付く。モデルは期待値で持ち、
+   * 窓の値を「付いている確率 × 値」にする（skills/chance.ts）。count は normalShot か normalHit、timed にだけ書ける。
+   * every・everyRef・stacksRef・during とは組み合わせない。chanceRef とどちらか片方
+   */
+  chance?: number;
+  /** 確率（%）の description_value_NN */
+  chanceRef?: number;
 };
+
+/** ソルジャーE.G. 編: 確率のきっかけを書ける回数の種類 */
+export const CHANCE_COUNT_KINDS = ['normalShot', 'normalHit'] as const satisfies readonly ShotCountKind[];
+
+/** ソルジャーE.G. 編: 確率のきっかけ（chance / chanceRef）を持つ回数トリガーか */
+export function isChanceTrigger(t: EffectTrigger): t is ShotCountTrigger {
+  return isShotCountTrigger(t) && (t.chance !== undefined || t.chanceRef !== undefined);
+}
 
 /** クルミ S2 編: 回数トリガーの数える窓と、数え直し（plan/design-kurumi-s2.md 2.1 節） */
 export type ShotCountWindow = 'fullBurst';
@@ -400,14 +419,14 @@ export type EventCountTrigger = {
 /**
  * ニヒリスター編: 時間の周期のトリガー。戦闘開始から k × everySeconds 秒（k = 1, 2, …）に発火する。射撃・リロード・
  * 的のジャンプ・バーストに関係しない（録画 081 の S2。C-0091）。CT が説明文にも CDN にも無いアクティブ型のスキル用で、
- * 値は実測の即値。射撃に効かない damage と dot にだけ書ける（1 パス目の出来事の列にタイマーのフレームが無いため。
- * plan/design-nihilister.md 8.1 節）
+ * 値は実測の即値。damage・dot・autoAttack・burstGaugeHit と timed に書ける。ソルジャーE.G. 編（plan/design-soldier-eg.md 3.2 節）で、
+ * 1 パス目で窓を追う stat（最大装弾数など）の timed にも書けるようにした（1 パス目が周期のフレームで窓を登録する。frame/firstPass.ts）
  */
 export type TimerTrigger = {
   everySeconds: number;
   /**
    * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.5 節）: 戦闘開始時（フレーム 0）にも 1 回発火する
-   * （「戦闘開始時、… 再発動周期 N 秒」）。timed の、1 パス目で窓を追わない stat にだけ書ける
+   * （「戦闘開始時、… 再発動周期 N 秒」）。timed にだけ書ける（1 パス目で窓を追う stat は、戦闘開始時と同じくループの前に登録する）
    */
   atStart?: true;
 };
@@ -545,7 +564,7 @@ export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffSt
 
 /**
  * 防御力無視ダメージ編: 1 パス目のループで窓を追う stat か（攻撃力・射撃に効く stat・状態の stat）。追わない stat の窓は
- * planBuffTimeline だけが作るので、durationShots・durationUntil・条件 inFullBurst・周期のトリガーの atStart はそちらにだけ書ける
+ * planBuffTimeline だけが作るので、durationShots・durationUntil・条件 inFullBurst はそちらにだけ書ける
  */
 export function isFirstPassTrackedStat(stat: BuffStat): boolean {
   return stat === 'attack' || isFiringStat(stat) || isStateStat(stat);
@@ -1182,6 +1201,7 @@ function parseTrigger(
   path: string,
   allowTimer: boolean | 'withStart' = false,
   allowDuring = false,
+  allowChance = false,
 ): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
@@ -1191,7 +1211,7 @@ function parseTrigger(
     if (!allowTimer)
       fail(
         path,
-        'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit and timed (stats not tracked in the first pass)',
+        'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit and timed',
       );
     const keys = allowTimer === 'withStart' ? ['everySeconds', 'atStart'] : ['everySeconds'];
     for (const key of Object.keys(v)) if (!keys.includes(key)) fail(`${path}.${key}`, 'unknown field');
@@ -1205,7 +1225,7 @@ function parseTrigger(
   }
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
-      if (!['count', 'every', 'everyRef', 'stacksRef', 'during', 'reset'].includes(key)) {
+      if (!['count', 'every', 'everyRef', 'stacksRef', 'during', 'reset', 'chance', 'chanceRef'].includes(key)) {
         fail(`${path}.${key}`, 'unknown field');
       }
     }
@@ -1225,6 +1245,29 @@ function parseTrigger(
       if (trigger.count === 'lastShot') fail(`${path}.during`, 'during cannot be used with lastShot');
       if (trigger.count === 'weaponChangeShot') fail(`${path}.during`, 'during cannot be used with weaponChangeShot');
     }
+    // ソルジャーE.G. 編: 確率のきっかけ（plan/design-soldier-eg.md 3.1 節）
+    if (v.chance !== undefined || v.chanceRef !== undefined) {
+      if (!allowChance) fail(`${path}.chance`, 'a chance trigger (chance / chanceRef) is only allowed in timed');
+      if (v.chance !== undefined && v.chanceRef !== undefined) fail(path, 'at most one of chance and chanceRef');
+      if (!(CHANCE_COUNT_KINDS as readonly string[]).includes(trigger.count)) {
+        fail(
+          `${path}.count`,
+          `a chance trigger needs count ${CHANCE_COUNT_KINDS.join(' or ')}, got "${trigger.count}"`,
+        );
+      }
+      for (const key of ['every', 'everyRef', 'stacksRef', 'during'] as const) {
+        if (v[key] !== undefined) fail(`${path}.${key}`, `a chance trigger cannot be combined with ${key}`);
+      }
+      if (v.chance !== undefined) {
+        const chance = v.chance;
+        if (typeof chance !== 'number' || !Number.isFinite(chance) || chance <= 0 || chance > 100) {
+          fail(`${path}.chance`, `expected a percentage in (0, 100], got ${JSON.stringify(chance)}`);
+        }
+        trigger.chance = chance;
+      } else {
+        trigger.chanceRef = parseRef(v.chanceRef, `${path}.chanceRef`);
+      }
+    }
     return trigger;
   }
   if ((EVENT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
@@ -1241,8 +1284,8 @@ function parseTrigger(
 
 function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
-  // 防御力無視ダメージ編: 周期のトリガーは、1 パス目で窓を追わない stat だけ（1 パス目の出来事の列にタイマーのフレームが無いため）
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, isFirstPassTrackedStat(stat) ? false : 'withStart');
+  // 防御力無視ダメージ編: 周期のトリガー（ソルジャーE.G. 編で、1 パス目で窓を追う stat にも）。ソルジャーE.G. 編: 確率のきっかけ
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, 'withStart', false, true);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
@@ -1353,12 +1396,38 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
     effect.condition = { selfBuffed };
   }
   validateFixedChargeTime(effect, path);
+  validateChanceTimed(effect, path);
   // ペルソナ編: 名前の付いた効果の記録は planBuffTimeline の 1 段目で作るので、条件付き・順位の対象とは組めない
   if (effect.name !== undefined && (effect.condition !== undefined || effect.target === 'topAttack')) {
     fail(`${path}.name`, 'a named effect cannot have a condition or target "topAttack"');
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
+}
+
+/**
+ * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけの timed は、窓を期待値の小片にするので、値を足し合わせて
+ * 意味のある stat（射撃に効かない・状態でない・フラグでない）だけに書け、スタック・条件・発数や出来事の維持・amplifies・名前・
+ * 順位の対象とは組み合わせない（意味が決まっていない。使うキャラが出たら足す）
+ */
+function validateChanceTimed(effect: TimedEffect, path: string): void {
+  if (!isChanceTrigger(effect.trigger)) return;
+  const stat = effect.stat;
+  if (isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isHitStateStat(stat)) {
+    fail(`${path}.stat`, `a chance trigger is not supported for "${stat}" (it needs a value that adds up linearly)`);
+  }
+  if (effect.target === 'topAttack') fail(`${path}.target`, 'a chance trigger cannot target "topAttack"');
+  const forbidden: [unknown, string][] = [
+    [effect.maxStacks ?? effect.maxStacksRef, 'maxStacks'],
+    [effect.condition, 'condition'],
+    [effect.durationShots ?? effect.durationShotsRef, 'durationShots'],
+    [effect.durationUntil, 'durationUntil'],
+    [effect.amplifies, 'amplifies'],
+    [effect.name, 'name'],
+  ];
+  for (const [value, key] of forbidden) {
+    if (value !== undefined) fail(`${path}.${key}`, `a chance trigger cannot be combined with ${key}`);
+  }
 }
 
 /**

@@ -63,6 +63,8 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // マナ: III の発動から効果（持続ダメージの付与と 1 回目の tick・持続ダメージ▲）まで 2f（動画で 24f。止まり 22f を含む）。
   // バーストの倍率ダメージは無い
   { resourceIds: [290], delays: { hitFrames: 0, effectFrames: 2 }, claim: 'C-0301' },
+  // ソルジャーE.G.: III の発動からヒットまで 7f（動画で 29f。止まり 22f を含む）。バースト使用時の効果は無い（V-0247・V-0242）
+  { resourceIds: [300], delays: { hitFrames: 7, effectFrames: 0 }, claim: 'C-0370' },
 ];
 
 type DelayKey = Pick<CharacterData, 'resourceId' | 'skills' | 'treasure'>;

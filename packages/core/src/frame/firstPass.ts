@@ -60,8 +60,11 @@ import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
 import { resolveDamageGauges, resolveDotEffects, resolveTimerGauges } from '../skills/burstDamage.ts';
 import { effectFrameOf, type BurstActivation, type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
 import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
+import { chanceScaleAt, chanceValueOf, type ChanceOpportunity } from '../skills/chance.ts';
 import {
+  isResolvedChance,
   isResolvedShotCount,
+  isResolvedTimer,
   resolveInstant,
   resolveTimed,
   type ResolvedInstantEffect,
@@ -259,13 +262,22 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   /** 発火の文脈 context のとき、効果 e が掛かる枠（Stage 11: burstUsers は発火ごとに変わる） */
   const targetsAt = (e: Parameters<typeof isEffectTarget>[0], sourceSlotIndex: number, context: FireContext) =>
     slots.flatMap((t, i) => (t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character, context) ? [i] : []));
+  /**
+   * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.2 節）: 時間の周期のトリガーは出来事の列に無いので、周期のフレーム
+   * （skills/timeline.ts の timerFrames。planBuffTimeline の triggerFires と同じ）で発火する。atStart のフレーム 0 はループの前に登録する
+   */
+  const firesOf = (trigger: ResolvedTimedEffect['trigger'], sourceSlotIndex: number): TriggerTracker => {
+    if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, sourceSlotIndex, scheduleModel);
+    const at = new Set(timerFrames(trigger.everySeconds, frames));
+    return (ev) => at.has(ev.frame);
+  };
   /** 窓を持ちうる枠（burstUsers・topAttack は武器種の条件だけ）で FiringSource を作る */
   const sourceOf = (effect: ResolvedTimedEffect, sourceSlotIndex: number, casterBaseAttack: number): FiringSource => ({
     sourceSlotIndex,
     effect,
     casterBaseAttack,
     canTarget: slots.map((t, i) => t !== null && canEverTarget(effect, sourceSlotIndex, i, t.character)),
-    fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
+    fires: firesOf(effect.trigger, sourceSlotIndex),
     windows: slots.map(() => []),
     starts: slots.map(() => []),
   });
@@ -318,7 +330,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   // Stage 11 アリス編: 順位が要るときだけ攻撃力の窓を追う（無ければクラウン編までのループと同じ）
   const needsRank =
     firing.some((src) => dependsOnRank(src.effect)) || otherInstants.some((src) => dependsOnRank(src.effect));
-  const attackTrack = needsRank ? attackCandidates : [];
+  const attackTrack = needsRank ? attackCandidates.filter((src) => !isResolvedChance(src.effect.trigger)) : [];
+  // ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけの攻撃力▲は、順位にも期待値（付いている確率 × 値）で入れる。
+  // 機会（発の次のフレームから D フレーム）を貯め、順位を出すフレームの値を planBuffTimeline の小片と同じ式で出す
+  const chanceAttack: { src: FiringSource; targets: number[]; opportunities: ChanceOpportunity[] }[] = needsRank
+    ? attackCandidates
+        .filter((src) => isResolvedChance(src.effect.trigger))
+        .map((src) => ({ src, targets: targetsAt(src.effect, src.sourceSlotIndex, null), opportunities: [] }))
+    : [];
   const rankSlots = needsRank ? rankSlotsOf(slots, passive) : [];
   // Stage 11 モダニア: ループで追う条件付きの効果（射撃に効くもの、順位のために追う攻撃力のもの）があるときだけ、条件の stat の窓を追う
   const conditionStats = new Set<BuffStat>(
@@ -361,6 +380,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         })),
       ),
     );
+    for (const { src, targets, opportunities } of chanceAttack) {
+      const scale = chanceScaleAt(opportunities, src.effect.durationFrames, f);
+      if (scale <= 0) continue;
+      const effect = { ...src.effect, value: chanceValueOf(src.effect.value, scale) };
+      for (const slotIndex of targets) {
+        attackWindows.push({ slotIndex, sourceSlotIndex: src.sourceSlotIndex, effect, start: f, end: f + 1 });
+      }
+    }
     const finalAttacks = finalAttacksAt(rankSlots, attackWindows, f);
     return { ...context, attackRank: attackRankFor(e, rankSlots, finalAttacks, sourceSlotIndex) };
   };
@@ -409,9 +436,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   };
   /** フレーム f の発火で付く窓の始まり。射撃の回数トリガーは次のフレームから（Stage 8） */
   const startOf = (src: FiringSource, f: number): number => (isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
-  // 戦闘開始時の窓はループの前に登録する（1 発目のマガジンから効く）
+  // 戦闘開始時の窓はループの前に登録する（1 発目のマガジンから効く）。ソルジャーE.G. 編: 周期のトリガーの atStart も
   for (const src of [...stateTrack, ...hitTrack, ...attackTrack, ...firing]) {
-    if (src.effect.trigger !== 'battleStart' || frames <= 0) continue;
+    const t = src.effect.trigger;
+    const atStart = isResolvedTimer(t) && 'atStart' in t && t.atStart === true;
+    if ((t !== 'battleStart' && !atStart) || frames <= 0) continue;
     if (!conditionOk(src, 0)) continue;
     register(src, 0, withRank(src.effect, src.sourceSlotIndex, null, 0));
   }
@@ -981,6 +1010,13 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
       if (!src.fires(ev) || !conditionOk(src, f)) continue;
       register(src, startOf(src, f), fireContextOf(src.effect.trigger, ev));
+    }
+    for (const { src, opportunities } of chanceAttack) {
+      const trigger = src.effect.trigger;
+      const shot = ev.shots[src.sourceSlotIndex];
+      if (!shot || !isResolvedChance(trigger) || f + 1 >= frames) continue;
+      const weight = shotCountWeight(trigger.count, shot);
+      if (weight > 0) opportunities.push({ start: f + 1, q: Math.min(1, trigger.chance * weight) });
     }
     for (const src of firing) {
       if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み

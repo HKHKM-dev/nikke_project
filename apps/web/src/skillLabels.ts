@@ -88,6 +88,8 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
     if (trigger.stacks !== undefined) {
       return `${what} ${formatNumber(trigger.every / trigger.stacks)} 回 × ${trigger.stacks} スタックごと`;
     }
+    // ソルジャーE.G. 編: 確率のきっかけ（期待値。plan/design-soldier-eg.md 3.1 節）
+    if (trigger.chance !== undefined) return `${what}ごとに ${formatNumber(trigger.chance * 100)}% の確率`;
     const base = trigger.every === 1 ? `${what}ごと` : `${what} ${trigger.every} 回ごと`;
     // クルミ S2 編: フルバースト中だけ数える回数トリガー（plan/design-kurumi-s2.md 2.1 節）
     if (trigger.during === 'fullBurst') {

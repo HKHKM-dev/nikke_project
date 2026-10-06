@@ -26,7 +26,9 @@ import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
+import { chanceOpportunities, chancePieces, chanceValueOf } from './chance.ts';
 import {
+  isResolvedChance,
   isResolvedShotCount,
   isResolvedTimer,
   resolvePassives,
@@ -34,6 +36,7 @@ import {
   type AppliedEffect,
   type AppliedTimedEffect,
   type ResolvedEffect,
+  type ResolvedShotCountTrigger,
   type ResolvedTimedEffect,
   type ResolvedTrigger,
   type SkillLevels,
@@ -625,6 +628,28 @@ export function planBuffTimeline(
       for (const w of effectWindows(mine, effect, frames)) out.push(windowOf(slotIndex, sourceSlotIndex, effect, w));
     });
   };
+  /** ソルジャーE.G. 編: 確率のきっかけの効果の小片の窓を、対象の枠ごとに作る（対象は発火の文脈によらない。types.ts の validateChanceTimed） */
+  const chanceWindows = (
+    effect: ResolvedTimedEffect,
+    sourceSlotIndex: number,
+    events: readonly FrameEvents[],
+  ): BuffWindow[] => {
+    const trigger = effect.trigger as ResolvedShotCountTrigger & { chance: number };
+    const pieces = chancePieces(
+      chanceOpportunities(trigger, sourceSlotIndex, events, frames),
+      effect.durationFrames,
+      frames,
+    );
+    const out: BuffWindow[] = [];
+    slots.forEach((target, slotIndex) => {
+      if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character)) return;
+      for (const { start, end, scale } of pieces) {
+        const value = chanceValueOf(effect.value, scale);
+        out.push(windowOf(slotIndex, sourceSlotIndex, { ...effect, value }, { start, end }));
+      }
+    });
+    return out;
+  };
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
@@ -638,6 +663,11 @@ export function planBuffTimeline(
       }
       if (effect.condition !== undefined) {
         conditional.push({ sourceSlotIndex, effect });
+        continue;
+      }
+      // ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけは、期待値の小片の窓（値 × 付いている確率）にする
+      if (isResolvedChance(effect.trigger)) {
+        windows.push(...chanceWindows(effect, sourceSlotIndex, eventsOf(schedule, shots, frames, healsKey)));
         continue;
       }
       const fires = buffStartFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey);
