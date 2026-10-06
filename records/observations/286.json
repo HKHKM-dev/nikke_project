@@ -1,0 +1,181 @@
+[
+  {
+    "id": "286-01",
+    "recording": "286",
+    "kind": "hit",
+    "use": "compare",
+    "value": 176658,
+    "description": "環境コントロールの窓の中のフラワーのコアの会心でない 1 ヒット",
+    "source": "V-0248",
+    "readAt": "2026-10-07",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f808（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内の秒は (動画のフレーム − 808) ÷ 58.82（バーストもフルバーストも無い）。増分はフラワーの発だけ（エマは撃たない）。1 ヒット = 胴体 × (1 + 1.0 × コア + 0.5 × 会心)（フラワーの距離ボーナスは録画でも出なかった）× 環境コントロールの窓の中なら 1.039 の格子に、99 増分のうち 97 が ±1 で乗り、窓の中か外かは C-0305 の窓（0〜10・30〜40 秒…）と全部一致した。21 増分（f976〜f10161）がすべて 176,658。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "286-02",
+    "recording": "286",
+    "kind": "hit",
+    "use": "compare",
+    "value": 88329,
+    "description": "環境コントロールの窓の中のフラワーの胴体の会心でない 1 ヒット",
+    "source": "V-0248",
+    "readAt": "2026-10-07",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f808（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内の秒は (動画のフレーム − 808) ÷ 58.82（バーストもフルバーストも無い）。増分はフラワーの発だけ（エマは撃たない）。1 ヒット = 胴体 × (1 + 1.0 × コア + 0.5 × 会心)（フラワーの距離ボーナスは録画でも出なかった）× 環境コントロールの窓の中なら 1.039 の格子に、99 増分のうち 97 が ±1 で乗り、窓の中か外かは C-0305 の窓（0〜10・30〜40 秒…）と全部一致した。6 増分（f2728〜f8155）がすべて 88,329。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "286-03",
+    "recording": "286",
+    "kind": "hit",
+    "use": "compare",
+    "value": 170027,
+    "description": "環境コントロールの窓の外のフラワーのコアの会心でない 1 ヒット",
+    "source": "V-0248",
+    "readAt": "2026-10-07",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f808（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内の秒は (動画のフレーム − 808) ÷ 58.82（バーストもフルバーストも無い）。増分はフラワーの発だけ（エマは撃たない）。1 ヒット = 胴体 × (1 + 1.0 × コア + 0.5 × 会心)（フラワーの距離ボーナスは録画でも出なかった）× 環境コントロールの窓の中なら 1.039 の格子に、99 増分のうち 97 が ±1 で乗り、窓の中か外かは C-0305 の窓（0〜10・30〜40 秒…）と全部一致した。45 増分（f1505〜f11356）がすべて 170,027。窓の中の 176,658 との比は 1.0390。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "286-04",
+    "recording": "286",
+    "kind": "hit",
+    "use": "compare",
+    "value": 85014,
+    "description": "環境コントロールの窓の外のフラワーの胴体の会心でない 1 ヒット",
+    "source": "V-0248",
+    "readAt": "2026-10-07",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f808（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内の秒は (動画のフレーム − 808) ÷ 58.82（バーストもフルバーストも無い）。増分はフラワーの発だけ（エマは撃たない）。1 ヒット = 胴体 × (1 + 1.0 × コア + 0.5 × 会心)（フラワーの距離ボーナスは録画でも出なかった）× 環境コントロールの窓の中なら 1.039 の格子に、99 増分のうち 97 が ±1 で乗り、窓の中か外かは C-0305 の窓（0〜10・30〜40 秒…）と全部一致した。12 増分（f1669〜f11275）がすべて 85,014。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "286-05",
+    "recording": "286",
+    "kind": "hit",
+    "use": "compare",
+    "value": 212534,
+    "description": "環境コントロールの窓の外のフラワーのコア会心の 1 ヒット",
+    "source": "V-0248",
+    "readAt": "2026-10-07",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f808（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内の秒は (動画のフレーム − 808) ÷ 58.82（バーストもフルバーストも無い）。増分はフラワーの発だけ（エマは撃たない）。1 ヒット = 胴体 × (1 + 1.0 × コア + 0.5 × 会心)（フラワーの距離ボーナスは録画でも出なかった）× 環境コントロールの窓の中なら 1.039 の格子に、99 増分のうち 97 が ±1 で乗り、窓の中か外かは C-0305 の窓（0〜10・30〜40 秒…）と全部一致した。5 増分（f5343〜f11053）がすべて 212,534。ほかに窓の中のコア会心 220,823（6 増分）・窓の外の胴体会心 127,520（2 増分）も同じ格子に乗る。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "286-06",
+    "recording": "286",
+    "kind": "hit",
+    "use": "record",
+    "value": [117513, 69218],
+    "description": "格子に乗らなかったフラワーの 2 増分（f4862・f7210）",
+    "source": "V-0248",
+    "readAt": "2026-10-07",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f808（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内の秒は (動画のフレーム − 808) ÷ 58.82（バーストもフルバーストも無い）。増分はフラワーの発だけ（エマは撃たない）。1 ヒット = 胴体 × (1 + 1.0 × コア + 0.5 × 会心)（フラワーの距離ボーナスは録画でも出なかった）× 環境コントロールの窓の中なら 1.039 の格子に、99 増分のうち 97 が ±1 で乗り、窓の中か外かは C-0305 の窓（0〜10・30〜40 秒…）と全部一致した。2 つともゲーム内 68.9 秒・108.8 秒で、的のジャンプ（狙えない窓の始まり 68.7 秒・108.3 秒の代表値。C-0057）の直前。ジャンプの最中の着弾とみて、仮説の判定には使わない。"
+    }
+  }
+]

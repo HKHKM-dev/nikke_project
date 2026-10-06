@@ -1,0 +1,35 @@
+{
+  "id": "286",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-286_rl+mg_flower+emma-tu_explosion.mp4",
+  "original": "2026-10-06_23-49-51.mp4",
+  "durationSec": 198.1,
+  "frames": 11885,
+  "fps": 60,
+  "sizeMB": 239.8,
+  "sha256": "c327508503ad",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0248（エマ：TU S2 の味方全体の発射体爆発ダメージ▲）の録画。フラワー（AI）+ エマ：TU（操作・撃たない）・AUTO 射撃 OFF・オートバースト OFF（バーストは撃たない）"
+}

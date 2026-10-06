@@ -1,0 +1,390 @@
+{
+  "verification": "V-0249",
+  "note": "I-DOLL・フラワー（304・RL・バースト I・枠 1・AI）+ ウンファ：TU（95・SR・バースト II・枠 2・AI）+ エマ：TU（93・MG・バースト I・枠 3・操作・撃たない）・AUTO 射撃 OFF・オートバースト OFF（バーストは手でフラワー I → ウンファ II の順に撃ち、エマのバーストは撃たない）・灼熱タブの BigArms・射撃場 3 分・スペック固定 ON。III がいないのでフルバーストは起きず、チェーンは II で切れる。モデルは自動のバーストで、同じ段の候補は枠の若い順なので、毎回フラワー I → ウンファ II になる（1 回目は 785f・814f）。モデルでは操作のエマも撃つ（ゲージが早く溜まり、バーストの時刻が録画とずれる）が、比べるのはバーストからの相対の時刻で決まる 1 ヒットの値なので、時刻のずれは値に効かない。どの仮説も V-0248 の H1（エマの S2 の効果 2。発射体爆発ダメージ 2.32%▲）を足してある（V-0248 が H1 で合う前提）。S1 の環境コントロールは、ウンファがいるので戦闘中ずっと × 1.039（C-0306）",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 95,
+      "controlled": false
+    },
+    {
+      "rid": 93,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "フォーメーションの追加効果（エマの AS 適用中の効果 1・2、ウンファの LT 適用中の効果 1・2）は効かない。V-0248 の H1 だけ",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "projectileExplosionDamage",
+              "ref": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H1",
+      "note": "4 つとも効く（2 体が編成にいれば。withCharacter）。発射体爆発ダメージ▲は 2.32 + 3.09 + 5.11 = 10.52%（攻撃ダメージ▲の枠。C-0205）、防御力無視ダメージ▲はカモフラージュの 42.24 + 30.97 + 30.97 = 104.18%（同じ stat の和。置き場所は TRUE_DAMAGE_BUCKET の separate。攻撃ダメージ▲が無いので attackDamage でも同じ値）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "projectileExplosionDamage",
+              "ref": 2
+            }
+          },
+          {
+            "rid": 93,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "trueDamage",
+              "ref": 3,
+              "withCharacter": {
+                "rid": 95,
+                "present": true
+              }
+            }
+          },
+          {
+            "rid": 93,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "projectileExplosionDamage",
+              "ref": 4,
+              "withCharacter": {
+                "rid": 95,
+                "present": true
+              }
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "projectileExplosionDamage",
+              "ref": 3,
+              "withCharacter": {
+                "rid": 93,
+                "present": true
+              }
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "trueDamage",
+              "ref": 4,
+              "withCharacter": {
+                "rid": 93,
+                "present": true
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "エマの AS 適用中の追加効果（防御力無視ダメージ 30.97%▲・発射体爆発ダメージ 3.09%▲）だけ効く",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "projectileExplosionDamage",
+              "ref": 2
+            }
+          },
+          {
+            "rid": 93,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "trueDamage",
+              "ref": 3,
+              "withCharacter": {
+                "rid": 95,
+                "present": true
+              }
+            }
+          },
+          {
+            "rid": 93,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "projectileExplosionDamage",
+              "ref": 4,
+              "withCharacter": {
+                "rid": 95,
+                "present": true
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "ウンファの LT 適用中の追加効果（発射体爆発ダメージ 5.11%▲・防御力無視ダメージ 30.97%▲）だけ効く",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "projectileExplosionDamage",
+              "ref": 2
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "projectileExplosionDamage",
+              "ref": 3,
+              "withCharacter": {
+                "rid": 93,
+                "present": true
+              }
+            }
+          },
+          {
+            "rid": 95,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "trueDamage",
+              "ref": 4,
+              "withCharacter": {
+                "rid": 93,
+                "present": true
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "flower-core-pre",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストより前（モデルは 785f）のフラワーの 1 ヒット（コア・会心なし）。発射体爆発ダメージ▲の合計を見る"
+    },
+    {
+      "id": "flower-body-pre",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ区間の胴体"
+    },
+    {
+      "id": "flower-core-taken",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "徹甲炸裂弾の受けるダメージ▲（10 秒）の中のフラワーのコア（ウンファのバースト 814f から 286f）"
+    },
+    {
+      "id": "eun-pre-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "対照: バーストより前のウンファのコア（防御力無視ダメージの発でないので、どの仮説でも同じ）"
+    },
+    {
+      "id": "eun-round-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 830,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ウンファの炸裂弾（使用武器変更の 1 発。モデルは 817〜847f の区間）のコア。防御力無視ダメージ▲の合計が乗る。発射体爆発ダメージ▲はモデルでは乗らない（乗る読みは検証記録に手で書く）"
+    },
+    {
+      "id": "eun-camo-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 875,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "カモフラージュ（5 秒）と徹甲炸裂弾の中のウンファのコア（バーストから 1 秒）。防御力無視ダメージ▲の合計を見る"
+    },
+    {
+      "id": "eun-camo-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 875,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ区間のコア会心"
+    },
+    {
+      "id": "eun-taken-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1235,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "対照: カモフラージュの後・徹甲炸裂弾の中のウンファのコア（バーストから 7 秒）。防御力無視ダメージの発でないので、どの仮説でも同じ"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "57db64233f6b1098714207c2417ce789284b91f1",
+    "values": {
+      "H0": {
+        "flower-core-pre": 206202.6263296112,
+        "flower-body-pre": 103101.3131648056,
+        "flower-core-taken": 261514.1489071498,
+        "eun-pre-core": 713539.5038357567,
+        "eun-round-core": 1819458.80906247,
+        "eun-camo-core": 1287939.6018212575,
+        "eun-camo-core-crit": 1761321.8024706608,
+        "eun-taken-core": 904938.406356474
+      },
+      "H1": {
+        "flower-core-pre": 222727.85635211715,
+        "flower-body-pre": 111363.92817605857,
+        "flower-core-taken": 282472.0850001778,
+        "eun-pre-core": 713539.5038357567,
+        "eun-round-core": 2611762.511490264,
+        "eun-camo-core": 1848787.3165063574,
+        "eun-camo-core-crit": 2528309.0946882693,
+        "eun-taken-core": 904938.406356474
+      },
+      "H2": {
+        "flower-core-pre": 212429.8166673604,
+        "flower-body-pre": 106214.9083336802,
+        "flower-core-taken": 269411.7126300104,
+        "eun-pre-core": 713539.5038357567,
+        "eun-round-core": 2215610.660276367,
+        "eun-camo-core": 1568363.459163807,
+        "eun-camo-core-crit": 2144815.4485794646,
+        "eun-taken-core": 904938.406356474
+      },
+      "H3": {
+        "flower-core-pre": 216500.66601436795,
+        "flower-body-pre": 108250.33300718397,
+        "flower-core-taken": 274574.52127731725,
+        "eun-pre-core": 713539.5038357567,
+        "eun-round-core": 2215610.660276367,
+        "eun-camo-core": 1568363.459163807,
+        "eun-camo-core-crit": 2144815.4485794646,
+        "eun-taken-core": 904938.406356474
+      }
+    },
+    "seen": {}
+  }
+}
