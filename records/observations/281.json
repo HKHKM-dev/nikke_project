@@ -23,7 +23,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "addEffects": [
           {
             "rid": 300,
@@ -78,7 +77,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "addEffects": [
           {
             "rid": 300,
@@ -149,8 +147,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1

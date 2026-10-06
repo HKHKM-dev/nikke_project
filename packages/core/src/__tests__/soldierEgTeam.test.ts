@@ -122,12 +122,7 @@ describe('ソルジャーE.G. 単騎（射撃場・条件は自動）', () => {
 });
 
 describe('順位（アリスの S1。フルバースト時に最終攻撃力が最も高い味方）', () => {
-  const input = team(
-    [fixedSlot(836), fixedSlot(20), fixedSlot(191), fixedSlot(SOLDIER)],
-    plainEnemy,
-    true,
-    2,
-  );
+  const input = team([fixedSlot(836), fixedSlot(20), fixedSlot(191), fixedSlot(SOLDIER)], plainEnemy, true, 2);
   const plan = planTeamRun(input);
 
   it('counts the expected Attack up of the soldier at the frame of each ranking', () => {

@@ -76,9 +76,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -94,7 +92,8 @@
           }
         ]
       },
-      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・胴体・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・胴体・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）",
+      "observations": ["283-01", "278-01", "279-01"]
     },
     {
       "id": "hit-on-body-crit",
@@ -109,9 +108,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -127,7 +124,8 @@
           }
         ]
       },
-      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・胴体・距離ボーナスなし・会心）。値は区間に依らない（S2 はダメージに効かない）"
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・胴体・距離ボーナスなし・会心）。値は区間に依らない（S2 はダメージに効かない）",
+      "observations": ["283-04", "278-04", "279-04"]
     },
     {
       "id": "hit-on-body-dist",
@@ -142,9 +140,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -160,7 +156,8 @@
           }
         ]
       },
-      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・胴体・距離ボーナスあり・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・胴体・距離ボーナスあり・会心でない）。値は区間に依らない（S2 はダメージに効かない）",
+      "observations": ["283-03", "278-03", "279-03"]
     },
     {
       "id": "hit-on-body-dist-crit",
@@ -175,9 +172,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -208,9 +203,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -226,7 +219,8 @@
           }
         ]
       },
-      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・コア・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・コア・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）",
+      "observations": ["283-02", "278-02", "279-02"]
     },
     {
       "id": "hit-on-core-crit",
@@ -241,9 +235,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -274,9 +266,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -307,9 +297,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -340,9 +328,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -362,7 +348,8 @@
           }
         ]
       },
-      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・胴体・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・胴体・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）",
+      "observations": ["283-05", "278-05", "279-05"]
     },
     {
       "id": "hit-off-body-crit",
@@ -377,9 +364,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -399,7 +384,8 @@
           }
         ]
       },
-      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・胴体・距離ボーナスなし・会心）。値は区間に依らない（S2 はダメージに効かない）"
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・胴体・距離ボーナスなし・会心）。値は区間に依らない（S2 はダメージに効かない）",
+      "observations": ["283-08", "278-08", "279-08"]
     },
     {
       "id": "hit-off-body-dist",
@@ -414,9 +400,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -436,7 +420,8 @@
           }
         ]
       },
-      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・胴体・距離ボーナスあり・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・胴体・距離ボーナスあり・会心でない）。値は区間に依らない（S2 はダメージに効かない）",
+      "observations": ["283-07", "278-07", "279-07"]
     },
     {
       "id": "hit-off-body-dist-crit",
@@ -451,9 +436,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -488,9 +471,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -510,7 +491,8 @@
           }
         ]
       },
-      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・コア・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・コア・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）",
+      "observations": ["283-06", "278-06", "279-06"]
     },
     {
       "id": "hit-off-core-crit",
@@ -525,9 +507,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -562,9 +542,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -599,9 +577,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -633,9 +609,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "note": "S1 の▲が付いている発の割合の期待値（全部の発）。録画では、1 発の値の格子で▲が付いていると読めた発の割合（読めた発のうち）"
@@ -650,9 +624,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "note": "続けて撃った 2 発で、前で付いていて後で切れている組の数の期待値。録画では、▲が付いていると読めた発の次の読めた発が付いていない回数"
@@ -724,9 +696,9 @@
       }
     },
     "seen": {
-      "283": [],
       "278": [],
-      "279": []
+      "279": [],
+      "283": []
     }
   }
 }

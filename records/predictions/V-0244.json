@@ -34,9 +34,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -63,7 +61,8 @@
           }
         ]
       },
-      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いている・サクラ S1 の敵の受けるダメージ▲が付いている・会心でない。▲の有無は定義の差し替え（addEffects）で決めた格子の値"
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いている・サクラ S1 の敵の受けるダメージ▲が付いている・会心でない。▲の有無は定義の差し替え（addEffects）で決めた格子の値",
+      "observations": ["280-02", "280-04", "281-01"]
     },
     {
       "id": "burst-s1on-dton-crit",
@@ -76,9 +75,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -118,9 +115,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -151,7 +146,8 @@
           }
         ]
       },
-      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いている・サクラ S1 の敵の受けるダメージ▲が付いていない・会心でない。▲の有無は定義の差し替え（addEffects）で決めた格子の値"
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いている・サクラ S1 の敵の受けるダメージ▲が付いていない・会心でない。▲の有無は定義の差し替え（addEffects）で決めた格子の値",
+      "observations": ["280-03"]
     },
     {
       "id": "burst-s1on-dtoff-crit",
@@ -164,9 +160,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -210,9 +204,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -243,7 +235,8 @@
           }
         ]
       },
-      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いていない・サクラ S1 の敵の受けるダメージ▲が付いている・会心でない。▲の有無は定義の差し替え（addEffects）で決めた格子の値"
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いていない・サクラ S1 の敵の受けるダメージ▲が付いている・会心でない。▲の有無は定義の差し替え（addEffects）で決めた格子の値",
+      "observations": ["281-02"]
     },
     {
       "id": "burst-s1off-dton-crit",
@@ -256,9 +249,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -289,7 +280,8 @@
           }
         ]
       },
-      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いていない・サクラ S1 の敵の受けるダメージ▲が付いている・会心。▲の有無は定義の差し替え（addEffects）で決めた格子の値"
+      "note": "ソルジャーE.G. のバーストの倍率ダメージの 1 ヒット（1 回目の発動。フルバースト中）。S1 の攻撃力▲が付いていない・サクラ S1 の敵の受けるダメージ▲が付いている・会心。▲の有無は定義の差し替え（addEffects）で決めた格子の値",
+      "observations": ["280-01"]
     },
     {
       "id": "burst-s1off-dtoff",
@@ -302,9 +294,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -352,9 +342,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "addEffects": [
           {
@@ -401,9 +389,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "note": "III（ソルジャーE.G.）の発動（右のバースト欄の III のタイマーが 00.00 になった最初のフレーム）から、バーストのヒットの HUD の増分までの動画のフレーム（5 回）。いまのモデルは遅れの表に行が無く 0（止まりの 22f を足した値になる）。録画 280 で読んで遅れの表に入れ、281 は入れた後に読む前の予測を足す"
@@ -420,9 +406,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "note": "V-0240 の再現: ソルジャーE.G. の S2 の発動の表示のフレーム（戦闘開始からの動画のフレーム。フルバーストの入りの止まりを含む）。モデルのフルバーストの時刻が録画と違えば、止まりの数の分（1 回 22f）ずれる"
@@ -441,32 +425,9 @@
         "burst-s1off-dton-crit": 1029811.1191199999,
         "burst-s1off-dtoff": 585885.6,
         "burst-s1off-dtoff-crit": 878828.3999999999,
-        "burst-delays": [
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
+        "burst-delays": [0, 0, 0, 0, 0],
         "s2-starts-team": [
-          529,
-          1081,
-          1610,
-          2140,
-          2669,
-          3220,
-          3750,
-          4279,
-          4809,
-          5338,
-          5890,
-          6419,
-          6948,
-          7478,
-          8029,
-          8559,
-          9088,
-          9617,
+          529, 1081, 1610, 2140, 2669, 3220, 3750, 4279, 4809, 5338, 5890, 6419, 6948, 7478, 8029, 8559, 9088, 9617,
           10169
         ]
       }

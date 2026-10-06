@@ -51,9 +51,9 @@ describe('chance / chanceRef の検証', () => {
 
   it('rejects a chance outside (0, 100], both forms, and counts other than normalShot / normalHit', () => {
     for (const chance of [0, -1, 101]) {
-      expect(() =>
-        parseSkillDefinition(withSkill1([{ ...S1, trigger: { count: 'normalHit', chance } }])),
-      ).toThrow(/expected a percentage in \(0, 100\]/);
+      expect(() => parseSkillDefinition(withSkill1([{ ...S1, trigger: { count: 'normalHit', chance } }]))).toThrow(
+        /expected a percentage in \(0, 100\]/,
+      );
     }
     expect(() =>
       parseSkillDefinition(withSkill1([{ ...S1, trigger: { count: 'normalHit', chance: 5, chanceRef: 3 } }])),
@@ -74,7 +74,9 @@ describe('chance / chanceRef の検証', () => {
   it('rejects stats that do not add up linearly and the fields whose meaning is undecided', () => {
     expect(() => parseSkillDefinition(withSkill1([{ ...S1, stat: 'maxAmmo' }]))).toThrow(/not supported for "maxAmmo"/);
     expect(() => parseSkillDefinition(withSkill1([{ ...S1, stat: 'hitRate' }]))).toThrow(/not supported for "hitRate"/);
-    expect(() => parseSkillDefinition(withSkill1([{ ...S1, maxStacks: 3 }]))).toThrow(/cannot be combined with maxStacks/);
+    expect(() => parseSkillDefinition(withSkill1([{ ...S1, maxStacks: 3 }]))).toThrow(
+      /cannot be combined with maxStacks/,
+    );
     expect(() => parseSkillDefinition(withSkill1([{ ...S1, condition: { selfBuffed: 'critRate' } }]))).toThrow(
       /cannot be combined with condition/,
     );

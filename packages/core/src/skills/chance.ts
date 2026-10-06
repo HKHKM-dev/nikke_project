@@ -93,7 +93,11 @@ export function chanceValueOf(value: number, scale: number): number {
 }
 
 /** フレーム frame に効果が付いている確率（chancePieces の、frame を含む小片の scale。無ければ 0） */
-export function chanceScaleAt(opportunities: readonly ChanceOpportunity[], durationFrames: number, frame: number): number {
+export function chanceScaleAt(
+  opportunities: readonly ChanceOpportunity[],
+  durationFrames: number,
+  frame: number,
+): number {
   const active = opportunities.filter((o) => o.start <= frame && frame < o.start + durationFrames);
   if (active.length === 0) return 0;
   return scaleOf([...active].sort((a, b) => a.start - b.start).map((o) => o.q));

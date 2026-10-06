@@ -348,7 +348,10 @@ function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
  * ソルジャーE.G. 編（V-0241）: 枠の、スロット skill の確率のきっかけの効果の機会（発の次のフレームから、確率 = p × その発の回数の量）と
  * 維持のフレーム。窓の小片（skills/chance.ts）と同じ機会を、射撃の列から作り直す
  */
-function chanceSourceOf(result: SimResult, ctx: MetricContext): { opportunities: ChanceOpportunity[]; duration: number } {
+function chanceSourceOf(
+  result: SimResult,
+  ctx: MetricContext,
+): { opportunities: ChanceOpportunity[]; duration: number } {
   const input = slotOf(ctx.input.slots, ctx);
   if (input.skills === undefined || input.skills.definition === null)
     throw new Error(`枠 ${String(ctx.args.slot)} にスキル定義が無い`);

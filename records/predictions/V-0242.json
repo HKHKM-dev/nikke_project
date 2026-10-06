@@ -33,12 +33,11 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "III（ソルジャーE.G.）の発動（右のバースト欄の III のタイマーが 00.00 になった最初のフレーム）から、バーストのヒットの HUD の増分までの動画のフレーム（5 回）"
+      "note": "III（ソルジャーE.G.）の発動（右のバースト欄の III のタイマーが 00.00 になった最初のフレーム）から、バーストのヒットの HUD の増分までの動画のフレーム（5 回）",
+      "observations": ["281-04"]
     }
   ],
   "predicted": {
@@ -46,13 +45,7 @@
     "commit": "fc5018b24eab02c29b542104c8092c0b137b04f4",
     "values": {
       "H1": {
-        "burst-delays": [
-          29,
-          29,
-          29,
-          29,
-          29
-        ]
+        "burst-delays": [29, 29, 29, 29, 29]
       }
     },
     "seen": {

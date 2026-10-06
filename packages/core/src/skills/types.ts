@@ -1250,7 +1250,10 @@ function parseTrigger(
       if (!allowChance) fail(`${path}.chance`, 'a chance trigger (chance / chanceRef) is only allowed in timed');
       if (v.chance !== undefined && v.chanceRef !== undefined) fail(path, 'at most one of chance and chanceRef');
       if (!(CHANCE_COUNT_KINDS as readonly string[]).includes(trigger.count)) {
-        fail(`${path}.count`, `a chance trigger needs count ${CHANCE_COUNT_KINDS.join(' or ')}, got "${trigger.count}"`);
+        fail(
+          `${path}.count`,
+          `a chance trigger needs count ${CHANCE_COUNT_KINDS.join(' or ')}, got "${trigger.count}"`,
+        );
       }
       for (const key of ['every', 'everyRef', 'stacksRef', 'during'] as const) {
         if (v[key] !== undefined) fail(`${path}.${key}`, `a chance trigger cannot be combined with ${key}`);
