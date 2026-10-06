@@ -1,0 +1,130 @@
+{
+  "verification": "V-0271",
+  "note": "既存の録画 221（ココア（I・AI）+ デルタ（II・AI）+ ラピ（III・操作・AUTO 射撃 ON）・灼熱の的・3 分モード・スペック固定 ON・オートバースト ON）の読み直し。ラピの S2 のヒットを読む前に出した（V-0201 はラピのバーストのヒットだけを読んだ）。いまのモデル（S2 は未対応で発動しない）は、指標を出せないので仮説に入れず、検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 10,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S2 は戦闘開始から 20 秒ごと（録画 073 の探索。073-19）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 10,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 20
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "S2 は 40 秒ごと（ラピのバーストの CT と同じ。録画 018 ではフルバーストの周期ごとにしか同じ値が見えなかったことからの対照の仮説）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 10,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 40
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "180 秒の S2 の回数"
+    },
+    {
+      "id": "mean-interval",
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "S2 の 1 回目から最後までの動画のフレーム数 ÷ (回数 − 1)（フルバーストの入りの止まりを含む）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "646d5ed4292e59df904f5c59fe9e64d27613663c",
+    "values": {
+      "H1": {
+        "count": 8,
+        "mean-interval": 1186
+      },
+      "H2": {
+        "count": 4,
+        "mean-interval": 2375
+      }
+    },
+    "seen": {
+      "221": ["221-01", "221-02", "221-03", "221-04", "221-05", "221-06", "221-07", "221-08"],
+      "073": [
+        "054-05",
+        "073-01",
+        "073-02",
+        "073-03",
+        "073-04",
+        "073-05",
+        "073-06",
+        "073-07",
+        "073-08",
+        "073-09",
+        "073-10",
+        "073-11",
+        "073-12",
+        "073-13",
+        "073-14",
+        "073-15",
+        "073-16",
+        "073-17",
+        "073-18",
+        "073-19"
+      ]
+    }
+  }
+}
