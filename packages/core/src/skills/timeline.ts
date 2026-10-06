@@ -684,6 +684,18 @@ export function planBuffTimeline(
         });
       }
       perTarget.forEach((starts, slotIndex) => {
+        // 順位の発数編（plan/design-ranked-shot-duration.md 2 節）: 「N 発間維持」は発火のフレームの順位で決まった枠の射撃で切る
+        if (effect.durationShots !== undefined) {
+          for (const [start, end] of shotCountWindows(
+            starts,
+            shots[slotIndex]?.frames ?? [],
+            effect.durationShots,
+            frames,
+          )) {
+            rankedWindows.push(windowOf(slotIndex, sourceSlotIndex, effect, { start, end }));
+          }
+          return;
+        }
         for (const w of effectWindows(starts, effect, frames)) {
           rankedWindows.push(windowOf(slotIndex, sourceSlotIndex, effect, w));
         }

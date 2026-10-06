@@ -9,7 +9,7 @@ import {
   formatDamageCondition,
   formatTrigger,
 } from '../skillLabels.ts';
-import { framesToGameSeconds } from '@nikke/core';
+import { capCritRate, framesToGameSeconds } from '@nikke/core';
 
 type Props = {
   character: CharacterData;
@@ -223,7 +223,7 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
             <td>
               {`+${formatNumber(rep.trigger.boost.crit, 3)}${
                 hasCritBuff
-                  ? `（確率 ${formatPercent(character.crit.rate + buffs.critRate, 2)} × ダメージ +${formatPercent(
+                  ? `（確率 ${formatPercent(capCritRate(character.crit.rate + buffs.critRate), 2)} × ダメージ +${formatPercent(
                       character.crit.damage - 1 + buffs.critDamage,
                       2,
                     )}）`

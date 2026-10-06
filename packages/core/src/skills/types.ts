@@ -1278,7 +1278,7 @@ function validateFixedChargeTime(effect: TimedEffect, path: string): void {
 /** durationRef / durationSeconds のちょうど片方 */
 /**
  * ヘルム編: timed の維持。秒（durationRef / durationSeconds）か発数（durationShots / durationShotsRef）のちょうど 1 つ。
- * 発数の窓は 1 パス目の射撃の列から後で決めるので、1 パス目のループの中で窓を追う stat と順位の対象には書けない
+ * 発数の窓は 1 パス目の射撃の列から後で決めるので、1 パス目のループの中で窓を追う stat には書けない
  */
 function parseTimedDuration(
   v: Record<string, Json>,
@@ -1319,7 +1319,7 @@ function parseTimedDuration(
       `a duration in shots is not supported for "${stat}" (its window is tracked inside the first pass)`,
     );
   }
-  if (target === 'topAttack') fail(`${path}.target`, 'a duration in shots cannot target "topAttack"');
+  // 順位の発数編（plan/design-ranked-shot-duration.md 2 節）: topAttack は 2 段目（順位）で、対象の枠の射撃で窓を切る
   if (hasShots) return { durationShots: parsePositiveInt(v.durationShots, `${path}.durationShots`) };
   return { durationShotsRef: parseRef(v.durationShotsRef, `${path}.durationShotsRef`) };
 }

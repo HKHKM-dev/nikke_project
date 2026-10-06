@@ -14,6 +14,7 @@ import {
   applyChargeBuffs,
   scaleBasisPoints,
   applyCritBuffs,
+  capCritRate,
   type BuffTotals,
 } from './skills/buffs.ts';
 import { computeStat, type GrowthInput } from './stats.ts';
@@ -352,7 +353,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const boostCore = coreRate * (shot.coreDamageRate - 1 + buffs.coreDamage);
   const crit = applyCritBuffs(character.crit, buffs);
   // ヘルム編: 通常攻撃のクリティカル確率▲は通常攻撃の会心率にだけ足す（射撃ごとの倍率ダメージは boostSkillCrit）
-  const boostCrit = (crit.rate + buffs.normalCritRate) * (crit.damage - 1);
+  const boostCrit = capCritRate(crit.rate + buffs.normalCritRate) * (crit.damage - 1);
   const boostSkillCrit = crit.rate * (crit.damage - 1);
   const boostDistance = condition.distanceBonus && character.bonusRange !== null ? DISTANCE_BONUS : 0;
   const boostFullBurst = condition.fullBurst ? FULL_BURST_BOOST : 0;

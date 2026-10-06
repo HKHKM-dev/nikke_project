@@ -16,7 +16,7 @@ import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
 import { effectiveMaxAmmo, firingParams } from '../frame/firing.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
-import { applyCritBuffs } from '../skills/buffs.ts';
+import { applyCritBuffs, capCritRate } from '../skills/buffs.ts';
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
@@ -320,7 +320,9 @@ function critRateAt(result: SimResult, ctx: MetricContext): number {
   const frame = Number(ctx.args.frame);
   const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
-  return applyCritBuffs(input.character.crit, segment.trigger.buffs).rate + segment.trigger.buffs.normalCritRate;
+  return capCritRate(
+    applyCritBuffs(input.character.crit, segment.trigger.buffs).rate + segment.trigger.buffs.normalCritRate,
+  );
 }
 
 /**

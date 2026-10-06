@@ -75,7 +75,7 @@ notes の種類: 未対応 28・前提の外 21・計算に無関係 28・補足
   - effects[0] timed・fullBurstStart・critDamage: C-0323（確定）
   - effects[1] timed・fullBurstStart・critRate: C-0324（仮説）
   - effects[2] timed・fullBurstStart・attackDamage: C-0323（確定）
-  - notes[0] 未対応: フルバーストタイムの発動時に、自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）に付くクリティカル確率▲（1 発間）は未対応。順位で決まる対象への発数の維持（topAttack と durationShots）が語彙に無い: 根拠なし
+  - notes[0] 未対応: フルバーストタイムの発動時に、自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）に付くクリティカル確率▲（1 発間）は未対応。語彙（topAttack と durationShots の組み合わせ）はあるが、撮っていない（plan/design-ranked-shot-duration.md 5 節）: 根拠なし
 - **宝物版 burst**: supported
   - effects[0] timed・burstUse・attack: C-0322（確定）
   - effects[1] timed・burstUse・critDamage: C-0322（確定）

@@ -69,7 +69,7 @@ describe('ミランダ（32）の定義', () => {
     ]);
     expect(s2.map((e) => e.value)).toEqual([0.3299, 0.301, 0.237].map((v) => expect.closeTo(v, 12)));
     for (const e of s2) expect(e.durationFrames).toBe(TEN_SECONDS);
-    // 3 行目（1 発間のクリティカル確率▲）は語彙に無いので notes のまま
+    // 3 行目（1 発間のクリティカル確率▲）は撮っていないので notes のまま（語彙は plan/design-ranked-shot-duration.md）
     expect(applied.definition!.skills.skill2.support).toBe('partial');
     expect(applied.definition!.skills.burst.support).toBe('supported');
   });
