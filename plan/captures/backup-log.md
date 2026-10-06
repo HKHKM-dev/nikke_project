@@ -203,3 +203,5 @@
 2026-10-06 22:46 に録画 276（ソルジャーF.A.単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-276_sg_soldier-fa.mp4`）だけを同期した。E: と I: で sha256 が一致（`3353dff0bd7d`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-06 22:52 に録画 277（I-DOLL・オーシャン + ソルジャーF.A.）を `intake.ts` で取り込み、この 1 本（`range/20261006-277_sg_soldier-fa_burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`224315c3d912`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 23:50 に録画 285（ミランダ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261006-285_smg+sr+ar_miranda+delta+idoll-sun_delta-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`fc44b514ec7b`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
