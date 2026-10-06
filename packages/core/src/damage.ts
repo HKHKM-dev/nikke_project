@@ -9,12 +9,13 @@ import { elementMultiplier } from './element.ts';
 import type { ResolvedSkillDamage } from './skills/burstDamage.ts';
 import {
   ZERO_BUFFS,
-  applyAttackBuffs,
   applyAttackDamageBuffs,
   applyChargeBuffs,
   scaleBasisPoints,
   applyCritBuffs,
   capCritRate,
+  roundedAttack,
+  type AttackRounding,
   type BuffTotals,
 } from './skills/buffs.ts';
 import { computeStat, type GrowthInput } from './stats.ts';
@@ -181,6 +182,8 @@ export type TriggerDamageInput = {
   buffs?: BuffTotals;
   /** Stage 11 モダニア: その枠の射撃ごとの倍率ダメージ（resolvePerShotDamage の結果）。省略は無し */
   perShot?: readonly ResolvedSkillDamage[];
+  /** 攻撃力▲の丸め（TeamInput.attackRounding）。省略は ATTACK_ROUNDING（いまのモデル） */
+  attackRounding?: AttackRounding;
 };
 
 export type DamageInput = TriggerDamageInput & {
@@ -336,8 +339,9 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
 
   const baseAttack = baseAttackOf(input);
   // C-0027: 最終攻撃力は整数に丸めてから防御力を引く。向きは四捨五入（136,777.36 → 136,777 が切り上げを、
-  // 265,497.70 → 265,498 が切り捨てを否定する。V-0185）。倍率ダメージ・持続ダメージもこの値を使う
-  const attack = Math.round(applyAttackBuffs(baseAttack, buffs));
+  // 265,497.70 → 265,498 が切り捨てを否定する。V-0185）。倍率ダメージ・持続ダメージもこの値を使う。
+  // どの単位で丸めるか（▲の合計か、効果ごとか）は attackRounding（V-0265）
+  const attack = roundedAttack(baseAttack, buffs, input.attackRounding);
   const baseHit = Math.max(1, attack - enemy.defence);
   const weaponMultiplier = shot.damage / 10000;
   const charge = isChargeWeapon(shot) && condition.fullCharge;

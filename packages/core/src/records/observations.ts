@@ -17,7 +17,7 @@ import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
 import { effectiveMaxAmmo, firingParams } from '../frame/firing.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
-import { applyCritBuffs, capCritRate } from '../skills/buffs.ts';
+import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buffs.ts';
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
 import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
 import { MAX_SKILL_LEVELS, isResolvedChance, resolveTimed } from '../skills/resolve.ts';
@@ -98,6 +98,11 @@ export type CompareSetup = {
    * 省略はいまのモデル。予測の仮説（H1〜H3）の override に使う
    */
   sustainedDamagePlacement?: SustainedDamagePlacement;
+  /**
+   * 攻撃力▲の丸め（TeamInput.attackRounding。V-0265）。省略はいまのモデル（C-0027）。
+   * 予測の仮説の override に使う
+   */
+  attackRounding?: AttackRounding;
   /** V-0165: false なら、録画（予測の編成）の宝物の段階を使わず、どの枠も基礎版のスキルにする。省略 true */
   treasure?: boolean;
   /**
@@ -764,6 +769,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
   dotStackTickDamage: { args: ['slot', 'frame', 'stacks', 'crit'], sim: dotStackTickDamage },
   skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
+  skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
   fullBurstCrossingShotGauge: { args: ['slot'], sim: fullBurstCrossingShotGauge },
@@ -864,6 +870,18 @@ function skillHitDamage(result: SimResult, ctx: MetricContext): number {
   const hit = hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目の倍率ダメージが無い`);
   return oneHitValue(hit.hit, ctx.args.crit === true);
+}
+
+/**
+ * V-0265: 倍率ダメージの n 回目から count 回（skillHitDamage と同じ通し番号）の和。同じ発で出る 2 つの倍率ダメージ
+ * （ドレイクの S2 の毎回のヒットと「5 回攻撃」）は HUD の総ダメージの 1 つの増分に乗るので、和で比べる
+ */
+function skillHitsDamage(result: SimResult, ctx: MetricContext): number {
+  const n = Number(ctx.args.n);
+  let sum = 0;
+  for (let i = n; i < n + Number(ctx.args.count); i++)
+    sum += skillHitDamage(result, { ...ctx, args: { ...ctx.args, n: i } });
+  return sum;
 }
 
 /**
@@ -1186,6 +1204,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     ...(setup.sustainedDamagePlacement === undefined
       ? {}
       : { sustainedDamagePlacement: setup.sustainedDamagePlacement }),
+    ...(setup.attackRounding === undefined ? {} : { attackRounding: setup.attackRounding }),
   };
 }
 

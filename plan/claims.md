@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 247・仮説 71・棄却 61・範囲外 1（計 380）
+件数: 確定 247・仮説 72・棄却 61・範囲外 1（計 381）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -719,6 +719,11 @@
   - 根拠: `253-01`。V-0225
   - モデル側: damage.ts の normalAttackMultiplier（scaleBasisPoints(shot.damage, buffs.normalAttackDamage)。SG は 1 トリガーの値で丸める）
   - 検証記録: V-0225
+- **C-0398** 攻撃力▲が 2 つ以上重なっても、効果ごと・出どころのスキルごとには丸めず、▲を全部足した最終攻撃力を 1 回だけ四捨五入する（C-0027 の丸めの単位）。ドレイク（宝物）の S1 の 2 つ（同じスキル）だけ・それにリターのバースト・さらにリターの S1 が重なった 3 つの組み合わせの S2 のヒットが、合計の丸めと端数まで合い、効果ごと（同じスキルの 2 つで 1 大きい）・スキルごと（リターの窓の中で 1 小さい）とは合わない
+  - 状態: 仮説・等級: 厳密一致・更新日: 2026-10-07
+  - 根拠: `039-14`・`039-15`・`039-16`・`039-17`。V-0265
+  - モデル側: 実装済み（damage.ts の computeTriggerDamage → skills/buffs.ts の roundedAttack。既定 ATTACK_ROUNDING = 'total'）。効果ごと・スキルごとの丸め（AttackRounding の effect・skill）は、照合ランナーの setup.attackRounding で予測の仮説にだけ使う
+  - 検証記録: V-0265
 
 ## 育成・ステータス
 

@@ -509,7 +509,10 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
       passiveEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount: applied.appliedAmount });
     }
     const buildEffects = slot.buildEffects ?? NO_BUILD_EFFECTS;
-    for (const e of buildEffects) buffs = addRatioBuff(buffs, e.stat, e.value);
+    for (const e of buildEffects) {
+      const { kind, part, line, skillId } = e.source;
+      buffs = addRatioBuff(buffs, e.stat, e.value, `build:${kind}:${part ?? ''}:${line ?? skillId ?? ''}`);
+    }
     return { buffs, passiveEffects, buildEffects, timedEffects: [] };
   });
 }

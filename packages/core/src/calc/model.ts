@@ -136,6 +136,7 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
       enemy,
       model,
       attackOverride: slot.attackOverride,
+      attackRounding: input.attackRounding,
     };
     const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
     const perShot = perShotDamageOf(slot);

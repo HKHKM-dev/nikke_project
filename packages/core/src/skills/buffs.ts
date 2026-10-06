@@ -17,12 +17,29 @@ export type ChangedWeapon = {
   trueDamage?: true;
 };
 
+/**
+ * 攻撃力▲の丸め（V-0265）。最終攻撃力を整数にする所:
+ * - 'total': ▲を全部足した最終攻撃力を四捨五入する（C-0027。いまのモデル）
+ * - 'effect': ▲を効果ごとに四捨五入してから足す（同じスキルの同じ値の効果＝スタックは 1 つにまとめる）
+ * - 'skill': ▲を出どころのスキル（キャラ × スロット）ごとに足して四捨五入してから足す
+ * 'effect'・'skill' は検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
+ */
+export type AttackRounding = 'total' | 'effect' | 'skill';
+
+/** いまのモデルの攻撃力▲の丸め（C-0027） */
+export const ATTACK_ROUNDING: AttackRounding = 'total';
+
+/** 攻撃力▲の 1 件（丸めの仮説用）。source は出どころ（`<resourceId>.<スロット>`。育成の効果層は `build`） */
+export type AttackPart = { source: string; ratio: number; flat: number };
+
 /** 1 体が受けるバフの合計。attackFlat 以外はすべて比率の加算（0.2 = +20%） */
 export type BuffTotals = {
   /** 攻撃力の比率加算。Σ(stat attack, scaling ratio) */
   attackRatio: number;
   /** 攻撃力の固定加算（実数）。Σ(発動者のバフ前攻撃力 × value) */
   attackFlat: number;
+  /** 攻撃力▲の内訳（足した順）。attackRatio・attackFlat と同じものを 1 件ずつ持つ。丸めの仮説（AttackRounding）だけが読む */
+  attackParts: readonly AttackPart[];
   /** 会心率の加算。crit.rate に足す */
   critRate: number;
   /** 会心ダメージ倍率の加算。crit.damage − 1 に足す */
@@ -102,6 +119,7 @@ export type BuffTotals = {
 export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   attackRatio: 0,
   attackFlat: 0,
+  attackParts: Object.freeze([]) as readonly AttackPart[],
   critRate: 0,
   critDamage: 0,
   attackDamage: 0,
@@ -130,7 +148,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
 });
 
 /** stat に対応する BuffTotals の比率フィールド */
-const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon'>> = {
+const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attackParts'>> = {
   attack: 'attackRatio',
   critRate: 'critRate',
   critDamage: 'critDamage',
@@ -161,15 +179,25 @@ export function statTotal(totals: BuffTotals, stat: BuffStat): number {
   return totals[RATIO_FIELD[stat]];
 }
 
-/** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す */
-export function addRatioBuff(totals: BuffTotals, stat: BuffStat, ratio: number): BuffTotals {
+/** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す。攻撃力は内訳にも出どころ source で足す */
+export function addRatioBuff(totals: BuffTotals, stat: BuffStat, ratio: number, source = 'build'): BuffTotals {
   const field = RATIO_FIELD[stat];
-  return { ...totals, [field]: totals[field] + ratio };
+  const next = { ...totals, [field]: totals[field] + ratio };
+  return stat === 'attack' ? { ...next, attackParts: [...totals.attackParts, { source, ratio, flat: 0 }] } : next;
 }
 
-/** 攻撃力の固定加算（実数）。新しいオブジェクトを返す */
-export function addFlatAttack(totals: BuffTotals, amount: number): BuffTotals {
-  return { ...totals, attackFlat: totals.attackFlat + amount };
+/** 攻撃力の固定加算（実数）。新しいオブジェクトを返す。内訳にも出どころ source で足す */
+export function addFlatAttack(totals: BuffTotals, amount: number, source = 'build'): BuffTotals {
+  return {
+    ...totals,
+    attackFlat: totals.attackFlat + amount,
+    attackParts: [...totals.attackParts, { source, ratio: 0, flat: amount }],
+  };
+}
+
+/** 効果の出どころ（AttackPart.source） */
+function sourceKeyOf(effect: { source?: ResolvedEffect['source'] }): string {
+  return effect.source === undefined ? 'build' : `${effect.source.resourceId}.${effect.source.skill}`;
 }
 
 export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
@@ -181,7 +209,10 @@ export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
  */
 export function applyResolvedEffect(
   totals: BuffTotals,
-  effect: Pick<ResolvedEffect, 'stat' | 'scaling' | 'value'> & { weapon?: ChangedWeapon },
+  effect: Pick<ResolvedEffect, 'stat' | 'scaling' | 'value'> & {
+    weapon?: ChangedWeapon;
+    source?: ResolvedEffect['source'];
+  },
   casterBaseAttack: number,
 ): AppliedBuff {
   // Stage 11 モダニア: 使用武器の変更は値を足さず、武器を差し替える（1 体に 1 つ。後から付いたほうを使う）
@@ -190,7 +221,7 @@ export function applyResolvedEffect(
   }
   if (effect.scaling === 'casterAttack') {
     const appliedAmount = casterBaseAttack * effect.value;
-    return { totals: addFlatAttack(totals, appliedAmount), appliedAmount };
+    return { totals: addFlatAttack(totals, appliedAmount, sourceKeyOf(effect)), appliedAmount };
   }
   if (effect.scaling === 'casterChargeTime') {
     // value は解決時に 発動者の基礎チャージ時間 × 比率 の秒数にしてある（skills/resolve.ts）
@@ -203,12 +234,35 @@ export function applyResolvedEffect(
   if (effect.scaling === 'flat') {
     return { totals: { ...totals, maxAmmoFlat: totals.maxAmmoFlat + effect.value }, appliedAmount: effect.value };
   }
-  return { totals: addRatioBuff(totals, effect.stat as BuffStat, effect.value), appliedAmount: effect.value };
+  return {
+    totals: addRatioBuff(totals, effect.stat as BuffStat, effect.value, sourceKeyOf(effect)),
+    appliedAmount: effect.value,
+  };
 }
 
 /** base × (1 + attackRatio) + attackFlat */
 export function applyAttackBuffs(baseAttack: number, buffs: BuffTotals): number {
   return baseAttack * (1 + buffs.attackRatio) + buffs.attackFlat;
+}
+
+/**
+ * 整数の最終攻撃力（C-0027）。rounding が 'total' なら applyAttackBuffs を四捨五入し、'effect'・'skill' なら
+ * ▲の内訳（attackParts）を効果ごと・出どころのスキルごとにまとめて四捨五入してから足す（AttackRounding）
+ */
+export function roundedAttack(
+  baseAttack: number,
+  buffs: BuffTotals,
+  rounding: AttackRounding = ATTACK_ROUNDING,
+): number {
+  if (rounding === 'total') return Math.round(applyAttackBuffs(baseAttack, buffs));
+  const groups = new Map<string, number>();
+  for (const part of buffs.attackParts) {
+    const key = rounding === 'skill' ? part.source : `${part.source}|${part.ratio}|${part.flat}`;
+    groups.set(key, (groups.get(key) ?? 0) + baseAttack * part.ratio + part.flat);
+  }
+  let attack = Math.round(baseAttack);
+  for (const amount of groups.values()) attack += Math.round(amount);
+  return attack;
 }
 
 /**

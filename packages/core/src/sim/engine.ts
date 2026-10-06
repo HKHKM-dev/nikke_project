@@ -189,6 +189,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       growth: slot.growth,
       enemy,
       attackOverride: slot.attackOverride,
+      attackRounding: input.attackRounding,
     };
     const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
     const perShot = perShotDamageOf(slot);
@@ -309,6 +310,7 @@ export function runSimulation(simInput: SimInput): SimResult {
         growth: slot.growth,
         enemy,
         attackOverride: slot.attackOverride,
+        attackRounding: input.attackRounding,
         buffs,
         condition: { ...slot.condition, fullBurst: false },
       });
