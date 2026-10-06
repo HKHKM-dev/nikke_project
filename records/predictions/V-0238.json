@@ -1,0 +1,176 @@
+{
+  "verification": "V-0238",
+  "note": "録画 2 の編成で出す。H0 では、ソルジャーF.A. の 1 ペレットはバーストの窓の中でも外でも同じ値（効果が無く、III がいないのでフルバーストも無い）",
+  "team": [
+    {
+      "rid": 305,
+      "controlled": true
+    },
+    {
+      "rid": 301,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの定義（ソルジャーF.A. のスキルはどれも効果なし。S1 は前提の外、S2・バーストはダメージに関係しない）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "solo-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 1（ソルジャーF.A. 単騎・操作）の 1 ペレット（胴体・非会心・距離ボーナスなし）。手順 1・3 の発（バーストは出ない。S2 の発動の前後を含む）。編成は予測ファイルの枠 2 で出す（オーシャンには味方の与ダメージを変える効果が無い（C-0254）ので、単騎の枠 1 と同じ値）。観測値は読んだ後に observations で結び付ける"
+    },
+    {
+      "id": "solo-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 1（ソルジャーF.A. 単騎・操作）の 1 ペレット（胴体・会心・距離ボーナスなし）。手順 1・3 の発（バーストは出ない。S2 の発動の前後を含む）。編成は予測ファイルの枠 2 で出す（オーシャンには味方の与ダメージを変える効果が無い（C-0254）ので、単騎の枠 1 と同じ値）。観測値は読んだ後に observations で結び付ける"
+    },
+    {
+      "id": "solo-body-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 1（ソルジャーF.A. 単騎・操作）の 1 ペレット（胴体・非会心・距離ボーナスあり（近））。手順 1・3 の発（バーストは出ない。S2 の発動の前後を含む）。編成は予測ファイルの枠 2 で出す（オーシャンには味方の与ダメージを変える効果が無い（C-0254）ので、単騎の枠 1 と同じ値）。観測値は読んだ後に observations で結び付ける"
+    },
+    {
+      "id": "solo-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 1（ソルジャーF.A. 単騎・操作）の 1 ペレット（胴体・会心・距離ボーナスあり（近））。手順 1・3 の発（バーストは出ない。S2 の発動の前後を含む）。編成は予測ファイルの枠 2 で出す（オーシャンには味方の与ダメージを変える効果が無い（C-0254）ので、単騎の枠 1 と同じ値）。観測値は読んだ後に observations で結び付ける"
+    },
+    {
+      "id": "burst-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 2（オーシャン（I・操作・撃たない）+ ソルジャーF.A.（II・AI））の 1 ペレット（胴体・非会心・距離ボーナスなし）。ソルジャーF.A. のバースト（II）の窓の中の発（sim の 1 回目の窓は f795〜1383）"
+    },
+    {
+      "id": "burst-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1000,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 2（オーシャン（I・操作・撃たない）+ ソルジャーF.A.（II・AI））の 1 ペレット（胴体・会心・距離ボーナスなし）。ソルジャーF.A. のバースト（II）の窓の中の発（sim の 1 回目の窓は f795〜1383）"
+    },
+    {
+      "id": "burst-body-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 2（オーシャン（I・操作・撃たない）+ ソルジャーF.A.（II・AI））の 1 ペレット（胴体・非会心・距離ボーナスあり（近））。ソルジャーF.A. のバースト（II）の窓の中の発（sim の 1 回目の窓は f795〜1383）"
+    },
+    {
+      "id": "burst-crit-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1000,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "録画 2（オーシャン（I・操作・撃たない）+ ソルジャーF.A.（II・AI））の 1 ペレット（胴体・会心・距離ボーナスあり（近））。ソルジャーF.A. のバースト（II）の窓の中の発（sim の 1 回目の窓は f795〜1383）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "9701f62252905860ace75f62b3c1570078096217",
+    "values": {
+      "H0": {
+        "solo-body": 11618.4888,
+        "solo-crit": 17427.7332,
+        "solo-body-dist": 15104.035439999998,
+        "solo-crit-dist": 20913.27984,
+        "burst-body": 11618.4888,
+        "burst-crit": 17427.7332,
+        "burst-body-dist": 15104.035439999998,
+        "burst-crit-dist": 20913.27984
+      }
+    },
+    "seen": {}
+  }
+}
