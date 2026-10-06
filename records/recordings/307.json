@@ -1,0 +1,29 @@
+{
+  "id": "307",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-307_sr_unfa_manual.mp4",
+  "original": "2026-10-07_01-17-56.mp4",
+  "durationSec": 47.4,
+  "frames": 2841,
+  "fps": 60,
+  "sizeMB": 57.4,
+  "sha256": "d9087579e245",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 92,
+      "name": "ウンファ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0250。ウンファ単騎・操作（AUTO 射撃 OFF）・オートバースト OFF。マガジンの最後の弾丸だけを的に当てる撮り方（V-0250 の撮影計画）"
+}
