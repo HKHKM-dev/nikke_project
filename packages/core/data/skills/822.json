@@ -29,7 +29,8 @@
           "en": "ATK down on the target after 5 normal attack hits only lowers the enemy's ATK and does not affect damage",
           "kind": "noDamage",
           "claims": [
-            "C-0253"
+            "C-0253",
+            "C-0367"
           ]
         }
       ]
