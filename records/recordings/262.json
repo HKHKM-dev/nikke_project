@@ -1,0 +1,41 @@
+{
+  "id": "262",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-262_smg+sr+ar_miranda+delta+idoll-sun_miranda-control.mp4",
+  "original": "2026-10-06_19-49-14.mp4",
+  "durationSec": 201.4,
+  "frames": 12084,
+  "fps": 60,
+  "sizeMB": 244.2,
+  "sha256": "0c59b7307d72",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 32,
+      "name": "ミランダ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0228（ミランダの宝物版 S2 の 3 行目）の録画。ミランダ（宝物 3・操作・撃たない）・デルタ（AI）・I-DOLL・サン（AI）。オートバースト ON"
+}
