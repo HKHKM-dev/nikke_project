@@ -1,0 +1,145 @@
+{
+  "verification": "V-0234",
+  "note": "V-0219 の案 1-a（窓の時刻の偏りの対照）。判定に使うのは、サクラ（836。SMG・AI）のコア命中率の、帯ごとの III（I-DOLL・サン）の発動から 30 秒の窓の中 − 外（coreHitRateDiff）。編成のどのキャラも味方に命中率▲を配らないので、モデルでは窓の中と外のコア命中率は同じ（差は 0）。sim の窓（サンのバースト使用から 1,765f）は f562・2914・5266・7618・9970 に始まる（V-0236 の予測ファイルの窓の終わり − 588f）。帯の中ではモデルのコア命中率は一定なので、録画の時刻が sim と違っても比べられる。サンは操作枠で撃たない（照準は画面の中央付近に置いたまま。V-0236 で残弾を読む）。サンのバーストの最大装弾数▲はサン自身にしか効かず（C-0275）、モデルには入れていない",
+  "team": [
+    {
+      "rid": 836,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "窓の時刻の偏りは無い（いまのモデル）。命中率▲が無いので、サクラのコア命中率は窓の中も外も的の表の SMG の値のまま。K = 1"
+    }
+  ],
+  "targets": [
+    {
+      "id": "sakura-midnear-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 1176,
+        "baseFrame": 300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "中近（1 区間目）の窓の中（sim の 19.6 秒）− 外（5 秒。1 回目のバーストより前）",
+      "observations": ["254-06"]
+    },
+    {
+      "id": "sakura-near1-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 3235,
+        "baseFrame": 2500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "近（2 区間目）の窓の中（53.9 秒）− 外（41.7 秒。1 回目の窓の終わりと 2 回目のバーストの間）",
+      "observations": ["254-07"]
+    },
+    {
+      "id": "sakura-far-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 5588,
+        "baseFrame": 4900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "遠（3 区間目）の窓の中（93.1 秒）− 外（81.7 秒）",
+      "observations": ["255-06"]
+    },
+    {
+      "id": "sakura-midfar-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 7941,
+        "baseFrame": 7300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "中遠（4 区間目）の窓の中（132.4 秒）− 外（121.7 秒）",
+      "observations": ["255-07"]
+    },
+    {
+      "id": "sakura-near2-core-diff",
+      "model": "sim",
+      "metric": "coreHitRateDiff",
+      "args": {
+        "slot": 1,
+        "frame": 10117,
+        "baseFrame": 9600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "近（5 区間目）の窓の中（168.6 秒）− 外（160 秒）",
+      "observations": ["255-08"]
+    },
+    {
+      "id": "sakura-body-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "読み取りの格子の基（判定に使わない）。サクラの胴体・会心なし・距離ボーナスなしの 1 ヒット（フルバーストの外）。ノワールの S1 の攻撃力▲が無いので V-0219 の値より小さい"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "c1adaf290dced956daf1a46930e3636a70fff772",
+    "values": {
+      "H0": {
+        "sakura-midnear-core-diff": 0,
+        "sakura-near1-core-diff": 0,
+        "sakura-far-core-diff": 0,
+        "sakura-midfar-core-diff": 0,
+        "sakura-near2-core-diff": 0,
+        "sakura-body-hit": 7047.8991000000005
+      }
+    },
+    "seen": {}
+  }
+}

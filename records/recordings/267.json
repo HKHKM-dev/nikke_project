@@ -1,0 +1,47 @@
+{
+  "id": "267",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-267_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4",
+  "original": "2026-10-06_20-16-16.mp4",
+  "durationSec": 201.1,
+  "frames": 12064,
+  "fps": 60,
+  "sizeMB": 243.5,
+  "sha256": "9c68a5fe303f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 270,
+      "name": "ブラン",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0219 の足し撮りの録画 A（部隊あり）の 1 本目。サクラ（AI）・デルタ（AI）・ブラン（操作・撃たない）・ノワール（AI）。オートバースト ON（左上のボタンで確かめた）。A を 3 本続けて撮った（計画は A・B の交互）"
+}
