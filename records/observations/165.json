@@ -987,5 +987,109 @@
       "tool": "tools/captures/still.ts と同じ切り出し（ffmpeg の select と crop で照準の横の AMMO・CHARGE を 1 フレームずつ並べた）+ 目視",
       "note": "発射は照準の横の AMMO が減り CHARGE が 100% に戻るフレーム。リロードの完了は AMMO が 000 から 006 に戻ったフレーム。f2088 は CHARGE 250% → 100%・AMMO 001 → 000。CHARGE は f2219〜2228 が 100%、f2231 107%、f2236〜2244 が 126・129・133・136・140・144・147・151・155%（1f に約 3.6% = 150% ÷ 42f）、f2245〜2249 が 141・143・146・148・151%（1f に約 2.5% = 150% ÷ 59f）、f2252 から照準の表示の形が替わり、f2288 に 250%、f2289 に発（AMMO 006 → 005）。f2244 の 155% は 0.7 秒のチャージで約 15.4f、f2245 の 141% は 1 秒のチャージで約 16.1f の経過にあたる。窓の中のマガジン（リロードの完了 f1835 頃）の発は、AMMO の減りで f1875〜1886・1918〜1922・1958〜1962・2004（165-18）・2043〜2046・2088 の間（4f おきの切り出しで読んだ幅）"
     }
+  },
+  {
+    "id": "165-34",
+    "recording": "165",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0269",
+    "readAt": "2026-10-07",
+    "value": [2274, 3158, 4066, 4950, 5857, 8532, 9416, 10323, 11205],
+    "unit": "f",
+    "description": "イサベル（III・AI）の S2 のヒット（170.58% の値）が出た動画のフレーム（9 回）。値は順に 340,059・205,709・475,946・205,709・814,002・241,285・241,285・241,285・241,285。隣どうしの間隔は 882〜884f、フルバーストの入りをまたぐと 907〜908f。5857 → 8532 の間の 2 回はほかの発と混ざって値では読めない。戦闘開始は f900、f915〜1337 は一時停止の画面（`165-23` の注）で、1 回目は一時停止を除いて戦闘開始から 952f",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分（hud.ts --mode jumps。録画の全体）を、イサベルの S2 を仮に 1 秒ごとに足したモデルの 1 ヒットの値（その時点のバフ・会心の有無。V-0269 の H1 と同じ式）の一覧に突き合わせ、ちょうど一致したものを全部挙げた。どれも前のフレームが読めた単独の増分"
+    }
+  },
+  {
+    "id": "165-35",
+    "recording": "165",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0269",
+    "readAt": "2026-10-07",
+    "value": 11,
+    "description": "S2 のヒットの回数（180 秒）。値で特定できた 9 回（`165-34`）と、間隔から位置が決まる 2 回（5857 → 8532 の間の 2 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`165-34` の列。比べるモデルは、S2 を 15 秒ごとに足した setup（V-0269 の H1。いまの定義では S2 は発動しない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 231,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "165-36",
+    "recording": "165",
+    "kind": "interval",
+    "use": "compare",
+    "source": "V-0269",
+    "readAt": "2026-10-07",
+    "value": 893.1,
+    "unit": "f",
+    "description": "S2 の 1 回目（f2274）から 11 回目（f11205）までの動画のフレーム数 ÷ 10。フルバーストの入りの止まりを含む",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`165-34` の最初と最後。比べるモデルは S2 を 15 秒ごとに足した setup"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 231,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
   }
 ]

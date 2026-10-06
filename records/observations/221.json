@@ -203,5 +203,107 @@
       "tool": "hud.ts --mode jumps と、HUD を 1 フレームずつ並べた一覧（FULL BURST の表示の中は目で読んだ）",
       "note": "予測の E0（いまのモデル。発動のフレームで付く）と合い、E1（1 ヒット目で付く）は外れる。発動から止まりの明けまでは発が無いので、E2（止まりの中で付く）とは見分けられない。回ごとに値が違うのは、S1 の▲（221-07）と、的のジャンプごとの着地点（距離）の違いとみられる（確かめていない）"
     }
+  },
+  {
+    "id": "221-09",
+    "recording": "221",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0271",
+    "readAt": "2026-10-07",
+    "value": [2093, 3271, 4472, 5650, 6852, 8032, 10412],
+    "unit": "f",
+    "description": "ラピ（III・操作）の S2 のヒット（528.97% の値）が出た動画のフレーム（7 回）。値は順に 1,211,336・611,807・1,211,336・502,167・1,211,336・502,167・502,167（1,211,336 はフルバーストの中の値、611,807 は 073 と同じ S1 の乗った値）。隣どうしの間隔は 1178〜1180f、フルバーストの入りをまたぐと 1202f。2093 → 4472 は 2 回分（間は 3271）、8032 → 10412 は 2 回分（間の 1 回はほかの発と混ざって値では読めない）。最初のヒットは f802 で、1 回目の S2 はその約 1290f 後",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分（hud.ts --mode jumps。録画の全体）を、ラピの S2 を仮に 1 秒ごとに足したモデルの 1 ヒットの値（その時点のバフ・会心の有無）と、録画 073 の S1 の乗った値（611,807・522,691・917,710。`073-19`）に突き合わせ、ちょうど一致したものを全部挙げた。どれも前のフレームが読めた単独の増分"
+    }
+  },
+  {
+    "id": "221-10",
+    "recording": "221",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0271",
+    "readAt": "2026-10-07",
+    "value": 8,
+    "description": "S2 のヒットの回数（180 秒）。値で特定できた 7 回（`221-09`）と、間隔から位置が決まる 1 回（8032 と 10412 の間）。10412 の次（約 11590）は戦闘の終わりの後",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`221-09` の列。比べるモデルは、S2 を 20 秒ごとに足した setup（V-0271 の H1。いまの定義では S2 は発動しない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 10,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 20
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "221-11",
+    "recording": "221",
+    "kind": "interval",
+    "use": "compare",
+    "source": "V-0271",
+    "readAt": "2026-10-07",
+    "value": 1188.4,
+    "unit": "f",
+    "description": "S2 の 1 回目（f2093）から 8 回目（f10412）までの動画のフレーム数 ÷ 7。フルバーストの入りの止まりを含む",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`221-09` の最初と最後。比べるモデルは S2 を 20 秒ごとに足した setup"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 10,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 20
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
   }
 ]
