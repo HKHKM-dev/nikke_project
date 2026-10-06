@@ -1,0 +1,29 @@
+{
+  "id": "283",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-283_ar_soldier-eg_auto.mp4",
+  "original": "2026-10-06_22-56-38.mp4",
+  "durationSec": 198.8,
+  "frames": 11930,
+  "fps": 60,
+  "sizeMB": 240.9,
+  "sha256": "8c0596393a4a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0241 の 1 本目（V-0240 の再現にも使う）。ソルジャーE.G. 単騎・操作・AUTO 射撃 ON・オートバースト ON（単騎の III なのでバーストは撃てない）"
+}

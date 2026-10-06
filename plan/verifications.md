@@ -5,11 +5,13 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 0・保留 0・完了 221・打ち切り 18（計 239）
+件数: 調査中 3・保留 0・完了 221・打ち切り 18（計 242）
 
 ## 開いている検証
 
-なし。
+- **V-0240** ソルジャーE.G. の S2（最大装弾数▲）はいつ付くか（状態: 調査中）
+- **V-0241** ソルジャーE.G. の S1（確率の攻撃力▲）は、1 発ごとに 5% で付き、上書き延長で 5 秒続くか（状態: 調査中）
+- **V-0244** ソルジャーE.G. のバーストの倍率ダメージのヒットの遅れと値（状態: 調査中）
 
 ## 全件
 
@@ -2423,3 +2425,49 @@
   - 録画: 075、076、077、243
   - 観測値: 075-21、075-22、076-13、076-14、077-42
   - 結論: C-0367、C-0368
+- **[V-0240](../records/verifications/V-0240-soldier-eg-s2.md)** ソルジャーE.G. の S2（最大装弾数▲）はいつ付くか
+  - 問い: 説明文にきっかけの無いソルジャーE.G. の S2 の最大装弾数▲は、射撃に依らず CT ごとに付くか。付くなら CT と 1 回目の時刻と値はいくつか
+  - 話題: スキル・キャラ固有・日付: 2026-10-06・状態: 調査中・Stage: plan/design-soldier-eg.md 5.1 節
+  - 録画: 278、279、282、283
+  - 観測値: 282-01、282-02、282-03、282-04
+  - 予測（2026-10-06、commit f34bb68）との比べ:
+    - s2-starts-solo（buffWindowStarts）: 実測なし。H1 [529, 1,059, 1,588, 2,118, 2,647, 3,176, 3,706, 4,235, 4,765, 5,294, 5,824, 6,353, 6,882, 7,412, 7,941, 8,471, 9,000, 9,529, 10,059]
+    - s2-max-ammo（maxAmmoAt）: 実測なし。H1 128
+- **[V-0241](../records/verifications/V-0241-soldier-eg-s1.md)** ソルジャーE.G. の S1（確率の攻撃力▲）は、1 発ごとに 5% で付き、上書き延長で 5 秒続くか
+  - 問い: ソルジャーE.G. の通常攻撃の 1 発の値は、S1 の攻撃力▲の有無の格子に乗り、▲は 1 発ごとに 5% で付いて上書き延長で 5 秒続くか
+  - 話題: スキル・キャラ固有・日付: 2026-10-06・状態: 調査中・Stage: plan/design-soldier-eg.md 5.2 節
+  - 録画: 278、279、283
+  - 予測（2026-10-06、commit f34bb68）との比べ:
+    - hit-on-body（hitDamage）: 実測なし。H1 12,304.423、H-p4 12,140.506、H-p6 12,236.474
+    - hit-on-body-crit（hitDamage）: 実測なし。H1 18,456.634、H-p4 18,210.758、H-p6 18,354.711
+    - hit-on-body-dist（hitDamage）: 実測なし。H1 15,995.749、H-p4 15,782.657、H-p6 15,907.416
+    - hit-on-body-dist-crit（hitDamage）: 実測なし。H1 22,147.961、H-p4 21,852.91、H-p6 22,025.653
+    - hit-on-core（hitDamage）: 実測なし。H1 24,608.845、H-p4 24,281.011、H-p6 24,472.948
+    - hit-on-core-crit（hitDamage）: 実測なし。H1 30,761.057、H-p4 30,351.264、H-p6 30,591.185
+    - hit-on-core-dist（hitDamage）: 実測なし。H1 28,300.172、H-p4 27,923.163、H-p6 28,143.89
+    - hit-on-core-dist-crit（hitDamage）: 実測なし。H1 34,452.383、H-p4 33,993.416、H-p6 34,262.127
+    - hit-off-body（hitDamage）: 実測なし。H1 11,400.357、H-p4 12,140.506、H-p6 12,236.474
+    - hit-off-body-crit（hitDamage）: 実測なし。H1 17,100.536、H-p4 18,210.758、H-p6 18,354.711
+    - hit-off-body-dist（hitDamage）: 実測なし。H1 14,820.464、H-p4 15,782.657、H-p6 15,907.416
+    - hit-off-body-dist-crit（hitDamage）: 実測なし。H1 20,520.643、H-p4 21,852.91、H-p6 22,025.653
+    - hit-off-core（hitDamage）: 実測なし。H1 22,800.715、H-p4 24,281.011、H-p6 24,472.948
+    - hit-off-core-crit（hitDamage）: 実測なし。H1 28,500.893、H-p4 30,351.264、H-p6 30,591.185
+    - hit-off-core-dist（hitDamage）: 実測なし。H1 26,220.822、H-p4 27,923.163、H-p6 28,143.89
+    - hit-off-core-dist-crit（hitDamage）: 実測なし。H1 31,921、H-p4 33,993.416、H-p6 34,262.127
+    - active-ratio（chanceActiveRatio）: 実測なし。H1 0.891、H-p4 0.833、H-p6 0.929
+    - expiries（chanceExpiries）: 実測なし。H1 8.242、H-p4 10.391、H-p6 6.285
+- **[V-0244](../records/verifications/V-0244-soldier-eg-burst.md)** ソルジャーE.G. のバーストの倍率ダメージのヒットの遅れと値
+  - 問い: ソルジャーE.G. のバーストの倍率ダメージは、III の発動から何フレーム遅れて 1 ヒットで出て、値は burstDamage の式（最終攻撃力に S1 の▲が入る）と合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-06・状態: 調査中・Stage: plan/design-soldier-eg.md 5.3 節
+  - 録画: 280、281
+  - 予測（2026-10-06、commit f34bb68）との比べ:
+    - burst-s1on-dton（burstHitDamage）: 実測なし。H1 740,984.449
+    - burst-s1on-dton-crit（burstHitDamage）: 実測なし。H1 1,111,476.673
+    - burst-s1on-dtoff（burstHitDamage）: 実測なし。H1 632,347.2
+    - burst-s1on-dtoff-crit（burstHitDamage）: 実測なし。H1 948,520.8
+    - burst-s1off-dton（burstHitDamage）: 実測なし。H1 686,540.746
+    - burst-s1off-dton-crit（burstHitDamage）: 実測なし。H1 1,029,811.119
+    - burst-s1off-dtoff（burstHitDamage）: 実測なし。H1 585,885.6
+    - burst-s1off-dtoff-crit（burstHitDamage）: 実測なし。H1 878,828.4
+    - burst-delays（burstHitDelays）: 実測なし。H1 [0, 0, 0, 0, 0]
+    - s2-starts-team（buffWindowStarts）: 実測なし。H1 [529, 1,081, 1,610, 2,140, 2,669, 3,220, 3,750, 4,279, 4,809, 5,338, 5,890, 6,419, 6,948, 7,478, 8,029, 8,559, 9,088, 9,617, 10,169]

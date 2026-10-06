@@ -62,7 +62,17 @@ export type ResolvedShotCountTrigger = {
   /** クルミ S2 編: 数える窓と数え直し（plan/design-kurumi-s2.md 2.1 節）。有ればどちらも有る */
   during?: ShotCountWindow;
   reset?: ShotCountReset;
+  /**
+   * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけの確率（比率。0 より大きく 1 以下）。有れば every は 1 で、
+   * 回数の量が正の射撃のたびに発火する（skills/triggers.ts）。窓の値は skills/chance.ts が期待値にする
+   */
+  chance?: number;
 };
+
+/** ソルジャーE.G. 編: 確率のきっかけ（解決済み）か */
+export function isResolvedChance(t: ResolvedTrigger): t is ResolvedShotCountTrigger & { chance: number } {
+  return isResolvedShotCount(t) && t.chance !== undefined;
+}
 
 export function isResolvedShotCount(t: ResolvedTrigger): t is ResolvedShotCountTrigger {
   return typeof t === 'object' && 'every' in t;
@@ -80,6 +90,14 @@ export function isResolvedTimer(t: ResolvedTrigger): t is { everySeconds: number
 /** everyRef・stacksRef を Lv の数値に解決する。回数・スタック数は整数でなければ RangeError */
 export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: number): ResolvedTrigger {
   if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
+  // ソルジャーE.G. 編: 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
+  if (trigger.chance !== undefined || trigger.chanceRef !== undefined) {
+    const percent = trigger.chance ?? skillValue(skill, trigger.chanceRef!, level);
+    if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
+      throw new RangeError(`skill ${skill.id}: chance must be a percentage in (0, 100], got ${percent}`);
+    }
+    return { count: trigger.count, every: 1, chance: percent / 100 };
+  }
   const every = trigger.everyRef === undefined ? (trigger.every ?? 1) : skillValue(skill, trigger.everyRef, level);
   if (!Number.isInteger(every) || every < 1) {
     throw new RangeError(`skill ${skill.id}: count trigger must be a positive integer, got ${every}`);

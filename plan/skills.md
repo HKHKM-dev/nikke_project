@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 33・効果 172（根拠あり 131）・notes 83（根拠あり 44）
+件数: キャラ 34・効果 175（根拠あり 134）・notes 83（根拠あり 44）
 
 notes の種類: 未対応 22・前提の外 22・計算に無関係 31・補足 8
 
-スロット: supported 67・partial 11・unsupported 7・noEffect 23
+スロット: supported 70・partial 11・unsupported 7・noEffect 23
 
 ## 10 ラピ
 
@@ -279,6 +279,15 @@ notes の種類: 未対応 22・前提の外 22・計算に無関係 31・補足
 - **burst**: supported
   - effects[0] timed・burstUse・sustainedDamage: C-0299（確定）、C-0301（仮説）
   - effects[1] dot・burstUse: C-0300（確定）、C-0301（仮説）
+
+## 300 ソルジャーE.G.
+
+- **skill1**: supported
+  - effects[0] timed・normalHit・attack: C-0372（仮説）
+- **skill2**: supported
+  - effects[0] timed・9 秒ごと・maxAmmo: C-0369（仮説）、C-0017（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-0371（仮説）
 
 ## 301 ソルジャーF.A.
 

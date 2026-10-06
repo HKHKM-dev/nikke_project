@@ -1,0 +1,11 @@
+{
+  "id": "C-0371",
+  "text": "ソルジャーE.G. のバーストは、攻撃範囲内の敵（単体ボス）に最終攻撃力の値 2 の % の倍率ダメージを 1 ヒットで与える（式は burstDamage。ヒットの遅れは未測定）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/300.json` の burst）の読み。式はほかのキャラの burstDamage と同じとみた（C-0227・C-0230 など）。撮影（V-0244）で確かめる",
+  "model": "`data/skills/300.json` の burst の effects[0]（`burstDamage`）。ヒットの遅れは未反映（`burst/landing.ts` の `MEASURED_BURST_DELAYS` に行が無いので 0）",
+  "replaces": [],
+  "updated": "2026-10-06"
+}

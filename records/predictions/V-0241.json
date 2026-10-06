@@ -1,0 +1,732 @@
+{
+  "verification": "V-0241",
+  "note": "既存の録画の読み直し（撮影の後、読む前に予測を出した。録画 283・278・279: ソルジャーE.G. 単騎・AUTO 射撃・オートバースト ON・BigArms 灼熱の 3 分モード・スペック固定 ON）。1 ヒットの値の指標は、▲の有無を定義の差し替え（setup の addEffects）で決めた格子の値で、仮説によらない（仮説の override は addEffects を置き換えるので、H-p4・H-p6 の列のこの指標は期待値になり、比べない）。上書き延長でない仮説（H-norefresh）はモデルで書けないので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 300,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義: 通常攻撃の命中 1 発ごとに 5%（値 3）× その発の弾丸命中率で付き、上書き延長で 5 秒。値は説明文の値 1 を攻撃力に足す"
+    },
+    {
+      "id": "H-p4",
+      "note": "確率が 4%（ほかは H1 と同じ）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "normalHit",
+                "chance": 4
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-p6",
+      "note": "確率が 6%（ほかは H1 と同じ）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "normalHit",
+                "chance": 6
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-on-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・胴体・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-on-body-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・胴体・距離ボーナスなし・会心）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-on-body-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・胴体・距離ボーナスあり・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-on-body-dist-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・胴体・距離ボーナスあり・会心）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-on-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・コア・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-on-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・コア・距離ボーナスなし・会心）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-on-core-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・コア・距離ボーナスあり・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-on-core-dist-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いている（説明文の値 1 を常時付けた形）・コア・距離ボーナスあり・会心）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-off-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・胴体・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-off-body-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・胴体・距離ボーナスなし・会心）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-off-body-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・胴体・距離ボーナスあり・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-off-body-dist-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・胴体・距離ボーナスあり・会心）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-off-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・コア・距離ボーナスなし・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-off-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・コア・距離ボーナスなし・会心）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-off-core-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・コア・距離ボーナスあり・会心でない）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "hit-off-core-dist-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "note": "通常攻撃の 1 ヒットの値（S1 の▲が付いていない（効果を外した形）・コア・距離ボーナスあり・会心）。値は区間に依らない（S2 はダメージに効かない）"
+    },
+    {
+      "id": "active-ratio",
+      "model": "sim",
+      "metric": "chanceActiveRatio",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "note": "S1 の▲が付いている発の割合の期待値（全部の発）。録画では、1 発の値の格子で▲が付いていると読めた発の割合（読めた発のうち）"
+    },
+    {
+      "id": "expiries",
+      "model": "sim",
+      "metric": "chanceExpiries",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "note": "続けて撃った 2 発で、前で付いていて後で切れている組の数の期待値。録画では、▲が付いていると読めた発の次の読めた発が付いていない回数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "f34bb68b8e613e0932f70a6c9176335b6fcd5915",
+    "values": {
+      "H1": {
+        "hit-on-body": 12304.422600000002,
+        "hit-on-body-crit": 18456.6339,
+        "hit-on-body-dist": 15995.749380000003,
+        "hit-on-body-dist-crit": 22147.960680000004,
+        "hit-on-core": 24608.845200000003,
+        "hit-on-core-crit": 30761.056500000006,
+        "hit-on-core-dist": 28300.171980000003,
+        "hit-on-core-dist-crit": 34452.38328,
+        "hit-off-body": 11400.357299999998,
+        "hit-off-body-crit": 17100.535949999998,
+        "hit-off-body-dist": 14820.464489999998,
+        "hit-off-body-dist-crit": 20520.643139999996,
+        "hit-off-core": 22800.714599999996,
+        "hit-off-core-crit": 28500.893249999994,
+        "hit-off-core-dist": 26220.821789999995,
+        "hit-off-core-dist-crit": 31921.000439999993,
+        "active-ratio": 0.8913688090065119,
+        "expiries": 8.24183742100037
+      },
+      "H-p4": {
+        "hit-on-body": 12140.5056,
+        "hit-on-body-crit": 18210.7584,
+        "hit-on-body-dist": 15782.657280000001,
+        "hit-on-body-dist-crit": 21852.91008,
+        "hit-on-core": 24281.0112,
+        "hit-on-core-crit": 30351.264000000003,
+        "hit-on-core-dist": 27923.16288,
+        "hit-on-core-dist-crit": 33993.41568,
+        "hit-off-body": 12140.5056,
+        "hit-off-body-crit": 18210.7584,
+        "hit-off-body-dist": 15782.657280000001,
+        "hit-off-body-dist-crit": 21852.91008,
+        "hit-off-core": 24281.0112,
+        "hit-off-core-crit": 30351.264000000003,
+        "hit-off-core-dist": 27923.16288,
+        "hit-off-core-dist-crit": 33993.41568,
+        "active-ratio": 0.8331261244975111,
+        "expiries": 10.390604501117556
+      },
+      "H-p6": {
+        "hit-on-body": 12236.474100000001,
+        "hit-on-body-crit": 18354.711150000003,
+        "hit-on-body-dist": 15907.416330000002,
+        "hit-on-body-dist-crit": 22025.653380000003,
+        "hit-on-core": 24472.948200000003,
+        "hit-on-core-crit": 30591.185250000002,
+        "hit-on-core-dist": 28143.89043,
+        "hit-on-core-dist-crit": 34262.12748,
+        "hit-off-body": 12236.474100000001,
+        "hit-off-body-crit": 18354.711150000003,
+        "hit-off-body-dist": 15907.416330000002,
+        "hit-off-body-dist-crit": 22025.653380000003,
+        "hit-off-core": 24472.948200000003,
+        "hit-off-core-crit": 30591.185250000002,
+        "hit-off-core-dist": 28143.89043,
+        "hit-off-core-dist-crit": 34262.12748,
+        "active-ratio": 0.9285126082641668,
+        "expiries": 6.284540355135816
+      }
+    },
+    "seen": {
+      "283": [],
+      "278": [],
+      "279": []
+    }
+  }
+}

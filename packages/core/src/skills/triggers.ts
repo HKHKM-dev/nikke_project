@@ -141,6 +141,8 @@ export function createTriggerTracker(
       }
       const shot = ev.shots[slotIndex];
       if (!shot) return false;
+      // ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけは、回数の量が正の射撃のたびに引く（付く確率は skills/chance.ts）
+      if (t.chance !== undefined) return shotCountWeight(t.count, shot) > 0;
       const next = advanceShotCount(count, shotCountWeight(t.count, shot), t.every);
       count = next.count;
       return next.fired;

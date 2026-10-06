@@ -70,6 +70,8 @@ function triggerLabel(t: ResolvedTrigger): string {
   // ペルソナ編: 効果名のトリガー（applied:followUp）
   if ('applied' in t) return `applied:${t.applied}`;
   // クルミ S2 編: フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
+  // ソルジャーE.G. 編: 確率のきっかけ（normalHit@5%。窓は期待値の小片）
+  if ('every' in t && t.chance !== undefined) return `${t.count}@${+(t.chance * 100).toFixed(4)}%`;
   if ('every' in t)
     return `${t.count}/${t.every}${t.during ? `@${t.during}${t.reset === 'fullBurstStart' ? '!' : ''}` : ''}`;
   return `${t.count}≥${t.atLeast}`;

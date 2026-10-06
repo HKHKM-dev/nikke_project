@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 227・仮説 74・棄却 58・範囲外 1（計 360）
+件数: 確定 227・仮説 77・棄却 58・範囲外 1（計 363）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -50,7 +50,7 @@
   - 状態: 確定・等級: 厳密一致・更新日: 2026-09-23
   - 根拠: verification.md Stage 10（録画 37・39）
   - モデル側: `frame/firing.ts`
-  - 定義: `data/skills/308.json` の burst の effects[0]
+  - 定義: `data/skills/300.json` の skill2 の effects[0]、`data/skills/308.json` の burst の effects[0]
 - **C-0058** rpm で決まる射撃の間隔（AR・SMG・SG）は、ゲーム内の時計（動画の 1 フレーム = 0.017 秒）で rpm を 1 フレームずつ蓄積し、端数を持ち越して進む。AR 720 rpm は 60 発で 290f（10 発ごとに 1 回 4f）、SMG 1440 rpm は 120 発で 292f、SG 90 rpm は 39f と 40f が混ざる。1 秒 = 60f の蓄積（AR 295f・SMG 298f・SG 40f ちょうど）とは合わない
   - 状態: 確定・等級: 厳密一致・更新日: 2026-09-27
   - 根拠: `004-01`・`004-02`・`007-01`・`007-02`（AR 2 体・3 マガジン。4f の入る位置まで一致）、`005-01`・`005-02`（SMG。2f と 3f の数まで一致）、`008-01`（SG 2 マガジン）。V-0011
@@ -1913,6 +1913,21 @@
   - モデル側: `data/skills/301.json` の全スロットの notes（効果なし）
   - 検証記録: V-0238
   - 定義: `data/skills/301.json` の skill1 の notes[0]、`data/skills/301.json` の skill2 の notes[0]、`data/skills/301.json` の burst の notes[0]
+- **C-0369** ソルジャーE.G. の S2 の最大装弾数▲は、説明文にきっかけが無いアクティブ型のスキルで、射撃に依らず戦闘開始から 9 秒ごと（CT 9 秒）に自分に付き、値 2（5 秒）続く。値は説明文の値 1 で C-0017 の形（Lv10 で 128）
+  - 状態: 仮説・等級: 単独実測・更新日: 2026-10-06
+  - 根拠: `282-01`（撃たない単騎で 7 回。間隔 529〜530f で射撃・的のジャンプに関係なく一定。1 回目は戦闘開始から 533f）・`282-02`（窓の中の最大装弾数 128）・`282-04`（窓は表示から 294f）。CT 9 秒はこの録画から読んだ値（平均の間隔 529.8f。ゲーム内の時計の 9 秒は 529.2f）。モデルの発火（9 秒ごと。529・1058・1588…f）より表示は 4〜8f 遅れる。スキルの id が 1 で始まる（plan/design-soldier-eg.md 2 節）。V-0240
+  - モデル側: `data/skills/300.json` の skill2 の effects[0]（`timed`・トリガー `{ everySeconds: 9 }`・`maxAmmo`）。発火は `skills/timeline.ts` の `timerFrames`、1 パス目は `frame/firstPass.ts` の `firesOf`
+  - 定義: `data/skills/300.json` の skill2 の effects[0]
+- **C-0371** ソルジャーE.G. のバーストは、攻撃範囲内の敵（単体ボス）に最終攻撃力の値 2 の % の倍率ダメージを 1 ヒットで与える（式は burstDamage。ヒットの遅れは未測定）
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-06
+  - 根拠: 説明文（`data/characters/300.json` の burst）の読み。式はほかのキャラの burstDamage と同じとみた（C-0227・C-0230 など）。撮影（V-0244）で確かめる
+  - モデル側: `data/skills/300.json` の burst の effects[0]（`burstDamage`）。ヒットの遅れは未反映（`burst/landing.ts` の `MEASURED_BURST_DELAYS` に行が無いので 0）
+  - 定義: `data/skills/300.json` の burst の effects[0]
+- **C-0372** ソルジャーE.G. の S1 の攻撃力▲は、通常攻撃の命中 1 発ごとに説明文の確率（値 3。5%）で自分に付き、持続中に付けば上書き延長で値 2（5 秒）続く。値は説明文の値 1 を攻撃力に足す
+  - 状態: 仮説・等級: 推論・更新日: 2026-10-06
+  - 根拠: 説明文（`data/characters/300.json` の skill1）の読み。確率で付く効果は期待値の窓で持つ（2026-10-06 オーナー承認。plan/design-soldier-eg.md 3.1 節の案 A）。撮影（V-0241）で確かめる
+  - モデル側: `data/skills/300.json` の skill1 の effects[0]（`timed`・トリガー `{ count: normalHit, chanceRef: 3 }`）。期待値の窓は `skills/chance.ts`
+  - 定義: `data/skills/300.json` の skill1 の effects[0]
 
 ## 敵・的・場面
 
