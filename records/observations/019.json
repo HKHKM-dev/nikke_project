@@ -340,5 +340,107 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "019-18",
+    "recording": "019",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0274",
+    "readAt": "2026-10-07",
+    "value": [1693, 2458, 3223, 4018, 4778, 5543, 6332, 7862, 8651, 9417, 10182, 10971],
+    "unit": "f",
+    "description": "エーテル（I・AI）の S2 のヒット（56.32% の値）が出た動画のフレーム（12 回）。値は順に 67,710・45,140・45,140・67,710・45,140・67,710・67,710・45,140・67,710・45,140・67,710・67,710。隣どうしの間隔は 765〜766f、フルバーストの入りをまたぐと 789f。6332 → 7862 は 2 回分（間の 1 回はほかの発と混ざって値では読めない）。f4018 は前の 21f が読めない（間隔の 795f・760f はその分ずれている）。戦闘開始は f851（`019` の観測値の注）で、1 回目はその 842f 後",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分（hud.ts --mode jumps。録画の全体）を、エーテルの S2 を仮に 1 秒ごとに足したモデルの 1 ヒットの値（会心なし 45,140・会心 67,710 など。V-0274 の H1 と同じ式）に突き合わせ、ちょうど一致したものを全部挙げた。f4018 のほかは前のフレームが読めた単独の増分"
+    }
+  },
+  {
+    "id": "019-19",
+    "recording": "019",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0274",
+    "readAt": "2026-10-07",
+    "value": 13,
+    "description": "S2 のヒットの回数（180 秒）。値で特定できた 12 回（`019-18`）と、間隔から位置が決まる 1 回（6332 と 7862 の間）。10971 の次（約 11760）は戦闘の終わりの後",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`019-18` の列。比べるモデルは、S2 を 13 秒ごとに足した setup（V-0274 の H1。いまの定義では S2 は発動しない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 291,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 13
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "019-20",
+    "recording": "019",
+    "kind": "interval",
+    "use": "compare",
+    "source": "V-0274",
+    "readAt": "2026-10-07",
+    "value": 773.2,
+    "unit": "f",
+    "description": "S2 の 1 回目（f1693）から 13 回目（f10971）までの動画のフレーム数 ÷ 12。フルバーストの入りの止まりを含む",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`019-18` の最初と最後。どちらも前のフレームが読めた単独の増分。比べるモデルは S2 を 13 秒ごとに足した setup"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 291,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 13
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
   }
 ]
