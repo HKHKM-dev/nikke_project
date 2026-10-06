@@ -1,0 +1,87 @@
+{
+  "verification": "V-0235",
+  "note": "ミサト単騎・スペック固定 ON・オートバースト ON の新しい撮影。判定の指標（2 回目のチェーン切れから 3 回目の満タンまでに的に当たった数）は、H0 の値を 1 パス目と 2 パス目の組み合わせで出すので、このファイルの範囲外（検証記録の「予測」に手で書いた）。このファイルは副の指標（同じ窓の撃った発の数）と参考の値",
+  "team": [
+    {
+      "rid": 833,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "持続の命中率▲の上がりはゲージ（と命中の回数）に効かない（C-0265 の前のモデル）。override は 2 パス目の▲も止めるが、このファイルの指標は 1 パス目の値（発の数・満タンのフレーム）だけ",
+      "override": {
+        "sustainedHitRateUp": false
+      }
+    },
+    {
+      "id": "H1",
+      "note": "持続の命中率▲で上がった弾丸命中率のぶんもゲージが溜まる（C-0265。いまのモデル）。ミサト S1 の▲は 3 段（5.04% × 3。C-0183）で、遠の弾丸命中率は 0.760 → 0.862（C-0192・C-0320）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "far-shots",
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "副の指標。2 回目のチェーン切れ（チェーンの UI が消えたフレーム。C-0009）の後から、3 回目に BURST バーが消えた発までに撃った発の数。モデルでは窓が遠の区間（3 区間目）に入る"
+    },
+    {
+      "id": "near-shots",
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "参考。1 回目のチェーン切れから 2 回目の満タンまで（近の区間。外れがほぼ無いので H0 と H1 が同じ）。チェーン切れの後に 0 から溜まり、500 ヒットで満タンになる（C-0009・C-0255）ことの確かめ"
+    },
+    {
+      "id": "far-full-frame",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "参考。3 回目の満タンのフレーム。H1 は遠の区間の終わり（的の 3 回目のジャンプ）の前、H0 はジャンプの後（4 区間目の中遠）に来る"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "9ae1bd25ce6707c7c69c9d1b449493d259d7e80a",
+    "values": {
+      "H0": {
+        "far-shots": 647,
+        "near-shots": 501,
+        "far-full-frame": 6616
+      },
+      "H1": {
+        "far-shots": 581,
+        "near-shots": 501,
+        "far-full-frame": 6290
+      }
+    },
+    "seen": {}
+  }
+}

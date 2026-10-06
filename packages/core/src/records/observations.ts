@@ -592,6 +592,18 @@ export const METRICS: Readonly<Record<string, Metric>> = {
       return slotOf(r.shots, c).frames.filter((f) => f <= full).length;
     },
   },
+  // V-0235: n 回目（0 始まり）にチェーンが切れた（ゲージが 0 に戻った。C-0009）フレームの後から、次に BURST バーが消えたフレームまでに
+  // 枠が撃った発の数。単騎のオートバーストで、チェーンの待ちの明けから次の満タンまでの溜まり方を比べる
+  chainTimeoutToGaugeFullShots: {
+    args: ['slot', 'n'],
+    sim: (r, c) => {
+      const timeout = r.schedule?.chainTimeouts[Number(c.args.n)];
+      if (timeout === undefined) throw new Error(`${String(c.args.n)} 回目のチェーン切れが無い`);
+      const full = r.schedule?.gaugeFullFrames.find((f) => f > timeout);
+      if (full === undefined) throw new Error(`${String(c.args.n)} 回目のチェーン切れの後に満タンが無い`);
+      return slotOf(r.shots, c).frames.filter((f) => f > timeout && f <= full).length;
+    },
+  },
   burstCount: {
     args: ['slot'],
     sim: (r, c) => slotOf(r.slots, c).burst.activations.length,

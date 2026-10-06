@@ -638,7 +638,7 @@ export function landingNotes(
     ...(n > 0 ? [`常時の命中率▲ ${pct(n)} でコア命中率を 1/(1 − N)² 倍（上限 1）`] : []),
     'フルバースト中などに配られる持続の命中率▲も、効いている区間で N に足してコア命中率に効かせた（C-0170。仮説）',
     raisesBullet
-      ? '命中率▲（常時 + 持続）で弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0192。確かめたのは SMG の遠だけで、ほかの帯と AR・MG には同じ式を当てた）。持続の▲による上がりも、1 パス目のゲージと命中の回数に入れた（C-0265。仮説）'
+      ? '命中率▲（常時 + 持続）で弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0192。確かめたのは SMG の遠だけで、ほかの帯と AR・MG には同じ式を当てた）。持続の▲による上がりも、1 パス目のゲージ（C-0362）と命中の回数（C-0363。仮説）に入れた'
       : '命中率▲は弾丸命中率に効かせていない（未実装。SG の近 A では上がるが（C-0157）、効き方の式が決まっていない）',
   ];
   const en = [
@@ -647,7 +647,7 @@ export function landingNotes(
     ...(n > 0 ? [`constant hit rate up ${pct(n)} scales core hit rate by 1/(1 − N)² (max 1)`] : []),
     'timed hit rate buffs (e.g. given at full burst) are added to N while active and change core hit rate (C-0170; hypothesis)',
     raisesBullet
-      ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) (C-0192; checked only for SMG at far range, and the same formula is used for the other bands and for AR and MG); the rise from timed buffs is also fed into the burst gauge and the hit counts (C-0265; hypothesis)'
+      ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) (C-0192; checked only for SMG at far range, and the same formula is used for the other bands and for AR and MG); the rise from timed buffs is also fed into the burst gauge (C-0362) and the hit counts (C-0363; hypothesis)'
       : 'hit rate buffs do not change bullet hit rate (not modeled; they raise it for SG at near A (C-0157), but the formula is unknown)',
   ];
   notes.push({ level: 'approx', code: 'auto-condition', message: { ja: ja.join('。'), en: en.join('; ') } });

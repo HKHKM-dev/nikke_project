@@ -1,11 +1,11 @@
 {
   "id": "C-0265",
   "text": "持続の命中率▲で上がった弾丸命中率とコア命中率のぶんも、常時の▲と同じく、的に当たった弾のバーストゲージと、命中・コアの命中の回数が増える",
-  "state": "仮説",
+  "state": "棄却",
   "topic": "バーストゲージ",
   "grade": "推論",
   "basis": "次の結論をつないだもの（直接には測っていない）: C-0083（的に 1 回当たるごとに `target_burst_energy_pershot`）、C-0139（何にも当たらない弾は溜めない）、C-0192（命中率▲は弾丸命中率を H2 の形で上げる。根拠の▲はミサト S1 の持続のスタック）、C-0170（配られた持続の▲も常時の▲と同じ式。仮説）。弱い所: C-0083 は SMG を確かめていない。外れた弾のうちコンテナに当たった分（C-0139 の半分のゲージ）はモデルに入れていない（常時の▲と同じ扱い）。確かめるなら、ミサト単騎（スペック固定 ON・オートバースト OFF）の 1 回目の満タンのフレーム（plan/design-sustained-hit-rate-gauge.md 4 節）。2026-10-05 のオーナーの判断で、仮説として入れた。V-0188（ミサト単騎・スペック固定 ON・オートバースト OFF の 1 回目の満タンまでに撃った発の数を、対照のリター単騎と比べた録画 18 本の読み直し）は判定なし: 満タンは的への約 500 ヒット目で C-0083 と合い、▲の乗ったマガジンで外れが減る向きも C-0192 と合ったが、1 区間目（中近）の外れがモデル（的の表）より少なく、仮説の差が読む前に決めた目安の大きさに届かなかった（2026-10-05 のオーナーの判断で閉じた）",
-  "model": "`frame/firstPass.ts`（当たりの窓 `hitWindows`。持続の `hitRate` の窓を追い、条件が自動の枠の発のゲージと命中の期待値を `options.hitRateWith` → `frame/landing.ts` の `hitRateSpanWith` で出し直す。2 パス目の `landingPartsWith` と同じ式）。SG は弾丸命中率に効かせない（C-0157）。`TeamInput.sustainedHitRateUp` が false なら足さない。plan/design-sustained-hit-rate-gauge.md",
+  "model": "C-0362・C-0363 に分けて置き換えた（2026-10-06 のオーナーの判断。V-0235）。確かめたのは、持続の▲で上がった弾丸命中率のぶん増えた当たりがゲージを溜める部分（C-0362）だけ。もとのモデル側: `frame/firstPass.ts`（当たりの窓 `hitWindows`。持続の `hitRate` の窓を追い、条件が自動の枠の発のゲージと命中の期待値を `options.hitRateWith` → `frame/landing.ts` の `hitRateSpanWith` で出し直す。2 パス目の `landingPartsWith` と同じ式）。SG は弾丸命中率に効かせない（C-0157）。`TeamInput.sustainedHitRateUp` が false なら足さない。plan/design-sustained-hit-rate-gauge.md",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-06"
 }

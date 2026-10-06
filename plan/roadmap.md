@@ -99,7 +99,7 @@
 
 ---
 
-- 持続の命中率▲の上がりがゲージに効くか（2026-10-05 起票）→ 一部完了: V-0188、C-0265、[design-sustained-hit-rate-gauge.md](design-sustained-hit-rate-gauge.md)。残りは backlog 2-23
+- 持続の命中率▲の上がりがゲージに効くか（2026-10-05 起票）→ 完了: V-0188・V-0235、C-0362（C-0265 は棄却し、確かめていないコア命中率と回数トリガーの部分は C-0363（仮説）に分けた）、[design-sustained-hit-rate-gauge.md](design-sustained-hit-rate-gauge.md)（2026-10-06）
 - 持続ダメージ▲の stat（2026-10-05 起票）→ 完了: マナは V-0185、C-0299〜C-0301・C-0281（C-0279・C-0280 は棄却）、レイヴンのバーストは V-0227、C-0332・C-0185（2026-10-06）、[design-sustained-damage-up.md](design-sustained-damage-up.md)
 - 射撃場の SMG の中近の弾丸命中率（2026-10-05 起票）→ 一部完了: V-0188・V-0190・V-0191、C-0286・C-0287（C-0034 は棄却）。近も V-0198・V-0199、C-0294・C-0295（C-0286 は棄却）。中遠 A も V-0200・V-0215、C-0319・C-0320（C-0295 は棄却）。残り（遠）は backlog 2-25
 
