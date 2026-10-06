@@ -1,0 +1,45 @@
+{
+  "formatVersion": 1,
+  "resourceId": 291,
+  "checkedAt": "2026-10-07",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "残りの HP の数値が最も低い味方 1 機に受けるダメージ▼は、ダメージとゲージに関係しない",
+          "en": "Damage-taken down on the ally with the lowest HP does not affect damage or gauge",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終防御力が最も高い敵への 56.32% のダメージは、説明文にきっかけ（いつ出るか）が書かれていないので未対応。録画では約 13 秒ごとに出る（C-0405、仮説。入れるかはオーナーの判断）",
+          "en": "The 56.32% hit on the highest-DEF enemies is not modeled because the description does not say when it happens. Recordings show it about every 13 s (C-0405, hypothesis; whether to model it is the owner's call)",
+          "kind": "unimplemented",
+          "claims": [
+            "C-0405"
+          ]
+        },
+        {
+          "ja": "フルバーストタイム持続中に発動した時の、同じ敵への防御力▼は未対応（S2 のきっかけが無いので発動しない）",
+          "en": "The DEF down on the same enemy when activated during Full Burst is not modeled (S2 has no trigger, so it never activates)",
+          "kind": "unimplemented"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "残りの HP の数値が最も低い味方へのバリアは、ダメージとゲージに関係しない",
+          "en": "The barrier on the allies with the lowest HP does not affect damage or gauge",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  }
+}

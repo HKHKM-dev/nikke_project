@@ -1,0 +1,153 @@
+{
+  "verification": "V-0274",
+  "note": "既存の録画 019（エーテル（I・AI）+ デルタ（II・AI）+ ノワール（III・操作）・灼熱の的・3 分モード・スペック固定 ON）の読み直し。エーテルの S2 のヒットを読む前に出した。エーテルの定義（data/skills/291.json）は notes だけで、S2 は未対応（モデルでは発動しない。回数 0）。いまのモデルは指標を出せないので仮説に入れず、検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 291,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 271,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S2 は戦闘開始から 13 秒ごと（録画 018 の探索。018-22）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 291,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 13
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "S2 は 15 秒ごと（イサベルの S2 と同じ周期。対照の仮説）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 291,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "180 秒の S2 の回数",
+      "observations": ["019-19"]
+    },
+    {
+      "id": "mean-interval",
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "S2 の 1 回目から最後までの動画のフレーム数 ÷ (回数 − 1)（フルバーストの入りの止まりを含む）",
+      "observations": ["019-20"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "0a33d22291bf43f66cbadce99d6604ef339b9489",
+    "values": {
+      "H1": {
+        "count": 13,
+        "mean-interval": 772
+      },
+      "H2": {
+        "count": 11,
+        "mean-interval": 889
+      }
+    },
+    "seen": {
+      "018": [
+        "018-01",
+        "018-02",
+        "018-03",
+        "018-04",
+        "018-05",
+        "018-06",
+        "018-07",
+        "018-08",
+        "018-09",
+        "018-10",
+        "018-11",
+        "018-12",
+        "018-13",
+        "018-14",
+        "018-15",
+        "018-16",
+        "018-17",
+        "018-18",
+        "018-19",
+        "018-20",
+        "018-21",
+        "018-22"
+      ],
+      "019": [
+        "018-02",
+        "019-01",
+        "019-02",
+        "019-03",
+        "019-04",
+        "019-05",
+        "019-06",
+        "019-07",
+        "019-08",
+        "019-09",
+        "019-10",
+        "019-11",
+        "019-12",
+        "019-13",
+        "019-14",
+        "019-15",
+        "019-16",
+        "019-17"
+      ]
+    }
+  }
+}
