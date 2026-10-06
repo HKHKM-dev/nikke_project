@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 308,
-  "checkedAt": "2026-10-05",
+  "checkedAt": "2026-10-06",
   "skills": {
     "skill1": {
       "effects": [],
@@ -10,7 +10,9 @@
           "ja": "通常攻撃が 10 回命中した時の自分の防御力▲は、ダメージに関係しない",
           "en": "DEF up on self after 10 normal hits does not affect damage",
           "kind": "noDamage",
-          "claims": ["C-0275"]
+          "claims": [
+            "C-0275"
+          ]
         }
       ]
     },
@@ -21,17 +23,30 @@
           "ja": "攻撃を受けた時（確率）の自分の攻撃力▲は、被弾を扱わないので起きない",
           "en": "The chance-based ATK up on self when attacked never happens (taking hits is not modelled)",
           "kind": "outOfScope",
-          "claims": ["C-0275"]
+          "claims": [
+            "C-0275"
+          ]
         }
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "自分の最大装弾数▲（10 秒間維持）は未実装（自分の射撃にだけ効く。値の丸めを確かめていない）",
-          "en": "Max Ammo up on self (10 s) is not implemented (it only affects her own firing; the rounding is unchecked)",
-          "kind": "unimplemented"
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "maxAmmo",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "最大装弾数は C-0017 の形（加算して四捨五入。Lv10 で 533）。残弾は増やさず、リロードで新しい最大まで込める。窓はバースト使用から値 2 の秒（ゲーム内の時計）。録画では III の発動（欄の 00.00）から 607〜609f で切れ、モデルの 588f より長い（数え方は確かめていない）",
+            "en": "Max ammo follows C-0017 (additive ratio, rounded; 533 at Lv10). Current ammo is not increased; a reload fills to the new maximum. The window lasts value 2 seconds of game time from the Burst use. In recordings it ended 607–609 frames after the III activation (00.00 on the burst bar), longer than the model's 588 frames (how it is counted is unchecked)"
+          },
+          "claims": [
+            "C-0364",
+            "C-0017",
+            "C-0275"
+          ]
         }
       ]
     }

@@ -179,3 +179,23 @@
 2026-10-06 20:51 に録画 274（ミサト単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-274_smg_misato_auto-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`15f1992a0ce8`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-06 20:51 に録画 275（ミサト単騎）を `intake.ts` で取り込み、この 1 本（`range/20261006-275_smg_misato_auto-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`fa6f43a5321b`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 19:36 に録画 254（サクラ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261006-254_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`39c1614f11db`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 19:36 に録画 255（サクラ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261006-255_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`dc576c36d898`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 19:36 に録画 256（サクラ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261006-256_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`c805985c2e41`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 19:36 に録画 257（サクラ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261006-257_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`e39c37dde125`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 20:29 に録画 267（サクラ + デルタ + ブラン + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261006-267_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`9c68a5fe303f`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 20:29 に録画 268（サクラ + デルタ + ブラン + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261006-268_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`1308748a074f`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 20:30 に録画 269（サクラ + デルタ + ブラン + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261006-269_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`b42e5405f806`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 20:39 に録画 270（サクラ + デルタ + ユニ + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261006-270_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`7a05380c3468`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 20:39 に録画 271（サクラ + デルタ + ユニ + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261006-271_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`9ada055e0fb1`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-06 20:39 に録画 272（サクラ + デルタ + ユニ + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261006-272_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`d6058d9120db`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
