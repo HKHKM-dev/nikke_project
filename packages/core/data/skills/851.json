@@ -52,12 +52,18 @@
         {
           "ja": "戦闘開始時とフルバーストタイム発動時の自分のパーツダメージ▲（急所攻略）は、射撃場の的にパーツが無いので効かない",
           "en": "Part damage up for self at battle start and on Full Burst (Weak Point Strike) does not apply (the training target has no parts)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "claims": [
+            "C-0365"
+          ]
         },
         {
           "ja": "味方がパーツを破壊した時の、自分の持続ダメージ▲（一点集中）は、射撃場の的にパーツが無いので起きない",
           "en": "Sustained damage up for self when an ally destroys a part (Focus) does not occur (the training target has no parts)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "claims": [
+            "C-0365"
+          ]
         }
       ]
     },
@@ -97,7 +103,10 @@
         {
           "ja": "A.N.モードの一点集中の解除は、一点集中（S2。パーツの破壊で付く）が射撃場の的では起きないので何もしない",
           "en": "A.N. Mode's removal of Focus does nothing (Focus, from S2 on part destruction, never occurs on the training target)",
-          "kind": "modeling"
+          "kind": "modeling",
+          "claims": [
+            "C-0365"
+          ]
         }
       ]
     }
