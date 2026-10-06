@@ -237,5 +237,99 @@
       "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
       "note": "使えたコマ 37 / 101。四分位: 足元 542〜542・高さ 148〜160。足元の y は半分の解像度で測るので 2px 刻み"
     }
+  },
+  {
+    "id": "123-16",
+    "recording": "123",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0277",
+    "readAt": "2026-10-07",
+    "value": 36059,
+    "description": "A2 単騎の、フルチャージの通常攻撃 1 発ごとの S2 の追加ダメージ（会心なし）。`123-02` のコア + 追加・コア会心 + 追加・胴体 + 追加の 3 つから",
+    "method": {
+      "tool": "読んだ値からの計算",
+      "note": "`123-02` の増分（V-0099 で読んだ値）から、モデルのフルチャージの通常攻撃の 1 発（コア 405,209.97・コア会心 506,512.46・胴体 202,604.99。S2 を含まない）を引いた残り。5 つの組み合わせのどれでも、会心なし 36,059・会心 54,088 のどちらかになる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "123-17",
+    "recording": "123",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0277",
+    "readAt": "2026-10-07",
+    "value": 54088,
+    "description": "同じ追加ダメージの会心。`123-02` のコア + 追加会心・コア会心 + 追加会心の 2 つから",
+    "method": {
+      "tool": "読んだ値からの計算",
+      "note": "`123-02` の増分（V-0099 で読んだ値）から、モデルのフルチャージの通常攻撃の 1 発（コア 405,209.97・コア会心 506,512.46・胴体 202,604.99。S2 を含まない）を引いた残り。5 つの組み合わせのどれでも、会心なし 36,059・会心 54,088 のどちらかになる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "123-18",
+    "recording": "123",
+    "kind": "total",
+    "use": "compare",
+    "source": "V-0277",
+    "readAt": "2026-10-07",
+    "value": 34541290,
+    "description": "A2 単騎の 180 秒の与ダメージ（`123-01` と同じ値。S2 の定義を入れたので比べる）。会心の偏りと的のジャンプの時刻で動くので、結論には結び付けない",
+    "method": {
+      "tool": "hud.ts --mode final",
+      "note": "`123-01` の値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
   }
 ]
