@@ -72,7 +72,7 @@
 - ラムの S1 の部隊の条件（2026-09-28 起票）→ 完了: V-0026、C-0080・C-0235、[design-ram-s1.md](design-ram-s1.md)
 - calc のハイブリッド（[design-stage10.md](design-stage10.md) 5 節）の限界（2026-09-28 起票）→ 保留（2026-09-28、オーナー決定）: [design-calc-hybrid.md](design-calc-hybrid.md) 10 節。見直しは backlog 4-5
 - ダメージに効く効果の無いキャラの定義（2026-09-28）→ 完了: V-0026・V-0027・V-0031、C-0081・C-0092
-- ヘルムの残り（2026-09-28 起票）→ 一部完了: V-0033・V-0034・V-0038・V-0231・V-0247、C-0094・C-0097・C-0103・C-0104・C-0345・C-0087（反復実測）、[design-helm.md](design-helm.md)・[design-heal-vocabulary.md](design-heal-vocabulary.md)。残りは backlog 2-12
+- ヘルムの残り（2026-09-28 起票）→ 一部完了: V-0033・V-0034・V-0038・V-0231・V-0247、C-0094・C-0097・C-0103・C-0104・C-0345・C-0087（確定）、[design-helm.md](design-helm.md)・[design-heal-vocabulary.md](design-heal-vocabulary.md)。残りは backlog 2-12
 - OL の「チャージダメージ倍率▲」（2026-09-28 起票）→ 完了: V-0047・V-0048・V-0050・V-0053、C-0121〜C-0123・C-0126・C-0127・C-0134
 - 持続ダメージの語彙 `dot`（2026-09-28）→ 完了: V-0032・V-0039・V-0040・V-0051・V-0052・V-0054・V-0060・V-0064・V-0067、[design-nihilister.md](design-nihilister.md)・[design-kurumi.md](design-kurumi.md)・[design-damage-taken.md](design-damage-taken.md)
 - クルミ S2 の語彙と定義（2026-10-05）→ 完了: V-0181・V-0182、C-0276・C-0277、[design-kurumi-s2.md](design-kurumi-s2.md)
