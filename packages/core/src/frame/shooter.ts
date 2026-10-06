@@ -74,10 +74,11 @@ export type ShooterState = {
   /** Stage 16-B: ハイド中に始めたリロード（明けるまでに込め終わらなければ取り消す）。無ければキーごと無い */
   hideReload?: true;
   /**
-   * 押下チャージ型（FiringParams.downCharge）の、前の発からチャージしているフレーム数。発と発の間（リロード・ハイドを挟まない）
-   * だけ持ち、毎フレームその時のチャージ時間で待ちを決め直す。チャージの途中でチャージ時間が変わる（バーストの発動で 1 秒 → 0.7 秒）と、
-   * 経過を持ち越して新しいチャージ時間に届いたら撃つ（C-0223。撃った時点の待ちのまま・やり直しとは合わない。V-0134）。
-   * 無ければキーごと無い
+   * 押下チャージ型（FiringParams.downCharge）の、前の発（リロードの後は、込め終えてから解放の分の後）からチャージしているフレーム数。
+   * 発と発の間と、込め終えてから 1 発目まで持ち（込め終えた時は −解放 から数える）、毎フレームその時のチャージ時間で待ちを決め直す。
+   * チャージの途中でチャージ時間が変わる（バーストの発動で 1 秒 → 0.7 秒、窓の終わりで 0.7 秒 → 1 秒）と、経過を持ち越して
+   * 新しいチャージ時間に届いたら撃つ（C-0380。撃った時点の待ちのまま・やり直しとは合わない。V-0134・V-0151・V-0252）。
+   * リロード中・ハイドの明けは持たない。無ければキーごと無い
    */
   chargeElapsed?: number;
 };
@@ -165,6 +166,9 @@ function loadChunks(state: ShooterState, shot: ShotParams, model: WeaponModel, p
     const first = reloadFirstShotFrames(shot, model, params);
     if (first === 0) return true;
     state.wait = first - 1;
+    // 押下チャージ型: 1 発目の待ち（チャージ + 解放）は、込め終えた時に決めず、解放の分を負の経過から数えて毎フレームその時の
+    // チャージ時間で決め直す。窓の終わり（0.7 秒 → 1 秒）がこのチャージの途中に来ると、経過を持ち越して 1 秒に届いたら撃つ（C-0380）
+    if (params.downCharge) state.chargeElapsed = -model.chargeReleaseFrames;
     return false;
   }
 }
@@ -223,7 +227,7 @@ export function stepShooter(
 ): boolean {
   if (MAX_AMMO_CLAMP_ON_DECREASE && state.ammo > params.maxAmmo) state.ammo = params.maxAmmo;
   if (state.chargeElapsed !== undefined) {
-    // 押下チャージ型: 前の発からの経過と、このフレームのチャージ時間で待ちを決め直す（C-0223）
+    // 押下チャージ型: 前の発（リロードの後は、込め終えてから解放の分の後）からの経過と、このフレームのチャージ時間で待ちを決め直す（C-0380）
     state.chargeElapsed += 1;
     state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - state.chargeElapsed);
   }

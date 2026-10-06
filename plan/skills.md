@@ -41,7 +41,7 @@ notes の種類: 未対応 20・前提の外 22・計算に無関係 31・補足
   - notes[0] 未対応: みんなの星のときのフルチャージ攻撃時の味方全体の回復（回復を受けた時に発動する味方のスキルには効く）: 根拠なし
 - **burst**: partial
   - effects[0] autoAttack・burstUse: C-0211（確定）、C-0213（確定）、C-0207（確定）、C-0240（仮説）、C-0297（確定）、C-0298（確定）
-  - effects[1] timed・burstUse・fixedChargeTime: C-0214（仮説）
+  - effects[1] timed・burstUse・fixedChargeTime: C-0214（確定）
   - effects[2] timed・burstUse・attackDamage: C-0209（確定）、C-0203（仮説）
   - notes[0] 未対応: シューティングスターのコアに当たる割合は射撃場の的でしか測っていない。的の表に行の無い敵では、モデルのシューティングスターはコアに当たらない（plan/design-anis-star-core-path.md 3.2 節）: C-0298（確定）
   - notes[1] 未対応: コアダメージ▲がシューティングスターのコアに乗るかは確かめていない。モデルは乗せない（plan/design-anis-star-core-path.md 7 節の論点 4）: 根拠なし
