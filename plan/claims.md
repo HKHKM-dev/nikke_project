@@ -723,6 +723,7 @@
   - 状態: 仮説・等級: 厳密一致・更新日: 2026-10-07
   - 根拠: `039-14`・`039-15`・`039-16`・`039-17`。V-0265
   - モデル側: 実装済み（damage.ts の computeTriggerDamage → skills/buffs.ts の roundedAttack。既定 ATTACK_ROUNDING = 'total'）。効果ごと・スキルごとの丸め（AttackRounding の effect・skill）は、照合ランナーの setup.attackRounding で予測の仮説にだけ使う
+  - 検証記録: V-0265
 
 ## 育成・ステータス
 
