@@ -1,0 +1,328 @@
+[
+  {
+    "id": "259-01",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 104899.2,
+    "description": "ココア + ユニ + クイーン（真）+ 雪子・風圧の的の、雪子の 1〜4 回目のフルバーストの中（クイーン（真）の S1 のフルバースト終了時の攻撃力▲の後）のクイーン（真）の 1 ペレット（胴体）。ちょうど整数に乗った 12 トリガー（1,860 単位。f2962 の 1,237,812 = 177 単位、f3001 の 1,041,999 = 149 単位 など）から。仮説 K（追撃なし。58,174.9）の単位に乗るトリガーは 0",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）のうち、クイーン（真）の 1 トリガー（10 ペレットの和。39f ごと）の増分を、1 ペレットの単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位、会心 5・コア 10 単位を足す）で割り、ちょうど整数に乗った増分（雪子・ココア・ユニの発が混ざらないもの）から胴体を Σ増分 / Σ単位 × 15 で出した。窓は雪子のバーストのヒット（f2576・5065・7615・10140）の後、前のクイーン（真）のフルバースト終了から 15 秒（882f）の後から雪子のフルバーストの終わりまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2150,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-02",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 6946003,
+    "description": "同じ録画の、雪子の 2 回目のバーストの後のクイーン（真）の S1 の追撃の分配ダメージのヒット（f5167。6,946,003）。3・4 回目（f7719・f10244）は 7,091,238・7,075,677 で、6,946,003 とほかの発の和。予測（6,945,978.471）より 24.5 大きい。クイーン（真）の攻撃力の▲（S1 のフルバースト終了時 60,283.71・追撃 96,216.54）を効果ごとに整数に丸めて足すと、モデル（合計を丸める。C-0027）より攻撃力が 1 大きく、その差（+25.1）と合う（259-09 と同じ）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の 100 万を超える増分。雪子のバーストのヒットの 102〜104f 後に出る（259-10）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-03",
+    "recording": "259",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 9,
+    "description": "同じ録画の 180 秒の、クイーン（真）の S1 の倍率ダメージのヒットの数。1more 5 回（クイーン（真）のバーストのヒットの 23f 後: f1424・3826・6330・8875・11392）と追撃 4 回（雪子のバーストのヒットの約 100f 後: f2677・5167・7719・10244）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の 100 万を超える増分のうち、値がクイーン（真）の 1more（約 650 万〜950 万）と追撃（約 695 万）に当たるものを数えた。III は録画でもクイーン（真）・雪子の順に交互（5 回・4 回）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-04",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 33245,
+    "description": "同じ録画の、クイーン（真）の 1 回目のフルバーストの中（S1 の戦闘開始時の攻撃力▲の後）の雪子の 1 発（胴体相当）。コアの増分 55,408（25 単位）×8・会心つきの 66,490（30 単位）×5 が胴体 33,245.1（バトンタッチ 1 スタック・有利コードの▲・フルバースト補正）に乗る（13/13）。仮説 L1・L2・M の単位には 0",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分のうち 20 万未満（雪子の 1 発）を、1 発の単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位、距離 3・会心 5・コア 10 単位を足す）で割り、整数に乗った増分の値を胴体に直した。窓はクイーン（真）のバーストのヒット f1401 の +400〜+550f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-05",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 41906,
+    "description": "同じ録画の、クイーン（真）の 2 回目のフルバーストの中（雪子の S1 のフルバースト終了時の攻撃力▲の後）の雪子の 1 発（胴体相当）。コアの 69,843（25 単位）×160・コア会心の 83,812 ×21 が胴体 41,906.1（バトンタッチ 2 スタック）に乗る（181/186）。仮説 L1・L2・M の単位には 0",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分のうち 20 万未満（雪子の 1 発）を、1 発の単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位、距離 3・会心 5・コア 10 単位を足す）で割り、整数に乗った増分の値を胴体に直した。窓はクイーン（真）のバーストのヒット f3803 の +300〜+550f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 3300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-06",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 50567,
+    "description": "同じ録画の、クイーン（真）の 3 回目のフルバーストの中の雪子の 1 発（胴体相当）。距離ボーナスつきの 60,680（18 単位）×5 などが胴体 50,566.9（バトンタッチ 3 スタック）に乗る（6/6）。仮説 L1・L2・M の単位には 0",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分のうち 20 万未満（雪子の 1 発）を、1 発の単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位、距離 3・会心 5・コア 10 単位を足す）で割り、整数に乗った増分の値を胴体に直した。窓はクイーン（真）のバーストのヒット f6307 の +310〜+550f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 5750,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-07",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 30881,
+    "description": "同じ録画の、雪子の 1 回目のフルバーストの終わり（有利コードの▲の後）の雪子の 1 発（胴体相当）。コアの 51,468（25 単位）が胴体 30,881.0（1more の攻撃力▲・バトンタッチ 1 スタック）に乗る。▲の中は 73,997（コア）。仮説 N（追撃が雪子自身にも付く）とは合わない。予測ファイルの y-own-fb-body（2 スタックの回）は、その回の増分が欠けていて読めなかったので、同じ窓の 1 スタックの回を読んだ（予測ファイルの指標ではない）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分のうち 20 万未満（雪子の 1 発）を、1 発の単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位、距離 3・会心 5・コア 10 単位を足す）で割り、整数に乗った増分の値を胴体に直した。窓は雪子のバーストのヒット f2576 の +440〜+600f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 2320,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-08",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 42929,
+    "description": "同じ録画の、雪子の 3 回目のフルバーストの終わり（有利コードの▲の後）の雪子の 1 発（胴体相当）。コアの 71,548（25 単位）・距離つきコアの 80,134 が胴体 42,929.1（1more の攻撃力▲・バトンタッチ 3 スタック）に乗る。▲の中は 115,211・102,867（胴体 61,720.3）。予測ファイルの指標ではない（259-07 と同じ）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分のうち 20 万未満（雪子の 1 発）を、1 発の単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位、距離 3・会心 5・コア 10 単位を足す）で割り、整数に乗った増分の値を胴体に直した。窓は雪子のバーストのヒット f7615・f10140 の +440〜+600f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 7200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-09",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 9483613,
+    "description": "同じ録画の、クイーン（真）の 3 回目のバーストの後の S1 の 1more の分配ダメージのヒット（f6330）。モデル（9,483,582.7）より 30 大きい。攻撃力の▲（1more 36,292.52・追撃 96,216.54・S1 のフルバースト終了時 60,283.71）を効果ごとに整数に丸めて足すと攻撃力が 1 大きく、その差（+30.3）と合う。1 回目（f1424。6,564,502）もモデル（6,564,472）より 30 大きく、同じ読み（戦闘開始時 60,283.71・1more 36,292.52）で合う。予測ファイルの指標ではない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の 100 万を超える増分。クイーン（真）のバーストのヒットの 23f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-11",
+    "recording": "259",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": 8736989,
+    "description": "同じ録画の、雪子の 2 回目のバーストの倍率ダメージのヒット（f5065。8,736,989）。発動の直前のバフにバトンタッチ 2 スタックが入った値（モデルと同じ）。予測ファイルの指標ではない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の 100 万を超える増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 4,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "259-10",
+    "recording": "259",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0233",
+    "readAt": "2026-10-06",
+    "value": [46, 48, 48, 102, 104, 104],
+    "unit": "f",
+    "description": "同じ録画の、雪子の 2〜4 回目のバーストのヒット（f5065・7615・10140）から、雪子の 1more の分配ダメージのヒット（f5111・7663・10188）までと、クイーン（真）の追撃の分配ダメージのヒット（f5167・7719・10244）までの動画のフレーム数。1 回目（f2576）は HUD が 36f 読めない区間の中なので外した（1more は f2622、追撃は f2677）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分のフレーム"
+    }
+  }
+]

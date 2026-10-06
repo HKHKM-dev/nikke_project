@@ -1,0 +1,189 @@
+[
+  {
+    "id": "260-01",
+    "recording": "260",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0232",
+    "readAt": "2026-10-06",
+    "value": 15545,
+    "description": "ラム + デルタ + 雪子・灼熱の的の、2〜4 回目のフルバーストの中（h+5〜h+540）の雪子の 1 発（胴体）。胴体の増分 15,545 が 20 個。25,908（25 単位）×369・29,017（28 単位）×214 なども同じ胴体に乗る（799 個のうち 786 個）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、窓ごとに雪子の 1 発の単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位・外 10 単位、距離 3・会心 5・コア 10 単位を足す）で割り、整数に乗った増分の値を胴体に直した。窓はバーストのヒットのフレーム h（f3926・6304・8714。2〜4 回目）から決めた（258 と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "260-02",
+    "recording": "260",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0232",
+    "readAt": "2026-10-06",
+    "value": 17143,
+    "description": "同じ録画の、フルバースト終了から 15 秒の中（h+640〜h+1450）の雪子の 1 発（胴体）。胴体の増分 17,143 が 15 個。39,430（23 単位）×437・34,287（20 単位）×367 なども同じ胴体に乗る。仮説 E（10,363.3）の単位に乗るのは半分未満",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、窓ごとに雪子の 1 発の単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位・外 10 単位、距離 3・会心 5・コア 10 単位を足す）で割り、整数に乗った増分の値を胴体に直した。窓はバーストのヒットのフレーム h（f3926・6304・8714。2〜4 回目）から決めた（258 と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "260-03",
+    "recording": "260",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0232",
+    "readAt": "2026-10-06",
+    "value": 10363,
+    "description": "同じ録画の、フルバースト終了から 15 秒の後（h+1600〜h+2250）の雪子の 1 発（胴体）。胴体の増分 10,363 が 9 個。23,836（23 単位）×509・20,727（20 単位）×134 なども同じ胴体に乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、窓ごとに雪子の 1 発の単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位・外 10 単位、距離 3・会心 5・コア 10 単位を足す）で割り、整数に乗った増分の値を胴体に直した。窓はバーストのヒットのフレーム h（f3926・6304・8714。2〜4 回目）から決めた（258 と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "260-04",
+    "recording": "260",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0232",
+    "readAt": "2026-10-06",
+    "value": 17143,
+    "description": "同じ録画の、戦闘開始から最初のバーストの前（f800〜1450）の雪子の 1 発（胴体）。胴体の増分 17,143 が 11 個、34,287（20 単位）×236・42,858（25 単位）×39。S1 の戦闘開始時の攻撃力▲の中",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、窓ごとに雪子の 1 発の単位（倍率グループ 0.1 分。胴体はフルバースト中 15 単位・外 10 単位、距離 3・会心 5・コア 10 単位を足す）で割り、整数に乗った増分の値を胴体に直した。窓はバーストのヒットのフレーム h（f3926・6304・8714。2〜4 回目）から決めた（258 と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "260-05",
+    "recording": "260",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0232",
+    "readAt": "2026-10-06",
+    "value": 2342044,
+    "description": "同じ録画の、3・4 回目のバーストの倍率ダメージのヒット（f6304・f8714。どちらも 2,342,044）。2 回目（f3926）は 2,367,952 で、2,342,044 と雪子の 1 発（25,908）の和。5 回目（f11058）も 2,365,880 で同じく和",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の 100 万を超える増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "260-06",
+    "recording": "260",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0232",
+    "readAt": "2026-10-06",
+    "value": 0,
+    "description": "同じ録画の 180 秒の、1more の分配ダメージのヒットの数。100 万を超える増分はバーストのヒットの 5 つ（f1548・3926・6304・8714・11058）だけで、その後の数百万の増分は無い",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の 100 万を超える増分を数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]
