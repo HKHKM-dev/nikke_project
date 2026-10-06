@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 209・仮説 67・棄却 54・範囲外 1（計 331）
+件数: 確定 209・仮説 68・棄却 54・範囲外 1（計 332）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1732,6 +1732,13 @@
   - モデル側: `data/skills/851.json` の burst の effects[1]（`timed`・`burstUse`・`self`・`sustainedDamage`）。置き場所は `skills/burstDamage.ts` の `SUSTAINED_DAMAGE_PLACEMENT`（`attackDamage`。C-0299）、乗るかは `frame/plan.ts` の `planSkillHits` が tick のフレームのバフで決める（T1）。A.N.モードの効果の遅れは `burst/landing.ts` の `MEASURED_BURST_DELAYS` のレイヴンの行の効果 0f のまま（未測定）
   - 検証記録: V-0227
   - 定義: `data/skills/851.json` の burst の effects[1]
+- **C-0334** 宝物版のミランダの S2（ウェイクアップ！）の 3 行目のクリティカル確率▲（Lv10 で 85.42%・1 発間）は、フルバーストタイムの発動時の最終攻撃力の順位で自分を除く 1 位の味方 1 機に付き、その味方のフルバースト開始以後の 1 発目の会心率に足される（素の 0.15 と足して 1 を超えるので、その 1 発は必ず会心）。2 発目からは素の会心率に戻る
+  - 状態: 仮説・等級: 単独実測・更新日: 2026-10-06
+  - 根拠: `262-03`（ミランダ（操作・撃たない）+ デルタ + I-DOLL・サンの編成で、フルバースト 4 回とも、自分を除く 1 位（スペック固定の最終攻撃力でサンがデルタより上）のサンの 1 発目が会心。足さないモデル（V-0229 の H0）で 4 回とも会心になる確率は 0.15^4 = 0.0005）・`262-04`（サンの 2 発目以後は 327 発中 47 発 = 0.144 で素の会心率のまま。1 発で切れる）・`262-05`（デルタの 1 発目は読めた 3 回とも会心でない。対象はデルタではない）。予測（records/predictions/V-0229.json）は撮る前に commit した。確率の数え上げで録画は 1 本なので仮説に置く（C-0324 と同じ扱い）。録画 262 は I-DOLL・サン（未確定はバーストの自分の最大装弾数▲だけで、1 発目が会心かに効かない）で最小構成の警告が出るが、2026-10-06 のオーナーの承認（plan/design-ranked-shot-duration.md 7 節の論点 4）で通した。自分を除かない読みは、撃たないミランダが対象になり H0 と同じ見え方なので、この録画では見分けていない（同じ言い回しの読みは C-0322）。会心率の頭打ち（1）は、1 でも 1.0042 でも必ず会心で見え方が同じなので、この結論の根拠にしない。V-0229
+  - モデル側: `data/skills/32.json` の treasureSkills.skill2 の effects[3]（`timed`・`fullBurstStart`・`topAttack`・`targetCountRef` 7・`excludeSelf: "unlessShort"`・`critRate`・`durationShotsRef` 9）。窓は `skills/timeline.ts` の 2 段目（順位）で、対象の枠の射撃で切る（plan/design-ranked-shot-duration.md 2 節）
+  - 検証記録: V-0229
+  - 定義: `data/skills/32.json` の treasureSkills.skill2 の effects[3]
+  - 等級の候補（機械）: 厳密一致
 
 ## 敵・的・場面
 

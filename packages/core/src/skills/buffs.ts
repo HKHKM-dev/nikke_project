@@ -211,9 +211,17 @@ export function applyAttackBuffs(baseAttack: number, buffs: BuffTotals): number 
   return baseAttack * (1 + buffs.attackRatio) + buffs.attackFlat;
 }
 
-/** { rate: crit.rate + critRate, damage: crit.damage + critDamage } */
+/**
+ * { rate: min(1, crit.rate + critRate), damage: crit.damage + critDamage }。
+ * 順位の発数編: 会心率は確率なので 1 で頭打ち（plan/design-ranked-shot-duration.md 7 節の論点 2）
+ */
 export function applyCritBuffs(crit: CharacterData['crit'], buffs: BuffTotals): CharacterData['crit'] {
-  return { rate: crit.rate + buffs.critRate, damage: crit.damage + buffs.critDamage };
+  return { rate: capCritRate(crit.rate + buffs.critRate), damage: crit.damage + buffs.critDamage };
+}
+
+/** 順位の発数編: 会心率（確率）の上限 1 */
+export function capCritRate(rate: number): number {
+  return Math.min(1, rate);
 }
 
 /** 1 + attackDamage。倍率グループ (1 + コア + 会心 + 距離) とは別に掛ける */

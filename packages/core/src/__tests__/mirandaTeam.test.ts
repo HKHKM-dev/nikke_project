@@ -2,6 +2,8 @@
 // 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0186。持続の▲の入れ方は C-0170）、宝物版 S1 の攻撃力▲（C-0187）、
 // sim と calc の整合。V-0114。宝物版のバーストの対象（自分を除く上位 2 機、足りなければ自分。C-0322）と、宝物版 S2 の
 // フルバーストタイムの発動時の効果（C-0323・C-0324）を、録画 244・245 と同じ編成で見る（V-0216〜V-0218）。
+// 宝物版 S2 の 3 行目（自分を除く 1 位に「1 発間」のクリティカル確率▲。topAttack × durationShots。C-0334）は、録画 262 と
+// 同じ編成で見る（V-0229。plan/design-ranked-shot-duration.md）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
@@ -93,6 +95,15 @@ const TRIO: TeamInput = {
   controlledSlot: 2,
 };
 
+// V-0229 の撮影（録画 262）と同じ: TRIO で操作枠をミランダ（撃たない）に替えた編成
+const TRIO_LINE3: TeamInput = {
+  slots: [fixedSlot(32, true, 3), fixedSlot(20, true), fixedSlot(308, true)],
+  enemy: rangeEnemy,
+  durationSeconds: 180,
+  burst: true,
+  controlledSlot: 0,
+};
+
 /** フルバーストに入らなかったミランダのバースト（fullBurst false）か、フルバーストの始まり（true）から 2 秒後の区間 */
 function after(input: TeamInput, fullBurst: boolean) {
   const sim = runSimulation(input);
@@ -146,6 +157,28 @@ describe('ウェイクアップ！（宝物版）のフルバーストタイム�
   });
 });
 
+describe('ウェイクアップ！（宝物版）の 3 行目', () => {
+  const sim = runSimulation(TRIO_LINE3);
+  const plan = planTeamRun(TRIO_LINE3);
+  const segmentAt = (frame: number) => sim.timeline.segments.find((s) => s.start <= frame && frame < s.end)!;
+
+  it('gives Critical Rate up to Sun (top ATK except self) from each full burst start to her first shot', () => {
+    const fbs = sim.schedule!.fullBurstWindows;
+    expect(fbs.length).toBeGreaterThanOrEqual(3);
+    const sunShots = plan.shots[2]!.frames;
+    for (const fb of fbs) {
+      const first = sunShots.find((f) => f >= fb.start);
+      if (first === undefined) continue;
+      expect(segmentAt(first).slots[2]!.buffs.critRate).toBeCloseTo(0.8542, 12);
+      const second = sunShots.find((f) => f > first)!;
+      expect(segmentAt(second).slots[2]!.buffs.critRate).toBe(0);
+      // デルタとミランダには付かない
+      expect(segmentAt(first).slots[1]!.buffs.critRate).toBe(0);
+      expect(segmentAt(first).slots[0]!.buffs.critRate).toBeCloseTo(0.301, 12);
+    }
+  });
+});
+
 describe('ヘルスアップ！の命中率▲（ミランダ単騎・条件は自動）', () => {
   const plan = planTeamRun(SOLO);
   const sim = runSimulation(SOLO);
@@ -183,6 +216,7 @@ describe.each([
   ['ミランダ単騎（V-0114 の撮影の条件）', SOLO],
   ['ミランダ + デルタ（V-0216 の撮影の条件）', DUO],
   ['ミランダ + デルタ + I-DOLL・サン（V-0217・V-0218 の撮影の条件）', TRIO],
+  ['ミランダ（操作）+ デルタ + I-DOLL・サン（V-0229 の撮影の条件）', TRIO_LINE3],
   ['実戦寄り（ミランダ + リター + デルタ + アリス + モダニア）', PRACTICAL],
 ] as const)('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);

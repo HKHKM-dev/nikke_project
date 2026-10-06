@@ -82,13 +82,12 @@ describe('parseSkillDefinition（ヘルム編）', () => {
     );
   });
 
-  it('rejects a duration in shots mixed with seconds, stacks, conditions, ranking or stats tracked in the first pass', () => {
+  it('rejects a duration in shots mixed with seconds, stacks, conditions or stats tracked in the first pass', () => {
     const timed = { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'chargeDamage', ref: 1 };
     expect(parseOne({ ...timed, durationShots: 10, durationRef: 2 })).toThrow(/either in seconds or in shots/);
     expect(parseOne({ ...timed, durationShots: 10, durationShotsRef: 2 })).toThrow(/at most one/);
     expect(parseOne({ ...timed, durationShots: 10, maxStacks: 3 })).toThrow(/cannot stack/);
     expect(parseOne({ ...timed, durationShots: 10, condition: { selfBuffed: 'attack' } })).toThrow(/condition/);
-    expect(parseOne({ ...timed, target: 'topAttack', targetCount: 1, durationShots: 10 })).toThrow(/topAttack/);
     for (const stat of ['attack', 'reloadSpeed', 'hitRate']) {
       expect(parseOne({ ...timed, stat, durationShots: 10 })).toThrow(/first pass/);
     }

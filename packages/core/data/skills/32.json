@@ -180,13 +180,19 @@
           "claims": [
             "C-0323"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "フルバーストタイムの発動時に、自分を除く最終攻撃力が最も高い味方 1 機（足りなければ自分）に付くクリティカル確率▲（1 発間）は未対応。順位で決まる対象への発数の維持（topAttack と durationShots）が語彙に無い",
-          "en": "Critical Rate up for 1 shot on the 1 ally with the highest final ATK except the user (the user only if there are not enough allies) at the start of Full Burst is not supported: a duration in shots on a ranked target (topAttack with durationShots) is not in the vocabulary",
-          "kind": "unimplemented"
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "topAttack",
+          "targetCountRef": 7,
+          "excludeSelf": "unlessShort",
+          "stat": "critRate",
+          "ref": 8,
+          "durationShotsRef": 9,
+          "claims": [
+            "C-0334"
+          ]
         }
       ]
     },
