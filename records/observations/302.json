@@ -288,5 +288,101 @@
       "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
       "note": "空きがフルバーストの入りの止まり・的のジャンプ・窓の境にかかるもの（41〜59f・112f 以上の IN の空き）は除いた。ココアの AI の枠の RELOADING の表示は、▲の外の回がどれも窓の始まりにかかり、基準が取れなかったので読まない"
     }
+  },
+  {
+    "id": "302-10",
+    "recording": "302",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0267",
+    "readAt": "2026-10-07",
+    "value": 1193702,
+    "description": "レイヴン（III・AI）の、レイヴンが III を撃った回のフルバーストの中の通常攻撃の 1 ヒット（コア・会心なし）。f1534・3909・6338・6458・6774・8788・8907・9026・9222・11155・11274・11393 の増分がどれも 1,193,702（ほかに f6577 の 1,214,082 = 1,193,702 + サンの 20,380）。攻撃力▲はレイヴンの S1 とクラウンの S1",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分（録画の全体）を、予測ファイル（V-0267）のレイヴンの 1 ヒットの値（窓の中のコア・コア会心 × 仮説 2 つ、窓の外のコア）と、それにサン・ココアの 1 ヒット（`302-01`〜`302-08` の値）を 1 つ足した和に突き合わせ、ちょうど一致したものを全部挙げた。H0 の値に一致した増分は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "302-11",
+    "recording": "302",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0267",
+    "readAt": "2026-10-07",
+    "value": 1432443,
+    "description": "同じ窓のレイヴンの 1 ヒット（コア・会心）。f1730・1849・1968・4028・11512 の増分がどれも 1,432,443",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分（録画の全体）を、予測ファイル（V-0267）のレイヴンの 1 ヒットの値（窓の中のコア・コア会心 × 仮説 2 つ、窓の外のコア）と、それにサン・ココアの 1 ヒット（`302-01`〜`302-08` の値）を 1 つ足した和に突き合わせ、ちょうど一致したものを全部挙げた。H0 の値に一致した増分は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "302-12",
+    "recording": "302",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0267",
+    "readAt": "2026-10-07",
+    "value": 367175,
+    "description": "レイヴンの、攻撃力▲の外の通常攻撃の 1 ヒット（コア・会心なし）。f914・1271・3528・3647・6077・7131・7249・8408・8526・8646・9709・11011 の増分がどれも 367,175（ほかに f4819 の 711,771 = 367,175 + ココアの 344,596）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分（録画の全体）を、予測ファイル（V-0267）のレイヴンの 1 ヒットの値（窓の中のコア・コア会心 × 仮説 2 つ、窓の外のコア）と、それにサン・ココアの 1 ヒット（`302-01`〜`302-08` の値）を 1 つ足した和に突き合わせ、ちょうど一致したものを全部挙げた。H0 の値に一致した増分は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
