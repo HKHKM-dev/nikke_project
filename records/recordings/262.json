@@ -14,7 +14,8 @@
       "slot": 1,
       "rid": 32,
       "name": "ミランダ",
-      "controlled": true
+      "controlled": true,
+      "treasurePhase": 3
     },
     {
       "slot": 2,
@@ -37,5 +38,5 @@
   "fixedSpec": true,
   "autoFire": false,
   "autoBurst": true,
-  "conditionNote": "V-0228（ミランダの宝物版 S2 の 3 行目）の録画。ミランダ（宝物 3・操作・撃たない）・デルタ（AI）・I-DOLL・サン（AI）。オートバースト ON"
+  "conditionNote": "V-0229（ミランダの宝物版 S2 の 3 行目）の録画。ミランダ（宝物 3・操作・撃たない）・デルタ（AI）・I-DOLL・サン（AI）。オートバースト ON"
 }
