@@ -1,0 +1,114 @@
+{
+  "verification": "V-0266",
+  "note": "既存の録画 259（ココア（I・AI）+ ユニ（II・AI）+ クイーン（真）（III・操作・AUTO 射撃 ON）+ 雪子（III・AI）・風圧の的・3 分モード・スペック固定 ON・オートバースト ON）の読み直し。クイーン（真）のバーストの倍率ダメージのヒットを読む前に出した。V-0233 は 1 回目（S1 の戦闘開始時の▲だけ）を読んでいない（259 の観測値にバーストのヒットは無い）",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 160,
+      "controlled": false
+    },
+    {
+      "rid": 870,
+      "controlled": true
+    },
+    {
+      "rid": 871,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "攻撃力▲の組み合わせによらない（C-0398 の合計の丸め。差は S1 の分配ダメージのヒットだけのもの）"
+    },
+    {
+      "id": "H1",
+      "note": "差は攻撃力▲の組み合わせ（S1 + 追撃）によるもので、同じ組み合わせのバーストのヒットも攻撃力 1 つ分大きい（効果ごとの丸めの形で出す）",
+      "override": {
+        "attackRounding": "effect"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストのヒット（会心なし）。攻撃力▲は S1 の戦闘開始時の 1 つだけで、H0・H1 は同じ値（対照）"
+    },
+    {
+      "id": "burst-2",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のバーストのヒット（会心なし）。攻撃力▲は S1 のフルバースト終了時と追撃の 2 つ（`259-02` と同じ組み合わせ）。H1 は攻撃力 1 つ分大きい"
+    },
+    {
+      "id": "burst-2c",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目以降のバーストのヒットが会心だったときの値（burst-2 と同じ組み合わせ）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "d2399be8f5b989e043defdb75443ebe9e57e11c8",
+    "values": {
+      "H0": {
+        "burst-1": 7815801.719343845,
+        "burst-2": 11991752.287027027,
+        "burst-2c": 17987628.43054054
+      },
+      "H1": {
+        "burst-1": 7815801.719343845,
+        "burst-2": 11991795.688857988,
+        "burst-2c": 17987693.53328698
+      }
+    },
+    "seen": {
+      "259": [
+        "259-01",
+        "259-02",
+        "259-03",
+        "259-04",
+        "259-05",
+        "259-06",
+        "259-07",
+        "259-08",
+        "259-09",
+        "259-11",
+        "259-10"
+      ]
+    }
+  }
+}

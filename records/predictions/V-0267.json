@@ -1,0 +1,108 @@
+{
+  "verification": "V-0267",
+  "note": "既存の録画 302（レイヴン（III・AI）+ I-DOLL・サン（III・AI）+ クラウン（II・操作・撃たない）+ ココア（I・AI）・灼熱の的・3 分モード・スペック固定 ON）の読み直し。レイヴンの通常攻撃のヒットを読む前に出した（V-0262 はサンとココアのヒットだけを読んだ）。frame 600 はモデルの 1 回目のフルバースト（レイヴンが III）の中",
+  "team": [
+    {
+      "rid": 851,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": false
+    },
+    {
+      "rid": 330,
+      "controlled": true
+    },
+    {
+      "rid": 311,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（C-0027・C-0398）: ▲を全部足した最終攻撃力を四捨五入する"
+    },
+    {
+      "id": "H1",
+      "note": "対象が自分の▲（レイヴンの S1）だけ効果ごとに四捨五入し、クラウンの S1（バーストを使った味方）と合わせて最終攻撃力を四捨五入する",
+      "override": {
+        "attackRounding": "self"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "fb-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "レイヴンが III を撃った回のフルバーストの中の、レイヴンの通常攻撃（フルチャージ）の 1 ヒット（コア・会心なし）。攻撃力▲はレイヴンの S1（自分。発動者の攻撃力の 47.52%）とクラウンの S1（バーストを使った味方。64.51%）。H1 は攻撃力 1 つ分大きい"
+    },
+    {
+      "id": "fb-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ窓のコア・会心"
+    },
+    {
+      "id": "base-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "▲の外のレイヴンの通常攻撃の 1 ヒット（コア・会心なし）。H0・H1 とも同じ値（読みの確かめ。C-0185 の 173-09 と同じ値）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "92aedf72808bd504bd6aa12aa4810f142604507f",
+    "values": {
+      "H0": {
+        "fb-core": 1193697.2692449999,
+        "fb-core-crit": 1432436.723094,
+        "base-core": 367174.74
+      },
+      "H1": {
+        "fb-core": 1193702.48894,
+        "fb-core-crit": 1432442.986728,
+        "base-core": 367174.74
+      }
+    },
+    "seen": {
+      "302": ["302-01", "302-02", "302-03", "302-04", "302-05", "302-06", "302-07", "302-08", "302-09"]
+    }
+  }
+}

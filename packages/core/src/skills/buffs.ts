@@ -22,15 +22,19 @@ export type ChangedWeapon = {
  * - 'total': ▲を全部足した最終攻撃力を四捨五入する（C-0027。いまのモデル）
  * - 'effect': ▲を効果ごとに四捨五入してから足す（同じスキルの同じ値の効果＝スタックは 1 つにまとめる）
  * - 'skill': ▲を出どころのスキル（キャラ × スロット）ごとに足して四捨五入してから足す
+ * - 'self': 対象が自分（target self）の▲だけ効果ごとに四捨五入し、ほかの▲と合わせた最終攻撃力を四捨五入する（V-0266）
  * 'effect'・'skill' は検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
  */
-export type AttackRounding = 'total' | 'effect' | 'skill';
+export type AttackRounding = 'total' | 'effect' | 'skill' | 'self';
 
 /** いまのモデルの攻撃力▲の丸め（C-0027） */
 export const ATTACK_ROUNDING: AttackRounding = 'total';
 
-/** 攻撃力▲の 1 件（丸めの仮説用）。source は出どころ（`<resourceId>.<スロット>`。育成の効果層は `build`） */
-export type AttackPart = { source: string; ratio: number; flat: number };
+/**
+ * 攻撃力▲の 1 件（丸めの仮説用）。source は出どころ（`<resourceId>.<スロット>`。育成の効果層は `build`）。
+ * self は対象が自分（target self）の効果
+ */
+export type AttackPart = { source: string; ratio: number; flat: number; self?: true };
 
 /** 1 体が受けるバフの合計。attackFlat 以外はすべて比率の加算（0.2 = +20%） */
 export type BuffTotals = {
@@ -180,18 +184,25 @@ export function statTotal(totals: BuffTotals, stat: BuffStat): number {
 }
 
 /** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す。攻撃力は内訳にも出どころ source で足す */
-export function addRatioBuff(totals: BuffTotals, stat: BuffStat, ratio: number, source = 'build'): BuffTotals {
+export function addRatioBuff(
+  totals: BuffTotals,
+  stat: BuffStat,
+  ratio: number,
+  source = 'build',
+  self = false,
+): BuffTotals {
   const field = RATIO_FIELD[stat];
   const next = { ...totals, [field]: totals[field] + ratio };
-  return stat === 'attack' ? { ...next, attackParts: [...totals.attackParts, { source, ratio, flat: 0 }] } : next;
+  if (stat !== 'attack') return next;
+  return { ...next, attackParts: [...totals.attackParts, { source, ratio, flat: 0, ...(self ? { self } : {}) }] };
 }
 
 /** 攻撃力の固定加算（実数）。新しいオブジェクトを返す。内訳にも出どころ source で足す */
-export function addFlatAttack(totals: BuffTotals, amount: number, source = 'build'): BuffTotals {
+export function addFlatAttack(totals: BuffTotals, amount: number, source = 'build', self = false): BuffTotals {
   return {
     ...totals,
     attackFlat: totals.attackFlat + amount,
-    attackParts: [...totals.attackParts, { source, ratio: 0, flat: amount }],
+    attackParts: [...totals.attackParts, { source, ratio: 0, flat: amount, ...(self ? { self } : {}) }],
   };
 }
 
@@ -212,6 +223,7 @@ export function applyResolvedEffect(
   effect: Pick<ResolvedEffect, 'stat' | 'scaling' | 'value'> & {
     weapon?: ChangedWeapon;
     source?: ResolvedEffect['source'];
+    target?: ResolvedEffect['target'];
   },
   casterBaseAttack: number,
 ): AppliedBuff {
@@ -221,7 +233,10 @@ export function applyResolvedEffect(
   }
   if (effect.scaling === 'casterAttack') {
     const appliedAmount = casterBaseAttack * effect.value;
-    return { totals: addFlatAttack(totals, appliedAmount, sourceKeyOf(effect)), appliedAmount };
+    return {
+      totals: addFlatAttack(totals, appliedAmount, sourceKeyOf(effect), effect.target === 'self'),
+      appliedAmount,
+    };
   }
   if (effect.scaling === 'casterChargeTime') {
     // value は解決時に 発動者の基礎チャージ時間 × 比率 の秒数にしてある（skills/resolve.ts）
@@ -235,7 +250,7 @@ export function applyResolvedEffect(
     return { totals: { ...totals, maxAmmoFlat: totals.maxAmmoFlat + effect.value }, appliedAmount: effect.value };
   }
   return {
-    totals: addRatioBuff(totals, effect.stat as BuffStat, effect.value, sourceKeyOf(effect)),
+    totals: addRatioBuff(totals, effect.stat as BuffStat, effect.value, sourceKeyOf(effect), effect.target === 'self'),
     appliedAmount: effect.value,
   };
 }
@@ -255,6 +270,20 @@ export function roundedAttack(
   rounding: AttackRounding = ATTACK_ROUNDING,
 ): number {
   if (rounding === 'total') return Math.round(applyAttackBuffs(baseAttack, buffs));
+  if (rounding === 'self') {
+    const own = new Map<string, number>();
+    let rest = baseAttack;
+    for (const part of buffs.attackParts) {
+      const amount = baseAttack * part.ratio + part.flat;
+      if (part.self !== true) rest += amount;
+      else {
+        const key = `${part.source}|${part.ratio}|${part.flat}`;
+        own.set(key, (own.get(key) ?? 0) + amount);
+      }
+    }
+    for (const amount of own.values()) rest += Math.round(amount);
+    return Math.round(rest);
+  }
   const groups = new Map<string, number>();
   for (const part of buffs.attackParts) {
     const key = rounding === 'skill' ? part.source : `${part.source}|${part.ratio}|${part.flat}`;
