@@ -15,7 +15,10 @@
           "assumes": {
             "ja": "フルチャージの通常攻撃 1 発ごとに 1 回（全弾命中の前提。射撃場の的は「ターゲット」とみる）",
             "en": "Once per full-charge normal shot (every shot is assumed to hit; the range target is taken as a \"target\")"
-          }
+          },
+          "claims": [
+            "C-0410"
+          ]
         }
       ],
       "notes": [
