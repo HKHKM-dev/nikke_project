@@ -30,7 +30,10 @@
         {
           "ja": "超火力状態のときの追加ダメージ（262.79%）は未対応（超火力はバーストの火力ゲージで決まる）",
           "en": "The extra hit in the Super Firepower state (262.79%) is not modeled (that state depends on the Burst's firepower gauge)",
-          "kind": "unimplemented"
+          "kind": "unimplemented",
+          "claims": [
+            "C-0410"
+          ]
         }
       ]
     },
