@@ -43,7 +43,7 @@
             "en": "Max ammo follows C-0017 (additive ratio, rounded; 533 at Lv10). Current ammo is not increased; a reload fills to the new maximum. The window lasts value 2 seconds of game time from the Burst use. In recordings it ended 607–609 frames after the III activation (00.00 on the burst bar), longer than the model's 588 frames (how it is counted is unchecked)"
           },
           "claims": [
-            "C-0338",
+            "C-0347",
             "C-0017",
             "C-0275"
           ]

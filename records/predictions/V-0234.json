@@ -1,14 +1,17 @@
 {
-<<<<<<<< HEAD:records/predictions/V-0234.json
-  "verification": "V-0234",
-  "note": "エマ：TU（93・MG）単騎・操作（AUTO 射撃 ON）・オートバースト OFF（バーストは検証記録の「次に撮るもの」の時刻に手で撃つ。II がいないのでチェーンは切れる）・灼熱タブの BigArms・射撃場 3 分・スペック固定 ON。モデルのバーストは自動で 32.33 秒・74.58 秒・116.94 秒・165.46 秒（1902・4387・6879・9733f）で、指標の frame はこの時刻で選んだ。録画のバーストの時刻がずれたら、同じ関係（環境コントロールの窓とバーストの窓の重なり方）の時刻のヒットで読む。S1 の環境コントロールは C-0305（戦闘開始時と 30 秒ごと・10 秒・× 1.039）。S2 の効果 1 は会心のヒットにだけ、効果 2 は RL にだけ効く（V-0209 と同じ）。バーストの攻撃力▲（発動者基準 40.07%・10 秒）は定義にあり、根拠の結論は無い（この検証で値を見る）。ID は V-0226 から V-0235、V-0234 と 2 回振り直した（main の V-0226・V-0235 と重なったため。predicted.commit と予測の commit bf67347 は振り直す前のブランチのもの）",
-========
   "verification": "V-0234",
   "note": "V-0219 の案 1-a（窓の時刻の偏りの対照）。判定に使うのは、サクラ（836。SMG・AI）のコア命中率の、帯ごとの III（I-DOLL・サン）の発動から 30 秒の窓の中 − 外（coreHitRateDiff）。編成のどのキャラも味方に命中率▲を配らないので、モデルでは窓の中と外のコア命中率は同じ（差は 0）。sim の窓（サンのバースト使用から 1,765f）は f562・2914・5266・7618・9970 に始まる（V-0235 の予測ファイルの窓の終わり − 588f）。帯の中ではモデルのコア命中率は一定なので、録画の時刻が sim と違っても比べられる。サンは操作枠で撃たない（照準は画面の中央付近に置いたまま。V-0235 で残弾を読む）。サンのバーストの最大装弾数▲はサン自身にしか効かず（C-0275）、モデルには入れていない",
->>>>>>>> a94d1c8 (V-0234 → V-0234、C-0362 → C-0362 に振り直す（main の同じ番号と重なったため）):records/predictions/V-0234.json
   "team": [
     {
-      "rid": 93,
+      "rid": 836,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 308,
       "controlled": true
     }
   ],
@@ -16,156 +19,125 @@
   "hypotheses": [
     {
       "id": "H0",
-      "note": "環境コントロール強化は効かない（いまの定義の burst の effects[1] を、窓の無い S2 を参照する amplifies に置き換えて消す。S2 に受けるダメージ▲の窓は無いので何も起きない）",
-      "override": {
-        "addEffects": [
-          {
-            "rid": 93,
-            "skill": "burst",
-            "replace": 1,
-            "effect": {
-              "kind": "timed",
-              "trigger": "burstUse",
-              "target": "allies",
-              "stat": "damageTaken",
-              "durationSeconds": 10,
-              "amplifies": {
-                "skill": "skill2",
-                "percent": 100
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "id": "H1",
-      "note": "いまの定義（amplifies）: バースト使用時に自分が環境コントロールの窓の中なら付き、発動から 10 秒と環境コントロールの窓の重なりの間だけ、受けるダメージ▲ 3.9% を同じ群に足す（× 1.078）"
+      "note": "窓の時刻の偏りは無い（いまのモデル）。命中率▲が無いので、サクラのコア命中率は窓の中も外も的の表の SMG の値のまま。K = 1"
     }
   ],
   "targets": [
     {
-      "id": "hit-out",
+      "id": "sakura-midnear-core-diff",
       "model": "sim",
-      "metric": "hitDamage",
+      "metric": "coreHitRateDiff",
       "args": {
         "slot": 1,
-        "frame": 1200,
-        "core": true,
-        "crit": false,
-        "distance": false
+        "frame": 1176,
+        "baseFrame": 300
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "condition": "auto"
       },
-      "note": "対照: どの効果の窓の外（20 秒ほど）のエマの 1 ヒット（コア・会心なし・距離ボーナスなし）。V-0209 の hit-out-window と同じ条件"
+      "note": "中近（1 区間目）の窓の中（sim の 19.6 秒）− 外（5 秒。1 回目のバーストより前）",
+      "observations": ["254-06"]
     },
     {
-      "id": "hit-env-only",
+      "id": "sakura-near1-core-diff",
       "model": "sim",
-      "metric": "hitDamage",
+      "metric": "coreHitRateDiff",
       "args": {
         "slot": 1,
-        "frame": 3800,
-        "core": true,
-        "crit": false,
-        "distance": false
+        "frame": 3235,
+        "baseFrame": 2500
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "condition": "auto"
       },
-      "note": "環境コントロールだけ（60〜70 秒の窓。バーストの窓の外）。× 1.039（C-0305。同じ録画での確かめ）"
+      "note": "近（2 区間目）の窓の中（53.9 秒）− 外（41.7 秒。1 回目の窓の終わりと 2 回目のバーストの間）",
+      "observations": ["254-07"]
     },
     {
-      "id": "hit-burst-only",
+      "id": "sakura-far-core-diff",
       "model": "sim",
-      "metric": "hitDamage",
+      "metric": "coreHitRateDiff",
       "args": {
         "slot": 1,
-        "frame": 4700,
-        "core": true,
-        "crit": false,
-        "distance": false
+        "frame": 5588,
+        "baseFrame": 4900
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "condition": "auto"
       },
-      "note": "バーストの攻撃力▲だけ（74.58 秒のバーストの窓。環境コントロールは 60〜70・90〜100 秒で、重ならない）。発動者基準の攻撃力▲の値を見る"
+      "note": "遠（3 区間目）の窓の中（93.1 秒）− 外（81.7 秒）",
+      "observations": ["255-06"]
     },
     {
-      "id": "hit-enhanced",
+      "id": "sakura-midfar-core-diff",
       "model": "sim",
-      "metric": "hitDamage",
+      "metric": "coreHitRateDiff",
       "args": {
         "slot": 1,
-        "frame": 2200,
-        "core": true,
-        "crit": false,
-        "distance": false
+        "frame": 7941,
+        "baseFrame": 7300
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "condition": "auto"
       },
-      "note": "判定の指標。環境コントロールの窓（30〜40 秒）の中で撃ったバースト（32.33 秒）の後、40 秒より前。H1 は攻撃力▲ × (1 + 3.9% + 3.9%)、H0 は攻撃力▲ × 1.039"
+      "note": "中遠（4 区間目）の窓の中（132.4 秒）− 外（121.7 秒）",
+      "observations": ["255-07"]
     },
     {
-      "id": "hit-after-env",
+      "id": "sakura-near2-core-diff",
       "model": "sim",
-      "metric": "hitDamage",
+      "metric": "coreHitRateDiff",
       "args": {
         "slot": 1,
-        "frame": 2420,
-        "core": true,
-        "crit": false,
-        "distance": false
+        "frame": 10117,
+        "baseFrame": 9600
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "condition": "auto"
       },
-      "note": "環境コントロールの窓の終わり（40 秒）からバーストの窓の終わり（42.33 秒）まで。H0・H1 とも攻撃力▲だけ（強化は環境コントロールの窓の外では効かない読み）"
+      "note": "近（5 区間目）の窓の中（168.6 秒）− 外（160 秒）",
+      "observations": ["255-08"]
     },
     {
-      "id": "hit-burst3",
+      "id": "sakura-body-hit",
       "model": "sim",
       "metric": "hitDamage",
       "args": {
         "slot": 1,
-        "frame": 7300,
-        "core": true,
+        "frame": 300,
+        "core": false,
         "crit": false,
         "distance": false
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "condition": "auto"
       },
-      "note": "環境コントロールの窓の外（110〜120 秒）で撃ったバースト（116.94 秒）の窓の中で、次の環境コントロールの窓（120 秒〜）が始まった後。H1 は発動の瞬間に環境コントロール状態でないので強化なし（攻撃力▲ × 1.039）"
+      "note": "読み取りの格子の基（判定に使わない）。サクラの胴体・会心なし・距離ボーナスなしの 1 ヒット（フルバーストの外）。ノワールの S1 の攻撃力▲が無いので V-0219 の値より小さい"
     }
   ],
   "predicted": {
     "at": "2026-10-06",
-    "commit": "548eb424d91df6f7542ee94c783870015a950364",
+    "commit": "c1adaf290dced956daf1a46930e3636a70fff772",
     "values": {
       "H0": {
-        "hit-out": 11120.505,
-        "hit-env-only": 11554.204694999999,
-        "hit-burst-only": 15580.961,
-        "hit-enhanced": 16188.618478999999,
-        "hit-after-env": 15580.961,
-        "hit-burst3": 16188.618478999999
-      },
-      "H1": {
-        "hit-out": 11120.505,
-        "hit-env-only": 11554.204694999999,
-        "hit-burst-only": 15580.961,
-        "hit-enhanced": 16796.275958000002,
-        "hit-after-env": 15580.961,
-        "hit-burst3": 16188.618478999999
+        "sakura-midnear-core-diff": 0,
+        "sakura-near1-core-diff": 0,
+        "sakura-far-core-diff": 0,
+        "sakura-midfar-core-diff": 0,
+        "sakura-near2-core-diff": 0,
+        "sakura-body-hit": 7047.8991000000005
       }
     },
     "seen": {}
