@@ -1,9 +1,9 @@
 {
   "verification": "V-0261",
-  "note": "ココア（I・AI）+ デルタ（II・AI）+ クイーン（真）（III・操作・AUTO 射撃 ON）・灼熱の的（録画 224 と同じ編成。灼熱なので 1more は付かない）。モデルの 2 回目のフルバーストは f3053〜3641、S1 のフルバースト終了時の攻撃力▲は f4523 まで、次の I は f4272",
+  "note": "ラム（I・AI）+ デルタ（II・AI）+ クイーン（真）（III・操作・AUTO 射撃 ON）・灼熱の的（録画 230 と同じ編成。計画はココアだったが、撮ったのはラム。戦闘履歴で確かめて出し直した）。灼熱なので 1more は付かない。モデルの 2 回目のフルバーストは f2950〜3538、S1 のフルバースト終了時の攻撃力▲は f4420 まで、次の I は f5244",
   "team": [
     {
-      "rid": 311,
+      "rid": 822,
       "controlled": false
     },
     {
@@ -82,7 +82,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 3,
-        "frame": 3300,
+        "frame": 3200,
         "core": false,
         "crit": false,
         "distance": false
@@ -100,7 +100,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 3,
-        "frame": 4000,
+        "frame": 3900,
         "core": false,
         "crit": false,
         "distance": false
@@ -118,7 +118,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 3,
-        "frame": 5000,
+        "frame": 4800,
         "core": false,
         "crit": false,
         "distance": false
@@ -149,7 +149,7 @@
   ],
   "predicted": {
     "at": "2026-10-07",
-    "commit": "62f3ae7d4c367eb8670a5e0fffb36ec8966edbd9",
+    "commit": "e324f290916490470761e89eb2596bebe9f0ff83",
     "values": {
       "H1": {
         "burst-hit-1": 6323975.8227557605,
@@ -157,7 +157,7 @@
         "pellet-fb": 47070.84330000001,
         "pellet-fb-end-in": 47171.956,
         "pellet-after": 31380.562199999997,
-        "s1-attack-window-ends": [882, 2068, 4523, 7021, 9529]
+        "s1-attack-window-ends": [882, 2068, 4420, 6772, 9124]
       },
       "H0": {
         "burst-hit-1": 3328233.1576,
@@ -165,7 +165,7 @@
         "pellet-fb": 47070.84330000001,
         "pellet-fb-end-in": 47171.956,
         "pellet-after": 31380.562199999997,
-        "s1-attack-window-ends": [882, 2068, 4523, 7021, 9529]
+        "s1-attack-window-ends": [882, 2068, 4420, 6772, 9124]
       }
     },
     "seen": {}

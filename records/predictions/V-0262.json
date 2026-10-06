@@ -1,9 +1,13 @@
 {
   "verification": "V-0262",
-  "note": "ココア（I・AI）+ クラウン（II・操作・撃たない）+ レイヴン（III・AI）+ I-DOLL・サン（III・AI）・灼熱の的。モデルは撃たない枠を表せないのでクラウンも撃つが、setup の dropHeals でクラウンの回復を落とし、S2 の攻撃ダメージ▲（回復時）が起きない録画の形にする。モデルの 1 回目のフルバーストは f405〜993（III はレイヴン。バーストを使ったのはココア・クラウン・レイヴン）、クラウンのバーストは f376、2 回目は f1581〜2169（III はサン。レイヴンは使っていない）。フルバーストは約 20 秒ごとで、III はレイヴンとサンが交互",
+  "note": "レイヴン（III・AI）+ I-DOLL・サン（III・AI）+ クラウン（II・操作・撃たない）+ ココア（I・AI）・灼熱の的（撮った枠順。戦闘履歴で確かめて出し直した）。モデルは撃たない枠を表せないのでクラウンも撃つが、setup の dropHeals でクラウンの回復を落とし、S2 の攻撃ダメージ▲（回復時）が起きない録画の形にする。モデルの 1 回目のフルバーストは f405〜993（III はレイヴン。バーストを使ったのはココア・クラウン・レイヴン）、クラウンのバーストは f376、2 回目は f1581〜2169（III はサン。レイヴンは使っていない）。フルバーストは約 20 秒ごとで、III はレイヴンとサンが交互",
   "team": [
     {
-      "rid": 311,
+      "rid": 851,
+      "controlled": false
+    },
+    {
+      "rid": 308,
       "controlled": false
     },
     {
@@ -11,11 +15,7 @@
       "controlled": true
     },
     {
-      "rid": 851,
-      "controlled": false
-    },
-    {
-      "rid": 308,
+      "rid": 311,
       "controlled": false
     }
   ],
@@ -54,7 +54,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 1,
+        "slot": 4,
         "frame": 200,
         "core": false,
         "crit": false,
@@ -73,7 +73,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 1,
+        "slot": 4,
         "frame": 700,
         "core": false,
         "crit": false,
@@ -92,7 +92,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 1,
+        "slot": 4,
         "frame": 1150,
         "core": false,
         "crit": false,
@@ -111,7 +111,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 1,
+        "slot": 4,
         "frame": 1400,
         "core": false,
         "crit": false,
@@ -130,7 +130,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 200,
         "core": false,
         "crit": false,
@@ -149,7 +149,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 700,
         "core": false,
         "crit": false,
@@ -168,7 +168,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 1900,
         "core": false,
         "crit": false,
@@ -187,7 +187,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 4,
+        "slot": 2,
         "frame": 200,
         "core": false,
         "crit": false,
@@ -206,7 +206,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 4,
+        "slot": 2,
         "frame": 700,
         "core": false,
         "crit": false,
@@ -225,7 +225,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 4,
+        "slot": 2,
         "frame": 1900,
         "core": false,
         "crit": false,
@@ -244,7 +244,7 @@
       "model": "sim",
       "metric": "reloadFramesAt",
       "args": {
-        "slot": 1,
+        "slot": 4,
         "frame": 200
       },
       "setup": {
@@ -260,7 +260,7 @@
       "model": "sim",
       "metric": "reloadFramesAt",
       "args": {
-        "slot": 1,
+        "slot": 4,
         "frame": 700
       },
       "setup": {
@@ -276,7 +276,7 @@
       "model": "sim",
       "metric": "reloadFramesAt",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 200
       },
       "setup": {
@@ -292,7 +292,7 @@
       "model": "sim",
       "metric": "reloadFramesAt",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 1900
       },
       "setup": {
@@ -308,7 +308,7 @@
       "model": "sim",
       "metric": "buffWindowEnds",
       "args": {
-        "slot": 1,
+        "slot": 4,
         "skill": "skill1",
         "stat": "attack"
       },
@@ -325,7 +325,7 @@
       "model": "sim",
       "metric": "buffWindowEnds",
       "args": {
-        "slot": 1,
+        "slot": 4,
         "skill": "burst",
         "stat": "attackDamage"
       },
@@ -340,7 +340,7 @@
   ],
   "predicted": {
     "at": "2026-10-07",
-    "commit": "62f3ae7d4c367eb8670a5e0fffb36ec8966edbd9",
+    "commit": "e324f290916490470761e89eb2596bebe9f0ff83",
     "values": {
       "H1": {
         "cocoa-base": 172297.95,

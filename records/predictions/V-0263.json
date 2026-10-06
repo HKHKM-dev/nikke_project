@@ -1,9 +1,13 @@
 {
   "verification": "V-0263",
-  "note": "ココア（I・AI）+ ユニ（II・操作・撃たない）+ ノワール（III・AI）+ レイヴン（III・AI）・灼熱の的。I・II は CT 20 秒、III は 2 体とも CT 40 秒なので、フルバーストは約 20 秒ごとで III はノワールとレイヴンが交互（モデルでは 1 回目がノワール）。モデルは撃たない枠を表せないのでユニも撃つ。録画で起きないユニの S2（フルチャージの攻撃時）を消すため、どの指標の setup でも dropHeals でユニの回復を落とし、S2 の最大装弾数▲は対象を MG（編成にいない）に絞って誰にも付かないようにした",
+  "note": "ノワール（III・AI）+ レイヴン（III・AI）+ ユニ（II・操作・撃たない）+ ココア（I・AI）（撮った枠順。戦闘履歴で確かめて出し直した）・灼熱の的。I・II は CT 20 秒、III は 2 体とも CT 40 秒なので、フルバーストは約 20 秒ごとで III はノワールとレイヴンが交互（モデルでは 1 回目がノワール）。モデルは撃たない枠を表せないのでユニも撃つ。録画で起きないユニの S2（フルチャージの攻撃時）を消すため、どの指標の setup でも dropHeals でユニの回復を落とし、S2 の最大装弾数▲は対象を MG（編成にいない）に絞って誰にも付かないようにした",
   "team": [
     {
-      "rid": 311,
+      "rid": 271,
+      "controlled": false
+    },
+    {
+      "rid": 851,
       "controlled": false
     },
     {
@@ -11,11 +15,7 @@
       "controlled": true
     },
     {
-      "rid": 271,
-      "controlled": false
-    },
-    {
-      "rid": 851,
+      "rid": 311,
       "controlled": false
     }
   ],
@@ -71,18 +71,14 @@
       "model": "sim",
       "metric": "coreHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 600
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -110,18 +106,14 @@
       "model": "sim",
       "metric": "bulletHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 600
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -149,18 +141,14 @@
       "model": "sim",
       "metric": "coreHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 1800
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -188,18 +176,14 @@
       "model": "sim",
       "metric": "bulletHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 1800
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -227,18 +211,14 @@
       "model": "sim",
       "metric": "coreHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 2900
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -266,18 +246,14 @@
       "model": "sim",
       "metric": "bulletHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 2900
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -305,18 +281,14 @@
       "model": "sim",
       "metric": "coreHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 3950
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -344,18 +316,14 @@
       "model": "sim",
       "metric": "bulletHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 3950
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -383,18 +351,14 @@
       "model": "sim",
       "metric": "coreHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 5300
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -422,18 +386,14 @@
       "model": "sim",
       "metric": "bulletHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 5300
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -461,18 +421,14 @@
       "model": "sim",
       "metric": "coreHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 6300
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -500,18 +456,14 @@
       "model": "sim",
       "metric": "bulletHitRate",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 6300
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -539,18 +491,14 @@
       "model": "sim",
       "metric": "critRateAt",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 600
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -578,7 +526,7 @@
       "model": "sim",
       "metric": "hitDamage",
       "args": {
-        "slot": 3,
+        "slot": 1,
         "frame": 600,
         "core": false,
         "crit": false,
@@ -586,13 +534,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -620,18 +564,14 @@
       "model": "sim",
       "metric": "maxAmmoAt",
       "args": {
-        "slot": 2,
+        "slot": 3,
         "frame": 600
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -659,18 +599,14 @@
       "model": "sim",
       "metric": "maxAmmoAt",
       "args": {
-        "slot": 2,
+        "slot": 3,
         "frame": 1200
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "dropHeals": [
-          160
-        ],
+        "dropHeals": [160],
         "addEffects": [
           {
             "rid": 160,
@@ -696,7 +632,7 @@
   ],
   "predicted": {
     "at": "2026-10-07",
-    "commit": "6a4837971872c9ddfa5e18e6755a96e274b85e44",
+    "commit": "e324f290916490470761e89eb2596bebe9f0ff83",
     "values": {
       "H1": {
         "core-midnear-noirfb": 0.03509697950129865,
