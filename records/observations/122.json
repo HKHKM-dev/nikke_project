@@ -18,12 +18,30 @@
     "source": "V-0098",
     "readAt": "2026-10-02",
     "kind": "hit",
-    "use": "record",
+    "use": "compare",
     "value": 367175,
     "description": "レイヴン（RL・単騎 AUTO・スペック固定 ON）のフルチャージの通常攻撃 1 ヒット（コア・非会心）",
     "method": {
       "tool": "hud.ts --mode jumps（レシピ hud-jumps@1 のキャッシュ）+ 使い捨てのスクリプト（V-0097「読み方」）",
-      "note": "HUD の増分（1 フレームに 1 発）。持続ダメージの tick（82,012.3 × スタック数）と同じフレームに出た増分は和に分けた。胴体の発は 1 発も無いので、胴体の値は読めない。予測ファイル V-0098.json の hit-core（367,174.74）・hit-core-crit（458,968.425）と 1 未満で合う（結論に結び付けないので比べる値にはしない）"
+      "note": "HUD の増分（1 フレームに 1 発）。持続ダメージの tick（82,012.3 × スタック数）と同じフレームに出た増分は和に分けた。胴体の発は 1 発も無いので、胴体の値は読めない。予測ファイル V-0098.json の hit-core（367,174.74）・hit-core-crit（458,968.425）と 1 未満で合う。最初の発（f841。戦闘開始 f751 の 90f 後で、S2 の戦闘開始時の急所攻略（5 秒）の中）も同じ値。2026-10-06 に V-0237 の根拠にしたので、比べる値にした（指標と条件は V-0098.json の hit-core と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   },
   {
