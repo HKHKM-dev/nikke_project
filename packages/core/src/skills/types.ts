@@ -474,9 +474,21 @@ export type TimedEffect = TargetCountFields &
      * 次のフルバースト終了のフレームまで続く（無ければ戦闘の終わりまで）。1 パス目で窓を追う stat と、スタック・順位の対象には書けない
      */
     durationUntil?: DurationUntil;
+    /**
+     * 環境コントロール強化編（plan/design-true-damage-element.md 3.5 節）: 「（スキルの効果）によるダメージの増加倍率が X% 効果量に
+     * 対し増加」。発火の瞬間に自分（発動した枠）に、同じ枠の skill スロットの同じ stat の timed 効果の窓が効いていれば発火し
+     * （「自分が〈状態〉なら」）、維持の秒数のあいだ、参照する窓が効いている所はその値の percent% を、切れた所は発動の瞬間の値の
+     * (100 + percent)% を同じ stat に足す（参照する効果の▲を、切れても (100 + percent)% で保つ。V-0230）。
+     * 値は参照する効果から取るので ref・scaling・decrease は書かない。1 パス目で窓を追う stat と、スタック・条件・発数や出来事の維持・
+     * 順位の対象には書けない
+     */
+    amplifies?: Amplifies;
     /** 常に満たすとみなした条件。UI に「仮定」として出す */
     assumes?: LocalizedText;
   };
+
+/** 環境コントロール強化編: 増やす相手の効果（同じ枠の skill スロットの、同じ stat の timed 効果）と、その値に対する割合（%） */
+export type Amplifies = { skill: SkillSlot; percent: number };
 
 /** 防御力無視ダメージ編: 維持の終わりの出来事 */
 export type DurationUntil = 'fullBurstEnd';
@@ -1193,8 +1205,12 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   validateFlatChargeTime(stat, scaling, v, path);
   validateDamageTaken(stat, target, v, path);
   const effect: TimedEffect = { kind: 'timed', trigger, target, stat };
+  // 環境コントロール強化編: 値は参照する効果から取る
+  if (v.amplifies !== undefined) {
+    effect.amplifies = parseAmplifies(v, stat, target, `${path}.amplifies`);
+  }
   // Stage 11 モダニア: フラグの stat（装弾数無限）は値を持たないので ref も scaling も書かない
-  if (isFlagStat(stat)) {
+  else if (isFlagStat(stat)) {
     if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value (do not write ref)`);
     if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value (do not write scaling)`);
   } else {
@@ -1260,6 +1276,40 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   validateFixedChargeTime(effect, path);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
+}
+
+/**
+ * 環境コントロール強化編: amplifies の形と、組み合わせられない欄（plan/design-true-damage-element.md 3.5 節）。
+ * 窓は planBuffTimeline が参照する効果の窓から作るので、1 パス目で窓を追う stat には書けない
+ */
+function parseAmplifies(v: Record<string, Json>, stat: BuffStat, target: BuffTarget, path: string): Amplifies {
+  const a = v.amplifies;
+  if (!isRecord(a) || Object.keys(a).some((k) => k !== 'skill' && k !== 'percent')) {
+    fail(path, 'expected { skill, percent }');
+  }
+  const skill = oneOf(SKILL_SLOTS, a.skill, `${path}.skill`);
+  const percent = a.percent;
+  if (typeof percent !== 'number' || !Number.isFinite(percent) || percent <= 0) {
+    fail(`${path}.percent`, `expected a positive number, got ${JSON.stringify(percent)}`);
+  }
+  if (isFirstPassTrackedStat(stat) || isFlagStat(stat)) {
+    fail(path, `amplifies is not supported for "${stat}" (its window is tracked inside the first pass)`);
+  }
+  if (target === 'topAttack') fail(path, 'amplifies cannot target "topAttack"');
+  for (const key of [
+    'ref',
+    'scaling',
+    'decrease',
+    'maxStacks',
+    'maxStacksRef',
+    'condition',
+    'durationShots',
+    'durationShotsRef',
+    'durationUntil',
+  ]) {
+    if (v[key] !== undefined) fail(path, `amplifies cannot be combined with ${key}`);
+  }
+  return { skill, percent };
 }
 
 /**

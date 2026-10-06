@@ -1,0 +1,29 @@
+{
+  "id": "263",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-263_mg_emma-tu_manual-burst.mp4",
+  "original": "2026-10-06_19-53-32.mp4",
+  "durationSec": 197.9,
+  "frames": 11876,
+  "fps": 60,
+  "sizeMB": 239.9,
+  "sha256": "3f01afb1c734",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0230（エマ：TU のバーストの環境コントロール強化）の録画。エマ：TU 単騎・AUTO 射撃 ON・オートバースト OFF（バーストは手で撃つ）"
+}

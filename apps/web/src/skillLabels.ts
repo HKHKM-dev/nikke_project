@@ -188,6 +188,11 @@ export function formatTimedExtras(effect: AppliedTimedEffect): string {
   if (selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[selfBuffed]}増加状態なら`);
   else if (effect.condition !== undefined) parts.push('フルバーストタイムなら');
   if (effect.durationUntil === 'fullBurstEnd') parts.push('フルバーストタイムの終了まで');
+  if (effect.amplifies !== undefined) {
+    parts.push(
+      `${SKILL_SLOT_LABEL[effect.amplifies.skill]}の同じ効果の ${formatNumber(effect.amplifies.percent)}% 増し（発動の瞬間に効いていれば）`,
+    );
+  }
   return parts.length === 0 ? '' : `（${parts.join('・')}）`;
 }
 

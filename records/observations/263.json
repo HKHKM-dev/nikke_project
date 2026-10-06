@@ -1,0 +1,214 @@
+[
+  {
+    "id": "263-01",
+    "recording": "263",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [1999, 4972, 8918],
+    "spread": {
+      "kind": "range",
+      "low": -12,
+      "high": 98
+    },
+    "description": "エマ：TU 単騎・バーストを手で撃った録画の、バースト（I）を使ったゲーム内のフレーム（戦闘開始から）の並び。1 ヒットの系列が攻撃力▲の系列に替わる前の最後のヒットと、替わった後の最初のヒットのあいだ",
+    "source": "V-0230",
+    "readAt": "2026-10-06",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/hud.ts --mode jumps・使い捨てのスクリプト",
+      "note": "戦闘開始は f764（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内のフレームは動画のフレーム − 764（フルバーストが無く、I の発動の止まり 1f 前後は無視した）。1 回目: 環境コントロールの系列 11,554 の最後のヒット f2762 と、強化の系列 16,798 の最初のヒット f2764 のあいだ（ゲーム内 1999、33.98 秒。環境コントロールの窓 30〜40 秒の中）。2 回目: 対照の距離ボーナスの系列 12,789 の最後 f5721 と、攻撃力▲の系列 17,918 の最初 f5743 のあいだ（f5742 は 2 ヒットの読みが割れた 258,378）。ゲーム内 4957〜4979 の中点 4968 を 4972 とした（終わり f6327.5 から 588f 前は 4975.5。84.5 秒。窓の外）。3 回目: 対照の系列 11,121 の最後 f9581 と強化の系列の最初（胴体 8,399）f9777 のあいだ（ゲーム内 8817〜9013。リロードの空き。強化の系列なので環境コントロールの窓 150 秒（8823f）より後。値は終わりの f10140〜f10311 の空きからも決まらず、範囲の中ほどの 8918 を書いた）。幅（spread）は 3 回目の読みの幅"
+    }
+  },
+  {
+    "id": "263-02",
+    "recording": "263",
+    "kind": "hit",
+    "use": "compare",
+    "value": 16798,
+    "description": "1 回目のバースト（33.98 秒。環境コントロールの窓の中で撃った）の後、環境コントロールの窓の終わり（40 秒）より前のコアの会心でない 1 ヒット",
+    "source": "V-0230",
+    "readAt": "2026-10-06",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f764（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内のフレームは動画のフレーム − 764（フルバーストが無く、I の発動の止まり 1f 前後は無視した）。f2764〜f2938（ゲーム内 2000〜2174、34.0〜37.0 秒）のコアの会心でない増分はすべて 16,798。会心は 22,972、胴体は 8,399。3 回目のバースト（150 秒の窓の中）の後の f9824〜f10140（154.2〜159.6 秒）も同じ 16,798。1 ヒット = 胴体 ×(1 + 1.0×コア + 0.3×距離ボーナス + 0.7351×会心)（V-0209 の格子）で、増分を系列に分けた。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "263-03",
+    "recording": "263",
+    "kind": "hit",
+    "use": "compare",
+    "value": 16798,
+    "description": "1 回目のバーストの後、環境コントロールの窓の終わり（40 秒）からバーストの窓の終わり（発動から 10 秒）までのコアの会心でない 1 ヒット",
+    "source": "V-0230",
+    "readAt": "2026-10-06",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f764（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内のフレームは動画のフレーム − 764（フルバーストが無く、I の発動の止まり 1f 前後は無視した）。リロードの空き（f2940〜f3133）の後の f3188〜f3350（ゲーム内 2424〜2586、41.2〜43.96 秒）のコアの会心でない増分はすべて 16,798（胴体 8,399・会心 22,972 も窓の中と同じ）。環境コントロールの窓の終わりは、V-0209 の 2 回目の読み（2287±97。`226-01`）でも 2384 より前で、この区間はその後。f3352 から対照の 11,121 に戻った（発動 f2763 から 589f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2420,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "263-04",
+    "recording": "263",
+    "kind": "hit",
+    "use": "compare",
+    "value": 17918,
+    "description": "2 回目のバースト（84.5 秒。環境コントロールの窓の外で撃った）の窓の中で、次の環境コントロールの窓（90 秒〜）が始まる前のコア・距離ボーナスの会心でない 1 ヒット",
+    "source": "V-0230",
+    "readAt": "2026-10-06",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f764（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内のフレームは動画のフレーム − 764（フルバーストが無く、I の発動の止まり 1f 前後は無視した）。f5743〜f5913（ゲーム内 4979〜5149、84.6〜87.5 秒。着地点は近で、コアの増分はどれも距離ボーナス付き）。会心は 23,645。距離ボーナスなしの系列はこの窓に出ない。対照の距離ボーナスの系列 12,789 との比は 1.4011"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 4700,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "263-05",
+    "recording": "263",
+    "kind": "hit",
+    "use": "compare",
+    "value": 18617,
+    "description": "2 回目のバースト（84.5 秒）の窓の中で、環境コントロールの窓（90 秒〜）が始まった後のコア・距離ボーナスの会心でない 1 ヒット",
+    "source": "V-0230",
+    "readAt": "2026-10-06",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f764（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内のフレームは動画のフレーム − 764（フルバーストが無く、I の発動の止まり 1f 前後は無視した）。f6280〜f6327（ゲーム内 5516〜5563、93.8〜94.6 秒）のコアの増分はすべて 18,617（会心 24,567）。17,918（263-04）との比は 1.0390 で、強化の 1.078 倍ではない。f6328 から環境コントロールだけの 13,287 に替わった（バーストの窓の終わり）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 7300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "263-06",
+    "recording": "263",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13287,
+    "description": "環境コントロールの窓（90〜100 秒）の中で、バーストの窓の外のコア・距離ボーナスの会心でない 1 ヒット",
+    "source": "V-0230",
+    "readAt": "2026-10-06",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f764（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内のフレームは動画のフレーム − 764（フルバーストが無く、I の発動の止まり 1f 前後は無視した）。f6328〜f6440（ゲーム内 5564〜5676、94.6〜96.5 秒）。123〜128 秒（120 秒の窓）も同じ 13,287。会心は 17,534"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3800,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "263-07",
+    "recording": "263",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11121,
+    "description": "どの窓の外（12〜17 秒）のコアの会心でない 1 ヒット",
+    "source": "V-0230",
+    "readAt": "2026-10-06",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f764（timer.ts の +319f の次の +89f の変わり目。V-0023）。ゲーム内のフレームは動画のフレーム − 764（フルバーストが無く、I の発動の止まり 1f 前後は無視した）。f1520〜f1760（ゲーム内 756〜996）。胴体は 5,560、会心は 15,208。0〜10 秒の窓の中は 11,554（V-0209 と同じ）。2 回目の環境コントロールは 60 秒（f4280 の前後）から始まり、1 回目のバースト（33.98 秒）で周期はずれていない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

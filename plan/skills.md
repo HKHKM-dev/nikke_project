@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 31・効果 156（根拠あり 114）・notes 82（根拠あり 36）
+件数: キャラ 31・効果 157（根拠あり 116）・notes 81（根拠あり 36）
 
-notes の種類: 未対応 27・前提の外 21・計算に無関係 28・補足 6
+notes の種類: 未対応 26・前提の外 21・計算に無関係 28・補足 6
 
-スロット: supported 59・partial 15・unsupported 8・noEffect 20
+スロット: supported 60・partial 14・unsupported 8・noEffect 20
 
 ## 10 ラピ
 
@@ -106,10 +106,10 @@ notes の種類: 未対応 27・前提の外 21・計算に無関係 28・補足
   - notes[0] 未対応: 味方全体の発射体爆発ダメージ▲は未対応（語彙 projectileExplosionDamage はある）: 根拠なし
   - notes[1] 未対応: フォーメーションAS 適用中の追加効果のうち、味方全体の防御力無視ダメージ▲・発射体爆発ダメージ▲は未対応（語彙 withCharacter・trueDamage・projectileExplosionDamage はあるが、根拠の結論が無い。防御力無視ダメージの発か RL のいる編成で撮る必要がある）。環境コントロールの再発動周期 20 秒▼は S1 の効果に書いた: 根拠なし
   - notes[2] 計算に無関係: フォーメーションAS 適用中の陽動発動不可はダメージに関係しない: 根拠なし
-- **burst**: partial
-  - effects[0] timed・burstUse・attack: 根拠なし
-  - notes[0] 未対応: 環境コントロール強化（環境コントロールの受けるダメージ▲を 10 秒間 2 倍にする）は未対応（環境コントロールの窓に重ねて切り取る語彙が無い。plan/design-true-damage-element.md 6 節の論点 6）: 根拠なし
-  - notes[1] 計算に無関係: 味方全体の受ける HP 回復量▲はダメージに関係しない: 根拠なし
+- **burst**: supported
+  - effects[0] timed・burstUse・attack: C-0337（確定）
+  - effects[1] timed・burstUse・damageTaken: C-0335（確定）、C-0336（仮説）
+  - notes[0] 計算に無関係: 味方全体の受ける HP 回復量▲はダメージに関係しない: 根拠なし
 
 ## 95 ウンファ：タクティカル・アップ
 
