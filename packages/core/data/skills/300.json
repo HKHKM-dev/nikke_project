@@ -54,11 +54,12 @@
           "ref": 2,
           "damageType": "skill",
           "assumes": {
-            "ja": "攻撃範囲内の敵は単体ボスで 1 ヒット。ヒットの遅れは未測定（発動と同じフレーム）",
-            "en": "Enemies in range are a lone boss, so it lands once. The hit delay is unmeasured (same frame as the activation)"
+            "ja": "攻撃範囲内の敵は単体ボスで 1 ヒット。ヒットは遅れの表（burst/landing.ts）の時刻（III の発動から 7f）に出す",
+            "en": "Enemies in range are a lone boss, so it lands once. The hit lands at the time in the delay table (burst/landing.ts; 7 frames after the III activation)"
           },
           "claims": [
-            "C-0371"
+            "C-0371",
+            "C-0370"
           ]
         }
       ]

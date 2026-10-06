@@ -287,7 +287,7 @@ notes の種類: 未対応 22・前提の外 22・計算に無関係 31・補足
 - **skill2**: supported
   - effects[0] timed・9 秒ごと・maxAmmo: C-0369（仮説）、C-0017（確定）
 - **burst**: supported
-  - effects[0] burstDamage・skill: C-0371（仮説）
+  - effects[0] burstDamage・skill: C-0371（仮説）、C-0370（仮説）
 
 ## 301 ソルジャーF.A.
 
