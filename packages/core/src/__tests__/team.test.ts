@@ -214,14 +214,30 @@ describe('computeTeamDamage with passives', () => {
     const team = computeTeamDamage({ slots: [buffer, plain, null, caster], enemy, durationSeconds: 180 });
     const [a, c, , b] = team.slots;
     // 枠 A: 自分の +20% と B からの固定加算 1000 × 0.1、自分の会心ダメ +10%
-    expect(a?.passiveBuffs).toEqual({ ...ZERO_BUFFS, attackRatio: 0.2, attackFlat: 100, critDamage: 0.1 });
+    expect(a?.passiveBuffs).toEqual({
+      ...ZERO_BUFFS,
+      attackRatio: 0.2,
+      attackFlat: 100,
+      attackParts: [expect.objectContaining({ ratio: 0.2 }), expect.objectContaining({ flat: 100 })],
+      critDamage: 0.1,
+    });
     expect(a?.segments[0]?.trigger.attack).toBeCloseTo(1000 * 1.2 + 100, 10);
     // 枠 C（定義なし）: A の会心ダメと B の固定加算だけ
-    expect(c?.passiveBuffs).toEqual({ ...ZERO_BUFFS, attackFlat: 100, critDamage: 0.1 });
+    expect(c?.passiveBuffs).toEqual({
+      ...ZERO_BUFFS,
+      attackFlat: 100,
+      attackParts: [expect.objectContaining({ flat: 100 })],
+      critDamage: 0.1,
+    });
     expect(c?.segments[0]?.trigger.attack).toBeCloseTo(1100, 10);
     expect(c?.skillSupport).toBeNull();
     // 枠 B: 自分の allies 効果も自分に掛かる
-    expect(b?.passiveBuffs).toEqual({ ...ZERO_BUFFS, attackFlat: 100, critDamage: 0.1 });
+    expect(b?.passiveBuffs).toEqual({
+      ...ZERO_BUFFS,
+      attackFlat: 100,
+      attackParts: [expect.objectContaining({ flat: 100 })],
+      critDamage: 0.1,
+    });
     expect(b?.skillSupport).toEqual({ skill1: 'supported', skill2: 'unsupported', burst: 'unsupported' });
     expect(a?.passiveEffects.map((e) => [e.sourceSlotIndex, e.stat, e.scaling, e.appliedAmount])).toEqual([
       [0, 'attack', 'ratio', 0.2],
@@ -250,7 +266,12 @@ describe('computeTeamDamage with passives', () => {
     const full = computeTeamDamage({ slots: [buffer, plain, caster], enemy, durationSeconds: 180 });
     const withoutCaster = computeTeamDamage({ slots: [buffer, plain, null], enemy, durationSeconds: 180 });
     expect(withoutCaster.slots[1]?.passiveBuffs).toEqual({ ...ZERO_BUFFS, critDamage: 0.1 });
-    expect(withoutCaster.slots[0]?.passiveBuffs).toEqual({ ...ZERO_BUFFS, attackRatio: 0.2, critDamage: 0.1 });
+    expect(withoutCaster.slots[0]?.passiveBuffs).toEqual({
+      ...ZERO_BUFFS,
+      attackRatio: 0.2,
+      attackParts: [expect.objectContaining({ ratio: 0.2 })],
+      critDamage: 0.1,
+    });
     expect(full.slots[1]?.dps).toBeGreaterThan(withoutCaster.slots[1]?.dps ?? 0);
   });
 

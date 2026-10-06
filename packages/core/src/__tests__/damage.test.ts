@@ -102,6 +102,7 @@ describe('computeDamage', () => {
     const buffs = {
       attackRatio: 0.2,
       attackFlat: 100,
+      attackParts: [],
       critRate: 0.05,
       critDamage: 0.5,
       attackDamage: 0.3,

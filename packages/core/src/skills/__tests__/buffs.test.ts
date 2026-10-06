@@ -8,6 +8,7 @@ import {
   applyChargeBuffs,
   applyCritBuffs,
   applyResolvedEffect,
+  roundedAttack,
   scaleBasisPoints,
   type BuffTotals,
 } from '../buffs.ts';
@@ -15,6 +16,7 @@ import {
 const buffs: BuffTotals = {
   attackRatio: 0.2,
   attackFlat: 300,
+  attackParts: [],
   critRate: 0.05,
   critDamage: 0.2,
   attackDamage: 0.1,
@@ -48,6 +50,54 @@ describe('applyAttackBuffs', () => {
     expect(applyAttackBuffs(1000, { ...ZERO_BUFFS, attackRatio: 0.2 })).toBeCloseTo(1200, 10);
     expect(applyAttackBuffs(1000, { ...ZERO_BUFFS, attackFlat: 300 })).toBe(1300);
     expect(applyAttackBuffs(1000, buffs)).toBeCloseTo(1500, 10);
+  });
+});
+
+describe('roundedAttack', () => {
+  // V-0233 の論点 3: クイーン（真）（119,896）に S1 の 50.28%・1more の 30.27%・雪子の追撃（96,216.54）
+  const queen = (rid: number, skill: 'skill1' | 'skill2' | 'burst', name = '') => ({
+    resourceId: rid,
+    skill,
+    name: { ja: name, en: name },
+  });
+  const effect = (
+    stat: 'attack',
+    scaling: 'ratio' | 'casterAttack',
+    value: number,
+    source: ReturnType<typeof queen>,
+  ) => ({ stat, scaling, value, source });
+  const apply = (effects: ReturnType<typeof effect>[], caster = 119896) =>
+    effects.reduce((t, e) => applyResolvedEffect(t, e, caster).totals, ZERO_BUFFS);
+
+  it('rounds the total by default (C-0027) and each effect or each source skill on request', () => {
+    const totals = apply([
+      effect('attack', 'ratio', 0.5028, queen(870, 'skill1')),
+      effect('attack', 'ratio', 0.3027, queen(870, 'burst')),
+      effect('attack', 'casterAttack', 0.8025, queen(871, 'skill2')),
+    ]);
+    // 119,896 + 60,283.71 + 36,292.52 + 96,216.54 = 312,688.77
+    expect(roundedAttack(119896, totals)).toBe(312689);
+    expect(roundedAttack(119896, totals, 'total')).toBe(312689);
+    // 119,896 + 60,284 + 36,293 + 96,217
+    expect(roundedAttack(119896, totals, 'effect')).toBe(312690);
+    expect(roundedAttack(119896, totals, 'skill')).toBe(312690);
+  });
+
+  it('sums effects of the same skill before rounding in the skill mode, and merges stacks in the effect mode', () => {
+    // ドレイク（宝物）の S1: 11.85% と SG の 63.88%（14,207.68 + 76,589.57）
+    const drake = apply([
+      effect('attack', 'ratio', 0.1185, queen(101, 'skill1')),
+      effect('attack', 'ratio', 0.6388, queen(101, 'skill1')),
+    ]);
+    expect(roundedAttack(119896, drake, 'total')).toBe(210693);
+    expect(roundedAttack(119896, drake, 'effect')).toBe(210694);
+    expect(roundedAttack(119896, drake, 'skill')).toBe(210693);
+    // 同じ効果のスタック（42,203.39 × 2）は 1 つにまとめる
+    const stacks = apply([
+      effect('attack', 'casterAttack', 0.352, queen(870, 'skill2')),
+      effect('attack', 'casterAttack', 0.352, queen(870, 'skill2')),
+    ]);
+    expect(roundedAttack(119896, stacks, 'effect')).toBe(119896 + 84407);
   });
 });
 
@@ -96,6 +146,7 @@ describe('addRatioBuff / addFlatAttack', () => {
     expect(ZERO_BUFFS).toEqual({
       attackRatio: 0,
       attackFlat: 0,
+      attackParts: [],
       critRate: 0,
       critDamage: 0,
       attackDamage: 0,
@@ -125,6 +176,10 @@ describe('addRatioBuff / addFlatAttack', () => {
     expect(d).toEqual({
       attackRatio: 0.1,
       attackFlat: 250,
+      attackParts: [
+        { source: 'build', ratio: 0.1, flat: 0 },
+        { source: 'build', ratio: 0, flat: 250 },
+      ],
       critRate: 0,
       critDamage: 0.3,
       attackDamage: 0,

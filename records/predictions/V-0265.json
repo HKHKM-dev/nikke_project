@@ -1,0 +1,180 @@
+{
+  "verification": "V-0265",
+  "note": "既存の録画 039（リター（I・AI）+ デルタ（II・AI）+ ドレイク（III・操作・宝物 3 段階）・灼熱の的・3 分モード・スペック固定 ON）の読み直し。ドレイクの S2 のヒット（ダメージの数字）を読む前に出した。n はモデルのドレイクの倍率ダメージ（持続ダメージを除く）の通し番号で、録画のヒットは攻撃力▲の組み合わせ（どの窓の中か）で対応させる",
+  "team": [
+    {
+      "rid": 82,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 101,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（C-0027）: 攻撃力▲を全部足した最終攻撃力を四捨五入する"
+    },
+    {
+      "id": "H1",
+      "note": "攻撃力▲を効果ごとに四捨五入してから足す（同じ効果のスタックは 1 つ）",
+      "override": {
+        "attackRounding": "effect"
+      }
+    },
+    {
+      "id": "H2",
+      "note": "攻撃力▲を出どころのスキル（キャラ × スロット）ごとに足して四捨五入してから足す",
+      "override": {
+        "attackRounding": "skill"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "fb-every5",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "フルバーストの中で、リターの▲の窓の外のドレイクの S2「5 回攻撃」（倍率 201.6%）の 1 ヒット（会心なし）。攻撃力▲はドレイクの宝物版 S1 の 2 つ（11.85%・SG の 63.88%）だけ。H1 だけが 4 大きい"
+    },
+    {
+      "id": "fb-s2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ窓の S2 の毎回のヒット（倍率 98.55%。会心なし）。H1 だけが 2 大きい"
+    },
+    {
+      "id": "liter-every5",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバーストの中で、リターのバーストの攻撃力▲（66%）の窓の中のドレイクの「5 回攻撃」（会心なし）。攻撃力▲はリターのバーストとドレイクの S1 の 2 つ。H2 だけが 4 小さい"
+    },
+    {
+      "id": "liter-s2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "liter-every5 と同じ発の S2 の毎回のヒット（会心なし）。H2 だけが 2 小さい"
+    },
+    {
+      "id": "liter-s1-every5",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 42,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目以降のフルバーストの頭で、リターの S1（14.42%）とバースト（66%）の窓の中のドレイクの「5 回攻撃」（会心なし）。H2 だけが 4 小さい"
+    },
+    {
+      "id": "liter-s1-s2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 55,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "liter-s1-every5 と同じ窓の S2 の毎回のヒット（会心なし）。H2 だけが 2 小さい"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "4f8101aa751b17381e9d98785ab512122b3b3e83",
+    "values": {
+      "H0": {
+        "fb-every5": 838581.9998975999,
+        "fb-s2": 409931.82584279997,
+        "liter-every5": 1153685.8771199998,
+        "liter-s2": 563966.98011,
+        "liter-s1-every5": 1222530.7304448,
+        "liter-s1-s2": 597621.0490343999
+      },
+      "H1": {
+        "fb-every5": 838585.9819008,
+        "fb-s2": 409933.7724023999,
+        "liter-every5": 1153685.8771199998,
+        "liter-s2": 563966.98011,
+        "liter-s1-every5": 1222530.7304448,
+        "liter-s1-s2": 597621.0490343999
+      },
+      "H2": {
+        "fb-every5": 838581.9998975999,
+        "fb-s2": 409931.82584279997,
+        "liter-every5": 1153681.8951168,
+        "liter-s2": 563965.0335503999,
+        "liter-s1-every5": 1222526.7484416002,
+        "liter-s1-s2": 597619.1024748
+      }
+    },
+    "seen": {
+      "039": [
+        "018-02",
+        "039-01",
+        "039-02",
+        "039-03",
+        "039-04",
+        "039-05",
+        "039-06",
+        "039-07",
+        "039-08",
+        "039-09",
+        "039-10",
+        "039-11",
+        "039-12",
+        "039-13"
+      ]
+    }
+  }
+}

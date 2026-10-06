@@ -39,7 +39,7 @@ import {
   type BuffTimeline,
   type SlotBuffState,
 } from '../skills/timeline.ts';
-import { applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
+import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
 import type { DamageCondition } from '../skills/types.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
@@ -179,6 +179,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     shots,
     input.sustainedDamagePlacement,
     slotAutoAttackCoreRatesOf(slots, enemy, frames),
+    input.attackRounding,
   );
   return {
     frames,
@@ -222,6 +223,8 @@ export function planSkillHits(
   sustainedDamagePlacement?: SustainedDamagePlacement,
   /** コアの経路編: 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf）。省略はコアなし */
   autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] = [],
+  /** 攻撃力▲の丸め（TeamInput.attackRounding）。省略はいまのモデル */
+  attackRounding?: AttackRounding,
 ): SkillHitEvent[] {
   const hits: SkillHitEvent[] = [];
   // クルミ S2 編: damage の条件 targetStatus が見る、status ごとの「付いている」区間（編成の全枠の dot から先に出しておく）
@@ -257,6 +260,7 @@ export function planSkillHits(
         growth: slot.growth,
         enemy,
         attackOverride: slot.attackOverride,
+        attackRounding,
         buffs,
         condition: { ...slot.condition, fullBurst: false },
       });

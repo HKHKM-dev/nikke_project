@@ -17,7 +17,7 @@ import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
 import { effectiveMaxAmmo, firingParams } from '../frame/firing.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
-import { applyCritBuffs, capCritRate } from '../skills/buffs.ts';
+import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buffs.ts';
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
 import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
 import { MAX_SKILL_LEVELS, isResolvedChance, resolveTimed } from '../skills/resolve.ts';
@@ -98,6 +98,11 @@ export type CompareSetup = {
    * 省略はいまのモデル。予測の仮説（H1〜H3）の override に使う
    */
   sustainedDamagePlacement?: SustainedDamagePlacement;
+  /**
+   * 攻撃力▲の丸め（TeamInput.attackRounding。V-0265）。省略はいまのモデル（C-0027）。
+   * 予測の仮説の override に使う
+   */
+  attackRounding?: AttackRounding;
   /** V-0165: false なら、録画（予測の編成）の宝物の段階を使わず、どの枠も基礎版のスキルにする。省略 true */
   treasure?: boolean;
   /**
@@ -1186,6 +1191,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     ...(setup.sustainedDamagePlacement === undefined
       ? {}
       : { sustainedDamagePlacement: setup.sustainedDamagePlacement }),
+    ...(setup.attackRounding === undefined ? {} : { attackRounding: setup.attackRounding }),
   };
 }
 

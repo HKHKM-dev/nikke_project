@@ -14,7 +14,7 @@ import {
 import type { BuildEffect } from './buildEffects.ts';
 import type { InstantApplication } from './frame/firstPass.ts';
 import type { AutoConditionSummary, ConditionMode, LandingFrameSpan } from './frame/landing.ts';
-import type { BuffTotals } from './skills/buffs.ts';
+import type { AttackRounding, BuffTotals } from './skills/buffs.ts';
 import type {
   BurstHitResult,
   ResolvedDamageEffect,
@@ -108,6 +108,11 @@ export type TeamInput = {
    * SUSTAINED_DAMAGE_PLACEMENT（いまのモデル）。検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
    */
   sustainedDamagePlacement?: SustainedDamagePlacement;
+  /**
+   * 攻撃力▲の丸め（V-0265）。省略は ATTACK_ROUNDING（いまのモデル。C-0027）。
+   * 検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
+   */
+  attackRounding?: AttackRounding;
 };
 
 /** 枠 slotIndex の shot 発目（1 始まり）が、障害物を count 個壊した */
