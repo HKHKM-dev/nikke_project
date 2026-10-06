@@ -1,0 +1,57 @@
+{
+  "verification": "V-0283",
+  "note": "既存の録画 210（クイーン（真）単騎・風圧の的）の読み直し。窓の切れ目のトリガーを読む前に出した",
+  "team": [
+    {
+      "rid": 870,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S1 の戦闘開始時の攻撃力▲は、戦闘開始からゲーム内の時計で 15 秒（C-0270。C-0050 の切り捨てで 882f）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "s1-end",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "S1 の攻撃力▲の窓の終わり（戦闘開始からのモデルのフレーム）。録画では、戦闘開始（f752）から、1 ペレットの値が下がる前の最後のトリガーと下がった後の最初のトリガーのあいだ"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "163c86f03472e8437fc90c4c40f6b9106705c731",
+    "values": {
+      "H1": {
+        "s1-end": [
+          882
+        ]
+      }
+    },
+    "seen": {
+      "210": [
+        "210-01",
+        "210-02",
+        "210-03",
+        "210-04",
+        "210-05"
+      ]
+    }
+  }
+}
