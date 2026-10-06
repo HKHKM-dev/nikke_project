@@ -1,0 +1,540 @@
+[
+  {
+    "id": "279-01",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 12304,
+    "description": "ソルジャーE.G. 単騎の通常攻撃の 1 ヒット（▲あり・胴体・距離ボーナスなし・会心でない）。この格子の値に乗った発 497 発がどれも同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "前のフレームも読めた増分（1 フレームに 1 発）を、予測ファイルの 16 の格子の値（S1 の▲の有無 × コア・距離ボーナス・会心）の最も近いものに当てた（差 1.5 以内）。▲の有無は値で決まる（16 の値は最も近いもので 201 離れる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "279-02",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 24609,
+    "description": "ソルジャーE.G. 単騎の通常攻撃の 1 ヒット（▲あり・コア・距離ボーナスなし・会心でない）。この格子の値に乗った発 243 発がどれも同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "前のフレームも読めた増分（1 フレームに 1 発）を、予測ファイルの 16 の格子の値（S1 の▲の有無 × コア・距離ボーナス・会心）の最も近いものに当てた（差 1.5 以内）。▲の有無は値で決まる（16 の値は最も近いもので 201 離れる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "279-03",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15996,
+    "description": "ソルジャーE.G. 単騎の通常攻撃の 1 ヒット（▲あり・胴体・距離ボーナスあり・会心でない）。この格子の値に乗った発 383 発がどれも同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "前のフレームも読めた増分（1 フレームに 1 発）を、予測ファイルの 16 の格子の値（S1 の▲の有無 × コア・距離ボーナス・会心）の最も近いものに当てた（差 1.5 以内）。▲の有無は値で決まる（16 の値は最も近いもので 201 離れる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "279-04",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 18457,
+    "description": "ソルジャーE.G. 単騎の通常攻撃の 1 ヒット（▲あり・胴体・距離ボーナスなし・会心）。この格子の値に乗った発 103 発がどれも同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "前のフレームも読めた増分（1 フレームに 1 発）を、予測ファイルの 16 の格子の値（S1 の▲の有無 × コア・距離ボーナス・会心）の最も近いものに当てた（差 1.5 以内）。▲の有無は値で決まる（16 の値は最も近いもので 201 離れる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "279-05",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11400,
+    "description": "ソルジャーE.G. 単騎の通常攻撃の 1 ヒット（▲なし・胴体・距離ボーナスなし・会心でない）。この格子の値に乗った発 66 発がどれも同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "前のフレームも読めた増分（1 フレームに 1 発）を、予測ファイルの 16 の格子の値（S1 の▲の有無 × コア・距離ボーナス・会心）の最も近いものに当てた（差 1.5 以内）。▲の有無は値で決まる（16 の値は最も近いもので 201 離れる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "279-06",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 22801,
+    "description": "ソルジャーE.G. 単騎の通常攻撃の 1 ヒット（▲なし・コア・距離ボーナスなし・会心でない）。この格子の値に乗った発 12 発がどれも同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "前のフレームも読めた増分（1 フレームに 1 発）を、予測ファイルの 16 の格子の値（S1 の▲の有無 × コア・距離ボーナス・会心）の最も近いものに当てた（差 1.5 以内）。▲の有無は値で決まる（16 の値は最も近いもので 201 離れる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "279-07",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 14820,
+    "description": "ソルジャーE.G. 単騎の通常攻撃の 1 ヒット（▲なし・胴体・距離ボーナスあり・会心でない）。この格子の値に乗った発 29 発がどれも同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "前のフレームも読めた増分（1 フレームに 1 発）を、予測ファイルの 16 の格子の値（S1 の▲の有無 × コア・距離ボーナス・会心）の最も近いものに当てた（差 1.5 以内）。▲の有無は値で決まる（16 の値は最も近いもので 201 離れる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "279-08",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 17101,
+    "description": "ソルジャーE.G. 単騎の通常攻撃の 1 ヒット（▲なし・胴体・距離ボーナスなし・会心）。この格子の値に乗った発 13 発がどれも同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "前のフレームも読めた増分（1 フレームに 1 発）を、予測ファイルの 16 の格子の値（S1 の▲の有無 × コア・距離ボーナス・会心）の最も近いものに当てた（差 1.5 以内）。▲の有無は値で決まる（16 の値は最も近いもので 201 離れる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 1000
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "279-09",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "count",
+    "use": "record",
+    "value": [1595, 1583],
+    "unit": "発",
+    "description": "前のフレームも読めた増分の数と、そのうち 16 の格子の値のどれかに差 1.5 以内で乗った数。乗らなかった増分は、桁の読み違いとみられる値（800・5・8・12296 など）と、2 発が重なった値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）"
+    }
+  },
+  {
+    "id": "279-10",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.916,
+    "description": "格子に乗った 1583 発のうち、S1 の▲が付いている（▲ありの値に乗った）発の割合",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "▲の有無は 1 発の値の格子で決めた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "chanceActiveRatio",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.08
+      }
+    }
+  },
+  {
+    "id": "279-11",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "count",
+    "use": "compare",
+    "value": 9,
+    "unit": "回",
+    "description": "格子に乗った発を時刻の順に並べ、▲ありの発の次の発が▲なしだった回数（▲が切れた回数）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）",
+      "note": "読めなかった発・格子に乗らなかった発は飛ばして、次に読めた発と比べた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "chanceExpiries",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 4.2
+      }
+    }
+  },
+  {
+    "id": "279-12",
+    "recording": "279",
+    "source": "V-0241",
+    "readAt": "2026-10-06",
+    "kind": "interval",
+    "use": "record",
+    "value": [1220, 836, 1485, 706, 1059, 286, 323, 2803, 640],
+    "unit": "f",
+    "description": "▲ありの発が続いた並びの長さ（最初の発から最後の発まで。切れた並びだけ、時刻の順）。付き直さないなら、どれも 5 秒（294f）以下になる",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）"
+    }
+  },
+  {
+    "id": "279-13",
+    "recording": "279",
+    "source": "V-0240",
+    "readAt": "2026-10-06",
+    "kind": "timing",
+    "use": "compare",
+    "value": [
+      534, 1065, 1595, 2124, 2654, 3184, 3714, 4244, 4774, 5305, 5835, 6366, 6896, 7425, 7956, 8485, 9014, 9545, 10076
+    ],
+    "unit": "f",
+    "description": "S2 の発動の表示（左の「スキル2 イーグルタクティク」）が出たフレーム。戦闘開始（タイマーが出た f748）からの数。19 回",
+    "method": {
+      "tool": "ffmpeg（crop=200:50:0:550 の signalstats の YAVG を全フレーム）",
+      "note": "戦闘開始から 534 + 530k f の ±40f の中で、明るさが 1 フレームで 4 以上・3 フレームで 15 以上上がった最初のフレーム。戦闘開始は右上のタイマーの欄（crop=110:40:1780:15）の明るさが 40 以上下がったフレーム（282 と同じ読み方）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "maxAmmo",
+        "video": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 20
+      }
+    }
+  },
+  {
+    "id": "279-14",
+    "recording": "279",
+    "source": "V-0240",
+    "readAt": "2026-10-06",
+    "kind": "count",
+    "use": "compare",
+    "value": 128,
+    "unit": "発",
+    "description": "照準の横の残弾の、戦闘中に読めた最大の値（S2 の窓の中にリロードが明けたマガジン）。60 を超えた値は 124〜128 で、128 を超えない",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series --max 200（戦闘の全フレーム）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 700
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    }
+  }
+]
