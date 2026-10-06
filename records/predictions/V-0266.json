@@ -45,9 +45,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "1 回目のバーストのヒット（会心なし）。攻撃力▲は S1 の戦闘開始時の 1 つだけで、H0・H1 は同じ値（対照）"
     },
@@ -62,9 +60,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "2 回目のバーストのヒット（会心なし）。攻撃力▲は S1 のフルバースト終了時と追撃の 2 つ（`259-02` と同じ組み合わせ）。H1 は攻撃力 1 つ分大きい"
     },
@@ -79,9 +75,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "2 回目以降のバーストのヒットが会心だったときの値（burst-2 と同じ組み合わせ）"
     }
