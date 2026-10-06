@@ -1,0 +1,63 @@
+{
+  "verification": "V-0252",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（リロードを込め終えたときに 1 発目の待ちを「その時のチャージ時間 + 解放」で決め、窓の終わりで決め直さない。frame/shooter.ts の loadChunks）。撮る録画は手でバーストを撃つので、モデルのオートバーストの窓とは位相が違う。指標はどちらも位相に依らない値を、モデルの窓の中から選んだ（モデルの 1 回目の窓は、窓の終わりがリロードの後の 1 発目のチャージの途中に来る）。H1（窓の終わりで経過を持ち越し、1 秒のチャージに決め直す）と H2（窓の終わりでチャージをやり直す）はコードの切り替えなので、検証記録に手で書いた。H1 の値は out-of-window の 2 つ目（窓の外のリロードを挟む間隔）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "cross-at-window-end",
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "burst": 0,
+        "from": 430,
+        "to": 630
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "窓の終わりがリロードの後の 1 発目のチャージの途中に来た回の、窓の中のマガジンの最後の発から、リロードの後の 1 発目までの間隔（動画のフレーム）。範囲はモデルの 1 回目の窓（f778〜1366）の最後の発 f1217 と、窓の後の f1400。撮る録画では、この形の回ごとの値の中央値と比べる",
+      "observations": ["288-06"]
+    },
+    {
+      "id": "out-of-window",
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 300,
+        "to": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "1 回目のバーストより前の、窓の外の発と発の間隔と、リロードを挟む間隔（C-0222）。範囲はモデルの 1 本目のマガジンの最後の 2 発と、2 本目の 1 発目。H1 なら、cross-at-window-end はこの 2 つ目と同じ値になる"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "57db64233f6b1098714207c2417ce789284b91f1",
+    "values": {
+      "H0": {
+        "cross-at-window-end": [183],
+        "out-of-window": [59, 200]
+      }
+    },
+    "seen": {}
+  }
+}
