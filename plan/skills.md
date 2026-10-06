@@ -485,7 +485,7 @@ notes の種類: 未対応 28・前提の外 24・計算に無関係 33・補足
 ## 870 クイーン（真）
 
 - **skill1**: supported
-  - effects[0] timed・battleStart・attack: C-0270（仮説）
+  - effects[0] timed・battleStart・attack: C-0270（確定）
   - effects[1] timed・fullBurstEnd・attack: C-0392（確定）
   - effects[2] passive・elementDamage: C-0296（確定）
   - effects[3] damage・burstUse・distributed: C-0310（確定）
