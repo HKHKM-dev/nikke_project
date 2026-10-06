@@ -303,5 +303,50 @@
       "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
       "note": "使えたコマ 15 / 101。四分位: 足元 526〜544・高さ 134〜160。足元の y は半分の解像度で測るので 2px 刻み"
     }
+  },
+  {
+    "id": "075-21",
+    "recording": "075",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0239",
+    "readAt": "2026-10-06",
+    "value": 8,
+    "unit": "ヒット",
+    "description": "ラム（SR）単騎・AUTO・オートバースト OFF で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・--mode events、hud.ts --mode jumps（レシピ hud-jumps@1 のキャッシュ）+ 使い捨てのスクリプト（V-0239「読み方」）",
+      "note": "ヒットは 875・957・1039・1121・1203・1285・1485・1567（1〜8 ヒット目。どれも的のヒットで、総ダメージに出ない発は満タンの後の 9 発目）。7 ヒット目でバーが 113px（約 96% から上は映らない。C-0084）、8 ヒット目の f1567 でバーが消えた。1 ヒットは 56,000 × フルチャージ倍率 2.5 = 140,000（C-0083）で、7 ヒットの 980,000 では届かず 8 ヒット目で届く。5 ヒット目で付く S1 の攻撃力▼が 20,000 以上を溜めれば 7 ヒット目で届く。戦闘開始は f805"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "075-22",
+    "recording": "075",
+    "kind": "gauge",
+    "use": "record",
+    "source": "V-0239",
+    "readAt": "2026-10-06",
+    "value": [2, 19, 18, 19, 19, 19, 17],
+    "unit": "px",
+    "description": "ラム（SR）単騎・AUTO で、戦闘の最初のヒットから 7 ヒット目までの、ヒットごとの BURST バーの伸び（直前の読めたフレームと 4f 後からの読めたフレームの差）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・--mode events、hud.ts --mode jumps（レシピ hud-jumps@1 のキャッシュ）+ 使い捨てのスクリプト（V-0239「読み方」）",
+      "note": "1 ヒット目は 0px から（バーは本当の約 12.6% までは 0px。C-0084）。7 ヒット目は 113px で頭打ち。140,000 は約 18.9px。S1 が付く 5 ヒット目（f1203）の伸びもほかのヒットと同じ 19px で、28,000（約 3.8px）の余分な伸びは無い"
+    }
   }
 ]
