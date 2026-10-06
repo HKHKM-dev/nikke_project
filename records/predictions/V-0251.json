@@ -1,0 +1,210 @@
+{
+  "verification": "V-0251",
+  "note": "エマ：TU（93・MG）単騎・操作（AUTO 射撃 ON）・オートバースト OFF（バーストは検証記録の「次に撮るもの」の時刻に手で撃つ）・灼熱タブの BigArms・射撃場 3 分・スペック固定 OFF。育成はオーナーが 2026-10-06 に確かめた値（キャラ画面の攻撃力 345,763・OL なし・キューブなし・コレクションなし・スキル Lv 1/1/1）。S1 Lv1 の環境コントロールは受けるダメージ 2.3%▲、バースト Lv1 の攻撃力▲は発動者基準 23.68%。指標の frame は V-0230 と同じく、モデルの自動のバーストの時刻からの関係で選んだ代表の時刻。録画のバーストの時刻がずれたら、同じ関係（環境コントロールの窓とバーストの窓の重なり方）の時刻のヒットで読む。H2・H3 の percent は V-0230 の Lv10 の合計 7.811%（C-0336）から逆算した値で、定義には入れない（仮説の値）",
+  "team": [
+    {
+      "rid": 93,
+      "controlled": true,
+      "build": {
+        "attack": 345763,
+        "cube": null,
+        "collection": null,
+        "skillLevels": {
+          "skill1": 1,
+          "skill2": 1,
+          "burst": 1
+        }
+      }
+    }
+  ],
+  "fixedSpec": false,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（C-0336。percent 100）: 強化の合計はちょうど 2 倍（2.3% × 2 = 4.6%）。Lv10 の +0.011% は再現しない"
+    },
+    {
+      "id": "H2",
+      "note": "比例: ずれは環境コントロールの値に比例する（Lv10 で 3.9% → 3.911%、percent 100 × 3.911 ÷ 3.9 = 100.282）。Lv1 の合計は 2.3% × 2.00282 = 4.6065%",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "damageTaken",
+              "durationSeconds": 10,
+              "amplifies": {
+                "skill": "skill1",
+                "percent": 100.282
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "一定の量: ずれは値に依らず +0.011%（Lv1 の合計 4.611%。percent 100 × 2.311 ÷ 2.3 = 100.478）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 93,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "damageTaken",
+              "durationSeconds": 10,
+              "amplifies": {
+                "skill": "skill1",
+                "percent": 100.478
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "対照: どの効果の窓の外（20 秒ほど）のエマの 1 ヒット（コア・会心なし・距離ボーナスなし）。V-0209 の hit-out-window と同じ条件"
+    },
+    {
+      "id": "hit-env-only",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "環境コントロールだけ（60〜70 秒の窓。バーストの窓の外）。× 1.039（C-0305。同じ録画での確かめ）"
+    },
+    {
+      "id": "hit-burst-only",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 4700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "バーストの攻撃力▲だけ（74.58 秒のバーストの窓。環境コントロールは 60〜70・90〜100 秒で、重ならない）。発動者基準の攻撃力▲の値を見る"
+    },
+    {
+      "id": "hit-enhanced",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "判定の指標。環境コントロールの窓（30〜40 秒）の中で撃ったバースト（32.33 秒）の後、40 秒より前。H1 は攻撃力▲ × (1 + 3.9% + 3.9%)、H0 は攻撃力▲ × 1.039"
+    },
+    {
+      "id": "hit-after-env",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2420,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "環境コントロールの窓の終わり（40 秒）からバーストの窓の終わり（42.33 秒）まで。H0・H1 とも攻撃力▲だけ（強化は環境コントロールの窓の外では効かない読み）"
+    },
+    {
+      "id": "hit-burst3",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 7300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "環境コントロールの窓の外（110〜120 秒）で撃ったバースト（116.94 秒）の窓の中で、次の環境コントロールの窓（120 秒〜）が始まった後。H1 は発動の瞬間に環境コントロール状態でないので強化なし（攻撃力▲ × 1.039）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-06",
+    "commit": "57db64233f6b1098714207c2417ce789284b91f1",
+    "values": {
+      "H1": {
+        "hit-out": 38506.8582,
+        "hit-env-only": 39392.515938599994,
+        "hit-burst-only": 47627.956,
+        "hit-enhanced": 49818.841975999996,
+        "hit-after-env": 49818.841975999996,
+        "hit-burst3": 48723.39898799999
+      },
+      "H2": {
+        "hit-out": 38506.8582,
+        "hit-env-only": 39392.515938599994,
+        "hit-burst-only": 47627.956,
+        "hit-enhanced": 49821.93112522616,
+        "hit-after-env": 49821.93112522616,
+        "hit-burst3": 48723.39898799999
+      },
+      "H3": {
+        "hit-out": 38506.8582,
+        "hit-env-only": 39392.515938599994,
+        "hit-burst-only": 47627.956,
+        "hit-enhanced": 49824.07819348264,
+        "hit-after-env": 49824.07819348264,
+        "hit-burst3": 48723.39898799999
+      }
+    },
+    "seen": {}
+  }
+}
