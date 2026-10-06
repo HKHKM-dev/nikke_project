@@ -29,9 +29,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 1, "frame": 0, "core": false, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   },
   {
@@ -50,9 +61,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 1, "frame": 0, "core": false, "crit": true, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   },
   {
@@ -71,9 +93,53 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 1, "frame": 0, "core": true, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "119-05",
+    "recording": "119",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0281",
+    "readAt": "2026-10-07",
+    "value": [843, 858, 873, 888, 903, 918, 933, 948, 963, 978],
+    "unit": "f",
+    "description": "ミハラ：ボンディングチェーン単騎（操作・バーストなし）の、S1 のキャプチャーチェーンの攻撃（60,369。f918 だけ会心の 90,554）が出た動画のフレーム（10 回）。戦闘開始の直後から 15f おき（14〜16f）で、MG の最初のヒット（f1077）より前。どの攻撃の 1f 前（f886 は 2f 前）にも、チェーンバインドの 1 スタックぶんの持続ダメージ 30,245（f901 は会心の 45,367）が単独で出ている（f842・857・872・886・901・916・932・947・961・976）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分。値は、モデルの攻撃力 120,694（スペック固定 ON）から (120,694 − 防御 100) × 50.06% = 60,369.4（会心 90,554.0）、× 25.08% = 30,245.0（会心 45,367.5）、その 10 倍 302,450（会心 453,675）と端数まで一致する。持続ダメージの増分のうち 315,884・329,318・467,109・480,543 などは、同じフレームの MG の 1 ヒット（13,434・26,868 など）との和"
+    }
+  },
+  {
+    "id": "119-06",
+    "recording": "119",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0281",
+    "readAt": "2026-10-07",
+    "value": [
+      1005, 1064, 1124, 1183, 1242, 1302, 1362, 1420, 1479, 1538, 1598, 1657, 1716, 1776, 1835, 1894, 1953, 2014, 2072,
+      2131, 2190, 2250, 2310, 2369, 2427, 2488, 2547, 2605, 2664, 2724, 2784, 2843, 2902
+    ],
+    "unit": "f",
+    "description": "同じ録画の、チェーンバインド 10 スタックぶんの持続ダメージ（302,450。会心は 453,675。1 tick の全スタックが一緒に会心する）が出た動画のフレーム（33 回。録画の終わりの一時停止まで）。間隔は 58〜61f（平均 59.3f。約 1 秒）。10 スタックのまま増えも減りもせず、録画の終わり（最後の攻撃から約 32 秒）まで消えない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分。値は、モデルの攻撃力 120,694（スペック固定 ON）から (120,694 − 防御 100) × 50.06% = 60,369.4（会心 90,554.0）、× 25.08% = 30,245.0（会心 45,367.5）、その 10 倍 302,450（会心 453,675）と端数まで一致する。持続ダメージの増分のうち 315,884・329,318・467,109・480,543 などは、同じフレームの MG の 1 ヒット（13,434・26,868 など）との和"
     }
   }
 ]
