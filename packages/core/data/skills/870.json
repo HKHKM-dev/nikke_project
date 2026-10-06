@@ -25,7 +25,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-0392"
+          ]
         },
         {
           "kind": "passive",
@@ -101,7 +104,10 @@
           "target": "self",
           "stat": "distributedDamage",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-0391"
+          ]
         },
         {
           "kind": "timed",

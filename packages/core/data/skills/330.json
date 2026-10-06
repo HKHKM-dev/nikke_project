@@ -12,7 +12,10 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0393"
+          ]
         },
         {
           "kind": "timed",
@@ -24,14 +27,20 @@
           "assumes": {
             "ja": "説明文の「直前にバーストを使用した味方」「使用していない味方」へのリロード速度（どちらも同じ値・同じ秒数）を味方全体の 1 効果にまとめた",
             "en": "The two Reload Speed lines (allies who just used / did not use their Burst, same value and duration) are merged into one effect on all allies"
-          }
+          },
+          "claims": [
+            "C-0394"
+          ]
         }
       ],
       "notes": [
         {
           "ja": "直前にバーストスキルを使用していない味方への防御力▲はダメージに関係しない",
           "en": "The DEF buff on allies who did not just use their Burst does not affect damage",
-          "kind": "noDamage"
+          "kind": "noDamage",
+          "claims": [
+            "C-0393"
+          ]
         }
       ]
     },
@@ -91,14 +100,20 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0393"
+          ]
         }
       ],
       "notes": [
         {
           "ja": "バリアは扱わない（要件 5.2 節）",
           "en": "Shields are not modeled (requirements 5.2)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "claims": [
+            "C-0393"
+          ]
         }
       ]
     }

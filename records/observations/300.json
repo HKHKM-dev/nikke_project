@@ -22,9 +22,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -55,9 +53,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -72,9 +68,7 @@
     "readAt": "2026-10-07",
     "kind": "interval",
     "use": "record",
-    "value": [
-      294
-    ],
+    "value": [294],
     "unit": "f",
     "description": "ユニの発の間が 5 秒より空いた唯一の所（最後の発 f7095 → 次の発の HUD の増分 f7414。ほかの発の間は HUD の増分で 200〜244f）で、ユニの最後の発（顔アイコンの残弾が 1/7 から 0/7 になったフレーム）から、サンの照準の横の残弾が 061 から 060 に替わった最初のフレーム（f7389。前のフレーム f7388 は 061）までの動画のフレーム数。ゲーム内の時計の 5 秒（294f。C-0140）と同じ。その後 f7496 に 061 に戻った",
     "method": {
