@@ -21,7 +21,6 @@
 // - 区間: まとまりごとの的の足元の y と照準の高さの幅が大きく変わる所で切り、帯の並び（data/enemies.json の range-3min-jump）で
 //   帯を当て、近は幅（C-0155）、中遠は足元の y（C-0044）で着地点を決める。--sections で切れ目を与えれば、それを使う。
 // - 出力: derived/<id>/coverage@<設定の版>.shots.tsv（発ごと）と .summary.json（着地点ごとの表と自己検査）。追跡しない。
-import '../../packages/core/scripts/below-normal.ts';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';

@@ -9,7 +9,6 @@
 // （plan/captures/index.md「バックアップ」）。バックアップ先が無い環境と --no-backup では同期しない。同期に失敗したら終了コード 1。
 // 同期できたら plan/captures/backup-log.md に 1 段落足す。
 // 取り込んだ後は npm run records:table（台帳の表）と、キャラの確かめに node tools/captures/probe-result.ts <動画> --list。
-import '../../packages/core/scripts/below-normal.ts';
 import {
   appendFileSync,
   copyFileSync,

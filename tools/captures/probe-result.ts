@@ -14,7 +14,6 @@
 // 切り出した画像の文字は OCR せず目視で読む。名前欄は長いと横スクロールで切れるので
 // （録画 21 のクイーン（真）は「ーン（真）」しか写らないフレームがある）、
 // 1 区間から複数枚サンプルする。
-import '../../packages/core/scripts/below-normal.ts';
 import { mkdirSync } from 'node:fs';
 import { basename, extname, join } from 'node:path';
 import { parseArgs } from 'node:util';

@@ -14,7 +14,6 @@
 // mode:
 //   mags    マガジンごとの 1 発目・最終弾（0 の表示）・次の最大の表示と、4f 以上止まった区間（MG のスピンアップ中の間隔も出る）
 //   series  各フレームの残弾（表示が消えているフレームは空）
-import '../../packages/core/scripts/below-normal.ts';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { cropFilter, parseCrop, rawFrames, type Crop } from './ffmpeg.ts';

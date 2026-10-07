@@ -2,7 +2,6 @@
 //   node tools/captures/still.ts <動画> --frame 1234 --out out.png [--crop x,y,w,h] [--scale 960]
 // -ss（時間指定）ではなく select=eq(n,N) を使う。録画にはフレーム落ちがあり、
 // 時間とフレーム番号が比例しないため、番号で取らないと解析結果と対応が取れない。
-import '../../packages/core/scripts/below-normal.ts';
 import { parseArgs } from 'node:util';
 import { parseCrop, writeStill } from './ffmpeg.ts';
 

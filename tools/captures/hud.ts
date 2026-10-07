@@ -12,7 +12,6 @@
 //   final   最後に残った値（単騎なら戦闘履歴の与ダメージと同じになる）
 //   jumps   値が増えたフレームと増分（単騎で 1 フレームに 1 ヒットなら、増分がそのまま 1 ヒットの値）
 //   series  読めたフレームごとの値（落とした読みには「x」を付ける）
-import '../../packages/core/scripts/below-normal.ts';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { cropFilter, parseCrop, rawFrames, type Crop } from './ffmpeg.ts';
