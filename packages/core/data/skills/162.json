@@ -44,7 +44,10 @@
           "kind": "outOfScope",
           "effect": {
             "kind": "unknown"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         },
         {
           "ja": "バースト 3 段階突入時の自分の持続ダメージ▲（10 秒）は未対応",

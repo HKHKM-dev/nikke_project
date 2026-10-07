@@ -15,7 +15,10 @@
             "stat": "unknown",
             "target": "allies",
             "trigger": "battleStart"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         },
         {
           "ja": "通常攻撃 100 回命中ごとの、ブームインストール状態の対象と周囲の敵への分配ダメージは未対応",
