@@ -24,7 +24,7 @@ import type { BuildEffect } from '../buildEffects.ts';
 import { resolveCycleEvery, type CycleWindow } from './cycles.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
-import { framesToGameSeconds, gameSecondsToFirstFrame, gameSecondsToFrame } from '../time.ts';
+import { framesToGameSeconds, gameSecondsToFirstFrame } from '../time.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
 import { chanceOpportunities, chancePieces, chanceValueOf } from './chance.ts';
 import {

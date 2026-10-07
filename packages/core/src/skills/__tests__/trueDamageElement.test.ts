@@ -6,7 +6,7 @@ import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { FIXED_BURST_CYCLE, planFixedCycle } from '../../burst/fixedCycle.ts';
 import { computeTriggerDamage, TRUE_DAMAGE_BUCKET, type TriggerDamageInput } from '../../damage.ts';
 import type { BurstStep, CharacterData, SkillRaw } from '../../types.ts';
-import { gameSecondsToFirstFrame, gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
+import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../../time.ts';
 import { ZERO_BUFFS, type ChangedWeapon } from '../buffs.ts';
 import { applyComposition, compositionAllows, enemyElementAllows, withCharacterAllows } from '../composition.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
