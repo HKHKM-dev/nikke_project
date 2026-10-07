@@ -7,5 +7,13 @@
   "basis": "`095-03`（tick 48,785 = 41,322.36 × 1.1806）、`095-04`（1 発 12,747 = 10,797.29 × 1.1806）。どちらも合わせ込みなしの値と 1 未満の差。`095-05`（B の 584f 後まで乗り、589f 後には乗らない）。モデルに入れた後の値は、録画 095 の 1 発・tick とも差が 1 未満（`095-06`・`095-07`）。V-0054・V-0067",
   "model": "`data/skills/862.json` の burst（`timed`・`damageTaken`・`allies`）。stat `damageTaken` は `damage.ts`（通常攻撃・射撃ごとの倍率ダメージ）と `skills/burstDamage.ts` の `computeBurstHit`（倍率ダメージ・持続ダメージ）で別枠の乗数として掛ける",
   "replaces": [],
-  "updated": "2026-10-01"
+  "updated": "2026-10-01",
+  "subject": {
+    "places": [
+      "data/skills/95.json の burst の effects[0]",
+      "data/skills/194.json の skill1 の effects[0]",
+      "data/skills/836.json の skill1 の effects[0]",
+      "data/skills/862.json の burst の effects[0]"
+    ]
+  }
 }

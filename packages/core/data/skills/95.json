@@ -72,7 +72,13 @@
         {
           "ja": "カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）",
           "en": "Camouflage's exclusion from single-target attacks and its removal on a direct hit do not happen (no damage taken is assumed; Camouflage lasts 5 s)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          }
         }
       ]
     },
@@ -191,6 +197,10 @@
           "ja": "炸裂弾（使用武器変更の 1 発）に発射体爆発ダメージ▲が乗る分は未対応。録画では (1 + 防御力無視ダメージ▲ + 発射体爆発ダメージ▲) の和で掛かっていた（C-0376。変更後の武器の発に発射体の爆発を持たせる語彙と、2 つの▲の置き場所が要る）",
           "en": "Projectile Explosion Damage up on the Explosive Round (the weapon-change shot) is not modeled. In the recording it applied as (1 + True Damage up + Projectile Explosion Damage up) summed (C-0376; needs vocabulary for an explosion on the changed weapon and a placement for the two ups)",
           "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "burstUse"
+          },
           "claims": [
             "C-0376"
           ]

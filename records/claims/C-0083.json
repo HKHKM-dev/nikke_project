@@ -7,5 +7,8 @@
   "basis": "`028-01`（ラピ AR。操作コア・操作胴体・AI の 3 本）・`035-04`（エマ MG・AI）・`025-02`（デルタ SR・AI）。どれも、CDN の値を当たった回数だけ足した合計が 1,000,000 に届いたヒットで替わり、その 1 つ前のヒットでは替わらない。V-0028",
   "model": "`burst/dynamic.ts` の `energyPerTrigger`（倍率なし）",
   "replaces": ["C-0005"],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "mechanism": "gauge"
+  }
 }

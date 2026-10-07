@@ -76,6 +76,9 @@
           "ja": "ペルソナ - ヨハンナ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ",
           "en": "Persona - Johanna (battle start, continuous, cannot be removed) is the persona state in the definition's states",
           "kind": "modeling",
+          "effect": {
+            "kind": "unknown"
+          },
           "claims": [
             "C-0354"
           ]

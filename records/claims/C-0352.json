@@ -7,5 +7,8 @@
   "basis": "`258-01`・`258-02`（フルバースト中。仮説 D（乗らない）と 40% 以上離れる）。灼熱の `260-01` では乗らない。録画 258・260 は最小構成の警告なし。予測は撮る前に commit した（V-0232 の注記）。V-0232",
   "model": "`data/skills/871.json`（burst の `timed`・`burstUse`・`attack`・`enemyElement: Wind`）",
   "replaces": [],
-  "updated": "2026-10-06"
+  "updated": "2026-10-06",
+  "subject": {
+    "places": ["data/skills/871.json の burst の effects[1]"]
+  }
 }

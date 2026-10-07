@@ -7,5 +7,8 @@
   "basis": "verification.md Stage 5「録画 15: フルバースト補正は加算だった」",
   "model": "`damage.ts` の `FULL_BURST_BOOST` = 0.5",
   "replaces": [],
-  "updated": "2026-09-22"
+  "updated": "2026-09-22",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }

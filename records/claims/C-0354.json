@@ -7,5 +7,8 @@
   "basis": "`259-01`（追撃がクイーン（真）に付く。仮説 K と 80% 離れる）・`259-04`〜`259-06`（バトンタッチが雪子に付く。L1 と 35% 以上離れる）・`259-07`・`259-08`（雪子自身には追撃が付かない。N と合わない）。灼熱の `261-01`〜`261-03` では起きない。録画 259・261 は最小構成の警告あり（ユニ・クイーン（真）・雪子）だが、どの窓も未確定の要素はペルソナの効果 1 つで、手書きのほかの仮説と 35% 以上離れ H1 だけに端数まで乗ったので、2026-10-06 のオーナーの判断で確定にした（V-0233 の論点 1。V-0208 と同じ扱い）。予測は撮る前に commit した。V-0233",
   "model": "`data/skills/870.json`・`data/skills/871.json` の最上位の `states`（persona）。根拠は skill1 の notes（modeling）の claims で指す。対象の絞り込みは `skills/composition.ts` の `fixedTargetsOf`（plan/design-persona.md 3.1・3.2 節）",
   "replaces": [],
-  "updated": "2026-10-06"
+  "updated": "2026-10-06",
+  "subject": {
+    "places": ["data/skills/870.json の skill1 の notes[0]", "data/skills/871.json の skill1 の notes[0]"]
+  }
 }

@@ -7,5 +7,8 @@
   "basis": "`258-04`・`260-02`（フルバースト終了から 15 秒の中）・`258-10`・`260-04`（戦闘開始から最初のバーストの前）。HUD の増分の 9 割以上が H1 の単位のちょうどの倍数に乗り、仮説 E（フルバースト終了時の▲なし）の単位には半分未満。録画 258・260 は最小構成の警告なし。予測は撮る前に commit した（V-0232 の注記）。V-0232",
   "model": "`data/skills/871.json`（skill1 の `timed`・`battleStart` と `fullBurstEnd`・`attack`）",
   "replaces": [],
-  "updated": "2026-10-06"
+  "updated": "2026-10-06",
+  "subject": {
+    "places": ["data/skills/871.json の skill1 の effects[0]", "data/skills/871.json の skill1 の effects[1]"]
+  }
 }

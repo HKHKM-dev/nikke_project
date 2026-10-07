@@ -7,5 +7,8 @@
   "basis": "`L-AD-08`・`L-AI-05`・`L-AN-06`（timer.ts --mode summary。C-0260 と同じ読み方）。傾きと数え直しは V-0057（`L-AD-07`・`L-AI-04`・`L-AN-05` から）。どの録画でも読みは 150 間隔以上",
   "model": "—（モデルは今の版に合わせる。旧の録画と比べる値は、この速さの違いを含む）",
   "replaces": [],
-  "updated": "2026-09-30"
+  "updated": "2026-09-30",
+  "subject": {
+    "mechanism": "clock"
+  }
 }

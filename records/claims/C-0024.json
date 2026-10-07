@@ -7,5 +7,8 @@
   "basis": "`046-01`、design-stage11-scarlet-bs.md 0 節",
   "model": "`burst/dynamic.ts`",
   "replaces": [],
-  "updated": "2026-09-24"
+  "updated": "2026-09-24",
+  "subject": {
+    "mechanism": "burstChain"
+  }
 }

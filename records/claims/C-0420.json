@@ -7,5 +7,11 @@
   "basis": "`222-09`・`222-12`（2・5 回目のフルバーストで、止まりの明けからヒットまでに出たドレイクの発。値は `222-13`）: どちらも攻撃ダメージ▲の付いたモデルの 1 ペレットの和と端数まで合い、▲の無い 1 ペレット（効果の遅れを 4 にして回したモデル）のどの和とも 800 以上離れる。読む前に commit した予測（V-0293 の H0）と合い、E1（ヒットで付く）・E2 は外れた。`222-08`・`222-10`・`222-11`（1・3・4 回目。最初の発がヒットの後で、時刻は見分けられないが▲の付いた値）。最大装弾数は `222-14`（発動の前後で残弾は増えず、リロードで 20。予測の M0）。最小構成（ココア・デルタは機構が確定。V-0202）。録画 222 の読み直し。V-0293",
   "model": "`data/skills/101.json` の treasureSkills.burst の effects[1]（`timed`・`burstUse`・`attackDamage`）・effects[2]（`maxAmmo`）。時刻は `burst/landing.ts` の `MEASURED_BURST_DELAYS` のドレイクの行の効果の遅れ 0（発動のフレーム）。残弾を増やさずリロードで込めるのはモデルの既定（`frame/shooter.ts`。C-0364 と同じ）",
   "replaces": [],
-  "updated": "2026-10-07"
+  "updated": "2026-10-07",
+  "subject": {
+    "places": [
+      "data/skills/101.json の treasureSkills.burst の effects[1]",
+      "data/skills/101.json の treasureSkills.burst の effects[2]"
+    ]
+  }
 }

@@ -9,7 +9,13 @@
         {
           "ja": "「20 回攻撃を受けた時」のチャージダメージ倍率▲は、被弾を扱わないので起きない（要件 5.2 節）",
           "en": "Charge damage up after being hit 20 times does not occur because taking hits is not modeled (requirements 5.2)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "chargeDamageMultiplier",
+            "target": "self",
+            "trigger": "damaged"
+          }
         }
       ]
     },

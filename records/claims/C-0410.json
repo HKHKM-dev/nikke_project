@@ -7,5 +7,8 @@
   "basis": "`120-04`・`120-05`（単騎・バーストなしの録画 120 の 1 発の増分 19 個の全部が、通常攻撃の 1 ヒットと追加ダメージ 528,178（会心 792,266）の和。モデル 528,177.6・792,266.4）。読み直し（予測（V-0280 の H1・H2）を、追加ダメージの値を読む前に commit した）。H2（262.79% も乗る）は 0 個。値は説明文の 437.98% で、合わせ込みの定数は無い。V-0280",
   "model": "実装済み（data/skills/18.json の skill1 の effects[0]。`fullChargeShot` の `damage`・`additional`。射撃ごとの倍率ダメージとして 1 トリガーの値に畳み込む）。超火力の追加効果は notes（未対応）",
   "replaces": [],
-  "updated": "2026-10-07"
+  "updated": "2026-10-07",
+  "subject": {
+    "places": ["data/skills/18.json の skill1 の effects[0]", "data/skills/18.json の skill1 の notes[1]"]
+  }
 }

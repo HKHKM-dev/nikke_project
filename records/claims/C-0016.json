@@ -7,5 +7,8 @@
   "basis": "verification.md Stage 12（13 体 × 3 項目のうち .5 の 3 点）",
   "model": "`stats.ts` の `applyCoreRatio`",
   "replaces": [],
-  "updated": "2026-09-24"
+  "updated": "2026-09-24",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }

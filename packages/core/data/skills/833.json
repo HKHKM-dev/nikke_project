@@ -31,6 +31,11 @@
           "ja": "通常攻撃 120 回ごとの味方 1 機の HP 回復は未対応（回復を受けた時の効果を起こさない。単騎ではダメージに関係しない）",
           "en": "The HP restore on 1 ally every 120 normal attacks is not modeled (it does not trigger effects on being healed; it does not affect damage solo)",
           "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "normalShot"
+          },
           "claims": [
             "C-0180"
           ]
@@ -44,6 +49,12 @@
           "ja": "射撃マニュアル状態の間の味方全体のバリアに与えるダメージ▲は、バリアの無い敵（射撃場の的）では効かない",
           "en": "Damage dealt to Shield up for all allies during Shooting Manual has no effect on enemies without a shield (the range target)",
           "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "unknown"
+          },
           "claims": [
             "C-0180"
           ]
@@ -65,6 +76,11 @@
           "ja": "味方全体の持続回復は未対応（回復を受けた時の効果を起こさない。単騎ではダメージに関係しない）",
           "en": "The heal over time on all allies is not modeled (it does not trigger effects on being healed; it does not affect damage solo)",
           "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "burstUse"
+          },
           "claims": [
             "C-0180"
           ]

@@ -7,5 +7,12 @@
   "basis": "`081-01`〜`081-03`（録画 081。ココアのバーストの後・戦闘の終わりの近くのココアの 1 発。効果なしのモデルとの差は 1 未満）、`081-04`（ココアの 1 発 98 件がすべて効果なしのモデルの 8 通りのどれか）。V-0031",
   "model": "`data/skills/311.json` の全スロットの notes（効果なし）",
   "replaces": [],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "places": [
+      "data/skills/311.json の skill1 の notes[0]",
+      "data/skills/311.json の skill2 の notes[0]",
+      "data/skills/311.json の burst の notes[0]"
+    ]
+  }
 }

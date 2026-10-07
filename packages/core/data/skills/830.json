@@ -26,7 +26,13 @@
         {
           "ja": "戦闘開始時のバリアに与えるダメージ▲は、射撃場の敵にバリアが無いのでダメージに関係しない",
           "en": "Damage to barriers up from the start of battle does not affect damage (the shooting range enemy has no barrier)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "battleStart"
+          }
         }
       ]
     },
@@ -50,6 +56,12 @@
           "ja": "「自分がバリア適用状態なら」有利コードの攻撃ダメージ▲は、バリアを扱わないので起きない",
           "en": "Elemental advantage damage up while shielded does not occur because shields are not modeled",
           "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "elementDamage",
+            "target": "self",
+            "trigger": "unknown"
+          },
           "claims": [
             "C-0075"
           ]
@@ -101,6 +113,9 @@
           "ja": "貫通特化は射撃場の敵ではダメージに関係しない",
           "en": "Pierce does not affect damage on the shooting range enemy",
           "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          },
           "claims": [
             "C-0076"
           ]
@@ -109,6 +124,7 @@
           "ja": "命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。AR の弾丸命中率にも同じ式で効かせる（確かめたのは SMG だけ）。バーストゲージにも同じ N で効かせるが、▲の窓（10 秒）はフルバーストの窓に収まり、ゲージの溜まる時間と重ならない（きっかけの遅れは未測定で 0）",
           "en": "With automatic conditions the Hit Rate buff makes the core hit rate 1 during the burst (N ≥ 1; timed buffs use the same formula as constant ones). It also raises the AR bullet hit rate with the same formula (verified only for SMG). The burst gauge uses the same N, but the 10 s buff lies inside the full burst window, when the gauge does not charge (the trigger delay is unmeasured and taken as 0)",
           "kind": "modeling",
+          "refers": "effects[2]",
           "claims": [
             "C-0037",
             "C-0170",

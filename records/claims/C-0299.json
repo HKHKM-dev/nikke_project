@@ -7,5 +7,8 @@
   "basis": "`212-03`（tick の会心なし 2,741,786。単独の 25 回と、マナの 1 ヒットを差し引いた 9 回がどれもこの値）・`212-04`（会心 3,655,715。会心なしとの比 4 : 3 で、倍率グループに足す H3 の形でない）。撮る前の予測（V-0185 の H2）とは 2.7・3.9 違い、C-0027（最終攻撃力の整数丸め。モデルは未実装）を入れた手計算では 2,741,786.40・3,655,715.20 で 1 未満。別枠の乗数 H1 は 6.4% 大きく、H3 は 5.8% 小さい。▲が通常攻撃に乗らないことは `212-02`（同じ窓の 1 ヒットが S2 の▲だけの値。C-0281）。最小構成（ラム・デルタは与ダメージに効く効果が無い）。V-0185",
   "model": "`skills/burstDamage.ts` の `SUSTAINED_DAMAGE_PLACEMENT`（`attackDamage`）。`data/skills/290.json` の burst の effects[0]（`timed`・`burstUse`・`sustainedDamage`）。tick への掛け方は `computeBurstHit`、乗るかは `frame/plan.ts` の `planSkillHits` が tick のフレームのバフで決める",
   "replaces": ["C-0279"],
-  "updated": "2026-10-05"
+  "updated": "2026-10-05",
+  "subject": {
+    "places": ["data/skills/290.json の burst の effects[0]"]
+  }
 }

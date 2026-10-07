@@ -7,5 +7,8 @@
   "basis": "`045-09`〜`045-19`（スタック 1〜5 の通常攻撃の会心の 1 ヒット 11 通り。差 0.5 未満）・`045-20`〜`045-24`（スタック 0・1・2・4・5 の最大装弾数。リロード明けの残弾が何回でも同じ値）。録画 045 はモダニア単騎・スペック固定 ON（最小構成）。予測は読む前に固定（四捨五入でなく切り捨てなら 284・269・239 になる）。V-0179。スタックの規則（付与のたびに全スタックを更新）は凍結の記録で 045 から読んだので、この結論の根拠にしない",
   "model": "`data/skills/260.json` の skill1 の effects[1]（timed・critDamage・stacks）・effects[2]（timed・maxAmmo・stacks）。最大装弾数の丸めは `frame/firing.ts` の `effectiveMaxAmmo`（C-0017）",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-05",
+  "subject": {
+    "places": ["data/skills/260.json の skill1 の effects[1]", "data/skills/260.json の skill1 の effects[2]"]
+  }
 }

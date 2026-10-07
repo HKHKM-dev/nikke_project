@@ -7,5 +7,12 @@
   "basis": "`063-05`（バースト中の 1 発が × 2.5004 で、モデルとの差は 1 未満）。命中率▲でバースト中のコア命中率が 1 になるのは C-0037（録画 63）。V-0022",
   "model": "`data/skills/830.json` の burst の effects[0]（timed・attackDamage）と effects[2]（timed・hitRate。状態だけで、コア命中率には効かせていない）",
   "replaces": [],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "places": [
+      "data/skills/830.json の burst の effects[0]",
+      "data/skills/830.json の burst の effects[2]",
+      "data/skills/830.json の burst の notes[0]"
+    ]
+  }
 }

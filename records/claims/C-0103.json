@@ -7,5 +7,11 @@
   "basis": "`082-01`・`082-08`（単騎の 3 発目で満タン。チャージだけの読みでは 4 発目。`082-08` は発の番号の照合。V-0085）、`082-02`（1・2 発目の後のバー 29px・74px。この合計なら 28.8px・74.6px）、`079-11`（ラム・デルタと同じフレームの 2 回の斉射の後のバー。44.8%・89.6% と合う）、`079-01`。操作キャラの SR の弾が × 2.5 なことは C-0007（`023-02`）。合わせ込みの定数は使っていない。内訳（チャージと追加ダメージのヒットの分け方）は C-0094・C-0104 の推論。V-0034",
   "model": "`data/skills/352.json` の treasureSkills.skill1 の effects[1]（burstGauge）と treasureSkills.skill2 の effects[1] の gaugeHits。どちらもモデルは発と同じフレームに足す（実測はバーが発のフレームで 1 回に跳ぶ。V-0034。2026-10-02 に発の次のフレームから直した。plan/design-helm.md の経過）",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-05",
+  "subject": {
+    "places": [
+      "data/skills/352.json の treasureSkills.skill1 の effects[1]",
+      "data/skills/352.json の treasureSkills.skill2 の effects[1]"
+    ]
+  }
 }

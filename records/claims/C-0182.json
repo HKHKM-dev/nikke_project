@@ -7,5 +7,8 @@
   "basis": "`141-01`・`141-02`（単騎・操作。最後に付けた f1001・f2087 から 5 回の tick で止まり、2 スタックとも一度に消え、次の発で 1 スタックから始まる。空に撃った 3 発でもスタックが 1・2・3 と増える）、`141-03`（付けたのは撃った 6f 後）、`122-07`・`122-08`（AUTO。2 秒ごとに付け直す間は、最初に付いてから 5 秒を過ぎても 6 スタックまで積み上がる）。tick の値は 1 スタック 82,012.3 の整数倍で、会心は 1.5 倍（`122-08` の f1313・f1372、`141-02` の f2263・f3040）。10 スタックの上限は確かめていない。2026-10-03 にオーナーの確認を得て確定にした。V-0111",
   "model": "`data/skills/851.json` の skill1 の effects[0]（`dot` の `firstTick: afterInterval`・`maxStacksRef`。plan/design-raven-s1.md 2.1 節）。tick のフレームとスタックの数は `frame/dot.ts` の `dotTicks`（付け直しはクルミと同じ `dotTickTracker` の規則）、tick の値は `frame/plan.ts` の `planSkillHits` で 1 スタックの倍率 × スタックの数。付けたフレームの遅れ（撃った 6f 後）は入れていない",
   "replaces": [],
-  "updated": "2026-10-03"
+  "updated": "2026-10-03",
+  "subject": {
+    "places": ["data/skills/851.json の skill1 の effects[0]"]
+  }
 }

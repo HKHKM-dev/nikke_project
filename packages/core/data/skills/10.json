@@ -9,7 +9,13 @@
         {
           "ja": "被弾 N 回で自分に攻撃力▲（維持型）は、被弾を扱わないので起きない（要件 5.2 節。射撃場の 3 分モードでは的が反撃するので発動する）",
           "en": "ATK up on taking hits (timed) does not occur because taking hits is not modeled (requirements 5.2; the 3-minute range mode fires back, so it does trigger there)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "damaged"
+          }
         }
       ]
     },
@@ -20,6 +26,10 @@
           "ja": "最終攻撃力が最も高い敵への倍率ダメージは未対応（説明文にきっかけ（いつ出るか）が書かれていない）。録画では約 20 秒ごとに出る（C-0403、仮説。入れるかはオーナーの判断）",
           "en": "The hit on the enemy with the highest final ATK is not modeled (the description does not say when it happens). Recordings show it about every 20 s (C-0403, hypothesis; whether to model it is the owner's call)",
           "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "unknown"
+          },
           "claims": [
             "C-0403"
           ]

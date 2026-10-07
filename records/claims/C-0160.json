@@ -7,5 +7,16 @@
   "basis": "verification.md Stage 8「射撃場の実測（録画 36〜38）」の 3・4（録画 38）。`038-07`〜`038-10`（バーストスキルダメージ。4 回目は、3 回目に付いた段階 3 の攻撃力込み）、`038-14`（追加ダメージは 3 回目から段階 2、4 回目から段階 3）、`038-15`（段階 1 の▲は 2 回目から）。V-0075",
   "model": "`data/skills/231.json` の skill1 の effects[0]・effects[1]・effects[2]、burst の effects[0]・effects[1]・effects[2]・effects[3]",
   "replaces": [],
-  "updated": "2026-10-01"
+  "updated": "2026-10-01",
+  "subject": {
+    "places": [
+      "data/skills/231.json の skill1 の effects[0]",
+      "data/skills/231.json の skill1 の effects[1]",
+      "data/skills/231.json の skill1 の effects[2]",
+      "data/skills/231.json の burst の effects[0]",
+      "data/skills/231.json の burst の effects[1]",
+      "data/skills/231.json の burst の effects[2]",
+      "data/skills/231.json の burst の effects[3]"
+    ]
+  }
 }

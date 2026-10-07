@@ -7,5 +7,8 @@
   "basis": "`193-08`（f9655 の 500 ヒット目でバーが消え、その 1 つ前のヒットではバーがある。手順 1 の 233 ヒットの 46.6% はバーの 46px とも合う）。撃っていない間とリロードの間に、ほかの出どころが無いこと（`193-06`・`193-07`）。撮る前の予測（V-0162 の「手順 3 は補い」: 500 ヒット目）どおり。V-0162",
   "model": "`burst/dynamic.ts` の `energyPerTrigger` と `frame/firstPass.ts`（1 ヒット `targetBurstEnergyPerShot`。モデルどおり）",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-05",
+  "subject": {
+    "mechanism": "gauge"
+  }
 }

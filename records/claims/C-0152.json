@@ -7,5 +7,8 @@
   "basis": "`113-01`（録画 113。▲の窓の中のデルタの 1 発 246,304 = 104,313.12 × 2 × 1.1806。モデルとの差は 1 未満）、`113-02`（窓の外は 208,626）、`113-03`（デルタの 1 発は、窓の中の 35 回がすべて × 1.1806、窓の外の 60 回がすべて素の値）。V-0067",
   "model": "`data/skills/862.json` の burst（`target`: `allies`）。`skills/types.ts` の `damageTaken`",
   "replaces": [],
-  "updated": "2026-10-01"
+  "updated": "2026-10-01",
+  "subject": {
+    "places": ["data/skills/836.json の skill1 の effects[0]", "data/skills/862.json の burst の effects[0]"]
+  }
 }

@@ -7,5 +7,8 @@
   "basis": "`232-10`（4 回）・`233-10`（5 回）の炸裂弾の 9 発が、胴体・コア・コアの会心・コアの距離ボーナスの 4 通りで、手で書いた予測（V-0207 の Hb1。撮る前に commit した）と 1 未満の差。▲の乗らない Hb2・チャージダメージ▲の乗らない Hb3・防御力を引く Hb4 の値は出ていない。V-0207・V-0208",
   "model": "`data/skills/95.json` の burst の effects[1]（`weaponChange`・`burstUse`・`trueDamage`・`chargeTimeSeconds` 0.3・`fullChargeDamage` 300・`maxAmmoRef`。撃ち切りで終わる）。変更後の武器は `skills/resolve.ts` の `changedWeaponShot`（上書き）、撃ち切りの窓は `frame/firstPass.ts` の `closeWeaponChange` と `skills/timeline.ts` の `untilWeaponChangeEndWindows`。戻った基礎の SR の待ち・炸裂弾の発の時刻・ゲージは未確定（plan/design-true-damage-element.md 9 節の論点 9〜11）。モデルの炸裂弾は `232-10` の 4 通りと 1 未満の差（`__tests__/eunhwaTuWeaponChange.test.ts`）",
   "replaces": [],
-  "updated": "2026-10-06"
+  "updated": "2026-10-06",
+  "subject": {
+    "places": ["data/skills/95.json の burst の effects[1]"]
+  }
 }

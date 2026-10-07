@@ -7,5 +7,8 @@
   "basis": "`079-03`（フルバーストの外のコア 1,175,434）、`079-04`（フルバースト中のコア 1,878,785）。どちらもモデルとの差は 1 未満。`079-09`（5 回のバーストで、▲の付いた発はどれも 10 発）。V-0033",
   "model": "`data/skills/352.json` の treasureSkills.burst の effects[1]（timed・burstUse・chargeDamageMultiplier・durationShotsRef）。stat `chargeDamageMultiplier`（`skills/buffs.ts` の applyChargeBuffs）",
   "replaces": ["C-0095"],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "places": ["data/skills/352.json の treasureSkills.burst の effects[1]"]
+  }
 }

@@ -7,5 +7,8 @@
   "basis": "`225-01`（5 回で 64〜65f。64f の回は始まりの前にタイマーの表示が 2 フレーム続く（録画の重複フレームの位置））。録画 225 は機構の確定したキャラだけの最小構成（I ココア・II デルタ）で、予測を撮る前に commit してから撮ったもので、値（遅れの表の 43f）を決めた録画 173 とは別の録画で再現した（V-0205。予測との比べは H0 が全部許容内）。 前の根拠: `173-01`（5 回で 64〜65f）。録画 173 は最小構成でない（ラムのスキル定義の notes が結論に結び付いていない）うえ、予測の commit が録画の後だった（V-0150 の予測の注記）。効果（A.N.モード。持続ダメージ▲）は語彙に無いので読んでいない。V-0150",
   "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のレイヴンの 1 行（hitFrames 43・effectFrames 0）。`data/skills/851.json` の burst の effects[0]",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-05",
+  "subject": {
+    "places": ["data/skills/851.json の burst の effects[0]"]
+  }
 }

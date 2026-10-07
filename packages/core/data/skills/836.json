@@ -56,6 +56,11 @@
           "ja": "残りの HP の割合が最も低い味方 2 機の持続回復は未対応（HP を持たないので対象が決まらない。回復を受けた時の効果を起こさない。ほかにダメージとゲージには関係しない）",
           "en": "The heal over time on the 2 allies with the lowest HP ratio is not modeled (HP is not modeled, so the targets are undetermined; it does not trigger effects on being healed; it does not otherwise affect damage or the burst gauge)",
           "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "burstUse"
+          },
           "claims": [
             "C-0316"
           ]

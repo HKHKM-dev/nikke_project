@@ -7,5 +7,13 @@
   "basis": "`038-23`（1〜4 回目とも同じ長さ）、`038-22`。効果の発火がヒットと同じフレームなことは `038-15`（C-0162）。止まりは `videoFrameOf` と同じ 22f で差し引いた（この録画の止まりは `038-03`）。モデルに入れた後は `038-27` で一致。V-0078・V-0080",
   "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のイサベルの 1 行。`data/skills/231.json` の burst の effects[0]・effects[1]・effects[2]・effects[3]（ヒットと効果の発火のフレームで出す）",
   "replaces": [],
-  "updated": "2026-10-02"
+  "updated": "2026-10-02",
+  "subject": {
+    "places": [
+      "data/skills/231.json の burst の effects[0]",
+      "data/skills/231.json の burst の effects[1]",
+      "data/skills/231.json の burst の effects[2]",
+      "data/skills/231.json の burst の effects[3]"
+    ]
+  }
 }

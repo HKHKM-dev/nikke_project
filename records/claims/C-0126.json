@@ -7,5 +7,8 @@
   "basis": "`091-01`（バーストの後の 10 発がどれも差 1 未満。コレクションで丸めてからバーストの倍率を掛けると 4.6% 大きく、OL も含めて掛けると 6.8% 大きい）。11 発目は `088-01` の値に戻る。V-0048",
   "model": "`skills/buffs.ts` の `applyChargeBuffs`（スキルとコレクションの倍率▲は `chargeDamageMultiplier` に足し合わせる）",
   "replaces": [],
-  "updated": "2026-09-29"
+  "updated": "2026-09-29",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }

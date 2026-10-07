@@ -7,5 +7,8 @@
   "basis": "`229-01`（フルバースト中。S2 の▲と 1more の攻撃力▲の積が H1 だけに乗る）・`229-02`・`229-03`（フルバースト終了の後。S2 の▲が外れている）。灼熱の `230-01`〜`230-03` では乗らない。HUD の増分の 21〜42 トリガーが窓ごとに H1 の単位のちょうどの倍数に乗り、手書きのほかの仮説の単位には 1 つも乗らない。録画 229・230 は最小構成の警告なし。予測は撮る前に commit した。フルバースト中の値は 1more の攻撃力▲（C-0308）と分けられないが、2026-10-06 のオーナーの判断で確定にした（C-0258・C-0289 と同じ扱い）。V-0211",
   "model": "`data/skills/870.json`（skill2 の `timed`・`burstUse`・`elementDamage`・`durationUntil: fullBurstEnd`）。属性の倍率は C-0296 と同じ `element.ts` の `elementMultiplier`",
   "replaces": [],
-  "updated": "2026-10-06"
+  "updated": "2026-10-06",
+  "subject": {
+    "places": ["data/skills/870.json の skill2 の effects[2]"]
+  }
 }

@@ -115,6 +115,11 @@
           "ja": "味方のゲージへの効き方は、実測では ×1.06 ではなく、味方のゲージ 1 回（弾・追加ダメージのヒット）ごとに一定量を足す形（アニス：スターが撃っているとき約 1,680、操作で撃たないとき約 840）。モデルはまだ ×1.06 のまま（未反映）",
           "en": "Measured effect on allies is not ×1.06: each ally gauge event (bullet or additional-damage hit) gets a fixed amount added (about 1,680 while Anis: Star is firing, about 840 while she is controlled and not firing). The model still applies ×1.06 (not yet reflected)",
           "kind": "unimplemented",
+          "effect": {
+            "kind": "passive",
+            "stat": "burstGaugeSpeed",
+            "target": "allies"
+          },
           "claims": [
             "C-0245",
             "C-0246"
@@ -124,6 +129,9 @@
           "ja": "誘導弾の飛ぶ時間（ゲージが着弾で溜まる分）は、射撃場の的の距離帯ごとの代表値だけ。的の表の無い敵では 0（発射のフレームに溜まる）。着地点ごとの値、ダメージを置くフレームとバフの判定を着弾の時刻にすること（発動に重なる発の追加ダメージだけにバーストの攻撃ダメージ▲が乗る分）は未実装（plan/design-anis-star-gauge-timing.md 3 節）",
           "en": "Homing projectile flight time (the gauge charges on landing) uses per-distance-band representative values on the shooting range target only; on enemies without the table it is 0 (charged on the firing frame). Per-landing-point values, and placing damage and buff checks at landing time (only the additional damage of a shot overlapping her Burst activation takes the Burst ATK damage up), are not modeled (plan/design-anis-star-gauge-timing.md 3)",
           "kind": "unimplemented",
+          "effect": {
+            "kind": "unknown"
+          },
           "claims": [
             "C-0413",
             "C-0414"
@@ -186,7 +194,12 @@
         {
           "ja": "みんなの星のときのフルチャージ攻撃時の味方全体の回復（回復を受けた時に発動する味方のスキルには効く）",
           "en": "The heal for all allies on Full Charge attacks with Everyone's Star (it matters for allies whose skills trigger on being healed)",
-          "kind": "unimplemented"
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "fullChargeShot"
+          }
         }
       ]
     },
@@ -252,6 +265,10 @@
           "ja": "シューティングスターのコアに当たる割合は射撃場の的でしか測っていない。的の表に行の無い敵では、モデルのシューティングスターはコアに当たらない（plan/design-anis-star-core-path.md 3.2 節）",
           "en": "The Shooting Star core hit rate is measured only on the shooting range target. On enemies without a target table row, Shooting Stars never hit the core in the model (plan/design-anis-star-core-path.md 3.2)",
           "kind": "unimplemented",
+          "effect": {
+            "kind": "autoAttack",
+            "trigger": "burstUse"
+          },
           "claims": [
             "C-0298"
           ]
@@ -259,12 +276,22 @@
         {
           "ja": "コアダメージ▲がシューティングスターのコアに乗るかは確かめていない。モデルは乗せない（plan/design-anis-star-core-path.md 7 節の論点 4）",
           "en": "Whether Core Damage up applies to Shooting Star core hits is not verified; the model does not apply it (plan/design-anis-star-core-path.md 7, item 4)",
-          "kind": "unimplemented"
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "autoAttack",
+            "trigger": "burstUse"
+          }
         },
         {
           "ja": "爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0282。単騎の録画 164 では遠で高く中遠で低く、向きが揃わない。録画 211 では帯ごとの窓の中と外の差が小さい標本で見分けられない（V-0187）。plan/design-anis-star-core-path.md 9 節）",
           "en": "Whether the Explosion Radius increase changes the core hit rate of normal attacks during her Burst (inside and outside the Burst the same table row applies, C-0282; on the solo recording 164 it was higher at far and lower at mid-far, so the direction is not consistent; on recording 211 the in/out difference per band is not distinguishable with the small samples (V-0187). plan/design-anis-star-core-path.md 9)",
           "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          },
           "claims": [
             "C-0282"
           ]

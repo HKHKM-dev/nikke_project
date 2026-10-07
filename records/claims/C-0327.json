@@ -7,5 +7,8 @@
   "basis": "`250-01`・`250-02`・`250-03`・`250-04`。V-0221",
   "model": "damage.ts の boostCore（コア命中率 × (coreDamageRate − 1 + buffs.coreDamage)）。コレクションの写像は buildEffects.ts の COLLECTION_SKILL_EFFECTS（Stage 13）",
   "replaces": [],
-  "updated": "2026-10-06"
+  "updated": "2026-10-06",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }

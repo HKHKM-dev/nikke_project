@@ -10,6 +10,12 @@
           "ja": "攻撃を受けた時（確率）の自分の防御力▲は、被弾を扱わないので起きない",
           "en": "The chance-based DEF up on self when attacked never happens (taking hits is not modelled)",
           "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          },
           "claims": [
             "C-0366"
           ]

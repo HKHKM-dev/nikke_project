@@ -7,5 +7,8 @@
   "basis": "`004-01`・`004-02`・`007-01`・`007-02`（AR 2 体・3 マガジン。4f の入る位置まで一致）、`005-01`・`005-02`（SMG。2f と 3f の数まで一致）、`008-01`（SG 2 マガジン）。V-0011",
   "model": "`weapons.ts` の `MAX_RPM`（= 60 × ゲーム内の 1 秒のフレーム数）で `cadence.ts`・`frame/shooter.ts` が蓄積する（Stage 21-C3）",
   "replaces": [],
-  "updated": "2026-09-27"
+  "updated": "2026-09-27",
+  "subject": {
+    "mechanism": "firing"
+  }
 }

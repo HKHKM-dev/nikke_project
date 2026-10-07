@@ -7,5 +7,8 @@
   "basis": "`287-01`〜`287-03`（フラワーの 1 ヒット。徹甲炸裂弾の外と中。H1 の合計 10.52% で端数まで合い、H0（2.32%）・H2（5.41%）・H3（7.43%）とは 1.9% 以上離れる）。`287-04`・`287-07`（ウンファの防御力無視ダメージでない発。どの仮説でも同じ値の対照）。撮る前の予測は records/predictions/最小構成の警告を通して確定にするのは 2026-10-07 のオーナーの判断（警告の 2 つは見た値に効かない）。V-0249.json（H1）。録画 287 の最小構成の警告（ウンファ：TU の C-0268、エマ：TU の S2 の効果 2 は C-0373 で同じ日に確定）。V-0249",
   "model": "`data/skills/93.json` の skill2 の effects[3]、`data/skills/95.json` の skill2 の effects[3]（`withCharacter`）",
   "replaces": [],
-  "updated": "2026-10-07"
+  "updated": "2026-10-07",
+  "subject": {
+    "places": ["data/skills/93.json の skill2 の effects[3]", "data/skills/95.json の skill2 の effects[3]"]
+  }
 }

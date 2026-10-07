@@ -7,5 +7,8 @@
   "basis": "`010-07`（マナ単騎・スペック固定 ON。最初のヒットから 118 ヒット目でバーが消えた。予測は読む前に固定）。V-0176",
   "model": "`data/skills/290.json` の skill2 の effects[0]（passive・burstGaugeSpeed）。掛け方は `burst/dynamic.ts`（枠ごとの 1 トリガーのゲージに (1 + 速度)）と `frame/firstPass.ts` の `gaugeSpeed`",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-05",
+  "subject": {
+    "places": ["data/skills/290.json の skill2 の effects[0]"]
+  }
 }

@@ -7,5 +7,12 @@
   "basis": "`056-22`（回復の間の発の数。6 回ともちょうど 860。照準の横の残弾で数えた）。録画 056 はクラウン単騎・AUTO・スペック固定 ON（最小構成）。H1（発を数える。860 発）は読む前に検証記録に書いた。V-0178。窓の中の 1 ヒット（8 通りとも式どおり）と回復の間の命中の数は、自動の条件で比べた観測値なので、残差として並べるだけでこの結論の根拠にしない（命中の数は 2 回が許容外。的の表の MG の弾丸命中率より外れが多い）",
   "model": "`data/skills/330.json` の skill2 の effects[0]（heal・count normalShot・everyRef・stacksRef）・effects[1]（timed・healed・attackDamage）・notes[1]。回復と窓は `skills/heals.ts`（plan/design-heal-window.md）、攻撃ダメージ▲の乗数は `damage.ts` の `attackDamageMultiplier`（C-0018）",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-05",
+  "subject": {
+    "places": [
+      "data/skills/330.json の skill2 の effects[0]",
+      "data/skills/330.json の skill2 の effects[1]",
+      "data/skills/330.json の skill2 の notes[1]"
+    ]
+  }
 }

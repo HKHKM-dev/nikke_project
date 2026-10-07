@@ -7,5 +7,8 @@
   "basis": "`089-01`（アリス: 3.5 × 1.0947 = 3.83145 → 3.8315、+ 0.1181 = 3.9496。足してから掛けると 0.28% 大きく、両方を足すと 6.0% 小さい）、`088-01`（ヘルム: 2.5 × 1.0947 = 2.73675 → 2.7368、+ 0.1111 = 2.8479）。V-0047",
   "model": "`buildEffects.ts` の `COLLECTION_SKILL_EFFECTS`（RL・SR のコレクション → `chargeDamageMultiplier`）と `skills/buffs.ts` の `applyChargeBuffs`（丸め(素 × (1 + chargeDamageMultiplier)) + chargeDamage）",
   "replaces": [],
-  "updated": "2026-09-29"
+  "updated": "2026-09-29",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }

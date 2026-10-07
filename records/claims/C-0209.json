@@ -7,5 +7,8 @@
   "basis": "`162-10`（S2 の無いバーストの窓のシューティングスターに ×1.352 が乗る）、`162-08`・`162-09`（バーストの窓の通常攻撃）、`163-06`（みんなの星では乗らないモデルと合う）。撮る前の予測は records/predictions/V-0124.json。読み直し（予測を commit した後に読んだ。plan/design-reread-prediction.md）。V-0124。単騎の録画 164（`164-01`・`164-02`）と撮り直しの録画 165（`165-05`）でも、撮る前に固定した予測と合った。V-0123・V-0125",
   "model": "`data/skills/17.json`（burst。`burstStepMix`）",
   "replaces": [],
-  "updated": "2026-10-04"
+  "updated": "2026-10-04",
+  "subject": {
+    "places": ["data/skills/17.json の burst の effects[2]"]
+  }
 }

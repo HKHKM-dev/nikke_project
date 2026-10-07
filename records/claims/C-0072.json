@@ -7,5 +7,13 @@
   "basis": "`077-01`・`077-02`（録画 77 の単騎の 1 ヒット。会心なし・会心とも、モデルとの差は表示の丸めの範囲）。V-0020",
   "model": "`data/skills/304.json` の burst の effects[0]（burstDamage）",
   "replaces": [],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "places": [
+      "data/skills/304.json の skill1 の notes[0]",
+      "data/skills/304.json の skill2 の notes[0]",
+      "data/skills/304.json の burst の effects[0]",
+      "data/skills/304.json の burst の notes[0]"
+    ]
+  }
 }

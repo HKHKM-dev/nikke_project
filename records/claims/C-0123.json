@@ -7,5 +7,8 @@
   "basis": "`088-01`（ヘルムのフルチャージの倍率が 2.5 × 1.0947 の丸め + OL 0.1111 で合う。コレクションが乗らないなら 5.7% 小さい）。V-0047",
   "model": "`buildEffects.ts` の `resolveBuildEffects`（宝物の段階が 1 以上の枠は、コレクションの入力の代わりに SR Lv15 のスキルを乗せる。段階 1・2 は同じとみなす）",
   "replaces": [],
-  "updated": "2026-09-29"
+  "updated": "2026-09-29",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }

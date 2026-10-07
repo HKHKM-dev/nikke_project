@@ -7,5 +7,12 @@
   "basis": "`063-07`（デルタ自身のバーストの後・フルバースト中のコア + 会心の 1 発。S1・S2・バーストの効果がすべて付いている時。デルタのスキルなしのモデルとの差は 1 未満）、`013-01`〜`013-04`（フルチャージの 1 発。差は 1 未満）。V-0027",
   "model": "`data/skills/20.json` の全スロットの notes（効果なし）",
   "replaces": [],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "places": [
+      "data/skills/20.json の skill1 の notes[0]",
+      "data/skills/20.json の skill2 の notes[0]",
+      "data/skills/20.json の burst の notes[0]"
+    ]
+  }
 }
