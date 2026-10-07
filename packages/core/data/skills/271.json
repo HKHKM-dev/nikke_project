@@ -93,8 +93,10 @@
             "stat": "unknown",
             "target": "allies",
             "trigger": "burstUse"
-          }
-
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     }

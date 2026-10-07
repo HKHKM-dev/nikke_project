@@ -55,7 +55,10 @@
             "stat": "unknown",
             "target": "self",
             "trigger": "fullBurstStart"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },

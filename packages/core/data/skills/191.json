@@ -35,7 +35,10 @@
           "kind": "outOfScope",
           "effect": {
             "kind": "unknown"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         },
         {
           "ja": "HP 80% 未満のときの回復は、被弾を扱わないので起きない",
