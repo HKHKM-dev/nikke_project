@@ -247,12 +247,14 @@ describe('最小構成の警告', () => {
     const verifications = loadVerifications();
     const solo = verifications.find((v) => v.id === 'V-0063')!;
     expect(minimalWarnings([solo], ctx)).toEqual([]);
-    const team = verifications.find((v) => v.recordings.some((r) => (recordings.get(r)?.team.length ?? 0) >= 3));
-    if (team) {
-      const w = minimalWarnings([team], ctx);
-      expect(w.length).toBeGreaterThan(0);
-      expect(renderMinimalLines(w)[0]).toContain('最小構成の警告');
-    }
+    // 録画 048〜050（リター・クラウン・アリス・モダニア・紅蓮：ブラックシャドウ）は、未確定の枠が 2 つ以上
+    const team = verifications.find((v) => v.id === 'V-0092')!;
+    const w = minimalWarnings([team], ctx);
+    expect(w.map((x) => x.recording)).toEqual(['048', '049', '050']);
+    expect(renderMinimalLines(w)[0]).toContain('最小構成の警告');
+    // 録画 047 は台帳の的の属性を埋めて（灼熱）的の表が引け、ラム・デルタが確定に戻る。未確定は紅蓮：ブラックシャドウの 1 枠だけ
+    const v047 = verifications.find((v) => v.id === 'V-0002')!;
+    expect(minimalWarnings([v047], ctx).filter((x) => x.recording === '047')).toEqual([]);
     expect(renderMinimalLines([])).toEqual([]);
     const o: Observation = loadObservations()[0]!;
     expect(o.id).toBeTruthy();
