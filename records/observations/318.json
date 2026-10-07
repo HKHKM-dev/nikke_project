@@ -229,6 +229,10 @@
     "method": {
       "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）と hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
       "note": "4 回目の発動（f10155）は六角形の替わり目で読んだ。比べる観測値（318-03〜05）は 1〜3 回目だけ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
     }
   }
 ]

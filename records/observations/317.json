@@ -188,6 +188,10 @@
     "method": {
       "tool": "hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
       "note": "殲滅モードの窓の終わりは、効果の発火（+7f）から数えて後ろにずれてはいない（ずれていれば +910f 前後）。止まりを除いたモデルのフレームで 876〜879f で、フルバーストの窓（882f）の終わりの 3〜6f 前"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
     }
   },
   {
@@ -203,6 +207,10 @@
     "method": {
       "tool": "hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）と still.ts",
       "note": "発動の前の発の止まり（バーストのカットイン）は、この検証の問いの外。記録だけ"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
     }
   }
 ]

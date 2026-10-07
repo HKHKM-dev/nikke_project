@@ -4,8 +4,14 @@
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
-  "basis": "`318-03`・`318-04`・`318-05`（1〜3 回目のバースト。発動の後の最初の発（+1〜2f）がすでに▲の値で、発動の直前の発（−1f）は▲の無い値）。予測（いまのモデル。効果の遅れ 0）を撮る前に commit し、3 回とも合った。4 回目は的のジャンプで発が無く読めない（`318-09`）。I・II の発動には止まりが無いので、動画のフレームの差がそのままモデルのフレーム。V-0311",
+  "basis": "`318-03`・`318-04`・`318-05`（1〜3 回目のバースト。発動の後の最初の発（+1〜2f）がすでに▲の値で、発動の直前の発（−1f）は▲の無い値）。予測（いまのモデル。効果の遅れ 0）を撮る前に commit し、3 回とも合った。4 回目は的のジャンプで発が無く読めない。I・II の発動には止まりが無いので、動画のフレームの差がそのままモデルのフレーム。V-0311",
   "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` に行が無い（効果の遅れ 0）。`data/skills/32.json` の treasureSkills.burst の effects[0]・effects[1]（発動のフレームで付く）",
   "replaces": [],
-  "updated": "2026-10-07"
+  "updated": "2026-10-07",
+  "subject": {
+    "places": [
+      "data/skills/32.json の treasureSkills.burst の effects[0]",
+      "data/skills/32.json の treasureSkills.burst の effects[1]"
+    ]
+  }
 }

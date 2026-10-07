@@ -382,6 +382,10 @@
     "method": {
       "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）、hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）と、HUD を 1 フレームずつ並べた一覧（crop=300:50:810:28。帯で隠れたフレームは目で読んだ）",
       "note": "4 回目は発動の −6f までモダニアの通常攻撃の増分（22,274 など）が続き、殲滅モードの最初の発（+29f）までは増分が無い"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
     }
   }
 ]
