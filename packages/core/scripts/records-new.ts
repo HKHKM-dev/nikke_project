@@ -5,7 +5,6 @@
 // claim: 次の空き番号で records/claims/C-NNNN.json を作る。話題はその検証記録の話題、根拠はその検証記録を source にする観測値、
 //   等級は機械の候補（3.5 節）、状態は確定にできる条件が全部そろえば確定、欠ければ仮説（欠けた条件を出す。3.6 節）。
 //   text と model は人が書く。
-import './below-normal.ts';
 import { spawnSync } from 'node:child_process';
 import { existsSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';

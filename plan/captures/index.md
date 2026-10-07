@@ -289,8 +289,6 @@ node tools/captures/intake.ts <元ファイル> --id NNN --name <識別子> [--f
 node tools/captures/read.ts <録画 id> --recipe <名前> --source V-NNNN [--opt key=value ...] [--write] [--against ID,ID]   # レシピで読んで観測値にする（npm run records:read）
 ```
 
-`tools/` と `packages/core/scripts/` の node で直に起動するスクリプトは、先頭で `packages/core/scripts/below-normal.ts` を import して、自分の優先度を「通常以下」に下げる。そこから起動する ffmpeg・git・node も同じ優先度で動く（ゲームと並べて解析を回しても、ゲームの邪魔をしにくくする）。入口のスクリプトを足すときも、この import を先頭に置く。
-
 `read.ts` は、録画を**レシピ**（名前と版を持つ読み方。`tools/captures/recipes/`）で読み、観測値（`records/observations/<録画 id>.json` の形）を出す（[../design-records-automation.md](../design-records-automation.md) 3.4 節）。`--list` でレシピと `--opt` の説明が出る。`--write` で観測値のファイルに足す（id は次の空き番号。同じレシピ・同じ版の観測値が既にあれば、同じ値なら足さず、違えば差を出して止まる）。`--against` は既存の観測値の値を並べて出す（旧の観測値の確かめ用）。中間出力（`hud.ts` の増分など）は、録画の置き場所の `derived/<録画 id>/` にキャッシュする（追跡しない。録画のファイルの大きさが変わると作り直す）。目で数える値はレシピの外（観測値の `method.note` に書く）。
 
 - `hud-jumps`: HUD の総ダメージの最後の値（total）と、増分の数から数えたトリガーの数（count）。前の増分から 30f 未満の増分は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さから発の数を決める（V-0071 の「足し戻し」）。HUD が読めなかった後の読み（`hud.ts` の gap 列が 2 以上）は、読めなかった間の真ん中を組の始まりとして測る（版 2。V-0079）。

@@ -7,6 +7,7 @@ import {
   CLAIMS_PATH,
   RESIDUALS_PATH,
   loadClaims,
+  loadSensitivity,
   loadObservations,
   loadPredictions,
   loadRecordingsFile,
@@ -116,13 +117,18 @@ describe('records/claims・plan/claims.md', () => {
         gradeCandidates,
         rereadOnlyClaimsOf(claims, observations, loadPredictions(), loadVerifications(), recordings),
         relevanceCounts(
-          relevanceOf(claims, observations, {
-            recordings,
-            characters: data.characters,
-            skills: data.skills,
-            enemies: data.enemies,
+          relevanceOf(
             claims,
-          }),
+            observations,
+            {
+              recordings,
+              characters: data.characters,
+              skills: data.skills,
+              enemies: data.enemies,
+              claims,
+            },
+            loadSensitivity(),
+          ),
         ),
       ),
     );

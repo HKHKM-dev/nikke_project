@@ -2,7 +2,7 @@
 
 - 関連: [design-minimal-check.md](design-minimal-check.md) 8 節（警告の単位と数え方の決定・試算）、[design-records-automation.md](design-records-automation.md) 3.5〜3.7 節、[design-skill-note-kinds.md](design-skill-note-kinds.md)、AGENTS.md「事実と記録」
 - 作成日: 2026-10-07
-- 状態: 承認（2026-10-07。9 節）。オーナーが選んだ策（1a・2a・3b・4a・5a・6c・7a・8a。design-minimal-check.md 8 節の後の対話）の組み合わせ。実装は 7 節の段取りで進める（PR 1〜3 は 2026-10-07〜08 に済んだ。10.1〜10.5 節）
+- 状態: 承認（2026-10-07。9 節）。オーナーが選んだ策（1a・2a・3b・4a・5a・6c・7a・8a。design-minimal-check.md 8 節の後の対話）の組み合わせ。実装は 7 節の段取りで進める（PR 1〜4 は 2026-10-07〜08 に済んだ。10.1〜10.6 節）
 
 ## 1. 目的と、決まっていること
 
@@ -245,3 +245,12 @@ O に `compare` が無いとき（`scope` を使う）と、E がモデルに無
 
 - 10.4 節の論点は、オーナーが案 A に決めた（2026-10-08）。間隔（`interval`）の観測値は、`scope.source` が `burstChain`（バーストの段・CT・フルバーストの入りどうしの間隔など）か `clock`（時計・止まり）なら、射撃の刻みに加えてバーストの時刻の分類（ゲージ・CT▼・再突入）も効きうるとする（`relevance.ts` の `allowedClasses`）。ほかの間隔は射撃の刻みだけのまま。
 - 確定の結論の根拠にある間隔の観測値に `scope`（`slot: "all"`）を書き足した。`mechanism` が `burstChain`・`clock` の結論に立つものは、その出どころにした。定義の場所に立つ結論のものは、説明文がバーストの時刻（フルバースト・発動・CT・満タン・BURST バー・段・チェーン）を読んだものを `burstChain` にした。バーストのヒットどうしの間隔、▲の窓の長さ、射撃の刻みには書いていない。迷うものは `burstChain` 側に倒した（警告の出し損ねを避ける）。
+
+### 10.6 PR 4: 感度（2026-10-08）
+
+- **置き場所と分担**（2026-10-08、オーナー決定）: 感度は `npm run records:minimal`（`packages/core/scripts/records-minimal.ts`、計算は `src/records/sensitivity.ts`）が計算し、結果を追跡するファイル `records/minimal/sensitivity.json` に書く（4.1 節の「キャッシュは追跡しない」から変えた）。`records:check` はそれを読んで静的な判定に重ね、[minimal.md](minimal.md) と [claims.md](claims.md) を作る。CI とテストは感度を回さないので速いまま、生成物は一致する。
+- **結果の 1 件**: 観測値 × 要素ごとに、効きうるか・P− と P+ の基準との差・入力の鍵。鍵は、版（`SENSITIVITY_VERSION`）・録画の台帳・比べる指定・編成の定義（根拠の `claims` と notes を除く）から作る。鍵が今の入力と合わない結果は使わず、静的な判定に戻して、minimal.md の冒頭に「感度の結果が無いか古い要素」の数を出す。根拠の結論を書き足しただけでは鍵は変わらない。
+- **対象**: 確定の結論の根拠で sim と比べる観測値と、その録画の、根拠が確定でなく録画で起きうる定義の効果の組（結論の対象かどうかは結論ごとに違うので問わない）。notes・定義の無いキャラ・通常攻撃の条件は、静的な判定のまま。
+- **P+**: timed の効果のきっかけを `battleStart`、維持を比べる指定の戦闘の長さ（`durationSeconds`、省略は 180 秒）にし、ほかの維持の欄（`durationRef`・`durationShots` など）と `condition` を外す。passive は P− だけ（もともと常に効く）。
+- **計算できない形**: 外すと観測量そのものが無くなるもの（持続ダメージの tick やバーストのヒットを数える観測値で、その効果を外したとき）は、効きうるとみる（結果に `error` を残す）。
+- 計算は数秒で済む（同じ録画・同じ指定の sim を使い回す）。定義・録画・比べる指定を変えた PR では `npm run records:minimal` を回す（`records:check` まで回る）。
