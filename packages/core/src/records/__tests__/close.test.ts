@@ -163,22 +163,45 @@ describe('closeChecks', () => {
     expect(closeChecks({ ...base, claims: [noSubject] }).warnings.some((w) => w.includes('subject'))).toBe(true);
   });
 
-  it('本文の節が空、既に完了、最小構成の警告、失効は注意', () => {
+  it('本文の節が空、既に完了、ほかの記録の観測値の組の最小構成の警告、失効は注意', () => {
     expect(closeChecks({ ...base, verification: doc([], { 次: '' }) }).errors[0]).toContain('次に撮るもの');
     expect(closeChecks({ ...base, verification: doc([], { 分かったこと: '' }) }).errors[0]).toContain('分かったこと');
+    const pair = (observation: string) => ({
+      observation,
+      recordings: [observation.slice(0, 3)],
+      elements: [{ name: 'a', reason: '根拠なし' }],
+      marked: [],
+    });
+    // 失効した観測値で、ほかの記録の観測値（050-01）の組にだけ警告がある
     const r = closeChecks({
       ...base,
-      minimal: new Map([
-        [
-          'C-0001',
-          [{ observation: '101-01', recordings: ['101'], elements: [{ name: 'a', reason: '根拠なし' }], marked: [] }],
-        ],
-      ]),
+      minimal: new Map([['C-0001', [pair('050-01')]]]),
       observations: [{ ...obs, invalid: { reason: '読み違い', date: '2026-10-02' } }],
     });
     expect(r.errors).toEqual([]);
     expect(r.warnings.some((w) => w.includes('最小構成'))).toBe(true);
     expect(r.warnings.some((w) => w.includes('失効'))).toBe(true);
+  });
+
+  it('確定の結論で、この記録の観測値の組に最小構成の警告があれば誤り（設計書 11 節）', () => {
+    const pair = {
+      observation: '101-01',
+      recordings: ['101'],
+      elements: [{ name: 'a', reason: '根拠なし' }],
+      marked: [],
+    };
+    const r = closeChecks({ ...base, minimal: new Map([['C-0001', [pair]]]) });
+    expect(r.errors.some((e) => e.includes('最小構成の警告がある'))).toBe(true);
+    // 印だけの組は止めない
+    const marked = { ...pair, elements: [], marked: ['a'] };
+    expect(closeChecks({ ...base, minimal: new Map([['C-0001', [marked]]]) }).errors).toEqual([]);
+    // 仮説の結論は止めない
+    const hypothesis = closeChecks({
+      ...base,
+      claims: [claim({ state: '仮説', grade: '単独実測' })],
+      minimal: new Map([['C-0001', [pair]]]),
+    });
+    expect(hypothesis.errors.some((e) => e.includes('最小構成'))).toBe(false);
   });
 
   it('「結論」が無い記録は完了にできない', () => {
