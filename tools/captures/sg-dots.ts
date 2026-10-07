@@ -10,6 +10,7 @@
 //   撃った瞬間と点の分け方は dotsAt・firedOf。照準の形（maskReticle）と残弾の箱の所は探さない。
 // - 的のマスクは、撃つ before フレーム前のコマで、coverage.ts と同じ分け方。点は同じ画面の座標で重ねる。
 // - 出力: derived/<id>/sg-dots@<設定の版>.tsv（点ごと）と、区間ごとのまとめ（標準エラー）。
+import '../../packages/core/scripts/below-normal.ts';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';

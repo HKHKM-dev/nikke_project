@@ -11,6 +11,7 @@
 //   series  各フレームの充填率（%）。見えていないフレームは「-」
 //   jumps   充填率が増えたフレームと増分（1 発ずつの読み取り用）
 //   events  「溜め始め」「満タン」「バー消失」のフレーム。1 回目の溜め始めからの相対フレームも出す
+import '../../packages/core/scripts/below-normal.ts';
 import { parseArgs } from 'node:util';
 import { rawFrames } from './ffmpeg.ts';
 

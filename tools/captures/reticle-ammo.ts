@@ -15,6 +15,7 @@
 //   mags    マガジンごとに、最大（max）の表示が出たフレーム・0 になったフレーム・その間の「減った量の合計」と「増えた量の合計」
 //           （弾丸チャージ。STEP_UP 以上の増え）・増えたフレームと量。発数 = 減った量の合計（間のフレームが読めずに
 //           増えと減りが打ち消し合うと過小になるので、増えの回数と合わせて見る）
+import '../../packages/core/scripts/below-normal.ts';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { rawFrames } from './ffmpeg.ts';

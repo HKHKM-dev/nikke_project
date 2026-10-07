@@ -6,6 +6,7 @@
 //   summary  区間のフレーム数・重複フレーム数と、重複の続く区間（3 フレーム以上）の一覧
 //   list     重複フレームの番号
 //   diff     フレームごとの差の平均（しきい値を決めるとき用）
+import '../../packages/core/scripts/below-normal.ts';
 import { parseArgs } from 'node:util';
 import { rawFrames } from './ffmpeg.ts';
 

@@ -25,6 +25,7 @@
 // 的: 戦場（y 120〜720）の背景を、戦闘中のフレーム（照準の線が見えるもの）の画素ごとの中央値で作り、背景より暗い画素の
 // 連結成分のうち照準の近くのものを的とする（半分の解像度）。的は区間ごとに跳んで位置を変えるので、中央値に的は残らない。
 // 背景に無い遮蔽物（壊れる前の緑の箱など）が的に接していると、外接矩形がそこまで広がる。遠い的の脚は霧で薄く、取れないことがある。
+import '../../packages/core/scripts/below-normal.ts';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
