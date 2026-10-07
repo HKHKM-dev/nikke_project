@@ -616,5 +616,43 @@
       "slot": 3,
       "source": "dot"
     }
+  },
+  {
+    "id": "020-22",
+    "recording": "020",
+    "source": "V-0320",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "record",
+    "value": [1649, 3180, 5499, 7053, 7818, 9373, 10138],
+    "unit": "f",
+    "description": "エーテル（I・AI）の S2 のヒット（35,633・会心 53,449）が出た動画のフレーム（単独の増分で値が合った 7 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode ticks・使い捨てのスクリプト（左の欄 crop 0,578,100,36 の明るさ）",
+      "note": "ゲーム内のティック（戦闘開始 f808）で 1 回目 816.6、最後 9,235.1。あいだは 11 周期で 1 周期 765.32"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "020-23",
+    "recording": "020",
+    "source": "V-0320",
+    "readAt": "2026-10-08",
+    "kind": "interval",
+    "use": "record",
+    "value": [50, 50, 50, 50, 50, 52, 50],
+    "unit": "f",
+    "description": "同じ 7 回の、左の「スキル2 副反応実験」の帯からヒットまで",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode ticks・使い捨てのスクリプト（左の欄 crop 0,578,100,36 の明るさ）",
+      "note": "1 回目の帯（f1599）は戦闘開始から 766.6 ティック"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
   }
 ]
