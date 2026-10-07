@@ -67,7 +67,7 @@
 - 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: V-0036・V-0044・V-0049、C-0114、[design-stage22.md](design-stage22.md) 8 節。残りは backlog 3 節（`L-HC-01`）
 - スキル定義の根拠の欄（2026-09-28 起票）→ 完了: [skills-guide.md](skills-guide.md) 3 節。Stage 11 までの定義は backlog 5-2
 - 単騎の I のバーストの時刻（2026-09-28 起票）→ 完了: V-0020・V-0023・V-0106〜V-0108、C-0009・C-0176〜C-0178、[design-flower-s2-gauge.md](design-flower-s2-gauge.md)
-- 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: V-0074・V-0096・V-0102・V-0103・V-0109・V-0110・V-0112・V-0114・V-0165・V-0166、C-0170、[design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは backlog 2-15・4-8
+- 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: V-0074・V-0096・V-0102・V-0103・V-0109・V-0110・V-0112・V-0114・V-0165・V-0298・V-0166、C-0170・C-0440、[design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは backlog 2-15・4-8
 - 吸収回復で「回復効果が適用された時」がどう起きるか（2026-09-28 起票）→ 完了: V-0024・V-0029、C-0082・C-0087、[design-heal-window.md](design-heal-window.md)
 - ラムの S1 の部隊の条件（2026-09-28 起票）→ 完了: V-0026、C-0080・C-0235、[design-ram-s1.md](design-ram-s1.md)
 - calc のハイブリッド（[design-stage10.md](design-stage10.md) 5 節）の限界（2026-09-28 起票）→ 保留（2026-09-28、オーナー決定）: [design-calc-hybrid.md](design-calc-hybrid.md) 10 節。見直しは backlog 4-5

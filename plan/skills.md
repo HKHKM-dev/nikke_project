@@ -74,16 +74,16 @@ notes の種類: 未対応 27・前提の外 24・計算に無関係 33・補足
 ## 32 ミランダ
 
 - **skill1**: supported
-  - effects[0] timed・normalHit・hitRate: C-0186（仮説）
-  - effects[1] timed・normalHit・hitRate: C-0186（仮説）
+  - effects[0] timed・normalHit・hitRate: C-0440（確定）、C-0441（仮説）
+  - effects[1] timed・normalHit・hitRate: C-0440（確定）、C-0441（仮説）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・critDamage: C-0326（仮説）
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0325（仮説）
   - effects[1] timed・burstUse・critDamage: C-0325（仮説）
 - **宝物版 skill1**: supported
-  - effects[0] timed・normalHit・hitRate: C-0186（仮説）
-  - effects[1] timed・normalHit・hitRate: C-0186（仮説）
+  - effects[0] timed・normalHit・hitRate: C-0440（確定）、C-0441（仮説）
+  - effects[1] timed・normalHit・hitRate: C-0440（確定）、C-0441（仮説）
   - effects[2] timed・normalHit・attack: C-0187（確定）
 - **宝物版 skill2**: supported
   - effects[0] timed・fullBurstStart・critDamage: C-0323（確定）
