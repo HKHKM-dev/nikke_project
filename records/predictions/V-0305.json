@@ -1,0 +1,171 @@
+{
+  "verification": "V-0305",
+  "note": "V-0219 の部隊あり（録画 A。246・247・267〜269）の編成の予測。判定に使うのは、サクラ（836。SMG・AI）の遠の弾丸命中率の、▲の窓（ノワールのバースト使用から 30 秒）の中の、A と B（248・249・270〜272）の外れの割合の比 q（検証記録に手で書く）。B は編成が違うのでこのファイルに入れない（どの仮説でも▲は付かず、表の値のまま）。録画のブランは撃たないが、モデルはブランを撃たせる（撃たない枠を表せない）。オートバースト ON",
+  "team": [
+    {
+      "rid": 836,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 270,
+      "controlled": true
+    },
+    {
+      "rid": 271,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "部隊の命中率▲は付かない（いまの定義。burst の notes[1] が未対応のまま）。サクラの遠の弾丸命中率は、窓の中も外も的の表の SMG の値のまま"
+    },
+    {
+      "id": "H1",
+      "note": "部隊の命中率▲（説明文の値 6・7。Lv10 で 11.61%・30 秒）を、バースト使用時（burstUse）に味方全体に配る持続の命中率▲として足し、squad（present: true）で同じ部隊の味方（ブラン）がいるときだけ効かせる。弾丸命中率への効き方は C-0192 の形（外れの割合 m → m ^ (1 ÷ (1 − N)²)。frame/landing.ts の bulletHitRateWithHitRateUp）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 271,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "hitRate",
+              "ref": 6,
+              "durationRef": 7,
+              "squad": {
+                "present": true
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "sakura-far-bullet-in",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5588
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "遠の▲の窓の中（sim の 3 回目のノワールのバーストの後）の弾丸命中率。判定は、この値そのものでなく、A と B の外れの割合の比 q（検証記録）。H1 の q の予測は、表の値から (1 − この値) ÷ (1 − 0.76)"
+    },
+    {
+      "id": "sakura-far-bullet-out",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 4706
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "遠の▲の窓の外（2 回目の窓の終わりから 3 回目のバーストまで）の弾丸命中率。陰性の対照（A と B の外れの割合の比が 1 になるはず）"
+    },
+    {
+      "id": "sakura-near1-bullet-in",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3235
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "読み方の確かめ（判定に使わない）。近（2 区間目）の▲の窓の中の弾丸命中率。表の値がほぼ 1 なので、射撃の刻みから数えた撃った数とヒットの数がほぼ同じになるはず"
+    },
+    {
+      "id": "sakura-body-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "読み取りの格子の基（判定に使わない）。サクラの胴体・会心なし・距離ボーナスなしの 1 ヒット（ノワール S1 の攻撃力▲を含む。フルバーストの外）。命中率▲は 1 ヒットの値に出ない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "f227fbe99d2f6ddef7ca8cae1ca5d052f2326703",
+    "values": {
+      "H0": {
+        "sakura-far-bullet-in": 0.76,
+        "sakura-far-bullet-out": 0.76,
+        "sakura-near1-bullet-in": 0.9986,
+        "sakura-body-hit": 8551.996200000003
+      },
+      "H1": {
+        "sakura-far-bullet-in": 0.8390466390199698,
+        "sakura-far-bullet-out": 0.76,
+        "sakura-near1-bullet-in": 0.9997775766076578,
+        "sakura-body-hit": 8551.996200000003
+      }
+    },
+    "seen": {
+      "246": [
+        "246-01",
+        "246-02",
+        "246-03",
+        "246-04",
+        "246-05",
+        "246-06",
+        "246-07",
+        "246-08",
+        "246-09",
+        "246-10",
+        "246-11"
+      ],
+      "247": [
+        "246-03",
+        "246-04",
+        "246-05",
+        "246-06",
+        "246-07",
+        "246-08",
+        "246-10",
+        "246-11",
+        "247-01",
+        "247-02",
+        "247-03"
+      ],
+      "248": ["246-11", "248-01", "248-02", "248-03", "248-04", "248-05", "248-06"],
+      "249": ["246-11", "248-03", "248-04", "248-06", "249-01", "249-02", "249-03"],
+      "267": ["246-10", "246-11", "267-01"],
+      "268": ["246-10", "246-11", "268-01"],
+      "269": ["246-10", "246-11", "269-01"],
+      "270": ["246-11", "248-06", "270-01"],
+      "271": ["246-11", "248-06", "271-01"],
+      "272": ["246-11", "248-06", "272-01"]
+    }
+  }
+}
