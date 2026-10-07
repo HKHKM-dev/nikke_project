@@ -9,7 +9,8 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { gradeCandidate, type ClaimGrade } from '../src/records/claims.ts';
 import { closeChecks, markState, prTitle, type GitOrder } from '../src/records/close.ts';
-import { minimalWarnings } from '../src/records/minimal.ts';
+import { relevanceOf } from '../src/records/relevance.ts';
+import { withFreshSensitivity } from '../src/records/sensitivity.ts';
 import { invalidReasonsOf, runObservations, type Observation } from '../src/records/observations.ts';
 import type { PredictionFile } from '../src/records/predictions.ts';
 import {
@@ -19,6 +20,7 @@ import {
   loadPredictions,
   loadRecordingsFile,
   loadRecordsData,
+  loadSensitivity,
   loadVerifications,
   recordingMap,
   verificationPath,
@@ -65,13 +67,19 @@ for (const c of ownClaims) {
   const g = gradeCandidate(c, residualOf, invalid);
   if (g !== undefined) gradeCandidates.set(c.id, g);
 }
-const warnings = minimalWarnings([verification], {
+// 最小構成の検査（plan/design-minimal-relevance.md 5 節）: この記録の結論の組。根拠の観測値の感度はその場で計算して重ねる
+const relevanceCtx = {
   recordings,
   characters: data.characters,
   skills: data.skills,
   enemies: data.enemies,
   claims,
-});
+  data,
+};
+const sensitivity = withFreshSensitivity(basisObs, relevanceCtx, loadSensitivity());
+const minimal = new Map(
+  relevanceOf(ownClaims, observations, relevanceCtx, sensitivity).map((r) => [r.claim, r.warnings]),
+);
 const git = (args: string[]): string => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
 
 /** 予測と読みの順を git の履歴で調べる（調べられなければ undefined） */
@@ -135,7 +143,7 @@ const result = closeChecks({
   recordings,
   prediction,
   gradeCandidates,
-  warnings,
+  minimal,
   ...(prediction?.predicted?.seen === undefined ? {} : { gitOrder: gitOrderOf(prediction, own) }),
 });
 for (const w of result.warnings) console.log(`注意: ${w}`);

@@ -1,7 +1,7 @@
 // 起案と結論の下書き（plan/design-records-automation.md 3.1・3.6 節）。npm run records:new の純粋な部分。
 // 採番（最大の番号 + 1）、検証記録のひな形、結論の状態（確定にできる条件が全部そろえば確定、1 つでも欠ければ仮説と理由）。
-import { CLAIM_TOPICS, type ClaimFile, type ClaimGrade, type ClaimTopic } from './claims.ts';
-import type { MinimalWarning } from './minimal.ts';
+import { CLAIM_TOPICS, type ClaimFile, type ClaimGrade, type ClaimSubject, type ClaimTopic } from './claims.ts';
+import { summarizeWarnings, type PairWarning } from './relevance.ts';
 import type { Observation } from './observations.ts';
 import { seenObservationIds, type PredictionComparison } from './predictions.ts';
 
@@ -95,8 +95,10 @@ export type ClaimDraftInput = {
   gradeCandidate: ClaimGrade | undefined;
   /** 比べた観測値の ID → 許容内か */
   compared: ReadonlyMap<string, boolean>;
-  /** その検証記録の最小構成の警告 */
-  warnings: readonly MinimalWarning[];
+  /** 結論の対象（plan/design-minimal-relevance.md 3.2 節。records:new の --subject・--mechanism） */
+  subject?: ClaimSubject;
+  /** 下書きの結論 × 根拠の観測値の組のうち、効きうる未確定の要素が残った組（最小構成の検査。同 5 節） */
+  minimal: readonly PairWarning[];
   /** 予測との比べ（予測ファイルが無ければ undefined） */
   prediction: PredictionComparison | undefined;
 };
@@ -104,8 +106,9 @@ export type ClaimDraftInput = {
 export type ClaimDraft = { file: ClaimFile; reasons: string[] };
 
 /**
- * 結論の下書き（3.6 節）。状態は、等級の候補が厳密一致か反復実測で、疑問の印（最小構成の警告・予測の日付・合う仮説が 1 つに
- * 決まらない・失効した観測値・許容外）が無いときだけ確定。1 つでも欠ければ仮説にし、欠けた条件を reasons に返す
+ * 結論の下書き（3.6 節）。状態は、等級の候補が厳密一致か反復実測で、疑問の印（結論の対象が無い・最小構成の警告・scope の無い観測値・
+ * 予測の日付・合う仮説が 1 つに決まらない・失効した観測値・許容外）が無いときだけ確定。1 つでも欠ければ仮説にし、欠けた条件を reasons に返す。
+ * 最小構成の警告は plan/design-minimal-relevance.md の組の判定（records/relevance.ts）
  */
 export function claimDraft(input: ClaimDraftInput): ClaimDraft {
   const reasons: string[] = [];
@@ -114,9 +117,14 @@ export function claimDraft(input: ClaimDraftInput): ClaimDraft {
   const candidate = input.gradeCandidate;
   if (candidate === undefined) reasons.push('モデルと比べた観測値が無い（等級の候補を出せない）');
   else if (candidate !== '厳密一致' && candidate !== '反復実測') reasons.push(`等級の候補が ${candidate}`);
-  if (input.warnings.length > 0) {
-    reasons.push(`最小構成の警告がある（録画 ${input.warnings.map((w) => w.recording).join('・')}）`);
+  if (input.subject === undefined) reasons.push('結論の対象（subject）が無い（--subject か --mechanism で書く）');
+  const warned = input.minimal.filter((w) => w.elements.length > 0);
+  if (warned.length > 0) {
+    reasons.push(`最小構成の警告がある（${summarizeWarnings(warned)}）`);
   }
+  // 設計書 9 節の 2: compare を持たない根拠の観測値には scope が要る
+  const noScope = valid.filter((o) => o.compare === undefined && o.scope === undefined).map((o) => o.id);
+  if (noScope.length > 0) reasons.push(`scope の無い観測値がある（${noScope.join('・')}）`);
   if (invalid.length > 0) reasons.push(`失効した観測値がある（${invalid.map((o) => o.id).join('・')}）`);
   const outside = [...input.compared.entries()].filter(([, ok]) => !ok).map(([id]) => id);
   if (outside.length > 0) reasons.push(`許容外の観測値がある（${outside.join('・')}）`);
@@ -155,6 +163,7 @@ export function claimDraft(input: ClaimDraftInput): ClaimDraft {
     model: '（モデル側を書く。未反映ならそう書く）',
     replaces: [],
     updated: input.today,
+    ...(input.subject === undefined ? {} : { subject: input.subject }),
   };
   return { file, reasons };
 }

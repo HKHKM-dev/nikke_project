@@ -127,3 +127,16 @@ export function sensitivityTargets(observations: readonly Observation[], ctx: Re
   const ids = new Set(ctx.claims.filter((c) => c.state === '確定').flatMap((c) => c.observations));
   return observations.filter((o) => ids.has(o.id) && usesSensitivity(o));
 }
+
+/** 読み込んだ感度の結果に、指定の観測値の感度をその場で計算して重ねる（records:new・records:close。新しい観測値は結果が無いので） */
+export function withFreshSensitivity(
+  observations: readonly Observation[],
+  ctx: SensitivityContext,
+  loaded: ReadonlyMap<string, SensitivityEntry>,
+): Map<string, SensitivityEntry> {
+  const out = new Map(loaded);
+  const cache = new Map<string, SimResult>();
+  for (const o of observations)
+    for (const e of sensitivityOf(o, ctx, cache)) out.set(`${e.observation}|${e.element}`, e);
+  return out;
+}
