@@ -1,6 +1,7 @@
 // スキル定義の ref を Lv の数値に解決する。単位変換（% → 比率）はここで一律に行う。
 // Stage 11 モダニア: スタックの最大数・「▼」・条件・使用武器の変更（stat 'weapon' の持続効果として解決する）を足した。
 import type { CharacterData, Element, Locale, LocalizedText, ShotParams, SkillRaw, WeaponType } from '../types.ts';
+import { burstWindowTrimOf } from '../burst/landing.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { isChargeWeapon } from '../weapons.ts';
 import type { ChangedWeapon } from './buffs.ts';
@@ -372,7 +373,20 @@ export function resolveTimed(
       resolved.push(r);
     });
   }
-  return resolved;
+  // 効果の窓の終わり（plan/design-burst-effect-window-end.md 案 B）: 遅れの表の行に印のあるキャラは、burstUse で発火する効果の
+  // 窓の終わりを発動から数える（効果の発火が遅れる分だけ維持フレームを縮める）
+  const trim = burstWindowTrimOf(character);
+  if (trim === 0) return resolved;
+  return resolved.map((r) =>
+    isBurstUseTrigger(r.trigger) && r.durationFrames > 0 && r.durationFrames !== BATTLE_END_FRAMES
+      ? { ...r, durationFrames: Math.max(0, r.durationFrames - trim) }
+      : r,
+  );
+}
+
+/** 自分のバーストの使用（burstUse・{ count: burstUse }）で発火するトリガーか */
+function isBurstUseTrigger(t: ResolvedTrigger): boolean {
+  return t === 'burstUse' || (typeof t === 'object' && 'count' in t && t.count === 'burstUse');
 }
 
 function durationSecondsOf(

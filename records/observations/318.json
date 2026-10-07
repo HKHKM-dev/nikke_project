@@ -1,0 +1,238 @@
+[
+  {
+    "id": "318-01",
+    "recording": "318",
+    "kind": "total",
+    "use": "record",
+    "value": 75168808,
+    "description": "ミランダ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "最後の増分は f11400。増分は 2791 個"
+    },
+    "source": "V-0311",
+    "readAt": "2026-10-07"
+  },
+  {
+    "id": "318-02",
+    "recording": "318",
+    "kind": "count",
+    "use": "record",
+    "value": 207,
+    "unit": "トリガー",
+    "description": "ミランダ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "増分は 2791 個。前の増分から 30f 未満の増分（2762 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 40f）から発の数を決めた（2 発になった組 26 個）"
+    },
+    "source": "V-0311",
+    "readAt": "2026-10-07"
+  },
+  {
+    "id": "318-03",
+    "recording": "318",
+    "source": "V-0311",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "compare",
+    "value": 0,
+    "unit": "f",
+    "description": "1 回目のバースト（I の発動。右のバースト欄の六角形が I から II に替わったフレーム f2547）の後の最初の発（f2548）から、攻撃力▲の乗った最初の発までのモデルのフレーム数。発動の後の最初の発がすでに▲の値（26,706（距離））で、発動の前の最後の発（f2546）は▲の無い値（29,130（距離・会心））",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）と hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "発の値は格子（胴体・距離ボーナス・会心・コア × 宝物版 S1 の攻撃力▲ × バーストの▲の有無。V-0216 と同じ）で分けた。▲の無い値は 16,183・21,039・24,275・29,130・40,459・45,314、▲の値は 20,543・26,706・42,367・48,530・51,359・57,522。53,405 は▲の外にも出るので分けるのに使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "fromShot": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "318-04",
+    "recording": "318",
+    "source": "V-0311",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "compare",
+    "value": 0,
+    "unit": "f",
+    "description": "2 回目のバースト（I の発動。右のバースト欄の六角形が I から II に替わったフレーム f5111）の後の最初の発（f5113）から、攻撃力▲の乗った最初の発までのモデルのフレーム数。発動の後の最初の発がすでに▲の値（20,543（胴体））で、発動の前の最後の発（f5110）は▲の無い値（16,183（胴体））",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）と hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "発の値は格子（胴体・距離ボーナス・会心・コア × 宝物版 S1 の攻撃力▲ × バーストの▲の有無。V-0216 と同じ）で分けた。▲の無い値は 16,183・21,039・24,275・29,130・40,459・45,314、▲の値は 20,543・26,706・42,367・48,530・51,359・57,522。53,405 は▲の外にも出るので分けるのに使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "fromShot": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "318-05",
+    "recording": "318",
+    "source": "V-0311",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "compare",
+    "value": 0,
+    "unit": "f",
+    "description": "3 回目のバースト（I の発動。右のバースト欄の六角形が I から II に替わったフレーム f7749）の後の最初の発（f7750）から、攻撃力▲の乗った最初の発までのモデルのフレーム数。発動の後の最初の発がすでに▲の値（20,543（胴体））で、発動の前の最後の発（f7748）は▲の無い値（16,183（胴体））",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）と hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "発の値は格子（胴体・距離ボーナス・会心・コア × 宝物版 S1 の攻撃力▲ × バーストの▲の有無。V-0216 と同じ）で分けた。▲の無い値は 16,183・21,039・24,275・29,130・40,459・45,314、▲の値は 20,543・26,706・42,367・48,530・51,359・57,522。53,405 は▲の外にも出るので分けるのに使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "fromShot": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "318-06",
+    "recording": "318",
+    "source": "V-0311",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 20543,
+    "description": "バーストの▲の窓の中のミランダの 1 発（胴体・会心なし・距離ボーナスなし）。2・3 回目の窓（f5113〜5657・f7750〜8337）の胴体の増分",
+    "method": {
+      "tool": "hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "格子は 318-03 と同じ。frame は予測ファイルと同じ（モデルの 1 回目のバースト 1682f の前後 60f）にし、録画では各回のバーストの前後の同じ状態の発を読んだ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1742,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "318-07",
+    "recording": "318",
+    "source": "V-0311",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 42367,
+    "description": "同じ窓の会心の 1 発（胴体・距離ボーナスなし）。クリティカルダメージ▲も乗った値",
+    "method": {
+      "tool": "hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "格子は 318-03 と同じ。frame は予測ファイルと同じ（モデルの 1 回目のバースト 1682f の前後 60f）にし、録画では各回のバーストの前後の同じ状態の発を読んだ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1742,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "318-08",
+    "recording": "318",
+    "source": "V-0311",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 16183,
+    "description": "バーストの前の 1 発（胴体・会心なし・距離ボーナスなし）。2・3 回目の発動の前の増分",
+    "method": {
+      "tool": "hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "格子は 318-03 と同じ。frame は予測ファイルと同じ（モデルの 1 回目のバースト 1682f の前後 60f）にし、録画では各回のバーストの前後の同じ状態の発を読んだ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1622,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "318-09",
+    "recording": "318",
+    "source": "V-0311",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      [2547, 2548, 3127],
+      [5111, 5113, 5657],
+      [7749, 7750, 8338],
+      [10155, 10258, 10742]
+    ],
+    "unit": "f",
+    "description": "各回の [I の発動, ▲の付いた最初の発, ▲の窓の最後の発（か▲の無い値に戻る直前）]。3・4 回目は、▲の無い値に戻るまで発動から 589f・587f（10 秒）。1・2 回目は窓の終わりに的のジャンプ（発の無い 100f 余り）が重なる。4 回目は発動の −24f から +81f まで発が無く（的のジャンプ）、+82〜101f は HUD が読めないので、付き始めは読めない",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）と hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "4 回目の発動（f10155）は六角形の替わり目で読んだ。比べる観測値（318-03〜05）は 1〜3 回目だけ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

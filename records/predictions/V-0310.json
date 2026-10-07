@@ -1,0 +1,156 @@
+{
+  "verification": "V-0310",
+  "note": "撮る前の予測。的のジャンプ（range-3min-jump）を入れない（V-0180 と同じ。殲滅モードの始まりと発の数は、発動の時刻とジャンプの重なり方によらず比べたいため）。効果の遅れが表の値と違う仮説は、遅れの表（burst/landing.ts）で切り替わるので、このファイルの範囲外（検証記録に手で書く）",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 260,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。モダニアは遅れの表に行が無く、殲滅モードと装弾数無限は III の発動のフレームで始まる（効果の遅れ 0）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "anni-first-1",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "1 回目のフルバースト（III の発動）から、殲滅モード（使用武器変更）の最初の発までのモデルのフレーム数。録画では、III のタイマーが 00.00 になったフレームから殲滅モードの値の最初の増分までの動画のフレーム数を読み、止まりの後なら 22 を引く"
+    },
+    {
+      "id": "anni-first-2",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "2 回目のフルバースト（III の発動）から、殲滅モード（使用武器変更）の最初の発までのモデルのフレーム数。録画では、III のタイマーが 00.00 になったフレームから殲滅モードの値の最初の増分までの動画のフレーム数を読み、止まりの後なら 22 を引く"
+    },
+    {
+      "id": "anni-first-3",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "3 回目のフルバースト（III の発動）から、殲滅モード（使用武器変更）の最初の発までのモデルのフレーム数。録画では、III のタイマーが 00.00 になったフレームから殲滅モードの値の最初の増分までの動画のフレーム数を読み、止まりの後なら 22 を引く"
+    },
+    {
+      "id": "anni-first-4",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "4 回目のフルバースト（III の発動）から、殲滅モード（使用武器変更）の最初の発までのモデルのフレーム数。録画では、III のタイマーが 00.00 になったフレームから殲滅モードの値の最初の増分までの動画のフレーム数を読み、止まりの後なら 22 を引く"
+    },
+    {
+      "id": "fb-shots-1",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 0,
+        "from": 0,
+        "to": 882
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "1 回目のフルバースト（発動から 882f。モデルのフルバーストの窓）の中のモダニアの発の数。モデルでは全部が殲滅モードの発。録画では殲滅モードの発の数と比べる（的のジャンプが重なった回は比べない）"
+    },
+    {
+      "id": "fb-shots-2",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 1,
+        "from": 0,
+        "to": 882
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "2 回目のフルバースト（発動から 882f。モデルのフルバーストの窓）の中のモダニアの発の数。モデルでは全部が殲滅モードの発。録画では殲滅モードの発の数と比べる（的のジャンプが重なった回は比べない）"
+    },
+    {
+      "id": "fb-shots-3",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 2,
+        "from": 0,
+        "to": 882
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "3 回目のフルバースト（発動から 882f。モデルのフルバーストの窓）の中のモダニアの発の数。モデルでは全部が殲滅モードの発。録画では殲滅モードの発の数と比べる（的のジャンプが重なった回は比べない）"
+    },
+    {
+      "id": "fb-shots-4",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 3,
+        "from": 0,
+        "to": 882
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "4 回目のフルバースト（発動から 882f。モデルのフルバーストの窓）の中のモダニアの発の数。モデルでは全部が殲滅モードの発。録画では殲滅モードの発の数と比べる（的のジャンプが重なった回は比べない）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "16e2e429011b6b23a9ef1d56f0222cf5a1e4c0d4",
+    "values": {
+      "H0": {
+        "anni-first-1": 1,
+        "anni-first-2": 1,
+        "anni-first-3": 1,
+        "anni-first-4": 1,
+        "fb-shots-1": 881,
+        "fb-shots-2": 881,
+        "fb-shots-3": 881,
+        "fb-shots-4": 881
+      }
+    },
+    "seen": {}
+  }
+}

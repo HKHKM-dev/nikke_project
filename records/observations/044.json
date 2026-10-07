@@ -190,6 +190,10 @@
       "setup": {
         "enemy": "range-bigarms-fire"
       }
+    },
+    "invalid": {
+      "reason": "比べる窓をモデルのフレームの絶対値（f8707〜9588。当時のモデルの 4 回目のフルバースト）で書いていた。遅れの表にモダニアの行（C-0452）を足すとモデルのフルバーストの時刻がずれ、窓が 4 回目のフルバーストに合わなくなる。読んだ値（872）は同じで、窓をモデルの 4 回目の発動からの 882f にした観測値は 044-18（V-0312）",
+      "date": "2026-10-08"
     }
   },
   {
@@ -308,6 +312,114 @@
     "scope": {
       "slot": "all",
       "source": "burstChain"
+    }
+  },
+  {
+    "id": "044-15",
+    "recording": "044",
+    "source": "V-0312",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "compare",
+    "value": 6,
+    "unit": "f",
+    "description": "2 回目のフルバースト（III のタイマーが 00.00 になったフレーム f4287）から、モダニアの殲滅モードの最初の発までのモデルのフレーム数（動画の差 28〜29f から止まり 22f を引いた）",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）、hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）と、HUD を 1 フレームずつ並べた一覧（crop=300:50:810:28。帯で隠れたフレームは目で読んだ）",
+      "note": "+24〜28f の HUD は 65,920,091 のまま変わらず、+29f の増分 45,782 が殲滅モードの 2 発分（22,299 + 23,483。同じフルバーストの格子）。+28f の発が +29f にまとめて出たとみて、最初の発を +28f とした（V-0310 の 317-03 と同じ扱い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "044-16",
+    "recording": "044",
+    "source": "V-0312",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "compare",
+    "value": 7,
+    "unit": "f",
+    "description": "3 回目のフルバースト（f7048）から、モダニアの殲滅モードの最初の発（+29f。動画の差から止まり 22f を引いた）までのモデルのフレーム数",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）、hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）と、HUD を 1 フレームずつ並べた一覧（crop=300:50:810:28。帯で隠れたフレームは目で読んだ）",
+      "note": "hud.ts は +3〜27f を読めず（FULL BURST の帯）、+28f に 207,723 をまとめて出す。HUD を目で読むと、+24f で 121,125,080 に上がった後（殲滅モードの値の格子に無い 1 つの増分）、+24〜28f は変わらず、+29f から毎フレーム殲滅モードの値（25,105・25,105・20,645・20,645）で増える"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "044-17",
+    "recording": "044",
+    "source": "V-0312",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "record",
+    "value": [7, 7],
+    "unit": "f",
+    "description": "1 回目（f1414）と 4 回目（f9817）のフルバーストの、III の発動から殲滅モードの最初の発（+29f）までのモデルのフレーム数。1 回目は凍結の記録、4 回目は V-0180（f9846）で読まれていたので、根拠に数えない",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）、hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）と、HUD を 1 フレームずつ並べた一覧（crop=300:50:810:28。帯で隠れたフレームは目で読んだ）",
+      "note": "4 回目は発動の −6f までモダニアの通常攻撃の増分（22,274 など）が続き、殲滅モードの最初の発（+29f）までは増分が無い"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "044-18",
+    "recording": "044",
+    "kind": "count",
+    "use": "compare",
+    "value": 872,
+    "unit": "発",
+    "description": "モダニア（操作）の 4 回目のフルバーストの、殲滅モードの最初の発から最後の発までの発の数（044-10 と同じ読み。比べる窓をモデルの 4 回目の発動からの 882f にした）",
+    "source": "V-0312",
+    "readAt": "2026-10-08",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "044-10（V-0180）の値をそのまま使い、比べる窓だけを替えた。読み方は 044-10 の method と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 3,
+        "from": 0,
+        "to": 882
+      },
+      "tolerance": {
+        "abs": 15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
     }
   }
 ]

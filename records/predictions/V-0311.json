@@ -1,0 +1,189 @@
+{
+  "verification": "V-0311",
+  "note": "撮る前の予測。的のジャンプ（range-3min-jump）を入れない（効果の遅れの指標は発動の時刻とジャンプの重なり方によらず比べたいため。1 発の値はバーストの前後の同じずれのフレームで比べる）。効果の遅れが表の値と違う仮説は、遅れの表（burst/landing.ts）で切り替わるので、このファイルの範囲外（検証記録に手で書く）",
+  "team": [
+    {
+      "rid": 32,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（C-0322）。宝物版のバーストは、自分を除く候補が 2 機に足りなければ自分にも付く。単騎では候補が 0 機なので自分に付く。効果の遅れ 0（遅れの表に行が無い）"
+    },
+    {
+      "id": "H2",
+      "note": "単騎では自分にも付かない（自分を除く候補が 1 機もいないときは対象なし、の読み。excludeSelf: always と同じ値）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "always",
+              "stat": "attack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          },
+          {
+            "rid": 32,
+            "skill": "burst",
+            "treasure": true,
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "always",
+              "stat": "critDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "buffed-first-1",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "1 回目のバースト（I の発動）の後の最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-2",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "2 回目のバースト（I の発動）の後の最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-3",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "3 回目のバースト（I の発動）の後の最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-4",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "4 回目のバースト（I の発動）の後の最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "solo-body-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1742,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "1 回目のバースト（モデルは 1682f）の 1 秒後のミランダの 1 発（胴体・会心なし・距離ボーナスなし）。H0 は攻撃力▲の中、H2 は外"
+    },
+    {
+      "id": "solo-crit-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1742,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "同じフレームの会心の 1 発。H0 はクリティカルダメージ▲も乗る"
+    },
+    {
+      "id": "solo-body-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1622,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      },
+      "note": "1 回目のバーストの 1 秒前のミランダの 1 発（胴体・会心なし・距離ボーナスなし）。どの仮説でも▲の外（対照）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "16e2e429011b6b23a9ef1d56f0222cf5a1e4c0d4",
+    "values": {
+      "H0": {
+        "buffed-first-1": 0,
+        "buffed-first-2": 0,
+        "buffed-first-3": 0,
+        "buffed-first-4": 0,
+        "solo-body-in": 20543.436,
+        "solo-crit-in": 42366.7280628,
+        "solo-body-out": 16183.476
+      },
+      "H2": {
+        "buffed-first-1": 0,
+        "buffed-first-2": 0,
+        "buffed-first-3": 0,
+        "buffed-first-4": 0,
+        "solo-body-in": 16183.476,
+        "solo-crit-in": 24275.214,
+        "solo-body-out": 16183.476
+      }
+    },
+    "seen": {}
+  }
+}

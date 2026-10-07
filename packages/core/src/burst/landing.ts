@@ -19,6 +19,11 @@ export type MeasuredBurstDelayRow = {
   resourceIds: readonly number[];
   /** 分かれたヒット編: true なら、burst が宝物版のとき（宝物の段階が burst まで解放したとき）だけ当てる */
   treasure?: boolean;
+  /**
+   * 効果の窓の終わり（plan/design-burst-effect-window-end.md 案 B）: true なら、そのキャラの burstUse で発火する timed・使用武器変更の
+   * 窓の終わりを発動から数える（維持時間から effectFrames を引く。窓の始まりは効果の発火のまま）。書かない行は窓ごと遅れる
+   */
+  windowFromActivation?: true;
   delays: BurstDelays;
   claim: string;
 };
@@ -63,6 +68,11 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // マナ: III の発動から効果（持続ダメージの付与と 1 回目の tick・持続ダメージ▲）まで 2f（動画で 24f。止まり 22f を含む）。
   // バーストの倍率ダメージは無い
   { resourceIds: [290], delays: { hitFrames: 0, effectFrames: 2 }, claim: 'C-0301' },
+  // モダニア: III の発動から殲滅モードの最初の発まで 7f（動画で 28〜29f。止まり 22f を含む）。モデルの使用武器変更は効果の発火の
+  // 次のフレームから撃つので、効果（殲滅モード・装弾数無限）の発火は 6f。バーストの倍率ダメージは無い。止まりの明けから殲滅モードの
+  // 最初の発まで撃たないことはモデルに無い（定義の burst の notes）
+  // 窓の終わりは発動から数える（実測の最後の発は後ろにずれない。plan/design-burst-effect-window-end.md）
+  { resourceIds: [260], delays: { hitFrames: 0, effectFrames: 6 }, windowFromActivation: true, claim: 'C-0452' },
   // ソルジャーE.G.: III の発動からヒットまで 7f（動画で 29f。止まり 22f を含む）。バースト使用時の効果は無い（V-0247・V-0242）
   { resourceIds: [300], delays: { hitFrames: 7, effectFrames: 0 }, claim: 'C-0370' },
   // 雪子: III の発動と同じフレームにヒット（動画では III のタイマーが 00.00 になる 1f 前。フルバーストの入りの止まりの前）。
@@ -85,6 +95,15 @@ export function measuredBurstDelayRow(character: DelayKey): MeasuredBurstDelayRo
       (row) => row.resourceIds.includes(character.resourceId) && (row.treasure !== true || isTreasureBurst(character)),
     ) ?? null
   );
+}
+
+/**
+ * 効果の窓の終わり（plan/design-burst-effect-window-end.md 案 B）: burstUse で発火する効果の維持フレームから引くフレーム数。
+ * 行に windowFromActivation が無ければ 0
+ */
+export function burstWindowTrimOf(character: DelayKey): number {
+  const row = measuredBurstDelayRow(character);
+  return row?.windowFromActivation === true ? row.delays.effectFrames : 0;
 }
 
 /** キャラのバーストの遅れ。表に無ければ 0 */
