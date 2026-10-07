@@ -3,7 +3,7 @@
 // frame/plan.ts から同じ名前で再エクスポートする
 import type { ResolvedDamageEffect } from '../skills/burstDamage.ts';
 import type { DotFirstTick } from '../skills/types.ts';
-import { gameSecondsToFrame } from '../time.ts';
+import { gameSecondsToFirstFrame, gameSecondsToFrame } from '../time.ts';
 
 /**
  * クルミ編: dot を status ごとにまとめる（status の無い効果はそれぞれ 1 つ）。同じ status の効果は、間隔・維持・firstTick・
@@ -53,8 +53,8 @@ export const DOT_LATER_TICK_DELAY_SECONDS = 0.5;
 
 /**
  * ニヒリスター編: 持続ダメージの tick のフレーム（plan/design-nihilister.md 2.1 節・経過）。発火 f ごとに、f と
- * f + gameSecondsToFrame(k × 間隔 + DOT_LATER_TICK_DELAY_SECONDS)（k = 1 … floor(維持 ÷ 間隔) − 1）の計 floor(維持 ÷ 間隔) 回。
- * 時刻の四捨五入なので長さの切り捨てを積み重ねない。戦闘の終わり（frames）以降も出さない。
+ * f + ceil((k × 間隔 + DOT_LATER_TICK_DELAY_SECONDS) ÷ 0.017) − 1（k = 1 … floor(維持 ÷ 間隔) − 1）の計 floor(維持 ÷ 間隔) 回。
+ * 起点（1 回目の tick の 1f 前）からの時刻に達した最初のフレームで、端数を積み重ねない（C-0454。録画 081 の 0・88・147・205・264・323・382・441・499・558）。戦闘の終わり（frames）以降も出さない。
  * V-0051: 維持の途中（前の発火から維持秒のうち）の再発火は、tick の刻みを変えずに終わりだけを延ばす（C-0129。クルミの
  * ハッキングの録画 057〜062）。刻みは最初の発火のまま続き、最後の発火が単独なら出したはずの最後の tick の時刻まで出る。
  * 再発火が無ければ（ニヒリスターの火傷）、発火ごとの 10 回のまま
@@ -150,13 +150,13 @@ export function dotTickTracker(
   firstTick: DotFirstTick = 'atApplication',
 ): DotTickTracker {
   const count = Math.floor(durationSeconds / intervalSeconds + 1e-9);
-  // クルミ編: afterInterval は付いた 1 間隔後から間隔ごと（k + 1 間隔後。C-0130）
+  // クルミ編: afterInterval は付いた 1 間隔後から間隔ごと（k + 1 間隔後。C-0130）。どちらも時刻に達した最初のフレーム（C-0454）
   const offset = (k: number): number =>
     firstTick === 'afterInterval'
-      ? gameSecondsToFrame((k + 1) * intervalSeconds)
+      ? gameSecondsToFirstFrame((k + 1) * intervalSeconds)
       : k === 0
         ? 0
-        : gameSecondsToFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS);
+        : gameSecondsToFirstFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS) - 1;
   const lastOffset = offset(count - 1);
   const durationFrames = gameSecondsToFrame(durationSeconds);
   let active = false;
@@ -176,7 +176,7 @@ export function dotTickTracker(
       const end = last + lastOffset;
       const ticks: number[] = [];
       for (;;) {
-        // 1 回目の後は、k 回目の時刻を起点から四捨五入する（間隔の四捨五入を積み重ねない）
+        // 1 回目の後は、k 回目の時刻を起点から数える（間隔の切り上げを積み重ねない）
         const tick = anchor + offset(k);
         if (tick > end || tick >= frames) break;
         ticks.push(tick);

@@ -6,7 +6,7 @@ import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { FIXED_BURST_CYCLE, planFixedCycle } from '../../burst/fixedCycle.ts';
 import { computeTriggerDamage, TRUE_DAMAGE_BUCKET, type TriggerDamageInput } from '../../damage.ts';
 import type { BurstStep, CharacterData, SkillRaw } from '../../types.ts';
-import { gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
+import { gameSecondsToFirstFrame, gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
 import { ZERO_BUFFS, type ChangedWeapon } from '../buffs.ts';
 import { applyComposition, compositionAllows, enemyElementAllows, withCharacterAllows } from '../composition.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
@@ -219,9 +219,9 @@ describe('窓の作り方', () => {
   it('fires a timer trigger with atStart at frame 0 too', () => {
     expect(triggerFrames({ everySeconds: 30, atStart: true }, null, 0, FRAMES)).toEqual([
       0,
-      ...[30, 60, 90, 120, 150].map((s) => gameSecondsToFrame(s)),
+      ...[1, 2, 3, 4, 5].map((k) => k * gameSecondsToFirstFrame(30)),
     ]);
-    expect(triggerFrames({ everySeconds: 30 }, null, 0, FRAMES)[0]).toBe(gameSecondsToFrame(30));
+    expect(triggerFrames({ everySeconds: 30 }, null, 0, FRAMES)[0]).toBe(gameSecondsToFirstFrame(30));
   });
 
   /** values: [1] = 比率 %、[2] = 維持秒数 */

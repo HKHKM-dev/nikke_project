@@ -9,7 +9,7 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { gameSecondsToFrame } from '../time.ts';
+import { gameSecondsToFirstFrame, gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 
@@ -58,7 +58,8 @@ describe('環境コントロールの窓', () => {
   it('opens at battle start and every 30 s after, for 10 s each, without Eunhwa: TU (録画 226 の編成。C-0305)', () => {
     const windows = environmentWindows(team([fixedSlot(EMMA)], 0, false));
     expect(windows.map((w) => w.start)).toEqual(
-      [0, 30, 60, 90, 120, 150].map((s) => (s === 0 ? 0 : gameSecondsToFrame(s))),
+      // 30 秒ごとの周期は発動のたびに数え直す（k × ceil(30 ÷ 0.017)。C-0432）
+      [0, 1, 2, 3, 4, 5].map((k) => k * gameSecondsToFirstFrame(30)),
     );
     for (const w of windows) {
       expect(w.end - w.start).toBe(gameSecondsToFrame(10));

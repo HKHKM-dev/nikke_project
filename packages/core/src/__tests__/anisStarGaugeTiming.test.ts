@@ -12,7 +12,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { validateObstacleBreaks, type TeamInput, type TeamSlotInput } from '../team.ts';
-import { gameSecondsToFrames } from '../time.ts';
+import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, TargetProfile } from '../types.ts';
 
 function readJson<T>(path: string): T {
@@ -119,10 +119,12 @@ describe('ゲージの時刻（1 パス目）', () => {
     const a0 = before.schedule!.activations[0]!.frame;
     const a1 = after.schedule!.activations[0]!.frame;
     const lastBefore = ticksOf(before, a0).at(-1)!.frame;
-    expect(lastBefore).toBe(a0 + gameSecondsToFrames(10)); // 最後の刻みはチェーンの待ちの明けと同じフレーム（溜まらない）
+    // 最後の刻みは 10 秒に達した最初のフレーム（C-0454）。チェーンの待ちの明け（gameSecondsToFrames(10)。切り捨て）の 1f 後
+    // （plan/design-timer-ceil.md 2 節の論点 3）
+    expect(lastBefore).toBe(a0 + gameSecondsToFirstFrame(10));
     const lastAfter = ticksOf(after, a1).at(-1)!.frame;
     const flight = slotFlightsOf([fixedSlot(17)], withFlight, gameSecondsToFrames(180))[0]!.autoAttacks.burst!;
-    expect(lastAfter).toBe(a1 + gameSecondsToFrames(10) + flightFramesAt(flight, a1 + gameSecondsToFrames(10)));
+    expect(lastAfter).toBe(a1 + gameSecondsToFirstFrame(10) + flightFramesAt(flight, a1 + gameSecondsToFirstFrame(10)));
     expect(ticksOf(after, a1)).toHaveLength(40);
   });
 
