@@ -279,7 +279,7 @@ notes の種類: 未対応 27・前提の外 24・計算に無関係 33・補足
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0226（確定）
   - effects[1] timed・burstUse・hitRate: C-0396（仮説）
-  - effects[2] timed・burstUse・hitRate: C-0430（仮説）
+  - effects[2] timed・burstUse・hitRate: C-0442（仮説）
   - notes[0] 前提の外: 阻止部位の攻撃ダメージ▲（SG の味方に 10 秒、同じ部隊の味方がいれば味方全体に 30 秒）は、射撃場の敵に阻止部位が無いのでダメージに関係しない: 根拠なし
 
 ## 290 マナ
