@@ -5,7 +5,8 @@
 //
 // 表示は白（FB 中などは薄い赤）の斜体の数字で、カンマ区切り・中央揃え。min(R,G,B) を 2 値にして連結成分に分け、
 // 高さの揃った成分を数字、低くて下に寄った成分をカンマとして左から並べ、数字は見本（hud-templates.json）と
-// 正規化相互相関で照合する。カンマの位置が 3 桁区切りにならない読みは捨てる。
+// 正規化相互相関で照合する。0 と 8 は照合の差が小さいとき、字の穴の数で分ける（V-0327）。
+// カンマの位置が 3 桁区切りにならない読みは捨てる。
 // 総ダメージは減らないので、読めた値の列から最長の非減少列を残し、そこから外れた読み（1 桁の誤読・先頭の桁の欠け）を落とす。
 //
 // mode:
@@ -15,6 +16,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { cropFilter, parseCrop, rawFrames, type Crop } from './ffmpeg.ts';
+import { holes, type Component } from './hud-glyph.ts';
 
 const TEMPLATE_FILE = new URL('./hud-templates.json', import.meta.url);
 /** 数字とみなす明るさ（min(R,G,B)） */
@@ -24,10 +26,12 @@ const NORM_W = 10;
 const NORM_H = 16;
 /** これより照合が悪い数字を含む読みは捨てる */
 const MIN_SCORE = 0.6;
+/** 0 と 8 の照合の差がこれより小さければ、穴の数で決める（V-0327） */
+const ZERO_EIGHT_MARGIN = 0.03;
+/** 穴と数える背景の塊の大きさ（px）の下限。数字の穴は 15px 以上、ノイズは 9px 以下（V-0327） */
+const MIN_HOLE = 10;
 
 type Templates = { crop: Crop; digitHeight: number; digits: Record<string, number[]> };
-
-type Component = { minX: number; maxX: number; minY: number; maxY: number; pixels: [number, number][] };
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -182,14 +186,23 @@ function readValue(gs: Glyph[], templates: Templates): number | null {
     const v = normalize(g.c);
     let best = '';
     let bestScore = -1;
+    const scores: Record<string, number> = {};
     for (const [digit, t] of Object.entries(templates.digits)) {
       const s = ncc(v, t);
+      scores[digit] = s;
       if (s > bestScore) {
         bestScore = s;
         best = digit;
       }
     }
     if (bestScore < MIN_SCORE) return null;
+    // 0 と 8 は外形が同じで、見本との照合で分けられないことがある（0 を 8 と読む。V-0299）。
+    // 照合の差が小さいときは、穴の数（0 は 1 個、8 は 2 個）で決める。どちらでもなければ（字が欠けて穴が開いている）照合のまま
+    if ((best === '0' || best === '8') && Math.abs(scores['0']! - scores['8']!) < ZERO_EIGHT_MARGIN) {
+      const h = holes(g.c, MIN_HOLE);
+      if (h === 1) best = '0';
+      else if (h === 2) best = '8';
+    }
     text += best;
   }
   if (!/^\d{1,3}(,\d{3})*$/.test(text)) return null;

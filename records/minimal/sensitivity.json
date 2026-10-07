@@ -146,17 +146,17 @@
       "plus": 0
     },
     {
-      "observation": "019-11",
+      "observation": "019-17",
       "element": "ノワール burst.effects[1]",
-      "key": "1959a0b460fa879b",
+      "key": "1740275cbaaf9949",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
-      "observation": "019-17",
+      "observation": "019-24",
       "element": "ノワール burst.effects[1]",
-      "key": "1740275cbaaf9949",
+      "key": "1959a0b460fa879b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -5944,7 +5944,7 @@
       "plus": 0
     },
     {
-      "observation": "248-01",
+      "observation": "248-09",
       "element": "ノワール burst.effects[1]",
       "key": "35c8bd78332e3459",
       "effective": false,
