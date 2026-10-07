@@ -91,8 +91,8 @@ notes の種類: 未対応 27・前提の外 24・計算に無関係 33・補足
   - effects[2] timed・fullBurstStart・attackDamage: C-0323（確定）
   - effects[3] timed・fullBurstStart・critRate: C-0334（確定）
 - **宝物版 burst**: supported
-  - effects[0] timed・burstUse・attack: C-0322（確定）
-  - effects[1] timed・burstUse・critDamage: C-0322（確定）
+  - effects[0] timed・burstUse・attack: C-0322（確定）、C-0450（確定）、C-0451（確定）
+  - effects[1] timed・burstUse・critDamage: C-0322（確定）、C-0450（確定）、C-0451（確定）
 
 ## 82 リター
 

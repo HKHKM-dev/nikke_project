@@ -1,0 +1,41 @@
+{
+  "id": "317",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-317_sr+sr+mg_cocoa+delta+modernia_modernia-auto.mp4",
+  "original": "2026-10-07_23-33-48.mp4",
+  "durationSec": 228.2,
+  "frames": 13691,
+  "fps": 60,
+  "sizeMB": 276.3,
+  "sha256": "bfc62fe43910",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 260,
+      "name": "モダニア",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0310。ココア（I・AI）・デルタ（II・AI）・モダニア（III・操作・AUTO 射撃）。出撃画面で灼熱タブ・3 分モード・スペック固定 ON、戦闘履歴のパネル（f13628）で枠順・キャラ名・Lv.400・交戦時間 03:00 を確かめた"
+}

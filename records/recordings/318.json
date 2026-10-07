@@ -1,0 +1,30 @@
+{
+  "id": "318",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-318_smg_miranda_burst-solo.mp4",
+  "original": "2026-10-07_23-38-50.mp4",
+  "durationSec": 203.9,
+  "frames": 12232,
+  "fps": 60,
+  "sizeMB": 247.1,
+  "sha256": "4de48662c1f0",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 32,
+      "name": "ミランダ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0311。ミランダ（I・宝物 3 段階・操作・AUTO 射撃）の単騎。出撃画面では 3 枠目に置いた（ほかの枠は空き。戦闘履歴のパネルでは 1 枠目に出る）。出撃画面で灼熱タブ・3 分モード・スペック固定 ON、戦闘履歴のパネル（f12150）でキャラ名・Lv.400・交戦時間 03:00 を確かめた"
+}

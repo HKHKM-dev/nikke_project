@@ -1,0 +1,208 @@
+[
+  {
+    "id": "317-01",
+    "recording": "317",
+    "kind": "total",
+    "use": "record",
+    "value": 246225542,
+    "description": "ココア・デルタ・モダニア の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "最後の増分は f11646。増分は 6278 個"
+    },
+    "source": "V-0310",
+    "readAt": "2026-10-07"
+  },
+  {
+    "id": "317-02",
+    "recording": "317",
+    "kind": "count",
+    "use": "record",
+    "value": 220,
+    "unit": "トリガー",
+    "description": "ココア・デルタ・モダニア のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "増分は 6278 個。前の増分から 30f 未満の増分（6244 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 45f）から発の数を決めた（2 発になった組 23 個）"
+    },
+    "source": "V-0310",
+    "readAt": "2026-10-07"
+  },
+  {
+    "id": "317-03",
+    "recording": "317",
+    "source": "V-0310",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "compare",
+    "value": 6,
+    "unit": "f",
+    "description": "1 回目のフルバースト（III のタイマーが 00.00 になったフレーム f1415）から、モダニアの殲滅モードの最初の発（f1443。動画で +28f）までのモデルのフレーム数（動画のフレームの差からフルバーストの入りの止まり 22f を引いた）",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）と hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "f1443 は HUD が読めず、f1444 の増分 38,046 が殲滅モードの 2 発分（19,023 × 2）なので、最初の発を f1443 とした。発動の 1 つ前のフレームは III のタイマー 09.52 が 2 フレーム続く（録画の重複フレームの位置）。止まりの明け（+22f）から最初の発までは増分が無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "317-04",
+    "recording": "317",
+    "source": "V-0310",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "compare",
+    "value": 7,
+    "unit": "f",
+    "description": "2 回目のフルバースト（III のタイマーが 00.00 になったフレーム f4117）から、モダニアの殲滅モードの最初の発（f4146。動画で +29f）までのモデルのフレーム数（動画のフレームの差からフルバーストの入りの止まり 22f を引いた）",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）と hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "動画で +28f のフレームは HUD が読めて値が変わらず、+29f の増分が殲滅モードの 1 発。止まりの明け（+22f）から最初の発までは増分が無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "317-05",
+    "recording": "317",
+    "source": "V-0310",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "compare",
+    "value": 7,
+    "unit": "f",
+    "description": "3 回目のフルバースト（III のタイマーが 00.00 になったフレーム f6739）から、モダニアの殲滅モードの最初の発（f6768。動画で +29f）までのモデルのフレーム数（動画のフレームの差からフルバーストの入りの止まり 22f を引いた）",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）と hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "動画で +28f のフレームは HUD が読めて値が変わらず、+29f の増分が殲滅モードの 1 発。止まりの明け（+22f）から最初の発までは増分が無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "317-06",
+    "recording": "317",
+    "source": "V-0310",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "compare",
+    "value": 7,
+    "unit": "f",
+    "description": "4 回目のフルバースト（III のタイマーが 00.00 になったフレーム f9341）から、モダニアの殲滅モードの最初の発（f9370。動画で +29f）までのモデルのフレーム数（動画のフレームの差からフルバーストの入りの止まり 22f を引いた）",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:60:1720:410・tile）と hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "動画で +28f のフレームは HUD が読めて値が変わらず、+29f の増分が殲滅モードの 1 発。止まりの明け（+22f）から最初の発までは増分が無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "317-07",
+    "recording": "317",
+    "source": "V-0310",
+    "readAt": "2026-10-07",
+    "kind": "count",
+    "use": "compare",
+    "value": 874,
+    "unit": "発",
+    "description": "1 回目のフルバースト（f1415〜）の殲滅モードの発の数。最初の発 f1443 から最後の発 f2316（発動の +901f）まで、1 フレーム 1 発（的のジャンプは重ならない）",
+    "method": {
+      "tool": "hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "V-0180 と同じ数え方（1 フレーム 1 発。HUD が読めない・増分の抜けたフレームの次は 2 発分）。最後の発の後は f2338 まで増分が無い。2〜3 回目は的のジャンプ（120f の空き）が窓に重なり、4 回目は終わりの f10230〜10247 の HUD が読めないので数えない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 0,
+        "from": 0,
+        "to": 882
+      },
+      "tolerance": {
+        "abs": 15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "317-08",
+    "recording": "317",
+    "source": "V-0310",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "record",
+    "value": [901, 899, 898, 888],
+    "unit": "f",
+    "description": "1〜4 回目のフルバーストの、III の発動から最後の殲滅モードの発までの動画のフレーム数（モデルの最後の発は動画で +903f）。3 回目は +899〜905 が読めず +906 に 1 発分、4 回目は +889〜906 が読めないので下限",
+    "method": {
+      "tool": "hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）",
+      "note": "殲滅モードの窓の終わりは、効果の発火（+7f）から数えて後ろにずれてはいない（ずれていれば +910f 前後）。止まりを除いたモデルのフレームで 876〜879f で、フルバーストの窓（882f）の終わりの 3〜6f 前"
+    }
+  },
+  {
+    "id": "317-09",
+    "recording": "317",
+    "source": "V-0310",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "record",
+    "value": [-19, -7],
+    "unit": "f",
+    "description": "III の発動の前の、モダニアの最後の通常攻撃の発とみられる増分（4 回目は f9322 = 発動の −19f、3 回目は f6732 = −7f の 27,039）。1 回目はリロード中（RELOADING の表示）、2 回目は −16f の増分（208,626）がデルタの発とみられ、モダニアの最後の発は読み分けていない。どの回も、最後の発から殲滅モードの最初の発までモダニアの増分は無い",
+    "method": {
+      "tool": "hud.ts --mode jumps（recipe:hud-jumps@2 のキャッシュ）と still.ts",
+      "note": "発動の前の発の止まり（バーストのカットイン）は、この検証の問いの外。記録だけ"
+    }
+  }
+]
