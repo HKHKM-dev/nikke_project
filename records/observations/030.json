@@ -10,5 +10,72 @@
     "method": {
       "note": "HUD の総ダメージの 1 フレームごとの増分を、スペック固定の 1 ヒットの値（コア × 会心 × 距離）に当てはめた"
     }
+  },
+  {
+    "id": "030-02",
+    "recording": "030",
+    "source": "V-0306",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "value": 753251,
+    "description": "ラピ（AI。オーシャンは操作・撃たない）の S2 のヒット（528.97% の値。会心）の 1 ヒット。録画の中の S2 はこの 1 回だけ",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分のうち 40 万以上はこの 1 つだけ（f2082。前のフレームも読めた単独の増分で、前後の通常攻撃の発のフレームと重ならない）。比べるモデルは S2 を 20 秒ごとに足した setup（V-0271 の H1。いまの定義では S2 は発動しない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 10,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 20
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "030-03",
+    "recording": "030",
+    "source": "V-0306",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "record",
+    "value": 1278,
+    "unit": "f",
+    "description": "ラピ（AI。オーシャンは操作・撃たない）の S2 の 1 回目のヒットの、戦闘開始（f804。02:59 が出たフレーム）からの動画のフレーム数。最初の発（f815）からは 1267f",
+    "method": {
+      "tool": "timer.ts --mode changes・hud.ts --mode jumps",
+      "note": "戦闘開始は timer.ts の +89〜90f の変わり目（C-0078）。最初の発は hud.ts の最初の増分。1 回目の時刻の仮説（戦闘開始から 1,277f・最初の発から 1,266f）は読む前に V-0306 に書いた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
   }
 ]

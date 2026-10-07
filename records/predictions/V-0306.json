@@ -44,7 +44,8 @@
         "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
-      "note": "S2 の 1 ヒット（会心なし。S1 の被弾の▲が乗れば 073 の比 1.0409・1.2183 倍）"
+      "note": "S2 の 1 ヒット（会心なし。S1 の被弾の▲が乗れば 073 の比 1.0409・1.2183 倍）",
+      "observations": ["028-05"]
     },
     {
       "id": "hit-crit",
@@ -59,7 +60,8 @@
         "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
-      "note": "S2 の 1 ヒット（会心）"
+      "note": "S2 の 1 ヒット（会心）",
+      "observations": ["029-03"]
     }
   ],
   "predicted": {
