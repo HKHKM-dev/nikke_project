@@ -1,0 +1,164 @@
+{
+  "verification": "V-0316",
+  "note": "既存の録画 020（エーテル（I・AI）+ デルタ（II・AI）+ マナ（III・操作）・電撃の的・3 分モード・スペック固定 ON・オートバースト ON）の読み直し。マナのバーストの持続ダメージの tick を読む前に出した。H1 はいまのモデル（C-0301 の遅れ 2f と、C-0101 の形の tick の列）",
+  "team": [
+    {
+      "rid": 291,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 290,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（C-0301・C-0101）",
+      "override": {}
+    }
+  ],
+  "targets": [
+    {
+      "id": "offsets-1",
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数"
+    },
+    {
+      "id": "offsets-2",
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数"
+    },
+    {
+      "id": "offsets-3",
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数"
+    },
+    {
+      "id": "offsets-4",
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数"
+    },
+    {
+      "id": "offsets-5",
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "5 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数"
+    },
+    {
+      "id": "tick",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "持続ダメージの 1 tick（会心なし。tick の見分けに使う）"
+    },
+    {
+      "id": "tick-crit",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "note": "持続ダメージの 1 tick（会心）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "e04f616ad0385aa41b59ca5a6ad76e1f3b1ea558",
+    "values": {
+      "H1": {
+        "offsets-1": [24, 112, 171, 230, 289, 348, 406, 465, 524, 583],
+        "offsets-2": [24, 112, 171, 230, 289, 348, 406, 465, 524, 583],
+        "offsets-3": [24, 112, 171, 230, 289, 348, 406, 465, 524, 583],
+        "offsets-4": [24, 112, 171, 230, 289, 348, 406, 465, 524, 583],
+        "offsets-5": [24, 112, 171, 230, 289, 348, 406, 465, 524, 583],
+        "tick": 2741786.397504,
+        "tick-crit": 3655715.196672
+      }
+    },
+    "seen": {
+      "020": [
+        "018-02",
+        "020-01",
+        "020-02",
+        "020-03",
+        "020-04",
+        "020-05",
+        "020-06",
+        "020-07",
+        "020-08",
+        "020-09",
+        "020-10",
+        "020-11",
+        "020-12",
+        "020-13",
+        "020-14",
+        "020-15",
+        "020-16"
+      ]
+    }
+  }
+}
