@@ -4,7 +4,6 @@
 // Stage 13: 手書きの OL の表（data/masters/overload.json）のオプションが CDN の equip_option_table_v2 と一致することを確かめる。
 //   node scripts/fetch-data.ts [--limit N] [--refresh] [--concurrency N]
 // 生 JSON は .cache/ に保存し、--refresh を付けない限りキャッシュを優先する。
-import './below-normal.ts';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

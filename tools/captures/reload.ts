@@ -22,7 +22,6 @@
 // --shots に `hud.ts --mode jumps` の出力のファイルを渡すと、リロードごとに最終弾（見え始めより前の最後の増分）・
 // 最終弾 → 完了・完了 → 次の増分・遡った 0 の点 − 最終弾と、窓をまたいだ回・最終弾の読み違いの印を足し、
 // 集計を標準エラーに出す。
-import '../../packages/core/scripts/below-normal.ts';
 import { parseArgs } from 'node:util';
 import { readFileSync } from 'node:fs';
 import { cropFilter, parseCrop, rawFrames } from './ffmpeg.ts';

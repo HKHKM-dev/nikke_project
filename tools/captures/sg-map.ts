@@ -8,7 +8,6 @@
 //   点を探した画素（sg-dots-lib の searchable）に置き、読めた当たりの点を 1 個ずつ置く。どちらも基準点（x は targetMedianX、
 //   y は区間の足元）からの座標で、区間ごとに足す。当たりと見込みを標準偏差 6px のガウスでぼかした比を P とし、ぼかした見込みの
 //   数がぼかしの広がり（2π × σ²）の中で 2 個に満たない所は σ を 12px、24px に広げる。
-import '../../packages/core/scripts/below-normal.ts';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';

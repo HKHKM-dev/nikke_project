@@ -1,7 +1,6 @@
 // Stage 19-A: 録画の台帳の表を作り直す。
 // Stage 20-C: records/recordings/<録画 id>.json から plan/captures/recordings.md を丸ごと書き出す（前の中身は読まない）。
 // 使い方: npm run records:table（ルート。整形まで行う）
-import './below-normal.ts';
 import { writeFileSync } from 'node:fs';
 import { renderRecordingsDoc, validateRecordings } from '../src/records/recordings.ts';
 import {

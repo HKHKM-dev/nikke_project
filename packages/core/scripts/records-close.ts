@@ -4,7 +4,6 @@
 // 「次に撮るもの」「分かったこと」が空でない）。予測ファイルに控え（seen）があれば、git の履歴で予測の commit が観測値を足した commit
 // より前かも見る（plan/design-reread-prediction.md 5 節。ブランチの上で、マージの前に回す）。通れば --mark で状態を完了に書き換え、records:check と CI と同じ確認を回し
 // （--no-ci で省く）、PR の題名の案を出す。roadmap.md の更新と PR は人（エージェント）が行う。
-import './below-normal.ts';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';

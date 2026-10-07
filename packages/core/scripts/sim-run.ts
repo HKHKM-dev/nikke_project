@@ -21,7 +21,6 @@
 // --jump-windows で、出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の
 // setup.jumpWindows と同じ）。観測値の id（例 056-11。records/observations/<録画>.json の値）か、[始まり, 終わり, …] の秒を
 // カンマ区切りで渡す。--events に狙えない窓を持つ出来事のセットが要る。
-import './below-normal.ts';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';

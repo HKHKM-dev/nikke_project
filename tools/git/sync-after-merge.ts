@@ -10,7 +10,6 @@
 // （作業中の変更がある・早送りに失敗した）は、黙っていると気づかれないので知らせる。早送りは Windows で途中で
 // 失敗すると、作業ツリーのファイルだけが書き換わり HEAD と index が残ることがある（2026-09-28、#54 の早送り）。
 // 失敗してもフックを止めない（常に終了コード 0）。
-import '../../packages/core/scripts/below-normal.ts';
 import { execFileSync } from 'node:child_process';
 
 /** 成功したら標準出力（前後の空白を除く）、失敗したら null */

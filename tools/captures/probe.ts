@@ -2,7 +2,6 @@
 //   node tools/captures/probe.ts [ディレクトリまたはファイル...]
 // 既定は録画の置き場所（dirs.ts。種別サブフォルダごと再帰的に見る）。
 // 録画本体は Git 管理外なので、worktree からは絶対パスで触る。
-import '../../packages/core/scripts/below-normal.ts';
 import { readdirSync, statSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
 import { capturesDir } from './dirs.ts';

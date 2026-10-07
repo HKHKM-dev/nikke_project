@@ -6,7 +6,6 @@
 // - 誤検出率: 的が確かにいない所（照準の中心から SG の照準円の半径 + 40px より外で、findTarget の外接矩形を 25px 広げた外）の
 //   画素のうち、マスクが的とした割合
 // を出す。選び方（V-0127 の「予測」に固定）: 誤検出率 ≤ maxFp の候補のうち再現率が最大。差 0.01 未満なら処理の少ない方。
-import '../../packages/core/scripts/below-normal.ts';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';

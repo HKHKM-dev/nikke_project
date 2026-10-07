@@ -3,7 +3,6 @@
 // Stage 20-D: 検証記録の一覧（plan/verifications.md）も records/verifications/ から作り直す（前の中身は読まない）。
 // スキル定義の根拠（plan/skills-guide.md 3 節）: 定義の claims を結論と突き合わせ、対応状況の一覧（plan/skills.md）も作り直す。
 // 使い方: npm run records:check（ルート。整形まで行う）
-import './below-normal.ts';
 import { readFileSync, writeFileSync } from 'node:fs';
 import {
   claimsByObservation,
