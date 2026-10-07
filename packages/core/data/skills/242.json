@@ -15,7 +15,10 @@
             "stat": "unknown",
             "target": "allies",
             "trigger": "unknown"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         },
         {
           "ja": "最終攻撃力が最も高い味方 2 機への受けるHP回復量▲はダメージに関係しない",
@@ -58,7 +61,10 @@
             "stat": "unknown",
             "target": "allies",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         },
         {
           "ja": "最終攻撃力が最も高い味方 2 機の吸収回復（攻撃ダメージの X% 回復・10 秒）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",

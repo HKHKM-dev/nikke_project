@@ -67,7 +67,10 @@
             "stat": "unknown",
             "target": "self",
             "trigger": "fullChargeShot"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         },
         {
           "ja": "バースト 3 段階突入時の自分の攻撃力▲（10 秒）は未対応",
@@ -125,7 +128,10 @@
           "effect": {
             "kind": "damage",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     }

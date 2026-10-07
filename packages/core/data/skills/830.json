@@ -32,7 +32,10 @@
             "stat": "unknown",
             "target": "self",
             "trigger": "battleStart"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },

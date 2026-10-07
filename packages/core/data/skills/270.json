@@ -15,7 +15,10 @@
             "stat": "unknown",
             "target": "allies",
             "trigger": "normalShot"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },

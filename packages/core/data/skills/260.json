@@ -151,7 +151,10 @@
           "effect": {
             "kind": "weaponChange",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     }
