@@ -64,13 +64,13 @@
 
 予測は 2026-10-07（commit 5b297b0）に出した。
 
-| 指標                                   | 実測         | 予測 H0 |
-| -------------------------------------- | ------------ | ------- |
-| effect-first-1（burstEffectFirstShot） | （実測なし） | 0       |
-| effect-first-2（burstEffectFirstShot） | （実測なし） | 0       |
-| effect-first-3（burstEffectFirstShot） | （実測なし） | 0       |
-| effect-first-4（burstEffectFirstShot） | （実測なし） | 0       |
-| effect-first-5（burstEffectFirstShot） | （実測なし） | 0       |
+| 指標                                   | 実測          | 予測 H0         |
+| -------------------------------------- | ------------- | --------------- |
+| effect-first-1（burstEffectFirstShot） | 0（`222-08`） | 0（+0、許容内） |
+| effect-first-2（burstEffectFirstShot） | 0（`222-09`） | 0（+0、許容内） |
+| effect-first-3（burstEffectFirstShot） | 0（`222-10`） | 0（+0、許容内） |
+| effect-first-4（burstEffectFirstShot） | 0（`222-11`） | 0（+0、許容内） |
+| effect-first-5（burstEffectFirstShot） | 0（`222-12`） | 0（+0、許容内） |
 
 <!-- records:predictions:end -->
 

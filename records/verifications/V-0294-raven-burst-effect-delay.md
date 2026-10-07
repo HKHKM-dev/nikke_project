@@ -57,18 +57,18 @@
 
 予測は 2026-10-07（commit 5b297b0）に出した。
 
-| 指標                              | 実測         | 予測 H0     |
-| --------------------------------- | ------------ | ----------- |
-| tick-1（dotStackTickDamage）      | （実測なし） | 343,883.119 |
-| tick-1-crit（dotStackTickDamage） | （実測なし） | 458,510.826 |
-| tick-2（dotStackTickDamage）      | （実測なし） | 343,883.119 |
-| tick-2-crit（dotStackTickDamage） | （実測なし） | 458,510.826 |
-| tick-3（dotStackTickDamage）      | （実測なし） | 343,883.119 |
-| tick-3-crit（dotStackTickDamage） | （実測なし） | 458,510.826 |
-| tick-4（dotStackTickDamage）      | （実測なし） | 343,883.119 |
-| tick-4-crit（dotStackTickDamage） | （実測なし） | 458,510.826 |
-| tick-5（dotStackTickDamage）      | （実測なし） | 343,883.119 |
-| tick-5-crit（dotStackTickDamage） | （実測なし） | 458,510.826 |
+| 指標                              | 実測                  | 予測 H0                       |
+| --------------------------------- | --------------------- | ----------------------------- |
+| tick-1（dotStackTickDamage）      | 343,883.2（`225-03`） | 343,883.119（-0.081、許容内） |
+| tick-1-crit（dotStackTickDamage） | （実測なし）          | 458,510.826                   |
+| tick-2（dotStackTickDamage）      | 343,883.1（`225-04`） | 343,883.119（+0.019、許容内） |
+| tick-2-crit（dotStackTickDamage） | （実測なし）          | 458,510.826                   |
+| tick-3（dotStackTickDamage）      | （実測なし）          | 343,883.119                   |
+| tick-3-crit（dotStackTickDamage） | 458,510.8（`225-05`） | 458,510.826（+0.026、許容内） |
+| tick-4（dotStackTickDamage）      | 343,883.1（`225-06`） | 343,883.119（+0.019、許容内） |
+| tick-4-crit（dotStackTickDamage） | （実測なし）          | 458,510.826                   |
+| tick-5（dotStackTickDamage）      | 343,883.1（`225-07`） | 343,883.119（+0.019、許容内） |
+| tick-5-crit（dotStackTickDamage） | （実測なし）          | 458,510.826                   |
 
 <!-- records:predictions:end -->
 

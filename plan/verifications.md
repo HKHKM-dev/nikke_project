@@ -2936,26 +2936,30 @@
   - 問い: ドレイク（III・宝物あり）のバーストの攻撃ダメージ▲・最大装弾数▲は、III の発動（0f）から何フレームで、ドレイクの発（ペレット）の値と照準の横の残弾に出るか。ヒット（4f 後）より前か
   - 話題: スキル・キャラ固有・日付: 2026-10-07・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）。backlog 2-4（バースト使用時の効果の遅れ）
   - 録画: 222
+  - 観測値: 222-08、222-09、222-10、222-11、222-12、222-13、222-14
   - 派生元: V-0202
   - 予測（2026-10-07、commit 5b297b0）との比べ:
-    - effect-first-1（burstEffectFirstShot）: 実測なし。H0 0
-    - effect-first-2（burstEffectFirstShot）: 実測なし。H0 0
-    - effect-first-3（burstEffectFirstShot）: 実測なし。H0 0
-    - effect-first-4（burstEffectFirstShot）: 実測なし。H0 0
-    - effect-first-5（burstEffectFirstShot）: 実測なし。H0 0
+    - effect-first-1（burstEffectFirstShot）: 実測 0（222-08）。H0 0（+0、許容内）
+    - effect-first-2（burstEffectFirstShot）: 実測 0（222-09）。H0 0（+0、許容内）
+    - effect-first-3（burstEffectFirstShot）: 実測 0（222-10）。H0 0（+0、許容内）
+    - effect-first-4（burstEffectFirstShot）: 実測 0（222-11）。H0 0（+0、許容内）
+    - effect-first-5（burstEffectFirstShot）: 実測 0（222-12）。H0 0（+0、許容内）
+    - 許容内の指標: H0 5/5。合う仮説は H0 だけ
 - **[V-0294](../records/verifications/V-0294-raven-burst-effect-delay.md)** レイヴンの A.N.モードの持続ダメージ▲は、III の発動とヒットのどちらで S1 の tick に乗り始めるか（録画 225 の読み直し）
   - 問い: レイヴン（III）のバーストの A.N.モード（持続ダメージ▲。C-0332）は、III の発動（0f）とヒット（43f 後）のどちらから、S1 の持続ダメージの tick に乗るか
   - 話題: スキル・キャラ固有・日付: 2026-10-07・状態: 調査中・Stage: plan/design-burst-landing.md 5 節の 2（ほかのキャラの遅れ）、plan/design-sustained-damage-up.md。backlog 2-4（バースト使用時の効果の遅れ）
   - 録画: 225
+  - 観測値: 225-03、225-04、225-05、225-06、225-07、225-08
   - 派生元: V-0205
   - 予測（2026-10-07、commit 5b297b0）との比べ:
-    - tick-1（dotStackTickDamage）: 実測なし。H0 343,883.119
+    - tick-1（dotStackTickDamage）: 実測 343,883.2（225-03）。H0 343,883.119（-0.081、許容内）
     - tick-1-crit（dotStackTickDamage）: 実測なし。H0 458,510.826
-    - tick-2（dotStackTickDamage）: 実測なし。H0 343,883.119
+    - tick-2（dotStackTickDamage）: 実測 343,883.1（225-04）。H0 343,883.119（+0.019、許容内）
     - tick-2-crit（dotStackTickDamage）: 実測なし。H0 458,510.826
     - tick-3（dotStackTickDamage）: 実測なし。H0 343,883.119
-    - tick-3-crit（dotStackTickDamage）: 実測なし。H0 458,510.826
-    - tick-4（dotStackTickDamage）: 実測なし。H0 343,883.119
+    - tick-3-crit（dotStackTickDamage）: 実測 458,510.8（225-05）。H0 458,510.826（+0.026、許容内）
+    - tick-4（dotStackTickDamage）: 実測 343,883.1（225-06）。H0 343,883.119（+0.019、許容内）
     - tick-4-crit（dotStackTickDamage）: 実測なし。H0 458,510.826
-    - tick-5（dotStackTickDamage）: 実測なし。H0 343,883.119
+    - tick-5（dotStackTickDamage）: 実測 343,883.1（225-07）。H0 343,883.119（+0.019、許容内）
     - tick-5-crit（dotStackTickDamage）: 実測なし。H0 458,510.826
+    - 許容内の指標: H0 5/5。合う仮説は H0 だけ
