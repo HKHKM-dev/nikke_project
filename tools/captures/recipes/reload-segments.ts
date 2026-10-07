@@ -49,7 +49,8 @@ export const reloadSegments: Recipe = {
     await loadHudJumps(ctx);
     const shots = join(ctx.derivedDir, `${HUD_JUMPS_CACHE_KEY}.tsv`);
     const sha = 'sha256' in ctx.recording ? ctx.recording.sha256 : undefined;
-    const key = `reload-fit${stages ? '-stages' : ''}${ctx.options.crop ? `-${ctx.options.crop.replace(/,/g, '_')}` : ''}@${VERSION}`;
+    // 発のフレームは hud-jumps のキャッシュから取るので、その版も鍵に入れる
+    const key = `reload-fit${stages ? '-stages' : ''}${ctx.options.crop ? `-${ctx.options.crop.replace(/,/g, '_')}` : ''}@${VERSION}+${HUD_JUMPS_CACHE_KEY}`;
     const text = await derived(
       ctx.derivedDir,
       key,

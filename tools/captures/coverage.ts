@@ -5,7 +5,7 @@
 //
 // 撃っている間は照準円の中が着弾の光で隠れるので、形は撃っていないコマ（リロード中など）から、照準のずれは発のフレームから
 // 読み、組み合わせる（設計書 1.1）。
-// - 発のフレーム: HUD の増分（derived/<id>/hud-jumps@1.tsv。read.ts のレシピ hud-jumps が作る）をまとまり（マガジン）に分け、
+// - 発のフレーム: HUD の増分（derived/<id>/hud-jumps@<版>.tsv。read.ts のレシピ hud-jumps が作る）をまとまり（マガジン）に分け、
 //   最初の増分から連射の間隔ごとに、最後の増分までを発とする（V-0118 の数え方）。
 // - 発ごとに: 照準の中心 a_t（findAim）と、的の基準点 b_t。ずれ d_t = a_t − b_t。基準点の横は、findTarget の的の画素（半分の
 //   解像度）のうち照準の中心から anchorExclude px より外のものの x の中央値（照準の周りは、発のフレームでは着弾の光、撃っていない
@@ -58,6 +58,7 @@ import {
 } from './coverage-lib.ts';
 import { capturesDir } from './dirs.ts';
 import { FIELD_H, fieldBackground, fitTintAround } from './field-bg.ts';
+import { HUD_JUMPS_CACHE_KEY } from './recipes/hud-jumps.ts';
 import { parseHudJumpsTsv } from './recipes/triggers.ts';
 
 const { values, positionals } = parseArgs({
@@ -103,7 +104,7 @@ if (!['AR', 'SMG'].includes(character.weaponType)) log(`注意: 武器種 ${char
 // 発のフレームと、撃っていないコマ
 
 const derivedDir = join(capturesDir(), 'derived', id);
-const hudPath = join(derivedDir, 'hud-jumps@1.tsv');
+const hudPath = join(derivedDir, `${HUD_JUMPS_CACHE_KEY}.tsv`);
 if (!existsSync(hudPath)) {
   console.error(`${hudPath} が無い。先に node tools/captures/read.ts ${id} hud-jumps でキャッシュを作る`);
   process.exit(1);

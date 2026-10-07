@@ -8,8 +8,11 @@ import { observation, type Recipe, type RecipeContext } from './types.ts';
 
 /** レシピの版。2: 組の跨ぐ長さを、読めなかった間の真ん中から測る（V-0079） */
 export const HUD_JUMPS_VERSION = 2;
-/** hud.ts --mode jumps の出力のキャッシュの名前（出力の形は版 1 から変わらない） */
-export const HUD_JUMPS_CACHE_KEY = 'hud-jumps@1';
+/**
+ * hud.ts --mode jumps の出力のキャッシュの名前（出力の形は版 1 から変わらない）。
+ * 2: hud.ts が 0 と 8 を穴の数で分けるようにした（V-XXXX）。同じ録画でも読みが変わるので作り直す
+ */
+export const HUD_JUMPS_CACHE_KEY = 'hud-jumps@2';
 
 function runHud(video: string): Promise<string> {
   return new Promise((resolve, reject) => {
