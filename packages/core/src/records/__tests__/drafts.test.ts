@@ -230,8 +230,23 @@ describe('最小構成の警告', () => {
     expect(normalConditionMeasured(data.characters.get(304)!, recording, data.enemies)).toBe(true);
     expect(normalConditionMeasured(data.characters.get(511)!, recording, data.enemies)).toBe(true);
     expect(normalConditionMeasured(data.characters.get(103)!, recording, data.enemies)).toBe(true);
-    const raid = { ...recording, target: { name: 'boss', element: null } };
+    const raid = { ...recording, mode: 'interception-special' as const, target: { name: 'boss', element: null } };
     expect(normalConditionMeasured(data.characters.get(307)!, raid, data.enemies)).toBe(false);
+    // 台帳の属性が空の射撃場 3 分モードの録画も、射撃場の表を引く（5 つの属性のプリセットが同じ表を指す。D1）
+    const noElement = { ...recording, target: { ...recording.target, element: null } };
+    expect(normalConditionMeasured(data.characters.get(307)!, noElement, data.enemies)).toBe(true);
+    const noMode = { ...noElement, mode: null };
+    expect(normalConditionMeasured(data.characters.get(307)!, noMode, data.enemies)).toBe(false);
+    // 射撃場のプリセットが属性ごとに別の表を指すなら、属性が空では決まらない
+    const firstRange = data.enemies.enemies.find((p) => p.content === 'range')!;
+    const split = {
+      ...data.enemies,
+      enemies: data.enemies.enemies.map((p) => (p === firstRange ? { ...p, targetProfile: 'other' } : p)),
+    };
+    expect(normalConditionMeasured(data.characters.get(307)!, noElement, split)).toBe(false);
+    const water = { ...recording, target: { ...recording.target, element: 'Water' as const } };
+    expect(firstRange.element).not.toBe('Water');
+    expect(normalConditionMeasured(data.characters.get(307)!, water, split)).toBe(true);
   });
 
   it('編成の条件で外れる効果は見ない（録画 192 のラムの S1 の CT▼。同じ部隊の味方がいない）', () => {

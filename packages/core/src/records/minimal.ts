@@ -26,12 +26,18 @@ export function mechanismConfirmed(def: SkillDefinition | undefined, states: Rea
   return entriesOf(def).every(({ entry }) => entryConfirmed(entry));
 }
 
-/** 録画の的の表（射撃場の的で、属性のプリセットがあるもの）。無ければ undefined */
+/**
+ * 録画の的の表（射撃場の的で、属性のプリセットがあるもの）。無ければ undefined。
+ * 台帳の属性が空でも、射撃場 3 分モードの録画で、射撃場のプリセットがどれも同じ表を指すなら、その表を引く
+ * （plan/design-minimal-check.md 5 節の D1。モデルの targetProfileForEnemy が属性の空の射撃場の的に射撃場の表を引くのと揃える）
+ */
 export function targetProfileOfRecording(recording: RecordingEntry, enemies: EnemyPresetMaster) {
-  if (recording.target.element === null) return undefined;
-  const preset = enemies.enemies.find(
-    (p) => p.content === 'range' && p.element === recording.target.element && p.targetProfile !== undefined,
-  );
+  const range = enemies.enemies.filter((p) => p.content === 'range' && p.targetProfile !== undefined);
+  if (recording.target.element === null) {
+    if (recording.mode !== 'range-3min' || new Set(range.map((p) => p.targetProfile)).size !== 1) return undefined;
+    return targetProfileOf(enemies, range[0]!);
+  }
+  const preset = range.find((p) => p.element === recording.target.element);
   return preset === undefined ? undefined : targetProfileOf(enemies, preset);
 }
 
