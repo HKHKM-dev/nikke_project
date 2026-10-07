@@ -1,18 +1,29 @@
 // 起案と結論の下書き（plan/design-records-automation.md 3.1・3.6 節）。
 //   npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN]
-//   npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>]
+//   npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>] [--subject "<定義の場所>" … | --mechanism <機構>]
 // verification: 次の空き番号で records/verifications/V-NNNN-<短い名前>.md をひな形から作る（状態は調査中）。
 // claim: 次の空き番号で records/claims/C-NNNN.json を作る。話題はその検証記録の話題、根拠はその検証記録を source にする観測値、
 //   等級は機械の候補（3.5 節）、状態は確定にできる条件が全部そろえば確定、欠ければ仮説（欠けた条件を出す。3.6 節）。
-//   text と model は人が書く。
+//   結論の対象（subject）は --subject（定義の場所。複数可）か --mechanism（plan/design-minimal-relevance.md 3.2 節）。
+//   最小構成の検査（同 5 節）は、下書きを確定とみて根拠の観測値の組を判定する。text と model は人が書く。
 import { spawnSync } from 'node:child_process';
 import { existsSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import { CLAIM_TOPICS, gradeCandidate, toClaims, type ClaimTopic } from '../src/records/claims.ts';
+import {
+  CLAIM_MECHANISMS,
+  CLAIM_TOPICS,
+  gradeCandidate,
+  toClaims,
+  type Claim,
+  type ClaimMechanism,
+  type ClaimSubject,
+  type ClaimTopic,
+} from '../src/records/claims.ts';
 import { claimDraft, nextId, verificationFileName, verificationTemplate } from '../src/records/drafts.ts';
-import { minimalWarnings } from '../src/records/minimal.ts';
 import { invalidReasonsOf, runObservations } from '../src/records/observations.ts';
 import { comparePredictions, todayLocal } from '../src/records/predictions.ts';
+import { relevanceOf } from '../src/records/relevance.ts';
+import { withFreshSensitivity } from '../src/records/sensitivity.ts';
 import {
   ROOT,
   loadClaims,
@@ -20,6 +31,7 @@ import {
   loadPredictions,
   loadRecordingsFile,
   loadRecordsData,
+  loadSensitivity,
   loadSkillDefinitions,
   loadVerifications,
   recordingMap,
@@ -34,13 +46,16 @@ const { values, positionals } = parseArgs({
     question: { type: 'string' },
     from: { type: 'string' },
     text: { type: 'string' },
+    subject: { type: 'string', multiple: true },
+    mechanism: { type: 'string' },
   },
 });
 
 const USAGE =
   'usage: npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN]\n' +
-  '       npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>]\n' +
-  `話題: ${CLAIM_TOPICS.join(' / ')}`;
+  '       npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>] [--subject "<定義の場所>" … | --mechanism <機構>]\n' +
+  `話題: ${CLAIM_TOPICS.join(' / ')}\n` +
+  `機構: ${CLAIM_MECHANISMS.join(' / ')}`;
 
 function fail(message: string): never {
   console.error(message);
@@ -125,13 +140,33 @@ if (kind === 'verification') {
     },
   ])[0]!;
   const candidate = gradeCandidate(basisForCandidate, residualOf, new Set(invalidReasonsOf(observations).keys()));
-  const warnings = minimalWarnings([verification], {
+  // 結論の対象（plan/design-minimal-relevance.md 3.2 節）
+  if (values.subject !== undefined && values.mechanism !== undefined) fail('--subject と --mechanism はどちらか 1 つ');
+  if (values.mechanism !== undefined && !(CLAIM_MECHANISMS as readonly string[]).includes(values.mechanism))
+    fail(`機構が語彙に無い: ${values.mechanism}`);
+  const subject: ClaimSubject | undefined =
+    values.mechanism !== undefined
+      ? { mechanism: values.mechanism as ClaimMechanism }
+      : values.subject !== undefined
+        ? { places: values.subject.map((s) => s.replaceAll('`', '').trim()) }
+        : undefined;
+  // 最小構成の検査（同 5 節）: 下書きを確定とみて、根拠の観測値の組を判定する。感度はその場で計算して重ねる
+  const asConfirmed: Claim = {
+    ...basisForCandidate,
+    state: '確定',
+    observations: own.filter((o) => o.invalid === undefined).map((o) => o.id),
+    ...(subject === undefined ? {} : { subject }),
+  };
+  const relevanceCtx = {
     recordings,
     characters: data.characters,
     skills: data.skills,
     enemies: data.enemies,
-    claims,
-  });
+    claims: [...claims, asConfirmed],
+    data,
+  };
+  const sensitivity = withFreshSensitivity(own, relevanceCtx, loadSensitivity());
+  const minimal = relevanceOf([asConfirmed], observations, relevanceCtx, sensitivity)[0]?.warnings ?? [];
   const prediction = predictions.find((p) => p.verification === from);
   const draft = claimDraft({
     id,
@@ -142,7 +177,8 @@ if (kind === 'verification') {
     observations: own,
     gradeCandidate: candidate,
     compared,
-    warnings,
+    ...(subject === undefined ? {} : { subject }),
+    minimal,
     prediction: prediction === undefined ? undefined : comparePredictions(prediction, observations),
   });
   const path = `${ROOT}records/claims/${id}.json`;
@@ -157,6 +193,10 @@ if (kind === 'verification') {
   console.log(
     'text（結論の文）と model（モデル側）を書き、検証記録の「結論」に ID を足してから npm run records:check を回す',
   );
+  if (subject !== undefined && 'places' in subject)
+    console.log(
+      `subject の定義の場所（${subject.places.join('、')}）の claims にも ${id} を足す（records:check が確かめる）`,
+    );
   void loadSkillDefinitions;
 } else {
   fail('verification か claim を指定する');

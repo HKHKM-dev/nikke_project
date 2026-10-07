@@ -1,14 +1,7 @@
 // 起案と結論の下書き・最小構成の警告・確定の等級の検査（plan/design-records-automation.md 3.1・3.5・3.6 節）
 import { format, resolveConfig } from 'prettier';
 import { describe, expect, it } from 'vitest';
-import {
-  loadClaims,
-  loadObservations,
-  loadRecordingsFile,
-  loadRecordsData,
-  loadVerifications,
-  recordingMap,
-} from '../../../scripts/records-data.ts';
+import { loadClaims, loadRecordingsFile, loadRecordsData, recordingMap } from '../../../scripts/records-data.ts';
 import { toClaims, validateClaims, type ClaimFile, type ClaimState } from '../claims.ts';
 import {
   claimDraft,
@@ -18,7 +11,8 @@ import {
   verificationTemplate,
   type ClaimDraftInput,
 } from '../drafts.ts';
-import { mechanismConfirmed, minimalWarnings, normalConditionMeasured, renderMinimalLines } from '../minimal.ts';
+import { mechanismConfirmed, normalConditionMeasured } from '../minimal.ts';
+import { elementsOf } from '../relevance.ts';
 import type { Observation } from '../observations.ts';
 import { parseVerification } from '../verifications.ts';
 import type { SkillDefinition } from '../../skills/types.ts';
@@ -78,6 +72,7 @@ const obs = (id: string, readAt = '2026-10-02', invalid = false): Observation =>
   description: '',
   source: 'V-0099',
   readAt,
+  scope: { slot: 1, source: 'normal' },
   ...(invalid ? { invalid: { reason: '読み違い', date: '2026-10-02' } } : {}),
 });
 
@@ -94,7 +89,8 @@ describe('claimDraft（結論の下書きの状態）', () => {
       ['101-01', true],
       ['102-01', true],
     ]),
-    warnings: [],
+    subject: { mechanism: 'targetTable' },
+    minimal: [],
     prediction: undefined,
   };
 
@@ -115,9 +111,31 @@ describe('claimDraft（結論の下書きの状態）', () => {
     expect(claimDraft({ ...base, gradeCandidate: undefined }).file.grade).toBe('単独実測');
     expect(claimDraft({ ...base, observations: [], gradeCandidate: undefined }).file.grade).toBe('推論');
     expect(
-      claimDraft({ ...base, warnings: [{ verification: 'V-0099', recording: '048', unconfirmed: ['a', 'b'] }] })
-        .reasons[0],
-    ).toContain('最小構成');
+      claimDraft({
+        ...base,
+        minimal: [
+          {
+            observation: '101-01',
+            recordings: ['101'],
+            elements: [{ name: 'a skill1.effects[0]', reason: '根拠なし' }],
+            marked: [],
+          },
+        ],
+      }).reasons[0],
+    ).toContain('最小構成の警告がある（a skill1.effects[0]（101-01））');
+    // 印だけの組は警告ではない
+    expect(
+      claimDraft({ ...base, minimal: [{ observation: '101-01', recordings: ['101'], elements: [], marked: ['a'] }] })
+        .reasons,
+    ).toEqual([]);
+    // 結論の対象が無い・compare も scope も無い観測値（設計書 9 節の 2）
+    const { subject: _subject, ...noSubject } = base;
+    expect(claimDraft(noSubject).reasons[0]).toContain('結論の対象');
+    const bare = { ...obs('103-01'), scope: undefined };
+    expect(claimDraft({ ...base, observations: [bare] }).reasons.some((r) => r.includes('scope の無い観測値'))).toBe(
+      true,
+    );
+    expect(claimDraft(base).file.subject).toEqual({ mechanism: 'targetTable' });
     expect(
       claimDraft({ ...base, observations: [obs('101-01'), obs('102-01', '2026-10-02', true)] }).reasons[0],
     ).toContain('失効');
@@ -251,27 +269,9 @@ describe('最小構成の警告', () => {
 
   it('編成の条件で外れる効果は見ない（録画 192 のラムの S1 の CT▼。同じ部隊の味方がいない）', () => {
     const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims };
-    const v = loadVerifications().find((x) => x.recordings.includes('192'))!;
-    expect(minimalWarnings([v], ctx)).toEqual([]);
+    const names = elementsOf(recordings.get('192')!, ctx).map((e) => e.name);
+    expect(names.some((n) => n.startsWith('ラム skill1.effects['))).toBe(false);
     // 外さずに見ると、CT▼ の根拠の C-0235（仮説）でラムが未確定になる
     expect(mechanismConfirmed(data.skills.get(822), states)).toBe(false);
-  });
-
-  it('単騎の録画には出ず、未確定の枠が 2 つ以上の多人数の録画に出る', () => {
-    const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims };
-    const verifications = loadVerifications();
-    const solo = verifications.find((v) => v.id === 'V-0063')!;
-    expect(minimalWarnings([solo], ctx)).toEqual([]);
-    // 録画 048〜050（リター・クラウン・アリス・モダニア・紅蓮：ブラックシャドウ）は、未確定の枠が 2 つ以上
-    const team = verifications.find((v) => v.id === 'V-0092')!;
-    const w = minimalWarnings([team], ctx);
-    expect(w.map((x) => x.recording)).toEqual(['048', '049', '050']);
-    expect(renderMinimalLines(w)[0]).toContain('最小構成の警告');
-    // 録画 047 は台帳の的の属性を埋めて（灼熱）的の表が引け、ラム・デルタが確定に戻る。未確定は紅蓮：ブラックシャドウの 1 枠だけ
-    const v047 = verifications.find((v) => v.id === 'V-0002')!;
-    expect(minimalWarnings([v047], ctx).filter((x) => x.recording === '047')).toEqual([]);
-    expect(renderMinimalLines([])).toEqual([]);
-    const o: Observation = loadObservations()[0]!;
-    expect(o.id).toBeTruthy();
   });
 });

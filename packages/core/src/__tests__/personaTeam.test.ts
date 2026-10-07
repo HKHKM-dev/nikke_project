@@ -200,7 +200,7 @@ describe('追撃とバトンタッチ（ココア + ユニ + クイーン（真�
     expect(queenBursts.length).toBeGreaterThan(0);
   });
 
-  // 追撃の分配ダメージは、追撃が付いたフレームの 82f 後（C-0361。仮説。動画では雪子のバーストのヒットの 104f 後で、間に止まり 22f が入る。V-0292）
+  // 追撃の分配ダメージは、追撃が付いたフレームの 82f 後（C-0429。仮説。動画では雪子のバーストのヒットの 104f 後で、間に止まり 22f が入る。V-0292）
   it("applies the follow-up to Queen at each of Yukiko's bursts, and fires Queen's S1 82 frames later", () => {
     const followUps = appliedFrames(plan.timeline, 'followUp', q);
     expect(followUps).toEqual(yukikoBursts.filter((f) => f < plan.frames));

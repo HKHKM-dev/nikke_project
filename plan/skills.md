@@ -74,16 +74,16 @@ notes の種類: 未対応 28・前提の外 24・計算に無関係 33・補足
 ## 32 ミランダ
 
 - **skill1**: supported
-  - effects[0] timed・normalHit・hitRate: C-0428（確定）、C-0429（仮説）
-  - effects[1] timed・normalHit・hitRate: C-0428（確定）、C-0429（仮説）
+  - effects[0] timed・normalHit・hitRate: C-0430（確定）、C-0431（仮説）
+  - effects[1] timed・normalHit・hitRate: C-0430（確定）、C-0431（仮説）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・critDamage: C-0326（仮説）
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0325（仮説）
   - effects[1] timed・burstUse・critDamage: C-0325（仮説）
 - **宝物版 skill1**: supported
-  - effects[0] timed・normalHit・hitRate: C-0428（確定）、C-0429（仮説）
-  - effects[1] timed・normalHit・hitRate: C-0428（確定）、C-0429（仮説）
+  - effects[0] timed・normalHit・hitRate: C-0430（確定）、C-0431（仮説）
+  - effects[1] timed・normalHit・hitRate: C-0430（確定）、C-0431（仮説）
   - effects[2] timed・normalHit・attack: C-0187（確定）
 - **宝物版 skill2**: supported
   - effects[0] timed・fullBurstStart・critDamage: C-0323（確定）
@@ -489,7 +489,7 @@ notes の種類: 未対応 28・前提の外 24・計算に無関係 33・補足
   - effects[1] timed・fullBurstEnd・attack: C-0392（確定）
   - effects[2] passive・elementDamage: C-0296（確定）
   - effects[3] damage・burstUse・distributed: C-0310（確定）
-  - effects[4] damage・followUp が適用された時・distributed: C-0361（仮説）
+  - effects[4] damage・followUp が適用された時・distributed: C-0429（仮説）
   - notes[0] 補足: ペルソナ - ヨハンナ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ: C-0354（確定）
   - notes[1] 計算に無関係: 防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない: 根拠なし
 - **skill2**: supported
@@ -507,7 +507,7 @@ notes の種類: 未対応 28・前提の外 24・計算に無関係 33・補足
 - **skill1**: partial
   - effects[0] timed・battleStart・attack: C-0347（確定）
   - effects[1] timed・fullBurstEnd・attack: C-0347（確定）
-  - effects[2] damage・burstUse・distributed: C-0358（確定）、C-0359（確定）
+  - effects[2] damage・burstUse・distributed: C-0358（確定）、C-0428（確定）
   - notes[0] 補足: ペルソナ - コノハナサクヤ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ: C-0354（確定）
   - notes[1] 未対応: ペルソナ - コノハナサクヤの 3 秒ごとの味方全体の回復（メディア）は未対応（回復を受けた時の効果を持つ味方の発動を変える）: 根拠なし
 - **skill2**: partial

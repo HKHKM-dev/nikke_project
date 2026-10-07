@@ -2,7 +2,7 @@
 
 - 関連: [design-minimal-check.md](design-minimal-check.md) 8 節（警告の単位と数え方の決定・試算）、[design-records-automation.md](design-records-automation.md) 3.5〜3.7 節、[design-skill-note-kinds.md](design-skill-note-kinds.md)、AGENTS.md「事実と記録」
 - 作成日: 2026-10-07
-- 状態: 承認（2026-10-07。9 節）。オーナーが選んだ策（1a・2a・3b・4a・5a・6c・7a・8a。design-minimal-check.md 8 節の後の対話）の組み合わせ。実装は 7 節の段取りで進める（PR 1〜4 は 2026-10-07〜08 に済んだ。10.1〜10.6 節）
+- 状態: 承認（2026-10-07。9 節）。オーナーが選んだ策（1a・2a・3b・4a・5a・6c・7a・8a。design-minimal-check.md 8 節の後の対話）の組み合わせ。実装は 7 節の段取りで進める（PR 1〜5 は 2026-10-07〜08 に済んだ。10.1〜10.7 節。落とすかはオーナーの判断待ち）
 
 ## 1. 目的と、決まっていること
 
@@ -254,3 +254,10 @@ O に `compare` が無いとき（`scope` を使う）と、E がモデルに無
 - **P+**: timed の効果のきっかけを `battleStart`、維持を比べる指定の戦闘の長さ（`durationSeconds`、省略は 180 秒）にし、ほかの維持の欄（`durationRef`・`durationShots` など）と `condition` を外す。passive は P− だけ（もともと常に効く）。
 - **計算できない形**: 外すと観測量そのものが無くなるもの（持続ダメージの tick やバーストのヒットを数える観測値で、その効果を外したとき）は、効きうるとみる（結果に `error` を残す）。
 - 計算は数秒で済む（同じ録画・同じ指定の sim を使い回す）。定義・録画・比べる指定を変えた PR では `npm run records:minimal` を回す（`records:check` まで回る）。
+
+### 10.7 PR 5: records:new・records:close への組み込み（2026-10-08）
+
+- **`records:new -- claim`**: `--subject "<定義の場所>"`（複数可）か `--mechanism <機構>` で結論の対象を書けるようにし、下書きの結論を確定とみて、根拠の観測値の組をこの検査で判定する（根拠の観測値の感度はその場で計算して重ねる）。確定にする条件（design-records-automation.md 3.6 節）の「最小構成の警告が無い」をこの判定に置き換え、「結論の対象がある」「`compare` の無い根拠の観測値に `scope` がある」（9 節の 2）を足した。`--subject` の場所の `claims` には、人が新しい結論の ID を足す（`records:check` が確かめる）。
+- **`records:close`**: その記録の確定の結論の組を同じく判定し、警告のある組は注意に出す（落とさない。下の論点）。確定の結論の根拠の観測値に `compare` も `scope` も無ければ誤り（9 節の 2）。`subject` が無ければ注意。
+- 旧の判定（検証記録 × 録画の `minimalWarnings` と、verifications.md の行の `renderMinimalLines`）は消した。`mechanismConfirmed`・`normalConditionMeasured` は、撮る前に編成を選ぶ材料と、通常攻撃の条件の要素の判定のために残す（6 節）。
+- **論点（オーナーの判断待ち）**: 落とすか。9 節の 1 のとおり、既存の確定の結論の警告の組（[minimal.md](minimal.md)）を組ごとに、印を付けるか結論を見直すかを決めてから、`records:close`（新しい確定の結論）と `records:check`（既存の結論）のどちらで止めるかを決める。
