@@ -1,0 +1,49 @@
+{
+  "id": "311",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-311_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4",
+  "original": "2026-10-07_23-02-54.mp4",
+  "durationSec": 203.5,
+  "frames": 12207,
+  "fps": 60,
+  "sizeMB": 246.4,
+  "sha256": "43ddc2c449d8",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 270,
+      "name": "ブラン",
+      "controlled": true,
+      "fires": false,
+      "bursts": false
+    },
+    {
+      "slot": 4,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0292 の録画 A（部隊あり）の 3 本目。サクラ（AI）・デルタ（AI）・ブラン（操作・撃たない）・ノワール（AI）。戦闘履歴のパネルで枠順とブランの与ダメージ 0 を、左上の表示で AUTO 射撃 OFF・オートバースト ON を確かめた。出撃画面は映っていない（スペック固定と的の属性は 1 ヒットの値で確かめる）"
+}

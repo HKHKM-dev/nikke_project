@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 37・効果 185（根拠あり 152）・notes 93（根拠あり 51）
+件数: キャラ 37・効果 186（根拠あり 153）・notes 92（根拠あり 51）
 
-notes の種類: 未対応 28・前提の外 24・計算に無関係 33・補足 8
+notes の種類: 未対応 27・前提の外 24・計算に無関係 33・補足 8
 
-スロット: supported 72・partial 14・unsupported 9・noEffect 25
+スロット: supported 73・partial 13・unsupported 9・noEffect 25
 
 ## 10 ラピ
 
@@ -276,11 +276,11 @@ notes の種類: 未対応 28・前提の外 24・計算に無関係 33・補足
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・maxAmmo: C-0395（確定）
   - effects[1] ammoRefill・fullBurstStart: C-0395（確定）
-- **burst**: partial
+- **burst**: supported
   - effects[0] burstDamage・skill: C-0226（確定）
   - effects[1] timed・burstUse・hitRate: C-0396（仮説）
+  - effects[2] timed・burstUse・hitRate: C-0442（仮説）
   - notes[0] 前提の外: 阻止部位の攻撃ダメージ▲（SG の味方に 10 秒、同じ部隊の味方がいれば味方全体に 30 秒）は、射撃場の敵に阻止部位が無いのでダメージに関係しない: 根拠なし
-  - notes[1] 未対応: 同じ部隊の味方がいれば味方全体の命中率▲（30 秒間維持）は未対応（部隊の条件 squad はあるが、AI のサクラのコア命中率の、部隊あり・なしの直の比べ（V-0219。10 本）で R = 1.13 ± 0.08 と、付くかどうかを決められなかった）: 根拠なし
 
 ## 290 マナ
 
