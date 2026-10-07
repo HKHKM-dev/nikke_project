@@ -4,6 +4,7 @@
 // Windows では、書いた直後のファイルを別のプロセス（ウイルス対策・索引など）が一時的に開いていて、prettier が
 // 「UNKNOWN: unknown error, open」で書けないことがある。records:check などは生成物を書いてから prettier で整えるので、
 // そこで止まると整形されていない生成物が残る（2026-10-07 に何度か起きた）。そのための繰り返し。
+import '../packages/core/scripts/below-normal.ts';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 

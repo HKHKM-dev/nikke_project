@@ -7,6 +7,7 @@
 //   summary  変わり目の間隔のうち 56〜62f の平均（ふだんの比）と、62〜150f の間隔（長い間隔）の数と長くなった分の合計。
 //            117〜123f は 2 秒分の拾いそこねとして 2 で割る
 //   changes  変わり目のフレームと、前の変わり目からの間隔
+import '../../packages/core/scripts/below-normal.ts';
 import { parseArgs } from 'node:util';
 import { cropFilter, parseCrop, rawFrames } from './ffmpeg.ts';
 

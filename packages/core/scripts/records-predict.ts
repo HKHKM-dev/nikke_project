@@ -4,6 +4,7 @@
 // 撮る前にこのファイルを commit しておく（「予測は撮る前に書く」を履歴で示す）。
 // 既存の録画の読み直しでは、検証記録の「録画」に録画を挙げてから回す。そのとき既にある観測値の ID を predicted.seen に控える
 // （plan/design-reread-prediction.md 5 節。控えに入った観測値は、この予測の根拠にも照合にも数えない）。
+import './below-normal.ts';
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';

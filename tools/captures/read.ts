@@ -7,6 +7,7 @@
 // - 観測値は標準出力に JSON で出す。--write で records/observations/<録画 id>.json に足す（id は次の空き番号。source・readAt を書く）。
 //   同じレシピ・同じ版の観測値が既にあれば、同じ値なら足さず、違えば差を出して止まる（人が invalid を付けるか、版を上げる）。
 // - --against は、既存の観測値（ID）の値を並べて出す（レシピの出力と目で比べる。旧の観測値の確かめ用）。
+import '../../packages/core/scripts/below-normal.ts';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';

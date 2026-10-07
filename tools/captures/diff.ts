@@ -3,6 +3,7 @@
 // 使い分け（2026-09-22 の較正で有効だった領域）:
 //   SR/RL … 手元（反動）  AR … 同じ手元のパルス列  MG/SMG … HUD 総ダメージカウンター
 // 残弾カウンターは数字がロール表示されて毎フレーム変化するので使えない。
+import '../../packages/core/scripts/below-normal.ts';
 import { writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { cropFilter, ffprobe, parseCrop, rawFrames } from './ffmpeg.ts';
