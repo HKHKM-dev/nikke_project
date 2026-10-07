@@ -83,12 +83,12 @@
 
 予測は 2026-10-08（commit f227fbe）に出した。
 
-| 指標                                    | 実測         | 予測 H0   | 予測 H1   |
-| --------------------------------------- | ------------ | --------- | --------- |
-| sakura-far-bullet-in（bulletHitRate）   | （実測なし） | 0.76      | 0.839     |
-| sakura-far-bullet-out（bulletHitRate）  | （実測なし） | 0.76      | 0.76      |
-| sakura-near1-bullet-in（bulletHitRate） | （実測なし） | 0.999     | 1         |
-| sakura-body-hit（hitDamage）            | （実測なし） | 8,551.996 | 8,551.996 |
+| 指標                                    | 実測              | 予測 H0                    | 予測 H1                 |
+| --------------------------------------- | ----------------- | -------------------------- | ----------------------- |
+| sakura-far-bullet-in（bulletHitRate）   | 0.853（`246-13`） | 0.76（-0.093、**許容外**） | 0.839（-0.014、許容内） |
+| sakura-far-bullet-out（bulletHitRate）  | （実測なし）      | 0.76                       | 0.76                    |
+| sakura-near1-bullet-in（bulletHitRate） | （実測なし）      | 0.999                      | 1                       |
+| sakura-body-hit（hitDamage）            | （実測なし）      | 8,551.996                  | 8,551.996               |
 
 <!-- records:predictions:end -->
 
