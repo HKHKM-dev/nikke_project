@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bannerRises, risesBeforeHits } from './banner-lib.ts';
+import { bannerRises, risesBeforeHits, whiteOnsets, whitePixels } from './banner-lib.ts';
 
 /** f0 から、base の明るさに [フレーム, 上げ幅] の立ち上がり（4 フレームで上がりきる）を足した列 */
 function series(f0: number, n: number, base: number, rises: [number, number][]): [number, number][] {
@@ -38,5 +38,25 @@ describe('risesBeforeHits', () => {
       { hit: 2070, ds: [98] },
       { hit: 3248, ds: [99] },
     ]);
+  });
+});
+
+describe('whitePixels と whiteOnsets', () => {
+  it('counts light grey pixels and leaves out a yellow flash', () => {
+    const rgb = new Uint8Array([210, 210, 205, 255, 220, 60, 90, 90, 90]);
+    expect(whitePixels(rgb)).toBe(1);
+  });
+
+  it('finds where the count crosses the threshold', () => {
+    expect(
+      whiteOnsets([
+        [7282, 0],
+        [7283, 259],
+        [7284, 999],
+        [7300, 0],
+        [7301, 150],
+        [7302, 900],
+      ]),
+    ).toEqual([7283, 7302]);
   });
 });
