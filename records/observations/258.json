@@ -336,8 +336,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     }
   }

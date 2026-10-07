@@ -65,6 +65,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [290], delays: { hitFrames: 0, effectFrames: 2 }, claim: 'C-0301' },
   // ソルジャーE.G.: III の発動からヒットまで 7f（動画で 29f。止まり 22f を含む）。バースト使用時の効果は無い（V-0247・V-0242）
   { resourceIds: [300], delays: { hitFrames: 7, effectFrames: 0 }, claim: 'C-0370' },
+  // 雪子: III の発動と同じフレームにヒット（動画では III のタイマーが 00.00 になる 1f 前。フルバーストの入りの止まりの前）。
+  // 効果（1more の攻撃力▲・真紅の華の分配ダメージ▲）の遅れは未測定。表に無いときの既定と同じ値で、測った値として置く
+  { resourceIds: [871], delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-0419' },
 ];
 
 type DelayKey = Pick<CharacterData, 'resourceId' | 'skills' | 'treasure'>;
