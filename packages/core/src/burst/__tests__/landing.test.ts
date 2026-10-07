@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import {
   burstDelaysFieldOf,
   burstDelaysOf,
+  burstWindowTrimOf,
   isTreasureBurst,
   MEASURED_BURST_DELAYS,
   withBurstDelays,
@@ -20,6 +21,7 @@ import {
 } from '../schedule.ts';
 import { planFixedCycle } from '../fixedCycle.ts';
 import { createTriggerTracker, replayEvents } from '../../skills/triggers.ts';
+import { MAX_SKILL_LEVELS, resolveTimed } from '../../skills/resolve.ts';
 import { applyTreasure } from '../../skills/treasure.ts';
 import { parseSkillDefinition } from '../../skills/types.ts';
 import type { CharacterData } from '../../types.ts';
@@ -47,6 +49,23 @@ describe('遅れの表', () => {
   it('adds delays only for characters in the table', () => {
     expect(burstDelaysFieldOf(character(862))).toEqual({});
     expect(burstDelaysFieldOf(character(ISABEL))).toEqual({ delays: { hitFrames: 134, effectFrames: 134 } });
+  });
+
+  // 効果の窓の終わり（plan/design-burst-effect-window-end.md 案 B）: 印のある行（モダニア）だけ、burstUse の効果の維持を縮める
+  it('counts the burst-use windows of Modernia from the activation (C-0452), and leaves other rows alone', () => {
+    expect(burstWindowTrimOf(character(260))).toBe(6);
+    expect(burstWindowTrimOf(character(ISABEL))).toBe(0);
+    expect(burstWindowTrimOf(character(862))).toBe(0);
+    const def = parseSkillDefinition(
+      JSON.parse(readFileSync(new URL('../../../data/skills/260.json', import.meta.url), 'utf8')) as unknown,
+    );
+    const resolved = resolveTimed(def, character(260), MAX_SKILL_LEVELS);
+    const burst = resolved.filter((r) => r.source.skill === 'burst');
+    // 15 秒（882f）から効果の遅れ 6f を引く
+    expect(burst.map((r) => [r.stat, r.durationFrames])).toEqual([
+      ['infiniteAmmo', 876],
+      ['weapon', 876],
+    ]);
   });
 
   // 分かれたヒット編（plan/design-burst-split-hits.md 4.5 節）: 宝物の印のある行は、burst が宝物版のときだけ当てる

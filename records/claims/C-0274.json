@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
   "basis": "`044-10`（4 回目のフルバーストの殲滅モードの発の数 872。予測 881 と ±15 の許容の中。始まりの約 10f の遅れはモデルに無い）。比べたのは 1 回だけ（2・3 回目は的のジャンプが重なり、1 回目は凍結の記録で読んだ）なので仮説にとどめた。V-0180",
-  "model": "`data/skills/260.json` の burst の effects[0]（timed・infiniteAmmo）・effects[1]（weaponChange）・notes[0]（フルバースト 15 秒は burst_duration）。殲滅モードの最初の発の約 10f の遅れは未実装",
+  "model": "`data/skills/260.json` の burst の effects[0]（timed・infiniteAmmo）・effects[1]（weaponChange）・notes[0]（フルバースト 15 秒は burst_duration）。殲滅モードの最初の発の遅れは、遅れの表のモダニアの行（C-0452）",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-08"
 }

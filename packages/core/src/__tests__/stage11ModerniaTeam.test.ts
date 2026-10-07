@@ -117,12 +117,14 @@ describe('録画 44 の予測（7.5）', () => {
     expect(Math.round(segmentAt(calc, 2, attack[0]!.start).trigger.attack)).toBe(156154);
   });
 
-  it('switches to Annihilation Mode from the frame after the burst: 1 shot / frame, no reload, base MG fully reloaded afterwards', () => {
-    // 持ち替えるのは発動の次のフレームから、終わりは装弾数無限と同じ（weaponStartTrim）
+  it('switches to Annihilation Mode 7f after the burst: 1 shot / frame, no reload, base MG fully reloaded afterwards', () => {
+    // 効果（装弾数無限・殲滅モード）は発動の 6f 後に発火し（C-0452。遅れの表の行）、持ち替えるのはその次のフレームから
+    // （weaponStartTrim）。窓の終わりは発動から数える（windowFromActivation。plan/design-burst-effect-window-end.md）ので、
+    // フルバーストの終わりのまま。C-0452 の前は、発動の次のフレームから
     const weapon = of('weapon');
-    expect(weapon.map((w) => [w.start, w.end])).toEqual(fb.map((w) => [w.start + 1, w.end]));
+    expect(weapon.map((w) => [w.start, w.end])).toEqual(fb.map((w) => [w.start + 7, w.end]));
     const infinite = of('infiniteAmmo');
-    expect(infinite.map((w) => [w.start, w.end])).toEqual(fb.map((w) => [w.start, w.end]));
+    expect(infinite.map((w) => [w.start, w.end])).toEqual(fb.map((w) => [w.start + 6, w.end]));
     const last = new Set(plan.shots[2]!.lastShotFrames);
     for (const w of weapon) {
       const inside = shots.filter((f) => f >= w.start && f < w.end);

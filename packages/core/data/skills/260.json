@@ -103,7 +103,8 @@
           "stat": "infiniteAmmo",
           "durationRef": 2,
           "claims": [
-            "C-0274"
+            "C-0274",
+            "C-0452"
           ]
         },
         {
@@ -118,7 +119,8 @@
           },
           "claims": [
             "C-0273",
-            "C-0274"
+            "C-0274",
+            "C-0452"
           ]
         }
       ],
@@ -132,6 +134,14 @@
           },
           "claims": [
             "C-0274"
+          ]
+        },
+        {
+          "ja": "殲滅モードと装弾数無限は III の発動の 6f 後に付き、殲滅モードの最初の発は発動の 7f 後（C-0452。遅れの表の行）。実測では止まりの明けから殲滅モードの最初の発までモダニアは撃たない（発動の前も 6〜19f 撃たない回がある）が、モデルはこの間も通常の MG の発を撃つ（未対応）",
+          "en": "Annihilation Mode and unlimited ammo start 6 frames after the Burst III activation, and the first Annihilation shot comes 7 frames after it (C-0452; the delay table row). In recordings Modernia does not fire from the end of the full burst entry stop until the first Annihilation shot (and in some bursts not for 6-19 frames before the activation either), but the model fires base MG shots there (not modeled)",
+          "kind": "unimplemented",
+          "claims": [
+            "C-0452"
           ]
         },
         {
