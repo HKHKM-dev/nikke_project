@@ -1,0 +1,76 @@
+{
+  "verification": "V-0306",
+  "note": "既存の録画 028・029（ラピ単騎・操作・スペック固定 ON・水冷の的・3 分モード）の読み直し。S2 のヒットを読む前に出した。いまの定義では S2 は発動しないので、V-0271 の H1（20 秒ごと）を addEffects で足した値を出す。1 回目の時刻の仮説（戦闘開始からか、最初の発からか）はモデルの指標で表せないので検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 10,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S2 は 20 秒ごと（C-0403。V-0271 の H1 と同じ足し方）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 10,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 20
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "note": "S2 の 1 ヒット（会心なし。S1 の被弾の▲が乗れば 073 の比 1.0409・1.2183 倍）"
+    },
+    {
+      "id": "hit-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "note": "S2 の 1 ヒット（会心）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "a2a8c567166659b793727fd84c74996402122191",
+    "values": {
+      "H1": {
+        "hit": 502167.0901,
+        "hit-crit": 753250.63515
+      }
+    },
+    "seen": {}
+  }
+}
