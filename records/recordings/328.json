@@ -1,0 +1,19 @@
+{
+  "id": "328",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-328_sr_snow-white-ha_manual.mp4",
+  "original": null,
+  "durationSec": 62.7,
+  "frames": 3759,
+  "fps": 60,
+  "sizeMB": 75.9,
+  "sha256": "b268f65bddc7",
+  "team": [{ "slot": 1, "rid": 471, "name": "スノーホワイト：ヘビーアームズ", "controlled": true }],
+  "target": { "name": "BigArms", "element": "Fire" },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0296。スノーホワイト：ヘビーアームズ単騎・操作（AUTO 射撃 OFF）・オートバースト OFF。的にフルチャージ 1 発 → 空に向けて部分チャージを 6 回（V-0296 の撮影計画）。クラウドで Drive から取り寄せて素性を書いた（original は不明）"
+}
