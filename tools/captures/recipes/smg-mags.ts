@@ -7,6 +7,7 @@
 // @2（V-0215）: バーストの効果の窓（胴体の格子に乗らない増分のまとまり。detectBuffWindows）の中は、窓の増分から測った格子で
 // 分ける。窓にかかるマガジンは、最大装弾数▲で装弾数が変わるので、撃った数を残弾の読みから数える（shotsFromAmmo）。
 // 窓にかかるマガジンを除いた値も説明に書く。窓の無い録画は @1 と同じ読み。--opt windows=off で窓を探さない。
+// @3（V-0327）: 読み方は @2 と同じ。hud.ts が 0 と 8 を穴の数で分けるようにした増分（hud-jumps@2 のキャッシュ）で読む。
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { derived } from './cache.ts';
@@ -61,7 +62,7 @@ function ammoConfirms(ammo: readonly AmmoRow[], start: number, end: number, mag:
 
 export const smgMags: Recipe = {
   name: 'smg-mags',
-  version: 2,
+  version: 3,
   describe:
     'SMG 単騎・射撃場 3 分モードの、距離帯ごと（中近・近・遠・中遠）の完全なマガジンの弾丸命中率（rate）。中遠は着地点（A か B・C）を説明に書く',
   options: {

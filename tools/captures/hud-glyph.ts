@@ -37,4 +37,3 @@ export function holes(c: Component, minArea = 1): number {
   }
   return count;
 }
-

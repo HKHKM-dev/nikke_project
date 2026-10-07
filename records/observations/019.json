@@ -235,6 +235,10 @@
     "scope": {
       "slot": "all",
       "source": "burstChain"
+    },
+    "invalid": {
+      "reason": "4 回目のヒットを f8491 としていた。hud.ts が HUD の 0 を 8 と読んだ（V-0327）ため f8490 の読みを落としていた（直後の f8492 に偽の +80）。直した読みでは f8490 で、差は 93f。直した値は 019-24（V-0327）",
+      "date": "2026-10-08"
     }
   },
   {
@@ -560,6 +564,40 @@
     "scope": {
       "slot": 1,
       "source": "skill"
+    }
+  },
+  {
+    "id": "019-24",
+    "recording": "019",
+    "source": "V-0327",
+    "readAt": "2026-10-08",
+    "kind": "interval",
+    "use": "compare",
+    "value": [94, 93, 94, 93, 94],
+    "unit": "f",
+    "description": "エーテル（I）+ デルタ（II）+ ノワール（III）で、1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1264・3642・6019・8397・10774）から、ノワールのバーストの倍率ダメージのヒット（HUD の 480,611 の増分。f1358・3735・6113・8490・10868）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧・hud.ts --mode jumps（hud.ts は V-0327 で直した読み）",
+      "note": "93f の 2 回目は、FB の始まりの前に III のタイマーの表示が 1 つ飛ぶ（09.59 → 09.54。録画の重複フレームの位置）。4 回目のヒットは f8490（旧の 019-11 の f8491 は、hud.ts が f8490 の 0 を 8 と読んで読みを落とした後のフレーム。V-0327）。FB の始まりは、どの回も六角形が II から III に替わった 29f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   }
 ]
