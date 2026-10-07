@@ -34,6 +34,7 @@ import {
   SKILLS_DOC_PATH,
   VERIFICATIONS_PATH,
   loadClaims,
+  loadSensitivity,
   knownRids,
   loadObservations,
   loadPredictions,
@@ -99,13 +100,18 @@ for (const c of claims) {
   if (g !== undefined) gradeCandidates.set(c.id, g);
 }
 // 最小構成の検査（plan/design-minimal-relevance.md。確定の結論 × 根拠の観測値の組に、効きうる未確定の要素）
-const relevance = relevanceOf(claims, observations, {
-  recordings,
-  characters: data.characters,
-  skills: data.skills,
-  enemies: data.enemies,
+const relevance = relevanceOf(
   claims,
-});
+  observations,
+  {
+    recordings,
+    characters: data.characters,
+    skills: data.skills,
+    enemies: data.enemies,
+    claims,
+  },
+  loadSensitivity(),
+);
 writeFileSync(MINIMAL_PATH, renderMinimal(relevance, claims));
 writeFileSync(
   CLAIMS_PATH,

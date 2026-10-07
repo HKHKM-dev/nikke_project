@@ -80,3 +80,5 @@ NIKKE のダメージ計算ツール。
 新しい知見は、まず検証記録（数値は観測値）に根拠つきで書き、撮影や読み取りで繰り返し効くものは `guide.md` に 1〜2 行で足す。
 
 検証の流れ（起案 → 予測の固定 → 撮る → 取り込み → レシピで読む → 比べる → 結論の下書き → 閉じる）の道具は `npm run records:new`・`records:predict`・`records:read`・`records:check`・`records:close` と `tools/captures/intake.ts`（`plan/design-records-automation.md` 2 節。手順は `plan/skills-guide.md` 1 節）。
+
+最小構成の検査（確定の結論 × 根拠の観測値の組に、効きうる未確定の要素を出す）は `plan/minimal.md`（生成）。スキル定義・録画の台帳・観測値の比べる指定を変えたら `npm run records:minimal` で感度を計算し直す（`plan/design-minimal-relevance.md` 10.6 節）。

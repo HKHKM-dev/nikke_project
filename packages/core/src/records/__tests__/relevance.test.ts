@@ -8,6 +8,7 @@ import {
   loadObservations,
   loadRecordingsFile,
   loadRecordsData,
+  loadSensitivity,
   recordingMap,
 } from '../../../scripts/records-data.ts';
 import type { Claim } from '../claims.ts';
@@ -54,7 +55,9 @@ const obs = (patch: Partial<Observation>): Observation => ({
 
 describe('plan/minimal.md（実データ）', () => {
   it('matches plan/minimal.md (npm run records:check)', () => {
-    expect(readFileSync(MINIMAL_PATH, 'utf8')).toBe(renderMinimal(relevanceOf(claims, observations, ctx), claims));
+    expect(readFileSync(MINIMAL_PATH, 'utf8')).toBe(
+      renderMinimal(relevanceOf(claims, observations, ctx, loadSensitivity()), claims),
+    );
   });
 });
 
