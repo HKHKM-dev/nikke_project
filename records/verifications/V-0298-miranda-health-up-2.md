@@ -79,15 +79,15 @@
 
 予測は 2026-10-07（commit 16e2e42）に出した。
 
-| 指標                               | 実測         | 予測 H1        |
-| ---------------------------------- | ------------ | -------------- |
-| miranda-body（hitDamage）          | （実測なし） | 10,781.1       |
-| miranda-core（hitDamage）          | （実測なし） | 26,952.75      |
-| miranda-crit（hitDamage）          | （実測なし） | 16,171.65      |
-| miranda-dist-body（hitDamage）     | （実測なし） | 14,015.43      |
-| miranda-atk-body（hitDamage）      | （実測なし） | 16,183.476     |
-| miranda-atk-dist-body（hitDamage） | （実測なし） | 21,038.519     |
-| miranda-total（slotTotalDamage）   | （実測なし） | 72,444,631.829 |
+| 指標                               | 実測               | 予測 H1                      |
+| ---------------------------------- | ------------------ | ---------------------------- |
+| miranda-body（hitDamage）          | 10,781（`322-06`） | 10,781.1（+0.1、許容内）     |
+| miranda-core（hitDamage）          | （実測なし）       | 26,952.75                    |
+| miranda-crit（hitDamage）          | 16,172（`322-07`） | 16,171.65（-0.35、許容内）   |
+| miranda-dist-body（hitDamage）     | 14,015（`322-08`） | 14,015.43（+0.43、許容内）   |
+| miranda-atk-body（hitDamage）      | 16,183（`322-09`） | 16,183.476（+0.476、許容内） |
+| miranda-atk-dist-body（hitDamage） | 21,039（`322-10`） | 21,038.519（-0.481、許容内） |
+| miranda-total（slotTotalDamage）   | （実測なし）       | 72,444,631.829               |
 
 <!-- records:predictions:end -->
 
