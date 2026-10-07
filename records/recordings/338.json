@@ -1,0 +1,29 @@
+{
+  "id": "338",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-338_rl_n-miracle-fairy_manual.mp4",
+  "original": null,
+  "durationSec": 65.4,
+  "frames": 3921,
+  "fps": 60,
+  "sizeMB": 78.9,
+  "sha256": "407005231a7d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 121,
+      "name": "エヌ : ミラクルフェアリー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0301。エヌ : ミラクルフェアリー単騎・操作（AUTO 射撃 OFF）・オートバースト OFF。マガジン 1 は 6 発とも的、マガジン 2・3 は最後の弾丸だけ的（V-0301 の撮影計画）。クラウドで Drive から取り寄せて素性を書いた（original は不明）"
+}
