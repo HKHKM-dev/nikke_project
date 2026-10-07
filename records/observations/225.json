@@ -228,5 +228,36 @@
       "tool": "recipe hud-jumps のキャッシュ（hud.ts --mode jumps の増分）",
       "note": "発動の前の最後の tick は 26〜31f 前。ヒットの後の最初の tick（109〜114f 後）も▲の乗った値（1,719,416 = 5 スタック・4,585,108 = 10 スタックの会心・3,438,831 = 10 スタック）。止まりの明けの直後（22〜49f）には tick が無いので、▲が発動から 28f までのどこで付くかは見分けられない"
     }
+  },
+  {
+    "id": "225-09",
+    "recording": "225",
+    "source": "V-0294",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3438831,
+    "description": "2 回目の発動（f3751）の後、止まりの明けからヒットまでに出た S1 の tick（f3804。10 スタック・会心なし）の値そのもの（225-04 はこれを 10 で割った 1 スタック）。A.N.モードの持続ダメージ▲の乗った値",
+    "method": {
+      "tool": "recipe hud-jumps のキャッシュ（hud.ts --mode jumps の増分）",
+      "note": "1 スタックに割ると端数が出て機械の等級の候補が厳密一致にならないので、読んだ整数の値でも比べる（V-0189 の C-0285 と同じ扱い）。4・5 回目の同じ位置の tick も同じ 3,438,831"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2872,
+        "stacks": 10,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

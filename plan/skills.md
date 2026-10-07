@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 37・効果 185（根拠あり 150）・notes 93（根拠あり 51）
+件数: キャラ 37・効果 185（根拠あり 152）・notes 93（根拠あり 51）
 
 notes の種類: 未対応 28・前提の外 24・計算に無関係 33・補足 8
 
@@ -165,8 +165,8 @@ notes の種類: 未対応 28・前提の外 24・計算に無関係 33・補足
   - effects[1] damage・normalShot・skill: 根拠なし
 - **宝物版 burst**: supported
   - effects[0] burstDamage・skill: C-0228（確定）
-  - effects[1] timed・burstUse・attackDamage: 根拠なし
-  - effects[2] timed・burstUse・maxAmmo: 根拠なし
+  - effects[1] timed・burstUse・attackDamage: C-0420（確定）
+  - effects[2] timed・burstUse・maxAmmo: C-0420（確定）
 
 ## 160 ユニ
 
@@ -469,7 +469,7 @@ notes の種類: 未対応 28・前提の外 24・計算に無関係 33・補足
   - notes[1] 前提の外: 味方がパーツを破壊した時の、自分の持続ダメージ▲（一点集中）は、射撃場の的にパーツが無いので起きない: C-0365（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0185（確定）、C-0233（確定）、C-0234（確定）
-  - effects[1] timed・burstUse・sustainedDamage: C-0332（確定）
+  - effects[1] timed・burstUse・sustainedDamage: C-0332（確定）、C-0421（確定）
   - notes[0] 補足: A.N.モードの一点集中の解除は、一点集中（S2。パーツの破壊で付く）が射撃場の的では起きないので何もしない: C-0365（確定）
 
 ## 862 クルミ

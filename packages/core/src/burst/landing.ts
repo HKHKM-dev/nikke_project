@@ -44,7 +44,7 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // 効果（自分の攻撃力▲）の遅れは未測定。最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
   { resourceIds: [10], delays: { hitFrames: 90, effectFrames: 0, hitOffsets: [0, 7, 14] }, claim: 'C-0227' },
   // ドレイク（宝物あり）: III の発動から 1 ヒット目まで 4f（動画で 26〜27f の最も多い値）、2・3 ヒット目は 27f・55f 後。
-  // 効果（最大装弾数▲・攻撃ダメージ▲）の遅れは未測定。宝物なしは未測定。最小構成でない録画の仮説
+  // 効果（攻撃ダメージ▲・最大装弾数▲）はヒットより前に付き、止まりの明けの 1f 後の発にも乗る（C-0420）ので 0。宝物なしは未測定
   {
     resourceIds: [101],
     treasure: true,
@@ -57,8 +57,8 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // クイーン（真）: III の発動からヒットまで 1f（動画で 22〜23f。止まり 22f を含む）。効果（自分の攻撃力▲）の遅れは未測定。
   // 最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
   { resourceIds: [870], delays: { hitFrames: 1, effectFrames: 0 }, claim: 'C-0231' },
-  // レイヴン: III の発動からヒットまで 43f（動画で 64〜65f。止まり 22f を含む）。効果（A.N.モード）は持続ダメージ▲で語彙に無い。
-  // 最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
+  // レイヴン: III の発動からヒットまで 43f（動画で 64〜65f。止まり 22f を含む）。効果（A.N.モードの持続ダメージ▲）はヒットより前に
+  // 付き、止まりの明けの後の最初の S1 の tick から乗る（C-0421）ので 0
   { resourceIds: [851], delays: { hitFrames: 43, effectFrames: 0 }, claim: 'C-0233' },
   // マナ: III の発動から効果（持続ダメージの付与と 1 回目の tick・持続ダメージ▲）まで 2f（動画で 24f。止まり 22f を含む）。
   // バーストの倍率ダメージは無い
