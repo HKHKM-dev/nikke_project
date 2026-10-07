@@ -20,11 +20,11 @@
   ],
   "target": {
     "name": "BigArms",
-    "element": null
+    "element": "Fire"
   },
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "BigArms（3 分モード・スペック固定。読んだ数値はどれも属性有利なしで一致）。単騎なので操作キャラだが、画面左上のボタンで AUTO 射撃・オートバーストとも 180 秒のあいだ ON（2026-09-27 に確かめた。V-0001）"
+  "conditionNote": "BigArms（**灼熱**。3 分モード・スペック固定。2026-10-07 に録画の始めのロビーの画面（約 2 秒）で、灼熱のタブ・WEAK POINT の水冷の印を確かめた。読んだ数値はどれも属性有利なしで一致）。単騎なので操作キャラだが、画面左上のボタンで AUTO 射撃・オートバーストとも 180 秒のあいだ ON（2026-09-27 に確かめた。V-0001）"
 }
