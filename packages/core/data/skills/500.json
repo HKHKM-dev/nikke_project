@@ -1,0 +1,83 @@
+{
+  "formatVersion": 1,
+  "resourceId": 500,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時の、敵の発射体を攻撃する時の発射体に与えるダメージ▲は、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）",
+          "en": "The damage increase against enemy projectiles from the start of combat does not affect damage, since shooting enemy projectiles is not modeled (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "通常攻撃 100 回命中ごとの、ブームインストール状態の対象と周囲の敵への分配ダメージは未対応",
+          "en": "The distributed damage to a Boom-Installed target and nearby enemies every 100 normal attack hits is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "normalHit"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃 60 回命中ごとの、対象がブームインストール状態のときの味方全体の攻撃力▲（5 秒）は未対応",
+          "en": "The attack increase on all allies every 60 normal attack hits while the target is Boom-Installed (5 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "normalHit"
+          }
+        },
+        {
+          "ja": "ターゲットが出現した時の味方全体のバーストゲージのチャージ 100%（戦闘中 1 回）は未対応",
+          "en": "The 100% burst gauge charge for all allies when a target appears (once per combat) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstGauge",
+            "target": "allies",
+            "trigger": "battleStart"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方全体の分配ダメージ▲（10 秒）は未対応",
+          "en": "The distributed damage increase on all allies (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "distributedDamage",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "照準線に最も近い敵 1 機へのバーストスキルダメージと、ブームインストール（防御力▼・10 秒）は未対応",
+          "en": "The burst skill damage and Boom Install (defense decrease, 10 s) on the enemy nearest the crosshair are not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstDamage",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

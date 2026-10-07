@@ -1,0 +1,79 @@
+{
+  "formatVersion": 1,
+  "resourceId": 270,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃 120 回ごとの味方共用バリアは扱わない（要件 5.2 節）",
+          "en": "The shared barrier for allies every 120 normal attacks is not modeled (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルバーストタイム終了時の味方全体の持続回復は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
+          "en": "The heal over time on all allies when Full Burst ends is not modeled (it changes the activation of allies with on-healed effects)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "fullBurstEnd"
+          }
+        },
+        {
+          "ja": "フルバーストタイム終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼は未対応",
+          "en": "The burst skill cooldown reduction on self when Full Burst ends, if an ally of the same squad is present, is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "cooldownReduction",
+            "target": "self",
+            "trigger": "fullBurstEnd"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方全体の持続回復（8 秒）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
+          "en": "The heal over time on all allies (8 s) is not modeled (it changes the activation of allies with on-healed effects)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "残りの HP が最も低い味方 1 機への不屈と最大HP▲はダメージに関係しない",
+          "en": "Indomitability and the max HP increase on the ally with the lowest HP do not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "敵全体の受けるダメージ▲（10 秒）は未対応",
+          "en": "The damage-taken increase on all enemies (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "damageTaken",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

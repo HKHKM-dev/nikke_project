@@ -1,0 +1,48 @@
+{
+  "formatVersion": 1,
+  "resourceId": 307,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最後の弾丸が命中した時の自分の防御力▲はダメージに関係しない",
+          "en": "The defense increase on self when the last bullet hits does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は未対応（説明文にきっかけが無い。回復を受けた時の効果を起こしうる）",
+          "en": "The lifesteal on self (restore X% of attack damage, 10 s) is not modeled (the description gives no trigger; it can trigger on-healed effects)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "self",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い敵 2 機への防御力▼（5 秒）は未対応",
+          "en": "The defense decrease on the 2 enemies with the highest final attack (5 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "unknown",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

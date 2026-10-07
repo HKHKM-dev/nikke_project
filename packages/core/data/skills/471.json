@@ -1,0 +1,133 @@
+{
+  "formatVersion": 1,
+  "resourceId": 471,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "チャージ中の 0.2 秒ごとのロックオンと、ロックオン状態の敵全体への受けるダメージ▲（4 秒）は未対応（ゲージは溜めない。C-0426）",
+          "en": "The lock-on every 0.2 s while charging and the damage-taken increase on all locked-on enemies (4 s) are not modeled (they do not charge the burst gauge; C-0426)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "damageTaken",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "チャージ中のオートファイア準備（防御力▲）はダメージに関係しない",
+          "en": "Auto-fire preparation (defense increase) while charging does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "フルチャージ攻撃時のオートファイア（敵全体と、ロックオン対象への装填数分の順番の攻撃）は未対応",
+          "en": "Auto Fire on fully charged attacks (on all enemies, and sequential attacks on lock-on targets by the loaded count) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時のチャージ時間 1.2 秒の固定（持続）は未対応",
+          "en": "Fixing the charge time to 1.2 s from the start of combat (permanent) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "fixedChargeTime",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "フルチャージした時の自分の攻撃力▲（5 秒）は未対応",
+          "en": "The attack increase on self on full charge (5 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        },
+        {
+          "ja": "フルチャージした時の貫通特化とパーツダメージ▲は、敵 1 体・パーツの無い射撃場の的ではダメージに関係しない（要件 5.2 節）",
+          "en": "Pierce and the parts damage increase on full charge do not affect damage against a single range target without parts (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        },
+        {
+          "ja": "バースト 3 段階突入時の自分の攻撃力▲（10 秒）は未対応",
+          "en": "The attack increase on self on entering burst stage 3 (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "burstStage3Enter"
+          }
+        },
+        {
+          "ja": "セブンスドワーフ・フルアクティブ状態のフルチャージ時のチャージダメージ▲・順番攻撃ダメージ▲（1 発）は未対応",
+          "en": "The charge damage and sequential attack damage increases (1 shot) on full charge during Seventh Dwarf Full Active are not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "chargeDamage",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の攻撃ダメージ▲（10 秒）は未対応",
+          "en": "The attack damage increase on self (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "セブンスドワーフ・フルアクティブ（チャージ時間 3.2 秒の固定、ロックオン対象数とオートファイア準備の装填数▲、使用回数 2 回）は未対応",
+          "en": "Seventh Dwarf Full Active (charge time fixed to 3.2 s, more lock-on targets and auto-fire loads, 2 uses) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "fixedChargeTime",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "破壊可能な発射体全体へのダメージは、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）",
+          "en": "The damage to all destructible projectiles does not affect damage, since shooting enemy projectiles is not modeled (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
