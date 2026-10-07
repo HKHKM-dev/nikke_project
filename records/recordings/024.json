@@ -20,11 +20,11 @@
   ],
   "target": {
     "name": "BigArms",
-    "element": null
+    "element": "Electronic"
   },
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": null,
   "autoBurst": null,
-  "conditionNote": "BigArms（3 分モード・スペック固定）"
+  "conditionNote": "BigArms（**電撃**。3 分モード・スペック固定。2026-10-07 に録画の始めのロビーの画面（約 2 秒）で、電撃のタブ・WEAK POINT の鉄甲の印を確かめた）"
 }
