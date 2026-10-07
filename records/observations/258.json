@@ -309,5 +309,36 @@
       "tool": "hud.ts --mode jumps",
       "note": "hud.ts --mode jumps の増分の値の変わり目（258-03・258-02。f4556 からは 28,499 = フルバースト補正の無いコア会心、f4560 からは 37,715 = フルバースト終了時の攻撃力▲のコア）"
     }
+  },
+  {
+    "id": "258-12",
+    "recording": "258",
+    "source": "V-0292",
+    "readAt": "2026-10-07",
+    "kind": "interval",
+    "use": "compare",
+    "value": [-1, -1, -1, -1, -1],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ 雪子（III・操作）・風圧の的で、1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1574・3951・6401・8779・11156）から、雪子のバーストの分配ダメージのヒット（f1573・3950・6400・8778・11155）までの動画のフレーム数。どの回もヒットが 00.00 の 1f 前（フルバーストの入りの止まりの前）に出る",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄（crop=200:60:1720:415）を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop・tile）・hud.ts --mode series と、HUD（crop=300:38:810:34）を 1 フレームずつ並べた一覧",
+      "note": "ヒットは HUD の値がバーストのヒットの値だけ増えたフレーム（258-06）。5 回目は hud.ts が 0 を 8 と読んで f11155 の読みを落としていたので、HUD を並べた一覧で 305,435,395 → 309,139,337（+3,703,942）を f11155 と読んだ（258-09 の f11156 より 1f 前）。00.00 の 1f 前のフレームは、どの回も III のタイマーの 09.5x の表示"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
   }
 ]

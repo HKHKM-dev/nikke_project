@@ -52,7 +52,12 @@
 
 <!-- records:predictions:start -->
 
-（予測との比べの表は npm run records:check が書き込む）
+予測は 2026-10-07（commit 5b297b0）に出した。
+
+| 指標                                 | 実測                             | 予測 H0                       |
+| ------------------------------------ | -------------------------------- | ----------------------------- |
+| yukiko-delays-wind（burstHitDelays） | [-1, -1, -1, -1, -1]（`258-12`） | [0, 0, 0, 0, 0]（+1、許容内） |
+| yukiko-delays-fire（burstHitDelays） | [-1, -1, -1, -1, -1]（`260-07`） | [0, 0, 0, 0, 0]（+1、許容内） |
 
 <!-- records:predictions:end -->
 

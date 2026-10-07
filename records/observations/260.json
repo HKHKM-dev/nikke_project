@@ -185,5 +185,36 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "260-07",
+    "recording": "260",
+    "source": "V-0292",
+    "readAt": "2026-10-07",
+    "kind": "interval",
+    "use": "compare",
+    "value": [-1, -1, -1, -1, -1],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ 雪子（III・操作）・灼熱の的で、1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1549・3927・6304・8681・11059）から、雪子のバーストの分配ダメージのヒット（f1548・3926・6303・8680・11058）までの動画のフレーム数。どの回もヒットが 00.00 の 1f 前に出る（風圧の 258-12 と同じ。1more の有無によらない）",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄（crop=200:60:1720:415）を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop・tile）・hud.ts --mode series と、HUD（crop=300:38:810:34）を 1 フレームずつ並べた一覧",
+      "note": "ヒットは HUD の値がバーストのヒットの値（2,342,044。260-05）だけ増えたフレーム。3・4 回目は hud.ts が 0 を 8 と読んで読みを落としていたので、HUD を並べた一覧で f6303（115,748,370 → 118,090,414）・f8680（164,160,483 → 166,502,527）と読んだ（260-05・260-06 の f6304・f8714 は、その後の最初の読めたフレーム）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
   }
 ]
