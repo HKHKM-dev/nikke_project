@@ -1,0 +1,75 @@
+{
+  "formatVersion": 1,
+  "resourceId": 501,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃が命中した時の蓄積爆破（与えたダメージの一部を蓄積し、最大量で分配ダメージ）は未対応（付けたときはゲージを溜めず、切れるときに溜める。C-0430）",
+          "en": "Accumulated Blast on a fully charged hit (stores part of the damage dealt and deals distributed damage at the cap) is not modeled (it does not charge the gauge when applied, but does when it ends; C-0430)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃 5 回ごとの自分の分配ダメージ▲（10 秒）は未対応",
+          "en": "The distributed damage increase on self every 5 fully charged attacks (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "distributedDamage",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        },
+        {
+          "ja": "フルチャージ攻撃が 5 回命中した時の対象の防御力▼（10 秒）は未対応",
+          "en": "The defense decrease on the target when 5 fully charged attacks hit (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "unknown",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の攻撃力▲（10 秒）は未対応",
+          "en": "The attack increase on self (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "蓄積爆破のダメージ蓄積割合▲（10 秒）は未対応",
+          "en": "The accumulation ratio increase of Accumulated Blast (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "formatVersion": 1,
+  "resourceId": 511,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "バースト 3 段階突入時の、最終最大HPに比例する自分の攻撃力▲（10 秒）は未対応",
+          "en": "The attack increase on self proportional to final max HP on entering burst stage 3 (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "burstStage3Enter"
+          }
+        },
+        {
+          "ja": "フルチャージ攻撃時の自分のチャージ速度▲（リロード完了で解除）は未対応",
+          "en": "The charge speed increase on self on fully charged attacks (removed on reload) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "chargeSpeed",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        },
+        {
+          "ja": "フルチャージ攻撃が命中した時の追加ダメージは未対応",
+          "en": "The additional damage when a fully charged attack hits is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "デコイ（分身）は、被弾を扱わないのでダメージに関係しない（要件 5.2 節）",
+          "en": "Decoy (clone) does not affect damage, since being hit is not modeled (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "デコイがある時の 3 秒ごとの美しさ（最大HP▲・12 スタック）は未対応（最大HP は S1 の攻撃力▲と、バーストの追加ダメージに効く）",
+          "en": "Beauty (max HP increase, 12 stacks) every 3 s while a decoy exists is not modeled (max HP affects the S1 attack increase and the burst additional damage)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "timer"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "ランダムな敵への 10 回の倍率ダメージと、美しさのスタックに応じた追加ダメージは未対応",
+          "en": "The 10 hits on random enemies and the additional damage by Beauty stacks are not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstDamage",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "formatVersion": 1,
+  "resourceId": 313,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "ペレットが 30 回命中した時の、照準線に最も近い敵 2 機へのダメージは未対応（ペレットの命中を数える回数トリガーが無い。backlog 4-16）",
+          "en": "The damage to the 2 enemies nearest the crosshair every 30 pellet hits is not modeled (there is no count trigger for pellet hits; backlog 4-16)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "normalHit"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃 1 回でペレットが 5 個以上命中した時の自分のリロード速度▲（2 秒）は未対応",
+          "en": "The reload speed increase on self when 5 or more pellets hit in one normal attack (2 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "reloadSpeed",
+            "target": "self",
+            "trigger": "normalShot"
+          }
+        },
+        {
+          "ja": "フルバーストタイム中のペレット 30 回命中ごとの、自分の弾丸チャージと攻撃力▲（5 スタック・2 秒）は未対応",
+          "en": "The ammo charge and attack increase on self (5 stacks, 2 s) every 30 pellet hits during Full Burst are not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "normalHit"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の攻撃ダメージ▲（10 秒）は未対応",
+          "en": "The attack damage increase on self (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分のクリティカルダメージ▲（10 秒）は未対応",
+          "en": "The critical damage increase on self (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "critDamage",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "敵全体へのバーストスキルダメージは未対応",
+          "en": "The burst skill damage on all enemies is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstDamage",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

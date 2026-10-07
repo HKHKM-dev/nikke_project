@@ -1,0 +1,75 @@
+{
+  "formatVersion": 1,
+  "resourceId": 226,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時とバースト使用時の共用バリアは扱わない（要件 5.2 節）",
+          "en": "The shared barrier at the start of combat and on burst use is not modeled (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "フルチャージ状態を 1 秒以上維持した時、自分がバリア適用状態なら味方全体の攻撃ダメージ▲（持続）は未対応（バリアを扱わないので条件が決まらない）",
+          "en": "The attack damage increase on all allies (permanent) when full charge is held for 1 s or more while she has a barrier is not modeled (barriers are not modeled, so the condition is undetermined)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃時の自分の HP 回復は未対応（回復を受けた時の効果を起こしうる）",
+          "en": "The HP restore on self on fully charged attacks is not modeled (it can trigger on-healed effects)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        },
+        {
+          "ja": "バリア適用状態の時の現在のHP▼とバリアHP回復はダメージに関係しない",
+          "en": "The current HP decrease and barrier HP restore while she has a barrier do not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の最大HP▲はダメージに関係しない",
+          "en": "The max HP increase on self does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "味方全体の攻撃ダメージ▲（10 秒）は未対応",
+          "en": "The attack damage increase on all allies (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

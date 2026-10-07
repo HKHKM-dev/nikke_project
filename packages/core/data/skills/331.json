@@ -1,0 +1,75 @@
+{
+  "formatVersion": 1,
+  "resourceId": 331,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時に自分の王へ付ける、スキル発動者基準の攻撃力▲（持続）は未対応（王の決まり方を扱っていない）",
+          "en": "The caster-based attack increase given to her king at the start of combat (permanent) is not modeled (how the king is chosen is not modeled)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "unknown",
+            "trigger": "battleStart"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルバーストタイムの発動時に自分の王へ付ける通常攻撃ダメージ倍率▲（10 秒）は未対応",
+          "en": "The normal attack damage multiplier increase given to her king when Full Burst starts (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "normalAttackDamage",
+            "target": "unknown",
+            "trigger": "fullBurstStart"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方全体のバースト再突入 2 段階は未対応",
+          "en": "Burst re-entry to stage 2 for all allies is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstReentry",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "味方全体の最大装弾数▲（10 秒）は未対応",
+          "en": "The max ammo increase on all allies (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "maxAmmo",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分の王への攻撃ダメージ▲（10 秒）は未対応",
+          "en": "The attack damage increase on her king (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "unknown",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

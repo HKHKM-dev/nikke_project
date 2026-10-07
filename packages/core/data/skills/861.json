@@ -1,0 +1,75 @@
+{
+  "formatVersion": 1,
+  "resourceId": 861,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時とフルバーストタイム終了時の自分の攻撃力▲（5 秒）は未対応",
+          "en": "The attack increase on self at the start of combat and when Full Burst ends (5 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "フルバーストタイムの発動時の自分の防御力無視ダメージ▲（15 秒）は未対応",
+          "en": "The true damage increase on self when Full Burst starts (15 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "trueDamage",
+            "target": "self",
+            "trigger": "fullBurstStart"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "敵全体の受けるダメージ▲（5 秒）と気絶は未対応（説明文にきっかけが無い。発動してもバーストゲージは溜めない。C-0418）",
+          "en": "The damage-taken increase (5 s) and stun on all enemies are not modeled (the description gives no trigger; activating it does not charge the burst gauge; C-0418)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "damageTaken",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "味方全体の防御力無視ダメージ▲（10 秒）は未対応（説明文にきっかけが無い）",
+          "en": "The true damage increase on all allies (10 s) is not modeled (the description gives no trigger)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "trueDamage",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "使用武器変更（10 秒。通常攻撃を防御力無視ダメージに変更し、命中した敵に受けるダメージ▲）は未対応",
+          "en": "The weapon change (10 s; normal attacks become true damage and hit enemies take more damage) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
