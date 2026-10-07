@@ -44,7 +44,8 @@
         "enemy": "range-bigarms-wind",
         "events": ["range-3min-jump"]
       },
-      "note": "S2 の 1 ヒット（会心なし。スペック固定 ON とした場合）"
+      "note": "S2 の 1 ヒット（会心なし。スペック固定 ON とした場合）",
+      "observations": ["008-04"]
     },
     {
       "id": "hit-crit",
