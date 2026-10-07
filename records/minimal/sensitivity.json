@@ -124,7 +124,7 @@
     {
       "observation": "019-01",
       "element": "ノワール burst.effects[1]",
-      "key": "48adb2763da36973",
+      "key": "6605ed53328ba25c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -132,7 +132,7 @@
     {
       "observation": "019-06",
       "element": "ノワール burst.effects[1]",
-      "key": "6c0e48b7bf4c978e",
+      "key": "e78d3a36afadfc09",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -140,7 +140,7 @@
     {
       "observation": "019-10",
       "element": "ノワール burst.effects[1]",
-      "key": "dcdf6e23a8ddf3d6",
+      "key": "d957a60295b61ac1",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -148,7 +148,7 @@
     {
       "observation": "019-11",
       "element": "ノワール burst.effects[1]",
-      "key": "e41262e9996edcdc",
+      "key": "1959a0b460fa879b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -156,7 +156,7 @@
     {
       "observation": "019-17",
       "element": "ノワール burst.effects[1]",
-      "key": "58fc6641963f804e",
+      "key": "1740275cbaaf9949",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -5946,7 +5946,7 @@
     {
       "observation": "248-01",
       "element": "ノワール burst.effects[1]",
-      "key": "bcdff9ed64ccb21e",
+      "key": "35c8bd78332e3459",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -5954,7 +5954,7 @@
     {
       "observation": "249-01",
       "element": "ノワール burst.effects[1]",
-      "key": "f3d67cb566a650ee",
+      "key": "9f6f22b0725f4ea9",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6570,7 +6570,7 @@
     {
       "observation": "304-03",
       "element": "ノワール burst.effects[1]",
-      "key": "4bd497c8955e6499",
+      "key": "e8d1a73fc41d9eda",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6578,7 +6578,7 @@
     {
       "observation": "304-04",
       "element": "ノワール burst.effects[1]",
-      "key": "84377de78372aa24",
+      "key": "c0434f2c5aea49cf",
       "effective": false,
       "minus": 0,
       "plus": 0

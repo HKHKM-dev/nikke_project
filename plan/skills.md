@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 37・効果 186（根拠あり 153）・notes 92（根拠あり 51）
+件数: キャラ 37・効果 186（根拠あり 153）・notes 93（根拠あり 52）
 
-notes の種類: 未対応 27・前提の外 24・計算に無関係 33・補足 8
+notes の種類: 未対応 28・前提の外 24・計算に無関係 33・補足 8
 
-スロット: supported 73・partial 13・unsupported 9・noEffect 25
+スロット: supported 72・partial 14・unsupported 9・noEffect 25
 
 ## 10 ラピ
 
@@ -251,11 +251,12 @@ notes の種類: 未対応 27・前提の外 24・計算に無関係 33・補足
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・hitRate: C-0170（仮説）
   - effects[1] timed・normalHit・attack: C-0124（確定）、C-0118（確定）
-- **burst**: supported
-  - effects[0] timed・burstUse・infiniteAmmo: C-0274（仮説）
-  - effects[1] weaponChange・burstUse: C-0273（確定）、C-0274（仮説）
+- **burst**: partial
+  - effects[0] timed・burstUse・infiniteAmmo: C-0274（仮説）、C-0452（確定）
+  - effects[1] weaponChange・burstUse: C-0273（確定）、C-0274（仮説）、C-0452（確定）
   - notes[0] 補足: 「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている: C-0274（仮説）
-  - notes[1] 前提の外: 殲滅モードの照準線拡張・照準範囲内のすべての敵を同時に照準は、単体の的では関係しない: 根拠なし
+  - notes[1] 未対応: 殲滅モードと装弾数無限は III の発動の 6f 後に付き、殲滅モードの最初の発は発動の 7f 後（C-0452。遅れの表の行）。実測では止まりの明けから殲滅モードの最初の発までモダニアは撃たない（発動の前も 6〜19f 撃たない回がある）が、モデルはこの間も通常の MG の発を撃つ（未対応）: C-0452（確定）
+  - notes[2] 前提の外: 殲滅モードの照準線拡張・照準範囲内のすべての敵を同時に照準は、単体の的では関係しない: 根拠なし
 
 ## 261 ニヒリスター
 
