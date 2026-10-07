@@ -66,9 +66,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
         "midFarLanding": "A"
       }
@@ -138,12 +136,7 @@
     "kind": "position",
     "use": "record",
     "unit": "px",
-    "value": [
-      542,
-      382,
-      160,
-      148
-    ],
+    "value": [542, 382, 160, 148],
     "description": "遠（3 区間目）の的の、足元の y・上端の y・高さ・幅（1920×1080。外接矩形。的だけが取れたコマの中央値）。足元で分けると遠 A（V-0228「結果」）",
     "method": {
       "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
@@ -155,12 +148,7 @@
     "recording": "200",
     "kind": "rate",
     "use": "record",
-    "value": [
-      0.246,
-      0.135,
-      0.078,
-      0.039
-    ],
+    "value": [0.246, 0.135, 0.078, 0.039],
     "description": "リター（SMG）単騎の、各区間の頭の 30 ヒットを除いた残りの距離帯ごとのコア命中率。近・中近・中遠・遠の順。近 257 / 1045、中近 57 / 422、中遠 41 / 528、遠 21 / 536（コア / 当たった数）",
     "method": {
       "tool": "recipe:smg-cores@1",
@@ -174,12 +162,7 @@
     "recording": "200",
     "kind": "count",
     "use": "record",
-    "value": [
-      257,
-      57,
-      41,
-      21
-    ],
+    "value": [257, 57, 41, 21],
     "unit": "ヒット",
     "description": "リター（SMG）単騎の、各区間の頭の 30 ヒットを除いた残りの距離帯ごとのコアのヒットの数。近・中近・中遠・遠の順",
     "method": {
@@ -194,12 +177,7 @@
     "recording": "200",
     "kind": "count",
     "use": "record",
-    "value": [
-      1045,
-      422,
-      528,
-      536
-    ],
+    "value": [1045, 422, 528, 536],
     "unit": "ヒット",
     "description": "リター（SMG）単騎の、各区間の頭の 30 ヒットを除いた残りの距離帯ごとの当たった数（分解できたヒット）。近・中近・中遠・遠の順",
     "method": {
@@ -214,12 +192,7 @@
     "recording": "200",
     "kind": "rate",
     "use": "record",
-    "value": [
-      0.241,
-      0.137,
-      0.077,
-      0.037
-    ],
+    "value": [0.241, 0.137, 0.077, 0.037],
     "description": "リター（SMG）単騎の全部のヒットの距離帯ごとのコア命中率（参考）。近・中近・中遠・遠の順。近 266 / 1105、中近 62 / 452、中遠 43 / 558、遠 22 / 596。会心の割合は 0.173",
     "method": {
       "tool": "recipe:smg-cores@1",

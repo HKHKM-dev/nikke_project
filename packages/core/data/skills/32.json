@@ -20,7 +20,7 @@
             "en": "\"When normal attacks hit 30 times\" counts every normal hit; each 30th hit fires it and restarts the 5 s (no stacking)"
           },
           "claims": [
-            "C-0186"
+            "C-0426", "C-0427"
           ]
         },
         {
@@ -35,7 +35,7 @@
           "ref": 5,
           "durationRef": 6,
           "claims": [
-            "C-0186"
+            "C-0426", "C-0427"
           ]
         }
       ]
@@ -112,7 +112,7 @@
             "en": "\"When normal attacks hit 30 times\" counts every normal hit; each 30th hit fires it and restarts the 5 s (no stacking)"
           },
           "claims": [
-            "C-0186"
+            "C-0426", "C-0427"
           ]
         },
         {
@@ -127,7 +127,7 @@
           "ref": 5,
           "durationRef": 6,
           "claims": [
-            "C-0186"
+            "C-0426", "C-0427"
           ]
         },
         {
