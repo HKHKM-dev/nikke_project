@@ -26,7 +26,8 @@
       "slot": 3,
       "rid": 308,
       "name": "I-DOLL・サン",
-      "controlled": true
+      "controlled": true,
+      "fires": false
     }
   ],
   "target": {

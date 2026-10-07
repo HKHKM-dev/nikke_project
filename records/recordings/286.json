@@ -20,7 +20,8 @@
       "slot": 2,
       "rid": 93,
       "name": "エマ：タクティカル・アップ",
-      "controlled": true
+      "controlled": true,
+      "fires": false
     }
   ],
   "target": {

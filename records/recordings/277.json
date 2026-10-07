@@ -14,7 +14,8 @@
       "slot": 1,
       "rid": 305,
       "name": "I-DOLL・オーシャン",
-      "controlled": true
+      "controlled": true,
+      "fires": false
     },
     {
       "slot": 2,

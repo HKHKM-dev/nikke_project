@@ -20,7 +20,8 @@
       "slot": 2,
       "rid": 304,
       "name": "I-DOLL・フラワー",
-      "controlled": true
+      "controlled": true,
+      "fires": false
     }
   ],
   "target": {

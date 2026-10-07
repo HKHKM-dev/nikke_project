@@ -21,7 +21,8 @@
       "slot": 2,
       "rid": 20,
       "name": "デルタ",
-      "controlled": true
+      "controlled": true,
+      "fires": false
     },
     {
       "slot": 3,

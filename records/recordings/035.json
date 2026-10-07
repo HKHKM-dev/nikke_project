@@ -22,6 +22,7 @@
       "rid": 308,
       "name": "I-DOLL・サン",
       "controlled": true,
+      "fires": false,
       "note": "操作・撃たない"
     }
   ],
