@@ -1,0 +1,133 @@
+{
+  "formatVersion": 1,
+  "resourceId": 16,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "部隊構成による戦闘補助（基本バースト段階が I の味方がいなければ、自分をバースト I に変更）は未対応",
+          "en": "Combat Support by squad composition (if no ally has base burst stage I, she becomes burst I) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "unknown"
+          }
+        },
+        {
+          "ja": "フルバーストタイムの発動時、戦闘補助状態なら味方全体のバーストスキルクールタイム▼は未対応",
+          "en": "The burst skill cooldown reduction on all allies when Full Burst starts, while in Combat Support, is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "cooldownReduction",
+            "target": "allies",
+            "trigger": "fullBurstStart"
+          }
+        },
+        {
+          "ja": "フルバーストタイムの発動時、戦闘補助状態なら味方全体の攻撃ダメージ▲（10 秒）は未対応",
+          "en": "The attack damage increase on all allies when Full Burst starts, while in Combat Support (10 s), is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "allies",
+            "trigger": "fullBurstStart"
+          }
+        },
+        {
+          "ja": "フルバーストタイムの発動時、戦闘補助状態でなければ自分の攻撃力▲（10 秒）は未対応",
+          "en": "The attack increase on self when Full Burst starts, while not in Combat Support (10 s), is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "fullBurstStart"
+          }
+        },
+        {
+          "ja": "阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）",
+          "en": "The damage increase against blocking parts does not affect damage, since the range enemy has no blocking parts (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "fullBurstStart"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "電撃コードの敵への有利コード、発射体付着ダメージ▲・発射体爆発ダメージ▲（持続）は未対応",
+          "en": "The advantage against Electric enemies and the attached-projectile and projectile-explosion damage increases (permanent) are not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "passive",
+            "stat": "unknown",
+            "target": "self"
+          }
+        },
+        {
+          "ja": "通常攻撃 120 回ごとの粘着榴弾（付着と起爆のダメージ）は未対応",
+          "en": "The sticky grenade (attach and detonation damage) every 120 normal attacks is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "バースト I で使った時の、自分のバーストスキルクールタイム▼は未対応",
+          "en": "The burst skill cooldown reduction on self when used as burst I is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "cooldownReduction",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "バースト I で使った時の、味方全体のスキル発動者基準の攻撃力▲（10 秒）は未対応",
+          "en": "The caster-based attack increase on all allies when used as burst I (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "バースト III で使った時の、照準線に最も近い敵 1 機への追加ダメージは未対応",
+          "en": "The additional damage on the enemy nearest the crosshair when used as burst III is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "爆発範囲▲・発射体付着ダメージ▲・粘着榴弾の回数条件▼（10 秒）は未対応（爆発範囲はダメージの式に無い）",
+          "en": "The explosion range increase, attached-projectile damage increase and sticky-grenade count reduction (10 s) are not modeled (explosion range is not in the damage formula)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "formatVersion": 1,
+  "resourceId": 190,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最後の弾丸が命中した時の対象の防御力▼（10 秒）は未対応",
+          "en": "The defense decrease on the target when the last bullet hits (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "unknown",
+            "trigger": "lastShot"
+          }
+        },
+        {
+          "ja": "最後の弾丸が命中した時の対象の攻撃力▼はダメージに関係しない",
+          "en": "The attack decrease on the target when the last bullet hits does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルバーストタイムの発動時の敵全体への挑発と、自分の受けるダメージ▼はダメージに関係しない",
+          "en": "The taunt on all enemies and the damage-taken decrease on self when Full Burst starts do not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い敵 10 機へのダメージは未対応",
+          "en": "The damage to the 10 enemies with the highest final attack is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstDamage",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分の HP が 50% 以上の時の味方全体の防御力▲はダメージに関係しない",
+          "en": "The defense increase on all allies while own HP is 50% or more does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  }
+}

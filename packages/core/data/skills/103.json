@@ -1,0 +1,95 @@
+{
+  "formatVersion": 1,
+  "resourceId": 103,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時の、最終最大HPに比例する自分の攻撃力▲（持続）は未対応",
+          "en": "The attack increase on self proportional to final max HP from the start of combat (permanent) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "フルチャージ攻撃時のウォームアップ（チャージ速度▲・5 スタック）は未対応",
+          "en": "Warm-up (charge speed increase, 5 stacks) on fully charged attacks is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "chargeSpeed",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        },
+        {
+          "ja": "ウォームアップのフルスタックの後の使用武器変更（エレクトリックパワー・フル・フルチャージ）と、終了時の残弾数減少は未対応",
+          "en": "The weapon change after full Warm-up stacks (Electric Power: Full Full Charge) and the ammo decrease when it ends are not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "使用武器変更中の通常攻撃によるオーバーエネルギー（最大HP▲の段階）は未対応（最大HP は S1 の攻撃力▲に効く）",
+          "en": "Over Energy (max HP increase by stage) from normal attacks during the weapon change is not modeled (max HP affects the S1 attack increase)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "normalShot"
+          }
+        },
+        {
+          "ja": "バースト 3 段階突入時の自分の攻撃ダメージ▲（10 秒）は未対応",
+          "en": "The attack damage increase on self on entering burst stage 3 (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "self",
+            "trigger": "burstStage3Enter"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の攻撃力▲（10 秒）は未対応",
+          "en": "The attack increase on self (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "敵全体へのバーストスキルダメージと、オーバーエネルギーの段階に応じた追加ダメージは未対応",
+          "en": "The burst skill damage on all enemies and the additional damage by Over Energy stage are not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstDamage",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

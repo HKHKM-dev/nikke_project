@@ -1,0 +1,76 @@
+{
+  "formatVersion": 1,
+  "resourceId": 242,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い味方 2 機へのバリアは扱わない（要件 5.2 節）",
+          "en": "The barrier on the 2 allies with the highest final attack is not modeled (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "最終攻撃力が最も高い味方 2 機への受けるHP回復量▲はダメージに関係しない",
+          "en": "The HP-recovery-received increase on the 2 allies with the highest final attack does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い敵 1 機への挑発と、自分の最大HP▲はダメージに関係しない",
+          "en": "The taunt on the enemy with the highest final attack and the max HP increase on self do not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "S2 の発動のたびに、射手の target_burst_energy_pershot（4,000）のゲージを溜めるのは未対応（説明文にきっかけが無い。C-0422）",
+          "en": "Charging the burst gauge by the shooter's target_burst_energy_pershot (4,000) on each S2 activation is not modeled (the description gives no trigger; C-0422)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstGaugeHit",
+            "trigger": "timer"
+          },
+          "claims": [
+            "C-0422"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い味方 2 機へのバリアは扱わない（要件 5.2 節）",
+          "en": "The barrier on the 2 allies with the highest final attack is not modeled (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "最終攻撃力が最も高い味方 2 機の吸収回復（攻撃ダメージの X% 回復・10 秒）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
+          "en": "The lifesteal (restore X% of attack damage, 10 s) on the 2 allies with the highest final attack is not modeled (it changes the activation of allies with on-healed effects)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

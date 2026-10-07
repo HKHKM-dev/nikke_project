@@ -1,0 +1,77 @@
+{
+  "formatVersion": 1,
+  "resourceId": 162,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "キャプチャーチェーン（戦闘開始時と、バーストを使ったフルバーストタイムの終了時のチャージ）による、ランダムな敵へのダメージは未対応",
+          "en": "The damage to random enemies by Capture Chain (charged at the start of combat and when a Full Burst in which she used her burst ends) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "チェーンバインド（同じ敵への持続ダメージ・20 スタック・持続）は未対応",
+          "en": "Chain Bind (damage over time on the same enemy, 20 stacks, permanent) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "dot",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルバーストタイム中の通常攻撃 40 回命中ごとの、チェーンバインドのスタック量▲は未対応",
+          "en": "The Chain Bind stack increase every 40 normal attack hits during Full Burst is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "dot",
+            "trigger": "normalHit"
+          }
+        },
+        {
+          "ja": "自分が戦闘不能になった時のスタック量▲と、敵が破壊された時のキャプチャーチェーン▲は、前提（味方が倒れない・敵 1 体）の外（要件 5.2 節）",
+          "en": "The stack increase when she is defeated and the Capture Chain increase when an enemy is destroyed are outside the assumptions (allies are not defeated, a single enemy; requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          }
+        },
+        {
+          "ja": "バースト 3 段階突入時の自分の持続ダメージ▲（10 秒）は未対応",
+          "en": "The damage-over-time increase on self on entering burst stage 3 (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "sustainedDamage",
+            "target": "self",
+            "trigger": "burstStage3Enter"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "チェーンバインド状態の対象への持続ダメージ（プリング・チェーン）は未対応",
+          "en": "The damage over time (Pulling Chain) on Chain-Bound targets is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "dot",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

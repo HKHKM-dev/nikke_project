@@ -1,0 +1,95 @@
+{
+  "formatVersion": 1,
+  "resourceId": 314,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時のゴールデンチップ 50 個と、フルバーストタイム中の通常攻撃 3 回ごとのゴールデンチップ（クリティカルダメージ▲・最大 50 スタック・持続）は未対応（戦闘開始からの 66% は C-0128）",
+          "en": "The 50 Golden Chips at the start of combat and the Golden Chip (critical damage increase, up to 50 stacks, permanent) every 3 normal attacks during Full Burst are not modeled (the 66% from the start of combat is C-0128)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "critDamage",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "フルバーストタイム中の通常攻撃 3 回ごとの、自分と自分を除く最終攻撃力が最も高い味方 1 機への攻撃ダメージ▲（2 秒）は未対応",
+          "en": "The attack damage increase on self and the ally with the highest final attack every 3 normal attacks during Full Burst (2 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "allies",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "バースト 3 段階突入時の、ゴールデンチップのスタック量別のフルバーストタイムの持続時間▲は未対応",
+          "en": "The Full Burst duration increase by Golden Chip stacks on entering burst stage 3 is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "burstStage3Enter"
+          }
+        },
+        {
+          "ja": "フルバーストタイム中の通常攻撃ごとの、時間延長状態別のダメージは未対応",
+          "en": "The damage by time-extension state on each normal attack during Full Burst is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "ゴールデンチップのスタック量別の、敵全体へのバーストスキルダメージは未対応",
+          "en": "The burst skill damage on all enemies by Golden Chip stacks is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstDamage",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "ゴールデンチップのスタック量別の、自分の命中率▲（15 秒）は未対応",
+          "en": "The hit rate increase on self by Golden Chip stacks (15 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "hitRate",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "ゴールデンチップのスタック量別の、自分の攻撃力▲（15 秒）は未対応",
+          "en": "The attack increase on self by Golden Chip stacks (15 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

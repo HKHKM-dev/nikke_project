@@ -1,0 +1,62 @@
+{
+  "formatVersion": 1,
+  "resourceId": 60,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃時の自分の爆発範囲▲（5 秒）は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）",
+          "en": "The explosion range increase on self on fully charged attacks (5 s) is not modeled (explosion range is not in the damage formula; its effect on the core hit rate is not checked)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "4 機以上に同時に命中した時の防御力▼と追加ダメージは、敵 1 体では起きない",
+          "en": "The defense decrease and additional damage when 4 or more enemies are hit at once do not occur against a single enemy",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "攻撃範囲内の敵へのダメージは未対応",
+          "en": "The damage to enemies in range is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstDamage",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "味方全体のチャージ速度▲（10 秒）は未対応",
+          "en": "The charge speed increase on all allies (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "chargeSpeed",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

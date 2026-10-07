@@ -1,0 +1,66 @@
+{
+  "formatVersion": 1,
+  "resourceId": 121,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃 3 回ごとの、支援型の味方全体の吸収回復（攻撃ダメージの X% 回復・5 秒）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
+          "en": "The lifesteal (restore X% of attack damage, 5 s) on all Supporter allies every 3 normal attacks is not modeled (it changes the activation of allies with on-healed effects)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の HP が 90% 以上の時の味方全体の受けるHP回復量▲と、最後の弾丸が命中した時の敵全体の受けるHP回復量▼はダメージに関係しない（後半はバーストゲージも溜めない。C-0431）",
+          "en": "The HP-recovery-received increase on all allies while own HP is 90% or more and the HP-recovery-received decrease on all enemies when the last bullet hits do not affect damage (the latter does not charge the burst gauge either; C-0431)",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "火力型の味方全体の HP 回復は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
+          "en": "The HP restore on all Attacker allies is not modeled (it changes the activation of allies with on-healed effects)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "火力型の味方全体の攻撃力▲（10 秒）は未対応",
+          "en": "The attack increase on all Attacker allies (10 s) is not modeled",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "戦闘不能の火力型の味方の復活は、味方が倒れないので起きない（要件 5.2 節）",
+          "en": "Reviving a defeated Attacker ally does not occur, since allies are not defeated (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          }
+        }
+      ]
+    }
+  }
+}
