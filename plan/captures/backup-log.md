@@ -253,6 +253,24 @@
 
 2026-10-07 23:53 に録画 321（アニス：スター単騎）を `intake.ts` で取り込み、この 1 本（`range/20261007-321_rl_anis-star_solo_far-burst-late.mp4`）だけを同期した。E: と I: で sha256 が一致（`ba3b16502467`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
+2026-10-07 23:37 に録画 319（サクラ + デルタ + ブラン + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261007-319_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`cf9cebdd17cb`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-07 23:37 に録画 310（サクラ + デルタ + ブラン + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261007-310_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`86df2fc2ce2e`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-07 23:37 に録画 311（サクラ + デルタ + ブラン + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261007-311_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`43ddc2c449d8`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-07 23:38 に録画 312（サクラ + デルタ + ブラン + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261007-312_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`89067ae5b9af`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-07 23:38 に録画 313（サクラ + デルタ + ユニ + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261007-313_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`f7a8003b9921`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-07 23:38 に録画 314（サクラ + デルタ + ユニ + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261007-314_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`58d4ef0450e2`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-07 23:38 に録画 315（サクラ + デルタ + ユニ + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261007-315_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`3c770ecd68c6`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-07 23:38 に録画 316（サクラ + デルタ + ユニ + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261007-316_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`586e51ea61d5`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-07 に、録画 319 は取り込みのときの番号（309）が別のブランチの録画（フォルクヴァン）と重なったので振り直し、E: と I: のファイル名と `derived/` の置き場所を替えた。中身は変えていない（sha256 は上のとおり）。
+
 2026-10-08 00:18 に録画 322（ミランダ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261007-322_smg_miranda_auto.mp4`）だけを同期した。E: と I: で sha256 が一致（`6762c927de45`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-08 00:18 に録画 323（ミランダ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261007-323_smg_miranda_auto.mp4`）だけを同期した。E: と I: で sha256 が一致（`010fd8c424ab`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。

@@ -1,0 +1,49 @@
+{
+  "id": "316",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-316_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4",
+  "original": "2026-10-07_23-20-42.mp4",
+  "durationSec": 205.1,
+  "frames": 12306,
+  "fps": 60,
+  "sizeMB": 248.5,
+  "sha256": "586e51ea61d5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": true,
+      "fires": false,
+      "bursts": false
+    },
+    {
+      "slot": 4,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0292 の録画 B（部隊なし）の 4 本目。サクラ（AI）・デルタ（AI）・ユニ（操作・撃たない）・ノワール（AI）。戦闘履歴のパネルで枠順とユニの与ダメージ 0 を、左上の表示で AUTO 射撃 OFF・オートバースト ON を確かめた。出撃画面は映っていない（スペック固定と的の属性は 1 ヒットの値で確かめる）"
+}
