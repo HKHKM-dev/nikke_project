@@ -36,7 +36,8 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       },
-      "note": "1 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数"
+      "note": "1 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数",
+      "observations": ["020-17"]
     },
     {
       "id": "offsets-2",
@@ -50,7 +51,8 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       },
-      "note": "2 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数"
+      "note": "2 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数",
+      "observations": ["020-18"]
     },
     {
       "id": "offsets-3",
@@ -64,7 +66,8 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       },
-      "note": "3 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数"
+      "note": "3 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数",
+      "observations": ["020-19"]
     },
     {
       "id": "offsets-4",
@@ -78,7 +81,8 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       },
-      "note": "4 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数"
+      "note": "4 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数",
+      "observations": ["020-20"]
     },
     {
       "id": "offsets-5",
@@ -92,7 +96,8 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       },
-      "note": "5 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数"
+      "note": "5 回目のバーストの発動（III のタイマーが 00.00）から各 tick までの動画のフレーム数",
+      "observations": ["020-21"]
     },
     {
       "id": "tick",

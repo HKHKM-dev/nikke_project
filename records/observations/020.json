@@ -446,5 +446,175 @@
       "tool": "hud.ts --mode jumps",
       "note": "単独の増分のうち、モデルのデルタの 1 ヒット（フルバースト中・外 × コア × 会心の 4 通り）より 3 以上大きく、差 ÷ 値 × (攻撃力 − 防御) が 5〜25 のものを全部挙げた。019 は、ノワールの S1 の攻撃力▲でデルタの値がほかの 3 本より 1.0135 倍大きい"
     }
+  },
+  {
+    "id": "020-17",
+    "recording": "020",
+    "source": "V-0316",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "compare",
+    "value": [24, 112, 170, 229, 288, 346, 406, 464, 523, 582],
+    "unit": "f",
+    "description": "1 回目のマナのバーストの発動（III のタイマーが 00.00 になったフレーム f1294）から、その持続ダメージの各 tick までの動画のフレーム数（フルバーストの入りの止まりを含む）。予測ファイル V-0316 の offsets-1 と同じ指標",
+    "method": {
+      "tool": "hud.ts --mode jumps + 右のバースト欄と HUD を 1 フレームずつ目で読む",
+      "note": "tick は HUD の増分 2,741,786（会心 3,655,715。ほかにエーテルの S2 の後の窓では 2,741,879・3,655,839 など少し大きい値）。1 回目の tick は f1318（HUD 5,524,577 → 8,266,363。止まりの明けで hud.ts の増分はまとまるので、HUD を 1 フレームずつ目で読んだ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "020-18",
+    "recording": "020",
+    "source": "V-0316",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "compare",
+    "value": [24, 112, 171, 229, 288, 347, 406, 465, 523, 582],
+    "unit": "f",
+    "description": "2 回目のマナのバーストの発動（III のタイマーが 00.00 になったフレーム f3671）から、その持続ダメージの各 tick までの動画のフレーム数（フルバーストの入りの止まりを含む）。予測ファイル V-0316 の offsets-2 と同じ指標",
+    "method": {
+      "tool": "hud.ts --mode jumps + 右のバースト欄と HUD を 1 フレームずつ目で読む",
+      "note": "tick は HUD の増分 2,741,786（会心 3,655,715。ほかにエーテルの S2 の後の窓では 2,741,879・3,655,839 など少し大きい値）。1 回目の tick は f3695（68,505,684 → 71,247,470）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "020-19",
+    "recording": "020",
+    "source": "V-0316",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "compare",
+    "value": [23, 111, 170, 228, 287, 346, 405, 464, 522, 581],
+    "unit": "f",
+    "description": "3 回目のマナのバーストの発動（III のタイマーが 00.00 になったフレーム f6049）から、その持続ダメージの各 tick までの動画のフレーム数（フルバーストの入りの止まりを含む）。予測ファイル V-0316 の offsets-3 と同じ指標",
+    "method": {
+      "tool": "hud.ts --mode jumps + 右のバースト欄と HUD を 1 フレームずつ目で読む",
+      "note": "tick は HUD の増分 2,741,786（会心 3,655,715。ほかにエーテルの S2 の後の窓では 2,741,879・3,655,839 など少し大きい値）。始まりの直前の f6048 に III の 09.52 が 2 フレーム続く（録画の重複フレーム）ので、始まりの読みが 1f 遅く、列が全体に 1f 小さい見込み。1 回目の tick は f6072"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "020-20",
+    "recording": "020",
+    "source": "V-0316",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "compare",
+    "value": [24, 111, 170, 229, 288, 347, 405, 465, 522, 581],
+    "unit": "f",
+    "description": "4 回目のマナのバーストの発動（III のタイマーが 00.00 になったフレーム f8426）から、その持続ダメージの各 tick までの動画のフレーム数（フルバーストの入りの止まりを含む）。予測ファイル V-0316 の offsets-4 と同じ指標",
+    "method": {
+      "tool": "hud.ts --mode jumps + 右のバースト欄と HUD を 1 フレームずつ目で読む",
+      "note": "tick は HUD の増分 2,741,786（会心 3,655,715。ほかにエーテルの S2 の後の窓では 2,741,879・3,655,839 など少し大きい値）。1 回目の tick は f8450（ほかの発と同じフレームで、増分の値では見分けられない。前後の値の替わり目の位置で取った）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "020-21",
+    "recording": "020",
+    "source": "V-0316",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "compare",
+    "value": [24, 112, 171, 229, 288, 347, 406, 465, 523, 582],
+    "unit": "f",
+    "description": "5 回目のマナのバーストの発動（III のタイマーが 00.00 になったフレーム f10803）から、その持続ダメージの各 tick までの動画のフレーム数（フルバーストの入りの止まりを含む）。予測ファイル V-0316 の offsets-5 と同じ指標",
+    "method": {
+      "tool": "hud.ts --mode jumps + 右のバースト欄と HUD を 1 フレームずつ目で読む",
+      "note": "tick は HUD の増分 2,741,786（会心 3,655,715。ほかにエーテルの S2 の後の窓では 2,741,879・3,655,839 など少し大きい値）。1 回目の tick は f10827（会心。241,118,321 → 244,846,700）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    }
   }
 ]
