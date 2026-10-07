@@ -27,11 +27,11 @@
   ],
   "target": {
     "name": "BigArms",
-    "element": null
+    "element": "Water"
   },
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": null,
   "autoBurst": null,
-  "conditionNote": "BigArms（3 分モード・スペック固定）"
+  "conditionNote": "BigArms（**水冷**。3 分モード・スペック固定。2026-10-07 に録画の始めのロビーの画面（約 2 秒）で、水冷のタブ・WEAK POINT の電撃の印を確かめた）"
 }
