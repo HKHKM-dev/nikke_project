@@ -1,0 +1,119 @@
+{
+  "verification": "V-0293",
+  "note": "読み直し（録画 222）の、読む前の予測。効果の遅れが表の値と違う仮説（E1・E2）は、遅れの表（burst/landing.ts）で切り替わるので、このファイルの範囲外（検証記録に手で書く）。モデルでは 5 回とも発動の後の最初の発がヒット（4f）より後なので、効果の遅れを 4f にしても値は変わらない",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 101,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。ドレイク（宝物あり）の遅れの表の行は効果の遅れ 0 で、攻撃ダメージ▲・最大装弾数▲は III の発動のフレームで付く"
+    }
+  ],
+  "targets": [
+    {
+      "id": "effect-first-1",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目の発動（III のタイマーが 00.00 になったフレーム）の後のドレイクの最初の発から、バースト使用時の効果（攻撃ダメージ▲・最大装弾数▲）の発火以後の最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）。録画では、発動の後の最初の発から、攻撃ダメージ▲の付いた値の最初の発までの動画のフレーム数を読み、止まりをまたぐなら 22 を引く"
+    },
+    {
+      "id": "effect-first-2",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目の発動（III のタイマーが 00.00 になったフレーム）の後のドレイクの最初の発から、バースト使用時の効果（攻撃ダメージ▲・最大装弾数▲）の発火以後の最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）。録画では、発動の後の最初の発から、攻撃ダメージ▲の付いた値の最初の発までの動画のフレーム数を読み、止まりをまたぐなら 22 を引く"
+    },
+    {
+      "id": "effect-first-3",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目の発動（III のタイマーが 00.00 になったフレーム）の後のドレイクの最初の発から、バースト使用時の効果（攻撃ダメージ▲・最大装弾数▲）の発火以後の最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）。録画では、発動の後の最初の発から、攻撃ダメージ▲の付いた値の最初の発までの動画のフレーム数を読み、止まりをまたぐなら 22 を引く"
+    },
+    {
+      "id": "effect-first-4",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目の発動（III のタイマーが 00.00 になったフレーム）の後のドレイクの最初の発から、バースト使用時の効果（攻撃ダメージ▲・最大装弾数▲）の発火以後の最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）。録画では、発動の後の最初の発から、攻撃ダメージ▲の付いた値の最初の発までの動画のフレーム数を読み、止まりをまたぐなら 22 を引く"
+    },
+    {
+      "id": "effect-first-5",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "5 回目の発動（III のタイマーが 00.00 になったフレーム）の後のドレイクの最初の発から、バースト使用時の効果（攻撃ダメージ▲・最大装弾数▲）の発火以後の最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）。録画では、発動の後の最初の発から、攻撃ダメージ▲の付いた値の最初の発までの動画のフレーム数を読み、止まりをまたぐなら 22 を引く"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "5b297b0271827eebb5447d6ef17db6d5a9830027",
+    "values": {
+      "H0": {
+        "effect-first-1": 0,
+        "effect-first-2": 0,
+        "effect-first-3": 0,
+        "effect-first-4": 0,
+        "effect-first-5": 0
+      }
+    },
+    "seen": {
+      "222": ["222-01", "222-02", "222-03", "222-04", "222-05", "222-06", "222-07"]
+    }
+  }
+}

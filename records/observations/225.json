@@ -58,5 +58,206 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "225-03",
+    "recording": "225",
+    "source": "V-0294",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 343883.2,
+    "description": "ココア + デルタ + レイヴンの 1 回目の発動（f1371）の後、止まりの明けからヒット（発動の 64〜65f 後）までに出た S1 の持続ダメージの tick（f1426。発動の 55f 後。会心なし）の 1 スタックの値（1,375,533 ÷ 4 スタック）。A.N.モードの持続ダメージ▲の乗った値",
+    "method": {
+      "tool": "recipe hud-jumps のキャッシュ（hud.ts --mode jumps の増分）",
+      "note": "止まりの明けからヒットまでの tick は、どの回も 1 つ。▲なし（効果の遅れを 43 にして回したモデル）の 1 スタック（181,526.1・会心 242,034.9）の整数倍にはならない。発動の前の最後の tick は、どれも▲もフルバースト補正も無い 1 スタック 82,012.3 の整数倍（1 回目は 328,049 = 4 スタック、2〜5 回目は 820,123 = 10 スタック）。1 スタックの読みの幅は 0.5 ÷ スタックの数"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 520,
+        "stacks": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "225-04",
+    "recording": "225",
+    "source": "V-0294",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 343883.1,
+    "description": "ココア + デルタ + レイヴンの 2 回目の発動（f3751）の後、止まりの明けからヒット（発動の 64〜65f 後）までに出た S1 の持続ダメージの tick（f3804。発動の 53f 後。会心なし）の 1 スタックの値（3,438,831 ÷ 10 スタック）。A.N.モードの持続ダメージ▲の乗った値",
+    "method": {
+      "tool": "recipe hud-jumps のキャッシュ（hud.ts --mode jumps の増分）",
+      "note": "止まりの明けからヒットまでの tick は、どの回も 1 つ。▲なし（効果の遅れを 43 にして回したモデル）の 1 スタック（181,526.1・会心 242,034.9）の整数倍にはならない。発動の前の最後の tick は、どれも▲もフルバースト補正も無い 1 スタック 82,012.3 の整数倍（1 回目は 328,049 = 4 スタック、2〜5 回目は 820,123 = 10 スタック）。1 スタックの読みの幅は 0.5 ÷ スタックの数"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2872,
+        "stacks": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "225-05",
+    "recording": "225",
+    "source": "V-0294",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 458510.8,
+    "description": "ココア + デルタ + レイヴンの 3 回目の発動（f6130）の後、止まりの明けからヒット（発動の 64〜65f 後）までに出た S1 の持続ダメージの tick（f6182。発動の 52f 後。会心）の 1 スタックの値（4,585,108 ÷ 10 スタック）。A.N.モードの持続ダメージ▲の乗った値",
+    "method": {
+      "tool": "recipe hud-jumps のキャッシュ（hud.ts --mode jumps の増分）",
+      "note": "止まりの明けからヒットまでの tick は、どの回も 1 つ。▲なし（効果の遅れを 43 にして回したモデル）の 1 スタック（181,526.1・会心 242,034.9）の整数倍にはならない。発動の前の最後の tick は、どれも▲もフルバースト補正も無い 1 スタック 82,012.3 の整数倍（1 回目は 328,049 = 4 スタック、2〜5 回目は 820,123 = 10 スタック）。1 スタックの読みの幅は 0.5 ÷ スタックの数"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 5224,
+        "stacks": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "225-06",
+    "recording": "225",
+    "source": "V-0294",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 343883.1,
+    "description": "ココア + デルタ + レイヴンの 4 回目の発動（f8509）の後、止まりの明けからヒット（発動の 64〜65f 後）までに出た S1 の持続ダメージの tick（f8560。発動の 51f 後。会心なし）の 1 スタックの値（3,438,831 ÷ 10 スタック）。A.N.モードの持続ダメージ▲の乗った値",
+    "method": {
+      "tool": "recipe hud-jumps のキャッシュ（hud.ts --mode jumps の増分）",
+      "note": "止まりの明けからヒットまでの tick は、どの回も 1 つ。▲なし（効果の遅れを 43 にして回したモデル）の 1 スタック（181,526.1・会心 242,034.9）の整数倍にはならない。発動の前の最後の tick は、どれも▲もフルバースト補正も無い 1 スタック 82,012.3 の整数倍（1 回目は 328,049 = 4 スタック、2〜5 回目は 820,123 = 10 スタック）。1 スタックの読みの幅は 0.5 ÷ スタックの数"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 7576,
+        "stacks": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "225-07",
+    "recording": "225",
+    "source": "V-0294",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 343883.1,
+    "description": "ココア + デルタ + レイヴンの 5 回目の発動（f10889）の後、止まりの明けからヒット（発動の 64〜65f 後）までに出た S1 の持続ダメージの tick（f10939。発動の 50f 後。会心なし）の 1 スタックの値（3,438,831 ÷ 10 スタック）。A.N.モードの持続ダメージ▲の乗った値",
+    "method": {
+      "tool": "recipe hud-jumps のキャッシュ（hud.ts --mode jumps の増分）",
+      "note": "止まりの明けからヒットまでの tick は、どの回も 1 つ。▲なし（効果の遅れを 43 にして回したモデル）の 1 スタック（181,526.1・会心 242,034.9）の整数倍にはならない。発動の前の最後の tick は、どれも▲もフルバースト補正も無い 1 スタック 82,012.3 の整数倍（1 回目は 328,049 = 4 スタック、2〜5 回目は 820,123 = 10 スタック）。1 スタックの読みの幅は 0.5 ÷ スタックの数"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 9956,
+        "stacks": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "225-08",
+    "recording": "225",
+    "source": "V-0294",
+    "readAt": "2026-10-07",
+    "kind": "timing",
+    "use": "record",
+    "value": [55, 53, 52, 51, 50],
+    "unit": "f",
+    "description": "1〜5 回目の III の発動（f1371・3751・6130・8509・10889）から、止まりの明けの後の最初の S1 の tick までの動画のフレーム数（止まり 22f を含む。モデルのフレームで約 28〜33f）。どの回もヒット（64〜65f）より前で、A.N.モードの持続ダメージ▲の乗った値（225-03〜225-07）",
+    "method": {
+      "tool": "recipe hud-jumps のキャッシュ（hud.ts --mode jumps の増分）",
+      "note": "発動の前の最後の tick は 26〜31f 前。ヒットの後の最初の tick（109〜114f 後）も▲の乗った値（1,719,416 = 5 スタック・4,585,108 = 10 スタックの会心・3,438,831 = 10 スタック）。止まりの明けの直後（22〜49f）には tick が無いので、▲が発動から 28f までのどこで付くかは見分けられない"
+    }
+  },
+  {
+    "id": "225-09",
+    "recording": "225",
+    "source": "V-0294",
+    "readAt": "2026-10-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3438831,
+    "description": "2 回目の発動（f3751）の後、止まりの明けからヒットまでに出た S1 の tick（f3804。10 スタック・会心なし）の値そのもの（225-04 はこれを 10 で割った 1 スタック）。A.N.モードの持続ダメージ▲の乗った値",
+    "method": {
+      "tool": "recipe hud-jumps のキャッシュ（hud.ts --mode jumps の増分）",
+      "note": "1 スタックに割ると端数が出て機械の等級の候補が厳密一致にならないので、読んだ整数の値でも比べる（V-0189 の C-0285 と同じ扱い）。4・5 回目の同じ位置の tick も同じ 3,438,831"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2872,
+        "stacks": 10,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

@@ -460,6 +460,26 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 1, burst: 2, from: 0, to: 588 })).toThrow('発動 2 回目');
   });
 
+  it('measures the first shot at or after the burst effect, from the activation or from the first shot (backlog 2-4)', () => {
+    const result = {
+      shots: [{ frames: [88, 91, 93, 96, 98, 101, 400, 402] }],
+      schedule: {
+        activations: [
+          { slotIndex: 0, frame: 90 },
+          { slotIndex: 0, frame: 300, effectFrame: 310 },
+        ],
+      },
+    } as unknown as SimResult;
+    const metric = METRICS.burstEffectFirstShot!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 1, n: 0 })).toBe(1);
+    expect(value({ slot: 1, n: 0, fromShot: true })).toBe(0);
+    expect(value({ slot: 1, n: 1 })).toBe(100);
+    expect(value({ slot: 1, n: 1, fromShot: true })).toBe(0);
+    expect(() => value({ slot: 1, n: 2 })).toThrow('2 回目の発動が無い');
+  });
+
   it('reports unknown metrics, missing args, calc-less metrics and unknown presets', () => {
     const base = observations.find((o) => o.id === '047-02')!;
     const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '047-99'): Observation => ({

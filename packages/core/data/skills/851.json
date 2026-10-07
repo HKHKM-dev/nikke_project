@@ -91,11 +91,12 @@
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "A.N.モードの持続ダメージ▲は、S1 の持続ダメージの tick に、tick ごとにその時点の▲で乗る（▲の前に付けたスタックの分も乗る）。付くのは III の発動のフレーム（効果の遅れは未測定）",
-            "en": "A.N. Mode's sustained damage up applies to S1's damage-over-time ticks by the state at each tick (including stacks applied before it). It starts on the III activation frame (the effect delay is unmeasured)"
+            "ja": "A.N.モードの持続ダメージ▲は、S1 の持続ダメージの tick に、tick ごとにその時点の▲で乗る（▲の前に付けたスタックの分も乗る）。付くのは III の発動のフレーム（実測ではヒットより前に付き、止まりの明けの後の最初の tick から乗る）",
+            "en": "A.N. Mode's sustained damage up applies to S1's damage-over-time ticks by the state at each tick (including stacks applied before it). It starts on the III activation frame (measured: it is on before the hit, from the first tick after the Full Burst entry pause)"
           },
           "claims": [
-            "C-0332"
+            "C-0332",
+            "C-0421"
           ]
         }
       ],

@@ -151,7 +151,10 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-0420"
+          ]
         },
         {
           "kind": "timed",
@@ -159,7 +162,10 @@
           "target": "self",
           "stat": "maxAmmo",
           "ref": 2,
-          "durationRef": 3
+          "durationRef": 3,
+          "claims": [
+            "C-0420"
+          ]
         }
       ]
     }
