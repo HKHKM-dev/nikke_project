@@ -175,7 +175,7 @@
             "HomingProjectile:100:750": {
               "near": 1,
               "midNear": 0.8958,
-              "far": 0.3922,
+              "far": 0.5,
               "midFar": 0.875
             }
           }

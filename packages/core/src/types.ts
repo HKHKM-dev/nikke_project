@@ -383,7 +383,7 @@ export type TargetProfile = {
   bulletHitRate: TargetRateTable;
   /**
    * V-0119: 1 発の通常攻撃のヒット数の期待値（1 以上。省略・null・表に無いキーは 1）。いまの実データに行は無い（誘導弾・爆発の範囲
-   * 750 の RL の 2 ヒットは、コアの 1 ヒットだった。C-0282）
+   * 750 の RL の 2 ヒットは、コアの 1 ヒットだった。C-0424）
    */
   hitsPerShot?: TargetRateTable;
   /**

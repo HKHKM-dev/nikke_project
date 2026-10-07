@@ -1,0 +1,29 @@
+{
+  "id": "321",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-321_rl_anis-star_solo_far-burst-late.mp4",
+  "original": "2026-10-07_23-47-43.mp4",
+  "durationSec": 198.4,
+  "frames": 11904,
+  "fps": 60,
+  "sizeMB": 240.6,
+  "sha256": "ba3b16502467",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0297。アニス：スター単騎・操作（AUTO 射撃 ON・オートバースト OFF）。バーストは遠の区間でだけ手で使い、窓は 2 回（遠の着地の後の最初の発から約 0.8 秒後と、約 26 秒後。2 回目は区間の終わりのジャンプで切れる。321-04）"
+}
