@@ -129,6 +129,8 @@ export type MinimalElement = {
   };
   /** 効果のスロット */
   skillSlot?: SkillSlot;
+  /** 効果の定義の中の位置（感度で定義から外す・置き換えるのに使う） */
+  effectRef?: { rid: number; root: SkillRoot; slot: SkillSlot; index: number };
   /** 根拠の結論（補足の refers の notes の claims も含める） */
   claims: string[];
 };
@@ -203,6 +205,7 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
             type: 'effect',
             shape: shapeOfEffect(e),
             skillSlot: slot,
+            effectRef: { rid: member.rid, root, slot, index },
             claims: [...(e.claims ?? []), ...refs.flatMap(({ note }) => note.claims ?? [])],
           });
         });
@@ -367,14 +370,69 @@ export type PairWarning = {
   marked: string[];
 };
 
-export type ClaimRelevance = { claim: string; pairs: number; warnings: PairWarning[] };
+/** unmeasured は、感度で決めるはずの要素のうち、感度の結果が無いか古くて静的な判定で代えた数 */
+export type ClaimRelevance = { claim: string; pairs: number; warnings: PairWarning[]; unmeasured: number };
+
+// ---- 感度の結果（4.1 節。design-minimal-relevance.md 10.6 節） ----
+
+/** 感度の結果の 1 件（観測値 × 要素）。key は入力（録画・比べる指定・編成の定義）から作り、合わなければ古いとみる */
+export type SensitivityEntry = {
+  observation: string;
+  element: string;
+  key: string;
+  /** 外す（P−）か常に効かせる（P+）の予測が、基準の予測から許容を超えて動いたか（計算できなかったときも true） */
+  effective: boolean;
+  /** 基準との差（compareValue の diff。計算しなかった・できなかったときは null） */
+  minus: number | null;
+  plus: number | null;
+  error?: string;
+};
+
+/** 観測値 ID|要素の名前 → 結果 */
+export type SensitivityIndex = ReadonlyMap<string, SensitivityEntry>;
+
+/** 感度の計算の仕方を変えたら上げる（鍵が変わり、結果は古いとみなされる） */
+export const SENSITIVITY_VERSION = 1;
+
+/** 感度を使う観測値（sim と比べるもの） */
+export function usesSensitivity(o: Observation): boolean {
+  return o.use === 'compare' && o.compare?.model === 'sim' && o.invalid === undefined;
+}
+
+/** FNV-1a（64 ビットを 2 つの 32 ビットで）。ブラウザでも動くように node:crypto は使わない */
+function hash(text: string): string {
+  let a = 0x811c9dc5;
+  let b = 0x01000193 ^ 0x5bd1e995;
+  for (let i = 0; i < text.length; i++) {
+    const c = text.charCodeAt(i);
+    a = Math.imul(a ^ c, 0x01000193) >>> 0;
+    b = Math.imul(b ^ c, 0x5bd1e995) >>> 0;
+  }
+  return a.toString(16).padStart(8, '0') + b.toString(16).padStart(8, '0');
+}
+
+/** 計算に効かない欄（根拠・notes・表示の文）を除く */
+const keyReplacer = (k: string, v: unknown) => (['claims', 'notes', 'ja', 'en'].includes(k) ? undefined : v);
+
+/** 感度の入力の鍵: 版・録画の台帳・比べる指定・編成の定義（根拠と notes を除く） */
+export function sensitivityKey(
+  o: Observation,
+  recording: RecordingEntry,
+  ctx: Pick<RelevanceContext, 'skills'>,
+): string {
+  const defs = recording.team.map((m) => ctx.skills.get(m.rid) ?? null);
+  return hash(JSON.stringify({ v: SENSITIVITY_VERSION, recording, compare: o.compare, defs }, keyReplacer));
+}
 
 /** 確定の結論ごとの組の判定（2 節）。失効した観測値と、録画の台帳に無い観測値は数えない */
 export function relevanceOf(
   claims: readonly Claim[],
   observations: readonly Observation[],
   ctx: RelevanceContext,
+  /** 感度の結果（records/minimal/sensitivity.json）。鍵が今の入力と合うものだけ使う */
+  sensitivity: SensitivityIndex = new Map(),
 ): ClaimRelevance[] {
+  const keys = new Map<string, string>();
   const byId = new Map(ctx.claims.map((c) => [c.id, c]));
   const obs = new Map(observations.map((o) => [o.id, o]));
   const out: ClaimRelevance[] = [];
@@ -382,6 +440,7 @@ export function relevanceOf(
     if (c.state !== '確定') continue;
     const subject = new Set(c.subject !== undefined && 'places' in c.subject ? c.subject.places : []);
     let pairs = 0;
+    let unmeasured = 0;
     const warnings: PairWarning[] = [];
     for (const id of c.observations) {
       const o = obs.get(id);
@@ -397,10 +456,23 @@ export function relevanceOf(
       for (const rec of recs) {
         for (const e of elementsOf(rec, ctx)) {
           if (e.places.some((p) => subject.has(p))) continue;
-          const reason = unconfirmedReason(e, rec, ctx, byId);
+          let reason = unconfirmedReason(e, rec, ctx, byId);
           if (reason === undefined) continue;
           if (impossibleReason(e, rec) !== undefined) continue;
-          if (notRelevantReason(e, o, rec, ctx) !== undefined) continue;
+          // 感度（4.1 節）: sim と比べる観測値と定義の効果の組は、今の入力の鍵と合う結果があればそれで決める
+          let measured = false;
+          if (usesSensitivity(o) && e.type === 'effect') {
+            const cacheKey = `${o.id}|${rec.id}`;
+            const key = keys.get(cacheKey) ?? sensitivityKey(o, rec, ctx);
+            keys.set(cacheKey, key);
+            const s = sensitivity.get(`${o.id}|${e.name}`);
+            if (s !== undefined && s.key === key) {
+              if (!s.effective) continue;
+              reason = `${reason}・感度で効く`;
+              measured = true;
+            } else unmeasured++;
+          }
+          if (!measured && notRelevantReason(e, o, rec, ctx) !== undefined) continue;
           if (elements.some((x) => x.name === e.name) || marked.includes(e.name)) continue;
           const mark = (c.minimal ?? []).some(
             (m) => m.element === e.name && (m.observations === '*' || m.observations.includes(o.id)),
@@ -412,7 +484,7 @@ export function relevanceOf(
       if (elements.length > 0 || marked.length > 0)
         warnings.push({ observation: o.id, recordings: recs.map((r) => r.id), elements, marked });
     }
-    out.push({ claim: c.id, pairs, warnings });
+    out.push({ claim: c.id, pairs, warnings, unmeasured });
   }
   return out;
 }
@@ -464,8 +536,9 @@ const HEADER = `# 最小構成の検査
 
 - **このファイルは生成する（手で書かない）**。\`npm run records:check\` で作り直す（[design-minimal-relevance.md](design-minimal-relevance.md) 5 節）。
 - 確定の結論と、その根拠の観測値の組ごとに、観測値の録画の編成から、根拠が確定（か範囲外）でない要素（効果・notes・定義の無いキャラ・的の表に無い通常攻撃の条件）を並べ、結論の対象（\`subject\`）・その録画で起きないもの（撃たない枠・バーストを使わない枠・単騎）・観測量に効かないもの（静的な判定。同 4.2 節）を外して、残ったものを出す。計算に無関係の notes は数えない。
-- 残った要素が 1 つでもある組が警告。人の判断の印（結論の \`minimal\`。同 4.3 節）のある要素は外し、「印」に出す。感度（sim を回し直す判定。同 4.1 節）は未実装で、\`compare\` を持つ観測値にも静的な判定を当てている。
-- 結論ごとに、残った要素と、それが残った組の観測値を並べる。要素の後ろの括弧は、未確定の理由（根拠なし・仮説の結論・定義なし・的の表に無い）。`;
+- sim と比べる観測値と定義の効果の組は、静的な判定の代わりに感度（同 4.1 節。その効果を外す・常に効かせると予測が許容を超えて動くか）で決める。感度の結果は \`npm run records:minimal\` が \`records/minimal/sensitivity.json\` に書き、入力（録画・比べる指定・編成の定義）が変わった組は、計算し直すまで静的な判定に戻す。
+- 残った要素が 1 つでもある組が警告。人の判断の印（結論の \`minimal\`。同 4.3 節）のある要素は外し、「印」に出す。
+- 結論ごとに、残った要素と、それが残った組の観測値を並べる。要素の後ろの括弧は、未確定の理由（根拠なし・仮説の結論・定義なし・的の表に無い）。感度で効くと決まったものには「感度で効く」を足す。`;
 
 export function renderMinimal(results: readonly ClaimRelevance[], claims: readonly Claim[]): string {
   const byId = new Map(claims.map((c) => [c.id, c]));
@@ -478,6 +551,12 @@ export function renderMinimal(results: readonly ClaimRelevance[], claims: readon
     '',
     `件数: 確定の結論 ${results.length}・組 ${pairs}。警告のある組 ${warned.length}（結論 ${claimsWarned.length}。うち組がすべて警告 ${allWarned.length}）`,
   ];
+  const unmeasured = results.reduce((n, r) => n + r.unmeasured, 0);
+  if (unmeasured > 0)
+    lines.push(
+      '',
+      `**感度の結果が無いか古い要素: ${unmeasured}**（静的な判定で代えた。\`npm run records:minimal\` で計算し直す）`,
+    );
   const shown = results.filter((r) => r.warnings.length > 0);
   if (shown.length > 0) lines.push('', '## 警告と印のある結論');
   for (const r of shown) {

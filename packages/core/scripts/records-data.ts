@@ -6,6 +6,7 @@ import { MASTER_FILES } from '../src/load.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
+import type { SensitivityEntry } from '../src/records/relevance.ts';
 import type { DefinedCharacter } from '../src/records/skills.ts';
 import { rereadOnlyClaims, type PredictionFile } from '../src/records/predictions.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
@@ -31,6 +32,8 @@ export const VERIFICATIONS_PATH = `${ROOT}plan/verifications.md`;
 export const SKILLS_DOC_PATH = `${ROOT}plan/skills.md`;
 /** 最小構成の検査の一覧（生成物。plan/design-minimal-relevance.md 5 節） */
 export const MINIMAL_PATH = `${ROOT}plan/minimal.md`;
+/** 最小構成の検査の感度の結果（records:minimal が書く。plan/design-minimal-relevance.md 10.6 節） */
+export const SENSITIVITY_PATH = `${ROOT}records/minimal/sensitivity.json`;
 
 /** 検証記録のファイルの絶対パス */
 export function verificationPath(v: Pick<Verification, 'file'>): string {
@@ -192,4 +195,14 @@ export function misplacedClaims(): string[] {
     .map((name) => ({ name, id: readJson<ClaimFile>(`${CLAIMS_DIR}${name}`).id }))
     .filter(({ name, id }) => `${id}.json` !== name)
     .map(({ name, id }) => `${id}: ${name} に置かれている`);
+}
+
+/** 感度の結果のファイル（plan/design-minimal-relevance.md 10.6 節） */
+export type SensitivityFile = { version: number; entries: SensitivityEntry[] };
+
+/** 感度の結果（観測値 ID|要素の名前 → 結果）。ファイルが無ければ空 */
+export function loadSensitivity(): Map<string, SensitivityEntry> {
+  if (!existsSync(SENSITIVITY_PATH)) return new Map();
+  const file = readJson<SensitivityFile>(SENSITIVITY_PATH);
+  return new Map(file.entries.map((e) => [`${e.observation}|${e.element}`, e]));
 }
