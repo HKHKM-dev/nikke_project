@@ -2,7 +2,7 @@
 
 - 関連: [design-minimal-check.md](design-minimal-check.md) 8 節（警告の単位と数え方の決定・試算）、[design-records-automation.md](design-records-automation.md) 3.5〜3.7 節、[design-skill-note-kinds.md](design-skill-note-kinds.md)、AGENTS.md「事実と記録」
 - 作成日: 2026-10-07
-- 状態: 起案。オーナーが選んだ策（1a・2a・3b・4a・5a・6c・7a・8a。design-minimal-check.md 8 節の後の対話）の組み合わせを設計した。9 節の判断待ち。判断までは、検査・データの形・結論の状態を変えない
+- 状態: 承認（2026-10-07。9 節）。オーナーが選んだ策（1a・2a・3b・4a・5a・6c・7a・8a。design-minimal-check.md 8 節の後の対話）の組み合わせ。実装は 7 節の段取りで進める
 
 ## 1. 目的と、決まっていること
 
@@ -155,7 +155,7 @@ O に `compare` が無いとき（`scope` を使う）と、E がモデルに無
 - [verifications.md](verifications.md): 検証記録 × 録画の今の警告の行は、この検査に置き換えて消す。
 - `records:new -- claim`: 状態の決め方（design-records-automation.md 3.6 節）の「最小構成の警告が無い」を、下書きの結論の組に警告が無いことに置き換える。
 - `records:close`: その検証記録の結論について同じ判定を回し、警告を出す。
-- コマンド: 感度は数分かかるので、`records:minimal` を新設し、`plan/minimal.md` を作り直す。`records:check` は、データの形の検査（3 節）と静的な判定だけを回す（9 節の 5）。
+- コマンド: 感度は数分かかるので、`records:minimal` を新設し、`plan/minimal.md` を作り直す。`records:check` は、データの形の検査（3 節）と静的な判定だけを回す（9 節の 5 で決定）。
 
 ## 6. 既存の判定との関係
 
@@ -181,10 +181,12 @@ O に `compare` が無いとき（`scope` を使う）と、E がモデルに無
 - **静的な判定は粗い**: `compare` の無い観測値は、stat の分類と対象と出どころでしか分けない。時刻・回数・ゲージの観測値は、ほとんど外れない。
 - **`fires`・`bursts` の省略**は保守的（起きうる）なので、台帳を埋めない録画では警告が減らない。
 
-## 9. 決めてほしいこと
+## 9. 決めたこと（2026-10-07、オーナー決定）
 
-1. **既存の確定の結論への当て方**: (a) 全部に当てて、警告の組に印を付けていく / (b) 新しく確定にする結論から当て、既存の結論は `plan/minimal.md` に出すだけにする（推奨）。
-2. **`scope` を必須にする範囲**: 新しく確定にする結論の根拠の観測値のうち、`compare` を持たないものに `scope` を必須にするか（推奨: 必須）。
-3. **前提の外の notes も `effect` を書くか**（推奨: 書く。3 分モードでは被弾が起きる）。
-4. **計算に無関係の notes を数えない**こと（design-minimal-check.md 8.4 節の段 1）を、検査の規則として確定してよいか。AGENTS.md の「機構が確定したキャラ」の文に影響する。
-5. **感度の置き場所**: `records:minimal` を別コマンドにする（推奨）か、`records:check` に入れるか（数分延びる）。
+1. **既存の確定の結論にも全部当てる**。PR 3・4 の後、既存の確定の結論の警告の組を `plan/minimal.md` に出し、組ごとに、印を付ける（4.3 節）か、結論を見直すかをオーナーが決める。
+2. **`scope` は必須**: 新しく確定にする結論の根拠の観測値のうち、`compare` を持たないものには `scope` を必須にする（`records:new -- claim`・`records:close` で検査）。
+3. **前提の外の notes にも `effect` を書く**（3.3 節のとおり）。
+4. **計算に無関係（`noDamage`）の notes は数えない**を、検査の規則として確定する。AGENTS.md「事実と記録」の「機構が確定したキャラ」の文に「計算に無関係の notes は除く」を足す（実装の PR に入れる）。
+5. **感度は別コマンド `records:minimal`** にする。`records:check` は、データの形の検査と静的な判定だけを回す。
+
+- 落とすか（`records:check` か `records:close` で止めるか）は、PR 5 で、既存の結論の警告の組を見てから決める（[design-minimal-check.md](design-minimal-check.md) 8.5 節の 5）。

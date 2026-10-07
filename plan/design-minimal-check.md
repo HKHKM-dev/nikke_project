@@ -2,7 +2,7 @@
 
 - 関連: [design-records-automation.md](design-records-automation.md) 3.5・3.7 節、7 節の 5、8.6 節、[design-skill-claims-5-2.md](design-skill-claims-5-2.md)、[design-skill-note-kinds.md](design-skill-note-kinds.md)、[backlog.md](backlog.md) 4-1・5-2、AGENTS.md「事実と記録」
 - 作成日: 2026-10-07（main の PR #383 の時点）
-- 状態: 起案。2026-10-07 のオーナーの指示で「落とすか」の前に「何に警告を出すか」から検討し直している（8 節）。警告の単位・出す結論・数え方は決まった（8.3 節）。残りはオーナーの判断待ち（8.5 節）。判断までは、検査の強さ・結論の状態・AGENTS.md を変えない
+- 状態: 起案。2026-10-07 のオーナーの指示で「落とすか」の前に「何に警告を出すか」から検討し直している（8 節）。警告の単位・出す結論・数え方は決まった（8.3 節）。続きは [design-minimal-relevance.md](design-minimal-relevance.md)（2026-10-07 に承認）。落とすかは同書の PR 5 で決める。判断までは、検査の強さ・結論の状態・AGENTS.md を変えない
 - 5〜7 節は最初の起案（検査の強さの比べ）。8 節の決定で前提が変わったので、8 節の判断の後に書き直す
 - 件数はこの文書に書かない。`npm run records:check` の標準出力と [verifications.md](verifications.md) の「最小構成の警告」に出る（集計の手順は 2 節）
 
