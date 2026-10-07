@@ -51,6 +51,10 @@
     "method": {
       "tool": "tools/captures/timer.ts --mode changes",
       "note": "秒の変わり目が 56〜62f（2 秒分は 116〜122f）の間隔で続く区間ごとに、共通の傾き（この録画は 58.853 f/秒）で切片を当てはめ、フルバーストをまたぐ前後の区間の切片の差を傾きで割った余りを取った。フルバーストの残り時間の表示が秒の数字に重なる区間は使わない。フルバーストの無い区間のずれは ±1f 以内"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
     }
   },
   {
@@ -81,6 +85,10 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
     }
   },
   {
@@ -96,6 +104,10 @@
     "method": {
       "tool": "tools/captures/gauge.ts --mode series",
       "note": "100% と消えたフレーム: f1419→1428・f2590→2612・f4980→4985"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -305,6 +317,10 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -320,6 +336,10 @@
     "method": {
       "tool": "ffmpeg（右のバースト欄 1740,420 から 180×150 を切り出し、フレーム番号を付けて 1 フレームずつ並べた一覧）",
       "note": "CT の 0: 3828.2（0.02 が f3827、f3828 は 0.00 の表示）・6206.2・8582.6・10960.6。顔が明るくなった: 3829・6206・8583・10961。「40」: 3832・6209・8586・10964。II のアイコン: 3835・6212・8589・10967"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -335,6 +355,10 @@
     "method": {
       "tool": "ffmpeg（右のバースト欄 1740,420 から 180×150 を切り出し、フレーム番号を付けて 1 フレームずつ並べた一覧）",
       "note": "CT の 0 の間隔 2378.0・2376.4・2378.0 から、止まり 22.6・22.1・22.2（`021-03` の 2〜4 回目）と 40 秒 = 2354.1f（傾き 58.853 f/秒。`021-03`）を引いた"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -350,6 +374,10 @@
     "method": {
       "tool": "ffmpeg（右のバースト欄 1740,420 から 180×150 を切り出し、フレーム番号を付けて 1 フレームずつ並べた一覧。番号は動画の先頭から数えたフレーム（018〜021 は可変フレームレートなので、パケットの時刻の並びから引いた））・tools/captures/hud.ts --mode jumps",
       "note": "バーが消えたのは f1428（総ダメージの HUD の増分も f1428）。I の顔はそのあいだ明るいまま（CT は明けている）。顔の後ろの緑の光が消えて暗くなったのが f1452、「40」が f1454、II のアイコンが f1457"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -379,6 +407,10 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {

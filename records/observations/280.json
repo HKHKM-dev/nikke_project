@@ -249,6 +249,10 @@
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）・ffmpeg（バースト欄 crop=200:60:1720:415 の YAVG）",
       "note": "バースト欄は、III の六角形が白から赤に替わるフレーム（明るさが 160 前後から 90 前後に落ちる）の 5f 後に 00.00 になる（1 回目と 2〜5 回目の前後を画で確かめた）。ヒットは 5 回ともその落ち込みの 33〜34f 後"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   }
 ]

@@ -2,7 +2,7 @@
 
 - 関連: [design-minimal-check.md](design-minimal-check.md) 8 節（警告の単位と数え方の決定・試算）、[design-records-automation.md](design-records-automation.md) 3.5〜3.7 節、[design-skill-note-kinds.md](design-skill-note-kinds.md)、AGENTS.md「事実と記録」
 - 作成日: 2026-10-07
-- 状態: 承認（2026-10-07。9 節）。オーナーが選んだ策（1a・2a・3b・4a・5a・6c・7a・8a。design-minimal-check.md 8 節の後の対話）の組み合わせ。実装は 7 節の段取りで進める（PR 1〜3 は 2026-10-07〜08 に済んだ。10.1〜10.4 節）
+- 状態: 承認（2026-10-07。9 節）。オーナーが選んだ策（1a・2a・3b・4a・5a・6c・7a・8a。design-minimal-check.md 8 節の後の対話）の組み合わせ。実装は 7 節の段取りで進める（PR 1〜3 は 2026-10-07〜08 に済んだ。10.1〜10.5 節）
 
 ## 1. 目的と、決まっていること
 
@@ -240,3 +240,8 @@ O に `compare` が無いとき（`scope` を使う）と、E がモデルに無
   - **録画で起きうるか**: `fires: false` の枠は、通常攻撃の条件の要素と、回数トリガー（`normalShot` など）がきっかけの要素を外す。`bursts: false` の枠と単騎の録画は、バーストのスロットの要素と、きっかけが `burstUse` の要素を外す。単騎の録画は、さらにフルバーストの開始・終了とバースト 2・3 段階突入がきっかけの要素も外す（C-0024）。
   - **静的な判定**: 4.2 節の順。観測値の枠は `scope.slot` か `compare.args.slot`、出どころは `scope.source` か指標（`hitDamage`・`perShotHitDamage` は通常攻撃）。分類は design-minimal-check.md 8.4 節の段 3 の表どおり。PR 4 の感度までは、`compare` を持つ観測値にも静的な判定を当てる。
 - **論点（オーナーの判断待ち）**: 段 3 の表は、`interval` の観測値に効く分類を「射撃の刻み」だけにしている。`interval` には、射撃の間隔のほかに、CT の進み（C-0070）やフルバーストの入りの止まりの長さ（C-0069）もある。そのため、未確定の CT▼（リターの S1 など）を外している組がある。CT▼ が効きうるのは CT の観測値だけなので、`interval` にバーストの時刻の分類を足すか、観測値の `scope.source`（`burstChain`・`clock`）で分けるかを決めてほしい。
+
+### 10.5 間隔の観測値を出どころで分ける（2026-10-08）
+
+- 10.4 節の論点は、オーナーが案 A に決めた（2026-10-08）。間隔（`interval`）の観測値は、`scope.source` が `burstChain`（バーストの段・CT・フルバーストの入りどうしの間隔など）か `clock`（時計・止まり）なら、射撃の刻みに加えてバーストの時刻の分類（ゲージ・CT▼・再突入）も効きうるとする（`relevance.ts` の `allowedClasses`）。ほかの間隔は射撃の刻みだけのまま。
+- 確定の結論の根拠にある間隔の観測値に `scope`（`slot: "all"`）を書き足した。`mechanism` が `burstChain`・`clock` の結論に立つものは、その出どころにした。定義の場所に立つ結論のものは、説明文がバーストの時刻（フルバースト・発動・CT・満タン・BURST バー・段・チェーン）を読んだものを `burstChain` にした。バーストのヒットどうしの間隔、▲の窓の長さ、射撃の刻みには書いていない。迷うものは `burstChain` 側に倒した（警告の出し損ねを避ける）。

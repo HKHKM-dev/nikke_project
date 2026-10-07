@@ -238,6 +238,10 @@
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps・右上の帯の一覧",
       "note": "フルバーストの終わりの後は止まりが無いので、動画のフレームはゲーム内の時計のまま"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   }
 ]

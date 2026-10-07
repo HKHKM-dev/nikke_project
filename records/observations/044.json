@@ -74,6 +74,10 @@
     "method": {
       "tool": "tools/captures/timer.ts --mode changes",
       "note": "秒の変わり目が 56〜62f（2 秒分は 116〜122f）の間隔で続く区間ごとに、共通の傾き（この録画は 58.901 f/秒）で切片を当てはめ、フルバーストをまたぐ前後の区間の切片の差を傾きで割った余りを取った。フルバーストの残り時間の表示が秒の数字に重なる区間は使わない。フルバーストの無い区間のずれは ±1f 以内"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
     }
   },
   {
@@ -104,6 +108,10 @@
     "method": {
       "tool": "tools/captures/gauge.ts --mode series",
       "note": "100% と消えたフレーム: f1311→1326・f2856→3022・f5768→5783・f8531→8551・f11281→11286"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -133,6 +141,10 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -259,6 +271,10 @@
     "method": {
       "tool": "ffmpeg（右のバースト欄 1740,420 から 180×150 を切り出し、フレーム番号を付けて 1 フレームずつ並べた一覧。番号は動画の先頭から数えたフレーム（018〜021 は可変フレームレートなので、パケットの時刻の並びから引いた））・tools/captures/hud.ts --mode jumps",
       "note": "バーが消えたのは f1326（総ダメージの HUD の増分も f1326）。I の顔はそのあいだ明るいまま（CT は明けている）。顔の後ろの緑の光が消えて暗くなったのが f1351、「20」が f1352、II のアイコンが f1355"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -288,6 +304,10 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   }
 ]

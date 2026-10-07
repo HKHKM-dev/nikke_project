@@ -89,6 +89,16 @@ const KIND_CLASS: Record<string, ElementClass> = {
   cycleEvery: 'firing',
 };
 
+/**
+ * 観測値に効きうる分類。間隔（interval）は射撃の刻みだけだが、出どころがバーストの段・CT（burstChain）か時計（clock）の間隔には、
+ * バーストの時刻（ゲージ・CT▼・再突入）も効く（design-minimal-relevance.md 10.5 節。2026-10-08、オーナー決定の案 A）
+ */
+export function allowedClasses(o: Pick<Observation, 'kind' | 'scope'>): readonly ElementClass[] | 'all' {
+  if (o.kind === 'interval' && (o.scope?.source === 'burstChain' || o.scope?.source === 'clock'))
+    return ['firing', 'burstTiming'];
+  return ALLOWED[o.kind];
+}
+
 /** 指標から決まる観測量の出どころ（design-minimal-relevance.md 3.1 節。1 ヒットの値の指標だけ） */
 const METRIC_SOURCE: Record<string, ObservationSource> = {
   hitDamage: 'normal',
@@ -343,7 +353,7 @@ export function notRelevantReason(
       return '対象のコードが観測した枠と違う';
   }
   if (cls === 'unknown') return undefined;
-  const allowed = ALLOWED[o.kind];
+  const allowed = allowedClasses(o);
   if (allowed !== 'all' && !allowed.includes(cls)) return `観測値（${o.kind}）に効かない分類`;
   return undefined;
 }

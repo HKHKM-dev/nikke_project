@@ -71,6 +71,10 @@
     "method": {
       "tool": "ffmpeg（1 フレームずつ）・tools/captures/timer.ts・tools/captures/hud.ts --mode jumps",
       "note": "最終弾は `hud.ts --mode jumps` の、リロードの空きの前の最後の増分のフレーム（1075・1453・1831・2209・3281・3659・4038・4416）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
     }
   },
   {

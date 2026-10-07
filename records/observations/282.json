@@ -57,6 +57,10 @@
     "method": {
       "tool": "tools/captures/reticle-ammo.ts --mode series --max 200",
       "note": "6 回目 f3928 → 4222（f4006〜4221 は続けて 128）。5 回目 f3398 → 3691（f3500〜3690 に読めないフレームがある）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   }
 ]

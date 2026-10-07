@@ -72,6 +72,10 @@
     "method": {
       "tool": "tools/captures/reticle-ammo.ts --mode series --max 600・右のバースト欄の平均色の列と一覧",
       "note": "196-10・196-11 と同じ読み方"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -87,6 +91,10 @@
     "method": {
       "tool": "tools/captures/reticle-ammo.ts --mode series --max 600・右のバースト欄の平均色の列と一覧",
       "note": "196-10・196-11 と同じ読み方"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {

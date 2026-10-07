@@ -197,6 +197,10 @@
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "hud.ts --mode jumps の増分のフレーム"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
