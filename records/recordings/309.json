@@ -1,0 +1,19 @@
+{
+  "id": "309",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-309_ar_folkwang_manual.mp4",
+  "original": null,
+  "durationSec": 200.4,
+  "frames": 12024,
+  "fps": 60,
+  "sizeMB": 241.0,
+  "sha256": "ee72f180ae41",
+  "team": [{ "slot": 1, "rid": 242, "name": "フォルクヴァン", "controlled": true }],
+  "target": { "name": "BigArms", "element": "Fire" },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0295。フォルクヴァン単騎・操作（AUTO 射撃 OFF）・オートバースト OFF。的に 1 マガジン → 隠れて待つ → 的に 1 マガジン（V-0295 の撮影計画）。クラウドで Drive から取り寄せて素性を書いた（original は不明）"
+}
