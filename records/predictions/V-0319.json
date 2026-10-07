@@ -1,0 +1,79 @@
+{
+  "verification": "V-0319",
+  "note": "既存の録画 008（イサベル単騎・操作・風圧の的）の読み直し。S2 を読む前に出した。素性にスペック固定の記載が無いので、固定 ON とした場合の値。時刻の仮説は検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 231,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S2 は 15 秒ごと（C-0402。V-0269 の H1 と同じ足し方）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 231,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "note": "S2 の 1 ヒット（会心なし。スペック固定 ON とした場合）",
+      "observations": ["008-04"]
+    },
+    {
+      "id": "hit-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "note": "S2 の 1 ヒット（会心。スペック固定 ON とした場合）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "5f27cb2f90bd1c95f0d578177aa17d1f1c7a56db",
+    "values": {
+      "H1": {
+        "hit": 205709.2452,
+        "hit-crit": 308563.8678
+      }
+    },
+    "seen": {
+      "008": ["008-01", "008-02", "008-03"]
+    }
+  }
+}

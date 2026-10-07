@@ -22,8 +22,8 @@
     "element": "Wind"
   },
   "mode": null,
-  "fixedSpec": null,
+  "fixedSpec": true,
   "autoFire": null,
   "autoBurst": null,
-  "conditionNote": "BigArms（風・防100）"
+  "conditionNote": "BigArms（風・防100）。スペック固定 ON（2026-10-08 に、イサベルの S2 の 1 ヒット 205,709 が固定 ON のモデルの値と端数まで合ったことから決めた。V-0319。素性の記録は無い）"
 }

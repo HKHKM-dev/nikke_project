@@ -43,5 +43,72 @@
     },
     "source": "V-0057",
     "readAt": "2026-09-30"
+  },
+  {
+    "id": "008-04",
+    "recording": "008",
+    "source": "V-0319",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "value": 205709,
+    "description": "イサベル単騎の S2 のヒット（170.58% の値。会心なし）の 1 ヒット（f1321）。録画の中の S2 はこの 1 回だけ",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "前のフレームが読めた単独の増分。比べるモデルは S2 を 15 秒ごとに足した setup（V-0269 の H1）で、スペック固定 ON。値が端数まで合うので、この録画はスペック固定 ON とみた（録画の素性に注記した）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 231,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "008-05",
+    "recording": "008",
+    "source": "V-0319",
+    "readAt": "2026-10-08",
+    "kind": "timing",
+    "use": "record",
+    "value": [884, 928, 44],
+    "unit": "f",
+    "description": "イサベル単騎の S2 の 1 回目の、戦闘開始（f393）から左の「スキル2」の帯が出たフレーム（f1277）・ヒット（f1321）までの動画のフレーム数と、帯からヒットまで",
+    "method": {
+      "tool": "timer.ts --mode changes・使い捨てのスクリプト（左の欄 crop 0,578,100,36 の明るさ）・hud.ts --mode jumps",
+      "note": "帯は明るさが 1 フレームで +4 以上・3 フレームで +15 以上上がった最初のフレーム（V-0313 と同じ）。単騎なので帯はこの 1 つだけで、文字を画で確かめた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
   }
 ]
