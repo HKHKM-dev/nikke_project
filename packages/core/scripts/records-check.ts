@@ -15,7 +15,7 @@ import {
   type ClaimGrade,
 } from '../src/records/claims.ts';
 import { verificationExtraLines } from '../src/records/extras.ts';
-import { minimalWarnings } from '../src/records/minimal.ts';
+import { relevanceCounts, relevanceOf, renderMinimal } from '../src/records/relevance.ts';
 import { comparePredictions, renderPredictionTable, validatePredictions } from '../src/records/predictions.ts';
 import { RESULTS_MARKERS } from '../src/records/drafts.ts';
 import {
@@ -29,6 +29,7 @@ import { definitionPlacesByClaim, renderSkills, validateSkillClaims } from '../s
 import { renderVerifications, validateVerifications, verificationsByClaim } from '../src/records/verifications.ts';
 import {
   CLAIMS_PATH,
+  MINIMAL_PATH,
   RESIDUALS_PATH,
   SKILLS_DOC_PATH,
   VERIFICATIONS_PATH,
@@ -97,6 +98,15 @@ for (const c of claims) {
   const g = gradeCandidate(c, residualOf, new Set(invalidReasons.keys()));
   if (g !== undefined) gradeCandidates.set(c.id, g);
 }
+// 最小構成の検査（plan/design-minimal-relevance.md。確定の結論 × 根拠の観測値の組に、効きうる未確定の要素）
+const relevance = relevanceOf(claims, observations, {
+  recordings,
+  characters: data.characters,
+  skills: data.skills,
+  enemies: data.enemies,
+  claims,
+});
+writeFileSync(MINIMAL_PATH, renderMinimal(relevance, claims));
 writeFileSync(
   CLAIMS_PATH,
   renderClaims(
@@ -106,16 +116,10 @@ writeFileSync(
     definitionPlacesByClaim(skills),
     gradeCandidates,
     rereadOnlyClaimsOf(claims, observations, predictions, verifications, recordings),
+    relevanceCounts(relevance),
   ),
 );
-// 予測との突き合わせ（3.5 節）と最小構成の警告（3.5 節）
-const warnings = minimalWarnings(verifications, {
-  recordings,
-  characters: data.characters,
-  skills: data.skills,
-  enemies: data.enemies,
-  claims,
-});
+// 予測との突き合わせ（3.5 節）。検証記録 × 録画の最小構成の警告は、plan/minimal.md の組の判定に置き換えた（design-minimal-relevance.md 5 節）
 for (const p of predictions) {
   const comparison = comparePredictions(p, observations);
   // 検証記録の「結果」に生成ブロックの印があれば、予測との比べの表を書き込む（3.6 節。閉じた記録には印が無い）
@@ -130,7 +134,7 @@ for (const p of predictions) {
 }
 writeFileSync(
   VERIFICATIONS_PATH,
-  renderVerifications(verifications, observations, verificationExtraLines(observations, predictions, warnings)),
+  renderVerifications(verifications, observations, verificationExtraLines(observations, predictions, [])),
 );
 writeFileSync(SKILLS_DOC_PATH, renderSkills(skills, claims));
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
@@ -146,11 +150,15 @@ const above = claims.filter((c) => {
 console.log(
   `等級の候補（機械）を出せた結論 ${gradeCandidates.size} 件のうち、書いた等級のほうが上のもの: ${above.length} 件（claims.md に出す。plan/design-records-automation.md 3.5 節）`,
 );
-console.log(
-  `最小構成の警告: ${warnings.length} 件（検証記録 ${new Set(warnings.map((w) => w.verification)).size} 件。verifications.md に出す。落とさない）`,
-);
 for (const p of predictions) {
   const cmp = comparePredictions(p, observations);
   const fits = [...cmp.score.entries()].filter(([, s]) => s.total > 0).map(([h, s]) => `${h} ${s.ok}/${s.total}`);
   console.log(`予測 ${p.verification}: ${p.predicted === null ? 'まだ出していない' : fits.join('・') || '観測値なし'}`);
+}
+{
+  const counts = [...relevanceCounts(relevance).values()];
+  const warned = counts.filter((c) => c.warned > 0).length;
+  console.log(
+    `最小構成: 確定の結論 ${counts.length}・組 ${counts.reduce((n, c) => n + c.pairs, 0)}。警告のある組 ${counts.reduce((n, c) => n + c.warned, 0)}（結論 ${warned}）`,
+  );
 }
