@@ -6798,6 +6798,454 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "322-06",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "a38d513a80628589",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "322-06",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "a38d513a80628589",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "322-07",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "26bddf294a7ce28e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "322-07",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "26bddf294a7ce28e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "322-08",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "7ea5936b968e889a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "322-08",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "7ea5936b968e889a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "322-09",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "93368c70e5baaf67",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "322-09",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "93368c70e5baaf67",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "322-10",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "0efdade9d3a772cc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "322-10",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "0efdade9d3a772cc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "323-06",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "e5f377edef5ab5ac",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "323-06",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "e5f377edef5ab5ac",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "323-07",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "1579ccf8f258b00f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "323-07",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "1579ccf8f258b00f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "323-08",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "e656154a8d202de3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "323-08",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "e656154a8d202de3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "323-09",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "d8df9bb3c3bdc802",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "323-09",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "d8df9bb3c3bdc802",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "323-10",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "7b43a0e874b80a6d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "323-10",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "7b43a0e874b80a6d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "324-06",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "d947e3fe3ad7b325",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "324-06",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "d947e3fe3ad7b325",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "324-07",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "5461fe774a60dc16",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "324-07",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "5461fe774a60dc16",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "324-08",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "9e59492c382cce0b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "324-08",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "9e59492c382cce0b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "324-09",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "10c7d24d7b45f430",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "324-09",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "10c7d24d7b45f430",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "325-06",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "0055b814fdedaac5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "325-06",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "0055b814fdedaac5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "325-07",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "f304304b7be535ca",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "325-07",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "f304304b7be535ca",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "325-08",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "abbf99f539f41976",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "325-08",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "abbf99f539f41976",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "325-09",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "c519d1b6b43ab1ab",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "325-09",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "c519d1b6b43ab1ab",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "325-10",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "36d14bcfc4dded10",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "325-10",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "36d14bcfc4dded10",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "326-06",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "f6315c7ba3c37b9e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "326-06",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "f6315c7ba3c37b9e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "326-07",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "d7ee2690cf04b309",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "326-07",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "d7ee2690cf04b309",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "326-08",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "5b2a8715e4dad790",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "326-08",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "5b2a8715e4dad790",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "326-09",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "e8dcced259f63327",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "326-09",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "e8dcced259f63327",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "327-06",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "663f00c3eff936ba",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "327-06",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "663f00c3eff936ba",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "327-07",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "5c7591665e3c60f1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "327-07",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "5c7591665e3c60f1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "327-08",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "e021d918310686b5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "327-08",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "e021d918310686b5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "327-09",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "a500883d9dc61d34",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "327-09",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "a500883d9dc61d34",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "327-10",
+      "element": "ミランダ treasureSkills.skill1.effects[0]",
+      "key": "77691bfa913199bb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "327-10",
+      "element": "ミランダ treasureSkills.skill1.effects[1]",
+      "key": "77691bfa913199bb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

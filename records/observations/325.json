@@ -1,0 +1,250 @@
+[
+  {
+    "id": "325-01",
+    "recording": "325",
+    "kind": "total",
+    "use": "record",
+    "value": 71433344,
+    "description": "ミランダ（SMG）単騎・AUTO・オートバースト OFF の 180 秒の HUD の総ダメージの最後の値（V-0298 のミランダの 4 本目）。戦闘履歴のパネルの与ダメージと一致。的のジャンプの時刻とリロードの位置で動くので、比べない（予測ファイルの miranda-total と並べるだけ）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "最後の増分は f11404。増分は 2826 個。パネルは f12068 を probe-result.ts で切り出して読んだ"
+    },
+    "source": "V-0298",
+    "readAt": "2026-10-08"
+  },
+  {
+    "id": "325-02",
+    "recording": "325",
+    "kind": "rate",
+    "use": "record",
+    "value": [0.343, 0.134, 0.046, 0.047],
+    "description": "ミランダ（SMG）単騎の、各区間の頭の 30 ヒットを除いた残りの距離帯ごとのコア命中率。近・中近・中遠・遠の順。近 323 / 941、中近 58 / 433、中遠 25 / 540、遠 28 / 596（コア / 当たった数）",
+    "method": {
+      "tool": "recipe:smg-cores@1",
+      "note": "10781.1 × 攻撃力▲（1・1.5011）× (1 + コア 1.5 + 会心 0.5 + 距離ボーナス 0.3) の 16 通りの格子で、差 2 以内で読んだ。前のフレームも読めた増分は 1 ヒット、読めなかった後の増分は 1 か 2 ヒット（ヒットの数とコアの数が一通りに決まらないものは落とした）。区間の切れ目は f2722・f4440・f6768・f8910・f10861（--opt cuts）。区間ごとのヒットの数は 463・460・543・570・541・113。攻撃力▲の段ごとのヒットの数は 38・2652。分解できたヒットは 2690、決まらず落とした増分 0、格子に乗らず落とした増分 17、数えなかった範囲（f2302〜f2722）の増分 119。距離帯と距離ボーナスが合わないヒット 0"
+    },
+    "source": "V-0298",
+    "readAt": "2026-10-08",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "325-03",
+    "recording": "325",
+    "kind": "count",
+    "use": "record",
+    "value": [323, 58, 25, 28],
+    "unit": "ヒット",
+    "description": "ミランダ（SMG）単騎の、各区間の頭の 30 ヒットを除いた残りの距離帯ごとのコアのヒットの数。近・中近・中遠・遠の順",
+    "method": {
+      "tool": "recipe:smg-cores@1",
+      "note": "10781.1 × 攻撃力▲（1・1.5011）× (1 + コア 1.5 + 会心 0.5 + 距離ボーナス 0.3) の 16 通りの格子で、差 2 以内で読んだ。前のフレームも読めた増分は 1 ヒット、読めなかった後の増分は 1 か 2 ヒット（ヒットの数とコアの数が一通りに決まらないものは落とした）。区間の切れ目は f2722・f4440・f6768・f8910・f10861（--opt cuts）。区間ごとのヒットの数は 463・460・543・570・541・113。攻撃力▲の段ごとのヒットの数は 38・2652。分解できたヒットは 2690、決まらず落とした増分 0、格子に乗らず落とした増分 17、数えなかった範囲（f2302〜f2722）の増分 119。距離帯と距離ボーナスが合わないヒット 0"
+    },
+    "source": "V-0298",
+    "readAt": "2026-10-08",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "325-04",
+    "recording": "325",
+    "kind": "count",
+    "use": "record",
+    "value": [941, 433, 540, 596],
+    "unit": "ヒット",
+    "description": "ミランダ（SMG）単騎の、各区間の頭の 30 ヒットを除いた残りの距離帯ごとの当たった数（分解できたヒット）。近・中近・中遠・遠の順",
+    "method": {
+      "tool": "recipe:smg-cores@1",
+      "note": "10781.1 × 攻撃力▲（1・1.5011）× (1 + コア 1.5 + 会心 0.5 + 距離ボーナス 0.3) の 16 通りの格子で、差 2 以内で読んだ。前のフレームも読めた増分は 1 ヒット、読めなかった後の増分は 1 か 2 ヒット（ヒットの数とコアの数が一通りに決まらないものは落とした）。区間の切れ目は f2722・f4440・f6768・f8910・f10861（--opt cuts）。区間ごとのヒットの数は 463・460・543・570・541・113。攻撃力▲の段ごとのヒットの数は 38・2652。分解できたヒットは 2690、決まらず落とした増分 0、格子に乗らず落とした増分 17、数えなかった範囲（f2302〜f2722）の増分 119。距離帯と距離ボーナスが合わないヒット 0"
+    },
+    "source": "V-0298",
+    "readAt": "2026-10-08",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "325-05",
+    "recording": "325",
+    "kind": "rate",
+    "use": "record",
+    "value": [0.341, 0.13, 0.053, 0.046],
+    "description": "ミランダ（SMG）単騎の全部のヒットの距離帯ごとのコア命中率（参考）。近・中近・中遠・遠の順。近 341 / 1001、中近 60 / 463、中遠 30 / 570、遠 30 / 656。会心の割合は 0.165",
+    "method": {
+      "tool": "recipe:smg-cores@1",
+      "note": "10781.1 × 攻撃力▲（1・1.5011）× (1 + コア 1.5 + 会心 0.5 + 距離ボーナス 0.3) の 16 通りの格子で、差 2 以内で読んだ。前のフレームも読めた増分は 1 ヒット、読めなかった後の増分は 1 か 2 ヒット（ヒットの数とコアの数が一通りに決まらないものは落とした）。区間の切れ目は f2722・f4440・f6768・f8910・f10861（--opt cuts）。区間ごとのヒットの数は 463・460・543・570・541・113。攻撃力▲の段ごとのヒットの数は 38・2652。分解できたヒットは 2690、決まらず落とした増分 0、格子に乗らず落とした増分 17、数えなかった範囲（f2302〜f2722）の増分 119。距離帯と距離ボーナスが合わないヒット 0"
+    },
+    "source": "V-0298",
+    "readAt": "2026-10-08",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "325-06",
+    "recording": "325",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0298",
+    "readAt": "2026-10-08",
+    "value": 10781,
+    "description": "ミランダ（SMG・単騎 AUTO・宝物 3 段階）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし・攻撃力▲の外（戦闘開始の 30 ヒットの前と、ジャンプの後に▲が切れた間））。7 回（最初は f4585）。予測ファイル V-0298 の miranda-body と同じ指標",
+    "method": {
+      "tool": "recipe:hud-jumps@2 のキャッシュ（hud.ts --mode jumps）",
+      "note": "ミランダだけの増分（単騎）。前のフレームも読めた増分のうち、予測の値と差 2 以内のもの"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "325-07",
+    "recording": "325",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0298",
+    "readAt": "2026-10-08",
+    "value": 16172,
+    "description": "ミランダ（SMG・単騎 AUTO・宝物 3 段階）のスペック固定 ON の通常攻撃 1 ヒット（会心・距離ボーナスなし・攻撃力▲の外）。1 回（最初は f4606）。予測ファイル V-0298 の miranda-crit と同じ指標",
+    "method": {
+      "tool": "recipe:hud-jumps@2 のキャッシュ（hud.ts --mode jumps）",
+      "note": "ミランダだけの増分（単騎）。前のフレームも読めた増分のうち、予測の値と差 2 以内のもの"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "325-08",
+    "recording": "325",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0298",
+    "readAt": "2026-10-08",
+    "value": 14015,
+    "description": "ミランダ（SMG・単騎 AUTO・宝物 3 段階）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスの中・攻撃力▲の外（戦闘開始の 30 ヒットの前））。21 回（最初は f827）。予測ファイル V-0298 の miranda-dist-body と同じ指標",
+    "method": {
+      "tool": "recipe:hud-jumps@2 のキャッシュ（hud.ts --mode jumps）",
+      "note": "ミランダだけの増分（単騎）。前のフレームも読めた増分のうち、予測の値と差 2 以内のもの"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "325-09",
+    "recording": "325",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0298",
+    "readAt": "2026-10-08",
+    "value": 16183,
+    "description": "ミランダ（SMG・単騎 AUTO・宝物 3 段階）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスなし・宝物版 S1 の攻撃力▲の中）。988 回（最初は f4609）。予測ファイル V-0298 の miranda-atk-body と同じ指標",
+    "method": {
+      "tool": "recipe:hud-jumps@2 のキャッシュ（hud.ts --mode jumps）",
+      "note": "ミランダだけの増分（単騎）。前のフレームも読めた増分のうち、予測の値と差 2 以内のもの"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "325-10",
+    "recording": "325",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0298",
+    "readAt": "2026-10-08",
+    "value": 21039,
+    "description": "ミランダ（SMG・単騎 AUTO・宝物 3 段階）のスペック固定 ON の通常攻撃 1 ヒット（胴体・非会心・距離ボーナスの中・宝物版 S1 の攻撃力▲の中）。923 回（最初は f913）。予測ファイル V-0298 の miranda-atk-dist-body と同じ指標",
+    "method": {
+      "tool": "recipe:hud-jumps@2 のキャッシュ（hud.ts --mode jumps）",
+      "note": "ミランダだけの増分（単騎）。前のフレームも読めた増分のうち、予測の値と差 2 以内のもの"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  }
+]
