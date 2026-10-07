@@ -214,7 +214,55 @@ export type Observation = {
   readAt?: string;
   /** 使えなくなった観測値（読み違い・条件の誤り・ゲームの更新など）。消さずに付け、照合から外す（Stage 20-E） */
   invalid?: { reason: string; date: string };
+  /** 最小構成の検査編: 観測量の範囲（plan/design-minimal-relevance.md 3.1 節） */
+  scope?: ObservationScope;
 };
+
+/**
+ * 観測量の出どころ（plan/design-minimal-relevance.md 3.1 節）。normal = 通常攻撃のヒット、skill = 倍率ダメージ・追加ダメージ、
+ * burst = バーストのヒット、dot = 持続ダメージ、gauge = ゲージ、burstChain = バーストの段・CT、clock = 時計・止まり、
+ * target = 的の動き・大きさ、firing = 射撃の刻み・リロード
+ */
+export const OBSERVATION_SOURCES = [
+  'normal',
+  'skill',
+  'burst',
+  'dot',
+  'gauge',
+  'burstChain',
+  'clock',
+  'target',
+  'firing',
+] as const;
+export type ObservationSource = (typeof OBSERVATION_SOURCES)[number];
+
+/**
+ * 観測量の範囲。slot はどの枠のものか（1 始まり。複数なら配列、編成の全体なら 'all'）。frames は読んだ範囲（動画のフレーム。省略可）で、
+ * 人が読む範囲の記録（未確定の要素の判定には使わない。同 4.1 節の 6c）
+ */
+export type ObservationScope = {
+  slot: number | number[] | 'all';
+  source: ObservationSource;
+  frames?: [number, number];
+};
+
+/** scope の検査。teamSize は録画の編成の枠の数（録画が無ければ undefined で、枠の範囲は見ない） */
+export function validateScope(scope: ObservationScope, teamSize: number | undefined, at: string): string[] {
+  const errors: string[] = [];
+  const slots = scope.slot === 'all' ? [] : Array.isArray(scope.slot) ? scope.slot : [scope.slot];
+  if (scope.slot !== 'all' && slots.length === 0) errors.push(`${at}: scope.slot が空`);
+  for (const s of slots)
+    if (!Number.isInteger(s) || s < 1 || (teamSize !== undefined && s > teamSize))
+      errors.push(`${at}: scope.slot は録画の編成の枠（1〜${teamSize ?? '?'}）か 'all'（${JSON.stringify(s)}）`);
+  if (new Set(slots).size !== slots.length) errors.push(`${at}: scope.slot に同じ枠が 2 回ある`);
+  if (!OBSERVATION_SOURCES.includes(scope.source)) errors.push(`${at}: scope.source が語彙に無い: ${scope.source}`);
+  if (scope.frames !== undefined) {
+    const f = scope.frames;
+    if (!Array.isArray(f) || f.length !== 2 || !f.every((x) => Number.isInteger(x) && x >= 0) || f[0] > f[1])
+      errors.push(`${at}: scope.frames は [始まり, 終わり]（0 以上の整数で、始まり ≤ 終わり）`);
+  }
+  return errors;
+}
 
 /** 失効した観測値 → 失効の理由（Stage 20-E） */
 export function invalidReasonsOf(observations: readonly Observation[]): Map<string, string> {
@@ -1007,6 +1055,7 @@ export function validateObservations(
     if (o.readAt !== undefined && !isDate(o.readAt)) errors.push(`${at}: readAt は YYYY-MM-DD`);
     if (o.invalid !== undefined && (o.invalid.reason.trim() === '' || !isDate(o.invalid.date)))
       errors.push(`${at}: invalid には reason と date（YYYY-MM-DD）が要る`);
+    if (o.scope !== undefined) errors.push(...validateScope(o.scope, recordings.get(o.recording)?.team.length, at));
     if (o.use === 'compare' && o.compare === undefined) errors.push(`${at}: use が compare なら compare が要る`);
     if (o.use !== 'compare' && o.compare !== undefined) errors.push(`${at}: compare は use が compare のときだけ`);
     const c = o.compare;

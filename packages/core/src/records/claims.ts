@@ -2,6 +2,10 @@
 // 結論は records/claims/C-NNNN.json に 1 件 1 ファイルで置き、plan/claims.md は話題ごとの一覧として生成する。
 // 根拠の観測値は「根拠」の文にバッククォートで書いた ID から拾う（書くのは 1 か所だけ）。
 // Stage 20-A: ID の桁を決め打ちしない（録画 3 桁以上・連番 2 桁以上・結論 4 桁以上）。通し番号の抜けは許す。
+import { ELEMENTS } from '../element.ts';
+import { BUFF_STATS, type BuffStat } from '../skills/types.ts';
+import type { BurstStep, Element, WeaponType } from '../types.ts';
+import { WEAPON_TYPES } from '../weapons.ts';
 
 export const CLAIM_STATES = ['確定', '仮説', '棄却', '範囲外'] as const;
 export type ClaimState = (typeof CLAIM_STATES)[number];
@@ -46,7 +50,144 @@ export type ClaimFile = {
   replaces: string[];
   /** 更新日（YYYY-MM-DD） */
   updated: string;
+  /** 最小構成の検査編: 結論の対象（plan/design-minimal-relevance.md 3.2 節） */
+  subject?: ClaimSubject;
+  /** 最小構成の検査編: 仮説の効く条件（同 3.5 節）。仮説の結論にだけ書ける */
+  when?: ClaimWhen;
+  /** 最小構成の検査編: 人の判断の印（同 4.3 節）。印のある要素は、その組の警告から外す */
+  minimal?: MinimalMark[];
 };
+
+/**
+ * 定義に結び付かない結論の機構の名前（plan/design-minimal-relevance.md 3.2 節）。観測量の出どころ（records/observations.ts の
+ * OBSERVATION_SOURCES）の firing・gauge・burstChain・clock・target に、damageFormula（1 ヒットの式）・targetTable（的の表のコア命中率・
+ * 弾丸命中率）を足したもの
+ */
+export const CLAIM_MECHANISMS = [
+  'firing',
+  'gauge',
+  'burstChain',
+  'clock',
+  'target',
+  'damageFormula',
+  'targetTable',
+] as const;
+export type ClaimMechanism = (typeof CLAIM_MECHANISMS)[number];
+
+/**
+ * 結論の対象。places は定義の場所（`data/skills/17.json` の skill2 の effects[0] の形。バッククォートは省いてよい）で、2 体の組の結論は
+ * 2 つ以上書く。書いた場所の claims がこの結論を含むことを records/skills.ts の validateClaimSubjects で見る。mechanism は定義に結び付かない結論
+ */
+export type ClaimSubject = { places: string[] } | { mechanism: ClaimMechanism };
+
+/**
+ * 仮説の効く条件（plan/design-minimal-relevance.md 3.5 節）。書いた条件が全部その録画で成り立つときだけ、仮説を未確定の要素に数える。
+ * teamHas = 編成にこの〈バースト段階・武器種・部隊（CDN の squad）・キャラ（rid）〉のキャラがいる、sameStatSources = 同じ stat の効果の
+ * 出どころが atLeast 以上、enemyElement = 的の属性
+ */
+export type ClaimWhen = {
+  teamHas?: { burstStage?: BurstStep; weaponType?: WeaponType; squad?: string; rid?: number };
+  sameStatSources?: { stat: BuffStat; atLeast: number };
+  enemyElement?: Element;
+};
+
+/**
+ * 人の判断の印（plan/design-minimal-relevance.md 4.3 節）。observations はこの結論の根拠の観測値の ID（'*' は全部の組）、
+ * element は判定の要素の名前（「イサベル skill2.notes[0]」など）、reason は効かないとみなした理由、decided はオーナーが決めた日
+ */
+export type MinimalMark = { observations: string[] | '*'; element: string; reason: string; decided: string };
+
+const BURST_STAGES: readonly BurstStep[] = ['Step1', 'Step2', 'Step3', 'AllStep'];
+const isDate = (d: unknown) => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d);
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
+const unknownKeys = (v: Record<string, unknown>, keys: readonly string[]) =>
+  Object.keys(v).filter((k) => !keys.includes(k));
+
+/** subject・when・minimal の形の検査（plan/design-minimal-relevance.md 3.2・3.5・4.3 節）。subject の場所の実在は validateClaimSubjects */
+export function validateMinimalFields(c: Claim): string[] {
+  const errors: string[] = [];
+  const at = c.id;
+  if (c.subject !== undefined) {
+    const s: unknown = c.subject;
+    if (!isRecord(s) || unknownKeys(s, ['places', 'mechanism']).length > 0 || 'places' in s === 'mechanism' in s)
+      errors.push(`${at}: subject は { places } か { mechanism } のどちらか 1 つ`);
+    else if ('places' in s) {
+      const places = s.places;
+      if (
+        !Array.isArray(places) ||
+        places.length === 0 ||
+        !places.every((p) => typeof p === 'string' && p.trim() !== '')
+      )
+        errors.push(`${at}: subject.places は定義の場所の文字列の並び（1 つ以上）`);
+      else if (new Set(places).size !== places.length) errors.push(`${at}: subject.places に同じ場所が 2 回ある`);
+    } else if (!(CLAIM_MECHANISMS as readonly unknown[]).includes(s.mechanism))
+      errors.push(`${at}: subject.mechanism が語彙に無い: ${String(s.mechanism)}`);
+  }
+  if (c.when !== undefined) {
+    const w: unknown = c.when;
+    if (c.state !== '仮説') errors.push(`${at}: when は仮説の結論にだけ書ける（${c.state}）`);
+    if (!isRecord(w) || Object.keys(w).length === 0)
+      errors.push(`${at}: when は teamHas・sameStatSources・enemyElement の 1 つ以上`);
+    else {
+      for (const k of unknownKeys(w, ['teamHas', 'sameStatSources', 'enemyElement']))
+        errors.push(`${at}: when に知らない欄がある: ${k}`);
+      if (w.teamHas !== undefined) {
+        const t = w.teamHas;
+        if (
+          !isRecord(t) ||
+          Object.keys(t).length === 0 ||
+          unknownKeys(t, ['burstStage', 'weaponType', 'squad', 'rid']).length > 0
+        )
+          errors.push(`${at}: when.teamHas は burstStage・weaponType・squad・rid の 1 つ以上`);
+        else {
+          if (t.burstStage !== undefined && !(BURST_STAGES as readonly unknown[]).includes(t.burstStage))
+            errors.push(`${at}: when.teamHas.burstStage が語彙に無い: ${String(t.burstStage)}`);
+          if (t.weaponType !== undefined && !(WEAPON_TYPES as readonly unknown[]).includes(t.weaponType))
+            errors.push(`${at}: when.teamHas.weaponType が語彙に無い: ${String(t.weaponType)}`);
+          if (t.squad !== undefined && (typeof t.squad !== 'string' || t.squad.trim() === ''))
+            errors.push(`${at}: when.teamHas.squad は部隊の ID（CDN の squad）`);
+          if (t.rid !== undefined && !(Number.isInteger(t.rid) && (t.rid as number) > 0))
+            errors.push(`${at}: when.teamHas.rid は正の整数`);
+        }
+      }
+      if (w.sameStatSources !== undefined) {
+        const s = w.sameStatSources;
+        if (
+          !isRecord(s) ||
+          unknownKeys(s, ['stat', 'atLeast']).length > 0 ||
+          !(BUFF_STATS as readonly unknown[]).includes(s.stat) ||
+          !(Number.isInteger(s.atLeast) && (s.atLeast as number) >= 2)
+        )
+          errors.push(`${at}: when.sameStatSources は { stat: 効果の stat, atLeast: 2 以上の整数 }`);
+      }
+      if (w.enemyElement !== undefined && !(ELEMENTS as readonly unknown[]).includes(w.enemyElement))
+        errors.push(`${at}: when.enemyElement が語彙に無い: ${String(w.enemyElement)}`);
+    }
+  }
+  if (c.minimal !== undefined) {
+    if (!Array.isArray(c.minimal) || c.minimal.length === 0) errors.push(`${at}: minimal は印の並び（1 つ以上）`);
+    else
+      c.minimal.forEach((m: unknown, i) => {
+        const p = `${at}: minimal[${i}]`;
+        if (!isRecord(m) || unknownKeys(m, ['observations', 'element', 'reason', 'decided']).length > 0) {
+          errors.push(`${p} は { observations, element, reason, decided }`);
+          return;
+        }
+        if (m.observations !== '*') {
+          if (!Array.isArray(m.observations) || m.observations.length === 0)
+            errors.push(`${p}.observations は観測値の ID の並びか '*'`);
+          else
+            for (const o of m.observations)
+              if (!c.observations.includes(o as string))
+                errors.push(`${p}.observations の ${String(o)} はこの結論の根拠に無い`);
+        }
+        if (typeof m.element !== 'string' || m.element.trim() === '') errors.push(`${p}.element が空`);
+        if (typeof m.reason !== 'string' || m.reason.trim() === '') errors.push(`${p}.reason が空`);
+        if (!isDate(m.decided)) errors.push(`${p}.decided は YYYY-MM-DD`);
+      });
+  }
+  return errors;
+}
 
 export type Claim = ClaimFile & {
   /** 根拠の文から拾った観測値の ID */
@@ -113,6 +254,7 @@ export function validateClaims(
     for (const o of c.observations) if (!observationIds.has(o)) errors.push(`${c.id}: 観測値 ${o} が無い`);
     if (c.state === '確定' && c.observations.length > 0 && c.observations.every((o) => invalidIds.has(o)))
       errors.push(`${c.id}: 確定の結論の根拠の観測値が、すべて失効している`);
+    errors.push(...validateMinimalFields(c));
     for (const r of c.replaces) {
       const old = byId.get(r);
       if (old === undefined) errors.push(`${c.id}: 置き換えた結論 ${r} が無い`);
