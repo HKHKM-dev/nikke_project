@@ -181,8 +181,10 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
   recording.team.forEach((member, i) => {
     const character = ctx.characters.get(member.rid);
     const base = ctx.skills.get(member.rid);
+    // 要素の名前はキャラのデータの名前（台帳の呼び名は録画ごとに揺れる。印は名前で合わせる。design-minimal-relevance.md 11.4 節）
+    const who = character?.name.ja ?? member.name;
     if (character === undefined || base === undefined) {
-      out.push({ slot: member.slot, name: `${member.name}（定義なし）`, places: [], type: 'noDefinition', claims: [] });
+      out.push({ slot: member.slot, name: `${who}（定義なし）`, places: [], type: 'noDefinition', claims: [] });
     } else {
       const phase = (member.treasurePhase ?? 0) as TreasurePhase;
       const treasure = new Set(treasureSlots(character, phase));
@@ -200,7 +202,7 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
           const refs = referring(index);
           out.push({
             slot: member.slot,
-            name: `${member.name} ${prefix}${slot}.effects[${index}]`,
+            name: `${who} ${prefix}${slot}.effects[${index}]`,
             places: [place(`effects[${index}]`), ...refs.map(({ j }) => place(`notes[${j}]`))],
             type: 'effect',
             shape: shapeOfEffect(e),
@@ -213,7 +215,7 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
           if (n.kind === 'noDamage' || n.refers !== undefined) return;
           out.push({
             slot: member.slot,
-            name: `${member.name} ${prefix}${slot}.notes[${j}]`,
+            name: `${who} ${prefix}${slot}.notes[${j}]`,
             places: [place(`notes[${j}]`)],
             type: 'note',
             shape: shapeOfNote(n.effect),
@@ -226,7 +228,7 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
     if (character !== undefined && !normalConditionMeasured(character, recording, ctx.enemies))
       out.push({
         slot: member.slot,
-        name: `${member.name} 通常攻撃の条件`,
+        name: `${who} 通常攻撃の条件`,
         places: [],
         type: 'normalCondition',
         claims: [],
