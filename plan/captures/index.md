@@ -283,6 +283,8 @@ node tools/captures/reticle-ammo.ts <動画> [--mode mags|series] [--from N] [--
 node tools/captures/hud.ts   <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop 810,34,300,38]
 node tools/captures/aim.ts   <動画> [--from N] [--to N] [--step 60] [--csv out.csv] [--debug-dir DIR]
 node tools/captures/timer.ts <動画...> [--mode summary|changes]   # 残り時間の秒の変わり目と、1 秒あたりのフレーム数（V-0003）
+node tools/captures/timer.ts <動画> --mode steps [--start N]      # 残り時間の止まりの段（V-0168）
+node tools/captures/timer.ts <動画> --mode ticks --at f1,f2,... [--start N]   # フレームを戦闘開始からのゲーム内のティック（止まりを除く）に直す（V-0302）
 node tools/captures/dups.ts  <動画> [--from N] [--to N] [--mode summary|list|diff]   # 重複フレーム（前と同じ画）を拾う（V-0004）
 node tools/captures/reload.ts <動画> [--shots <hud.ts --mode jumps の出力>] [--stages] [--mode series|segments|fit]   # RELOADING のバーから、リロードごとの完了・伸び・最終弾 → 完了（V-0057）
 node tools/captures/intake.ts <元ファイル> --id NNN --name <識別子> [--folder range] [--rid 271,870 --controlled 1 --target BigArms --element Fire --mode range-3min --fixed-spec on|off ...] [--no-backup]   # 取り込み: リネーム・移動・素性・records/recordings/NNN.json・Drive への同期
