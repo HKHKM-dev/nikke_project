@@ -27,6 +27,7 @@
       "rid": 226,
       "name": "ラプンツェル：ピュアグレイス",
       "controlled": true,
+      "fires": false,
       "note": "操作キャラの枠・AUTO 射撃 OFF で撃たせない（与ダメージ 0）"
     }
   ],
