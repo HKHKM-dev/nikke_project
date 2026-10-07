@@ -1,0 +1,29 @@
+{
+  "id": "337",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-337_sr_trony_manual.mp4",
+  "original": null,
+  "durationSec": 61.0,
+  "frames": 3657,
+  "fps": 60,
+  "sizeMB": 73.5,
+  "sha256": "66a27b7ec6fb",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 501,
+      "name": "トロニー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0300。トロニー単騎・操作（AUTO 射撃 OFF）・オートバースト OFF。的の胴体にフルチャージ 1 発 → 隠れて 7 秒以上、を 4 回（V-0300 の撮影計画）。クラウドで Drive から取り寄せて素性を書いた（original は不明）"
+}
