@@ -1,0 +1,29 @@
+{
+  "id": "308",
+  "date": "2026-10-07",
+  "folder": "range",
+  "file": "20261007-308_sr_takina_manual.mp4",
+  "original": "2026-10-07_21-39-37.mp4",
+  "durationSec": 151.8,
+  "frames": 9110,
+  "fps": 60,
+  "sizeMB": 182.9,
+  "sha256": "97a65a000ac7",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 861,
+      "name": "たきな",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0291。たきな単騎・操作（AUTO 射撃 OFF）・オートバースト OFF。的に 2 発 → 撃たずに隠れて待つ → 的に 1 発（V-0291 の撮影計画）。残り 00:40 で退出"
+}
