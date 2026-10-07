@@ -60,10 +60,19 @@ export function closeChecks(input: CloseInput): CloseResult {
       );
     }
     if (c.state === '確定') {
+      // 最小構成の検査（plan/design-minimal-relevance.md 11 節。2026-10-08 のオーナー決定）: この記録の観測値の組に警告があれば止める。
+      // 既存の確定の結論を指す記録もあるので、ほかの記録の観測値の組の警告は注意にとどめる（records:check でも止めない）
       const warned = (input.minimal.get(id) ?? []).filter((w) => w.elements.length > 0);
-      if (warned.length > 0) {
-        warnings.push(`${at}: 最小構成の警告があるのに結論 ${id} を確定にしている（${summarizeWarnings(warned)}）`);
-      }
+      const ownWarned = warned.filter((w) => ownIds.has(w.observation));
+      const otherWarned = warned.filter((w) => !ownIds.has(w.observation));
+      if (ownWarned.length > 0)
+        errors.push(
+          `${at}: 結論 ${id} を確定にしているが、この記録の観測値の組に最小構成の警告がある（${summarizeWarnings(ownWarned)}）。効かない理由を結論の minimal に印として書くか、仮説にする`,
+        );
+      if (otherWarned.length > 0)
+        warnings.push(
+          `${at}: 結論 ${id} のほかの記録の観測値の組に最小構成の警告がある（${summarizeWarnings(otherWarned)}）`,
+        );
       if (c.subject === undefined) warnings.push(`${at}: 確定の結論 ${id} に結論の対象（subject）が無い`);
       // 設計書 9 節の 2: 確定にする結論の根拠の観測値のうち、compare を持たないものには scope が要る
       const noScope = input.observations

@@ -135,7 +135,7 @@
 - [ ] 効果の `assumes` と、notes の種類（`kind`）が実態と合っている（[skills.md](skills.md) の対応状況が意図どおり）
 - [ ] 定義のどの効果にも `claims` がある（[skills.md](skills.md) のそのキャラに「根拠なし」の効果が残っていない）
 - [ ] 検証記録の「予測」が、撮る前（読み直しなら読む前）に書かれている（予測ファイルの commit が録画か読みより前）
-- [ ] `npm run records:close -- V-NNNN --mark` が通っている（結論の根拠・等級の候補・予測の日付・本文の節・確定の結論の根拠の観測値の `scope`）。最小構成の警告の注意が出たら、[minimal.md](minimal.md) の要素を確かめる
+- [ ] `npm run records:close -- V-NNNN --mark` が通っている（結論の根拠・等級の候補・予測の日付・本文の節・確定の結論の根拠の観測値の `scope`）。この記録の観測値の組に最小構成の警告があると誤りになる（効かない理由を結論の `minimal` に印として書くか、仮説にする。[design-minimal-relevance.md](design-minimal-relevance.md) 11.3 節）
 - [ ] 既存のテストの数値が変わっていない（変わったなら、その理由と根拠の ID を PR に書く）
 - [ ] 実戦的な編成で sim と calc が整合するテストがある
 - [ ] `npm run records:check` と `npm run records:table` の生成物がコミットされている
