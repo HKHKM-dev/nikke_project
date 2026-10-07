@@ -1,6 +1,6 @@
 // 検証記録を閉じる前の検査（plan/design-records-automation.md 3.7 節）。npm run records:close の純粋な部分。
 import { gradeAboveCandidate, type Claim, type ClaimGrade } from './claims.ts';
-import type { MinimalWarning } from './minimal.ts';
+import { summarizeWarnings, type PairWarning } from './relevance.ts';
 import type { Observation } from './observations.ts';
 import { seenObservationIds, type PredictionFile } from './predictions.ts';
 import type { RecordingEntry } from './recordings.ts';
@@ -15,7 +15,8 @@ export type CloseInput = {
   prediction: PredictionFile | undefined;
   /** 結論 ID → 機械の等級の候補 */
   gradeCandidates: ReadonlyMap<string, ClaimGrade>;
-  warnings: readonly MinimalWarning[];
+  /** 結論 ID → 効きうる未確定の要素が残った組（最小構成の検査。plan/design-minimal-relevance.md 5 節） */
+  minimal: ReadonlyMap<string, readonly PairWarning[]>;
   /**
    * git の履歴で見た、予測と読みの順（plan/design-reread-prediction.md 5 節の B1。ブランチの上で records:close が調べる）。
    * 調べられなかったら undefined
@@ -58,10 +59,21 @@ export function closeChecks(input: CloseInput): CloseResult {
         `${at}: 結論 ${id} の等級（${c.grade}）が機械の候補（${candidate}）より上。根拠に別の録画を足すか、等級を候補に合わせる`,
       );
     }
-    if (c.state === '確定' && input.warnings.length > 0) {
-      warnings.push(
-        `${at}: 最小構成の警告があるのに結論 ${id} を確定にしている（録画 ${input.warnings.map((w) => w.recording).join('・')}）`,
-      );
+    if (c.state === '確定') {
+      const warned = (input.minimal.get(id) ?? []).filter((w) => w.elements.length > 0);
+      if (warned.length > 0) {
+        warnings.push(`${at}: 最小構成の警告があるのに結論 ${id} を確定にしている（${summarizeWarnings(warned)}）`);
+      }
+      if (c.subject === undefined) warnings.push(`${at}: 確定の結論 ${id} に結論の対象（subject）が無い`);
+      // 設計書 9 節の 2: 確定にする結論の根拠の観測値のうち、compare を持たないものには scope が要る
+      const noScope = input.observations
+        .filter((o) => c.observations.includes(o.id) && o.invalid === undefined)
+        .filter((o) => o.compare === undefined && o.scope === undefined)
+        .map((o) => o.id);
+      if (noScope.length > 0)
+        errors.push(
+          `${at}: 確定の結論 ${id} の根拠の観測値に scope が無い（${noScope.join('・')}。compare を持たないものに要る）`,
+        );
     }
   }
   // 予測は撮る前に書く。起票より前に撮った録画（読み直し）は撮る前に予測を書けないので、録画の日は見ず、読んだ日とだけ比べる。

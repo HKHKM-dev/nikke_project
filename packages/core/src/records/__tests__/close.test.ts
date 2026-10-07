@@ -46,6 +46,7 @@ const claim = (patch: Partial<Claim> = {}): Claim => ({
   replaces: [],
   updated: '2026-10-02',
   observations: ['101-01'],
+  subject: { mechanism: 'targetTable' },
   ...patch,
 });
 const obs: Observation = {
@@ -56,6 +57,7 @@ const obs: Observation = {
   value: 1,
   description: '',
   source: 'V-0099',
+  scope: { slot: 1, source: 'normal' },
   readAt: '2026-10-02',
 };
 const recording = { id: '101', date: '2026-10-01', team: [], legacy: false } as unknown as RecordingEntry;
@@ -73,7 +75,7 @@ const base: CloseInput = {
     predicted: { at: '2026-09-30', commit: 'abc1234', values: {} },
   },
   gradeCandidates: new Map([['C-0001', '反復実測']]),
-  warnings: [],
+  minimal: new Map(),
 };
 
 describe('closeChecks', () => {
@@ -145,12 +147,33 @@ describe('closeChecks', () => {
     expect(closeChecks(old).errors).toEqual([]);
   });
 
+  it('確定の結論の根拠に compare も scope も無い観測値があれば誤り、subject が無ければ注意（設計書 9 節の 2・3.2 節）', () => {
+    const bare: Observation = { ...obs, use: 'record' };
+    delete bare.scope;
+    expect(closeChecks({ ...base, observations: [bare] }).errors.some((e) => e.includes('scope が無い'))).toBe(true);
+    // 仮説の結論なら問わない
+    const hypothesis = closeChecks({
+      ...base,
+      observations: [bare],
+      claims: [claim({ state: '仮説', grade: '単独実測' })],
+    });
+    expect(hypothesis.errors.some((e) => e.includes('scope'))).toBe(false);
+    const noSubject = claim();
+    delete noSubject.subject;
+    expect(closeChecks({ ...base, claims: [noSubject] }).warnings.some((w) => w.includes('subject'))).toBe(true);
+  });
+
   it('本文の節が空、既に完了、最小構成の警告、失効は注意', () => {
     expect(closeChecks({ ...base, verification: doc([], { 次: '' }) }).errors[0]).toContain('次に撮るもの');
     expect(closeChecks({ ...base, verification: doc([], { 分かったこと: '' }) }).errors[0]).toContain('分かったこと');
     const r = closeChecks({
       ...base,
-      warnings: [{ verification: 'V-0099', recording: '101', unconfirmed: ['a', 'b'] }],
+      minimal: new Map([
+        [
+          'C-0001',
+          [{ observation: '101-01', recordings: ['101'], elements: [{ name: 'a', reason: '根拠なし' }], marked: [] }],
+        ],
+      ]),
       observations: [{ ...obs, invalid: { reason: '読み違い', date: '2026-10-02' } }],
     });
     expect(r.errors).toEqual([]);

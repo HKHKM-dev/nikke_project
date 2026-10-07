@@ -579,3 +579,11 @@ export function renderMinimal(results: readonly ClaimRelevance[], claims: readon
   }
   return `${lines.join('\n')}\n`;
 }
+
+/** 警告のある組を「要素（観測値…）」の 1 行にまとめる（records:new・records:close の理由と注意） */
+export function summarizeWarnings(pairs: readonly PairWarning[]): string {
+  const byElement = new Map<string, string[]>();
+  for (const w of pairs)
+    for (const e of w.elements) byElement.set(e.name, [...(byElement.get(e.name) ?? []), w.observation]);
+  return [...byElement].map(([name, os]) => `${name}（${compressIds(os).join('・').replaceAll('`', '')}）`).join('、');
+}

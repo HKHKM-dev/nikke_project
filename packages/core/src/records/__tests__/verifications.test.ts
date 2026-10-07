@@ -54,7 +54,7 @@ describe('records/verifications・plan/verifications.md', () => {
   it('passes validation and matches plan/verifications.md (npm run records:check)', () => {
     expect(validateVerifications(verifications, { claims, recordingIds, observations })).toEqual([]);
     // 予測との比べ（plan/design-records-automation.md 3.5 節）も載る。最小構成の警告は plan/minimal.md に移した（design-minimal-relevance.md 5 節）
-    const extra = verificationExtraLines(observations, loadPredictions(), []);
+    const extra = verificationExtraLines(observations, loadPredictions());
     expect(readFileSync(VERIFICATIONS_PATH, 'utf8')).toBe(renderVerifications(verifications, observations, extra));
   });
 

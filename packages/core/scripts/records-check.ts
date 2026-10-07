@@ -139,7 +139,7 @@ for (const p of predictions) {
 }
 writeFileSync(
   VERIFICATIONS_PATH,
-  renderVerifications(verifications, observations, verificationExtraLines(observations, predictions, [])),
+  renderVerifications(verifications, observations, verificationExtraLines(observations, predictions)),
 );
 writeFileSync(SKILLS_DOC_PATH, renderSkills(skills, claims));
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
