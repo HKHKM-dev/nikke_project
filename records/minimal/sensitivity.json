@@ -6586,7 +6586,7 @@
     {
       "observation": "317-03",
       "element": "モダニア burst.effects[0]",
-      "key": "c5b5ddb613d585eb",
+      "key": "37a09307fc4f9682",
       "effective": false,
       "minus": 0,
       "plus": -1
@@ -6594,7 +6594,7 @@
     {
       "observation": "317-03",
       "element": "モダニア burst.effects[1]",
-      "key": "c5b5ddb613d585eb",
+      "key": "37a09307fc4f9682",
       "effective": true,
       "minus": 89,
       "plus": null
@@ -6602,7 +6602,7 @@
     {
       "observation": "317-03",
       "element": "モダニア skill2.effects[0]",
-      "key": "c5b5ddb613d585eb",
+      "key": "37a09307fc4f9682",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6610,7 +6610,7 @@
     {
       "observation": "317-04",
       "element": "モダニア burst.effects[0]",
-      "key": "0fd32e9dee58848e",
+      "key": "6f6bb008e754ab5f",
       "effective": false,
       "minus": -1,
       "plus": -1
@@ -6618,7 +6618,7 @@
     {
       "observation": "317-04",
       "element": "モダニア burst.effects[1]",
-      "key": "0fd32e9dee58848e",
+      "key": "6f6bb008e754ab5f",
       "effective": true,
       "minus": 69,
       "plus": null
@@ -6626,7 +6626,7 @@
     {
       "observation": "317-04",
       "element": "モダニア skill2.effects[0]",
-      "key": "0fd32e9dee58848e",
+      "key": "6f6bb008e754ab5f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6634,7 +6634,7 @@
     {
       "observation": "317-05",
       "element": "モダニア burst.effects[0]",
-      "key": "7da0226089c499e1",
+      "key": "268484257d498fb8",
       "effective": false,
       "minus": 0,
       "plus": -1
@@ -6642,7 +6642,7 @@
     {
       "observation": "317-05",
       "element": "モダニア burst.effects[1]",
-      "key": "7da0226089c499e1",
+      "key": "268484257d498fb8",
       "effective": true,
       "minus": 63,
       "plus": null
@@ -6650,7 +6650,7 @@
     {
       "observation": "317-05",
       "element": "モダニア skill2.effects[0]",
-      "key": "7da0226089c499e1",
+      "key": "268484257d498fb8",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6658,7 +6658,7 @@
     {
       "observation": "317-06",
       "element": "モダニア burst.effects[0]",
-      "key": "150260bf55b14d04",
+      "key": "3a07331e6eb292b5",
       "effective": false,
       "minus": 0,
       "plus": -1
@@ -6666,7 +6666,7 @@
     {
       "observation": "317-06",
       "element": "モダニア burst.effects[1]",
-      "key": "150260bf55b14d04",
+      "key": "3a07331e6eb292b5",
       "effective": true,
       "minus": 58,
       "plus": null
@@ -6674,7 +6674,7 @@
     {
       "observation": "317-06",
       "element": "モダニア skill2.effects[0]",
-      "key": "150260bf55b14d04",
+      "key": "3a07331e6eb292b5",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6682,7 +6682,7 @@
     {
       "observation": "317-07",
       "element": "モダニア burst.effects[0]",
-      "key": "b924223600e7371d",
+      "key": "9533b51f61a29684",
       "effective": true,
       "minus": -317,
       "plus": 7
@@ -6690,7 +6690,7 @@
     {
       "observation": "317-07",
       "element": "モダニア burst.effects[1]",
-      "key": "b924223600e7371d",
+      "key": "9533b51f61a29684",
       "effective": true,
       "minus": -178,
       "plus": null
@@ -6698,7 +6698,7 @@
     {
       "observation": "317-07",
       "element": "モダニア skill2.effects[0]",
-      "key": "b924223600e7371d",
+      "key": "9533b51f61a29684",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6706,7 +6706,7 @@
     {
       "observation": "318-03",
       "element": "ミランダ treasureSkills.skill1.effects[0]",
-      "key": "db1a16fbddf318e4",
+      "key": "7fad93ccef30958f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6714,7 +6714,7 @@
     {
       "observation": "318-03",
       "element": "ミランダ treasureSkills.skill1.effects[1]",
-      "key": "db1a16fbddf318e4",
+      "key": "7fad93ccef30958f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6722,7 +6722,7 @@
     {
       "observation": "318-04",
       "element": "ミランダ treasureSkills.skill1.effects[0]",
-      "key": "2cc0427a0da1a1cd",
+      "key": "40024995e7a48f46",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6730,7 +6730,7 @@
     {
       "observation": "318-04",
       "element": "ミランダ treasureSkills.skill1.effects[1]",
-      "key": "2cc0427a0da1a1cd",
+      "key": "40024995e7a48f46",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6738,7 +6738,7 @@
     {
       "observation": "318-05",
       "element": "ミランダ treasureSkills.skill1.effects[0]",
-      "key": "e57ac5b1db81e846",
+      "key": "dd33a7be19c448cd",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6746,7 +6746,7 @@
     {
       "observation": "318-05",
       "element": "ミランダ treasureSkills.skill1.effects[1]",
-      "key": "e57ac5b1db81e846",
+      "key": "dd33a7be19c448cd",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6754,7 +6754,7 @@
     {
       "observation": "318-06",
       "element": "ミランダ treasureSkills.skill1.effects[0]",
-      "key": "64ff2d8a2e55aebf",
+      "key": "079d9e67a384e128",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6762,7 +6762,7 @@
     {
       "observation": "318-06",
       "element": "ミランダ treasureSkills.skill1.effects[1]",
-      "key": "64ff2d8a2e55aebf",
+      "key": "079d9e67a384e128",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6770,7 +6770,7 @@
     {
       "observation": "318-07",
       "element": "ミランダ treasureSkills.skill1.effects[0]",
-      "key": "75d6611300cc5f94",
+      "key": "a542384833c2c95f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6778,7 +6778,7 @@
     {
       "observation": "318-07",
       "element": "ミランダ treasureSkills.skill1.effects[1]",
-      "key": "75d6611300cc5f94",
+      "key": "a542384833c2c95f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6786,7 +6786,7 @@
     {
       "observation": "318-08",
       "element": "ミランダ treasureSkills.skill1.effects[0]",
-      "key": "5b7bff1b00262bb4",
+      "key": "a2f7fbfaf483b863",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6794,7 +6794,7 @@
     {
       "observation": "318-08",
       "element": "ミランダ treasureSkills.skill1.effects[1]",
-      "key": "5b7bff1b00262bb4",
+      "key": "a2f7fbfaf483b863",
       "effective": false,
       "minus": 0,
       "plus": 0
