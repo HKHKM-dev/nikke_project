@@ -7,5 +7,8 @@
   "basis": "`162-04`・`162-05`（私だけの星。1 回目のフルバーストのデルタのコアとイサベルのペレットが、攻撃力の違う 2 体そろってモデルと合う。攻撃力▲なし・攻撃ダメージ▲なしのモデルとは合わない。`162-04` の差 1.3 は最終攻撃力の端数を整数に丸めると差 1 未満）、`163-05`（みんなの星。攻撃ダメージ▲だけで合う）。撮る前の予測は records/predictions/V-0124.json（H1）。読み直し（予測を commit した後に読んだ。plan/design-reread-prediction.md）。V-0124。撮り直しの録画 165 でも、撮る前に固定した予測（V-0125）と合った（`165-01`・`165-02`）。V-0125",
   "model": "`data/skills/17.json`（skill2）。攻撃力▲は `scaling: casterAttack`、私だけの星は `burstStepMix`",
   "replaces": [],
-  "updated": "2026-10-04"
+  "updated": "2026-10-04",
+  "subject": {
+    "places": ["data/skills/17.json の skill2 の effects[0]", "data/skills/17.json の skill2 の effects[2]"]
+  }
 }

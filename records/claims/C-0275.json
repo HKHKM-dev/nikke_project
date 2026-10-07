@@ -7,5 +7,12 @@
   "basis": "説明文（`data/characters/308.json` の skill1・skill2・burst。3 つとも対象は「自分に」）。撃たない操作枠のとき I-DOLL・サン自身の与ダメージは 0（戦闘履歴のパネル。`125-01`・`196-01` の注記）。バーストの最大装弾数▲の値の扱い（丸め）は確かめていない（定義では未実装の notes）。オーナーの判断（2026-10-05。plan/design-kurumi-s2.md 6 節の論点 3 の i）で、クルミの S2 の読み直し（V-0181）の前提として作った",
   "model": "`data/skills/308.json` の skill1・skill2 の notes（効果なし）。バーストは未実装の notes",
   "replaces": [],
-  "updated": "2026-10-05"
+  "updated": "2026-10-05",
+  "subject": {
+    "places": [
+      "data/skills/308.json の skill1 の notes[0]",
+      "data/skills/308.json の skill2 の notes[0]",
+      "data/skills/308.json の burst の effects[0]"
+    ]
+  }
 }

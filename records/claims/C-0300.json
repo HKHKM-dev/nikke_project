@@ -7,5 +7,8 @@
   "basis": "`212-06`（1 回目のバーストの tick の列。1 回目の tick から 2 回目まで 88f、以後 58〜59f。2〜5 回目のバーストも ±1f で同じ列）、`212-05`（5 回のバースト（`212-07`）で 10 回ずつ）。撮る前の予測（V-0185 の D2。検証記録に手で書いた）の形と合い、D1（1 秒後から 10 回）・D3（付いた瞬間から 11 回）とは間隔と数が合わない。1 回目の tick も▲・フルバースト補正の乗った値（`212-03` の注）。1 回目の tick の時刻（発動から 2f）は C-0301。V-0185",
   "model": "`data/skills/290.json` の burst の effects[1]（`dot`・`burstUse`・`firstTick: atApplication`）。tick のフレームは `frame/plan.ts` の `dotTickFrames`",
   "replaces": ["C-0280"],
-  "updated": "2026-10-05"
+  "updated": "2026-10-05",
+  "subject": {
+    "places": ["data/skills/290.json の burst の effects[1]"]
+  }
 }

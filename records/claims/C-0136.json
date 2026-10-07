@@ -7,5 +7,8 @@
   "basis": "`095-01`（録画 095。切れているときに使った 2 回とも、B の 57・116・175・234・293f 後の 5 回）、`095-02`（付いている最中に使った回で、B の後も 1 秒に 1 回のまま。命中で最後に付いたのが B の直前かもしれない f4850 の回も、1 秒に 1 回で増えない）。V-0054",
   "model": "`data/skills/862.json`（2 つの `dot` の `status`: `hacking`）。`frame/plan.ts` の `groupDotsByStatus` と `planSkillHits`（同じ status の発火をまとめて `dotTickFrames` に渡す）",
   "replaces": ["C-0132"],
-  "updated": "2026-09-30"
+  "updated": "2026-09-30",
+  "subject": {
+    "places": ["data/skills/862.json の skill1 の effects[0]", "data/skills/862.json の skill1 の effects[1]"]
+  }
 }

@@ -127,6 +127,9 @@
           "ja": "「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている",
           "en": "Full Burst Time +5 s is already in burst_duration (a 15 s full burst)",
           "kind": "modeling",
+          "effect": {
+            "kind": "unknown"
+          },
           "claims": [
             "C-0274"
           ]
@@ -134,7 +137,11 @@
         {
           "ja": "殲滅モードの照準線拡張・照準範囲内のすべての敵を同時に照準は、単体の的では関係しない",
           "en": "Annihilation Mode's wider aim and targeting every enemy in range do not matter against a single target",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "burstUse"
+          }
         }
       ]
     }

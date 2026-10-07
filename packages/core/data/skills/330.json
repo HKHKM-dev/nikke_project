@@ -86,6 +86,7 @@
           "ja": "リラックスは 20 スタックで回復するまでの数え上げにだけ使う",
           "en": "Relax only counts shots until the heal at 20 stacks",
           "kind": "modeling",
+          "refers": "effects[0]",
           "claims": [
             "C-0271"
           ]
@@ -111,6 +112,12 @@
           "ja": "バリアは扱わない（要件 5.2 節）",
           "en": "Shields are not modeled (requirements 5.2)",
           "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "burstUse"
+          },
           "claims": [
             "C-0393"
           ]

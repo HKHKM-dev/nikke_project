@@ -7,5 +7,11 @@
   "basis": "`244-02`〜`244-05`（2 人の編成（ミランダ + デルタ）で、バーストの窓のミランダの胴体と会心の 1 発、デルタのコアの 1 発が、自分にも付くモデル（V-0216 の H1）と 1 未満の差。自分に付かないモデル（H2）の値は窓の中に出ない）・`245-02`・`245-03`（3 人の編成（+ I-DOLL・サン）で、フルバーストの中のデルタのコアの 1 発が攻撃力▲の値、I だけで切れたチェーンの回のミランダの 490 発は攻撃力▲の無い値。自分を除かないモデル（V-0218 の H3）の値は出ない）。予測（records/predictions/V-0216.json・V-0218.json）は撮る前に commit した。録画 245 は III の I-DOLL・サン（撃たない操作枠。未確定はバーストの自分の最大装弾数▲だけで、ミランダとデルタの 1 発に効かない）が未確定で最小構成の警告が出るが、2026-10-06 にオーナーの判断で通した（V-0208 と同じ扱い）。V-0216・V-0218",
   "model": "`data/skills/32.json` の treasureSkills.burst の effects[0]・effects[1]（`timed`・`burstUse`・`topAttack`・`targetCountRef` 1（2 機）・`excludeSelf: \"unlessShort\"`）",
   "replaces": [],
-  "updated": "2026-10-06"
+  "updated": "2026-10-06",
+  "subject": {
+    "places": [
+      "data/skills/32.json の treasureSkills.burst の effects[0]",
+      "data/skills/32.json の treasureSkills.burst の effects[1]"
+    ]
+  }
 }

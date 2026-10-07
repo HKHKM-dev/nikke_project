@@ -7,5 +7,8 @@
   "basis": "`094-01`（フルバースト中のコアの発 57 件がどれも差 1 未満。スキルの▲を倍率の前に足すと 0.16% 大きく、その値は 0 件。バーストの攻撃力▲だけが乗った発 5,186,143 で、スキルの Lv も値から確かめた）。V-0053",
   "model": "`skills/buffs.ts` の `applyChargeBuffs`（chargeDamage は OL もスキルも倍率▲の後に足す）",
   "replaces": [],
-  "updated": "2026-09-29"
+  "updated": "2026-09-29",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }

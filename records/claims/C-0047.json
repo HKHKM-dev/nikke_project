@@ -7,5 +7,8 @@
   "basis": "`046-05`・`055-05`（録画 46・55 の段 B 40 回。会心は 3 回で、どれも 3 ティックがそろっていた）",
   "model": "`skills/cycles.ts`（段 B を 1 ヒットにまとめ、会心は期待値で持つ。合計の期待値は同じ）",
   "replaces": [],
-  "updated": "2026-09-27"
+  "updated": "2026-09-27",
+  "subject": {
+    "places": ["data/skills/225.json の skill1 の effects[0]"]
+  }
 }

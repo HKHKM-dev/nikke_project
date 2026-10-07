@@ -7,5 +7,8 @@
   "basis": "`012-01`〜`012-04`・`014-01`・`014-02`、verification.md Stage 4「attackDamage の置き場所」",
   "model": "`damage.ts` の `attackDamageMultiplier`",
   "replaces": ["C-0019"],
-  "updated": "2026-09-22"
+  "updated": "2026-09-22",
+  "subject": {
+    "places": ["data/skills/870.json の skill2 の effects[0]"]
+  }
 }

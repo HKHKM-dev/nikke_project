@@ -55,7 +55,12 @@
         {
           "ja": "環境コントロールの味方全体の持続回復は未対応（回復を受けた時の効果を起こさない）",
           "en": "Environment Setup's heal over time on all allies is not modeled (it does not trigger effects on being healed)",
-          "kind": "unimplemented"
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "timer"
+          }
         },
         {
           "ja": "陽動はダメージに関係しない",

@@ -7,5 +7,8 @@
   "basis": "`092-02`（ソーダ：トゥインクルバニー、コレクション SR Lv5 の 6.3%: 23,160 × 1.063 = 24,619.08。四捨五入の 24,619 だけが 65 件中 64 件で合い、切り上げ・ペレットごとの丸め（24,620）は 0 件、丸めなしは 9 件）。端数 0.5 は `089-01`・`088-01`・`091-01` で切り上がった。V-0050",
   "model": "`skills/buffs.ts` の `scaleBasisPoints`（`applyChargeBuffs` と `damage.ts` の通常攻撃ダメージ倍率が使う）",
   "replaces": [],
-  "updated": "2026-09-29"
+  "updated": "2026-09-29",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }

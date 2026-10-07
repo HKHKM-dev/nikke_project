@@ -18,7 +18,13 @@
         {
           "ja": "バーストスキルを使用した時の爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）",
           "en": "The explosion range up on Burst Skill use is not modeled (explosion range is not in the damage formula; its effect on the core-hit share is unverified)",
-          "kind": "unimplemented"
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          }
         }
       ]
     },
@@ -44,7 +50,10 @@
         {
           "ja": "パーツダメージ▲はパーツを扱わないので効かない",
           "en": "Parts damage up has no effect because parts are not modeled",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          }
         }
       ]
     },
@@ -54,7 +63,13 @@
         {
           "ja": "B モード（1 秒ごとに現在の HP▼、攻撃力▲・チャージ速度▲。HP 40% 以下で解除）は未対応（HP を持たないので解除の時刻が決まらない）",
           "en": "B Mode (current HP down every second; ATK and charge speed up; ends at HP 40% or below) is not modeled (HP is not modeled, so the end time is undefined)",
-          "kind": "unimplemented"
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          }
         }
       ]
     }

@@ -7,5 +7,8 @@
   "basis": "`086-01`・`087-01`（リター、コレクション SR Lv15 の 9.46%。8 通りの 1 ヒットがどれも 1 未満で合う。丸めずに掛けると 0.044% 小さい）。V-0047",
   "model": "`damage.ts` の `normalAttackMultiplier`（`skills/buffs.ts` の `scaleBasisPoints` で武器倍率を丸める）",
   "replaces": [],
-  "updated": "2026-09-29"
+  "updated": "2026-09-29",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }

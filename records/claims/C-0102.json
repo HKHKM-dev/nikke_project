@@ -7,5 +7,8 @@
   "basis": "`081-16`（録画 081。S2 の 17 ヒットのうち 12 件が 135,837、5 件が会心の 203,756。スペック固定の攻撃力 120,694・防御 100 から合わせ込みなしで計算した値と一致）。V-0032",
   "model": "`data/skills/261.json` の skill2 の effects[0]（`damage`）。値は `skills/burstDamage.ts` の `computeSkillHit`",
   "replaces": [],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "places": ["data/skills/261.json の skill2 の effects[0]"]
+  }
 }

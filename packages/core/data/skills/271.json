@@ -73,12 +73,24 @@
         {
           "ja": "阻止部位の攻撃ダメージ▲（SG の味方に 10 秒、同じ部隊の味方がいれば味方全体に 30 秒）は、射撃場の敵に阻止部位が無いのでダメージに関係しない",
           "en": "Damage to interruption parts up (SG allies for 10 s; all allies for 30 s with a same-squad ally) does not affect damage (the shooting range enemy has no interruption part)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
         },
         {
           "ja": "同じ部隊の味方がいれば味方全体の命中率▲（30 秒間維持）は未対応（部隊の条件 squad はあるが、AI のサクラのコア命中率の、部隊あり・なしの直の比べ（V-0219。10 本）で R = 1.13 ± 0.08 と、付くかどうかを決められなかった）",
           "en": "Hit Rate up for all allies (30 s) with a same-squad ally is not modeled (the squad condition exists, but a direct with/without-squad comparison of an AI Sakura's core hit rate (V-0219, 10 recordings) gave R = 1.13 ± 0.08, which could not decide whether it applies)",
-          "kind": "unimplemented"
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "hitRate",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
         }
       ]
     }

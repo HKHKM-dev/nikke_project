@@ -7,5 +7,8 @@
   "basis": "`063-05`（アスカ自身のバースト中のコアの 1 発。コアの項 × 1.6007）、`063-06`・`063-07`（風圧のフラワー・デルタのフルバースト中のコア + 会心の 1 発。コアダメージ▲なしの値だけが出た）。どれもモデルとの差は 1 未満。V-0022",
   "model": "`data/skills/830.json` の skill2 の effects[0]（timed・fullBurstStart・targetElement Fire・coreDamage）",
   "replaces": [],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "places": ["data/skills/830.json の skill2 の effects[0]", "data/skills/830.json の skill2 の notes[0]"]
+  }
 }

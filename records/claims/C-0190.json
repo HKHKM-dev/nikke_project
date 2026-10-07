@@ -7,5 +7,8 @@
   "basis": "`161-05`・`161-06`（アニス：スター単騎・私だけの星の追加ダメージ 135,251・会心 202,876 が、攻撃力▲の後の攻撃力でのモデルの値 135,250.821・202,876.232 と 1 未満の差。予測は撮る前に固定した。records/predictions/V-0116.json）・`150-06`・`150-07`（録画 150 の▲なしの 96,566.5・144,850 も 1 未満の差。こちらは観測値を見た後の照合）。合わせ込みの定数なし。どちらの録画でもコアの値の増分は無い。どちらの録画でも、フルチャージの 1 発の増分は胴体 1〜2 ヒット + 追加ダメージ 1 回に分かれる（胴体の 2 ヒットは backlog 2-17）。V-0116",
   "model": "`data/skills/17.json` の skill1 の effects[4]（`damage`・`fullChargeShot`・`additional`。`perShot`）。比べる指標は `perShotHitDamage`",
   "replaces": [],
-  "updated": "2026-10-03"
+  "updated": "2026-10-03",
+  "subject": {
+    "places": ["data/skills/17.json の skill1 の effects[4]"]
+  }
 }

@@ -7,5 +7,12 @@
   "basis": "`243-07`（録画 243。180 秒の HUD の増分 2955 個がどれも、サクラの通常攻撃の格子と S1 の▲のヒットか、その組の和で説明でき、S2 の発火・バーストの使用（4 回）・持続回復の tick の増分は無い）。予測（H0。commit 5bb3b0e）は撮る前に出した。S2 がゲージを溜めないかは C-0321（仮説）に分けた（2026-10-06 オーナーの判断）。V-0213",
   "model": "`data/skills/836.json` の skill2 と burst の notes（効果なし。持続回復は未対応）",
   "replaces": [],
-  "updated": "2026-10-06"
+  "updated": "2026-10-06",
+  "subject": {
+    "places": [
+      "data/skills/836.json の skill2 の notes[0]",
+      "data/skills/836.json の skill2 の notes[1]",
+      "data/skills/836.json の burst の notes[0]"
+    ]
+  }
 }

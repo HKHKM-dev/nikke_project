@@ -7,5 +7,8 @@
   "basis": "`081-08`・`081-09`（録画 081。バーストの倍率ダメージの会心なし・会心。モデルとの差は 1 未満）、`081-17`（バーストの後のマガジンが 4 回とも 12 発。窓の外は 6 発）。V-0032",
   "model": "`data/skills/261.json` の burst の effects[0]（`burstDamage`）・effects[2]（`timed`・`maxAmmo`・`flat`）",
   "replaces": [],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "places": ["data/skills/261.json の burst の effects[0]", "data/skills/261.json の burst の effects[2]"]
+  }
 }

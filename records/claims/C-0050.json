@@ -7,5 +7,8 @@
   "basis": "`056-04`（録画 56 の 5 回。境目のはっきりした 2 回とも 411f）",
   "model": "`time.ts` の `gameSecondsToFrames`（Stage 21-B。切り捨てで 7 秒 = 411f。`records/__tests__/stage21Time.test.ts`）",
   "replaces": [],
-  "updated": "2026-09-27"
+  "updated": "2026-09-27",
+  "subject": {
+    "places": ["data/skills/330.json の skill2 の effects[1]"]
+  }
 }

@@ -10,6 +10,9 @@
           "ja": "フルチャージ攻撃時の貫通特化・貫通範囲の拡張は、敵 1 体ではダメージに関係しない",
           "en": "Pierce and the wider piercing radius after a Full Charge attack do not affect damage against a single enemy",
           "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          },
           "claims": [
             "C-0088"
           ]
@@ -18,6 +21,10 @@
           "ja": "2 機以上に同時に命中した時の追加ダメージは、敵 1 体では起きない",
           "en": "The additional damage when 2 or more enemies are hit at once does not occur against a single enemy",
           "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "trigger": "unknown"
+          },
           "claims": [
             "C-0088"
           ]

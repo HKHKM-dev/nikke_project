@@ -32,12 +32,20 @@
         {
           "ja": "貫通特化は敵 1 体ではダメージに関係しない",
           "en": "Pierce does not affect damage against a single enemy",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          }
         },
         {
           "ja": "HP 80% 未満のときの回復は、被弾を扱わないので起きない",
           "en": "The heal below 80% HP does not occur because taking hits is not modeled",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "heal",
+            "target": "self",
+            "trigger": "damaged"
+          }
         }
       ]
     },

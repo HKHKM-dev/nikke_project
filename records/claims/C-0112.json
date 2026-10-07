@@ -7,5 +7,8 @@
   "basis": "`085-01`（▲の中の tick の会心なし 18,330）・`085-02`（会心 27,496）。C-0100 の式に、ラプンツェル：ピュアグレイスのバーストの攻撃ダメージ 15.24%▲（Lv10）の乗数 1.1524 を掛けた値と端数まで一致。`085-03`〜`085-05`（▲の付いた 5 回の火傷で、どれも前の 3〜6 tick が▲あり、残りが▲なし。切り替わりは、ココア・ニヒリスターの 1 発が ×1.1524 から素の値に戻る区間と同じ位置）。V-0040",
   "model": "`frame/plan.ts` の `planSkillHits`（tick のフレームのバフ（state.buffs）で `computeSkillHit` を呼ぶ）。乗数は `skills/burstDamage.ts` の `computeBurstHit` の attackDamageMultiplier",
   "replaces": [],
-  "updated": "2026-09-29"
+  "updated": "2026-09-29",
+  "subject": {
+    "places": ["data/skills/261.json の burst の effects[1]", "data/skills/851.json の skill1 の effects[0]"]
+  }
 }

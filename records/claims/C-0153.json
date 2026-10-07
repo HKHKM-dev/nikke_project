@@ -7,5 +7,11 @@
   "basis": "根拠となる実測は無い。モデルのほかの別枠の乗数（攻撃ダメージ▲・分配ダメージ▲）と同じ扱いにした（plan/design-damage-taken.md 2 節）。受けるダメージ▲を持つ 2 体（クルミとイサベルなど）を同時に撮れば確かめられる。録画 038（V-0075）はイサベルの▲だけで、重なりは見えない",
   "model": "`skills/buffs.ts` の `damageTaken`（同じ stat の値を足す）。`data/skills/862.json`、`data/skills/231.json`",
   "replaces": [],
-  "updated": "2026-10-01"
+  "updated": "2026-10-01",
+  "when": {
+    "sameStatSources": {
+      "stat": "damageTaken",
+      "atLeast": 2
+    }
+  }
 }

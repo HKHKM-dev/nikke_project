@@ -7,5 +7,8 @@
   "basis": "`161-03`・`161-04`（アニス：スター単騎。一時停止画面の適用中の効果に「私だけの星: 攻撃力 40.01% 増加」があり、1 ヒットの胴体 172,540・会心 258,809 が、攻撃力 80,485 × 1.4001 のモデルの値と 1 未満の差。予測は撮る前に固定した。records/predictions/V-0116.json）・`150-03`・`150-04`（基本バースト段階 1 の I-DOLL・フラワーがいる録画 150。適用中の効果はスターフォールとみんなの星だけ（録画 151）で、1 ヒットは▲なしの値と 1 未満の差）。合わせ込みの定数なし。スキル Lv 10 は一時停止画面の表示とチャージ速度 6%（Lv10 の値）から。V-0116",
   "model": "`data/skills/17.json` の skill1 の effects[1]（`passive`・`burstStepMix`）。`skills/composition.ts` の `applyCompositionToTeam`（最上位で条件を満たさない効果を外す）",
   "replaces": [],
-  "updated": "2026-10-03"
+  "updated": "2026-10-03",
+  "subject": {
+    "places": ["data/skills/17.json の skill1 の effects[1]"]
+  }
 }

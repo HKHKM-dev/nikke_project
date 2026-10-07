@@ -7,5 +7,11 @@
   "basis": "`079-06`（フルバースト中のデルタのコア 333,463 = ▲ 27.87% 込み）、`079-04`（フルバースト中のヘルムの本体）、`079-07`（バーストの 1 ヒット 10,854,092。会心 16,281,138 も 2 回）。どれもモデルとの差は 1 未満。V-0033",
   "model": "`data/skills/352.json` の treasureSkills.skill2 の effects[0]（timed・fullBurstStart・attackDamage）、treasureSkills.burst の effects[0]（burstDamage）",
   "replaces": [],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "places": [
+      "data/skills/352.json の treasureSkills.skill2 の effects[0]",
+      "data/skills/352.json の treasureSkills.burst の effects[0]"
+    ]
+  }
 }

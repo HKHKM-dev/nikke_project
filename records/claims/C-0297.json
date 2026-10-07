@@ -7,5 +7,8 @@
   "basis": "単騎の録画 211（V-0187。撮る前に予測を固定）: シューティングスターの胴体 60,902（`211-01`）・胴体の会心 91,353（`211-02`）・コア 121,805（`211-03`）・コアの会心 152,256（`211-04`）が、H-add の予測（`star-body`・`star-core`・`star-core-crit`）と 1 未満の差で合い、H-mul にしか出ない 182,707（胴体の会心 × 2）は 0 回（`211-05`）。単騎なのでほかの効果が混ざらない。多人数の録画 162・165 のフルバースト中の値（`162-25`〜`162-29`・`165-25`〜`165-29`。V-0174）も H-add と合う（推移の記録）。V-0174・V-0187",
   "model": "`skills/burstDamage.ts` の `computeBurstHit` の core（boost に 割合 × (コア倍率 − 1) を足す）と、`data/skills/17.json` の burst の autoAttack の `core: true`",
   "replaces": ["C-0212"],
-  "updated": "2026-10-05"
+  "updated": "2026-10-05",
+  "subject": {
+    "places": ["data/skills/17.json の burst の effects[0]"]
+  }
 }

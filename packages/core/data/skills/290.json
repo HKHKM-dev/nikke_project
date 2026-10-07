@@ -19,12 +19,20 @@
         {
           "ja": "通常攻撃 10 回ごとの味方全体の回復は未対応（回復を受けた時の効果を起こさない）",
           "en": "The heal on all allies every 10 normal attacks is not modeled (it does not trigger effects on being healed)",
-          "kind": "unimplemented"
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "normalShot"
+          }
         },
         {
           "ja": "味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない",
           "en": "Revive and Matter γ removal on ally incapacitation do not occur because allies are never incapacitated",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          }
         }
       ]
     },

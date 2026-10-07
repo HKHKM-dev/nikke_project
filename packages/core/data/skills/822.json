@@ -55,6 +55,12 @@
           "ja": "味方全体のバリアは扱わない（要件 5.2 節）",
           "en": "The shield on all allies is not modeled (requirements 5.2)",
           "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "burstUse"
+          },
           "claims": [
             "C-0253"
           ]

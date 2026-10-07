@@ -7,5 +7,8 @@
   "basis": "verification.md Stage 18-B",
   "model": "`records/recordings/` でキューブを付けた録画は照合ランナーが組まない",
   "replaces": [],
-  "updated": "2026-09-27"
+  "updated": "2026-09-27",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }

@@ -38,7 +38,13 @@
         {
           "ja": "阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない",
           "en": "Damage to interruption parts up does not affect damage (the shooting range enemy has no interruption part)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "fullBurstStart"
+          }
         }
       ]
     },
@@ -71,7 +77,8 @@
         {
           "ja": "説明文に出てこない数値（description_value_04・05）は使っていない",
           "en": "Values not shown in the description (description_value_04 and 05) are not used",
-          "kind": "modeling"
+          "kind": "modeling",
+          "refers": "effects[0]"
         }
       ]
     }
@@ -155,7 +162,13 @@
         {
           "ja": "阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない",
           "en": "Damage to interruption parts up does not affect damage (the shooting range enemy has no interruption part)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "fullBurstStart"
+          }
         }
       ]
     },

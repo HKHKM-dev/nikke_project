@@ -7,5 +7,8 @@
   "basis": "`081-10`・`081-11`（録画 081。1 tick の会心なし 15,906・会心 23,860。モデルとの差は 1 未満）。89 tick がすべてこの 2 つの値。クルミの S1 のハッキング（持続ダメージ）の 1 tick も同じ形（verification.md Stage 18-B「撮影 1」の値の検算）。フルバースト補正・攻撃ダメージ▲が乗るかは、この録画では見ていない。V-0032",
   "model": "`data/skills/261.json` の burst の effects[1]（`dot`）。値は `skills/burstDamage.ts` の `computeSkillHit`",
   "replaces": ["C-0090"],
-  "updated": "2026-09-28"
+  "updated": "2026-09-28",
+  "subject": {
+    "places": ["data/skills/261.json の burst の effects[1]"]
+  }
 }

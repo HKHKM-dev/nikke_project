@@ -7,5 +7,8 @@
   "basis": "`287-06`（カモフラージュの中のウンファのコア 6 発と、距離ボーナス付き 2 発。H1 の合計 104.18% で端数まで合い、H0（42.24%）・H2 と H3（73.21%）とは 1.18 倍以上離れる）。`287-04`・`287-07`（カモフラージュの外の対照）。撮る前の予測は records/predictions/最小構成の警告を通して確定にするのは 2026-10-07 のオーナーの判断（C-0374 と同じ）。V-0249.json（H1）。録画 287 の最小構成の警告（C-0374 と同じ）。V-0249",
   "model": "`data/skills/93.json` の skill2 の effects[2]、`data/skills/95.json` の skill2 の effects[4]（`withCharacter`。置き場所は `damage.ts` の `TRUE_DAMAGE_BUCKET`）",
   "replaces": [],
-  "updated": "2026-10-07"
+  "updated": "2026-10-07",
+  "subject": {
+    "places": ["data/skills/93.json の skill2 の effects[2]", "data/skills/95.json の skill2 の effects[4]"]
+  }
 }

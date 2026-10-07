@@ -7,5 +7,13 @@
   "basis": "`010-01`〜`010-04`・`013-01`〜`013-06`、verification.md Stage 4「射撃場の実測」",
   "model": "`damage.ts` の `computeTriggerDamage`",
   "replaces": [],
-  "updated": "2026-09-22"
+  "updated": "2026-09-22",
+  "subject": {
+    "places": [
+      "data/skills/95.json の skill2 の effects[1]",
+      "data/skills/95.json の skill2 の effects[2]",
+      "data/skills/271.json の skill1 の effects[0]",
+      "data/skills/290.json の skill1 の effects[0]"
+    ]
+  }
 }

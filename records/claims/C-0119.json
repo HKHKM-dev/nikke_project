@@ -7,5 +7,8 @@
   "basis": "`087-01` と `086-01`（リター: 電撃の敵と灼熱の敵の 1 ヒットの比がどれも 1.2655 = 1.1 + 0.1655）、`090-01`・`090-02`（モダニア: 風圧の敵で、通常攻撃と S1 の追加ダメージの和が 1.1 + 0.3871 + 0.0848 で合う。S1 に乗らないなら 6.0% 小さい）、`088-01`・`089-01`（鉄甲・灼熱の敵ではどちらも乗らない式で合う）。V-0047",
   "model": "`element.ts` の `elementMultiplier`、`damage.ts` の `ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE`（true）",
   "replaces": [],
-  "updated": "2026-09-29"
+  "updated": "2026-09-29",
+  "subject": {
+    "places": ["data/skills/260.json の skill1 の effects[0]"]
+  }
 }

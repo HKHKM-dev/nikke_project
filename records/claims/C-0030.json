@@ -7,5 +7,8 @@
   "basis": "verification.md Stage 8「射撃場の実測」（録画 36・37）・Stage 9",
   "model": "`skills/treasure.ts`（枠ごとの宝物の段階）",
   "replaces": [],
-  "updated": "2026-09-23"
+  "updated": "2026-09-23",
+  "subject": {
+    "mechanism": "damageFormula"
+  }
 }
