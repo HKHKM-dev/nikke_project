@@ -2,7 +2,7 @@
 
 - 関連: [design-minimal-check.md](design-minimal-check.md) 8 節（警告の単位と数え方の決定・試算）、[design-records-automation.md](design-records-automation.md) 3.5〜3.7 節、[design-skill-note-kinds.md](design-skill-note-kinds.md)、AGENTS.md「事実と記録」
 - 作成日: 2026-10-07
-- 状態: 承認（2026-10-07。9 節）。オーナーが選んだ策（1a・2a・3b・4a・5a・6c・7a・8a。design-minimal-check.md 8 節の後の対話）の組み合わせ。実装は 7 節の段取りで進める
+- 状態: 承認（2026-10-07。9 節）。オーナーが選んだ策（1a・2a・3b・4a・5a・6c・7a・8a。design-minimal-check.md 8 節の後の対話）の組み合わせ。実装は 7 節の段取りで進める（PR 1 は 2026-10-07 に済んだ。10.1 節）
 
 ## 1. 目的と、決まっていること
 
@@ -190,3 +190,22 @@ O に `compare` が無いとき（`scope` を使う）と、E がモデルに無
 5. **感度は別コマンド `records:minimal`** にする。`records:check` は、データの形の検査と静的な判定だけを回す。
 
 - 落とすか（`records:check` か `records:close` で止めるか）は、PR 5 で、既存の結論の警告の組を見てから決める（[design-minimal-check.md](design-minimal-check.md) 8.5 節の 5）。
+
+## 10. 実施の記録
+
+### 10.1 PR 1: データの形（2026-10-07）
+
+- 型と検査を足した。計算・警告・生成物は変えていない（既存のデータは全部通り、`records:check` の出力も変わらない）。単体テストは `packages/core/src/records/__tests__/minimalFields.test.ts`。
+  - 観測値の `scope`（`records/observations.ts` の `ObservationScope`・`validateScope`）。
+  - 結論の `subject`・`when`・`minimal`（`records/claims.ts` の `validateMinimalFields`）と、`subject.places` が定義の `claims` でその結論を指す場所であることの検査（`records/skills.ts` の `validateClaimSubjects`。`validateSkillClaims` から呼ぶ）。
+  - 台帳の枠の `fires`・`bursts`（`records/recordings.ts`）。
+  - notes の `effect`・`refers`（`skills/types.ts` の `NoteEffect`・`parseNoteEffect`）。
+- 3 節で決めていなかった細部は、次のように決めた。
+  - **notes の `effect`**: 欄は `kind`・`stat`・`target`・`trigger` だけ（値や Lv の参照は書かない）。どの欄も語彙か `"unknown"`。`stat`・`target` は passive と timed で、`trigger` は timed で必須。`kind` も `"unknown"` を書ける。
+  - **きっかけの語彙**: 定義のトリガーの名前（`BuffTrigger`）に、回数トリガーの `count` の名前（`normalShot` など）・時間の周期 `timer`・効果名のトリガー `applied`・被弾 `damaged` を足した `NOTE_EFFECT_TRIGGERS`。`damaged` は notes の `effect` にだけ書ける（定義の効果のトリガーには足していない。モデルは被弾を扱わない）。
+  - **`effect` と `refers` を書ける notes**: `effect` は `noDamage` のほか（`modeling` は `refers` が無いときだけ）。`refers` は `modeling` だけで、同じスロットの効果の番号を指す。PR 2 で書き込むまでは、どれも省略できる。
+  - **`subject.places`**: 書き方は `formatPlace` と同じで、バッククォートは省いてよい。`places` と `mechanism` はどちらか 1 つ。
+  - **`when`**: 仮説の結論にだけ書ける。`teamHas` の部隊は CDN の `squad`（`CE003` など）、キャラは `rid`。`sameStatSources.atLeast` は 2 以上。
+  - **`minimal`**: どの状態の結論にも書ける（棄却にした後も印を消さずに残せる）。`observations` はその結論の根拠の観測値か `"*"`。
+  - **`scope`**: `slot` は録画の編成の枠の範囲か `"all"`。`frames` は 0 以上の整数で、始まり ≤ 終わり。必須にする検査（9 節の 2）は、`records:new -- claim`・`records:close` に入れる PR 5 で行う。
+- 9 節の 4（AGENTS.md の「計算に無関係の notes は除く」）は、`noDamage` を数えない判定を入れる PR 3 で足す。

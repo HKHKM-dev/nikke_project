@@ -168,6 +168,25 @@ export function validateSkillClaims(characters: readonly DefinedCharacter[], cla
       }
     }
   }
+  return [...errors, ...validateClaimSubjects(characters, claims)];
+}
+
+/**
+ * 最小構成の検査編（plan/design-minimal-relevance.md 3.2 節）: 結論の subject.places に書いた定義の場所が、定義の claims でこの結論を
+ * 指しているか。場所の書き方は formatPlace と同じ（バッククォートは省いてよい）
+ */
+export function validateClaimSubjects(characters: readonly DefinedCharacter[], claims: readonly Claim[]): string[] {
+  const errors: string[] = [];
+  const cited = definitionPlacesByClaim(characters);
+  const plain = (s: string) => s.replaceAll('`', '').trim();
+  for (const claim of claims) {
+    const subject = claim.subject;
+    if (subject === undefined || !('places' in subject) || !Array.isArray(subject.places)) continue;
+    const ok = new Set((cited.get(claim.id) ?? []).map(plain));
+    for (const place of subject.places)
+      if (typeof place === 'string' && !ok.has(plain(place)))
+        errors.push(`${claim.id}: subject.places の「${place}」は、定義の claims でこの結論を指す場所でない`);
+  }
   return errors;
 }
 

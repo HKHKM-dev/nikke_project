@@ -937,8 +937,53 @@ export function burstReentryStepOf(definition: SkillDefinition | null | undefine
   return null;
 }
 
-/** 扱わなかった効果や扱い方の説明。claims は「ダメージに関係しない」などの判断の根拠 */
-export type SkillNote = LocalizedText & ClaimRefs & { kind: SkillNoteKind };
+/** 効果の種類（SkillEffect の kind の全部） */
+export const SKILL_EFFECT_KINDS = [
+  'passive',
+  'burstDamage',
+  'timed',
+  'damage',
+  ...INSTANT_KINDS,
+  'weaponChange',
+  'cycle',
+  'cycleEvery',
+  'dot',
+  'autoAttack',
+  'burstGaugeHit',
+  'burstReentry',
+] as const satisfies readonly SkillEffect['kind'][];
+type MissingEffectKind = Exclude<SkillEffect['kind'], (typeof SKILL_EFFECT_KINDS)[number]>;
+const _allEffectKinds: [MissingEffectKind] extends [never] ? true : never = true;
+void _allEffectKinds;
+
+/**
+ * 最小構成の検査編（plan/design-minimal-relevance.md 3.3 節）: notes の効く先のきっかけ。定義のトリガーの名前（BuffTrigger・回数トリガーの
+ * count・時間の周期は timer・効果名のトリガーは applied）に、damaged（自分が被弾した時。射撃場 3 分モードの的の反撃で起きうる）を足したもの
+ */
+export const NOTE_EFFECT_TRIGGERS = [...BUFF_TRIGGERS, ...SHOT_COUNT_KINDS, 'timer', 'applied', 'damaged'] as const;
+export type NoteEffectTrigger = (typeof NOTE_EFFECT_TRIGGERS)[number];
+
+/** notes の効く先の欄で、語彙で書けないもの。判定では「何にでも当たる」とみなす */
+export type Unknown = 'unknown';
+
+/**
+ * 最小構成の検査編（plan/design-minimal-relevance.md 3.3 節）: 未対応・前提の外の notes（と、指す効果の無い補足）が、効いたとしたら
+ * どんな効果かを定義の効果と同じ語彙で書いたもの。計算（calc・sim）は読まない。対応状況（support）の決め方も変えない。
+ * stat・target は passive と timed で、trigger は timed で必須（ほかの種類では書いても書かなくてもよい）
+ */
+export type NoteEffect = {
+  kind: SkillEffect['kind'] | Unknown;
+  stat?: BuffStat | Unknown;
+  target?: BuffTarget | Unknown;
+  trigger?: NoteEffectTrigger | Unknown;
+};
+
+/**
+ * 扱わなかった効果や扱い方の説明。claims は「ダメージに関係しない」などの判断の根拠。
+ * 最小構成の検査編: effect は効く先（unimplemented・outOfScope と、refers の無い modeling に書ける）。refers は modeling が指す
+ * 同じスロットの効果（"effects[0]" の形）で、検査ではその効果と同じ要素として扱う
+ */
+export type SkillNote = LocalizedText & ClaimRefs & { kind: SkillNoteKind; effect?: NoteEffect; refers?: string };
 
 /** 効果と notes からスロットの対応状況を決める（plan/design-skill-note-kinds.md 2.2 節） */
 export function deriveSkillSupport(
@@ -1028,7 +1073,41 @@ function parseNote(v: Json, path: string): SkillNote {
   if (!isRecord(v)) fail(path, 'expected an object');
   const note: SkillNote = { ...text, kind: oneOf(SKILL_NOTE_KINDS, v.kind, `${path}.kind`) };
   if (v.claims !== undefined) note.claims = parseClaimRefs(v.claims, `${path}.claims`);
+  if (v.refers !== undefined) {
+    if (note.kind !== 'modeling') fail(`${path}.refers`, `only allowed in a modeling note, found in ${note.kind}`);
+    if (typeof v.refers !== 'string' || !NOTE_REFERS.test(v.refers))
+      fail(`${path}.refers`, `expected "effects[<index>]", got ${JSON.stringify(v.refers)}`);
+    note.refers = v.refers;
+  }
+  if (v.effect !== undefined) {
+    if (note.kind === 'noDamage') fail(`${path}.effect`, 'not allowed in a noDamage note');
+    if (note.refers !== undefined) fail(`${path}.effect`, 'a modeling note with refers takes its effect from there');
+    note.effect = parseNoteEffect(v.effect, `${path}.effect`);
+  }
   return note;
+}
+
+const NOTE_REFERS = /^effects\[(\d+)\]$/;
+
+/** notes の effect（plan/design-minimal-relevance.md 3.3 節）。各欄は語彙か 'unknown' */
+function parseNoteEffect(v: Json, path: string): NoteEffect {
+  if (!isRecord(v)) fail(path, 'expected an object');
+  for (const key of Object.keys(v))
+    if (!['kind', 'stat', 'target', 'trigger'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+  const orUnknown = <T extends string>(allowed: readonly T[], value: Json, at: string): T | Unknown =>
+    value === 'unknown' ? 'unknown' : oneOf(allowed, value, at);
+  const effect: NoteEffect = { kind: orUnknown(SKILL_EFFECT_KINDS, v.kind, `${path}.kind`) };
+  const required = {
+    stat: effect.kind === 'passive' || effect.kind === 'timed',
+    target: effect.kind === 'passive' || effect.kind === 'timed',
+    trigger: effect.kind === 'timed',
+  };
+  for (const key of ['stat', 'target', 'trigger'] as const)
+    if (required[key] && v[key] === undefined) fail(`${path}.${key}`, `required for ${effect.kind} (or "unknown")`);
+  if (v.stat !== undefined) effect.stat = orUnknown(BUFF_STATS, v.stat, `${path}.stat`);
+  if (v.target !== undefined) effect.target = orUnknown(BUFF_TARGETS, v.target, `${path}.target`);
+  if (v.trigger !== undefined) effect.trigger = orUnknown(NOTE_EFFECT_TRIGGERS, v.trigger, `${path}.trigger`);
+  return effect;
 }
 
 /** casterAttack は attack だけ、flat（Stage 10）は maxAmmo（発数）と chargeSpeed（対象の語彙編。「チャージ時間 X 秒▼」の秒） */
@@ -2080,6 +2159,11 @@ function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' 
   }
   if (effects.length === 0 && (notes ?? []).length === 0)
     fail(`${path}.notes`, 'a slot without effects needs notes saying why');
+  notes?.forEach((n, i) => {
+    const index = n.refers === undefined ? undefined : Number(NOTE_REFERS.exec(n.refers)![1]);
+    if (index !== undefined && index >= effects.length)
+      fail(`${path}.notes[${i}].refers`, `${n.refers} is not an effect of this slot`);
+  });
   const entry: SkillEntry = { support: deriveSkillSupport(effects, notes), effects };
   if (v.sequential !== undefined) {
     if (v.sequential !== true) fail(`${path}.sequential`, 'expected true');

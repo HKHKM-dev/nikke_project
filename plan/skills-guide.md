@@ -31,6 +31,7 @@
   - **前提の外**（`outOfScope`）: モデルの前提（静止単体ボス・被弾なし・味方が倒れない・パーツ／阻止部位／バリアなし。[requirements.md](requirements.md) 5.2 節）では起きない・効かない（被弾トリガー・貫通・阻止部位・バリアなど）
   - **未対応**（`unimplemented`）: 前提の中でダメージに効く（効きうる）のに、今回は定義しないもの。理由（語彙が無い・撮っていない・きっかけが説明文に無い など）を添える。味方の回復は、「回復を受けた時」の効果を持つ味方の発動を変えるので、`heal` で定義しないならここ
   - 扱い方の補足（`modeling`）: 扱っていない効果ではなく、どこから入っているか・近似などの説明
+  - 未対応・前提の外の notes には、効いたとしたらどんな効果かを `effect`（`kind`・`stat`・`target`・`trigger`。語彙で書けない欄は `"unknown"`。被弾のきっかけは `damaged`）で書く。補足は、指す効果を `refers`（`"effects[0]"` など）で書き、指す効果が無ければ `effect` を書く。計算は読まず、最小構成の検査が使う（[design-minimal-relevance.md](design-minimal-relevance.md) 3.3 節）
 - 語彙に無い効果の見込みは [design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果）と [requirements.md](requirements.md)（スコープ外）にもある。
 
 ### 1.3 検証記録を起こす

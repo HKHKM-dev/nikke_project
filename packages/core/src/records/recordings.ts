@@ -30,6 +30,13 @@ export type RecordingMember = {
   cube?: string;
   /** スペック固定 OFF の録画の育成（録画に映した値）。照合ランナーはこれでモデルの入力を組む。無ければ固定 OFF の録画は比べられない */
   build?: RecordingBuild;
+  /**
+   * 最小構成の検査編（plan/design-minimal-relevance.md 3.4 節）: 戦闘中に通常攻撃を 1 発でも撃ったか（戦闘履歴の与ダメージが 0 なら false）。
+   * 省略は「分からない」で、撃ったとみなす
+   */
+  fires?: boolean;
+  /** 同: バーストを 1 回でも使ったか（右のバースト欄の段の並び）。省略は「分からない」で、使ったとみなす（単騎の録画は使わないとみなす。C-0024） */
+  bursts?: boolean;
 };
 
 /**
@@ -155,6 +162,9 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
     entry.team.forEach((member, i) => {
       if (member.slot !== i + 1) errors.push(`${at}: 枠は 1 から枠順に並べる（${i + 1} 番目が ${member.slot}）`);
       if (!knownRids.has(member.rid)) errors.push(`${at}: rid ${member.rid} のキャラのデータが無い`);
+      for (const key of ['fires', 'bursts'] as const)
+        if (member[key] !== undefined && typeof member[key] !== 'boolean')
+          errors.push(`${at}: 枠 ${member.slot} の ${key} は true か false（分からなければ書かない）`);
       if (member.build !== undefined) {
         if (entry.fixedSpec !== false) errors.push(`${at}: 育成（build）はスペック固定 OFF の録画にだけ書く`);
         errors.push(...validateRecordingBuild(member.build, `${at} 枠 ${member.slot}`));
