@@ -53,7 +53,10 @@
           "kind": "outOfScope",
           "effect": {
             "kind": "unknown"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },
