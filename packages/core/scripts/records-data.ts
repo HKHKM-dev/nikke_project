@@ -29,6 +29,8 @@ export const PREDICTIONS_DIR = `${ROOT}records/predictions/`;
 export const VERIFICATIONS_PATH = `${ROOT}plan/verifications.md`;
 /** スキル定義の対応状況の一覧（生成物。plan/skills-guide.md 3 節） */
 export const SKILLS_DOC_PATH = `${ROOT}plan/skills.md`;
+/** 最小構成の検査の一覧（生成物。plan/design-minimal-relevance.md 5 節） */
+export const MINIMAL_PATH = `${ROOT}plan/minimal.md`;
 
 /** 検証記録のファイルの絶対パス */
 export function verificationPath(v: Pick<Verification, 'file'>): string {

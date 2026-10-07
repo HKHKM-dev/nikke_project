@@ -16,13 +16,14 @@ import type { Verification } from './verifications.ts';
 
 const CONFIRMED_STATES: readonly ClaimState[] = ['確定', '範囲外'];
 
-/** 定義の効果と notes の根拠が、すべて確定（か範囲外）の結論に結び付いているか */
+/** 定義の効果と notes（計算に無関係の notes は除く。plan/design-minimal-relevance.md 9 節の 4）の根拠が、すべて確定（か範囲外）の結論に結び付いているか */
 export function mechanismConfirmed(def: SkillDefinition | undefined, states: ReadonlyMap<string, ClaimState>): boolean {
   if (def === undefined) return false;
   const cited = (ids: readonly string[] | undefined) =>
     ids !== undefined && ids.length > 0 && ids.every((id) => CONFIRMED_STATES.includes(states.get(id) ?? '仮説'));
   const entryConfirmed = (entry: SkillEntry) =>
-    entry.effects.every((e) => cited(e.claims)) && (entry.notes ?? []).every((n) => cited(n.claims));
+    entry.effects.every((e) => cited(e.claims)) &&
+    (entry.notes ?? []).every((n) => n.kind === 'noDamage' || cited(n.claims));
   return entriesOf(def).every(({ entry }) => entryConfirmed(entry));
 }
 

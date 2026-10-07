@@ -372,6 +372,8 @@ export function renderClaims(
   gradeCandidates: ReadonlyMap<string, ClaimGrade> = new Map(),
   /** 読み直しだけに立つ確定の結論（plan/design-reread-prediction.md 5 節の C1） */
   rereadOnly: ReadonlySet<string> = new Set(),
+  /** 結論 ID → 最小構成の検査の警告のある組の数と組の数（plan/design-minimal-relevance.md 5 節。警告のあるものだけ出す） */
+  minimalCounts: ReadonlyMap<string, { warned: number; pairs: number }> = new Map(),
 ): string {
   const replacedBy = new Map<string, string[]>();
   for (const c of claims) for (const r of c.replaces) replacedBy.set(r, [...(replacedBy.get(r) ?? []), c.id]);
@@ -413,6 +415,9 @@ export function renderClaims(
         const above = gradeAboveCandidate(c.grade, candidate);
         lines.push(`  - 等級の候補（機械）: ${candidate}${above ? '（書いた等級のほうが上）' : ''}`);
       }
+      const minimal = minimalCounts.get(c.id);
+      if (minimal !== undefined && minimal.warned > 0)
+        lines.push(`  - 最小構成の警告: ${minimal.warned} / ${minimal.pairs} 組（[minimal.md](minimal.md)）`);
     }
   }
   return `${lines.join('\n')}\n`;

@@ -48,6 +48,7 @@ import {
   jumpWindowsOf,
 } from '../observations.ts';
 import { extractGeneratedSection, normalizeTable, type ProjectRecording } from '../recordings.ts';
+import { relevanceCounts, relevanceOf } from '../relevance.ts';
 import { definitionPlacesByClaim } from '../skills.ts';
 import { verificationsByClaim } from '../verifications.ts';
 
@@ -114,6 +115,15 @@ describe('records/claims・plan/claims.md', () => {
         definitionPlacesByClaim(loadSkillDefinitions()),
         gradeCandidates,
         rereadOnlyClaimsOf(claims, observations, loadPredictions(), loadVerifications(), recordings),
+        relevanceCounts(
+          relevanceOf(claims, observations, {
+            recordings,
+            characters: data.characters,
+            skills: data.skills,
+            enemies: data.enemies,
+            claims,
+          }),
+        ),
       ),
     );
   });
