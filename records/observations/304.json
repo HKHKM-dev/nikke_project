@@ -167,6 +167,10 @@
     "description": "9 回目のフルバーストの始まり（右上の帯が赤くなった f10940 ごろ。照準の残弾が 010 になった f10942 の直前）から、残弾が 011 から 006 に戻った最初のフレーム（f11551）までの動画のフレーム数。ゲーム内の 10 秒（588f）とフルバーストの入りの止まり（約 22f）の和と同じ",
     "method": {
       "tool": "tools/captures/reticle-ammo.ts --mode series --max 12"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   }
 ]

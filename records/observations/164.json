@@ -140,6 +140,10 @@
     "method": {
       "tool": "tools/captures/hud.ts --mode series（総ダメージの増分） + 使い捨てのスクリプト（増分を候補の値の和に分けた）",
       "note": "発は f1910・1951・1993・2178・2220・2262・2304・2345・2388。モデルは窓の中の発の位相が違い（発動から最初の発まで 53f。実測は 12f）、間隔の数が合わないので比べない（C-0214 は 165-09 で比べた）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -311,6 +315,10 @@
     "method": {
       "tool": "164-15 と同じ使い捨てのスクリプト（緑の I の続いた最後のフレームの次）",
       "note": "照準の周りがバーストの表示（AMMO・CHARGE）に替わるのは替わり目の 3f 前（f3345）・5f 前（f6059）。1 回目は替わり目の後に白い光と橙が 2 度出る"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -440,7 +448,7 @@
     "readAt": "2026-10-05",
     "kind": "rate",
     "use": "compare",
-    "value": 1.0,
+    "value": 1,
     "description": "バーストの窓の通常攻撃のうちコアに当たった発の割合（近。コア 21 / 読めた 21 発）。2・3・7 回目の窓（発動 f3338・4714・10313）",
     "method": {
       "tool": "tools/captures/hud.ts --mode series + tools/captures/still.ts（ポップアップの切り出し）",

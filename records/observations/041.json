@@ -144,6 +144,10 @@
     "method": {
       "tool": "tools/captures/gauge.ts --mode series",
       "note": "100% と消えたフレーム: f4565→4574・f7055→7064"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   }
 ]

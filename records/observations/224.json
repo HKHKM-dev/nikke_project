@@ -27,6 +27,10 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {

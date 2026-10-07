@@ -43,7 +43,11 @@
       "tool": "hud.ts --mode jumps",
       "note": "S1 ありの最後の 1 発 f3140・6120・9123、S1 なしの最初の 1 発 f3223・6125・9206（1・3 回目は間がアスカのリロード）。4 回目は戦闘の終わりまで S1 あり（最後の 1 発 f11393）"
     },
-    "note": "080-03（1485・1415・1451）と同じくらい。1 回目は、ユニの吸収回復で付いた S1（284-01）の切れる前にアスカのバーストが来て、そこから 25 秒に延びた"
+    "note": "080-03（1485・1415・1451）と同じくらい。1 回目は、ユニの吸収回復で付いた S1（284-01）の切れる前にアスカのバーストが来て、そこから 25 秒に延びた",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   },
   {
     "id": "284-04",
@@ -54,7 +58,11 @@
     "readAt": "2026-10-06",
     "value": 2315,
     "unit": "f",
-    "spread": { "kind": "range", "low": 2232, "high": 2321 },
+    "spread": {
+      "kind": "range",
+      "low": 2232,
+      "high": 2321
+    },
     "description": "最初に付いた S1 が切れるまでの長さ（S1 ありの最初の 1 発 f908 から S1 なしの最初の 1 発 f3223 まで。幅は、前後の S1 なしの 1 発 f902 と S1 ありの最後の 1 発 f3140 から）",
     "method": {
       "tool": "hud.ts --mode jumps",
@@ -93,9 +101,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 3, "frame": 1740, "core": false, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "args": {
+        "slot": 3,
+        "frame": 1740,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -115,9 +134,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 3, "frame": 3000, "core": false, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "args": {
+        "slot": 3,
+        "frame": 3000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -137,9 +167,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 3, "frame": 4710, "core": false, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "args": {
+        "slot": 3,
+        "frame": 4710,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -166,14 +207,25 @@
     "readAt": "2026-10-06",
     "value": 135298006,
     "description": "アスカの与ダメージ（フラワー + ユニ + アスカ・180 秒。戦闘履歴）",
-    "method": { "tool": "probe-result.ts", "note": "284-09 のアスカの値" },
+    "method": {
+      "tool": "probe-result.ts",
+      "note": "284-09 のアスカの値"
+    },
     "note": "予測ファイルの asuka-total（参考。コア命中率と的のジャンプの窓の残差が乗る）",
     "compare": {
       "model": "sim",
       "metric": "slotTotalDamage",
-      "args": { "slot": 3 },
-      "tolerance": { "rel": 0.02 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"], "condition": "auto" }
+      "args": {
+        "slot": 3
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
     }
   }
 ]

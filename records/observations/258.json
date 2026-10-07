@@ -308,6 +308,10 @@
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "hud.ts --mode jumps の増分の値の変わり目（258-03・258-02。f4556 からは 28,499 = フルバースト補正の無いコア会心、f4560 からは 37,715 = フルバースト終了時の攻撃力▲のコア）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -338,6 +342,10 @@
         "enemy": "range-bigarms-wind",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   }
 ]

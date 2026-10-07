@@ -423,6 +423,10 @@
           }
         ]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -460,6 +464,10 @@
           }
         ]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {

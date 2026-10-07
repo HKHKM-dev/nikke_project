@@ -51,6 +51,10 @@
     "method": {
       "tool": "tools/captures/timer.ts --mode changes",
       "note": "秒の変わり目が 56〜62f（2 秒分は 116〜122f）の間隔で続く区間ごとに、共通の傾き（この録画は 58.844 f/秒）で切片を当てはめ、フルバーストをまたぐ前後の区間の切片の差を傾きで割った余りを取った。フルバーストの残り時間の表示が秒の数字に重なる区間は使わない。フルバーストの無い区間のずれは ±1f 以内"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
     }
   },
   {
@@ -81,6 +85,10 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
     }
   },
   {
@@ -96,6 +104,10 @@
     "method": {
       "tool": "tools/captures/gauge.ts --mode series",
       "note": "100% と消えたフレーム: f1125→1207・f2335→2337・f4711→4716・f7100→7105・f9385→9417"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -170,6 +182,10 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -200,6 +216,10 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -230,6 +250,10 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -260,6 +284,10 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -290,6 +318,10 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -305,6 +337,10 @@
     "method": {
       "tool": "ffmpeg（右のバースト欄 1740,420 から 180×150 を切り出し、フレーム番号を付けて 1 フレームずつ並べた一覧。番号は動画の先頭から数えたフレーム（018〜021 は可変フレームレートなので、パケットの時刻の並びから引いた））・tools/captures/hud.ts --mode jumps",
       "note": "バーが消えたのは f1207（総ダメージの HUD の増分も f1207）。I の顔はそのあいだ明るいまま（CT は明けている）。顔の後ろの緑の光が消えて暗くなったのが f1231、「40」が f1233、II のアイコンが f1235"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -334,6 +370,10 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -363,6 +403,10 @@
         "enemy": "range-bigarms-electric",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {

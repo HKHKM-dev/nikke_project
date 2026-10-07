@@ -41,6 +41,10 @@
     "method": {
       "tool": "tools/captures/timer.ts --mode changes",
       "note": "秒の変わり目が 56〜62f（2 秒分は 116〜122f）の間隔で続く区間ごとに、共通の傾き（この録画は 58.838 f/秒）で切片を当てはめ、フルバーストをまたぐ前後の区間の切片の差を傾きで割った余りを取った。フルバーストの残り時間の表示が秒の数字に重なる区間は使わない。フルバーストの無い区間のずれは ±1f 以内"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
     }
   },
   {
@@ -71,6 +75,10 @@
     "method": {
       "tool": "tools/captures/gauge.ts --mode series",
       "note": "100% と消えたフレーム: f1363→1381・f2303→2338・f9491→9651"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -345,6 +353,10 @@
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "ヒットの値が、▲なしと × 1.3996 のどちらの組み合わせで端数まで合うかで分けた（ラム・デルタの 1 発は値が決まっているので確か。イサベルのペレットは組み合わせが 1 通りに決まったものだけ）。5 回目の着弾の前は f11175〜11187 が読めていない"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -375,6 +387,10 @@
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "2〜5 回目のフルバーストの始まりは読んでいない"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -465,6 +481,10 @@
     "method": {
       "tool": "hud.ts --mode jumps・038-22",
       "note": "5 回目は着弾の f11188 の前の f11175〜11187 が読めていない（038-15）ので、フルバーストの始まり f11020 からは 155〜168f としか言えず、使わない"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -585,6 +605,10 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -600,6 +624,10 @@
     "method": {
       "tool": "ffmpeg（右のバースト欄 1740,420 から 180×150 を切り出し、フレーム番号を付けて 1 フレームずつ並べた一覧。番号は動画の先頭から数えたフレーム（018〜021 は可変フレームレートなので、パケットの時刻の並びから引いた））・tools/captures/hud.ts --mode jumps",
       "note": "バーが消えたのは f1381（総ダメージの HUD の増分も f1381）。I の顔はそのあいだ明るいまま（CT は明けている）。顔の後ろの緑の光が消えて暗くなったのが f1405、「40」が f1407、II のアイコンが f1410"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -629,6 +657,10 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {

@@ -26,6 +26,10 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -393,7 +397,11 @@
     "recording": "079",
     "use": "record",
     "source": "V-0195",
-    "readAt": "2026-10-05"
+    "readAt": "2026-10-05",
+    "scope": {
+      "slot": "all",
+      "source": "clock"
+    }
   },
   {
     "id": "079-19",
@@ -408,6 +416,10 @@
     "recording": "079",
     "use": "record",
     "source": "V-0195",
-    "readAt": "2026-10-05"
+    "readAt": "2026-10-05",
+    "scope": {
+      "slot": "all",
+      "source": "clock"
+    }
   }
 ]

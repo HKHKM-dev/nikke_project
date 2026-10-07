@@ -152,6 +152,10 @@
       "tolerance": {
         "abs": 1
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   }
 ]

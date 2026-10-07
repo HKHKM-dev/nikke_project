@@ -42,6 +42,10 @@
     "method": {
       "tool": "gauge.ts --mode series",
       "note": "077-21 と同じ読み。戻ったバーは 19px から 20f ほどで 0px に減る"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -72,6 +76,10 @@
     "method": {
       "tool": "still.ts・右のバースト欄を 1 フレームずつ並べた一覧",
       "note": "I のアイコン（顔）が CT の 20 に替わるのは f4316（六角形の替わり目の 3f 前）。多人数の録画でも、顔が CT に替わってから 3f 後に次の段の六角形に替わる（V-0131 の 081・084）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -102,6 +110,10 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   }
 ]

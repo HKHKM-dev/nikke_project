@@ -207,6 +207,18 @@ describe('静的な判定（4.2 節）', () => {
     const nodef: MinimalElement = { slot: 1, name: 'n', places: [], type: 'noDefinition', claims: [] };
     expect(notRelevantReason(nodef, obs({ kind: 'position' }), rec('162'), ctx)).toBeUndefined();
   });
+
+  it('lets burst timing move an interval of the burst chain or the clock, but not a firing interval (10.5 節)', () => {
+    const ct = el({ kind: 'cooldownReduction', target: 'self', trigger: 'fullBurstEnd' });
+    expect(notRelevantReason(ct, obs({ kind: 'interval' }), rec('162'), ctx)).toMatch(/効かない分類/);
+    for (const source of ['burstChain', 'clock'] as const)
+      expect(
+        notRelevantReason(ct, obs({ kind: 'interval', scope: { slot: 'all', source } }), rec('162'), ctx),
+      ).toBeUndefined();
+    expect(
+      notRelevantReason(ct, obs({ kind: 'interval', scope: { slot: 'all', source: 'firing' } }), rec('162'), ctx),
+    ).toMatch(/効かない分類/);
+  });
 });
 
 describe('対象と印（2 節の 1・4.3 節）', () => {
