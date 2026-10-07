@@ -3,6 +3,7 @@
 import { BURST_GAUGE_MAX } from '../burst/controller.ts';
 import {
   activationFramesOfSlot,
+  effectFrameOf,
   hitFrameOf,
   hitFramesOf,
   videoFrameOf,
@@ -825,6 +826,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
+  burstEffectFirstShot: { args: ['slot', 'n'], sim: burstEffectFirstShot },
   fullBurstCrossingShotGauge: { args: ['slot'], sim: fullBurstCrossingShotGauge },
   shotGauge: { args: ['slot', 'n'], sim: shotGauge },
 };
@@ -967,6 +969,28 @@ function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
   const count = Number(ctx.args.count);
   if (mine.length < count) throw new Error(`発動が ${mine.length} 回しかない`);
   return mine.slice(0, count).map((a) => videoFrameOf(schedule, hitFrameOf(a)) - videoFrameOf(schedule, a.frame));
+}
+
+/**
+ * バーストの効果の遅れ（backlog 2-4）: 枠の n 回目（0 始まり）のバーストの発動から、効果の発火（effectFrameOf）以後の
+ * 枠の最初の発までのモデルのフレーム数（ゲーム内の時間。フルバーストの入りの止まりを含まない）。効果の乗った最初の発の時刻を、
+ * 動画のフレームの差（止まりの後の発は 22f を引く）と比べる。fromShot が true なら起点を発動の後の最初の発にする（発の間隔と
+ * リロードの位置によらず、効果の遅れが無ければ 0）
+ */
+function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
+  const activation = mine[Number(ctx.args.n)];
+  if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
+  const frames = slotOf(result.shots, ctx).frames;
+  const firstFrom = (frame: number) => {
+    const shot = frames.find((f) => f >= frame);
+    if (shot === undefined) throw new Error(`フレーム ${frame} の後に発が無い`);
+    return shot;
+  };
+  const origin = ctx.args.fromShot === true ? firstFrom(activation.frame) : activation.frame;
+  return firstFrom(effectFrameOf(activation)) - origin;
 }
 
 /**

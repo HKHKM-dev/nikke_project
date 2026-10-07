@@ -1,0 +1,208 @@
+{
+  "verification": "V-0294",
+  "note": "読み直し（録画 225）の、読む前の予測。frame は H0 のモデルの 1〜5 回目の III の発動のフレーム。効果の遅れが表の値と違う仮説（A1・A2）は、遅れの表（burst/landing.ts）で切り替わるので、このファイルの範囲外（検証記録に手で書く）",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 851,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。レイヴンの遅れの表の行は効果の遅れ 0 で、A.N.モードの持続ダメージ▲は III の発動のフレームで付き、その後の tick に乗る（C-0332）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "tick-1",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 520,
+        "stacks": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目の発動（モデルのフレーム 520）以後の、S1 の持続ダメージの最初の tick の 1 スタックの値（会心なし）。モデルではこの tick は発動とヒット（43f）の間にあり、A.N.モードの持続ダメージ▲が乗る。録画では、止まりの明けの後の最初の tick の値をスタックの数で割る"
+    },
+    {
+      "id": "tick-1-crit",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 520,
+        "stacks": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目の発動（モデルのフレーム 520）以後の、S1 の持続ダメージの最初の tick の 1 スタックの値（会心）。モデルではこの tick は発動とヒット（43f）の間にあり、A.N.モードの持続ダメージ▲が乗る。録画では、止まりの明けの後の最初の tick の値をスタックの数で割る"
+    },
+    {
+      "id": "tick-2",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2872,
+        "stacks": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目の発動（モデルのフレーム 2872）以後の、S1 の持続ダメージの最初の tick の 1 スタックの値（会心なし）。モデルではこの tick は発動とヒット（43f）の間にあり、A.N.モードの持続ダメージ▲が乗る。録画では、止まりの明けの後の最初の tick の値をスタックの数で割る"
+    },
+    {
+      "id": "tick-2-crit",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2872,
+        "stacks": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目の発動（モデルのフレーム 2872）以後の、S1 の持続ダメージの最初の tick の 1 スタックの値（会心）。モデルではこの tick は発動とヒット（43f）の間にあり、A.N.モードの持続ダメージ▲が乗る。録画では、止まりの明けの後の最初の tick の値をスタックの数で割る"
+    },
+    {
+      "id": "tick-3",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 5224,
+        "stacks": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目の発動（モデルのフレーム 5224）以後の、S1 の持続ダメージの最初の tick の 1 スタックの値（会心なし）。モデルではこの tick は発動とヒット（43f）の間にあり、A.N.モードの持続ダメージ▲が乗る。録画では、止まりの明けの後の最初の tick の値をスタックの数で割る"
+    },
+    {
+      "id": "tick-3-crit",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 5224,
+        "stacks": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目の発動（モデルのフレーム 5224）以後の、S1 の持続ダメージの最初の tick の 1 スタックの値（会心）。モデルではこの tick は発動とヒット（43f）の間にあり、A.N.モードの持続ダメージ▲が乗る。録画では、止まりの明けの後の最初の tick の値をスタックの数で割る"
+    },
+    {
+      "id": "tick-4",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 7576,
+        "stacks": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目の発動（モデルのフレーム 7576）以後の、S1 の持続ダメージの最初の tick の 1 スタックの値（会心なし）。モデルではこの tick は発動とヒット（43f）の間にあり、A.N.モードの持続ダメージ▲が乗る。録画では、止まりの明けの後の最初の tick の値をスタックの数で割る"
+    },
+    {
+      "id": "tick-4-crit",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 7576,
+        "stacks": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目の発動（モデルのフレーム 7576）以後の、S1 の持続ダメージの最初の tick の 1 スタックの値（会心）。モデルではこの tick は発動とヒット（43f）の間にあり、A.N.モードの持続ダメージ▲が乗る。録画では、止まりの明けの後の最初の tick の値をスタックの数で割る"
+    },
+    {
+      "id": "tick-5",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 9956,
+        "stacks": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "5 回目の発動（モデルのフレーム 9956）以後の、S1 の持続ダメージの最初の tick の 1 スタックの値（会心なし）。モデルではこの tick は発動とヒット（43f）の間にあり、A.N.モードの持続ダメージ▲が乗る。録画では、止まりの明けの後の最初の tick の値をスタックの数で割る"
+    },
+    {
+      "id": "tick-5-crit",
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 9956,
+        "stacks": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "5 回目の発動（モデルのフレーム 9956）以後の、S1 の持続ダメージの最初の tick の 1 スタックの値（会心）。モデルではこの tick は発動とヒット（43f）の間にあり、A.N.モードの持続ダメージ▲が乗る。録画では、止まりの明けの後の最初の tick の値をスタックの数で割る"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "5b297b0271827eebb5447d6ef17db6d5a9830027",
+    "values": {
+      "H0": {
+        "tick-1": 343883.11942656,
+        "tick-1-crit": 458510.82590208005,
+        "tick-2": 343883.11942656,
+        "tick-2-crit": 458510.82590208005,
+        "tick-3": 343883.11942656,
+        "tick-3-crit": 458510.82590208005,
+        "tick-4": 343883.11942656,
+        "tick-4-crit": 458510.82590208005,
+        "tick-5": 343883.11942656,
+        "tick-5-crit": 458510.82590208005
+      }
+    },
+    "seen": {
+      "225": ["225-01", "225-02"]
+    }
+  }
+}
