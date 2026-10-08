@@ -10,5 +10,19 @@
   "updated": "2026-09-29",
   "subject": {
     "places": ["data/skills/261.json の burst の effects[1]", "data/skills/851.json の skill1 の effects[0]"]
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["085-01", "085-02"],
+      "element": "ラプンツェル：ピュアグレイス skill1.notes[1]",
+      "reason": "録画 085 のラプンツェル：ピュアグレイスは撃たない枠で、フルチャージ状態にならない",
+      "decided": "2026-10-08"
+    },
+    {
+      "observations": ["085-01", "085-02"],
+      "element": "ラプンツェル：ピュアグレイス burst.notes[1]",
+      "reason": "C-0112 は、この▲（説明文の値）が火傷の tick に乗ることを、乗った値が式どおりに合うことで確かめた（▲は観測の手段）",
+      "decided": "2026-10-08"
+    }
+  ]
 }

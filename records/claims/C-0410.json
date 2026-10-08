@@ -10,5 +10,19 @@
   "updated": "2026-10-07",
   "subject": {
     "places": ["data/skills/18.json の skill1 の effects[0]", "data/skills/18.json の skill1 の notes[1]"]
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["120-04", "120-05"],
+      "element": "ネオン：ビジョン・アイ skill1.notes[0]",
+      "reason": "被弾時の無敵・デバフ免疫・受けるHP回復量▲は、与ダメージ・射撃・ゲージに効かない",
+      "decided": "2026-10-08"
+    },
+    {
+      "observations": ["120-04", "120-05"],
+      "element": "ネオン：ビジョン・アイ skill2.notes[0]",
+      "reason": "単騎の録画でフルバーストが起きない（C-0024）ので、フルバーストタイム中・フルバースト終了時の効果は起きない",
+      "decided": "2026-10-08"
+    }
+  ]
 }

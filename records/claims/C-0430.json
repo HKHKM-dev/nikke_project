@@ -10,5 +10,13 @@
   "updated": "2026-10-08",
   "subject": {
     "mechanism": "gauge"
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["337-01", "337-02", "337-03"],
+      "element": "トロニー skill1.notes[0]",
+      "reason": "C-0430 は蓄積爆破のゲージを測った結論。未対応の分配ダメージは、最大量に届かないこの録画では起きない",
+      "decided": "2026-10-08"
+    }
+  ]
 }

@@ -10,5 +10,13 @@
   "updated": "2026-10-05",
   "subject": {
     "places": ["data/skills/10.json の burst の effects[0]"]
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["221-06", "221-07"],
+      "element": "ラピ skill1.notes[0]",
+      "reason": "221-06 は S1 の付いていない格子の値。221-07 は S1 の付いた値だが、C-0227 が言うのは倍率ダメージが 3 ヒットに分かれることと時刻で、値の大きさではない",
+      "decided": "2026-10-08"
+    }
+  ]
 }
