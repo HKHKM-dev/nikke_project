@@ -29,11 +29,11 @@
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "説明文にきっかけが無いアクティブ型のスキルで、射撃に依らず戦闘開始から 17 秒ごとに付く（仮説・推論。C-0406。探索の録画 L-HC から読んだ値）。単騎では自分に付き、クリティカル確率を 5 秒間上げる",
-            "en": "An active skill with no trigger in the description: applied every 17 s from combat start regardless of firing (hypothetical inference; C-0406; read from exploratory recording L-HC). On solo teams it targets self, increasing Critical Rate for 5 s"
+            "ja": "説明文にきっかけが無いアクティブ型のスキルで、射撃に依らず戦闘開始から 17 秒ごと（1 回目は 1 周期後）に付く（C-0496。単騎の録画 387〜389）。単騎では自分に付き、クリティカル確率を 5 秒間上げる。1 周期が 1000 ティックより約 0.63 ティック長い分は入れていない",
+            "en": "An active skill with no trigger in the description: applied every 17 s from combat start (first after one period) regardless of firing (C-0496; solo recordings 387-389). On solo teams it targets self, increasing Critical Rate for 5 s. The period being about 0.63 ticks longer than 1000 is not modeled"
           },
           "claims": [
-            "C-0406"
+            "C-0496"
           ]
         }
       ]

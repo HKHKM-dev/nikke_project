@@ -1,0 +1,29 @@
+{
+  "id": "388",
+  "date": "2026-10-09",
+  "folder": "range",
+  "file": "20261009-388_sr_product08_auto.mp4",
+  "original": "2026-10-09_00-27-50.mp4",
+  "durationSec": 197.4,
+  "frames": 11844,
+  "fps": 60,
+  "sizeMB": 239.1,
+  "sha256": "d6eeb40f4231",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 302,
+      "name": "プロダクト08",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0375 の 2 本目。プロダクト08 単騎・操作・AUTO 射撃 ON・オートバースト ON（バーストは撃っていない。V-0375「結果」）"
+}
