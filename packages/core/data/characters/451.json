@@ -88,7 +88,7 @@
       },
       "description": {
         "ja": "■<word_group=10034>遮蔽物のHPを回復した時</word_group>自分に\n<color=#00AEFF>「バーストスキル<word_group=10031>クールタイム</word_group>{description_value_01}秒▼」「{description_value_02}スタック」「{description_value_03}秒間維持」</color>\n■<word_group=10034>遮蔽物のHPを回復した時</word_group>、味方全体に\n<color=#00AEFF>「攻撃ダメージ{description_value_04}％▲」「{description_value_05}秒間維持」</color>",
-        "en": "■ Activates when <word_group=10034>recovering Cover's HP</word_group>. Affects self.\n<color=#00AEFF><word_group=10031>Cooldown</word_group> of Burst Skill ▼ {description_value_01} sec, stacks up to {description_value_02} time(s) and lasts for {description_value_03} sec.</color>\n■ Activates when <word_group=10034>recovering Cover's HP</word_group>. Affects all allies.\n<color=#00AEFF>Attack damage ▲ {description_value_04}% for {description_value_05} sec.</color>"
+        "en": "■ Activates when <word_group=10034>restoring cover HP</word_group>. Affects self.\n<color=#00AEFF><word_group=10031>Cooldown</word_group> of Burst Skill ▼ {description_value_01} sec. Stacks up to {description_value_02} times and lasts for {description_value_03} sec.</color>\n■ Activates when <word_group=10034>restoring cover HP</word_group>. Affects all allies.\n<color=#00AEFF>Attack Damage ▲ {description_value_04}% for {description_value_05} sec.</color>"
       },
       "values": [
         ["7", "7", "7", "10", "10", "10", "13", "13", "13", "13"],

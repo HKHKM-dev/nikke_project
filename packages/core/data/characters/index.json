@@ -262,6 +262,19 @@
       "burstStep": "Step1"
     },
     {
+      "resourceId": 63,
+      "name": {
+        "ja": "ベロータ：パンプキンウィッチ",
+        "en": "Belorta: Pumpkin Witch"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "TETRA",
+      "element": "Water",
+      "weaponType": "RL",
+      "burstStep": "Step2"
+    },
+    {
       "resourceId": 70,
       "name": {
         "ja": "ブリッド",

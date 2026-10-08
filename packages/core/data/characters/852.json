@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■味方全体に\n<color=#00AEFF>「<word_group=10017>遮蔽物HP回復</word_group> {description_value_01}％」</color>",
-        "en": "■ Affects all allies.\n<color=#00AEFF><word_group=10017>Restores {description_value_01}% of Cover HP</word_group>.</color>"
+        "en": "■ Affects all allies.\n<color=#00AEFF><word_group=10017>Restores {description_value_01}% of cover HP</word_group>.</color>"
       },
       "values": [
         ["5.91", "6.36", "6.82", "7.27", "7.73", "8.18", "8.64", "9.09", "9.55", "10"],
