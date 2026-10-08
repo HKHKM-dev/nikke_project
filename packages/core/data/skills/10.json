@@ -61,7 +61,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 2,
-          "durationRef": 3
+          "durationRef": 3,
+          "claims": [
+            "C-0457"
+          ]
         }
       ]
     }

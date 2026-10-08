@@ -1,0 +1,382 @@
+{
+  "verification": "V-0361",
+  "note": "ココア（I・AI）+ デルタ（II・AI）+ ラピ（III・操作・AUTO 射撃 ON）・灼熱の BigArms・3 分モード・スペック固定 ON（録画 221 と、撮影計画 R1 の編成）。モデルのフルバーストとバーストの攻撃力▲の窓は同じ f594〜1182（1 回目）・2973〜3561・5469〜6057・7922〜8510・10410〜。ラピの S1（被弾で自分に攻撃力▲。前提の外）はモデルに無いので、比べるのは S1 が付いていない回の 1 ヒットだけ（検証記録の「読み方」）。distance は 1 回目（中近）で乗る（AR）見込みだが、両方を出しておく",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 10,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（burst の effects[1]: バースト使用時（III の発動のフレーム）に自分に攻撃力 60.75%▲を 10 秒。窓はフルバーストと同じフレームに始まり、同じフレームに終わる）"
+    },
+    {
+      "id": "H2-short",
+      "note": "攻撃力▲の窓がフルバーストより短い（例として 8 秒。フルバーストの最後の 2 秒は▲が無い）。説明文の秒数の読み違い・数え方の違いの代表",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 10,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "attack",
+              "ref": 2,
+              "durationSeconds": 8
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2-long",
+      "note": "攻撃力▲の窓がフルバーストより長い（例として 12 秒。フルバーストの終わりの後の 2 秒も▲が乗る）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 10,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "attack",
+              "ref": 2,
+              "durationSeconds": 12
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0",
+      "note": "バーストの攻撃力▲（burst の effects[1]）が乗らない。対象を味方の MG に絞って、この編成では誰にも付かない形にする",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 10,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "attack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストより前のラピの 1 ヒット（胴体・会心なし・距離ボーナスあり）。どの仮説も同じ（対照）。撮影計画 R1 の新しい録画だけで読む（録画 221 の値は 221-08 の説明で見ている）"
+    },
+    {
+      "id": "base-nd",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 ヒットの距離ボーナスなし"
+    },
+    {
+      "id": "fb1-early",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの頭（止まりの明けから数秒）のラピの 1 ヒット（胴体・会心なし・距離ボーナスあり）。攻撃力▲の値そのものを見る。新しい録画だけで読む（録画 221 の値は 221-08 で読み済み）"
+    },
+    {
+      "id": "fb1-early-nd",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 ヒットの距離ボーナスなし"
+    },
+    {
+      "id": "fb1-late",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1170,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの終わりの直前（最後の 1 秒）のラピの 1 ヒット（胴体・会心なし・距離ボーナスあり）。窓が 10 秒続くかを見る。録画 221 でも読む（221-08 は 1 ヒット目の後までしか読んでいない）"
+    },
+    {
+      "id": "fb1-late-nd",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1170,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 ヒットの距離ボーナスなし"
+    },
+    {
+      "id": "after1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの終わりの直後（最初の 1 秒）のラピの 1 ヒット（胴体・会心なし・距離ボーナスあり）。窓がフルバーストより長く続くか（H1 では base と同じ値）。録画 221 でも読む"
+    },
+    {
+      "id": "after1-nd",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 ヒットの距離ボーナスなし"
+    },
+    {
+      "id": "fb3-late",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 6040,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "3 回目のフルバーストの終わりの直前のラピの 1 ヒット（胴体・会心なし・距離ボーナスなし（遠））。録画 221 の 3 回目は S1 が付いていなかった回（221-07）。S1 が付いていなければ比べる"
+    },
+    {
+      "id": "after3",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 6070,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "3 回目のフルバーストの終わりの直後のラピの 1 ヒット（胴体・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストの倍率ダメージの 3 ヒットの和（会心なし）。攻撃力▲は 1 ヒット目より前に付く（221-08）ので、▲の有無で値が変わる。新しい録画だけで読む（録画 221 は 221-06 で読み済み。V-0201 と同じ指標・setup なので、新しい録画では C-0227 の再現にもなる）"
+    },
+    {
+      "id": "burst-hit-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ 3 ヒットの和の会心"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "3d5a4f65607656cf4ca455af88be8f7064cad7c5",
+    "values": {
+      "H1": {
+        "base": 16845.86085,
+        "base-nd": 12958.354500000001,
+        "fb1-early": 37510.0362,
+        "fb1-early-nd": 31258.3635,
+        "fb1-late": 37510.0362,
+        "fb1-late-nd": 31258.3635,
+        "after1": 16845.86085,
+        "after1-nd": 12958.354500000001,
+        "fb3-late": 31258.363500000007,
+        "after3": 12958.354500000001,
+        "burst-hit": 624393.3276,
+        "burst-hit-crit": 936589.9913999999
+      },
+      "H2-short": {
+        "base": 16845.86085,
+        "base-nd": 12958.354500000001,
+        "fb1-early": 37510.0362,
+        "fb1-early-nd": 31258.3635,
+        "fb1-late": 23325.0381,
+        "fb1-late-nd": 19437.531750000002,
+        "after1": 16845.86085,
+        "after1-nd": 12958.354500000001,
+        "fb3-late": 19437.531750000002,
+        "after3": 12958.354500000001,
+        "burst-hit": 624393.3276,
+        "burst-hit-crit": 936589.9913999999
+      },
+      "H2-long": {
+        "base": 16845.86085,
+        "base-nd": 12958.354500000001,
+        "fb1-early": 37510.0362,
+        "fb1-early-nd": 31258.3635,
+        "fb1-late": 37510.0362,
+        "fb1-late-nd": 31258.3635,
+        "after1": 27090.5817,
+        "after1-nd": 20838.909,
+        "fb3-late": 31258.363500000007,
+        "after3": 20838.909,
+        "burst-hit": 624393.3276,
+        "burst-hit-crit": 936589.9913999999
+      },
+      "H0": {
+        "base": 16845.86085,
+        "base-nd": 12958.354500000001,
+        "fb1-early": 23325.0381,
+        "fb1-early-nd": 19437.531750000002,
+        "fb1-late": 23325.0381,
+        "fb1-late-nd": 19437.531750000002,
+        "after1": 16845.86085,
+        "after1-nd": 12958.354500000001,
+        "fb3-late": 19437.531750000002,
+        "after3": 12958.354500000001,
+        "burst-hit": 624393.3276,
+        "burst-hit-crit": 936589.9913999999
+      }
+    },
+    "seen": {
+      "221": [
+        "221-01",
+        "221-02",
+        "221-03",
+        "221-04",
+        "221-05",
+        "221-06",
+        "221-07",
+        "221-08",
+        "221-09",
+        "221-10",
+        "221-11",
+        "221-12",
+        "221-13",
+        "221-14",
+        "221-15"
+      ]
+    }
+  }
+}
