@@ -1,0 +1,43 @@
+{
+  "id": "354",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-354_smg+sr+sg_sakura+delta+drake_drake-control.mp4",
+  "original": "2026-10-08_20-51-56.mp4",
+  "durationSec": 203.2,
+  "frames": 12191,
+  "fps": 60,
+  "sizeMB": 246.1,
+  "sha256": "3f2baee2a48c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": true,
+      "fires": false,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0354 の A（▲あり）。サクラ（AI）・デルタ（AI）・ドレイク（操作・撃たない・宝物 3 段階）。オートバースト ON。A の 4 本を続けて撮り、続けて B の 4 本（358〜361）を撮った"
+}

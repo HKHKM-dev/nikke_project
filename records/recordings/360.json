@@ -1,0 +1,42 @@
+{
+  "id": "360",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-360_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4",
+  "original": "2026-10-08_21-13-59.mp4",
+  "durationSec": 199.3,
+  "frames": 11958,
+  "fps": 60,
+  "sizeMB": 241.5,
+  "sha256": "9a026c94fb57",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true,
+      "fires": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0354 の B（対照）。サクラ（AI）・デルタ（AI）・I-DOLL・サン（操作・撃たない）。オートバースト ON。A の 4 本（354〜357）を続けて撮った後に、B の 4 本を続けて撮った"
+}
