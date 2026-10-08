@@ -10,5 +10,13 @@
   "updated": "2026-09-28",
   "subject": {
     "mechanism": "target"
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["049-05", "050-03"],
+      "element": "アリス skill2.notes[1]",
+      "reason": "観測量は射撃場の的のジャンプの時刻で、的の動きはキャラのスキルに依らない",
+      "decided": "2026-10-08"
+    }
+  ]
 }

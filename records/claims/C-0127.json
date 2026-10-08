@@ -10,5 +10,13 @@
   "updated": "2026-09-29",
   "subject": {
     "mechanism": "damageFormula"
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["092-02"],
+      "element": "ソーダ：トゥインクルバニー skill2.notes[1]",
+      "reason": "単騎の録画でフルバーストが起きない（C-0024）ので、フルバーストタイム中・フルバースト終了時の効果は起きない",
+      "decided": "2026-10-08"
+    }
+  ]
 }

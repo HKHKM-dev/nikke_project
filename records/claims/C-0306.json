@@ -14,5 +14,13 @@
       "data/skills/93.json の skill2 の effects[2]",
       "data/skills/93.json の skill2 の effects[3]"
     ]
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["227-03"],
+      "element": "ウンファ：タクティカル・アップ skill1.notes[0]",
+      "reason": "これらの録画のカモフラージュの窓と、窓の中と外の 1 発の値は、解除の無い 5 秒（付き直しを含む）のモデルと合う（C-0311・C-0314 の観測）。被弾での解除は観測量に出ていない。攻撃対象からの除外は的の行動で、与ダメージに効かない",
+      "decided": "2026-10-08"
+    }
+  ]
 }
