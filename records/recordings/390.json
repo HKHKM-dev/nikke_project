@@ -1,0 +1,32 @@
+{
+  "id": "390",
+  "date": "2026-10-09",
+  "folder": "range",
+  "file": "20261009-390_sg_privaty-unkind-maid_manual-near_fixed-off.mp4",
+  "original": "2026-10-09_00-43-24.mp4",
+  "durationSec": 89.9,
+  "frames": 5393,
+  "fps": 60,
+  "sizeMB": 108.2,
+  "sha256": "93c3b8ff7cd5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 313,
+      "name": "プリバティ：アンカインド・メイド",
+      "controlled": true,
+      "build": {
+        "attack": 419608
+      }
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "単騎・手動。2 区間目（1 回目の近）だけ撃ち、2 回目のジャンプで止めた。キューブなし（出撃前のキャラ画面で外した）。出撃画面では 3 番目の枠。V-0372"
+}

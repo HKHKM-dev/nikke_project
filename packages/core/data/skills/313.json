@@ -13,7 +13,10 @@
           "effect": {
             "kind": "damage",
             "trigger": "normalHit"
-          }
+          },
+          "claims": [
+            "C-0408"
+          ]
         }
       ]
     },
