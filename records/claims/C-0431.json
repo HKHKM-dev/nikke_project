@@ -10,5 +10,13 @@
   "updated": "2026-10-08",
   "subject": {
     "mechanism": "gauge"
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["338-03"],
+      "element": "エヌ : ミラクルフェアリー skill1.notes[0]",
+      "reason": "単騎の録画（338）で、吸収回復を受ける支援型の味方がいないので起きない。この観測値はエヌのヒットのフレーム",
+      "decided": "2026-10-08"
+    }
+  ]
 }

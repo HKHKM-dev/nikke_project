@@ -10,5 +10,19 @@
   "updated": "2026-10-08",
   "subject": {
     "places": ["data/skills/271.json の burst の effects[0]"]
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["019-24"],
+      "element": "エーテル skill2.notes[1]",
+      "reason": "防御力▼は 1 ヒットの値に効くだけで、ヒットのフレームには効かない。この観測値は III の発動からバーストのヒットまでのフレーム数",
+      "decided": "2026-10-08"
+    },
+    {
+      "observations": ["246-01", "247-01"],
+      "element": "ブラン skill2.notes[1]",
+      "reason": "CT▼はフルバーストの終わりに付き、次の発動までの時刻を動かすだけで、発動からバーストのヒットまでの遅れには効かない",
+      "decided": "2026-10-08"
+    }
+  ]
 }
