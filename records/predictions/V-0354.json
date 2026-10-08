@@ -1,0 +1,163 @@
+{
+  "verification": "V-0354",
+  "note": "推奨の案 1（▲あり A: サクラ（AI）・デルタ（AI）・ドレイク（操作・撃たない・宝物 3 段階））の予測。対照 B（ドレイクを I-DOLL・サン（操作・撃たない）に替える）は編成が違うのでこのファイルに入れず、検証記録に書いた（▲が無いので、どの帯も的の表の SMG の値）。判定の指標 K（A の窓の中のコア命中率を、B の同じ窓の帯ごとの値で割った比）は METRICS に無いので、検証記録の「予測」に手で書いた（H0 1、H1 1 ÷ (1 − 0.2009)²、H2 1 ÷ (1 − 0.1185)²）。ここに置くのは、K の元になる A の帯ごとの窓の中と外の値。録画のフルバーストの時刻は sim と違うが、帯の中ではモデルのコア命中率は窓の中と外でそれぞれ一定なので、sim の各帯のフルバーストの中（入りから 300f）と、その帯の窓の外の 1 フレームで代表させる。オーナーが別の案を選んだら、撮る前にこのファイルを書き直して予測を出し直す",
+  "team": [
+    {
+      "rid": 836,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 101,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "持続の命中率▲はコア命中率を変えない（C-0170 の前のモデルの形）。窓の中も外も的の表の SMG の値",
+      "override": {
+        "sustainedHitRateUp": false
+      }
+    },
+    {
+      "id": "H1",
+      "note": "持続の命中率▲も C-0036 の式（p ÷ (1 − N)²、上限 1）でコア命中率を上げる（C-0170。いまのモデル）。N はドレイクの宝物版 S1 の 20.09%"
+    },
+    {
+      "id": "H2",
+      "note": "参考（V-0165 の H2 と同じ）: 式は C-0170 のまま、N が基礎版 S1 の 11.85%。ほかの枠の宝物の段階も 0 にするが、サクラのコア命中率に効くのはドレイクの S1 の N だけ",
+      "override": {
+        "treasure": false
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "sakura-midnear-core-in",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 697
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "中近（1 区間目）の▲の窓の中（sim の 1 回目のフルバーストの入り f397 から 300f）"
+    },
+    {
+      "id": "sakura-midnear-core-out",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 1500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "中近の窓の外（的の表の SMG の中近）"
+    },
+    {
+      "id": "sakura-near-core-in",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3049
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "近（2 区間目）の▲の窓の中（sim の 2 回目のフルバーストの入り f2749 から 300f。近の着地点は 2 か所の配分）"
+    },
+    {
+      "id": "sakura-near-core-out",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 2400
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "近の窓の外（的の表の SMG の近）"
+    },
+    {
+      "id": "sakura-far-core-in",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5401
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "遠（3 区間目）の▲の窓の中（sim の 3 回目のフルバーストの入り f5101 から 300f）"
+    },
+    {
+      "id": "sakura-midfar-core-in",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7753
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "中遠（4 区間目）の▲の窓の中（sim の 4 回目のフルバーストの入り f7453 から 300f。中遠の着地点は 3 か所の配分）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "3d5a4f65607656cf4ca455af88be8f7064cad7c5",
+    "values": {
+      "H0": {
+        "sakura-midnear-core-in": 0.1179,
+        "sakura-midnear-core-out": 0.1179,
+        "sakura-near-core-in": 0.2644,
+        "sakura-near-core-out": 0.2644,
+        "sakura-far-core-in": 0.0342,
+        "sakura-midfar-core-in": 0.0516
+      },
+      "H1": {
+        "sakura-midnear-core-in": 0.18463394269372715,
+        "sakura-midnear-core-out": 0.1179,
+        "sakura-near-core-in": 0.4140561021901735,
+        "sakura-near-core-out": 0.2644,
+        "sakura-far-core-in": 0.05355793757527963,
+        "sakura-midfar-core-in": 0.08080671283287803
+      },
+      "H2": {
+        "sakura-midnear-core-in": 0.15172920134008158,
+        "sakura-midnear-core-out": 0.1179,
+        "sakura-near-core-in": 0.34026463811974195,
+        "sakura-near-core-out": 0.2644,
+        "sakura-far-core-in": 0.04401305077040535,
+        "sakura-midfar-core-in": 0.06640565554833087
+      }
+    },
+    "seen": {}
+  }
+}
