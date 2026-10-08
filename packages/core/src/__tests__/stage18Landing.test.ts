@@ -91,13 +91,13 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     ]);
   });
 
-  it('reads the band values (C-0320・C-0319・C-0294・C-0287・V-0056・V-0069・V-0072) through the landing, the band or all, and leaves the unmeasured cells null', () => {
+  it('reads the band values (C-0320・C-0467・C-0465・C-0287・V-0056・V-0069・V-0072) through the landing, the band or all, and leaves the unmeasured cells null', () => {
     const at = (id: string) => profile.landings.find((l) => l.id === id)!;
     expect(targetRateOf(profile.coreHitRate, AR, at('midNear'))).toBe(0.2281);
     expect(targetRateOf(profile.coreHitRate, SMG, at('midFarA'))).toBe(0.0516);
     expect(targetRateOf(profile.coreHitRate, SMG, at('midFarC'))).toBe(0.0516);
     expect(targetRateOf(profile.bulletHitRate, SMG, at('far'))).toBe(0.76);
-    // SMG の弾丸命中率は中遠の着地点 A だけ着地点の値（C-0319）で、B・C は帯の値（C-0320）
+    // SMG の弾丸命中率は中遠の着地点 A だけ着地点の値（C-0467）で、B・C は帯の値（C-0320）
     expect(targetRateOf(profile.bulletHitRate, SMG, at('midFarA'))).toBe(0.9838);
     expect(targetRateOf(profile.bulletHitRate, SMG, at('midFarB'))).toBe(0.921);
     expect(targetRateOf(profile.bulletHitRate, SMG, at('midFarC'))).toBe(0.921);

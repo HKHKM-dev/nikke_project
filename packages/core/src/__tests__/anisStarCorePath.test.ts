@@ -1,6 +1,6 @@
 // アニス：スター（17）のバーストのコアの経路（plan/design-anis-star-core-path.md 3.1・3.2 節）: 自動攻撃の core と、的の表の
 // coreHitRate.autoAttacks。行が無いあいだは数値が変わらないこと（退化）と、行があるときの式（boost に 割合 × (コア倍率 − 1)）を見る。
-// 実データの行は C-0298（単騎の録画 164・211 の合計）。式と引き方のテストの行の値はテスト用
+// 実データの行は C-0466（単騎の録画 164・211 の合計）。式と引き方のテストの行の値はテスト用
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage } from '../calc/model.ts';
@@ -107,9 +107,9 @@ describe('自動攻撃の core（plan/design-anis-star-core-path.md 3.1 節）',
 });
 
 describe('的の表の coreHitRate.autoAttacks（3.2 節）', () => {
-  it('has the Shooting Star row of C-0298 in the data', () => {
+  it('has the Shooting Star row of C-0466 in the data', () => {
     expect(profile.coreHitRate.autoAttacks).toEqual({
-      '17:burst': { near: 0.9464, midNear: 0.8442, far: 0.5667, midFar: 0.7266 },
+      '17:burst': { near: 0.9467, midNear: 0.8442, far: 0.5667, midFar: 0.7266 },
     });
   });
 

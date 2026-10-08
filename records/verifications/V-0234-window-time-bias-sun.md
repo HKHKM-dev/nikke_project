@@ -69,7 +69,7 @@
 
 | 指標                                        | 実測               | 予測 H0                 |
 | ------------------------------------------- | ------------------ | ----------------------- |
-| sakura-midnear-core-diff（coreHitRateDiff） | 0.047（`254-06`）  | 0（-0.047、**許容外**） |
+| sakura-midnear-core-diff（coreHitRateDiff） | 0.049（`254-10`）  | 0（-0.049、**許容外**） |
 | sakura-near1-core-diff（coreHitRateDiff）   | -0.025（`254-07`） | 0（+0.025、許容内）     |
 | sakura-far-core-diff（coreHitRateDiff）     | -0.007（`255-06`） | 0（+0.007、許容内）     |
 | sakura-midfar-core-diff（coreHitRateDiff）  | -0.015（`255-07`） | 0（+0.015、許容内）     |

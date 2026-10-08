@@ -99,7 +99,7 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
     const planned = (frame: number) => spanAt(frame).hitRate;
     /**
      * 持続の▲ k 段での、計画の値に対する比。中遠のような配分の区間は着地点ごとに H2 を当ててから混ぜる（SMG の中遠は
-     * 着地点 A だけ値が違う。C-0319）ので、モデルと同じ hitRateSpanWith で出す
+     * 着地点 A だけ値が違う。C-0467）ので、モデルと同じ hitRateSpanWith で出す
      */
     const ratioWith = (frame: number, k: number) =>
       hitRateSpanWith(on.landing!, misato, 0, spanAt(frame), k * MISATO_S1).hitRate / planned(frame);
