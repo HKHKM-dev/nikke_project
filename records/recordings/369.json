@@ -1,0 +1,29 @@
+{
+  "id": "369",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-369_ar_moran_auto.mp4",
+  "original": "2026-10-08_23-05-29.mp4",
+  "durationSec": 46.7,
+  "frames": 2801,
+  "fps": 60,
+  "sizeMB": 56.7,
+  "sha256": "42caa781a98d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 281,
+      "name": "モラン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0369 の撮影 M1（撮る前に予測を commit した）。モラン単騎・操作・AUTO 射撃 ON・オートバースト OFF（戦闘中の画で左上の AUTO が点いていることを確かめた）。最初のヒットは f938、BURST バーが消えたのは f2228。バーストは使っていない。消えた後に退出。取り込みのときは 367 を振ったが、ほかの取り込みと重なったので 369 に振り直した"
+}
