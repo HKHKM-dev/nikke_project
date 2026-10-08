@@ -1,0 +1,101 @@
+{
+  "verification": "V-0370",
+  "note": "録画 213〜220 の読み直し（リター単騎・操作・AUTO 射撃 ON・オートバースト ON・灼熱の的・3 分モード・スペック固定 ON。どれもバーストを 4 回使う）。I の段の発動には止まりが無いので、動画のフレームの差がそのままモデルのフレーム。効果の遅れが表の値と違う仮説は、遅れの表（burst/landing.ts）で切り替わるので、このファイルの範囲外（検証記録に手で書く）",
+  "team": [
+    {
+      "rid": 82,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。リターは遅れの表（MEASURED_BURST_DELAYS）に行が無く、バースト使用時の効果（バーストの味方全体の攻撃力▲と、S1 のバースト使用回数別の効果）は I の発動と同じフレームに付く（遅れ 0）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "buffed-first-1",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバースト（I の発動）の後のリターの最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-2",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のバースト（I の発動）の後のリターの最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-3",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目のバースト（I の発動）の後のリターの最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-4",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目のバースト（I の発動）の後のリターの最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "752b5a640cae66a0687563cdd1f08217fc1fb849",
+    "values": {
+      "H0": {
+        "buffed-first-1": 0,
+        "buffed-first-2": 0,
+        "buffed-first-3": 0,
+        "buffed-first-4": 0
+      }
+    },
+    "seen": {
+      "213": ["213-01", "213-02", "213-03", "213-04", "213-05", "213-06", "213-07"],
+      "214": ["214-01", "214-02", "214-03", "214-04", "214-05"],
+      "215": ["215-01", "215-02", "215-03", "215-04", "215-05", "215-06", "215-07", "215-08"],
+      "216": ["216-01", "216-02", "216-03", "216-04", "216-05", "216-06"],
+      "217": ["217-01", "217-02", "217-03", "217-04", "217-05"],
+      "218": ["218-01", "218-02", "218-03", "218-04", "218-05"],
+      "219": ["219-01", "219-02", "219-03", "219-04", "219-05", "219-06"],
+      "220": ["220-01", "220-02", "220-03", "220-04", "220-05"]
+    }
+  }
+}

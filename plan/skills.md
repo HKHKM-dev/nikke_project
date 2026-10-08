@@ -129,12 +129,12 @@ notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補�
   - effects[1] cooldownReduction・fullBurstStart: C-0460（確定）
   - effects[2] cooldownReduction・fullBurstStart: C-0460（確定）
   - effects[3] timed・burstUse・maxAmmo: C-0468（確定）
-  - effects[4] timed・burstUse・critDamage: C-0468（確定）
-  - effects[5] timed・burstUse・attack: C-0468（確定）
+  - effects[4] timed・burstUse・critDamage: C-0468（確定）、C-0493（確定）
+  - effects[5] timed・burstUse・attack: C-0468（確定）、C-0493（確定）
 - **skill2**: noEffect
   - notes[0] 計算に無関係: 遮蔽物の HP 回復はダメージに関係しない: 根拠なし
 - **burst**: supported
-  - effects[0] timed・burstUse・attack: C-0468（確定）
+  - effects[0] timed・burstUse・attack: C-0468（確定）、C-0493（確定）
 
 ## 90 エマ
 
