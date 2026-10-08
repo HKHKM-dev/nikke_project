@@ -9,10 +9,11 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { runFirstPass } from '../frame/firstPass.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
-import { METRICS } from '../records/observations.ts';
+import { buildTeamInput, METRICS } from '../records/observations.ts';
 import { shotCountWeight } from '../skills/triggers.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
+import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../scripts/records-data.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
 import { untilWeaponChangeEndWindows } from '../skills/timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
@@ -70,6 +71,16 @@ describe('語彙の検証', () => {
     expect(() => parseSkillDefinition(withBurst({ ...BASE, chargeTimeSeconds: 0.3 }))).toThrow(/exactly one/);
   });
 
+  it('accepts projectileExplosion: true only', () => {
+    expect(
+      parseSkillDefinition(withBurst({ ...BASE, durationSeconds: 1, projectileExplosion: true })).skills.burst
+        .effects[0],
+    ).toMatchObject({ projectileExplosion: true });
+    expect(() => parseSkillDefinition(withBurst({ ...BASE, durationSeconds: 1, projectileExplosion: false }))).toThrow(
+      /projectileExplosion/,
+    );
+  });
+
   it('rejects non-positive parameters', () => {
     for (const bad of [{ chargeTimeSeconds: 0 }, { fullChargeDamage: -1 }, { maxAmmoRef: 0 }]) {
       expect(() => parseSkillDefinition(withBurst({ ...BASE, maxAmmoRef: 2, ...bad }))).toThrow();
@@ -124,6 +135,7 @@ describe('解決', () => {
     expect(weapon.durationUntil).toBe('ammoSpent');
     expect(weapon.durationFrames).toBe(0);
     expect(weapon.weapon!.trueDamage).toBe(true);
+    expect(weapon.weapon!.projectileExplosion).toBe(true); // C-0376
     expect(weapon.weapon!.shot).toEqual({
       ...character.shot,
       damage: 10560,
@@ -248,6 +260,34 @@ describe('録画 232 の編成（フラワー + ウンファ：TU）', () => {
         hit(w.end - 1, { core: true }),
       ];
       [875582, 2013838, 2188954, 1751163].forEach((v, k) => expect(Math.abs(round[k]! - v)).toBeLessThan(1));
+    }
+  });
+});
+
+describe('録画 287 の編成（フラワー + ウンファ：TU + エマ：TU）', () => {
+  // 発射体爆発ダメージ▲（フォーメーション。C-0374）と防御力無視ダメージ▲（C-0375）が 1 つの和で炸裂弾に乗る（C-0376）
+  const file = loadRecordingsFile();
+  const input = buildTeamInput(
+    recordingMap(file).get('287')!,
+    { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] },
+    loadRecordsData(file),
+  );
+  const plan = planTeamRun(input);
+  const windows = plan.timeline.windows.filter((w) => w.slotIndex === 1 && w.effect.stat === 'weapon');
+
+  it('matches the Explosive Rounds of recording 287 within 1: core, core in the distance bonus, core crit (287-08 の 2〜5 回目。C-0376)', () => {
+    // 1 回目（2,206,017）は着弾の前にカモフラージュが外れた回（直接攻撃での解除。前提の外）で、比べない
+    const sim = runSimulation(input);
+    const hit = (frame: number, args: Record<string, boolean>) =>
+      METRICS.hitDamage!.sim!(sim, { args: { slot: 2, frame, ...args }, input } as never) as number;
+    expect(windows.length).toBeGreaterThan(3);
+    for (const w of windows) {
+      const round = [
+        hit(w.end - 1, { core: true }),
+        hit(w.end - 1, { core: true, distance: true }),
+        hit(w.end - 1, { core: true, crit: true }),
+      ];
+      [2746329, 3158278, 3755742].forEach((v, k) => expect(Math.abs(round[k]! - v)).toBeLessThan(1));
     }
   });
 });

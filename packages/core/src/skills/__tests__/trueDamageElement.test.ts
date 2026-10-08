@@ -329,6 +329,31 @@ describe('1 発の式の防御力無視ダメージ', () => {
     expect(changed.trueDamage).toBe(true);
     expect(changed.normal / base.normal).toBeCloseTo(1000 / 900, 12);
   });
+
+  it('puts True Damage up in the Attack Damage sum (C-0376 with C-0205)', () => {
+    expect(TRUE_DAMAGE_BUCKET).toBe('attackDamage');
+  });
+
+  it('gives a weapon change with projectileExplosion the Projectile Explosion Damage up, in one sum with True Damage up (C-0376)', () => {
+    const shot = makeCharacter().shot;
+    const weapon: ChangedWeapon = { id: 'x', hits: 1, shot, trueDamage: true };
+    const buffs = { ...ZERO_BUFFS, trueDamage: 0.4, projectileExplosionDamage: 0.1 };
+    const plain = computeTriggerDamage(input({ ...buffs, weapon }));
+    expect(plain.projectileExplosionMultiplier).toBe(1);
+    expect(plain.trueDamageMultiplier).toBeCloseTo(1.4, 12);
+    const exploding = computeTriggerDamage(input({ ...buffs, weapon: { ...weapon, projectileExplosion: true } }));
+    expect(exploding.projectileExplosionMultiplier * exploding.trueDamageMultiplier).toBeCloseTo(1.5, 12);
+    expect(exploding.normal / plain.normal).toBeCloseTo(1.5 / 1.4, 12);
+    // 攻撃ダメージ▲も同じ和に入る（1 + 0.2 + 0.1 + 0.4）÷（1 + 0.2）
+    const withAttackDamage = computeTriggerDamage(
+      input({ ...buffs, attackDamage: 0.2, weapon: { ...weapon, projectileExplosion: true } }),
+    );
+    expect(
+      withAttackDamage.attackDamageMultiplier *
+        withAttackDamage.projectileExplosionMultiplier *
+        withAttackDamage.trueDamageMultiplier,
+    ).toBeCloseTo(1.7, 12);
+  });
 });
 
 describe('ウンファ：TU の定義（data/skills/95.json）', () => {

@@ -48,9 +48,12 @@ export const PER_SHOT_DAMAGE_CORE = false;
  */
 export const PROJECTILE_EXPLOSION_BUCKET: 'attackDamage' | 'separate' | 'none' = 'attackDamage';
 
-/** 発射体の爆発を持つ武器か（shot.projectile.explosionRange > 0。RL）。発射体爆発ダメージ▲はこの武器の通常攻撃にだけ掛ける */
-export function hasProjectileExplosion(shot: ShotParams): boolean {
-  return (shot.projectile?.explosionRange ?? 0) > 0;
+/**
+ * 発射体の爆発を持つ武器か（shot.projectile.explosionRange > 0。RL）。発射体爆発ダメージ▲はこの武器の通常攻撃にだけ掛ける。
+ * 発射体の爆発を持つ使用武器の変更（WeaponChangeEffect.projectileExplosion。ウンファ：TU の炸裂弾。C-0376）が効いていれば、その発も含める
+ */
+export function hasProjectileExplosion(shot: ShotParams, buffs?: BuffTotals): boolean {
+  return (shot.projectile?.explosionRange ?? 0) > 0 || buffs?.weapon?.projectileExplosion === true;
 }
 
 /**
@@ -58,7 +61,7 @@ export function hasProjectileExplosion(shot: ShotParams): boolean {
  * (1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ) ÷ (1 + Σ攻撃ダメージ)）。爆発の無い武器と▲の無いときは 1
  */
 export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotals): number {
-  return hasProjectileExplosion(shot) ? explosionHitMultiplier(buffs) : 1;
+  return hasProjectileExplosion(shot, buffs) ? explosionHitMultiplier(buffs) : 1;
 }
 
 /**
@@ -76,10 +79,12 @@ export function explosionHitMultiplier(buffs: BuffTotals): number {
 /**
  * 防御力無視ダメージ編: 防御力無視ダメージ▲（trueDamage）の式の中の置き場所（plan/design-true-damage-element.md 3.1 節・6 節の論点 1）。
  * separate = 別の乗数 (1 + Σ防御力無視ダメージ)、attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ)。
- * **未確定（仮定）**: 根拠の結論が無い（炸裂弾で発射体爆発ダメージ▲と 1 つの和だった C-0376 は attackDamage を指すが、攻撃ダメージ▲の無い録画で、2 つだけの別の群と分けていない）。攻撃ダメージ▲が無ければ
- * 2 つは同じ値になる（区別は攻撃ダメージ▲を持つ機構が確定したキャラを足した録画で行う）
+ * **attackDamage**: 炸裂弾では発射体爆発ダメージ▲と 1 つの和 (1 + Σ防御力無視ダメージ + Σ発射体爆発ダメージ) で掛かり（C-0376）、
+ * 発射体爆発ダメージ▲は攻撃ダメージ▲と同じ枠（C-0205）なので、separate は C-0376 と合わない。ただし C-0376 は攻撃ダメージ▲の無い録画で、
+ * 「攻撃ダメージ▲を含まない、防御力無視ダメージ▲と発射体爆発ダメージ▲だけの枠」とは分けていない（攻撃ダメージ▲を持つ機構が確定したキャラを
+ * 足した録画で分ける。plan/design-true-damage-element.md 10 節）
  */
-export const TRUE_DAMAGE_BUCKET: 'separate' | 'attackDamage' = 'separate';
+export const TRUE_DAMAGE_BUCKET: 'separate' | 'attackDamage' = 'attackDamage';
 
 /** 防御力無視ダメージ編: 通常攻撃の 1 発が防御力無視ダメージか（「通常攻撃が防御力無視ダメージに変化」の窓か、防御力無視の使用武器の変更） */
 export function isTrueDamageShot(buffs: BuffTotals): boolean {
@@ -87,15 +92,21 @@ export function isTrueDamageShot(buffs: BuffTotals): boolean {
 }
 
 /**
- * 防御力無視ダメージ▲の乗数。攻撃ダメージ▲の乗数とは別に掛ける形にそろえる（attackDamage の枠は
- * (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ) ÷ (1 + Σ攻撃ダメージ)）。防御力無視ダメージでない発と▲の無いときは 1
+ * 防御力無視ダメージ▲の乗数。攻撃ダメージ▲の乗数・発射体爆発ダメージ▲の乗数とは別に掛ける形にそろえる（attackDamage の枠は
+ * (1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ + Σ防御力無視ダメージ) ÷ (1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ)。発射体爆発ダメージ▲は
+ * 同じ枠に入る発（hasProjectileExplosion）のときだけ分母に入れる。projectileExplosionMultiplier との積が 1 つの和になる。C-0376）。
+ * 防御力無視ダメージでない発と▲の無いときは 1
  */
-export function trueDamageMultiplier(buffs: BuffTotals): number {
+export function trueDamageMultiplier(shot: ShotParams, buffs: BuffTotals): number {
   const up = buffs.trueDamage;
   if (!isTrueDamageShot(buffs) || up === 0) return 1;
   if (TRUE_DAMAGE_BUCKET === 'separate') return 1 + up;
-  const attackDamage = applyAttackDamageBuffs(buffs);
-  return (attackDamage + up) / attackDamage;
+  const explosion =
+    PROJECTILE_EXPLOSION_BUCKET === 'attackDamage' && hasProjectileExplosion(shot, buffs)
+      ? buffs.projectileExplosionDamage
+      : 0;
+  const group = applyAttackDamageBuffs(buffs) + explosion;
+  return (group + up) / group;
 }
 
 /**
@@ -368,7 +379,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   // 防御力無視ダメージ編: 通常攻撃だけ、防御力を引かない基礎と▲の乗数（射撃ごとの倍率ダメージは baseHit のまま）
   const trueDamage = isTrueDamageShot(buffs);
   const normalBaseHit = trueDamage ? Math.max(1, attack) : baseHit;
-  const trueMultiplier = trueDamageMultiplier(buffs);
+  const trueMultiplier = trueDamageMultiplier(shot, buffs);
 
   const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage);
   const hitsPerShot = hitsPerShotOf(condition);

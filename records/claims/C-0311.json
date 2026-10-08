@@ -5,9 +5,9 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`232-01`〜`232-03`（カモフラージュの中のコアの 1 発が、変化 × ▲ × 受けるダメージ▲のモデルと 1 未満の差。3 回のバーストで同じ値）・`232-09`（効果の外は 013-05 と同じ値）・`232-11`（どの回もカモフラージュの値は 2 発で、着弾から 296〜302f の発は外の値）。予測（records/predictions/V-0207.json の H1）は撮る前に commit した。変化の分（防御力 100 ÷ 攻撃力）だけ離れた値で合い、変化なし・▲なしの値は出ていない。V-0207",
-  "model": "`data/skills/95.json` の skill1 の effects[0]・effects[1]（`timed`・`burstUse`・`self`・`trueDamageConversion`・`trueDamage`）。1 発の式は `damage.ts` の `isTrueDamageShot`・`trueDamageMultiplier`（置き場所 `TRUE_DAMAGE_BUCKET` は `separate` のまま。plan/design-true-damage-element.md 6 節の論点 1）",
+  "model": "`data/skills/95.json` の skill1 の effects[0]・effects[1]（`timed`・`burstUse`・`self`・`trueDamageConversion`・`trueDamage`）。1 発の式は `damage.ts` の `isTrueDamageShot`・`trueDamageMultiplier`（置き場所 `TRUE_DAMAGE_BUCKET` は `attackDamage`。C-0376 と C-0205 から。攻撃ダメージ▲が無いときは `separate` と同じ値。plan/design-true-damage-element.md 10 節）",
   "replaces": [],
-  "updated": "2026-10-06",
+  "updated": "2026-10-09",
   "subject": {
     "places": [
       "data/skills/95.json の skill1 の effects[0]",
