@@ -1,0 +1,523 @@
+[
+  {
+    "id": "364-01",
+    "recording": "364",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 11329,
+    "unit": "ダメージ",
+    "description": "リター単騎の 1 回目のバーストより前の 1 ヒット（胴体・会心なし・距離ボーナスあり）。予測ファイルの base-d",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "最初は f947。バーストより前の増分は距離ボーナスありの格子だけで、距離ボーナスなし（base）は読めない。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-02",
+    "recording": "364",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 18814,
+    "unit": "ダメージ",
+    "description": "1 回目のバースト使用の窓の中の 1 ヒット（胴体・会心なし・距離ボーナスあり）。予測ファイルの win1-d",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓 1 で f2651〜2835 に 43 回。窓 1 は距離ボーナスありの格子だけで、win1 は読めない。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1800,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-03",
+    "recording": "364",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 14472,
+    "unit": "ダメージ",
+    "description": "2 回目のバースト使用の窓の中の 1 ヒット（胴体・会心なし・距離ボーナスなし）。予測ファイルの win2",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓 2 で f5292〜5583 に 52 回。窓 2 は距離ボーナスなしの格子だけで、win2-d は読めない。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 4300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-04",
+    "recording": "364",
+    "kind": "rate",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 1.62465,
+    "unit": "倍",
+    "description": "2 回目の窓の、会心の 1 ヒット ÷ 会心なしの 1 ヒット（胴体・距離ボーナスなし）。予測ファイルの win2-crit-ratio",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "23,512（会心。窓 2 に 10 回、最初は f5319）÷ 14,472（会心なし）。表示の整数の比で、丸めの幅は ±0.0001。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 4300,
+        "core": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-05",
+    "recording": "364",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 15730,
+    "unit": "ダメージ",
+    "description": "3 回目のバースト使用の窓の中の 1 ヒット（胴体・会心なし・距離ボーナスなし）。予測ファイルの win3",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓 3 で f8006・8011・8263。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6680,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-06",
+    "recording": "364",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 20449,
+    "unit": "ダメージ",
+    "description": "3 回目の窓の中の 1 ヒット（胴体・会心なし・距離ボーナスあり）。予測ファイルの win3-d",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓 3 で f7974 から 60 回余り。窓 4（f10457〜10660）も同じ格子。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6680,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-07",
+    "recording": "364",
+    "kind": "rate",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 1.6246,
+    "unit": "倍",
+    "description": "3 回目の窓の、会心の 1 ヒット ÷ 会心なしの 1 ヒット（胴体・距離ボーナスなし）。予測ファイルの win3-crit-ratio",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "25,555（会心。窓 3 の f7981・8013・8057・8062）÷ 15,730（会心なし）。距離ボーナスありの組（30,274 ÷ 20,449）も同じ 1.3+0.6246 の格子に乗る。表示の整数の比で、丸めの幅は ±0.0001。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 6680,
+        "core": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-08",
+    "recording": "364",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 15730,
+    "unit": "ダメージ",
+    "description": "3 回目の窓の最後の 0.5 秒の 1 ヒット（胴体・会心なし・距離ボーナスなし）。予測ファイルの win3-late",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f8263（窓 3 の最初の▲の付いた増分 f7972 から 291f）。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6884,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-09",
+    "recording": "364",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 20449,
+    "unit": "ダメージ",
+    "description": "3 回目の窓の最後の 0.5 秒の 1 ヒット（胴体・会心なし・距離ボーナスあり）。予測ファイルの win3-late-d",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f8258・8260。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6884,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-10",
+    "recording": "364",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 8715,
+    "unit": "ダメージ",
+    "description": "3 回目の窓が切れた後の 1 秒の 1 ヒット（胴体・会心なし・距離ボーナスなし）。予測ファイルの after3",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f8300（窓 3 の最後の▲の付いた増分 f8265 の 35f 後）。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6974,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-11",
+    "recording": "364",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 11329,
+    "unit": "ダメージ",
+    "description": "3 回目の窓が切れた後の 1 秒の 1 ヒット（胴体・会心なし・距離ボーナスあり）。予測ファイルの after3-d",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f8268（窓 3 の最後の▲の付いた増分 f8265 の次の増分）から。予測ファイル V-0365 を commit（c60e083）してから撮った。窓は、総ダメージの増分が胴体 8,714.7 の格子（距離 0.3・会心 0.5・コア 1.0）から外れて▲の付いた格子に乗るひとまとまり（窓 1: f2651〜2835、窓 2: f5292〜5583、窓 3: f7972〜8265、窓 4: f10457〜10660。窓 1・4 はリロードで終わりが見えない）。どの窓も、窓の中の増分はその窓の 1 つの格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6974,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-12",
+    "recording": "364",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 120,
+    "unit": "発",
+    "description": "1 回目のバーストより前の、リロードを終えた直後の照準の横の残弾（最大装弾数）。予測ファイルの ammo-base",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode mags",
+      "note": "戦闘の始め（f934）と、バーストより前のリロード明け（f1336・1740・2144・2518）で 120。予測ファイル V-0365 を commit（c60e083）してから撮った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1500
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-13",
+    "recording": "364",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 174,
+    "unit": "発",
+    "description": "1 回目の窓の中で終わったリロードの直後の照準の横の残弾。予測ファイルの ammo-win1",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode mags",
+      "note": "リロード明けの f2936 で 174（窓 1 の最初の▲の付いた増分 f2651 の 285f 後。次の増分 f2947 は▲の無い格子）。予測ファイル V-0365 を commit（c60e083）してから撮った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1800
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-14",
+    "recording": "364",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 174,
+    "unit": "発",
+    "description": "3 回目の窓の中で終わったリロードの直後の照準の横の残弾。予測ファイルの ammo-win3",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode mags",
+      "note": "リロード明けの f8221 で 174（窓 3 の中）。予測ファイル V-0365 を commit（c60e083）してから撮った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 6680
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-15",
+    "recording": "364",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 174,
+    "unit": "発",
+    "description": "2 回目の窓の中で終わったリロードの直後の照準の横の残弾（予測ファイルに無い指標。V-0365 の H2（スタックしない読み）は 120）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode mags",
+      "note": "リロード明けの f5485 で 174（窓 2 の中）。予測ファイル V-0365 を commit（c60e083）してから撮った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 4300
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "364-16",
+    "recording": "364",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": 120,
+    "unit": "発",
+    "description": "4 回目の窓が切れた後に終わったリロードの直後の照準の横の残弾（窓の中のリロード明けとの違い）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode mags",
+      "note": "リロード明けの f10760 で 120（窓 4 の最初の▲の付いた増分 f10457 の 303f 後で、リロードの前の最後の増分 f10660 までは▲の格子）。窓の外のほかのリロード明けもどれも 120"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [10457, 10800]
+    }
+  },
+  {
+    "id": "364-17",
+    "recording": "364",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0365",
+    "readAt": "2026-10-08",
+    "value": [291, 293],
+    "unit": "f（動画）",
+    "description": "窓 2・窓 3 の、最初の▲の付いた増分から最後の▲の付いた増分までの長さ（窓の長さの下限）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓 2: f5292〜5583（前の増分 f5289・後の増分 f5586 は▲の無い格子）。窓 3: f7972〜8265（前の増分 f7946・後の増分 f8268 は▲の無い格子）。両端の増分の間隔（約 2.5f）を足すと、窓は 291〜297f（60 fps で 4.85〜4.95 秒）。バーストの攻撃力▲と S1 の攻撃力▲は同じ増分で切れる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [5280, 8300]
+    }
+  }
+]

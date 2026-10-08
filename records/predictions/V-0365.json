@@ -1,0 +1,576 @@
+{
+  "verification": "V-0365",
+  "note": "撮影計画 L1（リター単騎・操作・AUTO 射撃 ON・オートバースト ON・灼熱の BigArms・3 分モード・スペック固定 ON）の予測。V-0359 の予測ファイルの B の指標と仮説を写した（setup の condition は書かない。確定の根拠にする観測値は手入力の条件で比べる。plan/design-minimal-relevance.md 11.7 節）。モデル（手入力の条件）はバーストを 4 回使う（f1699・4201・6607・9110）。使用回数別の効果の窓（5 秒 = 294f）は、1 回目: 最大装弾数▲ + バーストの攻撃力▲・2 回目: + クリティカルダメージ▲・3 回目: + 攻撃力▲ 14.42%・4 回目: 3 回目と同じ。hitDamage のフレームは窓の中の代表で、値はその窓の状態だけで決まる（録画の窓の時刻がモデルとずれても、同じ回の窓の中の 1 ヒットと比べる）。distance は録画の着地点で乗るほうを使う（両方を出しておく）。S1 の CT▼（effects[0]〜[2]）は単騎では起きない（フルバーストが無い）ので範囲外（C-0460）",
+  "team": [
+    {
+      "rid": 82,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 の effects[3]〜[5]: 自分のバースト使用の 1・2・3 回目以降に、味方全体に最大装弾数 45.17%▲・クリティカルダメージ 12.46%▲・攻撃力 14.42%▲を 5 秒。下位効果のスタック適用（atLeast）。burst の effects[0]: バースト使用時に味方全体に攻撃力 66%▲を 5 秒）"
+    },
+    {
+      "id": "H0-burst",
+      "note": "バーストの攻撃力▲（burst の effects[0]）が乗らない。対象を味方の MG に絞って、この編成では誰にも付かない形にする（ほかはいまの定義）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 82,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-s1-ammo",
+      "note": "S1 の 1 回目の最大装弾数▲（skill1 の effects[3]）が乗らない（対象を味方の MG に絞る）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 82,
+            "skill": "skill1",
+            "replace": 3,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-s1-crit",
+      "note": "S1 の 2 回目のクリティカルダメージ▲（skill1 の effects[4]）が乗らない（対象を味方の MG に絞る）。effects[4] は束 4 の対象の外だが、同じ録画で読めるので並べる",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 82,
+            "skill": "skill1",
+            "replace": 4,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 2
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "critDamage",
+              "ref": 6,
+              "durationRef": 7
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-s1-attack",
+      "note": "S1 の 3 回目の攻撃力▲（skill1 の effects[5]）が乗らない（対象を味方の MG に絞る）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 82,
+            "skill": "skill1",
+            "replace": 5,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 3
+              },
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "attack",
+              "ref": 8,
+              "durationRef": 9
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2-short",
+      "note": "バーストの攻撃力▲の窓が 5 秒より短い（例として 3 秒）。S1 の効果の窓は 5 秒のまま",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 82,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2-long",
+      "note": "バーストの攻撃力▲の窓が 5 秒より長い（例として 7 秒）。S1 の効果の窓は 5 秒のまま",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 82,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 7
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストより前のリターの 1 ヒット（胴体・会心なし・距離ボーナスなし）。どの仮説も同じ（対照）"
+    },
+    {
+      "id": "base-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ 1 ヒットの距離ボーナスあり"
+    },
+    {
+      "id": "win1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバースト使用から 5 秒の窓の中の 1 ヒット（胴体・会心なし・距離ボーナスなし）。バーストの攻撃力▲ 66% が乗る"
+    },
+    {
+      "id": "win1-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1800,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ窓の 1 ヒットの距離ボーナスあり"
+    },
+    {
+      "id": "win2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 4300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のバースト使用の窓の中の 1 ヒット（胴体・会心なし・距離ボーナスなし）。攻撃力は 1 回目の窓と同じ（66%）"
+    },
+    {
+      "id": "win2-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 4300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ窓の 1 ヒットの距離ボーナスあり"
+    },
+    {
+      "id": "win2-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 4300,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目の窓の、会心した 1 ヒットと会心しない 1 ヒットの比（S1 の effects[4] のクリティカルダメージ▲）。攻撃力の項は比で消える"
+    },
+    {
+      "id": "win3",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6680,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目のバースト使用の窓の中の 1 ヒット（胴体・会心なし・距離ボーナスなし）。攻撃力▲ 66% + 14.42%"
+    },
+    {
+      "id": "win3-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6680,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ窓の 1 ヒットの距離ボーナスあり"
+    },
+    {
+      "id": "win3-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 6680,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目の窓の会心の比。下位効果のスタック適用なら 2 回目の▲も乗る（スタックしない読み H2 では会心の▲は無い。検証記録に手で書く）"
+    },
+    {
+      "id": "win3-late",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6884,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目の窓の終わりの直前（最後の 0.5 秒）の 1 ヒット（胴体・会心なし・距離ボーナスなし）。窓が 5 秒続くか"
+    },
+    {
+      "id": "win3-late-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6884,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ 1 ヒットの距離ボーナスあり"
+    },
+    {
+      "id": "after3",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6974,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目の窓が切れた後の 1 ヒット（base と同じ値の見込み）。窓の切れ目の前後で読む"
+    },
+    {
+      "id": "after3-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6974,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ 1 ヒットの距離ボーナスあり"
+    },
+    {
+      "id": "ammo-base",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストより前の最大装弾数（照準の横の残弾の、リロード直後の値）"
+    },
+    {
+      "id": "ammo-win1",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1800
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目の窓の最大装弾数（窓の中で終わったリロードの直後の照準の横の残弾。▲は残弾を増やさず、その後のリロードで込める見込み（C-0420 と同じ形））"
+    },
+    {
+      "id": "ammo-win3",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 6680
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目の窓の最大装弾数（下位効果のスタック適用なら 1 回目の▲も乗る。スタックしない読み H2 では元のまま。検証記録に手で書く）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "672ee3ae92b51d1b55ea7149ae8cc8c6e5bd9c05",
+    "values": {
+      "H1": {
+        "base": 8714.7225,
+        "base-d": 11329.13925,
+        "win1": 14472.2448,
+        "win1-d": 18813.918240000003,
+        "win2": 14472.2448,
+        "win2-d": 18813.918240000003,
+        "win2-crit-ratio": 1.6246,
+        "win3": 15730.150499999998,
+        "win3-d": 20449.195649999998,
+        "win3-crit-ratio": 1.6246,
+        "win3-late": 15730.150499999998,
+        "win3-late-d": 20449.195649999998,
+        "after3": 8714.7225,
+        "after3-d": 11329.13925,
+        "ammo-base": 120,
+        "ammo-win1": 174,
+        "ammo-win3": 174
+      },
+      "H0-burst": {
+        "base": 8714.7225,
+        "base-d": 11329.13925,
+        "win1": 8714.7225,
+        "win1-d": 11329.13925,
+        "win2": 8714.7225,
+        "win2-d": 11329.13925,
+        "win2-crit-ratio": 1.6246,
+        "win3": 9972.628200000001,
+        "win3-d": 12964.416660000003,
+        "win3-crit-ratio": 1.6246,
+        "win3-late": 9972.628200000001,
+        "win3-late-d": 12964.416660000003,
+        "after3": 8714.7225,
+        "after3-d": 11329.13925,
+        "ammo-base": 120,
+        "ammo-win1": 174,
+        "ammo-win3": 174
+      },
+      "H0-s1-ammo": {
+        "base": 8714.7225,
+        "base-d": 11329.13925,
+        "win1": 14472.2448,
+        "win1-d": 18813.918240000003,
+        "win2": 14472.2448,
+        "win2-d": 18813.918240000003,
+        "win2-crit-ratio": 1.6246,
+        "win3": 15730.150499999998,
+        "win3-d": 20449.195649999998,
+        "win3-crit-ratio": 1.6246,
+        "win3-late": 15730.150499999998,
+        "win3-late-d": 20449.195649999998,
+        "after3": 8714.7225,
+        "after3-d": 11329.13925,
+        "ammo-base": 120,
+        "ammo-win1": 120,
+        "ammo-win3": 120
+      },
+      "H0-s1-crit": {
+        "base": 8714.7225,
+        "base-d": 11329.13925,
+        "win1": 14472.2448,
+        "win1-d": 18813.918240000003,
+        "win2": 14472.2448,
+        "win2-d": 18813.918240000003,
+        "win2-crit-ratio": 1.5,
+        "win3": 15730.150500000002,
+        "win3-d": 20449.19565,
+        "win3-crit-ratio": 1.5,
+        "win3-late": 15730.150500000002,
+        "win3-late-d": 20449.19565,
+        "after3": 8714.7225,
+        "after3-d": 11329.13925,
+        "ammo-base": 120,
+        "ammo-win1": 174,
+        "ammo-win3": 174
+      },
+      "H0-s1-attack": {
+        "base": 8714.7225,
+        "base-d": 11329.13925,
+        "win1": 14472.2448,
+        "win1-d": 18813.918240000003,
+        "win2": 14472.2448,
+        "win2-d": 18813.918240000003,
+        "win2-crit-ratio": 1.6246,
+        "win3": 14472.2448,
+        "win3-d": 18813.918240000003,
+        "win3-crit-ratio": 1.6246,
+        "win3-late": 14472.2448,
+        "win3-late-d": 18813.918240000003,
+        "after3": 8714.7225,
+        "after3-d": 11329.13925,
+        "ammo-base": 120,
+        "ammo-win1": 174,
+        "ammo-win3": 174
+      },
+      "H2-short": {
+        "base": 8714.7225,
+        "base-d": 11329.13925,
+        "win1": 14472.2448,
+        "win1-d": 18813.918240000003,
+        "win2": 14472.2448,
+        "win2-d": 18813.918240000003,
+        "win2-crit-ratio": 1.6246,
+        "win3": 15730.150499999998,
+        "win3-d": 20449.195649999998,
+        "win3-crit-ratio": 1.6246,
+        "win3-late": 9972.628200000001,
+        "win3-late-d": 12964.416660000003,
+        "after3": 8714.7225,
+        "after3-d": 11329.13925,
+        "ammo-base": 120,
+        "ammo-win1": 174,
+        "ammo-win3": 174
+      },
+      "H2-long": {
+        "base": 8714.7225,
+        "base-d": 11329.13925,
+        "win1": 14472.2448,
+        "win1-d": 18813.918240000003,
+        "win2": 14472.2448,
+        "win2-d": 18813.918240000003,
+        "win2-crit-ratio": 1.6246,
+        "win3": 15730.150499999998,
+        "win3-d": 20449.195649999998,
+        "win3-crit-ratio": 1.6246,
+        "win3-late": 15730.150499999998,
+        "win3-late-d": 20449.195649999998,
+        "after3": 14472.2448,
+        "after3-d": 18813.918240000003,
+        "ammo-base": 120,
+        "ammo-win1": 174,
+        "ammo-win3": 174
+      }
+    },
+    "seen": {}
+  }
+}

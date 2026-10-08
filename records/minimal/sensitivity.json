@@ -989,38 +989,6 @@
       "plus": 0
     },
     {
-      "observation": "039-05",
-      "element": "リター burst.effects[0]",
-      "key": "877adb4d79a04474",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-05",
-      "element": "リター skill1.effects[3]",
-      "key": "877adb4d79a04474",
-      "effective": false,
-      "minus": 0,
-      "plus": -10
-    },
-    {
-      "observation": "039-05",
-      "element": "リター skill1.effects[4]",
-      "key": "877adb4d79a04474",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-05",
-      "element": "リター skill1.effects[5]",
-      "key": "877adb4d79a04474",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
       "observation": "039-06",
       "element": "ドレイク treasureSkills.skill1.effects[1]",
       "key": "1ab8d4107b758feb",
@@ -1039,38 +1007,6 @@
     {
       "observation": "039-06",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
-      "key": "1ab8d4107b758feb",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-06",
-      "element": "リター burst.effects[0]",
-      "key": "1ab8d4107b758feb",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-06",
-      "element": "リター skill1.effects[3]",
-      "key": "1ab8d4107b758feb",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-06",
-      "element": "リター skill1.effects[4]",
-      "key": "1ab8d4107b758feb",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-06",
-      "element": "リター skill1.effects[5]",
       "key": "1ab8d4107b758feb",
       "effective": false,
       "minus": 0,
@@ -1101,38 +1037,6 @@
       "plus": 0
     },
     {
-      "observation": "039-07",
-      "element": "リター burst.effects[0]",
-      "key": "e867accb29fdb36a",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-07",
-      "element": "リター skill1.effects[3]",
-      "key": "e867accb29fdb36a",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-07",
-      "element": "リター skill1.effects[4]",
-      "key": "e867accb29fdb36a",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-07",
-      "element": "リター skill1.effects[5]",
-      "key": "e867accb29fdb36a",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
       "observation": "039-08",
       "element": "ドレイク treasureSkills.skill1.effects[1]",
       "key": "10f72b3c87635587",
@@ -1151,38 +1055,6 @@
     {
       "observation": "039-08",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
-      "key": "10f72b3c87635587",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-08",
-      "element": "リター burst.effects[0]",
-      "key": "10f72b3c87635587",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-08",
-      "element": "リター skill1.effects[3]",
-      "key": "10f72b3c87635587",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-08",
-      "element": "リター skill1.effects[4]",
-      "key": "10f72b3c87635587",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-08",
-      "element": "リター skill1.effects[5]",
       "key": "10f72b3c87635587",
       "effective": false,
       "minus": 0,
@@ -1213,38 +1085,6 @@
       "plus": 0
     },
     {
-      "observation": "039-09",
-      "element": "リター burst.effects[0]",
-      "key": "bfc2efdd84220bf0",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-09",
-      "element": "リター skill1.effects[3]",
-      "key": "bfc2efdd84220bf0",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-09",
-      "element": "リター skill1.effects[4]",
-      "key": "bfc2efdd84220bf0",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-09",
-      "element": "リター skill1.effects[5]",
-      "key": "bfc2efdd84220bf0",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
       "observation": "039-10",
       "element": "ドレイク treasureSkills.skill1.effects[1]",
       "key": "b23b70a6023df2ed",
@@ -1269,38 +1109,6 @@
       "plus": 0
     },
     {
-      "observation": "039-10",
-      "element": "リター burst.effects[0]",
-      "key": "b23b70a6023df2ed",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-10",
-      "element": "リター skill1.effects[3]",
-      "key": "b23b70a6023df2ed",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-10",
-      "element": "リター skill1.effects[4]",
-      "key": "b23b70a6023df2ed",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-10",
-      "element": "リター skill1.effects[5]",
-      "key": "b23b70a6023df2ed",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
       "observation": "039-11",
       "element": "ドレイク treasureSkills.skill1.effects[1]",
       "key": "f77edb77842d1096",
@@ -1319,38 +1127,6 @@
     {
       "observation": "039-11",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
-      "key": "f77edb77842d1096",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-11",
-      "element": "リター burst.effects[0]",
-      "key": "f77edb77842d1096",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-11",
-      "element": "リター skill1.effects[3]",
-      "key": "f77edb77842d1096",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-11",
-      "element": "リター skill1.effects[4]",
-      "key": "f77edb77842d1096",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-11",
-      "element": "リター skill1.effects[5]",
       "key": "f77edb77842d1096",
       "effective": false,
       "minus": 0,
@@ -1375,38 +1151,6 @@
     {
       "observation": "039-13",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
-      "key": "f64efdeb9edd0ecc",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-13",
-      "element": "リター burst.effects[0]",
-      "key": "f64efdeb9edd0ecc",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-13",
-      "element": "リター skill1.effects[3]",
-      "key": "f64efdeb9edd0ecc",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-13",
-      "element": "リター skill1.effects[4]",
-      "key": "f64efdeb9edd0ecc",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-13",
-      "element": "リター skill1.effects[5]",
       "key": "f64efdeb9edd0ecc",
       "effective": false,
       "minus": 0,
@@ -1437,38 +1181,6 @@
       "plus": 0
     },
     {
-      "observation": "039-14",
-      "element": "リター burst.effects[0]",
-      "key": "b390d28fb0cc8cbc",
-      "effective": true,
-      "minus": 0,
-      "plus": 315103.8772223999
-    },
-    {
-      "observation": "039-14",
-      "element": "リター skill1.effects[3]",
-      "key": "b390d28fb0cc8cbc",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-14",
-      "element": "リター skill1.effects[4]",
-      "key": "b390d28fb0cc8cbc",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-14",
-      "element": "リター skill1.effects[5]",
-      "key": "b390d28fb0cc8cbc",
-      "effective": true,
-      "minus": 0,
-      "plus": 68844.85332480015
-    },
-    {
       "observation": "039-15",
       "element": "ドレイク treasureSkills.skill1.effects[1]",
       "key": "fc7a0b0e1cf8306f",
@@ -1491,38 +1203,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "039-15",
-      "element": "リター burst.effects[0]",
-      "key": "fc7a0b0e1cf8306f",
-      "effective": true,
-      "minus": 0,
-      "plus": 469139.03148959996
-    },
-    {
-      "observation": "039-15",
-      "element": "リター skill1.effects[3]",
-      "key": "fc7a0b0e1cf8306f",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-15",
-      "element": "リター skill1.effects[4]",
-      "key": "fc7a0b0e1cf8306f",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-15",
-      "element": "リター skill1.effects[5]",
-      "key": "fc7a0b0e1cf8306f",
-      "effective": true,
-      "minus": 0,
-      "plus": 102498.92224920029
     },
     {
       "observation": "039-16",
@@ -1549,38 +1229,6 @@
       "plus": 0
     },
     {
-      "observation": "039-16",
-      "element": "リター burst.effects[0]",
-      "key": "9693c7434817e702",
-      "effective": true,
-      "minus": -469139.03148959996,
-      "plus": 0
-    },
-    {
-      "observation": "039-16",
-      "element": "リター skill1.effects[3]",
-      "key": "9693c7434817e702",
-      "effective": true,
-      "minus": 0,
-      "plus": -1120573.4667299998
-    },
-    {
-      "observation": "039-16",
-      "element": "リター skill1.effects[4]",
-      "key": "9693c7434817e702",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-16",
-      "element": "リター skill1.effects[5]",
-      "key": "9693c7434817e702",
-      "effective": true,
-      "minus": 0,
-      "plus": 102498.92224920029
-    },
-    {
       "observation": "039-17",
       "element": "ドレイク treasureSkills.skill1.effects[1]",
       "key": "57deea4005797dbb",
@@ -1605,38 +1253,6 @@
       "plus": 0
     },
     {
-      "observation": "039-17",
-      "element": "リター burst.effects[0]",
-      "key": "57deea4005797dbb",
-      "effective": true,
-      "minus": -469139.03148959996,
-      "plus": 0
-    },
-    {
-      "observation": "039-17",
-      "element": "リター skill1.effects[3]",
-      "key": "57deea4005797dbb",
-      "effective": true,
-      "minus": -571637.9537388002,
-      "plus": -1460584.0854792
-    },
-    {
-      "observation": "039-17",
-      "element": "リター skill1.effects[4]",
-      "key": "57deea4005797dbb",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-17",
-      "element": "リター skill1.effects[5]",
-      "key": "57deea4005797dbb",
-      "effective": true,
-      "minus": -102498.92224920029,
-      "plus": 0
-    },
-    {
       "observation": "039-18",
       "element": "ドレイク treasureSkills.skill1.effects[1]",
       "key": "44ba2be33210295a",
@@ -1655,38 +1271,6 @@
     {
       "observation": "039-18",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
-      "key": "44ba2be33210295a",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-18",
-      "element": "リター burst.effects[0]",
-      "key": "44ba2be33210295a",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-18",
-      "element": "リター skill1.effects[3]",
-      "key": "44ba2be33210295a",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-18",
-      "element": "リター skill1.effects[4]",
-      "key": "44ba2be33210295a",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "039-18",
-      "element": "リター skill1.effects[5]",
       "key": "44ba2be33210295a",
       "effective": false,
       "minus": 0,
@@ -2957,172 +2541,12 @@
       "plus": 0
     },
     {
-      "observation": "114-08",
-      "element": "リター burst.effects[0]",
-      "key": "2dcd09d8de0c9cff",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "114-08",
-      "element": "リター skill1.effects[3]",
-      "key": "2dcd09d8de0c9cff",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "114-08",
-      "element": "リター skill1.effects[4]",
-      "key": "2dcd09d8de0c9cff",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "114-08",
-      "element": "リター skill1.effects[5]",
-      "key": "2dcd09d8de0c9cff",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
       "observation": "115-06",
       "element": "モダニア skill2.effects[0]",
       "key": "b0b7e7e4fdedc213",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "115-06",
-      "element": "リター burst.effects[0]",
-      "key": "b0b7e7e4fdedc213",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "115-06",
-      "element": "リター skill1.effects[3]",
-      "key": "b0b7e7e4fdedc213",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "115-06",
-      "element": "リター skill1.effects[4]",
-      "key": "b0b7e7e4fdedc213",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "115-06",
-      "element": "リター skill1.effects[5]",
-      "key": "b0b7e7e4fdedc213",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "116-06",
-      "element": "リター burst.effects[0]",
-      "key": "fbdd99f10d0b57ee",
-      "effective": true,
-      "minus": 0,
-      "plus": 4436.950599999999
-    },
-    {
-      "observation": "116-06",
-      "element": "リター skill1.effects[3]",
-      "key": "fbdd99f10d0b57ee",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "116-06",
-      "element": "リター skill1.effects[4]",
-      "key": "fbdd99f10d0b57ee",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "116-06",
-      "element": "リター skill1.effects[5]",
-      "key": "fbdd99f10d0b57ee",
-      "effective": true,
-      "minus": 0,
-      "plus": 969.4027999999998
-    },
-    {
-      "observation": "117-06",
-      "element": "リター burst.effects[0]",
-      "key": "c34964373b3276b4",
-      "effective": true,
-      "minus": 0,
-      "plus": 4436.950599999999
-    },
-    {
-      "observation": "117-06",
-      "element": "リター skill1.effects[3]",
-      "key": "c34964373b3276b4",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "117-06",
-      "element": "リター skill1.effects[4]",
-      "key": "c34964373b3276b4",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "117-06",
-      "element": "リター skill1.effects[5]",
-      "key": "c34964373b3276b4",
-      "effective": true,
-      "minus": 0,
-      "plus": 969.4027999999998
-    },
-    {
-      "observation": "117-07",
-      "element": "リター burst.effects[0]",
-      "key": "86a7e5124fcdfd17",
-      "effective": true,
-      "minus": 0,
-      "plus": 8873.901199999998
-    },
-    {
-      "observation": "117-07",
-      "element": "リター skill1.effects[3]",
-      "key": "86a7e5124fcdfd17",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "117-07",
-      "element": "リター skill1.effects[4]",
-      "key": "86a7e5124fcdfd17",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "117-07",
-      "element": "リター skill1.effects[5]",
-      "key": "86a7e5124fcdfd17",
-      "effective": true,
-      "minus": 0,
-      "plus": 1938.8055999999997
     },
     {
       "observation": "137-05",

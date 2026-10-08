@@ -50,7 +50,10 @@
           "target": "allies",
           "stat": "maxAmmo",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-0468"
+          ]
         },
         {
           "kind": "timed",
@@ -61,7 +64,10 @@
           "target": "allies",
           "stat": "critDamage",
           "ref": 6,
-          "durationRef": 7
+          "durationRef": 7,
+          "claims": [
+            "C-0468"
+          ]
         },
         {
           "kind": "timed",
@@ -72,7 +78,10 @@
           "target": "allies",
           "stat": "attack",
           "ref": 8,
-          "durationRef": 9
+          "durationRef": 9,
+          "claims": [
+            "C-0468"
+          ]
         }
       ]
     },
@@ -94,7 +103,10 @@
           "target": "allies",
           "stat": "attack",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0468"
+          ]
         }
       ]
     }
