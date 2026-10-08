@@ -511,6 +511,7 @@ function resolveWeaponChange(
       hits,
       shot: changedWeaponShot(character.shot, damage, change.rateOfFire, hits, overrides),
       ...(effect.trueDamage ? { trueDamage: true as const } : {}),
+      ...(effect.projectileExplosion ? { projectileExplosion: true as const } : {}),
     },
     trigger: resolveTrigger(effect.trigger, skill, level),
     durationFrames: untilEmpty ? 0 : gameSecondsToFrames(durationSecondsOf(effect, skill, level)),

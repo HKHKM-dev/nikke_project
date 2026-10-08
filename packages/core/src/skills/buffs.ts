@@ -15,6 +15,8 @@ export type ChangedWeapon = {
   shot: ShotParams;
   /** 防御力無視ダメージ編: 変更後の武器の 1 発が防御力無視ダメージか（WeaponChangeEffect.trueDamage） */
   trueDamage?: true;
+  /** 変更後の武器の発が発射体の爆発を持つか（WeaponChangeEffect.projectileExplosion。発射体爆発ダメージ▲が乗る） */
+  projectileExplosion?: true;
 };
 
 /**
