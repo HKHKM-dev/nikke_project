@@ -154,6 +154,22 @@
       "plus": 0
     },
     {
+      "observation": "019-19",
+      "element": "ノワール burst.effects[1]",
+      "key": "ca4ce00c93498d33",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "019-20",
+      "element": "ノワール burst.effects[1]",
+      "key": "a3e955f513ad5026",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "019-24",
       "element": "ノワール burst.effects[1]",
       "key": "1959a0b460fa879b",
@@ -1443,43 +1459,11 @@
     },
     {
       "observation": "044-08",
-      "element": "モダニア burst.effects[0]",
-      "key": "2663ac5a21fc1e5b",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "044-08",
-      "element": "モダニア burst.effects[1]",
-      "key": "2663ac5a21fc1e5b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "044-08",
       "element": "モダニア skill2.effects[0]",
       "key": "2663ac5a21fc1e5b",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "044-11",
-      "element": "モダニア burst.effects[0]",
-      "key": "14b2076fabc6e51c",
-      "effective": true,
-      "minus": -996.2487359999977,
-      "plus": 0
-    },
-    {
-      "observation": "044-11",
-      "element": "モダニア burst.effects[1]",
-      "key": "14b2076fabc6e51c",
-      "effective": true,
-      "minus": 16998.494057999997,
-      "plus": null
     },
     {
       "observation": "044-11",
@@ -1491,22 +1475,6 @@
     },
     {
       "observation": "044-12",
-      "element": "モダニア burst.effects[0]",
-      "key": "1e2a4956f64146ff",
-      "effective": true,
-      "minus": -996.2487359999905,
-      "plus": 0
-    },
-    {
-      "observation": "044-12",
-      "element": "モダニア burst.effects[1]",
-      "key": "1e2a4956f64146ff",
-      "effective": true,
-      "minus": 18510.657318000005,
-      "plus": null
-    },
-    {
-      "observation": "044-12",
       "element": "モダニア skill2.effects[0]",
       "key": "1e2a4956f64146ff",
       "effective": true,
@@ -1515,43 +1483,11 @@
     },
     {
       "observation": "044-14",
-      "element": "モダニア burst.effects[0]",
-      "key": "006bbf1b489eb42c",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "044-14",
-      "element": "モダニア burst.effects[1]",
-      "key": "006bbf1b489eb42c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "044-14",
       "element": "モダニア skill2.effects[0]",
       "key": "006bbf1b489eb42c",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "044-15",
-      "element": "モダニア burst.effects[0]",
-      "key": "633c0c9b0b165e8e",
-      "effective": false,
-      "minus": 0,
-      "plus": -1
-    },
-    {
-      "observation": "044-15",
-      "element": "モダニア burst.effects[1]",
-      "key": "633c0c9b0b165e8e",
-      "effective": false,
-      "minus": 1,
-      "plus": null
     },
     {
       "observation": "044-15",
@@ -1563,43 +1499,11 @@
     },
     {
       "observation": "044-16",
-      "element": "モダニア burst.effects[0]",
-      "key": "31693f98d03d342d",
-      "effective": false,
-      "minus": 0,
-      "plus": -1
-    },
-    {
-      "observation": "044-16",
-      "element": "モダニア burst.effects[1]",
-      "key": "31693f98d03d342d",
-      "effective": true,
-      "minus": 23,
-      "plus": null
-    },
-    {
-      "observation": "044-16",
       "element": "モダニア skill2.effects[0]",
       "key": "31693f98d03d342d",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "044-18",
-      "element": "モダニア burst.effects[0]",
-      "key": "0eb90cf7bdd4d4be",
-      "effective": true,
-      "minus": -317,
-      "plus": 7
-    },
-    {
-      "observation": "044-18",
-      "element": "モダニア burst.effects[1]",
-      "key": "0eb90cf7bdd4d4be",
-      "effective": true,
-      "minus": -105,
-      "plus": null
     },
     {
       "observation": "044-18",
@@ -6585,43 +6489,11 @@
     },
     {
       "observation": "317-03",
-      "element": "モダニア burst.effects[0]",
-      "key": "ac8b6cc12f8871ee",
-      "effective": false,
-      "minus": 0,
-      "plus": -1
-    },
-    {
-      "observation": "317-03",
-      "element": "モダニア burst.effects[1]",
-      "key": "ac8b6cc12f8871ee",
-      "effective": true,
-      "minus": 89,
-      "plus": null
-    },
-    {
-      "observation": "317-03",
       "element": "モダニア skill2.effects[0]",
       "key": "ac8b6cc12f8871ee",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "317-04",
-      "element": "モダニア burst.effects[0]",
-      "key": "d57f25baa75e1d4b",
-      "effective": false,
-      "minus": -1,
-      "plus": -1
-    },
-    {
-      "observation": "317-04",
-      "element": "モダニア burst.effects[1]",
-      "key": "d57f25baa75e1d4b",
-      "effective": true,
-      "minus": 69,
-      "plus": null
     },
     {
       "observation": "317-04",
@@ -6633,22 +6505,6 @@
     },
     {
       "observation": "317-05",
-      "element": "モダニア burst.effects[0]",
-      "key": "e3811213a8058be4",
-      "effective": false,
-      "minus": 0,
-      "plus": -1
-    },
-    {
-      "observation": "317-05",
-      "element": "モダニア burst.effects[1]",
-      "key": "e3811213a8058be4",
-      "effective": true,
-      "minus": 63,
-      "plus": null
-    },
-    {
-      "observation": "317-05",
       "element": "モダニア skill2.effects[0]",
       "key": "e3811213a8058be4",
       "effective": false,
@@ -6657,43 +6513,11 @@
     },
     {
       "observation": "317-06",
-      "element": "モダニア burst.effects[0]",
-      "key": "830d40745050eb41",
-      "effective": false,
-      "minus": 0,
-      "plus": -1
-    },
-    {
-      "observation": "317-06",
-      "element": "モダニア burst.effects[1]",
-      "key": "830d40745050eb41",
-      "effective": true,
-      "minus": 58,
-      "plus": null
-    },
-    {
-      "observation": "317-06",
       "element": "モダニア skill2.effects[0]",
       "key": "830d40745050eb41",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "317-07",
-      "element": "モダニア burst.effects[0]",
-      "key": "521075651d1346e0",
-      "effective": true,
-      "minus": -317,
-      "plus": 7
-    },
-    {
-      "observation": "317-07",
-      "element": "モダニア burst.effects[1]",
-      "key": "521075651d1346e0",
-      "effective": true,
-      "minus": -178,
-      "plus": null
     },
     {
       "observation": "317-07",
