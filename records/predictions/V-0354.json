@@ -51,7 +51,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "中近（1 区間目）の▲の窓の中（sim の 1 回目のフルバーストの入り f397 から 300f）"
+      "note": "中近（1 区間目）の▲の窓の中（sim の 1 回目のフルバーストの入り f397 から 300f）",
+      "observations": ["354-04"]
     },
     {
       "id": "sakura-midnear-core-out",
@@ -66,7 +67,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "中近の窓の外（的の表の SMG の中近）"
+      "note": "中近の窓の外（的の表の SMG の中近）",
+      "observations": ["354-05"]
     },
     {
       "id": "sakura-near-core-in",
@@ -81,7 +83,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "近（2 区間目）の▲の窓の中（sim の 2 回目のフルバーストの入り f2749 から 300f。近の着地点は 2 か所の配分）"
+      "note": "近（2 区間目）の▲の窓の中（sim の 2 回目のフルバーストの入り f2749 から 300f。近の着地点は 2 か所の配分）",
+      "observations": ["354-06"]
     },
     {
       "id": "sakura-near-core-out",
@@ -96,7 +99,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "近の窓の外（的の表の SMG の近）"
+      "note": "近の窓の外（的の表の SMG の近）",
+      "observations": ["354-07"]
     },
     {
       "id": "sakura-far-core-in",
@@ -111,7 +115,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "遠（3 区間目）の▲の窓の中（sim の 3 回目のフルバーストの入り f5101 から 300f）"
+      "note": "遠（3 区間目）の▲の窓の中（sim の 3 回目のフルバーストの入り f5101 から 300f）",
+      "observations": ["354-08"]
     },
     {
       "id": "sakura-midfar-core-in",
@@ -126,7 +131,8 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "note": "中遠（4 区間目）の▲の窓の中（sim の 4 回目のフルバーストの入り f7453 から 300f。中遠の着地点は 3 か所の配分）"
+      "note": "中遠（4 区間目）の▲の窓の中（sim の 4 回目のフルバーストの入り f7453 から 300f。中遠の着地点は 3 か所の配分）",
+      "observations": ["354-09"]
     }
   ],
   "predicted": {
