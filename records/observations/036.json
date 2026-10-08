@@ -61,5 +61,146 @@
       "tool": "tools/captures/reload.ts --stages --shots（hud.ts --mode jumps の出力）",
       "note": "段のバーが消えたフレームの差"
     }
+  },
+  {
+    "id": "036-05",
+    "recording": "036",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0360",
+    "value": 241509,
+    "description": "ドレイク（宝物 3 段階）単騎の、S2 の 1 回目（5 回目の発 f1031 の 6f 後の f1037。5 回攻撃の effects[1] だけ。会心なし）。15・45・55 回目の発の後（f1534・3130・3626）も同じ 241,509",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps（録画の全体）。ドレイクの発（ペレットの増分。約 39f おき）に戦闘開始から番号を振り、ペレットの約 6f 後に出る、ペレットの格子に乗らない増分を S2 とした（V-0265 の読み方）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "036-06",
+    "recording": "036",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0360",
+    "value": 362263,
+    "description": "S2 の 7 回目（25 回目の発 f2024 の後の f2030。5 回攻撃の effects[1] だけ）。会心（241,509 × 1.5）。35・65 回目の発の後（f2526・4122）も同じ 362,263",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps（録画の全体）。ドレイクの発（ペレットの増分。約 39f おき）に戦闘開始から番号を振り、ペレットの約 6f 後に出る、ペレットの格子に乗らない増分を S2 とした（V-0265 の読み方）。予測ファイルの s2-25th は会心なしの指標なので、この観測値は会心の値で照合する（予測の指標とは結び付かない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 6,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "036-07",
+    "recording": "036",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0360",
+    "value": 359568,
+    "description": "30 回目の発（f2324）の後の f2330 の増分。10 回攻撃の effects[0] と 5 回攻撃の effects[1] の和（どちらも会心なし）。10・40・50・70 回目の発の後（f1337・2934・3430・4422）も同じ 359,568",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps（録画の全体）。ドレイクの発（ペレットの増分。約 39f おき）に戦闘開始から番号を振り、ペレットの約 6f 後に出る、ペレットの格子に乗らない増分を S2 とした（V-0265 の読み方）。モデルの n 7・8（同じ発の 2 つ）の和で比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 1,
+        "n": 7,
+        "count": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "036-08",
+    "recording": "036",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0360",
+    "value": 359568,
+    "description": "50 回目の発（f3424）の後の f3430 の増分（10 回攻撃と 5 回攻撃の和。会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps（録画の全体）。ドレイクの発（ペレットの増分。約 39f おき）に戦闘開始から番号を振り、ペレットの約 6f 後に出る、ペレットの格子に乗らない増分を S2 とした（V-0265 の読み方）。モデルの n 13・14 は 50 回攻撃の 2 つ（予測ファイルの指標 s2-40th-sum の名前と注記は「40 回攻撃」だが、番号 n 13 は 50 回攻撃。予測を出したときの数え違いで、値と番号は録画とモデルで同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 1,
+        "n": 13,
+        "count": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "036-09",
+    "recording": "036",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0360",
+    "value": [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70],
+    "description": "S2 の増分が出た発の番号（戦闘開始からのドレイクの発。録画の 74 発のうち）。どれも 5 の倍数の発の 6f 後に 1 つずつ出て、ほかの発の後には出ない。5 の奇数倍は 241,509（会心 362,263）、10 の倍数は 359,568（10 回攻撃の会心と 5 回攻撃の会心なしの和 418,597 が 20 回目の f1834）。60 回目（f3933）は読めないフレームの後の増分（gap 20）にペレットと一緒に乗った",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps（録画の全体）。ドレイクの発（ペレットの増分。約 39f おき）に戦闘開始から番号を振り、ペレットの約 6f 後に出る、ペレットの格子に乗らない増分を S2 とした（V-0265 の読み方）。f2888 の 66,748（ペレットの少ない発）も 1 発に数えた。数えた発の間隔は 34〜40f（リロードの空きを除く）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [874, 4573]
+    }
   }
 ]

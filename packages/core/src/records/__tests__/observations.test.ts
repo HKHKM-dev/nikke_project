@@ -604,6 +604,38 @@ describe('照合の部品', () => {
     ).toThrow(/buildEffectsOff/);
   });
 
+  it('reads the burst skill cooldown cut at the n-th full burst start (cooldownCutFrames。V-0359)', () => {
+    const metric = METRICS.cooldownCutFrames!;
+    const schedule = {
+      fullBurstWindows: [{ start: 100 }, { start: 500 }],
+      cooldownReductions: [
+        { frame: 100, slotIndex: 1, sourceSlotIndex: 0, frames: 50, applied: 50 },
+        { frame: 100, slotIndex: 1, sourceSlotIndex: 0, frames: 30, applied: 30 },
+        { frame: 100, slotIndex: 0, sourceSlotIndex: 0, frames: 50, applied: 50 },
+        // CT が明けかけの枠は、実際に縮んだ分（applied）だけ数える
+        { frame: 500, slotIndex: 1, sourceSlotIndex: 0, frames: 80, applied: 12 },
+      ],
+    } as unknown as SimResult['schedule'];
+    const at = (n: number | string) =>
+      metric.sim({ schedule } as SimResult, { args: { slot: 2, n }, input: {} as TeamInput });
+    expect(at(0)).toBe(80);
+    expect(at(1)).toBe(12);
+    expect(at('0, 1')).toEqual([80, 12]);
+    expect(() => at(2)).toThrow(/2 回目のフルバーストが無い/);
+
+    // 録画 039（リター + デルタ + ドレイク）: リターの S1 の CT▼ はスタックして、デルタの CT を 1・2・3 回目以降で長く縮める（C-0460）
+    const input = buildTeamInput(
+      recordings.get('039')!,
+      { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] },
+      data,
+    );
+    const cuts = metric.sim(runSimulation(input), { args: { slot: 2, n: '0,1,2,3' }, input }) as number[];
+    // モデルは CT をフレームの整数で縮めるので、増分は説明文の秒 ÷ 0.017 と 1f 以内
+    expect(Math.abs(cuts[1]! - cuts[0]! - 2.7 / 0.017)).toBeLessThanOrEqual(1);
+    expect(Math.abs(cuts[2]! - cuts[1]! - 3.17 / 0.017)).toBeLessThanOrEqual(1);
+    expect(cuts[3]).toBe(cuts[2]);
+  });
+
   it('builds automatic conditions with the target profile and a fixed mid-far landing (Stage 18-C)', () => {
     const rec54 = recordings.get('054') as ProjectRecording;
     const manual = buildTeamInput(rec54, { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] }, data);

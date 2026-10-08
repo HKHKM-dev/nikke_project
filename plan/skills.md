@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 56・効果 186（根拠あり 154）・notes 206（根拠あり 72）
+件数: キャラ 56・効果 186（根拠あり 162）・notes 206（根拠あり 72）
 
 notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補足 8
 
@@ -21,7 +21,7 @@ notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補�
   - notes[1] 計算に無関係: 挑発はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0227（確定）
-  - effects[1] timed・burstUse・attack: 根拠なし
+  - effects[1] timed・burstUse・attack: C-0457（確定）
 
 ## 16 ラピ：レッドフード
 
@@ -124,9 +124,9 @@ notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補�
 ## 82 リター
 
 - **skill1**: supported
-  - effects[0] cooldownReduction・fullBurstStart: 根拠なし
-  - effects[1] cooldownReduction・fullBurstStart: 根拠なし
-  - effects[2] cooldownReduction・fullBurstStart: 根拠なし
+  - effects[0] cooldownReduction・fullBurstStart: C-0460（確定）
+  - effects[1] cooldownReduction・fullBurstStart: C-0460（確定）
+  - effects[2] cooldownReduction・fullBurstStart: C-0460（確定）
   - effects[3] timed・burstUse・maxAmmo: 根拠なし
   - effects[4] timed・burstUse・critDamage: 根拠なし
   - effects[5] timed・burstUse・attack: 根拠なし
@@ -192,13 +192,13 @@ notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補�
   - effects[0] burstDamage・skill: 根拠なし
   - effects[1] timed・burstUse・maxAmmo: 根拠なし
 - **宝物版 skill1**: supported
-  - effects[0] timed・fullBurstStart・attack: 根拠なし
+  - effects[0] timed・fullBurstStart・attack: C-0459（確定）
   - effects[1] timed・fullBurstStart・attack: 根拠なし
   - effects[2] timed・fullBurstStart・maxAmmo: 根拠なし
-  - effects[3] timed・fullBurstStart・hitRate: 根拠なし
+  - effects[3] timed・fullBurstStart・hitRate: C-0170（仮説）
 - **宝物版 skill2**: supported
-  - effects[0] damage・normalShot・skill: 根拠なし
-  - effects[1] damage・normalShot・skill: 根拠なし
+  - effects[0] damage・normalShot・skill: C-0458（確定）
+  - effects[1] damage・normalShot・skill: C-0458（確定）
 - **宝物版 burst**: supported
   - effects[0] burstDamage・skill: C-0228（確定）
   - effects[1] timed・burstUse・attackDamage: C-0420（確定）

@@ -5,7 +5,7 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 2・保留 0・完了 297・打ち切り 21（計 320）
+件数: 調査中 2・保留 0・完了 300・打ち切り 21（計 323）
 
 ## 開いている検証
 
@@ -3222,3 +3222,77 @@
     - sun-reload-after（reloadToNextShotAt）: 実測なし。H1 112.235、H2 112.235
     - alice-reload-out（reloadFramesAt）: 実測なし。H1 117.647、H2 117.647
     - alice-reload-in（reloadFramesAt）: 実測なし。H1 57.753、H2 117.647
+- **[V-0359](../records/verifications/V-0359-liter-skills-minimal.md)** リターの S1・バーストの効果を最小構成で確かめる（CT▼・使用回数別の効果・攻撃力▲）
+  - 問い: リター（82）の S1 のフルバースト開始回数別のバーストスキルクールタイム▼と、バースト使用回数別の最大装弾数▲・攻撃力▲、バーストの味方全体の攻撃力▲を、説明文どおり（いまの定義）と読んで、モデルは最小構成の実測と合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-08・状態: 完了・Stage: plan/design-minimal-relevance.md 11 節の束 4（根拠の無い効果）。進め方は plan/design-skill-claims-5-2.md と同じ
+  - 録画: 039、114、115
+  - 観測値: 039-18、114-08、115-06
+  - 結論: C-0460
+  - 予測（2026-10-08、commit 3d5a4f6）との比べ:
+    - base（hitDamage）: 実測なし。H1 8,714.723、H0-burst 8,714.723、H0-s1-ammo 8,714.723、H0-s1-crit 8,714.723、H0-s1-attack 8,714.723、H2-short 8,714.723、H2-long 8,714.723
+    - base-d（hitDamage）: 実測なし。H1 11,329.139、H0-burst 11,329.139、H0-s1-ammo 11,329.139、H0-s1-crit 11,329.139、H0-s1-attack 11,329.139、H2-short 11,329.139、H2-long 11,329.139
+    - win1（hitDamage）: 実測なし。H1 14,472.245、H0-burst 8,714.723、H0-s1-ammo 14,472.245、H0-s1-crit 14,472.245、H0-s1-attack 14,472.245、H2-short 14,472.245、H2-long 14,472.245
+    - win1-d（hitDamage）: 実測なし。H1 18,813.918、H0-burst 11,329.139、H0-s1-ammo 18,813.918、H0-s1-crit 18,813.918、H0-s1-attack 18,813.918、H2-short 18,813.918、H2-long 18,813.918
+    - win2（hitDamage）: 実測なし。H1 14,472.245、H0-burst 8,714.723、H0-s1-ammo 14,472.245、H0-s1-crit 14,472.245、H0-s1-attack 14,472.245、H2-short 14,472.245、H2-long 14,472.245
+    - win2-d（hitDamage）: 実測なし。H1 18,813.918、H0-burst 11,329.139、H0-s1-ammo 18,813.918、H0-s1-crit 18,813.918、H0-s1-attack 18,813.918、H2-short 18,813.918、H2-long 18,813.918
+    - win2-crit-ratio（critHitRatio）: 実測なし。H1 1.625、H0-burst 1.625、H0-s1-ammo 1.625、H0-s1-crit 1.5、H0-s1-attack 1.625、H2-short 1.625、H2-long 1.625
+    - win3（hitDamage）: 実測なし。H1 15,783.756、H0-burst 10,006.613、H0-s1-ammo 15,783.756、H0-s1-crit 15,784.58、H0-s1-attack 14,521.564、H2-short 15,783.756、H2-long 15,783.756
+    - win3-d（hitDamage）: 実測なし。H1 20,518.883、H0-burst 13,008.597、H0-s1-ammo 20,518.883、H0-s1-crit 20,519.954、H0-s1-attack 18,878.033、H2-short 20,518.883、H2-long 20,518.883
+    - win3-crit-ratio（critHitRatio）: 実測なし。H1 1.625、H0-burst 1.625、H0-s1-ammo 1.625、H0-s1-crit 1.5、H0-s1-attack 1.625、H2-short 1.625、H2-long 1.625
+    - win3-late（hitDamage）: 実測なし。H1 15,783.756、H0-burst 10,006.613、H0-s1-ammo 15,783.756、H0-s1-crit 15,784.58、H0-s1-attack 14,521.564、H2-short 10,006.613、H2-long 15,783.756
+    - win3-late-d（hitDamage）: 実測なし。H1 20,518.883、H0-burst 13,008.597、H0-s1-ammo 20,518.883、H0-s1-crit 20,519.954、H0-s1-attack 18,878.033、H2-short 13,008.597、H2-long 20,518.883
+    - after3（hitDamage）: 実測なし。H1 8,744.877、H0-burst 8,744.877、H0-s1-ammo 8,744.877、H0-s1-crit 8,744.877、H0-s1-attack 8,744.877、H2-short 8,744.877、H2-long 14,522.321
+    - after3-d（hitDamage）: 実測なし。H1 11,368.34、H0-burst 11,368.34、H0-s1-ammo 11,368.34、H0-s1-crit 11,368.34、H0-s1-attack 11,368.34、H2-short 11,368.34、H2-long 18,879.018
+    - ammo-base（maxAmmoAt）: 実測なし。H1 120、H0-burst 120、H0-s1-ammo 120、H0-s1-crit 120、H0-s1-attack 120、H2-short 120、H2-long 120
+    - ammo-win1（maxAmmoAt）: 実測なし。H1 174、H0-burst 174、H0-s1-ammo 120、H0-s1-crit 174、H0-s1-attack 174、H2-short 174、H2-long 174
+    - ammo-win3（maxAmmoAt）: 実測なし。H1 174、H0-burst 174、H0-s1-ammo 120、H0-s1-crit 174、H0-s1-attack 174、H2-short 174、H2-long 174
+- **[V-0360](../records/verifications/V-0360-drake-treasure-s1-s2-minimal.md)** ドレイク（宝物あり）の宝物版 S1・S2 の効果を最小構成で確かめる
+  - 問い: ドレイク（101・宝物あり）の宝物版 S1（フルバースト開始時の味方全体の攻撃力▲・SG の味方の攻撃力▲と最大装弾数▲・命中率▲）と宝物版 S2（10 回攻撃・5 回攻撃ごとの倍率ダメージ）を説明文どおり（いまの定義）と読んで、モデルは最小構成の実測と合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-08・状態: 完了・Stage: plan/design-minimal-relevance.md 11 節の束 4（根拠の無い効果）。進め方は plan/design-skill-claims-5-2.md と同じ
+  - 録画: 036、222
+  - 観測値: 036-05、036-06、036-07、036-08、036-09、222-15、222-16、222-17、222-18
+  - 結論: C-0458、C-0459
+  - 予測（2026-10-08、commit 3d5a4f6）との比べ:
+    - s2-five（skillHitDamage）: 実測なし。H1 241,508.736、H0-all 241,508.736、H0-sg 241,508.736、H0-ammo 241,508.736、H2-short 241,508.736、H2-long 241,508.736
+    - s2-five-crit（skillHitDamage）: 実測なし。H1 362,263.104、H0-all 362,263.104、H0-sg 362,263.104、H0-ammo 362,263.104、H2-short 362,263.104、H2-long 362,263.104
+    - s2-25th（skillHitDamage）: 実測なし。H1 241,508.736、H0-all 241,508.736、H0-sg 241,508.736、H0-ammo 241,508.736、H2-short 241,508.736、H2-long 270,152.064
+    - s2-30th-sum（skillHitsDamage）: 実測なし。H1 359,567.694、H0-all 359,567.694、H0-sg 359,567.694、H0-ammo 359,567.694、H2-short 359,567.694、H2-long 359,567.694
+    - s2-40th-sum（skillHitsDamage）: 実測なし。H1 359,567.694、H0-all 359,567.694、H0-sg 359,567.694、H0-ammo 359,567.694、H2-short 359,567.694、H2-long 359,567.694
+    - s2-count（skillHitCount）: 実測なし。H1 63、H0-all 63、H0-sg 63、H0-ammo 61、H2-short 63、H2-long 63
+    - cocoa-base（hitDamage）: 実測なし。H1 172,297.95、H0-all 172,297.95、H0-sg 172,297.95、H0-ammo 172,297.95、H2-short 172,297.95、H2-long 172,297.95
+    - cocoa-base-d（hitDamage）: 実測なし。H1 223,987.335、H0-all 223,987.335、H0-sg 223,987.335、H0-ammo 223,987.335、H2-short 223,987.335、H2-long 223,987.335
+    - cocoa-fb（hitDamage）: 実測なし。H1 289,103.274、H0-all 258,446.925、H0-sg 289,103.274、H0-ammo 289,103.274、H2-short 289,103.274、H2-long 289,103.274
+    - cocoa-fb-d（hitDamage）: 実測なし。H1 346,923.929、H0-all 310,136.31、H0-sg 346,923.929、H0-ammo 346,923.929、H2-short 346,923.929、H2-long 346,923.929
+    - cocoa-fb-late（hitDamage）: 実測なし。H1 289,103.274、H0-all 258,446.925、H0-sg 289,103.274、H0-ammo 289,103.274、H2-short 258,446.925、H2-long 289,103.274
+    - cocoa-fb-late-d（hitDamage）: 実測なし。H1 346,923.929、H0-all 310,136.31、H0-sg 346,923.929、H0-ammo 346,923.929、H2-short 310,136.31、H2-long 346,923.929
+    - cocoa-after（hitDamage）: 実測なし。H1 172,297.95、H0-all 172,297.95、H0-sg 172,297.95、H0-ammo 172,297.95、H2-short 172,297.95、H2-long 192,735.516
+    - cocoa-after-d（hitDamage）: 実測なし。H1 223,987.335、H0-all 223,987.335、H0-sg 223,987.335、H0-ammo 223,987.335、H2-short 223,987.335、H2-long 250,556.171
+    - delta-base（hitDamage）: 実測なし。H1 104,313.115、H0-all 104,313.115、H0-sg 104,313.115、H0-ammo 104,313.115、H2-short 104,313.115、H2-long 104,313.115
+    - delta-base-d（hitDamage）: 実測なし。H1 135,607.05、H0-all 135,607.05、H0-sg 135,607.05、H0-ammo 135,607.05、H2-short 135,607.05、H2-long 135,607.05
+    - delta-fb（hitDamage）: 実測なし。H1 175,040.368、H0-all 156,469.672、H0-sg 175,040.368、H0-ammo 175,040.368、H2-short 175,040.368、H2-long 175,040.368
+    - delta-fb-d（hitDamage）: 実測なし。H1 210,048.442、H0-all 187,763.607、H0-sg 210,048.442、H0-ammo 210,048.442、H2-short 210,048.442、H2-long 210,048.442
+    - drake-base（hitDamage）: 実測なし。H1 25,672.283、H0-all 25,672.283、H0-sg 25,672.283、H0-ammo 25,672.283、H2-short 25,672.283、H2-long 25,672.283
+    - drake-base-d（hitDamage）: 実測なし。H1 33,373.968、H0-all 33,373.968、H0-sg 33,373.968、H0-ammo 33,373.968、H2-short 33,373.968、H2-long 33,373.968
+    - drake-fb（hitDamage）: 実測なし。H1 89,140.934、H0-all 83,127.319、H0-sg 56,721.931、H0-ammo 89,140.934、H2-short 89,140.934、H2-long 89,140.934
+    - drake-fb-d（hitDamage）: 実測なし。H1 106,969.121、H0-all 99,752.782、H0-sg 68,066.318、H0-ammo 106,969.121、H2-short 106,969.121、H2-long 106,969.121
+    - drake-ammo-base（maxAmmoAt）: 実測なし。H1 9、H0-all 9、H0-sg 9、H0-ammo 9、H2-short 9、H2-long 9
+    - drake-ammo-fb（maxAmmoAt）: 実測なし。H1 20、H0-all 20、H0-sg 20、H0-ammo 15、H2-short 20、H2-long 20
+- **[V-0361](../records/verifications/V-0361-rapi-burst-attack-minimal.md)** ラピのバーストの自分の攻撃力▲を最小構成で確かめる
+  - 問い: ラピ（10）のバーストの「自分に攻撃力 60.75%▲・10 秒」を、バースト使用の時（III の発動のフレーム）から 10 秒と読んで（いまの定義）、モデルは最小構成の実測と合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-08・状態: 完了・Stage: plan/design-minimal-relevance.md 11 節の束 4（根拠の無い効果）。進め方は plan/design-skill-claims-5-2.md と同じ
+  - 録画: 221
+  - 観測値: 221-16、221-17、221-18
+  - 結論: C-0457
+  - 予測（2026-10-08、commit 3d5a4f6）との比べ:
+    - base（hitDamage）: 実測なし。H1 16,845.861、H2-short 16,845.861、H2-long 16,845.861、H0 16,845.861
+    - base-nd（hitDamage）: 実測なし。H1 12,958.355、H2-short 12,958.355、H2-long 12,958.355、H0 12,958.355
+    - fb1-early（hitDamage）: 実測なし。H1 37,510.036、H2-short 37,510.036、H2-long 37,510.036、H0 23,325.038
+    - fb1-early-nd（hitDamage）: 実測なし。H1 31,258.364、H2-short 31,258.364、H2-long 31,258.364、H0 19,437.532
+    - fb1-late（hitDamage）: 実測なし。H1 37,510.036、H2-short 23,325.038、H2-long 37,510.036、H0 23,325.038
+    - fb1-late-nd（hitDamage）: 実測なし。H1 31,258.364、H2-short 19,437.532、H2-long 31,258.364、H0 19,437.532
+    - after1（hitDamage）: 実測なし。H1 16,845.861、H2-short 16,845.861、H2-long 27,090.582、H0 16,845.861
+    - after1-nd（hitDamage）: 実測なし。H1 12,958.355、H2-short 12,958.355、H2-long 20,838.909、H0 12,958.355
+    - fb3-late（hitDamage）: 実測なし。H1 31,258.364、H2-short 19,437.532、H2-long 31,258.364、H0 19,437.532
+    - after3（hitDamage）: 実測なし。H1 12,958.355、H2-short 12,958.355、H2-long 20,838.909、H0 12,958.355
+    - burst-hit（burstHitDamage）: 実測なし。H1 624,393.328、H2-short 624,393.328、H2-long 624,393.328、H0 624,393.328
+    - burst-hit-crit（burstHitDamage）: 実測なし。H1 936,589.991、H2-short 936,589.991、H2-long 936,589.991、H0 936,589.991
