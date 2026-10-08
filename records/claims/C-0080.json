@@ -10,5 +10,13 @@
   "updated": "2026-10-04",
   "subject": {
     "places": ["data/skills/822.json の skill1 の effects[0]"]
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["040-02"],
+      "element": "アドミ burst.effects[0]",
+      "reason": "観測量はラムの S1 の CT▼が起きるかで、リロード速度▲は CT に効かない",
+      "decided": "2026-10-08"
+    }
+  ]
 }

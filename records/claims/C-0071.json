@@ -10,5 +10,13 @@
   "updated": "2026-09-28",
   "subject": {
     "mechanism": "clock"
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["042-03", "042-05"],
+      "element": "アドミ burst.effects[0]",
+      "reason": "観測量は止まりのあいだ射撃・ダメージが止まることで、リロード速度▲の付き始めは止まりの中のゲーム内の時間に効かない",
+      "decided": "2026-10-08"
+    }
+  ]
 }

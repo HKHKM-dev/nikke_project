@@ -73,6 +73,10 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // 最初の発まで撃たないことはモデルに無い（定義の burst の notes）
   // 窓の終わりは発動から数える（実測の最後の発は後ろにずれない。plan/design-burst-effect-window-end.md）
   { resourceIds: [260], delays: { hitFrames: 0, effectFrames: 6 }, windowFromActivation: true, claim: 'C-0452' },
+  // アドミ: II の発動（六角形が II から III に替わるフレーム）から効果（味方全体のリロード速度▲・クリティカルダメージ▲）まで、
+  // 味方の会心の発で挟んだ 16〜22f の真ん中の 19f（止まりより前なので動画のフレームと同じ）。窓は遅れた始まりから数える。
+  // バーストの倍率ダメージは無い。読み直しの後付けの仮説（2026-10-08 オーナーの判断で入れた）
+  { resourceIds: [172], delays: { hitFrames: 0, effectFrames: 19 }, claim: 'C-0479' },
   // ソルジャーE.G.: III の発動からヒットまで 7f（動画で 29f。止まり 22f を含む）。バースト使用時の効果は無い（V-0247・V-0242）
   { resourceIds: [300], delays: { hitFrames: 7, effectFrames: 0 }, claim: 'C-0370' },
   // 雪子: III の発動と同じフレームにヒット（動画では III のタイマーが 00.00 になる 1f 前。フルバーストの入りの止まりの前）。
