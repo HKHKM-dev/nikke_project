@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 57・効果 193（根拠あり 176）・notes 205（根拠あり 70）
+件数: キャラ 57・効果 193（根拠あり 180）・notes 205（根拠あり 70）
 
 notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補足 8
 
@@ -277,14 +277,14 @@ notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補�
 ## 191 アリス
 
 - **skill1**: supported
-  - effects[0] timed・fullBurstStart・chargeSpeed: 根拠なし
-  - effects[1] timed・fullBurstStart・chargeDamage: 根拠なし
+  - effects[0] timed・fullBurstStart・chargeSpeed: C-0474（確定）
+  - effects[1] timed・fullBurstStart・chargeDamage: C-0474（確定）
 - **skill2**: noEffect
   - notes[0] 前提の外: 貫通特化は敵 1 体ではダメージに関係しない: C-0443（範囲外）
   - notes[1] 前提の外: HP 80% 未満のときの回復は、被弾を扱わないので起きない: 根拠なし
 - **burst**: supported
-  - effects[0] timed・burstUse・chargeSpeed: 根拠なし
-  - effects[1] timed・burstUse・attack: 根拠なし
+  - effects[0] timed・burstUse・chargeSpeed: C-0475（確定）
+  - effects[1] timed・burstUse・attack: C-0475（確定）
 
 ## 194 ルドミラ：ウィンターオーナー
 
