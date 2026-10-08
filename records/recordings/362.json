@@ -1,0 +1,47 @@
+{
+  "id": "362",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-362_sr+sg+sr+rl_cocoa+soldier-fa+alice+raven_alice-s1-burst.mp4",
+  "original": "2026-10-08_21-28-17.mp4",
+  "durationSec": 205.5,
+  "frames": 12327,
+  "fps": 60,
+  "sizeMB": 249.1,
+  "sha256": "5d638c629a2d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。f30 の出撃画面で編成と枠順を確かめた）。ココア（I・AI）+ ソルジャーF.A.（II・AI）+ アリス（III・操作）+ レイヴン（III・AI）。AUTO 射撃 ON・オートバースト ON（画面左上）。終わりの戦闘履歴のパネル（f12150〜）で 4 体の名前と枠を確かめた。フルバーストの始まり（III のタイマーが 00.00 になったフレーム）は f1368・2571・3772・4974・6175・7378・8578・9823・11024 で、III はアリス（1・3・5・7・9 回目）とレイヴン（2・4・6・8 回目）が交互に撃った（フルバーストの中のアリスの 1 発の値で分けた）。取り込みのときは 358 を振ったが、ほかの取り込みと重なったので 362 に振り直した。V-0357"
+}
