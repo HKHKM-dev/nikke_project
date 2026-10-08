@@ -483,7 +483,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
 - **skill1**: noEffect
   - notes[0] 計算に無関係: 通常攻撃命中時（確率 20%）の残りの HP が最も低い味方 1 機の防御力▲は、被弾を扱わないのでダメージに関係しない: C-0072（確定）
 - **skill2**: supported
-  - effects[0] timed・17 秒ごと・critRate: C-0406（仮説）
+  - effects[0] timed・17 秒ごと・critRate: C-0496（確定）
 - **burst**: unsupported
   - notes[0] 未対応: 味方全体の攻撃力▲（10 秒）は未対応（単騎ではバーストを撃たず、撮っていない）: 根拠なし
 

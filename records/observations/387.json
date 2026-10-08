@@ -1,0 +1,281 @@
+[
+  {
+    "id": "387-01",
+    "recording": "387",
+    "kind": "total",
+    "use": "record",
+    "value": 25357560,
+    "description": "プロダクト08 の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11310。増分は 101 個"
+    },
+    "source": "V-0375",
+    "readAt": "2026-10-09"
+  },
+  {
+    "id": "387-02",
+    "recording": "387",
+    "kind": "count",
+    "use": "record",
+    "value": 101,
+    "unit": "トリガー",
+    "description": "プロダクト08 のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 101 個。前の増分から 30f 未満の増分（0 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 31f）から発の数を決めた（2 発になった組 0 個）"
+    },
+    "source": "V-0375",
+    "readAt": "2026-10-09"
+  },
+  {
+    "id": "387-03",
+    "recording": "387",
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1004, 2005, 3006, 4007, 5008, 6009, 7010, 8010, 9011, 10012],
+    "unit": "f",
+    "description": "S2 の窓の始まり（枠のバフの列に矢印のアイコンが出たフレーム）。戦闘開始（残り時間の表示が出た f756）からの数。10 回",
+    "method": {
+      "tool": "tools/captures/banner.ts・tools/captures/timer.ts --mode changes・使い捨てのスクリプト",
+      "note": "バフの列（1920×1080 で x 890〜1010・y 1040〜1076）の 21px ごとのスロットで、青い画素（B > 110・B − R > 70）が 80 以上のスロットの数の変わり目を全フレームで取った（使い捨てのスクリプト）。アイコンは残り時間で上から暗くなるので、図柄では分けない。S2 の帯（banner.ts）の立ち上がりの 1〜2f 後に数が増えたフレームを始まりとした。帯の立ち上がりは f1759・f2759・f3761・f4762・f5763・f6764・f7765・f8765・f9766・f10767。戦闘開始の直後（f0 付近）には帯もアイコンも出ない。モデル（1000k）との差は 1 回目の +4 から 10 回目の +12 まで、1 回ごとに約 0.9f 広がる（周期が 1000 ティックより長い 387-07 と、止まり）。許容 ±10f は撮る前に決めた値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "critRate",
+        "video": true
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "387-04",
+    "recording": "387",
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "interval",
+    "use": "record",
+    "value": 294,
+    "unit": "f",
+    "description": "S2 の窓の長さ（矢印のアイコンが出てから消えるまで）。読めた回の値",
+    "method": {
+      "tool": "使い捨てのスクリプト（バフの列のアイコンの数）",
+      "note": "1・2・4・5・6・9・10 回目が 294f。3・7・8 回目は背景が明るくなって画素の数え方が崩れた（281〜283f で落ちたように出る）。3 回目は画で、始まり（f3762）から 294f の f4056 で矢印のアイコンが消え、盾のアイコンは残ることを確かめた。アイコンの数の落ちを、始まりから 280〜310f の中で取った。モデルは floor(5 ÷ 0.017) = 294f（予測ファイルの s2-ends − s2-starts）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "387-05",
+    "recording": "387",
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "count",
+    "use": "record",
+    "value": [9, 27],
+    "description": "S2 の窓の中の発のうち、会心の数と全体の数。割合は 0.333",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（総ダメージの増分）+ 使い捨てのスクリプト",
+      "note": "窓は 387-03 の始まりから 294f（[始まり, 始まり + 294)）。増分 234,028（胴体）・269,133（胴体・距離ボーナス）を会心なし、292,535・327,640（それぞれの × 1.25）を会心とした。コアの値は出ない。どれにも当たらない増分（的のジャンプの始まりの直後のチャージ途中の発。f2242（112,708）・f6711（247,656）・f10803（119,998））は数えない。境目の近くの発: 窓の始まりから 5f の f1765（会心でない）と、終わりから 2f 後の f11064（会心でない。外に数えた）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "387-06",
+    "recording": "387",
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "count",
+    "use": "record",
+    "value": [8, 71],
+    "description": "S2 の窓の外の発のうち、会心の数と全体の数。割合は 0.113",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（総ダメージの増分）+ 使い捨てのスクリプト",
+      "note": "387-05 と同じ読み方で、窓の外の発"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "387-07",
+    "recording": "387",
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "interval",
+    "use": "record",
+    "value": 1000.63,
+    "unit": "f",
+    "description": "S2 の帯の 1 周期を、ゲーム内のティック（止まりを除いた 1 フレーム 0.017 秒）に直した長さ（1 回目と 10 回目のあいだ ÷ 9）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode ticks",
+      "note": "帯の立ち上がり（387-03 の注）を --start 756 でティックに直した。周期ごとの差は 1000.0 前後と 1001.0 前後が混ざる。ceil(17 ÷ 0.017) = 1000（C-0432）より長い"
+    }
+  },
+  {
+    "id": "387-08",
+    "recording": "387",
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.3333,
+    "description": "S2 の窓の中の発のうち会心の割合（9 ÷ 27）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（総ダメージの増分）+ 使い捨てのスクリプト",
+      "note": "387-05 の割合。許容 ±0.18 は 1 本（約 28 発）の H1 の標準誤差の 2 倍で、1 本では H1 と H0 を見分けない。判定は 3 本の合計（387-10）で行う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 1100
+      },
+      "tolerance": {
+        "abs": 0.18
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "387-09",
+    "recording": "387",
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.1127,
+    "description": "S2 の窓の外の発のうち会心の割合（8 ÷ 71。対照）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（総ダメージの増分）+ 使い捨てのスクリプト",
+      "note": "387-06 の割合。許容 ±0.085 は 1 本（約 70 発）の標準誤差（素の 0.15）の 2 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.085
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "387-10",
+    "recording": "387",
+    "recordings": ["387", "388", "389"],
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "rate",
+    "use": "record",
+    "value": 0.3929,
+    "description": "S2 の窓の中の発のうち会心の割合（録画 387・388・389 の 3 本の合計。33 ÷ 84）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（総ダメージの増分）+ 使い捨てのスクリプト",
+      "note": "387-05（9 ÷ 27）・388-05（12 ÷ 27）・389-05（12 ÷ 30）の合計。撮る前に決めた許容（H1 の 0.3799 ± 0.106）の中。二項分布で、H1 からは +0.2σ（標準誤差 0.053）、H0（0.15）からは +6.2σ（標準誤差 0.039）。比べる観測値は録画ごとの 387-08・388-08・389-08（複数の録画にまたがる観測値は compare に使えない）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "387-11",
+    "recording": "387",
+    "recordings": ["387", "388", "389"],
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "rate",
+    "use": "record",
+    "value": 0.1546,
+    "description": "S2 の窓の外の発のうち会心の割合（録画 387・388・389 の 3 本の合計。32 ÷ 207。対照）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（総ダメージの増分）+ 使い捨てのスクリプト",
+      "note": "387-06（8 ÷ 71）・388-06（13 ÷ 70）・389-06（11 ÷ 66）の合計。撮る前に決めた許容（0.15 ± 0.05）の中（素の 0.15 から +0.2σ）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "387-12",
+    "recording": "387",
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "total",
+    "use": "compare",
+    "value": 25357560,
+    "description": "プロダクト08 の与ダメージ（単騎・AUTO・180 秒）。会心の偏りで動くので、仮説の見分けには使わない",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "387-01 の値。許容 ±2% は L-HC-01 と同じ。会心の偏りだけで 1σ 約 1.8%（V-0375「予測」の見積り）。バーストは撃っていない（チャージ途中の発のほかの増分が、どれも攻撃力▲の無い 4 つの値に乗る）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "387-13",
+    "recording": "387",
+    "recordings": ["387", "388", "389"],
+    "source": "V-0375",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "record",
+    "value": [1004, 1005, 1005],
+    "unit": "f",
+    "description": "S2 の 1 回目の窓の始まり（矢印のアイコンが出たフレーム。戦闘開始からの数。録画 387・388・389）。3 本とも、戦闘開始の直後（f0 付近）には帯もアイコンも出ない",
+    "method": {
+      "tool": "tools/captures/banner.ts・使い捨てのスクリプト（バフの列のアイコンの数）",
+      "note": "387-03・388-03・389-03 の 1 回目と、その注の「戦闘開始の直後には出ない」。H1 の 1000（1 周期後）に +4〜+5f、H2 の 0（戦闘開始時）とは合わない。2 回目以降の始まりのずれ（周期の長さ）は V-0375「分からないこと」で別の検証に回した"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  }
+]
