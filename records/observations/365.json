@@ -1,0 +1,125 @@
+[
+  {
+    "id": "365-01",
+    "recording": "365",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0366",
+    "readAt": "2026-10-08",
+    "value": 25672,
+    "description": "ココア + デルタ + ドレイク（宝物あり・操作）の、1 回目のフルバーストより前のドレイクの 1 ペレット（胴体・会心なし・距離ボーナスなし）。単位 12,836.02（9 トリガー・165 単位。f842〜1156）の 2 倍（25,672.04）。f1117 の 256,720 は胴体 10 ペレット、f921・1039 の 231,048 は胴体 9 ペレット",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（recipe hud-jumps のキャッシュ hud-jumps@2。hud.ts --mode jumps）を、ドレイクの 1 ペレットの単位（倍率 0.5 分。胴体はフルバーストの中 3 単位・外 2 単位、会心・コア・コア会心はそれぞれ 1・2・3 単位多い。距離ボーナスの無い区間）で割り、整数に乗った増分（ココア・デルタの 1 発・S2 の倍率ダメージ・バーストのヒットが混ざらないトリガー）から単位を Σ増分 / Σ単位数 で出した。フルバーストの窓は、バーストの倍率ダメージの 1 ヒット目の増分（f1261・3641・6093・8473・10853。FULL BURST の表示の明けの最初の読み）から動画の 584f まで（222-01 の入りの 26f と、10 秒 + 入りの止まりの 610f から）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "365-02",
+    "recording": "365",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0366",
+    "readAt": "2026-10-08",
+    "value": 89141,
+    "description": "同じ録画の、1〜5 回目のフルバーストの中のドレイクの 1 ペレット（胴体・会心なし・距離ボーナスなし）。単位 29,713.66（54 トリガー・1,591 単位）の 3 倍（89,140.98）。窓の中の増分のうち、SG の味方の攻撃力▲（S1 の effects[1]）の無い 1 ペレット（H0-sg の胴体 56,722 の 1/3 の単位）に乗るものは 0 個",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（recipe hud-jumps のキャッシュ hud-jumps@2。hud.ts --mode jumps）を、ドレイクの 1 ペレットの単位（倍率 0.5 分。胴体はフルバーストの中 3 単位・外 2 単位、会心・コア・コア会心はそれぞれ 1・2・3 単位多い。距離ボーナスの無い区間）で割り、整数に乗った増分（ココア・デルタの 1 発・S2 の倍率ダメージ・バーストのヒットが混ざらないトリガー）から単位を Σ増分 / Σ単位数 で出した。フルバーストの窓は、バーストの倍率ダメージの 1 ヒット目の増分（f1261・3641・6093・8473・10853。FULL BURST の表示の明けの最初の読み）から動画の 584f まで（222-01 の入りの 26f と、10 秒 + 入りの止まりの 610f から）。1 ペレットずつ丸めた値（胴体 89,141・会心 118,855・コア 148,568・コア会心 178,282）の和でも、54 トリガーが ±2 で乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "365-03",
+    "recording": "365",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0366",
+    "readAt": "2026-10-08",
+    "value": 9,
+    "unit": "発",
+    "description": "同じ録画の、1 回目のフルバーストより前のドレイクの最大装弾数（戦闘開始の照準の横の残弾 9。f832）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 300
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "365-04",
+    "recording": "365",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0366",
+    "readAt": "2026-10-08",
+    "value": 20,
+    "unit": "発",
+    "description": "同じ録画の、フルバーストの中で終わったリロードの直後のドレイクの照準の横の残弾（最大装弾数）。2 回目 f3988・3 回目 f6242・4 回目 f8582・5 回目 f11196 でどれも 20。SG の味方の最大装弾数▲（S1 の effects[2]）が無ければ 15（バーストの▲だけ）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "リロードの段ごとの込めは 7 ずつ（2 回目: f3928 で 7・f3958 で 14・f3988 で 20。round(0.33 × 20)）。1 回目はリロードの途中に窓が始まり、f1230 で 5・f1281 で 12・f1311 で 19・f1341 で 20"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 900
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

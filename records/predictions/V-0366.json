@@ -1,0 +1,201 @@
+{
+  "verification": "V-0366",
+  "note": "撮影計画 D1 の編成: ココア（I・AI）+ デルタ（II・AI）+ ドレイク（III・操作・AUTO 射撃 ON・オートバースト ON・宝物 3 段階）・灼熱の BigArms・3 分モード・スペック固定 ON（録画 222 と同じ）。V-0360 の予測ファイルの C の指標と仮説を写した（2026-10-08）。V-0360 では指標の枠・コアが録画と合わず予測と結び付かなかったので、指標を D1 の読み方に合わせた: ドレイクは枠 3（3 体の編成のまま）、1 ペレットは胴体（コアなし・会心なし。HUD の 1 トリガーの増分の格子の単位から出す胴体の値。V-0293・222-13 の読み方）。setup に condition を書かない（手入力の条件。結論の根拠にするため。plan/design-minimal-relevance.md 11.7 節）。モデルのフルバーストは f407〜995・2759〜3347…（S1 の窓もこれと同じ）。hitDamage・maxAmmoAt のフレームは窓の中と前の代表",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 101,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（宝物版 S1 の effects[0]: フルバースト開始時に味方全体に攻撃力 11.85%▲・10 秒、effects[1]: SG の味方に攻撃力 63.88%▲・10 秒、effects[2]: SG の味方に最大装弾数 50.14%▲・10 秒、effects[3]: 味方全体に命中率 20.09%▲・10 秒。宝物版 S2 の effects[0]: 10 回攻撃ごとに最終攻撃力の 98.55%、effects[1]: 5 回攻撃ごとに 201.6%。どちらも単体ボスに 1 ヒット）"
+    },
+    {
+      "id": "H0-sg",
+      "note": "S1 の SG の味方への攻撃力▲（effects[1]）が乗らない（対象を MG に替える）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 101,
+            "skill": "skill1",
+            "treasure": true,
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "attack",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-ammo",
+      "note": "S1 の SG の味方への最大装弾数▲（effects[2]）が乗らない（対象を MG に替える）。バーストの最大装弾数▲（C-0420）は乗る",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 101,
+            "skill": "skill1",
+            "treasure": true,
+            "replace": 2,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "ref": 7,
+              "durationRef": 8
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "drake-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバーストより前のドレイクの 1 ペレット（胴体・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "drake-base-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ 1 ペレットの距離ボーナスあり"
+    },
+    {
+      "id": "drake-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "フルバーストの中のドレイクの 1 ペレット（胴体・会心なし・距離ボーナスなし）。フルバースト補正、S1 の effects[0]・effects[1]、バーストの攻撃ダメージ▲（C-0420）が乗る"
+    },
+    {
+      "id": "drake-fb-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ 1 ペレットの距離ボーナスあり"
+    },
+    {
+      "id": "drake-ammo-base",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバーストより前のドレイクの最大装弾数（照準の横の残弾の、リロード直後の値）"
+    },
+    {
+      "id": "drake-ammo-fb",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "フルバーストの中の最大装弾数（窓の中で終わったリロードの直後の照準の横の残弾）。S1 の effects[2] とバーストの最大装弾数▲（C-0420）の和で効く"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "672ee3ae92b51d1b55ea7149ae8cc8c6e5bd9c05",
+    "values": {
+      "H1": {
+        "drake-base": 25672.282799999997,
+        "drake-base-d": 33373.96764,
+        "drake-fb": 89140.93381847997,
+        "drake-fb-d": 106969.12058217598,
+        "drake-ammo-base": 9,
+        "drake-ammo-fb": 20
+      },
+      "H0-sg": {
+        "drake-base": 25672.282799999997,
+        "drake-base-d": 33373.96764,
+        "drake-fb": 56721.93138144,
+        "drake-fb-d": 68066.31765772801,
+        "drake-ammo-base": 9,
+        "drake-ammo-fb": 20
+      },
+      "H0-ammo": {
+        "drake-base": 25672.282799999997,
+        "drake-base-d": 33373.96764,
+        "drake-fb": 89140.93381847997,
+        "drake-fb-d": 106969.12058217598,
+        "drake-ammo-base": 9,
+        "drake-ammo-fb": 15
+      }
+    },
+    "seen": {}
+  }
+}

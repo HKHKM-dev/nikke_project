@@ -83,7 +83,10 @@
           "targetWeapon": "SG",
           "stat": "attack",
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-0471"
+          ]
         },
         {
           "kind": "timed",
@@ -92,7 +95,10 @@
           "targetWeapon": "SG",
           "stat": "maxAmmo",
           "ref": 7,
-          "durationRef": 8
+          "durationRef": 8,
+          "claims": [
+            "C-0471"
+          ]
         },
         {
           "kind": "timed",

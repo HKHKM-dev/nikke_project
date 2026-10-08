@@ -1,0 +1,17 @@
+{
+  "id": "C-0471",
+  "text": "ドレイク（宝物あり）の宝物版 S1 の SG の味方への攻撃力▲（スキル Lv10 で 63.88%）と最大装弾数▲（50.14%）は、説明文どおりフルバーストの開始で SG の味方（自分を含む）に付き、フルバーストの中の 1 ペレットと最大装弾数に乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`365-02`（フルバーストの中のドレイクの 1 ペレット（胴体）が、S1 の effects[1] の付いた値。54 トリガーがその格子に乗り、付かない値（H0-sg）の格子に乗る増分は 0 個）・`365-04`（フルバーストの中で終わったリロードの後の最大装弾数が 4 回とも 20。effects[2] が無ければ 15）・`365-01`・`365-03`（フルバーストの前の 1 ペレットと最大装弾数。対照）。どれもモデルと端数まで合う。撮る前に commit した予測（V-0366。V-0360 の C の指標を録画に合わせて写した）の H1 だけが 4/4。V-0366",
+  "model": "反映（`data/skills/101.json` の treasureSkills.skill1 の effects[1]・effects[2]（`timed`・`fullBurstStart`・味方の SG・攻撃力・最大装弾数・10 秒））",
+  "replaces": [],
+  "updated": "2026-10-08",
+  "subject": {
+    "places": [
+      "data/skills/101.json の treasureSkills.skill1 の effects[1]",
+      "data/skills/101.json の treasureSkills.skill1 の effects[2]"
+    ]
+  }
+}

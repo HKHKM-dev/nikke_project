@@ -1,0 +1,42 @@
+{
+  "id": "365",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-365_sr+sr+sg_cocoa+delta+drake_drake-auto.mp4",
+  "original": "2026-10-08_21-38-31.mp4",
+  "durationSec": 201.3,
+  "frames": 12077,
+  "fps": 60,
+  "sizeMB": 243.9,
+  "sha256": "469ff94a1a77",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0366（撮影 D1）。ココア（I）+ デルタ（II）+ ドレイク（III・宝物あり・操作・AUTO 射撃 ON）、オートバースト ON。録画 222 と同じ編成。出撃画面で灼熱タブ・3 分モード・スペック固定 ON、戦闘履歴で枠順・キャラ名・Lv.400・合計交戦時間 03:00 を確かめた"
+}
