@@ -1,0 +1,29 @@
+{
+  "id": "335",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-335_smg_liter_auto.mp4",
+  "original": "2026-10-08_01-05-34.mp4",
+  "durationSec": 201.4,
+  "frames": 12085,
+  "fps": 60,
+  "sizeMB": 243.8,
+  "sha256": "78b68cf81eff",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0328（SMG の遠の弾丸命中率を遠の着地点ごとに）の 1 日目の 8 本の 7 本目。リター単騎・3 分モードを撃ち切る。条件（スペック固定 ON・AUTO 射撃 ON・オートバースト OFF・灼熱タブ）は撮影の計画の値"
+}
