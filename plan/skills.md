@@ -159,7 +159,7 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
   - effects[3] passive・projectileExplosionDamage: C-0374（確定）、C-0306（確定）
   - notes[0] 計算に無関係: フォーメーションAS 適用中の陽動発動不可はダメージに関係しない: 根拠なし
 - **burst**: supported
-  - effects[0] timed・burstUse・attack: C-0337（確定）
+  - effects[0] timed・burstUse・attack: C-0337（確定）、C-0497（確定）
   - effects[1] timed・burstUse・damageTaken: C-0335（確定）、C-0336（仮説）、C-0379（仮説）
   - notes[0] 計算に無関係: 味方全体の受ける HP 回復量▲はダメージに関係しない: 根拠なし
 
