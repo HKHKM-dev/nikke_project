@@ -10,6 +10,8 @@ import { explosionHitMultiplier, FULL_BURST_BOOST, skillElementMultiplier } from
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
 import {
+  isShotCountTrigger,
+  isTimerTrigger,
   SKILL_SLOTS,
   type DamageCondition,
   type DotFirstTick,
@@ -203,7 +205,32 @@ export function resolveTimerGauges(def: SkillDefinition): number[] {
   const out: number[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    for (const effect of entry.effects) if (effect.kind === 'burstGaugeHit') out.push(effect.trigger.everySeconds);
+    for (const effect of entry.effects) {
+      if (effect.kind === 'burstGaugeHit' && isTimerTrigger(effect.trigger)) out.push(effect.trigger.everySeconds);
+    }
+  }
+  return out;
+}
+
+/**
+ * モラン編（plan/design-moran.md 3 節）: 射撃の回数のトリガーでゲージだけを溜める効果（burstGaugeHit）の、Lv の数値に解決した
+ * トリガーの列（効果ごとに 1 つ）。unsupported なら空。1 回の量は射手の targetBurstEnergyPerShot で、発火した射撃のフレームに足す
+ * （frame/firstPass.ts）
+ */
+export function resolveShotGauges(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedShotCountTrigger[] {
+  const out: ResolvedShotCountTrigger[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const entry = def.skills[slot];
+    for (const effect of entry.effects) {
+      if (effect.kind !== 'burstGaugeHit' || !isShotCountTrigger(effect.trigger)) continue;
+      const trigger = resolveTrigger(effect.trigger, character.skills[slot], levels[slot]);
+      if (!isResolvedShotCount(trigger)) throw new RangeError('burstGaugeHit needs a timer or shot count trigger');
+      out.push(trigger);
+    }
   }
   return out;
 }

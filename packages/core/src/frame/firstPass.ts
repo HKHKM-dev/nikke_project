@@ -38,6 +38,7 @@
 //
 // フラワー編（plan/design-flower-s2-gauge.md 3 節）: 周期でゲージだけを溜める効果（burstGaugeHit）は、ループの前に発火のフレームへ
 // 射手の 1 ヒットぶんのゲージを予約し、段のヒットと同じく手順 2 で足す（I-DOLL・フラワーの S2。C-0178）。
+// モラン編（plan/design-moran.md 3 節）: 射撃の回数のトリガーの burstGaugeHit は、射撃を数えて発火した射撃のフレームのゲージに足す。
 //
 // 持続の命中率▲（plan/design-sustained-hit-rate-gauge.md）: 当たりに効く状態の stat（HIT_STATE_STATS）の timed 効果の窓（当たりの窓）
 // を追い、条件が自動の枠の発のゲージと命中の期待値を、常時の N + 効いている持続の▲で出し直す（options.hitRateWith。2 パス目の
@@ -57,7 +58,12 @@ import {
 } from '../burst/controller.ts';
 import { SG_PELLET_GAUGE_HIT_RATE, burstUnitOf, energyPerTrigger, partialGaugeRatio } from '../burst/dynamic.ts';
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
-import { resolveDamageGauges, resolveDotEffects, resolveTimerGauges } from '../skills/burstDamage.ts';
+import {
+  resolveDamageGauges,
+  resolveDotEffects,
+  resolveShotGauges,
+  resolveTimerGauges,
+} from '../skills/burstDamage.ts';
 import { effectFrameOf, type BurstActivation, type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
 import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
 import { chanceScaleAt, chanceValueOf, type ChanceOpportunity } from '../skills/chance.ts';
@@ -616,6 +622,22 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       });
     }
   });
+  // モラン編（plan/design-moran.md 3 節）: 射撃の回数でゲージだけを溜める効果（burstGaugeHit）。射撃を数えて、発火した射撃の
+  // フレームのゲージに足す（付けるのは撃った時でヒットではないので、飛ぶ時間は足さない）
+  const shotGaugeTrackers: { slotIndex: number; count: ShotCountKind; every: number; energy: number; n: number }[] = [];
+  slots.forEach((slot, i) => {
+    if (slot === null || slot.definition === null) return;
+    for (const t of resolveShotGauges(slot.definition, slot.character, slot.levels)) {
+      if (t.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
+      shotGaugeTrackers.push({
+        slotIndex: i,
+        count: t.count,
+        every: t.every,
+        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
+        n: 0,
+      });
+    }
+  });
   // レイヴン編（plan/design-raven-s1.md 4 節）: ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick）。射撃を数えて
   // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する。
   // V-0113（10 節）: バースト使用時に付く効果（burstUse。クルミのハッキング）も同じまとまりの発火として、手順 3 の出来事で追う
@@ -799,6 +821,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       // 射撃ごとの倍率ダメージのヒット（S1 の追加ダメージなど）も、発の着弾から数える（飛ぶ時間。plan/design-anis-star-gauge-timing.md 3.1 節）
       const flight = shotFlightAt(t.slotIndex, f);
       for (const d of t.gaugeHits) gauge += landingGauge(t.slotIndex, f + flight + d, f, t.energy);
+    }
+    // モラン編: 射撃の回数でゲージだけを溜める効果。発火した射撃のフレームのゲージに足す
+    for (const t of shotGaugeTrackers) {
+      const shot = shotEvents[t.slotIndex];
+      if (shot === null || shot === undefined) continue;
+      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
+      t.n = counted.count;
+      if (counted.fired) gauge += t.energy;
     }
     // レイヴン編: ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
     // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）

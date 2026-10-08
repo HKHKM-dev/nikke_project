@@ -1,0 +1,216 @@
+{
+  "formatVersion": 1,
+  "resourceId": 281,
+  "checkedAt": "2026-10-09",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時の、自分の失った HP に応じた防御力▲はダメージに関係しない",
+          "en": "The DEF increase on self by HP lost (from the start of battle) does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "武器変更状態で通常攻撃が 5 回命中した時の、対象への追加ダメージ（最終攻撃力の X%）は未対応（撮っていない。武器変更の中の命中を数えるトリガーが無い）",
+          "en": "The additional damage (X% of final ATK) on the target after landing 5 normal attacks while the weapon is changed is not modeled (not recorded; no trigger counts hits during the weapon change)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "weaponChangeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "assumes": {
+            "ja": "対象「最終攻撃力が最も高い敵 3 機」は単体ボスで 1 機で、付けるたびに 1 回溜める（3 機いるときに 3 回溜めるかは確かめていない）。実測では撃った 6f 後に溜まるが、モデルは撃ったフレームに置く（レイヴンの S1 を付けたときと同じ）",
+            "en": "The 3 enemies with the highest final ATK are the lone boss, so each taunt charges once (whether 3 enemies charge 3 times is unverified). In recordings the gauge rises 6 frames after the shot; the model puts it on the shot frame (same as applying Raven S1)"
+          },
+          "claims": [
+            "C-0480"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最後の弾丸で攻撃した時の、最終攻撃力が最も高い敵 3 機への挑発（4 秒）そのものはダメージに関係しない（ゲージは effects[0]）",
+          "en": "The taunt itself (4 s) on the 3 enemies with the highest final ATK when firing the last bullet does not affect damage (the gauge is effects[0])",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "HP 20% 以下の時の、自分への使用回数別の最大 HP▲はダメージに関係しない",
+          "en": "The max HP increases on self by number of uses when HP falls to 20% or below do not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "使用武器の変更（最終攻撃力の X% のダメージ・10 秒）は未対応（撮っていない）",
+          "en": "The weapon change (X% of final ATK per shot, 10 s) is not modeled (not recorded)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分への装弾数無限（10 秒）は未対応（使用武器の変更と合わせて撮っていない）",
+          "en": "Unlimited ammo on self (10 s) is not modeled (not recorded, together with the weapon change)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "infiniteAmmo",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
+          "en": "The lifesteal on self (restore X% of attack damage, 10 s) is not modeled (it changes the activation of allies with on-healed effects)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "敵全体への挑発（ヘイト）、味方全体への受けるダメージ▼・発動者基準の防御力▲はダメージに関係しない",
+          "en": "The taunt on all enemies (Hate), and the damage taken decrease and caster-based DEF increase on all allies do not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時の、自分の失った HP に応じた防御力▲はダメージに関係しない",
+          "en": "The DEF increase on self by HP lost (from the start of battle) does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "武器変更状態で通常攻撃が 5 回命中した時の、対象への追加ダメージ（最終攻撃力の X%）は未対応（撮っていない。武器変更の中の命中を数えるトリガーが無い）",
+          "en": "The additional damage (X% of final ATK) on the target after landing 5 normal attacks while the weapon is changed is not modeled (not recorded; no trigger counts hits during the weapon change)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "weaponChangeShot"
+          }
+        },
+        {
+          "ja": "ラプチャーが出現した時の、自分への熱血（バーストスキルのクールタイム 20 秒▼・持続）は未対応（持続するクールタイム▼の語彙が無い。撮っていない）",
+          "en": "Fervor on self when Raptures appear (Burst Skill cooldown -20 s, continuous) is not modeled (no vocabulary for a continuous cooldown reduction; not recorded)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "cooldownReduction",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "assumes": {
+            "ja": "対象「最終攻撃力が最も高い敵 3 機」は単体ボスで 1 機で、付けるたびに 1 回溜める（3 機いるときに 3 回溜めるかは確かめていない）。実測では撃った 6f 後に溜まるが、モデルは撃ったフレームに置く（レイヴンの S1 を付けたときと同じ）。宝物版の S2 も挑発の行は同じなので、同じとみた",
+            "en": "The 3 enemies with the highest final ATK are the lone boss, so each taunt charges once (whether 3 enemies charge 3 times is unverified). In recordings the gauge rises 6 frames after the shot; the model puts it on the shot frame (same as applying Raven S1). The treasure S2 has the same taunt line, so it is taken as the same"
+          },
+          "claims": [
+            "C-0480"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最後の弾丸で攻撃した時の、最終攻撃力が最も高い敵 3 機への挑発（4 秒）そのものはダメージに関係しない（ゲージは effects[0]）",
+          "en": "The taunt itself (4 s) on the 3 enemies with the highest final ATK when firing the last bullet does not affect damage (the gauge is effects[0])",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "HP 20% 以下の時の、自分への使用回数別の最大 HP▲はダメージに関係しない",
+          "en": "The max HP increases on self by number of uses when HP falls to 20% or below do not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "フルバーストタイムの発動時、熱血状態なら味方全体のバーストスキルクールタイム▼は未対応（撮っていない）",
+          "en": "The Burst Skill cooldown reduction on all allies when Full Burst starts while in Fervor is not modeled (not recorded)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "cooldownReduction",
+            "target": "allies",
+            "trigger": "fullBurstStart"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "使用武器の変更（最終攻撃力の X% のダメージ・10 秒）は未対応（撮っていない）",
+          "en": "The weapon change (X% of final ATK per shot, 10 s) is not modeled (not recorded)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分への装弾数無限（10 秒）は未対応（使用武器の変更と合わせて撮っていない）",
+          "en": "Unlimited ammo on self (10 s) is not modeled (not recorded, together with the weapon change)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "infiniteAmmo",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
+          "en": "The lifesteal on self (restore X% of attack damage, 10 s) is not modeled (it changes the activation of allies with on-healed effects)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "敵全体への挑発（ヘイト）、味方全体への受けるダメージ▼・発動者基準の防御力▲はダメージに関係しない",
+          "en": "The taunt on all enemies (Hate), and the damage taken decrease and caster-based DEF increase on all allies do not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "味方全体への発動者基準の攻撃力▲（10 秒）は未対応（撮っていない）",
+          "en": "The caster-based ATK increase on all allies (10 s) is not modeled (not recorded)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
