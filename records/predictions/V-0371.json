@@ -1,0 +1,95 @@
+{
+  "verification": "V-0371",
+  "note": "録画 100・105 の読み直し（クルミ単騎・操作・手で撃つ・灼熱の的・3 分モード・スペック固定 ON。どちらもバーストを 4 回使う）。比べる指標は、発動の後も撃ち続けた録画 100 の発で読む（105 は発動の前後に撃っていないので、ハッキングの tick の値を記録にする）。I の段の発動には止まりが無いので、動画のフレームの差がそのままモデルのフレーム。効果の遅れが表の値と違う仮説は、遅れの表（burst/landing.ts）で切り替わるので、このファイルの範囲外（検証記録に手で書く）",
+  "team": [
+    {
+      "rid": 862,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。クルミは遅れの表（MEASURED_BURST_DELAYS）に行が無く、バースト使用時の効果（敵全体の受けるダメージ▲・バースト使用時のハッキング）は I の発動と同じフレームに付く（遅れ 0）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "buffed-first-1",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバースト（I の発動）の後のクルミの最初の発から、受けるダメージ▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-2",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のバースト（I の発動）の後のクルミの最初の発から、受けるダメージ▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-3",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目のバースト（I の発動）の後のクルミの最初の発から、受けるダメージ▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-4",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目のバースト（I の発動）の後のクルミの最初の発から、受けるダメージ▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-09",
+    "commit": "debecf5f63631c1b83fae234d879c67623158c06",
+    "values": {
+      "H0": {
+        "buffed-first-1": 0,
+        "buffed-first-2": 0,
+        "buffed-first-3": 0,
+        "buffed-first-4": 0
+      }
+    },
+    "seen": {
+      "100": ["100-01", "100-02", "100-03", "100-04", "100-05"],
+      "105": ["105-01", "105-02", "105-03", "105-04"]
+    }
+  }
+}

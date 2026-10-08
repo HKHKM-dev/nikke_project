@@ -80,5 +80,152 @@
       "slot": 1,
       "source": "dot"
     }
+  },
+  {
+    "id": "100-06",
+    "recording": "100",
+    "source": "V-0371",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "compare",
+    "value": 0,
+    "unit": "f",
+    "description": "クルミ単騎の 1 回目のバースト（I の発動 = 六角形が I から II に替わったフレーム f2371。V-0060 の B と同じフレーム）の後の最初の発（0f）から、受けるダメージ▲の乗った最初の発までのモデルのフレーム数。発動の後の最初の発がもう▲の値（× 1.1806）。▲の無い最後の発は -6f、▲の乗った最初の増分は 0f（発動から）",
+    "method": {
+      "tool": "右のバースト欄の六角形の色（ffmpeg の select=between(n,…)・crop=10:10:1763:435 の平均の色。緑の I から緑でない色に替わった最初のフレーム。V-0370 と同じ）、recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2。V-0371 で作った）と、使い捨てのスクリプトでの分け方",
+      "note": "増分を、クルミの 1 発（胴体 10,797.29 × (1 + コア 1 + 距離 0.3 + 会心 0.5) の 8 通り）と tick（41,322.36・61,983.54）の、▲なしと × 1.1806 の格子（2 つの和まで）に ±2（和は ±3）で当てた（V-0054・V-0060 と同じ格子）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "fromShot": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "100-07",
+    "recording": "100",
+    "source": "V-0371",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "compare",
+    "value": 0,
+    "unit": "f",
+    "description": "クルミ単騎の 2 回目のバースト（I の発動 = 六角形が I から II に替わったフレーム f4695。V-0060 の B と同じフレーム）の後の最初の発（0f）から、受けるダメージ▲の乗った最初の発までのモデルのフレーム数。発動の後の最初の発がもう▲の値（× 1.1806）。▲の無い最後の発は -7f、▲の乗った最初の増分は 0f（発動から）",
+    "method": {
+      "tool": "右のバースト欄の六角形の色（ffmpeg の select=between(n,…)・crop=10:10:1763:435 の平均の色。緑の I から緑でない色に替わった最初のフレーム。V-0370 と同じ）、recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2。V-0371 で作った）と、使い捨てのスクリプトでの分け方",
+      "note": "増分を、クルミの 1 発（胴体 10,797.29 × (1 + コア 1 + 距離 0.3 + 会心 0.5) の 8 通り）と tick（41,322.36・61,983.54）の、▲なしと × 1.1806 の格子（2 つの和まで）に ±2（和は ±3）で当てた（V-0054・V-0060 と同じ格子）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "fromShot": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "100-08",
+    "recording": "100",
+    "source": "V-0371",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "compare",
+    "value": 0,
+    "unit": "f",
+    "description": "クルミ単騎の 3 回目のバースト（I の発動 = 六角形が I から II に替わったフレーム f6947。V-0060 の B と同じフレーム）の後の最初の発（+3f）から、受けるダメージ▲の乗った最初の発までのモデルのフレーム数。発動の後の最初の発がもう▲の値（× 1.1806）。▲の無い最後の発は -8f、▲の乗った最初の増分は -1f（発動から）（-1f の増分は▲の乗った 1 発と▲の乗った tick の和）",
+    "method": {
+      "tool": "右のバースト欄の六角形の色（ffmpeg の select=between(n,…)・crop=10:10:1763:435 の平均の色。緑の I から緑でない色に替わった最初のフレーム。V-0370 と同じ）、recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2。V-0371 で作った）と、使い捨てのスクリプトでの分け方",
+      "note": "増分を、クルミの 1 発（胴体 10,797.29 × (1 + コア 1 + 距離 0.3 + 会心 0.5) の 8 通り）と tick（41,322.36・61,983.54）の、▲なしと × 1.1806 の格子（2 つの和まで）に ±2（和は ±3）で当てた（V-0054・V-0060 と同じ格子）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "fromShot": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "100-09",
+    "recording": "100",
+    "source": "V-0371",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "compare",
+    "value": 0,
+    "unit": "f",
+    "description": "クルミ単騎の 4 回目のバースト（I の発動 = 六角形が I から II に替わったフレーム f9185。V-0060 の B と同じフレーム）の後の最初の発（+2f）から、受けるダメージ▲の乗った最初の発までのモデルのフレーム数。発動の後の最初の発がもう▲の値（× 1.1806）。▲の無い最後の発は -3f、▲の乗った最初の増分は +2f（発動から）",
+    "method": {
+      "tool": "右のバースト欄の六角形の色（ffmpeg の select=between(n,…)・crop=10:10:1763:435 の平均の色。緑の I から緑でない色に替わった最初のフレーム。V-0370 と同じ）、recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2。V-0371 で作った）と、使い捨てのスクリプトでの分け方",
+      "note": "増分を、クルミの 1 発（胴体 10,797.29 × (1 + コア 1 + 距離 0.3 + 会心 0.5) の 8 通り）と tick（41,322.36・61,983.54）の、▲なしと × 1.1806 の格子（2 つの和まで）に ±2（和は ±3）で当てた（V-0054・V-0060 と同じ格子）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "fromShot": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "100-10",
+    "recording": "100",
+    "source": "V-0371",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "record",
+    "value": {
+      "activation": [2371, 4695, 6947, 9185],
+      "lastAbsent": [-6, -7, -8, -3],
+      "firstPresent": [0, 0, -1, 2]
+    },
+    "unit": "f",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "description": "クルミ単騎の 1〜4 回目のバーストの I の発動（六角形が I から II に替わったフレーム。activation）と、そこから数えた、受けるダメージ▲の無い最後の発（lastAbsent）・▲の乗った最初の増分（firstPresent）の動画のフレーム数。3 回目の -1f は▲の乗った 1 発と▲の乗った tick の和",
+    "method": {
+      "tool": "右のバースト欄の六角形の色（ffmpeg の select=between(n,…)・crop=10:10:1763:435 の平均の色。緑の I から緑でない色に替わった最初のフレーム。V-0370 と同じ）、recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2。V-0371 で作った）と、使い捨てのスクリプトでの分け方",
+      "note": "増分を、クルミの 1 発（胴体 10,797.29 × (1 + コア 1 + 距離 0.3 + 会心 0.5) の 8 通り）と tick（41,322.36・61,983.54）の、▲なしと × 1.1806 の格子（2 つの和まで）に ±2（和は ±3）で当てた（V-0054・V-0060 と同じ格子）"
+    }
   }
 ]
