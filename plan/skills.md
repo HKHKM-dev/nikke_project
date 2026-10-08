@@ -537,7 +537,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
 ## 313 プリバティ：アンカインド・メイド
 
 - **skill1**: supported
-  - effects[0] damage・pelletHit・skill: C-0408（仮説）
+  - effects[0] damage・pelletHit・skill: C-0408（確定）
 - **skill2**: unsupported
   - notes[0] 未対応: 通常攻撃 1 回でペレットが 5 個以上命中した時の自分のリロード速度▲（2 秒）は未対応: 根拠なし
   - notes[1] 未対応: フルバーストタイム中のペレット 30 回命中ごとの、自分の弾丸チャージと攻撃力▲（5 スタック・2 秒）は未対応: 根拠なし
