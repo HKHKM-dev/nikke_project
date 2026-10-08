@@ -1,0 +1,41 @@
+{
+  "id": "368",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-368_smg+sr+rl_sakura+delta+raven_burst-left.mp4",
+  "original": "2026-10-08_23-08-08.mp4",
+  "durationSec": 58.4,
+  "frames": 3501,
+  "fps": 60,
+  "sizeMB": 70.6,
+  "sha256": "61ee7207c946",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": null,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "バーストゲージの表示を左にした録画（ゲームのオプション。普段は右）。サクラ（I）+ デルタ（II）+ レイヴン（III・操作・AUTO 射撃 ON）、オートバースト OFF（画面左上）。出撃画面は写っていない（読み込み画面から始まる）。戦闘開始から約 39 秒（残り 02:21）で一時停止の画面に入って終わる。一時停止の画面で枠順・キャラ名・Lv.400 を確かめた"
+}
