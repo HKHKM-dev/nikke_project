@@ -56,13 +56,13 @@
 
 予測は 2026-10-08（commit 3d5a4f6）に出した。
 
-| 指標                                   | 実測         | 予測 H1 | 予測 H2 |
-| -------------------------------------- | ------------ | ------- | ------- |
-| sun-reload-out（reloadToNextShotAt）   | （実測なし） | 112.235 | 112.235 |
-| sun-reload-in（reloadToNextShotAt）    | （実測なし） | 67.315  | 112.235 |
-| sun-reload-after（reloadToNextShotAt） | （実測なし） | 112.235 | 112.235 |
-| alice-reload-out（reloadFramesAt）     | （実測なし） | 117.647 | 117.647 |
-| alice-reload-in（reloadFramesAt）      | （実測なし） | 57.753  | 117.647 |
+| 指標                                   | 実測            | 予測 H1                   | 予測 H2                        |
+| -------------------------------------- | --------------- | ------------------------- | ------------------------------ |
+| sun-reload-out（reloadToNextShotAt）   | （実測なし）    | 112.235                   | 112.235                        |
+| sun-reload-in（reloadToNextShotAt）    | 67（`042-11`）  | 67.315（+0.315、許容内）  | 112.235（+45.235、**許容外**） |
+| sun-reload-after（reloadToNextShotAt） | 112（`042-12`） | 112.235（+0.235、許容内） | 112.235（+0.235、許容内）      |
+| alice-reload-out（reloadFramesAt）     | （実測なし）    | 117.647                   | 117.647                        |
+| alice-reload-in（reloadFramesAt）      | （実測なし）    | 57.753                    | 117.647                        |
 
 <!-- records:predictions:end -->
 

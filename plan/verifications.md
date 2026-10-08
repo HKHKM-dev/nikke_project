@@ -3215,9 +3215,11 @@
   - 問い: アドミ（172）のバーストのリロード速度▲を定義どおり（味方全体・10 秒）に読んで、モデルは味方のリロードの長さに合うか
   - 話題: スキル・キャラ固有・日付: 2026-10-08・状態: 調査中
   - 録画: 042
+  - 観測値: 042-11、042-12、042-13
   - 予測（2026-10-08、commit 3d5a4f6）との比べ:
     - sun-reload-out（reloadToNextShotAt）: 実測なし。H1 112.235、H2 112.235
-    - sun-reload-in（reloadToNextShotAt）: 実測なし。H1 67.315、H2 112.235
-    - sun-reload-after（reloadToNextShotAt）: 実測なし。H1 112.235、H2 112.235
+    - sun-reload-in（reloadToNextShotAt）: 実測 67（042-11）。H1 67.315（+0.315、許容内）、H2 112.235（+45.235、**許容外**）
+    - sun-reload-after（reloadToNextShotAt）: 実測 112（042-12）。H1 112.235（+0.235、許容内）、H2 112.235（+0.235、許容内）
     - alice-reload-out（reloadFramesAt）: 実測なし。H1 117.647、H2 117.647
     - alice-reload-in（reloadFramesAt）: 実測なし。H1 57.753、H2 117.647
+    - 許容内の指標: H1 2/2・H2 1/2。合う仮説は H1 だけ
