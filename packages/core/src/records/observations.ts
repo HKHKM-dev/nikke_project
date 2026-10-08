@@ -865,6 +865,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
   burstEffectFirstShot: { args: ['slot', 'n'], sim: burstEffectFirstShot },
+  burstEffectDelay: { args: ['slot', 'n'], sim: burstEffectDelay },
   fullBurstCrossingShotGauge: { args: ['slot'], sim: fullBurstCrossingShotGauge },
   shotGauge: { args: ['slot', 'n'], sim: shotGauge },
 };
@@ -1029,6 +1030,20 @@ function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
   };
   const origin = ctx.args.fromShot === true ? firstFrom(activation.frame) : activation.frame;
   return firstFrom(effectFrameOf(activation)) - origin;
+}
+
+/**
+ * バーストの効果の遅れ（backlog 2-4。V-0368）: 枠の n 回目（0 始まり）のバーストの発動から、バースト使用時の効果の発火
+ * （effectFrameOf）までのモデルのフレーム数。効果の乗った発が自分の発でないとき（味方の発の値で▲の有無を読むとき）に、
+ * 録画の「▲の無い最後の発 〜 ▲の乗った最初の発」の幅（観測値の spread）と比べる
+ */
+function burstEffectDelay(result: SimResult, ctx: MetricContext): number {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
+  const activation = mine[Number(ctx.args.n)];
+  if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
+  return effectFrameOf(activation) - activation.frame;
 }
 
 /**

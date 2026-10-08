@@ -260,8 +260,8 @@ notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補�
 - **skill2**: noEffect
   - notes[0] 計算に無関係: 最終攻撃力が最も高い味方 2 機の受けるダメージ▼は防御系でダメージに関係しない: 根拠なし
 - **burst**: supported
-  - effects[0] timed・burstUse・reloadSpeed: C-0456（確定）
-  - effects[1] timed・burstUse・critDamage: C-0463（確定）
+  - effects[0] timed・burstUse・reloadSpeed: C-0456（確定）、C-0479（仮説）
+  - effects[1] timed・burstUse・critDamage: C-0463（確定）、C-0479（仮説）
 
 ## 190 ルドミラ
 

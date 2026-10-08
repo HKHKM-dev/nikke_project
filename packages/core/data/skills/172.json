@@ -38,7 +38,7 @@
           "stat": "reloadSpeed",
           "ref": 1,
           "durationRef": 2,
-          "claims": ["C-0456"]
+          "claims": ["C-0456", "C-0479"]
         },
         {
           "kind": "timed",
@@ -47,7 +47,7 @@
           "stat": "critDamage",
           "ref": 3,
           "durationRef": 4,
-          "claims": ["C-0463"]
+          "claims": ["C-0463", "C-0479"]
         }
       ]
     }
