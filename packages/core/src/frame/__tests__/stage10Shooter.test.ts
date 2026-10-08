@@ -1,5 +1,5 @@
 // Stage 10: 射手の射撃に効くバフと、1 回分ずつの分割リロード（plan/design-stage10.md 3 節・8.2 節）。
-// 退化（基礎値で Stage 9 と 1 フレームも変わらない）は、Stage 9 の stepShooter をこのファイルに凍結した写しと全 202 体で比べる。
+// 退化（基礎値で Stage 9 と 1 フレームも変わらない）は、Stage 9 の stepShooter をこのファイルに凍結した写しと全 203 体で比べる。
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
@@ -122,11 +122,11 @@ const DRAKE: Partial<ShotParams> = {
 };
 
 describe('stage 10 shooter: degeneration (8.2)', () => {
-  it('loads all 202 characters', () => {
-    expect(characters.length).toBe(202);
+  it('loads all 203 characters', () => {
+    expect(characters.length).toBe(203);
   });
 
-  it('fires on exactly the Stage 9 frames for all 202 characters over 180 s (base params)', () => {
+  it('fires on exactly the Stage 9 frames for all 203 characters over 180 s (base params)', () => {
     const mismatched: number[] = [];
     for (const c of characters) {
       const expected = stage9ShotFrames(c.shot, 10_800);

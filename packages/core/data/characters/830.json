@@ -85,7 +85,7 @@
       },
       "description": {
         "ja": "■戦闘開始時、自分に\n<color=#00AEFF>「<word_group=10054>バリアに与えるダメージ</word_group>{description_value_01}％▲」「持続」</color>\n■<word_group=10027>回復効果が適用された時</word_group>、自分に\n<color=#00AEFF>「攻撃力{description_value_02}％▲」「{description_value_03}秒間維持」</color>",
-        "en": "■ Activates at the start of battle. Affects self.\n<color=#00AEFF><word_group=10054>Damage dealt to Shield</word_group> ▲ {description_value_01}% continuously.</color>\n■ Activates when <word_group=10027>recovery takes effect</word_group>. Affects self.\n<color=#00AEFF>ATK ▲ {description_value_02}% for {description_value_03} sec.</color>"
+        "en": "■ Activates at the start of battle. Affects self.\n<color=#00AEFF><word_group=10054>Damage dealt to shields</word_group> ▲ {description_value_01}% continuously.</color>\n■ Activates when <word_group=10027>recovery takes effect</word_group>. Affects self.\n<color=#00AEFF>ATK ▲ {description_value_02}% for {description_value_03} sec.</color>"
       },
       "values": [
         ["404.65", "426.47", "448.29", "470.1", "491.92", "513.74", "535.56", "557.38", "579.2", "601.01"],

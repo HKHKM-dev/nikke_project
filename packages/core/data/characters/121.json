@@ -135,7 +135,7 @@
         "en": "Blue Butterfly Slumber"
       },
       "description": {
-        "ja": "■火力型の味方全体に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPの\n{description_value_03}％回復」\n「攻撃力{description_value_04}％▲」「{description_value_05}秒間維持」</color>\n■戦闘不能状態の火力型の味方をランダムで{description_value_01}機に\n<color=#00AEFF>「HP{description_value_02}％で復活」「戦闘中1回発動」</color>",
+        "ja": "■火力型の味方全体に\n<color=#00AEFF>「スキル発動者の<word_group=10025>最終</word_group>最大HPの\n{description_value_03}％回復」\n「攻撃力{description_value_04}％▲」「{description_value_05}秒間維持」</color>\n■戦闘不能状態の火力型の味方を\nランダムで{description_value_01}機に\n<color=#00AEFF>「HP{description_value_02}％で復活」「戦闘中1回発動」</color>",
         "en": "■ Affects all Attacker allies.\n<color=#00AEFF>Restores HP equal to {description_value_03}% of the skill user's <word_group=10025>final</word_group> max HP.\nATK ▲ {description_value_04}% for {description_value_05} sec.</color>\n■ Affects {description_value_01} incapacitated Attacker ally unit(s) at random.\n<color=#00AEFF>Revives with {description_value_02}% HP. Activates once per battle.</color>"
       },
       "values": [

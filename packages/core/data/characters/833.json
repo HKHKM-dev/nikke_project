@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■自分が射撃マニュアル状態の時に限り、味方全体に\n<color=#00AEFF>「<word_group=10054>バリアに与えるダメージ</word_group>{description_value_01}％▲」「持続」</color>\n■自分が射撃マニュアルのフルスタック状態の時のみ\n<color=#00AEFF>「与えるHP回復量{description_value_02}％▲」「持続」</color>",
-        "en": "■ Only activates if in the Shooting Manual state. Affects all allies.\n<color=#00AEFF><word_group=10054>Damage dealt to Shield</word_group> ▲ {description_value_01}% continuously.</color>\n■ Only activates when Shooting Manual is at max stacks. Affects self.\n<color=#00AEFF>Outgoing Healing ▲ {description_value_02}% continuously.</color>"
+        "en": "■ Only activates if in the Shooting Manual state. Affects all allies.\n<color=#00AEFF><word_group=10054>Damage dealt to shields</word_group> ▲ {description_value_01}% continuously.</color>\n■ Only activates when Shooting Manual is at max stacks. Affects self.\n<color=#00AEFF>Outgoing Healing ▲ {description_value_02}% continuously.</color>"
       },
       "values": [
         ["75", "83.33", "91.66", "100", "108.33", "116.66", "125", "133.33", "141.66", "150"],

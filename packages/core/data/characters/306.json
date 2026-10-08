@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■<word_group=10025>最終</word_group>攻撃力が最も高い味方{description_value_01}機に\n<color=#00AEFF>「遮蔽物防御力{description_value_02}％▲」「{description_value_03}秒間維持」</color>",
-        "en": "■ Affects {description_value_01} ally unit(s) with the highest <word_group=10025>final</word_group> ATK. \n<color=#00AEFF>Cover's DEF ▲ {description_value_02}% for {description_value_03} sec.</color>"
+        "en": "■ Affects {description_value_01} ally unit(s) with the highest <word_group=10025>final</word_group> ATK. \n<color=#00AEFF>Cover DEF ▲ {description_value_02}% for {description_value_03} sec.</color>"
       },
       "values": [
         ["3", "3", "3", "3", "3", "3", "3", "3", "3", "3"],

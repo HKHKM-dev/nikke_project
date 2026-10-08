@@ -1,19 +1,19 @@
 {
-  "resourceId": 381,
+  "resourceId": 63,
   "name": {
-    "ja": "ビスケット",
-    "en": "Biscuit"
+    "ja": "ベロータ：パンプキンウィッチ",
+    "en": "Belorta: Pumpkin Witch"
   },
   "rarity": "SSR",
   "class": "Supporter",
   "corporation": "TETRA",
   "corporationSubType": null,
-  "squad": "HappyZoo",
+  "squad": "LittleCannon",
   "squadName": {
-    "ja": "ハッピーズー",
-    "en": "Happy Zoo"
+    "ja": "リトルキャノン",
+    "en": "The Carronades"
   },
-  "element": "Electronic",
+  "element": "Water",
   "weaponType": "RL",
   "burstStep": "Step2",
   "levelCurve": {
@@ -81,21 +81,21 @@
   },
   "skills": {
     "skill1": {
-      "id": 2381101,
+      "id": 2063101,
       "name": {
-        "ja": "ハッピーパピー",
-        "en": "Happy Puppy"
+        "ja": "プレイフル・リトル・ウィッチ",
+        "en": "Playful Little Witch"
       },
       "description": {
-        "ja": "■フルバーストタイムが終了した時、火力型の味方全体に\n<color=#00AEFF>「通常攻撃のクリティカル確率{description_value_01}％▲」\n「{description_value_02}秒間維持」\n「スキル発動者の<word_group=10025>最終</word_group>最大HPの{description_value_03}％\n持続回復」「1秒間隔」「{description_value_04}秒間維持」</color>",
-        "en": "■ Activates at the end of Full Burst. Affects all Attacker allies. \n<color=#00AEFF>Normal Attack Critical Rate ▲ {description_value_01}% for {description_value_02} sec. \nRestores HP equal to {description_value_03}% of the skill user's <word_group=10025>final</word_group> max HP every second for {description_value_04} sec.</color>"
+        "ja": "■フルバーストタイムが発動した時、自分に\n<color=#00AEFF>「おばけの仮装：<word_group=10004>単一攻撃の対象から除外</word_group>\n直接攻撃を受けると解除」「{description_value_01}秒間維持」\n「イタズラ準備：最大HP{description_value_02}％▲」\n「{description_value_03}秒間維持」</color>\n■フルバーストタイムが発動した時、\n自分の<word_group=10109>右隣の</word_group>味方1機に\n<color=#00AEFF>「スキル発動者基準で攻撃力{description_value_04}％▲」\n「{description_value_05}秒間維持」</color>",
+        "en": "■ Activates when entering Full Burst. Affects self.\n<color=#00AEFF>Ghost Costume: <word_group=10004>Prevents being targeted by single-target attacks</word_group> for {description_value_01} sec. This effect is removed upon taking a direct hit.\nPrank Preparation: Max HP ▲ {description_value_02}% for {description_value_03} sec.</color>\n■ Activates when entering Full Burst. Affects the ally <word_group=10109>to the right</word_group> of this unit.\n<color=#00AEFF>ATK ▲ {description_value_04}% of the skill user's ATK for {description_value_05} sec.</color>"
       },
       "values": [
-        ["1.13", "1.64", "2.16", "2.68", "3.19", "3.71", "4.22", "4.74", "5.25", "5.77"],
         ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
-        ["1.05", "1.1", "1.16", "1.21", "1.26", "1.32", "1.37", "1.42", "1.48", "1.53"],
+        ["9.36", "10.08", "10.8", "11.52", "12.24", "12.96", "13.68", "14.4", "15.12", "15.84"],
         ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
-        null,
+        ["26.52", "28.56", "30.6", "32.64", "34.68", "36.72", "38.76", "40.8", "42.84", "44.88"],
+        ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
         null,
         null,
         null,
@@ -105,21 +105,21 @@
       ]
     },
     "skill2": {
-      "id": 2381201,
+      "id": 2063201,
       "name": {
-        "ja": "引っ張り合い",
-        "en": "Tug of War"
+        "ja": "トリック・オア・トリート！",
+        "en": "Trick or Treat!"
       },
       "description": {
-        "ja": "■防御型の味方の誰かのHPが{description_value_01}％以下なら、\n対象に\n<color=#00AEFF>「無敵」「{description_value_04}秒間維持」「戦闘中{description_value_05}回発動」\n「スキル発動者の<word_group=10025>最終</word_group>最大HPの{description_value_02}％\n回復」「戦闘中{description_value_03}回発動」</color>",
-        "en": "■ Activates when a Defender ally's HP falls below {description_value_01}%. Affects the target Defender ally.\n<color=#00AEFF>Invincible for {description_value_04} sec. Activates {description_value_05} time(s) per battle.\nRestores HP equal to {description_value_02}% of the skill user's <word_group=10025>final</word_group> max HP. Activates {description_value_03} time(s) per battle.</color>"
+        "ja": "■フルチャージ攻撃が命中した時、\n自分がおばけの仮装状態なら、対象に\n<color=#00AEFF>「おばけのイタズラ：受けるダメージ\n{description_value_01}％▲」「{description_value_02}秒間維持」</color>\n■フルチャージして攻撃した時、\n自分の<word_group=10109>右隣の</word_group>味方1機に\n<color=#00AEFF>「持続ダメージ{description_value_03}％▲」「{description_value_04}秒間維持」</color>",
+        "en": "■ Activates when landing a Full Charge attack while in the Ghost Costume state. Affects the target.\n<color=#00AEFF>Ghostly Prank: Damage Taken ▲ {description_value_01}% for {description_value_02} sec.</color>\n■ Activates when performing a Full Charge attack. Affects the ally <word_group=10109>to the right </word_group> of this unit.\n<color=#00AEFF>Sustained Damage ▲ {description_value_03}% for {description_value_04} sec.</color>"
       },
       "values": [
-        ["50", "50", "50", "50", "50", "50", "50", "50", "50", "50"],
-        ["12.46", "13.66", "14.86", "16.06", "17.26", "18.46", "19.66", "20.86", "22.06", "23.26"],
-        ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2"],
+        ["6.24", "6.72", "7.2", "7.68", "8.16", "8.64", "9.12", "9.6", "10.08", "10.56"],
+        ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+        ["11.8", "12.71", "13.62", "14.52", "15.43", "16.34", "17.25", "18.16", "19.06", "19.97"],
         ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
-        ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2"],
+        null,
         null,
         null,
         null,
@@ -129,22 +129,22 @@
       ]
     },
     "burst": {
-      "id": 1381301,
+      "id": 1063301,
       "name": {
-        "ja": "お散歩トレーニング",
-        "en": "Walk Training"
+        "ja": "ハッピーハロウィン！",
+        "en": "Happy Halloween!"
       },
       "description": {
-        "ja": "■遮蔽物が破壊された味方ランダムに{description_value_01}機に\n<color=#00AEFF>「遮蔽物HP{description_value_02}％で<word_group=10016>遮蔽物復活</word_group>」</color>\n■支援型の味方全体に\n<color=#00AEFF>「攻撃力{description_value_03}％▲」「{description_value_04}秒間維持」\n「攻撃ダメージの{description_value_05}％回復」「{description_value_06}秒間維持」</color>",
-        "en": "■ Affects {description_value_01} random ally unit(s) whose cover has been destroyed.\n<color=#00AEFF><word_group=10016>Rebuilds cover</word_group> with {description_value_02}% HP.</color>\n■ Affects all Supporter allies.\n<color=#00AEFF>ATK ▲ {description_value_03}% for {description_value_04} sec.\nRestores HP equal to {description_value_05}% of attack damage. Lasts for {description_value_06} sec.</color>"
+        "ja": "■自分の<word_group=10109>右隣の</word_group>味方1機に\n<color=#00AEFF>「スキル発動者基準で攻撃力{description_value_01}％▲」\n「{description_value_02}秒間維持」\n「持続ダメージ{description_value_03}％▲」「{description_value_04}秒間維持」\n</color>",
+        "en": "■ Affects the ally <word_group=10109>to the right</word_group> of this unit.\n<color=#00AEFF> ATK ▲ {description_value_01}% of the skill user's ATK for {description_value_02} sec.\nSustained Damage ▲ {description_value_03}% for {description_value_04} sec.</color>"
       },
       "values": [
-        ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2"],
-        ["51.48", "56.16", "60.84", "65.52", "70.2", "74.88", "79.56", "84.24", "88.92", "93.6"],
-        ["17.42", "20.27", "23.12", "25.97", "28.82", "31.68", "34.53", "37.38", "40.23", "43.08"],
+        ["28.08", "30.24", "32.4", "34.56", "36.72", "38.88", "41.04", "43.2", "45.36", "47.52"],
         ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
-        ["35.39", "37.62", "39.84", "42.07", "44.3", "46.53", "48.75", "50.98", "53.21", "55.44"],
+        ["16.09", "17.32", "18.56", "19.8", "21.04", "22.28", "23.51", "24.75", "25.99", "27.23"],
         ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
+        null,
+        null,
         null,
         null,
         null,
