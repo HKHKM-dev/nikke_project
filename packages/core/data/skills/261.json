@@ -41,11 +41,10 @@
           "ref": 1,
           "damageType": "skill",
           "assumes": {
-            "ja": "戦闘開始から 10 秒ごと（CT 10 秒は録画 081 から読んだ値。C-0091）。攻撃範囲内の敵は 1 体",
-            "en": "Every 10 s from the start of battle (the 10 s cooldown was read from recording 081; C-0091). There is one enemy within attack range"
+            "ja": "戦闘開始から 10 秒ごと（CT 10 秒は録画 081・084 から読んだ値。C-0401）。攻撃範囲内の敵は 1 体",
+            "en": "Every 10 s from the start of battle (the 10 s cooldown was read from recordings 081 and 084; C-0401). There is one enemy within attack range"
           },
           "claims": [
-            "C-0091",
             "C-0102",
             "C-0401"
           ]
