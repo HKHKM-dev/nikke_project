@@ -1,0 +1,63 @@
+{
+  "verification": "V-0376",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "L0",
+      "note": "いまのモデル（遠のコアの割合は遠 A・遠 B に共通の 1 行。C-0425 の 45/90）。L1（遠 A が遠 B より高い）は検証記録に手で書く"
+    }
+  ],
+  "targets": [
+    {
+      "id": "far-out-A",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto",
+        "farLanding": ["A"]
+      },
+      "note": "遠 A に降りた録画（289）の、遠（3 区間目）のバーストの窓の外の通常攻撃のコア命中率"
+    },
+    {
+      "id": "far-out-B",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto",
+        "farLanding": ["B"]
+      },
+      "note": "遠 B に降りた録画（288）の、遠（3 区間目）のバーストの窓の外の通常攻撃のコア命中率"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-09",
+    "commit": "3896fb6f32fa1e3e5ad8a887846e13fb1be1725f",
+    "values": {
+      "L0": {
+        "far-out-A": 0.5,
+        "far-out-B": 0.5
+      }
+    },
+    "seen": {}
+  }
+}
