@@ -61,9 +61,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（胴体・会心・距離ボーナスなし）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
     },
@@ -80,9 +78,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（胴体・会心なし・距離ボーナスなし）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
     },
@@ -99,9 +95,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（胴体・会心・距離ボーナスあり）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
     },
@@ -118,9 +112,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（胴体・会心なし・距離ボーナスあり）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
     },
@@ -137,9 +129,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（コア・会心・距離ボーナスなし）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
     },
@@ -156,9 +146,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（コア・会心なし・距離ボーナスなし）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
     },
@@ -175,9 +163,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（コア・会心・距離ボーナスあり）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
     },
@@ -194,9 +180,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（コア・会心なし・距離ボーナスあり）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
     },
@@ -213,9 +197,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（胴体・会心・距離ボーナスなし）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
     },
@@ -232,9 +214,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（胴体・会心なし・距離ボーナスなし）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
     },
@@ -251,9 +231,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（胴体・会心・距離ボーナスあり）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
     },
@@ -270,9 +248,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（胴体・会心なし・距離ボーナスあり）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
     },
@@ -289,9 +265,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（コア・会心・距離ボーナスなし）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
     },
@@ -308,9 +282,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（コア・会心なし・距離ボーナスなし）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
     },
@@ -327,9 +299,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（コア・会心・距離ボーナスあり）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
     },
@@ -346,9 +316,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "I-DOLL・サン（AR）の 1 発（コア・会心なし・距離ボーナスあり）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
     }
