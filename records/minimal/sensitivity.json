@@ -1395,24 +1395,8 @@
     },
     {
       "observation": "040-06",
-      "element": "アドミ burst.effects[0]",
-      "key": "5f66824464a119bb",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "040-06",
       "element": "アドミ burst.effects[1]",
       "key": "5f66824464a119bb",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-10",
-      "element": "アドミ burst.effects[0]",
-      "key": "da207002ddb34507",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -1453,6 +1437,86 @@
       "observation": "042-10",
       "element": "アリス skill1.effects[1]",
       "key": "da207002ddb34507",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "042-11",
+      "element": "アドミ burst.effects[1]",
+      "key": "44b07b5355eb763c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "042-11",
+      "element": "アリス burst.effects[0]",
+      "key": "44b07b5355eb763c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "042-11",
+      "element": "アリス burst.effects[1]",
+      "key": "44b07b5355eb763c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "042-11",
+      "element": "アリス skill1.effects[0]",
+      "key": "44b07b5355eb763c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "042-11",
+      "element": "アリス skill1.effects[1]",
+      "key": "44b07b5355eb763c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "042-12",
+      "element": "アドミ burst.effects[1]",
+      "key": "1e433bbcc54db111",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "042-12",
+      "element": "アリス burst.effects[0]",
+      "key": "1e433bbcc54db111",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "042-12",
+      "element": "アリス burst.effects[1]",
+      "key": "1e433bbcc54db111",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "042-12",
+      "element": "アリス skill1.effects[0]",
+      "key": "1e433bbcc54db111",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "042-12",
+      "element": "アリス skill1.effects[1]",
+      "key": "1e433bbcc54db111",
       "effective": false,
       "minus": 0,
       "plus": 0
