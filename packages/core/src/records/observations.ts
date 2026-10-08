@@ -92,6 +92,12 @@ export type CompareSetup = {
    */
   obstacles?: { slot: number; shot: number; count: string }[];
   /**
+   * ペレットの命中編（plan/design-pellet-hit.md 3 節）: 録画で数えた、発ごとに的に当たったペレットの数（TeamInput.pelletHits）。
+   * slot は枠（1 始まり）、counts は 1 発目からの数の並びを持つ観測値の id（同じ録画・use が input・値は 0 以上の整数の配列）。
+   * 回数トリガー pelletHit の回数にだけ効く。省略は無し
+   */
+  pelletHits?: { slot: number; counts: string }[];
+  /**
    * V-0165: 持続の命中率▲（C-0170）をコア命中率に効かせるか（TeamInput.sustainedHitRateUp）。省略 true。
    * false は C-0170 の前の形で、予測の仮説（H0）の override に使う
    */
@@ -909,6 +915,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     sim: (r, c) => skillHitVideoFrames(r, c)[Number(c.args.n)] ?? NaN,
   },
   skillHitMeanInterval: { args: ['slot', 'skill'], sim: skillHitMeanInterval },
+  skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
@@ -1036,6 +1043,20 @@ function skillHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
       (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
     )
     .map((h) => videoFrameOf(result.schedule, h.frame));
+}
+
+/**
+ * ペレットの命中編（plan/design-pellet-hit.md 4 節。V-0374）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回が、
+ * それぞれ枠の何発目（1 始まり。同じフレームの発を含む）の射撃で出たか。録画では、ヒットの直前の発の番号（撃った順）と比べる
+ */
+function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {
+  const shots = slotOf(result.shots, ctx).frames;
+  const hits = result.skillHits.filter(
+    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
+  );
+  const count = Number(ctx.args.count);
+  if (hits.length < count) throw new Error(`発動が ${hits.length} 回しかない`);
+  return hits.slice(0, count).map((h) => shots.filter((f) => f <= h.frame).length);
 }
 
 /** V-0268: skillHitVideoFrames の 1 回目から最後までの動画のフレーム数 ÷ (回数 − 1)（発動の間隔の平均） */
@@ -1245,6 +1266,18 @@ export function validateObservations(
           errors.push(`${at}: obstacles の観測値 ${ref.id} の値は正の整数（個数）`);
       }
     }
+    for (const ph of c.setup.pelletHits ?? []) {
+      if (!Number.isInteger(ph.slot) || ph.slot < 1) errors.push(`${at}: pelletHits の slot は 1 以上の整数`);
+      const ref = observations.find((x) => x.id === ph.counts);
+      if (ref === undefined) errors.push(`${at}: pelletHits の観測値 ${ph.counts} が無い`);
+      else {
+        if (ref.recording !== o.recording) errors.push(`${at}: pelletHits の観測値は同じ録画のもの`);
+        if (ref.use !== 'input') errors.push(`${at}: pelletHits の観測値 ${ref.id} の use は input`);
+        if (ref.invalid !== undefined) errors.push(`${at}: pelletHits の観測値 ${ref.id} は失効している`);
+        if (!(Array.isArray(ref.value) && ref.value.every((n) => Number.isInteger(n) && n >= 0)))
+          errors.push(`${at}: pelletHits の観測値 ${ref.id} の値は 0 以上の整数の配列（発ごとの数）`);
+      }
+    }
     const tol = 'rel' in c.tolerance ? c.tolerance.rel : c.tolerance.abs;
     if (!(tol >= 0)) errors.push(`${at}: 許容幅は 0 以上`);
   }
@@ -1381,6 +1414,11 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     if (typeof count !== 'number') throw new Error(`obstacles の観測値 ${ob.count} が無いか、個数でない`);
     return { slotIndex: ob.slot - 1, shot: ob.shot, count };
   });
+  const pelletHits = (setup.pelletHits ?? []).map((ph) => {
+    const counts = data.observationValues?.get(ph.counts);
+    if (!Array.isArray(counts)) throw new Error(`pelletHits の観測値 ${ph.counts} が無いか、配列でない`);
+    return { slotIndex: ph.slot - 1, counts };
+  });
   return {
     slots,
     enemy: {
@@ -1405,6 +1443,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     burstModel: 'dynamic',
     controlledSlot: controlled < 0 ? null : controlled,
     ...(obstacleBreaks.length === 0 ? {} : { obstacleBreaks }),
+    ...(pelletHits.length === 0 ? {} : { pelletHits }),
     ...(setup.sustainedHitRateUp === false ? { sustainedHitRateUp: false } : {}),
     ...(setup.sustainedDamagePlacement === undefined
       ? {}

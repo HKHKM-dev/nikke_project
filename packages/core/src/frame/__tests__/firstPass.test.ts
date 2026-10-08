@@ -74,10 +74,10 @@ function synthetic(
 }
 
 /** ルドミラ：ウィンターオーナー編: 1 パス目の射撃の列は発ごとの命中の期待値を持つ（planShots の列には無い）。射撃の列だけを比べる */
-function withoutHits(logs: readonly (ShotLog | null)[]): (Omit<ShotLog, 'hits' | 'coreHits'> | null)[] {
+function withoutHits(logs: readonly (ShotLog | null)[]): (Omit<ShotLog, 'hits' | 'coreHits' | 'pelletHits'> | null)[] {
   return logs.map((log) => {
     if (log === null) return null;
-    const { hits: _hits, coreHits: _coreHits, ...rest } = log;
+    const { hits: _hits, coreHits: _coreHits, pelletHits: _pelletHits, ...rest } = log;
     return rest;
   });
 }

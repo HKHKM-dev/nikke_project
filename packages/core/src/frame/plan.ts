@@ -47,6 +47,7 @@ import {
   toTimelineSlots,
   validateControlledSlot,
   validateObstacleBreaks,
+  validatePelletHits,
   validateTeamSlots,
   type TeamInput,
   type TeamSlotInput,
@@ -144,6 +145,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   validateTeamSlots(slots);
   validateControlledSlot(slots, input.controlledSlot);
   validateObstacleBreaks(slots, input.obstacleBreaks);
+  validatePelletHits(slots, input.pelletHits);
   const frames = battleSecondsToFrames(input.durationSeconds);
   const timelineSlots = toTimelineSlots(slots);
   const untargetable = untargetableRanges(enemy.events, frames);
@@ -161,6 +163,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     // plan/design-anis-star-gauge-timing.md: 飛ぶ時間（的の表）と、発が壊した障害物（録画で数えた入力）
     flights: slotFlightsOf(slots, enemy, frames),
     obstacleBreaks: input.obstacleBreaks ?? [],
+    pelletHits: input.pelletHits ?? [],
     // plan/design-sustained-hit-rate-gauge.md: 持続の命中率▲を 1 パス目のゲージと命中の期待値にも効かせる（2 パス目と同じ切り替え）
     ...(landing === null || input.sustainedHitRateUp === false
       ? {}
