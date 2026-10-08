@@ -387,5 +387,104 @@
       "slot": "all",
       "source": "gauge"
     }
+  },
+  {
+    "id": "221-16",
+    "recording": "221",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0361",
+    "value": 37510,
+    "description": "1 回目のフルバーストの終わりの直前のラピの 1 発（胴体・会心なし・距離ボーナスあり）。最後の 1 秒の f1943・1948・1958・1968・1983・1993 がどれも 37,510（間の 47,929・58,349 も▲の付いた会心・コアの格子）。最後の発 f1993 は終わりの約 7f 前",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps（録画の全体）。ラピ（AR）の 1 発の格子は、▲とフルバースト補正の付いた 37,510・47,929・58,349（距離ボーナスあり。胴体・会心・コア）、付かない 16,846・23,325・29,804・36,283。フルバーストの終わりは 221-01 の始まり（f1390・6417）から動画の 610f（10 秒 + 入りの止まり）で f2000・7027。f2012 は読めないフレームの後の増分（gap 19）で使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1170,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "221-17",
+    "recording": "221",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0361",
+    "value": 16846,
+    "description": "1 回目のフルバーストの終わりの直後のラピの 1 発（胴体・会心なし・距離ボーナスあり）。終わりの後の最初の発 f2017 は 23,325（▲の無い会心の値。フルバースト補正だけの胴体の値とも同じで分けられない）、次の f2022 から 16,846 が続く。窓がフルバーストより長い H2-long の値（27,091）は出ない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps（録画の全体）。ラピ（AR）の 1 発の格子は、▲とフルバースト補正の付いた 37,510・47,929・58,349（距離ボーナスあり。胴体・会心・コア）、付かない 16,846・23,325・29,804・36,283。フルバーストの終わりは 221-01 の始まり（f1390・6417）から動画の 610f（10 秒 + 入りの止まり）で f2000・7027。S1（被弾の▲）が付いていれば 16,846 から外れるが、この区間は▲の無い格子に乗った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "221-18",
+    "recording": "221",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0361",
+    "value": 31258,
+    "description": "3 回目のフルバーストの終わりの直前のラピの 1 発（胴体・会心なし・距離ボーナスなし（遠））。最後の 2 秒の f6912〜6971 の胴体がどれも 31,258（f6917 は会心の 41,678）。f6971 の後は的のジャンプで撃たず、終わりの直後の 1 発は無い（次の発 f7149 はジャンプの後で、終わりの 2 秒より後）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps（録画の全体）。ラピ（AR）の 1 発の格子は、▲とフルバースト補正の付いた 37,510・47,929・58,349（距離ボーナスあり。胴体・会心・コア）、付かない 16,846・23,325・29,804・36,283。フルバーストの終わりは 221-01 の始まり（f1390・6417）から動画の 610f（10 秒 + 入りの止まり）で f2000・7027。3 回目は遠で距離ボーナスが無く、▲の付いた格子は 31,258・41,678。S1 の付いた格子（221-07 の 1.218 倍）は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 6040,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
   }
 ]
