@@ -1,0 +1,416 @@
+{
+  "verification": "V-0362",
+  "note": "録画 042 の読み直し（V-0358 と同じ録画・同じ編成）。I-DOLL・フラワー（I・AI）+ アドミ（II・AI）+ アリス（III・操作）+ I-DOLL・サン（III・AI）・灼熱の的・3 分モード・スペック固定 ON。アドミのバーストは各回のフルバーストの約 0.5 秒前で、クリティカルダメージ▲の窓はそこから 10 秒。比べるのは、III がアリスの回（サンの自分のバーストの効果が無い回）の窓の中と、窓の外のサンの 1 発。会心なしの 1 発は、窓の中のほかの効果（フルバースト補正など）をそろえる確かめ",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 172,
+      "controlled": false
+    },
+    {
+      "rid": 191,
+      "controlled": true
+    },
+    {
+      "rid": 308,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（バーストの effects[1]: バースト使用時に味方全体（自分を含む）へクリティカルダメージ▲（値 3）を 10 秒）"
+    },
+    {
+      "id": "H2",
+      "note": "クリティカルダメージ▲はアドミ自身にだけ付く（サンの会心の 1 発には乗らない。▲が付かない場合と、サンの 1 発では同じ値）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 172,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "critDamage",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "sun-crit-body-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（胴体・会心・距離ボーナスなし）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
+    },
+    {
+      "id": "sun-base-body-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（胴体・会心なし・距離ボーナスなし）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
+    },
+    {
+      "id": "sun-crit-body-d-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（胴体・会心・距離ボーナスあり）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
+    },
+    {
+      "id": "sun-base-body-d-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（胴体・会心なし・距離ボーナスあり）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
+    },
+    {
+      "id": "sun-crit-core-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（コア・会心・距離ボーナスなし）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
+    },
+    {
+      "id": "sun-base-core-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（コア・会心なし・距離ボーナスなし）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
+    },
+    {
+      "id": "sun-crit-core-d-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（コア・会心・距離ボーナスあり）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
+    },
+    {
+      "id": "sun-base-core-d-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（コア・会心なし・距離ボーナスあり）。アリスが III の回（1 回目のフルバースト）の、アドミのバーストの窓の中"
+    },
+    {
+      "id": "sun-crit-body-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1200,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（胴体・会心・距離ボーナスなし）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
+    },
+    {
+      "id": "sun-base-body-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（胴体・会心なし・距離ボーナスなし）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
+    },
+    {
+      "id": "sun-crit-body-d-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1200,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（胴体・会心・距離ボーナスあり）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
+    },
+    {
+      "id": "sun-base-body-d-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（胴体・会心なし・距離ボーナスあり）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
+    },
+    {
+      "id": "sun-crit-core-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1200,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（コア・会心・距離ボーナスなし）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
+    },
+    {
+      "id": "sun-base-core-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（コア・会心なし・距離ボーナスなし）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
+    },
+    {
+      "id": "sun-crit-core-d-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1200,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（コア・会心・距離ボーナスあり）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
+    },
+    {
+      "id": "sun-base-core-d-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "I-DOLL・サン（AR）の 1 発（コア・会心なし・距離ボーナスあり）。1 回目の窓が切れた後、次のバーストより前（▲の外）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "53505faca7f8d67fe128b0b67baa36880999283c",
+    "values": {
+      "H1": {
+        "sun-crit-body-in": 22771.5364513,
+        "sun-base-body-in": 14958.96675,
+        "sun-crit-body-d-in": 25763.3298013,
+        "sun-base-body-d-in": 17950.7601,
+        "sun-crit-core-in": 32744.1809513,
+        "sun-base-core-in": 24931.61125,
+        "sun-crit-core-d-in": 35735.9743013,
+        "sun-base-core-d-in": 27923.404599999998,
+        "sun-crit-body-after": 14958.96675,
+        "sun-base-body-after": 9972.6445,
+        "sun-crit-body-d-after": 17950.7601,
+        "sun-base-body-d-after": 12964.43785,
+        "sun-crit-core-after": 24931.61125,
+        "sun-base-core-after": 19945.289,
+        "sun-crit-core-d-after": 27923.404599999998,
+        "sun-base-core-d-after": 22937.08235
+      },
+      "H2": {
+        "sun-crit-body-in": 19945.289,
+        "sun-base-body-in": 14958.96675,
+        "sun-crit-body-d-in": 22937.08235,
+        "sun-base-body-d-in": 17950.7601,
+        "sun-crit-core-in": 29917.9335,
+        "sun-base-core-in": 24931.61125,
+        "sun-crit-core-d-in": 32909.72685,
+        "sun-base-core-d-in": 27923.404599999998,
+        "sun-crit-body-after": 14958.96675,
+        "sun-base-body-after": 9972.6445,
+        "sun-crit-body-d-after": 17950.7601,
+        "sun-base-body-d-after": 12964.43785,
+        "sun-crit-core-after": 24931.61125,
+        "sun-base-core-after": 19945.289,
+        "sun-crit-core-d-after": 27923.404599999998,
+        "sun-base-core-d-after": 22937.08235
+      }
+    },
+    "seen": {
+      "042": [
+        "018-02",
+        "042-01",
+        "042-02",
+        "042-03",
+        "042-04",
+        "042-05",
+        "042-06",
+        "042-07",
+        "042-08",
+        "042-09",
+        "042-10",
+        "042-11",
+        "042-12",
+        "042-13"
+      ]
+    }
+  }
+}

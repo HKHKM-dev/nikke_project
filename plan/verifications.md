@@ -5,12 +5,13 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 2・保留 0・完了 301・打ち切り 21（計 324）
+件数: 調査中 3・保留 0・完了 301・打ち切り 21（計 325）
 
 ## 開いている検証
 
 - **V-0328** 射撃場の SMG の遠の弾丸命中率は遠の着地点（遠 A・遠 B）で違うか（撮影。backlog 2-25）（状態: 調査中）
 - **V-0357** アリスの S1（最終攻撃力の上位 2 機へのチャージ速度▲・チャージダメージ▲）とバースト（自分のチャージ速度▲・攻撃力▲）（状態: 調査中）
+- **V-0362** アドミのバーストのクリティカルダメージ▲は味方全体に付くか（録画 042 の読み直し）（状態: 調査中）
 
 ## 全件
 
@@ -3224,6 +3225,7 @@
   - 録画: 042
   - 観測値: 042-11、042-12、042-13
   - 結論: C-0456
+  - 派生した検証: V-0362
   - 予測（2026-10-08、commit 3d5a4f6）との比べ:
     - sun-reload-out（reloadToNextShotAt）: 実測なし。H1 112.235、H2 112.235
     - sun-reload-in（reloadToNextShotAt）: 実測なし。H1 67.315、H2 112.235
@@ -3304,3 +3306,25 @@
     - after3（hitDamage）: 実測なし。H1 12,958.355、H2-short 12,958.355、H2-long 20,838.909、H0 12,958.355
     - burst-hit（burstHitDamage）: 実測なし。H1 624,393.328、H2-short 624,393.328、H2-long 624,393.328、H0 624,393.328
     - burst-hit-crit（burstHitDamage）: 実測なし。H1 936,589.991、H2-short 936,589.991、H2-long 936,589.991、H0 936,589.991
+- **[V-0362](../records/verifications/V-0362-admi-burst-crit-damage.md)** アドミのバーストのクリティカルダメージ▲は味方全体に付くか（録画 042 の読み直し）
+  - 問い: アドミ（172）のバーストのクリティカルダメージ▲（Lv10 の値・10 秒）は、説明文どおりアドミ以外の味方（I-DOLL・サン）の会心の 1 発にも乗るか
+  - 話題: スキル・キャラ固有・日付: 2026-10-08・状態: 調査中
+  - 録画: 042
+  - 派生元: V-0358
+  - 予測（2026-10-08、commit 53505fa）との比べ:
+    - sun-crit-body-in（hitDamage）: 実測なし。H1 22,771.536、H2 19,945.289
+    - sun-base-body-in（hitDamage）: 実測なし。H1 14,958.967、H2 14,958.967
+    - sun-crit-body-d-in（hitDamage）: 実測なし。H1 25,763.33、H2 22,937.082
+    - sun-base-body-d-in（hitDamage）: 実測なし。H1 17,950.76、H2 17,950.76
+    - sun-crit-core-in（hitDamage）: 実測なし。H1 32,744.181、H2 29,917.934
+    - sun-base-core-in（hitDamage）: 実測なし。H1 24,931.611、H2 24,931.611
+    - sun-crit-core-d-in（hitDamage）: 実測なし。H1 35,735.974、H2 32,909.727
+    - sun-base-core-d-in（hitDamage）: 実測なし。H1 27,923.405、H2 27,923.405
+    - sun-crit-body-after（hitDamage）: 実測なし。H1 14,958.967、H2 14,958.967
+    - sun-base-body-after（hitDamage）: 実測なし。H1 9,972.645、H2 9,972.645
+    - sun-crit-body-d-after（hitDamage）: 実測なし。H1 17,950.76、H2 17,950.76
+    - sun-base-body-d-after（hitDamage）: 実測なし。H1 12,964.438、H2 12,964.438
+    - sun-crit-core-after（hitDamage）: 実測なし。H1 24,931.611、H2 24,931.611
+    - sun-base-core-after（hitDamage）: 実測なし。H1 19,945.289、H2 19,945.289
+    - sun-crit-core-d-after（hitDamage）: 実測なし。H1 27,923.405、H2 27,923.405
+    - sun-base-core-d-after（hitDamage）: 実測なし。H1 22,937.082、H2 22,937.082
