@@ -653,6 +653,50 @@ describe('照合の部品', () => {
     expect(cuts[3]).toBe(cuts[2]);
   });
 
+  it('reads the magazine after each full burst start and the cycle counter residue per window (V-0356)', () => {
+    const input = {} as TeamInput;
+    // フルバーストの開始から、その後で最初に撃ち切った発まで（開始のフレームの発を含む）。撃ち切る前に終わった回は数えない
+    const magazine = METRICS.fullBurstMagazineShots!;
+    const fired = {
+      schedule: { fullBurstWindows: [{ start: 100 }, { start: 400 }, { start: 900 }] },
+      shots: [{ frames: [50, 100, 150, 200, 300, 400, 450, 500, 950], lastShotFrames: [50, 200, 500] }],
+    } as unknown as SimResult;
+    expect(magazine.sim(fired, { args: { slot: 1 }, input })).toEqual([3, 3]);
+    expect(magazine.sim(fired, { args: { slot: 1, count: 1 }, input })).toEqual([3]);
+    expect(() => magazine.sim(fired, { args: { slot: 1, count: 3 }, input })).toThrow(/2 回しか無い/);
+
+    // (p + n + k) mod every。窓の前に段が無い窓と、窓の後に段が出ない窓は除く
+    const residues = METRICS.cycleWindowResidues!;
+    const cycled = (frames: number[]) =>
+      frames.map((frame) => ({ frame, slotIndex: 0, effect: { cycle: { step: 0 } } }));
+    const sim = {
+      shots: [{ frames: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110] }],
+      // 窓 [35, 55) の前の最後の段は 10（p = 2）、窓の中は 40・50（n = 2）、窓の後の最初の段は 80（k = 3）
+      skillHits: cycled([10, 40, 50, 80]),
+      timeline: {
+        cycleWindows: [
+          { slotIndex: 0, start: 35, end: 55 },
+          { slotIndex: 0, start: 5, end: 8 },
+          { slotIndex: 0, start: 95, end: 105 },
+          { slotIndex: 1, start: 35, end: 55 },
+        ],
+      },
+    } as unknown as SimResult;
+    expect(residues.sim(sim, { args: { slot: 1, every: 3 }, input })).toEqual([(2 + 2 + 3) % 3]);
+
+    // 録画 363（ココア + デルタ + 紅蓮：ブラックシャドウ）: S2 で毎回 14 発撃ち、通算のカウンタなので余りはいつも 0（C-0490・C-0492）
+    const team = buildTeamInput(
+      recordings.get('363')!,
+      { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] },
+      data,
+    );
+    const result = runSimulation(team);
+    expect(magazine.sim(result, { args: { slot: 3, count: 4 }, input: team })).toEqual([14, 14, 14, 14]);
+    const r = residues.sim(result, { args: { slot: 3, every: 3 }, input: team }) as number[];
+    expect(r.length).toBeGreaterThanOrEqual(4);
+    expect(r.every((x) => x === 0)).toBe(true);
+  });
+
   it('builds automatic conditions with the target profile and a fixed mid-far landing (Stage 18-C)', () => {
     const rec54 = recordings.get('054') as ProjectRecording;
     const manual = buildTeamInput(rec54, { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] }, data);

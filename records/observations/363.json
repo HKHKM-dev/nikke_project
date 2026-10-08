@@ -1,0 +1,510 @@
+[
+  {
+    "id": "363-01",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "value": 207265,
+    "description": "紅蓮：ブラックシャドウの通常攻撃の 1 ヒット（コア・会心なし）。フルバーストの窓の外の 96 ヒットがすべて 207,265（対照。どの仮説も同じ）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（最後の値 349,484,922 は戦闘履歴の 3 人の与ダメージの和と一致）と、使い捨てのスクリプトでの分け方",
+      "note": "紅蓮BS の増分は値の組で分けた（ココア・デルタの SR の 1 発（208,626・239,920・260,783・344,596・430,745・553,222 など）は紅蓮BS の格子と重ならない。259,081（紅蓮BS の窓の外の通常攻撃の会心。207,265 × 1.25）は、残弾が減った発に付くことで紅蓮BS と確かめた）。窓の中・外は、同じ発の通常攻撃の値（207,265 か 1,188,135）と、残弾の表示（フルバースト開始で 14 に増えたフレーム）で分けた。1 回目のフルバーストより前の f886・973・1016・1102・1145・1188・1231 を含む、窓の外の会心でない 1 ヒット"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-02",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1188135,
+    "description": "紅蓮BS の通常攻撃の 1 ヒット（コア・会心なし）。5 回のフルバーストの窓の中の 57 ヒットがすべて 1,188,135（H1 の値。攻撃力▲を外す H0-atk なら 552,067、チャージダメージ▲を外す H0-cd なら 557,583）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（最後の値 349,484,922 は戦闘履歴の 3 人の与ダメージの和と一致）と、使い捨てのスクリプトでの分け方",
+      "note": "紅蓮BS の増分は値の組で分けた（ココア・デルタの SR の 1 発（208,626・239,920・260,783・344,596・430,745・553,222 など）は紅蓮BS の格子と重ならない。259,081（紅蓮BS の窓の外の通常攻撃の会心。207,265 × 1.25）は、残弾が減った発に付くことで紅蓮BS と確かめた）。窓の中・外は、同じ発の通常攻撃の値（207,265 か 1,188,135）と、残弾の表示（フルバースト開始で 14 に増えたフレーム）で分けた。会心の発は 1,425,762（1.2 倍）で別に出る（使っていない）。窓の中の発は 1 回目 f1393〜1910、2 回目 f3862〜4378、3 回目 f6247〜6806、4 回目 f8701〜9260、5 回目 f11068〜11541"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-03",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "value": 207265,
+    "description": "1 回目のフルバーストの窓が明けた後の紅蓮BS の通常攻撃の 1 ヒット（コア・会心なし）。窓の中の最後の発（f1910）の次の発（f1952）から 207,265 に戻った（▲が 10 秒で切れる）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（最後の値 349,484,922 は戦闘履歴の 3 人の与ダメージの和と一致）と、使い捨てのスクリプトでの分け方",
+      "note": "紅蓮BS の増分は値の組で分けた（ココア・デルタの SR の 1 発（208,626・239,920・260,783・344,596・430,745・553,222 など）は紅蓮BS の格子と重ならない。259,081（紅蓮BS の窓の外の通常攻撃の会心。207,265 × 1.25）は、残弾が減った発に付くことで紅蓮BS と確かめた）。窓の中・外は、同じ発の通常攻撃の値（207,265 か 1,188,135）と、残弾の表示（フルバースト開始で 14 に増えたフレーム）で分けた。2〜4 回目の窓の明けの後も、最初の会心でない発（f4421・7068・9432）は 207,265"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-04",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "value": 341317,
+    "description": "S1 の段 A の 1 ヒット（会心なし）。窓の外の 11 回がすべて 341,317（対照）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（最後の値 349,484,922 は戦闘履歴の 3 人の与ダメージの和と一致）と、使い捨てのスクリプトでの分け方",
+      "note": "紅蓮BS の増分は値の組で分けた（ココア・デルタの SR の 1 発（208,626・239,920・260,783・344,596・430,745・553,222 など）は紅蓮BS の格子と重ならない。259,081（紅蓮BS の窓の外の通常攻撃の会心。207,265 × 1.25）は、残弾が減った発に付くことで紅蓮BS と確かめた）。窓の中・外は、同じ発の通常攻撃の値（207,265 か 1,188,135）と、残弾の表示（フルバースト開始で 14 に増えたフレーム）で分けた。段 A は段 C（1,022,673）・段 B の 3 ティック（227,119 × 3）と値で分けた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-05",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1101851,
+    "description": "フルバーストの窓の中の S1 の段 A の 1 ヒット（会心なし）。19 回がすべて 1,101,851（H1。攻撃力▲を外す H0-atk なら 511,976。チャージダメージ▲は乗らない）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（最後の値 349,484,922 は戦闘履歴の 3 人の与ダメージの和と一致）と、使い捨てのスクリプトでの分け方",
+      "note": "紅蓮BS の増分は値の組で分けた（ココア・デルタの SR の 1 発（208,626・239,920・260,783・344,596・430,745・553,222 など）は紅蓮BS の格子と重ならない。259,081（紅蓮BS の窓の外の通常攻撃の会心。207,265 × 1.25）は、残弾が減った発に付くことで紅蓮BS と確かめた）。窓の中・外は、同じ発の通常攻撃の値（207,265 か 1,188,135）と、残弾の表示（フルバースト開始で 14 に増えたフレーム）で分けた。会心は 1,469,135（4/3 倍）で別に出る。窓の外の会心の段 A は 511,976（1.5 倍。f7719）で、H0-atk の窓の中の値と同じになるが、窓の外（窓の明けから 900f 以上後）の発なので窓の中の値には数えない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-06",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3301427,
+    "description": "フルバーストの窓の中の S1 の段 C の 1 ヒット（会心なし）。20 回がすべて 3,301,427（H1。H0-atk なら 1,534,010）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（最後の値 349,484,922 は戦闘履歴の 3 人の与ダメージの和と一致）と、使い捨てのスクリプトでの分け方",
+      "note": "紅蓮BS の増分は値の組で分けた（ココア・デルタの SR の 1 発（208,626・239,920・260,783・344,596・430,745・553,222 など）は紅蓮BS の格子と重ならない。259,081（紅蓮BS の窓の外の通常攻撃の会心。207,265 × 1.25）は、残弾が減った発に付くことで紅蓮BS と確かめた）。窓の中・外は、同じ発の通常攻撃の値（207,265 か 1,188,135）と、残弾の表示（フルバースト開始で 14 に増えたフレーム）で分けた。会心は 4,401,903（4/3 倍）。窓の外の会心の段 C は 1,534,010（1.5 倍。f3413）で、窓の外の発"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 5,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-07",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "compare",
+    "value": 9,
+    "description": "1 回目のフルバーストより前の紅蓮BS の最大装弾数。戦闘開始のマガジンの表示が 9（f854）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列",
+      "note": "リロード明けの表示の値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 300
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-08",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "compare",
+    "value": 14,
+    "description": "フルバーストの窓の中の最大装弾数。5 回ともフルバースト開始の表示が 14（f1367・3836・6219・8654・11042）で、14 から数えて撃った（H1。最大装弾数▲を外す H0-ammo なら 9）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列",
+      "note": "開始の直後の表示の値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 700
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-09",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "compare",
+    "value": 9,
+    "description": "1 回目のフルバーストの窓が明けた後の最大装弾数。窓の後の最初のリロード明けの表示が 9（f2090）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列",
+      "note": "2〜4 回目の後のリロード明けも 9（f4560・6941・9399）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 1200
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-10",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "compare",
+    "value": [9, 14],
+    "description": "戦闘開始からのマガジン 2 本の発数。1 本目 9 発（f882〜1227）、1 回目のフルバーストをまたぐ 2 本目 14 発（f1389〜1947）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列",
+      "note": "残弾の表示が 1 ずつ減ったフレームを発とし、0 は表示されないので 1 の後のリロードの前の発を最終弾とした（HUD の増分 f1231・1952 で確かめた）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-11",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "compare",
+    "value": 13,
+    "description": "1 回目のフルバーストの窓の中の紅蓮BS の発の数。通常攻撃の 1 ヒットが窓の中の値（1,188,135 か会心の 1,425,762）だった発が 13（f1389〜1905）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列",
+      "note": "窓の中の発の後の発（f1947）は 207,265 で窓の外"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 0,
+        "from": 0,
+        "to": 600
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-12",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "compare",
+    "value": 13,
+    "description": "2 回目のフルバーストの窓の中の発の数。13（f3859〜4379）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列",
+      "note": "窓の中の発の後の発（f4418）は 207,265 で窓の外"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 1,
+        "from": 0,
+        "to": 600
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-13",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "compare",
+    "value": 105,
+    "description": "180 秒の S1 の段のヒットの回数（段 B の 3 ティックは 1 回に数える）。105 回（H1 106、H0-ammo 95、H0-refill 98、H0-cycle 62）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（最後の値 349,484,922 は戦闘履歴の 3 人の与ダメージの和と一致）と、使い捨てのスクリプトでの分け方",
+      "note": "紅蓮BS の増分は値の組で分けた（ココア・デルタの SR の 1 発（208,626・239,920・260,783・344,596・430,745・553,222 など）は紅蓮BS の格子と重ならない。259,081（紅蓮BS の窓の外の通常攻撃の会心。207,265 × 1.25）は、残弾が減った発に付くことで紅蓮BS と確かめた）。窓の中・外は、同じ発の通常攻撃の値（207,265 か 1,188,135）と、残弾の表示（フルバースト開始で 14 に増えたフレーム）で分けた。段のヒットを値（段 A 341,317・1,101,851、段 B のティック 227,119・733,192、段 C 1,022,673・3,301,427 と、それぞれの会心）で拾い、段 B の 3 ティック（45f 以内）を 1 回にした。同じフレームのほかの枠の増分と重なった 2 回（f1857 の段 B のティック + 260,783、f6722 の段 C + 344,233）は、和から段の値を引いた残りがココア・デルタの格子に乗ることで確かめた。段の列は A → B → C が戦闘の終わりまで途切れない。許容 ±5 は、モデルと録画の射撃の位相のずれ（フルバースト開始から 1 発目まで。design-stage11-scarlet-bs.md 13 節）で窓の中の発が 1 回のフルバーストにつき ±1 発動きうる 5 回分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-14",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "record",
+    "value": [0, 13, 2, 0, 13, 2, 2, 14, 2, 1, 14, 3],
+    "description": "フルバーストの窓ごとの段の数え方 [p, n, k]（1〜4 回目）。p = 窓の前の最後の段の後の段なしの発、n = 窓の中の発（毎発で段）、k = 窓の後で最初に段が出たのが何発目か。4 回とも p + n + k ≡ 0 (mod 3)（H1。通算のカウンタ）。H2（数え直す。k = 3）は 1〜3 回目で、H3（窓の中を数えない。p + k ≡ 0）は 4 回とも外れる。5 回目は窓の途中で戦闘が終わり k が無い",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列・tools/captures/hud.ts --mode jumps（最後の値 349,484,922 は戦闘履歴の 3 人の与ダメージの和と一致）と、使い捨てのスクリプトでの分け方",
+      "note": "発は残弾の表示が減ったフレーム。段の有無は、発の 2〜7f 後の段のヒットの増分で見た。窓の前の最後の段は 1 回目 f1227 の発（段 C）、2 回目 f3793（段 B）、3 回目 f5957（段 C）、4 回目 f8459（段 B）。窓の後の最初の段は 1 回目 f2120（段 B）、2 回目 f4666（段 A）、3 回目 f7063（段 C）、4 回目 f9515（段 B）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill",
+      "frames": [882, 11544]
+    }
+  },
+  {
+    "id": "363-15",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "record",
+    "value": [7, 14, 9, 14, 9, 14],
+    "description": "フルバーストごとの、開始の直前の残弾 r と開始からマガジンが空になるまでの発の数 m [r, m]（2〜4 回目）。どれも開始の直後に表示が 14 になり、14 発撃った（H1。弾丸チャージを外す H0-refill なら m = r、最大装弾数▲を外す H0-ammo なら 9）。5 回目は r = 7 で表示が 14 になり、戦闘の終わりまでに 11 発撃って 3 残った。1 回目はリロード中に始まり、表示が 14 になったのはリロードがふつうに明ける頃（f1367）で、H0-refill と見分けられない",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列",
+      "note": "2 回目 f3793〜3801 に 7 → f3836 に 14（間はカットインで読めない）、3 回目 f6187〜6218 に 9 → f6219 に 14、4 回目 f8646〜8653 に 9 → f8654 に 14、5 回目 f11040〜11041 に 7 → f11042 に 14。1 回目は最終弾 f1227 からリロード（ふつうのリロードは最終弾から表示まで約 143f。f1947 → 2090）で、f1367 に 14"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing",
+      "frames": [1227, 11577]
+    }
+  },
+  {
+    "id": "363-16",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "hit",
+    "use": "record",
+    "value": 1188135,
+    "description": "5 回目のフルバーストの直前の発（f11040。残弾が 8 → 7 に減ったフレーム。表示が 14 になったのは f11042）の 1 ヒットは窓の中の値 1,188,135 で、段 B が付いた（窓の前の最後の段 f10822 の段 A の後の 2 発目なので、窓の外なら段なし）。HUD は f11044〜11067 のカットインで読めず、f11068 に 1,188,135、f11069〜11098 に段 B の 3 ティックが出た",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列・tools/captures/hud.ts --mode jumps（最後の値 349,484,922 は戦闘履歴の 3 人の与ダメージの和と一致）と、使い捨てのスクリプトでの分け方",
+      "note": "残弾は f11030〜11039 が 8、f11040〜11041 が 7、f11042 から 14。「FULL BURST!」の表示は f11042 ごろから。発のフレームとバースト使用のフレームの差は 1〜2f で、表示の遅れの幅と区別できない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill",
+      "frames": [11030, 11098]
+    }
+  },
+  {
+    "id": "363-17",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "compare",
+    "value": [14, 14, 14, 14],
+    "description": "1〜4 回目のフルバーストの、開始から最初にマガジンを撃ち切るまでの紅蓮BS の発の数。4 回とも 14（開始の直前は 1 回目リロード中、2 回目残弾 7、3・4 回目残弾 9）。最大装弾数▲と弾丸チャージが効けば、開始の前の残弾に依らず 14（H1）。弾丸チャージを外す H0-refill なら 2〜4 回目は 7・9・9、最大装弾数▲を外す H0-ammo なら 9 以下。1 回目（リロード中）だけは H0-refill でも 14 になる",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列",
+      "note": "363-15 と同じ読み。発は残弾の表示が減ったフレームで、最終弾は 1 の表示の後のリロードの前の発（HUD の増分 f1952・4421・6806・9260 で確かめた）。5 回目は撃ち切る前に戦闘が終わったので数えない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstMagazineShots",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "363-18",
+    "recording": "363",
+    "source": "V-0356",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "use": "compare",
+    "value": [0, 0, 0, 0],
+    "description": "段の間隔の変更の窓ごとの、窓の前の最後の段の後の段なしの発 p・窓の中の発 n・窓の後で最初に段が出たのが何発目か k の和を 3 で割った余り（1〜4 回目。363-14 の [p, n, k] から）。4 回とも 0（H1。通算のカウンタ）。段が出るたびに数え直す H2 なら [1, 1, 1, 0]、窓の中の発を数えない H3 なら [1, 1, 2, 2]",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series・tools/captures/hud.ts --mode jumps と、使い捨てのスクリプトでの発の列",
+      "note": "363-14 と同じ読み。5 回目は窓の後に段が出る前に戦闘が終わったので除く（モデルの指標も同じ規則で除く）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "cycleWindowResidues",
+      "args": {
+        "slot": 3,
+        "every": 3
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]
