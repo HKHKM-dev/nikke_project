@@ -327,6 +327,52 @@ function magazineShots(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
+ * V-0356（紅蓮：ブラックシャドウの S2）: フルバーストごとに、開始のフレームから、その後で最初にマガジンを撃ち切った発までの発の数
+ * （開始のフレームの発を含む）。最大装弾数▲と弾丸チャージ（▲の後の最大まで足す）が効けば、開始の前の残弾やリロード中かに依らず
+ * ▲の後の最大になる。count を書くと最初の count 回（録画で読めた回数にそろえる）。撃ち切る前に戦闘が終わった回は数えない
+ */
+function fullBurstMagazineShots(result: SimResult, ctx: MetricContext): number[] {
+  const log = slotOf(result.shots, ctx);
+  const ends = log.lastShotFrames ?? [];
+  const out: number[] = [];
+  for (const w of result.schedule?.fullBurstWindows ?? []) {
+    const end = ends.find((f) => f >= w.start);
+    if (end === undefined) break;
+    out.push(log.frames.filter((f) => f >= w.start && f <= end).length);
+  }
+  if (ctx.args.count === undefined) return out;
+  const count = Number(ctx.args.count);
+  if (out.length < count) throw new Error(`撃ち切ったフルバーストが ${out.length} 回しか無い`);
+  return out.slice(0, count);
+}
+
+/**
+ * V-0356（紅蓮：ブラックシャドウのバースト）: 段の間隔の変更の窓ごとに、窓の前の最後の段の後の段なしの発の数 p・窓の中の発の数 n・
+ * 窓の後で最初に段が出たのが何発目か k の和を every（窓の外の段の間隔）で割った余り。通算のカウンタなら 0 になり、射撃の位相に依らない。
+ * 窓の前に段が無い窓と、窓の後に段が出る前に戦闘が終わった窓は除く
+ */
+function cycleWindowResidues(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const every = Number(ctx.args.every);
+  const shots = slotOf(result.shots, ctx).frames;
+  const tiers = new Set(
+    result.skillHits.filter((h) => h.slotIndex === slotIndex && h.effect.cycle !== undefined).map((h) => h.frame),
+  );
+  const out: number[] = [];
+  for (const w of result.timeline.cycleWindows.filter((x) => x.slotIndex === slotIndex)) {
+    const before = shots.filter((f) => f < w.start);
+    let last = before.length - 1;
+    while (last >= 0 && !tiers.has(before[last]!)) last -= 1;
+    const k = shots.filter((f) => f >= w.end).findIndex((f) => tiers.has(f)) + 1;
+    if (last < 0 || k === 0) continue;
+    const p = before.length - 1 - last;
+    const n = shots.filter((f) => f >= w.start && f < w.end).length;
+    out.push((p + n + k) % every);
+  }
+  return out;
+}
+
+/**
  * クラウン編（V-0178）: その枠が出した回復（heal）ごとに、前の回復（初回は戦闘の始め）からその回復までに撃った通常攻撃の
  * 当たる数の期待値（発ごとの区間の弾丸命中率の和）。録画の総ダメージの増分から数えたヒット数と比べる
  */
@@ -825,6 +871,8 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 3 節）: 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
   // 最後の弾丸の発を含む）。弾丸チャージでマガジンが延びるかを見る
   magazineShots: { args: ['slot', 'count'], sim: magazineShots },
+  fullBurstMagazineShots: { args: ['slot'], sim: fullBurstMagazineShots },
+  cycleWindowResidues: { args: ['slot', 'every'], sim: cycleWindowResidues },
   shotIntervals: {
     args: ['slot'],
     sim: (r, c) => {

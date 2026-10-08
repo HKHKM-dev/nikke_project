@@ -1,0 +1,41 @@
+{
+  "id": "363",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-363_sr+sr+rl_cocoa+delta+scarlet-black-shadow.mp4",
+  "original": "2026-10-08_21-21-31.mp4",
+  "durationSec": 208.1,
+  "frames": 12485,
+  "fps": 60,
+  "sizeMB": 252.2,
+  "sha256": "bfac6938e465",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 225,
+      "name": "紅蓮：ブラックシャドウ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0356（紅蓮：ブラックシャドウの S2・バースト）。BigArms（灼熱タブ・3 分モード・スペック固定 ON）。ココア（I）+ デルタ（II）+ 紅蓮：ブラックシャドウ（III・操作）の 3 体（戦闘履歴のパネル（f12240〜）で枠と名前を確かめた。Lv.400・交戦時間 03:00）。AUTO 射撃 ON・オートバースト ON（画面左上のボタン）。HUD の最後の値 349,484,922 は、戦闘履歴の 3 人の与ダメージの和と一致。取り込みのときに付けた 354 が別の検証の録画と重なったので、同じ日に 363 に振り直した"
+}
