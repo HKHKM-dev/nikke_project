@@ -348,9 +348,13 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
  * Stage 10: lastShot = 残弾を 0 にした射撃（「最後の弾丸で攻撃した時 / 命中した時」）。最大装弾数▲で遅れ、弾丸チャージで出なくなる。
  * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9.6 節の論点 12）: weaponChangeShot = 使用武器の変更
  * （weaponChange）で持ち替えた武器で撃った射撃（「命中した敵に」付く徹甲炸裂弾の受けるダメージ▲。その発自身には乗らない）。
- * 循環（cycle）と during には書けない
+ * 循環（cycle）と during には書けない。
+ * ペレットの命中編（plan/design-pellet-hit.md 2 節）: pelletHit = 的に当たったペレットの数。1 発ごとに shotCount × その発の
+ * 当たったペレットの割合（SG 以外は normalHit と同じ量）を足し、累計が N の倍数に届いた発で発火する（持ち越し。C-0408）。
+ * 1 発の量が N を超えてはいけないので every か everyRef が要り、循環には書けない
  */
-export type ShotCountKind = 'normalShot' | 'normalHit' | 'coreHit' | 'fullChargeShot' | 'lastShot' | 'weaponChangeShot';
+export type ShotCountKind =
+  'normalShot' | 'normalHit' | 'coreHit' | 'fullChargeShot' | 'lastShot' | 'weaponChangeShot' | 'pelletHit';
 export const SHOT_COUNT_KINDS = [
   'normalShot',
   'normalHit',
@@ -358,6 +362,7 @@ export const SHOT_COUNT_KINDS = [
   'fullChargeShot',
   'lastShot',
   'weaponChangeShot',
+  'pelletHit',
 ] as const satisfies readonly ShotCountKind[];
 
 export type ShotCountTrigger = {
@@ -1324,6 +1329,10 @@ function parseTrigger(
       }
     }
     if (v.every !== undefined && v.everyRef !== undefined) fail(path, 'at most one of every and everyRef');
+    // ペレットの命中編（plan/design-pellet-hit.md 2 節）: 1 発で複数のペレットを数えるので、毎回（1）は書けない
+    if (v.count === 'pelletHit' && v.every === undefined && v.everyRef === undefined) {
+      fail(path, 'pelletHit needs every or everyRef');
+    }
     const trigger: ShotCountTrigger = { count: v.count as ShotCountKind };
     if (v.every !== undefined) trigger.every = parsePositiveInt(v.every, `${path}.every`);
     if (v.everyRef !== undefined) trigger.everyRef = parseRef(v.everyRef, `${path}.everyRef`);
@@ -1719,6 +1728,7 @@ function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
   if (!isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'a cycle needs a shot count trigger');
   if (trigger.count === 'lastShot') fail(`${path}.trigger.count`, 'lastShot is not allowed in a cycle');
   if (trigger.count === 'weaponChangeShot') fail(`${path}.trigger.count`, 'weaponChangeShot is not allowed in a cycle');
+  if (trigger.count === 'pelletHit') fail(`${path}.trigger.count`, 'pelletHit is not allowed in a cycle');
   if (trigger.stacksRef !== undefined) fail(`${path}.trigger.stacksRef`, 'stacksRef is not allowed in a cycle');
   if (!Array.isArray(v.steps) || v.steps.length < 2) fail(`${path}.steps`, 'expected an array of at least 2 steps');
   const steps = v.steps.map((raw, i): CycleStep => {

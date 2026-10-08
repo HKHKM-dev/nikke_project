@@ -38,6 +38,11 @@ export type ShotEvent = {
   /** 同 2.2 節: この射撃のコアの命中の期待値（弾丸命中率 × コア命中率。敵にコアが無ければ 0）。coreHit の回数に足す */
   coreHits: number;
   /**
+   * ペレットの命中編（plan/design-pellet-hit.md 2 節）: この射撃で的に当たったペレットの数（期待値か、録画で数えた入力）。
+   * pelletHit の回数に足す。省略は hits（1 ペレットの武器）
+   */
+  pellets?: number;
+  /**
    * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9.6 節）: 使用武器の変更で持ち替えた武器で撃った射撃か
    * （weaponChangeShot の回数に足す）。省略は false
    */
@@ -59,18 +64,25 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
       return shot.lastShot ? 1 : 0;
     case 'weaponChangeShot':
       return shot.weaponChange === true ? 1 : 0;
+    case 'pelletHit':
+      return shot.pellets ?? shot.hits;
   }
 }
 
-/** 期待値の累計の端数の誤差の許し（1 発の量は 1 以下なので、N の倍数をまたいだかの判定にだけ使う） */
+/** 期待値の累計の端数の誤差の許し（N の倍数をまたいだかの判定にだけ使う） */
 const COUNT_EPSILON = 1e-9;
 
 /**
- * 回数の累計 count に weight を足した値と、この射撃で N（every）の倍数を越えたか。整数の量（射撃の回数）なら
- * 「累計が every の倍数になった射撃」と同じ。期待値の量は、累計が every の倍数を越えた射撃で 1 回発火する（1 発の量は 1 以下）
+ * 回数の累計 count に weight を足した値と、この射撃で N（every）の倍数を越えたか。整数の量（射撃の回数・ペレットの数）なら
+ * 「累計が every の倍数に届いた射撃」と同じ（ちょうど倍数になった射撃も発火する。C-0408）。期待値の量は、累計が every の倍数を
+ * 越えた射撃で 1 回発火する。1 射撃で 2 回は発火しないので、1 発の量が every を超えたら RangeError（pelletHit の N が
+ * ペレット数より小さい定義。plan/design-pellet-hit.md 2 節）
  */
 export function advanceShotCount(count: number, weight: number, every: number): { count: number; fired: boolean } {
   if (weight <= 0) return { count, fired: false };
+  if (weight > every + COUNT_EPSILON) {
+    throw new RangeError(`a count trigger got ${weight} in one shot, more than every (${every})`);
+  }
   const next = count + weight;
   const fired = Math.floor(next / every + COUNT_EPSILON) > Math.floor(count / every + COUNT_EPSILON);
   return { count: next, fired };
@@ -247,6 +259,8 @@ export function replayEvents(
         hits: log.hits?.[k] ?? 1,
         coreHits: log.coreHits?.[k] ?? 0,
       };
+      const pellets = log.pelletHits?.[k];
+      if (pellets !== undefined) shot.pellets = pellets;
       if (changed.has(f)) shot.weaponChange = true;
       (at(f).shots as (ShotEvent | null)[])[slotIndex] = shot;
     });

@@ -40,6 +40,11 @@ export type ShotLog = {
    */
   hits?: number[];
   coreHits?: number[];
+  /**
+   * ペレットの命中編（plan/design-pellet-hit.md 2 節）: frames と同じ並びの、発ごとに的に当たったペレットの数（期待値か、録画で
+   * 数えた入力。1 パス目が書く）。省略は hits
+   */
+  pelletHits?: number[];
 };
 
 export type PartialShot = { frame: number; progress: number };

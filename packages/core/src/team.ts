@@ -98,6 +98,11 @@ export type TeamInput = {
    */
   obstacleBreaks?: readonly ObstacleBreak[];
   /**
+   * ペレットの命中編（plan/design-pellet-hit.md 3 節）: 発ごとに的に当たったペレットの数（録画で数えた入力）。有る発は、回数トリガー
+   * pelletHit の回数に期待値の代わりにこの数を足す。ダメージとゲージには効かない。省略は無し。利用者の計算には出さない
+   */
+  pelletHits?: readonly PelletHits[];
+  /**
    * C-0170（仮説）: 持続の命中率▲（フルバーストの頭などで配られるもの）を、条件が自動の枠のコア命中率（と C-0192 の弾丸命中率）に
    * 効かせるか。省略 true（いまのモデル）。false は PR #198 の前の形で、検証の予測の仮説（records/predictions の setup）だけが使う。
    * 常時の命中率▲には関わらない
@@ -117,6 +122,31 @@ export type TeamInput = {
 
 /** 枠 slotIndex の shot 発目（1 始まり）が、障害物を count 個壊した */
 export type ObstacleBreak = { slotIndex: number; shot: number; count: number };
+
+/** 枠 slotIndex の 1 発目から順に、発ごとに的に当たったペレットの数（counts[k] が k + 1 発目） */
+export type PelletHits = { slotIndex: number; counts: readonly number[] };
+
+/** pelletHits の枠・数を検証する。数は 0 以上でその枠のペレット数以下の整数、同じ枠は 1 つだけ */
+export function validatePelletHits(
+  slots: readonly (TeamSlotInput | null)[],
+  inputs: readonly PelletHits[] | undefined,
+): void {
+  const seen = new Set<number>();
+  for (const p of inputs ?? []) {
+    const slot = Number.isInteger(p.slotIndex) ? slots[p.slotIndex] : undefined;
+    if (slot === undefined || slot === null) {
+      throw new RangeError(`pelletHits: slotIndex must be a filled slot, got ${p.slotIndex}`);
+    }
+    if (seen.has(p.slotIndex)) throw new RangeError(`pelletHits: duplicate slot ${p.slotIndex}`);
+    seen.add(p.slotIndex);
+    const max = slot.character.shot.shotCount;
+    for (const n of p.counts) {
+      if (!Number.isInteger(n) || n < 0 || n > max) {
+        throw new RangeError(`pelletHits: a count must be an integer in [0, ${max}], got ${n}`);
+      }
+    }
+  }
+}
 
 /** obstacleBreaks の枠・発の番号・個数を検証する。同じ枠の同じ発は 1 つだけ */
 export function validateObstacleBreaks(

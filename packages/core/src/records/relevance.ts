@@ -115,6 +115,7 @@ const METRIC_SOURCE: Record<string, ObservationSource> = {
   dotHitDamage: 'dot',
   dotStackTickDamage: 'dot',
   skillHitDamage: 'skill',
+  skillHitShotIndices: 'skill',
 };
 
 /** 判定の要素（design-minimal-relevance.md 2 節の 2） */

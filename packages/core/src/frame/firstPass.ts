@@ -115,7 +115,7 @@ import {
 } from './shooter.ts';
 import type { ShotLog } from './shots.ts';
 import { flightFramesAt, type FlightFrameSpan, type LandingHitRateSpan, type SlotFlight } from './landing.ts';
-import type { ObstacleBreak } from '../team.ts';
+import type { ObstacleBreak, PelletHits } from '../team.ts';
 
 export type FirstPassOptions = {
   frames: number;
@@ -142,6 +142,11 @@ export type FirstPassOptions = {
   flights?: readonly (SlotFlight | null)[];
   /** 同 2 節: 発が壊した障害物（録画で数えた入力）。その発のゲージに物の分を足す。省略は無し */
   obstacleBreaks?: readonly ObstacleBreak[];
+  /**
+   * ペレットの命中編（plan/design-pellet-hit.md 3 節）: 枠ごとの、発ごとに的に当たったペレットの数（録画で数えた入力）。
+   * 有る発は pelletHit の回数に期待値の代わりにこの数を足す。省略は無し（期待値）
+   */
+  pelletHits?: readonly PelletHits[];
   /**
    * plan/design-sustained-hit-rate-gauge.md: 枠 slotIndex の区間 span の弾丸命中率とコアの命中の期待値を、持続の命中率▲
    * timedHitRateUp を足した N で出し直す（frame/landing.ts の hitRateSpanWith）。省略なら持続の▲の窓を追わない（計画の値のまま）
@@ -488,7 +493,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const logs: (ShotLog | null)[] = slots.map((slot) =>
     slot === null
       ? null
-      : { frames: [], fullCharge: isChargeWeapon(slot.character.shot), lastShotFrames: [], hits: [], coreHits: [] },
+      : {
+          frames: [],
+          fullCharge: isChargeWeapon(slot.character.shot),
+          lastShotFrames: [],
+          hits: [],
+          coreHits: [],
+          pelletHits: [],
+        },
   );
 
   // ---- バースト ----
@@ -563,6 +575,23 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     const hitRate = span?.hitRate ?? slot.hitRate ?? 1;
     const coreHits = span !== undefined ? span.coreHits : (slot.hitRate ?? 1) * (slot.coreHitRate ?? 0);
     return { hits: pellets[i] ? 1 : hitRate, coreHits: enemyHasCore ? coreHits : 0 };
+  };
+  // ペレットの命中編（plan/design-pellet-hit.md 2・3 節）: 発ごとに的に当たったペレットの数。録画で数えた入力があればその数、
+  // 無ければ期待値（SG は shotCount × 当たったペレットの割合。割合はゲージと同じ: 的の表の区間はその値、手入力は
+  // 弾丸命中率 × SG_PELLET_GAUGE_HIT_RATE。C-0150。SG 以外は命中の期待値と同じ）
+  const pelletInputs = slots.map(() => new Map<number, number>());
+  for (const p of options.pelletHits ?? []) p.counts.forEach((n, k) => pelletInputs[p.slotIndex]?.set(k, n));
+  const pelletsAt = (i: number, f: number, k: number, hits: number): number => {
+    const input = pelletInputs[i]!.get(k);
+    if (input !== undefined) return input;
+    if (!pellets[i]) return hits;
+    const slot = slots[i]!;
+    const span = spanAt(i, f);
+    const rate =
+      span === undefined
+        ? (slot.hitRate ?? 1) * SG_PELLET_GAUGE_HIT_RATE
+        : (spanValueAt(i, f)?.hitRate ?? 1) * (span.measured === true ? 1 : SG_PELLET_GAUGE_HIT_RATE);
+    return slot.character.shot.shotCount * rate;
   };
   // V-0030: 段のヒットでゲージを溜める循環。溜めるゲージは当たるフレームに予約する（pendingGauge）
   const cycleTrackers: CycleGaugeTracker[] = [];
@@ -801,9 +830,17 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const isPartial = partial !== null && partial < 1;
       if (isPartial) (log.partialShots ??= []).push({ frame: f, progress: partial });
       const { hits, coreHits } = hitsAt(i, f);
+      const pelletCount = pelletsAt(i, f, shotCounts[i]!, hits);
       log.hits!.push(hits);
       log.coreHits!.push(coreHits);
-      shotEvents[i] = { lastShot: state.lastShot, fullCharge: log.fullCharge && !isPartial, hits, coreHits };
+      log.pelletHits!.push(pelletCount);
+      shotEvents[i] = {
+        lastShot: state.lastShot,
+        fullCharge: log.fullCharge && !isPartial,
+        hits,
+        coreHits,
+        pellets: pelletCount,
+      };
       if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
       shotCounts[i]! += 1;
       const energy =
