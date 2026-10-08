@@ -417,6 +417,10 @@
       "tolerance": {
         "abs": 0.08
       }
+    },
+    "invalid": {
+      "reason": "旧の hud.ts が HUD の 0 を 8 と読み、格子に乗る発を 13 発落としていた（1392/1583）。直した読みでは 1406/1596 = 0.881。直した値は 283-16（V-0363）",
+      "date": "2026-10-08"
     }
   },
   {
@@ -545,6 +549,36 @@
       "slot": 1,
       "source": "skill",
       "frames": [1275, 10815]
+    }
+  },
+  {
+    "id": "283-16",
+    "recording": "283",
+    "source": "V-0363",
+    "readAt": "2026-10-08",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.881,
+    "description": "格子に乗った 1596 発のうち、S1 の▲が付いている（▲ありの値に乗った）発の割合",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（戦闘の全フレーム）（hud.ts は V-0327 で直した読み）",
+      "note": "▲の有無は 1 発の値の格子で決めた。前のフレームも読めた増分（1 フレームに 1 発）を、予測ファイル V-0241 の 16 の格子の値の最も近いものに当てた（差 1.5 以内）。▲あり 1406 発。旧の hud.ts の読み（283-10）では 1392/1583（V-0363）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "chanceActiveRatio",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.08
+      }
     }
   }
 ]

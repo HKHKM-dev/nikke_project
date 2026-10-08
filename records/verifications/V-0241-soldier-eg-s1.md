@@ -53,7 +53,7 @@
 | hit-off-core-crit（hitDamage）      | （実測なし）       | 28,500.893                   | 30,351.264                           | 30,591.185                           |
 | hit-off-core-dist（hitDamage）      | （実測なし）       | 26,220.822                   | 27,923.163                           | 28,143.89                            |
 | hit-off-core-dist-crit（hitDamage） | （実測なし）       | 31,921                       | 33,993.416                           | 34,262.127                           |
-| active-ratio（chanceActiveRatio）   | 0.854（`278-10`）  | 0.891（+0.038、許容内）      | 0.833（-0.02、許容内）               | 0.929（+0.075、許容内）              |
+| active-ratio（chanceActiveRatio）   | 0.855（`278-16`）  | 0.891（+0.036、許容内）      | 0.833（-0.022、許容内）              | 0.929（+0.074、許容内）              |
 | expiries（chanceExpiries）          | 11（`278-11`）     | 8.242（-2.758、許容内）      | 10.391（-0.609、許容内）             | 6.285（-4.715、**許容外**）          |
 
 <!-- records:predictions:end -->

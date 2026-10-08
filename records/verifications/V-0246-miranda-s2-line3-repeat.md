@@ -52,7 +52,7 @@
 | 指標                              | 実測              | 予測 H1                |
 | --------------------------------- | ----------------- | ---------------------- |
 | sun-first-crit-rate（critRateAt） | 1（`285-07`）     | 1（+0、許容内）        |
-| sun-later-crit-rate（critRateAt） | 0.169（`285-08`） | 0.15（-0.019、許容内） |
+| sun-later-crit-rate（critRateAt） | 0.172（`285-12`） | 0.15（-0.022、許容内） |
 
 <!-- records:predictions:end -->
 

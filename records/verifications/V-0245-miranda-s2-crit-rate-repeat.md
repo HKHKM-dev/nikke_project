@@ -51,8 +51,8 @@
 
 | 指標                                     | 実測               | 予測 H1                      |
 | ---------------------------------------- | ------------------ | ---------------------------- |
-| fb-miranda-crit-rate（critRateAt）       | 0.434（`285-03`）  | 0.451（+0.017、許容内）      |
-| after-fb-miranda-crit-rate（critRateAt） | 0.162（`285-04`）  | 0.15（-0.012、許容内）       |
+| fb-miranda-crit-rate（critRateAt）       | 0.439（`285-10`）  | 0.451（+0.012、許容内）      |
+| after-fb-miranda-crit-rate（critRateAt） | 0.162（`285-11`）  | 0.15（-0.012、許容内）       |
 | fb-miranda-body（hitDamage）             | 30,028（`285-05`） | 30,028.44（+0.44、許容内）   |
 | fb-miranda-crit（hitDamage）             | 46,642（`285-06`） | 46,642.174（+0.174、許容内） |
 
