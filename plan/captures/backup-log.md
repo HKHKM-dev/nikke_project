@@ -366,3 +366,7 @@
 2026-10-08 21:32 に録画 360（サクラ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261008-360_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`9a026c94fb57`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-08 21:32 に録画 361（サクラ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261008-361_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`56ea52e250d8`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-09 00:45 に録画 371（ノワール単騎）を `intake.ts` で取り込み、この 1 本（`range/20261009-371_sg_noir_spec-off.mp4`）だけを同期した。E: と I: で sha256 が一致（`76b987c571bc`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-09 00:45 に録画 372（ノワール単騎）を `intake.ts` で取り込み、この 1 本（`range/20261009-372_sg_noir_spec-off.mp4`）だけを同期した。E: と I: で sha256 が一致（`2dec168a6392`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
