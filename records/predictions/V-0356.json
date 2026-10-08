@@ -1,0 +1,440 @@
+{
+  "verification": "V-0356",
+  "note": "撮る前の予測（新しい録画。ココア（I・AI）+ デルタ（II・AI）+ 紅蓮：ブラックシャドウ（III・操作・AUTO 射撃 ON）、オートバースト ON、灼熱の BigArms・3 分モード・スペック固定 ON）。撮ったら戦闘履歴で枠順を確かめ、違えば出し直す。モデルの 1 回目のフルバーストは f479〜1067（バースト使用も f479）。段の数え方（通算か数え直すか）と弾丸チャージの見分けは、録画の位相に依るので検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 225,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（data/skills/225.json）。S2 の effects[0]: フルバースト開始時に自分の最大装弾数▲（値 1。Lv10 で 60%。9 → 14。C-0017 の形）を 10 秒。effects[1]: 同じフレームに弾丸チャージ（値 3。Lv10 で 100%。▲の後の最大の割合。C-0395 の順）。バーストの effects[0]: バースト使用から 10 秒、S1 の段の間隔を 3 → 1（窓の中は毎発で次の段。通算のカウンタは戻さない）。effects[1]: 攻撃力▲（値 2。115.12%）を 10 秒。effects[2]: チャージダメージ▲（値 4。169.63%。フルチャージ倍率に加算。C-0020）を 10 秒"
+    },
+    {
+      "id": "H0-ammo",
+      "note": "S2 の effects[0]（最大装弾数▲）を外した形。効果を、同じきっかけで、この録画では効かない stat（elementDamage。風の紅蓮BS は灼熱の的に属性有利が無い）の窓に置き換えて外した（予測ファイルで効果を消す語彙が無いため）。ほかはいまの定義",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 225,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "elementDamage",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-refill",
+      "note": "S2 の effects[1]（弾丸チャージ）を外した形。効果を、同じきっかけで、この録画では効かない stat（elementDamage。風の紅蓮BS は灼熱の的に属性有利が無い）の窓に置き換えて外した（予測ファイルで効果を消す語彙が無いため）。ほかはいまの定義",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 225,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "elementDamage",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-cycle",
+      "note": "バーストの effects[0]（段の間隔の変更。窓の中も通算の 3 の倍数の発でだけ次の段）を外した形。効果を、同じきっかけで、この録画では効かない stat（elementDamage。風の紅蓮BS は灼熱の的に属性有利が無い）の窓に置き換えて外した（予測ファイルで効果を消す語彙が無いため）。ほかはいまの定義",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 225,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "elementDamage",
+              "ref": 1,
+              "durationRef": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-atk",
+      "note": "バーストの effects[1]（攻撃力▲）を外した形。効果を、同じきっかけで、この録画では効かない stat（elementDamage。風の紅蓮BS は灼熱の的に属性有利が無い）の窓に置き換えて外した（予測ファイルで効果を消す語彙が無いため）。ほかはいまの定義",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 225,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "elementDamage",
+              "ref": 1,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-cd",
+      "note": "バーストの effects[2]（チャージダメージ▲）を外した形。効果を、同じきっかけで、この録画では効かない stat（elementDamage。風の紅蓮BS は灼熱の的に属性有利が無い）の窓に置き換えて外した（予測ファイルで効果を消す語彙が無いため）。ほかはいまの定義",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 225,
+            "skill": "burst",
+            "replace": 2,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "elementDamage",
+              "ref": 1,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "normal-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "紅蓮BS の通常攻撃の 1 ヒット（コア・会心なし）。1 回目のフルバーストより前。対照（どの仮説も同じ）"
+    },
+    {
+      "id": "normal-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの窓（バースト使用から 10 秒）の中の通常攻撃の 1 ヒット（コア・会心なし）。攻撃力▲・チャージダメージ▲・フルバースト補正が乗る。録画では窓の中のどのフルバーストのどの発でもよい（同じ値）"
+    },
+    {
+      "id": "normal-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの窓が明けた後の通常攻撃の 1 ヒット（コア・会心なし）。攻撃力▲・チャージダメージ▲が 10 秒で切れていること"
+    },
+    {
+      "id": "tier-a-out",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "S1 の段 A の 1 ヒット（会心なし）。フルバーストの窓の外。対照（どの仮説も同じ）"
+    },
+    {
+      "id": "tier-a-in",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの窓の中の S1 の段 A の 1 ヒット（会心なし）。攻撃力▲とフルバースト補正は乗り、チャージダメージ▲は乗らない（倍率ダメージ）。攻撃力▲とチャージダメージ▲を分ける"
+    },
+    {
+      "id": "tier-c-in",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 5,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの窓の中の S1 の段 C の 1 ヒット（会心なし）。tier-a-in と同じく攻撃力▲だけが乗る"
+    },
+    {
+      "id": "max-ammo-before",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストより前の最大装弾数。録画では照準の左の残弾（reticle-ammo.ts）のリロード明けの値"
+    },
+    {
+      "id": "max-ammo-in",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 700
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの窓の中の最大装弾数。録画ではフルバースト開始の直後の照準の左の残弾"
+    },
+    {
+      "id": "max-ammo-after",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 1200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの窓（S2 の 10 秒）が明けた後の最大装弾数。録画では窓が明けた後の最初のリロード明けの照準の左の残弾"
+    },
+    {
+      "id": "magazines",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "戦闘開始からのマガジン 2 本の発数（リロードからリロードまで）。2 本目は 1 回目のフルバーストをまたぐ"
+    },
+    {
+      "id": "window-shots-1",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 0,
+        "from": 0,
+        "to": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のバースト使用から 600f（10 秒）の中の紅蓮BS の発の数。録画では、通常攻撃の 1 ヒットが窓の中の値（normal-in）だった発の数"
+    },
+    {
+      "id": "window-shots-2",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 1,
+        "from": 0,
+        "to": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "2 回目のバースト使用から 600f の中の発の数（window-shots-1 と同じ読み方）"
+    },
+    {
+      "id": "tier-count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "180 秒の S1 の段のヒットの回数（段 B の 3 ティックは 1 回に数える）。段の間隔の変更が無ければ大きく減る"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "3d5a4f65607656cf4ca455af88be8f7064cad7c5",
+    "values": {
+      "H1": {
+        "normal-out": 207264.9078,
+        "normal-in": 1188134.607487475,
+        "normal-after": 207264.9078,
+        "tier-a-out": 341317.1981999999,
+        "tier-a-in": 1101851.3566499997,
+        "tier-c-in": 3301427.4316499997,
+        "max-ammo-before": 9,
+        "max-ammo-in": 14,
+        "max-ammo-after": 9,
+        "magazines": [9, 14],
+        "window-shots-1": 13,
+        "window-shots-2": 13,
+        "tier-count": 106
+      },
+      "H0-ammo": {
+        "normal-out": 207264.9078,
+        "normal-in": 1188134.607487475,
+        "normal-after": 207264.9078,
+        "tier-a-out": 341317.1981999999,
+        "tier-a-in": 1101851.3566499997,
+        "tier-c-in": 3301427.4316499997,
+        "max-ammo-before": 9,
+        "max-ammo-in": 9,
+        "max-ammo-after": 9,
+        "magazines": [9, 9],
+        "window-shots-1": 10,
+        "window-shots-2": 11,
+        "tier-count": 95
+      },
+      "H0-refill": {
+        "normal-out": 207264.9078,
+        "normal-in": 1188134.607487475,
+        "normal-after": 207264.9078,
+        "tier-a-out": 341317.1981999999,
+        "tier-a-in": 1101851.3566499997,
+        "tier-c-in": 3301427.4316499997,
+        "max-ammo-before": 9,
+        "max-ammo-in": 14,
+        "max-ammo-after": 9,
+        "magazines": [9, 14],
+        "window-shots-1": 13,
+        "window-shots-2": 13,
+        "tier-count": 98
+      },
+      "H0-cycle": {
+        "normal-out": 207264.9078,
+        "normal-in": 1188134.607487475,
+        "normal-after": 207264.9078,
+        "tier-a-out": 341317.1981999999,
+        "tier-a-in": 1101851.3566499997,
+        "tier-c-in": 3301427.4316499997,
+        "max-ammo-before": 9,
+        "max-ammo-in": 14,
+        "max-ammo-after": 9,
+        "magazines": [9, 14],
+        "window-shots-1": 13,
+        "window-shots-2": 13,
+        "tier-count": 62
+      },
+      "H0-atk": {
+        "normal-out": 207264.9078,
+        "normal-in": 552067.3540009499,
+        "normal-after": 207264.9078,
+        "tier-a-out": 341317.1981999999,
+        "tier-a-in": 511975.7973,
+        "tier-c-in": 1534009.9472999999,
+        "max-ammo-before": 9,
+        "max-ammo-in": 14,
+        "max-ammo-after": 9,
+        "magazines": [9, 14],
+        "window-shots-1": 13,
+        "window-shots-2": 13,
+        "tier-count": 106
+      },
+      "H0-cd": {
+        "normal-out": 207264.9078,
+        "normal-in": 557582.802375,
+        "normal-after": 207264.9078,
+        "tier-a-out": 341317.1981999999,
+        "tier-a-in": 1101851.3566499997,
+        "tier-c-in": 3301427.4316499997,
+        "max-ammo-before": 9,
+        "max-ammo-in": 14,
+        "max-ammo-after": 9,
+        "magazines": [9, 14],
+        "window-shots-1": 13,
+        "window-shots-2": 13,
+        "tier-count": 106
+      }
+    },
+    "seen": {}
+  }
+}

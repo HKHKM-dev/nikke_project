@@ -5,11 +5,12 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 1・保留 0・完了 296・打ち切り 21（計 318）
+件数: 調査中 1・保留 1・完了 296・打ち切り 21（計 319）
 
 ## 開いている検証
 
 - **V-0328** 射撃場の SMG の遠の弾丸命中率は遠の着地点（遠 A・遠 B）で違うか（撮影。backlog 2-25）（状態: 調査中）
+- **V-0356** 紅蓮：ブラックシャドウの S2（最大装弾数▲・弾丸チャージ）とバースト（段の間隔の変更・攻撃力▲・チャージダメージ▲）を、最小構成の新しい録画で確かめる（状態: 保留・待ち: 撮影（「次に撮るもの」の 1 本。編成はオーナーの判断待ち））
 
 ## 全件
 
@@ -3193,3 +3194,21 @@
   - 予測（2026-10-07、commit e377527）との比べ:
     - far-a（bulletHitRate）: 実測なし。H0 0.76、H1 0.789、H2-farA 0.807、H2-farB 0.761
     - far-b（bulletHitRate）: 実測なし。H0 0.76、H1 0.789、H2-farA 0.807、H2-farB 0.761
+- **[V-0356](../records/verifications/V-0356-scarlet-bs-s2-burst.md)** 紅蓮：ブラックシャドウの S2（最大装弾数▲・弾丸チャージ）とバースト（段の間隔の変更・攻撃力▲・チャージダメージ▲）を、最小構成の新しい録画で確かめる
+  - 問い: 紅蓮：ブラックシャドウの S2 とバーストの 5 つの効果を説明文どおり（定義どおり）と読んで、モデルは最小構成（ココア + デルタ + 紅蓮BS）の新しい録画と合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-08・状態: 保留・Stage: 最小構成の検査の束 4（design-minimal-relevance.md 11 節。片付け方は design-skill-claims-5-2.md と同じ）
+  - 待ち: 撮影（「次に撮るもの」の 1 本。編成はオーナーの判断待ち）
+  - 予測（2026-10-08、commit 3d5a4f6）との比べ:
+    - normal-out（hitDamage）: 実測なし。H1 207,264.908、H0-ammo 207,264.908、H0-refill 207,264.908、H0-cycle 207,264.908、H0-atk 207,264.908、H0-cd 207,264.908
+    - normal-in（hitDamage）: 実測なし。H1 1,188,134.607、H0-ammo 1,188,134.607、H0-refill 1,188,134.607、H0-cycle 1,188,134.607、H0-atk 552,067.354、H0-cd 557,582.802
+    - normal-after（hitDamage）: 実測なし。H1 207,264.908、H0-ammo 207,264.908、H0-refill 207,264.908、H0-cycle 207,264.908、H0-atk 207,264.908、H0-cd 207,264.908
+    - tier-a-out（skillHitDamage）: 実測なし。H1 341,317.198、H0-ammo 341,317.198、H0-refill 341,317.198、H0-cycle 341,317.198、H0-atk 341,317.198、H0-cd 341,317.198
+    - tier-a-in（skillHitDamage）: 実測なし。H1 1,101,851.357、H0-ammo 1,101,851.357、H0-refill 1,101,851.357、H0-cycle 1,101,851.357、H0-atk 511,975.797、H0-cd 1,101,851.357
+    - tier-c-in（skillHitDamage）: 実測なし。H1 3,301,427.432、H0-ammo 3,301,427.432、H0-refill 3,301,427.432、H0-cycle 3,301,427.432、H0-atk 1,534,009.947、H0-cd 3,301,427.432
+    - max-ammo-before（maxAmmoAt）: 実測なし。H1 9、H0-ammo 9、H0-refill 9、H0-cycle 9、H0-atk 9、H0-cd 9
+    - max-ammo-in（maxAmmoAt）: 実測なし。H1 14、H0-ammo 9、H0-refill 14、H0-cycle 14、H0-atk 14、H0-cd 14
+    - max-ammo-after（maxAmmoAt）: 実測なし。H1 9、H0-ammo 9、H0-refill 9、H0-cycle 9、H0-atk 9、H0-cd 9
+    - magazines（magazineShots）: 実測なし。H1 [9, 14]、H0-ammo [9, 9]、H0-refill [9, 14]、H0-cycle [9, 14]、H0-atk [9, 14]、H0-cd [9, 14]
+    - window-shots-1（shotCount）: 実測なし。H1 13、H0-ammo 10、H0-refill 13、H0-cycle 13、H0-atk 13、H0-cd 13
+    - window-shots-2（shotCount）: 実測なし。H1 13、H0-ammo 11、H0-refill 13、H0-cycle 13、H0-atk 13、H0-cd 13
+    - tier-count（skillHitCount）: 実測なし。H1 106、H0-ammo 95、H0-refill 98、H0-cycle 62、H0-atk 106、H0-cd 106
