@@ -5,12 +5,13 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 2・保留 0・完了 305・打ち切り 21（計 328）
+件数: 調査中 3・保留 0・完了 305・打ち切り 21（計 329）
 
 ## 開いている検証
 
 - **V-0328** 射撃場の SMG の遠の弾丸命中率は遠の着地点（遠 A・遠 B）で違うか（撮影。backlog 2-25）（状態: 調査中）
 - **V-0357** アリスの S1（最終攻撃力の上位 2 機へのチャージ速度▲・チャージダメージ▲）とバースト（自分のチャージ速度▲・攻撃力▲）（状態: 調査中）
+- **V-0365** リターの S1 の使用回数別の効果とバーストの攻撃力▲を単騎の撮影で確かめる（状態: 調査中）
 
 ## 全件
 
@@ -3277,6 +3278,7 @@
   - 録画: 039、114、115
   - 観測値: 039-18、114-08、115-06
   - 結論: C-0460
+  - 派生した検証: V-0365
   - 予測（2026-10-08、commit 3d5a4f6）との比べ:
     - base（hitDamage）: 実測なし。H1 8,714.723、H0-burst 8,714.723、H0-s1-ammo 8,714.723、H0-s1-crit 8,714.723、H0-s1-attack 8,714.723、H2-short 8,714.723、H2-long 8,714.723
     - base-d（hitDamage）: 実測なし。H1 11,329.139、H0-burst 11,329.139、H0-s1-ammo 11,329.139、H0-s1-crit 11,329.139、H0-s1-attack 11,329.139、H2-short 11,329.139、H2-long 11,329.139
@@ -3387,3 +3389,25 @@
   - 結論: C-0465、C-0467
   - 派生元: V-0363
   - 訂正: V-0029、V-0033、V-0047、V-0050、V-0051、V-0062、V-0063、V-0103、V-0109、V-0110、V-0112、V-0114、V-0160、V-0165、V-0174、V-0187、V-0198、V-0199、V-0200、V-0215、V-0219、V-0234、V-0241、V-0244、V-0263、V-0282、V-0289、V-0304、V-0305
+- **[V-0365](../records/verifications/V-0365-liter-l1-burst-count.md)** リターの S1 の使用回数別の効果とバーストの攻撃力▲を単騎の撮影で確かめる
+  - 問い: リター（82）の S1 のバースト使用回数別の最大装弾数▲・クリティカルダメージ▲・攻撃力▲と、バーストの味方全体の攻撃力▲を、説明文どおり（いまの定義）と読んで、モデルは単騎の撮影 L1 と合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-08・状態: 調査中・Stage: plan/design-minimal-relevance.md 11 節の束 4（根拠の無い効果）。V-0359 の B（撮影 L1）を引き継ぐ
+  - 派生元: V-0359
+  - 予測（2026-10-08、commit 672ee3a）との比べ:
+    - base（hitDamage）: 実測なし。H1 8,714.723、H0-burst 8,714.723、H0-s1-ammo 8,714.723、H0-s1-crit 8,714.723、H0-s1-attack 8,714.723、H2-short 8,714.723、H2-long 8,714.723
+    - base-d（hitDamage）: 実測なし。H1 11,329.139、H0-burst 11,329.139、H0-s1-ammo 11,329.139、H0-s1-crit 11,329.139、H0-s1-attack 11,329.139、H2-short 11,329.139、H2-long 11,329.139
+    - win1（hitDamage）: 実測なし。H1 14,472.245、H0-burst 8,714.723、H0-s1-ammo 14,472.245、H0-s1-crit 14,472.245、H0-s1-attack 14,472.245、H2-short 14,472.245、H2-long 14,472.245
+    - win1-d（hitDamage）: 実測なし。H1 18,813.918、H0-burst 11,329.139、H0-s1-ammo 18,813.918、H0-s1-crit 18,813.918、H0-s1-attack 18,813.918、H2-short 18,813.918、H2-long 18,813.918
+    - win2（hitDamage）: 実測なし。H1 14,472.245、H0-burst 8,714.723、H0-s1-ammo 14,472.245、H0-s1-crit 14,472.245、H0-s1-attack 14,472.245、H2-short 14,472.245、H2-long 14,472.245
+    - win2-d（hitDamage）: 実測なし。H1 18,813.918、H0-burst 11,329.139、H0-s1-ammo 18,813.918、H0-s1-crit 18,813.918、H0-s1-attack 18,813.918、H2-short 18,813.918、H2-long 18,813.918
+    - win2-crit-ratio（critHitRatio）: 実測なし。H1 1.625、H0-burst 1.625、H0-s1-ammo 1.625、H0-s1-crit 1.5、H0-s1-attack 1.625、H2-short 1.625、H2-long 1.625
+    - win3（hitDamage）: 実測なし。H1 15,730.15、H0-burst 9,972.628、H0-s1-ammo 15,730.15、H0-s1-crit 15,730.151、H0-s1-attack 14,472.245、H2-short 15,730.15、H2-long 15,730.15
+    - win3-d（hitDamage）: 実測なし。H1 20,449.196、H0-burst 12,964.417、H0-s1-ammo 20,449.196、H0-s1-crit 20,449.196、H0-s1-attack 18,813.918、H2-short 20,449.196、H2-long 20,449.196
+    - win3-crit-ratio（critHitRatio）: 実測なし。H1 1.625、H0-burst 1.625、H0-s1-ammo 1.625、H0-s1-crit 1.5、H0-s1-attack 1.625、H2-short 1.625、H2-long 1.625
+    - win3-late（hitDamage）: 実測なし。H1 15,730.15、H0-burst 9,972.628、H0-s1-ammo 15,730.15、H0-s1-crit 15,730.151、H0-s1-attack 14,472.245、H2-short 9,972.628、H2-long 15,730.15
+    - win3-late-d（hitDamage）: 実測なし。H1 20,449.196、H0-burst 12,964.417、H0-s1-ammo 20,449.196、H0-s1-crit 20,449.196、H0-s1-attack 18,813.918、H2-short 12,964.417、H2-long 20,449.196
+    - after3（hitDamage）: 実測なし。H1 8,714.723、H0-burst 8,714.723、H0-s1-ammo 8,714.723、H0-s1-crit 8,714.723、H0-s1-attack 8,714.723、H2-short 8,714.723、H2-long 14,472.245
+    - after3-d（hitDamage）: 実測なし。H1 11,329.139、H0-burst 11,329.139、H0-s1-ammo 11,329.139、H0-s1-crit 11,329.139、H0-s1-attack 11,329.139、H2-short 11,329.139、H2-long 18,813.918
+    - ammo-base（maxAmmoAt）: 実測なし。H1 120、H0-burst 120、H0-s1-ammo 120、H0-s1-crit 120、H0-s1-attack 120、H2-short 120、H2-long 120
+    - ammo-win1（maxAmmoAt）: 実測なし。H1 174、H0-burst 174、H0-s1-ammo 120、H0-s1-crit 174、H0-s1-attack 174、H2-short 174、H2-long 174
+    - ammo-win3（maxAmmoAt）: 実測なし。H1 174、H0-burst 174、H0-s1-ammo 120、H0-s1-crit 174、H0-s1-attack 174、H2-short 174、H2-long 174
