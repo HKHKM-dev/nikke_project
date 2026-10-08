@@ -3512,4 +3512,5 @@
   - 結論: C-0480
   - 派生元: V-0300
   - 予測（2026-10-08、commit 5cc19cb）との比べ:
-    - gauge-full-shot-0（gaugeFullShotIndex）: 実測なし。H0 200
+    - gauge-full-shot-0（gaugeFullShotIndex）: 実測 197（369-01）。H0 200（+3、**許容外**）
+    - 許容内の指標: H0 0/1。合う仮説は無い

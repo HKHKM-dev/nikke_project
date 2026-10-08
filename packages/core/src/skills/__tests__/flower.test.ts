@@ -70,12 +70,22 @@ describe('I-DOLL・フラワー（304）', () => {
 describe('burstGaugeHit の検証', () => {
   const entry = (effect: unknown) => withSkill2({ effects: [effect] });
 
-  it('needs a timer trigger and no other fields', () => {
+  // モラン編（plan/design-moran.md 2 節）: 射撃の回数のトリガーも書ける（stacksRef は書けない）
+  it('needs a timer or shot count trigger and no other fields', () => {
     expect(() => parseSkillDefinition(entry(GAUGE))).not.toThrow();
-    expect(() => parseSkillDefinition(entry({ ...GAUGE, trigger: 'burstUse' }))).toThrow(/needs a timer trigger/);
-    expect(() => parseSkillDefinition(entry({ ...GAUGE, trigger: { count: 'normalShot', every: 10 } }))).toThrow(
-      /needs a timer trigger/,
+    expect(() => parseSkillDefinition(entry({ ...GAUGE, trigger: 'burstUse' }))).toThrow(
+      /needs a timer trigger \(\{ everySeconds \}\) or a shot count trigger/,
     );
+    expect(() => parseSkillDefinition(entry({ ...GAUGE, trigger: { count: 'burstUse', atLeast: 1 } }))).toThrow(
+      /or a shot count trigger/,
+    );
+    expect(() => parseSkillDefinition(entry({ ...GAUGE, trigger: { count: 'normalShot', every: 10 } }))).not.toThrow();
+    expect(() => parseSkillDefinition(entry({ ...GAUGE, trigger: { count: 'lastShot', stacksRef: 1 } }))).toThrow(
+      /stacksRef cannot be used in burstGaugeHit/,
+    );
+    expect(() =>
+      parseSkillDefinition(entry({ ...GAUGE, trigger: { count: 'normalShot', during: 'fullBurst', reset: 'never' } })),
+    ).toThrow(/only allowed in damage/);
     expect(() => parseSkillDefinition(entry({ ...GAUGE, ref: 1 }))).toThrow(/ref: unknown field/);
   });
 

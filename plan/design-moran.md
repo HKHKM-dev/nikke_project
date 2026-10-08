@@ -3,7 +3,7 @@
 - 関連: [skills-guide.md](skills-guide.md) 1.4 節、[design-flower-s2-gauge.md](design-flower-s2-gauge.md)（ゲージだけを溜める `burstGaugeHit`）、[design-raven-s1.md](design-raven-s1.md) 5 節の 4（付けたときの遅れ）、[design-stage10.md](design-stage10.md) 2 節（`lastShot`）、[backlog.md](backlog.md) 2-29・6 節
 - 作成日: 2026-10-09
 - 根拠: C-0480（V-0369）
-- 状態: 起案（オーナーの承認待ち）
+- 状態: オーナーの承認（2026-10-09「論点は推奨どおりで、実装して」）で実装した。5 節の論点は推奨どおりにした
 
 ## 1. 何を足すか
 
@@ -104,3 +104,4 @@ S2 の前半のゲージだけを効果にし、ほかの行は notes にする�
 ## 経過
 
 - 2026-10-09: 起案（オーナーの指示「モランの定義の設計を起案して」）。
+- 2026-10-09: 承認と実装。5 節の論点 3 は、録画 369・370 の台帳に宝物の段階を書かず、宝物版の S2 の効果の `assumes` に「同じ行なので同じとみた」と書いた。

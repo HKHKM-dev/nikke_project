@@ -4,7 +4,13 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
-import { resolveBurstDamage, resolveDamageEffects, resolveDotEffects } from '../burstDamage.ts';
+import {
+  resolveBurstDamage,
+  resolveDamageEffects,
+  resolveDotEffects,
+  resolveShotGauges,
+  resolveTimerGauges,
+} from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
@@ -161,10 +167,13 @@ describe('data/skills', () => {
       const dot1 = resolveDotEffects(def, character, { skill1: 1, skill2: 1, burst: 1 });
       // ラム編: 即時効果（CT▼）だけの定義もある
       const instant10 = resolveInstant(def, character, MAX_SKILL_LEVELS);
+      // モラン編: ゲージだけを溜める効果（burstGaugeHit）だけの定義もある
+      const gauges10 = resolveShotGauges(def, character, MAX_SKILL_LEVELS).length + resolveTimerGauges(def).length;
       // ダメージに効く効果が 1 つも無いキャラ（デルタなど）は、全スロットが効果なしで notes だけ（noEffect・unsupported）
       const modeled = SKILL_SLOTS.some((slot) => def.skills[slot].effects.length > 0);
       if (modeled) {
-        const count = lv10.length + burst10.length + timed10.length + damage10.length + dot10.length + instant10.length;
+        const count =
+          lv10.length + burst10.length + timed10.length + damage10.length + dot10.length + instant10.length + gauges10;
         expect(count).toBeGreaterThan(0);
       }
       damage10.forEach((e, i) => {

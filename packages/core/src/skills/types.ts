@@ -18,6 +18,7 @@
 // ニヒリスター編で持続ダメージ（dot。「持続ダメージ」「1秒間隔」「10秒間維持」）を足した（plan/design-nihilister.md 2.1 節）。
 // 撮影の後に、時間の周期のトリガー（{ everySeconds }。CT ごとに発動するアクティブ型のスキル）を足した（同 8 節）。
 // フラワー編で、周期でゲージだけを溜める効果（burstGaugeHit）を足した（plan/design-flower-s2-gauge.md 2 節）。
+// モラン編で、burstGaugeHit に射撃の回数のトリガーを書けるようにした（plan/design-moran.md 2 節）。
 // ソルジャーE.G. 編で、確率のきっかけ（回数トリガーの chance / chanceRef。期待値の窓）を足し、時間の周期のトリガーを 1 パス目で
 // 窓を追う stat の timed にも書けるようにした（plan/design-soldier-eg.md 3.1・3.2 節）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
@@ -884,11 +885,12 @@ export type AutoAttackEffect = {
 /**
  * フラワー編: トリガーが発火するたびに、射手の 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ倍率は
  * 乗らない）を発火のフレームのゲージに足す。ダメージは出さない（I-DOLL・フラワーの S2。C-0178）。
- * トリガーは時間の周期のトリガー（{ everySeconds }）だけ（plan/design-flower-s2-gauge.md 2 節）
+ * トリガーは時間の周期のトリガー（{ everySeconds }。plan/design-flower-s2-gauge.md 2 節）か、モラン編で足した射撃の回数の
+ * トリガー（{ count }。stacksRef は書けない。発火した射撃のフレームに足す。plan/design-moran.md 2 節）
  */
 export type BurstGaugeHitEffect = {
   kind: 'burstGaugeHit';
-  trigger: TimerTrigger;
+  trigger: TimerTrigger | ShotCountTrigger;
   assumes?: LocalizedText;
 };
 
@@ -1982,7 +1984,16 @@ function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstG
     if (!['kind', 'trigger', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
   }
   const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
-  if (!isTimerTrigger(trigger)) fail(`${path}.trigger`, 'burstGaugeHit needs a timer trigger ({ everySeconds })');
+  // モラン編（plan/design-moran.md 2 節）: 射撃の回数のトリガーも書ける。during・chance は parseTrigger が弾く
+  if (!isTimerTrigger(trigger) && !isShotCountTrigger(trigger)) {
+    fail(
+      `${path}.trigger`,
+      'burstGaugeHit needs a timer trigger ({ everySeconds }) or a shot count trigger ({ count })',
+    );
+  }
+  if (isShotCountTrigger(trigger) && trigger.stacksRef !== undefined) {
+    fail(`${path}.trigger.stacksRef`, 'stacksRef cannot be used in burstGaugeHit');
+  }
   const effect: BurstGaugeHitEffect = { kind: 'burstGaugeHit', trigger };
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
