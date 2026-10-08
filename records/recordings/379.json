@@ -1,0 +1,29 @@
+{
+  "id": "379",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-379_smg_liter_auto.mp4",
+  "original": "2026-10-08_23-46-36.mp4",
+  "durationSec": 199.5,
+  "frames": 11967,
+  "fps": 60,
+  "sizeMB": 241.7,
+  "sha256": "b08772af9888",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0373（SMG の中遠 A の弾丸命中率の再現）の 9 本目（2 回目の 8 本）。リター単騎・3 分モードを撃ち切る。条件（スペック固定 ON・AUTO 射撃 ON・オートバースト OFF・灼熱タブ）は撮影の計画の値。AUTO 射撃 ON・オートバースト OFF は戦闘中の画面左上のボタンで確かめた"
+}

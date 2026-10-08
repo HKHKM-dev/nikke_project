@@ -1,0 +1,57 @@
+{
+  "verification": "V-0373",
+  "note": "撮る前の予測（リター単騎・スペック固定 ON・オートバースト OFF の新しい撮影。値を決めていない録画）。中遠の着地点が A の録画だけを比べる",
+  "team": [
+    {
+      "rid": 82,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "的の表の中遠の値（着地点を分けない 0.9210。C-0467 の前の表の値。今の表の中遠 B・C の値）",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.921
+      }
+    },
+    {
+      "id": "H1",
+      "note": "C-0467 の値（V-0200 の中遠 A の 6 本。2,125 / 2,160 = 0.9838）。今のモデル（data/enemies.json の range-bigarms の bulletHitRate.SMG.midFarA）のまま"
+    }
+  ],
+  "targets": [
+    {
+      "id": "midfar-a",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "midFarLanding": "A"
+      },
+      "note": "判定の指標。中遠（4 区間目）の着地点が A の録画の、完全なマガジンの弾丸命中率の録画ごとの平均 p̄",
+      "observations": ["394-06"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "5166e2c5fe5deb26a644707258fef08c82c4cd06",
+    "values": {
+      "H0": {
+        "midfar-a": 0.921
+      },
+      "H1": {
+        "midfar-a": 0.9838
+      }
+    },
+    "seen": {}
+  }
+}
