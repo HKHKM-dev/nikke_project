@@ -1,0 +1,737 @@
+{
+  "verification": "V-0360",
+  "note": "ココア（I・AI）+ デルタ（II・AI）+ ドレイク（III・操作・AUTO 射撃 ON・宝物 3 段階）・灼熱の BigArms・3 分モード・スペック固定 ON（録画 222 と、撮影計画 D1 の編成）。モデルのフルバーストは f407〜995・2759〜3347・5111〜5699・7463〜8051・9863〜（S1 の窓もこれと同じ）。S2 の倍率ダメージは攻撃の回数だけで決まり、番号 n は 5 回攻撃（effects[1]）と 10 回攻撃（effects[0]・effects[1] の順）の通し番号。n = 0・6 と、n = 7〜8・13〜14 の組はフルバーストの外のヒットで、単騎（録画 036）でも同じ番号・同じ値になる（単騎ではフルバーストが無く、ココア・デルタは与ダメージを変えない）。hitDamage のフレームは窓の中と前の代表。distance は録画の着地点で乗るほうを使う（両方を出しておく）",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 101,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（宝物版 S1 の effects[0]: フルバースト開始時に味方全体に攻撃力 11.85%▲・10 秒、effects[1]: SG の味方に攻撃力 63.88%▲・10 秒、effects[2]: SG の味方に最大装弾数 50.14%▲・10 秒、effects[3]: 味方全体に命中率 20.09%▲・10 秒。宝物版 S2 の effects[0]: 10 回攻撃ごとに最終攻撃力の 98.55%、effects[1]: 5 回攻撃ごとに 201.6%。どちらも単体ボスに 1 ヒット）"
+    },
+    {
+      "id": "H0-all",
+      "note": "S1 の味方全体の攻撃力▲（effects[0]）が乗らない。対象を味方の MG に絞って、この編成では誰にも付かない形にする",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 101,
+            "skill": "skill1",
+            "treasure": true,
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "attack",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-sg",
+      "note": "S1 の SG の味方への攻撃力▲（effects[1]）が乗らない（対象を MG に替える）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 101,
+            "skill": "skill1",
+            "treasure": true,
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "attack",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-ammo",
+      "note": "S1 の SG の味方への最大装弾数▲（effects[2]）が乗らない（対象を MG に替える）。バーストの最大装弾数▲（C-0420）は乗る",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 101,
+            "skill": "skill1",
+            "treasure": true,
+            "replace": 2,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "targetWeapon": "MG",
+              "stat": "maxAmmo",
+              "ref": 7,
+              "durationRef": 8
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2-short",
+      "note": "S1 の味方全体の攻撃力▲（effects[0]）の窓がフルバーストより短い（例として 8 秒）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 101,
+            "skill": "skill1",
+            "treasure": true,
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "stat": "attack",
+              "ref": 3,
+              "durationSeconds": 8
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2-long",
+      "note": "S1 の味方全体の攻撃力▲（effects[0]）の窓がフルバーストより長い（例として 12 秒）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 101,
+            "skill": "skill1",
+            "treasure": true,
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "stat": "attack",
+              "ref": 3,
+              "durationSeconds": 12
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "s2-five",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "S2 の 1 回目（5 回攻撃。effects[1] だけ。会心なし）。フルバーストの前"
+    },
+    {
+      "id": "s2-five-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じヒットの会心"
+    },
+    {
+      "id": "s2-25th",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 6,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "25 回攻撃の S2（effects[1] だけ。会心なし）。モデルではフルバーストの外"
+    },
+    {
+      "id": "s2-30th-sum",
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "n": 7,
+        "count": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "30 回攻撃で同じ発に出る 2 つ（10 回攻撃の effects[0] と 5 回攻撃の effects[1]）の和（どちらも会心なし）。HUD の 1 つの増分に乗る（V-0265）。モデルではフルバーストの外"
+    },
+    {
+      "id": "s2-40th-sum",
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "n": 13,
+        "count": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "40 回攻撃の 2 つの和（会心なし）。モデルではフルバーストの外"
+    },
+    {
+      "id": "s2-count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "180 秒の S2 の倍率ダメージの数（参考。録画の射撃の数がモデルと違えば動くので、判定は発の番号で読む（検証記録の「読み方」））"
+    },
+    {
+      "id": "cocoa-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストより前のココアの 1 発（胴体・会心なし・距離ボーナスなし）。どの仮説も同じ（対照）"
+    },
+    {
+      "id": "cocoa-base-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 発の距離ボーナスあり"
+    },
+    {
+      "id": "cocoa-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの中のココアの 1 発（胴体・会心なし・距離ボーナスなし）。フルバースト補正と S1 の effects[0] が乗る（effects[1] は SG だけなので乗らない）"
+    },
+    {
+      "id": "cocoa-fb-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 発の距離ボーナスあり"
+    },
+    {
+      "id": "cocoa-fb-late",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 950,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの終わりの直前（最後の 2 秒）のココアの 1 発（胴体・会心なし・距離ボーナスなし）。窓が 10 秒続くか"
+    },
+    {
+      "id": "cocoa-fb-late-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 950,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 発の距離ボーナスあり"
+    },
+    {
+      "id": "cocoa-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1080,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの終わりの直後（最初の 1.5 秒）のココアの 1 発（胴体・会心なし・距離ボーナスなし）。窓がフルバーストより長く続くか（H1 では cocoa-base と同じ値）"
+    },
+    {
+      "id": "cocoa-after-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1080,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 発の距離ボーナスあり"
+    },
+    {
+      "id": "delta-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストより前のデルタの 1 発（胴体・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "delta-base-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 発の距離ボーナスあり"
+    },
+    {
+      "id": "delta-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの中のデルタの 1 発（胴体・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "delta-fb-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 発の距離ボーナスあり"
+    },
+    {
+      "id": "drake-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストより前のドレイクの 1 ペレット（胴体・会心なし・距離ボーナスなし）。撮影計画 D1 の新しい録画だけで読む（録画 222 のペレットは 222-13 で読み済み）"
+    },
+    {
+      "id": "drake-base-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 ペレットの距離ボーナスあり"
+    },
+    {
+      "id": "drake-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの中のドレイクの 1 ペレット（胴体・会心なし・距離ボーナスなし）。フルバースト補正、S1 の effects[0]・effects[1]、バーストの攻撃ダメージ▲（C-0420）が乗る。新しい録画だけで読む"
+    },
+    {
+      "id": "drake-fb-d",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "同じ 1 ペレットの距離ボーナスあり"
+    },
+    {
+      "id": "drake-ammo-base",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストより前のドレイクの最大装弾数（照準の横の残弾の、リロード直後の値）"
+    },
+    {
+      "id": "drake-ammo-fb",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの中の最大装弾数（窓の中で終わったリロードの直後の照準の横の残弾）。S1 の effects[2] とバーストの最大装弾数▲（C-0420）の和で効く。新しい録画だけで読む（録画 222 の値は 222-14 で読み済み）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "3d5a4f65607656cf4ca455af88be8f7064cad7c5",
+    "values": {
+      "H1": {
+        "s2-five": 241508.736,
+        "s2-five-crit": 362263.104,
+        "s2-25th": 241508.736,
+        "s2-30th-sum": 359567.694,
+        "s2-40th-sum": 359567.694,
+        "s2-count": 63,
+        "cocoa-base": 172297.95,
+        "cocoa-base-d": 223987.33500000002,
+        "cocoa-fb": 289103.274,
+        "cocoa-fb-d": 346923.9288,
+        "cocoa-fb-late": 289103.274,
+        "cocoa-fb-late-d": 346923.9288,
+        "cocoa-after": 172297.95,
+        "cocoa-after-d": 223987.33500000002,
+        "delta-base": 104313.11499999999,
+        "delta-base-d": 135607.0495,
+        "delta-fb": 175040.368125,
+        "delta-fb-d": 210048.44175,
+        "drake-base": 25672.2828,
+        "drake-base-d": 33373.96764,
+        "drake-fb": 89140.93381847997,
+        "drake-fb-d": 106969.12058217598,
+        "drake-ammo-base": 9,
+        "drake-ammo-fb": 20
+      },
+      "H0-all": {
+        "s2-five": 241508.736,
+        "s2-five-crit": 362263.104,
+        "s2-25th": 241508.736,
+        "s2-30th-sum": 359567.694,
+        "s2-40th-sum": 359567.694,
+        "s2-count": 63,
+        "cocoa-base": 172297.95,
+        "cocoa-base-d": 223987.33500000002,
+        "cocoa-fb": 258446.92500000002,
+        "cocoa-fb-d": 310136.31000000006,
+        "cocoa-fb-late": 258446.92500000002,
+        "cocoa-fb-late-d": 310136.31000000006,
+        "cocoa-after": 172297.95,
+        "cocoa-after-d": 223987.33500000002,
+        "delta-base": 104313.11499999999,
+        "delta-base-d": 135607.0495,
+        "delta-fb": 156469.67249999996,
+        "delta-fb-d": 187763.60699999996,
+        "drake-base": 25672.2828,
+        "drake-base-d": 33373.96764,
+        "drake-fb": 83127.31870896001,
+        "drake-fb-d": 99752.78245075203,
+        "drake-ammo-base": 9,
+        "drake-ammo-fb": 20
+      },
+      "H0-sg": {
+        "s2-five": 241508.736,
+        "s2-five-crit": 362263.104,
+        "s2-25th": 241508.736,
+        "s2-30th-sum": 359567.694,
+        "s2-40th-sum": 359567.694,
+        "s2-count": 63,
+        "cocoa-base": 172297.95,
+        "cocoa-base-d": 223987.33500000002,
+        "cocoa-fb": 289103.274,
+        "cocoa-fb-d": 346923.9288,
+        "cocoa-fb-late": 289103.274,
+        "cocoa-fb-late-d": 346923.9288,
+        "cocoa-after": 172297.95,
+        "cocoa-after-d": 223987.33500000002,
+        "delta-base": 104313.11499999999,
+        "delta-base-d": 135607.0495,
+        "delta-fb": 175040.368125,
+        "delta-fb-d": 210048.44175,
+        "drake-base": 25672.2828,
+        "drake-base-d": 33373.96764,
+        "drake-fb": 56721.93138144,
+        "drake-fb-d": 68066.31765772801,
+        "drake-ammo-base": 9,
+        "drake-ammo-fb": 20
+      },
+      "H0-ammo": {
+        "s2-five": 241508.736,
+        "s2-five-crit": 362263.104,
+        "s2-25th": 241508.736,
+        "s2-30th-sum": 359567.694,
+        "s2-40th-sum": 359567.694,
+        "s2-count": 61,
+        "cocoa-base": 172297.95,
+        "cocoa-base-d": 223987.33500000002,
+        "cocoa-fb": 289103.274,
+        "cocoa-fb-d": 346923.9288,
+        "cocoa-fb-late": 289103.274,
+        "cocoa-fb-late-d": 346923.9288,
+        "cocoa-after": 172297.95,
+        "cocoa-after-d": 223987.33500000002,
+        "delta-base": 104313.11499999999,
+        "delta-base-d": 135607.0495,
+        "delta-fb": 175040.368125,
+        "delta-fb-d": 210048.44175,
+        "drake-base": 25672.2828,
+        "drake-base-d": 33373.96764,
+        "drake-fb": 89140.93381847997,
+        "drake-fb-d": 106969.12058217598,
+        "drake-ammo-base": 9,
+        "drake-ammo-fb": 15
+      },
+      "H2-short": {
+        "s2-five": 241508.736,
+        "s2-five-crit": 362263.104,
+        "s2-25th": 241508.736,
+        "s2-30th-sum": 359567.694,
+        "s2-40th-sum": 359567.694,
+        "s2-count": 63,
+        "cocoa-base": 172297.95,
+        "cocoa-base-d": 223987.33500000002,
+        "cocoa-fb": 289103.274,
+        "cocoa-fb-d": 346923.9288,
+        "cocoa-fb-late": 258446.92500000002,
+        "cocoa-fb-late-d": 310136.31000000006,
+        "cocoa-after": 172297.95,
+        "cocoa-after-d": 223987.33500000002,
+        "delta-base": 104313.11499999999,
+        "delta-base-d": 135607.0495,
+        "delta-fb": 175040.368125,
+        "delta-fb-d": 210048.44175,
+        "drake-base": 25672.2828,
+        "drake-base-d": 33373.96764,
+        "drake-fb": 89140.93381847997,
+        "drake-fb-d": 106969.12058217598,
+        "drake-ammo-base": 9,
+        "drake-ammo-fb": 20
+      },
+      "H2-long": {
+        "s2-five": 241508.736,
+        "s2-five-crit": 362263.104,
+        "s2-25th": 270152.064,
+        "s2-30th-sum": 359567.694,
+        "s2-40th-sum": 359567.694,
+        "s2-count": 63,
+        "cocoa-base": 172297.95,
+        "cocoa-base-d": 223987.33500000002,
+        "cocoa-fb": 289103.274,
+        "cocoa-fb-d": 346923.9288,
+        "cocoa-fb-late": 289103.274,
+        "cocoa-fb-late-d": 346923.9288,
+        "cocoa-after": 192735.516,
+        "cocoa-after-d": 250556.17080000002,
+        "delta-base": 104313.11499999999,
+        "delta-base-d": 135607.0495,
+        "delta-fb": 175040.368125,
+        "delta-fb-d": 210048.44175,
+        "drake-base": 25672.2828,
+        "drake-base-d": 33373.96764,
+        "drake-fb": 89140.93381847997,
+        "drake-fb-d": 106969.12058217598,
+        "drake-ammo-base": 9,
+        "drake-ammo-fb": 20
+      }
+    },
+    "seen": {
+      "222": [
+        "222-01",
+        "222-02",
+        "222-03",
+        "222-04",
+        "222-05",
+        "222-06",
+        "222-07",
+        "222-08",
+        "222-09",
+        "222-10",
+        "222-11",
+        "222-12",
+        "222-13",
+        "222-14"
+      ],
+      "036": ["023-01", "036-01", "036-02", "036-03", "036-04"]
+    }
+  }
+}
