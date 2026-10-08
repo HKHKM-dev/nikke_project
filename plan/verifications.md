@@ -5,7 +5,7 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 0・保留 0・完了 315・打ち切り 21（計 336）
+件数: 調査中 0・保留 0・完了 316・打ち切り 21（計 337）
 
 ## 開いている検証
 
@@ -3524,4 +3524,16 @@
     - buffed-first-2（burstEffectFirstShot）: 実測 0（213-09）。H0 0（+0、許容内）
     - buffed-first-3（burstEffectFirstShot）: 実測 0（213-10）。H0 0（+0、許容内）
     - buffed-first-4（burstEffectFirstShot）: 実測 0（213-11）。H0 0（+0、許容内）
+    - 許容内の指標: H0 4/4。合う仮説は H0 だけ
+- **[V-0371](../records/verifications/V-0371-kurumi-burst-effect-delay.md)** クルミのバーストの効果の遅れ（録画 100・105 の読み直し）
+  - 問い: クルミ（862）のバースト使用時の効果（敵全体の受けるダメージ▲）は、I の発動（六角形が I から II に替わるフレーム）の後の最初の発から乗るか（いまのモデル。遅れ 0）
+  - 話題: スキル・キャラ固有・日付: 2026-10-09・状態: 完了
+  - 録画: 100、105
+  - 観測値: 100-06、100-07、100-08、100-09、100-10、105-05
+  - 結論: C-0494
+  - 予測（2026-10-09、commit debecf5）との比べ:
+    - buffed-first-1（burstEffectFirstShot）: 実測 0（100-06）。H0 0（+0、許容内）
+    - buffed-first-2（burstEffectFirstShot）: 実測 0（100-07）。H0 0（+0、許容内）
+    - buffed-first-3（burstEffectFirstShot）: 実測 0（100-08）。H0 0（+0、許容内）
+    - buffed-first-4（burstEffectFirstShot）: 実測 0（100-09）。H0 0（+0、許容内）
     - 許容内の指標: H0 4/4。合う仮説は H0 だけ

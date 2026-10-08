@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 294・仮説 77・棄却 80・範囲外 2（計 453）
+件数: 確定 295・仮説 77・棄却 80・範囲外 2（計 454）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -2561,6 +2561,12 @@
   - モデル側: `burst/landing.ts` の `MEASURED_BURST_DELAYS` に行が無い（効果の遅れ 0）。`data/skills/82.json` の burst の effects[0]・skill1 の effects[4]・skill1 の effects[5]（発動のフレームで付く）
   - 検証記録: V-0370
   - 定義: `data/skills/82.json` の skill1 の effects[4]、`data/skills/82.json` の skill1 の effects[5]、`data/skills/82.json` の burst の effects[0]
+- **C-0494** クルミ（862）のバースト使用時の効果（敵全体の受けるダメージ▲）は、I の発動（六角形が I から II に替わるフレーム）の後の最初の発から乗る（効果の遅れ 0）
+  - 状態: 確定・等級: 厳密一致・読み直し・更新日: 2026-10-09
+  - 根拠: 録画 100（クルミ単騎・手で撃ち続けたままバーストを使った 4 回）で、発動の後の最初の発がもう▲の値（`100-06`〜`100-09`。予測（いまのモデル。遅れ 0）を読む前に commit し、4 回とも合った）。▲の無い最後の発は発動の 3〜8f 前、▲の乗った最初の増分は 1f 前〜2f 後（`100-10`）。録画 105（発動の前後に撃っていない 4 回）でも、発動の後の最初のハッキングの tick（+10〜56f）はどれも▲の値（`105-05`。H0 と矛盾しない）。単騎なので、1 発と tick の値に効くのはクルミ自身の効果だけ。I の段の発動には止まりが無いので、動画のフレームの差がそのままモデルのフレーム。V-0371
+  - モデル側: `burst/landing.ts` の `MEASURED_BURST_DELAYS` に行が無い（効果の遅れ 0）。`data/skills/862.json` の burst の effects[0]（発動のフレームで付く）
+  - 検証記録: V-0371
+  - 定義: `data/skills/862.json` の burst の effects[0]
 
 ## 敵・的・場面
 
