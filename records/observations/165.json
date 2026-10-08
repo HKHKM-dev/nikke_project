@@ -1037,21 +1037,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "addEffects": [
-          {
-            "rid": 231,
-            "skill": "skill2",
-            "effect": {
-              "kind": "damage",
-              "trigger": {
-                "everySeconds": 15
-              },
-              "ref": 2,
-              "damageType": "skill"
-            }
-          }
-        ]
+        "burst": true
       }
     }
   },
@@ -1082,21 +1068,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "addEffects": [
-          {
-            "rid": 231,
-            "skill": "skill2",
-            "effect": {
-              "kind": "damage",
-              "trigger": {
-                "everySeconds": 15
-              },
-              "ref": 2,
-              "damageType": "skill"
-            }
-          }
-        ]
+        "burst": true
       }
     }
   },

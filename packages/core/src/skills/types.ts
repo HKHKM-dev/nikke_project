@@ -1286,7 +1286,7 @@ function parsePositiveInt(v: Json, path: string): number {
 
 /**
  * 文字列なら BuffTrigger、オブジェクトなら回数トリガー。時間の周期のトリガー（{ everySeconds }）は allowTimer のとき
- * （damage・dot・burstGaugeHit）だけ
+ * （damage・dot・autoAttack・burstGaugeHit・timed）だけ
  */
 function parseTrigger(
   v: Json,

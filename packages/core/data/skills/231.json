@@ -50,17 +50,34 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "最終防御力が最も高い敵への 170.58% のダメージは、説明文にきっかけ（いつ出るか）が書かれていないので未対応。録画では約 15 秒ごとに出る（C-0402、仮説。入れるかはオーナーの判断）",
-          "en": "The 170.58% hit on the highest-DEF enemies is not modeled because the description does not say when it happens. Recordings show it about every 15 s (C-0402, hypothesis; whether to model it is the owner's call)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "unknown"
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 15
+          },
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "戦闘開始から約 15 秒ごと（CT 15 秒は録画 038・162・165 から読んだ値。C-0402）。最終防御力が最も高い敵 5 機を単体ボスで 1 体として 1 ヒット",
+            "en": "Every ~15 s from the start of combat (the 15 s cooldown read from recordings 038, 162 and 165; C-0402). The 5 highest-DEF enemies hit once as a single boss"
           },
           "claims": [
+            "C-0402",
+            "C-0102"
+          ]
+        },
+        {
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "everySeconds": 15
+          },
+          "assumes": {
+            "ja": "周期の 15 秒は録画から読んだ値。S2 のヒットも 1 回につき的の 1 ヒットぶん（フルチャージ倍率なし）のゲージを溜める（C-0404）",
+            "en": "The 15 s period is read from recordings. The S2 hit also builds gauge equal to one target hit (no full-charge multiplier) per activation (C-0404)"
+          },
+          "claims": [
+            "C-0404",
             "C-0402"
           ]
         }

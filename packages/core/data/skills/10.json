@@ -20,20 +20,39 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "最終攻撃力が最も高い敵への倍率ダメージは未対応（説明文にきっかけ（いつ出るか）が書かれていない）。録画では約 20 秒ごとに出る（C-0403、仮説。入れるかはオーナーの判断）",
-          "en": "The hit on the enemy with the highest final ATK is not modeled (the description does not say when it happens). Recordings show it about every 20 s (C-0403, hypothesis; whether to model it is the owner's call)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "unknown"
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 20
+          },
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "戦闘開始から約 20 秒ごと（CT 20 秒は録画 073・221 から読んだ値。C-0403）。最終攻撃力が最も高い敵 1 機を単体ボスで 1 体として 1 ヒット",
+            "en": "Every ~20 s from combat start (the 20 s cooldown read from recordings 073 and 221; C-0403). The single highest-ATK enemy hit once as a single boss"
           },
           "claims": [
-            "C-0403"
+            "C-0403",
+            "C-0102"
           ]
         },
+        {
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "everySeconds": 20
+          },
+          "assumes": {
+            "ja": "周期の 20 秒は録画から読んだ値。S2 のヒットも 1 回につき的の 1 ヒットぶん（フルチャージ倍率なし）のゲージを溜める（C-0409）",
+            "en": "The 20 s period is read from recordings. The S2 hit also builds gauge equal to one target hit (no full-charge multiplier) per activation (C-0409)"
+          },
+          "claims": [
+            "C-0409",
+            "C-0403"
+          ]
+        }
+      ],
+      "notes": [
         {
           "ja": "挑発はダメージに関係しない",
           "en": "Taunt does not affect damage",

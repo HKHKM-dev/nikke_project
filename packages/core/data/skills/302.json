@@ -1,0 +1,58 @@
+{
+  "formatVersion": 1,
+  "resourceId": 302,
+  "checkedAt": "2026-10-08",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃命中時（確率 20%）の残りの HP が最も低い味方 1 機の防御力▲は、被弾を扱わないのでダメージに関係しない",
+          "en": "The chance-based (20%) DEF ▲ on the 1 ally with the lowest remaining HP on normal hit does not affect damage because taking hits is not modeled",
+          "kind": "noDamage",
+          "claims": [
+            "C-0072"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 17
+          },
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "stat": "critRate",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "説明文にきっかけが無いアクティブ型のスキルで、射撃に依らず戦闘開始から 17 秒ごとに付く（仮説・推論。C-0406。探索の録画 L-HC から読んだ値）。単騎では自分に付き、クリティカル確率を 5 秒間上げる",
+            "en": "An active skill with no trigger in the description: applied every 17 s from combat start regardless of firing (hypothetical inference; C-0406; read from exploratory recording L-HC). On solo teams it targets self, increasing Critical Rate for 5 s"
+          },
+          "claims": [
+            "C-0406"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方全体の攻撃力▲（10 秒）は未対応（単騎ではバーストを撃たず、撮っていない）",
+          "en": "The attack increase on all allies (10 s) is not modeled (burst is not used in solo, not recorded)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

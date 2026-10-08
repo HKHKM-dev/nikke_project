@@ -98,6 +98,10 @@ describe('records:check での重ね方', () => {
     (e) =>
       e.type === 'effect' && unconfirmedReason(e, rec, ctx) !== undefined && impossibleReason(e, rec) === undefined,
   )!;
+  const unconfirmed = elementsOf(rec, ctx).filter(
+    (e) =>
+      e.type === 'effect' && unconfirmedReason(e, rec, ctx) !== undefined && impossibleReason(e, rec) === undefined,
+  );
   const claim: Claim = {
     id: 'C-9200',
     text: 't',
@@ -120,12 +124,15 @@ describe('records:check での重ね方', () => {
       plus: null,
       ...entry,
     };
-    return relevanceOf(
-      [claim],
-      observations,
-      { ...ctx, claims: [...claims, claim] },
-      new Map([[`${o.id}|${element.name}`, s]]),
-    )[0]!;
+    const sens = new Map<string, SensitivityEntry>(
+      unconfirmed.map((e) => [
+        `${o.id}|${e.name}`,
+        e.name === element.name
+          ? s
+          : { observation: o.id, element: e.name, key: s.key, effective: false, minus: 0, plus: null },
+      ]),
+    );
+    return relevanceOf([claim], observations, { ...ctx, claims: [...claims, claim] }, sens)[0]!;
   };
   const names = (r: ReturnType<typeof run>) => r.warnings.flatMap((w) => w.elements.map((e) => e.name));
 
