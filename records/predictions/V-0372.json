@@ -1,0 +1,76 @@
+{
+  "verification": "V-0372",
+  "note": "撮影の編成: ノワール単騎（操作・AUTO 射撃 ON・オートバースト OFF）・灼熱の BigArms・3 分モード・スペック固定 OFF・キューブなし（録画 109 と同じ条件）。2 本。判定に使うのは近のコア命中率（near-core）で、2 本の近 4 区間を合わせた 1 つの観測値（95% 区間つき）を observations で結び付ける（複数の録画にまたがる値は compare に使えない）。モデルの的の表は近の着地点 A・B でコア命中率を分けない（C-0158。V-0076 で差は 0.8 SE）ので、近の 1 回目のフレームで代表させる。F2 はモデルに無い（スペック固定で的の表を分けない）ので、手入力の条件で 109 の値を置いた。スペック固定 OFF の 1 ヒットの値はオーナーの育成で決まるが、コア命中率と会心率には効かない（C-0159 で会心率は CDN どおり）ので、モデルはスペック固定 ON で回す",
+  "team": [
+    {
+      "rid": 271,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "F1",
+      "note": "偶然（109 の 1 本が高かった）。スペック固定 OFF でも近のコア命中率は的の表（C-0158。近 0.042）と同じ。いまのモデル"
+    },
+    {
+      "id": "F2",
+      "note": "スペック固定 OFF で近のコア命中率が変わる（機構は未知）。値は同じ条件（キューブなし）の録画 109 の近（51 / 849 = 0.060。109-08 の近 2 区間）。モデルには無いので、手入力の条件でコア命中率を置く",
+      "override": {
+        "condition": "manual",
+        "coreHitRate": 0.06
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "near-core",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3235
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "判定に使う。近（2 区間目と 5 区間目）の、当たったペレット 1 個あたりのコア命中率。2 本の近 4 区間を合わせた観測値と比べる",
+      "observations": ["371-07"]
+    },
+    {
+      "id": "near-crit",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 3235
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "読みの確かめ（判定に使わない）。近の会心率（CDN の 0.15。C-0159）。分解が崩れていればここが外れる",
+      "observations": ["371-08"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-09",
+    "commit": "debecf5f63631c1b83fae234d879c67623158c06",
+    "values": {
+      "F1": {
+        "near-core": 0.042,
+        "near-crit": 0.15
+      },
+      "F2": {
+        "near-core": 0.06,
+        "near-crit": 0.15
+      }
+    },
+    "seen": {}
+  }
+}

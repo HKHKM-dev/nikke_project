@@ -1,0 +1,30 @@
+{
+  "id": "372",
+  "date": "2026-10-09",
+  "folder": "range",
+  "file": "20261009-372_sg_noir_spec-off.mp4",
+  "original": "2026-10-09_00-38-57.mp4",
+  "durationSec": 211.8,
+  "frames": 12708,
+  "fps": 60,
+  "sizeMB": 256.5,
+  "sha256": "2dec168a6392",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true,
+      "note": "単騎・AUTO 射撃 ON・オートバースト OFF。キューブなし。戦闘中は触っていない"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・**スペック固定 OFF**。録画の先頭の出撃画面で確かめた）。ノワール単騎（出撃画面と、末尾の戦闘履歴のパネル）。AUTO 射撃 ON・オートバースト OFF（画面左上のボタンで確かめた）。キューブなし（録画の先頭の装備画面で、キューブの枠が空）。装備 4 部位の改造装備効果（OL）に命中率の行は無い（録画の先頭で確かめた）。371 と 372 で装備は同じ。結果画面の TOTAL DAMAGE は 277,863,188。1 ペレットの値は 372-01。V-0372"
+}
