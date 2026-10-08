@@ -64,7 +64,7 @@
           "ref": 1,
           "durationRef": 2,
           "claims": [
-            "C-0479"
+            "C-0490"
           ]
         },
         {
@@ -73,7 +73,7 @@
           "target": "self",
           "ref": 3,
           "claims": [
-            "C-0479"
+            "C-0490"
           ]
         }
       ]
@@ -87,11 +87,11 @@
           "every": 1,
           "durationRef": 1,
           "assumes": {
-            "ja": "「1 回 / 2 回 / 3 回」は窓の中では毎回次の段が出ることと読み、通算のカウンタはそのまま続ける（録画 47 の 5 回のフルバーストで確認し、録画 363 で確かめた。C-0481）。窓に入るかは射撃のフレームで判定する（未確定。録画 363 の 1 回は、バースト使用の 1〜2f 前の発が窓の中の段と値になったが、差が表示の遅れの幅の中で決められない。V-0356）",
-            "en": "\"1 / 2 / 3 times\" is read as advancing one tier on every shot inside the window, while the running count keeps going (confirmed with the 5 full bursts of recording 47 and checked with recording 363; C-0481). Whether a shot is inside the window is judged at the shot frame (unconfirmed: in recording 363 one shot fired 1-2f before the burst use got the in-window tier and damage, but the gap is within the display lag. V-0356)"
+            "ja": "「1 回 / 2 回 / 3 回」は窓の中では毎回次の段が出ることと読み、通算のカウンタはそのまま続ける（録画 47 の 5 回のフルバーストで確認し、録画 363 で確かめた。C-0492）。窓に入るかは射撃のフレームで判定する（未確定。録画 363 の 1 回は、バースト使用の 1〜2f 前の発が窓の中の段と値になったが、差が表示の遅れの幅の中で決められない。V-0356）",
+            "en": "\"1 / 2 / 3 times\" is read as advancing one tier on every shot inside the window, while the running count keeps going (confirmed with the 5 full bursts of recording 47 and checked with recording 363; C-0492). Whether a shot is inside the window is judged at the shot frame (unconfirmed: in recording 363 one shot fired 1-2f before the burst use got the in-window tier and damage, but the gap is within the display lag. V-0356)"
           },
           "claims": [
-            "C-0481"
+            "C-0492"
           ]
         },
         {
@@ -102,7 +102,7 @@
           "ref": 2,
           "durationRef": 3,
           "claims": [
-            "C-0480"
+            "C-0491"
           ]
         },
         {
@@ -113,7 +113,7 @@
           "ref": 4,
           "durationRef": 5,
           "claims": [
-            "C-0480"
+            "C-0491"
           ]
         }
       ]

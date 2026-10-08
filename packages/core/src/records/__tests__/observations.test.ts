@@ -667,7 +667,7 @@ describe('照合の部品', () => {
     } as unknown as SimResult;
     expect(residues.sim(sim, { args: { slot: 1, every: 3 }, input })).toEqual([(2 + 2 + 3) % 3]);
 
-    // 録画 363（ココア + デルタ + 紅蓮：ブラックシャドウ）: S2 で毎回 14 発撃ち、通算のカウンタなので余りはいつも 0（C-0479・C-0481）
+    // 録画 363（ココア + デルタ + 紅蓮：ブラックシャドウ）: S2 で毎回 14 発撃ち、通算のカウンタなので余りはいつも 0（C-0490・C-0492）
     const team = buildTeamInput(
       recordings.get('363')!,
       { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] },
