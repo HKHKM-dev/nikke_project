@@ -22,7 +22,59 @@ export type CloseInput = {
    * 調べられなかったら undefined
    */
   gitOrder?: GitOrder;
+  /**
+   * 手計算の予測（予測ファイルが無く、「予測」の節に「手計算」と書いた記録。plan/design-pellet-hit.md 7 節）の、「予測」の節の commit と
+   * 読みの順。records:close が git の履歴で調べる。調べられなかったら undefined
+   */
+  handOrder?: GitOrder;
 };
+
+const PREDICTION_SECTION = '予測（撮る前に書く）';
+
+/** 検証記録の Markdown から「予測」の節の本文（見出しの次の行から次の見出しの前まで。前後の空白を除く）を取り出す。無ければ undefined */
+export function predictionSectionOf(markdown: string): string | undefined {
+  const head = `## ${PREDICTION_SECTION}
+`;
+  const start = markdown.indexOf(head);
+  if (start < 0) return undefined;
+  const body = markdown.slice(start + head.length);
+  const next = body.search(/^## /m);
+  return (next < 0 ? body : body.slice(0, next)).trim();
+}
+
+/**
+ * 予測ファイルの代わりに、「予測」の節に手計算の予測を書いた記録か（plan/design-pellet-hit.md 7 節）。語彙が無く仮説ごとに定義を
+ * 切り替えるので予測ファイルにできないとき。順は「予測」の節の commit と観測値の commit で確かめる
+ */
+export function isHandPrediction(v: Pick<Verification, 'sections'>): boolean {
+  const section = v.sections.get(PREDICTION_SECTION) ?? '';
+  return !/探索|予測なし/.test(section) && /手計算/.test(section);
+}
+
+/**
+ * 予測の commit と読みの順の検査（予測ファイルと手計算の予測で同じ）。label.unsaved は commit していないものの呼び名、
+ * label.commit は予測の commit の呼び名
+ */
+function orderChecks(
+  g: GitOrder,
+  label: { unsaved: string; commit: string },
+  at: string,
+  errors: string[],
+  warnings: string[],
+): void {
+  const what = label.commit;
+  if (g.uncommitted || g.predictionCommit === null) {
+    errors.push(`${at}: ${label.unsaved}が commit されていない。予測を commit してから読む`);
+  } else if (g.notAfter.length > 0) {
+    errors.push(
+      `${at}: 観測値 ${g.notAfter.join('・')} を、${what}の commit（${g.predictionCommit.slice(0, 7)}）より前か同じ commit で足した`,
+    );
+  }
+  if (g.predictionCommit !== null && g.merged !== undefined && g.merged.length > 0)
+    warnings.push(
+      `${at}: 観測値 ${g.merged.join('・')} は${what}と同じマージ済みの commit（${g.predictionCommit.slice(0, 7)}）で足されていて、git では順を見られない（控えの検査だけ）`,
+    );
+}
 
 export type GitOrder = {
   /** 予測ファイルの predicted に手元の変更がある（予測を commit していない） */
@@ -108,10 +160,21 @@ export function closeChecks(input: CloseInput): CloseResult {
   ].sort();
   const earliest = dates[0];
   if (input.prediction === undefined) {
-    const section = v.sections.get('予測（撮る前に書く）') ?? '';
-    if (!/探索|予測なし/.test(section)) {
+    const section = v.sections.get(PREDICTION_SECTION) ?? '';
+    if (isHandPrediction(v)) {
+      if (input.handOrder === undefined) {
+        errors.push(`${at}: 手計算の予測（「予測」の節）と観測値の順を git の履歴で確かめられない`);
+      } else
+        orderChecks(
+          input.handOrder,
+          { unsaved: '手計算の予測（「予測」の節）', commit: '手計算の予測' },
+          at,
+          errors,
+          warnings,
+        );
+    } else if (!/探索|予測なし/.test(section)) {
       errors.push(
-        `${at}: 予測ファイル（records/predictions/${v.id}.json）が無い。探索なら「予測」の節に「探索」か「予測なし」と書く`,
+        `${at}: 予測ファイル（records/predictions/${v.id}.json）が無い。探索なら「予測」の節に「探索」か「予測なし」と書く。予測ファイルにできない予測（仮説ごとに定義を切り替えるなど）は、「予測」の節に「手計算」の予測を書いて撮る前に commit する`,
       );
     }
   } else if (input.prediction.predicted === null) {
@@ -136,20 +199,8 @@ export function closeChecks(input: CloseInput): CloseResult {
         }
       }
       // git の順は控えのある予測ファイルだけ見る（控えの無い古い記録は、録画を足しながら予測を出し直したものがある）
-      const g = input.gitOrder;
-      if (g !== undefined) {
-        if (g.uncommitted || g.predictionCommit === null) {
-          errors.push(`${at}: 予測ファイルの predicted が commit されていない。予測を commit してから読む`);
-        } else if (g.notAfter.length > 0) {
-          errors.push(
-            `${at}: 観測値 ${g.notAfter.join('・')} を、予測の commit（${g.predictionCommit.slice(0, 7)}）より前か同じ commit で足した`,
-          );
-        }
-        if (g.predictionCommit !== null && g.merged !== undefined && g.merged.length > 0)
-          warnings.push(
-            `${at}: 観測値 ${g.merged.join('・')} は予測と同じマージ済みの commit（${g.predictionCommit.slice(0, 7)}）で足されていて、git では順を見られない（控えの検査だけ）`,
-          );
-      }
+      if (input.gitOrder !== undefined)
+        orderChecks(input.gitOrder, { unsaved: '予測ファイルの predicted ', commit: '予測' }, at, errors, warnings);
     }
   }
   if ((v.sections.get('次に撮るもの') ?? '').trim() === '')

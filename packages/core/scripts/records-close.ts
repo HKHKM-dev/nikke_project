@@ -7,9 +7,17 @@
 // （--no-ci で省く）、PR の題名の案を出す。roadmap.md の更新と PR は人（エージェント）が行う。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
+import { relative } from 'node:path';
 import { parseArgs } from 'node:util';
 import { gradeCandidate, type ClaimGrade } from '../src/records/claims.ts';
-import { closeChecks, markState, prTitle, type GitOrder } from '../src/records/close.ts';
+import {
+  closeChecks,
+  isHandPrediction,
+  markState,
+  predictionSectionOf,
+  prTitle,
+  type GitOrder,
+} from '../src/records/close.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
 import { invalidReasonsOf, runObservations, type Observation } from '../src/records/observations.ts';
@@ -83,7 +91,71 @@ const minimal = new Map(
 );
 const git = (args: string[]): string => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
 
-/** 予測と読みの順を git の履歴で調べる（調べられなければ undefined） */
+/** main にマージ済みの commit か（origin/main が無ければ main で見る）。スカッシュマージした予測と読みは同じ commit になる */
+function isMergedCommit(c: string): boolean {
+  const mainRef = ['origin/main', 'main'].find((r) => {
+    try {
+      git(['rev-parse', '--verify', '--quiet', r]);
+      return true;
+    } catch {
+      return false;
+    }
+  });
+  if (mainRef === undefined) return false;
+  try {
+    git(['merge-base', '--is-ancestor', c, mainRef]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * 予測（予測ファイルの predicted か、検証記録の「予測」の節）と読みの順。history は新しい順の [commit, その commit の予測の中身]、
+ * atHead は HEAD の中身、current は手元の中身。予測の commit は、中身がいまと同じ続く最も古い commit（anyEarlier なら、続いて
+ * いなくても中身がいまと同じ最も古い commit。手計算の予測で、途中で書き足して戻した節。plan/design-pellet-hit.md 7 節）
+ */
+function orderOf(
+  history: readonly (readonly [string, string | undefined])[],
+  atHead: string | undefined,
+  current: string,
+  own: readonly Observation[],
+  anyEarlier = false,
+): GitOrder {
+  const uncommitted = atHead !== current;
+  let predictionCommit: string | null = null;
+  if (!uncommitted) {
+    for (const [c, content] of history) {
+      if (content === current) predictionCommit = c;
+      else if (!anyEarlier) break;
+    }
+  }
+  const notAfter: string[] = [];
+  const merged: string[] = [];
+  if (predictionCommit !== null) {
+    for (const o of own) {
+      const file = `records/observations/${o.recording}.json`;
+      const added = git(['log', '--format=%H', '--reverse', '-S', `"id": "${o.id}"`, '--', file]).split('\n')[0];
+      if (!added) continue; // まだ commit していない読みは予測の後
+      if (added === predictionCommit && isMergedCommit(added)) {
+        merged.push(o.id);
+        continue;
+      }
+      let after = added !== predictionCommit;
+      if (after) {
+        try {
+          git(['merge-base', '--is-ancestor', predictionCommit, added]);
+        } catch {
+          after = false;
+        }
+      }
+      if (!after) notAfter.push(o.id);
+    }
+  }
+  return { uncommitted, predictionCommit, notAfter, merged };
+}
+
+/** 予測ファイルと読みの順を git の履歴で調べる（調べられなければ undefined） */
 function gitOrderOf(prediction: PredictionFile, own: readonly Observation[]): GitOrder | undefined {
   const path = `records/predictions/${prediction.verification}.json`;
   try {
@@ -101,60 +173,46 @@ function gitOrderOf(prediction: PredictionFile, own: readonly Observation[]): Gi
         return undefined;
       }
     };
-    const current = withoutSeen(prediction.predicted);
-    const uncommitted = predictedAt('HEAD') !== current;
-    // いまの predicted を入れた commit: 新しい順にたどり、predicted がいまと同じ中身の続く最も古い commit
-    // （手書きの部分（targets の observations など）を後で直した commit は、predicted が同じなので飛ばす）
-    let predictionCommit: string | null = null;
-    if (!uncommitted) {
-      for (const c of git(['log', '--format=%H', '--', path]).split('\n')) {
-        if (!c || predictedAt(c) !== current) break;
-        predictionCommit = c;
-      }
-    }
-    const notAfter: string[] = [];
-    const merged: string[] = [];
-    // main にマージ済みの commit か（origin/main が無ければ main で見る）。スカッシュマージした予測と読みは同じ commit になる
-    const mainRef = ['origin/main', 'main'].find((r) => {
-      try {
-        git(['rev-parse', '--verify', '--quiet', r]);
-        return true;
-      } catch {
-        return false;
-      }
-    });
-    const isMerged = (c: string): boolean => {
-      if (mainRef === undefined) return false;
-      try {
-        git(['merge-base', '--is-ancestor', c, mainRef]);
-        return true;
-      } catch {
-        return false;
-      }
-    };
-    if (predictionCommit !== null) {
-      for (const o of own) {
-        const file = `records/observations/${o.recording}.json`;
-        const added = git(['log', '--format=%H', '--reverse', '-S', `"id": "${o.id}"`, '--', file]).split('\n')[0];
-        if (!added) continue; // まだ commit していない読みは予測の後
-        if (added === predictionCommit && isMerged(added)) {
-          merged.push(o.id);
-          continue;
-        }
-        let after = added !== predictionCommit;
-        if (after) {
-          try {
-            git(['merge-base', '--is-ancestor', predictionCommit, added]);
-          } catch {
-            after = false;
-          }
-        }
-        if (!after) notAfter.push(o.id);
-      }
-    }
-    return { uncommitted, predictionCommit, notAfter, merged };
+    // 手書きの部分（targets の observations など）を後で直した commit は、predicted が同じなので飛ばす
+    const history = git(['log', '--format=%H', '--', path])
+      .split('\n')
+      .filter((c) => c !== '')
+      .map((c) => [c, predictedAt(c)] as const);
+    return orderOf(history, predictedAt('HEAD'), withoutSeen(prediction.predicted), own);
   } catch (e) {
     console.log(`注意: git の履歴で予測と読みの順を調べられなかった（${(e as Error).message.split('\n')[0]}）`);
+    return undefined;
+  }
+}
+
+/**
+ * 手計算の予測（予測ファイルが無く、「予測」の節に手計算の予測を書いた記録。plan/design-pellet-hit.md 7 節）と読みの順。
+ * 記録の改名（番号の振り直し）をたどって、「予測」の節がいまと同じ中身の最も古い commit を予測の commit とみる
+ */
+function handOrderOf(path: string, own: readonly Observation[]): GitOrder | undefined {
+  const rel = relative(ROOT, path).replaceAll('\\', '/');
+  try {
+    const sectionAt = (rev: string, file: string): string | undefined => {
+      try {
+        return predictionSectionOf(git(['show', `${rev}:${file}`]));
+      } catch {
+        return undefined;
+      }
+    };
+    // --follow --name-only は「commit の行・空行・その commit でのパスの行」の並び
+    const lines = git(['log', '--follow', '--format=%H', '--name-only', '--', rel]).split('\n');
+    const history: (readonly [string, string | undefined])[] = [];
+    for (let i = 0; i < lines.length; i++) {
+      const c = lines[i]!;
+      if (!/^[0-9a-f]{40}$/.test(c)) continue;
+      const file = lines.slice(i + 1).find((l) => l !== '');
+      if (file !== undefined) history.push([c, sectionAt(c, file)]);
+    }
+    const current = predictionSectionOf(readFileSync(path, 'utf8'));
+    if (current === undefined) throw new Error('「予測」の節が無い');
+    return orderOf(history, sectionAt('HEAD', rel), current, own, true);
+  } catch (e) {
+    console.log(`注意: git の履歴で手計算の予測と読みの順を調べられなかった（${(e as Error).message.split('\n')[0]}）`);
     return undefined;
   }
 }
@@ -169,6 +227,9 @@ const result = closeChecks({
   gradeCandidates,
   minimal,
   ...(prediction?.predicted?.seen === undefined ? {} : { gitOrder: gitOrderOf(prediction, own) }),
+  ...(prediction === undefined && isHandPrediction(verification)
+    ? { handOrder: handOrderOf(verificationPath(verification), own) }
+    : {}),
 });
 for (const w of result.warnings) console.log(`注意: ${w}`);
 if (result.errors.length > 0) {

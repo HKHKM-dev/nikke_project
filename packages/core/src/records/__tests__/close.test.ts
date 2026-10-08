@@ -1,7 +1,7 @@
 // 閉じる前の検査（plan/design-records-automation.md 3.7 節）
 import { describe, expect, it } from 'vitest';
 import type { Claim } from '../claims.ts';
-import { closeChecks, markState, prTitle, type CloseInput } from '../close.ts';
+import { closeChecks, isHandPrediction, markState, predictionSectionOf, prTitle, type CloseInput } from '../close.ts';
 import type { Observation } from '../observations.ts';
 import type { RecordingEntry } from '../recordings.ts';
 import { parseVerification } from '../verifications.ts';
@@ -157,6 +157,36 @@ describe('closeChecks', () => {
     // 控えの無い古い予測ファイルでは git の順を見ない
     const old = { ...base, gitOrder: { uncommitted: true, predictionCommit: null, notAfter: ['101-01'] } };
     expect(closeChecks(old).errors).toEqual([]);
+  });
+
+  it('手計算の予測: 「予測」の節の commit より後に読んだ観測値なら通る（plan/design-pellet-hit.md 7 節）', () => {
+    const hand = (g?: Partial<CloseInput['handOrder'] & object>): CloseInput => ({
+      ...base,
+      prediction: undefined,
+      verification: doc([], { 予測: '語彙が無いので手計算の予測を書く。仮説 A は 4・3・3…' }),
+      ...(g === undefined
+        ? {}
+        : { handOrder: { uncommitted: false, predictionCommit: 'def5678', notAfter: [], ...g } }),
+    });
+    expect(isHandPrediction(hand().verification)).toBe(true);
+    expect(closeChecks(hand({})).errors).toEqual([]);
+    expect(closeChecks(hand()).errors[0]).toContain('git の履歴で確かめられない');
+    expect(closeChecks(hand({ uncommitted: true })).errors[0]).toContain(
+      '手計算の予測（「予測」の節）が commit されていない',
+    );
+    expect(closeChecks(hand({ notAfter: ['101-01'] })).errors[0]).toContain(
+      '101-01 を、手計算の予測の commit（def5678）',
+    );
+    // 「手計算」と書いていない予測の節は今までどおり（予測ファイルか探索が要る）
+    const plain = closeChecks({ ...base, prediction: undefined, verification: doc([], { 予測: '仮説 H1' }) });
+    expect(plain.errors[0]).toContain('予測ファイル');
+    expect(isHandPrediction(doc([], { 予測: '探索（手計算はしない）' }))).toBe(false);
+  });
+
+  it('predictionSectionOf: 「予測」の節の本文を取り出す', () => {
+    const md = ['# V', '', '## 予測（撮る前に書く）', '', '本文 1', '', '| a |', '', '## 読み方', '', 'x'].join('\n');
+    expect(predictionSectionOf(md)).toBe('本文 1\n\n| a |');
+    expect(predictionSectionOf('# V\n\n## 読み方\n')).toBeUndefined();
   });
 
   it('確定の結論の根拠に compare も scope も無い観測値があれば誤り、subject が無ければ注意（設計書 9 節の 2・3.2 節）', () => {
