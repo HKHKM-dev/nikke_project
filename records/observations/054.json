@@ -36,7 +36,8 @@
         "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto",
-        "midFarLanding": "A"
+        "midFarLanding": "A",
+        "farLanding": ["A"]
       }
     }
   },

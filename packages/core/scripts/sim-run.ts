@@ -13,7 +13,8 @@
 // （射撃場のプリセットと、--enemy を省いた属性なしの射撃場の的で効く。ほかの敵では手入力の値と注記）。manual は --core-hit-rate・
 // --hit-rate（省略 1）と距離ボーナスあり。18-C2 から既定は auto で、--core-hit-rate か --hit-rate を指定したら manual。
 // --mid-far A|B|C で中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。--near A,B で近の 1 回目・2 回目の
-// 着地点を固定する（C-0155。省略は 2 か所の配分）。自動の枠は、使った条件の発数平均を出す。
+// 着地点を固定する（C-0155。省略は 2 か所の配分）。--far A,B で遠の 1 回目・2 回目の着地点を固定する（C-0477。省略は 2 か所の
+// 配分）。自動の枠は、使った条件の発数平均を出す。
 // calc の数え方（plan/design-calc-hybrid.md）: --shot-counting hybrid|firingSlots|average で、枠ごとの表にその数え方の calc の列を足す
 // （既定の calc の列は変えない。既定は hybrid）。
 // --skill-levels resourceId:slot=Lv をカンマ区切り（slot は skill1・skill2・burst。例 191:skill2=4,260:burst=4）。省略は全部 Lv10
@@ -38,9 +39,11 @@ import {
 } from '../src/enemies.ts';
 import {
   jumpWindowsOf,
+  FAR_LANDINGS,
   landingFixed,
   MID_FAR_LANDINGS,
   NEAR_LANDINGS,
+  type FarLanding,
   type MidFarLanding,
   type NearLanding,
 } from '../src/records/observations.ts';
@@ -100,6 +103,7 @@ const { values } = parseArgs({
     condition: { type: 'string' },
     'mid-far': { type: 'string' },
     near: { type: 'string' },
+    far: { type: 'string' },
     // plan/design-calc-hybrid.md: 別の数え方の calc を並べて出す（hybrid・firingSlots・average）
     'shot-counting': { type: 'string' },
     // 実ビルドの録画と比べるときのスキル Lv（resourceId:slot=Lv をカンマ区切り。省略は全部 Lv10）
@@ -111,7 +115,7 @@ const { values } = parseArgs({
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--near A,B] [--shot-counting hybrid|firingSlots|average] [--skill-levels 191:skill2=4] [--jump-windows 056-11]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--near A,B] [--far A,B] [--shot-counting hybrid|firingSlots|average] [--skill-levels 191:skill2=4] [--jump-windows 056-11]',
   );
   process.exit(2);
 }
@@ -180,6 +184,11 @@ if (midFar !== undefined && (!MID_FAR_LANDINGS.includes(midFar) || conditionMode
 const near = values.near?.split(',') as NearLanding[] | undefined;
 if (near !== undefined && (!near.every((n) => NEAR_LANDINGS.includes(n)) || conditionMode !== 'auto')) {
   console.error('--near takes A or B per near span (e.g. A,B) and needs --condition auto');
+  process.exit(2);
+}
+const far = values.far?.split(',') as FarLanding[] | undefined;
+if (far !== undefined && (!far.every((n) => FAR_LANDINGS.includes(n)) || conditionMode !== 'auto')) {
+  console.error('--far takes A or B per far span (e.g. A,B) and needs --condition auto');
   process.exit(2);
 }
 const condition = {
@@ -313,7 +322,7 @@ const input = {
             eventSetIds,
             Number(values.duration),
             target,
-            landingFixed(midFar, near),
+            landingFixed(midFar, near, far),
             jumpWindows,
           ),
         },
@@ -381,7 +390,7 @@ console.log(
     `conditions ${conditionMode}${
       conditionMode === 'manual'
         ? ` (core ${condition.coreHitRate}, hit rate ${condition.hitRate})`
-        : [midFar ? `mid-far ${midFar}` : '', near ? `near ${near.join(',')}` : '']
+        : [midFar ? `mid-far ${midFar}` : '', near ? `near ${near.join(',')}` : '', far ? `far ${far.join(',')}` : '']
             .filter(Boolean)
             .map((x) => ` (${x})`)
             .join('')
