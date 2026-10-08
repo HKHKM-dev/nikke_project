@@ -10,8 +10,10 @@ import {
   SKILL_SLOTS,
   type BuffStat,
   type NoteEffect,
+  type NoteOnlyStat,
   type SkillDefinition,
   type SkillEffect,
+  type SkillEntry,
   type SkillNote,
 } from '../skills/types.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
@@ -71,6 +73,12 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   trueDamage: 'damageValue',
   trueDamageConversion: 'damageValue',
   sustainedDamage: 'damageValue',
+};
+
+/** notes の効く先にだけ使う stat の分類（design-minimal-relevance.md 11.8 節） */
+const NOTE_STAT_CLASS: Record<NoteOnlyStat, ElementClass> = {
+  enemyDefenseDown: 'damageValue',
+  maxHp: 'damageValue',
 };
 
 const KIND_CLASS: Record<string, ElementClass> = {
@@ -306,14 +314,14 @@ export function impossibleReason(element: MinimalElement, recording: RecordingEn
   return undefined;
 }
 
-/** 要素の分類（4.2 節の 4） */
+/** 要素の分類（4.2 節の 5） */
 export function classOf(element: MinimalElement): ElementClass {
   if (element.type === 'normalCondition') return 'normalCondition';
   const shape = element.shape;
   if (shape === undefined || shape.kind === 'unknown') return 'unknown';
   if (shape.kind === 'passive' || shape.kind === 'timed') {
     if (shape.stat === undefined || shape.stat === 'unknown') return 'unknown';
-    return STAT_CLASS[shape.stat as BuffStat] ?? 'unknown';
+    return STAT_CLASS[shape.stat as BuffStat] ?? NOTE_STAT_CLASS[shape.stat as NoteOnlyStat] ?? 'unknown';
   }
   return KIND_CLASS[shape.kind] ?? 'unknown';
 }
@@ -330,6 +338,19 @@ export function observedSource(o: Observation): ObservationSource | undefined {
   return o.scope?.source ?? (o.compare !== undefined ? METRIC_SOURCE[o.compare.metric] : undefined);
 }
 
+/** 編成に、回復を受けた時（trigger: healed）がきっかけの効果か notes を持つキャラがいるか（宝物版のスロットも見る） */
+export function teamHasHealedTrigger(recording: RecordingEntry, ctx: RelevanceContext): boolean {
+  const healed = (x: { trigger?: unknown } | undefined) => x?.trigger === 'healed';
+  return recording.team.some((m) => {
+    const def = ctx.skills.get(m.rid);
+    if (def === undefined) return false;
+    const slots = [def.skills, def.treasureSkills ?? {}].flatMap((s) => Object.values(s) as SkillEntry[]);
+    return slots.some(
+      (s) => s.effects.some((e) => healed(e as { trigger?: unknown })) || (s.notes ?? []).some((n) => healed(n.effect)),
+    );
+  });
+}
+
 /** 静的な判定（4.2 節）。効かないなら理由、効きうるなら undefined */
 export function notRelevantReason(
   element: MinimalElement,
@@ -339,6 +360,8 @@ export function notRelevantReason(
 ): string | undefined {
   if (element.type === 'noDefinition') return undefined;
   const cls = classOf(element);
+  // 回復は「回復を受けた時」の効果を通してだけ観測量に効く（11.8 節。2026-10-08、オーナー決定）
+  if (cls === 'heal' && !teamHasHealedTrigger(recording, ctx)) return '回復を受けた時の効果を持つ味方がいない';
   const single = o.kind === 'hit' || o.kind === 'rate';
   if (observedSource(o) === 'normal' && o.kind === 'hit' && cls === 'otherHit') return '別のヒット';
   const slots = observedSlots(o);

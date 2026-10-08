@@ -59,7 +59,7 @@
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
-            "stat": "unknown",
+            "stat": "maxHp",
             "target": "self",
             "trigger": "timer"
           }

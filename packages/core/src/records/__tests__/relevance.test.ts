@@ -222,6 +222,30 @@ describe('静的な判定（4.2 節）', () => {
       notRelevantReason(ct, obs({ kind: 'interval', scope: { slot: 'all', source: 'firing' } }), rec('162'), ctx),
     ).toMatch(/効かない分類/);
   });
+
+  it('classifies the note-only stats as damage values (11.8 節)', () => {
+    expect(classOf(el({ kind: 'timed', stat: 'enemyDefenseDown', target: 'enemy' }))).toBe('damageValue');
+    expect(classOf(el({ kind: 'timed', stat: 'maxHp', target: 'self' }))).toBe('damageValue');
+    const timing = obs({ kind: 'timing', scope: { slot: 1, source: 'gauge' } });
+    const defDown = el({ kind: 'timed', stat: 'enemyDefenseDown', target: 'enemy' });
+    expect(notRelevantReason(defDown, timing, rec('162'), ctx)).toMatch(/効かない分類/);
+    expect(
+      notRelevantReason(defDown, obs({ kind: 'hit', scope: { slot: 1, source: 'normal' } }), rec('162'), ctx),
+    ).toBe(undefined);
+  });
+
+  it('drops a heal unless someone in the team triggers on being healed (11.8 節)', () => {
+    const heal = el({ kind: 'heal', target: 'allies', trigger: 'burstUse' });
+    const count = obs({ kind: 'count', scope: { slot: 1, source: 'gauge' } });
+    // 162 には回復を受けた時の効果を持つキャラがいない
+    expect(notRelevantReason(heal, count, rec('162'), ctx)).toBe('回復を受けた時の効果を持つ味方がいない');
+    // クラウン（330）の定義には trigger: healed がある
+    const withCrown: RecordingEntry = {
+      ...rec('162'),
+      team: [...rec('162').team, { slot: 5, rid: 330, name: 'クラウン', controlled: false }],
+    };
+    expect(notRelevantReason(heal, count, withCrown, ctx)).toBeUndefined();
+  });
 });
 
 describe('対象と印（2 節の 1・4.3 節）', () => {
