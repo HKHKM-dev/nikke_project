@@ -24,7 +24,7 @@ import type { BuildEffect } from '../buildEffects.ts';
 import { resolveCycleEvery, type CycleWindow } from './cycles.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
-import { framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
+import { framesToGameSeconds, gameSecondsToFirstFrame } from '../time.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
 import { chanceOpportunities, chancePieces, chanceValueOf } from './chance.ts';
 import {
@@ -298,8 +298,9 @@ export function triggerFires(
 }
 
 /**
- * ニヒリスター編: 時間の周期のトリガーの発火フレーム。戦闘開始から k × N 秒（k = 1, 2, …）の時刻を四捨五入したフレームで、
- * 戦闘の終わり（frames）より前だけ（plan/design-nihilister.md 8.1 節。C-0091）
+ * ニヒリスター編: 時間の周期のトリガーの発火フレーム。戦闘開始から k × ceil(N ÷ 0.017) フレーム（k = 1, 2, …）で、
+ * 戦闘の終わり（frames）より前だけ（plan/design-nihilister.md 8.1 節。C-0091）。発動のたびに N 秒に達した最初のフレームを数え直し、
+ * 端数を持ち越さない（C-0432。plan/design-timer-ceil.md）
  */
 export function timerFrames(everySeconds: number, frames: number): number[] {
   const fires: number[] = [];
@@ -307,7 +308,7 @@ export function timerFrames(everySeconds: number, frames: number): number[] {
   const lastFrameSeconds = framesToGameSeconds(frames - 1) + 1e-9;
   for (let k = 1; ; k++) {
     const seconds = k * everySeconds;
-    const frame = gameSecondsToFrame(seconds);
+    const frame = k * gameSecondsToFirstFrame(everySeconds);
     if (frame >= frames || seconds > lastFrameSeconds) return fires;
     fires.push(frame);
   }

@@ -69,11 +69,11 @@ describe('everySeconds の解決と発火', () => {
     expect(s2!.multiplier).toBeCloseTo(1.1264, 10);
   });
 
-  it('fires at k × N s from the start of battle, before the end (10 s → 17 times in 180 s)', () => {
+  it('fires every ceil(N ÷ 0.017) frames from the start of battle, before the end (10 s → 17 times in 180 s。C-0432)', () => {
     const frames = timerFrames(10, 10588);
     expect(frames).toHaveLength(17);
-    expect(frames.slice(0, 3)).toEqual([588, 1176, 1765]);
-    expect(frames.at(-1)).toBe(10000);
+    expect(frames.slice(0, 3)).toEqual([589, 1178, 1767]);
+    expect(frames.at(-1)).toBe(17 * 589);
     expect(triggerFrames({ everySeconds: 10 }, null, 1, 10588)).toEqual(frames);
   });
 

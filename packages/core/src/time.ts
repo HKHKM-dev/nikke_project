@@ -30,6 +30,14 @@ export function battleSecondsToFrames(seconds: number): number {
   return Math.max(0, Math.ceil(seconds / GAME_SECONDS_PER_FRAME - 1e-9));
 }
 
+/**
+ * ゲーム内の時刻 seconds に達した最初のフレーム（切り上げ）。周期のスキルの発動（C-0432）と持続ダメージの tick（C-0454）は、
+ * 起点からの時刻がこの値に達したフレームで起きる（plan/design-timer-ceil.md）
+ */
+export function gameSecondsToFirstFrame(seconds: number): number {
+  return Math.ceil(seconds / GAME_SECONDS_PER_FRAME - 1e-9);
+}
+
 /** 時刻（出来事の境目）: ゲーム内の秒 → フレーム（四捨五入） */
 export function gameSecondsToFrame(seconds: number): number {
   return Math.round(seconds / GAME_SECONDS_PER_FRAME);
