@@ -1,0 +1,96 @@
+{
+  "verification": "V-0328",
+  "note": "撮る前の予測（リター単騎・スペック固定 ON・オートバースト OFF の新しい撮影）。モデルの遠は 1 か所なので far-a・far-b は同じ値を出す。H2-x は指標 x だけで比べる。観測値は読んだ後に、指標の observations で遠の着地点ごとに結び付ける。主な指標の差 d（far-a − far-b）は検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 82,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "遠は着地点によらず、的の表のとおり 0.7600（C-0320）"
+    },
+    {
+      "id": "H1",
+      "note": "遠は着地点によらず、V-0200 の 25 本の値（9,559 / 12,120）",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.7887
+      }
+    },
+    {
+      "id": "H2-farA",
+      "note": "遠は着地点で違う。遠 A は V-0200・V-0215 の遠 A の 20 本の値（7,847 / 9,726）。far-a の指標だけで比べる",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.8068
+      }
+    },
+    {
+      "id": "H2-farB",
+      "note": "遠は着地点で違う。遠 B は V-0200・V-0215 の遠 B の 20 本の値（7,419 / 9,751）。far-b の指標だけで比べる",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.7608
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "far-a",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5400
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "判定の指標。遠の着地点が遠 A（足元 540 以上）の録画の、3 区間目の完全なマガジンの弾丸命中率の平均 p̄_A"
+    },
+    {
+      "id": "far-b",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5400
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "判定の指標。遠の着地点が遠 B（足元 536 以下）の録画の、3 区間目の完全なマガジンの弾丸命中率の平均 p̄_B"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-07",
+    "commit": "e377527a2a0211ce3b07b9711b54e85d835745ff",
+    "values": {
+      "H0": {
+        "far-a": 0.76,
+        "far-b": 0.76
+      },
+      "H1": {
+        "far-a": 0.7887,
+        "far-b": 0.7887
+      },
+      "H2-farA": {
+        "far-a": 0.8068,
+        "far-b": 0.8068
+      },
+      "H2-farB": {
+        "far-a": 0.7608,
+        "far-b": 0.7608
+      }
+    },
+    "seen": {}
+  }
+}
