@@ -71,7 +71,10 @@
           "target": "allies",
           "stat": "attack",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-0458"
+          ]
         },
         {
           "kind": "timed",
@@ -114,7 +117,10 @@
           "assumes": {
             "ja": "対象「残りの HP が最も低い敵 3 機」は単体ボスで 1 ヒット",
             "en": "The 3 lowest-HP enemies are a lone boss, so it lands once"
-          }
+          },
+          "claims": [
+            "C-0457"
+          ]
         },
         {
           "kind": "damage",
@@ -127,7 +133,10 @@
           "assumes": {
             "ja": "対象「残りの HP が最も低い敵 1 機」は単体ボス",
             "en": "The lowest-HP enemy is the lone boss"
-          }
+          },
+          "claims": [
+            "C-0457"
+          ]
         }
       ]
     },
