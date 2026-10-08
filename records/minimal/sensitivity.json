@@ -4982,6 +4982,94 @@
       "plus": null
     },
     {
+      "observation": "302-01",
+      "element": "クラウン burst.effects[0]",
+      "key": "3ef9ba2bc4a7a40e",
+      "effective": true,
+      "minus": -9572.917548959995,
+      "plus": 0
+    },
+    {
+      "observation": "302-02",
+      "element": "クラウン burst.effects[0]",
+      "key": "379e609ee198d9b9",
+      "effective": true,
+      "minus": -5421.129550200003,
+      "plus": 0
+    },
+    {
+      "observation": "302-03",
+      "element": "クラウン burst.effects[0]",
+      "key": "98ddba535ccd069c",
+      "effective": true,
+      "minus": 0,
+      "plus": 3614.086366800002
+    },
+    {
+      "observation": "302-04",
+      "element": "クラウン burst.effects[0]",
+      "key": "da35e9a04587d841",
+      "effective": true,
+      "minus": 0,
+      "plus": 124881.55416
+    },
+    {
+      "observation": "302-05",
+      "element": "クラウン burst.effects[0]",
+      "key": "1d04af1f82d8f990",
+      "effective": true,
+      "minus": -237293.71797599993,
+      "plus": 0
+    },
+    {
+      "observation": "302-06",
+      "element": "クラウン burst.effects[0]",
+      "key": "d069cbf92b1283fe",
+      "effective": true,
+      "minus": -189834.97438079998,
+      "plus": 0
+    },
+    {
+      "observation": "302-07",
+      "element": "クラウン burst.effects[0]",
+      "key": "a4d7dd4c4c52529b",
+      "effective": true,
+      "minus": -6381.945032640004,
+      "plus": 0
+    },
+    {
+      "observation": "302-08",
+      "element": "クラウン burst.effects[0]",
+      "key": "7b137b809876b957",
+      "effective": true,
+      "minus": -3614.086366800002,
+      "plus": 0
+    },
+    {
+      "observation": "302-10",
+      "element": "クラウン burst.effects[0]",
+      "key": "362f63e95cbed376",
+      "effective": true,
+      "minus": -317526.2639400001,
+      "plus": 0
+    },
+    {
+      "observation": "302-11",
+      "element": "クラウン burst.effects[0]",
+      "key": "b94cebd46344eddd",
+      "effective": true,
+      "minus": -381031.516728,
+      "plus": 0
+    },
+    {
+      "observation": "302-12",
+      "element": "クラウン burst.effects[0]",
+      "key": "c7d54a2503660e2a",
+      "effective": true,
+      "minus": 0,
+      "plus": 133064.12577600003
+    },
+    {
       "observation": "304-03",
       "element": "ノワール burst.effects[1]",
       "key": "e8d1a73fc41d9eda",
