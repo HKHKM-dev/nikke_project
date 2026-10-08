@@ -22,7 +22,7 @@ notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補�
   - notes[0] 計算に無関係: 挑発はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0227（確定）
-  - effects[1] timed・burstUse・attack: C-0457（確定）
+  - effects[1] timed・burstUse・attack: C-0457（確定）、C-0469（仮説）
 
 ## 16 ラピ：レッドフード
 
