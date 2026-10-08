@@ -46,7 +46,8 @@
           "target": "allies",
           "stat": "critDamage",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": ["C-0463"]
         }
       ]
     }
