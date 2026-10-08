@@ -1948,9 +1948,9 @@
   - 検証記録: V-0212
   - 定義: `data/skills/870.json` の skill1 の effects[3]
 - **C-0311** ウンファ：タクティカル・アップの S1 のバースト使用時のカモフラージュ（5 秒）の中では、通常攻撃の 1 発の基礎が防御力を引かない max(1, 攻撃力) になり、防御力無視ダメージ 42.24%▲（Lv10）が乗る。攻撃ダメージ▲が無いとき、▲は別の乗数 (1 + 42.24%) と同じ値になる（攻撃ダメージ▲の群に足すかは区別していない）。窓はバースト使用時から数えて 5 秒で、炸裂弾の着弾から 2 発目まで（296f 後の発は外）
-  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-06
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-09
   - 根拠: `232-01`〜`232-03`（カモフラージュの中のコアの 1 発が、変化 × ▲ × 受けるダメージ▲のモデルと 1 未満の差。3 回のバーストで同じ値）・`232-09`（効果の外は 013-05 と同じ値）・`232-11`（どの回もカモフラージュの値は 2 発で、着弾から 296〜302f の発は外の値）。予測（records/predictions/V-0207.json の H1）は撮る前に commit した。変化の分（防御力 100 ÷ 攻撃力）だけ離れた値で合い、変化なし・▲なしの値は出ていない。V-0207
-  - モデル側: `data/skills/95.json` の skill1 の effects[0]・effects[1]（`timed`・`burstUse`・`self`・`trueDamageConversion`・`trueDamage`）。1 発の式は `damage.ts` の `isTrueDamageShot`・`trueDamageMultiplier`（置き場所 `TRUE_DAMAGE_BUCKET` は `separate` のまま。plan/design-true-damage-element.md 6 節の論点 1）
+  - モデル側: `data/skills/95.json` の skill1 の effects[0]・effects[1]（`timed`・`burstUse`・`self`・`trueDamageConversion`・`trueDamage`）。1 発の式は `damage.ts` の `isTrueDamageShot`・`trueDamageMultiplier`（置き場所 `TRUE_DAMAGE_BUCKET` は `attackDamage`。C-0376 と C-0205 から。攻撃ダメージ▲が無いときは `separate` と同じ値。plan/design-true-damage-element.md 10 節）
   - 検証記録: V-0207
   - 定義: `data/skills/95.json` の skill1 の effects[0]、`data/skills/95.json` の skill1 の effects[1]、`data/skills/95.json` の skill1 の effects[2]、`data/skills/95.json` の skill1 の effects[3]
 - **C-0312** ウンファ：タクティカル・アップのバーストの徹甲炸裂弾（命中した敵の受けるダメージ 27.87%▲・10 秒。Lv10）は、ほかのどの群とも別の乗数 (1 + 27.87%) で、ウンファの通常攻撃の 1 発に乗る（C-0138 と同じ受けるダメージ▲）。炸裂弾自身には乗らない
@@ -2232,18 +2232,18 @@
   - 定義: `data/skills/93.json` の skill2 の effects[3]、`data/skills/95.json` の skill2 の effects[3]
   - 最小構成の警告: 5 / 5 組（[minimal.md](minimal.md)）
 - **C-0375** エマ：タクティカル・アップの S2 の「フォーメーションAS 適用中」の効果 1（味方全体に防御力無視ダメージ 30.97%▲）と、ウンファ：タクティカル・アップの S2 の「フォーメーションLT 適用中」の効果 2（味方全体に防御力無視ダメージ 30.97%▲）（Lv10）は、2 体が編成にいれば両方とも効き、ウンファの S1 のカモフラージュの防御力無視ダメージ▲（42.24%）と同じ stat の和（合計 104.18%）で、カモフラージュの中の通常攻撃（防御力無視ダメージの発）に掛かる（攻撃ダメージ▲が無いとき）
-  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-07
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-09
   - 根拠: `287-06`（カモフラージュの中のウンファのコア 6 発と、距離ボーナス付き 2 発。H1 の合計 104.18% で端数まで合い、H0（42.24%）・H2 と H3（73.21%）とは 1.18 倍以上離れる）。`287-04`・`287-07`（カモフラージュの外の対照）。撮る前の予測は records/predictions/最小構成の警告を通して確定にするのは 2026-10-07 のオーナーの判断（C-0374 と同じ）。V-0249.json（H1）。録画 287 の最小構成の警告（C-0374 と同じ）。V-0249
-  - モデル側: `data/skills/93.json` の skill2 の effects[2]、`data/skills/95.json` の skill2 の effects[4]（`withCharacter`。置き場所は `damage.ts` の `TRUE_DAMAGE_BUCKET`）
+  - モデル側: `data/skills/93.json` の skill2 の effects[2]、`data/skills/95.json` の skill2 の effects[4]（`withCharacter`。置き場所は `damage.ts` の `TRUE_DAMAGE_BUCKET`。`attackDamage`。plan/design-true-damage-element.md 10 節）
   - 検証記録: V-0249
   - 定義: `data/skills/93.json` の skill2 の effects[2]、`data/skills/95.json` の skill2 の effects[4]
   - 最小構成の警告: 3 / 3 組（[minimal.md](minimal.md)）
 - **C-0376** ウンファ：タクティカル・アップのバーストの炸裂弾（使用武器変更の 1 発）にも、発射体爆発ダメージ▲が乗る。防御力無視ダメージ▲と同じ群の和 (1 + Σ防御力無視ダメージ + Σ発射体爆発ダメージ) で掛かる（攻撃ダメージ▲が無いとき。攻撃ダメージ▲の群かどうかは分からない）。炸裂弾の着弾の前にカモフラージュが外れていた回は、カモフラージュの防御力無視ダメージ▲（42.24%）だけが抜けて、フォーメーションの防御力無視ダメージ▲と発射体爆発ダメージ▲は乗る
-  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-07
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-09
   - 根拠: `287-05`・`287-08`（5 回の炸裂弾。2〜5 回目はコア 2 回・コアの距離ボーナス・コア会心が和の読みで ±0.22 以内、1 回目（カモフラージュの▲が抜けた回）が +0.06。手で書いた値と比べた。モデルは炸裂弾に発射体爆発ダメージ▲を掛けないので、どちらもモデルと比べない記録の観測値。C-0313 と同じ扱い）。予測（R0: 乗らない、R1: × (1 + 発射体爆発ダメージ▲)）とは合わず、和の読みは値を見た後に立てた。値を見た後の読みを、端数まで合うので確定にするのは 2026-10-07 のオーナーの判断。最小構成の警告も C-0374 と同じく通した。V-0249
-  - モデル側: 未反映。`data/skills/95.json` の burst の notes（未対応）。変更後の武器の発は発射体の爆発を持たず（`damage.ts` の `hasProjectileExplosion`）、防御力無視ダメージ▲と発射体爆発ダメージ▲は別の乗数の積で掛かる（`trueDamageMultiplier`・`projectileExplosionMultiplier`）。入れるには語彙と置き場所の設計が要る（backlog.md 6 節）
+  - モデル側: `data/skills/95.json` の burst の effects[1]（`weaponChange` の `projectileExplosion`。変更後の武器の発に発射体爆発ダメージ▲が乗る。`damage.ts` の `hasProjectileExplosion`）。2 つの▲の和は `TRUE_DAMAGE_BUCKET` を `attackDamage` にして作る（発射体爆発ダメージ▲は攻撃ダメージ▲と同じ枠。C-0205。`trueDamageMultiplier` は同じ枠の発射体爆発ダメージ▲を分母に含め、`projectileExplosionMultiplier` との積が 1 つの和になる）。攻撃ダメージ▲を含まない 2 つだけの和とは分けていない。モデルの炸裂弾は `287-05`（比べる）と `287-08` の 2〜5 回目（`__tests__/eunhwaTuWeaponChange.test.ts`）に 1 未満の差（plan/design-true-damage-element.md 10 節）
   - 検証記録: V-0249
-  - 定義: `data/skills/95.json` の burst の notes[0]
+  - 定義: `data/skills/95.json` の burst の effects[1]
   - 最小構成の警告: 2 / 2 組（[minimal.md](minimal.md)）
 - **C-0379** エマ：タクティカル・アップのバーストの環境コントロール強化の受けるダメージ▲の合計の、2 倍の読み（環境コントロールの値 × 2）からのずれは、S1 の環境コントロールの値に比例せず、値に依らない一定の量（S1 Lv1 の 2.3% で +0.0105% ± 0.0014%、Lv10 の 3.9% で +0.011% ± 0.003%）。量の出どころは分からない
   - 状態: 仮説・等級: 推論・更新日: 2026-10-08

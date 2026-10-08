@@ -169,7 +169,8 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
         ? `・最大装弾数 ${formatNumber(shot.maxAmmo)} 発`
         : '';
     const trueDamage = effect.weapon?.trueDamage ? '・防御力無視ダメージ' : '';
-    return `使用武器の変更（1 発 ${formatPercent(effect.value, 2)}${hits}${rate}${ammo}${trueDamage}）`;
+    const explosion = effect.weapon?.projectileExplosion ? '・発射体の爆発' : '';
+    return `使用武器の変更（1 発 ${formatPercent(effect.value, 2)}${hits}${rate}${ammo}${trueDamage}${explosion}）`;
   }
   const stat = BUFF_STAT_LABEL[effect.stat];
   if (effect.stat === 'infiniteAmmo') return stat;
