@@ -34,8 +34,8 @@
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
-            "stat": "unknown",
-            "target": "unknown",
+            "stat": "enemyDefenseDown",
+            "target": "enemy",
             "trigger": "unknown"
           }
         }

@@ -963,6 +963,19 @@ void _allEffectKinds;
 export const NOTE_EFFECT_TRIGGERS = [...BUFF_TRIGGERS, ...SHOT_COUNT_KINDS, 'timer', 'applied', 'damaged'] as const;
 export type NoteEffectTrigger = (typeof NOTE_EFFECT_TRIGGERS)[number];
 
+/**
+ * 最小構成の検査編（plan/design-minimal-relevance.md 11.8 節）: notes の効く先にだけ使う stat。計算の語彙（BuffStat）に無く、
+ * 効く量の分類（与ダメージの値）は決まるもの。enemyDefenseDown は敵の防御力▼、maxHp は最大HP▲（攻撃力▲に効く形）
+ */
+export const NOTE_ONLY_STATS = ['enemyDefenseDown', 'maxHp'] as const;
+export type NoteOnlyStat = (typeof NOTE_ONLY_STATS)[number];
+export const NOTE_EFFECT_STATS = [...BUFF_STATS, ...NOTE_ONLY_STATS] as const;
+export type NoteEffectStat = (typeof NOTE_EFFECT_STATS)[number];
+
+/** 最小構成の検査編（同 11.8 節）: notes の効く先にだけ使う対象。enemy は敵（デバフ） */
+export const NOTE_EFFECT_TARGETS = [...BUFF_TARGETS, 'enemy'] as const;
+export type NoteEffectTarget = (typeof NOTE_EFFECT_TARGETS)[number];
+
 /** notes の効く先の欄で、語彙で書けないもの。判定では「何にでも当たる」とみなす */
 export type Unknown = 'unknown';
 
@@ -973,8 +986,8 @@ export type Unknown = 'unknown';
  */
 export type NoteEffect = {
   kind: SkillEffect['kind'] | Unknown;
-  stat?: BuffStat | Unknown;
-  target?: BuffTarget | Unknown;
+  stat?: NoteEffectStat | Unknown;
+  target?: NoteEffectTarget | Unknown;
   trigger?: NoteEffectTrigger | Unknown;
 };
 
@@ -1104,8 +1117,8 @@ function parseNoteEffect(v: Json, path: string): NoteEffect {
   };
   for (const key of ['stat', 'target', 'trigger'] as const)
     if (required[key] && v[key] === undefined) fail(`${path}.${key}`, `required for ${effect.kind} (or "unknown")`);
-  if (v.stat !== undefined) effect.stat = orUnknown(BUFF_STATS, v.stat, `${path}.stat`);
-  if (v.target !== undefined) effect.target = orUnknown(BUFF_TARGETS, v.target, `${path}.target`);
+  if (v.stat !== undefined) effect.stat = orUnknown(NOTE_EFFECT_STATS, v.stat, `${path}.stat`);
+  if (v.target !== undefined) effect.target = orUnknown(NOTE_EFFECT_TARGETS, v.target, `${path}.target`);
   if (v.trigger !== undefined) effect.trigger = orUnknown(NOTE_EFFECT_TRIGGERS, v.trigger, `${path}.trigger`);
   return effect;
 }
