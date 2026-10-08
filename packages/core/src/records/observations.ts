@@ -638,6 +638,28 @@ function gaugeFullToActivation(result: { schedule: BurstSchedule | null }, ctx: 
   return videoFrameOf(schedule, next.frame) - videoFrameOf(schedule, full);
 }
 
+/**
+ * V-0359（リターの S1 の CT▼）: n 回目（0 始まり）のフルバーストの入りのフレームに、枠の残りのバーストスキル CT が縮んだフレーム数
+ * （その枠が受けた即時効果の CT▼ の、実際に縮んだ量の和。CT が明けていた枠は 0。burst/controller.ts の reduceCooldown）。
+ * n はカンマ区切りの並び（"0,2,3"）も書け、そのときは回ごとの列。録画では、右のバースト欄の CT の残り秒の切り替わりから読んだ
+ * 縮んだ長さ（ゲーム内の秒 ÷ 0.017）と比べる
+ */
+function cooldownCutFrames(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number | number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const cutAt = (n: number): number => {
+    const window = schedule.fullBurstWindows[n];
+    if (window === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
+    return schedule.cooldownReductions
+      .filter((r) => r.slotIndex === slotIndex && r.frame === window.start)
+      .reduce((sum, r) => sum + r.applied, 0);
+  };
+  const n = ctx.args.n;
+  if (typeof n === 'string') return n.split(',').map((x) => cutAt(Number(x.trim())));
+  return cutAt(Number(n));
+}
+
 function burstActivationSlots(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
@@ -715,6 +737,11 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     args: ['n'],
     sim: (r, c) => gaugeFullToActivation(r, c),
     calc: (r, c) => gaugeFullToActivation(r, c),
+  },
+  /** V-0359: n 回目のフルバーストの入りに、枠の残りのバーストスキル CT が縮んだフレーム数（n はカンマ区切りの並びも書ける） */
+  cooldownCutFrames: {
+    args: ['slot', 'n'],
+    sim: (r, c) => cooldownCutFrames(r, c),
   },
   fullBurstStarts: {
     args: [],
