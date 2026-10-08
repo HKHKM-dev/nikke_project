@@ -5,7 +5,7 @@
   "topic": "バーストゲージ",
   "grade": "推論",
   "basis": "`162-35`（3 回とも +1px）・`165-37`（1 回 +1px・1 回 0）・`038-31`（1 回 +1px・1 回 0）・`163-17`（1 回 0）・`163-16`（163 の S2 のフレーム）。探索（予測なし）で、量は px の刻みより細かく決められない（4,000 は約 0.5px で、px の刻みをまたぐのは半分ほどの回）。V-0273",
-  "model": "未反映（イサベルの S2 自体が未対応。C-0402。入れるなら、Flower の S2 と同じ `burstGaugeHit`（`{ \"everySeconds\": 15 }`）を damage と並べる形が考えられる）",
+  "model": "イサベルは実装済み（data/skills/231.json の skill2。everySeconds: 15 の burstGaugeHit）",
   "replaces": [],
-  "updated": "2026-10-07"
+  "updated": "2026-10-08"
 }

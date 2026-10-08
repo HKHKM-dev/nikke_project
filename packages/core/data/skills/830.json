@@ -17,7 +17,7 @@
             "en": "A heal at full HP still counts as applied"
           },
           "claims": [
-            "C-0077",
+            "C-0464",
             "C-0087"
           ]
         }
@@ -95,7 +95,7 @@
             "en": "The lifesteal (10 s) triggers \"when healed\" only when newly applied, not on hits during it or refreshes (V-0022, V-0024)"
           },
           "claims": [
-            "C-0077",
+            "C-0464",
             "C-0082"
           ]
         },

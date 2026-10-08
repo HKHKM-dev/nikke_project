@@ -157,7 +157,10 @@ describe('イサベル: 使用回数別の段階とフルバースト 5 秒', ()
     expect(byRef(3.4965)).toHaveLength(uses - 3);
     // バーストと同じフレーム（III の発動 = フルバースト開始）に出るので、フルバースト補正 +0.5 が乗る
     const burstSeconds = isabel.burst.activations.map((a) => a.seconds);
-    for (const a of isabel.skillHits.activations) {
+    const tierSkillHits = isabel.skillHits.activations.filter(
+      (a) => Math.abs(a.hit.multiplier - 2.997) < 1e-9 || Math.abs(a.hit.multiplier - 3.4965) < 1e-9,
+    );
+    for (const a of tierSkillHits) {
       expect(burstSeconds).toContain(a.seconds);
       expect(a.hit.boost.fullBurst).toBe(0.5);
     }

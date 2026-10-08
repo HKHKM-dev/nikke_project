@@ -27,8 +27,8 @@ export type ChangedWeapon = {
  */
 export type AttackRounding = 'total' | 'effect' | 'skill' | 'self';
 
-/** いまのモデルの攻撃力▲の丸め（C-0027） */
-export const ATTACK_ROUNDING: AttackRounding = 'total';
+/** いまのモデルの攻撃力▲の丸め（C-0027・C-0400） */
+export const ATTACK_ROUNDING: AttackRounding = 'self';
 
 /**
  * 攻撃力▲の 1 件（丸めの仮説用）。source は出どころ（`<resourceId>.<スロット>`。育成の効果層は `build`）。
@@ -271,6 +271,7 @@ export function roundedAttack(
 ): number {
   if (rounding === 'total') return Math.round(applyAttackBuffs(baseAttack, buffs));
   if (rounding === 'self') {
+    if (buffs.attackParts.length === 0) return Math.round(applyAttackBuffs(baseAttack, buffs));
     const own = new Map<string, number>();
     let rest = baseAttack;
     for (const part of buffs.attackParts) {

@@ -64,7 +64,7 @@ describe('plan/minimal.md（実データ）', () => {
 describe('要素を並べる（2 節の 2）', () => {
   it('lists effects and notes of every slot, but not noDamage notes', () => {
     const els = elementsOf(rec('162'), ctx);
-    expect(els.some((e) => e.name === 'イサベル skill2.notes[0]')).toBe(true);
+    expect(els.some((e) => e.name === 'イサベル skill2.effects[0]')).toBe(true);
     const def = data.skills.get(17)!;
     def.skills.skill2.notes?.forEach((n, j) => {
       if (n.kind === 'noDamage') expect(els.some((e) => e.name === `アニス：スター skill2.notes[${j}]`)).toBe(false);
@@ -269,14 +269,14 @@ describe('対象と印（2 節の 1・4.3 節）', () => {
       ...w.elements.map((e) => e.name),
       ...w.marked.map((m) => `印 ${m}`),
     ]);
-  const target = 'イサベル skill2.notes[0]';
+  const target = 'イサベル skill2.effects[0]';
 
   it('counts the element when it is not the subject', () => {
     expect(elementsFor(base)).toContain(target);
   });
 
   it('drops the subject', () => {
-    const c = { ...base, subject: { places: ['data/skills/231.json の skill2 の notes[0]'] } };
+    const c = { ...base, subject: { places: ['data/skills/231.json の skill2 の effects[0]'] } };
     expect(elementsFor(c)).not.toContain(target);
   });
 

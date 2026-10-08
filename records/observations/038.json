@@ -505,7 +505,7 @@
       "metric": "skillHitDamage",
       "args": {
         "slot": 3,
-        "n": 0,
+        "n": 6,
         "crit": false
       },
       "tolerance": {
@@ -535,7 +535,7 @@
       "metric": "skillHitDamage",
       "args": {
         "slot": 3,
-        "n": 1,
+        "n": 9,
         "crit": false
       },
       "tolerance": {
@@ -565,7 +565,7 @@
       "metric": "skillHitDamage",
       "args": {
         "slot": 3,
-        "n": 2,
+        "n": 10,
         "crit": true
       },
       "tolerance": {

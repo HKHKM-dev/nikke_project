@@ -70,21 +70,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": ["range-3min-jump"],
-        "addEffects": [
-          {
-            "rid": 231,
-            "skill": "skill2",
-            "effect": {
-              "kind": "damage",
-              "trigger": {
-                "everySeconds": 15
-              },
-              "ref": 2,
-              "damageType": "skill"
-            }
-          }
-        ]
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {

@@ -110,7 +110,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, isabel 
     const burstHits = sim.slots[isabel]!.burst.hits;
     expect(burstHits).toHaveLength(lands.filter((f) => f < plan.frames).length);
     for (const h of burstHits) expect(h.damageTakenMultiplier).toBe(1);
-    const tierHits = plan.skillHits.filter((h) => h.slotIndex === isabel);
+    const tierHits = plan.skillHits.filter((h) => h.slotIndex === isabel && h.effect.source.skill === 'burst');
     expect(tierHits.length).toBeGreaterThan(0);
     for (const h of tierHits) {
       expect(lands).toContain(h.frame);
@@ -119,7 +119,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, isabel 
   });
 
   it('keeps the S1 attack of the same landing off the tier 2 damage of the 3rd use (C-0163)', () => {
-    const third = plan.skillHits.find((h) => h.slotIndex === isabel)!;
+    const third = plan.skillHits.find((h) => h.slotIndex === isabel && h.effect.source.skill === 'burst')!;
     expect(third.frame).toBe(lands[2]);
     const at = (f: number) => plan.timeline.segments.find((g) => g.start <= f && f < g.end)!.slots[isabel]!.buffs;
     // S1 の段階 3 の攻撃力は 3 回目の効果の発火から付くが、同じ発動の段階 2 の追加ダメージは発火の直前のバフで計算する

@@ -6,19 +6,20 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 56・効果 186（根拠あり 163）・notes 206（根拠あり 72）
+件数: キャラ 57・効果 193（根拠あり 170）・notes 205（根拠あり 70）
 
-notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補足 8
+notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補足 8
 
-スロット: supported 72・partial 14・unsupported 58・noEffect 33
+スロット: supported 75・partial 15・unsupported 56・noEffect 34
 
 ## 10 ラピ
 
 - **skill1**: noEffect
   - notes[0] 前提の外: 被弾 N 回で自分に攻撃力▲（維持型）は、被弾を扱わないので起きない（要件 5.2 節。射撃場の 3 分モードでは的が反撃するので発動する）: 根拠なし
-- **skill2**: unsupported
-  - notes[0] 未対応: 最終攻撃力が最も高い敵への倍率ダメージは未対応（説明文にきっかけ（いつ出るか）が書かれていない）。録画では約 20 秒ごとに出る（C-0403、仮説。入れるかはオーナーの判断）: C-0403（仮説）
-  - notes[1] 計算に無関係: 挑発はダメージに関係しない: 根拠なし
+- **skill2**: supported
+  - effects[0] damage・20 秒ごと・skill: C-0403（仮説）、C-0102（確定）
+  - effects[1] burstGaugeHit・20 秒ごと: C-0409（仮説）、C-0403（仮説）
+  - notes[0] 計算に無関係: 挑発はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0227（確定）
   - effects[1] timed・burstUse・attack: C-0457（確定）
@@ -328,8 +329,9 @@ notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補�
   - effects[0] timed・burstUse・critRate: C-0160（確定）
   - effects[1] timed・burstUse・critDamage: C-0160（確定）
   - effects[2] timed・burstUse・attack: C-0160（確定）
-- **skill2**: unsupported
-  - notes[0] 未対応: 最終防御力が最も高い敵への 170.58% のダメージは、説明文にきっかけ（いつ出るか）が書かれていないので未対応。録画では約 15 秒ごとに出る（C-0402、仮説。入れるかはオーナーの判断）: C-0402（仮説）
+- **skill2**: supported
+  - effects[0] damage・15 秒ごと・skill: C-0402（仮説）、C-0102（確定）
+  - effects[1] burstGaugeHit・15 秒ごと: C-0404（仮説）、C-0402（仮説）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0160（確定）、C-0165（確定）
   - effects[1] timed・burstUse・damageTaken: C-0160（確定）、C-0161（確定）、C-0162（確定）、C-0165（確定）、C-0153（仮説）
@@ -421,9 +423,10 @@ notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補�
 
 - **skill1**: noEffect
   - notes[0] 計算に無関係: 残りの HP の数値が最も低い味方 1 機に受けるダメージ▼は、ダメージとゲージに関係しない: 根拠なし
-- **skill2**: unsupported
-  - notes[0] 未対応: 最終防御力が最も高い敵への 56.32% のダメージは、説明文にきっかけ（いつ出るか）が書かれていないので未対応。録画では約 13 秒ごとに出る（C-0405、仮説。入れるかはオーナーの判断）: C-0405（確定）
-  - notes[1] 未対応: フルバーストタイム持続中に発動した時の、同じ敵への防御力▼は未対応（S2 のきっかけが無いので発動しない）: 根拠なし
+- **skill2**: partial
+  - effects[0] damage・13 秒ごと・skill: C-0405（確定）、C-0102（確定）
+  - effects[1] burstGaugeHit・13 秒ごと: C-0409（仮説）、C-0405（確定）
+  - notes[0] 未対応: フルバーストタイム持続中に発動した時の、同じ敵への防御力▼は未対応（語彙と効きの確かめが要るため）: 根拠なし
 - **burst**: noEffect
   - notes[0] 計算に無関係: 残りの HP の数値が最も低い味方へのバリアは、ダメージとゲージに関係しない: 根拠なし
 
@@ -444,6 +447,15 @@ notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補�
   - notes[0] 計算に無関係: 自分の吸収回復（攻撃ダメージの一部を回復）は、ダメージに関係しない（自分にだけ付き、ソルジャーF.A. に回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）: C-0366（確定）
 - **burst**: noEffect
   - notes[0] 計算に無関係: 自分の最大HP▲は、ダメージに関係しない: C-0366（確定）
+
+## 302 プロダクト08
+
+- **skill1**: noEffect
+  - notes[0] 計算に無関係: 通常攻撃命中時（確率 20%）の残りの HP が最も低い味方 1 機の防御力▲は、被弾を扱わないのでダメージに関係しない: C-0072（確定）
+- **skill2**: supported
+  - effects[0] timed・17 秒ごと・critRate: C-0406（仮説）
+- **burst**: unsupported
+  - notes[0] 未対応: 味方全体の攻撃力▲（10 秒）は未対応（単騎ではバーストを撃たず、撮っていない）: 根拠なし
 
 ## 304 I-DOLL・フラワー
 
@@ -557,7 +569,7 @@ notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補�
 - **宝物版 skill1**: supported
   - effects[0] timed・lastShot・normalCritRate: C-0097（確定）
   - effects[1] burstGauge・fullChargeShot: C-0094（仮説）、C-0103（確定）
-  - effects[2] heal・fullChargeShot: C-0345（仮説）
+  - effects[2] heal・fullChargeShot: C-0345（確定）
 - **宝物版 skill2**: supported
   - effects[0] timed・fullBurstStart・attackDamage: C-0096（確定）
   - effects[1] damage・fullChargeShot・additional: C-0093（確定）、C-0103（確定）、C-0104（仮説）
@@ -643,14 +655,14 @@ notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補�
 ## 830 アスカ
 
 - **skill1**: supported
-  - effects[0] timed・healed・attack: C-0077（仮説）、C-0087（確定）
+  - effects[0] timed・healed・attack: C-0464（確定）、C-0087（確定）
   - notes[0] 前提の外: 戦闘開始時のバリアに与えるダメージ▲は、射撃場の敵にバリアが無いのでダメージに関係しない: C-0443（範囲外）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・coreDamage: C-0075（確定）
   - notes[0] 前提の外: 「自分がバリア適用状態なら」有利コードの攻撃ダメージ▲は、バリアを扱わないので起きない: C-0075（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・attackDamage: C-0076（確定）
-  - effects[1] heal・burstUse: C-0077（仮説）、C-0082（確定）
+  - effects[1] heal・burstUse: C-0464（確定）、C-0082（確定）
   - effects[2] timed・burstUse・hitRate: C-0076（確定）
   - notes[0] 前提の外: 貫通特化は射撃場の敵ではダメージに関係しない: C-0076（確定）
   - notes[1] 補足: 命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。AR の弾丸命中率にも同じ式で効かせる（確かめたのは SMG だけ）。バーストゲージにも同じ N で効かせるが、▲の窓（10 秒）はフルバーストの窓に収まり、ゲージの溜まる時間と重ならない（きっかけの遅れは未測定で 0）: C-0037（確定）、C-0170（仮説）、C-0192（確定）、C-0011（確定）、C-0264（仮説）、C-0362（確定）、C-0363（仮説）

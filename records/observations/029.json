@@ -55,21 +55,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"],
-        "addEffects": [
-          {
-            "rid": 10,
-            "skill": "skill2",
-            "effect": {
-              "kind": "damage",
-              "trigger": {
-                "everySeconds": 20
-              },
-              "ref": 2,
-              "damageType": "skill"
-            }
-          }
-        ]
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {

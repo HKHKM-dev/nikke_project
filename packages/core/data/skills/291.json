@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 291,
-  "checkedAt": "2026-10-07",
+  "checkedAt": "2026-10-08",
   "skills": {
     "skill1": {
       "effects": [],
@@ -14,23 +14,42 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "最終防御力が最も高い敵への 56.32% のダメージは、説明文にきっかけ（いつ出るか）が書かれていないので未対応。録画では約 13 秒ごとに出る（C-0405、仮説。入れるかはオーナーの判断）",
-          "en": "The 56.32% hit on the highest-DEF enemies is not modeled because the description does not say when it happens. Recordings show it about every 13 s (C-0405, hypothesis; whether to model it is the owner's call)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "unknown"
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 13
+          },
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "戦闘開始から約 13 秒ごと（CT 13 秒は録画 018・019 から読んだ値。C-0405）。最終防御力が最も高い敵 3 機を単体ボスで 1 体として 1 ヒット",
+            "en": "Every ~13 s from the start of combat (the 13 s cooldown read from recordings 018 and 019; C-0405). The 3 highest-DEF enemies hit once as a single boss"
           },
           "claims": [
-            "C-0405"
+            "C-0405",
+            "C-0102"
           ]
         },
         {
-          "ja": "フルバーストタイム持続中に発動した時の、同じ敵への防御力▼は未対応（S2 のきっかけが無いので発動しない）",
-          "en": "The DEF down on the same enemy when activated during Full Burst is not modeled (S2 has no trigger, so it never activates)",
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "everySeconds": 13
+          },
+          "assumes": {
+            "ja": "周期の 13 秒は録画から読んだ値。S2 のヒットも 1 回につき的の 1 ヒットぶん（フルチャージ倍率なし）のゲージを溜める（C-0409）",
+            "en": "The 13 s period is read from recordings. The S2 hit also builds gauge equal to one target hit (no full-charge multiplier) per activation (C-0409)"
+          },
+          "claims": [
+            "C-0409",
+            "C-0405"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルバーストタイム持続中に発動した時の、同じ敵への防御力▼は未対応（語彙と効きの確かめが要るため）",
+          "en": "The DEF down on the same enemy when activated during Full Burst is not modeled (needs vocabulary and verification)",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
