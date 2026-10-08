@@ -71,6 +71,10 @@
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps（分解は 125-04 と同じスクリプト）",
       "note": "125-04 と同じ読み方"
+    },
+    "invalid": {
+      "reason": "旧の hud.ts が HUD の 0 を 8 と読み、中近の f1541・1819・2138 のクルミの 1 ヒットが格子に乗らずに落ちていた。直した読みでは中近の窓の中 19 / 88 = 0.216、外 44 / 184 = 0.239（記録の値に違う区間の差を足した値）。直した値は 125-15（V-0364）",
+      "date": "2026-10-08"
     }
   },
   {
@@ -89,9 +93,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 1, "frame": 0, "core": false, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   },
   {
@@ -110,9 +125,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 1, "frame": 0, "core": true, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   },
   {
@@ -131,9 +157,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 1, "frame": 0, "core": false, "crit": true, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   },
   {
@@ -152,9 +189,20 @@
     "compare": {
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 1, "frame": 0, "core": false, "crit": false, "distance": true },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   },
   {
@@ -173,9 +221,18 @@
     "compare": {
       "model": "sim",
       "metric": "dotHitDamage",
-      "args": { "slot": 1, "n": 0, "crit": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "burst": false }
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
     }
   },
   {
@@ -240,9 +297,32 @@
     "compare": {
       "model": "sim",
       "metric": "skillHitDamage",
-      "args": { "slot": 1, "n": 0, "crit": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire" }
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "125-15",
+    "recording": "125",
+    "source": "V-0364",
+    "readAt": "2026-10-08",
+    "kind": "rate",
+    "use": "record",
+    "value": [0.216, 0.239, 0.169, 0.15],
+    "unit": "割合",
+    "description": "参考（判定には使わない）。クルミの中近（1 区間目）と中遠（4 区間目）のコア命中率。中近のフルバーストの中・外、中遠のフルバーストの中・外の順。中近は 19 / 88 と 44 / 184、中遠は 15 / 89 と 35 / 234。差は中近 −0.023 ± 0.052（± は旧の読みの数）、中遠 +0.019 ± 0.044（100f のブロック間の分散）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（分解は 125-04 と同じスクリプト）（hud.ts は V-0327 で直した読み）",
+      "note": "125-04 と同じ読み方。旧の読み（`125-05`）の中近は 18 / 86 と 44 / 183。旧の増分で回し直しても再現できなかったので、記録の値に違う区間の差を足した: f1541（窓の外。新は 14,036 の胴体 1 ヒット）、f1819（窓の中。旧の 8 と 22,937 の割れが新は 22,945 の胴体 1 ヒット）、f2138（窓の中。旧の 36,492 が新は 35,692 のコア 1 ヒット）。旧で f1819 の 22,937 を数えていたなら、中は 19 / 87 = 0.218（V-0364）"
     }
   }
 ]

@@ -65,7 +65,7 @@
         "condition": "auto"
       },
       "note": "中近（1 区間目）の窓の中（sim の 20 秒）− 外（3.4 秒。1 回目のノワールのバーストより前）",
-      "observations": ["246-03"]
+      "observations": ["246-19"]
     },
     {
       "id": "sakura-near1-core-diff",
@@ -116,7 +116,7 @@
         "condition": "auto"
       },
       "note": "中遠（4 区間目）の窓の中（135 秒）− 外（118 秒）",
-      "observations": ["246-06"]
+      "observations": ["246-20"]
     },
     {
       "id": "sakura-near2-core-diff",
@@ -133,7 +133,7 @@
         "condition": "auto"
       },
       "note": "近（5 区間目）の窓の中（172 秒）− 外（160 秒。4 回目の窓の終わりと 5 回目のバーストの間）",
-      "observations": ["246-07"]
+      "observations": ["246-21"]
     },
     {
       "id": "sakura-far-core-in",

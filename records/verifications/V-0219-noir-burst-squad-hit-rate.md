@@ -88,11 +88,11 @@
 
 | 指標                                        | 実測              | 予測 H0                 | 予測 H1                     |
 | ------------------------------------------- | ----------------- | ----------------------- | --------------------------- |
-| sakura-midnear-core-diff（coreHitRateDiff） | 0.087（`246-03`） | 0（-0.087、**許容外**） | 0.033（-0.054、**許容外**） |
+| sakura-midnear-core-diff（coreHitRateDiff） | 0.085（`246-19`） | 0（-0.085、**許容外**） | 0.033（-0.052、**許容外**） |
 | sakura-near1-core-diff（coreHitRateDiff）   | 0.061（`246-04`） | 0（-0.061、許容内）     | 0.074（+0.013、許容内）     |
 | sakura-far-core-diff（coreHitRateDiff）     | -0.01（`246-05`） | 0（+0.01、許容内）      | 0.01（+0.02、許容内）       |
-| sakura-midfar-core-diff（coreHitRateDiff）  | 0.041（`246-06`） | 0（-0.041、**許容外**） | 0.014（-0.027、許容内）     |
-| sakura-near2-core-diff（coreHitRateDiff）   | 0.035（`246-07`） | 0（-0.035、許容内）     | 0.074（+0.039、許容内）     |
+| sakura-midfar-core-diff（coreHitRateDiff）  | 0.043（`246-20`） | 0（-0.043、**許容外**） | 0.014（-0.029、**許容外**） |
+| sakura-near2-core-diff（coreHitRateDiff）   | 0.039（`246-21`） | 0（-0.039、許容内）     | 0.074（+0.035、許容内）     |
 | sakura-far-core-in（coreHitRate）           | （実測なし）      | 0.034                   | 0.044                       |
 | sakura-far-bullet-in（bulletHitRate）       | （実測なし）      | 0.76                    | 0.839                       |
 | sakura-far-bullet-out（bulletHitRate）      | （実測なし）      | 0.76                    | 0.76                        |

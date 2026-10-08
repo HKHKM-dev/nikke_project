@@ -4,8 +4,8 @@
   "state": "仮説",
   "topic": "スキル・キャラ固有",
   "grade": "推論",
-  "basis": "説明文（`data/characters/194.json` の skill2）の読み。コアの命中の回数を期待値で数えるのはモデルの近似（2026-10-04 オーナー決定。plan/design-ludmilla-wo.md 5 節の論点 1）。録画 099 の読み直しで確かめる（フルバーストの分は段 B）。V-0159。フルバースト開始時のクリティカル確率▲は、録画 192 の窓の中と外の会心の割合の差 15.2%（±1.3%。`192-05`）と合う（統計の読みで、1 本の録画なので仮説のまま。V-0160）",
+  "basis": "説明文（`data/characters/194.json` の skill2）の読み。コアの命中の回数を期待値で数えるのはモデルの近似（2026-10-04 オーナー決定。plan/design-ludmilla-wo.md 5 節の論点 1）。録画 099 の読み直しで確かめる（フルバーストの分は段 B）。V-0159。フルバースト開始時のクリティカル確率▲は、録画 192 の窓の中と外の会心の割合の差 14.9%（±1.3%。`192-10`）と合う（統計の読みで、1 本の録画なので仮説のまま。V-0160）。`192-10` は hud.ts の 0/8 の誤読を直した読みで出し直した観測値で、旧の `192-05` は失効（V-0364）",
   "model": "`data/skills/194.json`（skill2）。数えは `skills/triggers.ts` の `shotCountWeight`（`coreHit`）、発ごとの値は `frame/firstPass.ts` の `hitsAt` と `frame/landing.ts` の `mixedCoreHits`",
   "replaces": [],
-  "updated": "2026-10-04"
+  "updated": "2026-10-08"
 }

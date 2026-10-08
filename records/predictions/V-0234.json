@@ -38,7 +38,7 @@
         "condition": "auto"
       },
       "note": "中近（1 区間目）の窓の中（sim の 19.6 秒）− 外（5 秒。1 回目のバーストより前）",
-      "observations": ["254-06"]
+      "observations": ["254-10"]
     },
     {
       "id": "sakura-near1-core-diff",
