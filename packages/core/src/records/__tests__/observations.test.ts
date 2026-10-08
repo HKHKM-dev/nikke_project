@@ -496,6 +496,23 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 1, n: 2 })).toThrow('2 回目の発動が無い');
   });
 
+  it('measures the delay from the burst activation to the burst effect (backlog 2-4, V-0368)', () => {
+    const result = {
+      schedule: {
+        activations: [
+          { slotIndex: 1, frame: 90 },
+          { slotIndex: 1, frame: 300, effectFrame: 318 },
+        ],
+      },
+    } as unknown as SimResult;
+    const metric = METRICS.burstEffectDelay!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 2, n: 0 })).toBe(0);
+    expect(value({ slot: 2, n: 1 })).toBe(18);
+    expect(() => value({ slot: 2, n: 2 })).toThrow('2 回目の発動が無い');
+  });
+
   it('reports unknown metrics, missing args, calc-less metrics and unknown presets', () => {
     const base = observations.find((o) => o.id === '047-02')!;
     const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '047-99'): Observation => ({

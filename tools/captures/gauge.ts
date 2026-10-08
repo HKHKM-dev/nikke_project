@@ -1,11 +1,13 @@
 // 画面右の「BURST」ゲージバーを画素で読み、フレームごとの充填率を出す（Stage 7 のゲージ較正用）。
-//   node tools/captures/gauge.ts <動画> [--from N] [--to N] [--step 1] [--mode series|jumps|events]
+//   node tools/captures/gauge.ts <動画> [--from N] [--to N] [--step 1] [--mode series|jumps|events] [--side right|left]
 //
 // バーは 1920×1080 で x 1793〜1905・y 442（113px）。充填部は輝度 約 171、未充填部は 約 110 なので、
 // 行の画素がすべてどちらかに近いフレームだけを「バーが見えている」とみなし、明るい画素の割合を充填率にする。
 // フルバースト中・CT 待ち・チェーン中はバーの位置に別の UI（タイマー・段階のアイコン）が出るので「-」になる。
 // バーは本当のゲージの約 12.6〜96% しか映さない（C-0084。1px ≈ 本当の 0.74%）。約 12.6% までは 0px、約 96% からは 113px のまま。
 // 本当の満タンは「バー消失」のフレーム（C-0083）。AR の 1 発（0.4%）は 1 発ずつは読めず、SR / SG の 1 発（5〜13%）は 1 発ずつ読める。
+// ゲームのオプションでバーストの欄を左に出した録画は --side left（x 8〜124・y 442 の 117px。明るさは右と同じで、左から溜まる。
+// 空でも左端の 2px は明るい。本当のゲージとの対応は較正していない。チェーン中は段のタイマーのバーが同じ行に出て、充填と読まれる）。
 //
 // mode:
 //   series  各フレームの充填率（%）。見えていないフレームは「-」
@@ -14,7 +16,10 @@
 import { parseArgs } from 'node:util';
 import { rawFrames } from './ffmpeg.ts';
 
-const BAR = { x: 1793, y: 442, w: 113, h: 2 };
+const BARS = {
+  right: { x: 1793, y: 442, w: 113, h: 2 },
+  left: { x: 8, y: 442, w: 117, h: 2 },
+} as const;
 const FILLED = 171;
 const EMPTY = 110;
 /** 充填・未充填のどちらかからこれ以上離れた画素があれば、バー以外の UI が重なっているとみなす */
@@ -31,13 +36,14 @@ const { values, positionals } = parseArgs({
     to: { type: 'string' },
     step: { type: 'string', default: '1' },
     mode: { type: 'string', default: 'events' },
+    side: { type: 'string', default: 'right' },
   },
 });
 
 const video = positionals[0];
 if (!video) {
   console.error(
-    'usage: node tools/captures/gauge.ts <動画> [--from N] [--to N] [--step 1] [--mode series|jumps|events]',
+    'usage: node tools/captures/gauge.ts <動画> [--from N] [--to N] [--step 1] [--mode series|jumps|events] [--side right|left]',
   );
   process.exit(1);
 }
@@ -45,6 +51,12 @@ const from = Number(values.from);
 const to = values.to === undefined ? undefined : Number(values.to);
 const step = Number(values.step);
 const mode = values.mode;
+const side = values.side;
+if (side !== 'right' && side !== 'left') {
+  console.error('--side は right か left');
+  process.exit(1);
+}
+const BAR = BARS[side];
 
 /** 1 行ぶん（上の行だけ使う）の充填率 0..1。バー以外の UI が重なっていれば null */
 function readFill(frame: Buffer): number | null {

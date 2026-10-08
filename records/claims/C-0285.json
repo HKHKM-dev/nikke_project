@@ -10,5 +10,13 @@
   "updated": "2026-10-05",
   "subject": {
     "mechanism": "burstChain"
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["042-09"],
+      "element": "アドミ burst.effects[0]",
+      "reason": "観測量はバーストの段の長さ（満タン → I → II → III の発動）で、アドミのリロード速度▲の付き始め（II の発動の後。C-0479）は段の長さに効かない",
+      "decided": "2026-10-08"
+    }
+  ]
 }

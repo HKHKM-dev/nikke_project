@@ -260,8 +260,8 @@ notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補�
 - **skill2**: noEffect
   - notes[0] 計算に無関係: 最終攻撃力が最も高い味方 2 機の受けるダメージ▼は防御系でダメージに関係しない: 根拠なし
 - **burst**: supported
-  - effects[0] timed・burstUse・reloadSpeed: C-0456（確定）
-  - effects[1] timed・burstUse・critDamage: C-0463（確定）
+  - effects[0] timed・burstUse・reloadSpeed: C-0456（確定）、C-0479（仮説）
+  - effects[1] timed・burstUse・critDamage: C-0463（確定）、C-0479（仮説）
 
 ## 190 ルドミラ
 
@@ -304,12 +304,12 @@ notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補�
 - **skill1**: supported
   - effects[0] cycle・fullChargeShot: C-0047（確定）、C-0085（確定）
 - **skill2**: supported
-  - effects[0] timed・fullBurstStart・maxAmmo: C-0479（確定）
-  - effects[1] ammoRefill・fullBurstStart: C-0479（確定）
+  - effects[0] timed・fullBurstStart・maxAmmo: C-0490（確定）
+  - effects[1] ammoRefill・fullBurstStart: C-0490（確定）
 - **burst**: supported
-  - effects[0] cycleEvery・burstUse: C-0481（確定）
-  - effects[1] timed・burstUse・attack: C-0480（確定）
-  - effects[2] timed・burstUse・chargeDamage: C-0480（確定）
+  - effects[0] cycleEvery・burstUse: C-0492（確定）
+  - effects[1] timed・burstUse・attack: C-0491（確定）
+  - effects[2] timed・burstUse・chargeDamage: C-0491（確定）
 
 ## 226 ラプンツェル：ピュアグレイス
 

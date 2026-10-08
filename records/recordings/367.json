@@ -1,0 +1,29 @@
+{
+  "id": "367",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-367_ar_moran_burst-left.mp4",
+  "original": "2026-10-08_23-06-46.mp4",
+  "durationSec": 54.2,
+  "frames": 3250,
+  "fps": 60,
+  "sizeMB": 65.6,
+  "sha256": "9ac5d65e28d5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 281,
+      "name": "モラン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": null
+  },
+  "mode": "range-3min",
+  "fixedSpec": null,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "バーストゲージの表示を左にした録画（ゲームのオプション。普段は右）。モラン単騎・操作・AUTO 射撃 ON・オートバースト OFF（画面左上）。出撃画面は写っていない（読み込み画面から始まる）。戦闘開始から約 38 秒（残り 02:22）で一時停止の画面に入って終わる。一時停止の画面でキャラ名・Lv.400 を確かめた"
+}
