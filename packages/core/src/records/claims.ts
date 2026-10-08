@@ -42,6 +42,11 @@ export type ClaimFile = {
   topic: ClaimTopic;
   /** 棄却の結論は省いてよい */
   grade?: ClaimGrade;
+  /**
+   * 等級を機械の候補より上にした人の判断の理由（1 本の録画の中の反復で反復実測にするなど。plan/design-minimal-relevance.md 11.7 節）。
+   * 書けば records:close の等級の検査が注意にとどまり、claims.md の等級の候補の行に出る
+   */
+  gradeReason?: string;
   /** 根拠。観測値はバッククォートで囲んだ ID で書く（`012-01`〜`012-04` のような範囲も可） */
   basis: string;
   /** モデル側（どのコード・データに入っているか。未実装・未反映ならそう書く） */
@@ -248,6 +253,8 @@ export function validateClaims(
     else if (c.state === '確定' && !CONFIRMABLE_GRADES.includes(c.grade)) {
       errors.push(`${c.id}: 確定にできるのは等級が厳密一致・反復実測・データ明記のときだけ（${c.grade}）`);
     }
+    if (c.gradeReason !== undefined && (typeof c.gradeReason !== 'string' || c.gradeReason.trim() === ''))
+      errors.push(`${c.id}: gradeReason は空でない文`);
     if (c.text.trim() === '') errors.push(`${c.id}: 結論が空`);
     if (c.basis.trim() === '') errors.push(`${c.id}: 根拠が空`);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(c.updated)) errors.push(`${c.id}: 更新日は YYYY-MM-DD`);
@@ -413,7 +420,8 @@ export function renderClaims(
       const candidate = gradeCandidates.get(c.id);
       if (candidate !== undefined && c.grade !== undefined && candidate !== c.grade && c.state !== '棄却') {
         const above = gradeAboveCandidate(c.grade, candidate);
-        lines.push(`  - 等級の候補（機械）: ${candidate}${above ? '（書いた等級のほうが上）' : ''}`);
+        const reason = above && c.gradeReason !== undefined ? `。理由: ${c.gradeReason}` : '';
+        lines.push(`  - 等級の候補（機械）: ${candidate}${above ? `（書いた等級のほうが上${reason}）` : ''}`);
       }
       const minimal = minimalCounts.get(c.id);
       if (minimal !== undefined && minimal.warned > 0)
