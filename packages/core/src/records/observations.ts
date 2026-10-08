@@ -1046,7 +1046,7 @@ function skillHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * ペレットの命中編（plan/design-pellet-hit.md 4 節。V-0373）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回が、
+ * ペレットの命中編（plan/design-pellet-hit.md 4 節。V-0374）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回が、
  * それぞれ枠の何発目（1 始まり。同じフレームの発を含む）の射撃で出たか。録画では、ヒットの直前の発の番号（撃った順）と比べる
  */
 function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {

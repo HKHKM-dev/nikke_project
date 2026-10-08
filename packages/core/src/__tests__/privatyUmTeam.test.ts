@@ -44,7 +44,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 }
 
 const PRIVATY_UM = 313;
-// 撮影の編成（単騎。V-0373）と、プリバティ：アンカインド・メイドが III の実戦寄りの 5 人
+// 撮影の編成（単騎。V-0374）と、プリバティ：アンカインド・メイドが III の実戦寄りの 5 人
 const TEAMS: Record<string, { input: TeamInput; privaty: number }> = {
   '撮影の編成（プリバティ：アンカインド・メイド単騎）': { input: team([fixedSlot(PRIVATY_UM)], 0), privaty: 0 },
   '実戦寄り（リター + クラウン + プリバティ：アンカインド・メイド + アリス + ドレイク）': {
