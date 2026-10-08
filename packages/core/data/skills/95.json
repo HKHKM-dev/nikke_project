@@ -180,32 +180,21 @@
           "trigger": "burstUse",
           "damageRef": 1,
           "trueDamage": true,
+          "projectileExplosion": true,
           "chargeTimeSeconds": 0.3,
           "fullChargeDamage": 300,
           "maxAmmoRef": 2,
           "claims": [
-            "C-0313"
+            "C-0313",
+            "C-0376"
           ],
           "assumes": {
-            "ja": "撃ち切ったら（最大装弾数 1 発）、次のフレームに基礎の SR に戻る。戻った基礎の SR は満タンのマガジンで、リロードの後の 1 発目と同じ待ちで撃つ（モダニア由来の決まり。未確定。録画 232 では着弾から基礎の SR の 1 発目まで 137f で、モデルより長い）。炸裂弾の発は持ち替えの次のフレームから、構え + チャージ 0.3 秒の待ちで撃つ（録画の着弾はバースト使用から 20f ほど）。炸裂弾の発のバーストゲージは基礎の SR の 1 発と同じ量（未確定）。変更後の武器の発射レート（CDN）は、チャージ武器の発の間隔には使わない",
-            "en": "After the magazine (1 round) is spent, the unit switches back to the base SR on the next frame. The base SR returns with a full magazine and fires after the same wait as the first shot after a reload (rule carried over from Modernia; unverified. In recording 232 the first base SR shot came 137 frames after the round's hit, later than the model). The round is fired from the frame after the switch, after the aim + 0.3 s charge wait (in recordings it hits about 20 frames after Burst Skill use). The round's Burst Gauge gain is the same as one base SR shot (unverified). The changed weapon's rate of fire (CDN) is not used for a charge weapon's shot interval"
+            "ja": "撃ち切ったら（最大装弾数 1 発）、次のフレームに基礎の SR に戻る。戻った基礎の SR は満タンのマガジンで、リロードの後の 1 発目と同じ待ちで撃つ（モダニア由来の決まり。未確定。録画 232 では着弾から基礎の SR の 1 発目まで 137f で、モデルより長い）。炸裂弾の発は持ち替えの次のフレームから、構え + チャージ 0.3 秒の待ちで撃つ（録画の着弾はバースト使用から 20f ほど）。炸裂弾の発のバーストゲージは基礎の SR の 1 発と同じ量（未確定）。変更後の武器の発射レート（CDN）は、チャージ武器の発の間隔には使わない。炸裂弾は発射体の爆発を持ち、発射体爆発ダメージ▲が防御力無視ダメージ▲と 1 つの和で乗る（C-0376）。2 つの▲が攻撃ダメージ▲と同じ和か、2 つだけの別の和かは分けていない（モデルは攻撃ダメージ▲と同じ和。damage.ts の TRUE_DAMAGE_BUCKET）",
+            "en": "After the magazine (1 round) is spent, the unit switches back to the base SR on the next frame. The base SR returns with a full magazine and fires after the same wait as the first shot after a reload (rule carried over from Modernia; unverified. In recording 232 the first base SR shot came 137 frames after the round's hit, later than the model). The round is fired from the frame after the switch, after the aim + 0.3 s charge wait (in recordings it hits about 20 frames after Burst Skill use). The round's Burst Gauge gain is the same as one base SR shot (unverified). The changed weapon's rate of fire (CDN) is not used for a charge weapon's shot interval. The round has a projectile explosion, so Projectile Explosion Damage up applies, summed with True Damage up (C-0376). Whether the two ups share the sum with Attack Damage up or form a sum of their own is not separated (the model puts them in the Attack Damage sum; TRUE_DAMAGE_BUCKET in damage.ts)"
           }
         }
       ],
-      "notes": [
-        {
-          "ja": "炸裂弾（使用武器変更の 1 発）に発射体爆発ダメージ▲が乗る分は未対応。録画では (1 + 防御力無視ダメージ▲ + 発射体爆発ダメージ▲) の和で掛かっていた（C-0376。変更後の武器の発に発射体の爆発を持たせる語彙と、2 つの▲の置き場所が要る）",
-          "en": "Projectile Explosion Damage up on the Explosive Round (the weapon-change shot) is not modeled. In the recording it applied as (1 + True Damage up + Projectile Explosion Damage up) summed (C-0376; needs vocabulary for an explosion on the changed weapon and a placement for the two ups)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "weaponChange",
-            "trigger": "burstUse"
-          },
-          "claims": [
-            "C-0376"
-          ]
-        }
-      ]
+      "notes": []
     }
   }
 }

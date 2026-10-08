@@ -736,6 +736,11 @@ export type WeaponChangeEffect = {
   /** 防御力無視ダメージ編: 変更後の武器の 1 発を防御力無視ダメージにする（「最終攻撃力の X% の防御力無視ダメージ」） */
   trueDamage?: true;
   /**
+   * 炸裂弾の発射体爆発ダメージ▲編: 変更後の武器の発が発射体の爆発を持つ（発射体爆発ダメージ▲が乗る。damage.ts の hasProjectileExplosion）。
+   * 基礎の武器の発射体（着弾の範囲など）は変えない。ウンファ：TU の炸裂弾は C-0376
+   */
+  projectileExplosion?: true;
+  /**
    * 使用武器変更の武器のパラメータ（plan/design-true-damage-element.md 9 節）: 変更後の武器のチャージ時間（秒・即値）。
    * 説明文に数字で書かれている（description_value でない）。省略は基礎の武器のまま。チャージ武器にだけ書ける
    */
@@ -1654,6 +1659,7 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
         'damageRef',
         'hitsPerShot',
         'trueDamage',
+        'projectileExplosion',
         'chargeTimeSeconds',
         'fullChargeDamage',
         'maxAmmoRef',
@@ -1698,6 +1704,12 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
   if (v.trueDamage !== undefined) {
     if (v.trueDamage !== true) fail(`${path}.trueDamage`, `expected true, got ${JSON.stringify(v.trueDamage)}`);
     effect.trueDamage = true;
+  }
+  if (v.projectileExplosion !== undefined) {
+    if (v.projectileExplosion !== true) {
+      fail(`${path}.projectileExplosion`, `expected true, got ${JSON.stringify(v.projectileExplosion)}`);
+    }
+    effect.projectileExplosion = true;
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

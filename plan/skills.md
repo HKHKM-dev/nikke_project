@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 58・効果 196（根拠あり 188）・notes 223（根拠あり 70）
+件数: キャラ 58・効果 196（根拠あり 188）・notes 222（根拠あり 69）
 
-notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補足 8
+notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補足 8
 
-スロット: supported 77・partial 16・unsupported 59・noEffect 34
+スロット: supported 78・partial 15・unsupported 59・noEffect 34
 
 ## 10 ラピ
 
@@ -177,10 +177,9 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - effects[2] passive・attack: C-0020（確定）
   - effects[3] passive・projectileExplosionDamage: C-0374（確定）
   - effects[4] passive・trueDamage: C-0375（確定）
-- **burst**: partial
+- **burst**: supported
   - effects[0] timed・weaponChangeShot・damageTaken: C-0312（確定）、C-0138（確定）
-  - effects[1] weaponChange・burstUse: C-0313（確定）
-  - notes[0] 未対応: 炸裂弾（使用武器変更の 1 発）に発射体爆発ダメージ▲が乗る分は未対応。録画では (1 + 防御力無視ダメージ▲ + 発射体爆発ダメージ▲) の和で掛かっていた（C-0376。変更後の武器の発に発射体の爆発を持たせる語彙と、2 つの▲の置き場所が要る）: C-0376（確定）
+  - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）
 
 ## 101 ドレイク
 
