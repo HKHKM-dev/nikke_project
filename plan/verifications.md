@@ -3218,11 +3218,10 @@
   - 結論: C-0456
   - 予測（2026-10-08、commit 3d5a4f6）との比べ:
     - sun-reload-out（reloadToNextShotAt）: 実測なし。H1 112.235、H2 112.235
-    - sun-reload-in（reloadToNextShotAt）: 実測 67（042-11）。H1 67.315（+0.315、許容内）、H2 112.235（+45.235、**許容外**）
-    - sun-reload-after（reloadToNextShotAt）: 実測 112（042-12）。H1 112.235（+0.235、許容内）、H2 112.235（+0.235、許容内）
+    - sun-reload-in（reloadToNextShotAt）: 実測なし。H1 67.315、H2 112.235
+    - sun-reload-after（reloadToNextShotAt）: 実測なし。H1 112.235、H2 112.235
     - alice-reload-out（reloadFramesAt）: 実測なし。H1 117.647、H2 117.647
     - alice-reload-in（reloadFramesAt）: 実測なし。H1 57.753、H2 117.647
-    - 許容内の指標: H1 2/2・H2 1/2。合う仮説は H1 だけ
 - **[V-0359](../records/verifications/V-0359-liter-skills-minimal.md)** リターの S1・バーストの効果を最小構成で確かめる（CT▼・使用回数別の効果・攻撃力▲）
   - 問い: リター（82）の S1 のフルバースト開始回数別のバーストスキルクールタイム▼と、バースト使用回数別の最大装弾数▲・攻撃力▲、バーストの味方全体の攻撃力▲を、説明文どおり（いまの定義）と読んで、モデルは最小構成の実測と合うか
   - 話題: スキル・キャラ固有・日付: 2026-10-08・状態: 完了・Stage: plan/design-minimal-relevance.md 11 節の束 4（根拠の無い効果）。進め方は plan/design-skill-claims-5-2.md と同じ

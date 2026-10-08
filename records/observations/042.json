@@ -227,8 +227,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -262,8 +261,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
