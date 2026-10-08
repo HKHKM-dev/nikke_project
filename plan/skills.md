@@ -196,7 +196,7 @@ notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補�
   - effects[0] timed・fullBurstStart・attack: C-0459（確定）
   - effects[1] timed・fullBurstStart・attack: C-0471（確定）
   - effects[2] timed・fullBurstStart・maxAmmo: C-0471（確定）
-  - effects[3] timed・fullBurstStart・hitRate: C-0170（仮説）
+  - effects[3] timed・fullBurstStart・hitRate: C-0485（確定）、C-0486（仮説）
 - **宝物版 skill2**: supported
   - effects[0] damage・normalShot・skill: C-0458（確定）
   - effects[1] damage・normalShot・skill: C-0458（確定）
@@ -358,7 +358,7 @@ notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補�
   - effects[1] timed・normalHit・critDamage: C-0272（確定）
   - effects[2] timed・normalHit・maxAmmo: C-0272（確定）
 - **skill2**: supported
-  - effects[0] timed・fullBurstStart・hitRate: C-0170（仮説）
+  - effects[0] timed・fullBurstStart・hitRate: C-0485（確定）、C-0486（仮説）
   - effects[1] timed・normalHit・attack: C-0124（確定）、C-0118（確定）
 - **burst**: partial
   - effects[0] timed・burstUse・infiniteAmmo: C-0455（確定）、C-0452（確定）
@@ -665,7 +665,7 @@ notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補�
   - effects[1] heal・burstUse: C-0464（確定）、C-0082（確定）
   - effects[2] timed・burstUse・hitRate: C-0076（確定）
   - notes[0] 前提の外: 貫通特化は射撃場の敵ではダメージに関係しない: C-0076（確定）
-  - notes[1] 補足: 命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。AR の弾丸命中率にも同じ式で効かせる（確かめたのは SMG だけ）。バーストゲージにも同じ N で効かせるが、▲の窓（10 秒）はフルバーストの窓に収まり、ゲージの溜まる時間と重ならない（きっかけの遅れは未測定で 0）: C-0037（確定）、C-0170（仮説）、C-0192（確定）、C-0011（確定）、C-0264（仮説）、C-0362（確定）、C-0363（仮説）
+  - notes[1] 補足: 命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。AR の弾丸命中率にも同じ式で効かせる（確かめたのは SMG だけ）。バーストゲージにも同じ N で効かせるが、▲の窓（10 秒）はフルバーストの窓に収まり、ゲージの溜まる時間と重ならない（きっかけの遅れは未測定で 0）: C-0037（確定）、C-0192（確定）、C-0011（確定）、C-0264（仮説）、C-0362（確定）、C-0363（仮説）
 
 ## 833 ミサト
 

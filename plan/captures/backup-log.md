@@ -346,3 +346,19 @@
 2026-10-08 23:20 に録画 367（モラン単騎）を `intake.ts` で取り込み、この 1 本（`range/20261008-367_ar_moran_burst-left.mp4`）だけを同期した。E: と I: で sha256 が一致（`9ac5d65e28d5`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-08 23:20 に録画 368（サクラ + デルタ + レイヴン）を `intake.ts` で取り込み、この 1 本（`range/20261008-368_smg+sr+rl_sakura+delta+raven_burst-left.mp4`）だけを同期した。E: と I: で sha256 が一致（`61ee7207c946`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-08 21:32 に録画 354（サクラ + デルタ + ドレイク）を `intake.ts` で取り込み、この 1 本（`range/20261008-354_smg+sr+sg_sakura+delta+drake_drake-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`3f2baee2a48c`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-08 21:32 に録画 355（サクラ + デルタ + ドレイク）を `intake.ts` で取り込み、この 1 本（`range/20261008-355_smg+sr+sg_sakura+delta+drake_drake-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`d08d7aeff2bc`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-08 21:32 に録画 356（サクラ + デルタ + ドレイク）を `intake.ts` で取り込み、この 1 本（`range/20261008-356_smg+sr+sg_sakura+delta+drake_drake-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`c5e521c537b1`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-08 21:32 に録画 357（サクラ + デルタ + ドレイク）を `intake.ts` で取り込み、この 1 本（`range/20261008-357_smg+sr+sg_sakura+delta+drake_drake-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`3a3005e6da78`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-08 21:32 に録画 358（サクラ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261008-358_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`a63b256bdb2c`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-08 21:32 に録画 359（サクラ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261008-359_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`d3b8d44fc9b4`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-08 21:32 に録画 360（サクラ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261008-360_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`9a026c94fb57`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-08 21:32 に録画 361（サクラ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261008-361_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`56ea52e250d8`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
