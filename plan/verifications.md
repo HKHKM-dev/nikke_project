@@ -5,11 +5,12 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 1・保留 0・完了 296・打ち切り 21（計 318）
+件数: 調査中 2・保留 0・完了 297・打ち切り 21（計 320）
 
 ## 開いている検証
 
 - **V-0328** 射撃場の SMG の遠の弾丸命中率は遠の着地点（遠 A・遠 B）で違うか（撮影。backlog 2-25）（状態: 調査中）
+- **V-0357** アリスの S1（最終攻撃力の上位 2 機へのチャージ速度▲・チャージダメージ▲）とバースト（自分のチャージ速度▲・攻撃力▲）（状態: 調査中）
 
 ## 全件
 
@@ -3193,3 +3194,32 @@
   - 予測（2026-10-07、commit e377527）との比べ:
     - far-a（bulletHitRate）: 実測なし。H0 0.76、H1 0.789、H2-farA 0.807、H2-farB 0.761
     - far-b（bulletHitRate）: 実測なし。H0 0.76、H1 0.789、H2-farA 0.807、H2-farB 0.761
+- **[V-0357](../records/verifications/V-0357-alice-s1-burst.md)** アリスの S1（最終攻撃力の上位 2 機へのチャージ速度▲・チャージダメージ▲）とバースト（自分のチャージ速度▲・攻撃力▲）
+  - 問い: アリス（191）の S1 とバーストを定義どおりに読んで、モデルはアリスと S1 の 2 機目の味方の 1 発の値と射撃の間隔に合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-08・状態: 調査中
+  - 予測（2026-10-08、commit 3d5a4f6）との比べ:
+    - alice-base（hitDamage）: 実測なし。H1 578,950.109、H2 578,950.109、H3 578,950.109
+    - alice-fb-own（hitDamage）: 実測なし。H1 1,145,377.587、H2 1,145,377.587、H3 1,122,919.203
+    - alice-fb-s1only（hitDamage）: 実測なし。H1 738,161.389、H2 738,161.389、H3 723,687.636
+    - alice-after（hitDamage）: 実測なし。H1 578,950.109、H2 578,950.109、H3 578,950.109
+    - raven-base（hitDamage）: 実測なし。H1 183,587.37、H2 183,587.37、H3 183,587.37
+    - raven-fb-alice-round（hitDamage）: 実測なし。H1 417,730.202、H2 417,730.202、H3 417,730.202
+    - cocoa-base（hitDamage）: 実測なし。H1 344,595.9、H2 344,595.9、H3 344,595.9
+    - cocoa-fb（hitDamage）: 実測なし。H1 430,744.875、H2 430,744.875、H3 442,805.732
+    - alice-interval-own（fullBurstShotIntervalDiff）: 実測なし。H1 -81、H2 -81、H3 -71
+    - alice-interval-s1only（fullBurstShotIntervalDiff）: 実測なし。H1 -11、H2 -11、H3 59
+    - raven-interval-alice-round（fullBurstShotIntervalDiff）: 実測なし。H1 -10、H2 -7、H3 -10
+    - cocoa-interval（fullBurstShotIntervalDiff）: 実測なし。H1 0、H2 0、H3 -10
+- **[V-0358](../records/verifications/V-0358-admi-burst-reload.md)** アドミのバーストの味方全体のリロード速度▲
+  - 問い: アドミ（172）のバーストのリロード速度▲を定義どおり（味方全体・10 秒）に読んで、モデルは味方のリロードの長さに合うか
+  - 話題: スキル・キャラ固有・日付: 2026-10-08・状態: 完了
+  - 録画: 042
+  - 観測値: 042-11、042-12、042-13
+  - 結論: C-0456
+  - 予測（2026-10-08、commit 3d5a4f6）との比べ:
+    - sun-reload-out（reloadToNextShotAt）: 実測なし。H1 112.235、H2 112.235
+    - sun-reload-in（reloadToNextShotAt）: 実測 67（042-11）。H1 67.315（+0.315、許容内）、H2 112.235（+45.235、**許容外**）
+    - sun-reload-after（reloadToNextShotAt）: 実測 112（042-12）。H1 112.235（+0.235、許容内）、H2 112.235（+0.235、許容内）
+    - alice-reload-out（reloadFramesAt）: 実測なし。H1 117.647、H2 117.647
+    - alice-reload-in（reloadFramesAt）: 実測なし。H1 57.753、H2 117.647
+    - 許容内の指標: H1 2/2・H2 1/2。合う仮説は H1 だけ

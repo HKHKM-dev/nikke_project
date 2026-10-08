@@ -1,0 +1,162 @@
+{
+  "verification": "V-0358",
+  "note": "録画 042 の読み直し。I-DOLL・フラワー（I・AI）+ アドミ（II・AI）+ アリス（III・操作）+ I-DOLL・サン（III・AI）・灼熱の的・3 分モード・スペック固定 ON（台帳の枠順）。モデルのフルバーストは約 20 秒ごとで、II はどの回もアドミ、III はアリス（1・3・5・7・9 回目）とサン（2・4・6・8 回目）が交互。アドミのバーストは f369・1545・2721…（フルバーストの約 0.5 秒前）で、リロード速度▲の窓はそこから 10 秒。サンが III の回は、サンのバーストの最大装弾数▲（C-0364）でサンがリロードしないので、サンのリロードを読めるのはアリスの回の窓の中と、窓の外",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 172,
+      "controlled": false
+    },
+    {
+      "rid": 191,
+      "controlled": true
+    },
+    {
+      "rid": 308,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（バーストの effects[0]: バースト使用時に味方全体（自分を含む）へリロード速度▲（値 1。Lv10 で 50.91%）を 10 秒。効き方は C-0013 の 時間 × (1 − Σ速度)）"
+    },
+    {
+      "id": "H2",
+      "note": "リロード速度▲はアドミ自身にだけ付く（味方には付かない。サンとアリスのリロードは▲なしと同じ）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 172,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "reloadSpeed",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "sun-reload-out",
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 4,
+        "frame": 200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "サン（AR・60 発）のマガジンの最終弾から次のマガジンの 1 発目まで（動画のフレーム。C-0148）。最初のバーストより前（▲の外）"
+    },
+    {
+      "id": "sun-reload-in",
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 4,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "アリスが III の回の、アドミのリロード速度▲の窓の中のサンの同じ長さ"
+    },
+    {
+      "id": "sun-reload-after",
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 4,
+        "frame": 1200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目の窓が切れた後、次のバーストより前のサンの同じ長さ。▲の秒数（10 秒）が切れていれば sun-reload-out と同じ"
+    },
+    {
+      "id": "alice-reload-out",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 3,
+        "frame": 200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "補助: アリス（操作・SR）のリロード 1 回の長さ（モデルのフレーム）。▲の外。録画の RELOADING のバー（最終弾 → 完了）は、これに約 11〜13f を足した長さ（C-0135）なので、比べるのは alice-reload-in との差"
+    },
+    {
+      "id": "alice-reload-in",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 3,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "補助: アドミのリロード速度▲の窓の中のアリスのリロード 1 回の長さ"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "3d5a4f65607656cf4ca455af88be8f7064cad7c5",
+    "values": {
+      "H1": {
+        "sun-reload-out": 112.23529411764706,
+        "sun-reload-in": 67.31470588235294,
+        "sun-reload-after": 112.23529411764706,
+        "alice-reload-out": 117.6470588235294,
+        "alice-reload-in": 57.752941176470586
+      },
+      "H2": {
+        "sun-reload-out": 112.23529411764706,
+        "sun-reload-in": 112.23529411764706,
+        "sun-reload-after": 112.23529411764706,
+        "alice-reload-out": 117.6470588235294,
+        "alice-reload-in": 117.6470588235294
+      }
+    },
+    "seen": {
+      "042": [
+        "018-02",
+        "042-01",
+        "042-02",
+        "042-03",
+        "042-04",
+        "042-05",
+        "042-06",
+        "042-07",
+        "042-08",
+        "042-09",
+        "042-10"
+      ]
+    }
+  }
+}

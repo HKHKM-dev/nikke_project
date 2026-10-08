@@ -1,0 +1,345 @@
+{
+  "verification": "V-0357",
+  "note": "撮影計画の編成（まだ撮っていない）: ココア（I・AI）+ ソルジャーF.A.（II・AI）+ アリス（III・操作・AUTO 射撃 ON）+ レイヴン（III・AI）・灼熱の的・3 分モード・スペック固定 ON・オートバースト ON。アリス以外は機構が確定したキャラ（plan/design-skill-claims-5-2.md 6.1 節）。モデルのフルバーストは約 20 秒ごとで、III はアリス（1・3・5・7・9 回目）とレイヴン（2・4・6・8 回目）が交互。1 回目は f368〜956（アリスの回）、2 回目は f1544〜（レイヴンの回。f1909〜2027 は的のジャンプ）。S1 の対象は、H1 ではどの回もアリスとレイヴン（レイヴンは自分の S1 のフルバースト開始時の攻撃力▲で 2 位）。撮った編成・枠順が違えば、戦闘履歴で確かめて出し直す",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 301,
+      "controlled": false
+    },
+    {
+      "rid": 191,
+      "controlled": true
+    },
+    {
+      "rid": 851,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 の effects[0]: フルバースト開始時に最終攻撃力の上位 2 機（自分を含む）へ、アリスの基礎チャージ時間 × 値 2（Lv10 で 11.67%）の秒数ぶんのチャージ速度▲を 10 秒。effects[1]: 同じ 2 機へチャージダメージ▲（値 4。7%）を 10 秒。バーストの effects[0]: 自分にチャージ速度▲（値 1。80.15%）を 10 秒。effects[1]: 自分に攻撃力▲（値 3。55.12%）を 10 秒）"
+    },
+    {
+      "id": "H2",
+      "note": "S1 のチャージ速度▲は発動者基準でなく、受け手のチャージ速度に 11.67% をそのまま足す（scaling なし）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 191,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "stat": "chargeSpeed",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "S1 の「最終攻撃力が最も高い味方 2 機」は自分を除く（チャージ速度▲・チャージダメージ▲とも）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 191,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "always",
+              "stat": "chargeSpeed",
+              "scaling": "casterChargeTime",
+              "ref": 2,
+              "durationRef": 3
+            }
+          },
+          {
+            "rid": 191,
+            "skill": "skill1",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "excludeSelf": "always",
+              "stat": "chargeDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "alice-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "アリスのフルチャージの 1 発（コア・会心なし・距離ボーナスなし）。最初のバーストより前（▲なし）"
+    },
+    {
+      "id": "alice-fb-own",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "アリスが III の回のフルバーストの中のアリスの 1 発。バーストの攻撃力▲と S1 のチャージダメージ▲（H3 では乗らない）が乗る"
+    },
+    {
+      "id": "alice-fb-s1only",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "レイヴンが III の回のフルバーストの中のアリスの 1 発。バーストの▲は無く、S1 のチャージダメージ▲だけ（H3 ではどちらも無い）"
+    },
+    {
+      "id": "alice-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの後、次のバーストより前のアリスの 1 発。▲の秒数（10 秒）が切れていれば alice-base と同じ"
+    },
+    {
+      "id": "raven-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "レイヴンのフルチャージの 1 発（胴体・会心なし・距離ボーナスなし）。最初のバーストより前"
+    },
+    {
+      "id": "raven-fb-alice-round",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "アリスが III の回のフルバーストの中のレイヴンの 1 発。レイヴン自身の S1 の攻撃力▲と、アリスの S1 のチャージダメージ▲（H1・H2・H3 とも 2 機に入る）"
+    },
+    {
+      "id": "cocoa-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "ココアのフルチャージの 1 発（コア・会心なし・距離ボーナスなし）。最初のバーストより前"
+    },
+    {
+      "id": "cocoa-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの中のココアの 1 発。H1・H2 では S1 の対象外（3 位）、H3 では 2 機目に入りチャージダメージ▲が乗る"
+    },
+    {
+      "id": "alice-interval-own",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "アリスが III の回（1 回目のフルバースト）の、フルバーストの中のアリスの発の間隔の中央値 − 直前の同じ長さの中央値（動画のフレーム）。バーストのチャージ速度▲と S1 のチャージ速度▲が乗る"
+    },
+    {
+      "id": "alice-interval-s1only",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "レイヴンが III の回（2 回目のフルバースト）の同じ差。S1 のチャージ速度▲だけ（H2 は大きさ、H3 は 0 で分かれる）"
+    },
+    {
+      "id": "raven-interval-alice-round",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 4,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "アリスが III の回（1 回目）の、レイヴンの発の間隔の差。S1 のチャージ速度▲（H1 はアリスの基礎チャージ時間 × 11.67% の秒、H2 はレイヴンの速度に 11.67%）"
+    },
+    {
+      "id": "cocoa-interval",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの、ココアの発の間隔の差。H1・H2 では 0 の見込み、H3 では S1 のチャージ速度▲で縮む"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-08",
+    "commit": "3d5a4f65607656cf4ca455af88be8f7064cad7c5",
+    "values": {
+      "H1": {
+        "alice-base": 578950.1088,
+        "alice-fb-own": 1145377.58706,
+        "alice-fb-s1only": 738161.3887199999,
+        "alice-after": 578950.1088,
+        "raven-base": 183587.37,
+        "raven-fb-alice-round": 417730.20166499994,
+        "cocoa-base": 344595.9,
+        "cocoa-fb": 430744.875,
+        "alice-interval-own": -81,
+        "alice-interval-s1only": -11,
+        "raven-interval-alice-round": -10,
+        "cocoa-interval": 0
+      },
+      "H2": {
+        "alice-base": 578950.1088,
+        "alice-fb-own": 1145377.58706,
+        "alice-fb-s1only": 738161.3887199999,
+        "alice-after": 578950.1088,
+        "raven-base": 183587.37,
+        "raven-fb-alice-round": 417730.20166499994,
+        "cocoa-base": 344595.9,
+        "cocoa-fb": 430744.875,
+        "alice-interval-own": -81,
+        "alice-interval-s1only": -11,
+        "raven-interval-alice-round": -7,
+        "cocoa-interval": 0
+      },
+      "H3": {
+        "alice-base": 578950.1088,
+        "alice-fb-own": 1122919.203,
+        "alice-fb-s1only": 723687.636,
+        "alice-after": 578950.1088,
+        "raven-base": 183587.37,
+        "raven-fb-alice-round": 417730.20166499994,
+        "cocoa-base": 344595.9,
+        "cocoa-fb": 442805.73150000005,
+        "alice-interval-own": -71,
+        "alice-interval-s1only": 59,
+        "raven-interval-alice-round": -10,
+        "cocoa-interval": -10
+      }
+    },
+    "seen": {}
+  }
+}

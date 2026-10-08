@@ -37,7 +37,8 @@
           "target": "allies",
           "stat": "reloadSpeed",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": ["C-0456"]
         },
         {
           "kind": "timed",
