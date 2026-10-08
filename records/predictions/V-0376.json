@@ -1,0 +1,99 @@
+{
+  "verification": "V-0376",
+  "note": "録画 022（エマ：TU（I・AI）+ デルタ（II・操作）・オートバースト・スペック固定 ON）の読み直しを主にし、録画 263（エマ：TU 単騎・バーストは手で撃つ・スペック固定 ON）も同じ指標で読む。編成は 022。デルタの定義にダメージに効く効果は無い（どれも noDamage）。I の段の発動には止まりが無いので、動画のフレームの差がそのままモデルのフレーム。効果の遅れが表の値と違う仮説は、遅れの表（burst/landing.ts）で切り替わるので、このファイルの範囲外（検証記録に手で書く）",
+  "team": [
+    {
+      "rid": 93,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。エマ：TU は遅れの表（MEASURED_BURST_DELAYS）に行が無く、バースト使用時の効果（味方全体の攻撃力▲・環境コントロール強化）は I の発動と同じフレームに付く（遅れ 0）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "buffed-first-1",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバースト（I の発動）の後のエマ：TU の最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-2",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のバースト（I の発動）の後のエマ：TU の最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-3",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目のバースト（I の発動）の後のエマ：TU の最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    },
+    {
+      "id": "buffed-first-4",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目のバースト（I の発動）の後のエマ：TU の最初の発から、攻撃力▲の乗った最初の発までのモデルのフレーム数（効果の遅れが無ければ 0）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-09",
+    "commit": "3896fb6f32fa1e3e5ad8a887846e13fb1be1725f",
+    "values": {
+      "H0": {
+        "buffed-first-1": 0,
+        "buffed-first-2": 0,
+        "buffed-first-3": 0,
+        "buffed-first-4": 0
+      }
+    },
+    "seen": {
+      "263": ["263-01", "263-02", "263-03", "263-04", "263-05", "263-06", "263-07"],
+      "022": ["018-02", "022-01", "022-02", "022-03", "022-04", "022-05", "022-06"]
+    }
+  }
+}
