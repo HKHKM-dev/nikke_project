@@ -1,0 +1,31 @@
+{
+  "id": "351",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-351_sr_helm_gauge-sky.mp4",
+  "original": "2026-10-08_20-39-08.mp4",
+  "durationSec": 38.9,
+  "frames": 2333,
+  "fps": 60,
+  "sizeMB": 46.9,
+  "sha256": "ac976f25d49b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "note": "単騎・操作・宝物 3。スコープでフルチャージして撃った。7 発とも何にも当たらない空（狙って）",
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。f30 の射撃場の画面で確かめた）。ヘルム単騎・操作。AUTO 射撃 OFF・オートバースト OFF。的とコンテナには 1 発も当てていない（HUD の総ダメージは最後まで 0）。戦闘開始は f761（timer.ts --mode changes の +320f の次の +89f の変わり目）。発は f894・1015・1146・1259・1373・1501・1805（バーの伸びたフレーム）。6 発目と 7 発目の間にリロード。f1805 でバーが消え、I のアイコンが出た。V-0350 段 A"
+}

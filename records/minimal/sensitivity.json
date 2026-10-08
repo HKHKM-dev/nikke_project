@@ -2565,40 +2565,8 @@
       "plus": null
     },
     {
-      "observation": "079-01",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "21364ff1b936dd4e",
-      "effective": true,
-      "minus": 82,
-      "plus": null
-    },
-    {
-      "observation": "079-01",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
-      "key": "21364ff1b936dd4e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "079-02",
       "element": "ヘルム treasureSkills.burst.effects[2]",
-      "key": "3786653f0be3ff3c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "079-02",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "3786653f0be3ff3c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "079-02",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
       "key": "3786653f0be3ff3c",
       "effective": false,
       "minus": 0,
@@ -2613,40 +2581,8 @@
       "plus": null
     },
     {
-      "observation": "079-03",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "03fd94b26350f735",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "079-03",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
-      "key": "03fd94b26350f735",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "079-04",
       "element": "ヘルム treasureSkills.burst.effects[2]",
-      "key": "39636c1ad0600abd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "079-04",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "39636c1ad0600abd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "079-04",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
       "key": "39636c1ad0600abd",
       "effective": false,
       "minus": 0,
@@ -2661,22 +2597,6 @@
       "plus": null
     },
     {
-      "observation": "079-05",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "02dbb95d67a4292a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "079-05",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
-      "key": "02dbb95d67a4292a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "079-06",
       "element": "ヘルム treasureSkills.burst.effects[2]",
       "key": "3ba60d8c38587205",
@@ -2685,40 +2605,8 @@
       "plus": null
     },
     {
-      "observation": "079-06",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "3ba60d8c38587205",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "079-06",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
-      "key": "3ba60d8c38587205",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "079-07",
       "element": "ヘルム treasureSkills.burst.effects[2]",
-      "key": "fc793442f9dec5c5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "079-07",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "fc793442f9dec5c5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "079-07",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
       "key": "fc793442f9dec5c5",
       "effective": false,
       "minus": 0,
@@ -2826,54 +2714,6 @@
       "key": "8ff17613aacf7944",
       "effective": false,
       "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "082-01",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "02dcd65f73acb348",
-      "effective": true,
-      "minus": 246,
-      "plus": null
-    },
-    {
-      "observation": "082-01",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
-      "key": "02dcd65f73acb348",
-      "effective": true,
-      "minus": 82,
-      "plus": null
-    },
-    {
-      "observation": "082-03",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "04d1161926d33d70",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "082-03",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
-      "key": "04d1161926d33d70",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "082-08",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "b14d8aa019a3226b",
-      "effective": true,
-      "minus": 3,
-      "plus": null
-    },
-    {
-      "observation": "082-08",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
-      "key": "b14d8aa019a3226b",
-      "effective": true,
-      "minus": 1,
       "plus": null
     },
     {
@@ -6542,22 +6382,6 @@
       "plus": null
     },
     {
-      "observation": "264-03",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "2d7afd0cdc6cb4bd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "264-03",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
-      "key": "2d7afd0cdc6cb4bd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "264-04",
       "element": "アスカ burst.effects[2]",
       "key": "34f0498944c57b86",
@@ -6568,22 +6392,6 @@
     {
       "observation": "264-04",
       "element": "ヘルム treasureSkills.burst.effects[2]",
-      "key": "34f0498944c57b86",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "264-04",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "34f0498944c57b86",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "264-04",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
       "key": "34f0498944c57b86",
       "effective": false,
       "minus": 0,
@@ -6606,22 +6414,6 @@
       "plus": null
     },
     {
-      "observation": "264-05",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "c419990f071efdec",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "264-05",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
-      "key": "c419990f071efdec",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "265-03",
       "element": "アスカ burst.effects[2]",
       "key": "c66576e6524ed35b",
@@ -6632,22 +6424,6 @@
     {
       "observation": "265-03",
       "element": "ヘルム treasureSkills.burst.effects[2]",
-      "key": "c66576e6524ed35b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "265-03",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "c66576e6524ed35b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "265-03",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
       "key": "c66576e6524ed35b",
       "effective": false,
       "minus": 0,
@@ -6664,22 +6440,6 @@
     {
       "observation": "265-04",
       "element": "ヘルム treasureSkills.burst.effects[2]",
-      "key": "c7f00533c3f64c68",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "265-04",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "c7f00533c3f64c68",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "265-04",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
       "key": "c7f00533c3f64c68",
       "effective": false,
       "minus": 0,
@@ -6696,22 +6456,6 @@
     {
       "observation": "265-05",
       "element": "ヘルム treasureSkills.burst.effects[2]",
-      "key": "037d48edbd5d3912",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "265-05",
-      "element": "ヘルム treasureSkills.skill1.effects[1]",
-      "key": "037d48edbd5d3912",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "265-05",
-      "element": "ヘルム treasureSkills.skill2.effects[1]",
       "key": "037d48edbd5d3912",
       "effective": false,
       "minus": 0,

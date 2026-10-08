@@ -568,11 +568,11 @@ notes の種類: 未対応 114・前提の外 37・計算に無関係 46・補�
   - notes[0] 補足: 説明文に出てこない数値（description_value_04・05）は使っていない: 根拠なし
 - **宝物版 skill1**: supported
   - effects[0] timed・lastShot・normalCritRate: C-0097（確定）
-  - effects[1] burstGauge・fullChargeShot: C-0094（仮説）、C-0103（確定）
+  - effects[1] burstGauge・fullChargeShot: C-0094（確定）、C-0103（確定）
   - effects[2] heal・fullChargeShot: C-0345（確定）
 - **宝物版 skill2**: supported
   - effects[0] timed・fullBurstStart・attackDamage: C-0096（確定）
-  - effects[1] damage・fullChargeShot・additional: C-0093（確定）、C-0103（確定）、C-0104（仮説）
+  - effects[1] damage・fullChargeShot・additional: C-0093（確定）、C-0103（確定）、C-0104（確定）
   - notes[0] 前提の外: 阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない: C-0443（範囲外）
 - **宝物版 burst**: supported
   - effects[0] burstDamage・skill: C-0096（確定）

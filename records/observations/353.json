@@ -1,0 +1,72 @@
+[
+  {
+    "id": "353-01",
+    "recording": "353",
+    "use": "record",
+    "source": "V-0350",
+    "readAt": "2026-10-08",
+    "kind": "gauge",
+    "value": [12, 57, 77, 105],
+    "unit": "px",
+    "description": "ヘルム（SR・宝物 3・操作）単騎で、コンテナ → 的 → 空 → コンテナの順に撃ったフルチャージの 1〜4 発目の直後の BURST バーの長さ（113px 中）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・jumps・still.ts（スコープと着弾の画）",
+      "note": "戦闘開始は f777。バーが伸びたフレームは f885（コンテナ）・986（的）・1093（空）・1210（コンテナ）。充填率 10.6・50.4・68.1・92.9%。当たり先は、着弾の画（コンテナの爆発・的の上の数値・何も無い）で確かめた。f1313〜1330 は的の攻撃の赤い画面でバーの読みが乱れるが、発は無い（照準の横の残弾は 002 のまま）。的の発の HUD の増分は 808,667（454,889 + 353,778。2 つ目はクリティカル） で、本体と S2 の追加ダメージの組。ほかの発では総ダメージは増えない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [777, 1387]
+    }
+  },
+  {
+    "id": "353-02",
+    "recording": "353",
+    "use": "record",
+    "source": "V-0350",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "value": 5,
+    "unit": "発",
+    "description": "同じ録画で、戦闘の最初の発から数えて、BURST バーが消えた（本当の満タン）発の番号。5 発目は空に撃った",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・jumps・still.ts（スコープと着弾の画）",
+      "note": "4 発目の後はバーが 105px のままで、5 発目の f1377 でバーが消えた（スコープの中は空。総ダメージは増えない）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [777, 1387]
+    }
+  },
+  {
+    "id": "353-03",
+    "recording": "353",
+    "use": "compare",
+    "source": "V-0350",
+    "readAt": "2026-10-08",
+    "kind": "gauge",
+    "value": 18.5,
+    "unit": "%",
+    "description": "的に当てた 2 発目のバーの伸びから、空に撃った 3 発目のバーの伸びを引いた量（353-01 の 45px − 20px = 25px）を % に直した値。S1 のチャージは両方に入って消えるので、弾と的の発だけに加わる分が残る",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・jumps・still.ts（スコープと着弾の画）",
+      "note": "1px = 0.74%（C-0084）。どちらの発の前後もバーは 0px と 113px の間にある。バーの読みは 1 本ごとに ±1px なので、差は ±1.5% ほどずれうる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotGauge",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

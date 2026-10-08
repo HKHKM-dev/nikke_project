@@ -1,0 +1,42 @@
+[
+  {
+    "id": "351-01",
+    "recording": "351",
+    "use": "record",
+    "source": "V-0350",
+    "readAt": "2026-10-08",
+    "kind": "gauge",
+    "value": [2, 21, 41, 60, 79, 99],
+    "unit": "px",
+    "description": "ヘルム（SR・宝物 3・操作）単騎で、何にも当たらない空に撃ったフルチャージの 1〜6 発目の直後の BURST バーの長さ（113px 中）。的とコンテナには当てていない",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・jumps・still.ts（スコープと着弾の画）",
+      "note": "戦闘開始は f761（timer.ts --mode changes の +89f の変わり目）。バーが伸びたフレームは f894・1015・1146・1259・1373・1501。充填率 1.8・18.6・36.3・53.1・69.9・87.6%。1 発の伸びは 19〜20px。発のスコープの中は空と雲だけで、HUD の総ダメージは最後まで 0"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [761, 1830]
+    }
+  },
+  {
+    "id": "351-02",
+    "recording": "351",
+    "use": "record",
+    "source": "V-0350",
+    "readAt": "2026-10-08",
+    "kind": "count",
+    "value": 7,
+    "unit": "発",
+    "description": "同じ録画で、戦闘の最初の発から数えて、BURST バーが消えた（本当の満タン）発の番号。7 発とも空に撃った",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・jumps・still.ts（スコープと着弾の画）",
+      "note": "6 発目の後はバーが 99px のまま（f1501〜1804。間にリロード）で、7 発目の f1805 でバーが消え、f1830 には I のアイコンが出ている"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [761, 1830]
+    }
+  }
+]
