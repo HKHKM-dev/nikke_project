@@ -3596,12 +3596,12 @@
     - buffed-first-3（burstEffectFirstShot）: 実測 0（022-09）。H0 0（+0、許容内）
     - buffed-first-4（burstEffectFirstShot）: 実測 0（022-10）。H0 0（+0、許容内）
     - 許容内の指標: H0 4/4。合う仮説は H0 だけ
-- **[V-0377](../records/verifications/V-0377-crown-burst-effect-delay.md)** クラウンのバーストの効果の遅れ（録画 302 の読み直し）
+- **[V-0378](../records/verifications/V-0378-crown-burst-effect-delay.md)** クラウンのバーストの効果の遅れ（録画 302 の読み直し）
   - 問い: クラウン（330）のバースト使用時の効果（味方全体の攻撃ダメージ▲）は、II の発動（六角形が II から III に替わるフレーム）と同じフレームに付くか（いまのモデル。遅れ 0）
   - 話題: スキル・キャラ固有・日付: 2026-10-09・状態: 完了
   - 録画: 302
   - 観測値: 302-14、302-15、302-16、302-17、302-18、302-19、302-20、302-21、302-22、302-23
-  - 結論: C-0498
+  - 結論: C-0499
   - 予測（2026-10-09、commit 79ec470）との比べ:
     - effect-delay-1（burstEffectDelay）: 実測 -2.5（302-14）。H0 0（+2.5、許容内）
     - effect-delay-2（burstEffectDelay）: 実測 -3（302-15）。H0 0（+3、許容内）
