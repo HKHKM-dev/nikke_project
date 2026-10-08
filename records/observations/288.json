@@ -218,7 +218,7 @@
   {
     "id": "288-13",
     "recording": "288",
-    "source": "V-0376",
+    "source": "V-0377",
     "readAt": "2026-10-09",
     "kind": "rate",
     "use": "compare",
@@ -250,7 +250,7 @@
   {
     "id": "288-14",
     "recording": "288",
-    "source": "V-0376",
+    "source": "V-0377",
     "readAt": "2026-10-09",
     "kind": "count",
     "use": "record",
