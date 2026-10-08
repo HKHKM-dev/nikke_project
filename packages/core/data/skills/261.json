@@ -93,9 +93,12 @@
           "scaling": "flat",
           "ref": 4,
           "durationRef": 5,
+          "assumes": {
+            "ja": "窓の始まりは、ヒットと火傷の付与と同じく II の発動から 9f 遅れるとみなす（C-0219 の遅れの表の行。窓の始まりはどの録画でも読めておらず、確かめていない）",
+            "en": "The window is assumed to start 9 frames after the Burst II activation, like the hit and the burn (the delay table row of C-0219; the window start has not been read in any recording)"
+          },
           "claims": [
-            "C-0089",
-            "C-0219"
+            "C-0089"
           ]
         }
       ]

@@ -1635,324 +1635,88 @@
     },
     {
       "observation": "081-01",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "0167bf36c72f86d5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-01",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "0167bf36c72f86d5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-01",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "0167bf36c72f86d5",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "081-01",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "0167bf36c72f86d5",
+      "key": "a40ce46bc406541a",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "081-02",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "7988d711f82842da",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-02",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "7988d711f82842da",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-02",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "7988d711f82842da",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "081-02",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "7988d711f82842da",
+      "key": "f8847b7e548ebc61",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "081-03",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "7b37b342703489db",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-03",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "7b37b342703489db",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-03",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "7b37b342703489db",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "081-03",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "7b37b342703489db",
+      "key": "088e8e17787ed89c",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "081-05",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "4eebec03cbf905ac",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-05",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "4eebec03cbf905ac",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-05",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "4eebec03cbf905ac",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "081-05",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "4eebec03cbf905ac",
+      "key": "68d7c588b804beb7",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "081-06",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "aaa1d7854b3a24dc",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-06",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "aaa1d7854b3a24dc",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-06",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "aaa1d7854b3a24dc",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "081-06",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "aaa1d7854b3a24dc",
+      "key": "b7afa0c23c7e3e47",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "081-07",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "af153079037a1f06",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-07",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "af153079037a1f06",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-07",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "af153079037a1f06",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "081-07",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "af153079037a1f06",
+      "key": "fbb2b746dd265515",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "081-08",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "78ec335636962f8d",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 0 回目のバーストの倍率ダメージが無い"
-    },
-    {
-      "observation": "081-08",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "78ec335636962f8d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-08",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "78ec335636962f8d",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "081-08",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "78ec335636962f8d",
+      "key": "e0835b8bfafa58e2",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "081-09",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "3d1f461a1332cff7",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 1 回目のバーストの倍率ダメージが無い"
-    },
-    {
-      "observation": "081-09",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "3d1f461a1332cff7",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-09",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "3d1f461a1332cff7",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "081-09",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "3d1f461a1332cff7",
+      "key": "e51d70af63376af0",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "081-10",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "3ef787c6a9ae5539",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-10",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "3ef787c6a9ae5539",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 1 回目の持続ダメージの tick が無い"
-    },
-    {
-      "observation": "081-10",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "3ef787c6a9ae5539",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "081-10",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "3ef787c6a9ae5539",
+      "key": "4fa0c6bb665c5886",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "081-11",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "6bb32c3cb5c03d29",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "081-11",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "6bb32c3cb5c03d29",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 2 回目の持続ダメージの tick が無い"
-    },
-    {
-      "observation": "081-11",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "6bb32c3cb5c03d29",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "081-11",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "6bb32c3cb5c03d29",
+      "key": "9ac4a7d115b001d6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "081-20",
+      "element": "ニヒリスター skill2.effects[0]",
+      "key": "8ff17613aacf7944",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2031,33 +1795,8 @@
     },
     {
       "observation": "084-01",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "ae56bb7c1b671a0d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "084-01",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "ae56bb7c1b671a0d",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 1 回目の持続ダメージの tick が無い"
-    },
-    {
-      "observation": "084-01",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "ae56bb7c1b671a0d",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "084-01",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "ae56bb7c1b671a0d",
+      "key": "2a3d30031a4aaefe",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2065,7 +1804,7 @@
     {
       "observation": "084-01",
       "element": "紅蓮：ブラックシャドウ burst.effects[0]",
-      "key": "ae56bb7c1b671a0d",
+      "key": "2a3d30031a4aaefe",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2073,7 +1812,7 @@
     {
       "observation": "084-01",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "ae56bb7c1b671a0d",
+      "key": "2a3d30031a4aaefe",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2081,7 +1820,7 @@
     {
       "observation": "084-01",
       "element": "紅蓮：ブラックシャドウ burst.effects[2]",
-      "key": "ae56bb7c1b671a0d",
+      "key": "2a3d30031a4aaefe",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2089,7 +1828,7 @@
     {
       "observation": "084-01",
       "element": "紅蓮：ブラックシャドウ skill2.effects[0]",
-      "key": "ae56bb7c1b671a0d",
+      "key": "2a3d30031a4aaefe",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2097,40 +1836,15 @@
     {
       "observation": "084-01",
       "element": "紅蓮：ブラックシャドウ skill2.effects[1]",
-      "key": "ae56bb7c1b671a0d",
+      "key": "2a3d30031a4aaefe",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "084-02",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "e15b2c8b044e9dd8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "084-02",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "e15b2c8b044e9dd8",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 7 回目の持続ダメージの tick が無い"
-    },
-    {
-      "observation": "084-02",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "e15b2c8b044e9dd8",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "084-02",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "e15b2c8b044e9dd8",
+      "key": "3e2276ca7fc416b7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2138,7 +1852,7 @@
     {
       "observation": "084-02",
       "element": "紅蓮：ブラックシャドウ burst.effects[0]",
-      "key": "e15b2c8b044e9dd8",
+      "key": "3e2276ca7fc416b7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2146,7 +1860,7 @@
     {
       "observation": "084-02",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "e15b2c8b044e9dd8",
+      "key": "3e2276ca7fc416b7",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2154,7 +1868,7 @@
     {
       "observation": "084-02",
       "element": "紅蓮：ブラックシャドウ burst.effects[2]",
-      "key": "e15b2c8b044e9dd8",
+      "key": "3e2276ca7fc416b7",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2162,7 +1876,7 @@
     {
       "observation": "084-02",
       "element": "紅蓮：ブラックシャドウ skill2.effects[0]",
-      "key": "e15b2c8b044e9dd8",
+      "key": "3e2276ca7fc416b7",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2170,40 +1884,15 @@
     {
       "observation": "084-02",
       "element": "紅蓮：ブラックシャドウ skill2.effects[1]",
-      "key": "e15b2c8b044e9dd8",
+      "key": "3e2276ca7fc416b7",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "084-03",
-      "element": "ニヒリスター burst.effects[0]",
-      "key": "9264734b97c2753c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "084-03",
-      "element": "ニヒリスター burst.effects[1]",
-      "key": "9264734b97c2753c",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 11 回目の持続ダメージの tick が無い"
-    },
-    {
-      "observation": "084-03",
-      "element": "ニヒリスター burst.effects[2]",
-      "key": "9264734b97c2753c",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "084-03",
       "element": "ニヒリスター skill2.effects[0]",
-      "key": "9264734b97c2753c",
+      "key": "ec3c0e8a1e4322f3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2211,7 +1900,7 @@
     {
       "observation": "084-03",
       "element": "紅蓮：ブラックシャドウ burst.effects[0]",
-      "key": "9264734b97c2753c",
+      "key": "ec3c0e8a1e4322f3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2219,7 +1908,7 @@
     {
       "observation": "084-03",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "9264734b97c2753c",
+      "key": "ec3c0e8a1e4322f3",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2227,7 +1916,7 @@
     {
       "observation": "084-03",
       "element": "紅蓮：ブラックシャドウ burst.effects[2]",
-      "key": "9264734b97c2753c",
+      "key": "ec3c0e8a1e4322f3",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2235,7 +1924,7 @@
     {
       "observation": "084-03",
       "element": "紅蓮：ブラックシャドウ skill2.effects[0]",
-      "key": "9264734b97c2753c",
+      "key": "ec3c0e8a1e4322f3",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2243,7 +1932,63 @@
     {
       "observation": "084-03",
       "element": "紅蓮：ブラックシャドウ skill2.effects[1]",
-      "key": "9264734b97c2753c",
+      "key": "ec3c0e8a1e4322f3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "084-07",
+      "element": "ニヒリスター skill2.effects[0]",
+      "key": "7c6c9610dce812a9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "084-07",
+      "element": "紅蓮：ブラックシャドウ burst.effects[0]",
+      "key": "7c6c9610dce812a9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "084-07",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "7c6c9610dce812a9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "084-07",
+      "element": "紅蓮：ブラックシャドウ burst.effects[2]",
+      "key": "7c6c9610dce812a9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "084-07",
+      "element": "紅蓮：ブラックシャドウ skill2.effects[0]",
+      "key": "7c6c9610dce812a9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "084-07",
+      "element": "紅蓮：ブラックシャドウ skill2.effects[1]",
+      "key": "7c6c9610dce812a9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "085-06",
+      "element": "ニヒリスター skill2.effects[0]",
+      "key": "1b3018d0c4ba9ded",
       "effective": false,
       "minus": 0,
       "plus": null
