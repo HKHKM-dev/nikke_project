@@ -1,0 +1,31 @@
+{
+  "id": "352",
+  "date": "2026-10-08",
+  "folder": "range",
+  "file": "20261008-352_sr_helm_gauge-order.mp4",
+  "original": "2026-10-08_20-40-05.mp4",
+  "durationSec": 32.3,
+  "frames": 1937,
+  "fps": 60,
+  "sizeMB": 39.1,
+  "sha256": "b68c5e9bb202",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "note": "単騎・操作・宝物 3。スコープでフルチャージして撃った。1 発目コンテナ・2 発目的・3 発目空・4 発目別のコンテナ・5 発目空",
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。f30 の射撃場の画面で確かめた）。ヘルム単騎・操作。AUTO 射撃 OFF・オートバースト OFF。戦闘開始は f820。発は f961（コンテナ）・1082（的。総ダメージ 690,741）・1229（空）・1357（コンテナ。直後に的の攻撃の赤い画面）・1577（空。バーが消えた）。的のジャンプは f1379〜1410 ごろ。V-0350 段 B（1 本目）"
+}
