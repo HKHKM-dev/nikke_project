@@ -1,0 +1,191 @@
+{
+  "verification": "V-0375",
+  "note": "プロダクト08 単騎（操作・AUTO・3 分モード・スペック固定 ON）を撮る前に固定する。窓の始まり・終わりは枠のバフの列の矢印のアイコン（V-0276 の読み方）か左のスキルの帯で、会心は HUD の総ダメージの増分（hud.ts --mode jumps）で読む。判定の目安（観測値の許容）は検証記録の「予測」",
+  "team": [
+    {
+      "rid": 302,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（C-0406）: 射撃に依らず、戦闘開始から 17 秒ごと（ceil(17 ÷ 0.017) = 1000 ティックごと。C-0432）に、自分にクリティカル確率 22.99%▲（5 秒）が付く。1 回目は戦闘開始から 1 周期後"
+    },
+    {
+      "id": "H2",
+      "note": "戦闘開始時（フレーム 0）にも 1 回付き、その後は 17 秒ごと（atStart）。窓の数と 1 回目の時刻だけが H1 と違う",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 302,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 17,
+                "atStart": true
+              },
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "stat": "critRate",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0",
+      "note": "S2 は与ダメージに効かない（会心の割合はどの区間でも素の 0.15。V-0276 の窓の中の会心の多さは偶然）。比べる値を出すためだけに、効果を的の属性の条件（灼熱の的には付かない enemyElement Water）で外した形",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 302,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 17
+              },
+              "target": "topAttack",
+              "targetCountRef": 1,
+              "stat": "critRate",
+              "ref": 2,
+              "durationRef": 3,
+              "enemyElement": "Water"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "s2-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "critRate",
+        "video": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "S2 の窓の始まり（戦闘開始からの動画のフレーム）。録画では、枠のバフの列の矢印のアイコンの出始めか、左の「スキル2 戦術：精密射撃」の帯の立ち上がり。H0 は効果を外した形なので空に出るが、H0 はアイコンの有無ではなく会心の割合と与ダメージで見分ける（この指標は H1 と H2 の見分けと周期の確かめに使う）"
+    },
+    {
+      "id": "s2-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "critRate"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "S2 の窓の終わり（モデルのフレーム）。始まりとの差が窓の長さ（5 秒 = floor(5 ÷ 0.017) = 294f。持続の切り捨ては time.ts の gameSecondsToFrames）。録画では、矢印のアイコンが消えたフレーム"
+    },
+    {
+      "id": "crit-in-window",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 1100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "S2 の窓の中（H1・H2 の窓 f1000〜1294 の中）の通常攻撃の会心率。録画では、矢印の窓の中の発のうち会心だった割合（窓は録画で読んだ出始めから 294f）"
+    },
+    {
+      "id": "crit-outside",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "S2 の窓の外の会心率（対照）。録画では、矢印の窓の外の発のうち会心だった割合"
+    },
+    {
+      "id": "total-damage",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "単騎の与ダメージ（180 秒）。会心の偏りで 1σ 約 1% 動く（V-0001）ので、仮説の見分けには使わず、残差の確かめに使う"
+    },
+    {
+      "id": "shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "180 秒の発の数。会心の割合の二項の幅の見積もりに使う"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-09",
+    "commit": "debecf5f63631c1b83fae234d879c67623158c06",
+    "values": {
+      "H1": {
+        "s2-starts": [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+        "s2-ends": [1294, 2294, 3294, 4294, 5294, 6294, 7294, 8294, 9294, 10294],
+        "crit-in-window": 0.3799,
+        "crit-outside": 0.15,
+        "total-damage": 25293894.229993135,
+        "shots": 100
+      },
+      "H2": {
+        "s2-starts": [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+        "s2-ends": [294, 1294, 2294, 3294, 4294, 5294, 6294, 7294, 8294, 9294, 10294],
+        "crit-in-window": 0.3799,
+        "crit-outside": 0.15,
+        "total-damage": 25334246.566517636,
+        "shots": 100
+      },
+      "H0": {
+        "s2-starts": [],
+        "s2-ends": [],
+        "crit-in-window": 0.15,
+        "crit-outside": 0.15,
+        "total-damage": 24897620.6065644,
+        "shots": 100
+      }
+    },
+    "seen": {}
+  }
+}
