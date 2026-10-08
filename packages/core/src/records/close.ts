@@ -31,6 +31,11 @@ export type GitOrder = {
   predictionCommit: string | null;
   /** この検証記録の観測値のうち、予測の commit より前か同じ commit で足したもの */
   notAfter: string[];
+  /**
+   * この検証記録の観測値のうち、予測と同じ commit で足され、その commit が main にマージ済みのもの（notAfter には入れない）。
+   * スカッシュマージでブランチの順が消えたので、git では順を見られない（控えの検査だけ。plan/design-reread-prediction.md 5 節の B1）
+   */
+  merged?: string[];
 };
 
 export type CloseResult = { errors: string[]; warnings: string[] };
@@ -55,9 +60,16 @@ export function closeChecks(input: CloseInput): CloseResult {
     if (!tied) errors.push(`${at}: 結論 ${id} の根拠に、この検証記録の観測値も ID（${v.id}）も無い`);
     const candidate = input.gradeCandidates.get(id);
     if (c.grade !== undefined && candidate !== undefined && gradeAboveCandidate(c.grade, candidate)) {
-      errors.push(
-        `${at}: 結論 ${id} の等級（${c.grade}）が機械の候補（${candidate}）より上。根拠に別の録画を足すか、等級を候補に合わせる`,
-      );
+      // 人の判断で候補より上の等級にした結論（1 本の録画の中の反復など。plan/design-minimal-relevance.md 11.7 節）は、
+      // 理由（gradeReason）を書けば注意にとどめる
+      if (c.gradeReason !== undefined)
+        warnings.push(
+          `${at}: 結論 ${id} の等級（${c.grade}）は機械の候補（${candidate}）より上（理由: ${c.gradeReason}）`,
+        );
+      else
+        errors.push(
+          `${at}: 結論 ${id} の等級（${c.grade}）が機械の候補（${candidate}）より上。根拠に別の録画を足すか、等級を候補に合わせるか、人の判断なら理由を gradeReason に書く`,
+        );
     }
     if (c.state === '確定') {
       // 最小構成の検査（plan/design-minimal-relevance.md 11 節。2026-10-08 のオーナー決定）: この記録の観測値の組に警告があれば止める。
@@ -133,6 +145,10 @@ export function closeChecks(input: CloseInput): CloseResult {
             `${at}: 観測値 ${g.notAfter.join('・')} を、予測の commit（${g.predictionCommit.slice(0, 7)}）より前か同じ commit で足した`,
           );
         }
+        if (g.predictionCommit !== null && g.merged !== undefined && g.merged.length > 0)
+          warnings.push(
+            `${at}: 観測値 ${g.merged.join('・')} は予測と同じマージ済みの commit（${g.predictionCommit.slice(0, 7)}）で足されていて、git では順を見られない（控えの検査だけ）`,
+          );
       }
     }
   }

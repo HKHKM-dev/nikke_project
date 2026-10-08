@@ -99,6 +99,14 @@ describe('closeChecks', () => {
         gradeCandidates: new Map([['C-0001', '単独実測']]),
       }).errors,
     ).toEqual([]);
+    // 人の判断で候補より上にした等級は、理由（gradeReason）があれば注意にとどめる（design-minimal-relevance.md 11.7 節）
+    const reasoned = closeChecks({
+      ...base,
+      claims: [claim({ gradeReason: '1 本の録画の中の反復' })],
+      gradeCandidates: new Map([['C-0001', '単独実測']]),
+    });
+    expect(reasoned.errors).toEqual([]);
+    expect(reasoned.warnings[0]).toContain('理由: 1 本の録画の中の反復');
   });
 
   it('予測: 無ければ探索と書く、出していない、日付が録画より後', () => {
@@ -142,6 +150,10 @@ describe('closeChecks', () => {
     expect(closeChecks(order({ uncommitted: true })).errors[0]).toContain('commit されていない');
     expect(closeChecks(order({ predictionCommit: null })).errors[0]).toContain('commit されていない');
     expect(closeChecks(order({ notAfter: ['101-01'] })).errors[0]).toContain('101-01 を、予測の commit（def5678）');
+    // スカッシュマージで予測と同じ commit になった読みは、git では順を見られないので注意にとどめる（控えの検査は残る）
+    const squashed = closeChecks(order({ merged: ['101-01'] }));
+    expect(squashed.errors).toEqual([]);
+    expect(squashed.warnings[0]).toContain('101-01 は予測と同じマージ済みの commit（def5678）');
     // 控えの無い古い予測ファイルでは git の順を見ない
     const old = { ...base, gitOrder: { uncommitted: true, predictionCommit: null, notAfter: ['101-01'] } };
     expect(closeChecks(old).errors).toEqual([]);

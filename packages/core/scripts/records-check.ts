@@ -153,7 +153,7 @@ const above = claims.filter((c) => {
   return c.grade !== undefined && c.state !== '棄却' && g !== undefined && gradeAboveCandidate(c.grade, g);
 });
 console.log(
-  `等級の候補（機械）を出せた結論 ${gradeCandidates.size} 件のうち、書いた等級のほうが上のもの: ${above.length} 件（claims.md に出す。plan/design-records-automation.md 3.5 節）`,
+  `等級の候補（機械）を出せた結論 ${gradeCandidates.size} 件のうち、書いた等級のほうが上のもの: ${above.length} 件（うち理由（gradeReason）の無いもの ${above.filter((c) => c.gradeReason === undefined).length} 件。claims.md に出す。plan/design-records-automation.md 3.5 節）`,
 );
 for (const p of predictions) {
   const cmp = comparePredictions(p, observations);

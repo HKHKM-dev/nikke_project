@@ -1,8 +1,9 @@
 // 検証記録を閉じる（plan/design-records-automation.md 3.7 節）。
 //   npm run records:close -- V-NNNN [--mark] [--no-ci]
-// 完了にできるかを検査する（結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない・予測を撮る前に出している・
-// 「次に撮るもの」「分かったこと」が空でない）。予測ファイルに控え（seen）があれば、git の履歴で予測の commit が観測値を足した commit
-// より前かも見る（plan/design-reread-prediction.md 5 節。ブランチの上で、マージの前に回す）。通れば --mark で状態を完了に書き換え、records:check と CI と同じ確認を回し
+// 完了にできるかを検査する（結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない（上なら gradeReason に理由）・
+// 予測を撮る前に出している・「次に撮るもの」「分かったこと」が空でない）。予測ファイルに控え（seen）があれば、git の履歴で予測の
+// commit が観測値を足した commit より前かも見る（plan/design-reread-prediction.md 5 節。ブランチの上で、マージの前に回す。
+// スカッシュマージで予測と同じ commit になったものは注意にとどめる）。通れば --mark で状態を完了に書き換え、records:check と CI と同じ確認を回し
 // （--no-ci で省く）、PR の題名の案を出す。roadmap.md の更新と PR は人（エージェント）が行う。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -112,11 +113,34 @@ function gitOrderOf(prediction: PredictionFile, own: readonly Observation[]): Gi
       }
     }
     const notAfter: string[] = [];
+    const merged: string[] = [];
+    // main にマージ済みの commit か（origin/main が無ければ main で見る）。スカッシュマージした予測と読みは同じ commit になる
+    const mainRef = ['origin/main', 'main'].find((r) => {
+      try {
+        git(['rev-parse', '--verify', '--quiet', r]);
+        return true;
+      } catch {
+        return false;
+      }
+    });
+    const isMerged = (c: string): boolean => {
+      if (mainRef === undefined) return false;
+      try {
+        git(['merge-base', '--is-ancestor', c, mainRef]);
+        return true;
+      } catch {
+        return false;
+      }
+    };
     if (predictionCommit !== null) {
       for (const o of own) {
         const file = `records/observations/${o.recording}.json`;
         const added = git(['log', '--format=%H', '--reverse', '-S', `"id": "${o.id}"`, '--', file]).split('\n')[0];
         if (!added) continue; // まだ commit していない読みは予測の後
+        if (added === predictionCommit && isMerged(added)) {
+          merged.push(o.id);
+          continue;
+        }
         let after = added !== predictionCommit;
         if (after) {
           try {
@@ -128,7 +152,7 @@ function gitOrderOf(prediction: PredictionFile, own: readonly Observation[]): Gi
         if (!after) notAfter.push(o.id);
       }
     }
-    return { uncommitted, predictionCommit, notAfter };
+    return { uncommitted, predictionCommit, notAfter, merged };
   } catch (e) {
     console.log(`注意: git の履歴で予測と読みの順を調べられなかった（${(e as Error).message.split('\n')[0]}）`);
     return undefined;
