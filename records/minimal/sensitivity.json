@@ -5772,6 +5772,86 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "366-01",
+      "element": "ラピ skill2.effects[0]",
+      "key": "17a50e9b1017ab8c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "366-01",
+      "element": "ラピ skill2.effects[1]",
+      "key": "17a50e9b1017ab8c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "366-02",
+      "element": "ラピ skill2.effects[0]",
+      "key": "75a21b2619e223f3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "366-02",
+      "element": "ラピ skill2.effects[1]",
+      "key": "75a21b2619e223f3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "366-03",
+      "element": "ラピ skill2.effects[0]",
+      "key": "1da2f36cef7f3793",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "366-03",
+      "element": "ラピ skill2.effects[1]",
+      "key": "1da2f36cef7f3793",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "366-04",
+      "element": "ラピ skill2.effects[0]",
+      "key": "b26a6616662c53d3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "366-04",
+      "element": "ラピ skill2.effects[1]",
+      "key": "b26a6616662c53d3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "366-05",
+      "element": "ラピ skill2.effects[0]",
+      "key": "17cd3a8a8248e271",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "366-05",
+      "element": "ラピ skill2.effects[1]",
+      "key": "17cd3a8a8248e271",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
