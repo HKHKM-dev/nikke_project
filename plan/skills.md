@@ -359,9 +359,9 @@ notes の種類: 未対応 116・前提の外 37・計算に無関係 45・補�
   - effects[0] timed・fullBurstStart・hitRate: C-0170（仮説）
   - effects[1] timed・normalHit・attack: C-0124（確定）、C-0118（確定）
 - **burst**: partial
-  - effects[0] timed・burstUse・infiniteAmmo: C-0274（仮説）、C-0452（確定）
-  - effects[1] weaponChange・burstUse: C-0273（確定）、C-0274（仮説）、C-0452（確定）
-  - notes[0] 補足: 「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている: C-0274（仮説）
+  - effects[0] timed・burstUse・infiniteAmmo: C-0455（確定）、C-0452（確定）
+  - effects[1] weaponChange・burstUse: C-0273（確定）、C-0455（確定）、C-0452（確定）
+  - notes[0] 補足: 「フルバーストタイム 5 秒▲」は burst_duration（フルバースト 15 秒）で入っている: C-0455（確定）
   - notes[1] 未対応: 殲滅モードと装弾数無限は III の発動の 6f 後に付き、殲滅モードの最初の発は発動の 7f 後（C-0452。遅れの表の行）。実測では止まりの明けから殲滅モードの最初の発までモダニアは撃たない（発動の前も 6〜19f 撃たない回がある）が、モデルはこの間も通常の MG の発を撃つ（未対応）: C-0452（確定）
   - notes[2] 前提の外: 殲滅モードの照準線拡張・照準範囲内のすべての敵を同時に照準は、単体の的では関係しない: C-0443（範囲外）
 
