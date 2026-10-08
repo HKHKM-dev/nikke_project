@@ -664,6 +664,20 @@ describe('照合の部品', () => {
       'nearB',
       'far',
     ]);
+    // C-0477: 遠の着地点も 1 回目・2 回目の順に固定できる
+    const fixedFar = buildTeamInput(
+      rec54,
+      { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto', farLanding: ['B'] },
+      data,
+    );
+    expect(fixedFar.enemy.landings?.map((s) => s.landing)).toEqual([
+      'midNear',
+      'near',
+      'farB',
+      'midFar',
+      'near',
+      'far',
+    ]);
   });
 
   it('builds the obstacle breaks from input observations, and reports bad ones (plan/design-anis-star-gauge-timing.md 2.2 節)', () => {
@@ -754,7 +768,7 @@ describe('照合の部品', () => {
     expect(helm.treasureSkills!.skill1!.effects.map((e) => e.kind)).toEqual(['timed', 'burstGauge']);
   });
 
-  it('reports a mid-far or near landing without automatic conditions, or an unknown one', () => {
+  it('reports a mid-far, near or far landing without automatic conditions, or an unknown one', () => {
     const base = observations.find((o) => o.id === '054-02')!;
     const withSetup = (setup: Record<string, unknown>, id: string): Observation => ({
       ...base,
@@ -764,11 +778,16 @@ describe('照合の部品', () => {
     expect(
       validateObservations(
         [
-          withSetup({ condition: 'manual' }, '054-91'),
+          withSetup({ condition: 'manual', farLanding: undefined }, '054-91'),
           withSetup({ midFarLanding: 'D' }, '054-92'),
-          withSetup({ condition: 'maybe', midFarLanding: undefined }, '054-93'),
+          withSetup({ condition: 'maybe', midFarLanding: undefined, farLanding: undefined }, '054-93'),
           withSetup({ nearLanding: ['A', 'C'] }, '054-94'),
-          withSetup({ condition: 'manual', midFarLanding: undefined, nearLanding: ['A'] }, '054-95'),
+          withSetup(
+            { condition: 'manual', midFarLanding: undefined, nearLanding: ['A'], farLanding: undefined },
+            '054-95',
+          ),
+          withSetup({ farLanding: ['A', 'C'] }, '054-96'),
+          withSetup({ condition: 'manual', midFarLanding: undefined, farLanding: ['B'] }, '054-97'),
         ],
         recordings,
         data.enemies,
@@ -779,6 +798,8 @@ describe('照合の部品', () => {
       '054-93: condition は auto か manual',
       '054-94: nearLanding は A・B の並び（1 回目・2 回目の順）',
       '054-95: nearLanding は condition が auto のときだけ',
+      '054-96: farLanding は A・B の並び（1 回目・2 回目の順）',
+      '054-97: farLanding は condition が auto のときだけ',
     ]);
   });
 

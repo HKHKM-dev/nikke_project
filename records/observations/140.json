@@ -122,7 +122,8 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto"
+        "condition": "auto",
+        "farLanding": ["B"]
       }
     }
   },

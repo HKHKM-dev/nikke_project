@@ -55,7 +55,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": false,
-        "condition": "auto"
+        "condition": "auto",
+        "farLanding": ["B"]
       }
     }
   },
@@ -86,7 +87,8 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto"
+        "condition": "auto",
+        "farLanding": ["B"]
       }
     }
   },

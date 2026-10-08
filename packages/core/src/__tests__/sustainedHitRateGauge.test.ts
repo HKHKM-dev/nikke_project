@@ -118,20 +118,15 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
         const candidates = [1, 2, 3].map((k) => ratioWith(frame, k));
         expect(candidates.some((c) => Math.abs(c - r) < 1e-9)).toBe(true);
       }
-      // 帯の値 1 つの区間（遠など）では、H2 の比そのもの
-      const p = planned(raised.find(({ frame }) => planned(frame) < 0.8)!.frame);
-      expect(ratioWith(raised.find(({ frame }) => planned(frame) < 0.8)!.frame, 2)).toBeCloseTo(
-        bulletHitRateWithHitRateUp(p, 2 * MISATO_S1) / p,
-        12,
-      );
-      // 3 段が重なる発がある（SMG の遠では約 1.13 倍）
+      // 遠は 2 か所の配分（0.52 : 0.48。C-0477）で、SMG は着地点ごとの値（遠 A 0.8068・遠 B 0.7608）に H2 を当ててから混ぜる
+      const farMix = (k: number) =>
+        0.52 * bulletHitRateWithHitRateUp(0.8068, k * MISATO_S1) +
+        0.48 * bulletHitRateWithHitRateUp(0.7608, k * MISATO_S1);
       const far = raised.filter(({ frame }) => planned(frame) < 0.8);
-      expect(
-        far.some(
-          ({ frame, r }) =>
-            Math.abs(r - bulletHitRateWithHitRateUp(planned(frame), 3 * MISATO_S1) / planned(frame)) < 1e-9,
-        ),
-      ).toBe(true);
+      expect(planned(far[0]!.frame)).toBeCloseTo(farMix(0), 12);
+      expect(ratioWith(far[0]!.frame, 2)).toBeCloseTo(farMix(2) / farMix(0), 12);
+      // 3 段が重なる発がある（SMG の遠では約 1.12 倍）
+      expect(far.some(({ r }) => Math.abs(r - farMix(3) / farMix(0)) < 1e-9)).toBe(true);
     });
 
     it('fills the gauge no later than without the timed hit rate', () => {
