@@ -167,9 +167,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "1 回目のバーストより前のリターの 1 ヒット（胴体・会心なし・距離ボーナスなし）。どの仮説も同じ（対照）"
     },
@@ -186,9 +184,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "同じ 1 ヒットの距離ボーナスあり"
     },
@@ -205,9 +201,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "1 回目のバースト使用から 5 秒の窓の中の 1 ヒット（胴体・会心なし・距離ボーナスなし）。バーストの攻撃力▲ 66% が乗る"
     },
@@ -224,9 +218,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "同じ窓の 1 ヒットの距離ボーナスあり"
     },
@@ -243,9 +235,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "2 回目のバースト使用の窓の中の 1 ヒット（胴体・会心なし・距離ボーナスなし）。攻撃力は 1 回目の窓と同じ（66%）"
     },
@@ -262,9 +252,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "同じ窓の 1 ヒットの距離ボーナスあり"
     },
@@ -280,9 +268,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "2 回目の窓の、会心した 1 ヒットと会心しない 1 ヒットの比（S1 の effects[4] のクリティカルダメージ▲）。攻撃力の項は比で消える"
     },
@@ -299,9 +285,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "3 回目のバースト使用の窓の中の 1 ヒット（胴体・会心なし・距離ボーナスなし）。攻撃力▲ 66% + 14.42%"
     },
@@ -318,9 +302,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "同じ窓の 1 ヒットの距離ボーナスあり"
     },
@@ -336,9 +318,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "3 回目の窓の会心の比。下位効果のスタック適用なら 2 回目の▲も乗る（スタックしない読み H2 では会心の▲は無い。検証記録に手で書く）"
     },
@@ -355,9 +335,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "3 回目の窓の終わりの直前（最後の 0.5 秒）の 1 ヒット（胴体・会心なし・距離ボーナスなし）。窓が 5 秒続くか"
     },
@@ -374,9 +352,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "同じ 1 ヒットの距離ボーナスあり"
     },
@@ -393,9 +369,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "3 回目の窓が切れた後の 1 ヒット（base と同じ値の見込み）。窓の切れ目の前後で読む"
     },
@@ -412,9 +386,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "同じ 1 ヒットの距離ボーナスあり"
     },
@@ -428,9 +400,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "1 回目のバーストより前の最大装弾数（照準の横の残弾の、リロード直後の値）"
     },
@@ -444,9 +414,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "1 回目の窓の最大装弾数（窓の中で終わったリロードの直後の照準の横の残弾。▲は残弾を増やさず、その後のリロードで込める見込み（C-0420 と同じ形））"
     },
@@ -460,9 +428,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "3 回目の窓の最大装弾数（下位効果のスタック適用なら 1 回目の▲も乗る。スタックしない読み H2 では元のまま。検証記録に手で書く）"
     }
