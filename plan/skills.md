@@ -177,7 +177,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - effects[4] passive・trueDamage: C-0375（確定）
 - **burst**: supported
   - effects[0] timed・weaponChangeShot・damageTaken: C-0312（確定）、C-0138（確定）
-  - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）
+  - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）、C-0509（仮説）
 
 ## 101 ドレイク
 
