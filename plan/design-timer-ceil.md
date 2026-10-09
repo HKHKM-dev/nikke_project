@@ -2,6 +2,7 @@
 
 - 状態: **承認・実装済み**（2026-10-08。決定は 5 節）
 - 根拠: V-0302（C-0432）・V-0313（C-0453）・V-0317（C-0454）。どれも既存の録画の読み直しで、予測を読む前に commit した
+- 追記（2026-10-09）: C-0432 は V-0380 で棄却し、N ÷ 0.017 に端数がある N の C-0502（確定）と、ちょうど整数になる N（17 秒）の C-0501（仮説。1 周期が ceil より長い回を含む）に置き換えた。モデルは ceil のまま（C-0501 の model）
 - 関連: [design-nihilister.md](design-nihilister.md)（`everySeconds`・持続ダメージの tick）、[design-clock-stalls.md](design-clock-stalls.md)、backlog 4-11〜4-14・4-18・4-19
 
 ## 0. 分かったこと

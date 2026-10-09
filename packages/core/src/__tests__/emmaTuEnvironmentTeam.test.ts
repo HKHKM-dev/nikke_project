@@ -58,7 +58,7 @@ describe('環境コントロールの窓', () => {
   it('opens at battle start and every 30 s after, for 10 s each, without Eunhwa: TU (録画 226 の編成。C-0305)', () => {
     const windows = environmentWindows(team([fixedSlot(EMMA)], 0, false));
     expect(windows.map((w) => w.start)).toEqual(
-      // 30 秒ごとの周期は発動のたびに数え直す（k × ceil(30 ÷ 0.017)。C-0432）
+      // 30 秒ごとの周期は発動のたびに数え直す（k × ceil(30 ÷ 0.017)。C-0502）
       [0, 1, 2, 3, 4, 5].map((k) => k * gameSecondsToFirstFrame(30)),
     );
     for (const w of windows) {
