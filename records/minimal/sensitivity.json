@@ -67,6 +67,14 @@
     },
     {
       "observation": "018-01",
+      "element": "ラピ burst.effects[1]",
+      "key": "3509bea3efc0cac0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "018-01",
       "element": "ラピ skill2.effects[1]",
       "key": "3509bea3efc0cac0",
       "effective": false,
@@ -83,6 +91,14 @@
     },
     {
       "observation": "018-06",
+      "element": "ラピ burst.effects[1]",
+      "key": "7623baa6efc240f5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "018-06",
       "element": "ラピ skill2.effects[1]",
       "key": "7623baa6efc240f5",
       "effective": false,
@@ -99,6 +115,14 @@
     },
     {
       "observation": "018-12",
+      "element": "ラピ burst.effects[1]",
+      "key": "394da560975f7327",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "018-12",
       "element": "ラピ skill2.effects[1]",
       "key": "394da560975f7327",
       "effective": false,
@@ -115,6 +139,14 @@
     },
     {
       "observation": "018-13",
+      "element": "ラピ burst.effects[1]",
+      "key": "109751b41aee6eb3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "018-13",
       "element": "ラピ skill2.effects[1]",
       "key": "109751b41aee6eb3",
       "effective": false,
@@ -131,6 +163,14 @@
     },
     {
       "observation": "018-14",
+      "element": "ラピ burst.effects[1]",
+      "key": "19cea7b34d193d36",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "018-14",
       "element": "ラピ skill2.effects[1]",
       "key": "19cea7b34d193d36",
       "effective": false,
@@ -147,6 +187,14 @@
     },
     {
       "observation": "018-15",
+      "element": "ラピ burst.effects[1]",
+      "key": "322bb2b294834749",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "018-15",
       "element": "ラピ skill2.effects[1]",
       "key": "322bb2b294834749",
       "effective": false,
@@ -163,6 +211,14 @@
     },
     {
       "observation": "018-16",
+      "element": "ラピ burst.effects[1]",
+      "key": "9e3ba5f11abe2f8c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "018-16",
       "element": "ラピ skill2.effects[1]",
       "key": "9e3ba5f11abe2f8c",
       "effective": false,
@@ -179,6 +235,14 @@
     },
     {
       "observation": "018-17",
+      "element": "ラピ burst.effects[1]",
+      "key": "10f37c58f98c536f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "018-17",
       "element": "ラピ skill2.effects[1]",
       "key": "10f37c58f98c536f",
       "effective": false,
@@ -192,6 +256,14 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "018-21",
+      "element": "ラピ burst.effects[1]",
+      "key": "fcbf66e4686c46ed",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "018-21",
@@ -768,6 +840,14 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "030-02",
+      "element": "ラピ burst.effects[1]",
+      "key": "69a894e4aefa702b",
+      "effective": true,
+      "minus": 0,
+      "plus": 458085.37514999975
     },
     {
       "observation": "030-02",
@@ -2638,11 +2718,27 @@
     },
     {
       "observation": "221-01",
+      "element": "ラピ burst.effects[1]",
+      "key": "9083af2e860ca5d5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "221-01",
       "element": "ラピ skill2.effects[1]",
       "key": "9083af2e860ca5d5",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "221-02",
+      "element": "ラピ burst.effects[1]",
+      "key": "4c2556d5eeb4e0bc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "221-02",
@@ -2654,11 +2750,27 @@
     },
     {
       "observation": "221-03",
+      "element": "ラピ burst.effects[1]",
+      "key": "a75160ba257faa11",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "221-03",
       "element": "ラピ skill2.effects[1]",
       "key": "a75160ba257faa11",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "221-04",
+      "element": "ラピ burst.effects[1]",
+      "key": "cbf9718b86d231a6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "221-04",
@@ -2670,11 +2782,27 @@
     },
     {
       "observation": "221-05",
+      "element": "ラピ burst.effects[1]",
+      "key": "6e836d581ca0a71b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "221-05",
       "element": "ラピ skill2.effects[1]",
       "key": "6e836d581ca0a71b",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "221-06",
+      "element": "ラピ burst.effects[1]",
+      "key": "f445c1a5f9e33cc2",
+      "effective": true,
+      "minus": 0,
+      "plus": 379721.4875999999
     },
     {
       "observation": "221-06",
@@ -2686,11 +2814,27 @@
     },
     {
       "observation": "221-10",
+      "element": "ラピ burst.effects[1]",
+      "key": "627f79401a145c47",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "221-10",
       "element": "ラピ skill2.effects[1]",
       "key": "627f79401a145c47",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "221-11",
+      "element": "ラピ burst.effects[1]",
+      "key": "4de9b75992058982",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "221-11",
@@ -2702,6 +2846,14 @@
     },
     {
       "observation": "221-16",
+      "element": "ラピ burst.effects[1]",
+      "key": "6ac7d6ba76c8a967",
+      "effective": true,
+      "minus": -14184.998100000008,
+      "plus": 0
+    },
+    {
+      "observation": "221-16",
       "element": "ラピ skill2.effects[1]",
       "key": "6ac7d6ba76c8a967",
       "effective": false,
@@ -2710,11 +2862,27 @@
     },
     {
       "observation": "221-17",
+      "element": "ラピ burst.effects[1]",
+      "key": "f903df0c7a0b39cf",
+      "effective": true,
+      "minus": 0,
+      "plus": 10244.720850000005
+    },
+    {
+      "observation": "221-17",
       "element": "ラピ skill2.effects[1]",
       "key": "f903df0c7a0b39cf",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "221-18",
+      "element": "ラピ burst.effects[1]",
+      "key": "fdd72e5a65eb26cb",
+      "effective": true,
+      "minus": -11820.831750000005,
+      "plus": 0
     },
     {
       "observation": "221-18",
@@ -4526,11 +4694,27 @@
     },
     {
       "observation": "366-01",
+      "element": "ラピ burst.effects[1]",
+      "key": "53b77a33aff124bc",
+      "effective": true,
+      "minus": 0,
+      "plus": 10244.720850000005
+    },
+    {
+      "observation": "366-01",
       "element": "ラピ skill2.effects[1]",
       "key": "53b77a33aff124bc",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "366-02",
+      "element": "ラピ burst.effects[1]",
+      "key": "f84020561885afa3",
+      "effective": true,
+      "minus": -14184.998100000008,
+      "plus": 0
     },
     {
       "observation": "366-02",
@@ -4542,6 +4726,14 @@
     },
     {
       "observation": "366-03",
+      "element": "ラピ burst.effects[1]",
+      "key": "df46e4bc5c27b5c3",
+      "effective": true,
+      "minus": -14184.998100000008,
+      "plus": 0
+    },
+    {
+      "observation": "366-03",
       "element": "ラピ skill2.effects[1]",
       "key": "df46e4bc5c27b5c3",
       "effective": false,
@@ -4550,11 +4742,27 @@
     },
     {
       "observation": "366-04",
+      "element": "ラピ burst.effects[1]",
+      "key": "933a7dc637ac4803",
+      "effective": true,
+      "minus": 0,
+      "plus": 10244.720850000005
+    },
+    {
+      "observation": "366-04",
       "element": "ラピ skill2.effects[1]",
       "key": "933a7dc637ac4803",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "366-05",
+      "element": "ラピ burst.effects[1]",
+      "key": "6380de38138beaa7",
+      "effective": true,
+      "minus": -11820.831750000005,
+      "plus": 0
     },
     {
       "observation": "366-05",
