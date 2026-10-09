@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { MEASURED_BURST_DELAYS } from '../burst/landing.ts';
-import { effectFrameOf, hitFrameOf } from '../burst/schedule.ts';
+import { HEXAGON_AFTER_ACTIVATION_FRAMES, effectFrameOf, hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
@@ -78,13 +78,14 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, nihilis
   // バースト使用時の効果（火傷・最大装弾数▲）は、発動の 9f 後の効果の発火から（C-0219）。戦闘の終わり以降は発火しない
   const fires = mine.map(effectFrameOf).filter((f) => f < plan.frames);
 
-  it('lands the burst damage and fires the burst effects 9 frames after each use (C-0219)', () => {
+  it('lands the burst damage and fires the burst effects 9 frames after the hexagon change of each use (C-0219, V-0382)', () => {
     const delays = MEASURED_BURST_DELAYS.find((row) => row.resourceIds.includes(NIHILISTER))!.delays;
     expect(delays).toEqual({ hitFrames: 9, effectFrames: 9 });
     expect(mine.length).toBeGreaterThan(0);
     for (const a of mine) {
-      expect(hitFrameOf(a)).toBe(a.frame + 9);
-      expect(effectFrameOf(a)).toBe(a.frame + 9);
+      expect(hitFrameOf(a)).toBe(hexagonFrameOf(a) + 9);
+      expect(hexagonFrameOf(a)).toBe(a.frame + HEXAGON_AFTER_ACTIVATION_FRAMES);
+      expect(effectFrameOf(a)).toBe(a.frame + HEXAGON_AFTER_ACTIVATION_FRAMES + 9);
     }
   });
 

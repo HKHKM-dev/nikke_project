@@ -5,6 +5,7 @@ import {
   SKILL_SLOTS,
   TREASURE_PHASE_MAX,
   applyTreasure,
+  HEXAGON_AFTER_ACTIVATION_FRAMES,
   framesToGameSeconds,
   measuredBurstDelayRow,
   burstStepMixAllows,
@@ -44,7 +45,11 @@ function BurstDelayNote({ character }: { character: CharacterData }) {
   // 分かれたヒット編: 宝物の印のある行は、burst が宝物版のときだけ（plan/design-burst-split-hits.md 4.5 節）
   const row = measuredBurstDelayRow(character);
   if (row === null) return null;
-  const sec = (frames: number) => framesToGameSeconds(frames).toFixed(2);
+  // I・II の遅れは六角形の替わり目（本当の発動の 5f 後）から数えた値なので、発動からの時刻はそれを足す（遅れ 0 は発動のまま。
+  // burst/landing.ts の withBurstDelays と同じ。plan/design-burst-hit-origin.md 4 節）
+  const origin =
+    character.burstStep === 'Step1' || character.burstStep === 'Step2' ? HEXAGON_AFTER_ACTIVATION_FRAMES : 0;
+  const sec = (frames: number) => framesToGameSeconds(frames > 0 ? origin + frames : 0).toFixed(2);
   const { hitFrames, effectFrames, hitOffsets = [0] } = row.delays;
   // 分かれたヒット編: 等分した複数のヒットに分かれるときは、各ヒットの時刻を並べる
   const hits =

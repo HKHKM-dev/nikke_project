@@ -160,12 +160,24 @@ export function videoFrameOf(schedule: BurstSchedule | null, frame: number): num
 }
 
 /**
- * 発動の動画のフレームを、録画で読む「発動」（右のバースト欄の六角形の替わり目）として数える。替わり目は I・II の発動の止まりの後
- * なので、その発動自身の止まりを含める（III は入りの止まりの前のまま）。替わり目と本当の発動の約 6f の差は入れない
- * （plan/design-activation-stall-video.md 2 節・3.5 節）
+ * I・II の本当の発動（モデルの発動のフレーム）から、右のバースト欄の六角形の替わり目までのゲーム内のフレーム数（発動自身の止まり
+ * ACTIVATION_STOP_VIDEO_FRAMES を除く）。満タン → 替わり目 29f（C-0220）− 満タン → 本当の発動 23f（C-0285）− 止まり 1f（C-0289）。
+ * I・II の遅れの定数（C-0219・C-0220・C-0230・C-0479）は替わり目から数えた値なので、ここを起点に足す（V-0382。plan/design-burst-hit-origin.md）
+ */
+export const HEXAGON_AFTER_ACTIVATION_FRAMES = 5;
+
+/** 発動の六角形の替わり目のモデルのフレーム（I・II は本当の発動の HEXAGON_AFTER_ACTIVATION_FRAMES 後。III は発動のフレーム） */
+export function hexagonFrameOf(activation: Pick<BurstActivation, 'frame' | 'startsFullBurst'>): number {
+  return activation.frame + (activation.startsFullBurst ? 0 : HEXAGON_AFTER_ACTIVATION_FRAMES);
+}
+
+/**
+ * 発動の動画のフレームを、録画で読む「発動」（右のバースト欄の六角形の替わり目）として数える。I・II の替わり目は本当の発動の
+ * HEXAGON_AFTER_ACTIVATION_FRAMES 後で、その間の発動自身の止まりを videoFrameOf が含める（III は入りの止まりの前のまま）
+ * （plan/design-activation-stall-video.md 2 節・plan/design-burst-hit-origin.md）
  */
 export function activationVideoFrameOf(schedule: BurstSchedule | null, activation: BurstActivation): number {
-  return videoFrameOf(schedule, activation.frame) + (activation.startsFullBurst ? 0 : ACTIVATION_STOP_VIDEO_FRAMES);
+  return videoFrameOf(schedule, hexagonFrameOf(activation));
 }
 
 /** frame がフルバースト区間に入っているか */
