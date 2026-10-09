@@ -5,7 +5,7 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 0・保留 0・完了 335・打ち切り 22（計 357）
+件数: 調査中 0・保留 0・完了 336・打ち切り 22（計 358）
 
 ## 開いている検証
 
@@ -3743,6 +3743,7 @@
   - 録画: 192
   - 観測値: 192-11、192-12、192-13、192-14、192-15
   - 結論: C-0510
+  - 派生した検証: V-0393
   - 予測（2026-10-10、commit 8a564a5）との比べ:
     - effect-first-1（burstEffectFirstShot）: 実測なし。H0 0
     - effect-first-2（burstEffectFirstShot）: 実測なし。H0 0
@@ -3755,3 +3756,16 @@
     - window-end-4（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
     - window-end-5（buffWindowEndFromFullBurstEnd）: 実測 -2（192-13）。H0 0（+2、**許容外**）
     - 許容内の指標: H0 0/3。合う仮説は無い
+- **[V-0393](../records/verifications/V-0393-yukiko-burst-effect-window.md)** 雪子の 1more の攻撃力▲も、フルバーストのタイマーの 00.00 で切れ、補正はその 2f 後まで乗るか（録画 258 の読み直し）
+  - 問い: 雪子（III）のバーストの 1more の攻撃力▲（風圧・バースト使用時・10 秒）は、ルドミラ：WO（C-0510）と同じく、画面中央上のフルバーストのタイマーが 00.00 になるフレームで切れ、フルバースト補正はその 2f 後まで乗るか
+  - 話題: スキル・キャラ固有・日付: 2026-10-10・状態: 完了・Stage: backlog 2-4（plan/burst-effect-delay-candidates.md の P3。III の自分への効果）
+  - 録画: 258
+  - 観測値: 258-14、258-15、258-16、258-17、258-18
+  - 結論: C-0511
+  - 派生元: V-0392
+  - 予測（2026-10-10、commit d7ec959）との比べ:
+    - window-end-1（buffWindowEndFromFullBurstEnd）: 実測 -4.5（258-14）。H0 0（+4.5、**許容外**）
+    - window-end-2（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
+    - window-end-3（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
+    - window-end-4（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
+    - 許容内の指標: H0 0/1。合う仮説は無い

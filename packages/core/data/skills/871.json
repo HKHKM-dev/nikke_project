@@ -164,7 +164,8 @@
           "durationRef": 3,
           "enemyElement": "Wind",
           "claims": [
-            "C-0352"
+            "C-0352",
+            "C-0511"
           ]
         }
       ]
