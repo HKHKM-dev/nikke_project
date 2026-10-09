@@ -1,20 +1,24 @@
 // 画面右上の残り時間（MM:SS）の秒の 1 の位が変わったフレームを拾い、残り時間 1 秒あたりの動画のフレーム数を出す
 // （V-0002・V-0003）。数字は読まず、2 値にした画像が変わったフレームだけを見る。秒の値は、離れた 2 フレームの
 // 表示を still.ts などで目で読んで決める。
-//   node tools/captures/timer.ts <動画...> [--mode summary|changes|steps|ticks] [--crop 1852,26,14,18] [--threshold 90]
-//                                [--start N] [--at f1,f2,...]
+//   node tools/captures/timer.ts <動画...> [--mode summary|changes|steps|stalls|ticks] [--crop 1852,26,14,18]
+//                                [--threshold 90] [--start N] [--at f1,f2,...] [--window 35,5]
 //
 // mode:
 //   summary  変わり目の間隔のうち 56〜62f の平均（ふだんの比）と、62〜150f の間隔（長い間隔）の数と長くなった分の合計。
 //            117〜123f は 2 秒分の拾いそこねとして 2 で割る
 //   changes  変わり目のフレームと、前の変わり目からの間隔
-//   steps    残り時間の止まりの段（変わり目 − 58.8235 × 経過秒 の下の縁が 0.8f 以上上がった所。V-0168）
+//   steps    残り時間の止まりの段（変わり目 − 58.8235 × 経過秒 の下の縁が 0.8f 以上上がった所。V-0168）。鋸歯の位相で
+//            1f の止まりを取りこぼす（V-0286）ので、止まりの大きさは stalls で読む
+//   stalls   止まりの区切り（変わり目ごとの (o − 1, o] の共通部分が空になった所。V-0379「読み方」2）と、その大きさ
+//            （前後の共通部分の差の両端と真ん中。負は読み違い）。--at を書くと、各フレームの --window（前,後。既定 35,5）
+//            に掛かる区切りの大きさの和（V-0379 の発動ごとの止まり）も出す
 //   ticks    --at のフレームを、戦闘開始からのゲーム内のティック（止まりを除く）に直す（V-0302）。隣どうしの差も出す。
 //            その秒の中に止まりがある（直前と直後の 3 つの変わり目で下の縁が違う）フレームには * を付ける
 //   --start  戦闘開始（02:59 が出たフレーム）。省略すると、最初の 250f 以上の間隔の次の変わり目（C-0078）
 import { parseArgs } from 'node:util';
 import { cropFilter, parseCrop, rawFrames } from './ffmpeg.ts';
-import { gameTicksAt, timerOffsets, timerSteps } from './timer-ticks.ts';
+import { gameTicksAt, stallsAround, timerOffsets, timerStalls, timerSteps } from './timer-ticks.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -24,11 +28,12 @@ const { values, positionals } = parseArgs({
     threshold: { type: 'string', default: '90' },
     start: { type: 'string' },
     at: { type: 'string' },
+    window: { type: 'string', default: '35,5' },
   },
 });
 if (positionals.length === 0) {
   console.error(
-    'usage: node tools/captures/timer.ts <動画...> [--mode summary|changes|steps|ticks] [--crop x,y,w,h] [--threshold 90] [--start N] [--at f1,f2,...]',
+    'usage: node tools/captures/timer.ts <動画...> [--mode summary|changes|steps|stalls|ticks] [--crop x,y,w,h] [--threshold 90] [--start N] [--at f1,f2,...] [--window 35,5]',
   );
   process.exit(1);
 }
@@ -99,17 +104,28 @@ for (const video of positionals) {
   const name = video.split(/[\\/]/).pop();
   if (values.mode === 'changes') {
     console.log(`${name}\n  ${frames.map((f, i) => (i === 0 ? `${f}` : `${f}(+${f - frames[i - 1]!})`)).join(' ')}`);
-  } else if (values.mode === 'steps' || values.mode === 'ticks') {
+  } else if (values.mode === 'steps' || values.mode === 'stalls' || values.mode === 'ticks') {
     const start = values.start !== undefined ? Number(values.start) : battleStart(frames);
     const offsets = timerOffsets(frames, start);
+    const at = (values.at ?? '')
+      .split(',')
+      .filter((x) => x !== '')
+      .map(Number);
     if (values.mode === 'steps') {
       const steps = timerSteps(offsets);
       console.log(`${name}（戦闘開始 f${start}）\n  ${steps.map((st) => `${st.c}(+${st.size})`).join(' ')}`);
+    } else if (values.mode === 'stalls') {
+      const stalls = timerStalls(offsets);
+      const [before, after] = values.window.split(',').map(Number) as [number, number];
+      const fmt = (x: number) => x.toFixed(2);
+      const rows = stalls.map((s) => `${s.before}-${s.at}: ${fmt(s.size)}（${fmt(s.low)}〜${fmt(s.high)}）`);
+      const around = at.map((f) => {
+        const r = stallsAround(stalls, f, before, after);
+        return `f${f}: ${fmt(r.size)}（${r.stalls.map((s) => `${s.before}-${s.at}:${fmt(s.size)}`).join(' ')}）`;
+      });
+      const head = `${name}（戦闘開始 f${start}・変わり目 ${offsets.length}・区切り ${stalls.length}）`;
+      console.log([head, ...rows, ...around].join('\n  '));
     } else {
-      const at = (values.at ?? '')
-        .split(',')
-        .filter((x) => x !== '')
-        .map(Number);
       const rows = at.map((f, i) => {
         const t = gameTicksAt(offsets, start, f);
         const prev = i > 0 ? gameTicksAt(offsets, start, at[i - 1]!).ticks : null;

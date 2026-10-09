@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { gameTicksAt, TICKS_PER_SECOND, timerOffsets, timerSteps } from './timer-ticks.ts';
+import { gameTicksAt, stallsAround, TICKS_PER_SECOND, timerOffsets, timerStalls, timerSteps } from './timer-ticks.ts';
 
 /** 戦闘開始 start から、stalls（[経過秒, 止まりのフレーム数]）の止まりを入れた秒の変わり目（整数フレーム。最初に達したフレーム） */
 function changes(start: number, seconds: number, stalls: [number, number][] = []): number[] {
@@ -46,6 +46,40 @@ describe('gameTicksAt と timerSteps', () => {
     // a と b のあいだに 22f の止まり。ゲーム内のティックの差は動画の差 − 22（読みの幅 ± 1）
     const d = gameTicksAt(offs, start, b).ticks - gameTicksAt(offs, start, a).ticks;
     expect(Math.abs(d - (b - a - 22))).toBeLessThanOrEqual(1);
+  });
+
+  it('splits stalls by the intersection of the (o − 1, o] intervals, including 1f stalls (V-0379, backlog 5-3)', () => {
+    const start = 800;
+    const stalled: [number, number][] = [
+      [15, 1],
+      [40, 2],
+      [70, 22],
+      [100, 1],
+    ];
+    const c = changes(start, 130, stalled);
+    const stalls = timerStalls(timerOffsets(c, start));
+    expect(stalls).toHaveLength(stalled.length);
+    stalled.forEach(([k, n], i) => {
+      const s = stalls[i]!;
+      // 大きさの幅は止まりのフレーム数を含み、真ん中は ± 0.5 に収まる
+      expect(s.low).toBeLessThanOrEqual(n);
+      expect(s.high).toBeGreaterThanOrEqual(n);
+      expect(Math.abs(s.size - n)).toBeLessThanOrEqual(0.5);
+      // 区切りは止まりの入った秒の変わり目か、その後
+      expect(s.at).toBeGreaterThanOrEqual(c[k - 1]!);
+      expect(s.before).toBe(c[c.indexOf(s.at) - 1]);
+    });
+    // 発動の前後（35f 前〜5f 後）に掛かる区切りの和
+    expect(stallsAround(stalls, stalls[2]!.at - 10).size).toBeCloseTo(stalls[2]!.size, 6);
+    expect(stallsAround(stalls, c[55]!).size).toBe(0);
+  });
+
+  it('reports a misread change below the intersection as a negative stall', () => {
+    const start = 800;
+    const c = changes(start, 60);
+    const misread = [...c.slice(0, 30), c[30]! - 1, ...c.slice(31)];
+    const stalls = timerStalls(timerOffsets(misread, start));
+    expect(stalls.some((s) => s.size < 0)).toBe(true);
   });
 
   it('finds the step of a stall', () => {
