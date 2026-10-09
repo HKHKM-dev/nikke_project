@@ -344,5 +344,151 @@
       "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
       "note": "f2538（前の発から 77f。バーストの直前）と f9159（前の発から 29f）。値はコアの非会心の 0.946 倍と 0.513 倍。比べには使わない。戦闘履歴のパネルではウンファの被弾は 4 回だが、カモフラージュの値はどの回も 2 発で揃い、途中で解けた回は無い"
     }
+  },
+  {
+    "id": "232-14",
+    "recording": "232",
+    "source": "V-0390",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "compare",
+    "value": 23,
+    "unit": "f",
+    "description": "ウンファ：TU の 1 回目の II の発動（六角形の替わり目 f2681）から、使用武器変更の炸裂弾の着弾（f2704）までのフレーム数。的の着地点は近",
+    "method": {
+      "tool": "右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:70:1720:400・tile）で、六角形が II から III に替わり III のタイマーの 09.98 が出た最初のフレームを読んだ。炸裂弾の着弾は recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2。この検証で作った）",
+      "note": "替わり目の前は、II のタイマーが 09.52 のまま 1f 続き、替わり目の 3f 前にウンファの顔が CT（20）に替わる。4 回とも同じ並び（232-18）。III がいないので、入りの止まりは無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-15",
+    "recording": "232",
+    "source": "V-0390",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "compare",
+    "value": 28,
+    "unit": "f",
+    "description": "ウンファ：TU の 2 回目の II の発動（六角形の替わり目 f5164）から、使用武器変更の炸裂弾の着弾（f5192）までのフレーム数。的の着地点は遠",
+    "method": {
+      "tool": "右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:70:1720:400・tile）で、六角形が II から III に替わり III のタイマーの 09.98 が出た最初のフレームを読んだ。炸裂弾の着弾は recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2。この検証で作った）",
+      "note": "替わり目の前は、II のタイマーが 09.52 のまま 1f 続き、替わり目の 3f 前にウンファの顔が CT（20）に替わる。4 回とも同じ並び（232-18）。III がいないので、入りの止まりは無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-16",
+    "recording": "232",
+    "source": "V-0390",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "compare",
+    "value": 26,
+    "unit": "f",
+    "description": "ウンファ：TU の 3 回目の II の発動（六角形の替わり目 f7577）から、使用武器変更の炸裂弾の着弾（f7603）までのフレーム数。的の着地点は中遠",
+    "method": {
+      "tool": "右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:70:1720:400・tile）で、六角形が II から III に替わり III のタイマーの 09.98 が出た最初のフレームを読んだ。炸裂弾の着弾は recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2。この検証で作った）",
+      "note": "替わり目の前は、II のタイマーが 09.52 のまま 1f 続き、替わり目の 3f 前にウンファの顔が CT（20）に替わる。4 回とも同じ並び（232-18）。III がいないので、入りの止まりは無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-17",
+    "recording": "232",
+    "source": "V-0390",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "compare",
+    "value": 22,
+    "unit": "f",
+    "description": "ウンファ：TU の 4 回目の II の発動（六角形の替わり目 f10005）から、使用武器変更の炸裂弾の着弾（f10027）までのフレーム数。的の着地点は近",
+    "method": {
+      "tool": "右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:70:1720:400・tile）で、六角形が II から III に替わり III のタイマーの 09.98 が出た最初のフレームを読んだ。炸裂弾の着弾は recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2。この検証で作った）",
+      "note": "替わり目の前は、II のタイマーが 09.52 のまま 1f 続き、替わり目の 3f 前にウンファの顔が CT（20）に替わる。4 回とも同じ並び（232-18）。III がいないので、入りの止まりは無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "232-18",
+    "recording": "232",
+    "source": "V-0390",
+    "readAt": "2026-10-09",
+    "kind": "timing",
+    "use": "record",
+    "value": {
+      "activation": [2681, 5164, 7577, 10005],
+      "shot": [2704, 5192, 7603, 10027],
+      "delay": [23, 28, 26, 22],
+      "landing": ["near", "far", "midFar", "near"],
+      "prevShot": [-143, -58, -58, -58],
+      "faceToCt": [-3, -3, -3, -3]
+    },
+    "unit": "f",
+    "description": "ウンファ：TU の 1〜4 回目の II の発動（六角形の替わり目。activation）・炸裂弾の着弾（shot）・その差（delay）・的の着地点の帯（landing）・発動の前のウンファの最後の通常攻撃の発（prevShot。発動から数えた）・顔が CT に替わったフレーム（faceToCt。発動から数えた）",
+    "method": {
+      "tool": "右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop=200:70:1720:400・tile）で、六角形が II から III に替わり III のタイマーの 09.98 が出た最初のフレームを読んだ。炸裂弾の着弾は recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2。この検証で作った）",
+      "note": "着地点の帯は、ジャンプ（増分の空き。ジャンプの明けは f2700 前後・4860・7191・9337・11290）と、ウンファの通常攻撃の距離ボーナスの有無（f4860〜6954 と f11290〜 が距離ボーナス付き = 遠）から、3 分モードの順（中近 → 近 → 遠 → 中遠 → 近 → 遠。data/enemies.json の range-3min-jump）に当てた。1 回目は 1 回目のジャンプの明けの直後。2〜4 回目は直前の通常攻撃の位相が同じ（-58f）なのに遅れが 28・26・22f と違い、チャージの持ち越しでは説明できない"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    }
   }
 ]
