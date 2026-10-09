@@ -300,7 +300,7 @@ export function triggerFires(
 /**
  * ニヒリスター編: 時間の周期のトリガーの発火フレーム。戦闘開始から k × ceil(N ÷ 0.017) フレーム（k = 1, 2, …）で、
  * 戦闘の終わり（frames）より前だけ（plan/design-nihilister.md 8.1 節。C-0091）。発動のたびに N 秒に達した最初のフレームを数え直し、
- * 端数を持ち越さない（C-0432。plan/design-timer-ceil.md）
+ * 端数を持ち越さない（C-0502。plan/design-timer-ceil.md）
  */
 export function timerFrames(everySeconds: number, frames: number): number[] {
   const fires: number[] = [];
