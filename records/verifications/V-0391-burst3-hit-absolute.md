@@ -61,7 +61,11 @@
 
 <!-- records:predictions:start -->
 
-（予測との比べの表は npm run records:check が書き込む）
+予測は 2026-10-10（commit 8a564a5）に出した。
+
+| 指標                                     | 実測              | 予測 H0                 |
+| ---------------------------------------- | ----------------- | ----------------------- |
+| raven-full-to-hit（gaugeFullToBurstHit） | [152]（`225-10`） | [148]（-4、**許容外**） |
 
 <!-- records:predictions:end -->
 

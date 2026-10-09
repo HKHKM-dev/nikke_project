@@ -502,5 +502,58 @@
       "slot": "all",
       "source": "burstChain"
     }
+  },
+  {
+    "id": "258-20",
+    "recording": "258",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "compare",
+    "value": [89],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ 雪子（III・操作）・風圧の的で、1 回目のフルバーストの直前の満タン（BURST バーが消えた発。f1484）から、雪子のバーストの分配ダメージのヒット（f1573）までの動画のフレーム数。実機とモデルの両方でゲージが律速（満タン → 00.00 が 87〜90f）の回だけ",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "満タンのフレームに HUD の増分（208,626）。この回は満タン → 00.00 が 90f で、ほかの録画（87〜88f）より 2〜3f 長い。バーの段のタイマーの読みが消えるフレーム（I の替わり目の頃）も満タンの 30f 後・00.00 の 57f 前で、ほかの録画（29f・55〜56f）より遅い。区間の重複フレームは 5 つ（f1508・1510・1567・1569・1572）で、ほかの録画と同じくらい。2〜5 回目は I の段が長い（CT が律速）ので比べない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToBurstHit",
+      "args": {
+        "slot": 3,
+        "n": "0"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "258-21",
+    "recording": "258",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "record",
+    "value": [90],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ 雪子（III・操作）・風圧の的で、ゲージが律速の回の満タン（BURST バーが消えた発。f1484）から、フルバーストのタイマーが 00.00 になった最初のフレーム（f1574。既存の観測値の起点）までの動画のフレーム数",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "モデルの III の発動（フルバーストの入り）は満タンから 83f（23 + 1 + 29 + 1 + 29）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   }
 ]

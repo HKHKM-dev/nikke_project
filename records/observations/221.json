@@ -474,5 +474,58 @@
       "slot": "all",
       "source": "burstChain"
     }
+  },
+  {
+    "id": "221-19",
+    "recording": "221",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "compare",
+    "value": [199],
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ ラピ（III・操作）で、1 回目のフルバーストの直前の満タン（BURST バーが消えた発。f1302）から、ラピのバーストの倍率ダメージの 1 ヒット目（f1501）までの動画のフレーム数。実機とモデルの両方でゲージが律速（満タン → 00.00 が 87〜90f）の回だけ",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "満タンのフレームに HUD のココアの増分（16,846）。2〜4 回目もゲージが律速（満タン f3787・6330・8838 → 00.00 が 87f、→ ヒット 199f）だが、2・3 回目の満タンの直前は `221-15`（V-0318）で読まれていた（後付け）ので比べず、4 回目はモデルの I が CT 律速なので比べない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToBurstHit",
+      "args": {
+        "slot": 3,
+        "n": "0"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "221-20",
+    "recording": "221",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "record",
+    "value": [88, 87, 87, 87],
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ ラピ（III・操作）で、ゲージが律速の回の満タン（BURST バーが消えた発。f1302・3787・6330・8838）から、フルバーストのタイマーが 00.00 になった最初のフレーム（f1390・3874・6417・8925。既存の観測値の起点）までの動画のフレーム数",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "モデルの III の発動（フルバーストの入り）は満タンから 83f（23 + 1 + 29 + 1 + 29）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   }
 ]

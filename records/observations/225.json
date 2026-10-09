@@ -282,5 +282,77 @@
       "slot": "all",
       "source": "burstChain"
     }
+  },
+  {
+    "id": "225-10",
+    "recording": "225",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "compare",
+    "value": [152],
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ レイヴン（III・操作）で、1 回目のフルバーストの直前の満タン（BURST バーが消えた発。f1284）から、レイヴンのバーストの倍率ダメージのヒット（f1436）までの動画のフレーム数。実機とモデルの両方でゲージが律速（満タン → 00.00 が 87〜90f）の回だけ",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "満タンのフレームに HUD のココアの増分（246,037）。2〜5 回目は満タンが 00.00 の 170f 以上前で、I の段が長い（実機の CT が律速）ので比べない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToBurstHit",
+      "args": {
+        "slot": 3,
+        "n": "0"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "225-11",
+    "recording": "225",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "record",
+    "value": [87],
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ レイヴン（III・操作）で、ゲージが律速の回の満タン（BURST バーが消えた発。f1284）から、フルバーストのタイマーが 00.00 になった最初のフレーム（f1371。既存の観測値の起点）までの動画のフレーム数",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "モデルの III の発動（フルバーストの入り）は満タンから 83f（23 + 1 + 29 + 1 + 29）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "225-12",
+    "recording": "225",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "record",
+    "value": 3,
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ レイヴン（III・操作）の 1 回目のフルバーストで、右のバースト欄の III のキャラの顔が CT の秒（「40」）に替わったフレーム（f1368）から、フルバーストのタイマーが 00.00 になった最初のフレーム（f1371）までの動画のフレーム数",
+    "method": {
+      "tool": "ffmpeg（右のバースト欄 1740,420 から 180×150 を切り出し、1 フレームずつ並べた一覧）",
+      "note": "III の段のタイマーは 00.00 の 1f 前（f1370）の 09.52 まで 1 フレームごとに減り続ける（ゲーム内の時間は 00.00 の直前まで止まっていない）。六角形は白く光った後、「40」と同じフレームか 1f 前に赤い III に替わる"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   }
 ]
