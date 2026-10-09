@@ -139,10 +139,33 @@ export function stageEnterFrames(schedule: BurstSchedule, step: BurstStepKey): n
  */
 export const FULL_BURST_ENTRY_STOP_VIDEO_FRAMES = 22;
 
-/** モデルのフレーム（ゲーム内の時間）→ 録画の動画のフレーム。frame より前のフルバーストの入り（III の発動）ごとに止まりの分を足す */
+/**
+ * バーストの I・II の発動（フルバーストの入りでないもの）のたびに、ゲーム内の時間がまるごと止まる長さ（動画のフレーム）。
+ * 止まるのは本当の発動（モデルの発動のフレーム）の 1〜3f 後の 1 ティックで、次の段の六角形の替わり目（本当の発動の約 6f 後）より前
+ * （C-0289・C-0261・C-0258。V-0195・V-0379）。オートバーストでも 2f の回があり、手で撃つと多くが 2f だが（C-0500）、モデルは 1f 一律。
+ * 入りの止まりと同じく、録画の動画のフレームと比べるときだけ videoFrameOf で足す（plan/design-activation-stall-video.md）
+ */
+export const ACTIVATION_STOP_VIDEO_FRAMES = 1;
+
+/**
+ * モデルのフレーム（ゲーム内の時間）→ 録画の動画のフレーム。frame より前のフルバーストの入り（III の発動）ごとに入りの止まりを、
+ * I・II の発動ごとに発動の止まりを足す
+ */
 export function videoFrameOf(schedule: BurstSchedule | null, frame: number): number {
-  const entries = schedule?.activations.filter((a) => a.startsFullBurst && a.frame < frame).length ?? 0;
-  return frame + entries * FULL_BURST_ENTRY_STOP_VIDEO_FRAMES;
+  const before = schedule?.activations.filter((a) => a.frame < frame) ?? [];
+  const entries = before.filter((a) => a.startsFullBurst).length;
+  return (
+    frame + entries * FULL_BURST_ENTRY_STOP_VIDEO_FRAMES + (before.length - entries) * ACTIVATION_STOP_VIDEO_FRAMES
+  );
+}
+
+/**
+ * 発動の動画のフレームを、録画で読む「発動」（右のバースト欄の六角形の替わり目）として数える。替わり目は I・II の発動の止まりの後
+ * なので、その発動自身の止まりを含める（III は入りの止まりの前のまま）。替わり目と本当の発動の約 6f の差は入れない
+ * （plan/design-activation-stall-video.md 2 節・3.5 節）
+ */
+export function activationVideoFrameOf(schedule: BurstSchedule | null, activation: BurstActivation): number {
+  return videoFrameOf(schedule, activation.frame) + (activation.startsFullBurst ? 0 : ACTIVATION_STOP_VIDEO_FRAMES);
 }
 
 /** frame がフルバースト区間に入っているか */
