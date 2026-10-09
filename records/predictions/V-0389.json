@@ -1,0 +1,100 @@
+{
+  "verification": "V-0389",
+  "note": "新しい録画（R2。plan/burst-effect-delay-candidates.md 2 節）。録画 302 と同じ編成: レイヴン（III・AI）+ I-DOLL・サン（III・AI）+ クラウン（II・操作・撃たない）+ ココア（I・AI）・灼熱の的・3 分モード・スペック固定 ON・オートバースト ON。比べるのは、クラウンの II の発動（六角形の替わり目）から、バースト使用時の効果（味方全体の攻撃ダメージ▲）の発火までのフレーム数。付き始めは止まりより前なので、替わり目からの動画のフレームの差と比べる。発動より前に付く仮説はモデルで書けないので、このファイルの範囲外（検証記録に手で書く）",
+  "team": [
+    {
+      "rid": 851,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": false
+    },
+    {
+      "rid": 330,
+      "controlled": true
+    },
+    {
+      "rid": 311,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。クラウンは遅れの表（MEASURED_BURST_DELAYS）に行が無く、バースト使用時の効果は II の発動と同じフレームに付く（遅れ 0）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "effect-delay-1",
+      "model": "sim",
+      "metric": "burstEffectDelay",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "クラウンの 1 回目の II の発動から、バースト使用時の効果（味方全体の攻撃ダメージ▲）の発火までのフレーム数。録画では、発動（バースト欄の六角形の替わり目）の前後のサン・ココアの 1 発の▲の有無で幅を読む（観測値の spread）"
+    },
+    {
+      "id": "effect-delay-2",
+      "model": "sim",
+      "metric": "burstEffectDelay",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "クラウンの 2 回目の II の発動から、バースト使用時の効果（味方全体の攻撃ダメージ▲）の発火までのフレーム数。録画では、発動（バースト欄の六角形の替わり目）の前後のサン・ココアの 1 発の▲の有無で幅を読む（観測値の spread）"
+    },
+    {
+      "id": "effect-delay-3",
+      "model": "sim",
+      "metric": "burstEffectDelay",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "クラウンの 3 回目の II の発動から、バースト使用時の効果（味方全体の攻撃ダメージ▲）の発火までのフレーム数。録画では、発動（バースト欄の六角形の替わり目）の前後のサン・ココアの 1 発の▲の有無で幅を読む（観測値の spread）"
+    },
+    {
+      "id": "effect-delay-4",
+      "model": "sim",
+      "metric": "burstEffectDelay",
+      "args": {
+        "slot": 3,
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "クラウンの 4 回目の II の発動から、バースト使用時の効果（味方全体の攻撃ダメージ▲）の発火までのフレーム数。録画では、発動（バースト欄の六角形の替わり目）の前後のサン・ココアの 1 発の▲の有無で幅を読む（観測値の spread）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-09",
+    "commit": "b3ecbae1ac41289b8ba581da9c193f3df0e0ab6e",
+    "values": {
+      "H0": {
+        "effect-delay-1": 0,
+        "effect-delay-2": 0,
+        "effect-delay-3": 0,
+        "effect-delay-4": 0
+      }
+    },
+    "seen": {}
+  }
+}
