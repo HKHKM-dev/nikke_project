@@ -200,15 +200,17 @@ export function resolveDamageGauges(
 }
 
 /**
- * フラワー編: 周期でゲージだけを溜める効果（burstGaugeHit）の、周期の秒の列（効果ごとに 1 つ）。unsupported なら空。
- * 1 回の量は射手の targetBurstEnergyPerShot（frame/firstPass.ts。plan/design-flower-s2-gauge.md 2 節）
+ * フラワー編: 周期でゲージだけを溜める効果（burstGaugeHit）の、周期の秒と発火からの遅れ（delayFrames。無ければ 0）の列（効果ごとに 1 つ）。
+ * unsupported なら空。1 回の量は射手の targetBurstEnergyPerShot（frame/firstPass.ts。plan/design-flower-s2-gauge.md 2 節）
  */
-export function resolveTimerGauges(def: SkillDefinition): number[] {
-  const out: number[] = [];
+export function resolveTimerGauges(def: SkillDefinition): { everySeconds: number; delayFrames: number }[] {
+  const out: { everySeconds: number; delayFrames: number }[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
     for (const effect of entry.effects) {
-      if (effect.kind === 'burstGaugeHit' && isTimerTrigger(effect.trigger)) out.push(effect.trigger.everySeconds);
+      if (effect.kind === 'burstGaugeHit' && isTimerTrigger(effect.trigger)) {
+        out.push({ everySeconds: effect.trigger.everySeconds, delayFrames: effect.delayFrames ?? 0 });
+      }
     }
   }
   return out;

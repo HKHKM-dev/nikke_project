@@ -54,7 +54,7 @@ describe('I-DOLL・フラワー（304）', () => {
   it('models only the S2 gauge on S1 and S2', () => {
     expect(def.skills.skill1).toMatchObject({ support: 'noEffect', effects: [] });
     expect(def.skills.skill2).toMatchObject({ support: 'supported', effects: [GAUGE] });
-    expect(resolveTimerGauges(def)).toEqual([15]);
+    expect(resolveTimerGauges(def)).toEqual([{ everySeconds: 15, delayFrames: 0 }]);
   });
 
   it('resolves the burst to one skill-damage hit of the final ATK', () => {
@@ -89,6 +89,19 @@ describe('burstGaugeHit の検証', () => {
     expect(() => parseSkillDefinition(entry({ ...GAUGE, ref: 1 }))).toThrow(/ref: unknown field/);
   });
 
+  // 周期のスキルのヒットのゲージ（plan/design-timer-ceil.md 7 節）: delayFrames は時間の周期のトリガーだけ
+  it('takes a positive integer delayFrames only with a timer trigger', () => {
+    const delayed = parseSkillDefinition(entry({ ...GAUGE, delayFrames: 101 }));
+    expect(delayed.skills.skill2.effects[0]).toMatchObject({ kind: 'burstGaugeHit', delayFrames: 101 });
+    expect(resolveTimerGauges(delayed)).toEqual([{ everySeconds: 15, delayFrames: 101 }]);
+    expect(() =>
+      parseSkillDefinition(entry({ ...GAUGE, trigger: { count: 'normalShot', every: 10 }, delayFrames: 6 })),
+    ).toThrow(/delayFrames needs a timer trigger/);
+    for (const d of [0, -1, 1.5, '6']) {
+      expect(() => parseSkillDefinition(entry({ ...GAUGE, delayFrames: d }))).toThrow(/delayFrames/);
+    }
+  });
+
   it('is ignored when the slot is unsupported', () => {
     const none = parseSkillDefinition(
       withSkill2({ effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] }),
@@ -112,6 +125,15 @@ describe('S2 のゲージ（1 パス目）', () => {
     expect(timerFrames(15, withGauge.frames)[0]!).toBeLessThan(shotsOf(withGauge)[13]!);
     expect(indexOfFull(without)).toBe(15);
     expect(indexOfFull(withGauge)).toBe(14);
+  });
+
+  it('adds the gauge delayFrames after each fire, at the hit frame (C-0453)', () => {
+    // 15 発目の後に届くまで遅らせると、1 回目の満タンは S2 の無いときと同じ 15 発目になる（遅れなしは 14 発目）
+    const fire = timerFrames(15, withGauge.frames)[0]!;
+    const delayFrames = shotsOf(withGauge)[14]! - fire + 1;
+    const delayed = planTeamRun(solo(parseSkillDefinition(withSkill2({ effects: [{ ...GAUGE, delayFrames }] }))));
+    expect(indexOfFull(delayed)).toBe(15);
+    expect(delayed.schedule!.gaugeFullFrames[0]).toBe(without.schedule!.gaugeFullFrames[0]);
   });
 
   it('does not change the shots themselves', () => {

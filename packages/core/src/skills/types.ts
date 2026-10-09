@@ -898,6 +898,11 @@ export type AutoAttackEffect = {
 export type BurstGaugeHitEffect = {
   kind: 'burstGaugeHit';
   trigger: TimerTrigger | ShotCountTrigger;
+  /**
+   * 周期のスキルのヒットのゲージ（C-0404・C-0409）: 発火のフレームの delayFrames 後に足す（1 以上の整数。時間の周期のトリガーだけ）。
+   * 同じスキルの倍率ダメージの delayFrames（C-0453）と揃える（plan/design-timer-ceil.md 7 節）
+   */
+  delayFrames?: number;
   assumes?: LocalizedText;
 };
 
@@ -2172,7 +2177,7 @@ function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttac
 
 function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstGaugeHitEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+    if (!['kind', 'trigger', 'delayFrames', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
   }
   const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
   // モラン編（plan/design-moran.md 2 節）: 射撃の回数のトリガーも書ける。during・chance は parseTrigger が弾く
@@ -2186,6 +2191,15 @@ function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstG
     fail(`${path}.trigger.stacksRef`, 'stacksRef cannot be used in burstGaugeHit');
   }
   const effect: BurstGaugeHitEffect = { kind: 'burstGaugeHit', trigger };
+  if (v.delayFrames !== undefined) {
+    // 周期のスキルのヒットのゲージは、ヒットのフレームで溜まる（C-0404・C-0409 の HUD の読み。plan/design-timer-ceil.md 7 節）
+    if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames needs a timer trigger ({ everySeconds })');
+    const d = v.delayFrames;
+    if (typeof d !== 'number' || !Number.isInteger(d) || d < 1) {
+      fail(`${path}.delayFrames`, `expected a positive integer, got ${JSON.stringify(d)}`);
+    }
+    effect.delayFrames = d;
+  }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
