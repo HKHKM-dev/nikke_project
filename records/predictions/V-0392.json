@@ -1,0 +1,203 @@
+{
+  "verification": "V-0392",
+  "note": "録画 192（ラム（I）+ デルタ（II）+ ルドミラ：WO（III・操作））の読み直し。HUD の発の値を読む前に固定する。H0 はいまのモデル（攻撃力▲は III の発動のフレームで付き、フルバーストと同じ窓）。E1〜E3 は遅れの表で切り替わる仮説なので、検証記録の予測の節に手で書く",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 194,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル: バースト使用時の効果は III の発動のフレーム（遅れ 0）で付き、10 秒で切れる"
+    }
+  ],
+  "targets": [
+    {
+      "id": "effect-first-1",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ルドミラ：WO の 1 回目のバーストの後の最初の発から、攻撃力▲の付いた最初の発までのモデルのフレーム数（後付け。条件の予測の節）"
+    },
+    {
+      "id": "effect-first-2",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ルドミラ：WO の 2 回目のバーストの後の最初の発から、攻撃力▲の付いた最初の発までのモデルのフレーム数（後付け。条件の予測の節）"
+    },
+    {
+      "id": "effect-first-3",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ルドミラ：WO の 3 回目のバーストの後の最初の発から、攻撃力▲の付いた最初の発までのモデルのフレーム数（後付け。条件の予測の節）"
+    },
+    {
+      "id": "effect-first-4",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ルドミラ：WO の 4 回目のバーストの後の最初の発から、攻撃力▲の付いた最初の発までのモデルのフレーム数（後付け。条件の予測の節）"
+    },
+    {
+      "id": "effect-first-5",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "fromShot": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ルドミラ：WO の 5 回目のバーストの後の最初の発から、攻撃力▲の付いた最初の発までのモデルのフレーム数（後付け。条件の予測の節）"
+    },
+    {
+      "id": "window-end-1",
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバーストの中に始まった攻撃力▲の窓の終わり − フルバーストの窓の終わり（モデルのフレーム）"
+    },
+    {
+      "id": "window-end-2",
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のフルバーストの中に始まった攻撃力▲の窓の終わり − フルバーストの窓の終わり（モデルのフレーム）"
+    },
+    {
+      "id": "window-end-3",
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目のフルバーストの中に始まった攻撃力▲の窓の終わり − フルバーストの窓の終わり（モデルのフレーム）"
+    },
+    {
+      "id": "window-end-4",
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目のフルバーストの中に始まった攻撃力▲の窓の終わり − フルバーストの窓の終わり（モデルのフレーム）"
+    },
+    {
+      "id": "window-end-5",
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "n": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "5 回目のフルバーストの中に始まった攻撃力▲の窓の終わり − フルバーストの窓の終わり（モデルのフレーム）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-10",
+    "commit": "8a564a5a4383187a85420a013e502427ce667787",
+    "values": {
+      "H0": {
+        "effect-first-1": 0,
+        "effect-first-2": 0,
+        "effect-first-3": 0,
+        "effect-first-4": 0,
+        "effect-first-5": 0,
+        "window-end-1": 0,
+        "window-end-2": 0,
+        "window-end-3": 0,
+        "window-end-4": 0,
+        "window-end-5": 0
+      }
+    },
+    "seen": {
+      "192": ["192-01", "192-02", "192-03", "192-04", "192-05", "192-06", "192-07", "192-08", "192-09", "192-10"]
+    }
+  }
+}
