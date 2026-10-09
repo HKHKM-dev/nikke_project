@@ -919,6 +919,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
+  gaugeFullToBurstHit: { args: ['slot', 'n'], sim: gaugeFullToBurstHit },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
   burstEffectFirstShot: { args: ['slot', 'n'], sim: burstEffectFirstShot },
   burstEffectDelay: { args: ['slot', 'n'], sim: burstEffectDelay },
@@ -1079,6 +1080,26 @@ function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
   const count = Number(ctx.args.count);
   if (mine.length < count) throw new Error(`発動が ${mine.length} 回しかない`);
   return mine.slice(0, count).map((a) => videoFrameOf(schedule, hitFrameOf(a)) - activationVideoFrameOf(schedule, a));
+}
+
+/**
+ * backlog 2-30: 枠の n 回目（0 始まり）のバーストの発動の前の最後の満タン（BURST バーが消えた発）から、その発動のヒット（分かれたヒットは
+ * 1 ヒット目）までの動画のフレーム数の列。n はカンマ区切りの並び（"0,2,3"）も書ける。burstHitDelays と違い、起点に六角形の替わり目を
+ * 使わないので、遅れの定数を足す起点（本当の発動か替わり目か）の差が出る。ゲージが律速のチェーン（満タンから I まで 23f。C-0285）で比べる
+ */
+function gaugeFullToBurstHit(result: SimResult, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
+  return String(ctx.args.n)
+    .split(',')
+    .map((s) => {
+      const activation = mine[Number(s)];
+      if (activation === undefined) throw new Error(`${s} 回目の発動が無い`);
+      const full = schedule.gaugeFullFrames.filter((f) => f <= activation.frame).at(-1);
+      if (full === undefined) throw new Error(`${s} 回目の発動の前に満タンが無い`);
+      return videoFrameOf(schedule, hitFrameOf(activation)) - videoFrameOf(schedule, full);
+    });
 }
 
 /**
