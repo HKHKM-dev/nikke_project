@@ -40,14 +40,26 @@
           },
           "ref": 1,
           "damageType": "skill",
+          "delayFrames": 15,
           "assumes": {
-            "ja": "戦闘開始から 10 秒ごと（CT 10 秒は録画 081・084 から読んだ値。C-0401）。攻撃範囲内の敵は 1 体",
-            "en": "Every 10 s from the start of battle (the 10 s cooldown was read from recordings 081 and 084; C-0401). There is one enemy within attack range"
+            "ja": "戦闘開始から 10 秒ごと（CT 10 秒は録画 081・084 から読んだ値。C-0401）。攻撃範囲内の敵は 1 体。発動からヒットまで 15f（C-0453。帯からヒットまでの約 13f と、発動から帯までの約 2 ティック）",
+            "en": "Every 10 s from the start of battle (the 10 s cooldown was read from recordings 081 and 084; C-0401). There is one enemy within attack range. 15 f from activation to hit (C-0453: about 13 f from the banner to the hit plus about 2 ticks from activation to the banner)"
           },
           "claims": [
             "C-0102",
-            "C-0401"
+            "C-0401",
+            "C-0453"
           ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "S2 のヒットがバーストゲージを溜めるかは確かめていない（イサベル・エーテル・ラピの S2 は溜める。C-0404・C-0409）。モデルは溜めない",
+          "en": "Whether the S2 hit builds burst gauge has not been verified (the S2 hits of Isabel, Ether and Rapi do; C-0404, C-0409). The model does not add gauge",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstGaugeHit"
+          }
         }
       ]
     },

@@ -22,6 +22,13 @@ describe('damage の delayFrames の検証', () => {
     expect(def.skills.skill1.effects[0]).toMatchObject({ kind: 'damage', delayFrames: 24, enemyElement: 'Wind' });
   });
 
+  it('parses a delay on a timer damage (C-0453)', () => {
+    const def = parseSkillDefinition(
+      withSkill1([{ ...damage, trigger: { everySeconds: 20 }, damageType: 'skill', delayFrames: 101 }]),
+    );
+    expect(def.skills.skill1.effects[0]).toMatchObject({ trigger: { everySeconds: 20 }, delayFrames: 101 });
+  });
+
   it('leaves the delay out when it is not written', () => {
     const def = parseSkillDefinition(withSkill1([damage]));
     expect(def.skills.skill1.effects[0]).not.toHaveProperty('delayFrames');

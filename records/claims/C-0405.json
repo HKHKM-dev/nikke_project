@@ -5,9 +5,9 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`018-22`（録画 018 の探索。9 回。V-0275）・`019-18`〜`019-20`（予測を固定してから読んだ録画 019。回数 13 と平均の間隔 773.2f は 13 秒ごとの H1（13 回・772f）と許容内で合い、15 秒ごとの H2（11 回・889f）は外れた）。値はどの回も H1 のモデルの 1 ヒットと端数まで一致。最小構成の警告（デルタ・ノワール・ラピなど）は S2 の時刻と値に効かない（射撃・バーストに依らず、値は倍率ダメージの式で特定）。V-0274・V-0275。2026-10-08 の追記: 間隔の伸びは ceil(13 ÷ 0.017) = 765 ティック（C-0432）、1 回目の約 55f の遅れは発動からヒットまでの約 50f の遅れ（C-0453）で説明がつく",
-  "model": "実装済み（data/skills/291.json の skill2 の effects[0]・effects[1]。everySeconds: 13 の damage と burstGaugeHit。フルバースト中の防御力▼は未対応）",
+  "model": "実装済み（data/skills/291.json の skill2 の effects[0]・effects[1]。everySeconds: 13 の damage（delayFrames: 52。C-0453）と burstGaugeHit（ゲージは発動のフレーム）。フルバースト中の防御力▼は未対応）",
   "replaces": [],
-  "updated": "2026-10-08",
+  "updated": "2026-10-09",
   "subject": {
     "places": ["data/skills/291.json の skill2 の effects[0]", "data/skills/291.json の skill2 の effects[1]"]
   },

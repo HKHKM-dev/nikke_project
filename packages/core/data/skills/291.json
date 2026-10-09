@@ -22,13 +22,15 @@
           },
           "ref": 2,
           "damageType": "skill",
+          "delayFrames": 52,
           "assumes": {
-            "ja": "戦闘開始から約 13 秒ごと（CT 13 秒は録画 018・019 から読んだ値。C-0405）。最終防御力が最も高い敵 3 機を単体ボスで 1 体として 1 ヒット",
-            "en": "Every ~13 s from the start of combat (the 13 s cooldown read from recordings 018 and 019; C-0405). The 3 highest-DEF enemies hit once as a single boss"
+            "ja": "戦闘開始から約 13 秒ごと（CT 13 秒は録画 018・019 から読んだ値。C-0405）。最終防御力が最も高い敵 3 機を単体ボスで 1 体として 1 ヒット。発動からヒットまで 52f（C-0453。帯からヒットまでの約 50f と、発動から帯までの約 2 ティック）",
+            "en": "Every ~13 s from the start of combat (the 13 s cooldown read from recordings 018 and 019; C-0405). The 3 highest-DEF enemies hit once as a single boss. 52 f from activation to hit (C-0453: about 50 f from the banner to the hit plus about 2 ticks from activation to the banner)"
           },
           "claims": [
             "C-0405",
-            "C-0102"
+            "C-0102",
+            "C-0453"
           ]
         },
         {
@@ -37,8 +39,8 @@
             "everySeconds": 13
           },
           "assumes": {
-            "ja": "周期の 13 秒は録画から読んだ値。S2 のヒットも 1 回につき的の 1 ヒットぶん（フルチャージ倍率なし）のゲージを溜める（C-0409）",
-            "en": "The 13 s period is read from recordings. The S2 hit also builds gauge equal to one target hit (no full-charge multiplier) per activation (C-0409)"
+            "ja": "周期の 13 秒は録画から読んだ値。S2 のヒットも 1 回につき的の 1 ヒットぶん（フルチャージ倍率なし）のゲージを溜める（C-0409）。ゲージは発動のフレームに足す（ダメージのヒットは遅れて出るが、ゲージが発動とヒットのどちらで溜まるかは確かめていない。V-0313）",
+            "en": "The 13 s period is read from recordings. The S2 hit also builds gauge equal to one target hit (no full-charge multiplier) per activation (C-0409). The gauge is added at the activation frame (the damage hit lands later, but whether the gauge builds at activation or at the hit has not been verified; V-0313)"
           },
           "claims": [
             "C-0409",

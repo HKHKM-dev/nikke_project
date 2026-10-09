@@ -6,19 +6,19 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 58・効果 195（根拠あり 187）・notes 220（根拠あり 67）
+件数: キャラ 58・効果 195（根拠あり 187）・notes 221（根拠あり 67）
 
-notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補足 6
+notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補足 6
 
-スロット: supported 78・partial 15・unsupported 59・noEffect 34
+スロット: supported 77・partial 16・unsupported 59・noEffect 34
 
 ## 10 ラピ
 
 - **skill1**: noEffect
   - notes[0] 前提の外: 被弾 N 回で自分に攻撃力▲（維持型）は、被弾を扱わないので起きない（要件 5.2 節。射撃場の 3 分モードでは的が反撃するので発動する）: 根拠なし
 - **skill2**: supported
-  - effects[0] damage・20 秒ごと・skill: C-0403（仮説）、C-0102（確定）
-  - effects[1] burstGaugeHit・20 秒ごと: C-0409（仮説）、C-0403（仮説）
+  - effects[0] damage・20 秒ごと・skill: C-0403（確定）、C-0102（確定）、C-0453（確定）
+  - effects[1] burstGaugeHit・20 秒ごと: C-0409（仮説）、C-0403（確定）
   - notes[0] 計算に無関係: 挑発はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0227（確定）
@@ -327,7 +327,7 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
   - effects[1] timed・burstUse・critDamage: C-0160（確定）
   - effects[2] timed・burstUse・attack: C-0160（確定）
 - **skill2**: supported
-  - effects[0] damage・15 秒ごと・skill: C-0402（仮説）、C-0102（確定）
+  - effects[0] damage・15 秒ごと・skill: C-0402（仮説）、C-0102（確定）、C-0453（確定）
   - effects[1] burstGaugeHit・15 秒ごと: C-0404（仮説）、C-0402（仮説）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0160（確定）、C-0165（確定）
@@ -369,8 +369,9 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
 - **skill1**: noEffect
   - notes[0] 前提の外: フルチャージ攻撃時の貫通特化・貫通範囲の拡張は、敵 1 体ではダメージに関係しない: C-0088（確定）
   - notes[1] 前提の外: 2 機以上に同時に命中した時の追加ダメージは、敵 1 体では起きない: C-0088（確定）
-- **skill2**: supported
-  - effects[0] damage・10 秒ごと・skill: C-0102（確定）、C-0401（仮説）
+- **skill2**: partial
+  - effects[0] damage・10 秒ごと・skill: C-0102（確定）、C-0401（仮説）、C-0453（確定）
+  - notes[0] 未対応: S2 のヒットがバーストゲージを溜めるかは確かめていない（イサベル・エーテル・ラピの S2 は溜める。C-0404・C-0409）。モデルは溜めない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0089（確定）、C-0219（確定）
   - effects[1] dot・burstUse: C-0100（確定）、C-0101（確定）、C-0111（確定）、C-0112（確定）、C-0129（確定）、C-0219（確定）
@@ -451,7 +452,7 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
 - **skill1**: noEffect
   - notes[0] 計算に無関係: 残りの HP の数値が最も低い味方 1 機に受けるダメージ▼は、ダメージとゲージに関係しない: 根拠なし
 - **skill2**: partial
-  - effects[0] damage・13 秒ごと・skill: C-0405（確定）、C-0102（確定）
+  - effects[0] damage・13 秒ごと・skill: C-0405（確定）、C-0102（確定）、C-0453（確定）
   - effects[1] burstGaugeHit・13 秒ごと: C-0409（仮説）、C-0405（確定）
   - notes[0] 未対応: フルバーストタイム持続中に発動した時の、同じ敵への防御力▼は未対応（語彙と効きの確かめが要るため）: 根拠なし
 - **burst**: noEffect

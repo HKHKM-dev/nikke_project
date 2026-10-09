@@ -5,7 +5,7 @@
   "topic": "バーストゲージ",
   "grade": "推論",
   "basis": "`018-23`（エーテル。3 回 +1px・1 回 0）・`221-12`・`073-20`（ラピ。どちらも +1px）。探索（予測なし）で、量は px の刻みより細かく決められない。イサベル（`162-35` など。5 / 8）と合わせて、周期で発動する 3 体の S2 のどれでも同じ見え方。V-0279",
-  "model": "実装済み（data/skills/291.json・data/skills/10.json の skill2。everySeconds: 13 / 20 の burstGaugeHit。イサベルは C-0404 で実装済み）",
+  "model": "実装済み（data/skills/291.json・data/skills/10.json の skill2。everySeconds: 13 / 20 の burstGaugeHit。イサベルは C-0404 で実装済み）。ゲージは発動のフレームに足す（ダメージのヒットは発動の 52f・101f 後。C-0453。ゲージが発動とヒットのどちらで溜まるかは確かめていない。V-0313・backlog 4-22）",
   "replaces": [],
-  "updated": "2026-10-08"
+  "updated": "2026-10-09"
 }
