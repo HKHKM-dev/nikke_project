@@ -64,6 +64,8 @@
 
 ### 3.1 ペルソナ状態: 定義の `states`
 
+- 2026-10-09: 定義の `states` は、静的な状態の付与（`kind: 'state'`・`battleStart`・`durationUntil: battleEnd`・`self`）に置き換えた（[design-named-state.md](design-named-state.md) 5.2 節・7.1 節）。以下は当時の語彙として残す。
+
 ```json
 {
   "formatVersion": 1,
@@ -92,6 +94,8 @@
 - `excludeSelf` を `allies` に開くと、[design-target-vocab.md](design-target-vocab.md) 1.1 節の「自分を除く味方全体」の 6 体（ティアのバーストなど）にも使える形になる。ただしこの設計ではその 6 体は定義しない。
 
 ### 3.3 きっかけ: 名前の付いた効果と `{ "applied": 名前 }`
+
+- 2026-10-09: 効果の `name` は、状態の付与（`kind: 'state'`。追撃は `followUp`、バトンタッチは `batonPass`）に置き換えた。`{ "applied": id }` は目録の id を指す（[design-named-state.md](design-named-state.md) 5.3・5.4 節・7.1 節）。以下は当時の語彙として残す。
 
 ```json
 { "kind": "timed", "trigger": "burstUse", "enemyElement": "Wind", "target": "allies", "...": "...", "name": "followUp" }

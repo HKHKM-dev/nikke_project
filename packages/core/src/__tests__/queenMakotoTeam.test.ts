@@ -7,7 +7,7 @@ import type { EnemyInput } from '../damage.ts';
 import { elementMultiplier } from '../element.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
+import { MAX_SKILL_LEVELS, resolvePassives } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -50,11 +50,23 @@ const input = team([291, 20, 231, 101, QUEEN], 4, 'Wind');
 const queen = 4;
 
 describe('クイーン（真）の S1 の有利コードの攻撃ダメージ▲', () => {
-  it('is a passive self elementDamage on skill1 (C-0296)', () => {
+  // 名前の付いた状態の語彙編（plan/design-named-state.md 7.1 節）: ペルソナの静的な付与の中身（常時パッシブとして足す）
+  it('is the content of the static Persona grant on skill1, resolved as a passive self elementDamage (C-0296)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${QUEEN}.json`));
     expect(def.skills.skill1.effects).toContainEqual(
-      expect.objectContaining({ kind: 'passive', target: 'self', stat: 'elementDamage', claims: ['C-0296'] }),
+      expect.objectContaining({
+        kind: 'state',
+        state: 'persona',
+        trigger: 'battleStart',
+        target: 'self',
+        durationUntil: 'battleEnd',
+        contents: [expect.objectContaining({ stat: 'elementDamage', claims: ['C-0296'] })],
+      }),
     );
+    const passives = resolvePassives(def, character(QUEEN), MAX_SKILL_LEVELS);
+    expect(passives.filter((e) => e.stat === 'elementDamage')).toEqual([
+      expect.objectContaining({ target: 'self', scaling: 'ratio', value: expect.closeTo(0.1359, 10) }),
+    ]);
   });
 
   it('adds 13.59% to the 1.1 of the advantage for the whole battle, and nothing to the other slots', () => {

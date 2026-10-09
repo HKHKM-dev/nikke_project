@@ -5,7 +5,7 @@ import {
   SKILL_DAMAGE_TYPE_LABEL,
   SKILL_SLOT_LABEL,
   formatAppliedAmount,
-  formatTimedTrigger,
+  formatWindowTrigger,
   formatDamageCondition,
   formatTrigger,
 } from '../skillLabels.ts';
@@ -339,7 +339,7 @@ export function ResultPanel({ character, slot, attackLabel = '攻撃力（素）
                     ? '—'
                     : seg.timedEffects.map((e, j) => (
                         <small key={j} className="sub">
-                          {formatTimedTrigger(e.trigger)} {formatAppliedAmount(e)}
+                          {formatWindowTrigger(e)} {formatAppliedAmount(e)}
                           {j < seg.timedEffects.length - 1 ? ' / ' : ''}
                         </small>
                       ))}

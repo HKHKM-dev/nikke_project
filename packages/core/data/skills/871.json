@@ -2,9 +2,6 @@
   "formatVersion": 1,
   "resourceId": 871,
   "checkedAt": "2026-10-06",
-  "states": [
-    "persona"
-  ],
   "skills": {
     "skill1": {
       "effects": [
@@ -45,20 +42,19 @@
             "C-0358",
             "C-0428"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "ペルソナ - コノハナサクヤ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ",
-          "en": "Persona - Konohana Sakuya (battle start, continuous, cannot be removed) is the persona state in the definition's states",
-          "kind": "modeling",
-          "effect": {
-            "kind": "unknown"
-          },
+          "kind": "state",
+          "state": "persona",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationUntil": "battleEnd",
           "claims": [
             "C-0354"
           ]
-        },
+        }
+      ],
+      "notes": [
         {
           "ja": "ペルソナ - コノハナサクヤの 3 秒ごとの味方全体の回復（メディア）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
           "en": "The ally heal every 3 sec from Persona - Konohana Sakuya (Media) is not modeled (it changes allies' effects triggered by being healed)",
@@ -106,18 +102,22 @@
           ]
         },
         {
-          "kind": "timed",
+          "kind": "state",
+          "state": "followUp",
           "trigger": "burstUse",
           "enemyElement": "Wind",
           "target": "allies",
           "excludeSelf": "always",
           "targetState": "persona",
           "targetBurstStep": "Step3",
-          "stat": "attack",
-          "scaling": "casterAttack",
-          "ref": 8,
           "durationRef": 9,
-          "name": "followUp",
+          "contents": [
+            {
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 8
+            }
+          ],
           "claims": [
             "C-0355"
           ]

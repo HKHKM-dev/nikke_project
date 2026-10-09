@@ -60,10 +60,13 @@ describe('クルミの定義', () => {
   it('supports S1 (two hackings), S2 (additional damage in full burst, V-0181) and the burst (damage taken up)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${KURUMI}.json`));
     expect(def.skills.skill1.support).toBe('supported');
-    expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['dot', 'dot']);
+    expect(def.skills.skill1.effects).toMatchObject([
+      { kind: 'dot', state: 'hacked' },
+      { kind: 'dot', state: 'hacked' },
+    ]);
     expect(def.skills.skill2.support).toBe('supported');
     expect(def.skills.skill2.effects).toMatchObject([
-      { kind: 'damage', trigger: { count: 'normalHit' }, condition: { fullBurst: true, targetStatus: 'hacking' } },
+      { kind: 'damage', trigger: { count: 'normalHit' }, condition: { inFullBurst: true, enemyState: 'hacked' } },
     ]);
     expect(def.skills.burst.support).toBe('supported');
     expect(def.skills.burst.effects).toMatchObject([

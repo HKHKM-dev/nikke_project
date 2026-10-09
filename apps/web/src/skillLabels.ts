@@ -1,8 +1,7 @@
 // スキル関連の表示用ラベル（React 非依存）
-import { ELEMENT_LABEL, framesToGameSeconds, selfBuffedStatOf } from '@nikke/core';
+import { ELEMENT_LABEL, framesToGameSeconds, isStateContent, namedStateName, selfBuffedStatOf } from '@nikke/core';
 import type {
   BasicBurstStep,
-  EffectName,
   AppliedEffect,
   BuildEffect,
   BuildEffectSource,
@@ -11,12 +10,14 @@ import type {
   ResolvedInstantEffect,
   BuffStat,
   BuffTrigger,
-  DamageCondition,
+  EffectCondition,
+  NamedStateId,
   ResolvedTrigger,
   SkillDamageType,
   SkillSlot,
   SkillNoteKind,
   SkillSupport,
+  StateGrantEffect,
 } from '@nikke/core';
 import { formatNumber, formatPercent } from './format.ts';
 
@@ -52,8 +53,10 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   trueDamageConversion: '通常攻撃が防御力無視ダメージに変化',
 };
 
-/** ペルソナ編: 説明文の効果名 */
-export const EFFECT_NAME_LABEL: Record<EffectName, string> = { followUp: '追撃', batonTouch: 'バトンタッチ' };
+/** 名前の付いた状態の語彙編: 状態の画面の名前（目録の name。説明文の状態名） */
+export function stateLabel(id: NamedStateId): string {
+  return namedStateName(id).ja;
+}
 
 const BURST_STEP_ROMAN: Record<BasicBurstStep, string> = { Step1: 'I', Step2: 'II', Step3: 'III' };
 
@@ -74,7 +77,7 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
   // ニヒリスター編: 時間の周期のトリガー（CT ごとに発動するアクティブ型のスキル）
   if ('everySeconds' in trigger) return `戦闘開始から ${formatNumber(trigger.everySeconds)} 秒ごと`;
   // ペルソナ編: 「追撃が適用された時」
-  if ('applied' in trigger) return `${EFFECT_NAME_LABEL[trigger.applied]}が適用された時`;
+  if ('applied' in trigger) return `${stateLabel(trigger.applied)}が適用された時`;
   if ('every' in trigger) {
     const what = {
       normalShot: '通常攻撃',
@@ -102,18 +105,53 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
   return trigger.atLeast === 1 ? `${what}時` : `${what} ${trigger.atLeast} 回目以降`;
 }
 
-/** クルミ S2 編: damage の発火の条件。「（フルバースト中・対象が hacking 状態なら）」。無ければ空文字 */
-export function formatDamageCondition(condition: DamageCondition | undefined): string {
+/**
+ * クルミ S2 編: damage の発火の条件。「（フルバースト中・対象がハッキング状態なら）」。無ければ空文字。
+ * 名前の付いた状態の語彙編: timed と同じ条件の型（鍵はどれも満たすとき）
+ */
+export function formatDamageCondition(condition: EffectCondition | undefined): string {
   if (condition === undefined) return '';
   const parts: string[] = [];
-  if (condition.fullBurst === true) parts.push('フルバースト中');
-  if (condition.targetStatus !== undefined) parts.push(`対象が ${condition.targetStatus} 状態`);
+  if (condition.selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[condition.selfBuffed]}増加状態`);
+  if (condition.inFullBurst === true) parts.push('フルバースト中');
+  if (condition.enemyState !== undefined) parts.push(`対象が${stateLabel(condition.enemyState)}状態`);
   return `（${parts.join('・')}なら）`;
 }
 
 /** 「バースト使用時 →」 */
 export function formatTimedTrigger(trigger: ResolvedTrigger): string {
   return `${formatTrigger(trigger)} →`;
+}
+
+/** 窓の効果のきっかけ。「バースト使用時 →」。名前の付いた状態の語彙編: 状態の中身は「カモフラージュの間 →」（きっかけは付与のもの） */
+export function formatWindowTrigger(effect: AppliedTimedEffect): string {
+  return isStateContent(effect) ? `${stateLabel(effect.whileState)}の間 →` : formatTimedTrigger(effect.trigger);
+}
+
+/** 窓の効果の維持。「・10 秒」「・持続」。状態の中身は状態の窓の間なので空文字 */
+export function formatWindowDuration(effect: AppliedTimedEffect): string {
+  if (isStateContent(effect)) return '';
+  if (effect.durationShots !== undefined) return `・${effect.durationShots} 発`;
+  if (effect.durationUntil === 'ammoSpent') return '・撃ち切りまで';
+  if (effect.durationUntil === 'battleEnd') return '・持続';
+  return `・${formatNumber(framesToGameSeconds(effect.durationFrames), 0)} 秒`;
+}
+
+/**
+ * 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.7 節）: 定義の付与。「ペルソナ状態（戦闘の始めから終わりまで）。
+ * 中身: 有利コードの攻撃ダメージ」「追撃を付与。中身: 攻撃力」
+ */
+export function formatStateGrant(effect: StateGrantEffect): string {
+  const name = stateLabel(effect.state);
+  const head =
+    effect.trigger === 'battleStart' && effect.durationUntil === 'battleEnd' && effect.target === 'self'
+      ? `${name}状態（戦闘の始めから終わりまで）`
+      : `${name}を付与`;
+  const contents =
+    effect.contents === undefined
+      ? '中身なし（ほかの効果が、対象の絞り込み・条件・きっかけでこの状態を見る）'
+      : `中身: ${effect.contents.map((c) => BUFF_STAT_LABEL[c.stat]).join('・')}`;
+  return `${head}。${contents}`;
 }
 
 /** バーストスロットの倍率ダメージ（burstDamage）の種別 */
@@ -197,6 +235,8 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
 export function formatTimedExtras(effect: AppliedTimedEffect): string {
   const parts: string[] = [];
   if (effect.maxStacks !== undefined) parts.push(`最大 ${effect.maxStacks} スタック`);
+  // 名前の付いた状態の語彙編: 状態の中身の条件・維持は付与のもの（きっかけの欄に「〈名前〉の間」と出す）
+  if (isStateContent(effect)) return parts.length === 0 ? '' : `（${parts.join('・')}）`;
   const selfBuffed = selfBuffedStatOf(effect.condition);
   if (selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[selfBuffed]}増加状態なら`);
   else if (effect.condition !== undefined) parts.push('フルバーストタイムなら');
@@ -207,7 +247,6 @@ export function formatTimedExtras(effect: AppliedTimedEffect): string {
     );
   }
   if (effect.durationUntil === 'battleEnd') parts.push('戦闘の終わりまで');
-  if (effect.name !== undefined) parts.push(EFFECT_NAME_LABEL[effect.name]);
   return parts.length === 0 ? '' : `（${parts.join('・')}）`;
 }
 
@@ -244,9 +283,9 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
   const element = effect.targetElement ? `${ELEMENT_LABEL[effect.targetElement].ja}コードの` : '';
   // 対象の語彙編: 「同じ部隊の味方」「自分を除く」「基本チャージ時間が最も長い味方 N 機」
   const squad = effect.targetSquad === 'same' ? '同じ部隊の' : '';
-  // ペルソナ編: 「基本バースト段階 III のペルソナ状態の味方」
+  // ペルソナ編: 「基本バースト段階 III のペルソナ状態の味方」（状態の名前は目録の name）
   const step = effect.targetBurstStep ? `基本バースト段階 ${BURST_STEP_ROMAN[effect.targetBurstStep]} の` : '';
-  const state = effect.targetState === 'persona' ? 'ペルソナ状態の' : '';
+  const state = effect.targetState ? `${stateLabel(effect.targetState)}状態の` : '';
   const weapon = `${squad}${step}${state}${element}${effect.targetWeapon ? `${effect.targetWeapon} の` : ''}`;
   const exclude =
     effect.excludeSelf === 'always'

@@ -9,7 +9,7 @@ import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { firingParams } from '../frame/firing.ts';
 import { runFirstPass } from '../frame/firstPass.ts';
 import { initialShooter, resumeShooter, stepShooter } from '../frame/shooter.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
+import { MAX_SKILL_LEVELS, isStateContent } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -216,7 +216,7 @@ describe('実戦寄りの編成: 条件付きの攻撃力もアリスの順位�
     });
     const attack = plan.timeline.windows.filter((w) => w.effect.stat === 'attack' && w.effect.target !== 'topAttack');
     expect(first.rankAttackWindows.map(key).sort()).toEqual(attack.map(key).sort());
-    expect(attack.some((w) => w.effect.condition !== undefined)).toBe(true);
+    expect(attack.some((w) => !isStateContent(w.effect) && w.effect.condition !== undefined)).toBe(true);
     const speed = first.firingWindows.filter((w) => w.effect.target === 'topAttack');
     const damage = plan.timeline.windows.filter((w) => w.effect.stat === 'chargeDamage');
     expect(speed.map(key).sort()).toEqual(damage.map(key).sort());

@@ -74,17 +74,20 @@ describe('data/skills', () => {
           // Stage 11 モダニア: 使用武器の変更は damageRef、フラグの stat（装弾数無限）は ref を持たない
           // Stage 11 紅蓮BS: 循環は段ごとの ref、間隔の変更は ref を持たない（維持時間は下のテスト）
           // フラワー編: 周期のゲージ（burstGaugeHit）は ref を持たない。アニス：スター編: バースト再突入（burstReentry）も
+          // 名前の付いた状態の語彙編: 付与は値を持たず、中身の項目が ref を持つ（上限は中身の stat で見る）
           const refs =
             effect.kind === 'weaponChange'
               ? [effect.damageRef, ...(effect.maxAmmoRef === undefined ? [] : [effect.maxAmmoRef])]
               : effect.kind === 'cycle'
                 ? effect.steps.map((s) => s.ref)
-                : effect.kind === 'cycleEvery' ||
-                    effect.kind === 'burstGaugeHit' ||
-                    effect.kind === 'burstReentry' ||
-                    effect.ref === undefined
-                  ? []
-                  : [effect.ref];
+                : effect.kind === 'state'
+                  ? (effect.contents ?? []).flatMap((c) => (c.ref === undefined ? [] : [c.ref]))
+                  : effect.kind === 'cycleEvery' ||
+                      effect.kind === 'burstGaugeHit' ||
+                      effect.kind === 'burstReentry' ||
+                      effect.ref === undefined
+                    ? []
+                    : [effect.ref];
           for (const ref of refs) {
             const entry = character.skills[slot].values[ref - 1];
             expect(entry, `${slot} ref ${ref}`).toHaveLength(SKILL_LEVEL_MAX);
@@ -107,13 +110,17 @@ describe('data/skills', () => {
                 // Stage 11 紅蓮BS: バーストの攻撃力 115.12%・チャージダメージ 169.63% は 100% を超える（上限は 200% で見る）
                 // アスカ: バーストの攻撃ダメージ 150.04%・命中率 101.37% も同じ。ヘルム: チャージダメージ倍率 158.4% も同じ
                 // I-DOLL・サン: バーストの最大装弾数▲は Lv10 で 787.5%（C-0364。上限は 1000% で見る）
+                const stat =
+                  effect.kind === 'timed'
+                    ? effect.stat
+                    : effect.kind === 'state'
+                      ? effect.contents?.find((c) => c.ref === ref)?.stat
+                      : undefined;
                 const limit =
-                  effect.kind === 'timed' && effect.stat === 'maxAmmo'
+                  stat === 'maxAmmo'
                     ? 1000
-                    : effect.kind === 'timed' &&
-                        ['attack', 'chargeDamage', 'chargeDamageMultiplier', 'attackDamage', 'hitRate'].includes(
-                          effect.stat,
-                        )
+                    : stat !== undefined &&
+                        ['attack', 'chargeDamage', 'chargeDamageMultiplier', 'attackDamage', 'hitRate'].includes(stat)
                       ? 200
                       : 100;
                 expect(v).toBeLessThanOrEqual(limit);
@@ -127,7 +134,8 @@ describe('data/skills', () => {
     it('count triggers resolve to the same positive integer at every level (Stage 8)', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
-          if (effect.kind !== 'timed' && effect.kind !== 'damage') continue;
+          // 名前の付いた状態の語彙編: 付与（state）も timed と同じトリガー
+          if (effect.kind !== 'timed' && effect.kind !== 'damage' && effect.kind !== 'state') continue;
           const t = effect.trigger;
           if (typeof t !== 'object' || !('everyRef' in t) || t.everyRef === undefined) continue;
           const counts = Array.from({ length: SKILL_LEVEL_MAX }, (_, i) =>
@@ -142,7 +150,12 @@ describe('data/skills', () => {
     it('timed effects reference a positive duration that does not change with the skill level', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
-          if ((effect.kind !== 'timed' && effect.kind !== 'cycleEvery') || effect.durationRef === undefined) continue;
+          // 名前の付いた状態の語彙編: 付与（state）の維持も同じ
+          if (
+            (effect.kind !== 'timed' && effect.kind !== 'cycleEvery' && effect.kind !== 'state') ||
+            effect.durationRef === undefined
+          )
+            continue;
           const seconds = Array.from({ length: SKILL_LEVEL_MAX }, (_, i) =>
             skillValue(character.skills[slot], effect.durationRef!, i + 1),
           );

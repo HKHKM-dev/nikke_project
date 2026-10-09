@@ -1,6 +1,7 @@
-// ペルソナ編（plan/design-persona.md 3 節）: ペルソナ状態（定義の states）・対象の絞り込み（targetState・targetBurstStep・allies の
-// excludeSelf）・「〈効果名〉が適用された時」（トリガー { applied }）・戦闘の終わりまで続くスタック（durationUntil: battleEnd）。
-// 定義は data/skills のもの（ペルソナの効果は C-0354〜C-0357。V-0233 の撮影待ちの仮説）。
+// ペルソナ編（plan/design-persona.md 3 節）: ペルソナ状態・対象の絞り込み（targetState・targetBurstStep・allies の
+// excludeSelf）・「〈状態名〉が適用された時」（トリガー { applied }）・戦闘の終わりまで続くスタック（durationUntil: battleEnd）。
+// 名前の付いた状態の語彙編（plan/design-named-state.md 7.1 節）: ペルソナは静的な付与、追撃・バトンタッチは状態の付与（中身に攻撃力▲）。
+// 定義は data/skills のもの（ペルソナの効果は C-0354〜C-0357）。
 // 編成は V-0233 と同じ: I・II に CT 20 秒のココア・ユニを置き、クイーン（真）（III・操作）+ 雪子（III）。III の候補は枠の若い順
 // （burst/controller.ts）なので、I・II の CT が 40 秒だとクイーン（真）が毎回撃ち、雪子は撃たない。CT 20 秒ならクイーン（真）の CT 中に
 // 雪子が撃つ（plan/design-persona.md 9.1 節）。
@@ -12,9 +13,15 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
+import { MAX_SKILL_LEVELS, isStateContent } from '../skills/resolve.ts';
 import { appliedFrames } from '../skills/timeline.ts';
-import { parseSkillDefinition, type SkillDefinition, type TimedEffect } from '../skills/types.ts';
+import {
+  parseSkillDefinition,
+  staticStatesOf,
+  type SkillDefinition,
+  type StateGrantEffect,
+  type TimedEffect,
+} from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, Element } from '../types.ts';
 
@@ -40,6 +47,15 @@ const dataDefinition = (id: number): SkillDefinition =>
 const queenDefinition = () => dataDefinition(QUEEN);
 const yukikoDefinition = () => dataDefinition(YUKIKO);
 
+/** ペルソナの静的な付与（戦闘開始時・持続・自分） */
+const personaGrant = {
+  kind: 'state',
+  state: 'persona',
+  trigger: 'battleStart',
+  target: 'self',
+  durationUntil: 'battleEnd',
+};
+
 /** ペルソナ状態だけの定義（アイギスなど） */
 function personaOnly(resourceId: number): SkillDefinition {
   const empty = { effects: [], notes: [note('テスト')] };
@@ -47,8 +63,7 @@ function personaOnly(resourceId: number): SkillDefinition {
     formatVersion: 1,
     resourceId,
     checkedAt: '2026-10-06',
-    states: ['persona'],
-    skills: { skill1: empty, skill2: empty, burst: empty },
+    skills: { skill1: { effects: [personaGrant] }, skill2: empty, burst: empty },
   });
 }
 
@@ -94,10 +109,16 @@ const definitionWith = (effect: Record<string, unknown>, extra: Record<string, u
 const timed = { kind: 'timed', trigger: 'burstUse', target: 'allies', stat: 'attack', ref: 1, durationRef: 2 };
 
 describe('ペルソナの語彙の検証（parseSkillDefinition）', () => {
-  it('reads states and rejects unknown or duplicate ones', () => {
-    expect(parseSkillDefinition(definitionWith(timed, { states: ['persona'] })).states).toEqual(['persona']);
-    expect(() => parseSkillDefinition(definitionWith(timed, { states: ['bunny'] }))).toThrow(/states\[0\]/);
-    expect(() => parseSkillDefinition(definitionWith(timed, { states: ['persona', 'persona'] }))).toThrow(/duplicate/);
+  it('reads the Persona state from a static grant, and rejects the old top-level states and unknown ids', () => {
+    expect(staticStatesOf(parseSkillDefinition(definitionWith(personaGrant)))).toEqual(['persona']);
+    expect(() => parseSkillDefinition(definitionWith(timed, { states: ['persona'] }))).toThrow(
+      /states was replaced by a static state grant/,
+    );
+    expect(() => parseSkillDefinition(definitionWith({ ...personaGrant, state: 'bunny' }))).toThrow(/state/);
+    // ハッキングは敵の状態（味方への付与には書けない）
+    expect(() => parseSkillDefinition(definitionWith({ ...personaGrant, state: 'hacked' }))).toThrow(
+      /held by the enemy/,
+    );
   });
 
   it('allows targetState and targetBurstStep only on timed allies', () => {
@@ -114,7 +135,7 @@ describe('ペルソナの語彙の検証（parseSkillDefinition）', () => {
     ).toThrow(/targetBurstStep is only allowed in timed/);
   });
 
-  it('allows { applied } only in damage, and names only on timed without a condition', () => {
+  it('allows { applied } only in damage, and rejects the old effect names', () => {
     const damage = { kind: 'damage', trigger: { applied: 'followUp' }, ref: 1, damageType: 'distributed' };
     expect(parseSkillDefinition(definitionWith(damage)).skills.skill1.effects[0]).toMatchObject({
       trigger: { applied: 'followUp' },
@@ -133,15 +154,9 @@ describe('ペルソナの語彙の検証（parseSkillDefinition）', () => {
     expect(() =>
       parseSkillDefinition(definitionWith({ ...damage, trigger: 'fullBurstStart', delayFrames: 24 })),
     ).toThrow(/burstUse/);
-    expect(
-      (parseSkillDefinition(definitionWith({ ...timed, name: 'followUp' })).skills.skill1.effects[0] as TimedEffect)
-        .name,
-    ).toBe('followUp');
-    expect(() =>
-      parseSkillDefinition(
-        definitionWith({ ...timed, name: 'followUp', condition: { inFullBurst: true }, stat: 'critRate' }),
-      ),
-    ).toThrow(/named effect/);
+    expect(() => parseSkillDefinition(definitionWith({ ...timed, name: 'followUp' }))).toThrow(
+      /name was replaced by a state grant/,
+    );
   });
 
   it('allows durationUntil battleEnd on attack with stacks, but not fullBurstEnd', () => {
@@ -156,17 +171,17 @@ describe('ペルソナの語彙の検証（parseSkillDefinition）', () => {
 });
 
 describe('ペルソナ状態の味方への絞り込み（skills/composition.ts）', () => {
-  const targetsOf = (input: TeamInput, slot: number, skill: 'skill2', name: string) => {
+  const targetsOf = (input: TeamInput, slot: number, skill: 'skill2', state: string) => {
     const applied = applyCompositionToTeam(input);
     const effect = applied.slots[slot]!.skills!.definition!.skills[skill].effects.find(
-      (e) => e.kind === 'timed' && e.name === name,
-    ) as TimedEffect;
+      (e) => e.kind === 'state' && e.state === state,
+    ) as StateGrantEffect;
     return effect.fixedTargets;
   };
 
   it('gives the follow-up to the other III in the Persona state, and the baton pass to Yukiko', () => {
     expect(targetsOf(pair('Wind'), y, 'skill2', 'followUp')).toEqual([q]);
-    expect(targetsOf(pair('Wind'), q, 'skill2', 'batonTouch')).toEqual([y]);
+    expect(targetsOf(pair('Wind'), q, 'skill2', 'batonPass')).toEqual([y]);
   });
 
   it('skips a Persona II (Aigis) and a III without the Persona state', () => {
@@ -179,13 +194,13 @@ describe('ペルソナ状態の味方への絞り込み（skills/composition.ts�
       ],
       'Wind',
     );
-    expect(targetsOf(withAigis, q, 'skill2', 'batonTouch')).toEqual([y]);
-    // 雪子に定義（states）が無ければペルソナ状態でない
+    expect(targetsOf(withAigis, q, 'skill2', 'batonPass')).toEqual([y]);
+    // 雪子に定義（ペルソナの静的な付与）が無ければペルソナ状態でない
     const undefinedYukiko = team(
       [fixedSlot(RAM), fixedSlot(DELTA), fixedSlot(QUEEN, queenDefinition()), fixedSlot(YUKIKO)],
       'Wind',
     );
-    expect(targetsOf(undefinedYukiko, q, 'skill2', 'batonTouch')).toEqual([]);
+    expect(targetsOf(undefinedYukiko, q, 'skill2', 'batonPass')).toEqual([]);
   });
 });
 
@@ -221,13 +236,23 @@ describe('追撃とバトンタッチ（ココア + ユニ + クイーン（真�
     );
     expect(baton.map((w) => w.start)).toEqual(queenBursts.slice(0, 3));
     for (const w of baton) expect(w.end).toBe(plan.frames);
-    expect(plan.timeline.windows.some((w) => w.slotIndex === q && w.effect.name === 'batonTouch')).toBe(false);
+    expect(baton.every((w) => isStateContent(w.effect) && w.effect.whileState === 'batonPass')).toBe(true);
+    expect(
+      plan.timeline.windows.some(
+        (w) => w.slotIndex === q && isStateContent(w.effect) && w.effect.whileState === 'batonPass',
+      ),
+    ).toBe(false);
   });
 
   it('does nothing against a Fire enemy (no 1more)', () => {
     const fire = planTeamRun(pair('Fire'));
-    expect(fire.timeline.applications).toEqual([]);
-    expect(fire.timeline.windows.some((w) => w.effect.name !== undefined)).toBe(false);
+    // ペルソナ（静的な付与）はフレーム 0 に付いた記録だけ（plan/design-named-state.md 5.4 節）
+    expect(fire.timeline.applications).toEqual([
+      { frame: 0, state: 'persona', sourceSlotIndex: q, slotIndex: q },
+      { frame: 0, state: 'persona', sourceSlotIndex: y, slotIndex: y },
+    ]);
+    expect(fire.timeline.namedStateWindows).toEqual([]);
+    expect(fire.timeline.windows.some((w) => isStateContent(w.effect))).toBe(false);
   });
 
   it('agrees between sim and calc', () => {

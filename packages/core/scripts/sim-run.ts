@@ -51,7 +51,7 @@ import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
 import { firingParams } from '../src/frame/firing.ts';
-import { MAX_SKILL_LEVELS, type ResolvedTrigger, type SkillLevels } from '../src/skills/resolve.ts';
+import { MAX_SKILL_LEVELS, isStateContent, type ResolvedTrigger, type SkillLevels } from '../src/skills/resolve.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { compositionAllows } from '../src/skills/composition.ts';
 import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
@@ -70,7 +70,7 @@ function triggerLabel(t: ResolvedTrigger): string {
   if (typeof t === 'string') return t;
   // ニヒリスター編: 時間の周期のトリガー（every10s）
   if ('everySeconds' in t) return `every${t.everySeconds}s`;
-  // ペルソナ編: 効果名のトリガー（applied:followUp）
+  // ペルソナ編: 状態が付いた時のトリガー（applied:followUp。id は名前の付いた状態の目録の id）
   if ('applied' in t) return `applied:${t.applied}`;
   // クルミ S2 編: フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
   // ソルジャーE.G. 編: 確率のきっかけ（normalHit@5%。窓は期待値の小片）
@@ -361,7 +361,8 @@ const compositionRows = slots.flatMap((slot, i) =>
       return [
         {
           slot: `slot ${i + 1} ${slot.character.name.ja}`,
-          effect: `${skill}[${effectIndex}] ${e.kind}`,
+          // 名前の付いた状態の語彙編: 付与の行には状態の id も出す（state camouflage）
+          effect: `${skill}[${effectIndex}] ${e.kind}${e.kind === 'state' ? ` ${e.state}` : ''}`,
           condition: conditions.join(' & '),
           applies: compositionAllows(e, compositionCharacters, i, input.enemy.element),
         },
@@ -596,7 +597,8 @@ for (const [i, slot] of slots.entries()) {
       timed: compactTimed(g.timedEffects)
         .map(
           ({ e, n }) =>
-            `${triggerLabel(e.trigger)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
+            // 名前の付いた状態の語彙編: 状態の中身はトリガーの代わりに、効いている状態（while:camouflage）
+            `${isStateContent(e) ? `while:${e.whileState}` : triggerLabel(e.trigger)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
         )
         .join(', '),
     })),
@@ -715,16 +717,18 @@ function printCycles(slotIndex: number, c: NonNullable<(typeof calc.slots)[numbe
 }
 
 /** Stage 11 モダニア: 同じ効果のスタックの段をまとめる（「critDamage+14.25% ×5」） */
-function compactTimed<T extends { sourceSlotIndex: number; effectIndex: number; source: { skill: string } }>(
-  effects: readonly T[],
-): { e: T; n: number }[] {
+function compactTimed<
+  T extends { sourceSlotIndex: number; effectIndex: number; subIndex?: number; source: { skill: string } },
+>(effects: readonly T[]): { e: T; n: number }[] {
   const out: { e: T; n: number }[] = [];
   for (const e of effects) {
+    // 名前の付いた状態の語彙編: 状態の中身は付与の中身の何番目か（subIndex）でも分ける
     const found = out.find(
       (x) =>
         x.e.sourceSlotIndex === e.sourceSlotIndex &&
         x.e.source.skill === e.source.skill &&
-        x.e.effectIndex === e.effectIndex,
+        x.e.effectIndex === e.effectIndex &&
+        x.e.subIndex === e.subIndex,
     );
     if (found) found.n += 1;
     else out.push({ e, n: 1 });

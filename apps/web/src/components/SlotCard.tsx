@@ -16,7 +16,9 @@ import {
   type BuildMasters,
   type SkillLevels,
   type TeamSlotResult,
+  type WindowEffect,
   framesToGameSeconds,
+  isStateContent,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber, formatPercent } from '../format.ts';
@@ -29,6 +31,8 @@ import {
   formatInstant,
   formatTimedExtras,
   formatTimedTrigger,
+  formatWindowDuration,
+  formatWindowTrigger,
 } from '../skillLabels.ts';
 import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
@@ -91,11 +95,13 @@ export function SlotCard({
   const limits = character ? growthLimits(character) : null;
   const condition = slot.condition;
   // 同じ効果の窓をまとめて「10 秒 × 9 回」と見せる（窓は発動ごとに 1 件ある）。
-  // Stage 11 モダニア: スタックする効果は段 1 の窓だけを数える。命中率（状態だけの stat）の窓も並べる
+  // Stage 11 モダニア: スタックする効果は段 1 の窓だけを数える。命中率（状態だけの stat）の窓も並べる。
+  // 名前の付いた状態の語彙編: 状態の中身は付与の中身の何番目か（subIndex）でも分ける
+  const subIndexOf = (e: WindowEffect) => (isStateContent(e) ? e.subIndex : '');
   const timedSummary = (() => {
     const byKey = new Map<string, { effect: AppliedTimedEffect; count: number }>();
     for (const w of [...(slotResult?.windows ?? []), ...(slotResult?.stateWindows ?? [])]) {
-      const key = `${w.sourceSlotIndex}:${w.effect.source.skill}:${w.effect.effectIndex}`;
+      const key = `${w.sourceSlotIndex}:${w.effect.source.skill}:${w.effect.effectIndex}:${subIndexOf(w.effect)}`;
       const found = byKey.get(key);
       if (found) {
         if ((w.stack ?? 1) === 1) found.count += 1;
@@ -119,16 +125,24 @@ export function SlotCard({
           (e) =>
             e.sourceSlotIndex === entry.effect.sourceSlotIndex &&
             e.source.skill === entry.effect.source.skill &&
-            e.effectIndex === entry.effect.effectIndex,
+            e.effectIndex === entry.effect.effectIndex &&
+            subIndexOf(e) === subIndexOf(entry.effect),
         );
       if (applied) entry.effect = applied;
     }
     return [...byKey.values()];
   })();
-  /** Stage 11 モダニア: 条件を満たさずに発火しなかった回数（効果ごと） */
+  /**
+   * Stage 11 モダニア: 条件を満たさずに発火しなかった回数（効果ごと）。名前の付いた状態の語彙編: 状態の中身は、同じ枠が付けなかった
+   * その状態の回数（条件つきの付与）
+   */
   const skipsOf = (effect: AppliedTimedEffect): number =>
-    (slotResult?.conditionSkips ?? []).filter(
-      (x) => x.effect.source.skill === effect.source.skill && x.effect.effectIndex === effect.effectIndex,
+    (slotResult?.conditionSkips ?? []).filter((x) =>
+      isStateContent(effect)
+        ? x.state === effect.whileState && x.sourceSlotIndex === effect.sourceSlotIndex
+        : x.state === undefined &&
+          x.effect.source.skill === effect.source.skill &&
+          x.effect.effectIndex === effect.effectIndex,
     ).length;
   /** Stage 11 モダニア: 射撃ごとの追加ダメージの合計（1 トリガーの値に畳み込んだ分） */
   const perShotDamage = (slotResult?.segments ?? []).reduce((sum, g) => sum + g.trigger.perShot * g.triggers, 0);
@@ -386,23 +400,17 @@ export function SlotCard({
                     <li key={`timed-${i}`}>
                       <span className="amount">{formatAppliedAmount(t.effect)}</span>
                       <small className="sub">
-                        {formatTimedTrigger(t.effect.trigger)}{' '}
-                        {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}・
-                        {t.effect.durationShots !== undefined
-                          ? `${t.effect.durationShots} 発`
-                          : t.effect.durationUntil === 'ammoSpent'
-                            ? '撃ち切りまで'
-                            : t.effect.durationUntil === 'battleEnd'
-                              ? '持続'
-                              : `${formatNumber(framesToGameSeconds(t.effect.durationFrames), 0)} 秒`}{' '}
+                        {formatWindowTrigger(t.effect)}{' '}
+                        {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}
+                        {formatWindowDuration(t.effect)}{' '}
                         {/* ソルジャーE.G. 編: 確率のきっかけの窓は期待値の小片なので、回数ではなく「期待値」と出す */}
-                        {typeof t.effect.trigger === 'object' && 'chance' in t.effect.trigger
+                        {!isStateContent(t.effect) &&
+                        typeof t.effect.trigger === 'object' &&
+                        'chance' in t.effect.trigger
                           ? '（期待値）'
                           : `× ${t.count} 回`}
                         {formatTimedExtras(t.effect)}
-                        {t.effect.condition && skipsOf(t.effect) > 0
-                          ? `・状態でなく発動せず ${skipsOf(t.effect)} 回`
-                          : ''}
+                        {skipsOf(t.effect) > 0 ? `・状態でなく発動せず ${skipsOf(t.effect)} 回` : ''}
                         {t.effect.assumes ? `・仮定: ${t.effect.assumes.ja}` : ''}
                       </small>
                     </li>

@@ -20,7 +20,19 @@ import {
 
 type Variant = 'minus' | 'plus';
 
-/** 定義から効果を外す（minus）か、持続の効果を戦闘の始めから終わりまで効かせる（plus）。plus を当てられない効果は undefined */
+/** 持続の効果（timed・状態の付与）の維持ときっかけを、戦闘の始めから battleSeconds 秒にする */
+function alwaysOn<T extends SkillEffect>(effect: T, battleSeconds: number): T {
+  const always = { ...effect, trigger: 'battleStart', durationSeconds: battleSeconds } as Record<string, unknown>;
+  for (const k of ['durationRef', 'durationShots', 'durationShotsRef', 'durationUntil', 'condition']) delete always[k];
+  return always as unknown as T;
+}
+
+/**
+ * 定義から効果を外す（minus）か、持続の効果を戦闘の始めから終わりまで効かせる（plus）。plus を当てられない効果は undefined。
+ * 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.8 節）: 状態の付与の minus はその付与の発火だけを外し（中身は同じ状態の
+ * ほかの付与に移す）、plus は状態を戦闘の始めから付ける（同じ状態のほかの付与は外し、中身はこの付与に集める）。中身の項目の要素
+ * （subIndex）の minus は項目を外し、plus は項目を付与の対象の欄のまま戦闘の始めからの timed にする
+ */
 export function variantDefinition(
   def: SkillDefinition,
   ref: NonNullable<MinimalElement['effectRef']>,
@@ -32,14 +44,44 @@ export function variantDefinition(
   if (entry === undefined) return undefined;
   const effect = entry.effects[ref.index];
   if (effect === undefined) return undefined;
+  if (ref.subIndex !== undefined) {
+    if (effect.kind !== 'state') return undefined;
+    const item = effect.contents?.[ref.subIndex];
+    if (item === undefined) return undefined;
+    const rest = effect.contents!.filter((_, j) => j !== ref.subIndex);
+    const { contents: _contents, ...grant } = effect;
+    entry.effects[ref.index] = rest.length > 0 ? { ...grant, contents: rest } : grant;
+    if (variant === 'minus') return copy;
+    const { kind: _kind, state: _state, claims: _claims, maxStacks: _m, maxStacksRef: _mr, ...fields } = grant;
+    const { claims: _itemClaims, ...value } = item;
+    entry.effects.push(alwaysOn({ ...fields, ...value, kind: 'timed' } as SkillEffect, battleSeconds));
+    return copy;
+  }
+  // 同じ根（基礎版か宝物版）の、同じ状態のほかの付与
+  const entries = Object.values((ref.root === 'skills' ? copy.skills : copy.treasureSkills) ?? {});
+  const others = (state: string) =>
+    entries.flatMap((x) =>
+      x.effects.flatMap((e, k) => (e.kind === 'state' && e.state === state && e !== effect ? [{ x, e, k }] : [])),
+    );
   if (variant === 'minus') {
+    if (effect.kind === 'state' && effect.contents !== undefined) {
+      const next = others(effect.state)[0];
+      if (next !== undefined && next.e.kind === 'state') next.e.contents = effect.contents;
+    }
     entry.effects.splice(ref.index, 1);
     return copy;
   }
+  if (effect.kind === 'state') {
+    const rest = others(effect.state);
+    const contents = effect.contents ?? rest.flatMap(({ e }) => (e.kind === 'state' ? (e.contents ?? []) : []));
+    const always = alwaysOn(effect, battleSeconds);
+    entry.effects[ref.index] = contents.length > 0 ? { ...always, contents } : always;
+    // 後ろから外す（同じ効果の列の番号がずれないように）
+    for (const { x, k } of [...rest].reverse()) x.effects.splice(k, 1);
+    return copy;
+  }
   if (effect.kind !== 'timed') return undefined;
-  const always = { ...effect, trigger: 'battleStart', durationSeconds: battleSeconds } as Record<string, unknown>;
-  for (const k of ['durationRef', 'durationShots', 'durationShotsRef', 'durationUntil', 'condition']) delete always[k];
-  entry.effects[ref.index] = always as unknown as SkillEffect;
+  entry.effects[ref.index] = alwaysOn(effect, battleSeconds);
   return copy;
 }
 

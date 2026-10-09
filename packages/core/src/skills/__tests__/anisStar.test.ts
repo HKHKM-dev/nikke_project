@@ -125,7 +125,7 @@ describe('バースト段階の構成の条件（burstStepMix）', () => {
           burstStepMix: absent,
         }),
       ),
-    ).toThrow(/burstStepMix: only allowed in passive, timed, cooldownReduction and burstReentry/);
+    ).toThrow(/burstStepMix: only allowed in passive, timed, state, cooldownReduction and burstReentry/);
     expect(() =>
       parseSkillDefinition(withFirstEffect({ ...base, burstStepMix: { otherBurstStep: 'AllStep', present: false } })),
     ).toThrow(/otherBurstStep/);

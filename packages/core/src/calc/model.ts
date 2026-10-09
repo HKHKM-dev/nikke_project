@@ -39,8 +39,14 @@ import {
 import { firingParams } from '../frame/firing.ts';
 import { BURST_HIT_USES_PRE_ACTIVATION_BUFFS, burstHitBuffs, perShotDamageOf, planTeamRun } from '../frame/plan.ts';
 import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
-import { MAX_SKILL_LEVELS, isResolvedShotCount } from '../skills/resolve.ts';
-import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges, type SlotBuffState } from '../skills/timeline.ts';
+import { MAX_SKILL_LEVELS, isResolvedShotCount, isStateContent } from '../skills/resolve.ts';
+import {
+  EMPTY_BUFF_STATE,
+  groupTimeline,
+  mergeAdjacentRanges,
+  type BuffTimeline,
+  type SlotBuffState,
+} from '../skills/timeline.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { isFiringStat } from '../skills/types.ts';
@@ -96,11 +102,27 @@ function hasFiringWindow(state: SlotBuffState): boolean {
 }
 
 /**
- * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.5 節）: 枠自身の射撃の回数で開いた窓が効いているか。
- * その窓は撃っている間にだけ開き直るので、窓の中と外の発数の割合は時間の割合と大きく違う（リロード・MG のスピンアップ）
+ * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.5 節）: 枠に、枠自身の射撃の回数で開いた窓があるか。
+ * その窓は撃っている間にだけ開き直るので、窓の中と外の発数の割合は時間の割合と大きく違う（リロード・MG のスピンアップ）。
+ * 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.6 節）: 状態の中身はトリガーを持たないので、窓で見る。効果の窓は
+ * トリガーが自分の射撃の回数のもの、中身の窓は、その状態の窓に自分の射撃の回数の付与が発火を足したもの（shotCount）。
+ * 区間の効果は timeline.windows から作るので、効果だけの編成では区間の効果を見ていた今までの判定と同じ（stateWindows は区間の効果に入らない）
  */
-function hasOwnShotCountWindow(state: SlotBuffState, slotIndex: number): boolean {
-  return state.timedEffects.some((e) => e.sourceSlotIndex === slotIndex && isResolvedShotCount(e.trigger));
+function hasOwnShotCountWindow(timeline: BuffTimeline, slotIndex: number): boolean {
+  return timeline.windows.some((w) => {
+    if (w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex || w.start >= w.end) return false;
+    const effect = w.effect;
+    if (!isStateContent(effect)) return isResolvedShotCount(effect.trigger);
+    return timeline.namedStateWindows.some(
+      (n) =>
+        n.state === effect.whileState &&
+        n.slotIndex === slotIndex &&
+        n.sourceSlotIndex === slotIndex &&
+        n.start === w.start &&
+        n.end === w.end &&
+        n.shotCount === true,
+    );
+  });
 }
 
 /**
@@ -151,7 +173,7 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     // 全グループを射撃の列から数える（窓の中だけ数えると、窓の外の平均レートが残りの発数を外す）
     const countSlotShots =
       (shotCounting === 'firingSlots' && groups.some((g) => hasFiringWindow(g.state))) ||
-      (shotCounting === 'hybrid' && groups.some((g) => hasOwnShotCountWindow(g.state, index)));
+      (shotCounting === 'hybrid' && hasOwnShotCountWindow(timeline, index));
     for (const group of groups) {
       const state = group.state;
       // C-0170: 持続の命中率▲が効いているグループは、その N でコア命中率を出し直す（自動の枠は N が鍵に入るのでグループ内で同じ）

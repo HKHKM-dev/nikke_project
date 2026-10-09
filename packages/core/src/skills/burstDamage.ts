@@ -9,12 +9,13 @@ import type { EnemyInput, TriggerDamage } from '../damage.ts';
 import { explosionHitMultiplier, FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
+import type { NamedStateId } from './states.ts';
 import {
   isShotCountTrigger,
   isTimerTrigger,
   SKILL_SLOTS,
-  type DamageCondition,
   type DotFirstTick,
+  type EffectCondition,
   type SkillDamageType,
   type SkillDefinition,
   type SkillSlot,
@@ -87,7 +88,7 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    */
   cycle?: { step: number; steps: number };
   /** クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。frame/plan.ts の planSkillHits が絞る */
-  condition?: DamageCondition;
+  condition?: EffectCondition;
   /** 遅れて出る倍率ダメージ編: きっかけからの遅れ（フレーム）。frame/plan.ts の planSkillHits がそのフレームのバフで出す */
   delayFrames?: number;
   /**
@@ -98,7 +99,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     intervalSeconds: number;
     durationSeconds: number;
     firstTick: DotFirstTick;
-    status?: string;
+    /** 名前の付いた状態の語彙編: 付いている間を敵の状態（目録の id）とする持続ダメージ（plan/design-named-state.md 5.4 節） */
+    state?: NamedStateId;
     /** レイヴン編: 最大スタック数。スタックしない持続ダメージは 1（plan/design-raven-s1.md 8 節の 1） */
     maxStacks: number;
     /** レイヴン編: 付けたとき・tick ごとに射手の 1 ヒットぶんのゲージを溜める（C-0181。frame/firstPass.ts） */
@@ -287,7 +289,7 @@ export function resolveDotEffects(
           intervalSeconds: effect.intervalSeconds,
           durationSeconds,
           firstTick: effect.firstTick ?? (auto ? 'afterInterval' : 'atApplication'),
-          ...(!auto && effect.status !== undefined ? { status: effect.status } : {}),
+          ...(!auto && effect.state !== undefined ? { state: effect.state } : {}),
           maxStacks,
           ...(!auto && effect.gaugeOnApply === true ? { gaugeOnApply: true as const } : {}),
           ...(gaugeOnTick ? { gaugeOnTick: true as const } : {}),

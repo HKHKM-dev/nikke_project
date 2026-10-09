@@ -21,19 +21,26 @@ const SKILL_ROOTS: readonly SkillRoot[] = ['skills', 'treasureSkills'];
 /** 定義済みのキャラ（data/skills/index.json の順） */
 export type DefinedCharacter = { definition: SkillDefinition; name: LocalizedText };
 
-/** 定義の中の場所。index が無いのは「そのスロットの notes のどれか」（結論の model の「skill1 の notes」） */
+/**
+ * 定義の中の場所。index が無いのは「そのスロットの notes のどれか」（結論の model の「skill1 の notes」）。
+ * 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.8 節）: subIndex は状態の付与の中身の項目（effects[2].contents[0]）
+ */
 export type SkillPlace = {
   resourceId: number;
   root: SkillRoot;
   slot: SkillSlot;
   part: 'effects' | 'notes';
   index?: number;
+  subIndex?: number;
 };
 
-/** `data/skills/352.json` の treasureSkills.skill1 の effects[1]（基礎版は skills. を省く） */
+/** `data/skills/352.json` の treasureSkills.skill1 の effects[1]（基礎版は skills. を省く。中身の項目は effects[2].contents[0]） */
 export function formatPlace(p: SkillPlace): string {
   const slot = p.root === 'skills' ? p.slot : `${p.root}.${p.slot}`;
-  const part = p.index === undefined ? p.part : `${p.part}[${p.index}]`;
+  const part =
+    p.index === undefined
+      ? p.part
+      : `${p.part}[${p.index}]${p.subIndex === undefined ? '' : `.contents[${p.subIndex}]`}`;
   return `\`data/skills/${p.resourceId}.json\` の ${slot} の ${part}`;
 }
 
@@ -46,13 +53,18 @@ export function entriesOf(def: SkillDefinition): { root: SkillRoot; slot: SkillS
   );
 }
 
-/** 定義の効果・notes のうち claims を書いたもの（定義の中の順） */
+/** 定義の効果・notes（と状態の付与の中身の項目）のうち claims を書いたもの（定義の中の順） */
 export function claimCitations(def: SkillDefinition): { place: SkillPlace; claims: string[] }[] {
   const out: { place: SkillPlace; claims: string[] }[] = [];
   for (const { root, slot, entry } of entriesOf(def)) {
     const base = { resourceId: def.resourceId, root, slot };
     entry.effects.forEach((e, index) => {
       if (e.claims !== undefined) out.push({ place: { ...base, part: 'effects', index }, claims: e.claims });
+      if (e.kind !== 'state') return;
+      e.contents?.forEach((item, subIndex) => {
+        if (item.claims !== undefined)
+          out.push({ place: { ...base, part: 'effects', index, subIndex }, claims: item.claims });
+      });
     });
     entry.notes?.forEach((n, index) => {
       if (n.claims !== undefined) out.push({ place: { ...base, part: 'notes', index }, claims: n.claims });
@@ -74,7 +86,7 @@ export function definitionPlacesByClaim(characters: readonly DefinedCharacter[])
 
 const MODEL_FILE = /data\/skills\/(\d+)\.json/g;
 const MODEL_TOKEN =
-  /(?:\b(treasureSkills|skills)\.)?\b(skill1|skill2|burst)\b(?!\.)|\b(effects|notes)\b(?:\[(\d+)\])?|全スロット/g;
+  /(?:\b(treasureSkills|skills)\.)?\b(skill1|skill2|burst)\b(?!\.)|\b(effects|notes)\b(?:\[(\d+)\](?:\.contents\[(\d+)\])?)?|全スロット/g;
 
 /**
  * 結論の model の文から、定義のファイルと場所を拾う。ファイル名の後から次のファイル名までを、
@@ -102,7 +114,14 @@ export function definitionPlacesInModel(model: string): Map<number, SkillPlace[]
         // effects は番号つきだけを場所とみなす（「効果の effects」のような語は読まない）
         if (part === 'effects' && t[4] === undefined) continue;
         for (const slot of slots) {
-          places.push({ resourceId, root, slot, part, ...(t[4] === undefined ? {} : { index: Number(t[4]) }) });
+          places.push({
+            resourceId,
+            root,
+            slot,
+            part,
+            ...(t[4] === undefined ? {} : { index: Number(t[4]) }),
+            ...(t[5] === undefined ? {} : { subIndex: Number(t[5]) }),
+          });
         }
       }
     }
@@ -116,6 +135,11 @@ function citedAt(def: SkillDefinition, place: SkillPlace, claimId: string): bool
   if (entry === undefined) return undefined;
   const items: { claims?: string[] }[] = place.part === 'effects' ? entry.effects : (entry.notes ?? []);
   if (place.index === undefined) return items.length === 0 ? undefined : items.some((x) => x.claims?.includes(claimId));
+  if (place.subIndex !== undefined) {
+    const effect = entry.effects[place.index];
+    const item = effect?.kind === 'state' ? effect.contents?.[place.subIndex] : undefined;
+    return item === undefined ? undefined : (item.claims?.includes(claimId) ?? false);
+  }
   const item = items[place.index];
   return item === undefined ? undefined : (item.claims?.includes(claimId) ?? false);
 }
@@ -209,9 +233,16 @@ function triggerLabel(e: SkillEffect): string | undefined {
   return t.count;
 }
 
-/** 効果の短い説明（kind・トリガー・stat か damageType） */
+/** 効果の短い説明（kind・トリガー・stat か damageType。状態の付与は状態と中身の stat） */
 export function effectLabel(e: SkillEffect): string {
-  const detail = 'stat' in e ? e.stat : 'damageType' in e ? e.damageType : undefined;
+  const detail =
+    e.kind === 'state'
+      ? `${e.state}${e.contents === undefined ? '' : `（${e.contents.map((c) => c.stat).join('・')}）`}`
+      : 'stat' in e
+        ? e.stat
+        : 'damageType' in e
+          ? e.damageType
+          : undefined;
   return [e.kind, triggerLabel(e), detail].filter((x) => x !== undefined).join('・');
 }
 
@@ -247,6 +278,11 @@ export function renderSkills(characters: readonly DefinedCharacter[], claims: re
         effects++;
         if (e.claims !== undefined) citedEffects++;
         body.push(`  - effects[${i}] ${effectLabel(e)}: ${claimList(e.claims, states)}`);
+        // 名前の付いた状態の語彙編: 中身の項目に claims があれば、項目の行も出す（無い項目の根拠は付与の claims）
+        if (e.kind !== 'state') return;
+        e.contents?.forEach((c, j) => {
+          if (c.claims !== undefined) body.push(`    - contents[${j}] ${c.stat}: ${claimList(c.claims, states)}`);
+        });
       });
       entry.notes?.forEach((n, i) => {
         notes++;

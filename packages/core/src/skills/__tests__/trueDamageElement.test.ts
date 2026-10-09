@@ -9,7 +9,7 @@ import type { BurstStep, CharacterData, SkillRaw } from '../../types.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../../time.ts';
 import { ZERO_BUFFS, type ChangedWeapon } from '../buffs.ts';
 import { applyComposition, compositionAllows, enemyElementAllows, withCharacterAllows } from '../composition.ts';
-import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, resolveStateContents, resolveStateGrants, resolveTimed } from '../resolve.ts';
 import {
   inFullBurstAt,
   planBuffTimeline,
@@ -109,7 +109,7 @@ describe('durationUntil・inFullBurst・atStart の検証', () => {
       parseSkillDefinition(withSkill2([{ ...effect, stat: 'attack', ref: 1, target: 'self', durationRef: 1 }])),
     ).toThrow(/inFullBurst is not supported for "attack"/);
     expect(() => parseSkillDefinition(withSkill2([{ ...effect, condition: { inFullBurst: false } }]))).toThrow(
-      /expected \{ inFullBurst: true \}/,
+      /condition\.inFullBurst: expected true/,
     );
   });
 
@@ -365,14 +365,25 @@ describe('ウンファ：TU の定義（data/skills/95.json）', () => {
   );
   const timed = resolveTimed(definition, character, MAX_SKILL_LEVELS);
 
-  it('gives the Camouflage contents for 5 s on Burst Skill use and on Full Charge during Full Burst (C-0311・C-0314)', () => {
-    const camo = timed.filter((e) => e.source.skill === 'skill1');
-    expect(camo.map((e) => [e.stat, e.value, e.durationFrames, e.condition])).toEqual([
-      ['trueDamageConversion', 1, gameSecondsToFrames(5), undefined],
-      ['trueDamage', 0.4224, gameSecondsToFrames(5), undefined],
-      ['trueDamageConversion', 1, gameSecondsToFrames(5), { inFullBurst: true }],
-      ['trueDamage', 0.4224, gameSecondsToFrames(5), { inFullBurst: true }],
+  // 名前の付いた状態の語彙編（plan/design-named-state.md 7.1 節）: カモフラージュの 2 つの付与と、1 つ目の付与に書いた中身
+  it('grants Camouflage for 5 s on Burst Skill use and on Full Charge during Full Burst, with its contents (C-0311・C-0314)', () => {
+    const grants = resolveStateGrants(definition, character, MAX_SKILL_LEVELS);
+    expect(grants.map((g) => [g.source.skill, g.state, g.trigger, g.durationFrames, g.condition])).toEqual([
+      ['skill1', 'camouflage', 'burstUse', gameSecondsToFrames(5), undefined],
+      [
+        'skill1',
+        'camouflage',
+        expect.objectContaining({ count: 'fullChargeShot' }),
+        gameSecondsToFrames(5),
+        { inFullBurst: true },
+      ],
     ]);
+    const contents = resolveStateContents(definition, character, MAX_SKILL_LEVELS);
+    expect(contents.map((c) => [c.whileState, c.effectIndex, c.subIndex, c.stat, c.value, c.target])).toEqual([
+      ['camouflage', 0, 0, 'trueDamageConversion', 1, 'self'],
+      ['camouflage', 0, 1, 'trueDamage', 0.4224, 'self'],
+    ]);
+    expect(timed.filter((e) => e.source.skill === 'skill1')).toEqual([]);
   });
 
   it('gives Damage Taken up for 10 s on Burst Skill use (C-0312)', () => {
