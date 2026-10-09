@@ -1,0 +1,43 @@
+{
+  "verification": "V-0383",
+  "note": "撮影計画 T1 の編成: ティア単騎（操作・AUTO 射撃 OFF・オートバースト OFF）・灼熱の BigArms・3 分モード・スペック固定 ON。setup に condition を書かない（手入力の条件。結論の根拠にするため。plan/design-minimal-relevance.md 11.7 節）。ティアのスキルの定義は無いので、H0 は通常攻撃のヒットだけでゲージを溜める（フルチャージの 1 ヒット 28,000 × 2.5 = 70,000。C-0083）。S2 を付けたとき・切れるときに溜める仮説（A・E・AE）は、ティアのスキルの定義が無く予測ファイルの addEffects で足せない（定義の無いキャラには足せない。records/observations.ts）ので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 451,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（ティアの定義なし。S2 はゲージを溜めない。ゲージは本当の満タン = BURST バーが消えるヒット（C-0083）。戦闘開始は 0 から）。仮説 0（溜めない）の見え方"
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-shot-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "戦闘の最初のヒットから数えて、1 回目に BURST バーが消えたティアのヒットの番号（外れた発は数えない）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-09",
+    "commit": "b3ecbae1ac41289b8ba581da9c193f3df0e0ab6e",
+    "values": {
+      "H0": {
+        "gauge-full-shot-0": 15
+      }
+    },
+    "seen": {}
+  }
+}
