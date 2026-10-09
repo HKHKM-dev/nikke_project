@@ -1,6 +1,6 @@
 # モランの定義（S2 の挑発を付けたときのゲージ）
 
-- 関連: [skills-guide.md](skills-guide.md) 1.4 節、[design-flower-s2-gauge.md](design-flower-s2-gauge.md)（ゲージだけを溜める `burstGaugeHit`）、[design-raven-s1.md](design-raven-s1.md) 5 節の 4（付けたときの遅れ）、[design-stage10.md](design-stage10.md) 2 節（`lastShot`）、[backlog.md](backlog.md) 2-29・6 節
+- 関連: [skills-guide.md](skills-guide.md) 1.4 節、[design-flower-s2-gauge.md](design-flower-s2-gauge.md)（ゲージだけを溜める `burstGaugeHit`）、[design-raven-s1.md](design-raven-s1.md) 5 節の 4（付けたときの遅れ）、[design-stage10.md](design-stage10.md) 2 節（`lastShot`）、[backlog.md](backlog.md) 6 節（2-29 は 2026-10-10 に閉じた。経過は [roadmap.md](roadmap.md)「今後の課題」）
 - 作成日: 2026-10-09
 - 根拠: C-0480（V-0369）
 - 状態: オーナーの承認（2026-10-09「論点は推奨どおりで、実装して」）で実装した。5 節の論点は推奨どおりにした
