@@ -5,6 +5,7 @@ import { loadClaims, loadRecordingsFile, loadRecordsData, recordingMap } from '.
 import { toClaims, validateClaims, type ClaimFile, type ClaimState } from '../claims.ts';
 import {
   claimDraft,
+  idsInPaths,
   nextId,
   RESULTS_MARKERS,
   verificationFileName,
@@ -16,6 +17,23 @@ import { elementsOf } from '../relevance.ts';
 import type { Observation } from '../observations.ts';
 import { parseVerification } from '../verifications.ts';
 import type { SkillDefinition } from '../../skills/types.ts';
+
+describe('idsInPaths', () => {
+  it('takes verification and claim IDs from git file names (V-0378)', () => {
+    const out = [
+      '',
+      'records/verifications/V-0379-foo-bar.md',
+      'records/claims/C-0500.json',
+      'records/claims/C-0500.json',
+      'records/verifications/README.md',
+      'records/predictions/V-0381.json',
+      'records/claims/C-10001.json',
+      '',
+    ].join('\n');
+    expect(idsInPaths(out)).toEqual(['V-0379', 'C-0500', 'C-10001']);
+    expect(nextId('V', ['V-0378', ...idsInPaths(out)])).toBe('V-0380');
+  });
+});
 
 describe('nextId・verificationTemplate', () => {
   it('次の空き番号は最大 + 1（桁は既存に合わせる）', () => {

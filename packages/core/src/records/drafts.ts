@@ -19,6 +19,19 @@ export function nextId(prefix: 'V' | 'C', existing: readonly string[]): string {
   return `${prefix}-${String(max + 1).padStart(width, '0')}`;
 }
 
+/**
+ * git の出力のファイル名の並び（records/verifications/V-NNNN-….md・records/claims/C-NNNN.json）から、検証記録と結論の ID を取り出す
+ * （重複なし・出てきた順）。ほかのブランチが使っている番号を records:new の空き番号から除くのに使う（V-0378 の振り直し）
+ */
+export function idsInPaths(text: string): string[] {
+  const ids = new Set<string>();
+  for (const line of text.split('\n')) {
+    const m = /(?:^|\/)records\/(?:verifications\/(V-\d{4,})-[^/]*\.md|claims\/(C-\d{4,})\.json)$/.exec(line.trim());
+    if (m !== null) ids.add((m[1] ?? m[2])!);
+  }
+  return [...ids];
+}
+
 export type VerificationDraft = {
   id: string;
   title: string;

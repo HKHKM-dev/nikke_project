@@ -155,6 +155,34 @@ function orderOf(
   return { uncommitted, predictionCommit, notAfter, merged };
 }
 
+/**
+ * ファイルの履歴（新しい順の [commit, その commit でのパス]）。番号の振り直しでファイルを改名していれば、改名した commit の
+ * 祖先に限って古い名前の履歴を続ける。--follow は、振り直した後に main を取り込むと、古い名前を使う main の別のファイルまで
+ * たどってしまうので使わない（V-0378）
+ */
+function renamedHistory(path: string): (readonly [string, string])[] {
+  const out: (readonly [string, string])[] = [];
+  let at = 'HEAD';
+  let file = path;
+  for (let guard = 0; guard < 20; guard++) {
+    const commits = git(['log', '--format=%H', at, '--', file])
+      .split('\n')
+      .filter((c) => c !== '');
+    for (const c of commits) out.push([c, file] as const);
+    const oldest = commits.at(-1);
+    if (oldest === undefined) break;
+    // その名前が現れた commit が改名なら、古い名前を親から続ける
+    const renamed = git(['show', '-M', '--name-status', '--format=', oldest])
+      .split('\n')
+      .map((l) => l.split('\t'))
+      .find((cols) => /^R\d*$/.test(cols[0] ?? '') && cols[2] === file);
+    if (renamed === undefined) break;
+    at = `${oldest}^`;
+    file = renamed[1]!;
+  }
+  return out;
+}
+
 /** 予測ファイルと読みの順を git の履歴で調べる（調べられなければ undefined） */
 function gitOrderOf(prediction: PredictionFile, own: readonly Observation[]): GitOrder | undefined {
   const path = `records/predictions/${prediction.verification}.json`;
@@ -166,18 +194,16 @@ function gitOrderOf(prediction: PredictionFile, own: readonly Observation[]): Gi
       const { seen: _seen, ...rest } = predicted;
       return JSON.stringify(rest);
     };
-    const predictedAt = (rev: string): string | undefined => {
+    const predictedAt = (rev: string, file = path): string | undefined => {
       try {
-        return withoutSeen((JSON.parse(git(['show', `${rev}:${path}`])) as PredictionFile).predicted);
+        return withoutSeen((JSON.parse(git(['show', `${rev}:${file}`])) as PredictionFile).predicted);
       } catch {
         return undefined;
       }
     };
-    // 手書きの部分（targets の observations など）を後で直した commit は、predicted が同じなので飛ばす
-    const history = git(['log', '--format=%H', '--', path])
-      .split('\n')
-      .filter((c) => c !== '')
-      .map((c) => [c, predictedAt(c)] as const);
+    // 手書きの部分（targets の observations など）を後で直した commit は、predicted が同じなので飛ばす。
+    // 番号の振り直し（予測ファイルの改名）は renamedHistory でたどる
+    const history = renamedHistory(path).map(([c, file]) => [c, predictedAt(c, file)] as const);
     return orderOf(history, predictedAt('HEAD'), withoutSeen(prediction.predicted), own);
   } catch (e) {
     console.log(`注意: git の履歴で予測と読みの順を調べられなかった（${(e as Error).message.split('\n')[0]}）`);
@@ -199,15 +225,7 @@ function handOrderOf(path: string, own: readonly Observation[]): GitOrder | unde
         return undefined;
       }
     };
-    // --follow --name-only は「commit の行・空行・その commit でのパスの行」の並び
-    const lines = git(['log', '--follow', '--format=%H', '--name-only', '--', rel]).split('\n');
-    const history: (readonly [string, string | undefined])[] = [];
-    for (let i = 0; i < lines.length; i++) {
-      const c = lines[i]!;
-      if (!/^[0-9a-f]{40}$/.test(c)) continue;
-      const file = lines.slice(i + 1).find((l) => l !== '');
-      if (file !== undefined) history.push([c, sectionAt(c, file)]);
-    }
+    const history = renamedHistory(rel).map(([c, file]) => [c, sectionAt(c, file)] as const);
     const current = predictionSectionOf(readFileSync(path, 'utf8'));
     if (current === undefined) throw new Error('「予測」の節が無い');
     return orderOf(history, sectionAt('HEAD', rel), current, own, true);
