@@ -1,5 +1,5 @@
 // アニス：スター（17）の満タンと発動の時刻（plan/design-anis-star-gauge-timing.md）: 最初の発の物のゲージ（入力。C-0243）、
-// 誘導弾の飛ぶ時間（C-0413）、シューティングスターの飛ぶ時間（C-0240）。どれも 1 パス目のゲージの量と時刻だけを変える。
+// 誘導弾の飛ぶ時間（C-0413）、シューティングスターの飛ぶ時間（C-0504）。どれも 1 パス目のゲージの量と時刻だけを変える。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage } from '../calc/model.ts';
@@ -111,7 +111,7 @@ describe('ゲージの時刻（1 パス目）', () => {
     expect(run.schedule!.gaugeFullFrames[0]).toBe(run.shots[0]!.frames[8]! + 14);
   });
 
-  it('lands the Shooting Star hits after their ticks, so the last ones count after the chain wait (C-0240)', () => {
+  it('lands the Shooting Star hits after their ticks, so the last ones count after the chain wait (C-0504)', () => {
     const before = planTeamRun(solo(withoutFlight));
     const after = planTeamRun(solo(withFlight));
     const ticksOf = (plan: typeof before, a: number) =>
