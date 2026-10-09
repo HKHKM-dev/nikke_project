@@ -3149,12 +3149,100 @@
       "plus": 0
     },
     {
+      "observation": "258-01",
+      "element": "雪子 burst.effects[1]",
+      "key": "79afc352a7f1c267",
+      "effective": true,
+      "minus": -11153.383307739976,
+      "plus": 0
+    },
+    {
+      "observation": "258-02",
+      "element": "雪子 burst.effects[1]",
+      "key": "d2b61e6aa13df8c9",
+      "effective": true,
+      "minus": -7757.648838769503,
+      "plus": 0
+    },
+    {
+      "observation": "258-03",
+      "element": "雪子 burst.effects[1]",
+      "key": "dcc65668eb0411b7",
+      "effective": true,
+      "minus": 0,
+      "plus": 7435.588871826651
+    },
+    {
+      "observation": "258-04",
+      "element": "雪子 burst.effects[1]",
+      "key": "277475c06158671f",
+      "effective": true,
+      "minus": 0,
+      "plus": 5171.765892512998
+    },
+    {
+      "observation": "258-05",
+      "element": "雪子 burst.effects[1]",
+      "key": "001c2d210ea28806",
+      "effective": true,
+      "minus": 0,
+      "plus": 5171.765892513002
+    },
+    {
+      "observation": "258-06",
+      "element": "雪子 burst.effects[1]",
+      "key": "d8611735ee7315a4",
+      "effective": true,
+      "minus": 0,
+      "plus": 1680403.036977857
+    },
+    {
+      "observation": "258-07",
+      "element": "雪子 burst.effects[1]",
+      "key": "49b8a84a11b8c83f",
+      "effective": true,
+      "minus": -1523085.6620714227,
+      "plus": 0
+    },
+    {
+      "observation": "258-08",
+      "element": "雪子 burst.effects[1]",
+      "key": "f8f98cd7009cb534",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "258-10",
+      "element": "雪子 burst.effects[1]",
+      "key": "b600ae03164fca0c",
+      "effective": true,
+      "minus": 0,
+      "plus": 5171.765892512998
+    },
+    {
+      "observation": "258-12",
+      "element": "雪子 burst.effects[1]",
+      "key": "f6be1f3dc17db1b8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "259-01",
       "element": "クイーン（真） skill1.effects[4]",
       "key": "ae8a8714a7e40785",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "259-01",
+      "element": "雪子 burst.effects[1]",
+      "key": "ae8a8714a7e40785",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "259-04",
@@ -3165,12 +3253,28 @@
       "plus": null
     },
     {
+      "observation": "259-04",
+      "element": "雪子 burst.effects[1]",
+      "key": "70a886a66777cc49",
+      "effective": true,
+      "minus": 0,
+      "plus": 11153.383307739969
+    },
+    {
       "observation": "259-05",
       "element": "クイーン（真） skill1.effects[4]",
       "key": "967f18c1da19461c",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "259-05",
+      "element": "雪子 burst.effects[1]",
+      "key": "967f18c1da19461c",
+      "effective": true,
+      "minus": 0,
+      "plus": 11153.383307739976
     },
     {
       "observation": "259-06",
@@ -3181,12 +3285,28 @@
       "plus": null
     },
     {
+      "observation": "259-06",
+      "element": "雪子 burst.effects[1]",
+      "key": "963a76ae344f3b83",
+      "effective": true,
+      "minus": 0,
+      "plus": 11153.383307739954
+    },
+    {
       "observation": "259-07",
       "element": "クイーン（真） skill1.effects[4]",
       "key": "92116e66c7ba1a47",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "259-07",
+      "element": "雪子 burst.effects[1]",
+      "key": "92116e66c7ba1a47",
+      "effective": true,
+      "minus": -7757.648838769499,
+      "plus": 0
     },
     {
       "observation": "259-08",
@@ -3197,12 +3317,28 @@
       "plus": null
     },
     {
+      "observation": "259-08",
+      "element": "雪子 burst.effects[1]",
+      "key": "9601ee4e9d259a6d",
+      "effective": true,
+      "minus": -7757.648838769499,
+      "plus": 0
+    },
+    {
       "observation": "259-11",
       "element": "クイーン（真） skill1.effects[4]",
       "key": "c7aac5f31054f7e8",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "259-11",
+      "element": "雪子 burst.effects[1]",
+      "key": "c7aac5f31054f7e8",
+      "effective": true,
+      "minus": 0,
+      "plus": 1680403.0369778536
     },
     {
       "observation": "259-12",
@@ -3213,12 +3349,28 @@
       "plus": null
     },
     {
+      "observation": "259-12",
+      "element": "雪子 burst.effects[1]",
+      "key": "db2fd33f02b23770",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "259-13",
       "element": "クイーン（真） skill1.effects[4]",
       "key": "0c18d9fd1562957e",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "259-13",
+      "element": "雪子 burst.effects[1]",
+      "key": "0c18d9fd1562957e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "261-01",

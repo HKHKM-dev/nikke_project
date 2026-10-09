@@ -1,0 +1,120 @@
+{
+  "verification": "V-0393",
+  "note": "録画 258（ラム（I）+ デルタ（II）+ 雪子（III・操作）・風圧）の読み直し。フルバーストの終わりの前後の発の値を読む前に固定する。H0 はいまのモデル（1more の攻撃力▲は III の発動のフレームで付き、補正と同じ窓）。HC（C-0510 の形）は遅れの表で切り替わる仮説なので、検証記録の予測の節に手で書く。5 回目は戦闘の終わりで切れるので比べない",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 871,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル: 1more の攻撃力▲は III の発動のフレーム（遅れ 0）で付き、10 秒で補正と同じフレームに切れる"
+    }
+  ],
+  "targets": [
+    {
+      "id": "window-end-1",
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバーストの中に始まった 1more の攻撃力▲の窓の終わり − 補正の窓の終わり（モデルのフレーム）"
+    },
+    {
+      "id": "window-end-2",
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のフルバーストの中に始まった 1more の攻撃力▲の窓の終わり − 補正の窓の終わり（モデルのフレーム）。2 回目は V-0232 で一部読まれている（後付け）"
+    },
+    {
+      "id": "window-end-3",
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "note": "3 回目のフルバーストの中に始まった 1more の攻撃力▲の窓の終わり − 補正の窓の終わり（モデルのフレーム）"
+    },
+    {
+      "id": "window-end-4",
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "note": "4 回目のフルバーストの中に始まった 1more の攻撃力▲の窓の終わり − 補正の窓の終わり（モデルのフレーム）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-10",
+    "commit": "d7ec959cab3489e99f2b42afc5db4ede2e8e9285",
+    "values": {
+      "H0": {
+        "window-end-1": 0,
+        "window-end-2": 0,
+        "window-end-3": 0,
+        "window-end-4": 0
+      }
+    },
+    "seen": {
+      "258": [
+        "258-01",
+        "258-02",
+        "258-03",
+        "258-04",
+        "258-05",
+        "258-10",
+        "258-06",
+        "258-07",
+        "258-08",
+        "258-09",
+        "258-11",
+        "258-12",
+        "258-13"
+      ]
+    }
+  }
+}

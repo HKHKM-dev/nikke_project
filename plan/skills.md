@@ -788,4 +788,4 @@ notes の種類: 未対応 125・前提の外 37・計算に無関係 54・補�
   - notes[1] 計算に無関係: 真紅の守護（水冷コードの敵から受けるダメージ▼）はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-0351（確定）
-  - effects[1] timed・burstUse・attack: C-0352（確定）
+  - effects[1] timed・burstUse・attack: C-0352（確定）、C-0511（仮説）
