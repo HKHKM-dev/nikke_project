@@ -249,8 +249,8 @@ describe('静的な判定（4.2 節）', () => {
 });
 
 describe('対象と印（2 節の 1・4.3 節）', () => {
-  // イサベル skill2.notes[0] は仮説 C-0402 の要素。162 の観測値に立つ確定の結論を作り、対象・印で外れるかを見る
-  // 回数の観測値には、別のヒット（イサベルの S2 の notes の effect は damage）が効きうる
+  // イサベル skill2.effects[1]（S2 のヒットのゲージ）は仮説 C-0404 の要素。162 の観測値に立つ確定の結論を作り、対象・印で外れるかを見る
+  // 回数の観測値には、ゲージ（バーストの時刻）が効きうる
   const o = observations.find((x) => x.recording === '162' && x.invalid === undefined && x.kind === 'count')!;
   const base: Claim = {
     id: 'C-9100',
@@ -269,14 +269,14 @@ describe('対象と印（2 節の 1・4.3 節）', () => {
       ...w.elements.map((e) => e.name),
       ...w.marked.map((m) => `印 ${m}`),
     ]);
-  const target = 'イサベル skill2.effects[0]';
+  const target = 'イサベル skill2.effects[1]';
 
   it('counts the element when it is not the subject', () => {
     expect(elementsFor(base)).toContain(target);
   });
 
   it('drops the subject', () => {
-    const c = { ...base, subject: { places: ['data/skills/231.json の skill2 の effects[0]'] } };
+    const c = { ...base, subject: { places: ['data/skills/231.json の skill2 の effects[1]'] } };
     expect(elementsFor(c)).not.toContain(target);
   });
 
