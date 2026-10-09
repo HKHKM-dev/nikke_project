@@ -476,22 +476,23 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 1, burst: 2, from: 0, to: 588 })).toThrow('発動 2 回目');
   });
 
-  it('measures the first shot at or after the burst effect, from the activation or from the first shot (backlog 2-4)', () => {
+  it('measures the first shot at or after the burst effect, from the hexagon change or from the first shot (backlog 2-4, V-0390)', () => {
     const result = {
       shots: [{ frames: [88, 91, 93, 96, 98, 101, 400, 402] }],
       schedule: {
         activations: [
-          { slotIndex: 0, frame: 90 },
-          { slotIndex: 0, frame: 300, effectFrame: 310 },
+          { slotIndex: 0, frame: 90, startsFullBurst: true },
+          { slotIndex: 0, frame: 300, startsFullBurst: false, effectFrame: 310 },
         ],
       },
     } as unknown as SimResult;
     const metric = METRICS.burstEffectFirstShot!;
     const value = (args: Record<string, unknown>) =>
       metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    // III は替わり目が発動と同じフレーム。I・II は替わり目（本当の発動の 5f 後。hexagonFrameOf）から数える
     expect(value({ slot: 1, n: 0 })).toBe(1);
     expect(value({ slot: 1, n: 0, fromShot: true })).toBe(0);
-    expect(value({ slot: 1, n: 1 })).toBe(100);
+    expect(value({ slot: 1, n: 1 })).toBe(95);
     expect(value({ slot: 1, n: 1, fromShot: true })).toBe(0);
     expect(() => value({ slot: 1, n: 2 })).toThrow('2 回目の発動が無い');
   });
