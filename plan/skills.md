@@ -327,8 +327,8 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - effects[1] timed・burstUse・critDamage: C-0160（確定）
   - effects[2] timed・burstUse・attack: C-0160（確定）
 - **skill2**: supported
-  - effects[0] damage・15 秒ごと・skill: C-0402（仮説）、C-0102（確定）、C-0453（確定）
-  - effects[1] burstGaugeHit・15 秒ごと: C-0404（仮説）、C-0402（仮説）、C-0453（確定）
+  - effects[0] damage・15 秒ごと・skill: C-0402（確定）、C-0102（確定）、C-0453（確定）
+  - effects[1] burstGaugeHit・15 秒ごと: C-0404（仮説）、C-0402（確定）、C-0453（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0160（確定）、C-0165（確定）
   - effects[1] timed・burstUse・damageTaken: C-0160（確定）、C-0161（確定）、C-0162（確定）、C-0165（確定）、C-0153（仮説）
@@ -370,7 +370,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - notes[0] 前提の外: フルチャージ攻撃時の貫通特化・貫通範囲の拡張は、敵 1 体ではダメージに関係しない: C-0088（確定）
   - notes[1] 前提の外: 2 機以上に同時に命中した時の追加ダメージは、敵 1 体では起きない: C-0088（確定）
 - **skill2**: partial
-  - effects[0] damage・10 秒ごと・skill: C-0102（確定）、C-0401（仮説）、C-0453（確定）
+  - effects[0] damage・10 秒ごと・skill: C-0102（確定）、C-0401（確定）、C-0453（確定）
   - notes[0] 未対応: S2 のヒットがバーストゲージを溜めるかは確かめていない（イサベル・エーテル・ラピの S2 は溜める。C-0404・C-0409）。モデルは溜めない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0089（確定）、C-0219（確定）
