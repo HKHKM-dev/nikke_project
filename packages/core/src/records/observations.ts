@@ -483,6 +483,31 @@ function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
+ * バーストの効果の遅れ（backlog 2-4 の P3。V-0392）: n 回目（0 始まり）のフルバーストの窓の中に始まった、その枠が受ける timed の効果
+ * （skill と stat で絞る）の窓の終わりから、フルバーストの窓の終わりを引いたモデルのフレーム数（効果が先に切れれば負）。窓が同じ
+ * フレームに終わるかを、窓の終わりの前後の発の値（効果だけ・フルバースト補正だけの発の数）と比べる
+ */
+function buffWindowEndFromFullBurstEnd(result: SimResult, ctx: MetricContext): number {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const window = schedule.fullBurstWindows[Number(ctx.args.n)];
+  if (window === undefined) throw new Error(`${String(ctx.args.n)} 回目のフルバーストが無い`);
+  const slotIndex = slotIndexOf(ctx);
+  const ends = result.timeline.windows
+    .filter(
+      (w) =>
+        w.slotIndex === slotIndex &&
+        w.effect.source.skill === ctx.args.skill &&
+        w.effect.stat === ctx.args.stat &&
+        window.start <= w.start &&
+        w.start < window.end,
+    )
+    .map((w) => w.end);
+  if (ends.length === 0) throw new Error(`${String(ctx.args.n)} 回目のフルバーストの中に始まった窓が無い`);
+  return Math.max(...ends) - window.end;
+}
+
+/**
  * ソルジャーE.G. 編（V-0241）: 枠の、スロット skill の確率のきっかけの効果の機会（発の次のフレームから、確率 = p × その発の回数の量）と
  * 維持のフレーム。窓の小片（skills/chance.ts）と同じ機会を、射撃の列から作り直す
  */
@@ -874,6 +899,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },
+  buffWindowEndFromFullBurstEnd: { args: ['slot', 'skill', 'stat', 'n'], sim: buffWindowEndFromFullBurstEnd },
   chanceActiveRatio: { args: ['slot', 'skill'], sim: chanceActiveRatio },
   chanceExpiries: { args: ['slot', 'skill'], sim: chanceExpiries },
   critRateAt: { args: ['slot', 'frame'], sim: critRateAt },

@@ -5,7 +5,7 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 0・保留 0・完了 334・打ち切り 22（計 356）
+件数: 調査中 0・保留 0・完了 335・打ち切り 22（計 357）
 
 ## 開いている検証
 
@@ -3737,3 +3737,21 @@
     - shot-delay-3（burstEffectFirstShot）: 実測 26（232-16）。H0 30（+4、**許容外**）
     - shot-delay-4（burstEffectFirstShot）: 実測 22（232-17）。H0 30（+8、**許容外**）
     - 許容内の指標: H0 0/4。合う仮説は無い
+- **[V-0392](../records/verifications/V-0392-ludmilla-wo-burst-effect-delay.md)** ルドミラ：WO のバーストの攻撃力▲は、フルバーストと同じフレームに付いて同じフレームに切れるか（録画 192 の読み直し）
+  - 問い: ルドミラ：WO（III）のバーストの自分の攻撃力▲は、フルバーストの最初の発から乗り、フルバーストの終わりと同じ発で切れるか（効果の遅れ 0 のいまのモデルと合うか）
+  - 話題: スキル・キャラ固有・日付: 2026-10-10・状態: 完了・Stage: backlog 2-4（plan/burst-effect-delay-candidates.md の P3。III の自分への効果）
+  - 録画: 192
+  - 観測値: 192-11、192-12、192-13、192-14、192-15
+  - 結論: C-0510
+  - 予測（2026-10-10、commit 8a564a5）との比べ:
+    - effect-first-1（burstEffectFirstShot）: 実測なし。H0 0
+    - effect-first-2（burstEffectFirstShot）: 実測なし。H0 0
+    - effect-first-3（burstEffectFirstShot）: 実測なし。H0 0
+    - effect-first-4（burstEffectFirstShot）: 実測なし。H0 0
+    - effect-first-5（burstEffectFirstShot）: 実測なし。H0 0
+    - window-end-1（buffWindowEndFromFullBurstEnd）: 実測 -1.5（192-11）。H0 0（+1.5、**許容外**）
+    - window-end-2（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
+    - window-end-3（buffWindowEndFromFullBurstEnd）: 実測 -2（192-12）。H0 0（+2、**許容外**）
+    - window-end-4（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
+    - window-end-5（buffWindowEndFromFullBurstEnd）: 実測 -2（192-13）。H0 0（+2、**許容外**）
+    - 許容内の指標: H0 0/3。合う仮説は無い

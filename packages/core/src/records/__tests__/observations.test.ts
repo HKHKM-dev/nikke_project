@@ -497,6 +497,34 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 1, n: 2 })).toThrow('2 回目の発動が無い');
   });
 
+  it('measures the end of a timed window started in the n-th full burst, from the end of the full burst (backlog 2-4, V-0392)', () => {
+    const effect = (skill: string, stat: string) => ({ source: { skill }, stat });
+    const result = {
+      schedule: {
+        fullBurstWindows: [
+          { start: 100, end: 688 },
+          { start: 2000, end: 2588 },
+        ],
+      },
+      timeline: {
+        windows: [
+          { slotIndex: 2, start: 100, end: 688, effect: effect('burst', 'attack') },
+          { slotIndex: 2, start: 100, end: 1276, effect: effect('burst', 'reloadSpeed') },
+          { slotIndex: 1, start: 100, end: 700, effect: effect('burst', 'attack') },
+          { slotIndex: 2, start: 2004, end: 2592, effect: effect('burst', 'attack') },
+        ],
+      },
+    } as unknown as SimResult;
+    const metric = METRICS.buffWindowEndFromFullBurstEnd!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 3, skill: 'burst', stat: 'attack', n: 0 })).toBe(0);
+    expect(value({ slot: 3, skill: 'burst', stat: 'reloadSpeed', n: 0 })).toBe(588);
+    expect(value({ slot: 3, skill: 'burst', stat: 'attack', n: 1 })).toBe(4);
+    expect(() => value({ slot: 3, skill: 'burst', stat: 'reloadSpeed', n: 1 })).toThrow('始まった窓が無い');
+    expect(() => value({ slot: 3, skill: 'burst', stat: 'attack', n: 2 })).toThrow('2 回目のフルバーストが無い');
+  });
+
   it('measures the delay from the hexagon change of the burst activation to the burst effect (backlog 2-4, V-0368, V-0382)', () => {
     const result = {
       schedule: {
