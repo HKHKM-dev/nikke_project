@@ -863,7 +863,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     if (!t.onTick) return;
     for (const tick of ticks) {
       if (tick <= f) throw new RangeError(`dot gauge tick at ${tick} is not after the fire at ${f}`);
-      // 自動攻撃のヒットは、刻みのフレーム + 飛ぶ時間に着く（C-0240。ダメージの tick のフレームは変えない）
+      // 自動攻撃のヒットは、刻みのフレーム + 飛ぶ時間に着く（C-0504。ダメージの tick のフレームは変えない）
       const at = tick + flightFramesAt(t.flight, tick);
       pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
       dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy: t.energy });
