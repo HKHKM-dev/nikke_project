@@ -1,0 +1,29 @@
+{
+  "id": "399",
+  "date": "2026-10-09",
+  "folder": "range",
+  "file": "20261009-399_sg_maiden_manual.mp4",
+  "original": "2026-10-09_23-29-09.mp4",
+  "durationSec": 170.9,
+  "frames": 10252,
+  "fps": 60,
+  "sizeMB": 205.4,
+  "sha256": "bcac23ce0de5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 181,
+      "name": "メイデン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0384。メイデン単騎・操作（AUTO 射撃 OFF）・オートバースト OFF。撮影計画 M1（数トリガー撃つ → 隠れて撃たずに待つ）"
+}
