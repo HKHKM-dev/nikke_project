@@ -18,6 +18,7 @@ import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '.
 import { GEAR_PARTS, emptyBuild, type BuildInput } from '../build.ts';
 import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
 import { effectiveMaxAmmo, firingParams } from '../frame/firing.ts';
+import { landingFrameSpans } from '../frame/landing.ts';
 import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buffs.ts';
@@ -1107,12 +1108,19 @@ function gaugeFullToBurstHit(result: SimResult, ctx: MetricContext): number[] {
  * バーストの効果の遅れ（backlog 2-4）: 枠の n 回目（0 始まり）のバーストの発動の印（I・II は六角形の替わり目。hexagonFrameOf。
  * V-0382・V-0390）から、効果の発火（effectFrameOf）以後の枠の最初の発までのモデルのフレーム数（ゲーム内の時間。フルバーストの
  * 入りの止まりを含まない）。効果の乗った最初の発の時刻を、動画のフレームの差（止まりの後の発は 22f を引く）と比べる。fromShot が
- * true なら起点を発動の後の最初の発にする（発の間隔とリロードの位置によらず、効果の遅れが無ければ 0）
+ * true なら起点を発動の後の最初の発にする（発の間隔とリロードの位置によらず、効果の遅れが無ければ 0）。band（的の距離帯）があれば、n は
+ * 効果の発火のフレームの着地点がその帯の発動だけを数える（炸裂弾の時刻編。plan/design-eunhwa-tu-burst-shot-timing.md 7 節。モデルと録画で
+ * バーストの回と的のジャンプの位相がそろわないので、帯で決まる値を帯どうしで比べる）
  */
 function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
-  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
+  const band = ctx.args.band;
+  const spans = band === undefined ? [] : landingFrameSpans(ctx.input.enemy, result.frames);
+  const bandAt = (frame: number) => spans.find((s) => s.start <= frame && frame < s.end)?.band ?? null;
+  const mine = schedule.activations.filter(
+    (a) => a.slotIndex === slotIndexOf(ctx) && (band === undefined || bandAt(effectFrameOf(a)) === band),
+  );
   const activation = mine[Number(ctx.args.n)];
   if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
   const frames = slotOf(result.shots, ctx).frames;

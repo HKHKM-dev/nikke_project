@@ -152,8 +152,8 @@
             "C-0138"
           ],
           "assumes": {
-            "ja": "敵 1 体。ほかのどの群とも別の乗数 (1 + 27.87%) で味方の与ダメージに掛かる。炸裂弾（使用武器の変更の発）を撃った次のフレームから 10 秒で、炸裂弾自身には乗らない。実機の窓は炸裂弾の着弾から 10 秒（モデルは着弾までの飛ぶ時間を持たない）",
-            "en": "One enemy. Multiplies allies' damage as a separate multiplier (1 + 27.87%). It starts on the frame after the Explosive Round (the weapon-change shot) is fired and lasts 10 s, so the round itself does not get it. In game the window is 10 s from the round's hit (the model has no flight time for it)"
+            "ja": "敵 1 体。ほかのどの群とも別の乗数 (1 + 27.87%) で味方の与ダメージに掛かる。炸裂弾（使用武器の変更の発）を撃った次のフレームから 10 秒で、炸裂弾自身には乗らない。実機の窓は炸裂弾の着弾から 10 秒。モデルの炸裂弾は撃ったフレームに着くとみなす（射撃場の的では着弾の時刻に撃つ。effects[1] の assumes・C-0509）",
+            "en": "One enemy. Multiplies allies' damage as a separate multiplier (1 + 27.87%). It starts on the frame after the Explosive Round (the weapon-change shot) is fired and lasts 10 s, so the round itself does not get it. In game the window is 10 s from the round's hit. The model takes the round to hit on the frame it is fired (on the shooting range target it is fired at the hit time; see effects[1] and C-0509)"
           }
         },
         {
@@ -171,12 +171,25 @@
             "C-0509"
           ],
           "assumes": {
-            "ja": "撃ち切ったら（最大装弾数 1 発）、次のフレームに基礎の SR に戻る。戻った基礎の SR は満タンのマガジンで、リロードの後の 1 発目と同じ待ちで撃つ（モダニア由来の決まり。未確定。録画 232 では着弾から基礎の SR の 1 発目まで 137f で、モデルより長い）。炸裂弾の発は持ち替えの次のフレームから、構え + チャージ 0.3 秒の待ちで撃つ（録画の着弾はバースト使用から 20f ほど）。炸裂弾の発のバーストゲージは基礎の SR の 1 発と同じ量（未確定）。変更後の武器の発射レート（CDN）は、チャージ武器の発の間隔には使わない。炸裂弾は発射体の爆発を持ち、発射体爆発ダメージ▲が防御力無視ダメージ▲と 1 つの和で乗る（C-0376）。2 つの▲が攻撃ダメージ▲と同じ和か、2 つだけの別の和かは分けていない（モデルは攻撃ダメージ▲と同じ和。damage.ts の TRUE_DAMAGE_BUCKET）",
-            "en": "After the magazine (1 round) is spent, the unit switches back to the base SR on the next frame. The base SR returns with a full magazine and fires after the same wait as the first shot after a reload (rule carried over from Modernia; unverified. In recording 232 the first base SR shot came 137 frames after the round's hit, later than the model). The round is fired from the frame after the switch, after the aim + 0.3 s charge wait (in recordings it hits about 20 frames after Burst Skill use). The round's Burst Gauge gain is the same as one base SR shot (unverified). The changed weapon's rate of fire (CDN) is not used for a charge weapon's shot interval. The round has a projectile explosion, so Projectile Explosion Damage up applies, summed with True Damage up (C-0376). Whether the two ups share the sum with Attack Damage up or form a sum of their own is not separated (the model puts them in the Attack Damage sum; TRUE_DAMAGE_BUCKET in damage.ts)"
+            "ja": "撃ち切ったら（最大装弾数 1 発）、次のフレームに基礎の SR に戻る。戻った基礎の SR は満タンのマガジンで、リロードの後の 1 発目と同じ待ちで撃つ（モダニア由来の決まり。未確定。録画 232 では着弾から基礎の SR の 1 発目まで 137f で、モデルより長い）。炸裂弾の発は、射撃場の的（的の表の weaponChangeFirstHitFrames に行がある）では II の発動の印（六角形の替わり目）から帯ごとのフレーム（近 22・中近 24・中遠 25・遠 28。C-0509）に撃ち、撃ったフレームに着くとみなす（発射と飛ぶ時間に分けない。plan/design-eunhwa-tu-burst-shot-timing.md）。表の無い敵では、持ち替えの次のフレームから構え + チャージ 0.3 秒の待ちで撃つ（替わり目から 25f）。炸裂弾の発のバーストゲージは基礎の SR の 1 発と同じ量（未確定）。変更後の武器の発射レート（CDN）は、チャージ武器の発の間隔には使わない。炸裂弾は発射体の爆発を持ち、発射体爆発ダメージ▲が防御力無視ダメージ▲と 1 つの和で乗る（C-0376）。2 つの▲が攻撃ダメージ▲と同じ和か、2 つだけの別の和かは分けていない（モデルは攻撃ダメージ▲と同じ和。damage.ts の TRUE_DAMAGE_BUCKET）",
+            "en": "After the magazine (1 round) is spent, the unit switches back to the base SR on the next frame. The base SR returns with a full magazine and fires after the same wait as the first shot after a reload (rule carried over from Modernia; unverified. In recording 232 the first base SR shot came 137 frames after the round's hit, later than the model). On the shooting range target (a row in the target table's weaponChangeFirstHitFrames) the round is fired at the per-band frame after the Burst II activation mark (the hexagon change; near 22, mid-near 24, mid-far 25, far 28; C-0509) and is taken to hit on that frame (no split into firing and flight; plan/design-eunhwa-tu-burst-shot-timing.md). Against other enemies it is fired from the frame after the switch, after the aim + 0.3 s charge wait (25 frames after the hexagon change). The round's Burst Gauge gain is the same as one base SR shot (unverified). The changed weapon's rate of fire (CDN) is not used for a charge weapon's shot interval. The round has a projectile explosion, so Projectile Explosion Damage up applies, summed with True Damage up (C-0376). Whether the two ups share the sum with Attack Damage up or form a sum of their own is not separated (the model puts them in the Attack Damage sum; TRUE_DAMAGE_BUCKET in damage.ts)"
           }
         }
       ],
-      "notes": []
+      "notes": [
+        {
+          "ja": "II の直後に III が来たとき、実測の炸裂弾は III の発動より前に着き、フルバースト補正が乗らない（233-10）。モデルの III の発動は II の替わり目の 24f 後で、炸裂弾（中近 24f・中遠 25f・遠 28f）はフルバーストの中に入り、補正が乗る（未対応。III の本当の発動の位置は backlog 2-31）",
+          "en": "When Burst III follows Burst II immediately, the recorded round hits before the III activation and gets no full burst bonus (233-10). In the model the III activation is 24 frames after the II hexagon change, so the round (mid-near 24, mid-far 25, far 28 frames) falls inside the full burst and gets the bonus (not modeled; where the true III activation is belongs to backlog 2-31)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "burstUse"
+          },
+          "claims": [
+            "C-0509"
+          ]
+        }
+      ]
     }
   }
 }
