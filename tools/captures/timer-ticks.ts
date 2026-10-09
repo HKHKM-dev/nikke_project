@@ -64,6 +64,57 @@ export function gameTicksAt(
   return { ticks: f - start - s.after, stallInSecond: Math.abs(s.after - s.before) >= 0.8 };
 }
 
+/**
+ * 止まりの区切り 1 つ（V-0379「読み方」2）: 区切った変わり目 at と、その前の変わり目 before のあいだに止まりがある。
+ * 大きさは low〜high（区切りの前後の共通部分の差の両端）、size はその真ん中。負は読み違い（下に外れた所）
+ */
+export type TimerStall = { before: number; at: number; size: number; low: number; high: number };
+
+/** 共通部分を判定するときの丸めの幅 */
+const OVERLAP_EPS = 1e-6;
+
+/**
+ * 止まりを区間の共通部分で区切る（V-0379「読み方」2。backlog 5-3）。止まりの累計 S が一定のあいだ、変わり目ごとに
+ * S + 位相は (o − 1, o] にあるので、変わり目を順にその区間の共通部分に足し、新しい区間が共通部分と重ならなくなった所
+ * （と、変わり目が 4 秒以上飛んだ所）で区切る。前後の 3 点の最小の差で見る timerSteps は、鋸歯の位相によって 1f の
+ * 止まりを取りこぼす（V-0286・C-0415）。この区切り方は、単騎のオートバーストの I の発動 19 回の止まりをすべて拾った（V-0379）
+ */
+export function timerStalls(offsets: readonly TimerOffset[]): TimerStall[] {
+  const runs: { first: number; low: number; high: number }[] = [];
+  let cur: { first: number; low: number; high: number } | null = null;
+  for (let i = 0; i < offsets.length; i++) {
+    const { o, k } = offsets[i]!;
+    const gap = i > 0 && k - offsets[i - 1]!.k > 3;
+    if (cur !== null && !gap && o - 1 < cur.high + OVERLAP_EPS && o > cur.low - OVERLAP_EPS) {
+      cur.low = Math.max(cur.low, o - 1);
+      cur.high = Math.min(cur.high, o);
+    } else {
+      cur = { first: i, low: o - 1, high: o };
+      runs.push(cur);
+    }
+  }
+  return runs.slice(1).map((b, r) => {
+    const a = runs[r]!;
+    const low = b.low - a.high;
+    const high = b.high - a.low;
+    return { before: offsets[b.first - 1]!.c, at: offsets[b.first]!.c, size: (low + high) / 2, low, high };
+  });
+}
+
+/**
+ * フレーム f の前後に掛かる止まり: 区切りのうち、変わり目のあいだ (before, at] が [f − before, f + after] に掛かるもの
+ * （V-0379 の発動ごとの止まりは、発動の 35f 前から 5f 後まで）
+ */
+export function stallsAround(
+  stalls: readonly TimerStall[],
+  f: number,
+  before = 35,
+  after = 5,
+): { size: number; stalls: TimerStall[] } {
+  const hit = stalls.filter((s) => s.at >= f - before && s.before <= f + after);
+  return { size: hit.reduce((a, s) => a + s.size, 0), stalls: hit };
+}
+
 /** 止まりの段: 前の 3 点の最小と、その点からの 3 点の最小の差が + 0.8 以上の点（隣り合う 130f 以内は大きいほう。V-0168 と同じ） */
 export function timerSteps(offsets: readonly TimerOffset[]): { c: number; size: number }[] {
   const raw: { c: number; size: number }[] = [];
