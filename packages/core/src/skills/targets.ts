@@ -6,9 +6,10 @@
 // 対象の語彙編（plan/design-target-vocab.md 2 節）: 編成で決まる対象（targetSquad・longestChargeTime）は、最上位の
 // skills/composition.ts が決めた枠（fixedTargets）で絞る。「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
 // ペルソナ編（plan/design-persona.md 3.2 節）: 「ペルソナ状態の」「基本バースト段階が N の」と allies の「自分を除く」も、編成で決まる
-// 対象として fixedTargets で絞る。
+// 対象として fixedTargets で絞る。名前の付いた状態の語彙編: 「〈名前〉状態の」は目録の id（静的な状態。skills/composition.ts）。
 import type { Element, WeaponType } from '../types.ts';
-import type { BasicBurstStep, BuffTarget, ExcludeSelf, SkillState, TargetSquad } from './types.ts';
+import type { NamedStateId } from './states.ts';
+import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetSquad } from './types.ts';
 
 /**
  * 発火の文脈。
@@ -27,7 +28,7 @@ export type TargetedEffect = {
   targetCount?: number;
   targetSquad?: TargetSquad;
   excludeSelf?: ExcludeSelf;
-  targetState?: SkillState;
+  targetState?: NamedStateId;
   targetBurstStep?: BasicBurstStep;
   fixedTargets?: readonly number[];
 };

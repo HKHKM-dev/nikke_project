@@ -6,9 +6,9 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 58・効果 196（根拠あり 188）・notes 222（根拠あり 69）
+件数: キャラ 58・効果 195（根拠あり 187）・notes 220（根拠あり 67）
 
-notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補足 8
+notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補足 6
 
 スロット: supported 78・partial 15・unsupported 59・noEffect 34
 
@@ -166,10 +166,8 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
 ## 95 ウンファ：タクティカル・アップ
 
 - **skill1**: supported
-  - effects[0] timed・burstUse・trueDamageConversion: C-0311（確定）
-  - effects[1] timed・burstUse・trueDamage: C-0311（確定）
-  - effects[2] timed・fullChargeShot・trueDamageConversion: C-0314（確定）、C-0311（確定）
-  - effects[3] timed・fullChargeShot・trueDamage: C-0314（確定）、C-0311（確定）
+  - effects[0] state・burstUse・camouflage（trueDamageConversion・trueDamage）: C-0311（確定）
+  - effects[1] state・fullChargeShot・camouflage: C-0314（確定）、C-0311（確定）
   - notes[0] 前提の外: カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）: 根拠なし
 - **skill2**: supported
   - effects[0] passive・critRate: C-0317（確定）、C-0268（仮説）、C-0235（仮説）
@@ -756,16 +754,16 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
 - **skill1**: supported
   - effects[0] timed・battleStart・attack: C-0270（確定）
   - effects[1] timed・fullBurstEnd・attack: C-0392（確定）
-  - effects[2] passive・elementDamage: C-0296（確定）
+  - effects[2] state・battleStart・persona（elementDamage）: C-0354（確定）
+    - contents[0] elementDamage: C-0296（確定）
   - effects[3] damage・burstUse・distributed: C-0310（確定）
   - effects[4] damage・followUp が適用された時・distributed: C-0429（仮説）
-  - notes[0] 補足: ペルソナ - ヨハンナ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ: C-0354（確定）
-  - notes[1] 計算に無関係: 防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない: 根拠なし
+  - notes[0] 計算に無関係: 防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない: 根拠なし
 - **skill2**: supported
   - effects[0] passive・attackDamage: C-0018（確定）
   - effects[1] timed・burstStage3Enter・distributedDamage: C-0391（確定）
   - effects[2] timed・burstUse・elementDamage: C-0307（確定）
-  - effects[3] timed・burstUse・attack: C-0357（確定）
+  - effects[3] state・burstUse・batonPass（attack）: C-0357（確定）
   - notes[0] 計算に無関係: 鉄・拳・制・裁！の防御力▲はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-0231（確定）
@@ -777,13 +775,13 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
   - effects[0] timed・battleStart・attack: C-0347（確定）
   - effects[1] timed・fullBurstEnd・attack: C-0347（確定）
   - effects[2] damage・burstUse・distributed: C-0358（確定）、C-0428（確定）
-  - notes[0] 補足: ペルソナ - コノハナサクヤ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ: C-0354（確定）
-  - notes[1] 未対応: ペルソナ - コノハナサクヤの 3 秒ごとの味方全体の回復（メディア）は未対応（回復を受けた時の効果を持つ味方の発動を変える）: 根拠なし
+  - effects[3] state・battleStart・persona: C-0354（確定）
+  - notes[0] 未対応: ペルソナ - コノハナサクヤの 3 秒ごとの味方全体の回復（メディア）は未対応（回復を受けた時の効果を持つ味方の発動を変える）: 根拠なし
 - **skill2**: partial
   - effects[0] passive・attackDamage: C-0348（確定）
   - effects[1] timed・burstUse・distributedDamage: C-0349（確定）
   - effects[2] timed・burstStage3Enter・elementDamage: C-0350（確定）、C-0360（確定）
-  - effects[3] timed・burstUse・attack: C-0355（確定）
+  - effects[3] state・burstUse・followUp（attack）: C-0355（確定）
   - notes[0] 未対応: 真紅の華の 3 秒ごとの味方全体の回復（メディラマ）は未対応（回復を受けた時の効果を持つ味方の発動を変える）: 根拠なし
   - notes[1] 計算に無関係: 真紅の守護（水冷コードの敵から受けるダメージ▼）はダメージに関係しない: 根拠なし
 - **burst**: supported

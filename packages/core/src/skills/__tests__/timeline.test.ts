@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { FIXED_BURST_CYCLE, isFullBurstFrame, planFixedCycle } from '../../burst/fixedCycle.ts';
 import { slotsByStep } from '../../burst/schedule.ts';
-import { MAX_SKILL_LEVELS } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, isStateContent, type WindowEffect } from '../resolve.ts';
+
+/** 窓の効果のトリガー（名前の付いた状態の中身はトリガーを持たない） */
+const triggerOf = (e: WindowEffect) => (isStateContent(e) ? undefined : e.trigger);
 import { groupTimeline, planBuffTimeline, triggerFrames, type TimelineSlot } from '../timeline.ts';
 import type { BuffTrigger, SkillDefinition, SkillEntry, TimedEffect } from '../types.ts';
 import type { BurstStep, SkillRaw } from '../../types.ts';
@@ -306,13 +309,13 @@ describe('groupTimeline', () => {
     const slots = [timedSlot(4, 'Step3', [timed('battleStart'), timed('fullBurstEnd')], '50', '15')];
     const groups = groupTimeline(planBuffTimeline(slots, sched, FRAMES), 0);
     const first = groups[0]!;
-    expect(first.state.timedEffects.map((e) => e.trigger)).toEqual(['battleStart']);
-    expect(groups.some((g) => g.state.timedEffects.some((e) => e.trigger === 'fullBurstEnd'))).toBe(true);
+    expect(first.state.timedEffects.map(triggerOf)).toEqual(['battleStart']);
+    expect(groups.some((g) => g.state.timedEffects.some((e) => triggerOf(e) === 'fullBurstEnd'))).toBe(true);
     // どのグループも「効いている効果」が 1 通りに決まる
     for (const g of groups) {
-      const ids = g.state.timedEffects.map((e) => `${e.trigger}`).join(',');
+      const ids = g.state.timedEffects.map((e) => `${triggerOf(e)}`).join(',');
       for (const seg of g.segments) {
-        expect(seg.slots[0]!.timedEffects.map((e) => `${e.trigger}`).join(',')).toBe(ids);
+        expect(seg.slots[0]!.timedEffects.map((e) => `${triggerOf(e)}`).join(',')).toBe(ids);
       }
     }
   });

@@ -6,32 +6,31 @@
     "skill1": {
       "effects": [
         {
-          "kind": "timed",
+          "kind": "state",
+          "state": "camouflage",
           "trigger": "burstUse",
           "target": "self",
-          "stat": "trueDamageConversion",
           "durationRef": 1,
+          "contents": [
+            {
+              "stat": "trueDamageConversion"
+            },
+            {
+              "stat": "trueDamage",
+              "ref": 2
+            }
+          ],
           "claims": [
             "C-0311"
           ],
           "assumes": {
-            "ja": "カモフラージュは「バースト使用時」と「フルバーストタイムのフルチャージ時」の 2 つのきっかけで付く同じ状態で、中身（通常攻撃の防御力無視ダメージへの変化と▲）を、きっかけごとに直接付ける（窓は和集合）。被弾では解除されない（前提の外）",
-            "en": "Camouflage is one state granted by two triggers (Burst Skill use and Full Charge during Full Burst); its contents (normal attacks become true damage, plus the up) are granted directly per trigger (windows merge). It is not removed by hits (outside the model's assumptions)"
+            "ja": "カモフラージュは「バースト使用時」と「フルバーストタイムのフルチャージ時」の 2 つのきっかけで付く同じ状態で、中身（通常攻撃の防御力無視ダメージへの変化と▲）はこの付与に書き、窓は 2 つのきっかけをまたいで和集合になる。被弾では解除されない（前提の外）",
+            "en": "Camouflage is one state granted by two triggers (Burst Skill use and Full Charge during Full Burst); its contents (normal attacks become true damage, plus the up) are written on this grant, and its windows merge across both triggers. It is not removed by hits (outside the model's assumptions)"
           }
         },
         {
-          "kind": "timed",
-          "trigger": "burstUse",
-          "target": "self",
-          "stat": "trueDamage",
-          "ref": 2,
-          "durationRef": 1,
-          "claims": [
-            "C-0311"
-          ]
-        },
-        {
-          "kind": "timed",
+          "kind": "state",
+          "state": "camouflage",
           "trigger": {
             "count": "fullChargeShot"
           },
@@ -39,7 +38,6 @@
             "inFullBurst": true
           },
           "target": "self",
-          "stat": "trueDamageConversion",
           "durationRef": 1,
           "claims": [
             "C-0314",
@@ -49,23 +47,6 @@
             "ja": "フルバーストの中のフルチャージの発の後から付く（その発自身には乗らない）。チャージ途中の発で付くかは確かめていない（モデルはチャージ途中の発を撃たない）",
             "en": "Granted after each Full Charge shot during Full Burst (not on that shot itself). Whether a partially charged shot grants it is unverified (the model never fires partial charges)"
           }
-        },
-        {
-          "kind": "timed",
-          "trigger": {
-            "count": "fullChargeShot"
-          },
-          "condition": {
-            "inFullBurst": true
-          },
-          "target": "self",
-          "stat": "trueDamage",
-          "ref": 2,
-          "durationRef": 1,
-          "claims": [
-            "C-0314",
-            "C-0311"
-          ]
         }
       ],
       "notes": [

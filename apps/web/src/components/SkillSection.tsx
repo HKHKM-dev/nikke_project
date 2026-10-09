@@ -25,7 +25,13 @@ import {
   type WithCharacterCondition,
 } from '@nikke/core';
 import { useState, type Dispatch } from 'react';
-import { NOTE_KIND_BADGE, SKILL_SLOT_LABEL, SUPPORT_BADGE, treasurePhaseLabel } from '../skillLabels.ts';
+import {
+  NOTE_KIND_BADGE,
+  SKILL_SLOT_LABEL,
+  SUPPORT_BADGE,
+  formatStateGrant,
+  treasurePhaseLabel,
+} from '../skillLabels.ts';
 import { clampSkillLevel, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 
@@ -267,6 +273,20 @@ export function SkillSection({
                         <span className="badge">仮定</span> {e.assumes!.ja}
                       </li>
                     ))}
+                </ul>
+              )}
+              {/* 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.7 節）: 付与する状態と、その中身 */}
+              {entry && entry.effects.some((e) => e.kind === 'state') && (
+                <ul className="notes">
+                  {entry.effects.flatMap((e, i) =>
+                    e.kind === 'state'
+                      ? [
+                          <li key={i} className="note modeling">
+                            <span className="badge">状態</span> {formatStateGrant(e)}
+                          </li>,
+                        ]
+                      : [],
+                  )}
                 </ul>
               )}
               {entry && entry.effects.some(hasComposition) && (

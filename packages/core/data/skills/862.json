@@ -15,7 +15,7 @@
           "intervalSeconds": 1,
           "durationRef": 3,
           "firstTick": "afterInterval",
-          "status": "hacking",
+          "state": "hacked",
           "gaugeOnTick": true,
           "assumes": {
             "ja": "撃った弾はすべて命中する（命中の回数は射撃の回数と同じ列）。対象は敵 1 体。持続中に付き直すと、tick の刻みはそのままで終わりが延び、最後に付いてから 5 秒の中の刻みまで出る。tick ごとに、射手の 1 ヒットぶんのゲージを溜める（付けたときには溜めない）",
@@ -37,7 +37,7 @@
           "intervalSeconds": 1,
           "durationRef": 3,
           "firstTick": "afterInterval",
-          "status": "hacking",
+          "state": "hacked",
           "gaugeOnTick": true,
           "assumes": {
             "ja": "敵全体は敵 1 体。命中で付くハッキングと同じハッキング（付いている最中に使うと付き直しと同じで、tick の刻みは変わらない）。同じハッキングなので、tick のゲージも同じ（バーストで付いたときにゲージを溜めるかは確かめていない。溜めないとした）",
@@ -61,8 +61,8 @@
             "everyRef": 1
           },
           "condition": {
-            "fullBurst": true,
-            "targetStatus": "hacking"
+            "inFullBurst": true,
+            "enemyState": "hacked"
           },
           "ref": 2,
           "damageType": "additional",

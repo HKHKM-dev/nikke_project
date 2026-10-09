@@ -1,4 +1,5 @@
-// クルミ S2 編: フルバースト中だけ数える回数トリガー（during・reset）と、damage の条件（fullBurst・targetStatus）の
+// クルミ S2 編: フルバースト中だけ数える回数トリガー（during・reset）と、damage の条件（inFullBurst・enemyState。名前の付いた
+// 状態の語彙編で fullBurst・targetStatus から改名。plan/design-named-state.md 5.5・5.6 節）の
 // DSL・トリガー・発火の絞り込み（plan/design-kurumi-s2.md 2 節）。3 節の読み（H1〜H3）を定義に差し込んで、語彙の働きを見る
 // （実測の値は持ち込まない）。クルミの定義は H3（V-0181・C-0276）。
 import { readFileSync } from 'node:fs';
@@ -6,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { computeTeamDamage } from '../calc/model.ts';
-import { dotActiveSpans } from '../frame/dot.ts';
+import { dotActiveSpans, dotTickFrames } from '../frame/dot.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
@@ -36,7 +37,7 @@ function withSkill2(effects: unknown[]): unknown {
 const S2_H1 = {
   kind: 'damage',
   trigger: { count: 'normalHit', everyRef: 1, during: 'fullBurst', reset: 'fullBurstStart' },
-  condition: { targetStatus: 'hacking' },
+  condition: { enemyState: 'hacked' },
   ref: 2,
   damageType: 'additional',
 };
@@ -44,7 +45,7 @@ const S2_H2 = { ...S2_H1, trigger: { ...S2_H1.trigger, reset: 'never' } };
 const S2_H3 = {
   kind: 'damage',
   trigger: { count: 'normalHit', everyRef: 1 },
-  condition: { fullBurst: true, targetStatus: 'hacking' },
+  condition: { inFullBurst: true, enemyState: 'hacked' },
   ref: 2,
   damageType: 'additional',
 };
@@ -89,20 +90,35 @@ describe('during・reset と damage の condition の検証', () => {
     expect(() => parseSkillDefinition(withSkill2([{ ...S2_H3, condition: { selfBuffed: 'attack' } }]))).toThrow(
       /condition\.selfBuffed: unknown field/,
     );
-    expect(() => parseSkillDefinition(withSkill2([{ ...S2_H3, condition: { fullBurst: false } }]))).toThrow(
-      /expected true/,
+    expect(() => parseSkillDefinition(withSkill2([{ ...S2_H3, condition: { inFullBurst: false } }]))).toThrow(
+      /condition\.inFullBurst: expected true/,
+    );
+    // 名前の付いた状態の語彙編: 旧の鍵は読まない。状態は目録の敵の状態だけ
+    expect(() => parseSkillDefinition(withSkill2([{ ...S2_H3, condition: { fullBurst: true } }]))).toThrow(
+      /condition\.fullBurst: unknown field/,
+    );
+    expect(() => parseSkillDefinition(withSkill2([{ ...S2_H3, condition: { targetStatus: 'hacking' } }]))).toThrow(
+      /condition\.targetStatus: unknown field/,
+    );
+    expect(() => parseSkillDefinition(withSkill2([{ ...S2_H3, condition: { enemyState: 'stunned' } }]))).toThrow(
+      /condition\.enemyState/,
+    );
+    expect(() => parseSkillDefinition(withSkill2([{ ...S2_H3, condition: { enemyState: 'persona' } }]))).toThrow(
+      /held by the ally/,
     );
   });
 });
 
 describe('dotActiveSpans', () => {
-  it('spans each group from its first application to its last tick, both ends included', () => {
+  it('spans each group from its first application to the frame after its last tick (half-open)', () => {
     // 5 秒維持・1 秒間隔・付いた 1 秒後から: 0 と 120 は同じまとまり、1000 は新しいまとまり
     const spans = dotActiveSpans([0, 120, 1000], 1, 5, 'afterInterval');
     expect(spans).toHaveLength(2);
     expect(spans[0]!.start).toBe(0);
     expect(spans[1]!.start).toBe(1000);
-    expect(spans[0]!.end).toBeGreaterThan(120);
+    // 名前の付いた状態の語彙編（plan/design-named-state.md 5.5 節）: ほかの窓と同じ [start, end)。end は最後の tick の次のフレーム
+    const lastTick = Math.max(...dotTickFrames([0, 120], 1, 5, Number.POSITIVE_INFINITY, 'afterInterval'));
+    expect(spans[0]!.end).toBe(lastTick + 1);
     expect(spans[0]!.end).toBeLessThan(1000);
   });
 });
@@ -166,10 +182,14 @@ describe.each([
     expect(s2).toEqual(expected);
   });
 
-  it('fires only while the target is hacked, and never for a status nobody applies', () => {
-    const hacking = plan.skillHits.filter((h) => h.slotIndex === 0 && h.effect.dot?.status === 'hacking');
+  it('fires only while the target is hacked, and never when nobody applies the hacking', () => {
+    const hacking = plan.skillHits.filter((h) => h.slotIndex === 0 && h.effect.dot?.state === 'hacked');
     expect(hacking.length).toBeGreaterThan(0);
-    const none = planTeamRun(teamWith([{ ...effect, condition: { ...effect.condition, targetStatus: 'stunned' } }]));
+    // S1 の持続ダメージに状態が無ければ、敵はハッキング状態にならない（持続ダメージは出る）
+    const raw = withSkill2([effect]) as typeof raw862;
+    for (const e of raw.skills.skill1!.effects as Record<string, unknown>[]) delete e.state;
+    const none = planTeamRun({ ...input, slots: [slotOf(KURUMI, raw), ...input.slots.slice(1)] });
+    expect(none.skillHits.some((h) => h.slotIndex === 0 && h.effect.dot !== undefined)).toBe(true);
     expect(none.skillHits.filter((h) => h.slotIndex === 0 && h.effect.source.skill === 'skill2')).toHaveLength(0);
   });
 

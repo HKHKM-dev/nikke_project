@@ -1,7 +1,7 @@
 // ニヒリスター（261）: 持続ダメージ（dot）の DSL・解決・tick のフレーム（plan/design-nihilister.md 2.1 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { dotTickFrames, groupDotsByStatus } from '../../frame/plan.ts';
+import { dotTickFrames, groupDotsByState } from '../../frame/plan.ts';
 import type { CharacterData } from '../../types.ts';
 import { resolveDamageEffects, resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
@@ -54,12 +54,13 @@ describe('dot の検証', () => {
     );
   });
 
-  it('parses status (クルミ編) and rejects an empty one', () => {
-    const def = parseSkillDefinition(withBurst([{ ...BURN, status: 'burn' }]));
-    expect(def.skills.burst.effects[0]).toMatchObject({ status: 'burn' });
-    expect(() => parseSkillDefinition(withBurst([{ ...BURN, status: ' ' }]))).toThrow(
-      /status: expected a non-empty string/,
-    );
+  // 名前の付いた状態の語彙編（plan/design-named-state.md 5.5 節）: 持続ダメージが付ける敵の状態は目録の id（旧の status は読まない）
+  it('parses state (an enemy state of the catalog, クルミ編) and rejects unknown, ally and old status', () => {
+    const def = parseSkillDefinition(withBurst([{ ...BURN, state: 'hacked' }]));
+    expect(def.skills.burst.effects[0]).toMatchObject({ state: 'hacked' });
+    expect(() => parseSkillDefinition(withBurst([{ ...BURN, state: 'burn' }]))).toThrow(/state: expected one of/);
+    expect(() => parseSkillDefinition(withBurst([{ ...BURN, state: 'persona' }]))).toThrow(/held by the ally/);
+    expect(() => parseSkillDefinition(withBurst([{ ...BURN, status: 'hacking' }]))).toThrow(/status: unknown field/);
   });
 
   it('rejects an interval longer than an immediate duration', () => {
@@ -156,20 +157,20 @@ describe('dotTickFrames の afterInterval（付いた 1 間隔後から間隔ご
   });
 });
 
-describe('groupDotsByStatus（同じ status の dot は 1 つの持続ダメージ。C-0136）', () => {
+describe('groupDotsByState（同じ状態の dot は 1 つの持続ダメージ。C-0136）', () => {
   const [burn] = resolveDotEffects(parseSkillDefinition(raw261), nihilister, MAX_SKILL_LEVELS);
-  const withStatus = (status: string | undefined, effectIndex: number, durationSeconds = 10) => ({
+  const withState = (state: 'hacked' | undefined, effectIndex: number, durationSeconds = 10) => ({
     ...burn!,
     effectIndex,
-    dot: { ...burn!.dot!, durationSeconds, ...(status !== undefined ? { status } : {}) },
+    dot: { ...burn!.dot!, durationSeconds, ...(state !== undefined ? { state } : {}) },
   });
 
-  it('groups effects by status and keeps effects without a status apart', () => {
-    const groups = groupDotsByStatus([withStatus('a', 0), withStatus(undefined, 1), withStatus('a', 2)]);
+  it('groups effects by state and keeps effects without a state apart', () => {
+    const groups = groupDotsByState([withState('hacked', 0), withState(undefined, 1), withState('hacked', 2)]);
     expect(groups.map((g) => g.map((e) => e.effectIndex))).toEqual([[0, 2], [1]]);
   });
 
-  it('rejects effects of one status that differ in the duration', () => {
-    expect(() => groupDotsByStatus([withStatus('a', 0), withStatus('a', 1, 5)])).toThrow(/differ/);
+  it('rejects effects of one state that differ in the duration', () => {
+    expect(() => groupDotsByState([withState('hacked', 0), withState('hacked', 1, 5)])).toThrow(/differ/);
   });
 });

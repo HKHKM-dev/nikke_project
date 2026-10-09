@@ -5,9 +5,9 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`259-04`・`259-05`・`259-06`（1・2・3 スタックの雪子の 1 発。L1・L2・M の単位には 0）・`259-11`（2 スタックの雪子のバーストのヒット）・`259-07`・`259-08`（1・3 スタックの雪子自身のフルバースト）。録画 259・261 は最小構成の警告あり（ユニ・クイーン（真）・雪子）だが、どの窓も未確定の要素はペルソナの効果 1 つで、手書きのほかの仮説と 35% 以上離れ H1 だけに端数まで乗ったので、2026-10-06 のオーナーの判断で確定にした（V-0233 の論点 1。V-0208 と同じ扱い）。予測は撮る前に commit した。V-0233",
-  "model": "`data/skills/870.json`（skill2 の `timed`・`name: batonTouch`・`maxStacksRef`・`durationUntil: battleEnd`）",
+  "model": "`data/skills/870.json` の skill2 の effects[3]（付与 `kind: state`・`state: batonPass`・`maxStacksRef`・`durationUntil: battleEnd`。中身は `casterAttack` の攻撃力▲）",
   "replaces": [],
-  "updated": "2026-10-06",
+  "updated": "2026-10-09",
   "subject": {
     "places": ["data/skills/870.json の skill2 の effects[3]"]
   }

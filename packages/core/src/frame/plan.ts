@@ -40,7 +40,8 @@ import {
   type SlotBuffState,
 } from '../skills/timeline.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
-import type { DamageCondition } from '../skills/types.ts';
+import type { NamedStateId } from '../skills/states.ts';
+import type { EffectCondition } from '../skills/types.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import {
@@ -55,13 +56,13 @@ import {
 import type { WeaponModel } from '../weapons.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { dotActiveSpans, dotTicks, groupDotsByStatus } from './dot.ts';
+import { dotActiveSpans, dotTicks, groupDotsByState } from './dot.ts';
 export {
   DOT_LATER_TICK_DELAY_SECONDS,
   dotTickFrames,
   dotTickTracker,
   dotTicks,
-  groupDotsByStatus,
+  groupDotsByState,
   type DotTick,
   type DotTickTracker,
 } from './dot.ts';
@@ -230,8 +231,8 @@ export function planSkillHits(
   attackRounding?: AttackRounding,
 ): SkillHitEvent[] {
   const hits: SkillHitEvent[] = [];
-  // クルミ S2 編: damage の条件 targetStatus が見る、status ごとの「付いている」区間（編成の全枠の dot から先に出しておく）
-  const statusSpans = dotStatusSpans(slots, schedule, frames, shots);
+  // クルミ S2 編: damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間（編成の全枠の dot から先に出しておく）
+  const enemySpans = enemyStateSpans(slots, schedule, frames, shots);
   slots.forEach((slot, slotIndex) => {
     const definition = slot?.skills?.definition;
     if (!slot || !definition) return;
@@ -291,21 +292,22 @@ export function planSkillHits(
       // そのフレームのバフで出す（発動の直前のバフで固定しない）。戦闘の終わりを越えるヒットは出さない
       const delay = effect.delayFrames ?? 0;
       const pre = delay === 0 && isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
-      // ペルソナ編（plan/design-persona.md 3.3 節）: 「〈効果名〉が適用された時」は、その名前の効果がこの枠に付いたフレーム
+      // ペルソナ編（plan/design-persona.md 3.3 節）: 「〈状態名〉が適用された時」は、その状態がこの枠に付いたフレーム
+      // （名前の付いた状態の語彙編: 時刻表の applications。plan/design-named-state.md 5.3 節）
       const fires = isResolvedApplied(effect.trigger)
         ? appliedFrames(timeline, effect.trigger.applied, slotIndex)
         : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
       for (const frame of fires) {
-        if (!damageConditionHolds(effect.condition, frame, schedule, statusSpans)) continue;
+        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans)) continue;
         if (frame + delay >= frames) continue;
         push(frame + delay, effect, pre);
       }
     }
     // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。
-    // クルミ編: 同じ status の dot は 1 つの持続ダメージとして、発火をまとめて tick を出す（C-0136）。tick は、その時点で
+    // クルミ編: 同じ状態（state）の dot は 1 つの持続ダメージとして、発火をまとめて tick を出す（C-0136）。tick は、その時点で
     // 最後に付けた効果に帰属させる（値は同じ）。
     // レイヴン編: スタックする持続ダメージ（maxStacks > 1）は、tick の時点のスタックの数を倍率に掛ける（dotTicks。C-0182）
-    for (const group of groupDotsByStatus(resolveDotEffects(definition, slot.character, levels))) {
+    for (const group of groupDotsByState(resolveDotEffects(definition, slot.character, levels))) {
       const fires = group
         .flatMap((effect) =>
           triggerFrames(effect.trigger, schedule, slotIndex, frames, shots).map((f) => ({ f, effect })),
@@ -342,46 +344,50 @@ export function planSkillHits(
 }
 
 /**
- * クルミ S2 編（plan/design-kurumi-s2.md 2.3 節）: 編成の全枠の status つきの dot について、status ごとの「付いている」区間の列。
- * 発火は planSkillHits の tick と同じ（同じ status の効果の発火をまとめる）。別の枠の同じ名前は同じ状態とみなして区間を並べる
+ * クルミ S2 編（plan/design-kurumi-s2.md 2.3 節）: 編成の全枠の状態（state）つきの dot について、敵の状態ごとの「付いている」区間
+ * （[start, end) の半開区間。dotActiveSpans）の列。発火は planSkillHits の tick と同じ（同じ状態の効果の発火をまとめる）。
+ * 別の枠の同じ状態は同じ状態として区間を並べる（名前の付いた状態の語彙編: 目録の id で同じ状態を指す。plan/design-named-state.md 5.5 節）
  */
-function dotStatusSpans(
+function enemyStateSpans(
   slots: readonly (TeamSlotInput | null)[],
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
-): Map<string, { start: number; end: number }[]> {
-  const out = new Map<string, { start: number; end: number }[]>();
+): Map<NamedStateId, { start: number; end: number }[]> {
+  const out = new Map<NamedStateId, { start: number; end: number }[]>();
   slots.forEach((slot, slotIndex) => {
     const definition = slot?.skills?.definition;
     if (!slot || !definition) return;
     const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
-    for (const group of groupDotsByStatus(resolveDotEffects(definition, slot.character, levels))) {
-      const status = group[0]!.dot!.status;
-      if (status === undefined) continue;
+    for (const group of groupDotsByState(resolveDotEffects(definition, slot.character, levels))) {
+      const state = group[0]!.dot!.state;
+      if (state === undefined) continue;
       const fires = group
         .flatMap((effect) => triggerFrames(effect.trigger, schedule, slotIndex, frames, shots))
         .sort((a, b) => a - b);
       const { intervalSeconds, durationSeconds, firstTick } = group[0]!.dot!;
       const spans = dotActiveSpans(fires, intervalSeconds, durationSeconds, firstTick);
-      out.set(status, [...(out.get(status) ?? []), ...spans]);
+      out.set(state, [...(out.get(state) ?? []), ...spans]);
     }
   });
   return out;
 }
 
-/** クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。条件が無ければ true。キーはすべてを満たすこと */
+/**
+ * クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。条件が無ければ true。キーはすべてを満たすこと
+ * （名前の付いた状態の語彙編: timed と同じ条件の型。damage が受ける鍵は inFullBurst・enemyState。plan/design-named-state.md 5.6 節）
+ */
 function damageConditionHolds(
-  condition: DamageCondition | undefined,
+  condition: EffectCondition | undefined,
   frame: number,
   schedule: BurstSchedule | null,
-  statusSpans: ReadonlyMap<string, readonly { start: number; end: number }[]>,
+  enemySpans: ReadonlyMap<NamedStateId, readonly { start: number; end: number }[]>,
 ): boolean {
   if (condition === undefined) return true;
-  if (condition.fullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
-  if (condition.targetStatus !== undefined) {
-    const spans = statusSpans.get(condition.targetStatus) ?? [];
-    if (!spans.some((s) => s.start <= frame && frame <= s.end)) return false;
+  if (condition.inFullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
+  if (condition.enemyState !== undefined) {
+    const spans = enemySpans.get(condition.enemyState) ?? [];
+    if (!spans.some((s) => s.start <= frame && frame < s.end)) return false;
   }
   return true;
 }

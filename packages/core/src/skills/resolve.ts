@@ -1,5 +1,8 @@
 // スキル定義の ref を Lv の数値に解決する。単位変換（% → 比率）はここで一律に行う。
 // Stage 11 モダニア: スタックの最大数・「▼」・条件・使用武器の変更（stat 'weapon' の持続効果として解決する）を足した。
+// 名前の付いた状態の語彙編（plan/design-named-state.md 実装の別紙 1.2 節）: 付与（resolveStateGrants）と中身（resolveStateContents）を
+// 足した。resolveTimed は今のまま（timed と weaponChange。どれもトリガーを持つ）で、付与も中身も混ぜない。静的な付与の中身は
+// resolvePassives が常時パッシブとして集める。
 import type { CharacterData, Element, Locale, LocalizedText, ShotParams, SkillRaw, WeaponType } from '../types.ts';
 import { burstWindowTrimOf } from '../burst/landing.ts';
 import { gameSecondsToFrames } from '../time.ts';
@@ -17,7 +20,6 @@ import {
   type BuffTrigger,
   type Amplifies,
   type DurationUntil,
-  type EffectName,
   type EffectCondition,
   type EffectTrigger,
   type EventCountKind,
@@ -31,8 +33,11 @@ import {
   type TargetCountFields,
   type TimerTrigger,
   type TargetSquad,
-  type SkillState,
+  type StateGrantEffect,
+  type TimedEffect,
+  isStaticStateGrant,
 } from './types.ts';
+import type { NamedStateId } from './states.ts';
 
 /**
  * Stage 8: Lv の数値に解決したトリガー。射撃の回数トリガーは every（1 以上の整数）に解決済み。
@@ -201,8 +206,8 @@ export type ResolvedEffect = {
   targetSquad?: TargetSquad;
   /** 対象の語彙編: 「自分を除く」（topAttack。ペルソナ編: allies の always も）。定義に無ければキーごと無い */
   excludeSelf?: ExcludeSelf;
-  /** ペルソナ編: 「ペルソナ状態の」。定義に無ければキーごと無い */
-  targetState?: SkillState;
+  /** ペルソナ編: 「〈名前〉状態の」（名前の付いた状態の語彙編: 目録の id）。定義に無ければキーごと無い */
+  targetState?: NamedStateId;
   /** ペルソナ編: 「基本バースト段階が N の」。定義に無ければキーごと無い */
   targetBurstStep?: BasicBurstStep;
   /** 対象の語彙編: 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの）。無ければキーごと無い */
@@ -238,6 +243,11 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
     const entry = def.skills[slot];
     const skill = character.skills[slot];
     for (const effect of entry.effects) {
+      // 名前の付いた状態の語彙編（plan/design-named-state.md 3.4 節）: 静的な付与の中身は常時パッシブ（効果の並びの位置で足す）
+      if (effect.kind === 'state') {
+        if (isStaticStateGrant(effect)) resolved.push(...staticContentsOf(effect, character, slot, levels[slot]));
+        continue;
+      }
       if (effect.kind !== 'passive') continue;
       const r: ResolvedEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -261,6 +271,42 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
     }
   }
   return resolved;
+}
+
+/** 名前の付いた状態の語彙編: 静的な付与の中身（常時パッシブ。対象は持ち主 = 自分） */
+function staticContentsOf(
+  effect: StateGrantEffect,
+  character: CharacterData,
+  slot: SkillSlot,
+  level: number,
+): ResolvedEffect[] {
+  const skill = character.skills[slot];
+  return (effect.contents ?? []).map((item) => {
+    const r: ResolvedEffect = {
+      source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+      target: 'self',
+      stat: item.stat,
+      scaling: item.scaling ?? 'ratio',
+      value: contentValue(item, character, slot, level),
+    };
+    if (effect.assumes) r.assumes = effect.assumes;
+    return r;
+  });
+}
+
+/** 名前の付いた状態の語彙編: 中身の 1 項目の値（timed と同じ。フラグの stat は 1） */
+function contentValue(
+  item: { stat: BuffStat; ref?: number; scaling?: BuffScaling; decrease?: true },
+  character: CharacterData,
+  slot: SkillSlot,
+  level: number,
+): number {
+  const skill = character.skills[slot];
+  if (item.ref === undefined) {
+    if (!isFlagStat(item.stat)) throw new RangeError(`skill ${skill.id}: state content ${item.stat} needs ref`);
+    return 1;
+  }
+  return scaledValue(skillValue(skill, item.ref, level), item.stat, item.scaling, character, item.decrease);
 }
 
 /** Stage 6: トリガー付きの持続バフ。ResolvedEffect に「いつ付いて、何フレーム続くか」が付いた形 */
@@ -290,8 +336,6 @@ export type ResolvedTimedEffect = ResolvedEffect & {
    * その値 × 割合、切れた所は発動の瞬間の値 × (1 + 割合)）は planBuffTimeline が作る
    */
   amplifies?: Amplifies;
-  /** ペルソナ編: 説明文の効果名。トリガー { applied: 名前 } のきっかけ */
-  name?: EffectName;
 };
 
 /**
@@ -301,8 +345,32 @@ export type ResolvedTimedEffect = ResolvedEffect & {
  */
 export type ResolvedDurationUntil = DurationUntil | 'ammoSpent';
 
-/** 持続バフが枠へ適用された記録 */
-export type AppliedTimedEffect = ResolvedTimedEffect & {
+/**
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節・実装の別紙 1.1 節）: 解決した中身の 1 項目。状態の窓の間だけ持ち主に
+ * 効く stat の▲▼で、同じ stat の timed とどこでも同じに扱う（同 3.2 節）。トリガーと維持は持たず、窓は状態の窓（同じ定義の付与で
+ * その持ち主に付いた窓。skills/timeline.ts）。対象の欄は付与のもの（表示用。窓は状態の持ち主に付く）
+ */
+export type ResolvedStateContent = ResolvedEffect & {
+  /** 付与の、同じスロットの何番目の効果か（下位効果のスタック適用の順にも使う） */
+  effectIndex: number;
+  /** 付与の中身の何番目か */
+  subIndex: number;
+  /** どの状態の窓の間だけ効くか */
+  whileState: NamedStateId;
+  /** 付与のスタックの最大数（解決済み）。値は 1 スタックあたり */
+  maxStacks?: number;
+};
+
+/** 名前の付いた状態の語彙編: 窓を持つ効果（持続バフと、状態の中身）。BuffWindow・AppliedTimedEffect の元 */
+export type WindowEffect = ResolvedTimedEffect | ResolvedStateContent;
+
+/** 名前の付いた状態の語彙編: 状態の中身か（トリガーと維持を持たない） */
+export function isStateContent(effect: WindowEffect): effect is ResolvedStateContent {
+  return 'whileState' in effect;
+}
+
+/** 持続バフが枠へ適用された記録。名前の付いた状態の語彙編: 状態の中身も入る（isStateContent） */
+export type AppliedTimedEffect = WindowEffect & {
   sourceSlotIndex: number;
   appliedAmount: number;
 };
@@ -326,8 +394,7 @@ export function resolveTimed(
         return;
       }
       if (effect.kind !== 'timed') return;
-      const shots = resolveDurationShots(effect, skill, levels[slot]);
-      const seconds = shots === undefined ? durationSecondsOf(effect, skill, levels[slot]) : 0;
+      const window = resolveWindowFields(effect, character, slot, levels[slot], effectIndex);
       const value =
         effect.amplifies !== undefined
           ? effect.amplifies.percent / 100 // 環境コントロール強化編: 参照する効果の値に掛ける割合（窓ごとの値は planBuffTimeline）
@@ -343,33 +410,8 @@ export function resolveTimed(
       if (effect.ref === undefined && effect.amplifies === undefined && !isFlagStat(effect.stat)) {
         throw new RangeError(`skill ${skill.id}: timed ${effect.stat} needs ref`);
       }
-      const r: ResolvedTimedEffect = {
-        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
-        target: effect.target,
-        stat: effect.stat,
-        scaling: effect.scaling ?? 'ratio',
-        value,
-        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
-        durationFrames: effect.durationUntil === 'battleEnd' ? BATTLE_END_FRAMES : gameSecondsToFrames(seconds),
-        effectIndex,
-      };
-      if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
-      if (effect.targetElement) r.targetElement = effect.targetElement;
-      if (effect.targetSquad) r.targetSquad = effect.targetSquad;
-      if (effect.excludeSelf) r.excludeSelf = effect.excludeSelf;
-      if (effect.targetState) r.targetState = effect.targetState;
-      if (effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
-      if (effect.name) r.name = effect.name;
-      if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
-      const count = resolveTargetCount(effect, skill, levels[slot]);
-      if (count !== undefined) r.targetCount = count;
-      const maxStacks = resolveMaxStacks(effect, skill, levels[slot]);
-      if (maxStacks !== undefined) r.maxStacks = maxStacks;
-      if (effect.condition) r.condition = effect.condition;
-      if (shots !== undefined) r.durationShots = shots;
-      if (effect.durationUntil !== undefined) r.durationUntil = effect.durationUntil;
+      const r: ResolvedTimedEffect = { ...window, stat: effect.stat, scaling: effect.scaling ?? 'ratio', value };
       if (effect.amplifies !== undefined) r.amplifies = effect.amplifies;
-      if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
   }
@@ -382,6 +424,152 @@ export function resolveTimed(
       ? { ...r, durationFrames: Math.max(0, r.durationFrames - trim) }
       : r,
   );
+}
+
+/** 名前の付いた状態の語彙編: timed と付与で共通の、値を除いた窓の欄 */
+type ResolvedWindowFields = Omit<ResolvedTimedEffect, 'stat' | 'scaling' | 'value' | 'weapon' | 'amplifies'>;
+
+/**
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 3.1 節）: timed と付与で共通の窓の欄（トリガー・対象・維持・スタック・条件）を
+ * Lv の数値に解く。付与は「値を持たない持続効果」なので、窓の欄は timed と同じ関数で解く
+ */
+function resolveWindowFields(
+  effect: TimedEffect | StateGrantEffect,
+  character: CharacterData,
+  slot: SkillSlot,
+  level: number,
+  effectIndex: number,
+): ResolvedWindowFields {
+  const skill = character.skills[slot];
+  const shots = resolveDurationShots(effect, skill, level);
+  const seconds = shots === undefined ? durationSecondsOf(effect, skill, level) : 0;
+  const r: ResolvedWindowFields = {
+    source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+    target: effect.target,
+    trigger: resolveTrigger(effect.trigger, skill, level),
+    durationFrames: effect.durationUntil === 'battleEnd' ? BATTLE_END_FRAMES : gameSecondsToFrames(seconds),
+    effectIndex,
+  };
+  if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
+  if (effect.targetElement) r.targetElement = effect.targetElement;
+  if (effect.targetSquad) r.targetSquad = effect.targetSquad;
+  if (effect.excludeSelf) r.excludeSelf = effect.excludeSelf;
+  if (effect.targetState) r.targetState = effect.targetState;
+  if (effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
+  if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
+  const count = resolveTargetCount(effect, skill, level);
+  if (count !== undefined) r.targetCount = count;
+  const maxStacks = resolveMaxStacks(effect, skill, level);
+  if (maxStacks !== undefined) r.maxStacks = maxStacks;
+  if (effect.condition) r.condition = effect.condition;
+  if (shots !== undefined) r.durationShots = shots;
+  if (effect.durationUntil !== undefined) r.durationUntil = effect.durationUntil;
+  if (effect.assumes) r.assumes = effect.assumes;
+  return r;
+}
+
+/**
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2 節・実装の別紙 1.2 節）: 解決した付与。窓の欄は timed と同じに解いたもので、
+ * 値を持たない。effectIndex は付与のスロットの何番目の効果か
+ */
+export type ResolvedStateGrant = ResolvedWindowFields & {
+  state: NamedStateId;
+  /** 静的な付与（isStaticStateGrant）。持ち主は編成の段で決まり、中身は常時パッシブ（resolvePassives） */
+  isStatic: boolean;
+};
+
+/**
+ * 名前の付いた状態の語彙編: 定義の付与を Lv の数値に解く（静的な付与も入る）。維持は timed と同じに解き、バーストの効果の窓の終わり
+ * （burstWindowTrimOf）も同じに縮める。同じ状態の付与どうしは、解いた維持とスタックの上限が同じでなければ RangeError
+ * （窓を 1 つの状態としてまとめるため。plan/design-named-state.md 5.2 節）
+ */
+export function resolveStateGrants(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedStateGrant[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const trim = burstWindowTrimOf(character);
+  const untrimmed: ResolvedStateGrant[] = [];
+  for (const slot of SKILL_SLOTS) {
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'state') return;
+      const window = resolveWindowFields(effect, character, slot, levels[slot], effectIndex);
+      untrimmed.push({ ...window, state: effect.state, isStatic: isStaticStateGrant(effect) });
+    });
+  }
+  const resolved = untrimmed.map((g) =>
+    trim > 0 && isBurstUseTrigger(g.trigger) && g.durationFrames > 0 && g.durationFrames !== BATTLE_END_FRAMES
+      ? { ...g, durationFrames: Math.max(0, g.durationFrames - trim) }
+      : g,
+  );
+  const where = (g: ResolvedStateGrant): string => `${g.source.skill} effects[${g.effectIndex}]`;
+  untrimmed.forEach((g, i) => {
+    const k = untrimmed.findIndex((x) => x.state === g.state);
+    const first = untrimmed[k]!;
+    const same =
+      g.durationFrames === first.durationFrames &&
+      g.durationShots === first.durationShots &&
+      g.durationUntil === first.durationUntil &&
+      g.maxStacks === first.maxStacks;
+    if (!same) {
+      throw new RangeError(
+        `character ${character.resourceId}: grants of "${g.state}" need the same duration and max stacks (${where(first)} and ${where(g)})`,
+      );
+    }
+    // 窓の終わりを発動から数えるキャラで、バーストの使用の付与とほかの付与が混ざると、状態の維持が付与で分かれる（未対応）
+    if (resolved[i]!.durationFrames !== resolved[k]!.durationFrames) {
+      throw new RangeError(
+        `character ${character.resourceId}: grants of "${g.state}" mix burstUse and other triggers on a burst whose effect windows end from the activation (not supported: ${where(first)} and ${where(g)})`,
+      );
+    }
+  });
+  return resolved;
+}
+
+/**
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節）: 時間で変わる状態の中身を Lv の数値に解く（静的な付与の中身は
+ * resolvePassives）。値は付与のあるスロットの説明文の値で、そのスロットの Lv で解く。対象の欄・スタックの上限・仮定は付与のもの
+ */
+export function resolveStateContents(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedStateContent[] {
+  const grants = resolveStateGrants(def, character, levels);
+  const out: ResolvedStateContent[] = [];
+  for (const slot of SKILL_SLOTS) {
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'state' || effect.contents === undefined || isStaticStateGrant(effect)) return;
+      const grant = grants.find((g) => g.source.skill === slot && g.effectIndex === effectIndex)!;
+      effect.contents.forEach((item, subIndex) => {
+        const r: ResolvedStateContent = {
+          source: grant.source,
+          target: grant.target,
+          stat: item.stat,
+          scaling: item.scaling ?? 'ratio',
+          value: contentValue(item, character, slot, levels[slot]),
+          effectIndex,
+          subIndex,
+          whileState: effect.state,
+        };
+        if (grant.targetWeapon) r.targetWeapon = grant.targetWeapon;
+        if (grant.targetElement) r.targetElement = grant.targetElement;
+        if (grant.targetCount !== undefined) r.targetCount = grant.targetCount;
+        if (grant.targetSquad) r.targetSquad = grant.targetSquad;
+        if (grant.excludeSelf) r.excludeSelf = grant.excludeSelf;
+        if (grant.targetState) r.targetState = grant.targetState;
+        if (grant.targetBurstStep) r.targetBurstStep = grant.targetBurstStep;
+        if (grant.fixedTargets) r.fixedTargets = grant.fixedTargets;
+        if (grant.maxStacks !== undefined) r.maxStacks = grant.maxStacks;
+        if (grant.assumes) r.assumes = grant.assumes;
+        out.push(r);
+      });
+    });
+  }
+  return out;
 }
 
 /** 自分のバーストの使用（burstUse・{ count: burstUse }）で発火するトリガーか */

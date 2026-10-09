@@ -2,7 +2,7 @@
 // DSL・解決・tick とスタック（plan/design-raven-s1.md 2 節・4 節・8 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { dotTickFrames, dotTickTracker, dotTicks, groupDotsByStatus } from '../../frame/plan.ts';
+import { dotTickFrames, dotTickTracker, dotTicks, groupDotsByState } from '../../frame/plan.ts';
 import { gameSecondsToFrame } from '../../time.ts';
 import type { CharacterData } from '../../types.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
@@ -99,26 +99,26 @@ describe('dot の解決（スタックとゲージ）', () => {
     expect(() => resolveDotEffects(def, raven, MAX_SKILL_LEVELS)).toThrow(/gaugeOnTick needs a duration/);
   });
 
-  it('rejects a status group with different max stacks', () => {
+  it('rejects a state group with different max stacks', () => {
     const { maxStacksRef: _, ...plain } = SHOCK;
     const def = parseSkillDefinition(
       withSkill1([
-        { ...SHOCK, status: 'shock' },
-        { ...plain, status: 'shock' },
+        { ...SHOCK, state: 'hacked' },
+        { ...plain, state: 'hacked' },
       ]),
     );
-    expect(() => groupDotsByStatus(resolveDotEffects(def, raven, MAX_SKILL_LEVELS))).toThrow(/max stacks/);
+    expect(() => groupDotsByState(resolveDotEffects(def, raven, MAX_SKILL_LEVELS))).toThrow(/max stacks/);
   });
 
-  it('rejects a status group where only some effects have the tick gauge (V-0113)', () => {
+  it('rejects a state group where only some effects have the tick gauge (V-0113)', () => {
     const { gaugeOnApply: _, gaugeOnTick: __, ...noGauge } = SHOCK;
     const def = parseSkillDefinition(
       withSkill1([
-        { ...SHOCK, status: 'shock' },
-        { ...noGauge, status: 'shock' },
+        { ...SHOCK, state: 'hacked' },
+        { ...noGauge, state: 'hacked' },
       ]),
     );
-    expect(() => groupDotsByStatus(resolveDotEffects(def, raven, MAX_SKILL_LEVELS))).toThrow(/tick gauge/);
+    expect(() => groupDotsByState(resolveDotEffects(def, raven, MAX_SKILL_LEVELS))).toThrow(/tick gauge/);
   });
 });
 

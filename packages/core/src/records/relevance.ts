@@ -131,6 +131,8 @@ export type MinimalElement = {
   shape?: {
     kind: string;
     stat?: string;
+    /** 名前の付いた状態の語彙編: 状態の付与の中身の stat（分類は中身の stat の分類。plan/design-named-state-impl.md 1.8 節） */
+    stats?: string[];
     target?: string;
     trigger?: string;
     targetWeapon?: string;
@@ -138,8 +140,8 @@ export type MinimalElement = {
   };
   /** 効果のスロット */
   skillSlot?: SkillSlot;
-  /** 効果の定義の中の位置（感度で定義から外す・置き換えるのに使う） */
-  effectRef?: { rid: number; root: SkillRoot; slot: SkillSlot; index: number };
+  /** 効果の定義の中の位置（感度で定義から外す・置き換えるのに使う。subIndex は状態の付与の中身の項目） */
+  effectRef?: { rid: number; root: SkillRoot; slot: SkillSlot; index: number; subIndex?: number };
   /** 根拠の結論（補足の refers の notes の claims も含める） */
   claims: string[];
 };
@@ -163,6 +165,7 @@ function shapeOfEffect(e: SkillEffect): NonNullable<MinimalElement['shape']> {
   return {
     kind: e.kind,
     ...(typeof v.stat === 'string' ? { stat: v.stat } : {}),
+    ...(e.kind === 'state' ? { stats: (e.contents ?? []).map((c) => c.stat) } : {}),
     ...(typeof v.target === 'string' ? { target: v.target } : {}),
     ...(trigger !== undefined ? { trigger } : {}),
     ...(typeof v.targetWeapon === 'string' ? { targetWeapon: v.targetWeapon } : {}),
@@ -209,15 +212,33 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
         entry.effects.forEach((e, index) => {
           if (!compositionAllows(e, teamCharacters, i, recording.target.element)) return;
           const refs = referring(index);
+          const shape = shapeOfEffect(e);
           out.push({
             slot: member.slot,
             name: `${who} ${prefix}${slot}.effects[${index}]`,
             places: [place(`effects[${index}]`), ...refs.map(({ j }) => place(`notes[${j}]`))],
             type: 'effect',
-            shape: shapeOfEffect(e),
+            shape,
             skillSlot: slot,
             effectRef: { rid: member.rid, root, slot, index },
             claims: [...(e.claims ?? []), ...refs.flatMap(({ note }) => note.claims ?? [])],
+          });
+          // 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.8 節）: 中身の項目に claims があれば、項目を 1 つの要素にする
+          // （付与の要素は状態の窓。中身の値の根拠は項目の claims）
+          if (e.kind !== 'state') return;
+          e.contents?.forEach((item, subIndex) => {
+            if (item.claims === undefined) return;
+            const { stats: _stats, ...grantShape } = shape;
+            out.push({
+              slot: member.slot,
+              name: `${who} ${prefix}${slot}.effects[${index}].contents[${subIndex}]`,
+              places: [place(`effects[${index}].contents[${subIndex}]`)],
+              type: 'effect',
+              shape: { ...grantShape, stat: item.stat },
+              skillSlot: slot,
+              effectRef: { rid: member.rid, root, slot, index, subIndex },
+              claims: item.claims,
+            });
           });
         });
         notes.forEach((n: SkillNote, j) => {
@@ -262,7 +283,15 @@ export function whenHolds(when: ClaimWhen, recording: RecordingEntry, ctx: Relev
   }
   if (when.sameStatSources !== undefined) {
     const { stat, atLeast } = when.sameStatSources;
-    const sources = elementsOf(recording, ctx).filter((e) => e.type === 'effect' && e.shape?.stat === stat).length;
+    const elements = elementsOf(recording, ctx).filter((e) => e.type === 'effect');
+    // 名前の付いた状態の語彙編: 状態の付与は中身の stat の出どころ（claims のある項目は別の要素なので、付与の側では数えない）
+    const sources = elements.filter(
+      (e) =>
+        e.shape?.stat === stat ||
+        (e.shape?.stats ?? []).some(
+          (s, j) => s === stat && !elements.some((x) => x.name === `${e.name}.contents[${j}]`),
+        ),
+    ).length;
     if (sources < atLeast) return false;
   }
   if (when.enemyElement !== undefined && recording.target.element !== when.enemyElement) return false;
@@ -315,14 +344,25 @@ export function impossibleReason(element: MinimalElement, recording: RecordingEn
   return undefined;
 }
 
-/** 要素の分類（4.2 節の 5） */
+/** stat の分類 */
+function statClassOf(stat: string | undefined): ElementClass {
+  if (stat === undefined || stat === 'unknown') return 'unknown';
+  return STAT_CLASS[stat as BuffStat] ?? NOTE_STAT_CLASS[stat as NoteOnlyStat] ?? 'unknown';
+}
+
+/**
+ * 要素の分類（4.2 節の 5）。名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.8 節）: 状態の付与は中身の stat の分類
+ * （中身の分類が揃わない・中身の無い付与は分類が決まらない unknown）。中身の項目の要素は項目の stat の分類
+ */
 export function classOf(element: MinimalElement): ElementClass {
   if (element.type === 'normalCondition') return 'normalCondition';
   const shape = element.shape;
   if (shape === undefined || shape.kind === 'unknown') return 'unknown';
-  if (shape.kind === 'passive' || shape.kind === 'timed') {
-    if (shape.stat === undefined || shape.stat === 'unknown') return 'unknown';
-    return STAT_CLASS[shape.stat as BuffStat] ?? NOTE_STAT_CLASS[shape.stat as NoteOnlyStat] ?? 'unknown';
+  if (shape.kind === 'passive' || shape.kind === 'timed') return statClassOf(shape.stat);
+  if (shape.kind === 'state') {
+    if (shape.stat !== undefined) return statClassOf(shape.stat);
+    const classes = new Set((shape.stats ?? []).map(statClassOf));
+    return classes.size === 1 ? [...classes][0]! : 'unknown';
   }
   return KIND_CLASS[shape.kind] ?? 'unknown';
 }

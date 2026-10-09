@@ -2,27 +2,28 @@
 // frame/firstPass.ts（ゲージの予約）の両方が使うので、循環 import を避けて 1 つのモジュールに置く（plan/design-raven-s1.md 8 節の 2）。
 // frame/plan.ts から同じ名前で再エクスポートする
 import type { ResolvedDamageEffect } from '../skills/burstDamage.ts';
+import type { NamedStateId } from '../skills/states.ts';
 import type { DotFirstTick } from '../skills/types.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrame } from '../time.ts';
 
 /**
- * クルミ編: dot を status ごとにまとめる（status の無い効果はそれぞれ 1 つ）。同じ status の効果は、間隔・維持・firstTick・
- * 倍率が同じでなければならない（1 つの持続ダメージとして tick を出すため。C-0136）。V-0113: tick のゲージ（gaugeOnTick）も
- * 持続ダメージ 1 つの性質なので同じであること（付けたときのゲージ gaugeOnApply は効果のトリガーごと）
+ * クルミ編: dot を状態（state。名前の付いた状態の目録の id）ごとにまとめる（state の無い効果はそれぞれ 1 つ）。同じ state の効果は、
+ * 間隔・維持・firstTick・倍率が同じでなければならない（1 つの持続ダメージとして tick を出すため。C-0136）。V-0113: tick のゲージ
+ * （gaugeOnTick）も持続ダメージ 1 つの性質なので同じであること（付けたときのゲージ gaugeOnApply は効果のトリガーごと）
  */
-export function groupDotsByStatus(effects: readonly ResolvedDamageEffect[]): ResolvedDamageEffect[][] {
+export function groupDotsByState(effects: readonly ResolvedDamageEffect[]): ResolvedDamageEffect[][] {
   const groups: ResolvedDamageEffect[][] = [];
-  const byStatus = new Map<string, ResolvedDamageEffect[]>();
+  const byState = new Map<NamedStateId, ResolvedDamageEffect[]>();
   for (const effect of effects) {
-    const status = effect.dot?.status;
-    if (status === undefined) {
+    const state = effect.dot?.state;
+    if (state === undefined) {
       groups.push([effect]);
       continue;
     }
-    const group = byStatus.get(status);
+    const group = byState.get(state);
     if (group === undefined) {
       const created = [effect];
-      byStatus.set(status, created);
+      byState.set(state, created);
       groups.push(created);
       continue;
     }
@@ -36,7 +37,7 @@ export function groupDotsByStatus(effects: readonly ResolvedDamageEffect[]): Res
       a.multiplier !== effect.multiplier
     ) {
       throw new RangeError(
-        `dot status "${status}": effects differ in interval, duration, firstTick, max stacks, tick gauge or multiplier`,
+        `dot state "${state}": effects differ in interval, duration, firstTick, max stacks, tick gauge or multiplier`,
       );
     }
     group.push(effect);
@@ -113,8 +114,10 @@ export function dotTicks(
 
 /**
  * クルミ S2 編（plan/design-kurumi-s2.md 2.3 節）: 持続ダメージが敵に「付いている」区間の列。まとまり（維持の途中の付け直しで
- * つながった発火の列。dotTickTracker と同じ規則）ごとに、最初の発火のフレームから最後の tick のフレームまで（両端を含む）。
- * 最後の tick は戦闘の終わりで切らない（終わりの後の判定は起きないので）。fires は昇順
+ * つながった発火の列。dotTickTracker と同じ規則）ごとに、最初の発火のフレームから最後の tick のフレームまで。
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.5 節）: ほかの窓と同じ [start, end) の半開区間で持つ（end は最後の tick の
+ * 次のフレーム。含むフレームは両端を含む閉区間のときと同じ）。最後の tick は戦闘の終わりで切らない（終わりの後の判定は起きないので）。
+ * fires は昇順
  */
 export function dotActiveSpans(
   fires: readonly number[],
@@ -126,9 +129,9 @@ export function dotActiveSpans(
   const spans: { start: number; end: number }[] = [];
   for (const f of fires) {
     const r = tracker.fire(f);
-    if (r.newGroup) spans.push({ start: f, end: f });
+    if (r.newGroup) spans.push({ start: f, end: f + 1 });
     const span = spans[spans.length - 1]!;
-    span.end = Math.max(span.end, f, ...r.ticks);
+    span.end = Math.max(span.end, f + 1, ...r.ticks.map((t) => t + 1));
   }
   return spans;
 }

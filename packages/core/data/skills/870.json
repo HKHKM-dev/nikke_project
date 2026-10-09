@@ -2,9 +2,6 @@
   "formatVersion": 1,
   "resourceId": 870,
   "checkedAt": "2026-10-05",
-  "states": [
-    "persona"
-  ],
   "skills": {
     "skill1": {
       "effects": [
@@ -31,12 +28,22 @@
           ]
         },
         {
-          "kind": "passive",
+          "kind": "state",
+          "state": "persona",
+          "trigger": "battleStart",
           "target": "self",
-          "stat": "elementDamage",
-          "ref": 1,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "elementDamage",
+              "ref": 1,
+              "claims": [
+                "C-0296"
+              ]
+            }
+          ],
           "claims": [
-            "C-0296"
+            "C-0354"
           ]
         },
         {
@@ -72,17 +79,6 @@
         }
       ],
       "notes": [
-        {
-          "ja": "ペルソナ - ヨハンナ（戦闘開始時・持続・解除不可）は、定義の states の persona（ペルソナ状態）で持つ",
-          "en": "Persona - Johanna (battle start, continuous, cannot be removed) is the persona state in the definition's states",
-          "kind": "modeling",
-          "effect": {
-            "kind": "unknown"
-          },
-          "claims": [
-            "C-0354"
-          ]
-        },
         {
           "ja": "防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない",
           "en": "DEF up (Persona - Johanna) does not affect damage",
@@ -124,19 +120,23 @@
           ]
         },
         {
-          "kind": "timed",
+          "kind": "state",
+          "state": "batonPass",
           "trigger": "burstUse",
           "enemyElement": "Wind",
           "target": "allies",
           "excludeSelf": "always",
           "targetState": "persona",
           "targetBurstStep": "Step3",
-          "stat": "attack",
-          "scaling": "casterAttack",
-          "ref": 6,
           "maxStacksRef": 7,
           "durationUntil": "battleEnd",
-          "name": "batonTouch",
+          "contents": [
+            {
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 6
+            }
+          ],
           "claims": [
             "C-0357"
           ]

@@ -50,6 +50,8 @@
 
 ### 2.2 条件 `condition` の `fullBurst`（発火の瞬間がフルバースト中なら）
 
+- 2026-10-09: `fullBurst` は `timed` と同じ `inFullBurst` に、2.3 節の `targetStatus` は目録の id を指す `enemyState` に、dot の `status` は `state` に改めた（[design-named-state.md](design-named-state.md) 5.5・5.6 節。ハッキングの id は `hacked`。付いている区間は [最初の発火, 最後の tick + 1) の半開区間で、含むフレームは同じ）。以下は当時の語彙として残す。
+
 H3 を書くための条件。
 
 ```jsonc

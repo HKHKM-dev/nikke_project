@@ -5,10 +5,10 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`210-01`・`210-02`・`210-03`・`210-04`。V-0171。値を決めるのに使っていない録画 228 でも、窓の中と窓の後の 1 ペレットが同じ形で再現した（`228-01`・`228-02`。V-0214）",
-  "model": "`data/skills/870.json`（skill1 の stat `elementDamage`）。属性の倍率は C-0119 と同じ `element.ts` の `elementMultiplier`（モデルのコードは変えていない）",
+  "model": "`data/skills/870.json` の skill1 の effects[2].contents[0]（ペルソナの静的な付与の中身の stat `elementDamage`。常時パッシブとして足す）。属性の倍率は C-0119 と同じ `element.ts` の `elementMultiplier`（モデルのコードは変えていない）",
   "replaces": [],
-  "updated": "2026-10-06",
+  "updated": "2026-10-09",
   "subject": {
-    "places": ["data/skills/870.json の skill1 の effects[2]"]
+    "places": ["data/skills/870.json の skill1 の effects[2].contents[0]"]
   }
 }

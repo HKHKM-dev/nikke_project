@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { planFixedCycle } from '../../burst/fixedCycle.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
-import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, isStateContent, resolveTimed } from '../resolve.ts';
 import { planBuffTimeline, type TimelineSlot } from '../timeline.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEffect } from '../types.ts';
 import type { SkillRaw } from '../../types.ts';
@@ -110,7 +110,7 @@ describe('amplifies の窓', () => {
 
   it('keeps the referenced value multiplied for the whole duration, and fires only while the caster is in that state', () => {
     const t = planBuffTimeline([slotOf([atStart, later], [amplify as SkillEffect]), slotOf([], [])], schedule, FRAMES);
-    const amplified = t.windows.filter((w) => w.effect.amplifies !== undefined);
+    const amplified = t.windows.filter((w) => !isStateContent(w.effect) && w.effect.amplifies !== undefined);
     // 窓の中の発動は 10 秒・110 秒（105 秒の窓）・150 秒（140 秒の窓）。発動から 10 秒を、参照する窓が効いている所（その値 × 100%）と
     // 切れた所（発動の瞬間の値 × 200%）に分けて、参照する窓を受けた枠（味方全体）ごとに。30 秒の発動は 35 秒の窓に重なるが、
     // 発動の瞬間に効いていないので付かない（V-0230 の 263-05）

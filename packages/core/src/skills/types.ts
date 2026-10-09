@@ -21,11 +21,15 @@
 // モラン編で、burstGaugeHit に射撃の回数のトリガーを書けるようにした（plan/design-moran.md 2 節）。
 // ソルジャーE.G. 編で、確率のきっかけ（回数トリガーの chance / chanceRef。期待値の窓）を足し、時間の周期のトリガーを 1 パス目で
 // 窓を追う stat の timed にも書けるようにした（plan/design-soldier-eg.md 3.1・3.2 節）。
+// 名前の付いた状態の語彙編で、状態の付与（state。値を持たない持続効果と、状態の間だけ効く中身 contents）を足し、状態の名前を
+// 目録（skills/states.ts）の id にそろえた（ペルソナ編の states・timed の name、クルミ編の dot の status を置き換えた）。条件は
+// timed・付与・damage で 1 つの型（鍵の AND）にした（plan/design-named-state.md 5 節・10 節の論点 8）。
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 // 効果と notes には、根拠の結論の ID（claims）を書ける（plan/skills-guide.md 3 節。実在の検査は records/skills.ts）。
 import { ELEMENTS } from '../element.ts';
 import type { Element, LocalizedText, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
+import { NAMED_STATE_IDS, namedStateHolder, type NamedStateId, type StateHolder } from './states.ts';
 
 export type { SkillSlot };
 export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies readonly SkillSlot[];
@@ -206,20 +210,6 @@ export const EXCLUDE_SELF = ['always', 'unlessShort'] as const satisfies readonl
  */
 export type TargetSquad = 'same';
 export const TARGET_SQUADS = ['same'] as const satisfies readonly TargetSquad[];
-
-/**
- * ペルソナ編（plan/design-persona.md 3.1 節）: 枠の状態の名前。定義の最上位の states に書く（戦闘の始まりから終わりまでの静的な状態。
- * 「戦闘開始時、自分に…（持続・解除不可）」）。persona = ペルソナ状態
- */
-export type SkillState = 'persona';
-export const SKILL_STATES = ['persona'] as const satisfies readonly SkillState[];
-
-/**
- * ペルソナ編（同 3.3 節）: 説明文の効果名（timed の name）。トリガー { applied: 名前 } が、その名前の効果が付いたフレームで発火する。
- * followUp = 追撃、batonTouch = バトンタッチ
- */
-export type EffectName = 'followUp' | 'batonTouch';
-export const EFFECT_NAMES = ['followUp', 'batonTouch'] as const satisfies readonly EffectName[];
 
 /**
  * 対象の語彙編: 編成で決まる対象（targetSquad・longestChargeTime）の、最上位で決めた枠（skills/composition.ts の
@@ -438,10 +428,11 @@ export type TimerTrigger = {
 };
 
 /**
- * ペルソナ編（plan/design-persona.md 3.3 節）: 「〈効果名〉が適用された時」。編成のどの枠の効果でも、name がこの名前の timed が
- * この効果を持つ枠に付いたフレーム（窓の始まり。付き直しでも 1 回）で発火する。damage にだけ書ける
+ * ペルソナ編（plan/design-persona.md 3.3 節）: 「〈名前〉が適用された時」。名前の付いた状態の語彙編（plan/design-named-state.md 5.4 節）:
+ * 編成のどの枠の付与でも、その状態がこの効果を持つ枠に付いたフレーム（状態の窓の始まり。付き直しでも 1 回）で発火する。
+ * damage にだけ書ける
  */
-export type AppliedTrigger = { applied: EffectName };
+export type AppliedTrigger = { applied: NamedStateId };
 
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガーか時間の周期のトリガー（ペルソナ編: 効果名のトリガー） */
 export type EffectTrigger = BuffTrigger | ShotCountTrigger | EventCountTrigger | TimerTrigger | AppliedTrigger;
@@ -475,12 +466,13 @@ export type TimedEffect = TargetCountFields &
      * ペルソナ編（plan/design-persona.md 3.2 節）: 'always' は 'allies' にも書ける（「自分を除く…味方全体」）
      */
     excludeSelf?: ExcludeSelf;
-    /** ペルソナ編: 「ペルソナ状態の」。対象の枠の定義の states にその名前がある枠だけ。target が 'allies' のときだけ書ける */
-    targetState?: SkillState;
+    /**
+     * ペルソナ編: 「〈名前〉状態の」。名前の付いた状態の語彙編（plan/design-named-state.md 5.4 節）: 静的な状態（その枠の定義の
+     * 静的な付与。isStaticStateGrant）を持つ枠だけ。target が 'allies' のときだけ書ける
+     */
+    targetState?: NamedStateId;
     /** ペルソナ編: 「基本バースト段階が N の」。対象の枠の CharacterData.burstStep が N の枠だけ。target が 'allies' のときだけ書ける */
     targetBurstStep?: BasicBurstStep;
-    /** ペルソナ編: 説明文の効果名（「追撃」など）。トリガー { applied: 名前 } のきっかけになる */
-    name?: EffectName;
     /** Stage 9: 「〈武器〉を所持する味方」。target が self 以外（allies・Stage 11 の burstUsers）のときだけ書ける */
     targetWeapon?: WeaponType;
     /** アスカ: 「〈コード〉コードの味方」 */
@@ -504,7 +496,8 @@ export type TimedEffect = TargetCountFields &
     maxStacksRef?: number;
     /**
      * Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」。発火の瞬間に、効果を持つ枠がその stat の増加状態（常時パッシブか、
-     * 効いている窓で合計 > 0。同じフレームに付いた窓も入れる）なら発火する。カウンタは状態に関係なく数える
+     * 効いている窓で合計 > 0。同じフレームに付いた窓も入れる）なら発火する。カウンタは状態に関係なく数える。
+     * 防御力無視ダメージ編: 「フルバーストタイムなら」（inFullBurst）。名前の付いた状態の語彙編: 鍵はどれも満たすときだけ（AND）
      */
     condition?: EffectCondition;
     /** アニス：スター編: バースト段階の構成の条件 */
@@ -557,15 +550,22 @@ export type DurationUntil = 'fullBurstEnd' | 'battleEnd';
 export const DURATION_UNTILS = ['fullBurstEnd', 'battleEnd'] as const satisfies readonly DurationUntil[];
 
 /**
- * Stage 11 モダニア: 発火の条件。selfBuffed = 自分がその stat の増加状態なら。
- * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.4 節）: inFullBurst = 発火の瞬間がフルバーストタイムの中なら
- * （「フルバーストタイムなら」。1 パス目で窓を追う stat には書けない）
+ * 発火の条件。名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）で、timed・付与・damage を 1 つの型にした。
+ * キーは 1 つ以上で、すべてを満たすときだけ発火する（AND）。どの効果がどのキーを受けるかは効果の種類ごと（CONDITION_KEYS_OF）。
+ * selfBuffed = 自分がその stat の増加状態なら（Stage 11 モダニア。timed・付与）。
+ * inFullBurst = 発火の瞬間がフルバーストタイムの中なら（防御力無視ダメージ編。plan/design-true-damage-element.md 3.4 節。
+ * 1 パス目で窓を追う stat には書けない。damage ではクルミ S2 編の fullBurst を改めた。窓 [start, end) の中）。
+ * enemyState = 敵（1 体の前提）にその状態が付いているなら（クルミ S2 編の targetStatus を改めた。damage。付いている区間は
+ * 同じ状態の dot の最初の発火から最後の tick まで。編成のどの枠の dot でもよい）
  */
-export type EffectCondition = { selfBuffed: BuffStat } | { inFullBurst: true };
+export type EffectCondition = { selfBuffed?: BuffStat; inFullBurst?: true; enemyState?: NamedStateId };
 
-/** 条件が「自分が 〈stat〉 増加状態なら」ならその stat、それ以外は undefined */
+/** 名前の付いた状態の語彙編: 条件のキー */
+export type ConditionKey = keyof EffectCondition;
+
+/** 条件が「自分が 〈stat〉 増加状態なら」を含むならその stat、それ以外は undefined */
 export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffStat | undefined {
-  return condition !== undefined && 'selfBuffed' in condition ? condition.selfBuffed : undefined;
+  return condition?.selfBuffed;
 }
 
 /**
@@ -575,14 +575,6 @@ export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffSt
 export function isFirstPassTrackedStat(stat: BuffStat): boolean {
   return stat === 'attack' || isFiringStat(stat) || isStateStat(stat);
 }
-
-/**
- * クルミ S2 編（plan/design-kurumi-s2.md 2.2〜2.4 節）: damage の発火の条件。キーは 1 つ以上で、すべてを満たすときだけ発火する。
- * fullBurst = 発火のフレームがフルバーストの窓（[start, end)）の中なら（カウンタは窓によらず数える）、
- * targetStatus = 敵（1 体の前提）にその status の持続ダメージ（dot）が付いているなら。付いているのは、同じ status のまとまりの
- * 最初の発火のフレームから最後の tick のフレームまで（両端を含む。編成のどの枠の dot でもよい）
- */
-export type DamageCondition = { fullBurst?: true; targetStatus?: string };
 
 /** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */
 export type BurstDamageType = 'skill' | 'distributed';
@@ -624,8 +616,11 @@ export type DamageEffect = {
   withCharacter?: WithCharacterCondition;
   /** 防御力無視ダメージ編: 敵の属性の条件（クイーン（真）S1 の「1more が適用された時」） */
   enemyElement?: Element;
-  /** クルミ S2 編: 発火の条件（gaugeHits とは組み合わせない） */
-  condition?: DamageCondition;
+  /**
+   * クルミ S2 編（plan/design-kurumi-s2.md 2.2〜2.4 節）: 発火の条件（gaugeHits とは組み合わせない）。キーは inFullBurst・enemyState
+   * （名前の付いた状態の語彙編で fullBurst・targetStatus を改めた）。カウンタは条件によらず数える
+   */
+  condition?: EffectCondition;
   /**
    * 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3 節）: きっかけのフレームの delayFrames 後に出す（1 以上の整数）。
    * バフとフルバースト補正はそのフレームのもの（同じ発動で付いた効果も入る。発動の直前のバフで固定する規則は当てない）。
@@ -830,11 +825,12 @@ export type DotEffect = {
    */
   firstTick?: DotFirstTick;
   /**
-   * クルミ編: 状態異常の名前（「ハッキング」など）。同じキャラの同じ status の dot は 1 つの持続ダメージとして扱い、
+   * クルミ編: 状態異常の名前（「ハッキング」など）。同じキャラの同じ state の dot は 1 つの持続ダメージとして扱い、
    * 発火をまとめて tick を出す（どれで付いても付き直しと同じ。C-0136）。間隔・維持・firstTick・倍率は同じであること。
-   * 省略は効果ごとに別の持続ダメージ
+   * 省略は効果ごとに別の持続ダメージ。名前の付いた状態の語彙編（plan/design-named-state.md 5.5 節）: status を改め、目録の id
+   * （持ち主が敵の状態）にした。条件 enemyState が見る
    */
-  status?: string;
+  state?: NamedStateId;
   /**
    * レイヴン編（plan/design-raven-s1.md 2.1 節）: 最大スタック数の description_value_NN。有れば発火のたびに 1 スタック足し
    * （上限で止める）、tick の値は 1 スタックの倍率 × その tick の時点のスタックの数（C-0182）。付け直しで全スタックの時間が
@@ -849,7 +845,7 @@ export type DotEffect = {
   /**
    * レイヴン編（2.2 節）: tick ごとに、射手の 1 ヒットぶんのバーストゲージを tick のフレームに足す。スタックの数によらない
    * （C-0181）。firstTick: afterInterval で、維持が間隔の整数倍のときだけ（8 節の 2。解決のときに見る）。トリガーは射撃の回数トリガーか、
-   * burstUse（クルミのハッキング。C-0196。plan/design-raven-s1.md 10 節）。同じ status の効果は、どれも同じ値にする（tick は持続ダメージ
+   * burstUse（クルミのハッキング。C-0196。plan/design-raven-s1.md 10 節）。同じ state の効果は、どれも同じ値にする（tick は持続ダメージ
    * 1 つの性質なので）
    */
   gaugeOnTick?: true;
@@ -918,6 +914,55 @@ export type BurstReentryEffect = {
 };
 
 /**
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節）: 状態の中身の 1 項目。状態の窓の間だけ持ち主に効く stat の▲▼。
+ * 欄の意味は timed の値の欄と同じ。ref は付与のあるスロットの説明文の値（そのスロットの Lv で解く）。項目に kind が無ければ
+ * stat の▲▼と読む（ほかの種類は後の拡張で kind を持つ項目として足す。同 8.4 節）
+ */
+export type StateContentItem = Pick<TimedEffect, 'stat' | 'ref' | 'scaling' | 'decrease'> & ClaimRefs;
+
+/**
+ * 名前の付いた状態の語彙編（同 5.2 節）: 状態の付与。timed から値の欄（stat・ref・scaling・decrease）を除き、目録の id（state）を
+ * 足したもの。窓の作り方は timed と同じ（発火・対象・維持・上書き延長・スタック・条件・段）。同じ定義の同じ状態の付与は 1 つの状態
+ * （発火をまとめて和集合・スタックの段にする）で、中身（contents）を持てるのはそのうち 1 つ、維持とスタックの上限は同じ。
+ * 書けないのは name・amplifies と、トリガーの確率のきっかけ・{ applied }。静的な付与（isStaticStateGrant）は編成の段で持ち主が
+ * 決まり、中身は常時パッシブとして解く
+ */
+export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scaling' | 'decrease' | 'amplifies'> & {
+  kind: 'state';
+  /** 目録の id（持ち主が味方の状態） */
+  state: NamedStateId;
+  /** 状態の間だけ持ち主に効く中身（同 5.3 節） */
+  contents?: StateContentItem[];
+};
+
+/**
+ * 名前の付いた状態の語彙編（同 5.2 節）: 静的な付与か（戦闘開始時・戦闘の終わりまで・自分・発火の条件なし・スタックなし）。
+ * 持ち主は編成の段（skills/composition.ts）で決まり、中身は常時パッシブとして解く（skills/resolve.ts の resolvePassives）
+ */
+export function isStaticStateGrant(effect: StateGrantEffect): boolean {
+  return (
+    effect.trigger === 'battleStart' &&
+    effect.durationUntil === 'battleEnd' &&
+    effect.target === 'self' &&
+    effect.condition === undefined &&
+    effect.maxStacks === undefined &&
+    effect.maxStacksRef === undefined
+  );
+}
+
+/** 名前の付いた状態の語彙編: 定義の静的な付与が付ける状態（宝物版・編成の条件を当てた後の定義を渡す）。重複なし */
+export function staticStatesOf(definition: SkillDefinition | null | undefined): NamedStateId[] {
+  if (!definition) return [];
+  const out = new Set<NamedStateId>();
+  for (const slot of SKILL_SLOTS) {
+    for (const e of definition.skills[slot].effects) {
+      if (e.kind === 'state' && isStaticStateGrant(e)) out.add(e.state);
+    }
+  }
+  return [...out];
+}
+
+/**
  * 効果・notes の根拠の結論の ID（`C-NNNN`。1 つ以上・重複なし）。どの結論が効果を裏付けるかは、定義のこの欄を正にする
  * （結論の側からは生成物の plan/claims.md・plan/skills.md で引く）。実在と状態の検査は records/skills.ts（npm run records:check・npm test）。
  * モデルの計算には使わない
@@ -937,6 +982,7 @@ export type SkillEffect = (
   | AutoAttackEffect
   | BurstGaugeHitEffect
   | BurstReentryEffect
+  | StateGrantEffect
 ) &
   ClaimRefs;
 
@@ -963,6 +1009,7 @@ export const SKILL_EFFECT_KINDS = [
   'autoAttack',
   'burstGaugeHit',
   'burstReentry',
+  'state',
 ] as const satisfies readonly SkillEffect['kind'][];
 type MissingEffectKind = Exclude<SkillEffect['kind'], (typeof SKILL_EFFECT_KINDS)[number]>;
 const _allEffectKinds: [MissingEffectKind] extends [never] ? true : never = true;
@@ -1046,8 +1093,6 @@ export type SkillDefinition = {
    * 宝物の段階で宝物版になるスロットにここが無ければ、そのスロットは unsupported として扱う（skills/treasure.ts）
    */
   treasureSkills?: Partial<Record<SkillSlot, SkillEntry>>;
-  /** ペルソナ編（plan/design-persona.md 3.1 節）: 枠の状態（戦闘の始まりから終わりまで）。対象の targetState が見る */
-  states?: SkillState[];
 };
 
 /** 定義済みキャラの一覧（data/skills/index.json） */
@@ -1176,9 +1221,9 @@ function parsePersonaTargetFields(
   v: Record<string, Json>,
   target: BuffTarget,
   path: string,
-): { targetState?: SkillState; targetBurstStep?: BasicBurstStep } {
-  const out: { targetState?: SkillState; targetBurstStep?: BasicBurstStep } = {};
-  if (v.targetState !== undefined) out.targetState = oneOf(SKILL_STATES, v.targetState, `${path}.targetState`);
+): { targetState?: NamedStateId; targetBurstStep?: BasicBurstStep } {
+  const out: { targetState?: NamedStateId; targetBurstStep?: BasicBurstStep } = {};
+  if (v.targetState !== undefined) out.targetState = parseNamedStateId(v.targetState, `${path}.targetState`, 'ally');
   if (v.targetBurstStep !== undefined) {
     out.targetBurstStep = oneOf(BASIC_BURST_STEPS, v.targetBurstStep, `${path}.targetBurstStep`);
   }
@@ -1188,6 +1233,18 @@ function parsePersonaTargetFields(
     }
   }
   return out;
+}
+
+/**
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.6 節）: 目録の id で、持ち主の側が holder のもの。味方の状態を敵の条件で
+ * 見る、のような取り違えを落とす
+ */
+function parseNamedStateId(v: Json, path: string, holder: StateHolder): NamedStateId {
+  const id = oneOf(NAMED_STATE_IDS, v, path);
+  if (namedStateHolder(id) !== holder) {
+    fail(path, `"${id}" is a state held by the ${namedStateHolder(id)}, not by the ${holder}`);
+  }
+  return id;
 }
 
 /**
@@ -1249,6 +1306,9 @@ function parseTargetCount(v: Record<string, Json>, target: BuffTarget, path: str
     : { targetCountRef: parseRef(v.targetCountRef, `${path}.targetCountRef`) };
 }
 
+/** 名前の付いた状態の語彙編: timed の name（ペルソナ編）は状態の付与に置き換えた */
+const NAME_REPLACED = 'name was replaced by a state grant (kind "state". plan/design-named-state.md)';
+
 function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffect {
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'burstUsers') fail(`${path}.target`, 'burstUsers is not allowed in passive (it needs a full burst)');
@@ -1260,9 +1320,10 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   const targetElement = parseTargetElement(v, target, path);
   const targetSquad = parseTargetSquad(v, target, path);
   if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
-  for (const key of ['targetState', 'targetBurstStep', 'name'] as const) {
-    if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is only allowed in timed`);
+  for (const key of ['targetState', 'targetBurstStep'] as const) {
+    if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is only allowed in timed and state`);
   }
+  if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   if (isFlagStat(stat) || stat === 'fixedChargeTime') fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
@@ -1393,7 +1454,26 @@ function parseTrigger(
 function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   // 防御力無視ダメージ編: 周期のトリガー（ソルジャーE.G. 編で、1 パス目で窓を追う stat にも）。ソルジャーE.G. 編: 確率のきっかけ
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, 'withStart', false, true);
+  // 鍵の順は今までの timed と同じ（kind・trigger・target・stat の後に残りの欄）。最小構成の感度の鍵が定義の JSON から作られるので
+  const { trigger, target, ...rest } = parseTimedFields(v, path, stat, true);
+  return { kind: 'timed', trigger, target, stat, ...rest } as TimedEffect;
+}
+
+/** timed の、値（stat）を除いた欄。名前の付いた状態の語彙編: 付与（StateGrantEffect）はこの欄を timed と同じ規則で持つ */
+type TimedFields = Omit<TimedEffect, 'kind' | 'stat'>;
+
+/**
+ * timed の欄を検証する。名前の付いた状態の語彙編（plan/design-named-state.md 3.2 節）: stat が undefined なら付与の欄だけを見る
+ * （値の欄 ref・scaling・decrease・amplifies と stat ごとの規則を除く）。付与の stat ごとの規則は、付与の欄と中身の項目を合わせた
+ * timed として中身ごとに通す（validateStateGrants）
+ */
+function parseTimedFields(
+  v: Record<string, Json>,
+  path: string,
+  stat: BuffStat | undefined,
+  allowChance: boolean,
+): TimedFields {
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, 'withStart', false, allowChance);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
@@ -1422,36 +1502,40 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
       'burstGaugeSpeed is only allowed in passive (a timed gauge speed would feed back into the schedule)',
     );
   }
-  const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
-  validateScaling(scaling, stat, path);
-  validateFlatChargeTime(stat, scaling, v, path);
-  validateDamageTaken(stat, target, v, path);
-  const effect: TimedEffect = { kind: 'timed', trigger, target, stat };
-  // 環境コントロール強化編: 値は参照する効果から取る
-  if (v.amplifies !== undefined) {
-    effect.amplifies = parseAmplifies(v, stat, target, `${path}.amplifies`);
+  let scaling: BuffScaling | undefined;
+  if (stat !== undefined) {
+    scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
+    validateScaling(scaling, stat, path);
+    validateFlatChargeTime(stat, scaling, v, path);
+    validateDamageTaken(stat, target, v, path);
   }
-  // Stage 11 モダニア: フラグの stat（装弾数無限）は値を持たないので ref も scaling も書かない
-  else if (isFlagStat(stat)) {
-    if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value (do not write ref)`);
-    if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value (do not write scaling)`);
-  } else {
-    effect.ref = parseRef(v.ref, `${path}.ref`);
+  const effect: TimedFields = { trigger, target };
+  if (stat !== undefined) {
+    // 環境コントロール強化編: 値は参照する効果から取る
+    if (v.amplifies !== undefined) {
+      effect.amplifies = parseAmplifies(v, stat, target, `${path}.amplifies`);
+    }
+    // Stage 11 モダニア: フラグの stat（装弾数無限）は値を持たないので ref も scaling も書かない
+    else if (isFlagStat(stat)) {
+      if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value (do not write ref)`);
+      if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value (do not write scaling)`);
+    } else {
+      effect.ref = parseRef(v.ref, `${path}.ref`);
+    }
   }
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (targetSquad !== undefined) effect.targetSquad = targetSquad;
   if (excludeSelf !== undefined) effect.excludeSelf = excludeSelf;
   Object.assign(effect, persona);
-  if (v.name !== undefined) {
-    effect.name = oneOf(EFFECT_NAMES, v.name, `${path}.name`);
-    if (isTimerTrigger(trigger)) fail(`${path}.name`, 'a named effect cannot have a timer trigger');
-  }
+  if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
   Object.assign(effect, count);
-  if (scaling !== undefined) effect.scaling = scaling;
-  if (parseDecrease(v, scaling, path)) {
-    if (isFlagStat(stat)) fail(`${path}.decrease`, `${stat} has no value`);
-    effect.decrease = true;
+  if (stat !== undefined) {
+    if (scaling !== undefined) effect.scaling = scaling;
+    if (parseDecrease(v, scaling, path)) {
+      if (isFlagStat(stat)) fail(`${path}.decrease`, `${stat} has no value`);
+      effect.decrease = true;
+    }
   }
   Object.assign(effect, parseTimedDuration(v, stat, target, path));
   // Stage 11 モダニア: 効果のあるスタック
@@ -1459,7 +1543,7 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
     fail(path, 'at most one of maxStacks and maxStacksRef');
   if (v.maxStacks !== undefined) effect.maxStacks = parsePositiveInt(v.maxStacks, `${path}.maxStacks`);
   if (v.maxStacksRef !== undefined) effect.maxStacksRef = parseRef(v.maxStacksRef, `${path}.maxStacksRef`);
-  if (isFlagStat(stat) && (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)) {
+  if (stat !== undefined && isFlagStat(stat) && (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)) {
     fail(path, `${stat} cannot stack`);
   }
   const byShots = effect.durationShots !== undefined || effect.durationShotsRef !== undefined;
@@ -1473,44 +1557,150 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   ) {
     fail(path, 'a duration until an event cannot stack');
   }
-  // 防御力無視ダメージ編: 「フルバーストタイムなら」
-  if (isRecord(v.condition) && v.condition.inFullBurst !== undefined) {
-    const c = v.condition;
-    if (Object.keys(c).some((k) => k !== 'inFullBurst') || c.inFullBurst !== true) {
-      fail(`${path}.condition`, 'expected { inFullBurst: true }');
-    }
-    if (isFirstPassTrackedStat(stat)) {
+  // Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」。防御力無視ダメージ編: 「フルバーストタイムなら」。
+  // 名前の付いた状態の語彙編: 鍵はどれも満たすときだけ（AND。plan/design-named-state.md 10 節の論点 8）
+  if (v.condition !== undefined) {
+    const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.timed);
+    if (condition.inFullBurst === true && stat !== undefined && isFirstPassTrackedStat(stat)) {
       fail(
         `${path}.condition`,
         `inFullBurst is not supported for "${stat}" (its window is tracked inside the first pass)`,
       );
     }
-    if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
-    effect.condition = { inFullBurst: true };
-  }
-  // Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」
-  else if (v.condition !== undefined) {
-    const c = v.condition;
-    if (!isRecord(c) || Object.keys(c).some((k) => k !== 'selfBuffed')) {
-      fail(`${path}.condition`, 'expected { selfBuffed: stat } or { inFullBurst: true }');
-    }
-    const selfBuffed = oneOf(BUFF_STATS, c.selfBuffed, `${path}.condition.selfBuffed`);
-    if (isFlagStat(selfBuffed)) fail(`${path}.condition.selfBuffed`, `${selfBuffed} is not a buff state`);
     // 条件付きの効果が状態を作ると連鎖するので、同じ stat と状態だけの stat は出せない（plan/design-stage11-modernia.md 2.4 節）
-    if (stat === selfBuffed || isStateStat(stat)) {
+    if (
+      condition.selfBuffed !== undefined &&
+      stat !== undefined &&
+      (stat === condition.selfBuffed || isStateStat(stat))
+    ) {
       fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
     }
     if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
-    effect.condition = { selfBuffed };
+    effect.condition = condition;
   }
-  validateFixedChargeTime(effect, path);
-  validateChanceTimed(effect, path);
-  // ペルソナ編: 名前の付いた効果の記録は planBuffTimeline の 1 段目で作るので、条件付き・順位の対象とは組めない
-  if (effect.name !== undefined && (effect.condition !== undefined || effect.target === 'topAttack')) {
-    fail(`${path}.name`, 'a named effect cannot have a condition or target "topAttack"');
+  if (stat !== undefined) {
+    validateFixedChargeTime({ kind: 'timed', ...effect, stat }, path);
+    validateChanceTimed({ kind: 'timed', ...effect, stat }, path);
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
+}
+
+/** 名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）: 効果の種類ごとに受ける条件の鍵 */
+const CONDITION_KEYS_OF = {
+  timed: ['selfBuffed', 'inFullBurst'],
+  damage: ['inFullBurst', 'enemyState'],
+} as const satisfies Record<string, readonly ConditionKey[]>;
+
+/**
+ * 発火の条件（timed・付与・damage で 1 つの型）。キーは allowed のうち 1 つ以上で、どれも満たすときだけ発火する（AND）。
+ * 効果の種類ごとの規則（1 パス目で窓を追う stat には inFullBurst を書けない など）は呼ぶ側で見る
+ */
+function parseCondition(c: Json, path: string, allowed: readonly ConditionKey[]): EffectCondition {
+  if (!isRecord(c)) fail(path, `expected an object with ${allowed.join(' / ')}`);
+  for (const key of Object.keys(c)) {
+    if (!(allowed as readonly string[]).includes(key))
+      fail(`${path}.${key}`, `unknown field (allowed: ${allowed.join(', ')})`);
+  }
+  const condition: EffectCondition = {};
+  if (c.selfBuffed !== undefined) {
+    const selfBuffed = oneOf(BUFF_STATS, c.selfBuffed, `${path}.selfBuffed`);
+    if (isFlagStat(selfBuffed)) fail(`${path}.selfBuffed`, `${selfBuffed} is not a buff state`);
+    condition.selfBuffed = selfBuffed;
+  }
+  if (c.inFullBurst !== undefined) {
+    if (c.inFullBurst !== true) fail(`${path}.inFullBurst`, 'expected true');
+    condition.inFullBurst = true;
+  }
+  if (c.enemyState !== undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
+  if (Object.keys(condition).length === 0) fail(path, `expected at least one of ${allowed.join(', ')}`);
+  return condition;
+}
+
+/** 名前の付いた状態の語彙編: 付与に書けない欄（値の欄は中身に書く） */
+const STATE_GRANT_VALUE_KEYS = ['stat', 'ref', 'scaling', 'decrease'] as const;
+
+/**
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2・5.3 節）: 状態の付与。欄は timed から値の欄を除いたもので、規則も
+ * timed と同じ（parseTimedFields）。中身の項目は、付与の欄と合わせた timed として今の timed の規則に通す（stat ごとの規則が
+ * 中身にもそのまま効く）。同じ状態のほかの付与との規則（中身は 1 つ・維持とスタックの上限が同じ）は validateStateGrants
+ */
+function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGrantEffect {
+  for (const key of STATE_GRANT_VALUE_KEYS) {
+    if (v[key] !== undefined) fail(`${path}.${key}`, `a state grant has no value (write ${key} in contents)`);
+  }
+  if (v.amplifies !== undefined) fail(`${path}.amplifies`, 'amplifies is not allowed in a state grant');
+  for (const key of Object.keys(v)) {
+    if (!STATE_GRANT_KEYS.includes(key)) fail(`${path}.${key}`, 'unknown field');
+  }
+  const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
+  // トリガーの確率のきっかけは書けない（窓が期待値の小片になり、見る側の「付いているか」に使えない）。
+  // { applied } は parseTrigger が damage のほかで落とす（連鎖させない）
+  const fields = parseTimedFields(v, path, undefined, false);
+  // 循環の禁止: 付与が、自分の付ける状態を見て対象を決めない（plan/design-stage11-modernia.md 11.2 節の 7）
+  if (fields.targetState === state) fail(`${path}.targetState`, `a grant of "${state}" cannot look at its own state`);
+  const effect: StateGrantEffect = { kind: 'state', state, ...fields };
+  if (v.contents !== undefined) {
+    if (!Array.isArray(v.contents) || v.contents.length === 0) fail(`${path}.contents`, 'expected a non-empty array');
+    effect.contents = v.contents.map((item, i) => parseStateContentItem(item, v, `${path}.contents[${i}]`));
+  }
+  return effect;
+}
+
+/** 名前の付いた状態の語彙編: 付与に書ける欄（timed の欄から値の欄を除き、state・contents を足したもの） */
+const STATE_GRANT_KEYS: readonly string[] = [
+  'kind',
+  'state',
+  'contents',
+  'trigger',
+  'target',
+  'targetWeapon',
+  'targetElement',
+  'targetSquad',
+  'targetCount',
+  'targetCountRef',
+  'excludeSelf',
+  'targetState',
+  'targetBurstStep',
+  'durationRef',
+  'durationSeconds',
+  'durationShots',
+  'durationShotsRef',
+  'durationUntil',
+  'maxStacks',
+  'maxStacksRef',
+  'condition',
+  'burstStepMix',
+  'squad',
+  'withCharacter',
+  'enemyElement',
+  'assumes',
+  'claims',
+];
+
+/**
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節）: 中身の 1 項目。付与の欄（grant）と合わせた timed を
+ * parseTimedEffect に通して、stat ごとの規則を確かめる
+ */
+function parseStateContentItem(item: Json, grant: Record<string, Json>, path: string): StateContentItem {
+  if (!isRecord(item)) fail(path, 'expected an object');
+  for (const key of Object.keys(item)) {
+    if (!['stat', 'ref', 'scaling', 'decrease', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+  }
+  const timed = parseTimedEffect(contentAsTimed(grant, item), path);
+  const out: StateContentItem = { stat: timed.stat };
+  if (timed.ref !== undefined) out.ref = timed.ref;
+  if (timed.scaling !== undefined) out.scaling = timed.scaling;
+  if (timed.decrease) out.decrease = true;
+  if (item.claims !== undefined) out.claims = parseClaimRefs(item.claims, `${path}.claims`);
+  return out;
+}
+
+/** 名前の付いた状態の語彙編: 付与の欄と中身の項目を合わせた timed（検証用。plan/design-named-state.md 3.2 節） */
+function contentAsTimed(grant: Record<string, Json>, item: Record<string, Json>): Record<string, Json> {
+  const { kind: _kind, state: _state, contents: _contents, claims: _claims, ...fields } = grant;
+  const { claims: _itemClaims, ...value } = item;
+  return { ...fields, ...value, kind: 'timed' };
 }
 
 /**
@@ -1531,7 +1721,6 @@ function validateChanceTimed(effect: TimedEffect, path: string): void {
     [effect.durationShots ?? effect.durationShotsRef, 'durationShots'],
     [effect.durationUntil, 'durationUntil'],
     [effect.amplifies, 'amplifies'],
-    [effect.name, 'name'],
   ];
   for (const [value, key] of forbidden) {
     if (value !== undefined) fail(`${path}.${key}`, `a chance trigger cannot be combined with ${key}`);
@@ -1592,7 +1781,7 @@ function validateFixedChargeTime(effect: TimedEffect, path: string): void {
  */
 function parseTimedDuration(
   v: Record<string, Json>,
-  stat: BuffStat,
+  stat: BuffStat | undefined,
   target: BuffTarget,
   path: string,
 ): {
@@ -1610,7 +1799,7 @@ function parseTimedDuration(
       fail(path, 'durationUntil cannot be combined with another duration');
     }
     const until = oneOf(DURATION_UNTILS, v.durationUntil, `${path}.durationUntil`);
-    if (isFlagStat(stat) || (until === 'fullBurstEnd' && isFirstPassTrackedStat(stat))) {
+    if (stat !== undefined && (isFlagStat(stat) || (until === 'fullBurstEnd' && isFirstPassTrackedStat(stat)))) {
       fail(
         `${path}.stat`,
         `a duration until an event is not supported for "${stat}" (its window is tracked inside the first pass)`,
@@ -1624,7 +1813,7 @@ function parseTimedDuration(
   if (v.durationRef !== undefined || v.durationSeconds !== undefined) {
     fail(path, 'a duration is either in seconds or in shots, not both');
   }
-  if (stat === 'attack' || isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat)) {
+  if (stat !== undefined && (stat === 'attack' || isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat))) {
     fail(
       `${path}.stat`,
       `a duration in shots is not supported for "${stat}" (its window is tracked inside the first pass)`,
@@ -1805,7 +1994,9 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     if (trigger.stacksRef !== undefined) fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with stacksRef');
     effect.gaugeHits = parseGaugeHits(v.gaugeHits, `${path}.gaugeHits`, 0);
   }
-  if (v.condition !== undefined) effect.condition = parseDamageCondition(v.condition, `${path}.condition`);
+  // クルミ S2 編: 発火の条件。名前の付いた状態の語彙編: timed と同じ型（鍵は inFullBurst・enemyState）
+  if (v.condition !== undefined)
+    effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.damage);
   // クルミ S2 編: ゲージは 1 パス目で溜めるので、1 パス目の後に決まる窓・条件とは組み合わせない（plan/design-kurumi-s2.md 2.4 節）
   if (effect.gaugeHits !== undefined && (effect.condition !== undefined || hasCountingWindow(trigger))) {
     fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a condition or a counting window (during)');
@@ -1826,36 +2017,16 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   return effect;
 }
 
-/** ペルソナ編: damage のトリガー。{ applied: 名前 } のほかは parseTrigger と同じ */
+/** ペルソナ編: damage のトリガー。{ applied: 状態 }（名前の付いた状態の語彙編: 目録の id）のほかは parseTrigger と同じ */
 function parseDamageTrigger(v: Json, path: string): EffectTrigger {
   if (!isRecord(v) || v.applied === undefined) return parseTrigger(v, path, true, true);
   for (const key of Object.keys(v)) if (key !== 'applied') fail(`${path}.${key}`, 'unknown field');
-  return { applied: oneOf(EFFECT_NAMES, v.applied, `${path}.applied`) };
+  return { applied: parseNamedStateId(v.applied, `${path}.applied`, 'ally') };
 }
 
 /** クルミ S2 編: 回数トリガーに数える窓（during）があるか */
 export function hasCountingWindow(trigger: EffectTrigger): boolean {
   return typeof trigger === 'object' && 'count' in trigger && 'during' in trigger && trigger.during !== undefined;
-}
-
-/** クルミ S2 編: damage の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。キーは 1 つ以上 */
-function parseDamageCondition(c: Json, path: string): DamageCondition {
-  if (!isRecord(c)) fail(path, 'expected { fullBurst?: true, targetStatus?: name }');
-  for (const key of Object.keys(c)) {
-    if (key !== 'fullBurst' && key !== 'targetStatus') fail(`${path}.${key}`, 'unknown field');
-  }
-  const condition: DamageCondition = {};
-  if (c.fullBurst !== undefined) {
-    if (c.fullBurst !== true) fail(`${path}.fullBurst`, 'expected true');
-    condition.fullBurst = true;
-  }
-  if (c.targetStatus !== undefined) {
-    if (typeof c.targetStatus !== 'string' || c.targetStatus === '')
-      fail(`${path}.targetStatus`, 'expected a status name');
-    condition.targetStatus = c.targetStatus;
-  }
-  if (Object.keys(condition).length === 0) fail(path, 'expected at least one of fullBurst and targetStatus');
-  return condition;
 }
 
 /**
@@ -1873,7 +2044,7 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
         'durationRef',
         'durationSeconds',
         'firstTick',
-        'status',
+        'state',
         'maxStacksRef',
         'gaugeOnApply',
         'gaugeOnTick',
@@ -1904,12 +2075,8 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
     }
     effect.firstTick = v.firstTick as DotFirstTick;
   }
-  if (v.status !== undefined) {
-    if (typeof v.status !== 'string' || v.status.trim() === '') {
-      fail(`${path}.status`, `expected a non-empty string, got ${JSON.stringify(v.status)}`);
-    }
-    effect.status = v.status;
-  }
+  // クルミ編: 状態異常の名前。名前の付いた状態の語彙編: 目録の id（持ち主が敵の状態。status を改めた）
+  if (v.state !== undefined) effect.state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
   if (v.maxStacksRef !== undefined) {
     effect.maxStacksRef = parseRef(v.maxStacksRef, `${path}.maxStacksRef`);
     if (effect.firstTick !== 'afterInterval') fail(`${path}.maxStacksRef`, 'needs firstTick afterInterval');
@@ -2111,22 +2278,23 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
     if (
       effect.kind !== 'passive' &&
       effect.kind !== 'timed' &&
+      effect.kind !== 'state' &&
       effect.kind !== 'cooldownReduction' &&
       effect.kind !== 'burstReentry'
     ) {
       fail(
         `${path}.${key}`,
-        `only allowed in passive, timed, cooldownReduction and burstReentry, found in ${effect.kind}`,
+        `only allowed in passive, timed, state, cooldownReduction and burstReentry, found in ${effect.kind}`,
       );
     }
     if (key === 'burstStepMix') effect.burstStepMix = parseBurstStepMixCondition(v[key], `${path}.${key}`);
     else effect.squad = parseSquadCondition(v[key], `${path}.${key}`);
   }
-  // 防御力無視ダメージ編: 編成に特定のキャラがいる条件・敵の属性の条件（passive・timed・damage）
+  // 防御力無視ダメージ編: 編成に特定のキャラがいる条件・敵の属性の条件（passive・timed・damage。名前の付いた状態の語彙編: 付与も）
   for (const key of ['withCharacter', 'enemyElement'] as const) {
     if (v[key] === undefined) continue;
-    if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'damage') {
-      fail(`${path}.${key}`, `only allowed in passive, timed and damage, found in ${effect.kind}`);
+    if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'state' && effect.kind !== 'damage') {
+      fail(`${path}.${key}`, `only allowed in passive, timed, state and damage, found in ${effect.kind}`);
     }
     if (key === 'withCharacter') effect.withCharacter = parseWithCharacterCondition(v[key], `${path}.${key}`);
     else effect.enemyElement = oneOf(ELEMENTS, v[key], `${path}.${key}`);
@@ -2185,9 +2353,10 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'autoAttack') return parseAutoAttackEffect(v, path);
   if (v.kind === 'burstGaugeHit') return parseBurstGaugeHitEffect(v, path);
   if (v.kind === 'burstReentry') return parseBurstReentryEffect(v, path);
+  if (v.kind === 'state') return parseStateGrantEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit" or "burstReentry", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry" or "state", got ${JSON.stringify(v.kind)}`,
   );
 }
 
@@ -2253,6 +2422,63 @@ function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEn
   if (count > 1) fail(root, 'at most one fixedChargeTime effect per definition');
 }
 
+/**
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2・5.6 節）: 同じ定義の同じ状態の付与どうしの規則。中身（contents）を
+ * 持つのは 1 つだけ、維持の形（秒・発数・出来事）とスタックの有無は同じ（即値は値も。Lv で決まる値は解決のときに見る）。
+ * 中身を持たない付与も、中身の項目と合わせた timed として今の規則を通す（状態の窓を共有するので、stat ごとの規則がどの付与にも効く）
+ */
+function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const byState = new Map<NamedStateId, { effect: StateGrantEffect; path: string }[]>();
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'state') return;
+      byState.set(e.state, [...(byState.get(e.state) ?? []), { effect: e, path: `${root}.${slot}.effects[${i}]` }]);
+    });
+  }
+  for (const [state, grants] of byState) {
+    const bearers = grants.filter((g) => g.effect.contents !== undefined);
+    if (bearers.length > 1) {
+      fail(`${bearers[1]!.path}.contents`, `only one grant of "${state}" in a definition may have contents`);
+    }
+    const first = grants[0]!;
+    for (const g of grants.slice(1)) {
+      // 静的な付与は編成の段で持ち主が決まる（窓を作らない）ので、同じ状態を時間の中で付ける付与とは混ぜない
+      if (isStaticStateGrant(g.effect) !== isStaticStateGrant(first.effect)) {
+        fail(g.path, `grants of "${state}" need to be all static (battleStart, until battleEnd, self) or all not`);
+      }
+      if (durationFormOf(g.effect) !== durationFormOf(first.effect)) {
+        fail(g.path, `grants of "${state}" need the same duration (${durationFormOf(first.effect)})`);
+      }
+      if (stackFormOf(g.effect) !== stackFormOf(first.effect)) {
+        fail(g.path, `grants of "${state}" need the same max stacks (${stackFormOf(first.effect)})`);
+      }
+    }
+    const bearer = bearers[0];
+    if (bearer === undefined) continue;
+    for (const g of grants) {
+      if (g === bearer) continue;
+      bearer.effect.contents!.forEach((item, j) => {
+        parseTimedEffect(contentAsTimed(g.effect, item), `${g.path}（${bearer.path}.contents[${j}] と合わせて）`);
+      });
+    }
+  }
+}
+
+/** 名前の付いた状態の語彙編: 付与の維持の形（同じ状態の付与どうしで比べる。即値は値も） */
+function durationFormOf(e: StateGrantEffect): string {
+  if (e.durationUntil !== undefined) return `until ${e.durationUntil}`;
+  if (e.durationShots !== undefined) return `shots ${e.durationShots}`;
+  if (e.durationShotsRef !== undefined) return 'shots (ref)';
+  if (e.durationSeconds !== undefined) return `seconds ${e.durationSeconds}`;
+  return 'seconds (ref)';
+}
+
+/** 名前の付いた状態の語彙編: 付与のスタックの形（同じ状態の付与どうしで比べる。即値は値も） */
+function stackFormOf(e: StateGrantEffect): string {
+  if (e.maxStacks !== undefined) return `${e.maxStacks}`;
+  return e.maxStacksRef !== undefined ? 'ref' : 'none';
+}
+
 /** JSON.parse 済みの値を検証して SkillDefinition にする。不正なら Error */
 export function parseSkillDefinition(raw: Json): SkillDefinition {
   if (!isRecord(raw)) fail('', 'expected an object');
@@ -2275,12 +2501,11 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   }
   validateCycles(skills, 'skills');
   validateFixedChargeTimeCount(skills, 'skills');
+  validateStateGrants(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
+  // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
   if (raw.states !== undefined) {
-    if (!Array.isArray(raw.states) || raw.states.length === 0) fail('states', 'expected a non-empty array');
-    const states = raw.states.map((x, i) => oneOf(SKILL_STATES, x, `states[${i}]`));
-    if (new Set(states).size !== states.length) fail('states', 'duplicate state');
-    def.states = states;
+    fail('states', 'states was replaced by a static state grant (kind "state". plan/design-named-state.md)');
   }
   if (raw.treasureSkills !== undefined) {
     const treasure = raw.treasureSkills;
@@ -2293,6 +2518,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     }
     validateCycles({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateFixedChargeTimeCount({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateStateGrants({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;

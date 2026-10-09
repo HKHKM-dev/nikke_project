@@ -60,6 +60,7 @@
   - 数値は書かず、`ref` で説明文の値を指す。
   - スロットの対応状況（`support`）は書かない。効果の有無と、未対応（`unimplemented`）の notes の有無から読み込みで決まる（`supported`・`partial`・`unsupported`・`noEffect`。[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）。効果の無いスロットには、理由の notes が要る。
   - いつも満たすとみなした条件は、効果の `assumes` に書く。
+  - 名前の付いた状態（「〈名前〉」：機能…・〜状態なら・〜状態の味方・〜が適用された時）は、状態の付与（`kind: 'state'`）と中身（`contents`）で書き、名前は目録（`skills/states.ts`）の id で指す。目録に無い状態は id を足す（英語版の説明文の状態名の lowerCamelCase。[design-named-state.md](design-named-state.md) 5 節）。
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作るのは 1.6 なので、そのときに書き足す。
   - `checkedAt` は説明文を読んだ日。
 - **テスト**
