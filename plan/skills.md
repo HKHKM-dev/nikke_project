@@ -18,7 +18,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - notes[0] 前提の外: 被弾 N 回で自分に攻撃力▲（維持型）は、被弾を扱わないので起きない（要件 5.2 節。射撃場の 3 分モードでは的が反撃するので発動する）: 根拠なし
 - **skill2**: supported
   - effects[0] damage・20 秒ごと・skill: C-0403（確定）、C-0102（確定）、C-0453（確定）
-  - effects[1] burstGaugeHit・20 秒ごと: C-0409（仮説）、C-0403（確定）
+  - effects[1] burstGaugeHit・20 秒ごと: C-0409（仮説）、C-0403（確定）、C-0453（確定）
   - notes[0] 計算に無関係: 挑発はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0227（確定）
@@ -328,7 +328,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - effects[2] timed・burstUse・attack: C-0160（確定）
 - **skill2**: supported
   - effects[0] damage・15 秒ごと・skill: C-0402（仮説）、C-0102（確定）、C-0453（確定）
-  - effects[1] burstGaugeHit・15 秒ごと: C-0404（仮説）、C-0402（仮説）
+  - effects[1] burstGaugeHit・15 秒ごと: C-0404（仮説）、C-0402（仮説）、C-0453（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0160（確定）、C-0165（確定）
   - effects[1] timed・burstUse・damageTaken: C-0160（確定）、C-0161（確定）、C-0162（確定）、C-0165（確定）、C-0153（仮説）
@@ -453,7 +453,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - notes[0] 計算に無関係: 残りの HP の数値が最も低い味方 1 機に受けるダメージ▼は、ダメージとゲージに関係しない: 根拠なし
 - **skill2**: partial
   - effects[0] damage・13 秒ごと・skill: C-0405（確定）、C-0102（確定）、C-0453（確定）
-  - effects[1] burstGaugeHit・13 秒ごと: C-0409（仮説）、C-0405（確定）
+  - effects[1] burstGaugeHit・13 秒ごと: C-0409（仮説）、C-0405（確定）、C-0453（確定）
   - notes[0] 未対応: フルバーストタイム持続中に発動した時の、同じ敵への防御力▼は未対応（語彙と効きの確かめが要るため）: 根拠なし
 - **burst**: noEffect
   - notes[0] 計算に無関係: 残りの HP の数値が最も低い味方へのバリアは、ダメージとゲージに関係しない: 根拠なし

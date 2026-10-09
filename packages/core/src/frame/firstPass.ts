@@ -869,12 +869,16 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy: t.energy });
     }
   };
-  // フラワー編: 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する
+  // フラワー編: 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する。
+  // delayFrames があれば発火の後のヒットのフレームに足し、戦闘の終わりを越えるものは足さない（C-0453。plan/design-timer-ceil.md 7 節）
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
     const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
-    for (const everySeconds of resolveTimerGauges(slot.definition)) {
-      for (const at of timerFrames(everySeconds, frames)) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+    for (const { everySeconds, delayFrames } of resolveTimerGauges(slot.definition)) {
+      for (const fire of timerFrames(everySeconds, frames)) {
+        const at = fire + delayFrames;
+        if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+      }
     }
   });
   /** 着弾編: 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */

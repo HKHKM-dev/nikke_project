@@ -5,7 +5,7 @@
   "topic": "バーストゲージ",
   "grade": "推論",
   "basis": "`162-35`（3 回とも +1px）・`165-37`（1 回 +1px・1 回 0）・`038-31`（1 回 +1px・1 回 0）・`163-17`（1 回 0）・`163-16`（163 の S2 のフレーム）。探索（予測なし）で、量は px の刻みより細かく決められない（4,000 は約 0.5px で、px の刻みをまたぐのは半分ほどの回）。V-0273",
-  "model": "イサベルは実装済み（data/skills/231.json の skill2。everySeconds: 15 の burstGaugeHit）。ゲージは発動のフレームに足す（ダメージのヒットは発動の 45f 後。C-0453。ゲージが発動とヒットのどちらで溜まるかは確かめていない。V-0313・backlog 4-22）",
+  "model": "イサベルは実装済み（data/skills/231.json の skill2。everySeconds: 15 の burstGaugeHit。ゲージはダメージと同じく発動の 45f 後のヒットのフレームに足す（delayFrames。C-0453。plan/design-timer-ceil.md 7 節））",
   "replaces": [],
   "updated": "2026-10-09"
 }
