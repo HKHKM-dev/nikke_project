@@ -5,9 +5,9 @@
   "topic": "1 発の式・バフの掛かり方",
   "grade": "厳密一致",
   "basis": "`259-12`・`259-13`・`302-10`・`302-11`・`302-12`。V-0266・V-0267",
-  "model": "実装済み（damage.ts の computeTriggerDamage → skills/buffs.ts の roundedAttack。既定 ATTACK_ROUNDING = 'self'）。発動者の攻撃力基準の▲（casterAttack）も個別に丸める形とは、いまの観測値では見分けられない（全録画でこの 2 つが割れるヒットは無い）",
+  "model": "実装済み（damage.ts の computeTriggerDamage → skills/buffs.ts の roundedAttack。既定 ATTACK_ROUNDING = 'self'）。発動者の攻撃力基準の▲（casterAttack）も個別に丸める形とは、いまの観測値では見分けられない（全録画でこの 2 つが割れるヒットは無い）。2 つの形のうち self を既定にするのは 2026-10-09 のオーナーの判断（予測を出した形。V-0267「論点」2）。対象が自分の▲と、ほかのキャラの発動者基準の▲が重なり、2 つの形で最終攻撃力が 1 違うヒットの録画が出たら見直す",
   "replaces": ["C-0399"],
-  "updated": "2026-10-08",
+  "updated": "2026-10-09",
   "subject": {
     "mechanism": "damageFormula"
   },
