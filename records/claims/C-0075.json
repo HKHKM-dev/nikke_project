@@ -10,5 +10,13 @@
   "updated": "2026-09-28",
   "subject": {
     "places": ["data/skills/830.json の skill2 の effects[0]", "data/skills/830.json の skill2 の notes[0]"]
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["063-05"],
+      "element": "アスカ burst.effects[0]",
+      "reason": "仮説の C-0514 は攻撃ダメージ▲の付き始めの数 f（III のタイマーの 00.00 の 5f 前の発には乗らない）だけで、▲の値と 10 秒の窓は C-0076 で確定。比べるモデルのフレーム（063-05 は 1000。窓の始まりから 269f）は、アスカのバーストの窓の端から 96f 以上離れているか、録画にアスカのバーストが無く、付き始めの数 f に効かない",
+      "decided": "2026-10-10"
+    }
+  ]
 }

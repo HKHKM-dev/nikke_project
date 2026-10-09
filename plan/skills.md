@@ -690,7 +690,7 @@ notes の種類: 未対応 125・前提の外 37・計算に無関係 54・補�
   - effects[0] timed・fullBurstStart・coreDamage: C-0075（確定）
   - notes[0] 前提の外: 「自分がバリア適用状態なら」有利コードの攻撃ダメージ▲は、バリアを扱わないので起きない: C-0075（確定）
 - **burst**: supported
-  - effects[0] timed・burstUse・attackDamage: C-0076（確定）
+  - effects[0] timed・burstUse・attackDamage: C-0076（確定）、C-0514（仮説）
   - effects[1] heal・burstUse: C-0464（確定）、C-0082（確定）
   - effects[2] timed・burstUse・hitRate: C-0076（確定）
   - notes[0] 前提の外: 貫通特化は射撃場の敵ではダメージに関係しない: C-0076（確定）
