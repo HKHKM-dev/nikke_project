@@ -432,3 +432,7 @@
 2026-10-10 00:08 に録画 401（I-DOLL・フラワー + ウンファ：タクティカル・アップ）を `intake.ts` で取り込み、この 1 本（`range/20261009-401_rl+sr_flower+eunhwa-tu_burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`948bfd11bde7`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-10 00:08 に録画 402（レイヴン + I-DOLL・サン + クラウン + ココア）を `intake.ts` で取り込み、この 1 本（`range/20261009-402_rl+ar+mg+sr_raven+idoll-sun+crown+cocoa_crown-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`acc219c20cd5`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-10 00:16 に録画 403（ティア単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-403_rl_tia_manual.mp4`）だけを同期した。E: と I: で sha256 が一致（`6e4b40d0735b`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-10 00:26 に録画 404（メイデン単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-404_sg_maiden_manual.mp4`）だけを同期した。E: と I: で sha256 が一致（`900680039baf`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
