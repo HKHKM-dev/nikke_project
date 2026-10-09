@@ -26,6 +26,7 @@ import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
 import {
   ROOT,
+  idsInOtherBranches,
   loadClaims,
   loadObservations,
   loadPredictions,
@@ -67,6 +68,19 @@ function format(path: string): void {
   spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['prettier', '--write', path], { stdio: 'ignore' });
 }
 
+/**
+ * 次の空き番号。ほかのブランチ（手元か origin の、main に無い commit）が使っている番号も除く。並行する作業が同じ番号を取ると、
+ * 後からマージする側が振り直すことになる（V-0378）
+ */
+function freeId(prefix: 'V' | 'C', own: readonly string[]): string {
+  const other = idsInOtherBranches();
+  if (other.note !== '') console.log(`注意: ${other.note}`);
+  const ownOnly = nextId(prefix, own);
+  const id = nextId(prefix, [...own, ...other.ids]);
+  if (id !== ownOnly) console.log(`${ownOnly} から先はほかのブランチが使っているので、${id} にした`);
+  return id;
+}
+
 const kind = positionals[0];
 const verifications = loadVerifications();
 const today = todayLocal();
@@ -75,7 +89,7 @@ if (kind === 'verification') {
   if (!values.title || !values.name || !values.topic) fail('--title・--name・--topic が要る');
   if (values.from !== undefined && !verifications.some((v) => v.id === values.from))
     fail(`派生元 ${values.from} が無い`);
-  const id = nextId(
+  const id = freeId(
     'V',
     verifications.map((v) => v.id),
   );
@@ -111,7 +125,7 @@ if (kind === 'verification') {
   );
   const observations = loadObservations();
   const claims = loadClaims();
-  const id = nextId(
+  const id = freeId(
     'C',
     claims.map((c) => c.id),
   );

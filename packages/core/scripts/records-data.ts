@@ -1,4 +1,5 @@
 // Stage 19: records/ と packages/core/data を Node で読む（records-table.ts・records-check.ts・テストで共有）。
+import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseEnemyPresets } from '../src/enemies.ts';
@@ -9,6 +10,7 @@ import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src
 import type { SensitivityEntry } from '../src/records/relevance.ts';
 import type { DefinedCharacter } from '../src/records/skills.ts';
 import { rereadOnlyClaims, type PredictionFile } from '../src/records/predictions.ts';
+import { idsInPaths } from '../src/records/drafts.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
 import type { BuildMasters, CharacterData } from '../src/types.ts';
@@ -47,6 +49,49 @@ export function loadVerifications(): Verification[] {
       .filter((name) => name.startsWith('V-') && name.endsWith('.md'))
       .map((name) => parseVerification(name, readFileSync(`${VERIFICATIONS_DIR}${name}`, 'utf8'))),
   );
+}
+
+/**
+ * ほかのブランチ（手元のブランチと origin のブランチ）の、main に無い commit が足した検証記録・結論の ID と、見た範囲の説明。
+ * 並行する作業が同じ空き番号を取らないように、records:new の空き番号に含める（V-0378 の振り直し）。origin を取り込み直してから
+ * 見る（取り込めなければ手元の参照で見る）。git が使えなければ ids は空
+ */
+export function idsInOtherBranches(): { ids: string[]; note: string } {
+  const git = (args: string[]): string =>
+    execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', timeout: 30_000, stdio: ['ignore', 'pipe', 'pipe'] });
+  let note = '';
+  try {
+    git(['fetch', '--quiet', '--prune', 'origin']);
+  } catch {
+    note = 'origin を取り込めなかったので、手元の参照で見た。';
+  }
+  try {
+    const base = ['origin/main', 'main'].find((r) => {
+      try {
+        git(['rev-parse', '--verify', '--quiet', r]);
+        return true;
+      } catch {
+        return false;
+      }
+    });
+    if (base === undefined) return { ids: [], note: `${note}main が無いので、ほかのブランチは見ていない` };
+    const out = git([
+      'log',
+      '--format=',
+      '--name-only',
+      '--diff-filter=AR',
+      '--branches',
+      '--remotes=origin',
+      '--not',
+      base,
+      '--',
+      'records/verifications',
+      'records/claims',
+    ]);
+    return { ids: idsInPaths(out), note };
+  } catch (e) {
+    return { ids: [], note: `${note}ほかのブランチを見られなかった（${(e as Error).message.split('\n')[0]}）` };
+  }
 }
 
 /** records/predictions/V-NNNN.json（番号順）。無ければ空 */
