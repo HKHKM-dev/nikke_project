@@ -3,6 +3,7 @@
 import { BURST_GAUGE_MAX } from '../burst/controller.ts';
 import {
   activationFramesOfSlot,
+  activationVideoFrameOf,
   effectFrameOf,
   hitFrameOf,
   hitFramesOf,
@@ -1068,7 +1069,8 @@ function skillHitMeanInterval(result: SimResult, ctx: MetricContext): number {
 
 /**
  * バーストの着弾編（plan/design-burst-landing.md）: 枠のバーストの、発動からヒット（バーストの倍率ダメージ。分かれたヒットは 1 ヒット目）までの
- * 動画のフレーム数（発動の順に最初の count 回）。フルバーストの入りの止まりは videoFrameOf で足す
+ * 動画のフレーム数（発動の順に最初の count 回）。フルバーストの入りの止まりは videoFrameOf で足す。起点は六角形の替わり目なので、
+ * I・II の発動自身の止まりを含める（activationVideoFrameOf）
  */
 function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
   const schedule = result.schedule;
@@ -1076,7 +1078,7 @@ function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
   const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
   const count = Number(ctx.args.count);
   if (mine.length < count) throw new Error(`発動が ${mine.length} 回しかない`);
-  return mine.slice(0, count).map((a) => videoFrameOf(schedule, hitFrameOf(a)) - videoFrameOf(schedule, a.frame));
+  return mine.slice(0, count).map((a) => videoFrameOf(schedule, hitFrameOf(a)) - activationVideoFrameOf(schedule, a));
 }
 
 /**
@@ -1117,7 +1119,7 @@ function burstEffectDelay(result: SimResult, ctx: MetricContext): number {
 
 /**
  * 持続ダメージ▲編（plan/design-sustained-damage-up.md 5.1 節）: 枠の n 回目（0 始まり）のバーストの発動から、その発動の後に出た
- * バーストのスロットの持続ダメージの tick（次の発動の前まで）までの動画のフレーム数の列（フルバーストの入りの止まりを含む）
+ * バーストのスロットの持続ダメージの tick（次の発動の前まで）までの動画のフレーム数の列（フルバーストの入りの止まりを含む。起点は activationVideoFrameOf）
  */
 function dotTickOffsets(result: SimResult, ctx: MetricContext): number[] {
   const schedule = result.schedule;
@@ -1137,7 +1139,7 @@ function dotTickOffsets(result: SimResult, ctx: MetricContext): number[] {
       h.frame < end,
   );
   if (ticks.length === 0) throw new Error(`${String(ctx.args.n)} 回目の発動の後に持続ダメージの tick が無い`);
-  const from = videoFrameOf(schedule, activation.frame);
+  const from = activationVideoFrameOf(schedule, activation);
   return ticks.map((h) => videoFrameOf(schedule, h.frame) - from);
 }
 
