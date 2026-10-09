@@ -1,0 +1,36 @@
+{
+  "id": "401",
+  "date": "2026-10-09",
+  "folder": "range",
+  "file": "20261009-401_rl+sr_flower+eunhwa-tu_burst.mp4",
+  "original": "2026-10-09_23-54-23.mp4",
+  "durationSec": 202,
+  "frames": 12120,
+  "fps": 60,
+  "sizeMB": 244.2,
+  "sha256": "948bfd11bde7",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true,
+      "fires": false
+    },
+    {
+      "slot": 2,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0387（R4）。録画 232 と同じ編成: I-DOLL・フラワー（I・操作・撃たない）+ ウンファ：TU（II・AI）・灼熱タブ。左上の AUTO 射撃 OFF・オートバースト ON を画で確かめた"
+}
