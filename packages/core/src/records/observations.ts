@@ -1104,10 +1104,10 @@ function gaugeFullToBurstHit(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * バーストの効果の遅れ（backlog 2-4）: 枠の n 回目（0 始まり）のバーストの発動から、効果の発火（effectFrameOf）以後の
- * 枠の最初の発までのモデルのフレーム数（ゲーム内の時間。フルバーストの入りの止まりを含まない）。効果の乗った最初の発の時刻を、
- * 動画のフレームの差（止まりの後の発は 22f を引く）と比べる。fromShot が true なら起点を発動の後の最初の発にする（発の間隔と
- * リロードの位置によらず、効果の遅れが無ければ 0）
+ * バーストの効果の遅れ（backlog 2-4）: 枠の n 回目（0 始まり）のバーストの発動の印（I・II は六角形の替わり目。hexagonFrameOf。
+ * V-0382・V-0390）から、効果の発火（effectFrameOf）以後の枠の最初の発までのモデルのフレーム数（ゲーム内の時間。フルバーストの
+ * 入りの止まりを含まない）。効果の乗った最初の発の時刻を、動画のフレームの差（止まりの後の発は 22f を引く）と比べる。fromShot が
+ * true なら起点を発動の後の最初の発にする（発の間隔とリロードの位置によらず、効果の遅れが無ければ 0）
  */
 function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
   const schedule = result.schedule;
@@ -1121,7 +1121,7 @@ function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
     if (shot === undefined) throw new Error(`フレーム ${frame} の後に発が無い`);
     return shot;
   };
-  const origin = ctx.args.fromShot === true ? firstFrom(activation.frame) : activation.frame;
+  const origin = ctx.args.fromShot === true ? firstFrom(activation.frame) : hexagonFrameOf(activation);
   return firstFrom(effectFrameOf(activation)) - origin;
 }
 

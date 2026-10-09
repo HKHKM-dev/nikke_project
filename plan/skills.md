@@ -177,7 +177,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - effects[4] passive・trueDamage: C-0375（確定）
 - **burst**: supported
   - effects[0] timed・weaponChangeShot・damageTaken: C-0312（確定）、C-0138（確定）
-  - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）
+  - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）、C-0509（仮説）
 
 ## 101 ドレイク
 
@@ -257,8 +257,8 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
 - **skill2**: noEffect
   - notes[0] 計算に無関係: 最終攻撃力が最も高い味方 2 機の受けるダメージ▼は防御系でダメージに関係しない: 根拠なし
 - **burst**: supported
-  - effects[0] timed・burstUse・reloadSpeed: C-0456（確定）、C-0479（仮説）
-  - effects[1] timed・burstUse・critDamage: C-0463（確定）、C-0479（仮説）
+  - effects[0] timed・burstUse・reloadSpeed: C-0456（確定）、C-0479（確定）
+  - effects[1] timed・burstUse・critDamage: C-0463（確定）、C-0479（確定）
 
 ## 190 ルドミラ
 
@@ -569,7 +569,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - notes[0] 計算に無関係: リラックス（受ける HP 回復量▲）・無敵・挑発はダメージに関係しない: 根拠なし
   - notes[1] 補足: リラックスは 20 スタックで回復するまでの数え上げにだけ使う: C-0271（確定）
 - **burst**: supported
-  - effects[0] timed・burstUse・attackDamage: C-0393（確定）、C-0499（仮説）
+  - effects[0] timed・burstUse・attackDamage: C-0393（確定）、C-0499（確定）
   - notes[0] 前提の外: バリアは扱わない（要件 5.2 節）: C-0393（確定）
 
 ## 331 チャイム

@@ -1,0 +1,47 @@
+{
+  "id": "400",
+  "date": "2026-10-09",
+  "folder": "range",
+  "file": "20261009-400_rl+sr+sr+ar_flower+admi+alice+idoll-sun_admi-burst.mp4",
+  "original": "2026-10-09_23-19-54.mp4",
+  "durationSec": 203.1,
+  "frames": 12188,
+  "fps": 60,
+  "sizeMB": 246.1,
+  "sha256": "c28c91c4b91c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 172,
+      "name": "アドミ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0388（R1）。録画 042 と同じ編成: I-DOLL・フラワー（I・AI）+ アドミ（II・AI）+ アリス（III・操作・AUTO 射撃 ON）+ I-DOLL・サン（III・AI）・灼熱タブ。左上の AUTO 射撃 ON・オートバースト ON を画で確かめた"
+}

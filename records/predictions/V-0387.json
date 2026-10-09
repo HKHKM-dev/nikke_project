@@ -1,0 +1,92 @@
+{
+  "verification": "V-0387",
+  "note": "新しい録画（R4。plan/burst-effect-delay-candidates.md 2 節）。録画 232 と同じ編成: I-DOLL・フラワー（I・操作・撃たない）+ ウンファ：タクティカル・アップ（II・AI）・灼熱の的・3 分モード・スペック固定 ON・オートバースト ON。III がいないのでフルバーストは起きない。比べるのは、ウンファの II の発動（六角形の替わり目）から、使用武器変更の炸裂弾の着弾までのフレーム数（V-0390 と同じ指標）。帯ごとの範囲の仮説（H3。C-0509）はモデルに無いので、このファイルの範囲外（検証記録に手で書く）",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": true
+    },
+    {
+      "rid": 95,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。使用武器変更は II の発動と同じフレームに持ち替え、フルチャージの待ちの後に炸裂弾を撃つ（frame/shooter.ts の weaponChangeShooter）。飛ぶ時間は持たない"
+    }
+  ],
+  "targets": [
+    {
+      "id": "shot-delay-1",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ウンファの 1 回目の II の発動から、使用武器変更の炸裂弾（効果の発火以後の最初の発）までのモデルのフレーム数。録画では、発動（バースト欄の六角形の替わり目）から炸裂弾の着弾（HUD の増分）まで"
+    },
+    {
+      "id": "shot-delay-2",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ウンファの 2 回目の II の発動から、使用武器変更の炸裂弾（効果の発火以後の最初の発）までのモデルのフレーム数。録画では、発動（バースト欄の六角形の替わり目）から炸裂弾の着弾（HUD の増分）まで"
+    },
+    {
+      "id": "shot-delay-3",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ウンファの 3 回目の II の発動から、使用武器変更の炸裂弾（効果の発火以後の最初の発）までのモデルのフレーム数。録画では、発動（バースト欄の六角形の替わり目）から炸裂弾の着弾（HUD の増分）まで"
+    },
+    {
+      "id": "shot-delay-4",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ウンファの 4 回目の II の発動から、使用武器変更の炸裂弾（効果の発火以後の最初の発）までのモデルのフレーム数。録画では、発動（バースト欄の六角形の替わり目）から炸裂弾の着弾（HUD の増分）まで"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-09",
+    "commit": "7821f8bac14e224478deac396c00b3aab940f850",
+    "values": {
+      "H0": {
+        "shot-delay-1": 30,
+        "shot-delay-2": 30,
+        "shot-delay-3": 30,
+        "shot-delay-4": 30
+      }
+    },
+    "seen": {}
+  }
+}
