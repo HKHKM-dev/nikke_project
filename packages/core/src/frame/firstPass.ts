@@ -70,7 +70,13 @@ import {
   resolveShotGauges,
   resolveTimerGauges,
 } from '../skills/burstDamage.ts';
-import { effectFrameOf, type BurstActivation, type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
+import {
+  effectFrameOf,
+  hexagonFrameOf,
+  type BurstActivation,
+  type BurstSchedule,
+  type BurstScheduleModel,
+} from '../burst/schedule.ts';
 import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
 import { chanceScaleAt, chanceValueOf, type ChanceOpportunity } from '../skills/chance.ts';
 import {
@@ -129,6 +135,7 @@ import {
 } from './shooter.ts';
 import type { ShotLog } from './shots.ts';
 import { flightFramesAt, type FlightFrameSpan, type LandingHitRateSpan, type SlotFlight } from './landing.ts';
+import type { SkillSlot } from '../types.ts';
 import type { ObstacleBreak, PelletHits } from '../team.ts';
 
 export type FirstPassOptions = {
@@ -154,6 +161,12 @@ export type FirstPassOptions = {
    * 倍率ダメージのヒット）と自動攻撃のヒットのゲージを、着弾のフレーム（発射・刻み + 飛ぶ時間）に溜める。省略・null の枠は 0
    */
   flights?: readonly (SlotFlight | null)[];
+  /**
+   * 炸裂弾の時刻編（plan/design-eunhwa-tu-burst-shot-timing.md 4 節）: 枠ごと・スキルのスロットごとの、使用武器変更の最初の発の、発動の印
+   * （hexagonFrameOf）から着弾までのフレームの区間（frame/landing.ts の slotWeaponChangeFirstHitsOf）。省略・null・行の無いスロットは、
+   * チャージ武器の最初の発の待ち
+   */
+  weaponChangeFirstHits?: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[];
   /** 同 2 節: 発が壊した障害物（録画で数えた入力）。その発のゲージに物の分を足す。省略は無し */
   obstacleBreaks?: readonly ObstacleBreak[];
   /**
@@ -690,6 +703,21 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   };
   // plan/design-anis-star-gauge-timing.md 3 節: 枠 i がフレーム f に撃った発の飛ぶ時間（ゲージはその後のフレームに溜まる）
   const flights = slots.map((_, i) => options.flights?.[i] ?? null);
+  /**
+   * 炸裂弾の時刻編（plan/design-eunhwa-tu-burst-shot-timing.md 4 節）: フレーム f に始まった枠 i の使用武器変更（識別子
+   * `<resourceId>.<スロット>.<効果の番号>`）の最初の発を撃つフレーム。窓を開いた発動（効果の発火が f 以前の、枠 i の最後の発動）の
+   * 印 + 的の表の値（f の着地点で引く）。表の行が無ければ null
+   */
+  const weaponChangeFirstHitAt = (i: number, weaponId: string, f: number): number | null => {
+    const skill = weaponId.split('.')[1] as SkillSlot;
+    const spans = options.weaponChangeFirstHits?.[i]?.[skill];
+    if (spans === undefined) return null;
+    const opened = activationsOf()
+      .filter((a) => a.slotIndex === i && effectFrameOf(a) <= f)
+      .at(-1);
+    if (opened === undefined) return null;
+    return hexagonFrameOf(opened) + flightFramesAt(spans, f);
+  };
   const shotFlightAt = (i: number, f: number): number => flightFramesAt(flights[i]?.shot, f);
   // 同 2 節（C-0177・C-0243）: 枠ごとの「発の番号 → 壊した障害物の数」と、物 1 個のゲージ
   const obstacles = slots.map(() => new Map<number, number>());
@@ -945,8 +973,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const weaponId = params.weapon?.id ?? null;
       if (weaponId !== activeWeapon[i]) {
         activeWeapon[i] = weaponId;
-        if (params.weapon !== null) changedShooters[i] = weaponChangeShooter(params.weapon.shot, model, params);
-        else {
+        if (params.weapon !== null) {
+          changedShooters[i] = weaponChangeShooter(params.weapon.shot, model, params);
+          const firstHit = weaponChangeFirstHitAt(i, params.weapon.id, f);
+          if (firstHit !== null) changedShooters[i]!.wait = Math.max(0, firstHit - f);
+        } else {
           changedShooters[i] = null;
           resumeShooter(shooters[i]!, slot.character.shot, model, params);
         }

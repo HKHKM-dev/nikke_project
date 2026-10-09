@@ -372,6 +372,16 @@ function parseTargetProfile(v: unknown, path: string): TargetProfile {
     ...(v.flightFrames === undefined
       ? {}
       : { flightFrames: parseFlightFrames(v.flightFrames, `${path}.flightFrames`, keys) }),
+    ...(v.weaponChangeFirstHitFrames === undefined
+      ? {}
+      : {
+          weaponChangeFirstHitFrames: parseAutoAttackRows(
+            v.weaponChangeFirstHitFrames,
+            `${path}.weaponChangeFirstHitFrames`,
+            keys,
+            FRAMES,
+          ),
+        }),
     source: v.source,
   };
 }

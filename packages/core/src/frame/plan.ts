@@ -74,6 +74,7 @@ import {
   planLandings,
   slotAutoAttackCoreRatesOf,
   slotFlightsOf,
+  slotWeaponChangeFirstHitsOf,
   type FlightFrameSpan,
   type LandingHitRateSpan,
   type LandingPlan,
@@ -163,6 +164,8 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     enemyHasCore: enemy.hasCore,
     // plan/design-anis-star-gauge-timing.md: 飛ぶ時間（的の表）と、発が壊した障害物（録画で数えた入力）
     flights: slotFlightsOf(slots, enemy, frames),
+    // plan/design-eunhwa-tu-burst-shot-timing.md: 使用武器変更の最初の発の時刻（的の表）
+    weaponChangeFirstHits: slotWeaponChangeFirstHitsOf(slots, enemy, frames),
     obstacleBreaks: input.obstacleBreaks ?? [],
     pelletHits: input.pelletHits ?? [],
     // plan/design-sustained-hit-rate-gauge.md: 持続の命中率▲を 1 パス目のゲージと命中の期待値にも効かせる（2 パス目と同じ切り替え）
