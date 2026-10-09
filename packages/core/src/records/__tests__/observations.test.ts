@@ -496,21 +496,25 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 1, n: 2 })).toThrow('2 回目の発動が無い');
   });
 
-  it('measures the delay from the burst activation to the burst effect (backlog 2-4, V-0368)', () => {
+  it('measures the delay from the hexagon change of the burst activation to the burst effect (backlog 2-4, V-0368, V-0382)', () => {
     const result = {
       schedule: {
         activations: [
-          { slotIndex: 1, frame: 90 },
-          { slotIndex: 1, frame: 300, effectFrame: 318 },
+          { slotIndex: 1, frame: 90, startsFullBurst: false },
+          { slotIndex: 1, frame: 300, startsFullBurst: false, effectFrame: 324 },
+          { slotIndex: 1, frame: 500, startsFullBurst: true, effectFrame: 502 },
         ],
       },
     } as unknown as SimResult;
     const metric = METRICS.burstEffectDelay!;
     const value = (args: Record<string, unknown>) =>
       metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
-    expect(value({ slot: 2, n: 0 })).toBe(0);
-    expect(value({ slot: 2, n: 1 })).toBe(18);
-    expect(() => value({ slot: 2, n: 2 })).toThrow('2 回目の発動が無い');
+    // I・II の替わり目は本当の発動の 5f 後なので、遅れの無い効果は替わり目の 5f 前
+    expect(value({ slot: 2, n: 0 })).toBe(-5);
+    expect(value({ slot: 2, n: 1 })).toBe(19);
+    // III は発動のフレームから
+    expect(value({ slot: 2, n: 2 })).toBe(2);
+    expect(() => value({ slot: 2, n: 3 })).toThrow('3 回目の発動が無い');
   });
 
   it('reports unknown metrics, missing args, calc-less metrics and unknown presets', () => {

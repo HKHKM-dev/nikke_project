@@ -1,15 +1,17 @@
 // バーストの着弾編（plan/design-burst-landing.md 2 節）: バーストの発動から、バーストの倍率ダメージのヒットと、
 // 「バーストスキルを使用した時」の効果の発火までの遅れ（キャラごとの実測値。ゲーム内の時間 = モデルのフレーム）。
 // 表に無いキャラは 0（発動と同じフレーム。未測定）。チェーン・CT・フルバーストの窓は発動のフレームのまま。
+// 遅れの起点は録画で読んだ発動の印: I・II は右のバースト欄の六角形の替わり目（本当の発動の HEXAGON_AFTER_ACTIVATION_FRAMES 後。
+// hexagonFrameOf）、III はフルバーストの入り（発動のフレーム）。遅れ 0 の欄は本当の発動のまま（plan/design-burst-hit-origin.md）。
 // 分かれたヒット編（plan/design-burst-split-hits.md）: 1 回の発動の倍率ダメージが間をあけた複数のヒットに分かれるキャラは、
 // 1 ヒット目からのずれの列（hitOffsets）を持ち、倍率を等分して各ヒットに出す。
 import type { CharacterData } from '../types.ts';
-import type { BurstActivation } from './schedule.ts';
+import { hexagonFrameOf, type BurstActivation } from './schedule.ts';
 
 export type BurstDelays = {
-  /** 発動 → バーストの倍率ダメージ（burstDamage）の 1 ヒット目 */
+  /** 発動の印（hexagonFrameOf）→ バーストの倍率ダメージ（burstDamage）の 1 ヒット目 */
   hitFrames: number;
-  /** 発動 → 自分の burstUse・{ count: burstUse } のトリガーの発火 */
+  /** 発動の印（hexagonFrameOf）→ 自分の burstUse・{ count: burstUse } のトリガーの発火 */
   effectFrames: number;
   /** 分かれたヒット編: 1 ヒット目から各ヒットまでのずれ（昇順・先頭は 0）。省略は [0]（1 ヒット） */
   hitOffsets?: readonly number[];
@@ -38,9 +40,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // フルバーストの始まりの表示より 2〜35f 前に発火する。モデルは発動より前に置けないので 0（発動と同じフレーム）。
   // 宝物なしは未測定（plan/design-burst-split-hits.md 7 節の論点 4）
   { resourceIds: [352], treasure: true, delays: { hitFrames: 59, effectFrames: 0 }, claim: 'C-0167' },
-  // I-DOLL・フラワー: I の発動（六角形が I から II に替わるフレーム）からヒットまで 14f。バースト使用時の効果は無い
+  // I-DOLL・フラワー: I の発動（六角形が I から II に替わるフレーム。本当の発動の 5f 後）からヒットまで 14f。バースト使用時の効果は無い
   { resourceIds: [304], delays: { hitFrames: 14, effectFrames: 0 }, claim: 'C-0220' },
-  // ニヒリスター: II の発動からヒットと火傷の付与（1 回目の tick はヒットと同じフレーム。C-0101）まで、どちらも 9f
+  // ニヒリスター: II の発動（六角形の替わり目）からヒットと火傷の付与（1 回目の tick はヒットと同じフレーム。C-0101）まで、どちらも 9f
   { resourceIds: [261], delays: { hitFrames: 9, effectFrames: 9 }, claim: 'C-0219' },
   // ノワール: III の発動からヒットまで 72f（動画で 93〜94f。止まり 22f を含む）。効果（SG の味方の命中率▲）の遅れは未測定。
   // 録画が最小構成でない（エーテルの定義が無い）仮説だが、オーナーの判断で入れた（2026-10-04）
@@ -127,13 +129,15 @@ export function isSplit(delays: Readonly<BurstDelays>): boolean {
 }
 
 /**
- * 発動にヒットと効果の発火のフレームを書く。遅れ 0 の欄は書かない（hitFrameOf・effectFrameOf が発動のフレームを返す）。
+ * 発動にヒットと効果の発火のフレームを書く。遅れは発動の印（I・II は六角形の替わり目。hexagonFrameOf）に足す。
+ * 遅れ 0 の欄は書かない（hitFrameOf・effectFrameOf が本当の発動のフレームを返す）。
  * 分かれたヒットは hitOffsets を写す（1 ヒットなら書かない）
  */
 export function withBurstDelays(activation: BurstActivation, delays: Readonly<BurstDelays>): BurstActivation {
   const out = { ...activation };
-  if (delays.hitFrames > 0) out.hitFrame = activation.frame + delays.hitFrames;
-  if (delays.effectFrames > 0) out.effectFrame = activation.frame + delays.effectFrames;
+  const origin = hexagonFrameOf(activation);
+  if (delays.hitFrames > 0) out.hitFrame = origin + delays.hitFrames;
+  if (delays.effectFrames > 0) out.effectFrame = origin + delays.effectFrames;
   if (isSplit(delays)) out.hitOffsets = [...delays.hitOffsets!];
   return out;
 }

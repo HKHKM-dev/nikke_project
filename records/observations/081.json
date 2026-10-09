@@ -503,5 +503,39 @@
       "slot": 2,
       "source": "skill"
     }
+  },
+  {
+    "id": "081-22",
+    "recording": "081",
+    "source": "V-0382",
+    "readAt": "2026-10-09",
+    "kind": "interval",
+    "use": "compare",
+    "value": [67],
+    "unit": "f",
+    "description": "ココア（I）+ ニヒリスター（II・操作）で、1 回目のバーストの直前の満タン（BURST バーが消えた発。f1305）から、ニヒリスターのバーストの倍率ダメージのヒット（081-14 の f1372）までの動画のフレーム数。9 回のうちゲージが律速（満タン → II の替わり目が 58f）なのは 1 回目だけ",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "満タンのフレームに HUD の増分 760,887（ココアとニヒリスターのコアの和。081-04）がある。2〜9 回目は満タン（f2364・〜3528 以前・4878・6001・7188・8417・9622・10726）→ II の替わり目が 95〜179f で、実機の CT が律速"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToBurstHit",
+      "args": {
+        "slot": 2,
+        "n": "0"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   }
 ]

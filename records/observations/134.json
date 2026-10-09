@@ -134,5 +134,39 @@
       "source": "gauge"
     },
     "id": "134-07"
+  },
+  {
+    "id": "134-08",
+    "recording": "134",
+    "source": "V-0382",
+    "readAt": "2026-10-09",
+    "kind": "interval",
+    "use": "compare",
+    "value": [43],
+    "unit": "f",
+    "description": "フラワー単騎・操作（的以外を撃つ）で、満タン（BURST バーが消えたフレーム。f4290）から、バーストのヒット（HUD の 179,244 の増分。f4333）までの動画のフレーム数（1 回目。ゲージが律速）",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "134-05 の 29f と 134-06 の 14f の和と同じ（V-0382 の予測では後付け）。的以外を撃つので、満タンの発は HUD に出ない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToBurstHit",
+      "args": {
+        "slot": 1,
+        "n": "0"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   }
 ]

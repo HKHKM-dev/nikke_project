@@ -62,5 +62,39 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "223-03",
+    "recording": "223",
+    "source": "V-0382",
+    "readAt": "2026-10-09",
+    "kind": "interval",
+    "use": "compare",
+    "value": [183, 182, 183, 183],
+    "unit": "f",
+    "description": "ココア（I）+ ユニ（II・操作）で、ユニの 1・3・4・7 回目のバーストの直前の満タン（BURST バーが消えた発。f1498・4187・5674・9870）から、ユニのバーストの倍率ダメージのヒット（f1681・4369・5857・10053）までの動画のフレーム数。実機とモデルの両方でゲージが律速（満タン → II の替わり目が 57〜58f）の回だけ",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "1・3・4 回目は満タンのフレームに HUD のココアの増分がある。7 回目は画面が赤く染まった中で HUD が読めず（f9866〜9884）、バーが f9869 まで見えて f9870 に I の六角形が出たのを画で確かめた。5 回目（満タン f7171 → ヒット f7353 の 182f）も実機ではゲージが律速だが、モデルの 5 回目は CT が律速なので比べない。2・6 回目は満タン（f2744・8529）→ II の替わり目が 125・139f で、実機の CT が律速（満タン → ヒット 249・264f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToBurstHit",
+      "args": {
+        "slot": 2,
+        "n": "0,2,3,6"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   }
 ]

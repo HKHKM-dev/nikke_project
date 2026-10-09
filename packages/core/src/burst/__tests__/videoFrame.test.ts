@@ -5,8 +5,11 @@ import { gameSecondsToFrames } from '../../time.ts';
 import {
   ACTIVATION_STOP_VIDEO_FRAMES,
   FULL_BURST_ENTRY_STOP_VIDEO_FRAMES,
+  HEXAGON_AFTER_ACTIVATION_FRAMES,
   activationVideoFrameOf,
+  hexagonFrameOf,
   videoFrameOf,
+  type BurstSchedule,
 } from '../schedule.ts';
 
 describe('videoFrameOf', () => {
@@ -27,14 +30,24 @@ describe('videoFrameOf', () => {
     expect(videoFrameOf(s, second + 1)).toBe(second + 1 + 44 + 4);
   });
 
-  it('counts the activation stop of the I / II activation itself as before its hexagon change', () => {
-    const [i, ii, iii] = s.activations;
-    expect([i?.step, ii?.step, iii?.step]).toEqual(['Step1', 'Step2', 'Step3']);
-    expect(activationVideoFrameOf(s, i!)).toBe(first + 1);
-    // II の前には同じフレームの I があるが、止まりは発動のフレームより後（a.frame < frame）なので II 自身の 1f だけ
-    expect(activationVideoFrameOf(s, ii!)).toBe(first + 1);
+  it('puts the hexagon change of the I / II activation 5 frames after it, past its own activation stop (C-0220, C-0285, V-0382)', () => {
+    // 動的サイクルの形: I・II・III が 29f おきに並ぶ（C-0285）
+    const chain = {
+      activations: [
+        { frame: 100, step: 'Step1', slotIndex: 0, startsFullBurst: false, enteredStep: 'Step2' },
+        { frame: 129, step: 'Step2', slotIndex: 1, startsFullBurst: false, enteredStep: 'Step3' },
+        { frame: 158, step: 'Step3', slotIndex: 2, startsFullBurst: true, enteredStep: null },
+      ],
+    } as unknown as BurstSchedule;
+    const [i, ii, iii] = chain.activations;
+    expect(HEXAGON_AFTER_ACTIVATION_FRAMES).toBe(5);
+    expect([hexagonFrameOf(i!), hexagonFrameOf(ii!), hexagonFrameOf(iii!)]).toEqual([105, 134, 158]);
+    // I の替わり目は I 自身の止まりの後
+    expect(activationVideoFrameOf(chain, i!)).toBe(105 + 1);
+    // II の替わり目は I・II の止まりの後
+    expect(activationVideoFrameOf(chain, ii!)).toBe(134 + 2);
     // III は入りの止まりの前のまま
-    expect(activationVideoFrameOf(s, iii!)).toBe(first);
+    expect(activationVideoFrameOf(chain, iii!)).toBe(158 + 2);
   });
 
   it('is the identity without a schedule', () => {

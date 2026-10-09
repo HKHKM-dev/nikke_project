@@ -5,6 +5,7 @@ import {
   activationFramesOfSlot,
   activationVideoFrameOf,
   effectFrameOf,
+  hexagonFrameOf,
   hitFrameOf,
   hitFramesOf,
   videoFrameOf,
@@ -919,6 +920,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
+  gaugeFullToBurstHit: { args: ['slot', 'n'], sim: gaugeFullToBurstHit },
   burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
   burstEffectFirstShot: { args: ['slot', 'n'], sim: burstEffectFirstShot },
   burstEffectDelay: { args: ['slot', 'n'], sim: burstEffectDelay },
@@ -1069,8 +1071,8 @@ function skillHitMeanInterval(result: SimResult, ctx: MetricContext): number {
 
 /**
  * バーストの着弾編（plan/design-burst-landing.md）: 枠のバーストの、発動からヒット（バーストの倍率ダメージ。分かれたヒットは 1 ヒット目）までの
- * 動画のフレーム数（発動の順に最初の count 回）。フルバーストの入りの止まりは videoFrameOf で足す。起点は六角形の替わり目なので、
- * I・II の発動自身の止まりを含める（activationVideoFrameOf）
+ * 動画のフレーム数（発動の順に最初の count 回）。フルバーストの入りの止まりは videoFrameOf で足す。起点は六角形の替わり目
+ * （本当の発動の 5f 後。I・II の発動自身の止まりを含める。activationVideoFrameOf）
  */
 function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
   const schedule = result.schedule;
@@ -1079,6 +1081,26 @@ function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
   const count = Number(ctx.args.count);
   if (mine.length < count) throw new Error(`発動が ${mine.length} 回しかない`);
   return mine.slice(0, count).map((a) => videoFrameOf(schedule, hitFrameOf(a)) - activationVideoFrameOf(schedule, a));
+}
+
+/**
+ * backlog 2-30: 枠の n 回目（0 始まり）のバーストの発動の前の最後の満タン（BURST バーが消えた発）から、その発動のヒット（分かれたヒットは
+ * 1 ヒット目）までの動画のフレーム数の列。n はカンマ区切りの並び（"0,2,3"）も書ける。burstHitDelays と違い、起点に六角形の替わり目を
+ * 使わないので、遅れの定数を足す起点（本当の発動か替わり目か）の差が出る。ゲージが律速のチェーン（満タンから I まで 23f。C-0285）で比べる
+ */
+function gaugeFullToBurstHit(result: SimResult, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
+  return String(ctx.args.n)
+    .split(',')
+    .map((s) => {
+      const activation = mine[Number(s)];
+      if (activation === undefined) throw new Error(`${s} 回目の発動が無い`);
+      const full = schedule.gaugeFullFrames.filter((f) => f <= activation.frame).at(-1);
+      if (full === undefined) throw new Error(`${s} 回目の発動の前に満タンが無い`);
+      return videoFrameOf(schedule, hitFrameOf(activation)) - videoFrameOf(schedule, full);
+    });
 }
 
 /**
@@ -1104,8 +1126,8 @@ function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * バーストの効果の遅れ（backlog 2-4。V-0368）: 枠の n 回目（0 始まり）のバーストの発動から、バースト使用時の効果の発火
- * （effectFrameOf）までのモデルのフレーム数。効果の乗った発が自分の発でないとき（味方の発の値で▲の有無を読むとき）に、
+ * バーストの効果の遅れ（backlog 2-4。V-0368）: 枠の n 回目（0 始まり）のバーストの発動の印（I・II は六角形の替わり目。
+ * hexagonFrameOf。V-0382）から、バースト使用時の効果の発火（effectFrameOf）までのモデルのフレーム数（遅れの無い効果は負）。効果の乗った発が自分の発でないとき（味方の発の値で▲の有無を読むとき）に、
  * 録画の「▲の無い最後の発 〜 ▲の乗った最初の発」の幅（観測値の spread）と比べる
  */
 function burstEffectDelay(result: SimResult, ctx: MetricContext): number {
@@ -1114,7 +1136,7 @@ function burstEffectDelay(result: SimResult, ctx: MetricContext): number {
   const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
   const activation = mine[Number(ctx.args.n)];
   if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
-  return effectFrameOf(activation) - activation.frame;
+  return effectFrameOf(activation) - hexagonFrameOf(activation);
 }
 
 /**

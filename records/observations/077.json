@@ -752,5 +752,39 @@
       "slot": "all",
       "source": "burstChain"
     }
+  },
+  {
+    "id": "077-45",
+    "recording": "077",
+    "source": "V-0382",
+    "readAt": "2026-10-09",
+    "kind": "interval",
+    "use": "compare",
+    "value": [42, 43, 42, 42, 43],
+    "unit": "f",
+    "description": "I-DOLL・フラワー単騎（オートバースト ON）で、満タン（BURST バーが消えた発。f2230・4074・6153・8196・10358）から、バーストのヒット（077-01・077-02 の値の増分。f2272・4117・6195・8238・10401）までの動画のフレーム数（1〜5 回目。どれもゲージが律速）",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "満タンはバーが読めなくなった最初のフレームで、どの回も同じフレームに HUD の通常攻撃の増分がある（C-0083）。077-22 と 077-23 の和、077-28 の起点から 28〜29f 前と同じ（V-0382 の予測では後付け）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToBurstHit",
+      "args": {
+        "slot": 1,
+        "n": "0,1,2,3,4"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   }
 ]
