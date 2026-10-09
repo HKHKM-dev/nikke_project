@@ -5,7 +5,7 @@
   "topic": "バーストの段階とフルバースト",
   "grade": "単独実測",
   "basis": "`192-17`（I → II。12 本の 1 回目のフルバースト）・`192-18`（II → III）。予測（H0: モデルの 30f / H1: 段の表示どうしと同じ 29f）を読む前に commit し、平均 29.2f・29.3f で H1 と合った（30f・30f だったのは録画 317 だけ）。見ている事象は右のバースト欄の表示の時刻で、ダメージの値を使わない。比べる観測値（モデルの指標）が無いので、道具は等級の候補を出さない。確定にするかはオーナーの判断。V-0398",
-  "model": "未反映。`burst/controller.ts` の `BURST_STEP1_TO_STEP2_FRAMES`・`BURST_STEP2_TO_STEP3_FRAMES` = 29（ゲーム内）に、`burst/schedule.ts` の `videoFrameOf` が I・II の発動ごとに止まり 1f（`ACTIVATION_STOP_VIDEO_FRAMES`）を足すので、動画では本当の発動どうしが 30f。実機（約 29f）より 1 段 1f ずつ長く、ゲージが律速のチェーンの II の発動は満タンから 1f、III の発動は 2f 遅い（C-0503 の設計書 3.2 節・8.3 節の「モデルの II の替わり目は 59f で実機より 1f 遅い」と同じ向き）。直すなら段の長さをゲーム内 28f にする形で、backlog 2-31（plan/design-burst-hit-origin.md 8.3 節）と合わせてオーナーが決める",
+  "model": "未反映。`burst/controller.ts` の `BURST_STEP1_TO_STEP2_FRAMES`・`BURST_STEP2_TO_STEP3_FRAMES` = 29（ゲーム内）に、`burst/schedule.ts` の `videoFrameOf` が I・II の発動ごとに止まり 1f（`ACTIVATION_STOP_VIDEO_FRAMES`）を足すので、動画では本当の発動どうしが 30f。実機（約 29f）より 1 段 1f ずつ長く、ゲージが律速のチェーンの II の発動は満タンから 1f、III の発動は 2f 遅い（plan/design-burst-hit-origin.md 3.2 節の「モデルの II の替わり目は 59f で実機より 1f 遅い」と同じ向き）。直すなら段の長さをゲーム内 28f にする形で、backlog 2-31（plan/design-burst-hit-origin.md 8.3 節）と合わせてオーナーが決める",
   "replaces": [],
   "updated": "2026-10-10",
   "subject": {
