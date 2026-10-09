@@ -624,7 +624,8 @@ export type DamageEffect = {
   /**
    * 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3 節）: きっかけのフレームの delayFrames 後に出す（1 以上の整数）。
    * バフとフルバースト補正はそのフレームのもの（同じ発動で付いた効果も入る。発動の直前のバフで固定する規則は当てない）。
-   * きっかけは burstUse（クイーン（真）S1 の「1more が適用された時」。C-0310）と、ペルソナ編の { applied }（追撃が付いたフレームから数える）
+   * きっかけは burstUse（クイーン（真）S1 の「1more が適用された時」。C-0310）と、ペルソナ編の { applied }（追撃が付いたフレームから数える）と、
+   * 時間の周期のトリガー（周期のスキルの発動からヒットまで。C-0453）
    */
   delayFrames?: number;
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
@@ -2003,9 +2004,10 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   }
   if (v.delayFrames !== undefined) {
     // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: いま要るのはバースト使用時と、
-    // ペルソナ編の「〈効果名〉が適用された時」（クイーン（真）S1 の追撃。plan/design-persona.md 9.3 節）
-    if (trigger !== 'burstUse' && !isAppliedTrigger(trigger)) {
-      fail(`${path}.delayFrames`, 'delayFrames needs the trigger "burstUse" or { applied }');
+    // ペルソナ編の「〈効果名〉が適用された時」（クイーン（真）S1 の追撃。plan/design-persona.md 9.3 節）と、
+    // 周期のスキルの発動からヒットまでの遅れ（時間の周期のトリガー。C-0453。plan/design-timer-ceil.md 2 節の論点 4）
+    if (trigger !== 'burstUse' && !isAppliedTrigger(trigger) && !isTimerTrigger(trigger)) {
+      fail(`${path}.delayFrames`, 'delayFrames needs the trigger "burstUse", { applied } or { everySeconds }');
     }
     const d = v.delayFrames;
     if (typeof d !== 'number' || !Number.isInteger(d) || d < 1) {

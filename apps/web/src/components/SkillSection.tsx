@@ -9,6 +9,7 @@ import {
   measuredBurstDelayRow,
   burstStepMixAllows,
   enemyElementAllows,
+  isTimerTrigger,
   renderSkillDescription,
   squadAllows,
   treasureSlots,
@@ -72,7 +73,7 @@ function DelayedHitNotes({ effects }: { effects: readonly SkillEffect[] }) {
       {delayed.map((e, i) => (
         <li key={i} className="note approx">
           <span className="badge">実測</span>{' '}
-          {`倍率ダメージはバーストスキル使用の ${framesToGameSeconds(e.delayFrames).toFixed(2)} 秒後に、そのときのバフ（同じ発動で付いた効果を含む）で出る${e.claims ? `（${e.claims.join('・')}）` : ''}`}
+          {`倍率ダメージは${isTimerTrigger(e.trigger) ? '発動' : 'バーストスキル使用'}の ${framesToGameSeconds(e.delayFrames).toFixed(2)} 秒後に、そのときのバフ（同じ発動で付いた効果を含む）で出る${e.claims ? `（${e.claims.join('・')}）` : ''}`}
         </li>
       ))}
     </ul>

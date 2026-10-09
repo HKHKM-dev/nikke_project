@@ -60,10 +60,11 @@ const TEAMS: Record<string, { input: TeamInput; nihilister: number }> = {
 };
 
 describe('ニヒリスターの定義', () => {
-  it('supports S2 and the burst (S1 is notes)', () => {
+  it('supports S2 (partly: the gauge of the hit is a note) and the burst (S1 is notes)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${NIHILISTER}.json`));
     expect(def.skills.skill1.support).toBe('noEffect');
-    expect(def.skills.skill2.support).toBe('supported');
+    // S2 のヒットのゲージは確かめていない（notes の未対応）
+    expect(def.skills.skill2.support).toBe('partial');
     expect(def.skills.burst.support).toBe('supported');
     expect(def.skills.burst.effects.map((e) => e.kind)).toEqual(['burstDamage', 'dot', 'timed']);
   });
@@ -87,9 +88,12 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, nihilis
     }
   });
 
-  it('hits with S2 every 10 s from the start of battle, whatever the shots and bursts (C-0091)', () => {
+  it('hits with S2 15 frames after each activation every 10 s from the start of battle, whatever the shots and bursts (C-0401, C-0453)', () => {
     const s2 = plan.skillHits.filter((h) => h.slotIndex === nihilister && h.effect.source.skill === 'skill2');
-    expect(s2.map((h) => h.frame)).toEqual(timerFrames(10, plan.frames));
+    const expected = timerFrames(10, plan.frames)
+      .map((f) => f + 15)
+      .filter((f) => f < plan.frames);
+    expect(s2.map((h) => h.frame)).toEqual(expected);
     for (const h of s2) expect(h.effect.multiplier).toBeCloseTo(1.1264, 10);
   });
 

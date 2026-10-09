@@ -28,13 +28,15 @@
           },
           "ref": 2,
           "damageType": "skill",
+          "delayFrames": 101,
           "assumes": {
-            "ja": "戦闘開始から約 20 秒ごと（CT 20 秒は録画 073・221 から読んだ値。C-0403）。最終攻撃力が最も高い敵 1 機を単体ボスで 1 体として 1 ヒット",
-            "en": "Every ~20 s from combat start (the 20 s cooldown read from recordings 073 and 221; C-0403). The single highest-ATK enemy hit once as a single boss"
+            "ja": "戦闘開始から約 20 秒ごと（CT 20 秒は録画 073・221 から読んだ値。C-0403）。最終攻撃力が最も高い敵 1 機を単体ボスで 1 体として 1 ヒット。発動からヒットまで 101f（C-0453。単騎の録画 028〜030 の 1 回目のヒットが ceil の周期 1,177 の 100〜101f 後）",
+            "en": "Every ~20 s from combat start (the 20 s cooldown read from recordings 073 and 221; C-0403). The single highest-ATK enemy hit once as a single boss. 101 f from activation to hit (C-0453: in solo recordings 028–030 the first hit lands 100–101 f after the ceil period of 1,177)"
           },
           "claims": [
             "C-0403",
-            "C-0102"
+            "C-0102",
+            "C-0453"
           ]
         },
         {
@@ -43,8 +45,8 @@
             "everySeconds": 20
           },
           "assumes": {
-            "ja": "周期の 20 秒は録画から読んだ値。S2 のヒットも 1 回につき的の 1 ヒットぶん（フルチャージ倍率なし）のゲージを溜める（C-0409）",
-            "en": "The 20 s period is read from recordings. The S2 hit also builds gauge equal to one target hit (no full-charge multiplier) per activation (C-0409)"
+            "ja": "周期の 20 秒は録画から読んだ値。S2 のヒットも 1 回につき的の 1 ヒットぶん（フルチャージ倍率なし）のゲージを溜める（C-0409）。ゲージは発動のフレームに足す（ダメージのヒットは遅れて出るが、ゲージが発動とヒットのどちらで溜まるかは確かめていない。V-0313）",
+            "en": "The 20 s period is read from recordings. The S2 hit also builds gauge equal to one target hit (no full-charge multiplier) per activation (C-0409). The gauge is added at the activation frame (the damage hit lands later, but whether the gauge builds at activation or at the hit has not been verified; V-0313)"
           },
           "claims": [
             "C-0409",
