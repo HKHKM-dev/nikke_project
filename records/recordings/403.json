@@ -1,0 +1,29 @@
+{
+  "id": "403",
+  "date": "2026-10-10",
+  "folder": "range",
+  "file": "20261010-403_rl_tia_manual.mp4",
+  "original": "2026-10-10_00-13-34.mp4",
+  "durationSec": 74.4,
+  "frames": 4462,
+  "fps": 60,
+  "sizeMB": 89.7,
+  "sha256": "6e4b40d0735b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 451,
+      "name": "ティア",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0383 の 2 本目。ティア単騎・操作（AUTO 射撃 OFF）・オートバースト OFF。撮影計画 T1（5 ヒット → 隠れる → 5 ヒット → 隠れる → 満タンまで）"
+}
