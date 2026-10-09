@@ -391,6 +391,13 @@ export type TargetProfile = {
    * 省略・表に無い行は 0（発射のフレーム）
    */
   flightFrames?: FlightFramesTable;
+  /**
+   * 炸裂弾の時刻編（plan/design-eunhwa-tu-burst-shot-timing.md 4 節）: 使用武器変更の最初の発の、バーストの発動の印（I・II は六角形の
+   * 替わり目。hexagonFrameOf）から着弾までのフレーム（0 以上の整数）。キーは `<resourceId>:<スキルのスロット>`（flightFrames.autoAttacks と
+   * 同じ）。行は着地点の id・帯・all の順で引く。行のあるキャラは、最初の発をそのフレームに撃つ（撃つ = 着く）。省略・表に無い行は、
+   * チャージ武器の最初の発の待ち（frame/shooter.ts の weaponChangeShooter）
+   */
+  weaponChangeFirstHitFrames?: Readonly<Record<string, TargetRateRow | null>>;
   /** セルごとの出どころ（verification.md の節・claims.md の ID） */
   source: string;
 };

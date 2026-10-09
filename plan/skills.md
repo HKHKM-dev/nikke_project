@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 58・効果 195（根拠あり 187）・notes 221（根拠あり 67）
+件数: キャラ 58・効果 195（根拠あり 187）・notes 222（根拠あり 68）
 
-notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補足 6
+notes の種類: 未対応 125・前提の外 37・計算に無関係 54・補足 6
 
-スロット: supported 77・partial 16・unsupported 59・noEffect 34
+スロット: supported 76・partial 17・unsupported 59・noEffect 34
 
 ## 10 ラピ
 
@@ -175,9 +175,10 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - effects[2] passive・attack: C-0020（確定）
   - effects[3] passive・projectileExplosionDamage: C-0374（確定）
   - effects[4] passive・trueDamage: C-0375（確定）
-- **burst**: supported
+- **burst**: partial
   - effects[0] timed・weaponChangeShot・damageTaken: C-0312（確定）、C-0138（確定）
-  - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）、C-0509（仮説）
+  - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）、C-0509（確定）
+  - notes[0] 未対応: II の直後に III が来たとき、実測の炸裂弾は III の発動より前に着き、フルバースト補正が乗らない（233-10）。モデルの III の発動は II の替わり目の 24f 後で、炸裂弾（中近 24f・中遠 25f・遠 28f）はフルバーストの中に入り、補正が乗る（未対応。III の本当の発動の位置は backlog 2-31）: C-0509（確定）
 
 ## 101 ドレイク
 
