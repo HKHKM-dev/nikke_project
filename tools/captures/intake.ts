@@ -75,6 +75,11 @@ if (!source || !values.id || !values.name) fail('元ファイル・--id・--name
 if (!existsSync(source)) fail(`${source} が無い`);
 if (!/^\d{3,}$/.test(values.id)) fail('--id は 3 桁以上の数字');
 if (!/^[a-z0-9][a-z0-9_+-]*$/.test(values.name)) fail('--name は英小文字・数字・-・_・+');
+// 命名規約では編成をファイル名に入れない（plan/captures/index.md「命名規約」。録画 400〜402・407。plan/design-investigation-review.md 5 節）
+if (values.name.includes('+'))
+  console.log(
+    '注意: 識別子に + が入っている。命名規約では編成をファイル名に入れず、測定対象を 1 体だけ書く（編成は records/recordings/<録画 id>.json の team）',
+  );
 if (!(RECORDING_FOLDERS as readonly string[]).includes(values.folder))
   fail(`--folder は ${RECORDING_FOLDERS.join(' / ')}`);
 const folder = values.folder as RecordingFolder;

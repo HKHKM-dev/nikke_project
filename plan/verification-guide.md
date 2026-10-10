@@ -48,7 +48,7 @@
 
 - 検証記録の「次に撮るもの」に、編成・操作枠・的・モード・スペック固定・本数と、見分け方（窓の中の発の数・既存の録画での読みの揺れ）を書く。
 - 反復実測を狙うなら、2 本以上を 1 回の撮影で撮る（仮説を立てた録画は再現に数えないため）。
-- 予測は任意。見分けられる録画かをモデルで確かめたいときは、予測ファイル `records/predictions/V-NNNN.json` に、撮影と同じ編成・仮説（`setup` の上書き）・比べる指標を書き、`npm run records:predict -- V-NNNN` で仮説 × 指標の値を書き込む（書式は [records/predictions/README.md](../records/predictions/README.md)）。細かく見たいときは `npm run sim -- --ids <編成> --fixed-spec --controlled <操作枠> ...`（オプションは `packages/core/scripts/sim-run.ts` の冒頭）。予測ファイルにできない仮説は、検証記録の「予測」に手で書いてよい。使わなければ「予測」は「なし」。
+- 予測は任意。見分けられる録画かをモデルで確かめたいときは、予測ファイルの指標に許容の幅（`tolerance`。観測値の `compare.tolerance` と同じ形）を書くと、`records:predict` が、仮説どうしの予測の差がその幅の中の指標を「見分けられない」と出す。時刻の指標（フレーム）の幅は、動画とゲームの時刻のずれ（[captures/guide.md](captures/guide.md)「動画のフレームはゲーム内の時間とそろっていない」）を見込んで決める。そのうえで、予測ファイル `records/predictions/V-NNNN.json` に、撮影と同じ編成・仮説（`setup` の上書き）・比べる指標を書き、`npm run records:predict -- V-NNNN` で仮説 × 指標の値を書き込む（書式は [records/predictions/README.md](../records/predictions/README.md)）。細かく見たいときは `npm run sim -- --ids <編成> --fixed-spec --controlled <操作枠> ...`（オプションは `packages/core/scripts/sim-run.ts` の冒頭）。予測ファイルにできない仮説は、検証記録の「予測」に手で書いてよい。使わなければ「予測」は「なし」。
 - 撮影の手順と注意は [captures/index.md](captures/index.md)「撮影プロトコル」と [captures/guide.md](captures/guide.md)。
 
 ## 5. 撮る・取り込む

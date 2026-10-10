@@ -14,6 +14,7 @@ import { gradeCandidate, type Claim } from '../claims.ts';
 import type { Observation } from '../observations.ts';
 import {
   comparePredictions,
+  indistinguishableTargets,
   observationsOfTarget,
   renderPredictionLines,
   renderPredictionTable,
@@ -168,6 +169,26 @@ describe('records/predictions', () => {
     expect(renderPredictionTable(cmp)).not.toContain('後付け');
     // 控えの観測値は検証しない（101-99 は無い観測値）
     expect(validatePredictions([f], ctx)).toEqual([]);
+  });
+
+  it('finds targets whose hypotheses cannot be told apart within the tolerance (plan/design-investigation-review.md 2.1 節)', () => {
+    const tol = (shots: PredictionFile['targets'][number]['tolerance']) =>
+      file({
+        targets: [{ ...file().targets[0]!, tolerance: shots }, file().targets[1]!],
+        predicted: {
+          at: '2026-10-11',
+          commit: 'abc1234',
+          values: { H1: { shots: 189, total: 29_000_000 }, H2: { shots: 188, total: 20_000_000 } },
+        },
+      });
+    // 差 1 は ±1 の中で見分けられない。±0 なら見分けられる。許容の幅の無い指標は見ない
+    expect(indistinguishableTargets(tol({ abs: 1 }))).toEqual([{ target: 'shots', hypotheses: ['H1', 'H2'] }]);
+    expect(indistinguishableTargets(tol({ abs: 0 }))).toEqual([]);
+    expect(indistinguishableTargets(tol(undefined))).toEqual([]);
+    expect(validatePredictions([{ ...tol({ abs: 1 }), predicted: null }], ctx)).toEqual([]);
+    expect(validatePredictions([{ ...tol({ abs: -1 }), predicted: null }], ctx)).toEqual([
+      '予測 V-0063: 指標 shots の tolerance は { rel } か { abs }（0 以上の数）',
+    ]);
   });
 
   it('todayLocal uses the local date', () => {
