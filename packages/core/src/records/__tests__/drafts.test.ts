@@ -222,6 +222,27 @@ describe('validateClaims: 確定の等級', () => {
     expect(validateClaims(toClaims([claim('確定', 'データ明記')]), new Set())).toEqual([]);
     expect(validateClaims(toClaims([claim('仮説', '単独実測')]), new Set())).toEqual([]);
   });
+
+  it('人の判断（judgment）の形を見る（plan/design-investigation-review.md 3 節）', () => {
+    const withJudgment = (judgment: unknown) => ({ ...claim('確定', '反復実測'), judgment }) as ClaimFile;
+    expect(
+      validateClaims(
+        toClaims([withJudgment({ decided: '2026-10-11', overrides: ['指標なし', '許容外'], reason: '理由' })]),
+        new Set(),
+      ),
+    ).toEqual([]);
+    expect(
+      validateClaims(toClaims([withJudgment({ decided: '10/11', overrides: ['勘'], reason: '' })]), new Set()),
+    ).toEqual([
+      'C-9999: judgment.decided は YYYY-MM-DD',
+      'C-9999: judgment.overrides が語彙に無い: 勘',
+      'C-9999: judgment.reason が空',
+    ]);
+    expect(validateClaims(toClaims([withJudgment({ decided: '2026-10-11', overrides: [] })]), new Set())).toEqual([
+      'C-9999: judgment.overrides は上書きした条件の並び（1 つ以上。指標なし・最小構成の警告・許容外・合う仮説が 2 つ以上）',
+      'C-9999: judgment.reason が空',
+    ]);
+  });
 });
 
 describe('最小構成の警告', () => {

@@ -112,7 +112,11 @@ describe('closeChecks', () => {
     expect(closeChecks({ ...base, claims: [noDecided] }).errors[0]).toContain('decidedOn が無い');
     // 厳密一致・仮説の結論は問わない
     expect(
-      closeChecks({ ...base, claims: [{ ...noDecided, grade: '厳密一致' }], gradeCandidates: new Map() }).errors,
+      closeChecks({
+        ...base,
+        claims: [{ ...noDecided, grade: '厳密一致' }],
+        gradeCandidates: new Map([['C-0001', '厳密一致']]),
+      }).errors,
     ).toEqual([]);
     expect(closeChecks({ ...base, claims: [{ ...noDecided, state: '仮説' }] }).errors).toEqual([]);
     // 書いてあれば通る（空でもよい）
@@ -176,6 +180,40 @@ describe('closeChecks', () => {
       minimal: new Map([['C-0001', [pair]]]),
     });
     expect(hypothesis.errors.some((e) => e.includes('最小構成'))).toBe(false);
+  });
+
+  it('確定に残った条件は、人の判断（judgment）で上書きしていなければ誤り（plan/design-investigation-review.md 3 節）', () => {
+    const judged = (...overrides: NonNullable<Claim['judgment']>['overrides']) =>
+      claim({ judgment: { decided: '2026-10-11', overrides, reason: 'r' } });
+    // 比べる指標が無い（機械が等級の候補を出せない）。データ明記は人の等級なので問わない
+    expect(closeChecks({ ...base, gradeCandidates: new Map() }).errors[0]).toContain('「指標なし」');
+    expect(closeChecks({ ...base, gradeCandidates: new Map(), claims: [judged('指標なし')] }).errors).toEqual([]);
+    expect(
+      closeChecks({ ...base, gradeCandidates: new Map(), claims: [claim({ grade: 'データ明記' })] }).errors,
+    ).toEqual([]);
+    // この記録の根拠の観測値が許容外
+    expect(closeChecks({ ...base, outside: new Set(['101-01']) }).errors[0]).toContain('許容外（101-01）');
+    expect(closeChecks({ ...base, outside: new Set(['101-01']), claims: [judged('許容外')] }).errors).toEqual([]);
+    // 予測と合う仮説が 2 つ以上
+    expect(closeChecks({ ...base, predictionFits: ['H1', 'H2'] }).errors[0]).toContain('合う仮説が 2 つ（H1・H2）');
+    expect(
+      closeChecks({ ...base, predictionFits: ['H1', 'H2'], claims: [judged('合う仮説が 2 つ以上')] }).errors,
+    ).toEqual([]);
+    // この記録の観測値の組の最小構成の警告は、人の判断なら注意にとどめる
+    const pair = {
+      observation: '101-01',
+      recordings: ['101'],
+      elements: [{ name: 'a', reason: '根拠なし' }],
+      marked: [],
+    };
+    const r = closeChecks({ ...base, minimal: new Map([['C-0001', [pair]]]), claims: [judged('最小構成の警告')] });
+    expect(r.errors).toEqual([]);
+    expect(r.warnings.some((w) => w.includes('人の判断（judgment）で通した'))).toBe(true);
+    // 仮説の結論は問わない
+    expect(
+      closeChecks({ ...base, gradeCandidates: new Map(), claims: [claim({ state: '仮説', grade: '単独実測' })] })
+        .errors,
+    ).toEqual([]);
   });
 
   it('「結論」が無い記録は完了にできない', () => {

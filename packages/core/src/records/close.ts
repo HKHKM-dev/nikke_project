@@ -1,5 +1,5 @@
 // 検証記録を閉じる前の検査（plan/design-records-automation.md 3.7 節）。npm run records:close の純粋な部分。
-import { gradeAboveCandidate, type Claim, type ClaimGrade } from './claims.ts';
+import { gradeAboveCandidate, type Claim, type ClaimGrade, type JudgmentOverride } from './claims.ts';
 import { summarizeWarnings, type PairWarning } from './relevance.ts';
 import type { Observation } from './observations.ts';
 import type { Verification } from './verifications.ts';
@@ -13,6 +13,10 @@ export type CloseInput = {
   gradeCandidates: ReadonlyMap<string, ClaimGrade>;
   /** 結論 ID → 効きうる未確定の要素が残った組（最小構成の検査。plan/design-minimal-relevance.md 5 節） */
   minimal: ReadonlyMap<string, readonly PairWarning[]>;
+  /** モデルと比べて許容外だった観測値の ID（失効を除く） */
+  outside?: ReadonlySet<string>;
+  /** 予測ファイルの仮説が 2 つ以上あるとき、予測と合った仮説（plan/design-investigation-review.md 1.3 節） */
+  predictionFits?: readonly string[];
 };
 
 export type CloseResult = { errors: string[]; warnings: string[] };
@@ -49,14 +53,34 @@ export function closeChecks(input: CloseInput): CloseResult {
         );
     }
     if (c.state === '確定') {
+      // 人の判断で上書きした条件（plan/design-investigation-review.md 3 節）
+      const judged = (o: JudgmentOverride) => c.judgment?.overrides.includes(o) === true;
+      const needJudgment = (o: JudgmentOverride, what: string) =>
+        errors.push(
+          `${at}: 確定の結論 ${id} は${what}。根拠を足すか、仮説にするか、人の判断なら結論の judgment の overrides に「${o}」を書く`,
+        );
+      if (candidate === undefined && c.grade !== 'データ明記' && !judged('指標なし'))
+        needJudgment('指標なし', 'モデルと比べた観測値が無く、機械が等級の候補を出せない');
+      const outside = c.observations.filter((o) => ownIds.has(o) && input.outside?.has(o) === true);
+      if (outside.length > 0 && !judged('許容外'))
+        needJudgment('許容外', `、根拠のこの記録の観測値が許容外（${outside.join('・')}）`);
+      if ((input.predictionFits?.length ?? 0) >= 2 && !judged('合う仮説が 2 つ以上'))
+        needJudgment(
+          '合う仮説が 2 つ以上',
+          `、予測と合う仮説が ${input.predictionFits!.length} つ（${input.predictionFits!.join('・')}）`,
+        );
       // 最小構成の検査（plan/design-minimal-relevance.md 11 節。2026-10-08 のオーナー決定）: この記録の観測値の組に警告があれば止める。
       // 既存の確定の結論を指す記録もあるので、ほかの記録の観測値の組の警告は注意にとどめる（records:check でも止めない）
       const warned = (input.minimal.get(id) ?? []).filter((w) => w.elements.length > 0);
       const ownWarned = warned.filter((w) => ownIds.has(w.observation));
       const otherWarned = warned.filter((w) => !ownIds.has(w.observation));
-      if (ownWarned.length > 0)
+      if (ownWarned.length > 0 && judged('最小構成の警告'))
+        warnings.push(
+          `${at}: 結論 ${id} のこの記録の観測値の組に最小構成の警告がある（${summarizeWarnings(ownWarned)}）が、人の判断（judgment）で通した`,
+        );
+      else if (ownWarned.length > 0)
         errors.push(
-          `${at}: 結論 ${id} を確定にしているが、この記録の観測値の組に最小構成の警告がある（${summarizeWarnings(ownWarned)}）。効かない理由を結論の minimal に印として書くか、仮説にする`,
+          `${at}: 結論 ${id} を確定にしているが、この記録の観測値の組に最小構成の警告がある（${summarizeWarnings(ownWarned)}）。効かない理由を結論の minimal に印として書くか、仮説にするか、人の判断なら judgment の overrides に「最小構成の警告」を書く`,
         );
       if (otherWarned.length > 0)
         warnings.push(
