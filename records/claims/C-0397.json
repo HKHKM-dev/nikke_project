@@ -7,8 +7,22 @@
   "basis": "`305-01`・`305-02`・`305-03`・`305-04`・`306-01`・`306-02`・`306-03`・`306-04`。V-0264",
   "model": "frame/firing.ts の firingParams（speedScaledSeconds の subtract）と cadence.ts の reloadFirstShotFrames（24f）。キューブの写像は buildEffects.ts の CUBE_SKILL_EFFECTS。照合は records/observations.ts の reloadToNextShotAt",
   "replaces": ["C-0331"],
-  "updated": "2026-10-07",
+  "updated": "2026-10-11",
   "subject": {
     "mechanism": "firing"
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "250",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "251",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "252",
+      "role": "仮説の出どころ"
+    }
+  ]
 }

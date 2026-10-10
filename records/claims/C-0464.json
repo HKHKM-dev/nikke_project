@@ -7,9 +7,10 @@
   "basis": "`063-04`（録画 063。1445〜1462f。V-0022）・`080-03`（録画 080。1415〜1485f。V-0029）・`284-03`（録画 284。1426〜1480f。V-0244）。3 本の録画で、アスカのバーストによる吸収回復から約 25 秒（ゲーム内の 25 秒は約 1471 ティック）で S1 が切れることが再現した。吸収回復の窓の中の命中では延びないこと（C-0082）と、発動中の再発動で上書き延長すること（C-0087）は確定済み。V-0022・V-0029・V-0244。なお、アスカには別の仮説（burst.effects[2]）と根拠なしの notes が残るため、この確定によってもアスカは「機構が確定したキャラ」にはならない",
   "model": "`data/skills/830.json` の skill1 の effects[0]（timed・healed）と burst の effects[1]（heal・burstUse。吸収回復の窓。C-0082）",
   "replaces": ["C-0077"],
-  "updated": "2026-10-08",
+  "updated": "2026-10-11",
   "subject": {
     "places": ["data/skills/830.json の skill1 の effects[0]", "data/skills/830.json の burst の effects[1]"]
   },
-  "observations": ["063-04", "080-03", "284-03"]
+  "observations": ["063-04", "080-03", "284-03"],
+  "decidedOn": []
 }

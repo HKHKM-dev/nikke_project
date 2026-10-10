@@ -36,7 +36,7 @@ describe('出来事のセット（data/enemies.json）', () => {
     ]);
   });
 
-  it('expands to 5 jumps in 180 game seconds, as every recording read so far (C-0056)', () => {
+  it('expands to 5 jumps in 180 game seconds, as every recording read so far (C-0533)', () => {
     const events = enemyEventsOf(master, ['range-3min-jump'], 180);
     expect(events.map((e) => e.start.toFixed(2))).toEqual(['32.35', '68.69', '108.35', '144.69', '177.86']);
     expect(events.every((e) => e.kind === 'untargetable')).toBe(true);
@@ -158,12 +158,12 @@ describe('射手（ハイドとリロード）', () => {
       inputType: 'UP',
     };
     // 70 で 1 発（残弾 5）→ 100 でハイドしてリロード（189 で満タン）→ 220 から構えてチャージして 290 に 1 発目、以後 82f ごとに 6 発
-    // （戦闘開始と窓の明けの 1 発目は、SR は構え 11f + チャージ 59f + 満ちてから撃つまで 1f − 1 = 70f。C-0225・C-0232）
+    // （戦闘開始と窓の明けの 1 発目は、SR は構え 11f + チャージ 59f + 満ちてから撃つまで 1f − 1 = 70f。C-0537・C-0232）
     const fired = shotsWithWindow(sr, { start: 100, end: 220 }, 800);
     expect(fired).toEqual([70, 290, 372, 454, 536, 618, 700]);
   });
 
-  it('SR: after an empty-magazine reload that finishes in the window, fires at the later of the end + 70f and the usual time (C-0225)', () => {
+  it('SR: after an empty-magazine reload that finishes in the window, fires at the later of the end + 70f and the usual time (C-0537)', () => {
     // 1 発のマガジン: 70 で撃って弾切れ → リロードの完了から 82f（モデルの分け方）で次の発。ゲームの完了はモデルの完了より遅く、
     // 完了から待ちからの 1 発目（70f）で撃つので、完了が窓の終わりの 12f より前なら明けから 70f、近ければふだんの時刻のまま（V-0135）
     const sr: Partial<ShotParams> = {

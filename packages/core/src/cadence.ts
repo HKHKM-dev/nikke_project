@@ -90,7 +90,7 @@ export function firstShotFrames(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number {
-  // 射撃姿勢維持型: ハイドからは姿勢の残りが無く、構え + チャージ + 満ちてから撃つまで − 1（C-0225。紅蓮BS 30f・レイヴン 86f・A2 94f。
+  // 射撃姿勢維持型: ハイドからは姿勢の残りが無く、構え + チャージ + 満ちてから撃つまで − 1（C-0537。紅蓮BS 30f・レイヴン 86f・A2 94f。
   // plan/design-fire-stance-cadence.md 3.2 節）
   if (params.stance !== null) return model.aimInFrames + params.chargeFrames + params.stance.holdFrames - 1;
   // 射撃姿勢維持型でない入力が UP のチャージ武器も同じ形で、満ちてから撃つまでは 1f（RL 71f・SR 70f。SR は構えが 1f 短い。
@@ -99,7 +99,7 @@ export function firstShotFrames(
     const aim = model.aimInFrames - hideAimShorterFrames(shot, model);
     return aim + params.chargeFrames + model.chargeFullToShotFrames - 1;
   }
-  // Stage 22-A: 押下チャージ型は確かめていないので、発と発の間から構え解除のぶんを引いたまま（C-0225）
+  // Stage 22-A: 押下チャージ型は確かめていないので、発と発の間から構え解除のぶんを引いたまま（C-0537）
   if (isChargeWeapon(shot)) return Math.max(0, params.chargeFrames + model.chargeReleaseFrames - model.aimOutFrames);
   // Stage 22-C: チャージの無い武器（MG を含む）も、ハイドから構えてから撃つ（C-0114）
   return model.aimInFrames;
@@ -112,7 +112,7 @@ export function reloadFirstShotFrames(
   params: FiringParams = firingParams(shot),
 ): number {
   // Stage 22-A: チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0149 の紅蓮BS 172f・ラム 200f）。
-  // ゲームの完了（RELOADING のバーが消える）は構え解除のぶん遅く、完了からは firstShotFrames で撃つ（C-0225）。
+  // ゲームの完了（RELOADING のバーが消える）は構え解除のぶん遅く、完了からは firstShotFrames で撃つ（C-0537）。
   // 最後の発からの長さは同じなので分け方はそのままにし、窓の明けだけ unhideShooter で合わせる（V-0135）
   // 射撃姿勢維持型も発と発の間と同じ（リロードの側に stanceReloadExtraFrames を足してある。C-0149）
   if (params.stance !== null) return chargeShotIntervalFrames(params, model);

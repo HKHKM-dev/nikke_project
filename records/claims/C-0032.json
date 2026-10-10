@@ -7,8 +7,14 @@
   "basis": "verification.md Stage 18-A「距離帯と区間の並び」（旧の AR 単騎 0/15、旧の録画 L-HC のプロダクト08）",
   "model": "`data/enemies.json` の `range-bigarms`（中遠の範囲 25〜45）",
   "replaces": [],
-  "updated": "2026-09-26",
+  "updated": "2026-10-11",
   "subject": {
     "mechanism": "targetTable"
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "L-AD",
+      "role": "仮説の出どころ"
+    }
+  ]
 }

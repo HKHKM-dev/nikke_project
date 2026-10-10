@@ -7,8 +7,14 @@
   "basis": "`046-21`（046・055・070・071 の通常攻撃の増分の間隔。43f が 508 回、172f が 52 回。172f の平均 172.04f）。解放遅延 23f は C-0143、リロードの換算は C-0145。リロードの分は 172.04 − 43 − 117.6 = 11.4f の整数で 11f（モデルの 172f・171f の混ざり方の平均は 171.6f）。V-0061",
   "model": "`frame/firing.ts` の `stanceFrames` の式（C-0217）で同じ値になる（2026-10-04 に較正表 `MEASURED_CHARGE_CADENCE` を置き換えた。リロードの 11f は `WeaponModel.stanceReloadExtraFrames`。plan/design-fire-stance-cadence.md）",
   "replaces": ["C-0144"],
-  "updated": "2026-10-01",
+  "updated": "2026-10-11",
   "subject": {
     "mechanism": "firing"
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "046",
+      "role": "値を合わせた"
+    }
+  ]
 }

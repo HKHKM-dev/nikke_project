@@ -4,10 +4,10 @@
   "state": "確定",
   "topic": "読み取り（HUD・画面）",
   "grade": "反復実測",
-  "basis": "`L-AD-08`・`L-AI-05`・`L-AN-06`（timer.ts --mode summary。C-0260 と同じ読み方）。傾きと数え直しは V-0057（`L-AD-07`・`L-AI-04`・`L-AN-05` から）。どの録画でも読みは 150 間隔以上",
+  "basis": "`L-AD-08`・`L-AI-05`・`L-AN-06`（timer.ts --mode summary。C-0260 と同じ読み方）。傾きと数え直しは V-0057（`L-AD-07`・`L-AI-04`・`L-AN-05` から）。どの録画でも読みは 150 間隔以上 2026-10-10 の既存の確定の点検（plan/design-investigation-review.md 1.4 節）で足した: 再現（後の読み）: 旧の録画 L-HC（2026-09-12。プロダクト08 単騎）でも、残り時間の表示の 1 秒は動画の 59.235f（`L-HC-04`。V-0276。timer.ts --mode summary）で、L-AD・L-AI・L-AN と同じ速さ。リロードの傾きと数え直しの部分は L-AD・L-AI・L-AN の 3 本だけ",
   "model": "—（モデルは今の版に合わせる。旧の録画と比べる値は、この速さの違いを含む）",
   "replaces": [],
-  "updated": "2026-09-30",
+  "updated": "2026-10-11",
   "subject": {
     "mechanism": "clock"
   },
@@ -17,6 +17,20 @@
       "element": "エレグ skill2.notes[1]",
       "reason": "観測量は戦闘開始の構え・リロードの長さ・時計で、分配ダメージや戦闘開始時のゲージのチャージは効かない",
       "decided": "2026-10-08"
+    }
+  ],
+  "decidedOn": [
+    {
+      "recording": "L-AD",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "L-AI",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "L-AN",
+      "role": "仮説の出どころ"
     }
   ]
 }

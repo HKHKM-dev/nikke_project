@@ -194,7 +194,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - effects[0] timed・fullBurstStart・attack: C-0459（確定）
   - effects[1] timed・fullBurstStart・attack: C-0471（確定）
   - effects[2] timed・fullBurstStart・maxAmmo: C-0471（確定）
-  - effects[3] timed・fullBurstStart・hitRate: C-0485（確定）、C-0486（仮説）
+  - effects[3] timed・fullBurstStart・hitRate: C-0485（仮説）、C-0486（仮説）
 - **宝物版 skill2**: supported
   - effects[0] damage・normalShot・skill: C-0458（確定）
   - effects[1] damage・normalShot・skill: C-0458（確定）
@@ -300,7 +300,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
 ## 225 紅蓮：ブラックシャドウ
 
 - **skill1**: supported
-  - effects[0] cycle・fullChargeShot: C-0047（確定）、C-0085（確定）
+  - effects[0] cycle・fullChargeShot: C-0047（仮説）、C-0085（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・maxAmmo: C-0490（確定）
   - effects[1] ammoRefill・fullBurstStart: C-0490（確定）
@@ -356,7 +356,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - effects[1] timed・normalHit・critDamage: C-0272（確定）
   - effects[2] timed・normalHit・maxAmmo: C-0272（確定）
 - **skill2**: supported
-  - effects[0] timed・fullBurstStart・hitRate: C-0485（確定）、C-0486（仮説）
+  - effects[0] timed・fullBurstStart・hitRate: C-0485（仮説）、C-0486（仮説）
   - effects[1] timed・normalHit・attack: C-0124（確定）、C-0118（確定）
 - **burst**: partial
   - effects[0] timed・burstUse・infiniteAmmo: C-0455（確定）、C-0452（確定）

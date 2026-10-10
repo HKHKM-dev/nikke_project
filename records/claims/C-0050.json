@@ -4,11 +4,33 @@
   "state": "確定",
   "topic": "1 発の式・バフの掛かり方",
   "grade": "反復実測",
-  "basis": "`056-04`（録画 56 の 5 回。境目のはっきりした 2 回とも 411f）",
+  "basis": "`056-04`（録画 56 の 5 回。境目のはっきりした 2 回とも 411f） 2026-10-10 の既存の確定の点検（plan/design-investigation-review.md 1.4 節）: 1 本の録画の中の反復（回で数える。2026-10-10 のオーナーの決定）: 値（7 秒 = 411f。切り捨て）は 056 の 2・3 回目（`056-04`。境目のはっきりした 2 回）に合わせて決め、4・5 回目（409f・405f。読めない間を足しても 412f・418f まで）でも実時間の 420f に届かず、ゲーム内の時計の 7 秒と合う",
   "model": "`time.ts` の `gameSecondsToFrames`（Stage 21-B。切り捨てで 7 秒 = 411f。`records/__tests__/stage21Time.test.ts`）",
   "replaces": [],
-  "updated": "2026-09-27",
+  "updated": "2026-10-11",
   "subject": {
     "places": ["data/skills/330.json の skill2 の effects[1]"]
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "056",
+      "role": "値を合わせた"
+    },
+    {
+      "recording": "018",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "038",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "044",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "047",
+      "role": "仮説の出どころ"
+    }
+  ]
 }

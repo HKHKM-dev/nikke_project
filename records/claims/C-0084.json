@@ -7,8 +7,14 @@
   "basis": "`028-02`（ラピ。ここから決めた）、`025-03`（デルタ AI の 1〜8 発目の px。値を決めるのに使っていない。この縮尺の予測と 1px の単位で一致）。V-0028",
   "model": "モデルは本当の量を持つので、入れるものは無い。`tools/captures/gauge.ts` の px を量に直すときに使う",
   "replaces": [],
-  "updated": "2026-09-28",
+  "updated": "2026-10-11",
   "subject": {
     "mechanism": "gauge"
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "028",
+      "role": "値を合わせた"
+    }
+  ]
 }
