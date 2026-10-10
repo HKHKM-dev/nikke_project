@@ -4,6 +4,8 @@
 // 遅れの起点は録画で読んだ発動の印: I・II は右のバースト欄の六角形の替わり目（本当の発動の HEXAGON_AFTER_ACTIVATION_FRAMES 後）、
 // III はタイマーの 00.00（本当の発動の FULL_BURST_AFTER_ACTIVATION_FRAMES 後。フルバーストの窓の始まり）。どちらも hexagonFrameOf。
 // 遅れ 0 の効果は本当の発動のまま、遅れ 0 の III のヒットは 00.00（hitFrameOf。plan/design-burst-hit-origin.md 8 節）。
+// バースト使用時の効果の付き始めは実機ではキャラごとに違い（本当の発動の頃・表示の 1〜2f 前・表示の 0〜1f 後。V-0399）、
+// 表に行の無いキャラは実機より 0〜6f 早く付くことがある。数 f の差は直さない（plan/burst-effect-delay-candidates.md 2.7 節の案 C）。
 // 分かれたヒット編（plan/design-burst-split-hits.md）: 1 回の発動の倍率ダメージが間をあけた複数のヒットに分かれるキャラは、
 // 1 ヒット目からのずれの列（hitOffsets）を持ち、倍率を等分して各ヒットに出す。
 import type { CharacterData } from '../types.ts';

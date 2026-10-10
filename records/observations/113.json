@@ -94,9 +94,39 @@
     "compare": {
       "model": "sim",
       "metric": "gaugeFullFrame",
-      "args": { "n": 0 },
-      "tolerance": { "abs": 30 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"] }
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "113-05",
+    "recording": "113",
+    "source": "V-0399",
+    "readAt": "2026-10-10",
+    "kind": "timing",
+    "unit": "f",
+    "use": "record",
+    "value": {
+      "activation": [1795, 3347, 4835, 6276, 7748, 9215, 10660],
+      "lastAbsent": [-9, -4, -5, -3, -7, -16, -8],
+      "firstPresent": [-1, 1, 1, 2, 40, 17, 0]
+    },
+    "description": "クルミ（I・操作）+ デルタの 1〜7 回目の I の発動（六角形が I から II に替わったフレーム。activation）と、そこから数えた、敵の受けるダメージ▲の無いクルミの最後の増分（lastAbsent）・▲の乗った最初の増分（firstPresent）の動画のフレーム数。1 回目は替わり目の 1f 前（f1794）の発に▲がある",
+    "method": {
+      "tool": "右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop・drawtext のフレーム番号・tile）と、recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで格子に当てた",
+      "note": "クルミの 1 発は `100-10` と同じ格子（胴体 10,797.29 × (1 + コア 1 + 距離 0.3 + 会心 0.5) の 8 通りと tick 41,322.36・61,983.54 の、▲なしと × 1.1806）に ±2.5 で当てた。3 回目の −5f（f4830）の 52,119 は▲の無い tick と胴体の和。5・6 回目は替わり目の前後に発が無い（5 回目の f7788 は▲の乗った tick）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
     }
   }
 ]
