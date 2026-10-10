@@ -13,7 +13,7 @@
     {
       "slot": 1,
       "rid": 836,
-      "name": "サクラ",
+      "name": "鈴原サクラ",
       "controlled": true
     }
   ],
@@ -25,5 +25,5 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0213。サクラ単騎・180 秒放置。出撃画面ではサクラは 3 番目の枠に置いた"
+  "conditionNote": "V-0213。鈴原サクラ単騎・180 秒放置。出撃画面では鈴原サクラは 3 番目の枠に置いた"
 }

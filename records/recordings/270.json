@@ -13,7 +13,7 @@
     {
       "slot": 1,
       "rid": 836,
-      "name": "サクラ",
+      "name": "鈴原サクラ",
       "controlled": false
     },
     {
@@ -43,5 +43,5 @@
   "fixedSpec": true,
   "autoFire": false,
   "autoBurst": true,
-  "conditionNote": "V-0219 の足し撮りの録画 B（部隊なし）の 1 本目。サクラ（AI）・デルタ（AI）・ユニ（操作・撃たない）・ノワール（AI）。オートバースト ON（左上のボタンで確かめた）。B を 3 本撮った"
+  "conditionNote": "V-0219 の足し撮りの録画 B（部隊なし）の 1 本目。鈴原サクラ（AI）・デルタ（AI）・ユニ（操作・撃たない）・ノワール（AI）。オートバースト ON（左上のボタンで確かめた）。B を 3 本撮った"
 }

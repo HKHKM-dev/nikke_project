@@ -99,6 +99,25 @@ function emma(locale: 'en' | 'ja'): RawRoleData {
 describe('toCharacterData', () => {
   const data = toCharacterData(emma('en'), emma('ja'));
 
+  it('keeps the game name unless overridden', () => {
+    expect(data.name).toEqual({ ja: 'エマ', en: 'Emma' });
+    const sakura = (locale: 'en' | 'ja'): RawRoleData => ({
+      ...emma(locale),
+      resource_id: 836,
+      name_localkey: 'サクラ',
+    });
+    expect(toCharacterData(sakura('en'), sakura('ja')).name).toEqual({ ja: '鈴原サクラ', en: 'Sakura Suzuhara' });
+  });
+
+  // 同名が増えたら NAME_OVERRIDES に呼び名を足す（en は 392 ライと 831 レイがどちらも Rei。表示は ja なので見ない）
+  it('gives every character in the data a distinct ja name', () => {
+    const index = JSON.parse(readFileSync(new URL('../data/characters/index.json', import.meta.url), 'utf8')) as {
+      characters: { name: { ja: string } }[];
+    };
+    const names = index.characters.map((c) => c.name.ja);
+    expect(names.filter((n, i) => names.indexOf(n) !== i)).toEqual([]);
+  });
+
   it('converts units', () => {
     expect(data.crit).toEqual({ rate: 0.15, damage: 1.5 });
     expect(data.shot.reloadTime).toBe(2.5);

@@ -1,4 +1,4 @@
-// サクラ（836）を含む編成（V-0213）。S1: 通常攻撃の命中 120 回ごとに敵の受けるダメージ▲（5 秒）。命中は期待値で数え、
+// 鈴原サクラ（836）を含む編成（V-0213）。S1: 通常攻撃の命中 120 回ごとに敵の受けるダメージ▲（5 秒）。命中は期待値で数え、
 // 発火した発の次のフレームから乗る（C-0315）。S2（受ける HP 回復量▲・受けるダメージ▼）とバースト（持続回復）は効果なし（C-0316）。
 // sim と calc の整合。
 import { readFileSync } from 'node:fs';
@@ -50,7 +50,7 @@ function s1Windows(input: TeamInput) {
   return planTeamRun(input).timeline.windows.filter((w) => w.slotIndex === 0 && w.effect.stat === 'damageTaken');
 }
 
-describe('サクラの定義', () => {
+describe('鈴原サクラの定義', () => {
   const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${SAKURA}.json`));
 
   it('defines S1 as Damage Taken on all allies, and S2 and the burst without effects', () => {
@@ -68,7 +68,7 @@ describe('サクラの定義', () => {
   });
 });
 
-describe('サクラ単騎（手入力の条件）', () => {
+describe('鈴原サクラ単騎（手入力の条件）', () => {
   const input = solo();
   const shots = planTeamRun(input).shots[0]!.frames;
 
@@ -97,14 +97,14 @@ describe('サクラ単騎（手入力の条件）', () => {
   });
 });
 
-// V-0200 の録画 A の編成（サクラ I・デルタ II・ブラン II・ノワール III）と、実戦寄りの編成
+// V-0200 の録画 A の編成（鈴原サクラ I・デルタ II・ブラン II・ノワール III）と、実戦寄りの編成
 const TEAMS: Record<string, TeamInput> = {
   単騎: solo(),
-  'V-0200 の録画 A（サクラ + デルタ + ブラン + ノワール）': team(
+  'V-0200 の録画 A（鈴原サクラ + デルタ + ブラン + ノワール）': team(
     [fixedSlot(SAKURA), fixedSlot(20), fixedSlot(270), fixedSlot(271)],
     2,
   ),
-  '実戦寄り（サクラ + クラウン + リター + アリス + モダニア）': team(
+  '実戦寄り（鈴原サクラ + クラウン + リター + アリス + モダニア）': team(
     [fixedSlot(SAKURA), fixedSlot(330), fixedSlot(82), fixedSlot(191), fixedSlot(260)],
     3,
   ),

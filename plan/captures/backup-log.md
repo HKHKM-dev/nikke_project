@@ -18,17 +18,17 @@
 - 2026-10-06 00:56 録画 240（リター単騎）: `range/20261006-240_smg_liter_auto-burst.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 00:56 録画 241（リター単騎）: `range/20261006-241_smg_liter_auto-burst.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 00:56 録画 235（リター単騎）: `range/20261006-235_smg_liter_auto-burst.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 01:03 録画 243（サクラ単騎）: `range/20261006-243_smg_sakura_skills.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 01:03 録画 243（鈴原サクラ単騎）: `range/20261006-243_smg_sakura_skills.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 07:34 録画 244（ミランダ + デルタ）: `range/20261006-244_smg+sr_miranda+delta_burst.mp4` を同期（E: と I: で sha256 が一致）。
 
 2026-10-06 07:34 に録画 245（ミランダ + デルタ + I-DOLL・サン）を `intake.ts` で取り込み、この 1 本（`range/20261006-245_smg+sr+ar_miranda+delta+sun_full-burst.mp4`）だけを同期した。E: と I: で sha256 が一致（`c336fa3bc89a`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
-2026-10-06 07:35 に録画 246（サクラ + デルタ + ブラン + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261006-246_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`7247098dc40a`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+2026-10-06 07:35 に録画 246（鈴原サクラ + デルタ + ブラン + ノワール）を `intake.ts` で取り込み、この 1 本（`range/20261006-246_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4`）だけを同期した。E: と I: で sha256 が一致（`7247098dc40a`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
-- 2026-10-06 07:35 録画 247（サクラ + デルタ + ブラン + ノワール）: `range/20261006-247_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 07:35 録画 248（サクラ + デルタ + ユニ + ノワール）: `range/20261006-248_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 07:35 録画 249（サクラ + デルタ + ユニ + ノワール）: `range/20261006-249_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 07:35 録画 247（鈴原サクラ + デルタ + ブラン + ノワール）: `range/20261006-247_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 07:35 録画 248（鈴原サクラ + デルタ + ユニ + ノワール）: `range/20261006-248_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 07:35 録画 249（鈴原サクラ + デルタ + ユニ + ノワール）: `range/20261006-249_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
 
-2026-10-06 07:45 に、上の 4 本（サクラ + デルタ + ブラン / ユニ + ノワール）を、別のセッションが同じ時刻に 244・245（ミランダ）を取り込んでいたため、撮った順に 246〜249 へ振り直した（E: と I: の両方でファイル名を替え、sha256 の先頭と大きさが替える前と一致することを確かめた）。
+2026-10-06 07:45 に、上の 4 本（鈴原サクラ + デルタ + ブラン / ユニ + ノワール）を、別のセッションが同じ時刻に 244・245（ミランダ）を取り込んでいたため、撮った順に 246〜249 へ振り直した（E: と I: の両方でファイル名を替え、sha256 の先頭と大きさが替える前と一致することを確かめた）。
 
 - 2026-10-06 08:03 録画 250（マナ単騎）: `range/20261006-250_ar_mana_fixed-off.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 08:03 録画 251（マナ単騎）: `range/20261006-251_ar_mana_tboost-cube_fixed-off.mp4` を同期（E: と I: で sha256 が一致）。
@@ -49,24 +49,24 @@
 - 2026-10-06 20:12 録画 266（ミサト単騎）: `range/20261006-266_smg_misato_auto-burst.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 20:51 録画 274（ミサト単騎）: `range/20261006-274_smg_misato_auto-burst.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 20:51 録画 275（ミサト単騎）: `range/20261006-275_smg_misato_auto-burst.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 19:36 録画 254（サクラ + デルタ + I-DOLL・サン）: `range/20261006-254_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 19:36 録画 255（サクラ + デルタ + I-DOLL・サン）: `range/20261006-255_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 19:36 録画 256（サクラ + デルタ + I-DOLL・サン）: `range/20261006-256_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 19:36 録画 257（サクラ + デルタ + I-DOLL・サン）: `range/20261006-257_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 20:29 録画 267（サクラ + デルタ + ブラン + ノワール）: `range/20261006-267_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 20:29 録画 268（サクラ + デルタ + ブラン + ノワール）: `range/20261006-268_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 20:30 録画 269（サクラ + デルタ + ブラン + ノワール）: `range/20261006-269_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 20:39 録画 270（サクラ + デルタ + ユニ + ノワール）: `range/20261006-270_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 20:39 録画 271（サクラ + デルタ + ユニ + ノワール）: `range/20261006-271_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 20:39 録画 272（サクラ + デルタ + ユニ + ノワール）: `range/20261006-272_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 19:36 録画 254（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261006-254_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 19:36 録画 255（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261006-255_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 19:36 録画 256（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261006-256_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 19:36 録画 257（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261006-257_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 20:29 録画 267（鈴原サクラ + デルタ + ブラン + ノワール）: `range/20261006-267_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 20:29 録画 268（鈴原サクラ + デルタ + ブラン + ノワール）: `range/20261006-268_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 20:30 録画 269（鈴原サクラ + デルタ + ブラン + ノワール）: `range/20261006-269_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 20:39 録画 270（鈴原サクラ + デルタ + ユニ + ノワール）: `range/20261006-270_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 20:39 録画 271（鈴原サクラ + デルタ + ユニ + ノワール）: `range/20261006-271_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 20:39 録画 272（鈴原サクラ + デルタ + ユニ + ノワール）: `range/20261006-272_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 22:46 録画 276（ソルジャーF.A.単騎）: `range/20261006-276_sg_soldier-fa.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 22:52 録画 277（I-DOLL・オーシャン + ソルジャーF.A.）: `range/20261006-277_sg_soldier-fa_burst.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 23:10 録画 282（ソルジャーE.G.単騎。取り込んだときの番号は 276 で、main の録画と重なったので同じ日に 282 に振り直し、E: と I: のファイル名も替えた）: `range/20261006-282_ar_soldier-eg_s2-no-fire.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 23:20 録画 283（ソルジャーE.G.単騎。取り込んだときの番号は 277 で、同じく 283 に振り直した）: `range/20261006-283_ar_soldier-eg_auto.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 23:20 録画 278（ソルジャーE.G.単騎）: `range/20261006-278_ar_soldier-eg_auto.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 23:20 録画 279（ソルジャーE.G.単騎）: `range/20261006-279_ar_soldier-eg_auto.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 23:20 録画 280（サクラ + デルタ + ソルジャーE.G.）: `range/20261006-280_smg+sr+ar_sakura+delta+soldier-eg_eg-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-06 23:20 録画 281（サクラ + デルタ + ソルジャーE.G.）: `range/20261006-281_smg+sr+ar_sakura+delta+soldier-eg_eg-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 23:20 録画 280（鈴原サクラ + デルタ + ソルジャーE.G.）: `range/20261006-280_smg+sr+ar_sakura+delta+soldier-eg_eg-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-06 23:20 録画 281（鈴原サクラ + デルタ + ソルジャーE.G.）: `range/20261006-281_smg+sr+ar_sakura+delta+soldier-eg_eg-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 23:40 録画 284（I-DOLL・フラワー + ユニ + アスカ）: `range/20261006-284_ar_asuka_s1-extend.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 23:50 録画 285（ミランダ + デルタ + I-DOLL・サン）: `range/20261006-285_smg+sr+ar_miranda+delta+idoll-sun_delta-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-06 23:58 録画 286（I-DOLL・フラワー + エマ：タクティカル・アップ）: `range/20261006-286_rl+mg_flower+emma-tu_explosion.mp4` を同期（E: と I: で sha256 が一致）。
@@ -94,14 +94,14 @@
 - 2026-10-07 23:46 録画 318（ミランダ単騎）: `range/20261007-318_smg_miranda_burst-solo.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-07 23:52 録画 320（アニス：スター単騎）: `range/20261007-320_rl_anis-star_solo_far-burst-early.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-07 23:53 録画 321（アニス：スター単騎）: `range/20261007-321_rl_anis-star_solo_far-burst-late.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-07 23:37 録画 319（サクラ + デルタ + ブラン + ノワール）: `range/20261007-319_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-07 23:37 録画 310（サクラ + デルタ + ブラン + ノワール）: `range/20261007-310_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-07 23:37 録画 311（サクラ + デルタ + ブラン + ノワール）: `range/20261007-311_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-07 23:38 録画 312（サクラ + デルタ + ブラン + ノワール）: `range/20261007-312_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-07 23:38 録画 313（サクラ + デルタ + ユニ + ノワール）: `range/20261007-313_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-07 23:38 録画 314（サクラ + デルタ + ユニ + ノワール）: `range/20261007-314_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-07 23:38 録画 315（サクラ + デルタ + ユニ + ノワール）: `range/20261007-315_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-07 23:38 録画 316（サクラ + デルタ + ユニ + ノワール）: `range/20261007-316_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-07 23:37 録画 319（鈴原サクラ + デルタ + ブラン + ノワール）: `range/20261007-319_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-07 23:37 録画 310（鈴原サクラ + デルタ + ブラン + ノワール）: `range/20261007-310_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-07 23:37 録画 311（鈴原サクラ + デルタ + ブラン + ノワール）: `range/20261007-311_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-07 23:38 録画 312（鈴原サクラ + デルタ + ブラン + ノワール）: `range/20261007-312_smg+sr+ar+sg_sakura+delta+blanc+noir_blanc-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-07 23:38 録画 313（鈴原サクラ + デルタ + ユニ + ノワール）: `range/20261007-313_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-07 23:38 録画 314（鈴原サクラ + デルタ + ユニ + ノワール）: `range/20261007-314_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-07 23:38 録画 315（鈴原サクラ + デルタ + ユニ + ノワール）: `range/20261007-315_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-07 23:38 録画 316（鈴原サクラ + デルタ + ユニ + ノワール）: `range/20261007-316_smg+sr+rl+sg_sakura+delta+yuni+noir_yuni-control.mp4` を同期（E: と I: で sha256 が一致）。
 
 2026-10-07 に、録画 319 は取り込みのときの番号（309）が別のブランチの録画（フォルクヴァン）と重なったので振り直し、E: と I: のファイル名と `derived/` の置き場所を替えた。中身は変えていない（sha256 は上のとおり）。
 
@@ -140,17 +140,17 @@
 - 2026-10-08 20:11 録画 350（リター単騎）: `range/20261008-350_smg_liter_auto.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-08 21:47 録画 366（ココア + デルタ + ラピ）: `range/20261008-366_sr+sr+ar_cocoa+delta+rapi_rapi-auto.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-08 23:20 録画 367（モラン単騎）: `range/20261008-367_ar_moran_burst-left.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-08 23:20 録画 368（サクラ + デルタ + レイヴン）: `range/20261008-368_smg+sr+rl_sakura+delta+raven_burst-left.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-08 23:20 録画 368（鈴原サクラ + デルタ + レイヴン）: `range/20261008-368_smg+sr+rl_sakura+delta+raven_burst-left.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-08 23:08 録画 369（モラン単騎）: `range/20261008-369_ar_moran_auto.mp4` を同期（E: と I: で sha256 が一致）。 取り込み元の元ファイルは `intake.ts` が E: へ移した。取り込みのときは 367 を振ったが、ほかの取り込みと重なったので、E: と I: のファイル名を 369 に変えた。
 - 2026-10-08 23:31 録画 370（モラン単騎）: `range/20261008-370_ar_moran_auto.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-08 21:32 録画 354（サクラ + デルタ + ドレイク）: `range/20261008-354_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-08 21:32 録画 355（サクラ + デルタ + ドレイク）: `range/20261008-355_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-08 21:32 録画 356（サクラ + デルタ + ドレイク）: `range/20261008-356_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-08 21:32 録画 357（サクラ + デルタ + ドレイク）: `range/20261008-357_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-08 21:32 録画 358（サクラ + デルタ + I-DOLL・サン）: `range/20261008-358_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-08 21:32 録画 359（サクラ + デルタ + I-DOLL・サン）: `range/20261008-359_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-08 21:32 録画 360（サクラ + デルタ + I-DOLL・サン）: `range/20261008-360_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
-- 2026-10-08 21:32 録画 361（サクラ + デルタ + I-DOLL・サン）: `range/20261008-361_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-08 21:32 録画 354（鈴原サクラ + デルタ + ドレイク）: `range/20261008-354_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-08 21:32 録画 355（鈴原サクラ + デルタ + ドレイク）: `range/20261008-355_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-08 21:32 録画 356（鈴原サクラ + デルタ + ドレイク）: `range/20261008-356_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-08 21:32 録画 357（鈴原サクラ + デルタ + ドレイク）: `range/20261008-357_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-08 21:32 録画 358（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261008-358_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-08 21:32 録画 359（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261008-359_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-08 21:32 録画 360（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261008-360_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-08 21:32 録画 361（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261008-361_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-09 00:45 録画 371（ノワール単騎）: `range/20261009-371_sg_noir_spec-off.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-09 00:45 録画 372（ノワール単騎）: `range/20261009-372_sg_noir_spec-off.mp4` を同期（E: と I: で sha256 が一致）。
 
@@ -192,9 +192,9 @@
 - 2026-10-10 00:16 録画 403（ティア単騎）: `range/20261010-403_rl_tia_manual.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-10 00:26 録画 404（メイデン単騎）: `range/20261010-404_sg_maiden_manual.mp4` を同期（E: と I: で sha256 が一致）。
 
-2026-10-10 13:51 に録画 405（サクラ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-405_smg_sakura_manual_first-full.mp4`）だけを同期した。E: と I: で sha256 が一致（`b73b029b6be2`）。取り込み元の元ファイルは残した（`--copy`）。
+2026-10-10 13:51 に録画 405（鈴原サクラ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-405_smg_sakura_manual_first-full.mp4`）だけを同期した。E: と I: で sha256 が一致（`b73b029b6be2`）。取り込み元の元ファイルは残した（`--copy`）。
 
-2026-10-10 13:51 に録画 406（サクラ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-406_smg_sakura_manual_first-full.mp4`）だけを同期した。E: と I: で sha256 が一致（`91cba8e271a6`）。取り込み元の元ファイルは残した（`--copy`）。
+2026-10-10 13:51 に録画 406（鈴原サクラ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-406_smg_sakura_manual_first-full.mp4`）だけを同期した。E: と I: で sha256 が一致（`91cba8e271a6`）。取り込み元の元ファイルは残した（`--copy`）。
 
 - 2026-10-10 14:52 録画 407（ココア + ソルジャーF.A. + アリス + レイヴン）: `range/20261010-407_sr+sg+sr+rl_cocoa+soldier-fa+alice+raven_alice-burst-repro.mp4` を同期（E: と I: で sha256 が一致）。
 
