@@ -1,6 +1,6 @@
 // Google Drive API（v3）の薄いラッパ。fetch.ts が使う。依存パッケージは足さず、Node の fetch と crypto だけで書く。
 // 認証はサービスアカウント（読み取り専用のスコープ）。鍵は環境変数 NIKKE_DRIVE_SA_KEY に、鍵の JSON をそのままか
-// base64 にして入れる（plan/captures/index.md「クラウド環境での取り寄せ」）。鍵とアクセストークンは出力しない。
+// base64 にして入れる（plan/captures/storage.md「クラウド環境での取り寄せ」）。鍵とアクセストークンは出力しない。
 import { createSign } from 'node:crypto';
 import { createWriteStream } from 'node:fs';
 import { Readable } from 'node:stream';

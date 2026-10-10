@@ -54,7 +54,7 @@ NIKKE のダメージ計算ツール。
 ## コミットしないもの
 
 - `scratch/`（オーナーの育成データを含む。公開リポジトリ）
-- 録画の実体と証拠フレーム（スクリーンショット）。どちらも `E:/nikke_project_captures/` に置き、追跡するのは台帳と手引きだけ（`.gitignore` 参照）。クラウド環境では Google Drive のバックアップから取り寄せる（`plan/captures/index.md`「クラウド環境での取り寄せ」）
+- 録画の実体と証拠フレーム（スクリーンショット）。どちらも `E:/nikke_project_captures/` に置き、追跡するのは台帳と手引きだけ（`.gitignore` 参照）。クラウド環境では Google Drive のバックアップから取り寄せる（`plan/captures/storage.md`「クラウド環境での取り寄せ」）
 - `private/`（個人の情報。下記）
 
 ## 記録の置き場所
@@ -68,7 +68,8 @@ NIKKE のダメージ計算ツール。
 | `records/claims/`・`plan/claims.md`                  | 結論（1 件 1 ファイルの JSON。ID・状態・話題・根拠の等級・根拠・モデル側）と、話題ごとの一覧（生成）。問いからいまの結論を引くのは一覧                             |
 | `records/verifications/`・`plan/verifications.md`    | 検証記録（1 回の検証を 1 ファイル。問い・予測・結果・結論）と、その一覧（生成。開いている検証が冒頭に出る。予測との比べと最小構成の警告も出る）                    |
 | `records/predictions/`                               | 予測（任意。検証記録ごとに 1 ファイル。編成・仮説・比べる指標と、`npm run records:predict` が書く値）。撮影計画で仮説を見分けられるか確かめるのに使う              |
-| `plan/captures/index.md`                             | 置き場所・撮影プロトコル・命名規約・キャラ同定・解析ツールと、録画ごとの注記（録画の一覧の表は `plan/captures/recordings.md`）                                     |
+| `plan/captures/index.md`                             | 命名規約・撮影プロトコル・キャラ同定と、録画ごとの注記（録画の一覧の表は `plan/captures/recordings.md`）                                                           |
+| `plan/captures/storage.md`・`plan/captures/tools.md` | 録画の置き場所・バックアップ・クラウド環境での取り寄せ（storage.md）と、解析ツール・フレーム番号の約束・証拠フレーム（tools.md）                                   |
 | `records/recordings/`・`plan/captures/recordings.md` | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性（1 本 1 ファイルの JSON）と、その一覧（生成。`npm run records:table`）                              |
 | `records/observations/`・`plan/residuals.md`         | 録画から読んだ値（観測値）と、モデルとの残差の一覧（生成。`npm run records:check`）                                                                                |
 | `plan/verification.md`                               | 2026-09-26 までの実測と確認の記録（凍結。書き足さない）                                                                                                            |

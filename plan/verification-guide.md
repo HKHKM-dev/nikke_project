@@ -59,7 +59,7 @@
 ## 6. 読む
 
 - 読み取りはレシピで: `npm run records:read -- <録画 id> --recipe <名前> --source V-NNNN --write`。レシピと `--opt` の一覧は `npm run records:read -- --list`。観測値が `records/observations/<録画 id>.json` に足され、`source` に検証記録の ID、`method.tool` にレシピ名と版が入る。
-- レシピに無い値は、解析ツール（[captures/index.md](captures/index.md)「解析ツール」）か目で読み、同じファイルに手で書く（`method.note` に読み方）。観測値の形は `packages/core/src/records/observations.ts` の型（[design-records-automation.md](design-records-automation.md) 3.4 節）。
+- レシピに無い値は、解析ツール（[captures/tools.md](captures/tools.md)）か目で読み、同じファイルに手で書く（`method.note` に読み方）。観測値の形は `packages/core/src/records/observations.ts` の型（[design-records-automation.md](design-records-automation.md) 3.4 節）。
 - モデルと比べる値は、比べる指定（`compare`。指標は照合ランナー `observations.ts` の `METRICS`）を書く。要る指標が無ければ `METRICS` に足す（足した PR に入れる）。予測ファイルの指標と `metric`・`args`・`setup` を同じにすると、予測と自動で結び付く。
 - 繰り返し使う読み方はレシピにする（`tools/captures/recipes/`）。読み取りの落とし穴は [captures/guide.md](captures/guide.md)。
 
@@ -89,7 +89,7 @@
 
 ## 付録 A. 機構の検証
 
-結論の対象の `--mechanism` の語彙（`claims.ts` の `CLAIM_MECHANISMS`）ごとに、見るものと置き場所をまとめる。指標の全部は `observations.ts` の `METRICS`、レシピの全部は `records:read -- --list`、解析ツールの全部は [captures/index.md](captures/index.md)「解析ツール」。
+結論の対象の `--mechanism` の語彙（`claims.ts` の `CLAIM_MECHANISMS`）ごとに、見るものと置き場所をまとめる。指標の全部は `observations.ts` の `METRICS`、レシピの全部は `records:read -- --list`、解析ツールの全部は [captures/tools.md](captures/tools.md)。
 
 | 機構            | 見るもの                                          | モデル側の主な置き場所                                              | 代表の指標                                                                                | 読む道具                                                                                                    | 手引き（[captures/guide.md](captures/guide.md)） |
 | --------------- | ------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |

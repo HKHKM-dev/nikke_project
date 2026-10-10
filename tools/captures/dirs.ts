@@ -1,4 +1,4 @@
-// 録画の置き場所（plan/captures/index.md「置き場所」「クラウド環境での取り寄せ」）。
+// 録画の置き場所（plan/captures/storage.md「置き場所」「クラウド環境での取り寄せ」）。
 // 環境変数があればそれ。無ければ Windows（オーナーの手元）は E:、それ以外（クラウド環境）はホームの下にする。
 // リポジトリの中には置かない（録画は公開しない）。
 import { homedir } from 'node:os';
@@ -21,7 +21,7 @@ export function legacyDir(): string {
 }
 
 /**
- * capturesDir() のバックアップ先（NIKKE_BACKUP_DIR。plan/captures/index.md「バックアップ」）。無ければ Windows（オーナーの手元）は
+ * capturesDir() のバックアップ先（NIKKE_BACKUP_DIR。plan/captures/storage.md「バックアップ」）。無ければ Windows（オーナーの手元）は
  * Google Drive for desktop のメインアカウント側の I:、それ以外（クラウド環境）は null（同期しない）
  */
 export function backupDir(): string | null {
