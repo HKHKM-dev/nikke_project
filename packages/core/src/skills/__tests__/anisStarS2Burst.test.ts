@@ -133,7 +133,7 @@ describe('fixedChargeTime（チャージ時間の固定）', () => {
     expect(chargeShotIntervalFrames(up, DEFAULT_WEAPON_MODEL)).toBe(59 + 23);
   });
 
-  it('carries the charge over after a reload when the fixed charge time ends mid-charge (C-0380)', () => {
+  it('carries the charge over after a reload when the fixed charge time ends mid-charge (C-0541)', () => {
     const slow = firingParams(anis.shot);
     const fixed = firingParams(anis.shot, { ...ZERO_BUFFS, fixedChargeTime: 0.7 });
     /** 0.7 秒の固定で 1 本目のマガジンを撃ち切り、最後の発から switchAt フレーム目に 1 秒へ戻したときの、リロードを挟む間隔 */
@@ -156,7 +156,7 @@ describe('fixedChargeTime（チャージ時間の固定）', () => {
     expect(reloadCrossing(inWindow + 1)).toBe(inWindow);
   });
 
-  it('carries the charge elapsed over when the charge time changes mid-charge (C-0380)', () => {
+  it('carries the charge elapsed over when the charge time changes mid-charge (C-0542)', () => {
     const slow = firingParams(anis.shot);
     const fixed = firingParams(anis.shot, { ...ZERO_BUFFS, fixedChargeTime: 0.7 });
     /** 1 発目の後、switchAt フレーム目から 0.7 秒の固定に切り替えたときの、1 発目から 2 発目までのフレーム数 */

@@ -61,7 +61,7 @@ export type FiringParams = {
    * 押下チャージ型（inputType が DOWN_Charge）のチャージ武器か。押下チャージ型は、発と発の間がチャージ時間だけで、
    * 解放の分（WeaponModel.chargeReleaseFrames）を足さない（アニス：スターで、窓の外 59f・チャージ時間の固定の窓 42f。C-0222）。
    * リロードの後の 1 発目は今までどおり足す。チャージの途中でチャージ時間が変わったら、前の発（リロードの後は、込め終えてから
-   * 解放の分の後）からの経過を持ち越す（frame/shooter.ts の chargeElapsed。C-0380）。ほかの 5 体はアニス：スターの形を当てている（未確認。V-0134）
+   * 解放の分の後）からの経過を持ち越す（frame/shooter.ts の chargeElapsed。C-0541・C-0542）。ほかの 5 体はアニス：スターの形を当てている（未確認。V-0134）
    */
   downCharge: boolean;
   /** Stage 11 モダニア: 装弾数無限（撃っても残弾を減らさない） */
