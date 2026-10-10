@@ -78,7 +78,7 @@ const first = Number(values.from);
 const last = values.to === undefined ? undefined : Number(values.to);
 
 async function readLengths(): Promise<number[]> {
-  // select を必ず通す（hud.ts と同じ）。通さないとフレームの番号が index.md「フレーム番号の約束」とずれる
+  // select を必ず通す（hud.ts と同じ）。通さないとフレームの番号が tools.md「フレーム番号の約束」とずれる
   const select = last === undefined ? `gte(n\\,${first})` : `between(n\\,${first}\\,${last})`;
   const args = [
     '-v',

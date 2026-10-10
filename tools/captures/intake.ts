@@ -6,7 +6,7 @@
 // 命名規約は plan/captures/index.md「命名規約」（<YYYYMMDD>-<番号 3 桁>_<識別子>.mp4。識別子は英小文字・数字・-・_・+）。
 // 日付は --date、無ければ元のファイル名の YYYY-MM-DD、無ければファイルの更新日時。既定は移動（--copy で元を残す）。
 // 最後に、移した録画を Google Drive のバックアップ先（dirs.ts の backupDir()）へ robocopy で同期し、両方の sha256 を突き合わせる
-// （plan/captures/index.md「バックアップ」）。バックアップ先が無い環境と --no-backup では同期しない。同期に失敗したら終了コード 1。
+// （plan/captures/storage.md「バックアップ」）。バックアップ先が無い環境と --no-backup では同期しない。同期に失敗したら終了コード 1。
 // 同期できたら plan/captures/backup-log.md に 1 段落足す。
 // 取り込んだ後は npm run records:table（台帳の表）と、キャラの確かめに node tools/captures/probe-result.ts <動画> --list。
 import {
@@ -258,7 +258,7 @@ function appendBackupLog(root: string): void {
 
 if (!(await backup())) {
   console.error(
-    '取り込み（移動と records/recordings の JSON）は済んでいる。同期は plan/captures/index.md「バックアップ」の手順で手で行う',
+    '取り込み（移動と records/recordings の JSON）は済んでいる。同期は plan/captures/storage.md「バックアップ」の手順で手で行う',
   );
   process.exit(1);
 }

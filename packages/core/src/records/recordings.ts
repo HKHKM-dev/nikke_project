@@ -5,7 +5,7 @@ import type { CollectionInput, CubeInput, OverloadLine } from '../build.ts';
 import type { SkillLevels } from '../skills/resolve.ts';
 import type { CharacterData, Element, GearPart } from '../types.ts';
 
-/** 録画を置く種別フォルダ（台帳の「置き場所」の語彙） */
+/** 録画を置く種別フォルダ（plan/captures/storage.md「置き場所」の語彙） */
 export const RECORDING_FOLDERS = ['range', 'interception', 'raid', 'skill', 'burst', 'ui'] as const;
 export type RecordingFolder = (typeof RECORDING_FOLDERS)[number];
 
