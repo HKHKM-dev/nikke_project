@@ -152,6 +152,14 @@ function toSkill(en: RawSkillDetail, ja: RawSkillDetail): SkillRaw {
   };
 }
 
+/**
+ * ゲームの名前が同じキャラの呼び名（resourceId → 名前）。ゲームの名前に上書きする。
+ * 836 はゲームでは 282 と同じ「サクラ」。2026-10-11 のオーナーの決定で 836 を「鈴原サクラ」と呼ぶ（282 はそのまま）
+ */
+export const NAME_OVERRIDES: Readonly<Record<number, { ja: string; en: string }>> = {
+  836: { ja: '鈴原サクラ', en: 'Sakura Suzuhara' },
+};
+
 const TREASURE_SLOT: Record<number, SkillSlot> = { 1: 'skill1', 2: 'skill2', 3: 'burst' };
 const BASE_SKILL_KEY = { skill1: 'skill1_detail', skill2: 'skill2_detail', burst: 'ulti_skill_detail' } as const;
 /** 宝物版のスキル ID の下 6 桁は基礎版 + 50（先頭の桁は違うことがある。plan/design-stage9.md 0.3 節） */
@@ -216,7 +224,7 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
   const hasBonusRange = en.bonusrange_max > 0;
   return {
     resourceId: en.resource_id,
-    name: { ja: ja.name_localkey, en: en.name_localkey },
+    name: NAME_OVERRIDES[en.resource_id] ?? { ja: ja.name_localkey, en: en.name_localkey },
     rarity: oneOf(RARITIES, en.original_rare, 'original_rare'),
     class: oneOf(CLASSES, en.class, 'class'),
     corporation: en.corporation,

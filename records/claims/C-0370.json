@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
-  "basis": "`281-04`（予測を読む前に commit した録画 281 で、5 回とも 29f。予測ファイル records/predictions/V-0242.json の H1 と同じ）。値は録画 280 で読んだ（`280-06`。5 回とも 29f）。どちらもサクラ + デルタ（機構が確定したキャラ）との編成。V-0247・V-0242",
+  "basis": "`281-04`（予測を読む前に commit した録画 281 で、5 回とも 29f。予測ファイル records/predictions/V-0242.json の H1 と同じ）。値は録画 280 で読んだ（`280-06`。5 回とも 29f）。どちらも鈴原サクラ + デルタ（機構が確定したキャラ）との編成。V-0247・V-0242",
   "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のソルジャーE.G. の 1 行（hitFrames 7・effectFrames 0。バースト使用時の効果は無い）。`data/skills/300.json` の burst の effects[0]。III の遅れは III のタイマーの 00.00（`burst/schedule.ts` の `hexagonFrameOf`。本当の発動の `FULL_BURST_AFTER_ACTIVATION_FRAMES` = 6f 後。2026-10-10 のオーナーの判断。plan/design-burst-hit-origin.md 8 節）から足す",
   "replaces": [],
   "updated": "2026-10-11",

@@ -13,7 +13,7 @@
     {
       "slot": 1,
       "rid": 836,
-      "name": "サクラ",
+      "name": "鈴原サクラ",
       "controlled": false
     },
     {
@@ -39,5 +39,5 @@
   "fixedSpec": true,
   "autoFire": false,
   "autoBurst": true,
-  "conditionNote": "V-0354 の A（▲あり）。サクラ（AI）・デルタ（AI）・ドレイク（操作・撃たない・宝物 3 段階）。オートバースト ON。A の 4 本を続けて撮り、続けて B の 4 本（358〜361）を撮った"
+  "conditionNote": "V-0354 の A（▲あり）。鈴原サクラ（AI）・デルタ（AI）・ドレイク（操作・撃たない・宝物 3 段階）。オートバースト ON。A の 4 本を続けて撮り、続けて B の 4 本（358〜361）を撮った"
 }
