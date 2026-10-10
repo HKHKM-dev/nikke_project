@@ -1,0 +1,29 @@
+{
+  "id": "408",
+  "date": "2026-10-10",
+  "folder": "range",
+  "file": "20261010-408_sg_noir_auto_nocube.mp4",
+  "original": "2026-10-10_19-05-54.mp4",
+  "durationSec": 201.3,
+  "frames": 12077,
+  "fps": 60,
+  "sizeMB": 243.9,
+  "sha256": "9e287757e0c6",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 OFF）。V-0408 のキューブなし（撮った順の 1 本目）。冒頭のキューブの画面でキューブなしを確かめた。出撃画面でスペック固定 OFF と編成（真ん中の枠にノワール 1 体）、戦闘中の画面左上で AUTO 射撃 ON・オートバースト OFF を確かめた"
+}

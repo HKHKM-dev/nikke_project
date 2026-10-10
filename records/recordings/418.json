@@ -1,0 +1,29 @@
+{
+  "id": "418",
+  "date": "2026-10-10",
+  "folder": "range",
+  "file": "20261010-418_sg_noir_auto_cube.mp4",
+  "original": "2026-10-10_20-05-30.mp4",
+  "durationSec": 199.2,
+  "frames": 11951,
+  "fps": 60,
+  "sizeMB": 241.4,
+  "sha256": "1f2b2dbce85d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 OFF）。V-0411（V-0408 の追加の撮影）のキューブあり（撮った順の 10 本目）。冒頭のキューブの画面でキューブありを確かめた（アサルトキューブ。最初の 6 本と同じレベル）。出撃画面でスペック固定 OFF と編成（真ん中の枠にノワール 1 体）、戦闘中の画面左上で AUTO 射撃 ON・オートバースト OFF を確かめた"
+}

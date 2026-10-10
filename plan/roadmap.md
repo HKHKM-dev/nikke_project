@@ -78,7 +78,7 @@
 - 持続ダメージの語彙 `dot`（2026-09-28）→ 完了: V-0032・V-0039・V-0040・V-0051・V-0052・V-0054・V-0060・V-0064・V-0067、[design-nihilister.md](design-nihilister.md)・[design-kurumi.md](design-kurumi.md)・[design-damage-taken.md](design-damage-taken.md)
 - クルミ S2 の語彙と定義（2026-10-05）→ 完了: V-0181・V-0182、C-0276・C-0277、[design-kurumi-s2.md](design-kurumi-s2.md)
 - SG の命中率（2026-10-01）→ 一部完了: V-0056・V-0062・V-0063・V-0069・V-0070・V-0072・V-0073・V-0076・V-0105・V-0372、C-0150・C-0495、[design-sg-hit-rate.md](design-sg-hit-rate.md)。スペック固定 OFF の近のコア命中率は ON と変わらない（V-0372、C-0495）。残りは backlog 2-1
-- 命中率▲が弾丸命中率に効く式（2026-10-03 起票）→ 一部完了: V-0118・V-0148・V-0401、C-0192・C-0519（SMG の中遠 B・C）、[design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)。残りは backlog 2-1
+- 命中率▲が弾丸命中率に効く式（2026-10-03 起票）→ 一部完了: V-0118・V-0148・V-0401・V-0408・V-0411、C-0192・C-0519（SMG の中遠 B・C）・C-0527（SG の中近・遠。仮説）、[design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)。残りは backlog 2-1
 - 着地直後の 1 発のコアの外れ（2026-10-02 起票）→ 完了: V-0091、C-0193〜C-0195。続きは backlog 2-8
 - 照準の動く速さとコアへの跳び（2026-10-04 起票）→ 完了: V-0120、C-0199・C-0200。続きは backlog 2-8
 - AR・SMG・MG の撃ち始めの待ちの読み直し（2026-10-05）→ 完了: V-0196、C-0291・C-0292（C-0195 を棄却）。続きは backlog 2-8
