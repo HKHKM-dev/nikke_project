@@ -64,14 +64,14 @@
 
 予測は 2026-10-10（commit 10e118a）に出した。
 
-| 指標                                | 実測         | 予測 Hb       |
-| ----------------------------------- | ------------ | ------------- |
-| eun-pre-core（hitDamage）           | （実測なし） | 686,756.019   |
-| flower-fb-core（hitDamage）         | （実測なし） | 396,429.036   |
-| eun-fb-camo-core（hitDamage）       | （実測なし） | 1,868,382.24  |
-| eun-fb-camo-core-dist（hitDamage）  | （実測なし） | 2,092,588.109 |
-| eun-after-fb-camo-core（hitDamage） | （実測なし） | 977,414.891   |
-| eun-chain2-camo-core（hitDamage）   | （実測なし） | 1,249,820.421 |
+| 指標                                | 実測                  | 予測 Hb                         |
+| ----------------------------------- | --------------------- | ------------------------------- |
+| eun-pre-core（hitDamage）           | 686,756（`414-03`）   | 686,756.019（+0.019、許容内）   |
+| flower-fb-core（hitDamage）         | 396,429（`414-04`）   | 396,429.036（+0.036、許容内）   |
+| eun-fb-camo-core（hitDamage）       | 1,868,382（`414-05`） | 1,868,382.24（+0.24、許容内）   |
+| eun-fb-camo-core-dist（hitDamage）  | （実測なし）          | 2,092,588.109                   |
+| eun-after-fb-camo-core（hitDamage） | 977,415（`414-06`）   | 977,414.891（-0.109、許容内）   |
+| eun-chain2-camo-core（hitDamage）   | 1,249,820（`414-07`） | 1,249,820.421（+0.421、許容内） |
 
 <!-- records:predictions:end -->
 

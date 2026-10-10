@@ -3889,10 +3889,12 @@
 - **[V-0409](../records/verifications/V-0409-true-damage-bucket-attack-damage.md)** 防御力無視ダメージ▲の置き場所（攻撃ダメージ▲と同じ和か、別か）
   - 問い: ウンファ：タクティカル・アップの S1 のカモフラージュの防御力無視ダメージ▲が、味方の攻撃ダメージ▲と 1 つの和 (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ) で掛かる（`TRUE_DAMAGE_BUCKET` = `attackDamage`。(b)）と読んで、モデルは、ヘルムの宝物版 S2 の攻撃ダメージ▲が乗ったカモフラージュの中の 1 発と合うか（対立する読みは、攻撃ダメージ▲とは別の乗数 (1 + Σ攻撃ダメージ) × (1 + Σ防御力無視ダメージ + Σ発射体爆発ダメージ)。(c)）
   - 話題: スキル・キャラ固有・日付: 2026-10-10・状態: 調査中
+  - 観測値: 414-01、414-02、414-03、414-04、414-05、414-06、414-07、414-08
   - 予測（2026-10-10、commit 10e118a）との比べ:
-    - eun-pre-core（hitDamage）: 実測なし。Hb 686,756.019
-    - flower-fb-core（hitDamage）: 実測なし。Hb 396,429.036
-    - eun-fb-camo-core（hitDamage）: 実測なし。Hb 1,868,382.24
+    - eun-pre-core（hitDamage）: 実測 686,756（414-03）。Hb 686,756.019（+0.019、許容内）
+    - flower-fb-core（hitDamage）: 実測 396,429（414-04）。Hb 396,429.036（+0.036、許容内）
+    - eun-fb-camo-core（hitDamage）: 実測 1,868,382（414-05）。Hb 1,868,382.24（+0.24、許容内）
     - eun-fb-camo-core-dist（hitDamage）: 実測なし。Hb 2,092,588.109
-    - eun-after-fb-camo-core（hitDamage）: 実測なし。Hb 977,414.891
-    - eun-chain2-camo-core（hitDamage）: 実測なし。Hb 1,249,820.421
+    - eun-after-fb-camo-core（hitDamage）: 実測 977,415（414-06）。Hb 977,414.891（-0.109、許容内）
+    - eun-chain2-camo-core（hitDamage）: 実測 1,249,820（414-07）。Hb 1,249,820.421（+0.421、許容内）
+    - 許容内の指標: Hb 5/5。合う仮説は Hb だけ
