@@ -83,7 +83,7 @@ node tools/captures/probe.ts "I:/マイドライブ/nikke_project_captures"
 
 `probe.ts` が見るのは `.mp4` だけなので、スクショと証拠フレームは PowerShell の `Get-FileHash`（既定で SHA256）で突き合わせる。
 
-同期の実行の記録は [backup-log.md](backup-log.md) にある（同期したら 1 段落足す。`intake.ts` で同期した録画の段落は `intake.ts` が足す）。
+同期の実行の記録は [backup-log.md](backup-log.md) にある（同期したら足す。`intake.ts` で同期した録画は `intake.ts` が 1 行足す。2026-10-05 までは [backup-log-old.md](backup-log-old.md)。凍結）。
 
 ### 冗長性の現状と限界
 
