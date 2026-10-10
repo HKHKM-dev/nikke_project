@@ -1,9 +1,8 @@
-// 予測の固定（plan/design-records-automation.md 3.2 節）。検証記録ごとに records/predictions/V-NNNN.json を置き、
+// 予測（plan/design-records-automation.md 3.2 節）。検証記録ごとに records/predictions/V-NNNN.json を置き、
 // 手書きの部分（編成・仮説・比べる指標）から `npm run records:predict -- V-NNNN` が sim（calc）を回して predicted を書き込む。
-// 撮る前に commit することで「予測は撮る前に書く」を履歴で示す。records:check は、同じ検証記録を source にする観測値と
-// 突き合わせて、仮説ごとに合うかを plan/verifications.md に出す（3.5 節）。
-// 既存の録画の読み直しでは、予測の時点で既にあった観測値を控え（seen）に残し、それに結び付いた指標は後付けとして数えない
-// （plan/design-reread-prediction.md 5 節）。
+// records:check は、同じ検証記録を source にする観測値と突き合わせて、仮説ごとに合うかを plan/verifications.md に出す（3.5 節）。
+// 予測は任意の道具で、確定の条件ではない。撮る前の順番も問わない（plan/design-investigation-review.md 1 節。2026-10-10 の
+// オーナーの決定）。撮影計画で、その録画で仮説を見分けられるかを確かめるのに使う。
 import { computeTeamDamage } from '../calc/model.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import type { TeamInput, TeamResult } from '../team.ts';
@@ -16,7 +15,6 @@ import {
   type Observation,
   type RecordsData,
 } from './observations.ts';
-import type { Claim } from './claims.ts';
 import {
   validateRecordingBuild,
   type LegacyRecording,
@@ -61,8 +59,8 @@ export type Predicted = {
   /** 仮説 ID → 指標 ID → 値 */
   values: Record<string, Record<string, number | number[]>>;
   /**
-   * 予測の時点の控え: 検証記録の「録画」に挙げた録画 → そのとき既にあった観測値の ID。録画が挙がっていれば読み直し
-   * （plan/design-reread-prediction.md 5 節の B1）。2026-10-04 より前の予測ファイルには無い
+   * 予測の時点の控え: 検証記録の「録画」に挙げた録画 → そのとき既にあった観測値の ID（plan/design-reread-prediction.md 5 節の B1）。
+   * 2026-10-04〜10-10 の予測ファイルにだけある。2026-10-10 から書かず、読まない（plan/design-investigation-review.md 1.3 節）
    */
   seen?: Record<string, string[]>;
 };
@@ -151,65 +149,9 @@ export function validatePredictions(
             errors.push(`${at}: predicted に ${h} の ${t} が無い（records:predict で出し直す）`);
         }
       }
-      for (const [r, ids] of Object.entries(f.predicted.seen ?? {})) {
-        for (const o of ids) {
-          if (!observationIds.has(o)) errors.push(`${at}: predicted.seen の録画 ${r} の観測値 ${o} が無い`);
-        }
-      }
     }
   }
   return errors;
-}
-
-/** 予測の時点の控え（seen）を作る: 録画ごとに、そのとき既にあった観測値の ID（plan/design-reread-prediction.md 5 節） */
-export function seenAtPrediction(
-  recordings: readonly string[],
-  observations: readonly Pick<Observation, 'id' | 'recording' | 'recordings'>[],
-): Record<string, string[]> {
-  return Object.fromEntries(
-    recordings.map((r) => [
-      r,
-      observations.filter((o) => o.recording === r || (o.recordings ?? []).includes(r)).map((o) => o.id),
-    ]),
-  );
-}
-
-/** 予測の時点で既にあった観測値の ID（控えの無い予測ファイルは空） */
-export function seenObservationIds(file: PredictionFile): Set<string> {
-  return new Set(Object.values(file.predicted?.seen ?? {}).flat());
-}
-
-/**
- * 読み直しだけに立つ確定の結論（plan/design-reread-prediction.md 5 節の C1。claims.md に印を出す）。
- * 根拠の観測値のうち予測ファイルのある検証記録のものを、読み直し（予測の控えに録画が挙がっている、か録画の日が検証記録の日付より前）と、
- * 予測の後に撮ったものに分け、読み直しが 1 つ以上で予測の後に撮ったものが無い結論
- */
-export function rereadOnlyClaims(
-  claims: readonly Pick<Claim, 'id' | 'state' | 'observations'>[],
-  observations: readonly Pick<Observation, 'id' | 'recording' | 'source'>[],
-  predictions: readonly PredictionFile[],
-  dates: { verifications: ReadonlyMap<string, string>; recordings: ReadonlyMap<string, string> },
-): Set<string> {
-  const byId = new Map(observations.map((o) => [o.id, o]));
-  const predictionOf = new Map(predictions.map((p) => [p.verification, p]));
-  const out = new Set<string>();
-  for (const c of claims) {
-    if (c.state !== '確定') continue;
-    let reread = 0;
-    let fresh = 0;
-    for (const id of c.observations) {
-      const o = byId.get(id);
-      const predicted = o === undefined ? undefined : predictionOf.get(o.source)?.predicted;
-      if (o === undefined || predicted === undefined || predicted === null) continue;
-      const recorded = dates.recordings.get(o.recording);
-      const opened = dates.verifications.get(o.source);
-      const before = recorded !== undefined && opened !== undefined && recorded < opened;
-      if ((predicted.seen !== undefined && o.recording in predicted.seen) || before) reread++;
-      else fresh++;
-    }
-    if (reread > 0 && fresh === 0) out.add(c.id);
-  }
-  return out;
 }
 
 /** 予測の編成を、照合ランナーの入力の組み方（buildTeamInput）に渡せる形にする */
@@ -302,8 +244,6 @@ export function observationsOfTarget(
 export type TargetComparison = {
   target: PredictionTarget;
   observation: Observation | undefined;
-  /** 結び付いた観測値が予測の時点で既にあった（後付けの照合。合う仮説の数に入れない） */
-  late: boolean;
   /** 仮説 ID → 予測の値と差（観測値があれば）。ok は許容（観測値の compare.tolerance）か spread の中 */
   byHypothesis: { hypothesis: string; predicted: number | number[]; diff: number | null; ok: boolean | null }[];
 };
@@ -311,7 +251,7 @@ export type TargetComparison = {
 export type PredictionComparison = {
   file: PredictionFile;
   targets: TargetComparison[];
-  /** 仮説 ID → 観測値のある指標（後付けを除く）のうち許容内の数 / その指標の数 */
+  /** 仮説 ID → 観測値のある指標のうち許容内の数 / その指標の数 */
   score: Map<string, { ok: number; total: number }>;
 };
 
@@ -321,23 +261,19 @@ export function comparePredictions(file: PredictionFile, observations: readonly 
   for (const h of file.hypotheses) score.set(h.id, { ok: 0, total: 0 });
   const targets: TargetComparison[] = [];
   if (file.predicted === null) return { file, targets, score };
-  const seen = seenObservationIds(file);
   for (const t of file.targets) {
     const observation = observationsOfTarget(file, t, observations)[0];
-    const late = observation !== undefined && seen.has(observation.id);
     const byHypothesis = file.hypotheses.map((h) => {
       const predicted = file.predicted!.values[h.id]?.[t.id];
       if (predicted === undefined) return { hypothesis: h.id, predicted: Number.NaN, diff: null, ok: null };
       if (observation === undefined) return { hypothesis: h.id, predicted, diff: null, ok: null };
       const r = withinObservation(observation, predicted);
-      if (!late) {
-        const s = score.get(h.id)!;
-        s.total++;
-        if (r.ok) s.ok++;
-      }
+      const s = score.get(h.id)!;
+      s.total++;
+      if (r.ok) s.ok++;
       return { hypothesis: h.id, predicted, diff: r.diff, ok: r.ok };
     });
-    targets.push({ target: t, observation, late, byHypothesis });
+    targets.push({ target: t, observation, byHypothesis });
   }
   return { file, targets, score };
 }
@@ -379,16 +315,12 @@ export function renderPredictionTable(comparison: PredictionComparison): string 
     const cells = t.byHypothesis.map((b) => {
       if (t.observation === undefined) return fmt(b.predicted);
       const mark = b.ok === null ? '' : b.ok ? '許容内' : '**許容外**';
-      const late = t.late ? '後付け' : '';
-      return `${fmt(b.predicted)}（${[fmtDiff(t.observation, b.diff), mark, late].filter(Boolean).join('、')}）`;
+      return `${fmt(b.predicted)}（${[fmtDiff(t.observation, b.diff), mark].filter(Boolean).join('、')}）`;
     });
     return `| ${t.target.id}（${t.target.metric}） | ${observed} | ${cells.join(' | ')} |`;
   });
   return [
     `予測は ${file.predicted.at}（commit ${file.predicted.commit.slice(0, 7)}）に出した。`,
-    ...(targets.some((t) => t.late)
-      ? ['', '「後付け」は、予測の時点で既にあった観測値との照合（合う仮説の数に入れない）。']
-      : []),
     '',
     header,
     sep,
@@ -407,9 +339,8 @@ export function renderPredictionLines(comparison: PredictionComparison): string[
       const diff = t.observation === undefined ? '' : fmtDiff(t.observation, b.diff);
       return `${b.hypothesis} ${fmt(b.predicted)}${diff || mark ? `（${[diff, mark].filter(Boolean).join('、')}）` : ''}`;
     });
-    const late = t.late ? '。予測の前に読んだ後付け' : '';
     const observed =
-      t.observation === undefined ? '実測なし' : `実測 ${fmt(t.observation.value)}（${t.observation.id}${late}）`;
+      t.observation === undefined ? '実測なし' : `実測 ${fmt(t.observation.value)}（${t.observation.id}）`;
     lines.push(`    - ${t.target.id}（${t.target.metric}）: ${observed}。${parts.join('、')}`);
   }
   const fits = [...score.entries()].filter(([, s]) => s.total > 0);

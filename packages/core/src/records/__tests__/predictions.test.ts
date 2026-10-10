@@ -17,9 +17,7 @@ import {
   observationsOfTarget,
   renderPredictionLines,
   renderPredictionTable,
-  rereadOnlyClaims,
   runPredictions,
-  seenAtPrediction,
   todayLocal,
   validatePredictions,
   type PredictionFile,
@@ -156,70 +154,20 @@ describe('records/predictions', () => {
     expect(lines).toHaveLength(2);
   });
 
-  it('re-reads: the snapshot (seen) lists observations per recording, and a target linked to one is late and not scored', () => {
-    const tiny = [
-      { id: '101-01', recording: '101' },
-      { id: '101-02', recording: '101', recordings: ['101', '102'] },
-      { id: '103-01', recording: '103' },
-    ];
-    expect(seenAtPrediction(['101', '102'], tiny)).toEqual({ '101': ['101-01', '101-02'], '102': ['101-02'] });
+  it('scores every linked target: an old snapshot (seen) is no longer read (plan/design-investigation-review.md 1.3 節)', () => {
     const f = file({
       predicted: {
         at: '2026-10-02',
         commit: 'abc1234def',
         values: { H1: { shots: 189, total: 29_000_000 }, H2: { shots: 170, total: 20_000_000 } },
-        seen: { '101': ['101-09'] },
+        seen: { '101': ['101-09', '101-99'] },
       },
     });
     const cmp = comparePredictions(f, observations);
-    expect(cmp.targets.map((t) => t.late)).toEqual([true, false]);
-    expect(cmp.score.get('H1')).toEqual({ ok: 1, total: 1 });
-    expect(renderPredictionLines(cmp).some((l) => l.includes('実測 189（101-09。予測の前に読んだ後付け）'))).toBe(true);
-    expect(renderPredictionTable(cmp)).toContain('許容内、後付け');
-    expect(validatePredictions([{ ...f, predicted: { ...f.predicted!, seen: { '101': ['101-99'] } } }], ctx)).toEqual([
-      '予測 V-0063: predicted.seen の録画 101 の観測値 101-99 が無い',
-    ]);
-  });
-
-  it('marks a 確定 claim standing only on re-read observations (C1)', () => {
-    const p = (verification: string, seen?: Record<string, string[]>): PredictionFile =>
-      file({
-        verification,
-        predicted: { at: '2026-10-02', commit: 'abc1234', values: {}, ...(seen === undefined ? {} : { seen }) },
-      });
-    const obs = [
-      { id: '046-01', recording: '046', source: 'V-0090' },
-      { id: '162-04', recording: '162', source: 'V-0124' },
-      { id: '170-01', recording: '170', source: 'V-0125' },
-      { id: '010-01', recording: '010', source: 'verification.md' },
-    ];
-    const dates = {
-      verifications: new Map([
-        ['V-0090', '2026-10-02'],
-        ['V-0124', '2026-10-04'],
-        ['V-0125', '2026-10-04'],
-      ]),
-      recordings: new Map([
-        ['046', '2026-09-24'],
-        ['162', '2026-10-04'],
-        ['170', '2026-10-05'],
-      ]),
-    };
-    const preds = [p('V-0090'), p('V-0124', { '162': ['162-01'] }), p('V-0125', {})];
-    const c = (id: string, ids: string[], state: '確定' | '仮説' = '確定') => ({ id, state, observations: ids });
-    const marked = rereadOnlyClaims(
-      [
-        c('C-1', ['046-01', '010-01']), // 録画の日が起票より前
-        c('C-2', ['162-04']), // 同じ日でも控えに録画が挙がっていれば読み直し
-        c('C-3', ['162-04', '170-01']), // 予測の後に撮った録画を含む
-        c('C-4', ['010-01']), // 予測ファイルの無い根拠だけ
-        c('C-5', ['046-01'], '仮説'),
-      ],
-      obs,
-      preds,
-      dates,
-    );
-    expect([...marked]).toEqual(['C-1', 'C-2']);
+    expect(cmp.score.get('H1')).toEqual({ ok: 2, total: 2 });
+    expect(renderPredictionTable(cmp)).not.toContain('後付け');
+    // 控えの観測値は検証しない（101-99 は無い観測値）
+    expect(validatePredictions([f], ctx)).toEqual([]);
   });
 
   it('todayLocal uses the local date', () => {
@@ -267,6 +215,32 @@ describe('gradeCandidate（等級の候補）', () => {
     // 1 以上ずれた 1 ヒット、1 ヒットでない指標の端数の差は厳密一致にしない
     expect(gradeCandidate(claim('`013-01`'), residuals)).toBe('単独実測');
     expect(gradeCandidate(claim('`047-11`'), residuals)).toBe('単独実測');
+  });
+  it('does not count recordings used to decide the hypothesis, value or reading (decidedOn。plan/design-investigation-review.md 1.3 節)', () => {
+    const decided = (basis: string, decidedOn: Claim['decidedOn']): Claim => ({ ...claim(basis), decidedOn });
+    // 仮説の出どころの録画（101）を除くと、再現は 102 の 1 本で足りる
+    expect(
+      gradeCandidate(decided('`101-01`・`102-09`', [{ recording: '101', role: '仮説の出どころ' }]), residuals),
+    ).toBe('反復実測');
+    // 2 本とも決めるのに使った録画なら、再現が残らない
+    expect(
+      gradeCandidate(
+        decided('`101-01`・`102-09`', [
+          { recording: '101', role: '仮説の出どころ' },
+          { recording: '102', role: '読み方を合わせた' },
+        ]),
+        residuals,
+      ),
+    ).toBe('単独実測');
+    // 厳密一致は、値か読み方を合わせた録画のものを数えない。仮説の出どころの録画のものは数える
+    expect(gradeCandidate(decided('`101-09`', [{ recording: '101', role: '値を合わせた' }]), residuals)).toBe(
+      '単独実測',
+    );
+    expect(gradeCandidate(decided('`101-09`', [{ recording: '101', role: '仮説の出どころ' }]), residuals)).toBe(
+      '厳密一致',
+    );
+    // 空の並びは、決めるのに使った録画が無い（今までどおり）
+    expect(gradeCandidate(decided('`101-01`・`102-09`', []), residuals)).toBe('反復実測');
   });
   it('an observation is a dummy for the type', () => {
     const o: Observation = observations[0]!;
