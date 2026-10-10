@@ -7,6 +7,7 @@
 //                   （ハイドから構え 12f（SR は 11f）+ チャージ + 満ちてから撃つまで 1f − 1。C-0232。押下チャージ型は Stage 22-A の
 //                    発と発の間 82f − 構え解除 13f。C-0225。Stage 22-C: チャージの無い武器は構え 12f の後。C-0114）
 //   チャージ武器    発射したフレーム S で wait = charge + release − 1 → 次弾は S + 82
+//                   （チャージの途中でチャージ時間が変われば、S からの経過を持ち越して決め直す。C-0380・C-0523）
 //   リロード        最終弾のフレーム L から、1 回分ずつ込めて最後の 1 回分を込め終えたところで 1 発目の遅延につなぐ
 //                   → 次のマガジンの 1 発目は L + reload × chunks + reloadFirst（Stage 21-C3: AR・SMG・SG は 22f。C-0059。MG は 20f）
 //                   分割リロードは、込め始めの前に弾を込めない 1 段を待ち、段は切り上げた整数（C-0154）
@@ -74,11 +75,14 @@ export type ShooterState = {
   /** Stage 16-B: ハイド中に始めたリロード（明けるまでに込め終わらなければ取り消す）。無ければキーごと無い */
   hideReload?: true;
   /**
-   * 押下チャージ型（FiringParams.downCharge）の、前の発（リロードの後は、込め終えてから解放の分の後）からチャージしているフレーム数。
-   * 発と発の間と、込め終えてから 1 発目まで持ち（込め終えた時は −解放 から数える）、毎フレームその時のチャージ時間で待ちを決め直す。
-   * チャージの途中でチャージ時間が変わる（バーストの発動で 1 秒 → 0.7 秒、窓の終わりで 0.7 秒 → 1 秒）と、経過を持ち越して
-   * 新しいチャージ時間に届いたら撃つ（C-0380。撃った時点の待ちのまま・やり直しとは合わない。V-0134・V-0151・V-0252）。
-   * リロード中・ハイドの明けは持たない。無ければキーごと無い
+   * チャージ武器の、前の発（押下チャージ型のリロードの後は、込め終えてから解放の分の後）からのフレーム数。
+   * 発と発の間で持ち、毎フレームその時の発と発の間（chargeShotIntervalFrames）で待ちを決め直す。
+   * チャージの途中でチャージ時間が変わると、経過を持ち越して新しいチャージ時間に届いたら撃つ（撃った時点の待ちのまま・やり直しとは
+   * 合わない）。押下チャージ型はバーストの発動（1 秒 → 0.7 秒）と窓の終わり（0.7 秒 → 1 秒）で確かめた（C-0380。V-0134・V-0151・V-0252）。
+   * 入力が UP のチャージ武器は、SR（アリス）のチャージ速度▲の付き始めで確かめた（C-0523。V-0403・V-0407）。入力が UP の RL と、
+   * 速度が下がるとき（▲の切れ目）は同じ規則を当てているが確かめていない（plan/design-charge-carryover.md 2 節）。
+   * 込め終えてから 1 発目までは押下チャージ型だけ持つ（込め終えた時は −解放 から数える。入力が UP は込め終えた時に待ちを決める）。
+   * リロード中・ハイドの明け・戦闘開始の 1 発目は持たない。無ければキーごと無い
    */
   chargeElapsed?: number;
 };
@@ -181,7 +185,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
     state.lastShot = false;
     if (isChargeWeapon(shot)) {
       state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - 1);
-      if (params.downCharge) state.chargeElapsed = 0;
+      state.chargeElapsed = 0;
     }
     return;
   }
@@ -202,7 +206,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
   }
   if (isChargeWeapon(shot)) {
     state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - 1);
-    if (params.downCharge) state.chargeElapsed = 0;
+    state.chargeElapsed = 0;
   }
 }
 
@@ -227,7 +231,8 @@ export function stepShooter(
 ): boolean {
   if (MAX_AMMO_CLAMP_ON_DECREASE && state.ammo > params.maxAmmo) state.ammo = params.maxAmmo;
   if (state.chargeElapsed !== undefined) {
-    // 押下チャージ型: 前の発（リロードの後は、込め終えてから解放の分の後）からの経過と、このフレームのチャージ時間で待ちを決め直す（C-0380）
+    // チャージ武器: 前の発（押下チャージ型のリロードの後は、込め終えてから解放の分の後）からの経過と、このフレームのチャージ時間で
+    // 待ちを決め直す（C-0380・C-0523）
     state.chargeElapsed += 1;
     state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - state.chargeElapsed);
   }
@@ -288,7 +293,7 @@ export function resumeAfterLastShotRefill(
   delete state.reloadLead;
   state.lastShot = false;
   state.wait = isChargeWeapon(shot) ? Math.max(0, chargeShotIntervalFrames(params, model) - 1) : 0;
-  if (isChargeWeapon(shot) && params.downCharge) state.chargeElapsed = 0;
+  if (isChargeWeapon(shot)) state.chargeElapsed = 0;
   return true;
 }
 

@@ -3,6 +3,7 @@ import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { computeCadence } from '../../cadence.ts';
 import type { ShotParams } from '../../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
+import { ZERO_FIRING_BUFFS, chargeShotIntervalFrames, firingParams, type FiringParams } from '../firing.ts';
 import { initialShooter, shotFramesUpTo, stepShooter } from '../shooter.ts';
 
 const fixtures: Record<string, Partial<ShotParams>> = {
@@ -78,5 +79,41 @@ describe('stepShooter', () => {
   it('rejects invalid shot params', () => {
     expect(() => initialShooter(makeCharacter({ maxAmmo: 0 }).shot)).toThrow(RangeError);
     expect(() => initialShooter(makeCharacter({ rateOfFire: 0 }).shot)).toThrow(RangeError);
+  });
+});
+
+describe('UP charge weapons carry the charge elapsed over a mid-charge charge speed change (C-0523)', () => {
+  // アリス（1.5 秒の SR）とバーストのチャージ速度▲ 80.15%（191.json の burst の effects[0]）
+  const shot = makeCharacter(fixtures.SR!).shot;
+  const alice = { ...shot, chargeTime: 1.5 };
+  const base = firingParams(alice);
+  const buffed = firingParams(alice, { ...ZERO_FIRING_BUFFS, chargeSpeed: 0.8015 });
+  const slow = chargeShotIntervalFrames(base, DEFAULT_WEAPON_MODEL);
+  const fast = chargeShotIntervalFrames(buffed, DEFAULT_WEAPON_MODEL);
+
+  /** 1 発目の後、switchAt フレーム目から after に切り替えたときの、1 発目から 2 発目までのフレーム数 */
+  const secondShotAfter = (before: FiringParams, after: FiringParams, switchAt: number): number => {
+    const state = initialShooter(alice, DEFAULT_WEAPON_MODEL, before);
+    const fired: number[] = [];
+    for (let f = 0; fired.length < 2; f++) {
+      const params = fired.length === 1 && f - fired[0]! >= switchAt ? after : before;
+      if (stepShooter(state, alice, DEFAULT_WEAPON_MODEL, params)) fired.push(f);
+    }
+    return fired[1]! - fired[0]!;
+  };
+
+  it('shortens the wait when the buff starts mid-charge', () => {
+    expect(fast).toBeLessThan(slow);
+    // 切り替えが無ければ、撃った時点の待ちのまま
+    expect(secondShotAfter(base, buffed, 1000)).toBe(slow);
+    // 経過がまだ▲の間隔に届いていない: 届いたところで撃つ
+    expect(secondShotAfter(base, buffed, fast - 10)).toBe(fast);
+    // 経過がもう届いている: 切り替えのフレームに撃つ（V-0403・V-0407 の 00.00 の 1f 前の発）
+    expect(secondShotAfter(base, buffed, fast + 20)).toBe(fast + 20);
+  });
+
+  it('lengthens the wait when the buff ends mid-charge (same rule as C-0380, not measured for UP)', () => {
+    // ▲の間隔に届く前に切れれば、基礎の間隔まで待つ
+    expect(secondShotAfter(buffed, base, fast - 10)).toBe(slow);
   });
 });

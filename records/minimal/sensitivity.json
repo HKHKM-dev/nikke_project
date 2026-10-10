@@ -994,166 +994,6 @@
       "plus": 0
     },
     {
-      "observation": "042-10",
-      "element": "アリス burst.effects[1]",
-      "key": "da207002ddb34507",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-11",
-      "element": "アリス burst.effects[1]",
-      "key": "44b07b5355eb763c",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-12",
-      "element": "アリス burst.effects[1]",
-      "key": "1e433bbcc54db111",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-14",
-      "element": "アリス burst.effects[1]",
-      "key": "f2537a21d84c709c",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-15",
-      "element": "アリス burst.effects[1]",
-      "key": "9ea80ba65ecbde73",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-16",
-      "element": "アリス burst.effects[1]",
-      "key": "ca23b23adc1867e3",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-17",
-      "element": "アリス burst.effects[1]",
-      "key": "4ea25f1b1e41a5f8",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-18",
-      "element": "アリス burst.effects[1]",
-      "key": "d2d7e02cb8671057",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-19",
-      "element": "アリス burst.effects[1]",
-      "key": "284e86fd049f69b4",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-20",
-      "element": "アリス burst.effects[1]",
-      "key": "22cbdd61ab23457c",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-21",
-      "element": "アリス burst.effects[1]",
-      "key": "49d19f4ec6e1a48b",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-22",
-      "element": "アリス burst.effects[1]",
-      "key": "41118d3e34cb2439",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-23",
-      "element": "アリス burst.effects[1]",
-      "key": "bb1adc2734bce542",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-24",
-      "element": "アリス burst.effects[1]",
-      "key": "020073f3da919bca",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-25",
-      "element": "アリス burst.effects[1]",
-      "key": "dba30fc09b50ac0d",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-26",
-      "element": "アリス burst.effects[1]",
-      "key": "47696c7dcd1bde2e",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-27",
-      "element": "アリス burst.effects[1]",
-      "key": "678360aa45676b09",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-28",
-      "element": "アリス burst.effects[1]",
-      "key": "9e1093ce156bca79",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-29",
-      "element": "アリス burst.effects[1]",
-      "key": "12a50097385282da",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "042-32",
-      "element": "アリス burst.effects[1]",
-      "key": "e4e55b8a191ae143",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
       "observation": "047-01",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "239e9baba351482a",
@@ -5149,7 +4989,7 @@
     {
       "observation": "259-08",
       "element": "クイーン（真） burst.effects[1]",
-      "key": "a52ebbd28d3910c3",
+      "key": "024fb962b37311f9",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -5157,7 +4997,7 @@
     {
       "observation": "259-08",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "a52ebbd28d3910c3",
+      "key": "024fb962b37311f9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5165,7 +5005,7 @@
     {
       "observation": "259-08",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "a52ebbd28d3910c3",
+      "key": "024fb962b37311f9",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -5173,7 +5013,7 @@
     {
       "observation": "259-08",
       "element": "雪子 burst.effects[1]",
-      "key": "a52ebbd28d3910c3",
+      "key": "024fb962b37311f9",
       "effective": true,
       "minus": -7757.648838769499,
       "plus": 0
@@ -6579,102 +6419,6 @@
       "plus": 0
     },
     {
-      "observation": "362-03",
-      "element": "アリス burst.effects[1]",
-      "key": "4181c3cbfa16af76",
-      "effective": true,
-      "minus": 0,
-      "plus": 319385.25359999994
-    },
-    {
-      "observation": "362-04",
-      "element": "アリス burst.effects[1]",
-      "key": "47b94d77c1922d8a",
-      "effective": true,
-      "minus": -407216.1983399999,
-      "plus": 0
-    },
-    {
-      "observation": "362-05",
-      "element": "アリス burst.effects[1]",
-      "key": "982edfb191fe224a",
-      "effective": true,
-      "minus": 0,
-      "plus": 407216.1983399999
-    },
-    {
-      "observation": "362-06",
-      "element": "アリス burst.effects[1]",
-      "key": "71a84023f1e66074",
-      "effective": true,
-      "minus": 0,
-      "plus": 319385.25359999994
-    },
-    {
-      "observation": "362-07",
-      "element": "アリス burst.effects[1]",
-      "key": "8d38ad50a91dea11",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "362-08",
-      "element": "アリス burst.effects[1]",
-      "key": "9072ef44916abb4d",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "362-09",
-      "element": "アリス burst.effects[1]",
-      "key": "c34e76650c3800e4",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "362-10",
-      "element": "アリス burst.effects[1]",
-      "key": "de256961098e2af8",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "362-11",
-      "element": "アリス burst.effects[1]",
-      "key": "d316db658e9bf98a",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "362-12",
-      "element": "アリス burst.effects[1]",
-      "key": "bb69383841104f7b",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "362-13",
-      "element": "アリス burst.effects[1]",
-      "key": "3b2ea406c186a30d",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "362-14",
-      "element": "アリス burst.effects[1]",
-      "key": "e3da3787b56bf218",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
       "observation": "363-01",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "602e8559bfdc5ede",
@@ -6873,14 +6617,6 @@
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "400-01",
-      "element": "アリス burst.effects[1]",
-      "key": "7809aa92f4131741",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "401-01",

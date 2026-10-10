@@ -168,8 +168,10 @@ describe('runFirstPass: firing windows (1.1)', () => {
     const model = { ...DEFAULT_WEAPON_MODEL, aimInFrames: 23, srHideAimShorterFrames: 0 };
     const pass = runFirstPass([slotOf(character, def)], { frames: 800, burst: true, burstModel: 'fixed', model });
     const frames = pass.shots[0]!.frames;
-    // 588 の射撃は基礎値（次は 588 + 42）。630 からチャージ 0f（解放遅延 23f だけ）で 653・676…
-    expect(frames.filter((f) => f >= 546 && f <= 700)).toEqual([546, 588, 630, 653, 676, 699]);
+    // 588 の射撃は基礎値（588 には窓が無いので 588 + 42 の待ち）。589 から窓が効いてチャージ 0f（解放遅延 23f だけ）になり、
+    // 588 からの経過を持ち越して 611・634…（C-0523。経過を持ち越すので、射撃の列からは 588 に窓が見えたかを見分けられない。
+    // 窓の始まりは firingWindows で見る）
+    expect(frames.filter((f) => f >= 546 && f <= 700)).toEqual([546, 588, 611, 634, 657, 680]);
     expect(pass.firingWindows).toEqual([expect.objectContaining({ sourceSlotIndex: 0, start: 588, end: 800 })]);
   });
 
