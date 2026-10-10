@@ -440,3 +440,5 @@
 2026-10-10 13:51 に録画 405（サクラ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-405_smg_sakura_manual_first-full.mp4`）だけを同期した。E: と I: で sha256 が一致（`b73b029b6be2`）。取り込み元の元ファイルは残した（`--copy`）。
 
 2026-10-10 13:51 に録画 406（サクラ単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-406_smg_sakura_manual_first-full.mp4`）だけを同期した。E: と I: で sha256 が一致（`91cba8e271a6`）。取り込み元の元ファイルは残した（`--copy`）。
+
+2026-10-10 14:52 に録画 407（ココア + ソルジャーF.A. + アリス + レイヴン）を `intake.ts` で取り込み、この 1 本（`range/20261010-407_sr+sg+sr+rl_cocoa+soldier-fa+alice+raven_alice-burst-repro.mp4`）だけを同期した。E: と I: で sha256 が一致（`171245567e83`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
