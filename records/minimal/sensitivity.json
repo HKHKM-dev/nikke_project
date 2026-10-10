@@ -1154,6 +1154,70 @@
       "plus": null
     },
     {
+      "observation": "113-01",
+      "element": "クルミ burst.effects[0]",
+      "key": "4a04a147ae686b96",
+      "effective": true,
+      "minus": -37677.897138,
+      "plus": 0
+    },
+    {
+      "observation": "113-02",
+      "element": "クルミ burst.effects[0]",
+      "key": "c2f3a12f682abb1e",
+      "effective": true,
+      "minus": 0,
+      "plus": 37677.897138
+    },
+    {
+      "observation": "125-06",
+      "element": "クルミ burst.effects[0]",
+      "key": "a61b6b15f3a20e06",
+      "effective": true,
+      "minus": 0,
+      "plus": 1949.9899419000012
+    },
+    {
+      "observation": "125-07",
+      "element": "クルミ burst.effects[0]",
+      "key": "51bc46060d86cdb1",
+      "effective": true,
+      "minus": 0,
+      "plus": 3899.9798838000024
+    },
+    {
+      "observation": "125-08",
+      "element": "クルミ burst.effects[0]",
+      "key": "c223b09afa6d1091",
+      "effective": true,
+      "minus": 0,
+      "plus": 2924.9849128500027
+    },
+    {
+      "observation": "125-09",
+      "element": "クルミ burst.effects[0]",
+      "key": "3efdaedcb75eeedd",
+      "effective": true,
+      "minus": 0,
+      "plus": 2534.986924470002
+    },
+    {
+      "observation": "125-10",
+      "element": "クルミ burst.effects[0]",
+      "key": "e174da6d8def0a96",
+      "effective": true,
+      "minus": 0,
+      "plus": 7462.818649440007
+    },
+    {
+      "observation": "125-14",
+      "element": "クルミ burst.effects[0]",
+      "key": "874c9e5a56e1a4b1",
+      "effective": true,
+      "minus": -18464.90475753002,
+      "plus": 0
+    },
+    {
       "observation": "137-05",
       "element": "ミサト skill1.effects[0]",
       "key": "43fb975fdc624290",
@@ -2631,6 +2695,14 @@
       "key": "89022ec47fd3c2d1",
       "effective": false,
       "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "196-08",
+      "element": "クルミ burst.effects[0]",
+      "key": "007152b6c9a0b9ed",
+      "effective": true,
+      "minus": -18464.90475753002,
       "plus": 0
     },
     {

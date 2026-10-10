@@ -749,7 +749,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
 - **skill2**: supported
   - effects[0] damage・normalHit・additional: C-0276（確定）、C-0277（確定）
 - **burst**: supported
-  - effects[0] timed・burstUse・damageTaken: C-0138（確定）、C-0152（確定）、C-0153（仮説）、C-0494（確定）
+  - effects[0] timed・burstUse・damageTaken: C-0138（確定）、C-0152（確定）、C-0153（仮説）、C-0494（確定）、C-0517（仮説）
 
 ## 870 クイーン（真）
 
