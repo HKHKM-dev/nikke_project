@@ -276,7 +276,7 @@
     {
       "observation": "019-01",
       "element": "エーテル skill2.effects[1]",
-      "key": "5a9957a41c1a3cfd",
+      "key": "c61f82308f23dbc3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -284,7 +284,7 @@
     {
       "observation": "019-01",
       "element": "ノワール burst.effects[1]",
-      "key": "5a9957a41c1a3cfd",
+      "key": "c61f82308f23dbc3",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -292,7 +292,7 @@
     {
       "observation": "019-06",
       "element": "エーテル skill2.effects[1]",
-      "key": "a15b13832dee210c",
+      "key": "04331ac7a95e67aa",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -300,7 +300,7 @@
     {
       "observation": "019-06",
       "element": "ノワール burst.effects[1]",
-      "key": "a15b13832dee210c",
+      "key": "04331ac7a95e67aa",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -308,7 +308,7 @@
     {
       "observation": "019-10",
       "element": "エーテル skill2.effects[1]",
-      "key": "93a306d7f5b2a2d4",
+      "key": "31aa2c2bd3c45842",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -316,7 +316,7 @@
     {
       "observation": "019-10",
       "element": "ノワール burst.effects[1]",
-      "key": "93a306d7f5b2a2d4",
+      "key": "31aa2c2bd3c45842",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -324,7 +324,7 @@
     {
       "observation": "019-17",
       "element": "エーテル skill2.effects[1]",
-      "key": "0cd6289557a9c4cc",
+      "key": "195991514992f472",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -332,7 +332,7 @@
     {
       "observation": "019-17",
       "element": "ノワール burst.effects[1]",
-      "key": "0cd6289557a9c4cc",
+      "key": "195991514992f472",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -340,7 +340,7 @@
     {
       "observation": "019-19",
       "element": "エーテル skill2.effects[1]",
-      "key": "964763200de67937",
+      "key": "3e40e34471c55c91",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -348,7 +348,7 @@
     {
       "observation": "019-19",
       "element": "ノワール burst.effects[1]",
-      "key": "964763200de67937",
+      "key": "3e40e34471c55c91",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -356,7 +356,7 @@
     {
       "observation": "019-20",
       "element": "エーテル skill2.effects[1]",
-      "key": "1fc190dfdba7923e",
+      "key": "42e989fb24c668a0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -364,7 +364,7 @@
     {
       "observation": "019-20",
       "element": "ノワール burst.effects[1]",
-      "key": "1fc190dfdba7923e",
+      "key": "42e989fb24c668a0",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -372,7 +372,7 @@
     {
       "observation": "019-24",
       "element": "エーテル skill2.effects[1]",
-      "key": "8b8d850decdeb096",
+      "key": "26deaeb1909c1bb0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -380,7 +380,7 @@
     {
       "observation": "019-24",
       "element": "ノワール burst.effects[1]",
-      "key": "8b8d850decdeb096",
+      "key": "26deaeb1909c1bb0",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -860,7 +860,7 @@
     {
       "observation": "028-05",
       "element": "ラピ skill2.effects[1]",
-      "key": "1a6fba43f0d7f6b4",
+      "key": "32db8ac716ebfc1c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -868,7 +868,7 @@
     {
       "observation": "029-03",
       "element": "ラピ skill2.effects[1]",
-      "key": "1c7daa9d305ee394",
+      "key": "153f22dff5e79bd0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -876,7 +876,7 @@
     {
       "observation": "030-02",
       "element": "ラピ burst.effects[1]",
-      "key": "69a894e4aefa702b",
+      "key": "4f76acdcbc77829b",
       "effective": true,
       "minus": 0,
       "plus": 458085.37514999975
@@ -884,10 +884,42 @@
     {
       "observation": "030-02",
       "element": "ラピ skill2.effects[1]",
-      "key": "69a894e4aefa702b",
+      "key": "4f76acdcbc77829b",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "037-01",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "ce9c4571bc04d032",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "037-02",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "bcb3db32a885c26b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "037-03",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "62d70a51392fd420",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "037-04",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "3044031e460fc6cd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "038-07",
@@ -986,12 +1018,188 @@
       "plus": null
     },
     {
+      "observation": "039-05",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "877adb4d79a04474",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-06",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "1ab8d4107b758feb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-07",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "e867accb29fdb36a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-08",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "10f72b3c87635587",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-09",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "bfc2efdd84220bf0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-10",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "b23b70a6023df2ed",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-11",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "f77edb77842d1096",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-13",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "f64efdeb9edd0ecc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-14",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "b390d28fb0cc8cbc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-15",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "fc7a0b0e1cf8306f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-16",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "9693c7434817e702",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-17",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "57deea4005797dbb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "039-18",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "44ba2be33210295a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "040-06",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "f37ce91db8a2559c",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "044-08",
+      "element": "モダニア skill2.effects[0]",
+      "key": "2663ac5a21fc1e5b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "044-11",
+      "element": "モダニア skill2.effects[0]",
+      "key": "14b2076fabc6e51c",
+      "effective": true,
+      "minus": -5897.707199999997,
+      "plus": 0
+    },
+    {
+      "observation": "044-12",
+      "element": "モダニア skill2.effects[0]",
+      "key": "1e2a4956f64146ff",
+      "effective": true,
+      "minus": -6374.289599999993,
+      "plus": 0
+    },
+    {
+      "observation": "044-14",
+      "element": "モダニア skill2.effects[0]",
+      "key": "006bbf1b489eb42c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "044-15",
+      "element": "モダニア skill2.effects[0]",
+      "key": "633c0c9b0b165e8e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "044-16",
+      "element": "モダニア skill2.effects[0]",
+      "key": "31693f98d03d342d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "044-18",
+      "element": "モダニア skill2.effects[0]",
+      "key": "0eb90cf7bdd4d4be",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "046-01",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "a242dc7dd9846fe8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "046-14",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "0dbb301ad5535e5d",
+      "effective": true,
+      "minus": 7,
+      "plus": null
     },
     {
       "observation": "047-01",
@@ -1002,12 +1210,28 @@
       "plus": 0
     },
     {
+      "observation": "047-01",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "239e9baba351482a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "047-02",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "959ad37cbf64f92b",
       "effective": true,
       "minus": -0.4335856378112216,
       "plus": 0.2190115952650122
+    },
+    {
+      "observation": "047-02",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "959ad37cbf64f92b",
+      "effective": true,
+      "minus": -0.6389752152042306,
+      "plus": null
     },
     {
       "observation": "047-08",
@@ -1018,12 +1242,36 @@
       "plus": 0
     },
     {
+      "observation": "047-08",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "e8746dbc913bf7fb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "047-11",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "ad55a35145bc04f0",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "047-11",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "ad55a35145bc04f0",
+      "effective": true,
+      "minus": 148,
+      "plus": null
+    },
+    {
+      "observation": "055-12",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "cf06948e7a245949",
+      "effective": true,
+      "minus": 7,
+      "plus": null
     },
     {
       "observation": "063-05",
@@ -1088,6 +1336,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "070-03",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "d0ab1e33ee329d00",
+      "effective": true,
+      "minus": 7,
+      "plus": null
+    },
+    {
+      "observation": "071-05",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "222a8da0e25ef433",
+      "effective": true,
+      "minus": 7,
+      "plus": null
     },
     {
       "observation": "078-05",
@@ -1202,12 +1466,28 @@
       "plus": 0
     },
     {
+      "observation": "084-01",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "9d473001983d60a2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "084-02",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "bbe7c34e766cbb4f",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "084-02",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "bbe7c34e766cbb4f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "084-03",
@@ -1218,12 +1498,28 @@
       "plus": 0
     },
     {
+      "observation": "084-03",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "0927390eb83f8fe3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "084-07",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "c60a59f8f11d9f01",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "084-07",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "c60a59f8f11d9f01",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "084-09",
@@ -1234,12 +1530,28 @@
       "plus": 0
     },
     {
+      "observation": "084-09",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "780eea40896fd70b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "084-10",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "65a07db2a3e9817b",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "084-10",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "65a07db2a3e9817b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "084-11",
@@ -1250,9 +1562,17 @@
       "plus": 0
     },
     {
+      "observation": "084-11",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "bbac0739d7ed87ca",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "099-04",
       "element": "ルドミラ：ウィンターオーナー skill1.effects[0]",
-      "key": "3ee9b88391b1b3ea",
+      "key": "ceec0fdefcf947b5",
       "effective": true,
       "minus": -26221.77363484804,
       "plus": 0
@@ -1260,7 +1580,7 @@
     {
       "observation": "099-04",
       "element": "ルドミラ：ウィンターオーナー skill1.effects[1]",
-      "key": "3ee9b88391b1b3ea",
+      "key": "ceec0fdefcf947b5",
       "effective": true,
       "minus": -90515.08887484804,
       "plus": null
@@ -1268,7 +1588,7 @@
     {
       "observation": "099-04",
       "element": "ルドミラ：ウィンターオーナー skill1.effects[2]",
-      "key": "3ee9b88391b1b3ea",
+      "key": "ceec0fdefcf947b5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -1276,10 +1596,26 @@
     {
       "observation": "099-04",
       "element": "ルドミラ：ウィンターオーナー skill2.effects[0]",
-      "key": "3ee9b88391b1b3ea",
+      "key": "ceec0fdefcf947b5",
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "114-08",
+      "element": "モダニア skill2.effects[0]",
+      "key": "7689014b9032c5d2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "115-06",
+      "element": "モダニア skill2.effects[0]",
+      "key": "b0b7e7e4fdedc213",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "137-05",
@@ -4139,6 +4475,134 @@
       "plus": null
     },
     {
+      "observation": "222-01",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "59cf9ab08430c8a7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-03",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "fe5827f9149a3ee2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-04",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "84cc7f28acfebe9d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-05",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "75677ecba24bd098",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-06",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "fd05218a13c2f5cb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-07",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "53bd6023b6a98d82",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-08",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "83bf3ae2f003a54b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-09",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "d3824fa9881e1106",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-10",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "5bf9eb7c8c530521",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-11",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "b4d9a45b9235e29c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-12",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "50dacfd6d4d76dd7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-15",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "2e97e6b02aa71877",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-16",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "7470db099134d690",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-17",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "69a22988722d47c9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-18",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "bd38079b855816cc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "222-19",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "ca240a82f1931fab",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "224-01",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "3b1b35584b9514a1",
@@ -5875,6 +6339,46 @@
       "plus": 0
     },
     {
+      "observation": "317-03",
+      "element": "モダニア skill2.effects[0]",
+      "key": "ac8b6cc12f8871ee",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "317-04",
+      "element": "モダニア skill2.effects[0]",
+      "key": "d57f25baa75e1d4b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "317-05",
+      "element": "モダニア skill2.effects[0]",
+      "key": "e3811213a8058be4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "317-06",
+      "element": "モダニア skill2.effects[0]",
+      "key": "830d40745050eb41",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "317-07",
+      "element": "モダニア skill2.effects[0]",
+      "key": "521075651d1346e0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "318-03",
       "element": "ミランダ treasureSkills.skill1.effects[0]",
       "key": "19163ea81357c881",
@@ -6427,12 +6931,28 @@
       "plus": 238801.33409999998
     },
     {
+      "observation": "363-01",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "602e8559bfdc5ede",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "363-02",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "dd2c0df5543f9b0a",
       "effective": true,
       "minus": -636067.2534865252,
       "plus": 0
+    },
+    {
+      "observation": "363-02",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "dd2c0df5543f9b0a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "363-03",
@@ -6443,12 +6963,29 @@
       "plus": 238801.33409999998
     },
     {
+      "observation": "363-03",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "6824ebb9d00d0422",
+      "effective": true,
+      "minus": 980869.6996874751,
+      "plus": null
+    },
+    {
       "observation": "363-04",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "e058ca319e3ff1c8",
       "effective": true,
       "minus": 0,
       "plus": 393250.3728999999
+    },
+    {
+      "observation": "363-04",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "e058ca319e3ff1c8",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
     },
     {
       "observation": "363-05",
@@ -6459,12 +6996,30 @@
       "plus": 0
     },
     {
+      "observation": "363-05",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "41fbbcc018cf3f17",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 3 回目の倍率ダメージが無い"
+    },
+    {
       "observation": "363-06",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "ebf61f2e12abb309",
       "effective": true,
       "minus": -1767417.4843499998,
       "plus": 0
+    },
+    {
+      "observation": "363-06",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "ebf61f2e12abb309",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 5 回目の倍率ダメージが無い"
     },
     {
       "observation": "363-07",
@@ -6475,12 +7030,28 @@
       "plus": 0
     },
     {
+      "observation": "363-07",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "9d975065f2f5b122",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "363-08",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "635e9b29604e6c6e",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "363-08",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "635e9b29604e6c6e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "363-09",
@@ -6491,12 +7062,28 @@
       "plus": 0
     },
     {
+      "observation": "363-09",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "9ebb07b3c0fd5ada",
+      "effective": true,
+      "minus": 5,
+      "plus": null
+    },
+    {
       "observation": "363-10",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "508c53243fd0c7eb",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "363-10",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "508c53243fd0c7eb",
+      "effective": true,
+      "minus": 2,
+      "plus": null
     },
     {
       "observation": "363-11",
@@ -6507,12 +7094,28 @@
       "plus": 0
     },
     {
+      "observation": "363-11",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "84c685b8f5dec37d",
+      "effective": true,
+      "minus": 1,
+      "plus": null
+    },
+    {
       "observation": "363-12",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "54030fd5ef538f94",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "363-12",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "54030fd5ef538f94",
+      "effective": true,
+      "minus": 1,
+      "plus": null
     },
     {
       "observation": "363-13",
@@ -6523,6 +7126,14 @@
       "plus": 0
     },
     {
+      "observation": "363-13",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "019c70afbd5f0854",
+      "effective": true,
+      "minus": -105,
+      "plus": null
+    },
+    {
       "observation": "363-17",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "efb592dd882394fc",
@@ -6531,9 +7142,57 @@
       "plus": 0
     },
     {
+      "observation": "363-17",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "efb592dd882394fc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "363-18",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "c0687b847f40a16b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "363-18",
+      "element": "紅蓮：ブラックシャドウ skill1.effects[0]",
+      "key": "c0687b847f40a16b",
+      "effective": true,
+      "minus": null,
+      "plus": null
+    },
+    {
+      "observation": "365-01",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "ebee415cc4ac2e41",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "365-02",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "2b70bb055ea9d06c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "365-03",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "2b0c60efd369ca5a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "365-04",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "33d86ef572af4eb8",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6646,6 +7305,86 @@
       "observation": "401-04",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "36e4f999930cf3f6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "414-03",
+      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
+      "key": "d07909739ea40c9c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "414-03",
+      "element": "ヘルム treasureSkills.burst.effects[2]",
+      "key": "d07909739ea40c9c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "414-04",
+      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
+      "key": "803fcb6d66572eb6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "414-04",
+      "element": "ヘルム treasureSkills.burst.effects[2]",
+      "key": "803fcb6d66572eb6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "414-05",
+      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
+      "key": "7392762c61ea48a9",
+      "effective": false,
+      "minus": -4.656612873077393e-10,
+      "plus": null
+    },
+    {
+      "observation": "414-05",
+      "element": "ヘルム treasureSkills.burst.effects[2]",
+      "key": "7392762c61ea48a9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "414-06",
+      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
+      "key": "2c9212b639ca3d51",
+      "effective": false,
+      "minus": 1.1641532182693481e-10,
+      "plus": null
+    },
+    {
+      "observation": "414-06",
+      "element": "ヘルム treasureSkills.burst.effects[2]",
+      "key": "2c9212b639ca3d51",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "414-07",
+      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
+      "key": "1effdabb695c9586",
+      "effective": false,
+      "minus": 2.3283064365386963e-10,
+      "plus": null
+    },
+    {
+      "observation": "414-07",
+      "element": "ヘルム treasureSkills.burst.effects[2]",
+      "key": "1effdabb695c9586",
       "effective": false,
       "minus": 0,
       "plus": null

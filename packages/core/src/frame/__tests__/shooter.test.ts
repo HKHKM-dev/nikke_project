@@ -112,7 +112,7 @@ describe('UP charge weapons carry the charge elapsed over a mid-charge charge sp
     expect(secondShotAfter(base, buffed, fast + 20)).toBe(fast + 20);
   });
 
-  it('lengthens the wait when the buff ends mid-charge (same rule as C-0380, not measured for UP)', () => {
+  it('lengthens the wait when the buff ends mid-charge (same rule as C-0541, not measured for UP)', () => {
     // ▲の間隔に届く前に切れれば、基礎の間隔まで待つ
     expect(secondShotAfter(buffed, base, fast - 10)).toBe(slow);
   });
