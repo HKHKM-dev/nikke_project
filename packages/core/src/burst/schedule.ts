@@ -188,7 +188,9 @@ export const HEXAGON_AFTER_ACTIVATION_FRAMES = 5;
  * 発動の段の表示のモデルのフレーム。I・II は六角形の替わり目（本当の発動の HEXAGON_AFTER_ACTIVATION_FRAMES 後）、III は III のタイマーの
  * 00.00（フルバーストの窓の始まり。fullBurstStart。動的サイクルは本当の発動の FULL_BURST_AFTER_ACTIVATION_FRAMES 後）
  */
-export function hexagonFrameOf(activation: Pick<BurstActivation, 'frame' | 'startsFullBurst' | 'fullBurstStart'>): number {
+export function hexagonFrameOf(
+  activation: Pick<BurstActivation, 'frame' | 'startsFullBurst' | 'fullBurstStart'>,
+): number {
   if (!activation.startsFullBurst) return activation.frame + HEXAGON_AFTER_ACTIVATION_FRAMES;
   return activation.fullBurstStart ?? activation.frame + FULL_BURST_AFTER_ACTIVATION_FRAMES;
 }
