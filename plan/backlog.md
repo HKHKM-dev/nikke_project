@@ -36,8 +36,7 @@
 
 ## 5. 道具・記録の整備
 
-- 5-4 `records:renumber`: 検証記録・結論・観測値・録画の番号を、参照ごと一括で振り直す（[design-investigation-review.md](design-investigation-review.md) 4.3・5 節）
-- 5-5 番号の回避を観測値と録画に広げる（`records:read --write`・`intake.ts` がほかのブランチの番号を避ける。同 4.3・5 節）
+- 5-4 録画の番号の振り直し（`records:renumber` は検証記録・結論・観測値だけ。録画は E: と Google Drive の動画のファイル名と、観測値の ID の頭も変わる。[design-investigation-review.md](design-investigation-review.md) 4.3・5 節、[design-investigation-review-log.md](design-investigation-review-log.md) 11.11 節）
 - 5-6 右のバースト欄の表示の時刻（六角形の替わり目・III のタイマーの 00.00・CT の明け）を読む道具（同 5 節）
 - 5-7 予測の 1 発の値の格子に HUD の増分を当て、事象の前後で▲の無い最後の発と▲の乗った最初の発を出すレシピ（同 5 節）
 - 5-8 中遠の足元を読むレシピ（`midfar-landing`。同 5 節）

@@ -38,7 +38,7 @@ node tools/captures/sg-map.ts <SG の録画 id> [--smg 152] [--smg-landing far] 
 node tools/captures/mask-tune.ts <録画 id> [--top 15] [--maxFp 0.02]   # 的のマスクの取り方の候補を SG の着弾点で比べる（V-0127）
 ```
 
-`read.ts` は、録画を**レシピ**（名前と版を持つ読み方。`tools/captures/recipes/`）で読み、観測値（`records/observations/<録画 id>.json` の形）を出す（[../design-records-automation.md](../design-records-automation.md) 3.4 節）。`--list` でレシピと `--opt` の説明が出る。`--write` で観測値のファイルに足す（id は次の空き番号。同じレシピ・同じ版の観測値が既にあれば、同じ値なら足さず、違えば差を出して止まる）。`--against` は既存の観測値の値を並べて出す（旧の観測値の確かめ用）。中間出力（`hud.ts` の増分など）は、録画の置き場所の `derived/<録画 id>/` にキャッシュする（追跡しない。録画のファイルの大きさが変わると作り直す）。目で数える値はレシピの外（観測値の `method.note` に書く）。
+`read.ts` は、録画を**レシピ**（名前と版を持つ読み方。`tools/captures/recipes/`）で読み、観測値（`records/observations/<録画 id>.json` の形）を出す（[../design-records-automation.md](../design-records-automation.md) 3.4 節）。`--list` でレシピと `--opt` の説明が出る。`--write` で観測値のファイルに足す（id は次の空き番号で、どれかのブランチ（main を含む）がこの録画に足したことのある番号は避ける。同じレシピ・同じ版の観測値が既にあれば、同じ値なら足さず、違えば差を出して止まる）。`--against` は既存の観測値の値を並べて出す（旧の観測値の確かめ用）。中間出力（`hud.ts` の増分など）は、録画の置き場所の `derived/<録画 id>/` にキャッシュする（追跡しない。録画のファイルの大きさが変わると作り直す）。目で数える値はレシピの外（観測値の `method.note` に書く）。
 
 - `hud-jumps`: HUD の総ダメージの最後の値（total）と、増分の数から数えたトリガーの数（count）。前の増分から 30f 未満の増分は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さから発の数を決める（V-0071 の「足し戻し」）。HUD が読めなかった後の読み（`hud.ts` の gap 列が 2 以上）は、読めなかった間の真ん中を組の始まりとして測る（版 2。V-0079）。版 3 は、0 と 8 を穴の数で分けるようにした `hud.ts` の読み（キャッシュ `hud-jumps@2`）で読む（V-0327）。
 - `reload-segments`: `reload.ts --mode fit --shots`（増分は hud-jumps のキャッシュ）から、リロードごとの最終弾 → 完了・完了 → 次の増分・バーの長さ（V-0057 の読み方。取り消し・窓をまたいだ回・最終弾の読み違いは除く）。分割リロードは `--opt stages=1`。版 2 は、直した `hud.ts` の読み（キャッシュ `hud-jumps@2`）で読む（V-0327）。

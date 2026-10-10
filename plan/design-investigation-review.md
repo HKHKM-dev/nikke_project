@@ -1,7 +1,7 @@
 # 調査手順の見直し 設計書: 確定の条件と予測の扱い・撮影計画・記録の運用・道具・手順書と手引きの整理
 
 - 対象: 検証の流れ（[skills-guide.md](skills-guide.md) 1〜4 節、[design-records-automation.md](design-records-automation.md)、[design-reread-prediction.md](design-reread-prediction.md)）、撮影の手引き（[captures/guide.md](captures/guide.md)・[captures/index.md](captures/index.md)）、`packages/core/src/records/` の検査
-- 状態: 承認（2026-10-10。10 節）。9 節の順に実施する
+- 状態: **完了（2026-10-11）**（承認は 2026-10-10。10 節。9 節の 1〜7 を実施した。実施の記録は [design-investigation-review-log.md](design-investigation-review-log.md)）
 - 関連: [design-reread-prediction.md](design-reread-prediction.md)（2026-10-04 承認の B + C1、2026-10-08 の C2 の判断。1 節で改める）、[design-stage20.md](design-stage20.md) 3.2 節・7 節の 15（予測は撮る前に書く。1 節で改める）、[design-minimal-relevance.md](design-minimal-relevance.md)、[backlog.md](backlog.md) 4・5 節、[AGENTS.md](../AGENTS.md)「事実と記録」
 - 作成日: 2026-10-10
 - 調べた時点: main の 7508c744（#527）。この設計書の件数はその時点の調べで、判断の材料にするためのもの。以後は生成物（[claims.md](claims.md)・[verifications.md](verifications.md)・[minimal.md](minimal.md)）が正で、ここの件数は書き直さない。
@@ -379,87 +379,8 @@
 
 ## 11. 実施の記録
 
-### 11.1 確定の条件の変更（9 節の 1。2026-10-10）
-
-- `claims.ts`: 欄 `decidedOn`（`DECIDED_ROLES`）とその形の検査（`validateDecidedOn`）、等級の候補（`gradeCandidate`）、claims.md の冒頭の説明と「決めるのに使った録画」の行。「読み直し」の印を外した。
-- `drafts.ts`: 下書きの理由から予測の日付・控え・合う仮説が無いことを外し、合う仮説が 2 つ以上だけ残した。反復実測の候補で `decidedOn` が無ければ理由に出す。ひな形の見出しを「予測」にした。
-- `close.ts`・`records-close.ts`: 予測の順の検査（日付・控え・git の順・手計算の予測の順）を外した。確定の反復実測の結論に `decidedOn` が無ければ止める。
-- `predictions.ts`・`records-predict.ts`: 控え（`seen`）の書き込みと検査、後付け（`late`）、`rereadOnlyClaims` を外した。既存の予測ファイルの `seen` は残し、読まない。
-- `verifications.ts`: 見出しの語彙を「予測」にし、「予測（撮る前に書く）」を同じ節として読む（閉じた記録は書き換えない）。
-- `records-new.ts`: `--decided-on`。
-- 文書: AGENTS.md（コミット手順・事実と記録・記録の置き場所・検証の流れ）、skills-guide.md の 0・1.3・1.6・1.8・2・4 節、records/verifications/README.md（閉じた記録への追記の 4.2 節も）、records/predictions/README.md、design-records-automation.md 3.2・3.6・3.7 節・design-stage20.md 3.2 節と 7 節の 15・design-reread-prediction.md の注。
-
-### 11.2 既存の確定の点検（9 節の 2。2026-10-11）
-
-- 確定の反復実測の全部に `decidedOn` を書き、1.4.3 節のとおり根拠・`gradeReason`・検証記録を書き足した。仮説に戻した 8 件と、分けた 4 件（新しい 8 件）は 1.4.3 節。
-- 参照の差し替え: `cadence.ts`・`frame/shooter.ts`・`weapons.ts` のコメント、`cadence.test.ts`・`stage16Events.test.ts`・`anisStarS2Burst.test.ts`、`enemies.json` の `range-3min-jump` の出典、captures/guide.md。
-- roadmap の今後の課題と backlog 2-33 に起票した。
-
-### 11.3 手順書の分割（9 節の 3。2026-10-11）
-
-- [verification-guide.md](verification-guide.md) を作った（6.2 節の構成。確定にできる条件は 2.2 節の 1 か所に置いた。付録 A に機構ごとの置き場所・指標・道具、付録 B に機構を変えたとき）。
-- skills-guide.md はスキル定義に固有の節（0・1.1・1.2・1.4・1.5・3・4 節）に絞り、移した節（1.3・1.6〜1.9・2）は見出しを残して verification-guide.md を指す 1 行にした。3 節の例を棄却でない結論に替え、4 節に `records:minimal` を足した。
-- AGENTS.md の記録の置き場所の表と、末尾の手順の指し先、records の README 2 つ、design-records-automation.md 3.2・3.6・3.7 節の注を、verification-guide.md に向けた。
-
-### 11.4 撮影の手引きの整理（9 節の 4。2026-10-11）
-
-- captures/guide.md の 2 つの表を「**項目名**: 読み方（根拠: …）」の箇条書きにした（72KB → 36KB。項目名は変えていない。名前の無かった 1 行に名前を付けた）。
-- 冒頭の足し方を「まず検証記録に書く」に直した。棄却の結論を置き換えた結論に差し替え（C-0073 → C-0285、C-0051 → C-0052）、仮説の結論に「仮説」と書いた。凍結の記録を指す所のうち結論があるものを ID にした（C-0026・C-0029・C-0007）。
-- 数値の書き写しは、その値を持つ結論・観測値が確かめられたものだけ ID に替え、確かめられないもの（検証記録の本文にしか無い値など）は残した。バーストの CT の古い発動の定義を C-0512・C-0515・C-0258（仮説）・C-0285 に合わせて直し、C-0503・C-0516 を足した。0 → 8 の誤読と左の帯の注意を 1 か所にまとめた。
-- index.md には「まず verification.md に書く」の記述は無かった（7.1 節の見込みは誤り）。
-
-### 11.5 index.md の分割（9 節の 5 の前半。2026-10-11）
-
-- captures/index.md を 3 つに分けた: storage.md（置き場所・運用・参照資料・バックアップ・冗長性・クラウド環境での取り寄せ）、tools.md（フレーム番号の約束・解析ツール・証拠フレームの切り出し）、index.md（命名規約・撮影プロトコル・台帳・誰が写っているかの確かめ方）。移した見出しは index.md に 1 行のポインタで残した（閉じた記録と guide.md が節の名前で指している）。
-- 古い記述を直した: 題と目的の行（「唯一の追跡可能な記録」）、置き場所の木に derived/ と新しいファイル、命名規約の例の大文字（intake.ts は英小文字だけ通す）、撮影プロトコルの「1 体のみ・オートバースト OFF・15 秒以上」（最小構成と 3 分の撮影に合わせた）、弾数で武器種を決める所（録画 121 の RL は 120 発）、解析ツールの一覧に coverage.ts・sg-dots.ts・sg-map.ts・mask-tune.ts。
-- 生きた文書とコードのコメントの参照を、storage.md・tools.md に向けた（AGENTS.md・backup-log.md・verification-guide.md、aim.ts・dirs.ts・drive.ts・intake.ts・reload.ts・recordings.ts）。guide.md の参照（関連の行・解析ツール・フレーム番号の約束・バックアップ・参照資料）も、#544 のマージの後に向け直した。.gitignore の追跡の許可に storage.md・tools.md を足した。
-- 残り（9 節の 5 の後半）: 録画ごとの注記の移し（7.2 節）、design-records-automation.md の実施の記録の分割と古い書き方、backup-log.md の手書きの分の凍結（7.3 節）。
-
-### 11.6 記録の設計書と backup-log.md の整理（9 節の 5 の後半の一部。2026-10-11）
-
-- design-records-automation.md の 8 節（実施の記録）と経過を [design-records-automation-log.md](design-records-automation-log.md) に移した（8.x の番号はそのまま。元に 1 行のポインタ）。2・3 節の古い書き方（records:new の引数・`--append`・`range-intervals`・予測ファイルの JSON の例）を直した。8.x 節を指すコメントと backlog の参照を -log.md に向けた。
-- captures/backup-log.md の 2026-10-05 までの段落を backup-log-old.md に元の順のまま移して凍結した。10-06 からの `intake.ts` の段落は、sha256 の値が録画の JSON と一致するものを 1 行の書式にした（一致しない・書式の違う段落はそのまま）。backup-log.md は 82KB → 35KB。
-- `intake.ts` が backup-log.md に書くのを 1 行の書式にした（sha256 の値は書かない）。storage.md・tools.md の説明も直した。.gitignore の追跡の許可に backup-log-old.md を足した。
-- 残り: 録画ごとの注記の移し（7.2 節）。
-
-### 11.7 録画ごとの注記の移し（9 節の 5 の残り。2026-10-11）
-
-- captures/index.md の「録画の一覧」の注記を移した。録画ごとの条件・写っているもの（フレーム落ちの 001・007・010・011、016 のドレイクの同定、023〜035 のゲージ較正、019 のフルバーストの回数、099・114 の依頼と違ったキャラ、118 の識別子、121〜131 の出撃画面と戦闘履歴の写り、ユニの装弾数）は、録画の JSON の `conditionNote` に足した。7.2 節の案ではフレーム落ちに新しい欄を足すとしたが、`conditionNote` も一覧の表に出るので、コードを変えずにそちらに書いた。
-- 注記の元の文（移動の経緯を含む）は、何も失わないよう backup-log-old.md の末尾にそのまま移した。撮影の一般の注意（エーテル・反撃・ジャンプ・カードでの同定）は guide.md と「過去の取り違え」にあるので index.md から消し、16 のドレイクの取り違えを「過去の取り違え」に足した。index.md は 24KB → 15KB。
-
-### 11.8 人の判断の欄と、確定の結論の検査（9 節の 6 の前半。2026-10-11）
-
-- 結論に欄 `judgment`（判断の日・上書きした条件・理由。条件の語彙は `claims.ts` の `JUDGMENT_OVERRIDES`: 指標なし・最小構成の警告・許容外・合う仮説が 2 つ以上）と、claims.md の「人の判断」の印を足した。
-- `records:close` は、確定の結論に、比べる指標が無い（データ明記を除く）・この記録の根拠の観測値が許容外・予測と合う仮説が 2 つ以上、が残れば、`judgment` で上書きしていなければ止める。この記録の観測値の組の最小構成の警告は、`judgment` で上書きしていれば注意にとどめる（要素ごとの `minimal` の印もこれまでどおり使える）。
-- `records:check` は、根拠が検証記録にある確定の結論が、どの完了の検証記録の「結論」にも挙がっていなければ落とす（`verifications.ts` の `unlistedConfirmedClaims`）。いまのデータでは 9 件が挙がっていなかった（11.2 節で分けて作った C-0531・C-0533・C-0535・C-0537 を、どの検証記録にも足していなかった手落ちを含む）ので、根拠の検証記録の「結論」に足した（分けた仮説の C-0532・C-0534・C-0536・C-0538 も、元の結論の記録に足した）。
-- 既存の結論の `judgment`: 根拠の文がオーナーの判断で上書きしたと書いている条件のうち、いまも機械がその条件で確定の理由にできないものだけを書き足した（15 件）。根拠の文に書いていない条件（後の変更で出てきた警告など）は書いていない。
-- 残り（9 節の 6 の後半）: まとめの文書（4.1 節の Q2）。
-
-### 11.9 まとめの文書（9 節の 6 の後半。2026-10-11）
-
-- バースト使用時の効果の付き始め（backlog 2-4）のまとめの文書を [burst-effect-delay-candidates.md](burst-effect-delay-candidates.md) に決め（4.1 節の Q2）、backlog 2-4 の「いま分かっていること」の中身（キャラごとの結論の一覧）を、その文書の「まとめ」の節に移した。backlog 2-4 はそこを指す 1 行にし、roadmap の項目（経過の記録）にはまとめの指し先を足した。backlog は 33KB → 19KB。
-- キャラをまたぐ結論「付き始めはキャラごとに違う」に ID を付けた: C-0540（確定・反復実測・機構 burstChain）。根拠は形ごとの確定の結論（C-0499・C-0517・C-0450・C-0479）で、仮説の形のキャラは V-0399 の表を指す。V-0399 の「結論」に足した。
-- III の起点（backlog 2-30・2-31）は、backlog から既に閉じていたので扱わなかった。
-
-### 11.10 撮影計画の確かめ（9 節の 7 の前半。2026-10-11）
-
-- 予測ファイルの指標に任意の許容の幅（`tolerance`）を足した。`records:predict` は、どの 2 つの仮説の予測の差もその幅の中の指標を「見分けられない」と出す（`predictions.ts` の `indistinguishableTargets`）。時刻の指標の幅の既定は、コードの既定にはせず、手順書 4 節に動画とゲームの時刻のずれを見込んで決めると書いた（指標に単位の情報が無いため）。
-- 撮影プロトコルに、撮る前の確かめの短い一覧（録画・左上のボタン・重い処理・本数）を足した。`intake.ts` は、識別子に `+`（編成）が入っていれば注意を出す。
-- 残りの道具を backlog 5-4〜5-12 に起票した（roadmap の項目にも書いた）。
-- 残り（9 節の 7 の後半）: `records:renumber` と番号の回避（backlog 5-4・5-5）。
+→ [design-investigation-review-log.md](design-investigation-review-log.md)（2026-10-11 に移した。11.1〜11.11 節の番号はそのまま）。
 
 ## 経過
 
-- 2026-10-10: 起案。オーナーの依頼（調査手順の見直し。読み直しを根拠にしてよいかの検討を含む）から。
-- 2026-10-10: 1 節を決定。オーナーの回答は 3 つ。「撮影の前に予測を立てている必要はない。過去の動画であっても、厳密一致はもちろん、複数回観測された現象は確定したものと扱って良い」。反復の数え方では、仮説を立てるのに使った録画を数えない。予測は任意の道具として残す。既存の確定の扱いは、影響を数えてから決める。2〜9 節は 1 つずつ相談する。
-- 2026-10-10: 2〜9 節を決定（10.2 節）。閉じた記録への追記は、推奨と違い自由に書き足してよいとした。状態を承認にした。
-- 2026-10-10: 9 節の 1 を実施（11.1 節、#535）。既存の確定の点検の結果（1.4.1 節）を受けて、録画の中の反復・まとめて合わせた結論・再現の残らない結論の扱いを決めた（1.4.2 節）。
-- 2026-10-11: 点検の後の扱いを決め（10.3 節）、9 節の 2 を実施した（11.2 節）。
-- 2026-10-11: 9 節の 3（手順書の分割）を実施した（11.3 節）。
-- 2026-10-11: 9 節の 4（撮影の手引きの整理）を実施した（11.4 節）。
-- 2026-10-11: 9 節の 5 の前半（index.md の分割）を実施した（11.5 節）。
-- 2026-10-11: 9 節の 5 の後半のうち、記録の設計書と backup-log.md の整理を実施した（11.6 節）。
-- 2026-10-11: 9 節の 5 の残り（録画ごとの注記の移し）を実施した（11.7 節）。9 節の 5 を終えた。
-- 2026-10-11: 9 節の 6 の前半（人の判断の欄と、確定の結論の検査）を実施した（11.8 節）。
-- 2026-10-11: 9 節の 6 の後半（まとめの文書）を実施した（11.9 節）。9 節の 6 を終えた。
-- 2026-10-11: 9 節の 7 の前半（撮影計画の確かめ）を実施した（11.10 節）。
+→ [design-investigation-review-log.md](design-investigation-review-log.md) の「経過」。
