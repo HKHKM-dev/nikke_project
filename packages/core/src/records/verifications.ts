@@ -27,12 +27,18 @@ const REQUIRED_ITEMS: readonly VerificationItem[] = ['問い', '話題', '日付
 /** 本文の見出し（## の語彙と順） */
 export const VERIFICATION_SECTIONS = [
   '条件',
-  '予測（撮る前に書く）',
+  '予測',
   '読み方',
   '結果',
   '分かったこと・分からないこと',
   '次に撮るもの',
 ] as const;
+
+/**
+ * 古い見出し → 語彙の見出し。2026-10-10 までの記録の「予測（撮る前に書く）」は「予測」として読む（撮る前の予測を確定の条件から
+ * 外した。plan/design-investigation-review.md 1.3 節）
+ */
+const SECTION_ALIASES: Readonly<Record<string, string>> = { '予測（撮る前に書く）': '予測' };
 
 export type Verification = {
   id: string;
@@ -119,7 +125,8 @@ export function parseVerification(file: string, markdown: string): Verification 
     const line = lines[i]!;
     const heading = /^## (.+)$/.exec(line);
     if (heading) {
-      current = heading[1]!.trim();
+      const text = heading[1]!.trim();
+      current = SECTION_ALIASES[text] ?? text;
       if (!(VERIFICATION_SECTIONS as readonly string[]).includes(current))
         problems.push(`${id}: 本文の見出しが語彙に無い: ${current}`);
       if (sections.has(current)) problems.push(`${id}: 本文の見出しが重複している: ${current}`);

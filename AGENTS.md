@@ -19,7 +19,7 @@ NIKKE のダメージ計算ツール。
 - 作業はブランチで行い、PR で main にマージする。
 - PR の単位は**実装・検証が完了した時点**（動作するコード・確定した結論・テストが揃った状態）。設計起案や撮影待ちの段階では PR を出さない。
 - 設計の承認は対話で得て、実装と同じ PR に含める。
-- 「撮る前の commit」はトピックブランチ内で行い、撮影待ちの間はブランチを保持する。
+- 撮影待ちの間は、トピックブランチを保持する（撮影計画や予測の commit もそのブランチで行う）。
 - PR を出す手順:
   1. `git fetch origin && git rebase origin/main`（main を取り込むときはマージではなくリベース）。生成物が衝突したら `git checkout --ours -- <ファイル>` で main の版に戻し、自分のブランチで足した ID が main と重なっていれば次の空き番号に振り直し、作り直してから `git rebase --continue` する（`plan/design-stage20.md` 3.6 節）
   2. CI と同じ確認を通す: `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`
@@ -41,6 +41,7 @@ NIKKE のダメージ計算ツール。
 
 - 結論の一覧は `plan/claims.md`（生成）、その根拠は検証記録（`records/verifications/`）と観測値（`records/observations/`）にある。2026-09-26 までの根拠は `plan/verification.md` と `plan/captures/legacy-usage.md`（どちらも凍結）。これと矛盾する変更は、オーナーに確認してから行う。結論を訂正するときは、古い結論を消さずに棄却にする。
 - 新しく結論を確定にするのは、根拠の等級が厳密一致・反復実測・データ明記のときだけ（等級の決め方は `plan/claims.md` の冒頭）。
+- 撮る前の予測は確定の条件にしない。過去の録画の読み直しでも確定にできる。反復実測の再現には、仮説・値・読み方を決めるのに使った録画を数えない（結論の `decidedOn` に書く）。2026-10-10 のオーナーの決定（`plan/design-investigation-review.md` 1 節）。
 - 1 つの事実は 1 か所に置く。実測値は観測値か検証記録に置き、ほかの文書は ID（`C-NNNN`・`V-NNNN`・観測値の ID）で指して数値を書き写さない。検証記録へはパスのリンクを張らず ID で指す。件数は文書に書かず、生成物に出す。
 - 手書きのファイルは 50KB、検証記録は 30KB を目安にし、超えそうなら分ける。
 - 検証の編成は、観測したい事象に影響しうる未確定の要素が最も少ないものを選ぶ（最小構成）。単騎で観測できる事象は単騎で確かめる。
@@ -66,7 +67,7 @@ NIKKE のダメージ計算ツール。
 | `plan/roadmap.md`・設計書・`plan/backlog.md`         | 計画・決定・Stage の状況。残タスクの棚卸し（種類ごとの 1 行の一覧。経過と数値は書かない）は `plan/backlog.md`                                                      |
 | `records/claims/`・`plan/claims.md`                  | 結論（1 件 1 ファイルの JSON。ID・状態・話題・根拠の等級・根拠・モデル側）と、話題ごとの一覧（生成）。問いからいまの結論を引くのは一覧                             |
 | `records/verifications/`・`plan/verifications.md`    | 検証記録（1 回の検証を 1 ファイル。問い・予測・結果・結論）と、その一覧（生成。開いている検証が冒頭に出る。予測との比べと最小構成の警告も出る）                    |
-| `records/predictions/`                               | 撮る前の予測（検証記録ごとに 1 ファイル。編成・仮説・比べる指標と、`npm run records:predict` が書く値）。撮る前に commit する                                      |
+| `records/predictions/`                               | 予測（任意。検証記録ごとに 1 ファイル。編成・仮説・比べる指標と、`npm run records:predict` が書く値）。撮影計画で仮説を見分けられるか確かめるのに使う              |
 | `plan/captures/index.md`                             | 置き場所・撮影プロトコル・命名規約・キャラ同定・解析ツールと、録画ごとの注記（録画の一覧の表は `plan/captures/recordings.md`）                                     |
 | `records/recordings/`・`plan/captures/recordings.md` | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性（1 本 1 ファイルの JSON）と、その一覧（生成。`npm run records:table`）                              |
 | `records/observations/`・`plan/residuals.md`         | 録画から読んだ値（観測値）と、モデルとの残差の一覧（生成。`npm run records:check`）                                                                                |
@@ -79,6 +80,6 @@ NIKKE のダメージ計算ツール。
 
 新しい知見は、まず検証記録（数値は観測値）に根拠つきで書き、撮影や読み取りで繰り返し効くものは `guide.md` に 1〜2 行で足す。
 
-検証の流れ（起案 → 予測の固定 → 撮る → 取り込み → レシピで読む → 比べる → 結論の下書き → 閉じる）の道具は `npm run records:new`・`records:predict`・`records:read`・`records:check`・`records:close` と `tools/captures/intake.ts`（`plan/design-records-automation.md` 2 節。手順は `plan/skills-guide.md` 1 節）。
+検証の流れ（起案 → 撮影計画（予測は任意）→ 撮る → 取り込み → レシピで読む → 比べる → 結論の下書き → 閉じる）の道具は `npm run records:new`・`records:predict`・`records:read`・`records:check`・`records:close` と `tools/captures/intake.ts`（`plan/design-records-automation.md` 2 節。手順は `plan/skills-guide.md` 1 節）。
 
 最小構成の検査（確定の結論 × 根拠の観測値の組に、効きうる未確定の要素を出す）は `plan/minimal.md`（生成）。スキル定義・録画の台帳・観測値の比べる指定を変えたら `npm run records:minimal` で感度を計算し直す（`plan/design-minimal-relevance.md` 10.6 節）。

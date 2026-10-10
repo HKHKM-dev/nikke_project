@@ -118,6 +118,31 @@ describe('records/verifications・plan/verifications.md', () => {
     ]);
   });
 
+  it('reads the old heading 予測（撮る前に書く） as 予測 (plan/design-investigation-review.md 1.3 節)', () => {
+    const body = (heading: string) =>
+      [
+        '# V-0007: 題名',
+        '',
+        '- 問い: q',
+        '- 話題: 命中率・距離',
+        '- 日付: 2026-10-10',
+        '- 状態: 調査中',
+        '',
+        '## 条件',
+        `## ${heading}`,
+        '仮説 H1',
+        '## 読み方',
+        '## 結果',
+        '## 分かったこと・分からないこと',
+        '## 次に撮るもの',
+      ].join('\n');
+    for (const heading of ['予測', '予測（撮る前に書く）']) {
+      const v = parseVerification('V-0007-x.md', body(heading));
+      expect(v.problems).toEqual([]);
+      expect(v.sections.get('予測')).toContain('仮説 H1');
+    }
+  });
+
   it('checks the rules of the states, the ids and the cycles of dependencies', () => {
     const errors = check(
       [

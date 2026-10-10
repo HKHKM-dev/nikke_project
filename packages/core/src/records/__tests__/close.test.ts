@@ -1,9 +1,8 @@
 // 閉じる前の検査（plan/design-records-automation.md 3.7 節）
 import { describe, expect, it } from 'vitest';
 import type { Claim } from '../claims.ts';
-import { closeChecks, isHandPrediction, markState, predictionSectionOf, prTitle, type CloseInput } from '../close.ts';
+import { closeChecks, markState, prTitle, type CloseInput } from '../close.ts';
 import type { Observation } from '../observations.ts';
-import type { RecordingEntry } from '../recordings.ts';
 import { parseVerification } from '../verifications.ts';
 
 const doc = (extra: string[] = [], sections: Partial<Record<string, string>> = {}) =>
@@ -22,7 +21,7 @@ const doc = (extra: string[] = [], sections: Partial<Record<string, string>> = {
       '',
       '## 条件',
       '',
-      '## 予測（撮る前に書く）',
+      '## 予測',
       sections['予測'] ?? '仮説 H1',
       '## 読み方',
       '',
@@ -47,6 +46,7 @@ const claim = (patch: Partial<Claim> = {}): Claim => ({
   updated: '2026-10-02',
   observations: ['101-01'],
   subject: { mechanism: 'targetTable' },
+  decidedOn: [],
   ...patch,
 });
 const obs: Observation = {
@@ -60,20 +60,10 @@ const obs: Observation = {
   scope: { slot: 1, source: 'normal' },
   readAt: '2026-10-02',
 };
-const recording = { id: '101', date: '2026-10-01', team: [], legacy: false } as unknown as RecordingEntry;
 const base: CloseInput = {
   verification: doc(),
   claims: [claim()],
   observations: [obs],
-  recordings: new Map([['101', recording]]),
-  prediction: {
-    verification: 'V-0099',
-    team: [],
-    fixedSpec: true,
-    hypotheses: [{ id: 'H1' }],
-    targets: [],
-    predicted: { at: '2026-09-30', commit: 'abc1234', values: {} },
-  },
   gradeCandidates: new Map([['C-0001', '反復実測']]),
   minimal: new Map(),
 };
@@ -109,84 +99,26 @@ describe('closeChecks', () => {
     expect(reasoned.warnings[0]).toContain('理由: 1 本の録画の中の反復');
   });
 
-  it('予測: 無ければ探索と書く、出していない、日付が録画より後', () => {
-    expect(closeChecks({ ...base, prediction: undefined }).errors[0]).toContain('予測ファイル');
-    expect(closeChecks({ ...base, prediction: undefined, verification: doc([], { 予測: '探索' }) }).errors).toEqual([]);
-    expect(closeChecks({ ...base, prediction: { ...base.prediction!, predicted: null } }).errors[0]).toContain(
-      '出していない',
-    );
-    // 起票（2026-10-02）より前に撮った録画（2026-10-01）は読み直しなので、録画の日は見ない（読んだ日と同じ日の予測は通る）
-    const reread = { ...base.prediction!, predicted: { at: '2026-10-02', commit: 'abc1234', values: {} } };
-    expect(closeChecks({ ...base, prediction: reread }).errors).toEqual([]);
-    // 起票の後に撮った録画の日より後の予測は落ちる
-    const shot = { ...recording, date: '2026-10-02' } as RecordingEntry;
-    const late = { ...base.prediction!, predicted: { at: '2026-10-03', commit: 'abc1234', values: {} } };
-    const lateInput = {
-      ...base,
-      prediction: late,
-      recordings: new Map([['101', shot]]),
-      observations: [{ ...obs, readAt: '2026-10-03' }],
-    };
-    expect(closeChecks(lateInput).errors[0]).toContain('より後');
+  it('撮る前の予測と読みの順は見ない（plan/design-investigation-review.md 1 節）', () => {
+    // 予測ファイルが無く、「予測」の節に探索・手計算と書いていなくても通る
+    expect(closeChecks({ ...base, verification: doc([], { 予測: 'なし' }) }).errors).toEqual([]);
+    // 観測値を読んだ日が予測より前でも通る（予測は入力に無い）
+    expect(closeChecks({ ...base, observations: [{ ...obs, readAt: '2026-09-01' }] }).errors).toEqual([]);
   });
 
-  it('読み直し: 控え（seen）に入った観測値・控えに無い前の録画・git の順で落ちる（design-reread-prediction.md）', () => {
-    const seen = (s: Record<string, string[]>) => ({
-      ...base.prediction!,
-      predicted: { at: '2026-10-02', commit: 'abc1234', values: {}, seen: s },
-    });
-    // 録画 101（2026-10-01）を控えに挙げ、そのときの観測値は無かった: 通る
-    expect(closeChecks({ ...base, prediction: seen({ '101': [] }) }).errors).toEqual([]);
-    // 101-01 は予測の時点で既にあった
-    expect(closeChecks({ ...base, prediction: seen({ '101': ['101-01'] }) }).errors[0]).toContain('既にあった');
-    // 予測より前の録画が控えに無い
-    expect(closeChecks({ ...base, prediction: seen({}) }).errors[0]).toContain('控え（seen）に無い');
-    const order = (g: Partial<CloseInput['gitOrder'] & object>) => ({
-      ...base,
-      prediction: seen({ '101': [] }),
-      gitOrder: { uncommitted: false, predictionCommit: 'def5678', notAfter: [], ...g },
-    });
-    expect(closeChecks(order({})).errors).toEqual([]);
-    expect(closeChecks(order({ uncommitted: true })).errors[0]).toContain('commit されていない');
-    expect(closeChecks(order({ predictionCommit: null })).errors[0]).toContain('commit されていない');
-    expect(closeChecks(order({ notAfter: ['101-01'] })).errors[0]).toContain('101-01 を、予測の commit（def5678）');
-    // スカッシュマージで予測と同じ commit になった読みは、git では順を見られないので注意にとどめる（控えの検査は残る）
-    const squashed = closeChecks(order({ merged: ['101-01'] }));
-    expect(squashed.errors).toEqual([]);
-    expect(squashed.warnings[0]).toContain('101-01 は予測と同じマージ済みの commit（def5678）');
-    // 控えの無い古い予測ファイルでは git の順を見ない
-    const old = { ...base, gitOrder: { uncommitted: true, predictionCommit: null, notAfter: ['101-01'] } };
-    expect(closeChecks(old).errors).toEqual([]);
-  });
-
-  it('手計算の予測: 「予測」の節の commit より後に読んだ観測値なら通る（plan/design-pellet-hit.md 7 節）', () => {
-    const hand = (g?: Partial<CloseInput['handOrder'] & object>): CloseInput => ({
-      ...base,
-      prediction: undefined,
-      verification: doc([], { 予測: '語彙が無いので手計算の予測を書く。仮説 A は 4・3・3…' }),
-      ...(g === undefined
-        ? {}
-        : { handOrder: { uncommitted: false, predictionCommit: 'def5678', notAfter: [], ...g } }),
-    });
-    expect(isHandPrediction(hand().verification)).toBe(true);
-    expect(closeChecks(hand({})).errors).toEqual([]);
-    expect(closeChecks(hand()).errors[0]).toContain('git の履歴で確かめられない');
-    expect(closeChecks(hand({ uncommitted: true })).errors[0]).toContain(
-      '手計算の予測（「予測」の節）が commit されていない',
-    );
-    expect(closeChecks(hand({ notAfter: ['101-01'] })).errors[0]).toContain(
-      '101-01 を、手計算の予測の commit（def5678）',
-    );
-    // 「手計算」と書いていない予測の節は今までどおり（予測ファイルか探索が要る）
-    const plain = closeChecks({ ...base, prediction: undefined, verification: doc([], { 予測: '仮説 H1' }) });
-    expect(plain.errors[0]).toContain('予測ファイル');
-    expect(isHandPrediction(doc([], { 予測: '探索（手計算はしない）' }))).toBe(false);
-  });
-
-  it('predictionSectionOf: 「予測」の節の本文を取り出す', () => {
-    const md = ['# V', '', '## 予測（撮る前に書く）', '', '本文 1', '', '| a |', '', '## 読み方', '', 'x'].join('\n');
-    expect(predictionSectionOf(md)).toBe('本文 1\n\n| a |');
-    expect(predictionSectionOf('# V\n\n## 読み方\n')).toBeUndefined();
+  it('確定の反復実測の結論に decidedOn が無ければ誤り（同 1.3 節）', () => {
+    const noDecided = claim();
+    delete noDecided.decidedOn;
+    expect(closeChecks({ ...base, claims: [noDecided] }).errors[0]).toContain('decidedOn が無い');
+    // 厳密一致・仮説の結論は問わない
+    expect(
+      closeChecks({ ...base, claims: [{ ...noDecided, grade: '厳密一致' }], gradeCandidates: new Map() }).errors,
+    ).toEqual([]);
+    expect(closeChecks({ ...base, claims: [{ ...noDecided, state: '仮説' }] }).errors).toEqual([]);
+    // 書いてあれば通る（空でもよい）
+    expect(
+      closeChecks({ ...base, claims: [claim({ decidedOn: [{ recording: '101', role: '仮説の出どころ' }] })] }).errors,
+    ).toEqual([]);
   });
 
   it('確定の結論の根拠に compare も scope も無い観測値があれば誤り、subject が無ければ注意（設計書 9 節の 2・3.2 節）', () => {

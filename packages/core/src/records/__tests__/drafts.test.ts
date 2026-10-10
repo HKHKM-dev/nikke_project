@@ -110,6 +110,7 @@ describe('claimDraft（結論の下書きの状態）', () => {
     subject: { mechanism: 'targetTable' },
     minimal: [],
     prediction: undefined,
+    decidedOn: [],
   };
 
   it('等級の候補が厳密一致か反復実測で、疑問の印が無ければ確定', () => {
@@ -119,6 +120,20 @@ describe('claimDraft（結論の下書きの状態）', () => {
     expect(d.file.grade).toBe('反復実測');
     expect(d.file.basis).toBe('`101-01`・`102-01`。V-0099');
     expect(d.file.text).toContain('書く');
+    expect(d.file.decidedOn).toEqual([]);
+  });
+
+  it('反復実測の候補で decidedOn が無ければ仮説（plan/design-investigation-review.md 1.3 節）', () => {
+    const { decidedOn: _decidedOn, ...noDecided } = base;
+    const d = claimDraft(noDecided);
+    expect(d.file.state).toBe('仮説');
+    expect(d.reasons[0]).toContain('decidedOn が無い');
+    expect('decidedOn' in d.file).toBe(false);
+    // 厳密一致なら問わない
+    expect(claimDraft({ ...noDecided, gradeCandidate: '厳密一致' }).reasons).toEqual([]);
+    // 書けば結論のファイルに入る
+    const given = [{ recording: '101', role: '仮説の出どころ' as const }];
+    expect(claimDraft({ ...base, decidedOn: given }).file.decidedOn).toEqual(given);
   });
 
   it('疑問の印が 1 つでもあれば仮説にし、理由を返す', () => {
@@ -160,7 +175,7 @@ describe('claimDraft（結論の下書きの状態）', () => {
     expect(claimDraft({ ...base, compared: new Map([['101-01', false]]) }).reasons[0]).toContain('許容外');
   });
 
-  it('予測ファイルがあれば、予測を出したこと・日付が読んだ日より前・合う仮説が 1 つを求める', () => {
+  it('予測は任意: 順と日付は見ず、仮説が 2 つ以上あって 2 つ以上と合うときだけ理由にする（同 1.3 節）', () => {
     const file = {
       verification: 'V-0099',
       team: [{ rid: 307 }],
@@ -174,34 +189,17 @@ describe('claimDraft（結論の下書きの状態）', () => {
         ['H1', { ok: h1, total: 1 }],
         ['H2', { ok: h2, total: 1 }],
       ]);
-    expect(claimDraft({ ...base, prediction: { file, targets: [], score: score(1, 0) } }).reasons[0]).toContain(
-      '予測を出していない',
-    );
-    const done = { ...file, predicted: { at: '2026-10-03', commit: 'abc1234', values: {} } };
-    expect(claimDraft({ ...base, prediction: { file: done, targets: [], score: score(1, 0) } }).reasons[0]).toContain(
-      'より後',
-    );
-    const early = { ...file, predicted: { at: '2026-10-01', commit: 'abc1234', values: {} } };
-    expect(claimDraft({ ...base, prediction: { file: early, targets: [], score: score(1, 0) } }).file.state).toBe(
-      '確定',
-    );
-    expect(claimDraft({ ...base, prediction: { file: early, targets: [], score: score(1, 1) } }).reasons[0]).toContain(
-      '2 つ',
-    );
-    expect(claimDraft({ ...base, prediction: { file: early, targets: [], score: score(0, 0) } }).reasons[0]).toContain(
-      '合う仮説が無い',
-    );
-    // 読み直し: 予測の時点で既にあった観測値（控え seen）を根拠にしていれば仮説（design-reread-prediction.md）
-    const seen = (ids: string[]) => ({
+    // まだ出していない・読んだ日より後に出した・控えに入った観測値がある・どの仮説とも合わない、はどれも理由にしない
+    expect(claimDraft({ ...base, prediction: { file, targets: [], score: score(1, 0) } }).reasons).toEqual([]);
+    const late = {
       ...file,
-      predicted: { at: '2026-10-01', commit: 'abc1234', values: {}, seen: { '101': ids } },
-    });
-    expect(claimDraft({ ...base, prediction: { file: seen([]), targets: [], score: score(1, 0) } }).file.state).toBe(
-      '確定',
+      predicted: { at: '2026-10-03', commit: 'abc1234', values: {}, seen: { '101': ['101-01'] } },
+    };
+    expect(claimDraft({ ...base, prediction: { file: late, targets: [], score: score(1, 0) } }).reasons).toEqual([]);
+    expect(claimDraft({ ...base, prediction: { file: late, targets: [], score: score(0, 0) } }).reasons).toEqual([]);
+    expect(claimDraft({ ...base, prediction: { file: late, targets: [], score: score(1, 1) } }).reasons[0]).toContain(
+      '合う仮説が 2 つ',
     );
-    expect(
-      claimDraft({ ...base, prediction: { file: seen(['101-01']), targets: [], score: score(1, 0) } }).reasons[0],
-    ).toContain('既にあった観測値がある（101-01）');
   });
 });
 

@@ -61,7 +61,17 @@ export type ClaimFile = {
   when?: ClaimWhen;
   /** 最小構成の検査編: 人の判断の印（同 4.3 節）。印のある要素は、その組の警告から外す */
   minimal?: MinimalMark[];
+  /**
+   * 仮説・値・読み方を決めるのに使った録画（plan/design-investigation-review.md 1.3 節）。等級の候補は、反復実測の再現にこれらの
+   * 録画を数えず、厳密一致に値か読み方を合わせた録画を数えない。仮説を立てた録画が無ければ空の並び。書いていない結論は除かずに数える
+   */
+  decidedOn?: DecidedOn[];
 };
+
+/** 録画を何を決めるのに使ったか（plan/design-investigation-review.md 1.3 節） */
+export const DECIDED_ROLES = ['仮説の出どころ', '値を合わせた', '読み方を合わせた'] as const;
+export type DecidedRole = (typeof DECIDED_ROLES)[number];
+export type DecidedOn = { recording: string; role: DecidedRole };
 
 /**
  * 定義に結び付かない結論の機構の名前（plan/design-minimal-relevance.md 3.2 節）。観測量の出どころ（records/observations.ts の
@@ -194,6 +204,30 @@ export function validateMinimalFields(c: Claim): string[] {
   return errors;
 }
 
+const RECORDING_ID = /^(?:\d{3,}|L-[A-Z]{1,3})$/;
+
+/** decidedOn の形の検査（plan/design-investigation-review.md 1.3 節）。録画の実在は見ない（根拠に無い録画で仮説を立ててもよい） */
+export function validateDecidedOn(c: Pick<ClaimFile, 'id' | 'decidedOn'>): string[] {
+  if (c.decidedOn === undefined) return [];
+  const at = `${c.id}: decidedOn`;
+  if (!Array.isArray(c.decidedOn)) return [`${at} は { recording, role } の並び（無ければ []）`];
+  const errors: string[] = [];
+  const recordings = new Set<string>();
+  c.decidedOn.forEach((d: unknown, i) => {
+    if (!isRecord(d) || unknownKeys(d, ['recording', 'role']).length > 0) {
+      errors.push(`${at}[${i}] は { recording, role }`);
+      return;
+    }
+    if (typeof d.recording !== 'string' || !RECORDING_ID.test(d.recording))
+      errors.push(`${at}[${i}].recording は録画の id（3 桁以上の数字か L-…）: ${String(d.recording)}`);
+    else if (recordings.has(d.recording)) errors.push(`${at} に録画 ${d.recording} が 2 回ある`);
+    else recordings.add(d.recording);
+    if (!(DECIDED_ROLES as readonly unknown[]).includes(d.role))
+      errors.push(`${at}[${i}].role が語彙（${DECIDED_ROLES.join('・')}）に無い: ${String(d.role)}`);
+  });
+  return errors;
+}
+
 export type Claim = ClaimFile & {
   /** 根拠の文から拾った観測値の ID */
   observations: string[];
@@ -262,6 +296,7 @@ export function validateClaims(
     if (c.state === '確定' && c.observations.length > 0 && c.observations.every((o) => invalidIds.has(o)))
       errors.push(`${c.id}: 確定の結論の根拠の観測値が、すべて失効している`);
     errors.push(...validateMinimalFields(c));
+    errors.push(...validateDecidedOn(c));
     for (const r of c.replaces) {
       const old = byId.get(r);
       if (old === undefined) errors.push(`${c.id}: 置き換えた結論 ${r} が無い`);
@@ -299,9 +334,10 @@ export function gatedObservations(claims: readonly Claim[], invalidIds: Readonly
  * 根拠の等級の候補（plan/design-records-automation.md 3.5 節）。結論の根拠の観測値のうち、モデルと比べたもの（residuals）から
  * 機械で出す。上から順に当てはめる。根拠にモデルと比べた観測値が無い（記録だけの観測値や、旧の文書を指す根拠）ときは
  * 機械では決められないので undefined。データ明記は人が決めるので機械では出さない。
- *   厳密一致: 整数の観測値で、許容内かつ差が 0 のものがある
- *   反復実測: 許容内の観測値が 2 本以上の録画にある
- *   単独実測: 許容内が 1 本の録画だけ（か無い）
+ *   厳密一致: 整数の観測値で、許容内かつ差が 0 のものがある（値か読み方を合わせた録画（decidedOn）のものは数えない）
+ *   反復実測: 許容内の観測値が 2 本以上の録画にあり、そのうち 1 本以上が仮説・値・読み方を決めるのに使っていない録画（decidedOn に無い）
+ *   単独実測: 上のどちらでもない
+ * decidedOn は plan/design-investigation-review.md 1.3 節（2026-10-10 のオーナーの決定。仮説を立てるのに使った録画は再現に数えない）
  */
 /**
  * 1 ヒットの値の指標。モデルは端数を持ち、ゲームは途中の丸めで整数を出す（丸め方は四捨五入でも切り捨てでも揃わない）ので、
@@ -333,9 +369,15 @@ export function gradeCandidate(
     isInteger(r.value) &&
     r.diff !== null &&
     (r.diff === 0 || (r.metric !== undefined && HIT_VALUE_METRICS.has(r.metric) && Math.abs(r.diff) < 1));
-  if (ok.some(exact)) return '厳密一致';
-  const recordings = new Set(ok.map((r) => r.id.replace(/-\d+$/, '')));
-  if (recordings.size >= 2) return '反復実測';
+  const recordingOf = (id: string) => id.replace(/-\d+$/, '');
+  const decided = new Map((claim.decidedOn ?? []).map((d) => [d.recording, d.role]));
+  const fitted = (id: string) => {
+    const role = decided.get(recordingOf(id));
+    return role === '値を合わせた' || role === '読み方を合わせた';
+  };
+  if (ok.some((r) => exact(r) && !fitted(r.id))) return '厳密一致';
+  const recordings = new Set(ok.map((r) => recordingOf(r.id)));
+  if (recordings.size >= 2 && [...recordings].some((r) => !decided.has(r))) return '反復実測';
   return '単独実測';
 }
 
@@ -355,12 +397,12 @@ const CLAIMS_HEADER = `# 結論の台帳
 - 状態は \`確定\`・\`仮説\`・\`棄却\`・\`範囲外\` のどれか。\`範囲外\` は、モデルで扱わないものと、観測できないモデルの約束（単位など）。\`確定\` の結論の根拠の観測値は、\`npm test\` でモデルと比べ、許容幅の外なら落ちる。
 - 根拠の等級は、上から順に問い、最初に当てはまったもの（[design-stage20.md](design-stage20.md) 3.3 節）。新しく \`確定\` にするのは 1〜3 のとき。
   1. \`厳密一致\`: 合わせ込みの定数を持たない式やデータから計算した値と、実測が端数まで一致した
-  2. \`反復実測\`: 値を決めるのに使っていない実測でも再現した
+  2. \`反復実測\`: 値を決めるのに使っていない実測でも再現した（仮説・値・読み方を決めるのに使った録画のほかに、別の録画で 1 回以上）
   3. \`データ明記\`: ゲームのデータ（CDN の数値・説明文）に、解釈の余地なく一意に書かれている
   4. \`単独実測\`: 実測はあるが、1 回だけか、値をその実測に合わせて決めただけ
   5. \`推論\`: 上のどれでもない（解釈の余地のある読み・推論・推定・外部資料・観測できない約束）
+- 撮る前の予測は確定の条件にしない。過去の録画の読み直しでも確定にできる（[design-investigation-review.md](design-investigation-review.md) 1 節。2026-10-10 のオーナーの決定）。「決めるのに使った録画」は、仮説・値・読み方を決めるのに使った録画（結論の \`decidedOn\`）。機械の等級の候補は、反復実測の再現にこれらの録画を数えない。
 - 訂正は、古い結論を消さずに状態を \`棄却\` にし、新しい結論の「置き換え」に古い ID を書く。ID は変えない・使い回さない。
-- 「読み直し」の印は、根拠が予測の後に既存の録画を読んだ観測値だけで、予測の後に撮った録画を含まない確定の結論（[design-reread-prediction.md](design-reread-prediction.md)。比べる値を読む前の予測で確定にしたもの）。
 - 根拠の \`010-01\` などは観測値の ID（\`records/observations/<録画 id>.json\`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）`;
 
@@ -377,8 +419,6 @@ export function renderClaims(
   definitionPlaces: ReadonlyMap<string, readonly string[]> = new Map(),
   /** 結論 ID → 機械が出した等級の候補（plan/design-records-automation.md 3.5 節。書いた等級と違うときだけ出す） */
   gradeCandidates: ReadonlyMap<string, ClaimGrade> = new Map(),
-  /** 読み直しだけに立つ確定の結論（plan/design-reread-prediction.md 5 節の C1） */
-  rereadOnly: ReadonlySet<string> = new Set(),
   /** 結論 ID → 最小構成の検査の警告のある組の数と組の数（plan/design-minimal-relevance.md 5 節。警告のあるものだけ出す） */
   minimalCounts: ReadonlyMap<string, { warned: number; pairs: number }> = new Map(),
 ): string {
@@ -395,18 +435,17 @@ export function renderClaims(
     if (inTopic.length === 0) continue;
     lines.push('', `## ${topic}`, '');
     for (const c of inTopic) {
-      const meta = [
-        `状態: ${c.state}`,
-        ...(c.grade ? [`等級: ${c.grade}`] : []),
-        ...(rereadOnly.has(c.id) ? ['読み直し'] : []),
-        `更新日: ${c.updated}`,
-      ];
+      const meta = [`状態: ${c.state}`, ...(c.grade ? [`等級: ${c.grade}`] : []), `更新日: ${c.updated}`];
       lines.push(
         `- **${c.id}** ${c.text}`,
         `  - ${meta.join('・')}`,
         `  - 根拠: ${c.basis}`,
         `  - モデル側: ${c.model}`,
       );
+      if (c.decidedOn !== undefined)
+        lines.push(
+          `  - 決めるのに使った録画: ${c.decidedOn.length === 0 ? 'なし' : c.decidedOn.map((d) => `${d.recording}（${d.role}）`).join('、')}`,
+        );
       if (c.replaces.length > 0) lines.push(`  - 置き換え: ${c.replaces.join('、')}`);
       const by = replacedBy.get(c.id);
       if (by !== undefined) lines.push(`  - 置き換えた結論: ${by.join('、')}`);

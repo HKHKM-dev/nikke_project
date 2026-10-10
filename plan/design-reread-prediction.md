@@ -1,7 +1,7 @@
 # 読み直しの予測 設計書: 既存の録画を予測の後に読んだ結論を、確定の条件でどう扱うか
 
 - 対象: `D:\nikke_project`（規則は [AGENTS.md](../AGENTS.md)「事実と記録」、手順は [skills-guide.md](skills-guide.md) 1.8・2 節、検査は [design-records-automation.md](design-records-automation.md) 3.6・3.7 節）
-- 状態: 承認（2026-10-04、6 節の 6 点とも推奨どおり）。実施した（7 節）。7.2 節の S2 の検証のブランチの分も済んだ（V-0124 の `predicted.seen`、C-0204・C-0205・C-0207・C-0209・C-0211 の根拠の文）
+- 状態: 承認（2026-10-04、6 節の 6 点とも推奨どおり）。実施した（7 節）。7.2 節の S2 の検証のブランチの分も済んだ（V-0124 の `predicted.seen`、C-0204・C-0205・C-0207・C-0209・C-0211 の根拠の文）。**2026-10-10 に改めた**: 読む前の予測も確定の条件から外し、控え（`seen`）・git の順・後付け・claims.md の「読み直し」の印をやめた。代わりに、反復実測の再現に仮説・値・読み方を決めるのに使った録画（結論の `decidedOn`）を数えない（[design-investigation-review.md](design-investigation-review.md) 1 節）
 - 関連: [design-stage20.md](design-stage20.md) 3.2 節・7 節の 15（予測は撮る前に書く）、[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) 9 節の論点 11、V-0090・V-0122、V-0124（アニス：スターの S2 の検証。以下「S2 の検証」）
 - 作成日: 2026-10-04
 

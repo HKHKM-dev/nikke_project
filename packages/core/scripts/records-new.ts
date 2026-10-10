@@ -1,23 +1,29 @@
 // 起案と結論の下書き（plan/design-records-automation.md 3.1・3.6 節）。
 //   npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN]
 //   npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>] [--subject "<定義の場所>" … | --mechanism <機構>]
+//     [--decided-on <録画>:<仮説|値|読み方> … | --decided-on none]
 // verification: 次の空き番号で records/verifications/V-NNNN-<短い名前>.md をひな形から作る（状態は調査中）。
 // claim: 次の空き番号で records/claims/C-NNNN.json を作る。話題はその検証記録の話題、根拠はその検証記録を source にする観測値、
 //   等級は機械の候補（3.5 節）、状態は確定にできる条件が全部そろえば確定、欠ければ仮説（欠けた条件を出す。3.6 節）。
 //   結論の対象（subject）は --subject（定義の場所。複数可）か --mechanism（plan/design-minimal-relevance.md 3.2 節）。
 //   最小構成の検査（同 5 節）は、下書きを確定とみて根拠の観測値の組を判定する。text と model は人が書く。
+//   --decided-on は、仮説・値・読み方を決めるのに使った録画（decidedOn。plan/design-investigation-review.md 1.3 節）。等級の候補は、
+//   反復実測の再現にこれらの録画を数えない。仮説を立てた録画が無ければ none。
 import { spawnSync } from 'node:child_process';
 import { existsSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import {
   CLAIM_MECHANISMS,
   CLAIM_TOPICS,
+  DECIDED_ROLES,
   gradeCandidate,
   toClaims,
   type Claim,
   type ClaimMechanism,
   type ClaimSubject,
   type ClaimTopic,
+  type DecidedOn,
+  type DecidedRole,
 } from '../src/records/claims.ts';
 import { claimDraft, nextId, verificationFileName, verificationTemplate } from '../src/records/drafts.ts';
 import { invalidReasonsOf, runObservations } from '../src/records/observations.ts';
@@ -49,12 +55,14 @@ const { values, positionals } = parseArgs({
     text: { type: 'string' },
     subject: { type: 'string', multiple: true },
     mechanism: { type: 'string' },
+    'decided-on': { type: 'string', multiple: true },
   },
 });
 
 const USAGE =
   'usage: npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN]\n' +
   '       npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>] [--subject "<定義の場所>" … | --mechanism <機構>]\n' +
+  '         [--decided-on <録画>:<仮説|値|読み方> … | --decided-on none]\n' +
   `話題: ${CLAIM_TOPICS.join(' / ')}\n` +
   `機構: ${CLAIM_MECHANISMS.join(' / ')}`;
 
@@ -62,6 +70,26 @@ function fail(message: string): never {
   console.error(message);
   console.error(USAGE);
   process.exit(1);
+}
+
+/** 「--decided-on 077:仮説」の短い名前 → 語彙 */
+const ROLE_SHORT: Readonly<Record<string, DecidedRole>> = {
+  仮説: '仮説の出どころ',
+  値: '値を合わせた',
+  読み方: '読み方を合わせた',
+};
+
+/** --decided-on の値（「<録画>:<役割>」の並びか none）を decidedOn にする。指定が無ければ undefined */
+function parseDecidedOn(given: readonly string[] | undefined): DecidedOn[] | undefined {
+  if (given === undefined) return undefined;
+  if (given.length === 1 && given[0] === 'none') return [];
+  return given.map((v) => {
+    const m = /^([^:：]+)[:：](.+)$/.exec(v.trim());
+    const role = m === null ? undefined : (ROLE_SHORT[m[2]!] ?? m[2]);
+    if (m === null || role === undefined || !(DECIDED_ROLES as readonly string[]).includes(role))
+      fail(`--decided-on は <録画>:<${Object.keys(ROLE_SHORT).join('|')}> か none: ${v}`);
+    return { recording: m[1]!.replaceAll('`', '').trim(), role: role as DecidedRole };
+  });
 }
 
 function format(path: string): void {
@@ -107,7 +135,7 @@ if (kind === 'verification') {
   writeFileSync(path, verificationTemplate(draft));
   format(path);
   console.log(
-    `${path} を作った（状態: 調査中）。問い・条件・予測を書き、予測ファイル records/predictions/${id}.json を作って npm run records:predict -- ${id} を回す`,
+    `${path} を作った（状態: 調査中）。問い・条件・次に撮るもの（撮影計画）を書く。予測は任意（撮影計画で仮説を見分けられるか確かめるなら、予測ファイル records/predictions/${id}.json を作って npm run records:predict -- ${id}）`,
   );
 } else if (kind === 'claim') {
   const from = values.from;
@@ -130,6 +158,7 @@ if (kind === 'verification') {
     claims.map((c) => c.id),
   );
   const own = observations.filter((o) => o.source === from);
+  const decidedOn = parseDecidedOn(values['decided-on']);
   const residuals = runObservations(own, recordings, data);
   const residualOf = new Map(
     residuals.map((r) => [
@@ -151,6 +180,7 @@ if (kind === 'verification') {
       model: '',
       replaces: [],
       updated: today,
+      ...(decidedOn === undefined ? {} : { decidedOn }),
     },
   ])[0]!;
   const candidate = gradeCandidate(basisForCandidate, residualOf, new Set(invalidReasonsOf(observations).keys()));
@@ -194,6 +224,7 @@ if (kind === 'verification') {
     ...(subject === undefined ? {} : { subject }),
     minimal,
     prediction: prediction === undefined ? undefined : comparePredictions(prediction, observations),
+    ...(decidedOn === undefined ? {} : { decidedOn }),
   });
   const path = `${ROOT}records/claims/${id}.json`;
   if (existsSync(path)) fail(`${path} が既にある`);

@@ -1,9 +1,16 @@
 // 起案と結論の下書き（plan/design-records-automation.md 3.1・3.6 節）。npm run records:new の純粋な部分。
 // 採番（最大の番号 + 1）、検証記録のひな形、結論の状態（確定にできる条件が全部そろえば確定、1 つでも欠ければ仮説と理由）。
-import { CLAIM_TOPICS, type ClaimFile, type ClaimGrade, type ClaimSubject, type ClaimTopic } from './claims.ts';
+import {
+  CLAIM_TOPICS,
+  type ClaimFile,
+  type ClaimGrade,
+  type ClaimSubject,
+  type ClaimTopic,
+  type DecidedOn,
+} from './claims.ts';
 import { summarizeWarnings, type PairWarning } from './relevance.ts';
 import type { Observation } from './observations.ts';
-import { seenObservationIds, type PredictionComparison } from './predictions.ts';
+import type { PredictionComparison } from './predictions.ts';
 
 /** 既存の ID（V-0012・C-0159 など）から、同じ接頭辞の次の空き番号 */
 export function nextId(prefix: 'V' | 'C', existing: readonly string[]): string {
@@ -68,9 +75,9 @@ export function verificationTemplate(d: VerificationDraft): string {
     '## 条件',
     '',
     '',
-    '## 予測（撮る前に書く）',
+    '## 予測',
     '',
-    `仮説ごとに、この録画で何が見えるはずか。見分けられるか。外れたときの影響。数値は予測ファイル（records/predictions/${d.id}.json。npm run records:predict -- ${d.id}）を指す。既存の録画の読み直しなら、冒頭の「録画」に挙げてから予測を出し、読む前に commit する。`,
+    `任意（使わなければ「なし」）。撮影計画で、仮説ごとにこの録画で何が見えるはずか・見分けられるかを確かめるときに書く。数値は予測ファイル（records/predictions/${d.id}.json。npm run records:predict -- ${d.id}）を指す。仮説を立てるのに使った録画は、結論の decidedOn に書く。`,
     '',
     '## 読み方',
     '',
@@ -114,13 +121,16 @@ export type ClaimDraftInput = {
   minimal: readonly PairWarning[];
   /** 予測との比べ（予測ファイルが無ければ undefined） */
   prediction: PredictionComparison | undefined;
+  /** 仮説・値・読み方を決めるのに使った録画（records:new の --decided-on。plan/design-investigation-review.md 1.3 節）。無ければ undefined */
+  decidedOn?: DecidedOn[];
 };
 
 export type ClaimDraft = { file: ClaimFile; reasons: string[] };
 
 /**
- * 結論の下書き（3.6 節）。状態は、等級の候補が厳密一致か反復実測で、疑問の印（結論の対象が無い・最小構成の警告・scope の無い観測値・
- * 予測の日付・合う仮説が 1 つに決まらない・失効した観測値・許容外）が無いときだけ確定。1 つでも欠ければ仮説にし、欠けた条件を reasons に返す。
+ * 結論の下書き（3.6 節）。状態は、等級の候補が厳密一致か反復実測で、疑問の印（結論の対象が無い・反復実測なのに decidedOn が無い・
+ * 最小構成の警告・scope の無い観測値・予測と合う仮説が 2 つ以上・失効した観測値・許容外）が無いときだけ確定。1 つでも欠ければ仮説にし、
+ * 欠けた条件を reasons に返す。撮る前の予測と読みの順は見ない（plan/design-investigation-review.md 1 節）。
  * 最小構成の警告は plan/design-minimal-relevance.md の組の判定（records/relevance.ts）
  */
 export function claimDraft(input: ClaimDraftInput): ClaimDraft {
@@ -131,6 +141,8 @@ export function claimDraft(input: ClaimDraftInput): ClaimDraft {
   if (candidate === undefined) reasons.push('モデルと比べた観測値が無い（等級の候補を出せない）');
   else if (candidate !== '厳密一致' && candidate !== '反復実測') reasons.push(`等級の候補が ${candidate}`);
   if (input.subject === undefined) reasons.push('結論の対象（subject）が無い（--subject か --mechanism で書く）');
+  if (candidate === '反復実測' && input.decidedOn === undefined)
+    reasons.push('decidedOn が無い（仮説・値・読み方を決めるのに使った録画。無ければ []。--decided-on で書く）');
   const warned = input.minimal.filter((w) => w.elements.length > 0);
   if (warned.length > 0) {
     reasons.push(`最小構成の警告がある（${summarizeWarnings(warned)}）`);
@@ -141,27 +153,12 @@ export function claimDraft(input: ClaimDraftInput): ClaimDraft {
   if (invalid.length > 0) reasons.push(`失効した観測値がある（${invalid.map((o) => o.id).join('・')}）`);
   const outside = [...input.compared.entries()].filter(([, ok]) => !ok).map(([id]) => id);
   if (outside.length > 0) reasons.push(`許容外の観測値がある（${outside.join('・')}）`);
-  if (input.prediction !== undefined) {
+  // 予測は任意の道具（plan/design-investigation-review.md 1.3 節）。仮説が 2 つ以上あって 2 つ以上と合うときだけ、見分けられていないと出す
+  if (input.prediction !== undefined && input.prediction.file.predicted !== null) {
     const p = input.prediction;
-    if (p.file.predicted === null) reasons.push('予測ファイルがあるが、予測を出していない');
-    else {
-      const readAts = valid.map((o) => o.readAt).filter((d): d is string => d !== undefined);
-      const earliest = readAts.sort()[0];
-      if (earliest !== undefined && p.file.predicted.at > earliest) {
-        reasons.push(`予測の日付（${p.file.predicted.at}）が、観測値を読んだ日（${earliest}）より後`);
-      }
-      // 読み直しは比べる値を読む前の予測でよい。予測の時点で既にあった観測値は数えない（plan/design-reread-prediction.md）
-      const seen = seenObservationIds(p.file);
-      const early = valid.filter((o) => seen.has(o.id)).map((o) => o.id);
-      if (early.length > 0) reasons.push(`予測の時点で既にあった観測値がある（${early.join('・')}）`);
-      if (p.file.hypotheses.length >= 2) {
-        const fits = [...p.score.entries()].filter(([, s]) => s.total > 0 && s.ok === s.total).map(([h]) => h);
-        if (fits.length !== 1) {
-          reasons.push(
-            fits.length === 0 ? '予測と合う仮説が無い' : `予測と合う仮説が ${fits.length} つ（${fits.join('・')}）`,
-          );
-        }
-      }
+    if (p.file.hypotheses.length >= 2) {
+      const fits = [...p.score.entries()].filter(([, s]) => s.total > 0 && s.ok === s.total).map(([h]) => h);
+      if (fits.length >= 2) reasons.push(`予測と合う仮説が ${fits.length} つ（${fits.join('・')}）`);
     }
   }
   const basisIds = valid.map((o) => `\`${o.id}\``);
@@ -177,6 +174,7 @@ export function claimDraft(input: ClaimDraftInput): ClaimDraft {
     replaces: [],
     updated: input.today,
     ...(input.subject === undefined ? {} : { subject: input.subject }),
+    ...(input.decidedOn === undefined ? {} : { decidedOn: input.decidedOn }),
   };
   return { file, reasons };
 }

@@ -45,7 +45,6 @@ import {
   misplacedObservations,
   misplacedPredictions,
   recordingMap,
-  rereadOnlyClaimsOf,
   verificationPath,
 } from './records-data.ts';
 
@@ -120,7 +119,6 @@ writeFileSync(
     invalidReasons,
     definitionPlacesByClaim(skills),
     gradeCandidates,
-    rereadOnlyClaimsOf(claims, observations, predictions, verifications, recordings),
     relevanceCounts(relevance),
   ),
 );
