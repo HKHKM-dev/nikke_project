@@ -7,8 +7,14 @@
   "basis": "`100-01`（録画 100 の 3 回。B の後の最初の tick が、前の刻みの続きと ±2f で合い、B の約 1 秒後ではない）、`095-02`（録画 095 の 1 回）。V-0054・V-0060",
   "model": "`frame/dot.ts` の `groupDotsByState` と `dotTickFrames`（同じ状態の発火をまとめ、刻みは最初の発火のまま）。`data/skills/862.json`",
   "replaces": ["C-0137"],
-  "updated": "2026-10-09",
+  "updated": "2026-10-11",
   "subject": {
     "places": ["data/skills/862.json の skill1 の effects[1]"]
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "095",
+      "role": "読み方を合わせた"
+    }
+  ]
 }

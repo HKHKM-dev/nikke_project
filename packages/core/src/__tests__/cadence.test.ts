@@ -243,7 +243,7 @@ describe('reloadChunks', () => {
   });
 });
 
-// C-0225・C-0232: 入力が UP のチャージ武器は、ハイドしていた状態（戦闘開始・窓の明け）から構え + チャージ + 満ちてから撃つまで − 1 で撃つ。
+// C-0537・C-0232: 入力が UP のチャージ武器は、ハイドしていた状態（戦闘開始・窓の明け）から構え + チャージ + 満ちてから撃つまで − 1 で撃つ。
 // ラム（822、SR）: 発と発の間 82f、構えは 11f（SR）で 1 発目は 70f。フラワー（304、RL）は構え 12f で 71f。紅蓮BS は stage11ScarletBsTeam.test.ts（30f）
 describe('first shot from hiding (C-0232)', () => {
   it('ラム fires the first shot 12f earlier than the interval, and after a reload at the full interval', () => {

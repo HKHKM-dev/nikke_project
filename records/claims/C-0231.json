@@ -7,8 +7,18 @@
   "basis": "`224-01`（5 回で 22〜24f。22f の回は始まりの前にタイマーの表示が 2 フレーム続く（録画の重複フレームの位置））。録画 224 は機構の確定したキャラだけの最小構成（I ココア・II デルタ）で、予測を撮る前に commit してから撮ったもので、値（遅れの表の 1f）を決めた録画 021・040 とは別の録画で再現した（V-0204。遅れは予測の H0 と許容内。ヒットの値（`224-02`）は、予測の後に main に入った最終攻撃力の丸め（C-0027。PR #322）の分だけ固定した予測と違うが、いまのモデルとは合う）。 前の根拠: `021-17`（5 回）、`040-06`（I・II の顔ぶれの違う録画の 5 回とも 23f）。どちらの録画も最小構成でない（エーテル・アドミ・ラムの機構が未確定）。止まりの 22f（C-0069）を引いた 1f が、発動と同じフレームのヒットの HUD の表示の遅れか、ゲーム内の 1f の遅れかは見分けていない（ほかのキャラの遅れも同じ読み方）。効果（自分の攻撃力▲）の遅れは読んでいない。V-0147",
   "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のクイーン（真）の 1 行（hitFrames 1・effectFrames 0。効果の遅れは未測定）。`data/skills/870.json` の burst の effects[0]。III の遅れは III のタイマーの 00.00（`burst/schedule.ts` の `hexagonFrameOf`。本当の発動の `FULL_BURST_AFTER_ACTIVATION_FRAMES` = 6f 後。2026-10-10 のオーナーの判断。plan/design-burst-hit-origin.md 8 節）から足す",
   "replaces": [],
-  "updated": "2026-10-10",
+  "updated": "2026-10-11",
   "subject": {
     "places": ["data/skills/870.json の burst の effects[0]"]
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "021",
+      "role": "値を合わせた"
+    },
+    {
+      "recording": "040",
+      "role": "値を合わせた"
+    }
+  ]
 }

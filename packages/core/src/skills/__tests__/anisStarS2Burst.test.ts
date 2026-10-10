@@ -127,7 +127,7 @@ describe('fixedChargeTime（チャージ時間の固定）', () => {
     expect(chargeShotIntervalFrames(fixed, DEFAULT_WEAPON_MODEL)).toBe(42);
     const frames = simulateShotFrames(anis.shot, DEFAULT_WEAPON_MODEL, fixed);
     expect(frames.slice(1).map((f, i) => f - frames[i]!)).toEqual([42, 42, 42, 42, 42]);
-    // 入力が UP のチャージ武器（デルタ）は今までどおり解放を足す（C-0143）
+    // 入力が UP のチャージ武器（デルタ）は今までどおり解放を足す（C-0535）
     const up = firingParams(delta.shot);
     expect(up.downCharge).toBe(false);
     expect(chargeShotIntervalFrames(up, DEFAULT_WEAPON_MODEL)).toBe(59 + 23);

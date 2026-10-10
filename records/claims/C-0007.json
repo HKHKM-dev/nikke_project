@@ -7,8 +7,26 @@
   "basis": "verification.md Stage 7（録画 23〜25）、`023-02`（デルタ操作のフルチャージの 1 発でバー 17〜18px = 本当の約 13.3%。53,000 × 2.5）。V-0034",
   "model": "`burst/dynamic.ts`（`controlledSlot`）",
   "replaces": [],
-  "updated": "2026-09-28",
+  "updated": "2026-10-11",
   "subject": {
     "mechanism": "gauge"
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "018",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "019",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "021",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "022",
+      "role": "仮説の出どころ"
+    }
+  ]
 }

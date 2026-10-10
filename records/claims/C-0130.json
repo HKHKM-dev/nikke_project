@@ -7,8 +7,14 @@
   "basis": "`057-03`（録画 057〜062 のクルミ単騎の 6 本とも、36 回目の命中のフレームから最初の tick まで 59f。36 回目の命中のフレームの増分には tick が入っていない）。録画 093（スペック固定・手で撃つ）の 1 回だけ付いた 2 回でも、最初の tick は付いた 59f 後（`093-03`）。V-0051・V-0052",
   "model": "`data/skills/862.json`（`dot` の `firstTick`: `afterInterval`）。tick の時刻は `frame/plan.ts` の `dotTickFrames`",
   "replaces": [],
-  "updated": "2026-09-29",
+  "updated": "2026-10-11",
   "subject": {
     "places": ["data/skills/862.json の skill1 の effects[0]"]
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "058",
+      "role": "仮説の出どころ"
+    }
+  ]
 }

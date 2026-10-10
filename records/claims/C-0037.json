@@ -7,8 +7,9 @@
   "basis": "verification.md Stage 18-B「撮影 2」（録画 63）・Stage 18-B2「命中率▲で照準円は小さくなる」（録画 69）",
   "model": "`frame/landing.ts` の `coreHitRateWithHitRateUp`（N ≥ 1 で 1）",
   "replaces": [],
-  "updated": "2026-09-26",
+  "updated": "2026-10-11",
   "subject": {
     "places": ["data/skills/830.json の burst の notes[1]"]
-  }
+  },
+  "decidedOn": []
 }

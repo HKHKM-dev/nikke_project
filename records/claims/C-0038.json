@@ -4,11 +4,17 @@
   "state": "確定",
   "topic": "命中率・距離",
   "grade": "反復実測",
-  "basis": "verification.md Stage 18-B2「照準円の画面上の大きさ」（録画 64・65。AR・SG・MG で 0.282〜0.287）",
+  "basis": "verification.md Stage 18-B2「照準円の画面上の大きさ」（録画 64・65。AR・SG・MG で 0.282〜0.287） 2026-10-10 の点検（design-investigation-review.md 1.4.2 節の 2）で、決めた組と再現を分けた。比 0.285 は録画 64 の AR（クルミ 21.5px ÷ 75 = 0.287）と SG（プロダクト23 70.5px ÷ 250 = 0.282）の 2 つで決まる（真ん中 0.2845、幅 0.282〜0.287）。録画 65 の MG（エマ）は 71.7px ÷ 250 = 0.287 でこの幅に入るので、再現に数える。0.285 を決めた後に撮った録画 66（SG プリバティ。戻りきった半径 71.5〜71.7px）と録画 67（AR クルミ・キューブなし 21.26px）の比も 0.286〜0.287・0.2835 で、幅に入る（verification.md Stage 18-B）。",
   "model": "—（データの `shot.accuracy` に生値を持つだけ）",
   "replaces": [],
-  "updated": "2026-09-26",
+  "updated": "2026-10-11",
   "subject": {
     "mechanism": "targetTable"
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "064",
+      "role": "値を合わせた"
+    }
+  ]
 }

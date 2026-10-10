@@ -7,8 +7,26 @@
   "basis": "`018-01`・`019-01`・`020-01`・`021-01`・`047-01`・`079-02`（ヘルムのゲージのチャージがあっても CT で 5 回）、verification.md Stage 7",
   "model": "`burst/dynamic.ts`",
   "replaces": ["C-0023"],
-  "updated": "2026-09-28",
+  "updated": "2026-10-11",
   "subject": {
     "mechanism": "burstChain"
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "018",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "019",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "020",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "021",
+      "role": "仮説の出どころ"
+    }
+  ]
 }

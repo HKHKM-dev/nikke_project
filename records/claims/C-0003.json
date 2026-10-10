@@ -7,8 +7,14 @@
   "basis": "verification.md Stage 2-B、録画 35・41 での MG の再確認",
   "model": "`cadence.ts` のレート蓄積",
   "replaces": [],
-  "updated": "2026-09-24",
+  "updated": "2026-10-11",
   "subject": {
     "mechanism": "firing"
-  }
+  },
+  "decidedOn": [
+    {
+      "recording": "003",
+      "role": "仮説の出どころ"
+    }
+  ]
 }
