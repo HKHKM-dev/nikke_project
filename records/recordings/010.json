@@ -25,5 +25,5 @@
   "fixedSpec": true,
   "autoFire": null,
   "autoBurst": null,
-  "conditionNote": "BigArms（**灼熱**・防100）"
+  "conditionNote": "BigArms（**灼熱**・防100）。フレーム落ち（平均 fps が 60 を下回る）。時間計測の母数に使わない（1 ヒットの読み取りには影響しない）"
 }

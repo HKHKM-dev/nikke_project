@@ -25,5 +25,5 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": false,
-  "conditionNote": "単騎・AUTO。V-0100"
+  "conditionNote": "単騎・AUTO。V-0100。最初の 1 秒ほどに出撃画面（灼熱タブ・3 分モード・スペック固定 ON・編成はこのキャラ 1 体）、最後に戦闘履歴の画面（キャラ名）が写っている。照準の横の残弾は 120 から始まる（SMG と同じ数なので、弾数で武器種を決めない）"
 }

@@ -26,5 +26,5 @@
   "fixedSpec": true,
   "autoFire": null,
   "autoBurst": null,
-  "conditionNote": "BigArms（**電撃**。3 分モード・スペック固定。2026-10-07 に録画の始めのロビーの画面（約 2 秒）で、電撃のタブ・WEAK POINT の鉄甲の印を確かめた）"
+  "conditionNote": "BigArms（**電撃**。3 分モード・スペック固定。2026-10-07 に録画の始めのロビーの画面（約 2 秒）で、電撃のタブ・WEAK POINT の鉄甲の印を確かめた）。Stage 7 のゲージ較正（同じキャラを、操作してコアを狙う・操作して胴体を撃つ・AI（I-DOLL を操作して撃たせない）の 3 通りで撮った組の 1 本。どれかは legacy-usage.md）。フレーム数は ffprobe が返さない"
 }
