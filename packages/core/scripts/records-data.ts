@@ -52,13 +52,13 @@ export function loadVerifications(): Verification[] {
 }
 
 /**
- * ほかのブランチ（手元のブランチと origin のブランチ）の、main に無い commit が足した検証記録・結論の ID と、見た範囲の説明。
- * 並行する作業が同じ空き番号を取らないように、records:new の空き番号に含める（V-0378 の振り直し）。origin を取り込み直してから
- * 見る（取り込めなければ手元の参照で見る）。git が使えなければ ids は空
+ * 手元のブランチと origin のブランチ（main と自分のブランチを含む）の歴史について git log を回す。origin を取り込み直してから見る
+ * （取り込めなければ手元の参照で見る）。git が使えなければ out は空で、note に理由。main の歴史も見るのは、main より古いブランチでも、
+ * main が後から足した番号を避けるため（plan/design-investigation-review.md 4.3 節）
  */
-export function idsInOtherBranches(): { ids: string[]; note: string } {
-  const git = (args: string[]): string =>
-    execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', timeout: 30_000, stdio: ['ignore', 'pipe', 'pipe'] });
+function logBranches(args: readonly string[], paths: readonly string[]): { out: string; note: string } {
+  const git = (a: string[]): string =>
+    execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', timeout: 30_000, stdio: ['ignore', 'pipe', 'pipe'] });
   let note = '';
   try {
     git(['fetch', '--quiet', '--prune', 'origin']);
@@ -66,32 +66,43 @@ export function idsInOtherBranches(): { ids: string[]; note: string } {
     note = 'origin を取り込めなかったので、手元の参照で見た。';
   }
   try {
-    const base = ['origin/main', 'main'].find((r) => {
-      try {
-        git(['rev-parse', '--verify', '--quiet', r]);
-        return true;
-      } catch {
-        return false;
-      }
-    });
-    if (base === undefined) return { ids: [], note: `${note}main が無いので、ほかのブランチは見ていない` };
-    const out = git([
-      'log',
-      '--format=',
-      '--name-only',
-      '--diff-filter=AR',
-      '--branches',
-      '--remotes=origin',
-      '--not',
-      base,
-      '--',
-      'records/verifications',
-      'records/claims',
-    ]);
-    return { ids: idsInPaths(out), note };
+    return { out: git(['log', ...args, 'HEAD', '--branches', '--remotes=origin', '--', ...paths]), note };
   } catch (e) {
-    return { ids: [], note: `${note}ほかのブランチを見られなかった（${(e as Error).message.split('\n')[0]}）` };
+    return { out: '', note: `${note}ブランチの歴史を見られなかった（${(e as Error).message.split('\n')[0]}）` };
   }
+}
+
+/**
+ * どれかのブランチ（手元か origin。main を含む）が足したことのある検証記録・結論の ID と、見た範囲の説明。並行する作業が同じ空き番号を
+ * 取らないように、records:new の空き番号に含める（V-0378 の振り直し）
+ */
+export function idsInBranches(): { ids: string[]; note: string } {
+  const { out, note } = logBranches(
+    ['--format=', '--name-only', '--diff-filter=AR'],
+    ['records/verifications', 'records/claims'],
+  );
+  return { ids: idsInPaths(out), note };
+}
+
+/**
+ * どれかのブランチが records/observations/<録画>.json に足したことのある観測値の ID（read.ts の空き番号から除く。V-0394・V-0395 で
+ * 手で避けた分。plan/design-investigation-review.md 4.3 節）
+ */
+export function observationIdsInBranches(recording: string): { ids: string[]; note: string } {
+  const { out, note } = logBranches(['--format=', '-p'], [`records/observations/${recording}.json`]);
+  const escaped = recording.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`^\\+\\s*"id": "(${escaped}-\\d{2,})"`, 'gm');
+  return { ids: [...new Set([...out.matchAll(re)].map((m) => m[1]!))], note };
+}
+
+/** どれかのブランチが足したことのある録画の id（records/recordings/<id>.json。intake.ts の --id の確かめ） */
+export function recordingIdsInBranches(): { ids: string[]; note: string } {
+  const { out, note } = logBranches(['--format=', '--name-only', '--diff-filter=AR'], ['records/recordings']);
+  const ids = out
+    .split('\n')
+    .map((l) => /(?:^|\/)records\/recordings\/([^/]+)\.json$/.exec(l.trim())?.[1])
+    .filter((x): x is string => x !== undefined);
+  return { ids: [...new Set(ids)], note };
 }
 
 /** records/predictions/V-NNNN.json（番号順）。無ければ空 */

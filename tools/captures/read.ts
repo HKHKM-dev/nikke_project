@@ -5,6 +5,8 @@
 // - 録画の実体は records/recordings/<録画 id>.json から引く（このリポジトリの録画は置き場所の <folder>/<file>、旧の録画は path）。
 // - 中間出力（hud.ts の増分など）は、録画の置き場所の derived/<録画 id>/ にキャッシュする（追跡しない）。
 // - 観測値は標準出力に JSON で出す。--write で records/observations/<録画 id>.json に足す（id は次の空き番号。source・readAt を書く）。
+//   空き番号は、どれかのブランチ（手元か origin。main を含む）がこの録画に足したことのある番号を避ける（並行する読み取りが同じ番号を
+//   取らない。plan/design-investigation-review.md 4.3 節）。
 //   同じレシピ・同じ版の観測値が既にあれば、同じ値なら足さず、違えば差を出して止まる（人が invalid を付けるか、版を上げる）。
 // - --against は、既存の観測値（ID）の値を並べて出す（レシピの出力と目で比べる。旧の観測値の確かめ用）。
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
@@ -12,6 +14,7 @@ import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
+import { observationIdsInBranches } from '../../packages/core/scripts/records-data.ts';
 import type { Observation } from '../../packages/core/src/records/observations.ts';
 import { todayLocal } from '../../packages/core/src/records/predictions.ts';
 import { isLegacy, type RecordingEntry } from '../../packages/core/src/records/recordings.ts';
@@ -73,8 +76,8 @@ function loadObservations(recordingId: string): Observation[] {
   return existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as Observation[]) : [];
 }
 
-function nextId(recordingId: string, existing: readonly Observation[]): string {
-  const used = new Set(existing.map((o) => o.id));
+function nextId(recordingId: string, existing: readonly Observation[], taken: ReadonlySet<string>): string {
+  const used = new Set([...existing.map((o) => o.id), ...taken]);
   for (let n = 1; ; n++) {
     const candidate = `${recordingId}-${String(n).padStart(2, '0')}`;
     if (!used.has(candidate)) return candidate;
@@ -107,6 +110,9 @@ const ctx: RecipeContext = {
 const produced = await recipe.run(ctx);
 const existing = loadObservations(id);
 const tool = toolName(recipe);
+const branches = observationIdsInBranches(id);
+if (branches.note !== '') console.error(`注意: ${branches.note}`);
+const taken = new Set(branches.ids);
 const finished: Observation[] = [];
 for (const p of produced) {
   const prior = existing.find((o) => o.method?.tool === tool && o.kind === p.kind && o.description === p.description);
@@ -122,13 +128,16 @@ for (const p of produced) {
     continue;
   }
   finished.push({
-    id: nextId(id, [...existing, ...finished]),
+    id: nextId(id, [...existing, ...finished], taken),
     recording: id,
     ...p,
     source: ctx.source,
     readAt: ctx.readAt,
   } as Observation);
 }
+const ownFirst = nextId(id, existing, new Set());
+if (finished.length > 0 && finished[0]!.id !== ownFirst)
+  console.error(`${ownFirst} はほかのブランチ（か main）が使ったので、${finished[0]!.id} から振った`);
 console.log(JSON.stringify(finished, null, 2));
 if (values.against) {
   const want = values.against.split(',').map((s) => s.trim());

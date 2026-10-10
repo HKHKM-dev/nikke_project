@@ -14,6 +14,7 @@ import {
   copyFileSync,
   existsSync,
   mkdirSync,
+  readdirSync,
   readFileSync,
   renameSync,
   statSync,
@@ -32,6 +33,7 @@ import {
   type RecordingMode,
 } from '../../packages/core/src/records/recordings.ts';
 import type { CharacterData, Element } from '../../packages/core/src/types.ts';
+import { recordingIdsInBranches } from '../../packages/core/scripts/records-data.ts';
 import { backupDir, capturesDir } from './dirs.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
 
@@ -98,6 +100,17 @@ const onOff = (v: string | undefined, name: string): boolean | null => {
 
 const recordPath = `${ROOT}records/recordings/${values.id}.json`;
 if (existsSync(recordPath)) fail(`${recordPath} が既にある`);
+// どれかのブランチ（手元か origin。main を含む）が足したことのある番号は使わない（並行する取り込みが同じ番号を取らない。
+// plan/design-investigation-review.md 4.3 節）
+const branches = recordingIdsInBranches();
+if (branches.note !== '') console.error(`注意: ${branches.note}`);
+if (branches.ids.includes(values.id)) {
+  const used = [...readdirSync(`${ROOT}records/recordings`).map((n) => n.replace(/\.json$/, '')), ...branches.ids];
+  const max = Math.max(...used.filter((x) => /^\d+$/.test(x)).map(Number));
+  fail(
+    `録画 ${values.id} はほかのブランチ（か main）が records/recordings/${values.id}.json を足している。次の空き番号は ${String(max + 1).padStart(3, '0')}`,
+  );
+}
 
 function dateOf(): string {
   if (values.date !== undefined) {
