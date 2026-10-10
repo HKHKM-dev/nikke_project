@@ -282,7 +282,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - notes[1] 前提の外: HP 80% 未満のときの回復は、被弾を扱わないので起きない: 根拠なし
 - **burst**: supported
   - effects[0] timed・burstUse・chargeSpeed: C-0475（確定）
-  - effects[1] timed・burstUse・attack: C-0475（確定）、C-0523（仮説）
+  - effects[1] timed・burstUse・attack: C-0475（確定）、C-0523（確定）
 
 ## 194 ルドミラ：ウィンターオーナー
 
