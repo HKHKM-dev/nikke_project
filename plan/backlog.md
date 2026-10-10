@@ -1,6 +1,6 @@
 # 残タスクの棚卸し
 
-- 関連: [roadmap.md](roadmap.md)「今後の課題」（課題ごとの経過はそちら）、[verifications.md](verifications.md)、[claims.md](claims.md)、[residuals.md](residuals.md)、[skills.md](skills.md)、[design-records-automation.md](design-records-automation.md) 8.6 節
+- 関連: [roadmap.md](roadmap.md)「今後の課題」（課題ごとの経過はそちら）、[verifications.md](verifications.md)、[claims.md](claims.md)、[residuals.md](residuals.md)、[skills.md](skills.md)、[design-records-automation-log.md](design-records-automation-log.md) 8.6 節
 - 作成日: 2026-10-06（main の PR #344 の時点）
 - 何のための文書か: いま残っている仕事を、種類ごとに 1 行ずつ並べたもの。経過や数値は書かず、検証記録・結論・観測値の ID と、設計書の節で指す。件数は生成物（上の一覧）に出る。
 - 更新の仕方: 課題が閉じたら行を消す（経過は roadmap の「今後の課題」と検証記録に残るので、ここには残さない）。新しい課題は roadmap に起票してから、ここに 1 行足す。棚卸しをやり直したら作成日を書き換える。
