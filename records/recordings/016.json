@@ -25,5 +25,5 @@
   "fixedSpec": true,
   "autoFire": null,
   "autoBurst": null,
-  "conditionNote": "BigArms（**灼熱**・防100）"
+  "conditionNote": "BigArms（**灼熱**・防100）。キャラはドレイク（rid 101・灼熱）で、ドレイク：グレイトヴィラン（rid 104）ではない（2026-09-23 に末尾の一時停止の画面で確かめた）。Stage 2-B の SG の発射間隔と 3 分割リロードの較正"
 }
