@@ -74,12 +74,13 @@ NIKKE のダメージ計算ツール。
 | `plan/verification.md`                               | 2026-09-26 までの実測と確認の記録（凍結。書き足さない）                                                                                                            |
 | `plan/captures/guide.md`                             | 撮影と読み取りの落とし穴の話題別の索引（根拠は ID か、上の文書へのリンクで指す）                                                                                   |
 | `plan/game-help.md`                                  | ゲーム内のヘルプ（ⓘ）の書き起こし                                                                                                                                  |
-| `plan/skills-guide.md`                               | キャラのスキルを定義して撮影で確かめる手順                                                                                                                         |
+| `plan/verification-guide.md`                         | 検証の共通の流れ（起案から閉じるまで）と、確定にできる条件                                                                                                         |
+| `plan/skills-guide.md`                               | キャラのスキルを定義する手順（検証の流れは `plan/verification-guide.md`）                                                                                          |
 | `packages/core/data/skills/`・`plan/skills.md`       | スキル定義（効果ごとの根拠の結論 ID は `claims` の欄）と、キャラ × スロットの対応状況の一覧（生成。`npm run records:check`）                                       |
 | `private/`（メインのチェックアウト直下、追跡しない） | 所持キャラ・宝物・育成状況・ローカルのパスなど個人の情報。worktree には無いので絶対パスで読む。worktree のエージェントは書き込めないので、足すものはオーナーに渡す |
 
 新しい知見は、まず検証記録（数値は観測値）に根拠つきで書き、撮影や読み取りで繰り返し効くものは `guide.md` に 1〜2 行で足す。
 
-検証の流れ（起案 → 撮影計画（予測は任意）→ 撮る → 取り込み → レシピで読む → 比べる → 結論の下書き → 閉じる）の道具は `npm run records:new`・`records:predict`・`records:read`・`records:check`・`records:close` と `tools/captures/intake.ts`（`plan/design-records-automation.md` 2 節。手順は `plan/skills-guide.md` 1 節）。
+検証の流れ（起案 → 撮影計画（予測は任意）→ 撮る → 取り込み → レシピで読む → 比べる → 結論の下書き → 閉じる）の道具は `npm run records:new`・`records:predict`・`records:read`・`records:check`・`records:close` と `tools/captures/intake.ts`（`plan/design-records-automation.md` 2 節。手順は `plan/verification-guide.md`）。
 
 最小構成の検査（確定の結論 × 根拠の観測値の組に、効きうる未確定の要素を出す）は `plan/minimal.md`（生成）。スキル定義・録画の台帳・観測値の比べる指定を変えたら `npm run records:minimal` で感度を計算し直す（`plan/design-minimal-relevance.md` 10.6 節）。

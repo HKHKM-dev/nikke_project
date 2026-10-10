@@ -5,10 +5,10 @@
 - 冒頭の箇条書きと本文の見出しは、下のひな形のとおりに書く。合わない行は `npm test` で落ちる。一覧は `npm run records:check` で [plan/verifications.md](../../plan/verifications.md) に生成する。
 - 大きさは 30KB を目安にする。超えそうなら問いを分ける。
 - 観測値にできる数値は観測値（`records/observations/`）に置き、観測値の `source` にこの記録の ID を書く。本文では ID で指し、同じ数値をほかの文書に書き写さない。
-- 予測は任意で、確定の条件ではない（撮る前の順番も問わない。2026-10-10 のオーナーの決定。[design-investigation-review.md](../../plan/design-investigation-review.md) 1 節）。撮影計画で、その録画で仮説を見分けられるかを確かめるときに書く。数値は予測ファイル（`records/predictions/V-NNNN.json`。`npm run records:predict`。[design-records-automation.md](../../plan/design-records-automation.md) 3.2 節）に置き、「予測」の節には仮説ごとの見え方と見分け方を書いて予測ファイルを指す。使わなければ「予測」は「なし」。予測ファイルがあれば、読んだ後の突き合わせは `npm run records:check` が [plan/verifications.md](../../plan/verifications.md) に出す。2026-10-10 までの記録の見出し「予測（撮る前に書く）」は「予測」として読む。
+- 検証の流れと、確定にできる条件・予測の扱いは [plan/verification-guide.md](../../plan/verification-guide.md)（2.2 節が正）。予測は任意で、確定の条件ではない（撮る前の順番も問わない。2026-10-10 のオーナーの決定）。撮影計画で、その録画で仮説を見分けられるかを確かめるときに書く。数値は予測ファイル（`records/predictions/V-NNNN.json`。`npm run records:predict`。[design-records-automation.md](../../plan/design-records-automation.md) 3.2 節）に置き、「予測」の節には仮説ごとの見え方と見分け方を書いて予測ファイルを指す。使わなければ「予測」は「なし」。予測ファイルがあれば、読んだ後の突き合わせは `npm run records:check` が [plan/verifications.md](../../plan/verifications.md) に出す。2026-10-10 までの記録の見出し「予測（撮る前に書く）」は「予測」として読む。
 - 使えなくなった観測値（読み違い・条件の誤り・ゲームの更新）は消さずに `invalid`（理由と日付）を付ける。単位・幅・複数の録画・読み取った日も持てる（設計書 3.4 節）。
 - 閉じた（完了・打ち切りの）記録にも、録画・観測値・表・結果を書き足してよい（2026-10-10 のオーナーの決定。[design-investigation-review.md](../../plan/design-investigation-review.md) 4.2 節）。書き足して結論の根拠が変わったら、`npm run records:close -- V-NNNN` を回し直す。結論の訂正は、いまどおり古い結論を消さずに棄却にし、新しい結論の「置き換え」に古い ID を書く（AGENTS.md「事実と記録」）。別の問いとして訂正するときは新しい記録を作り、その冒頭の「訂正」に古い記録の ID を書く。
-- 完了にする前に `npm run records:close -- V-NNNN [--mark]` で検査する（結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない（人の判断で上にしたなら結論の `gradeReason` に理由）・確定の反復実測の結論に `decidedOn`（仮説・値・読み方を決めるのに使った録画。無ければ `[]`）がある・この記録の観測値の組に最小構成の警告が無い・「分かったこと」「次に撮るもの」が空でない。design-records-automation.md 3.7 節）。通れば `--mark` が状態を完了にし、`records:check` と CI と同じ確認を回し、PR の題名の案を出す。
+- 完了にする前に `npm run records:close -- V-NNNN [--mark]` で検査する（[plan/verification-guide.md](../../plan/verification-guide.md) 9 節。結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない（人の判断で上にしたなら結論の `gradeReason` に理由）・確定の反復実測の結論に `decidedOn`（仮説・値・読み方を決めるのに使った録画。無ければ `[]`）がある・この記録の観測値の組に最小構成の警告が無い・「分かったこと」「次に撮るもの」が空でない。design-records-automation.md 3.7 節）。通れば `--mark` が状態を完了にし、`records:check` と CI と同じ確認を回し、PR の題名の案を出す。
 
 ## ひな形
 
