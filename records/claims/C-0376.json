@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`287-05`・`287-08`（5 回の炸裂弾。2〜5 回目はコア 2 回・コアの距離ボーナス・コア会心が和の読みで ±0.22 以内、1 回目（カモフラージュの▲が抜けた回）が +0.06。手で書いた値と比べた。モデルは炸裂弾に発射体爆発ダメージ▲を掛けないので、どちらもモデルと比べない記録の観測値。C-0313 と同じ扱い）。予測（R0: 乗らない、R1: × (1 + 発射体爆発ダメージ▲)）とは合わず、和の読みは値を見た後に立てた。値を見た後の読みを、端数まで合うので確定にするのは 2026-10-07 のオーナーの判断。最小構成の警告も C-0374 と同じく通した。V-0249",
-  "model": "`data/skills/95.json` の burst の effects[1]（`weaponChange` の `projectileExplosion`。変更後の武器の発に発射体爆発ダメージ▲が乗る。`damage.ts` の `hasProjectileExplosion`）。2 つの▲の和は `TRUE_DAMAGE_BUCKET` を `attackDamage` にして作る（発射体爆発ダメージ▲は攻撃ダメージ▲と同じ枠。C-0205。`trueDamageMultiplier` は同じ枠の発射体爆発ダメージ▲を分母に含め、`projectileExplosionMultiplier` との積が 1 つの和になる）。攻撃ダメージ▲を含まない 2 つだけの和とは分けていない。モデルの炸裂弾は `287-05`（比べる）と `287-08` の 2〜5 回目（`__tests__/eunhwaTuWeaponChange.test.ts`）に 1 未満の差（plan/design-true-damage-element.md 10 節）",
+  "model": "`data/skills/95.json` の burst の effects[1]（`weaponChange` の `projectileExplosion`。変更後の武器の発に発射体爆発ダメージ▲が乗る。`damage.ts` の `hasProjectileExplosion`）。2 つの▲の和は `TRUE_DAMAGE_BUCKET` を `attackDamage` にして作る（発射体爆発ダメージ▲は攻撃ダメージ▲と同じ枠。C-0205。`trueDamageMultiplier` は同じ枠の発射体爆発ダメージ▲を分母に含め、`projectileExplosionMultiplier` との積が 1 つの和になる）。攻撃ダメージ▲を含まない 2 つだけの和ではないことは C-0525（V-0409）で確かめた。モデルの炸裂弾は `287-05`（比べる）と `287-08` の 2〜5 回目（`__tests__/eunhwaTuWeaponChange.test.ts`）に 1 未満の差（plan/design-true-damage-element.md 10 節）",
   "replaces": [],
   "updated": "2026-10-09",
   "subject": {

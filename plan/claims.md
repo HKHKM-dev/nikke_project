@@ -14,7 +14,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 318・仮説 79・棄却 85・範囲外 2（計 484）
+件数: 確定 319・仮説 79・棄却 85・範囲外 2（計 485）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -2019,7 +2019,7 @@
 - **C-0311** ウンファ：タクティカル・アップの S1 のバースト使用時のカモフラージュ（5 秒）の中では、通常攻撃の 1 発の基礎が防御力を引かない max(1, 攻撃力) になり、防御力無視ダメージ 42.24%▲（Lv10）が乗る。攻撃ダメージ▲が無いとき、▲は別の乗数 (1 + 42.24%) と同じ値になる（攻撃ダメージ▲の群に足すかは区別していない）。窓はバースト使用時から数えて 5 秒で、炸裂弾の着弾から 2 発目まで（296f 後の発は外）
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-09
   - 根拠: `232-01`〜`232-03`（カモフラージュの中のコアの 1 発が、変化 × ▲ × 受けるダメージ▲のモデルと 1 未満の差。3 回のバーストで同じ値）・`232-09`（効果の外は 013-05 と同じ値）・`232-11`（どの回もカモフラージュの値は 2 発で、着弾から 296〜302f の発は外の値）。予測（records/predictions/V-0207.json の H1）は撮る前に commit した。変化の分（防御力 100 ÷ 攻撃力）だけ離れた値で合い、変化なし・▲なしの値は出ていない。V-0207
-  - モデル側: `data/skills/95.json` の skill1 の effects[0]（付与 `kind: state`・`state: camouflage`・`burstUse`・`self`。中身は `trueDamageConversion`・`trueDamage`）と effects[1]（同じ状態の 2 つ目の付与。窓は付与をまたいで和集合。plan/design-named-state.md 5.3 節）。1 発の式は `damage.ts` の `isTrueDamageShot`・`trueDamageMultiplier`（置き場所 `TRUE_DAMAGE_BUCKET` は `attackDamage`。C-0376 と C-0205 から。攻撃ダメージ▲が無いときは `separate` と同じ値。plan/design-true-damage-element.md 10 節）
+  - モデル側: `data/skills/95.json` の skill1 の effects[0]（付与 `kind: state`・`state: camouflage`・`burstUse`・`self`。中身は `trueDamageConversion`・`trueDamage`）と effects[1]（同じ状態の 2 つ目の付与。窓は付与をまたいで和集合。plan/design-named-state.md 5.3 節）。1 発の式は `damage.ts` の `isTrueDamageShot`・`trueDamageMultiplier`（置き場所 `TRUE_DAMAGE_BUCKET` は `attackDamage`。C-0376・C-0205・C-0525 から。攻撃ダメージ▲が無いときは `separate` と同じ値。plan/design-true-damage-element.md 10 節）
   - 検証記録: V-0207
   - 定義: `data/skills/95.json` の skill1 の effects[0]、`data/skills/95.json` の skill1 の effects[1]
 - **C-0312** ウンファ：タクティカル・アップのバーストの徹甲炸裂弾（命中した敵の受けるダメージ 27.87%▲・10 秒。Lv10）は、ほかのどの群とも別の乗数 (1 + 27.87%) で、ウンファの通常攻撃の 1 発に乗る（C-0138 と同じ受けるダメージ▲）。炸裂弾自身には乗らない
@@ -2311,7 +2311,7 @@
 - **C-0376** ウンファ：タクティカル・アップのバーストの炸裂弾（使用武器変更の 1 発）にも、発射体爆発ダメージ▲が乗る。防御力無視ダメージ▲と同じ群の和 (1 + Σ防御力無視ダメージ + Σ発射体爆発ダメージ) で掛かる（攻撃ダメージ▲が無いとき。攻撃ダメージ▲の群かどうかは分からない）。炸裂弾の着弾の前にカモフラージュが外れていた回は、カモフラージュの防御力無視ダメージ▲（42.24%）だけが抜けて、フォーメーションの防御力無視ダメージ▲と発射体爆発ダメージ▲は乗る
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-09
   - 根拠: `287-05`・`287-08`（5 回の炸裂弾。2〜5 回目はコア 2 回・コアの距離ボーナス・コア会心が和の読みで ±0.22 以内、1 回目（カモフラージュの▲が抜けた回）が +0.06。手で書いた値と比べた。モデルは炸裂弾に発射体爆発ダメージ▲を掛けないので、どちらもモデルと比べない記録の観測値。C-0313 と同じ扱い）。予測（R0: 乗らない、R1: × (1 + 発射体爆発ダメージ▲)）とは合わず、和の読みは値を見た後に立てた。値を見た後の読みを、端数まで合うので確定にするのは 2026-10-07 のオーナーの判断。最小構成の警告も C-0374 と同じく通した。V-0249
-  - モデル側: `data/skills/95.json` の burst の effects[1]（`weaponChange` の `projectileExplosion`。変更後の武器の発に発射体爆発ダメージ▲が乗る。`damage.ts` の `hasProjectileExplosion`）。2 つの▲の和は `TRUE_DAMAGE_BUCKET` を `attackDamage` にして作る（発射体爆発ダメージ▲は攻撃ダメージ▲と同じ枠。C-0205。`trueDamageMultiplier` は同じ枠の発射体爆発ダメージ▲を分母に含め、`projectileExplosionMultiplier` との積が 1 つの和になる）。攻撃ダメージ▲を含まない 2 つだけの和とは分けていない。モデルの炸裂弾は `287-05`（比べる）と `287-08` の 2〜5 回目（`__tests__/eunhwaTuWeaponChange.test.ts`）に 1 未満の差（plan/design-true-damage-element.md 10 節）
+  - モデル側: `data/skills/95.json` の burst の effects[1]（`weaponChange` の `projectileExplosion`。変更後の武器の発に発射体爆発ダメージ▲が乗る。`damage.ts` の `hasProjectileExplosion`）。2 つの▲の和は `TRUE_DAMAGE_BUCKET` を `attackDamage` にして作る（発射体爆発ダメージ▲は攻撃ダメージ▲と同じ枠。C-0205。`trueDamageMultiplier` は同じ枠の発射体爆発ダメージ▲を分母に含め、`projectileExplosionMultiplier` との積が 1 つの和になる）。攻撃ダメージ▲を含まない 2 つだけの和ではないことは C-0525（V-0409）で確かめた。モデルの炸裂弾は `287-05`（比べる）と `287-08` の 2〜5 回目（`__tests__/eunhwaTuWeaponChange.test.ts`）に 1 未満の差（plan/design-true-damage-element.md 10 節）
   - 検証記録: V-0249
   - 定義: `data/skills/95.json` の burst の effects[1]
   - 最小構成の警告: 2 / 2 組（[minimal.md](minimal.md)）
@@ -2745,6 +2745,11 @@
   - モデル側: 未反映（案 C）。モデルは遅れの表に紅蓮：BS の行が無く、効果を本当の発動（00.00 の 6f 前。C-0516）に付ける（`data/skills/225.json` の burst の effects[1]。段の条件の変更・チャージダメージ▲も同じ）。この 1 回の観測とは合う
   - 検証記録: V-0404
   - 定義: `data/skills/225.json` の burst の effects[1]
+- **C-0525** 防御力無視ダメージ▲（ウンファ：タクティカル・アップの S1 のカモフラージュ）は、攻撃ダメージ▲（ヘルムの宝物版 S2）と 1 つの和 (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ) で、防御力無視ダメージの発に掛かる（攻撃ダメージ▲とは別の乗数 (1 + Σ攻撃ダメージ) × (1 + Σ防御力無視ダメージ) ではない）。発射体爆発ダメージ▲も攻撃ダメージ▲の和に入る（C-0205）ので、C-0376 と合わせて、炸裂弾では 3 つの▲が 1 つの和になる
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-10
+  - 根拠: `414-05`（フルバーストの中・カモフラージュの中・ヘルムの攻撃ダメージ▲の中のウンファのコア 2 発が Hb と 1 未満の差。同じ窓の会心 2 発も Hb の格子に乗る）・`414-08`（受けるダメージ▲の切れた後のフルバーストの中の同じ発 7 つが、Hb の格子に ±1.5 で乗る）。Hc（(c)。手計算）とは 6.9%、Hd とは 16% 離れ、どちらの値も出ていない。`414-04`（フラワーの 1 ヒット。攻撃ダメージ▲が乗っていることの対照）・`414-03`・`414-06`・`414-07`（どの読みでも同じ対照）。予測（records/predictions/V-0409.json の Hb と、検証記録に手で書いた Hc・Hd）は撮る前に commit した。最小構成の警告（ウンファの S1 の notes[0]）は 2026-10-10 のオーナーの判断で通した。V-0409
+  - モデル側: `damage.ts` の `TRUE_DAMAGE_BUCKET`（`attackDamage`）と `trueDamageMultiplier`（攻撃ダメージ▲・発射体爆発ダメージ▲と同じ枠の和）。変更なし（plan/design-true-damage-element.md 10.1 節）
+  - 検証記録: V-0409
 
 ## 敵・的・場面
 
