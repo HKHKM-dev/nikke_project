@@ -66,7 +66,38 @@ export type ClaimFile = {
    * 録画を数えず、厳密一致に値か読み方を合わせた録画を数えない。仮説を立てた録画が無ければ空の並び。書いていない結論は除かずに数える
    */
   decidedOn?: DecidedOn[];
+  /**
+   * 人の判断で確定にしたとき、機械の確定の条件のうち上書きしたもの（plan/design-investigation-review.md 3 節）。records:close は、
+   * 確定の結論に残った条件がここで上書きされていなければ止める。等級を機械の候補より上にした理由は gradeReason、最小構成の要素ごとの
+   * 効かない理由は minimal に書く
+   */
+  judgment?: Judgment;
 };
+
+/** 人の判断で上書きできる確定の条件（plan/design-investigation-review.md 3 節） */
+export const JUDGMENT_OVERRIDES = ['指標なし', '最小構成の警告', '許容外', '合う仮説が 2 つ以上'] as const;
+export type JudgmentOverride = (typeof JUDGMENT_OVERRIDES)[number];
+/** decided はオーナーが決めた日、overrides は上書きした条件、reason は理由 */
+export type Judgment = { decided: string; overrides: JudgmentOverride[]; reason: string };
+
+/** judgment の形の検査 */
+export function validateJudgment(c: Pick<ClaimFile, 'id' | 'judgment'>): string[] {
+  if (c.judgment === undefined) return [];
+  const at = `${c.id}: judgment`;
+  const j: unknown = c.judgment;
+  if (!isRecord(j) || unknownKeys(j, ['decided', 'overrides', 'reason']).length > 0)
+    return [`${at} は { decided, overrides, reason }`];
+  const errors: string[] = [];
+  if (!isDate(j.decided)) errors.push(`${at}.decided は YYYY-MM-DD`);
+  if (!Array.isArray(j.overrides) || j.overrides.length === 0)
+    errors.push(`${at}.overrides は上書きした条件の並び（1 つ以上。${JUDGMENT_OVERRIDES.join('・')}）`);
+  else
+    for (const o of j.overrides)
+      if (!(JUDGMENT_OVERRIDES as readonly unknown[]).includes(o))
+        errors.push(`${at}.overrides が語彙に無い: ${String(o)}`);
+  if (typeof j.reason !== 'string' || j.reason.trim() === '') errors.push(`${at}.reason が空`);
+  return errors;
+}
 
 /** 録画を何を決めるのに使ったか（plan/design-investigation-review.md 1.3 節） */
 export const DECIDED_ROLES = ['仮説の出どころ', '値を合わせた', '読み方を合わせた'] as const;
@@ -297,6 +328,7 @@ export function validateClaims(
       errors.push(`${c.id}: 確定の結論の根拠の観測値が、すべて失効している`);
     errors.push(...validateMinimalFields(c));
     errors.push(...validateDecidedOn(c));
+    errors.push(...validateJudgment(c));
     for (const r of c.replaces) {
       const old = byId.get(r);
       if (old === undefined) errors.push(`${c.id}: 置き換えた結論 ${r} が無い`);
@@ -402,6 +434,7 @@ const CLAIMS_HEADER = `# 結論の台帳
   4. \`単独実測\`: 実測はあるが、1 回だけか、値をその実測に合わせて決めただけ
   5. \`推論\`: 上のどれでもない（解釈の余地のある読み・推論・推定・外部資料・観測できない約束）
 - 撮る前の予測は確定の条件にしない。過去の録画の読み直しでも確定にできる（[design-investigation-review.md](design-investigation-review.md) 1 節。2026-10-10 のオーナーの決定）。「決めるのに使った録画」は、仮説・値・読み方を決めるのに使った録画（結論の \`decidedOn\`）。機械の等級の候補は、反復実測の再現にこれらの録画を数えない。
+- 「人の判断」の印は、機械の確定の条件（比べる指標・最小構成の警告・許容外・合う仮説が 1 つ）の一部をオーナーの判断で上書きして確定にした結論（結論の \`judgment\`。[design-investigation-review.md](design-investigation-review.md) 3 節）。2026-10-11 より前の判断は、根拠の文に書いてあり、印が付かないことがある。
 - 訂正は、古い結論を消さずに状態を \`棄却\` にし、新しい結論の「置き換え」に古い ID を書く。ID は変えない・使い回さない。
 - 根拠の \`010-01\` などは観測値の ID（\`records/observations/<録画 id>.json\`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）`;
@@ -435,13 +468,22 @@ export function renderClaims(
     if (inTopic.length === 0) continue;
     lines.push('', `## ${topic}`, '');
     for (const c of inTopic) {
-      const meta = [`状態: ${c.state}`, ...(c.grade ? [`等級: ${c.grade}`] : []), `更新日: ${c.updated}`];
+      const meta = [
+        `状態: ${c.state}`,
+        ...(c.grade ? [`等級: ${c.grade}`] : []),
+        ...(c.judgment !== undefined ? ['人の判断'] : []),
+        `更新日: ${c.updated}`,
+      ];
       lines.push(
         `- **${c.id}** ${c.text}`,
         `  - ${meta.join('・')}`,
         `  - 根拠: ${c.basis}`,
         `  - モデル側: ${c.model}`,
       );
+      if (c.judgment !== undefined)
+        lines.push(
+          `  - 人の判断（${c.judgment.decided}）: ${c.judgment.overrides.join('・')}を上書きした。${c.judgment.reason}`,
+        );
       if (c.decidedOn !== undefined)
         lines.push(
           `  - 決めるのに使った録画: ${c.decidedOn.length === 0 ? 'なし' : c.decidedOn.map((d) => `${d.recording}（${d.role}）`).join('、')}`,

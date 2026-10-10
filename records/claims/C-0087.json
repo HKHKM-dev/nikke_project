@@ -19,5 +19,10 @@
       "decided": "2026-10-10"
     }
   ],
-  "decidedOn": []
+  "decidedOn": [],
+  "judgment": {
+    "decided": "2026-10-07",
+    "overrides": ["最小構成の警告"],
+    "reason": "根拠の文のとおり（2026-10-07 のオーナーの判断）"
+  }
 }

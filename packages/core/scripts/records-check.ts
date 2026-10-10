@@ -25,7 +25,12 @@ import {
 } from '../src/records/observations.ts';
 import { replaceGeneratedSection } from '../src/records/recordings.ts';
 import { definitionPlacesByClaim, renderSkills, validateSkillClaims } from '../src/records/skills.ts';
-import { renderVerifications, validateVerifications, verificationsByClaim } from '../src/records/verifications.ts';
+import {
+  renderVerifications,
+  unlistedConfirmedClaims,
+  validateVerifications,
+  verificationsByClaim,
+} from '../src/records/verifications.ts';
 import {
   CLAIMS_PATH,
   MINIMAL_PATH,
@@ -67,6 +72,7 @@ const errors = [
   ...misplacedClaims(),
   ...validateClaims(claims, new Set(observations.map((o) => o.id)), new Set(invalidReasons.keys())),
   ...validateVerifications(verifications, { claims, recordingIds: new Set(recordings.keys()), observations }),
+  ...unlistedConfirmedClaims(claims, verifications, observations),
   ...validateSkillClaims(skills, claims),
   ...misplacedPredictions(),
   ...validatePredictions(predictions, {

@@ -1,7 +1,8 @@
 // 検証記録を閉じる（plan/design-records-automation.md 3.7 節）。
 //   npm run records:close -- V-NNNN [--mark] [--no-ci]
 // 完了にできるかを検査する（結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない（上なら gradeReason に理由）・
-// 確定の反復実測の結論に decidedOn がある・最小構成の警告・「次に撮るもの」「分かったこと」が空でない）。撮る前の予測と読みの順は
+// 確定の反復実測の結論に decidedOn がある・最小構成の警告・指標なし・許容外・合う仮説が 2 つ以上は人の判断（judgment）で上書き・
+// 「次に撮るもの」「分かったこと」が空でない）。撮る前の予測と読みの順は
 // 見ない（plan/design-investigation-review.md 1 節）。通れば --mark で状態を完了に書き換え、records:check と CI と同じ確認を回し
 // （--no-ci で省く）、PR の題名の案を出す。roadmap.md の更新と PR は人（エージェント）が行う。
 import { spawnSync } from 'node:child_process';
@@ -12,6 +13,7 @@ import { closeChecks, markState, prTitle } from '../src/records/close.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
 import { invalidReasonsOf, runObservations } from '../src/records/observations.ts';
+import { comparePredictions } from '../src/records/predictions.ts';
 import {
   ROOT,
   loadClaims,
@@ -79,12 +81,23 @@ const sensitivity = withFreshSensitivity(basisObs, relevanceCtx, loadSensitivity
 const minimal = new Map(
   relevanceOf(ownClaims, observations, relevanceCtx, sensitivity).map((r) => [r.claim, r.warnings]),
 );
+// 許容外の観測値と、予測と合った仮説（人の判断の上書きの検査。plan/design-investigation-review.md 3 節）
+const outside = new Set(residuals.filter((r) => r.status === 'outside').map((r) => r.observation.id));
+const prediction = predictions.find((p) => p.verification === id);
+const predictionFits =
+  prediction === undefined || prediction.predicted === null || prediction.hypotheses.length < 2
+    ? undefined
+    : [...comparePredictions(prediction, observations).score.entries()]
+        .filter(([, s]) => s.total > 0 && s.ok === s.total)
+        .map(([h]) => h);
 const result = closeChecks({
   verification,
   claims,
   observations: own,
   gradeCandidates,
   minimal,
+  outside,
+  ...(predictionFits === undefined ? {} : { predictionFits }),
 });
 for (const w of result.warnings) console.log(`注意: ${w}`);
 if (result.errors.length > 0) {

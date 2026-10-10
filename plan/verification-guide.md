@@ -75,7 +75,7 @@
 - `decidedOn` の役割: `仮説の出どころ`（その録画の観測値や残差を見て仮説を立てた）・`値を合わせた`（値をその録画に合わせて決めた）・`読み方を合わせた`（その録画を見てから読み方を組んだ・替えた）。予測の前に値を見ていただけの録画と、読めなさを理由に読み方を替えた録画は入れない（[design-investigation-review.md](design-investigation-review.md) 1.4.2 節の後）。
 - 定義に結び付く結論の書き方（効果の `claims` に ID を書く）は [skills-guide.md](skills-guide.md) 3 節。
 - `確定` の結論に結び付いた観測値は、以後 `npm test` で比べられる（許容外なら落ちる）。
-- 人の判断で確定にするとき（機械の候補より上の等級・最小構成の警告を通す など）は、理由を `gradeReason` か `minimal` の印に日付つきで書く。判断は PR の前に対話で受け、検証と同じ PR に入れる（判断だけの PR は出さない）。
+- 人の判断で確定にするとき（機械の確定の条件の一部をオーナーの判断で上書きする）は、結論の `judgment` に、判断の日（`decided`）・上書きした条件（`overrides`: `指標なし`・`最小構成の警告`・`許容外`・`合う仮説が 2 つ以上`）・理由を書く（claims.md に「人の判断」と出る）。等級を機械の候補より上にした理由は `gradeReason`、最小構成の要素ごとの効かない理由は `minimal` の印に書く。判断は PR の前に対話で受け、検証と同じ PR に入れる（判断だけの PR は出さない）（[design-investigation-review.md](design-investigation-review.md) 3 節）。
 - **合わなかったとき**
   - 根拠のある別の解釈があれば、定義やモデルを直して撮り直すか、既存の録画で比べ直す。
   - 古い結論は消さずに `棄却` にし、新しい結論の「置き換え」に古い ID を書く。スキル定義の `claims`・コードの注記の古い ID は新しい ID に差し替える（棄却の結論を `claims` が指すと `npm run records:check` が落ちる）。
@@ -83,7 +83,7 @@
 
 ## 9. 閉じる・PR
 
-- 検証記録の「結果」「分かったこと・分からないこと」「次に撮るもの」を書き、冒頭の「結論」に ID を足し、`npm run records:close -- V-NNNN --mark` で閉じる前の検査を通して状態を `完了` にする。検査は、結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない（上なら `gradeReason`）・確定の反復実測に `decidedOn` がある・この記録の観測値の組に最小構成の警告が無い・確定の結論の根拠の観測値に `scope` がある・本文の節が空でない（[design-records-automation.md](design-records-automation.md) 3.7 節）。CI と同じ確認も回る（急ぐときは `--no-ci`）。
+- 検証記録の「結果」「分かったこと・分からないこと」「次に撮るもの」を書き、冒頭の「結論」に ID を足し、`npm run records:close -- V-NNNN --mark` で閉じる前の検査を通して状態を `完了` にする。検査は、結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない（上なら `gradeReason`）・確定の反復実測に `decidedOn` がある・この記録の観測値の組に最小構成の警告が無い・確定の結論に指標がある（等級の候補が出る）・この記録の根拠の観測値が許容内・予測と合う仮説が 2 つ以上でない（この 4 つは `judgment` で上書きできる。データ明記は指標を問わない）・確定の結論の根拠の観測値に `scope` がある・本文の節が空でない（[design-records-automation.md](design-records-automation.md) 3.7 節）。CI と同じ確認も回る（急ぐときは `--no-ci`）。
 - 閉じた記録にも、録画・観測値・表・結果を書き足してよい（[design-investigation-review.md](design-investigation-review.md) 4.2 節）。結論の根拠が変わったら `records:close` を回し直す。
 - [roadmap.md](roadmap.md) を更新し（Stage にしたときはその節、そうでなければ今後の課題）、[AGENTS.md](../AGENTS.md)「コミット手順」で PR を出す。題名の案は `records:close` が出す。
 

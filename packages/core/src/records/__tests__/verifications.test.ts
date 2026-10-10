@@ -19,6 +19,7 @@ import {
   VERIFICATION_SECTIONS,
   parseVerification,
   renderVerifications,
+  unlistedConfirmedClaims,
   validateVerifications,
   type Verification,
 } from '../verifications.ts';
@@ -53,6 +54,7 @@ const check = (list: Verification[], obs: readonly Observation[] = []) =>
 describe('records/verifications・plan/verifications.md', () => {
   it('passes validation and matches plan/verifications.md (npm run records:check)', () => {
     expect(validateVerifications(verifications, { claims, recordingIds, observations })).toEqual([]);
+    expect(unlistedConfirmedClaims(claims, verifications, observations)).toEqual([]);
     // 予測との比べ（plan/design-records-automation.md 3.5 節）も載る。最小構成の警告は plan/minimal.md に移した（design-minimal-relevance.md 5 節）
     const extra = verificationExtraLines(observations, loadPredictions());
     expect(readFileSync(VERIFICATIONS_PATH, 'utf8')).toBe(renderVerifications(verifications, observations, extra));
@@ -172,6 +174,18 @@ describe('records/verifications・plan/verifications.md', () => {
       'V-0005: 依存が循環している（V-0005 → V-0006 → V-0005）',
       '999-01: source の検証記録 V-0998 が無い',
     ]);
+  });
+
+  it('finds 確定 claims not listed in any 完了 record (plan/design-investigation-review.md 3 節)', () => {
+    const base = claims.find((c) => c.state === '確定')!;
+    const c = { ...base, id: 'C-9998', basis: 'V-0001 の読み', observations: [] };
+    const frozen = { ...base, id: 'C-9997', basis: 'verification.md Stage 2', observations: [] };
+    const done = record('V-0001', '完了', ['- 結論: `C-9998`']);
+    expect(unlistedConfirmedClaims([c, frozen], [record('V-0001', '調査中')], [])).toEqual([
+      'C-9998: 確定の結論が、どの完了の検証記録の「結論」にも挙がっていない（根拠の検証記録の「結論」に足して records:close を通す）',
+    ]);
+    expect(unlistedConfirmedClaims([c, frozen], [done], [])).toEqual([]);
+    expect(unlistedConfirmedClaims([{ ...c, state: '仮説' }], [], [])).toEqual([]);
   });
 
   it('lists the open ones first, marking what can resume and what lost its premise', () => {

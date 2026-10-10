@@ -326,3 +326,26 @@ export function renderVerifications(
   }
   return `${lines.join('\n')}\n`;
 }
+
+/**
+ * 確定の結論は、閉じる前の検査（records:close）を通した記録に挙がっていること（plan/design-investigation-review.md 3 節）。
+ * 根拠が検証記録（観測値の source か、根拠の文の V-NNNN）にある結論だけを見る（2026-09-26 より前の凍結の記録だけが根拠のものは除く）
+ */
+export function unlistedConfirmedClaims(
+  claims: readonly Claim[],
+  verifications: readonly Verification[],
+  observations: readonly Observation[],
+): string[] {
+  const listed = new Set(verifications.filter((v) => v.state === '完了').flatMap((v) => v.claims));
+  const sourceOf = new Map(observations.map((o) => [o.id, o.source]));
+  const errors: string[] = [];
+  for (const c of claims) {
+    if (c.state !== '確定' || listed.has(c.id)) continue;
+    const fromVerification = c.observations.some((o) => V_ID.test(sourceOf.get(o) ?? '')) || /V-\d{4,}/.test(c.basis);
+    if (fromVerification)
+      errors.push(
+        `${c.id}: 確定の結論が、どの完了の検証記録の「結論」にも挙がっていない（根拠の検証記録の「結論」に足して records:close を通す）`,
+      );
+  }
+  return errors;
+}
