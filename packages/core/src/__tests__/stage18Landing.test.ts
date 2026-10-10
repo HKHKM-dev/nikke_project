@@ -132,7 +132,7 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(projectileKeyOf(RL)).toBe('ProjectileDirect:400');
     expect(targetRateOf(profile.coreHitRate, RL, at('farB'))).toBe(1);
     expect(targetRateOf(profile.coreHitRate, rl('ProjectileDirect', 300), at('farB'))).toBe(1);
-    // 外す側の直進弾 100 は 4 つの距離帯の値（C-0175）、誘導弾 100 も 4 つ（中遠は C-0241。ほかは C-0174）
+    // 外す側の直進弾 100 は 4 つの距離帯の値（C-0175）、誘導弾 100 も 4 つ（中遠は C-0530。ほかは C-0174）
     const direct100 = rl('ProjectileDirect', 100);
     expect(targetRateOf(profile.coreHitRate, direct100, at('nearA'))).toBe(1);
     expect(targetRateOf(profile.coreHitRate, direct100, at('farB'))).toBe(0.4286);
@@ -589,7 +589,7 @@ describe('編成（自動の条件）', () => {
     expect(codes(curve)).not.toContain('auto-condition-unmeasured');
     expect(codes(curve)).not.toContain('core-miss-by-projectile');
     expect(codes(RL)).not.toContain('core-miss-by-projectile');
-    // C-0174・C-0241: 誘導弾 100 と直進弾 100 は 4 つの距離帯とも測った
+    // C-0174・C-0530: 誘導弾 100 と直進弾 100 は 4 つの距離帯とも測った
     expect(codes(RL_HOMING)).not.toContain('auto-condition-unmeasured');
     expect(codes(RL_HOMING)).not.toContain('core-miss-by-projectile');
     expect(codes(rl('ProjectileDirect', 100))).not.toContain('auto-condition-unmeasured');

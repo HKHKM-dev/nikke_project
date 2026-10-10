@@ -259,7 +259,7 @@ describe('最小構成の警告', () => {
     // SR の弾丸命中率も表にある（C-0168）
     const sr = [...data.characters.values()].find((c) => c.weaponType === 'SR');
     if (sr) expect(normalConditionMeasured(sr, recording, data.enemies)).toBe(true);
-    // RL は弾の種類ごとの行で、的のどの着地点でも値があるときだけ測られている。誘導弾 100（フラワー）は中遠も測った（C-0174・C-0241）、
+    // RL は弾の種類ごとの行で、的のどの着地点でも値があるときだけ測られている。誘導弾 100（フラワー）は中遠も測った（C-0174・C-0530）、
     // 直進弾 100（ラプラス：アルティメットヒーロー）・曲射 1500（シンデレラ）も 4 つの距離帯とも測った（C-0175・C-0242）
     expect(normalConditionMeasured(data.characters.get(304)!, recording, data.enemies)).toBe(true);
     expect(normalConditionMeasured(data.characters.get(511)!, recording, data.enemies)).toBe(true);
