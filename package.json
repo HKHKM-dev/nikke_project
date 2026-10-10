@@ -28,7 +28,8 @@
     "records:minimal": "node packages/core/scripts/records-minimal.ts && node tools/format-retry.ts records/minimal && npm run records:check",
     "records:predict": "node packages/core/scripts/records-predict.ts",
     "records:new": "node packages/core/scripts/records-new.ts",
-    "records:close": "node packages/core/scripts/records-close.ts"
+    "records:close": "node packages/core/scripts/records-close.ts",
+    "records:renumber": "node packages/core/scripts/records-renumber.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

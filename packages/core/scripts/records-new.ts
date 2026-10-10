@@ -32,7 +32,7 @@ import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
 import {
   ROOT,
-  idsInOtherBranches,
+  idsInBranches,
   loadClaims,
   loadObservations,
   loadPredictions,
@@ -97,15 +97,15 @@ function format(path: string): void {
 }
 
 /**
- * 次の空き番号。ほかのブランチ（手元か origin の、main に無い commit）が使っている番号も除く。並行する作業が同じ番号を取ると、
+ * 次の空き番号。どれかのブランチ（手元か origin。まだ取り込んでいない main を含む）が使った番号も除く。並行する作業が同じ番号を取ると、
  * 後からマージする側が振り直すことになる（V-0378）
  */
 function freeId(prefix: 'V' | 'C', own: readonly string[]): string {
-  const other = idsInOtherBranches();
+  const other = idsInBranches();
   if (other.note !== '') console.log(`注意: ${other.note}`);
   const ownOnly = nextId(prefix, own);
   const id = nextId(prefix, [...own, ...other.ids]);
-  if (id !== ownOnly) console.log(`${ownOnly} から先はほかのブランチが使っているので、${id} にした`);
+  if (id !== ownOnly) console.log(`${ownOnly} から先はほかのブランチ（か main）が使っているので、${id} にした`);
   return id;
 }
 
