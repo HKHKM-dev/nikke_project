@@ -314,5 +314,58 @@
       "slot": "all",
       "source": "burstChain"
     }
+  },
+  {
+    "id": "248-15",
+    "recording": "248",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "compare",
+    "value": [181],
+    "unit": "f",
+    "description": "サクラ（I）+ デルタ（II）+ ユニ（操作・撃たない）+ ノワール（III）で、1 回目のフルバーストの直前の満タン（BURST バーが消えた発。f1194）から、ノワールのバーストの倍率ダメージのヒット（f1375）までの動画のフレーム数。実機とモデルの両方でゲージが律速（満タン → 00.00 が 87〜90f）の回だけ",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "満タンのフレームに HUD の増分（264,291）。2〜5 回目は I の段が長い（CT が律速）ので比べない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToBurstHit",
+      "args": {
+        "slot": 4,
+        "n": "0"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "248-16",
+    "recording": "248",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "record",
+    "value": [88],
+    "unit": "f",
+    "description": "サクラ（I）+ デルタ（II）+ ユニ（操作・撃たない）+ ノワール（III）で、ゲージが律速の回の満タン（BURST バーが消えた発。f1194）から、フルバーストのタイマーが 00.00 になった最初のフレーム（f1282。既存の観測値の起点）までの動画のフレーム数",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "モデルの III の発動（フルバーストの入り）は満タンから 83f（23 + 1 + 29 + 1 + 29）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   }
 ]

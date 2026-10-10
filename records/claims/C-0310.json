@@ -5,9 +5,9 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`229-05`（値。撮る前に手で書いた 8 通りのうち G3 だけと端数まで合い、ほかとは 17% 以上離れる）・`229-06`・`230-05`（回数。風圧で 5、灼熱で 0）・`229-07`（時刻。バーストのヒットの 23〜24f 後）。同じ発動のバーストのヒットは発動の直前のバフのまま（`229-04`・`230-04`）。録画 229・230 は最小構成の警告なし。G3 は予測ファイルではなく検証記録の手書きの予測なので、道具は合う仮説に数えないが、2026-10-06 のオーナーの判断で確定（厳密一致）にした（plan/design-delayed-skill-hit.md 5 節の論点 3）。V-0212",
-  "model": "`data/skills/870.json`（skill1 の `damage`・`burstUse`・`distributed`・`enemyElement: Wind`・`delayFrames: 24`）。遅れて出す扱い（そのフレームのバフで出す）は `frame/plan.ts` の `planSkillHits`（plan/design-delayed-skill-hit.md 3 節）",
+  "model": "`data/skills/870.json`（skill1 の `damage`・`burstUse`・`distributed`・`enemyElement: Wind`・`delayFrames: 30`。III の本当の発動の 30f 後 = III のタイマーの 00.00 の 24f 後で、バーストのヒット（00.00 の 1f 後。C-0231）の 23f 後。2026-10-10 に 24 から 30 にした（plan/design-burst-hit-origin.md 8 節））。遅れて出す扱い（そのフレームのバフで出す）は `frame/plan.ts` の `planSkillHits`（plan/design-delayed-skill-hit.md 3 節）",
   "replaces": ["C-0309"],
-  "updated": "2026-10-06",
+  "updated": "2026-10-10",
   "subject": {
     "places": ["data/skills/870.json の skill1 の effects[3]"]
   }

@@ -33,7 +33,7 @@
           "ref": 3,
           "damageType": "distributed",
           "enemyElement": "Wind",
-          "delayFrames": 26,
+          "delayFrames": 32,
           "assumes": {
             "ja": "単体ボスなので分配ダメージは全額 1 ヒット",
             "en": "Distributed damage lands in full as one hit on a lone boss"

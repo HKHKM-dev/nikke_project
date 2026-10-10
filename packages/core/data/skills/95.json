@@ -178,15 +178,13 @@
       ],
       "notes": [
         {
-          "ja": "II の直後に III が来たとき、実測の炸裂弾は III の発動より前に着き、フルバースト補正が乗らない（233-10）。モデルの III の発動は II の替わり目の 24f 後で、炸裂弾（中近 24f・中遠 25f・遠 28f）はフルバーストの中に入り、補正が乗る（未対応。III の本当の発動の位置は backlog 2-31）",
-          "en": "When Burst III follows Burst II immediately, the recorded round hits before the III activation and gets no full burst bonus (233-10). In the model the III activation is 24 frames after the II hexagon change, so the round (mid-near 24, mid-far 25, far 28 frames) falls inside the full burst and gets the bonus (not modeled; where the true III activation is belongs to backlog 2-31)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "weaponChange",
-            "trigger": "burstUse"
-          },
+          "ja": "II の直後に III が来たとき、炸裂弾は III のタイマーの 00.00（フルバーストの窓の始まり）より前に着き、フルバースト補正が乗らない（233-10）。モデルもフルバーストの窓を III の発動の 6f 後の 00.00 から始める（II の替わり目の 29f 後。C-0516）ので、炸裂弾（替わり目の 22〜28f 後）に補正は乗らない",
+          "en": "When Burst III follows Burst II immediately, the round hits before 00.00 of the III timer (the start of the full burst window) and gets no full burst bonus (233-10). The model also opens the full burst window at 00.00, 6 frames after the III activation (29 frames after the II hexagon change; C-0516), so the round (22 to 28 frames after the hexagon change) gets no bonus",
+          "kind": "modeling",
+          "refers": "effects[1]",
           "claims": [
-            "C-0509"
+            "C-0509",
+            "C-0516"
           ]
         }
       ]

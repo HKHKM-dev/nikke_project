@@ -102,30 +102,33 @@ describe('クイーン（真）の S1 の 1more の分配ダメージ（C-0310�
   const hitsOf = (t: TeamInput) =>
     planTeamRun(t).skillHits.filter((h) => h.slotIndex === q && h.effect.source.skill === 'skill1');
 
-  it('is a burstUse distributed damage against a Wind enemy, 24 frames late', () => {
+  it('is a burstUse distributed damage against a Wind enemy, 30 frames after the activation (24 after 00.00)', () => {
     expect(oneMore).toMatchObject({
       trigger: 'burstUse',
       damageType: 'distributed',
       enemyElement: 'Wind',
-      delayFrames: 24,
+      delayFrames: 30,
     });
     expect(oneMore.claims).toEqual(['C-0310']);
   });
 
-  it('lands 24 frames after each burst, and not against a Fire enemy', () => {
+  it('lands 30 frames after each burst, and not against a Fire enemy', () => {
     const delayed = hitsOf(minimal);
     const plain = hitsOf(undelayed);
     expect(delayed.length).toBeGreaterThan(0);
-    expect(delayed.map((h) => h.frame)).toEqual(plain.map((h) => h.frame + 24));
+    expect(delayed.map((h) => h.frame)).toEqual(plain.map((h) => h.frame + 30));
     expect(hitsOf(team([822, 20, QUEEN], 2, 'Fire'))).toEqual([]);
   });
 
   it('uses the buffs of its own frame: the 1more attack up and the S2 elemental up of the same burst', () => {
     const delayed = hitsOf(minimal)[1]!;
     const plain = hitsOf(undelayed)[1]!;
-    // フルバースト補正はどちらにも乗る（発動のフレームもフルバースト中）。違いは同じ発動で付く攻撃力▲と S2 の▲だけ
-    // 攻撃力 119,896 → 156,189（1more の攻撃力▲ 30.27%）、属性の倍率 1.2359 → 1.4915（S2 の▲ 25.56%）
-    const ratio = ((156189 - 100) / (119896 - 100)) * (1.4915 / 1.2359);
+    // 違いは同じ発動で付く攻撃力▲と S2 の▲、フルバースト補正（遅れた分はフルバーストの中。遅れの無い分は III の発動のフレームで、
+    // フルバーストの窓（III のタイマーの 00.00 = 発動の 6f 後から）の前。plan/design-burst-hit-origin.md 8 節）
+    // 攻撃力 119,896 → 156,189（1more の攻撃力▲ 30.27%）、属性の倍率 1.2359 → 1.4915（S2 の▲ 25.56%）、
+    // 倍率グループ（会心の期待値 0.15 × 0.5 を含む）1.075 → 1.575
+    const fullBurst = (1 + 0.5 + 0.15 * 0.5) / (1 + 0.15 * 0.5);
+    const ratio = ((156189 - 100) / (119896 - 100)) * (1.4915 / 1.2359) * fullBurst;
     expect(delayed.hit.perActivation / plain.hit.perActivation).toBeCloseTo(ratio, 4);
   });
 });

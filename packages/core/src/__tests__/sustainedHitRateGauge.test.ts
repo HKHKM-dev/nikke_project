@@ -157,18 +157,19 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
     const { plan, first } = firstPassOf(team(slots()));
     const off = planTeamRun(team(slots(), false));
 
-    it('tracks the windows, which lie inside the full burst windows', () => {
+    it('tracks the windows, which start at the III activation and lie inside [III activation, full burst end)', () => {
       const asuka = first.hitWindows.filter((w) => w.slotIndex === 2);
       expect(asuka.length).toBeGreaterThan(0);
+      // バースト使用時の効果は III の本当の発動から、フルバーストの窓は III のタイマーの 00.00（6f 後）から（plan/design-burst-hit-origin.md 8 節）
       const fb = plan.schedule!.fullBurstWindows;
-      for (const w of asuka) expect(fb.some((b) => b.start <= w.start && w.end <= b.end)).toBe(true);
+      for (const w of asuka) expect(fb.some((b) => b.start - 6 === w.start && w.end <= b.end)).toBe(true);
     });
 
     it('leaves the schedule and the gauge as without the timed hit rate', () => {
       expect(plan.schedule).toEqual(off.schedule);
-      // 記録には、フルバースト中（ゲージを足さない）の発の上がった値も残る。足す発（フルバーストの外）は同じ
+      // 記録には、III の発動からフルバーストの終わりまで（ゲージを足さない）の発の上がった値も残る。足す発（その外）は同じ
       const fb = plan.schedule!.fullBurstWindows;
-      const outside = (g: { frame: number }) => !fb.some((b) => b.start <= g.frame && g.frame < b.end);
+      const outside = (g: { frame: number }) => !fb.some((b) => b.start - 6 <= g.frame && g.frame < b.end);
       expect(plan.shotGauges.filter(outside)).toEqual(off.shotGauges.filter(outside));
     });
   });

@@ -8,9 +8,9 @@
 
 件数: キャラ 58・効果 195（根拠あり 187）・notes 222（根拠あり 68）
 
-notes の種類: 未対応 125・前提の外 37・計算に無関係 54・補足 6
+notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補足 7
 
-スロット: supported 76・partial 17・unsupported 59・noEffect 34
+スロット: supported 77・partial 16・unsupported 59・noEffect 34
 
 ## 10 ラピ
 
@@ -175,10 +175,10 @@ notes の種類: 未対応 125・前提の外 37・計算に無関係 54・補�
   - effects[2] passive・attack: C-0020（確定）
   - effects[3] passive・projectileExplosionDamage: C-0374（確定）
   - effects[4] passive・trueDamage: C-0375（確定）
-- **burst**: partial
+- **burst**: supported
   - effects[0] timed・weaponChangeShot・damageTaken: C-0312（確定）、C-0138（確定）
   - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）、C-0509（確定）
-  - notes[0] 未対応: II の直後に III が来たとき、実測の炸裂弾は III の発動より前に着き、フルバースト補正が乗らない（233-10）。モデルの III の発動は II の替わり目の 24f 後で、炸裂弾（中近 24f・中遠 25f・遠 28f）はフルバーストの中に入り、補正が乗る（未対応。III の本当の発動の位置は backlog 2-31）: C-0509（確定）
+  - notes[0] 補足: II の直後に III が来たとき、炸裂弾は III のタイマーの 00.00（フルバーストの窓の始まり）より前に着き、フルバースト補正が乗らない（233-10）。モデルもフルバーストの窓を III の発動の 6f 後の 00.00 から始める（II の替わり目の 29f 後。C-0516）ので、炸裂弾（替わり目の 22〜28f 後）に補正は乗らない: C-0509（確定）、C-0516（確定）
 
 ## 101 ドレイク
 

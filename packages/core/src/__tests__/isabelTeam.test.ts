@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { MEASURED_BURST_DELAYS } from '../burst/landing.ts';
-import { activationFramesOfSlot, effectFrameOf, hitFrameOf } from '../burst/schedule.ts';
+import { activationFramesOfSlot, effectFrameOf, hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -82,9 +82,11 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, isabel 
   it('lands the burst skill damage and fires the burst effects 134 frames after each use (C-0165)', () => {
     const delays = MEASURED_BURST_DELAYS.find((row) => row.resourceIds.includes(ISABEL))!.delays;
     expect(delays).toEqual({ hitFrames: 134, effectFrames: 134 });
+    // III の遅れは III のタイマーの 00.00（本当の発動の 6f 後。plan/design-burst-hit-origin.md 8 節）から
     for (const a of mine) {
-      expect(hitFrameOf(a)).toBe(a.frame + 134);
-      expect(effectFrameOf(a)).toBe(a.frame + 134);
+      expect(hexagonFrameOf(a)).toBe(a.frame + 6);
+      expect(hitFrameOf(a)).toBe(a.frame + 6 + 134);
+      expect(effectFrameOf(a)).toBe(a.frame + 6 + 134);
     }
     // ほかの枠の発動は遅れない
     for (const a of plan.schedule!.activations.filter((x) => x.slotIndex !== isabel)) {

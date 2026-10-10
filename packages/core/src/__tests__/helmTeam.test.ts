@@ -8,6 +8,7 @@ import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
+import { hexagonFrameOf } from '../burst/schedule.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -95,11 +96,13 @@ describe('録画 079 の編成: バーストのヒットの遅れ（C-0167）', 
   const calc = computeTeamDamage(input);
   const HELM_SLOT = 2;
 
-  it('lands the burst 59 frames after each use, inside the full burst', () => {
+  it('lands the burst 59 frames after 00.00 of each use (6 frames after the activation), inside the full burst', () => {
     const uses = sim.schedule!.activations.filter((a) => a.slotIndex === HELM_SLOT);
     expect(uses.length).toBeGreaterThan(0);
+    // III の遅れは III のタイマーの 00.00（本当の発動の 6f 後。plan/design-burst-hit-origin.md 8 節）から
+    expect(uses.every((a) => hexagonFrameOf(a) === a.frame + 6)).toBe(true);
     expect(sim.slots[HELM_SLOT]!.burst.activations).toEqual(
-      uses.map((a) => a.frame + 59).filter((f) => f < sim.frames),
+      uses.map((a) => hexagonFrameOf(a) + 59).filter((f) => f < sim.frames),
     );
   });
 

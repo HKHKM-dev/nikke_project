@@ -102,6 +102,8 @@ export function planFixedCycle(
         slotIndex,
         startsFullBurst: step === 'Step3',
         enteredStep: FIXED_ENTERED_STEP[step],
+        // 固定サイクルはフルバーストの窓の始まりに III が発動する（III のタイマーの 00.00 = 発動）
+        ...(step === 'Step3' ? { fullBurstStart: start } : {}),
       };
       const delays = candidates[slotIndex]?.delays;
       activations.push(delays === undefined ? activation : withBurstDelays(activation, delays));

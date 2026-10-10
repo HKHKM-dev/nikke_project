@@ -29,7 +29,7 @@ describe('planFixedCycle', () => {
     expect(s.activations.slice(0, 3)).toEqual([
       { frame: H, step: 'Step1', slotIndex: 0, startsFullBurst: false, enteredStep: 'Step2' },
       { frame: H, step: 'Step2', slotIndex: 1, startsFullBurst: false, enteredStep: 'Step3' },
-      { frame: H, step: 'Step3', slotIndex: 2, startsFullBurst: true, enteredStep: null },
+      { frame: H, step: 'Step3', slotIndex: 2, startsFullBurst: true, enteredStep: null, fullBurstStart: H },
     ]);
     expect(s.fullBurstWindows[0]).toEqual({ start: H, end: C, burstUsers: [0, 1, 2] });
     expect(s.fullBurstWindows[8]).toEqual({ start: H + 8 * C, end: 9 * C, burstUsers: [0, 1, 2] });

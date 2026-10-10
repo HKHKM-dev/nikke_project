@@ -5,9 +5,9 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`038-23`（1〜4 回目とも同じ長さ）、`038-22`。効果の発火がヒットと同じフレームなことは `038-15`（C-0162）。止まりは `videoFrameOf` と同じ 22f で差し引いた（この録画の止まりは `038-03`）。モデルに入れた後は `038-27` で一致。V-0078・V-0080",
-  "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のイサベルの 1 行。`data/skills/231.json` の burst の effects[0]・effects[1]・effects[2]・effects[3]（ヒットと効果の発火のフレームで出す）",
+  "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のイサベルの 1 行。`data/skills/231.json` の burst の effects[0]・effects[1]・effects[2]・effects[3]（ヒットと効果の発火のフレームで出す）。III の遅れは III のタイマーの 00.00（`burst/schedule.ts` の `hexagonFrameOf`。本当の発動の `FULL_BURST_AFTER_ACTIVATION_FRAMES` = 6f 後。2026-10-10 のオーナーの判断。plan/design-burst-hit-origin.md 8 節）から足す",
   "replaces": [],
-  "updated": "2026-10-02",
+  "updated": "2026-10-10",
   "subject": {
     "places": [
       "data/skills/231.json の burst の effects[0]",

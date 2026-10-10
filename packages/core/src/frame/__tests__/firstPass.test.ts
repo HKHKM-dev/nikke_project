@@ -286,7 +286,8 @@ describe('runFirstPass: cooldown reduction (4)', () => {
     const schedule = pass.schedule!;
     const fb = schedule.fullBurstWindows[0]!.start;
     const iii = schedule.activations.find((a) => a.startsFullBurst)!;
-    expect(iii.frame).toBe(fb);
+    // フルバーストは III の発動の 6f 後（III のタイマーの 00.00。plan/design-burst-hit-origin.md 8 節）から
+    expect(fb).toBe(iii.frame + 6);
     const atFirst = schedule.cooldownReductions.filter((r) => r.frame === fb);
     expect(atFirst.map((r) => r.slotIndex)).toEqual([0, 1, 2]);
     // 2.34 秒 = gameSecondsToFrames(2.34)（切り捨て）。III は今撃ったばかり（残り 40 秒）なので、まるまる縮む

@@ -1,8 +1,9 @@
 // バーストの着弾編（plan/design-burst-landing.md 2 節）: バーストの発動から、バーストの倍率ダメージのヒットと、
 // 「バーストスキルを使用した時」の効果の発火までの遅れ（キャラごとの実測値。ゲーム内の時間 = モデルのフレーム）。
 // 表に無いキャラは 0（発動と同じフレーム。未測定）。チェーン・CT・フルバーストの窓は発動のフレームのまま。
-// 遅れの起点は録画で読んだ発動の印: I・II は右のバースト欄の六角形の替わり目（本当の発動の HEXAGON_AFTER_ACTIVATION_FRAMES 後。
-// hexagonFrameOf）、III はフルバーストの入り（発動のフレーム）。遅れ 0 の欄は本当の発動のまま（plan/design-burst-hit-origin.md）。
+// 遅れの起点は録画で読んだ発動の印: I・II は右のバースト欄の六角形の替わり目（本当の発動の HEXAGON_AFTER_ACTIVATION_FRAMES 後）、
+// III はタイマーの 00.00（本当の発動の FULL_BURST_AFTER_ACTIVATION_FRAMES 後。フルバーストの窓の始まり）。どちらも hexagonFrameOf。
+// 遅れ 0 の効果は本当の発動のまま、遅れ 0 の III のヒットは 00.00（hitFrameOf。plan/design-burst-hit-origin.md 8 節）。
 // 分かれたヒット編（plan/design-burst-split-hits.md）: 1 回の発動の倍率ダメージが間をあけた複数のヒットに分かれるキャラは、
 // 1 ヒット目からのずれの列（hitOffsets）を持ち、倍率を等分して各ヒットに出す。
 import type { CharacterData } from '../types.ts';
@@ -34,9 +35,9 @@ const NO_DELAYS: Readonly<BurstDelays> = Object.freeze({ hitFrames: 0, effectFra
 
 /** 実測値の表。1 行に根拠の結論の ID を添える（skills-guide.md 1.5 節） */
 export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
-  // イサベル: III の発動からヒットと効果の発火まで、どちらも 134f（動画で 156f。フルバーストの入りの止まり 22f を含む）
+  // イサベル: III のタイマーの 00.00 からヒットと効果の発火まで、どちらも 134f（動画で 156f。フルバーストの入りの止まり 22f を含む）
   { resourceIds: [231], delays: { hitFrames: 134, effectFrames: 134 }, claim: 'C-0165' },
-  // ヘルム（宝物あり）: III の発動からヒットまで 59f（動画で 80〜81f。止まり 22f を含む）。効果（チャージダメージ倍率▲）は
+  // ヘルム（宝物あり）: III のタイマーの 00.00 からヒットまで 59f（動画で 80〜81f。止まり 22f を含む）。効果（チャージダメージ倍率▲）は
   // フルバーストの始まりの表示より 2〜35f 前に発火する。モデルは発動より前に置けないので 0（発動と同じフレーム）。
   // 宝物なしは未測定（plan/design-burst-split-hits.md 7 節の論点 4）
   { resourceIds: [352], treasure: true, delays: { hitFrames: 59, effectFrames: 0 }, claim: 'C-0167' },
@@ -44,13 +45,13 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [304], delays: { hitFrames: 14, effectFrames: 0 }, claim: 'C-0220' },
   // ニヒリスター: II の発動（六角形の替わり目）からヒットと火傷の付与（1 回目の tick はヒットと同じフレーム。C-0101）まで、どちらも 9f
   { resourceIds: [261], delays: { hitFrames: 9, effectFrames: 9 }, claim: 'C-0219' },
-  // ノワール: III の発動からヒットまで 72f（動画で 93〜94f。止まり 22f を含む）。効果（SG の味方の命中率▲）の遅れは未測定。
+  // ノワール: III のタイマーの 00.00 からヒットまで 72f（動画で 93〜94f。止まり 22f を含む）。効果（SG の味方の命中率▲）の遅れは未測定。
   // 録画が最小構成でない（エーテルの定義が無い）仮説だが、オーナーの判断で入れた（2026-10-04）
   { resourceIds: [271], delays: { hitFrames: 72, effectFrames: 0 }, claim: 'C-0226' },
-  // ラピ: III の発動から 1 ヒット目まで 90f（動画で 111〜112f の最も多い値。止まり 22f を含む）、7f おきの 3 ヒット。
+  // ラピ: III のタイマーの 00.00 から 1 ヒット目まで 90f（動画で 111〜112f の最も多い値。止まり 22f を含む）、7f おきの 3 ヒット。
   // 効果（自分の攻撃力▲）の遅れは未測定。最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
   { resourceIds: [10], delays: { hitFrames: 90, effectFrames: 0, hitOffsets: [0, 7, 14] }, claim: 'C-0227' },
-  // ドレイク（宝物あり）: III の発動から 1 ヒット目まで 4f（動画で 26〜27f の最も多い値）、2・3 ヒット目は 27f・55f 後。
+  // ドレイク（宝物あり）: III のタイマーの 00.00 から 1 ヒット目まで 4f（動画で 26〜27f の最も多い値）、2・3 ヒット目は 27f・55f 後。
   // 効果（攻撃ダメージ▲・最大装弾数▲）はヒットより前に付き、止まりの明けの 1f 後の発にも乗る（C-0420）ので 0。宝物なしは未測定
   {
     resourceIds: [101],
@@ -61,16 +62,16 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ユニ: II の発動（六角形が II から次の表示に替わるフレーム）からヒットまで 124f（フルバーストにつながる回は、間の III の発動の
   // 止まり 22f を含めて動画で 146f）。バースト使用時の効果は無い。最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
   { resourceIds: [160], delays: { hitFrames: 124, effectFrames: 0 }, claim: 'C-0230' },
-  // クイーン（真）: III の発動からヒットまで 1f（動画で 22〜23f。止まり 22f を含む）。効果（自分の攻撃力▲）の遅れは未測定。
+  // クイーン（真）: III のタイマーの 00.00 からヒットまで 1f（動画で 22〜23f。止まり 22f を含む）。効果（自分の攻撃力▲）の遅れは未測定。
   // 最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
   { resourceIds: [870], delays: { hitFrames: 1, effectFrames: 0 }, claim: 'C-0231' },
-  // レイヴン: III の発動からヒットまで 43f（動画で 64〜65f。止まり 22f を含む）。効果（A.N.モードの持続ダメージ▲）はヒットより前に
+  // レイヴン: III のタイマーの 00.00 からヒットまで 43f（動画で 64〜65f。止まり 22f を含む）。効果（A.N.モードの持続ダメージ▲）はヒットより前に
   // 付き、止まりの明けの後の最初の S1 の tick から乗る（C-0421）ので 0
   { resourceIds: [851], delays: { hitFrames: 43, effectFrames: 0 }, claim: 'C-0233' },
-  // マナ: III の発動から効果（持続ダメージの付与と 1 回目の tick・持続ダメージ▲）まで 2f（動画で 24f。止まり 22f を含む）。
+  // マナ: III のタイマーの 00.00 から効果（持続ダメージの付与と 1 回目の tick・持続ダメージ▲）まで 2f（動画で 24f。止まり 22f を含む）。
   // バーストの倍率ダメージは無い
   { resourceIds: [290], delays: { hitFrames: 0, effectFrames: 2 }, claim: 'C-0301' },
-  // モダニア: III の発動から殲滅モードの最初の発まで 7f（動画で 28〜29f。止まり 22f を含む）。モデルの使用武器変更は効果の発火の
+  // モダニア: III のタイマーの 00.00 から殲滅モードの最初の発まで 7f（動画で 28〜29f。止まり 22f を含む）。モデルの使用武器変更は効果の発火の
   // 次のフレームから撃つので、効果（殲滅モード・装弾数無限）の発火は 6f。バーストの倍率ダメージは無い。止まりの明けから殲滅モードの
   // 最初の発まで撃たないことはモデルに無い（定義の burst の notes）
   // 窓の終わりは発動から数える（実測の最後の発は後ろにずれない。plan/design-burst-effect-window-end.md）
@@ -79,9 +80,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // 味方の会心の発で挟んだ 16〜22f の真ん中の 19f（止まりより前なので動画のフレームと同じ）。窓は遅れた始まりから数える。
   // バーストの倍率ダメージは無い。録画 042 の読み直しで値を出し、録画 400（撮る前に予測を固定。V-0388）で再現した
   { resourceIds: [172], delays: { hitFrames: 0, effectFrames: 19 }, claim: 'C-0479' },
-  // ソルジャーE.G.: III の発動からヒットまで 7f（動画で 29f。止まり 22f を含む）。バースト使用時の効果は無い（V-0247・V-0242）
+  // ソルジャーE.G.: III のタイマーの 00.00 からヒットまで 7f（動画で 29f。止まり 22f を含む）。バースト使用時の効果は無い（V-0247・V-0242）
   { resourceIds: [300], delays: { hitFrames: 7, effectFrames: 0 }, claim: 'C-0370' },
-  // 雪子: III の発動と同じフレームにヒット（動画では III のタイマーが 00.00 になる 1f 前。フルバーストの入りの止まりの前）。
+  // 雪子: III のタイマーの 00.00（hitFrameOf）にヒット（動画では 00.00 の 1f 前。フルバーストの入りの止まりの前）。
   // 効果（1more の攻撃力▲・真紅の華の分配ダメージ▲）の遅れは未測定。表に無いときの既定と同じ値で、測った値として置く
   { resourceIds: [871], delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-0419' },
 ];

@@ -4,6 +4,7 @@ import { planFixedCycle } from '../fixedCycle.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import {
   ACTIVATION_STOP_VIDEO_FRAMES,
+  FULL_BURST_AFTER_ACTIVATION_FRAMES,
   FULL_BURST_ENTRY_STOP_VIDEO_FRAMES,
   HEXAGON_AFTER_ACTIVATION_FRAMES,
   activationVideoFrameOf,
@@ -14,7 +15,7 @@ import {
 
 describe('videoFrameOf', () => {
   const s = planFixedCycle([{ burstStep: 'Step1' }, { burstStep: 'Step2' }, { burstStep: 'Step3' }], 3000);
-  // 固定サイクルは 588f に I・II・III が同じフレームで並び、III でフルバーストに入る。次の入りは 1,764f
+  // 固定サイクルは 588f に I・II・III が同じフレームで並び、III でフルバーストに入る（III のタイマーの 00.00 = 発動）。次の入りは 1,764f
   const first = gameSecondsToFrames(10);
   const second = first + gameSecondsToFrames(20);
 
@@ -30,24 +31,27 @@ describe('videoFrameOf', () => {
     expect(videoFrameOf(s, second + 1)).toBe(second + 1 + 44 + 4);
   });
 
-  it('puts the hexagon change of the I / II activation 5 frames after it, past its own activation stop (C-0220, C-0285, V-0382)', () => {
-    // 動的サイクルの形: I・II・III が 29f おきに並ぶ（C-0285）
+  it('puts the hexagon change of the I / II activation 5 frames after it, past its own activation stop, and 00.00 of III 6 frames after it (C-0220, C-0285, V-0382, C-0512)', () => {
+    // 動的サイクルの形: I・II・III が 28f おきに並ぶ（C-0285・C-0515）
     const chain = {
       activations: [
         { frame: 100, step: 'Step1', slotIndex: 0, startsFullBurst: false, enteredStep: 'Step2' },
-        { frame: 129, step: 'Step2', slotIndex: 1, startsFullBurst: false, enteredStep: 'Step3' },
-        { frame: 158, step: 'Step3', slotIndex: 2, startsFullBurst: true, enteredStep: null },
+        { frame: 128, step: 'Step2', slotIndex: 1, startsFullBurst: false, enteredStep: 'Step3' },
+        { frame: 156, step: 'Step3', slotIndex: 2, startsFullBurst: true, enteredStep: null },
       ],
     } as unknown as BurstSchedule;
     const [i, ii, iii] = chain.activations;
     expect(HEXAGON_AFTER_ACTIVATION_FRAMES).toBe(5);
-    expect([hexagonFrameOf(i!), hexagonFrameOf(ii!), hexagonFrameOf(iii!)]).toEqual([105, 134, 158]);
+    expect(FULL_BURST_AFTER_ACTIVATION_FRAMES).toBe(6);
+    expect([hexagonFrameOf(i!), hexagonFrameOf(ii!), hexagonFrameOf(iii!)]).toEqual([105, 133, 162]);
     // I の替わり目は I 自身の止まりの後
     expect(activationVideoFrameOf(chain, i!)).toBe(105 + 1);
     // II の替わり目は I・II の止まりの後
-    expect(activationVideoFrameOf(chain, ii!)).toBe(134 + 2);
-    // III は入りの止まりの前のまま
-    expect(activationVideoFrameOf(chain, iii!)).toBe(158 + 2);
+    expect(activationVideoFrameOf(chain, ii!)).toBe(133 + 2);
+    // III の 00.00 は入りの止まりの前
+    expect(activationVideoFrameOf(chain, iii!)).toBe(162 + 2);
+    // 00.00 の後は入りの止まり（22f）を足す
+    expect(videoFrameOf(chain, 163)).toBe(163 + 2 + 22);
   });
 
   it('is the identity without a schedule', () => {
