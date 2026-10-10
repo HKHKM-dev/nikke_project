@@ -444,3 +444,14 @@
 2026-10-10 14:52 に録画 407（ココア + ソルジャーF.A. + アリス + レイヴン）を `intake.ts` で取り込み、この 1 本（`range/20261010-407_sr+sg+sr+rl_cocoa+soldier-fa+alice+raven_alice-burst-repro.mp4`）だけを同期した。E: と I: で sha256 が一致（`171245567e83`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
 
 2026-10-10 19:36 に録画 414（I-DOLL・フラワー + ウンファ：タクティカル・アップ + ヘルム）を `intake.ts` で取り込み、この 1 本（`range/20261010-414_rl+sr+sr_flower+eunhwa-tu+helm_true-damage-bucket.mp4`）だけを同期した。E: と I: で sha256 が一致（`af6b7ead2716`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+2026-10-10 19:30 に録画 408（ノワール単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-408_sg_noir_auto_nocube.mp4`）だけを同期した。E: と I: で sha256 が一致（`9e287757e0c6`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-10 19:30 に録画 409（ノワール単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-409_sg_noir_auto_nocube.mp4`）だけを同期した。E: と I: で sha256 が一致（`f61a974e3272`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-10 19:30 に録画 410（ノワール単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-410_sg_noir_auto_nocube.mp4`）だけを同期した。E: と I: で sha256 が一致（`ad6fea2a1eae`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-10 19:30 に録画 411（ノワール単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-411_sg_noir_auto_cube.mp4`）だけを同期した。E: と I: で sha256 が一致（`a51bac28c5a6`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-10 19:30 に録画 412（ノワール単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-412_sg_noir_auto_cube.mp4`）だけを同期した。E: と I: で sha256 が一致（`b51e745d1420`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
+
+2026-10-10 19:30 に録画 413（ノワール単騎）を `intake.ts` で取り込み、この 1 本（`range/20261010-413_sg_noir_auto_cube.mp4`）だけを同期した。E: と I: で sha256 が一致（`358a998c95eb`）。取り込み元の元ファイルは `intake.ts` が E: へ移した。
