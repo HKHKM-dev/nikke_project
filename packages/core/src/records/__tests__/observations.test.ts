@@ -489,8 +489,9 @@ describe('照合の部品', () => {
     const metric = METRICS.burstEffectFirstShot!;
     const value = (args: Record<string, unknown>) =>
       metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
-    // III は替わり目が発動と同じフレーム。I・II は替わり目（本当の発動の 5f 後。hexagonFrameOf）から数える
-    expect(value({ slot: 1, n: 0 })).toBe(1);
+    // III は III のタイマーの 00.00（本当の発動の 6f 後）、I・II は替わり目（本当の発動の 5f 後）から数える（hexagonFrameOf）。
+    // 遅れの無い効果は本当の発動に付くので、III の発動の後の最初の発（91）は 00.00（96）より前で負
+    expect(value({ slot: 1, n: 0 })).toBe(-5);
     expect(value({ slot: 1, n: 0, fromShot: true })).toBe(0);
     expect(value({ slot: 1, n: 1 })).toBe(95);
     expect(value({ slot: 1, n: 1, fromShot: true })).toBe(0);
@@ -541,8 +542,8 @@ describe('照合の部品', () => {
     // I・II の替わり目は本当の発動の 5f 後なので、遅れの無い効果は替わり目の 5f 前
     expect(value({ slot: 2, n: 0 })).toBe(-5);
     expect(value({ slot: 2, n: 1 })).toBe(19);
-    // III は発動のフレームから
-    expect(value({ slot: 2, n: 2 })).toBe(2);
+    // III は III のタイマーの 00.00（本当の発動の 6f 後）から
+    expect(value({ slot: 2, n: 2 })).toBe(-4);
     expect(() => value({ slot: 2, n: 3 })).toThrow('3 回目の発動が無い');
   });
 

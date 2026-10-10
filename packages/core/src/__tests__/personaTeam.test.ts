@@ -215,15 +215,16 @@ describe('追撃とバトンタッチ（ココア + ユニ + クイーン（真�
     expect(queenBursts.length).toBeGreaterThan(0);
   });
 
-  // 追撃の分配ダメージは、追撃が付いたフレームの 82f 後（C-0429。仮説。動画では雪子のバーストのヒットの 104f 後で、間に止まり 22f が入る。V-0292）
-  it("applies the follow-up to Queen at each of Yukiko's bursts, and fires Queen's S1 82 frames later", () => {
+  // 追撃の分配ダメージは、追撃が付いたフレーム（雪子の III の発動）の 88f 後（C-0429。仮説。動画では雪子のバーストのヒットの 104f 後で、
+  // 間に止まり 22f が入る。V-0292。III のタイマーの 00.00 は発動の 6f 後なので、00.00 からは 82f。plan/design-burst-hit-origin.md 8 節）
+  it("applies the follow-up to Queen at each of Yukiko's bursts, and fires Queen's S1 88 frames later", () => {
     const followUps = appliedFrames(plan.timeline, 'followUp', q);
     expect(followUps).toEqual(yukikoBursts.filter((f) => f < plan.frames));
     expect(appliedFrames(plan.timeline, 'followUp', y)).toEqual([]);
     const s1 = plan.skillHits.filter(
       (h) => h.slotIndex === q && h.effect.source.skill === 'skill1' && typeof h.effect.trigger === 'object',
     );
-    expect(s1.map((h) => h.frame)).toEqual(followUps.map((f) => f + 82).filter((f) => f < plan.frames));
+    expect(s1.map((h) => h.frame)).toEqual(followUps.map((f) => f + 88).filter((f) => f < plan.frames));
   });
 
   it("stacks the baton pass on Yukiko at each of Queen's bursts, up to 3, until the end of the battle", () => {

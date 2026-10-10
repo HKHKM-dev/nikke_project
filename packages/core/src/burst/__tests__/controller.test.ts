@@ -25,14 +25,15 @@ function unit(burstStep: BurstStep, cooldownFrames: number, nextStep: BurstNextS
 }
 
 /**
- * 状態機械の論理だけを見るため、フルバーストとチェーンの打ち切りを 600f、段の間隔を 20f に固定した timing
- * （Stage 21-B までの既定）で回す。既定値（ゲーム内の 10 秒・段の 29f）は下の 'uses …' で確かめる
+ * 状態機械の論理だけを見るため、フルバーストとチェーンの打ち切りを 600f、段の間隔を 20f、III の発動からフルバーストの開始までを 0f に
+ * 固定した timing（Stage 21-B までの既定）で回す。既定値（ゲーム内の 10 秒・段の 28f・開始の 6f）は下の 'uses …' で確かめる
  */
 const TIMING_600: BurstTiming = {
   ...DEFAULT_BURST_TIMING,
   readyDelayFrames: 20,
   step1ToStep2Frames: 20,
   step2ToStep3Frames: 20,
+  fullBurstStartDelayFrames: 0,
   fullBurstFrames: 600,
   chainTimeoutFrames: 600,
 };
@@ -60,10 +61,20 @@ describe('BurstController', () => {
     expect(gameSecondsToFrames(10)).toBe(588);
   });
 
-  it('uses 23f for full → I and 29f for I → II → III (C-0285)', () => {
+  it('uses 23f for full → I, 28f for I → II → III and starts the full burst 6f after III (C-0285, C-0515, C-0512)', () => {
     expect(DEFAULT_BURST_TIMING.readyDelayFrames).toBe(23);
-    expect(DEFAULT_BURST_TIMING.step1ToStep2Frames).toBe(29);
-    expect(DEFAULT_BURST_TIMING.step2ToStep3Frames).toBe(29);
+    expect(DEFAULT_BURST_TIMING.step1ToStep2Frames).toBe(28);
+    expect(DEFAULT_BURST_TIMING.step2ToStep3Frames).toBe(28);
+    expect(DEFAULT_BURST_TIMING.fullBurstStartDelayFrames).toBe(6);
+  });
+
+  it('opens the full burst window K frames after III and keeps the gauge from charging in between (plan/design-burst-hit-origin.md 8 節)', () => {
+    const timing = { ...TIMING_600, fullBurstStartDelayFrames: 6 };
+    const s = run([unit('Step1', 0), unit('Step2', 0), unit('Step3', 0)], 1800, 5000, timing);
+    // III の発動は 259 のまま、窓は 6f 後から 600f。2 回目の満タンは窓の終わり（865）から数え直す
+    expect(summary(s).slice(0, 3)).toEqual(['219:Step1:0', '239:Step2:1', '259:Step3:2']);
+    expect(s.fullBurstWindows[0]).toEqual({ start: 265, end: 865, burstUsers: [0, 1, 2] });
+    expect(s.gaugeFullFrames).toEqual([199, 865 + 199]);
   });
 
   it('is gauge-bound when cooldowns are short: full → I → II → III with 20f steps, 600f full burst, then refill from 0', () => {

@@ -12,7 +12,7 @@
     {
       "observation": "013-01",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "638761d68c11db43",
+      "key": "920da507e340b23e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20,7 +20,7 @@
     {
       "observation": "013-02",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "bde89add39cec454",
+      "key": "4cff7c683d1e2f69",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28,7 +28,7 @@
     {
       "observation": "013-03",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "996aa931279ebf44",
+      "key": "d18bed144faaeef9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -36,7 +36,7 @@
     {
       "observation": "013-04",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "8fbd1c383f600d7f",
+      "key": "e31d4a490c6fd5a2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -44,7 +44,7 @@
     {
       "observation": "013-05",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "493f405cf1865d43",
+      "key": "a0d43bb59192a43e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -52,7 +52,7 @@
     {
       "observation": "013-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "36f4f9233784be54",
+      "key": "880370ce763fd969",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -604,7 +604,7 @@
     {
       "observation": "021-01",
       "element": "エーテル skill2.effects[1]",
-      "key": "6ba03e29c70140c2",
+      "key": "ea9fb5e2676e8ebd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -612,7 +612,7 @@
     {
       "observation": "021-04",
       "element": "エーテル skill2.effects[1]",
-      "key": "649547067480591b",
+      "key": "73f08d2907520e2c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -620,7 +620,7 @@
     {
       "observation": "021-17",
       "element": "エーテル skill2.effects[1]",
-      "key": "2a60a07462fe1411",
+      "key": "524b2c23891297f6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -628,7 +628,7 @@
     {
       "observation": "021-21",
       "element": "エーテル skill2.effects[1]",
-      "key": "dcc6c87468e4f573",
+      "key": "04b15423c5f31bd4",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -1742,7 +1742,7 @@
       "element": "アニス：スター skill1.effects[0]",
       "key": "370eefeea2d4102f",
       "effective": false,
-      "minus": 0,
+      "minus": 7,
       "plus": null
     },
     {
@@ -1788,7 +1788,7 @@
     {
       "observation": "162-25",
       "element": "アニス：スター skill1.effects[0]",
-      "key": "eccd47a0a6d8b9e7",
+      "key": "f9fd26f5960a6274",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -1796,7 +1796,7 @@
     {
       "observation": "162-25",
       "element": "アニス：スター skill2.effects[1]",
-      "key": "eccd47a0a6d8b9e7",
+      "key": "f9fd26f5960a6274",
       "effective": true,
       "minus": -129578.416007375,
       "plus": 0
@@ -1804,7 +1804,7 @@
     {
       "observation": "162-25",
       "element": "イサベル skill2.effects[1]",
-      "key": "eccd47a0a6d8b9e7",
+      "key": "f9fd26f5960a6274",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -1812,7 +1812,7 @@
     {
       "observation": "162-26",
       "element": "アニス：スター skill1.effects[0]",
-      "key": "85585efde7d50aec",
+      "key": "097e592626e2f55b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -1820,7 +1820,7 @@
     {
       "observation": "162-26",
       "element": "アニス：スター skill2.effects[1]",
-      "key": "85585efde7d50aec",
+      "key": "097e592626e2f55b",
       "effective": true,
       "minus": -155494.09920884995,
       "plus": 0
@@ -1828,7 +1828,7 @@
     {
       "observation": "162-26",
       "element": "イサベル skill2.effects[1]",
-      "key": "85585efde7d50aec",
+      "key": "097e592626e2f55b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2372,7 +2372,7 @@
     {
       "observation": "165-25",
       "element": "アニス：スター skill1.effects[0]",
-      "key": "1ed1da8c8a878b95",
+      "key": "06e6811d1dd353fe",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2380,7 +2380,7 @@
     {
       "observation": "165-25",
       "element": "アニス：スター skill2.effects[1]",
-      "key": "1ed1da8c8a878b95",
+      "key": "06e6811d1dd353fe",
       "effective": true,
       "minus": -129578.416007375,
       "plus": 0
@@ -2388,7 +2388,7 @@
     {
       "observation": "165-25",
       "element": "イサベル skill2.effects[1]",
-      "key": "1ed1da8c8a878b95",
+      "key": "06e6811d1dd353fe",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2396,7 +2396,7 @@
     {
       "observation": "165-26",
       "element": "アニス：スター skill1.effects[0]",
-      "key": "e3be4a83b17b910a",
+      "key": "545a1d28e1e3087d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2404,7 +2404,7 @@
     {
       "observation": "165-26",
       "element": "アニス：スター skill2.effects[1]",
-      "key": "e3be4a83b17b910a",
+      "key": "545a1d28e1e3087d",
       "effective": true,
       "minus": -155494.09920884995,
       "plus": 0
@@ -2412,7 +2412,7 @@
     {
       "observation": "165-26",
       "element": "イサベル skill2.effects[1]",
-      "key": "e3be4a83b17b910a",
+      "key": "545a1d28e1e3087d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2949,6 +2949,22 @@
       "plus": null
     },
     {
+      "observation": "221-19",
+      "element": "ラピ burst.effects[1]",
+      "key": "81d5e99df0587dd0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "221-19",
+      "element": "ラピ skill2.effects[1]",
+      "key": "81d5e99df0587dd0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "226-01",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
       "key": "ff251e6b49b210d6",
@@ -2975,7 +2991,7 @@
     {
       "observation": "227-01",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "d84f4fe2f78554f9",
+      "key": "fdaeb1b72e2f5ac4",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2983,7 +2999,7 @@
     {
       "observation": "227-01",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "d84f4fe2f78554f9",
+      "key": "fdaeb1b72e2f5ac4",
       "effective": true,
       "minus": 0,
       "plus": 433.69969500000116
@@ -2991,7 +3007,7 @@
     {
       "observation": "227-01",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "d84f4fe2f78554f9",
+      "key": "fdaeb1b72e2f5ac4",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2999,7 +3015,7 @@
     {
       "observation": "227-02",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "f5a995142a963e97",
+      "key": "68b6500998a0542a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3007,7 +3023,7 @@
     {
       "observation": "227-02",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "f5a995142a963e97",
+      "key": "68b6500998a0542a",
       "effective": true,
       "minus": 0,
       "plus": 433.69969500000116
@@ -3015,7 +3031,7 @@
     {
       "observation": "227-02",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "f5a995142a963e97",
+      "key": "68b6500998a0542a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3023,7 +3039,7 @@
     {
       "observation": "231-02",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "89643bbce205664f",
+      "key": "30387d61724b1592",
       "effective": false,
       "minus": -0.0816,
       "plus": null
@@ -3031,7 +3047,7 @@
     {
       "observation": "232-01",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "96e2280e0d57efcb",
+      "key": "9f1ebbbb60d55056",
       "effective": false,
       "minus": 2.3283064365386963e-10,
       "plus": null
@@ -3039,7 +3055,7 @@
     {
       "observation": "232-02",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "554831c58a8a553c",
+      "key": "19ecc3fcc683e601",
       "effective": false,
       "minus": 2.3283064365386963e-10,
       "plus": null
@@ -3047,7 +3063,7 @@
     {
       "observation": "232-03",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "865b302a4ebd444b",
+      "key": "2a8da24f9f9760d6",
       "effective": false,
       "minus": 4.656612873077393e-10,
       "plus": null
@@ -3055,7 +3071,7 @@
     {
       "observation": "232-04",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "238e4d4dec894c68",
+      "key": "2fbd0ef42be38aa5",
       "effective": false,
       "minus": -1.1641532182693481e-10,
       "plus": null
@@ -3063,7 +3079,7 @@
     {
       "observation": "232-05",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "a80e8112e3763ca7",
+      "key": "6b39144711ed9f1a",
       "effective": false,
       "minus": -1.1641532182693481e-10,
       "plus": null
@@ -3071,7 +3087,7 @@
     {
       "observation": "232-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "5e3b14b9d0e7e980",
+      "key": "b384b9b87d0f2a2d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3079,7 +3095,7 @@
     {
       "observation": "232-07",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "d1115dc002deace3",
+      "key": "c8b5c62d4e9a07fe",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3087,7 +3103,7 @@
     {
       "observation": "232-08",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "d9ffe6bac8b9e55f",
+      "key": "1404783fbdd283c2",
       "effective": false,
       "minus": -5.820766091346741e-11,
       "plus": null
@@ -3095,7 +3111,7 @@
     {
       "observation": "232-09",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "624fcb04ccf86e8d",
+      "key": "6c5865996e8662b0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3103,7 +3119,7 @@
     {
       "observation": "232-14",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "1b9a8b97bc6b0228",
+      "key": "a9f60ac641ec4465",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3111,7 +3127,7 @@
     {
       "observation": "232-15",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "c6edec24e40ffabd",
+      "key": "633836b9b9ccab80",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3119,7 +3135,7 @@
     {
       "observation": "232-16",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "66358162d7661b95",
+      "key": "47afff375bbfdfc8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3127,7 +3143,7 @@
     {
       "observation": "232-17",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "84b77cae9796ee91",
+      "key": "284827db08978dec",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3135,7 +3151,7 @@
     {
       "observation": "233-01",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "04756eb4caf2f541",
+      "key": "9b423d6b72c75ea0",
       "effective": false,
       "minus": -2.3283064365386963e-10,
       "plus": null
@@ -3143,7 +3159,7 @@
     {
       "observation": "233-02",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "0e540bc52c98618a",
+      "key": "900e735264cf8fbb",
       "effective": false,
       "minus": -4.656612873077393e-10,
       "plus": null
@@ -3151,7 +3167,7 @@
     {
       "observation": "233-05",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "10b57aab40daa0e0",
+      "key": "2af5cfd07edbb3b1",
       "effective": false,
       "minus": 1.1641532182693481e-10,
       "plus": null
@@ -3159,7 +3175,7 @@
     {
       "observation": "233-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "975fd03701804b08",
+      "key": "e43c8d14b1063f89",
       "effective": false,
       "minus": 2.3283064365386963e-10,
       "plus": null
@@ -3167,7 +3183,7 @@
     {
       "observation": "233-07",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "150dfcc1673aab58",
+      "key": "c2e203166c392579",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3175,7 +3191,7 @@
     {
       "observation": "242-02",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "4c663be90b286692",
+      "key": "5a4c9188f39a729f",
       "effective": false,
       "minus": -0.0816,
       "plus": null
@@ -3365,6 +3381,14 @@
       "plus": 0
     },
     {
+      "observation": "248-15",
+      "element": "ノワール burst.effects[1]",
+      "key": "7c130862726b31dd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "249-01",
       "element": "ノワール burst.effects[1]",
       "key": "9f6f22b0725f4ea9",
@@ -3373,9 +3397,17 @@
       "plus": 0
     },
     {
+      "observation": "249-08",
+      "element": "ノワール burst.effects[1]",
+      "key": "09138aea94c02f8d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "258-01",
       "element": "雪子 burst.effects[1]",
-      "key": "79afc352a7f1c267",
+      "key": "6bd15497dbe952ba",
       "effective": true,
       "minus": -11153.383307739976,
       "plus": 0
@@ -3383,7 +3415,7 @@
     {
       "observation": "258-02",
       "element": "雪子 burst.effects[1]",
-      "key": "d2b61e6aa13df8c9",
+      "key": "f78a7c2473aab7ab",
       "effective": true,
       "minus": -7757.648838769503,
       "plus": 0
@@ -3391,7 +3423,7 @@
     {
       "observation": "258-03",
       "element": "雪子 burst.effects[1]",
-      "key": "dcc65668eb0411b7",
+      "key": "eade2eedfb483b4a",
       "effective": true,
       "minus": 0,
       "plus": 7435.588871826651
@@ -3399,7 +3431,7 @@
     {
       "observation": "258-04",
       "element": "雪子 burst.effects[1]",
-      "key": "277475c06158671f",
+      "key": "91232b450b52e052",
       "effective": true,
       "minus": 0,
       "plus": 5171.765892512998
@@ -3407,7 +3439,7 @@
     {
       "observation": "258-05",
       "element": "雪子 burst.effects[1]",
-      "key": "001c2d210ea28806",
+      "key": "295859ec350386e3",
       "effective": true,
       "minus": 0,
       "plus": 5171.765892513002
@@ -3415,7 +3447,7 @@
     {
       "observation": "258-06",
       "element": "雪子 burst.effects[1]",
-      "key": "d8611735ee7315a4",
+      "key": "85d6aa88dc954141",
       "effective": true,
       "minus": 0,
       "plus": 1680403.036977857
@@ -3423,7 +3455,7 @@
     {
       "observation": "258-07",
       "element": "雪子 burst.effects[1]",
-      "key": "49b8a84a11b8c83f",
+      "key": "7354a34f2e0c3a72",
       "effective": true,
       "minus": -1523085.6620714227,
       "plus": 0
@@ -3431,7 +3463,7 @@
     {
       "observation": "258-08",
       "element": "雪子 burst.effects[1]",
-      "key": "f8f98cd7009cb534",
+      "key": "2176469288e23a91",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -3439,7 +3471,7 @@
     {
       "observation": "258-10",
       "element": "雪子 burst.effects[1]",
-      "key": "b600ae03164fca0c",
+      "key": "cd780a0618793729",
       "effective": true,
       "minus": 0,
       "plus": 5171.765892512998
@@ -3447,7 +3479,15 @@
     {
       "observation": "258-12",
       "element": "雪子 burst.effects[1]",
-      "key": "f6be1f3dc17db1b8",
+      "key": "f0e297d0283cff8d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "258-20",
+      "element": "雪子 burst.effects[1]",
+      "key": "d47954b2726e7c01",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -3455,7 +3495,7 @@
     {
       "observation": "259-01",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "ae8a8714a7e40785",
+      "key": "2f0a55ec4773b14b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3463,7 +3503,7 @@
     {
       "observation": "259-01",
       "element": "雪子 burst.effects[1]",
-      "key": "ae8a8714a7e40785",
+      "key": "2f0a55ec4773b14b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -3471,7 +3511,7 @@
     {
       "observation": "259-04",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "70a886a66777cc49",
+      "key": "62de4c5a12a0fb0f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3479,7 +3519,7 @@
     {
       "observation": "259-04",
       "element": "雪子 burst.effects[1]",
-      "key": "70a886a66777cc49",
+      "key": "62de4c5a12a0fb0f",
       "effective": true,
       "minus": 0,
       "plus": 11153.383307739969
@@ -3487,7 +3527,7 @@
     {
       "observation": "259-05",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "967f18c1da19461c",
+      "key": "c794a69d406524c2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3495,7 +3535,7 @@
     {
       "observation": "259-05",
       "element": "雪子 burst.effects[1]",
-      "key": "967f18c1da19461c",
+      "key": "c794a69d406524c2",
       "effective": true,
       "minus": 0,
       "plus": 11153.383307739976
@@ -3503,7 +3543,7 @@
     {
       "observation": "259-06",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "963a76ae344f3b83",
+      "key": "40c181322cdcfe75",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3511,7 +3551,7 @@
     {
       "observation": "259-06",
       "element": "雪子 burst.effects[1]",
-      "key": "963a76ae344f3b83",
+      "key": "40c181322cdcfe75",
       "effective": true,
       "minus": 0,
       "plus": 11153.383307739954
@@ -3519,7 +3559,7 @@
     {
       "observation": "259-07",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "92116e66c7ba1a47",
+      "key": "b6497f1abbdad949",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3527,7 +3567,7 @@
     {
       "observation": "259-07",
       "element": "雪子 burst.effects[1]",
-      "key": "92116e66c7ba1a47",
+      "key": "b6497f1abbdad949",
       "effective": true,
       "minus": -7757.648838769499,
       "plus": 0
@@ -3535,7 +3575,7 @@
     {
       "observation": "259-08",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "9601ee4e9d259a6d",
+      "key": "a52ebbd28d3910c3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3543,7 +3583,7 @@
     {
       "observation": "259-08",
       "element": "雪子 burst.effects[1]",
-      "key": "9601ee4e9d259a6d",
+      "key": "a52ebbd28d3910c3",
       "effective": true,
       "minus": -7757.648838769499,
       "plus": 0
@@ -3551,7 +3591,7 @@
     {
       "observation": "259-11",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "c7aac5f31054f7e8",
+      "key": "7fc50a23148ea04e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3559,7 +3599,7 @@
     {
       "observation": "259-11",
       "element": "雪子 burst.effects[1]",
-      "key": "c7aac5f31054f7e8",
+      "key": "7fc50a23148ea04e",
       "effective": true,
       "minus": 0,
       "plus": 1680403.0369778536
@@ -3567,7 +3607,7 @@
     {
       "observation": "259-12",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "db2fd33f02b23770",
+      "key": "94edd08f992a5e86",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3575,7 +3615,7 @@
     {
       "observation": "259-12",
       "element": "雪子 burst.effects[1]",
-      "key": "db2fd33f02b23770",
+      "key": "94edd08f992a5e86",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -3583,7 +3623,7 @@
     {
       "observation": "259-13",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "0c18d9fd1562957e",
+      "key": "3edc6df9663d4780",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3591,7 +3631,7 @@
     {
       "observation": "259-13",
       "element": "雪子 burst.effects[1]",
-      "key": "0c18d9fd1562957e",
+      "key": "3edc6df9663d4780",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -3599,7 +3639,7 @@
     {
       "observation": "261-01",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "1d987081f88cdb46",
+      "key": "e59ecf5de1004958",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3607,7 +3647,7 @@
     {
       "observation": "261-02",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "4f4006c445b0473f",
+      "key": "e58a781c5c00f791",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3615,7 +3655,7 @@
     {
       "observation": "261-03",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "92c7a27a28662eb3",
+      "key": "d5693b2ed5975ee5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3623,7 +3663,7 @@
     {
       "observation": "262-03",
       "element": "ミランダ treasureSkills.skill1.effects[0]",
-      "key": "1989a36680c589af",
+      "key": "e70a371f831147a4",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -3631,7 +3671,7 @@
     {
       "observation": "262-03",
       "element": "ミランダ treasureSkills.skill1.effects[1]",
-      "key": "1989a36680c589af",
+      "key": "e70a371f831147a4",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -3639,7 +3679,7 @@
     {
       "observation": "262-04",
       "element": "ミランダ treasureSkills.skill1.effects[0]",
-      "key": "40852b9a6cdfe575",
+      "key": "4aa71b9494a0b289",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -3647,7 +3687,7 @@
     {
       "observation": "262-04",
       "element": "ミランダ treasureSkills.skill1.effects[1]",
-      "key": "40852b9a6cdfe575",
+      "key": "4aa71b9494a0b289",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -4063,7 +4103,7 @@
     {
       "observation": "287-01",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "159661e089146ec9",
+      "key": "a5e341bf1c0213f0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4071,7 +4111,7 @@
     {
       "observation": "287-01",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "159661e089146ec9",
+      "key": "a5e341bf1c0213f0",
       "effective": true,
       "minus": 0,
       "plus": 8360.333395315305
@@ -4079,7 +4119,7 @@
     {
       "observation": "287-01",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "159661e089146ec9",
+      "key": "a5e341bf1c0213f0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4087,7 +4127,7 @@
     {
       "observation": "287-02",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "d45504edf14d1bf2",
+      "key": "e726db6ada51dedb",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4095,7 +4135,7 @@
     {
       "observation": "287-02",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "d45504edf14d1bf2",
+      "key": "e726db6ada51dedb",
       "effective": true,
       "minus": 0,
       "plus": 4180.166697657653
@@ -4103,7 +4143,7 @@
     {
       "observation": "287-02",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "d45504edf14d1bf2",
+      "key": "e726db6ada51dedb",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4111,7 +4151,7 @@
     {
       "observation": "287-03",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "3c23c58483cda26f",
+      "key": "5960d3db73862a7e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4119,7 +4159,7 @@
     {
       "observation": "287-03",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "3c23c58483cda26f",
+      "key": "5960d3db73862a7e",
       "effective": true,
       "minus": 0,
       "plus": 8360.333395315334
@@ -4127,7 +4167,7 @@
     {
       "observation": "287-03",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "3c23c58483cda26f",
+      "key": "5960d3db73862a7e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4135,7 +4175,7 @@
     {
       "observation": "287-04",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "349e03e92532d866",
+      "key": "1ef0176e4e6eb3b7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4143,7 +4183,7 @@
     {
       "observation": "287-04",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "349e03e92532d866",
+      "key": "1ef0176e4e6eb3b7",
       "effective": true,
       "minus": 0,
       "plus": 26783.484744556947
@@ -4151,7 +4191,7 @@
     {
       "observation": "287-04",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "349e03e92532d866",
+      "key": "1ef0176e4e6eb3b7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4159,7 +4199,7 @@
     {
       "observation": "287-05",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "a1d022b8c6d509a3",
+      "key": "fa05cd4d10ff72c0",
       "effective": false,
       "minus": -4.656612873077393e-10,
       "plus": null
@@ -4167,7 +4207,7 @@
     {
       "observation": "287-05",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "a1d022b8c6d509a3",
+      "key": "fa05cd4d10ff72c0",
       "effective": true,
       "minus": 0,
       "plus": 103086.45100584254
@@ -4175,7 +4215,7 @@
     {
       "observation": "287-05",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "a1d022b8c6d509a3",
+      "key": "fa05cd4d10ff72c0",
       "effective": false,
       "minus": -4.656612873077393e-10,
       "plus": null
@@ -4183,7 +4223,7 @@
     {
       "observation": "287-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "0e07262b2e79b47e",
+      "key": "406c08c004732d7f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4191,7 +4231,7 @@
     {
       "observation": "287-06",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "0e07262b2e79b47e",
+      "key": "406c08c004732d7f",
       "effective": true,
       "minus": 0,
       "plus": 54718.60464730067
@@ -4199,7 +4239,7 @@
     {
       "observation": "287-06",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "0e07262b2e79b47e",
+      "key": "406c08c004732d7f",
       "effective": false,
       "minus": -2.3283064365386963e-10,
       "plus": null
@@ -4207,7 +4247,7 @@
     {
       "observation": "287-07",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "91cad63aac4f71c9",
+      "key": "6ee07dc101573ef0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4215,7 +4255,7 @@
     {
       "observation": "287-07",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "91cad63aac4f71c9",
+      "key": "6ee07dc101573ef0",
       "effective": true,
       "minus": 0,
       "plus": 26783.484744556947
@@ -4223,7 +4263,7 @@
     {
       "observation": "287-07",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "91cad63aac4f71c9",
+      "key": "6ee07dc101573ef0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4903,7 +4943,7 @@
     {
       "observation": "401-01",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "0981146df0660e02",
+      "key": "cfd1fe14088f48af",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4911,7 +4951,7 @@
     {
       "observation": "401-02",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "a4433d0eeea1ed8f",
+      "key": "89f258bb3204a1d2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4919,7 +4959,7 @@
     {
       "observation": "401-03",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "2bc2444895e866ef",
+      "key": "721e27e58472c8b2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4927,7 +4967,7 @@
     {
       "observation": "401-04",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "401d3f04577c546b",
+      "key": "36e4f999930cf3f6",
       "effective": false,
       "minus": 0,
       "plus": null

@@ -44,15 +44,15 @@ describe('full burst length per unit (burst_duration)', () => {
   it('uses the length of the unit whose activation starts the full burst', () => {
     // III が 300f（イサベル型）。I / II の長さは使わない
     const s = run([unit('Step1', 0, 900), unit('Step2', 0, 900), unit('Step3', 0, 300)], 1000, BURST_GAUGE_MAX);
-    // 満タン → I は 23f、I → II・II → III は 29f（C-0285）なので、III の発動とフルバーストの開始は 81f
-    expect(s.fullBurstWindows[0]).toEqual({ start: 81, end: 381, burstUsers: [0, 1, 2] });
-    // 終了後は 0 から溜め直して、次の満タンは 381f
-    expect(s.gaugeFullFrames[1]).toBe(381);
+    // 満タン → I は 23f、I → II・II → III は 28f（C-0285・C-0515）なので III の発動は 79f、フルバーストの開始はその 6f 後の 85f
+    expect(s.fullBurstWindows[0]).toEqual({ start: 85, end: 385, burstUsers: [0, 1, 2] });
+    // 終了後は 0 から溜め直して、次の満タンは 385f
+    expect(s.gaugeFullFrames[1]).toBe(385);
   });
 
   it('falls back to timing.fullBurstFrames (10 game seconds) when the unit has none', () => {
     const s = run([unit('Step1', 0), unit('Step2', 0), unit('Step3', 0)], 1000, BURST_GAUGE_MAX);
-    expect(s.fullBurstWindows[0]).toEqual({ start: 81, end: 81 + gameSecondsToFrames(10), burstUsers: [0, 1, 2] });
+    expect(s.fullBurstWindows[0]).toEqual({ start: 85, end: 85 + gameSecondsToFrames(10), burstUsers: [0, 1, 2] });
   });
 
   it('takes 5 s from イサベル and 15 s from モダニア as III in a real team', () => {
@@ -70,13 +70,13 @@ describe('enteredStep and stageEnterFrames', () => {
     const s = run([unit('Step1', 0), unit('Step2', 0), unit('Step3', 0)], 300, BURST_GAUGE_MAX);
     expect(s.activations.map((a) => [a.frame, a.step, a.enteredStep])).toEqual([
       [23, 'Step1', 'Step2'],
-      [52, 'Step2', 'Step3'],
-      [81, 'Step3', null],
+      [51, 'Step2', 'Step3'],
+      [79, 'Step3', null],
     ]);
     // 段階 1 はゲージ満タン、2 / 3 は I / II の発動フレーム
     expect(stageEnterFrames(s, 'Step1')).toEqual([0]);
     expect(stageEnterFrames(s, 'Step2')).toEqual([23]);
-    expect(stageEnterFrames(s, 'Step3')).toEqual([52]);
+    expect(stageEnterFrames(s, 'Step3')).toEqual([51]);
   });
 
   it('counts a re-entry (Step1 → Step1) as entering stage 1 again', () => {

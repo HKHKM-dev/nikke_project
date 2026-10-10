@@ -13,15 +13,23 @@
 import { gameSecondsToFrames } from '../time.ts';
 import type { BurstNextStep, BurstStep } from '../types.ts';
 import { withBurstDelays, type BurstDelays } from './landing.ts';
-import type { BurstActivation, BurstSchedule, BurstStepKey, CooldownReduction, FullBurstWindow } from './schedule.ts';
+import {
+  FULL_BURST_AFTER_ACTIVATION_FRAMES,
+  type BurstActivation,
+  type BurstSchedule,
+  type BurstStepKey,
+  type CooldownReduction,
+  type FullBurstWindow,
+} from './schedule.ts';
 
 /** バーストゲージの上限（CDN の target_burst_energy_pershot と同じ単位） */
 export const BURST_GAUGE_MAX = 1_000_000;
 /**
- * バーストの段の長さ（フレーム）。I → II、II → III の発動は、どれも 29f（ゲーム内の約 0.5 秒）。キャラによらない
- * （C-0285。V-0021 で 9 本・28〜30f。両端とも次の段の印で数えたので、表示の遅れは打ち消し合う）
+ * バーストの段の長さ（ゲーム内のフレーム）。I → II、II → III の本当の発動どうしは、動画で約 29f（C-0515。新しい CT の秒どうし。
+ * 段の表示どうしも 29f。C-0285）で、そのうち 1f は I・II の発動の止まり（C-0289。videoFrameOf が足す）なので、ゲーム内では 28f。
+ * キャラによらない（2026-10-10 のオーナーの判断。plan/design-burst-hit-origin.md 8 節）
  */
-const BURST_STAGE_FRAMES = 29;
+const BURST_STAGE_FRAMES = 28;
 /**
  * ゲージ満タン（BURST バーが消えた発）から I の発動（CT が走り出す）までのフレーム。約 23f（22.6〜23.9f。C-0285。V-0189）。
  * 満タン後に I の CT 明けを待った場合は、CT 明けのフレームですぐ撃つ
@@ -31,8 +39,11 @@ export const BURST_READY_DELAY_FRAMES = 23;
 export const BURST_STEP1_TO_STEP2_FRAMES = BURST_STAGE_FRAMES;
 /** II → III の発動の間隔（フレーム） */
 export const BURST_STEP2_TO_STEP3_FRAMES = BURST_STAGE_FRAMES;
-/** StepFull の発動からフルバースト開始まで（フレーム）。Stage 6 の実測で 3f 未満 */
-export const FULL_BURST_START_DELAY_FRAMES = 0;
+/**
+ * StepFull の発動（III の本当の発動。CT が走り出す）からフルバースト開始（III のタイマーの 00.00）まで（フレーム）。
+ * 値の出どころは schedule.ts の FULL_BURST_AFTER_ACTIVATION_FRAMES（C-0512・V-0391。2026-10-10 のオーナーの判断）
+ */
+export const FULL_BURST_START_DELAY_FRAMES = FULL_BURST_AFTER_ACTIVATION_FRAMES;
 /**
  * フルバースト時間（フレーム）の既定値。Stage 8 からは StepFull に入る発動をしたニケの burst_duration
  * （BurstUnit.fullBurstFrames。イサベル 5 秒、モダニア 15 秒）を優先し、それがない枠だけこの値を使う（plan/design-stage8.md 3.3 節）
@@ -185,16 +196,17 @@ function activate(state: BurstControllerState, slotIndex: number, frame: number)
   state.chainSlots.push(slotIndex);
   state.lastUseFrame = frame;
   const startsFullBurst = next === 'StepFull';
+  const start = frame + state.timing.fullBurstStartDelayFrames;
   const activation: BurstActivation = {
     frame,
     step: from,
     slotIndex,
     startsFullBurst,
     enteredStep: startsFullBurst ? null : next,
+    ...(startsFullBurst ? { fullBurstStart: start } : {}),
   };
   state.activations.push(unit.delays === undefined ? activation : withBurstDelays(activation, unit.delays));
   if (startsFullBurst) {
-    const start = frame + state.timing.fullBurstStartDelayFrames;
     state.fullBurstEnd = start + (unit.fullBurstFrames ?? state.timing.fullBurstFrames);
     // resetChain が chainSlots を差し替えるので、この配列はそのまま窓に渡せる
     state.windows.push({ start, end: state.fullBurstEnd, burstUsers: state.chainSlots });

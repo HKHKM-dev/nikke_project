@@ -5,9 +5,9 @@
   "topic": "バーストの段階とフルバースト",
   "grade": "厳密一致",
   "basis": "`223-03`（ココア + ユニ。機構の確定したキャラだけの最小構成。ゲージ律速の 4 回）・`081-22`（ココア + ニヒリスター。ゲージ律速の 1 回）は、予測（records/predictions/V-0382.json と検証記録の「予測」）を読む前に固定してから新しく読んだ満タンで、いまのモデル（定数を本当の発動に足す）より 4〜5f 遅く、替わり目から足す読み（H1）の幅に入った。`077-45`・`134-08`（フラワー単騎）は、既存の観測値（077-22・077-23・134-05・134-06）から値が分かっていた後付けで、5f の出どころ（C-0220 の 29f）の側。5f は C-0220 の 29f − C-0285 の 23f − 発動の止まり 1f（C-0289）で、観測値に合わせた値ではない。2026-10-09 にオーナーの判断（plan/design-burst-hit-origin.md）で入れ、根拠の観測値はどれも許容内（差 0〜+1）。V-0382",
-  "model": "`burst/schedule.ts` の `HEXAGON_AFTER_ACTIVATION_FRAMES` = 5 と `hexagonFrameOf`（I・II は発動の 5f 後、III は発動のフレーム）。`burst/landing.ts` の `withBurstDelays` は遅れの定数を `hexagonFrameOf` に足す（遅れ 0 の欄は本当の発動のまま）。照合の起点（`activationVideoFrameOf`・`burstEffectDelay`）も `hexagonFrameOf`。III の遅れの起点（00.00）と本当の III の発動の差は確かめていない（backlog 2-31）",
+  "model": "`burst/schedule.ts` の `HEXAGON_AFTER_ACTIVATION_FRAMES` = 5 と `hexagonFrameOf`（I・II は発動の 5f 後。III は III のタイマーの 00.00 で、2026-10-10 から発動の 6f 後。plan/design-burst-hit-origin.md 8 節）。`burst/landing.ts` の `withBurstDelays` は遅れの定数を `hexagonFrameOf` に足す（遅れ 0 の効果は本当の発動のまま、遅れ 0 の III のヒットは 00.00。`hitFrameOf`）。照合の起点（`activationVideoFrameOf`・`burstEffectDelay`）も `hexagonFrameOf`",
   "replaces": [],
-  "updated": "2026-10-09",
+  "updated": "2026-10-10",
   "subject": {
     "mechanism": "burstChain"
   },

@@ -5,6 +5,7 @@ import {
   SKILL_SLOTS,
   TREASURE_PHASE_MAX,
   applyTreasure,
+  FULL_BURST_AFTER_ACTIVATION_FRAMES,
   HEXAGON_AFTER_ACTIVATION_FRAMES,
   framesToGameSeconds,
   measuredBurstDelayRow,
@@ -45,17 +46,24 @@ function BurstDelayNote({ character }: { character: CharacterData }) {
   // 分かれたヒット編: 宝物の印のある行は、burst が宝物版のときだけ（plan/design-burst-split-hits.md 4.5 節）
   const row = measuredBurstDelayRow(character);
   if (row === null) return null;
-  // I・II の遅れは六角形の替わり目（本当の発動の 5f 後）から数えた値なので、発動からの時刻はそれを足す（遅れ 0 は発動のまま。
-  // burst/landing.ts の withBurstDelays と同じ。plan/design-burst-hit-origin.md 4 節）
+  // 遅れは段の表示から数えた値なので、発動からの時刻はそれを足す: I・II は六角形の替わり目（本当の発動の 5f 後）、III はタイマーの
+  // 00.00（本当の発動の 6f 後）。遅れ 0 の効果は発動のまま、遅れ 0 の III のヒットは 00.00（burst/landing.ts の withBurstDelays・
+  // burst/schedule.ts の hitFrameOf と同じ。plan/design-burst-hit-origin.md 4・8 節）
+  const step3 = character.burstStep === 'Step3';
   const origin =
-    character.burstStep === 'Step1' || character.burstStep === 'Step2' ? HEXAGON_AFTER_ACTIVATION_FRAMES : 0;
-  const sec = (frames: number) => framesToGameSeconds(frames > 0 ? origin + frames : 0).toFixed(2);
+    character.burstStep === 'Step1' || character.burstStep === 'Step2'
+      ? HEXAGON_AFTER_ACTIVATION_FRAMES
+      : step3
+        ? FULL_BURST_AFTER_ACTIVATION_FRAMES
+        : 0;
+  const sec = (frames: number, atOriginWhenZero = false) =>
+    framesToGameSeconds(frames > 0 || atOriginWhenZero ? origin + frames : 0).toFixed(2);
   const { hitFrames, effectFrames, hitOffsets = [0] } = row.delays;
   // 分かれたヒット編: 等分した複数のヒットに分かれるときは、各ヒットの時刻を並べる
   const hits =
     hitOffsets.length > 1
-      ? `${hitOffsets.length} 回に等分して発動の ${hitOffsets.map((o) => sec(hitFrames + o)).join('・')} 秒後`
-      : `発動の ${sec(hitFrames)} 秒後`;
+      ? `${hitOffsets.length} 回に等分して発動の ${hitOffsets.map((o) => sec(hitFrames + o, step3)).join('・')} 秒後`
+      : `発動の ${sec(hitFrames, step3)} 秒後`;
   return (
     <ul className="notes">
       <li className="note approx">

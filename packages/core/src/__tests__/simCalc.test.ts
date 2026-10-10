@@ -365,9 +365,9 @@ describe('sim vs calc on the dynamic cycle: quantities that must match exactly',
     expect(calc.burstSummary?.fullBursts).toBeLessThan(9);
     // CT 40 秒 = 2,352f（切り捨て）= 39.984 秒
     expect(calc.burstSummary?.meanCycleSeconds).toBeGreaterThanOrEqual(framesToGameSeconds(gameSecondsToFrames(40)));
-    // フルバーストは III が撃ったフレームから始まる
+    // フルバーストは III が撃ったフレームの 6f 後（III のタイマーの 00.00。plan/design-burst-hit-origin.md 8 節）から始まる
     for (const w of calc.schedule!.fullBurstWindows) {
-      expect(calc.schedule!.activations.some((a) => a.startsFullBurst && a.frame === w.start)).toBe(true);
+      expect(calc.schedule!.activations.some((a) => a.startsFullBurst && a.frame + 6 === w.start)).toBe(true);
     }
   });
 });

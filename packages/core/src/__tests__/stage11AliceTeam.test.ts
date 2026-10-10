@@ -117,10 +117,11 @@ describe('録画 42: アリスの S1 は自分とアドミに付く（22.5、実
   // Stage 23 でチャージをゲーム内の時計で数えるようにして、アリスも実測と同じ値になった（22 までは 30f / 102f）
   it('predicts the shot intervals: アリス 31f / 101f, アドミ 72f, フラワー 82f (outside: 112f / 82f / 82f)', () => {
     const alice = intervalsInFullBursts(plan.shots[2]!.frames, windows);
-    // マガジンの中の間隔（いちばん多い値）。リロードを挟んだ間隔（90f・160f）は除く
+    // マガジンの中の間隔（いちばん多い値）。リロードを挟んだ間隔（90f・160f）は除く。窓の最初の間隔は、窓の入りより前に始めた
+    // チャージの発（外の 112f）になりうるので除く（III のタイマーの 00.00 で窓の位相が動いた。plan/design-burst-hit-origin.md 8 節）
     alice.forEach((list, k) => {
       expect(mode(list)).toBe(k % 2 === 0 ? 31 : 101);
-      expect(list.every((d) => d === mode(list) || d > mode(list) + 40)).toBe(true);
+      expect(list.slice(1).every((d) => d === mode(list) || d > mode(list) + 40)).toBe(true);
     });
     for (const list of intervalsInFullBursts(plan.shots[1]!.frames, windows)) {
       // 窓の最初の間隔は、窓の入りより前に始めたチャージの発（外の 82f）になりうるので除く（C-0285 で 1 回目の窓の位相が動いた）

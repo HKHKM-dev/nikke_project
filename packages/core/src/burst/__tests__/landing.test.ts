@@ -89,40 +89,44 @@ describe('遅れの表', () => {
 });
 
 describe('発動のヒットと効果の発火のフレーム', () => {
-  it('defaults both to the activation frame and writes only the delayed ones', () => {
-    expect(hitFrameOf(activation)).toBe(600);
+  it('puts the undelayed III hit at 00.00 and the undelayed effect at the activation, and writes only the delayed ones', () => {
+    // III の遅れの起点は III のタイマーの 00.00（本当の発動の 6f 後。plan/design-burst-hit-origin.md 8 節の案 C'）
+    expect(hitFrameOf(activation)).toBe(606);
     expect(effectFrameOf(activation)).toBe(600);
+    expect(hitFrameOf({ ...activation, step: 'Step1', startsFullBurst: false, enteredStep: 'Step2' })).toBe(600);
     expect(withBurstDelays(activation, { hitFrames: 0, effectFrames: 0 })).toEqual(activation);
     const delayed = withBurstDelays(activation, { hitFrames: 80, effectFrames: 10 });
-    expect(delayed).toEqual({ ...activation, hitFrame: 680, effectFrame: 610 });
+    expect(delayed).toEqual({ ...activation, hitFrame: 686, effectFrame: 616 });
   });
 
   it('writes the offsets of split hits and gives each hit an equal share', () => {
     const split = withBurstDelays(activation, { hitFrames: 4, effectFrames: 0, hitOffsets: [0, 27, 55] });
-    expect(split).toEqual({ ...activation, hitFrame: 604, hitOffsets: [0, 27, 55] });
-    expect(hitFramesOf(split)).toEqual([604, 631, 659]);
-    expect(hitFramesOf(activation)).toEqual([600]);
+    expect(split).toEqual({ ...activation, hitFrame: 610, hitOffsets: [0, 27, 55] });
+    expect(hitFramesOf(split)).toEqual([610, 637, 665]);
+    expect(hitFramesOf(activation)).toEqual([606]);
     const schedule = { activations: [split] } as BurstSchedule;
     expect(burstHitsOfSlot(schedule, 0, 3000)).toEqual([
-      { activationFrame: 600, frame: 604, share: 1 / 3 },
-      { activationFrame: 600, frame: 631, share: 1 / 3 },
-      { activationFrame: 600, frame: 659, share: 1 / 3 },
+      { activationFrame: 600, frame: 610, share: 1 / 3 },
+      { activationFrame: 600, frame: 637, share: 1 / 3 },
+      { activationFrame: 600, frame: 665, share: 1 / 3 },
     ]);
     // 戦闘の終わり以降のヒットは、ヒットごとに出ない（4.2 節）
-    expect(hitFramesOfSlot(schedule, 0, 640)).toEqual([604, 631]);
+    expect(hitFramesOfSlot(schedule, 0, 640)).toEqual([610, 637]);
   });
 
   it('drops hits after the end of the battle', () => {
     const schedule = {
       activations: [withBurstDelays(activation, { hitFrames: 134, effectFrames: 134 })],
     } as BurstSchedule;
-    expect(hitFramesOfSlot(schedule, 0, 735)).toEqual([734]);
-    expect(hitFramesOfSlot(schedule, 0, 734)).toEqual([]);
+    expect(hitFramesOfSlot(schedule, 0, 741)).toEqual([740]);
+    expect(hitFramesOfSlot(schedule, 0, 740)).toEqual([]);
   });
 
   it('delays the activations of the fixed cycle for characters with delays', () => {
     const schedule = planFixedCycle([{ burstStep: 'Step3', delays: { hitFrames: 134, effectFrames: 134 } }], 3000);
     const first = schedule.activations[0]!;
+    // 固定サイクルは III のタイマーの 00.00 = 発動（fullBurstStart）なので、遅れは発動から
+    expect(first.fullBurstStart).toBe(first.frame);
     expect(first.hitFrame).toBe(first.frame + 134);
     expect(first.effectFrame).toBe(first.frame + 134);
   });
@@ -143,13 +147,13 @@ describe('出来事の列の burstEffects', () => {
   it('puts the activation at its frame and the burst effects at the effect frame', () => {
     expect(events.find((e) => e.frame === 600)!.activations).toHaveLength(1);
     expect(events.find((e) => e.frame === 600)!.burstEffects).toHaveLength(0);
-    expect(events.find((e) => e.frame === 734)!.burstEffects).toHaveLength(1);
+    expect(events.find((e) => e.frame === 740)!.burstEffects).toHaveLength(1);
   });
 
   it('fires burstUse and its count at the effect frame', () => {
     for (const trigger of ['burstUse', { count: 'burstUse', atLeast: 1 }] as const) {
       const tracker = createTriggerTracker(trigger, 0, 'dynamic');
-      expect(events.filter((e) => tracker(e)).map((e) => e.frame)).toEqual([734]);
+      expect(events.filter((e) => tracker(e)).map((e) => e.frame)).toEqual([740]);
     }
   });
 });

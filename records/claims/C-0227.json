@@ -5,9 +5,9 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`221-01`（4 回で 111〜112f）、`221-02`〜`221-05`（4 回とも 2・3 ヒット目は 7〜8f・14f 後）、`221-06`（1 回目の 3 ヒットの和がモデルと端数まで合う）。録画 221 は機構の確定したキャラだけの最小構成（I ココア・II デルタ）で、予測を撮る前に commit してから撮ったもので、値（遅れの表の 90f・[0, 7, 14]）を決めた録画 018 とは別の録画で再現した（V-0201。予測との比べは H0 が全部許容内。フルバーストは 4 回だけで、遅れの指標は予測の 5 回と結び付かないので、いまのモデルとの照合で比べた）。 前の根拠: `018-12`（5 回とも 1 ヒット目が 111〜112f、2・3 ヒット目はその 7f・14f 後（5 回目は 8f・15f 後））。録画 018 は最小構成でない（エーテルのスキル定義が無い）。1 ヒットの値も回によって違う（208,131 と 253,593。V-0201 で、S1 の被弾の攻撃力▲（範囲外）とみた。`221-07`）。2・3 ヒット目の時刻は `018-13`〜`018-17`（V-0144）。V-0138",
-  "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のラピの 1 行（hitFrames 90・hitOffsets [0, 7, 14]・effectFrames 0。効果の遅れは未測定）。倍率は 3 ヒットに等分する（plan/design-burst-split-hits.md。2026-10-04 オーナー承認）。`data/skills/10.json` の burst の effects[0]",
+  "model": "`burst/landing.ts` の `MEASURED_BURST_DELAYS` のラピの 1 行（hitFrames 90・hitOffsets [0, 7, 14]・effectFrames 0。効果の遅れは未測定）。倍率は 3 ヒットに等分する（plan/design-burst-split-hits.md。2026-10-04 オーナー承認）。`data/skills/10.json` の burst の effects[0]。III の遅れは III のタイマーの 00.00（`burst/schedule.ts` の `hexagonFrameOf`。本当の発動の `FULL_BURST_AFTER_ACTIVATION_FRAMES` = 6f 後。2026-10-10 のオーナーの判断。plan/design-burst-hit-origin.md 8 節）から足す",
   "replaces": [],
-  "updated": "2026-10-05",
+  "updated": "2026-10-10",
   "subject": {
     "places": ["data/skills/10.json の burst の effects[0]"]
   },
