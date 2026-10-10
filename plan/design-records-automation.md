@@ -61,7 +61,7 @@
 
 ### 3.2 予測の固定（`records:predict`）
 
-- 2026-10-10 に、撮る前（読み直しは読む前）の予測を確定の条件から外し、予測の順の検査（日付・控え `seen`・git の順・後付け）をやめた（[design-investigation-review.md](design-investigation-review.md) 1 節）。この節の予測の順に関わる記述は、その日までのもの。
+- 2026-10-10 に、撮る前（読み直しは読む前）の予測を確定の条件から外し、予測の順の検査（日付・控え `seen`・git の順・後付け）をやめた（[design-investigation-review.md](design-investigation-review.md) 1 節）。この節の予測の順に関わる記述は、その日までのもの。いまの流れと条件は [verification-guide.md](verification-guide.md)。
 - **予測の条件**は `records/predictions/V-NNNN.json` に手で書く。観測値の `compare` と同じ語彙（`model`・`metric`・`args`・`setup`。`observations.ts` の `CompareSpec`・`CompareSetup`）で、比べる指標ごとに 1 行。仮説ごとにモデルの設定が違うとき（定義の `ref` の解釈が割れる、表の値の候補が複数など）は、`hypotheses` に名前と、その仮説で上書きする設定を書く。
 
 ```json
@@ -121,7 +121,7 @@
 
 ### 3.6 結論と結果の下書き
 
-- 2026-10-10 に、撮る前（読み直しは読む前）の予測を確定の条件から外し、予測の順の検査（日付・控え `seen`・git の順・後付け）をやめた（[design-investigation-review.md](design-investigation-review.md) 1 節）。この節の予測の順に関わる記述は、その日までのもの。反復実測の候補は、結論の `decidedOn` の録画を再現に数えない（同 1.3 節）。
+- 2026-10-10 に、撮る前（読み直しは読む前）の予測を確定の条件から外し、予測の順の検査（日付・控え `seen`・git の順・後付け）をやめた（[design-investigation-review.md](design-investigation-review.md) 1 節）。この節の予測の順に関わる記述は、その日までのもの。いまの流れと条件は [verification-guide.md](verification-guide.md)。反復実測の候補は、結論の `decidedOn` の録画を再現に数えない（同 1.3 節）。
 - 結論は 3.1 節の `records:new -- claim --from V-NNNN`。`text`・`model` は人が書く。
 - **`state` の決め方**（2026-10-01 のオーナー決定）: 機械は、次の全部を満たすときに `確定` を書く。1 つでも欠ければ `仮説` を書き、欠けた条件を標準出力に出す。
   - 等級の候補が `厳密一致` か `反復実測`（`データ明記` は人が等級を書くので、人が `確定` にする）。
@@ -134,7 +134,7 @@
 
 ### 3.7 閉じる（`records:close`）
 
-- 2026-10-10 に、撮る前（読み直しは読む前）の予測を確定の条件から外し、予測の順の検査（日付・控え `seen`・git の順・後付け）をやめた（[design-investigation-review.md](design-investigation-review.md) 1 節）。この節の予測の順に関わる記述は、その日までのもの。代わりに、確定の反復実測の結論に `decidedOn` があるかを見る。
+- 2026-10-10 に、撮る前（読み直しは読む前）の予測を確定の条件から外し、予測の順の検査（日付・控え `seen`・git の順・後付け）をやめた（[design-investigation-review.md](design-investigation-review.md) 1 節）。この節の予測の順に関わる記述は、その日までのもの。いまの流れと条件は [verification-guide.md](verification-guide.md)。代わりに、確定の反復実測の結論に `decidedOn` があるかを見る。
 - `records:close -- V-NNNN` は、状態を `完了` にする前の検査を回す。
   - 冒頭の「結論」の各 ID が、この検証記録を `source` にする観測値を `basis` に持つか、`basis` にこの検証記録の ID を書いている。
   - 予測ファイルがあれば、その commit の日付が、録画の `date` と観測値の `readAt` のどれよりも前。無ければ「予測なし（探索）」と検証記録に書いてある。起票（検証記録の日付）より前に撮った録画は読み直しなので、その録画の `date` は見ない（2026-10-02。V-0090）。予測ファイルに控え（`seen`）があれば、この検証記録の観測値が控えに無いこと、予測より前の日の録画が控えに挙がっていること、ブランチの git の履歴で予測の commit が観測値を足した commit より前であることも見る（2026-10-04。[design-reread-prediction.md](design-reread-prediction.md)）。予測と観測値が同じ commit で、その commit が main にマージ済みなら、スカッシュマージで順が消えたものとして注意にとどめる（2026-10-08。控えの検査は残る）。

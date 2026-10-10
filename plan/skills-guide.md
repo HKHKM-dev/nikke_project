@@ -3,6 +3,7 @@
 - キャラ 1 体のスキルを `packages/core/data/skills/{resourceId}.json` に定義し、撮影で確かめるまでの手順。2026-09-28 にオーナーが決めた方針（0 節）でまとめた。
 - Stage 11 の手順（[design-stage11.md](design-stage11.md) 1・8 節）を、Stage 20 の記録の構造（検証記録・観測値・結論）に合わせて書き直したもの。以後はこちらに従う。
 - DSL の語彙と検証の規則は `packages/core/src/skills/types.ts`、原則は [design-stage4.md](design-stage4.md) 2 節。
+- **検証の共通の流れ（起案・撮影計画・撮る・読む・比べる・結論・閉じる）と、確定にできる条件は [verification-guide.md](verification-guide.md)**。ここに残すのは、スキル定義に固有の手順（0・1.1・1.2・1.4・1.5・3・4 節）。2026-10-11 に 1.3・1.6〜1.9・2 節を移した（見出しは、閉じた記録が節の番号で指しているので残す）。
 
 ## 0. 方針
 
@@ -36,9 +37,7 @@
 
 ### 1.3 検証記録を起こす
 
-- `npm run records:new -- verification --title "<題名>" --name <短い名前> --topic "スキル・キャラ固有" --question "<問い>"` で、次の空き番号の `records/verifications/V-NNNN-<短い名前>.md` を状態 `調査中` で作る（[design-records-automation.md](design-records-automation.md) 3.1 節）。書式は [records/verifications/README.md](../records/verifications/README.md)。
-- 問いは「<キャラ> のスキルを <解釈> と読んで、モデルは実測と合うか」。解釈が割れる行ごとに仮説を分ける。
-- 「予測」は 1.6 で埋める（任意）。「次に撮るもの」には撮影計画を書く（編成・操作枠・的・モード・スペック固定、どの仮説を見分けるか）。
+- → [verification-guide.md](verification-guide.md) 1・3 節。スキルの検証では、話題を `スキル・キャラ固有` にし、問いを「<キャラ> のスキルを <解釈> と読んで、モデルは実測と合うか」にする（解釈が割れる行ごとに仮説を分ける）。
 
 ### 1.4 設計書（語彙を足すときだけ）
 
@@ -61,59 +60,39 @@
   - スロットの対応状況（`support`）は書かない。効果の有無と、未対応（`unimplemented`）の notes の有無から読み込みで決まる（`supported`・`partial`・`unsupported`・`noEffect`。[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）。効果の無いスロットには、理由の notes が要る。
   - いつも満たすとみなした条件は、効果の `assumes` に書く。
   - 名前の付いた状態（「〈名前〉」：機能…・〜状態なら・〜状態の味方・〜が適用された時）は、状態の付与（`kind: 'state'`）と中身（`contents`）で書き、名前は目録（`skills/states.ts`）の id で指す。目録に無い状態は id を足す（英語版の説明文の状態名の lowerCamelCase。[design-named-state.md](design-named-state.md) 5 節）。
-  - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作るのは 1.6 なので、そのときに書き足す。
+  - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。
 - **テスト**
   - DSL の単体テストは `skills/__tests__/<名前>.test.ts`。定義の検証エラーと、Lv ごとの解決値を見る。
   - 編成のテストは `__tests__/<名前>Team.test.ts`。そのキャラを含む実戦的な編成で、sim と calc が整合することを見る（`describe.each`。例は `stage11ScarletBsTeam.test.ts`）。
-  - **テストに実測値を直書きしない**。実測との比較は観測値と照合ランナーで行う（1.8）。
+  - **テストに実測値を直書きしない**。実測との比較は観測値と照合ランナーで行う（[verification-guide.md](verification-guide.md) 6・7 節）。
 - **キャラ固有の分岐をコアに置かない**。実測でしか決まらない値（紅蓮BS の射撃の較正の `MEASURED_CHARGE_CADENCE` など）は、表の 1 行にして結論の ID を添える。
 
 ### 1.6 撮影計画を立てる（予測は任意）
 
-- 撮る前の予測は確定の条件ではない（2026-10-10 のオーナーの決定。[design-investigation-review.md](design-investigation-review.md) 1 節）。検証記録の「次に撮るもの」に撮影計画（編成・操作枠・的・モード・スペック固定・本数）を書き、その録画で仮説を見分けられるか（窓の中の発の数・既存の録画での読みの揺れ）を確かめる。反復実測を狙うなら、2 本以上を 1 回の撮影で撮る（仮説を立てた録画は再現に数えないため。3 節）。
-- 見分けられるかをモデルで確かめたいときは、予測ファイル `records/predictions/V-NNNN.json` に、撮影と同じ編成・仮説（`setup` の上書き）・比べる指標を書き、`npm run records:predict -- V-NNNN` で仮説 × 指標の値を書き込む（書式は [records/predictions/README.md](../records/predictions/README.md)。設計書 3.2 節）。細かく見たいときは `npm run sim -- --ids <編成> --fixed-spec --controlled <操作枠> ...`（オプションは `sim-run.ts` の冒頭）。予測ファイルにできない仮説（定義の解釈をコードで切り替えるなど）は、検証記録の「予測」に手で書いてよい。使わなければ「予測」は「なし」。
-- 解釈の結論を、`仮説`・等級 `推論` で作り（`npm run records:new -- claim --from V-NNNN --text "<解釈>"`。観測値が無いので仮説・推論になる）、定義の効果の `claims` に ID を書く（3 節）。
+- → [verification-guide.md](verification-guide.md) 4 節。
 
 ### 1.7 撮って読む
 
-- 撮影プロトコルは [captures/index.md](captures/index.md)「撮影プロトコル」、読み取りの落とし穴は [captures/guide.md](captures/guide.md)。
-- 撮り終えたら、すぐに取り込む: `node tools/captures/intake.ts <元ファイル> --id NNN --name <識別子> --rid ... --controlled ... --target BigArms --element Fire --mode range-3min --fixed-spec on|off ...`（リネーム・移動・素性・`records/recordings/<録画 id>.json`・Drive への同期と sha256 の突き合わせ・backup-log.md への記録）。空いた項目を埋めて `npm run records:table`。
-- 読み取りはレシピで: `npm run records:read -- <録画 id> --recipe <名前> --source V-NNNN --write`（`--list` でレシピと `--opt` の一覧。`hud-jumps`・`sg-pellets`・`reload-segments`・`smg-mags`。[captures/index.md](captures/index.md)「解析ツール」）。観測値が `records/observations/<録画 id>.json` に足され、`source` に検証記録の ID、`method.tool` にレシピ名と版が入る。
-- レシピに無い値は、ほかの解析ツールか目で読み、同じファイルに手で書く（`method.note` に読み方）。
-  - 比べる指標は照合ランナー（`packages/core/src/records/observations.ts` の `METRICS`）から選ぶ。予測ファイルの指標と `metric`・`args`・`setup` を同じにすると、予測と自動で結び付く（違うときは予測ファイルの `observations` で明示）。
-  - 要る指標が無ければ `METRICS` に足す。これも語彙の追加と同じ PR に入れる。繰り返し使う読み方はレシピにする（`tools/captures/recipes/`）。
+- → [verification-guide.md](verification-guide.md) 5・6 節。
 
 ### 1.8 比べて結論を出す
 
-- `npm run records:check` で残差の一覧（`plan/residuals.md`）を作り直す。予測ファイルがあれば、[verifications.md](verifications.md) の検証記録の項に「予測との比べ」（仮説ごとに許容内の指標の数と、合う仮説）が出、検証記録の「結果」の印の中に表が書き込まれる（設計書 3.5・3.6 節）。
-- **合ったとき**: `npm run records:new -- claim --from V-NNNN --text "<結論の文>" --subject "data/skills/<rid>.json の <スロット> の effects[<番号>]"` で結論を作る（定義に結び付かない結論は `--subject` の代わりに `--mechanism <機構>`。[design-minimal-relevance.md](design-minimal-relevance.md) 3.2 節）。根拠（この検証記録の観測値）と等級の候補が埋まり、確定にできる条件（等級の候補が厳密一致か反復実測、反復実測なら `decidedOn` がある、結論の対象（`subject`）がある、最小構成の警告（効きうる未確定の要素が残った組）なし、`compare` の無い根拠の観測値に `scope` がある、失効・許容外なし、予測ファイルを使ったなら合う仮説が 2 つ以上でない）が全部そろえば `確定`、欠ければ `仮説` と理由が出る。撮る前の予測と読みの順は見ない。人は理由を確かめて書き換えてよい。`model`（モデル側）を書く。
-  - 等級は、合わせ込みの定数なしで端数まで合えば `厳密一致`、値を決めるのに使っていない録画でも再現すれば `反復実測`（機械の候補はこの規則で出る。`データ明記` は人が書く）。
-  - 仮説・値・読み方を決めるのに使った録画（残差を見て仮説を思いついた録画、値や読み方をその録画に合わせて決めた録画）は、結論の `decidedOn` に書く（`--decided-on <録画>:<仮説|値|読み方>`。無ければ `--decided-on none`）。機械の候補は、反復実測の再現にこれらの録画を数えず、厳密一致に値か読み方を合わせた録画を数えない（[design-investigation-review.md](design-investigation-review.md) 1.3 節）。
-  - `確定` の結論に結び付いた観測値は、以後 `npm test` で自動的に比べられる。
-- **合わなかったとき**
-  - 根拠のある別の解釈があれば、定義を直して撮り直すか、既存の録画で比べ直す。
-  - 古い結論は消さずに `棄却` にし、新しい結論の「置き換え」に古い ID を書く。定義の `claims` の古い ID は新しい ID に差し替える（棄却の結論を指すと `npm run records:check` が落ちる）。
-  - 未解明のまま残るなら、その効果を定義から外すか、スロットを `partial` にして notes に書く。根拠の無い合わせ込みはしない。
-- 検証記録の「結果」（表の下の散文）「分かったこと・分からないこと」「次に撮るもの」を書き、冒頭の「結論」に ID を足し、`npm run records:close -- V-NNNN --mark` で閉じる前の検査を通して状態を `完了` にする（設計書 3.7 節。CI と同じ確認も回る。急ぐときは `--no-ci`）。
-- [roadmap.md](roadmap.md) を更新する（Stage にしたときはその節、そうでなければ今後の課題）。
+- → [verification-guide.md](verification-guide.md) 7・8 節（確定にできる条件は 2.2 節）。スキルの効果が合わなかったときは、根拠のある別の解釈で定義を直すか、未解明のまま効果を定義から外す・スロットを `partial` にして notes に書く。
 
 ### 1.9 PR を出す
 
-- 手順は [AGENTS.md](../AGENTS.md)「コミット手順」。
-- 題名は `スキル: <キャラ名>（V-NNNN、C-NNNN）`（`records:close` が案を出す）。
+- → [verification-guide.md](verification-guide.md) 9 節。題名は `スキル: <キャラ名>（V-NNNN、C-NNNN）`（`records:close` が案を出す）。
 
 ## 2. 撮影が先に済んでいるとき
 
-- 既存の録画で確かめられるときは、順番が逆になる。1.5 の実装 → 既に読んだ観測値か、読み直した観測値と比べる。合わない点だけを追加で撮る（紅蓮BS の例は [design-stage11-scarlet-bs.md](design-stage11-scarlet-bs.md) 1 節）。
-- **読み直しも確定にできる**。読む前の予測は要らない（2026-10-10 のオーナーの決定。[design-investigation-review.md](design-investigation-review.md) 1 節。それまでの「読む前に予測を commit する」規則（[design-reread-prediction.md](design-reread-prediction.md)）は改めた）。
-  - 同じ録画を前に読んで仮説を立てた、値や読み方をその録画に合わせて決めたときは、その録画を結論の `decidedOn` に書く。反復実測には、それらのほかの録画で 1 回以上の再現が要る（1.8）。
+- → [verification-guide.md](verification-guide.md) 2 節（読み直しも確定にできる）。既存の録画で確かめられるときは、1.5 の実装 → 既に読んだ観測値か読み直した観測値と比べ、合わない点だけを追加で撮る（紅蓮BS の例は [design-stage11-scarlet-bs.md](design-stage11-scarlet-bs.md) 1 節）。
 
 ## 3. 結論の書き方
 
 - 結論は `records/claims/C-NNNN.json`。話題は `スキル・キャラ固有` にする。
 - 1 件に書く解釈は 1 つ（例: 「クラウンの S2 の回復は、HP が満タンでも適用されたことになる」）。1 件で同じスロットの複数の効果を指してよい。
-- **効果との対応は定義の側に書く**（2026-09-28 に決めた）。効果と notes の `claims` に、根拠の結論の ID を並べる（例: `"claims": ["C-0077", "C-0087"]`）。
+- **効果との対応は定義の側に書く**（2026-09-28 に決めた）。効果と notes の `claims` に、根拠の結論の ID を並べる（例: `"claims": ["C-0413", "C-0461"]`）。
   - 正は定義の `claims`。効果を並べ替えたり足したりしても、ID は効果と一緒に動くので古くならない。結論の側からは生成物で引く: [claims.md](claims.md) の「定義」の行と、キャラ × スロットの一覧 [skills.md](skills.md)（どちらも `npm run records:check` で作り直す）。
   - 結論の `model` には、定義のファイル（`data/skills/830.json`）と、定義の外の置き場所（コード・定数）を書く。効果の場所（`skill1 の effects[0]`）は書かなくてよい。2026-09-28 より前の結論のように書いたときは、下の検査で突き合わせる。
   - notes にも `claims` を書ける（「ダメージに関係しない」「同じ部隊の味方がいない編成では起きない」などの判断の根拠）。`assumes` は効果の `claims` で指す。
@@ -136,5 +115,5 @@
 - [ ] `npm run records:close -- V-NNNN --mark` が通っている（結論の根拠・等級の候補・反復実測の `decidedOn`・本文の節・確定の結論の根拠の観測値の `scope`）。この記録の観測値の組に最小構成の警告があると誤りになる（効かない理由を結論の `minimal` に印として書くか、仮説にする。[design-minimal-relevance.md](design-minimal-relevance.md) 11.3 節）
 - [ ] 既存のテストの数値が変わっていない（変わったなら、その理由と根拠の ID を PR に書く）
 - [ ] 実戦的な編成で sim と calc が整合するテストがある
-- [ ] `npm run records:check` と `npm run records:table` の生成物がコミットされている
+- [ ] `npm run records:check` と `npm run records:table` の生成物がコミットされている。スキル定義・録画の台帳・観測値の比べる指定を変えたなら `npm run records:minimal` も回した
 - [ ] CI と同じ確認が通る（`npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`）
