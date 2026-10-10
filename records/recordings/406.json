@@ -1,0 +1,29 @@
+{
+  "id": "406",
+  "date": "2026-10-10",
+  "folder": "range",
+  "file": "20261010-406_smg_sakura_manual_first-full.mp4",
+  "original": "2026-10-10_13-49-34.mp4",
+  "durationSec": 66.5,
+  "frames": 3988,
+  "fps": 60,
+  "sizeMB": 80.3,
+  "sha256": "91cba8e271a6",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": null,
+  "autoFire": false,
+  "autoBurst": null,
+  "conditionNote": "V-0405。サクラ単騎・操作（AUTO 射撃 OFF）で的の中央を狙い、1 回目の満タンまで（V-0400 の撮影案）"
+}
