@@ -412,7 +412,7 @@
 
 - captures/index.md を 3 つに分けた: storage.md（置き場所・運用・参照資料・バックアップ・冗長性・クラウド環境での取り寄せ）、tools.md（フレーム番号の約束・解析ツール・証拠フレームの切り出し）、index.md（命名規約・撮影プロトコル・台帳・誰が写っているかの確かめ方）。移した見出しは index.md に 1 行のポインタで残した（閉じた記録と guide.md が節の名前で指している）。
 - 古い記述を直した: 題と目的の行（「唯一の追跡可能な記録」）、置き場所の木に derived/ と新しいファイル、命名規約の例の大文字（intake.ts は英小文字だけ通す）、撮影プロトコルの「1 体のみ・オートバースト OFF・15 秒以上」（最小構成と 3 分の撮影に合わせた）、弾数で武器種を決める所（録画 121 の RL は 120 発）、解析ツールの一覧に coverage.ts・sg-dots.ts・sg-map.ts・mask-tune.ts。
-- 生きた文書とコードのコメントの参照を、storage.md・tools.md に向けた（AGENTS.md・backup-log.md・verification-guide.md、aim.ts・dirs.ts・drive.ts・intake.ts・reload.ts・recordings.ts）。guide.md の 2 か所は、別の PR と重ならないよう、ポインタの見出しで足りるとしてそのまま残した。.gitignore の追跡の許可に storage.md・tools.md を足した。
+- 生きた文書とコードのコメントの参照を、storage.md・tools.md に向けた（AGENTS.md・backup-log.md・verification-guide.md、aim.ts・dirs.ts・drive.ts・intake.ts・reload.ts・recordings.ts）。guide.md の参照（関連の行・解析ツール・フレーム番号の約束・バックアップ・参照資料）も、#544 のマージの後に向け直した。.gitignore の追跡の許可に storage.md・tools.md を足した。
 - 残り（9 節の 5 の後半）: 録画ごとの注記の移し（7.2 節）、design-records-automation.md の実施の記録の分割と古い書き方、backup-log.md の手書きの分の凍結（7.3 節）。
 
 ## 経過
