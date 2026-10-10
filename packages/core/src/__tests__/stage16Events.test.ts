@@ -30,7 +30,7 @@ describe('出来事のセット（data/enemies.json）', () => {
     expect(master.eventSets.map((s) => s.id)).toEqual(['range-3min-jump']);
     for (const e of master.enemies.filter((p) => p.content === 'range'))
       expect(e.eventSets).toEqual(['range-3min-jump']);
-    // V-0009: 5 回ともジャンプを読めた録画（041・046・055・049・050）の、ゲーム内の秒の中央値。間隔は回ごとに並べる（C-0057）
+    // V-0009: 5 回ともジャンプを読めた録画（041・046・055・049・050）の、ゲーム内の秒の中央値。間隔は回ごとに並べる（C-0539）
     expect(master.eventSets[0]!.events).toEqual([
       { kind: 'untargetable', first: 32.35, duration: 2, every: [36.34, 39.66, 36.34, 33.17] },
     ]);
