@@ -12,6 +12,10 @@
     "method": {
       "tool": "hud.ts --mode jumps・timer.ts --mode changes",
       "note": "戦闘開始 f816（残り時間の変わり目が +320f・+89f と続いた所。V-0007 と同じ決め方で、このフレームの表示は 03:00）から 1 フレーム 0.017 秒で数えた。停止の前の最後の増分"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "target"
     }
   },
   {
