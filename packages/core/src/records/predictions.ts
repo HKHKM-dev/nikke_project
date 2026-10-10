@@ -14,6 +14,7 @@ import {
   type CompareSpec,
   type Observation,
   type RecordsData,
+  type Tolerance,
 } from './observations.ts';
 import {
   validateRecordingBuild,
@@ -49,6 +50,11 @@ export type PredictionTarget = {
   note?: string;
   /** 結び付ける観測値の ID（省略すると、同じ検証記録を source にする観測値のうち metric・args・setup が同じもの） */
   observations?: string[];
+  /**
+   * 撮影計画の見分けの確かめに使う許容の幅（観測値の compare.tolerance と同じ形）。仮説どうしの予測の差がこの幅の中なら、
+   * records:predict が「見分けられない」と出す（plan/design-investigation-review.md 2.1 節）
+   */
+  tolerance?: Tolerance;
 };
 
 export type Predicted = {
@@ -132,6 +138,16 @@ export function validatePredictions(
         }
       }
       if (typeof t.setup?.enemy !== 'string') errors.push(`${at}: 指標 ${t.id} の setup.enemy が要る`);
+      if (t.tolerance !== undefined) {
+        const tol: unknown = t.tolerance;
+        const ok =
+          typeof tol === 'object' &&
+          tol !== null &&
+          Object.keys(tol).length === 1 &&
+          (('rel' in tol && typeof tol.rel === 'number' && tol.rel >= 0) ||
+            ('abs' in tol && typeof tol.abs === 'number' && tol.abs >= 0));
+        if (!ok) errors.push(`${at}: 指標 ${t.id} の tolerance は { rel } か { abs }（0 以上の数）`);
+      }
       for (const o of t.observations ?? []) {
         if (!observationIds.has(o)) errors.push(`${at}: 指標 ${t.id} の観測値 ${o} が無い`);
       }
@@ -152,6 +168,25 @@ export function validatePredictions(
     }
   }
   return errors;
+}
+
+/**
+ * 撮影計画の見分けの確かめ（plan/design-investigation-review.md 2.1 節）: 許容の幅（tolerance）のある指標のうち、どの 2 つの仮説の
+ * 予測の差もその幅の中のもの（その録画とその指標では仮説を見分けられない）。仮説が 1 つか、予測を出していなければ空
+ */
+export function indistinguishableTargets(file: PredictionFile): { target: string; hypotheses: string[] }[] {
+  if (file.predicted === null || file.hypotheses.length < 2) return [];
+  const out: { target: string; hypotheses: string[] }[] = [];
+  for (const t of file.targets) {
+    if (t.tolerance === undefined) continue;
+    const values = file.hypotheses.map((h) => file.predicted!.values[h.id]?.[t.id]);
+    if (values.some((v) => v === undefined)) continue;
+    let close = true;
+    for (let i = 0; i < values.length && close; i++)
+      for (let j = i + 1; j < values.length && close; j++) close = compareValue(values[i]!, values[j]!, t.tolerance).ok;
+    if (close) out.push({ target: t.id, hypotheses: file.hypotheses.map((h) => h.id) });
+  }
+  return out;
 }
 
 /** 予測の編成を、照合ランナーの入力の組み方（buildTeamInput）に渡せる形にする */

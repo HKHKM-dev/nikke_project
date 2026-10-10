@@ -6,7 +6,12 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import { runPredictions, todayLocal, type PredictionFile } from '../src/records/predictions.ts';
+import {
+  indistinguishableTargets,
+  runPredictions,
+  todayLocal,
+  type PredictionFile,
+} from '../src/records/predictions.ts';
 import { PREDICTIONS_DIR, ROOT, loadRecordingsFile, loadRecordsData } from './records-data.ts';
 
 const { values, positionals } = parseArgs({
@@ -43,3 +48,10 @@ for (const h of file.hypotheses) {
   }
 }
 console.log(`${path} に predicted を書いた（${at}、commit ${commit.slice(0, 7)}）`);
+// 撮影計画の見分けの確かめ（plan/design-investigation-review.md 2.1 節）
+for (const x of indistinguishableTargets(out))
+  console.log(
+    `見分けられない: 指標 ${x.target} は、仮説 ${x.hypotheses.join('・')} の予測の差が許容の幅（tolerance）の中`,
+  );
+if (file.hypotheses.length >= 2 && file.targets.every((t) => t.tolerance === undefined))
+  console.log('注意: 指標に許容の幅（tolerance）を書くと、その録画で仮説を見分けられるかを確かめる');

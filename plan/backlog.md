@@ -36,7 +36,15 @@
 
 ## 5. 道具・記録の整備
 
-- （いまは無い）
+- 5-4 `records:renumber`: 検証記録・結論・観測値・録画の番号を、参照ごと一括で振り直す（[design-investigation-review.md](design-investigation-review.md) 4.3・5 節）
+- 5-5 番号の回避を観測値と録画に広げる（`records:read --write`・`intake.ts` がほかのブランチの番号を避ける。同 4.3・5 節）
+- 5-6 右のバースト欄の表示の時刻（六角形の替わり目・III のタイマーの 00.00・CT の明け）を読む道具（同 5 節）
+- 5-7 予測の 1 発の値の格子に HUD の増分を当て、事象の前後で▲の無い最後の発と▲の乗った最初の発を出すレシピ（同 5 節）
+- 5-8 中遠の足元を読むレシピ（`midfar-landing`。同 5 節）
+- 5-9 チャージの発のレシピ（`charge-shots`。[design-records-automation-log.md](design-records-automation-log.md) 8.6 節）
+- 5-10 予測の後にモデル（`packages/core/src`・`packages/core/data`）が変わったら、`records:check` が注意を出す（同 5 節）
+- 5-11 観測値の比べる設定（`CompareSetup`）に、遅れの表の上書き・手で撃ったバーストの時刻・複数の編成を足し、表示の時刻の指標を `METRICS` に足す（同 2.2 節。別の設計書）
+- 5-12 効きうる範囲を時刻で限る語彙（窓の端からの f）を足し、付き始めの仮説の最小構成の警告を自動で外す（同 2.4 節。別の設計書）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
