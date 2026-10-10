@@ -15,7 +15,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 313・仮説 93・棄却 91・範囲外 2（計 499）
+件数: 確定 314・仮説 93・棄却 91・範囲外 2（計 500）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -898,6 +898,12 @@
   - モデル側: 反映（2026-10-10 のオーナーの判断。plan/design-burst-hit-origin.md 8 節の案 C'）。ゲージが律速のチェーンで、モデルの III の本当の発動は満タンから 81f（動画。段の長さ 28f。C-0515）、III のタイマーの 00.00 はその 6f 後の 87f（`burst/schedule.ts` の `FULL_BURST_AFTER_ACTIVATION_FRAMES`・`hexagonFrameOf`。C-0512）。III の遅れの定数は `burst/landing.ts` の `withBurstDelays` が `hexagonFrameOf` に足し、フルバーストの窓と入りの止まりも 00.00 から（`burst/controller.ts` の `FULL_BURST_START_DELAY_FRAMES`・`videoFrameOf`）
   - 検証記録: V-0391
   - 定義: `data/skills/95.json` の burst の notes[0]
+- **C-0540** バースト使用時の効果の付き始めは、キャラごとに違い、1 つの形ではない。段の表示（I・II は六角形の替わり目、III はタイマーの 00.00）から数えて、本当の発動の頃に付くキャラ（C-0499）・表示の 1〜2f 前に付くキャラ（C-0517）・表示の後に付くキャラ（C-0450）・表示から遅れて付くキャラ（C-0479）がいる。形を分けるもの（段・操作の有無・効果の対象・武器）は分かっていない
+  - 状態: 確定・等級: 反復実測・更新日: 2026-10-11
+  - 根拠: 形ごとの確定の結論: C-0499（クラウン。本当の発動の頃）・C-0517（クルミ。替わり目の 3f 前より後・1f 前まで）・C-0450（ミランダ（宝物版）。替わり目の後の最初の発から）・C-0479（アドミ。替わり目から 16〜22f 後）。どれも別の録画で再現した確定の結論で、形が 4 つに分かれる。仮説の形（雪子・ルドミラ：WO・ラピ・アスカ）は V-0399 の表にある。2026-10-11 に、キャラをまたぐ結論として ID を付けた（plan/design-investigation-review.md 4.1 節。まとめは plan/burst-effect-delay-candidates.md）。V-0399
+  - モデル側: `burst/landing.ts` の `MEASURED_BURST_DELAYS`（キャラごとの遅れの表。表に行の無いキャラの効果は本当の発動に置く）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0399
 
 ## 1 発の式・バフの掛かり方
 
