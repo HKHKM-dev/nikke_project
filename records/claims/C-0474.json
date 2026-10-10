@@ -10,5 +10,13 @@
   "updated": "2026-10-08",
   "subject": {
     "places": ["data/skills/191.json の skill1 の effects[0]", "data/skills/191.json の skill1 の effects[1]"]
-  }
+  },
+  "minimal": [
+    {
+      "observations": ["362-03", "362-05", "362-06"],
+      "element": "アリス burst.effects[1]",
+      "reason": "C-0523 の仮説は、アリスのバーストの攻撃力▲の付き始め（III のタイマーの 00.00 の 2f 前の頃）だけを決める（値・長さは C-0475）。この観測値は、最初のバーストの前・レイヴンが III の回・1 回目の窓の後のアリスの発で、アリスのバーストの窓の端の数 f に掛からない",
+      "decided": "2026-10-10"
+    }
+  ]
 }

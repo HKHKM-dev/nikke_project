@@ -58,9 +58,9 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - effects[2] timed・fullBurstStart・attackDamage: C-0204（確定）
   - notes[0] 未対応: みんなの星のときのフルチャージ攻撃時の味方全体の回復（回復を受けた時に発動する味方のスキルには効く）: 根拠なし
 - **burst**: partial
-  - effects[0] autoAttack・burstUse: C-0211（確定）、C-0213（確定）、C-0207（確定）、C-0504（確定）、C-0297（確定）、C-0466（確定）
-  - effects[1] timed・burstUse・fixedChargeTime: C-0214（確定）
-  - effects[2] timed・burstUse・attackDamage: C-0209（確定）、C-0203（仮説）
+  - effects[0] autoAttack・burstUse: C-0211（確定）、C-0213（確定）、C-0207（確定）、C-0504（確定）、C-0297（確定）、C-0466（確定）、C-0521（仮説）
+  - effects[1] timed・burstUse・fixedChargeTime: C-0214（確定）、C-0520（仮説）
+  - effects[2] timed・burstUse・attackDamage: C-0209（確定）、C-0203（仮説）、C-0520（仮説）
   - notes[0] 未対応: シューティングスターのコアに当たる割合は射撃場の的でしか測っていない。的の表に行の無い敵では、モデルのシューティングスターはコアに当たらない（plan/design-anis-star-core-path.md 3.2 節）: C-0466（確定）
   - notes[1] 未対応: コアダメージ▲がシューティングスターのコアに乗るかは確かめていない。モデルは乗せない（plan/design-anis-star-core-path.md 7 節の論点 4）: 根拠なし
   - notes[2] 未対応: 爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0424。単騎の録画 320・321 で同じ遠の区間の窓の中と外を比べても差は見分けられず、遠の割合は録画どうしで食い違う（C-0425。V-0297）。0.1〜0.2 程度の差は否定できない。plan/design-anis-star-core-path.md 11 節）: C-0424（確定）、C-0425（仮説）
@@ -282,7 +282,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - notes[1] 前提の外: HP 80% 未満のときの回復は、被弾を扱わないので起きない: 根拠なし
 - **burst**: supported
   - effects[0] timed・burstUse・chargeSpeed: C-0475（確定）
-  - effects[1] timed・burstUse・attack: C-0475（確定）
+  - effects[1] timed・burstUse・attack: C-0475（確定）、C-0523（仮説）
 
 ## 194 ルドミラ：ウィンターオーナー
 
@@ -306,7 +306,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
   - effects[1] ammoRefill・fullBurstStart: C-0490（確定）
 - **burst**: supported
   - effects[0] cycleEvery・burstUse: C-0492（確定）
-  - effects[1] timed・burstUse・attack: C-0491（確定）
+  - effects[1] timed・burstUse・attack: C-0491（確定）、C-0524（仮説）
   - effects[2] timed・burstUse・chargeDamage: C-0491（確定）
 
 ## 226 ラプンツェル：ピュアグレイス
@@ -764,12 +764,12 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
 - **skill2**: supported
   - effects[0] passive・attackDamage: C-0018（確定）
   - effects[1] timed・burstStage3Enter・distributedDamage: C-0391（確定）
-  - effects[2] timed・burstUse・elementDamage: C-0307（確定）
+  - effects[2] timed・burstUse・elementDamage: C-0307（確定）、C-0522（仮説）
   - effects[3] state・burstUse・batonPass（attack）: C-0357（確定）
   - notes[0] 計算に無関係: 鉄・拳・制・裁！の防御力▲はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-0231（確定）
-  - effects[1] timed・burstUse・attack: C-0308（確定）
+  - effects[1] timed・burstUse・attack: C-0308（確定）、C-0522（仮説）
 
 ## 871 雪子
 

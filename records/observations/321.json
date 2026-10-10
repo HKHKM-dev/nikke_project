@@ -239,5 +239,31 @@
       "slot": 1,
       "source": "normal"
     }
+  },
+  {
+    "id": "321-13",
+    "recording": "321",
+    "source": "V-0406",
+    "readAt": "2026-10-10",
+    "kind": "timing",
+    "unit": "f",
+    "use": "record",
+    "value": {
+      "hexagon": [5078, 6567],
+      "display": [-4, -4],
+      "firstWindowShotFire": [-2, -3],
+      "attackDamageUpAtFire": [true, true],
+      "firstHit": [35, 35],
+      "lastHit": [612, 611]
+    },
+    "description": "アニス：スター単騎（手でバースト・遠の区間）の 2 回の I の六角形の替わり目（hexagon）と、そこから数えた、バーストの表示（AMMO・CHARGE）が出たフレーム（display）・窓の最初の発の発射（firstWindowShotFire）・その本体の攻撃ダメージ▲の有無・シューティングスターの最初と最後のヒット。2 回とも前の発からの経過が 0.7 秒を超えていた（CHARGE 210%・228% で止まった）ので、チャージ時間固定の切り替わりの直後に撃った回（C-0380 の P1）。着弾（f5102 の 649,406・f6591 の 507,562）は▲あり",
+    "method": {
+      "tool": "右のバースト欄の六角形の色の使い捨てのスクリプト、照準の周り（crop=900:300:510:300）を 1 フレームずつ並べた一覧（目で読んだ）、recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）",
+      "note": "1 回目: f5074〜5075 に AMMO 005・CHARGE 210%、f5076 に AMMO 004・107%。2 回目: f6563 に AMMO 002・CHARGE 228%、f6564 に AMMO 001・104%。前の発の着弾は f5056（307,791。▲なし）・f6538（480,330。▲なし）で、替わり目の 48f・55f 前に撃った"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
   }
 ]
