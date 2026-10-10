@@ -1,0 +1,47 @@
+{
+  "id": "407",
+  "date": "2026-10-10",
+  "folder": "range",
+  "file": "20261010-407_sr+sg+sr+rl_cocoa+soldier-fa+alice+raven_alice-burst-repro.mp4",
+  "original": "2026-10-10_14-46-56.mp4",
+  "durationSec": 211.8,
+  "frames": 12707,
+  "fps": 60,
+  "sizeMB": 256.6,
+  "sha256": "171245567e83",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0407（録画 362 と同じ編成の再現）。BigArms（灼熱タブ・3 分モード・スペック固定 ON。f30 の出撃画面で編成と枠順を確かめた）。ココア（I・AI）+ ソルジャーF.A.（II・AI）+ アリス（III・操作）+ レイヴン（III・AI）。AUTO 射撃 ON・オートバースト ON（画面左上）。終わりの戦闘履歴のパネル（f12600）で 4 体の名前と枠・交戦時間 03:00 を確かめた"
+}
