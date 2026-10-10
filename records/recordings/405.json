@@ -1,0 +1,29 @@
+{
+  "id": "405",
+  "date": "2026-10-10",
+  "folder": "range",
+  "file": "20261010-405_smg_sakura_manual_first-full.mp4",
+  "original": "2026-10-10_13-48-11.mp4",
+  "durationSec": 68.5,
+  "frames": 4107,
+  "fps": 60,
+  "sizeMB": 82.6,
+  "sha256": "b73b029b6be2",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "サクラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": null,
+  "conditionNote": "V-0405。サクラ単騎・操作（AUTO 射撃 OFF）で的の中央を狙い、1 回目の満タンまで（V-0400 の撮影案）。スペック固定 ON は 1 ヒットの値（距離ボーナスの胴体 9,162 = 243-02 の 7,048 × 1.3）で確かめた。オートバーストは画で決められなかった（満タンの後の読みに使わない）"
+}

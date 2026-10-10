@@ -36,7 +36,8 @@
           "en": "Incoming Healing up on the 2 allies with the lowest HP ratio every 60 normal attacks does not affect damage",
           "kind": "noDamage",
           "claims": [
-            "C-0316"
+            "C-0316",
+            "C-0321"
           ]
         },
         {
@@ -44,7 +45,8 @@
           "en": "Damage Taken down on the 2 allies with the lowest HP ratio every 120 normal attacks is defensive and does not affect damage",
           "kind": "noDamage",
           "claims": [
-            "C-0316"
+            "C-0316",
+            "C-0321"
           ]
         }
       ]
