@@ -1,5 +1,5 @@
 // レシピ near-landing: SG 単騎の録画で、近の区間ごとの照準の高さ ±30px での的の幅（的のふだんの姿勢のフレームの中央値）と、
-// 近の着地点（C-0155 の A・B）を出す（V-0069 の読み方の 3。plan/design-records-automation.md 8.6 節）。
+// 近の着地点（C-0155 の A・B）を出す（V-0069 の読み方の 3。plan/design-records-automation-log.md 8.6 節）。
 //
 // 近の区間（トリガーの最初と最後）は sg-pellets の区間の求め方で決める（--opt の pellet・cuts などは sg-pellets と同じ）。
 // 区間の中を step ごとに aim.ts と同じ部品（aim-lib.ts）で測る。背景は録画の全体の 120f ごとの、戦闘中のフレームの中央値

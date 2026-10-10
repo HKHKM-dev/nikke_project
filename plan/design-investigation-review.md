@@ -415,6 +415,13 @@
 - 生きた文書とコードのコメントの参照を、storage.md・tools.md に向けた（AGENTS.md・backup-log.md・verification-guide.md、aim.ts・dirs.ts・drive.ts・intake.ts・reload.ts・recordings.ts）。guide.md の参照（関連の行・解析ツール・フレーム番号の約束・バックアップ・参照資料）も、#544 のマージの後に向け直した。.gitignore の追跡の許可に storage.md・tools.md を足した。
 - 残り（9 節の 5 の後半）: 録画ごとの注記の移し（7.2 節）、design-records-automation.md の実施の記録の分割と古い書き方、backup-log.md の手書きの分の凍結（7.3 節）。
 
+### 11.6 記録の設計書と backup-log.md の整理（9 節の 5 の後半の一部。2026-10-11）
+
+- design-records-automation.md の 8 節（実施の記録）と経過を [design-records-automation-log.md](design-records-automation-log.md) に移した（8.x の番号はそのまま。元に 1 行のポインタ）。2・3 節の古い書き方（records:new の引数・`--append`・`range-intervals`・予測ファイルの JSON の例）を直した。8.x 節を指すコメントと backlog の参照を -log.md に向けた。
+- captures/backup-log.md の 2026-10-05 までの段落を backup-log-old.md に元の順のまま移して凍結した。10-06 からの `intake.ts` の段落は、sha256 の値が録画の JSON と一致するものを 1 行の書式にした（一致しない・書式の違う段落はそのまま）。backup-log.md は 82KB → 35KB。
+- `intake.ts` が backup-log.md に書くのを 1 行の書式にした（sha256 の値は書かない）。storage.md・tools.md の説明も直した。.gitignore の追跡の許可に backup-log-old.md を足した。
+- 残り: 録画ごとの注記の移し（7.2 節）。
+
 ## 経過
 
 - 2026-10-10: 起案。オーナーの依頼（調査手順の見直し。読み直しを根拠にしてよいかの検討を含む）から。
@@ -425,3 +432,4 @@
 - 2026-10-11: 9 節の 3（手順書の分割）を実施した（11.3 節）。
 - 2026-10-11: 9 節の 4（撮影の手引きの整理）を実施した（11.4 節）。
 - 2026-10-11: 9 節の 5 の前半（index.md の分割）を実施した（11.5 節）。
+- 2026-10-11: 9 節の 5 の後半のうち、記録の設計書と backup-log.md の整理を実施した（11.6 節）。

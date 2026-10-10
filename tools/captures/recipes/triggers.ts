@@ -160,7 +160,7 @@ const FIFTH_JUMP_AFTER: readonly [number, number] = [1500, 2600];
  * 前後の窓の regime が並びどおりの反転（近との境）か、近でない（遠 → 中遠）ことを確かめ、合わないものは落とす。5 番目の切れ目がリロードと重なる（プロダクト23 の 183f など）
  * ときは、4 番目から 1,500〜2,600f 後のリロードの空きのうち、後ろが全部 far・前に near があるものを 5 番目にする。後ろが 1 発だけ
  * のときは、その発が近として解けない（notNear）ことを求める（far は「近以外として解ける」で、10 ペレット全部が当たった近の発も
- * far になりうるので、1 発の far では近の終わりと決められない。102 の f11354。plan/design-records-automation.md 8.7 節）。
+ * far になりうるので、1 発の far では近の終わりと決められない。102 の f11354。plan/design-records-automation-log.md 8.7 節）。
  * cuts（切れ目の後の最初の発のフレーム）が与えられていれば、それをそのまま使う。
  */
 export function findJumpBoundaries(
