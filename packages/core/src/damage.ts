@@ -80,9 +80,9 @@ export function explosionHitMultiplier(buffs: BuffTotals): number {
  * 防御力無視ダメージ編: 防御力無視ダメージ▲（trueDamage）の式の中の置き場所（plan/design-true-damage-element.md 3.1 節・6 節の論点 1）。
  * separate = 別の乗数 (1 + Σ防御力無視ダメージ)、attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ)。
  * **attackDamage**: 炸裂弾では発射体爆発ダメージ▲と 1 つの和 (1 + Σ防御力無視ダメージ + Σ発射体爆発ダメージ) で掛かり（C-0376）、
- * 発射体爆発ダメージ▲は攻撃ダメージ▲と同じ枠（C-0205）なので、separate は C-0376 と合わない。ただし C-0376 は攻撃ダメージ▲の無い録画で、
- * 「攻撃ダメージ▲を含まない、防御力無視ダメージ▲と発射体爆発ダメージ▲だけの枠」とは分けていない（攻撃ダメージ▲を持つ機構が確定したキャラを
- * 足した録画で分ける。plan/design-true-damage-element.md 10 節）
+ * 発射体爆発ダメージ▲は攻撃ダメージ▲と同じ枠（C-0205）なので、separate は C-0376 と合わない。攻撃ダメージ▲（ヘルム）の乗った
+ * カモフラージュの発でも、防御力無視ダメージ▲は攻撃ダメージ▲と 1 つの和で、「攻撃ダメージ▲を含まない、防御力無視ダメージ▲と
+ * 発射体爆発ダメージ▲だけの枠」ではない（C-0525。V-0409。plan/design-true-damage-element.md 10.1 節）
  */
 export const TRUE_DAMAGE_BUCKET: 'separate' | 'attackDamage' = 'attackDamage';
 

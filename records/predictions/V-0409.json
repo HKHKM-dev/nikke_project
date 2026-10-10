@@ -1,0 +1,145 @@
+{
+  "verification": "V-0409",
+  "note": "I-DOLL・フラワー（304・RL・バースト I・枠 1・AI）+ ウンファ：TU（95・SR・バースト II・枠 2・AI）+ ヘルム（352・SR・バースト III・枠 3・操作・撃たない・宝物の段階 3）・AUTO 射撃 OFF・オートバースト ON・灼熱タブの BigArms・射撃場 3 分・スペック固定 ON。ヘルムの CT は 40 秒なので、フルバーストの回（I → II → III）と II で切れる回が交互に来る。モデル（ヘルムの宝物の段階 3）の 1 回目は 257f（I）・285f（II）・313f（III）で、フルバーストは 319〜919f。2 回目は II で切れる（II は 1461f）。モデルでは操作のヘルムも撃つ（撃たない操作枠の入力が無い）ので、ゲージが早く溜まりバーストの時刻が録画とずれるが、比べるのはバーストからの相対の時刻で決まる 1 発の値なので、時刻のずれは値に効かない。エマ：TU がいないのでフォーメーションの効果（C-0374・C-0375）は効かず、発射体爆発ダメージ▲は 0",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 95,
+      "controlled": false
+    },
+    {
+      "rid": 352,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Hb",
+      "note": "(b) いまのモデル。防御力無視ダメージ▲は攻撃ダメージ▲と 1 つの和 (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ)（TRUE_DAMAGE_BUCKET = attackDamage）。override は無い。対立する (c)（攻撃ダメージ▲とは別の乗数）と (d)（攻撃ダメージ▲は防御力無視ダメージの発に乗らない）は、コードの切り替えが要るので検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "eun-pre-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストより前（モデルは 285f）のウンファのコアの 1 発。どの読みでも同じ（対照）"
+    },
+    {
+      "id": "flower-fb-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 685,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバーストの中（ウンファのバースト 285f から 400f）のフラワーのコアの 1 ヒット。ヘルムの攻撃ダメージ▲（27.87%。C-0096）と徹甲炸裂弾の受けるダメージ▲の中。防御力無視ダメージの発でないので、どの読みでも同じ（攻撃ダメージ▲が乗っていることの対照）"
+    },
+    {
+      "id": "eun-fb-camo-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 685,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じフレームのウンファのコアの 1 発。フルバーストの中のフルチャージで付き直したカモフラージュ（C-0314）・ヘルムの攻撃ダメージ▲・受けるダメージ▲の中。(b) と (c)・(d) を見分ける本命"
+    },
+    {
+      "id": "eun-fb-camo-core-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 685,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "同じ発の距離ボーナス付き"
+    },
+    {
+      "id": "eun-after-fb-camo-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 979,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のフルバーストの終わり（モデルは 919f）から 1 秒後のウンファのコア。ヘルムの攻撃ダメージ▲（10 秒）の外で、フルバーストの最後のフルチャージから 5 秒のカモフラージュの中（C-0314。233-05 と同じ形）。どの読みでも同じ（対照）"
+    },
+    {
+      "id": "eun-chain2-camo-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1661,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のバースト（II で切れる回。モデルの II は 1461f）から 200f のウンファのコア。バースト使用時のカモフラージュと受けるダメージ▲の中で、攻撃ダメージ▲もフルバーストも無い（232-01 と同じ形）。どの読みでも同じ（対照）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-10",
+    "commit": "10e118ab0c73f7b955eeb9578e554627f450034a",
+    "values": {
+      "Hb": {
+        "eun-pre-core": 686756.0190912,
+        "flower-fb-core": 396429.03634764947,
+        "eun-fb-camo-core": 1868382.239778285,
+        "eun-fb-camo-core-dist": 2092588.108551679,
+        "eun-after-fb-camo-core": 977414.890962478,
+        "eun-chain2-camo-core": 1249820.4210737206
+      }
+    },
+    "seen": {}
+  }
+}

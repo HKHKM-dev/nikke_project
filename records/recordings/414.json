@@ -1,0 +1,43 @@
+{
+  "id": "414",
+  "date": "2026-10-10",
+  "folder": "range",
+  "file": "20261010-414_rl+sr+sr_flower+eunhwa-tu+helm_true-damage-bucket.mp4",
+  "original": "2026-10-10_19-32-19.mp4",
+  "durationSec": 210.6,
+  "frames": 12634,
+  "fps": 60,
+  "sizeMB": 255,
+  "sha256": "af6b7ead2716",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 352,
+      "name": "ヘルム",
+      "controlled": true,
+      "fires": false,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0409（防御力無視ダメージ▲の置き場所）の録画。フラワー（AI）+ ウンファ：TU（AI）+ ヘルム（操作・撃たない・宝物版）・AUTO 射撃 OFF・オートバースト ON。枠と名前は戦闘履歴のパネルで確かめた（f12458）"
+}
