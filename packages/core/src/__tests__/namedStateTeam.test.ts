@@ -168,6 +168,10 @@ describe('calc の射撃の数え方（自分の射撃の回数で開いた状�
   const withoutBurstTaken = () => {
     const raw = structuredClone(rawDefinition(EUNHWA));
     raw.skills.burst!.effects = raw.skills.burst!.effects.filter((x) => x.kind !== 'timed');
+    // 炸裂弾（使用武器変更）を指す注記は、効果の番号が 1 つ詰まるので抜く
+    raw.skills.burst!.notes = (raw.skills.burst!.notes ?? []).filter(
+      (n) => (n as { refers?: string }).refers === undefined,
+    );
     return raw;
   };
   const sources = (raw: RawDefinition) => {
