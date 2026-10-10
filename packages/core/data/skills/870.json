@@ -116,7 +116,8 @@
           "ref": 1,
           "durationUntil": "fullBurstEnd",
           "claims": [
-            "C-0307"
+            "C-0307",
+            "C-0522"
           ]
         },
         {
@@ -173,7 +174,8 @@
           "durationRef": 3,
           "enemyElement": "Wind",
           "claims": [
-            "C-0308"
+            "C-0308",
+            "C-0522"
           ]
         }
       ]
