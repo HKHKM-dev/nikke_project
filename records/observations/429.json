@@ -1,0 +1,405 @@
+[
+  {
+    "id": "429-01",
+    "recording": "429",
+    "kind": "rate",
+    "use": "record",
+    "unit": "割合",
+    "value": [0.9614, 0.9675, 0.9622, 0.964, 0.9542, 0.9111],
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの、的のジャンプで分けた区間（中近 → 近 → 遠 → 中遠 → 近 → 短い遠）ごとのコア命中率（コアのヒット ÷ 当たったヒット。区間の頭を除かない全部のヒット）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "hud-jumps@2 のキャッシュの増分を、胴体 4,477.4445（モデルの 1 ヒット。距離ボーナスなし・非会心）と S2 の攻撃ダメージ▲の窓の胴体 5,417.2601（モデル）× （1 + コア 1 + 会心 0.5 + 距離ボーナス 0.3）の 8 通りの、1 ヒットごとに四捨五入した値の和で、差 0 で読んだ（使い捨てのスクリプト scratchpad/read-b/cores.ts）。1 フレームの増分は 2 ヒットまで、読めなかった後の増分は（読めなかったフレーム数 × 2）ヒットまで。1 つの増分のヒットは同じ距離ボーナス。コアの数が 2 通りに読める組（例 17,910 = コア 2 か、コア会心 + 胴体会心）は、コア 0.96・会心 0.15 の尤度の比が 20 倍以上なら多いほうを取った（ほぼ全部コア 2）。決まらない増分と格子に乗らない増分（HUD が約 20f 読めなかった後のまとまった値）は落とした。増分 4799 個のうち分解できた 4785・決まらず落とした 0・格子に乗らず落とした 14・尤度で決めた 238。区間ごとのコア / ヒットは 846 / 880・1041 / 1076・993 / 1032・1045 / 1084・876 / 918・82 / 90、距離ボーナスの乗ったヒットは 0・0・1032・1084・0・90、会心の割合は 0.151・0.158・0.160・0.181・0.157・0.222。区間の切れ目（ジャンプの前の最後の増分）は f2642・f4847・f7181・f9264・f11281（区間は 中近 → 近 → 遠 → 中遠 → 近 → 短い遠。距離ボーナスの替わり目と、aim.ts の的の足元の y の替わり目で確かめた）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [963, 11583]
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-02",
+    "recording": "429",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.9614,
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの近のコア命中率（近の 2 区間を合わせた、コア 1917 ÷ 当たったヒット 1994。区間の頭を除かない全部のヒット。撃ち始めの外れを含む）。表（range-bigarms の MG）と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "429-01 と同じ読み。近の着地点は 2 区間目 A（幅 370px）・5 区間目 B（幅 474px）。"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [2819, 11281]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "tolerance": {
+        "abs": 0.0085
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "C"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-03",
+    "recording": "429",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.9614,
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの中近のコア命中率（コア 846 ÷ 当たったヒット 880。区間の頭を除かない全部のヒット。撃ち始めの外れを含む）。表（range-bigarms の MG）と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "429-01 と同じ読み。"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [963, 2642]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.0124
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "C"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-04",
+    "recording": "429",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.964,
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの中遠のコア命中率（コア 1045 ÷ 当たったヒット 1084。区間の頭を除かない全部のヒット。撃ち始めの外れを含む）。表（range-bigarms の MG）と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "429-01 と同じ読み。中遠の着地点は C（足元の y 560）。"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [7302, 9264]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7800
+      },
+      "tolerance": {
+        "abs": 0.0117
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "C"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-05",
+    "recording": "429",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.9581,
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの遠のコア命中率（遠の 2 区間を合わせた、コア 1075 ÷ 当たったヒット 1122。区間の頭を除かない全部のヒット。撃ち始めの外れを含む）。表（range-bigarms の MG）と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "429-01 と同じ読み。遠の着地点は 3 区間目 A（足元 540）・6 区間目 A（足元 540）。"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [4967, 11583]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5500
+      },
+      "tolerance": {
+        "abs": 0.0119
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "C"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-06",
+    "recording": "429",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.9983,
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの近の完全な1 クリップの弾丸命中率 = 当たったヒット 599 ÷ 撃った数 600（2 本 × 300）。表と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "429-01 と同じ分け方。完全なクリップは、増分の間が 60f 以上空いた所で切った連射のうち、ジャンプに接しない（前後の空きがリロード）・決まらない増分を含まない・区間をまたがないもの。クリップごとの当たった数は 300（f3943〜）・299（f10006〜）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [2819, 11281]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "tolerance": {
+        "abs": 0.004
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "C"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-07",
+    "recording": "429",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.9967,
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの中近の完全な1 クリップの弾丸命中率 = 当たったヒット 598 ÷ 撃った数 600（2 本 × 300）。表と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "429-01 と同じ分け方。完全なクリップは、増分の間が 60f 以上空いた所で切った連射のうち、ジャンプに接しない（前後の空きがリロード）・決まらない増分を含まない・区間をまたがないもの。クリップごとの当たった数は 299（f963〜）・299（f2082〜）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [963, 2642]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.0035
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "C"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-08",
+    "recording": "429",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.9933,
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの中遠の完全な1 クリップの弾丸命中率 = 当たったヒット 596 ÷ 撃った数 600（2 本 × 300）。表と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "429-01 と同じ分け方。完全なクリップは、増分の間が 60f 以上空いた所で切った連射のうち、ジャンプに接しない（前後の空きがリロード）・決まらない増分を含まない・区間をまたがないもの。クリップごとの当たった数は 299（f7754〜）・297（f8315〜）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [7302, 9264]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7800
+      },
+      "tolerance": {
+        "abs": 0.006
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "C"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-09",
+    "recording": "429",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.9833,
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの遠の完全な1 クリップの弾丸命中率 = 当たったヒット 295 ÷ 撃った数 300（1 本 × 300）。表と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "429-01 と同じ分け方。完全なクリップは、増分の間が 60f 以上空いた所で切った連射のうち、ジャンプに接しない（前後の空きがリロード）・決まらない増分を含まない・区間をまたがないもの。クリップごとの当たった数は 295（f6462〜）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [4967, 11583]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5500
+      },
+      "tolerance": {
+        "abs": 0.0105
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "C"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-10",
+    "recording": "429",
+    "kind": "position",
+    "use": "record",
+    "unit": "px",
+    "value": [560, 540, 540],
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの、中遠（4 区間目）・遠（3 区間目）・短い遠（6 区間目）の的の足元の y（1920×1080。外接矩形の下端の中央値）。着地点は 中遠 C・遠 A・短い遠 A",
+    "method": {
+      "tool": "tools/captures/aim.ts --step 5（f0〜12300）+ 使い捨てのスクリプト（scratchpad/read-b/aimseg2.ts）",
+      "note": "中遠は区間の頭 150f と尾 30f を除き fx 0.45 未満のコマの中央値（C-0044。V-0386 の境目は 568〜576 が B、558〜565 が C、579 以上が A）。遠は V-0228 の読み方の 3 のコマの選び方（tgt_clipped 0・fx 0.3 未満・高さ 110〜190・幅 80〜170・足元 515〜552）で、540 以上が遠 A、536 以下が遠 B（C-0477）。区間の切れ目（ジャンプの前の最後の増分）は f2642・f4847・f7181・f9264・f11281（区間は 中近 → 近 → 遠 → 中遠 → 近 → 短い遠。距離ボーナスの替わり目と、aim.ts の的の足元の y の替わり目で確かめた）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": "all",
+      "source": "target",
+      "frames": [963, 11583]
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-11",
+    "recording": "429",
+    "kind": "size",
+    "use": "record",
+    "unit": "px",
+    "value": [370, 474],
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの近の 2 区間（2・5 区間目）の、照準の高さ ±30px での的の幅（的のふだんの姿勢のコマの中央値）。近の着地点（C-0155）は A・B",
+    "method": {
+      "tool": "tools/captures/aim.ts --step 5 + 使い捨てのスクリプト（scratchpad/read-b/aimseg2.ts）",
+      "note": "near-landing レシピと同じ規則（的の上端の y が 250 以上・fx 0.45 未満のコマの tgt_band_w の中央値。近 A は 356〜372px、近 B は 409px 以上、外は決めない）を、5f おきの測定で区間の全部に当てた（レシピは 20f おきで、SG 単騎の区間の求め方を使う）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": "all",
+      "source": "target",
+      "frames": [2819, 11281]
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-12",
+    "recording": "429",
+    "kind": "count",
+    "use": "record",
+    "unit": "コマ",
+    "value": [28, 0, 34, 0, 1, 36, 0, 33, 30, 0, 0, 3],
+    "description": "クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの、区間（中近 → 近 → 遠 → 中遠 → 近 → 短い遠）ごとの 60f ごとの照準の色（白・水色の順に区間ごとに 2 つずつ）",
+    "method": {
+      "tool": "tools/captures/aim.ts --step 5 の aim_color（60 の倍数のフレームを取った）+ 使い捨てのスクリプト（scratchpad/read-b/aimseg2.ts・minority.ts）",
+      "note": "区間はトリガーの最初と最後（f963〜2642・f2819〜4847・f4967〜7181・f7302〜9264・f9471〜11281・f11448〜11583）。色の無い・unknown のコマは数えていない（0・0・0・0・1・0 コマ）。5f ごとの全部のコマでは 336/0・406/0・30/413・15/374・358/0・0/16（白/水色）。距離ボーナスの有無は同じ区間の増分の格子（429-01 か smg-cores の注記）。少ないほうの色のコマの多くはリロードの間（前の増分から 40f 以上空いた所）"
+    },
+    "source": "V-0422",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [963, 11583]
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "429-13",
+    "recording": "429",
+    "kind": "timing",
+    "use": "record",
+    "unit": "秒",
+    "value": [29.69, 66.47, 106.12, 142.56, 175.72],
+    "description": "的のジャンプで的が浮いた（足が地面を離れた）最初のフレームの、戦闘開始から数えたゲーム内の秒（クラウン（MG）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モード。1〜5 回目）",
+    "method": {
+      "tool": "timer.ts --mode changes・--mode ticks・aim.ts（的の外接矩形）",
+      "note": "戦闘開始 f952（残り時間の変わり目が +320f・+89f と続いた所の後のほう。371-14 と同じ）。浮いたフレームは 2702・4897・7232・9380・11331 で、timer.ts --mode ticks（止まりを除いたティック × 0.017 秒）で秒にした。戦闘の終わり（残り時間 00:00 の後に画面が切り替わる変わり目）は f11600（戦闘開始から 180.28 秒。最後の変わり目の前の変わり目のティックに、そこからのフレーム数 × 0.017 秒を足した）で、5 回目は終わりの 4.56 秒前。読み方: 各回の停止の前の最後の増分 L の L−10〜L+160 を aim.ts で 1f ごとに測り（背景は f1000〜11000 の 400f ごと）、的の上端の y が数フレーム止まった後に 40px 以上一度に上がり、下端（足元）も 30px 以上上がった最初のフレームを浮いたフレームとした（371-14 の「下端が 30px 以上上がって 2f 続いた」と同じ所。近の的は下端が探す範囲の端 702 に掛かるので、上端の跳びで決めた）。立ち上がり（上端が段階的に上がる）や、爆発・数字の重なりで外接矩形が一瞬ずれたコマを拾った回は、画を 1〜3f おきに並べて足が地面を離れたコマを確かめた"
+    },
+    "source": "V-0427",
+    "scope": {
+      "slot": "all",
+      "source": "target"
+    },
+    "readAt": "2026-10-11"
+  }
+]

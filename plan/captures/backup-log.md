@@ -212,3 +212,22 @@
 - 2026-10-10 20:17 録画 418（ノワール単騎）: `range/20261010-418_sg_noir_auto_cube.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-10 20:17 録画 419（ノワール単騎）: `range/20261010-419_sg_noir_auto_cube.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-10 20:17 録画 420（ノワール単騎）: `range/20261010-420_sg_noir_auto_cube.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 06:36 録画 421（紅蓮：ブラックシャドウ単騎）: `range/20261011-421_rl_scarlet-black-shadow_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 06:36 録画 422（紅蓮：ブラックシャドウ単騎）: `range/20261011-422_rl_scarlet-black-shadow_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:01 録画 423（I-DOLL・サン単騎）: `range/20261011-423_ar_idoll-sun_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:01 録画 424（I-DOLL・サン単騎）: `range/20261011-424_ar_idoll-sun_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:01 録画 425（I-DOLL・サン単騎）: `range/20261011-425_ar_idoll-sun_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 426（I-DOLL・オーシャン単騎）: `range/20261011-426_smg_idoll-ocean_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 427（I-DOLL・オーシャン単騎）: `range/20261011-427_smg_idoll-ocean_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 428（クラウン単騎）: `range/20261011-428_mg_crown_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 429（クラウン単騎）: `range/20261011-429_mg_crown_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 430（ドレイク単騎）: `range/20261011-430_sg_drake_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 431（ラム単騎）: `range/20261011-431_sr_rum_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 432（アニス：スター単騎）: `range/20261011-432_rl_anis-star_manual-burst.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 433（アニス：スター単騎）: `range/20261011-433_rl_anis-star_auto-burst.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 434（サクラ + デルタ + ドレイク）: `range/20261011-434_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 435（サクラ + デルタ + ドレイク）: `range/20261011-435_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 436（サクラ + デルタ + ドレイク）: `range/20261011-436_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 437（サクラ + デルタ + I-DOLL・サン）: `range/20261011-437_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 438（サクラ + デルタ + I-DOLL・サン）: `range/20261011-438_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 08:02 録画 439（サクラ + デルタ + I-DOLL・サン）: `range/20261011-439_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。

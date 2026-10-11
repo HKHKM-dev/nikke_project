@@ -1,0 +1,29 @@
+{
+  "id": "428",
+  "date": "2026-10-11",
+  "folder": "range",
+  "file": "20261011-428_mg_crown_auto.mp4",
+  "original": "2026-10-11_06-57-54.mp4",
+  "durationSec": 202.9,
+  "frames": 12174,
+  "fps": 60,
+  "sizeMB": 246.1,
+  "sha256": "e4c670c7a31b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0422・V-0423（V-0427）。クラウン単騎・操作（AUTO 射撃 ON）・オートバースト OFF。180 秒を撃ち切り、戦闘中は操作しない（V-0416 の撮影計画の D。同じ日に続けて撮った 2 本の 1 本目）"
+}
