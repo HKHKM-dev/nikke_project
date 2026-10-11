@@ -231,3 +231,18 @@
 - 2026-10-11 08:02 録画 437（サクラ + デルタ + I-DOLL・サン）: `range/20261011-437_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-11 08:02 録画 438（サクラ + デルタ + I-DOLL・サン）: `range/20261011-438_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-11 08:02 録画 439（サクラ + デルタ + I-DOLL・サン）: `range/20261011-439_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 14:16 録画 440（ルドミラ：ウィンターオーナー）: `range/20261011-440_mg_ludmilla-winter-owner_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 14:16 録画 441（ルドミラ：ウィンターオーナー）: `range/20261011-441_mg_ludmilla-winter-owner_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 14:16 録画 442（ルドミラ：ウィンターオーナー）: `range/20261011-442_mg_ludmilla-winter-owner_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 14:17 録画 443（エマ）: `range/20261011-443_mg_emma_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 14:17 録画 444（エマ）: `range/20261011-444_mg_emma_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 14:17 録画 445（エマ）: `range/20261011-445_mg_emma_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 14:17 録画 446（クラウン）: `range/20261011-446_mg_crown_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 14:17 録画 447（クラウン）: `range/20261011-447_mg_crown_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 14:17 録画 448（クラウン）: `range/20261011-448_mg_crown_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 16:57 録画 449（エマ）: `range/20261011-449_mg_emma_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 16:57 録画 450（エマ）: `range/20261011-450_mg_emma_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 16:57 録画 451（クラウン）: `range/20261011-451_mg_crown_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 16:57 録画 452（クラウン）: `range/20261011-452_mg_crown_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 16:57 録画 453（クラウン）: `range/20261011-453_mg_crown_auto.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-11 16:57 録画 454（クラウン）: `range/20261011-454_mg_crown_auto.mp4` を同期（E: と I: で sha256 が一致）。
