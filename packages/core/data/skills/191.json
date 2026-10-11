@@ -47,8 +47,8 @@
           ]
         },
         {
-          "ja": "HP 80% 未満のときの回復は、被弾を扱わないので起きない",
-          "en": "The heal below 80% HP does not occur because taking hits is not modeled",
+          "ja": "HP 80% 未満のときの回復は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
+          "en": "The heal below 80% HP does not occur because taking hits is not modeled (requirements 5.2). In the 3-minute range mode it can occur from the target's attacks",
           "kind": "outOfScope",
           "effect": {
             "kind": "heal",

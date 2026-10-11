@@ -7,8 +7,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "攻撃を受けた時（確率）の自分の防御力▲は、被弾を扱わないので起きない",
-          "en": "The chance-based DEF up on self when attacked never happens (taking hits is not modelled)",
+          "ja": "攻撃を受けた時（確率）の自分の防御力▲は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きる（C-0551）",
+          "en": "The chance-based DEF up on self when attacked does not occur because taking hits is not modeled (requirements 5.2). In the 3-minute range mode it does occur from the target's attacks",
           "kind": "outOfScope",
           "effect": {
             "kind": "timed",
