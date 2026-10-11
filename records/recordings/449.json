@@ -1,0 +1,29 @@
+{
+  "id": "449",
+  "date": "2026-10-11",
+  "folder": "range",
+  "file": "20261011-449_mg_emma_auto.mp4",
+  "original": "2026-10-11_16-33-46.mp4",
+  "durationSec": 197.2,
+  "frames": 11833,
+  "fps": 60,
+  "sizeMB": 239,
+  "sha256": "753057567da0",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 90,
+      "name": "エマ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0415 の撮り足し。単騎・AUTO 射撃 ON・自動バースト OFF。最後の戦闘履歴（キャラの印・1 体）で確かめた"
+}

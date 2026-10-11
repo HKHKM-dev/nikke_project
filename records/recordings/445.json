@@ -1,0 +1,29 @@
+{
+  "id": "445",
+  "date": "2026-10-11",
+  "folder": "range",
+  "file": "20261011-445_mg_emma_auto.mp4",
+  "original": "2026-10-11_13-55-50.mp4",
+  "durationSec": 198.8,
+  "frames": 11925,
+  "fps": 60,
+  "sizeMB": 240.7,
+  "sha256": "c01a6418637c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 90,
+      "name": "エマ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0415。単騎・AUTO 射撃 ON・自動バースト OFF。出撃画面（灼熱タブ・3 分・スペック固定 ON・1 体）と最後の戦闘履歴（キャラ名）が写っている"
+}
