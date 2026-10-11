@@ -1,0 +1,29 @@
+{
+  "id": "432",
+  "date": "2026-10-11",
+  "folder": "range",
+  "file": "20261011-432_rl_anis-star_manual-burst.mp4",
+  "original": "2026-10-11_07-15-37.mp4",
+  "durationSec": 199.9,
+  "frames": 11996,
+  "fps": 60,
+  "sizeMB": 242.5,
+  "sha256": "366b7d1465d0",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0426（V-0427）。アニス：スター単騎・操作（AUTO 射撃 ON）・オートバースト OFF・手でバースト。180 秒を撃ち切り、窓の外のマガジンの 5 発目の直前（照準の横の残弾 2 の終わり）に手でバーストを押す（V-0416 の撮影計画の H2。H2 を撮り、続けて H1（433）を撮った）"
+}

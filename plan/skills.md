@@ -300,7 +300,7 @@ notes の種類: 未対応 124・前提の外 37・計算に無関係 54・補�
 ## 225 紅蓮：ブラックシャドウ
 
 - **skill1**: supported
-  - effects[0] cycle・fullChargeShot: C-0047（仮説）、C-0085（確定）
+  - effects[0] cycle・fullChargeShot: C-0047（確定）、C-0085（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・maxAmmo: C-0490（確定）
   - effects[1] ammoRefill・fullBurstStart: C-0490（確定）
