@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 305,
-  "checkedAt": "2026-10-04",
+  "checkedAt": "2026-10-12",
   "skills": {
     "skill1": {
       "effects": [],
@@ -40,20 +40,28 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体の HP 回復は未対応（回復を受けた時の効果を起こさない。ほかにダメージとゲージには関係しない）",
-          "en": "The HP restore on all allies is not modeled (it does not trigger effects on being healed; it does not otherwise affect damage or the burst gauge)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "burstUse"
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 2,
+          "assumes": {
+            "ja": "味方全体への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす（ヘルムの宝物版 S1 の C-0345 からの類推）。回復量はダメージに関係しない",
+            "en": "A one-off heal on all allies that triggers \"when healed\" even on allies at full HP (by analogy with Helm's treasure S1, C-0345). The healed amount does not affect damage"
           },
           "claims": [
-            "C-0254"
+            "C-0254",
+            "C-0554"
           ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "説明文に出てこない数値（description_value_01）は使っていない",
+          "en": "The value not shown in the description (description_value_01) is not used",
+          "kind": "modeling",
+          "refers": "effects[0]"
         }
       ]
     }
