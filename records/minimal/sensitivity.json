@@ -875,8 +875,16 @@
     },
     {
       "observation": "030-02",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "17fc24aca72cfd0b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "030-02",
       "element": "ラピ burst.effects[1]",
-      "key": "4f76acdcbc77829b",
+      "key": "17fc24aca72cfd0b",
       "effective": true,
       "minus": 0,
       "plus": 458085.37514999975
@@ -884,7 +892,7 @@
     {
       "observation": "030-02",
       "element": "ラピ skill2.effects[1]",
-      "key": "4f76acdcbc77829b",
+      "key": "17fc24aca72cfd0b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5710,6 +5718,30 @@
       "observation": "265-05",
       "element": "ヘルム treasureSkills.burst.effects[2]",
       "key": "037d48edbd5d3912",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "277-01",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "6e3ac024f6445921",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "277-02",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "552c3f4fd093c246",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "277-03",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "65cd346826fe5b11",
       "effective": false,
       "minus": 0,
       "plus": null
