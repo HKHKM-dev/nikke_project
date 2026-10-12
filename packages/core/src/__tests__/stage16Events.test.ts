@@ -36,7 +36,7 @@ describe('出来事のセット（data/enemies.json）', () => {
     ]);
   });
 
-  it('expands to 5 jumps in 180 game seconds, as every recording read so far (C-0533)', () => {
+  it('expands to 5 jumps in 180 game seconds, as every recording read so far (C-0552)', () => {
     const events = enemyEventsOf(master, ['range-3min-jump'], 180);
     expect(events.map((e) => e.start.toFixed(2))).toEqual(['32.35', '68.69', '108.35', '144.69', '177.86']);
     expect(events.every((e) => e.kind === 'untargetable')).toBe(true);
