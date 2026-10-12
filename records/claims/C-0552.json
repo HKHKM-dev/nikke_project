@@ -44,7 +44,7 @@
   "judgment": {
     "decided": "2026-10-12",
     "overrides": ["指標なし"],
-    "reason": "観測量は的のジャンプの時刻で、モデルの指標（METRICS）に無い。モデルは的のジャンプを 1 組の代表値で持つ（data/enemies.json の range-3min-jump）。決めるのに使っていない撮影 A・B（455〜459）の再現で確定にした"
+    "reason": "観測量は的のジャンプの時刻で、モデルの指標（METRICS）に無い。モデルは的のジャンプを 1 組の代表値で持つ（data/enemies.json の range-3min-jump）。決めるのに使っていない撮影 A・B（455〜459）の再現で確定にした（2026-10-12 のオーナーの判断）"
   },
   "minimal": [
     {
