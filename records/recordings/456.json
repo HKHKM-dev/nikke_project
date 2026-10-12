@@ -1,0 +1,29 @@
+{
+  "id": "456",
+  "date": "2026-10-12",
+  "folder": "range",
+  "file": "20261012-456_sr_takina_hide.mp4",
+  "original": "2026-10-12_12-11-13.mp4",
+  "durationSec": 200.2,
+  "frames": 12011,
+  "fps": 60,
+  "sizeMB": 240.8,
+  "sha256": "2a2077588317",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 861,
+      "name": "たきな",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0430 撮影 A（2 本目）。たきな単騎・操作・AUTO 射撃 OFF・オートバースト OFF。戦闘開始から 180 秒、一度も撃たずに遮蔽物に隠れたまま"
+}
