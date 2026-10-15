@@ -185,7 +185,7 @@ export type NamedStateWindow = {
 
 /** ペルソナ編: 枠 slotIndex に状態 state が付いたフレーム（昇順。同じフレームに 2 つの出どころから付いても 1 回） */
 export function appliedFrames(
-  timeline: Pick<BuffTimeline, 'applications'>,
+  timeline: { readonly applications: readonly AppliedRecord[] },
   state: NamedStateId,
   slotIndex: number,
 ): number[] {
