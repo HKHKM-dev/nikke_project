@@ -5,3 +5,5 @@ packages/core/data/
 package-lock.json
 .claude/
 scratch/
+# スキルの効果の分類の一覧（生成物。npm run skills:catalog）。表の列幅をそろえると 2 倍の大きさになるので整形しない（最新かは npm test が確かめる）
+plan/skill-catalog.md
