@@ -3,6 +3,7 @@
 // 結果は records:check が読んで plan/minimal.md と claims.md に重ねる。使い方: npm run records:minimal（ルート。records:check まで回す）
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { enableLegacyCrossCheck } from '../src/frame/crossCheck.ts';
 import { SENSITIVITY_VERSION, type SensitivityEntry } from '../src/records/relevance.ts';
 import { sensitivityOf, sensitivityTargets } from '../src/records/sensitivity.ts';
 import type { SimResult } from '../src/sim/engine.ts';
@@ -16,6 +17,9 @@ import {
   recordingMap,
   type SensitivityFile,
 } from './records-data.ts';
+
+// 持ち主ごとの一覧編（plan/design-holder-effects.md 論点 6）: 段 A・B の間だけ、新旧の比べを入れる
+enableLegacyCrossCheck();
 
 const started = Date.now();
 const file = loadRecordingsFile();

@@ -4,6 +4,7 @@
 // スキル定義の根拠（plan/skills-guide.md 3 節）: 定義の claims を結論と突き合わせ、対応状況の一覧（plan/skills.md）も作り直す。
 // 使い方: npm run records:check（ルート。整形まで行う）
 import { readFileSync, writeFileSync } from 'node:fs';
+import { enableLegacyCrossCheck } from '../src/frame/crossCheck.ts';
 import {
   claimsByObservation,
   gatedObservations,
@@ -52,6 +53,9 @@ import {
   recordingMap,
   verificationPath,
 } from './records-data.ts';
+
+// 持ち主ごとの一覧編（plan/design-holder-effects.md 論点 6）: 段 A・B の間だけ、新旧の比べを入れる
+enableLegacyCrossCheck();
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
