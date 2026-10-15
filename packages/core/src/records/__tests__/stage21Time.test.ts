@@ -6,6 +6,7 @@ import { loadObservations, loadRecordingsFile, loadRecordsData, recordingMap } f
 import { planTeamRun } from '../../frame/plan.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { buildTeamInput } from '../observations.ts';
+import { piecesOf } from '../../__tests__/historyHelpers.ts';
 
 const file = loadRecordingsFile();
 const data = loadRecordsData(file);
@@ -19,7 +20,7 @@ describe('録画 56: クラウンの S2 の 7 秒（056-04）', () => {
   );
   const plan = planTeamRun(input);
   const shots = plan.shots[0]!.frames;
-  const windows = plan.timeline.windows.filter((w) => w.effect.stat === 'attackDamage');
+  const windows = piecesOf(plan).filter((w) => w.effect.stat === 'attackDamage');
 
   it('buffs the shots from the frame after the heal for 7 game seconds = 411f, as the clean readings of recording 56', () => {
     const clean = (measured.value as number[]).slice(1, 3);

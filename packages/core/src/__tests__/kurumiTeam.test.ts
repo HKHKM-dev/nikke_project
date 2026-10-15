@@ -13,6 +13,7 @@ import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -115,7 +116,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, kurumi 
 
   it('raises the damage taken by 18.06% for 10 s from each burst of Kurumi, for every slot (C-0138, C-0152)', () => {
     const uses = activationFramesOfSlot(plan.schedule!, kurumi);
-    const windows = plan.timeline.windows.filter((w) => w.effect.stat === 'damageTaken');
+    const windows = piecesOf(plan).filter((w) => w.effect.stat === 'damageTaken');
     expect(windows.length).toBeGreaterThan(0);
     for (const w of windows) {
       expect(w.effect.value).toBeCloseTo(0.1806, 10);

@@ -13,6 +13,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
+import { healsOf, piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -57,7 +58,7 @@ describe('録画 063 の編成の窓（4 節）', () => {
   const plan = planTeamRun(REC063);
   const ASUKA = 2;
   const windowsOf = (slotIndex: number, stat: string) =>
-    plan.timeline.windows.filter((w) => w.slotIndex === slotIndex && w.effect.stat === stat);
+    piecesOf(plan).filter((w) => w.slotIndex === slotIndex && w.effect.stat === stat);
 
   it('gives S1 for 25 s from each burst use (one heal on the burst, not on every hit)', () => {
     const activations = plan.schedule!.activations.filter((a) => a.slotIndex === ASUKA).map((a) => a.frame);
@@ -80,7 +81,7 @@ describe('録画 063 の編成の窓（4 節）', () => {
 
   it('heals Asuka once per burst use', () => {
     const uses = plan.schedule!.activations.filter((a) => a.slotIndex === ASUKA).map((a) => a.frame);
-    const heals = plan.timeline.heals;
+    const heals = healsOf(plan);
     expect(heals.map((h) => h.frame)).toEqual(uses);
     expect(heals.every((h) => h.sourceSlotIndex === ASUKA && h.slotIndex === ASUKA)).toBe(true);
   });

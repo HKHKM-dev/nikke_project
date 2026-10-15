@@ -3,7 +3,7 @@
 - 別紙: [design-holder-effects-current.md](design-holder-effects-current.md)（1 節: いまの作り。以下「いまの作りの別紙」）
 - 関連: [design-skill-catalog.md](design-skill-catalog.md)（2 段目の計画。9 節の段の候補）、[design-named-state.md](design-named-state.md)（5.2 節: 状態の段、8 節: 状態の後の拡張）、[design-stage6.md](design-stage6.md)（窓と区間。8 節の 2・9 節）、[design-stage10.md](design-stage10.md)（1 パス目。1 節）、[design-stage11-modernia.md](design-stage11-modernia.md)（1.5 段目。2.4・3.3 節）、[design-stage11.md](design-stage11.md)（順位。19 節）、[design-true-damage-element.md](design-true-damage-element.md)（強化。3.5 節）、[design-heal-window.md](design-heal-window.md)（吸収回復の窓）
 - 作成日: 2026-10-15
-- 状態: 決定。2026-10-15 にオーナーが論点 1〜11 と段の構成（3 節）を決めた（論点 1・2・6〜11 は推奨どおり、論点 3・4・5 は代わりの案。段 D・E はオーナーの指示で足し、論点 4 に合わせて段 A・B の中身を組み替えた）。設計書は、オーナーの指示で段 A の実装より先に PR にした（AGENTS.md のコミット手順の「設計の承認は実装と同じ PR に含める」の例外）。段 A〜C を実装した（2026-10-15。経過は別紙 [design-holder-effects-log.md](design-holder-effects-log.md)）
+- 状態: 決定。2026-10-15 にオーナーが論点 1〜11 と段の構成（3 節）を決めた（論点 1・2・6〜11 は推奨どおり、論点 3・4・5 は代わりの案。段 D・E はオーナーの指示で足し、論点 4 に合わせて段 A・B の中身を組み替えた）。設計書は、オーナーの指示で段 A の実装より先に PR にした（AGENTS.md のコミット手順の「設計の承認は実装と同じ PR に含める」の例外）。段 A〜D を実装した（2026-10-15。経過は別紙 [design-holder-effects-log.md](design-holder-effects-log.md)）
 
 ## 0. 目的と方針
 

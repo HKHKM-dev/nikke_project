@@ -15,6 +15,7 @@ import { planTeamRun, type SkillHitEvent } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput, type TeamResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
+import { cycleItemsOf, piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -106,10 +107,10 @@ describe('録画 47 の予測（7.5）', () => {
 
   it('refills to 14 at the full burst start and opens the tier window for 10 s from the burst', () => {
     expect(plan.instants.filter((x) => x.slotIndex === 2 && x.effect.kind === 'ammoRefill')).toHaveLength(5);
-    const maxAmmo = plan.timeline.windows.filter((w) => w.slotIndex === 2 && w.effect.stat === 'maxAmmo');
+    const maxAmmo = piecesOf(plan).filter((w) => w.slotIndex === 2 && w.effect.stat === 'maxAmmo');
     const tenSeconds = (f: number) => Math.min(f + gameSecondsToFrames(10), plan.frames);
     expect(maxAmmo.map((w) => [w.start, w.end])).toEqual(fb.map((w) => [w.start, tenSeconds(w.start)]));
-    const windows = plan.timeline.cycleWindows;
+    const windows = cycleItemsOf(plan);
     const bursts = plan.schedule!.activations.filter((a) => a.slotIndex === 2).map((a) => a.frame);
     expect(windows.map((w) => [w.slotIndex, w.start, w.end, w.every])).toEqual(
       bursts.map((f) => [2, f, tenSeconds(f), 1]),
@@ -121,7 +122,7 @@ describe('録画 47 の予測（7.5）', () => {
     let step = 0;
     for (const f of shots) {
       count += 1;
-      const inWindow = plan.timeline.cycleWindows.some((w) => w.start <= f && f < w.end);
+      const inWindow = cycleItemsOf(plan).some((w) => w.start <= f && f < w.end);
       if (inWindow || count % 3 === 0) {
         expect(stepAt.get(f), `shot ${count} at f${f}`).toBe(step);
         step = (step + 1) % 3;
@@ -133,7 +134,7 @@ describe('録画 47 の予測（7.5）', () => {
   });
 
   it('matches FB1 of 録画 47: C just before, 13 tiers A → A inside, B on the 2nd shot after', () => {
-    const w = plan.timeline.cycleWindows[0]!;
+    const w = cycleItemsOf(plan)[0]!;
     const before = shots.filter((f) => f < w.start);
     const inside = shots.filter((f) => f >= w.start && f < w.end);
     const after = shots.filter((f) => f >= w.end);
@@ -175,7 +176,7 @@ describe('録画 46・47 の実測（1 発の数値、2026-09-24）', () => {
   const calc = computeTeamDamage(REC47);
   const plan = planTeamRun(REC47);
   const hits = plan.skillHits.filter((h) => h.slotIndex === 2);
-  const w = plan.timeline.cycleWindows[0]!;
+  const w = cycleItemsOf(plan)[0]!;
   const outside = hits.filter((h) => h.frame < w.start || h.frame >= w.end + 600);
   const inside = hits.filter((h) => h.frame >= w.start && h.frame < w.end);
   const of = (list: SkillHitEvent[], step: number) => list.find((h) => h.effect.cycle!.step === step)!;

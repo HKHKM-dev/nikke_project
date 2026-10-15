@@ -19,6 +19,7 @@ import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -195,7 +196,7 @@ describe('録画 232 の編成（フラワー + ウンファ：TU）', () => {
   const plan = planTeamRun(REC232);
   const uses = plan.schedule!.activations.filter((a) => a.slotIndex === 1).map((a) => a.frame);
   const shots = plan.shots[1]!;
-  const windows = plan.timeline.windows.filter((w) => w.slotIndex === 1 && w.effect.stat === 'weapon');
+  const windows = piecesOf(plan).filter((w) => w.slotIndex === 1 && w.effect.stat === 'weapon');
 
   it('fires exactly one Explosive Round per burst, from the frame after the burst, then goes back to the base SR', () => {
     expect(uses.length).toBeGreaterThan(3);
@@ -237,7 +238,7 @@ describe('録画 232 の編成（フラワー + ウンファ：TU）', () => {
   });
 
   it('opens the Explosive Round’s Damage Taken up on the frame after the round, so the round itself does not get it (C-0312・論点 12)', () => {
-    const taken = plan.timeline.windows.filter((w) => w.slotIndex === 1 && w.effect.stat === 'damageTaken');
+    const taken = piecesOf(plan).filter((w) => w.slotIndex === 1 && w.effect.stat === 'damageTaken');
     expect(taken.map((w) => w.start)).toEqual(windows.map((w) => w.end));
     expect(taken.every((w) => w.end - w.start === gameSecondsToFrames(10))).toBe(true);
   });
@@ -267,7 +268,7 @@ describe('録画 287 の編成（フラワー + ウンファ：TU + エマ：TU�
     loadRecordsData(file),
   );
   const plan = planTeamRun(input);
-  const windows = plan.timeline.windows.filter((w) => w.slotIndex === 1 && w.effect.stat === 'weapon');
+  const windows = piecesOf(plan).filter((w) => w.slotIndex === 1 && w.effect.stat === 'weapon');
 
   it('matches the Explosive Rounds of recording 287 within 1: core, core in the distance bonus, core crit (287-08 の 2〜5 回目。C-0376)', () => {
     // 1 回目（2,206,017）は着弾の前にカモフラージュが外れた回（直接攻撃での解除。前提の外）で、比べない

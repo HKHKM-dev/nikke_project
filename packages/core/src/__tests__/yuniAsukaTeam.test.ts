@@ -13,6 +13,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
+import { healsOf, piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -64,7 +65,7 @@ describe('録画 078 の編成（V-0024）', () => {
   it('heals each slot once, on the first full charge shot (refreshes do not count)', () => {
     const first = plan.shots[YUNI]!.frames[0]!;
     expect(plan.shots[YUNI]!.frames.length).toBeGreaterThan(50);
-    expect(plan.timeline.heals).toEqual([
+    expect(healsOf(plan)).toEqual([
       { frame: first + 1, sourceSlotIndex: YUNI, slotIndex: YUNI },
       { frame: first + 1, sourceSlotIndex: YUNI, slotIndex: ASUKA },
     ]);
@@ -72,7 +73,7 @@ describe('録画 078 の編成（V-0024）', () => {
 
   it('gives Asuka S1 for 25 s from the first full charge shot, and never again', () => {
     const start = plan.shots[YUNI]!.frames[0]! + 1;
-    const s1 = plan.timeline.windows
+    const s1 = piecesOf(plan)
       .filter((w) => w.slotIndex === ASUKA && w.effect.stat === 'attack')
       .map((w) => ({ start: w.start, end: w.end }));
     expect(s1).toEqual([{ start, end: start + S1 }]);
@@ -86,9 +87,11 @@ describe('実戦寄りの編成', () => {
   it('heals Asuka on her burst uses as a separate window from Yuni (placeholder of point 1)', () => {
     const uses = plan.schedule!.activations.filter((a) => a.slotIndex === ASUKA).map((a) => a.frame);
     expect(uses.length).toBeGreaterThan(0);
-    const own = plan.timeline.heals.filter((h) => h.sourceSlotIndex === ASUKA).map((h) => h.frame);
+    const own = healsOf(plan)
+      .filter((h) => h.sourceSlotIndex === ASUKA)
+      .map((h) => h.frame);
     expect(own).toEqual(uses);
-    const fromYuni = plan.timeline.heals.filter((h) => h.sourceSlotIndex === 1 && h.slotIndex === ASUKA);
+    const fromYuni = healsOf(plan).filter((h) => h.sourceSlotIndex === 1 && h.slotIndex === ASUKA);
     expect(fromYuni).toHaveLength(1);
   });
 

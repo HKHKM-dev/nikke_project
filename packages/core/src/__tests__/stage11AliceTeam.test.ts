@@ -101,7 +101,7 @@ describe('録画 42: アリスの S1 は自分とアドミに付く（22.5、実
   it('opens 9 full bursts, III alternating アリス / サン, and ranks アリス then アドミ every time', () => {
     expect(windows).toHaveLength(9);
     expect(windows.map((w) => w.burstUsers[2])).toEqual([2, 3, 2, 3, 2, 3, 2, 3, 2]);
-    const s1 = plan.timeline.rankings.filter((r) => r.effect.effectIndex === 0);
+    const s1 = plan.history.rankings.filter((r) => r.effect.effectIndex === 0);
     expect(s1.map((r) => r.frame)).toEqual(windows.map((w) => w.start));
     for (const r of s1) {
       expect(r.targets).toEqual([2, 1]);
@@ -191,7 +191,7 @@ describe('録画 43: 同じフレームのバフも順位に入る（22.6、RANK
   const windows = plan.schedule!.fullBurstWindows;
 
   it('gives アリス’s S1 to マナ + アリス on アリス’s rounds and マナ + クラウン on マナ’s (recording: 2,580,367 / 1,274,396)', () => {
-    const s1 = plan.timeline.rankings.filter((r) => r.effect.effectIndex === 0);
+    const s1 = plan.history.rankings.filter((r) => r.effect.effectIndex === 0);
     expect(s1).toHaveLength(9);
     s1.forEach((r, k) => {
       // マナは常時 58.08% と FB 開始時 63.36%（同じフレーム）、クラウンは自分の S1 の +51,921（同じフレーム）で上がる
@@ -220,7 +220,7 @@ describe('録画 43 の代案（サン）: アドミには一度も付かない'
 
   it('gives アリス’s S1 to アリス + クラウン (never アドミ), since クラウン’s same-frame +51,921 counts', () => {
     const windows = plan.schedule!.fullBurstWindows;
-    const s1 = plan.timeline.rankings.filter((r) => r.effect.effectIndex === 0);
+    const s1 = plan.history.rankings.filter((r) => r.effect.effectIndex === 0);
     expect(s1).toHaveLength(9);
     s1.forEach((r, k) => {
       // アリスの回はアリス 237,904 → クラウン 132,406、サンの回はクラウン → アリス 119,896（サン 119,816 は 80 差で 3 位）
@@ -241,8 +241,8 @@ describe.each(Object.entries(TEAMS))('sim vs calc (22.4): %s', (_name, input) =>
   it('agree exactly on the schedule, the rankings, the instants, the skill hits and the shot-counted groups', () => {
     expect(sim.schedule).toEqual(calc.schedule);
     expect(sim.instants).toEqual(plan.instants);
-    expect(sim.timeline.rankings).toEqual(calc.timeline.rankings);
-    expect(calc.timeline.rankings.length).toBeGreaterThan(0);
+    expect(sim.history.rankings).toEqual(calc.history.rankings);
+    expect(calc.history.rankings.length).toBeGreaterThan(0);
     input.slots.forEach((_, i) => {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;

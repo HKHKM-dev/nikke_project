@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
-import { ENEMY } from '../holders.ts';
+import { ENEMY, valuePiecesOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS, isStateContent, resolveTimed } from '../resolve.ts';
 import type { TimelineSlot } from '../timeline.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEffect } from '../types.ts';
@@ -127,8 +127,10 @@ describe('amplifies の窓', () => {
     expect(first.history.amplified.map((p) => [p.holder, p.start, p.end, Number(p.value.toFixed(6))])).toEqual(
       pieces.map((p) => [ENEMY, ...p]),
     );
-    // 書き出しでは、参照する窓を受けた枠（味方全体）ごとの窓に写す
-    const written = t.windows.filter((w) => !isStateContent(w.effect) && w.effect.amplifies !== undefined);
+    // 値の小片では、効果の対象の枠（味方全体）ごとの小片に写す
+    const written = valuePiecesOf(first.history).filter(
+      (w) => !isStateContent(w.effect) && w.effect.amplifies !== undefined,
+    );
     expect(written.map((w) => [w.slotIndex, w.start, w.end, Number(w.effect.value.toFixed(6))])).toEqual(
       pieces.flatMap((p) => [
         [0, ...p],

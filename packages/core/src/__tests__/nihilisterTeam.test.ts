@@ -14,6 +14,7 @@ import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -106,9 +107,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, nihilis
   });
 
   it('gives max ammo +6 for 15 s on each burst (overlapping bursts extend the window)', () => {
-    const windows = plan.timeline.windows.filter(
-      (w) => w.sourceSlotIndex === nihilister && w.effect.stat === 'maxAmmo',
-    );
+    const windows = piecesOf(plan).filter((w) => w.sourceSlotIndex === nihilister && w.effect.stat === 'maxAmmo');
     // バーストごとの [効果の発火, 効果の発火 + 15 秒) の和集合（再発火は上書き延長）
     const expected: [number, number][] = [];
     for (const u of fires) {

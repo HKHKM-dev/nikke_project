@@ -13,6 +13,7 @@ import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -73,7 +74,7 @@ describe('録画 079 の編成（V-0033）', () => {
 
   it('keeps the charge damage multiplier for exactly 10 Helm shots after each burst (C-0099)', () => {
     const shots = plan.shots[HELM_SLOT]!.frames;
-    const windows = plan.timeline.windows.filter(
+    const windows = piecesOf(plan).filter(
       (w) => w.slotIndex === HELM_SLOT && w.effect.stat === 'chargeDamageMultiplier',
     );
     const uses = plan.schedule!.activations.filter((a) => a.slotIndex === HELM_SLOT).map((a) => a.frame);
@@ -135,9 +136,9 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, helm })
   const plan = planTeamRun(input);
 
   it('gives the normal crit rate to allies and the charge damage multiplier only to Helm', () => {
-    const crit = plan.timeline.windows.filter((w) => w.sourceSlotIndex === helm && w.effect.stat === 'normalCritRate');
+    const crit = piecesOf(plan).filter((w) => w.sourceSlotIndex === helm && w.effect.stat === 'normalCritRate');
     expect(new Set(crit.map((w) => w.slotIndex)).size).toBe(input.slots.length);
-    const charge = plan.timeline.windows.filter((w) => w.effect.stat === 'chargeDamageMultiplier');
+    const charge = piecesOf(plan).filter((w) => w.effect.stat === 'chargeDamageMultiplier');
     expect(charge.length).toBeGreaterThan(0);
     expect(charge.every((w) => w.slotIndex === helm)).toBe(true);
   });

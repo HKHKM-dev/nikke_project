@@ -12,6 +12,7 @@ import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -80,9 +81,7 @@ describe('同じ部隊の味方全体に（targetSquad）', () => {
 
 describe('基本チャージ時間が一番長い味方（longestChargeTime）', () => {
   const chargeWindows = (input: TeamInput) =>
-    planTeamRun(input).timeline.windows.filter(
-      (w) => w.effect.source.resourceId === MANA && w.effect.stat === 'chargeSpeed',
-    );
+    piecesOf(planTeamRun(input)).filter((w) => w.effect.source.resourceId === MANA && w.effect.stat === 'chargeSpeed');
 
   it('cuts 0.18 s from Delta at every full burst start (録画 020 の編成。C-0267)', () => {
     const input = team([fixedSlot(291), fixedSlot(20), fixedSlot(MANA)], 2);

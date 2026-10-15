@@ -10,6 +10,7 @@ import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -71,7 +72,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, cocoa }
   const plan = planTeamRun(input);
 
   it('gives no buff windows or instants from Cocoa (C-0092)', () => {
-    expect(plan.timeline.windows.filter((w) => w.sourceSlotIndex === cocoa)).toEqual([]);
+    expect(piecesOf(plan).filter((w) => w.sourceSlotIndex === cocoa)).toEqual([]);
     expect(plan.instants.filter((e) => e.sourceSlotIndex === cocoa)).toEqual([]);
   });
 
