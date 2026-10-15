@@ -35,7 +35,7 @@ import {
   type TargetSquad,
   type StateGrantEffect,
   type TimedEffect,
-  isStaticStateGrant,
+  staticStatesOf,
 } from './types.ts';
 import type { NamedStateId } from './states.ts';
 
@@ -239,13 +239,15 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
     throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
   }
   const resolved: ResolvedEffect[] = [];
+  const statics = new Set(staticStatesOf(def));
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
     const skill = character.skills[slot];
     for (const effect of entry.effects) {
-      // 名前の付いた状態の語彙編（plan/design-named-state.md 3.4 節）: 静的な付与の中身は常時パッシブ（効果の並びの位置で足す）
+      // 名前の付いた状態の語彙編（plan/design-named-state.md 3.4 節）: 静的な付与の中身は常時パッシブ（効果の並びの位置で足す）。
+      // 2 段目の段 1: 静的かは状態ごと（staticStatesOf）
       if (effect.kind === 'state') {
-        if (isStaticStateGrant(effect)) resolved.push(...staticContentsOf(effect, character, slot, levels[slot]));
+        if (statics.has(effect.state)) resolved.push(...staticContentsOf(effect, character, slot, levels[slot]));
         continue;
       }
       if (effect.kind !== 'passive') continue;
@@ -474,8 +476,10 @@ function resolveWindowFields(
  */
 export type ResolvedStateGrant = ResolvedWindowFields & {
   state: NamedStateId;
-  /** 静的な付与（isStaticStateGrant）。持ち主は編成の段で決まり、中身は常時パッシブ（resolvePassives） */
+  /** 静的な状態の付与（staticStatesOf）。持ち主は編成の段で決まり、中身は常時パッシブ（resolvePassives） */
   isStatic: boolean;
+  /** 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印（同じ定義の同じ状態の付与で揃う） */
+  undispellable?: true;
 };
 
 /**
@@ -492,12 +496,15 @@ export function resolveStateGrants(
     throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
   }
   const trim = burstWindowTrimOf(character);
+  const statics = new Set(staticStatesOf(def));
   const untrimmed: ResolvedStateGrant[] = [];
   for (const slot of SKILL_SLOTS) {
     def.skills[slot].effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'state') return;
       const window = resolveWindowFields(effect, character, slot, levels[slot], effectIndex);
-      untrimmed.push({ ...window, state: effect.state, isStatic: isStaticStateGrant(effect) });
+      const grant: ResolvedStateGrant = { ...window, state: effect.state, isStatic: statics.has(effect.state) };
+      if (effect.undispellable) grant.undispellable = true;
+      untrimmed.push(grant);
     });
   }
   const resolved = untrimmed.map((g) =>
@@ -539,10 +546,11 @@ export function resolveStateContents(
   levels: SkillLevels,
 ): ResolvedStateContent[] {
   const grants = resolveStateGrants(def, character, levels);
+  const statics = new Set(staticStatesOf(def));
   const out: ResolvedStateContent[] = [];
   for (const slot of SKILL_SLOTS) {
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      if (effect.kind !== 'state' || effect.contents === undefined || isStaticStateGrant(effect)) return;
+      if (effect.kind !== 'state' || effect.contents === undefined || statics.has(effect.state)) return;
       const grant = grants.find((g) => g.source.skill === slot && g.effectIndex === effectIndex)!;
       effect.contents.forEach((item, subIndex) => {
         const r: ResolvedStateContent = {
@@ -567,6 +575,45 @@ export function resolveStateContents(
         if (grant.assumes) r.assumes = grant.assumes;
         out.push(r);
       });
+    });
+  }
+  return out;
+}
+
+/**
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解決した解除（removeState）。対象は自分。effectIndex は解除のスロットの
+ * 何番目の効果か
+ */
+export type ResolvedRemoveState = {
+  source: ResolvedEffect['source'];
+  effectIndex: number;
+  state: NamedStateId;
+  trigger: ResolvedTrigger;
+  condition?: EffectCondition;
+};
+
+/** 2 段目の段 1: 定義の解除を Lv の数値に解く（解くのはトリガーの回数の参照だけ） */
+export function resolveRemoveStates(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedRemoveState[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const out: ResolvedRemoveState[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const skill = character.skills[slot];
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'removeState') return;
+      const r: ResolvedRemoveState = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        effectIndex,
+        state: effect.state,
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+      };
+      if (effect.condition) r.condition = effect.condition;
+      out.push(r);
     });
   }
   return out;

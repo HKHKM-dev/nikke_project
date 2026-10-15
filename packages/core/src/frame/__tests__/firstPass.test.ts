@@ -17,7 +17,7 @@ import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
 import { itemsOf } from '../../skills/holders.ts';
 import { resolvePassiveStates, type TimelineSlot } from '../../skills/timeline.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
+import { parseSkillDefinition, type SkillDefinition, type SkillEffect } from '../../skills/types.ts';
 import type { CharacterData, ShotParams, SkillRaw } from '../../types.ts';
 import { runFirstPass } from '../firstPass.ts';
 import { planShots, type ShotLog } from '../shots.ts';
@@ -84,12 +84,15 @@ function withoutHits(logs: readonly (ShotLog | null)[]): (Omit<ShotLog, 'hits' |
   });
 }
 
-/** マナの定義から、射撃に効く効果（S2 のチャージ時間▼）を外したもの */
+/**
+ * マナの定義の S2 を、常時のゲージ速度だけにしたもの（2 段目の段 1 より前の書き方。マターシグマを常時パッシブにし、射撃に効く効果
+ * （チャージ時間▼）と、フルバーストの開始・終わりの効果は外す）。常時のゲージ速度の受け渡しを確かめる用
+ */
 function manaWithoutFiring() {
   const def = loadDefinition(290);
   const skill2 = def.skills.skill2;
-  const effects = skill2.effects.filter((e) => !(e.kind === 'timed' && e.stat === 'chargeSpeed'));
-  expect(effects).toHaveLength(skill2.effects.length - 1);
+  expect(skill2.effects[0]).toMatchObject({ kind: 'state', state: 'metalSigma', trigger: 'battleStart' });
+  const effects: SkillEffect[] = [{ kind: 'passive', target: 'self', stat: 'burstGaugeSpeed', ref: 1 }];
   return { ...def, skills: { ...def.skills, skill2: { ...skill2, effects } } };
 }
 

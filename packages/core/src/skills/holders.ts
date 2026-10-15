@@ -23,12 +23,14 @@ import {
   isStateContent,
   resolveInstant,
   resolvePassives,
+  resolveRemoveStates,
   resolveStateContents,
   resolveStateGrants,
   resolveTimed,
   type AppliedEffect,
   type ResolvedEffect,
   type ResolvedInstantEffect,
+  type ResolvedRemoveState,
   type ResolvedStateContent,
   type ResolvedStateGrant,
   type ResolvedTimedEffect,
@@ -49,6 +51,7 @@ import {
 } from './triggers.ts';
 import {
   SKILL_SLOTS,
+  conditionReadsItems,
   isFiringStat,
   isHitStateStat,
   isStateStat,
@@ -117,14 +120,19 @@ export type HeldTrack = {
   stage: HeldStage;
   /** 窓の始まり（昇順）。確率のきっかけは機会（opportunities）で持つ */
   starts: number[];
+  /**
+   * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 状態の件の列を閉じる解除の発火のフレーム（昇順・重なりなし）。発火の f に
+   * 効いている件を f + 1 で切る（同じフレーム f に始まりのある列は閉じない）。状態のほかは空
+   */
+  closes: number[];
   /** 状態: 射撃の回数のきっかけの付与が発火を足したか（calc の射撃の数え方の判定 hasOwnShotCountItem が読む） */
   shotCount: boolean;
   /** 確率のきっかけの機会（出どころで共有。ほかは null） */
   opportunities: ChanceOpportunity[] | null;
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
   items: HeldItem[];
-  /** items を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・フルバーストの窓） */
-  seen: [number, number, number, number, number];
+  /** items を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・フルバーストの窓・閉じるフレーム） */
+  seen: [number, number, number, number, number, number];
 };
 
 /** 強化（amplifies）の出どころ。受け付けと値は、ループの後に履歴を閉じる時に決める（amplify） */
@@ -212,6 +220,9 @@ type StateGroup = {
 
 type CycleSource = { slotIndex: number; effect: ResolvedCycleEvery; fires: TriggerTracker; track: HeldTrack };
 
+/** 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除 1 つ（対象は自分） */
+type RemoveSource = { sourceSlotIndex: number; effect: ResolvedRemoveState; stage: HeldStage; fires: TriggerTracker };
+
 /** 1 パス目のループが使う、持ち主ごとの件の一覧 */
 export type HolderLists = {
   /** timed・状態・循環の間隔の変更のどれかがあるか（無ければ手順 3 の出来事は要らない） */
@@ -241,6 +252,13 @@ export type HolderLists = {
   openWeaponChange(holder: number, weaponId: string, end: number): boolean;
   /** 枠 slotIndex の、段の循環 targetSkill に効く間隔の変更の件のうち、フレーム frame に効いているものの間隔 */
   cycleEveryAt(slotIndex: number, targetSkill: string, frame: number): number[];
+  /**
+   * 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 枠 holder にフレーム frame に効いている、時間で変わるバーストゲージの
+   * チャージ速度の和（timed・状態の中身。常時の値は含まない）。ゲージを足す手順 2 で呼べば f − 1 までに付いた件になる
+   */
+  gaugeSpeedAt(holder: number, frame: number): number;
+  /** 時間で変わるバーストゲージのチャージ速度の件の列を持ちうるか */
+  hasGaugeSpeedTracks(holder: number): boolean;
   /** ループの後の履歴 */
   history(): HolderHistory;
 };
@@ -299,6 +317,38 @@ function stateItems(
     }));
   }
   return itemsOfPairs(unionWindows(starts, grant.durationFrames, frames));
+}
+
+/**
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除で閉じる状態の件。閉じる発火のフレーム c のうち、同じフレームに始まりの
+ * 無いもの（付与が勝つ）で始まりの列を区切り、区切りごとに今と同じ規則で件を作って、c より前の区切りの件を c + 1 で切る。
+ * 区切りの後の件は c + 1 以降に始まる。スタックしない件は、切った件と後の区切りの件がちょうど続けば 1 つにする（和集合の上書き延長と
+ * 同じ見え方）。スタックする件は段ごとに切り、後の区切りは段 1 から数え直す
+ */
+function closedStateItems(
+  starts: readonly number[],
+  closes: readonly number[],
+  build: (starts: readonly number[]) => HeldItem[],
+): HeldItem[] {
+  const effective = closes.filter((c) => !starts.includes(c));
+  if (effective.length === 0) return build(starts);
+  const out: HeldItem[] = [];
+  let lower = -Infinity;
+  for (const c of [...effective, Infinity]) {
+    const segment = starts.filter((s) => s > lower && s < c);
+    lower = c;
+    for (const item of build(segment)) {
+      const cut: HeldItem = { ...item, end: Math.min(item.end, c + 1) };
+      if (cut.start >= cut.end) continue;
+      const last = out[out.length - 1];
+      if (last !== undefined && last.stack === undefined && cut.stack === undefined && cut.start <= last.end) {
+        last.end = Math.max(last.end, cut.end);
+        continue;
+      }
+      out.push(cut);
+    }
+  }
+  return out;
 }
 
 /** timed の件（段 A までの planBuffTimeline の distribute と同じ規則）。確率のきっかけと強化は呼ぶ側 */
@@ -373,7 +423,8 @@ function stateGroupsOf(
         };
         groups.push(group);
       }
-      const stage: HeldStage = dependsOnRank(grant) ? 2 : grant.condition !== undefined ? 1.5 : 1;
+      // 2 段目の段 1: 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節）
+      const stage: HeldStage = dependsOnRank(grant) ? 2 : conditionReadsItems(grant.condition) ? 1.5 : 1;
       group.grants.push({ grant, stage, fires: firesOf(grant.trigger, sourceSlotIndex), group });
       if (STAGE_RANK[stage] > STAGE_RANK[group.stage]) group.stage = stage;
     }
@@ -385,7 +436,8 @@ function stateGroupsOf(
 function stageOfTimed(effect: ResolvedTimedEffect): HeldStage {
   if (effect.amplifies !== undefined) return 2.5;
   if (dependsOnRank(effect)) return 2;
-  if (effect.condition !== undefined) return 1.5;
+  // 2 段目の段 1: 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節）
+  if (conditionReadsItems(effect.condition)) return 1.5;
   return 1;
 }
 
@@ -413,10 +465,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       origin,
       stage,
       starts: [],
+      closes: [],
       shotCount: false,
       opportunities,
       items: [],
-      seen: [-1, -1, -1, -1, -1],
+      seen: [-1, -1, -1, -1, -1, -1],
     };
     tracks.push(track);
     return track;
@@ -505,6 +558,20 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
+  // ---- 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除（対象は自分。件を見る条件つきは段 1.5） ----
+  const removeSources: RemoveSource[] = [];
+  slots.forEach((slot, sourceSlotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveRemoveStates(slot.definition, slot.character, slot.levels)) {
+      removeSources.push({
+        sourceSlotIndex,
+        effect,
+        stage: conditionReadsItems(effect.condition) ? 1.5 : 1,
+        fires: firesOf(effect.trigger, sourceSlotIndex),
+      });
+    }
+  });
+
   // ---- 吸収回復の窓（効果ごと・持ち主ごと。C-0082・C-0087） ----
   /** 効果は出どころの枠・スロット・効果の番号で引く（1 パス目は効果を別に解決するので、同じオブジェクトではない） */
   const healKey = (sourceSlotIndex: number, effect: ResolvedInstantEffect): string =>
@@ -560,6 +627,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       log?.frames.length ?? 0,
       log?.weaponChangeEnds?.length ?? 0,
       windows.length,
+      track.closes.length,
     ];
     if (seen.every((v, i) => v === track.seen[i])) return track.items;
     track.seen = seen;
@@ -578,9 +646,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
               }))
             : timedItems(o.effect, track.starts, log, fullBurstEnds(), frames);
         break;
-      case 'state':
-        track.items = stateItems(o.grant, track.starts, log?.frames ?? [], fullBurstEnds(), frames);
+      case 'state': {
+        const ends = fullBurstEnds();
+        track.items = closedStateItems(track.starts, track.closes, (starts) =>
+          stateItems(o.grant, starts, log?.frames ?? [], ends, frames),
+        );
         break;
+      }
       case 'cycleEvery':
         track.items = itemsOfPairs(unionWindows(track.starts, o.effect.durationFrames, frames));
         break;
@@ -644,6 +716,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return byState;
   });
 
+  // ゲージ: 時間で変わるバーストゲージのチャージ速度の件（2 段目の段 1。plan/design-skill-stage1.md 1.6 節。段によらない。状態の中身も）
+  const gaugeViews = viewsOf((_, e) => e.stat === 'burstGaugeSpeed');
+
   const holdsAt = (condition: EffectCondition, sourceSlotIndex: number, frame: number): boolean => {
     if (condition.selfState !== undefined) {
       const { state, present } = condition.selfState;
@@ -667,6 +742,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     return true;
   };
+
+  /**
+   * 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: 条件の usedBurst（直前に自分がバーストスキルを使用していれば）。発火の文脈の
+   * burstUsers に自分がいるか。件を見ないので、段 1 の効果でも発火の前に見る。鍵が無ければ true
+   */
+  const usedBurstHolds = (
+    condition: EffectCondition | undefined,
+    trigger: ResolvedTrigger,
+    ev: FrameEvents,
+    sourceSlotIndex: number,
+  ): boolean =>
+    condition?.usedBurst !== true || (fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) ?? false);
 
   const rankSlots = rankSlotsOf(slots, passive);
   const finalAttacksAtFrame = (frame: number): (number | null)[] => {
@@ -736,6 +823,19 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     });
     return targets;
   };
+  /**
+   * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除の発火 1 つ。持ち主（自分）のその状態の件の列（出どころは問わない）に、
+   * 閉じるフレームを足す。解除不可の件の列は閉じない
+   */
+  const fireRemove = (src: RemoveSource, frame: number): void => {
+    if (frame >= frames) return;
+    for (const track of tracks) {
+      const o = track.origin;
+      if (track.holder !== src.sourceSlotIndex || o.kind !== 'state' || o.state !== src.effect.state) continue;
+      if (o.grant.undispellable === true) continue;
+      if (!track.closes.includes(frame)) insertSorted(track.closes, frame);
+    }
+  };
   const recordRanking = (
     frame: number,
     sourceSlotIndex: number,
@@ -767,6 +867,23 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const stage1Grants = grantsAt(1);
   const stage15Grants = grantsAt(1.5);
   const stage2Grants = grantsAt(2);
+  const stage1Removes = removeSources.filter((r) => r.stage === 1);
+  const stage15Removes = removeSources.filter((r) => r.stage === 1.5);
+  const skipGrant = (g: GrantSource, frame: number): void => {
+    conditionSkips.push({
+      frame,
+      sourceSlotIndex: g.group.sourceSlotIndex,
+      effect: { source: g.grant.source, effectIndex: g.grant.effectIndex },
+      state: g.group.state,
+    });
+  };
+  const skipEffect = (
+    sourceSlotIndex: number,
+    e: { source: ResolvedEffect['source']; effectIndex: number },
+    frame: number,
+  ): void => {
+    conditionSkips.push({ frame, sourceSlotIndex, effect: { source: e.source, effectIndex: e.effectIndex } });
+  };
 
   const ampFires = new Map(amplifiers.map((amp) => [amp, firesOf(amp.effect.trigger, amp.sourceSlotIndex)]));
 
@@ -778,6 +895,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 段 1: 条件なし・順位の対象でない付与と効果（確率のきっかけは機会を貯める）
     for (const g of stage1Grants) {
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
+      if (!usedBurstHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex)) {
+        skipGrant(g, f);
+        continue;
+      }
       fireGrant(g, battleStartOnly ? 0 : startOfFire(g.grant.trigger, f), fireContextOf(g.grant.trigger, ev));
     }
     for (const src of stage1Timed) {
@@ -793,7 +914,20 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         continue;
       }
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
+      if (!usedBurstHolds(src.effect.condition, src.effect.trigger, ev, src.sourceSlotIndex)) {
+        skipEffect(src.sourceSlotIndex, src.effect, f);
+        continue;
+      }
       fireTimed(src, battleStartOnly ? 0 : startOfFire(src.effect.trigger, f), fireContextOf(src.effect.trigger, ev));
+    }
+    // 2 段目の段 1: 解除（閉じるのは発火の次のフレームなので、段の中の順は同じフレームの判定に効かない。plan/design-skill-stage1.md 1.2 節）
+    for (const r of stage1Removes) {
+      if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
+      if (!usedBurstHolds(r.effect.condition, r.effect.trigger, ev, r.sourceSlotIndex)) {
+        skipEffect(r.sourceSlotIndex, r.effect, f);
+        continue;
+      }
+      fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
     // 段 C: 敵の状態（持続ダメージの発火のフレーム。ループの中の判定は読まない）
     for (const e of enemyStateSources) {
@@ -814,28 +948,36 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 段 1.5: 条件つきの付与と効果。判定は段 1 の件だけを見る（条件つきどうしは連鎖させない）
     for (const g of stage15Grants) {
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
-      if (!holdsAt(g.grant.condition!, g.group.sourceSlotIndex, f)) {
-        conditionSkips.push({
-          frame: f,
-          sourceSlotIndex: g.group.sourceSlotIndex,
-          effect: { source: g.grant.source, effectIndex: g.grant.effectIndex },
-          state: g.group.state,
-        });
+      if (
+        !usedBurstHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex) ||
+        !holdsAt(g.grant.condition!, g.group.sourceSlotIndex, f)
+      ) {
+        skipGrant(g, f);
         continue;
       }
       fireGrant(g, battleStartOnly ? 0 : startOfFire(g.grant.trigger, f), fireContextOf(g.grant.trigger, ev));
     }
     for (const src of stage15Timed) {
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
-      if (!holdsAt(src.effect.condition!, src.sourceSlotIndex, f)) {
-        conditionSkips.push({
-          frame: f,
-          sourceSlotIndex: src.sourceSlotIndex,
-          effect: { source: src.effect.source, effectIndex: src.effect.effectIndex },
-        });
+      if (
+        !usedBurstHolds(src.effect.condition, src.effect.trigger, ev, src.sourceSlotIndex) ||
+        !holdsAt(src.effect.condition!, src.sourceSlotIndex, f)
+      ) {
+        skipEffect(src.sourceSlotIndex, src.effect, f);
         continue;
       }
       fireTimed(src, battleStartOnly ? 0 : startOfFire(src.effect.trigger, f), fireContextOf(src.effect.trigger, ev));
+    }
+    for (const r of stage15Removes) {
+      if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
+      if (
+        !usedBurstHolds(r.effect.condition, r.effect.trigger, ev, r.sourceSlotIndex) ||
+        !holdsAt(r.effect.condition!, r.sourceSlotIndex, f)
+      ) {
+        skipEffect(r.sourceSlotIndex, r.effect, f);
+        continue;
+      }
+      fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
     // 段 2: 順位の対象。発火のフレームの順位（段 1・1.5 の攻撃力の件。同じフレームに付いたものも入れる）
     for (const g of stage2Grants) {
@@ -885,7 +1027,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       stateGroups.length > 0 ||
       cycleSources.length > 0 ||
       amplifiers.length > 0 ||
-      enemyStateSources.length > 0,
+      enemyStateSources.length > 0 ||
+      removeSources.length > 0,
     registerBattleStart() {
       if (frames <= 0) return;
       register(emptyEvents(0), true);
@@ -941,6 +1084,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         .filter((c) => c.slotIndex === slotIndex && c.effect.targetSkill === targetSkill)
         .flatMap((c) => activeAt(c.track, frame).map(() => c.effect.every));
     },
+    gaugeSpeedAt(holder, frame) {
+      let sum = 0;
+      for (const v of gaugeViews[holder] ?? []) {
+        for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
+      }
+      return sum;
+    },
+    hasGaugeSpeedTracks: (holder) => (gaugeViews[holder] ?? []).length > 0,
     history() {
       for (const track of tracks) readItems(track);
       const amplified = amplify(tracks, amplifiers, slots, frames);

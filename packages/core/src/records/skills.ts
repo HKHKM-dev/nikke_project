@@ -233,16 +233,18 @@ function triggerLabel(e: SkillEffect): string | undefined {
   return t.count;
 }
 
-/** 効果の短い説明（kind・トリガー・stat か damageType。状態の付与は状態と中身の stat） */
+/** 効果の短い説明（kind・トリガー・stat か damageType。状態の付与は状態と中身の stat、解除は外す状態） */
 export function effectLabel(e: SkillEffect): string {
   const detail =
     e.kind === 'state'
       ? `${e.state}${e.contents === undefined ? '' : `（${e.contents.map((c) => c.stat).join('・')}）`}`
-      : 'stat' in e
-        ? e.stat
-        : 'damageType' in e
-          ? e.damageType
-          : undefined;
+      : e.kind === 'removeState'
+        ? e.state
+        : 'stat' in e
+          ? e.stat
+          : 'damageType' in e
+            ? e.damageType
+            : undefined;
   return [e.kind, triggerLabel(e), detail].filter((x) => x !== undefined).join('・');
 }
 

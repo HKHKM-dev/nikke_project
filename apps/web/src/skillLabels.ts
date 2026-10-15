@@ -1,5 +1,12 @@
 // スキル関連の表示用ラベル（React 非依存）
-import { ELEMENT_LABEL, framesToGameSeconds, isStateContent, namedStateName } from '@nikke/core';
+import {
+  ELEMENT_LABEL,
+  SKILL_SLOTS,
+  framesToGameSeconds,
+  isStateContent,
+  namedStateName,
+  staticStatesOf,
+} from '@nikke/core';
 import type {
   BasicBurstStep,
   AppliedEffect,
@@ -12,8 +19,10 @@ import type {
   BuffTrigger,
   EffectCondition,
   NamedStateId,
+  RemoveStateEffect,
   ResolvedTrigger,
   SkillDamageType,
+  SkillDefinition,
   SkillSlot,
   SkillNoteKind,
   SkillSupport,
@@ -143,19 +152,53 @@ export function formatWindowDuration(effect: AppliedTimedEffect): string {
 
 /**
  * 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.7 節）: 定義の付与。「ペルソナ状態（戦闘の始めから終わりまで）。
- * 中身: 有利コードの攻撃ダメージ」「追撃を付与。中身: 攻撃力」
+ * 中身: 有利コードの攻撃ダメージ」「追撃を付与。中身: 攻撃力」。2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: 戦闘の始めから
+ * 終わりまでと書くのは静的な状態（状態ごとの決め方。staticStatesOf）だけ。中身の無い付与は、同じ定義のその状態の中身を出す
  */
-export function formatStateGrant(effect: StateGrantEffect): string {
+export function formatStateGrant(effect: StateGrantEffect, definition: SkillDefinition | null): string {
   const name = stateLabel(effect.state);
-  const head =
-    effect.trigger === 'battleStart' && effect.durationUntil === 'battleEnd' && effect.target === 'self'
-      ? `${name}状態（戦闘の始めから終わりまで）`
-      : `${name}を付与`;
-  const contents =
-    effect.contents === undefined
+  const isStatic = staticStatesOf(definition).includes(effect.state);
+  const conditions = formatGrantCondition(effect.condition);
+  const head = isStatic
+    ? `${name}状態（戦闘の始めから終わりまで）`
+    : `${name}を付与${conditions === '' ? '' : `（${conditions}）`}`;
+  const contents = effect.contents ?? stateContentsOf(definition, effect.state);
+  const contentText =
+    contents === undefined
       ? '中身なし（ほかの効果が、対象の絞り込み・条件・きっかけでこの状態を見る）'
-      : `中身: ${effect.contents.map((c) => BUFF_STAT_LABEL[c.stat]).join('・')}`;
-  return `${head}。${contents}`;
+      : `中身${effect.contents === undefined ? '（同じ状態のほかの付与）' : ''}: ${contents.map((c) => BUFF_STAT_LABEL[c.stat]).join('・')}`;
+  return `${head}。${contentText}${effect.undispellable ? '。解除不可' : ''}`;
+}
+
+/** 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 定義の解除。「マターシグマを解除（自分がマターシグマ状態なら）」 */
+export function formatRemoveState(effect: RemoveStateEffect): string {
+  const conditions = formatGrantCondition(effect.condition);
+  return `${stateLabel(effect.state)}を解除${conditions === '' ? '' : `（${conditions}）`}`;
+}
+
+/** 定義のその状態の中身（同じ状態の付与のどれかが持つもの。無ければ undefined） */
+function stateContentsOf(definition: SkillDefinition | null, state: NamedStateId): StateGrantEffect['contents'] {
+  for (const slot of SKILL_SLOTS) {
+    for (const e of definition?.skills[slot].effects ?? []) {
+      if (e.kind === 'state' && e.state === state && e.contents !== undefined) return e.contents;
+    }
+  }
+  return undefined;
+}
+
+/** 付与・解除の条件（「自分が〈状態〉なら」「直前に自分がバーストを使用していれば」など）。無ければ空文字 */
+function formatGrantCondition(condition: EffectCondition | undefined): string {
+  if (condition === undefined) return '';
+  const parts: string[] = [];
+  if (condition.selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[condition.selfBuffed]}増加状態なら`);
+  if (condition.inFullBurst === true) parts.push('フルバーストタイムなら');
+  if (condition.selfState !== undefined) {
+    parts.push(
+      `自分が${stateLabel(condition.selfState.state)}状態${condition.selfState.present ? 'なら' : 'でなければ'}`,
+    );
+  }
+  if (condition.usedBurst === true) parts.push('直前に自分がバーストを使用していれば');
+  return parts.join('・');
 }
 
 /** バーストスロットの倍率ダメージ（burstDamage）の種別 */
@@ -250,6 +293,7 @@ export function formatTimedExtras(effect: AppliedTimedEffect): string {
       `自分が${stateLabel(condition.selfState.state)}状態${condition.selfState.present ? 'なら' : 'でなければ'}`,
     );
   }
+  if (condition?.usedBurst === true) parts.push('直前に自分がバーストを使用していれば');
   if (effect.durationUntil === 'fullBurstEnd') parts.push('フルバーストタイムの終了まで');
   if (effect.amplifies !== undefined) {
     parts.push(

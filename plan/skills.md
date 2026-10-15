@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 58・効果 198（根拠あり 190）・notes 223（根拠あり 68）
+件数: キャラ 58・効果 200（根拠あり 190）・notes 223（根拠あり 68）
 
 notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補足 9
 
@@ -439,14 +439,16 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
 ## 290 マナ
 
 - **skill1**: partial
-  - effects[0] passive・attack: C-0020（確定）
+  - effects[0] state・battleStart・metalGamma（attack）: C-0020（確定）
   - notes[0] 未対応: 通常攻撃 10 回ごとの味方全体の回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
   - notes[1] 前提の外: 味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない: C-0443（範囲外）
 - **skill2**: supported
-  - effects[0] passive・burstGaugeSpeed: C-0269（確定）
+  - effects[0] state・battleStart・metalSigma（burstGaugeSpeed）: C-0269（確定）
   - effects[1] timed・fullBurstStart・attackDamage: C-0281（確定）
   - effects[2] timed・fullBurstStart・attack: C-0281（確定）
   - effects[3] timed・fullBurstStart・chargeSpeed: C-0267（確定）
+  - effects[4] removeState・fullBurstStart・metalSigma: 根拠なし
+  - effects[5] state・fullBurstEnd・metalSigma: 根拠なし
 - **burst**: supported
   - effects[0] timed・burstUse・sustainedDamage: C-0299（確定）、C-0301（仮説）
   - effects[1] dot・burstUse: C-0300（確定）、C-0301（仮説）

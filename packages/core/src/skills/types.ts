@@ -37,8 +37,9 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
 /**
  * 何が上がるか。Stage 8 の 2 つ:
  * distributedDamage = 分配ダメージの乗数 (1 + Σ)。distributed の倍率ダメージにだけ掛かる（録画 21 で別枠の乗数と確認）。
- * burstGaugeSpeed = バーストゲージのチャージ速度 (1 + Σ)。対象の枠の射撃で溜まるゲージに掛かる。passive にだけ書ける
- * （timed に書くと 時刻表 → バフ窓 → ゲージ → 時刻表 と循環するため）。
+ * burstGaugeSpeed = バーストゲージのチャージ速度 (1 + Σ)。対象の枠の射撃で溜まるゲージに掛かる。Stage 8 では passive にだけ
+ * 書けた（timed に書くと 時刻表 → バフ窓 → ゲージ → 時刻表 と循環したため）。2 段目の段 1（plan/design-skill-stage1.md 1.6 節）で、
+ * 1 パス目がフレームごとに件を作るようになったので、timed と状態の中身にも書ける（f − 1 までに付いた件を、射手と同じに読む）。
  * Stage 10 の 3 つ（射撃に効く。ダメージの式は読まない）:
  * maxAmmo = 最大装弾数（scaling 'ratio' は %、'flat' は発数）、reloadSpeed = リロード速度（%）、chargeSpeed = チャージ速度（%）。
  * 1 パス目（frame/firstPass.ts）が射手に渡すので、timed にも書ける。
@@ -468,7 +469,7 @@ export type TimedEffect = TargetCountFields &
     excludeSelf?: ExcludeSelf;
     /**
      * ペルソナ編: 「〈名前〉状態の」。名前の付いた状態の語彙編（plan/design-named-state.md 5.4 節）: 静的な状態（その枠の定義の
-     * 静的な付与。isStaticStateGrant）を持つ枠だけ。target が 'allies' のときだけ書ける
+     * 静的な状態。staticStatesOf）を持つ枠だけ。target が 'allies' のときだけ書ける
      */
     targetState?: NamedStateId;
     /** ペルソナ編: 「基本バースト段階が N の」。対象の枠の CharacterData.burstStep が N の枠だけ。target が 'allies' のときだけ書ける */
@@ -557,14 +558,26 @@ export const DURATION_UNTILS = ['fullBurstEnd', 'battleEnd'] as const satisfies 
  * 1 パス目で窓を追う stat には書けない。damage ではクルミ S2 編の fullBurst を改めた。窓 [start, end) の中）。
  * enemyState = 敵（1 体の前提）にその状態が付いているなら（クルミ S2 編の targetStatus を改めた。damage。付いている区間は
  * 同じ状態の dot の最初の発火から最後の tick まで。編成のどの枠の dot でもよい）。
- * selfState = 自分（効果を出した枠）にその状態が付いているか（2 段目の段 1。plan/design-skill-stage1.md 1.1 節。timed・付与・damage）
+ * selfState = 自分（効果を出した枠）にその状態が付いているか（2 段目の段 1。plan/design-skill-stage1.md 1.1 節。timed・付与・damage）。
+ * usedBurst = 直前に自分がバーストスキルを使用していれば（同 1.5 節。timed・付与・解除。フルバーストの開始・終了のきっかけだけ。
+ * 発火の文脈の burstUsers に自分がいるか。件を見ないので、これだけの条件は効果の段を上げない）
  */
 export type EffectCondition = {
   selfBuffed?: BuffStat;
   inFullBurst?: true;
   enemyState?: NamedStateId;
   selfState?: SelfStateCondition;
+  usedBurst?: true;
 };
+
+/**
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: 条件が、件を見る鍵（selfBuffed・inFullBurst・selfState・enemyState）を持つか。
+ * 持たない条件（usedBurst だけ）は発火の文脈だけで決まるので、効果の段を上げない（skills/holders.ts）
+ */
+export function conditionReadsItems(condition: EffectCondition | undefined): boolean {
+  if (condition === undefined) return false;
+  return Object.keys(condition).some((key) => key !== 'usedBurst');
+}
 
 /**
  * 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 自分の状態の条件。present: true は「自分が〈状態〉なら」、false は
@@ -588,7 +601,8 @@ export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffSt
  * （plan/design-holder-effects.md 2.7 節）で窓を作るコードは 1 つになった。この制限は、使うキャラの定義を足す時に外す
  */
 export function isFirstPassTrackedStat(stat: BuffStat): boolean {
-  return stat === 'attack' || isFiringStat(stat) || isStateStat(stat);
+  // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるバーストゲージのチャージ速度は、1 パス目がゲージに読む
+  return stat === 'attack' || stat === 'burstGaugeSpeed' || isFiringStat(stat) || isStateStat(stat);
 }
 
 /** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */
@@ -945,7 +959,7 @@ export type StateContentItem = Pick<TimedEffect, 'stat' | 'ref' | 'scaling' | 'd
  * 名前の付いた状態の語彙編（同 5.2 節）: 状態の付与。timed から値の欄（stat・ref・scaling・decrease）を除き、目録の id（state）を
  * 足したもの。窓の作り方は timed と同じ（発火・対象・維持・上書き延長・スタック・条件・段）。同じ定義の同じ状態の付与は 1 つの状態
  * （発火をまとめて和集合・スタックの段にする）で、中身（contents）を持てるのはそのうち 1 つ、維持とスタックの上限は同じ。
- * 書けないのは name・amplifies と、トリガーの確率のきっかけ・{ applied }。静的な付与（isStaticStateGrant）は編成の段で持ち主が
+ * 書けないのは name・amplifies と、トリガーの確率のきっかけ・{ applied }。静的な状態（staticStatesOf）の付与は編成の段で持ち主が
  * 決まり、中身は常時パッシブとして解く
  */
 export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scaling' | 'decrease' | 'amplifies'> & {
@@ -962,8 +976,27 @@ export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scal
 };
 
 /**
- * 名前の付いた状態の語彙編（同 5.2 節）: 静的な付与か（戦闘開始時・戦闘の終わりまで・自分・発火の条件なし・スタックなし）。
- * 持ち主は編成の段（skills/composition.ts）で決まり、中身は常時パッシブとして解く（skills/resolve.ts の resolvePassives）
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 「〈名前〉解除」（Removes）。発火のフレーム f に、持ち主（自分）のその状態の件
+ * （出どころは問わない。スタックはすべて）を f + 1 で閉じる（f の判定には付いている）。解除不可の件（付与の undispellable）は
+ * 閉じない。同じフレーム f に同じ状態が付いた件の列は閉じない（付与が勝つ）。段は、条件なし（と usedBurst だけ）は 1、件を見る
+ * 条件つきは 1.5。消去（Cancels。解除不可の件も閉じる）は、使い手を定義する時に別の種類で足す（分類の設計書の論点 8）
+ */
+export type RemoveStateEffect = {
+  kind: 'removeState';
+  /** 目録の id（持ち主が味方の状態） */
+  state: NamedStateId;
+  trigger: EffectTrigger;
+  /** 説明文の例はどれも自分なので、自分だけ（味方の状態を外す例が出たら広げる） */
+  target: 'self';
+  condition?: EffectCondition;
+  assumes?: LocalizedText;
+};
+
+/**
+ * 名前の付いた状態の語彙編（同 5.2 節）: 静的な付与の形か（戦闘開始時・戦闘の終わりまで・自分・発火の条件なし・スタックなし）。
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: 静的な状態かは状態ごとに決める（staticStatesOf。どの付与もこの形で、
+ * 外す効果も無い状態だけ）。静的な状態の持ち主は編成の段（skills/composition.ts）で決まり、中身は常時パッシブとして解く
+ * （skills/resolve.ts の resolvePassives）
  */
 export function isStaticStateGrant(effect: StateGrantEffect): boolean {
   return (
@@ -976,16 +1009,23 @@ export function isStaticStateGrant(effect: StateGrantEffect): boolean {
   );
 }
 
-/** 名前の付いた状態の語彙編: 定義の静的な付与が付ける状態（宝物版・編成の条件を当てた後の定義を渡す）。重複なし */
+/**
+ * 名前の付いた状態の語彙編: 定義の静的な状態（宝物版・編成の条件を当てた後の定義を渡す）。重複なし・最初の付与の順。
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: 状態ごとに決める。定義のその状態の付与がどれも静的な付与の形
+ * （isStaticStateGrant）で、定義にその状態を外す効果（removeState）が無いときだけ静的。静的でない状態の付与は、静的な形でも
+ * 時間で変わる付与として件にする
+ */
 export function staticStatesOf(definition: SkillDefinition | null | undefined): NamedStateId[] {
   if (!definition) return [];
-  const out = new Set<NamedStateId>();
+  const allStatic = new Map<NamedStateId, boolean>();
+  const removed = new Set<NamedStateId>();
   for (const slot of SKILL_SLOTS) {
     for (const e of definition.skills[slot].effects) {
-      if (e.kind === 'state' && isStaticStateGrant(e)) out.add(e.state);
+      if (e.kind === 'state') allStatic.set(e.state, (allStatic.get(e.state) ?? true) && isStaticStateGrant(e));
+      else if (e.kind === 'removeState') removed.add(e.state);
     }
   }
-  return [...out];
+  return [...allStatic].flatMap(([state, all]) => (all && !removed.has(state) ? [state] : []));
 }
 
 /**
@@ -1009,6 +1049,7 @@ export type SkillEffect = (
   | BurstGaugeHitEffect
   | BurstReentryEffect
   | StateGrantEffect
+  | RemoveStateEffect
 ) &
   ClaimRefs;
 
@@ -1036,6 +1077,7 @@ export const SKILL_EFFECT_KINDS = [
   'burstGaugeHit',
   'burstReentry',
   'state',
+  'removeState',
 ] as const satisfies readonly SkillEffect['kind'][];
 type MissingEffectKind = Exclude<SkillEffect['kind'], (typeof SKILL_EFFECT_KINDS)[number]>;
 const _allEffectKinds: [MissingEffectKind] extends [never] ? true : never = true;
@@ -1529,12 +1571,6 @@ function parseTimedFields(
   if (stat === 'trueDamageConversion' && target !== 'self') {
     fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
   }
-  if (stat === 'burstGaugeSpeed') {
-    fail(
-      `${path}.stat`,
-      'burstGaugeSpeed is only allowed in passive (a timed gauge speed would feed back into the schedule)',
-    );
-  }
   let scaling: BuffScaling | undefined;
   if (stat !== undefined) {
     scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
@@ -1609,6 +1645,7 @@ function parseTimedFields(
       fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
     }
     if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
+    validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
   }
   if (stat !== undefined) {
@@ -1621,9 +1658,21 @@ function parseTimedFields(
 
 /** 名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）: 効果の種類ごとに受ける条件の鍵 */
 const CONDITION_KEYS_OF = {
-  timed: ['selfBuffed', 'inFullBurst', 'selfState'],
+  timed: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst'],
   damage: ['inFullBurst', 'enemyState', 'selfState'],
+  // 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除は、段 1.5 の判定に入る鍵と usedBurst
+  removeState: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst'],
 } as const satisfies Record<string, readonly ConditionKey[]>;
+
+/** 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける */
+function validateUsedBurst(condition: EffectCondition, trigger: EffectTrigger, path: string): void {
+  if (condition.usedBurst === undefined) return;
+  if (typeof trigger === 'string' && (BURST_USERS_TRIGGERS as readonly string[]).includes(trigger)) return;
+  fail(
+    `${path}.usedBurst`,
+    `usedBurst is only allowed with trigger ${BURST_USERS_TRIGGERS.join(' or ')}, got ${JSON.stringify(trigger)}`,
+  );
+}
 
 /**
  * 発火の条件（timed・付与・damage で 1 つの型）。キーは allowed のうち 1 つ以上で、どれも満たすときだけ発火する（AND）。
@@ -1649,6 +1698,10 @@ function parseCondition(c: Json, path: string, allowed: readonly ConditionKey[])
   }
   if (c.enemyState !== undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
   if (c.selfState !== undefined) condition.selfState = parseSelfStateCondition(c.selfState, `${path}.selfState`);
+  if (c.usedBurst !== undefined) {
+    if (c.usedBurst !== true) fail(`${path}.usedBurst`, 'expected true');
+    condition.usedBurst = true;
+  }
   if (Object.keys(condition).length === 0) fail(path, `expected at least one of ${allowed.join(', ')}`);
   return condition;
 }
@@ -2423,10 +2476,40 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'burstGaugeHit') return parseBurstGaugeHitEffect(v, path);
   if (v.kind === 'burstReentry') return parseBurstReentryEffect(v, path);
   if (v.kind === 'state') return parseStateGrantEffect(v, path);
+  if (v.kind === 'removeState') return parseRemoveStateEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry" or "state", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry", "state" or "removeState", got ${JSON.stringify(v.kind)}`,
   );
+}
+
+/**
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除。対象は自分だけ。トリガーの確率のきっかけ・{ applied }・時間の周期の
+ * きっかけは書けない（使い手の時に足す）。条件は、自分がその状態なら（selfState）のように、外す状態を見てもよい（閉じるのは f + 1 で、
+ * f の判定には付いている）
+ */
+function parseRemoveStateEffect(v: Record<string, Json>, path: string): RemoveStateEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  if (v.target !== 'self') {
+    fail(
+      `${path}.target`,
+      `expected "self" (removing a state of an ally is not supported), got ${JSON.stringify(v.target)}`,
+    );
+  }
+  const effect: RemoveStateEffect = { kind: 'removeState', state, trigger, target: 'self' };
+  if (v.condition !== undefined) {
+    const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.removeState);
+    validateUsedBurst(condition, trigger, `${path}.condition`);
+    effect.condition = condition;
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
 }
 
 function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' = 'skills'): SkillEntry {
@@ -2511,9 +2594,10 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
     }
     const first = grants[0]!;
     for (const g of grants.slice(1)) {
-      // 静的な付与は編成の段で持ち主が決まる（窓を作らない）ので、同じ状態を時間の中で付ける付与とは混ぜない
-      if (isStaticStateGrant(g.effect) !== isStaticStateGrant(first.effect)) {
-        fail(g.path, `grants of "${state}" need to be all static (battleStart, until battleEnd, self) or all not`);
+      // 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: 静的な付与の形と時間で変わる付与が混ざった状態は静的にしない
+      // （staticStatesOf）。解除不可は件の列ごとに見るので、同じ状態の付与で揃える
+      if ((g.effect.undispellable === true) !== (first.effect.undispellable === true)) {
+        fail(g.path, `grants of "${state}" need the same undispellable`);
       }
       if (durationFormOf(g.effect) !== durationFormOf(first.effect)) {
         fail(g.path, `grants of "${state}" need the same duration (${durationFormOf(first.effect)})`);
