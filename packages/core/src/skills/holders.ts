@@ -1049,35 +1049,50 @@ export function activeItemsAt(
 
 // ---- 書き出し（plan/design-holder-effects.md 2.6 節。段 E で消す） ----
 
-/** 件の列の窓（timed・状態の中身・確率のきっかけ。強化は別）。並びは作った順 */
-function windowsOfTrack(
-  track: HeldTrack,
-  slots: readonly TimelineSlot[],
-): { windows: BuffWindow[]; stateWindows: BuffWindow[] } {
-  const windows: BuffWindow[] = [];
-  const stateWindows: BuffWindow[] = [];
+/**
+ * 値の小片（plan/design-holder-effects.md 2.9 節。段 D の 1）: 味方の枠ごとに、区間の値に足す効果と、その値が効いている区間 [start, end)。
+ * 件（timed・状態の中身）と、確率のきっかけの期待値、強化の小片から作る。敵の件は、効果の対象の味方の各枠に写す（区間の値は味方の
+ * 各枠に足す。C-0138）。状態だけの stat（命中率）の小片も入る（区間に足すのは、着地点の計画があり持続の命中率▲を使う時だけ）
+ */
+export type ValuePiece = {
+  /** 値を足す味方の枠 */
+  slotIndex: number;
+  sourceSlotIndex: number;
+  /** 効果（値は、確率のきっかけの期待値・強化の値に直したもの） */
+  effect: WindowEffect;
+  start: number;
+  end: number;
+  /** スタックの段（1 始まり）。スタックしない効果はキーごと無い */
+  stack?: number;
+  stage: HeldStage;
+};
+
+/** 件の列の値の小片（timed・状態の中身・確率のきっかけ。強化は別）。並びは作った順 */
+function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValuePiece[] {
+  const pieces: ValuePiece[] = [];
   const push = (effect: WindowEffect, item: HeldItem): void => {
-    // 段 C: 敵の件は、効果の対象の味方の各枠の窓に写す（区間の値は味方の各枠に足す。C-0138）
+    // 段 C: 敵の件は、効果の対象の味方の各枠に写す
     const holders =
       track.holder === ENEMY && !isStateContent(effect)
         ? alliesOf(effect, track.sourceSlotIndex, slots)
         : [track.holder];
     for (const slotIndex of holders) {
-      const w: BuffWindow = {
+      const piece: ValuePiece = {
         slotIndex,
         sourceSlotIndex: track.sourceSlotIndex,
         effect: item.scale === undefined ? effect : { ...effect, value: chanceValueOf(effect.value, item.scale) },
         start: item.start,
         end: item.end,
+        stage: track.stage,
       };
-      if (item.stack !== undefined) w.stack = item.stack;
-      (isStateStat(effect.stat) ? stateWindows : windows).push(w);
+      if (item.stack !== undefined) piece.stack = item.stack;
+      pieces.push(piece);
     }
   };
   const o = track.origin;
   if (o.kind === 'timed') for (const item of track.items) push(o.effect, item);
   if (o.kind === 'state') for (const item of track.items) for (const c of o.contents) push(c, item);
-  return { windows, stateWindows };
+  return pieces;
 }
 
 /** 段 C: 敵の件の効果を写す味方の枠（効果の対象。敵の件の効果は味方全体で、絞り込みを持たない） */
@@ -1168,12 +1183,12 @@ function amplify(
   return { pieces, skips };
 }
 
-/** 窓の並びの鍵（時刻の順。同じフレームは段 → 出どころの枠 → 定義の順 → 持ち主 → スタックの段。論点 5） */
-function windowKey(w: BuffWindow, stage: HeldStage): number[] {
+/** 値の小片の並びの鍵（時刻の順。同じフレームは段 → 出どころの枠 → 定義の順 → 持ち主 → スタックの段。論点 5） */
+function pieceKey(w: ValuePiece): number[] {
   const subIndex = isStateContent(w.effect) ? w.effect.subIndex : -1;
   return [
     w.start,
-    STAGE_RANK[stage],
+    STAGE_RANK[w.stage],
     w.sourceSlotIndex,
     SKILL_ORDER[w.effect.source.skill] ?? 0,
     w.effect.effectIndex,
@@ -1212,6 +1227,44 @@ function passiveStatesOf(history: HolderHistory): (SlotBuffState | null)[] {
  * 履歴から BuffTimeline を書き出す（段 A までの planBuffTimeline の出力と同じ形。並びは時刻の順）。
  * 区間は、書き出した窓から組み立てる（skills/timeline.ts の buildSegments。段 D の 1 で履歴から作る形に移す）
  */
+/** 履歴の値の小片（味方の枠ごと。並びは時刻の順。区間の値はこの順に足す） */
+export function valuePiecesOf(history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots'>): ValuePiece[] {
+  const keyed: { piece: ValuePiece; key: number[] }[] = [];
+  for (const track of history.tracks) {
+    if (track.origin.kind !== 'timed' && track.origin.kind !== 'state') continue;
+    for (const piece of piecesOfTrack(track, history.slots)) keyed.push({ piece, key: pieceKey(piece) });
+  }
+  // 強化は、履歴を閉じる時に作った値の小片から（敵が持つ小片は、効果の対象の味方の各枠に写す）
+  for (const p of history.amplified) {
+    const holders = p.holder === ENEMY ? alliesOf(p.effect, p.sourceSlotIndex, history.slots) : [p.holder];
+    for (const slotIndex of holders) {
+      const piece: ValuePiece = {
+        slotIndex,
+        sourceSlotIndex: p.sourceSlotIndex,
+        effect: { ...p.effect, value: p.value },
+        start: p.start,
+        end: p.end,
+        stage: 2.5,
+      };
+      keyed.push({ piece, key: pieceKey(piece) });
+    }
+  }
+  return keyed.sort((a, b) => compareKeys(a.key, b.key)).map((x) => x.piece);
+}
+
+/** 値の小片を窓の形にする（書き出し。段 E で消す） */
+function windowOf(p: ValuePiece): BuffWindow {
+  const w: BuffWindow = {
+    slotIndex: p.slotIndex,
+    sourceSlotIndex: p.sourceSlotIndex,
+    effect: p.effect,
+    start: p.start,
+    end: p.end,
+  };
+  if (p.stack !== undefined) w.stack = p.stack;
+  return w;
+}
+
 export function buffTimelineOf(
   history: HolderHistory,
   schedule: BurstSchedule | null,
@@ -1219,17 +1272,10 @@ export function buffTimelineOf(
   sustainedHitRateUp = true,
 ): BuffTimeline {
   const { frames } = history;
-  const keyed: { window: BuffWindow; key: number[] }[] = [];
-  const keyedState: { window: BuffWindow; key: number[] }[] = [];
   const namedStateWindows: { window: NamedStateWindow; key: number[] }[] = [];
   const cycleWindows: CycleWindow[] = [];
   for (const track of history.tracks) {
     const o = track.origin;
-    if (o.kind === 'timed' || o.kind === 'state') {
-      const { windows, stateWindows } = windowsOfTrack(track, history.slots);
-      for (const w of windows) keyed.push({ window: w, key: windowKey(w, track.stage) });
-      for (const w of stateWindows) keyedState.push({ window: w, key: windowKey(w, track.stage) });
-    }
     if (o.kind === 'state') {
       for (const item of track.items) {
         const record: NamedStateWindow = {
@@ -1258,24 +1304,12 @@ export function buffTimelineOf(
       }
     }
   }
-  // 強化は、履歴を閉じる時に作った値の小片から
-  for (const p of history.amplified) {
-    const holders = p.holder === ENEMY ? alliesOf(p.effect, p.sourceSlotIndex, history.slots) : [p.holder];
-    for (const slotIndex of holders) {
-      const w: BuffWindow = {
-        slotIndex,
-        sourceSlotIndex: p.sourceSlotIndex,
-        effect: { ...p.effect, value: p.value },
-        start: p.start,
-        end: p.end,
-      };
-      keyed.push({ window: w, key: windowKey(w, 2.5) });
-    }
-  }
   const sortByKey = <T>(xs: { window: T; key: number[] }[]): T[] =>
     xs.sort((a, b) => compareKeys(a.key, b.key)).map((x) => x.window);
-  const windows = sortByKey(keyed);
-  const stateWindows = sortByKey(keyedState);
+  // 段 D の 1: 区間は値の小片から組む。窓（書き出し）も同じ小片から
+  const pieces = valuePiecesOf(history);
+  const windows = pieces.filter((p) => !isStateStat(p.effect.stat)).map(windowOf);
+  const stateWindows = pieces.filter((p) => isStateStat(p.effect.stat)).map(windowOf);
   const passive = passiveStatesOf(history);
   const conditionSkips = [...history.conditionSkips];
   const rankings = [...history.rankings]
@@ -1286,8 +1320,7 @@ export function buffTimelineOf(
     slots: history.slots,
     schedule,
     frames,
-    windows,
-    stateWindows,
+    pieces,
     passive,
     landings,
     sustainedHitRateUp,

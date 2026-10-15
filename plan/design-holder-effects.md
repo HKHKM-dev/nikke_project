@@ -173,7 +173,7 @@ declare function itemsOf(history: HolderHistory, filter: HeldEffectFilter): Held
 declare function eventsOf(history: HolderHistory, item: HeldEffect): HeldEvent[];
 ```
 
-- 段 B で、件を読む関数 `itemsOf`（絞り込んだ件。時刻の順）・`activeItemsAt`（持ち主にフレーム f に効いている件）と、強化の値の小片（`HolderHistory.amplified`）を置いた（`skills/holders.ts`。件は `HeldItemView`）。出来事（付き直し・外れた）の読み方は、使う読む側を移す段で足す。
+- 段 B で、件を読む関数 `itemsOf`（絞り込んだ件。時刻の順）・`activeItemsAt`（持ち主にフレーム f に効いている件）と、強化の値の小片（`HolderHistory.amplified`）を置いた（`skills/holders.ts`。件は `HeldItemView`）。出来事（付き直し・外れた）の読み方は、使う読む側を移す段で足す。段 D の 1 で、区間に足す値の小片（`valuePiecesOf`。味方の枠ごと）を置いた。
 - 区間は、件と値の小片から作る（段 D の 1）。境目は、件の始まり・終わりと値の小片の変わり目に、いまと同じくフルバーストの端・発動・着地点の境目を足したもの。段 E の後に `BuffTimeline` に残るのは、区間と履歴。
 
 ### 2.10 範囲の外

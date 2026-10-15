@@ -26,3 +26,4 @@
   - クルミのハッキングを敵の状態の件にし、damage の条件 `enemyState` は敵の状態の件を見る形にした（`frame/plan.ts` の `enemyStateSpans` を消した）。
   - 検証を足した（2.8 節）。常時の `damageTaken` は、観測値の比べる設定（録画 280・281 と V-0247 の予測）が使っていたので禁じず、いまのまま味方の各枠の常時の件にした（はじめに禁じた所、`records:check` で比べられない観測値が出て気づいた）。
   - 確かめ: `npm test`、`records:check`（生成物に差分なし）、`records:minimal`（感度に差分なし。16 秒）。
+- 2026-10-15: 段 D の 1 を実装した。区間を、書き出した窓ではなく、履歴の値の小片（`skills/holders.ts` の `valuePiecesOf`。件・確率のきっかけの期待値・強化の小片から作り、敵の件は効果の対象の味方の各枠に写す。並びは時刻の順）から組む形にした（`skills/timeline.ts` の `buildSegments` の入力を小片にした）。窓（書き出し）も同じ小片から作るので、段 E で窓を消しても区間の作り方は変わらない。確かめ: `npm test`、`records:check`（生成物に差分なし）、`records:minimal`（感度に差分なし）。
