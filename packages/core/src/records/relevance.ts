@@ -3,7 +3,7 @@
 // 的の表に無い通常攻撃の条件を要素として並べ、根拠が確定（か範囲外）でないもののうち、結論の対象でなく、その録画で起きえて、
 // 観測量に効きうるものを残す。1 つでも残れば警告。人の判断の印（結論の minimal）のある要素は外す。
 // 感度（4.1 節。sim を回し直す）は PR 4 で足す。それまでは compare を持つ観測値にも静的な判定を当てる。
-import { compositionAllows } from '../skills/composition.ts';
+import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../skills/composition.ts';
 import { applyTreasure, treasureSlots } from '../skills/treasure.ts';
 import {
   SHOT_COUNT_KINDS,
@@ -190,6 +190,14 @@ export type RelevanceContext = {
 export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): MinimalElement[] {
   const out: MinimalElement[] = [];
   const teamCharacters = recording.team.map((m) => ctx.characters.get(m.rid) ?? null);
+  // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 編成で決まる自分の状態の条件（selfState）は、編成の段と同じに決める
+  const teamDefinitions = recording.team.map((m) => {
+    const character = ctx.characters.get(m.rid);
+    const base = ctx.skills.get(m.rid);
+    if (character === undefined || base === undefined) return null;
+    return applyTreasure(character, base, (m.treasurePhase ?? 0) as TreasurePhase).definition ?? null;
+  });
+  const selfStates = selfStateLookupsForTeam(teamDefinitions, teamCharacters, recording.target.element);
   recording.team.forEach((member, i) => {
     const character = ctx.characters.get(member.rid);
     const base = ctx.skills.get(member.rid);
@@ -211,6 +219,7 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
           notes.flatMap((n, j) => (n.refers === `effects[${index}]` ? [{ note: n, j }] : []));
         entry.effects.forEach((e, index) => {
           if (!compositionAllows(e, teamCharacters, i, recording.target.element)) return;
+          if (resolveSelfState(e, selfStates[i]!) === null) return;
           const refs = referring(index);
           const shape = shapeOfEffect(e);
           out.push({

@@ -4,7 +4,8 @@
 import { isStateContent, type WindowEffect } from './resolve.ts';
 import { itemsOf, valuePiecesOf, type HolderHistory } from './holders.ts';
 import type { ConditionSkip } from './timeline.ts';
-import { isStateStat, type SkillSlot } from './types.ts';
+import type { NamedStateId } from './states.ts';
+import { SKILL_SLOTS, isStateStat, staticStatesOf, type SkillSlot } from './types.ts';
 
 /** この枠が受けた持続の効果のまとめ（効果ごと。画面の「10 秒 × 9 回」） */
 export type SlotEffectSummary = {
@@ -29,6 +30,21 @@ export type SlotCycleSummary = {
   start: number;
   end: number;
   count: number;
+};
+
+/**
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: この枠に付いた名前の付いた状態のまとめ（状態 × 出どころごと。中身の無い状態も入る。
+ * 表示用）
+ */
+export type SlotStateSummary = {
+  state: NamedStateId;
+  sourceSlotIndex: number;
+  /** 付いた回数（付き直しも 1 回ずつ。静的な状態は 1） */
+  count: number;
+  /** 静的な状態（戦闘の始めから終わりまで付いている） */
+  isStatic: boolean;
+  /** 付与に解除不可の印がある */
+  undispellable: boolean;
 };
 
 /** まとめる値の小片の形（skills/holders.ts の ValuePiece） */
@@ -140,4 +156,33 @@ export function cycleSummariesOf(history: HolderHistory, slotIndex: number): Slo
     ),
     slotIndex,
   );
+}
+
+/** 履歴から、枠に付いた状態のまとめを作る（付いた記録。並びは最初に付いた順） */
+export function stateSummariesOf(
+  history: Pick<HolderHistory, 'applications' | 'slots'>,
+  slotIndex: number,
+): SlotStateSummary[] {
+  const byKey = new Map<string, SlotStateSummary>();
+  for (const a of history.applications) {
+    if (a.slotIndex !== slotIndex) continue;
+    const key = `${a.sourceSlotIndex}:${a.state}`;
+    const found = byKey.get(key);
+    if (found) {
+      found.count += 1;
+      continue;
+    }
+    const definition = history.slots[a.sourceSlotIndex]?.definition ?? null;
+    const grants = SKILL_SLOTS.flatMap((s) => definition?.skills[s].effects ?? []).filter(
+      (e) => e.kind === 'state' && e.state === a.state,
+    );
+    byKey.set(key, {
+      state: a.state,
+      sourceSlotIndex: a.sourceSlotIndex,
+      count: 1,
+      isStatic: a.sourceSlotIndex === slotIndex && staticStatesOf(definition).includes(a.state),
+      undispellable: grants.some((e) => e.kind === 'state' && e.undispellable === true),
+    });
+  }
+  return [...byKey.values()];
 }

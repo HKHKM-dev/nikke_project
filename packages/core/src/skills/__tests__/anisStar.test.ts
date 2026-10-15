@@ -8,7 +8,7 @@ import { resolvePerShotDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives } from '../resolve.ts';
 import { burstUnitOf } from '../../burst/dynamic.ts';
 import { applyComposition, burstStepMixAllows } from '../composition.ts';
-import { burstReentryStepOf, parseSkillDefinition } from '../types.ts';
+import { burstReentryStepOf, parseSkillDefinition, staticStatesOf } from '../types.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -61,8 +61,10 @@ describe('アニス：スター（17）の定義', () => {
 
   it('defines every line of S1, with the measured ally gauge bonus noted as unimplemented (V-0158)', () => {
     expect(def.skills.skill1.support).toBe('partial');
-    // V-0158 の味方のゲージと、誘導弾の飛ぶ時間の未実装の分（plan/design-anis-star-gauge-timing.md 3 節）
-    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['unimplemented', 'unimplemented']);
+    // V-0158 の味方のゲージと、誘導弾の飛ぶ時間の未実装の分（plan/design-anis-star-gauge-timing.md 3 節）。2 段目の段 1: 消去と
+    // フルバースト終了時の付け直しを書かないことの補足（私だけの星の付与を指す）
+    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['unimplemented', 'unimplemented', 'modeling']);
+    expect(def.skills.skill1.notes?.[2]?.refers).toBe('effects[1]');
   });
 
   it('re-enters Burst Stage I only with Everyone’s Star', () => {
@@ -107,13 +109,15 @@ describe('バースト段階の構成の条件（burstStepMix）', () => {
 
   it('gives My Own Star with a re-entering Burst I ally only (録画 460)', () => {
     const team = applyComposition(def, [anis, avistar, delta], 0);
+    // 2 段目の段 1（plan/design-skill-stage1.md 2.1 節）: 私だけの星は静的な状態の付与（中身に攻撃力▲）
     expect(team.skills.skill1.effects.map((e) => e.kind)).toEqual([
       'passive',
-      'passive',
+      'state',
       'cooldownReduction',
       'cooldownReduction',
       'damage',
     ]);
+    expect(staticStatesOf(team)).toEqual(['myOwnStar']);
     expect(burstReentryStepOf(team)).toBeNull();
     expect(burstUnitOf(anis, team).nextStep).toBe('Step2');
   });
@@ -122,13 +126,16 @@ describe('バースト段階の構成の条件（burstStepMix）', () => {
     const solo = applyComposition(def, [anis], 0);
     expect(solo.skills.skill1.effects.map((e) => e.kind)).toEqual([
       'passive',
-      'passive',
+      'state',
       'cooldownReduction',
       'cooldownReduction',
       'damage',
     ]);
+    expect(staticStatesOf(solo)).toEqual(['myOwnStar']);
     const withFlower = applyComposition(def, [anis, flower], 0);
-    expect(withFlower.skills.skill1.effects.map((e) => e.kind)).toEqual(['passive', 'damage', 'burstReentry']);
+    // みんなの星は中身の無い静的な状態の付与（S1 の末尾）。バースト再突入は burstReentry のまま
+    expect(withFlower.skills.skill1.effects.map((e) => e.kind)).toEqual(['passive', 'damage', 'burstReentry', 'state']);
+    expect(staticStatesOf(withFlower)).toEqual(['everyonesStar']);
     expect(resolvePassives(withFlower, anis, MAX_SKILL_LEVELS).map((e) => e.stat)).toEqual(['burstGaugeSpeed']);
     expect(resolveInstant(withFlower, anis, MAX_SKILL_LEVELS)).toEqual([]);
     // 残るのは条件を満たした効果だけなので、同じ編成で 2 回通しても同じ

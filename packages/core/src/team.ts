@@ -22,7 +22,7 @@ import type {
   SustainedDamagePlacement,
 } from './skills/burstDamage.ts';
 import type { HolderHistory } from './skills/holders.ts';
-import type { SlotCycleSummary, SlotEffectSummary } from './skills/summaries.ts';
+import type { SlotCycleSummary, SlotEffectSummary, SlotStateSummary } from './skills/summaries.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type SkillLevels } from './skills/resolve.ts';
 import { resolvePassiveStates, type BuffTimeline, type TimelineSlot } from './skills/timeline.ts';
 import { treasureSlots, type TreasurePhase } from './skills/treasure.ts';
@@ -232,6 +232,8 @@ export type TeamSlotResult = {
   effects: SlotEffectSummary[];
   /** 同: この枠の循環の間隔の変更（cycleEvery）のまとめ（効果ごと。区間には入らない。表示用） */
   cycleChanges: SlotCycleSummary[];
+  /** 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: この枠に付いた名前の付いた状態のまとめ（中身の無い状態も。表示用） */
+  states: SlotStateSummary[];
   /** バフ状態ごとにまとめた通常攻撃の結果（groupTimeline の順） */
   segments: SlotSegmentResult[];
   /** Σ segments.damage */

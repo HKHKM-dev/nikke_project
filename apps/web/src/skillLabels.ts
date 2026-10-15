@@ -1,5 +1,5 @@
 // スキル関連の表示用ラベル（React 非依存）
-import { ELEMENT_LABEL, framesToGameSeconds, isStateContent, namedStateName, selfBuffedStatOf } from '@nikke/core';
+import { ELEMENT_LABEL, framesToGameSeconds, isStateContent, namedStateName } from '@nikke/core';
 import type {
   BasicBurstStep,
   AppliedEffect,
@@ -115,6 +115,10 @@ export function formatDamageCondition(condition: EffectCondition | undefined): s
   if (condition.selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[condition.selfBuffed]}増加状態`);
   if (condition.inFullBurst === true) parts.push('フルバースト中');
   if (condition.enemyState !== undefined) parts.push(`対象が${stateLabel(condition.enemyState)}状態`);
+  // 2 段目の段 1: 自分の状態の条件
+  if (condition.selfState !== undefined) {
+    parts.push(`自分が${stateLabel(condition.selfState.state)}状態${condition.selfState.present ? '' : 'でない'}`);
+  }
   return `（${parts.join('・')}なら）`;
 }
 
@@ -237,9 +241,15 @@ export function formatTimedExtras(effect: AppliedTimedEffect): string {
   if (effect.maxStacks !== undefined) parts.push(`最大 ${effect.maxStacks} スタック`);
   // 名前の付いた状態の語彙編: 状態の中身の条件・維持は付与のもの（きっかけの欄に「〈名前〉の間」と出す）
   if (isStateContent(effect)) return parts.length === 0 ? '' : `（${parts.join('・')}）`;
-  const selfBuffed = selfBuffedStatOf(effect.condition);
-  if (selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[selfBuffed]}増加状態なら`);
-  else if (effect.condition !== undefined) parts.push('フルバーストタイムなら');
+  const condition = effect.condition;
+  if (condition?.selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[condition.selfBuffed]}増加状態なら`);
+  if (condition?.inFullBurst === true) parts.push('フルバーストタイムなら');
+  // 2 段目の段 1: 自分の状態の条件（静的な状態を見るものは編成の段で決まり、ここには来ない）
+  if (condition?.selfState !== undefined) {
+    parts.push(
+      `自分が${stateLabel(condition.selfState.state)}状態${condition.selfState.present ? 'なら' : 'でなければ'}`,
+    );
+  }
   if (effect.durationUntil === 'fullBurstEnd') parts.push('フルバーストタイムの終了まで');
   if (effect.amplifies !== undefined) {
     parts.push(

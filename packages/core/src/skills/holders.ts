@@ -631,8 +631,27 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const conditionViews = viewsOf((track) => track.stage === 1);
   // 順位: 段 1・1.5 の攻撃力の件（段 A までの 2 段目の材料）
   const rankViews = viewsOf((track, e) => e.stat === 'attack' && STAGE_RANK[track.stage] <= STAGE_RANK[1.5]);
+  // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 条件 selfState が見る、枠の静的な状態と、段 1 の状態の件の列（持ち主 → 状態）。
+  // 静的な状態を見る selfState は編成の段（skills/composition.ts）で決まるので、ここに来るのは時間で変わる状態がほとんど
+  const staticStates = slots.map((slot) => new Set(staticStatesOf(slot?.definition)));
+  const stateTracks = slots.map((_, holder) => {
+    const byState = new Map<NamedStateId, HeldTrack[]>();
+    for (const track of tracks) {
+      const o = track.origin;
+      if (track.holder !== holder || track.stage !== 1 || o.kind !== 'state') continue;
+      byState.set(o.state, [...(byState.get(o.state) ?? []), track]);
+    }
+    return byState;
+  });
 
   const holdsAt = (condition: EffectCondition, sourceSlotIndex: number, frame: number): boolean => {
+    if (condition.selfState !== undefined) {
+      const { state, present } = condition.selfState;
+      const has =
+        staticStates[sourceSlotIndex]?.has(state) === true ||
+        (stateTracks[sourceSlotIndex]?.get(state) ?? []).some((t) => activeAt(t, frame).length > 0);
+      if (has !== present) return false;
+    }
     if (condition.selfBuffed !== undefined) {
       const stat = condition.selfBuffed;
       const base = passive[sourceSlotIndex];

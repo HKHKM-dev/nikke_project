@@ -24,6 +24,15 @@ export const NAMED_STATES = {
   camouflage: { name: { ja: 'カモフラージュ', en: 'Camouflage' }, holder: 'ally' },
   /** ハッキング（クルミの S1 の持続ダメージ。S2 の「対象がハッキング状態なら」。C-0136・C-0276） */
   hacked: { name: { ja: 'ハッキング', en: 'Hacked' }, holder: 'enemy' },
+  /**
+   * 2 段目の段 1（plan/design-skill-stage1.md 2.1 節）: 私だけの星（アニス：スターの S1。自分を除く基本バースト段階 I の味方が
+   * いない時。S2・バーストの「私だけの星状態なら」。C-0189・C-0203・C-0555）
+   */
+  myOwnStar: { name: { ja: '私だけの星', en: 'My Own Star' }, holder: 'ally' },
+  /** 同: みんなの星（アニス：スターの S1。自分を除く基本バースト段階 I の味方がいる時。C-0201・C-0555） */
+  everyonesStar: { name: { ja: 'みんなの星', en: "Everyone's Star" }, holder: 'ally' },
+  /** 同: シューティングスター（アニス：スターのバーストの自動攻撃の呼び名。10 秒。C-0211） */
+  shootingStar: { name: { ja: 'シューティングスター', en: 'Shooting Star' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

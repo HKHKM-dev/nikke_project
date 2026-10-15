@@ -40,7 +40,7 @@ import { firingParams } from '../frame/firing.ts';
 import { BURST_HIT_USES_PRE_ACTIVATION_BUFFS, burstHitBuffs, perShotDamageOf, planTeamRun } from '../frame/plan.ts';
 import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { hasOwnShotCountItem } from '../skills/holders.ts';
-import { cycleSummariesOf, effectSummariesOf } from '../skills/summaries.ts';
+import { cycleSummariesOf, effectSummariesOf, stateSummariesOf } from '../skills/summaries.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges, type SlotBuffState } from '../skills/timeline.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
@@ -272,6 +272,7 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
       buildEffects: passive.buildEffects,
       effects: effectSummariesOf(history, index),
       cycleChanges: cycleSummariesOf(history, index),
+      states: stateSummariesOf(history, index),
       segments,
       normalDamage,
       burst: { activations, hit: representative, totalDamage: burstDamage },
