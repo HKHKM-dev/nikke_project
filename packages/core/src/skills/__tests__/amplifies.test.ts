@@ -5,7 +5,8 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
-import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
+import { ENEMY } from '../holders.ts';
+import { MAX_SKILL_LEVELS, isStateContent, resolveTimed } from '../resolve.ts';
 import type { TimelineSlot } from '../timeline.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEffect } from '../types.ts';
 import type { SkillRaw } from '../../types.ts';
@@ -111,24 +112,29 @@ describe('amplifies の窓', () => {
 
   it('keeps the referenced value multiplied for the whole duration, and fires only while the caster is in that state', () => {
     const { first, timeline: t } = run([slotOf([atStart, later], [amplify as SkillEffect]), slotOf([], [])]);
-    // 窓の中の発動は 10 秒・110 秒（105 秒の窓）・150 秒（140 秒の窓）。発動から 10 秒を、参照する窓が効いている所（その値 × 100%）と
-    // 切れた所（発動の瞬間の値 × 200%）に分けて、参照する窓を受けた枠（味方全体）ごとに。30 秒の発動は 35 秒の窓に重なるが、
-    // 発動の瞬間に効いていないので付かない（V-0230 の 263-05）
-    expect(first.history.amplified.map((p) => [p.holder, p.start, p.end, Number(p.value.toFixed(6))])).toEqual([
-      [0, 588, 882, 0.039],
-      [0, 882, 1176, 0.078],
-      [1, 588, 882, 0.039],
-      [1, 882, 1176, 0.078],
+    // 窓の中の発動は 10 秒・110 秒（105 秒の窓）・150 秒（140 秒の窓）。発動から 10 秒を、参照する件が効いている所（その値 × 100%）と
+    // 切れた所（発動の瞬間の値 × 200%）に分ける。30 秒の発動は 35 秒の窓に重なるが、発動の瞬間に効いていないので付かない（V-0230 の
+    // 263-05）。受けるダメージ▲は敵の件（plan/design-holder-effects.md 2.8 節）なので、小片も敵が持つ
+    const pieces = [
+      [588, 882, 0.039],
+      [882, 1176, 0.078],
       // 35 秒ごとの発動は k × ceil(35 ÷ 0.017) フレーム（C-0502）
-      [0, 6468, 6765, 0.039],
-      [0, 6765, 7056, 0.078],
-      [1, 6468, 6765, 0.039],
-      [1, 6765, 7056, 0.078],
-      [0, 8820, 8824, 0.039],
-      [0, 8824, 9408, 0.078],
-      [1, 8820, 8824, 0.039],
-      [1, 8824, 9408, 0.078],
-    ]);
+      [6468, 6765, 0.039],
+      [6765, 7056, 0.078],
+      [8820, 8824, 0.039],
+      [8824, 9408, 0.078],
+    ];
+    expect(first.history.amplified.map((p) => [p.holder, p.start, p.end, Number(p.value.toFixed(6))])).toEqual(
+      pieces.map((p) => [ENEMY, ...p]),
+    );
+    // 書き出しでは、参照する窓を受けた枠（味方全体）ごとの窓に写す
+    const written = t.windows.filter((w) => !isStateContent(w.effect) && w.effect.amplifies !== undefined);
+    expect(written.map((w) => [w.slotIndex, w.start, w.end, Number(w.effect.value.toFixed(6))])).toEqual(
+      pieces.flatMap((p) => [
+        [0, ...p],
+        [1, ...p],
+      ]),
+    );
     expect(first.history.conditionSkips.map((s) => s.frame)).toContain(1764);
     expect(first.history.conditionSkips.map((s) => s.frame)).not.toContain(588);
     // 受けるダメージ▲の合計は、参照する窓が切れた後も発動から 10 秒は 2 倍（V-0230 の 263-03）

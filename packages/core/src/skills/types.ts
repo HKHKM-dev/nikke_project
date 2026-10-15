@@ -1256,7 +1256,9 @@ function parseNamedStateId(v: Json, path: string, holder: StateHolder): NamedSta
 
 /**
  * 受けるダメージ編: damageTaken（敵の受けるダメージ▲）は敵へのデバフなので、味方全体（target 'allies'）にだけ書ける。
- * 武器種・属性で絞ることもできない（敵 1 体の前提で、敵が受ける全ダメージに掛かる）
+ * 武器種・属性で絞ることもできない（敵 1 体の前提で、敵が受ける全ダメージに掛かる）。
+ * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 敵の件なので、持ち主ごとに違いうる絞り込み（自分を除く・状態・
+ * バースト段階）と維持（持ち主の発数）も書けない
  */
 function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Record<string, Json>, path: string): void {
   if (stat !== 'damageTaken') return;
@@ -1264,6 +1266,9 @@ function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Record<strin
     fail(`${path}.target`, `damageTaken must target "allies" (an enemy debuff), got "${target}"`);
   if (v.targetWeapon !== undefined || v.targetElement !== undefined || v.targetSquad !== undefined)
     fail(path, 'damageTaken cannot narrow its target by weapon, element or squad (an enemy debuff)');
+  for (const key of ['excludeSelf', 'targetState', 'targetBurstStep', 'durationShots', 'durationShotsRef'] as const) {
+    if (v[key] !== undefined) fail(`${path}.${key}`, `damageTaken is held by the enemy, so it cannot have ${key}`);
+  }
 }
 
 /** Stage 9: targetWeapon は target が self 以外のときだけ（Stage 11 で burstUsers・topAttack にも広げた） */
@@ -1336,6 +1341,8 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
   validateFlatChargeTime(stat, scaling, v, path);
+  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 常時の受けるダメージ▲（観測値の比べる設定が使う）は、いまのまま
+  // 味方の各枠の常時の値に足す（敵の常時の件にするのは、敵の効果を外す語彙を足す時）
   validateDamageTaken(stat, target, v, path);
   const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
@@ -1613,6 +1620,8 @@ function parseCondition(c: Json, path: string, allowed: readonly ConditionKey[])
   if (c.selfBuffed !== undefined) {
     const selfBuffed = oneOf(BUFF_STATS, c.selfBuffed, `${path}.selfBuffed`);
     if (isFlagStat(selfBuffed)) fail(`${path}.selfBuffed`, `${selfBuffed} is not a buff state`);
+    // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 受けるダメージ▲は敵が持つ（自分の増加状態ではない）
+    if (selfBuffed === 'damageTaken') fail(`${path}.selfBuffed`, 'damageTaken is held by the enemy, not by the caster');
     condition.selfBuffed = selfBuffed;
   }
   if (c.inFullBurst !== undefined) {
@@ -1695,6 +1704,8 @@ function parseStateContentItem(item: Json, grant: Record<string, Json>, path: st
     if (!['stat', 'ref', 'scaling', 'decrease', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
   }
   const timed = parseTimedEffect(contentAsTimed(grant, item), path);
+  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 状態は味方が持つので、敵の件（受けるダメージ▲）は中身にできない
+  if (timed.stat === 'damageTaken') fail(`${path}.stat`, 'damageTaken is held by the enemy, not by a state of an ally');
   const out: StateContentItem = { stat: timed.stat };
   if (timed.ref !== undefined) out.ref = timed.ref;
   if (timed.scaling !== undefined) out.scaling = timed.scaling;

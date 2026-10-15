@@ -3,7 +3,7 @@
 - 別紙: [design-holder-effects-current.md](design-holder-effects-current.md)（1 節: いまの作り。以下「いまの作りの別紙」）
 - 関連: [design-skill-catalog.md](design-skill-catalog.md)（2 段目の計画。9 節の段の候補）、[design-named-state.md](design-named-state.md)（5.2 節: 状態の段、8 節: 状態の後の拡張）、[design-stage6.md](design-stage6.md)（窓と区間。8 節の 2・9 節）、[design-stage10.md](design-stage10.md)（1 パス目。1 節）、[design-stage11-modernia.md](design-stage11-modernia.md)（1.5 段目。2.4・3.3 節）、[design-stage11.md](design-stage11.md)（順位。19 節）、[design-true-damage-element.md](design-true-damage-element.md)（強化。3.5 節）、[design-heal-window.md](design-heal-window.md)（吸収回復の窓）
 - 作成日: 2026-10-15
-- 状態: 決定。2026-10-15 にオーナーが論点 1〜11 と段の構成（3 節）を決めた（論点 1・2・6〜11 は推奨どおり、論点 3・4・5 は代わりの案。段 D・E はオーナーの指示で足し、論点 4 に合わせて段 A・B の中身を組み替えた）。設計書は、オーナーの指示で段 A の実装より先に PR にした（AGENTS.md のコミット手順の「設計の承認は実装と同じ PR に含める」の例外）。段 A・B を実装した（2026-10-15。経過は別紙 [design-holder-effects-log.md](design-holder-effects-log.md)）
+- 状態: 決定。2026-10-15 にオーナーが論点 1〜11 と段の構成（3 節）を決めた（論点 1・2・6〜11 は推奨どおり、論点 3・4・5 は代わりの案。段 D・E はオーナーの指示で足し、論点 4 に合わせて段 A・B の中身を組み替えた）。設計書は、オーナーの指示で段 A の実装より先に PR にした（AGENTS.md のコミット手順の「設計の承認は実装と同じ PR に含める」の例外）。段 A〜C を実装した（2026-10-15。経過は別紙 [design-holder-effects-log.md](design-holder-effects-log.md)）
 
 ## 0. 目的と方針
 
@@ -134,6 +134,9 @@ type HeldEffect = {
 - バーストのヒットが、ヒットのフレームの敵の側のデバフを見る規則（`burstHitBuffs`。C-0163・C-0167）は、敵の件をヒットのフレームで読む形になる。値は変わらない。
 - 敵の状態（持続ダメージが付けるハッキングなど）を敵の件にし、出どころを持たせる。始まりと終わりは、いまの `dotActiveSpans`（最初の発火から最後の tick まで）のまま。条件 `enemyState` は敵の一覧を見る（どの出どころの件でもよい。いまと同じ）。
 - 検証を広げる: 敵の件になる効果には、持ち主ごとに違いうる絞り込みと維持（自分を除く・状態・バースト段階・発数の維持など）を書けないようにする。いまの定義の `damageTaken` は、どれも対象が味方全体で絞り込みが無い（2026-10-15 に確かめた）ので、値は変わらない。
+- 段 C の実装（`skills/holders.ts`）: 敵の持ち主は `ENEMY`。敵の件の効果は `damageTaken` の timed（`isEnemyEffect`）で、出どころ × 効果ごとに敵の 1 つの件の列にし、書き出しで効果の対象の味方の各枠の窓に写す。強化（`amplifies`）の発動の瞬間の判定と値の小片も、参照する件と同じく敵の件で見る。敵の状態は、持続ダメージの効果の発火（同じ状態の効果をまとめた、出どころ × 状態の件の列。`enemyState`）で、件は `dotActiveSpans`。damage の条件 `enemyState` は敵の状態の件を見る（`frame/plan.ts` の `planSkillHits` が履歴を受け取る）。バーストのヒットが読む受けるダメージ▲（`burstHitBuffs`）は、段 C では区間から読む（値は同じ。敵の件を直接読むのは段 D）。
+- 常時の `damageTaken`（観測値の比べる設定が、受けるダメージ▲を常時の値として差し込む）は、いまのまま味方の各枠の常時の件にする（敵の常時の件にするのは、敵の効果を外す語彙を足す時）。
+- 段 C で足した検証: timed の `damageTaken` に `excludeSelf`・`targetState`・`targetBurstStep`・`durationShots` を書けない。状態の中身と、条件 `selfBuffed` に `damageTaken` を書けない（味方が持つものではないため）。
 
 ### 2.9 履歴を読む形（段 D・E）
 

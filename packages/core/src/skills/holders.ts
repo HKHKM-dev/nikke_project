@@ -9,7 +9,9 @@
 // 履歴を閉じる時に決める（amplify。ループの中で強化の件を読む所は無い）。ループの後は、履歴から窓・区間・記録を書き出す（2.6 節。
 // 段 E で消す）。並びは時刻の順（論点 5）。段 B で 2 パス目（planBuffTimeline）を消し、件を作るのはここだけになった。
 import type { BurstScheduleModel, FullBurstWindow, BurstSchedule } from '../burst/schedule.ts';
+import { dotActiveSpans, groupDotsByState } from '../frame/dot.ts';
 import type { ShotLog } from '../frame/shots.ts';
+import { resolveDotEffects, type ResolvedDamageEffect } from './burstDamage.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
 import { chancePieces, chanceValueOf, type ChanceOpportunity } from './chance.ts';
 import { resolveCycleEvery, type CycleWindow, type ResolvedCycleEvery } from './cycles.ts';
@@ -74,6 +76,20 @@ import {
   type TimelineSlot,
 } from './timeline.ts';
 
+/**
+ * 敵を持ち主にする（plan/design-holder-effects.md 2.8 節。段 C）: 件の列の持ち主。0 以上は味方の枠、ENEMY は敵（1 体の前提）。
+ * 敵の件は、敵の受けるダメージ▲（damageTaken の timed）と、持続ダメージが付ける敵の状態
+ */
+export const ENEMY = -1;
+
+/**
+ * 敵が持つ効果か: 敵の受けるダメージ▲（damageTaken）。値は、敵が受ける全ダメージに掛かるので、味方の各枠の区間の値に足す
+ * （書き出しで味方の各枠の窓に写す。C-0138）
+ */
+export function isEnemyEffect(effect: { stat: string }): boolean {
+  return effect.stat === 'damageTaken';
+}
+
 /** 段の印（plan/design-holder-effects.md 2.5 節）。段 A までの 2 パス目の 1・1.5・2・2.5 段目 */
 export type HeldStage = 1 | 1.5 | 2 | 2.5;
 
@@ -83,14 +99,16 @@ export type HeldOrigin =
   | { kind: 'timed'; effect: ResolvedTimedEffect }
   | { kind: 'state'; state: NamedStateId; grant: ResolvedStateGrant; contents: readonly ResolvedStateContent[] }
   | { kind: 'healWindow'; effect: ResolvedInstantEffect }
-  | { kind: 'cycleEvery'; effect: ResolvedCycleEvery };
+  | { kind: 'cycleEvery'; effect: ResolvedCycleEvery }
+  /** 段 C: 持続ダメージが付ける敵の状態（持ち主は ENEMY。同じ状態の持続ダメージの効果をまとめる。frame/dot.ts の groupDotsByState） */
+  | { kind: 'enemyState'; state: NamedStateId; effects: readonly ResolvedDamageEffect[] };
 
 /** 件（窓 [start, end)）。stack はスタックの段（1 始まり）、scale は確率のきっかけの付いている確率 */
 export type HeldItem = { start: number; end: number; stack?: number; scale?: number };
 
 /** 件の列: 1 つの出どころの、1 人の持ち主への件 */
 export type HeldTrack = {
-  /** 持ち主の枠 */
+  /** 持ち主の枠（敵は ENEMY） */
   holder: number;
   /** 付けた枠 */
   sourceSlotIndex: number;
@@ -170,9 +188,14 @@ type TimedSource = {
   stage: HeldStage;
   fires: TriggerTracker;
   chance: boolean;
-  /** 持ち主ごとの件の列（対象になりうる枠だけ） */
+  /** 持ち主ごとの件の列（対象になりうる枠だけ）。敵の件の効果では、すべて null */
   tracks: (HeldTrack | null)[];
+  /** 段 C: 敵の件の効果（isEnemyEffect）の、敵の件の列。ほかは null */
+  enemy: HeldTrack | null;
 };
+
+/** 段 C: 持続ダメージが付ける敵の状態（出どころ × 状態）。発火は効果ごと */
+type EnemyStateSource = { effects: { effect: ResolvedDamageEffect; fires: TriggerTracker }[]; track: HeldTrack };
 
 /** 状態の付与 1 つ */
 type GrantSource = { grant: ResolvedStateGrant; stage: HeldStage; fires: TriggerTracker; group: StateGroup };
@@ -322,20 +345,17 @@ const SKILL_ORDER = Object.fromEntries(SKILL_SLOTS.map((s, i) => [s, i])) as Rec
 /** 件の列の書き出しの並びの鍵（段 → 出どころの枠 → 定義の順 → 持ち主） */
 function orderKeyOf(track: HeldTrack): number[] {
   const o = track.origin;
-  const source =
-    o.kind === 'state'
-      ? o.grant.source
-      : o.kind === 'passive' || o.kind === 'timed' || o.kind === 'healWindow' || o.kind === 'cycleEvery'
-        ? o.effect.source
-        : null;
+  const source = o.kind === 'state' ? o.grant.source : o.kind === 'enemyState' ? o.effects[0]!.source : o.effect.source;
   const effectIndex =
     o.kind === 'state'
       ? o.grant.effectIndex
-      : o.kind === 'passive'
-        ? 0
-        : 'effectIndex' in o.effect
-          ? o.effect.effectIndex
-          : 0;
+      : o.kind === 'enemyState'
+        ? o.effects[0]!.effectIndex
+        : o.kind === 'passive'
+          ? 0
+          : 'effectIndex' in o.effect
+            ? o.effect.effectIndex
+            : 0;
   return [
     STAGE_RANK[track.stage],
     track.sourceSlotIndex,
@@ -456,17 +476,24 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       const chance = isResolvedChance(effect.trigger);
       const opportunities: ChanceOpportunity[] | null = chance ? [] : null;
+      const canTarget = slots.map(
+        (target, holder) => target !== null && canEverTarget(effect, sourceSlotIndex, holder, target.character),
+      );
+      // 段 C: 敵の件の効果は、味方ごとではなく敵の 1 つの件の列に付ける
+      const enemy = isEnemyEffect(effect);
       const src: TimedSource = {
         sourceSlotIndex,
         effect,
         stage,
         fires: firesOf(effect.trigger, sourceSlotIndex),
         chance,
-        tracks: slots.map((target, holder) =>
-          target !== null && canEverTarget(effect, sourceSlotIndex, holder, target.character)
-            ? newTrack(holder, sourceSlotIndex, { kind: 'timed', effect }, stage, opportunities)
-            : null,
+        tracks: canTarget.map((can, holder) =>
+          can && !enemy ? newTrack(holder, sourceSlotIndex, { kind: 'timed', effect }, stage, opportunities) : null,
         ),
+        enemy:
+          enemy && canTarget.some(Boolean)
+            ? newTrack(ENEMY, sourceSlotIndex, { kind: 'timed', effect }, stage, opportunities)
+            : null,
       };
       timedSources.push(src);
     }
@@ -522,6 +549,20 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
+  // ---- 段 C: 持続ダメージが付ける敵の状態（出どころ × 状態ごとに 1 つの件の列。持ち主は敵） ----
+  const enemyStateSources: EnemyStateSource[] = [];
+  slots.forEach((slot, sourceSlotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const group of groupDotsByState(resolveDotEffects(slot.definition, slot.character, slot.levels))) {
+      const state = group[0]!.dot!.state;
+      if (state === undefined) continue;
+      enemyStateSources.push({
+        effects: group.map((effect) => ({ effect, fires: firesOf(effect.trigger, sourceSlotIndex) })),
+        track: newTrack(ENEMY, sourceSlotIndex, { kind: 'enemyState', state, effects: group }, 1),
+      });
+    }
+  });
+
   // 静的な状態はフレーム 0 に付いた記録を作る（見る側の規則を状態の種類で分けない。plan/design-named-state.md 5.4 節）
   if (frames > 0) {
     slots.forEach((slot, slotIndex) => {
@@ -535,7 +576,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const fullBurstEnds = (): number[] => options.fullBurstWindows().map((w) => w.end);
   /** 件の列の件（入力が変わったときだけ作り直す） */
   const readItems = (track: HeldTrack): HeldItem[] => {
-    const log = logs[track.holder];
+    const log = track.holder === ENEMY ? null : logs[track.holder];
     const windows = options.fullBurstWindows();
     const seen: HeldTrack['seen'] = [
       track.starts.length,
@@ -570,6 +611,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       case 'healWindow':
         track.items = healWindowItems(track.starts, o.effect.durationFrames, frames);
         break;
+      case 'enemyState': {
+        // 付いている間は、最初の発火から最後の tick まで（frame/dot.ts の dotActiveSpans。クルミ S2 編の区間と同じ）
+        const { intervalSeconds, durationSeconds, firstTick } = o.effects[0]!.dot!;
+        track.items = itemsOfPairs(
+          dotActiveSpans(track.starts, intervalSeconds, durationSeconds, firstTick).map((sp) => [sp.start, sp.end]),
+        );
+        break;
+      }
     }
     return track.items;
   };
@@ -656,6 +705,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     slots.forEach((target, holder) => {
       if (target === null) return;
       if (!isEffectTarget(src.effect, src.sourceSlotIndex, holder, target.character, context)) return;
+      // 段 C: 敵の件の効果は、対象の味方があれば敵の件の列に 1 回だけ足す
+      if (src.enemy !== null) {
+        if (targets.length === 0) insertSorted(src.enemy.starts, start);
+        targets.push(holder);
+        return;
+      }
       const track = src.tracks[holder];
       if (!track)
         throw new Error(`no track for ${src.effect.source.skill}[${src.effect.effectIndex}] on slot ${holder}`);
@@ -738,12 +793,20 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         if (!shot || !isResolvedChance(trigger) || f + 1 >= frames) continue;
         const weight = shotCountWeight(trigger.count, shot);
         if (weight <= 0) continue;
-        const opportunities = src.tracks.find((t) => t !== null)?.opportunities;
+        const opportunities = (src.enemy ?? src.tracks.find((t) => t !== null))?.opportunities;
         opportunities?.push({ start: f + 1, q: Math.min(1, trigger.chance * weight) });
         continue;
       }
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
       fireTimed(src, battleStartOnly ? 0 : startOfFire(src.effect.trigger, f), fireContextOf(src.effect.trigger, ev));
+    }
+    // 段 C: 敵の状態（持続ダメージの発火のフレーム。ループの中の判定は読まない）
+    for (const e of enemyStateSources) {
+      for (const { effect, fires } of e.effects) {
+        if (!take(effect.trigger) || !(battleStartOnly || fires(ev))) continue;
+        const at = battleStartOnly ? 0 : f;
+        if (at < frames) insertSorted(e.track.starts, at);
+      }
     }
     if (!battleStartOnly) {
       // 循環の間隔の変更はループの中でしか読まないので、戦闘開始時もフレーム 0 の出来事で登録する
@@ -822,7 +885,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const hasFiring = slots.map((_, i) => (firingViews[i] ?? []).length > 0);
 
   return {
-    hasSources: timedSources.length > 0 || stateGroups.length > 0 || cycleSources.length > 0 || amplifiers.length > 0,
+    hasSources:
+      timedSources.length > 0 ||
+      stateGroups.length > 0 ||
+      cycleSources.length > 0 ||
+      amplifiers.length > 0 ||
+      enemyStateSources.length > 0,
     registerBattleStart() {
       if (frames <= 0) return;
       register(emptyEvents(0), true);
@@ -930,13 +998,15 @@ function trackMatches(track: HeldTrack, filter: HeldItemFilter): boolean {
   if (filter.holder !== undefined && track.holder !== filter.holder) return false;
   if (filter.sourceSlotIndex !== undefined && track.sourceSlotIndex !== filter.sourceSlotIndex) return false;
   if (filter.kind !== undefined && o.kind !== filter.kind) return false;
-  const defined = o.kind === 'state' ? o.grant : o.effect;
+  const defined = o.kind === 'state' ? o.grant : o.kind === 'enemyState' ? o.effects[0]! : o.effect;
   if (filter.skill !== undefined && defined.source.skill !== filter.skill) return false;
   // 常時の効果は定義の中の番号を持たない（effectIndex で絞ると外れる）
   if (filter.effectIndex !== undefined && (!('effectIndex' in defined) || defined.effectIndex !== filter.effectIndex)) {
     return false;
   }
-  if (filter.state !== undefined && (o.kind !== 'state' || o.state !== filter.state)) return false;
+  if (filter.state !== undefined && ((o.kind !== 'state' && o.kind !== 'enemyState') || o.state !== filter.state)) {
+    return false;
+  }
   if (filter.stat !== undefined) {
     const stats =
       o.kind === 'state'
@@ -980,24 +1050,41 @@ export function activeItemsAt(
 // ---- 書き出し（plan/design-holder-effects.md 2.6 節。段 E で消す） ----
 
 /** 件の列の窓（timed・状態の中身・確率のきっかけ。強化は別）。並びは作った順 */
-function windowsOfTrack(track: HeldTrack): { windows: BuffWindow[]; stateWindows: BuffWindow[] } {
+function windowsOfTrack(
+  track: HeldTrack,
+  slots: readonly TimelineSlot[],
+): { windows: BuffWindow[]; stateWindows: BuffWindow[] } {
   const windows: BuffWindow[] = [];
   const stateWindows: BuffWindow[] = [];
   const push = (effect: WindowEffect, item: HeldItem): void => {
-    const w: BuffWindow = {
-      slotIndex: track.holder,
-      sourceSlotIndex: track.sourceSlotIndex,
-      effect: item.scale === undefined ? effect : { ...effect, value: chanceValueOf(effect.value, item.scale) },
-      start: item.start,
-      end: item.end,
-    };
-    if (item.stack !== undefined) w.stack = item.stack;
-    (isStateStat(effect.stat) ? stateWindows : windows).push(w);
+    // 段 C: 敵の件は、効果の対象の味方の各枠の窓に写す（区間の値は味方の各枠に足す。C-0138）
+    const holders =
+      track.holder === ENEMY && !isStateContent(effect)
+        ? alliesOf(effect, track.sourceSlotIndex, slots)
+        : [track.holder];
+    for (const slotIndex of holders) {
+      const w: BuffWindow = {
+        slotIndex,
+        sourceSlotIndex: track.sourceSlotIndex,
+        effect: item.scale === undefined ? effect : { ...effect, value: chanceValueOf(effect.value, item.scale) },
+        start: item.start,
+        end: item.end,
+      };
+      if (item.stack !== undefined) w.stack = item.stack;
+      (isStateStat(effect.stat) ? stateWindows : windows).push(w);
+    }
   };
   const o = track.origin;
   if (o.kind === 'timed') for (const item of track.items) push(o.effect, item);
   if (o.kind === 'state') for (const item of track.items) for (const c of o.contents) push(c, item);
   return { windows, stateWindows };
+}
+
+/** 段 C: 敵の件の効果を写す味方の枠（効果の対象。敵の件の効果は味方全体で、絞り込みを持たない） */
+function alliesOf(effect: ResolvedTimedEffect, sourceSlotIndex: number, slots: readonly TimelineSlot[]): number[] {
+  return slots.flatMap((target, holder) =>
+    target !== null && isEffectTarget(effect, sourceSlotIndex, holder, target.character) ? [holder] : [],
+  );
 }
 
 /**
@@ -1038,17 +1125,22 @@ function amplify(
     );
     const activeAt = (holder: number, frame: number) =>
       referenced.filter((r) => r.holder === holder && r.item.start <= frame && frame < r.item.end);
+    // 段 C: 敵の件の効果（受けるダメージ▲）は、発動の瞬間の判定も小片も敵の件で見る（参照する件も敵の件）
+    const enemy = isEnemyEffect(effect);
+    const targets = slots.flatMap((target, holder) =>
+      target !== null && isEffectTarget(effect, sourceSlotIndex, holder, target.character) ? [holder] : [],
+    );
+    const holders = enemy ? (targets.length > 0 ? [ENEMY] : []) : targets;
     const accepted: number[] = [];
     for (const frame of starts) {
-      if (activeAt(sourceSlotIndex, frame).length === 0) {
+      if (activeAt(enemy ? ENEMY : sourceSlotIndex, frame).length === 0) {
         skips.push({ frame, sourceSlotIndex, effect: { source: effect.source, effectIndex: effect.effectIndex } });
         continue;
       }
       accepted.push(frame);
     }
     for (const [s, e] of unionWindows(accepted, effect.durationFrames, frames)) {
-      slots.forEach((target, holder) => {
-        if (target === null || !isEffectTarget(effect, sourceSlotIndex, holder, target.character)) return;
+      holders.forEach((holder) => {
         const atStart = activeAt(holder, s);
         if (atStart.length === 0) return;
         const startValue = atStart.reduce((sum, r) => sum + r.value, 0);
@@ -1134,7 +1226,7 @@ export function buffTimelineOf(
   for (const track of history.tracks) {
     const o = track.origin;
     if (o.kind === 'timed' || o.kind === 'state') {
-      const { windows, stateWindows } = windowsOfTrack(track);
+      const { windows, stateWindows } = windowsOfTrack(track, history.slots);
       for (const w of windows) keyed.push({ window: w, key: windowKey(w, track.stage) });
       for (const w of stateWindows) keyedState.push({ window: w, key: windowKey(w, track.stage) });
     }
@@ -1168,14 +1260,17 @@ export function buffTimelineOf(
   }
   // 強化は、履歴を閉じる時に作った値の小片から
   for (const p of history.amplified) {
-    const w: BuffWindow = {
-      slotIndex: p.holder,
-      sourceSlotIndex: p.sourceSlotIndex,
-      effect: { ...p.effect, value: p.value },
-      start: p.start,
-      end: p.end,
-    };
-    keyed.push({ window: w, key: windowKey(w, 2.5) });
+    const holders = p.holder === ENEMY ? alliesOf(p.effect, p.sourceSlotIndex, history.slots) : [p.holder];
+    for (const slotIndex of holders) {
+      const w: BuffWindow = {
+        slotIndex,
+        sourceSlotIndex: p.sourceSlotIndex,
+        effect: { ...p.effect, value: p.value },
+        start: p.start,
+        end: p.end,
+      };
+      keyed.push({ window: w, key: windowKey(w, 2.5) });
+    }
   }
   const sortByKey = <T>(xs: { window: T; key: number[] }[]): T[] =>
     xs.sort((a, b) => compareKeys(a.key, b.key)).map((x) => x.window);

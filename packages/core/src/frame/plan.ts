@@ -40,7 +40,7 @@ import {
   type BuffTimeline,
   type SlotBuffState,
 } from '../skills/timeline.ts';
-import { buffTimelineOf, type HolderHistory } from '../skills/holders.ts';
+import { ENEMY, buffTimelineOf, itemsOf, type HolderHistory } from '../skills/holders.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { EffectCondition } from '../skills/types.ts';
@@ -58,7 +58,7 @@ import {
 import type { WeaponModel } from '../weapons.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { dotActiveSpans, dotTicks, groupDotsByState } from './dot.ts';
+import { dotTicks, groupDotsByState } from './dot.ts';
 export {
   DOT_LATER_TICK_DELAY_SECONDS,
   dotTickFrames,
@@ -188,6 +188,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     slots,
     enemy,
     timeline,
+    first.history,
     schedule,
     frames,
     shots,
@@ -232,6 +233,8 @@ export function planSkillHits(
   slots: readonly (TeamSlotInput | null)[],
   enemy: EnemyInput,
   timeline: BuffTimeline,
+  /** 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 1 パス目の履歴（条件 enemyState は敵の状態の件を見る） */
+  history: Pick<HolderHistory, 'tracks'>,
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
@@ -242,8 +245,12 @@ export function planSkillHits(
   attackRounding?: AttackRounding,
 ): SkillHitEvent[] {
   const hits: SkillHitEvent[] = [];
-  // クルミ S2 編: damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間（編成の全枠の dot から先に出しておく）
-  const enemySpans = enemyStateSpans(slots, schedule, frames, shots);
+  // クルミ S2 編: damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間。段 C: 敵の状態の件（どの出どころの件でもよい）
+  const enemySpans = new Map<NamedStateId, { start: number; end: number }[]>();
+  for (const item of itemsOf(history, { holder: ENEMY, kind: 'enemyState' })) {
+    if (item.origin.kind !== 'enemyState') continue;
+    enemySpans.set(item.origin.state, [...(enemySpans.get(item.origin.state) ?? []), item]);
+  }
   slots.forEach((slot, slotIndex) => {
     const definition = slot?.skills?.definition;
     if (!slot || !definition) return;
@@ -352,36 +359,6 @@ export function planSkillHits(
   });
   // フレーム順（同じフレームは枠順・定義順。sort は安定）
   return hits.sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
-}
-
-/**
- * クルミ S2 編（plan/design-kurumi-s2.md 2.3 節）: 編成の全枠の状態（state）つきの dot について、敵の状態ごとの「付いている」区間
- * （[start, end) の半開区間。dotActiveSpans）の列。発火は planSkillHits の tick と同じ（同じ状態の効果の発火をまとめる）。
- * 別の枠の同じ状態は同じ状態として区間を並べる（名前の付いた状態の語彙編: 目録の id で同じ状態を指す。plan/design-named-state.md 5.5 節）
- */
-function enemyStateSpans(
-  slots: readonly (TeamSlotInput | null)[],
-  schedule: BurstSchedule | null,
-  frames: number,
-  shots: readonly (ShotLog | null)[],
-): Map<NamedStateId, { start: number; end: number }[]> {
-  const out = new Map<NamedStateId, { start: number; end: number }[]>();
-  slots.forEach((slot, slotIndex) => {
-    const definition = slot?.skills?.definition;
-    if (!slot || !definition) return;
-    const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
-    for (const group of groupDotsByState(resolveDotEffects(definition, slot.character, levels))) {
-      const state = group[0]!.dot!.state;
-      if (state === undefined) continue;
-      const fires = group
-        .flatMap((effect) => triggerFrames(effect.trigger, schedule, slotIndex, frames, shots))
-        .sort((a, b) => a - b);
-      const { intervalSeconds, durationSeconds, firstTick } = group[0]!.dot!;
-      const spans = dotActiveSpans(fires, intervalSeconds, durationSeconds, firstTick);
-      out.set(state, [...(out.get(state) ?? []), ...spans]);
-    }
-  });
-  return out;
 }
 
 /**

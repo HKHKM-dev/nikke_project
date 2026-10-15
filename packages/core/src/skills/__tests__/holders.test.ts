@@ -6,7 +6,15 @@ import type { FullBurstWindow } from '../../burst/schedule.ts';
 import type { ShotLog } from '../../frame/shots.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import type { SkillRaw } from '../../types.ts';
-import { buffTimelineOf, createHolderLists, type HeldTrack, type HolderListsOptions } from '../holders.ts';
+import { dotActiveSpans } from '../../frame/dot.ts';
+import {
+  ENEMY,
+  buffTimelineOf,
+  createHolderLists,
+  itemsOf,
+  type HeldTrack,
+  type HolderListsOptions,
+} from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
 import type { TimelineSlot } from '../timeline.ts';
 import type { FrameEvents, ShotEvent } from '../triggers.ts';
@@ -291,5 +299,46 @@ describe('書き出しの並び（論点 5）', () => {
       [100, 0, 1],
       [300, 0, 0],
     ]);
+  });
+});
+
+describe('敵の件（段 C。plan/design-holder-effects.md 2.8 節）', () => {
+  it('keeps an enemy debuff as one enemy item and writes it to every ally', () => {
+    const slots = [slotWith(1, [timed({ stat: 'damageTaken', target: 'allies' })]), slotWith(2, []), null];
+    const lists = listsOf(slots);
+    lists.registerBattleStart();
+    lists.registerFrame(events(100, { fullBurstStart: true }, 3));
+    const history = lists.history();
+    expect(itemsOf(history, { stat: 'damageTaken' }).map((i) => [i.holder, i.start, i.end])).toEqual([
+      [ENEMY, 100, 100 + D10],
+    ]);
+    const written = buffTimelineOf(history, null).windows.filter((w) => w.effect.stat === 'damageTaken');
+    expect(written.map((w) => [w.slotIndex, w.start, w.end])).toEqual([
+      [0, 100, 100 + D10],
+      [1, 100, 100 + D10],
+    ]);
+  });
+
+  it('keeps the enemy state of a dot from its first fire to its last tick', () => {
+    const slot = slotWith(1, [
+      {
+        kind: 'dot',
+        trigger: 'fullBurstStart',
+        ref: 1,
+        intervalSeconds: 1,
+        durationRef: 3,
+        firstTick: 'afterInterval',
+        state: 'hacked',
+      },
+    ]);
+    const lists = listsOf([slot]);
+    lists.registerBattleStart();
+    lists.registerFrame(events(100, { fullBurstStart: true }));
+    lists.registerFrame(events(150, { fullBurstStart: true }));
+    const items = itemsOf(lists.history(), { holder: ENEMY, state: 'hacked' });
+    expect(items.map((i) => [i.start, i.end])).toEqual(
+      dotActiveSpans([100, 150], 1, 5, 'afterInterval').map((sp) => [sp.start, sp.end]),
+    );
+    expect(items).toHaveLength(1);
   });
 });
