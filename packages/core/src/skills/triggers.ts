@@ -164,7 +164,7 @@ export function createTriggerTracker(
   if (isResolvedTimer(t)) {
     throw new RangeError(`a timer trigger (every ${t.everySeconds} s) is not tracked per event; use triggerFires`);
   }
-  // ペルソナ編: 効果名のトリガーは 1 パス目の履歴の記録（BuffTimeline.applications）で決まる。出来事の列では追わない
+  // ペルソナ編: 効果名のトリガーは 1 パス目の履歴の記録（HolderHistory.applications）で決まる。出来事の列では追わない
   if (isResolvedApplied(t)) {
     throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);
   }

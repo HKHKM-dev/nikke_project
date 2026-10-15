@@ -6,15 +6,16 @@
 // 変更の終わり・フルバーストの窓）から作り直すので、同じフレームの中で始まりが前後して登録されても（射撃の回数のきっかけは次の
 // フレームから）、和集合とスタックと同じ件になる。ループの中の判定（射手・当たり・条件・順位）は件を読み、段 A までの段（1・1.5・2・
 // 2.5 段目）の見え方は件の列の段の印で再現する（2.5 節）。強化（2.5 段目）の受け付けと値は、参照する件の一生が要るので、ループの後に
-// 履歴を閉じる時に決める（amplify。ループの中で強化の件を読む所は無い）。ループの後は、履歴から窓・区間・記録を書き出す（2.6 節。
-// 段 E で消す）。並びは時刻の順（論点 5）。段 B で 2 パス目（planBuffTimeline）を消し、件を作るのはここだけになった。
+// 履歴を閉じる時に決める（amplify。ループの中で強化の件を読む所は無い）。ループの後は、履歴の値の小片から区間を作る（buffTimelineOf。
+// 2.9 節）。値の小片の並びは時刻の順（論点 5）。段 B で 2 パス目（planBuffTimeline）を消し、件を作るのはここだけになった。段 E で、
+// 窓と記録の書き出し（BuffTimeline の窓と記録の欄）を消し、読む側は履歴を直接読む。
 import type { BurstScheduleModel, FullBurstWindow, BurstSchedule } from '../burst/schedule.ts';
 import { dotActiveSpans, groupDotsByState } from '../frame/dot.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import { resolveDotEffects, type ResolvedDamageEffect } from './burstDamage.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
 import { chancePieces, chanceValueOf, type ChanceOpportunity } from './chance.ts';
-import { resolveCycleEvery, type CycleWindow, type ResolvedCycleEvery } from './cycles.ts';
+import { resolveCycleEvery, type ResolvedCycleEvery } from './cycles.ts';
 import {
   isResolvedChance,
   isResolvedShotCount,
@@ -68,9 +69,7 @@ import {
   weaponStartTrim,
   type AppliedRecord,
   type BuffTimeline,
-  type BuffWindow,
   type ConditionSkip,
-  type NamedStateWindow,
   type SlotBuffState,
   type TimelineLandings,
   type TimelineSlot,
@@ -84,7 +83,7 @@ export const ENEMY = -1;
 
 /**
  * 敵が持つ効果か: 敵の受けるダメージ▲（damageTaken）。値は、敵が受ける全ダメージに掛かるので、味方の各枠の区間の値に足す
- * （書き出しで味方の各枠の窓に写す。C-0138）
+ * （値の小片で味方の各枠に写す。C-0138）
  */
 export function isEnemyEffect(effect: { stat: string }): boolean {
   return effect.stat === 'damageTaken';
@@ -118,7 +117,7 @@ export type HeldTrack = {
   stage: HeldStage;
   /** 窓の始まり（昇順）。確率のきっかけは機会（opportunities）で持つ */
   starts: number[];
-  /** 状態: 射撃の回数のきっかけの付与が発火を足したか（書き出しの NamedStateWindow.shotCount） */
+  /** 状態: 射撃の回数のきっかけの付与が発火を足したか（calc の射撃の数え方の判定 hasOwnShotCountItem が読む） */
   shotCount: boolean;
   /** 確率のきっかけの機会（出どころで共有。ほかは null） */
   opportunities: ChanceOpportunity[] | null;
@@ -342,29 +341,6 @@ const STAGE_RANK: Record<HeldStage, number> = { 1: 0, 1.5: 1, 2: 2, 2.5: 3 };
 
 const SKILL_ORDER = Object.fromEntries(SKILL_SLOTS.map((s, i) => [s, i])) as Record<string, number>;
 
-/** 件の列の書き出しの並びの鍵（段 → 出どころの枠 → 定義の順 → 持ち主） */
-function orderKeyOf(track: HeldTrack): number[] {
-  const o = track.origin;
-  const source = o.kind === 'state' ? o.grant.source : o.kind === 'enemyState' ? o.effects[0]!.source : o.effect.source;
-  const effectIndex =
-    o.kind === 'state'
-      ? o.grant.effectIndex
-      : o.kind === 'enemyState'
-        ? o.effects[0]!.effectIndex
-        : o.kind === 'passive'
-          ? 0
-          : 'effectIndex' in o.effect
-            ? o.effect.effectIndex
-            : 0;
-  return [
-    STAGE_RANK[track.stage],
-    track.sourceSlotIndex,
-    SKILL_ORDER[source?.skill ?? 'skill1'] ?? 0,
-    effectIndex,
-    track.holder,
-  ];
-}
-
 function compareKeys(a: readonly number[], b: readonly number[]): number {
   const n = Math.min(a.length, b.length);
   for (let i = 0; i < n; i++) {
@@ -405,7 +381,7 @@ function stateGroupsOf(
   return groups;
 }
 
-/** timed の効果の段（強化は書き出しで扱う） */
+/** timed の効果の段（強化の受け付けと値は、履歴を閉じる時に決める） */
 function stageOfTimed(effect: ResolvedTimedEffect): HeldStage {
   if (effect.amplifies !== undefined) return 2.5;
   if (dependsOnRank(effect)) return 2;
@@ -861,7 +837,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const targets = fireTimed(src, start, { ...fireContextOf(src.effect.trigger, ev), attackRank });
       recordRanking(f, src.sourceSlotIndex, src.effect, attackRank, finalAttacks, targets);
     }
-    // 2.5 段目: 強化は発火の窓の始まりだけを貯める（受け付けと値は書き出し）
+    // 2.5 段目: 強化は発火の窓の始まりだけを貯める（受け付けと値は、履歴を閉じる時に amplify で決める）
     for (const amp of amplifiers) {
       if (!take(amp.effect.trigger)) continue;
       if (!battleStartOnly && !ampFires.get(amp)!(ev)) continue;
@@ -1081,7 +1057,7 @@ export function hasOwnShotCountItem(
   );
 }
 
-// ---- 書き出し（plan/design-holder-effects.md 2.6 節。段 E で消す） ----
+// ---- 値の小片と区間（plan/design-holder-effects.md 2.6・2.9 節） ----
 
 /**
  * 値の小片（plan/design-holder-effects.md 2.9 節。段 D の 1）: 味方の枠ごとに、区間の値に足す効果と、その値が効いている区間 [start, end)。
@@ -1257,10 +1233,6 @@ function passiveStatesOf(history: HolderHistory): (SlotBuffState | null)[] {
   });
 }
 
-/**
- * 履歴から BuffTimeline を書き出す（段 A までの planBuffTimeline の出力と同じ形。並びは時刻の順）。
- * 区間は、書き出した窓から組み立てる（skills/timeline.ts の buildSegments。段 D の 1 で履歴から作る形に移す）
- */
 /** 履歴の値の小片（味方の枠ごと。並びは時刻の順。区間の値はこの順に足す） */
 export function valuePiecesOf(history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots'>): ValuePiece[] {
   const keyed: { piece: ValuePiece; key: number[] }[] = [];
@@ -1286,19 +1258,10 @@ export function valuePiecesOf(history: Pick<HolderHistory, 'tracks' | 'amplified
   return keyed.sort((a, b) => compareKeys(a.key, b.key)).map((x) => x.piece);
 }
 
-/** 値の小片を窓の形にする（書き出し。段 E で消す） */
-function windowOf(p: ValuePiece): BuffWindow {
-  const w: BuffWindow = {
-    slotIndex: p.slotIndex,
-    sourceSlotIndex: p.sourceSlotIndex,
-    effect: p.effect,
-    start: p.start,
-    end: p.end,
-  };
-  if (p.stack !== undefined) w.stack = p.stack;
-  return w;
-}
-
+/**
+ * 履歴から区間と常時の値を作る（skills/timeline.ts の buildSegments。区間の値は、値の小片を時刻の順に足す）。段 E で、窓と記録の
+ * 書き出しを消した（読む側は履歴を読む。plan/design-holder-effects.md 3 節の段 E）
+ */
 export function buffTimelineOf(
   history: HolderHistory,
   schedule: BurstSchedule | null,
@@ -1306,74 +1269,15 @@ export function buffTimelineOf(
   sustainedHitRateUp = true,
 ): BuffTimeline {
   const { frames } = history;
-  const namedStateWindows: { window: NamedStateWindow; key: number[] }[] = [];
-  const cycleWindows: CycleWindow[] = [];
-  for (const track of history.tracks) {
-    const o = track.origin;
-    if (o.kind === 'state') {
-      for (const item of track.items) {
-        const record: NamedStateWindow = {
-          state: o.state,
-          slotIndex: track.holder,
-          sourceSlotIndex: track.sourceSlotIndex,
-          start: item.start,
-          end: item.end,
-        };
-        if (item.stack !== undefined) record.stack = item.stack;
-        if (track.shotCount) record.shotCount = true;
-        namedStateWindows.push({ window: record, key: [item.start, ...orderKeyOf(track), item.stack ?? 0] });
-      }
-    }
-    if (o.kind === 'cycleEvery') {
-      for (const item of track.items) {
-        cycleWindows.push({
-          slotIndex: track.holder,
-          source: o.effect.source,
-          effectIndex: o.effect.effectIndex,
-          targetSkill: o.effect.targetSkill,
-          every: o.effect.every,
-          start: item.start,
-          end: item.end,
-        });
-      }
-    }
-  }
-  const sortByKey = <T>(xs: { window: T; key: number[] }[]): T[] =>
-    xs.sort((a, b) => compareKeys(a.key, b.key)).map((x) => x.window);
-  // 段 D の 1: 区間は値の小片から組む。窓（書き出し）も同じ小片から
-  const pieces = valuePiecesOf(history);
-  const windows = pieces.filter((p) => !isStateStat(p.effect.stat)).map(windowOf);
-  const stateWindows = pieces.filter((p) => isStateStat(p.effect.stat)).map(windowOf);
   const passive = passiveStatesOf(history);
-  const conditionSkips = [...history.conditionSkips];
-  const rankings = [...history.rankings]
-    .map((x, i) => ({ x, i }))
-    .sort((a, b) => a.x.frame - b.x.frame || a.i - b.i)
-    .map(({ x }) => x);
   const segments = buildSegments({
     slots: history.slots,
     schedule,
     frames,
-    pieces,
+    pieces: valuePiecesOf(history),
     passive,
     landings,
     sustainedHitRateUp,
   });
-  return {
-    frames,
-    segments,
-    windows,
-    passive,
-    heals: [...history.heals].sort(
-      (a, b) => a.frame - b.frame || a.sourceSlotIndex - b.sourceSlotIndex || a.slotIndex - b.slotIndex,
-    ),
-    rankings,
-    stateWindows,
-    conditionSkips,
-    cycleWindows: cycleWindows.sort((a, b) => a.start - b.start || a.slotIndex - b.slotIndex),
-    applications: [...history.applications].sort(
-      (a, b) => a.frame - b.frame || a.sourceSlotIndex - b.sourceSlotIndex || a.slotIndex - b.slotIndex,
-    ),
-    namedStateWindows: sortByKey(namedStateWindows),
-  };
+  return { frames, segments, passive };
 }

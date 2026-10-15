@@ -46,18 +46,6 @@ export type ResolvedCycleEvery = {
   assumes?: LocalizedText;
 };
 
-/** 間隔の変更が 1 体に効いているフレーム区間（BuffTimeline.cycleWindows。区間には入らない） */
-export type CycleWindow = {
-  slotIndex: number;
-  source: ResolvedCycleEvery['source'];
-  effectIndex: number;
-  targetSkill: SkillSlot;
-  every: number;
-  start: number;
-  /** 戦闘時間で切る */
-  end: number;
-};
-
 function assertOwnDefinition(def: SkillDefinition, character: CharacterData): void {
   if (def.resourceId !== character.resourceId) {
     throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
@@ -178,13 +166,13 @@ export type CycleFire = {
 
 /**
  * 射撃の列 shotFrames（昇順）から、循環の各段の発動を決める（ファイル冒頭の規則）。
- * windows はこの循環に効く間隔の変更の窓。重なった窓は小さいほうの every を使う
+ * windows はこの循環に効く間隔の変更の件（持ち主ごとの一覧の履歴の cycleEvery の件 [start, end)）。重なった件は小さいほうの every を使う
  */
 export function cycleFires(
   every: number,
   steps: number,
   shotFrames: readonly number[],
-  windows: readonly Pick<CycleWindow, 'every' | 'start' | 'end'>[] = [],
+  windows: readonly { every: number; start: number; end: number }[] = [],
 ): CycleFire[] {
   if (!Number.isInteger(every) || every < 1) throw new RangeError(`every must be a positive integer, got ${every}`);
   if (!Number.isInteger(steps) || steps < 1) throw new RangeError(`steps must be a positive integer, got ${steps}`);

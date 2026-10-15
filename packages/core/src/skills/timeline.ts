@@ -15,19 +15,19 @@
 // Stage 11 アリス編: 対象「最終攻撃力が最も高い味方 N 機」（topAttack）の効果は 2 段目に回し、1 段目の攻撃力の窓で順位を付けて
 // 対象を決める（skills/ranking.ts。plan/design-stage11.md 19.2 節）。
 // Stage 11 モダニア（plan/design-stage11-modernia.md 3 節）: 効果のあるスタックは段ごとの窓にほどく（skills/stacks.ts）。
-// 状態だけの stat（命中率）の窓は windows（timedEffects）に入れず stateWindows に置く。着地点の計画があるときだけ、区間の
+// 状態だけの stat（命中率）の窓は区間の timedEffects に入れない。着地点の計画があるときだけ、区間の
 // buffs.hitRate に足し、自動の枠の鍵に入れる（C-0170。コア命中率の N）。条件「自分が 〈stat〉 増加状態なら」の効果は 1.5 段目で、
-// 1 段目の窓と stateWindows を見て発火を間引く。使用武器の変更の窓は、射手が持ち替えるフレーム（発火の次のフレーム）から始める
+// 1 段目の窓と状態だけの stat の窓を見て発火を間引く。使用武器の変更の窓は、射手が持ち替えるフレーム（発火の次のフレーム）から始める
 // （weaponStartTrim）。
 // 名前の付いた状態の語彙編（plan/design-named-state.md 5.2 節・実装の別紙 1.4 節）: 状態の付与は timed と同じ段に置き（条件なしは
 // 1 段目、条件つきは 1.5 段目、順位の対象は 2 段目）、出どころ × 状態ごとに発火を集め、その状態の付与のいちばん後の段で状態の窓
-// （namedStateWindows）と中身の窓（windows・stateWindows）を作る。中身は同じ stat の timed と同じに区間・鍵・判定に入る。
+// と中身の窓を作る。中身は同じ stat の timed と同じに区間・鍵・判定に入る。
 // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 B）: 窓を作る 2 パス目（planBuffTimeline）を消した。上の段（1〜2.5 段目）は、
-// 1 パス目の件の一覧（skills/holders.ts）の段の印で再現する。窓と記録はその履歴から書き出し（buffTimelineOf）、ここには区間の
-// 組み立て（buildSegments）と、件を作る関数（unionWindows など）、トリガーの発火の列（triggerFrames）を置く。
+// 1 パス目の件の一覧（skills/holders.ts）の段の印で再現する。区間はその履歴の値の小片から作り（buffTimelineOf）、ここには区間の
+// 組み立て（buildSegments）と、件を作る関数（unionWindows など）、トリガーの発火の列（triggerFrames）を置く。段 E で窓と記録の
+// 書き出し（BuffTimeline の windows・stateWindows・namedStateWindows・cycleWindows と記録の欄）を消した（読む側は履歴を読む）。
 import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { BuildEffect } from '../buildEffects.ts';
-import type { CycleWindow } from './cycles.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFirstFrame } from '../time.ts';
@@ -45,7 +45,7 @@ import {
   type SkillLevels,
   type WindowEffect,
 } from './resolve.ts';
-import type { RankSlot, RankingRecord } from './ranking.ts';
+import type { RankSlot } from './ranking.ts';
 import { stackWindows } from './stacks.ts';
 import { isEffectTarget } from './targets.ts';
 import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
@@ -68,28 +68,13 @@ export type TimelineSlot = {
   coreHitRate?: number;
 } | null;
 
-/** 1 つの効果が 1 人に効いているフレーム区間 */
-export type BuffWindow = {
-  /** 効果を受ける枠 */
-  slotIndex: number;
-  /** 効果を出した枠 */
-  sourceSlotIndex: number;
-  /** 名前の付いた状態の語彙編: 状態の中身（isStateContent）も入る */
-  effect: WindowEffect;
-  start: number;
-  /** 戦闘時間で切る */
-  end: number;
-  /** Stage 11 モダニア: 効果のあるスタックの段（1 始まり）。スタックしない効果はキーごと無い */
-  stack?: number;
-};
-
 /** Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった記録 */
 export type ConditionSkip = {
   /** トリガーが起きたフレーム */
   frame: number;
   sourceSlotIndex: number;
   effect: { source: ResolvedEffect['source']; effectIndex: number };
-  /** 名前の付いた状態の語彙編: 条件つきの付与なら、付けなかった状態（中身の窓の表示で状態ごとに数える） */
+  /** 名前の付いた状態の語彙編: 条件つきの付与なら、付けなかった状態（中身の効果の表示で状態ごとに数える） */
   state?: NamedStateId;
 };
 
@@ -125,73 +110,32 @@ export type TimelineSegment = {
   slotKeys: (string | null)[];
 };
 
+/**
+ * バフの区間と常時の値（持ち主ごとの一覧編の段 E の後。plan/design-holder-effects.md 2.9 節）。効果の件・値の小片・記録は、
+ * 1 パス目の履歴（skills/holders.ts の HolderHistory）を読む
+ */
 export type BuffTimeline = {
   frames: number;
   /** [0, frames) を隙間・重なりなく覆う */
   segments: TimelineSegment[];
-  /** 発生順（持ち主ごとの一覧の書き出しでは時刻の順。plan/design-holder-effects.md 2.6 節）。UI とテスト用 */
-  windows: BuffWindow[];
   /** 常時パッシブだけの状態（Stage 4 互換の表示用）。空枠は null */
   passive: (SlotBuffState | null)[];
-  /** Stage 11: 回復の記録（1 パス目の履歴の heals）。heal 効果が無ければ空 */
-  heals: HealRecord[];
-  /** Stage 11 アリス編: topAttack の効果の発火ごとの順位（効果ごと・発生順）。topAttack の効果が無ければ空 */
-  rankings: RankingRecord[];
-  /** Stage 11 モダニア: 状態だけの stat（命中率）の窓。区間には入れない（条件の判定と表示用） */
-  stateWindows: BuffWindow[];
-  /** Stage 11 モダニア: 条件を満たさずに発火しなかった記録（発生順） */
-  conditionSkips: ConditionSkip[];
-  /**
-   * Stage 11 紅蓮BS: 循環の間隔の変更（cycleEvery）の窓（発生順）。区間には入れない（ダメージの式も射手も読まない）。
-   * frame/plan.ts の planSkillHits が、射撃がこの窓に入るかで循環の段を決める（plan/design-stage11-scarlet-bs.md 3.2 節）
-   */
-  cycleWindows: CycleWindow[];
-  /**
-   * ペルソナ編（plan/design-persona.md 3.3 節）: 状態が枠に付いた記録（フレーム・出どころの枠・受けた枠の順）。名前の付いた状態の語彙編:
-   * どの段の付与からも作る（静的な付与はフレーム 0）。付き直し（窓が続いている間の再発火）も 1 回ずつ記録する。トリガー
-   * { applied: 状態 } の発火に使う（frame/plan.ts）
-   */
-  applications: AppliedRecord[];
-  /**
-   * 名前の付いた状態の語彙編（plan/design-named-state.md 実装の別紙 1.4 節）: 時間で変わる状態の窓（持ち主 × 状態 × 出どころごと。
-   * 発生順）。値を持たないので区間には入れない（中身の窓が windows・stateWindows に入る）。静的な状態は入らない（編成の段）
-   */
-  namedStateWindows: NamedStateWindow[];
 };
-
-/** ペルソナ編: 状態が枠に付いた記録（名前の付いた状態の語彙編: 目録の id） */
-export type AppliedRecord = { frame: number; state: NamedStateId; sourceSlotIndex: number; slotIndex: number };
 
 /**
- * 名前の付いた状態の語彙編: 状態の窓 [start, end)。同じ定義の同じ状態の付与の発火をまとめて、上書き延長（和集合）かスタックの段ごとの
- * 窓にしたもの
+ * ペルソナ編（plan/design-persona.md 3.3 節）: 状態が枠に付いた記録（1 パス目の履歴の applications）。名前の付いた状態の語彙編:
+ * 目録の id。どの段の付与からも作る（静的な付与はフレーム 0）。付き直し（件が続いている間の再発火）も 1 回ずつ記録する。トリガー
+ * { applied: 状態 } の発火に使う（frame/plan.ts）
  */
-export type NamedStateWindow = {
-  state: NamedStateId;
-  /** 持ち主の枠 */
-  slotIndex: number;
-  /** 付与を持つ枠 */
-  sourceSlotIndex: number;
-  start: number;
-  end: number;
-  /** スタックする状態の段（1 始まり）。スタックしない状態はキーごと無い */
-  stack?: number;
-  /**
-   * この窓の持ち主に、射撃の回数のトリガーの付与が発火を足したか（calc の射撃の数え方。段 D の 3 で、判定は skills/holders.ts の hasOwnShotCountItem が件の列の印で見る。
-   * 中身はトリガーを持たないので、窓を開いた付与のトリガーをここで持つ）
-   */
-  shotCount?: true;
-};
+export type AppliedRecord = { frame: number; state: NamedStateId; sourceSlotIndex: number; slotIndex: number };
 
 /** ペルソナ編: 枠 slotIndex に状態 state が付いたフレーム（昇順。同じフレームに 2 つの出どころから付いても 1 回） */
 export function appliedFrames(
-  timeline: { readonly applications: readonly AppliedRecord[] },
+  history: { readonly applications: readonly AppliedRecord[] },
   state: NamedStateId,
   slotIndex: number,
 ): number[] {
-  const frames = timeline.applications
-    .filter((a) => a.state === state && a.slotIndex === slotIndex)
-    .map((a) => a.frame);
+  const frames = history.applications.filter((a) => a.state === state && a.slotIndex === slotIndex).map((a) => a.frame);
   return [...new Set(frames)].sort((a, b) => a - b);
 }
 
@@ -493,7 +437,7 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
   });
 }
 
-/** 区間の組み立ての入力（持ち主ごとの一覧の書き出し skills/holders.ts の buffTimelineOf が渡す） */
+/** 区間の組み立ての入力（持ち主ごとの一覧の履歴から skills/holders.ts の buffTimelineOf が渡す） */
 export type SegmentInput = {
   slots: readonly TimelineSlot[];
   schedule: BurstSchedule | null;
@@ -508,8 +452,14 @@ export type SegmentInput = {
   sustainedHitRateUp: boolean;
 };
 
-/** 区間に足す値の小片の形（skills/holders.ts の ValuePiece） */
-export type SegmentPiece = Pick<BuffWindow, 'slotIndex' | 'sourceSlotIndex' | 'effect' | 'start' | 'end'>;
+/** 区間に足す値の小片の形（skills/holders.ts の ValuePiece）。値を足す枠に、出どころの枠の効果が [start, end) で効く */
+export type SegmentPiece = {
+  slotIndex: number;
+  sourceSlotIndex: number;
+  effect: WindowEffect;
+  start: number;
+  end: number;
+};
 
 /**
  * 値の小片から区間を組む（Stage 6 の 3〜5）。境界は {0, frames} ∪ 小片の端 ∪ フルバースト区間の端 ∪ バースト発動フレーム ∪ 着地点の
@@ -518,13 +468,13 @@ export type SegmentPiece = Pick<BuffWindow, 'slotIndex' | 'sourceSlotIndex' | 'e
  */
 export function buildSegments(input: SegmentInput): TimelineSegment[] {
   const { slots, schedule, frames, pieces, passive, landings, sustainedHitRateUp } = input;
-  const windows = pieces.filter((p) => !isStateStat(p.effect.stat));
-  const stateWindows = pieces.filter((p) => isStateStat(p.effect.stat));
+  const buffPieces = pieces.filter((p) => !isStateStat(p.effect.stat));
+  const statePieces = pieces.filter((p) => isStateStat(p.effect.stat));
   // 3. 境界
   const bounds = new Set<number>([0, frames]);
-  for (const w of windows) {
-    bounds.add(w.start);
-    bounds.add(w.end);
+  for (const p of buffPieces) {
+    bounds.add(p.start);
+    bounds.add(p.end);
   }
   if (schedule !== null) {
     for (const w of schedule.fullBurstWindows) {
@@ -538,12 +488,12 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
     bounds.add(s.end);
   }
   // 持続の命中率▲（C-0170）: 条件が自動の枠では、コア命中率の N に区間ごとの命中率を使う。着地点の計画があるときだけ、
-  // 状態の窓（命中率）の端も境界に足し、区間の状態の buffs.hitRate に持続の▲を足す（plan/design-sustained-hit-rate-core.md）
+  // 状態だけの stat（命中率）の小片の端も境界に足し、区間の状態の buffs.hitRate に持続の▲を足す（plan/design-sustained-hit-rate-core.md）
   const timedHitRateUp = landings !== null && sustainedHitRateUp;
   if (timedHitRateUp) {
-    for (const w of stateWindows) {
-      bounds.add(w.start);
-      bounds.add(w.end);
+    for (const p of statePieces) {
+      bounds.add(p.start);
+      bounds.add(p.end);
     }
   }
   let landingIndex = 0;
@@ -571,29 +521,29 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
             timedEffects: [] as AppliedTimedEffect[],
           },
     );
-    // 窓の並びの順に足して浮動小数の加算順を決定的にする（持ち主ごとの一覧の書き出しは時刻の順。plan/design-holder-effects.md 論点 5）
-    for (const w of windows) {
-      if (w.start > start || w.end <= start) continue;
-      const state = slotStates[w.slotIndex];
+    // 値の小片の並びの順に足して浮動小数の加算順を決定的にする（並びは時刻の順。plan/design-holder-effects.md 論点 5）
+    for (const p of buffPieces) {
+      if (p.start > start || p.end <= start) continue;
+      const state = slotStates[p.slotIndex];
       if (!state) continue;
-      const applied = applyResolvedEffect(state.buffs, w.effect, slots[w.sourceSlotIndex]?.casterBaseAttack ?? 0);
+      const applied = applyResolvedEffect(state.buffs, p.effect, slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0);
       state.buffs = applied.totals;
       state.timedEffects.push({
-        ...w.effect,
-        sourceSlotIndex: w.sourceSlotIndex,
+        ...p.effect,
+        sourceSlotIndex: p.sourceSlotIndex,
         appliedAmount: applied.appliedAmount,
       });
     }
-    // 状態の窓は timedEffects には入れない（表示は stateWindows のまま）。buffs.hitRate だけを足す
+    // 状態だけの stat の小片は timedEffects には入れない（表示は履歴の値の小片から作る）。buffs.hitRate だけを足す
     if (timedHitRateUp) {
-      for (const w of stateWindows) {
-        if (w.start > start || w.end <= start) continue;
-        const state = slotStates[w.slotIndex];
+      for (const p of statePieces) {
+        if (p.start > start || p.end <= start) continue;
+        const state = slotStates[p.slotIndex];
         if (!state) continue;
         state.buffs = applyResolvedEffect(
           state.buffs,
-          w.effect,
-          slots[w.sourceSlotIndex]?.casterBaseAttack ?? 0,
+          p.effect,
+          slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0,
         ).totals;
       }
     }

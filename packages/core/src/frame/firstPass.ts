@@ -12,8 +12,8 @@
 //      （録画 19: ノワールのフルバースト開始で 9 → 14 になるのは、+5 発と 39.88% の弾丸チャージが同じフレームに来るため）。
 //
 // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A・B）: 射撃に効かない効果（攻撃力・会心など）も、すべて件の一覧で持つ。
-// ループの後の窓・区間・記録は、planTeamRun が履歴から書き出す（skills/holders.ts の buffTimelineOf。2 パス目の作り直しはやめ、
-// 段 B で 2 パス目の入口 planBuffTimeline も消した）。
+// ループの後の区間は、planTeamRun が履歴から作る（skills/holders.ts の buffTimelineOf。2 パス目の作り直しはやめ、段 B で 2 パス目の
+// 入口 planBuffTimeline も消した）。読む側（calc・sim・観測値の指標・画面）は履歴を読む（段 D。段 E で窓と記録の書き出しを消した）。
 // 射撃に効く効果も即時効果も無い編成では、射撃の列は planShots、時刻表は planDynamicSchedule と 1 フレームも違わない（1.3 節）。
 //
 // Stage 11（plan/design-stage11.md 3 節）: 対象 burstUsers（「直前にバーストスキルを使用した味方」）は発火ごとに対象が変わるので、
@@ -195,7 +195,7 @@ export type FirstPassResult = {
    */
   shotGauges: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
   /**
-   * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 件の一覧の履歴。planTeamRun が窓・区間・記録を書き出す
+   * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 件の一覧の履歴。planTeamRun が区間を作る
    * （skills/holders.ts の buffTimelineOf）
    */
   history: HolderHistory;

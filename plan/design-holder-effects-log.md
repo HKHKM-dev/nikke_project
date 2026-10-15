@@ -41,3 +41,9 @@
   - `skills/__tests__/` の holders・amplifies は書き出した窓ではなく値の小片（`valuePiecesOf`）を見る形にし、stage11 の回復の記録が窓の書き出しと一致することを見る行は消した（書き出しは段 E で消す）。
   - これで、窓の欄（`windows`・`stateWindows`・`namedStateWindows`・`cycleWindows`）と記録の欄（`applications`・`conditionSkips`・`rankings`・`heals`）を読む所は無くなった（`BuffTimeline` を読むのは区間と常時の値だけ）。
   - 確かめ: `npm test`（テストだけの変更なので生成物は変わらない）。
+- 2026-10-15: 段 E を実装した（2.6 節と 3 節の段 E に実装の注記を足した）。
+  - 消したもの: `BuffTimeline` の窓の欄（`windows`・`stateWindows`・`namedStateWindows`・`cycleWindows`）と記録の欄（`applications`・`conditionSkips`・`rankings`・`heals`）、書き出しのコード（`skills/holders.ts` の `buffTimelineOf` の窓と記録を作る所・`windowOf`・`orderKeyOf`）、窓の型（`BuffWindow`・`NamedStateWindow`・`CycleWindow`）。区間の入力の小片の形（`SegmentPiece`）と循環の発（`cycleFires`）の間隔の変更の件の形は、型を直接書いた。
+  - `BuffTimeline` に残したのは区間と常時の値（`passive`）。常時の値は設計の段 E の項目に挙がっていなかったが、calc と sim の常時の効果が読み、常時の件から作る値なので残した（2.6・2.9 節）。
+  - 型の名前の「窓」（`WindowEffect`・`unionWindows` など）は改めなかった（3 節の段 E の 4 の決め）。コメントは、消した欄を指していた所と、触った所（区間の組み立ての中の小片の名前など）を直した。
+  - 結論の「モデル側」の文が消した欄 `BuffTimeline.applications` を指していたので、履歴の付いた記録（`HolderHistory.applications`）に直した（C-0356・C-0361・C-0429）。C-0271 は段 B で `skills/heals.ts` から窓の作りを移した後も「回復と窓は `skills/heals.ts`」のままだったので、同じく直した。結論の中身・状態・根拠は変えない。
+  - 確かめ: `npm test`、`records:check`（生成物の差分は `plan/claims.md` の上の「モデル側」の文だけ）、`records:minimal`（感度に差分なし）。窓の型を消して typecheck が通る（窓を読むコードが残っていない）。速さ: コアのテスト 48 秒、感度の計算 14 秒（段 A の後の 50 秒・15〜16 秒より少し速い）。

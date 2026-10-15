@@ -31,7 +31,7 @@ export type SlotCycleSummary = {
   count: number;
 };
 
-/** まとめる値の小片の形（skills/holders.ts の ValuePiece。窓 BuffWindow も同じ形） */
+/** まとめる値の小片の形（skills/holders.ts の ValuePiece） */
 export type SummaryPiece = { slotIndex: number; sourceSlotIndex: number; effect: WindowEffect; stack?: number };
 
 /** まとめる循環の件の形 */
