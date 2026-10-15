@@ -33,6 +33,13 @@ export const NAMED_STATES = {
   everyonesStar: { name: { ja: 'みんなの星', en: "Everyone's Star" }, holder: 'ally' },
   /** 同: シューティングスター（アニス：スターのバーストの自動攻撃の呼び名。10 秒。C-0211） */
   shootingStar: { name: { ja: 'シューティングスター', en: 'Shooting Star' }, holder: 'ally' },
+  /** 2 段目の段 1（plan/design-skill-stage1.md 2.2 節）: マターガンマ（マナの S1。戦闘開始時・持続・攻撃力▲。C-0020） */
+  metalGamma: { name: { ja: 'マターガンマ', en: 'Metal γ' }, holder: 'ally' },
+  /**
+   * 同: マターシグマ（マナの S2。戦闘開始時とフルバーストの終わり（直前に自分がバーストを使用していれば）に付き、フルバーストの
+   * 開始で解除。バーストゲージのチャージ速度▲。C-0269。S2 の「マターシグマ状態なら」。C-0281）
+   */
+  metalSigma: { name: { ja: 'マターシグマ', en: 'Metal σ' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

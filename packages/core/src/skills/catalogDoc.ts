@@ -42,7 +42,7 @@ const STAT_INFO: Record<string, readonly [label: string, status: Status | null, 
   chargeSpeed: ['チャージ速度', 'ok', 'chargeSpeed'],
   chargeTime: ['チャージ時間（秒）', 'ok', 'chargeSpeed の flat・fixedChargeTime'],
   hitRate: ['命中率', null, '味方▲は hitRate。敵▼は敵の命中'],
-  burstGaugeSpeed: ['バーストゲージのチャージ速度', null, 'burstGaugeSpeed（passive だけ）'],
+  burstGaugeSpeed: ['バーストゲージのチャージ速度', null, 'burstGaugeSpeed（2 段目の段 1 で timed・状態の中身にも）'],
   defense: ['防御力', null, '味方▲は防御系。敵▼は注記だけの enemyDefenseDown'],
   maxHp: ['最大HP', 'indirect', 'HP の経路（HP 基準の攻撃力▲・ダメージ、HP の割合、HP 順の対象、バリアの量）'],
   pierceDamage: ['貫通ダメージ', 'gap', 'なし（貫通特化の発に乗る。ツールチップ T2。敵 1 体で乗るかは撮って確かめる）'],
@@ -159,8 +159,8 @@ const KIND_INFO: Record<string, Info> = {
   'state:grant?': ['名前だけの付与（状態・仕組み）', 'check', 'state か、仕組みごとの語彙'],
   'state:remove': [
     '状態・スタックの解除（同じスキルが外す。解除不可の状態は外さない読み）',
-    'gap',
-    'なし（後の拡張 removeOn）',
+    'ok',
+    'removeState（自分の状態。2 段目の段 1。味方の状態はなし）',
   ],
   'state:cancel': [
     '状態の消去（同じスキルが外す。解除不可の状態も外す）',
@@ -236,7 +236,7 @@ const COND_INFO: Record<string, Info> = {
   ],
   squad: ['同じ部隊の味方がいれば', 'ok', 'squad'],
   burstStepMix: ['部隊構成（基本バースト段階）', 'ok', 'burstStepMix'],
-  usedBurst: ['直前に自分がバーストを使用していれば', 'gap', 'なし（burstUsers は対象だけ）'],
+  usedBurst: ['直前に自分がバーストを使用していれば', 'ok', 'usedBurst（2 段目の段 1）'],
   inFullBurst: ['フルバーストタイム中なら', 'ok', 'inFullBurst'],
   enemyCount: ['敵が N 機以上', 'premise', '敵 1 体'],
   alive: ['生存している限り', 'premise', '倒れない'],
@@ -346,7 +346,7 @@ function statStatus(e: CatalogEffect): readonly [Status, string] {
   }
   if (c === 'hitRate') return enemy ? ['damaged', '敵の命中（被弾の経路）'] : ['ok', 'hitRate（decrease）'];
   if (c === 'attack' && enemy) return ['damaged', '敵の攻撃力▼（被弾の経路）'];
-  if (c === 'burstGaugeSpeed') return ['ok', 'burstGaugeSpeed（timed は不可）'];
+  if (c === 'burstGaugeSpeed') return ['ok', 'burstGaugeSpeed（2 段目の段 1 で timed・状態の中身にも）'];
   if (enemy && info?.[1] === 'ok') return ['nodmg', '敵への同じ stat'];
   return [info?.[1] ?? 'check', info?.[2] ?? 'なし'];
 }

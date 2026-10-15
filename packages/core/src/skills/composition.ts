@@ -7,8 +7,8 @@
 // 効果の fixedTargets に書く（skills/targets.ts が絞る）。何度通しても同じ枠になる。
 // ペルソナ編（plan/design-persona.md 3.2 節）: 「ペルソナ状態の」（targetState）・「基本バースト段階が N の」
 // （targetBurstStep）・allies の「自分を除く」（excludeSelf: always）も、編成で決まる対象としてここで枠を決める。
-// 名前の付いた状態の語彙編（plan/design-named-state.md 3.4 節・実装の別紙 1.3 節）: 枠の状態は、その枠の定義の静的な付与
-// （isStaticStateGrant）から取る。静的な付与にも編成の条件を書けるので、効果を外した後の定義から集める
+// 名前の付いた状態の語彙編（plan/design-named-state.md 3.4 節・実装の別紙 1.3 節）: 枠の状態は、その枠の定義の静的な状態
+// （staticStatesOf。2 段目の段 1 で状態ごとの決め方にした）から取る。静的な付与にも編成の条件を書けるので、効果を外した後の定義から集める
 // （applyCompositionToTeam: 編成の条件で外す → 静的な状態を集める → 対象の枠を決める）。付与（state）の対象も timed と同じに決める。
 // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 自分の状態の条件（selfState）のうち、編成で決まるもの（自分の定義の静的な状態と、
 // どの枠の定義も付けない状態）も、ここで決める（満たせば条件から落とし、満たさなければ効果を外す）。

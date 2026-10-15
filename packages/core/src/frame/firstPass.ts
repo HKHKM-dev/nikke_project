@@ -334,19 +334,29 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
 
   // ---- バースト ----
   const gaugeSpeed = passive.map((s) => s?.buffs.burstGaugeSpeed ?? 0);
+  // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるゲージ速度（timed・状態の中身）の件を持ちうる枠は、フレームの頭で
+  // (1 + 常時の速度 + 効いている件の速度) を読み（f − 1 までに付いた件。射手と同じ見え方）、そのフレームに溜めるゲージに掛ける。
+  // 持たない枠は常時の値だけで、今までと同じ値（下の energies などを前もって作る）
+  const timedGauge = slots.map((_, i) => lists.hasGaugeSpeedTracks(i));
+  const timedGaugeSlots = slots.flatMap((_, i) => (timedGauge[i] ? [i] : []));
+  const gaugeScale = slots.map((_, i) => 1 + gaugeSpeed[i]!);
+  const targetEnergies = slots.map((slot) => slot?.character.shot.targetBurstEnergyPerShot ?? 0);
+  /** 枠 i の、射手の 1 ヒットぶんのゲージ（targetBurstEnergyPerShot）のこのフレームの量。前もって作った値 fixed は速度が変わらない枠の分 */
+  const targetEnergyNow = (i: number, fixed: number): number =>
+    timedGauge[i] ? targetEnergies[i]! * gaugeScale[i]! : fixed;
   // Stage 18-C: 弾丸命中率が着地点で変わる枠は、1 発のゲージを命中率 1 で持ち、撃ったフレームの区間の命中率を掛ける。
   // SG はペレットの割合も 1 で持ち、区間の弾丸命中率が的の表の値ならそのまま（当たったペレットの割合。C-0150）、
   // 手入力の値なら置き値 SG_PELLET_GAUGE_HIT_RATE を掛ける（plan/design-sg-hit-rate.md 3 節）
   const hitRateSpans = slots.map((_, i) => options.hitRates?.[i] ?? null);
   const hitRateAt = slots.map(() => 0);
-  const energies = slots.map((slot, i) =>
+  const baseEnergies = slots.map((slot, i) =>
     slot === null
       ? 0
-      : (hitRateSpans[i]
-          ? energyPerTrigger(slot.character.shot, i === controlledSlot, 1, 1)
-          : energyPerTrigger(slot.character.shot, i === controlledSlot, slot.hitRate ?? 1)) *
-        (1 + gaugeSpeed[i]!),
+      : hitRateSpans[i]
+        ? energyPerTrigger(slot.character.shot, i === controlledSlot, 1, 1)
+        : energyPerTrigger(slot.character.shot, i === controlledSlot, slot.hitRate ?? 1),
   );
+  const energies = baseEnergies.map((e, i) => e * (1 + gaugeSpeed[i]!));
   const pellets = slots.map((slot) => slot !== null && slot.character.shot.shotCount > 1);
   /** 枠 i のフレーム f の弾丸命中率の区間（自動でない枠は undefined。f は単調に増える） */
   const spanAt = (i: number, f: number): LandingHitRateSpan | undefined => {
@@ -367,10 +377,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   };
   /** 枠 i がフレーム f に撃った 1 発のゲージ */
   const energyAt = (i: number, f: number): number => {
-    if (!hitRateSpans[i]) return energies[i]!;
+    const energy = timedGauge[i] ? baseEnergies[i]! * gaugeScale[i]! : energies[i]!;
+    if (!hitRateSpans[i]) return energy;
     const span = spanAt(i, f);
     const pelletRate = pellets[i] && span?.measured !== true ? SG_PELLET_GAUGE_HIT_RATE : 1;
-    return energies[i]! * (spanValueAt(i, f)?.hitRate ?? 1) * pelletRate;
+    return energy * (spanValueAt(i, f)?.hitRate ?? 1) * pelletRate;
   };
   // plan/design-anis-star-gauge-timing.md 3 節: 枠 i がフレーム f に撃った発の飛ぶ時間（ゲージはその後のフレームに溜まる）
   const flights = slots.map((_, i) => options.flights?.[i] ?? null);
@@ -393,13 +404,15 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   // 同 2 節（C-0177・C-0243）: 枠ごとの「発の番号 → 壊した障害物の数」と、物 1 個のゲージ
   const obstacles = slots.map(() => new Map<number, number>());
   for (const b of options.obstacleBreaks ?? []) obstacles[b.slotIndex]?.set(b.shot, b.count);
-  const obstacleEnergies = slots.map((slot, i) =>
+  const obstacleBases = slots.map((slot, i) =>
     slot === null
       ? 0
       : slot.character.shot.burstEnergyPerShot *
-        (i === controlledSlot && slot.character.shot.chargeTime > 0 ? slot.character.shot.fullChargeBurstEnergy : 1) *
-        (1 + gaugeSpeed[i]!),
+        (i === controlledSlot && slot.character.shot.chargeTime > 0 ? slot.character.shot.fullChargeBurstEnergy : 1),
   );
+  const obstacleEnergies = obstacleBases.map((e, i) => e * (1 + gaugeSpeed[i]!));
+  const obstacleEnergyAt = (i: number): number =>
+    timedGauge[i] ? obstacleBases[i]! * gaugeScale[i]! : obstacleEnergies[i]!;
   const shotCounts = slots.map(() => 0);
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: 発ごとの命中・コアの命中の期待値。
   // 区間はゲージと同じ値（常時の命中率▲ + 効いている持続の▲）。SG の命中は 1 トリガーを 1 回（ペレットのどれかが当たる）
@@ -555,23 +568,30 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const reserveDotTicks = (t: (typeof dotGaugeTrackers)[number], f: number): void => {
     const { ticks } = t.tracker.fire(f);
     if (!t.onTick) return;
+    // 2 段目の段 1: 時間で変わるゲージ速度は、付いたフレームの速度で tick の分も決める
+    const energy = targetEnergyNow(t.slotIndex, t.energy);
     for (const tick of ticks) {
       if (tick <= f) throw new RangeError(`dot gauge tick at ${tick} is not after the fire at ${f}`);
       // 自動攻撃のヒットは、刻みのフレーム + 飛ぶ時間に着く（C-0504。ダメージの tick のフレームは変えない）
       const at = tick + flightFramesAt(t.flight, tick);
-      pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
-      dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy: t.energy });
+      pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+      dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy });
     }
   };
   // フラワー編: 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する。
   // delayFrames があれば発火の後のヒットのフレームに足し、戦闘の終わりを越えるものは足さない（C-0453。plan/design-timer-ceil.md 7 節）
+  // 2 段目の段 1: 時間で変わるゲージ速度の枠の周期のゲージは、発火のフレームの頭でその速度で予約する（発火のフレーム → 枠と遅れ）
+  const timedTimerGauges = new Map<number, { slotIndex: number; delayFrames: number }[]>();
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
     const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
     for (const { everySeconds, delayFrames } of resolveTimerGauges(slot.definition)) {
       for (const fire of timerFrames(everySeconds, frames)) {
         const at = fire + delayFrames;
-        if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+        if (at >= frames) continue;
+        if (timedGauge[i])
+          timedTimerGauges.set(fire, [...(timedTimerGauges.get(fire) ?? []), { slotIndex: i, delayFrames }]);
+        else pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
       }
     }
   });
@@ -591,10 +611,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       let e = t.every;
       for (const every of lists.cycleEveryAt(t.slotIndex, t.skill, f)) e = Math.min(e, every);
       if (t.count % e !== 0) continue;
+      const energy = targetEnergyNow(t.slotIndex, t.energy);
       for (const d of t.gaugeHits[t.step]!) {
         const at = f + d;
-        cycleGaugeHits.push({ slotIndex: t.slotIndex, shotFrame: f, frame: at, energy: t.energy });
-        if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
+        cycleGaugeHits.push({ slotIndex: t.slotIndex, shotFrame: f, frame: at, energy });
+        if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
       }
       t.step = (t.step + 1) % t.gaugeHits.length;
     }
@@ -628,6 +649,12 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     const blocked = block !== undefined && block.start <= f && f < block.end;
     const hideNow = blocked && block.start === f;
     const unhideNow = block !== undefined && block.end === f;
+    // 2 段目の段 1: 時間で変わるゲージ速度の枠の、このフレームの (1 + 速度)（f − 1 までに付いた件）と、その速度の周期のゲージ
+    for (const i of timedGaugeSlots) gaugeScale[i] = 1 + gaugeSpeed[i]! + lists.gaugeSpeedAt(i, f);
+    for (const t of timedTimerGauges.get(f) ?? []) {
+      const at = f + t.delayFrames;
+      pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + targetEnergies[t.slotIndex]! * gaugeScale[t.slotIndex]!);
+    }
     // 1. 射手（V-0030: 前のフレームまでに予約した段のヒットのゲージも、このフレームのゲージに入れる）
     let gauge = pendingGauge.get(f) ?? 0;
     pendingGauge.delete(f);
@@ -682,7 +709,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       shotCounts[i]! += 1;
       const energy =
         energyAt(i, f) * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +
-        (obstacles[i]!.get(shotCounts[i]!) ?? 0) * obstacleEnergies[i]!;
+        (obstacles[i]!.get(shotCounts[i]!) ?? 0) * obstacleEnergyAt(i);
       gauge += landingGauge(i, f + shotFlightAt(i, f), f, energy);
     });
     // ヘルム編: ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
@@ -694,7 +721,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (!counted.fired) continue;
       // 射撃ごとの倍率ダメージのヒット（S1 の追加ダメージなど）も、発の着弾から数える（飛ぶ時間。plan/design-anis-star-gauge-timing.md 3.1 節）
       const flight = shotFlightAt(t.slotIndex, f);
-      for (const d of t.gaugeHits) gauge += landingGauge(t.slotIndex, f + flight + d, f, t.energy);
+      const energy = targetEnergyNow(t.slotIndex, t.energy);
+      for (const d of t.gaugeHits) gauge += landingGauge(t.slotIndex, f + flight + d, f, energy);
     }
     // モラン編: 射撃の回数でゲージだけを溜める効果。発火した射撃のフレームのゲージに足す
     for (const t of shotGaugeTrackers) {
@@ -702,7 +730,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (shot === null || shot === undefined) continue;
       const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
       t.n = counted.count;
-      if (counted.fired) gauge += t.energy;
+      if (counted.fired) gauge += targetEnergyNow(t.slotIndex, t.energy);
     }
     // レイヴン編: ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
     // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）
@@ -720,8 +748,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
       if (!fired) continue;
       if (apply) {
-        gauge += t.energy;
-        dotGauges.push({ slotIndex: t.slotIndex, kind: 'apply', frame: f, energy: t.energy });
+        const energy = targetEnergyNow(t.slotIndex, t.energy);
+        gauge += energy;
+        dotGauges.push({ slotIndex: t.slotIndex, kind: 'apply', frame: f, energy });
       }
       reserveDotTicks(t, f);
     }

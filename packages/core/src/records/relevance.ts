@@ -16,6 +16,7 @@ import {
   type SkillEntry,
   type SkillNote,
 } from '../skills/types.ts';
+import type { NamedStateId } from '../skills/states.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { CharacterData, EnemyPresetMaster, SkillSlot } from '../types.ts';
 import type { Claim, ClaimState, ClaimWhen } from './claims.ts';
@@ -131,7 +132,11 @@ export type MinimalElement = {
   shape?: {
     kind: string;
     stat?: string;
-    /** 名前の付いた状態の語彙編: 状態の付与の中身の stat（分類は中身の stat の分類。plan/design-named-state-impl.md 1.8 節） */
+    /**
+     * 名前の付いた状態の語彙編: 状態の付与の中身の stat（分類は中身の stat の分類。plan/design-named-state-impl.md 1.8 節）。
+     * 2 段目の段 1（plan/design-skill-stage1.md 3 節）: 中身は、同じ定義のその状態の付与のどれかが持つもの（中身の無い付与も、
+     * 付ける状態の中身で数える）。解除（removeState）も、外す状態の中身
+     */
     stats?: string[];
     target?: string;
     trigger?: string;
@@ -147,7 +152,17 @@ export type MinimalElement = {
 };
 
 /** 効果の形（きっかけは名前に直す: 文字列はそのまま、回数トリガーは count、時間の周期は timer、効果名は applied） */
-function shapeOfEffect(e: SkillEffect): NonNullable<MinimalElement['shape']> {
+/** 2 段目の段 1: 定義のその状態の中身の stat（付与のどれかが持つ中身。無ければ空） */
+function stateStatsOf(def: SkillDefinition, state: NamedStateId): string[] {
+  for (const slot of SKILL_SLOTS) {
+    for (const g of def.skills[slot].effects) {
+      if (g.kind === 'state' && g.state === state && g.contents !== undefined) return g.contents.map((c) => c.stat);
+    }
+  }
+  return [];
+}
+
+function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<MinimalElement['shape']> {
   const v = e as Record<string, unknown>;
   const t = v.trigger;
   const trigger =
@@ -165,7 +180,7 @@ function shapeOfEffect(e: SkillEffect): NonNullable<MinimalElement['shape']> {
   return {
     kind: e.kind,
     ...(typeof v.stat === 'string' ? { stat: v.stat } : {}),
-    ...(e.kind === 'state' ? { stats: (e.contents ?? []).map((c) => c.stat) } : {}),
+    ...(e.kind === 'state' || e.kind === 'removeState' ? { stats: stateStatsOf(def, e.state) } : {}),
     ...(typeof v.target === 'string' ? { target: v.target } : {}),
     ...(trigger !== undefined ? { trigger } : {}),
     ...(typeof v.targetWeapon === 'string' ? { targetWeapon: v.targetWeapon } : {}),
@@ -221,7 +236,7 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
           if (!compositionAllows(e, teamCharacters, i, recording.target.element)) return;
           if (resolveSelfState(e, selfStates[i]!) === null) return;
           const refs = referring(index);
-          const shape = shapeOfEffect(e);
+          const shape = shapeOfEffect(e, def);
           out.push({
             slot: member.slot,
             name: `${who} ${prefix}${slot}.effects[${index}]`,
@@ -368,7 +383,7 @@ export function classOf(element: MinimalElement): ElementClass {
   const shape = element.shape;
   if (shape === undefined || shape.kind === 'unknown') return 'unknown';
   if (shape.kind === 'passive' || shape.kind === 'timed') return statClassOf(shape.stat);
-  if (shape.kind === 'state') {
+  if (shape.kind === 'state' || shape.kind === 'removeState') {
     if (shape.stat !== undefined) return statClassOf(shape.stat);
     const classes = new Set((shape.stats ?? []).map(statClassOf));
     return classes.size === 1 ? [...classes][0]! : 'unknown';

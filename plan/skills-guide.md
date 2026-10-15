@@ -62,6 +62,7 @@
   - 名前の付いた状態（「〈名前〉」：機能…・〜状態なら・〜状態の味方・〜が適用された時）は、状態の付与（`kind: 'state'`）と中身（`contents`）で書き、名前は目録（`skills/states.ts`）の id で指す。目録に無い状態は id を足す（英語版の説明文の状態名の lowerCamelCase。[design-named-state.md](design-named-state.md) 5 節）。
     - ほかの行から参照されない名前（効果の呼び名）も、状態の付与で書いて目録に足す（[design-skill-catalog.md](design-skill-catalog.md) の論点 4）。中身にできない項目（自分の維持の別の効果・即時・別の対象・ダメージ・自動攻撃）は別の効果で書き、付与は中身なしで足す（[design-skill-stage1.md](design-skill-stage1.md) 1.4 節）。
     - 「自分が〈状態〉なら・でなければ」は `condition.selfState`（`"<id>"` か `{ "state": "<id>", "present": false }`）。静的な状態を見るものは編成の段で決まる。「解除不可」は付与の `undispellable: true`（同 1.1・1.3 節）。
+    - 「〈名前〉解除」は `kind: 'removeState'`（自分の状態だけ。発火の次のフレームで外れ、同じフレームの判定には付いている）。「直前に自分がバーストを使用していれば」は `condition.usedBurst: true`（フルバーストの開始・終了のきっかけだけ）。静的な状態（戦闘の始めから終わりまで付いている）かは状態ごとに決まり、その状態のどの付与も「戦闘開始時・持続・自分・条件なし」で、外す効果も無い時だけ静的になる（同 1.2・1.4・1.5 節。例はマナの S2）。
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。
 - **テスト**

@@ -13,7 +13,7 @@ import { MAX_SKILL_LEVELS, isStateContent } from '../skills/resolve.ts';
 import { activeItemsAt, itemsOf } from '../skills/holders.ts';
 import { appliedFrames } from '../skills/timeline.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition, staticStatesOf, type SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, Element } from '../types.ts';
@@ -98,12 +98,17 @@ describe('状態の付与の検証（parseSkillDefinition）', () => {
     expect(() => parse([camouflage, { ...second, maxStacks: 2 }])).toThrow(/need the same max stacks/);
   });
 
-  it('does not mix a static grant with a timed grant of the same state', () => {
+  // 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: 静的な状態は状態ごとに決める。静的な形の付与と時間で変わる付与が混ざった状態は
+  // 静的にしない（どちらの付与も件にする）
+  it('makes a state static only when every grant has the static form', () => {
     const { durationSeconds: _, ...rest } = camouflage;
     const forever = { ...rest, trigger: 'battleStart', durationUntil: 'battleEnd' };
-    expect(() => parse([forever, { ...forever, trigger: 'fullBurstStart', contents: undefined }])).toThrow(
-      /need to be all static/,
-    );
+    expect(staticStatesOf(parse([forever]))).toEqual(['camouflage']);
+    const mixed = parse([forever, { ...forever, trigger: 'fullBurstStart', contents: undefined }]);
+    expect(staticStatesOf(mixed)).toEqual([]);
+    expect(() =>
+      parse([forever, { ...forever, trigger: 'fullBurstStart', contents: undefined, undispellable: true }]),
+    ).toThrow(/need the same undispellable/);
   });
 
   it('rejects a grant that looks at its own state, and ids of the other side', () => {

@@ -98,10 +98,17 @@ describe('parseSkillDefinition (Stage 8)', () => {
     }
   });
 
-  it('refuses burstGaugeSpeed on timed effects (it would feed back into the schedule)', () => {
+  // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 1 パス目がゲージの速さを件から読むので、timed にも書ける。1 パス目で窓を追う
+  // stat と同じく、フルバーストタイムの条件とフルバーストの終わりまでの維持は書けない
+  it('allows burstGaugeSpeed on timed effects with the limits of a first-pass stat', () => {
     expect(() =>
       parseSkillDefinition(withEffect({ ...timed, trigger: 'battleStart', stat: 'burstGaugeSpeed' })),
-    ).toThrow(/only allowed in passive/);
+    ).not.toThrow();
+    expect(() =>
+      parseSkillDefinition(
+        withEffect({ ...timed, trigger: 'burstUse', stat: 'burstGaugeSpeed', condition: { inFullBurst: true } }),
+      ),
+    ).toThrow(/inFullBurst is not supported for "burstGaugeSpeed"/);
   });
 
   it('refuses unknown damage types (damage on every shot is allowed since Stage 11 Modernia)', () => {

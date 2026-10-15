@@ -1,15 +1,22 @@
 {
   "formatVersion": 1,
   "resourceId": 290,
-  "checkedAt": "2026-10-05",
+  "checkedAt": "2026-10-16",
   "skills": {
     "skill1": {
       "effects": [
         {
-          "kind": "passive",
+          "kind": "state",
+          "state": "metalGamma",
+          "trigger": "battleStart",
           "target": "self",
-          "stat": "attack",
-          "ref": 1,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 1
+            }
+          ],
           "claims": [
             "C-0020"
           ]
@@ -42,14 +49,17 @@
     "skill2": {
       "effects": [
         {
-          "kind": "passive",
+          "kind": "state",
+          "state": "metalSigma",
+          "trigger": "battleStart",
           "target": "self",
-          "stat": "burstGaugeSpeed",
-          "ref": 1,
-          "assumes": {
-            "ja": "マターシグマはフルバースト開始で解除されるが、毎サイクル自分がバーストするのでフルバースト終了時に再付与され、ゲージが溜まる区間にはいつも付いている",
-            "en": "Metal σ is removed at Full Burst start but re-applied at its end because she bursts each cycle, so it is always on while the gauge charges"
-          },
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "burstGaugeSpeed",
+              "ref": 1
+            }
+          ],
           "claims": [
             "C-0269"
           ]
@@ -61,9 +71,8 @@
           "stat": "attackDamage",
           "ref": 2,
           "durationRef": 3,
-          "assumes": {
-            "ja": "毎サイクル自分がバーストするのでマターシグマが再付与され、毎回発動する",
-            "en": "Metal σ is re-applied every cycle because she bursts each cycle, so this triggers every time"
+          "condition": {
+            "selfState": "metalSigma"
           },
           "claims": [
             "C-0281"
@@ -76,9 +85,8 @@
           "stat": "attack",
           "ref": 4,
           "durationRef": 5,
-          "assumes": {
-            "ja": "毎サイクル自分がバーストするのでマターシグマが再付与され、毎回発動する",
-            "en": "Metal σ is re-applied every cycle because she bursts each cycle, so this triggers every time"
+          "condition": {
+            "selfState": "metalSigma"
           },
           "claims": [
             "C-0281"
@@ -100,6 +108,25 @@
           "claims": [
             "C-0267"
           ]
+        },
+        {
+          "kind": "removeState",
+          "state": "metalSigma",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "condition": {
+            "selfState": "metalSigma"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "metalSigma",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "condition": {
+            "usedBurst": true
+          }
         }
       ]
     },
