@@ -2,7 +2,7 @@
 // 録画 41（I-DOLL・フラワー + クラウン + デルタ（操作）+ ラピ）の実測値を固定する。数値は plan/verification.md Stage 11 節。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { slotPieces } from './historyHelpers.ts';
+import { healsOf, slotPieces } from './historyHelpers.ts';
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
@@ -119,7 +119,7 @@ describe('録画 41: クラウンの S1・S2・バースト（7.5）', () => {
 
   it('heals クラウン every 860 of her normal shots and gives every ally 7 s of attack damage from the next frame', () => {
     const shots = plan.shots[1]!.frames;
-    const heals = plan.timeline.heals.map((h) => h.frame);
+    const heals = healsOf(plan).map((h) => h.frame);
     expect(heals).toEqual(shots.filter((_, i) => (i + 1) % 860 === 0).map((f) => f + 1));
     expect(heals.length).toBeGreaterThanOrEqual(6);
     for (const i of [0, 1, 2, 3]) {
@@ -147,7 +147,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc (7.4): %s', (_name, input) => 
   it('agree exactly on the schedule, the heals, the skill hits, the bursts and the shot-counted groups', () => {
     expect(sim.schedule).toEqual(calc.schedule);
     expect(sim.instants).toEqual(plan.instants);
-    expect(sim.timeline.heals).toEqual(calc.timeline.heals);
+    expect(healsOf(sim)).toEqual(healsOf(calc));
     input.slots.forEach((_, i) => {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;

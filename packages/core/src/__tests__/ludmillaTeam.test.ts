@@ -13,6 +13,7 @@ import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -94,7 +95,7 @@ describe('ルドミラ：ウィンターオーナー単騎（手入力の条件�
     expect(s1.hit.damageTakenMultiplier).toBeCloseTo(1.1256, 12);
     expect(s2.hit.damageTakenMultiplier).toBe(1);
     // 受けるダメージ▲の窓は発火した発の次のフレームから（発火した発の通常攻撃には乗らない）
-    const window = plan.timeline.windows.find((w) => w.effect.stat === 'damageTaken')!;
+    const window = piecesOf(plan).find((w) => w.effect.stat === 'damageTaken')!;
     expect(window.start).toBe(shots[59]! + 1);
   });
 

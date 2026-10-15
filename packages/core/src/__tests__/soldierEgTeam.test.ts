@@ -15,6 +15,7 @@ import { parseSkillDefinition } from '../skills/types.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData } from '../types.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -59,7 +60,7 @@ function team(slots: TeamSlotInput[], enemy: EnemyInput, burst: boolean, control
 
 /** 枠 slotIndex の S1 の窓（期待値の小片） */
 function s1Windows(input: TeamInput, slotIndex = 0) {
-  return planTeamRun(input).timeline.windows.filter(
+  return piecesOf(planTeamRun(input)).filter(
     (w) => w.slotIndex === slotIndex && w.sourceSlotIndex === slotIndex && w.effect.source.skill === 'skill1',
   );
 }
@@ -128,9 +129,9 @@ describe('順位（アリスの S1。フルバースト時に最終攻撃力が�
   it('counts the expected Attack up of the soldier at the frame of each ranking', () => {
     const shots = plan.shots[3]!.frames;
     const opportunities = shots.map((f) => ({ start: f + 1, q: 0.05 }));
-    const base = plan.timeline.rankings[0]!;
-    expect(plan.timeline.rankings.length).toBeGreaterThan(0);
-    for (const r of plan.timeline.rankings) {
+    const base = plan.history.rankings[0]!;
+    expect(plan.history.rankings.length).toBeGreaterThan(0);
+    for (const r of plan.history.rankings) {
       const scale = chanceScaleAt(opportunities, DURATION, r.frame);
       expect(scale).toBeGreaterThan(0);
       // ほかの攻撃力▲が無い枠なので、最終攻撃力の比は 1 + 値 × 付いている確率

@@ -24,6 +24,7 @@ import {
 } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, Element } from '../types.ts';
+import { applicationsOf, piecesOf, stateItemsOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -218,9 +219,9 @@ describe('追撃とバトンタッチ（ココア + ユニ + クイーン（真�
   // 追撃の分配ダメージは、追撃が付いたフレーム（雪子の III の発動）の 88f 後（C-0429。仮説。動画では雪子のバーストのヒットの 104f 後で、
   // 間に止まり 22f が入る。V-0292。III のタイマーの 00.00 は発動の 6f 後なので、00.00 からは 82f。plan/design-burst-hit-origin.md 8 節）
   it("applies the follow-up to Queen at each of Yukiko's bursts, and fires Queen's S1 88 frames later", () => {
-    const followUps = appliedFrames(plan.timeline, 'followUp', q);
+    const followUps = appliedFrames(plan.history, 'followUp', q);
     expect(followUps).toEqual(yukikoBursts.filter((f) => f < plan.frames));
-    expect(appliedFrames(plan.timeline, 'followUp', y)).toEqual([]);
+    expect(appliedFrames(plan.history, 'followUp', y)).toEqual([]);
     const s1 = plan.skillHits.filter(
       (h) => h.slotIndex === q && h.effect.source.skill === 'skill1' && typeof h.effect.trigger === 'object',
     );
@@ -228,7 +229,7 @@ describe('追撃とバトンタッチ（ココア + ユニ + クイーン（真�
   });
 
   it("stacks the baton pass on Yukiko at each of Queen's bursts, up to 3, until the end of the battle", () => {
-    const baton = plan.timeline.windows.filter(
+    const baton = piecesOf(plan).filter(
       (w) =>
         w.slotIndex === y &&
         w.effect.source.resourceId === QUEEN &&
@@ -239,21 +240,19 @@ describe('追撃とバトンタッチ（ココア + ユニ + クイーン（真�
     for (const w of baton) expect(w.end).toBe(plan.frames);
     expect(baton.every((w) => isStateContent(w.effect) && w.effect.whileState === 'batonPass')).toBe(true);
     expect(
-      plan.timeline.windows.some(
-        (w) => w.slotIndex === q && isStateContent(w.effect) && w.effect.whileState === 'batonPass',
-      ),
+      piecesOf(plan).some((w) => w.slotIndex === q && isStateContent(w.effect) && w.effect.whileState === 'batonPass'),
     ).toBe(false);
   });
 
   it('does nothing against a Fire enemy (no 1more)', () => {
     const fire = planTeamRun(pair('Fire'));
     // ペルソナ（静的な付与）はフレーム 0 に付いた記録だけ（plan/design-named-state.md 5.4 節）
-    expect(fire.timeline.applications).toEqual([
+    expect(applicationsOf(fire)).toEqual([
       { frame: 0, state: 'persona', sourceSlotIndex: q, slotIndex: q },
       { frame: 0, state: 'persona', sourceSlotIndex: y, slotIndex: y },
     ]);
-    expect(fire.timeline.namedStateWindows).toEqual([]);
-    expect(fire.timeline.windows.some((w) => isStateContent(w.effect))).toBe(false);
+    expect(stateItemsOf(fire)).toEqual([]);
+    expect(piecesOf(fire).some((w) => isStateContent(w.effect))).toBe(false);
   });
 
   it('agrees between sim and calc', () => {

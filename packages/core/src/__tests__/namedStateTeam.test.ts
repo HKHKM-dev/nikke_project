@@ -17,6 +17,7 @@ import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, Element } from '../types.ts';
+import { applicationsOf, piecesOf, stateItemsOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -124,11 +125,11 @@ describe('ウンファ：TU のカモフラージュ（付与をまたぐ和集�
   const input = team([slotOf(FLOWER), slotOf(EUNHWA), slotOf(SUN)], 'Fire', 2);
   const plan = planTeamRun(applyCompositionToTeam(input));
   const e = 1;
-  const states = plan.timeline.namedStateWindows.filter((w) => w.state === 'camouflage');
+  const states = stateItemsOf(plan).filter((w) => w.state === 'camouflage');
   const bursts = plan.schedule!.activations.filter((a) => a.slotIndex === e).map((a) => a.frame);
 
   it('re-applies Camouflage inside the burst window (the two triggers overlap)', () => {
-    const applied = appliedFrames(plan.timeline, 'camouflage', e);
+    const applied = appliedFrames(plan.history, 'camouflage', e);
     const five = gameSecondsToFrames(5);
     expect(applied).toContain(bursts[0]);
     expect(applied.some((f) => f > bursts[0]! && f < bursts[0]! + five)).toBe(true);
@@ -137,7 +138,7 @@ describe('ウンファ：TU のカモフラージュ（付与をまたぐ和集�
   it('keeps one window per state (union across the grants) and puts the contents on it', () => {
     expect(states.length).toBeGreaterThan(0);
     for (let i = 1; i < states.length; i++) expect(states[i]!.start).toBeGreaterThan(states[i - 1]!.end);
-    const contents = plan.timeline.windows.filter((w) => isStateContent(w.effect) && w.slotIndex === e);
+    const contents = piecesOf(plan).filter((w) => isStateContent(w.effect) && w.slotIndex === e);
     for (const stat of ['trueDamageConversion', 'trueDamage']) {
       const spans = contents.filter((w) => w.effect.stat === stat).map((w) => [w.start, w.end]);
       expect(spans).toEqual(states.map((w) => [w.start, w.end]));
@@ -217,8 +218,8 @@ describe('条件つき・順位の対象の付与と「〈状態名〉が適用�
     });
     const plan = planTeamRun(applyCompositionToTeam(input));
     const fires = plan.shots[q]!.frames.filter((_, i) => (i + 1) % 10 === 0);
-    const applied = appliedFrames(plan.timeline, 'followUp', q);
-    const skips = plan.timeline.conditionSkips.filter((x) => x.state === 'followUp').map((x) => x.frame);
+    const applied = appliedFrames(plan.history, 'followUp', q);
+    const skips = plan.history.conditionSkips.filter((x) => x.state === 'followUp').map((x) => x.frame);
     expect(applied.length).toBeGreaterThan(0);
     expect(skips.length).toBeGreaterThan(0);
     // 窓は射撃の回数起点なので次のフレームから。付けなかった発火と合わせると、発火のすべて
@@ -244,11 +245,11 @@ describe('条件つき・順位の対象の付与と「〈状態名〉が適用�
       durationSeconds: 1,
     });
     const plan = planTeamRun(applyCompositionToTeam(input));
-    const rankings = plan.timeline.rankings.filter(
+    const rankings = plan.history.rankings.filter(
       (r) => r.sourceSlotIndex === q && r.effect.source.skill === 'skill1' && r.effect.effectIndex === grantIndex,
     );
     expect(rankings.length).toBeGreaterThan(0);
-    const applications = plan.timeline.applications.filter((a) => a.state === 'followUp');
+    const applications = applicationsOf(plan).filter((a) => a.state === 'followUp');
     expect(applications.map((a) => [a.frame, a.slotIndex])).toEqual(
       rankings.flatMap((r) => r.targets.map((t) => [r.frame, t])),
     );

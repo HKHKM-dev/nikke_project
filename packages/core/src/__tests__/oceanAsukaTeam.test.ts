@@ -12,6 +12,7 @@ import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { healsOf, piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -58,7 +59,7 @@ describe('実戦寄りの編成（オーシャン + クラウン + アスカ + �
   it('heals every slot on each Ocean burst use', () => {
     const uses = plan.schedule!.activations.filter((a) => a.slotIndex === OCEAN).map((a) => a.frame);
     expect(uses.length).toBeGreaterThan(0);
-    const fromOcean = plan.timeline.heals.filter((h) => h.sourceSlotIndex === OCEAN);
+    const fromOcean = healsOf(plan).filter((h) => h.sourceSlotIndex === OCEAN);
     expect(fromOcean).toEqual(
       uses.flatMap((frame) => PRACTICAL.slots.map((_, slotIndex) => ({ frame, sourceSlotIndex: OCEAN, slotIndex }))),
     );
@@ -66,7 +67,7 @@ describe('実戦寄りの編成（オーシャン + クラウン + アスカ + �
 
   it('starts or extends an Asuka S1 window at each Ocean burst use', () => {
     const uses = plan.schedule!.activations.filter((a) => a.slotIndex === OCEAN).map((a) => a.frame);
-    const s1 = plan.timeline.windows.filter(
+    const s1 = piecesOf(plan).filter(
       (w) => w.slotIndex === ASUKA && w.effect.source.resourceId === 830 && w.effect.stat === 'attack',
     );
     for (const frame of uses) {

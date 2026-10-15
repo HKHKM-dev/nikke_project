@@ -36,3 +36,8 @@
   - 結果の型: `TeamSlotResult` の `windows`・`stateWindows`・`conditionSkips`・`cycleWindows` を、履歴から作る表示用の欄 `effects`・`cycleChanges` に替えた。`TeamResult` に履歴（`history`）を足し、順位の表示（`TeamBreakdown`）と記録の道具（`scripts/sim-run.ts` の発動しなかった記録・循環・順位）は履歴を読む形にした。sim の枠の結果（`SimSlotResult`）の `windows` を消した。
   - 窓の欄を読んでいたテスト（teamTimed・stage8Team・stage11Team・timedRegression・simCalc）は、結果の履歴から枠の値の小片を読む形にした（テストの助け `__tests__/historyHelpers.ts` の `slotPieces`。段 D の 5 までの窓と同じ並び・同じ区切りなので、期待する値は変えていない）。
   - 確かめ: `npm test`、`records:check`（生成物に差分なし）、`scripts/sim-run.ts` を回した。
+- 2026-10-15: 段 D の 7 を実装した（段 D を閉じた）。
+  - 窓と記録を読んでいた編成のテスト（stage11ScarletBsTeam・stage11ModerniaTeam・stage11AliceTeam・personaTeam・namedStateTeam・yuniAsukaTeam・soldierEgTeam・helmTeam・eunhwaTuWeaponChange・stage11Team・oceanAsukaTeam・asukaTeam・targetVocabTeam・sakuraTeam・nihilisterTeam・ludmillaTeam・kurumiTeam・isabelTeam・emmaTuEnvironmentTeam・deltaTeam・cocoaTeam と `records/__tests__/stage21Time.test.ts`）を、結果の履歴から読む形にした。テストの助け（`__tests__/historyHelpers.ts`）に、区間に足す値の小片（`piecesOf`）・状態だけの stat の値の小片（`statePiecesOf`）・名前の付いた状態の件（`stateItemsOf`）・間隔の変更の件（`cycleItemsOf`）・回復と付いた記録（`healsOf`・`applicationsOf`）を足した。並びと形は窓・記録と同じにしたので、期待する値は変えていない。判定の記録・順位の記録と `{ applied }` のトリガー（`appliedFrames`）は履歴をそのまま読む。
+  - `skills/__tests__/` の holders・amplifies は書き出した窓ではなく値の小片（`valuePiecesOf`）を見る形にし、stage11 の回復の記録が窓の書き出しと一致することを見る行は消した（書き出しは段 E で消す）。
+  - これで、窓の欄（`windows`・`stateWindows`・`namedStateWindows`・`cycleWindows`）と記録の欄（`applications`・`conditionSkips`・`rankings`・`heals`）を読む所は無くなった（`BuffTimeline` を読むのは区間と常時の値だけ）。
+  - 確かめ: `npm test`（テストだけの変更なので生成物は変わらない）。

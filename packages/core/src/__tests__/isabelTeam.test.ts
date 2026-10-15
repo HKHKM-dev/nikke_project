@@ -14,6 +14,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -77,7 +78,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, isabel 
   const uses = activationFramesOfSlot(plan.schedule!, isabel);
   const mine = plan.schedule!.activations.filter((a) => a.slotIndex === isabel);
   const lands = mine.map(effectFrameOf);
-  const windows = plan.timeline.windows.filter((w) => w.effect.stat === 'damageTaken');
+  const windows = piecesOf(plan).filter((w) => w.effect.stat === 'damageTaken');
 
   it('lands the burst skill damage and fires the burst effects 134 frames after each use (C-0165)', () => {
     const delays = MEASURED_BURST_DELAYS.find((row) => row.resourceIds.includes(ISABEL))!.delays;

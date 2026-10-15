@@ -17,6 +17,7 @@ import type { TeamInput, TeamSlotInput, TeamResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { gameSecondsToFrames } from '../time.ts';
+import { piecesOf, statePiecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -64,7 +65,7 @@ describe('録画 44 の予測（7.5）', () => {
   const calc = computeTeamDamage(REC44);
   const fb = plan.schedule!.fullBurstWindows;
   const shots = plan.shots[2]!.frames;
-  const windows = plan.timeline.windows.filter((w) => w.slotIndex === 2);
+  const windows = piecesOf(plan).filter((w) => w.slotIndex === 2);
   const of = (stat: string) => windows.filter((w) => w.effect.stat === stat);
 
   it('opens 4 full bursts of 15 s, each started by モダニア', () => {
@@ -102,12 +103,12 @@ describe('録画 44 の予測（7.5）', () => {
   });
 
   it('fires S2’s attack only at the 200th shots inside the hit rate windows', () => {
-    const hit = plan.timeline.stateWindows.filter((w) => w.slotIndex === 2 && w.effect.stat === 'hitRate');
+    const hit = statePiecesOf(plan).filter((w) => w.slotIndex === 2 && w.effect.stat === 'hitRate');
     expect(hit.map((w) => [w.start, w.end])).toEqual(fb.map((w) => [w.start, w.end]));
     const fires = shots.filter((_, i) => (i + 1) % 200 === 0);
     const inside = fires.filter((f) => hit.some((w) => w.start <= f && f < w.end));
     const outside = fires.filter((f) => !hit.some((w) => w.start <= f && f < w.end));
-    expect(plan.timeline.conditionSkips.map((s) => s.frame)).toEqual(outside);
+    expect(plan.history.conditionSkips.map((s) => s.frame)).toEqual(outside);
     // 攻撃力の窓は S2 が通った 200 発目の次のフレームから 10 秒（和集合）
     const attack = of('attack');
     expect(attack.length).toBeGreaterThan(0);
@@ -172,7 +173,7 @@ describe('録画 44 の実測（1 発の数値、2026-09-24）', () => {
   const calc = computeTeamDamage(REC44);
   const plan = planTeamRun(REC44);
   const fb = plan.schedule!.fullBurstWindows;
-  const attack = plan.timeline.windows.filter((w) => w.slotIndex === 2 && w.effect.stat === 'attack');
+  const attack = piecesOf(plan).filter((w) => w.slotIndex === 2 && w.effect.stat === 'attack');
   /** 表示の 1 ヒット（非会心）。攻撃力は整数に丸めてから防御を引く（capture-pitfalls） */
   const hit = (frame: number, ratio: number, boost: number) =>
     Math.round((Math.round(segmentAt(calc, 2, frame).trigger.attack) - 100) * ratio * boost);
@@ -272,7 +273,7 @@ describe.each(Object.entries(TEAMS))('sim vs calc (7.4): %s', (_name, input) => 
   it('agree exactly on the schedule, the instants, the skill hits and the shot-counted groups', () => {
     expect(sim.schedule).toEqual(calc.schedule);
     expect(sim.instants).toEqual(plan.instants);
-    expect(sim.timeline.conditionSkips).toEqual(calc.timeline.conditionSkips);
+    expect(sim.history.conditionSkips).toEqual(calc.history.conditionSkips);
     input.slots.forEach((_, i) => {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;

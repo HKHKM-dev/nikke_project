@@ -12,6 +12,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -49,7 +50,7 @@ const EUNHWA = 95;
 
 /** エマの環境コントロールの受けるダメージ▲の窓（枠 0 に付いた分） */
 function environmentWindows(input: TeamInput) {
-  return planTeamRun(input).timeline.windows.filter(
+  return piecesOf(planTeamRun(input)).filter(
     (w) => w.slotIndex === 0 && w.effect.source.resourceId === EMMA && w.effect.stat === 'damageTaken',
   );
 }

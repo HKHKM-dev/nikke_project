@@ -273,7 +273,7 @@ describe('heal and healed (Stage 11, 3.3)', () => {
     slotOf(synthetic(1, 'Step1', 20, ['5', '4', '5.23', '20', '1']), selfHeal),
     slotOf(synthetic(2, 'Step3', 20)),
   ];
-  const { first: pass, timeline } = firstPassTimeline(slots, { frames: 1800, burst: true });
+  const { first: pass } = firstPassTimeline(slots, { frames: 1800, burst: true });
 
   it('heals on the frame after every 20th shot', () => {
     const heals = pass.history.heals;
@@ -294,7 +294,6 @@ describe('heal and healed (Stage 11, 3.3)', () => {
       expect(items.filter((i) => i.holder === slotIndex).map((i) => i.start)).toEqual(heals);
     }
     expect(items.every((i) => i.end - i.start === gameSecondsToFrames(1) || i.end === 1800)).toBe(true);
-    expect(timeline.heals).toEqual(pass.history.heals);
   });
 
   it('records the heals of the loop as instant applications too', () => {

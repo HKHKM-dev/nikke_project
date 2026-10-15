@@ -1,5 +1,5 @@
 // 持ち主ごとの一覧編（plan/design-holder-effects.md 3 節の段 A の 1）: 件の種類ごとの単体テスト。
-// 付き直しの境目・スタック・発数・出来事の終わり・吸収回復の窓・段の見え方（2.5 節の表）・確率のきっかけ・書き出しの並び（論点 5）
+// 付き直しの境目・スタック・発数・出来事の終わり・吸収回復の窓・段の見え方（2.5 節の表）・確率のきっかけ・値の小片の並び（論点 5）
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { FullBurstWindow } from '../../burst/schedule.ts';
@@ -9,9 +9,9 @@ import type { SkillRaw } from '../../types.ts';
 import { dotActiveSpans } from '../../frame/dot.ts';
 import {
   ENEMY,
-  buffTimelineOf,
   createHolderLists,
   itemsOf,
+  valuePiecesOf,
   type HeldTrack,
   type HolderListsOptions,
 } from '../holders.ts';
@@ -267,14 +267,14 @@ describe('確率のきっかけ', () => {
     lists.registerFrame(events(10, { shots: [SHOT] }));
     const history = lists.history();
     expect(timedTrack(history.tracks, 0, 0).items).toEqual([{ start: 11, end: 11 + D10, scale: 0.5 }]);
-    const [w] = buffTimelineOf(history, null).windows;
+    const [w] = valuePiecesOf(history);
     expect(w).toMatchObject({ start: 11, end: 11 + D10 });
     expect(w!.effect.value).toBeCloseTo(0.25, 12);
   });
 });
 
-describe('書き出しの並び（論点 5）', () => {
-  it('writes windows in time order, and on the same frame by stage, source slot and definition order', () => {
+describe('値の小片の並び（論点 5）', () => {
+  it('orders the value pieces in time order, and on the same frame by stage, source slot and definition order', () => {
     const slots = [
       slotWith(1, [
         timed({ trigger: 'fullBurstEnd', stat: 'critDamage' }),
@@ -287,11 +287,7 @@ describe('書き出しの並び（論点 5）', () => {
     lists.registerBattleStart();
     lists.registerFrame(events(100, { fullBurstStart: true }, 2));
     lists.registerFrame(events(300, { fullBurstEnd: true }, 2));
-    const order = buffTimelineOf(lists.history(), null).windows.map((w) => [
-      w.start,
-      w.sourceSlotIndex,
-      w.effect.effectIndex,
-    ]);
+    const order = valuePiecesOf(lists.history()).map((w) => [w.start, w.sourceSlotIndex, w.effect.effectIndex]);
     // 100: 段 1（枠 0 の効果 2、枠 1 の効果 0）→ 段 1.5（枠 0 の効果 1）。300: 枠 0 の効果 0
     expect(order).toEqual([
       [100, 0, 2],
@@ -303,7 +299,7 @@ describe('書き出しの並び（論点 5）', () => {
 });
 
 describe('敵の件（段 C。plan/design-holder-effects.md 2.8 節）', () => {
-  it('keeps an enemy debuff as one enemy item and writes it to every ally', () => {
+  it('keeps an enemy debuff as one enemy item and copies its value pieces to every ally', () => {
     const slots = [slotWith(1, [timed({ stat: 'damageTaken', target: 'allies' })]), slotWith(2, []), null];
     const lists = listsOf(slots);
     lists.registerBattleStart();
@@ -312,7 +308,7 @@ describe('敵の件（段 C。plan/design-holder-effects.md 2.8 節）', () => {
     expect(itemsOf(history, { stat: 'damageTaken' }).map((i) => [i.holder, i.start, i.end])).toEqual([
       [ENEMY, 100, 100 + D10],
     ]);
-    const written = buffTimelineOf(history, null).windows.filter((w) => w.effect.stat === 'damageTaken');
+    const written = valuePiecesOf(history).filter((w) => w.effect.stat === 'damageTaken');
     expect(written.map((w) => [w.slotIndex, w.start, w.end])).toEqual([
       [0, 100, 100 + D10],
       [1, 100, 100 + D10],

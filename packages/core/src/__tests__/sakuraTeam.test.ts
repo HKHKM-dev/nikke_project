@@ -13,6 +13,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -47,7 +48,7 @@ const solo = (condition: SlotCondition = MANUAL) => team([fixedSlot(SAKURA, cond
 
 /** 枠 0 の S1 の受けるダメージ▲の窓 */
 function s1Windows(input: TeamInput) {
-  return planTeamRun(input).timeline.windows.filter((w) => w.slotIndex === 0 && w.effect.stat === 'damageTaken');
+  return piecesOf(planTeamRun(input)).filter((w) => w.slotIndex === 0 && w.effect.stat === 'damageTaken');
 }
 
 describe('鈴原サクラの定義', () => {
