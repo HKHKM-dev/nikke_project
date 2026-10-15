@@ -28,3 +28,4 @@
   - 確かめ: `npm test`、`records:check`（生成物に差分なし）、`records:minimal`（感度に差分なし。16 秒）。
 - 2026-10-15: 段 D の 1 を実装した。区間を、書き出した窓ではなく、履歴の値の小片（`skills/holders.ts` の `valuePiecesOf`。件・確率のきっかけの期待値・強化の小片から作り、敵の件は効果の対象の味方の各枠に写す。並びは時刻の順）から組む形にした（`skills/timeline.ts` の `buildSegments` の入力を小片にした）。窓（書き出し）も同じ小片から作るので、段 E で窓を消しても区間の作り方は変わらない。確かめ: `npm test`、`records:check`（生成物に差分なし）、`records:minimal`（感度に差分なし）。
 - 2026-10-15: 段 D の 2 を実装した。`frame/plan.ts` の倍率ダメージの発動が、窓と記録ではなく履歴を読む形にした: 下位効果のスタック適用（`withEarlierSequentialEffects`）は値の小片（状態だけの stat を除く。受けるダメージ▲は敵の件から写った小片）、`{ applied }` のトリガー（`appliedFrames`）は履歴の付いた記録、段の循環の発（`cycleFires`）は間隔の変更の件。確かめ: `npm test`、`records:check`（生成物に差分なし）。
+- 2026-10-15: 段 D の 3 を実装した。calc の射撃の数え方の判定（自分の射撃の回数で開いた件があるか）を、窓と状態の窓ではなく件の列から行う形にした（`skills/holders.ts` の `hasOwnShotCountItem`。timed と強化は自分の射撃の回数のトリガー、状態は件の列の印 `shotCount`、敵の件は効果の対象の味方の枠の件として見る。`calc/model.ts` の `hasOwnShotCountWindow` を消した）。確かめ: `npm test`、`records:check`（生成物に差分なし）。

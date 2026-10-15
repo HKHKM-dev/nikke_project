@@ -177,7 +177,7 @@ export type NamedStateWindow = {
   /** スタックする状態の段（1 始まり）。スタックしない状態はキーごと無い */
   stack?: number;
   /**
-   * この窓の持ち主に、射撃の回数のトリガーの付与が発火を足したか（calc の射撃の数え方。calc/model.ts の hasOwnShotCountWindow。
+   * この窓の持ち主に、射撃の回数のトリガーの付与が発火を足したか（calc の射撃の数え方。段 D の 3 で、判定は skills/holders.ts の hasOwnShotCountItem が件の列の印で見る。
    * 中身はトリガーを持たないので、窓を開いた付与のトリガーをここで持つ）
    */
   shotCount?: true;

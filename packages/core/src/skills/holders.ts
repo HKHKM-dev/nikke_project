@@ -1047,6 +1047,40 @@ export function activeItemsAt(
   return itemsOf(history, { ...filter, holder }).filter((i) => i.start <= frame && frame < i.end);
 }
 
+/**
+ * 段 D の 3（ルドミラ：ウィンターオーナー編。plan/design-ludmilla-wo.md 2.5 節）: 枠 slotIndex に、枠自身の射撃の回数で開いた件があるか
+ * （calc の射撃の数え方。calc/model.ts）。timed（強化を含む）は自分の射撃の回数のトリガー、状態は自分の射撃の回数のトリガーの付与が
+ * 発火を足した件（shotCount）。区間に足す件だけを見る（状態だけの stat は除く）。敵の件は、効果の対象の味方の枠の件として見る
+ */
+export function hasOwnShotCountItem(
+  history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots'>,
+  slotIndex: number,
+): boolean {
+  const onSlot = (holder: number, effect: ResolvedTimedEffect): boolean =>
+    holder === slotIndex || (holder === ENEMY && alliesOf(effect, slotIndex, history.slots).includes(slotIndex));
+  const timed = history.tracks.some((track) => {
+    if (track.sourceSlotIndex !== slotIndex || !track.items.some((i) => i.start < i.end)) return false;
+    const o = track.origin;
+    if (o.kind === 'timed') {
+      return !isStateStat(o.effect.stat) && isResolvedShotCount(o.effect.trigger) && onSlot(track.holder, o.effect);
+    }
+    if (o.kind === 'state') {
+      return track.holder === slotIndex && track.shotCount && o.contents.some((c) => !isStateStat(c.stat));
+    }
+    return false;
+  });
+  return (
+    timed ||
+    history.amplified.some(
+      (p) =>
+        p.sourceSlotIndex === slotIndex &&
+        p.start < p.end &&
+        isResolvedShotCount(p.effect.trigger) &&
+        onSlot(p.holder, p.effect),
+    )
+  );
+}
+
 // ---- 書き出し（plan/design-holder-effects.md 2.6 節。段 E で消す） ----
 
 /**
