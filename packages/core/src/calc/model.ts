@@ -39,14 +39,9 @@ import {
 import { firingParams } from '../frame/firing.ts';
 import { BURST_HIT_USES_PRE_ACTIVATION_BUFFS, burstHitBuffs, perShotDamageOf, planTeamRun } from '../frame/plan.ts';
 import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
-import { MAX_SKILL_LEVELS, isResolvedShotCount, isStateContent } from '../skills/resolve.ts';
-import {
-  EMPTY_BUFF_STATE,
-  groupTimeline,
-  mergeAdjacentRanges,
-  type BuffTimeline,
-  type SlotBuffState,
-} from '../skills/timeline.ts';
+import { hasOwnShotCountItem } from '../skills/holders.ts';
+import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
+import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges, type SlotBuffState } from '../skills/timeline.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { isFiringStat } from '../skills/types.ts';
@@ -102,30 +97,6 @@ function hasFiringWindow(state: SlotBuffState): boolean {
 }
 
 /**
- * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.5 節）: 枠に、枠自身の射撃の回数で開いた窓があるか。
- * その窓は撃っている間にだけ開き直るので、窓の中と外の発数の割合は時間の割合と大きく違う（リロード・MG のスピンアップ）。
- * 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.6 節）: 状態の中身はトリガーを持たないので、窓で見る。効果の窓は
- * トリガーが自分の射撃の回数のもの、中身の窓は、その状態の窓に自分の射撃の回数の付与が発火を足したもの（shotCount）。
- * 区間の効果は timeline.windows から作るので、効果だけの編成では区間の効果を見ていた今までの判定と同じ（stateWindows は区間の効果に入らない）
- */
-function hasOwnShotCountWindow(timeline: BuffTimeline, slotIndex: number): boolean {
-  return timeline.windows.some((w) => {
-    if (w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex || w.start >= w.end) return false;
-    const effect = w.effect;
-    if (!isStateContent(effect)) return isResolvedShotCount(effect.trigger);
-    return timeline.namedStateWindows.some(
-      (n) =>
-        n.state === effect.whileState &&
-        n.slotIndex === slotIndex &&
-        n.sourceSlotIndex === slotIndex &&
-        n.start === w.start &&
-        n.end === w.end &&
-        n.shotCount === true,
-    );
-  });
-}
-
-/**
  * 通常攻撃のトリガー数を射撃の列から数える範囲（plan/design-calc-hybrid.md）。
  * - 'hybrid'（既定）: 持続の射撃バフが掛かっているグループだけ（plan/design-stage10.md 5 節）
  * - 'average'（design-stage10.md 5 節の案 (a)）: 数えない。持続の射撃バフもグループのバフ込みの平均レートに畳み込む
@@ -146,7 +117,7 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
   const { slots, enemy, durationSeconds, model } = input;
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing } = planTeamRun(input);
+  const { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, history } = planTeamRun(input);
   // Stage 16-B: 狙えない窓があると平均レートでは置けない（撃てない時間・撃ち直し・ハイド中のリロード）ので、全グループで射撃の列を数える
   const countAllShots = untargetable.length > 0;
 
@@ -173,7 +144,7 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     // 全グループを射撃の列から数える（窓の中だけ数えると、窓の外の平均レートが残りの発数を外す）
     const countSlotShots =
       (shotCounting === 'firingSlots' && groups.some((g) => hasFiringWindow(g.state))) ||
-      (shotCounting === 'hybrid' && hasOwnShotCountWindow(timeline, index));
+      (shotCounting === 'hybrid' && hasOwnShotCountItem(history, index));
     for (const group of groups) {
       const state = group.state;
       // C-0170: 持続の命中率▲が効いているグループは、その N でコア命中率を出し直す（自動の枠は N が鍵に入るのでグループ内で同じ）
