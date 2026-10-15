@@ -4,6 +4,8 @@
 // Stage 10: 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、1 パス目の射撃の列と時刻表は frame/firstPass.ts の
 // フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
 // Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
+// 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間と記録は、1 パス目の件の一覧の履歴から書き出す
+// （2 パス目の作り直しはやめた）。
 import { burstDelaysFieldOf, burstDelaysOf, isSplit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames } from '../time.ts';
@@ -32,13 +34,13 @@ import {
 import {
   EMPTY_BUFF_STATE,
   appliedFrames,
-  planBuffTimeline,
   resolvePassiveStates,
   segmentIndexAt,
   triggerFrames,
   type BuffTimeline,
   type SlotBuffState,
 } from '../skills/timeline.ts';
+import { buffTimelineOf } from '../skills/holders.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { EffectCondition } from '../skills/types.ts';
@@ -66,7 +68,8 @@ export {
   type DotTick,
   type DotTickTracker,
 } from './dot.ts';
-import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
+import { runFirstPass, type FirstPassOptions, type FirstPassResult, type InstantApplication } from './firstPass.ts';
+import { crossCheckLegacy, legacyCrossCheckEnabled } from './crossCheck.ts';
 import {
   flightFramesAt,
   hitRateSpanWith,
@@ -138,7 +141,7 @@ export type TeamPlan = {
 /**
  * Stage 8: 1 パス目。射撃の列 → 時刻表（常時のゲージ速度込み）→ バフの区間（射撃の回数トリガー込み）→ 倍率ダメージの発動。
  * Stage 10: 射撃の列と時刻表は runFirstPass のフレームループで同時に作る（射撃に効くバフ・CT 短縮・弾丸チャージ込み）。
- * バフの区間と倍率ダメージは、確定した射撃の列と時刻表から作る。
+ * バフの区間と倍率ダメージは、確定した射撃の列と時刻表から作る。持ち主ごとの一覧編: バフの区間は 1 パス目の履歴から書き出す。
  */
 export function planTeamRun(teamInput: TeamInput): TeamPlan {
   // Stage 9: 直接呼ばれても宝物の段階が効くように。最上位で適用済みなら何もしない（同じオブジェクト）
@@ -153,7 +156,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const untargetable = untargetableRanges(enemy.events, frames);
   // Stage 18-C: 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）
   const landing = planLandings(slots, enemy, frames, resolvePassiveStates(timelineSlots));
-  const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges } = runFirstPass(timelineSlots, {
+  const firstPassOptions: FirstPassOptions = {
     frames,
     model,
     burst: input.burst ?? false,
@@ -175,19 +178,39 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
           hitRateWith: (slotIndex: number, span: LandingHitRateSpan, up: number) =>
             hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, up),
         }),
-  });
-  const timeline = planBuffTimeline(timelineSlots, schedule, frames, shots, landing, input.sustainedHitRateUp ?? true);
-  const skillHits = planSkillHits(
-    slots,
-    enemy,
-    timeline,
-    schedule,
-    frames,
-    shots,
-    input.sustainedDamagePlacement,
-    slotAutoAttackCoreRatesOf(slots, enemy, frames),
-    input.attackRounding,
-  );
+  };
+  const first = runFirstPass(timelineSlots, firstPassOptions);
+  const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges } = first;
+  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間と記録は、1 パス目の件の一覧の履歴から書き出す
+  const sustainedHitRateUp = input.sustainedHitRateUp ?? true;
+  const timeline = buffTimelineOf(first.history, schedule, landing, sustainedHitRateUp);
+  const autoAttackCoreRates = slotAutoAttackCoreRatesOf(slots, enemy, frames);
+  const skillHitsOf = (t: BuffTimeline, s: BurstSchedule | null, sh: readonly (ShotLog | null)[]): SkillHitEvent[] =>
+    planSkillHits(
+      slots,
+      enemy,
+      t,
+      s,
+      frames,
+      sh,
+      input.sustainedDamagePlacement,
+      autoAttackCoreRates,
+      input.attackRounding,
+    );
+  const skillHits = skillHitsOf(timeline, schedule, shots);
+  // 段 A・B の間だけ: 新旧の比べ（論点 6。テストの準備と記録の道具からだけ入れる）
+  if (legacyCrossCheckEnabled()) {
+    crossCheckLegacy({
+      slots: timelineSlots,
+      options: firstPassOptions,
+      result: first,
+      timeline,
+      landings: landing,
+      sustainedHitRateUp,
+      skillHits,
+      skillHitsOf,
+    });
+  }
   return {
     frames,
     shots,

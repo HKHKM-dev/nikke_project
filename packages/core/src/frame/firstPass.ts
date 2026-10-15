@@ -6,13 +6,13 @@
 //   1. 射手を進める。射撃の実効値は「f − 1 までに登録済み」かつ「start ≤ f < end」の窓で決まる（1.1 節の表）。
 //      戦闘開始時（battleStart）の窓だけはループの前に登録し、1 発目のマガジンから効かせる。
 //   2. このフレームの射撃のゲージを足して状態機械を進める（Stage 7 の planDynamicSchedule と同じ）。
-//   3. このフレームの出来事を TriggerTracker（skills/triggers.ts）に流し、射撃に効く timed 効果の窓を登録する
-//      （窓の作り方は planBuffTimeline と同じ: 射撃の回数トリガーは f + 1 から、同じ効果の再発火は和集合）。
+//   3. このフレームの出来事を TriggerTracker（skills/triggers.ts）に流し、スキルの効果の件を登録する
+//      （持ち主ごとの件の一覧。skills/holders.ts: 射撃の回数トリガーは f + 1 から、同じ効果の再発火は和集合）。
 //      即時効果はその後に当てる: CT 短縮は発動の後（4 節）、弾丸チャージは同じフレームに付いた最大装弾数▲込みの最大で
 //      （録画 19: ノワールのフルバースト開始で 9 → 14 になるのは、+5 発と 39.88% の弾丸チャージが同じフレームに来るため）。
 //
-// 射撃に効かない効果（攻撃力・会心など）はここでは扱わない。ループの後で planBuffTimeline が確定した射撃の列と時刻表から
-// すべての窓を作り直す（トリガーは同じ TriggerTracker を通るので、射撃に効く効果の窓はここで登録したものと一致する）。
+// 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 射撃に効かない効果（攻撃力・会心など）も、すべて件の一覧で持つ。
+// ループの後の窓・区間・記録は、planTeamRun が履歴から書き出す（skills/holders.ts の buffTimelineOf。2 パス目の作り直しはやめた）。
 // 射撃に効く効果も即時効果も無い編成では、射撃の列は planShots、時刻表は planDynamicSchedule と 1 フレームも違わない（1.3 節）。
 //
 // Stage 11（plan/design-stage11.md 3 節）: 対象 burstUsers（「直前にバーストスキルを使用した味方」）は発火ごとに対象が変わるので、
@@ -50,6 +50,11 @@
 // 中身はその配列をそのまま読む（同じ stat の timed の窓と同じ列で、同じフレームの判定に入る）。手順 3 の順番は
 // 回復 → 条件なしの付与 → 状態の窓 → 条件つきの付与 → 当たりの窓 → 攻撃力の窓 → 順位の対象の付与 → 射撃に効く窓 → 即時効果。
 // 条件つきの付与の中身は、ほかの条件の判定に使わない（連鎖の禁止。planBuffTimeline の 1.5 段目と同じ）
+//
+// 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 上で「窓」と書いた追い方は、skills/holders.ts の件の一覧に置き換えた
+// （射撃に効く窓・当たりの窓・攻撃力の窓・状態の付与・吸収回復の窓・段の循環の窓）。手順 3 の順は
+// 回復 → 段 1 → 段 1.5 → 段 2 → 強化（貯めるだけ）→ 即時効果 で、上の順と同じ結果になる（同 2.4 節）。段の循環のゲージ（V-0030）は、
+// このフレームに付いた間隔の変更の件も見るように、手順 3 の後で数える（ゲージは先のフレームに予約するので、数える位置で値は変わらない）。
 import { burstDelaysFieldOf, burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { gameSecondsToFrames } from '../time.ts';
@@ -77,35 +82,17 @@ import {
   type BurstSchedule,
   type BurstScheduleModel,
 } from '../burst/schedule.ts';
-import { ZERO_BUFFS, applyResolvedEffect, type BuffTotals } from '../skills/buffs.ts';
-import { chanceScaleAt, chanceValueOf, type ChanceOpportunity } from '../skills/chance.ts';
+import { ZERO_BUFFS } from '../skills/buffs.ts';
 import {
-  isResolvedChance,
   isResolvedShotCount,
-  isResolvedTimer,
   resolveInstant,
-  resolveStateContents,
-  resolveStateGrants,
-  resolveTimed,
   type ResolvedInstantEffect,
-  type ResolvedStateContent,
-  type ResolvedStateGrant,
   type ResolvedTimedEffect,
-  type ResolvedTrigger,
-  type WindowEffect,
 } from '../skills/resolve.ts';
-import { createHealWindow, healFrameOf } from '../skills/heals.ts';
-import { attackRankFor, finalAttacksAt, type AttackWindow } from '../skills/ranking.ts';
-import { canEverTarget, dependsOnRank, isEffectTarget, type FireContext } from '../skills/targets.ts';
-import { stackWindows } from '../skills/stacks.ts';
-import {
-  effectWindows,
-  rankSlotsOf,
-  resolvePassiveStates,
-  selfBuffedAt,
-  weaponStartTrim,
-  type TimelineSlot,
-} from '../skills/timeline.ts';
+import { healFrameOf } from '../skills/heals.ts';
+import { createHolderLists, type HeldTrack, type HolderHistory } from '../skills/holders.ts';
+import { dependsOnRank, isEffectTarget, type FireContext } from '../skills/targets.ts';
+import { resolvePassiveStates, type TimelineSlot } from '../skills/timeline.ts';
 import {
   advanceShotCount,
   createTriggerTracker,
@@ -115,7 +102,7 @@ import {
   shotCountWeight,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import { isFiringStat, isHitStateStat, selfBuffedStatOf, type BuffStat, type ShotCountKind } from '../skills/types.ts';
+import { isFiringStat, isHitStateStat, type ShotCountKind } from '../skills/types.ts';
 import { dotTickTracker, groupDotsByState, type DotTickTracker } from './dot.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
@@ -242,72 +229,28 @@ export type FirstPassResult = {
    * フルバーストの終わりを跨ぐ発の照合用（plan/design-anis-star-gauge-timing.md 3.5 節）
    */
   shotGauges: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
+  /**
+   * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 件の一覧の履歴。planTeamRun が窓・区間・記録を書き出す
+   * （skills/holders.ts の buffTimelineOf）
+   */
+  history: HolderHistory;
 };
 
 /**
  * V-0030: ゲージを溜める段の循環を 1 パス目で追う状態。規則は skills/cycles.ts の cycleFires と同じ
- * （通算の射撃回数 n、窓の中は窓の every。窓は間隔の変更の発火から durationFrames の和集合）
+ * （通算の射撃回数 n、間隔の変更の件の中は件の every。件は持ち主ごとの一覧の、循環の間隔の変更）
  */
 type CycleGaugeTracker = {
   slotIndex: number;
+  /** 段の循環のスロット（間隔の変更の件を引く） */
+  skill: SkillSlot;
   every: number;
   gaugeHits: number[][];
   energy: number;
-  /** 間隔の変更（トリガーは自分の burstUse だけ扱う） */
-  changes: { every: number; durationFrames: number }[];
-  windows: { every: number; start: number; end: number }[];
   count: number;
   step: number;
   /** Stage 22-B: fullChargeShot の循環は部分チャージの発を数えない */
   fullChargeOnly: boolean;
-};
-
-/** 窓 [start, end) と、スタックする効果なら段（1 始まり） */
-type LoopWindow = [start: number, end: number, stack?: number];
-
-type FiringSource = {
-  sourceSlotIndex: number;
-  effect: ResolvedTimedEffect;
-  casterBaseAttack: number;
-  /** 対象になりうる枠（burstUsers は発火の文脈を除いた判定。実際に掛かるかは発火ごとに決まる） */
-  canTarget: boolean[];
-  fires: TriggerTracker;
-  /** 対象の枠ごとの窓（和集合済み。昇順）。上書き延長はその枠が受けた発火どうしでだけ起きる（Stage 11） */
-  windows: LoopWindow[][];
-  /** Stage 11 モダニア: スタックする効果の、対象の枠ごとの窓の始まり（段ごとの窓はここから作り直す） */
-  starts: number[][];
-};
-
-/**
- * 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.5 節）: 1 パス目で追う状態の付与。同じ出どころ × 状態の付与は
- * windows・starts の配列を共有し、どの付与の発火も 1 つの状態の窓に和集合・スタックで足す（register はそのまま使える）
- */
-type GrantSource = Omit<FiringSource, 'effect'> & { effect: ResolvedStateGrant };
-
-/** 窓を登録する元（timed の効果か、状態の付与） */
-type TrackSource = FiringSource | GrantSource;
-
-/**
- * 窓を読む側の形（timed の効果と、状態の中身）。中身の windows は状態の窓の配列そのもの（付与の発火で伸びた窓がそのまま見える）
- */
-type WindowView = Pick<FiringSource, 'sourceSlotIndex' | 'casterBaseAttack' | 'canTarget' | 'windows'> & {
-  effect: WindowEffect;
-};
-
-/** 名前の付いた状態の語彙編: 出どころ × 状態ごとの、時間で変わる状態（静的な付与の中身は常時パッシブ） */
-type StateGroup = {
-  sourceSlotIndex: number;
-  state: NamedStateId;
-  grants: GrantSource[];
-  contents: ResolvedStateContent[];
-  /** 条件なし・順位の対象でない付与だけか（planBuffTimeline の 1 段目で確定する状態。中身が条件の判定に入る） */
-  plain: boolean;
-  /** 順位の対象の付与を含むか（2 段目で確定する状態。中身は順位に入らない） */
-  ranked: boolean;
-  canTarget: boolean[];
-  windows: LoopWindow[][];
-  starts: number[][];
-  casterBaseAttack: number;
 };
 
 type InstantSource = {
@@ -337,51 +280,36 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const untargetable = options.untargetable ?? [];
   const scheduleModel: BurstScheduleModel | null = options.burst ? burstModel : null;
 
+  // ---- バーストの状態機械（件の一覧がフルバーストの窓を読むので、効果の準備の前に作る） ----
+  let controller: BurstControllerState | null = null;
+  let fixed: BurstSchedule | null = null;
+  if (options.burst) {
+    if (burstModel === 'fixed') {
+      fixed = planFixedCycle(
+        slots.map((s) =>
+          s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) },
+        ),
+        frames,
+      );
+    } else {
+      controller = initialBurstController(
+        slots.map((s) => (s === null ? null : burstUnitOf(s.character, s.definition))),
+        options.timing ?? DEFAULT_BURST_TIMING,
+      );
+    }
+  }
+  const activationsOf = (): readonly BurstActivation[] => controller?.activations ?? fixed?.activations ?? [];
+  const windowsOf = () => controller?.windows ?? fixed?.fullBurstWindows ?? [];
+  const gaugeFullOf = (): readonly number[] => controller?.gaugeFullFrames ?? [];
+
   // ---- 効果の準備 ----
   const passive = resolvePassiveStates(slots);
-  const firing: FiringSource[] = [];
   const instant: InstantSource[] = [];
   /** 発火の文脈 context のとき、効果 e が掛かる枠（Stage 11: burstUsers は発火ごとに変わる） */
   const targetsAt = (e: Parameters<typeof isEffectTarget>[0], sourceSlotIndex: number, context: FireContext) =>
     slots.flatMap((t, i) => (t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character, context) ? [i] : []));
-  /**
-   * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.2 節）: 時間の周期のトリガーは出来事の列に無いので、周期のフレーム
-   * （skills/timeline.ts の timerFrames。planBuffTimeline の triggerFires と同じ）で発火する。atStart のフレーム 0 はループの前に登録する
-   */
-  const firesOf = (trigger: ResolvedTimedEffect['trigger'], sourceSlotIndex: number): TriggerTracker => {
-    if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, sourceSlotIndex, scheduleModel);
-    const at = new Set(timerFrames(trigger.everySeconds, frames));
-    return (ev) => at.has(ev.frame);
-  };
-  /** 窓を持ちうる枠（burstUsers・topAttack は武器種の条件だけ）で FiringSource を作る */
-  const sourceOf = (effect: ResolvedTimedEffect, sourceSlotIndex: number, casterBaseAttack: number): FiringSource => ({
-    sourceSlotIndex,
-    effect,
-    casterBaseAttack,
-    canTarget: slots.map((t, i) => t !== null && canEverTarget(effect, sourceSlotIndex, i, t.character)),
-    fires: firesOf(effect.trigger, sourceSlotIndex),
-    windows: slots.map(() => []),
-    starts: slots.map(() => []),
-  });
-  /** 攻撃力の timed 効果（順位の要らないもの）。topAttack の射撃系・即時効果があるときだけ使う */
-  const attackCandidates: FiringSource[] = [];
-  /** Stage 11 モダニア: 条件の無い・順位の要らない timed 効果（条件の stat の窓を追うときの候補） */
-  const plainTimed: { effect: ResolvedTimedEffect; sourceSlotIndex: number; casterBaseAttack: number }[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
-    for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
-      // 使用武器変更の武器のパラメータ編: 撃ち切りで終わる変更は durationFrames が 0 でも窓を持つ（register が開け、撃ち切りで閉じる）
-      if (effect.durationFrames <= 0 && effect.durationUntil !== 'ammoSpent') continue;
-      // 環境コントロール強化編: amplifies の窓は planBuffTimeline が参照する窓から作るので、ここでは追わない
-      if (!dependsOnRank(effect) && effect.condition === undefined && effect.amplifies === undefined) {
-        plainTimed.push({ effect, sourceSlotIndex, casterBaseAttack: slot.casterBaseAttack });
-      }
-      if (effect.stat === 'attack' && !dependsOnRank(effect)) {
-        attackCandidates.push(sourceOf(effect, sourceSlotIndex, slot.casterBaseAttack));
-      }
-      if (!isFiringStat(effect.stat)) continue;
-      firing.push(sourceOf(effect, sourceSlotIndex, slot.casterBaseAttack));
-    }
     for (const effect of resolveInstant(slot.definition, slot.character, slot.levels)) {
       instant.push({
         sourceSlotIndex,
@@ -391,254 +319,13 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
   });
   // 回復は healed の出来事を作るので先に当てる（heal のトリガーに healed は書けないので順番で閉じる。plan/design-stage11.md 3.3 節）
-  // V-0024: 維持時間のある heal は、窓の付いている対象への付き直しでは healed を起こさない（planHeals と同じ規則）
-  const heals = instant
-    .filter((src) => src.effect.kind === 'heal')
-    .map((src) => ({ ...src, opens: createHealWindow(src.effect) }));
+  // V-0024: 維持時間のある heal は、件の付いている対象への付き直しでは healed を起こさない（件の一覧の吸収回復の件。applyHeal）
+  const heals = instant.filter((src) => src.effect.kind === 'heal');
   // V-0034: 射撃の回数トリガーのバーストゲージのチャージは、発と同じフレームのゲージに足す（手順 2 の前。下のループ）
   const isShotGaugeCharge = (src: InstantSource): boolean =>
     src.effect.kind === 'burstGauge' && isResolvedShotCount(src.effect.trigger);
   const shotGaugeCharges = instant.filter(isShotGaugeCharge);
   const otherInstants = instant.filter((src) => src.effect.kind !== 'heal' && !isShotGaugeCharge(src));
-  // 名前の付いた状態の語彙編: 時間で変わる状態を出どころ × 状態ごとにまとめる。どの状態を追うかは中身の stat で決める（下）
-  const stateGroups = stateGroupsOf(slots, (grant, sourceSlotIndex, windows, starts, casterBaseAttack) => ({
-    sourceSlotIndex,
-    effect: grant,
-    casterBaseAttack,
-    canTarget: slots.map((t, i) => t !== null && canEverTarget(grant, sourceSlotIndex, i, t.character)),
-    fires: firesOf(grant.trigger, sourceSlotIndex),
-    windows,
-    starts,
-  }));
-  const hasContent = (group: StateGroup, test: (stat: ResolvedStateContent['stat']) => boolean): boolean =>
-    group.contents.some((c) => test(c.stat));
-  /** 中身の窓を読む形（窓の配列は状態のもの） */
-  const viewsOf = (
-    groups: readonly StateGroup[],
-    test: (stat: ResolvedStateContent['stat']) => boolean,
-  ): WindowView[] =>
-    groups.flatMap((group) =>
-      group.contents
-        .filter((c) => test(c.stat))
-        .map((effect) => ({
-          sourceSlotIndex: group.sourceSlotIndex,
-          effect,
-          casterBaseAttack: group.casterBaseAttack,
-          canTarget: group.canTarget,
-          windows: group.windows,
-        })),
-    );
-  const firingGroups = stateGroups.filter((group) => hasContent(group, isFiringStat));
-  // 持続の命中率▲: 弾丸命中率の区間を持つ枠（条件が自動）に掛かりうる当たりの stat の効果だけを追う
-  const onAutoSlot = (canTarget: readonly boolean[]): boolean =>
-    canTarget.some((can, i) => can && (options.hitRates?.[i] ?? null) !== null);
-  const hitTrack: FiringSource[] =
-    options.hitRateWith === undefined
-      ? []
-      : plainTimed
-          .filter(({ effect }) => isHitStateStat(effect.stat))
-          .map(({ effect, sourceSlotIndex, casterBaseAttack }) => sourceOf(effect, sourceSlotIndex, casterBaseAttack))
-          .filter((src) => onAutoSlot(src.canTarget));
-  const hitGroups =
-    options.hitRateWith === undefined
-      ? []
-      : stateGroups.filter((group) => hasContent(group, isHitStateStat) && onAutoSlot(group.canTarget));
-  // Stage 11 アリス編: 順位が要るときだけ攻撃力の窓を追う（無ければクラウン編までのループと同じ）
-  const needsRank =
-    firing.some((src) => dependsOnRank(src.effect)) ||
-    otherInstants.some((src) => dependsOnRank(src.effect)) ||
-    firingGroups.some((group) => group.ranked);
-  const attackTrack = needsRank ? attackCandidates.filter((src) => !isResolvedChance(src.effect.trigger)) : [];
-  // 名前の付いた状態の語彙編: 順位に入るのは、順位の対象の付与を含まない状態の中身の攻撃力（planBuffTimeline の 2 段目と同じ）
-  const attackGroups = needsRank
-    ? stateGroups.filter((group) => !group.ranked && hasContent(group, (stat) => stat === 'attack'))
-    : [];
-  // ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけの攻撃力▲は、順位にも期待値（付いている確率 × 値）で入れる。
-  // 機会（発の次のフレームから D フレーム）を貯め、順位を出すフレームの値を planBuffTimeline の小片と同じ式で出す
-  const chanceAttack: { src: FiringSource; targets: number[]; opportunities: ChanceOpportunity[] }[] = needsRank
-    ? attackCandidates
-        .filter((src) => isResolvedChance(src.effect.trigger))
-        .map((src) => ({ src, targets: targetsAt(src.effect, src.sourceSlotIndex, null), opportunities: [] }))
-    : [];
-  const rankSlots = needsRank ? rankSlotsOf(slots, passive) : [];
-  // Stage 11 モダニア: ループで追う条件付きの効果（射撃に効くもの、順位のために追う攻撃力のもの）があるときだけ、条件の stat の窓を追う
-  const conditionStats = new Set<BuffStat>(
-    [
-      ...firing,
-      ...attackTrack,
-      ...[...firingGroups, ...hitGroups, ...attackGroups].flatMap((group) => group.grants),
-    ].flatMap(
-      (src) =>
-        // 防御力無視ダメージ編: ループで追う効果には inFullBurst を書けない（skills/types.ts の parseTimedEffect）
-        selfBuffedStatOf(src.effect.condition) ?? [],
-    ),
-  );
-  const stateTrack: FiringSource[] = plainTimed
-    .filter(({ effect }) => effect.stat !== 'weapon' && conditionStats.has(effect.stat))
-    .map(({ effect, sourceSlotIndex, casterBaseAttack }) => sourceOf(effect, sourceSlotIndex, casterBaseAttack));
-  // 名前の付いた状態の語彙編: 条件の判定に入るのは、条件なし・順位の対象でない付与だけの状態の中身（planBuffTimeline の 1 段目と同じ）
-  const isConditionStat = (stat: ResolvedStateContent['stat']): boolean =>
-    stat !== 'weapon' && conditionStats.has(stat);
-  const conditionGroups = stateGroups.filter((group) => group.plain && hasContent(group, isConditionStat));
-  // 追う状態（どれかの役に立つもの）。付与はどの状態でも 1 回だけ登録する（窓の配列を共有するので）
-  const trackedGroups = stateGroups.filter((group) =>
-    [firingGroups, hitGroups, attackGroups, conditionGroups].some((list) => list.includes(group)),
-  );
-  const trackedGrants = trackedGroups.flatMap((group) => group.grants);
-  const plainGrants = trackedGrants.filter((src) => src.effect.condition === undefined && !dependsOnRank(src.effect));
-  const conditionalGrants = trackedGrants.filter((src) => src.effect.condition !== undefined);
-  const rankedGrants = trackedGrants.filter((src) => dependsOnRank(src.effect));
-  // 窓を読む側（timed の効果の後に、状態の中身を並べる）
-  const firingViews: WindowView[] = [...firing, ...viewsOf(firingGroups, isFiringStat)];
-  const hitViews: WindowView[] = [...hitTrack, ...viewsOf(hitGroups, isHitStateStat)];
-  const stateViews: WindowView[] = [...stateTrack, ...viewsOf(conditionGroups, isConditionStat)];
-  const attackViews: WindowView[] = [...attackTrack, ...viewsOf(attackGroups, (stat) => stat === 'attack')];
-  const trackEvents = firing.length > 0 || instant.length > 0 || hitTrack.length > 0 || trackedGroups.length > 0;
-  /** 効果 src の条件を、フレーム f の状態の窓（同じフレームに付いたものも入れる）で判定する。条件の無い効果は常に true */
-  const conditionOk = (src: TrackSource, f: number): boolean => {
-    const condition = selfBuffedStatOf(src.effect.condition);
-    if (condition === undefined) return true;
-    const windows = stateViews.flatMap((st) =>
-      st.windows.flatMap((list, slotIndex) =>
-        list.map(([start, end]) => ({ slotIndex, effect: st.effect, start, end })),
-      ),
-    );
-    return selfBuffedAt(passive, windows, src.sourceSlotIndex, condition, f);
-  };
-  /** 効果 e の発火の文脈に、フレーム f の攻撃力の順位を足す（topAttack の効果だけ） */
-  const withRank = (
-    e: ResolvedTimedEffect | ResolvedInstantEffect | ResolvedStateGrant,
-    sourceSlotIndex: number,
-    context: FireContext,
-    f: number,
-  ): FireContext => {
-    if (!dependsOnRank(e)) return context;
-    const attackWindows: AttackWindow[] = attackViews.flatMap((src) =>
-      src.windows.flatMap((list, slotIndex) =>
-        list.map(([start, end]) => ({
-          slotIndex,
-          sourceSlotIndex: src.sourceSlotIndex,
-          effect: src.effect,
-          start,
-          end,
-        })),
-      ),
-    );
-    for (const { src, targets, opportunities } of chanceAttack) {
-      const scale = chanceScaleAt(opportunities, src.effect.durationFrames, f);
-      if (scale <= 0) continue;
-      const effect = { ...src.effect, value: chanceValueOf(src.effect.value, scale) };
-      for (const slotIndex of targets) {
-        attackWindows.push({ slotIndex, sourceSlotIndex: src.sourceSlotIndex, effect, start: f, end: f + 1 });
-      }
-    }
-    const finalAttacks = finalAttacksAt(rankSlots, attackWindows, f);
-    return { ...context, attackRank: attackRankFor(e, rankSlots, finalAttacks, sourceSlotIndex) };
-  };
-
-  /**
-   * 窓を登録する（同じ効果の再発火は和集合 = 上書き延長。planBuffTimeline の unionWindows と同じ）。
-   * Stage 11: 対象の枠ごとに、その枠が対象になった発火だけで和集合にする。
-   * Stage 11 モダニア: スタックする効果は、その枠の窓の始まりの列から段ごとの窓を作り直す（skills/stacks.ts。planBuffTimeline と同じ関数）
-   */
-  const register = (src: TrackSource, start: number, context: FireContext): void => {
-    if (start >= frames) return;
-    // 使用武器変更の武器のパラメータ編: 撃ち切りで終わる変更は戦闘の終わりまで開けておき、最後の弾丸の発で閉じる（手順 1）
-    const end = src.effect.durationUntil === 'ammoSpent' ? frames : Math.min(start + src.effect.durationFrames, frames);
-    for (const i of targetsAt(src.effect, src.sourceSlotIndex, context)) {
-      if (src.effect.maxStacks !== undefined) {
-        src.starts[i]!.push(start);
-        src.windows[i] = stackWindows(src.starts[i]!, src.effect.durationFrames, frames, src.effect.maxStacks).map(
-          (w): LoopWindow => [w.start, w.end, w.stack],
-        );
-        continue;
-      }
-      // 名前の付いた状態の語彙編: 状態の付与は、窓の始まりの列から作り直す（同じ状態のほかの付与の発火と並べ替えて和集合にする。
-      // 射撃の回数の付与は次のフレームから始まるので、同じフレームのほかの付与より後の始まりを先に登録することがある）
-      if ('state' in src.effect) {
-        src.starts[i]!.push(start);
-        src.windows[i] = effectWindows(src.starts[i]!, src.effect, frames).map((w): LoopWindow => [w.start, w.end]);
-        continue;
-      }
-      const list = src.windows[i]!;
-      const last = list[list.length - 1];
-      if (last !== undefined && start <= last[1]) {
-        if (end > last[1]) last[1] = end;
-        continue;
-      }
-      // Stage 11 モダニア: 使用武器の変更は持ち替えるフレーム（発火の次）から（planBuffTimeline の weaponStartTrim と同じ）
-      const trimmed = start + weaponStartTrim(src.effect);
-      if (trimmed < end) list.push([trimmed, end]);
-    }
-  };
-  /**
-   * 使用武器変更の武器のパラメータ編: 枠 i の、撃ち切りで終わる使用武器の変更（識別子 weaponId）の開いている窓を end で閉じる。
-   * 閉じたら true
-   */
-  const closeWeaponChange = (i: number, weaponId: string, end: number): boolean => {
-    for (const src of firing) {
-      if (src.effect.durationUntil !== 'ammoSpent' || src.effect.weapon?.id !== weaponId) continue;
-      const last = src.windows[i]?.[src.windows[i]!.length - 1];
-      if (last === undefined || last[0] >= end || last[1] < end) continue;
-      last[1] = Math.min(end, frames);
-      return true;
-    }
-    return false;
-  };
-  /** フレーム f の発火で付く窓の始まり。射撃の回数トリガーは次のフレームから（Stage 8） */
-  const startOf = (src: TrackSource, f: number): number => (isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
-  // 戦闘開始時の窓はループの前に登録する（1 発目のマガジンから効く）。ソルジャーE.G. 編: 周期のトリガーの atStart も。
-  // 順番はループの手順 3 と同じ
-  const atBattleStart = (t: ResolvedTrigger): boolean =>
-    t === 'battleStart' || (isResolvedTimer(t) && 'atStart' in t && t.atStart === true);
-  for (const src of [
-    ...plainGrants,
-    ...stateTrack,
-    ...conditionalGrants,
-    ...hitTrack,
-    ...attackTrack,
-    ...rankedGrants,
-    ...firing,
-  ]) {
-    if (!atBattleStart(src.effect.trigger) || frames <= 0) continue;
-    if (!conditionOk(src, 0)) continue;
-    register(src, 0, withRank(src.effect, src.sourceSlotIndex, null, 0));
-  }
-
-  // ---- 射手 ----
-  const passiveFiring = passive.map((s) => s?.buffs ?? ZERO_BUFFS);
-  const hasTimedFiring = slots.map((_, i) => firingViews.some((src) => src.canTarget[i]));
-  const baseParams = slots.map((slot, i) =>
-    slot === null ? null : firingParams(slot.character.shot, passiveFiring[i]!),
-  );
-  /**
-   * 枠 i がフレーム f に使う実効値（登録済みの窓のうち start ≤ f < end のもの）。
-   * 手順 1 で呼ぶときは f の窓はまだ登録されていないので「f − 1 までに登録済み」になり、
-   * 手順 3 の弾丸チャージで呼ぶときは f に付いた最大装弾数▲も含む
-   */
-  const paramsAt = (i: number, f: number): FiringParams => {
-    const base = baseParams[i]!;
-    if (!hasTimedFiring[i]) return base;
-    let buffs: BuffTotals = passiveFiring[i]!;
-    let changed = false;
-    for (const src of firingViews) {
-      if (!src.canTarget[i]) continue;
-      // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す
-      for (const [s, e] of src.windows[i]!) {
-        if (s > f || f >= e) continue;
-        buffs = applyResolvedEffect(buffs, src.effect, src.casterBaseAttack).totals;
-        changed = true;
-      }
-    }
-    if (!changed || isZeroFiring(buffs)) return base;
-    return firingParams(slots[i]!.character.shot, buffs);
-  };
-  const shooters: (ShooterState | null)[] = slots.map((slot, i) =>
-    slot === null ? null : initialShooter(slot.character.shot, model, paramsAt(i, 0)),
-  );
-  /** Stage 11 モダニア: 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
-  const changedShooters: (ShooterState | null)[] = slots.map(() => null);
-  const activeWeapon: (string | null)[] = slots.map(() => null);
   const logs: (ShotLog | null)[] = slots.map((slot) =>
     slot === null
       ? null
@@ -651,6 +338,34 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
           pelletHits: [],
         },
   );
+  // 持ち主ごとの件の一覧（plan/design-holder-effects.md 段 A）。スキルの効果をすべて、受ける枠ごとの件の列で持つ
+  const lists = createHolderLists(slots, { frames, scheduleModel, logs, fullBurstWindows: windowsOf });
+  const trackEvents = lists.hasSources || instant.length > 0;
+  // 戦闘開始時の件はループの前に登録する（1 発目のマガジンから効く）。ソルジャーE.G. 編: 周期のトリガーの atStart も
+  lists.registerBattleStart();
+
+  // ---- 射手 ----
+  const passiveFiring = passive.map((s) => s?.buffs ?? ZERO_BUFFS);
+  const baseParams = slots.map((slot, i) =>
+    slot === null ? null : firingParams(slot.character.shot, passiveFiring[i]!),
+  );
+  /**
+   * 枠 i がフレーム f に使う実効値（件の一覧のうち、射撃に効く stat の件で start ≤ f < end のもの）。
+   * 手順 1 で呼ぶときは f の件はまだ登録されていないので「f − 1 までに登録済み」になり、
+   * 手順 3 の弾丸チャージで呼ぶときは f に付いた最大装弾数▲も含む
+   */
+  const paramsAt = (i: number, f: number): FiringParams => {
+    const base = baseParams[i]!;
+    const buffs = lists.firingBuffsAt(i, f, passiveFiring[i]!);
+    if (buffs === null || isZeroFiring(buffs)) return base;
+    return firingParams(slots[i]!.character.shot, buffs);
+  };
+  const shooters: (ShooterState | null)[] = slots.map((slot, i) =>
+    slot === null ? null : initialShooter(slot.character.shot, model, paramsAt(i, 0)),
+  );
+  /** Stage 11 モダニア: 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
+  const changedShooters: (ShooterState | null)[] = slots.map(() => null);
+  const activeWeapon: (string | null)[] = slots.map(() => null);
 
   // ---- バースト ----
   const gaugeSpeed = passive.map((s) => s?.buffs.burstGaugeSpeed ?? 0);
@@ -675,24 +390,15 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     while (hitRateAt[i]! + 1 < spans.length && spans[hitRateAt[i]!]!.end <= f) hitRateAt[i]! += 1;
     return spans[hitRateAt[i]!];
   };
-  /** 枠 i がフレーム f に効いている持続の命中率▲の和（登録済みの当たりの窓のうち start ≤ f < end。スタックは段の数だけ） */
-  const timedHitUpAt = (i: number, f: number): number => {
-    let sum = 0;
-    for (const src of hitViews) {
-      if (!src.canTarget[i]) continue;
-      for (const [s, e] of src.windows[i]!) if (s <= f && f < e) sum += src.effect.value;
-    }
-    return sum;
-  };
-  /** 枠 i のフレーム f の区間の値（持続の命中率▲が効いていれば出し直した値） */
+  /** 枠 i がフレーム f の区間の値（持続の命中率▲が効いていれば出し直した値。▲は件の一覧の当たりの件。スタックは段の数だけ） */
   const spanValueAt = (
     i: number,
     f: number,
   ): LandingHitRateSpan | { hitRate: number; coreHits: number } | undefined => {
     const span = spanAt(i, f);
-    if (span === undefined || hitViews.length === 0) return span;
-    const up = timedHitUpAt(i, f);
-    return up === 0 ? span : options.hitRateWith!(i, span, up);
+    if (span === undefined || options.hitRateWith === undefined || !lists.hasHitTracks) return span;
+    const up = lists.hitUpAt(i, f);
+    return up === 0 ? span : options.hitRateWith(i, span, up);
   };
   /** 枠 i がフレーム f に撃った 1 発のゲージ */
   const energyAt = (i: number, f: number): number => {
@@ -765,27 +471,22 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     for (const cycle of resolveCycles(slot.definition, slot.character, slot.levels)) {
       if (cycle.gaugeHits.every((d) => d.length === 0)) continue;
       if (cycle.trigger.count === 'fullChargeShot' && !log.fullCharge) continue;
-      const changes = resolveCycleEvery(slot.definition, slot.character, slot.levels)
-        .filter((e) => e.targetSkill === cycle.source.skill)
-        .map((e) => {
-          if (e.trigger !== 'burstUse') {
-            throw new RangeError(
-              `cycle gauge hits support only a burstUse cycleEvery, got ${JSON.stringify(e.trigger)}`,
-            );
-          }
-          // 着弾編: 循環の窓は発動のフレームから数えるので、効果の発火が遅れるキャラ（burst/landing.ts）には使えない
-          if (burstDelaysOf(slot.character).effectFrames !== 0) {
-            throw new RangeError('cycleEvery is not supported for a character with a burst effect delay');
-          }
-          return { every: e.every, durationFrames: e.durationFrames };
-        });
+      for (const e of resolveCycleEvery(slot.definition, slot.character, slot.levels)) {
+        if (e.targetSkill !== cycle.source.skill) continue;
+        if (e.trigger !== 'burstUse') {
+          throw new RangeError(`cycle gauge hits support only a burstUse cycleEvery, got ${JSON.stringify(e.trigger)}`);
+        }
+        // 着弾編: 循環の窓は発動のフレームから数えるので、効果の発火が遅れるキャラ（burst/landing.ts）には使えない
+        if (burstDelaysOf(slot.character).effectFrames !== 0) {
+          throw new RangeError('cycleEvery is not supported for a character with a burst effect delay');
+        }
+      }
       cycleTrackers.push({
         slotIndex: i,
+        skill: cycle.source.skill,
         every: cycle.trigger.every,
         gaugeHits: cycle.gaugeHits,
         energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
-        changes,
-        windows: [],
         count: 0,
         step: 0,
         fullChargeOnly: cycle.trigger.count === 'fullChargeShot',
@@ -912,32 +613,32 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   /** 着弾編: 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
   const cycleGaugeHits: FirstPassResult['cycleGaugeHits'] = [];
-  let nextCycleActivation = 0;
-
-  let controller: BurstControllerState | null = null;
-  let fixed: BurstSchedule | null = null;
-  if (options.burst) {
-    if (burstModel === 'fixed') {
-      fixed = planFixedCycle(
-        slots.map((s) =>
-          s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) },
-        ),
-        frames,
-      );
-    } else {
-      controller = initialBurstController(
-        slots.map((s) => (s === null ? null : burstUnitOf(s.character, s.definition))),
-        options.timing ?? DEFAULT_BURST_TIMING,
-      );
+  /**
+   * V-0030: 段の循環。このフレームの射撃を数え、段のヒットのゲージを当たるフレームに予約する。間隔の変更の件は、このフレームに
+   * 付いたもの（発動のフレームから）も見るので、手順 3 の後に呼ぶ
+   */
+  const countCycles = (f: number): void => {
+    for (const t of cycleTrackers) {
+      const ev = shotEvents[t.slotIndex];
+      if (ev === null || ev === undefined) continue;
+      if (t.fullChargeOnly && !ev.fullCharge) continue;
+      t.count += 1;
+      let e = t.every;
+      for (const every of lists.cycleEveryAt(t.slotIndex, t.skill, f)) e = Math.min(e, every);
+      if (t.count % e !== 0) continue;
+      for (const d of t.gaugeHits[t.step]!) {
+        const at = f + d;
+        cycleGaugeHits.push({ slotIndex: t.slotIndex, shotFrame: f, frame: at, energy: t.energy });
+        if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
+      }
+      t.step = (t.step + 1) % t.gaugeHits.length;
     }
-  }
+  };
+
   let nextActivation = 0;
   let nextWindowStart = 0;
   let nextWindowEnd = 0;
   let gaugeFullSeen = 0;
-  const activationsOf = (): readonly BurstActivation[] => controller?.activations ?? fixed?.activations ?? [];
-  const windowsOf = () => controller?.windows ?? fixed?.fullBurstWindows ?? [];
-  const gaugeFullOf = (): readonly number[] => controller?.gaugeFullFrames ?? [];
 
   const instants: InstantApplication[] = [];
   /** Stage 11: 次のフレーム以降に起きる回復（射撃の回数起点）。フレーム → 受ける枠 */
@@ -995,7 +696,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (params.weapon !== null) (log.weaponChangeShotFrames ??= []).push(f);
       // 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節の論点 8）: 撃ち切りで終わる変更は、最後の弾丸を
       // 撃ったら次のフレームで基礎の武器に戻す（変更後の武器はリロードしない）。窓の終わりは planBuffTimeline も同じ列から作る
-      if (params.weapon !== null && state.lastShot && closeWeaponChange(i, params.weapon.id, f + 1)) {
+      if (params.weapon !== null && state.lastShot && lists.openWeaponChange(i, params.weapon.id, f + 1)) {
         (log.weaponChangeEnds ??= []).push(f + 1);
       }
       const isPartial = partial !== null && partial < 1;
@@ -1095,40 +796,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）
     if (controller !== null) stepBurstController(controller, f, gauge, blocked);
-    // 2b. V-0030: 段の循環。このフレームの発動で開く間隔の変更の窓を足してから（窓は発火のフレームから）、このフレームの射撃を数える
-    if (cycleTrackers.length > 0) {
-      const activations = activationsOf();
-      while (nextCycleActivation < activations.length && activations[nextCycleActivation]!.frame <= f) {
-        const a = activations[nextCycleActivation]!;
-        nextCycleActivation += 1;
-        for (const t of cycleTrackers) {
-          if (t.slotIndex !== a.slotIndex) continue;
-          for (const c of t.changes) {
-            if (c.durationFrames <= 0) continue;
-            const end = Math.min(a.frame + c.durationFrames, frames);
-            const last = t.windows.findLast((w) => w.every === c.every && a.frame <= w.end);
-            if (last !== undefined) last.end = Math.max(last.end, end);
-            else t.windows.push({ every: c.every, start: a.frame, end });
-          }
-        }
-      }
-      for (const t of cycleTrackers) {
-        const ev = shotEvents[t.slotIndex];
-        if (ev === null || ev === undefined) continue;
-        if (t.fullChargeOnly && !ev.fullCharge) continue;
-        t.count += 1;
-        let e = t.every;
-        for (const w of t.windows) if (w.start <= f && f < w.end) e = Math.min(e, w.every);
-        if (t.count % e !== 0) continue;
-        for (const d of t.gaugeHits[t.step]!) {
-          const at = f + d;
-          cycleGaugeHits.push({ slotIndex: t.slotIndex, shotFrame: f, frame: at, energy: t.energy });
-          if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + t.energy);
-        }
-        t.step = (t.step + 1) % t.gaugeHits.length;
-      }
+    // 2b. V-0030: 段の循環の射撃は、手順 3 の後に数える（countCycles）
+    if (!trackEvents && !trackDotBurstUse) {
+      countCycles(f);
+      continue;
     }
-    if (!trackEvents && !trackDotBurstUse) continue;
 
     // 3. 出来事 → 射撃に効く窓の登録 → 即時効果
     const activations = activationsOf();
@@ -1212,7 +884,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (!src.fires(ev)) continue;
       const at = healFrameOf(src.effect, f);
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev))) {
-        if (at < frames && !src.opens(target, at)) continue;
+        if (at < frames && !lists.applyHeal(src.effect, src.sourceSlotIndex, target, at)) continue;
         if (at === f) {
           healed[target] = true;
           healedDirty = true;
@@ -1231,59 +903,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
     }
 
-    // 名前の付いた状態の語彙編: 条件なしの付与を先に登録し、同じフレームの条件・順位・射撃の判定に中身を入れる
-    for (const src of plainGrants) {
-      if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
-      if (!src.fires(ev)) continue;
-      register(src, startOf(src, f), fireContextOf(src.effect.trigger, ev));
-    }
-    // Stage 11 モダニア: 条件の stat の窓（状態の窓）を先に登録し、同じフレームの条件の判定に入れる
-    for (const src of stateTrack) {
-      if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
-      if (!src.fires(ev)) continue;
-      register(src, startOf(src, f), fireContextOf(src.effect.trigger, ev));
-    }
-    // 条件つきの付与。中身はほかの条件の判定に入れない（stateViews に無い）
-    for (const src of conditionalGrants) {
-      if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
-      if (!src.fires(ev) || !conditionOk(src, f)) continue;
-      register(src, startOf(src, f), fireContextOf(src.effect.trigger, ev));
-    }
-    // 当たりの窓（持続の命中率▲）。このフレームの発には効かず、次のフレームの発から効く
-    for (const src of hitTrack) {
-      if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
-      if (!src.fires(ev)) continue;
-      register(src, startOf(src, f), fireContextOf(src.effect.trigger, ev));
-    }
-    // 攻撃力の窓（順位のためだけ）を先に登録し、同じフレームに付いたものも順位に入れる
-    for (const src of attackTrack) {
-      if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
-      if (!src.fires(ev) || !conditionOk(src, f)) continue;
-      register(src, startOf(src, f), fireContextOf(src.effect.trigger, ev));
-    }
-    for (const { src, opportunities } of chanceAttack) {
-      const trigger = src.effect.trigger;
-      const shot = ev.shots[src.sourceSlotIndex];
-      if (!shot || !isResolvedChance(trigger) || f + 1 >= frames) continue;
-      const weight = shotCountWeight(trigger.count, shot);
-      if (weight > 0) opportunities.push({ start: f + 1, q: Math.min(1, trigger.chance * weight) });
-    }
-    // 順位の対象の付与（同じフレームに付いた攻撃力の窓も順位に入れる）
-    for (const src of rankedGrants) {
-      if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
-      if (!src.fires(ev)) continue;
-      register(
-        src,
-        startOf(src, f),
-        withRank(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f),
-      );
-    }
-    for (const src of firing) {
-      if (src.effect.trigger === 'battleStart') continue; // ループの前に登録済み
-      if (!src.fires(ev) || !conditionOk(src, f)) continue;
-      const context = withRank(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
-      register(src, startOf(src, f), context);
-    }
+    // 持ち主ごとの件の一覧: 段 1 → 段 1.5 → 段 2 → 強化の順に件を登録する（plan/design-holder-effects.md 2.4 節）
+    lists.registerFrame(ev);
     for (const src of otherInstants) {
       if (!src.fires(ev)) continue;
       // ヘルム編: 射撃の回数トリガーでないバーストゲージのチャージは、対象によらず 1 回だけ、次のフレームのゲージに足す
@@ -1294,7 +915,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         pendingGaugeCharges.set(f + 1, list);
         continue;
       }
-      const context = withRank(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
+      const context = lists.rankContext(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, context)) {
         if (src.effect.kind === 'cooldownReduction') {
           if (controller === null) continue; // 固定サイクル・バーストなしでは CT を見ない
@@ -1335,89 +956,71 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         });
       }
     }
+    countCycles(f);
   }
 
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;
-  const windowsOfSources = (sources: readonly FiringSource[]): FiringWindow[] =>
-    sources.flatMap((src) =>
-      src.windows.flatMap((list, slotIndex) =>
-        list.map(([start, end, stack]) => {
-          const w: FiringWindow = { slotIndex, sourceSlotIndex: src.sourceSlotIndex, effect: src.effect, start, end };
-          if (stack !== undefined) w.stack = stack;
-          return w;
-        }),
-      ),
-    );
+  const history = lists.history();
+  // テスト用の窓（段 B で消す）: いまの 1 パス目が追っていた範囲（射撃に効く件・順位のための攻撃力の件・当たりの件・状態の件）
+  const windowsOfTracks = (test: (track: HeldTrack, effect: ResolvedTimedEffect) => boolean): FiringWindow[] =>
+    history.tracks.flatMap((track) => {
+      if (track.origin.kind !== 'timed' || !test(track, track.origin.effect)) return [];
+      const effect = track.origin.effect;
+      return track.items.map((item) => {
+        const w: FiringWindow = {
+          slotIndex: track.holder,
+          sourceSlotIndex: track.sourceSlotIndex,
+          effect,
+          start: item.start,
+          end: item.end,
+        };
+        if (item.stack !== undefined) w.stack = item.stack;
+        return w;
+      });
+    });
+  // 順位が要る（topAttack の射撃系の件・即時効果がある）ときだけ、順位のための攻撃力の件を出す（いまの attackTrack）
+  const needsRank =
+    history.tracks.some(
+      (t) =>
+        t.stage === 2 &&
+        ((t.origin.kind === 'timed' && isFiringStat(t.origin.effect.stat)) ||
+          (t.origin.kind === 'state' && t.origin.contents.some((c) => isFiringStat(c.stat)))),
+    ) || otherInstants.some((src) => dependsOnRank(src.effect));
+  // 当たりの件は、持続の命中率▲を 1 パス目で効かせるとき、条件が自動の枠に掛かりうる出どころの分（いまの hitTrack）
+  const autoSlot = (i: number) => (options.hitRates?.[i] ?? null) !== null;
+  const hitSources = new Set<ResolvedTimedEffect>();
+  for (const t of history.tracks) {
+    if (t.origin.kind === 'timed' && t.stage === 1 && isHitStateStat(t.origin.effect.stat) && autoSlot(t.holder)) {
+      hitSources.add(t.origin.effect);
+    }
+  }
   return {
     frames,
     shots: logs,
     schedule,
-    firingWindows: windowsOfSources(firing),
+    firingWindows: windowsOfTracks((_, effect) => isFiringStat(effect.stat)),
     instants,
-    rankAttackWindows: windowsOfSources(attackTrack),
-    hitWindows: windowsOfSources(hitTrack),
-    namedStateWindows: trackedGroups.flatMap((group) =>
-      group.windows.flatMap((list, slotIndex) =>
-        list.map(([start, end, stack]) => ({
-          state: group.state,
-          slotIndex,
-          sourceSlotIndex: group.sourceSlotIndex,
-          start,
-          end,
-          ...(stack === undefined ? {} : { stack }),
-        })),
-      ),
-    ),
+    rankAttackWindows: needsRank
+      ? windowsOfTracks(
+          (track, effect) => effect.stat === 'attack' && track.stage !== 2 && track.opportunities === null,
+        )
+      : [],
+    hitWindows: options.hitRateWith === undefined ? [] : windowsOfTracks((_, effect) => hitSources.has(effect)),
+    namedStateWindows: history.tracks.flatMap((track) => {
+      const o = track.origin;
+      if (o.kind !== 'state') return [];
+      return track.items.map((item) => ({
+        state: o.state,
+        slotIndex: track.holder,
+        sourceSlotIndex: track.sourceSlotIndex,
+        start: item.start,
+        end: item.end,
+        ...(item.stack === undefined ? {} : { stack: item.stack }),
+      }));
+    }),
     cycleGaugeHits,
     dotGauges,
     shotGauges,
+    history,
   };
-}
-
-/**
- * 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.5 節）: 時間で変わる状態の付与を出どころ × 状態ごとにまとめる
- * （静的な付与の中身は resolvePassiveStates の常時パッシブ）。同じ状態の付与は windows・starts を共有する
- */
-function stateGroupsOf(
-  slots: readonly TimelineSlot[],
-  sourceOf: (
-    grant: ResolvedStateGrant,
-    sourceSlotIndex: number,
-    windows: LoopWindow[][],
-    starts: number[][],
-    casterBaseAttack: number,
-  ) => GrantSource,
-): StateGroup[] {
-  const groups: StateGroup[] = [];
-  slots.forEach((slot, sourceSlotIndex) => {
-    if (slot === null || slot.definition === null) return;
-    const contents = resolveStateContents(slot.definition, slot.character, slot.levels);
-    for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
-      if (grant.isStatic || grant.durationFrames <= 0) continue;
-      let group = groups.find((g) => g.sourceSlotIndex === sourceSlotIndex && g.state === grant.state);
-      if (group === undefined) {
-        group = {
-          sourceSlotIndex,
-          state: grant.state,
-          grants: [],
-          contents: contents.filter((c) => c.whileState === grant.state),
-          plain: true,
-          ranked: false,
-          canTarget: slots.map(() => false),
-          windows: slots.map(() => []),
-          starts: slots.map(() => []),
-          casterBaseAttack: slot.casterBaseAttack,
-        };
-        groups.push(group);
-      }
-      const src = sourceOf(grant, sourceSlotIndex, group.windows, group.starts, slot.casterBaseAttack);
-      group.grants.push(src);
-      if (grant.condition !== undefined || dependsOnRank(grant)) group.plain = false;
-      if (dependsOnRank(grant)) group.ranked = true;
-      src.canTarget.forEach((can, i) => {
-        if (can) group.canTarget[i] = true;
-      });
-    }
-  });
-  return groups;
 }

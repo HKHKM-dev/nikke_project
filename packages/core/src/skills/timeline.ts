@@ -56,7 +56,14 @@ import { stackWindows } from './stacks.ts';
 import { dependsOnContext, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
 import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
 import type { NamedStateId } from './states.ts';
-import { isStateStat, staticStatesOf, type BuffStat, type EffectCondition, type SkillDefinition } from './types.ts';
+import {
+  SKILL_SLOTS,
+  isStateStat,
+  staticStatesOf,
+  type BuffStat,
+  type EffectCondition,
+  type SkillDefinition,
+} from './types.ts';
 
 /** 枠 1 つ分の入力。TeamSlotInput ではなく必要な情報だけを受けて循環 import を避ける（planFixedCycle と同じ流儀） */
 export type TimelineSlot = {
@@ -135,7 +142,7 @@ export type BuffTimeline = {
   frames: number;
   /** [0, frames) を隙間・重なりなく覆う */
   segments: TimelineSegment[];
-  /** 発生順。UI とテスト用 */
+  /** 発生順（持ち主ごとの一覧の書き出しでは時刻の順。plan/design-holder-effects.md 2.6 節）。UI とテスト用 */
   windows: BuffWindow[];
   /** 常時パッシブだけの状態（Stage 4 互換の表示用）。空枠は null */
   passive: (SlotBuffState | null)[];
@@ -266,8 +273,19 @@ function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null
   // Stage 11 モダニア: 使用武器の変更は武器ごとに別の状態
   if (state.buffs.weapon !== null) parts.push(`W:${state.buffs.weapon.id}`);
   // 効いている効果の出どころも鍵に入れる。合計が同じでも別の効果なら別の状態として扱い、UI のラベルが混ざらないようにする
-  // （例: クイーン（真）の battleStart と fullBurstEnd はどちらも攻撃力 +50.28%）。名前の付いた状態の語彙編: 中身は中身の番号まで
-  for (const e of state.timedEffects) {
+  // （例: クイーン（真）の battleStart と fullBurstEnd はどちらも攻撃力 +50.28%）。名前の付いた状態の語彙編: 中身は中身の番号まで。
+  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.6 節）: 区間の中の効果は時刻の順に並ぶので、鍵では定義の順
+  // （出どころの枠 → スロット → 効果 → 中身）に並べ直す（同じ効果の組なら、付いた順によらず同じ状態）
+  const effects = state.timedEffects
+    .map((e) => ({ e, sub: isStateContent(e) ? e.subIndex : -1 }))
+    .sort(
+      (a, b) =>
+        a.e.sourceSlotIndex - b.e.sourceSlotIndex ||
+        SKILL_SLOTS.indexOf(a.e.source.skill) - SKILL_SLOTS.indexOf(b.e.source.skill) ||
+        a.e.effectIndex - b.e.effectIndex ||
+        a.sub - b.sub,
+    );
+  for (const { e } of effects) {
     parts.push(`${e.sourceSlotIndex}.${e.source.skill}.${e.effectIndex}${isStateContent(e) ? `.${e.subIndex}` : ''}`);
   }
   // Stage 18-C: 条件が自動の枠だけ、着地点も鍵に入れる（手入力の枠のグループは今と同じ）。
@@ -511,7 +529,11 @@ export function inFullBurstAt(schedule: BurstSchedule | null, frame: number): bo
 }
 
 /** 同一効果の窓を和集合にする（上書き延長。重ねない）。frames が上限 */
-function unionWindows(fireFrames: readonly number[], durationFrames: number, frames: number): [number, number][] {
+export function unionWindows(
+  fireFrames: readonly number[],
+  durationFrames: number,
+  frames: number,
+): [number, number][] {
   if (durationFrames <= 0) return [];
   const merged: [number, number][] = [];
   for (const f of [...fireFrames].sort((a, b) => a - b)) {
@@ -1018,6 +1040,53 @@ export function planBuffTimeline(
     windows.push(...amplified);
   }
 
+  const segments = buildSegments({
+    slots,
+    schedule,
+    frames,
+    windows,
+    stateWindows,
+    passive,
+    landings,
+    sustainedHitRateUp,
+  });
+
+  return {
+    frames,
+    segments,
+    windows,
+    passive,
+    heals,
+    rankings,
+    stateWindows,
+    conditionSkips,
+    cycleWindows: planCycleWindows(slots, schedule, frames, shots, healsKey),
+    applications: applications.sort(
+      (a, b) => a.frame - b.frame || a.sourceSlotIndex - b.sourceSlotIndex || a.slotIndex - b.slotIndex,
+    ),
+    namedStateWindows,
+  };
+}
+
+/** 区間の組み立ての入力（planBuffTimeline と、持ち主ごとの一覧の書き出し skills/holders.ts の buffTimelineOf で共通） */
+export type SegmentInput = {
+  slots: readonly TimelineSlot[];
+  schedule: BurstSchedule | null;
+  frames: number;
+  /** 区間の値は、この並びの順に足す（浮動小数の加算順） */
+  windows: readonly BuffWindow[];
+  stateWindows: readonly BuffWindow[];
+  passive: readonly (SlotBuffState | null)[];
+  landings: TimelineLandings | null;
+  sustainedHitRateUp: boolean;
+};
+
+/**
+ * 窓から区間を組む（Stage 6 の 3〜5）。境界は {0, frames} ∪ 窓の端 ∪ フルバースト区間の端 ∪ バースト発動フレーム ∪ 着地点の境目
+ * （と、持続の命中率▲を区間に足すときは状態の窓の端）。区間ごとに、常時パッシブに、区間の頭で効いている窓を並びの順に足す
+ */
+export function buildSegments(input: SegmentInput): TimelineSegment[] {
+  const { slots, schedule, frames, windows, stateWindows, passive, landings, sustainedHitRateUp } = input;
   // 3. 境界
   const bounds = new Set<number>([0, frames]);
   for (const w of windows) {
@@ -1069,7 +1138,7 @@ export function planBuffTimeline(
             timedEffects: [] as AppliedTimedEffect[],
           },
     );
-    // 窓の発生順に足して浮動小数の加算順を決定的にする
+    // 窓の並びの順に足して浮動小数の加算順を決定的にする（持ち主ごとの一覧の書き出しは時刻の順。plan/design-holder-effects.md 論点 5）
     for (const w of windows) {
       if (w.start > start || w.end <= start) continue;
       const state = slotStates[w.slotIndex];
@@ -1108,22 +1177,7 @@ export function planBuffTimeline(
     if (landing !== undefined) segment.landing = landing;
     segments.push(segment);
   }
-
-  return {
-    frames,
-    segments,
-    windows,
-    passive,
-    heals,
-    rankings,
-    stateWindows,
-    conditionSkips,
-    cycleWindows: planCycleWindows(slots, schedule, frames, shots, healsKey),
-    applications: applications.sort(
-      (a, b) => a.frame - b.frame || a.sourceSlotIndex - b.sourceSlotIndex || a.slotIndex - b.slotIndex,
-    ),
-    namedStateWindows,
-  };
+  return segments;
 }
 
 /**
