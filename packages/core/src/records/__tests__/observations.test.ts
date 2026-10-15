@@ -496,7 +496,15 @@ describe('照合の部品', () => {
   });
 
   it('measures the end of a timed window started in the n-th full burst, from the end of the full burst (backlog 2-4, V-0392)', () => {
-    const effect = (skill: string, stat: string) => ({ source: { skill }, stat });
+    const effect = (skill: string, stat: string) => ({ source: { skill }, stat, effectIndex: 0, value: 0.1 });
+    // 持ち主ごとの一覧編（段 D の 5）: 指標は履歴の件（timed の件の列）を読む
+    const track = (holder: number, start: number, end: number, stat: string) => ({
+      holder,
+      sourceSlotIndex: holder,
+      origin: { kind: 'timed', effect: effect('burst', stat) },
+      stage: 1,
+      items: [{ start, end }],
+    });
     const result = {
       schedule: {
         fullBurstWindows: [
@@ -504,13 +512,15 @@ describe('照合の部品', () => {
           { start: 2000, end: 2588 },
         ],
       },
-      timeline: {
-        windows: [
-          { slotIndex: 2, start: 100, end: 688, effect: effect('burst', 'attack') },
-          { slotIndex: 2, start: 100, end: 1276, effect: effect('burst', 'reloadSpeed') },
-          { slotIndex: 1, start: 100, end: 700, effect: effect('burst', 'attack') },
-          { slotIndex: 2, start: 2004, end: 2592, effect: effect('burst', 'attack') },
+      history: {
+        tracks: [
+          track(2, 100, 688, 'attack'),
+          track(2, 100, 1276, 'reloadSpeed'),
+          track(1, 100, 700, 'attack'),
+          track(2, 2004, 2592, 'attack'),
         ],
+        amplified: [],
+        slots: [],
       },
     } as unknown as SimResult;
     const metric = METRICS.buffWindowEndFromFullBurstEnd!;
@@ -704,13 +714,20 @@ describe('照合の部品', () => {
       shots: [{ frames: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110] }],
       // 窓 [35, 55) の前の最後の段は 10（p = 2）、窓の中は 40・50（n = 2）、窓の後の最初の段は 80（k = 3）
       skillHits: cycled([10, 40, 50, 80]),
-      timeline: {
-        cycleWindows: [
-          { slotIndex: 0, start: 35, end: 55 },
-          { slotIndex: 0, start: 5, end: 8 },
-          { slotIndex: 0, start: 95, end: 105 },
-          { slotIndex: 1, start: 35, end: 55 },
-        ],
+      // 持ち主ごとの一覧編（段 D の 5）: 指標は履歴の間隔の変更の件を読む
+      history: {
+        tracks: [
+          { holder: 0, start: 35, end: 55 },
+          { holder: 0, start: 5, end: 8 },
+          { holder: 0, start: 95, end: 105 },
+          { holder: 1, start: 35, end: 55 },
+        ].map(({ holder, start, end }) => ({
+          holder,
+          sourceSlotIndex: holder,
+          origin: { kind: 'cycleEvery', effect: {} },
+          stage: 1,
+          items: [{ start, end }],
+        })),
       },
     } as unknown as SimResult;
     expect(residues.sim(sim, { args: { slot: 1, every: 3 }, input })).toEqual([(2 + 2 + 3) % 3]);
