@@ -40,6 +40,7 @@ import { firingParams } from '../frame/firing.ts';
 import { BURST_HIT_USES_PRE_ACTIVATION_BUFFS, burstHitBuffs, perShotDamageOf, planTeamRun } from '../frame/plan.ts';
 import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { hasOwnShotCountItem } from '../skills/holders.ts';
+import { cycleSummariesOf, effectSummariesOf } from '../skills/summaries.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges, type SlotBuffState } from '../skills/timeline.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
@@ -269,10 +270,8 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
       passiveBuffs: passive.buffs,
       passiveEffects: passive.passiveEffects,
       buildEffects: passive.buildEffects,
-      windows: timeline.windows.filter((w) => w.slotIndex === index),
-      stateWindows: timeline.stateWindows.filter((w) => w.slotIndex === index),
-      conditionSkips: timeline.conditionSkips.filter((x) => x.sourceSlotIndex === index),
-      cycleWindows: timeline.cycleWindows.filter((w) => w.slotIndex === index),
+      effects: effectSummariesOf(history, index),
+      cycleChanges: cycleSummariesOf(history, index),
       segments,
       normalDamage,
       burst: { activations, hit: representative, totalDamage: burstDamage },
@@ -307,6 +306,7 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     schedule,
     burstSummary: schedule === null ? null : summarizeSchedule(schedule, frames),
     timeline,
+    history,
     enemyEvents: [...(enemy.events ?? [])],
     enemyNotes: enemyEventNotes(enemy.events, landing !== null),
     landings: landing?.spans ?? [],

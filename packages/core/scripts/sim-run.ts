@@ -52,6 +52,7 @@ import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
 import { firingParams } from '../src/frame/firing.ts';
 import { MAX_SKILL_LEVELS, isStateContent, type ResolvedTrigger, type SkillLevels } from '../src/skills/resolve.ts';
+import { itemsOf } from '../src/skills/holders.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { compositionAllows } from '../src/skills/composition.ts';
 import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
@@ -458,9 +459,9 @@ if (calc.schedule && calc.burstSummary) {
 }
 
 // Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」の発火ごとの順位。同じ発火の同じ対象（S1 の 2 効果など）はまとめる
-if (calc.timeline.rankings.length > 0) {
+if (calc.history.rankings.length > 0) {
   const merged = new Map<string, Record<string, string | number>>();
-  for (const r of calc.timeline.rankings) {
+  for (const r of calc.history.rankings) {
     const key = `${r.frame}.${r.sourceSlotIndex}.${r.effect.source.skill}.${r.targets.join(',')}`;
     if (merged.has(key)) continue;
     merged.set(key, {
@@ -603,10 +604,11 @@ for (const [i, slot] of slots.entries()) {
         .join(', '),
     })),
   );
-  // Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった回数
-  if (c.conditionSkips.length > 0) {
+  // Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった回数（持ち主ごとの一覧編: 履歴の判定の記録）
+  const skips = calc.history.conditionSkips.filter((x) => x.sourceSlotIndex === i);
+  if (skips.length > 0) {
     console.log(
-      `condition skips: ${c.conditionSkips.length} (${c.conditionSkips.map((x) => framesToGameSeconds(x.frame).toFixed(2)).join(', ')}s)`,
+      `condition skips: ${skips.length} (${skips.map((x) => framesToGameSeconds(x.frame).toFixed(2)).join(', ')}s)`,
     );
   }
   printCycles(i, c);
@@ -698,7 +700,8 @@ function printCycles(slotIndex: number, c: NonNullable<(typeof calc.slots)[numbe
   );
   const shots = plan.shots[slotIndex]?.frames ?? [];
   const stepAt = new Map(cycled.map((a) => [gameSecondsToFrame(a.seconds), a.effect.cycle!.step]));
-  const rows = c.cycleWindows.map((w) => {
+  // 持ち主ごとの一覧編: 間隔の変更の件（時刻の順）
+  const rows = itemsOf(calc.history, { holder: slotIndex, kind: 'cycleEvery' }).map((w) => {
     const before = shots.filter((f) => f < w.start);
     let lastTier = before.length - 1;
     while (lastTier >= 0 && !stepAt.has(before[lastTier]!)) lastTier -= 1;

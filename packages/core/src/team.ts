@@ -21,15 +21,10 @@ import type {
   SkillHitResult,
   SustainedDamagePlacement,
 } from './skills/burstDamage.ts';
-import type { CycleWindow } from './skills/cycles.ts';
+import type { HolderHistory } from './skills/holders.ts';
+import type { SlotCycleSummary, SlotEffectSummary } from './skills/summaries.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type SkillLevels } from './skills/resolve.ts';
-import {
-  resolvePassiveStates,
-  type BuffTimeline,
-  type BuffWindow,
-  type ConditionSkip,
-  type TimelineSlot,
-} from './skills/timeline.ts';
+import { resolvePassiveStates, type BuffTimeline, type TimelineSlot } from './skills/timeline.ts';
 import { treasureSlots, type TreasurePhase } from './skills/treasure.ts';
 import { SKILL_SLOTS, type SkillDefinition, type SkillSlot, type SkillSupport } from './skills/types.ts';
 import type { GrowthInput } from './stats.ts';
@@ -230,14 +225,13 @@ export type TeamSlotResult = {
   passiveEffects: AppliedEffect[];
   /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。passiveBuffs に含まれている */
   buildEffects: readonly BuildEffect[];
-  /** この枠に掛かった持続バフの窓（発生順） */
-  windows: BuffWindow[];
-  /** Stage 11 モダニア: この枠に掛かった状態だけの stat（命中率）の窓（区間には入らない。表示用） */
-  stateWindows: BuffWindow[];
-  /** Stage 11 モダニア: この枠の条件付きの効果が、条件を満たさずに発火しなかった記録 */
-  conditionSkips: ConditionSkip[];
-  /** Stage 11 紅蓮BS: この枠の循環の間隔の変更（cycleEvery）の窓（区間には入らない。表示用） */
-  cycleWindows: CycleWindow[];
+  /**
+   * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 6）: この枠が受けた持続の効果のまとめ（効果ごと。命中率など状態だけの
+   * stat も入る。条件を満たさずに発火しなかった回数つき。表示用。skills/summaries.ts）
+   */
+  effects: SlotEffectSummary[];
+  /** 同: この枠の循環の間隔の変更（cycleEvery）のまとめ（効果ごと。区間には入らない。表示用） */
+  cycleChanges: SlotCycleSummary[];
   /** バフ状態ごとにまとめた通常攻撃の結果（groupTimeline の順） */
   segments: SlotSegmentResult[];
   /** Σ segments.damage */
@@ -273,6 +267,8 @@ export type TeamResult = {
   /** 時刻表の集計（フルバースト回数・稼働率・平均サイクル）。burst なしなら null */
   burstSummary: BurstSummary | null;
   timeline: BuffTimeline;
+  /** 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 6）: 1 パス目の件の一覧の履歴（順位の記録などを読む） */
+  history: HolderHistory;
   /** Stage 16-B: 敵の出来事（入力のまま）と、その注記（未実装の種類・近似）。出来事が無ければどちらも空 */
   enemyEvents: EnemyEvent[];
   enemyNotes: ModelNote[];

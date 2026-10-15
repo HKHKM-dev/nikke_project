@@ -4,6 +4,7 @@
 //   3. 長時間での収束（calc は sim の長時間平均）
 // Stage 6 の持続バフは describe('with timed buffs') で扱う。
 import { describe, expect, it } from 'vitest';
+import { slotPieces } from './historyHelpers.ts';
 import type { BuildEffect } from '../buildEffects.ts';
 import { slotsByStep, type BurstScheduleModel } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -279,8 +280,8 @@ describe('sim vs calc with timed buffs: quantities that must match exactly', () 
     expect(calc.slots[0]!.segments[0]!.buffs.attackRatio).toBeCloseTo(0.1, 12);
     expect(calc.slots[1]!.segments[1]!.buffs.attackRatio).toBeCloseTo(0.4 + 0.1, 12);
     expect(calc.slots[1]!.segments[0]!.buffs.attackRatio).toBeCloseTo(0.1, 12);
-    expect(calc.slots[0]!.windows).toHaveLength(18); // self 9 + allies 9
-    expect(calc.slots[1]!.windows).toHaveLength(9);
+    expect(slotPieces(calc, 0)).toHaveLength(18); // self 9 + allies 9
+    expect(slotPieces(calc, 1)).toHaveLength(9);
   });
 
   it('compute the same per-segment trigger damage and the same burst hits', () => {

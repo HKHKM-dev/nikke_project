@@ -2,6 +2,7 @@
 // 録画 41（I-DOLL・フラワー + クラウン + デルタ（操作）+ ラピ）の実測値を固定する。数値は plan/verification.md Stage 11 節。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { slotPieces } from './historyHelpers.ts';
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
@@ -122,7 +123,7 @@ describe('録画 41: クラウンの S1・S2・バースト（7.5）', () => {
     expect(heals).toEqual(shots.filter((_, i) => (i + 1) % 860 === 0).map((f) => f + 1));
     expect(heals.length).toBeGreaterThanOrEqual(6);
     for (const i of [0, 1, 2, 3]) {
-      const s2 = calc.slots[i]!.windows.filter((w) => !isStateContent(w.effect) && w.effect.trigger === 'healed');
+      const s2 = slotPieces(calc, i).filter((w) => !isStateContent(w.effect) && w.effect.trigger === 'healed');
       expect(s2.map((w) => w.start)).toEqual(heals.filter((f) => f < plan.frames));
       // 7 秒 = 411f（Stage 21-B。録画 56 の▲の発の区間と同じ。056-04）
       expect(s2.every((w) => w.end - w.start === gameSecondsToFrames(7) || w.end === plan.frames)).toBe(true);

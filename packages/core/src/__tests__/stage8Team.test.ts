@@ -4,6 +4,7 @@
 // - 録画 21（クイーン（真）の分配ダメージ 6,323,975）と録画 20（マナのゲージ速度で 1 回目の満タン）の回帰
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { slotPieces } from './historyHelpers.ts';
 import { summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -167,7 +168,7 @@ describe('イサベル: 使用回数別の段階とフルバースト 5 秒', ()
   });
 
   it('stacks the lower tiers: crit rate from the 1st use, crit damage from the 2nd, attack from the 3rd', () => {
-    const tiers = isabel.windows.map((w) => [w.effect.stat, w.start]);
+    const tiers = slotPieces(calc, 2).map((w) => [w.effect.stat, w.start]);
     const firstOf = (stat: string) => Math.min(...tiers.filter(([s]) => s === stat).map(([, f]) => f as number));
     const use = isabel.burst.activations.map((a) => gameSecondsToFrame(a.seconds));
     expect(firstOf('critRate')).toBe(use[0]);

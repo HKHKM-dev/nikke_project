@@ -2,6 +2,7 @@
 //   6.2 退化テスト: timed 効果がなければ Stage 5 の 2 区間モデルと厳密一致する
 //   6.3 ロードマップの完了条件: 持続時間がサイクル長以上なら常時バフと一致する
 import { describe, expect, it } from 'vitest';
+import { slotPieces } from './historyHelpers.ts';
 import type { EnemyInput } from '../damage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, SkillEntry } from '../skills/types.ts';
@@ -96,8 +97,8 @@ describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first
   });
 
   it('splits 180 s into three buff states and matches the hand calculation', () => {
-    const s = computeTeamDamage({ slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
-      .slots[0]!;
+    const r = computeTeamDamage({ slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
+    const s = r.slots[0]!;
     // Stage 21-B: 通常 10 秒 = H、フルバースト 9 回 = 9H、残りがバフありの通常（180 秒 = FRAMES）
     expect(s.segments.map((g) => [g.fullBurst, g.buffs.attackRatio !== 0])).toEqual([
       [false, false],
@@ -106,8 +107,8 @@ describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first
     ]);
     const expectedSeconds = [H, 9 * H, FRAMES - 10 * H].map(framesToGameSeconds);
     s.segments.forEach((g, i) => expect(g.seconds).toBeCloseTo(expectedSeconds[i]!, 9));
-    expect(s.windows).toHaveLength(1);
-    expect(s.windows[0]).toMatchObject({ start: H, end: FRAMES });
+    expect(slotPieces(r, 0)).toHaveLength(1);
+    expect(slotPieces(r, 0)[0]).toMatchObject({ start: H, end: FRAMES });
     const rate = s.cadence.triggersPerSecond;
     const expected = s.segments.reduce((a, g) => a + rate * g.seconds * g.trigger.perTrigger, 0);
     expect(s.normalDamage).toBeCloseTo(expected, 6);
@@ -133,7 +134,7 @@ describe('6.3 C: a zero-duration buff is the same as no effect at all', () => {
     const a = computeTeamDamage({ slots: [zero], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
     const b = computeTeamDamage({ slots: [none], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
     expect(a.totalDamage).toBe(b.totalDamage);
-    expect(a.slots[0]?.windows).toEqual([]);
+    expect(slotPieces(a, 0)).toEqual([]);
   });
 });
 
@@ -186,8 +187,8 @@ describe('timed buff targets and levels', () => {
       burst: true,
       burstModel: 'fixed',
     });
-    expect(t.slots[0]?.windows).toHaveLength(9);
-    expect(t.slots[1]?.windows).toHaveLength(9);
+    expect(slotPieces(t, 0)).toHaveLength(9);
+    expect(slotPieces(t, 1)).toHaveLength(9);
     const buffed = t.slots[1]?.segments.find((g) => g.buffs.attackRatio !== 0);
     expect(buffed?.fullBurst).toBe(true);
     expect(buffed?.buffs.attackRatio).toBeCloseTo(0.5, 12);
@@ -206,8 +207,8 @@ describe('timed buff targets and levels', () => {
       burst: true,
       burstModel: 'fixed',
     });
-    expect(t.slots[0]?.windows).toHaveLength(9);
-    expect(t.slots[1]?.windows).toEqual([]);
+    expect(slotPieces(t, 0)).toHaveLength(9);
+    expect(slotPieces(t, 1)).toEqual([]);
     expect(t.slots[1]?.segments.every((g) => g.buffs.attackRatio === 0)).toBe(true);
   });
 
@@ -233,13 +234,13 @@ describe('timed buff targets and levels', () => {
         scaling,
         { skill1: 10, skill2: 10, burst: level },
       );
-    const lv1 = computeTeamDamage({ slots: [make(1)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
-      .slots[0]!;
-    const lv10 = computeTeamDamage({ slots: [make(10)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
-      .slots[0]!;
+    const r1 = computeTeamDamage({ slots: [make(1)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
+    const r10 = computeTeamDamage({ slots: [make(10)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
+    const lv1 = r1.slots[0]!;
+    const lv10 = r10.slots[0]!;
     // Lv1: +10% / 5 秒、Lv10: +55% / 14 秒
-    expect(lv1.windows[0]).toMatchObject({ start: H, end: H + gameSecondsToFrames(5) });
-    expect(lv10.windows[0]).toMatchObject({ start: H, end: H + gameSecondsToFrames(14) });
+    expect(slotPieces(r1, 0)[0]).toMatchObject({ start: H, end: H + gameSecondsToFrames(5) });
+    expect(slotPieces(r10, 0)[0]).toMatchObject({ start: H, end: H + gameSecondsToFrames(14) });
     expect(Math.max(...lv1.segments.map((g) => g.buffs.attackRatio))).toBeCloseTo(0.1, 12);
     expect(Math.max(...lv10.segments.map((g) => g.buffs.attackRatio))).toBeCloseTo(0.55, 12);
     expect(lv10.totalDamage).toBeGreaterThan(lv1.totalDamage);
