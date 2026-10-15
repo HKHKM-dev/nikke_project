@@ -25,11 +25,13 @@ import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buffs.ts';
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
 import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
+import { itemsOf, valuePiecesOf, type ValuePiece } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, isResolvedChance, resolveTimed } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import {
   SKILL_SLOTS,
+  isStateStat,
   parseSkillDefinition,
   type SkillDefinition,
   type SkillEntry,
@@ -369,7 +371,8 @@ function cycleWindowResidues(result: SimResult, ctx: MetricContext): number[] {
     result.skillHits.filter((h) => h.slotIndex === slotIndex && h.effect.cycle !== undefined).map((h) => h.frame),
   );
   const out: number[] = [];
-  for (const w of result.timeline.cycleWindows.filter((x) => x.slotIndex === slotIndex)) {
+  // 持ち主ごとの一覧編（段 D の 5）: 間隔の変更の件（時刻の順）
+  for (const w of itemsOf(result.history, { holder: slotIndex, kind: 'cycleEvery' })) {
     const before = shots.filter((f) => f < w.start);
     let last = before.length - 1;
     while (last >= 0 && !tiers.has(before[last]!)) last -= 1;
@@ -390,7 +393,7 @@ function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
   const slot = slotOf(result.slots, ctx);
   const frames = slotOf(result.shots, ctx).frames;
-  const heals = result.timeline.heals.filter((h) => h.sourceSlotIndex === slotIndex).map((h) => h.frame);
+  const heals = result.history.heals.filter((h) => h.sourceSlotIndex === slotIndex).map((h) => h.frame);
   const starts = [...new Set(heals)].sort((a, b) => a - b);
   let from = 0;
   return starts.map((to) => {
@@ -449,12 +452,20 @@ function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
+ * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 5）: 効果の窓の指標が読む、区間に足す値の小片（状態だけの stat を除く。
+ * 段 D の 4 までの窓と同じ並び・同じ区切り。指標の名前の「窓」は観測値のファイルが参照しているので変えない）
+ */
+function buffPiecesOf(result: SimResult): ValuePiece[] {
+  return valuePiecesOf(result.history).filter((p) => !isStateStat(p.effect.stat));
+}
+
+/**
  * 5-2 の撮影計画（V-0177）: その枠が受ける timed の効果の窓の終わり（モデルのフレーム。戦闘時間で切った窓は戦闘の終わり）。
  * skill（'skill1' | 'skill2' | 'burst'）と stat で絞る
  */
 function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
-  return result.timeline.windows
+  return buffPiecesOf(result)
     .filter(
       (w) => w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
     )
@@ -470,7 +481,7 @@ function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
   const starts = [
     ...new Set(
-      result.timeline.windows
+      buffPiecesOf(result)
         .filter(
           (w) =>
             w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
@@ -495,7 +506,7 @@ function buffWindowEndFromFullBurstEnd(result: SimResult, ctx: MetricContext): n
   const window = schedule.fullBurstWindows[Number(ctx.args.n)];
   if (window === undefined) throw new Error(`${String(ctx.args.n)} 回目のフルバーストが無い`);
   const slotIndex = slotIndexOf(ctx);
-  const ends = result.timeline.windows
+  const ends = buffPiecesOf(result)
     .filter(
       (w) =>
         w.slotIndex === slotIndex &&

@@ -144,6 +144,8 @@ export type SimResult = {
   damagePerSecond: DamagePerSecond;
   /** 発のゲージ（着弾のフレーム。1 パス目の記録。照合用） */
   shotGauges: TeamPlan['shotGauges'];
+  /** 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 5）: 1 パス目の件の一覧の履歴（観測値の指標が読む） */
+  history: TeamPlan['history'];
   /** trace: false なら空 */
   events: SimEvent[];
 };
@@ -421,6 +423,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     landings: landing?.spans ?? [],
     damagePerSecond: perSecond,
     shotGauges,
+    history,
     events,
   };
 }
