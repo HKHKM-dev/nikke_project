@@ -1,4 +1,4 @@
-// スキルの効果の分類（plan/design-buff-state-heal.md の論点 2・11 節）: 読み違いの直し（説明文の書き損じ・句の読み方）と、
+// スキルの効果の分類（plan/design-skill-catalog.md の論点 2・11 節）: 読み違いの直し（説明文の書き損じ・句の読み方）と、
 // plan/skill-catalog.md が最新であること。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';

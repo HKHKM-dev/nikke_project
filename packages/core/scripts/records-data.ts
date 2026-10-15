@@ -34,7 +34,7 @@ export const VERIFICATIONS_PATH = `${ROOT}plan/verifications.md`;
 export const SKILLS_DOC_PATH = `${ROOT}plan/skills.md`;
 /** 最小構成の検査の一覧（生成物。plan/design-minimal-relevance.md 5 節） */
 export const MINIMAL_PATH = `${ROOT}plan/minimal.md`;
-/** スキルの効果の分類の一覧（生成物。plan/design-buff-state-heal.md の論点 2） */
+/** スキルの効果の分類の一覧（生成物。plan/design-skill-catalog.md の論点 2） */
 export const SKILL_CATALOG_PATH = `${ROOT}plan/skill-catalog.md`;
 /** 最小構成の検査の感度の結果（records:minimal が書く。plan/design-minimal-relevance.md 10.6 節） */
 export const SENSITIVITY_PATH = `${ROOT}records/minimal/sensitivity.json`;

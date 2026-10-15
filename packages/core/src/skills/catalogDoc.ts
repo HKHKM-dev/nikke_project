@@ -1,6 +1,6 @@
-// スキルの効果の分類の一覧（生成物 plan/skill-catalog.md。plan/design-buff-state-heal.md の論点 2）: skills/catalog.ts の読みを、
+// スキルの効果の分類の一覧（生成物 plan/skill-catalog.md。plan/design-skill-catalog.md の論点 2）: skills/catalog.ts の読みを、
 // 分類ごとの件数・キャラ・いまの語彙で書けるか（区分。本体 1 節）の表にする。3〜7 節の番号は分類の別紙
-// （plan/design-buff-state-heal-classes.md）の節と同じ。区分の付け方（どの分類が語彙あり・語彙なしか）はこのファイルの表で持つ。
+// （plan/design-skill-catalog-classes.md）の節と同じ。区分の付け方（どの分類が語彙あり・語彙なしか）はこのファイルの表で持つ。
 import type { CatalogEffect, CatalogLine } from './catalog.ts';
 import { NAMED_STATES } from './states.ts';
 
@@ -495,7 +495,7 @@ export function renderSkillCatalog(lines: readonly CatalogLine[], effects: reado
   p('# スキルの効果の分類');
   p();
   p(
-    '- **このファイルは生成する（手で書かない）**。`npm run skills:catalog` で作り直す。データを取り込み直して説明文が変わったら作り直す（最新かは `npm test` が確かめる）。作り方と区分の意味は [design-buff-state-heal.md](design-buff-state-heal.md) 1 節（論点 2）、読みの詳細は [design-buff-state-heal-classes.md](design-buff-state-heal-classes.md)（以下「分類の別紙」）、ツールチップとの突き合わせは [design-buff-state-heal-tooltips.md](design-buff-state-heal-tooltips.md)（T1〜T6）',
+    '- **このファイルは生成する（手で書かない）**。`npm run skills:catalog` で作り直す。データを取り込み直して説明文が変わったら作り直す（最新かは `npm test` が確かめる）。作り方と区分の意味は [design-skill-catalog.md](design-skill-catalog.md) 1 節（論点 2）、読みの詳細は [design-skill-catalog-classes.md](design-skill-catalog-classes.md)（以下「分類の別紙」）、ツールチップとの突き合わせは [design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md)（T1〜T6）',
   );
   p(
     `- 元データ: \`packages/core/data/characters/*.json\` の説明文（日本語）。キャラ ${chars.size}・スロット ${slotsAll.size}（宝物版を含む）・■ の行 ${L.length}・効果の句 ${E.length}`,

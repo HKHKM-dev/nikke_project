@@ -1,6 +1,6 @@
-# 設計書: スキルのバフ・状態・回復の実装計画（1 段目: 分類）
+# 設計書: スキルの効果の分類（バフ・状態・回復の実装計画の 1 段目）
 
-- 別紙: [design-buff-state-heal-tooltips.md](design-buff-state-heal-tooltips.md)（ゲーム内の用語のツールチップとの突き合わせ。以下「ツールチップの別紙」。食い違いは T1〜T6）
+- 別紙: [design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md)（ゲーム内の用語のツールチップとの突き合わせ。以下「ツールチップの別紙」。食い違いは T1〜T6）
 - 関連: [design-named-state.md](design-named-state.md)（8 節: 状態の後の拡張）、[design-heal-vocabulary.md](design-heal-vocabulary.md)（3 節: 回復の撮影待ち）、[design-skill-note-kinds.md](design-skill-note-kinds.md)（notes の種類）、[design-range-enemy-attacks.md](design-range-enemy-attacks.md)（被弾）、[design-minimal-relevance.md](design-minimal-relevance.md)（最小構成の検査）、[skills-guide.md](skills-guide.md)、[backlog.md](backlog.md) 6 節、[requirements.md](requirements.md) 5 節
 - 作成日: 2026-10-14
 - 状態: 起案。1 段目（分類）をオーナーに確かめてもらう段階。2026-10-14 にオーナーの指摘（解除不可の整理・防御と HP を間接に効くものとして整理・バリアをダメージに効くものとして扱う・HP は減りうるものとして扱う・ツールチップとの突き合わせ）と、改善提案書への判断（11 節）を入れた（経過）。2026-10-15 にオーナーが論点 1・2・3・5・9・10・11・12 を推奨どおりに、論点 4 を代わりの案（参照されない名前も目録に入れる）に、論点 8 を「解除と消去は別に実装する」に決めた（11 の直しは別のセッションに依頼）。論点 6・7 は検討中。分類の一覧は生成物にした（論点 2。`npm run skills:catalog`）。段階の計画（2 段目）は、残りの論点が決まってから書く
@@ -57,7 +57,7 @@
 
 ## 3〜7. 分類の詳細
 
-分類の詳細（表と読み）は別紙 [design-buff-state-heal-classes.md](design-buff-state-heal-classes.md)（以下「分類の別紙」）に置く。節の番号は本体と同じで、この設計書で 3〜7 節の番号（4.5 節・6.2 節など）を挙げたときは、分類の別紙の節を指す。
+分類の詳細（表と読み）は別紙 [design-skill-catalog-classes.md](design-skill-catalog-classes.md)（以下「分類の別紙」）に置く。節の番号は本体と同じで、この設計書で 3〜7 節の番号（4.5 節・6.2 節など）を挙げたときは、分類の別紙の節を指す。
 
 - **3. バフ・デバフ**: stat を、直接に効く（語彙あり・語彙なし）・間接に効く・被弾で効く・前提の外（構造）・要確認に分けた。値の算出と持続の形。
 - **4. 状態**: 名前の付いた状態と効果の呼び名、状態の一生（付く・中身・重なる・段階・変わる・切れる）、見る側、いまの定義の近似、外れ方と「解除不可」（4.5）、条件の判定のタイミング（4.6）。
@@ -168,3 +168,4 @@ Antigravity が分類の一覧の下書きとこの設計書を見て書いた�
 - 2026-10-14: 改善提案書（Antigravity）を 1 件ずつ判断した（11 節）。分類の一覧の読み取りの誤りを直し、節の番号を分類の別紙に揃えた。論点 2・5・7・11・12 の推奨を補強し、分類の別紙の 4.1・4.2・6.1・7.1〜7.3 節を直した。
 - 2026-10-15: オーナーが論点 1・2・3・5・9・10・11 を推奨どおりに決めた。論点 11 の直し（T1）は、提案のチップではなく、別のセッションへの依頼文をチャットで渡した。論点 10 の決定で持続回復が D-a と決まったことを、[design-heal-vocabulary.md](design-heal-vocabulary.md) の 3.1・4 節と経過に書いた。論点 4・6・7・8・12 は検討中。
 - 2026-10-15: オーナーが論点 4 を代わりの案（参照されない名前も目録に入れる）に、論点 8 を「解除と消去は別に実装する」に、論点 12 を推奨どおりに決めた（それぞれの決定の読みは 10 節）。論点 2 の道具を作り、分類の一覧を生成物 [skill-catalog.md](skill-catalog.md) にした（読みはスクラッチの下書きと同じ。一覧でも解除と消去を別の分類にした）。分類の別紙の 4.1・4.5 節に決定を書いた（[design-named-state.md](design-named-state.md) は 50KB の目安に達しているので書き足さず、この設計書を正とする。同 4.3・8.2 節の記述は決定と食い違わない）。
+- 2026-10-15: ブランチ名（`claude/skill-catalog`）に合わせて、設計書と別紙のファイル名を design-buff-state-heal から design-skill-catalog に改め、題名を「スキルの効果の分類」に寄せた（オーナーの指示）。

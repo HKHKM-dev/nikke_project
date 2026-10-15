@@ -1,6 +1,6 @@
 # 設計書 別紙: ゲーム内の用語のツールチップとの突き合わせ
 
-- 本体: [design-buff-state-heal.md](design-buff-state-heal.md)（スキルのバフ・状態・回復の実装計画。1 段目の分類）。分類の詳細は [design-buff-state-heal-classes.md](design-buff-state-heal-classes.md)（以下「分類の別紙」）
+- 本体: [design-skill-catalog.md](design-skill-catalog.md)（スキルのバフ・状態・回復の実装計画。1 段目の分類）。分類の詳細は [design-skill-catalog-classes.md](design-skill-catalog-classes.md)（以下「分類の別紙」）
 - 資料: ゲーム内のスキル情報で用語を押したときに出る説明（ツールチップ）の画像 100 枚（[captures/storage.md](captures/storage.md)「参照資料」の `tooltips/`。2026-08-09 撮影。公開しない）。ここには画像を置かず、要点を言い換えて書く（原文は写さない）。ファイル名は用語そのもの
 - 作成日: 2026-10-14（オーナーの依頼: 語彙がツールチップの内容と矛盾しないか確かめる）
 - 何と突き合わせたか: 分類の別紙の読み（3〜7 節）、いまの語彙（`packages/core/src/skills/types.ts`）、定義（`packages/core/data/skills/`）と notes
