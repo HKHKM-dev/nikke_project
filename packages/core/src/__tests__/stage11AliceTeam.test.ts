@@ -6,13 +6,13 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
-import { runFirstPass } from '../frame/firstPass.ts';
+import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
+import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 
 function readJson<T>(path: string): T {
@@ -170,22 +170,18 @@ describe('録画 42: アリスの S1 は自分とアドミに付く（22.5、実
     );
   });
 
-  it('chooses the same targets in the loop (charge speed) and in planBuffTimeline (charge damage)', () => {
-    const first = runFirstPass(toTimelineSlots(REC42.slots), {
-      frames: plan.frames,
-      burst: true,
-      controlledSlot: 2,
-    });
-    const key = (w: { slotIndex: number; start: number; end: number }) => `${w.slotIndex}:${w.start}-${w.end}`;
-    const speed = first.firingWindows.filter(
-      (w) => w.effect.source.resourceId === 191 && w.effect.target === 'topAttack',
-    );
-    const damage = plan.timeline.windows.filter((w) => w.effect.stat === 'chargeDamage');
-    expect(speed.map(key).sort()).toEqual(damage.map(key).sort());
-    // 順位のために追った攻撃力の窓は、planBuffTimeline の攻撃力の窓と同じ
-    const attack = plan.timeline.windows.filter((w) => w.effect.stat === 'attack');
-    expect(first.rankAttackWindows.map(key).sort()).toEqual(attack.map(key).sort());
-    expect(first.rankAttackWindows.length).toBeGreaterThan(0);
+  it('chooses the same targets for the charge speed (shooter) and the charge damage of the same fire', () => {
+    const key = (i: { holder: number; start: number; end: number }) => `${i.holder}:${i.start}-${i.end}`;
+    const ofAlice = (stat: 'chargeSpeed' | 'chargeDamage') =>
+      itemsOf(plan.history, { kind: 'timed', stat }).filter(
+        (i) =>
+          i.origin.kind === 'timed' &&
+          i.origin.effect.source.resourceId === 191 &&
+          i.origin.effect.target === 'topAttack',
+      );
+    const speed = ofAlice('chargeSpeed');
+    expect(speed.length).toBeGreaterThan(0);
+    expect(speed.map(key).sort()).toEqual(ofAlice('chargeDamage').map(key).sort());
   });
 });
 

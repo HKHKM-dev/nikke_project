@@ -14,7 +14,9 @@ import { burstDelaysFieldOf } from '../../burst/landing.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
-import { planBuffTimeline, resolvePassiveStates, type TimelineSlot } from '../../skills/timeline.ts';
+import { itemsOf } from '../../skills/holders.ts';
+import { resolvePassiveStates, type TimelineSlot } from '../../skills/timeline.ts';
+import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
 import type { CharacterData, ShotParams, SkillRaw } from '../../types.ts';
 import { runFirstPass } from '../firstPass.ts';
@@ -170,9 +172,11 @@ describe('runFirstPass: firing windows (1.1)', () => {
     const frames = pass.shots[0]!.frames;
     // 588 の射撃は基礎値（588 には窓が無いので 588 + 42 の待ち）。589 から窓が効いてチャージ 0f（解放遅延 23f だけ）になり、
     // 588 からの経過を持ち越して 611・634…（C-0523。経過を持ち越すので、射撃の列からは 588 に窓が見えたかを見分けられない。
-    // 窓の始まりは firingWindows で見る）
+    // 窓の始まりは件で見る）
     expect(frames.filter((f) => f >= 546 && f <= 700)).toEqual([546, 588, 611, 634, 657, 680]);
-    expect(pass.firingWindows).toEqual([expect.objectContaining({ sourceSlotIndex: 0, start: 588, end: 800 })]);
+    expect(itemsOf(pass.history, { stat: 'chargeSpeed' })).toEqual([
+      expect.objectContaining({ sourceSlotIndex: 0, start: 588, end: 800 }),
+    ]);
   });
 
   it('a battleStart window is registered before the loop, so the first magazine is already buffed', () => {
@@ -196,7 +200,7 @@ describe('runFirstPass: firing windows (1.1)', () => {
     expect(pass.shots[0]!.lastShotFrames![0]).toBe(pass.shots[0]!.frames[13]);
   });
 
-  it('registers the same windows as planBuffTimeline, for burst, full-burst and shot-count triggers', () => {
+  it('registers the firing items at the fires of burst, full-burst and shot-count triggers', () => {
     const i = synthetic(1, 'Step1', 20, {}, ['45.17', '5', '30', '10']);
     const ii = synthetic(2, 'Step2', 40, {
       maxAmmo: 6,
@@ -252,20 +256,35 @@ describe('runFirstPass: firing windows (1.1)', () => {
         ]),
       ),
     ];
-    const pass = runFirstPass(slots, { frames: FRAMES, burst: true });
-    const timeline = planBuffTimeline(slots, pass.schedule, FRAMES, pass.shots);
-    const fromTimeline = new Set(
-      timeline.windows.map(
-        (w) => `${w.sourceSlotIndex}.${w.effect.source.skill}.${w.effect.effectIndex}:${w.start}-${w.end}`,
-      ),
+    // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 B）: 2 パス目の窓との比べに代えて、件がトリガーの発火で付くことを見る
+    const pass = firstPassTimeline(slots, { frames: FRAMES, burst: true }).first;
+    const activations = (slotIndex: number) =>
+      pass.schedule!.activations.filter((a) => a.slotIndex === slotIndex).map((a) => a.frame);
+    /** 効果（出どころの枠・番号）の件が、持ち主ごとに発火の始まりで付き、どの発火も件の中にある */
+    const expectItemsAt = (source: number, effectIndex: number, holders: number[], starts: number[]) => {
+      expect(starts.length).toBeGreaterThan(0);
+      for (const holder of holders) {
+        const items = itemsOf(pass.history, { kind: 'timed', sourceSlotIndex: source, effectIndex, holder });
+        expect(items.length).toBeGreaterThan(0);
+        for (const item of items) expect(starts).toContain(item.start);
+        for (const s of starts) expect(items.some((item) => item.start <= s && s < item.end)).toBe(true);
+      }
+    };
+    expectItemsAt(0, 0, [0, 1, 2], activations(0));
+    expectItemsAt(
+      0,
+      1,
+      [0, 1, 2],
+      pass.shots[0]!.frames.filter((_, k) => (k + 1) % 30 === 0).map((f) => f + 1),
     );
-    const fromLoop = new Set(
-      pass.firingWindows.map(
-        (w) => `${w.sourceSlotIndex}.${w.effect.source.skill}.${w.effect.effectIndex}:${w.start}-${w.end}`,
-      ),
+    expectItemsAt(
+      2,
+      0,
+      [0, 1, 2],
+      pass.schedule!.fullBurstWindows.map((w) => w.start),
     );
-    expect(fromLoop.size).toBeGreaterThan(10);
-    expect(fromLoop).toEqual(fromTimeline);
+    expectItemsAt(2, 1, [2], activations(2));
+    expect(itemsOf(pass.history, { kind: 'timed', sourceSlotIndex: 2, effectIndex: 1, holder: 0 })).toEqual([]);
     // 射撃の列はバフで変わっている（ドレイク型 III のフルバースト中のマガジンが長い）
     expect(pass.shots[2]!.frames).not.toEqual(planShots([{ character: iii }], FRAMES)[0]!.frames);
   });

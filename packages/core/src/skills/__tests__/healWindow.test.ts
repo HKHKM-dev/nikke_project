@@ -1,10 +1,9 @@
-// 維持時間のある回復（吸収回復）: heal の durationRef の DSL・解決と、付き直しで healed を起こさない窓
-// （plan/design-heal-window.md 1.1 節。V-0024・C-0082）。
+// 維持時間のある回復（吸収回復）: heal の durationRef の DSL と解決（plan/design-heal-window.md 1.1 節。V-0024・C-0082）。
+// 付き直しで healed を起こさない窓は、持ち主ごとの一覧の件（skills/__tests__/holders.test.ts の「吸収回復の窓」）で見る。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-import { createHealWindow } from '../heals.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 
@@ -53,22 +52,5 @@ describe('heal の維持時間（1.1 節）', () => {
         withSkill2Effects([{ kind: 'ammoRefill', trigger: 'burstUse', target: 'self', ref: 3, durationRef: 4 }]),
       ),
     ).toThrow(/durationRef: unknown field/);
-  });
-});
-
-describe('createHealWindow', () => {
-  it('opens only when no window of the same effect is on the target, and extends on a refresh', () => {
-    const opens = createHealWindow({ durationFrames: 100 });
-    expect(opens(1, 10)).toBe(true);
-    expect(opens(1, 60)).toBe(false); // 付き直し（窓は 160 まで延びる）
-    expect(opens(1, 150)).toBe(false); // 延びた窓の中
-    expect(opens(2, 150)).toBe(true); // 対象の枠ごと
-    expect(opens(1, 250)).toBe(true); // 250 で切れた後
-  });
-
-  it('always opens without a duration', () => {
-    const opens = createHealWindow({});
-    expect(opens(0, 1)).toBe(true);
-    expect(opens(0, 2)).toBe(true);
   });
 });

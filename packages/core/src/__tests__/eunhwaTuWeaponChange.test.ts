@@ -6,18 +6,17 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from './fixtures.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { runFirstPass } from '../frame/firstPass.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { buildTeamInput, METRICS } from '../records/observations.ts';
 import { shotCountWeight } from '../skills/triggers.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
-import { applyCompositionToTeam } from '../skills/composition.ts';
 import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../scripts/records-data.ts';
+import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
-import { untilWeaponChangeEndWindows } from '../skills/timeline.ts';
+import { untilNextEndWindows } from '../skills/timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
-import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
+import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 
@@ -171,15 +170,15 @@ describe('解決', () => {
   });
 });
 
-describe('untilWeaponChangeEndWindows', () => {
+describe('untilNextEndWindows', () => {
   it('ends each window at the first end after its start, merges overlapping starts, and runs to the end without one', () => {
-    expect(untilWeaponChangeEndWindows([100, 500], [131, 532], 1000)).toEqual([
+    expect(untilNextEndWindows([100, 500], [131, 532], 1000)).toEqual([
       [100, 131],
       [500, 532],
     ]);
     // 開いている変更に重ねて付いても、撃ち切りまでで終わる（1 パス目は持ち替え直さない）
-    expect(untilWeaponChangeEndWindows([100, 120], [131, 160], 1000)).toEqual([[100, 131]]);
-    expect(untilWeaponChangeEndWindows([900], [131], 1000)).toEqual([[900, 1000]]);
+    expect(untilNextEndWindows([100, 120], [131, 160], 1000)).toEqual([[100, 131]]);
+    expect(untilNextEndWindows([900], [131], 1000)).toEqual([[900, 1000]]);
   });
 });
 
@@ -209,15 +208,10 @@ describe('録画 232 の編成（フラワー + ウンファ：TU）', () => {
     }
   });
 
-  it('agrees between the loop and planBuffTimeline on the weapon windows', () => {
-    const first = runFirstPass(toTimelineSlots(applyCompositionToTeam(REC232).slots), {
-      frames: plan.frames,
-      burst: true,
-      controlledSlot: 0,
-    });
-    const key = (w: { slotIndex: number; start: number; end: number }) => `${w.slotIndex}:${w.start}-${w.end}`;
-    expect(first.firingWindows.filter((w) => w.effect.stat === 'weapon').map(key)).toEqual(windows.map(key));
-    expect(first.shots).toEqual(plan.shots);
+  it('keeps the weapon items of the loop from the frame after the burst until the round is spent', () => {
+    const items = itemsOf(plan.history, { holder: 1, stat: 'weapon' });
+    expect(items.map((i) => i.start)).toEqual(uses.map((f) => f + 1));
+    expect(items.map((i) => i.end)).toEqual(shots.weaponChangeEnds);
   });
 
   it('counts the round in calc and sim alike, as a true-damage full charge of 105.6% × (300% + Charge Damage up)', () => {

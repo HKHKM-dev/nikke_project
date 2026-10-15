@@ -168,6 +168,27 @@ describe('吸収回復の窓', () => {
   });
 });
 
+describe('吸収回復の窓（効果ごと・対象の枠ごと）', () => {
+  it('keeps one window per target, extends it on a refresh, and always heals without a duration', () => {
+    const slot = slotWith(1, [
+      { kind: 'heal', trigger: 'fullBurstStart', target: 'allies', ref: 1, durationRef: 3 },
+      { kind: 'heal', trigger: 'fullBurstStart', target: 'self', ref: 1 },
+    ]);
+    const [lasting, instant] = resolveInstant(slot.definition!, slot.character, slot.levels).filter(
+      (e) => e.kind === 'heal',
+    );
+    const lists = listsOf([slot, slotWith(2, [])]);
+    lists.registerBattleStart();
+    expect(lists.applyHeal(lasting!, 0, 0, 10)).toBe(true);
+    expect(lists.applyHeal(lasting!, 0, 0, 60)).toBe(false); // 付き直し（窓は 60 + D5 まで延びる）
+    expect(lists.applyHeal(lasting!, 0, 0, 59 + D5)).toBe(false); // 延びた窓の中
+    expect(lists.applyHeal(lasting!, 0, 1, 60)).toBe(true); // 対象の枠ごと
+    expect(lists.applyHeal(lasting!, 0, 0, 59 + 2 * D5)).toBe(true); // 延びた窓が切れた後
+    expect(lists.applyHeal(instant!, 0, 0, 61)).toBe(true);
+    expect(lists.applyHeal(instant!, 0, 0, 62)).toBe(true);
+  });
+});
+
 describe('段の見え方（2.5 節の表）', () => {
   // e0: 攻撃力▲（段 1）。e1: 攻撃力の増加状態なら会心率▲（段 1.5）。e2: 会心率の増加状態なら会心ダメージ▲（段 1.5）
   const slot = slotWith(1, [
@@ -183,6 +204,38 @@ describe('段の見え方（2.5 節の表）', () => {
     const { tracks } = lists.history();
     expect(timedTrack(tracks, 0, 0).items).toEqual([{ start: 100, end: 100 + D10 }]);
     expect(timedTrack(tracks, 0, 1).items).toEqual([{ start: 100, end: 100 + D10 }]);
+  });
+
+  it('stops seeing an item at its end frame (f < end), and does not see another slot’s item', () => {
+    const conditional = timed({ trigger: 'fullBurstEnd', stat: 'critRate', condition: { selfBuffed: 'attack' } });
+    // 枠 0: 攻撃力▲（フルバースト開始から 10 秒）と、フルバースト終了で攻撃力の増加状態なら会心率▲。枠 1 は同じ条件の効果だけ
+    const lists = listsOf([slotWith(1, [timed(), conditional]), slotWith(2, [conditional])]);
+    lists.registerBattleStart();
+    lists.registerFrame(events(100, { fullBurstStart: true }, 2));
+    lists.registerFrame(events(99 + D10, { fullBurstEnd: true }, 2));
+    lists.registerFrame(events(100 + D10, { fullBurstEnd: true }, 2));
+    const history = lists.history();
+    expect(timedTrack(history.tracks, 0, 1).items).toEqual([{ start: 99 + D10, end: 99 + 2 * D10 }]);
+    expect(timedTrack(history.tracks, 1, 0).items).toEqual([]);
+    expect(history.conditionSkips.map((s) => [s.frame, s.sourceSlotIndex])).toEqual([
+      [99 + D10, 1],
+      [100 + D10, 0],
+      [100 + D10, 1],
+    ]);
+  });
+
+  it('counts a passive of the holder as the buffed state', () => {
+    const lists = listsOf([
+      slotWith(1, [
+        { kind: 'passive', target: 'self', stat: 'attack', ref: 1 },
+        timed({ stat: 'critRate', condition: { selfBuffed: 'attack' } }),
+      ]),
+    ]);
+    lists.registerBattleStart();
+    lists.registerFrame(events(100, { fullBurstStart: true }));
+    const history = lists.history();
+    expect(timedTrack(history.tracks, 0, 1).items).toEqual([{ start: 100, end: 100 + D10 }]);
+    expect(history.conditionSkips).toEqual([]);
   });
 
   it('hides a conditional item from another conditional effect (no chaining), even while it is active', () => {

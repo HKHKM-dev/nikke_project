@@ -40,7 +40,7 @@ import {
   type BuffTimeline,
   type SlotBuffState,
 } from '../skills/timeline.ts';
-import { buffTimelineOf } from '../skills/holders.ts';
+import { buffTimelineOf, type HolderHistory } from '../skills/holders.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { EffectCondition } from '../skills/types.ts';
@@ -68,8 +68,7 @@ export {
   type DotTick,
   type DotTickTracker,
 } from './dot.ts';
-import { runFirstPass, type FirstPassOptions, type FirstPassResult, type InstantApplication } from './firstPass.ts';
-import { crossCheckLegacy, legacyCrossCheckEnabled } from './crossCheck.ts';
+import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
 import {
   flightFramesAt,
   hitRateSpanWith,
@@ -136,6 +135,8 @@ export type TeamPlan = {
   dotGauges: FirstPassResult['dotGauges'];
   /** 発のゲージ（着弾のフレーム。1 パス目の記録。frame/firstPass.ts） */
   shotGauges: FirstPassResult['shotGauges'];
+  /** 持ち主ごとの一覧編（plan/design-holder-effects.md 2.9 節）: 1 パス目の件の一覧の履歴 */
+  history: HolderHistory;
 };
 
 /**
@@ -156,7 +157,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const untargetable = untargetableRanges(enemy.events, frames);
   // Stage 18-C: 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）
   const landing = planLandings(slots, enemy, frames, resolvePassiveStates(timelineSlots));
-  const firstPassOptions: FirstPassOptions = {
+  const first = runFirstPass(timelineSlots, {
     frames,
     model,
     burst: input.burst ?? false,
@@ -178,39 +179,22 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
           hitRateWith: (slotIndex: number, span: LandingHitRateSpan, up: number) =>
             hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, up),
         }),
-  };
-  const first = runFirstPass(timelineSlots, firstPassOptions);
+  });
   const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges } = first;
   // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間と記録は、1 パス目の件の一覧の履歴から書き出す
   const sustainedHitRateUp = input.sustainedHitRateUp ?? true;
   const timeline = buffTimelineOf(first.history, schedule, landing, sustainedHitRateUp);
-  const autoAttackCoreRates = slotAutoAttackCoreRatesOf(slots, enemy, frames);
-  const skillHitsOf = (t: BuffTimeline, s: BurstSchedule | null, sh: readonly (ShotLog | null)[]): SkillHitEvent[] =>
-    planSkillHits(
-      slots,
-      enemy,
-      t,
-      s,
-      frames,
-      sh,
-      input.sustainedDamagePlacement,
-      autoAttackCoreRates,
-      input.attackRounding,
-    );
-  const skillHits = skillHitsOf(timeline, schedule, shots);
-  // 段 A・B の間だけ: 新旧の比べ（論点 6。テストの準備と記録の道具からだけ入れる）
-  if (legacyCrossCheckEnabled()) {
-    crossCheckLegacy({
-      slots: timelineSlots,
-      options: firstPassOptions,
-      result: first,
-      timeline,
-      landings: landing,
-      sustainedHitRateUp,
-      skillHits,
-      skillHitsOf,
-    });
-  }
+  const skillHits = planSkillHits(
+    slots,
+    enemy,
+    timeline,
+    schedule,
+    frames,
+    shots,
+    input.sustainedDamagePlacement,
+    slotAutoAttackCoreRatesOf(slots, enemy, frames),
+    input.attackRounding,
+  );
   return {
     frames,
     shots,
@@ -223,6 +207,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     cycleGaugeHits,
     dotGauges,
     shotGauges,
+    history: first.history,
   };
 }
 

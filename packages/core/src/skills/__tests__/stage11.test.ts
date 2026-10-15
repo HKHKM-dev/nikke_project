@@ -11,12 +11,12 @@ import {
 } from '../../burst/controller.ts';
 import { planFixedCycle } from '../../burst/fixedCycle.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-import { runFirstPass } from '../../frame/firstPass.ts';
+import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import type { CharacterData, ShotParams, SkillRaw } from '../../types.ts';
-import { planHeals } from '../heals.ts';
+import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
 import { isEffectTarget } from '../targets.ts';
-import { planBuffTimeline, triggerFrames, type TimelineSlot } from '../timeline.ts';
+import { triggerFrames, type TimelineSlot } from '../timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
@@ -211,7 +211,7 @@ function slotOf(character: CharacterData, effects: unknown[] | null = null): Tim
 
 const FRAMES = gameSecondsToFrames(180);
 
-describe('planBuffTimeline: burstUsers windows per target (Stage 11, 3.2)', () => {
+describe('burstUsers: items per target (Stage 11, 3.2)', () => {
   // I・II（CT 20 秒）と III 2 体（CT 40 秒）: フルバーストごとに III が入れ替わる
   const crownLike = [
     { kind: 'timed', trigger: 'fullBurstStart', target: 'burstUsers', stat: 'attack', ref: 1, durationRef: 2 },
@@ -222,41 +222,44 @@ describe('planBuffTimeline: burstUsers windows per target (Stage 11, 3.2)', () =
     slotOf(synthetic(3, 'Step3', 40)),
     slotOf(synthetic(4, 'Step3', 40)),
   ];
-  const pass = runFirstPass(slots, { frames: FRAMES, burst: true });
-  const timeline = planBuffTimeline(slots, pass.schedule, FRAMES, pass.shots);
-  const windowsOf = (slotIndex: number) => timeline.windows.filter((w) => w.slotIndex === slotIndex);
+  const pass = firstPassTimeline(slots, { frames: FRAMES, burst: true }).first;
+  const startsOf = (slotIndex: number) =>
+    itemsOf(pass.history, { kind: 'timed', holder: slotIndex }).map((i) => i.start);
 
-  it('gives each full burst window to the slots of that chain only', () => {
+  it('gives each full burst to the slots of that chain only', () => {
     const fbs = pass.schedule!.fullBurstWindows;
     expect(fbs.length).toBeGreaterThanOrEqual(4);
     for (const slotIndex of [0, 1, 2, 3]) {
       const mine = fbs.filter((w) => w.burstUsers.includes(slotIndex)).map((w) => w.start);
-      expect(windowsOf(slotIndex).map((w) => w.start)).toEqual(mine);
+      expect(startsOf(slotIndex)).toEqual(mine);
     }
     // III は交互なので、どちらも全部のフルバーストには入らない
-    expect(windowsOf(2).length).toBeLessThan(fbs.length);
-    expect(windowsOf(3).length).toBeLessThan(fbs.length);
-    expect(windowsOf(2).length + windowsOf(3).length).toBe(fbs.length);
+    expect(startsOf(2).length).toBeLessThan(fbs.length);
+    expect(startsOf(3).length).toBeLessThan(fbs.length);
+    expect(startsOf(2).length + startsOf(3).length).toBe(fbs.length);
   });
 
-  it('never gives the window to a slot outside the chain (a II that did not burst)', () => {
+  it('never gives the item to a slot outside the chain (a II that did not burst)', () => {
     const withIdleII = [...slots, slotOf(synthetic(5, 'Step2', 40))];
-    const p = runFirstPass(withIdleII, { frames: FRAMES, burst: true });
-    const t = planBuffTimeline(withIdleII, p.schedule, FRAMES, p.shots);
+    const p = firstPassTimeline(withIdleII, { frames: FRAMES, burst: true }).first;
     expect(p.schedule!.activations.some((a) => a.slotIndex === 4)).toBe(false);
-    expect(t.windows.some((w) => w.slotIndex === 4)).toBe(false);
+    expect(itemsOf(p.history, { holder: 4, kind: 'timed' })).toEqual([]);
   });
 
-  it('matches the firing windows of the first pass for a firing stat (reload speed) on burstUsers', () => {
+  it('gives a firing stat (reload speed) on burstUsers to the slots of each chain, in the loop', () => {
     const reload = [
       { kind: 'timed', trigger: 'fullBurstStart', target: 'burstUsers', stat: 'reloadSpeed', ref: 1, durationRef: 2 },
     ];
     const s2 = [slots[0]!, slotOf(synthetic(2, 'Step2', 20, ['50', '15']), reload), slots[2]!, slots[3]!];
-    const p = runFirstPass(s2, { frames: FRAMES, burst: true });
-    const t = planBuffTimeline(s2, p.schedule, FRAMES, p.shots);
-    const key = (w: { slotIndex: number; start: number; end: number }) => `${w.slotIndex}:${w.start}-${w.end}`;
-    expect(new Set(p.firingWindows.map(key))).toEqual(new Set(t.windows.map(key)));
-    expect(p.firingWindows.length).toBeGreaterThan(0);
+    const p = firstPassTimeline(s2, { frames: FRAMES, burst: true }).first;
+    const fbs = p.schedule!.fullBurstWindows;
+    const items = itemsOf(p.history, { stat: 'reloadSpeed' });
+    expect(items.length).toBeGreaterThan(0);
+    for (const slotIndex of [0, 1, 2, 3]) {
+      expect(items.filter((i) => i.holder === slotIndex).map((i) => i.start)).toEqual(
+        fbs.filter((w) => w.burstUsers.includes(slotIndex)).map((w) => w.start),
+      );
+    }
   });
 });
 
@@ -270,10 +273,10 @@ describe('heal and healed (Stage 11, 3.3)', () => {
     slotOf(synthetic(1, 'Step1', 20, ['5', '4', '5.23', '20', '1']), selfHeal),
     slotOf(synthetic(2, 'Step3', 20)),
   ];
-  const pass = runFirstPass(slots, { frames: 1800, burst: true });
+  const { first: pass, timeline } = firstPassTimeline(slots, { frames: 1800, burst: true });
 
   it('heals on the frame after every 20th shot', () => {
-    const heals = planHeals(slots, pass.schedule, pass.shots, 1800);
+    const heals = pass.history.heals;
     const shots = pass.shots[0]!.frames;
     const expected = shots
       .filter((_, i) => (i + 1) % 20 === 0)
@@ -283,22 +286,21 @@ describe('heal and healed (Stage 11, 3.3)', () => {
     expect(heals.every((h) => h.sourceSlotIndex === 0 && h.slotIndex === 0)).toBe(true);
   });
 
-  it('opens the healed window on the heal frame for every ally (1 s)', () => {
-    const timeline = planBuffTimeline(slots, pass.schedule, 1800, pass.shots);
-    const heals = timeline.heals.map((h) => h.frame);
+  it('opens the healed item on the heal frame for every ally (1 s)', () => {
+    const heals = pass.history.heals.map((h) => h.frame);
     expect(heals.length).toBeGreaterThan(3);
+    const items = itemsOf(pass.history, { kind: 'timed' });
     for (const slotIndex of [0, 1]) {
-      const starts = timeline.windows.filter((w) => w.slotIndex === slotIndex).map((w) => w.start);
-      expect(starts).toEqual(heals);
+      expect(items.filter((i) => i.holder === slotIndex).map((i) => i.start)).toEqual(heals);
     }
-    expect(timeline.windows.every((w) => w.end - w.start === gameSecondsToFrames(1) || w.end === 1800)).toBe(true);
+    expect(items.every((i) => i.end - i.start === gameSecondsToFrames(1) || i.end === 1800)).toBe(true);
+    expect(timeline.heals).toEqual(pass.history.heals);
   });
 
-  it('records the same heals in the first pass loop (pendingHeals) as planHeals', () => {
-    const heals = planHeals(slots, pass.schedule, pass.shots, 1800);
+  it('records the heals of the loop as instant applications too', () => {
     const loop = pass.instants.filter((x) => x.effect.kind === 'heal');
     expect(loop.map((x) => [x.frame, x.sourceSlotIndex, x.slotIndex])).toEqual(
-      heals.map((h) => [h.frame, h.sourceSlotIndex, h.slotIndex]),
+      pass.history.heals.map((h) => [h.frame, h.sourceSlotIndex, h.slotIndex]),
     );
   });
 
@@ -308,16 +310,15 @@ describe('heal and healed (Stage 11, 3.3)', () => {
       { kind: 'timed', trigger: 'healed', target: 'self', stat: 'attack', ref: 2, durationRef: 3 },
     ];
     const s = [slotOf(synthetic(1, 'Step1', 20, ['10', '10', '1']), burstHeal), slotOf(synthetic(2, 'Step3', 20))];
-    const p = runFirstPass(s, { frames: 1800, burst: true });
-    const t = planBuffTimeline(s, p.schedule, 1800, p.shots);
+    const p = firstPassTimeline(s, { frames: 1800, burst: true }).first;
     const bursts = p.schedule!.activations.filter((a) => a.slotIndex === 0).map((a) => a.frame);
-    expect(t.heals.filter((h) => h.slotIndex === 1).map((h) => h.frame)).toEqual(bursts);
-    expect(t.windows.map((w) => w.start)).toEqual(bursts);
+    expect(p.history.heals.filter((h) => h.slotIndex === 1).map((h) => h.frame)).toEqual(bursts);
+    expect(itemsOf(p.history, { kind: 'timed' }).map((i) => i.start)).toEqual(bursts);
   });
 
   it('does not fire healed without heals (the cached events of another call are not reused)', () => {
     const [healed] = resolveTimed(slots[0]!.definition!, slots[0]!.character, MAX_SKILL_LEVELS);
-    const withHeals = planHeals(slots, pass.schedule, pass.shots, 1800);
+    const withHeals = pass.history.heals;
     expect(triggerFrames(healed!.trigger, pass.schedule, 0, 1800, pass.shots, withHeals).length).toBeGreaterThan(0);
     expect(triggerFrames(healed!.trigger, pass.schedule, 0, 1800, pass.shots)).toEqual([]);
   });

@@ -9,7 +9,9 @@ import { ZERO_BUFFS, applyResolvedEffect } from '../buffs.ts';
 import { isPerShotTrigger, resolveDamageEffects, resolvePerShotDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed } from '../resolve.ts';
 import { stackWindows } from '../stacks.ts';
-import { planBuffTimeline, selfBuffedAt, type TimelineSlot } from '../timeline.ts';
+import type { TimelineSlot } from '../timeline.ts';
+import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
+import { itemsOf } from '../holders.ts';
 import { isFiringStat, isStateStat, parseSkillDefinition } from '../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 
@@ -353,25 +355,14 @@ describe('stackWindows (2.2・7.2)', () => {
 });
 
 describe('condition "自分が 〈stat〉 増加状態なら" (2.4・3.3)', () => {
-  it('checks passives and positive windows including ones starting at the frame', () => {
-    const windows = [{ slotIndex: 0, effect: { stat: 'hitRate' as const, value: 0.0856 }, start: 100, end: 200 }];
-    const passive = [{ buffs: ZERO_BUFFS, passiveEffects: [], buildEffects: [], timedEffects: [] }];
-    expect(selfBuffedAt(passive, windows, 0, 'hitRate', 99)).toBe(false);
-    expect(selfBuffedAt(passive, windows, 0, 'hitRate', 100)).toBe(true);
-    expect(selfBuffedAt(passive, windows, 0, 'hitRate', 200)).toBe(false);
-    expect(selfBuffedAt(passive, windows, 1, 'hitRate', 150)).toBe(false);
-    const withPassive = [
-      { buffs: { ...ZERO_BUFFS, hitRate: 0.1 }, passiveEffects: [], buildEffects: [], timedEffects: [] },
-    ];
-    expect(selfBuffedAt(withPassive, [], 0, 'hitRate', 0)).toBe(true);
-  });
+  // 判定の細部（常時の効果・同じフレームに付いた件・件の終わり）は skills/__tests__/holders.test.ts の「段の見え方」
 
-  it('fires only at the 200th hits inside the hit rate windows and records the skips', () => {
+  it('fires only at the 30th hits inside the hit rate item and records the skips', () => {
     const character = modernia();
     const def = parseSkillDefinition(
       definition({
         skill2: supported(
-          { kind: 'timed', trigger: 'battleStart', target: 'self', stat: 'hitRate', ref: 1, durationSeconds: 1.02 },
+          { kind: 'timed', trigger: 'battleStart', target: 'self', stat: 'hitRate', ref: 1, durationSeconds: 3 },
           {
             kind: 'timed',
             trigger: { count: 'normalHit', every: 30 },
@@ -385,14 +376,20 @@ describe('condition "自分が 〈stat〉 増加状態なら" (2.4・3.3)', () =
       }),
     );
     const slots: TimelineSlot[] = [{ character, definition: def, levels: MAX_SKILL_LEVELS, casterBaseAttack: 1000 }];
-    // 射撃は 1 フレームおき（30 発目 = f58、60 発目 = f118）。窓はどちらも 1.02 秒 = 60f（Stage 21-B の 0.017 秒刻み）。命中率の窓は [0, 60)
-    const shots = [{ frames: Array.from({ length: 100 }, (_, i) => i * 2), fullCharge: false }];
-    const timeline = planBuffTimeline(slots, null, 300, shots);
-    expect(timeline.stateWindows.map((w) => [w.effect.stat, w.start, w.end])).toEqual([['hitRate', 0, 60]]);
-    // 命中率の窓は区間に入らない（境界も鍵も作らない）
-    expect(timeline.windows.every((w) => w.effect.stat !== 'hitRate')).toBe(true);
-    const attack = timeline.windows.filter((w) => w.effect.stat === 'attack');
-    expect(attack.map((w) => [w.start, w.end])).toEqual([[59, 119]]);
-    expect(timeline.conditionSkips.map((s) => s.frame)).toEqual([118, 178]);
+    // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 B）: 1 パス目の射撃で数える（MG は撃ち始めが遅く、30 発目は 3 秒の命中率の
+    // 件の中に 2 回、外に後の回が来る）。攻撃力の件は 1.02 秒 = 60f で、件の中の 2 回は重なって 1 件になる
+    const { first, timeline } = firstPassTimeline(slots, { frames: 300, burst: false });
+    const w = gameSecondsToFrames(3);
+    const thirtieth = first.shots[0]!.frames.filter((_, i) => (i + 1) % 30 === 0);
+    const inside = thirtieth.filter((f) => f < w);
+    expect(inside).toHaveLength(2);
+    expect(itemsOf(first.history, { stat: 'hitRate' }).map((i) => [i.start, i.end])).toEqual([[0, w]]);
+    expect(itemsOf(first.history, { stat: 'attack' }).map((i) => [i.start, i.end])).toEqual([
+      [inside[0]! + 1, inside[1]! + 1 + gameSecondsToFrames(1.02)],
+    ]);
+    expect(first.history.conditionSkips.map((s) => s.frame)).toEqual(thirtieth.filter((f) => f >= w));
+    expect(first.history.conditionSkips.length).toBeGreaterThan(0);
+    // 命中率の件は区間を割らない（着地点の計画が無いので、境界も鍵も作らない）
+    expect(timeline.segments.some((s) => s.start === w)).toBe(false);
   });
 });

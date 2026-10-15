@@ -7,13 +7,13 @@ import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { firingParams } from '../frame/firing.ts';
-import { runFirstPass } from '../frame/firstPass.ts';
 import { initialShooter, resumeShooter, stepShooter } from '../frame/shooter.ts';
-import { MAX_SKILL_LEVELS, isStateContent } from '../skills/resolve.ts';
+import { itemsOf } from '../skills/holders.ts';
+import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { toTimelineSlots, type TeamInput, type TeamSlotInput, type TeamResult } from '../team.ts';
+import type { TeamInput, TeamSlotInput, TeamResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { gameSecondsToFrames } from '../time.ts';
@@ -54,9 +54,6 @@ const TEAMS: Record<string, TeamInput> = {
   '録画 44（I-DOLL・フラワー + デルタ + モダニア）': REC44,
   '実戦寄り（リター + クラウン + モダニア + アリス + アドミ）': PRACTICAL,
 };
-
-type Window = { slotIndex: number; start: number; end: number; stack?: number };
-const key = (w: Window) => `${w.slotIndex}:${w.start}-${w.end}:${w.stack ?? '-'}`;
 
 function segmentAt(result: TeamResult, slotIndex: number, frame: number) {
   return result.slots[slotIndex]!.segments.find((g) => g.ranges.some((r) => r.start <= frame && frame < r.end))!;
@@ -152,11 +149,14 @@ describe('録画 44 の予測（7.5）', () => {
     expect(inFb.trigger.perShot).toBeGreaterThan(outside.trigger.perShot * 1.4);
   });
 
-  it('agrees between the loop and planBuffTimeline on every firing window, stacks included', () => {
-    const first = runFirstPass(toTimelineSlots(REC44.slots), { frames: plan.frames, burst: true, controlledSlot: 2 });
-    const firing = plan.timeline.windows.filter((w) => ['maxAmmo', 'infiniteAmmo', 'weapon'].includes(w.effect.stat));
-    expect(first.firingWindows.map(key).sort()).toEqual(firing.map(key).sort());
-    expect(first.shots).toEqual(plan.shots);
+  it('keeps every firing item of the loop, stacks included', () => {
+    const firing = itemsOf(plan.history, { holder: 2, kind: 'timed' }).filter(
+      (i) => i.origin.kind === 'timed' && ['maxAmmo', 'infiniteAmmo', 'weapon'].includes(i.origin.effect.stat),
+    );
+    const stats = new Set(firing.map((i) => (i.origin.kind === 'timed' ? i.origin.effect.stat : '')));
+    expect(stats).toEqual(new Set(['maxAmmo', 'infiniteAmmo', 'weapon']));
+    // S1 の最大装弾数▼は 5 スタック（段ごとの件）
+    expect(Math.max(...firing.map((i) => i.stack ?? 0))).toBe(5);
   });
 });
 
@@ -210,18 +210,20 @@ describe('録画 44 の実測（1 発の数値、2026-09-24）', () => {
 describe('実戦寄りの編成: 条件付きの攻撃力もアリスの順位に入る（3.3）', () => {
   const plan = planTeamRun(PRACTICAL);
 
-  it('tracks the same attack windows (conditional ones included) in the loop and in planBuffTimeline', () => {
-    const first = runFirstPass(toTimelineSlots(PRACTICAL.slots), {
-      frames: plan.frames,
-      burst: true,
-      controlledSlot: 2,
-    });
-    const attack = plan.timeline.windows.filter((w) => w.effect.stat === 'attack' && w.effect.target !== 'topAttack');
-    expect(first.rankAttackWindows.map(key).sort()).toEqual(attack.map(key).sort());
-    expect(attack.some((w) => !isStateContent(w.effect) && w.effect.condition !== undefined)).toBe(true);
-    const speed = first.firingWindows.filter((w) => w.effect.target === 'topAttack');
-    const damage = plan.timeline.windows.filter((w) => w.effect.stat === 'chargeDamage');
-    expect(speed.map(key).sort()).toEqual(damage.map(key).sort());
+  it('lets the ranking read the attack items, conditional ones included, and chooses the same targets for both Alice effects', () => {
+    const attack = itemsOf(plan.history, { kind: 'timed', stat: 'attack' }).filter(
+      (i) => i.origin.kind === 'timed' && i.origin.effect.target !== 'topAttack',
+    );
+    // 条件つきの攻撃力（段 1.5）も順位に入る（順位は段 1・1.5 の攻撃力の件を見る。plan/design-holder-effects.md 2.5 節）
+    expect(attack.some((i) => i.stage === 1.5)).toBe(true);
+    expect(attack.every((i) => i.stage === 1 || i.stage === 1.5)).toBe(true);
+    const key = (i: { holder: number; start: number; end: number }) => `${i.holder}:${i.start}-${i.end}`;
+    const ofAlice = (stat: 'chargeSpeed' | 'chargeDamage') =>
+      itemsOf(plan.history, { kind: 'timed', stat }).filter(
+        (i) => i.origin.kind === 'timed' && i.origin.effect.target === 'topAttack',
+      );
+    expect(ofAlice('chargeSpeed').length).toBeGreaterThan(0);
+    expect(ofAlice('chargeSpeed').map(key).sort()).toEqual(ofAlice('chargeDamage').map(key).sort());
   });
 
   it('lets モダニア and アリス alternate as III', () => {

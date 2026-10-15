@@ -26,7 +26,7 @@ export type ShotLog = {
   lastShotFrames?: number[];
   /**
    * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 撃ち切りで終わる使用武器の変更が終わったフレーム
-   * （最後の弾丸の発 + 1。基礎の武器に戻るフレーム。昇順）。1 パス目が書き、planBuffTimeline が窓の終わりに使う。省略は無し
+   * （最後の弾丸の発 + 1。基礎の武器に戻るフレーム。昇順）。1 パス目が書き、持ち主ごとの一覧（skills/holders.ts）が件の終わりに使う。省略は無し
    */
   weaponChangeEnds?: number[];
   /**

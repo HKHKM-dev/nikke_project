@@ -5,12 +5,12 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
-import { runFirstPass } from '../frame/firstPass.ts';
+import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
+import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 
@@ -87,19 +87,16 @@ describe('録画 063 の編成の窓（4 節）', () => {
 });
 
 describe('1 パス目のループの回復', () => {
-  it('tracks the same S1 windows for the ranking as planBuffTimeline (the burst heal in the loop)', () => {
+  it('gives the S1 attack items on the heals of the loop (the burst heal), at the stage the ranking reads', () => {
     const plan = planTeamRun(PRACTICAL);
-    const first = runFirstPass(toTimelineSlots(PRACTICAL.slots), {
-      frames: plan.frames,
-      burst: true,
-      controlledSlot: 2,
-    });
-    const key = (w: { slotIndex: number; start: number; end: number }) => `${w.slotIndex}:${w.start}-${w.end}`;
-    const asukaS1 = (w: { effect: { source: { resourceId: number }; stat: string } }) =>
-      w.effect.source.resourceId === 830 && w.effect.stat === 'attack';
-    const loop = first.rankAttackWindows.filter(asukaS1);
-    expect(loop.length).toBeGreaterThan(0);
-    expect(loop.map(key).sort()).toEqual(plan.timeline.windows.filter(asukaS1).map(key).sort());
+    const items = itemsOf(plan.history, { kind: 'timed', skill: 'skill1', stat: 'attack' }).filter(
+      (i) => i.origin.kind === 'timed' && i.origin.effect.source.resourceId === 830,
+    );
+    expect(items.length).toBeGreaterThan(0);
+    const healed = plan.history.heals.filter((h) => h.slotIndex === items[0]!.holder).map((h) => h.frame);
+    for (const i of items) expect(healed).toContain(i.start);
+    for (const f of healed) expect(items.some((i) => i.start <= f && f < i.end)).toBe(true);
+    expect(items.every((i) => i.stage === 1)).toBe(true);
   });
 });
 

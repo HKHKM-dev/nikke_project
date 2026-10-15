@@ -22,48 +22,35 @@
 // 名前の付いた状態の語彙編（plan/design-named-state.md 5.2 節・実装の別紙 1.4 節）: 状態の付与は timed と同じ段に置き（条件なしは
 // 1 段目、条件つきは 1.5 段目、順位の対象は 2 段目）、出どころ × 状態ごとに発火を集め、その状態の付与のいちばん後の段で状態の窓
 // （namedStateWindows）と中身の窓（windows・stateWindows）を作る。中身は同じ stat の timed と同じに区間・鍵・判定に入る。
+// 持ち主ごとの一覧編（plan/design-holder-effects.md 段 B）: 窓を作る 2 パス目（planBuffTimeline）を消した。上の段（1〜2.5 段目）は、
+// 1 パス目の件の一覧（skills/holders.ts）の段の印で再現する。窓と記録はその履歴から書き出し（buffTimelineOf）、ここには区間の
+// 組み立て（buildSegments）と、件を作る関数（unionWindows など）、トリガーの発火の列（triggerFrames）を置く。
 import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { BuildEffect } from '../buildEffects.ts';
-import { resolveCycleEvery, type CycleWindow } from './cycles.ts';
+import type { CycleWindow } from './cycles.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFirstFrame } from '../time.ts';
-import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
-import { chanceOpportunities, chancePieces, chanceValueOf } from './chance.ts';
+import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, type BuffTotals } from './buffs.ts';
 import {
-  isResolvedChance,
   isResolvedShotCount,
   isResolvedTimer,
   isStateContent,
   resolvePassives,
-  resolveStateContents,
-  resolveStateGrants,
-  resolveTimed,
   type AppliedEffect,
   type AppliedTimedEffect,
   type ResolvedEffect,
-  type ResolvedShotCountTrigger,
-  type ResolvedStateContent,
-  type ResolvedStateGrant,
   type ResolvedTimedEffect,
   type ResolvedTrigger,
   type SkillLevels,
   type WindowEffect,
 } from './resolve.ts';
-import { hasHealEffects, planHeals } from './heals.ts';
-import { attackRankFor, finalAttacksAt, tiedAtCutoff, type RankSlot, type RankingRecord } from './ranking.ts';
+import type { RankSlot, RankingRecord } from './ranking.ts';
 import { stackWindows } from './stacks.ts';
-import { dependsOnContext, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
+import { isEffectTarget } from './targets.ts';
 import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
 import type { NamedStateId } from './states.ts';
-import {
-  SKILL_SLOTS,
-  isStateStat,
-  staticStatesOf,
-  type BuffStat,
-  type EffectCondition,
-  type SkillDefinition,
-} from './types.ts';
+import { SKILL_SLOTS, type BuffStat, type SkillDefinition } from './types.ts';
 
 /** 枠 1 つ分の入力。TeamSlotInput ではなく必要な情報だけを受けて循環 import を避ける（planFixedCycle と同じ流儀） */
 export type TimelineSlot = {
@@ -146,7 +133,7 @@ export type BuffTimeline = {
   windows: BuffWindow[];
   /** 常時パッシブだけの状態（Stage 4 互換の表示用）。空枠は null */
   passive: (SlotBuffState | null)[];
-  /** Stage 11: 回復の記録（skills/heals.ts の planHeals）。heal 効果が無ければ空 */
+  /** Stage 11: 回復の記録（1 パス目の履歴の heals）。heal 効果が無ければ空 */
   heals: HealRecord[];
   /** Stage 11 アリス編: topAttack の効果の発火ごとの順位（効果ごと・発生順）。topAttack の効果が無ければ空 */
   rankings: RankingRecord[];
@@ -326,7 +313,7 @@ function eventsOf(
 /**
  * トリガーが起きたフレーム列（昇順）。schedule が null（バーストなし）なら battleStart と射撃の回数だけ発火する。
  * burstUse はその枠が実際に撃った発動のフレーム（動的サイクルでは段階ごとに別フレーム、同じ段階の 2 体は交互になりうる）。
- * 射撃の回数（Stage 8）は shots[slotIndex] の every・2 × every…番目の射撃のフレーム。バフ窓の開始は buffStartFrames が 1 つ後ろにずらす。
+ * 射撃の回数（Stage 8）は shots[slotIndex] の every・2 × every…番目の射撃のフレーム。件の始まりは skills/holders.ts の startOfFire が 1 つ後ろにずらす。
  * Stage 10: 判定は skills/triggers.ts の TriggerTracker（1 パス目のフレームループと共通）に出来事の列を流し直して行う。
  */
 export function triggerFrames(
@@ -340,7 +327,7 @@ export function triggerFrames(
   return triggerFires(trigger, schedule, slotIndex, frames, shots, heals).map((f) => f.frame);
 }
 
-/** Stage 11: triggerFrames の文脈つき版（対象 burstUsers の判定に使う）。heals は healed の出来事（planHeals の結果） */
+/** Stage 11: triggerFrames の文脈つき版（対象 burstUsers の判定に使う）。heals は healed の出来事（1 パス目の履歴の heals） */
 export function triggerFires(
   trigger: ResolvedTrigger,
   schedule: BurstSchedule | null,
@@ -376,32 +363,6 @@ export function timerFrames(everySeconds: number, frames: number): number[] {
   }
 }
 
-/** バフ窓が始まるフレーム。射撃の回数トリガーだけ、トリガーになった射撃の次のフレームから（その射撃自身には乗らない） */
-export function buffStartFrames(
-  trigger: ResolvedTrigger,
-  schedule: BurstSchedule | null,
-  slotIndex: number,
-  frames: number,
-  shots: readonly (ShotLog | null)[] = [],
-  heals: readonly HealRecord[] = NO_HEALS,
-): number[] {
-  return buffStartFires(trigger, schedule, slotIndex, frames, shots, heals).map((f) => f.frame);
-}
-
-/** Stage 11: buffStartFrames の文脈つき版 */
-export function buffStartFires(
-  trigger: ResolvedTrigger,
-  schedule: BurstSchedule | null,
-  slotIndex: number,
-  frames: number,
-  shots: readonly (ShotLog | null)[] = [],
-  heals: readonly HealRecord[] = NO_HEALS,
-): TriggerFire[] {
-  const fired = triggerFires(trigger, schedule, slotIndex, frames, shots, heals);
-  if (!isResolvedShotCount(trigger)) return fired;
-  return fired.map((f) => ({ frame: f.frame + 1, context: f.context })).filter((f) => f.frame < frames);
-}
-
 /**
  * Stage 11 モダニア: 使用武器の変更の窓の頭を何フレーム削るか。バースト系の発火（f）で付く窓 [f, f + d) を、射手が持ち替えるフレーム
  * （f + 1。frame/firstPass.ts の射手が見る窓の規則）から始める。発火のフレームの射撃は基礎の武器で撃たれるので、その 1 発を
@@ -423,30 +384,6 @@ export function effectWindows(
   return unionWindows(starts, effect.durationFrames, frames)
     .map(([start, end]) => ({ start: start + trim, end }))
     .filter((w) => w.start < w.end);
-}
-
-/**
- * Stage 11 モダニア: 枠 slotIndex がフレーム frame で stat の増加状態か（常時パッシブの合計 > 0、または値が正の窓が効いている）。
- * 同じフレームに始まった窓も入れる（アリス編の順位と同じ）
- */
-export function selfBuffedAt(
-  passive: readonly (SlotBuffState | null)[],
-  windows: readonly {
-    slotIndex: number;
-    effect: Pick<ResolvedTimedEffect, 'stat' | 'value'>;
-    start: number;
-    end: number;
-  }[],
-  slotIndex: number,
-  stat: BuffStat,
-  frame: number,
-): boolean {
-  const base = passive[slotIndex];
-  if (base && statTotal(base.buffs, stat) > 0) return true;
-  return windows.some(
-    (w) =>
-      w.slotIndex === slotIndex && w.effect.stat === stat && w.effect.value > 0 && w.start <= frame && frame < w.end,
-  );
 }
 
 /**
@@ -476,11 +413,12 @@ export function shotCountWindows(
 }
 
 /**
- * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 撃ち切りで終わる使用武器の変更の窓。始まり s から、
- * s より後の最初の終わり（1 パス目の ShotLog.weaponChangeEnds）まで（無ければ frames まで）。維持中にまた付いたら和集合
- * （1 パス目は開いている窓に重ねて付いても撃ち切りまで変えない）
+ * 出来事で終わる窓。始まり s から、s より後の最初の終わり（ends。昇順）まで（無ければ frames まで）。維持中にまた付いたら和集合。
+ * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 撃ち切りで終わる使用武器の変更（ends は 1 パス目の
+ * ShotLog.weaponChangeEnds。1 パス目は開いている窓に重ねて付いても撃ち切りまで変えない）。
+ * 防御力無視ダメージ編（同 3.2 節）: 「解除条件：フルバーストタイムが終了した時」（ends はフルバーストの終わり）
  */
-export function untilWeaponChangeEndWindows(
+export function untilNextEndWindows(
   starts: readonly number[],
   ends: readonly number[],
   frames: number,
@@ -497,35 +435,6 @@ export function untilWeaponChangeEndWindows(
     merged.push([s, end]);
   }
   return merged;
-}
-
-/**
- * 防御力無視ダメージ編: 「解除条件：フルバーストタイムが終了した時」の窓。始まり s から、s より後に終わる最初のフルバーストの終わりまで
- * （無ければ frames まで）。維持中にまた付いたら和集合（plan/design-true-damage-element.md 3.2 節）
- */
-export function untilFullBurstEndWindows(
-  starts: readonly number[],
-  schedule: BurstSchedule | null,
-  frames: number,
-): [number, number][] {
-  const ends = (schedule?.fullBurstWindows ?? []).map((w) => w.end);
-  const merged: [number, number][] = [];
-  for (const s of [...starts].sort((a, b) => a - b)) {
-    if (s >= frames) continue;
-    const end = Math.min(ends.find((e) => e > s) ?? frames, frames);
-    const last = merged[merged.length - 1];
-    if (last !== undefined && s <= last[1]) {
-      if (end > last[1]) last[1] = end;
-      continue;
-    }
-    merged.push([s, end]);
-  }
-  return merged;
-}
-
-/** 防御力無視ダメージ編: フレーム frame がフルバーストタイムの中か（条件 inFullBurst） */
-export function inFullBurstAt(schedule: BurstSchedule | null, frame: number): boolean {
-  return (schedule?.fullBurstWindows ?? []).some((w) => w.start <= frame && frame < w.end);
 }
 
 /** 同一効果の窓を和集合にする（上書き延長。重ねない）。frames が上限 */
@@ -584,491 +493,7 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
   });
 }
 
-/**
- * 持続バフの区間分割。
- * 境界は {0, frames} ∪ 全バフ窓の端 ∪ フルバースト区間の端 ∪ バースト発動フレーム。
- * shots（Stage 8）は射撃の回数トリガーに使う射撃の列。省略すると射撃の回数トリガーは発火しない。
- * Stage 18-C: landings（着地点の区間と、条件が自動の枠）を渡すと、着地点の境目も境界に足し、自動の枠の鍵に着地点を入れる。
- * sustainedHitRateUp が false なら、持続の命中率▲（C-0170）を区間の buffs.hitRate に足さない（TeamInput.sustainedHitRateUp）。
- */
-export function planBuffTimeline(
-  slots: readonly TimelineSlot[],
-  schedule: BurstSchedule | null,
-  frames: number,
-  shots: readonly (ShotLog | null)[] = [],
-  landings: TimelineLandings | null = null,
-  sustainedHitRateUp = true,
-): BuffTimeline {
-  if (!Number.isInteger(frames) || frames < 0) {
-    throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
-  }
-  const passive = resolvePassiveStates(slots);
-  // Stage 11: 回復の記録（1 段目）。heal 効果が無ければ空のまま（出来事の列は今までと同じ）
-  const heals = hasHealEffects(slots) ? planHeals(slots, schedule, shots, frames) : [];
-  const healsKey: readonly HealRecord[] = heals.length === 0 ? NO_HEALS : heals;
-
-  // 1〜2. 発火フレーム → 窓（同一効果は和集合、スタックする効果は段ごと）→ 対象の枠に配る
-  const windows: BuffWindow[] = [];
-  /** Stage 11 モダニア: 状態だけの stat（命中率）の窓。区間には入れない */
-  const stateWindows: BuffWindow[] = [];
-  /** 2 段目に回す効果（対象が攻撃力の順位で決まる） */
-  const ranked: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
-  /** ペルソナ編: 名前の付いた効果が付いた記録（1 段目の効果だけ。名前は条件・順位の対象と組めない） */
-  const applications: AppliedRecord[] = [];
-  /** 1.5 段目に回す効果（Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」） */
-  const conditional: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
-  /** 2.5 段目に回す効果（環境コントロール強化編: 参照する効果の窓に重なる間だけ、その値を増やす） */
-  const amplifying: { sourceSlotIndex: number; effect: ResolvedTimedEffect }[] = [];
-  /** 窓の始まりの列 fires から効果の窓を作り、対象の枠に配る */
-  const distribute = (
-    out: BuffWindow[],
-    effect: ResolvedTimedEffect,
-    sourceSlotIndex: number,
-    fires: readonly TriggerFire[],
-  ): void => {
-    // ヘルム編: 「N 発間維持」は対象の枠ごとに、その枠の射撃を数えて窓の終わりを決める
-    if (effect.durationShots !== undefined) {
-      const n = effect.durationShots;
-      slots.forEach((target, slotIndex) => {
-        if (target === null) return;
-        const mine = fires
-          .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, f.context))
-          .map((f) => f.frame);
-        for (const [start, end] of shotCountWindows(mine, shots[slotIndex]?.frames ?? [], n, frames)) {
-          out.push(windowOf(slotIndex, sourceSlotIndex, effect, { start, end }));
-        }
-      });
-      return;
-    }
-    // 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節の論点 8）: 撃ち切りで終わる使用武器の変更は、
-    // 持ち替えるフレーム（weaponStartTrim）から、1 パス目が基礎の武器に戻したフレームまで
-    if (effect.durationUntil === 'ammoSpent') {
-      const trim = weaponStartTrim(effect);
-      slots.forEach((target, slotIndex) => {
-        if (target === null) return;
-        const mine = fires
-          .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, f.context))
-          .map((f) => f.frame);
-        // 和集合は発火のフレームで取り、頭は後で削る（effectWindows・1 パス目の register と同じ順）
-        for (const [start, end] of untilWeaponChangeEndWindows(
-          mine,
-          shots[slotIndex]?.weaponChangeEnds ?? [],
-          frames,
-        )) {
-          if (start + trim < end) out.push(windowOf(slotIndex, sourceSlotIndex, effect, { start: start + trim, end }));
-        }
-      });
-      return;
-    }
-    // 防御力無視ダメージ編: 「解除条件：フルバーストタイムが終了した時」は時刻表のフルバーストの終わりで窓を閉じる
-    if (effect.durationUntil === 'fullBurstEnd') {
-      slots.forEach((target, slotIndex) => {
-        if (target === null) return;
-        const mine = fires
-          .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, f.context))
-          .map((f) => f.frame);
-        for (const [start, end] of untilFullBurstEndWindows(mine, schedule, frames)) {
-          out.push(windowOf(slotIndex, sourceSlotIndex, effect, { start, end }));
-        }
-      });
-      return;
-    }
-    if (!dependsOnContext(effect)) {
-      const merged = effectWindows(
-        fires.map((f) => f.frame),
-        effect,
-        frames,
-      );
-      if (merged.length === 0) return;
-      slots.forEach((target, slotIndex) => {
-        if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character)) {
-          return;
-        }
-        for (const w of merged) out.push(windowOf(slotIndex, sourceSlotIndex, effect, w));
-      });
-      return;
-    }
-    // Stage 11: 対象が発火ごとに変わる効果（burstUsers）は、対象の枠ごとに「その枠が対象だった発火」だけで和集合にする
-    // （上書き延長はその枠が受けた発火どうしでだけ起きる。plan/design-stage11.md 3.2 節）
-    slots.forEach((target, slotIndex) => {
-      if (target === null) return;
-      const mine = fires
-        .filter((f) => isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, f.context))
-        .map((f) => f.frame);
-      for (const w of effectWindows(mine, effect, frames)) out.push(windowOf(slotIndex, sourceSlotIndex, effect, w));
-    });
-  };
-  /** ソルジャーE.G. 編: 確率のきっかけの効果の小片の窓を、対象の枠ごとに作る（対象は発火の文脈によらない。types.ts の validateChanceTimed） */
-  const chanceWindows = (
-    effect: ResolvedTimedEffect,
-    sourceSlotIndex: number,
-    events: readonly FrameEvents[],
-  ): BuffWindow[] => {
-    const trigger = effect.trigger as ResolvedShotCountTrigger & { chance: number };
-    const pieces = chancePieces(
-      chanceOpportunities(trigger, sourceSlotIndex, events, frames),
-      effect.durationFrames,
-      frames,
-    );
-    const out: BuffWindow[] = [];
-    slots.forEach((target, slotIndex) => {
-      if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character)) return;
-      for (const { start, end, scale } of pieces) {
-        const value = chanceValueOf(effect.value, scale);
-        out.push(windowOf(slotIndex, sourceSlotIndex, { ...effect, value }, { start, end }));
-      }
-    });
-    return out;
-  };
-  slots.forEach((slot, sourceSlotIndex) => {
-    if (slot === null || slot.definition === null) return;
-    for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
-      if (effect.amplifies !== undefined) {
-        amplifying.push({ sourceSlotIndex, effect });
-        continue;
-      }
-      if (dependsOnRank(effect)) {
-        ranked.push({ sourceSlotIndex, effect });
-        continue;
-      }
-      if (effect.condition !== undefined) {
-        conditional.push({ sourceSlotIndex, effect });
-        continue;
-      }
-      // ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけは、期待値の小片の窓（値 × 付いている確率）にする
-      if (isResolvedChance(effect.trigger)) {
-        windows.push(...chanceWindows(effect, sourceSlotIndex, eventsOf(schedule, shots, frames, healsKey)));
-        continue;
-      }
-      const fires = buffStartFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey);
-      distribute(isStateStat(effect.stat) ? stateWindows : windows, effect, sourceSlotIndex, fires);
-    }
-  });
-
-  // 名前の付いた状態の語彙編（plan/design-named-state.md 5.2 節）: 付与を出どころ × 状態ごとにまとめ、timed と同じ段に置く。
-  // 発火は段ごとに足し、その状態の付与のいちばん後の段の後で、状態の窓と中身の窓を作る（finishStateGroups）
-  const stateGroups = stateGroupsOf(slots);
-  const namedStateWindows: NamedStateWindow[] = [];
-  /** 付与の発火 1 つを、対象の枠ごとの窓の始まりと、適用の記録（{ applied } の材料）に足す */
-  const addStateFire = (
-    group: StateGroup,
-    grant: ResolvedStateGrant,
-    start: number,
-    context: FireContext,
-  ): number[] => {
-    const targets: number[] = [];
-    slots.forEach((target, slotIndex) => {
-      if (target === null) return;
-      if (!isEffectTarget(grant, group.sourceSlotIndex, slotIndex, target.character, context)) return;
-      group.starts[slotIndex]!.push(start);
-      if (isResolvedShotCount(grant.trigger)) group.shotCount[slotIndex] = true;
-      applications.push({ frame: start, state: group.state, sourceSlotIndex: group.sourceSlotIndex, slotIndex });
-      targets.push(slotIndex);
-    });
-    return targets;
-  };
-  /** 持ち主の枠の状態の窓（同じ状態の付与は維持とスタックの上限が同じ。skills/resolve.ts の resolveStateGrants が確かめる） */
-  const stateWindowsOf = (
-    grant: ResolvedStateGrant,
-    starts: readonly number[],
-    holder: number,
-  ): { start: number; end: number; stack?: number }[] => {
-    if (grant.durationShots !== undefined) {
-      return shotCountWindows(starts, shots[holder]?.frames ?? [], grant.durationShots, frames).map(([start, end]) => ({
-        start,
-        end,
-      }));
-    }
-    if (grant.durationUntil === 'fullBurstEnd') {
-      return untilFullBurstEndWindows(starts, schedule, frames).map(([start, end]) => ({ start, end }));
-    }
-    if (grant.maxStacks !== undefined) return stackWindows(starts, grant.durationFrames, frames, grant.maxStacks);
-    return unionWindows(starts, grant.durationFrames, frames).map(([start, end]) => ({ start, end }));
-  };
-  /**
-   * 段 stage で確定する状態の、状態の窓と中身の窓を作る。中身の窓は同じ stat の timed と同じく windows（命中率は stateWindows）に
-   * 入れ、後の段の判定（条件・順位・強化）と区間に入る
-   */
-  const finishStateGroups = (stage: StateStage): void => {
-    for (const group of stateGroups) {
-      if (group.stage !== stage) continue;
-      const grant = group.grants[0]!;
-      slots.forEach((target, holder) => {
-        const starts = group.starts[holder]!;
-        if (target === null || starts.length === 0) return;
-        for (const w of stateWindowsOf(grant, starts, holder)) {
-          const record: NamedStateWindow = {
-            state: group.state,
-            slotIndex: holder,
-            sourceSlotIndex: group.sourceSlotIndex,
-            start: w.start,
-            end: w.end,
-          };
-          if (w.stack !== undefined) record.stack = w.stack;
-          if (group.shotCount[holder]) record.shotCount = true;
-          namedStateWindows.push(record);
-          for (const content of group.contents) {
-            (isStateStat(content.stat) ? stateWindows : windows).push(
-              windowOf(holder, group.sourceSlotIndex, content, w),
-            );
-          }
-        }
-      });
-    }
-  };
-  /** 段 stage の付与（条件なし・順位の対象でない付与の発火を足す。1.5 段目・2 段目はそれぞれの段で足す） */
-  const grantsAt = (stage: StateStage) =>
-    stateGroups.flatMap((group) =>
-      group.grants.filter((grant) => stageOfGrant(grant) === stage).map((grant) => ({ group, grant })),
-    );
-  for (const { group, grant } of grantsAt(1)) {
-    for (const fire of buffStartFires(grant.trigger, schedule, group.sourceSlotIndex, frames, shots, healsKey)) {
-      addStateFire(group, grant, fire.frame, fire.context);
-    }
-  }
-  // 静的な付与もフレーム 0 に適用の記録を作る（見る側の規則を状態の種類で分けない。plan/design-named-state.md 5.4 節）
-  if (frames > 0) {
-    slots.forEach((slot, slotIndex) => {
-      for (const state of staticStatesOf(slot?.definition)) {
-        applications.push({ frame: 0, state, sourceSlotIndex: slotIndex, slotIndex });
-      }
-    });
-  }
-  finishStateGroups(1);
-
-  // 1.5 段目（Stage 11 モダニア）: 条件付きの効果。発火の瞬間の状態は 1 段目の窓と状態の窓で見る（条件付きの効果どうしは連鎖させない）。
-  // 名前の付いた状態の語彙編: 条件つきの付与もここで発火を足す。条件の鍵はどれも満たすときだけ（AND）
-  const conditionSkips: ConditionSkip[] = [];
-  const conditionalGrants = grantsAt(1.5);
-  if (conditional.length > 0 || conditionalGrants.length > 0) {
-    const stateSources = [...windows, ...stateWindows];
-    const holds = (condition: EffectCondition, sourceSlotIndex: number, frame: number): boolean =>
-      (condition.selfBuffed === undefined ||
-        selfBuffedAt(passive, stateSources, sourceSlotIndex, condition.selfBuffed, frame)) &&
-      (condition.inFullBurst !== true || inFullBurstAt(schedule, frame));
-    for (const { group, grant } of conditionalGrants) {
-      for (const fire of triggerFires(grant.trigger, schedule, group.sourceSlotIndex, frames, shots, healsKey)) {
-        if (!holds(grant.condition!, group.sourceSlotIndex, fire.frame)) {
-          conditionSkips.push({
-            frame: fire.frame,
-            sourceSlotIndex: group.sourceSlotIndex,
-            effect: { source: grant.source, effectIndex: grant.effectIndex },
-            state: group.state,
-          });
-          continue;
-        }
-        // 窓は射撃の回数起点なら次のフレームから（buffStartFires と同じ規則）
-        const start = isResolvedShotCount(grant.trigger) ? fire.frame + 1 : fire.frame;
-        if (start < frames) addStateFire(group, grant, start, fire.context);
-      }
-    }
-    for (const { sourceSlotIndex, effect } of conditional) {
-      const accepted: TriggerFire[] = [];
-      for (const fire of triggerFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey)) {
-        const ok = holds(effect.condition!, sourceSlotIndex, fire.frame);
-        if (!ok) {
-          conditionSkips.push({
-            frame: fire.frame,
-            sourceSlotIndex,
-            effect: { source: effect.source, effectIndex: effect.effectIndex },
-          });
-          continue;
-        }
-        // 窓は射撃の回数起点なら次のフレームから（buffStartFires と同じ規則）
-        const start = isResolvedShotCount(effect.trigger) ? fire.frame + 1 : fire.frame;
-        if (start < frames) accepted.push({ frame: start, context: fire.context });
-      }
-      distribute(windows, effect, sourceSlotIndex, accepted);
-    }
-  }
-  finishStateGroups(1.5);
-
-  // 2 段目（Stage 11 アリス編）: 1 段目の攻撃力の窓で発火ごとに順位を付け、対象の枠ごとに和集合にする。
-  // 名前の付いた状態の語彙編: 順位の対象の付与もここで発火を足す（状態の中身の攻撃力▲も、1〜1.5 段目で確定していれば順位に入る）
-  const rankings: RankingRecord[] = [];
-  const rankedGrants = grantsAt(2);
-  if (ranked.length > 0 || rankedGrants.length > 0) {
-    const rankSlots = rankSlotsOf(slots, passive);
-    const attackWindows = windows.filter((w) => w.effect.stat === 'attack');
-    const rankedWindows: BuffWindow[] = [];
-    for (const { group, grant } of rankedGrants) {
-      for (const fire of triggerFires(grant.trigger, schedule, group.sourceSlotIndex, frames, shots, healsKey)) {
-        const start = isResolvedShotCount(grant.trigger) ? fire.frame + 1 : fire.frame;
-        if (start >= frames) continue;
-        const finalAttacks = finalAttacksAt(rankSlots, attackWindows, fire.frame);
-        const attackRank = attackRankFor(grant, rankSlots, finalAttacks, group.sourceSlotIndex);
-        const targets = addStateFire(group, grant, start, { ...fire.context, attackRank });
-        rankings.push({
-          frame: fire.frame,
-          sourceSlotIndex: group.sourceSlotIndex,
-          effect: { source: grant.source, effectIndex: grant.effectIndex },
-          finalAttacks,
-          targets: attackRank.filter((i) => targets.includes(i)),
-          tied: tiedAtCutoff(
-            grant.excludeSelf === 'unlessShort' ? attackRank.slice(0, -1) : attackRank,
-            finalAttacks,
-            grant.targetCount ?? 1,
-          ),
-        });
-      }
-    }
-    for (const { sourceSlotIndex, effect } of ranked) {
-      const perTarget: number[][] = slots.map(() => []);
-      // 順位はトリガーが起きたフレームで出し、窓は射撃の回数起点なら次のフレームから（1 パス目と同じ）
-      for (const fire of triggerFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey)) {
-        const start = isResolvedShotCount(effect.trigger) ? fire.frame + 1 : fire.frame;
-        if (start >= frames) continue;
-        const finalAttacks = finalAttacksAt(rankSlots, attackWindows, fire.frame);
-        const attackRank = attackRankFor(effect, rankSlots, finalAttacks, sourceSlotIndex);
-        const context = { ...fire.context, attackRank };
-        const targets: number[] = [];
-        slots.forEach((target, slotIndex) => {
-          if (target === null) return;
-          if (!isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character, context)) return;
-          perTarget[slotIndex]!.push(start);
-          targets.push(slotIndex);
-        });
-        rankings.push({
-          frame: fire.frame,
-          sourceSlotIndex,
-          effect: { source: effect.source, effectIndex: effect.effectIndex },
-          finalAttacks,
-          targets: attackRank.filter((i) => targets.includes(i)),
-          // 対象の語彙編: unlessShort で末尾に足した自分は、同値の比べに入れない（順位ではなく足りない分の補い）
-          tied: tiedAtCutoff(
-            effect.excludeSelf === 'unlessShort' ? attackRank.slice(0, -1) : attackRank,
-            finalAttacks,
-            effect.targetCount ?? 1,
-          ),
-        });
-      }
-      perTarget.forEach((starts, slotIndex) => {
-        // 順位の発数編（plan/design-ranked-shot-duration.md 2 節）: 「N 発間維持」は発火のフレームの順位で決まった枠の射撃で切る
-        if (effect.durationShots !== undefined) {
-          for (const [start, end] of shotCountWindows(
-            starts,
-            shots[slotIndex]?.frames ?? [],
-            effect.durationShots,
-            frames,
-          )) {
-            rankedWindows.push(windowOf(slotIndex, sourceSlotIndex, effect, { start, end }));
-          }
-          return;
-        }
-        for (const w of effectWindows(starts, effect, frames)) {
-          rankedWindows.push(windowOf(slotIndex, sourceSlotIndex, effect, w));
-        }
-      });
-    }
-    windows.push(...rankedWindows);
-  }
-  finishStateGroups(2);
-
-  // 2.5 段目（環境コントロール強化編。plan/design-true-damage-element.md 3.5 節、V-0230 の論点 1 (a)）: 発火の瞬間に自分に
-  // 同じ枠の参照するスロットの同じ stat の窓（1〜2 段目のもの）が効いていれば、発動から維持の秒数のあいだ、対象の枠ごとに
-  // 参照する窓が効いている所は「その値 × 割合」を足し、切れた所は「発動の瞬間の参照の値 × (1 + 割合)」を足す（切り取らない）
-  for (const { sourceSlotIndex, effect } of amplifying) {
-    const { skill } = effect.amplifies!;
-    const referenced = windows.filter(
-      (w) =>
-        w.sourceSlotIndex === sourceSlotIndex &&
-        w.effect.source.skill === skill &&
-        w.effect.stat === effect.stat &&
-        (isStateContent(w.effect) || w.effect.amplifies === undefined),
-    );
-    const activeAt = (slotIndex: number, frame: number) =>
-      referenced.filter((w) => w.slotIndex === slotIndex && w.start <= frame && frame < w.end);
-    const accepted: number[] = [];
-    for (const { frame } of buffStartFires(effect.trigger, schedule, sourceSlotIndex, frames, shots, healsKey)) {
-      if (activeAt(sourceSlotIndex, frame).length === 0) {
-        conditionSkips.push({
-          frame,
-          sourceSlotIndex,
-          effect: { source: effect.source, effectIndex: effect.effectIndex },
-        });
-        continue;
-      }
-      accepted.push(frame);
-    }
-    const amplified: BuffWindow[] = [];
-    // 同じ効果の再発火は上書き延長（和集合）。発動の瞬間の参照の値は、和集合の窓の始まり（その窓を開けた発火）のもの
-    for (const [s, e] of unionWindows(accepted, effect.durationFrames, frames)) {
-      slots.forEach((target, slotIndex) => {
-        if (target === null || !isEffectTarget(effect, sourceSlotIndex, slotIndex, target.character)) return;
-        const atStart = activeAt(slotIndex, s);
-        if (atStart.length === 0) return;
-        const startValue = atStart.reduce((sum, w) => sum + w.effect.value, 0);
-        // 参照する窓が効いている所
-        const covered: [number, number][] = [];
-        for (const w of referenced) {
-          if (w.slotIndex !== slotIndex) continue;
-          const start = Math.max(s, w.start);
-          const end = Math.min(e, w.end);
-          if (start >= end) continue;
-          covered.push([start, end]);
-          amplified.push(
-            windowOf(slotIndex, sourceSlotIndex, { ...effect, value: effect.value * w.effect.value }, { start, end }),
-          );
-        }
-        // 切れた所（参照する窓が効いていない所）は、発動の瞬間の値の (1 + 割合) 倍を足す
-        let cursor = s;
-        for (const [start, end] of covered.sort((a, b) => a[0] - b[0])) {
-          if (cursor < start) {
-            amplified.push(
-              windowOf(
-                slotIndex,
-                sourceSlotIndex,
-                { ...effect, value: (1 + effect.value) * startValue },
-                { start: cursor, end: start },
-              ),
-            );
-          }
-          cursor = Math.max(cursor, end);
-        }
-        if (cursor < e) {
-          amplified.push(
-            windowOf(
-              slotIndex,
-              sourceSlotIndex,
-              { ...effect, value: (1 + effect.value) * startValue },
-              { start: cursor, end: e },
-            ),
-          );
-        }
-      });
-    }
-    windows.push(...amplified);
-  }
-
-  const segments = buildSegments({
-    slots,
-    schedule,
-    frames,
-    windows,
-    stateWindows,
-    passive,
-    landings,
-    sustainedHitRateUp,
-  });
-
-  return {
-    frames,
-    segments,
-    windows,
-    passive,
-    heals,
-    rankings,
-    stateWindows,
-    conditionSkips,
-    cycleWindows: planCycleWindows(slots, schedule, frames, shots, healsKey),
-    applications: applications.sort(
-      (a, b) => a.frame - b.frame || a.sourceSlotIndex - b.sourceSlotIndex || a.slotIndex - b.slotIndex,
-    ),
-    namedStateWindows,
-  };
-}
-
-/** 区間の組み立ての入力（planBuffTimeline と、持ち主ごとの一覧の書き出し skills/holders.ts の buffTimelineOf で共通） */
+/** 区間の組み立ての入力（持ち主ごとの一覧の書き出し skills/holders.ts の buffTimelineOf が渡す） */
 export type SegmentInput = {
   slots: readonly TimelineSlot[];
   schedule: BurstSchedule | null;
@@ -1180,100 +605,6 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
   return segments;
 }
 
-/**
- * Stage 11 紅蓮BS: 循環の間隔の変更の窓。対象は常に自分で、同じ効果の再発火は上書き延長（和集合）。
- * 窓の始まりは持続バフと同じ（射撃の回数トリガーは書けないので、発火のフレームから）
- */
-function planCycleWindows(
-  slots: readonly TimelineSlot[],
-  schedule: BurstSchedule | null,
-  frames: number,
-  shots: readonly (ShotLog | null)[],
-  heals: readonly HealRecord[],
-): CycleWindow[] {
-  const out: CycleWindow[] = [];
-  slots.forEach((slot, slotIndex) => {
-    if (slot === null || slot.definition === null) return;
-    for (const e of resolveCycleEvery(slot.definition, slot.character, slot.levels)) {
-      const starts = buffStartFrames(e.trigger, schedule, slotIndex, frames, shots, heals);
-      for (const [start, end] of unionWindows(starts, e.durationFrames, frames)) {
-        out.push({
-          slotIndex,
-          source: e.source,
-          effectIndex: e.effectIndex,
-          targetSkill: e.targetSkill,
-          every: e.every,
-          start,
-          end,
-        });
-      }
-    }
-  });
-  return out.sort((a, b) => a.start - b.start || a.slotIndex - b.slotIndex);
-}
-
-/** 名前の付いた状態の語彙編: 付与を置く段（timed と同じ。順位の対象は 2 段目、条件つきは 1.5 段目、それ以外は 1 段目） */
-type StateStage = 1 | 1.5 | 2;
-
-/** 名前の付いた状態の語彙編: 出どころ × 状態ごとの付与（同じ定義の同じ状態の付与は 1 つの状態） */
-type StateGroup = {
-  sourceSlotIndex: number;
-  state: NamedStateId;
-  grants: ResolvedStateGrant[];
-  /** 中身（同じ定義の付与のうち 1 つだけが持つ） */
-  contents: ResolvedStateContent[];
-  /** 状態の窓が確定する段（付与のいちばん後の段） */
-  stage: StateStage;
-  /** 持ち主の枠ごとの窓の始まり */
-  starts: number[][];
-  /** 持ち主の枠ごとに、射撃の回数のトリガーの付与が発火を足したか */
-  shotCount: boolean[];
-};
-
-function stageOfGrant(grant: ResolvedStateGrant): StateStage {
-  if (dependsOnRank(grant)) return 2;
-  return grant.condition !== undefined ? 1.5 : 1;
-}
-
-/** 名前の付いた状態の語彙編: 編成の時間で変わる状態の付与を、出どころ × 状態ごとにまとめる（静的な付与は編成の段で扱う） */
-function stateGroupsOf(slots: readonly TimelineSlot[]): StateGroup[] {
-  const groups: StateGroup[] = [];
-  slots.forEach((slot, sourceSlotIndex) => {
-    if (slot === null || slot.definition === null) return;
-    const contents = resolveStateContents(slot.definition, slot.character, slot.levels);
-    for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
-      if (grant.isStatic) continue;
-      let group = groups.find((g) => g.sourceSlotIndex === sourceSlotIndex && g.state === grant.state);
-      if (group === undefined) {
-        group = {
-          sourceSlotIndex,
-          state: grant.state,
-          grants: [],
-          contents: contents.filter((c) => c.whileState === grant.state),
-          stage: 1,
-          starts: slots.map(() => []),
-          shotCount: slots.map(() => false),
-        };
-        groups.push(group);
-      }
-      group.grants.push(grant);
-      group.stage = Math.max(group.stage, stageOfGrant(grant)) as StateStage;
-    }
-  });
-  return groups;
-}
-
-function windowOf(
-  slotIndex: number,
-  sourceSlotIndex: number,
-  effect: WindowEffect,
-  w: { start: number; end: number; stack?: number },
-): BuffWindow {
-  const window: BuffWindow = { slotIndex, sourceSlotIndex, effect, start: w.start, end: w.end };
-  if (w.stack !== undefined) window.stack = w.stack;
-  return window;
-}
-
 /** 順位の材料（skills/ranking.ts）。常時パッシブは resolvePassiveStates の結果 */
 export function rankSlotsOf(slots: readonly TimelineSlot[], passive: readonly (SlotBuffState | null)[]): RankSlot[] {
   return slots.map((slot, i) =>
@@ -1321,7 +652,7 @@ export function groupTimeline(timeline: BuffTimeline, slotIndex: number): Timeli
 
 export type FrameRange = { start: number; end: number };
 
-/** Stage 18-C: planBuffTimeline に渡す着地点（frame/landing.ts の LandingPlan の一部） */
+/** Stage 18-C: 区間の組み立てに渡す着地点（frame/landing.ts の LandingPlan の一部） */
 export type TimelineLandings = {
   spans: readonly { start: number; end: number; landing: string | null }[];
   /** 枠ごと: 条件が自動か（鍵に着地点を入れる枠） */

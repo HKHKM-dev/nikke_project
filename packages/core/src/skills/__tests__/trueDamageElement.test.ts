@@ -10,13 +10,9 @@ import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../../time.ts';
 import { ZERO_BUFFS, type ChangedWeapon } from '../buffs.ts';
 import { applyComposition, compositionAllows, enemyElementAllows, withCharacterAllows } from '../composition.ts';
 import { MAX_SKILL_LEVELS, resolveStateContents, resolveStateGrants, resolveTimed } from '../resolve.ts';
-import {
-  inFullBurstAt,
-  planBuffTimeline,
-  triggerFrames,
-  untilFullBurstEndWindows,
-  type TimelineSlot,
-} from '../timeline.ts';
+import { triggerFrames, untilNextEndWindows, type TimelineSlot } from '../timeline.ts';
+import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
+import { itemsOf } from '../holders.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEntry, type SkillEffect } from '../types.ts';
 
 const FRAMES = gameSecondsToFrames(180);
@@ -203,17 +199,11 @@ describe('窓の作り方', () => {
 
   it('closes a window at the next full burst end (or the battle end)', () => {
     // 固定サイクルのフルバーストは [H, C)、[C + H, 2C) …
-    expect(untilFullBurstEndWindows([H], schedule, FRAMES)).toEqual([[H, C]]);
-    expect(untilFullBurstEndWindows([0], schedule, FRAMES)).toEqual([[0, C]]);
-    expect(untilFullBurstEndWindows([H, H + 10], schedule, FRAMES)).toEqual([[H, C]]);
-    expect(untilFullBurstEndWindows([5], null, FRAMES)).toEqual([[5, FRAMES]]);
-  });
-
-  it('tells whether a frame is inside a full burst', () => {
-    expect(inFullBurstAt(schedule, H - 1)).toBe(false);
-    expect(inFullBurstAt(schedule, H)).toBe(true);
-    expect(inFullBurstAt(schedule, C)).toBe(false);
-    expect(inFullBurstAt(null, H)).toBe(false);
+    const ends = schedule.fullBurstWindows.map((w) => w.end);
+    expect(untilNextEndWindows([H], ends, FRAMES)).toEqual([[H, C]]);
+    expect(untilNextEndWindows([0], ends, FRAMES)).toEqual([[0, C]]);
+    expect(untilNextEndWindows([H, H + 10], ends, FRAMES)).toEqual([[H, C]]);
+    expect(untilNextEndWindows([5], [], FRAMES)).toEqual([[5, FRAMES]]);
   });
 
   it('fires a timer trigger with atStart at frame 0 too', () => {
@@ -244,8 +234,8 @@ describe('窓の作り方', () => {
     return { character, definition, levels: MAX_SKILL_LEVELS, casterBaseAttack: 1000 };
   }
 
-  it('builds the windows of durationUntil and inFullBurst in planBuffTimeline', () => {
-    const t = planBuffTimeline(
+  it('builds the items of durationUntil and inFullBurst in the first pass', () => {
+    const { history } = firstPassTimeline(
       [
         slotOf('Step3', [
           {
@@ -277,16 +267,15 @@ describe('窓の作り方', () => {
           },
         ] as SkillEffect[]),
       ],
-      schedule,
-      FRAMES,
-    );
-    const element = t.windows.filter((w) => w.effect.stat === 'elementDamage');
+      { frames: FRAMES, burst: true, burstModel: 'fixed' },
+    ).first;
+    const element = itemsOf(history, { stat: 'elementDamage' });
     expect(element[0]).toMatchObject({ start: H, end: C });
     expect(element).toHaveLength(9);
-    const up = t.windows.filter((w) => w.effect.stat === 'trueDamage');
+    const up = itemsOf(history, { stat: 'trueDamage' });
     expect(up[0]).toMatchObject({ start: H, end: H + gameSecondsToFrames(5) });
-    expect(t.windows.some((w) => w.effect.stat === 'damageTaken')).toBe(false);
-    expect(t.conditionSkips).toEqual([expect.objectContaining({ frame: 0 })]);
+    expect(itemsOf(history, { stat: 'damageTaken' })).toEqual([]);
+    expect(history.conditionSkips).toEqual([expect.objectContaining({ frame: 0 })]);
   });
 });
 

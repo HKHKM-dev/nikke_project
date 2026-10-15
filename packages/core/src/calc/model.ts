@@ -64,7 +64,7 @@ import type { PartialShot } from '../frame/shots.ts';
 
 /**
  * Stage 10: 射撃の列 frames（昇順）のうち、区間の列 ranges（[start, end)、昇順・重なりなし）に入る発数。
- * 区間は planBuffTimeline の [0, frames) を隙間・重なりなく覆う区間から作るので、どの射撃もちょうど 1 つの区間に入る
+ * 区間は BuffTimeline の [0, frames) を隙間・重なりなく覆う区間から作るので、どの射撃もちょうど 1 つの区間に入る
  */
 export function countShotsInRanges(
   frames: readonly number[],

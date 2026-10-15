@@ -7,7 +7,9 @@ import type { ShotLog } from '../../frame/shots.ts';
 import type { SkillRaw } from '../../types.ts';
 import { computeBurstHit, resolveDamageEffects, type ResolvedSkillDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveTimed, resolveTrigger } from '../resolve.ts';
-import { buffStartFrames, planBuffTimeline, triggerFrames } from '../timeline.ts';
+import { triggerFrames } from '../timeline.ts';
+import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
+import { itemsOf, startOfFire } from '../holders.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
@@ -124,7 +126,7 @@ describe('resolveTrigger', () => {
   });
 });
 
-describe('triggerFrames / buffStartFrames (Stage 8)', () => {
+describe('triggerFrames / startOfFire (Stage 8)', () => {
   // 9 発撃ってリロード、また 9 発…の列（ドレイク型 SG）
   const frames = 1000;
   const log: ShotLog = {
@@ -139,10 +141,15 @@ describe('triggerFrames / buffStartFrames (Stage 8)', () => {
     expect(triggerFrames({ count: 'normalShot', every: 10 }, null, 0, 500, [log])).toEqual([400]);
   });
 
-  it('starts buff windows on the frame after the triggering shot', () => {
-    expect(buffStartFrames({ count: 'normalShot', every: 10 }, null, 0, frames, [log])).toEqual([401, 841]);
+  it('starts buff items on the frame after the triggering shot', () => {
+    const trigger = { count: 'normalShot', every: 10 } as const;
+    const starts = (n: number) =>
+      triggerFrames(trigger, null, 0, n, [log])
+        .map((f) => startOfFire(trigger, f))
+        .filter((s) => s < n);
+    expect(starts(frames)).toEqual([401, 841]);
     // 最後のフレームの射撃で付くバフは戦闘時間の外
-    expect(buffStartFrames({ count: 'normalShot', every: 10 }, null, 0, 841, [log])).toEqual([401]);
+    expect(starts(841)).toEqual([401]);
   });
 
   it('counts full-charge shots only for charge weapons', () => {
@@ -187,18 +194,22 @@ describe('triggerFrames / buffStartFrames (Stage 8)', () => {
         burst: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
       },
     });
-    const character = makeCharacter({}, { skills: { skill1: skill(['20']), skill2: skill([]), burst: skill([]) } });
+    // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 B）: 1 パス目の射撃で数える。発の間隔が 1 秒より長い遅い武器（90 rpm）にして、
+    // 件が重ならないようにする
+    const character = makeCharacter(
+      { rateOfFire: 90, endRateOfFire: 90 },
+      { skills: { skill1: skill(['20']), skill2: skill([]), burst: skill([]) } },
+    );
     const slots = [{ character, definition: def, levels: MAX_SKILL_LEVELS, casterBaseAttack: 1000 }];
-    const t = planBuffTimeline(slots, null, frames, [log]);
+    const { first } = firstPassTimeline(slots, { frames: 3000, burst: false });
     // 1 秒 = gameSecondsToFrames(1)（Stage 21-B: 58f）
     const len = gameSecondsToFrames(1);
-    expect(t.windows.map((w) => [w.start, w.end])).toEqual([
-      [401, 401 + len],
-      [841, 841 + len],
-    ]);
+    const tenth = first.shots[0]!.frames.filter((_, i) => (i + 1) % 10 === 0);
+    expect(tenth.length).toBeGreaterThan(1);
+    expect(itemsOf(first.history, { kind: 'timed' }).map((i) => [i.start, i.end])).toEqual(
+      tenth.map((f) => [f + 1, f + 1 + len]),
+    );
     expect(resolveTimed(def, character, MAX_SKILL_LEVELS)[0]!.trigger).toEqual({ count: 'normalShot', every: 10 });
-    // shots を渡さなければ射撃の回数は発火しない（Stage 7 までの呼び出し方）
-    expect(planBuffTimeline(slots, null, frames).windows).toEqual([]);
   });
 });
 
