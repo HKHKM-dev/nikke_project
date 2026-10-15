@@ -32,6 +32,26 @@ describe('damageTaken の検証', () => {
       /damageTaken cannot narrow its target/,
     );
   });
+
+  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 敵の件なので、持ち主ごとに違いうる絞り込みと維持を書けない
+  it('cannot vary by holder, since the enemy holds it', () => {
+    expect(() => parseSkillDefinition(withBurstEffect({ excludeSelf: 'always' }))).toThrow(
+      /damageTaken is held by the enemy, so it cannot have excludeSelf/,
+    );
+    expect(() => parseSkillDefinition(withBurstEffect({ durationRef: undefined, durationShots: 10 }))).toThrow(
+      /damageTaken is held by the enemy, so it cannot have durationShots/,
+    );
+    // 常時の受けるダメージ▲（観測値の比べる設定が使う）は、いまのまま味方の各枠の常時の値
+    const passive = structuredClone(raw862);
+    passive.skills.skill1!.effects[0] = { kind: 'passive', target: 'allies', stat: 'damageTaken', ref: 1 };
+    expect(parseSkillDefinition(passive).skills.skill1.effects[0]).toMatchObject({
+      kind: 'passive',
+      stat: 'damageTaken',
+    });
+    expect(() =>
+      parseSkillDefinition(withBurstEffect({ stat: 'attack', condition: { selfBuffed: 'damageTaken' } })),
+    ).toThrow(/damageTaken is held by the enemy, not by the caster/);
+  });
 });
 
 describe('computeBurstHit の damageTakenMultiplier', () => {
