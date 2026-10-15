@@ -31,7 +31,9 @@ import {
   type AutoConditionSummary,
   type LandingFrameSpan,
 } from '../frame/landing.ts';
-import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect } from '../skills/resolve.ts';
+import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type WindowEffect } from '../skills/resolve.ts';
+import { valuePiecesOf } from '../skills/holders.ts';
+import { isStateStat } from '../skills/types.ts';
 import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
@@ -64,7 +66,7 @@ export type SimEvent =
   | { frame: number; kind: 'trigger'; slot: number; fullBurst: boolean; damage: number }
   | { frame: number; kind: 'burst'; slot: number; step: BurstStepKey; damage: number }
   | { frame: number; kind: 'fullBurstStart' | 'fullBurstEnd' | 'gaugeFull' | 'chainTimeout' }
-  | { frame: number; kind: 'buffStart' | 'buffEnd'; slot: number; effect: BuffWindow['effect'] }
+  | { frame: number; kind: 'buffStart' | 'buffEnd'; slot: number; effect: WindowEffect }
   | { frame: number; kind: 'skillHit'; slot: number; effect: SkillHitEvent['effect']; damage: number }
   | {
       frame: number;
@@ -165,10 +167,11 @@ export function runSimulation(simInput: SimInput): SimResult {
   const trace = input.trace ?? false;
 
   // 1 パス目（calc と共通）: 射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動。2 パス目がこの下のフレームループ
-  const { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, shotGauges } = planTeamRun({
-    ...input,
-    model,
-  });
+  const { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, shotGauges, history } =
+    planTeamRun({
+      ...input,
+      model,
+    });
   // Stage 16-B: 1 秒ごとのダメージ（タイムラインの表示用）
   // 最後のフレーム（180 秒の戦闘では 179.996 秒）が入る秒までの列（V-0086）
   const seconds = frames > 0 ? Math.floor(framesToGameSeconds(frames - 1)) + 1 : 0;
@@ -280,6 +283,9 @@ export function runSimulation(simInput: SimInput): SimResult {
   let windowIndex = 0;
   let inFullBurst = false;
   let segIndex = 0;
+  // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 4）: 記録の出来事は、区間に足す値の小片の始まりと終わり
+  // （状態だけの stat は区間の効果に入らないので出さない）
+  const pieces = trace ? valuePiecesOf(history).filter((p) => !isStateStat(p.effect.stat)) : [];
 
   for (let f = 0; f < frames; f++) {
     while (segIndex + 1 < timeline.segments.length && timeline.segments[segIndex]!.end <= f) segIndex += 1;
@@ -290,7 +296,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       if (inFullBurst && !fb) events.push({ frame: f, kind: 'fullBurstEnd' });
       if (gaugeFull.has(f)) events.push({ frame: f, kind: 'gaugeFull' });
       if (chainTimeouts.has(f)) events.push({ frame: f, kind: 'chainTimeout' });
-      for (const w of timeline.windows) {
+      for (const w of pieces) {
         if (w.start === f) events.push({ frame: f, kind: 'buffStart', slot: w.slotIndex, effect: w.effect });
         if (w.end === f) events.push({ frame: f, kind: 'buffEnd', slot: w.slotIndex, effect: w.effect });
       }
