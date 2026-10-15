@@ -40,6 +40,7 @@
 
 ## 今後の課題
 
+- 効果を持ち主ごとの一覧で持つ組み直し（2026-10-15 起票。オーナーの問いから）→ 起案: [design-holder-effects.md](design-holder-effects.md)（2 段目の語彙の前に行う。段 A〜C。論点 1・2 は 2026-10-15 のオーナーの決定）
 - 「基本バースト段階が N の味方」に、同じ段階へ再突入するニケを数えていた（2026-10-15 起票。ゲーム内の用語のツールチップとの食い違い）→ 完了: V-0431、C-0555（C-0203 にツールチップの根拠を足して確定）。データ明記の定義にツールチップを足した（2026-10-15 のオーナーの決定。[design-skill-catalog.md](design-skill-catalog.md) 論点 10・11、[design-stage20.md](design-stage20.md) 3.3 節）
 - I-DOLL・フラワー（RL）の通常攻撃のコアの外れ（2026-10-02 起票）→ 完了: V-0097〜V-0101・V-0104・V-0153、C-0171〜C-0175・C-0242・C-0530（C-0028 は棄却。C-0241 は本数の数え違いで C-0530 に置き換えた）、[design-rl-core-by-projectile.md](design-rl-core-by-projectile.md)
 - レイヴン・A2（RL）の発の刻みがモデルより長い（2026-10-02 起票）→ 完了: V-0130・V-0136、C-0216・C-0217・C-0225（C-0110・C-0218 は棄却）、[design-fire-stance-cadence.md](design-fire-stance-cadence.md)（未確認の残りは 8 節）
