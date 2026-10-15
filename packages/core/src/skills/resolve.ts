@@ -361,7 +361,7 @@ export type ResolvedStateContent = ResolvedEffect & {
   maxStacks?: number;
 };
 
-/** 名前の付いた状態の語彙編: 窓を持つ効果（持続バフと、状態の中身）。BuffWindow・AppliedTimedEffect の元 */
+/** 名前の付いた状態の語彙編: 窓（件）を持つ効果（持続バフと、状態の中身）。値の小片（ValuePiece）・AppliedTimedEffect の元 */
 export type WindowEffect = ResolvedTimedEffect | ResolvedStateContent;
 
 /** 名前の付いた状態の語彙編: 状態の中身か（トリガーと維持を持たない） */

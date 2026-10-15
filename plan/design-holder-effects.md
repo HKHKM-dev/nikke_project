@@ -3,7 +3,7 @@
 - 別紙: [design-holder-effects-current.md](design-holder-effects-current.md)（1 節: いまの作り。以下「いまの作りの別紙」）
 - 関連: [design-skill-catalog.md](design-skill-catalog.md)（2 段目の計画。9 節の段の候補）、[design-named-state.md](design-named-state.md)（5.2 節: 状態の段、8 節: 状態の後の拡張）、[design-stage6.md](design-stage6.md)（窓と区間。8 節の 2・9 節）、[design-stage10.md](design-stage10.md)（1 パス目。1 節）、[design-stage11-modernia.md](design-stage11-modernia.md)（1.5 段目。2.4・3.3 節）、[design-stage11.md](design-stage11.md)（順位。19 節）、[design-true-damage-element.md](design-true-damage-element.md)（強化。3.5 節）、[design-heal-window.md](design-heal-window.md)（吸収回復の窓）
 - 作成日: 2026-10-15
-- 状態: 決定。2026-10-15 にオーナーが論点 1〜11 と段の構成（3 節）を決めた（論点 1・2・6〜11 は推奨どおり、論点 3・4・5 は代わりの案。段 D・E はオーナーの指示で足し、論点 4 に合わせて段 A・B の中身を組み替えた）。設計書は、オーナーの指示で段 A の実装より先に PR にした（AGENTS.md のコミット手順の「設計の承認は実装と同じ PR に含める」の例外）。段 A〜D を実装した（2026-10-15。経過は別紙 [design-holder-effects-log.md](design-holder-effects-log.md)）
+- 状態: 決定。2026-10-15 にオーナーが論点 1〜11 と段の構成（3 節）を決めた（論点 1・2・6〜11 は推奨どおり、論点 3・4・5 は代わりの案。段 D・E はオーナーの指示で足し、論点 4 に合わせて段 A・B の中身を組み替えた）。設計書は、オーナーの指示で段 A の実装より先に PR にした（AGENTS.md のコミット手順の「設計の承認は実装と同じ PR に含める」の例外）。段 A〜E を実装した（2026-10-15。経過は別紙 [design-holder-effects-log.md](design-holder-effects-log.md)）
 
 ## 0. 目的と方針
 
@@ -119,6 +119,7 @@ type HeldEffect = {
 - 常時の件は、窓ではなく、いまと同じく常時の値（`passive` と区間の常時の効果）に書き出す。
 - **並び**: 時刻の順（論点 5）。窓は始まりの順、記録はフレームの順にし、同じフレームのものは手順 3 で付けた順（段 → 出どころの枠 → 定義の順 → 持ち主 → スタックの段）に並べる。区間の値もこの順に足すので（[design-stage6.md](design-stage6.md) 9 節の浮動小数の加算順を、窓の作る順から時刻の順に改める）、いまの値と浮動小数の末尾が変わりうる。
 - 区間の鍵（`slotKeys`）に入れる効果の出どころは、定義の順（出どころの枠 → スロット → 効果 → 中身）に並べ直す（段 A）。区間の中の効果は時刻の順なので、そのまま鍵に入れると、同じ効果の組の区間が、付いた順の違いで別のグループに割れる。いまの作る順も効果ごとに窓がまとまっていたので、グループの分け方は変わらない。
+- 段 E の実装: 窓と記録の書き出しを消した。`BuffTimeline` に残したのは区間（`segments`）と常時の値（`passive`。常時の件から作り、calc と sim の常時の効果が読む）。並び（論点 5）は、値の小片（`valuePiecesOf`）の並びとして残る。
 
 ### 2.7 件を作るのは 1 パス目だけ（段 A から）
 
@@ -174,7 +175,7 @@ declare function eventsOf(history: HolderHistory, item: HeldEffect): HeldEvent[]
 ```
 
 - 段 B で、件を読む関数 `itemsOf`（絞り込んだ件。時刻の順）・`activeItemsAt`（持ち主にフレーム f に効いている件）と、強化の値の小片（`HolderHistory.amplified`）を置いた（`skills/holders.ts`。件は `HeldItemView`）。出来事（付き直し・外れた）の読み方は、使う読む側を移す段で足す。段 D の 1 で、区間に足す値の小片（`valuePiecesOf`。味方の枠ごと）を置いた。
-- 区間は、件と値の小片から作る（段 D の 1）。境目は、件の始まり・終わりと値の小片の変わり目に、いまと同じくフルバーストの端・発動・着地点の境目を足したもの。段 E の後に `BuffTimeline` に残るのは、区間と履歴。
+- 区間は、件と値の小片から作る（段 D の 1）。境目は、件の始まり・終わりと値の小片の変わり目に、いまと同じくフルバーストの端・発動・着地点の境目を足したもの。段 E の後に `BuffTimeline` に残るのは、区間と常時の値（2.6 節の段 E の実装）。履歴は `TeamPlan`・`TeamResult`・`SimResult` の `history` に持つ。
 
 ### 2.10 範囲の外
 
@@ -211,6 +212,7 @@ declare function eventsOf(history: HolderHistory, item: HeldEffect): HeldEvent[]
   2. 記録の欄（`applications`・`conditionSkips`・`rankings`・`heals`）も消す（論点 10）。
   3. 残るのは区間（論点 9）と履歴。どちらも 1 パス目の後に `planTeamRun` が作る。
   4. コードのコメントの「窓」は、触る所だけ「件」に直す。型の名前に残る「窓」（`WindowEffect` など）を改めるかは、この段で決める。過去の設計書は当時の記録なので書き換えない。
+     - 段 E の実装: 型の名前は改めなかった（`WindowEffect` は件を持つ効果の型として読め、名前を変えても値と動きは変わらず、差分が広がるだけのため）。件を作る関数の名前（`unionWindows` など）も同じ。改めるなら別の PR にする。
 - **その後**: 2 段目の語彙を、[design-skill-catalog.md](design-skill-catalog.md) 9 節の段の候補 1 から、段 E の後に足す（論点 11）。段 A を始めてから段 B を閉じるまでは、語彙を足さない（その間は、旧の実装と一覧の 2 つがあるので）。
 
 ## 4. 確かめ方（各段の完了の条件）

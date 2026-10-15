@@ -134,7 +134,7 @@ export function isFiringStat(stat: BuffStat | 'weapon'): boolean {
 }
 
 /**
- * Stage 11 モダニア: 状態だけを表す stat（射撃に効かない）。timed の窓は BuffTimeline.stateWindows に置く。区間を割り、区間の
+ * Stage 11 モダニア: 状態だけを表す stat（射撃に効かない）。timed の件は区間の timedEffects に入れない。区間を割り、区間の
  * buffs と鍵に入るのは、着地点の計画（条件が自動の枠）があるときだけ（C-0170。手入力の枠の区間・グループは変わらない）
  */
 export const STATE_STATS = ['hitRate'] as const satisfies readonly BuffStat[];
@@ -787,7 +787,7 @@ export type CycleEffect = {
 /**
  * Stage 11 紅蓮BS: 「スキル N の（フルチャージ）攻撃回数の条件が … に変更」。維持時間のあいだ、自分のスロット slot の cycle を
  * every 回ごとに進める（通算カウンタの every の倍数。1 なら毎回）。カウンタ自体は変えない（録画 47 の 5 回の FB で確認）。
- * 対象は常に自分。窓は BuffTimeline.cycleWindows に置き、区間には入れない
+ * 対象は常に自分。件は持ち主ごとの一覧の履歴（cycleEvery の件）に置き、区間には入れない
  */
 export type CycleEveryEffect = {
   kind: 'cycleEvery';

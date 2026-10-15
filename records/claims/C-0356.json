@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "推論",
   "basis": "値は H1 の規則（そのフレームのバフ）で合うが、時刻が合わない: ヒットは追撃が付いたフレームではなく、雪子のバーストのヒットの 102〜104f 後（`259-10`）。C-0361 に置き換えた（2026-10-06 のオーナーの判断。V-0233 の論点 2）。値の `259-02` は H1 より 24.5 大きく、差は攻撃力の▲を効果ごとに丸めると合う（同じ差が `259-09` の 1more にも出る。論点 3。別の検証で扱う）。V-0233",
-  "model": "`data/skills/870.json`（skill1 の effects[4]。`damage`・トリガー `{ applied: followUp }`・`distributed`）。付いたフレームは `skills/timeline.ts` の `BuffTimeline.applications`、ヒットは `frame/plan.ts` の `planSkillHits`（plan/design-persona.md 3.3 節）。未検証（V-0233 の撮影待ち）",
+  "model": "`data/skills/870.json`（skill1 の effects[4]。`damage`・トリガー `{ applied: followUp }`・`distributed`）。付いたフレームは `skills/holders.ts` の `HolderHistory.applications`（1 パス目の履歴の付いた記録）、ヒットは `frame/plan.ts` の `planSkillHits`（plan/design-persona.md 3.3 節）。未検証（V-0233 の撮影待ち）",
   "replaces": [],
   "updated": "2026-10-06"
 }

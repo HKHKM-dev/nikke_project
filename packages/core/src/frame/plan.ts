@@ -4,8 +4,8 @@
 // Stage 10: 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、1 パス目の射撃の列と時刻表は frame/firstPass.ts の
 // フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
 // Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
-// 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間と記録は、1 パス目の件の一覧の履歴から書き出す
-// （2 パス目の作り直しはやめた）。
+// 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間は、1 パス目の件の一覧の履歴から作る
+// （2 パス目の作り直しはやめた）。件と記録は履歴（TeamPlan.history）を読む。
 import { burstDelaysFieldOf, burstDelaysOf, isSplit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames } from '../time.ts';
@@ -149,7 +149,7 @@ export type TeamPlan = {
 /**
  * Stage 8: 1 パス目。射撃の列 → 時刻表（常時のゲージ速度込み）→ バフの区間（射撃の回数トリガー込み）→ 倍率ダメージの発動。
  * Stage 10: 射撃の列と時刻表は runFirstPass のフレームループで同時に作る（射撃に効くバフ・CT 短縮・弾丸チャージ込み）。
- * バフの区間と倍率ダメージは、確定した射撃の列と時刻表から作る。持ち主ごとの一覧編: バフの区間は 1 パス目の履歴から書き出す。
+ * バフの区間と倍率ダメージは、確定した射撃の列と時刻表から作る。持ち主ごとの一覧編: バフの区間は 1 パス目の履歴から作る。
  */
 export function planTeamRun(teamInput: TeamInput): TeamPlan {
   // Stage 9: 直接呼ばれても宝物の段階が効くように。最上位で適用済みなら何もしない（同じオブジェクト）
@@ -188,7 +188,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
         }),
   });
   const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges } = first;
-  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間と記録は、1 パス目の件の一覧の履歴から書き出す
+  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間は、1 パス目の件の一覧の履歴から作る
   const sustainedHitRateUp = input.sustainedHitRateUp ?? true;
   const timeline = buffTimelineOf(first.history, schedule, landing, sustainedHitRateUp);
   const skillHits = planSkillHits(
