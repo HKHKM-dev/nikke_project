@@ -18,6 +18,8 @@ const anis = readJson<CharacterData>('../../../data/characters/17.json');
 const flower = readJson<CharacterData>('../../../data/characters/304.json');
 const redHood = readJson<CharacterData>('../../../data/characters/470.json');
 const crown = readJson<CharacterData>('../../../data/characters/330.json');
+const avistar = readJson<CharacterData>('../../../data/characters/441.json');
+const delta = readJson<CharacterData>('../../../data/characters/20.json');
 const raw = readJson<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>('../../../data/skills/17.json');
 const def = parseSkillDefinition(raw);
 
@@ -93,6 +95,27 @@ describe('バースト段階の構成の条件（burstStepMix）', () => {
   it('does not count a variable Burst stage (AllStep) as Burst I (論点 1)', () => {
     expect(redHood.burstStep).toBe('AllStep');
     expect(burstStepMixAllows(absent, [anis, redHood], 0)).toBe(true);
+  });
+
+  it('does not count an ally that re-enters Burst I after her Burst (C-0555)', () => {
+    expect([avistar.burstStep, avistar.burstSkill.nextStep]).toEqual(['Step1', 'Step1']);
+    expect(burstStepMixAllows(absent, [anis, avistar], 0)).toBe(true);
+    expect(burstStepMixAllows(present, [anis, avistar], 0)).toBe(false);
+    // 通常の I（次は II）のフラワーがいれば数える
+    expect(burstStepMixAllows(absent, [anis, avistar, flower], 0)).toBe(false);
+  });
+
+  it('gives My Own Star with a re-entering Burst I ally only (録画 460)', () => {
+    const team = applyComposition(def, [anis, avistar, delta], 0);
+    expect(team.skills.skill1.effects.map((e) => e.kind)).toEqual([
+      'passive',
+      'passive',
+      'cooldownReduction',
+      'cooldownReduction',
+      'damage',
+    ]);
+    expect(burstReentryStepOf(team)).toBeNull();
+    expect(burstUnitOf(anis, team).nextStep).toBe('Step2');
   });
 
   it('removes the effects whose condition fails and keeps the rest', () => {

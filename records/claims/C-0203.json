@@ -1,16 +1,21 @@
 {
   "id": "C-0203",
   "text": "アニス：スターの S1 の部隊構成の分岐で、バースト段階が可変（AllStep）のキャラは「基本バースト段階 1 の味方」に数えない",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
-  "grade": "推論",
-  "basis": "解釈（plan/design-anis-star-s1.md 5 節の論点 1。2026-10-03 にオーナーが推奨どおりと承認）。AllStep のキャラ（レッドフード）を添えた録画は無い。C-0191 から分けた。V-0122",
-  "model": "`skills/composition.ts` の `burstStepMixAllows`（burstStep が otherBurstStep と一致するキャラだけを数える）",
+  "grade": "データ明記",
+  "basis": "ゲーム内の用語のツールチップ（「基本バースト段階がIの味方」「基本バースト段階がIIIの」。2026-08-09 撮影。参照資料 reference/tooltips/）に、全段階のニケは入らない（スキルで段階が変わるラピ：レッドフードは元の段階で数える）と書かれている。2026-10-15 のオーナーの決定で、ツールチップは説明文と同じくデータ明記の根拠にでき、モデルの値を変えない結論はツールチップだけで確定にできる（この結論はいまのモデルのまま）。それまでの根拠は解釈（plan/design-anis-star-s1.md 5 節の論点 1。2026-10-03 にオーナーが推奨どおりと承認）だけで、AllStep のキャラ（レッドフード）を添えた録画は無い。C-0191 から分けた。V-0122・V-0431",
+  "model": "`skills/composition.ts` の `countsAsBurstStep`（burstStep が N のキャラだけを数える。AllStep は Step1〜Step3 のどれとも一致しない）",
   "replaces": ["C-0191"],
-  "updated": "2026-10-04",
-  "when": {
-    "teamHas": {
-      "burstStage": "AllStep"
-    }
+  "updated": "2026-10-15",
+  "subject": {
+    "places": [
+      "data/skills/17.json の skill1 の effects[1]",
+      "data/skills/17.json の skill1 の effects[2]",
+      "data/skills/17.json の skill1 の effects[3]",
+      "data/skills/17.json の skill1 の effects[5]",
+      "data/skills/17.json の skill2 の effects[0]",
+      "data/skills/17.json の burst の effects[2]"
+    ]
   }
 }

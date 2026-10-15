@@ -28,17 +28,35 @@ import {
  * 条件を見るのに要るキャラの欄。対象の語彙編: 編成で決まる対象を決めるときは、武器種・属性（絞り込み）とチャージ時間も要る
  * （その効果が無い編成では無くてよい）
  */
-export type CompositionCharacter = Pick<CharacterData, 'burstStep' | 'squad' | 'resourceId'> &
+export type CompositionCharacter = BurstStepCharacter &
+  Pick<CharacterData, 'squad' | 'resourceId'> &
   Partial<Pick<CharacterData, 'weaponType' | 'element' | 'shot'>>;
 
-/** 自分（selfIndex）を除く空でない枠に、基本バースト段階が mix.otherBurstStep のキャラがいるかを mix.present と比べる */
+/** 「基本バースト段階が N の味方」を数えるのに要る欄（基本バースト段階と、バーストの後の段階） */
+export type BurstStepCharacter = Pick<CharacterData, 'burstStep'> & {
+  burstSkill: Pick<CharacterData['burstSkill'], 'nextStep'>;
+};
+
+/**
+ * 基本バースト段階が step の味方に数えるか。バーストの後に同じ段階へ再突入するキャラ（burstSkill.nextStep が burstStep と同じ。
+ * アビスタなど）は数えない（C-0555。ゲーム内の用語のツールチップと録画 460）。全段階（AllStep）のキャラは burstStep が
+ * Step1〜Step3 のどれとも一致しないので数えない（C-0203）
+ */
+export function countsAsBurstStep(c: BurstStepCharacter, step: string): boolean {
+  return c.burstStep === step && c.burstSkill.nextStep !== c.burstStep;
+}
+
+/**
+ * 自分（selfIndex）を除く空でない枠に、基本バースト段階が mix.otherBurstStep のキャラ（countsAsBurstStep。再突入するキャラは
+ * 数えない）がいるかを mix.present と比べる
+ */
 export function burstStepMixAllows(
   mix: BurstStepMixCondition | undefined,
-  characters: readonly (Pick<CharacterData, 'burstStep'> | null)[],
+  characters: readonly (BurstStepCharacter | null)[],
   selfIndex: number,
 ): boolean {
   if (mix === undefined) return true;
-  const present = characters.some((c, i) => i !== selfIndex && c !== null && c.burstStep === mix.otherBurstStep);
+  const present = characters.some((c, i) => i !== selfIndex && c !== null && countsAsBurstStep(c, mix.otherBurstStep));
   return present === mix.present;
 }
 
@@ -114,7 +132,7 @@ export function hasPersonaTargetFilter(effect: SkillEffect): boolean {
  * 対象の語彙編: 編成で決まる対象の枠（順位の順）。targetSquad = 部隊が自分と同じ枠（自分を含む。枠の順）、
  * longestChargeTime = 基本チャージ時間（CharacterData.shot.chargeTime）の長い順（同値は枠の若い順。仮定）。
  * ペルソナ編: targetState = 枠の静的な状態（states[i]。名前の付いた状態の語彙編: 枠の定義の静的な付与が付ける状態）にその id がある枠、
- * targetBurstStep = 基本バースト段階が N の枠、allies の excludeSelf = 自分の枠を外す。
+ * targetBurstStep = 基本バースト段階が N の枠（countsAsBurstStep。再突入するキャラは除く）、allies の excludeSelf = 自分の枠を外す。
  * どれも targetWeapon・targetElement で絞った後。どれでもない効果は undefined。付与（state）も timed と同じ
  */
 export function fixedTargetsOf(
@@ -139,7 +157,7 @@ export function fixedTargetsOf(
     if (c === null) return;
     if (squad && c.squad !== self.squad) return;
     if (state !== undefined && !(states[i] ?? []).includes(state)) return;
-    if (step !== undefined && c.burstStep !== step) return;
+    if (step !== undefined && !countsAsBurstStep(c, step)) return;
     if (excludeSelf && i === selfIndex) return;
     if (!matchesTargetFilter(effect, fullCharacter(c, i))) return;
     candidates.push(i);

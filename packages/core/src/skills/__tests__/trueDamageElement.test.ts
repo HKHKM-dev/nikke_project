@@ -161,8 +161,8 @@ describe('withCharacter・enemyElement', () => {
   });
 
   const characters = [
-    { resourceId: 95, burstStep: 'Step2' as const, squad: 'Absolute' },
-    { resourceId: 93, burstStep: 'Step1' as const, squad: 'Absolute' },
+    { resourceId: 95, burstStep: 'Step2' as const, burstSkill: { nextStep: 'Step3' as const }, squad: 'Absolute' },
+    { resourceId: 93, burstStep: 'Step1' as const, burstSkill: { nextStep: 'Step2' as const }, squad: 'Absolute' },
     null,
   ];
 

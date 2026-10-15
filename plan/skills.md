@@ -45,22 +45,22 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
 
 - **skill1**: partial
   - effects[0] passive・burstGaugeSpeed: C-0244（仮説）
-  - effects[1] passive・attack: C-0189（確定）、C-0203（仮説）
-  - effects[2] cooldownReduction・battleStart: C-0202（確定）、C-0203（仮説）
-  - effects[3] cooldownReduction・fullBurstEnd: C-0202（確定）、C-0203（仮説）
+  - effects[1] passive・attack: C-0189（確定）、C-0203（確定）、C-0555（確定）
+  - effects[2] cooldownReduction・battleStart: C-0202（確定）、C-0203（確定）、C-0555（確定）
+  - effects[3] cooldownReduction・fullBurstEnd: C-0202（確定）、C-0203（確定）、C-0555（確定）
   - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）、C-0413（確定）、C-0461（確定）
-  - effects[5] burstReentry: C-0201（確定）、C-0203（仮説）
+  - effects[5] burstReentry: C-0201（確定）、C-0203（確定）、C-0555（確定）
   - notes[0] 未対応: 味方のゲージへの効き方は、実測では ×1.06 ではなく、味方のゲージ 1 回（弾・追加ダメージのヒット）ごとに一定量を足す形（アニス：スターが撃っているとき約 1,680、操作で撃たないとき約 840）。モデルはまだ ×1.06 のまま（未反映）: C-0245（仮説）、C-0246（仮説）
   - notes[1] 未対応: 誘導弾の飛ぶ時間（ゲージが着弾で溜まる分）は、射撃場の的の距離帯ごとの代表値だけ。的の表の無い敵では 0（発射のフレームに溜まる）。着地点ごとの値、ダメージを置くフレームとバフの判定を着弾の時刻にすること（発動に重なる発の追加ダメージだけにバーストの攻撃ダメージ▲が乗る分）は未実装（plan/design-anis-star-gauge-timing.md 3 節）: C-0413（確定）、C-0461（確定）
 - **skill2**: partial
-  - effects[0] timed・fullBurstStart・attack: C-0204（確定）、C-0203（仮説）
+  - effects[0] timed・fullBurstStart・attack: C-0204（確定）、C-0203（確定）、C-0555（確定）
   - effects[1] timed・fullBurstStart・projectileExplosionDamage: C-0205（確定）、C-0210（仮説）
   - effects[2] timed・fullBurstStart・attackDamage: C-0204（確定）
   - notes[0] 未対応: みんなの星のときのフルチャージ攻撃時の味方全体の回復（回復を受けた時に発動する味方のスキルには効く）: 根拠なし
 - **burst**: partial
   - effects[0] autoAttack・burstUse: C-0211（確定）、C-0213（確定）、C-0207（確定）、C-0504（確定）、C-0297（確定）、C-0466（確定）、C-0521（仮説）
   - effects[1] timed・burstUse・fixedChargeTime: C-0214（確定）、C-0520（仮説）
-  - effects[2] timed・burstUse・attackDamage: C-0209（確定）、C-0203（仮説）、C-0520（仮説）
+  - effects[2] timed・burstUse・attackDamage: C-0209（確定）、C-0203（確定）、C-0555（確定）、C-0520（仮説）
   - notes[0] 未対応: シューティングスターのコアに当たる割合は射撃場の的でしか測っていない。的の表に行の無い敵では、モデルのシューティングスターはコアに当たらない（plan/design-anis-star-core-path.md 3.2 節）: C-0466（確定）
   - notes[1] 未対応: コアダメージ▲がシューティングスターのコアに乗るかは確かめていない。モデルは乗せない（plan/design-anis-star-core-path.md 7 節の論点 4）: 根拠なし
   - notes[2] 未対応: 爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0424。単騎の録画 320・321 で同じ遠の区間の窓の中と外を比べても差は見分けられず、遠の割合は録画どうしで食い違う（C-0425。V-0297）。0.1〜0.2 程度の差は否定できない。plan/design-anis-star-core-path.md 11 節）: C-0424（確定）、C-0425（仮説）
@@ -766,7 +766,7 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
   - effects[0] passive・attackDamage: C-0018（確定）
   - effects[1] timed・burstStage3Enter・distributedDamage: C-0391（確定）
   - effects[2] timed・burstUse・elementDamage: C-0307（確定）、C-0522（仮説）
-  - effects[3] state・burstUse・batonPass（attack）: C-0357（確定）
+  - effects[3] state・burstUse・batonPass（attack）: C-0357（確定）、C-0555（確定）
   - notes[0] 計算に無関係: 鉄・拳・制・裁！の防御力▲はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-0231（確定）
@@ -784,7 +784,7 @@ notes の種類: 未対応 123・前提の外 37・計算に無関係 54・補�
   - effects[0] passive・attackDamage: C-0348（確定）
   - effects[1] timed・burstUse・distributedDamage: C-0349（確定）
   - effects[2] timed・burstStage3Enter・elementDamage: C-0350（確定）、C-0360（確定）
-  - effects[3] state・burstUse・followUp（attack）: C-0355（確定）
+  - effects[3] state・burstUse・followUp（attack）: C-0355（確定）、C-0555（確定）
   - notes[0] 未対応: 真紅の華の 3 秒ごとの味方全体の回復（メディラマ）は未対応（回復を受けた時の効果を持つ味方の発動を変える）: 根拠なし
   - notes[1] 計算に無関係: 真紅の守護（水冷コードの敵から受けるダメージ▼）はダメージに関係しない: 根拠なし
 - **burst**: supported

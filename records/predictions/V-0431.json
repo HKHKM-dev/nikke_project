@@ -1,0 +1,76 @@
+{
+  "verification": "V-0431",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    },
+    {
+      "rid": 441,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（再突入するアビスタも基本バースト段階 I の味方に数える）。アニス：スターはみんなの星。数えない H1 はモデルを切り替えるので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-slots",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 6
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "バーストを撃った枠の並び（最初の 6 回。1 = アニス：スター、2 = アビスタ、3 = デルタ）",
+      "observations": ["460-01"]
+    },
+    {
+      "id": "anis-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      },
+      "note": "アニス：スターのフルチャージの通常攻撃 1 ヒット（胴体・非会心）。私だけの星なら攻撃力▲が乗る（C-0189）",
+      "observations": []
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-15",
+    "commit": "6ba321bf710c9193357e407279c5151a2ba861c2",
+    "values": {
+      "H0": {
+        "burst-slots": [1, 2, 1, 2, 1, 2],
+        "anis-hit": 123190.0125
+      }
+    }
+  }
+}

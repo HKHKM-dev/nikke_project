@@ -7169,6 +7169,46 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "460-01",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "76a35024ee6d7b49",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "460-01",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "76a35024ee6d7b49",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "460-01",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "76a35024ee6d7b49",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "460-01",
+      "element": "アニス：スター skill1.effects[0]",
+      "key": "76a35024ee6d7b49",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "460-01",
+      "element": "アニス：スター skill2.effects[1]",
+      "key": "76a35024ee6d7b49",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }
