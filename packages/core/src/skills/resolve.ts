@@ -314,7 +314,7 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   trigger: ResolvedTrigger;
   /**
    * gameSecondsToFrames(維持秒数)。0 なら効果なし。
-   * ヘルム編: 発数の維持（durationShots）では 0 にする（1 パス目のループでは追わず、窓は planBuffTimeline が射撃の列から作る）
+   * ヘルム編: 発数の維持（durationShots）では 0 にする（件の終わりは、持ち主ごとの一覧が持ち主の射撃の列から決める。skills/holders.ts）
    */
   durationFrames: number;
   /** ヘルム編: 「N 発間維持」の N（解決済み）。有れば durationFrames は 0 */
@@ -327,13 +327,13 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   condition?: EffectCondition;
   /**
    * 防御力無視ダメージ編: 維持の終わりの出来事（「解除条件：フルバーストタイムが終了した時」）。有れば durationFrames は 0
-   * （1 パス目のループでは追わず、窓は planBuffTimeline が時刻表から作る）。
+   * （件の終わりは、持ち主ごとの一覧がフルバーストの終わりから決める。skills/holders.ts）。
    * ペルソナ編: battleEnd（戦闘の終わりまで）は durationFrames が BATTLE_END_FRAMES で、窓はほかの秒の維持と同じに作る
    */
   durationUntil?: ResolvedDurationUntil;
   /**
    * 環境コントロール強化編: 増やす相手の効果。有れば value は割合（percent ÷ 100）で、窓ごとの値（参照する窓が効いている所は
-   * その値 × 割合、切れた所は発動の瞬間の値 × (1 + 割合)）は planBuffTimeline が作る
+   * その値 × 割合、切れた所は発動の瞬間の値 × (1 + 割合)）は skills/holders.ts の amplify が作る
    */
   amplifies?: Amplifies;
 };
@@ -397,7 +397,7 @@ export function resolveTimed(
       const window = resolveWindowFields(effect, character, slot, levels[slot], effectIndex);
       const value =
         effect.amplifies !== undefined
-          ? effect.amplifies.percent / 100 // 環境コントロール強化編: 参照する効果の値に掛ける割合（窓ごとの値は planBuffTimeline）
+          ? effect.amplifies.percent / 100 // 環境コントロール強化編: 参照する効果の値に掛ける割合（窓ごとの値は skills/holders.ts の amplify）
           : effect.ref === undefined
             ? 1 // フラグの stat（装弾数無限）
             : scaledValue(

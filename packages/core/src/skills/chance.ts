@@ -3,35 +3,13 @@
 // D フレーム。フレーム t の効果の強さは、付いている確率 1 − Π (1 − qᵢ)（積は sᵢ ≤ t < sᵢ + D の機会。sᵢ は発の次のフレーム）に
 // 値を掛けたもの。攻撃力▲などダメージの式で 1 次の stat なら、1 発の期待値はこの強さで付けた値と同じ（四捨五入の分を除く）。
 // 窓は、機会の始まりと終わりで小片に割り、小片ごとに付いている確率（scale）を持たせる。区間・鍵・calc・sim の読み方は変えない。
-import type { ResolvedShotCountTrigger } from './resolve.ts';
-import { shotCountWeight, type FrameEvents } from './triggers.ts';
+// 機会は 1 パス目のループが発ごとに貯める（skills/holders.ts。回数の量が 0 の発と、窓が戦闘の終わりより後に始まる発は除く）。
 
 /** 1 回の機会。start は窓が始まるフレーム（発の次のフレーム）、q はその発で付く確率 */
 export type ChanceOpportunity = { start: number; q: number };
 
 /** 期待値の窓の小片。scale はその間に効果が付いている確率（0 より大きく 1 以下） */
 export type ChancePiece = { start: number; end: number; scale: number };
-
-/**
- * 出来事の列から、枠 slotIndex の確率のきっかけの機会を並べる（昇順）。回数の量が 0 の射撃と、窓が戦闘の終わり（frames）より後に
- * 始まる射撃は除く（回数トリガーの窓が発の次のフレームから始まる規則。skills/timeline.ts の buffStartFires と同じ）
- */
-export function chanceOpportunities(
-  trigger: ResolvedShotCountTrigger & { chance: number },
-  slotIndex: number,
-  events: readonly FrameEvents[],
-  frames: number,
-): ChanceOpportunity[] {
-  const out: ChanceOpportunity[] = [];
-  for (const ev of events) {
-    const shot = ev.shots[slotIndex];
-    if (!shot) continue;
-    const weight = shotCountWeight(trigger.count, shot);
-    if (weight <= 0 || ev.frame + 1 >= frames) continue;
-    out.push({ start: ev.frame + 1, q: Math.min(1, trigger.chance * weight) });
-  }
-  return out;
-}
 
 /** 付いている確率 1 − Π (1 − q)。機会の q の列から（順に掛けるので、同じ列なら同じ値） */
 function scaleOf(qs: readonly number[]): number {

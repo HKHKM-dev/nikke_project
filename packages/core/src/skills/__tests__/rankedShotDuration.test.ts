@@ -2,12 +2,13 @@
 // 窓は発火のフレームの順位で決まった枠の射撃で切る。会心率は 1 で頭打ち（plan/design-ranked-shot-duration.md 2 節・7 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { runFirstPass } from '../../frame/firstPass.ts';
+import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import type { CharacterData } from '../../types.ts';
 import { applyCritBuffs, capCritRate, ZERO_BUFFS } from '../buffs.ts';
+import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { planBuffTimeline, type TimelineSlot } from '../timeline.ts';
+import type { TimelineSlot } from '../timeline.ts';
 import { applyTreasure } from '../treasure.ts';
 import { parseSkillDefinition } from '../types.ts';
 
@@ -47,13 +48,13 @@ function team(deltaAttack: number, sunAttack: number): TimelineSlot[] {
   ];
 }
 
-function line3Windows(slots: TimelineSlot[]) {
-  const pass = runFirstPass(slots, { frames: FRAMES, burst: true });
-  const timeline = planBuffTimeline(slots, pass.schedule, FRAMES, pass.shots);
-  const windows = timeline.windows.filter(
-    (w) => w.effect.source.skill === 'skill2' && w.effect.stat === 'critRate' && w.effect.target === 'topAttack',
+/** S2 の 3 行目の件（持ち主ごとの一覧編: 1 パス目の履歴。plan/design-holder-effects.md 段 B） */
+function line3Items(slots: TimelineSlot[]) {
+  const { first: pass, timeline } = firstPassTimeline(slots, { frames: FRAMES, burst: true });
+  const items = itemsOf(pass.history, { kind: 'timed', skill: 'skill2', stat: 'critRate' }).filter(
+    (i) => i.origin.kind === 'timed' && i.origin.effect.target === 'topAttack',
   );
-  return { pass, timeline, windows };
+  return { pass, timeline, items };
 }
 
 describe('parseSkillDefinition（順位の発数編）', () => {
@@ -77,39 +78,37 @@ describe('parseSkillDefinition（順位の発数編）', () => {
   });
 });
 
-describe('planBuffTimeline: topAttack × durationShots', () => {
-  it('gives the window to the top other ally at each full burst start, until its first shot', () => {
-    const { pass, timeline, windows } = line3Windows(team(1000, 2000));
+describe('topAttack × durationShots', () => {
+  it('gives the item to the top other ally at each full burst start, until its first shot', () => {
+    const { pass, items } = line3Items(team(1000, 2000));
     const fbStarts = pass.schedule!.fullBurstWindows.map((w) => w.start);
     expect(fbStarts.length).toBeGreaterThanOrEqual(3);
     // 自分（3000）を除いた 1 位はサン（枠 3）
-    expect(new Set(windows.map((w) => w.slotIndex))).toEqual(new Set([2]));
+    expect(new Set(items.map((i) => i.holder))).toEqual(new Set([2]));
     const sunShots = pass.shots[2]!.frames;
-    for (const w of windows) {
-      expect(fbStarts).toContain(w.start);
-      const first = sunShots.find((f) => f >= w.start)!;
-      expect(w.end).toBe(first + 1);
+    for (const i of items) {
+      expect(fbStarts).toContain(i.start);
+      const first = sunShots.find((f) => f >= i.start)!;
+      expect(i.end).toBe(first + 1);
     }
-    expect(windows.map((w) => w.start)).toEqual(fbStarts);
+    expect(items.map((i) => i.start)).toEqual(fbStarts);
     // 順位の記録は 1 機
-    const ranks = timeline.rankings.filter((r) => r.effect.source.skill === 'skill2');
+    const ranks = pass.history.rankings.filter((r) => r.effect.source.skill === 'skill2');
     expect(ranks.every((r) => r.targets.length === 1 && r.targets[0] === 2)).toBe(true);
   });
 
   it('follows the ranking (Delta when it has the higher attack)', () => {
-    const { windows } = line3Windows(team(2000, 1000));
-    expect(new Set(windows.map((w) => w.slotIndex))).toEqual(new Set([1]));
+    const { items } = line3Items(team(2000, 1000));
+    expect(new Set(items.map((i) => i.holder))).toEqual(new Set([1]));
   });
 
   it('puts the crit rate up only on the segment that holds the first shot', () => {
-    const slots = team(1000, 2000);
-    const { pass, windows } = line3Windows(slots);
-    const w = windows[0]!;
-    const timeline = planBuffTimeline(slots, pass.schedule, FRAMES, pass.shots);
+    const { timeline, items } = line3Items(team(1000, 2000));
+    const i = items[0]!;
     const at = (frame: number) =>
       timeline.segments.find((s) => s.start <= frame && frame < s.end)!.slots[2]!.buffs.critRate;
-    expect(at(w.end - 1)).toBeCloseTo(0.8542, 12);
-    expect(at(w.end)).toBe(0);
+    expect(at(i.end - 1)).toBeCloseTo(0.8542, 12);
+    expect(at(i.end)).toBe(0);
   });
 });
 

@@ -108,7 +108,7 @@ describe('ヘルム（352）の定義の解決', () => {
     const charge = timed.find((e) => e.stat === 'chargeDamageMultiplier')!;
     expect(charge.value).toBeCloseTo(1.584, 12);
     expect(charge.durationShots).toBe(10);
-    // 発数の維持は 1 パス目のループで追わない（窓は planBuffTimeline が射撃の列から作る）
+    // 発数の維持は秒の維持を持たない（件の終わりは、持ち主ごとの一覧が持ち主の射撃の列から決める）
     expect(charge.durationFrames).toBe(0);
     const gauge = resolveInstant(treasure.definition!, treasure.character, MAX_SKILL_LEVELS).find(
       (e) => e.kind === 'burstGauge',

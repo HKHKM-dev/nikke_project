@@ -1,23 +1,17 @@
 // 1 パス目で持続の命中率▲の窓を追う（plan/design-sustained-hit-rate-gauge.md）。
 //   1. ミサト単騎（SMG・条件が自動）: S1 のスタックの▲の間だけ、発のゲージが H2 の比（C-0192）で上がる。射撃は変わらない
-//   2. 1 パス目の当たりの窓は、2 パス目の状態の窓（stateWindows）と同じ
+//   2. 当たりの件はスタックの段ごとに持つ（持ち主ごとの一覧編: 1 パス目の履歴。plan/design-holder-effects.md 段 B）
 //   3. アスカのバーストの▲は、フルバーストの窓に収まり、時刻表を変えない（設計書 0.1 節）
-//   4. 手入力の枠は窓を追わない
+//   4. 手入力の枠には持続の▲を効かせない
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { untargetableRanges } from '../frame/events.ts';
 import { runFirstPass } from '../frame/firstPass.ts';
-import {
-  bulletHitRateWithHitRateUp,
-  hitRateSpanWith,
-  hitRateSpansOf,
-  slotFlightsOf,
-  type LandingHitRateSpan,
-} from '../frame/landing.ts';
+import { bulletHitRateWithHitRateUp, hitRateSpanWith, hitRateSpansOf } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
+import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
@@ -66,28 +60,6 @@ const team = (slots: TeamSlotInput[], sustained = true): TeamInput => ({
 
 /** ミサト S1 の 1 段の命中率▲（C-0183） */
 const MISATO_S1 = 0.0504;
-
-type Window = { slotIndex: number; sourceSlotIndex: number; start: number; end: number; stack?: number };
-const key = (w: Window) => `${w.slotIndex}<${w.sourceSlotIndex}:${w.start}-${w.end}:${w.stack ?? '-'}`;
-
-/** planTeamRun と同じ材料で 1 パス目を回す（当たりの窓を見るため） */
-function firstPassOf(input: TeamInput) {
-  const plan = planTeamRun(input);
-  const landing = plan.landing!;
-  const frames = battleSecondsToFrames(input.durationSeconds);
-  const first = runFirstPass(toTimelineSlots(input.slots), {
-    frames,
-    burst: true,
-    controlledSlot: null,
-    untargetable: untargetableRanges(enemy.events, frames),
-    hitRates: hitRateSpansOf(landing, input.slots.length),
-    enemyHasCore: true,
-    flights: slotFlightsOf(input.slots, enemy, frames),
-    hitRateWith: (slotIndex: number, span: LandingHitRateSpan, up: number) =>
-      hitRateSpanWith(landing, input.slots[slotIndex]!, slotIndex, span, up),
-  });
-  return { plan, first };
-}
 
 describe('1 パス目で持続の命中率▲の窓を追う', () => {
   describe('ミサト単騎（SMG・条件が自動）', () => {
@@ -144,21 +116,21 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
     });
   });
 
-  it('agrees with the state windows of planBuffTimeline (stacks included)', () => {
-    const { plan, first } = firstPassOf(team([fixedSlot(833)]));
-    expect(first.shots).toEqual(plan.shots);
-    expect(first.hitWindows.length).toBeGreaterThan(0);
-    expect(first.hitWindows.map(key).sort()).toEqual(plan.timeline.stateWindows.map(key).sort());
+  it('keeps the hit rate items per stack', () => {
+    const plan = planTeamRun(team([fixedSlot(833)]));
+    const hits = itemsOf(plan.history, { stat: 'hitRate' });
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits.some((i) => (i.stack ?? 0) > 1)).toBe(true);
   });
 
   describe('アスカのバースト（設計書 0.1 節）', () => {
     // リター（I）・デルタ（II）・アスカ（III）
     const slots = () => [fixedSlot(82), fixedSlot(20), fixedSlot(830)];
-    const { plan, first } = firstPassOf(team(slots()));
+    const plan = planTeamRun(team(slots()));
     const off = planTeamRun(team(slots(), false));
 
-    it('tracks the windows, which start at the III activation and lie inside [III activation, full burst end)', () => {
-      const asuka = first.hitWindows.filter((w) => w.slotIndex === 2);
+    it('has the items, which start at the III activation and lie inside [III activation, full burst end)', () => {
+      const asuka = itemsOf(plan.history, { stat: 'hitRate', holder: 2 });
       expect(asuka.length).toBeGreaterThan(0);
       // バースト使用時の効果は III の本当の発動から、フルバーストの窓は III のタイマーの 00.00（6f 後）から（plan/design-burst-hit-origin.md 8 節）
       const fb = plan.schedule!.fullBurstWindows;
@@ -174,7 +146,7 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
     });
   });
 
-  it('does not track the windows for manual slots', () => {
+  it('does not apply the timed hit rate to manual slots', () => {
     const { first } = (() => {
       const input = team([fixedSlot(833, false)]);
       const frames = battleSecondsToFrames(input.durationSeconds);
@@ -189,7 +161,7 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
         }),
       };
     })();
-    expect(first.hitWindows).toEqual([]);
+    expect(first.shots[0]!.frames.length).toBeGreaterThan(0);
     const manualOn = planTeamRun(team([fixedSlot(833, false)]));
     const manualOff = planTeamRun(team([fixedSlot(833, false)], false));
     expect(manualOn.schedule).toEqual(manualOff.schedule);

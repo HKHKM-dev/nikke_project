@@ -1,11 +1,12 @@
 // 環境コントロール強化の語彙 amplifies（plan/design-true-damage-element.md 3.5 節）。
-// 定義の検証と、planBuffTimeline の窓（参照する窓が効いている所と切れた所・発火の瞬間の状態・値）を見る。定義に使ったのはエマ：TU のバースト（V-0230）。
+// 定義の検証と、1 パス目の履歴の強化の小片（参照する件が効いている所と切れた所・発火の瞬間の状態・値）を見る。定義に使ったのはエマ：TU の
+// バースト（V-0230）。持ち主ごとの一覧編（plan/design-holder-effects.md 段 B）で、planBuffTimeline の窓から履歴に移した。
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
-import { planFixedCycle } from '../../burst/fixedCycle.ts';
+import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
-import { MAX_SKILL_LEVELS, isStateContent, resolveTimed } from '../resolve.ts';
-import { planBuffTimeline, type TimelineSlot } from '../timeline.ts';
+import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
+import type { TimelineSlot } from '../timeline.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEffect } from '../types.ts';
 import type { SkillRaw } from '../../types.ts';
 
@@ -96,7 +97,7 @@ describe('amplifies の窓', () => {
   }
 
   // 固定サイクルの I の発動は 588f（10 秒）・1764f（30 秒）・2940f（50 秒）…
-  const schedule = planFixedCycle([{ burstStep: 'Step1' }, { burstStep: 'Step2' }], FRAMES);
+  const run = (slots: TimelineSlot[]) => firstPassTimeline(slots, { frames: FRAMES, burst: true, burstModel: 'fixed' });
   const base = { kind: 'timed', target: 'allies', stat: 'damageTaken', ref: 1 } as const;
   /** 戦闘開始から 15 秒（[0, 882)） */
   const atStart = { ...base, trigger: 'battleStart', durationSeconds: 15 } as SkillEffect;
@@ -109,12 +110,11 @@ describe('amplifies の窓', () => {
   });
 
   it('keeps the referenced value multiplied for the whole duration, and fires only while the caster is in that state', () => {
-    const t = planBuffTimeline([slotOf([atStart, later], [amplify as SkillEffect]), slotOf([], [])], schedule, FRAMES);
-    const amplified = t.windows.filter((w) => !isStateContent(w.effect) && w.effect.amplifies !== undefined);
+    const { first, timeline: t } = run([slotOf([atStart, later], [amplify as SkillEffect]), slotOf([], [])]);
     // 窓の中の発動は 10 秒・110 秒（105 秒の窓）・150 秒（140 秒の窓）。発動から 10 秒を、参照する窓が効いている所（その値 × 100%）と
     // 切れた所（発動の瞬間の値 × 200%）に分けて、参照する窓を受けた枠（味方全体）ごとに。30 秒の発動は 35 秒の窓に重なるが、
     // 発動の瞬間に効いていないので付かない（V-0230 の 263-05）
-    expect(amplified.map((w) => [w.slotIndex, w.start, w.end, Number(w.effect.value.toFixed(6))])).toEqual([
+    expect(first.history.amplified.map((p) => [p.holder, p.start, p.end, Number(p.value.toFixed(6))])).toEqual([
       [0, 588, 882, 0.039],
       [0, 882, 1176, 0.078],
       [1, 588, 882, 0.039],
@@ -129,8 +129,8 @@ describe('amplifies の窓', () => {
       [1, 8820, 8824, 0.039],
       [1, 8824, 9408, 0.078],
     ]);
-    expect(t.conditionSkips.map((s) => s.frame)).toContain(1764);
-    expect(t.conditionSkips.map((s) => s.frame)).not.toContain(588);
+    expect(first.history.conditionSkips.map((s) => s.frame)).toContain(1764);
+    expect(first.history.conditionSkips.map((s) => s.frame)).not.toContain(588);
     // 受けるダメージ▲の合計は、参照する窓が切れた後も発動から 10 秒は 2 倍（V-0230 の 263-03）
     const at = (frame: number) =>
       t.segments.find((s) => s.start <= frame && frame < s.end)!.slots[0]!.buffs.damageTaken;
@@ -141,20 +141,18 @@ describe('amplifies の窓', () => {
   });
 
   it('scales by percent', () => {
-    const t = planBuffTimeline(
-      [slotOf([atStart], [{ ...amplify, amplifies: { skill: 'skill1', percent: 50 } } as SkillEffect])],
-      schedule,
-      FRAMES,
-    );
+    const t = run([
+      slotOf([atStart], [{ ...amplify, amplifies: { skill: 'skill1', percent: 50 } } as SkillEffect]),
+    ]).timeline;
     const at = (frame: number) =>
       t.segments.find((s) => s.start <= frame && frame < s.end)!.slots[0]!.buffs.damageTaken;
     expect(at(600)).toBeCloseTo(0.039 * 1.5, 12);
     expect(at(900)).toBeCloseTo(0.039 * 1.5, 12);
   });
 
-  it('does nothing without a referenced window', () => {
-    const t = planBuffTimeline([slotOf([], [amplify as SkillEffect])], schedule, FRAMES);
-    expect(t.windows).toEqual([]);
-    expect(t.conditionSkips.length).toBeGreaterThan(0);
+  it('does nothing without a referenced item', () => {
+    const { history } = run([slotOf([], [amplify as SkillEffect])]).first;
+    expect(history.amplified).toEqual([]);
+    expect(history.conditionSkips.length).toBeGreaterThan(0);
   });
 });

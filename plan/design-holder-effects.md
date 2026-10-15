@@ -3,7 +3,7 @@
 - 別紙: [design-holder-effects-current.md](design-holder-effects-current.md)（1 節: いまの作り。以下「いまの作りの別紙」）
 - 関連: [design-skill-catalog.md](design-skill-catalog.md)（2 段目の計画。9 節の段の候補）、[design-named-state.md](design-named-state.md)（5.2 節: 状態の段、8 節: 状態の後の拡張）、[design-stage6.md](design-stage6.md)（窓と区間。8 節の 2・9 節）、[design-stage10.md](design-stage10.md)（1 パス目。1 節）、[design-stage11-modernia.md](design-stage11-modernia.md)（1.5 段目。2.4・3.3 節）、[design-stage11.md](design-stage11.md)（順位。19 節）、[design-true-damage-element.md](design-true-damage-element.md)（強化。3.5 節）、[design-heal-window.md](design-heal-window.md)（吸収回復の窓）
 - 作成日: 2026-10-15
-- 状態: 決定。2026-10-15 にオーナーが論点 1〜11 と段の構成（3 節）を決めた（論点 1・2・6〜11 は推奨どおり、論点 3・4・5 は代わりの案。段 D・E はオーナーの指示で足し、論点 4 に合わせて段 A・B の中身を組み替えた）。設計書は、オーナーの指示で段 A の実装より先に PR にした（AGENTS.md のコミット手順の「設計の承認は実装と同じ PR に含める」の例外）。段 A を実装した（2026-10-15。経過）
+- 状態: 決定。2026-10-15 にオーナーが論点 1〜11 と段の構成（3 節）を決めた（論点 1・2・6〜11 は推奨どおり、論点 3・4・5 は代わりの案。段 D・E はオーナーの指示で足し、論点 4 に合わせて段 A・B の中身を組み替えた）。設計書は、オーナーの指示で段 A の実装より先に PR にした（AGENTS.md のコミット手順の「設計の承認は実装と同じ PR に含める」の例外）。段 A・B を実装した（2026-10-15。経過は別紙 [design-holder-effects-log.md](design-holder-effects-log.md)）
 
 ## 0. 目的と方針
 
@@ -67,7 +67,7 @@ type HeldEffect = {
 - 書き出しに要る印も件に持つ（状態の件に、射撃の回数のトリガーの付与が発火を足したか。いまの `NamedStateWindow.shotCount`）。
 - 常時の件（スキルの常時パッシブと、静的な状態）は、戦闘の始めから終わりまでの件で、段の印は 1（いまの常時の値と同じく、どの判定にも入る）。育成の効果層は件にせず、持ち主の常時の値として持つ（論点 3 の決定の読み）。
 - 解除不可の印など、2 段目の語彙が要る欄は、その語彙を足す時に足す（使い手のいない欄は入れない）。
-- 段 A の実装（`skills/holders.ts`）: 件の列（`HeldTrack`。出どころ × 効果 × 持ち主。状態は出どころ × 状態 × 持ち主）が、発火の始まりの列と段の印を持ち、件（`HeldItem`）は始まりの列から作る（2.7 節）。確率のきっかけの件の列は機会の列を持ち、強化は件の列にせず、発火の始まりだけを持って書き出しで値を出す（いまの 2.5 段目と同じ作り方）。
+- 段 A の実装（`skills/holders.ts`）: 件の列（`HeldTrack`。出どころ × 効果 × 持ち主。状態は出どころ × 状態 × 持ち主）が、発火の始まりの列と段の印を持ち、件（`HeldItem`）は始まりの列から作る（2.7 節）。確率のきっかけの件の列は機会の列を持ち、強化は件の列にせず、発火の始まりだけを持ち、ループの後に履歴を閉じる時に受け付けと値の小片を決める（`amplify`。段 A までの 2.5 段目と同じ作り方。段 B で書き出しから移した）。
 
 ### 2.3 一覧の操作
 
@@ -109,7 +109,7 @@ type HeldEffect = {
 ### 2.6 書き出し（段 A〜D の橋渡し）
 
 - 書き出しは、読む側を移し終えるまでの橋渡しで、段 E で消す（区間は残す。論点 9・10）。段 A〜C の区間は、書き出した窓からいまの組み立て方で作り、段 D の 1 で履歴から作る形に移す。
-- 書き出すもの: `BuffTimeline` の各欄（`windows`・`stateWindows`・`namedStateWindows`・`applications`・`conditionSkips`・`rankings`・`heals`・`cycleWindows`・`segments`）と、`FirstPassResult` の窓の欄（`firingWindows`・`rankAttackWindows`・`hitWindows`・`namedStateWindows`）。形と意味はいまのまま。
+- 書き出すもの: `BuffTimeline` の各欄（`windows`・`stateWindows`・`namedStateWindows`・`applications`・`conditionSkips`・`rankings`・`heals`・`cycleWindows`・`segments`）。形と意味はいまのまま。`FirstPassResult` の窓の欄（`firingWindows`・`rankAttackWindows`・`hitWindows`・`namedStateWindows`。テスト用）は、段 B でテストを移した後に読む所が無くなったので消した。
 - 件 1 つからの書き出し:
   - 和集合の件: 窓 1 つ。
   - スタックする件: 段ごとの窓（いまの `stackWindows` と同じ）。
@@ -125,7 +125,7 @@ type HeldEffect = {
 - 1 パス目のループが、すべての件を一覧で持つ（射撃に効く stat などだけを追うのをやめる）。射手・当たり・条件・順位・強化の参照・弾丸チャージは、一覧を直接読む。順位の材料（`skills/ranking.ts` の `finalAttacksAt`）の入力も、窓の列から一覧の件に替える。
 - `planTeamRun`（`frame/plan.ts`）は、1 パス目の履歴から書き出す。2 パス目での作り直しはやめ、`planBuffTimeline` の入口も消す（論点 4）。出来事の列の流し直し（`replayEvents`）は、倍率ダメージの発動（`planSkillHits`）が使うので残す。
 - 手で射撃の列と時刻表を与えて窓を確かめていたテストは、1 パス目から作る形に書き直す（段 B）。
-- 窓を作る関数のうち、始まりの列から件を作るもの（`unionWindows`・`shotCountWindows`・`untilWeaponChangeEndWindows`・`effectWindows`・`stackWindows`・`chancePieces`）は、段 A で件の作り方として一覧が使う形にした（件の列は発火の始まりの列を持ち、入力（始まり・機会・持ち主の射撃・撃ち切り・フルバーストの窓）が変わった時に件を作り直す。フルバーストの終わりで終わる件は、`untilWeaponChangeEndWindows` にフルバーストの終わりの列を渡す）。旧の実装だけが使う関数（`untilFullBurstEndWindows`・`selfBuffedAt` など）は、段 B で旧の実装と一緒に消す。
+- 窓を作る関数のうち、始まりの列から件を作るもの（`unionWindows`・`shotCountWindows`・`untilNextEndWindows`・`effectWindows`・`stackWindows`・`chancePieces`）は、段 A で件の作り方として一覧が使う形にした（件の列は発火の始まりの列を持ち、入力（始まり・機会・持ち主の射撃・撃ち切り・フルバーストの窓）が変わった時に件を作り直す。撃ち切りで終わる件とフルバーストの終わりで終わる件は、`untilNextEndWindows` に終わりの列を渡す。段 B で `untilWeaponChangeEndWindows` から名前を改めた）。旧の実装だけが使う関数（`untilFullBurstEndWindows`・`selfBuffedAt` など）は、段 B で旧の実装と一緒に消した。
 - 窓を作るコードが 1 つになるので、1 パス目で窓を追う stat に書けない語彙の制限（1.3 節）は要らなくなる。制限を外すのは、使うキャラの定義の時（使い手のいない語彙は入れない）。
 
 ### 2.8 敵を持ち主にする（段 C）
@@ -170,6 +170,7 @@ declare function itemsOf(history: HolderHistory, filter: HeldEffectFilter): Held
 declare function eventsOf(history: HolderHistory, item: HeldEffect): HeldEvent[];
 ```
 
+- 段 B で、件を読む関数 `itemsOf`（絞り込んだ件。時刻の順）・`activeItemsAt`（持ち主にフレーム f に効いている件）と、強化の値の小片（`HolderHistory.amplified`）を置いた（`skills/holders.ts`。件は `HeldItemView`）。出来事（付き直し・外れた）の読み方は、使う読む側を移す段で足す。
 - 区間は、件と値の小片から作る（段 D の 1）。境目は、件の始まり・終わりと値の小片の変わり目に、いまと同じくフルバーストの端・発動・着地点の境目を足したもの。段 E の後に `BuffTimeline` に残るのは、区間と履歴。
 
 ### 2.10 範囲の外
@@ -203,7 +204,7 @@ declare function eventsOf(history: HolderHistory, item: HeldEffect): HeldEvent[]
   6. 画面（`apps/web`）: 受けている効果のまとめ（`SlotCard` の「10 秒 × 9 回」）・発動しなかった記録・循環の間隔の変更・順位（`TeamBreakdown`）を、履歴から作る。結果の型（`TeamSlotResult` の `windows`・`stateWindows`・`conditionSkips`・`cycleWindows`）を、履歴から作る表示用の欄に替え、ほかに読む所（記録の道具・テスト）も同じ段で直す。
   7. テスト: 段 B で移さなかった、窓の形で確かめるテスト（編成のテストが `timeline.windows` を読む所など）を、件と出来事で確かめる形に移す。期待する値（始まり・終わり・段・値）は変えない。
 - **段 E: 窓の書き出しを消す**
-  1. `BuffTimeline` の窓の欄（`windows`・`stateWindows`・`namedStateWindows`・`cycleWindows`）、`FirstPassResult` の窓の欄（`firingWindows`・`rankAttackWindows`・`hitWindows`・`namedStateWindows`）、書き出しのコード（2.6 節）、窓の型（`BuffWindow`・`NamedStateWindow`・`CycleWindow`・`FiringWindow`）を消す。
+  1. `BuffTimeline` の窓の欄（`windows`・`stateWindows`・`namedStateWindows`・`cycleWindows`）、書き出しのコード（2.6 節）、窓の型（`BuffWindow`・`NamedStateWindow`・`CycleWindow`）を消す（`FirstPassResult` の窓の欄と `FiringWindow` は、段 B で消した）。
   2. 記録の欄（`applications`・`conditionSkips`・`rankings`・`heals`）も消す（論点 10）。
   3. 残るのは区間（論点 9）と履歴。どちらも 1 パス目の後に `planTeamRun` が作る。
   4. コードのコメントの「窓」は、触る所だけ「件」に直す。型の名前に残る「窓」（`WindowEffect` など）を改めるかは、この段で決める。過去の設計書は当時の記録なので書き換えない。
@@ -292,11 +293,4 @@ declare function eventsOf(history: HolderHistory, item: HeldEffect): HeldEvent[]
 
 ## 経過
 
-- 2026-10-15: 起案。オーナーの問い（誰がどの効果を誰に付与するかは窓で管理されているか、実機のようにキャラごとに効果を管理する形に組み直せるか）への調べを元に書いた。同日、オーナーが論点 1・2 と段の構成を推奨どおりに決めた。
-- 2026-10-15: オーナーの指示で、読む側を一つずつ一覧・履歴を直接読む形に移す段 D と、最後に窓の書き出しを消す段 E を足した（0・2.6・2.7・2.9・2.10・3〜5・7 節。論点 9〜11 を足した）。
-- 2026-10-15: オーナーが論点 3（スキルによる効果は、常時の値であっても一覧に入れる）・論点 4（2 パス目の入口を消し、テストも 1 パス目から作る）・論点 5（時刻の順にする）を決めた。論点 3 で常時の件（2.2・2.4 節）を、論点 4 で段 A・B の組み替え（2.7・3 節）を、論点 5 で並びと許容（2.6・4・5 節）と論点 6 の推奨を直した。使用武器の変更が 1 体に 1 つしか無い（並びを変えても値が変わらない）ことを、定義で確かめた。
-- 2026-10-15: 本体が 50KB の目安に達したので、1 節（いまの作り）を別紙 [design-holder-effects-current.md](design-holder-effects-current.md) に移し、本体には要点を残した（節の番号は本体と同じ）。
-- 2026-10-15: オーナーが論点 6〜11 を推奨どおりに決めた（論点がすべて決まった）。オーナーの指示で、設計書を段 A の実装より先に PR にした。
-- 2026-10-15: 段 A を実装した（`skills/holders.ts`・`frame/firstPass.ts`・`frame/plan.ts`）。旧の 1 パス目は `frame/legacyFirstPass.ts` に写して残し、新旧の比べは `frame/crossCheck.ts`（テストの準備 `crossCheck.setup.ts` と `records-check.ts`・`records-minimal.ts` から入れる。倍率ダメージの発動も比べる）。件の作り方を 2.2・2.7 節に、区間の鍵の並べ直しを 2.6 節に書き足した。吸収回復の件の列は、1 パス目が別に解決した効果と引き合わせるため、出どころの枠・スロット・効果の番号で引く。件の種類ごとの単体テストは `skills/__tests__/holders.test.ts`。
-  - 新旧の比べを入れて、`npm test`（テストの期待値は変えず、許容つきにしたテストも無い）・`records:check`（生成物に差分なし）・`records:minimal`（感度に差分なし）が通った。比べで出た差は、区間の鍵の並び（上の 2.6 節）と、吸収回復の件の引き当て（効果のオブジェクトで引いていた）だけで、どちらも新しいコードの誤りとして直した。
-  - 速さ（論点 7。同じ環境で main と比べた。比べは入れない）: コアのテスト 52 秒 → 50 秒、感度の計算（`records-minimal.ts`）15 秒 → 15〜16 秒。比べを入れると 61 秒・29 秒。
+→ [design-holder-effects-log.md](design-holder-effects-log.md)（2026-10-15 の段 B の実装の時に移した）。

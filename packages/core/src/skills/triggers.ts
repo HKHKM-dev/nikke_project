@@ -1,9 +1,9 @@
 // Stage 10: トリガーの判定を 1 か所にする（plan/design-stage10.md 1.2 節）。
 // フレームごとの出来事（射撃・バーストの発動・フルバーストの開始 / 終了・ゲージ満タン）を 1 つずつ受け取り、
 // そのフレームにトリガーが発火したかを返す。回数トリガーの数え上げもここに持つ。
-//   - 1 パス目のフレームループ（frame/firstPass.ts）は、出来事が起きるたびに流す（射撃に効く効果だけ）。
-//   - バッチの triggerFrames（skills/timeline.ts）は、確定した射撃の列と時刻表を同じ出来事の列に直して流し直す。
-// どちらも同じコードを通るので、ループの中で見た発火と、あとで planBuffTimeline が作る窓が食い違わない。
+//   - 1 パス目のフレームループ（frame/firstPass.ts）は、出来事が起きるたびに流す（持ち主ごとの一覧の件。skills/holders.ts）。
+//   - バッチの triggerFrames（skills/timeline.ts）は、確定した射撃の列と時刻表を同じ出来事の列に直して流し直す（倍率ダメージの発動）。
+// どちらも同じコードを通るので、ループの中で見た発火と、倍率ダメージの発火が食い違わない。
 // Stage 11: 出来事に「回復を受けた」（healed）と、フルバーストを開いたチェーンの枠（burstUsers。発火の文脈）を足した
 // （plan/design-stage11.md 3 節）。
 import {
@@ -164,7 +164,7 @@ export function createTriggerTracker(
   if (isResolvedTimer(t)) {
     throw new RangeError(`a timer trigger (every ${t.everySeconds} s) is not tracked per event; use triggerFires`);
   }
-  // ペルソナ編: 効果名のトリガーは planBuffTimeline の記録（BuffTimeline.applications）で決まる。出来事の列では追わない
+  // ペルソナ編: 効果名のトリガーは 1 パス目の履歴の記録（BuffTimeline.applications）で決まる。出来事の列では追わない
   if (isResolvedApplied(t)) {
     throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);
   }
@@ -212,7 +212,7 @@ export function fireContextOf(trigger: ResolvedTrigger, ev: FrameEvents): FireCo
 /**
  * 確定した射撃の列と時刻表を、出来事のあるフレームだけの FrameEvents の列（昇順）に直す。
  * 戦闘時間 frames の外（f ≥ frames）の出来事は含めない。フレーム 0 は常に含める（戦闘開始）。
- * Stage 11: heals（skills/heals.ts の planHeals）の回復を healed として書き込む。省略時は回復なし
+ * Stage 11: heals（1 パス目の履歴の回復の記録）の回復を healed として書き込む。省略時は回復なし
  */
 export function replayEvents(
   schedule: BurstSchedule | null,

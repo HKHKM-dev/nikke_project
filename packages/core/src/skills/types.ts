@@ -570,7 +570,8 @@ export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffSt
 
 /**
  * 防御力無視ダメージ編: 1 パス目のループで窓を追う stat か（攻撃力・射撃に効く stat・状態の stat）。追わない stat の窓は
- * planBuffTimeline だけが作るので、durationShots・durationUntil・条件 inFullBurst はそちらにだけ書ける
+ * planBuffTimeline だけが作ったので、durationShots・durationUntil・条件 inFullBurst はそちらにだけ書ける。持ち主ごとの一覧編
+ * （plan/design-holder-effects.md 2.7 節）で窓を作るコードは 1 つになった。この制限は、使うキャラの定義を足す時に外す
  */
 export function isFirstPassTrackedStat(stat: BuffStat): boolean {
   return stat === 'attack' || isFiringStat(stat) || isStateStat(stat);
@@ -1735,7 +1736,7 @@ function validateChanceTimed(effect: TimedEffect, path: string): void {
 
 /**
  * 環境コントロール強化編: amplifies の形と、組み合わせられない欄（plan/design-true-damage-element.md 3.5 節）。
- * 窓は planBuffTimeline が参照する効果の窓から作るので、1 パス目で窓を追う stat には書けない
+ * 窓は参照する効果の件から作る（skills/holders.ts の amplify）。1 パス目で窓を追う stat には書けない（isFirstPassTrackedStat の制限）
  */
 function parseAmplifies(v: Record<string, Json>, stat: BuffStat, target: BuffTarget, path: string): Amplifies {
   const a = v.amplifies;

@@ -6,15 +6,15 @@ import { describe, expect, it } from 'vitest';
 import { computeTeamDamage } from '../calc/model.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { runFirstPass } from '../frame/firstPass.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { MAX_SKILL_LEVELS, isStateContent } from '../skills/resolve.ts';
-import { appliedFrames, selfBuffedAt } from '../skills/timeline.ts';
+import { activeItemsAt, itemsOf } from '../skills/holders.ts';
+import { appliedFrames } from '../skills/timeline.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
-import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
+import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, Element } from '../types.ts';
 
@@ -225,9 +225,11 @@ describe('条件つき・順位の対象の付与と「〈状態名〉が適用�
     expect([...applied.map((f) => f - 1), ...skips].sort((a, b) => a - b)).toEqual(
       fires.filter((f) => f + 1 < plan.frames),
     );
-    for (const f of applied) {
-      expect(selfBuffedAt(plan.timeline.passive, plan.timeline.windows, q, 'distributedDamage', f - 1)).toBe(true);
-    }
+    // 発火のフレーム（付いた次のフレームの前）に、分配ダメージの増加状態（常時の値か、効いている件）
+    const buffed = (f: number) =>
+      (plan.timeline.passive[q]?.buffs.distributedDamage ?? 0) > 0 ||
+      activeItemsAt(plan.history, q, f, { stat: 'distributedDamage' }).length > 0;
+    for (const f of applied) expect(buffed(f - 1)).toBe(true);
     const hits = plan.skillHits.filter((h) => h.slotIndex === q && h.effect.effectIndex === grantIndex + 1);
     expect(hits.map((h) => h.frame)).toEqual(applied);
   });
@@ -257,35 +259,31 @@ describe('条件つき・順位の対象の付与と「〈状態名〉が適用�
 });
 
 describe('1 パス目の順位に入る状態の中身（アリス + クイーン（真）+ 雪子）', () => {
-  // アリスの S1 の topAttack のチャージ速度▲（射撃に効く）があるので、1 パス目が順位を出し、追撃・バトンタッチの攻撃力▲を追う
+  // アリスの S1 の topAttack のチャージ速度▲（射撃に効く）があるので、1 パス目が順位を出す。追撃・バトンタッチの攻撃力▲も順位に入る
   const input = team([slotOf(311), slotOf(160), slotOf(191), slotOf(QUEEN), slotOf(871)], 'Wind', 3);
   const prepared = applyCompositionToTeam(applyTreasureToTeam(input));
   const plan = planTeamRun(prepared);
-  const first = runFirstPass(toTimelineSlots(prepared.slots), {
-    frames: plan.frames,
-    burst: true,
-    controlledSlot: 3,
-  });
-  const key = (w: { state?: string; slotIndex: number; start: number; end: number }) =>
-    `${w.state ?? ''}:${w.slotIndex}:${w.start}-${w.end}`;
+  const key = (i: { holder: number; start: number; end: number }) => `${i.holder}:${i.start}-${i.end}`;
 
-  it('tracks the follow-up and the baton pass in the loop with the same windows as planBuffTimeline', () => {
-    const tracked = first.namedStateWindows.map(key).sort();
-    expect(tracked.length).toBeGreaterThan(0);
-    expect(tracked).toEqual(
-      plan.timeline.namedStateWindows
-        .filter((w) => w.state === 'followUp' || w.state === 'batonPass')
-        .map(key)
-        .sort(),
+  it('has the follow-up and the baton pass with attack contents, at a stage the ranking reads', () => {
+    const items = [...itemsOf(plan.history, { state: 'followUp' }), ...itemsOf(plan.history, { state: 'batonPass' })];
+    expect(items.length).toBeGreaterThan(0);
+    expect(items.every((i) => i.origin.kind === 'state' && i.origin.contents.some((c) => c.stat === 'attack'))).toBe(
+      true,
     );
+    expect(items.every((i) => i.stage === 1 || i.stage === 1.5)).toBe(true);
   });
 
-  it('chooses the same targets in the loop (charge speed) and in planBuffTimeline (charge damage)', () => {
-    const speed = first.firingWindows.filter(
-      (w) => w.effect.source.resourceId === 191 && w.effect.target === 'topAttack',
-    );
-    const damage = plan.timeline.windows.filter((w) => w.effect.stat === 'chargeDamage');
+  it('chooses the same targets for the charge speed (shooter) and the charge damage of the same fire', () => {
+    const ofAlice = (stat: 'chargeSpeed' | 'chargeDamage') =>
+      itemsOf(plan.history, { kind: 'timed', stat }).filter(
+        (i) =>
+          i.origin.kind === 'timed' &&
+          i.origin.effect.source.resourceId === 191 &&
+          i.origin.effect.target === 'topAttack',
+      );
+    const speed = ofAlice('chargeSpeed');
     expect(speed.length).toBeGreaterThan(0);
-    expect(speed.map(key).sort()).toEqual(damage.map(key).sort());
+    expect(speed.map(key).sort()).toEqual(ofAlice('chargeDamage').map(key).sort());
   });
 });

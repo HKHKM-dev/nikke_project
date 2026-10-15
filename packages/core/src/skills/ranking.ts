@@ -4,7 +4,7 @@
 //     （モデルでは III の発動とフルバーストの開始が同じフレームなので、入れないとアリス自身のバーストが順位に入らない）。
 //   - 順位で対象が決まる効果（topAttack）の窓は数えない（呼び出し側が渡さない）。攻撃力を配る topAttack で循環しないため。
 //   - 同値は枠の若い順（仮定。未検証）。
-// planBuffTimeline（バッチ）と 1 パス目のループ（frame/firstPass.ts）が同じ関数を使う。
+// 1 パス目のループの持ち主ごとの一覧（skills/holders.ts）が使う。
 import type { Element, WeaponType } from '../types.ts';
 import { applyAttackBuffs, applyResolvedEffect, type BuffTotals } from './buffs.ts';
 import type { ResolvedEffect } from './resolve.ts';

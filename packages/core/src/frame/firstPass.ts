@@ -11,18 +11,19 @@
 //      即時効果はその後に当てる: CT 短縮は発動の後（4 節）、弾丸チャージは同じフレームに付いた最大装弾数▲込みの最大で
 //      （録画 19: ノワールのフルバースト開始で 9 → 14 になるのは、+5 発と 39.88% の弾丸チャージが同じフレームに来るため）。
 //
-// 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 射撃に効かない効果（攻撃力・会心など）も、すべて件の一覧で持つ。
-// ループの後の窓・区間・記録は、planTeamRun が履歴から書き出す（skills/holders.ts の buffTimelineOf。2 パス目の作り直しはやめた）。
+// 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A・B）: 射撃に効かない効果（攻撃力・会心など）も、すべて件の一覧で持つ。
+// ループの後の窓・区間・記録は、planTeamRun が履歴から書き出す（skills/holders.ts の buffTimelineOf。2 パス目の作り直しはやめ、
+// 段 B で 2 パス目の入口 planBuffTimeline も消した）。
 // 射撃に効く効果も即時効果も無い編成では、射撃の列は planShots、時刻表は planDynamicSchedule と 1 フレームも違わない（1.3 節）。
 //
 // Stage 11（plan/design-stage11.md 3 節）: 対象 burstUsers（「直前にバーストスキルを使用した味方」）は発火ごとに対象が変わるので、
 // 窓を対象の枠ごとに持つ。回復（heal）は手順 3 の最初に当て、射撃の回数起点なら次のフレームに送って healed を立てる
-// （planBuffTimeline 側の skills/heals.ts の planHeals と同じ規則）。
+// （skills/heals.ts の healFrameOf）。
 //
 // Stage 11 アリス編（plan/design-stage11.md 19.3 節）: 対象「最終攻撃力が最も高い味方 N 機」（topAttack）の射撃系・即時効果があるときだけ、
 // 攻撃力の timed 効果の窓も同じ TriggerTracker で追い（射撃には使わず順位のためだけ）、発火のフレームで順位を出して対象を決める。
 // 手順 3 の順番は 回復 → 攻撃力の窓 → 射撃に効く窓 → 即時効果 で、同じフレームに付いた攻撃力の窓も順位に入る
-// （planBuffTimeline の 2 段目と同じ意味。skills/ranking.ts）。
+// （段の 2 段目。skills/ranking.ts）。
 //
 // Stage 11 モダニア（plan/design-stage11-modernia.md 3 節）: スタックする効果（最大装弾数▼）は段ごとの窓で登録する（skills/stacks.ts）。
 // 条件「自分が 〈stat〉 増加状態なら」の効果を追うときは、条件の stat の窓（状態の窓）も追い、手順 3 の順番は
@@ -49,7 +50,7 @@
 // 条件の stat・順位が要るときの攻撃力）があれば、その状態の付与も追う。同じ出どころ × 状態の付与は窓の配列を共有し（状態の窓）、
 // 中身はその配列をそのまま読む（同じ stat の timed の窓と同じ列で、同じフレームの判定に入る）。手順 3 の順番は
 // 回復 → 条件なしの付与 → 状態の窓 → 条件つきの付与 → 当たりの窓 → 攻撃力の窓 → 順位の対象の付与 → 射撃に効く窓 → 即時効果。
-// 条件つきの付与の中身は、ほかの条件の判定に使わない（連鎖の禁止。planBuffTimeline の 1.5 段目と同じ）
+// 条件つきの付与の中身は、ほかの条件の判定に使わない（連鎖の禁止。1.5 段目）
 //
 // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 上で「窓」と書いた追い方は、skills/holders.ts の件の一覧に置き換えた
 // （射撃に効く窓・当たりの窓・攻撃力の窓・状態の付与・吸収回復の窓・段の循環の窓）。手順 3 の順は
@@ -83,15 +84,10 @@ import {
   type BurstScheduleModel,
 } from '../burst/schedule.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
-import {
-  isResolvedShotCount,
-  resolveInstant,
-  type ResolvedInstantEffect,
-  type ResolvedTimedEffect,
-} from '../skills/resolve.ts';
+import { isResolvedShotCount, resolveInstant, type ResolvedInstantEffect } from '../skills/resolve.ts';
 import { healFrameOf } from '../skills/heals.ts';
-import { createHolderLists, type HeldTrack, type HolderHistory } from '../skills/holders.ts';
-import { dependsOnRank, isEffectTarget, type FireContext } from '../skills/targets.ts';
+import { createHolderLists, type HolderHistory } from '../skills/holders.ts';
+import { isEffectTarget, type FireContext } from '../skills/targets.ts';
 import { resolvePassiveStates, type TimelineSlot } from '../skills/timeline.ts';
 import {
   advanceShotCount,
@@ -102,9 +98,8 @@ import {
   shotCountWeight,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import { isFiringStat, isHitStateStat, type ShotCountKind } from '../skills/types.ts';
+import type { ShotCountKind } from '../skills/types.ts';
 import { dotTickTracker, groupDotsByState, type DotTickTracker } from './dot.ts';
-import type { NamedStateId } from '../skills/states.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { timerFrames, type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
@@ -172,18 +167,6 @@ export type FirstPassOptions = {
   ) => { hitRate: number; coreHits: number };
 };
 
-/** 射撃に効く timed 効果の窓（Stage 11 から対象の枠ごと。発火ごとに対象が変わる効果があるため） */
-export type FiringWindow = {
-  /** 効果を受ける枠 */
-  slotIndex: number;
-  sourceSlotIndex: number;
-  effect: ResolvedTimedEffect;
-  start: number;
-  end: number;
-  /** Stage 11 モダニア: 効果のあるスタックの段（1 始まり）。スタックしない効果はキーごと無い */
-  stack?: number;
-};
-
 /** 即時効果を 1 枠に当てた記録 */
 export type InstantApplication = {
   frame: number;
@@ -198,26 +181,8 @@ export type FirstPassResult = {
   frames: number;
   shots: (ShotLog | null)[];
   schedule: BurstSchedule | null;
-  /** 射撃に効く timed 効果の窓（発生順）。テスト用（区間は planBuffTimeline が作る） */
-  firingWindows: FiringWindow[];
   /** 即時効果（発生順） */
   instants: InstantApplication[];
-  /** Stage 11 アリス編: 順位のためだけに追った攻撃力の窓（topAttack の射撃系・即時効果が無ければ空）。テスト用 */
-  rankAttackWindows: FiringWindow[];
-  /** 持続の命中率▲の窓（当たりの窓。options.hitRateWith が無い・条件が自動の枠に掛からなければ空）。テスト用 */
-  hitWindows: FiringWindow[];
-  /**
-   * 名前の付いた状態の語彙編: 1 パス目で追った状態の窓（中身に 1 パス目で追う stat がある状態だけ。stack はスタックの段）。テスト用
-   * （窓は planBuffTimeline の namedStateWindows が作り直す）
-   */
-  namedStateWindows: {
-    state: NamedStateId;
-    slotIndex: number;
-    sourceSlotIndex: number;
-    start: number;
-    end: number;
-    stack?: number;
-  }[];
   /** V-0030: 段の循環のヒットで溜めたゲージ（予約した順）。frame は当たるフレーム、shotFrame は段を出した射撃。テスト用 */
   cycleGaugeHits: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
   /**
@@ -695,7 +660,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (state.lastShot) log.lastShotFrames!.push(f);
       if (params.weapon !== null) (log.weaponChangeShotFrames ??= []).push(f);
       // 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節の論点 8）: 撃ち切りで終わる変更は、最後の弾丸を
-      // 撃ったら次のフレームで基礎の武器に戻す（変更後の武器はリロードしない）。窓の終わりは planBuffTimeline も同じ列から作る
+      // 撃ったら次のフレームで基礎の武器に戻す（変更後の武器はリロードしない）。件の終わりも同じ列から作る（skills/holders.ts）
       if (params.weapon !== null && state.lastShot && lists.openWeaponChange(i, params.weapon.id, f + 1)) {
         (log.weaponChangeEnds ??= []).push(f + 1);
       }
@@ -961,63 +926,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
 
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;
   const history = lists.history();
-  // テスト用の窓（段 B で消す）: いまの 1 パス目が追っていた範囲（射撃に効く件・順位のための攻撃力の件・当たりの件・状態の件）
-  const windowsOfTracks = (test: (track: HeldTrack, effect: ResolvedTimedEffect) => boolean): FiringWindow[] =>
-    history.tracks.flatMap((track) => {
-      if (track.origin.kind !== 'timed' || !test(track, track.origin.effect)) return [];
-      const effect = track.origin.effect;
-      return track.items.map((item) => {
-        const w: FiringWindow = {
-          slotIndex: track.holder,
-          sourceSlotIndex: track.sourceSlotIndex,
-          effect,
-          start: item.start,
-          end: item.end,
-        };
-        if (item.stack !== undefined) w.stack = item.stack;
-        return w;
-      });
-    });
-  // 順位が要る（topAttack の射撃系の件・即時効果がある）ときだけ、順位のための攻撃力の件を出す（いまの attackTrack）
-  const needsRank =
-    history.tracks.some(
-      (t) =>
-        t.stage === 2 &&
-        ((t.origin.kind === 'timed' && isFiringStat(t.origin.effect.stat)) ||
-          (t.origin.kind === 'state' && t.origin.contents.some((c) => isFiringStat(c.stat)))),
-    ) || otherInstants.some((src) => dependsOnRank(src.effect));
-  // 当たりの件は、持続の命中率▲を 1 パス目で効かせるとき、条件が自動の枠に掛かりうる出どころの分（いまの hitTrack）
-  const autoSlot = (i: number) => (options.hitRates?.[i] ?? null) !== null;
-  const hitSources = new Set<ResolvedTimedEffect>();
-  for (const t of history.tracks) {
-    if (t.origin.kind === 'timed' && t.stage === 1 && isHitStateStat(t.origin.effect.stat) && autoSlot(t.holder)) {
-      hitSources.add(t.origin.effect);
-    }
-  }
   return {
     frames,
     shots: logs,
     schedule,
-    firingWindows: windowsOfTracks((_, effect) => isFiringStat(effect.stat)),
     instants,
-    rankAttackWindows: needsRank
-      ? windowsOfTracks(
-          (track, effect) => effect.stat === 'attack' && track.stage !== 2 && track.opportunities === null,
-        )
-      : [],
-    hitWindows: options.hitRateWith === undefined ? [] : windowsOfTracks((_, effect) => hitSources.has(effect)),
-    namedStateWindows: history.tracks.flatMap((track) => {
-      const o = track.origin;
-      if (o.kind !== 'state') return [];
-      return track.items.map((item) => ({
-        state: o.state,
-        slotIndex: track.holder,
-        sourceSlotIndex: track.sourceSlotIndex,
-        start: item.start,
-        end: item.end,
-        ...(item.stack === undefined ? {} : { stack: item.stack }),
-      }));
-    }),
     cycleGaugeHits,
     dotGauges,
     shotGauges,
