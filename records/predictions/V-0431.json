@@ -39,7 +39,7 @@
         "condition": "auto"
       },
       "note": "バーストを撃った枠の並び（最初の 6 回。1 = アニス：スター、2 = アビスタ、3 = デルタ）",
-      "observations": []
+      "observations": ["460-01"]
     },
     {
       "id": "anis-hit",

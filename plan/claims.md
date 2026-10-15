@@ -6,7 +6,7 @@
 - 根拠の等級は、上から順に問い、最初に当てはまったもの（[design-stage20.md](design-stage20.md) 3.3 節）。新しく `確定` にするのは 1〜3 のとき。
   1. `厳密一致`: 合わせ込みの定数を持たない式やデータから計算した値と、実測が端数まで一致した
   2. `反復実測`: 値を決めるのに使っていない実測でも再現した（仮説・値・読み方を決めるのに使った録画のほかに、別の録画で 1 回以上）
-  3. `データ明記`: ゲームのデータ（CDN の数値・説明文）に、解釈の余地なく一意に書かれている
+  3. `データ明記`: ゲームのデータ（CDN の数値・説明文・ゲーム内の用語のツールチップ）に、解釈の余地なく一意に書かれている。ツールチップは 2026-10-15 のオーナーの決定で足した。モデルの値が変わる結論は、撮影か既存の録画で 1 度確かめてから確定にする
   4. `単独実測`: 実測はあるが、1 回だけか、値をその実測に合わせて決めただけ
   5. `推論`: 上のどれでもない（解釈の余地のある読み・推論・推定・外部資料・観測できない約束）
 - 撮る前の予測は確定の条件にしない。過去の録画の読み直しでも確定にできる（[design-investigation-review.md](design-investigation-review.md) 1 節。2026-10-10 のオーナーの決定）。「決めるのに使った録画」は、仮説・値・読み方を決めるのに使った録画（結論の `decidedOn`）。機械の等級の候補は、反復実測の再現にこれらの録画を数えない。
@@ -15,7 +15,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 327・仮説 86・棄却 99・範囲外 2（計 514）
+件数: 確定 329・仮説 85・棄却 99・範囲外 2（計 515）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1840,11 +1840,11 @@
   - 等級の候補（機械）: 厳密一致
   - 最小構成の警告: 2 / 2 組（[minimal.md](minimal.md)）
 - **C-0203** アニス：スターの S1 の部隊構成の分岐で、バースト段階が可変（AllStep）のキャラは「基本バースト段階 1 の味方」に数えない
-  - 状態: 仮説・等級: 推論・更新日: 2026-10-04
-  - 根拠: 解釈（plan/design-anis-star-s1.md 5 節の論点 1。2026-10-03 にオーナーが推奨どおりと承認）。AllStep のキャラ（レッドフード）を添えた録画は無い。C-0191 から分けた。V-0122
-  - モデル側: `skills/composition.ts` の `burstStepMixAllows`（burstStep が otherBurstStep と一致するキャラだけを数える）
+  - 状態: 確定・等級: データ明記・更新日: 2026-10-15
+  - 根拠: ゲーム内の用語のツールチップ（「基本バースト段階がIの味方」「基本バースト段階がIIIの」。2026-08-09 撮影。参照資料 reference/tooltips/）に、全段階のニケは入らない（スキルで段階が変わるラピ：レッドフードは元の段階で数える）と書かれている。2026-10-15 のオーナーの決定で、ツールチップは説明文と同じくデータ明記の根拠にでき、モデルの値を変えない結論はツールチップだけで確定にできる（この結論はいまのモデルのまま）。それまでの根拠は解釈（plan/design-anis-star-s1.md 5 節の論点 1。2026-10-03 にオーナーが推奨どおりと承認）だけで、AllStep のキャラ（レッドフード）を添えた録画は無い。C-0191 から分けた。V-0122・V-0431
+  - モデル側: `skills/composition.ts` の `countsAsBurstStep`（burstStep が N のキャラだけを数える。AllStep は Step1〜Step3 のどれとも一致しない）
   - 置き換え: C-0191
-  - 検証記録: V-0122
+  - 検証記録: V-0122、V-0431
   - 定義: `data/skills/17.json` の skill1 の effects[1]、`data/skills/17.json` の skill1 の effects[2]、`data/skills/17.json` の skill1 の effects[3]、`data/skills/17.json` の skill1 の effects[5]、`data/skills/17.json` の skill2 の effects[0]、`data/skills/17.json` の burst の effects[2]
 - **C-0204** アニス：スターの S2 は、フルバースト発動時に味方全体へ攻撃ダメージ▲を 10 秒付け、私だけの星のときは発動者（アニス：スター）のバフ前攻撃力の割合の攻撃力▲も 10 秒付ける
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-04
@@ -3021,6 +3021,14 @@
   - 根拠: 説明文の読み（plan/design-heal-vocabulary.md 1 節の表の 4・5 節）。同じく味方全体への 1 回の回復のヘルムの宝物版 S1 の C-0345（満タンの味方にも起こす）。オーシャンと味方の与ダメージとゲージを変えないのは C-0254
   - モデル側: `data/skills/305.json` の skills.burst の effects[0]（`heal`・`burstUse`・`allies`）
   - 定義: `data/skills/305.json` の burst の effects[0]
+- **C-0555** 「基本バースト段階が N の味方」（アニス：スターの S1 の部隊構成の分岐 burstStepMix・対象の絞り込み targetBurstStep）には、バーストの後に同じ段階へ再突入するニケ（burstSkill.nextStep が burstStep と同じ。アビスタなど）を数えない
+  - 状態: 確定・等級: データ明記・更新日: 2026-10-15
+  - 根拠: ゲーム内の用語のツールチップ（gradeReason）と、その確かめの録画 460（V-0431）。アニス：スター（操作）・アビスタ（基本バースト段階 I・バーストで I に再突入）・デルタ（II）の編成で、戦闘開始の直後の一時停止画面に、アニス：スターの適用中の効果として私だけの星（攻撃力 40.01% 増加）が出る（みんなの星ではない）。撃った枠の並びの最初の 6 回は 1・3・2・1・2・1（`460-01`）で、アビスタを数えないモデルと一致し、数えるモデル（1・2・1・2・1・2。デルタは II を撃たない）と合わない。アニス：スターの I の後はどの回も II の段に進む。アニス：スターの 1 発の増分（胴体 2 ヒット + 追加ダメージ）は 480,330（`460-02`）で、単騎・私だけの星の録画 161 の同じ組と同じ値（▲なしならおよそ 342,946）。撮る前の予測は records/predictions/V-0431.json と V-0431「予測」（予測は確定の条件にしていない）。V-0431
+  - モデル側: `skills/composition.ts` の `countsAsBurstStep`（`burstStep` が N で、`burstSkill.nextStep` が `burstStep` と違うキャラだけを数える）。`burstStepMixAllows`（編成の条件 `burstStepMix`）と `fixedTargetsOf`（対象の絞り込み `targetBurstStep`）が使う
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0431
+  - 定義: `data/skills/17.json` の skill1 の effects[1]、`data/skills/17.json` の skill1 の effects[2]、`data/skills/17.json` の skill1 の effects[3]、`data/skills/17.json` の skill1 の effects[5]、`data/skills/17.json` の skill2 の effects[0]、`data/skills/17.json` の burst の effects[2]、`data/skills/870.json` の skill2 の effects[3]、`data/skills/871.json` の skill2 の effects[3]
+  - 等級の候補（機械）: 厳密一致
 
 ## 敵・的・場面
 

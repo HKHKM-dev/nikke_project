@@ -1,8 +1,9 @@
 // ラム編: 同じ部隊の味方の条件（squad。plan/design-ram-s1.md 2.1 節）と、バースト段階の構成の条件（burstStepMix）との組み合わせ。
-// バースト段階の構成の条件だけの検査は anisStar.test.ts
+// バースト段階の構成の条件だけの検査は anisStar.test.ts。再突入するキャラを「基本バースト段階が N の味方」に数えない（C-0555）検査も
+// ここに置く
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
-import { applyComposition, compositionAllows, squadAllows } from '../composition.ts';
+import { applyComposition, compositionAllows, countsAsBurstStep, fixedTargetsOf, squadAllows } from '../composition.ts';
 import { parseSkillDefinition } from '../types.ts';
 
 const ram = makeCharacter({}, { squad: 'CE003', burstStep: 'Step1' });
@@ -76,5 +77,39 @@ describe('同じ部隊の味方の条件（squad）', () => {
       /squad\.name: unknown field/,
     );
     expect(() => parseSkillDefinition(definitionWith({ ...cut, squad: true }))).toThrow(/squad: expected an object/);
+  });
+});
+
+describe('基本バースト段階が N の味方に再突入するキャラを数えない（C-0555）', () => {
+  // チャイム（331）のように、バーストの後に同じ段階へ再突入するキャラ
+  const reentry = makeCharacter({}, { squad: 'Test', burstStep: 'Step2' });
+  reentry.burstSkill = { ...reentry.burstSkill, nextStep: 'Step2' };
+  const timed = {
+    kind: 'timed',
+    trigger: 'burstUse',
+    target: 'allies',
+    stat: 'attack',
+    ref: 1,
+    durationRef: 2,
+    targetBurstStep: 'Step2',
+  };
+
+  it('counts only the slots that go on to the next stage', () => {
+    expect(countsAsBurstStep(rem, 'Step2')).toBe(true);
+    expect(countsAsBurstStep(reentry, 'Step2')).toBe(false);
+    expect(countsAsBurstStep(ram, 'Step2')).toBe(false);
+  });
+
+  it('leaves a re-entering slot out of targetBurstStep', () => {
+    const effect = parseSkillDefinition(definitionWith(timed)).skills.skill1.effects[0]!;
+    expect(fixedTargetsOf(effect, [ram, reentry, rem, delta], 0)).toEqual([2, 3]);
+  });
+
+  it('leaves a re-entering slot out of burstStepMix', () => {
+    const effect = parseSkillDefinition(
+      definitionWith({ ...cut, burstStepMix: { otherBurstStep: 'Step2', present: true } }),
+    ).skills.skill1.effects[0]!;
+    expect(compositionAllows(effect, [ram, reentry], 0)).toBe(false);
+    expect(compositionAllows(effect, [ram, reentry, rem], 0)).toBe(true);
   });
 });

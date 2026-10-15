@@ -28,12 +28,13 @@
             "present": false
           },
           "assumes": {
-            "ja": "私だけの星（自分を除く基本バースト段階 1 の味方がいないとき）。バースト段階が可変（AllStep）のキャラは段階 1 に数えない",
-            "en": "My Own Star (no other standard Burst I ally). Allies with a variable Burst stage (AllStep) are not counted as Burst I"
+            "ja": "私だけの星（自分を除く基本バースト段階 1 の味方がいないとき）。バーストの後に I へ再突入するキャラ（アビスタなど）と、バースト段階が可変（AllStep）のキャラは段階 1 に数えない",
+            "en": "My Own Star (no other standard Burst I ally). Allies that re-enter Burst I after their Burst (e.g. Avistar) and allies with a variable Burst stage (AllStep) are not counted as Burst I"
           },
           "claims": [
             "C-0189",
-            "C-0203"
+            "C-0203",
+            "C-0555"
           ]
         },
         {
@@ -51,7 +52,8 @@
           },
           "claims": [
             "C-0202",
-            "C-0203"
+            "C-0203",
+            "C-0555"
           ]
         },
         {
@@ -69,7 +71,8 @@
           },
           "claims": [
             "C-0202",
-            "C-0203"
+            "C-0203",
+            "C-0555"
           ]
         },
         {
@@ -101,12 +104,13 @@
             "present": true
           },
           "assumes": {
-            "ja": "みんなの星（自分を除く基本バースト段階 1 の味方がいるとき）。自分のバーストの後、チェーンはもう一度 I に入り、このチェーンで未使用の別の I の枠が撃つ",
-            "en": "Everyone’s Star (another standard Burst I ally is present). After her Burst the chain re-enters Stage I, and another Burst I slot not yet used in this chain fires"
+            "ja": "みんなの星（自分を除く基本バースト段階 1 の味方がいるとき。I に再突入するキャラは数えない）。自分のバーストの後、チェーンはもう一度 I に入り、このチェーンで未使用の別の I の枠が撃つ",
+            "en": "Everyone’s Star (another standard Burst I ally is present; allies that re-enter Burst I are not counted). After her Burst the chain re-enters Stage I, and another Burst I slot not yet used in this chain fires"
           },
           "claims": [
             "C-0201",
-            "C-0203"
+            "C-0203",
+            "C-0555"
           ]
         }
       ],
@@ -159,7 +163,8 @@
           },
           "claims": [
             "C-0204",
-            "C-0203"
+            "C-0203",
+            "C-0555"
           ]
         },
         {
@@ -259,6 +264,7 @@
           "claims": [
             "C-0209",
             "C-0203",
+            "C-0555",
             "C-0520"
           ]
         }
