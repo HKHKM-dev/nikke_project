@@ -5,7 +5,7 @@ import { summarizeSchedule } from '../burst/schedule.ts';
 import { enemyEventNotes } from '../frame/events.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
-import { cycleSummariesOf, effectSummariesOf } from '../skills/summaries.ts';
+import { cycleSummariesOf, effectSummariesOf, stateSummariesOf } from '../skills/summaries.ts';
 import { groupTimeline, mergeAdjacentRanges } from '../skills/timeline.ts';
 import {
   skillSupportOf,
@@ -70,6 +70,7 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
       buildEffects: slot.buildEffects,
       effects: effectSummariesOf(sim.history, index),
       cycleChanges: cycleSummariesOf(sim.history, index),
+      states: stateSummariesOf(sim.history, index),
       segments,
       normalDamage: slot.normalDamage,
       burst: {

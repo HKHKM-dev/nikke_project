@@ -33,6 +33,7 @@ import {
   formatTimedTrigger,
   formatWindowDuration,
   formatWindowTrigger,
+  stateLabel,
 } from '../skillLabels.ts';
 import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
@@ -341,7 +342,8 @@ export function SlotCard({
               slotResult.buildEffects.length === 0 &&
               slotResult.effects.every((e) => e.stateOnly) &&
               slotResult.instants.length === 0 &&
-              slotResult.cycleChanges.length === 0 ? (
+              slotResult.cycleChanges.length === 0 &&
+              slotResult.states.length === 0 ? (
                 <p className="hint">なし</p>
               ) : (
                 <ul className="received-list">
@@ -391,6 +393,17 @@ export function SlotCard({
                             ? `（計 ${x.total} 発）`
                             : ''}
                         {x.instant.effect.assumes ? `・仮定: ${x.instant.effect.assumes.ja}` : ''}
+                      </small>
+                    </li>
+                  ))}
+                  {/* 2 段目の段 1: 付いた名前の付いた状態（中身の無い状態も。plan/design-skill-stage1.md 1.4 節） */}
+                  {slotResult.states.map((x) => (
+                    <li key={`state-${x.sourceSlotIndex}-${x.state}`}>
+                      <span className="amount">状態: {stateLabel(x.state)}</span>
+                      <small className="sub">
+                        枠 {x.sourceSlotIndex + 1} {slotNames[x.sourceSlotIndex] ?? ''}・
+                        {x.isStatic ? '戦闘の始めから終わりまで' : `${x.count} 回`}
+                        {x.undispellable ? '・解除不可' : ''}
                       </small>
                     </li>
                   ))}

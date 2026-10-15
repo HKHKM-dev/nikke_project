@@ -10,6 +10,8 @@
 // 名前の付いた状態の語彙編（plan/design-named-state.md 3.4 節・実装の別紙 1.3 節）: 枠の状態は、その枠の定義の静的な付与
 // （isStaticStateGrant）から取る。静的な付与にも編成の条件を書けるので、効果を外した後の定義から集める
 // （applyCompositionToTeam: 編成の条件で外す → 静的な状態を集める → 対象の枠を決める）。付与（state）の対象も timed と同じに決める。
+// 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 自分の状態の条件（selfState）のうち、編成で決まるもの（自分の定義の静的な状態と、
+// どの枠の定義も付けない状態）も、ここで決める（満たせば条件から落とし、満たさなければ効果を外す）。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, Element } from '../types.ts';
 import type { NamedStateId } from './states.ts';
@@ -171,9 +173,68 @@ function sameTargets(a: readonly number[] | undefined, b: readonly number[] | un
   return a === b || (a !== undefined && b !== undefined && a.length === b.length && a.every((v, i) => v === b[i]));
 }
 
+/** 定義の付与（静的なものも時間で変わるものも）が付ける状態 */
+export function grantedStatesOf(definition: SkillDefinition | null | undefined): Set<NamedStateId> {
+  const out = new Set<NamedStateId>();
+  if (!definition) return out;
+  for (const slot of SKILL_SLOTS)
+    for (const e of definition.skills[slot].effects) if (e.kind === 'state') out.add(e.state);
+  return out;
+}
+
+/**
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 自分の状態が編成で決まるか。true = いつも付いている（自分の定義の静的な状態）、
+ * false = いつも付いていない（自分の定義もほかの枠の定義も付けない）、undefined = 時間で変わる（段 1.5 と damage で件を見る）
+ */
+export type SelfStateLookup = (state: NamedStateId) => boolean | undefined;
+
+/**
+ * 枠の定義（編成の条件を当てた後）と、ほかの枠の定義が付けうる状態から、SelfStateLookup を作る。
+ * ほかの枠の付与は、対象がこの枠になりうるかを見ずに数える（多めに「時間で変わる」とみなす）
+ */
+export function selfStateLookupOf(
+  own: SkillDefinition | null | undefined,
+  others: ReadonlySet<NamedStateId> = new Set(),
+): SelfStateLookup {
+  const statics = new Set(staticStatesOf(own));
+  const granted = grantedStatesOf(own);
+  return (state) => (statics.has(state) ? true : granted.has(state) || others.has(state) ? undefined : false);
+}
+
+/**
+ * 効果の selfState を、編成で決まるなら決める。満たすなら条件から selfState を落とした効果（ほかの鍵が無ければ条件ごと落とす。
+ * 段の印が条件の無い効果と同じになる）、満たさないなら null、決まらなければそのまま
+ */
+export function resolveSelfState<E extends SkillEffect>(effect: E, lookup: SelfStateLookup): E | null {
+  const condition = 'condition' in effect ? effect.condition : undefined;
+  const self = condition?.selfState;
+  if (condition === undefined || self === undefined) return effect;
+  const has = lookup(self.state);
+  if (has === undefined) return effect;
+  if (has !== self.present) return null;
+  const { selfState: _selfState, ...rest } = condition;
+  const { condition: _condition, ...without } = effect as E & { condition?: unknown };
+  return (Object.keys(rest).length > 0 ? { ...without, condition: rest } : without) as E;
+}
+
+/**
+ * 編成の枠ごとの SelfStateLookup（applyCompositionToTeam と同じ決め方。最小構成の検査など、効果を 1 つずつ見る所が使う）。
+ * definitions は宝物版を当てた各枠の定義（定義の無い枠は null）
+ */
+export function selfStateLookupsForTeam(
+  definitions: readonly (SkillDefinition | null | undefined)[],
+  characters: readonly (CompositionCharacter | null)[],
+  enemyElement: Element | null = null,
+): SelfStateLookup[] {
+  const filtered = definitions.map((d, i) => (d ? filterComposition(d, characters, i, enemyElement) : d));
+  const others = otherGrantedStates(filtered);
+  return filtered.map((own, i) => selfStateLookupOf(own, others[i]));
+}
+
 /**
  * 編成の条件を満たさない効果を外し、編成で決まる対象の枠（fixedTargets）を書いた定義。どの効果も変わらなければ
- * definition をそのまま返す
+ * definition をそのまま返す。2 段目の段 1: 編成で決まる selfState も決める（others はほかの枠の定義が付けうる状態。
+ * 省略はほかの枠が付けない）
  */
 export function applyComposition(
   definition: SkillDefinition,
@@ -182,14 +243,22 @@ export function applyComposition(
   enemyElement: Element | null = null,
   /** ペルソナ編: 枠ごとの静的な状態（名前の付いた状態の語彙編: 編成の条件を当てた後の定義の静的な付与。定義の無い枠は undefined） */
   states: readonly (readonly NamedStateId[] | undefined)[] = [],
+  others: ReadonlySet<NamedStateId> = new Set(),
 ): SkillDefinition {
-  let changed = false;
-  const skills = { ...definition.skills };
+  const allowed = filterComposition(definition, characters, selfIndex, enemyElement);
+  const lookup = selfStateLookupOf(allowed, others);
+  let changed = allowed !== definition;
+  const skills = { ...allowed.skills };
   for (const slot of SKILL_SLOTS) {
-    const entry = definition.skills[slot];
+    const entry = allowed.skills[slot];
     let slotChanged = false;
     const effects = entry.effects
-      .filter((e) => compositionAllows(e, characters, selfIndex, enemyElement))
+      .map((e) => {
+        const resolved = resolveSelfState(e, lookup);
+        if (resolved !== e) slotChanged = true;
+        return resolved;
+      })
+      .filter((e): e is SkillEffect => e !== null)
       .map((e) => {
         const fixed = fixedTargetsOf(e, characters, selfIndex, states);
         if (
@@ -206,6 +275,25 @@ export function applyComposition(
     changed = true;
     skills[slot] = { ...entry, effects };
   }
+  return changed ? { ...allowed, skills } : definition;
+}
+
+/** 編成の条件（burstStepMix・squad・withCharacter・enemyElement）を満たさない効果を外した定義。どれも満たせばそのまま */
+function filterComposition(
+  definition: SkillDefinition,
+  characters: readonly (CompositionCharacter | null)[],
+  selfIndex: number,
+  enemyElement: Element | null,
+): SkillDefinition {
+  let changed = false;
+  const skills = { ...definition.skills };
+  for (const slot of SKILL_SLOTS) {
+    const entry = definition.skills[slot];
+    const effects = entry.effects.filter((e) => compositionAllows(e, characters, selfIndex, enemyElement));
+    if (effects.length === entry.effects.length) continue;
+    changed = true;
+    skills[slot] = { ...entry, effects };
+  }
   return changed ? { ...definition, skills } : definition;
 }
 
@@ -215,28 +303,43 @@ function applyCompositionToSlot(
   selfIndex: number,
   enemyElement: Element | null,
   states: readonly (readonly NamedStateId[] | undefined)[],
+  others: ReadonlySet<NamedStateId>,
 ): TeamSlotInput {
   const definition = slot.skills?.definition;
   if (slot.skills === undefined || !definition) return slot;
-  const applied = applyComposition(definition, characters, selfIndex, enemyElement, states);
+  const applied = applyComposition(definition, characters, selfIndex, enemyElement, states, others);
   return applied === definition ? slot : { ...slot, skills: { ...slot.skills, definition: applied } };
+}
+
+/** 枠ごとの、ほかの枠の定義が付けうる状態（自分の枠を除く全枠の付与の状態） */
+function otherGrantedStates(definitions: readonly (SkillDefinition | null | undefined)[]): Set<NamedStateId>[] {
+  const granted = definitions.map(grantedStatesOf);
+  return definitions.map((_, i) => {
+    const out = new Set<NamedStateId>();
+    granted.forEach((g, j) => {
+      if (j !== i) for (const s of g) out.add(s);
+    });
+    return out;
+  });
 }
 
 /**
  * 各枠に applyComposition を当てた新しい入力。どの枠も変わらなければ input をそのまま返す。
  * 宝物版の差し替え（applyTreasureToTeam）の後に通す（宝物版の効果にも条件を書けるように）。
- * 名前の付いた状態の語彙編: 枠の静的な状態は、編成の条件で効果を外した後の定義から集める（applyComposition は 2 回通しても同じ）
+ * 名前の付いた状態の語彙編: 枠の静的な状態は、編成の条件で効果を外した後の定義から集める（applyComposition は 2 回通しても同じ）。
+ * 2 段目の段 1: 編成で決まる selfState は、ほかの枠の定義が付けうる状態を見て決める
  */
 export function applyCompositionToTeam<T extends TeamInput>(input: T): T {
   const characters = input.slots.map((slot) => (slot === null ? null : slot.character));
   const enemyElement = input.enemy.element;
   const filtered = input.slots.map((slot, i) => {
     const definition = slot?.skills?.definition;
-    return definition ? applyComposition(definition, characters, i, enemyElement) : undefined;
+    return definition ? filterComposition(definition, characters, i, enemyElement) : undefined;
   });
   const states = filtered.map((definition) => (definition === undefined ? undefined : staticStatesOf(definition)));
+  const others = otherGrantedStates(filtered);
   const slots = input.slots.map((slot, i) =>
-    slot === null ? null : applyCompositionToSlot(slot, characters, i, enemyElement, states),
+    slot === null ? null : applyCompositionToSlot(slot, characters, i, enemyElement, states, others[i]!),
   );
   if (slots.every((slot, i) => slot === input.slots[i])) return input;
   return { ...input, slots };

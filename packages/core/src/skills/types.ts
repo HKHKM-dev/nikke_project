@@ -556,9 +556,23 @@ export const DURATION_UNTILS = ['fullBurstEnd', 'battleEnd'] as const satisfies 
  * inFullBurst = 発火の瞬間がフルバーストタイムの中なら（防御力無視ダメージ編。plan/design-true-damage-element.md 3.4 節。
  * 1 パス目で窓を追う stat には書けない。damage ではクルミ S2 編の fullBurst を改めた。窓 [start, end) の中）。
  * enemyState = 敵（1 体の前提）にその状態が付いているなら（クルミ S2 編の targetStatus を改めた。damage。付いている区間は
- * 同じ状態の dot の最初の発火から最後の tick まで。編成のどの枠の dot でもよい）
+ * 同じ状態の dot の最初の発火から最後の tick まで。編成のどの枠の dot でもよい）。
+ * selfState = 自分（効果を出した枠）にその状態が付いているか（2 段目の段 1。plan/design-skill-stage1.md 1.1 節。timed・付与・damage）
  */
-export type EffectCondition = { selfBuffed?: BuffStat; inFullBurst?: true; enemyState?: NamedStateId };
+export type EffectCondition = {
+  selfBuffed?: BuffStat;
+  inFullBurst?: true;
+  enemyState?: NamedStateId;
+  selfState?: SelfStateCondition;
+};
+
+/**
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 自分の状態の条件。present: true は「自分が〈状態〉なら」、false は
+ * 「自分が〈状態〉でなければ」。件の出どころは問わない。JSON は "selfState": "<id>"（付いていれば）か
+ * { "state": "<id>", "present": false }。静的な状態を見るものは編成の段（skills/composition.ts の resolveSelfState）で決まり、
+ * 時間で変わる状態は timed・付与なら段 1.5（skills/holders.ts）、damage なら frame/plan.ts で件を見る
+ */
+export type SelfStateCondition = { state: NamedStateId; present: boolean };
 
 /** 名前の付いた状態の語彙編: 条件のキー */
 export type ConditionKey = keyof EffectCondition;
@@ -940,6 +954,11 @@ export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scal
   state: NamedStateId;
   /** 状態の間だけ持ち主に効く中身（同 5.3 節） */
   contents?: StateContentItem[];
+  /**
+   * 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 説明文の「解除不可」。効果解除と、後から付く発動不可で外れない。
+   * 持続の長さは変えない。読むのは解除（後の語彙）・効果解除（後の語彙）と、画面の状態の表示
+   */
+  undispellable?: true;
 };
 
 /**
@@ -1602,8 +1621,8 @@ function parseTimedFields(
 
 /** 名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）: 効果の種類ごとに受ける条件の鍵 */
 const CONDITION_KEYS_OF = {
-  timed: ['selfBuffed', 'inFullBurst'],
-  damage: ['inFullBurst', 'enemyState'],
+  timed: ['selfBuffed', 'inFullBurst', 'selfState'],
+  damage: ['inFullBurst', 'enemyState', 'selfState'],
 } as const satisfies Record<string, readonly ConditionKey[]>;
 
 /**
@@ -1629,8 +1648,19 @@ function parseCondition(c: Json, path: string, allowed: readonly ConditionKey[])
     condition.inFullBurst = true;
   }
   if (c.enemyState !== undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
+  if (c.selfState !== undefined) condition.selfState = parseSelfStateCondition(c.selfState, `${path}.selfState`);
   if (Object.keys(condition).length === 0) fail(path, `expected at least one of ${allowed.join(', ')}`);
   return condition;
+}
+
+/** 2 段目の段 1: 自分の状態の条件。"<id>"（付いていれば）か { state, present } */
+function parseSelfStateCondition(v: Json, path: string): SelfStateCondition {
+  if (typeof v === 'string') return { state: parseNamedStateId(v, path, 'ally'), present: true };
+  if (!isRecord(v)) fail(path, 'expected a state id or { state, present }');
+  for (const key of Object.keys(v)) if (key !== 'state' && key !== 'present') fail(`${path}.${key}`, 'unknown field');
+  const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
+  if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
+  return { state, present: v.present };
 }
 
 /** 名前の付いた状態の語彙編: 付与に書けない欄（値の欄は中身に書く） */
@@ -1653,9 +1683,19 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   // トリガーの確率のきっかけは書けない（窓が期待値の小片になり、見る側の「付いているか」に使えない）。
   // { applied } は parseTrigger が damage のほかで落とす（連鎖させない）
   const fields = parseTimedFields(v, path, undefined, false);
-  // 循環の禁止: 付与が、自分の付ける状態を見て対象を決めない（plan/design-stage11-modernia.md 11.2 節の 7）
+  // 循環の禁止: 付与が、自分の付ける状態を見て対象や発火を決めない（plan/design-stage11-modernia.md 11.2 節の 7。2 段目の段 1 の
+  // selfState も同じ。plan/design-skill-stage1.md 1.1 節）
   if (fields.targetState === state) fail(`${path}.targetState`, `a grant of "${state}" cannot look at its own state`);
+  if (fields.condition?.selfState?.state === state) {
+    fail(`${path}.condition.selfState`, `a grant of "${state}" cannot look at its own state`);
+  }
   const effect: StateGrantEffect = { kind: 'state', state, ...fields };
+  // 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印
+  if (v.undispellable !== undefined) {
+    if (v.undispellable !== true)
+      fail(`${path}.undispellable`, `expected true, got ${JSON.stringify(v.undispellable)}`);
+    effect.undispellable = true;
+  }
   if (v.contents !== undefined) {
     if (!Array.isArray(v.contents) || v.contents.length === 0) fail(`${path}.contents`, 'expected a non-empty array');
     effect.contents = v.contents.map((item, i) => parseStateContentItem(item, v, `${path}.contents[${i}]`));
@@ -1668,6 +1708,7 @@ const STATE_GRANT_KEYS: readonly string[] = [
   'kind',
   'state',
   'contents',
+  'undispellable',
   'trigger',
   'target',
   'targetWeapon',
@@ -1716,7 +1757,7 @@ function parseStateContentItem(item: Json, grant: Record<string, Json>, path: st
 
 /** 名前の付いた状態の語彙編: 付与の欄と中身の項目を合わせた timed（検証用。plan/design-named-state.md 3.2 節） */
 function contentAsTimed(grant: Record<string, Json>, item: Record<string, Json>): Record<string, Json> {
-  const { kind: _kind, state: _state, contents: _contents, claims: _claims, ...fields } = grant;
+  const { kind: _kind, state: _state, contents: _contents, claims: _claims, undispellable: _u, ...fields } = grant;
   const { claims: _itemClaims, ...value } = item;
   return { ...fields, ...value, kind: 'timed' };
 }

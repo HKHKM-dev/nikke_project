@@ -50,7 +50,7 @@ import {
 } from '../skills/holders.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
 import type { NamedStateId } from '../skills/states.ts';
-import { isStateStat, type EffectCondition } from '../skills/types.ts';
+import { isStateStat, staticStatesOf, type EffectCondition } from '../skills/types.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import {
@@ -268,6 +268,15 @@ export function planSkillHits(
     if (!slot || !definition) return;
     const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
     const sequential = definition.skills.burst.sequential === true;
+    // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: damage の条件 selfState が見る、自分の静的な状態と状態の件（段の印に依らない。
+    // 同じフレームに付いた件も見る。解除・消去で外れる件はそのフレームまで付いている）
+    const ownStatics = new Set(staticStatesOf(definition));
+    const ownStateItems = itemsOf(history, { holder: slotIndex, kind: 'state' });
+    const selfStateAt = (state: NamedStateId, frame: number): boolean =>
+      ownStatics.has(state) ||
+      ownStateItems.some(
+        (i) => i.origin.kind === 'state' && i.origin.state === state && i.start <= frame && frame < i.end,
+      );
     // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
     const delays = burstDelaysOf(slot.character);
     if (sequential && delays.hitFrames !== delays.effectFrames) {
@@ -328,7 +337,7 @@ export function planSkillHits(
         ? appliedFrames(history, effect.trigger.applied, slotIndex)
         : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
       for (const frame of fires) {
-        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans)) continue;
+        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateAt)) continue;
         if (frame + delay >= frames) continue;
         push(frame + delay, effect, pre);
       }
@@ -378,15 +387,23 @@ export function planSkillHits(
 
 /**
  * クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。条件が無ければ true。キーはすべてを満たすこと
- * （名前の付いた状態の語彙編: timed と同じ条件の型。damage が受ける鍵は inFullBurst・enemyState。plan/design-named-state.md 5.6 節）
+ * （名前の付いた状態の語彙編: timed と同じ条件の型。damage が受ける鍵は inFullBurst・enemyState。plan/design-named-state.md 5.6 節。
+ * 2 段目の段 1: selfState も。plan/design-skill-stage1.md 1.1 節）
  */
 function damageConditionHolds(
   condition: EffectCondition | undefined,
   frame: number,
   schedule: BurstSchedule | null,
   enemySpans: ReadonlyMap<NamedStateId, readonly { start: number; end: number }[]>,
+  selfStateAt: (state: NamedStateId, frame: number) => boolean,
 ): boolean {
   if (condition === undefined) return true;
+  if (
+    condition.selfState !== undefined &&
+    selfStateAt(condition.selfState.state, frame) !== condition.selfState.present
+  ) {
+    return false;
+  }
   if (condition.inFullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
   if (condition.enemyState !== undefined) {
     const spans = enemySpans.get(condition.enemyState) ?? [];

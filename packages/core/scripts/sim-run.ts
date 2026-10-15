@@ -54,7 +54,7 @@ import { firingParams } from '../src/frame/firing.ts';
 import { MAX_SKILL_LEVELS, isStateContent, type ResolvedTrigger, type SkillLevels } from '../src/skills/resolve.ts';
 import { itemsOf } from '../src/skills/holders.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
-import { compositionAllows } from '../src/skills/composition.ts';
+import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../src/skills/composition.ts';
 import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
 import { computeTeamDamage } from '../src/calc/model.ts';
 import { planTeamRun } from '../src/frame/plan.ts';
@@ -344,6 +344,12 @@ if (
 }
 // 編成の条件（burstStepMix・squad・withCharacter・enemyElement）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
 const compositionCharacters = slots.map((s) => s.character);
+// 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 編成で決まる自分の状態の条件（selfState）
+const selfStates = selfStateLookupsForTeam(
+  slots.map((s) => s.skills?.definition ?? null),
+  compositionCharacters,
+  input.enemy.element,
+);
 const compositionRows = slots.flatMap((slot, i) =>
   SKILL_SLOTS.flatMap((skill) =>
     (slot.skills?.definition?.skills[skill].effects ?? []).flatMap((e, effectIndex) => {
@@ -351,13 +357,22 @@ const compositionRows = slots.flatMap((slot, i) =>
       const squad = 'squad' in e ? e.squad : undefined;
       const withCharacter = 'withCharacter' in e ? e.withCharacter : undefined;
       const enemyElement = 'enemyElement' in e ? e.enemyElement : undefined;
-      if (mix === undefined && squad === undefined && withCharacter === undefined && enemyElement === undefined)
+      const selfState = 'condition' in e ? e.condition?.selfState : undefined;
+      const decided = selfState !== undefined && selfStates[i]!(selfState.state) !== undefined;
+      if (
+        mix === undefined &&
+        squad === undefined &&
+        withCharacter === undefined &&
+        enemyElement === undefined &&
+        !decided
+      )
         return [];
       const conditions = [
         mix && `other ${mix.otherBurstStep} ${mix.present ? 'present' : 'absent'}`,
         squad && `same squad (${slot.character.squad}) ${squad.present ? 'present' : 'absent'}`,
         withCharacter && `character ${withCharacter.rid} ${withCharacter.present ? 'present' : 'absent'}`,
         enemyElement && `enemy ${enemyElement}`,
+        decided && selfState !== undefined && `self ${selfState.present ? 'in' : 'not in'} ${selfState.state}`,
       ].filter(Boolean);
       return [
         {
@@ -365,7 +380,9 @@ const compositionRows = slots.flatMap((slot, i) =>
           // 名前の付いた状態の語彙編: 付与の行には状態の id も出す（state camouflage）
           effect: `${skill}[${effectIndex}] ${e.kind}${e.kind === 'state' ? ` ${e.state}` : ''}`,
           condition: conditions.join(' & '),
-          applies: compositionAllows(e, compositionCharacters, i, input.enemy.element),
+          applies:
+            compositionAllows(e, compositionCharacters, i, input.enemy.element) &&
+            resolveSelfState(e, selfStates[i]!) !== null,
         },
       ];
     }),

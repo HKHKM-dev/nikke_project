@@ -60,6 +60,8 @@
   - スロットの対応状況（`support`）は書かない。効果の有無と、未対応（`unimplemented`）の notes の有無から読み込みで決まる（`supported`・`partial`・`unsupported`・`noEffect`。[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）。効果の無いスロットには、理由の notes が要る。
   - いつも満たすとみなした条件は、効果の `assumes` に書く。
   - 名前の付いた状態（「〈名前〉」：機能…・〜状態なら・〜状態の味方・〜が適用された時）は、状態の付与（`kind: 'state'`）と中身（`contents`）で書き、名前は目録（`skills/states.ts`）の id で指す。目録に無い状態は id を足す（英語版の説明文の状態名の lowerCamelCase。[design-named-state.md](design-named-state.md) 5 節）。
+    - ほかの行から参照されない名前（効果の呼び名）も、状態の付与で書いて目録に足す（[design-skill-catalog.md](design-skill-catalog.md) の論点 4）。中身にできない項目（自分の維持の別の効果・即時・別の対象・ダメージ・自動攻撃）は別の効果で書き、付与は中身なしで足す（[design-skill-stage1.md](design-skill-stage1.md) 1.4 節）。
+    - 「自分が〈状態〉なら・でなければ」は `condition.selfState`（`"<id>"` か `{ "state": "<id>", "present": false }`）。静的な状態を見るものは編成の段で決まる。「解除不可」は付与の `undispellable: true`（同 1.1・1.3 節）。
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。
 - **テスト**

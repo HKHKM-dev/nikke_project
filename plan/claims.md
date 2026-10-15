@@ -1808,9 +1808,9 @@
 - **C-0189** アニス：スターの S1 の部隊構成の分岐は説明文どおり。自分を除く基本バースト段階 1 の味方がいなければ、戦闘開始から自分に私だけの星（攻撃力 40.01%▲。Lv10）が付き、ほかの攻撃力▲と同じく 1 発の式に乗る。いれば、みんなの星（バースト再突入 I 段階）になり、攻撃力▲は付かない
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-03
   - 根拠: `161-03`・`161-04`（アニス：スター単騎。一時停止画面の適用中の効果に「私だけの星: 攻撃力 40.01% 増加」があり、1 ヒットの胴体 172,540・会心 258,809 が、攻撃力 80,485 × 1.4001 のモデルの値と 1 未満の差。予測は撮る前に固定した。records/predictions/V-0116.json）・`150-03`・`150-04`（基本バースト段階 1 の I-DOLL・フラワーがいる録画 150。適用中の効果はスターフォールとみんなの星だけ（録画 151）で、1 ヒットは▲なしの値と 1 未満の差）。合わせ込みの定数なし。スキル Lv 10 は一時停止画面の表示とチャージ速度 6%（Lv10 の値）から。V-0116
-  - モデル側: `data/skills/17.json` の skill1 の effects[1]（`passive`・`burstStepMix`）。`skills/composition.ts` の `applyCompositionToTeam`（最上位で条件を満たさない効果を外す）
+  - モデル側: `data/skills/17.json` の skill1 の effects[1]（静的な状態の付与 `myOwnStar`。中身に攻撃力▲。`burstStepMix`。2 段目の段 1 で `passive` から書き直した）。`skills/composition.ts` の `applyCompositionToTeam`（最上位で条件を満たさない効果を外す）
   - 検証記録: V-0116
-  - 定義: `data/skills/17.json` の skill1 の effects[1]
+  - 定義: `data/skills/17.json` の skill1 の effects[1]、`data/skills/17.json` の skill1 の notes[2]
 - **C-0190** アニス：スターの S1 の追加ダメージは、フルチャージの発が命中するたびに 1 回、最終攻撃力の 120.13%（Lv10）×（攻撃力 − 防御力）。会心で 1.5 倍（倍率グループに足す）、コアの補正は乗らない。射撃ごとの倍率ダメージ（perShot）の式と同じ
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-03
   - 根拠: `161-05`・`161-06`（アニス：スター単騎・私だけの星の追加ダメージ 135,251・会心 202,876 が、攻撃力▲の後の攻撃力でのモデルの値 135,250.821・202,876.232 と 1 未満の差。予測は撮る前に固定した。records/predictions/V-0116.json）・`150-06`・`150-07`（録画 150 の▲なしの 96,566.5・144,850 も 1 未満の差。こちらは観測値を見た後の照合）。合わせ込みの定数なし。どちらの録画でもコアの値の増分は無い。どちらの録画でも、フルチャージの 1 発の増分は胴体 1〜2 ヒット + 追加ダメージ 1 回に分かれる（胴体の 2 ヒットは backlog 2-17）。V-0116
@@ -1828,7 +1828,7 @@
   - 根拠: `163-01`（デルタ・アニス：スター・フラワー・イサベルのオートバーストで、撃った枠の並びの最初の 8 回が、再突入ありのモデルと同じ 2・3・1・4・2・3・2・3。アニス：スターの I の後、同じチェーンでフラワーが I を撃つ。チェーンの合間も、アニス：スターの I の後にフラワーが I を撃ってから II のデルタの CT 待ちで切れる）。再突入なしのモデルは 2・1・4・3・2・1・4・2（合間にフラワーが I だけ撃つ）で合わない。撮る前に固定した予測（アニス：スターを枠 1 にした編成。records/predictions/V-0121.json）の並び 1・2・3・4・1・2・1・2 とも、キャラで読み替えると一致する（録画は枠の並びが依頼と違った）。アニス：スターの I からフラワーの I までは 29〜32f で段の間隔と同じ（`163-03`）。段階 1 の味方のいない録画 162 では、アニス：スターの I の後すぐ II に替わる（`162-02`）。V-0121
   - モデル側: `data/skills/17.json` の skill1 の `burstReentry`（`burstStepMix` は基本バースト段階 1 の味方がいるとき）。`burst/dynamic.ts` の `burstUnitOf`（定義の再突入の段階で nextStep を差し替える）
   - 検証記録: V-0121
-  - 定義: `data/skills/17.json` の skill1 の effects[5]
+  - 定義: `data/skills/17.json` の skill1 の effects[5]、`data/skills/17.json` の skill1 の effects[6]
   - 最小構成の警告: 3 / 3 組（[minimal.md](minimal.md)）
 - **C-0202** アニス：スターの S1 の私だけの星のとき（自分を除く基本バースト段階 1 の味方がいない編成）、フルバースト終了時に、アニス：スター自身を含む味方全体のバーストスキルクールタイムが 7.48 秒（Lv10）縮む。戦闘開始時の分は、CT が回っていないので効かない
   - 状態: 確定・等級: データ明記・更新日: 2026-10-04
@@ -1845,11 +1845,11 @@
   - モデル側: `skills/composition.ts` の `countsAsBurstStep`（burstStep が N のキャラだけを数える。AllStep は Step1〜Step3 のどれとも一致しない）
   - 置き換え: C-0191
   - 検証記録: V-0122、V-0431
-  - 定義: `data/skills/17.json` の skill1 の effects[1]、`data/skills/17.json` の skill1 の effects[2]、`data/skills/17.json` の skill1 の effects[3]、`data/skills/17.json` の skill1 の effects[5]、`data/skills/17.json` の skill2 の effects[0]、`data/skills/17.json` の burst の effects[2]
+  - 定義: `data/skills/17.json` の skill1 の effects[1]、`data/skills/17.json` の skill1 の effects[2]、`data/skills/17.json` の skill1 の effects[3]、`data/skills/17.json` の skill1 の effects[5]、`data/skills/17.json` の skill1 の effects[6]、`data/skills/17.json` の skill2 の effects[0]、`data/skills/17.json` の burst の effects[2]
 - **C-0204** アニス：スターの S2 は、フルバースト発動時に味方全体へ攻撃ダメージ▲を 10 秒付け、私だけの星のときは発動者（アニス：スター）のバフ前攻撃力の割合の攻撃力▲も 10 秒付ける
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-04
   - 根拠: `162-04`・`162-05`（私だけの星。1 回目のフルバーストのデルタのコアとイサベルのペレットが、攻撃力の違う 2 体そろってモデルと合う。攻撃力▲なし・攻撃ダメージ▲なしのモデルとは合わない。`162-04` の差 1.3 は最終攻撃力の端数を整数に丸めると差 1 未満）、`163-05`（みんなの星。攻撃ダメージ▲だけで合う）。撮る前の予測は records/predictions/V-0124.json（H1）。読み直し（予測を commit した後に読んだ。plan/design-reread-prediction.md）。V-0124。撮り直しの録画 165 でも、撮る前に固定した予測（V-0125）と合った（`165-01`・`165-02`）。V-0125
-  - モデル側: `data/skills/17.json`（skill2）。攻撃力▲は `scaling: casterAttack`、私だけの星は `burstStepMix`
+  - モデル側: `data/skills/17.json`（skill2）。攻撃力▲は `scaling: casterAttack`、私だけの星は `condition.selfState: myOwnStar`（静的な状態なので編成の段で決まる。2 段目の段 1 で `burstStepMix` から書き直した）
   - 検証記録: V-0124、V-0125
   - 定義: `data/skills/17.json` の skill2 の effects[0]、`data/skills/17.json` の skill2 の effects[2]
 - **C-0205** 発射体爆発ダメージ▲は、発射体の爆発を持つ武器（RL）の通常攻撃のヒットに、攻撃ダメージ▲と同じ枠に足して掛かる（1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ）。アニス：スター自身にも、味方の RL にも掛かり、S1 の追加ダメージには掛からない
@@ -1879,7 +1879,7 @@
 - **C-0209** アニス：スターのバーストは、私だけの星のとき自分に攻撃ダメージ▲を 10 秒付ける
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-04
   - 根拠: `162-10`（S2 の無いバーストの窓のシューティングスターに ×1.352 が乗る）、`162-08`・`162-09`（バーストの窓の通常攻撃）、`163-06`（みんなの星では乗らないモデルと合う）。撮る前の予測は records/predictions/V-0124.json。読み直し（予測を commit した後に読んだ。plan/design-reread-prediction.md）。V-0124。単騎の録画 164（`164-01`・`164-02`）と撮り直しの録画 165（`165-05`）でも、撮る前に固定した予測と合った。V-0123・V-0125
-  - モデル側: `data/skills/17.json`（burst。`burstStepMix`）
+  - モデル側: `data/skills/17.json`（burst。`condition.selfState: myOwnStar`。2 段目の段 1 で `burstStepMix` から書き直した）
   - 検証記録: V-0123、V-0124、V-0125
   - 定義: `data/skills/17.json` の burst の effects[2]
 - **C-0210** アニス：スターの S2 の発射体爆発ダメージ▲の対象「自分と、自分より最終防御力が低い味方」は、味方全員が低いとみなす
@@ -1894,7 +1894,7 @@
   - モデル側: `data/skills/17.json`（burst の autoAttack）、`skills/burstDamage.ts` の `resolveDotEffects`（dot と同じ刻みと式）
   - 置き換え: C-0206
   - 検証記録: V-0123、V-0124、V-0125
-  - 定義: `data/skills/17.json` の burst の effects[0]
+  - 定義: `data/skills/17.json` の burst の effects[0]、`data/skills/17.json` の burst の effects[3]
   - 最小構成の警告: 2 / 7 組（[minimal.md](minimal.md)）
 - **C-0212** アニス：スターのシューティングスターはコアに当たることがあり、当たるとコアの補正（+1）が乗る。当たる割合は距離帯ごとに未測定
   - 状態: 棄却・等級: 推論・更新日: 2026-10-05
@@ -3027,7 +3027,7 @@
   - モデル側: `skills/composition.ts` の `countsAsBurstStep`（`burstStep` が N で、`burstSkill.nextStep` が `burstStep` と違うキャラだけを数える）。`burstStepMixAllows`（編成の条件 `burstStepMix`）と `fixedTargetsOf`（対象の絞り込み `targetBurstStep`）が使う
   - 決めるのに使った録画: なし
   - 検証記録: V-0431
-  - 定義: `data/skills/17.json` の skill1 の effects[1]、`data/skills/17.json` の skill1 の effects[2]、`data/skills/17.json` の skill1 の effects[3]、`data/skills/17.json` の skill1 の effects[5]、`data/skills/17.json` の skill2 の effects[0]、`data/skills/17.json` の burst の effects[2]、`data/skills/870.json` の skill2 の effects[3]、`data/skills/871.json` の skill2 の effects[3]
+  - 定義: `data/skills/17.json` の skill1 の effects[1]、`data/skills/17.json` の skill1 の effects[2]、`data/skills/17.json` の skill1 の effects[3]、`data/skills/17.json` の skill1 の effects[5]、`data/skills/17.json` の skill1 の effects[6]、`data/skills/17.json` の skill2 の effects[0]、`data/skills/17.json` の burst の effects[2]、`data/skills/870.json` の skill2 の effects[3]、`data/skills/871.json` の skill2 の effects[3]
   - 等級の候補（機械）: 厳密一致
 
 ## 敵・的・場面

@@ -19,17 +19,25 @@
           ]
         },
         {
-          "kind": "passive",
+          "kind": "state",
+          "state": "myOwnStar",
+          "trigger": "battleStart",
           "target": "self",
-          "stat": "attack",
-          "ref": 2,
+          "durationUntil": "battleEnd",
+          "undispellable": true,
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 2
+            }
+          ],
           "burstStepMix": {
             "otherBurstStep": "Step1",
             "present": false
           },
           "assumes": {
-            "ja": "私だけの星（自分を除く基本バースト段階 1 の味方がいないとき）。バーストの後に I へ再突入するキャラ（アビスタなど）と、バースト段階が可変（AllStep）のキャラは段階 1 に数えない",
-            "en": "My Own Star (no other standard Burst I ally). Allies that re-enter Burst I after their Burst (e.g. Avistar) and allies with a variable Burst stage (AllStep) are not counted as Burst I"
+            "ja": "私だけの星（自分を除く基本バースト段階 1 の味方がいないとき）。持続・解除不可。編成で決まるので静的な状態（S2・バーストの「私だけの星状態なら」は編成の段で決まる）。バーストの後に I へ再突入するキャラ（アビスタなど）と、バースト段階が可変（AllStep）のキャラは段階 1 に数えない",
+            "en": "My Own Star (no other standard Burst I ally). Continuous and cannot be removed. Fixed by the squad, so it is a static state (the 'if in My Own Star' of S2 and the Burst is settled with the squad). Allies that re-enter Burst I after their Burst (e.g. Avistar) and allies with a variable Burst stage (AllStep) are not counted as Burst I"
           },
           "claims": [
             "C-0189",
@@ -112,6 +120,27 @@
             "C-0203",
             "C-0555"
           ]
+        },
+        {
+          "kind": "state",
+          "state": "everyonesStar",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "undispellable": true,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": true
+          },
+          "assumes": {
+            "ja": "みんなの星（自分を除く基本バースト段階 1 の味方がいるとき）。持続・解除不可。中身のバースト再突入は effects[5]（状態の中身に種類を足すのは後の拡張。plan/design-named-state.md 8.4 節）",
+            "en": "Everyone's Star (another standard Burst I ally is present). Continuous and cannot be removed. Its Burst re-entry is effects[5] (giving a state content a kind is a later extension; plan/design-named-state.md 8.4)"
+          },
+          "claims": [
+            "C-0201",
+            "C-0203",
+            "C-0555"
+          ]
         }
       ],
       "notes": [
@@ -140,6 +169,15 @@
             "C-0413",
             "C-0461"
           ]
+        },
+        {
+          "ja": "部隊構成による効果の「みんなの星消去」「私だけの星消去」と、フルバーストタイム終了時の付け直しは書かない。編成で決まる入れ替えで、戦闘中は片方しか付かず、付け直しは持続の状態を延ばすだけなので、値は変わらない（plan/design-skill-stage1.md 2.1 節）",
+          "en": "The 'Cancels Everyone's Star / My Own Star' of the squad effects and the re-application when Full Burst ends are not written. The swap is fixed by the squad, only one of them is ever on during a battle, and re-applying only extends a continuous state, so the values do not change (plan/design-skill-stage1.md 2.1)",
+          "kind": "modeling",
+          "refers": "effects[1]",
+          "claims": [
+            "C-0189"
+          ]
         }
       ]
     },
@@ -153,13 +191,12 @@
           "scaling": "casterAttack",
           "ref": 1,
           "durationRef": 2,
-          "burstStepMix": {
-            "otherBurstStep": "Step1",
-            "present": false
+          "condition": {
+            "selfState": "myOwnStar"
           },
           "assumes": {
-            "ja": "私だけの星のとき。値は発動者（アニス：スター）のバフ前攻撃力の割合",
-            "en": "With My Own Star. The value is a share of the caster’s (Anis: Star) pre-buff ATK"
+            "ja": "私だけの星状態のとき（静的な状態なので編成で決まる）。値は発動者（アニス：スター）のバフ前攻撃力の割合",
+            "en": "In My Own Star (a static state, so it is settled with the squad). The value is a share of the caster's (Anis: Star) pre-buff ATK"
           },
           "claims": [
             "C-0204",
@@ -253,19 +290,32 @@
           "stat": "attackDamage",
           "ref": 6,
           "durationRef": 7,
-          "burstStepMix": {
-            "otherBurstStep": "Step1",
-            "present": false
+          "condition": {
+            "selfState": "myOwnStar"
           },
           "assumes": {
-            "ja": "私だけの星のとき",
-            "en": "With My Own Star"
+            "ja": "私だけの星状態のとき（静的な状態なので編成で決まる）",
+            "en": "In My Own Star (a static state, so it is settled with the squad)"
           },
           "claims": [
             "C-0209",
             "C-0203",
             "C-0555",
             "C-0520"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "shootingStar",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationRef": 2,
+          "assumes": {
+            "ja": "シューティングスターの呼び名（中身なし。自動攻撃は effects[0]）。維持はシューティングスターの維持時間",
+            "en": "The name of Shooting Star (no contents; the auto attack is effects[0]). It lasts as long as Shooting Star"
+          },
+          "claims": [
+            "C-0211"
           ]
         }
       ],

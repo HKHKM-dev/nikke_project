@@ -223,9 +223,9 @@ const TRIG_INFO: Record<string, Info> = {
 const COND_INFO: Record<string, Info> = {
   focus: ['フォーカス状態なら（操作キャラ。ツールチップ「フォーカス」）', 'gap', 'なし（編成で決まる）'],
   selfBuffed: ['自分が〈stat〉増加状態なら', 'ok', 'selfBuffed'],
-  selfState: ['自分が〈状態〉なら', 'gap', '後の拡張 selfState'],
+  selfState: ['自分が〈状態〉なら', 'ok', 'selfState（2 段目の段 1）'],
   'selfState:fullStack': ['自分が〈状態〉のフルスタックなら', 'gap', '後の拡張 selfState の stacks'],
-  'selfState:absent': ['自分が〈状態〉でなければ', 'gap', '後の拡張 selfState の present'],
+  'selfState:absent': ['自分が〈状態〉でなければ', 'ok', 'selfState の present: false（2 段目の段 1）'],
   'selfState:while': ['自分に〈状態〉適用中', 'gap', '後の拡張 while'],
   enemyState: ['対象（敵）が〈状態〉なら', 'check', 'damage の enemyState だけ'],
   enemyElement: ['対象が〈コード〉なら', 'ok', 'enemyElement'],
@@ -660,7 +660,7 @@ export function renderSkillCatalog(lines: readonly CatalogLine[], effects: reado
   const viewers: [string, Status, CatalogLine[]][] = [
     [
       '条件: 自分が〈状態〉なら',
-      'gap',
+      'ok',
       L.filter(
         (l) =>
           l.conditions.includes('selfState') &&
@@ -669,7 +669,7 @@ export function renderSkillCatalog(lines: readonly CatalogLine[], effects: reado
       ),
     ],
     ['条件: 自分が〈状態〉のフルスタックなら', 'gap', L.filter((l) => l.conditions.includes('selfState:fullStack'))],
-    ['条件: 自分が〈状態〉でなければ', 'gap', L.filter((l) => l.conditions.includes('selfState:absent'))],
+    ['条件: 自分が〈状態〉でなければ', 'ok', L.filter((l) => l.conditions.includes('selfState:absent'))],
     ['条件: 自分に〈状態〉適用中', 'gap', L.filter((l) => l.conditions.includes('selfState:while'))],
     ['条件: 対象（敵）が〈状態〉なら', 'check', L.filter((l) => l.conditions.includes('enemyState'))],
     ['きっかけ: 〈状態〉が適用された時', 'check', L.filter((l) => l.triggers.includes('stateApplied'))],
