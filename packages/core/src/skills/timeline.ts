@@ -50,7 +50,7 @@ import { stackWindows } from './stacks.ts';
 import { isEffectTarget } from './targets.ts';
 import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
 import type { NamedStateId } from './states.ts';
-import { SKILL_SLOTS, type BuffStat, type SkillDefinition } from './types.ts';
+import { SKILL_SLOTS, isStateStat, type BuffStat, type SkillDefinition } from './types.ts';
 
 /** 枠 1 つ分の入力。TeamSlotInput ではなく必要な情報だけを受けて循環 import を避ける（planFixedCycle と同じ流儀） */
 export type TimelineSlot = {
@@ -498,20 +498,28 @@ export type SegmentInput = {
   slots: readonly TimelineSlot[];
   schedule: BurstSchedule | null;
   frames: number;
-  /** 区間の値は、この並びの順に足す（浮動小数の加算順） */
-  windows: readonly BuffWindow[];
-  stateWindows: readonly BuffWindow[];
+  /**
+   * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 1）: 値の小片（skills/holders.ts の valuePiecesOf）。区間の値は、この並びの
+   * 順に足す（浮動小数の加算順）。状態だけの stat（命中率）の小片は、着地点の計画があり持続の命中率▲を使う時だけ区間に足す
+   */
+  pieces: readonly SegmentPiece[];
   passive: readonly (SlotBuffState | null)[];
   landings: TimelineLandings | null;
   sustainedHitRateUp: boolean;
 };
 
+/** 区間に足す値の小片の形（skills/holders.ts の ValuePiece） */
+export type SegmentPiece = Pick<BuffWindow, 'slotIndex' | 'sourceSlotIndex' | 'effect' | 'start' | 'end'>;
+
 /**
- * 窓から区間を組む（Stage 6 の 3〜5）。境界は {0, frames} ∪ 窓の端 ∪ フルバースト区間の端 ∪ バースト発動フレーム ∪ 着地点の境目
- * （と、持続の命中率▲を区間に足すときは状態の窓の端）。区間ごとに、常時パッシブに、区間の頭で効いている窓を並びの順に足す
+ * 値の小片から区間を組む（Stage 6 の 3〜5）。境界は {0, frames} ∪ 小片の端 ∪ フルバースト区間の端 ∪ バースト発動フレーム ∪ 着地点の
+ * 境目（と、持続の命中率▲を区間に足すときは状態だけの stat の小片の端）。区間ごとに、常時パッシブに、区間の頭で効いている小片を
+ * 並びの順に足す（状態だけの stat の小片は、ほかの小片の後に足す）
  */
 export function buildSegments(input: SegmentInput): TimelineSegment[] {
-  const { slots, schedule, frames, windows, stateWindows, passive, landings, sustainedHitRateUp } = input;
+  const { slots, schedule, frames, pieces, passive, landings, sustainedHitRateUp } = input;
+  const windows = pieces.filter((p) => !isStateStat(p.effect.stat));
+  const stateWindows = pieces.filter((p) => isStateStat(p.effect.stat));
   // 3. 境界
   const bounds = new Set<number>([0, frames]);
   for (const w of windows) {
