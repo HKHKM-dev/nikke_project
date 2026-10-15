@@ -1,8 +1,8 @@
-# 設計書 別紙: スキルのバフ・状態・回復の分類の詳細
+# 設計書 別紙: スキルの効果の分類の詳細
 
-- 本体: [design-buff-state-heal.md](design-buff-state-heal.md)（目的・分類の作り方と区分・分類の軸・見えたこと・2 段目の案・論点）
+- 本体: [design-skill-catalog.md](design-skill-catalog.md)（目的・分類の作り方と区分・分類の軸・見えたこと・2 段目の案・論点）
 - 作成日: 2026-10-14（本体が 50KB を超えたので、本体の 3〜7 節をここに移した。節の番号は本体と同じ）
-- 区分（語彙あり・語彙なし・間接に効く・前提で決まる・被弾で効く・前提の外（構造）・計算に無関係・要確認）の意味は本体 1 節。件数とキャラの一覧は生成物 [skill-catalog.md](skill-catalog.md)（本体の論点 2。節の番号はこの別紙と同じ）。T1〜T6 はツールチップの別紙（[design-buff-state-heal-tooltips.md](design-buff-state-heal-tooltips.md)）の食い違いの番号
+- 区分（語彙あり・語彙なし・間接に効く・前提で決まる・被弾で効く・前提の外（構造）・計算に無関係・要確認）の意味は本体 1 節。件数とキャラの一覧は生成物 [skill-catalog.md](skill-catalog.md)（本体の論点 2。節の番号はこの別紙と同じ）。T1〜T6 はツールチップの別紙（[design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md)）の食い違いの番号
 
 ## 3. バフ・デバフ（stat の▲▼）
 

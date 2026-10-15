@@ -1,4 +1,4 @@
-// スキルの効果の分類（plan/design-buff-state-heal.md 1 節・論点 2）: 全キャラの説明文（日本語。宝物版を含む）を、■ の行と
+// スキルの効果の分類（plan/design-skill-catalog.md 1 節・論点 2）: 全キャラの説明文（日本語。宝物版を含む）を、■ の行と
 // 「」の効果の句に分け、きっかけ・条件・対象・効果・修飾を正規表現で読む。読みは機械的なもので、件数は目安。
 // 一覧（生成物 plan/skill-catalog.md）は skills/catalogDoc.ts が書く。読み違いは、説明文の書き損じの表（TEXT_FIXES）と、
 // 句の読み方の表（META・KINDS・TRIGGERS・CONDITIONS・TARGETS）で直す。
