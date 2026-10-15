@@ -31,3 +31,8 @@
 - 2026-10-15: 段 D の 3 を実装した。calc の射撃の数え方の判定（自分の射撃の回数で開いた件があるか）を、窓と状態の窓ではなく件の列から行う形にした（`skills/holders.ts` の `hasOwnShotCountItem`。timed と強化は自分の射撃の回数のトリガー、状態は件の列の印 `shotCount`、敵の件は効果の対象の味方の枠の件として見る。`calc/model.ts` の `hasOwnShotCountWindow` を消した）。確かめ: `npm test`、`records:check`（生成物に差分なし）。
 - 2026-10-15: 段 D の 4 を実装した。sim の記録の出来事（`buffStart`・`buffEnd`）を、窓ではなく区間に足す値の小片の始まりと終わりから出す形にした（`sim/engine.ts`。状態だけの stat は、いまと同じく出さない）。比べ: 観測値の比べる設定の編成ごとに、記録の出来事を値の小片から出したものと窓から出したものが同じことを、一時のテストで確かめてから消した。`npm test`、`records:check`（生成物に差分なし）。
 - 2026-10-15: 段 D の 5 を実装した。観測値の指標が、窓と記録ではなく履歴を読む形にした（`records/observations.ts`）: 効果の窓の始まり・終わり（`buffWindowStarts`・`buffWindowEnds`・`buffWindowEndFromFullBurstEnd`）は区間に足す値の小片（状態だけの stat を除く。窓と同じ区切り）、循環の指標（`cycleWindowResidues`）は間隔の変更の件、回復の指標（`healHitCounts`）は履歴の回復の記録。sim の結果（`SimResult`）に履歴（`history`）を足した。指標の名前は変えない（2.10 節）。指標の単体テストの作り物の sim の結果は、窓の列から件の列に直した。確かめ: `npm test`、`records:check`（生成物に差分なし。すべての観測値で、指標が窓を読んだ時と同じ値）。
+- 2026-10-15: 段 D の 6 を実装した。
+  - 画面のまとめ（受けている効果の「10 秒 × 9 回」と発動しなかった回数、循環の間隔の変更）を作る所を、core の純関数（`skills/summaries.ts` の `slotEffectSummaries`・`slotCycleSummaries`）に切り出し、入力を履歴（値の小片・判定の記録・間隔の変更の件）にした。比べ: 観測値の比べる設定の編成ごと・枠ごとに、窓から作ったまとめと履歴から作ったまとめが同じことを、一時のテストで確かめてから消した。
+  - 結果の型: `TeamSlotResult` の `windows`・`stateWindows`・`conditionSkips`・`cycleWindows` を、履歴から作る表示用の欄 `effects`・`cycleChanges` に替えた。`TeamResult` に履歴（`history`）を足し、順位の表示（`TeamBreakdown`）と記録の道具（`scripts/sim-run.ts` の発動しなかった記録・循環・順位）は履歴を読む形にした。sim の枠の結果（`SimSlotResult`）の `windows` を消した。
+  - 窓の欄を読んでいたテスト（teamTimed・stage8Team・stage11Team・timedRegression・simCalc）は、結果の履歴から枠の値の小片を読む形にした（テストの助け `__tests__/historyHelpers.ts` の `slotPieces`。段 D の 5 までの窓と同じ並び・同じ区切りなので、期待する値は変えていない）。
+  - 確かめ: `npm test`、`records:check`（生成物に差分なし）、`scripts/sim-run.ts` を回した。

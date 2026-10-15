@@ -3,6 +3,7 @@
 // 15 秒で切れ、1 ペレットのダメージが 47,172 → 31,381 に変わることを実測している。Stage 6 の timed（battleStart）はこれを再現する。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { slotPieces } from './historyHelpers.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { MAX_SKILL_LEVELS, isStateContent, type WindowEffect } from '../skills/resolve.ts';
 
@@ -60,11 +61,11 @@ describe('録画 14: クイーン（真）の戦闘開始時 攻撃力 +50.28%�
   const s = team.slots[0]!;
 
   it('splits the battle at 15 s', () => {
-    expect(s.windows).toHaveLength(1);
+    expect(slotPieces(team, 0)).toHaveLength(1);
     // Stage 21-B: 15 秒 = 882f。180 秒の戦闘は 10,589f（V-0086）
     const q = gameSecondsToFrames(15);
-    expect(s.windows[0]).toMatchObject({ start: 0, end: q });
-    expect(triggerOf(s.windows[0]!.effect)).toBe('battleStart');
+    expect(slotPieces(team, 0)[0]).toMatchObject({ start: 0, end: q });
+    expect(triggerOf(slotPieces(team, 0)[0]!.effect)).toBe('battleStart');
     expect(s.segments.map((g) => g.buffs.attackRatio !== 0)).toEqual([true, false]);
     expect(s.segments[0]!.seconds).toBeCloseTo(framesToGameSeconds(q), 9);
     expect(s.segments[1]!.seconds).toBeCloseTo(framesToGameSeconds(battleSecondsToFrames(180) - q), 9);
@@ -99,8 +100,8 @@ describe('録画 14: クイーン（真）の戦闘開始時 攻撃力 +50.28%�
     });
     const b = withBurst.slots[0]!;
     // battleStart 1 本 + fullBurstEnd 9 本（Stage 21-B: 9 回目のフルバースト窓は 10,584f で閉じ、戦闘の終わり 10,588f より前）
-    expect(b.windows.filter((w) => triggerOf(w.effect) === 'battleStart')).toHaveLength(1);
-    expect(b.windows.filter((w) => triggerOf(w.effect) === 'fullBurstEnd')).toHaveLength(9);
+    expect(slotPieces(withBurst, 0).filter((w) => triggerOf(w.effect) === 'battleStart')).toHaveLength(1);
+    expect(slotPieces(withBurst, 0).filter((w) => triggerOf(w.effect) === 'fullBurstEnd')).toHaveLength(9);
     // 前サイクルの 15 秒窓（C·k〜C·k + 15 秒）が発動フレーム C·k + H に生きているので、2 回目以降のバーストヒットは強い
     // （固定サイクルの 1 サイクル C = 1,176f、通常 H = 588f、15 秒 = 882f）
     const hits = b.burst.activations.map((a) => a.hit.baseHit);

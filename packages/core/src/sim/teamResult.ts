@@ -5,6 +5,7 @@ import { summarizeSchedule } from '../burst/schedule.ts';
 import { enemyEventNotes } from '../frame/events.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
+import { cycleSummariesOf, effectSummariesOf } from '../skills/summaries.ts';
 import { groupTimeline, mergeAdjacentRanges } from '../skills/timeline.ts';
 import {
   skillSupportOf,
@@ -67,10 +68,8 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
       passiveBuffs: slot.passiveBuffs,
       passiveEffects: slot.passiveEffects,
       buildEffects: slot.buildEffects,
-      windows: slot.windows,
-      stateWindows: sim.timeline.stateWindows.filter((w) => w.slotIndex === index),
-      conditionSkips: sim.timeline.conditionSkips.filter((x) => x.sourceSlotIndex === index),
-      cycleWindows: sim.timeline.cycleWindows.filter((w) => w.slotIndex === index),
+      effects: effectSummariesOf(sim.history, index),
+      cycleChanges: cycleSummariesOf(sim.history, index),
       segments,
       normalDamage: slot.normalDamage,
       burst: {
@@ -112,6 +111,7 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
     schedule: sim.schedule,
     burstSummary: sim.schedule === null ? null : summarizeSchedule(sim.schedule, sim.frames),
     timeline: sim.timeline,
+    history: sim.history,
     enemyEvents: [...(input.enemy.events ?? [])],
     enemyNotes: enemyEventNotes(input.enemy.events, sim.landings.length > 0),
     landings: sim.landings,

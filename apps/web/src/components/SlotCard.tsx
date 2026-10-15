@@ -94,56 +94,29 @@ export function SlotCard({
 }: Props) {
   const limits = character ? growthLimits(character) : null;
   const condition = slot.condition;
-  // 同じ効果の窓をまとめて「10 秒 × 9 回」と見せる（窓は発動ごとに 1 件ある）。
-  // Stage 11 モダニア: スタックする効果は段 1 の窓だけを数える。命中率（状態だけの stat）の窓も並べる。
-  // 名前の付いた状態の語彙編: 状態の中身は付与の中身の何番目か（subIndex）でも分ける
+  // 同じ効果の件をまとめて「10 秒 × 9 回」と見せる（持ち主ごとの一覧編の段 D の 6: まとめは core の skills/summaries.ts が履歴から作る。
+  // スタックする効果は段 1 だけを数え、命中率（状態だけの stat）も並べる。状態の中身は付与の中身の何番目か（subIndex）でも分ける）
   const subIndexOf = (e: WindowEffect) => (isStateContent(e) ? e.subIndex : '');
-  const timedSummary = (() => {
-    const byKey = new Map<string, { effect: AppliedTimedEffect; count: number }>();
-    for (const w of [...(slotResult?.windows ?? []), ...(slotResult?.stateWindows ?? [])]) {
-      const key = `${w.sourceSlotIndex}:${w.effect.source.skill}:${w.effect.effectIndex}:${subIndexOf(w.effect)}`;
-      const found = byKey.get(key);
-      if (found) {
-        if ((w.stack ?? 1) === 1) found.count += 1;
-        continue;
-      }
-      byKey.set(key, {
-        // 区間に出ない窓（命中率）でも値が出るように、比率の効果は値そのものを仮に入れる（下で区間の値に置き換える）
-        effect: {
-          ...w.effect,
-          sourceSlotIndex: w.sourceSlotIndex,
-          appliedAmount: w.effect.scaling === 'casterAttack' ? 0 : w.effect.value,
-        },
-        count: 1,
-      });
-    }
+  const timedSummary = (slotResult?.effects ?? []).map((summary) => {
+    // 区間に出ない件（命中率）でも値が出るように、比率の効果は値そのものを仮に入れる（下で区間の値に置き換える）
+    let effect: AppliedTimedEffect = {
+      ...summary.effect,
+      sourceSlotIndex: summary.sourceSlotIndex,
+      appliedAmount: summary.effect.scaling === 'casterAttack' ? 0 : summary.effect.value,
+    };
     // appliedAmount は区間依存なので、代表区間（最初の区間）に出ていればそれを使う
-    for (const entry of byKey.values()) {
-      const applied = slotResult?.segments
-        .flatMap((seg) => seg.timedEffects)
-        .find(
-          (e) =>
-            e.sourceSlotIndex === entry.effect.sourceSlotIndex &&
-            e.source.skill === entry.effect.source.skill &&
-            e.effectIndex === entry.effect.effectIndex &&
-            subIndexOf(e) === subIndexOf(entry.effect),
-        );
-      if (applied) entry.effect = applied;
-    }
-    return [...byKey.values()];
-  })();
-  /**
-   * Stage 11 モダニア: 条件を満たさずに発火しなかった回数（効果ごと）。名前の付いた状態の語彙編: 状態の中身は、同じ枠が付けなかった
-   * その状態の回数（条件つきの付与）
-   */
-  const skipsOf = (effect: AppliedTimedEffect): number =>
-    (slotResult?.conditionSkips ?? []).filter((x) =>
-      isStateContent(effect)
-        ? x.state === effect.whileState && x.sourceSlotIndex === effect.sourceSlotIndex
-        : x.state === undefined &&
-          x.effect.source.skill === effect.source.skill &&
-          x.effect.effectIndex === effect.effectIndex,
-    ).length;
+    const applied = slotResult?.segments
+      .flatMap((seg) => seg.timedEffects)
+      .find(
+        (e) =>
+          e.sourceSlotIndex === effect.sourceSlotIndex &&
+          e.source.skill === effect.source.skill &&
+          e.effectIndex === effect.effectIndex &&
+          subIndexOf(e) === subIndexOf(effect),
+      );
+    if (applied) effect = applied;
+    return { effect, count: summary.count, skips: summary.skips };
+  });
   /** Stage 11 モダニア: 射撃ごとの追加ダメージの合計（1 トリガーの値に畳み込んだ分） */
   const perShotDamage = (slotResult?.segments ?? []).reduce((sum, g) => sum + g.trigger.perShot * g.triggers, 0);
 
@@ -166,17 +139,8 @@ export function SlotCard({
     return [...byKey.values()];
   })();
 
-  // Stage 11 紅蓮BS: 循環の間隔の変更（「スキル 1 の段を毎回進める」）の窓を効果ごとにまとめる
-  const cycleSummary = (() => {
-    const byKey = new Map<string, { window: NonNullable<typeof slotResult>['cycleWindows'][number]; count: number }>();
-    for (const w of slotResult?.cycleWindows ?? []) {
-      const key = `${w.source.skill}:${w.effectIndex}`;
-      const found = byKey.get(key);
-      if (found) found.count += 1;
-      else byKey.set(key, { window: w, count: 1 });
-    }
-    return [...byKey.values()];
-  })();
+  // Stage 11 紅蓮BS: 循環の間隔の変更（「スキル 1 の段を毎回進める」）を効果ごとにまとめたもの（core の skills/summaries.ts）
+  const cycleSummary = slotResult?.cycleChanges ?? [];
 
   // Stage 18-C2: 条件が自動の枠で使った条件の平均（的の表の無い敵では null）
   const autoCondition = slotResult?.autoCondition ?? null;
@@ -375,9 +339,9 @@ export function SlotCard({
               <span className="skills-title">受けているバフ</span>
               {slotResult.passiveEffects.length === 0 &&
               slotResult.buildEffects.length === 0 &&
-              slotResult.windows.length === 0 &&
+              slotResult.effects.every((e) => e.stateOnly) &&
               slotResult.instants.length === 0 &&
-              slotResult.cycleWindows.length === 0 ? (
+              slotResult.cycleChanges.length === 0 ? (
                 <p className="hint">なし</p>
               ) : (
                 <ul className="received-list">
@@ -410,7 +374,7 @@ export function SlotCard({
                           ? '（期待値）'
                           : `× ${t.count} 回`}
                         {formatTimedExtras(t.effect)}
-                        {skipsOf(t.effect) > 0 ? `・状態でなく発動せず ${skipsOf(t.effect)} 回` : ''}
+                        {t.skips > 0 ? `・状態でなく発動せず ${t.skips} 回` : ''}
                         {t.effect.assumes ? `・仮定: ${t.effect.assumes.ja}` : ''}
                       </small>
                     </li>
@@ -430,7 +394,7 @@ export function SlotCard({
                       </small>
                     </li>
                   ))}
-                  {cycleSummary.map(({ window: w, count }) => (
+                  {cycleSummary.map(({ count, ...w }) => (
                     <li key={`cycle-${w.source.skill}-${w.effectIndex}`}>
                       <span className="amount">
                         {SKILL_SLOT_LABEL[w.targetSkill]} の段を{w.every === 1 ? '毎回' : ` ${w.every} 回ごとに`}進める

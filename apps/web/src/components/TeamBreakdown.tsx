@@ -64,7 +64,8 @@ export function TeamBreakdown({
   const schedule = result.schedule;
   const byStep = schedule ? slotsByStep(schedule) : null;
   // Stage 11 アリス編: フルバースト開始時の「最終攻撃力が最も高い味方 N 機」の対象（同じ発火の同じ対象はまとめる）
-  const rankings = result.timeline.rankings;
+  // 持ち主ごとの一覧編（段 D の 6）: 順位の記録は履歴から
+  const rankings = result.history.rankings;
   const rankingLabel = (frame: number): string => {
     const seen = new Set<string>();
     const parts: string[] = [];

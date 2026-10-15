@@ -39,7 +39,7 @@ import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { BuffTotals } from '../skills/buffs.ts';
 import type { BuildEffect } from '../buildEffects.ts';
-import { EMPTY_BUFF_STATE, groupTimeline, type BuffTimeline, type BuffWindow } from '../skills/timeline.ts';
+import { EMPTY_BUFF_STATE, groupTimeline, type BuffTimeline } from '../skills/timeline.ts';
 import {
   BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
   burstHitBuffs,
@@ -104,8 +104,6 @@ export type SimSlotResult = {
   passiveEffects: AppliedEffect[];
   /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。passiveBuffs に含まれている */
   buildEffects: readonly BuildEffect[];
-  /** この枠に掛かった持続バフの窓（発生順） */
-  windows: BuffWindow[];
   segments: SimSlotSegment[];
   /** Σ segments.damage */
   normalDamage: number;
@@ -240,7 +238,6 @@ export function runSimulation(simInput: SimInput): SimResult {
         passiveBuffs: passive.buffs,
         passiveEffects: passive.passiveEffects,
         buildEffects: passive.buildEffects,
-        windows: timeline.windows.filter((w) => w.slotIndex === index),
         segments,
         normalDamage: 0,
         // 代表値（1 発動の内訳）は割当に関係なく出す。発動があれば 1 回目のスナップショットで上書きする
