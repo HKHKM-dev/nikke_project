@@ -40,10 +40,17 @@ import {
   type BuffTimeline,
   type SlotBuffState,
 } from '../skills/timeline.ts';
-import { ENEMY, buffTimelineOf, itemsOf, type HolderHistory } from '../skills/holders.ts';
+import {
+  ENEMY,
+  buffTimelineOf,
+  itemsOf,
+  valuePiecesOf,
+  type HolderHistory,
+  type ValuePiece,
+} from '../skills/holders.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
 import type { NamedStateId } from '../skills/states.ts';
-import type { EffectCondition } from '../skills/types.ts';
+import { isStateStat, type EffectCondition } from '../skills/types.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import {
@@ -233,8 +240,11 @@ export function planSkillHits(
   slots: readonly (TeamSlotInput | null)[],
   enemy: EnemyInput,
   timeline: BuffTimeline,
-  /** 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 1 パス目の履歴（条件 enemyState は敵の状態の件を見る） */
-  history: Pick<HolderHistory, 'tracks'>,
+  /**
+   * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節・段 D の 2）: 1 パス目の履歴。条件 enemyState は敵の状態の件、
+   * 下位効果のスタック適用は値の小片、{ applied } は付いた記録、段の循環は間隔の変更の件を見る
+   */
+  history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots' | 'applications'>,
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
@@ -251,6 +261,8 @@ export function planSkillHits(
     if (item.origin.kind !== 'enemyState') continue;
     enemySpans.set(item.origin.state, [...(enemySpans.get(item.origin.state) ?? []), item]);
   }
+  // 段 D の 2: 下位効果のスタック適用が見る値の小片（区間に足すのと同じ。状態だけの stat は入れない）
+  const pieces = valuePiecesOf(history).filter((p) => !isStateStat(p.effect.stat));
   slots.forEach((slot, slotIndex) => {
     const definition = slot?.skills?.definition;
     if (!slot || !definition) return;
@@ -273,9 +285,9 @@ export function planSkillHits(
       const skill = effect.source.skill;
       const buffs =
         pre && sequential && skill === 'burst'
-          ? withEarlierSequentialEffects(timeline, atHit, frame, slotIndex, skill, effect.effectIndex)
+          ? withEarlierSequentialEffects(pieces, atHit, frame, slotIndex, skill, effect.effectIndex)
           : skill !== 'burst' && definition.skills[skill].sequential === true && isResolvedShotCount(effect.trigger)
-            ? withEarlierSequentialEffects(timeline, atHit, frame + 1, slotIndex, skill, effect.effectIndex)
+            ? withEarlierSequentialEffects(pieces, atHit, frame + 1, slotIndex, skill, effect.effectIndex)
             : atHit;
       const trigger = computeTriggerDamage({
         character: slot.character,
@@ -313,7 +325,7 @@ export function planSkillHits(
       // ペルソナ編（plan/design-persona.md 3.3 節）: 「〈状態名〉が適用された時」は、その状態がこの枠に付いたフレーム
       // （名前の付いた状態の語彙編: 時刻表の applications。plan/design-named-state.md 5.3 節）
       const fires = isResolvedApplied(effect.trigger)
-        ? appliedFrames(timeline, effect.trigger.applied, slotIndex)
+        ? appliedFrames(history, effect.trigger.applied, slotIndex)
         : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
       for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans)) continue;
@@ -348,8 +360,11 @@ export function planSkillHits(
     // Stage 11 紅蓮BS: 段の循環。射撃の列を通算で数え、間隔の変更の窓に入る射撃は窓の間隔で段を進める（skills/cycles.ts）。
     // 値は射撃の回数トリガーの倍率ダメージと同じく、その射撃と同じバフ
     for (const cycle of resolveCycles(definition, slot.character, levels)) {
-      const windows = timeline.cycleWindows.filter(
-        (w) => w.slotIndex === slotIndex && w.targetSkill === cycle.source.skill,
+      // 段 D の 2: 間隔の変更の件（持ち主はその枠。時刻の順）
+      const windows = itemsOf(history, { holder: slotIndex, kind: 'cycleEvery' }).flatMap((i) =>
+        i.origin.kind === 'cycleEvery' && i.origin.effect.targetSkill === cycle.source.skill
+          ? [{ start: i.start, end: i.end, every: i.origin.effect.every }]
+          : [],
       );
       const shotFrames = cycleShotFrames(shots[slotIndex], cycle.trigger);
       for (const fire of cycleFires(cycle.trigger.every, cycle.steps.length, shotFrames, windows)) {
@@ -383,12 +398,13 @@ function damageConditionHolds(
 /**
  * 着弾編（plan/design-burst-landing.md 3.2 節）: 「下位効果のスタック適用」（sequential）の damage が見るバフ。
  * 発動の直前のバフに、同じ枠の同じスロットで前に書いた timed のうち、start（同じ発動の効果の窓の始まり）に始まって
- * この枠に掛かる窓の値を足す（イサベルの段階 2・3 の追加ダメージに、同じ発動の段階 1 の受けるダメージ▲が乗る。C-0163）。
+ * この枠に掛かる値の小片を足す（イサベルの段階 2・3 の追加ダメージに、同じ発動の段階 1 の受けるダメージ▲が乗る。C-0163。
+ * 持ち主ごとの一覧編の段 D の 2: 受けるダメージ▲は敵の件で、値の小片はこの枠にも写る）。
  * 前の発動の窓が続いていれば、直前のバフにもう入っている（窓が和集合で、start に始まらない）。
  * ルドミラ：ウィンターオーナー編: スキルのスロットでは、射撃の回数トリガーの窓の始まり（発火の次のフレーム）を start に渡す
  */
 function withEarlierSequentialEffects(
-  timeline: BuffTimeline,
+  pieces: readonly ValuePiece[],
   buffs: BuffTotals,
   start: number,
   slotIndex: number,
@@ -396,7 +412,7 @@ function withEarlierSequentialEffects(
   effectIndex: number,
 ): BuffTotals {
   let out = buffs;
-  for (const w of timeline.windows) {
+  for (const w of pieces) {
     if (w.start !== start || w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex) continue;
     if (w.effect.source.skill !== skill || w.effect.effectIndex >= effectIndex) continue;
     if (w.stack !== undefined || w.effect.scaling === 'casterAttack' || w.effect.stat === 'weapon') {
