@@ -855,6 +855,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       });
     }
     if (due !== undefined) pendingHeals.delete(f);
+    // 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: このフレームにフルスタックになった状態を消費する（回復のきっかけ { fullStack }）。
+    // フルスタックになる件は、射撃の回数のきっかけの付与なので前のフレームまでに登録済み
+    const fullStacks = lists.consumeFullStacks(f);
     const ev: FrameEvents = {
       frame: f,
       shots: shotEvents,
@@ -866,6 +869,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       fullBurstStartUsers,
       fullBurstEndUsers,
       healed,
+      ...(fullStacks.length > 0 ? { fullStacks } : {}),
     };
     // V-0113: バースト使用時に付く持続ダメージ（クルミのハッキング）。付け直しと同じで、延びた tick のゲージを予約する
     // （burstUse のトリガーの判定と同じく、このフレームの効果の発火 burstEffects で見る）

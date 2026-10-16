@@ -175,7 +175,9 @@ function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<Minima
             ? 'timer'
             : 'applied' in t
               ? 'applied'
-              : undefined
+              : 'fullStack' in t
+                ? 'fullStack'
+                : undefined
         : undefined;
   return {
     kind: e.kind,

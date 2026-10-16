@@ -17,12 +17,14 @@ import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import {
   isResolvedApplied,
   isResolvedEventCount,
+  isResolvedFullStack,
   isResolvedTimer,
   isResolvedShotCount,
   type ResolvedTrigger,
 } from './resolve.ts';
 import type { FireContext } from './targets.ts';
 import type { ShotCountKind } from './types.ts';
+import type { NamedStateId } from './states.ts';
 
 /** 1 枠の 1 回の射撃 */
 export type ShotEvent = {
@@ -109,7 +111,16 @@ export type FrameEvents = {
   fullBurstEndUsers: readonly number[];
   /** Stage 11: 枠ごとに、このフレームに回復を受けたか（heal 効果の対象になった） */
   healed: readonly boolean[];
+  /**
+   * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: このフレームにフルスタックになって外れた状態（持ち主の枠と状態）。1 パス目が
+   * 回復の前に件の一覧から出す（skills/holders.ts の consumeFullStacks）。流し直し（replayEvents）では作らないので、
+   * フルスタックの消費のきっかけは 1 パス目で当てる回復にだけ書ける。省略は無し
+   */
+  fullStacks?: readonly FullStackEvent[];
 };
+
+/** 2 段目の段 3: フルスタックになって外れた状態 */
+export type FullStackEvent = { slotIndex: number; state: NamedStateId };
 
 /** 回復の記録（Stage 11）。frame に slotIndex の枠が sourceSlotIndex の heal 効果で回復を受けた */
 export type HealRecord = {
@@ -163,6 +174,10 @@ export function createTriggerTracker(
   // ニヒリスター編: 時間の周期のトリガーは出来事の列に無いフレームで起きるので、ここでは追わない（skills/timeline.ts の triggerFires が並べる）
   if (isResolvedTimer(t)) {
     throw new RangeError(`a timer trigger (every ${t.everySeconds} s) is not tracked per event; use triggerFires`);
+  }
+  // 2 段目の段 3: フルスタックの消費のきっかけは、このフレームに外れた状態（1 パス目が回復の前に出す）
+  if (isResolvedFullStack(t)) {
+    return (ev) => (ev.fullStacks ?? []).some((x) => x.slotIndex === slotIndex && x.state === t.fullStack);
   }
   // ペルソナ編: 効果名のトリガーは 1 パス目の履歴の記録（HolderHistory.applications）で決まる。出来事の列では追わない
   if (isResolvedApplied(t)) {

@@ -2099,9 +2099,9 @@
 - **C-0271** クラウンの S2 のリラックスは、通常攻撃の命中ではなく発を数え、43 発 × 20 スタック = 860 発ごとに自分を回復する。回復の次の発から、味方全体に攻撃ダメージ 20.99%▲（ゲーム内の 7 秒。C-0050）が乗る（置き場所は C-0018 の別の乗数）。単騎 AUTO の録画で、6 回とも回復の間の発はちょうど 860 で、命中は外れた発の分だけ少ない
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-05
   - 根拠: `056-22`（回復の間の発の数。6 回ともちょうど 860。照準の横の残弾で数えた）。録画 056 はクラウン単騎・AUTO・スペック固定 ON（最小構成）。H1（発を数える。860 発）は読む前に検証記録に書いた。V-0178。窓の中の 1 ヒット（8 通りとも式どおり）と回復の間の命中の数は、自動の条件で比べた観測値なので、残差として並べるだけでこの結論の根拠にしない（命中の数は 2 回が許容外。的の表の MG の弾丸命中率より外れが多い）
-  - モデル側: `data/skills/330.json` の skill2 の effects[0]（heal・count normalShot・everyRef・stacksRef）・effects[1]（timed・healed・attackDamage）・notes[1]。回復のフレームは `skills/heals.ts` の `healFrameOf`、回復の記録と窓は `skills/holders.ts` の件の一覧（plan/design-heal-window.md）、攻撃ダメージ▲の乗数は `damage.ts` の `attackDamageMultiplier`（C-0018）
+  - モデル側: `data/skills/330.json` の skill2 の effects[0]（heal・フルスタックの消費のきっかけ `{ fullStack: relax }`）・effects[1]（timed・healed・attackDamage）・effects[2]（状態 `relax` の付与。通常攻撃 43 回ごと・20 スタック・持続）。2 段目の段 3 で、回数のきっかけの stacksRef（860 発ごと）から書き直した（回復のフレームは同じ）。フルスタックの消費は `skills/holders.ts` の `consumeFullStacks`、回復の記録と窓は `skills/holders.ts` の件の一覧（plan/design-heal-window.md）、攻撃ダメージ▲の乗数は `damage.ts` の `attackDamageMultiplier`（C-0018）
   - 検証記録: V-0178
-  - 定義: `data/skills/330.json` の skill2 の effects[0]、`data/skills/330.json` の skill2 の effects[1]、`data/skills/330.json` の skill2 の notes[1]
+  - 定義: `data/skills/330.json` の skill2 の effects[0]、`data/skills/330.json` の skill2 の effects[1]、`data/skills/330.json` の skill2 の effects[2]
 - **C-0272** モダニアの S1 のスタックは、1 つごとに自分の会心の倍率に 0.1425（クリティカルダメージ 14.25%▲）を足し、最大装弾数を 300 ×（1 − 0.0504 × スタック）の四捨五入にする（285・270・255・240・224）。単騎の録画で、スタック 1〜5 の会心の 1 ヒットと、スタック 1・2・4・5 のリロード明けの残弾が、どれも式どおり
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-05
   - 根拠: `045-09`〜`045-19`（スタック 1〜5 の通常攻撃の会心の 1 ヒット 11 通り。差 0.5 未満）・`045-20`〜`045-24`（スタック 0・1・2・4・5 の最大装弾数。リロード明けの残弾が何回でも同じ値）。録画 045 はモダニア単騎・スペック固定 ON（最小構成）。予測は読む前に固定（四捨五入でなく切り捨てなら 284・269・239 になる）。V-0179。スタックの規則（付与のたびに全スタックを更新）は凍結の記録で 045 から読んだので、この結論の根拠にしない
