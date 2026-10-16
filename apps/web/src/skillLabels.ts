@@ -20,6 +20,7 @@ import type {
   EffectCondition,
   NamedStateId,
   RemoveStateEffect,
+  StackChangeEffect,
   ResolvedTrigger,
   SkillDamageType,
   SkillDefinition,
@@ -175,6 +176,15 @@ export function formatStateGrant(effect: StateGrantEffect, definition: SkillDefi
 export function formatRemoveState(effect: RemoveStateEffect): string {
   const conditions = formatGrantCondition(effect.condition);
   return `${stateLabel(effect.state)}を解除${conditions === '' ? '' : `（${conditions}）`}`;
+}
+
+/**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: 定義のスタック量の増加。「ゴールデンチップのスタック量 +50」。amount は
+ * 解いた値（amountRef は Lv の説明文の値）
+ */
+export function formatStackChange(effect: StackChangeEffect, amount: number): string {
+  const conditions = formatGrantCondition(effect.condition);
+  return `${stateLabel(effect.state)}のスタック量 +${formatNumber(amount)}${conditions === '' ? '' : `（${conditions}）`}`;
 }
 
 /** 定義のその状態の中身（同じ状態の付与のどれかが持つもの。無ければ undefined） */

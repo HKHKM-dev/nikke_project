@@ -13,6 +13,7 @@ import {
   enemyElementAllows,
   isTimerTrigger,
   renderSkillDescription,
+  skillValue,
   squadAllows,
   treasureSlots,
   withCharacterAllows,
@@ -33,6 +34,7 @@ import {
   SKILL_SLOT_LABEL,
   SUPPORT_BADGE,
   formatRemoveState,
+  formatStackChange,
   formatStateGrant,
   treasurePhaseLabel,
 } from '../skillLabels.ts';
@@ -290,26 +292,40 @@ export function SkillSection({
                     ))}
                 </ul>
               )}
-              {/* 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.7 節）: 付与する状態と、その中身。2 段目の段 1: 解除も */}
-              {entry && entry.effects.some((e) => e.kind === 'state' || e.kind === 'removeState') && (
-                <ul className="notes">
-                  {entry.effects.flatMap((e, i) =>
-                    e.kind === 'state'
-                      ? [
-                          <li key={i} className="note modeling">
-                            <span className="badge">状態</span> {formatStateGrant(e, shown.definition ?? null)}
-                          </li>,
-                        ]
-                      : e.kind === 'removeState'
+              {/* 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.7 節）: 付与する状態と、その中身。2 段目の段 1: 解除も。
+                  段 3: スタック量の増加も */}
+              {entry &&
+                entry.effects.some(
+                  (e) => e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange',
+                ) && (
+                  <ul className="notes">
+                    {entry.effects.flatMap((e, i) =>
+                      e.kind === 'state'
                         ? [
                             <li key={i} className="note modeling">
-                              <span className="badge">解除</span> {formatRemoveState(e)}
+                              <span className="badge">状態</span> {formatStateGrant(e, shown.definition ?? null)}
                             </li>,
                           ]
-                        : [],
-                  )}
-                </ul>
-              )}
+                        : e.kind === 'removeState'
+                          ? [
+                              <li key={i} className="note modeling">
+                                <span className="badge">解除</span> {formatRemoveState(e)}
+                              </li>,
+                            ]
+                          : e.kind === 'stackChange'
+                            ? [
+                                <li key={i} className="note modeling">
+                                  <span className="badge">スタック</span>{' '}
+                                  {formatStackChange(
+                                    e,
+                                    e.amount ?? Math.round(skillValue(skill, e.amountRef!, levels[slot])),
+                                  )}
+                                </li>,
+                              ]
+                            : [],
+                    )}
+                  </ul>
+                )}
               {entry && entry.effects.some(hasComposition) && (
                 <ul className="notes">
                   {entry.effects.flatMap((e, i) => [

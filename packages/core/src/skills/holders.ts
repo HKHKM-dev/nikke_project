@@ -24,6 +24,7 @@ import {
   resolveInstant,
   resolvePassives,
   resolveRemoveStates,
+  resolveStackChanges,
   resolveStateContents,
   resolveStateGrants,
   resolveTimed,
@@ -31,6 +32,7 @@ import {
   type ResolvedEffect,
   type ResolvedInstantEffect,
   type ResolvedRemoveState,
+  type ResolvedStackChange,
   type ResolvedStateContent,
   type ResolvedStateGrant,
   type ResolvedTimedEffect,
@@ -223,6 +225,15 @@ type CycleSource = { slotIndex: number; effect: ResolvedCycleEvery; fires: Trigg
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除 1 つ（対象は自分） */
 type RemoveSource = { sourceSlotIndex: number; effect: ResolvedRemoveState; stage: HeldStage; fires: TriggerTracker };
+
+/** 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加 1 つ（対象は自分。足す先は同じ定義の付与の状態の件の列） */
+type StackSource = {
+  sourceSlotIndex: number;
+  effect: ResolvedStackChange;
+  stage: HeldStage;
+  fires: TriggerTracker;
+  track: HeldTrack;
+};
 
 /** 1 パス目のループが使う、持ち主ごとの件の一覧 */
 export type HolderLists = {
@@ -573,6 +584,28 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
+  // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加（足す先は、同じ定義の付与の状態の、自分の件の列） ----
+  const stackSources: StackSource[] = [];
+  slots.forEach((slot, sourceSlotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveStackChanges(slot.definition, slot.character, slot.levels)) {
+      const group = stateGroups.find((g) => g.sourceSlotIndex === sourceSlotIndex && g.state === effect.state);
+      const track = group?.tracks[sourceSlotIndex] ?? null;
+      if (track === null) {
+        throw new Error(
+          `no state track for ${effect.state} on slot ${sourceSlotIndex} (stackChange needs a grant on self)`,
+        );
+      }
+      stackSources.push({
+        sourceSlotIndex,
+        effect,
+        stage: conditionReadsItems(effect.condition) ? 1.5 : 1,
+        fires: firesOf(effect.trigger, sourceSlotIndex),
+        track,
+      });
+    }
+  });
+
   // ---- 吸収回復の窓（効果ごと・持ち主ごと。C-0082・C-0087） ----
   /** 効果は出どころの枠・スロット・効果の番号で引く（1 パス目は効果を別に解決するので、同じオブジェクトではない） */
   const healKey = (sourceSlotIndex: number, effect: ResolvedInstantEffect): string =>
@@ -837,6 +870,21 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!track.closes.includes(frame)) insertSorted(track.closes, frame);
     }
   };
+  /**
+   * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加の発火 1 つ。状態の件の列に、同じフレームの始まりを N 個入れる
+   * （スタックの段は始まりの数で上がり、上限と維持は付与のもの）。付いた記録は 1 件
+   */
+  const fireStackChange = (src: StackSource, start: number): void => {
+    if (start >= frames) return;
+    for (let k = 0; k < src.effect.amount; k++) insertSorted(src.track.starts, start);
+    if (isResolvedShotCount(src.effect.trigger)) src.track.shotCount = true;
+    applications.push({
+      frame: start,
+      state: src.effect.state,
+      sourceSlotIndex: src.sourceSlotIndex,
+      slotIndex: src.sourceSlotIndex,
+    });
+  };
   const recordRanking = (
     frame: number,
     sourceSlotIndex: number,
@@ -870,6 +918,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const stage2Grants = grantsAt(2);
   const stage1Removes = removeSources.filter((r) => r.stage === 1);
   const stage15Removes = removeSources.filter((r) => r.stage === 1.5);
+  const stage1Stacks = stackSources.filter((x) => x.stage === 1);
+  const stage15Stacks = stackSources.filter((x) => x.stage === 1.5);
   const skipGrant = (g: GrantSource, frame: number): void => {
     conditionSkips.push({
       frame,
@@ -930,6 +980,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
+    // 2 段目の段 3: スタック量の増加（状態の件の列の始まりを足すだけなので、段 1 の付与と同じ見え方）
+    for (const x of stage1Stacks) {
+      if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
+      if (!usedBurstHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex)) {
+        skipEffect(x.sourceSlotIndex, x.effect, f);
+        continue;
+      }
+      fireStackChange(x, battleStartOnly ? 0 : startOfFire(x.effect.trigger, f));
+    }
     // 段 C: 敵の状態（持続ダメージの発火のフレーム。ループの中の判定は読まない）
     for (const e of enemyStateSources) {
       for (const { effect, fires } of e.effects) {
@@ -980,6 +1039,17 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
+    for (const x of stage15Stacks) {
+      if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
+      if (
+        !usedBurstHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex) ||
+        !holdsAt(x.effect.condition!, x.sourceSlotIndex, f)
+      ) {
+        skipEffect(x.sourceSlotIndex, x.effect, f);
+        continue;
+      }
+      fireStackChange(x, battleStartOnly ? 0 : startOfFire(x.effect.trigger, f));
+    }
     // 段 2: 順位の対象。発火のフレームの順位（段 1・1.5 の攻撃力の件。同じフレームに付いたものも入れる）
     for (const g of stage2Grants) {
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
@@ -1029,7 +1099,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       cycleSources.length > 0 ||
       amplifiers.length > 0 ||
       enemyStateSources.length > 0 ||
-      removeSources.length > 0,
+      removeSources.length > 0 ||
+      stackSources.length > 0,
     registerBattleStart() {
       if (frames <= 0) return;
       register(emptyEvents(0), true);

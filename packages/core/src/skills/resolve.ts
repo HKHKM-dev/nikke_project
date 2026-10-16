@@ -619,6 +619,48 @@ export function resolveRemoveStates(
   return out;
 }
 
+/**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: 解決したスタック量の増加（stackChange）。対象は自分。amount は足すスタックの数
+ * （amountRef はスロットの Lv の説明文の値を整数に丸めたもの）
+ */
+export type ResolvedStackChange = {
+  source: ResolvedEffect['source'];
+  effectIndex: number;
+  state: NamedStateId;
+  trigger: ResolvedTrigger;
+  amount: number;
+  condition?: EffectCondition;
+};
+
+/** 2 段目の段 3: 定義のスタック量の増加を Lv の数値に解く */
+export function resolveStackChanges(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedStackChange[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const out: ResolvedStackChange[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const skill = character.skills[slot];
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'stackChange') return;
+      const amount = effect.amount ?? Math.round(skillValue(skill, effect.amountRef!, levels[slot]));
+      const r: ResolvedStackChange = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        effectIndex,
+        state: effect.state,
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        amount,
+      };
+      if (effect.condition) r.condition = effect.condition;
+      out.push(r);
+    });
+  }
+  return out;
+}
+
 /** 自分のバーストの使用（burstUse・{ count: burstUse }）で発火するトリガーか */
 function isBurstUseTrigger(t: ResolvedTrigger): boolean {
   return t === 'burstUse' || (typeof t === 'object' && 'count' in t && t.count === 'burstUse');

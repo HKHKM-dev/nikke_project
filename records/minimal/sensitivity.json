@@ -1594,6 +1594,24 @@
       "plus": 0
     },
     {
+      "observation": "092-08",
+      "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
+      "key": "48c6033b9999e02e",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: no state track for goldenChip on slot 0 (stackChange needs a grant on self)"
+    },
+    {
+      "observation": "092-09",
+      "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
+      "key": "0de04da8e999bc09",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: no state track for goldenChip on slot 0 (stackChange needs a grant on self)"
+    },
+    {
       "observation": "099-04",
       "element": "ルドミラ：ウィンターオーナー skill1.effects[0]",
       "key": "ceec0fdefcf947b5",

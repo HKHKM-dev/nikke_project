@@ -15,7 +15,20 @@
       "rid": 314,
       "name": "ソーダ：トゥインクルバニー",
       "controlled": true,
-      "note": "単騎・AUTO。コレクション SR Lv5（1 ヒットから逆算。V-0050）"
+      "note": "単騎・AUTO。コレクション SR Lv5（1 ヒットから逆算。V-0050）",
+      "build": {
+        "attack": 423134,
+        "cube": null,
+        "collection": {
+          "rarity": "SR",
+          "level": 5
+        },
+        "skillLevels": {
+          "skill1": 10,
+          "skill2": 10,
+          "burst": 10
+        }
+      }
     }
   ],
   "target": {

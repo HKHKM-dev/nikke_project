@@ -67,7 +67,8 @@ describe('during・reset と damage の condition の検証', () => {
     ).toThrow(/reset/);
   });
 
-  it('allows during only in damage, and not with gaugeHits', () => {
+  // 2 段目の段 3（plan/design-skill-stage3.md 1.2 節）: timed と状態の付与にも開いた（即時効果には書けない）
+  it('allows during in damage, timed and state grants, and not with gaugeHits', () => {
     const timed = {
       kind: 'timed',
       trigger: S2_H1.trigger,
@@ -76,7 +77,11 @@ describe('during・reset と damage の condition の検証', () => {
       ref: 2,
       durationSeconds: 5,
     };
-    expect(() => parseSkillDefinition(withSkill2([timed]))).toThrow(/only allowed in damage/);
+    expect(parseSkillDefinition(withSkill2([timed])).skills.skill2.effects[0]).toMatchObject({
+      trigger: S2_H1.trigger,
+    });
+    const cut = { kind: 'cooldownReduction', trigger: S2_H1.trigger, target: 'allies', ref: 2 };
+    expect(() => parseSkillDefinition(withSkill2([cut]))).toThrow(/only allowed in damage, timed and state/);
     expect(() => parseSkillDefinition(withSkill2([{ ...S2_H1, condition: undefined, gaugeHits: [0] }]))).toThrow(
       /gaugeHits cannot be used with a condition or a counting window/,
     );

@@ -122,7 +122,7 @@ const KIND_INFO: Record<string, Info> = {
   'buffOp:immunity': ['効果の免疫', 'check', '自分に付く▼（デバフ）を防ぎうる'],
   'buffOp:nullify': ['増減効果の無効', 'gap', 'なし（チャージ速度の増減を無効にする等）'],
   'buffOp:copy': ['スタックのコピー', 'gap', 'なし'],
-  'buffOp:stackChange': ['スタック量の増減', 'gap', 'なし'],
+  'buffOp:stackChange': ['スタック量の増減', 'check', '増加は stackChange（2 段目の段 3）。減少はまだ無い'],
   'instant:ammoRefill': ['弾丸チャージ', 'ok', 'ammoRefill'],
   'instant:forceReload': ['強制リロード', 'gap', 'なし'],
   'instant:ammoDrain': ['残弾数の減少', 'gap', 'なし（自分）'],

@@ -180,7 +180,9 @@ function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<Minima
   return {
     kind: e.kind,
     ...(typeof v.stat === 'string' ? { stat: v.stat } : {}),
-    ...(e.kind === 'state' || e.kind === 'removeState' ? { stats: stateStatsOf(def, e.state) } : {}),
+    ...(e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange'
+      ? { stats: stateStatsOf(def, e.state) }
+      : {}),
     ...(typeof v.target === 'string' ? { target: v.target } : {}),
     ...(trigger !== undefined ? { trigger } : {}),
     ...(typeof v.targetWeapon === 'string' ? { targetWeapon: v.targetWeapon } : {}),
@@ -383,7 +385,7 @@ export function classOf(element: MinimalElement): ElementClass {
   const shape = element.shape;
   if (shape === undefined || shape.kind === 'unknown') return 'unknown';
   if (shape.kind === 'passive' || shape.kind === 'timed') return statClassOf(shape.stat);
-  if (shape.kind === 'state' || shape.kind === 'removeState') {
+  if (shape.kind === 'state' || shape.kind === 'removeState' || shape.kind === 'stackChange') {
     if (shape.stat !== undefined) return statClassOf(shape.stat);
     const classes = new Set((shape.stats ?? []).map(statClassOf));
     return classes.size === 1 ? [...classes][0]! : 'unknown';
