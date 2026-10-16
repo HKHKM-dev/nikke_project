@@ -7,10 +7,18 @@ import type { LocalizedText } from '../types.ts';
 /** 状態を持つ側。ally = 味方の枠、enemy = 敵（1 体の前提） */
 export type StateHolder = 'ally' | 'enemy';
 
+/**
+ * 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 状態の家族。条件・きっかけが家族の根（id が家族の名前と同じ状態）を指したら、
+ * 家族のどの状態でも当たる（「バリア適用状態なら」は、名前の無いバリアにも名前の付いたバリアにも当たる）
+ */
+export type StateFamily = 'barrier';
+
 export type NamedStateInfo = {
   /** 画面と CLI の名前（日本語は説明文の状態名） */
   name: LocalizedText;
   holder: StateHolder;
+  /** 2 段目の段 5: 家族（任意） */
+  family?: StateFamily;
 };
 
 export const NAMED_STATES = {
@@ -47,6 +55,11 @@ export const NAMED_STATES = {
   goldenChip: { name: { ja: 'ゴールデンチップ', en: 'Golden Chip' }, holder: 'ally' },
   /** 同（2.2 節）: リラックス（クラウンの S2。通常攻撃 43 回ごとに 1 スタック・20 スタック・持続。フルスタックで外れて回復。C-0271） */
   relax: { name: { ja: 'リラックス', en: 'Relax' }, holder: 'ally' },
+  /**
+   * 2 段目の段 5（plan/design-skill-stage5.md 1.1 節）: バリア（名前の無いバリア・共用バリアの付与。家族の根。「バリア適用状態なら」は
+   * 家族のどのバリアにも当たる。ラムのバースト・アスカ S2）
+   */
+  barrier: { name: { ja: 'バリア', en: 'Barrier' }, holder: 'ally', family: 'barrier' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
@@ -61,4 +74,19 @@ export function namedStateName(id: NamedStateId): LocalizedText {
 /** 状態を持つ側 */
 export function namedStateHolder(id: NamedStateId): StateHolder {
   return NAMED_STATES[id].holder;
+}
+
+/** 2 段目の段 5: 状態の家族（無ければ undefined） */
+export function namedStateFamily(id: NamedStateId): StateFamily | undefined {
+  return (NAMED_STATES[id] as NamedStateInfo).family;
+}
+
+/** 2 段目の段 5: 条件・きっかけの id が指す状態か（同じ id か、id が家族の根でその家族の状態） */
+export function stateMatches(conditionId: NamedStateId, state: NamedStateId): boolean {
+  return state === conditionId || namedStateFamily(state) === conditionId;
+}
+
+/** 2 段目の段 5: 条件・きっかけの id が指す状態の一覧（家族の根なら家族のどれも） */
+export function statesMatching(conditionId: NamedStateId): NamedStateId[] {
+  return NAMED_STATE_IDS.filter((s) => stateMatches(conditionId, s));
 }

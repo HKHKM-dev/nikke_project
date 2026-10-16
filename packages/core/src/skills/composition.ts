@@ -14,7 +14,7 @@
 // どの枠の定義も付けない状態）も、ここで決める（満たせば条件から落とし、満たさなければ効果を外す）。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, Element } from '../types.ts';
-import type { NamedStateId } from './states.ts';
+import { statesMatching, type NamedStateId } from './states.ts';
 import { matchesTargetFilter } from './targets.ts';
 import {
   SKILL_SLOTS,
@@ -198,7 +198,12 @@ export function selfStateLookupOf(
 ): SelfStateLookup {
   const statics = new Set(staticStatesOf(own));
   const granted = grantedStatesOf(own);
-  return (state) => (statics.has(state) ? true : granted.has(state) || others.has(state) ? undefined : false);
+  // 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの状態でも当たる
+  return (state) => {
+    const ids = statesMatching(state);
+    if (ids.some((s) => statics.has(s))) return true;
+    return ids.some((s) => granted.has(s) || others.has(s)) ? undefined : false;
+  };
 }
 
 /**

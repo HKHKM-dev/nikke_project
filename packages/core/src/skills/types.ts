@@ -29,7 +29,7 @@
 import { ELEMENTS } from '../element.ts';
 import type { Element, LocalizedText, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
-import { NAMED_STATE_IDS, namedStateHolder, type NamedStateId, type StateHolder } from './states.ts';
+import { NAMED_STATE_IDS, namedStateHolder, stateMatches, type NamedStateId, type StateHolder } from './states.ts';
 
 export type { SkillSlot };
 export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies readonly SkillSlot[];
@@ -1849,7 +1849,8 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   // 循環の禁止: 付与が、自分の付ける状態を見て対象や発火を決めない（plan/design-stage11-modernia.md 11.2 節の 7。2 段目の段 1 の
   // selfState も同じ。plan/design-skill-stage1.md 1.1 節）
   if (fields.targetState === state) fail(`${path}.targetState`, `a grant of "${state}" cannot look at its own state`);
-  if (fields.condition?.selfState?.state === state) {
+  // 2 段目の段 5: 家族の根を見る条件も、家族の状態の付与には書けない
+  if (fields.condition?.selfState !== undefined && stateMatches(fields.condition.selfState.state, state)) {
     fail(`${path}.condition.selfState`, `a grant of "${state}" cannot look at its own state`);
   }
   const effect: StateGrantEffect = { kind: 'state', state, ...fields };

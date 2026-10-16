@@ -1,0 +1,106 @@
+{
+  "verification": "V-0436",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": true
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 830,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（plan/design-skill-stage5.md 2.1 節。ラムのバーストのバリアが付いている時、フルバースト開始でアスカに有利コードの攻撃ダメージ▲ 10 秒）。付かない読み H0 はモデルを切り替えるので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "asuka-fb1-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバースト中（戦闘開始から約 10 秒）のアスカの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスあり）。有利コードの攻撃ダメージ▲の分だけ H0 より大きい",
+      "observations": []
+    },
+    {
+      "id": "asuka-fb1-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "同じ区間のコアの 1 ヒット（コアダメージ▲（C-0075）も乗る）",
+      "observations": []
+    },
+    {
+      "id": "asuka-after-fb1-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの後（約 22 秒。▲の窓の外）の 1 ヒット。H0 と H1 で同じ（対照）",
+      "observations": []
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-16",
+    "commit": "44624bf2355165ad6fce641e501349e83de42e29",
+    "values": {
+      "H1": {
+        "asuka-fb1-body": 279092.0992999132,
+        "asuka-fb1-core": 527282.5011606748,
+        "asuka-after-fb1-body": 63330.29502800001
+      }
+    }
+  }
+}

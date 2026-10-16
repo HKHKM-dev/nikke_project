@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 58・効果 204（根拠あり 193）・notes 233（根拠あり 72）
+件数: キャラ 58・効果 206（根拠あり 195）・notes 231（根拠あり 70）
 
-notes の種類: 未対応 121・前提の外 28・計算に無関係 28・補足 8・間接 48
+notes の種類: 未対応 121・前提の外 27・計算に無関係 28・補足 8・間接 47
 
-スロット: supported 79・partial 17・unsupported 56・noEffect 34
+スロット: supported 80・partial 17・unsupported 56・noEffect 33
 
 ## 10 ラピ
 
@@ -699,8 +699,8 @@ notes の種類: 未対応 121・前提の外 28・計算に無関係 28・補�
 - **skill2**: noEffect
   - notes[0] 間接（HP）: 自分の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: C-0253（確定）
   - notes[1] 間接（防御力）: 残りの HP が最も低い味方 2 機の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: C-0253（確定）
-- **burst**: noEffect
-  - notes[0] 間接（バリア）: 味方全体のバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。バリアはモデルに無い。要件 5.2 節）: C-0253（確定）
+- **burst**: supported
+  - effects[0] state・burstUse・barrier: C-0253（確定）
 
 ## 830 アスカ
 
@@ -709,7 +709,7 @@ notes の種類: 未対応 121・前提の外 28・計算に無関係 28・補�
   - notes[0] 前提の外: 戦闘開始時のバリアに与えるダメージ▲は、射撃場の敵にバリアが無いのでダメージに関係しない: C-0443（範囲外）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・coreDamage: C-0075（確定）
-  - notes[0] 前提の外（読む: バリア）: 「自分がバリア適用状態なら」有利コードの攻撃ダメージ▲は、バリアを扱わないので起きない: C-0075（確定）
+  - effects[1] timed・fullBurstStart・elementDamage（読む: バリア）: C-0075（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・attackDamage: C-0076（確定）、C-0514（仮説）
   - effects[1] heal・burstUse: C-0464（確定）、C-0082（確定）
