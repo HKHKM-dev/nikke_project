@@ -20,6 +20,11 @@
         "cube": {
           "id": 1000303,
           "level": 15
+        },
+        "skillLevels": {
+          "skill1": 1,
+          "skill2": 1,
+          "burst": 1
         }
       }
     }

@@ -70,6 +70,11 @@ export type BuffTotals = {
    */
   damageTaken: number;
   /**
+   * 2 段目の段 2（plan/design-skill-stage2.md）: 敵の防御力▼の加算（割合）。与ダメージの式で、敵の防御力を (1 − Σ) 倍にしてから
+   * 引く（damage.ts の defenceAfterDown。0〜1 に収める）
+   */
+  enemyDefenseDown: number;
+  /**
    * アニス：スター S2・バースト編: 発射体爆発ダメージの加算。発射体の爆発を持つ武器（RL）の通常攻撃にだけ掛ける（式の中の置き場所は
    * damage.ts の PROJECTILE_EXPLOSION_BUCKET。plan/design-anis-star-s2-burst.md 2.1 節）
    */
@@ -133,6 +138,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   chargeDamageMultiplier: 0,
   distributedDamage: 0,
   damageTaken: 0,
+  enemyDefenseDown: 0,
   projectileExplosionDamage: 0,
   sustainedDamage: 0,
   burstGaugeSpeed: 0,
@@ -163,6 +169,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   chargeDamageMultiplier: 'chargeDamageMultiplier',
   distributedDamage: 'distributedDamage',
   damageTaken: 'damageTaken',
+  enemyDefenseDown: 'enemyDefenseDown',
   projectileExplosionDamage: 'projectileExplosionDamage',
   sustainedDamage: 'sustainedDamage',
   fixedChargeTime: 'fixedChargeTime',

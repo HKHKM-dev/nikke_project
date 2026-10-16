@@ -16,7 +16,12 @@
       "name": "ルドミラ",
       "controlled": true,
       "build": {
-        "attack": 294673
+        "attack": 294673,
+        "skillLevels": {
+          "skill1": 1,
+          "skill2": 1,
+          "burst": 1
+        }
       }
     }
   ],

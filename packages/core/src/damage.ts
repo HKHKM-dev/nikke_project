@@ -214,7 +214,7 @@ export type TriggerDamage = {
   /** バフ後の最終攻撃力。バフを全部足してから整数に四捨五入する（C-0027） */
   attack: number;
   buffs: BuffTotals;
-  /** max(1, 攻撃力 − 防御力) */
+  /** max(1, 攻撃力 − 防御力)。2 段目の段 2: 防御力は敵の防御力▼の後（defenceAfterDown） */
   baseHit: number;
   weaponMultiplier: number;
   /** Stage 13: 通常攻撃ダメージ倍率の乗数（丸めた武器倍率 ÷ 素の武器倍率。通常攻撃だけ。perShot には掛けない。C-0121） */
@@ -337,6 +337,15 @@ export function conditionNotes(condition: Pick<TriggerCondition, 'hitRate'>): Mo
 /** 距離ボーナス（適正距離のとき倍率グループに足す。キャラに bonusRange がなければ乗らない） */
 export const DISTANCE_BONUS = 0.3;
 
+/**
+ * 2 段目の段 2（plan/design-skill-stage2.md）: 敵の防御力▼の後の防御力。防御力 × (1 − Σ enemyDefenseDown)（Σ は 0〜1 に収める）。
+ * 端数は丸めない（録画 305・306 の読み直し。V-0433）。通常攻撃・倍率ダメージ・持続ダメージで、攻撃力から引くのはこの値
+ */
+export function defenceAfterDown(enemy: EnemyInput, buffs: BuffTotals): number {
+  const down = Math.min(1, Math.max(0, buffs.enemyDefenseDown));
+  return down === 0 ? enemy.defence : enemy.defence * (1 - down);
+}
+
 /** 1 トリガーの期待ダメージ。sim はフレームごとにこの値を加算し、calc は秒間トリガー数を掛ける */
 export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const { character, enemy, condition } = input;
@@ -353,7 +362,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   // 265,497.70 → 265,498 が切り捨てを否定する。V-0185）。倍率ダメージ・持続ダメージもこの値を使う。
   // どの単位で丸めるか（▲の合計か、効果ごとか）は attackRounding（V-0265）
   const attack = roundedAttack(baseAttack, buffs, input.attackRounding);
-  const baseHit = Math.max(1, attack - enemy.defence);
+  const baseHit = Math.max(1, attack - defenceAfterDown(enemy, buffs));
   const weaponMultiplier = shot.damage / 10000;
   const charge = isChargeWeapon(shot) && condition.fullCharge;
   const chargeMultiplier = applyChargeBuffs(shot.fullChargeDamage, charge, buffs);

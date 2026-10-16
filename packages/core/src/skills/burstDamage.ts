@@ -6,7 +6,7 @@
 // 分配ダメージには (1 + Σ distributedDamage) を別の乗数で掛ける（録画 21 のクイーン（真）の 1.9001 倍。plan/design-stage8.md 2.4 節）。
 // 持続ダメージ▲編: 持続ダメージ（dot）の tick には Σ sustainedDamage を SUSTAINED_DAMAGE_PLACEMENT の置き場所で掛ける。
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
-import { explosionHitMultiplier, FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
+import { defenceAfterDown, explosionHitMultiplier, FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
 import type { NamedStateId } from './states.ts';
@@ -549,7 +549,8 @@ export function computeSkillHit(
 ): SkillHitResult {
   return computeBurstHit({
     attack: trigger.attack,
-    enemy,
+    // 2 段目の段 2: 敵の防御力▼は、ヒットの時点の敵の側のバフ（buffs）で防御力を下げる
+    enemy: { ...enemy, defence: defenceAfterDown(enemy, buffs) },
     crit: applyCritBuffs(character.crit, buffs),
     attackDamageMultiplier: trigger.attackDamageMultiplier,
     elementMultiplier: skillElementMultiplier(character, enemy, buffs),

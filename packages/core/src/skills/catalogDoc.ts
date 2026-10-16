@@ -43,7 +43,7 @@ const STAT_INFO: Record<string, readonly [label: string, status: Status | null, 
   chargeTime: ['チャージ時間（秒）', 'ok', 'chargeSpeed の flat・fixedChargeTime'],
   hitRate: ['命中率', null, '味方▲は hitRate。敵▼は敵の命中'],
   burstGaugeSpeed: ['バーストゲージのチャージ速度', null, 'burstGaugeSpeed（2 段目の段 1 で timed・状態の中身にも）'],
-  defense: ['防御力', null, '味方▲は防御系。敵▼は注記だけの enemyDefenseDown'],
+  defense: ['防御力', null, '味方▲は防御系。敵▼は enemyDefenseDown（2 段目の段 2）'],
   maxHp: ['最大HP', 'indirect', 'HP の経路（HP 基準の攻撃力▲・ダメージ、HP の割合、HP 順の対象、バリアの量）'],
   pierceDamage: ['貫通ダメージ', 'gap', 'なし（貫通特化の発に乗る。ツールチップ T2。敵 1 体で乗るかは撮って確かめる）'],
   explosionRange: ['爆発範囲', 'check', 'なし（式に無い。コアの割合への効きは未確認）'],
@@ -341,7 +341,7 @@ function statStatus(e: CatalogEffect): readonly [Status, string] {
     return down ? ['damaged', '被弾の経路'] : ['check', '味方の被ダメ▲'];
   }
   if (c === 'defense') {
-    if (enemy) return down ? ['gap', '注記だけの enemyDefenseDown'] : ['nodmg', '敵の防御▲'];
+    if (enemy) return down ? ['ok', 'enemyDefenseDown（2 段目の段 2）'] : ['nodmg', '敵の防御▲'];
     return ['indirect', '防御力の経路（防御力の比べ・順位の対象。被ダメージは被弾の経路）'];
   }
   if (c === 'hitRate') return enemy ? ['damaged', '敵の命中（被弾の経路）'] : ['ok', 'hitRate（decrease）'];

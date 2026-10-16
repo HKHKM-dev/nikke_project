@@ -69,6 +69,7 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   normalCritRate: 'critRate',
   chargeDamageMultiplier: 'damageValue',
   damageTaken: 'damageValue',
+  enemyDefenseDown: 'damageValue',
   projectileExplosionDamage: 'damageValue',
   fixedChargeTime: 'firing',
   trueDamage: 'damageValue',
@@ -78,7 +79,6 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
 
 /** notes の効く先にだけ使う stat の分類（design-minimal-relevance.md 11.8 節） */
 const NOTE_STAT_CLASS: Record<NoteOnlyStat, ElementClass> = {
-  enemyDefenseDown: 'damageValue',
   maxHp: 'damageValue',
 };
 
