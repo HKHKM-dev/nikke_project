@@ -998,6 +998,25 @@ export type RemoveStateEffect = {
 };
 
 /**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: 「〈名前〉のスタック量 N 個▲」。発火のフレーム（射撃の回数のきっかけは次のフレーム）に、
+ * 持ち主（自分）のその状態に N スタックを足す。上限・維持・中身は、同じ定義のその状態の付与（スタックを持つ。対象は自分）のもの。
+ * 減少は、使い手（ソーダ：トゥインクルバニーのバースト）を定義する時に足す
+ */
+export type StackChangeEffect = {
+  kind: 'stackChange';
+  /** 目録の id（持ち主が味方の状態） */
+  state: NamedStateId;
+  trigger: EffectTrigger;
+  target: 'self';
+  /** 足すスタックの数（即値）。amountRef とどちらか 1 つ */
+  amount?: number;
+  /** 足すスタックの数の description_value_NN */
+  amountRef?: number;
+  condition?: EffectCondition;
+  assumes?: LocalizedText;
+};
+
+/**
  * 名前の付いた状態の語彙編（同 5.2 節）: 静的な付与の形か（戦闘開始時・戦闘の終わりまで・自分・発火の条件なし・スタックなし）。
  * 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: 静的な状態かは状態ごとに決める（staticStatesOf。どの付与もこの形で、
  * 外す効果も無い状態だけ）。静的な状態の持ち主は編成の段（skills/composition.ts）で決まり、中身は常時パッシブとして解く
@@ -1055,6 +1074,7 @@ export type SkillEffect = (
   | BurstReentryEffect
   | StateGrantEffect
   | RemoveStateEffect
+  | StackChangeEffect
 ) &
   ClaimRefs;
 
@@ -1083,6 +1103,7 @@ export const SKILL_EFFECT_KINDS = [
   'burstReentry',
   'state',
   'removeState',
+  'stackChange',
 ] as const satisfies readonly SkillEffect['kind'][];
 type MissingEffectKind = Exclude<SkillEffect['kind'], (typeof SKILL_EFFECT_KINDS)[number]>;
 const _allEffectKinds: [MissingEffectKind] extends [never] ? true : never = true;
@@ -1493,7 +1514,7 @@ function parseTrigger(
     if (v.stacksRef !== undefined) trigger.stacksRef = parseRef(v.stacksRef, `${path}.stacksRef`);
     // クルミ S2 編: フルバースト中だけ数える回数トリガー（plan/design-kurumi-s2.md 2.1 節）
     if (v.during !== undefined || v.reset !== undefined) {
-      if (!allowDuring) fail(`${path}.during`, 'a counting window (during) is only allowed in damage');
+      if (!allowDuring) fail(`${path}.during`, 'a counting window (during) is only allowed in damage, timed and state');
       if (v.during === undefined) fail(`${path}.reset`, 'reset needs during');
       trigger.during = oneOf(SHOT_COUNT_WINDOWS, v.during, `${path}.during`);
       if (v.reset === undefined) fail(`${path}.reset`, 'during needs reset (fullBurstStart or never)');
@@ -1561,7 +1582,8 @@ function parseTimedFields(
   stat: BuffStat | undefined,
   allowChance: boolean,
 ): TimedFields {
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, 'withStart', false, allowChance);
+  // 2 段目の段 3（plan/design-skill-stage3.md 1.2 節）: 回数のきっかけの数える窓（during）も、damage と同じ意味で書ける
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
@@ -2490,10 +2512,45 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'burstReentry') return parseBurstReentryEffect(v, path);
   if (v.kind === 'state') return parseStateGrantEffect(v, path);
   if (v.kind === 'removeState') return parseRemoveStateEffect(v, path);
+  if (v.kind === 'stackChange') return parseStackChangeEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry", "state" or "removeState", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry", "state", "removeState" or "stackChange", got ${JSON.stringify(v.kind)}`,
   );
+}
+
+/**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加。対象は自分だけ。トリガーと条件は解除と同じ。同じ定義に
+ * その状態をスタックで付ける付与が要ること（validateStackChanges）は、定義全体で見る
+ */
+function parseStackChangeEffect(v: Record<string, Json>, path: string): StackChangeEffect {
+  for (const key of Object.keys(v)) {
+    if (
+      !['kind', 'state', 'trigger', 'target', 'amount', 'amountRef', 'condition', 'assumes', 'claims'].includes(key)
+    ) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  if (v.target !== 'self') {
+    fail(
+      `${path}.target`,
+      `expected "self" (changing the stacks of an ally is not supported), got ${JSON.stringify(v.target)}`,
+    );
+  }
+  const effect: StackChangeEffect = { kind: 'stackChange', state, trigger, target: 'self' };
+  if ((v.amount === undefined) === (v.amountRef === undefined))
+    fail(path, 'expected exactly one of amount and amountRef');
+  if (v.amount !== undefined) effect.amount = parsePositiveInt(v.amount, `${path}.amount`);
+  else effect.amountRef = parseRef(v.amountRef, `${path}.amountRef`);
+  if (v.condition !== undefined) {
+    const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.removeState);
+    validateUsedBurst(condition, trigger, `${path}.condition`);
+    effect.condition = condition;
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
 }
 
 /**
@@ -2588,6 +2645,31 @@ function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEn
 }
 
 /**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加は、同じ定義にその状態をスタックで付ける付与（対象は自分）が
+ * 要る（上限・維持・中身は付与のもの）
+ */
+function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
+  );
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'stackChange') return;
+      const stacking = grants.some(
+        (g) =>
+          g.state === e.state && g.target === 'self' && (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
+      );
+      if (!stacking) {
+        fail(
+          `${root}.${slot}.effects[${i}]`,
+          `stackChange of "${e.state}" needs a grant of the same state on self with maxStacks in the definition`,
+        );
+      }
+    });
+  }
+}
+
+/**
  * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2・5.6 節）: 同じ定義の同じ状態の付与どうしの規則。中身（contents）を
  * 持つのは 1 つだけ、維持の形（秒・発数・出来事）とスタックの有無は同じ（即値は値も。Lv で決まる値は解決のときに見る）。
  * 中身を持たない付与も、中身の項目と合わせた timed として今の規則を通す（状態の窓を共有するので、stat ごとの規則がどの付与にも効く）
@@ -2668,6 +2750,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   validateCycles(skills, 'skills');
   validateFixedChargeTimeCount(skills, 'skills');
   validateStateGrants(skills, 'skills');
+  validateStackChanges(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
   if (raw.states !== undefined) {
@@ -2685,6 +2768,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     validateCycles({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateFixedChargeTimeCount({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateStateGrants({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateStackChanges({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;

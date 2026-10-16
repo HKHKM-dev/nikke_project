@@ -238,7 +238,7 @@ export function effectLabel(e: SkillEffect): string {
   const detail =
     e.kind === 'state'
       ? `${e.state}${e.contents === undefined ? '' : `（${e.contents.map((c) => c.stat).join('・')}）`}`
-      : e.kind === 'removeState'
+      : e.kind === 'removeState' || e.kind === 'stackChange'
         ? e.state
         : 'stat' in e
           ? e.stat

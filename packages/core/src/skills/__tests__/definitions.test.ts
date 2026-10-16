@@ -11,7 +11,15 @@ import {
   resolveShotGauges,
   resolveTimerGauges,
 } from '../burstDamage.ts';
-import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
+import {
+  MAX_SKILL_LEVELS,
+  resolveInstant,
+  resolvePassives,
+  resolveStackChanges,
+  resolveStateContents,
+  resolveTimed,
+  skillValue,
+} from '../resolve.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
 import { parseSkillDefinition, parseSkillIndex, SKILL_SLOTS } from '../types.ts';
@@ -83,13 +91,18 @@ describe('data/skills', () => {
                 ? effect.steps.map((s) => s.ref)
                 : effect.kind === 'state'
                   ? (effect.contents ?? []).flatMap((c) => (c.ref === undefined ? [] : [c.ref]))
-                  : effect.kind === 'cycleEvery' ||
-                      effect.kind === 'burstGaugeHit' ||
-                      effect.kind === 'burstReentry' ||
-                      effect.kind === 'removeState' ||
-                      effect.ref === undefined
-                    ? []
-                    : [effect.ref];
+                  : // 2 段目の段 3: スタック量の増加は、足す数の amountRef
+                    effect.kind === 'stackChange'
+                    ? effect.amountRef === undefined
+                      ? []
+                      : [effect.amountRef]
+                    : effect.kind === 'cycleEvery' ||
+                        effect.kind === 'burstGaugeHit' ||
+                        effect.kind === 'burstReentry' ||
+                        effect.kind === 'removeState' ||
+                        effect.ref === undefined
+                      ? []
+                      : [effect.ref];
           for (const ref of refs) {
             const entry = character.skills[slot].values[ref - 1];
             expect(entry, `${slot} ref ${ref}`).toHaveLength(SKILL_LEVEL_MAX);
@@ -184,11 +197,22 @@ describe('data/skills', () => {
       const instant10 = resolveInstant(def, character, MAX_SKILL_LEVELS);
       // モラン編: ゲージだけを溜める効果（burstGaugeHit）だけの定義もある
       const gauges10 = resolveShotGauges(def, character, MAX_SKILL_LEVELS).length + resolveTimerGauges(def).length;
+      // 2 段目の段 3: 時間で変わる状態の中身（ソーダ：トゥインクルバニーのゴールデンチップ）とスタック量の増加だけの定義もある
+      const states10 =
+        resolveStateContents(def, character, MAX_SKILL_LEVELS).length +
+        resolveStackChanges(def, character, MAX_SKILL_LEVELS).length;
       // ダメージに効く効果が 1 つも無いキャラ（デルタなど）は、全スロットが効果なしで notes だけ（noEffect・unsupported）
       const modeled = SKILL_SLOTS.some((slot) => def.skills[slot].effects.length > 0);
       if (modeled) {
         const count =
-          lv10.length + burst10.length + timed10.length + damage10.length + dot10.length + instant10.length + gauges10;
+          lv10.length +
+          burst10.length +
+          timed10.length +
+          damage10.length +
+          dot10.length +
+          instant10.length +
+          gauges10 +
+          states10;
         expect(count).toBeGreaterThan(0);
       }
       damage10.forEach((e, i) => {

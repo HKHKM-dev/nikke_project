@@ -1,22 +1,48 @@
 {
   "formatVersion": 1,
   "resourceId": 314,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-16",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "戦闘開始時のゴールデンチップ 50 個と、フルバーストタイム中の通常攻撃 3 回ごとのゴールデンチップ（クリティカルダメージ▲・最大 50 スタック・持続）は未対応（戦闘開始からの 66% は C-0128）",
-          "en": "The 50 Golden Chips at the start of combat and the Golden Chip (critical damage increase, up to 50 stacks, permanent) every 3 normal attacks during Full Burst are not modeled (the 66% from the start of combat is C-0128)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "critDamage",
-            "target": "self",
-            "trigger": "battleStart"
-          }
+          "kind": "stackChange",
+          "state": "goldenChip",
+          "trigger": "battleStart",
+          "target": "self",
+          "amountRef": 1,
+          "claims": [
+            "C-0128"
+          ]
         },
+        {
+          "kind": "state",
+          "state": "goldenChip",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 2,
+            "during": "fullBurst",
+            "reset": "fullBurstStart"
+          },
+          "target": "self",
+          "maxStacksRef": 4,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "critDamage",
+              "ref": 3,
+              "claims": [
+                "C-0128"
+              ]
+            }
+          ],
+          "assumes": {
+            "ja": "フルバーストタイムの持続中の通常攻撃の回数は、フルバーストごとに数え直す（確かめていない。戦闘開始時に上限の 50 スタックが付くので、バーストのスタック量▼（未対応）が無いうちは値に効かない）",
+            "en": "The normal attack count during Full Burst restarts at each Full Burst (unverified; it does not change values while the stacks stay at the cap of 50 from the start of battle, since the stack decrease of the Burst is not modeled)"
+          }
+        }
+      ],
+      "notes": [
         {
           "ja": "フルバーストタイム中の通常攻撃 3 回ごとの、自分と自分を除く最終攻撃力が最も高い味方 1 機への攻撃ダメージ▲（2 秒）は未対応",
           "en": "The attack damage increase on self and the ally with the highest final attack every 3 normal attacks during Full Burst (2 s) is not modeled",

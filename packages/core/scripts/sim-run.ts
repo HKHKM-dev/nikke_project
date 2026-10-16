@@ -378,7 +378,7 @@ const compositionRows = slots.flatMap((slot, i) =>
         {
           slot: `slot ${i + 1} ${slot.character.name.ja}`,
           // 名前の付いた状態の語彙編: 付与の行には状態の id も出す（state camouflage）。2 段目の段 1: 解除も（removeState metalSigma）
-          effect: `${skill}[${effectIndex}] ${e.kind}${e.kind === 'state' || e.kind === 'removeState' ? ` ${e.state}` : ''}`,
+          effect: `${skill}[${effectIndex}] ${e.kind}${e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange' ? ` ${e.state}` : ''}`,
           condition: conditions.join(' & '),
           applies:
             compositionAllows(e, compositionCharacters, i, input.enemy.element) &&
