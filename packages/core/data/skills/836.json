@@ -32,9 +32,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "通常攻撃 60 回ごとの、残りの HP の割合が最も低い味方 2 機の受ける HP 回復量▲は、ダメージに関係しない",
-          "en": "Incoming Healing up on the 2 allies with the lowest HP ratio every 60 normal attacks does not affect damage",
-          "kind": "noDamage",
+          "ja": "通常攻撃 60 回ごとの、残りの HP の割合が最も低い味方 2 機の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Incoming Healing up on the 2 allies with the lowest HP ratio every 60 normal attacks does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp",
           "claims": [
             "C-0316",
             "C-0321"
@@ -58,6 +59,9 @@
           "ja": "残りの HP の割合が最も低い味方 2 機の持続回復は未対応（HP を持たないので対象が決まらない。回復を受けた時の効果を起こさない。ほかにダメージとゲージには関係しない）",
           "en": "The heal over time on the 2 allies with the lowest HP ratio is not modeled (HP is not modeled, so the targets are undetermined; it does not trigger effects on being healed; it does not otherwise affect damage or the burst gauge)",
           "kind": "unimplemented",
+          "reads": [
+            "hp"
+          ],
           "effect": {
             "kind": "heal",
             "target": "allies",

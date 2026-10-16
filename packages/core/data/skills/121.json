@@ -22,9 +22,15 @@
       "effects": [],
       "notes": [
         {
-          "ja": "自分の HP が 90% 以上の時の味方全体の受けるHP回復量▲と、最後の弾丸が命中した時の敵全体の受けるHP回復量▼はダメージに関係しない（後半はバーストゲージも溜めない。C-0431）",
-          "en": "The HP-recovery-received increase on all allies while own HP is 90% or more and the HP-recovery-received decrease on all enemies when the last bullet hits do not affect damage (the latter does not charge the burst gauge either; C-0431)",
+          "ja": "最後の弾丸が命中した時の敵全体の受けるHP回復量▼はダメージに関係しない（バーストゲージも溜めない。C-0431）",
+          "en": "The HP-recovery-received decrease on all enemies when the last bullet hits does not affect damage (it does not charge the burst gauge either; C-0431)",
           "kind": "noDamage"
+        },
+        {
+          "ja": "自分の HP が 90% 以上の時の味方全体の受けるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The HP-recovery-received increase on all allies while own HP is 90% or more does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
         }
       ]
     },

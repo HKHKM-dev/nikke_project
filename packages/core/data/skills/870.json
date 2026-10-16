@@ -80,9 +80,10 @@
       ],
       "notes": [
         {
-          "ja": "防御力▲（ペルソナ - ヨハンナ）はダメージに関係しない",
-          "en": "DEF up (Persona - Johanna) does not affect damage",
-          "kind": "noDamage"
+          "ja": "防御力▲（ペルソナ - ヨハンナ）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "DEF up (Persona - Johanna) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
         }
       ]
     },
@@ -146,9 +147,10 @@
       ],
       "notes": [
         {
-          "ja": "鉄・拳・制・裁！の防御力▲はダメージに関係しない",
-          "en": "DEF up from Fist of Justice! does not affect damage",
-          "kind": "noDamage"
+          "ja": "鉄・拳・制・裁！の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "DEF up from Fist of Justice! does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
         }
       ]
     },

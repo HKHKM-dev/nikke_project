@@ -7,9 +7,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "通常攻撃が 10 回命中した時の自分の防御力▲は、ダメージに関係しない",
-          "en": "DEF up on self after 10 normal hits does not affect damage",
-          "kind": "noDamage",
+          "ja": "通常攻撃が 10 回命中した時の自分の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "DEF up on self after 10 normal hits does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense",
           "claims": [
             "C-0275"
           ]

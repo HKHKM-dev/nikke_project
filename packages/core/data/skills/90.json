@@ -22,9 +22,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "自分の HP が 90% 以上の時の、味方全体の受けるHP回復量▲はダメージに関係しない",
-          "en": "The HP-recovery-received increase on all allies while own HP is 90% or more does not affect damage",
-          "kind": "noDamage"
+          "ja": "自分の HP が 90% 以上の時の、味方全体の受けるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The HP-recovery-received increase on all allies while own HP is 90% or more does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
         }
       ]
     },

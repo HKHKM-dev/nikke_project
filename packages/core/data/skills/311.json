@@ -7,8 +7,17 @@
       "effects": [],
       "notes": [
         {
-          "ja": "味方全体の遮蔽物 HP 回復と、デバフのかかった味方のデバフ解除は、ダメージに関係しない",
-          "en": "Cover HP recovery for all allies and debuff removal on debuffed allies do not affect damage",
+          "ja": "味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "Cover HP recovery for all allies does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover",
+          "claims": [
+            "C-0092"
+          ]
+        },
+        {
+          "ja": "デバフのかかった味方のデバフ解除はダメージに関係しない",
+          "en": "Debuff removal on debuffed allies does not affect damage",
           "kind": "noDamage",
           "claims": [
             "C-0092"

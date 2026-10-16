@@ -9,6 +9,10 @@
   "replaces": [],
   "updated": "2026-09-28",
   "subject": {
-    "places": ["data/skills/261.json の skill1 の notes[0]", "data/skills/261.json の skill1 の notes[1]"]
+    "places": [
+      "data/skills/261.json の skill1 の notes[0]",
+      "data/skills/261.json の skill1 の notes[1]",
+      "data/skills/261.json の skill1 の notes[2]"
+    ]
   }
 }

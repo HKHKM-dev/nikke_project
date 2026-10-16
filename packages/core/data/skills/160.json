@@ -53,9 +53,10 @@
       ],
       "notes": [
         {
-          "ja": "味方全体の防御力▲はダメージに関係しない",
-          "en": "Defence up for all allies does not affect damage",
-          "kind": "noDamage"
+          "ja": "味方全体の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "Defence up for all allies does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
         }
       ]
     },

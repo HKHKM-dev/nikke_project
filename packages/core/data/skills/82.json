@@ -91,9 +91,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "遮蔽物の HP 回復はダメージに関係しない",
-          "en": "Cover HP recovery does not affect damage",
-          "kind": "noDamage"
+          "ja": "遮蔽物の HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "Cover HP recovery does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover"
         }
       ]
     },

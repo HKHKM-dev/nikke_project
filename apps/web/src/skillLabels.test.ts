@@ -2,7 +2,7 @@
 import { parseSkillDefinition, type SkillDefinition } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { formatRemoveState, formatStateGrant } from './skillLabels.ts';
+import { formatRemoveState, formatStateGrant, noteBadgeLabel } from './skillLabels.ts';
 
 const definitionOf = (id: number): SkillDefinition =>
   parseSkillDefinition(
@@ -32,5 +32,15 @@ describe('付与と解除の表示', () => {
     const star = anis.skills.skill1.effects[1];
     if (star?.kind !== 'state') throw new Error('unexpected definition');
     expect(formatStateGrant(star, anis)).toBe('私だけの星状態（戦闘の始めから終わりまで）。中身: 攻撃力。解除不可');
+  });
+});
+
+// 分類の設計書の論点 7（plan/design-indirect-notes.md 5 節）: 間接の notes は経路を添える
+describe('notes の印', () => {
+  it('adds the path to an indirect note', () => {
+    const delta = definitionOf(20);
+    const [defense] = delta.skills.skill2.notes!;
+    expect(noteBadgeLabel(defense!)).toBe('間接（防御力）');
+    expect(noteBadgeLabel({ kind: 'noDamage' })).toBe('計算に無関係');
   });
 });

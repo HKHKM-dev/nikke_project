@@ -67,6 +67,9 @@
           "ja": "B モード（1 秒ごとに現在の HP▼、攻撃力▲・チャージ速度▲。HP 40% 以下で解除）は未対応（HP を持たないので解除の時刻が決まらない）",
           "en": "B Mode (current HP down every second; ATK and charge speed up; ends at HP 40% or below) is not modeled (HP is not modeled, so the end time is undefined)",
           "kind": "unimplemented",
+          "reads": [
+            "hp"
+          ],
           "effect": {
             "kind": "timed",
             "stat": "unknown",

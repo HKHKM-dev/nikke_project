@@ -10,6 +10,9 @@
           "ja": "バースト 3 段階突入時の、最終最大HPに比例する自分の攻撃力▲（10 秒）は未対応",
           "en": "The attack increase on self proportional to final max HP on entering burst stage 3 (10 s) is not modeled",
           "kind": "unimplemented",
+          "reads": [
+            "hp"
+          ],
           "effect": {
             "kind": "timed",
             "stat": "attack",
@@ -43,9 +46,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "デコイ（分身）は、被弾を扱わないのでダメージに関係しない（要件 5.2 節）",
-          "en": "Decoy (clone) does not affect damage, since being hit is not modeled (requirements 5.2)",
-          "kind": "outOfScope",
+          "ja": "デコイ（分身）は、それ自体は与ダメージを変えない（デコイを読む効果のある編成でだけ効く。S2 の美しさがデコイを読む）",
+          "en": "Decoy (clone) does not change damage by itself (it matters only with an effect reading decoys in the team; Beauty in S2 reads decoys)",
+          "kind": "indirect",
+          "path": "decoy",
           "effect": {
             "kind": "timed",
             "stat": "unknown",
@@ -57,6 +61,9 @@
           "ja": "デコイがある時の 3 秒ごとの美しさ（最大HP▲・12 スタック）は未対応（最大HP は S1 の攻撃力▲と、バーストの追加ダメージに効く）",
           "en": "Beauty (max HP increase, 12 stacks) every 3 s while a decoy exists is not modeled (max HP affects the S1 attack increase and the burst additional damage)",
           "kind": "unimplemented",
+          "reads": [
+            "decoy"
+          ],
           "effect": {
             "kind": "timed",
             "stat": "maxHp",

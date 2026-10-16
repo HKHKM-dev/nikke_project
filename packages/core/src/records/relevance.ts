@@ -6,9 +6,11 @@
 import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../skills/composition.ts';
 import { applyTreasure, treasureSlots } from '../skills/treasure.ts';
 import {
+  INDIRECT_PATH_NAMES,
   SHOT_COUNT_KINDS,
   SKILL_SLOTS,
   type BuffStat,
+  type IndirectPath,
   type NoteEffect,
   type NoteOnlyStat,
   type SkillDefinition,
@@ -149,6 +151,10 @@ export type MinimalElement = {
   effectRef?: { rid: number; root: SkillRoot; slot: SkillSlot; index: number; subIndex?: number };
   /** 根拠の結論（補足の refers の notes の claims も含める） */
   claims: string[];
+  /** 分類の設計書の論点 7（plan/design-indirect-notes.md 2 節）: 間接の notes の経路（動かす側） */
+  path?: IndirectPath;
+  /** 同: 読む側の印（効果・notes の reads） */
+  reads?: IndirectPath[];
 };
 
 /** 効果の形（きっかけは名前に直す: 文字列はそのまま、回数トリガーは count、時間の周期は timer、効果名は applied） */
@@ -250,6 +256,7 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
             skillSlot: slot,
             effectRef: { rid: member.rid, root, slot, index },
             claims: [...(e.claims ?? []), ...refs.flatMap(({ note }) => note.claims ?? [])],
+            ...(e.reads === undefined ? {} : { reads: e.reads }),
           });
           // 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.8 節）: 中身の項目に claims があれば、項目を 1 つの要素にする
           // （付与の要素は状態の窓。中身の値の根拠は項目の claims）
@@ -279,6 +286,8 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
             shape: shapeOfNote(n.effect),
             skillSlot: slot,
             claims: n.claims ?? [],
+            ...(n.path === undefined ? {} : { path: n.path }),
+            ...(n.reads === undefined ? {} : { reads: n.reads }),
           });
         });
       }
@@ -335,6 +344,9 @@ export function unconfirmedReason(
 ): string | undefined {
   if (element.type === 'noDefinition') return '定義なし';
   if (element.type === 'normalCondition') return '的の表に無い';
+  // 分類の設計書の論点 7（plan/design-indirect-notes.md 2 節）: 間接の要素は、読む側のいる編成ではいつも未確定（notes の結論は、読む側の
+  // いない編成の根拠）。効くのは読む側のいる時だけなので、効きうるかは notRelevantReason が見る
+  if (element.path !== undefined) return `間接（${INDIRECT_PATH_NAMES[element.path].ja}）: 読む側のいる編成の根拠なし`;
   if (element.claims.length === 0) return '根拠なし';
   const open = element.claims.filter((id) => {
     const c = byId.get(id);
@@ -420,14 +432,49 @@ export function teamHasHealedTrigger(recording: RecordingEntry, ctx: RelevanceCo
   });
 }
 
-/** 静的な判定（4.2 節）。効かないなら理由、効きうるなら undefined */
+/** 録画の編成の要素（間接の要素の読む側を引くのに使う。文脈 × 録画ごとに作る） */
+const teamElements = new WeakMap<RelevanceContext, Map<string, MinimalElement[]>>();
+function elementsOfTeam(recording: RecordingEntry, ctx: RelevanceContext): MinimalElement[] {
+  let byRecording = teamElements.get(ctx);
+  if (byRecording === undefined) {
+    byRecording = new Map();
+    teamElements.set(ctx, byRecording);
+  }
+  let elements = byRecording.get(recording.id);
+  if (elements === undefined) {
+    elements = elementsOf(recording, ctx);
+    byRecording.set(recording.id, elements);
+  }
+  return elements;
+}
+
+/**
+ * 静的な判定（4.2 節）。効かないなら理由、効きうるなら undefined。readerExcluded は、間接の要素の読む側のうち、この観測値に効かないと
+ * 分かっているもの（人の判断の印・感度で効かない。relevanceOf が渡す）
+ */
 export function notRelevantReason(
   element: MinimalElement,
   o: Observation,
   recording: RecordingEntry,
   ctx: RelevanceContext,
+  readerExcluded: (reader: MinimalElement) => boolean = () => false,
 ): string | undefined {
   if (element.type === 'noDefinition') return undefined;
+  // 分類の設計書の論点 7（plan/design-indirect-notes.md 2 節）: 間接の要素は、同じ経路を読む要素が編成にいて、その要素がこの録画で起きえて
+  // この観測値に効きうる時だけ効きうる（効く分類と対象は、読む側で見る）
+  if (element.path !== undefined) {
+    const path = element.path;
+    const readers = elementsOfTeam(recording, ctx).filter((r) => r.reads?.includes(path));
+    const name = INDIRECT_PATH_NAMES[path].ja;
+    if (readers.length === 0) return `${name}を読む味方がいない`;
+    const effective = readers.some(
+      (r) =>
+        !readerExcluded(r) &&
+        impossibleReason(r, recording) === undefined &&
+        notRelevantReason(r, o, recording, ctx) === undefined,
+    );
+    return effective ? undefined : `${name}を読む効果がこの観測値に効かない`;
+  }
   const cls = classOf(element);
   // 回復は「回復を受けた時」の効果を通してだけ観測量に効く（11.8 節。2026-10-08、オーナー決定）
   if (cls === 'heal' && !teamHasHealedTrigger(recording, ctx)) return '回復を受けた時の効果を持つ味方がいない';
@@ -506,7 +553,7 @@ function hash(text: string): string {
 }
 
 /** 計算に効かない欄（根拠・notes・表示の文）を除く */
-const keyReplacer = (k: string, v: unknown) => (['claims', 'notes', 'ja', 'en'].includes(k) ? undefined : v);
+const keyReplacer = (k: string, v: unknown) => (['claims', 'notes', 'ja', 'en', 'reads'].includes(k) ? undefined : v);
 
 /** 感度の入力の鍵: 版・録画の台帳・比べる指定・編成の定義（根拠と notes を除く） */
 export function sensitivityKey(
@@ -547,7 +594,19 @@ export function relevanceOf(
       pairs++;
       const elements: { name: string; reason: string }[] = [];
       const marked: string[] = [];
+      const markedFor = (name: string) =>
+        (c.minimal ?? []).some((m) => m.element === name && (m.observations === '*' || m.observations.includes(o.id)));
       for (const rec of recs) {
+        // 分類の設計書の論点 7（plan/design-indirect-notes.md 2 節）: 間接の要素の読む側のうち、印か感度でこの観測値に効かないもの
+        const readerExcluded = (r: MinimalElement): boolean => {
+          if (markedFor(r.name)) return true;
+          if (!usesSensitivity(o) || r.type !== 'effect') return false;
+          const cacheKey = `${o.id}|${rec.id}`;
+          const key = keys.get(cacheKey) ?? sensitivityKey(o, rec, ctx);
+          keys.set(cacheKey, key);
+          const s = sensitivity.get(`${o.id}|${r.name}`);
+          return s !== undefined && s.key === key && !s.effective;
+        };
         for (const e of elementsOf(rec, ctx)) {
           if (e.places.some((p) => subject.has(p))) continue;
           let reason = unconfirmedReason(e, rec, ctx, byId);
@@ -566,11 +625,9 @@ export function relevanceOf(
               measured = true;
             } else unmeasured++;
           }
-          if (!measured && notRelevantReason(e, o, rec, ctx) !== undefined) continue;
+          if (!measured && notRelevantReason(e, o, rec, ctx, readerExcluded) !== undefined) continue;
           if (elements.some((x) => x.name === e.name) || marked.includes(e.name)) continue;
-          const mark = (c.minimal ?? []).some(
-            (m) => m.element === e.name && (m.observations === '*' || m.observations.includes(o.id)),
-          );
+          const mark = markedFor(e.name);
           if (mark) marked.push(e.name);
           else elements.push({ name: e.name, reason });
         }

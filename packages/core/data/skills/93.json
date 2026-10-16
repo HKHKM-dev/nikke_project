@@ -175,9 +175,10 @@
       ],
       "notes": [
         {
-          "ja": "味方全体の受ける HP 回復量▲はダメージに関係しない",
-          "en": "HP recovery taken up for all allies does not affect damage",
-          "kind": "noDamage"
+          "ja": "味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "HP recovery taken up for all allies does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
         }
       ]
     }

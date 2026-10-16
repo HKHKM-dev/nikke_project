@@ -68,9 +68,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "残りの HP の数値が最も低い味方へのバリアは、ダメージとゲージに関係しない",
-          "en": "The barrier on the allies with the lowest HP does not affect damage or gauge",
-          "kind": "noDamage"
+          "ja": "残りの HP の数値が最も低い味方へのバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。バーストゲージは溜めない）",
+          "en": "The barrier on the allies with the lowest HP does not change damage by itself (it matters only with an effect reading barriers in the team; it does not charge the burst gauge)",
+          "kind": "indirect",
+          "path": "barrier"
         }
       ]
     }

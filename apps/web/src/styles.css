@@ -223,6 +223,11 @@ header p {
   background: #757575;
   color: #fff;
 }
+/* 分類の設計書の論点 7（plan/design-indirect-notes.md 5 節）: 間接 */
+.note.indirect .badge {
+  background: #5e35b1;
+  color: #fff;
+}
 .breakdown {
   border-collapse: collapse;
   width: 100%;

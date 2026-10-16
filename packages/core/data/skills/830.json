@@ -59,6 +59,9 @@
           "ja": "「自分がバリア適用状態なら」有利コードの攻撃ダメージ▲は、バリアを扱わないので起きない",
           "en": "Elemental advantage damage up while shielded does not occur because shields are not modeled",
           "kind": "outOfScope",
+          "reads": [
+            "barrier"
+          ],
           "effect": {
             "kind": "timed",
             "stat": "elementDamage",
@@ -114,9 +117,10 @@
       ],
       "notes": [
         {
-          "ja": "貫通特化は射撃場の敵ではダメージに関係しない",
-          "en": "Pierce does not affect damage on the shooting range enemy",
-          "kind": "outOfScope",
+          "ja": "貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体に乗るかは確かめていない）",
+          "en": "Pierce does not change damage by itself (it matters only with a Pierce Damage increase in the team; whether it applies against a single enemy is not verified)",
+          "kind": "indirect",
+          "path": "pierce",
           "effect": {
             "kind": "unknown"
           },
