@@ -10,6 +10,9 @@
           "ja": "戦闘開始時の、最終最大HPに比例する自分の攻撃力▲（持続）は未対応",
           "en": "The attack increase on self proportional to final max HP from the start of combat (permanent) is not modeled",
           "kind": "unimplemented",
+          "reads": [
+            "hp"
+          ],
           "effect": {
             "kind": "timed",
             "stat": "attack",

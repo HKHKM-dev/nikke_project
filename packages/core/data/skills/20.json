@@ -7,9 +7,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃時の自分の最大HP▲は、ダメージに関係しない",
-          "en": "Max HP up on self after a Full Charge attack does not affect damage",
-          "kind": "noDamage",
+          "ja": "フルチャージ攻撃時の自分の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on self after a Full Charge attack does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp",
           "claims": [
             "C-0081"
           ]
@@ -20,9 +21,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "バーストスキル使用時の自分の防御力▲は、ダメージに関係しない",
-          "en": "DEF up on self when using the Burst Skill does not affect damage",
-          "kind": "noDamage",
+          "ja": "バーストスキル使用時の自分の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "DEF up on self when using the Burst Skill does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense",
           "claims": [
             "C-0081"
           ]
@@ -33,8 +35,17 @@
       "effects": [],
       "notes": [
         {
-          "ja": "デコイ（分身）と挑発は、ダメージに関係しない",
-          "en": "The decoy and the taunt do not affect damage",
+          "ja": "デコイ（分身）は、それ自体は与ダメージを変えない（デコイを読む効果のある編成でだけ効く）",
+          "en": "The decoy does not change damage by itself (it matters only with an effect reading decoys in the team)",
+          "kind": "indirect",
+          "path": "decoy",
+          "claims": [
+            "C-0081"
+          ]
+        },
+        {
+          "ja": "挑発はダメージに関係しない",
+          "en": "The taunt does not affect damage",
           "kind": "noDamage",
           "claims": [
             "C-0081"

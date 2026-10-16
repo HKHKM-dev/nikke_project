@@ -7,9 +7,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "通常攻撃 120 回ごとの味方共用バリアは扱わない（要件 5.2 節）",
-          "en": "The shared barrier for allies every 120 normal attacks is not modeled (requirements 5.2)",
-          "kind": "outOfScope",
+          "ja": "通常攻撃 120 回ごとの味方共用バリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。バリアはモデルに無い。要件 5.2 節）",
+          "en": "The shared barrier for allies every 120 normal attacks does not change damage by itself (it matters only with an effect reading barriers in the team; barriers are not modeled, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
           "effect": {
             "kind": "timed",
             "stat": "unknown",
@@ -61,8 +62,8 @@
           }
         },
         {
-          "ja": "残りの HP が最も低い味方 1 機への不屈と最大HP▲はダメージに関係しない",
-          "en": "Indomitability and the max HP increase on the ally with the lowest HP do not affect damage",
+          "ja": "残りの HP が最も低い味方 1 機への不屈はダメージに関係しない",
+          "en": "Indomitability on the ally with the lowest HP does not affect damage",
           "kind": "noDamage"
         },
         {
@@ -75,6 +76,12 @@
             "target": "allies",
             "trigger": "burstUse"
           }
+        },
+        {
+          "ja": "残りの HP が最も低い味方 1 機への最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The max HP increase on the ally with the lowest HP does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
         }
       ]
     }

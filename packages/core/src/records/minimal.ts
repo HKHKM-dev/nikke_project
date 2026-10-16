@@ -1,7 +1,7 @@
 // キャラ単位の「機構が確定したキャラ」の判定（AGENTS.md「事実と記録」）と、通常攻撃の条件が的の表で測られているかの判定。
 // 撮る前に編成を選ぶ材料（plan/design-skill-claims-5-2.md 6.1 節）に使う。結論の警告は、効果・notes 単位の最小構成の検査
 // （records/relevance.ts。plan/design-minimal-relevance.md）に置き換えた（検証記録 × 録画の旧の警告は PR 5 で消した）。
-// 「機構が確定したキャラ」は、スキル定義の効果と notes（計算に無関係を除く）の根拠がすべて確定（か範囲外）の結論に結び付き、
+// 「機構が確定したキャラ」は、スキル定義の効果と notes（計算に無関係・間接を除く）の根拠がすべて確定（か範囲外）の結論に結び付き、
 // 通常攻撃の条件（コア命中率・弾丸命中率）がその的の表で測られているキャラ。
 import { targetProfileOf } from '../enemies.ts';
 import { rateRowOf, targetRateOf } from '../frame/landing.ts';
@@ -13,14 +13,17 @@ import { entriesOf } from './skills.ts';
 
 const CONFIRMED_STATES: readonly ClaimState[] = ['確定', '範囲外'];
 
-/** 定義の効果と notes（計算に無関係の notes は除く。plan/design-minimal-relevance.md 9 節の 4）の根拠が、すべて確定（か範囲外）の結論に結び付いているか */
+/**
+ * 定義の効果と notes（計算に無関係の notes は除く。plan/design-minimal-relevance.md 9 節の 4）の根拠が、すべて確定（か範囲外）の結論に
+ * 結び付いているか。間接の notes も除く（読む側のいる編成では、最小構成の検査が録画ごとに見る。plan/design-indirect-notes.md 3 節）
+ */
 export function mechanismConfirmed(def: SkillDefinition | undefined, states: ReadonlyMap<string, ClaimState>): boolean {
   if (def === undefined) return false;
   const cited = (ids: readonly string[] | undefined) =>
     ids !== undefined && ids.length > 0 && ids.every((id) => CONFIRMED_STATES.includes(states.get(id) ?? '仮説'));
   const entryConfirmed = (entry: SkillEntry) =>
     entry.effects.every((e) => cited(e.claims)) &&
-    (entry.notes ?? []).every((n) => n.kind === 'noDamage' || cited(n.claims));
+    (entry.notes ?? []).every((n) => n.kind === 'noDamage' || n.kind === 'indirect' || cited(n.claims));
   return entriesOf(def).every(({ entry }) => entryConfirmed(entry));
 }
 

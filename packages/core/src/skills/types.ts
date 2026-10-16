@@ -256,22 +256,44 @@ export type WithCharacterCondition = { rid: number; present: boolean };
 
 /**
  * スロットの対応状況（plan/design-skill-note-kinds.md 2.2 節）。定義には書かず、効果の有無と unimplemented の notes の有無から
- * 読み込みで決める（deriveSkillSupport）。noEffect = モデルの前提の中でダメージに効く効果が無い（notes が noDamage・outOfScope・modeling だけ）
+ * 読み込みで決める（deriveSkillSupport）。noEffect = モデルの前提の中でダメージに効く効果が無い（notes が noDamage・outOfScope・modeling・
+ * indirect だけ）
  */
 export type SkillSupport = 'supported' | 'partial' | 'unsupported' | 'noEffect';
 
 /**
  * notes の種類（plan/design-skill-note-kinds.md 2.1 節）。unimplemented = 前提の中でダメージに効く（効きうる）のに定義していない、
  * outOfScope = モデルの前提（静止単体ボス・被弾なし・味方が倒れない・パーツ／阻止部位／バリアなし。要件 5.2 節）では起きない・効かない、
- * noDamage = どの編成・敵でも与ダメージを変えない、modeling = 扱っていない効果ではなく扱い方の補足
+ * noDamage = どの編成・敵でも与ダメージを変えない、modeling = 扱っていない効果ではなく扱い方の補足。
+ * 分類の設計書の論点 7（plan/design-indirect-notes.md 1.1 節）: indirect = それ自体は与ダメージを変えないが、経路（path）の値や有無を
+ * 動かし、その経路を読む効果（reads）が編成にいる時だけ効く
  */
-export type SkillNoteKind = 'unimplemented' | 'outOfScope' | 'noDamage' | 'modeling';
+export type SkillNoteKind = 'unimplemented' | 'outOfScope' | 'noDamage' | 'modeling' | 'indirect';
 export const SKILL_NOTE_KINDS = [
   'unimplemented',
   'outOfScope',
   'noDamage',
   'modeling',
+  'indirect',
 ] as const satisfies readonly SkillNoteKind[];
+
+/**
+ * 分類の設計書の論点 7（plan/design-indirect-notes.md 1.3 節）: 間接に効く経路。間接の notes の path（動かす側）と、効果・notes の
+ * reads（読む側）に書く
+ */
+export const INDIRECT_PATHS = ['hp', 'defense', 'barrier', 'decoy', 'cover', 'pierce', 'pellet'] as const;
+export type IndirectPath = (typeof INDIRECT_PATHS)[number];
+
+/** 経路の名前（plan/skills.md と画面） */
+export const INDIRECT_PATH_NAMES: Record<IndirectPath, LocalizedText> = {
+  hp: { ja: 'HP', en: 'HP' },
+  defense: { ja: '防御力', en: 'DEF' },
+  barrier: { ja: 'バリア', en: 'Barrier' },
+  decoy: { ja: 'デコイ', en: 'Decoy' },
+  cover: { ja: '遮蔽物', en: 'Cover' },
+  pierce: { ja: '貫通', en: 'Pierce' },
+  pellet: { ja: 'ペレット', en: 'Pellet' },
+};
 
 export type PassiveEffect = FixedTargetFields & {
   /** 無条件・常時（段階 A）。トリガー付きの持続バフは 'timed'（段階 B） */
@@ -1072,6 +1094,9 @@ export function staticStatesOf(definition: SkillDefinition | null | undefined): 
  */
 export type ClaimRefs = { claims?: string[] };
 
+/** 分類の設計書の論点 7（plan/design-indirect-notes.md 1.2 節）: 読む側の印。その経路の値や有無で、値・対象・条件・きっかけ・維持が決まる */
+export type IndirectReads = { reads?: IndirectPath[] };
+
 export type SkillEffect = (
   | PassiveEffect
   | BurstDamageEffect
@@ -1089,7 +1114,8 @@ export type SkillEffect = (
   | RemoveStateEffect
   | StackChangeEffect
 ) &
-  ClaimRefs;
+  ClaimRefs &
+  IndirectReads;
 
 /** アニス：スター編: 定義のバースト再突入の段階（編成の条件で外した後の定義を渡す）。無ければ null */
 export function burstReentryStepOf(definition: SkillDefinition | null | undefined): BasicBurstStep | null {
@@ -1160,10 +1186,14 @@ export type NoteEffect = {
 
 /**
  * 扱わなかった効果や扱い方の説明。claims は「ダメージに関係しない」などの判断の根拠。
- * 最小構成の検査編: effect は効く先（unimplemented・outOfScope と、refers の無い modeling に書ける）。refers は modeling が指す
- * 同じスロットの効果（"effects[0]" の形）で、検査ではその効果と同じ要素として扱う
+ * 最小構成の検査編: effect は効く先（unimplemented・outOfScope・indirect と、refers の無い modeling に書ける）。refers は modeling が指す
+ * 同じスロットの効果（"effects[0]" の形）で、検査ではその効果と同じ要素として扱う。
+ * 分類の設計書の論点 7（plan/design-indirect-notes.md 1.1・1.2 節）: path は indirect の経路（必須）。reads は読む側の印
+ * （unimplemented・outOfScope と、refers の無い modeling に書ける）
  */
-export type SkillNote = LocalizedText & ClaimRefs & { kind: SkillNoteKind; effect?: NoteEffect; refers?: string };
+export type SkillNote = LocalizedText &
+  ClaimRefs &
+  IndirectReads & { kind: SkillNoteKind; effect?: NoteEffect; refers?: string; path?: IndirectPath };
 
 /** 効果と notes からスロットの対応状況を決める（plan/design-skill-note-kinds.md 2.2 節） */
 export function deriveSkillSupport(
@@ -1262,7 +1292,32 @@ function parseNote(v: Json, path: string): SkillNote {
     if (note.refers !== undefined) fail(`${path}.effect`, 'a modeling note with refers takes its effect from there');
     note.effect = parseNoteEffect(v.effect, `${path}.effect`);
   }
+  // 分類の設計書の論点 7（plan/design-indirect-notes.md 1.1・1.2 節）: 間接の経路と、読む側の印
+  if (note.kind === 'indirect') {
+    if (v.path === undefined) fail(`${path}.path`, 'required in an indirect note');
+    note.path = oneOf(INDIRECT_PATHS, v.path, `${path}.path`);
+  } else if (v.path !== undefined) fail(`${path}.path`, `only allowed in an indirect note, found in ${note.kind}`);
+  if (v.reads !== undefined) {
+    if (note.kind === 'noDamage' || note.kind === 'indirect')
+      fail(`${path}.reads`, `not allowed in a ${note.kind} note (indirect paths do not chain)`);
+    if (note.refers !== undefined) fail(`${path}.reads`, 'a modeling note with refers: write reads in the effect');
+    note.reads = parseIndirectReads(v.reads, `${path}.reads`);
+  }
+  for (const key of Object.keys(v)) {
+    if (!['ja', 'en', 'kind', 'claims', 'refers', 'effect', 'path', 'reads'].includes(key))
+      fail(`${path}.${key}`, 'unknown field');
+  }
   return note;
+}
+
+/** 分類の設計書の論点 7: 読む側の印（経路の id の列。空でなく、重ならない） */
+function parseIndirectReads(v: Json, path: string): IndirectPath[] {
+  if (!Array.isArray(v) || v.length === 0) fail(path, 'expected a non-empty array of indirect paths');
+  return v.map((x, i) => {
+    const p = oneOf(INDIRECT_PATHS, x, `${path}[${i}]`);
+    if (v.indexOf(x) !== i) fail(`${path}[${i}]`, `duplicate path ${p}`);
+    return p;
+  });
 }
 
 const NOTE_REFERS = /^effects\[(\d+)\]$/;
@@ -2449,7 +2504,10 @@ function parseRef(v: Json, path: string): number {
  */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
-  const effect: SkillEffect = parseEffectBody(v, path, slot);
+  // 分類の設計書の論点 7（plan/design-indirect-notes.md 1.2 節）: 読む側の印はどの種類の効果にも書ける（計算は読まない）
+  const { reads, ...body } = v;
+  const effect: SkillEffect = parseEffectBody(body, path, slot);
+  if (reads !== undefined) effect.reads = parseIndirectReads(reads, `${path}.reads`);
   for (const key of ['burstStepMix', 'squad'] as const) {
     if (v[key] === undefined) continue;
     if (

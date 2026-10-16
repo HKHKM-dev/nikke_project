@@ -1,6 +1,7 @@
 // スキル関連の表示用ラベル（React 非依存）
 import {
   ELEMENT_LABEL,
+  INDIRECT_PATH_NAMES,
   SKILL_SLOTS,
   framesToGameSeconds,
   isStateContent,
@@ -25,6 +26,7 @@ import type {
   SkillDamageType,
   SkillDefinition,
   SkillSlot,
+  SkillNote,
   SkillNoteKind,
   SkillSupport,
   StateGrantEffect,
@@ -246,7 +248,15 @@ export const NOTE_KIND_BADGE: Record<SkillNoteKind, SupportBadge> = {
   outOfScope: { label: '前提の外', className: 'out-of-scope' },
   noDamage: { label: '計算に無関係', className: 'no-damage' },
   modeling: { label: '補足', className: 'modeling' },
+  // 分類の設計書の論点 7（plan/design-indirect-notes.md 5 節）: 経路を読む効果のある編成でだけ効く
+  indirect: { label: '間接', className: 'indirect' },
 };
+
+/** 分類の設計書の論点 7: notes の印（間接は経路を添える。「間接（防御力）」） */
+export function noteBadgeLabel(note: Pick<SkillNote, 'kind' | 'path'>): string {
+  const label = NOTE_KIND_BADGE[note.kind].label;
+  return note.path === undefined ? label : `${label}（${INDIRECT_PATH_NAMES[note.path].ja}）`;
+}
 
 /**
  * 「攻撃力 +42.2%」「攻撃力 +3,105（発動者基準 14.1%）」「最大装弾数 +5 発」「チャージ時間 −0.175 秒（発動者基準のチャージ速度）」。

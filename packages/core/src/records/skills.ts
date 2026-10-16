@@ -4,8 +4,10 @@
 // 結論の model の文が定義の場所（`data/skills/830.json` の skill1 の effects[0] など）を書いているときは、その場所が
 // 定義の claims でその結論を指しているかも確かめる（効果の並べ替えで文が古くなるのを止める）。
 import {
+  INDIRECT_PATH_NAMES,
   SKILL_NOTE_KINDS,
   SKILL_SLOTS,
+  type IndirectPath,
   type SkillDefinition,
   type SkillEffect,
   type SkillEntry,
@@ -221,7 +223,7 @@ const SKILLS_HEADER = `# スキル定義の対応状況
 - **このファイルは生成する（手で書かない）**。定義は \`packages/core/data/skills/{resourceId}.json\` に置き、\`npm run records:check\` で作り直す（[skills-guide.md](skills-guide.md) 3 節）。
 - キャラ × スロットごとに、対応状況と、効果・notes と、その根拠の結論（定義の \`claims\`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
 - 対応状況は効果と notes の種類から決まる（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）: \`supported\`（効果あり・未対応なし）・\`partial\`（効果あり・未対応あり）・\`unsupported\`（効果なし・未対応あり）・\`noEffect\`（前提の中でダメージに効く効果なし）。
-- notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
+- notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。`;
 
 function triggerLabel(e: SkillEffect): string | undefined {
@@ -254,7 +256,13 @@ const NOTE_KIND_LABEL: Record<SkillNoteKind, string> = {
   outOfScope: '前提の外',
   noDamage: '計算に無関係',
   modeling: '補足',
+  indirect: '間接',
 };
+
+/** 分類の設計書の論点 7（plan/design-indirect-notes.md 5 節）: 間接の経路と、読む側の印 */
+const pathName = (p: IndirectPath) => INDIRECT_PATH_NAMES[p].ja;
+const readsLabel = (reads: readonly IndirectPath[] | undefined) =>
+  reads === undefined ? '' : `（読む: ${reads.map(pathName).join('・')}）`;
 const SUPPORT_ORDER: readonly SkillSupport[] = ['supported', 'partial', 'unsupported', 'noEffect'];
 
 function claimList(ids: readonly string[] | undefined, states: ReadonlyMap<string, ClaimState>): string {
@@ -280,7 +288,7 @@ export function renderSkills(characters: readonly DefinedCharacter[], claims: re
       entry.effects.forEach((e, i) => {
         effects++;
         if (e.claims !== undefined) citedEffects++;
-        body.push(`  - effects[${i}] ${effectLabel(e)}: ${claimList(e.claims, states)}`);
+        body.push(`  - effects[${i}] ${effectLabel(e)}${readsLabel(e.reads)}: ${claimList(e.claims, states)}`);
         // 名前の付いた状態の語彙編: 中身の項目に claims があれば、項目の行も出す（無い項目の根拠は付与の claims）
         if (e.kind !== 'state') return;
         e.contents?.forEach((c, j) => {
@@ -291,7 +299,8 @@ export function renderSkills(characters: readonly DefinedCharacter[], claims: re
         notes++;
         if (n.claims !== undefined) citedNotes++;
         noteKinds.set(n.kind, noteKinds.get(n.kind)! + 1);
-        body.push(`  - notes[${i}] ${NOTE_KIND_LABEL[n.kind]}: ${n.ja}: ${claimList(n.claims, states)}`);
+        const kind = `${NOTE_KIND_LABEL[n.kind]}${n.path === undefined ? '' : `（${pathName(n.path)}）`}${readsLabel(n.reads)}`;
+        body.push(`  - notes[${i}] ${kind}: ${n.ja}: ${claimList(n.claims, states)}`);
       });
     }
   }

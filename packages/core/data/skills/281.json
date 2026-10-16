@@ -7,9 +7,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "戦闘開始時の、自分の失った HP に応じた防御力▲はダメージに関係しない",
-          "en": "The DEF increase on self by HP lost (from the start of battle) does not affect damage",
-          "kind": "noDamage"
+          "ja": "戦闘開始時の、自分の失った HP に応じた防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on self by HP lost (from the start of battle) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
         },
         {
           "ja": "武器変更状態で通常攻撃が 5 回命中した時の、対象への追加ダメージ（最終攻撃力の X%）は未対応（撮っていない。武器変更の中の命中を数えるトリガーが無い）",
@@ -45,9 +46,10 @@
           "kind": "noDamage"
         },
         {
-          "ja": "HP 20% 以下の時の、自分への使用回数別の最大 HP▲はダメージに関係しない",
-          "en": "The max HP increases on self by number of uses when HP falls to 20% or below do not affect damage",
-          "kind": "noDamage"
+          "ja": "HP 20% 以下の時の、自分への使用回数別の最大 HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The max HP increases on self by number of uses when HP falls to 20% or below does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
         }
       ]
     },
@@ -85,9 +87,15 @@
           }
         },
         {
-          "ja": "敵全体への挑発（ヘイト）、味方全体への受けるダメージ▼・発動者基準の防御力▲はダメージに関係しない",
-          "en": "The taunt on all enemies (Hate), and the damage taken decrease and caster-based DEF increase on all allies do not affect damage",
+          "ja": "敵全体への挑発（ヘイト）と、味方全体への受けるダメージ▼はダメージに関係しない",
+          "en": "The taunt on all enemies (Hate) and the damage taken decrease on all allies do not affect damage",
           "kind": "noDamage"
+        },
+        {
+          "ja": "味方全体への発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The caster-based DEF increase on all allies does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
         }
       ]
     }
@@ -97,9 +105,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "戦闘開始時の、自分の失った HP に応じた防御力▲はダメージに関係しない",
-          "en": "The DEF increase on self by HP lost (from the start of battle) does not affect damage",
-          "kind": "noDamage"
+          "ja": "戦闘開始時の、自分の失った HP に応じた防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on self by HP lost (from the start of battle) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
         },
         {
           "ja": "武器変更状態で通常攻撃が 5 回命中した時の、対象への追加ダメージ（最終攻撃力の X%）は未対応（撮っていない。武器変更の中の命中を数えるトリガーが無い）",
@@ -145,9 +154,10 @@
           "kind": "noDamage"
         },
         {
-          "ja": "HP 20% 以下の時の、自分への使用回数別の最大 HP▲はダメージに関係しない",
-          "en": "The max HP increases on self by number of uses when HP falls to 20% or below do not affect damage",
-          "kind": "noDamage"
+          "ja": "HP 20% 以下の時の、自分への使用回数別の最大 HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The max HP increases on self by number of uses when HP falls to 20% or below does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
         },
         {
           "ja": "フルバーストタイムの発動時、熱血状態なら味方全体のバーストスキルクールタイム▼は未対応（撮っていない）",
@@ -195,8 +205,8 @@
           }
         },
         {
-          "ja": "敵全体への挑発（ヘイト）、味方全体への受けるダメージ▼・発動者基準の防御力▲はダメージに関係しない",
-          "en": "The taunt on all enemies (Hate), and the damage taken decrease and caster-based DEF increase on all allies do not affect damage",
+          "ja": "敵全体への挑発（ヘイト）と、味方全体への受けるダメージ▼はダメージに関係しない",
+          "en": "The taunt on all enemies (Hate) and the damage taken decrease on all allies do not affect damage",
           "kind": "noDamage"
         },
         {
@@ -209,6 +219,12 @@
             "target": "allies",
             "trigger": "burstUse"
           }
+        },
+        {
+          "ja": "味方全体への発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The caster-based DEF increase on all allies does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
         }
       ]
     }

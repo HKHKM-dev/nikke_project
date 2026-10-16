@@ -7,9 +7,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "最終攻撃力が最も高い味方 2 機へのバリアは扱わない（要件 5.2 節）",
-          "en": "The barrier on the 2 allies with the highest final attack is not modeled (requirements 5.2)",
-          "kind": "outOfScope",
+          "ja": "最終攻撃力が最も高い味方 2 機へのバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。バリアはモデルに無い。要件 5.2 節）",
+          "en": "The barrier on the 2 allies with the highest final attack does not change damage by itself (it matters only with an effect reading barriers in the team; barriers are not modeled, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
           "effect": {
             "kind": "timed",
             "stat": "unknown",
@@ -21,9 +22,10 @@
           ]
         },
         {
-          "ja": "最終攻撃力が最も高い味方 2 機への受けるHP回復量▲はダメージに関係しない",
-          "en": "The HP-recovery-received increase on the 2 allies with the highest final attack does not affect damage",
-          "kind": "noDamage"
+          "ja": "最終攻撃力が最も高い味方 2 機への受けるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The HP-recovery-received increase on the 2 allies with the highest final attack does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
         }
       ]
     },
@@ -31,8 +33,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "最終攻撃力が最も高い敵 1 機への挑発と、自分の最大HP▲はダメージに関係しない",
-          "en": "The taunt on the enemy with the highest final attack and the max HP increase on self do not affect damage",
+          "ja": "最終攻撃力が最も高い敵 1 機への挑発はダメージに関係しない",
+          "en": "The taunt on the enemy with the highest final attack does not affect damage",
           "kind": "noDamage"
         },
         {
@@ -46,6 +48,12 @@
           "claims": [
             "C-0422"
           ]
+        },
+        {
+          "ja": "自分の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The max HP increase on self does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
         }
       ]
     },
@@ -53,9 +61,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "最終攻撃力が最も高い味方 2 機へのバリアは扱わない（要件 5.2 節）",
-          "en": "The barrier on the 2 allies with the highest final attack is not modeled (requirements 5.2)",
-          "kind": "outOfScope",
+          "ja": "最終攻撃力が最も高い味方 2 機へのバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。バリアはモデルに無い。要件 5.2 節）",
+          "en": "The barrier on the 2 allies with the highest final attack does not change damage by itself (it matters only with an effect reading barriers in the team; barriers are not modeled, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
           "effect": {
             "kind": "timed",
             "stat": "unknown",

@@ -31,6 +31,7 @@ import {
 import { useState, type Dispatch } from 'react';
 import {
   NOTE_KIND_BADGE,
+  noteBadgeLabel,
   SKILL_SLOT_LABEL,
   SUPPORT_BADGE,
   formatRemoveState,
@@ -370,7 +371,7 @@ export function SkillSection({
                 <ul className="notes">
                   {entry.notes.map((n, i) => (
                     <li key={i} className={`note ${NOTE_KIND_BADGE[n.kind].className}`}>
-                      <span className="badge">{NOTE_KIND_BADGE[n.kind].label}</span> {n.ja}
+                      <span className="badge">{noteBadgeLabel(n)}</span> {n.ja}
                     </li>
                   ))}
                 </ul>

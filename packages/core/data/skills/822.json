@@ -39,9 +39,19 @@
       "effects": [],
       "notes": [
         {
-          "ja": "自分の最大HP▲と、残りの HP が最も低い味方 2 機の防御力▲は、ダメージに関係しない",
-          "en": "Max HP up on self and DEF up on the 2 allies with the lowest HP do not affect damage",
-          "kind": "noDamage",
+          "ja": "自分の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on self does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp",
+          "claims": [
+            "C-0253"
+          ]
+        },
+        {
+          "ja": "残りの HP が最も低い味方 2 機の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "DEF up on the 2 allies with the lowest HP does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense",
           "claims": [
             "C-0253"
           ]
@@ -52,9 +62,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "味方全体のバリアは扱わない（要件 5.2 節）",
-          "en": "The shield on all allies is not modeled (requirements 5.2)",
-          "kind": "outOfScope",
+          "ja": "味方全体のバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。バリアはモデルに無い。要件 5.2 節）",
+          "en": "The shield on all allies does not change damage by itself (it matters only with an effect reading barriers in the team; barriers are not modeled, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
           "effect": {
             "kind": "timed",
             "stat": "unknown",

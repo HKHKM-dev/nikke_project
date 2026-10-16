@@ -7,9 +7,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "通常攻撃命中時（確率 20%）の残りの HP が最も低い味方 1 機の防御力▲は、被弾を扱わないのでダメージに関係しない",
-          "en": "The chance-based (20%) DEF ▲ on the 1 ally with the lowest remaining HP on normal hit does not affect damage because taking hits is not modeled",
-          "kind": "noDamage",
+          "ja": "通常攻撃命中時（確率 20%）の、残りの HP が最も低い味方 1 機の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The chance-based (20%) DEF ▲ on the 1 ally with the lowest remaining HP on normal hit does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense",
           "claims": [
             "C-0072"
           ]

@@ -7,9 +7,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃時の貫通特化・貫通範囲の拡張は、敵 1 体ではダメージに関係しない",
-          "en": "Pierce and the wider piercing radius after a Full Charge attack do not affect damage against a single enemy",
-          "kind": "outOfScope",
+          "ja": "フルチャージ攻撃時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体に乗るかは確かめていない）",
+          "en": "Pierce after a Full Charge attack does not change damage by itself (it matters only with a Pierce Damage increase in the team; whether it applies against a single enemy is not verified)",
+          "kind": "indirect",
+          "path": "pierce",
           "effect": {
             "kind": "unknown"
           },
@@ -24,6 +25,17 @@
           "effect": {
             "kind": "damage",
             "trigger": "unknown"
+          },
+          "claims": [
+            "C-0088"
+          ]
+        },
+        {
+          "ja": "フルチャージ攻撃時の貫通範囲の拡張は、敵 1 体ではダメージに関係しない",
+          "en": "The wider piercing radius after a Full Charge attack does not affect damage against a single enemy",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
           },
           "claims": [
             "C-0088"

@@ -60,9 +60,10 @@
           ]
         },
         {
-          "ja": "射撃マニュアルのフルスタック状態の間の自分の与えるHP回復量▲は、ダメージに関係しない",
-          "en": "Outgoing Healing up on self at max Shooting Manual stacks does not affect damage",
-          "kind": "noDamage",
+          "ja": "射撃マニュアルのフルスタック状態の間の自分の与えるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Outgoing Healing up on self at max Shooting Manual stacks does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp",
           "claims": [
             "C-0180"
           ]
