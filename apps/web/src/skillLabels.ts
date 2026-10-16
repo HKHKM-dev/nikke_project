@@ -89,6 +89,8 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
   if ('everySeconds' in trigger) return `戦闘開始から ${formatNumber(trigger.everySeconds)} 秒ごと`;
   // ペルソナ編: 「追撃が適用された時」
   if ('applied' in trigger) return `${stateLabel(trigger.applied)}が適用された時`;
+  // 2 段目の段 3: 「リラックスのフルスタックで解除した時」
+  if ('fullStack' in trigger) return `${stateLabel(trigger.fullStack)}のフルスタックで解除した時`;
   if ('every' in trigger) {
     const what = {
       normalShot: '通常攻撃',

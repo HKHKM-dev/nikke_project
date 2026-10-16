@@ -6,9 +6,9 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 58・効果 203（根拠あり 192）・notes 221（根拠あり 68）
+件数: キャラ 58・効果 204（根拠あり 193）・notes 220（根拠あり 67）
 
-notes の種類: 未対応 121・前提の外 37・計算に無関係 54・補足 9
+notes の種類: 未対応 121・前提の外 37・計算に無関係 54・補足 8
 
 スロット: supported 79・partial 17・unsupported 56・noEffect 34
 
@@ -573,10 +573,10 @@ notes の種類: 未対応 121・前提の外 37・計算に無関係 54・補�
   - effects[1] timed・fullBurstStart・reloadSpeed: C-0394（確定）
   - notes[0] 計算に無関係: 直前にバーストスキルを使用していない味方への防御力▲はダメージに関係しない: C-0393（確定）
 - **skill2**: supported
-  - effects[0] heal・normalShot: C-0271（確定）
+  - effects[0] heal・relax のフルスタック: C-0271（確定）
   - effects[1] timed・healed・attackDamage: C-0050（確定）、C-0271（確定）
+  - effects[2] state・normalShot・relax: C-0271（確定）
   - notes[0] 計算に無関係: リラックス（受ける HP 回復量▲）・無敵・挑発はダメージに関係しない: 根拠なし
-  - notes[1] 補足: リラックスは 20 スタックで回復するまでの数え上げにだけ使う: C-0271（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・attackDamage: C-0393（確定）、C-0499（確定）
   - notes[0] 前提の外: バリアは扱わない（要件 5.2 節）: C-0393（確定）

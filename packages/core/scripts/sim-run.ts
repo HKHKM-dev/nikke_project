@@ -73,6 +73,8 @@ function triggerLabel(t: ResolvedTrigger): string {
   if ('everySeconds' in t) return `every${t.everySeconds}s`;
   // ペルソナ編: 状態が付いた時のトリガー（applied:followUp。id は名前の付いた状態の目録の id）
   if ('applied' in t) return `applied:${t.applied}`;
+  // 2 段目の段 3: フルスタックの消費のきっかけ（fullStack:relax）
+  if ('fullStack' in t) return `fullStack:${t.fullStack}`;
   // クルミ S2 編: フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
   // ソルジャーE.G. 編: 確率のきっかけ（normalHit@5%。窓は期待値の小片）
   if ('every' in t && t.chance !== undefined) return `${t.count}@${+(t.chance * 100).toFixed(4)}%`;

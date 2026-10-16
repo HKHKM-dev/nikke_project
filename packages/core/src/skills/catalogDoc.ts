@@ -197,7 +197,7 @@ const TRIG_INFO: Record<string, Info> = {
   partialChargeShot: ['フルチャージでない通常攻撃', 'gap'],
   reloadComplete: ['リロード完了時', 'gap'],
   teamAmmo: ['味方の消費した弾の合計', 'gap'],
-  fullStackConsume: ['フルスタックでスタック解除後（数えるだけのスタックは stacksRef）', 'check'],
+  fullStackConsume: ['フルスタックでスタック解除後', 'ok', 'トリガー { fullStack }（回復だけ。2 段目の段 3）'],
   resourceEvent: ['固有のカウンタの出来事', 'gap'],
   skillEvent: ['ほかのスキルの発動・命中', 'gap'],
   limited: ['戦闘中 N 回', 'gap'],
@@ -674,7 +674,7 @@ export function renderSkillCatalog(lines: readonly CatalogLine[], effects: reado
     ['条件: 対象（敵）が〈状態〉なら', 'check', L.filter((l) => l.conditions.includes('enemyState'))],
     ['きっかけ: 〈状態〉が適用された時', 'check', L.filter((l) => l.triggers.includes('stateApplied'))],
     ['きっかけ: 〈状態〉が終了した時', 'gap', L.filter((l) => l.triggers.includes('stateEnded'))],
-    ['きっかけ: フルスタックでスタック解除後', 'gap', L.filter((l) => l.triggers.includes('fullStackConsume'))],
+    ['きっかけ: フルスタックでスタック解除後', 'ok', L.filter((l) => l.triggers.includes('fullStackConsume'))],
     ['対象: 〈状態〉状態の味方', 'check', L.filter((l) => /状態の味方|状態ではない味方/.test(l.head))],
   ];
   for (const [k, s, items] of viewers) p(`| ${k} | ${rowCounts(items)} | ${ST[s]} | ${fmtChars(items)} |`);

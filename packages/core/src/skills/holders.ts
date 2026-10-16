@@ -18,6 +18,7 @@ import { chancePieces, chanceValueOf, type ChanceOpportunity } from './chance.ts
 import { resolveCycleEvery, type ResolvedCycleEvery } from './cycles.ts';
 import {
   isResolvedChance,
+  isResolvedFullStack,
   isResolvedShotCount,
   isResolvedTimer,
   isStateContent,
@@ -48,6 +49,7 @@ import {
   fireContextOf,
   shotCountWeight,
   type FrameEvents,
+  type FullStackEvent,
   type HealRecord,
   type TriggerTracker,
 } from './triggers.ts';
@@ -128,14 +130,19 @@ export type HeldTrack = {
    * 効いている件を f + 1 で切る（同じフレーム f に始まりのある列は閉じない）。状態のほかは空
    */
   closes: number[];
+  /**
+   * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費のフレーム（昇順）。その時に付いている件を、同じフレームに
+   * 始まった件も含めて次のフレームで切る（解除と違い、付与が勝つ規則を当てない）。状態のほかは空
+   */
+  consumes: number[];
   /** 状態: 射撃の回数のきっかけの付与が発火を足したか（calc の射撃の数え方の判定 hasOwnShotCountItem が読む） */
   shotCount: boolean;
   /** 確率のきっかけの機会（出どころで共有。ほかは null） */
   opportunities: ChanceOpportunity[] | null;
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
   items: HeldItem[];
-  /** items を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・フルバーストの窓・閉じるフレーム） */
-  seen: [number, number, number, number, number, number];
+  /** items を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・フルバーストの窓・閉じるフレーム・消費のフレーム） */
+  seen: [number, number, number, number, number, number, number];
 };
 
 /** 強化（amplifies）の出どころ。受け付けと値は、ループの後に履歴を閉じる時に決める（amplify） */
@@ -271,6 +278,11 @@ export type HolderLists = {
   gaugeSpeedAt(holder: number, frame: number): number;
   /** 時間で変わるバーストゲージのチャージ速度の件の列を持ちうるか */
   hasGaugeSpeedTracks(holder: number): boolean;
+  /**
+   * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
+   * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る）。回復を当てる前（手順 3 の最初）に呼ぶ
+   */
+  consumeFullStacks(frame: number): FullStackEvent[];
   /** ループの後の履歴 */
   history(): HolderHistory;
 };
@@ -341,13 +353,15 @@ function closedStateItems(
   starts: readonly number[],
   closes: readonly number[],
   build: (starts: readonly number[]) => HeldItem[],
+  consumes: readonly number[] = [],
 ): HeldItem[] {
-  const effective = closes.filter((c) => !starts.includes(c));
+  // 2 段目の段 3: フルスタックの消費は、同じフレームに始まった件も切る（区切りの前に入れる）。解除の区切りには同じフレームの始まりが無い
+  const effective = [...new Set([...closes.filter((c) => !starts.includes(c)), ...consumes])].sort((a, b) => a - b);
   if (effective.length === 0) return build(starts);
   const out: HeldItem[] = [];
   let lower = -Infinity;
   for (const c of [...effective, Infinity]) {
-    const segment = starts.filter((s) => s > lower && s < c);
+    const segment = starts.filter((s) => s > lower && s <= c);
     lower = c;
     for (const item of build(segment)) {
       const cut: HeldItem = { ...item, end: Math.min(item.end, c + 1) };
@@ -478,10 +492,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       stage,
       starts: [],
       closes: [],
+      consumes: [],
       shotCount: false,
       opportunities,
       items: [],
-      seen: [-1, -1, -1, -1, -1, -1],
+      seen: [-1, -1, -1, -1, -1, -1, -1],
     };
     tracks.push(track);
     return track;
@@ -606,6 +621,17 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
+  // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ） ----
+  const consuming: { holder: number; state: NamedStateId }[] = [];
+  slots.forEach((slot, holder) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveInstant(slot.definition, slot.character, slot.levels)) {
+      if (!isResolvedFullStack(effect.trigger)) continue;
+      const state = effect.trigger.fullStack;
+      if (!consuming.some((c) => c.holder === holder && c.state === state)) consuming.push({ holder, state });
+    }
+  });
+
   // ---- 吸収回復の窓（効果ごと・持ち主ごと。C-0082・C-0087） ----
   /** 効果は出どころの枠・スロット・効果の番号で引く（1 パス目は効果を別に解決するので、同じオブジェクトではない） */
   const healKey = (sourceSlotIndex: number, effect: ResolvedInstantEffect): string =>
@@ -662,6 +688,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       log?.weaponChangeEnds?.length ?? 0,
       windows.length,
       track.closes.length,
+      track.consumes.length,
     ];
     if (seen.every((v, i) => v === track.seen[i])) return track.items;
     track.seen = seen;
@@ -682,8 +709,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         break;
       case 'state': {
         const ends = fullBurstEnds();
-        track.items = closedStateItems(track.starts, track.closes, (starts) =>
-          stateItems(o.grant, starts, log?.frames ?? [], ends, frames),
+        track.items = closedStateItems(
+          track.starts,
+          track.closes,
+          (starts) => stateItems(o.grant, starts, log?.frames ?? [], ends, frames),
+          track.consumes,
         );
         break;
       }
@@ -1164,6 +1194,20 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return sum;
     },
     hasGaugeSpeedTracks: (holder) => (gaugeViews[holder] ?? []).length > 0,
+    consumeFullStacks(frame) {
+      const out: FullStackEvent[] = [];
+      for (const { holder, state } of consuming) {
+        const own = tracks.filter((t) => t.holder === holder && t.origin.kind === 'state' && t.origin.state === state);
+        const full = own.some((t) => {
+          const max = t.origin.kind === 'state' ? t.origin.grant.maxStacks : undefined;
+          return max !== undefined && readItems(t).some((it) => it.stack === max && it.start === frame);
+        });
+        if (!full) continue;
+        for (const t of own) if (!t.consumes.includes(frame)) insertSorted(t.consumes, frame);
+        out.push({ slotIndex: holder, state });
+      }
+      return out;
+    },
     history() {
       for (const track of tracks) readItems(track);
       const amplified = amplify(tracks, amplifiers, slots, frames);

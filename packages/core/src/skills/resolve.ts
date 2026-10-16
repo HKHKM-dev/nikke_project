@@ -16,6 +16,7 @@ import {
   type BuffStat,
   type BuffTarget,
   type AppliedTrigger,
+  type FullStackTrigger,
   type BasicBurstStep,
   type BuffTrigger,
   type Amplifies,
@@ -44,7 +45,17 @@ import type { NamedStateId } from './states.ts';
  * 文字列のトリガーと発動回数のトリガーはそのまま。ニヒリスター編の時間の周期のトリガー（{ everySeconds }）もそのまま。
  */
 export type ResolvedTrigger =
-  BuffTrigger | ResolvedShotCountTrigger | { count: EventCountKind; atLeast: number } | TimerTrigger | AppliedTrigger;
+  | BuffTrigger
+  | ResolvedShotCountTrigger
+  | { count: EventCountKind; atLeast: number }
+  | TimerTrigger
+  | AppliedTrigger
+  | FullStackTrigger;
+
+/** 2 段目の段 3: フルスタックの消費のきっかけ（{ fullStack }）か */
+export function isResolvedFullStack(t: ResolvedTrigger): t is FullStackTrigger {
+  return typeof t === 'object' && 'fullStack' in t;
+}
 
 /** ペルソナ編: 効果名のトリガー（{ applied }）か */
 export function isResolvedApplied(t: ResolvedTrigger): t is AppliedTrigger {

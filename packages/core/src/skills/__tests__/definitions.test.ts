@@ -156,8 +156,13 @@ describe('data/skills', () => {
           const counts = Array.from({ length: SKILL_LEVEL_MAX }, (_, i) =>
             skillValue(character.skills[slot], t.everyRef!, i + 1),
           );
-          expect(Number.isInteger(counts[0]) && counts[0]! >= 1, `${slot} everyRef ${t.everyRef}`).toBe(true);
-          expect(new Set(counts).size, `${slot} everyRef ${t.everyRef}`).toBe(1);
+          expect(
+            counts.every((n) => Number.isInteger(n) && n >= 1),
+            `${slot} everyRef ${t.everyRef}`,
+          ).toBe(true);
+          // 2 段目の段 3: クラウンの S2（リラックスの付与）の回数は Lv で変わる（Lv1 で 65 回 → Lv10 で 43 回。Lv ごとに読む）。
+          // それまで回復（この検査の外）に書いていたので見えていなかった。付与のほかは、どの Lv も同じ回数
+          if (effect.kind !== 'state') expect(new Set(counts).size, `${slot} everyRef ${t.everyRef}`).toBe(1);
         }
       }
     });

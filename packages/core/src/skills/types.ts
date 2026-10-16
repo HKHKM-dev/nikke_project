@@ -440,8 +440,21 @@ export type TimerTrigger = {
  */
 export type AppliedTrigger = { applied: NamedStateId };
 
+/**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: 「〈名前〉のフルスタック状態の時、スタック解除後」。持ち主（自分）のその状態の件が
+ * フルスタックになったフレームに発火し、その状態のスタックを全部外す（次のフレームで閉じる。同じフレームに付いた件も外す）。
+ * 回復（heal）にだけ書ける（1 パス目が回復の前にフルスタックを見つける。frame/firstPass.ts）。その状態は、同じ定義の付与で
+ * 自分にスタックで付き、付与はどれも射撃の回数のきっかけ（フルスタックになる件が前のフレームまでに登録される）
+ */
+export type FullStackTrigger = { fullStack: NamedStateId };
+
+export function isFullStackTrigger(t: unknown): t is FullStackTrigger {
+  return typeof t === 'object' && t !== null && 'fullStack' in t;
+}
+
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガーか時間の周期のトリガー（ペルソナ編: 効果名のトリガー） */
-export type EffectTrigger = BuffTrigger | ShotCountTrigger | EventCountTrigger | TimerTrigger | AppliedTrigger;
+export type EffectTrigger =
+  BuffTrigger | ShotCountTrigger | EventCountTrigger | TimerTrigger | AppliedTrigger | FullStackTrigger;
 
 export function isAppliedTrigger(t: unknown): t is AppliedTrigger {
   return typeof t === 'object' && t !== null && 'applied' in t;
@@ -1476,11 +1489,18 @@ function parseTrigger(
   allowTimer: boolean | 'withStart' = false,
   allowDuring = false,
   allowChance = false,
+  allowFullStack = false,
 ): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
   // ペルソナ編: 効果名のトリガーは damage だけ（parseDamageEffect が先に読む）
   if (v.applied !== undefined) fail(path, 'an applied trigger ({ applied }) is only allowed in damage');
+  // 2 段目の段 3: フルスタックの消費のきっかけは heal だけ（plan/design-skill-stage3.md 1.3 節）
+  if (v.fullStack !== undefined) {
+    if (!allowFullStack) fail(path, 'a full-stack trigger ({ fullStack }) is only allowed in heal');
+    for (const key of Object.keys(v)) if (key !== 'fullStack') fail(`${path}.${key}`, 'unknown field');
+    return { fullStack: parseNamedStateId(v.fullStack, `${path}.fullStack`, 'ally') };
+  }
   if (v.everySeconds !== undefined) {
     if (!allowTimer)
       fail(
@@ -2383,7 +2403,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
     }
   }
   const hasDuration = v.durationRef !== undefined || v.durationSeconds !== undefined;
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, false, false, false, kind === 'heal');
   // 回復で回復を起こすと連鎖が閉じないので、heal のトリガーに healed は書けない（plan/design-stage11.md 3.3 節）
   if (kind === 'heal' && trigger === 'healed') fail(`${path}.trigger`, 'heal cannot be triggered by "healed"');
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
@@ -2645,6 +2665,32 @@ function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEn
 }
 
 /**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費のきっかけは、同じ定義にその状態を自分にスタックで付ける付与が
+ * 要り、その状態の付与はどれも射撃の回数のきっかけ（フルスタックになる件が、回復を当てる前のフレームまでに登録される）
+ */
+function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
+  );
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (!('trigger' in e) || !isFullStackTrigger(e.trigger)) return;
+      const state = e.trigger.fullStack;
+      const own = grants.filter((g) => g.state === state);
+      const stacking = own.some(
+        (g) => g.target === 'self' && (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
+      );
+      if (!stacking || !own.every((g) => isShotCountTrigger(g.trigger))) {
+        fail(
+          `${root}.${slot}.effects[${i}].trigger`,
+          `a full-stack trigger of "${state}" needs grants of the same state on self with maxStacks and shot count triggers in the definition`,
+        );
+      }
+    });
+  }
+}
+
+/**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加は、同じ定義にその状態をスタックで付ける付与（対象は自分）が
  * 要る（上限・維持・中身は付与のもの）
  */
@@ -2751,6 +2797,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   validateFixedChargeTimeCount(skills, 'skills');
   validateStateGrants(skills, 'skills');
   validateStackChanges(skills, 'skills');
+  validateFullStackTriggers(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
   if (raw.states !== undefined) {
@@ -2769,6 +2816,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     validateFixedChargeTimeCount({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateStateGrants({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateStackChanges({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateFullStackTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;
