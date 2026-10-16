@@ -15,7 +15,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 329・仮説 85・棄却 99・範囲外 2（計 515）
+件数: 確定 330・仮説 85・棄却 99・範囲外 2（計 516）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -3030,6 +3030,13 @@
   - 検証記録: V-0431
   - 定義: `data/skills/17.json` の skill1 の effects[1]、`data/skills/17.json` の skill1 の effects[2]、`data/skills/17.json` の skill1 の effects[3]、`data/skills/17.json` の skill1 の effects[5]、`data/skills/17.json` の skill1 の effects[6]、`data/skills/17.json` の skill2 の effects[0]、`data/skills/17.json` の burst の effects[2]、`data/skills/870.json` の skill2 の effects[3]、`data/skills/871.json` の skill2 の effects[3]
   - 等級の候補（機械）: 厳密一致
+- **C-0556** 敵の防御力▼は、ダメージの式で敵の防御力を (1 − X) 倍にしてから引く（max(1, 最終攻撃力 − 防御力 × (1 − X))。X は説明文の値）。ルドミラ（190）の S1「最後の弾丸が命中した時、対象に防御力 X%▼（10 秒）」は、最後の弾丸が命中した次のフレームから付き、10 秒（588f）で切れる。最後の弾丸の命中の無いマガジン（的のジャンプで途中で切れた・外れた）の後は付き直さない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-16
+  - 根拠: `305-05`〜`305-09`・`306-05`〜`306-09`（ルドミラ単騎・スペック固定 OFF の 2 本。X は台帳の S1 のスキル Lv の説明文の値。1 本目のマガジン（▼なし）と 2 本目から（▼あり）の通常攻撃の 1 ヒットが、どの種類（胴体・会心・コア × 距離の有無）も、防御力 100 × (1 − X) を引くモデルと 1 未満。▼で「攻撃力 − 防御」が増える量は、説明文の Lv10 の値（8.4）やエーテルの S2 の後の増え（C-0412）の比を当てた量とは合わない）、`305-10`・`306-10`（▼は最後の弾丸の命中から 10 秒で切れる。305 では命中の 586f 後のヒットが▼あり、589f 後が▼なしで、モデルの窓（命中の次のフレームから 588f）とフレームまで合う。間に最後の弾丸の命中の無いマガジンがあっても付き直していない）。防御力 × (1 − X) の端数を丸めるかは、この 2 本では見分けられない（丸めると 1 ヒットの値が 0.2 未満変わる）。読み直し（予測なし）。V-0433
+  - モデル側: `data/skills/190.json` の skill1 の effects[0]（`timed`・`lastShot`・`target: "allies"`・`enemyDefenseDown`）。式は `damage.ts` の `defenceAfterDown`（通常攻撃と、`skills/burstDamage.ts` の `computeSkillHit` の倍率ダメージ・持続ダメージ。端数は丸めない）。敵が持つ効果（`skills/holders.ts` の `isEnemyEffect`）で、バーストのヒットはヒットの時点の値（`frame/plan.ts` の `burstHitBuffs`）。最後の弾丸が外れた時に付かないのは入れていない（効果の `assumes`）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0433
+  - 定義: `data/skills/190.json` の skill1 の effects[0]
 
 ## 敵・的・場面
 

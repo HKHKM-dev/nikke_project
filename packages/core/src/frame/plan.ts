@@ -457,7 +457,8 @@ export function burstSnapshotState(
 
 /**
  * 着弾編（2026-10-02 オーナー決定。plan/design-burst-landing.md 8 節、C-0163・C-0167）: バーストのヒットが見るバフ。
- * 撃つ側のバフは発動のフレーム activationFrame の時点（preActivation なら直前）で固定し、敵の側のデバフ（damageTaken）だけ
+ * 撃つ側のバフは発動のフレーム activationFrame の時点（preActivation なら直前）で固定し、敵の側のデバフ（damageTaken。2 段目の段 2 の
+ * enemyDefenseDown も）だけ
  * ヒットのフレーム hitFrame の時点の値を使う。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで
  * 付く S2 の攻撃ダメージ▲は乗らない（`079-07`）。遅れの無いキャラ（hitFrame = activationFrame）は burstSnapshotState と同じ
  */
@@ -471,7 +472,7 @@ export function burstHitBuffs(
   const atActivation = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
   if (hitFrame === activationFrame) return atActivation;
   const atHit = burstSnapshotState(timeline, hitFrame, slotIndex, preActivation).buffs;
-  return { ...atActivation, damageTaken: atHit.damageTaken };
+  return { ...atActivation, damageTaken: atHit.damageTaken, enemyDefenseDown: atHit.enemyDefenseDown };
 }
 
 /**

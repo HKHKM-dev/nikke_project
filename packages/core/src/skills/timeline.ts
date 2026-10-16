@@ -174,6 +174,8 @@ const BUFF_FIELDS = [
   'distributedDamage',
   // 受けるダメージ編: 敵の受けるダメージ▲
   'damageTaken',
+  // 2 段目の段 2: 敵の防御力▼
+  'enemyDefenseDown',
   // アニス：スター S2・バースト編: 発射体爆発ダメージ▲とチャージ時間の固定
   'projectileExplosionDamage',
   // 持続ダメージ▲編

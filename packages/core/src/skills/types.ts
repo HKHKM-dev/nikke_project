@@ -58,6 +58,9 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * chargeDamage で、その後に足す（C-0020・C-0122・C-0134）。
  * 受けるダメージ編: damageTaken = 敵の受けるダメージ▲（敵へのデバフ）。敵 1 体の前提なので、味方全体（target 'allies' だけ）の
  * 与ダメージに別枠の乗数 (1 + Σ) で掛ける（通常攻撃・射撃ごとの倍率ダメージ・倍率ダメージ・持続ダメージ。C-0138。plan/design-damage-taken.md）
+ * 2 段目の段 2（plan/design-skill-stage2.md）: enemyDefenseDown = 敵の防御力▼（敵へのデバフ）。受けるダメージ▲と同じく敵が持ち、
+ * 味方全体（target 'allies' だけ）の与ダメージの式で、防御力を (1 − Σ) 倍にしてから引く（max(1, 攻撃力 − 防御力 × (1 − Σ))。
+ * 通常攻撃・倍率ダメージ・持続ダメージに共通。Σ は 0〜1 に収める）
  * アニス：スター S2・バースト編（plan/design-anis-star-s2-burst.md 2.1・2.3 節）:
  * projectileExplosionDamage = 発射体爆発ダメージ▲。発射体の爆発を持つ武器（RL）の通常攻撃にだけ掛ける（式の中の置き場所は
  * damage.ts の PROJECTILE_EXPLOSION_BUCKET）。
@@ -89,6 +92,7 @@ export type BuffStat =
   | 'normalCritRate'
   | 'chargeDamageMultiplier'
   | 'damageTaken'
+  | 'enemyDefenseDown'
   | 'projectileExplosionDamage'
   | 'fixedChargeTime'
   | 'trueDamage'
@@ -113,6 +117,7 @@ export const BUFF_STATS = [
   'normalCritRate',
   'chargeDamageMultiplier',
   'damageTaken',
+  'enemyDefenseDown',
   'projectileExplosionDamage',
   'fixedChargeTime',
   'trueDamage',
@@ -1092,9 +1097,10 @@ export type NoteEffectTrigger = (typeof NOTE_EFFECT_TRIGGERS)[number];
 
 /**
  * 最小構成の検査編（plan/design-minimal-relevance.md 11.8 節）: notes の効く先にだけ使う stat。計算の語彙（BuffStat）に無く、
- * 効く量の分類（与ダメージの値）は決まるもの。enemyDefenseDown は敵の防御力▼、maxHp は最大HP▲（攻撃力▲に効く形）
+ * 効く量の分類（与ダメージの値）は決まるもの。maxHp は最大HP▲（攻撃力▲に効く形）。敵の防御力▼（enemyDefenseDown）は、2 段目の段 2 で
+ * 計算の語彙（BuffStat）に移した（notes の効く先には BuffStat としてそのまま書ける）
  */
-export const NOTE_ONLY_STATS = ['enemyDefenseDown', 'maxHp'] as const;
+export const NOTE_ONLY_STATS = ['maxHp'] as const;
 export type NoteOnlyStat = (typeof NOTE_ONLY_STATS)[number];
 export const NOTE_EFFECT_STATS = [...BUFF_STATS, ...NOTE_ONLY_STATS] as const;
 export type NoteEffectStat = (typeof NOTE_EFFECT_STATS)[number];
@@ -1322,14 +1328,21 @@ function parseNamedStateId(v: Json, path: string, holder: StateHolder): NamedSta
  * バースト段階）と維持（持ち主の発数）も書けない
  */
 function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Record<string, Json>, path: string): void {
-  if (stat !== 'damageTaken') return;
-  if (target !== 'allies')
-    fail(`${path}.target`, `damageTaken must target "allies" (an enemy debuff), got "${target}"`);
+  if (!isEnemyHeldStat(stat)) return;
+  if (target !== 'allies') fail(`${path}.target`, `${stat} must target "allies" (an enemy debuff), got "${target}"`);
   if (v.targetWeapon !== undefined || v.targetElement !== undefined || v.targetSquad !== undefined)
-    fail(path, 'damageTaken cannot narrow its target by weapon, element or squad (an enemy debuff)');
+    fail(path, `${stat} cannot narrow its target by weapon, element or squad (an enemy debuff)`);
   for (const key of ['excludeSelf', 'targetState', 'targetBurstStep', 'durationShots', 'durationShotsRef'] as const) {
-    if (v[key] !== undefined) fail(`${path}.${key}`, `damageTaken is held by the enemy, so it cannot have ${key}`);
+    if (v[key] !== undefined) fail(`${path}.${key}`, `${stat} is held by the enemy, so it cannot have ${key}`);
   }
+}
+
+/**
+ * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 敵が持つ stat か（敵の受けるダメージ▲と、2 段目の段 2 の敵の防御力▼）。
+ * 値は敵が受ける全ダメージに効くので、味方の各枠の区間の値に写す（skills/holders.ts の isEnemyEffect）
+ */
+export function isEnemyHeldStat(stat: string): boolean {
+  return stat === 'damageTaken' || stat === 'enemyDefenseDown';
 }
 
 /** Stage 9: targetWeapon は target が self 以外のときだけ（Stage 11 で burstUsers・topAttack にも広げた） */

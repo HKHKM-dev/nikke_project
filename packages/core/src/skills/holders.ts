@@ -52,6 +52,7 @@ import {
 import {
   SKILL_SLOTS,
   conditionReadsItems,
+  isEnemyHeldStat,
   isFiringStat,
   isHitStateStat,
   isStateStat,
@@ -85,11 +86,11 @@ import {
 export const ENEMY = -1;
 
 /**
- * 敵が持つ効果か: 敵の受けるダメージ▲（damageTaken）。値は、敵が受ける全ダメージに掛かるので、味方の各枠の区間の値に足す
- * （値の小片で味方の各枠に写す。C-0138）
+ * 敵が持つ効果か: 敵の受けるダメージ▲（damageTaken）と、2 段目の段 2 の敵の防御力▼（enemyDefenseDown）。値は、敵が受ける全ダメージに
+ * 効くので、味方の各枠の区間の値に足す（値の小片で味方の各枠に写す。C-0138）
  */
 export function isEnemyEffect(effect: { stat: string }): boolean {
-  return effect.stat === 'damageTaken';
+  return isEnemyHeldStat(effect.stat);
 }
 
 /** 段の印（plan/design-holder-effects.md 2.5 節）。段 A までの 2 パス目の 1・1.5・2・2.5 段目 */

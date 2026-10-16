@@ -1,22 +1,29 @@
 {
   "formatVersion": 1,
   "resourceId": 190,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-16",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "最後の弾丸が命中した時の対象の防御力▼（10 秒）は未対応",
-          "en": "The defense decrease on the target when the last bullet hits (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "enemyDefenseDown",
-            "target": "enemy",
-            "trigger": "lastShot"
-          }
-        },
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない。録画 305・306 では、的のジャンプの前後で外れた最後の弾丸の後だけ付かなかった）",
+            "en": "The last bullet always hits (not applying it on a miss is not modeled; in recordings 305 and 306 it was not applied only after a last bullet that missed around the target jumps)"
+          },
+          "claims": [
+            "C-0556"
+          ]
+        }
+      ],
+      "notes": [
         {
           "ja": "最後の弾丸が命中した時の対象の攻撃力▼はダメージに関係しない",
           "en": "The attack decrease on the target when the last bullet hits does not affect damage",
