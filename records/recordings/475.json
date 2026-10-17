@@ -1,0 +1,35 @@
+{
+  "id": "475",
+  "date": "2026-10-17",
+  "folder": "range",
+  "file": "20261017-475_ar+ar_mana+asuka_asuka-control.mp4",
+  "original": "2026-10-17_20-03-53.mp4",
+  "durationSec": 197,
+  "frames": 11821,
+  "fps": 60,
+  "sizeMB": 238.8,
+  "sha256": "6ab5d9d51963",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 290,
+      "name": "マナ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0437（マナの回復の F2）の録画。マナ（AI）・アスカ（操作・AUTO 射撃 ON）。オートバースト OFF"
+}

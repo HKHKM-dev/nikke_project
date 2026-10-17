@@ -10,46 +10,6 @@
       "plus": null
     },
     {
-      "observation": "010-01",
-      "element": "マナ skill1.effects[1]",
-      "key": "2b126198fa9d61e7",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "010-02",
-      "element": "マナ skill1.effects[1]",
-      "key": "7775944bcbce1620",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "010-03",
-      "element": "マナ skill1.effects[1]",
-      "key": "1f3f65271ee5f178",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "010-04",
-      "element": "マナ skill1.effects[1]",
-      "key": "5ad157d6c606f69b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "010-07",
-      "element": "マナ skill1.effects[1]",
-      "key": "dc1281e02f3eb385",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "013-01",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "920da507e340b23e",
@@ -450,14 +410,6 @@
       "plus": null
     },
     {
-      "observation": "020-01",
-      "element": "マナ skill1.effects[1]",
-      "key": "a161cc67538bb0e0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "020-04",
       "element": "エーテル skill2.effects[1]",
       "key": "a197a976829c090d",
@@ -476,14 +428,6 @@
     {
       "observation": "020-04",
       "element": "マナ burst.effects[1]",
-      "key": "a197a976829c090d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "020-04",
-      "element": "マナ skill1.effects[1]",
       "key": "a197a976829c090d",
       "effective": false,
       "minus": 0,
@@ -514,14 +458,6 @@
       "plus": null
     },
     {
-      "observation": "020-08",
-      "element": "マナ skill1.effects[1]",
-      "key": "a3b89f022a47b0ef",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "020-09",
       "element": "エーテル skill2.effects[1]",
       "key": "3d058e7d56b500da",
@@ -540,14 +476,6 @@
     {
       "observation": "020-09",
       "element": "マナ burst.effects[1]",
-      "key": "3d058e7d56b500da",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "020-09",
-      "element": "マナ skill1.effects[1]",
       "key": "3d058e7d56b500da",
       "effective": false,
       "minus": 0,
@@ -578,14 +506,6 @@
       "plus": null
     },
     {
-      "observation": "020-10",
-      "element": "マナ skill1.effects[1]",
-      "key": "f73bf300a5e860c5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "020-11",
       "element": "エーテル skill2.effects[1]",
       "key": "7529f94b11ea6070",
@@ -604,14 +524,6 @@
     {
       "observation": "020-11",
       "element": "マナ burst.effects[1]",
-      "key": "7529f94b11ea6070",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "020-11",
-      "element": "マナ skill1.effects[1]",
       "key": "7529f94b11ea6070",
       "effective": false,
       "minus": 0,
@@ -642,14 +554,6 @@
       "plus": null
     },
     {
-      "observation": "020-12",
-      "element": "マナ skill1.effects[1]",
-      "key": "670d19b6d59c59bb",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "020-14",
       "element": "エーテル skill2.effects[1]",
       "key": "6bd0c768b44cfaad",
@@ -674,14 +578,6 @@
       "plus": null
     },
     {
-      "observation": "020-14",
-      "element": "マナ skill1.effects[1]",
-      "key": "6bd0c768b44cfaad",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "020-15",
       "element": "エーテル skill2.effects[1]",
       "key": "6bd0c768b44cfaad",
@@ -700,14 +596,6 @@
     {
       "observation": "020-15",
       "element": "マナ burst.effects[1]",
-      "key": "6bd0c768b44cfaad",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "020-15",
-      "element": "マナ skill1.effects[1]",
       "key": "6bd0c768b44cfaad",
       "effective": false,
       "minus": 0,
@@ -4194,14 +4082,6 @@
       "plus": null
     },
     {
-      "observation": "212-01",
-      "element": "マナ skill1.effects[1]",
-      "key": "1f25d9b98e5eb01c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "212-02",
       "element": "マナ burst.effects[0]",
       "key": "84e777953ed96a10",
@@ -4212,14 +4092,6 @@
     {
       "observation": "212-02",
       "element": "マナ burst.effects[1]",
-      "key": "84e777953ed96a10",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "212-02",
-      "element": "マナ skill1.effects[1]",
       "key": "84e777953ed96a10",
       "effective": false,
       "minus": 0,
@@ -4243,14 +4115,6 @@
       "error": "minus: 4 回目の持続ダメージの tick が無い"
     },
     {
-      "observation": "212-03",
-      "element": "マナ skill1.effects[1]",
-      "key": "c93fd3cd52702d84",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "212-04",
       "element": "マナ burst.effects[0]",
       "key": "3503a32ec6a7bba3",
@@ -4268,14 +4132,6 @@
       "error": "minus: 4 回目の持続ダメージの tick が無い"
     },
     {
-      "observation": "212-04",
-      "element": "マナ skill1.effects[1]",
-      "key": "3503a32ec6a7bba3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "212-05",
       "element": "マナ burst.effects[0]",
       "key": "2ed83dced8aa1b71",
@@ -4289,14 +4145,6 @@
       "key": "2ed83dced8aa1b71",
       "effective": true,
       "minus": -50,
-      "plus": null
-    },
-    {
-      "observation": "212-05",
-      "element": "マナ skill1.effects[1]",
-      "key": "2ed83dced8aa1b71",
-      "effective": false,
-      "minus": 0,
       "plus": null
     },
     {
@@ -4317,14 +4165,6 @@
       "error": "minus: 0 回目の発動の後に持続ダメージの tick が無い"
     },
     {
-      "observation": "212-06",
-      "element": "マナ skill1.effects[1]",
-      "key": "158e24e92a7d0c8a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "212-07",
       "element": "マナ burst.effects[0]",
       "key": "3f1e3d6b703308b8",
@@ -4341,14 +4181,6 @@
       "plus": null
     },
     {
-      "observation": "212-07",
-      "element": "マナ skill1.effects[1]",
-      "key": "3f1e3d6b703308b8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "212-08",
       "element": "マナ burst.effects[0]",
       "key": "ea4f93c3e3422dae",
@@ -4359,14 +4191,6 @@
     {
       "observation": "212-08",
       "element": "マナ burst.effects[1]",
-      "key": "ea4f93c3e3422dae",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "212-08",
-      "element": "マナ skill1.effects[1]",
       "key": "ea4f93c3e3422dae",
       "effective": false,
       "minus": 0,
@@ -5291,54 +5115,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "250-01",
-      "element": "マナ skill1.effects[1]",
-      "key": "dca93a192805467a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "250-02",
-      "element": "マナ skill1.effects[1]",
-      "key": "2849c5d4ad1d8961",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "250-03",
-      "element": "マナ skill1.effects[1]",
-      "key": "8196c29a11d478c5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "250-04",
-      "element": "マナ skill1.effects[1]",
-      "key": "558173d17721e932",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "250-05",
-      "element": "マナ skill1.effects[1]",
-      "key": "14a62e8711ee72a0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "251-01",
-      "element": "マナ skill1.effects[1]",
-      "key": "a7d3c92fc0559ed4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "258-01",
@@ -7709,14 +7485,6 @@
       "plus": null
     },
     {
-      "observation": "465-01",
-      "element": "マナ skill1.effects[1]",
-      "key": "7b5153fc753ac775",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "465-02",
       "element": "マナ burst.effects[0]",
       "key": "b95e37d2f3280c7b",
@@ -7733,14 +7501,6 @@
       "plus": null
     },
     {
-      "observation": "465-02",
-      "element": "マナ skill1.effects[1]",
-      "key": "b95e37d2f3280c7b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "465-03",
       "element": "マナ burst.effects[0]",
       "key": "d36fece67ba26dc1",
@@ -7751,14 +7511,6 @@
     {
       "observation": "465-03",
       "element": "マナ burst.effects[1]",
-      "key": "d36fece67ba26dc1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "465-03",
-      "element": "マナ skill1.effects[1]",
       "key": "d36fece67ba26dc1",
       "effective": false,
       "minus": 0,
@@ -7775,14 +7527,6 @@
     {
       "observation": "465-04",
       "element": "マナ burst.effects[1]",
-      "key": "fe8ea11ba4d89dd4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "465-04",
-      "element": "マナ skill1.effects[1]",
       "key": "fe8ea11ba4d89dd4",
       "effective": false,
       "minus": 0,
@@ -7799,14 +7543,6 @@
     {
       "observation": "465-05",
       "element": "マナ burst.effects[1]",
-      "key": "5c9454abd1a5e824",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "465-05",
-      "element": "マナ skill1.effects[1]",
       "key": "5c9454abd1a5e824",
       "effective": false,
       "minus": 0,
@@ -7823,14 +7559,6 @@
     {
       "observation": "465-06",
       "element": "マナ burst.effects[1]",
-      "key": "74523544f89c3027",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "465-06",
-      "element": "マナ skill1.effects[1]",
       "key": "74523544f89c3027",
       "effective": false,
       "minus": 0,
@@ -7847,14 +7575,6 @@
     {
       "observation": "465-07",
       "element": "マナ burst.effects[1]",
-      "key": "0f4593547fdffefd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "465-07",
-      "element": "マナ skill1.effects[1]",
       "key": "0f4593547fdffefd",
       "effective": false,
       "minus": 0,
@@ -7871,14 +7591,6 @@
     {
       "observation": "465-08",
       "element": "マナ burst.effects[1]",
-      "key": "a38e9fb58d6d43d4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "465-08",
-      "element": "マナ skill1.effects[1]",
       "key": "a38e9fb58d6d43d4",
       "effective": false,
       "minus": 0,
@@ -7895,14 +7607,6 @@
     {
       "observation": "465-09",
       "element": "マナ burst.effects[1]",
-      "key": "081b90f35aa8f2b8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "465-09",
-      "element": "マナ skill1.effects[1]",
       "key": "081b90f35aa8f2b8",
       "effective": false,
       "minus": 0,
@@ -7919,14 +7623,6 @@
     {
       "observation": "465-10",
       "element": "マナ burst.effects[1]",
-      "key": "120556663527975f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "465-10",
-      "element": "マナ skill1.effects[1]",
       "key": "120556663527975f",
       "effective": false,
       "minus": 0,
@@ -7943,14 +7639,6 @@
     {
       "observation": "466-01",
       "element": "マナ burst.effects[1]",
-      "key": "96624f9dc9d0cdd0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "466-01",
-      "element": "マナ skill1.effects[1]",
       "key": "96624f9dc9d0cdd0",
       "effective": false,
       "minus": 0,
@@ -7967,14 +7655,6 @@
     {
       "observation": "466-02",
       "element": "マナ burst.effects[1]",
-      "key": "472f5a2d853ed63a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "466-02",
-      "element": "マナ skill1.effects[1]",
       "key": "472f5a2d853ed63a",
       "effective": false,
       "minus": 0,
@@ -7991,14 +7671,6 @@
     {
       "observation": "466-03",
       "element": "マナ burst.effects[1]",
-      "key": "58934e1586fc70d8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "466-03",
-      "element": "マナ skill1.effects[1]",
       "key": "58934e1586fc70d8",
       "effective": false,
       "minus": 0,
@@ -8015,14 +7687,6 @@
     {
       "observation": "466-04",
       "element": "マナ burst.effects[1]",
-      "key": "4a61f4e4bcf4a6d5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "466-04",
-      "element": "マナ skill1.effects[1]",
       "key": "4a61f4e4bcf4a6d5",
       "effective": false,
       "minus": 0,
@@ -8039,14 +7703,6 @@
     {
       "observation": "466-05",
       "element": "マナ burst.effects[1]",
-      "key": "bad8746a44558331",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "466-05",
-      "element": "マナ skill1.effects[1]",
       "key": "bad8746a44558331",
       "effective": false,
       "minus": 0,
@@ -8063,14 +7719,6 @@
     {
       "observation": "466-06",
       "element": "マナ burst.effects[1]",
-      "key": "39c97c251cf190b2",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "466-06",
-      "element": "マナ skill1.effects[1]",
       "key": "39c97c251cf190b2",
       "effective": false,
       "minus": 0,
@@ -8087,14 +7735,6 @@
     {
       "observation": "466-07",
       "element": "マナ burst.effects[1]",
-      "key": "f6b4743d3337fb10",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "466-07",
-      "element": "マナ skill1.effects[1]",
       "key": "f6b4743d3337fb10",
       "effective": false,
       "minus": 0,
@@ -8111,14 +7751,6 @@
     {
       "observation": "466-08",
       "element": "マナ burst.effects[1]",
-      "key": "a80d0ddc691ec269",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "466-08",
-      "element": "マナ skill1.effects[1]",
       "key": "a80d0ddc691ec269",
       "effective": false,
       "minus": 0,
@@ -8135,14 +7767,6 @@
     {
       "observation": "466-09",
       "element": "マナ burst.effects[1]",
-      "key": "66a8f4ee9eef8b7d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "466-09",
-      "element": "マナ skill1.effects[1]",
       "key": "66a8f4ee9eef8b7d",
       "effective": false,
       "minus": 0,
@@ -8159,14 +7783,6 @@
     {
       "observation": "466-10",
       "element": "マナ burst.effects[1]",
-      "key": "5bd18db751f5a972",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "466-10",
-      "element": "マナ skill1.effects[1]",
       "key": "5bd18db751f5a972",
       "effective": false,
       "minus": 0,
@@ -8237,6 +7853,198 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "474-03",
+      "element": "アスカ burst.effects[0]",
+      "key": "3cbc50add219be2c",
+      "effective": true,
+      "minus": 0,
+      "plus": 43835.459059392
+    },
+    {
+      "observation": "474-03",
+      "element": "アスカ burst.effects[2]",
+      "key": "3cbc50add219be2c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "474-03",
+      "element": "マナ burst.effects[0]",
+      "key": "3cbc50add219be2c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "474-03",
+      "element": "マナ burst.effects[1]",
+      "key": "3cbc50add219be2c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "474-04",
+      "element": "アスカ burst.effects[0]",
+      "key": "81eeab6a36048ba3",
+      "effective": true,
+      "minus": 0,
+      "plus": 66448.09416783998
+    },
+    {
+      "observation": "474-04",
+      "element": "アスカ burst.effects[2]",
+      "key": "81eeab6a36048ba3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "474-04",
+      "element": "マナ burst.effects[0]",
+      "key": "81eeab6a36048ba3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "474-04",
+      "element": "マナ burst.effects[1]",
+      "key": "81eeab6a36048ba3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "474-05",
+      "element": "アスカ burst.effects[0]",
+      "key": "7725a034890490c9",
+      "effective": true,
+      "minus": 0,
+      "plus": 66448.09416783998
+    },
+    {
+      "observation": "474-05",
+      "element": "アスカ burst.effects[2]",
+      "key": "7725a034890490c9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "474-05",
+      "element": "マナ burst.effects[0]",
+      "key": "7725a034890490c9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "474-05",
+      "element": "マナ burst.effects[1]",
+      "key": "7725a034890490c9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "475-03",
+      "element": "アスカ burst.effects[0]",
+      "key": "19290d813cddd85e",
+      "effective": true,
+      "minus": 0,
+      "plus": 43835.459059392
+    },
+    {
+      "observation": "475-03",
+      "element": "アスカ burst.effects[2]",
+      "key": "19290d813cddd85e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "475-03",
+      "element": "マナ burst.effects[0]",
+      "key": "19290d813cddd85e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "475-03",
+      "element": "マナ burst.effects[1]",
+      "key": "19290d813cddd85e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "475-04",
+      "element": "アスカ burst.effects[0]",
+      "key": "b8943ed677b26099",
+      "effective": true,
+      "minus": 0,
+      "plus": 66448.09416783998
+    },
+    {
+      "observation": "475-04",
+      "element": "アスカ burst.effects[2]",
+      "key": "b8943ed677b26099",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "475-04",
+      "element": "マナ burst.effects[0]",
+      "key": "b8943ed677b26099",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "475-04",
+      "element": "マナ burst.effects[1]",
+      "key": "b8943ed677b26099",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "475-05",
+      "element": "アスカ burst.effects[0]",
+      "key": "564e8e7001337eb3",
+      "effective": true,
+      "minus": 0,
+      "plus": 66448.09416783998
+    },
+    {
+      "observation": "475-05",
+      "element": "アスカ burst.effects[2]",
+      "key": "564e8e7001337eb3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "475-05",
+      "element": "マナ burst.effects[0]",
+      "key": "564e8e7001337eb3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "475-05",
+      "element": "マナ burst.effects[1]",
+      "key": "564e8e7001337eb3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

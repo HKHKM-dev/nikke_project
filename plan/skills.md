@@ -487,7 +487,7 @@ notes の種類: 未対応 132・前提の外 27・計算に無関係 28・補�
 
 - **skill1**: supported
   - effects[0] state・battleStart・metalGamma（attack）: C-0020（確定）
-  - effects[1] heal・normalShot: C-0570（仮説）
+  - effects[1] heal・normalShot: C-0570（確定）
   - notes[0] 前提の外: 味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない: C-0443（範囲外）
 - **skill2**: supported
   - effects[0] state・battleStart・metalSigma（burstGaugeSpeed）: C-0269（確定）
