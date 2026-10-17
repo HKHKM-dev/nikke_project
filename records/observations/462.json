@@ -1,0 +1,268 @@
+[
+  {
+    "id": "462-01",
+    "recording": "462",
+    "source": "V-0436",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 279092,
+    "description": "アスカの 1 回目のフルバースト中の通常攻撃の 1 ヒット（胴体・会心なし・距離あり）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "1 回目のフルバースト（f1270〜f1847）の 1 フレームに 1 ヒットの増分（gap 1）。コア・距離あり 527,283 が 53 回、コア・会心・距離あり 604,808 が 16 回、胴体・距離あり 279,092 が 1 回。ラムのバーストの帯は f1195 ごろ、アスカの体力の表示の右端の水色の帯（バリア）は f1200〜f1760 に見え、f1150・f1820 には無い。フルバーストの帯は f1250 ごろ。H0（有利コードの攻撃ダメージ▲なし）の格子の値（胴体・距離あり 219,255、コア・距離あり 414,234 など。H1 の値の 1.1 / 1.4002 倍）は録画のどこにも出ない。比べるフレーム 600 はモデルの 1 回目のフルバースト（401〜1001）の中。比べは手入力の条件（自動の条件の観測値は結論に結び付けない規則。この枠・フレームのモデルの値は自動の条件と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [1270, 1847]
+    }
+  },
+  {
+    "id": "462-02",
+    "recording": "462",
+    "source": "V-0436",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 527283,
+    "description": "アスカの 1 回目のフルバースト中の通常攻撃の 1 ヒット（コア・会心なし・距離あり）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "462-01 と同じ区間の増分。この区間のアスカの値の大半がこれ（コア・距離あり 527,283 が 53 回、コア・会心・距離あり 604,808 が 16 回、胴体・距離あり 279,092 が 1 回）。コアダメージ▲（C-0075）も乗る。比べるフレーム 600。比べは手入力の条件（自動の条件の観測値は結論に結び付けない規則。この枠・フレームのモデルの値は自動の条件と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [1270, 1847]
+    }
+  },
+  {
+    "id": "462-03",
+    "recording": "462",
+    "source": "V-0436",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 63330,
+    "description": "アスカの 1 回目のフルバーストの後（有利コードの攻撃ダメージ▲の窓の外）の通常攻撃の 1 ヒット（胴体・会心なし・距離あり）。H0 と H1 で同じ（対照）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "1 回目のフルバーストの後、アスカの値が距離ボーナスの外の値に替わるまで（f1929〜f2551）の増分。63,330 が 34 回、コア・距離あり 112,046 が 29 回、会心・距離あり 87,688 が 8 回、コア・会心・距離あり 136,404 が 7 回。比べるフレーム 1300 はモデルの 1 回目のフルバーストの後（S1 の攻撃力▲（C-0464）は残り、バーストの攻撃ダメージ▲と S2 の 2 つの▲は切れた区間）。比べは手入力の条件（自動の条件の観測値は結論に結び付けない規則。この枠・フレームのモデルの値は自動の条件と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [1929, 2551]
+    }
+  },
+  {
+    "id": "462-04",
+    "recording": "462",
+    "source": "V-0436",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 480767,
+    "description": "アスカの 2 回目のフルバースト中の通常攻撃の 1 ヒット（コア・会心なし・距離なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "2 回目のフルバースト（f3648〜f4206）の増分。コア・距離なし 480,767 が 57 回、コア・会心・距離なし 558,293 が 7 回、胴体・距離なし 232,577 が 1 回。この区間は的の着地点が距離ボーナスの外で、距離なしの値だけが出る。ラムのバーストのたびにバリアが付き直し、H1 の値が出る。H0 の値は出ない。比べるフレーム 3053 はモデルの2 回目のフルバーストの中。比べは手入力の条件（自動の条件の観測値は結論に結び付けない規則。この枠・フレームのモデルの値は自動の条件と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3053,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [3648, 4206]
+    }
+  },
+  {
+    "id": "462-05",
+    "recording": "462",
+    "source": "V-0436",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 480767,
+    "description": "アスカの 3 回目のフルバースト中の通常攻撃の 1 ヒット（コア・会心なし・距離なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "3 回目のフルバースト（f6023〜f6551）の増分。コア・距離なし 480,767 が 34 回、胴体・距離なし 232,577 が 15 回、コア・会心・距離なし 558,293 が 9 回。この区間は的の着地点が距離ボーナスの外で、距離なしの値だけが出る。ラムのバーストのたびにバリアが付き直し、H1 の値が出る。H0 の値は出ない。比べるフレーム 5405 はモデルの3 回目のフルバーストの中。比べは手入力の条件（自動の条件の観測値は結論に結び付けない規則。この枠・フレームのモデルの値は自動の条件と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 5405,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [6023, 6551]
+    }
+  },
+  {
+    "id": "462-06",
+    "recording": "462",
+    "source": "V-0436",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 527283,
+    "description": "アスカの 4 回目のフルバースト中の通常攻撃の 1 ヒット（コア・会心なし・距離あり）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "4 回目のフルバースト（f8451〜f8978）の増分。コア・距離あり 527,283 が 46 回、コア・会心・距離あり 604,808 が 11 回、胴体・距離あり 279,092 が 1 回。ラムのバーストのたびにバリアが付き直し、H1 の値が出る。H0 の値は出ない。比べるフレーム 7757 はモデルの4 回目のフルバーストの中。比べは手入力の条件（自動の条件の観測値は結論に結び付けない規則。この枠・フレームのモデルの値は自動の条件と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 7757,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [8451, 8978]
+    }
+  },
+  {
+    "id": "462-07",
+    "recording": "462",
+    "source": "V-0436",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 480767,
+    "description": "アスカの 5 回目のフルバースト中の通常攻撃の 1 ヒット（コア・会心なし・距離なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "5 回目のフルバースト（f10793〜f11356）の増分。コア・距離なし 480,767 が 39 回、コア・会心・距離なし 558,293 が 14 回、胴体・距離なし 232,577 が 4 回。この区間は的の着地点が距離ボーナスの外で、距離なしの値だけが出る。ラムのバーストのたびにバリアが付き直し、H1 の値が出る。H0 の値は出ない。比べるフレーム 10109 はモデルの5 回目のフルバーストの中。比べは手入力の条件（自動の条件の観測値は結論に結び付けない規則。この枠・フレームのモデルの値は自動の条件と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 10109,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [10793, 11356]
+    }
+  }
+]

@@ -71,7 +71,8 @@
             "en": "A barrier on all allies (no contents; the barrier amount does not affect damage). Being broken by enemy hits is not modeled, so it is assumed to last its full 10 s (range target attacks go to the controlled unit, C-0551)"
           },
           "claims": [
-            "C-0253"
+            "C-0253",
+            "C-0557"
           ]
         }
       ]

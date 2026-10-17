@@ -43,7 +43,7 @@
         "condition": "auto"
       },
       "note": "1 回目のフルバースト中（戦闘開始から約 10 秒）のアスカの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスあり）。有利コードの攻撃ダメージ▲の分だけ H0 より大きい",
-      "observations": []
+      "observations": ["461-01", "462-01"]
     },
     {
       "id": "asuka-fb1-core",
@@ -66,7 +66,7 @@
         "condition": "auto"
       },
       "note": "同じ区間のコアの 1 ヒット（コアダメージ▲（C-0075）も乗る）",
-      "observations": []
+      "observations": ["461-02", "462-02"]
     },
     {
       "id": "asuka-after-fb1-body",
@@ -89,7 +89,7 @@
         "condition": "auto"
       },
       "note": "1 回目のフルバーストの後（約 22 秒。▲の窓の外）の 1 ヒット。H0 と H1 で同じ（対照）",
-      "observations": []
+      "observations": ["461-03", "462-03"]
     }
   ],
   "predicted": {

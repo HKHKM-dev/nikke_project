@@ -15,7 +15,7 @@
 - 根拠の `010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 330・仮説 85・棄却 99・範囲外 2（計 516）
+件数: 確定 331・仮説 85・棄却 99・範囲外 2（計 517）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -3040,6 +3040,13 @@
   - 決めるのに使った録画: なし
   - 検証記録: V-0433
   - 定義: `data/skills/190.json` の skill1 の effects[0]
+- **C-0557** アスカの S2 の「フルバーストタイムが発動した時、自分がバリア適用状態なら自分に有利コードの攻撃ダメージ 30.02%▲（10 秒）」は、ラムのバーストの味方全体のバリア（10 秒）が付いている時のフルバースト開始で付く。有利コードの的への 1 発の有利コードの倍率 1.1 に 0.3002 を足し（1.4002 倍）、フルバーストの間ずっと乗り、フルバーストの後には残らない。ラムのバーストのバリアは、付いた味方をバリア適用状態にする
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-17
+  - 根拠: ラム（操作）・デルタ・アスカの風圧のタブの 2 本（録画 461・462）で、5 回のフルバーストのどれも、アスカの 1 ヒットが▲ありのモデルの値と差 1 未満: 1 回目の胴体 `461-01`・`462-01`、コア `461-02`・`462-02`、2〜5 回目のコア `461-04`〜`461-07`・`462-04`〜`462-07`（距離ボーナスの外の回も含む）。フルバーストの後の 1 ヒット `461-03`・`462-03`（対照）も合う。▲なし（H0）の値は 2 本のどこにも出ない。アスカの体力の表示のバリアは、ラムのバーストからフルバーストの開始をまたいで付いていた（2 本とも目で見た）。仮説は説明文から立て、予測は撮る前に出した（H1 は予測ファイル、H0 は検証記録）。V-0436
+  - モデル側: `data/skills/830.json` の skill2 の effects[1]（timed・fullBurstStart・自分・elementDamage・`condition.selfState: 'barrier'`）と `data/skills/822.json` の burst の effects[0]（状態 `barrier` の付与・burstUse・味方全体・10 秒）。条件の当たりは `skills/states.ts` の家族の当たり（`stateMatches`）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0436
+  - 定義: `data/skills/822.json` の burst の effects[0]、`data/skills/830.json` の skill2 の effects[1]
 
 ## 敵・的・場面
 
@@ -3197,9 +3204,9 @@
   - モデル側: 範囲外（`data/enemies.json` の `range-3min-jump` は 1 組の代表値で、武器種による違いは持たない。C-0064 と同じ）
   - 決めるのに使った録画: 075（値を合わせた）、076（値を合わせた）
   - 検証記録: V-0288
-- **C-0443** パーツ（破壊・パーツダメージ▲）・阻止部位・敵のバリアと敵の発射体・貫通と複数の敵への同時の命中や照準・味方の戦闘不能と復活・味方に付けるバリアは、モデルの前提の外（要件 5.2 節）で、与ダメージの計算に入れない。射撃場 3 分モードの的（BigArms）は 1 体で、モデルはこれらを起きないものとして扱う
-  - 状態: 範囲外・等級: 推論・更新日: 2026-10-08
-  - 根拠: 要件 5.2 節（当面扱わないもの: ボスの行動パターン・パーツ破壊、被弾による HP 変動・回復・シールド、貫通・範囲攻撃の複数ヒット）と、スキル定義の notes の種類 outOfScope（design-skill-note-kinds.md 2.1 節）。最小構成の検査で、射撃場では起きない notes を未確定の要素に数えないための約束（design-minimal-relevance.md 11.2 節）
+- **C-0443** パーツ（破壊・パーツダメージ▲）・阻止部位・敵のバリアと敵の発射体・貫通と複数の敵への同時の命中や照準・味方の戦闘不能と復活・味方に付けるバリアの量（被弾を受け止める分と、尽きて割れること）は、モデルの前提の外（要件 5.2 節）で、与ダメージの計算に入れない。射撃場 3 分モードの的（BigArms）は 1 体で、モデルはこれらを起きないものとして扱う。味方にバリアが付いている状態は、バリア適用状態を読む効果のために扱う（C-0557）
+  - 状態: 範囲外・等級: 推論・更新日: 2026-10-17
+  - 根拠: 要件 5.2 節（当面扱わないもの: ボスの行動パターン・パーツ破壊、被弾による HP 変動・回復・シールド、貫通・範囲攻撃の複数ヒット）と、スキル定義の notes の種類 outOfScope（design-skill-note-kinds.md 2.1 節）。最小構成の検査で、射撃場では起きない notes を未確定の要素に数えないための約束（design-minimal-relevance.md 11.2 節）。2026-10-17 に、味方に付けるバリアの部分を量に限った（2 段目の段 5 でバリアが付いている状態をモデルに入れた。plan/design-skill-stage5.md。オーナーの判断）
   - モデル側: 未反映（モデルは扱わない）。スキル定義の前提の外（outOfScope）の notes の claims にこの結論を書く
   - 定義: `data/skills/16.json` の skill1 の notes[4]、`data/skills/60.json` の skill2 の notes[0]、`data/skills/121.json` の burst の notes[2]、`data/skills/162.json` の skill2 の notes[1]、`data/skills/191.json` の skill2 の notes[0]、`data/skills/226.json` の skill1 の notes[0]、`data/skills/242.json` の skill1 の notes[0]、`data/skills/242.json` の burst の notes[0]、`data/skills/260.json` の burst の notes[2]、`data/skills/270.json` の skill1 の notes[0]、`data/skills/271.json` の burst の notes[0]、`data/skills/290.json` の skill1 の notes[1]、`data/skills/352.json` の skill2 の notes[0]、`data/skills/352.json` の treasureSkills.skill2 の notes[0]、`data/skills/471.json` の skill2 の notes[2]、`data/skills/471.json` の skill2 の notes[5]、`data/skills/471.json` の burst の notes[2]、`data/skills/500.json` の skill1 の notes[0]、`data/skills/811.json` の skill2 の notes[0]、`data/skills/830.json` の skill1 の notes[0]
 - **C-0477** 射撃場 3 分モードの遠（3 区間目）の着地点は 2 か所ある。遠 A（足元の y 540〜542。近い）と遠 B（534 前後。遠い）で、遠 B の的は高さ・幅が約 8% 小さく、上端が約 4px 下に写る。単騎の 129 本では遠 A 67・遠 B 62（遠 A の割合 0.52、95% の幅 0.43〜0.60）。アニス：スターの誘導弾の飛ぶ時間は遠 A で 26〜27f（録画 164・211）、遠 B で 28〜29f（録画 161）
