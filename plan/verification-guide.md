@@ -41,7 +41,7 @@
 ## 3. 起案
 
 - `npm run records:new -- verification --title "<題名>" --name <短い名前> --topic "<話題>" --question "<問い>"` で、次の空き番号の `records/verifications/V-NNNN-<短い名前>.md` を状態 `調査中` で作る（ほかのブランチが使っている番号は避ける）。
-- 番号がほかのブランチと重なったら、`npm run records:renumber -- <古い ID> <新しい ID>` で、ファイル名と参照ごと振り直す（検証記録・結論・観測値。AGENTS.md「コミット手順」の 1）。
+- 番号がほかのブランチと重なったら、`npm run records:renumber -- <古い ID> <新しい ID>` で、ファイル名と参照ごと振り直す（検証記録・結論・観測値・録画。AGENTS.md「コミット手順」の 1。録画は E: と Google Drive のファイル名も変える。[design-recording-renumber.md](design-recording-renumber.md)）。
 - 読み直しなら、冒頭の「録画」に録画を挙げる。別の検証の途中で出た問いなら「派生元」を書く。
 - 仮説の出どころ（どの録画のどの値・残差から立てたか）を書いておく。結論の `decidedOn` のもとになる（8 節）。
 
@@ -98,7 +98,7 @@
 | `gauge`         | バーストゲージの溜まり方と満タン                  | `burst/controller.ts`・`frame/firstPass.ts`                         | `gaugeFullFrame`・`gaugeFullShotIndex`・`shotGauge`                                       | `gauge.ts`（BURST バーの px）                                                                               | 画面の読み方                                     |
 | `burstChain`    | バーストの段・CT・フルバーストの入り              | `burst/schedule.ts`・`burst/controller.ts`・`burst/dynamic.ts`      | `fullBurstStarts`・`fullBurstStartIntervals`・`burstActivationSlots`・`cooldownCutFrames` | `hud.ts`。右のバースト欄は ffmpeg で切り出して目で読む（道具は未整備。design-investigation-review.md 5 節） | 画面の読み方                                     |
 | `clock`         | ゲーム内の時計と動画のフレーム・止まり            | `time.ts`・`burst/schedule.ts`（`videoFrameOf`）                    | `videoFramesBetween`                                                                      | `timer.ts`・`timer-ticks.ts`                                                                                | 動画と道具                                       |
-| `target`        | 的のジャンプ・着地点・狙えない時間                | `data/enemies.json` の出来事・`frame/events.ts`・`frame/landing.ts` | （時刻は記録の観測値が多い）                                                              | レシピ `near-landing`・`smg-mags`（中遠の着地点の注記）、`aim.ts`・`coverage.ts`                            | 射撃場の条件                                     |
+| `target`        | 的のジャンプ・着地点・狙えない時間                | `data/enemies.json` の出来事・`frame/events.ts`・`frame/landing.ts` | （時刻は記録の観測値が多い）                                                              | レシピ `near-landing`・`midfar-landing`・`smg-mags`（中遠の着地点の注記）、`aim.ts`・`coverage.ts`          | 射撃場の条件                                     |
 | `damageFormula` | 1 ヒットの値（バフの掛かり方・会心・コア・距離）  | `damage.ts`                                                         | `hitDamage`・`perShotHitDamage`・`burstHitDamage`・`dotHitDamage`・`skillHitDamage`       | レシピ `hud-jumps`、`hud.ts`。スキルの帯は `banner.ts`                                                      | 画面の読み方                                     |
 | `targetTable`   | 的の表のコア命中率・弾丸命中率                    | `data/enemies.json` の `range-bigarms`                              | `coreHitRate`・`bulletHitRate`                                                            | レシピ `sg-pellets`・`smg-mags`・`smg-cores`・`charge-shots`                                                | 射撃場の条件                                     |
 
