@@ -294,7 +294,7 @@ export function SkillSection({
                 </ul>
               )}
               {/* 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.7 節）: 付与する状態と、その中身。2 段目の段 1: 解除も。
-                  段 3: スタック量の増加も */}
+                  段 3: スタック量の増減も */}
               {entry &&
                 entry.effects.some(
                   (e) => e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange',
@@ -320,6 +320,7 @@ export function SkillSection({
                                   {formatStackChange(
                                     e,
                                     e.amount ?? Math.round(skillValue(skill, e.amountRef!, levels[slot])),
+                                    (ref) => Math.round(skillValue(skill, ref, levels[slot])),
                                   )}
                                 </li>,
                               ]

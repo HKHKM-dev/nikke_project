@@ -44,13 +44,14 @@ import {
   ENEMY,
   buffTimelineOf,
   itemsOf,
+  stacksHold,
   valuePiecesOf,
   type HolderHistory,
   type ValuePiece,
 } from '../skills/holders.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
 import { stateMatches, type NamedStateId } from '../skills/states.ts';
-import { isStateStat, staticStatesOf, type EffectCondition } from '../skills/types.ts';
+import { isStateStat, staticStatesOf, type EffectCondition, type SelfStateCondition } from '../skills/types.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import {
@@ -270,15 +271,26 @@ export function planSkillHits(
     const sequential = definition.skills.burst.sequential === true;
     // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: damage の条件 selfState が見る、自分の静的な状態と状態の件（段の印に依らない。
     // 発火のフレームより前に付いた件だけを見る。同じフレームに付いた件（同じ発動の付与を含む）は見ない（C-0160 と同じ読み。V-0432）。
-    // 解除・消去で外れる件はそのフレームまで付いている）
+    // 解除・消去で外れる件はそのフレームまで付いている）。2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの
+    // 状態でも当たる。2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件は、同じ件の段の最大を見る（skills/holders.ts の stacksHold）
     const ownStatics = new Set(staticStatesOf(definition));
     const ownStateItems = itemsOf(history, { holder: slotIndex, kind: 'state' });
-    // 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの状態でも当たる
-    const selfStateAt = (state: NamedStateId, frame: number): boolean =>
-      [...ownStatics].some((s) => stateMatches(state, s)) ||
-      ownStateItems.some(
-        (i) => i.origin.kind === 'state' && stateMatches(state, i.origin.state) && i.start < frame && frame < i.end,
+    const selfStateHolds = (self: SelfStateCondition, frame: number): boolean => {
+      const isStatic = [...ownStatics].some((s) => stateMatches(self.state, s));
+      const active = ownStateItems.filter(
+        (i) =>
+          i.origin.kind === 'state' && stateMatches(self.state, i.origin.state) && i.start < frame && frame < i.end,
       );
+      if (self.stacks === undefined) return (isStatic || active.length > 0) === self.present;
+      return stacksHold(
+        self.stacks,
+        isStatic,
+        [...new Set(active.map((i) => i.origin))].map((origin) => ({
+          origin,
+          items: active.filter((i) => i.origin === origin),
+        })),
+      );
+    };
     // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
     const delays = burstDelaysOf(slot.character);
     if (sequential && delays.hitFrames !== delays.effectFrames) {
@@ -339,7 +351,7 @@ export function planSkillHits(
         ? appliedFrames(history, effect.trigger.applied, slotIndex)
         : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
       for (const frame of fires) {
-        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateAt)) continue;
+        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds)) continue;
         if (frame + delay >= frames) continue;
         push(frame + delay, effect, pre);
       }
@@ -397,15 +409,10 @@ function damageConditionHolds(
   frame: number,
   schedule: BurstSchedule | null,
   enemySpans: ReadonlyMap<NamedStateId, readonly { start: number; end: number }[]>,
-  selfStateAt: (state: NamedStateId, frame: number) => boolean,
+  selfStateHolds: (self: SelfStateCondition, frame: number) => boolean,
 ): boolean {
   if (condition === undefined) return true;
-  if (
-    condition.selfState !== undefined &&
-    selfStateAt(condition.selfState.state, frame) !== condition.selfState.present
-  ) {
-    return false;
-  }
+  if (condition.selfState !== undefined && !selfStateHolds(condition.selfState, frame)) return false;
   if (condition.inFullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
   if (condition.enemyState !== undefined) {
     const spans = enemySpans.get(condition.enemyState) ?? [];

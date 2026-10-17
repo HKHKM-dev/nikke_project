@@ -42,7 +42,7 @@ import {
   type WindowEffect,
 } from './resolve.ts';
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackWindow, type RankingRecord } from './ranking.ts';
-import { stackWindows } from './stacks.ts';
+import { stackWindows, STACK_REFRESH, type StackDecrease } from './stacks.ts';
 import { statesMatching, type NamedStateId } from './states.ts';
 import { canEverTarget, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
 import {
@@ -137,6 +137,11 @@ export type HeldTrack = {
    */
   consumes: number[];
   /**
+   * 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少（フレームの昇順）。そのフレームに効いている段の上から
+   * N 段を次のフレームで切る（skills/stacks.ts）。スタックする状態のほかは空
+   */
+  decreases: StackDecrease[];
+  /**
    * 状態: 射撃の回数のきっかけの付与が発火を足したか（calc の射撃の数え方の判定 hasOwnShotCountItem が読む）。2 段目の段 4
    * （plan/design-skill-stage4.md 1.1 節）: timed・状態の { applied } が、出どころの枠の射撃の回数のきっかけで付いた記録から発火を足したか
    */
@@ -145,8 +150,8 @@ export type HeldTrack = {
   opportunities: ChanceOpportunity[] | null;
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
   items: HeldItem[];
-  /** items を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・フルバーストの窓・閉じるフレーム・消費のフレーム） */
-  seen: [number, number, number, number, number, number, number];
+  /** items を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・フルバーストの窓・閉じるフレーム・消費のフレーム・減少） */
+  seen: [number, number, number, number, number, number, number, number];
 };
 
 /** 強化（amplifies）の出どころ。受け付けと値は、ループの後に履歴を閉じる時に決める（amplify） */
@@ -237,7 +242,7 @@ type CycleSource = { slotIndex: number; effect: ResolvedCycleEvery; fires: Trigg
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除 1 つ（対象は自分） */
 type RemoveSource = { sourceSlotIndex: number; effect: ResolvedRemoveState; stage: HeldStage; fires: TriggerTracker };
 
-/** 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加 1 つ（対象は自分。足す先は同じ定義の付与の状態の件の列） */
+/** 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減 1 つ（対象は自分。足す・減らす先は同じ定義の付与の状態の件の列） */
 type StackSource = {
   sourceSlotIndex: number;
   effect: ResolvedStackChange;
@@ -323,13 +328,14 @@ function healWindowItems(starts: readonly number[], durationFrames: number | und
   return items;
 }
 
-/** 状態の件（段 A までの planBuffTimeline の stateWindowsOf と同じ規則） */
+/** 状態の件（段 A までの planBuffTimeline の stateWindowsOf と同じ規則）。2 段目の段 3: decreases はスタックする状態だけ */
 function stateItems(
   grant: ResolvedStateGrant,
   starts: readonly number[],
   shotFrames: readonly number[],
   fullBurstEnds: readonly number[],
   frames: number,
+  decreases: readonly StackDecrease[] = [],
 ): HeldItem[] {
   if (grant.durationShots !== undefined) {
     return itemsOfPairs(shotCountWindows(starts, shotFrames, grant.durationShots, frames));
@@ -338,7 +344,7 @@ function stateItems(
     return itemsOfPairs(untilNextEndWindows(starts, fullBurstEnds, frames));
   }
   if (grant.maxStacks !== undefined) {
-    return stackWindows(starts, grant.durationFrames, frames, grant.maxStacks).map((w) => ({
+    return stackWindows(starts, grant.durationFrames, frames, grant.maxStacks, STACK_REFRESH, decreases).map((w) => ({
       start: w.start,
       end: w.end,
       stack: w.stack,
@@ -351,23 +357,26 @@ function stateItems(
  * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除で閉じる状態の件。閉じる発火のフレーム c のうち、同じフレームに始まりの
  * 無いもの（付与が勝つ）で始まりの列を区切り、区切りごとに今と同じ規則で件を作って、c より前の区切りの件を c + 1 で切る。
  * 区切りの後の件は c + 1 以降に始まる。スタックしない件は、切った件と後の区切りの件がちょうど続けば 1 つにする（和集合の上書き延長と
- * 同じ見え方）。スタックする件は段ごとに切り、後の区切りは段 1 から数え直す
+ * 同じ見え方）。スタックする件は段ごとに切り、後の区切りは段 1 から数え直す。
+ * 2 段目の段 3: スタック量の減少（decreases）は、そのフレームを含む区切り（前の区切りのフレームより後で、区切りのフレーム以前）に渡す
  */
 function closedStateItems(
   starts: readonly number[],
   closes: readonly number[],
-  build: (starts: readonly number[]) => HeldItem[],
+  build: (starts: readonly number[], decreases: readonly StackDecrease[]) => HeldItem[],
   consumes: readonly number[] = [],
+  decreases: readonly StackDecrease[] = [],
 ): HeldItem[] {
   // 2 段目の段 3: フルスタックの消費は、同じフレームに始まった件も切る（区切りの前に入れる）。解除の区切りには同じフレームの始まりが無い
   const effective = [...new Set([...closes.filter((c) => !starts.includes(c)), ...consumes])].sort((a, b) => a - b);
-  if (effective.length === 0) return build(starts);
+  if (effective.length === 0) return build(starts, decreases);
   const out: HeldItem[] = [];
   let lower = -Infinity;
   for (const c of [...effective, Infinity]) {
     const segment = starts.filter((s) => s > lower && s <= c);
+    const cuts = decreases.filter((d) => d.frame > lower && d.frame <= c);
     lower = c;
-    for (const item of build(segment)) {
+    for (const item of build(segment, cuts)) {
       const cut: HeldItem = { ...item, end: Math.min(item.end, c + 1) };
       if (cut.start >= cut.end) continue;
       const last = out[out.length - 1];
@@ -379,6 +388,27 @@ function closedStateItems(
     }
   }
   return out;
+}
+
+/**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件を満たすか。tracks は、持ち主のその状態の件の列ごとの出どころと、
+ * そのフレームに効いている件。N はスタックの段の最大が N 以上、'full' はどれかの件の列の段の最大がその付与の上限に届いている。
+ * 静的な状態（isStatic）は 1 段
+ */
+export function stacksHold(
+  stacks: 'full' | number,
+  isStatic: boolean,
+  tracks: readonly { origin: HeldOrigin; items: readonly HeldItem[] }[],
+): boolean {
+  if (stacks === 'full') {
+    return tracks.some(({ origin, items }) => {
+      const max = origin.kind === 'state' ? origin.grant.maxStacks : undefined;
+      return max !== undefined && items.some((it) => it.stack === max);
+    });
+  }
+  let level = isStatic ? 1 : 0;
+  for (const { items } of tracks) for (const it of items) level = Math.max(level, it.stack ?? 1);
+  return level >= stacks;
 }
 
 /** timed の件（段 A までの planBuffTimeline の distribute と同じ規則）。確率のきっかけと強化は呼ぶ側 */
@@ -537,10 +567,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       starts: [],
       closes: [],
       consumes: [],
+      decreases: [],
       shotCount: false,
       opportunities,
       items: [],
-      seen: [-1, -1, -1, -1, -1, -1, -1],
+      seen: [-1, -1, -1, -1, -1, -1, -1, -1],
     };
     tracks.push(track);
     return track;
@@ -648,7 +679,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
-  // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加（足す先は、同じ定義の付与の状態の、自分の件の列） ----
+  // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減（足す・減らす先は、同じ定義の付与の状態の、自分の件の列） ----
   const stackSources: StackSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -738,6 +769,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       windows.length,
       track.closes.length,
       track.consumes.length,
+      track.decreases.length,
     ];
     if (seen.every((v, i) => v === track.seen[i])) return track.items;
     track.seen = seen;
@@ -761,8 +793,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         track.items = closedStateItems(
           track.starts,
           track.closes,
-          (starts) => stateItems(o.grant, starts, log?.frames ?? [], ends, frames),
+          (starts, decreases) => stateItems(o.grant, starts, log?.frames ?? [], ends, frames, decreases),
           track.consumes,
+          track.decreases,
         );
         break;
       }
@@ -808,9 +841,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     });
   // 射手: 射撃に効く stat（timed は段によらない。状態の中身も）
   const firingViews = viewsOf((_, e) => isFiringStat(e.stat));
-  // 当たり: 条件なし・順位の対象でない timed の当たりの stat と、状態の中身（段 A までの hitTrack・hitGroups）
+  // 当たり: 順位の対象でない timed の当たりの stat と、状態の中身（段 A までの hitTrack・hitGroups）。2 段目の段 3: 条件つき（段 1.5）の
+  // 命中率▲（ソーダ：トゥインクルバニーのバースト）も、区間（2 パス目）と同じ N にするため入れる（plan/design-skill-stage3.md 経過）
   const hitViews = viewsOf(
-    (track, e) => isHitStateStat(e.stat) && (track.origin.kind === 'state' || track.stage === 1),
+    (track, e) =>
+      isHitStateStat(e.stat) && (track.origin.kind === 'state' || STAGE_RANK[track.stage] <= STAGE_RANK[1.5]),
   );
   // 条件 selfBuffed: 段 1 の件（段 A までの 1.5 段目の判定に入る窓）
   const conditionViews = viewsOf((track) => track.stage === 1);
@@ -834,14 +869,24 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   const holdsAt = (condition: EffectCondition, sourceSlotIndex: number, frame: number): boolean => {
     if (condition.selfState !== undefined) {
-      const { state, present } = condition.selfState;
+      const { state, present, stacks } = condition.selfState;
       // 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの状態でも当たる
-      const has = statesMatching(state).some(
-        (s) =>
-          staticStates[sourceSlotIndex]?.has(s) === true ||
-          (stateTracks[sourceSlotIndex]?.get(s) ?? []).some((t) => activeAt(t, frame).length > 0),
-      );
-      if (has !== present) return false;
+      const family = statesMatching(state);
+      const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
+      const own = family.flatMap((s) => stateTracks[sourceSlotIndex]?.get(s) ?? []);
+      if (stacks === undefined) {
+        const has = isStatic || own.some((t) => activeAt(t, frame).length > 0);
+        if (has !== present) return false;
+      } else if (
+        !stacksHold(
+          stacks,
+          isStatic,
+          own.map((t) => ({ origin: t.origin, items: activeAt(t, frame) })),
+        )
+      ) {
+        // 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件（段 1 の状態の件の、そのフレームの段の最大）
+        return false;
+      }
     }
     if (condition.selfBuffed !== undefined) {
       const stat = condition.selfBuffed;
@@ -964,10 +1009,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   };
   /**
    * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加の発火 1 つ。状態の件の列に、同じフレームの始まりを N 個入れる
-   * （スタックの段は始まりの数で上がり、上限と維持は付与のもの）。付いた記録は 1 件
+   * （スタックの段は始まりの数で上がり、上限と維持は付与のもの）。付いた記録は 1 件。
+   * 減少（同 1.5 節）は、件の列に減少（そのフレームに効いている段の上から N 段を次のフレームで切る）を入れる。付いた記録は作らない
    */
   const fireStackChange = (src: StackSource, start: number): void => {
     if (start >= frames) return;
+    if (src.effect.decrease === true) {
+      const decreases = src.track.decreases;
+      let i = decreases.length;
+      while (i > 0 && decreases[i - 1]!.frame > start) i--;
+      decreases.splice(i, 0, { frame: start, amount: src.effect.amount });
+      return;
+    }
     for (let k = 0; k < src.effect.amount; k++) insertSorted(src.track.starts, start);
     const record: AppliedRecord = {
       frame: start,
@@ -1149,7 +1202,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
-    // 2 段目の段 3: スタック量の増加（状態の件の列の始まりを足すだけなので、段 1 の付与と同じ見え方）
+    // 2 段目の段 3: スタック量の増減（増加は状態の件の列の始まりを足すだけなので、段 1 の付与と同じ見え方。減少は次のフレームで切るので、
+    // 段の中の順は同じフレームの判定に効かない）
     for (const x of stage1Stacks) {
       if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
       if (!usedBurstHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex)) {

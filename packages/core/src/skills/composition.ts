@@ -18,6 +18,7 @@ import { statesMatching, type NamedStateId } from './states.ts';
 import { matchesTargetFilter } from './targets.ts';
 import {
   SKILL_SLOTS,
+  isStacksCondition,
   staticStatesOf,
   type BurstStepMixCondition,
   type SkillDefinition,
@@ -216,6 +217,9 @@ export function resolveSelfState<E extends SkillEffect>(effect: E, lookup: SelfS
   if (condition === undefined || self === undefined) return effect;
   const has = lookup(self.state);
   if (has === undefined) return effect;
+  // 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件は、付けうる枠が無ければ満たさない。静的な状態（1 段）は
+  // 件を見る段（skills/holders.ts・frame/plan.ts の stacksHold）で決める
+  if (isStacksCondition(self)) return has ? effect : null;
   if (has !== self.present) return null;
   const { selfState: _selfState, ...rest } = condition;
   const { condition: _condition, ...without } = effect as E & { condition?: unknown };

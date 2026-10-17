@@ -241,13 +241,15 @@ export function effectLabel(e: SkillEffect): string {
   const detail =
     e.kind === 'state'
       ? `${e.state}${e.contents === undefined ? '' : `（${e.contents.map((c) => c.stat).join('・')}）`}`
-      : e.kind === 'removeState' || e.kind === 'stackChange'
+      : e.kind === 'removeState'
         ? e.state
-        : 'stat' in e
-          ? e.stat
-          : 'damageType' in e
-            ? e.damageType
-            : undefined;
+        : e.kind === 'stackChange'
+          ? `${e.state}${e.decrease ? '（減少）' : ''}`
+          : 'stat' in e
+            ? e.stat
+            : 'damageType' in e
+              ? e.damageType
+              : undefined;
   return [e.kind, triggerLabel(e), detail].filter((x) => x !== undefined).join('・');
 }
 

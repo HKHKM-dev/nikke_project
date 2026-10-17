@@ -179,6 +179,17 @@ export function skillValue(skill: SkillRaw, ref: number, level: number): number 
 }
 
 /**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: 条件の Lv で決まる値を解く（selfState の stacksRef を、スロットの Lv の
+ * 説明文の値を整数に丸めた stacks にする）。解いた後の条件は stacksRef を持たない
+ */
+export function resolveCondition(condition: EffectCondition, skill: SkillRaw, level: number): EffectCondition {
+  const self = condition.selfState;
+  if (self?.stacksRef === undefined) return condition;
+  const { stacksRef, ...rest } = self;
+  return { ...condition, selfState: { ...rest, stacks: Math.round(skillValue(skill, stacksRef, level)) } };
+}
+
+/**
  * % 表記の値を比率にする。flat（Stage 10。最大装弾数の発数）はそのまま。
  * casterChargeTime（Stage 11 アリス編）は 発動者の基礎チャージ時間 × 比率 の秒数にする。
  * Stage 11 モダニア: decrease（「▼」）なら符号を反転する。
@@ -474,7 +485,7 @@ function resolveWindowFields(
   if (count !== undefined) r.targetCount = count;
   const maxStacks = resolveMaxStacks(effect, skill, level);
   if (maxStacks !== undefined) r.maxStacks = maxStacks;
-  if (effect.condition) r.condition = effect.condition;
+  if (effect.condition) r.condition = resolveCondition(effect.condition, skill, level);
   if (shots !== undefined) r.durationShots = shots;
   if (effect.durationUntil !== undefined) r.durationUntil = effect.durationUntil;
   if (effect.assumes) r.assumes = effect.assumes;
@@ -623,7 +634,7 @@ export function resolveRemoveStates(
         state: effect.state,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
       };
-      if (effect.condition) r.condition = effect.condition;
+      if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       out.push(r);
     });
   }
@@ -631,8 +642,8 @@ export function resolveRemoveStates(
 }
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: 解決したスタック量の増加（stackChange）。対象は自分。amount は足すスタックの数
- * （amountRef はスロットの Lv の説明文の値を整数に丸めたもの）
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: 解決したスタック量の増減（stackChange）。対象は自分。amount は足す
+ * （decrease なら減らす）スタックの数（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）
  */
 export type ResolvedStackChange = {
   source: ResolvedEffect['source'];
@@ -640,10 +651,12 @@ export type ResolvedStackChange = {
   state: NamedStateId;
   trigger: ResolvedTrigger;
   amount: number;
+  /** スタック量の減少（▼） */
+  decrease?: true;
   condition?: EffectCondition;
 };
 
-/** 2 段目の段 3: 定義のスタック量の増加を Lv の数値に解く */
+/** 2 段目の段 3: 定義のスタック量の増減を Lv の数値に解く */
 export function resolveStackChanges(
   def: SkillDefinition,
   character: CharacterData,
@@ -665,7 +678,8 @@ export function resolveStackChanges(
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         amount,
       };
-      if (effect.condition) r.condition = effect.condition;
+      if (effect.decrease) r.decrease = true;
+      if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       out.push(r);
     });
   }
