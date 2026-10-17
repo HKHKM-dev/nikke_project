@@ -7835,15 +7835,31 @@
     {
       "observation": "469-02",
       "element": "ミハラ skill1.effects[0]",
-      "key": "dc2529cc3db1346f",
+      "key": "f36fa896842bda61",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "469-03",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "d6b829560e368c55",
+      "effective": true,
+      "minus": -70938.87411600002,
+      "plus": 0
+    },
+    {
+      "observation": "469-04",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "af2a454758c6a2c4",
+      "effective": true,
+      "minus": -81988.48943999992,
+      "plus": 0
+    },
+    {
       "observation": "469-05",
       "element": "ミハラ skill1.effects[0]",
-      "key": "ad800313e62dbc04",
+      "key": "98bcfee79dc0fd06",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7851,7 +7867,7 @@
     {
       "observation": "469-07",
       "element": "ミハラ skill1.effects[0]",
-      "key": "84f2ae287dca2251",
+      "key": "a88b8eca9c4da7bf",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7875,7 +7891,7 @@
     {
       "observation": "470-02",
       "element": "ミハラ skill1.effects[0]",
-      "key": "f353693de243518c",
+      "key": "fc35c81127899a7e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7899,7 +7915,7 @@
     {
       "observation": "470-05",
       "element": "ミハラ skill1.effects[0]",
-      "key": "f88cc1d691effe07",
+      "key": "20b1b1a0b95afe89",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7907,7 +7923,7 @@
     {
       "observation": "470-07",
       "element": "ミハラ skill1.effects[0]",
-      "key": "cf90f6918f9a2352",
+      "key": "3924383d1644db48",
       "effective": false,
       "minus": 0,
       "plus": 0

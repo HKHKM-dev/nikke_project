@@ -4058,12 +4058,12 @@
   - 観測値: 469-01、469-02、469-03、469-04、469-05、469-06、469-07、469-08、470-01、470-02、470-03、470-04、470-05、470-06、470-07、470-08
   - 結論: C-0566、C-0563、C-0564、C-0565、C-0575
   - 予測（2026-10-16、commit ab7e648）との比べ:
-    - mihara-additional-hits（skillHitCount）: 実測 9（469-02）。H1 4（-5、**許容外**）
+    - mihara-additional-hits（skillHitCount）: 実測なし。H1 4
     - mihara-burst-skill-1（burstHitDamage）: 実測 379,353（470-03）。H1 379,352.268（-0.732、許容内）
     - mihara-burst-skill-2（burstHitDamage）: 実測 438,441（470-04）。H1 438,441.12（+0.12、許容内）
-    - mihara-additional-1（skillHitDamage）: 実測 438,441（469-05）。H1 292,294.08（-146,146.92、**許容外**）
+    - mihara-additional-1（skillHitDamage）: 実測なし。H1 292,294.08
     - full-bursts（fullBurstCount）: 実測 5（469-06）。H1 5（+0、許容内）
-    - 許容内の指標: H1 3/5。合う仮説は無い
+    - 許容内の指標: H1 3/3。合う仮説は H1 だけ
 - **[V-0433](../records/verifications/V-0433-enemy-defense-down.md)** 敵の防御力▼の効き方（ルドミラ単騎の録画 305・306 の読み直し）
   - 問い: ルドミラ（190）の S1 の「最後の弾丸が命中した時、対象に防御力 X%▼（10 秒）」は、ダメージの式の防御力をどう下げるか（防御力 × (1 − X) を引くか）。いつから付き、いつ切れるか
   - 話題: スキル・キャラ固有・日付: 2026-10-16・状態: 完了・Stage: plan/design-skill-stage2.md（2 段目の段 2）

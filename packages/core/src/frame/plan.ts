@@ -361,7 +361,8 @@ export function planSkillHits(
       const delay = effect.delayFrames ?? 0;
       const pre = delay === 0 && isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
       // ミハラのバースト編: 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（分かれたヒットと同じ）
-      if (sequential && effect.perBurstHit === true) throw new RangeError('a sequential burst cannot have perBurstHit damage');
+      if (sequential && effect.perBurstHit === true)
+        throw new RangeError('a sequential burst cannot have perBurstHit damage');
       // ペルソナ編（plan/design-persona.md 3.3 節）: 「〈状態名〉が適用された時」は、その状態がこの枠に付いたフレーム
       // （名前の付いた状態の語彙編: 時刻表の applications。plan/design-named-state.md 5.3 節）
       const fires = isResolvedApplied(effect.trigger)
