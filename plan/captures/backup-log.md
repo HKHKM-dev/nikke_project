@@ -265,5 +265,6 @@
 - 2026-10-17 19:59 録画 473（ミサト + アスカ）: `range/20261017-473_smg+ar_misato+asuka-idle.mp4` を同期（E: と I: で sha256 が一致）。
 
 2026-10-17 に、録画 465・466 の証拠フレーム（`frames/465_f*.jpg`・`frames/466_f*.jpg`。V-0434）を PowerShell の robocopy で手で同期した（E: と I: で sha256 が一致）。
+
 - 2026-10-17 20:14 録画 474（マナ + アスカ）: `range/20261017-474_ar+ar_mana+asuka_asuka-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-17 20:15 録画 475（マナ + アスカ）: `range/20261017-475_ar+ar_mana+asuka_asuka-control.mp4` を同期（E: と I: で sha256 が一致）。
