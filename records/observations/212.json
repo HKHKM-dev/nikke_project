@@ -207,5 +207,42 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "212-08",
+    "recording": "212",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 72664,
+    "description": "2 回目のフルバースト（マナが III を撃った回）の中のマナの通常攻撃の 1 ヒット（胴体・会心なし・距離なし）。S2 の攻撃力▲・攻撃ダメージ▲が乗る（1 回目のフルバーストの後にマターシグマが付き直った）。V-0434 の読み直し",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "III の発動 f3690（212-06 の注）の後の f3740〜4250 で、マナだけの増分は 72,664 が 32 回・96,885 が 4 回・121,106 が 23 回・145,328 が 5 回。マナの値はどれも S1 と S2 の▲の単位 48,442.53 の格子（1.5 倍以上）に乗り、S1 だけの単位 28,547.40 の格子に乗る増分は 0。3〜5 回目（f6117〜6627・8494〜9004・10872〜11382）も同じく、どれも S2 の▲ありの格子だけ（1 回目は 212-02）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [3740, 4250]
+    }
   }
 ]

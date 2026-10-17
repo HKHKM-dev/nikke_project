@@ -1,0 +1,357 @@
+[
+  {
+    "id": "465-01",
+    "recording": "465",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 37112,
+    "description": "マナ（操作）の通常攻撃の 1 ヒット（胴体・会心なし・距離あり）。1 回目と 2 回目のフルバーストの間。S1 の攻撃力▲だけが乗る（録画 212 の `212-01` と同じ値）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1800〜3500 にマナだけの増分で 33 回。サンと同じフレームに当たった増分は、サンの格子を引くと同じ値になる。HUD の増分（15 万未満）を「マナの格子 + サンの格子」に分けた。マナの格子は S1 だけの単位 28,547.40（距離なし・会心なし）か、S1 と S2 の▲の単位 48,442.53 に、倍率グループ（1 + 距離 0.3 + 会心 0.5 + コア 1 + フルバースト 0.5）を掛けて丸めた値。サンの格子は単位 9,972.64 と、攻撃力▲が乗ったらしい 10,881（サンの S2。サンの値だけに効く）。どの増分も、格子の組み合わせ 1 通りにだけ乗った（両方の格子に乗る増分は無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [1800, 3500]
+    }
+  },
+  {
+    "id": "465-02",
+    "recording": "465",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 87197,
+    "description": "1 回目のフルバースト（サンが III を撃ち、マナは撃たない）の中のマナの通常攻撃の 1 ヒット（胴体・会心なし・距離あり）。S2 の攻撃力▲・攻撃ダメージ▲が乗る（戦闘開始時のマターシグマ。録画 212 の `212-02` と同じ値）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "III の発動の後の f1247〜1757 で、マナだけの増分は 87,197 が 8 回・111,418 が 3 回・135,639 が 4 回。マナの値を含む増分 66 回が、どれも S2 の▲ありの格子に乗り、S1 だけの格子に乗る増分は 0。HUD の増分（15 万未満）を「マナの格子 + サンの格子」に分けた。マナの格子は S1 だけの単位 28,547.40（距離なし・会心なし）か、S1 と S2 の▲の単位 48,442.53 に、倍率グループ（1 + 距離 0.3 + 会心 0.5 + コア 1 + フルバースト 0.5）を掛けて丸めた値。サンの格子は単位 9,972.64 と、攻撃力▲が乗ったらしい 10,881（サンの S2。サンの値だけに効く）。どの増分も、格子の組み合わせ 1 通りにだけ乗った（両方の格子に乗る増分は無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [1247, 1757]
+    }
+  },
+  {
+    "id": "465-03",
+    "recording": "465",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 42821,
+    "description": "2 回目のフルバースト（サンが III を撃ち、マナは撃たない）の中のマナの通常攻撃の 1 ヒット（胴体・会心なし・距離なし）。S2 の▲が乗らない（乗れば 72,664）。的は距離ボーナスの外",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "III の発動の後の f3624〜4134 で、マナだけの増分は 42,821 が 35 回・57,095 が 7 回・71,369 が 32 回・85,642 が 4 回。マナの値を含む増分 78 回が、どれも S1 だけの単位の格子（1.5 倍以上。フルバーストの +0.5 が乗り、1.0 倍・1.3 倍は無い）に乗り、S2 の▲ありの格子に乗る増分は 0。HUD の増分（15 万未満）を「マナの格子 + サンの格子」に分けた。マナの格子は S1 だけの単位 28,547.40（距離なし・会心なし）か、S1 と S2 の▲の単位 48,442.53 に、倍率グループ（1 + 距離 0.3 + 会心 0.5 + コア 1 + フルバースト 0.5）を掛けて丸めた値。サンの格子は単位 9,972.64 と、攻撃力▲が乗ったらしい 10,881（サンの S2。サンの値だけに効く）。どの増分も、格子の組み合わせ 1 通りにだけ乗った（両方の格子に乗る増分は無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [3624, 4134]
+    }
+  },
+  {
+    "id": "465-04",
+    "recording": "465",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 42821,
+    "description": "3 回目のフルバースト（サンが III を撃ち、マナは撃たない）の中のマナの通常攻撃の 1 ヒット（胴体・会心なし・距離なし）。S2 の▲が乗らない（乗れば 72,664）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "III の発動の後の f6002〜6512 で、マナだけの増分は 42,821 が 44 回・57,095 が 11 回・71,369 が 3 回・85,642 が 2 回。マナの値を含む増分 60 回が、どれも S1 だけの単位の格子（1.5 倍以上。フルバーストの +0.5 が乗り、1.0 倍・1.3 倍は無い）に乗り、S2 の▲ありの格子に乗る増分は 0。HUD の増分（15 万未満）を「マナの格子 + サンの格子」に分けた。マナの格子は S1 だけの単位 28,547.40（距離なし・会心なし）か、S1 と S2 の▲の単位 48,442.53 に、倍率グループ（1 + 距離 0.3 + 会心 0.5 + コア 1 + フルバースト 0.5）を掛けて丸めた値。サンの格子は単位 9,972.64 と、攻撃力▲が乗ったらしい 10,881（サンの S2。サンの値だけに効く）。どの増分も、格子の組み合わせ 1 通りにだけ乗った（両方の格子に乗る増分は無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 5300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [6002, 6512]
+    }
+  },
+  {
+    "id": "465-05",
+    "recording": "465",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 51385,
+    "description": "4 回目のフルバースト（サンが III を撃ち、マナは撃たない）の中のマナの通常攻撃の 1 ヒット（胴体・会心なし・距離あり）。S2 の▲が乗らない（乗れば 87,197）。予測ファイル V-0434 の mana-hit-fb2 と同じ値（窓は 4 回目）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "III の発動の後の f8392〜8902 で、マナだけの増分は 51,385 が 43 回・65,659 が 9 回・79,933 が 2 回。マナの値を含む増分 77 回が、どれも S1 だけの単位の格子（1.5 倍以上。フルバーストの +0.5 が乗り、1.0 倍・1.3 倍は無い）に乗り、S2 の▲ありの格子に乗る増分は 0。HUD の増分（15 万未満）を「マナの格子 + サンの格子」に分けた。マナの格子は S1 だけの単位 28,547.40（距離なし・会心なし）か、S1 と S2 の▲の単位 48,442.53 に、倍率グループ（1 + 距離 0.3 + 会心 0.5 + コア 1 + フルバースト 0.5）を掛けて丸めた値。サンの格子は単位 9,972.64 と、攻撃力▲が乗ったらしい 10,881（サンの S2。サンの値だけに効く）。どの増分も、格子の組み合わせ 1 通りにだけ乗った（両方の格子に乗る増分は無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 7600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [8392, 8902]
+    }
+  },
+  {
+    "id": "465-06",
+    "recording": "465",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 42821,
+    "description": "5 回目のフルバースト（サンが III を撃ち、マナは撃たない）の中のマナの通常攻撃の 1 ヒット（胴体・会心なし・距離なし）。S2 の▲が乗らない（乗れば 72,664）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "III の発動の後の f10768〜11278 で、マナだけの増分は 42,821 が 30 回・57,095 が 2 回・71,369 が 16 回・85,642 が 5 回。マナの値を含む増分 64 回が、どれも S1 だけの単位の格子（1.5 倍以上。フルバーストの +0.5 が乗り、1.0 倍・1.3 倍は無い）に乗り、S2 の▲ありの格子に乗る増分は 0。HUD の増分（15 万未満）を「マナの格子 + サンの格子」に分けた。マナの格子は S1 だけの単位 28,547.40（距離なし・会心なし）か、S1 と S2 の▲の単位 48,442.53 に、倍率グループ（1 + 距離 0.3 + 会心 0.5 + コア 1 + フルバースト 0.5）を掛けて丸めた値。サンの格子は単位 9,972.64 と、攻撃力▲が乗ったらしい 10,881（サンの S2。サンの値だけに効く）。どの増分も、格子の組み合わせ 1 通りにだけ乗った（両方の格子に乗る増分は無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 10000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [10768, 11278]
+    }
+  },
+  {
+    "id": "465-07",
+    "recording": "465",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "interval",
+    "use": "compare",
+    "value": 253,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I の六角形に替わるまでのフレーム数（`043-07` と同じ読み方）。マターシグマ（ゲージ速度▲）はどちらの仮説でも付いている",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode series・ffmpeg で右のバースト欄を 1 フレームずつ切り出して目で見た",
+      "note": "戦闘開始は f829（+89f の変わり目）、六角形が出たのは f1082。その前に止まりは無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge",
+      "frames": [829, 1082]
+    }
+  },
+  {
+    "id": "465-08",
+    "recording": "465",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "interval",
+    "use": "compare",
+    "value": 1328,
+    "unit": "f",
+    "description": "戦闘開始から、2 回目に BURST バーが消えて I の六角形に替わるまでのゲーム内のフレーム数（動画のフレーム数から、1 回目のフルバーストの入りの止まりと I・II の発動の止まりを引いた）。マターシグマが付いていればマナのゲージに 1.704 が掛かって早くなる",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・ffmpeg で右のバースト欄を 1 フレームずつ切り出して目で見た・tools/captures/timer.ts --mode stalls",
+      "note": "六角形が出たのは f2181（f2180 はまだ BURST バー。証拠フレーム frames/465_f2180_gauge-before-full2.jpg・frames/465_f2181_gauge-full2.jpg）。戦闘開始 f829 から動画で 1352f。止まりは、モデルの videoFrameOf と同じく、フルバーストの入り 22f（FULL_BURST_ENTRY_STOP_VIDEO_FRAMES。C-0069）と I・II の発動 1f ずつ（C-0261・C-0289）の 24f を引いた。timer.ts --mode stalls で読んだ 1 回目のフルバーストをまたぐ止まりは 23.44f で、引いた値は 1f 以内で同じ。gauge.ts --mode events の 2 回目の「バー消失」（f2040 ごろ）は爆発のエフェクトの読み違い（その時のバーは 75% ほど）"
+    },
+    "evidence": ["frames/465_f2180_gauge-before-full2.jpg", "frames/465_f2181_gauge-full2.jpg"],
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge",
+      "frames": [829, 2181]
+    }
+  },
+  {
+    "id": "465-09",
+    "recording": "465",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": [4, 3, 1, 4, 3, 1, 4, 3, 1, 4, 3, 1, 4, 3, 1],
+    "unit": "枠",
+    "description": "バーストを撃った枠の並び（1 = I-DOLL・サン、3 = デルタ、4 = ラム）。どのフルバーストも III はサンが撃ち、マナ（2）は一度も撃たない",
+    "method": {
+      "tool": "ffmpeg で右のバースト欄を切り出して目で見た・tools/captures/hud.ts --mode jumps",
+      "note": "III の段には、どの回もサン（A。CT の残り 0.15〜0.30 秒）とマナ（S）の顔が並び、サンの CT が明けるとサンが撃った（5 回目は f10686。証拠フレーム frames/465_f10686_fb5-iii.jpg）。マナのバーストの持続ダメージの tick（録画 212 の 2,741,786 など）は無く、HUD の増分の最大は 60 万未満。HUD の最後の値は戦闘履歴のパネルの 4 人の与ダメージの和と一致"
+    },
+    "evidence": ["frames/465_f10686_fb5-iii.jpg"],
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 15
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "465-10",
+    "recording": "465",
+    "source": "V-0434",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": 5,
+    "description": "180 秒のフルバーストの回数（全員 CT 40 秒。C-0022）",
+    "method": {
+      "tool": "ffmpeg で右のバースト欄を切り出して目で見た",
+      "note": "465-09 の III の 5 回"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  }
+]
