@@ -3,7 +3,7 @@
 //   node tools/captures/intake.ts <元ファイル> --id NNN --name <種別内の識別子> [--folder range] [--date YYYY-MM-DD]
 //        [--rid 271,870] [--controlled 1] [--target BigArms --element Fire] [--mode range-3min]
 //        [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."] [--copy] [--no-backup]
-// 命名規約は plan/captures/index.md「命名規約」（<YYYYMMDD>-<番号 3 桁>_<識別子>.mp4。識別子は英小文字・数字・-・_・+）。
+// 命名規約は plan/captures/index.md「命名規約」（<YYYYMMDD>-<番号 3〜4 桁>_<識別子>.mp4。識別子は英小文字・数字・-・_・+）。
 // 日付は --date、無ければ元のファイル名の YYYY-MM-DD、無ければファイルの更新日時。既定は移動（--copy で元を残す）。
 // 最後に、移した録画を Google Drive のバックアップ先（dirs.ts の backupDir()）へ robocopy で同期し、両方の sha256 を突き合わせる
 // （plan/captures/storage.md「バックアップ」）。バックアップ先が無い環境と --no-backup では同期しない。同期に失敗したら終了コード 1。
