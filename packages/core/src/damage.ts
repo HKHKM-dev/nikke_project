@@ -268,6 +268,18 @@ export function baseMaxHpOf(input: { character: CharacterData; growth: GrowthInp
   return input.hpOverride ?? computeStat(input.character, 'hp', input.growth);
 }
 
+/**
+ * 2 段目の段 7（plan/design-skill-stage7.md 1.1 節）: バフ前の防御力。defenceOverride（射撃場スペック固定・育成入力）があればそれ、
+ * 無ければ育成値から算出する（baseMaxHpOf と同じ流儀）
+ */
+export function baseDefenceOf(input: {
+  character: CharacterData;
+  growth: GrowthInput;
+  defenceOverride?: number;
+}): number {
+  return input.defenceOverride ?? computeStat(input.character, 'defence', input.growth);
+}
+
 export function modelNotes(shot: ShotParams): ModelNote[] {
   const notes: ModelNote[] = [];
   const unsupported = (code: string, ja: string, en: string): void => {

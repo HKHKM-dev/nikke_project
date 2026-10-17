@@ -45,9 +45,19 @@ describe('アニス：スター（17）の S2 とバースト', () => {
       ['skill2', 'fullBurstStart', 'allies', 'attackDamage', 'ratio'],
       ['burst', 'burstUse', 'self', 'fixedChargeTime', 'ratio'],
       ['burst', 'burstUse', 'self', 'attackDamage', 'ratio'],
+      ['burst', 'burstUse', 'self', 'defense', 'ratio'],
     ]);
-    [0.3501, 0.9203, 0.34, 0.7, 0.352].forEach((v, i) => expect(timed[i]!.value).toBeCloseTo(v, 12));
+    [0.3501, 0.9203, 0.34, 0.7, 0.352, 0.5501].forEach((v, i) => expect(timed[i]!.value).toBeCloseTo(v, 12));
     expect(timed.every((e) => e.durationFrames === gameSecondsToFrames(10))).toBe(true);
+    // 2 段目の段 7（plan/design-skill-stage7.md 2.1 節）: 発射体爆発ダメージ▲の対象は、自分と、自分より最終防御力が低い味方
+    expect(timed.map((e) => e.targetDefense)).toEqual([
+      undefined,
+      'lowerThanSelf',
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    ]);
   });
 
   it('drops the My Own Star buffs (S2 ATK up, burst Attack Damage up) with another Burst I ally', () => {
@@ -59,6 +69,7 @@ describe('アニス：スター（17）の S2 とバースト', () => {
       'skill2.projectileExplosionDamage',
       'skill2.attackDamage',
       'burst.fixedChargeTime',
+      'burst.defense',
     ]);
   });
 

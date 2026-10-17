@@ -78,6 +78,9 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   sustainedDamage: 'damageValue',
   // 2 段目の段 6 の PR 2: 最大HP▲ は発動者の最終最大HP 基準の攻撃力▲を通して値に効く（notes のときと同じ分類）
   maxHp: 'damageValue',
+  // 2 段目の段 7: 防御力▲ は、対象の絞り込み（自分より最終防御力が低い味方）を通して値に効く（防御力▲ だけの効果は、経路 defense の
+  // 間接の要素と同じに見る。notRelevantReason）
+  defense: 'damageValue',
 };
 
 const KIND_CLASS: Record<string, ElementClass> = {
@@ -140,6 +143,8 @@ export type MinimalElement = {
     trigger?: string;
     targetWeapon?: string;
     targetElement?: string;
+    /** 2 段目の段 7: 対象の絞り込み「自分より最終防御力が低い味方」（防御力▲ の読む側） */
+    targetDefense?: string;
   };
   /** 効果のスロット */
   skillSlot?: SkillSlot;
@@ -191,6 +196,7 @@ function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<Minima
     ...(trigger !== undefined ? { trigger } : {}),
     ...(typeof v.targetWeapon === 'string' ? { targetWeapon: v.targetWeapon } : {}),
     ...(typeof v.targetElement === 'string' ? { targetElement: v.targetElement } : {}),
+    ...(typeof v.targetDefense === 'string' ? { targetDefense: v.targetDefense } : {}),
   };
 }
 
@@ -502,6 +508,14 @@ function elementsOfTeam(recording: RecordingEntry, ctx: RelevanceContext): Minim
   return elements;
 }
 
+/** 2 段目の段 7: 防御力▲ だけの効果（状態の中身が防御力▲ だけの付与も）。与ダメージの式を読まない */
+function isDefenseOnly(element: MinimalElement): boolean {
+  const shape = element.shape;
+  if (element.type !== 'effect' || shape === undefined) return false;
+  if (shape.stat !== undefined) return shape.stat === 'defense';
+  return shape.stats !== undefined && shape.stats.length > 0 && shape.stats.every((stat) => stat === 'defense');
+}
+
 /**
  * 静的な判定（4.2 節）。効かないなら理由、効きうるなら undefined。readerExcluded は、間接の要素の読む側のうち、この観測値に効かないと
  * 分かっているもの（人の判断の印・感度で効かない。relevanceOf が渡す）
@@ -515,17 +529,22 @@ export function notRelevantReason(
 ): string | undefined {
   if (element.type === 'noDefinition') return undefined;
   // 分類の設計書の論点 7（plan/design-indirect-notes.md 2 節）: 間接の要素は、同じ経路を読む要素が編成にいて、その要素がこの録画で起きえて
-  // この観測値に効きうる時だけ効きうる（効く分類と対象は、読む側で見る）
-  if (element.path !== undefined) {
-    const path = element.path;
+  // この観測値に効きうる時だけ効きうる（効く分類と対象は、読む側で見る）。2 段目の段 7（plan/design-skill-stage7.md 1.2 節）: 防御力▲ の
+  // 効果も与ダメージの式を読まず、防御力を読む側を通してだけ値に効くので、経路 defense の間接の要素と同じに見る
+  const path = element.path ?? (isDefenseOnly(element) ? 'defense' : undefined);
+  if (path !== undefined) {
     const readers = elementsOfTeam(recording, ctx).filter((r) => r.reads?.includes(path));
     const name = INDIRECT_PATH_NAMES[path].ja;
     if (readers.length === 0) return `${name}を読む味方がいない`;
+    const observed = observedSlots(o);
     const effective = readers.some(
       (r) =>
         !readerExcluded(r) &&
         impossibleReason(r, recording) === undefined &&
-        notRelevantReason(r, o, recording, ctx) === undefined,
+        notRelevantReason(r, o, recording, ctx) === undefined &&
+        // 2 段目の段 7（同 1.4 節）: 「自分と自分より最終防御力が低い味方」の読む側は発動者をいつも対象にするので、防御力の比べで値が
+        // 変わりうるのは、観測した枠のうち発動者でない枠（観測した枠が分からなければ効きうるとみる）
+        (r.shape?.targetDefense === undefined || observed === undefined || observed.some((slot) => slot !== r.slot)),
     );
     return effective ? undefined : `${name}を読む効果がこの観測値に効かない`;
   }

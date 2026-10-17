@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   formatAppliedAmount,
+  formatEffectSource,
   formatRemoveState,
   formatStateGrant,
   formatTrigger,
@@ -76,5 +77,24 @@ describe('効果の値の表示', () => {
       appliedAmount: 109605.5145,
     };
     expect(formatAppliedAmount(effect)).toBe('攻撃力 +109,606（発動者の最終最大HP の 4.05%）');
+  });
+});
+
+// 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 対象の絞り込み「自分と自分より最終防御力が低い味方」
+describe('効果の出どころの表示', () => {
+  it('writes the narrowing by final DEF', () => {
+    const effect: AppliedEffect = {
+      source: { resourceId: 17, skill: 'skill2', name: { ja: 'S2', en: 'S2' } },
+      target: 'allies',
+      stat: 'projectileExplosionDamage',
+      scaling: 'ratio',
+      value: 0.9203,
+      targetDefense: 'lowerThanSelf',
+      sourceSlotIndex: 1,
+      appliedAmount: 0.9203,
+    };
+    expect(formatEffectSource(effect, 'アニス：スター')).toBe(
+      '枠 2 アニス：スター スキル 2（自分と自分より最終防御力が低い味方）',
+    );
   });
 });

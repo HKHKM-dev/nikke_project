@@ -2,6 +2,7 @@ import {
   computeCombatAttack,
   computeCombatStat,
   computeFixedSpecAttack,
+  computeFixedSpecDefence,
   computeFixedSpecHp,
   computeTeamDamage,
   fixedSpecGrowth,
@@ -163,6 +164,8 @@ export function App() {
             // 2 段目の段 6: 最終最大HP 基準の効果のための、スペック固定の最大HP と、HP の割合の想定
             hpOverride: computeFixedSpecHp(character),
             hpRatio: slot.hpRatio,
+            // 2 段目の段 7: 最終防御力の比べ（自分より最終防御力が低い味方）のための、スペック固定の防御力
+            defenceOverride: computeFixedSpecDefence(character),
             skills: slotSkills,
           };
         }
@@ -173,16 +176,22 @@ export function App() {
         const treasurePhase = effectiveTreasurePhase(slot, character);
         let attackOverride: number | undefined;
         let hpOverride: number | undefined;
+        let defenceOverride: number | undefined;
         let buildEffects: BuildEffect[] | undefined;
         if (masters && (!isEmptyBuild(slot.build) || treasurePhase > 0)) {
           try {
             attackOverride = computeCombatAttack(character, growth, slot.build, masters, { treasurePhase }).attack;
             // 2 段目の段 6: 同じ育成入力から戦闘中の最大HP（バフ前）も作る（最終最大HP 基準の効果が読む）
             hpOverride = computeCombatStat(character, growth, slot.build, masters, 'hp', { treasurePhase }).value;
+            // 2 段目の段 7: 防御力（バフ前）も（最終防御力の比べが読む）
+            defenceOverride = computeCombatStat(character, growth, slot.build, masters, 'defence', {
+              treasurePhase,
+            }).value;
             buildEffects = resolveBuildEffects(character, slot.build, masters, { treasurePhase }).effects;
           } catch {
             attackOverride = undefined;
             hpOverride = undefined;
+            defenceOverride = undefined;
             buildEffects = undefined;
           }
         }
@@ -194,6 +203,7 @@ export function App() {
           attackOverride,
           hpOverride,
           hpRatio: slot.hpRatio,
+          defenceOverride,
           buildEffects,
           skills: slotSkills,
         };

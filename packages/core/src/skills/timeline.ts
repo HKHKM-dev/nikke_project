@@ -61,10 +61,15 @@ export type TimelineSlot = {
   /** 発動者基準の固定加算に使うバフ前攻撃力（damage.ts の baseAttackOf と同じ値） */
   casterBaseAttack: number;
   /**
-   * 2 段目の段 6（plan/design-skill-stage6.md 1.2・1.3 節）: 発動者の最終最大HP（casterFinalMaxHp の固定加算に使う）。最大HP を
-   * 動かす効果がまだモデルに無いので、バフ前の最大HP（damage.ts の baseMaxHpOf）。省略して casterFinalMaxHp の効果を配ると RangeError
+   * 2 段目の段 6（plan/design-skill-stage6.md 1.2・1.3・2.4 節）: 発動者のバフ前の最大HP（damage.ts の baseMaxHpOf）。casterFinalMaxHp の
+   * 固定加算は、これに最大HP▲ の件を足した最終最大HP を、区間の頭・順位のフレームで読む。省略して casterFinalMaxHp の効果を配ると RangeError
    */
   casterMaxHp?: number;
+  /**
+   * 2 段目の段 7（plan/design-skill-stage7.md 1.2 節）: 枠のバフ前の防御力（damage.ts の baseDefenceOf）。最終防御力（これに防御力▲ の
+   * 件を足した値）は、対象の絞り込み「自分より最終防御力が低い味方」が発火のフレームで比べる。省略して比べると RangeError
+   */
+  baseDefence?: number;
   /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。自分だけに効く常時バフ。省略は無し */
   buildEffects?: readonly BuildEffect[];
   /** Stage 15: 命中率（射撃場 = 1 の相対値。省略 1）。1 パス目のゲージと normalHit の回数に使う */

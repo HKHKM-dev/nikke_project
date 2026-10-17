@@ -6,9 +6,9 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 60・効果 229（根拠あり 220）・notes 233（根拠あり 73）
+件数: キャラ 60・効果 230（根拠あり 221）・notes 232（根拠あり 73）
 
-notes の種類: 未対応 122・前提の外 27・計算に無関係 28・補足 10・間接 46
+notes の種類: 未対応 122・前提の外 27・計算に無関係 28・補足 10・間接 45
 
 スロット: supported 89・partial 16・unsupported 57・noEffect 33
 
@@ -56,7 +56,7 @@ notes の種類: 未対応 122・前提の外 27・計算に無関係 28・補�
   - notes[2] 補足: 部隊構成による効果の「みんなの星消去」「私だけの星消去」と、フルバーストタイム終了時の付け直しは書かない。編成で決まる入れ替えで、戦闘中は片方しか付かず、付け直しは持続の状態を延ばすだけなので、値は変わらない（plan/design-skill-stage1.md 2.1 節）: C-0189（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・attack: C-0204（確定）、C-0203（確定）、C-0555（確定）
-  - effects[1] timed・fullBurstStart・projectileExplosionDamage（読む: 防御力）: C-0205（確定）、C-0210（仮説）
+  - effects[1] timed・fullBurstStart・projectileExplosionDamage（読む: 防御力）: C-0205（確定）、C-0586（仮説）
   - effects[2] timed・fullBurstStart・attackDamage: C-0204（確定）
   - effects[3] heal・fullChargeShot: C-0576（確定）
 - **burst**: partial
@@ -64,11 +64,11 @@ notes の種類: 未対応 122・前提の外 27・計算に無関係 28・補�
   - effects[1] timed・burstUse・fixedChargeTime: C-0214（確定）、C-0520（仮説）
   - effects[2] timed・burstUse・attackDamage: C-0209（確定）、C-0203（確定）、C-0555（確定）、C-0520（仮説）
   - effects[3] state・burstUse・shootingStar: C-0211（確定）
+  - effects[4] timed・burstUse・defense: C-0586（仮説）
   - notes[0] 未対応: シューティングスターのコアに当たる割合は射撃場の的でしか測っていない。的の表に行の無い敵では、モデルのシューティングスターはコアに当たらない（plan/design-anis-star-core-path.md 3.2 節）: C-0466（確定）
   - notes[1] 未対応: コアダメージ▲がシューティングスターのコアに乗るかは確かめていない。モデルは乗せない（plan/design-anis-star-core-path.md 7 節の論点 4）: 根拠なし
   - notes[2] 未対応: 爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0424。単騎の録画 320・321 で同じ遠の区間の窓の中と外を比べても差は見分けられず、遠の割合は録画どうしで食い違う（C-0425。V-0297）。0.1〜0.2 程度の差は否定できない。plan/design-anis-star-core-path.md 11 節）: C-0424（確定）、C-0425（仮説）
-  - notes[3] 間接（防御力）: 自分の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。S2 の対象「自分より最終防御力が低い味方」の比べを読む。S2 は味方全員が低いとみなす。C-0210）: 根拠なし
-  - notes[4] 間接（HP）: みんなの星のときの味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+  - notes[3] 間接（HP）: みんなの星のときの味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 
 ## 18 ネオン：ビジョン・アイ
 
