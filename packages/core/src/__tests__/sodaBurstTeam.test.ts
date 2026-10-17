@@ -87,12 +87,23 @@ describe('ソーダ：トゥインクルバニーのバースト（ラム + デ�
     expect(attack.end - attack.start).toBe(882);
   });
 
-  it('adds a stack every 3 normal attacks inside each Full Burst (the count restarts at each Full Burst)', () => {
+  it('adds a stack on every 3rd normal attack of the battle that lands inside a Full Burst (V-0443)', () => {
     const shots = plan.shots[S]!.frames;
-    for (const w of plan.schedule!.fullBurstWindows) {
-      const inside = shots.filter((f) => w.start <= f && f < w.end).length;
-      expect(chipsAt(plan, w.end) - chipsAt(plan, w.start)).toBe(Math.floor(inside / 3));
+    const windows = plan.schedule!.fullBurstWindows;
+    // 通し番号が 3 の倍数の発のうち、窓の中のもの（窓の外の回は発火せずに過ぎる）
+    const third = shots.filter((_, i) => (i + 1) % 3 === 0);
+    for (const w of windows) {
+      const fires = third.filter((f) => w.start <= f && f < w.end).length;
+      expect(chipsAt(plan, w.end) - chipsAt(plan, w.start)).toBe(fires);
     }
+    // 窓の外で 3 の倍数に届く回があり、フルバーストごとに数え直す読みとは数が変わる回がある
+    expect(third.some((f) => !windows.some((w) => w.start <= f && f < w.end))).toBe(true);
+    expect(
+      windows.some((w) => {
+        const inside = shots.filter((f) => w.start <= f && f < w.end).length;
+        return chipsAt(plan, w.end) - chipsAt(plan, w.start) !== Math.floor(inside / 3);
+      }),
+    ).toBe(true);
   });
 
   it('deals the burst skill damage on every burst', () => {
@@ -148,15 +159,18 @@ describe('スタックの指標（records/observations.ts。V-0437 の比べ）'
     expect(expected.slice(0, 3)).toEqual([-17, -17, -17]);
   });
 
-  it('gives zero gain residues when the count restarts at each Full Burst, and not when it carries over', () => {
+  it('gives zero gain residues when the count restarts at each Full Burst, and not when it counts the whole battle', () => {
     const args = { slot: 3, state: 'goldenChip', every: 3 };
-    expect(metric('fullBurstStackGainResidues', args)).toEqual([0, 0, 0, 0, 0]);
+    // いまの定義（戦闘中ずっと数える。V-0443）は、窓の外の発の分だけ余りが出る回がある
+    expect((metric('fullBurstStackGainResidues', args) as number[]).some((r) => r !== 0)).toBe(true);
+    // フルバーストごとに数え直す読み（V-0437 の H1。V-0443 で棄却）なら余りは 0 だけ
     const raw = structuredClone(rawDefinition(SODA));
     const grant = raw.skills.skill1!.effects[1]!;
-    raw.skills.skill1!.effects[1] = { ...grant, trigger: { ...(grant.trigger as object), reset: 'never' } };
-    const carried = recordingTeam(raw);
-    const residues = metric('fullBurstStackGainResidues', args, runSimulation(carried), carried) as number[];
-    expect(residues.some((r) => r !== 0)).toBe(true);
+    const { firesDuring: _, ...rest } = grant.trigger as Record<string, unknown>;
+    raw.skills.skill1!.effects[1] = { ...grant, trigger: { ...rest, during: 'fullBurst', reset: 'fullBurstStart' } };
+    const restarted = recordingTeam(raw);
+    const residues = metric('fullBurstStackGainResidues', args, runSimulation(restarted), restarted) as number[];
+    expect(residues).toEqual([0, 0, 0, 0, 0]);
   });
 });
 

@@ -410,6 +410,12 @@ export type ShotCountTrigger = {
   /** 同 2.1 節: during を書くときは必須。fullBurstStart = フルバーストが始まるフレームで 0 に戻す、never = 戻さない */
   reset?: ShotCountReset;
   /**
+   * ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 'fullBurst' なら、射撃は窓の外も含めて戦闘中ずっと数え、N の倍数に届いた発が
+   * フルバーストの窓（[start, end)）の中のときだけ発火する（窓の外で届いた回は発火せずに過ぎる）。during・reset・stacksRef・
+   * chance とは組み合わせない。書ける効果は during と同じ（damage・timed・付与）
+   */
+  firesDuring?: ShotCountWindow;
+  /**
    * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 「〜した時、p% の確率で」の p（%。0 より大きく 100 以下の即値）。
    * 1 発ごとに確率 p × その発の回数の量（normalShot は 1、normalHit はその発の弾丸命中率）で付く。モデルは期待値で持ち、
    * 窓の値を「付いている確率 × 値」にする（skills/chance.ts）。count は normalShot か normalHit、timed にだけ書ける。
@@ -1629,7 +1635,11 @@ function parseTrigger(
   }
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
-      if (!['count', 'every', 'everyRef', 'stacksRef', 'during', 'reset', 'chance', 'chanceRef'].includes(key)) {
+      if (
+        !['count', 'every', 'everyRef', 'stacksRef', 'during', 'reset', 'firesDuring', 'chance', 'chanceRef'].includes(
+          key,
+        )
+      ) {
         fail(`${path}.${key}`, 'unknown field');
       }
     }
@@ -1653,6 +1663,19 @@ function parseTrigger(
       if (trigger.count === 'lastShot') fail(`${path}.during`, 'during cannot be used with lastShot');
       if (trigger.count === 'weaponChangeShot') fail(`${path}.during`, 'during cannot be used with weaponChangeShot');
     }
+    // ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけフルバーストの窓の中に限る
+    if (v.firesDuring !== undefined) {
+      if (!allowDuring) {
+        fail(`${path}.firesDuring`, 'a firing window (firesDuring) is only allowed in damage, timed and state');
+      }
+      if (v.during !== undefined) fail(`${path}.firesDuring`, 'firesDuring cannot be used with during');
+      trigger.firesDuring = oneOf(SHOT_COUNT_WINDOWS, v.firesDuring, `${path}.firesDuring`);
+      if (trigger.stacksRef !== undefined) fail(`${path}.firesDuring`, 'firesDuring cannot be used with stacksRef');
+      if (trigger.count === 'lastShot') fail(`${path}.firesDuring`, 'firesDuring cannot be used with lastShot');
+      if (trigger.count === 'weaponChangeShot') {
+        fail(`${path}.firesDuring`, 'firesDuring cannot be used with weaponChangeShot');
+      }
+    }
     // ソルジャーE.G. 編: 確率のきっかけ（plan/design-soldier-eg.md 3.1 節）
     if (v.chance !== undefined || v.chanceRef !== undefined) {
       if (!allowChance) fail(`${path}.chance`, 'a chance trigger (chance / chanceRef) is only allowed in timed');
@@ -1663,7 +1686,7 @@ function parseTrigger(
           `a chance trigger needs count ${CHANCE_COUNT_KINDS.join(' or ')}, got "${trigger.count}"`,
         );
       }
-      for (const key of ['every', 'everyRef', 'stacksRef', 'during'] as const) {
+      for (const key of ['every', 'everyRef', 'stacksRef', 'during', 'firesDuring'] as const) {
         if (v[key] !== undefined) fail(`${path}.${key}`, `a chance trigger cannot be combined with ${key}`);
       }
       if (v.chance !== undefined) {
@@ -2362,9 +2385,14 @@ function parseDamageTrigger(v: Json, path: string): EffectTrigger {
   return parseAppliedTrigger(v, path) ?? parseTrigger(v, path, true, true);
 }
 
-/** クルミ S2 編: 回数トリガーに数える窓（during）があるか */
+/** クルミ S2 編: 回数トリガーに数える窓（during）か、発火の窓（firesDuring。V-0443）があるか */
 export function hasCountingWindow(trigger: EffectTrigger): boolean {
-  return typeof trigger === 'object' && 'count' in trigger && 'during' in trigger && trigger.during !== undefined;
+  return (
+    typeof trigger === 'object' &&
+    'count' in trigger &&
+    (('during' in trigger && trigger.during !== undefined) ||
+      ('firesDuring' in trigger && trigger.firesDuring !== undefined))
+  );
 }
 
 /**

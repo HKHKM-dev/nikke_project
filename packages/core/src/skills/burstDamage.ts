@@ -323,7 +323,8 @@ export function isPerShotTrigger(trigger: ResolvedTrigger): boolean {
     'every' in trigger &&
     trigger.every === 1 &&
     trigger.count !== 'lastShot' &&
-    trigger.during === undefined
+    trigger.during === undefined &&
+    trigger.firesDuring === undefined
   );
 }
 

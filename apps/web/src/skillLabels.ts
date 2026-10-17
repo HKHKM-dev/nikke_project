@@ -115,6 +115,8 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
     if (trigger.during === 'fullBurst') {
       return `フルバースト中の${base}（${trigger.reset === 'fullBurstStart' ? 'フルバーストごとに数え直す' : '持ち越す'}）`;
     }
+    // ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけフルバースト中
+    if (trigger.firesDuring === 'fullBurst') return `${base}（フルバーストの外も数え、付くのはフルバースト中だけ）`;
     return base;
   }
   const what = trigger.count === 'burstUse' ? 'バースト使用' : 'フルバースト';
