@@ -623,9 +623,22 @@ export function conditionReadsItems(condition: EffectCondition | undefined): boo
  * 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 自分の状態の条件。present: true は「自分が〈状態〉なら」、false は
  * 「自分が〈状態〉でなければ」。件の出どころは問わない。JSON は "selfState": "<id>"（付いていれば）か
  * { "state": "<id>", "present": false }。静的な状態を見るものは編成の段（skills/composition.ts の resolveSelfState）で決まり、
- * 時間で変わる状態は timed・付与なら段 1.5（skills/holders.ts）、damage なら frame/plan.ts で件を見る
+ * 時間で変わる状態は timed・付与なら段 1.5（skills/holders.ts）、damage なら frame/plan.ts で件を見る。
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: stacks は「〈名前〉N スタック以上なら」（N）と「フルスタック状態なら」（'full'）。
+ * そのフレームのその状態の件のスタックの段の最大を見る（静的な状態は 1 段）。stacksRef は N の description_value_NN（解決で stacks に
+ * する）。present は true（「でなければ」とは組み合わせない）
  */
-export type SelfStateCondition = { state: NamedStateId; present: boolean };
+export type SelfStateCondition = {
+  state: NamedStateId;
+  present: boolean;
+  stacks?: 'full' | number;
+  stacksRef?: number;
+};
+
+/** 2 段目の段 3: スタック数を見る自分の状態の条件か（stacks か stacksRef を持つ） */
+export function isStacksCondition(self: SelfStateCondition | undefined): boolean {
+  return self !== undefined && (self.stacks !== undefined || self.stacksRef !== undefined);
+}
 
 /** 名前の付いた状態の語彙編: 条件のキー */
 export type ConditionKey = keyof EffectCondition;
@@ -1036,7 +1049,9 @@ export type RemoveStateEffect = {
 /**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: 「〈名前〉のスタック量 N 個▲」。発火のフレーム（射撃の回数のきっかけは次のフレーム）に、
  * 持ち主（自分）のその状態に N スタックを足す。上限・維持・中身は、同じ定義のその状態の付与（スタックを持つ。対象は自分）のもの。
- * 減少は、使い手（ソーダ：トゥインクルバニーのバースト）を定義する時に足す
+ * 2 段目の段 3（同 1.5 節）: decrease は「〈名前〉のスタック量 N 個▼」。発火のフレームに効いている段の上から N 段を、次のフレームで
+ * 切る（同じフレームの判定には付いている）。最後の 1 段は残す（V-0437）。減らす先は、足す先と同じ（同じ定義の付与の、自分の件の列）。
+ * 後の付与は減った段から数える
  */
 export type StackChangeEffect = {
   kind: 'stackChange';
@@ -1044,10 +1059,12 @@ export type StackChangeEffect = {
   state: NamedStateId;
   trigger: EffectTrigger;
   target: 'self';
-  /** 足すスタックの数（即値）。amountRef とどちらか 1 つ */
+  /** 足す（減らす）スタックの数（即値）。amountRef とどちらか 1 つ */
   amount?: number;
-  /** 足すスタックの数の description_value_NN */
+  /** 足す（減らす）スタックの数の description_value_NN */
   amountRef?: number;
+  /** 2 段目の段 3: スタック量の減少（▼） */
+  decrease?: true;
   condition?: EffectCondition;
   assumes?: LocalizedText;
 };
@@ -1828,14 +1845,29 @@ function parseCondition(c: Json, path: string, allowed: readonly ConditionKey[])
   return condition;
 }
 
-/** 2 段目の段 1: 自分の状態の条件。"<id>"（付いていれば）か { state, present } */
+/**
+ * 2 段目の段 1: 自分の状態の条件。"<id>"（付いていれば）か { state, present }。
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: { state, stacks: "full" | N }・{ state, stacksRef }（N スタック以上。present は省略か true）
+ */
 function parseSelfStateCondition(v: Json, path: string): SelfStateCondition {
   if (typeof v === 'string') return { state: parseNamedStateId(v, path, 'ally'), present: true };
-  if (!isRecord(v)) fail(path, 'expected a state id or { state, present }');
-  for (const key of Object.keys(v)) if (key !== 'state' && key !== 'present') fail(`${path}.${key}`, 'unknown field');
+  if (!isRecord(v)) fail(path, 'expected a state id or { state, present } or { state, stacks }');
+  for (const key of Object.keys(v)) {
+    if (!['state', 'present', 'stacks', 'stacksRef'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+  }
   const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
-  if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
-  return { state, present: v.present };
+  if (v.stacks === undefined && v.stacksRef === undefined) {
+    if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
+    return { state, present: v.present };
+  }
+  if (v.present !== undefined && v.present !== true) {
+    fail(`${path}.present`, 'a stack count condition cannot be negated (present must be true or omitted)');
+  }
+  if (v.stacks !== undefined && v.stacksRef !== undefined) fail(path, 'expected at most one of stacks and stacksRef');
+  const condition: SelfStateCondition = { state, present: true };
+  if (v.stacksRef !== undefined) condition.stacksRef = parseRef(v.stacksRef, `${path}.stacksRef`);
+  else condition.stacks = v.stacks === 'full' ? 'full' : parsePositiveInt(v.stacks, `${path}.stacks`);
+  return condition;
 }
 
 /** 名前の付いた状態の語彙編: 付与に書けない欄（値の欄は中身に書く） */
@@ -2629,13 +2661,24 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
 }
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加。対象は自分だけ。トリガーと条件は解除と同じ。同じ定義に
- * その状態をスタックで付ける付与が要ること（validateStackChanges）は、定義全体で見る
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増加と減少（decrease）。対象は自分だけ。トリガーと条件は解除と
+ * 同じ。同じ定義にその状態をスタックで付ける付与が要ること（validateStackChanges）は、定義全体で見る
  */
 function parseStackChangeEffect(v: Record<string, Json>, path: string): StackChangeEffect {
   for (const key of Object.keys(v)) {
     if (
-      !['kind', 'state', 'trigger', 'target', 'amount', 'amountRef', 'condition', 'assumes', 'claims'].includes(key)
+      ![
+        'kind',
+        'state',
+        'trigger',
+        'target',
+        'amount',
+        'amountRef',
+        'decrease',
+        'condition',
+        'assumes',
+        'claims',
+      ].includes(key)
     ) {
       fail(`${path}.${key}`, 'unknown field');
     }
@@ -2653,6 +2696,11 @@ function parseStackChangeEffect(v: Record<string, Json>, path: string): StackCha
     fail(path, 'expected exactly one of amount and amountRef');
   if (v.amount !== undefined) effect.amount = parsePositiveInt(v.amount, `${path}.amount`);
   else effect.amountRef = parseRef(v.amountRef, `${path}.amountRef`);
+  // 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少
+  if (v.decrease !== undefined) {
+    if (v.decrease !== true) fail(`${path}.decrease`, `expected true, got ${JSON.stringify(v.decrease)}`);
+    effect.decrease = true;
+  }
   if (v.condition !== undefined) {
     const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.removeState);
     validateUsedBurst(condition, trigger, `${path}.condition`);
@@ -2803,7 +2851,7 @@ function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>
 }
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加は、同じ定義にその状態をスタックで付ける付与（対象は自分）が
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減は、同じ定義にその状態をスタックで付ける付与（対象は自分）が
  * 要る（上限・維持・中身は付与のもの）
  */
 function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {

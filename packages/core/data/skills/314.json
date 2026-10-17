@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 314,
-  "checkedAt": "2026-10-16",
+  "checkedAt": "2026-10-17",
   "skills": {
     "skill1": {
       "effects": [
@@ -37,8 +37,8 @@
             }
           ],
           "assumes": {
-            "ja": "フルバーストタイムの持続中の通常攻撃の回数は、フルバーストごとに数え直す（確かめていない。戦闘開始時に上限の 50 スタックが付くので、バーストのスタック量▼（未対応）が無いうちは値に効かない）",
-            "en": "The normal attack count during Full Burst restarts at each Full Burst (unverified; it does not change values while the stacks stay at the cap of 50 from the start of battle, since the stack decrease of the Burst is not modeled)"
+            "ja": "フルバーストタイムの持続中の通常攻撃の回数は、フルバーストごとに数え直す（確かめていない）",
+            "en": "The normal attack count during Full Burst restarts at each Full Burst (unverified)"
           }
         }
       ],
@@ -82,40 +82,67 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "ゴールデンチップのスタック量別の、敵全体へのバーストスキルダメージは未対応",
-          "en": "The burst skill damage on all enemies by Golden Chip stacks is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstDamage",
-            "trigger": "burstUse"
-          }
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は敵 1 体（パーツへのダメージは扱わない）",
+            "en": "All enemies means one enemy (damage to parts is not handled)"
+          },
+          "claims": [
+            "C-0572"
+          ]
         },
         {
-          "ja": "ゴールデンチップのスタック量別の、自分の命中率▲（15 秒）は未対応",
-          "en": "The hit rate increase on self by Golden Chip stacks (15 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "hitRate",
-            "target": "self",
-            "trigger": "burstUse"
-          }
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "hitRate",
+          "ref": 4,
+          "durationRef": 5,
+          "condition": {
+            "selfState": {
+              "state": "goldenChip",
+              "stacksRef": 3
+            }
+          },
+          "claims": [
+            "C-0573"
+          ]
         },
         {
-          "ja": "ゴールデンチップのスタック量別の、自分の攻撃力▲（15 秒）は未対応",
-          "en": "The attack increase on self by Golden Chip stacks (15 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
-            "trigger": "burstUse"
-          }
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 7,
+          "durationRef": 8,
+          "condition": {
+            "selfState": {
+              "state": "goldenChip",
+              "stacksRef": 6
+            }
+          },
+          "claims": [
+            "C-0573"
+          ]
+        },
+        {
+          "kind": "stackChange",
+          "state": "goldenChip",
+          "trigger": "burstUse",
+          "target": "self",
+          "decrease": true,
+          "amountRef": 1,
+          "claims": [
+            "C-0573",
+            "C-0574"
+          ]
         }
-      ]
+      ],
+      "notes": []
     }
   }
 }

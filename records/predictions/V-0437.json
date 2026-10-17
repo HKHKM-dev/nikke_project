@@ -1,0 +1,274 @@
+{
+  "verification": "V-0437",
+  "note": "ラム（I）+ デルタ（II）+ ソーダ：トゥインクルバニー（III・操作・AUTO 射撃 ON）、オートバースト ON・灼熱のタブ・スペック固定 ON の新しい録画（撮る前）の予測。S2 のフルバーストタイムの持続時間▲（未対応）で実際のフルバーストが延びると、2 回目からの発動の前のスタック数はモデルより大きくなる見込み（検証記録の「予測」）。指標は、発動の時刻やフルバーストの長さに依らない形にした",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 314,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "発動の時（減る前）のスタック数で段階を判定し（20 以上で命中率▲、30 以上で攻撃力▲）、効果の後に 17 個▼。フルバースト中の通常攻撃 3 回ごとに 1 個▲で、回数はフルバーストごとに数え直す。いまのモデル"
+    },
+    {
+      "id": "H2",
+      "note": "17 個▼を先に当て、減った後のスタック数で段階を判定する。減る前のスタック数が 17 以上なら、減る前で 37 以上・47 以上と同じなので、条件の値をそう置き換える",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 314,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "hitRate",
+              "ref": 4,
+              "durationRef": 5,
+              "condition": {
+                "selfState": {
+                  "state": "goldenChip",
+                  "stacks": 37
+                }
+              }
+            }
+          },
+          {
+            "rid": 314,
+            "skill": "burst",
+            "replace": 2,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "attack",
+              "ref": 7,
+              "durationRef": 8,
+              "condition": {
+                "selfState": {
+                  "state": "goldenChip",
+                  "stacks": 47
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "フルバースト中の通常攻撃の回数を、フルバーストをまたいで持ち越す（S1 の付与の reset を never にする）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 314,
+            "skill": "skill1",
+            "replace": 1,
+            "effect": {
+              "kind": "state",
+              "state": "goldenChip",
+              "trigger": {
+                "count": "normalShot",
+                "everyRef": 2,
+                "during": "fullBurst",
+                "reset": "never"
+              },
+              "target": "self",
+              "maxStacksRef": 4,
+              "durationUntil": "battleEnd",
+              "contents": [
+                {
+                  "stat": "critDamage",
+                  "ref": 3
+                }
+              ],
+              "assumes": {
+                "ja": "フルバーストタイムの持続中の通常攻撃の回数は、フルバーストごとに数え直す（確かめていない）",
+                "en": "The normal attack count during Full Burst restarts at each Full Burst (unverified)"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "soda-attack-applied",
+      "model": "sim",
+      "metric": "burstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "判定の指標（H1 と H2）。ソーダ：TB のバーストの発動ごとに、自分に攻撃力▲（30 スタック以上）が付いたか（1・0）。録画では、発動の直後の一時停止画面の適用中の効果で読む。2 回目の発動の前のスタック数は、フルバーストの長さに依らず 30〜46 の間に入る見込みで、H1 は付き、H2 は付かない",
+      "observations": ["463-01", "471-01"]
+    },
+    {
+      "id": "soda-hit-applied",
+      "model": "sim",
+      "metric": "burstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "hitRate",
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "判定の指標（H1 と H2）。発動ごとに、自分に命中率▲（20 スタック以上）が付いたか。3 回目の発動の前のスタック数は 20〜36 の間に入る見込みで、H1 は付き、H2 は付かない（2 回目は、フルバーストが延びると H2 でも付きうるので、見分けに使わない）",
+      "observations": ["463-02", "471-02"]
+    },
+    {
+      "id": "soda-chip-drops",
+      "model": "sim",
+      "metric": "stateStackDrops",
+      "args": {
+        "slot": 3,
+        "state": "goldenChip",
+        "count": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "前提の確かめ（どの仮説でも −17）。発動ごとの、直前（フルバーストの外の会心の比）から直後（一時停止画面）へのゴールデンチップの差。4 回目からは、発動の前が 17 個より少なくなりうるので数えない",
+      "observations": ["463-03", "471-03"]
+    },
+    {
+      "id": "soda-chip-gain-residues",
+      "model": "sim",
+      "metric": "fullBurstStackGainResidues",
+      "args": {
+        "slot": 3,
+        "state": "goldenChip",
+        "every": 3,
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "判定の指標（H1 と H3）。フルバーストごとの、ゴールデンチップの増え方から「窓の中のソーダ：TB の発の数 ÷ 3（切り捨て）」を引いたもの。H1 は 0 だけ、H3 は持ち越した余りで 1 になる回がある。録画では、窓の中の発を数え、発動の直後（一時停止画面）と次の発動の前（会心の比）のスタック数の差と比べる"
+    },
+    {
+      "id": "soda-burst-skill-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "副次。1 回目のバーストスキルダメージ（会心なし）。最終攻撃力の 628.7%。発動の直前のバフで計算するので、同じ発動の攻撃力▲は乗らない（C-0160 と同じ規則）"
+    },
+    {
+      "id": "soda-burst-skill-2",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "副次。2 回目のバーストスキルダメージ（会心なし）。1 回目の攻撃力▲（15 秒）は切れているので、1 回目と同じ値"
+    },
+    {
+      "id": "full-bursts",
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "前提。フルバーストは 180 秒で 5 回（CT 40 秒の III が 1 体。C-0022）。S2 でフルバーストが延びても、CT で決まる見込み"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-17",
+    "commit": "6605e741562c41c12c0feb65972b6b5e0217fb6f",
+    "values": {
+      "H1": {
+        "soda-attack-applied": [1, 1, 0, 0, 0],
+        "soda-hit-applied": [1, 1, 1, 0, 0],
+        "soda-chip-drops": [-17, -17, -17],
+        "soda-chip-gain-residues": [0, 0, 0, 0],
+        "soda-burst-skill-1": 753157.452,
+        "soda-burst-skill-2": 753157.4520000002,
+        "full-bursts": 5
+      },
+      "H2": {
+        "soda-attack-applied": [1, 0, 0, 0, 0],
+        "soda-hit-applied": [1, 0, 0, 0, 0],
+        "soda-chip-drops": [-17, -17, -17],
+        "soda-chip-gain-residues": [0, 0, 0, 0],
+        "soda-burst-skill-1": 753157.452,
+        "soda-burst-skill-2": 753157.4520000002,
+        "full-bursts": 5
+      },
+      "H3": {
+        "soda-attack-applied": [1, 1, 0, 0, 0],
+        "soda-hit-applied": [1, 1, 1, 0, 0],
+        "soda-chip-drops": [-17, -17, -17],
+        "soda-chip-gain-residues": [0, 0, 0, 1],
+        "soda-burst-skill-1": 753157.452,
+        "soda-burst-skill-2": 753157.4520000002,
+        "full-bursts": 5
+      }
+    }
+  }
+}

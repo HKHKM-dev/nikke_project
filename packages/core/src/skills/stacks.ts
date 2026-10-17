@@ -15,8 +15,15 @@ export const STACK_REFRESH: 'all' | 'each' = 'all';
 export type StackWindow = { stack: number; start: number; end: number };
 
 /**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少。フレーム frame に効いている段の上から amount 段を、
+ * 次のフレーム（frame + 1）で切る。最後の 1 段は残す（付いている段より多く減らしても 1 段になる。V-0437 の録画 463・471）
+ */
+export type StackDecrease = { frame: number; amount: number };
+
+/**
  * 発火（窓が始まるフレーム）の列から、段ごとの窓を作る。durationFrames ≤ 0 なら空。frames が上限。
- * 並びは段 1 から順に始まった順（'all' はチェーンの中で段が上がる順、'each' は区間の順）
+ * 並びは段 1 から順に始まった順（'all' はチェーンの中で段が上がる順、'each' は区間の順）。
+ * 2 段目の段 3: decreases（スタック量の減少）は 'all' だけ。同じフレームの始まりは減少の前に数える
  */
 export function stackWindows(
   starts: readonly number[],
@@ -24,11 +31,13 @@ export function stackWindows(
   frames: number,
   maxStacks: number,
   mode: 'all' | 'each' = STACK_REFRESH,
+  decreases: readonly StackDecrease[] = [],
 ): StackWindow[] {
   if (durationFrames <= 0 || maxStacks < 1) return [];
   const sorted = starts.filter((s) => s < frames).sort((a, b) => a - b);
+  if (mode === 'each' && decreases.length > 0) throw new RangeError('a stack decrease needs STACK_REFRESH "all"');
   return mode === 'all'
-    ? refreshAll(sorted, durationFrames, frames, maxStacks)
+    ? refreshAll(sorted, durationFrames, frames, maxStacks, decreases)
     : eachOwn(sorted, durationFrames, frames, maxStacks);
 }
 
@@ -37,12 +46,24 @@ function refreshAll(
   durationFrames: number,
   frames: number,
   maxStacks: number,
+  decreases: readonly StackDecrease[],
 ): StackWindow[] {
   const out: StackWindow[] = [];
   /** いまのチェーンの段の窓（段 1 から） */
   let chain: StackWindow[] = [];
   let chainEnd = -1;
+  const cuts = decreases.filter((d) => d.frame < frames).sort((a, b) => a.frame - b.frame);
+  let next = 0;
+  /** フレーム limit より前の減少を当てる: 効いている段の上から切り（最後の 1 段は残す）、後の始まりは減った段から数える */
+  const cutBefore = (limit: number): void => {
+    while (next < cuts.length && cuts[next]!.frame < limit) {
+      const { frame, amount } = cuts[next++]!;
+      if (chain.length === 0 || frame >= chainEnd) continue;
+      for (const w of chain.splice(Math.max(1, chain.length - amount))) w.end = frame + 1;
+    }
+  };
   for (const s of sorted) {
+    cutBefore(s);
     const end = Math.min(s + durationFrames, frames);
     // 和集合（unionWindows）と同じく、ちょうど切れたフレームの発火も続きとみなす
     if (chain.length > 0 && s <= chainEnd) {
@@ -60,6 +81,7 @@ function refreshAll(
     chainEnd = end;
     out.push(w);
   }
+  cutBefore(Infinity);
   return out;
 }
 

@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 60・効果 216（根拠あり 206）・notes 244（根拠あり 73）
+件数: キャラ 60・効果 220（根拠あり 210）・notes 241（根拠あり 73）
 
-notes の種類: 未対応 132・前提の外 27・計算に無関係 28・補足 10・間接 47
+notes の種類: 未対応 129・前提の外 27・計算に無関係 28・補足 10・間接 47
 
-スロット: supported 84・partial 17・unsupported 61・noEffect 33
+スロット: supported 85・partial 17・unsupported 60・noEffect 33
 
 ## 10 ラピ
 
@@ -609,10 +609,11 @@ notes の種類: 未対応 132・前提の外 27・計算に無関係 28・補�
 - **skill2**: unsupported
   - notes[0] 未対応: バースト 3 段階突入時の、ゴールデンチップのスタック量別のフルバーストタイムの持続時間▲は未対応: 根拠なし
   - notes[1] 未対応: フルバーストタイム中の通常攻撃ごとの、時間延長状態別のダメージは未対応: 根拠なし
-- **burst**: unsupported
-  - notes[0] 未対応: ゴールデンチップのスタック量別の、敵全体へのバーストスキルダメージは未対応: 根拠なし
-  - notes[1] 未対応: ゴールデンチップのスタック量別の、自分の命中率▲（15 秒）は未対応: 根拠なし
-  - notes[2] 未対応: ゴールデンチップのスタック量別の、自分の攻撃力▲（15 秒）は未対応: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-0572（確定）
+  - effects[1] timed・burstUse・hitRate: C-0573（確定）
+  - effects[2] timed・burstUse・attack: C-0573（確定）
+  - effects[3] stackChange・burstUse・goldenChip（減少）: C-0573（確定）、C-0574（確定）
 
 ## 330 クラウン
 
