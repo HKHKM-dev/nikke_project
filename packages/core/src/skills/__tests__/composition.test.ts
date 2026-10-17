@@ -69,7 +69,7 @@ describe('同じ部隊の味方の条件（squad）', () => {
           squad: { present: true },
         }),
       ),
-    ).toThrow(/squad: only allowed in passive, timed, state, cooldownReduction and burstReentry/);
+    ).toThrow(/squad: only allowed in passive, timed, state, cooldownReduction, heal and burstReentry/);
     expect(() => parseSkillDefinition(definitionWith({ ...cut, squad: { present: 'yes' } }))).toThrow(
       /present: expected a boolean/,
     );

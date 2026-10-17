@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 17,
-  "checkedAt": "2026-10-05",
+  "checkedAt": "2026-10-17",
   "skills": {
     "skill1": {
       "effects": [
@@ -233,18 +233,25 @@
           "claims": [
             "C-0204"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "みんなの星のときのフルチャージ攻撃時の味方全体の回復（回復を受けた時に発動する味方のスキルには効く）",
-          "en": "The heal for all allies on Full Charge attacks with Everyone's Star (it matters for allies whose skills trigger on being healed)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "fullChargeShot"
-          }
+          "kind": "heal",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "ref": 3,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": true
+          },
+          "assumes": {
+            "ja": "みんなの星状態のとき（自分を除く基本バースト段階 1 の味方がいるとき。S1 の everyonesStar と同じ編成の条件）。フルチャージの発ごとに味方全体が回復を受け、そのたびに「回復効果が適用された時」を起こす（1 回の回復。HP が満タンでも適用とみなす。ヘルムの宝物版 S1 の C-0345 と同じ読み）。回復量はダメージに関係しない",
+            "en": "With Everyone's Star (another standard Burst I ally is present; the same squad condition as everyonesStar in S1). Each Full Charge shot heals all allies and triggers \"when healed\" each time (a one-off heal; it counts as applied even at full HP, read the same way as Helm's treasure S1, C-0345). The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-0576"
+          ]
         }
       ]
     },
