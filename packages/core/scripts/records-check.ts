@@ -13,7 +13,7 @@ import {
   validateClaims,
   type ClaimGrade,
 } from '../src/records/claims.ts';
-import { verificationExtraLines } from '../src/records/extras.ts';
+import { openStaleness, openVerificationIds, verificationExtraLines } from '../src/records/extras.ts';
 import { relevanceCounts, relevanceOf, renderMinimal } from '../src/records/relevance.ts';
 import { comparePredictions, renderPredictionTable, validatePredictions } from '../src/records/predictions.ts';
 import { RESULTS_MARKERS } from '../src/records/drafts.ts';
@@ -128,9 +128,11 @@ writeFileSync(
     relevanceCounts(relevance),
   ),
 );
+// 予測の後のモデルの変更（plan/design-prediction-staleness.md）: 開いている検証の予測だけ、いまのモデルで出し直して保存した値と比べる
+const staleness = openStaleness(predictions, openVerificationIds(verifications), data);
 // 予測との突き合わせ（3.5 節）。検証記録 × 録画の最小構成の警告は、plan/minimal.md の組の判定に置き換えた（design-minimal-relevance.md 5 節）
 for (const p of predictions) {
-  const comparison = comparePredictions(p, observations);
+  const comparison = comparePredictions(p, observations, staleness.get(p.verification));
   // 検証記録の「結果」に生成ブロックの印があれば、予測との比べの表を書き込む（3.6 節。閉じた記録には印が無い）
   const v = verifications.find((x) => x.id === p.verification);
   if (v !== undefined) {
@@ -143,7 +145,7 @@ for (const p of predictions) {
 }
 writeFileSync(
   VERIFICATIONS_PATH,
-  renderVerifications(verifications, observations, verificationExtraLines(observations, predictions)),
+  renderVerifications(verifications, observations, verificationExtraLines(observations, predictions, staleness)),
 );
 writeFileSync(SKILLS_DOC_PATH, renderSkills(skills, claims));
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
@@ -162,7 +164,16 @@ console.log(
 for (const p of predictions) {
   const cmp = comparePredictions(p, observations);
   const fits = [...cmp.score.entries()].filter(([, s]) => s.total > 0).map(([h, s]) => `${h} ${s.ok}/${s.total}`);
-  console.log(`予測 ${p.verification}: ${p.predicted === null ? 'まだ出していない' : fits.join('・') || '観測値なし'}`);
+  const s = staleness.get(p.verification);
+  const note =
+    s === undefined
+      ? ''
+      : s.kind === 'error'
+        ? '（モデルが変わった。いまのモデルでは出し直せない）'
+        : `（モデルが変わった。出し直すと仮説 × 指標 ${s.targets.length} つの値が変わる）`;
+  console.log(
+    `予測 ${p.verification}: ${p.predicted === null ? 'まだ出していない' : fits.join('・') || '観測値なし'}${note}`,
+  );
 }
 {
   const counts = [...relevanceCounts(relevance).values()];
