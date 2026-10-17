@@ -2,6 +2,7 @@
 import { buffEdge } from './buff-edge.ts';
 import { chargeShots } from './charge-shots.ts';
 import { hudJumps } from './hud-jumps.ts';
+import { midfarLanding } from './midfar-landing.ts';
 import { nearLanding } from './near-landing.ts';
 import { reloadSegments } from './reload-segments.ts';
 import { sgPellets } from './sg-pellets.ts';
@@ -14,6 +15,7 @@ export const RECIPES: readonly Recipe[] = [
   sgPellets,
   reloadSegments,
   nearLanding,
+  midfarLanding,
   smgMags,
   smgCores,
   buffEdge,
