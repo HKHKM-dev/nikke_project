@@ -26,6 +26,8 @@ export type AttackWindow = {
 export type RankSlot = {
   /** バフ前攻撃力（damage.ts の baseAttackOf。発動者基準の固定加算にも使う） */
   casterBaseAttack: number;
+  /** 2 段目の段 6: 発動者の最終最大HP（casterFinalMaxHp の固定加算。skills/timeline.ts の TimelineSlot と同じ） */
+  casterMaxHp?: number;
   weaponType: WeaponType;
   /** アスカ: targetElement の絞り込み用 */
   element: Element;
@@ -53,7 +55,8 @@ export function finalAttacksAt(
     let buffs: BuffTotals = slot.passive;
     for (const w of windows) {
       if (w.slotIndex !== index || w.effect.stat !== 'attack' || !countsAt(w, frame)) continue;
-      buffs = applyResolvedEffect(buffs, w.effect, slots[w.sourceSlotIndex]?.casterBaseAttack ?? 0).totals;
+      const caster = slots[w.sourceSlotIndex];
+      buffs = applyResolvedEffect(buffs, w.effect, caster?.casterBaseAttack ?? 0, caster?.casterMaxHp).totals;
     }
     return applyAttackBuffs(slot.casterBaseAttack, buffs);
   });

@@ -65,6 +65,11 @@ export const DEFAULT_BURST = true;
 export const DEFAULT_CONDITION_MODE: ConditionMode = 'auto';
 /** Stage 9: 宝物の段階の既定。0 = 宝物なし（ユーザー指定） */
 export const DEFAULT_TREASURE_PHASE: TreasurePhase = 0;
+/**
+ * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節・論点 4）: HP の割合の想定の既定。全員満タン（1）。満タンかどうかで分かれる
+ * 効果（「最大の時のみ」）を定義する時に、射撃場の撮影で決め直す
+ */
+export const DEFAULT_HP_RATIO = 1;
 
 export type SlotState = {
   resourceId: number | null;
@@ -77,6 +82,11 @@ export type SlotState = {
   treasurePhase: TreasurePhase;
   /** Stage 12: 育成入力（装備・キューブ・好感度・コレクション・リサイクルルーム・その他）。growth と同じくキャラを変えても残る */
   build: BuildInput;
+  /**
+   * 2 段目の段 6: HP の割合の想定（現在の HP ÷ 最終最大HP。0 より大きく 1 以下）。被弾の時刻は計算に入れず、戦闘中は一定とみなす。
+   * 入力欄は HP の割合の条件を持つ効果のある枠にだけ出す（論点 5）。キャラを選び直すと既定（満タン）に戻る
+   */
+  hpRatio: number;
 };
 
 export type TeamState = {
@@ -106,6 +116,7 @@ export type TeamAction =
   | { type: 'setSkillLevels'; index: number; skillLevels: SkillLevels }
   | { type: 'setTreasurePhase'; index: number; treasurePhase: TreasurePhase }
   | { type: 'setBuild'; index: number; build: BuildInput }
+  | { type: 'setHpRatio'; index: number; hpRatio: number }
   | { type: 'setEnemy'; enemy: EnemyInput }
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
@@ -123,6 +134,7 @@ export function emptySlot(): SlotState {
     skillLevels: { ...DEFAULT_SKILL_LEVELS },
     treasurePhase: DEFAULT_TREASURE_PHASE,
     build: emptyBuild(),
+    hpRatio: DEFAULT_HP_RATIO,
   };
 }
 
@@ -156,11 +168,16 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
     case 'selectCharacter': {
       // 同じニケは 1 枠まで。他の枠にいれば何もしない（UI 側でも選択肢から除外している）
       if (state.slots.some((s, i) => i !== action.index && s.resourceId === action.resourceId)) return state;
-      // 宝物の段階はキャラごとのものなので、別のニケに変えたら 0 に戻す
+      // 宝物の段階と HP の割合の想定はキャラごとのものなので、別のニケに変えたら既定に戻す
       return updateSlot(state, action.index, (s) =>
         s.resourceId === action.resourceId
           ? s
-          : { ...s, resourceId: action.resourceId, treasurePhase: DEFAULT_TREASURE_PHASE },
+          : {
+              ...s,
+              resourceId: action.resourceId,
+              treasurePhase: DEFAULT_TREASURE_PHASE,
+              hpRatio: DEFAULT_HP_RATIO,
+            },
       );
     }
     case 'clearSlot':
@@ -168,6 +185,7 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
         ...s,
         resourceId: null,
         treasurePhase: DEFAULT_TREASURE_PHASE,
+        hpRatio: DEFAULT_HP_RATIO,
       }));
     case 'setGrowth':
       return updateSlot(state, action.index, (s) => ({ ...s, growth: action.growth }));
@@ -181,6 +199,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return updateSlot(state, action.index, (s) => ({ ...s, treasurePhase: action.treasurePhase }));
     case 'setBuild':
       return updateSlot(state, action.index, (s) => ({ ...s, build: action.build }));
+    case 'setHpRatio':
+      return updateSlot(state, action.index, (s) => ({ ...s, hpRatio: action.hpRatio }));
     case 'setEnemy':
       return { ...state, enemy: action.enemy };
     case 'setDuration':
@@ -364,6 +384,13 @@ function parseTreasurePhase(v: Json): TreasurePhase | null {
   return v as TreasurePhase;
 }
 
+/** 2 段目の段 6: HP の割合の想定。段 6 までの保存データには無いので、欠落は既定（満タン）。0 より大きく 1 以下 */
+function parseHpRatio(v: Json): number | null {
+  if (v === undefined) return DEFAULT_HP_RATIO;
+  if (!isFinite_(v) || v <= 0 || v > 1) return null;
+  return v;
+}
+
 /** Stage 13: OL のオプション行。Stage 12 の保存データには無いので、欠落は空（オプションなし） */
 function parseOverload(v: Json, type: GearType): OverloadLine[] | undefined {
   if (v === undefined) return [];
@@ -491,17 +518,19 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     const skillLevels = parseSkillLevels(s.skillLevels);
     const treasurePhase = parseTreasurePhase(s.treasurePhase);
     const build = parseBuild(s.build);
+    const hpRatio = parseHpRatio(s.hpRatio);
     if (
       growth === null ||
       condition === null ||
       conditionMode === null ||
       skillLevels === null ||
       treasurePhase === null ||
-      build === null
+      build === null ||
+      hpRatio === null
     ) {
       return null;
     }
-    slots.push({ resourceId: id, growth, conditionMode, condition, skillLevels, treasurePhase, build });
+    slots.push({ resourceId: id, growth, conditionMode, condition, skillLevels, treasurePhase, build, hpRatio });
   }
 
   const enemy = parseEnemy(raw.enemy);

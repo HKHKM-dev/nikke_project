@@ -1,8 +1,8 @@
 // 2 段目の段 1（plan/design-skill-stage1.md 1.2・1.4 節）: スキルの欄の付与と解除の表示。定義は data/skills のもの（マナ・アニス：スター）
-import { parseSkillDefinition, type SkillDefinition } from '@nikke/core';
+import { parseSkillDefinition, type AppliedEffect, type SkillDefinition } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { formatRemoveState, formatStateGrant, formatTrigger, noteBadgeLabel } from './skillLabels.ts';
+import { formatAppliedAmount, formatRemoveState, formatStateGrant, formatTrigger, noteBadgeLabel } from './skillLabels.ts';
 
 const definitionOf = (id: number): SkillDefinition =>
   parseSkillDefinition(
@@ -54,5 +54,21 @@ describe('notes の印', () => {
     const [defense] = delta.skills.skill2.notes!;
     expect(noteBadgeLabel(defense!)).toBe('間接（防御力）');
     expect(noteBadgeLabel({ kind: 'noDamage' })).toBe('計算に無関係');
+  });
+});
+
+// 2 段目の段 6（plan/design-skill-stage6.md 1.3 節）: 発動者の最終最大HP 基準の攻撃力▲は、足した実数と最終最大HP の割合を出す
+describe('効果の値の表示', () => {
+  it('writes the attack up from the caster final max HP with its ratio', () => {
+    const effect: AppliedEffect = {
+      source: { resourceId: 103, skill: 'skill1', name: { ja: 'S1', en: 'S1' } },
+      target: 'self',
+      stat: 'attack',
+      scaling: 'casterFinalMaxHp',
+      value: 0.0405,
+      sourceSlotIndex: 0,
+      appliedAmount: 109605.5145,
+    };
+    expect(formatAppliedAmount(effect)).toBe('攻撃力 +109,606（発動者の最終最大HP の 4.05%）');
   });
 });

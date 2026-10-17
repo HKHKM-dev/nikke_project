@@ -282,12 +282,25 @@ const TGT_INFO: Record<string, Info> = {
   '-': ['（対象を読み取れなかったもの）', 'check'],
 };
 
+/**
+ * 値の算出の行（3.2 節の SC のキー）。発動者基準は stat で語彙の有無が分かれる。2 段目の段 6: 発動者の最終最大HP 基準は、攻撃力だけが
+ * 語彙あり（casterFinalMaxHp）
+ */
+function scalingKeyOf(e: CatalogEffect): string {
+  const stat = e.stat!;
+  if (stat.scaling === 'casterHp') return stat.canon === 'attack' ? 'casterHp:ok' : 'casterHp';
+  if (stat.scaling !== 'casterBased') return stat.scaling;
+  return ['attack', 'chargeSpeed', 'chargeTime'].includes(stat.canon) ? 'casterBased:ok' : 'casterBased:indirect';
+}
+
 /** 値の算出（3.2 節） */
 const SC: Record<string, Info> = {
   ratio: ['対象自身の値の X%', 'ok'],
   'casterBased:ok': ['スキル発動者基準の攻撃力・チャージ速度（casterAttack・casterChargeTime）', 'ok'],
   'casterBased:indirect': ['スキル発動者基準の防御力・最大HP など（発動者の値を読む。分類の別紙 6 節）', 'indirect'],
-  casterHp: ['発動者の最大HP の X% 分', 'gap'],
+  // 2 段目の段 6（plan/design-skill-stage6.md 1.3 節）: 最終最大HP の X% 分の攻撃力▲は語彙あり（casterFinalMaxHp）。ほかの stat は語彙なし
+  'casterHp:ok': ['発動者の最大HP の X% 分の攻撃力▲（casterFinalMaxHp）', 'ok'],
+  casterHp: ['発動者の最大HP 基準の、攻撃力のほかの値', 'gap'],
   perStack: ['X% × 〈状態〉のスタック数', 'gap'],
   lostHp: ['失った HP N% ごと（HP の経路の読む側）', 'indirect'],
   perMaxAmmo: ['最大装弾数 N 発ごと', 'gap'],
@@ -565,11 +578,7 @@ export function renderSkillCatalog(lines: readonly CatalogLine[], effects: reado
   p();
   p('| 算出 | 効果 | キャラ | 定義あり | 状況 | キャラ（例） |');
   p('| --- | --- | --- | --- | --- | --- |');
-  const scKey = (e: CatalogEffect) => {
-    const stat = e.stat!;
-    if (stat.scaling !== 'casterBased') return stat.scaling;
-    return ['attack', 'chargeSpeed', 'chargeTime'].includes(stat.canon) ? 'casterBased:ok' : 'casterBased:indirect';
-  };
+  const scKey = scalingKeyOf;
   for (const [k, items] of byCount(group(statEffects, scKey))) {
     p(`| ${SC[k]?.[0] ?? k} | ${rowCounts(items)} | ${ST[SC[k]?.[1] ?? 'check']} | ${fmtChars(items)} |`);
   }
@@ -804,8 +813,8 @@ export function renderSkillCatalog(lines: readonly CatalogLine[], effects: reado
     for (const t of trigs) if (remains(TRIG_INFO[t]?.[1])) gaps.add(`きっかけ: ${TRIG_INFO[t]![0]}`);
     for (const c of condKeys(e)) if (remains(COND_INFO[c]?.[1])) gaps.add(`条件: ${COND_INFO[c]![0]}`);
     for (const t of tgtKeys(e)) if (remains(TGT_INFO[t]?.[1])) gaps.add(`対象: ${TGT_INFO[t]![0]}`);
-    if (e.kind === 'stat' && ['casterHp', 'perStack', 'perMaxAmmo'].includes(e.stat!.scaling)) {
-      gaps.add(`算出: ${SC[e.stat!.scaling]![0]}`);
+    if (e.kind === 'stat' && ['casterHp', 'perStack', 'perMaxAmmo'].includes(scalingKeyOf(e))) {
+      gaps.add(`算出: ${SC[scalingKeyOf(e)]![0]}`);
     }
   }
   const gapCount = new Map<string, { all: number; only: number }>();

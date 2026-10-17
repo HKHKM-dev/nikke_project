@@ -13,7 +13,15 @@ import {
   validateBuild,
   type BuildInput,
 } from '../build.ts';
-import { AFFECTION_ATTACK, FIXED_SPEC_GEAR_ATTACK, computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
+import {
+  AFFECTION_ATTACK,
+  AFFECTION_HP,
+  FIXED_SPEC_GEAR_ATTACK,
+  FIXED_SPEC_GEAR_HP,
+  computeFixedSpecAttack,
+  computeFixedSpecHp,
+  fixedSpecGrowth,
+} from '../fixedSpec.ts';
 import { applyCoreRatio, computeStat } from '../stats.ts';
 import type { BuildMasters, CharacterData, NikkeClass } from '../types.ts';
 
@@ -38,6 +46,9 @@ describe('masters', () => {
     for (const cls of CLASSES) {
       const sum = GEAR_PARTS.reduce((s, part) => s + (masters.gear.tiers.T9[cls][part].attack[5] ?? NaN), 0);
       expect(sum, cls).toBe(FIXED_SPEC_GEAR_ATTACK[cls]);
+      // 2 段目の段 6: スペック固定の最大HP の装備の定数
+      const hp = GEAR_PARTS.reduce((s, part) => s + (masters.gear.tiers.T9[cls][part].hp[5] ?? NaN), 0);
+      expect(hp, cls).toBe(FIXED_SPEC_GEAR_HP[cls]);
     }
   });
 
@@ -63,6 +74,7 @@ describe('masters', () => {
       expect(masters.affection.ranks[0]?.attack[cls]).toBe(0);
       for (const rank of [10, 30, 40] as const) {
         expect(masters.affection.ranks[rank - 1]?.attack[cls], `${cls} rank ${rank}`).toBe(AFFECTION_ATTACK[cls][rank]);
+        expect(masters.affection.ranks[rank - 1]?.hp[cls], `${cls} rank ${rank} hp`).toBe(AFFECTION_HP[cls][rank]);
       }
     }
   });
@@ -102,6 +114,14 @@ describe('computeCombatAttack', () => {
       expect(r.withCore).toBe(expected.withCore);
       expect(r.gear).toBe(expected.gear);
       expect(r.affection).toBe(expected.affection);
+    }
+  });
+
+  it('with fixedSpecBuild gives the HP of computeFixedSpecHp for every character (2 段目の段 6. retreat)', () => {
+    for (const id of allIds) {
+      const c = loadCharacter(id);
+      const r = computeCombatStat(c, fixedSpecGrowth(c), fixedSpecBuild(c), masters, 'hp');
+      expect(r.value, `${id} ${c.name.ja}`).toBe(computeFixedSpecHp(c));
     }
   });
 

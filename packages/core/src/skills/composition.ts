@@ -12,8 +12,11 @@
 // （applyCompositionToTeam: 編成の条件で外す → 静的な状態を集める → 対象の枠を決める）。付与（state）の対象も timed と同じに決める。
 // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 自分の状態の条件（selfState）のうち、編成で決まるもの（自分の定義の静的な状態と、
 // どの枠の定義も付けない状態）も、ここで決める（満たせば条件から落とし、満たさなければ効果を外す）。
+// 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 自分の HP の割合の条件（selfHp）も、枠の HP の割合の想定（TeamSlotInput.hpRatio。
+// 戦闘中一定）で、ここで決める（applyCompositionToTeam の枠ごとの段。最小構成の検査など、枠の入力の無い所は想定の既定（満タン）とみなす）。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, Element } from '../types.ts';
+import { skillValue, type SkillLevels } from './resolve.ts';
 import { statesMatching, type NamedStateId } from './states.ts';
 import { matchesTargetFilter } from './targets.ts';
 import {
@@ -227,6 +230,55 @@ export function resolveSelfState<E extends SkillEffect>(effect: E, lookup: SelfS
 }
 
 /**
+ * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 効果の selfHp（自分の HP の割合の条件）を、枠の HP の割合の想定 hpRatio で決める。
+ * 満たすなら条件から selfHp を落とした効果（ほかの鍵が無ければ条件ごと落とす）、満たさないなら null。threshold は atLeastRef を
+ * 割合（説明文の % ÷ 100）にする関数
+ */
+export function resolveSelfHp<E extends SkillEffect>(
+  effect: E,
+  hpRatio: number,
+  threshold: (ref: number) => number,
+): E | null {
+  const condition = 'condition' in effect ? effect.condition : undefined;
+  const hp = condition?.selfHp;
+  if (condition === undefined || hp === undefined) return effect;
+  if (hpRatio < threshold(hp.atLeastRef)) return null;
+  const { selfHp: _selfHp, ...rest } = condition;
+  const { condition: _condition, ...without } = effect as E & { condition?: unknown };
+  return (Object.keys(rest).length > 0 ? { ...without, condition: rest } : without) as E;
+}
+
+/**
+ * 2 段目の段 6: 定義の selfHp を、枠の HP の割合の想定で決めた定義（どの効果も変わらなければ definition をそのまま返す）。
+ * 閾値は枠のキャラの説明文の値（スキル Lv の値）。いまは passive だけが書けるので、静的な状態の集め方には効かない
+ */
+export function applySelfHp(
+  definition: SkillDefinition,
+  character: Pick<CharacterData, 'skills'>,
+  levels: SkillLevels,
+  hpRatio: number,
+): SkillDefinition {
+  let changed = false;
+  const skills = { ...definition.skills };
+  for (const slot of SKILL_SLOTS) {
+    const entry = definition.skills[slot];
+    const threshold = (ref: number) => skillValue(character.skills[slot], ref, levels[slot]) / 100;
+    let slotChanged = false;
+    const effects = entry.effects
+      .map((e) => {
+        const resolved = resolveSelfHp(e, hpRatio, threshold);
+        if (resolved !== e) slotChanged = true;
+        return resolved;
+      })
+      .filter((e): e is SkillEffect => e !== null);
+    if (!slotChanged) continue;
+    changed = true;
+    skills[slot] = { ...entry, effects };
+  }
+  return changed ? { ...definition, skills } : definition;
+}
+
+/**
  * 編成の枠ごとの SelfStateLookup（applyCompositionToTeam と同じ決め方。最小構成の検査など、効果を 1 つずつ見る所が使う）。
  * definitions は宝物版を当てた各枠の定義（定義の無い枠は null）
  */
@@ -316,7 +368,9 @@ function applyCompositionToSlot(
 ): TeamSlotInput {
   const definition = slot.skills?.definition;
   if (slot.skills === undefined || !definition) return slot;
-  const applied = applyComposition(definition, characters, selfIndex, enemyElement, states, others);
+  const composed = applyComposition(definition, characters, selfIndex, enemyElement, states, others);
+  // 2 段目の段 6: 自分の HP の割合の条件は、枠の HP の割合の想定（省略は満タン）で決める
+  const applied = applySelfHp(composed, slot.character, slot.skills.levels, slot.hpRatio ?? 1);
   return applied === definition ? slot : { ...slot, skills: { ...slot.skills, definition: applied } };
 }
 

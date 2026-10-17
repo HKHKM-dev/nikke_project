@@ -20,7 +20,7 @@ import { GEAR_PARTS, emptyBuild, type BuildInput } from '../build.ts';
 import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
 import { effectiveMaxAmmo, firingParams } from '../frame/firing.ts';
 import { landingFrameSpans } from '../frame/landing.ts';
-import { computeFixedSpecAttack, fixedSpecGrowth } from '../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buffs.ts';
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
@@ -1527,6 +1527,19 @@ export function jumpWindowsOf(value: number | number[] | undefined): { start: nu
   return out;
 }
 
+/** 2 段目の段 6: 定義に発動者の最終最大HP を読む効果（scaling casterFinalMaxHp。状態の中身も）があるか。宝物版の定義も見る */
+function readsCasterMaxHp(definition: SkillDefinition | null): boolean {
+  if (definition === null) return false;
+  const entries = [...Object.values(definition.skills), ...Object.values(definition.treasureSkills ?? {})];
+  return entries.some((entry) =>
+    entry.effects.some(
+      (e) =>
+        ('scaling' in e && e.scaling === 'casterFinalMaxHp') ||
+        (e.kind === 'state' && (e.contents ?? []).some((c) => c.scaling === 'casterFinalMaxHp')),
+    ),
+  );
+}
+
 /** drop なら、定義の各スロット（基礎版・宝物版）から回復（heal）を落とした写しを返す（CompareSetup.dropHeals） */
 function withoutHealsIf(definition: SkillDefinition | null, drop: boolean): SkillDefinition | null {
   if (definition === null || !drop) return definition;
@@ -1590,6 +1603,10 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       throw new Error('キューブを付けた枠は未対応（スペック固定では乗らない）');
     const treasurePhase = (setup.treasure === false ? 0 : (member.treasurePhase ?? 0)) as TreasurePhase;
     const build = fixedSpec ? undefined : member.build!;
+    // 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: 台帳の育成には最大HP が無いので、最終最大HP を読む効果のある枠は
+    // スペック固定 OFF の録画では比べない（黙って育成値だけの HP にしない）
+    if (build !== undefined && readsCasterMaxHp(definition))
+      throw new Error(`rid ${member.rid}: スペック固定 OFF の録画で最終最大HP を読む効果のある枠は未対応（台帳に最大HP が無い）`);
     const off = new Set(setup.buildEffectsOff ?? []);
     const buildEffects =
       build === undefined
@@ -1603,6 +1620,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       condition,
       ...(auto ? { conditionMode: 'auto' as const } : {}),
       attackOverride: build === undefined ? computeFixedSpecAttack(character).attack : build.attack,
+      ...(build === undefined ? { hpOverride: computeFixedSpecHp(character) } : {}),
       ...(buildEffects === undefined ? {} : { buildEffects }),
       skills: {
         definition: definition === null ? null : withAddedEffects(definition, adds),

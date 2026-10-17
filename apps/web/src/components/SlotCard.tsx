@@ -103,7 +103,10 @@ export function SlotCard({
     let effect: AppliedTimedEffect = {
       ...summary.effect,
       sourceSlotIndex: summary.sourceSlotIndex,
-      appliedAmount: summary.effect.scaling === 'casterAttack' ? 0 : summary.effect.value,
+      appliedAmount:
+        summary.effect.scaling === 'casterAttack' || summary.effect.scaling === 'casterFinalMaxHp'
+          ? 0
+          : summary.effect.value,
     };
     // appliedAmount は区間依存なので、代表区間（最初の区間）に出ていればそれを使う
     const applied = slotResult?.segments
@@ -333,6 +336,7 @@ export function SlotCard({
             status={skillsStatus}
             teamCharacters={teamCharacters}
             enemyElement={enemyElement}
+            hpRatio={slot.hpRatio}
             dispatch={dispatch}
           />
           {slotResult && (

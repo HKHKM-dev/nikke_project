@@ -1,25 +1,27 @@
 {
   "formatVersion": 1,
   "resourceId": 103,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-17",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "戦闘開始時の、最終最大HPに比例する自分の攻撃力▲（持続）は未対応",
-          "en": "The attack increase on self proportional to final max HP from the start of combat (permanent) is not modeled",
-          "kind": "unimplemented",
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attack",
+          "scaling": "casterFinalMaxHp",
+          "ref": 1,
+          "durationUntil": "battleEnd",
           "reads": [
             "hp"
           ],
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
-            "trigger": "battleStart"
-          }
-        },
+          "claims": [
+            "C-0579"
+          ]
+        }
+      ],
+      "notes": [
         {
           "ja": "フルチャージ攻撃時のウォームアップ（チャージ速度▲・5 スタック）は未対応",
           "en": "Warm-up (charge speed increase, 5 stacks) on fully charged attacks is not modeled",
@@ -54,7 +56,10 @@
             "stat": "maxHp",
             "target": "self",
             "trigger": "normalShot"
-          }
+          },
+          "claims": [
+            "C-0577"
+          ]
         },
         {
           "ja": "バースト 3 段階突入時の自分の攻撃ダメージ▲（10 秒）は未対応",

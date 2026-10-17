@@ -312,6 +312,10 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
   if (effect.scaling === 'casterAttack') {
     return `${stat} +${formatNumber(effect.appliedAmount)}（発動者基準 ${formatPercent(effect.value, 2)}）`;
   }
+  // 2 段目の段 6: 発動者の最終最大HP 基準の攻撃力▲は、最終最大HP の X% の実数を足す
+  if (effect.scaling === 'casterFinalMaxHp') {
+    return `${stat} +${formatNumber(effect.appliedAmount)}（発動者の最終最大HP の ${formatPercent(effect.value, 2)}）`;
+  }
   // 対象の語彙編: 「チャージ時間 X 秒▼」（chargeSpeed の flat）は秒数でチャージ時間から引く
   if (effect.scaling === 'flat' && effect.stat === 'chargeSpeed')
     return `チャージ時間 −${formatNumber(effect.appliedAmount, 2)} 秒`;

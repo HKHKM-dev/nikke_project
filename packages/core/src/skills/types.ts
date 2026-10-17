@@ -170,14 +170,17 @@ export function isFlagStat(stat: BuffStat): boolean {
  * どう算出するか。ratio = 対象自身の基礎値に対する比率、casterAttack = 発動者のバフ前攻撃力 × 比率の固定加算、
  * flat = 実数の固定加算（Stage 10。stat が maxAmmo のときだけ。値は発数で 100 で割らない）、
  * casterChargeTime = 発動者の基礎チャージ時間 × 比率の秒数を対象のチャージ時間から引く（Stage 11 アリス編。stat が chargeSpeed のときだけ。
- * 「スキル発動者基準でチャージ速度 X%▲」。録画 42 でアドミ（1 秒）が 0.175 秒縮んだ。plan/design-stage11.md 27 節）
+ * 「スキル発動者基準でチャージ速度 X%▲」。録画 42 でアドミ（1 秒）が 0.175 秒縮んだ。plan/design-stage11.md 27 節）、
+ * casterFinalMaxHp = 発動者の最終最大HP × 比率を攻撃力に固定加算する（2 段目の段 6。stat が attack のときだけ。「スキル発動者の
+ * 最終最大HP の X% 分の攻撃力▲」。plan/design-skill-stage6.md 1.3 節。録画 121 のラプラス：アルティメットヒーロー）
  */
-export type BuffScaling = 'ratio' | 'casterAttack' | 'flat' | 'casterChargeTime';
+export type BuffScaling = 'ratio' | 'casterAttack' | 'flat' | 'casterChargeTime' | 'casterFinalMaxHp';
 export const BUFF_SCALINGS = [
   'ratio',
   'casterAttack',
   'flat',
   'casterChargeTime',
+  'casterFinalMaxHp',
 ] as const satisfies readonly BuffScaling[];
 
 /**
@@ -320,6 +323,11 @@ export type PassiveEffect = FixedTargetFields & {
   withCharacter?: WithCharacterCondition;
   /** 防御力無視ダメージ編: 敵の属性の条件（敵の属性がこれのときだけ効果を持つ。静的な条件） */
   enemyElement?: Element;
+  /**
+   * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 自分の HP の割合の条件（selfHp だけ）。HP の割合は枠の想定
+   * （TeamSlotInput.hpRatio）で戦闘中一定なので、編成の段（skills/composition.ts の resolveSelfHp）で決まる
+   */
+  condition?: EffectCondition;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -600,7 +608,9 @@ export const DURATION_UNTILS = ['fullBurstEnd', 'battleEnd'] as const satisfies 
  * 同じ状態の dot の最初の発火から最後の tick まで。編成のどの枠の dot でもよい）。
  * selfState = 自分（効果を出した枠）にその状態が付いているか（2 段目の段 1。plan/design-skill-stage1.md 1.1 節。timed・付与・damage）。
  * usedBurst = 直前に自分がバーストスキルを使用していれば（同 1.5 節。timed・付与・解除。フルバーストの開始・終了のきっかけだけ。
- * 発火の文脈の burstUsers に自分がいるか。件を見ないので、これだけの条件は効果の段を上げない）
+ * 発火の文脈の burstUsers に自分がいるか。件を見ないので、これだけの条件は効果の段を上げない）。
+ * selfHp = 自分の HP の割合が閾値以上なら（2 段目の段 6。plan/design-skill-stage6.md 1.4 節。passive だけ。HP の割合は枠の想定で
+ * 戦闘中一定なので、編成の段で決まる）
  */
 export type EffectCondition = {
   selfBuffed?: BuffStat;
@@ -608,7 +618,14 @@ export type EffectCondition = {
   enemyState?: NamedStateId;
   selfState?: SelfStateCondition;
   usedBurst?: true;
+  selfHp?: SelfHpCondition;
 };
+
+/**
+ * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 自分の HP の割合の条件。atLeastRef = 「自分の HP が X% 以上なら」の X の
+ * description_value の番号（値は % 表記）。「以下」「未満」「最大の時のみ」は使い手を定義する時に足す
+ */
+export type SelfHpCondition = { atLeastRef: number };
 
 /**
  * 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: 条件が、件を見る鍵（selfBuffed・inFullBurst・selfState・enemyState）を持つか。
@@ -616,7 +633,8 @@ export type EffectCondition = {
  */
 export function conditionReadsItems(condition: EffectCondition | undefined): boolean {
   if (condition === undefined) return false;
-  return Object.keys(condition).some((key) => key !== 'usedBurst');
+  // 2 段目の段 6: selfHp は編成の段で決まる（件を見ない）
+  return Object.keys(condition).some((key) => key !== 'usedBurst' && key !== 'selfHp');
 }
 
 /**
@@ -1378,6 +1396,9 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   if (scaling === 'casterAttack' && stat !== 'attack') {
     fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
   }
+  if (scaling === 'casterFinalMaxHp' && stat !== 'attack') {
+    fail(`${path}.scaling`, `casterFinalMaxHp is only allowed with stat "attack", got "${stat}"`);
+  }
   if (scaling === 'casterChargeTime' && stat !== 'chargeSpeed') {
     fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
   }
@@ -1543,6 +1564,7 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   if (targetSquad !== undefined) effect.targetSquad = targetSquad;
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) effect.decrease = true;
+  if (v.condition !== undefined) effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.passive);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -1813,6 +1835,8 @@ const CONDITION_KEYS_OF = {
   damage: ['inFullBurst', 'enemyState', 'selfState'],
   // 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除は、段 1.5 の判定に入る鍵と usedBurst
   removeState: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst'],
+  // 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 常時の効果は、自分の HP の割合の条件だけ（編成の段で決まる）
+  passive: ['selfHp'],
 } as const satisfies Record<string, readonly ConditionKey[]>;
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける */
@@ -1853,8 +1877,16 @@ function parseCondition(c: Json, path: string, allowed: readonly ConditionKey[])
     if (c.usedBurst !== true) fail(`${path}.usedBurst`, 'expected true');
     condition.usedBurst = true;
   }
+  if (c.selfHp !== undefined) condition.selfHp = parseSelfHpCondition(c.selfHp, `${path}.selfHp`);
   if (Object.keys(condition).length === 0) fail(path, `expected at least one of ${allowed.join(', ')}`);
   return condition;
+}
+
+/** 2 段目の段 6: 自分の HP の割合の条件。{ atLeastRef }（「自分の HP が X% 以上なら」） */
+function parseSelfHpCondition(v: Json, path: string): SelfHpCondition {
+  if (!isRecord(v)) fail(path, 'expected { atLeastRef }');
+  for (const key of Object.keys(v)) if (key !== 'atLeastRef') fail(`${path}.${key}`, 'unknown field');
+  return { atLeastRef: parseRef(v.atLeastRef, `${path}.atLeastRef`) };
 }
 
 /**

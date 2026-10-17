@@ -60,6 +60,11 @@ export type TimelineSlot = {
   levels: SkillLevels;
   /** 発動者基準の固定加算に使うバフ前攻撃力（damage.ts の baseAttackOf と同じ値） */
   casterBaseAttack: number;
+  /**
+   * 2 段目の段 6（plan/design-skill-stage6.md 1.2・1.3 節）: 発動者の最終最大HP（casterFinalMaxHp の固定加算に使う）。最大HP を
+   * 動かす効果がまだモデルに無いので、バフ前の最大HP（damage.ts の baseMaxHpOf）。省略して casterFinalMaxHp の効果を配ると RangeError
+   */
+  casterMaxHp?: number;
   /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。自分だけに効く常時バフ。省略は無し */
   buildEffects?: readonly BuildEffect[];
   /** Stage 15: 命中率（射撃場 = 1 の相対値。省略 1）。1 パス目のゲージと normalHit の回数に使う */
@@ -404,7 +409,7 @@ export function unionWindows(
   return merged;
 }
 
-type PassiveSource = { slotIndex: number; casterBaseAttack: number; effect: ResolvedEffect };
+type PassiveSource = { slotIndex: number; casterBaseAttack: number; casterMaxHp?: number; effect: ResolvedEffect };
 
 const NO_BUILD_EFFECTS: readonly BuildEffect[] = Object.freeze([]);
 
@@ -417,16 +422,16 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
   slots.forEach((slot, slotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolvePassives(slot.definition, slot.character, slot.levels)) {
-      sources.push({ slotIndex, casterBaseAttack: slot.casterBaseAttack, effect });
+      sources.push({ slotIndex, casterBaseAttack: slot.casterBaseAttack, casterMaxHp: slot.casterMaxHp, effect });
     }
   });
   return slots.map((slot, index) => {
     if (slot === null) return null;
     let buffs: BuffTotals = { ...ZERO_BUFFS };
     const passiveEffects: AppliedEffect[] = [];
-    for (const { slotIndex, casterBaseAttack, effect } of sources) {
+    for (const { slotIndex, casterBaseAttack, casterMaxHp, effect } of sources) {
       if (!isEffectTarget(effect, slotIndex, index, slot.character)) continue;
-      const applied = applyResolvedEffect(buffs, effect, casterBaseAttack);
+      const applied = applyResolvedEffect(buffs, effect, casterBaseAttack, casterMaxHp);
       buffs = applied.totals;
       passiveEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount: applied.appliedAmount });
     }
@@ -528,7 +533,8 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
       if (p.start > start || p.end <= start) continue;
       const state = slotStates[p.slotIndex];
       if (!state) continue;
-      const applied = applyResolvedEffect(state.buffs, p.effect, slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0);
+      const caster = slots[p.sourceSlotIndex];
+      const applied = applyResolvedEffect(state.buffs, p.effect, caster?.casterBaseAttack ?? 0, caster?.casterMaxHp);
       state.buffs = applied.totals;
       state.timedEffects.push({
         ...p.effect,
@@ -546,6 +552,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
           state.buffs,
           p.effect,
           slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0,
+          slots[p.sourceSlotIndex]?.casterMaxHp,
         ).totals;
       }
     }
@@ -572,6 +579,7 @@ export function rankSlotsOf(slots: readonly TimelineSlot[], passive: readonly (S
       ? null
       : {
           casterBaseAttack: slot.casterBaseAttack,
+          casterMaxHp: slot.casterMaxHp,
           weaponType: slot.character.weaponType,
           element: slot.character.element,
           passive: passive[i]?.buffs ?? ZERO_BUFFS,
