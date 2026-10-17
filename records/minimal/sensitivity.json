@@ -1762,6 +1762,38 @@
       "plus": 0
     },
     {
+      "observation": "124-05",
+      "element": "シンデレラ skill2.effects[0]",
+      "key": "b399108357afb8b4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "124-05",
+      "element": "シンデレラ skill2.effects[2]",
+      "key": "b399108357afb8b4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "124-06",
+      "element": "シンデレラ skill2.effects[0]",
+      "key": "1dc10eac5e404d1b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "124-06",
+      "element": "シンデレラ skill2.effects[2]",
+      "key": "1dc10eac5e404d1b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "137-05",
       "element": "ミサト skill1.effects[0]",
       "key": "3b45667af24069b7",
@@ -4830,6 +4862,70 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "178-06",
+      "element": "シンデレラ skill2.effects[0]",
+      "key": "561b2be938ae8586",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "178-06",
+      "element": "シンデレラ skill2.effects[2]",
+      "key": "561b2be938ae8586",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "178-07",
+      "element": "シンデレラ skill2.effects[0]",
+      "key": "e62e5162af5d05b1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "178-07",
+      "element": "シンデレラ skill2.effects[2]",
+      "key": "e62e5162af5d05b1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "179-06",
+      "element": "シンデレラ skill2.effects[0]",
+      "key": "00746f2165b73c92",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "179-06",
+      "element": "シンデレラ skill2.effects[2]",
+      "key": "00746f2165b73c92",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "179-07",
+      "element": "シンデレラ skill2.effects[0]",
+      "key": "e787651a8a8eaf2d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "179-07",
+      "element": "シンデレラ skill2.effects[2]",
+      "key": "e787651a8a8eaf2d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "181-03",

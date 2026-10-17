@@ -692,9 +692,7 @@ export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffSt
 export function isFirstPassTrackedStat(stat: BuffStat): boolean {
   // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるバーストゲージのチャージ速度は、1 パス目がゲージに読む。
   // 2 段目の段 6 の PR 2: 最大HP▲ は、1 パス目の順位（攻撃力）が発動者の最終最大HP として読むので、攻撃力と同じに扱う
-  return (
-    stat === 'attack' || stat === 'maxHp' || stat === 'burstGaugeSpeed' || isFiringStat(stat) || isStateStat(stat)
-  );
+  return stat === 'attack' || stat === 'maxHp' || stat === 'burstGaugeSpeed' || isFiringStat(stat) || isStateStat(stat);
 }
 
 /** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */

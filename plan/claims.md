@@ -3221,6 +3221,7 @@
   - 決めるのに使った録画: 124（仮説の出どころ）
   - 検証記録: V-0445
   - 定義: `data/skills/511.json` の skill1 の effects[0]
+  - 最小構成の警告: 6 / 6 組（[minimal.md](minimal.md)）
 
 ## 敵・的・場面
 

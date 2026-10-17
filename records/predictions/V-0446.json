@@ -1,9 +1,18 @@
 {
   "verification": "V-0446",
   "team": [
-    { "rid": 822, "controlled": false },
-    { "rid": 20, "controlled": false },
-    { "rid": 511, "controlled": true }
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 511,
+      "controlled": true
+    }
   ],
   "fixedSpec": true,
   "hypotheses": [
@@ -17,9 +26,22 @@
       "id": "cin-fb1-s5-core",
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 3, "frame": 950, "core": true, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"], "burst": true, "condition": "auto" },
+      "args": {
+        "slot": 3,
+        "frame": 950,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
       "note": "1 回目のフルバースト中、美しさ 5 スタックの所のシンデレラのコアの 1 ヒット（会心なし）。HUD の増分は、これに同じ発の追加ダメージ（cin-fb1-s5-add）を足した値",
       "observations": []
     },
@@ -27,9 +49,20 @@
       "id": "cin-fb1-s5-add",
       "model": "sim",
       "metric": "perShotHitDamage",
-      "args": { "slot": 3, "frame": 950, "crit": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"], "burst": true, "condition": "auto" },
+      "args": {
+        "slot": 3,
+        "frame": 950,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
       "note": "同じ所の S1 の追加ダメージ（会心なし。C-0583）",
       "observations": []
     },
@@ -37,9 +70,22 @@
       "id": "cin-fb1-s8-core",
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 3, "frame": 1440, "core": true, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"], "burst": true, "condition": "auto" },
+      "args": {
+        "slot": 3,
+        "frame": 1440,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
       "note": "1 回目のフルバースト中、S1 の攻撃力▲の終わりの前（美しさ 8 スタック）のコアの 1 ヒット。読み直しなら cin-fb1-s5-core より上がり、発火の瞬間の値で固定なら同じ",
       "observations": []
     },
@@ -47,9 +93,20 @@
       "id": "cin-fb1-s8-add",
       "model": "sim",
       "metric": "perShotHitDamage",
-      "args": { "slot": 3, "frame": 1440, "crit": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"], "burst": true, "condition": "auto" },
+      "args": {
+        "slot": 3,
+        "frame": 1440,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
       "note": "同じ所の S1 の追加ダメージ（会心なし）",
       "observations": []
     },
@@ -57,9 +114,22 @@
       "id": "cin-after-fb1-core",
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 3, "frame": 1520, "core": true, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"], "burst": true, "condition": "auto" },
+      "args": {
+        "slot": 3,
+        "frame": 1520,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
       "note": "1 回目のフルバーストの後（S1 の攻撃力▲の外）のコアの 1 ヒット。美しさは読む側が無いので値に効かない（対照。録画 124 と同じ値）",
       "observations": []
     },
@@ -67,11 +137,38 @@
       "id": "cin-fb2-core",
       "model": "sim",
       "metric": "hitDamage",
-      "args": { "slot": 3, "frame": 3300, "core": true, "crit": false, "distance": false },
-      "tolerance": { "abs": 1 },
-      "setup": { "enemy": "range-bigarms-fire", "events": ["range-3min-jump"], "burst": true, "condition": "auto" },
+      "args": {
+        "slot": 3,
+        "frame": 3300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
       "note": "2 回目のフルバースト中（美しさ 12 スタック。36 秒で上限）のコアの 1 ヒット。読み直しでも固定でも同じ値（デコイが壊れずに美しさが 12 まで上がったかの確かめ）",
       "observations": []
     }
-  ]
+  ],
+  "predicted": {
+    "at": "2026-10-17",
+    "commit": "1adc361901791a56ba1fa437e39f6fd07154e635",
+    "values": {
+      "H1": {
+        "cin-fb1-s5-core": 285411.3405,
+        "cin-fb1-s5-add": 364252.779,
+        "cin-fb1-s8-core": 292359.9445,
+        "cin-fb1-s8-add": 373120.851,
+        "cin-after-fb1-core": 103246.494,
+        "cin-fb2-core": 301625.28500000003
+      }
+    }
+  }
 }
