@@ -1452,7 +1452,7 @@
     {
       "observation": "092-08",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "48c6033b9999e02e",
+      "key": "19f782bac93c0d37",
       "effective": true,
       "minus": null,
       "plus": 0,
@@ -1461,7 +1461,7 @@
     {
       "observation": "092-09",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "0de04da8e999bc09",
+      "key": "1b103ae552f323e0",
       "effective": true,
       "minus": null,
       "plus": 0,
@@ -7469,6 +7469,42 @@
       "plus": 0
     },
     {
+      "observation": "463-01",
+      "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
+      "key": "381808e038760ca9",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: no state track for goldenChip on slot 2 (stackChange needs a grant on self)"
+    },
+    {
+      "observation": "463-02",
+      "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
+      "key": "984acc250fe58c1e",
+      "effective": true,
+      "minus": null,
+      "plus": -1,
+      "error": "minus: no state track for goldenChip on slot 2 (stackChange needs a grant on self)"
+    },
+    {
+      "observation": "463-03",
+      "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
+      "key": "e737bd44357c536d",
+      "effective": true,
+      "minus": null,
+      "plus": 2,
+      "error": "minus: no state track for goldenChip on slot 2 (stackChange needs a grant on self)"
+    },
+    {
+      "observation": "463-05",
+      "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
+      "key": "b5a36ddbd8351a18",
+      "effective": true,
+      "minus": null,
+      "plus": -1.1641532182693481e-10,
+      "error": "minus: no state track for goldenChip on slot 2 (stackChange needs a grant on self)"
+    },
+    {
       "observation": "465-01",
       "element": "マナ burst.effects[0]",
       "key": "b8ed168d4b15d3e2",
@@ -7853,6 +7889,42 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "471-01",
+      "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
+      "key": "369eaea354857168",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: no state track for goldenChip on slot 2 (stackChange needs a grant on self)"
+    },
+    {
+      "observation": "471-02",
+      "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
+      "key": "e1d912243ae04733",
+      "effective": true,
+      "minus": null,
+      "plus": -1,
+      "error": "minus: no state track for goldenChip on slot 2 (stackChange needs a grant on self)"
+    },
+    {
+      "observation": "471-03",
+      "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
+      "key": "71405ca7fc9f6754",
+      "effective": true,
+      "minus": null,
+      "plus": 2,
+      "error": "minus: no state track for goldenChip on slot 2 (stackChange needs a grant on self)"
+    },
+    {
+      "observation": "471-05",
+      "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
+      "key": "ac24e90ad9584d25",
+      "effective": true,
+      "minus": null,
+      "plus": -1.1641532182693481e-10,
+      "error": "minus: no state track for goldenChip on slot 2 (stackChange needs a grant on self)"
     }
   ]
 }

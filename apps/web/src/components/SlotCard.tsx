@@ -376,7 +376,7 @@ export function SlotCard({
                           ? '（期待値）'
                           : `× ${t.count} 回`}
                         {formatTimedExtras(t.effect)}
-                        {t.skips > 0 ? `・状態でなく発動せず ${t.skips} 回` : ''}
+                        {t.skips > 0 ? `・条件を満たさず発動せず ${t.skips} 回` : ''}
                         {t.effect.assumes ? `・仮定: ${t.effect.assumes.ja}` : ''}
                       </small>
                     </li>

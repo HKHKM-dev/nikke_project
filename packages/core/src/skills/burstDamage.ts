@@ -22,6 +22,7 @@ import {
 } from './types.ts';
 import {
   isResolvedShotCount,
+  resolveCondition,
   resolveTrigger,
   skillValue,
   type ResolvedShotCountTrigger,
@@ -168,7 +169,7 @@ export function resolveDamageEffects(
         trigger,
         effectIndex,
       };
-      if (effect.condition) r.condition = { ...effect.condition };
+      if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);

@@ -21,6 +21,7 @@ import type {
   EffectCondition,
   NamedStateId,
   RemoveStateEffect,
+  SelfStateCondition,
   StackChangeEffect,
   ResolvedTrigger,
   SkillDamageType,
@@ -130,11 +131,27 @@ export function formatDamageCondition(condition: EffectCondition | undefined): s
   if (condition.selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[condition.selfBuffed]}増加状態`);
   if (condition.inFullBurst === true) parts.push('フルバースト中');
   if (condition.enemyState !== undefined) parts.push(`対象が${stateLabel(condition.enemyState)}状態`);
-  // 2 段目の段 1: 自分の状態の条件
-  if (condition.selfState !== undefined) {
-    parts.push(`自分が${stateLabel(condition.selfState.state)}状態${condition.selfState.present ? '' : 'でない'}`);
-  }
+  // 2 段目の段 1: 自分の状態の条件。段 3: スタック数の条件
+  if (condition.selfState !== undefined) parts.push(selfStateText(condition.selfState, '', 'でない'));
   return `（${parts.join('・')}なら）`;
+}
+
+/**
+ * 2 段目の段 1・段 3: 自分の状態の条件の文。「自分がカモフラージュ状態」「自分がゴールデンチップ 20 スタック以上」「自分が〈名前〉の
+ * フルスタック状態」に、付いていれば positive、付いていなければ negative を続ける。stacksRef（解く前の定義）は stacksOf で値にする
+ */
+export function selfStateText(
+  self: SelfStateCondition,
+  positive: string,
+  negative: string,
+  stacksOf?: (ref: number) => number,
+): string {
+  const name = stateLabel(self.state);
+  const stacks = self.stacks ?? (self.stacksRef !== undefined ? stacksOf?.(self.stacksRef) : undefined);
+  if (stacks === 'full') return `自分が${name}のフルスタック状態${positive}`;
+  if (stacks !== undefined) return `自分が${name} ${formatNumber(stacks)} スタック以上${positive}`;
+  if (self.stacksRef !== undefined) return `自分が${name}の説明文の値（${self.stacksRef}）スタック以上${positive}`;
+  return `自分が${name}状態${self.present ? positive : negative}`;
 }
 
 /** 「バースト使用時 →」 */
@@ -186,12 +203,17 @@ export function formatRemoveState(effect: RemoveStateEffect): string {
 }
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: 定義のスタック量の増加。「ゴールデンチップのスタック量 +50」。amount は
- * 解いた値（amountRef は Lv の説明文の値）
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: 定義のスタック量の増減。「ゴールデンチップのスタック量 +50」
+ * 「ゴールデンチップのスタック量 −17（効果の後に、上の段から）」。amount は解いた値（amountRef は Lv の説明文の値）
  */
-export function formatStackChange(effect: StackChangeEffect, amount: number): string {
-  const conditions = formatGrantCondition(effect.condition);
-  return `${stateLabel(effect.state)}のスタック量 +${formatNumber(amount)}${conditions === '' ? '' : `（${conditions}）`}`;
+export function formatStackChange(
+  effect: StackChangeEffect,
+  amount: number,
+  stacksOf?: (ref: number) => number,
+): string {
+  const conditions = formatGrantCondition(effect.condition, stacksOf);
+  const change = effect.decrease ? `−${formatNumber(amount)}（次のフレームに上の段から）` : `+${formatNumber(amount)}`;
+  return `${stateLabel(effect.state)}のスタック量 ${change}${conditions === '' ? '' : `（${conditions}）`}`;
 }
 
 /** 定義のその状態の中身（同じ状態の付与のどれかが持つもの。無ければ undefined） */
@@ -205,16 +227,12 @@ function stateContentsOf(definition: SkillDefinition | null, state: NamedStateId
 }
 
 /** 付与・解除の条件（「自分が〈状態〉なら」「直前に自分がバーストを使用していれば」など）。無ければ空文字 */
-function formatGrantCondition(condition: EffectCondition | undefined): string {
+function formatGrantCondition(condition: EffectCondition | undefined, stacksOf?: (ref: number) => number): string {
   if (condition === undefined) return '';
   const parts: string[] = [];
   if (condition.selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[condition.selfBuffed]}増加状態なら`);
   if (condition.inFullBurst === true) parts.push('フルバーストタイムなら');
-  if (condition.selfState !== undefined) {
-    parts.push(
-      `自分が${stateLabel(condition.selfState.state)}状態${condition.selfState.present ? 'なら' : 'でなければ'}`,
-    );
-  }
+  if (condition.selfState !== undefined) parts.push(selfStateText(condition.selfState, 'なら', 'でなければ', stacksOf));
   if (condition.usedBurst === true) parts.push('直前に自分がバーストを使用していれば');
   return parts.join('・');
 }
@@ -315,12 +333,8 @@ export function formatTimedExtras(effect: AppliedTimedEffect): string {
   const condition = effect.condition;
   if (condition?.selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[condition.selfBuffed]}増加状態なら`);
   if (condition?.inFullBurst === true) parts.push('フルバーストタイムなら');
-  // 2 段目の段 1: 自分の状態の条件（静的な状態を見るものは編成の段で決まり、ここには来ない）
-  if (condition?.selfState !== undefined) {
-    parts.push(
-      `自分が${stateLabel(condition.selfState.state)}状態${condition.selfState.present ? 'なら' : 'でなければ'}`,
-    );
-  }
+  // 2 段目の段 1: 自分の状態の条件（静的な状態を見るものは編成の段で決まり、ここには来ない）。段 3: スタック数の条件
+  if (condition?.selfState !== undefined) parts.push(selfStateText(condition.selfState, 'なら', 'でなければ'));
   if (condition?.usedBurst === true) parts.push('直前に自分がバーストを使用していれば');
   if (effect.durationUntil === 'fullBurstEnd') parts.push('フルバーストタイムの終了まで');
   if (effect.amplifies !== undefined) {

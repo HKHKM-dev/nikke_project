@@ -27,6 +27,7 @@ import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamag
 import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
 import { itemsOf, valuePiecesOf, type ValuePiece } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, isResolvedChance, resolveTimed } from '../skills/resolve.ts';
+import type { NamedStateId } from '../skills/states.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import {
@@ -796,6 +797,85 @@ function burstActivationSlots(result: { schedule: BurstSchedule | null }, ctx: M
   return schedule.activations.slice(0, n).map((a) => a.slotIndex + 1);
 }
 
+/** 結果を最初の count 個に切る（count が無ければそのまま。足りなければ誤り） */
+function firstCount(values: number[], ctx: MetricContext, what: string): number[] {
+  if (ctx.args.count === undefined) return values;
+  const count = Number(ctx.args.count);
+  if (values.length < count) throw new Error(`${what}が ${values.length} 回しか無い`);
+  return values.slice(0, count);
+}
+
+/** 2 段目の段 3: 枠 slotIndex のフレーム frame の、状態 state のスタックの段の最大（付いていなければ 0） */
+function stateStacksAt(result: SimResult, slotIndex: number, state: string, frame: number): number {
+  let level = 0;
+  for (const it of itemsOf(result.history, { holder: slotIndex, state: state as NamedStateId })) {
+    if (it.start <= frame && frame < it.end) level = Math.max(level, it.stack ?? 1);
+  }
+  return level;
+}
+
+/**
+ * 2 段目の段 3（ソーダ：トゥインクルバニーのバースト。V-0437）: 枠のバーストの発動ごとに、その発動から次の発動まで（最後は戦闘の
+ * 終わりまで）に始まった、枠が自分に付けた timed の効果（skill と stat で絞る。状態だけの stat も入れる）の窓があれば 1、無ければ 0。
+ * count を書くと最初の count 回。録画では、発動の直後の一時停止画面の適用中の効果と比べる。条件（スタック数など）で付いたかを、
+ * 発動の時刻に依らずに比べる
+ */
+function burstBuffApplied(result: SimResult, ctx: MetricContext): number[] {
+  if (result.schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const acts = activationFramesOfSlot(result.schedule, slotIndex);
+  const starts = valuePiecesOf(result.history)
+    .filter(
+      (p) =>
+        p.slotIndex === slotIndex &&
+        p.sourceSlotIndex === slotIndex &&
+        p.effect.source.skill === ctx.args.skill &&
+        p.effect.stat === ctx.args.stat,
+    )
+    .map((p) => p.start);
+  const applied = acts.map((a, k) => (starts.some((f) => a <= f && f < (acts[k + 1] ?? Infinity)) ? 1 : 0));
+  return firstCount(applied, ctx, 'バーストの発動');
+}
+
+/**
+ * 2 段目の段 3（同）: 枠の状態 state のスタック量の減少（stackChange の decrease）ごとに、減少のフレームから次のフレームへの
+ * スタックの段の最大の差（負。付いている段より多く減らせば、付いている段の数だけ）。count を書くと最初の count 回。録画では、発動の
+ * 直前（フルバーストの外の 1 ヒットの会心の比）と直後（一時停止画面）のスタック数の差と比べる
+ */
+function stateStackDrops(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const state = String(ctx.args.state);
+  const frames = [
+    ...new Set(
+      result.history.tracks
+        .filter((t) => t.holder === slotIndex && t.origin.kind === 'state' && t.origin.state === state)
+        .flatMap((t) => t.decreases.map((d) => d.frame)),
+    ),
+  ].sort((a, b) => a - b);
+  const drops = frames.map(
+    (d) => stateStacksAt(result, slotIndex, state, d + 1) - stateStacksAt(result, slotIndex, state, d),
+  );
+  return firstCount(drops, ctx, 'スタック量の減少');
+}
+
+/**
+ * 2 段目の段 3（同）: フルバーストの窓ごとに、窓の中の状態 state のスタックの段の最大の増え方（窓の終わり − 始まり）から、窓の中の
+ * 枠の発の数を every で割った商を引いたもの。「フルバースト中の通常攻撃 every 回ごとに 1 スタック（フルバーストごとに数え直す）」なら
+ * 0。窓の長さや発の数に依らずに、数え方だけを比べる（録画では、窓の中の発を数え、前後のスタック数と比べる）。count を書くと最初の count 回
+ */
+function fullBurstStackGainResidues(result: SimResult, ctx: MetricContext): number[] {
+  if (result.schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const state = String(ctx.args.state);
+  const every = Number(ctx.args.every);
+  const shots = slotOf(result.shots, ctx).frames;
+  const residues = result.schedule.fullBurstWindows.map((w) => {
+    const gained = stateStacksAt(result, slotIndex, state, w.end) - stateStacksAt(result, slotIndex, state, w.start);
+    return gained - Math.floor(shots.filter((f) => w.start <= f && f < w.end).length / every);
+  });
+  return firstCount(residues, ctx, 'フルバースト');
+}
+
 /**
  * アニス：スター編: 射撃ごとの倍率ダメージ（perShot。「フルチャージ攻撃が命中した時、最終攻撃力の X% の追加ダメージ」など）の 1 回の値。
  * hitDamage と同じく、その時点の区間の 1 トリガーの perShot から、倍率グループ（1 + 会心 + フルバースト）だけをパターンに差し替えて
@@ -993,6 +1073,10 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   burstEffectFirstShot: { args: ['slot', 'n'], sim: burstEffectFirstShot },
   burstEffectDelay: { args: ['slot', 'n'], sim: burstEffectDelay },
   fullBurstCrossingShotGauge: { args: ['slot'], sim: fullBurstCrossingShotGauge },
+  // 2 段目の段 3（ソーダ：トゥインクルバニーのバースト。V-0437）: スタック数の条件で付いたか・スタック量の減少・フルバースト中の数え方
+  burstBuffApplied: { args: ['slot', 'skill', 'stat'], sim: burstBuffApplied },
+  stateStackDrops: { args: ['slot', 'state'], sim: stateStackDrops },
+  fullBurstStackGainResidues: { args: ['slot', 'state', 'every'], sim: fullBurstStackGainResidues },
   shotGauge: { args: ['slot', 'n'], sim: shotGauge },
 };
 
