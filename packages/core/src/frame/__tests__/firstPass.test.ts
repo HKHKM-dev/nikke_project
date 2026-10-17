@@ -86,14 +86,24 @@ function withoutHits(logs: readonly (ShotLog | null)[]): (Omit<ShotLog, 'hits' |
 
 /**
  * マナの定義の S2 を、常時のゲージ速度だけにしたもの（2 段目の段 1 より前の書き方。マターシグマを常時パッシブにし、射撃に効く効果
- * （チャージ時間▼）と、フルバーストの開始・終わりの効果は外す）。常時のゲージ速度の受け渡しを確かめる用
+ * （チャージ時間▼）と、フルバーストの開始・終わりの効果は外す）。S1 の通常攻撃 10 発ごとの回復（即時効果。C-0570）も外す。
+ * 常時のゲージ速度の受け渡しを確かめる用
  */
 function manaWithoutFiring() {
   const def = loadDefinition(290);
+  const skill1 = def.skills.skill1;
+  expect(skill1.effects[1]).toMatchObject({ kind: 'heal' });
   const skill2 = def.skills.skill2;
   expect(skill2.effects[0]).toMatchObject({ kind: 'state', state: 'metalSigma', trigger: 'battleStart' });
   const effects: SkillEffect[] = [{ kind: 'passive', target: 'self', stat: 'burstGaugeSpeed', ref: 1 }];
-  return { ...def, skills: { ...def.skills, skill2: { ...skill2, effects } } };
+  return {
+    ...def,
+    skills: {
+      ...def.skills,
+      skill1: { ...skill1, effects: skill1.effects.filter((e) => e.kind !== 'heal') },
+      skill2: { ...skill2, effects },
+    },
+  };
 }
 
 describe('runFirstPass: degeneration (1.3)', () => {

@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 290,
-  "checkedAt": "2026-10-16",
+  "checkedAt": "2026-10-17",
   "skills": {
     "skill1": {
       "effects": [
@@ -20,19 +20,25 @@
           "claims": [
             "C-0020"
           ]
+        },
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "normalShot",
+            "every": 10
+          },
+          "target": "allies",
+          "ref": 2,
+          "assumes": {
+            "ja": "通常攻撃 10 発ごと（通算 10・20・30…発目）に味方全体が回復を受け、そのたびに「回復効果が適用された時」を起こす（1 回の回復。HP が満タンでも適用とみなす。ヘルムの宝物版 S1 の C-0345 と同じ読み）。条件のマターガンマは戦闘開始から終わりまで付いている（解除は味方の戦闘不能時だけで、射撃場では起きない）ので条件を書かない。回復量はダメージに関係しない",
+            "en": "Every 10 normal attacks (the 10th, 20th, 30th... overall) heal all allies and trigger \"when healed\" each time (a one-off heal; it counts as applied even at full HP, as read for Helm's treasure S1 in C-0345). Metal γ, the condition, lasts from the start to the end of battle (it is removed only when an ally is incapacitated, which does not happen on the range), so no condition is written. The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-0570"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "通常攻撃 10 回ごとの味方全体の回復は未対応（回復を受けた時の効果を起こさない）",
-          "en": "The heal on all allies every 10 normal attacks is not modeled (it does not trigger effects on being healed)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "normalShot"
-          }
-        },
         {
           "ja": "味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない",
           "en": "Revive and Matter γ removal on ally incapacitation do not occur because allies are never incapacitated",
