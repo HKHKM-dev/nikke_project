@@ -766,6 +766,8 @@ export type HealEffect = {
   /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */
   durationRef?: number;
   durationSeconds?: number;
+  /** F5（plan/design-heal-vocabulary.md 3.3 節）: 編成に特定のキャラがいる条件 */
+  withCharacter?: WithCharacterCondition;
   assumes?: LocalizedText;
 };
 
@@ -1554,7 +1556,7 @@ function parsePositiveInt(v: Json, path: string): number {
 
 /**
  * 文字列なら BuffTrigger、オブジェクトなら回数トリガー。時間の周期のトリガー（{ everySeconds }）は allowTimer のとき
- * （damage・dot・autoAttack・burstGaugeHit・timed）だけ
+ * （damage・dot・autoAttack・burstGaugeHit・timed・heal）だけ
  */
 function parseTrigger(
   v: Json,
@@ -1580,7 +1582,7 @@ function parseTrigger(
     if (!allowTimer)
       fail(
         path,
-        'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit and timed',
+        'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit, timed and heal',
       );
     const keys = allowTimer === 'withStart' ? ['everySeconds', 'atStart'] : ['everySeconds'];
     for (const key of Object.keys(v)) if (!keys.includes(key)) fail(`${path}.${key}`, 'unknown field');
@@ -2497,7 +2499,8 @@ function parseBurstReentryEffect(v: Record<string, Json>, path: string): BurstRe
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
   // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）
   const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds'] : [];
-  const compositionKeys = kind === 'cooldownReduction' ? ['burstStepMix', 'squad'] : [];
+  const compositionKeys =
+    kind === 'cooldownReduction' ? ['burstStepMix', 'squad'] : kind === 'heal' ? ['withCharacter'] : [];
   const scalingKeys = kind === 'ammoRefill' ? ['scaling'] : [];
   for (const key of Object.keys(v)) {
     if (
@@ -2521,7 +2524,15 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
     }
   }
   const hasDuration = v.durationRef !== undefined || v.durationSeconds !== undefined;
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, false, false, false, kind === 'heal');
+  // F5（plan/design-heal-vocabulary.md 3.3 節）: heal は時間の周期のトリガー（atStart も）を書ける（エマ：TU の S1 の持続回復）
+  const trigger = parseTrigger(
+    v.trigger,
+    `${path}.trigger`,
+    kind === 'heal' ? 'withStart' : false,
+    false,
+    false,
+    kind === 'heal',
+  );
   // 回復で回復を起こすと連鎖が閉じないので、heal のトリガーに healed は書けない（plan/design-stage11.md 3.3 節）
   if (kind === 'heal' && trigger === 'healed') fail(`${path}.trigger`, 'heal cannot be triggered by "healed"');
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
@@ -2591,8 +2602,16 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   // 防御力無視ダメージ編: 編成に特定のキャラがいる条件・敵の属性の条件（passive・timed・damage。名前の付いた状態の語彙編: 付与も）
   for (const key of ['withCharacter', 'enemyElement'] as const) {
     if (v[key] === undefined) continue;
+    // F5（plan/design-heal-vocabulary.md 3.3 節）: withCharacter は heal にも書ける（エマ：TU の S1 の持続回復の周期。ウンファ：TU の有無）
+    if (key === 'withCharacter' && effect.kind === 'heal') {
+      effect.withCharacter = parseWithCharacterCondition(v[key], `${path}.${key}`);
+      continue;
+    }
     if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'state' && effect.kind !== 'damage') {
-      fail(`${path}.${key}`, `only allowed in passive, timed, state and damage, found in ${effect.kind}`);
+      fail(
+        `${path}.${key}`,
+        `only allowed in passive, timed, state and damage (withCharacter also in heal), found in ${effect.kind}`,
+      );
     }
     if (key === 'withCharacter') effect.withCharacter = parseWithCharacterCondition(v[key], `${path}.${key}`);
     else effect.enemyElement = oneOf(ELEMENTS, v[key], `${path}.${key}`);

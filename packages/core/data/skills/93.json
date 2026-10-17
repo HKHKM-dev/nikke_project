@@ -49,19 +49,51 @@
             "C-0305",
             "C-0306"
           ]
+        },
+        {
+          "kind": "heal",
+          "target": "allies",
+          "ref": 3,
+          "durationRef": 4,
+          "trigger": {
+            "everySeconds": 30,
+            "atStart": true
+          },
+          "withCharacter": {
+            "rid": 95,
+            "present": false
+          },
+          "assumes": {
+            "ja": "環境コントロールの効果 2（持続回復・1 秒間隔）。付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（ゲーム内の用語のツールチップの読み）。付く時刻は効果 1（受けるダメージ▲）と同じで、戦闘開始時と、そこから 30 秒ごと。編成にウンファ：タクティカル・アップがいないとき",
+            "en": "Environment Setup Effect 2 (heal over time, every second). Triggers \"when recovery is applied\" only once when applied, not on each 1-second tick (reading of the in-game term tooltip). Applied at the same times as Effect 1 (Damage Taken up): at battle start and every 30 s after. Only when Eunhwa: Tactical Upgrade is not in the team"
+          },
+          "claims": [
+            "C-0578"
+          ]
+        },
+        {
+          "kind": "heal",
+          "target": "allies",
+          "ref": 3,
+          "durationRef": 4,
+          "trigger": {
+            "everySeconds": 10,
+            "atStart": true
+          },
+          "withCharacter": {
+            "rid": 95,
+            "present": true
+          },
+          "assumes": {
+            "ja": "上の効果と同じ持続回復で、編成にウンファ：タクティカル・アップがいるとき。S2 のフォーメーションAS で再発動周期が 10 秒になる（効果 1 と同じ読み）",
+            "en": "Same heal over time as the previous effect, with Eunhwa: Tactical Upgrade in the team. S2's AS Formation makes the recurring interval 10 s (same reading as Effect 1)"
+          },
+          "claims": [
+            "C-0578"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "環境コントロールの味方全体の持続回復は未対応（回復を受けた時の効果を起こさない）",
-          "en": "Environment Setup's heal over time on all allies is not modeled (it does not trigger effects on being healed)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "timer"
-          }
-        },
         {
           "ja": "陽動はダメージに関係しない",
           "en": "Exposure does not affect damage",
