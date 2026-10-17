@@ -1,0 +1,161 @@
+{
+  "verification": "V-0441",
+  "note": "撮る前の予測（plan/design-heal-vocabulary.md 5 節の F5）。エマ：TU（AI）とアスカ（操作）の 2 体で、オートバースト OFF でバーストを撃たない（setup の burst: false）。見るのはアスカの S1（回復効果が適用された時、攻撃力▲ 25 秒）が付いているかで、アスカの 1 発（コア・会心・距離なし）で比べる。環境コントロールは戦闘開始時と 30 秒ごと（1765f ごと）に付き、受けるダメージ▲は 10 秒（588f）続く（C-0305）。D-a ならアスカの S1 は付いてから 25 秒（1470f）で切れ、次の付き直しまで約 5 秒（295f）空く。D-b（1 秒ごとの刻みで起きる）は予測ファイルにできないので、検証記録に手で書く（S1 が切れないので、切れ目の指標は D-a の asuka-hit-20s と同じ値）",
+  "team": [
+    {
+      "rid": 93,
+      "controlled": false
+    },
+    {
+      "rid": 830,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "環境コントロールの持続回復が「回復効果が適用された時」を起こさない（定義する前のモデルの形）。アスカの S1 は一度も付かない",
+      "override": {
+        "dropHeals": [93]
+      }
+    },
+    {
+      "id": "Da",
+      "note": "D-a（C-0578。いまのモデル）: 持続回復は付いた時に 1 回だけ起こす。アスカの S1 は環境コントロールが付いた時（0・1765・3530…f）から 1470f 続き、各周期の 1470〜1765f の間は S1 なし"
+    }
+  ],
+  "targets": [
+    {
+      "id": "asuka-hit-5s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 294,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "環境コントロールの受けるダメージ▲の窓の中（S1 ありなら S1 と ▲の両方）。H0 は ▲だけ",
+      "observations": ["476-10", "477-10"]
+    },
+    {
+      "id": "asuka-hit-20s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1176,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "受けるダメージ▲の窓の外・S1 の窓の中。Da は S1 あり（D-b も S1 あり。D-b の判定の指標の値はこれと同じ）",
+      "observations": ["476-11", "477-11"]
+    },
+    {
+      "id": "asuka-hit-27s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1620,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "判定の指標。1 回目の切れ目（1470〜1765f）の中。Da は S1 なし、D-b は S1 あり"
+    },
+    {
+      "id": "asuka-hit-57s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3380,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "判定の指標。2 回目の切れ目（3235〜3530f）の中",
+      "observations": ["476-07", "477-07"]
+    },
+    {
+      "id": "asuka-hit-147s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 8680,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "判定の指標。5 回目の切れ目（8530〜8825f）の中",
+      "observations": ["476-08", "477-08"]
+    },
+    {
+      "id": "asuka-total",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "アスカの与ダメージ（180 秒。戦闘履歴）。参考（コア命中率と的のジャンプの窓の残差が乗る）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-17",
+    "commit": "dda6ad989e727bab1618b58920383335ffa3fc1a",
+    "values": {
+      "H0": {
+        "asuka-hit-5s": 23350.205054399998,
+        "asuka-hit-20s": 22473.7296,
+        "asuka-hit-27s": 22473.7296,
+        "asuka-hit-57s": 22473.7296,
+        "asuka-hit-147s": 22473.7296,
+        "asuka-total": 37555207.07512696
+      },
+      "Da": {
+        "asuka-hit-5s": 46014.10946439999,
+        "asuka-hit-20s": 44286.919599999994,
+        "asuka-hit-27s": 22473.7296,
+        "asuka-hit-57s": 22473.7296,
+        "asuka-hit-147s": 22473.7296,
+        "asuka-total": 68703342.63865091
+      }
+    }
+  }
+}

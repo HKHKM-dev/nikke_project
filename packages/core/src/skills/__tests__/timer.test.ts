@@ -31,7 +31,7 @@ describe('everySeconds の検証', () => {
   });
 
   // ソルジャーE.G. 編（plan/design-soldier-eg.md 3.2 節）: 1 パス目で窓を追う stat（攻撃力・最大装弾数など）の timed にも書ける
-  it('is allowed in damage, dot, autoAttack, burstGaugeHit and timed only', () => {
+  it('is allowed in damage, dot, autoAttack, burstGaugeHit, timed and heal only', () => {
     const dot = { kind: 'dot', trigger: { everySeconds: 10 }, ref: 1, intervalSeconds: 1, durationSeconds: 5 };
     expect(() => parseSkillDefinition(withSkill2([dot]))).not.toThrow();
     const timed = {
@@ -44,9 +44,18 @@ describe('everySeconds の検証', () => {
     };
     expect(() => parseSkillDefinition(withSkill2([timed]))).not.toThrow();
     expect(() => parseSkillDefinition(withSkill2([{ ...timed, stat: 'maxAmmo' }]))).not.toThrow();
-    const heal = { kind: 'heal', trigger: { everySeconds: 10 }, target: 'self', ref: 1 };
-    expect(() => parseSkillDefinition(withSkill2([heal]))).toThrow(
-      /only allowed in damage, dot, autoAttack, burstGaugeHit and timed/,
+    // F5（plan/design-heal-vocabulary.md 3.3 節）: heal にも書ける（atStart も）
+    const heal = {
+      kind: 'heal',
+      trigger: { everySeconds: 10, atStart: true },
+      target: 'allies',
+      ref: 1,
+      durationSeconds: 5,
+    };
+    expect(() => parseSkillDefinition(withSkill2([heal]))).not.toThrow();
+    const cooldown = { kind: 'cooldownReduction', trigger: { everySeconds: 10 }, target: 'allies', ref: 1 };
+    expect(() => parseSkillDefinition(withSkill2([cooldown]))).toThrow(
+      /only allowed in damage, dot, autoAttack, burstGaugeHit, timed and heal/,
     );
   });
 

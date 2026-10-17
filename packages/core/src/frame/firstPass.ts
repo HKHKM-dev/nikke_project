@@ -84,11 +84,11 @@ import {
   type BurstScheduleModel,
 } from '../burst/schedule.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
-import { isResolvedShotCount, resolveInstant, type ResolvedInstantEffect } from '../skills/resolve.ts';
+import { isResolvedShotCount, isResolvedTimer, resolveInstant, type ResolvedInstantEffect } from '../skills/resolve.ts';
 import { healFrameOf } from '../skills/heals.ts';
 import { createHolderLists, type HolderHistory } from '../skills/holders.ts';
 import { isEffectTarget, type FireContext } from '../skills/targets.ts';
-import { resolvePassiveStates, type TimelineSlot } from '../skills/timeline.ts';
+import { resolvePassiveStates, triggerFrames, type TimelineSlot } from '../skills/timeline.ts';
 import {
   advanceShotCount,
   createTriggerTracker,
@@ -274,13 +274,20 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   /** 発火の文脈 context のとき、効果 e が掛かる枠（Stage 11: burstUsers は発火ごとに変わる） */
   const targetsAt = (e: Parameters<typeof isEffectTarget>[0], sourceSlotIndex: number, context: FireContext) =>
     slots.flatMap((t, i) => (t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character, context) ? [i] : []));
+  // F5（plan/design-heal-vocabulary.md 3.3 節）: 時間の周期のトリガー（heal だけ書ける）は出来事の列に無いので、
+  // 周期のフレーム（atStart ならフレーム 0 も。skills/timeline.ts の triggerFires）で発火する
+  const instantTracker = (effect: ResolvedInstantEffect, sourceSlotIndex: number): TriggerTracker => {
+    if (!isResolvedTimer(effect.trigger)) return createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel);
+    const at = new Set(triggerFrames(effect.trigger, null, sourceSlotIndex, frames));
+    return (ev) => at.has(ev.frame);
+  };
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveInstant(slot.definition, slot.character, slot.levels)) {
       instant.push({
         sourceSlotIndex,
         effect,
-        fires: createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel),
+        fires: instantTracker(effect, sourceSlotIndex),
       });
     }
   });
