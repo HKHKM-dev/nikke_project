@@ -21,8 +21,7 @@
           "trigger": {
             "count": "normalShot",
             "everyRef": 2,
-            "during": "fullBurst",
-            "reset": "fullBurstStart"
+            "firesDuring": "fullBurst"
           },
           "target": "self",
           "maxStacksRef": 4,
@@ -36,10 +35,9 @@
               ]
             }
           ],
-          "assumes": {
-            "ja": "フルバーストタイムの持続中の通常攻撃の回数は、フルバーストごとに数え直す（確かめていない）",
-            "en": "The normal attack count during Full Burst restarts at each Full Burst (unverified)"
-          }
+          "claims": [
+            "C-0580"
+          ]
         }
       ],
       "notes": [

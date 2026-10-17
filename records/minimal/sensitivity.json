@@ -1452,7 +1452,7 @@
     {
       "observation": "092-08",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "19f782bac93c0d37",
+      "key": "024b5d50dd0018ed",
       "effective": true,
       "minus": null,
       "plus": 0,
@@ -1461,7 +1461,7 @@
     {
       "observation": "092-09",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "1b103ae552f323e0",
+      "key": "4a1791b563969e46",
       "effective": true,
       "minus": null,
       "plus": 0,
@@ -7471,7 +7471,7 @@
     {
       "observation": "463-01",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "381808e038760ca9",
+      "key": "7d1059a6325ef1a3",
       "effective": true,
       "minus": null,
       "plus": 0,
@@ -7480,7 +7480,7 @@
     {
       "observation": "463-02",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "984acc250fe58c1e",
+      "key": "72942bf5dab8a8d0",
       "effective": true,
       "minus": null,
       "plus": -1,
@@ -7489,7 +7489,7 @@
     {
       "observation": "463-03",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "e737bd44357c536d",
+      "key": "04318c8a0addf75f",
       "effective": true,
       "minus": null,
       "plus": 2,
@@ -7498,7 +7498,7 @@
     {
       "observation": "463-05",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "b5a36ddbd8351a18",
+      "key": "038a79b3189791be",
       "effective": true,
       "minus": null,
       "plus": -1.1641532182693481e-10,
@@ -7939,7 +7939,7 @@
     {
       "observation": "471-01",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "369eaea354857168",
+      "key": "e3577c0b4471820e",
       "effective": true,
       "minus": null,
       "plus": 0,
@@ -7948,7 +7948,7 @@
     {
       "observation": "471-02",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "e1d912243ae04733",
+      "key": "ca0d6aaa83ffc671",
       "effective": true,
       "minus": null,
       "plus": -1,
@@ -7957,7 +7957,7 @@
     {
       "observation": "471-03",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "71405ca7fc9f6754",
+      "key": "593308ef4edd53c2",
       "effective": true,
       "minus": null,
       "plus": 2,
@@ -7966,7 +7966,7 @@
     {
       "observation": "471-05",
       "element": "ソーダ：トゥインクルバニー skill1.effects[1]",
-      "key": "ac24e90ad9584d25",
+      "key": "d6cb90c0f5b82877",
       "effective": true,
       "minus": null,
       "plus": -1.1641532182693481e-10,

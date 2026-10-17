@@ -150,17 +150,18 @@ export function createTriggerTracker(
   let count = 0;
   const t = trigger;
   if (isResolvedShotCount(t)) {
-    // クルミ S2 編（plan/design-kurumi-s2.md 2.1 節）: フルバーストの窓（[start, end)）の中の射撃だけを数える。
+    // クルミ S2 編（plan/design-kurumi-s2.md 2.1 節）: フルバーストの窓（[start, end)）の中の射撃だけを数える（firesDuring は
+    // 窓の外の発も数え、発火だけを窓の中に限る。V-0443）。
     // 同じフレームの射撃は、開始なら窓の中、終了なら外（isInFullBurst と同じ境界）
     let inFullBurst = false;
     return (ev) => {
-      if (t.during === 'fullBurst') {
+      if (t.during === 'fullBurst' || t.firesDuring === 'fullBurst') {
         if (ev.fullBurstEnd) inFullBurst = false;
         if (ev.fullBurstStart) {
           inFullBurst = true;
           if (t.reset === 'fullBurstStart') count = 0;
         }
-        if (!inFullBurst) return false;
+        if (t.during === 'fullBurst' && !inFullBurst) return false;
       }
       const shot = ev.shots[slotIndex];
       if (!shot) return false;
@@ -168,6 +169,8 @@ export function createTriggerTracker(
       if (t.chance !== undefined) return shotCountWeight(t.count, shot) > 0;
       const next = advanceShotCount(count, shotCountWeight(t.count, shot), t.every);
       count = next.count;
+      // ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 窓の外の発も数え、窓の外で届いた回は発火せずに過ぎる
+      if (t.firesDuring === 'fullBurst' && !inFullBurst) return false;
       return next.fired;
     };
   }

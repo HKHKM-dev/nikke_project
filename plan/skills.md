@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 60・効果 224（根拠あり 214）・notes 237（根拠あり 73）
+件数: キャラ 60・効果 224（根拠あり 215）・notes 237（根拠あり 73）
 
 notes の種類: 未対応 125・前提の外 27・計算に無関係 28・補足 10・間接 47
 
@@ -603,7 +603,7 @@ notes の種類: 未対応 125・前提の外 27・計算に無関係 28・補�
 
 - **skill1**: partial
   - effects[0] stackChange・battleStart・goldenChip: C-0128（確定）
-  - effects[1] state・normalShot・goldenChip（critDamage）: 根拠なし
+  - effects[1] state・normalShot・goldenChip（critDamage）: C-0580（仮説）
     - contents[0] critDamage: C-0128（確定）
   - notes[0] 未対応: フルバーストタイム中の通常攻撃 3 回ごとの、自分と自分を除く最終攻撃力が最も高い味方 1 機への攻撃ダメージ▲（2 秒）は未対応: 根拠なし
 - **skill2**: unsupported
