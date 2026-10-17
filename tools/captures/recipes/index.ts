@@ -1,5 +1,6 @@
 // レシピの一覧（read.ts --recipe <名前>）
 import { buffEdge } from './buff-edge.ts';
+import { chargeShots } from './charge-shots.ts';
 import { hudJumps } from './hud-jumps.ts';
 import { nearLanding } from './near-landing.ts';
 import { reloadSegments } from './reload-segments.ts';
@@ -16,6 +17,7 @@ export const RECIPES: readonly Recipe[] = [
   smgMags,
   smgCores,
   buffEdge,
+  chargeShots,
 ];
 
 export function findRecipe(name: string): Recipe | undefined {
