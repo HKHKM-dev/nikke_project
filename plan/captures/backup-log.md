@@ -270,3 +270,5 @@
 - 2026-10-17 19:59 録画 471（ラム + デルタ + ソーダ：トゥインクルバニー）: `range/20261017-471_sg_soda-tb-burst_pause-2.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-17 20:14 録画 474（マナ + アスカ）: `range/20261017-474_ar+ar_mana+asuka_asuka-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-17 20:15 録画 475（マナ + アスカ）: `range/20261017-475_ar+ar_mana+asuka_asuka-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-17 20:29 録画 478（アニス：スター + I-DOLL・フラワー + アスカ）: `range/20261017-478_rl+rl+ar_anis-star+idoll-flower+asuka_asuka-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-17 20:29 録画 479（アニス：スター + I-DOLL・フラワー + アスカ）: `range/20261017-479_rl+rl+ar_anis-star+idoll-flower+asuka_asuka-control.mp4` を同期（E: と I: で sha256 が一致）。
