@@ -458,7 +458,7 @@ export type TimerTrigger = {
 /**
  * ペルソナ編（plan/design-persona.md 3.3 節）: 「〈名前〉が適用された時」。名前の付いた状態の語彙編（plan/design-named-state.md 5.4 節）:
  * 編成のどの枠の付与でも、その状態がこの効果を持つ枠に付いたフレーム（状態の窓の始まり。付き直しでも 1 回）で発火する。
- * damage にだけ書ける
+ * damage と、2 段目の段 4（plan/design-skill-stage4.md 1.1 節）から timed・状態の付与に書ける（timed・付与は連鎖させない）
  */
 export type AppliedTrigger = { applied: NamedStateId };
 
@@ -999,8 +999,9 @@ export type StateContentItem = Pick<TimedEffect, 'stat' | 'ref' | 'scaling' | 'd
  * 名前の付いた状態の語彙編（同 5.2 節）: 状態の付与。timed から値の欄（stat・ref・scaling・decrease）を除き、目録の id（state）を
  * 足したもの。窓の作り方は timed と同じ（発火・対象・維持・上書き延長・スタック・条件・段）。同じ定義の同じ状態の付与は 1 つの状態
  * （発火をまとめて和集合・スタックの段にする）で、中身（contents）を持てるのはそのうち 1 つ、維持とスタックの上限は同じ。
- * 書けないのは name・amplifies と、トリガーの確率のきっかけ・{ applied }。静的な状態（staticStatesOf）の付与は編成の段で持ち主が
- * 決まり、中身は常時パッシブとして解く
+ * 書けないのは name・amplifies と、トリガーの確率のきっかけ。{ applied } は 2 段目の段 4 から書ける（自分の状態は見ない。連鎖させない）。
+ * 静的な状態（staticStatesOf）の付与は編成の段で持ち主が決まり、中身は常時パッシブとして解く。2 段目の段 4（plan/design-skill-stage4.md
+ * 1.2 節）: 維持 0 秒の付与は、名前の付いた即時効果の付いた記録だけを作る（中身・スタック・解除不可は書けない）
  */
 export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scaling' | 'decrease' | 'amplifies'> & {
   kind: 'state';
@@ -1548,8 +1549,10 @@ function parseTrigger(
 ): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
-  // ペルソナ編: 効果名のトリガーは damage だけ（parseDamageEffect が先に読む）
-  if (v.applied !== undefined) fail(path, 'an applied trigger ({ applied }) is only allowed in damage');
+  // ペルソナ編: 効果名のトリガーは damage と、2 段目の段 4 から timed・付与だけ（parseAppliedTrigger で先に読む）
+  if (v.applied !== undefined) {
+    fail(path, 'an applied trigger ({ applied }) is only allowed in damage, timed and state grants');
+  }
   // 2 段目の段 3: フルスタックの消費のきっかけは heal だけ（plan/design-skill-stage3.md 1.3 節）
   if (v.fullStack !== undefined) {
     if (!allowFullStack) fail(path, 'a full-stack trigger ({ fullStack }) is only allowed in heal');
@@ -1657,9 +1660,18 @@ function parseTimedFields(
   stat: BuffStat | undefined,
   allowChance: boolean,
 ): TimedFields {
-  // 2 段目の段 3（plan/design-skill-stage3.md 1.2 節）: 回数のきっかけの数える窓（during）も、damage と同じ意味で書ける
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance);
+  // 2 段目の段 3（plan/design-skill-stage3.md 1.2 節）: 回数のきっかけの数える窓（during）も、damage と同じ意味で書ける。
+  // 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: 「〈名前〉が適用される時」（{ applied }）も書ける
+  const trigger =
+    parseAppliedTrigger(v.trigger, `${path}.trigger`) ??
+    parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  // 同: { applied } の効果は条件・順位の対象・強化を書けない（使い手がいない。論点 6）
+  if (isAppliedTrigger(trigger)) {
+    if (v.condition !== undefined) fail(`${path}.condition`, 'an effect on an applied trigger cannot have a condition');
+    if (target === 'topAttack') fail(`${path}.target`, 'an effect on an applied trigger cannot target "topAttack"');
+    if (v.amplifies !== undefined) fail(`${path}.amplifies`, 'an effect on an applied trigger cannot amplify');
+  }
   validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
@@ -1844,8 +1856,11 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   }
   const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
   // トリガーの確率のきっかけは書けない（窓が期待値の小片になり、見る側の「付いているか」に使えない）。
-  // { applied } は parseTrigger が damage のほかで落とす（連鎖させない）
+  // 2 段目の段 4: { applied } は書ける（連鎖させない。同じ定義の中の連鎖は validateAppliedTriggers）
   const fields = parseTimedFields(v, path, undefined, false);
+  if (isAppliedTrigger(fields.trigger) && fields.trigger.applied === state) {
+    fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
+  }
   // 循環の禁止: 付与が、自分の付ける状態を見て対象や発火を決めない（plan/design-stage11-modernia.md 11.2 節の 7。2 段目の段 1 の
   // selfState も同じ。plan/design-skill-stage1.md 1.1 節）
   if (fields.targetState === state) fail(`${path}.targetState`, `a grant of "${state}" cannot look at its own state`);
@@ -1864,7 +1879,24 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
     if (!Array.isArray(v.contents) || v.contents.length === 0) fail(`${path}.contents`, 'expected a non-empty array');
     effect.contents = v.contents.map((item, i) => parseStateContentItem(item, v, `${path}.contents[${i}]`));
   }
+  // 2 段目の段 4（plan/design-skill-stage4.md 1.2 節）: 維持 0 秒の付与は、名前の付いた即時効果の付いた記録だけを作る（窓は無い）
+  if (effect.durationSeconds === 0) {
+    for (const key of ['contents', 'maxStacks', 'maxStacksRef', 'undispellable']) {
+      if (v[key] !== undefined)
+        fail(`${path}.${key}`, 'a grant lasting 0 seconds holds nothing (it only records the application)');
+    }
+  }
   return effect;
+}
+
+/**
+ * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } を damage のほかで読む。{ applied } でなければ undefined
+ * （ほかのトリガーは呼ぶ側の parseTrigger が読む）
+ */
+function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | undefined {
+  if (!isRecord(v) || v.applied === undefined) return undefined;
+  for (const key of Object.keys(v)) if (key !== 'applied') fail(`${path}.${key}`, 'unknown field');
+  return { applied: parseNamedStateId(v.applied, `${path}.applied`, 'ally') };
 }
 
 /** 名前の付いた状態の語彙編: 付与に書ける欄（timed の欄から値の欄を除き、state・contents を足したもの） */
@@ -2243,9 +2275,7 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
 
 /** ペルソナ編: damage のトリガー。{ applied: 状態 }（名前の付いた状態の語彙編: 目録の id）のほかは parseTrigger と同じ */
 function parseDamageTrigger(v: Json, path: string): EffectTrigger {
-  if (!isRecord(v) || v.applied === undefined) return parseTrigger(v, path, true, true);
-  for (const key of Object.keys(v)) if (key !== 'applied') fail(`${path}.${key}`, 'unknown field');
-  return { applied: parseNamedStateId(v.applied, `${path}.applied`, 'ally') };
+  return parseAppliedTrigger(v, path) ?? parseTrigger(v, path, true, true);
 }
 
 /** クルミ S2 編: 回数トリガーに数える窓（during）があるか */
@@ -2750,6 +2780,29 @@ function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry
 }
 
 /**
+ * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: timed・付与の { applied } は連鎖させない。同じ定義の中で、{ applied } の付与が
+ * 付ける状態を、ほかの timed・付与の { applied } が見ない（damage の { applied } は見てよい。ダメージは記録を作らないので閉じる）
+ */
+function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const chained = new Set<NamedStateId>();
+  for (const slot of SKILL_SLOTS) {
+    for (const e of entries[slot]?.effects ?? [])
+      if (e.kind === 'state' && isAppliedTrigger(e.trigger)) chained.add(e.state);
+  }
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if ((e.kind !== 'timed' && e.kind !== 'state') || !isAppliedTrigger(e.trigger)) return;
+      if (chained.has(e.trigger.applied)) {
+        fail(
+          `${root}.${slot}.effects[${i}].trigger`,
+          `"${e.trigger.applied}" is granted on an applied trigger in the definition (applied triggers do not chain)`,
+        );
+      }
+    });
+  }
+}
+
+/**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加は、同じ定義にその状態をスタックで付ける付与（対象は自分）が
  * 要る（上限・維持・中身は付与のもの）
  */
@@ -2857,6 +2910,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   validateStateGrants(skills, 'skills');
   validateStackChanges(skills, 'skills');
   validateFullStackTriggers(skills, 'skills');
+  validateAppliedTriggers(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
   if (raw.states !== undefined) {
@@ -2876,6 +2930,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     validateStateGrants({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateStackChanges({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateFullStackTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateAppliedTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;

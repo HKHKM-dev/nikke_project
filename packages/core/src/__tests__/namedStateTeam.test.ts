@@ -83,7 +83,11 @@ describe('状態の付与の検証（parseSkillDefinition）', () => {
   it('keeps the value fields in the contents, and the trigger rules of timed', () => {
     expect(() => parse([{ ...camouflage, stat: 'attack' }])).toThrow(/a state grant has no value/);
     expect(() => parse([{ ...camouflage, amplifies: { skill: 'skill2', percent: 100 } }])).toThrow(/amplifies/);
-    expect(() => parse([{ ...camouflage, trigger: { applied: 'followUp' } }])).toThrow(/only allowed in damage/);
+    // 2 段目の段 4: { applied } は書ける（自分の状態は見ない）
+    expect(parse([{ ...camouflage, trigger: { applied: 'followUp' } }]).skills.skill1.effects[0]).toMatchObject({
+      trigger: { applied: 'followUp' },
+    });
+    expect(() => parse([{ ...camouflage, trigger: { applied: 'camouflage' } }])).toThrow(/its own state/);
     expect(() => parse([{ ...camouflage, trigger: { count: 'normalHit', chance: 0.5 } }])).toThrow(/chance/);
     expect(() => parse([{ ...camouflage, name: 'followUp' }])).toThrow(/unknown field/);
   });

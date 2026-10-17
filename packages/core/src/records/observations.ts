@@ -452,6 +452,30 @@ function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
+ * 2 段目の段 4（V-0435。トーブの宝物版 S1）: 枠の shot 発目（1 始まり。戦闘の始めから数える）を撃ったフレームの最大装弾数（最大装弾数▲の
+ * 後の値）。録画では、その発の後の枠アイコンの上の「残弾/最大」の最大を読む（ゲーム内の時刻に依らない）
+ */
+function maxAmmoAtShot(result: SimResult, ctx: MetricContext): number {
+  const frame = slotOf(result.shots, ctx).frames[Number(ctx.args.shot) - 1];
+  if (frame === undefined) throw new Error(`枠 ${String(ctx.args.slot)} の ${String(ctx.args.shot)} 発目が無い`);
+  return maxAmmoAt(result, { ...ctx, args: { ...ctx.args, frame } });
+}
+
+/**
+ * 同: 枠に入った弾丸チャージの発数（最初の count 回。最大で止まった回は、足せた分だけ）。録画では照準の左の残弾の増え
+ * （`reticle-ammo.ts --mode mags`）を読む
+ */
+function ammoRefillAmounts(result: SimResult, ctx: MetricContext): number[] {
+  const count = Number(ctx.args.count);
+  const amounts = result.instants
+    .filter((e) => e.slotIndex === slotIndexOf(ctx) && e.effect.kind === 'ammoRefill')
+    .map((e) => e.amount)
+    .slice(0, count);
+  if (amounts.length < count) throw new Error(`弾丸チャージが ${amounts.length} 回しか無い`);
+  return amounts;
+}
+
+/**
  * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 5）: 効果の窓の指標が読む、区間に足す値の小片（状態だけの stat を除く。
  * 段 D の 4 までの窓と同じ並び・同じ区切り。指標の名前の「窓」は観測値のファイルが参照しているので変えない）
  */
@@ -908,6 +932,9 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
   healHitCounts: { args: ['slot'], sim: healHitCounts },
   maxAmmoAt: { args: ['slot', 'frame'], sim: maxAmmoAt },
+  // 2 段目の段 4（V-0435）: n 発目の最大装弾数と、弾丸チャージの発数
+  maxAmmoAtShot: { args: ['slot', 'shot'], sim: maxAmmoAtShot },
+  ammoRefillAmounts: { args: ['slot', 'count'], sim: ammoRefillAmounts },
   reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
   reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },

@@ -99,11 +99,12 @@ describe('録画 19: ノワールの最大装弾数 +5 発と弾丸チャージ 
   it('refills every ally at every full burst start, with the max raised in the same frame', () => {
     for (const fb of fbStarts) {
       const at = plan.instants.filter((x) => x.frame === fb);
-      // SG 9 → 14: floor(14 × 0.3988) = 5（残弾は 9 以下なので 5 まるまる入る）、SR 6 → 11: floor(11 × 0.3988) = 4
+      // SG 9 → 14: round(14 × 0.3988) = 6（どのフルバーストの入りでも残弾は 8 以下で、6 まるまる入る）、SR 6 → 11: round(11 × 0.3988) = 4。
+      // 端数は四捨五入（C-0558）
       expect(at.map((x) => [x.slotIndex, x.amount])).toEqual([
-        [0, 5],
+        [0, 6],
         [1, 4],
-        [2, 5],
+        [2, 6],
       ]);
     }
   });
