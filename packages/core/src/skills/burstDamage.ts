@@ -92,6 +92,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   condition?: EffectCondition;
   /** 遅れて出る倍率ダメージ編: きっかけからの遅れ（フレーム）。frame/plan.ts の planSkillHits がそのフレームのバフで出す */
   delayFrames?: number;
+  /** ミハラのバースト編: バーストの倍率ダメージの分かれたヒットのそれぞれに出す（frame/plan.ts の planSkillHits） */
+  perBurstHit?: true;
   /**
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
@@ -171,6 +173,7 @@ export function resolveDamageEffects(
       };
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
+      if (effect.perBurstHit === true) r.perBurstHit = true;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });

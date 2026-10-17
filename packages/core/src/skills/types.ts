@@ -710,6 +710,12 @@ export type DamageEffect = {
    * 時間の周期のトリガー（周期のスキルの発動からヒットまで。C-0453）
    */
   delayFrames?: number;
+  /**
+   * ミハラのバースト編（plan/design-mihara-burst-hits.md 3.2 節）: バーストの倍率ダメージの分かれたヒットのそれぞれと同じフレームに出す
+   * （倍率は等分しない。条件は効果の発火のフレームで 1 回判定する。フルバースト補正はヒットのフレームで決める）。trigger が burstUse の
+   * ときだけ書ける（delayFrames とは組み合わせない）。C-0565
+   */
+  perBurstHit?: true;
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -2304,6 +2310,13 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       fail(`${path}.delayFrames`, `expected a positive integer, got ${JSON.stringify(d)}`);
     }
     effect.delayFrames = d;
+  }
+  if (v.perBurstHit !== undefined) {
+    // ミハラのバースト編（plan/design-mihara-burst-hits.md 3.2 節）: バーストの倍率ダメージのヒットに合わせる
+    if (v.perBurstHit !== true) fail(`${path}.perBurstHit`, `expected true, got ${JSON.stringify(v.perBurstHit)}`);
+    if (trigger !== 'burstUse') fail(`${path}.perBurstHit`, 'perBurstHit needs the trigger "burstUse"');
+    if (effect.delayFrames !== undefined) fail(`${path}.perBurstHit`, 'perBurstHit cannot be used with delayFrames');
+    effect.perBurstHit = true;
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

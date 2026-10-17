@@ -7826,66 +7826,112 @@
     },
     {
       "observation": "469-01",
-      "element": "ミハラ burst.effects[0]",
-      "key": "2c39573b58673fb0",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "694b7907faa040c8",
       "effective": false,
       "minus": 0,
-      "plus": null
+      "plus": 0
     },
     {
-      "observation": "469-01",
+      "observation": "469-02",
       "element": "ミハラ skill1.effects[0]",
-      "key": "2c39573b58673fb0",
+      "key": "f36fa896842bda61",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "469-03",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "d6b829560e368c55",
+      "effective": true,
+      "minus": -70938.87411600002,
+      "plus": 0
+    },
+    {
+      "observation": "469-04",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "af2a454758c6a2c4",
+      "effective": true,
+      "minus": -81988.48943999992,
+      "plus": 0
+    },
+    {
+      "observation": "469-05",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "98bcfee79dc0fd06",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "469-07",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "a88b8eca9c4da7bf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "469-08",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "86a0d2dcd9406697",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "470-01",
-      "element": "ミハラ burst.effects[0]",
-      "key": "0ff5a102670593e3",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "b268e3bcd00b29ef",
       "effective": false,
       "minus": 0,
-      "plus": null
+      "plus": 0
     },
     {
-      "observation": "470-01",
+      "observation": "470-02",
       "element": "ミハラ skill1.effects[0]",
-      "key": "0ff5a102670593e3",
+      "key": "fc35c81127899a7e",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "470-03",
-      "element": "ミハラ burst.effects[0]",
-      "key": "e09857e8b1ae6d61",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 0 回目のバーストの倍率ダメージが無い"
+      "element": "ミハラ skill1.effects[0]",
+      "key": "8f8998ae17da0c75",
+      "effective": false,
+      "minus": 5.820766091346741e-11,
+      "plus": 0
     },
     {
-      "observation": "470-03",
+      "observation": "470-04",
       "element": "ミハラ skill1.effects[0]",
-      "key": "e09857e8b1ae6d61",
+      "key": "e2ba65dd5beee720",
+      "effective": false,
+      "minus": 5.820766091346741e-11,
+      "plus": 0
+    },
+    {
+      "observation": "470-05",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "20b1b1a0b95afe89",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
-      "observation": "470-04",
-      "element": "ミハラ burst.effects[0]",
-      "key": "e0736d4d92578978",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 1 回目のバーストの倍率ダメージが無い"
+      "observation": "470-07",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "3924383d1644db48",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
-      "observation": "470-04",
+      "observation": "470-08",
       "element": "ミハラ skill1.effects[0]",
-      "key": "e0736d4d92578978",
+      "key": "887ebfed52d75a2c",
       "effective": false,
       "minus": 0,
       "plus": 0
