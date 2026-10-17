@@ -90,5 +90,8 @@ export function computeFixedSpecHp(
   const growth = fixedSpecGrowth(character);
   const gradeBase = computeStat(character, 'hp', { ...growth, core: 0 });
   const affection = AFFECTION_HP[character.class][fixedSpecAffectionRank(character)];
-  return applyCoreRatio(gradeBase + affection, growth.core, character.statEnhance.coreHp) + FIXED_SPEC_GEAR_HP[character.class];
+  return (
+    applyCoreRatio(gradeBase + affection, growth.core, character.statEnhance.coreHp) +
+    FIXED_SPEC_GEAR_HP[character.class]
+  );
 }

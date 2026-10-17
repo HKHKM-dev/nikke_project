@@ -264,11 +264,7 @@ export function baseAttackOf(input: Pick<TriggerDamageInput, 'character' | 'grow
  * 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: バフ前の最大HP。hpOverride（射撃場スペック固定・育成入力）があればそれ、
  * 無ければ育成値から算出する（baseAttackOf と同じ流儀）
  */
-export function baseMaxHpOf(input: {
-  character: CharacterData;
-  growth: GrowthInput;
-  hpOverride?: number;
-}): number {
+export function baseMaxHpOf(input: { character: CharacterData; growth: GrowthInput; hpOverride?: number }): number {
   return input.hpOverride ?? computeStat(input.character, 'hp', input.growth);
 }
 

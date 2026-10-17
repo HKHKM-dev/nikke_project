@@ -1606,7 +1606,9 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     // 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: 台帳の育成には最大HP が無いので、最終最大HP を読む効果のある枠は
     // スペック固定 OFF の録画では比べない（黙って育成値だけの HP にしない）
     if (build !== undefined && readsCasterMaxHp(definition))
-      throw new Error(`rid ${member.rid}: スペック固定 OFF の録画で最終最大HP を読む効果のある枠は未対応（台帳に最大HP が無い）`);
+      throw new Error(
+        `rid ${member.rid}: スペック固定 OFF の録画で最終最大HP を読む効果のある枠は未対応（台帳に最大HP が無い）`,
+      );
     const off = new Set(setup.buildEffectsOff ?? []);
     const buildEffects =
       build === undefined

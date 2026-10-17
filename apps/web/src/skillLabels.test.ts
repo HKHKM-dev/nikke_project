@@ -2,7 +2,13 @@
 import { parseSkillDefinition, type AppliedEffect, type SkillDefinition } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { formatAppliedAmount, formatRemoveState, formatStateGrant, formatTrigger, noteBadgeLabel } from './skillLabels.ts';
+import {
+  formatAppliedAmount,
+  formatRemoveState,
+  formatStateGrant,
+  formatTrigger,
+  noteBadgeLabel,
+} from './skillLabels.ts';
 
 const definitionOf = (id: number): SkillDefinition =>
   parseSkillDefinition(

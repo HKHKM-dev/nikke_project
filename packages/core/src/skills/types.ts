@@ -1564,7 +1564,8 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   if (targetSquad !== undefined) effect.targetSquad = targetSquad;
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) effect.decrease = true;
-  if (v.condition !== undefined) effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.passive);
+  if (v.condition !== undefined)
+    effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.passive);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
