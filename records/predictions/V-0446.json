@@ -1,0 +1,174 @@
+{
+  "verification": "V-0446",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 511,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（plan/design-skill-stage6.md 2.4 節）。美しさは戦闘開始から 3 秒ごとに 1 スタック（12 まで）付き、S1 の攻撃力▲は効いている間の最終最大HP を読み直す。発火の瞬間の値で固定する読み H2 はモデルを切り替える欄が無いので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "cin-fb1-s5-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 950,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバースト中、美しさ 5 スタックの所のシンデレラのコアの 1 ヒット（会心なし）。HUD の増分は、これに同じ発の追加ダメージ（cin-fb1-s5-add）を足した値",
+      "observations": ["480-05", "481-05"]
+    },
+    {
+      "id": "cin-fb1-s5-add",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 950,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "同じ所の S1 の追加ダメージ（会心なし。C-0583）",
+      "observations": ["480-06", "481-06"]
+    },
+    {
+      "id": "cin-fb1-s8-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1440,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバースト中、S1 の攻撃力▲の終わりの前（美しさ 8 スタック）のコアの 1 ヒット。読み直しなら cin-fb1-s5-core より上がり、発火の瞬間の値で固定なら同じ",
+      "observations": []
+    },
+    {
+      "id": "cin-fb1-s8-add",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1440,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "同じ所の S1 の追加ダメージ（会心なし）",
+      "observations": []
+    },
+    {
+      "id": "cin-after-fb1-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1520,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの後（S1 の攻撃力▲の外）のコアの 1 ヒット。美しさは読む側が無いので値に効かない（対照。録画 124 と同じ値）",
+      "observations": ["480-11", "481-11"]
+    },
+    {
+      "id": "cin-fb2-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "2 回目のフルバースト中（美しさ 12 スタック。36 秒で上限）のコアの 1 ヒット。読み直しでも固定でも同じ値（デコイが壊れずに美しさが 12 まで上がったかの確かめ）",
+      "observations": ["480-09", "481-09"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-17",
+    "commit": "575990d939612163028b7beedc4f5be7127f7db5",
+    "values": {
+      "H1": {
+        "cin-fb1-s5-core": 285411.3405,
+        "cin-fb1-s5-add": 364252.779,
+        "cin-fb1-s8-core": 292359.9445,
+        "cin-fb1-s8-add": 373120.851,
+        "cin-after-fb1-core": 103246.494,
+        "cin-fb2-core": 301625.28500000003
+      }
+    }
+  }
+}

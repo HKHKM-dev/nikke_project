@@ -97,7 +97,8 @@ export type BuffStat =
   | 'fixedChargeTime'
   | 'trueDamage'
   | 'trueDamageConversion'
-  | 'sustainedDamage';
+  | 'sustainedDamage'
+  | 'maxHp';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -123,6 +124,10 @@ export const BUFF_STATS = [
   'trueDamage',
   'trueDamageConversion',
   'sustainedDamage',
+  // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 最大HP▲（比率）。与ダメージの式は読まず、発動者の最終最大HP 基準の
+  // 攻撃力▲（casterFinalMaxHp）だけが読む。「最大HP のみ▲」は効いている間 HP の割合を下げる（同 2.4 節。論点 8 の決定）ので、
+  // その形を足すまでこの stat では書かない（notes のまま。definitions.test.ts）
+  'maxHp',
 ] as const satisfies readonly BuffStat[];
 
 /** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限、アニス：スター編でチャージ時間の固定を足した */
@@ -686,8 +691,9 @@ export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffSt
  * （plan/design-holder-effects.md 2.7 節）で窓を作るコードは 1 つになった。この制限は、使うキャラの定義を足す時に外す
  */
 export function isFirstPassTrackedStat(stat: BuffStat): boolean {
-  // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるバーストゲージのチャージ速度は、1 パス目がゲージに読む
-  return stat === 'attack' || stat === 'burstGaugeSpeed' || isFiringStat(stat) || isStateStat(stat);
+  // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるバーストゲージのチャージ速度は、1 パス目がゲージに読む。
+  // 2 段目の段 6 の PR 2: 最大HP▲ は、1 パス目の順位（攻撃力）が発動者の最終最大HP として読むので、攻撃力と同じに扱う
+  return stat === 'attack' || stat === 'maxHp' || stat === 'burstGaugeSpeed' || isFiringStat(stat) || isStateStat(stat);
 }
 
 /** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */
@@ -1218,13 +1224,10 @@ export const NOTE_EFFECT_TRIGGERS = [...BUFF_TRIGGERS, ...SHOT_COUNT_KINDS, 'tim
 export type NoteEffectTrigger = (typeof NOTE_EFFECT_TRIGGERS)[number];
 
 /**
- * 最小構成の検査編（plan/design-minimal-relevance.md 11.8 節）: notes の効く先にだけ使う stat。計算の語彙（BuffStat）に無く、
- * 効く量の分類（与ダメージの値）は決まるもの。maxHp は最大HP▲（攻撃力▲に効く形）。敵の防御力▼（enemyDefenseDown）は、2 段目の段 2 で
- * 計算の語彙（BuffStat）に移した（notes の効く先には BuffStat としてそのまま書ける）
+ * 最小構成の検査編（plan/design-minimal-relevance.md 11.8 節）: notes の効く先の stat。notes の効く先にだけ使う stat は、敵の防御力▼
+ * （2 段目の段 2）と最大HP▲（2 段目の段 6 の PR 2）を計算の語彙（BuffStat）に移して無くなった（notes にも BuffStat としてそのまま書ける）
  */
-export const NOTE_ONLY_STATS = ['maxHp'] as const;
-export type NoteOnlyStat = (typeof NOTE_ONLY_STATS)[number];
-export const NOTE_EFFECT_STATS = [...BUFF_STATS, ...NOTE_ONLY_STATS] as const;
+export const NOTE_EFFECT_STATS = BUFF_STATS;
 export type NoteEffectStat = (typeof NOTE_EFFECT_STATS)[number];
 
 /** 最小構成の検査編（同 11.8 節）: notes の効く先にだけ使う対象。enemy は敵（デバフ） */

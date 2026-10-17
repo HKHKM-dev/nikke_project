@@ -65,6 +65,16 @@ export const NAMED_STATES = {
    */
   barrier: { name: { ja: 'バリア', en: 'Barrier' }, holder: 'ally', family: 'barrier' },
   /**
+   * 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: デコイ（シンデレラの S2 の分身。中身なし・持続。被弾で壊れる分は
+   * 扱わない）。「デコイが存在する時」（selfState）が読む。判定は自分のデコイだけ
+   */
+  decoy: { name: { ja: 'デコイ', en: 'Decoy' }, holder: 'ally' },
+  /**
+   * 同: 美しさ（シンデレラの S2。デコイがある間 3 秒ごとに 1 スタック・中身は最大HP▲・12 スタック・持続）。S1 の最終最大HP 基準の
+   * 攻撃力▲が、上がった最終最大HP を読み直す
+   */
+  beauty: { name: { ja: '美しさ', en: 'Beautiful' }, holder: 'ally' },
+  /**
    * 2 段目の段 4（plan/design-skill-stage4.md 2.1 節）: 代用弾丸（トーブの S1。弾丸チャージの即時効果の呼び名。維持 0 秒の付与で、
    * 付いた記録だけを作る。「代用弾丸が適用される時」の { applied } が読む）
    */

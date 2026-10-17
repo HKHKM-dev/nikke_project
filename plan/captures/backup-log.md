@@ -274,3 +274,5 @@
 - 2026-10-17 20:21 録画 477（エマ：タクティカル・アップ + アスカ）: `range/20261017-477_mg+ar_emma-tu+asuka_asuka-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-17 20:29 録画 478（アニス：スター + I-DOLL・フラワー + アスカ）: `range/20261017-478_rl+rl+ar_anis-star+idoll-flower+asuka_asuka-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-17 20:29 録画 479（アニス：スター + I-DOLL・フラワー + アスカ）: `range/20261017-479_rl+rl+ar_anis-star+idoll-flower+asuka_asuka-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-17 22:58 録画 480（ラム + デルタ + シンデレラ）: `range/20261017-480_sr+sr+rl_ram+delta+cinderella_cinderella-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-17 22:58 録画 481（ラム + デルタ + シンデレラ）: `range/20261017-481_sr+sr+rl_ram+delta+cinderella_cinderella-control.mp4` を同期（E: と I: で sha256 が一致）。

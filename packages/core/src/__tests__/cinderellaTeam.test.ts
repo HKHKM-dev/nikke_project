@@ -1,5 +1,5 @@
-// シンデレラ（511）を含む編成。S1 のフルチャージ攻撃の命中時の追加ダメージ（射撃ごとの倍率ダメージ。C-0583。V-0445）。
-// 2 段目の段 6（plan/design-skill-stage6.md 2.4 節）の PR 2 の前に、撮影の要らない分を分けて定義した。sim と calc の整合
+// シンデレラ（511）を含む編成。S1 のフルチャージ攻撃の命中時の追加ダメージ（射撃ごとの倍率ダメージ。C-0583。V-0445）と、
+// 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）の美しさ（最大HP▲）と S1 の最終最大HP 基準の攻撃力▲の読み直し。sim と calc の整合
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
@@ -7,6 +7,10 @@ import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
+import { ZERO_BUFFS } from '../skills/buffs.ts';
+import { itemsOf } from '../skills/holders.ts';
+import { timerFrames } from '../skills/timeline.ts';
+import { finalAttacksAt } from '../skills/ranking.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -47,7 +51,7 @@ const team = (ids: number[], burst: boolean, controlledSlot: number): TeamInput 
 describe('シンデレラの定義', () => {
   it('defines the additional damage of S1 on every full charge shot (C-0583)', () => {
     const def = definitionOf(CINDERELLA);
-    expect(def.skills.skill1.effects).toMatchObject([
+    expect(def.skills.skill1.effects.slice(0, 1)).toMatchObject([
       {
         kind: 'damage',
         trigger: { count: 'fullChargeShot' },
@@ -114,5 +118,113 @@ describe.each([
       const c = calc.slots[i]!.totalDamage;
       expect(Math.abs(s - c) / c).toBeLessThan(0.05);
     });
+  });
+});
+
+// 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 最大HP▲（美しさ）と、S1 の最終最大HP 基準の攻撃力▲の読み直し。
+// 撮影（V-0446）の前のモデル（H1）の形をテストで固定する
+describe('美しさと S1 の攻撃力▲の読み直し（段 6 の PR 2）', () => {
+  const input = team([RAM, DELTA, CINDERELLA], true, 2);
+  const plan = planTeamRun(input);
+  const c = character(CINDERELLA);
+  const baseAttack = computeFixedSpecAttack(c).attack;
+  const baseHp = computeFixedSpecHp(c);
+  const s1 = Number(c.skills.skill1.values[0]![9]) / 100;
+  const beautyUp = Number(c.skills.skill2.values[1]![9]) / 100;
+
+  it('defines the decoy and Beautiful of S2, and the attack up of S1 from the final max HP', () => {
+    const def = definitionOf(CINDERELLA);
+    expect(def.skills.skill1.effects[1]).toMatchObject({
+      kind: 'timed',
+      trigger: 'burstStage3Enter',
+      target: 'self',
+      stat: 'attack',
+      scaling: 'casterFinalMaxHp',
+      ref: 1,
+      durationRef: 2,
+    });
+    expect(def.skills.skill2.support).toBe('supported');
+    expect(def.skills.skill2.effects).toMatchObject([
+      { kind: 'state', state: 'decoy', trigger: 'battleStart', target: 'self', durationUntil: 'battleEnd' },
+      { kind: 'state', state: 'decoy', trigger: 'burstStage3Enter', target: 'self', durationUntil: 'battleEnd' },
+      {
+        kind: 'state',
+        state: 'beauty',
+        trigger: { everySeconds: 3 },
+        condition: { selfState: { state: 'decoy', present: true } },
+        maxStacksRef: 3,
+        contents: [{ stat: 'maxHp', ref: 2 }],
+      },
+    ]);
+  });
+
+  it('stacks Beautiful every 3 s from the start of battle while the decoy lasts, up to 12', () => {
+    const beauty = itemsOf(plan.history, { holder: 2, state: 'beauty' });
+    expect(beauty.map((i) => i.start)).toEqual(timerFrames(3, plan.history.frames).slice(0, 12));
+    expect(itemsOf(plan.history, { holder: 2, state: 'decoy' }).map((i) => i.start)).toContain(0);
+  });
+
+  it('reads the final max HP again while the attack up of S1 lasts (H1 of V-0446)', () => {
+    const calc = computeTeamDamage(input);
+    const window = itemsOf(plan.history, { holder: 2, sourceSlotIndex: 2, kind: 'timed', stat: 'attack' })[0]!;
+    const beautyStarts = itemsOf(plan.history, { holder: 2, state: 'beauty' }).map((i) => i.start);
+    const ranges = calc.slots[2]!.segments.flatMap((g) => g.ranges.map((r) => ({ ...r, attack: g.trigger.attack })));
+    const inWindow = ranges.filter((r) => r.start >= window.start && r.start < window.end);
+    expect(new Set(inWindow.map((r) => r.attack)).size).toBeGreaterThan(1);
+    for (const r of inWindow) {
+      const stacks = beautyStarts.filter((f) => f <= r.start).length;
+      expect(r.attack).toBe(Math.round(baseAttack + s1 * baseHp * (1 + beautyUp * stacks)));
+    }
+    // S1 の攻撃力▲の外では、美しさは読む側が無いので値に効かない
+    const outside = ranges.filter((r) => r.start >= window.end && r.start < window.end + 200);
+    for (const r of outside) expect(r.attack).toBe(baseAttack);
+  });
+});
+
+describe('最大HP▲ を読む発動者の最終最大HP（常時の効果・順位）', () => {
+  it('reads the passive max HP up of the caster for a passive attack up from the final max HP', () => {
+    const base = {
+      formatVersion: 1,
+      resourceId: CINDERELLA,
+      checkedAt: '2026-10-17',
+      skills: {
+        skill2: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+        burst: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+      },
+    };
+    // S1 の値 1（2.71%）を攻撃力▲、S2 の値 2（1.6%）を常時の最大HP▲ として使う合成の定義
+    const definition = parseSkillDefinition({
+      ...base,
+      skills: {
+        ...base.skills,
+        skill1: {
+          effects: [{ kind: 'passive', target: 'self', stat: 'attack', scaling: 'casterFinalMaxHp', ref: 1 }],
+        },
+        skill2: { effects: [{ kind: 'passive', target: 'self', stat: 'maxHp', ref: 2 }] },
+      },
+    });
+    const slot: TeamSlotInput = { ...fixedSlot(CINDERELLA), skills: { definition, levels: MAX_SKILL_LEVELS } };
+    const calc = computeTeamDamage({ slots: [slot], enemy, durationSeconds: 180, burst: false, controlledSlot: 0 });
+    const c = character(CINDERELLA);
+    const s1 = Number(c.skills.skill1.values[0]![9]) / 100;
+    const up = Number(c.skills.skill2.values[1]![9]) / 100;
+    const expected = Math.round(computeFixedSpecAttack(c).attack + s1 * computeFixedSpecHp(c) * (1 + up));
+    expect(calc.slots[0]!.segments[0]!.trigger.attack).toBe(expected);
+  });
+
+  it('uses the final max HP given with the window in the ranking', () => {
+    const slots = [
+      {
+        casterBaseAttack: 100,
+        casterMaxHp: 1000,
+        weaponType: 'AR' as const,
+        element: 'Fire' as const,
+        passive: ZERO_BUFFS,
+      },
+    ];
+    const effect = { stat: 'attack' as const, scaling: 'casterFinalMaxHp' as const, value: 0.1 };
+    const window = { slotIndex: 0, sourceSlotIndex: 0, effect, start: 0, end: 10 };
+    expect(finalAttacksAt(slots, [window], 5)).toEqual([200]);
+    expect(finalAttacksAt(slots, [{ ...window, casterMaxHp: 2000 }], 5)).toEqual([300]);
   });
 });

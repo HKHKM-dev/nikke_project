@@ -65,6 +65,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   fixedChargeTime: 'チャージ時間の固定',
   trueDamage: '防御力無視ダメージ',
   trueDamageConversion: '通常攻撃が防御力無視ダメージに変化',
+  maxHp: '最大HP',
 };
 
 /** 名前の付いた状態の語彙編: 状態の画面の名前（目録の name。説明文の状態名） */

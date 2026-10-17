@@ -421,13 +421,22 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
       sources.push({ slotIndex, casterBaseAttack: slot.casterBaseAttack, casterMaxHp: slot.casterMaxHp, effect });
     }
   });
+  // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 発動者の最終最大HP は、発動者の常時の最大HP▲ を入れた値
+  const passiveMaxHp = slots.map((slot, holder) =>
+    slot === null
+      ? 0
+      : sources
+          .filter((s) => s.effect.stat === 'maxHp' && isEffectTarget(s.effect, s.slotIndex, holder, slot.character))
+          .reduce((sum, s) => sum + s.effect.value, 0),
+  );
   return slots.map((slot, index) => {
     if (slot === null) return null;
     let buffs: BuffTotals = { ...ZERO_BUFFS };
     const passiveEffects: AppliedEffect[] = [];
     for (const { slotIndex, casterBaseAttack, casterMaxHp, effect } of sources) {
       if (!isEffectTarget(effect, slotIndex, index, slot.character)) continue;
-      const applied = applyResolvedEffect(buffs, effect, casterBaseAttack, casterMaxHp);
+      const finalMaxHp = casterMaxHp === undefined ? undefined : casterMaxHp * (1 + passiveMaxHp[slotIndex]!);
+      const applied = applyResolvedEffect(buffs, effect, casterBaseAttack, finalMaxHp);
       buffs = applied.totals;
       passiveEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount: applied.appliedAmount });
     }
@@ -524,13 +533,29 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
             timedEffects: [] as AppliedTimedEffect[],
           },
     );
+    // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 発動者の最終最大HP の読み直し。区間の頭の、枠ごとの最大HP▲ の和
+    // （常時 + 区間の頭で効いている小片）。最大HP▲ の小片の端は区間の境目なので、区間の中では同じ値
+    const maxHpUp = passive.map((base) => base?.buffs.maxHpRatio ?? 0);
+    for (const p of buffPieces) {
+      if (p.effect.stat !== 'maxHp' || p.start > start || p.end <= start) continue;
+      maxHpUp[p.slotIndex] = (maxHpUp[p.slotIndex] ?? 0) + p.effect.value;
+    }
+    const finalMaxHpOf = (slotIndex: number): number | undefined => {
+      const base = slots[slotIndex]?.casterMaxHp;
+      return base === undefined ? undefined : base * (1 + (maxHpUp[slotIndex] ?? 0));
+    };
     // 値の小片の並びの順に足して浮動小数の加算順を決定的にする（並びは時刻の順。plan/design-holder-effects.md 論点 5）
     for (const p of buffPieces) {
       if (p.start > start || p.end <= start) continue;
       const state = slotStates[p.slotIndex];
       if (!state) continue;
       const caster = slots[p.sourceSlotIndex];
-      const applied = applyResolvedEffect(state.buffs, p.effect, caster?.casterBaseAttack ?? 0, caster?.casterMaxHp);
+      const applied = applyResolvedEffect(
+        state.buffs,
+        p.effect,
+        caster?.casterBaseAttack ?? 0,
+        finalMaxHpOf(p.sourceSlotIndex),
+      );
       state.buffs = applied.totals;
       state.timedEffects.push({
         ...p.effect,
@@ -548,7 +573,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
           state.buffs,
           p.effect,
           slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0,
-          slots[p.sourceSlotIndex]?.casterMaxHp,
+          finalMaxHpOf(p.sourceSlotIndex),
         ).totals;
       }
     }

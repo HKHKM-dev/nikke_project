@@ -11119,6 +11119,86 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "480-05",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "1b787751bea05eac",
+      "effective": true,
+      "minus": -156353.223,
+      "plus": 0
+    },
+    {
+      "observation": "480-06",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "d0d1efdd7bc14fd0",
+      "effective": true,
+      "minus": -199543.914,
+      "plus": 0
+    },
+    {
+      "observation": "480-09",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "2768d8c5f70069c4",
+      "effective": true,
+      "minus": -172567.16749999998,
+      "plus": 0
+    },
+    {
+      "observation": "480-10",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "be12eacf61cb7cfc",
+      "effective": true,
+      "minus": -220236.765,
+      "plus": 0
+    },
+    {
+      "observation": "480-11",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "9c73ea2b455ae652",
+      "effective": true,
+      "minus": 0,
+      "plus": 130641.46159999998
+    },
+    {
+      "observation": "481-05",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "8676693d700178d8",
+      "effective": true,
+      "minus": -156353.223,
+      "plus": 0
+    },
+    {
+      "observation": "481-06",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "7933cc6145e68c54",
+      "effective": true,
+      "minus": -199543.914,
+      "plus": 0
+    },
+    {
+      "observation": "481-09",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "cb9b6341ea80e578",
+      "effective": true,
+      "minus": -172567.16749999998,
+      "plus": 0
+    },
+    {
+      "observation": "481-10",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "e1ec81936fe41718",
+      "effective": true,
+      "minus": -220236.765,
+      "plus": 0
+    },
+    {
+      "observation": "481-11",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "bc9cdbbfa67c58fe",
+      "effective": true,
+      "minus": 0,
+      "plus": 130641.46159999998
     }
   ]
 }

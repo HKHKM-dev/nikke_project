@@ -19,23 +19,25 @@
           "claims": [
             "C-0583"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "バースト 3 段階突入時の、最終最大HPに比例する自分の攻撃力▲（10 秒）は未対応",
-          "en": "The attack increase on self proportional to final max HP on entering burst stage 3 (10 s) is not modeled",
-          "kind": "unimplemented",
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "self",
+          "stat": "attack",
+          "scaling": "casterFinalMaxHp",
+          "ref": 1,
+          "durationRef": 2,
           "reads": [
             "hp"
           ],
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
-            "trigger": "burstStage3Enter"
-          }
-        },
+          "claims": [
+            "C-0584",
+            "C-0585"
+          ]
+        }
+      ],
+      "notes": [
         {
           "ja": "フルチャージ攻撃時の自分のチャージ速度▲（リロード完了で解除）は未対応",
           "en": "The charge speed increase on self on fully charged attacks (removed on reload) is not modeled",
@@ -50,33 +52,56 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "デコイ（分身）は、それ自体は与ダメージを変えない（デコイを読む効果のある編成でだけ効く。S2 の美しさがデコイを読む）",
-          "en": "Decoy (clone) does not change damage by itself (it matters only with an effect reading decoys in the team; Beauty in S2 reads decoys)",
-          "kind": "indirect",
-          "path": "decoy",
-          "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "self",
-            "trigger": "battleStart"
-          }
+          "kind": "state",
+          "state": "decoy",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "デコイ（分身）は中身なしの状態として持続とみなし、被弾でデコイの HP が尽きて壊れる分は扱わない（射撃場の的の攻撃は撃つ枠に当たる（V-0438）が、デコイは 180 秒を通して壊れなかった。C-0584）。デコイの HP の量はダメージに関係しない",
+            "en": "The decoy (clone) is a state without contents that is assumed to last; being destroyed when its HP runs out from enemy hits is not modeled (range target attacks hit the firing slots, V-0438, but the decoy was not destroyed over 180 s, C-0584). The decoy HP does not affect damage"
+          },
+          "claims": [
+            "C-0584"
+          ]
         },
         {
-          "ja": "デコイがある時の 3 秒ごとの美しさ（最大HP▲・12 スタック）は未対応（最大HP は S1 の攻撃力▲と、バーストの追加ダメージに効く）",
-          "en": "Beauty (max HP increase, 12 stacks) every 3 s while a decoy exists is not modeled (max HP affects the S1 attack increase and the burst additional damage)",
-          "kind": "unimplemented",
-          "reads": [
-            "decoy"
+          "kind": "state",
+          "state": "decoy",
+          "trigger": "burstStage3Enter",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "claims": [
+            "C-0584"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "beauty",
+          "trigger": {
+            "everySeconds": 3
+          },
+          "target": "self",
+          "condition": {
+            "selfState": "decoy"
+          },
+          "durationUntil": "battleEnd",
+          "maxStacksRef": 3,
+          "contents": [
+            {
+              "stat": "maxHp",
+              "ref": 2
+            }
           ],
-          "effect": {
-            "kind": "timed",
-            "stat": "maxHp",
-            "target": "self",
-            "trigger": "timer"
-          }
+          "assumes": {
+            "ja": "戦闘開始から 3 秒ごと（3 秒・6 秒…。0 秒には付かない）に、デコイがあれば 1 スタック付く。最大HP▲ はバフ前の最大HP の比率で累積して足す（C-0584）",
+            "en": "One stack every 3 s from the start of battle (3 s, 6 s, ...; none at 0 s) while the decoy exists. The max HP increases add up as ratios of the base max HP (C-0584)"
+          },
+          "claims": [
+            "C-0584"
+          ]
         }
       ]
     },
