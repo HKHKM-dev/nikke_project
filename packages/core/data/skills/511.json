@@ -30,6 +30,10 @@
           "durationRef": 2,
           "reads": [
             "hp"
+          ],
+          "claims": [
+            "C-0584",
+            "C-0585"
           ]
         }
       ],
@@ -56,16 +60,22 @@
           "target": "self",
           "durationUntil": "battleEnd",
           "assumes": {
-            "ja": "デコイ（分身）は中身なしの状態として持続とみなし、被弾でデコイの HP が尽きて壊れる分は扱わない（射撃場の的の攻撃は、撃つ枠に当たる。V-0438）。デコイの HP の量はダメージに関係しない",
-            "en": "The decoy (clone) is a state without contents that is assumed to last; being destroyed when its HP runs out from enemy hits is not modeled (range target attacks hit the firing slots, V-0438). The decoy HP does not affect damage"
-          }
+            "ja": "デコイ（分身）は中身なしの状態として持続とみなし、被弾でデコイの HP が尽きて壊れる分は扱わない（射撃場の的の攻撃は撃つ枠に当たる（V-0438）が、デコイは 180 秒を通して壊れなかった。C-0584）。デコイの HP の量はダメージに関係しない",
+            "en": "The decoy (clone) is a state without contents that is assumed to last; being destroyed when its HP runs out from enemy hits is not modeled (range target attacks hit the firing slots, V-0438, but the decoy was not destroyed over 180 s, C-0584). The decoy HP does not affect damage"
+          },
+          "claims": [
+            "C-0584"
+          ]
         },
         {
           "kind": "state",
           "state": "decoy",
           "trigger": "burstStage3Enter",
           "target": "self",
-          "durationUntil": "battleEnd"
+          "durationUntil": "battleEnd",
+          "claims": [
+            "C-0584"
+          ]
         },
         {
           "kind": "state",
@@ -86,9 +96,12 @@
             }
           ],
           "assumes": {
-            "ja": "戦闘開始から 3 秒ごと（3 秒・6 秒…）に、デコイがあれば 1 スタック付く（最初の時刻は撮影で確かめる）。最大HP▲ はバフ前の最大HP の比率で累積して足す（C-0577 の読み）",
-            "en": "One stack every 3 s from the start of battle (3 s, 6 s, ...) while the decoy exists (the first time is to be verified by capture). The max HP increases add up as ratios of the base max HP (the reading of C-0577)"
-          }
+            "ja": "戦闘開始から 3 秒ごと（3 秒・6 秒…。0 秒には付かない）に、デコイがあれば 1 スタック付く。最大HP▲ はバフ前の最大HP の比率で累積して足す（C-0584）",
+            "en": "One stack every 3 s from the start of battle (3 s, 6 s, ...; none at 0 s) while the decoy exists. The max HP increases add up as ratios of the base max HP (C-0584)"
+          },
+          "claims": [
+            "C-0584"
+          ]
         }
       ]
     },

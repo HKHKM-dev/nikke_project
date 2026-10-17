@@ -43,7 +43,7 @@
         "condition": "auto"
       },
       "note": "1 回目のフルバースト中、美しさ 5 スタックの所のシンデレラのコアの 1 ヒット（会心なし）。HUD の増分は、これに同じ発の追加ダメージ（cin-fb1-s5-add）を足した値",
-      "observations": []
+      "observations": ["480-05", "481-05"]
     },
     {
       "id": "cin-fb1-s5-add",
@@ -64,7 +64,7 @@
         "condition": "auto"
       },
       "note": "同じ所の S1 の追加ダメージ（会心なし。C-0583）",
-      "observations": []
+      "observations": ["480-06", "481-06"]
     },
     {
       "id": "cin-fb1-s8-core",
@@ -131,7 +131,7 @@
         "condition": "auto"
       },
       "note": "1 回目のフルバーストの後（S1 の攻撃力▲の外）のコアの 1 ヒット。美しさは読む側が無いので値に効かない（対照。録画 124 と同じ値）",
-      "observations": []
+      "observations": ["480-11", "481-11"]
     },
     {
       "id": "cin-fb2-core",
@@ -154,7 +154,7 @@
         "condition": "auto"
       },
       "note": "2 回目のフルバースト中（美しさ 12 スタック。36 秒で上限）のコアの 1 ヒット。読み直しでも固定でも同じ値（デコイが壊れずに美しさが 12 まで上がったかの確かめ）",
-      "observations": []
+      "observations": ["480-09", "481-09"]
     }
   ],
   "predicted": {
