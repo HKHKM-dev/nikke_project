@@ -159,7 +159,7 @@
   ],
   "predicted": {
     "at": "2026-10-17",
-    "commit": "1adc361901791a56ba1fa437e39f6fd07154e635",
+    "commit": "575990d939612163028b7beedc4f5be7127f7db5",
     "values": {
       "H1": {
         "cin-fb1-s5-core": 285411.3405,

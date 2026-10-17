@@ -4199,7 +4199,7 @@
 - **[V-0446](../records/verifications/V-0446-cinderella-beauty-live-read.md)** シンデレラの美しさと、S1 の最大HP 基準の攻撃力▲の読み直し（撮影）
   - 問い: シンデレラの S2 の美しさ（デコイがある間 3 秒ごとに最大HP▲・12 スタック）は戦闘開始から 3 秒ごとに付き、S1 のバースト 3 段階突入時の攻撃力▲（最終最大HP の X%・10 秒）は、その間に上がった最終最大HP を読み直すか
   - 話題: スキル・キャラ固有・日付: 2026-10-17・状態: 調査中・Stage: plan/design-skill-stage6.md 2.4 節（2 段目の段 6 の PR 2）
-  - 予測（2026-10-17、commit 1adc361）との比べ:
+  - 予測（2026-10-17、commit 575990d）との比べ:
     - cin-fb1-s5-core（hitDamage）: 実測なし。H1 285,411.341
     - cin-fb1-s5-add（perShotHitDamage）: 実測なし。H1 364,252.779
     - cin-fb1-s8-core（hitDamage）: 実測なし。H1 292,359.945
