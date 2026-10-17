@@ -603,7 +603,7 @@ notes の種類: 未対応 125・前提の外 27・計算に無関係 28・補�
 
 - **skill1**: partial
   - effects[0] stackChange・battleStart・goldenChip: C-0128（確定）
-  - effects[1] state・normalShot・goldenChip（critDamage）: C-0580（仮説）
+  - effects[1] state・normalShot・goldenChip（critDamage）: C-0580（確定）
     - contents[0] critDamage: C-0128（確定）
   - notes[0] 未対応: フルバーストタイム中の通常攻撃 3 回ごとの、自分と自分を除く最終攻撃力が最も高い味方 1 機への攻撃ダメージ▲（2 秒）は未対応: 根拠なし
 - **skill2**: unsupported
