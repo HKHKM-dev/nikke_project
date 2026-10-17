@@ -65,7 +65,7 @@
 - `skills/states.ts`: 目録の `barrier`（家族の印 `family`）。
 - `skills/holders.ts`: 条件 `selfState` の判定で、家族の根なら家族のどの状態の件でも当たる。
 - `skills/composition.ts`（静的な `selfState`）・`frame/plan.ts`（`damage` の `selfState`）: 同じ当たり。
-- `data/skills/830.json`・`822.json`、結論 C-0075 の扱い（論点 6）。ラムのバーストのバリアの間接の notes を効果にしたので、結論 C-0253 の対象とモデル側の場所を、notes から効果に移す（結論の文は変えない。間接の notes の結論と同じ扱い。[design-indirect-notes.md](design-indirect-notes.md) の論点 5）。
+- `data/skills/830.json`・`822.json`、結論 C-0075 の扱い（論点 6）。ラムのバーストのバリアの間接の notes を効果にしたので、結論 C-0253 の対象とモデル側の場所を、notes から効果に移す。結論の文は、バーストのバリアの部分を「バリアを読む味方のいない編成では」と範囲を限って書き直す（2026-10-17 のオーナーの判断。C-0075 の後半と同じ扱い）。
 - `apps/web`: 状態の名前の表示（今のまま）。
 
 ## 4. 論点
@@ -94,3 +94,4 @@
 
 - 2026-10-16: 起案（オーナーが分類の設計書の論点 7 を承認し、段 5 の前提の間接の notes を [design-indirect-notes.md](design-indirect-notes.md) で入れた）。
 - 2026-10-16: オーナーが論点 6 を代わりの案に決めた。C-0075 の後半を「灼熱のタブ・バリアを付ける味方のいない編成では」と書き直した（根拠の録画 063 の範囲。更新日を改めた）。論点 1〜5 は推奨どおりにして、PR 1 を実装した: 目録の `barrier`（家族の根）と家族の当たり（`skills/states.ts` の `stateMatches`・`statesMatching`。条件 `selfState` の判定は `skills/holders.ts`・`skills/composition.ts`・`frame/plan.ts`）、ラムのバーストのバリアの付与、アスカ S2 の有利コードの攻撃ダメージ▲（`selfState: 'barrier'`。C-0075 を付けた。結論の対象を notes[0] から効果に移した）。バリアを付ける味方のいない編成（録画 063 と同じ）では、編成の段で効果が外れる。既存の観測値の残差は変わらない（感度は、ラム・アスカのいる録画の鍵が変わったので計算し直した）。撮影計画は V-0436（予測は H1 をファイルに、H0 を手で書いた）。撮影を待つ間は、ブランチ `claude/skill-stage5-barrier` に置く。
+- 2026-10-17: オーナーの判断で、C-0253 のバーストのバリアの部分を「バリアを読む味方のいない編成では」と書き直した（根拠の録画 038・079・173・192 に、バリアを読む味方はいない。更新日を改めた）。S1 の攻撃力▼と S2 の最大HP▲・防御力▲の部分は変えない（間接の notes の結論と同じ扱い。[design-indirect-notes.md](design-indirect-notes.md) の論点 5）。
