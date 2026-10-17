@@ -10,7 +10,7 @@ import {
   finalAttacksAt,
   rankByFinalAttack,
   tiedAtCutoff,
-  type AttackWindow,
+  type AttackItem,
   type RankSlot,
 } from '../ranking.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
@@ -137,7 +137,7 @@ describe('順位（skills/ranking.ts、18 節）', () => {
 
   it('ranks by final attack (ratio and caster-based flat), same-frame windows included, ties by slot order', () => {
     const slots: RankSlot[] = [slot(54316, 'RL'), slot(99925), slot(119896), null, slot(119896, 'AR')];
-    const windows: AttackWindow[] = [
+    const windows: AttackItem[] = [
       // アリスのバースト（同じフレームに始まる）
       { slotIndex: 2, sourceSlotIndex: 2, effect: attack(0.5512), start: 306, end: 906 },
       // クラウン型の固定加算（発動者 = 枠 1 の 99,925 × 0.5）。フラワーに 306 から

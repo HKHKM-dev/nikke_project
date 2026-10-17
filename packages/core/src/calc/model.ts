@@ -93,7 +93,7 @@ function lowerBound(frames: readonly number[], value: number): number {
 }
 
 /** Stage 10: 持続の射撃バフ（最大装弾数・リロード速度・チャージ速度・装弾数無限・使用武器変更の timed）が掛かっている状態か */
-function hasFiringWindow(state: SlotBuffState): boolean {
+function hasFiringItem(state: SlotBuffState): boolean {
   return state.timedEffects.some((e) => isFiringStat(e.stat));
 }
 
@@ -144,7 +144,7 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.5 節）: 自分の射撃の回数で開く窓を持つ枠は、'hybrid' でも
     // 全グループを射撃の列から数える（窓の中だけ数えると、窓の外の平均レートが残りの発数を外す）
     const countSlotShots =
-      (shotCounting === 'firingSlots' && groups.some((g) => hasFiringWindow(g.state))) ||
+      (shotCounting === 'firingSlots' && groups.some((g) => hasFiringItem(g.state))) ||
       (shotCounting === 'hybrid' && hasOwnShotCountItem(history, index));
     for (const group of groups) {
       const state = group.state;
@@ -160,7 +160,7 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
         timedEffects: state.timedEffects,
       };
       // Stage 10: 持続の射撃バフが掛かっているグループは、射撃の列の発数を数える（plan/design-stage10.md 5 節。'hybrid' のとき）
-      if (countAllShots || countSlotShots || (shotCounting === 'hybrid' && hasFiringWindow(state))) {
+      if (countAllShots || countSlotShots || (shotCounting === 'hybrid' && hasFiringItem(state))) {
         const trigger = landingTriggerDamage({ ...base, buffs: state.buffs, perShot }, parts, group.fullBurst);
         const triggers = countShotsInRanges(shotFrames, ranges);
         // Stage 22-B: 部分チャージの発（C-0109）は、その発のチャージの進みで値を出し直す

@@ -10,7 +10,7 @@ import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../../time.ts';
 import { ZERO_BUFFS, type ChangedWeapon } from '../buffs.ts';
 import { applyComposition, compositionAllows, enemyElementAllows, withCharacterAllows } from '../composition.ts';
 import { MAX_SKILL_LEVELS, resolveStateContents, resolveStateGrants, resolveTimed } from '../resolve.ts';
-import { triggerFrames, untilNextEndWindows, type TimelineSlot } from '../timeline.ts';
+import { triggerFrames, untilNextEndItems, type TimelineSlot } from '../timeline.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { itemsOf } from '../holders.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEntry, type SkillEffect } from '../types.ts';
@@ -194,16 +194,16 @@ describe('withCharacter・enemyElement', () => {
   });
 });
 
-describe('窓の作り方', () => {
+describe('件の作り方', () => {
   const schedule = planFixedCycle([{ burstStep: 'Step3' }], FRAMES);
 
   it('closes a window at the next full burst end (or the battle end)', () => {
     // 固定サイクルのフルバーストは [H, C)、[C + H, 2C) …
     const ends = schedule.fullBurstWindows.map((w) => w.end);
-    expect(untilNextEndWindows([H], ends, FRAMES)).toEqual([[H, C]]);
-    expect(untilNextEndWindows([0], ends, FRAMES)).toEqual([[0, C]]);
-    expect(untilNextEndWindows([H, H + 10], ends, FRAMES)).toEqual([[H, C]]);
-    expect(untilNextEndWindows([5], [], FRAMES)).toEqual([[5, FRAMES]]);
+    expect(untilNextEndItems([H], ends, FRAMES)).toEqual([[H, C]]);
+    expect(untilNextEndItems([0], ends, FRAMES)).toEqual([[0, C]]);
+    expect(untilNextEndItems([H, H + 10], ends, FRAMES)).toEqual([[H, C]]);
+    expect(untilNextEndItems([5], [], FRAMES)).toEqual([[5, FRAMES]]);
   });
 
   it('fires a timer trigger with atStart at frame 0 too', () => {

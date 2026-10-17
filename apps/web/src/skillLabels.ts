@@ -161,13 +161,13 @@ export function formatTimedTrigger(trigger: ResolvedTrigger): string {
   return `${formatTrigger(trigger)} →`;
 }
 
-/** 窓の効果のきっかけ。「バースト使用時 →」。名前の付いた状態の語彙編: 状態の中身は「カモフラージュの間 →」（きっかけは付与のもの） */
-export function formatWindowTrigger(effect: AppliedTimedEffect): string {
+/** 件を持つ効果のきっかけ。「バースト使用時 →」。名前の付いた状態の語彙編: 状態の中身は「カモフラージュの間 →」（きっかけは付与のもの） */
+export function formatItemTrigger(effect: AppliedTimedEffect): string {
   return isStateContent(effect) ? `${stateLabel(effect.whileState)}の間 →` : formatTimedTrigger(effect.trigger);
 }
 
-/** 窓の効果の維持。「・10 秒」「・持続」。状態の中身は状態の窓の間なので空文字 */
-export function formatWindowDuration(effect: AppliedTimedEffect): string {
+/** 件を持つ効果の維持。「・10 秒」「・持続」。状態の中身は状態の件の間なので空文字 */
+export function formatItemDuration(effect: AppliedTimedEffect): string {
   if (isStateContent(effect)) return '';
   if (effect.durationShots !== undefined) return `・${effect.durationShots} 発`;
   if (effect.durationUntil === 'ammoSpent') return '・撃ち切りまで';

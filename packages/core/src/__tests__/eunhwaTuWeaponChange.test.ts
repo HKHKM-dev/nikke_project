@@ -14,7 +14,7 @@ import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../scripts/records-data.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
-import { untilNextEndWindows } from '../skills/timeline.ts';
+import { untilNextEndItems } from '../skills/timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -171,15 +171,15 @@ describe('解決', () => {
   });
 });
 
-describe('untilNextEndWindows', () => {
+describe('untilNextEndItems', () => {
   it('ends each window at the first end after its start, merges overlapping starts, and runs to the end without one', () => {
-    expect(untilNextEndWindows([100, 500], [131, 532], 1000)).toEqual([
+    expect(untilNextEndItems([100, 500], [131, 532], 1000)).toEqual([
       [100, 131],
       [500, 532],
     ]);
     // 開いている変更に重ねて付いても、撃ち切りまでで終わる（1 パス目は持ち替え直さない）
-    expect(untilNextEndWindows([100, 120], [131, 160], 1000)).toEqual([[100, 131]]);
-    expect(untilNextEndWindows([900], [131], 1000)).toEqual([[900, 1000]]);
+    expect(untilNextEndItems([100, 120], [131, 160], 1000)).toEqual([[100, 131]]);
+    expect(untilNextEndItems([900], [131], 1000)).toEqual([[900, 1000]]);
   });
 });
 

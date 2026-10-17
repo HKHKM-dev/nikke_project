@@ -39,10 +39,10 @@ import {
   type ResolvedStateGrant,
   type ResolvedTimedEffect,
   type ResolvedTrigger,
-  type WindowEffect,
+  type ItemEffect,
 } from './resolve.ts';
-import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackWindow, type RankingRecord } from './ranking.ts';
-import { stackWindows, STACK_REFRESH, type StackDecrease } from './stacks.ts';
+import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type RankingRecord } from './ranking.ts';
+import { stackItems, STACK_REFRESH, type StackDecrease } from './stacks.ts';
 import { statesMatching, type NamedStateId } from './states.ts';
 import { canEverTarget, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
 import {
@@ -68,13 +68,13 @@ import {
 import type { SkillSlot } from '../types.ts';
 import {
   buildSegments,
-  effectWindows,
+  effectItems,
   rankSlotsOf,
   resolvePassiveStates,
-  shotCountWindows,
+  shotCountItems,
   timerFrames,
-  unionWindows,
-  untilNextEndWindows,
+  unionItems,
+  untilNextEndItems,
   weaponStartTrim,
   type AppliedRecord,
   type BuffTimeline,
@@ -340,19 +340,19 @@ function stateItems(
   decreases: readonly StackDecrease[] = [],
 ): HeldItem[] {
   if (grant.durationShots !== undefined) {
-    return itemsOfPairs(shotCountWindows(starts, shotFrames, grant.durationShots, frames));
+    return itemsOfPairs(shotCountItems(starts, shotFrames, grant.durationShots, frames));
   }
   if (grant.durationUntil === 'fullBurstEnd') {
-    return itemsOfPairs(untilNextEndWindows(starts, fullBurstEnds, frames));
+    return itemsOfPairs(untilNextEndItems(starts, fullBurstEnds, frames));
   }
   if (grant.maxStacks !== undefined) {
-    return stackWindows(starts, grant.durationFrames, frames, grant.maxStacks, STACK_REFRESH, decreases).map((w) => ({
+    return stackItems(starts, grant.durationFrames, frames, grant.maxStacks, STACK_REFRESH, decreases).map((w) => ({
       start: w.start,
       end: w.end,
       stack: w.stack,
     }));
   }
-  return itemsOfPairs(unionWindows(starts, grant.durationFrames, frames));
+  return itemsOfPairs(unionItems(starts, grant.durationFrames, frames));
 }
 
 /**
@@ -422,19 +422,19 @@ function timedItems(
   frames: number,
 ): HeldItem[] {
   if (effect.durationShots !== undefined) {
-    return itemsOfPairs(shotCountWindows(starts, log?.frames ?? [], effect.durationShots, frames));
+    return itemsOfPairs(shotCountItems(starts, log?.frames ?? [], effect.durationShots, frames));
   }
   if (effect.durationUntil === 'ammoSpent') {
     // 和集合は発火のフレームで取り、頭は後で削る（段 A までの planBuffTimeline・1 パス目の register と同じ順）
     const trim = weaponStartTrim(effect);
-    return untilNextEndWindows(starts, log?.weaponChangeEnds ?? [], frames)
+    return untilNextEndItems(starts, log?.weaponChangeEnds ?? [], frames)
       .filter(([start, end]) => start + trim < end)
       .map(([start, end]) => ({ start: start + trim, end }));
   }
   if (effect.durationUntil === 'fullBurstEnd') {
-    return itemsOfPairs(untilNextEndWindows(starts, fullBurstEnds, frames));
+    return itemsOfPairs(untilNextEndItems(starts, fullBurstEnds, frames));
   }
-  return effectWindows(starts, effect, frames).map((w) => {
+  return effectItems(starts, effect, frames).map((w) => {
     const item: HeldItem = { start: w.start, end: w.end };
     if (w.stack !== undefined) item.stack = w.stack;
     return item;
@@ -803,7 +803,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         break;
       }
       case 'cycleEvery':
-        track.items = itemsOfPairs(unionWindows(track.starts, o.effect.durationFrames, frames));
+        track.items = itemsOfPairs(unionItems(track.starts, o.effect.durationFrames, frames));
         break;
       case 'healWindow':
         track.items = healWindowItems(track.starts, o.effect.durationFrames, frames);
@@ -823,12 +823,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     readItems(track).filter((it) => it.start <= frame && frame < it.end);
 
   /** 件の効いている値（確率のきっかけは付いている確率を掛けて丸めた値） */
-  const valueOf = (effect: WindowEffect, item: HeldItem): number =>
+  const valueOf = (effect: ItemEffect, item: HeldItem): number =>
     item.scale === undefined ? effect.value : chanceValueOf(effect.value, item.scale);
 
   // ---- 読む側の索引（持ち主ごと。並びは作った順 = 段 A までの 1 パス目の窓を読む順） ----
-  type View = { track: HeldTrack; effect: WindowEffect };
-  const viewsOf = (test: (track: HeldTrack, effect: WindowEffect) => boolean): View[][] =>
+  type View = { track: HeldTrack; effect: ItemEffect };
+  const viewsOf = (test: (track: HeldTrack, effect: ItemEffect) => boolean): View[][] =>
     slots.map((_, holder) => {
       const views: View[] = [];
       for (const track of tracks) {
@@ -921,7 +921,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   const rankSlots = rankSlotsOf(slots, passive);
   const finalAttacksAtFrame = (frame: number): (number | null)[] => {
-    const windows: AttackWindow[] = [];
+    const windows: AttackItem[] = [];
     rankViews.forEach((views, holder) => {
       for (const v of views) {
         for (const it of activeAt(v.track, frame)) {
@@ -1561,7 +1561,7 @@ export type ValuePiece = {
   slotIndex: number;
   sourceSlotIndex: number;
   /** 効果（値は、確率のきっかけの期待値・強化の値に直したもの） */
-  effect: WindowEffect;
+  effect: ItemEffect;
   start: number;
   end: number;
   /** スタックの段（1 始まり）。スタックしない効果はキーごと無い */
@@ -1572,7 +1572,7 @@ export type ValuePiece = {
 /** 件の列の値の小片（timed・状態の中身・確率のきっかけ。強化は別）。並びは作った順 */
 function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValuePiece[] {
   const pieces: ValuePiece[] = [];
-  const push = (effect: WindowEffect, item: HeldItem): void => {
+  const push = (effect: ItemEffect, item: HeldItem): void => {
     // 段 C: 敵の件は、効果の対象の味方の各枠に写す
     const holders =
       track.holder === ENEMY && !isStateContent(effect)
@@ -1618,11 +1618,11 @@ function amplify(
   const skips: ConditionSkip[] = [];
   if (amplifiers.length === 0) return { pieces, skips };
   /** 参照の候補（件の列を作った順 → 件 → 中身の順。発動の瞬間の値はこの順に足す） */
-  const references: { holder: number; sourceSlotIndex: number; effect: WindowEffect; item: HeldItem; value: number }[] =
+  const references: { holder: number; sourceSlotIndex: number; effect: ItemEffect; item: HeldItem; value: number }[] =
     [];
   for (const track of tracks) {
     const o = track.origin;
-    const effects: readonly WindowEffect[] = o.kind === 'timed' ? [o.effect] : o.kind === 'state' ? o.contents : [];
+    const effects: readonly ItemEffect[] = o.kind === 'timed' ? [o.effect] : o.kind === 'state' ? o.contents : [];
     for (const item of track.items) {
       for (const effect of effects) {
         if (isStateStat(effect.stat)) continue;
@@ -1656,7 +1656,7 @@ function amplify(
       }
       accepted.push(frame);
     }
-    for (const [s, e] of unionWindows(accepted, effect.durationFrames, frames)) {
+    for (const [s, e] of unionItems(accepted, effect.durationFrames, frames)) {
       holders.forEach((holder) => {
         const atStart = activeAt(holder, s);
         if (atStart.length === 0) return;

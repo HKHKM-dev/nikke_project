@@ -8,7 +8,7 @@ import type { CharacterData, SkillRaw } from '../../types.ts';
 import { ZERO_BUFFS, applyResolvedEffect } from '../buffs.ts';
 import { isPerShotTrigger, resolveDamageEffects, resolvePerShotDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed } from '../resolve.ts';
-import { stackWindows } from '../stacks.ts';
+import { stackItems } from '../stacks.ts';
 import type { TimelineSlot } from '../timeline.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { itemsOf } from '../holders.ts';
@@ -296,11 +296,11 @@ describe('computeTriggerDamage with per-shot damage and a changed weapon (3.1)',
   });
 });
 
-describe('stackWindows (2.2・7.2)', () => {
+describe('stackItems (2.2・7.2)', () => {
   it('refreshes every stack on each fire and drops them all together (all)', () => {
     // 6 秒ごと・維持 10 秒・上限 5: 段 k は k 回目の発火から最後の発火 + 10 秒まで
     const starts = [0, 360, 720, 1080, 1440, 1800];
-    expect(stackWindows(starts, 600, 10_000, 5, 'all')).toEqual([
+    expect(stackItems(starts, 600, 10_000, 5, 'all')).toEqual([
       { stack: 1, start: 0, end: 2400 },
       { stack: 2, start: 360, end: 2400 },
       { stack: 3, start: 720, end: 2400 },
@@ -308,7 +308,7 @@ describe('stackWindows (2.2・7.2)', () => {
       { stack: 5, start: 1440, end: 2400 },
     ]);
     // 10 秒を超えて空くと段がすべて切れて 1 からやり直す（ちょうど切れたフレームは続きとみなす）
-    expect(stackWindows([0, 600, 1300], 600, 10_000, 5, 'all')).toEqual([
+    expect(stackItems([0, 600, 1300], 600, 10_000, 5, 'all')).toEqual([
       { stack: 1, start: 0, end: 1200 },
       { stack: 2, start: 600, end: 1200 },
       { stack: 1, start: 1300, end: 1900 },
@@ -317,25 +317,25 @@ describe('stackWindows (2.2・7.2)', () => {
 
   it('counts the fires in the last duration with each own timer (each)', () => {
     // 6 秒ごと・維持 10 秒なら直近 10 秒に 1〜2 回: 1 スタックと 2 スタックを行き来する（plan/design-stage11-modernia.md 0.1 節）
-    expect(stackWindows([0, 360, 720, 1080], 600, 10_000, 5, 'each')).toEqual([
+    expect(stackItems([0, 360, 720, 1080], 600, 10_000, 5, 'each')).toEqual([
       { stack: 1, start: 0, end: 1680 },
       { stack: 2, start: 360, end: 600 },
       { stack: 2, start: 720, end: 960 },
       { stack: 2, start: 1080, end: 1320 },
     ]);
     // 上限で止める
-    expect(stackWindows([0, 10, 20], 600, 10_000, 2, 'each')).toEqual([
+    expect(stackItems([0, 10, 20], 600, 10_000, 2, 'each')).toEqual([
       { stack: 1, start: 0, end: 620 },
       { stack: 2, start: 10, end: 610 },
     ]);
   });
 
   it('cuts at the battle length and ignores zero durations', () => {
-    expect(stackWindows([0, 100], 600, 500, 5, 'all')).toEqual([
+    expect(stackItems([0, 100], 600, 500, 5, 'all')).toEqual([
       { stack: 1, start: 0, end: 500 },
       { stack: 2, start: 100, end: 500 },
     ]);
-    expect(stackWindows([0], 0, 500, 5)).toEqual([]);
+    expect(stackItems([0], 0, 500, 5)).toEqual([]);
   });
 
   it('adds one value per stack in the segments (5 stacks of −5.04% → 300 × 0.748 = 224.4 → 224)', () => {

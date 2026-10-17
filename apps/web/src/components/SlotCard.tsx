@@ -16,7 +16,7 @@ import {
   type BuildMasters,
   type SkillLevels,
   type TeamSlotResult,
-  type WindowEffect,
+  type ItemEffect,
   framesToGameSeconds,
   isStateContent,
 } from '@nikke/core';
@@ -31,8 +31,8 @@ import {
   formatInstant,
   formatTimedExtras,
   formatTimedTrigger,
-  formatWindowDuration,
-  formatWindowTrigger,
+  formatItemDuration,
+  formatItemTrigger,
   stateLabel,
 } from '../skillLabels.ts';
 import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
@@ -97,7 +97,7 @@ export function SlotCard({
   const condition = slot.condition;
   // 同じ効果の件をまとめて「10 秒 × 9 回」と見せる（持ち主ごとの一覧編の段 D の 6: まとめは core の skills/summaries.ts が履歴から作る。
   // スタックする効果は段 1 だけを数え、命中率（状態だけの stat）も並べる。状態の中身は付与の中身の何番目か（subIndex）でも分ける）
-  const subIndexOf = (e: WindowEffect) => (isStateContent(e) ? e.subIndex : '');
+  const subIndexOf = (e: ItemEffect) => (isStateContent(e) ? e.subIndex : '');
   const timedSummary = (slotResult?.effects ?? []).map((summary) => {
     // 区間に出ない件（命中率）でも値が出るように、比率の効果は値そのものを仮に入れる（下で区間の値に置き換える）
     let effect: AppliedTimedEffect = {
@@ -370,9 +370,9 @@ export function SlotCard({
                     <li key={`timed-${i}`}>
                       <span className="amount">{formatAppliedAmount(t.effect)}</span>
                       <small className="sub">
-                        {formatWindowTrigger(t.effect)}{' '}
+                        {formatItemTrigger(t.effect)}{' '}
                         {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}
-                        {formatWindowDuration(t.effect)}{' '}
+                        {formatItemDuration(t.effect)}{' '}
                         {/* ソルジャーE.G. 編: 確率のきっかけの窓は期待値の小片なので、回数ではなく「期待値」と出す */}
                         {!isStateContent(t.effect) &&
                         typeof t.effect.trigger === 'object' &&

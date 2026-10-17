@@ -1,7 +1,7 @@
 // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 6）: 画面に出す、枠ごとの持続の効果と循環の間隔の変更のまとめ（純関数）。
 // 段 D の 5 までは、画面が窓（TeamSlotResult の windows・stateWindows・cycleWindows）と記録（conditionSkips）からまとめていた。
 // まとめ方は同じで、入力を履歴（値の小片・件・判定の記録）にした。
-import { isStateContent, type WindowEffect } from './resolve.ts';
+import { isStateContent, type ItemEffect } from './resolve.ts';
 import { itemsOf, valuePiecesOf, type HolderHistory } from './holders.ts';
 import type { ConditionSkip } from './timeline.ts';
 import type { NamedStateId } from './states.ts';
@@ -10,7 +10,7 @@ import { SKILL_SLOTS, isStateStat, staticStatesOf, type SkillSlot } from './type
 /** この枠が受けた持続の効果のまとめ（効果ごと。画面の「10 秒 × 9 回」） */
 export type SlotEffectSummary = {
   /** 代表の効果（最初に付いた値の小片の効果。値は確率のきっかけの期待値・強化の値に直したもの） */
-  effect: WindowEffect;
+  effect: ItemEffect;
   sourceSlotIndex: number;
   /** 付いた回数（値の小片の数。スタックする効果は段 1 の数） */
   count: number;
@@ -48,7 +48,7 @@ export type SlotStateSummary = {
 };
 
 /** まとめる値の小片の形（skills/holders.ts の ValuePiece） */
-export type SummaryPiece = { slotIndex: number; sourceSlotIndex: number; effect: WindowEffect; stack?: number };
+export type SummaryPiece = { slotIndex: number; sourceSlotIndex: number; effect: ItemEffect; stack?: number };
 
 /** まとめる循環の件の形 */
 export type SummaryCycle = {
@@ -61,7 +61,7 @@ export type SummaryCycle = {
   end: number;
 };
 
-const subIndexOf = (e: WindowEffect): number | '' => (isStateContent(e) ? e.subIndex : '');
+const subIndexOf = (e: ItemEffect): number | '' => (isStateContent(e) ? e.subIndex : '');
 
 /**
  * 効果ごとのまとめ。pieces は区間に足す小片のあとに状態だけの stat の小片を並べたもの（まとめの並びは、最初に出た順）。

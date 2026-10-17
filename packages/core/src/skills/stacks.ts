@@ -1,8 +1,8 @@
-// Stage 11 モダニア: 効果のあるスタック（「{N}スタック」「{Y}秒間維持」）の窓（plan/design-stage11-modernia.md 2.2・3.2 節）。
-// スタックの段ごとの窓にほどく: 段 k の窓 = スタック数が k 以上の区間。区間では段ごとの窓を 1 つずつ足すので、
+// Stage 11 モダニア: 効果のあるスタック（「{N}スタック」「{Y}秒間維持」）の件（plan/design-stage11-modernia.md 2.2・3.2 節）。
+// スタックの段ごとの件にほどく: 段 k の件 = スタック数が k 以上の区間。区間では段ごとの件を 1 つずつ足すので、
 // k スタックのときの合計は k × 1 スタックの値になり、区間分割（skills/timeline.ts）と射手の実効値（frame/firstPass.ts）はそのまま使える。
-// 1 パス目のループ（持ち主ごとの一覧。skills/holders.ts）が使う。発火のフレームより後の窓は、それより前の発火だけで決まる
-// （後の発火は、それが始まるフレームより前の窓を変えない）ので、ループの途中の発火で作り直しても窓は食い違わない。
+// 1 パス目のループ（持ち主ごとの一覧。skills/holders.ts）が使う。発火のフレームより後の件は、それより前の発火だけで決まる
+// （後の発火は、それが始まるフレームより前の件を変えない）ので、ループの途中の発火で作り直しても件は食い違わない。
 
 /**
  * スタックの維持時間の数え方（仮。録画 44 の 2 で確かめる）。
@@ -11,8 +11,8 @@
  */
 export const STACK_REFRESH: 'all' | 'each' = 'all';
 
-/** 段 stack（1 始まり）の窓 [start, end) */
-export type StackWindow = { stack: number; start: number; end: number };
+/** 段 stack（1 始まり）の件 [start, end) */
+export type StackItem = { stack: number; start: number; end: number };
 
 /**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少。フレーム frame に効いている段の上から amount 段を、
@@ -21,18 +21,18 @@ export type StackWindow = { stack: number; start: number; end: number };
 export type StackDecrease = { frame: number; amount: number };
 
 /**
- * 発火（窓が始まるフレーム）の列から、段ごとの窓を作る。durationFrames ≤ 0 なら空。frames が上限。
+ * 発火（件が始まるフレーム）の列から、段ごとの件を作る。durationFrames ≤ 0 なら空。frames が上限。
  * 並びは段 1 から順に始まった順（'all' はチェーンの中で段が上がる順、'each' は区間の順）。
  * 2 段目の段 3: decreases（スタック量の減少）は 'all' だけ。同じフレームの始まりは減少の前に数える
  */
-export function stackWindows(
+export function stackItems(
   starts: readonly number[],
   durationFrames: number,
   frames: number,
   maxStacks: number,
   mode: 'all' | 'each' = STACK_REFRESH,
   decreases: readonly StackDecrease[] = [],
-): StackWindow[] {
+): StackItem[] {
   if (durationFrames <= 0 || maxStacks < 1) return [];
   const sorted = starts.filter((s) => s < frames).sort((a, b) => a - b);
   if (mode === 'each' && decreases.length > 0) throw new RangeError('a stack decrease needs STACK_REFRESH "all"');
@@ -47,10 +47,10 @@ function refreshAll(
   frames: number,
   maxStacks: number,
   decreases: readonly StackDecrease[],
-): StackWindow[] {
-  const out: StackWindow[] = [];
-  /** いまのチェーンの段の窓（段 1 から） */
-  let chain: StackWindow[] = [];
+): StackItem[] {
+  const out: StackItem[] = [];
+  /** いまのチェーンの段の件（段 1 から） */
+  let chain: StackItem[] = [];
   let chainEnd = -1;
   const cuts = decreases.filter((d) => d.frame < frames).sort((a, b) => a.frame - b.frame);
   let next = 0;
@@ -65,7 +65,7 @@ function refreshAll(
   for (const s of sorted) {
     cutBefore(s);
     const end = Math.min(s + durationFrames, frames);
-    // 和集合（unionWindows）と同じく、ちょうど切れたフレームの発火も続きとみなす
+    // 和集合（unionItems）と同じく、ちょうど切れたフレームの発火も続きとみなす
     if (chain.length > 0 && s <= chainEnd) {
       if (chain.length < maxStacks) {
         const w = { stack: chain.length + 1, start: s, end };
@@ -85,12 +85,12 @@ function refreshAll(
   return out;
 }
 
-function eachOwn(sorted: readonly number[], durationFrames: number, frames: number, maxStacks: number): StackWindow[] {
+function eachOwn(sorted: readonly number[], durationFrames: number, frames: number, maxStacks: number): StackItem[] {
   const own = sorted.map((s) => [s, Math.min(s + durationFrames, frames)] as const);
   const bounds = [...new Set(own.flatMap(([s, e]) => [s, e]))].sort((a, b) => a - b);
-  const out: StackWindow[] = [];
-  /** 段ごとに開いている窓 */
-  const open: (StackWindow | null)[] = Array.from({ length: maxStacks }, () => null);
+  const out: StackItem[] = [];
+  /** 段ごとに開いている件 */
+  const open: (StackItem | null)[] = Array.from({ length: maxStacks }, () => null);
   for (let i = 0; i + 1 < bounds.length; i++) {
     const a = bounds[i]!;
     const b = bounds[i + 1]!;

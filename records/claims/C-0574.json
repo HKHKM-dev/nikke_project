@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`463-04`・`471-04`（4・5 回目の発動の直前 15・5 個（463）、16・5 個（471）が、直後はどれも 1 個。画面右下の数が発動の直後に 1 になり、一時停止画面の STACK も 1。ソーダ：トゥインクルバニーはまだ撃っていない）。463 で見つけ、471 で再現した。V-0437",
-  "model": "`skills/stacks.ts` の `stackWindows`（減少は最後の 1 段を残す）。`data/skills/314.json` の burst の effects[3]",
+  "model": "`skills/stacks.ts` の `stackItems`（減少は最後の 1 段を残す）。`data/skills/314.json` の burst の effects[3]",
   "replaces": [],
   "updated": "2026-10-17",
   "subject": {
