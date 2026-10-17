@@ -1,5 +1,5 @@
 {
-  "verification": "V-0437",
+  "verification": "V-0439",
   "note": "撮る前の予測（plan/design-heal-vocabulary.md 5 節の F2）。マナ（AI）と◎アスカ（操作）の 2 体で、どちらもバースト段階 III なのでバーストは撃たない（オートバースト OFF。setup の burst: false）。見るのはアスカの S1（回復効果が適用された時、攻撃力▲ 25 秒）が付いているかで、アスカの 1 発（コア・会心・距離なし）で比べる",
   "team": [
     {
