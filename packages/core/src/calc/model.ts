@@ -37,7 +37,13 @@ import {
   slotConditionNotes,
 } from '../frame/landing.ts';
 import { firingParams } from '../frame/firing.ts';
-import { BURST_HIT_USES_PRE_ACTIVATION_BUFFS, burstHitBuffs, perShotDamageOf, planTeamRun } from '../frame/plan.ts';
+import {
+  BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
+  burstHitBuffs,
+  perShotDamageOf,
+  planTeamRun,
+  sameActivationPiecesOf,
+} from '../frame/plan.ts';
 import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
 import { hasOwnShotCountItem } from '../skills/holders.ts';
 import { cycleSummariesOf, effectSummariesOf, stateSummariesOf } from '../skills/summaries.ts';
@@ -204,8 +210,16 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
       // 分かれたヒット編: ヒットごとに倍率の share ぶんを計算し、発動ごとに足し合わせる（秒は 1 ヒット目。plan/design-burst-split-hits.md 4.3 節）
       const groups: { activationFrame: number; seconds: number; parts: { hit: BurstHitResult; share: number }[] }[] =
         [];
+      const sameActivation = sameActivationPiecesOf(history, slot.character);
       for (const { activationFrame, frame, share } of burstHitsOfSlot(schedule, index, timeline.frames)) {
-        const buffs = burstHitBuffs(timeline, activationFrame, frame, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
+        const buffs = burstHitBuffs(
+          timeline,
+          activationFrame,
+          frame,
+          index,
+          BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
+          sameActivation,
+        );
         const trigger = computeTriggerDamage({
           ...base,
           buffs,

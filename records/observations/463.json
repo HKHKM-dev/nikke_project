@@ -145,12 +145,28 @@
     "source": "V-0437",
     "readAt": "2026-10-17",
     "kind": "hit",
-    "use": "record",
-    "value": [1245002, 1245002],
-    "description": "ソーダ：トゥインクルバニーの 1・2 回目のバーストスキルダメージ（会心なし）。同じ発動の攻撃力▲（65.25%）が乗った値（3 回目の値 × 攻撃力▲の比 約 1.653）。ダメージは発動から遅れて出る。モデルは発動の時点のバフで計算するので合わない（遅れは別の検証）",
+    "use": "compare",
+    "value": 1245002,
+    "description": "ソーダ：トゥインクルバニーの 1 回目のバーストスキルダメージ（会心なし）。同じ発動の攻撃力▲（65.25%）が乗った値（攻撃力 × 1.6525 から防御 100 を引いた式で、小数を切り捨てた値と一致する）。3〜5 回目（▲なし）は 463-05",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",
-      "note": "f2153・f4979（一時停止の明けから約 1.4 秒後）"
+      "note": "f2153（一時停止の明けの後。一時停止の明けから約 1.3 秒後）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
     },
     "scope": {
       "slot": 3,
@@ -209,6 +225,59 @@
     "scope": {
       "slot": 3,
       "source": "normal"
+    }
+  },
+  {
+    "id": "463-10",
+    "recording": "463",
+    "source": "V-0444",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1245002,
+    "description": "ソーダ：トゥインクルバニーの 2 回目のバーストスキルダメージ（会心なし）。同じ発動の攻撃力▲（65.25%）が乗った値（攻撃力 × 1.6525 から防御 100 を引いた式で、小数を切り捨てた値と一致する）。3〜5 回目（▲なし）は 463-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f4979（一時停止の明けの後。一時停止の明けから約 1.3 秒後）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "463-11",
+    "recording": "463",
+    "source": "V-0444",
+    "readAt": "2026-10-17",
+    "kind": "interval",
+    "use": "record",
+    "value": [127, 128, 129, 129, 128],
+    "unit": "f",
+    "description": "III（ソーダ：トゥインクルバニー）の発動（00.00）から一時停止の入りまでと、一時停止の明けからバーストスキルダメージのヒットまでの、動画のフレームの和（一時停止を挟んだ回）。一時停止の入りと明けの演出のあいだゲームが進むかが分からないので、遅れの値には使わない",
+    "method": {
+      "tool": "tools/captures/dups.ts --mode diff・hud.ts --mode jumps",
+      "note": "入りは前のフレームとの差が 30 を超えた最初のフレーム、明けは一時停止の画が動いた（差 9 以上）最初のフレーム。00.00 f1534・4413・7239・10104・12829、入り f1585・4462・7288・10154・12877、明け f2077・4900・7765・10490・13056、ヒット f2153・4979・7845・10569・13136"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
     }
   }
 ]

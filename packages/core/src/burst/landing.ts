@@ -29,6 +29,11 @@ export type MeasuredBurstDelayRow = {
    * 窓の終わりを発動から数える（維持時間から effectFrames を引く。窓の始まりは効果の発火のまま）。書かない行は窓ごと遅れる
    */
   windowFromActivation?: true;
+  /**
+   * 同じ発動の▲がヒットに乗る（plan/design-burst-landing.md 10 節の案 1）: true なら、バーストの倍率ダメージのヒットに、
+   * 発動の直前のバフ（burstHitBuffs）に加えて、同じ発動で自分に付いた burst スロットの効果を足す。書かない行は乗せない（6 節の 5）
+   */
+  sameActivationBuffsOnHit?: true;
   delays: BurstDelays;
   claim: string;
 };
@@ -91,6 +96,10 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // 10f・22f 後で、バーストスキルダメージを 3 等分する（C-0564）。効果（S2 のペインロード 1・2）の遅れは未測定。
   // 追加ダメージ（burst の effects[1]）は perBurstHit で 3 ヒットのそれぞれに出る（C-0565）
   { resourceIds: [161], delays: { hitFrames: 17, effectFrames: 0, hitOffsets: [0, 10, 22] }, claim: 'C-0575' },
+  // ソーダ：トゥインクルバニー: III のタイマーの 00.00 からヒットまで 96f（動画で 118f。止まり 22f を含む。一時停止の無い 1 回の読み）。
+  // 効果（命中率▲・攻撃力▲・ゴールデンチップの減少）はヒットより前に付く（発動から約 0.4 秒の一時停止画面で付いていた）ので 0。
+  // ヒットに同じ発動の攻撃力▲が乗る（C-0582。ラピ・ヘルム・イサベルは乗らない）
+  { resourceIds: [314], sameActivationBuffsOnHit: true, delays: { hitFrames: 96, effectFrames: 0 }, claim: 'C-0581' },
 ];
 
 type DelayKey = Pick<CharacterData, 'resourceId' | 'skills' | 'treasure'>;
@@ -117,6 +126,11 @@ export function measuredBurstDelayRow(character: DelayKey): MeasuredBurstDelayRo
 export function burstWindowTrimOf(character: DelayKey): number {
   const row = measuredBurstDelayRow(character);
   return row?.windowFromActivation === true ? row.delays.effectFrames : 0;
+}
+
+/** 同じ発動の▲がヒットに乗るか（plan/design-burst-landing.md 10 節）。表に無ければ false */
+export function sameActivationBuffsOnHit(character: DelayKey): boolean {
+  return measuredBurstDelayRow(character)?.sameActivationBuffsOnHit === true;
 }
 
 /** キャラのバーストの遅れ。表に無ければ 0 */
