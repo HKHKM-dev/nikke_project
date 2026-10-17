@@ -129,6 +129,11 @@ export type FirstPassOptions = {
   /** 操作キャラの枠（フルチャージ倍率がゲージに乗る）。null は全員 AI */
   controlledSlot?: number | null;
   timing?: Readonly<BurstTiming>;
+  /**
+   * 比べる設定の拡張（plan/design-compare-setup-extension.md 3.2 節）: 手で撃ったチェーンの始まり（I の本当の発動）のフレームの並び
+   * （TeamInput.manualBursts）。動的サイクルだけ。省略はオートバースト
+   */
+  manualBursts?: readonly number[];
   /** Stage 16-B: 敵を狙えない窓（昇順・重なりなし。frame/events.ts の untargetableRanges）。省略・空なら今までと同じ */
   untargetable?: readonly FrameRange[];
   /**
@@ -249,8 +254,10 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   // ---- バーストの状態機械（件の一覧がフルバーストの窓を読むので、効果の準備の前に作る） ----
   let controller: BurstControllerState | null = null;
   let fixed: BurstSchedule | null = null;
+  if (options.manualBursts !== undefined && !options.burst) throw new RangeError('manualBursts needs burst');
   if (options.burst) {
     if (burstModel === 'fixed') {
+      if (options.manualBursts !== undefined) throw new RangeError('manualBursts needs the dynamic burst model');
       fixed = planFixedCycle(
         slots.map((s) =>
           s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) },
@@ -261,6 +268,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       controller = initialBurstController(
         slots.map((s) => (s === null ? null : burstUnitOf(s.character, s.definition))),
         options.timing ?? DEFAULT_BURST_TIMING,
+        options.manualBursts ?? null,
       );
     }
   }

@@ -8,11 +8,12 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import {
   indistinguishableTargets,
+  predictionRids,
   runPredictions,
   todayLocal,
   type PredictionFile,
 } from '../src/records/predictions.ts';
-import { PREDICTIONS_DIR, ROOT, loadRecordingsFile, loadRecordsData } from './records-data.ts';
+import { PREDICTIONS_DIR, ROOT, loadRecordingsFile, loadRecordsData, recordingMap } from './records-data.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -31,11 +32,9 @@ if (!existsSync(path)) {
   process.exit(1);
 }
 const file = JSON.parse(readFileSync(path, 'utf8')) as PredictionFile;
-const data = loadRecordsData(
-  loadRecordingsFile(),
-  file.team.map((m) => m.rid),
-);
-const predicted = runPredictions(file, data);
+const recordingsFile = loadRecordingsFile();
+const data = loadRecordsData(recordingsFile, predictionRids(file));
+const predicted = runPredictions(file, data, recordingMap(recordingsFile));
 const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
 const at = values.date ?? todayLocal();
 // 2026-10-10 より前の控え（seen）は書き直すときに落とす（読まなくなった。plan/design-investigation-review.md 1.3 節）

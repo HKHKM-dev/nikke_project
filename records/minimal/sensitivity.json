@@ -5523,6 +5523,14 @@
       "plus": 0
     },
     {
+      "observation": "222-21",
+      "element": "ドレイク treasureSkills.skill1.effects[3]",
+      "key": "9380b0bf55a22ed8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "224-01",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "cd7de10d531c17e6",
@@ -6267,6 +6275,14 @@
       "plus": 0
     },
     {
+      "observation": "248-17",
+      "element": "ノワール burst.effects[1]",
+      "key": "bff3fe4301e6869e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "249-01",
       "element": "ノワール burst.effects[1]",
       "key": "25f34fa99e0de59e",
@@ -6278,6 +6294,14 @@
       "observation": "249-08",
       "element": "ノワール burst.effects[1]",
       "key": "071c7289b4b908c6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "249-10",
+      "element": "ノワール burst.effects[1]",
+      "key": "ca81506bfcaab85e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7085,7 +7109,7 @@
     {
       "observation": "263-04",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "56c310b46a3168d7",
+      "key": "e48c65046358a9ad",
       "effective": false,
       "minus": -3.637978807091713e-12,
       "plus": null
@@ -7093,7 +7117,7 @@
     {
       "observation": "263-05",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "93b9e379b2b0f984",
+      "key": "ca67772bf24dbdd2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -7101,7 +7125,7 @@
     {
       "observation": "263-07",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "9630a0ad3dc0a13c",
+      "key": "c338936f1377a4d8",
       "effective": false,
       "minus": 0,
       "plus": null

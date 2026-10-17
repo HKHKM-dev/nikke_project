@@ -124,6 +124,12 @@ export type TeamInput = {
    * 検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
    */
   attackRounding?: AttackRounding;
+  /**
+   * 比べる設定の拡張（plan/design-compare-setup-extension.md 3 節）: 手で撃ったチェーンの始まり（I の本当の発動）のゲーム内の
+   * フレームの並び（昇順）。満タンの後の I をこのフレーム（満タンの 23f 後より前なら 23f 後）で撃ち、並びが尽きたら撃たない。
+   * II・III はオートと同じ。burst が true の動的サイクルだけ。録画の照合（records/observations.ts）だけが使う。利用者の計算には出さない
+   */
+  manualBursts?: readonly number[];
 };
 
 /** 枠 slotIndex の shot 発目（1 始まり）が、障害物を count 個壊した */

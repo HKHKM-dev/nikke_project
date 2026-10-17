@@ -20,6 +20,7 @@ import {
   validateRecordingBuild,
   type LegacyRecording,
   type RecordingBuild,
+  type RecordingEntry,
   type RecordingMember,
 } from './recordings.ts';
 
@@ -48,6 +49,14 @@ export type PredictionTarget = {
   args?: CompareSpec['args'];
   setup: CompareSetup;
   note?: string;
+  /**
+   * 比べる設定の拡張（plan/design-compare-setup-extension.md 4 節）: この指標だけ、ファイルの team の代わりに使う録画（台帳の編成・
+   * スペック固定・育成で組む。jumpWindows・manualBursts などの観測値もその録画のものを引ける）。team と一緒には書かない
+   */
+  recording?: string;
+  /** 同: この指標だけの編成（撮る前の編成。ファイルの team と同じ形）。fixedSpec を省略するとファイルの fixedSpec */
+  team?: PredictionMember[];
+  fixedSpec?: boolean;
   /** 結び付ける観測値の ID（省略すると、同じ検証記録を source にする観測値のうち metric・args・setup が同じもの） */
   observations?: string[];
   /**
@@ -96,7 +105,13 @@ export function todayLocal(now = new Date()): string {
 /** 予測ファイルの検証。問題があれば 1 件 1 行 */
 export function validatePredictions(
   files: readonly PredictionFile[],
-  ctx: { verificationIds: ReadonlySet<string>; knownRids: ReadonlySet<number>; observations: readonly Observation[] },
+  ctx: {
+    verificationIds: ReadonlySet<string>;
+    knownRids: ReadonlySet<number>;
+    observations: readonly Observation[];
+    /** 指標の recording を確かめる（省略なら確かめない） */
+    recordingIds?: ReadonlySet<string>;
+  },
 ): string[] {
   const errors: string[] = [];
   const seen = new Set<string>();
@@ -107,14 +122,7 @@ export function validatePredictions(
     else if (!ctx.verificationIds.has(f.verification)) errors.push(`${at}: 検証記録が無い`);
     if (seen.has(f.verification)) errors.push(`${at}: 予測ファイルが重複している`);
     seen.add(f.verification);
-    if (f.team.length === 0 || f.team.length > 5) errors.push(`${at}: 編成は 1〜5 体`);
-    for (const m of f.team) if (!ctx.knownRids.has(m.rid)) errors.push(`${at}: rid ${m.rid} のキャラのデータが無い`);
-    f.team.forEach((m, i) => {
-      if (m.build === undefined) return;
-      if (f.fixedSpec !== false) errors.push(`${at}: 育成（build）はスペック固定 OFF の予測にだけ書く`);
-      errors.push(...validateRecordingBuild(m.build, `${at} 枠 ${i + 1}`));
-    });
-    if (f.team.filter((m) => m.controlled === true).length > 1) errors.push(`${at}: 操作した枠が 2 つ以上ある`);
+    errors.push(...validateTeam(f.team, f.fixedSpec, at, ctx.knownRids));
     if (typeof f.fixedSpec !== 'boolean') errors.push(`${at}: fixedSpec は true か false`);
     if (f.hypotheses.length === 0) errors.push(`${at}: 仮説が 1 つ以上要る`);
     const hyp = new Set<string>();
@@ -137,6 +145,16 @@ export function validatePredictions(
           if (t.args?.[a] === undefined) errors.push(`${at}: 指標 ${t.id} に引数 ${a} が要る`);
         }
       }
+      if (t.recording !== undefined) {
+        if (t.team !== undefined || t.fixedSpec !== undefined)
+          errors.push(`${at}: 指標 ${t.id} の recording は team・fixedSpec と一緒に書かない`);
+        if (ctx.recordingIds !== undefined && !ctx.recordingIds.has(t.recording))
+          errors.push(`${at}: 指標 ${t.id} の録画 ${t.recording} が無い`);
+      }
+      if (t.team !== undefined)
+        errors.push(...validateTeam(t.team, t.fixedSpec ?? f.fixedSpec, `${at} 指標 ${t.id}`, ctx.knownRids));
+      else if (t.fixedSpec !== undefined && t.recording === undefined)
+        errors.push(`${at}: 指標 ${t.id} の fixedSpec は team と一緒に書く`);
       if (typeof t.setup?.enemy !== 'string') errors.push(`${at}: 指標 ${t.id} の setup.enemy が要る`);
       if (t.tolerance !== undefined) {
         const tol: unknown = t.tolerance;
@@ -170,6 +188,30 @@ export function validatePredictions(
   return errors;
 }
 
+/** 編成の検証（ファイルの team と指標の team で共通） */
+function validateTeam(
+  team: readonly PredictionMember[],
+  fixedSpec: boolean,
+  at: string,
+  knownRids: ReadonlySet<number>,
+): string[] {
+  const errors: string[] = [];
+  if (team.length === 0 || team.length > 5) errors.push(`${at}: 編成は 1〜5 体`);
+  for (const m of team) if (!knownRids.has(m.rid)) errors.push(`${at}: rid ${m.rid} のキャラのデータが無い`);
+  team.forEach((m, i) => {
+    if (m.build === undefined) return;
+    if (fixedSpec !== false) errors.push(`${at}: 育成（build）はスペック固定 OFF の予測にだけ書く`);
+    errors.push(...validateRecordingBuild(m.build, `${at} 枠 ${i + 1}`));
+  });
+  if (team.filter((m) => m.controlled === true).length > 1) errors.push(`${at}: 操作した枠が 2 つ以上ある`);
+  return errors;
+}
+
+/** 予測ファイルに出てくる rid（ファイルの team と指標の team。データの読み込みに使う） */
+export function predictionRids(file: PredictionFile): number[] {
+  return [...file.team, ...file.targets.flatMap((t) => t.team ?? [])].map((m) => m.rid);
+}
+
 /**
  * 撮影計画の見分けの確かめ（plan/design-investigation-review.md 2.1 節）: 許容の幅（tolerance）のある指標のうち、どの 2 つの仮説の
  * 予測の差もその幅の中のもの（その録画とその指標では仮説を見分けられない）。仮説が 1 つか、予測を出していなければ空
@@ -190,8 +232,13 @@ export function indistinguishableTargets(file: PredictionFile): { target: string
 }
 
 /** 予測の編成を、照合ランナーの入力の組み方（buildTeamInput）に渡せる形にする */
-function asRecording(file: PredictionFile): LegacyRecording {
-  const team: RecordingMember[] = file.team.map((m, i) => ({
+function asRecording(
+  file: PredictionFile,
+  members: readonly PredictionMember[] = file.team,
+  fixedSpec: boolean = file.fixedSpec,
+  suffix = '',
+): LegacyRecording {
+  const team: RecordingMember[] = members.map((m, i) => ({
     slot: i + 1,
     rid: m.rid,
     name: String(m.rid),
@@ -200,22 +247,37 @@ function asRecording(file: PredictionFile): LegacyRecording {
     ...(m.build === undefined ? {} : { build: m.build }),
   }));
   return {
-    id: `prediction:${file.verification}`,
+    id: `prediction:${file.verification}${suffix}`,
     legacy: true,
     path: '',
     team,
     target: { name: '', element: null },
     mode: null,
-    fixedSpec: file.fixedSpec,
+    fixedSpec,
     autoFire: null,
     autoBurst: null,
     conditionNote: '',
   };
 }
 
-/** 仮説ごと・指標ごとにモデルを回す（同じ条件は 1 回だけ） */
-export function runPredictions(file: PredictionFile, data: RecordsData): Predicted['values'] {
-  const recording = asRecording(file);
+/**
+ * 仮説ごと・指標ごとにモデルを回す（同じ条件は 1 回だけ）。指標の recording（plan/design-compare-setup-extension.md 4 節）を引くには
+ * recordings を渡す
+ */
+export function runPredictions(
+  file: PredictionFile,
+  data: RecordsData,
+  recordings: ReadonlyMap<string, RecordingEntry> = new Map(),
+): Predicted['values'] {
+  const recordingOf = (t: PredictionTarget): RecordingEntry => {
+    if (t.recording !== undefined) {
+      const r = recordings.get(t.recording);
+      if (r === undefined) throw new Error(`指標 ${t.id} の録画 ${t.recording} が無い`);
+      return r;
+    }
+    if (t.team !== undefined) return asRecording(file, t.team, t.fixedSpec ?? file.fixedSpec, `:${t.id}`);
+    return asRecording(file);
+  };
   const cache = new Map<string, { input: TeamInput; sim?: SimResult; calc?: TeamResult }>();
   const values: Predicted['values'] = {};
   for (const h of file.hypotheses) {
@@ -224,7 +286,8 @@ export function runPredictions(file: PredictionFile, data: RecordsData): Predict
       const metric = METRICS[t.metric];
       if (metric === undefined) throw new Error(`metric ${t.metric} が語彙に無い`);
       const setup: CompareSetup = { ...t.setup, ...(h.override ?? {}) };
-      const key = JSON.stringify(setup);
+      const recording = recordingOf(t);
+      const key = `${recording.id}:${JSON.stringify(setup)}`;
       let run = cache.get(key);
       if (run === undefined) {
         run = { input: buildTeamInput(recording, setup, data) };

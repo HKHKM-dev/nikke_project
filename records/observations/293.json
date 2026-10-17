@@ -3,7 +3,7 @@
     "id": "293-01",
     "recording": "293",
     "kind": "timing",
-    "use": "record",
+    "use": "input",
     "unit": "f",
     "value": [2044, 4959, 8890],
     "spread": {
@@ -37,7 +37,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 1,
-        "frame": 2200,
+        "frame": 2120,
         "core": true,
         "crit": false,
         "distance": false
@@ -47,7 +47,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "manualBursts": "293-01"
       }
     }
   },
@@ -69,7 +70,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 1,
-        "frame": 2420,
+        "frame": 2500,
         "core": true,
         "crit": false,
         "distance": false
@@ -79,7 +80,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "manualBursts": "293-01"
       }
     }
   },
@@ -101,7 +103,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 1,
-        "frame": 4700,
+        "frame": 5080,
         "core": true,
         "crit": false,
         "distance": true
@@ -111,7 +113,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "manualBursts": "293-01"
       }
     }
   },
@@ -133,7 +136,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 1,
-        "frame": 7300,
+        "frame": 5460,
         "core": true,
         "crit": false,
         "distance": true
@@ -143,7 +146,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "manualBursts": "293-01"
       }
     }
   },
@@ -175,7 +179,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "manualBursts": "293-01"
       }
     }
   },
@@ -207,7 +212,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "manualBursts": "293-01"
       }
     }
   }
