@@ -766,6 +766,10 @@ export type HealEffect = {
   /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */
   durationRef?: number;
   durationSeconds?: number;
+  /** 回復の語彙編（plan/design-heal-vocabulary.md 2.1 節）: バースト段階の構成の条件（アニス：スター S2 のみんなの星） */
+  burstStepMix?: BurstStepMixCondition;
+  /** 回復の語彙編: 同じ部隊の味方の条件 */
+  squad?: SquadCondition;
   /** F5（plan/design-heal-vocabulary.md 3.3 節）: 編成に特定のキャラがいる条件 */
   withCharacter?: WithCharacterCondition;
   assumes?: LocalizedText;
@@ -2499,8 +2503,13 @@ function parseBurstReentryEffect(v: Record<string, Json>, path: string): BurstRe
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
   // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）
   const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds'] : [];
+  // 編成の条件は cooldownReduction と heal（回復の語彙編。plan/design-heal-vocabulary.md 2.1 節）。heal は withCharacter も（F5。3.3 節）
   const compositionKeys =
-    kind === 'cooldownReduction' ? ['burstStepMix', 'squad'] : kind === 'heal' ? ['withCharacter'] : [];
+    kind === 'cooldownReduction'
+      ? ['burstStepMix', 'squad']
+      : kind === 'heal'
+        ? ['burstStepMix', 'squad', 'withCharacter']
+        : [];
   const scalingKeys = kind === 'ammoRefill' ? ['scaling'] : [];
   for (const key of Object.keys(v)) {
     if (
@@ -2589,11 +2598,12 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
       effect.kind !== 'timed' &&
       effect.kind !== 'state' &&
       effect.kind !== 'cooldownReduction' &&
+      effect.kind !== 'heal' &&
       effect.kind !== 'burstReentry'
     ) {
       fail(
         `${path}.${key}`,
-        `only allowed in passive, timed, state, cooldownReduction and burstReentry, found in ${effect.kind}`,
+        `only allowed in passive, timed, state, cooldownReduction, heal and burstReentry, found in ${effect.kind}`,
       );
     }
     if (key === 'burstStepMix') effect.burstStepMix = parseBurstStepMixCondition(v[key], `${path}.${key}`);

@@ -1,0 +1,124 @@
+{
+  "verification": "V-0440",
+  "note": "撮る前の予測（plan/design-heal-vocabulary.md 5 節の F3）。アニス：スター（AI）・I-DOLL・フラワー（AI）・アスカ（操作）の 3 体。フラワーは自分を除く基本バースト段階 1 の味方なので、アニス：スターはみんなの星。オートバースト OFF でバーストは撃たない（setup の burst: false）。見るのはアスカの S1（回復効果が適用された時、攻撃力▲ 25 秒）が付いているかで、アスカの 1 発（コア・会心・距離なし）で比べる",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": false
+    },
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 830,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "アニス：スターの回復が「回復効果が適用された時」を起こさない（回復を定義する前のモデルの形。みんなの星の条件が満たされていない、満タンの味方への回復は適用とみなされない、など）。アスカの S1 は一度も付かない",
+      "override": {
+        "dropHeals": [17]
+      }
+    },
+    {
+      "id": "H1",
+      "note": "みんなの星のアニス：スターのフルチャージの発ごとの回復が、満タンのアスカにも「回復効果が適用された時」を起こす（C-0576。いまのモデル）。S1 はアニス：スターの最初のフルチャージの発から付き、発の間隔は 25 秒よりずっと短いので、戦闘の終わりまで切れない"
+    }
+  ],
+  "targets": [
+    {
+      "id": "asuka-hit-before-first-heal",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 30,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "アニス：スターの最初のフルチャージの発より前のアスカの 1 発。どの仮説でも S1 なし（読みの基準）"
+    },
+    {
+      "id": "asuka-hit-50s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "判定の指標。最初の回復から 25 秒（S1 の 1 回分）を過ぎた所のアスカの 1 発。H1 は S1 あり、H0 は S1 なし",
+      "observations": ["478-04", "479-04"]
+    },
+    {
+      "id": "asuka-hit-150s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 9000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "戦闘の終わり近くのアスカの 1 発（S1 が付き続けるかの確かめ）",
+      "observations": ["478-05", "479-05"]
+    },
+    {
+      "id": "asuka-total",
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "アスカの与ダメージ（180 秒。戦闘履歴）。参考（コア命中率と的のジャンプの窓の残差が乗る）",
+      "observations": ["478-07", "479-07"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-17",
+    "commit": "a34d93e16df3adef4f8e67f52367d54b0c6b35b2",
+    "values": {
+      "H0": {
+        "asuka-hit-before-first-heal": 22473.7296,
+        "asuka-hit-50s": 22473.7296,
+        "asuka-hit-150s": 22473.7296,
+        "asuka-total": 37050904.33903995
+      },
+      "H1": {
+        "asuka-hit-before-first-heal": 22473.7296,
+        "asuka-hit-50s": 44286.919599999994,
+        "asuka-hit-150s": 44286.919599999994,
+        "asuka-total": 72594750.0288268
+      }
+    }
+  }
+}
