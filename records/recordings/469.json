@@ -1,0 +1,41 @@
+{
+  "id": "469",
+  "date": "2026-10-17",
+  "folder": "range",
+  "file": "20261017-469_ar_mihara.mp4",
+  "original": "2026-10-17_18-51-38.mp4",
+  "durationSec": 240,
+  "frames": 14400,
+  "fps": 60,
+  "sizeMB": 290.2,
+  "sha256": "381a75928f68",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 161,
+      "name": "ミハラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0432。ラム（I）・デルタ（II）・ミハラ（III・操作）。ミハラのバーストの追加ダメージ（同じ発動で付くペインロード 2）"
+}

@@ -1,0 +1,121 @@
+{
+  "formatVersion": 1,
+  "resourceId": 161,
+  "checkedAt": "2026-10-16",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "highwayToHell1",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 1
+          },
+          "target": "self",
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 1
+            }
+          ],
+          "claims": [
+            "C-0563"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "highwayToHell2",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2
+          },
+          "target": "self",
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "critRate",
+              "ref": 3
+            }
+          ],
+          "claims": [
+            "C-0566"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "claims": [
+            "C-0563"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 2,
+          "damageType": "additional",
+          "condition": {
+            "selfState": "highwayToHell2"
+          },
+          "claims": [
+            "C-0566"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る",
+          "en": "The Full Burst Time −5 s comes from burst_duration (5 s) in the schedule",
+          "kind": "modeling",
+          "effect": {
+            "kind": "unknown"
+          },
+          "claims": [
+            "C-0011"
+          ]
+        },
+        {
+          "ja": "バーストスキルダメージは 3 等分の 3 ヒット（1 ヒット目の 10f・22f 後）に分かれ、会心は 3 ヒットでそろう。モデルは発動のフレームの 1 ヒット（合計の値は同じ）。III の発動から 1 ヒット目までの遅れは未測定",
+          "en": "The Burst Skill damage is split into three equal hits (10 f and 22 f after the first), which crit together. The model gives one hit on the activation frame (same total). The delay from the III activation to the first hit is not measured",
+          "kind": "modeling",
+          "refers": "effects[0]",
+          "claims": [
+            "C-0564"
+          ]
+        },
+        {
+          "ja": "追加ダメージがバーストスキルダメージの 3 ヒットのそれぞれで出ること（1 回のバーストで 3 回）と、フルバースト補正が乗ることは未対応。モデルは発動のフレームに 1 回（補正なし）",
+          "en": "The additional damage dealt on each of the three Burst Skill hits (three times per Burst) with the Full Burst bonus is not modeled. The model deals it once on the activation frame (without the bonus)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "burstUse"
+          },
+          "claims": [
+            "C-0565"
+          ]
+        }
+      ]
+    }
+  }
+}

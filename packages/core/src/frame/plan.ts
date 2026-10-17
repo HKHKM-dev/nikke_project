@@ -269,14 +269,15 @@ export function planSkillHits(
     const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
     const sequential = definition.skills.burst.sequential === true;
     // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: damage の条件 selfState が見る、自分の静的な状態と状態の件（段の印に依らない。
-    // 同じフレームに付いた件も見る。解除・消去で外れる件はそのフレームまで付いている）
+    // 発火のフレームより前に付いた件だけを見る。同じフレームに付いた件（同じ発動の付与を含む）は見ない（C-0160 と同じ読み。V-0432）。
+    // 解除・消去で外れる件はそのフレームまで付いている）
     const ownStatics = new Set(staticStatesOf(definition));
     const ownStateItems = itemsOf(history, { holder: slotIndex, kind: 'state' });
     // 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの状態でも当たる
     const selfStateAt = (state: NamedStateId, frame: number): boolean =>
       [...ownStatics].some((s) => stateMatches(state, s)) ||
       ownStateItems.some(
-        (i) => i.origin.kind === 'state' && stateMatches(state, i.origin.state) && i.start <= frame && frame < i.end,
+        (i) => i.origin.kind === 'state' && stateMatches(state, i.origin.state) && i.start < frame && frame < i.end,
       );
     // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
     const delays = burstDelaysOf(slot.character);

@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 59・効果 210（根拠あり 201）・notes 242（根拠あり 70）
+件数: キャラ 60・効果 215（根拠あり 205）・notes 245（根拠あり 73）
 
-notes の種類: 未対応 132・前提の外 27・計算に無関係 28・補足 8・間接 47
+notes の種類: 未対応 133・前提の外 27・計算に無関係 28・補足 10・間接 47
 
-スロット: supported 81・partial 17・unsupported 61・noEffect 33
+スロット: supported 83・partial 18・unsupported 61・noEffect 33
 
 ## 10 ラピ
 
@@ -244,6 +244,20 @@ notes の種類: 未対応 132・前提の外 27・計算に無関係 28・補�
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0230（確定）
   - notes[0] 計算に無関係: 移動不可（5 秒間維持）はダメージに関係しない: 根拠なし
+
+## 161 ミハラ
+
+- **skill1**: supported
+  - effects[0] timed・lastShot・critDamage: 根拠なし
+- **skill2**: supported
+  - effects[0] state・burstUse・highwayToHell1（attack）: C-0563（確定）
+  - effects[1] state・burstUse・highwayToHell2（critRate）: C-0566（確定）
+- **burst**: partial
+  - effects[0] burstDamage・skill: C-0563（確定）
+  - effects[1] damage・burstUse・additional: C-0566（確定）
+  - notes[0] 補足: フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る: C-0011（確定）
+  - notes[1] 補足: バーストスキルダメージは 3 等分の 3 ヒット（1 ヒット目の 10f・22f 後）に分かれ、会心は 3 ヒットでそろう。モデルは発動のフレームの 1 ヒット（合計の値は同じ）。III の発動から 1 ヒット目までの遅れは未測定: C-0564（仮説）
+  - notes[2] 未対応: 追加ダメージがバーストスキルダメージの 3 ヒットのそれぞれで出ること（1 回のバーストで 3 回）と、フルバースト補正が乗ることは未対応。モデルは発動のフレームに 1 回（補正なし）: C-0565（仮説）
 
 ## 162 ミハラ：ボンディングチェーン
 

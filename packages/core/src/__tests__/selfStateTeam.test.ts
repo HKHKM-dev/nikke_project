@@ -170,7 +170,7 @@ describe('時間で変わる状態を見る selfState（クイーン（真）の
     expect(skips.map((x) => x.frame)).toEqual(fullBursts);
   });
 
-  it('lets damage see a state given in the same frame (burst use)', () => {
+  it('does not let damage see a state given in the same frame (burst use. V-0432)', () => {
     const damage = (condition: unknown) => ({
       kind: 'damage',
       trigger: 'burstUse',
@@ -182,11 +182,12 @@ describe('時間で変わる状態を見る selfState（クイーン（真）の
     const off = withEffects([damage({ selfState: { state: 'followUp', present: false } })]);
     const hitFrames = (plan: ReturnType<typeof planTeamRun>) =>
       plan.skillHits.filter((h) => h.slotIndex === q && h.effect.effectIndex === grantIndex + 1).map((h) => h.frame);
-    // バースト使用時の付与は、バーストの効果のフレームに付く（付いた記録）。同じフレームのダメージがそれを見る
+    // バースト使用時の付与は、バーストの効果のフレームに付く（付いた記録）。同じフレームのダメージはそれを見ない（発動の前の
+    // 状態を見る。V-0432）。追撃（2 秒）は次のバーストまでに切れているので、どの回も「付いていない」の側で出る
     const applied = appliedFrames(on.history, 'followUp', q);
     expect(applied.length).toBe(queenBursts(on).length);
-    expect(hitFrames(on)).toEqual(applied);
-    expect(hitFrames(off)).toEqual([]);
+    expect(hitFrames(on)).toEqual([]);
+    expect(hitFrames(off)).toEqual(applied);
   });
 });
 
