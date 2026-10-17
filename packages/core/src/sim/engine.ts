@@ -45,6 +45,7 @@ import {
   burstHitBuffs,
   perShotDamageOf,
   planTeamRun,
+  sameActivationPiecesOf,
   type SkillHitEvent,
   type TeamPlan,
 } from '../frame/plan.ts';
@@ -309,7 +310,14 @@ export function runSimulation(simInput: SimInput): SimResult {
       const runner = runners[index];
       if (!runner) continue;
       const slot = slots[index]!;
-      const buffs = burstHitBuffs(timeline, activation.frame, f, index, BURST_HIT_USES_PRE_ACTIVATION_BUFFS);
+      const buffs = burstHitBuffs(
+        timeline,
+        activation.frame,
+        f,
+        index,
+        BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
+        sameActivationPiecesOf(history, slot.character),
+      );
       const trigger = computeTriggerDamage({
         character: slot.character,
         growth: slot.growth,

@@ -7451,6 +7451,57 @@
       "plus": 0
     },
     {
+      "observation": "463-01",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "7d1059a6325ef1a3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "463-02",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "72942bf5dab8a8d0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "463-03",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "04318c8a0addf75f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "463-05",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "038a79b3189791be",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 2 回目のバーストの倍率ダメージが無い"
+    },
+    {
+      "observation": "463-06",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "c937009d80668f14",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目のバーストの倍率ダメージが無い"
+    },
+    {
+      "observation": "463-10",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "ba481f3e806f7cf1",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 1 回目のバーストの倍率ダメージが無い"
+    },
+    {
       "observation": "465-01",
       "element": "マナ burst.effects[0]",
       "key": "7b5153fc753ac775",
@@ -7881,6 +7932,57 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "471-01",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "e3577c0b4471820e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "471-02",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "ca0d6aaa83ffc671",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "471-03",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "593308ef4edd53c2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "471-05",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "d6cb90c0f5b82877",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 2 回目のバーストの倍率ダメージが無い"
+    },
+    {
+      "observation": "471-06",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "897d77f232b9a3ad",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目のバーストの倍率ダメージが無い"
+    },
+    {
+      "observation": "471-13",
+      "element": "ソーダ：トゥインクルバニー burst.effects[0]",
+      "key": "d83ff0912f0b1a60",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 1 回目のバーストの倍率ダメージが無い"
     },
     {
       "observation": "474-03",

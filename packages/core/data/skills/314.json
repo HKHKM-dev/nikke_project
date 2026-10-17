@@ -90,7 +90,9 @@
             "en": "All enemies means one enemy (damage to parts is not handled)"
           },
           "claims": [
-            "C-0572"
+            "C-0572",
+            "C-0581",
+            "C-0582"
           ]
         },
         {
@@ -124,7 +126,8 @@
             }
           },
           "claims": [
-            "C-0573"
+            "C-0573",
+            "C-0582"
           ]
         },
         {

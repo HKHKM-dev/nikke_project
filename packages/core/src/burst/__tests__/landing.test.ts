@@ -8,6 +8,7 @@ import {
   burstWindowTrimOf,
   isTreasureBurst,
   MEASURED_BURST_DELAYS,
+  sameActivationBuffsOnHit,
   withBurstDelays,
 } from '../landing.ts';
 import {
@@ -52,6 +53,12 @@ describe('遅れの表', () => {
   });
 
   // 効果の窓の終わり（plan/design-burst-effect-window-end.md 案 B）: 印のある行（モダニア）だけ、burstUse の効果の維持を縮める
+  it('puts the same burst buffs on the hit only for Soda: Twinkle Bunny (C-0582), not for Rapi, Helm or Isabel', () => {
+    expect(sameActivationBuffsOnHit(character(314))).toBe(true);
+    for (const id of [10, 352, ISABEL]) expect(sameActivationBuffsOnHit(character(id))).toBe(false);
+    expect(burstDelaysOf(character(314))).toEqual({ hitFrames: 96, effectFrames: 0 });
+  });
+
   it('counts the burst-use windows of Modernia from the activation (C-0452), and leaves other rows alone', () => {
     expect(burstWindowTrimOf(character(260))).toBe(6);
     expect(burstWindowTrimOf(character(ISABEL))).toBe(0);

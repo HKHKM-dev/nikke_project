@@ -610,9 +610,9 @@ notes の種類: 未対応 125・前提の外 27・計算に無関係 28・補�
   - notes[0] 未対応: バースト 3 段階突入時の、ゴールデンチップのスタック量別のフルバーストタイムの持続時間▲は未対応: 根拠なし
   - notes[1] 未対応: フルバーストタイム中の通常攻撃ごとの、時間延長状態別のダメージは未対応: 根拠なし
 - **burst**: supported
-  - effects[0] burstDamage・skill: C-0572（確定）
+  - effects[0] burstDamage・skill: C-0572（確定）、C-0581（仮説）、C-0582（確定）
   - effects[1] timed・burstUse・hitRate: C-0573（確定）
-  - effects[2] timed・burstUse・attack: C-0573（確定）
+  - effects[2] timed・burstUse・attack: C-0573（確定）、C-0582（確定）
   - effects[3] stackChange・burstUse・goldenChip（減少）: C-0573（確定）、C-0574（確定）
 
 ## 330 クラウン

@@ -75,6 +75,12 @@ function BurstDelayNote({ character }: { character: CharacterData }) {
         <span className="badge">実測</span>{' '}
         {`バーストスキルダメージは${hits}、バーストスキル使用時の効果は ${sec(effectFrames)} 秒後に出る（${row.claim}）`}
       </li>
+      {row.sameActivationBuffsOnHit === true && (
+        // plan/design-burst-landing.md 10 節: 同じ発動の▲がヒットに乗る行（結論は burst の定義の claims）
+        <li className="note approx">
+          <span className="badge">実測</span> バーストスキルダメージには、同じ発動で自分に付いた効果が乗る
+        </li>
+      )}
     </ul>
   );
 }

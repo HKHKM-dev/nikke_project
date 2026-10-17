@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { METRICS } from '../records/observations.ts';
@@ -109,6 +110,23 @@ describe('ソーダ：トゥインクルバニーのバースト（ラム + デ�
   it('deals the burst skill damage on every burst', () => {
     const sim = runSimulation(recordingTeam());
     expect(sim.slots[S]!.burst.hits.length).toBe(bursts.length);
+  });
+
+  // V-0444（plan/design-burst-landing.md 10 節の案 1）: ヒットは III のタイマーの 00.00 から 96f（C-0581）で、同じ発動で付いた
+  // 攻撃力▲が乗る（C-0582。▲込みの攻撃力は整数に切り捨て）。▲の付かない 3 回目以降は素の攻撃力
+  it('hits 96 frames after the Full Burst timer and carries the same burst ATK▲ (sim and calc)', () => {
+    const activations = plan.schedule!.activations.filter((a) => a.slotIndex === S);
+    for (const a of activations) expect(hitFrameOf(a) - hexagonFrameOf(a)).toBe(96);
+    const attack = computeFixedSpecAttack(character(SODA)).attack;
+    const expected = [1, 1, 0, 0, 0].map(
+      (up) => (up ? Math.floor(attack * 1.6525) : attack) - FIXED_SPEC_ENEMY_DEFENCE,
+    );
+    const sim = runSimulation(recordingTeam()).slots[S]!.burst.hits.map((h) => h.baseHit);
+    const calc = computeTeamDamage(recordingTeam()).slots[S]!.burst.activations.map((a) => a.hit.baseHit);
+    for (const values of [sim, calc]) {
+      expect(values.length).toBe(expected.length);
+      values.forEach((v, i) => expect(v).toBe(expected[i]));
+    }
   });
 });
 

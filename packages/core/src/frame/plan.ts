@@ -6,7 +6,7 @@
 // Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
 // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間は、1 パス目の件の一覧の履歴から作る
 // （2 パス目の作り直しはやめた）。件と記録は履歴（TeamPlan.history）を読む。
-import { burstDelaysFieldOf, burstDelaysOf, isSplit } from '../burst/landing.ts';
+import { burstDelaysFieldOf, burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames } from '../time.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
@@ -57,7 +57,13 @@ import {
 } from '../skills/holders.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
 import { stateMatches, type NamedStateId } from '../skills/states.ts';
-import { isStateStat, staticStatesOf, type EffectCondition, type SelfStateCondition } from '../skills/types.ts';
+import {
+  isEnemyHeldStat,
+  isStateStat,
+  staticStatesOf,
+  type EffectCondition,
+  type SelfStateCondition,
+} from '../skills/types.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import {
@@ -504,7 +510,9 @@ export function burstSnapshotState(
  * 撃つ側のバフは発動のフレーム activationFrame の時点（preActivation なら直前）で固定し、敵の側のデバフ（damageTaken。2 段目の段 2 の
  * enemyDefenseDown も）だけ
  * ヒットのフレーム hitFrame の時点の値を使う。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで
- * 付く S2 の攻撃ダメージ▲は乗らない（`079-07`）。遅れの無いキャラ（hitFrame = activationFrame）は burstSnapshotState と同じ
+ * 付く S2 の攻撃ダメージ▲は乗らない（`079-07`）。遅れの無いキャラ（hitFrame = activationFrame）は burstSnapshotState と同じ。
+ * sameActivation（同じ発動の▲がヒットに乗る行のキャラだけ。plan/design-burst-landing.md 10 節の案 1、C-0582）を渡すと、
+ * 撃つ側のバフに、同じ発動で自分に付いた burst スロットの効果を足す（withSameActivationEffects）
  */
 export function burstHitBuffs(
   timeline: BuffTimeline,
@@ -512,11 +520,63 @@ export function burstHitBuffs(
   hitFrame: number,
   slotIndex: number,
   preActivation: boolean,
+  sameActivation?: readonly ValuePiece[],
 ): BuffTotals {
   const atActivation = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
-  if (hitFrame === activationFrame) return atActivation;
-  const atHit = burstSnapshotState(timeline, hitFrame, slotIndex, preActivation).buffs;
-  return { ...atActivation, damageTaken: atHit.damageTaken, enemyDefenseDown: atHit.enemyDefenseDown };
+  let buffs = atActivation;
+  if (hitFrame !== activationFrame) {
+    const atHit = burstSnapshotState(timeline, hitFrame, slotIndex, preActivation).buffs;
+    buffs = { ...atActivation, damageTaken: atHit.damageTaken, enemyDefenseDown: atHit.enemyDefenseDown };
+  }
+  if (sameActivation === undefined) return buffs;
+  return withSameActivationEffects(
+    sameActivation,
+    buffs,
+    activationFrame,
+    preActivation ? hitFrame - 1 : hitFrame,
+    slotIndex,
+  );
+}
+
+/** 同じ発動の▲がヒットに乗るキャラ（plan/design-burst-landing.md 10 節）なら、burstHitBuffs の sameActivation に渡す値の小片 */
+export function sameActivationPiecesOf(
+  history: Parameters<typeof valuePiecesOf>[0],
+  character: Parameters<typeof sameActivationBuffsOnHit>[0],
+): readonly ValuePiece[] | undefined {
+  return sameActivationBuffsOnHit(character) ? valuePiecesOf(history) : undefined;
+}
+
+/**
+ * 同じ発動の▲がヒットに乗るキャラ（plan/design-burst-landing.md 10 節の案 1）: この枠が自分に付けた burst スロットの値の小片のうち、
+ * 発動のフレーム以後に始まり、ヒットが見るフレーム at に続いているものを足す。遅れは CT（20 秒以上）より短いので、発動のフレーム
+ * 以後に始まる burst スロットの小片は、この発動のものだけ。敵が持つ stat（受けるダメージ▲・防御力▼）は、もうヒットの時点の値で
+ * 入っているので足さない
+ */
+function withSameActivationEffects(
+  pieces: readonly ValuePiece[],
+  buffs: BuffTotals,
+  activationFrame: number,
+  at: number,
+  slotIndex: number,
+): BuffTotals {
+  let out = buffs;
+  for (const w of pieces) {
+    if (w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex || w.effect.source.skill !== 'burst') continue;
+    if (w.start < activationFrame || w.start > at || w.end <= at) continue;
+    if (isStateStat(w.effect.stat) || isEnemyHeldStat(w.effect.stat)) continue;
+    if (
+      w.stack !== undefined ||
+      w.effect.scaling === 'casterAttack' ||
+      w.effect.scaling === 'casterFinalMaxHp' ||
+      w.effect.stat === 'weapon'
+    ) {
+      throw new RangeError(
+        'same-activation buffs on a burst hit support only plain timed effects (no stacks, casterAttack, casterFinalMaxHp or weapon)',
+      );
+    }
+    out = applyResolvedEffect(out, w.effect, 0).totals;
+  }
+  return out;
 }
 
 /**
