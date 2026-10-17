@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 60・効果 219（根拠あり 209）・notes 242（根拠あり 73）
+件数: キャラ 60・効果 220（根拠あり 210）・notes 241（根拠あり 73）
 
-notes の種類: 未対応 130・前提の外 27・計算に無関係 28・補足 10・間接 47
+notes の種類: 未対応 129・前提の外 27・計算に無関係 28・補足 10・間接 47
 
-スロット: supported 84・partial 18・unsupported 60・noEffect 33
+スロット: supported 85・partial 17・unsupported 60・noEffect 33
 
 ## 10 ラピ
 
@@ -485,10 +485,10 @@ notes の種類: 未対応 130・前提の外 27・計算に無関係 28・補�
 
 ## 290 マナ
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] state・battleStart・metalGamma（attack）: C-0020（確定）
-  - notes[0] 未対応: 通常攻撃 10 回ごとの味方全体の回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
-  - notes[1] 前提の外: 味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない: C-0443（範囲外）
+  - effects[1] heal・normalShot: C-0570（確定）
+  - notes[0] 前提の外: 味方の戦闘不能時の復活とマターガンマ解除は、味方が倒れないので起きない: C-0443（範囲外）
 - **skill2**: supported
   - effects[0] state・battleStart・metalSigma（burstGaugeSpeed）: C-0269（確定）
   - effects[1] timed・fullBurstStart・attackDamage: C-0281（確定）
