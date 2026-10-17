@@ -246,5 +246,19 @@ describe('data/skills', () => {
         if (entry.support !== 'supported') expect(entry.notes?.length ?? 0, `${slot} notes`).toBeGreaterThan(0);
       }
     });
+
+    // 2 段目の段 6 の論点 8（plan/design-skill-stage6.md 2.4 節）: 「最大HP のみ▲」は効いている間 HP の割合を下げる扱いが要るので、その形を
+    // 足すまで maxHp では書かない（notes のまま）。スロットの説明文に「最大HPのみ」があれば、そのスロットに maxHp の効果を書かない
+    // （同じスロットに最大HP▲ と最大HP のみ▲ の両方がある定義を書く時は、この検査を行ごとに直す）
+    it('does not write a max HP only up as maxHp yet', () => {
+      for (const slot of SKILL_SLOTS) {
+        const writesMaxHp = def.skills[slot].effects.some(
+          (e) =>
+            ('stat' in e && e.stat === 'maxHp') ||
+            (e.kind === 'state' && (e.contents ?? []).some((c) => c.stat === 'maxHp')),
+        );
+        if (writesMaxHp) expect(character.skills[slot].description.ja, slot).not.toMatch(/最大HPのみ/);
+      }
+    });
   });
 });

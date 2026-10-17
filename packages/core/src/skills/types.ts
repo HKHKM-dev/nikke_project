@@ -125,7 +125,8 @@ export const BUFF_STATS = [
   'trueDamageConversion',
   'sustainedDamage',
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 最大HP▲（比率）。与ダメージの式は読まず、発動者の最終最大HP 基準の
-  // 攻撃力▲（casterFinalMaxHp）だけが読む。「最大HP のみ▲」も同じ stat（現在の HP は扱わない）
+  // 攻撃力▲（casterFinalMaxHp）だけが読む。「最大HP のみ▲」は効いている間 HP の割合を下げる（同 2.4 節。論点 8 の決定）ので、
+  // その形を足すまでこの stat では書かない（notes のまま。definitions.test.ts）
   'maxHp',
 ] as const satisfies readonly BuffStat[];
 
