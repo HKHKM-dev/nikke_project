@@ -2,7 +2,7 @@
 import { parseSkillDefinition, type SkillDefinition } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { formatRemoveState, formatStateGrant, noteBadgeLabel } from './skillLabels.ts';
+import { formatRemoveState, formatStateGrant, formatTrigger, noteBadgeLabel } from './skillLabels.ts';
 
 const definitionOf = (id: number): SkillDefinition =>
   parseSkillDefinition(
@@ -25,6 +25,18 @@ describe('付与と解除の表示', () => {
     const removal = sigma[4];
     if (removal?.kind !== 'removeState') throw new Error('unexpected definition');
     expect(formatRemoveState(removal)).toBe('マターシグマを解除（自分がマターシグマ状態なら）');
+  });
+
+  // 2 段目の段 4（plan/design-skill-stage4.md 1.2 節）: 維持 0 秒の付与と、{ applied } の付与
+  it('writes a grant lasting 0 seconds as an instant record, and a grant on an applied trigger as usual', () => {
+    const torb = definitionOf(192);
+    const [, bullets, modification] = torb.treasureSkills!.skill1!.effects;
+    if (bullets?.kind !== 'state' || modification?.kind !== 'state') throw new Error('unexpected definition');
+    expect(formatStateGrant(bullets, torb)).toBe(
+      '代用弾丸を付与。即時（維持なし。付いた記録だけを作り、「〜が適用された時」の効果がきっかけにする）',
+    );
+    expect(formatStateGrant(modification, torb)).toBe('応急改造を付与。中身: 最大装弾数');
+    expect(formatTrigger({ applied: 'emergencyCraftedBullets' })).toBe('代用弾丸が適用された時');
   });
 
   it('marks an undispellable grant', () => {

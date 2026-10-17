@@ -225,9 +225,10 @@ type InstantSource = {
 };
 
 /**
- * 弾丸チャージの端数（仮）。録画 19 のノワール（14 × 39.88% = 5.58）は満タンに近く、切り捨て・四捨五入のどちらでも 14 になった
+ * 弾丸チャージの端数（C-0558）。トーブの代用弾丸（最大装弾数 × 5.31%）が、最大装弾数 60〜64 で 3 発、66 で 4 発入る（録画 467・468）。
+ * 録画 19 のノワール（14 × 39.88% = 5.58）は満タンに近く、切り捨て・四捨五入のどちらでも 14 になった
  */
-export const AMMO_REFILL_ROUNDING: 'floor' | 'round' = 'floor';
+export const AMMO_REFILL_ROUNDING: 'floor' | 'round' = 'round';
 
 function refillRounds(maxAmmo: number, ratio: number): number {
   const raw = maxAmmo * ratio;
@@ -317,7 +318,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   /**
    * 枠 i がフレーム f に使う実効値（件の一覧のうち、射撃に効く stat の件で start ≤ f < end のもの）。
    * 手順 1 で呼ぶときは f の件はまだ登録されていないので「f − 1 までに登録済み」になり、
-   * 手順 3 の弾丸チャージで呼ぶときは f に付いた最大装弾数▲も含む
+   * 手順 3 の弾丸チャージで呼ぶときは f に付いた最大装弾数▲も含む（射撃の回数のきっかけの弾丸チャージは f + 1 で呼ぶ。C-0561）
    */
   const paramsAt = (i: number, f: number): FiringParams => {
     const base = baseParams[i]!;
@@ -932,7 +933,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         const state = shooters[target];
         const slot = slots[target];
         if (!state || !slot) continue;
-        const params = paramsAt(target, f);
+        // 2 段目の段 4（C-0561。仮説）: 射撃の回数のきっかけの弾丸チャージは、同じ発のきっかけで付く件（f + 1 から。`{ applied }` の
+        // 付与で付く応急改造を含む）を入れた最大装弾数で数える。残弾に足すのは発のフレーム f のまま
+        const params = paramsAt(target, isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
         const before = state.ammo;
         // ルドミラ：ウィンターオーナー編: 発数の弾丸チャージ（scaling 'flat'）は値をそのまま足す
         const rounds =

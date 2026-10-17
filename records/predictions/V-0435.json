@@ -1,0 +1,199 @@
+{
+  "verification": "V-0435",
+  "team": [
+    {
+      "rid": 192,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまのモデル（plan/design-skill-stage4.md 2.1 節の定義。代用弾丸は 10 発目の次のフレームの記録で、応急改造は記録ごとに 1 スタック（最大 3）、クリティカルダメージ▲も記録から。弾丸チャージの端数は切り捨て（frame/firstPass.ts の AMMO_REFILL_ROUNDING。仮））。ほかの読みはモデルを切り替えるので、このファイルの範囲外（検証記録に手で書いた）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "max-ammo-shot-10",
+      "model": "sim",
+      "metric": "maxAmmoAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 10
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "10 発目を撃った時の最大装弾数（枠アイコンの上の「残弾/最大」）。代用弾丸の前",
+      "observations": []
+    },
+    {
+      "id": "max-ammo-shot-11",
+      "model": "sim",
+      "metric": "maxAmmoAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 11
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "11 発目を撃った時の最大装弾数。1 回目の代用弾丸の後（応急改造 1 スタック）",
+      "observations": []
+    },
+    {
+      "id": "max-ammo-shot-21",
+      "model": "sim",
+      "metric": "maxAmmoAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 21
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "21 発目を撃った時の最大装弾数（応急改造 2 スタック）",
+      "observations": []
+    },
+    {
+      "id": "max-ammo-shot-31",
+      "model": "sim",
+      "metric": "maxAmmoAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 31
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "31 発目を撃った時の最大装弾数（応急改造 3 スタック）",
+      "observations": []
+    },
+    {
+      "id": "refills",
+      "model": "sim",
+      "metric": "ammoRefillAmounts",
+      "args": {
+        "slot": 1,
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "最初の 8 回の弾丸チャージの発数（照準の左の残弾の増え）。最大装弾数 60・62・64 では 5.31% が 3.19〜3.40 発、66 では 3.50 発で、端数の扱いで分かれる",
+      "observations": ["467-01", "468-01"]
+    },
+    {
+      "id": "magazines",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 3
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "戦闘の始めから 3 本のマガジンの発数（最初の的のジャンプの前）",
+      "observations": []
+    },
+    {
+      "id": "crit-ratio-start",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 30,
+        "core": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "最初の代用弾丸の前（10 発目まで）の、会心と会心しない胴体の 1 ヒットの比（クリティカルダメージ▲なし）。会心が出ないこともある",
+      "observations": ["467-04", "468-04"]
+    },
+    {
+      "id": "crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "最初の代用弾丸の後の、会心と会心しない胴体の 1 ヒットの比（クリティカルダメージ▲あり。撃ち続ける間は切れない）",
+      "observations": ["467-05", "468-05"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-17",
+    "commit": "d4810b9fc97018dd5a2e1be97b61e97176bc0788",
+    "values": {
+      "H1": {
+        "max-ammo-shot-10": 60,
+        "max-ammo-shot-11": 62,
+        "max-ammo-shot-21": 64,
+        "max-ammo-shot-31": 66,
+        "refills": [3, 3, 3, 3, 3, 3, 3, 3],
+        "magazines": [84, 93, 96],
+        "crit-ratio-start": 1.3846153846153848,
+        "crit-ratio": 1.424923076923077
+      }
+    }
+  }
+}

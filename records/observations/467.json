@@ -1,0 +1,185 @@
+[
+  {
+    "id": "467-01",
+    "recording": "467",
+    "source": "V-0435",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": [3, 3, 4, 4, 4, 4, 4, 4],
+    "unit": "発",
+    "description": "トーブ（操作・単騎）の最初の 8 回の弾丸チャージ（代用弾丸）の発数。10・20・30・…・80 発目に入り、3・3 の後は 4。30 発目（応急改造の 3 スタック目と同じ代用弾丸）から 4 になる",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）",
+      "note": "残弾の表示が 1 減って k 増えた（発 + 弾丸チャージ）フレームの k。919・968・1017・1066・1115・1164・1213・1263 で、どれも発と同じフレームに増えた（間の値は出ない）。1 本目のマガジンの中なので、最大で止まった回は無い。f1185〜1187 の 10（前後は 18・17）と f1273 の 0（前後は 9・8）は読み違い。比べるモデルは手入力の条件（自動の条件の観測値は確定の結論の根拠にしない規則。発の数・最大装弾数・会心の比は条件に依らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "ammoRefillAmounts",
+      "args": {
+        "slot": 1,
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [874, 1329]
+    }
+  },
+  {
+    "id": "467-02",
+    "recording": "467",
+    "source": "V-0435",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": [94, 110],
+    "unit": "発",
+    "description": "戦闘の始めから 2 本のマガジンの発数。1 本目 94 発（最大装弾数 60 + 弾丸チャージ 3・3・4 × 7）、2 本目 110 発（66 + 4 × 11）。3 本目は最初の的のジャンプで撃ち切る前にリロードした",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、使い捨てのスクリプトでの発の列",
+      "note": "残弾の表示が 1 ずつ減ったフレーム（弾丸チャージの発を含む）を発とし、0 は表示されないので 1 の後のリロードの前の発を最終弾とした。1 本目 f874〜1329、2 本目 f1421〜1955（10 発ごとの弾丸チャージが通しの 100・110・…・200 発目に入る）。1 本目は HUD の総ダメージの増分（hud.ts --mode jumps）でも 94 個。比べるモデルは手入力の条件（自動の条件の観測値は確定の結論の根拠にしない規則。発の数・最大装弾数・会心の比は条件に依らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [874, 1955]
+    }
+  },
+  {
+    "id": "467-03",
+    "recording": "467",
+    "source": "V-0435",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": 66,
+    "unit": "発",
+    "description": "95 発目（2 本目のマガジンの 1 発目）を撃った時の最大装弾数。リロードを終えた直後の照準の左の残弾（60 + 応急改造 2 発 × 3 スタック）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "リロードの明けの f1401 から 1 発目の前まで 66。単騎の操作キャラは枠アイコンの上の「残弾/最大」が出ないので、マガジンの途中の最大は読めない。この後のリロードの明けも、どれも 66（応急改造は撃ち続ける間は切れない）。比べるモデルは手入力の条件（自動の条件の観測値は確定の結論の根拠にしない規則。発の数・最大装弾数・会心の比は条件に依らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 95
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [1401, 1421]
+    }
+  },
+  {
+    "id": "467-04",
+    "recording": "467",
+    "source": "V-0435",
+    "readAt": "2026-10-17",
+    "kind": "rate",
+    "use": "compare",
+    "value": 1.3846,
+    "unit": "倍",
+    "description": "最初の代用弾丸の前（10 発目まで）の、会心と会心しない胴体（距離ボーナスあり）の 1 ヒットの比。25,515 ÷ 18,428（クリティカルダメージ▲なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "会心の胴体の増分は f879 の 1 つ。値の格子は胴体 14,175 × (1 + 距離 0.3 + 会心 0.5)。比べるモデルは手入力の条件（自動の条件の観測値は確定の結論の根拠にしない規則。発の数・最大装弾数・会心の比は条件に依らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 30,
+        "core": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [874, 919]
+    }
+  },
+  {
+    "id": "467-05",
+    "recording": "467",
+    "source": "V-0435",
+    "readAt": "2026-10-17",
+    "kind": "rate",
+    "use": "compare",
+    "value": 1.4249,
+    "unit": "倍",
+    "description": "最初の代用弾丸の後の、会心と会心しない胴体（距離ボーナスあり）の 1 ヒットの比。26,258 ÷ 18,428（クリティカルダメージ 5.24%▲）。11 発目からは、会心の胴体はどれも 26,258 で、▲の無い 25,515 は出ない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "26,258 の増分は 105 個。ほかの格子も 1 + 0.5 + 0.0524 で揃う（会心の胴体・距離ボーナスなし 22,006、会心のコア 36,181・40,433）。比べるモデルは手入力の条件（自動の条件の観測値は確定の結論の根拠にしない規則。発の数・最大装弾数・会心の比は条件に依らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

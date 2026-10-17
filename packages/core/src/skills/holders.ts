@@ -17,6 +17,7 @@ import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTota
 import { chancePieces, chanceValueOf, type ChanceOpportunity } from './chance.ts';
 import { resolveCycleEvery, type ResolvedCycleEvery } from './cycles.ts';
 import {
+  isResolvedApplied,
   isResolvedChance,
   isResolvedFullStack,
   isResolvedShotCount,
@@ -135,7 +136,10 @@ export type HeldTrack = {
    * 始まった件も含めて次のフレームで切る（解除と違い、付与が勝つ規則を当てない）。状態のほかは空
    */
   consumes: number[];
-  /** 状態: 射撃の回数のきっかけの付与が発火を足したか（calc の射撃の数え方の判定 hasOwnShotCountItem が読む） */
+  /**
+   * 状態: 射撃の回数のきっかけの付与が発火を足したか（calc の射撃の数え方の判定 hasOwnShotCountItem が読む）。2 段目の段 4
+   * （plan/design-skill-stage4.md 1.1 節）: timed・状態の { applied } が、出どころの枠の射撃の回数のきっかけで付いた記録から発火を足したか
+   */
   shotCount: boolean;
   /** 確率のきっかけの機会（出どころで共有。ほかは null） */
   opportunities: ChanceOpportunity[] | null;
@@ -430,6 +434,7 @@ function compareKeys(a: readonly number[], b: readonly number[]): number {
 function stateGroupsOf(
   slots: readonly TimelineSlot[],
   firesOf: (trigger: ResolvedTrigger, slotIndex: number) => TriggerTracker,
+  appliedStageOf: (state: NamedStateId) => HeldStage,
 ): StateGroup[] {
   const groups: StateGroup[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -449,13 +454,52 @@ function stateGroupsOf(
         };
         groups.push(group);
       }
-      // 2 段目の段 1: 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節）
-      const stage: HeldStage = dependsOnRank(grant) ? 2 : conditionReadsItems(grant.condition) ? 1.5 : 1;
+      // 2 段目の段 4: { applied } の付与は、見る状態を付ける付与の段（plan/design-skill-stage4.md 1.1 節）
+      const stage: HeldStage = isResolvedApplied(grant.trigger)
+        ? appliedStageOf(grant.trigger.applied)
+        : stageOfGrant(grant);
       group.grants.push({ grant, stage, fires: firesOf(grant.trigger, sourceSlotIndex), group });
       if (STAGE_RANK[stage] > STAGE_RANK[group.stage]) group.stage = stage;
     }
   });
   return groups;
+}
+
+/** 状態の付与の段（{ applied } のほか）。2 段目の段 1: 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節） */
+function stageOfGrant(grant: ResolvedStateGrant): HeldStage {
+  return dependsOnRank(grant) ? 2 : conditionReadsItems(grant.condition) ? 1.5 : 1;
+}
+
+/** 2 段目の段 3: スタック量の増加の段（件を見る条件つきは段 1.5） */
+function stageOfStackChange(effect: ResolvedStackChange): HeldStage {
+  return conditionReadsItems(effect.condition) ? 1.5 : 1;
+}
+
+/**
+ * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } の効果の段。状態ごとに、その状態を付ける付与とスタック量の増加
+ * （編成のどの枠でも。{ applied } のもの・静的な付与を除く）の段のいちばん後。無ければ（静的な状態だけ・付ける効果が無い）段 1
+ */
+function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedStateId) => HeldStage {
+  // { applied } の効果を持つ編成でだけ解く（初めて引かれた時）
+  let stages: Map<NamedStateId, HeldStage> | null = null;
+  const build = (): Map<NamedStateId, HeldStage> => {
+    const out = new Map<NamedStateId, HeldStage>();
+    const bump = (state: NamedStateId, stage: HeldStage): void => {
+      const now = out.get(state);
+      if (now === undefined || STAGE_RANK[stage] > STAGE_RANK[now]) out.set(state, stage);
+    };
+    for (const slot of slots) {
+      if (slot === null || slot.definition === null) continue;
+      for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
+        if (!grant.isStatic && !isResolvedApplied(grant.trigger)) bump(grant.state, stageOfGrant(grant));
+      }
+      for (const effect of resolveStackChanges(slot.definition, slot.character, slot.levels)) {
+        bump(effect.state, stageOfStackChange(effect));
+      }
+    }
+    return out;
+  };
+  return (state) => (stages ??= build()).get(state) ?? 1;
 }
 
 /** timed の効果の段（強化の受け付けと値は、履歴を閉じる時に決める） */
@@ -503,6 +547,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   };
   /** 周期のトリガーは出来事の列に無いので、周期のフレームで発火する（atStart のフレーム 0 はループの前に登録する） */
   const firesOf = (trigger: ResolvedTrigger, slotIndex: number): TriggerTracker => {
+    // 2 段目の段 4: { applied } は出来事では発火しない（段の登録の後に、付いた記録から発火する。dispatchApplied）
+    if (isResolvedApplied(trigger)) return () => false;
     if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, slotIndex, options.scheduleModel);
     const at = new Set(timerFrames(trigger.everySeconds, frames));
     return (ev) => at.has(ev.frame);
@@ -520,12 +566,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
+  // ---- 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } の効果の段（見る状態を付ける付与の段） ----
+  const appliedStageOf = appliedStagesOf(slots);
+
   // ---- timed の出どころ（持ち主ごとの件の列は、対象になりうる枠にだけ作る） ----
   const timedSources: TimedSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
-      const stage = stageOfTimed(effect);
+      const stage = isResolvedApplied(effect.trigger) ? appliedStageOf(effect.trigger.applied) : stageOfTimed(effect);
       if (stage === 2.5) {
         amplifiers.push({ sourceSlotIndex, effect, starts: [] });
         continue;
@@ -556,7 +605,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   });
 
   // ---- 時間で変わる状態（出どころ × 状態 × 持ち主ごとに 1 つの件の列） ----
-  const stateGroups = stateGroupsOf(slots, firesOf);
+  const stateGroups = stateGroupsOf(slots, firesOf, appliedStageOf);
   for (const group of stateGroups) {
     const grant = group.grants[0]!.grant;
     slots.forEach((target, holder) => {
@@ -614,7 +663,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       stackSources.push({
         sourceSlotIndex,
         effect,
-        stage: conditionReadsItems(effect.condition) ? 1.5 : 1,
+        stage: stageOfStackChange(effect),
         fires: firesOf(effect.trigger, sourceSlotIndex),
         track,
       });
@@ -847,8 +896,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   };
 
   // ---- 登録 ----
-  /** timed の発火 1 つを、対象の持ち主の件の列に足す。対象になった枠を返す */
-  const fireTimed = (src: TimedSource, start: number, context: FireContext): number[] => {
+  /** 2 段目の段 4: 出どころの枠の射撃の回数のきっかけで付いた記録（{ applied } の件の shotCount に使う） */
+  const shotCountApplications = new Set<AppliedRecord>();
+  /**
+   * timed の発火 1 つを、対象の持ち主の件の列に足す。対象になった枠を返す。byShots は、2 段目の段 4 の { applied } が出どころの枠の
+   * 射撃の回数のきっかけで付いた記録から発火したか（件の shotCount）
+   */
+  const fireTimed = (src: TimedSource, start: number, context: FireContext, byShots = false): number[] => {
     if (start >= frames) return [];
     const targets: number[] = [];
     slots.forEach((target, holder) => {
@@ -857,6 +911,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       // 段 C: 敵の件の効果は、対象の味方があれば敵の件の列に 1 回だけ足す
       if (src.enemy !== null) {
         if (targets.length === 0) insertSorted(src.enemy.starts, start);
+        if (byShots) src.enemy.shotCount = true;
         targets.push(holder);
         return;
       }
@@ -864,28 +919,32 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!track)
         throw new Error(`no track for ${src.effect.source.skill}[${src.effect.effectIndex}] on slot ${holder}`);
       insertSorted(track.starts, start);
+      if (byShots) track.shotCount = true;
       targets.push(holder);
     });
     return targets;
   };
-  /** 状態の付与の発火 1 つを、対象の持ち主の状態の件の列と、付いた記録に足す */
-  const fireGrant = (g: GrantSource, start: number, context: FireContext): number[] => {
+  /** 状態の付与の発火 1 つを、対象の持ち主の状態の件の列と、付いた記録に足す。byShots は fireTimed と同じ */
+  const fireGrant = (g: GrantSource, start: number, context: FireContext, byShots = false): number[] => {
     if (start >= frames) return [];
     const group = g.group;
     const targets: number[] = [];
+    const shots = isResolvedShotCount(g.grant.trigger);
     slots.forEach((target, holder) => {
       if (target === null) return;
       if (!isEffectTarget(g.grant, group.sourceSlotIndex, holder, target.character, context)) return;
       const track = group.tracks[holder];
       if (!track) throw new Error(`no state track for ${group.state} on slot ${holder}`);
       insertSorted(track.starts, start);
-      if (isResolvedShotCount(g.grant.trigger)) track.shotCount = true;
-      applications.push({
+      if (shots || byShots) track.shotCount = true;
+      const record: AppliedRecord = {
         frame: start,
         state: group.state,
         sourceSlotIndex: group.sourceSlotIndex,
         slotIndex: holder,
-      });
+      };
+      applications.push(record);
+      if (shots) shotCountApplications.add(record);
       targets.push(holder);
     });
     return targets;
@@ -910,14 +969,85 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const fireStackChange = (src: StackSource, start: number): void => {
     if (start >= frames) return;
     for (let k = 0; k < src.effect.amount; k++) insertSorted(src.track.starts, start);
-    if (isResolvedShotCount(src.effect.trigger)) src.track.shotCount = true;
-    applications.push({
+    const record: AppliedRecord = {
       frame: start,
       state: src.effect.state,
       sourceSlotIndex: src.sourceSlotIndex,
       slotIndex: src.sourceSlotIndex,
-    });
+    };
+    applications.push(record);
+    if (isResolvedShotCount(src.effect.trigger)) {
+      src.track.shotCount = true;
+      shotCountApplications.add(record);
+    }
   };
+
+  // ---- 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } の出どころ（timed・付与。見る状態が自分に付いた記録から発火する） ----
+  type AppliedSource = {
+    state: NamedStateId;
+    sourceSlotIndex: number;
+    stage: HeldStage;
+    /** 最後に発火したフレーム。記録のフレームは呼び出しの順に減らないので、前の呼び出しと同じフレームの 2 回目を落とす */
+    last: number;
+    fire: (start: number, byShots: boolean) => void;
+  };
+  /** { applied } の付与で付いた記録（timed・付与の { applied } を起こさない。連鎖させない） */
+  const chainedApplications = new Set<AppliedRecord>();
+  const appliedSources: AppliedSource[] = [];
+  for (const group of stateGroups) {
+    for (const g of group.grants) {
+      const t = g.grant.trigger;
+      if (!isResolvedApplied(t)) continue;
+      appliedSources.push({
+        state: t.applied,
+        sourceSlotIndex: group.sourceSlotIndex,
+        stage: g.stage,
+        last: -1,
+        fire: (start, byShots) => {
+          const before = applications.length;
+          fireGrant(g, start, null, byShots);
+          for (let k = before; k < applications.length; k++) chainedApplications.add(applications[k]!);
+        },
+      });
+    }
+  }
+  for (const src of timedSources) {
+    const t = src.effect.trigger;
+    if (!isResolvedApplied(t)) continue;
+    appliedSources.push({
+      state: t.applied,
+      sourceSlotIndex: src.sourceSlotIndex,
+      stage: src.stage,
+      last: -1,
+      fire: (start, byShots) => {
+        fireTimed(src, start, null, byShots);
+      },
+    });
+  }
+  /**
+   * 段 stage の { applied } の出どころを、この呼び出しで付いた記録（applications の from から。{ applied } の付与の記録を除く）から
+   * 発火する。窓は記録のフレームから。同じフレームに 2 つの出どころから付いても 1 回（appliedFrames と同じ）
+   */
+  const dispatchApplied = (stage: HeldStage, from: number): void => {
+    for (const a of appliedSources) {
+      if (a.stage !== stage) continue;
+      /** フレーム → 出どころの枠の射撃の回数のきっかけで付いた記録があるか */
+      const fires = new Map<number, boolean>();
+      for (let k = from; k < applications.length; k++) {
+        const r = applications[k]!;
+        if (r.state !== a.state || r.slotIndex !== a.sourceSlotIndex || chainedApplications.has(r)) continue;
+        const byShots = r.sourceSlotIndex === a.sourceSlotIndex && shotCountApplications.has(r);
+        fires.set(r.frame, (fires.get(r.frame) ?? false) || byShots);
+      }
+      for (const [frame, byShots] of [...fires].sort((x, y) => x[0] - y[0])) {
+        if (frame <= a.last) continue;
+        a.last = frame;
+        a.fire(frame, byShots);
+      }
+    }
+  };
+  /** 2 段目の段 4: まだ dispatchApplied で読んでいない記録の始まり（静的な状態の記録は、戦闘開始時の呼び出しで読む） */
+  let appliedFrom = 0;
   const recordRanking = (
     frame: number,
     sourceSlotIndex: number,
@@ -941,11 +1071,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     });
   };
 
-  const stage1Timed = timedSources.filter((s) => s.stage === 1);
-  const stage15Timed = timedSources.filter((s) => s.stage === 1.5);
-  const stage2Timed = timedSources.filter((s) => s.stage === 2);
+  // 2 段目の段 4: { applied } の出どころは出来事では発火しない（dispatchApplied）
+  const timedAt = (stage: HeldStage): TimedSource[] =>
+    timedSources.filter((s) => s.stage === stage && !isResolvedApplied(s.effect.trigger));
+  const stage1Timed = timedAt(1);
+  const stage15Timed = timedAt(1.5);
+  const stage2Timed = timedAt(2);
   const grantsAt = (stage: HeldStage): GrantSource[] =>
-    stateGroups.flatMap((group) => group.grants.filter((g) => g.stage === stage));
+    stateGroups.flatMap((group) =>
+      group.grants.filter((g) => g.stage === stage && !isResolvedApplied(g.grant.trigger)),
+    );
   const stage1Grants = grantsAt(1);
   const stage15Grants = grantsAt(1.5);
   const stage2Grants = grantsAt(2);
@@ -974,6 +1109,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** 段 1〜2 と強化の発火（手順 3。battleStartOnly ならループの前の戦闘開始時の分だけ） */
   const register = (ev: FrameEvents, battleStartOnly: boolean): void => {
     const f = ev.frame;
+    const from = appliedFrom;
     const take = (trigger: ResolvedTrigger): boolean =>
       battleStartOnly ? atBattleStart(trigger) : trigger !== 'battleStart';
     // 段 1: 条件なし・順位の対象でない付与と効果（確率のきっかけは機会を貯める）
@@ -1022,6 +1158,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireStackChange(x, battleStartOnly ? 0 : startOfFire(x.effect.trigger, f));
     }
+    // 2 段目の段 4: 段 1 の { applied }（段 1 の付与・スタック量の増加で付いた記録から）
+    dispatchApplied(1, from);
     // 段 C: 敵の状態（持続ダメージの発火のフレーム。ループの中の判定は読まない）
     for (const e of enemyStateSources) {
       for (const { effect, fires } of e.effects) {
@@ -1083,6 +1221,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireStackChange(x, battleStartOnly ? 0 : startOfFire(x.effect.trigger, f));
     }
+    dispatchApplied(1.5, from);
     // 段 2: 順位の対象。発火のフレームの順位（段 1・1.5 の攻撃力の件。同じフレームに付いたものも入れる）
     for (const g of stage2Grants) {
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
@@ -1102,6 +1241,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const targets = fireTimed(src, start, { ...fireContextOf(src.effect.trigger, ev), attackRank });
       recordRanking(f, src.sourceSlotIndex, src.effect, attackRank, finalAttacks, targets);
     }
+    dispatchApplied(2, from);
+    appliedFrom = applications.length;
     // 2.5 段目: 強化は発火の窓の始まりだけを貯める（受け付けと値は、履歴を閉じる時に amplify で決める）
     for (const amp of amplifiers) {
       if (!take(amp.effect.trigger)) continue;
@@ -1327,7 +1468,12 @@ export function hasOwnShotCountItem(
     if (track.sourceSlotIndex !== slotIndex || !track.items.some((i) => i.start < i.end)) return false;
     const o = track.origin;
     if (o.kind === 'timed') {
-      return !isStateStat(o.effect.stat) && isResolvedShotCount(o.effect.trigger) && onSlot(track.holder, o.effect);
+      // 2 段目の段 4: { applied } の件は、出どころの枠の射撃の回数のきっかけで付いた記録から発火した時（shotCount）
+      return (
+        !isStateStat(o.effect.stat) &&
+        (isResolvedShotCount(o.effect.trigger) || track.shotCount) &&
+        onSlot(track.holder, o.effect)
+      );
     }
     if (o.kind === 'state') {
       return track.holder === slotIndex && track.shotCount && o.contents.some((c) => !isStateStat(c.stat));

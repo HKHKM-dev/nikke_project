@@ -401,10 +401,10 @@ describe('runFirstPass: ammo refill', () => {
     const fb = pass.schedule!.fullBurstWindows[0]!.start;
     const refills = pass.instants.filter((x) => x.frame === fb && x.effect.kind === 'ammoRefill');
     expect(refills).toHaveLength(3);
-    // ノワール型: floor(14 × 0.3988) = 5 を足して最大 14 で止める。AR（60 + 5 発）は floor(65 × 0.3988) = 25 まで
+    // ノワール型: round(14 × 0.3988) = 6 を足して最大 14 で止める（四捨五入。C-0558）。AR（60 + 5 発）は round(65 × 0.3988) = 26 まで
     const byslot = (i: number) => refills.find((x) => x.slotIndex === i)!.amount;
     expect(byslot(2)).toBeGreaterThanOrEqual(0);
-    expect(byslot(2)).toBeLessThanOrEqual(5);
-    expect(byslot(0)).toBeLessThanOrEqual(25);
+    expect(byslot(2)).toBeLessThanOrEqual(6);
+    expect(byslot(0)).toBeLessThanOrEqual(26);
   });
 });

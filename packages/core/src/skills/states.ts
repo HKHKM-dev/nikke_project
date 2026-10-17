@@ -60,6 +60,13 @@ export const NAMED_STATES = {
    * 家族のどのバリアにも当たる。ラムのバースト・アスカ S2）
    */
   barrier: { name: { ja: 'バリア', en: 'Barrier' }, holder: 'ally', family: 'barrier' },
+  /**
+   * 2 段目の段 4（plan/design-skill-stage4.md 2.1 節）: 代用弾丸（トーブの S1。弾丸チャージの即時効果の呼び名。維持 0 秒の付与で、
+   * 付いた記録だけを作る。「代用弾丸が適用される時」の { applied } が読む）
+   */
+  emergencyCraftedBullets: { name: { ja: '代用弾丸', en: 'Emergency-Crafted Bullets' }, holder: 'ally' },
+  /** 同: 応急改造（トーブの S1。代用弾丸が適用される時に味方全体。最大装弾数▲・3 スタック・5 秒。S2・バーストが見る） */
+  temporaryModification: { name: { ja: '応急改造', en: 'Temporary Modification' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

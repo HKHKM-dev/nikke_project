@@ -169,10 +169,13 @@ export function formatStateGrant(effect: StateGrantEffect, definition: SkillDefi
     ? `${name}状態（戦闘の始めから終わりまで）`
     : `${name}を付与${conditions === '' ? '' : `（${conditions}）`}`;
   const contents = effect.contents ?? stateContentsOf(definition, effect.state);
+  // 2 段目の段 4（plan/design-skill-stage4.md 1.2 節）: 維持 0 秒の付与は、名前の付いた即時効果の付いた記録だけ
   const contentText =
-    contents === undefined
-      ? '中身なし（ほかの効果が、対象の絞り込み・条件・きっかけでこの状態を見る）'
-      : `中身${effect.contents === undefined ? '（同じ状態のほかの付与）' : ''}: ${contents.map((c) => BUFF_STAT_LABEL[c.stat]).join('・')}`;
+    effect.durationSeconds === 0
+      ? '即時（維持なし。付いた記録だけを作り、「〜が適用された時」の効果がきっかけにする）'
+      : contents === undefined
+        ? '中身なし（ほかの効果が、対象の絞り込み・条件・きっかけでこの状態を見る）'
+        : `中身${effect.contents === undefined ? '（同じ状態のほかの付与）' : ''}: ${contents.map((c) => BUFF_STAT_LABEL[c.stat]).join('・')}`;
   return `${head}。${contentText}${effect.undispellable ? '。解除不可' : ''}`;
 }
 

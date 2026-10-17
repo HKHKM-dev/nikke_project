@@ -1,0 +1,220 @@
+{
+  "formatVersion": 1,
+  "resourceId": 192,
+  "checkedAt": "2026-10-16",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "攻撃した時の確率で自分に付く代用弾丸（弾丸チャージ）は未対応（確率のきっかけの即時効果と付与は書けない）",
+          "en": "Emergency-Crafted Bullets on self by chance on attack (ammo refill) is not modeled (instant effects and grants cannot have a chance trigger)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "ammoRefill",
+            "target": "self",
+            "trigger": "normalShot"
+          }
+        },
+        {
+          "ja": "代用弾丸が適用される時の、味方全体の応急改造（最大装弾数▲・3 スタック・5 秒）は未対応（代用弾丸が確率のきっかけで付くため）",
+          "en": "Temporary Modification on all allies when Emergency-Crafted Bullets is applied (max ammo up, 3 stacks, 5 s) is not modeled (Emergency-Crafted Bullets comes by chance)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "maxAmmo",
+            "target": "allies",
+            "trigger": "applied"
+          }
+        },
+        {
+          "ja": "代用弾丸が適用される時の、味方全体のクリティカルダメージ▲（5 秒）は未対応（代用弾丸が確率のきっかけで付くため）",
+          "en": "Critical Damage up on all allies when Emergency-Crafted Bullets is applied (5 s) is not modeled (Emergency-Crafted Bullets comes by chance)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "critDamage",
+            "target": "allies",
+            "trigger": "applied"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分が応急改造のフルスタック状態の時のみの、味方全体のクリティカル確率▲（持続）は未対応（スタック数の条件。plan/design-skill-stage3.md 1.4 節）",
+          "en": "Critical Rate up on all allies only while self is at max Temporary Modification stacks (continuous) is not modeled (a stack count condition; plan/design-skill-stage3.md 1.4)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "critRate",
+            "target": "allies",
+            "trigger": "applied"
+          }
+        },
+        {
+          "ja": "自分が応急改造のフルスタック状態の時のみの、ショットガンを所持する味方全体の攻撃速度▲（持続）は未対応（スタック数の条件。攻撃速度は計算の語彙に無い）",
+          "en": "Attack Speed up on all allies with shotguns only while self is at max Temporary Modification stacks (continuous) is not modeled (a stack count condition; attack speed is not in the calculation vocabulary)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "applied"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方全体の、スキル発動者基準の攻撃力▲（応急改造スタックコピー・10 秒）は未対応（スタック数で決まる値）",
+          "en": "ATK up of the skill user's ATK on all allies (mirrors the Temporary Modification stack count, 10 s) is not modeled (a value set by a stack count)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "ショットガンを所持する味方全体の、スキル発動者基準の攻撃力▲（応急改造スタックコピー・10 秒）は未対応（スタック数で決まる値）",
+          "en": "ATK up of the skill user's ATK on all allies with shotguns (mirrors the Temporary Modification stack count, 10 s) is not modeled (a value set by a stack count)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "ammoRefill",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "ref": 2,
+          "claims": [
+            "C-0558"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "emergencyCraftedBullets",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "durationSeconds": 0,
+          "assumes": {
+            "ja": "代用弾丸の呼び名（中身なし。弾丸チャージは effects[0]）。即時効果なので維持は 0 秒で、付いた記録だけを作る",
+            "en": "The name of Emergency-Crafted Bullets (no contents; the ammo refill is effects[0]). It is instant, so it lasts 0 s and only records the application"
+          },
+          "claims": [
+            "C-0558"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "temporaryModification",
+          "trigger": {
+            "applied": "emergencyCraftedBullets"
+          },
+          "target": "allies",
+          "maxStacksRef": 4,
+          "durationRef": 5,
+          "contents": [
+            {
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 3
+            }
+          ],
+          "claims": [
+            "C-0559"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "applied": "emergencyCraftedBullets"
+          },
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 6,
+          "durationRef": 7,
+          "claims": [
+            "C-0560"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分が応急改造のフルスタック時のみの、味方全体のクリティカル確率▲（持続）は未対応（スタック数の条件。plan/design-skill-stage3.md 1.4 節）",
+          "en": "Critical Rate up on all allies only at max Temporary Modification stacks on self (continuous) is not modeled (a stack count condition; plan/design-skill-stage3.md 1.4)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "critRate",
+            "target": "allies",
+            "trigger": "applied"
+          }
+        },
+        {
+          "ja": "自分が応急改造のフルスタック時のみの、ショットガンを所持する味方全体の攻撃速度▲（持続）は未対応（スタック数の条件。攻撃速度は計算の語彙に無い）",
+          "en": "Attack Speed up on all allies with shotguns only at max Temporary Modification stacks on self (continuous) is not modeled (a stack count condition; attack speed is not in the calculation vocabulary)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "applied"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方全体の、スキル発動者基準の攻撃力▲（応急改造スタックコピー・15 秒）は未対応（スタック数で決まる値）",
+          "en": "ATK up of the skill user's ATK on all allies (mirrors the Temporary Modification stack count, 15 s) is not modeled (a value set by a stack count)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "ショットガンを所持する味方全体の、スキル発動者基準の攻撃力▲（応急改造スタックコピー・15 秒）は未対応（スタック数で決まる値）",
+          "en": "ATK up of the skill user's ATK on all allies with shotguns (mirrors the Temporary Modification stack count, 15 s) is not modeled (a value set by a stack count)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

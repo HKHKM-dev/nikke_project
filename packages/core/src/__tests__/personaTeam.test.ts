@@ -136,7 +136,8 @@ describe('ペルソナの語彙の検証（parseSkillDefinition）', () => {
     ).toThrow(/targetBurstStep is only allowed in timed/);
   });
 
-  it('allows { applied } only in damage, and rejects the old effect names', () => {
+  // 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } は damage と timed・付与に書ける（ほかの効果では落とす）
+  it('allows { applied } in damage and timed, and rejects the old effect names', () => {
     const damage = { kind: 'damage', trigger: { applied: 'followUp' }, ref: 1, damageType: 'distributed' };
     expect(parseSkillDefinition(definitionWith(damage)).skills.skill1.effects[0]).toMatchObject({
       trigger: { applied: 'followUp' },
@@ -144,8 +145,12 @@ describe('ペルソナの語彙の検証（parseSkillDefinition）', () => {
     expect(() => parseSkillDefinition(definitionWith({ ...damage, trigger: { applied: 'oneMore' } }))).toThrow(
       /applied/,
     );
-    expect(() => parseSkillDefinition(definitionWith({ ...timed, trigger: { applied: 'followUp' } }))).toThrow(
-      /only allowed in damage/,
+    expect(
+      parseSkillDefinition(definitionWith({ ...timed, trigger: { applied: 'followUp' } })).skills.skill1.effects[0],
+    ).toMatchObject({ trigger: { applied: 'followUp' } });
+    const refill = { kind: 'ammoRefill', trigger: { applied: 'followUp' }, target: 'self', ref: 1 };
+    expect(() => parseSkillDefinition(definitionWith(refill))).toThrow(
+      /only allowed in damage, timed and state grants/,
     );
     expect(
       parseSkillDefinition(definitionWith({ ...damage, delayFrames: 104 })).skills.skill1.effects[0],
