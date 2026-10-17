@@ -28,6 +28,8 @@ import {
 
 const observations = loadObservations();
 const predictions = loadPredictions();
+// モデルを回すテストが共有する（読むのが重いので 1 回だけ）
+const data = loadRecordsData(loadRecordingsFile(), [307]);
 
 const SETUP = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], burst: false, condition: 'auto' as const };
 
@@ -92,7 +94,6 @@ describe('records/predictions', () => {
 
   it('runs the model per hypothesis and target, applying the override to the setup', () => {
     const f = file();
-    const data = loadRecordsData(loadRecordingsFile(), [307]);
     const values = runPredictions(f, data);
     expect(values.H1!.shots).toBe(187);
     // H2 は 90 秒（override）なので発が減る
@@ -194,7 +195,6 @@ describe('records/predictions', () => {
   });
 
   it('warns when the model changed after the prediction, and not otherwise (plan/design-prediction-staleness.md)', () => {
-    const data = loadRecordsData(loadRecordingsFile(), [307]);
     const f = file();
     const fresh = file({ predicted: { at: '2026-10-17', commit: 'abc1234', values: runPredictions(f, data) } });
     // 変えていなければ出ない
@@ -230,7 +230,6 @@ describe('records/predictions', () => {
 
   it('records:check looks only at the predictions of open verifications', () => {
     const verifications = loadVerifications();
-    const data = loadRecordsData(loadRecordingsFile(), [307]);
     const f = file({
       predicted: {
         at: '2026-10-17',
