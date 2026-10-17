@@ -10,7 +10,13 @@ import { burstDelaysFieldOf, burstDelaysOf, isSplit } from '../burst/landing.ts'
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames } from '../time.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
-import { isInFullBurst, type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
+import {
+  effectFrameOf,
+  hitFramesOf,
+  isInFullBurst,
+  type BurstSchedule,
+  type BurstScheduleModel,
+} from '../burst/schedule.ts';
 import { computeTriggerDamage, type EnemyInput } from '../damage.ts';
 import {
   SKILL_HIT_FULL_BURST_BONUS,
@@ -298,10 +304,19 @@ export function planSkillHits(
     }
     // 分かれたヒット編: 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（plan/design-burst-split-hits.md 4.1 節）
     if (sequential && isSplit(delays)) throw new RangeError('a sequential burst cannot have split hits');
-    const push = (frame: number, effect: ResolvedDamageEffect, pre: boolean, stacks?: number): void => {
+    // ミハラのバースト編: 自分の発動（perBurstHit の damage が、発火のフレームからヒットのフレームの列を引く）
+    const mine = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
+    const push = (
+      frame: number,
+      effect: ResolvedDamageEffect,
+      pre: boolean,
+      stacks?: number,
+      activationFrame = frame - delays.effectFrames,
+    ): void => {
       // バースト使用時の倍率ダメージは、撃つ側のバフを発動の時点で固定する（burstHitBuffs）。発動は発火の effectFrames 前
+      // （ミハラのバースト編: 分かれたヒットごとに出す damage は、発動のフレームを渡す）
       const atHit = pre
-        ? burstHitBuffs(timeline, frame - delays.effectFrames, frame, slotIndex, pre)
+        ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre)
         : burstSnapshotState(timeline, frame, slotIndex, pre).buffs;
       // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
       // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
@@ -345,6 +360,8 @@ export function planSkillHits(
       // そのフレームのバフで出す（発動の直前のバフで固定しない）。戦闘の終わりを越えるヒットは出さない
       const delay = effect.delayFrames ?? 0;
       const pre = delay === 0 && isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
+      // ミハラのバースト編: 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（分かれたヒットと同じ）
+      if (sequential && effect.perBurstHit === true) throw new RangeError('a sequential burst cannot have perBurstHit damage');
       // ペルソナ編（plan/design-persona.md 3.3 節）: 「〈状態名〉が適用された時」は、その状態がこの枠に付いたフレーム
       // （名前の付いた状態の語彙編: 時刻表の applications。plan/design-named-state.md 5.3 節）
       const fires = isResolvedApplied(effect.trigger)
@@ -352,6 +369,16 @@ export function planSkillHits(
         : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
       for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds)) continue;
+        if (effect.perBurstHit === true) {
+          // ミハラのバースト編（plan/design-mihara-burst-hits.md 3.2 節）: 条件は発火のフレームで 1 回判定し（C-0566）、
+          // その発動のバーストの倍率ダメージのヒットのそれぞれに、等分しない倍率で出す（C-0565）
+          const activation = mine.find((a) => effectFrameOf(a) === frame);
+          if (activation === undefined) throw new RangeError(`no burst activation fires at frame ${frame}`);
+          for (const hit of hitFramesOf(activation)) {
+            if (hit < frames) push(hit, effect, pre, undefined, activation.frame);
+          }
+          continue;
+        }
         if (frame + delay >= frames) continue;
         push(frame + delay, effect, pre);
       }

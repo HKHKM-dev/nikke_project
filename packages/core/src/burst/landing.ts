@@ -87,6 +87,10 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // 雪子: III のタイマーの 00.00（hitFrameOf）にヒット（動画では 00.00 の 1f 前。フルバーストの入りの止まりの前）。
   // 効果（1more の攻撃力▲・真紅の華の分配ダメージ▲）の遅れは未測定。表に無いときの既定と同じ値で、測った値として置く
   { resourceIds: [871], delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-0419' },
+  // ミハラ: III のタイマーの 00.00 から 1 ヒット目まで 17f（動画で 39f の最も多い値。止まり 22f を含む。C-0575）、2・3 ヒット目は
+  // 10f・22f 後で、バーストスキルダメージを 3 等分する（C-0564）。効果（S2 のペインロード 1・2）の遅れは未測定。
+  // 追加ダメージ（burst の effects[1]）は perBurstHit で 3 ヒットのそれぞれに出る（C-0565）
+  { resourceIds: [161], delays: { hitFrames: 17, effectFrames: 0, hitOffsets: [0, 10, 22] }, claim: 'C-0575' },
 ];
 
 type DelayKey = Pick<CharacterData, 'resourceId' | 'skills' | 'treasure'>;
