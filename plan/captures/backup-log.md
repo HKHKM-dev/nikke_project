@@ -276,3 +276,7 @@
 - 2026-10-17 20:29 録画 479（アニス：スター + I-DOLL・フラワー + アスカ）: `range/20261017-479_rl+rl+ar_anis-star+idoll-flower+asuka_asuka-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-17 22:58 録画 480（ラム + デルタ + シンデレラ）: `range/20261017-480_sr+sr+rl_ram+delta+cinderella_cinderella-control.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-17 22:58 録画 481（ラム + デルタ + シンデレラ）: `range/20261017-481_sr+sr+rl_ram+delta+cinderella_cinderella-control.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-18 06:07 録画 482（I-DOLL・フラワー + アニス：スター + デルタ + シンデレラ）: `range/20261018-482_cinderella-control.mp4` を同期（E: と I: で sha256 が一致）。 取り込み元の元ファイルは残した（`--copy`）。
+- 2026-10-18 06:07 録画 483（I-DOLL・フラワー + アニス：スター + デルタ + シンデレラ）: `range/20261018-483_cinderella-control.mp4` を同期（E: と I: で sha256 が一致）。 取り込み元の元ファイルは残した（`--copy`）。
+- 2026-10-18 06:07 録画 484（アニス：スター + デルタ + シンデレラ）: `range/20261018-484_cinderella-control.mp4` を同期（E: と I: で sha256 が一致）。 取り込み元の元ファイルは残した（`--copy`）。
+- 2026-10-18 06:07 録画 485（アニス：スター + デルタ + シンデレラ）: `range/20261018-485_cinderella-control.mp4` を同期（E: と I: で sha256 が一致）。 取り込み元の元ファイルは残した（`--copy`）。
