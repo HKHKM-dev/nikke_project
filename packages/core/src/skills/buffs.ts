@@ -88,6 +88,11 @@ export type BuffTotals = {
   burstGaugeSpeed: number;
   /** Stage 10: 最大装弾数の比率の加算（frame/firing.ts の effectiveMaxAmmo）。ダメージの式は読まない */
   maxAmmoRatio: number;
+  /**
+   * 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 最大HP▲ の比率の加算。その枠の最終最大HP = バフ前の最大HP ×
+   * (1 + maxHpRatio)。ダメージの式は読まず、その枠が発動者の casterFinalMaxHp だけが読む（skills/timeline.ts・skills/holders.ts）
+   */
+  maxHpRatio: number;
   /** Stage 10: 最大装弾数の発数の加算（scaling 'flat'） */
   maxAmmoFlat: number;
   /** Stage 10: リロード速度の加算 */
@@ -143,6 +148,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   sustainedDamage: 0,
   burstGaugeSpeed: 0,
   maxAmmoRatio: 0,
+  maxHpRatio: 0,
   maxAmmoFlat: 0,
   reloadSpeed: 0,
   chargeSpeed: 0,
@@ -175,6 +181,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   fixedChargeTime: 'fixedChargeTime',
   burstGaugeSpeed: 'burstGaugeSpeed',
   maxAmmo: 'maxAmmoRatio',
+  maxHp: 'maxHpRatio',
   reloadSpeed: 'reloadSpeed',
   chargeSpeed: 'chargeSpeed',
   hitRate: 'hitRate',

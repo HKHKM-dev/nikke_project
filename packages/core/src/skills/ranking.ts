@@ -20,6 +20,11 @@ export type AttackItem = {
   effect: Pick<ResolvedEffect, 'stat' | 'scaling' | 'value'>;
   start: number;
   end: number;
+  /**
+   * 2 段目の段 6 の PR 2: 発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）の窓の、そのフレームの発動者の最終最大HP。
+   * 無ければ RankSlot の casterMaxHp（バフ前の最大HP）
+   */
+  casterMaxHp?: number;
 };
 
 /** 順位を出すのに要る枠の情報（空枠は null） */
@@ -56,7 +61,12 @@ export function finalAttacksAt(
     for (const w of windows) {
       if (w.slotIndex !== index || w.effect.stat !== 'attack' || !countsAt(w, frame)) continue;
       const caster = slots[w.sourceSlotIndex];
-      buffs = applyResolvedEffect(buffs, w.effect, caster?.casterBaseAttack ?? 0, caster?.casterMaxHp).totals;
+      buffs = applyResolvedEffect(
+        buffs,
+        w.effect,
+        caster?.casterBaseAttack ?? 0,
+        w.casterMaxHp ?? caster?.casterMaxHp,
+      ).totals;
     }
     return applyAttackBuffs(slot.casterBaseAttack, buffs);
   });

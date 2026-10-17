@@ -934,17 +934,30 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     condition?.usedBurst !== true || (fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) ?? false);
 
   const rankSlots = rankSlotsOf(slots, passive);
+  // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
+  // 発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）の順位の値が読む
+  const maxHpViews = viewsOf((_, e) => e.stat === 'maxHp');
+  const finalMaxHpAt = (slotIndex: number, frame: number): number | undefined => {
+    const base = slots[slotIndex]?.casterMaxHp;
+    if (base === undefined) return undefined;
+    let up = passive[slotIndex]?.buffs.maxHpRatio ?? 0;
+    for (const v of maxHpViews[slotIndex] ?? []) for (const it of activeAt(v.track, frame)) up += valueOf(v.effect, it);
+    return base * (1 + up);
+  };
   const finalAttacksAtFrame = (frame: number): (number | null)[] => {
     const windows: AttackItem[] = [];
     rankViews.forEach((views, holder) => {
       for (const v of views) {
         for (const it of activeAt(v.track, frame)) {
+          const casterMaxHp =
+            v.effect.scaling === 'casterFinalMaxHp' ? finalMaxHpAt(v.track.sourceSlotIndex, frame) : undefined;
           windows.push({
             slotIndex: holder,
             sourceSlotIndex: v.track.sourceSlotIndex,
             effect: { stat: v.effect.stat, scaling: v.effect.scaling, value: valueOf(v.effect, it) },
             start: it.start,
             end: it.end,
+            ...(casterMaxHp === undefined ? {} : { casterMaxHp }),
           });
         }
       }
@@ -1716,13 +1729,23 @@ function pieceKey(w: ValuePiece): number[] {
 
 /** 常時パッシブだけの状態を、常時の件から作る（resolvePassiveStates と同じ並び・同じ値） */
 function passiveStatesOf(history: HolderHistory): (SlotBuffState | null)[] {
+  // 2 段目の段 6 の PR 2: 発動者の最終最大HP は、発動者の常時の最大HP▲ を入れた値（resolvePassiveStates と同じ）
+  const passiveMaxHp = history.slots.map(() => 0);
+  for (const track of history.tracks) {
+    if (track.origin.kind === 'passive' && track.origin.effect.stat === 'maxHp' && track.holder >= 0)
+      passiveMaxHp[track.holder] = (passiveMaxHp[track.holder] ?? 0) + track.origin.effect.value;
+  }
   return history.slots.map((slot, index) => {
     if (slot === null) return null;
     let buffs: BuffTotals = { ...ZERO_BUFFS };
     const passiveEffects: AppliedEffect[] = [];
     for (const track of history.tracks) {
       if (track.holder !== index || track.origin.kind !== 'passive') continue;
-      const applied = applyResolvedEffect(buffs, track.origin.effect, track.casterBaseAttack, track.casterMaxHp);
+      const finalMaxHp =
+        track.casterMaxHp === undefined
+          ? undefined
+          : track.casterMaxHp * (1 + (passiveMaxHp[track.sourceSlotIndex] ?? 0));
+      const applied = applyResolvedEffect(buffs, track.origin.effect, track.casterBaseAttack, finalMaxHp);
       buffs = applied.totals;
       passiveEffects.push({
         ...track.origin.effect,

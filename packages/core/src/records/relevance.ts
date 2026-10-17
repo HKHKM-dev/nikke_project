@@ -12,7 +12,6 @@ import {
   type BuffStat,
   type IndirectPath,
   type NoteEffect,
-  type NoteOnlyStat,
   type SkillDefinition,
   type SkillEffect,
   type SkillEntry,
@@ -77,10 +76,7 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   trueDamage: 'damageValue',
   trueDamageConversion: 'damageValue',
   sustainedDamage: 'damageValue',
-};
-
-/** notes の効く先にだけ使う stat の分類（design-minimal-relevance.md 11.8 節） */
-const NOTE_STAT_CLASS: Record<NoteOnlyStat, ElementClass> = {
+  // 2 段目の段 6 の PR 2: 最大HP▲ は発動者の最終最大HP 基準の攻撃力▲を通して値に効く（notes のときと同じ分類）
   maxHp: 'damageValue',
 };
 
@@ -445,7 +441,7 @@ export function impossibleReason(element: MinimalElement, recording: RecordingEn
 /** stat の分類 */
 function statClassOf(stat: string | undefined): ElementClass {
   if (stat === undefined || stat === 'unknown') return 'unknown';
-  return STAT_CLASS[stat as BuffStat] ?? NOTE_STAT_CLASS[stat as NoteOnlyStat] ?? 'unknown';
+  return STAT_CLASS[stat as BuffStat] ?? 'unknown';
 }
 
 /**
