@@ -48,6 +48,10 @@ export const NAMED_STATES = {
    * 開始で解除。バーストゲージのチャージ速度▲。C-0269。S2 の「マターシグマ状態なら」。C-0281）
    */
   metalSigma: { name: { ja: 'マターシグマ', en: 'Metal σ' }, holder: 'ally' },
+  /** 同（2.3 節）: ペインロード 1（ミハラの S2。バーストの使用 1 回目から。攻撃力▲・45 秒） */
+  highwayToHell1: { name: { ja: 'ペインロード1', en: 'Highway to Hell 1' }, holder: 'ally' },
+  /** 同: ペインロード 2（ミハラの S2。バーストの使用 2 回目から。クリティカル確率▲・45 秒。バーストの「ペインロード2の状態なら」） */
+  highwayToHell2: { name: { ja: 'ペインロード2', en: 'Highway to Hell 2' }, holder: 'ally' },
   /**
    * 2 段目の段 3（plan/design-skill-stage3.md 2.1 節）: ゴールデンチップ（ソーダ：トゥインクルバニーの S1。戦闘開始時に 50 個、
    * フルバースト中の通常攻撃 3 回ごとに 1 個。最大 50 スタック・持続・クリティカルダメージ▲。C-0128）

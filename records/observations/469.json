@@ -1,0 +1,241 @@
+[
+  {
+    "id": "469-01",
+    "recording": "469",
+    "source": "V-0432",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": [3, 4, 5],
+    "unit": "回目",
+    "description": "ミハラ（III）のバーストの追加ダメージが出たバーストの回（1 始まり）。1・2 回目のバーストの 3 ヒットには追加ダメージの成分が無く、3〜5 回目の 3 ヒットにはどれにもある",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "各回のバーストの 1 ヒット目は f1463・3842・6220・8697・11075。1 回目は 213,322 が 3 回（会心。94,933 × 1.332 × (1 + 0.5 + 0.187) = 213,321.97。S1 のクリティカルダメージ▲が乗る）、2 回目は 246,550 が 3 回（会心。109,720 × 1.332 × 1.687 = 246,550.08）。3 回目は 584,588・620,750（584,588 + ミハラの通常攻撃 36,162）・584,588、4 回目は 584,588・584,588・785,394、5 回目は 609,390（584,588 + 24,802）・785,394・785,394。3 回目以降の 1 ヒットは、バーストスキルダメージの 3 分の 1（146,147。会心なし）と追加ダメージ（会心なし 438,441 = 109,720 × 2.664 × 1.5、会心 639,247 = 109,720 × 2.664 × 2.187。フルバースト補正 +0.5 が乗る）の和。最終攻撃力はスペック固定の 95,033 にペインロード 1 の攻撃力 15.56%▲で 109,820（防御 100 を引いて 109,720）。2 回目の 1 ヒットは追加ダメージの会心なし（438,441）より小さく、追加ダメージを含まない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitBurstOrdinals",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "469-02",
+    "recording": "469",
+    "source": "V-0432",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": 9,
+    "unit": "回",
+    "description": "180 秒のミハラのバーストの追加ダメージのヒットの数。3〜5 回目のバーストの 3 ヒットのそれぞれに 1 回ずつ出る。予測ファイル V-0432 の mihara-additional-hits と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "469-01 の注の分け方。モデルは 1 回のバーストで 1 回（発動のフレーム）なので、3 倍の差が出る"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "469-03",
+    "recording": "469",
+    "source": "V-0432",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 639966,
+    "description": "1 回目のバーストのバーストスキルダメージ（3 ヒットの和。会心あり）。同じ発動で付くペインロード 1 の攻撃力▲は乗らない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "213,322 が 3 回（会心。94,933 × 1.332 × (1 + 0.5 + 0.187) = 213,321.97。S1 のクリティカルダメージ▲が乗る）。モデルは 1 ヒット（399.6%）なので 3 ヒットの和で比べる（各ヒットの丸めで和は最大 1.5 ずれる）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "469-04",
+    "recording": "469",
+    "source": "V-0432",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 739650,
+    "description": "2 回目のバーストのバーストスキルダメージ（3 ヒットの和。会心あり）。1 回目に付いたペインロード 1 の攻撃力▲が乗る",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "246,550 が 3 回（会心。109,720 × 1.332 × 1.687 = 246,550.08）。469-03 と同じく 3 ヒットの和で比べる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "469-05",
+    "recording": "469",
+    "source": "V-0432",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 438441,
+    "description": "最初の追加ダメージの 1 ヒット（会心なし）。3 回目のバーストの 1 ヒット目。フルバースト補正（+0.5）が乗る。予測ファイル V-0432 の mihara-additional-1 と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "3 回目のバーストの 1 ヒット目の増分 584,588 から、バーストスキルダメージの 3 分の 1（146,147）を引いた値。109,720 × 2.664 × 1.5 = 438,441.12。モデルは発動のフレーム（フルバーストの前）に出すので補正が乗らず 292,294"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "469-06",
+    "recording": "469",
+    "source": "V-0432",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": 5,
+    "unit": "回",
+    "description": "180 秒のフルバーストの回数（CT 40 秒の III が 1 体）。予測ファイル V-0432 の full-bursts と同じ指標",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "ミハラのバーストの 3 ヒットの組が 5 つ（f1463・3842・6220・8697・11075）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "469-07",
+    "recording": "469",
+    "source": "V-0432",
+    "readAt": "2026-10-17",
+    "kind": "timing",
+    "use": "compare",
+    "value": [0, 10, 22],
+    "unit": "f",
+    "description": "1 回目のバーストのバーストスキルダメージの 3 ヒットの、1 ヒット目からのずれ（動画のフレーム）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "増分のフレームの差。1・3・4・5 回目は [0, 10, 22]、2 回目は [0, 9, 22]。モデルは 1 ヒット（分かれたヒットの表に行が無い）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  }
+]

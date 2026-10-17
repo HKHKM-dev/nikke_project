@@ -985,6 +985,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   skillHitMeanInterval: { args: ['slot', 'skill'], sim: skillHitMeanInterval },
   skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
+  skillHitBurstOrdinals: { args: ['slot', 'skill'], sim: skillHitBurstOrdinals },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   gaugeFullToBurstHit: { args: ['slot', 'n'], sim: gaugeFullToBurstHit },
@@ -1127,6 +1128,26 @@ function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {
   const count = Number(ctx.args.count);
   if (hits.length < count) throw new Error(`発動が ${hits.length} 回しかない`);
   return hits.slice(0, count).map((h) => shots.filter((f) => f <= h.frame).length);
+}
+
+/**
+ * V-0432: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）が出た、枠の何回目（1 始まり）のバーストか（昇順・重ねない）。
+ * 発動から次の自分の発動の前までに出たヒットを、その回に数える。1 回のバーストで何ヒット出るかは問わない
+ */
+function skillHitBurstOrdinals(result: SimResult, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndex).map((a) => a.frame);
+  const hits = result.skillHits.filter(
+    (h) => h.slotIndex === slotIndex && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
+  );
+  const ordinals = new Set<number>();
+  for (const h of hits) {
+    const n = mine.filter((f) => f <= h.frame).length;
+    if (n > 0) ordinals.add(n);
+  }
+  return [...ordinals].sort((a, b) => a - b);
 }
 
 /** V-0268: skillHitVideoFrames の 1 回目から最後までの動画のフレーム数 ÷ (回数 − 1)（発動の間隔の平均） */

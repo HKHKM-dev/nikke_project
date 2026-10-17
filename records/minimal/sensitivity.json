@@ -7787,6 +7787,72 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "469-01",
+      "element": "ミハラ burst.effects[0]",
+      "key": "2c39573b58673fb0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "469-01",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "2c39573b58673fb0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "470-01",
+      "element": "ミハラ burst.effects[0]",
+      "key": "0ff5a102670593e3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "470-01",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "0ff5a102670593e3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "470-03",
+      "element": "ミハラ burst.effects[0]",
+      "key": "e09857e8b1ae6d61",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目のバーストの倍率ダメージが無い"
+    },
+    {
+      "observation": "470-03",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "e09857e8b1ae6d61",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "470-04",
+      "element": "ミハラ burst.effects[0]",
+      "key": "e0736d4d92578978",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 1 回目のバーストの倍率ダメージが無い"
+    },
+    {
+      "observation": "470-04",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "e0736d4d92578978",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

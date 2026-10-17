@@ -1,0 +1,28 @@
+{
+  "id": "C-0566",
+  "text": "ミハラのバーストの「自分がペインロード2の状態なら」の追加ダメージは、同じ発動で S2 が付けたペインロード 2 を見ない（発動の前の状態を見る。イサベルの C-0160 と同じ読み）。ペインロード 2 は 2 回目のバーストで付くので、追加ダメージは 3 回目のバーストから出る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`469-01`・`470-01`。V-0432。読み方（3 ヒットの値の分け方）は録画 469 で組み、録画 470 で再現した",
+  "model": "`frame/plan.ts` の damage の selfState（発火のフレームより前に付いた件だけを見る）と、`data/skills/161.json` の burst の effects[1]・skill2 の effects[1]",
+  "replaces": [],
+  "updated": "2026-10-17",
+  "subject": {
+    "places": ["data/skills/161.json の burst の effects[1]", "data/skills/161.json の skill2 の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "469",
+      "role": "読み方を合わせた"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["469-01", "470-01"],
+      "element": "ミハラ burst.notes[2]",
+      "reason": "未対応の notes（追加ダメージが 3 ヒットのそれぞれで出て、フルバースト補正が乗る）は、追加ダメージの回数と値を変えるが、同じ条件（ペインロード 2）で出るので、出た回（3・4・5 回目）は変わらない",
+      "decided": "2026-10-17"
+    }
+  ]
+}
