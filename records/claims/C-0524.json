@@ -10,5 +10,9 @@
   "updated": "2026-10-10",
   "subject": {
     "places": ["data/skills/225.json の burst の effects[1]"]
+  },
+  "edge": {
+    "start": [0, 4],
+    "end": [0, 4]
   }
 }

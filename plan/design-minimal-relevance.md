@@ -104,6 +104,7 @@
 - 語彙: `teamHas`（編成に〈バースト段階・武器種・部隊の味方・キャラ〉がいる）、`sameStatSources`（同じ stat の効果の出どころが N 以上）、`enemyElement`（的の属性）。足りなければ足す。
 - 例: C-0203（AllStep のキャラの扱い）は `teamHas.burstStage`、C-0153（受けるダメージ▲が重なるときの式）は `sameStatSources`。
 - 書けない仮説は `when` を省く（常に未確定に数える）。
+- 窓の端（付き始め・切れ目）の数 f だけを決める仮説は、`edge` に端のずれうる範囲を書く（[design-minimal-edge.md](design-minimal-edge.md)。感度で端を動かして判定する）。
 
 ## 4. 判定
 

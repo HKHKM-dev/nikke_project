@@ -508,6 +508,9 @@ export function isEventCountTrigger(t: EffectTrigger): t is EventCountTrigger {
   return typeof t === 'object' && 'count' in t && (EVENT_COUNT_KINDS as readonly string[]).includes(t.count);
 }
 
+/** 最小構成の検査の窓の端編: 件の始まり・終わりを動かすフレーム */
+export type EdgeShift = { start: number; end: number };
+
 /** Stage 6: 「（トリガー）時、（対象）に （stat）X%▲、Y 秒間維持」。同じ効果が持続中に再発火したら上書き延長（窓の和集合） */
 export type TimedEffect = TargetCountFields &
   FixedTargetFields & {
@@ -557,6 +560,11 @@ export type TimedEffect = TargetCountFields &
     condition?: EffectCondition;
     /** アニス：スター編: バースト段階の構成の条件 */
     burstStepMix?: BurstStepMixCondition;
+    /**
+     * 最小構成の検査の窓の端編（plan/design-minimal-edge.md 3.3 節）: 件の始まりと終わりを動かすフレーム（負は早い側）。
+     * 検査の感度（records/sensitivity.ts）が写した定義にだけ書く。データの JSON には書けない（読み込みで弾く）
+     */
+    edgeShift?: EdgeShift;
     /** ラム編: 同じ部隊の味方の条件 */
     squad?: SquadCondition;
     /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
