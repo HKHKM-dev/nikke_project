@@ -76,7 +76,7 @@ const TEAMS: Record<string, { input: TeamInput; ram: number; sameSquad: boolean 
 describe('ラムの定義', () => {
   const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${RAM}.json`));
 
-  it('defines only the burst cooldown cut of S1, conditioned on an ally from the same squad', () => {
+  it('defines the burst cooldown cut of S1, conditioned on an ally from the same squad, and the barrier of the burst', () => {
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill1.effects).toMatchObject([
       {
@@ -90,10 +90,21 @@ describe('ラムの定義', () => {
     ]);
     // 同じ部隊の読みは仮説（C-0235）なので、画面に「仮定」として出す
     expect(def.skills.skill1.effects[0]!.assumes?.ja).toContain('仮説');
-    for (const slot of ['skill2', 'burst'] as const) {
-      expect(def.skills[slot].support).toBe('noEffect');
-      expect(def.skills[slot].effects).toEqual([]);
-    }
+    expect(def.skills.skill2.support).toBe('noEffect');
+    expect(def.skills.skill2.effects).toEqual([]);
+    // 2 段目の段 5（plan/design-skill-stage5.md 2.1 節）: バーストの味方全体のバリアは、中身の無いバリアの付与（読む側はアスカ S2 など）
+    expect(def.skills.burst.support).toBe('supported');
+    expect(def.skills.burst.effects).toMatchObject([
+      {
+        kind: 'state',
+        state: 'barrier',
+        trigger: 'burstUse',
+        target: 'allies',
+        durationRef: 2,
+        claims: ['C-0253', 'C-0557'],
+      },
+    ]);
+    expect(def.skills.burst.effects[0]).not.toHaveProperty('contents');
   });
 
   it('puts Rem and Emilia in the same squad as Ram', () => {

@@ -42,7 +42,7 @@ import {
 } from './resolve.ts';
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackWindow, type RankingRecord } from './ranking.ts';
 import { stackWindows } from './stacks.ts';
-import type { NamedStateId } from './states.ts';
+import { statesMatching, type NamedStateId } from './states.ts';
 import { canEverTarget, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
 import {
   createTriggerTracker,
@@ -786,9 +786,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const holdsAt = (condition: EffectCondition, sourceSlotIndex: number, frame: number): boolean => {
     if (condition.selfState !== undefined) {
       const { state, present } = condition.selfState;
-      const has =
-        staticStates[sourceSlotIndex]?.has(state) === true ||
-        (stateTracks[sourceSlotIndex]?.get(state) ?? []).some((t) => activeAt(t, frame).length > 0);
+      // 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの状態でも当たる
+      const has = statesMatching(state).some(
+        (s) =>
+          staticStates[sourceSlotIndex]?.has(s) === true ||
+          (stateTracks[sourceSlotIndex]?.get(s) ?? []).some((t) => activeAt(t, frame).length > 0),
+      );
       if (has !== present) return false;
     }
     if (condition.selfBuffed !== undefined) {

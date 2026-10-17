@@ -7,8 +7,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "最終攻撃力が最も高い味方 2 機へのバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。バリアはモデルに無い。要件 5.2 節）",
-          "en": "The barrier on the 2 allies with the highest final attack does not change damage by itself (it matters only with an effect reading barriers in the team; barriers are not modeled, requirements 5.2)",
+          "ja": "最終攻撃力が最も高い味方 2 機へのバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
+          "en": "The barrier on the 2 allies with the highest final attack does not change damage by itself (it matters only with an effect reading barriers in the team; this barrier is not defined, so the model does not put allies in a barrier state; the barrier amount is out of scope, requirements 5.2)",
           "kind": "indirect",
           "path": "barrier",
           "effect": {
@@ -61,8 +61,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "最終攻撃力が最も高い味方 2 機へのバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。バリアはモデルに無い。要件 5.2 節）",
-          "en": "The barrier on the 2 allies with the highest final attack does not change damage by itself (it matters only with an effect reading barriers in the team; barriers are not modeled, requirements 5.2)",
+          "ja": "最終攻撃力が最も高い味方 2 機へのバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
+          "en": "The barrier on the 2 allies with the highest final attack does not change damage by itself (it matters only with an effect reading barriers in the team; this barrier is not defined, so the model does not put allies in a barrier state; the barrier amount is out of scope, requirements 5.2)",
           "kind": "indirect",
           "path": "barrier",
           "effect": {

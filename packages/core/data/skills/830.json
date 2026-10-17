@@ -52,24 +52,23 @@
           "claims": [
             "C-0075"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "「自分がバリア適用状態なら」有利コードの攻撃ダメージ▲は、バリアを扱わないので起きない",
-          "en": "Elemental advantage damage up while shielded does not occur because shields are not modeled",
-          "kind": "outOfScope",
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "condition": {
+            "selfState": "barrier"
+          },
           "reads": [
             "barrier"
           ],
-          "effect": {
-            "kind": "timed",
-            "stat": "elementDamage",
-            "target": "self",
-            "trigger": "unknown"
-          },
           "claims": [
-            "C-0075"
+            "C-0075",
+            "C-0557"
           ]
         }
       ]

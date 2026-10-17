@@ -49,7 +49,7 @@ import {
   type ValuePiece,
 } from '../skills/holders.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
-import type { NamedStateId } from '../skills/states.ts';
+import { stateMatches, type NamedStateId } from '../skills/states.ts';
 import { isStateStat, staticStatesOf, type EffectCondition } from '../skills/types.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
@@ -272,10 +272,11 @@ export function planSkillHits(
     // 同じフレームに付いた件も見る。解除・消去で外れる件はそのフレームまで付いている）
     const ownStatics = new Set(staticStatesOf(definition));
     const ownStateItems = itemsOf(history, { holder: slotIndex, kind: 'state' });
+    // 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの状態でも当たる
     const selfStateAt = (state: NamedStateId, frame: number): boolean =>
-      ownStatics.has(state) ||
+      [...ownStatics].some((s) => stateMatches(state, s)) ||
       ownStateItems.some(
-        (i) => i.origin.kind === 'state' && i.origin.state === state && i.start <= frame && frame < i.end,
+        (i) => i.origin.kind === 'state' && stateMatches(state, i.origin.state) && i.start <= frame && frame < i.end,
       );
     // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
     const delays = burstDelaysOf(slot.character);

@@ -59,21 +59,20 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体のバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。バリアはモデルに無い。要件 5.2 節）",
-          "en": "The shield on all allies does not change damage by itself (it matters only with an effect reading barriers in the team; barriers are not modeled, requirements 5.2)",
-          "kind": "indirect",
-          "path": "barrier",
-          "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "allies",
-            "trigger": "burstUse"
+          "kind": "state",
+          "state": "barrier",
+          "trigger": "burstUse",
+          "target": "allies",
+          "durationRef": 2,
+          "assumes": {
+            "ja": "味方全体のバリア（中身なし。バリアの量はダメージに関係しない）。被弾でバリアの HP が尽きて外れる分は扱わず、10 秒の維持の終わりまで付いているとみなす（射撃場の的の攻撃は操作キャラに向く。C-0551）",
+            "en": "A barrier on all allies (no contents; the barrier amount does not affect damage). Being broken by enemy hits is not modeled, so it is assumed to last its full 10 s (range target attacks go to the controlled unit, C-0551)"
           },
           "claims": [
-            "C-0253"
+            "C-0253",
+            "C-0557"
           ]
         }
       ]
