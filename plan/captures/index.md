@@ -36,6 +36,7 @@ interception の例: 20261001-066_special_boss-name.mp4 （種類_ボス英名�
 - 日本語・空白は使わない（ffmpeg にそのまま渡せるように）。
 - 条件違いの撮り直しだけ `_dist-out`（適正距離外）のような補足を付ける。
 - 元のファイル名は必ず `records/recordings/<録画 id>.json` の `original` に残す。リネームは可逆。
+- 番号が重なったときの振り直しは `npm run records:renumber -- <古い番号> <新しい番号>`（2 桁の時代の録画も、番号の部分だけを変える。[../design-recording-renumber.md](../design-recording-renumber.md)）。番号は 4 桁（1000〜）まで扱う。
 
 ## 撮影プロトコル（次回以降）
 

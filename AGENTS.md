@@ -21,7 +21,7 @@ NIKKE のダメージ計算ツール。
 - 設計の承認は対話で得て、実装と同じ PR に含める。
 - 撮影待ちの間は、トピックブランチを保持する（撮影計画や予測の commit もそのブランチで行う）。
 - PR を出す手順:
-  1. `git fetch origin && git rebase origin/main`（main を取り込むときはマージではなくリベース）。生成物が衝突したら `git checkout --ours -- <ファイル>` で main の版に戻し、作り直してから `git rebase --continue` する。自分のブランチで足した ID が main と重なっていたら、リベースを中止し（`git rebase --abort`）、自分のブランチで `npm run records:renumber -- <古い ID> <新しい ID>` で振り直してから取り込み直す（`plan/design-stage20.md` 3.6 節）
+  1. `git fetch origin && git rebase origin/main`（main を取り込むときはマージではなくリベース）。生成物が衝突したら `git checkout --ours -- <ファイル>` で main の版に戻し、作り直してから `git rebase --continue` する。自分のブランチで足した ID が main と重なっていたら、リベースを中止し（`git rebase --abort`）、自分のブランチで `npm run records:renumber -- <古い ID> <新しい ID>` で振り直してから取り込み直す（`plan/design-stage20.md` 3.6 節。録画の番号も同じ道具で、E: と Google Drive のファイル名ごと振り直す。`plan/design-recording-renumber.md`）
   2. CI と同じ確認を通す: `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`
   3. `git push -u origin HEAD`（リベースで履歴を書き換えたときは `--force-with-lease`）
   4. `gh pr create`

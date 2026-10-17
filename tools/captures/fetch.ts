@@ -2,7 +2,7 @@
 // クラウド環境で解析するため。
 //   node tools/captures/fetch.ts <録画 id | 相対パス>... [--legacy] [--force]
 //   node tools/captures/fetch.ts --list [相対パス] [--legacy]
-// 録画 id（3 桁）は records/recordings/<id>.json の folder と file から Drive 上のパスを決め、落としたら sha256 の
+// 録画 id（3〜4 桁）は records/recordings/<id>.json の folder と file から Drive 上のパスを決め、落としたら sha256 の
 // 先頭 12 桁を台帳と突き合わせる。旧プロジェクトの録画 id（L-）は台帳の path から old_nikkecalc の下を引く（台帳に
 // sha256 が無いので突き合わせない）。相対パス（例: frames/064_xxx.jpg、reference/tooltips）は Drive 上のそのままで、
 // --legacy を付けると old_nikkecalc の下を指す。フォルダを指すと中身を全部落とす。置き場所は dirs.ts（既にあるものは
@@ -41,7 +41,7 @@ if (!values.list && positionals.length === 0) {
 type Target = { legacy: boolean; relPath: string; sha256?: string };
 
 function toTarget(arg: string): Target {
-  if (!/^(\d{3}|L-[A-Z0-9]+)$/.test(arg)) {
+  if (!/^(\d{3,4}|L-[A-Z0-9]+)$/.test(arg)) {
     return { legacy: values.legacy, relPath: arg.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '') };
   }
   const path = new URL(`${arg}.json`, RECORDINGS_DIR);
