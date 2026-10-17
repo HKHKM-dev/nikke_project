@@ -1,5 +1,6 @@
 // 正規化済みキャラデータの型。数値の単位は各フィールドのコメントを参照。
 // 方針: レベル曲線と武器倍率は CDN の生の整数を保持し、倍率化は計算関数で行う。
+import type { BurstDelayOverride } from './burst/landing.ts';
 
 export type Locale = 'ja' | 'en';
 export type LocalizedText = Record<Locale, string>;
@@ -161,6 +162,11 @@ export type CharacterData = CharacterIndexEntry & {
   skills: { skill1: SkillRaw; skill2: SkillRaw; burst: SkillRaw };
   /** Stage 9: 宝物（SSR のお気に入りアイテム）。ないキャラは null */
   treasure: TreasureData | null;
+  /**
+   * 比べる設定の拡張（plan/design-compare-setup-extension.md 2.2 節）: バーストの遅れの表（burst/landing.ts）の上書き。
+   * 照合ランナー（records/observations.ts の buildTeamInput）だけが付ける。データとアプリには無い
+   */
+  burstDelayOverride?: BurstDelayOverride;
 };
 
 /**

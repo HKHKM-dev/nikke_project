@@ -39,7 +39,6 @@
 - 5-4 録画の番号の振り直し（`records:renumber` は検証記録・結論・観測値だけ。録画は E: と Google Drive の動画のファイル名と、観測値の ID の頭も変わる。[design-investigation-review.md](design-investigation-review.md) 4.3・5 節、[design-investigation-review-log.md](design-investigation-review-log.md) 11.11 節）
 - 5-6 右のバースト欄の表示の時刻（六角形の替わり目・III のタイマーの 00.00・CT の明け）を読む道具（同 5 節）
 - 5-8 中遠の足元を読むレシピ（`midfar-landing`。同 5 節）
-- 5-11 観測値の比べる設定（`CompareSetup`）に、遅れの表の上書き・手で撃ったバーストの時刻・複数の編成を足し、表示の時刻の指標を `METRICS` に足す（同 2.2 節。別の設計書）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 

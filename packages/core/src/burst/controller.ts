@@ -108,6 +108,13 @@ export type BurstControllerState = {
   gaugeFullFrames: number[];
   chainTimeouts: number[];
   cooldownReductions: CooldownReduction[];
+  /**
+   * 比べる設定の拡張（plan/design-compare-setup-extension.md 3.2 節）: 手で撃ったチェーンの始まり（I の本当の発動）のフレームの並び。
+   * null はオートバースト
+   */
+  readonly manualBursts: readonly number[] | null;
+  /** manualBursts の次に使う番号 */
+  manualNext: number;
 };
 
 function validateTiming(t: BurstTiming): void {
@@ -127,8 +134,17 @@ function validateTiming(t: BurstTiming): void {
 export function initialBurstController(
   units: readonly BurstUnit[],
   timing: Readonly<BurstTiming> = DEFAULT_BURST_TIMING,
+  manualBursts: readonly number[] | null = null,
 ): BurstControllerState {
   validateTiming(timing);
+  if (manualBursts !== null) {
+    manualBursts.forEach((f, i) => {
+      if (!Number.isInteger(f) || f < 0 || (i > 0 && f <= manualBursts[i - 1]!))
+        throw new RangeError(
+          `manualBursts must be ascending non-negative integers, got ${JSON.stringify(manualBursts)}`,
+        );
+    });
+  }
   for (const u of units) {
     if (u !== null && (!Number.isInteger(u.cooldownFrames) || u.cooldownFrames < 0)) {
       throw new RangeError(`cooldownFrames must be a non-negative integer, got ${u.cooldownFrames}`);
@@ -154,6 +170,8 @@ export function initialBurstController(
     gaugeFullFrames: [],
     chainTimeouts: [],
     cooldownReductions: [],
+    manualBursts,
+    manualNext: 0,
   };
 }
 
@@ -189,6 +207,7 @@ function resetChain(state: BurstControllerState): void {
 
 function activate(state: BurstControllerState, slotIndex: number, frame: number): void {
   const unit = state.units[slotIndex]!;
+  if (state.phase === 'ready' && state.manualBursts !== null) state.manualNext += 1;
   const from = state.step;
   const next = resolveNextStep(unit.nextStep, from);
   state.cooldownEnd[slotIndex] = frame + unit.cooldownFrames;
@@ -237,7 +256,15 @@ export function stepBurstController(state: BurstControllerState, frame: number, 
       state.gaugeFullFrames.push(frame);
     }
   }
-  if (blocked) return;
+  // 手で撃つ（manualBursts）: 満タンの後の I は、満タンの readyDelayFrames 後と並びの次のフレームの遅い方。並びが尽きたら撃たない。
+  // 録画で撃った時刻なので、的を狙えない間（blocked）でも撃つ。II・III はオートと同じ
+  const manualReady = state.phase === 'ready' && state.manualBursts !== null;
+  if (manualReady) {
+    const next = state.manualBursts![state.manualNext];
+    if (next === undefined) return;
+    if (frame < next) return;
+  }
+  if (blocked && !manualReady) return;
   // 間隔 0 の設定では同じフレームに複数段階が撃てるのでループにする
   while ((state.phase === 'ready' || state.phase === 'chain') && frame >= state.nextAllowedFrame) {
     const candidate = pickCandidate(state, state.step, frame);

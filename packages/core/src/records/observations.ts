@@ -1,6 +1,7 @@
 // Stage 19-B: 観測値（records/observations/<録画 id>.json）の型・検証と、照合ランナー（モデルと比べて残差を出す）。
 // plan/design-stage19.md 2.3・2.3.1・2.5 節。
 import { BURST_GAUGE_MAX } from '../burst/controller.ts';
+import type { BurstDelayOverride } from '../burst/landing.ts';
 import {
   activationFramesOfSlot,
   activationVideoFrameOf,
@@ -29,7 +30,7 @@ import { itemsOf, valuePiecesOf, type ValuePiece } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, isResolvedChance, resolveTimed } from '../skills/resolve.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
-import { gameSecondsToFrame } from '../time.ts';
+import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 import {
   SKILL_SLOTS,
   isStateStat,
@@ -137,7 +138,54 @@ export type CompareSetup = {
    * override に使う（plan/design-heal-vocabulary.md 6 節の論点 2）。省略は無し
    */
   dropHeals?: number[];
+  /**
+   * 比べる設定の拡張（plan/design-compare-setup-extension.md 2 節）: バーストの遅れの表（burst/landing.ts）を rid ごとに上書きする。
+   * row が null なら表の行を外す（遅れ 0）。予測の仮説の override と、条件の違いを試す観測値に使う。省略は表のまま
+   */
+  burstDelays?: BurstDelayOverrideSetup[];
+  /**
+   * 同 3 節: 手で撃ったチェーンの始まり（I の本当の発動）のゲーム内のフレームの並びを持つ観測値の id（同じ録画・use が input・
+   * 値は昇順の 0 以上の整数の配列。TeamInput.manualBursts）。省略はオートバースト
+   */
+  manualBursts?: string;
 };
+
+/** CompareSetup.burstDelays の 1 件 */
+export type BurstDelayOverrideSetup = {
+  rid: number;
+  treasure?: boolean;
+  row: null | {
+    hitFrames: number;
+    effectFrames: number;
+    hitOffsets?: number[];
+    windowFromActivation?: true;
+    sameActivationBuffsOnHit?: true;
+    origin?: 'mark' | 'activation';
+  };
+};
+
+/** 比べる設定の遅れの上書きを、キャラの burstDelayOverride にする（結論の ID は無いので、表の行の claim は空） */
+export function burstDelayOverrideOf(o: BurstDelayOverrideSetup): BurstDelayOverride {
+  const r = o.row;
+  return {
+    ...(o.treasure === true ? { treasure: true } : {}),
+    row:
+      r === null
+        ? null
+        : {
+            resourceIds: [o.rid],
+            ...(r.windowFromActivation === true ? { windowFromActivation: true as const } : {}),
+            ...(r.sameActivationBuffsOnHit === true ? { sameActivationBuffsOnHit: true as const } : {}),
+            delays: {
+              hitFrames: r.hitFrames,
+              effectFrames: r.effectFrames,
+              ...(r.hitOffsets === undefined ? {} : { hitOffsets: r.hitOffsets }),
+              ...(r.origin === undefined ? {} : { origin: r.origin }),
+            },
+            claim: '',
+          },
+  };
+}
 
 /** CompareSetup.addEffects の 1 件 */
 export type AddedEffect = {
@@ -1078,7 +1126,66 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   stateStackDrops: { args: ['slot', 'state'], sim: stateStackDrops },
   fullBurstStackGainResidues: { args: ['slot', 'state', 'every'], sim: fullBurstStackGainResidues },
   shotGauge: { args: ['slot', 'n'], sim: shotGauge },
+  // 比べる設定の拡張（plan/design-compare-setup-extension.md 5 節）: 右のバースト欄の表示の時刻
+  ctEndToFullBurstStart: {
+    args: ['slot', 'n'],
+    sim: (r, c) => ctEndToFullBurstStart(r, c),
+    calc: (r, c) => ctEndToFullBurstStart(r, c),
+  },
+  chainStepIntervals: {
+    args: ['n'],
+    sim: (r, c) => chainStepIntervals(r, c),
+    calc: (r, c) => chainStepIntervals(r, c),
+  },
 };
+
+/**
+ * 比べる設定の拡張（plan/design-compare-setup-extension.md 5 節。C-0512）: 枠の n 回目（0 始まり。カンマ区切りの並びも書ける）の
+ * 発動の、その枠の CT の明け（前の発動 + CT − その間に縮んだ分）から発動の印（III はタイマーの 00.00。hexagonFrameOf）までの
+ * 動画のフレーム数の列。モデルでその回が CT の明けで撃っていなければ（ゲージや前の段が律速）比べられない
+ */
+function ctEndToFullBurstStart(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const character = ctx.input.slots[slotIndex]?.character;
+  if (character === undefined) throw new Error(`枠 ${String(ctx.args.slot)} が無い`);
+  const cooldown = gameSecondsToFrames(character.burstSkill.cooldownSeconds);
+  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndex);
+  return String(ctx.args.n)
+    .split(',')
+    .map((s) => {
+      const k = Number(s);
+      const activation = mine[k];
+      const previous = mine[k - 1];
+      if (activation === undefined) throw new Error(`${s} 回目の発動が無い`);
+      if (previous === undefined) throw new Error(`${s} 回目はモデルで CT が律速でない（前の発動が無い）`);
+      const cut = schedule.cooldownReductions
+        .filter((r) => r.slotIndex === slotIndex && r.frame >= previous.frame && r.frame < activation.frame)
+        .reduce((sum, r) => sum + r.applied, 0);
+      const ctEnd = previous.frame + cooldown - cut;
+      if (ctEnd !== activation.frame)
+        throw new Error(`${s} 回目はモデルで CT が律速でない（CT の明け ${ctEnd}・発動 ${activation.frame}）`);
+      return activationVideoFrameOf(schedule, activation) - videoFrameOf(schedule, ctEnd);
+    });
+}
+
+/**
+ * 比べる設定の拡張（plan/design-compare-setup-extension.md 5 節。C-0515）: n 回目（0 始まり）のフルバーストを開いたチェーンの、
+ * 隣り合う本当の発動どうしの動画のフレーム数（I → II・II → III。I・II の発動の止まりを含む）
+ */
+function chainStepIntervals(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const n = Number(ctx.args.n);
+  const entries = schedule.activations.flatMap((a, i) => (a.startsFullBurst ? [i] : []));
+  const last = entries[n];
+  const window = schedule.fullBurstWindows[n];
+  if (last === undefined || window === undefined) throw new Error(`${String(ctx.args.n)} 回目のフルバーストが無い`);
+  const chain = schedule.activations.slice(last - window.burstUsers.length + 1, last + 1);
+  const frames = chain.map((a) => videoFrameOf(schedule, a.frame));
+  return frames.slice(1).map((f, i) => f - frames[i]!);
+}
 
 /**
  * アニス：スター編（plan/design-anis-star-gauge-timing.md 7 節の V-B）: 枠の n 発目（1 始まり）が溜めたゲージ（バーの最大に対する %。
@@ -1481,10 +1588,48 @@ export function validateObservations(
           errors.push(`${at}: pelletHits の観測値 ${ref.id} の値は 0 以上の整数の配列（発ごとの数）`);
       }
     }
+    for (const d of c.setup.burstDelays ?? []) {
+      if (!Number.isInteger(d.rid)) errors.push(`${at}: burstDelays の rid は整数`);
+      const r = d.row;
+      if (r === undefined) errors.push(`${at}: burstDelays の row は行か null`);
+      else if (r !== null) {
+        if (!Number.isInteger(r.hitFrames) || !Number.isInteger(r.effectFrames))
+          errors.push(`${at}: burstDelays の hitFrames・effectFrames は整数`);
+        if (r.origin !== undefined && r.origin !== 'mark' && r.origin !== 'activation')
+          errors.push(`${at}: burstDelays の origin は mark か activation`);
+        if (
+          r.hitOffsets !== undefined &&
+          !(
+            r.hitOffsets[0] === 0 &&
+            r.hitOffsets.every((x, i) => Number.isInteger(x) && (i === 0 || x > r.hitOffsets![i - 1]!))
+          )
+        )
+          errors.push(`${at}: burstDelays の hitOffsets は 0 から始まる昇順の整数`);
+      }
+    }
+    if (c.setup.manualBursts !== undefined) {
+      if (c.setup.burst === false) errors.push(`${at}: manualBursts は burst が false のときには書かない`);
+      const ref = observations.find((x) => x.id === c.setup.manualBursts);
+      if (ref === undefined) errors.push(`${at}: manualBursts の観測値 ${c.setup.manualBursts} が無い`);
+      else {
+        if (ref.recording !== o.recording) errors.push(`${at}: manualBursts の観測値は同じ録画のもの`);
+        if (ref.use !== 'input') errors.push(`${at}: manualBursts の観測値 ${ref.id} の use は input`);
+        if (ref.invalid !== undefined) errors.push(`${at}: manualBursts の観測値 ${ref.id} は失効している`);
+        if (manualBurstsOf(ref.value) === undefined)
+          errors.push(`${at}: manualBursts の観測値 ${ref.id} の値は昇順の 0 以上の整数の配列`);
+      }
+    }
     const tol = 'rel' in c.tolerance ? c.tolerance.rel : c.tolerance.abs;
     if (!(tol >= 0)) errors.push(`${at}: 許容幅は 0 以上`);
   }
   return errors;
+}
+
+/** 手で撃ったチェーンの始まりの並び（昇順の 0 以上の整数）。形が違えば undefined */
+export function manualBurstsOf(value: number | number[] | undefined): number[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const ok = value.every((f, i) => Number.isInteger(f) && f >= 0 && (i === 0 || f > value[i - 1]!));
+  return ok ? value : undefined;
 }
 
 // ---- 照合ランナー ----
@@ -1591,8 +1736,12 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     hitRate: setup.hitRate ?? 1,
   };
   const slots: TeamSlotInput[] = recording.team.map((member) => {
-    const character = data.characters.get(member.rid);
-    if (character === undefined) throw new Error(`rid ${member.rid} のデータが無い`);
+    const base = data.characters.get(member.rid);
+    if (base === undefined) throw new Error(`rid ${member.rid} のデータが無い`);
+    const delayOverrides = (setup.burstDelays ?? []).filter((d) => d.rid === member.rid);
+    if (delayOverrides.length > 1) throw new Error(`burstDelays: rid ${member.rid} が 2 つある`);
+    const character =
+      delayOverrides.length === 0 ? base : { ...base, burstDelayOverride: burstDelayOverrideOf(delayOverrides[0]!) };
     const definition = withoutHealsIf(
       data.skills.get(member.rid) ?? null,
       setup.dropHeals?.includes(member.rid) === true,
@@ -1632,6 +1781,13 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     };
   });
   const controlled = recording.team.findIndex((m) => m.controlled === true);
+  let manualBursts: number[] | undefined;
+  if (setup.manualBursts !== undefined) {
+    if (setup.burst === false) throw new Error('manualBursts は burst が false のときには書かない');
+    manualBursts = manualBurstsOf(data.observationValues?.get(setup.manualBursts));
+    if (manualBursts === undefined)
+      throw new Error(`manualBursts の観測値 ${setup.manualBursts} が無いか、昇順のフレームの並びでない`);
+  }
   const obstacleBreaks = (setup.obstacles ?? []).map((ob) => {
     const count = data.observationValues?.get(ob.count);
     if (typeof count !== 'number') throw new Error(`obstacles の観測値 ${ob.count} が無いか、個数でない`);
@@ -1672,6 +1828,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       ? {}
       : { sustainedDamagePlacement: setup.sustainedDamagePlacement }),
     ...(setup.attackRounding === undefined ? {} : { attackRounding: setup.attackRounding }),
+    ...(manualBursts === undefined ? {} : { manualBursts }),
   };
 }
 
@@ -1791,6 +1948,15 @@ function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
   if (setup?.midFarLanding !== undefined) entries.push(['midFar', setup.midFarLanding]);
   if (setup?.nearLanding !== undefined) entries.push(['near', setup.nearLanding.join('・')]);
   if (setup?.farLanding !== undefined) entries.push(['far', setup.farLanding.join('・')]);
+  if (setup?.manualBursts !== undefined) entries.push(['manualBursts', setup.manualBursts]);
+  for (const d of setup?.burstDelays ?? []) {
+    const r = d.row;
+    const row =
+      r === null
+        ? '行なし'
+        : `hit ${r.hitFrames}・effect ${r.effectFrames}${r.origin === 'activation' ? '（本当の発動から）' : ''}`;
+    entries.push([`burstDelays[${d.rid}${d.treasure === true ? '・宝物' : ''}]`, row]);
+  }
   return entries.length === 0 ? '' : `（${entries.map(([k, v]) => `${k}=${String(v)}`).join('、')}）`;
 }
 

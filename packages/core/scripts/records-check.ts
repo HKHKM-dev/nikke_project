@@ -15,7 +15,12 @@ import {
 } from '../src/records/claims.ts';
 import { openStaleness, openVerificationIds, verificationExtraLines } from '../src/records/extras.ts';
 import { relevanceCounts, relevanceOf, renderMinimal } from '../src/records/relevance.ts';
-import { comparePredictions, renderPredictionTable, validatePredictions } from '../src/records/predictions.ts';
+import {
+  comparePredictions,
+  predictionRids,
+  renderPredictionTable,
+  validatePredictions,
+} from '../src/records/predictions.ts';
 import { RESULTS_MARKERS } from '../src/records/drafts.ts';
 import {
   invalidReasonsOf,
@@ -58,7 +63,7 @@ const recordings = recordingMap(file);
 const predictions = loadPredictions();
 const data = loadRecordsData(
   file,
-  predictions.flatMap((p) => p.team.map((m) => m.rid)),
+  predictions.flatMap((p) => predictionRids(p)),
 );
 const observations = loadObservations();
 const claims = loadClaims();
@@ -79,6 +84,7 @@ const errors = [
     verificationIds: new Set(verifications.map((v) => v.id)),
     knownRids: knownRids(),
     observations,
+    recordingIds: new Set(recordings.keys()),
   }),
 ];
 if (errors.length > 0) {

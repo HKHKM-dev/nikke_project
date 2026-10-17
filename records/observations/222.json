@@ -548,7 +548,7 @@
     "source": "V-0394",
     "readAt": "2026-10-10",
     "kind": "timing",
-    "use": "record",
+    "use": "compare",
     "value": [6, 7, 6],
     "unit": "f",
     "description": "CT が律速の III の回の、III のキャラの CT が明けたフレーム（B）から III のタイマーの 00.00（Z）までの動画のフレーム数。ココア + デルタ + ドレイク（宝物あり・操作）の 2〜4 回目（CT が律速）。B・N・Z は f3630・3633・3636、f6009・6013・6016、f8389・8392・8395（B → Z が 6・7・6f、N → Z が 3f）。1・5 回目は CT が明けていて B は無い（N → Z は 3f）",
@@ -559,6 +559,21 @@
     "scope": {
       "slot": "all",
       "source": "burstChain"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "ctEndToFullBurstStart",
+      "args": {
+        "slot": 3,
+        "n": "1,2,3"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {

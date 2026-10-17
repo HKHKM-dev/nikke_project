@@ -183,6 +183,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     burst: input.burst ?? false,
     burstModel: input.burstModel ?? 'dynamic',
     controlledSlot: input.controlledSlot ?? null,
+    ...(input.manualBursts === undefined ? {} : { manualBursts: input.manualBursts }),
     untargetable,
     hitRates: landing === null ? undefined : hitRateSpansOf(landing, slots.length),
     enemyHasCore: enemy.hasCore,

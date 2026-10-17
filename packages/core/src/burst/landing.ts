@@ -18,6 +18,11 @@ export type BurstDelays = {
   effectFrames: number;
   /** 分かれたヒット編: 1 ヒット目から各ヒットまでのずれ（昇順・先頭は 0）。省略は [0]（1 ヒット） */
   hitOffsets?: readonly number[];
+  /**
+   * 比べる設定の拡張（plan/design-compare-setup-extension.md 2 節）: 遅れの起点。省略（'mark'）は発動の印（hexagonFrameOf）、
+   * 'activation' は本当の発動。表の行は書かない（比べる設定の burstDelays の上書きだけが使う）
+   */
+  origin?: 'mark' | 'activation';
 };
 
 export type MeasuredBurstDelayRow = {
@@ -102,7 +107,13 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [314], sameActivationBuffsOnHit: true, delays: { hitFrames: 96, effectFrames: 0 }, claim: 'C-0581' },
 ];
 
-type DelayKey = Pick<CharacterData, 'resourceId' | 'skills' | 'treasure'>;
+/**
+ * 比べる設定の拡張（plan/design-compare-setup-extension.md 2.2 節）: 遅れの表の上書き。row が null なら表の行を外す（遅れ 0）。
+ * treasure が true なら、burst が宝物版のときだけ当てる（そうでなければ表のまま）
+ */
+export type BurstDelayOverride = { treasure?: boolean; row: MeasuredBurstDelayRow | null };
+
+type DelayKey = Pick<CharacterData, 'resourceId' | 'skills' | 'treasure' | 'burstDelayOverride'>;
 
 /** 分かれたヒット編: burst が宝物版か（applyTreasure が skills.burst を宝物版のスキルに差し替えたか） */
 export function isTreasureBurst(character: DelayKey): boolean {
@@ -112,6 +123,8 @@ export function isTreasureBurst(character: DelayKey): boolean {
 
 /** 表の行（画面の注記用）。表に無ければ null */
 export function measuredBurstDelayRow(character: DelayKey): MeasuredBurstDelayRow | null {
+  const override = character.burstDelayOverride;
+  if (override !== undefined && (override.treasure !== true || isTreasureBurst(character))) return override.row;
   return (
     MEASURED_BURST_DELAYS.find(
       (row) => row.resourceIds.includes(character.resourceId) && (row.treasure !== true || isTreasureBurst(character)),
@@ -141,7 +154,9 @@ export function burstDelaysOf(character: DelayKey): Readonly<BurstDelays> {
 /** 表にあるキャラだけ delays を持たせる（無いキャラの BurstUnit・BurstCandidate は今までと同じ形） */
 export function burstDelaysFieldOf(character: DelayKey): { delays?: Readonly<BurstDelays> } {
   const delays = burstDelaysOf(character);
-  return delays.hitFrames === 0 && delays.effectFrames === 0 && !isSplit(delays) ? {} : { delays };
+  return delays.hitFrames === 0 && delays.effectFrames === 0 && !isSplit(delays) && delays.origin === undefined
+    ? {}
+    : { delays };
 }
 
 /** 分かれたヒット編: 2 つ以上のヒットに分かれるか */
@@ -152,13 +167,24 @@ export function isSplit(delays: Readonly<BurstDelays>): boolean {
 /**
  * 発動にヒットと効果の発火のフレームを書く。遅れは発動の印（I・II は六角形の替わり目。hexagonFrameOf）に足す。
  * 遅れ 0 の欄は書かない（hitFrameOf・effectFrameOf が本当の発動のフレームを返す）。
- * 分かれたヒットは hitOffsets を写す（1 ヒットなら書かない）
+ * 分かれたヒットは hitOffsets を写す（1 ヒットなら書かない）。
+ * 比べる設定の拡張（plan/design-compare-setup-extension.md 2.3 節）: 遅れは負でもよい。origin が 'activation' なら本当の発動に足し、
+ * 遅れ 0 の欄も書く。足した後のフレームが本当の発動より前なら RangeError
  */
 export function withBurstDelays(activation: BurstActivation, delays: Readonly<BurstDelays>): BurstActivation {
   const out = { ...activation };
-  const origin = hexagonFrameOf(activation);
-  if (delays.hitFrames > 0) out.hitFrame = origin + delays.hitFrames;
-  if (delays.effectFrames > 0) out.effectFrame = origin + delays.effectFrames;
+  const fromActivation = delays.origin === 'activation';
+  const origin = fromActivation ? activation.frame : hexagonFrameOf(activation);
+  const at = (d: number, what: string): number => {
+    const frame = origin + d;
+    if (frame < activation.frame)
+      throw new RangeError(
+        `burst ${what} delay ${d} puts the frame before the activation (${frame} < ${activation.frame})`,
+      );
+    return frame;
+  };
+  if (delays.hitFrames !== 0 || fromActivation) out.hitFrame = at(delays.hitFrames, 'hit');
+  if (delays.effectFrames !== 0 || fromActivation) out.effectFrame = at(delays.effectFrames, 'effect');
   if (isSplit(delays)) out.hitOffsets = [...delays.hitOffsets!];
   return out;
 }
