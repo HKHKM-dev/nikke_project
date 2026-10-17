@@ -1,6 +1,7 @@
 // アニス：スター（17）: S1「スターフォール」の解決と、バースト段階の構成の条件（burstStepMix。plan/design-anis-star-s1.md 2.1 節）。
 // 私だけの星（自分の攻撃力▲）と CT▼ は自分を除く基本バースト段階 1 の味方がいないときだけ、追加ダメージは射撃ごと（perShot）。
-// みんなの星はバースト再突入 I 段階（burstReentry。V-0121）。S2・バーストは未実装の notes（V-0116）。
+// みんなの星はバースト再突入 I 段階（burstReentry。V-0121）。S2 のみんなの星のときの回復は heal + burstStepMix
+// （plan/design-heal-vocabulary.md 2.1 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
@@ -41,13 +42,22 @@ describe('アニス：スター（17）の定義', () => {
     expect(passives[1]!.value).toBeCloseTo(0.4001, 12);
   });
 
-  it('resolves the Burst cooldown cut at battle start and at the end of Full Burst', () => {
+  it('resolves the Burst cooldown cut at battle start and at the end of Full Burst, and the S2 heal', () => {
     const instants = resolveInstant(def, anis, MAX_SKILL_LEVELS);
     expect(instants.map((e) => [e.kind, e.trigger, e.target])).toEqual([
       ['cooldownReduction', 'battleStart', 'allies'],
       ['cooldownReduction', 'fullBurstEnd', 'allies'],
+      ['heal', { count: 'fullChargeShot', every: 1 }, 'allies'],
     ]);
     expect(instants[0]!.value).toBeCloseTo(7.48, 12);
+  });
+
+  it('keeps the S2 heal only with Everyone’s Star (C-0576)', () => {
+    const healsOf = (d: typeof def) => d.skills.skill2.effects.filter((e) => e.kind === 'heal');
+    expect(healsOf(applyComposition(def, [anis], 0))).toEqual([]);
+    expect(healsOf(applyComposition(def, [anis, flower], 0))).toEqual([
+      expect.objectContaining({ target: 'allies', ref: 3 }),
+    ]);
   });
 
   it('resolves the additional damage on every Full Charge shot (120.13% at Lv10, 71% at Lv1)', () => {
@@ -137,7 +147,7 @@ describe('バースト段階の構成の条件（burstStepMix）', () => {
     expect(withFlower.skills.skill1.effects.map((e) => e.kind)).toEqual(['passive', 'damage', 'burstReentry', 'state']);
     expect(staticStatesOf(withFlower)).toEqual(['everyonesStar']);
     expect(resolvePassives(withFlower, anis, MAX_SKILL_LEVELS).map((e) => e.stat)).toEqual(['burstGaugeSpeed']);
-    expect(resolveInstant(withFlower, anis, MAX_SKILL_LEVELS)).toEqual([]);
+    expect(resolveInstant(withFlower, anis, MAX_SKILL_LEVELS).map((e) => e.kind)).toEqual(['heal']);
     // 残るのは条件を満たした効果だけなので、同じ編成で 2 回通しても同じ
     expect(applyComposition(withFlower, [anis, flower], 0)).toBe(withFlower);
     expect(applyComposition(solo, [anis], 0)).toBe(solo);
@@ -155,7 +165,7 @@ describe('バースト段階の構成の条件（burstStepMix）', () => {
           burstStepMix: absent,
         }),
       ),
-    ).toThrow(/burstStepMix: only allowed in passive, timed, state, cooldownReduction and burstReentry/);
+    ).toThrow(/burstStepMix: only allowed in passive, timed, state, cooldownReduction, heal and burstReentry/);
     expect(() =>
       parseSkillDefinition(withFirstEffect({ ...base, burstStepMix: { otherBurstStep: 'AllStep', present: false } })),
     ).toThrow(/otherBurstStep/);
