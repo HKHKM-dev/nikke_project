@@ -244,6 +244,56 @@ export function runPredictions(file: PredictionFile, data: RecordsData): Predict
   return values;
 }
 
+/** 予測の後のモデルの変更: いま出し直すと値が変わる仮説 × 指標か、いまのモデルでは出し直せない（例外）こと */
+export type Staleness =
+  | {
+      kind: 'changed';
+      targets: { hypothesis: string; target: string; saved: number | number[]; now: number | number[] }[];
+    }
+  | { kind: 'error'; message: string };
+
+function sameValue(a: number | number[] | undefined, b: number | number[]): boolean {
+  if (Array.isArray(a) && Array.isArray(b)) return a.length === b.length && a.every((x, i) => x === b[i]);
+  return a === b;
+}
+
+/**
+ * いまのモデルで予測を出し直し、保存した値と比べる（plan/design-prediction-staleness.md 1 節）。同じコードとデータなら計算は
+ * 決定的なので、厳密に同じかで比べる。値が変わらなければ undefined。予測をまだ出していなければ見ない
+ */
+export function predictionStaleness(file: PredictionFile, data: RecordsData): Staleness | undefined {
+  if (file.predicted === null) return undefined;
+  let now: Predicted['values'];
+  try {
+    now = runPredictions(file, data);
+  } catch (e) {
+    return { kind: 'error', message: e instanceof Error ? e.message : String(e) };
+  }
+  const targets: Extract<Staleness, { kind: 'changed' }>['targets'] = [];
+  for (const h of file.hypotheses) {
+    for (const t of file.targets) {
+      const v = now[h.id]![t.id]!;
+      const saved = file.predicted.values[h.id]?.[t.id];
+      if (!sameValue(saved, v)) targets.push({ hypothesis: h.id, target: t.id, saved: saved ?? Number.NaN, now: v });
+    }
+  }
+  return targets.length > 0 ? { kind: 'changed', targets } : undefined;
+}
+
+const STALE_SHOWN = 5;
+
+/** 予測の後のモデルの変更の注意（先頭の 1 行と、仮説 × 指標ごとの旧 → 新の行。先頭は「- 」で始まり、続く行は 2 字下げる） */
+function renderStaleness(file: PredictionFile, stale: Staleness): string[] {
+  const head = '- **予測の後にモデルが変わった**: ';
+  const redo = `\`npm run records:predict -- ${file.verification}\` で出し直す`;
+  if (stale.kind === 'error') return [`${head}いまのモデルでは出し直せない（${stale.message}）`];
+  const lines = [`${head}いま出し直すと、仮説 × 指標 ${stale.targets.length} つの値が変わる（${redo}）`];
+  for (const x of stale.targets.slice(0, STALE_SHOWN))
+    lines.push(`  - ${x.hypothesis} ${x.target}: ${fmt(x.saved)} → ${fmt(x.now)}`);
+  if (stale.targets.length > STALE_SHOWN) lines.push(`  - ほか ${stale.targets.length - STALE_SHOWN} つ`);
+  return lines;
+}
+
 function stable(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stable).join(',')}]`;
   if (value !== null && typeof value === 'object') {
@@ -288,14 +338,20 @@ export type PredictionComparison = {
   targets: TargetComparison[];
   /** 仮説 ID → 観測値のある指標のうち許容内の数 / その指標の数 */
   score: Map<string, { ok: number; total: number }>;
+  /** 予測の後のモデルの変更（records:check が開いている検証の予測だけ出し直して見る。plan/design-prediction-staleness.md） */
+  stale?: Staleness;
 };
 
 /** 予測と観測値の突き合わせ（predicted が無ければ空） */
-export function comparePredictions(file: PredictionFile, observations: readonly Observation[]): PredictionComparison {
+export function comparePredictions(
+  file: PredictionFile,
+  observations: readonly Observation[],
+  stale?: Staleness,
+): PredictionComparison {
   const score = new Map<string, { ok: number; total: number }>();
   for (const h of file.hypotheses) score.set(h.id, { ok: 0, total: 0 });
   const targets: TargetComparison[] = [];
-  if (file.predicted === null) return { file, targets, score };
+  if (file.predicted === null) return { file, targets, score, ...(stale ? { stale } : {}) };
   for (const t of file.targets) {
     const observation = observationsOfTarget(file, t, observations)[0];
     const byHypothesis = file.hypotheses.map((h) => {
@@ -310,7 +366,7 @@ export function comparePredictions(file: PredictionFile, observations: readonly 
     });
     targets.push({ target: t, observation, byHypothesis });
   }
-  return { file, targets, score };
+  return { file, targets, score, ...(stale ? { stale } : {}) };
 }
 
 /** 観測値の許容（compare.tolerance）か幅（spread）で、予測が合うか */
@@ -357,6 +413,7 @@ export function renderPredictionTable(comparison: PredictionComparison): string 
   return [
     `予測は ${file.predicted.at}（commit ${file.predicted.commit.slice(0, 7)}）に出した。`,
     '',
+    ...(comparison.stale ? [...renderStaleness(file, comparison.stale), ''] : []),
     header,
     sep,
     ...rows,
@@ -390,5 +447,6 @@ export function renderPredictionLines(comparison: PredictionComparison): string[
           : `合う仮説が ${all.length} つ（${all.join('・')}）`;
     lines.push(`    - 許容内の指標: ${text}。${verdict}`);
   }
+  if (comparison.stale) lines.push(...renderStaleness(file, comparison.stale).map((l) => `  ${l}`));
   return lines;
 }

@@ -11,11 +11,13 @@ import {
   misplacedPredictions,
 } from '../../../scripts/records-data.ts';
 import { gradeCandidate, type Claim } from '../claims.ts';
+import { openStaleness, openVerificationIds, verificationExtraLines } from '../extras.ts';
 import type { Observation } from '../observations.ts';
 import {
   comparePredictions,
   indistinguishableTargets,
   observationsOfTarget,
+  predictionStaleness,
   renderPredictionLines,
   renderPredictionTable,
   runPredictions,
@@ -189,6 +191,61 @@ describe('records/predictions', () => {
     expect(validatePredictions([{ ...tol({ abs: -1 }), predicted: null }], ctx)).toEqual([
       '予測 V-0063: 指標 shots の tolerance は { rel } か { abs }（0 以上の数）',
     ]);
+  });
+
+  it('warns when the model changed after the prediction, and not otherwise (plan/design-prediction-staleness.md)', () => {
+    const data = loadRecordsData(loadRecordingsFile(), [307]);
+    const f = file();
+    const fresh = file({ predicted: { at: '2026-10-17', commit: 'abc1234', values: runPredictions(f, data) } });
+    // 変えていなければ出ない
+    expect(predictionStaleness(fresh, data)).toBeUndefined();
+    expect(renderPredictionLines(comparePredictions(fresh, observations, undefined)).join('\n')).not.toContain(
+      'モデルが変わった',
+    );
+    // モデルを変える（編成のキャラの会心ダメージの倍率）と、総ダメージの指標の値が変わる。発の数は変わらない
+    const ch = data.characters.get(307)!;
+    const changed = {
+      ...data,
+      characters: new Map([...data.characters, [307, { ...ch, crit: { ...ch.crit, damage: ch.crit.damage + 0.5 } }]]),
+    };
+    const stale = predictionStaleness(fresh, changed);
+    expect(stale?.kind).toBe('changed');
+    if (stale?.kind !== 'changed') return;
+    expect(stale.targets.map((x) => `${x.hypothesis} ${x.target}`)).toEqual(['H1 total', 'H2 total']);
+    expect(stale.targets[0]!.saved).toBe(fresh.predicted!.values.H1!.total);
+    const lines = renderPredictionLines(comparePredictions(fresh, observations, stale));
+    expect(lines).toContain(
+      '  - **予測の後にモデルが変わった**: いま出し直すと、仮説 × 指標 2 つの値が変わる（`npm run records:predict -- V-0063` で出し直す）',
+    );
+    expect(lines.filter((l) => /^ {4}- H[12] total: /.test(l))).toHaveLength(2);
+    const table = renderPredictionTable(comparePredictions(fresh, observations, stale));
+    expect(table).toContain('\n- **予測の後にモデルが変わった**: ');
+    expect(table).toContain('\n  - H1 total: ');
+    // いまのモデルで回らない（語彙に無い指標）ときは、出し直せないと出す
+    const broken = { ...fresh, targets: [{ ...f.targets[0]!, metric: 'nope' }] };
+    expect(predictionStaleness(broken, data)).toEqual({ kind: 'error', message: 'metric nope が語彙に無い' });
+    // 予測をまだ出していなければ見ない
+    expect(predictionStaleness(f, changed)).toBeUndefined();
+  });
+
+  it('records:check looks only at the predictions of open verifications', () => {
+    const verifications = loadVerifications();
+    const data = loadRecordsData(loadRecordingsFile(), [307]);
+    const f = file({
+      predicted: {
+        at: '2026-10-17',
+        commit: 'abc1234',
+        values: { H1: { shots: 1, total: 1 }, H2: { shots: 1, total: 1 } },
+      },
+    });
+    const open = new Set(['V-0063']);
+    const lines = (ids: ReadonlySet<string>) =>
+      verificationExtraLines(observations, [f], openStaleness([f], ids, data))
+        .get('V-0063')!
+        .join('\n');
+    expect(lines(open)).toContain('予測の後にモデルが変わった');
+    expect(lines(new Set())).not.toContain('予測の後にモデルが変わった');
+    expect(openVerificationIds(verifications).has('V-0063')).toBe(false);
   });
 
   it('todayLocal uses the local date', () => {
