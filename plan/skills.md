@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 60・効果 220（根拠あり 210）・notes 241（根拠あり 73）
+件数: キャラ 60・効果 222（根拠あり 212）・notes 240（根拠あり 73）
 
-notes の種類: 未対応 129・前提の外 27・計算に無関係 28・補足 10・間接 47
+notes の種類: 未対応 128・前提の外 27・計算に無関係 28・補足 10・間接 47
 
-スロット: supported 85・partial 17・unsupported 60・noEffect 33
+スロット: supported 86・partial 16・unsupported 60・noEffect 33
 
 ## 10 ラピ
 
@@ -152,11 +152,12 @@ notes の種類: 未対応 129・前提の外 27・計算に無関係 28・補�
 
 ## 93 エマ：タクティカル・アップ
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] timed・30 秒ごと・damageTaken: C-0305（確定）
   - effects[1] timed・10 秒ごと・damageTaken: C-0305（確定）、C-0306（確定）
-  - notes[0] 未対応: 環境コントロールの味方全体の持続回復は未対応（回復を受けた時の効果を起こさない）: 根拠なし
-  - notes[1] 計算に無関係: 陽動はダメージに関係しない: 根拠なし
+  - effects[2] heal・30 秒ごと: C-0578（確定）
+  - effects[3] heal・10 秒ごと: C-0578（確定）
+  - notes[0] 計算に無関係: 陽動はダメージに関係しない: 根拠なし
 - **skill2**: supported
   - effects[0] passive・critDamage: C-0266（確定）、C-0235（仮説）
   - effects[1] passive・projectileExplosionDamage: C-0373（確定）、C-0205（確定）
