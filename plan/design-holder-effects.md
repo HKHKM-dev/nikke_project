@@ -213,6 +213,7 @@ declare function eventsOf(history: HolderHistory, item: HeldEffect): HeldEvent[]
   3. 残るのは区間（論点 9）と履歴。どちらも 1 パス目の後に `planTeamRun` が作る。
   4. コードのコメントの「窓」は、触る所だけ「件」に直す。型の名前に残る「窓」（`WindowEffect` など）を改めるかは、この段で決める。過去の設計書は当時の記録なので書き換えない。
      - 段 E の実装: 型の名前は改めなかった（`WindowEffect` は件を持つ効果の型として読め、名前を変えても値と動きは変わらず、差分が広がるだけのため）。件を作る関数の名前（`unionWindows` など）も同じ。改めるなら別の PR にする。
+     - 2026-10-17 の名前の変更: 件を表す型と件を作る関数の名前を、オーナーの承認した対応表で改めた（`WindowEffect` → `ItemEffect`、`unionWindows`・`effectWindows`・`shotCountWindows`・`untilNextEndWindows`・`stackWindows` → `unionItems`・`effectItems`・`shotCountItems`・`untilNextEndItems`・`stackItems`、`StackWindow` → `StackItem`、`AttackWindow` → `AttackItem`、`resolveWindowFields`・`ResolvedWindowFields` → `resolveItemFields`・`ResolvedItemFields`、`hasFiringWindow` → `hasFiringItem`、`formatWindowTrigger`・`formatWindowDuration` → `formatItemTrigger`・`formatItemDuration`、テストの助けの `PieceWindow` → `StagelessPiece`）。値と動きは変えていない。吸収回復の件（`healWindowItems`・出どころの種類 `'healWindow'`）は、「吸収回復の窓」が設計書と結論の用語なので残した。フルバーストの窓・敵のジャンプの窓・語彙の数える窓・観測値の指標の名前は件ではないので対象外。
 - **その後**: 2 段目の語彙を、[design-skill-catalog.md](design-skill-catalog.md) 9 節の段の候補 1 から、段 E の後に足す（論点 11）。段 A を始めてから段 B を閉じるまでは、語彙を足さない（その間は、旧の実装と一覧の 2 つがあるので）。
 
 ## 4. 確かめ方（各段の完了の条件）

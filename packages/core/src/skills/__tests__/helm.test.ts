@@ -7,7 +7,7 @@ import { computeTriggerDamage } from '../../damage.ts';
 import type { CharacterData } from '../../types.ts';
 import { applyChargeBuffs, ZERO_BUFFS } from '../buffs.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
-import { shotCountWindows } from '../timeline.ts';
+import { shotCountItems } from '../timeline.ts';
 import { applyTreasure } from '../treasure.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 
@@ -128,18 +128,18 @@ describe('ヘルム（352）の定義の解決', () => {
   });
 });
 
-describe('shotCountWindows（N 発間維持）', () => {
+describe('shotCountItems（N 発間維持）', () => {
   it('lasts until the Nth shot at or after the start (inclusive)', () => {
-    expect(shotCountWindows([10], [5, 10, 20, 30, 40], 2, 100)).toEqual([[10, 21]]);
+    expect(shotCountItems([10], [5, 10, 20, 30, 40], 2, 100)).toEqual([[10, 21]]);
   });
 
   it('runs to the end of the battle when fewer than N shots are left', () => {
-    expect(shotCountWindows([10], [20, 30], 3, 100)).toEqual([[10, 100]]);
+    expect(shotCountItems([10], [20, 30], 3, 100)).toEqual([[10, 100]]);
   });
 
   it('counts again from a refire during the window (union)', () => {
-    expect(shotCountWindows([10, 25], [20, 30, 40, 50], 2, 100)).toEqual([[10, 41]]);
-    expect(shotCountWindows([10, 60], [20, 30, 70, 80], 2, 100)).toEqual([
+    expect(shotCountItems([10, 25], [20, 30, 40, 50], 2, 100)).toEqual([[10, 41]]);
+    expect(shotCountItems([10, 60], [20, 30, 70, 80], 2, 100)).toEqual([
       [10, 31],
       [60, 81],
     ]);

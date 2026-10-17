@@ -31,7 +31,7 @@ import {
   type AutoConditionSummary,
   type LandingFrameSpan,
 } from '../frame/landing.ts';
-import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type WindowEffect } from '../skills/resolve.ts';
+import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type ItemEffect } from '../skills/resolve.ts';
 import { valuePiecesOf } from '../skills/holders.ts';
 import { isStateStat } from '../skills/types.ts';
 import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
@@ -67,7 +67,7 @@ export type SimEvent =
   | { frame: number; kind: 'trigger'; slot: number; fullBurst: boolean; damage: number }
   | { frame: number; kind: 'burst'; slot: number; step: BurstStepKey; damage: number }
   | { frame: number; kind: 'fullBurstStart' | 'fullBurstEnd' | 'gaugeFull' | 'chainTimeout' }
-  | { frame: number; kind: 'buffStart' | 'buffEnd'; slot: number; effect: WindowEffect }
+  | { frame: number; kind: 'buffStart' | 'buffEnd'; slot: number; effect: ItemEffect }
   | { frame: number; kind: 'skillHit'; slot: number; effect: SkillHitEvent['effect']; damage: number }
   | {
       frame: number;

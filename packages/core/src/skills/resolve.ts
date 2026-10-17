@@ -388,16 +388,16 @@ export type ResolvedStateContent = ResolvedEffect & {
   maxStacks?: number;
 };
 
-/** 名前の付いた状態の語彙編: 窓（件）を持つ効果（持続バフと、状態の中身）。値の小片（ValuePiece）・AppliedTimedEffect の元 */
-export type WindowEffect = ResolvedTimedEffect | ResolvedStateContent;
+/** 名前の付いた状態の語彙編: 件を持つ効果（持続バフと、状態の中身）。値の小片（ValuePiece）・AppliedTimedEffect の元 */
+export type ItemEffect = ResolvedTimedEffect | ResolvedStateContent;
 
 /** 名前の付いた状態の語彙編: 状態の中身か（トリガーと維持を持たない） */
-export function isStateContent(effect: WindowEffect): effect is ResolvedStateContent {
+export function isStateContent(effect: ItemEffect): effect is ResolvedStateContent {
   return 'whileState' in effect;
 }
 
 /** 持続バフが枠へ適用された記録。名前の付いた状態の語彙編: 状態の中身も入る（isStateContent） */
-export type AppliedTimedEffect = WindowEffect & {
+export type AppliedTimedEffect = ItemEffect & {
   sourceSlotIndex: number;
   appliedAmount: number;
 };
@@ -421,7 +421,7 @@ export function resolveTimed(
         return;
       }
       if (effect.kind !== 'timed') return;
-      const window = resolveWindowFields(effect, character, slot, levels[slot], effectIndex);
+      const window = resolveItemFields(effect, character, slot, levels[slot], effectIndex);
       const value =
         effect.amplifies !== undefined
           ? effect.amplifies.percent / 100 // 環境コントロール強化編: 参照する効果の値に掛ける割合（窓ごとの値は skills/holders.ts の amplify）
@@ -453,24 +453,24 @@ export function resolveTimed(
   );
 }
 
-/** 名前の付いた状態の語彙編: timed と付与で共通の、値を除いた窓の欄 */
-type ResolvedWindowFields = Omit<ResolvedTimedEffect, 'stat' | 'scaling' | 'value' | 'weapon' | 'amplifies'>;
+/** 名前の付いた状態の語彙編: timed と付与で共通の、値を除いた件の欄 */
+type ResolvedItemFields = Omit<ResolvedTimedEffect, 'stat' | 'scaling' | 'value' | 'weapon' | 'amplifies'>;
 
 /**
- * 名前の付いた状態の語彙編（plan/design-named-state.md 3.1 節）: timed と付与で共通の窓の欄（トリガー・対象・維持・スタック・条件）を
- * Lv の数値に解く。付与は「値を持たない持続効果」なので、窓の欄は timed と同じ関数で解く
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 3.1 節）: timed と付与で共通の件の欄（トリガー・対象・維持・スタック・条件）を
+ * Lv の数値に解く。付与は「値を持たない持続効果」なので、件の欄は timed と同じ関数で解く
  */
-function resolveWindowFields(
+function resolveItemFields(
   effect: TimedEffect | StateGrantEffect,
   character: CharacterData,
   slot: SkillSlot,
   level: number,
   effectIndex: number,
-): ResolvedWindowFields {
+): ResolvedItemFields {
   const skill = character.skills[slot];
   const shots = resolveDurationShots(effect, skill, level);
   const seconds = shots === undefined ? durationSecondsOf(effect, skill, level) : 0;
-  const r: ResolvedWindowFields = {
+  const r: ResolvedItemFields = {
     source: { resourceId: character.resourceId, skill: slot, name: skill.name },
     target: effect.target,
     trigger: resolveTrigger(effect.trigger, skill, level),
@@ -496,10 +496,10 @@ function resolveWindowFields(
 }
 
 /**
- * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2 節・実装の別紙 1.2 節）: 解決した付与。窓の欄は timed と同じに解いたもので、
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2 節・実装の別紙 1.2 節）: 解決した付与。件の欄は timed と同じに解いたもので、
  * 値を持たない。effectIndex は付与のスロットの何番目の効果か
  */
-export type ResolvedStateGrant = ResolvedWindowFields & {
+export type ResolvedStateGrant = ResolvedItemFields & {
   state: NamedStateId;
   /** 静的な状態の付与（staticStatesOf）。持ち主は編成の段で決まり、中身は常時パッシブ（resolvePassives） */
   isStatic: boolean;
@@ -526,7 +526,7 @@ export function resolveStateGrants(
   for (const slot of SKILL_SLOTS) {
     def.skills[slot].effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'state') return;
-      const window = resolveWindowFields(effect, character, slot, levels[slot], effectIndex);
+      const window = resolveItemFields(effect, character, slot, levels[slot], effectIndex);
       const grant: ResolvedStateGrant = { ...window, state: effect.state, isStatic: statics.has(effect.state) };
       if (effect.undispellable) grant.undispellable = true;
       untrimmed.push(grant);

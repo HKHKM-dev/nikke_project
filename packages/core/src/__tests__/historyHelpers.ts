@@ -8,27 +8,27 @@ import { SKILL_SLOTS, isStateStat, type SkillSlot } from '../skills/types.ts';
 import type { NamedStateId } from '../skills/states.ts';
 
 type WithHistory = { history: HolderHistory };
-/** 値の小片から段を除いた形（窓と同じ形） */
-export type PieceWindow = Omit<ValuePiece, 'stage'>;
+/** 値の小片から段を除いた形（件と同じ形） */
+export type StagelessPiece = Omit<ValuePiece, 'stage'>;
 
-const windowOf = ({ stage: _stage, ...w }: ValuePiece): PieceWindow => w;
+const withoutStage = ({ stage: _stage, ...w }: ValuePiece): StagelessPiece => w;
 
 /** 区間に足す値の小片（状態だけの stat を除く。時刻の順） */
-export function piecesOf(result: WithHistory): PieceWindow[] {
+export function piecesOf(result: WithHistory): StagelessPiece[] {
   return valuePiecesOf(result.history)
     .filter((p) => !isStateStat(p.effect.stat))
-    .map(windowOf);
+    .map(withoutStage);
 }
 
 /** 状態だけの stat（命中率）の値の小片（時刻の順） */
-export function statePiecesOf(result: WithHistory): PieceWindow[] {
+export function statePiecesOf(result: WithHistory): StagelessPiece[] {
   return valuePiecesOf(result.history)
     .filter((p) => isStateStat(p.effect.stat))
-    .map(windowOf);
+    .map(withoutStage);
 }
 
 /** 枠の、区間に足す値の小片 */
-export function slotPieces(result: WithHistory, slotIndex: number): PieceWindow[] {
+export function slotPieces(result: WithHistory, slotIndex: number): StagelessPiece[] {
   return piecesOf(result).filter((p) => p.slotIndex === slotIndex);
 }
 

@@ -24,7 +24,7 @@
 // と中身の窓を作る。中身は同じ stat の timed と同じに区間・鍵・判定に入る。
 // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 B）: 窓を作る 2 パス目（planBuffTimeline）を消した。上の段（1〜2.5 段目）は、
 // 1 パス目の件の一覧（skills/holders.ts）の段の印で再現する。区間はその履歴の値の小片から作り（buffTimelineOf）、ここには区間の
-// 組み立て（buildSegments）と、件を作る関数（unionWindows など）、トリガーの発火の列（triggerFrames）を置く。段 E で窓と記録の
+// 組み立て（buildSegments）と、件を作る関数（unionItems など）、トリガーの発火の列（triggerFrames）を置く。段 E で窓と記録の
 // 書き出し（BuffTimeline の windows・stateWindows・namedStateWindows・cycleWindows と記録の欄）を消した（読む側は履歴を読む）。
 import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { BuildEffect } from '../buildEffects.ts';
@@ -43,10 +43,10 @@ import {
   type ResolvedTimedEffect,
   type ResolvedTrigger,
   type SkillLevels,
-  type WindowEffect,
+  type ItemEffect,
 } from './resolve.ts';
 import type { RankSlot } from './ranking.ts';
-import { stackWindows } from './stacks.ts';
+import { stackItems } from './stacks.ts';
 import { isEffectTarget } from './targets.ts';
 import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
 import type { NamedStateId } from './states.ts';
@@ -324,24 +324,24 @@ export function weaponStartTrim(effect: Pick<ResolvedTimedEffect, 'trigger'> & {
   return effect.stat === 'weapon' && effect.trigger !== 'battleStart' && !isResolvedShotCount(effect.trigger) ? 1 : 0;
 }
 
-/** Stage 11 モダニア: 効果 1 つの窓（スタックする効果は段ごと、しない効果は和集合。使用武器の変更は頭を削る） */
-export function effectWindows(
+/** Stage 11 モダニア: 効果 1 つの件（スタックする効果は段ごと、しない効果は和集合。使用武器の変更は頭を削る） */
+export function effectItems(
   starts: readonly number[],
   effect: Pick<ResolvedTimedEffect, 'durationFrames' | 'maxStacks' | 'trigger'> & { stat?: BuffStat | 'weapon' },
   frames: number,
 ): { start: number; end: number; stack?: number }[] {
-  if (effect.maxStacks !== undefined) return stackWindows(starts, effect.durationFrames, frames, effect.maxStacks);
+  if (effect.maxStacks !== undefined) return stackItems(starts, effect.durationFrames, frames, effect.maxStacks);
   const trim = weaponStartTrim(effect);
-  return unionWindows(starts, effect.durationFrames, frames)
+  return unionItems(starts, effect.durationFrames, frames)
     .map(([start, end]) => ({ start: start + trim, end }))
     .filter((w) => w.start < w.end);
 }
 
 /**
- * ヘルム編: 「N 発間維持」の窓。始まり s から、s 以降の N 発目の射撃のフレーム + 1 まで（N 発目にも効く）。
+ * ヘルム編: 「N 発間維持」の件。始まり s から、s 以降の N 発目の射撃のフレーム + 1 まで（N 発目にも効く）。
  * N 発を撃つ前に戦闘が終われば frames まで。維持中にまた付いたら、そこから数え直す（和集合。秒の維持の上書き延長に合わせる）
  */
-export function shotCountWindows(
+export function shotCountItems(
   starts: readonly number[],
   shotFrames: readonly number[],
   shots: number,
@@ -364,12 +364,12 @@ export function shotCountWindows(
 }
 
 /**
- * 出来事で終わる窓。始まり s から、s より後の最初の終わり（ends。昇順）まで（無ければ frames まで）。維持中にまた付いたら和集合。
+ * 出来事で終わる件。始まり s から、s より後の最初の終わり（ends。昇順）まで（無ければ frames まで）。維持中にまた付いたら和集合。
  * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 撃ち切りで終わる使用武器の変更（ends は 1 パス目の
- * ShotLog.weaponChangeEnds。1 パス目は開いている窓に重ねて付いても撃ち切りまで変えない）。
+ * ShotLog.weaponChangeEnds。1 パス目は開いている件に重ねて付いても撃ち切りまで変えない）。
  * 防御力無視ダメージ編（同 3.2 節）: 「解除条件：フルバーストタイムが終了した時」（ends はフルバーストの終わり）
  */
-export function untilNextEndWindows(
+export function untilNextEndItems(
   starts: readonly number[],
   ends: readonly number[],
   frames: number,
@@ -388,12 +388,8 @@ export function untilNextEndWindows(
   return merged;
 }
 
-/** 同一効果の窓を和集合にする（上書き延長。重ねない）。frames が上限 */
-export function unionWindows(
-  fireFrames: readonly number[],
-  durationFrames: number,
-  frames: number,
-): [number, number][] {
+/** 同一効果の件を和集合にする（上書き延長。重ねない）。frames が上限 */
+export function unionItems(fireFrames: readonly number[], durationFrames: number, frames: number): [number, number][] {
   if (durationFrames <= 0) return [];
   const merged: [number, number][] = [];
   for (const f of [...fireFrames].sort((a, b) => a - b)) {
@@ -463,7 +459,7 @@ export type SegmentInput = {
 export type SegmentPiece = {
   slotIndex: number;
   sourceSlotIndex: number;
-  effect: WindowEffect;
+  effect: ItemEffect;
   start: number;
   end: number;
 };

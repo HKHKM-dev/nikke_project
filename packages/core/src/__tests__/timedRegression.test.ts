@@ -5,10 +5,10 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { slotPieces } from './historyHelpers.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { MAX_SKILL_LEVELS, isStateContent, type WindowEffect } from '../skills/resolve.ts';
+import { MAX_SKILL_LEVELS, isStateContent, type ItemEffect } from '../skills/resolve.ts';
 
 /** 窓の効果のトリガー（名前の付いた状態の中身はトリガーを持たない） */
-const triggerOf = (e: WindowEffect) => (isStateContent(e) ? undefined : e.trigger);
+const triggerOf = (e: ItemEffect) => (isStateContent(e) ? undefined : e.trigger);
 import { parseSkillDefinition } from '../skills/types.ts';
 import { computeTeamDamage } from '../calc/model.ts';
 import { type TeamSlotInput } from '../team.ts';

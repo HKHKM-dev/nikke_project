@@ -1,12 +1,12 @@
 // 2 段目の段 3 の PR 3（plan/design-skill-stage3.md 1.4・1.5 節）: スタック数の条件（selfState の stacks）とスタック量の減少
-// （stackChange の decrease）の読み込み・解決・段の窓・件の一覧での判定
+// （stackChange の decrease）の読み込み・解決・段の件・件の一覧での判定
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import type { SkillRaw } from '../../types.ts';
 import { createHolderLists, itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveStackChanges, resolveTimed } from '../resolve.ts';
-import { stackWindows } from '../stacks.ts';
+import { stackItems } from '../stacks.ts';
 import type { TimelineSlot } from '../timeline.ts';
 import type { FrameEvents } from '../triggers.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEntry } from '../types.ts';
@@ -145,11 +145,11 @@ describe('解決（スタック数の参照・減少）', () => {
   });
 });
 
-describe('段の窓のスタック量の減少（skills/stacks.ts）', () => {
+describe('段の件のスタック量の減少（skills/stacks.ts）', () => {
   const five = [0, 0, 0, 0, 0];
 
   it('cuts the top stacks on the frame after the decrease and counts later stacks from the lower level', () => {
-    expect(stackWindows([...five, 300], 10_000, 1000, 5, 'all', [{ frame: 100, amount: 2 }])).toEqual([
+    expect(stackItems([...five, 300], 10_000, 1000, 5, 'all', [{ frame: 100, amount: 2 }])).toEqual([
       { stack: 1, start: 0, end: 1000 },
       { stack: 2, start: 0, end: 1000 },
       { stack: 3, start: 0, end: 1000 },
@@ -160,7 +160,7 @@ describe('段の窓のスタック量の減少（skills/stacks.ts）', () => {
   });
 
   it('counts a start on the same frame before the decrease, and keeps the last stack when the decrease is larger', () => {
-    expect(stackWindows([0, 100, 400], 10_000, 1000, 5, 'all', [{ frame: 100, amount: 9 }])).toEqual([
+    expect(stackItems([0, 100, 400], 10_000, 1000, 5, 'all', [{ frame: 100, amount: 9 }])).toEqual([
       { stack: 1, start: 0, end: 1000 },
       { stack: 2, start: 100, end: 101 },
       { stack: 2, start: 400, end: 1000 },
@@ -168,10 +168,10 @@ describe('段の窓のスタック量の減少（skills/stacks.ts）', () => {
   });
 
   it('ignores a decrease when no stack is active and needs the refresh-all mode', () => {
-    expect(stackWindows([200], 50, 1000, 5, 'all', [{ frame: 100, amount: 1 }])).toEqual([
+    expect(stackItems([200], 50, 1000, 5, 'all', [{ frame: 100, amount: 1 }])).toEqual([
       { stack: 1, start: 200, end: 250 },
     ]);
-    expect(() => stackWindows([0], 50, 1000, 5, 'each', [{ frame: 10, amount: 1 }])).toThrow(/STACK_REFRESH/);
+    expect(() => stackItems([0], 50, 1000, 5, 'each', [{ frame: 10, amount: 1 }])).toThrow(/STACK_REFRESH/);
   });
 });
 
