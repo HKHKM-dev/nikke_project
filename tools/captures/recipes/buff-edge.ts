@@ -170,7 +170,7 @@ function model(recording: RecordingEntry, setup: CompareSetup, slot: number): Mo
     },
     segments() {
       const s = sim.slots[slot - 1];
-      if (s === undefined) throw new Error(`枠 ${slot} が無い`);
+      if (s === undefined || s === null) throw new Error(`枠 ${slot} が無い`);
       return s.segments.map((seg) => {
         let values = '（値なし）';
         try {
