@@ -8,6 +8,7 @@ import {
   resolveBurstDamage,
   resolveDamageEffects,
   resolveDotEffects,
+  resolvePerShotDamage,
   resolveShotGauges,
   resolveTimerGauges,
 } from '../burstDamage.ts';
@@ -206,6 +207,8 @@ describe('data/skills', () => {
       const states10 =
         resolveStateContents(def, character, MAX_SKILL_LEVELS).length +
         resolveStackChanges(def, character, MAX_SKILL_LEVELS).length;
+      // シンデレラ編（V-0445）: 射撃ごとの倍率ダメージ（damage の every = 1。発に畳み込む）だけの定義もある
+      const perShot10 = resolvePerShotDamage(def, character, MAX_SKILL_LEVELS).length;
       // ダメージに効く効果が 1 つも無いキャラ（デルタなど）は、全スロットが効果なしで notes だけ（noEffect・unsupported）
       const modeled = SKILL_SLOTS.some((slot) => def.skills[slot].effects.length > 0);
       if (modeled) {
@@ -217,7 +220,8 @@ describe('data/skills', () => {
           dot10.length +
           instant10.length +
           gauges10 +
-          states10;
+          states10 +
+          perShot10;
         expect(count).toBeGreaterThan(0);
       }
       damage10.forEach((e, i) => {
