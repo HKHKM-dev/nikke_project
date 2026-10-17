@@ -116,7 +116,10 @@
           "target": "self",
           "condition": {
             "selfState": "metalSigma"
-          }
+          },
+          "claims": [
+            "C-0562"
+          ]
         },
         {
           "kind": "state",
@@ -126,7 +129,10 @@
           "durationUntil": "battleEnd",
           "condition": {
             "usedBurst": true
-          }
+          },
+          "claims": [
+            "C-0562"
+          ]
         }
       ]
     },
