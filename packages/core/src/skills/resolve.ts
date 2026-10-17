@@ -26,6 +26,7 @@ import {
   type EffectTrigger,
   type EventCountKind,
   type ExcludeSelf,
+  type TargetDefense,
   type InstantKind,
   type ShotCountKind,
   type ShotCountReset,
@@ -236,6 +237,8 @@ export type ResolvedEffect = {
   targetState?: NamedStateId;
   /** ペルソナ編: 「基本バースト段階が N の」。定義に無ければキーごと無い */
   targetBurstStep?: BasicBurstStep;
+  /** 2 段目の段 7: 「自分と自分より最終防御力が低い味方」。定義に無ければキーごと無い */
+  targetDefense?: TargetDefense;
   /** 対象の語彙編: 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの）。無ければキーごと無い */
   fixedTargets?: readonly number[];
   stat: EffectStat;
@@ -487,6 +490,7 @@ function resolveItemFields(
   if (effect.excludeSelf) r.excludeSelf = effect.excludeSelf;
   if (effect.targetState) r.targetState = effect.targetState;
   if (effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
+  if (effect.targetDefense) r.targetDefense = effect.targetDefense;
   if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
   const count = resolveTargetCount(effect, skill, level);
   if (count !== undefined) r.targetCount = count;

@@ -98,7 +98,8 @@ export type BuffStat =
   | 'trueDamage'
   | 'trueDamageConversion'
   | 'sustainedDamage'
-  | 'maxHp';
+  | 'maxHp'
+  | 'defense';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -128,6 +129,9 @@ export const BUFF_STATS = [
   // 攻撃力▲（casterFinalMaxHp）だけが読む。「最大HP のみ▲」は効いている間 HP の割合を下げる（同 2.4 節。論点 8 の決定）ので、
   // その形を足すまでこの stat では書かない（notes のまま。definitions.test.ts）
   'maxHp',
+  // 2 段目の段 7（plan/design-skill-stage7.md 1.3 節）: 防御力▲（比率）。与ダメージの式は読まず、対象の絞り込み
+  // 「自分より最終防御力が低い味方」（targetDefense）だけが、発火のフレームの最終防御力として読む
+  'defense',
 ] as const satisfies readonly BuffStat[];
 
 /** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限、アニス：スター編でチャージ時間の固定を足した */
@@ -536,6 +540,11 @@ export type TimedEffect = TargetCountFields &
     targetState?: NamedStateId;
     /** ペルソナ編: 「基本バースト段階が N の」。対象の枠の CharacterData.burstStep が N の枠だけ。target が 'allies' のときだけ書ける */
     targetBurstStep?: BasicBurstStep;
+    /**
+     * 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 「自分と自分より最終防御力が低い味方」（lowerThanSelf）。発火のフレームの
+     * 最終防御力で比べ（同値は含まない。自分は含む）、維持の間は対象を変えない。target が 'allies' の timed だけに書ける
+     */
+    targetDefense?: TargetDefense;
     /** Stage 9: 「〈武器〉を所持する味方」。target が self 以外（allies・Stage 11 の burstUsers）のときだけ書ける */
     targetWeapon?: WeaponType;
     /** アスカ: 「〈コード〉コードの味方」 */
@@ -693,7 +702,15 @@ export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffSt
 export function isFirstPassTrackedStat(stat: BuffStat): boolean {
   // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるバーストゲージのチャージ速度は、1 パス目がゲージに読む。
   // 2 段目の段 6 の PR 2: 最大HP▲ は、1 パス目の順位（攻撃力）が発動者の最終最大HP として読むので、攻撃力と同じに扱う
-  return stat === 'attack' || stat === 'maxHp' || stat === 'burstGaugeSpeed' || isFiringStat(stat) || isStateStat(stat);
+  // 2 段目の段 7: 防御力▲ は、1 パス目の発火の対象の絞り込み（最終防御力の比べ）が読むので、攻撃力と同じに扱う
+  return (
+    stat === 'attack' ||
+    stat === 'maxHp' ||
+    stat === 'defense' ||
+    stat === 'burstGaugeSpeed' ||
+    isFiringStat(stat) ||
+    isStateStat(stat)
+  );
 }
 
 /** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */
@@ -1563,6 +1580,8 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   const targetElement = parseTargetElement(v, target, path);
   const targetSquad = parseTargetSquad(v, target, path);
   if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
+  // 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 最終防御力の比べは発火の瞬間に決めるので、常時の効果には書けない
+  if (v.targetDefense !== undefined) fail(`${path}.targetDefense`, 'targetDefense is only allowed in timed');
   for (const key of ['targetState', 'targetBurstStep'] as const) {
     if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is only allowed in timed and state`);
   }
@@ -1735,6 +1754,10 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
 /** timed の、値（stat）を除いた欄。名前の付いた状態の語彙編: 付与（StateGrantEffect）はこの欄を timed と同じ規則で持つ */
 type TimedFields = Omit<TimedEffect, 'kind' | 'stat'>;
 
+/** 2 段目の段 7: 防御力の比べの対象の絞り込み。lowerThanSelf = 自分と、自分より最終防御力が低い味方 */
+export type TargetDefense = 'lowerThanSelf';
+export const TARGET_DEFENSES = ['lowerThanSelf'] as const satisfies readonly TargetDefense[];
+
 /**
  * timed の欄を検証する。名前の付いた状態の語彙編（plan/design-named-state.md 3.2 節）: stat が undefined なら付与の欄だけを見る
  * （値の欄 ref・scaling・decrease・amplifies と stat ごとの規則を除く）。付与の stat ごとの規則は、付与の欄と中身の項目を合わせた
@@ -1776,6 +1799,16 @@ function parseTimedFields(
     }
   }
   const persona = parsePersonaTargetFields(v, target, path);
+  // 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 「自分より最終防御力が低い味方」は allies だけ（自分を除く・状態・段階・部隊の
+  // 絞り込みとは組み合わせない。使い手がいない）
+  let targetDefense: TargetDefense | undefined;
+  if (v.targetDefense !== undefined) {
+    targetDefense = oneOf(TARGET_DEFENSES, v.targetDefense, `${path}.targetDefense`);
+    if (target !== 'allies') fail(`${path}.targetDefense`, `only allowed with target "allies", got "${target}"`);
+    for (const key of ['excludeSelf', 'targetState', 'targetBurstStep', 'targetSquad'] as const) {
+      if (v[key] !== undefined) fail(`${path}.targetDefense`, `cannot be combined with ${key}`);
+    }
+  }
   if (stat === 'trueDamageConversion' && target !== 'self') {
     fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
   }
@@ -1805,6 +1838,7 @@ function parseTimedFields(
   if (targetSquad !== undefined) effect.targetSquad = targetSquad;
   if (excludeSelf !== undefined) effect.excludeSelf = excludeSelf;
   Object.assign(effect, persona);
+  if (targetDefense !== undefined) effect.targetDefense = targetDefense;
   if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
   Object.assign(effect, count);
   if (stat !== undefined) {
@@ -2121,6 +2155,8 @@ function parseAmplifies(v: Record<string, Json>, stat: BuffStat, target: BuffTar
     'durationShots',
     'durationShotsRef',
     'durationUntil',
+    // 2 段目の段 7: 最終防御力の比べの対象は発火の瞬間に決める（topAttack と同じく、強化の窓の作り方の外）
+    'targetDefense',
   ]) {
     if (v[key] !== undefined) fail(path, `amplifies cannot be combined with ${key}`);
   }

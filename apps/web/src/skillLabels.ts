@@ -66,6 +66,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   trueDamage: '防御力無視ダメージ',
   trueDamageConversion: '通常攻撃が防御力無視ダメージに変化',
   maxHp: '最大HP',
+  defense: '防御力',
 };
 
 /** 名前の付いた状態の語彙編: 状態の画面の名前（目録の name。説明文の状態名） */
@@ -396,6 +397,8 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
       : effect.excludeSelf === 'unlessShort'
         ? '自分を除く（足りなければ自分も）'
         : '';
+  // 2 段目の段 7: 「自分と自分より最終防御力が低い味方」（発火の瞬間の最終防御力で決めた対象）
+  const defense = effect.targetDefense === 'lowerThanSelf' ? '自分と自分より最終防御力が低い' : '';
   const only =
     effect.target === 'burstUsers'
       ? `（直前にバーストを使った${weapon}味方）`
@@ -403,8 +406,8 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
         ? `（${exclude}最終攻撃力が最も高い${weapon}味方 ${effect.targetCount ?? 1} 機）`
         : effect.target === 'longestChargeTime'
           ? `（基本チャージ時間が最も長い${weapon}味方 ${effect.targetCount ?? 1} 機）`
-          : weapon !== '' || exclude !== ''
-            ? `（${exclude}${weapon}味方）`
+          : weapon !== '' || exclude !== '' || defense !== ''
+            ? `（${exclude}${defense}${weapon}味方）`
             : '';
   return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}`;
 }

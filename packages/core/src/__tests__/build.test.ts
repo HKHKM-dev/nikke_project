@@ -15,10 +15,13 @@ import {
 } from '../build.ts';
 import {
   AFFECTION_ATTACK,
+  AFFECTION_DEFENCE,
   AFFECTION_HP,
   FIXED_SPEC_GEAR_ATTACK,
+  FIXED_SPEC_GEAR_DEFENCE,
   FIXED_SPEC_GEAR_HP,
   computeFixedSpecAttack,
+  computeFixedSpecDefence,
   computeFixedSpecHp,
   fixedSpecGrowth,
 } from '../fixedSpec.ts';
@@ -49,6 +52,9 @@ describe('masters', () => {
       // 2 段目の段 6: スペック固定の最大HP の装備の定数
       const hp = GEAR_PARTS.reduce((s, part) => s + (masters.gear.tiers.T9[cls][part].hp[5] ?? NaN), 0);
       expect(hp, cls).toBe(FIXED_SPEC_GEAR_HP[cls]);
+      // 2 段目の段 7: スペック固定の防御力の装備の定数
+      const def = GEAR_PARTS.reduce((s, part) => s + (masters.gear.tiers.T9[cls][part].defence[5] ?? NaN), 0);
+      expect(def, cls).toBe(FIXED_SPEC_GEAR_DEFENCE[cls]);
     }
   });
 
@@ -75,6 +81,9 @@ describe('masters', () => {
       for (const rank of [10, 30, 40] as const) {
         expect(masters.affection.ranks[rank - 1]?.attack[cls], `${cls} rank ${rank}`).toBe(AFFECTION_ATTACK[cls][rank]);
         expect(masters.affection.ranks[rank - 1]?.hp[cls], `${cls} rank ${rank} hp`).toBe(AFFECTION_HP[cls][rank]);
+        expect(masters.affection.ranks[rank - 1]?.defence[cls], `${cls} rank ${rank} defence`).toBe(
+          AFFECTION_DEFENCE[cls][rank],
+        );
       }
     }
   });
@@ -122,6 +131,14 @@ describe('computeCombatAttack', () => {
       const c = loadCharacter(id);
       const r = computeCombatStat(c, fixedSpecGrowth(c), fixedSpecBuild(c), masters, 'hp');
       expect(r.value, `${id} ${c.name.ja}`).toBe(computeFixedSpecHp(c));
+    }
+  });
+
+  it('with fixedSpecBuild gives the defence of computeFixedSpecDefence for every character (2 段目の段 7. retreat)', () => {
+    for (const id of allIds) {
+      const c = loadCharacter(id);
+      const r = computeCombatStat(c, fixedSpecGrowth(c), fixedSpecBuild(c), masters, 'defence');
+      expect(r.value, `${id} ${c.name.ja}`).toBe(computeFixedSpecDefence(c));
     }
   });
 

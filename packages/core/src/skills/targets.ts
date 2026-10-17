@@ -9,16 +9,22 @@
 // 対象として fixedTargets で絞る。名前の付いた状態の語彙編: 「〈名前〉状態の」は目録の id（静的な状態。skills/composition.ts）。
 import type { Element, WeaponType } from '../types.ts';
 import type { NamedStateId } from './states.ts';
-import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetSquad } from './types.ts';
+import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetDefense, TargetSquad } from './types.ts';
 
 /**
  * 発火の文脈。
  * burstUsers = そのフルバーストを開いたチェーンでバーストを撃った枠（FullBurstWindow.burstUsers）。フルバーストの開始・終了のときだけ。
  * attackRank = 対象になりうる枠（効果の targetWeapon で絞った後）を発火のフレームの最終攻撃力の高い順に並べたもの。
  * topAttack の効果のときだけ（skills/ranking.ts の attackRankFor）。
- * どちらも無い発火では null
+ * lowerDefense = 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 発火のフレームの最終防御力が、発動者より低い枠と発動者自身
+ * （同値は含まない）。targetDefense の効果のときだけ（skills/holders.ts）。
+ * どれも無い発火では null
  */
-export type FireContext = { burstUsers?: readonly number[]; attackRank?: readonly number[] } | null;
+export type FireContext = {
+  burstUsers?: readonly number[];
+  attackRank?: readonly number[];
+  lowerDefense?: readonly number[];
+} | null;
 
 /** isEffectTarget が見る効果の項目 */
 export type TargetedEffect = {
@@ -30,6 +36,8 @@ export type TargetedEffect = {
   excludeSelf?: ExcludeSelf;
   targetState?: NamedStateId;
   targetBurstStep?: BasicBurstStep;
+  /** 2 段目の段 7: 「自分と自分より最終防御力が低い味方」。発火の文脈の lowerDefense で決める */
+  targetDefense?: TargetDefense;
   fixedTargets?: readonly number[];
 };
 
@@ -94,6 +102,10 @@ export function isEffectTarget(
     case 'self':
       return sourceSlotIndex === targetSlotIndex;
     case 'allies':
+      // 2 段目の段 7: 防御力の比べの絞り込みは、発火の文脈の枠だけ（文脈に無ければ誰にも掛からない）
+      if (effect.targetDefense !== undefined)
+        return weaponOk && context?.lowerDefense?.includes(targetSlotIndex) === true;
+      return weaponOk;
     case 'longestChargeTime':
       return weaponOk;
     case 'burstUsers':
@@ -121,8 +133,13 @@ export function canEverTarget(
 }
 
 /** 対象が発火の文脈で変わるか（変わらなければ効果ごとに 1 回だけ対象を決めてよい） */
-export function dependsOnContext(effect: { target: BuffTarget }): boolean {
-  return effect.target === 'burstUsers' || effect.target === 'topAttack';
+export function dependsOnContext(effect: { target: BuffTarget; targetDefense?: TargetDefense }): boolean {
+  return effect.target === 'burstUsers' || effect.target === 'topAttack' || dependsOnDefense(effect);
+}
+
+/** 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 対象を決めるのに最終防御力の比べが要るか */
+export function dependsOnDefense(effect: { targetDefense?: TargetDefense }): boolean {
+  return effect.targetDefense !== undefined;
 }
 
 /** Stage 11 アリス編: 対象を決めるのに攻撃力の順位が要るか */

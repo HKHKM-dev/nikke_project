@@ -28,7 +28,12 @@ import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, computeCombatStat, emptyBuild, type BuildInput } from '../src/build.ts';
 import { resolveBuildEffects } from '../src/buildEffects.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, fixedSpecGrowth } from '../src/fixedSpec.ts';
+import {
+  computeFixedSpecAttack,
+  computeFixedSpecDefence,
+  computeFixedSpecHp,
+  fixedSpecGrowth,
+} from '../src/fixedSpec.ts';
 import {
   LANDING_BAND_LABEL,
   enemyEventsOf,
@@ -229,6 +234,8 @@ const slots: TeamSlotInput[] = ids.map((id) => {
         attackOverride: computeFixedSpecAttack(character).attack,
         // 2 段目の段 6: 最終最大HP 基準の効果（casterFinalMaxHp）のための、スペック固定の最大HP
         hpOverride: computeFixedSpecHp(character),
+        // 2 段目の段 7: 最終防御力の比べ（targetDefense）のための、スペック固定の防御力
+        defenceOverride: computeFixedSpecDefence(character),
         skills,
       }
     : { ...withBuild(character, skills, buildFile[String(id)]), ...modeOf };
@@ -266,14 +273,18 @@ function withBuild(
           : ''),
     );
   }
-  // 2 段目の段 6: 同じ育成入力から戦闘中の最大HP（バフ前）も作る
+  // 2 段目の段 6・段 7: 同じ育成入力から戦闘中の最大HP と防御力（バフ前）も作る
   const hp = computeCombatStat(character, growth, build, masters, 'hp', { treasurePhase: skills.treasurePhase }).value;
+  const defence = computeCombatStat(character, growth, build, masters, 'defence', {
+    treasurePhase: skills.treasurePhase,
+  }).value;
   return {
     character,
     growth,
     condition,
     attackOverride: combat.attack,
     hpOverride: hp,
+    defenceOverride: defence,
     buildEffects: effects.effects,
     skills,
   };

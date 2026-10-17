@@ -21,7 +21,7 @@ import { GEAR_PARTS, emptyBuild, type BuildInput } from '../build.ts';
 import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
 import { effectiveMaxAmmo, firingParams } from '../frame/firing.ts';
 import { landingFrameSpans } from '../frame/landing.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, fixedSpecGrowth } from '../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecDefence, computeFixedSpecHp, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buffs.ts';
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
@@ -1685,6 +1685,13 @@ function readsCasterMaxHp(definition: SkillDefinition | null): boolean {
   );
 }
 
+/** 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 対象を最終防御力の比べで決める効果（targetDefense）があるか */
+function comparesDefence(definition: SkillDefinition | null): boolean {
+  if (definition === null) return false;
+  const entries = [...Object.values(definition.skills), ...Object.values(definition.treasureSkills ?? {})];
+  return entries.some((entry) => entry.effects.some((e) => 'targetDefense' in e && e.targetDefense !== undefined));
+}
+
 /** drop なら、定義の各スロット（基礎版・宝物版）から回復（heal）を落とした写しを返す（CompareSetup.dropHeals） */
 function withoutHealsIf(definition: SkillDefinition | null, drop: boolean): SkillDefinition | null {
   if (definition === null || !drop) return definition;
@@ -1716,6 +1723,13 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     if (missing.length > 0)
       throw new Error(`スペック固定 OFF の録画で、枠 ${missing.join('・')} の育成（build）が無い`);
     if (data.buildMasters === undefined) throw new Error('スペック固定 OFF の録画には育成のマスタが要る');
+    // 2 段目の段 7（plan/design-skill-stage7.md 1.1 節）: 台帳の育成には防御力が無いので、最終防御力で対象を決める効果（味方全員の
+    // 防御力を読む）のある編成は、スペック固定 OFF の録画では比べない（黙って育成値だけの防御力にしない）
+    const readers = recording.team.filter((m) => comparesDefence(data.skills.get(m.rid) ?? null)).map((m) => m.rid);
+    if (readers.length > 0)
+      throw new Error(
+        `rid ${readers.join('・')}: スペック固定 OFF の録画で最終防御力で対象を決める効果のある編成は未対応（台帳に防御力が無い）`,
+      );
   } else if (setup.buildEffectsOff !== undefined) throw new Error('buildEffectsOff はスペック固定 OFF の録画だけ');
   const preset = data.enemies.enemies.find((e) => e.id === setup.enemy);
   if (preset === undefined) throw new Error(`敵のプリセット ${setup.enemy} が無い`);
@@ -1771,7 +1785,9 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       condition,
       ...(auto ? { conditionMode: 'auto' as const } : {}),
       attackOverride: build === undefined ? computeFixedSpecAttack(character).attack : build.attack,
-      ...(build === undefined ? { hpOverride: computeFixedSpecHp(character) } : {}),
+      ...(build === undefined
+        ? { hpOverride: computeFixedSpecHp(character), defenceOverride: computeFixedSpecDefence(character) }
+        : {}),
       ...(buildEffects === undefined ? {} : { buildEffects }),
       skills: {
         definition: definition === null ? null : withAddedEffects(definition, adds),

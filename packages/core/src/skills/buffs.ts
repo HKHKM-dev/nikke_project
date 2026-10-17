@@ -93,6 +93,11 @@ export type BuffTotals = {
    * (1 + maxHpRatio)。ダメージの式は読まず、その枠が発動者の casterFinalMaxHp だけが読む（skills/timeline.ts・skills/holders.ts）
    */
   maxHpRatio: number;
+  /**
+   * 2 段目の段 7（plan/design-skill-stage7.md 1.2 節）: 防御力▲ の比率の加算。その枠の最終防御力 = バフ前の防御力 × (1 + defenseRatio)。
+   * ダメージの式は読まず、対象の絞り込み「自分より最終防御力が低い味方」だけが読む（skills/holders.ts）
+   */
+  defenseRatio: number;
   /** Stage 10: 最大装弾数の発数の加算（scaling 'flat'） */
   maxAmmoFlat: number;
   /** Stage 10: リロード速度の加算 */
@@ -149,6 +154,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   burstGaugeSpeed: 0,
   maxAmmoRatio: 0,
   maxHpRatio: 0,
+  defenseRatio: 0,
   maxAmmoFlat: 0,
   reloadSpeed: 0,
   chargeSpeed: 0,
@@ -182,6 +188,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   burstGaugeSpeed: 'burstGaugeSpeed',
   maxAmmo: 'maxAmmoRatio',
   maxHp: 'maxHpRatio',
+  defense: 'defenseRatio',
   reloadSpeed: 'reloadSpeed',
   chargeSpeed: 'chargeSpeed',
   hitRate: 'hitRate',

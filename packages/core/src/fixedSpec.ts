@@ -95,3 +95,34 @@ export function computeFixedSpecHp(
     FIXED_SPEC_GEAR_HP[character.class]
   );
 }
+
+/** 2 段目の段 7（plan/design-skill-stage7.md 1.1 節）: T9 Lv5 装備 4 部位の防御力合計（クラス別固定値。マスタの gear.json と同じ） */
+export const FIXED_SPEC_GEAR_DEFENCE: Record<NikkeClass, number> = {
+  Supporter: 1466,
+  Defender: 1612,
+  Attacker: 1319,
+};
+
+/** 2 段目の段 7: 好感度ランクによる防御力加算（クラス別固定値。マスタの affection.json と同じ） */
+export const AFFECTION_DEFENCE: Record<NikkeClass, Record<AffectionRank, number>> = {
+  Supporter: { 10: 67, 30: 273, 40: 390 },
+  Defender: { 10: 74, 30: 300, 40: 429 },
+  Attacker: { 10: 60, 30: 246, 40: 351 },
+};
+
+/**
+ * 2 段目の段 7（plan/design-skill-stage7.md 1.1 節）: スペック固定の戦闘中の防御力（バフ前）。最大HP と同じ組み立て（コアは
+ * 「突破後の素の防御力 + 好感度」に掛かり、装備には掛からない）。育成の層（fixedSpecBuild を computeCombatStat に通した防御力）と
+ * 同値（build.test.ts）
+ */
+export function computeFixedSpecDefence(
+  character: Pick<CharacterData, 'rarity' | 'class' | 'corporationSubType' | 'levelCurve' | 'statEnhance'>,
+): number {
+  const growth = fixedSpecGrowth(character);
+  const gradeBase = computeStat(character, 'defence', { ...growth, core: 0 });
+  const affection = AFFECTION_DEFENCE[character.class][fixedSpecAffectionRank(character)];
+  return (
+    applyCoreRatio(gradeBase + affection, growth.core, character.statEnhance.coreDefence) +
+    FIXED_SPEC_GEAR_DEFENCE[character.class]
+  );
+}

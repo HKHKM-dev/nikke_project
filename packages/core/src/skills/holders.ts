@@ -44,7 +44,7 @@ import {
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type RankingRecord } from './ranking.ts';
 import { stackItems, STACK_REFRESH, type StackDecrease } from './stacks.ts';
 import { statesMatching, type NamedStateId } from './states.ts';
-import { canEverTarget, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
+import { canEverTarget, dependsOnDefense, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
 import {
   createTriggerTracker,
   fireContextOf,
@@ -550,7 +550,8 @@ function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedStateId) 
 /** timed の効果の段（強化の受け付けと値は、履歴を閉じる時に決める） */
 function stageOfTimed(effect: ResolvedTimedEffect): HeldStage {
   if (effect.amplifies !== undefined) return 2.5;
-  if (dependsOnRank(effect)) return 2;
+  // 2 段目の段 7: 最終防御力の比べの対象も、順位と同じく段 1・1.5 の件（防御力▲）が出そろってから決める
+  if (dependsOnRank(effect) || dependsOnDefense(effect)) return 2;
   // 2 段目の段 1: 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節）
   if (conditionReadsItems(effect.condition)) return 1.5;
   return 1;
@@ -944,6 +945,26 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     for (const v of maxHpViews[slotIndex] ?? []) for (const it of activeAt(v.track, frame)) up += valueOf(v.effect, it);
     return base * (1 + up);
   };
+  // 2 段目の段 7（plan/design-skill-stage7.md 1.2・1.4 節）: 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
+  // 発動者より低い枠（同値は含まない）と発動者自身
+  const defenseViews = viewsOf((_, e) => e.stat === 'defense');
+  const finalDefenceAt = (slotIndex: number, frame: number): number => {
+    const base = slots[slotIndex]?.baseDefence;
+    if (base === undefined)
+      throw new RangeError(`slot ${slotIndex}: the base defence is needed to compare final defence`);
+    let up = passive[slotIndex]?.buffs.defenseRatio ?? 0;
+    for (const v of defenseViews[slotIndex] ?? [])
+      for (const it of activeAt(v.track, frame)) up += valueOf(v.effect, it);
+    return base * (1 + up);
+  };
+  const lowerDefenseAt = (sourceSlotIndex: number, frame: number): number[] => {
+    const own = finalDefenceAt(sourceSlotIndex, frame);
+    const out: number[] = [];
+    slots.forEach((slot, i) => {
+      if (slot !== null && (i === sourceSlotIndex || finalDefenceAt(i, frame) < own)) out.push(i);
+    });
+    return out;
+  };
   const finalAttacksAtFrame = (frame: number): (number | null)[] => {
     const windows: AttackItem[] = [];
     rankViews.forEach((views, holder) => {
@@ -1320,6 +1341,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
       const start = battleStartOnly ? 0 : startOfFire(src.effect.trigger, f);
       if (start >= frames) continue;
+      // 2 段目の段 7: 最終防御力の比べの対象（発火のフレームの最終防御力。段 1・1.5 の防御力▲ の件。同じフレームに付いたものも入れる）
+      if (dependsOnDefense(src.effect)) {
+        fireTimed(src, start, {
+          ...fireContextOf(src.effect.trigger, ev),
+          lowerDefense: lowerDefenseAt(src.sourceSlotIndex, f),
+        });
+        continue;
+      }
       const finalAttacks = finalAttacksAtFrame(f);
       const attackRank = attackRankFor(src.effect, rankSlots, finalAttacks, src.sourceSlotIndex);
       const targets = fireTimed(src, start, { ...fireContextOf(src.effect.trigger, ev), attackRank });

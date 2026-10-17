@@ -211,16 +211,13 @@
           "stat": "projectileExplosionDamage",
           "ref": 4,
           "durationRef": 5,
-          "assumes": {
-            "ja": "対象は「自分と、自分より最終防御力が低い味方」。味方全員の最終防御力が自分より低いとみなす（効くのは発射体の爆発を持つ RL の通常攻撃だけ）",
-            "en": "Targets self and allies with lower final DEF. All allies are assumed to have lower final DEF (it only affects normal attacks of RLs with projectile explosions)"
-          },
+          "targetDefense": "lowerThanSelf",
           "reads": [
             "defense"
           ],
           "claims": [
             "C-0205",
-            "C-0210"
+            "C-0586"
           ]
         },
         {
@@ -327,6 +324,17 @@
           "claims": [
             "C-0211"
           ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "defense",
+          "ref": 5,
+          "durationRef": 2,
+          "claims": [
+            "C-0586"
+          ]
         }
       ],
       "notes": [
@@ -365,12 +373,6 @@
             "C-0424",
             "C-0425"
           ]
-        },
-        {
-          "ja": "自分の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。S2 の対象「自分より最終防御力が低い味方」の比べを読む。S2 は味方全員が低いとみなす。C-0210）",
-          "en": "DEF up on self does not change damage by itself (it matters only with an effect reading DEF in the team; S2 target selection 'allies with lower final DEF' reads it; S2 assumes all allies are lower, C-0210)",
-          "kind": "indirect",
-          "path": "defense"
         },
         {
           "ja": "みんなの星のときの味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
