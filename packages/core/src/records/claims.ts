@@ -59,6 +59,11 @@ export type ClaimFile = {
   subject?: ClaimSubject;
   /** 最小構成の検査編: 仮説の効く条件（同 3.5 節）。仮説の結論にだけ書ける */
   when?: ClaimWhen;
+  /**
+   * 最小構成の検査編: 窓の端だけを決める仮説の、実機の端がモデルの端からずれうる範囲（plan/design-minimal-edge.md 2 節）。
+   * 仮説の結論にだけ書け、subject.places が必須
+   */
+  edge?: ClaimEdge;
   /** 最小構成の検査編: 人の判断の印（同 4.3 節）。印のある要素は、その組の警告から外す */
   minimal?: MinimalMark[];
   /**
@@ -137,6 +142,12 @@ export type ClaimWhen = {
   enemyElement?: Element;
 };
 
+/** 窓の端のずれうる範囲（フレーム。負は早い側）。[min, max]、整数、min ≤ max、絶対値は EDGE_LIMIT 以下。書かない端は動かさない */
+export type ClaimEdge = { start?: [number, number]; end?: [number, number] };
+
+/** edge の範囲の絶対値の上限（「数 f」の語彙にとどめる。plan/design-minimal-edge.md 2 節） */
+export const EDGE_LIMIT = 30;
+
 /**
  * 人の判断の印（plan/design-minimal-relevance.md 4.3 節）。observations はこの結論の根拠の観測値の ID（'*' は全部の組）、
  * element は判定の要素の名前（「イサベル skill2.notes[0]」など）、reason は効かないとみなした理由、decided はオーナーが決めた日
@@ -209,6 +220,26 @@ export function validateMinimalFields(c: Claim): string[] {
       if (w.enemyElement !== undefined && !(ELEMENTS as readonly unknown[]).includes(w.enemyElement))
         errors.push(`${at}: when.enemyElement が語彙に無い: ${String(w.enemyElement)}`);
     }
+  }
+  if (c.edge !== undefined) {
+    const e: unknown = c.edge;
+    if (c.state !== '仮説') errors.push(`${at}: edge は仮説の結論にだけ書ける（${c.state}）`);
+    if (c.subject === undefined || !('places' in c.subject))
+      errors.push(`${at}: edge には subject.places が要る（端を動かす効果の場所）`);
+    if (!isRecord(e) || unknownKeys(e, ['start', 'end']).length > 0 || (e.start === undefined && e.end === undefined))
+      errors.push(`${at}: edge は { start, end } の 1 つ以上`);
+    else
+      for (const k of ['start', 'end'] as const) {
+        const r = e[k];
+        if (r === undefined) continue;
+        if (
+          !Array.isArray(r) ||
+          r.length !== 2 ||
+          !r.every((x) => Number.isInteger(x) && Math.abs(x as number) <= EDGE_LIMIT) ||
+          (r[0] as number) > (r[1] as number)
+        )
+          errors.push(`${at}: edge.${k} は [min, max]（整数・min ≤ max・絶対値 ${EDGE_LIMIT} 以下）`);
+      }
   }
   if (c.minimal !== undefined) {
     if (!Array.isArray(c.minimal) || c.minimal.length === 0) errors.push(`${at}: minimal は印の並び（1 つ以上）`);

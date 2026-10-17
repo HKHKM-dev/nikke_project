@@ -20,6 +20,7 @@ import {
   type BasicBurstStep,
   type BuffTrigger,
   type Amplifies,
+  type EdgeShift,
   type DurationUntil,
   type EffectCondition,
   type EffectTrigger,
@@ -363,6 +364,8 @@ export type ResolvedTimedEffect = ResolvedEffect & {
    * その値 × 割合、切れた所は発動の瞬間の値 × (1 + 割合)）は skills/holders.ts の amplify が作る
    */
   amplifies?: Amplifies;
+  /** 最小構成の検査の窓の端編（plan/design-minimal-edge.md 3.3 節）: 定義の edgeShift を写したもの */
+  edgeShift?: EdgeShift;
 };
 
 /**
@@ -439,6 +442,7 @@ export function resolveTimed(
       }
       const r: ResolvedTimedEffect = { ...window, stat: effect.stat, scaling: effect.scaling ?? 'ratio', value };
       if (effect.amplifies !== undefined) r.amplifies = effect.amplifies;
+      if (effect.edgeShift !== undefined) r.edgeShift = effect.edgeShift;
       resolved.push(r);
     });
   }

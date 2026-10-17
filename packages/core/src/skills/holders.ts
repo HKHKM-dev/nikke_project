@@ -63,6 +63,7 @@ import {
   isStateStat,
   staticStatesOf,
   type BuffStat,
+  type EdgeShift,
   type EffectCondition,
 } from './types.ts';
 import type { SkillSlot } from '../types.ts';
@@ -314,6 +315,18 @@ function itemsOfPairs(pairs: readonly (readonly [number, number])[]): HeldItem[]
 }
 
 /** 吸収回復の窓（V-0024）: 付き直しは終わりを延ばし、終わりのフレームちょうどに付けば新しい件 */
+/**
+ * 最小構成の検査の窓の端編（plan/design-minimal-edge.md 3.3 節）: 件ごとに始まりと終わりを動かす（戦闘の範囲に切り詰め、長さ 0 以下は消す）。
+ * 1 パス目は前から進むので、始まりを早めた分は、きっかけより前のフレームの 1 パス目の読みには効かない（バフの区間の表には効く）
+ */
+export function shiftEdges(items: readonly HeldItem[], shift: EdgeShift, frames: number): HeldItem[] {
+  return items.flatMap((it) => {
+    const start = Math.max(0, it.start + shift.start);
+    const end = Math.min(frames, it.end + shift.end);
+    return start < end ? [{ ...it, start, end }] : [];
+  });
+}
+
 function healWindowItems(starts: readonly number[], durationFrames: number | undefined, frames: number): HeldItem[] {
   if (durationFrames === undefined) return [];
   const items: HeldItem[] = [];
@@ -790,6 +803,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
                 scale: p.scale,
               }))
             : timedItems(o.effect, track.starts, log, fullBurstEnds(), frames);
+        if (o.effect.edgeShift !== undefined) track.items = shiftEdges(track.items, o.effect.edgeShift, frames);
         break;
       case 'state': {
         const ends = fullBurstEnds();

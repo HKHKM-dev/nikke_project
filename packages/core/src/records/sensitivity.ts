@@ -2,17 +2,20 @@
 // 基準の予測 P0（O の compare.setup のまま）、E を定義から外した予測 P−、E が持続の効果なら戦闘の始めから終わりまで効かせた予測 P+ を出し、
 // P− か P+ が P0 から許容（compare.tolerance）を超えて動けば「効きうる」とする。E のきっかけと維持時間は信じない（6c）。
 // ほかの要素はモデルの窓のまま。1 つずつ変える（未確定どうしの重なりは見ない。8 節の限界）。
+// 端だけ未確定の要素（plan/design-minimal-edge.md 3.2 節）は、P−・P+ の代わりに、窓の端を仮説の範囲の両端まで広げる・縮める 2 通りを回す。
 // 計算は数分かかるので records:minimal で回し、結果を records/minimal/sensitivity.json に置く。records:check はそれを読む。
 import { runSimulation, type SimResult } from '../sim/engine.ts';
-import type { SkillDefinition, SkillEffect } from '../skills/types.ts';
+import type { EdgeShift, SkillDefinition, SkillEffect } from '../skills/types.ts';
 import { METRICS, buildTeamInput, compareValue, type Observation, type RecordsData } from './observations.ts';
 import type { RecordingEntry } from './recordings.ts';
 import {
+  edgeRangeOf,
   elementsOf,
   impossibleReason,
   sensitivityKey,
   unconfirmedReason,
   usesSensitivity,
+  type EdgeRange,
   type MinimalElement,
   type RelevanceContext,
   type SensitivityEntry,
@@ -85,6 +88,27 @@ export function variantDefinition(
   return copy;
 }
 
+/** 端を広げる（widen）・縮める（narrow）ずらし（plan/design-minimal-edge.md 3.2 節）。動かさない変換は undefined */
+export function edgeShiftOf(range: EdgeRange, variant: 'widen' | 'narrow'): EdgeShift | undefined {
+  const shift =
+    variant === 'widen' ? { start: range.start[0], end: range.end[1] } : { start: range.start[1], end: range.end[0] };
+  return shift.start === 0 && shift.end === 0 ? undefined : shift;
+}
+
+/** timed の効果に端のずらし（edgeShift）を付けた定義。timed でなければ undefined */
+export function edgeDefinition(
+  def: SkillDefinition,
+  ref: NonNullable<MinimalElement['effectRef']>,
+  shift: EdgeShift,
+): SkillDefinition | undefined {
+  const copy = structuredClone(def);
+  const entry = ref.root === 'skills' ? copy.skills[ref.slot] : copy.treasureSkills?.[ref.slot];
+  const effect = entry?.effects[ref.index];
+  if (effect === undefined || effect.kind !== 'timed' || ref.subIndex !== undefined) return undefined;
+  entry!.effects[ref.index] = { ...effect, edgeShift: shift };
+  return copy;
+}
+
 /** 観測値の予測（sim）。同じ入力の sim は cache で 1 回にする */
 function predict(
   o: Observation,
@@ -141,8 +165,31 @@ export function sensitivityOf(
       minus: null,
       plus: null,
     };
+    const base = ctx.data.skills.get(e.effectRef.rid);
+    const edge = edgeRangeOf(e, recording, ctx);
+    if (edge !== undefined) {
+      entry.edge = { range: edge, widen: null, narrow: null };
+      for (const variant of ['widen', 'narrow'] as const) {
+        const shift = edgeShiftOf(edge, variant);
+        if (base === undefined || shift === undefined) continue;
+        try {
+          const def = edgeDefinition(base, e.effectRef, shift);
+          if (def === undefined) throw new Error('timed でない効果');
+          const skills = new Map(ctx.data.skills);
+          skills.set(e.effectRef.rid, def);
+          const pv = predict(o, recording, { ...ctx.data, skills }, cache, `${setupKey}|${e.name}|${variant}`);
+          const { diff, ok } = compareValue(p0, pv, o.compare!.tolerance);
+          entry.edge[variant] = Number.isFinite(diff) ? diff : null;
+          if (!ok) entry.effective = true;
+        } catch (err) {
+          entry.effective = true;
+          entry.error = `${variant}: ${(err as Error).message}`;
+        }
+      }
+      out.push(entry);
+      continue;
+    }
     for (const variant of ['minus', 'plus'] as const) {
-      const base = ctx.data.skills.get(e.effectRef.rid);
       if (base === undefined) continue;
       const def = variantDefinition(base, e.effectRef, variant, battleSeconds);
       if (def === undefined) continue;

@@ -33,7 +33,7 @@
 - 結論の下書き（`records:new -- claim`）が `確定` にするのは、次が全部そろうとき（欠ければ `仮説` と理由を出す。人は理由を確かめて書き換えてよい）:
   - 等級の候補（機械）が厳密一致か反復実測。反復実測なら `decidedOn` がある（無ければ `[]` と書く）
   - 結論の対象（`subject`）がある
-  - 最小構成の警告（効きうる未確定の要素が残った組）が無い。効かない理由がはっきりしていれば、結論の `minimal` に印として書く
+  - 最小構成の警告（効きうる未確定の要素が残った組）が無い。効かない理由がはっきりしていれば、結論の `minimal` に印として書く。窓の端（付き始め・切れ目）の数 f だけを決める仮説は、印の代わりに仮説の結論に `edge`（端のずれうる範囲）を書けば、sim と比べる組は感度で自動で外れる（[design-minimal-edge.md](design-minimal-edge.md)）
   - `compare` の無い根拠の観測値に `scope` がある
   - 失効・許容外の観測値が無い
   - 予測ファイルを使ったなら、合う仮説が 2 つ以上でない
@@ -67,7 +67,7 @@
 ## 7. 比べる
 
 - `npm run records:check` で、残差の一覧（[residuals.md](residuals.md)）・結論の一覧（[claims.md](claims.md)）・検証記録の一覧（[verifications.md](verifications.md)。予測ファイルがあれば「予測との比べ」）・対応状況（[skills.md](skills.md)）・最小構成の検査（[minimal.md](minimal.md)）を作り直す。
-- スキル定義・録画の台帳・観測値の比べる指定を変えたら、`npm run records:minimal` で感度を計算し直す（[design-minimal-relevance.md](design-minimal-relevance.md) 10.6 節）。
+- スキル定義・録画の台帳・観測値の比べる指定（と、結論の状態・`edge`）を変えたら、`npm run records:minimal` で感度を計算し直す（[design-minimal-relevance.md](design-minimal-relevance.md) 10.6 節）。
 - 合わないときは、まず読み取りと条件を疑う。機構の話にするのは、未確定の要素を 1 つにした編成で切り分けてから。残差を係数で埋めない（AGENTS.md）。
 
 ## 8. 結論

@@ -348,14 +348,72 @@ export function unconfirmedReason(
   // いない編成の根拠）。効くのは読む側のいる時だけなので、効きうるかは notRelevantReason が見る
   if (element.path !== undefined) return `間接（${INDIRECT_PATH_NAMES[element.path].ja}）: 読む側のいる編成の根拠なし`;
   if (element.claims.length === 0) return '根拠なし';
-  const open = element.claims.filter((id) => {
+  const open = openClaims(element, recording, ctx, byId);
+  return open.length === 0 ? undefined : open.map((id) => `${byId.get(id)?.state ?? '?'} ${id}`).join('・');
+}
+
+/** 要素の根拠のうち、確定・範囲外でなく、when がその録画で成り立つ結論（2 節の 3） */
+function openClaims(
+  element: MinimalElement,
+  recording: RecordingEntry,
+  ctx: RelevanceContext,
+  byId: ReadonlyMap<string, Claim>,
+): string[] {
+  return element.claims.filter((id) => {
     const c = byId.get(id);
     const state: ClaimState | undefined = c?.state;
     if (state === '確定' || state === '範囲外') return false;
     if (state === '仮説' && c!.when !== undefined) return whenHolds(c!.when, recording, ctx);
     return true;
   });
-  return open.length === 0 ? undefined : open.map((id) => `${byId.get(id)?.state ?? '?'} ${id}`).join('・');
+}
+
+/** 端だけ未確定の要素の、端のずれうる範囲（plan/design-minimal-edge.md 3.1 節。フレーム。負は早い側） */
+export type EdgeRange = { start: [number, number]; end: [number, number] };
+
+/** 付き始めを早める変換を当ててよい分類（2 パス目のダメージで読む効果。plan/design-minimal-edge.md 3.3 節の限界） */
+const EDGE_EARLY_CLASSES: readonly ElementClass[] = ['damageValue', 'critRate'];
+
+/**
+ * 端だけ未確定か（plan/design-minimal-edge.md 3.1 節）。timed の定義の効果で、根拠に確定の結論が 1 つ以上あり、開いた結論がすべて
+ * edge を持つ仮説でその subject.places がこの効果の場所を含むとき、端ごとに範囲の和をとって返す。そうでなければ undefined。
+ * 付き始めを早める範囲は、1 パス目で読む分類の効果には当てない（undefined）
+ */
+export function edgeRangeOf(
+  element: MinimalElement,
+  recording: RecordingEntry,
+  ctx: RelevanceContext,
+  byId: ReadonlyMap<string, Claim> = new Map(ctx.claims.map((c) => [c.id, c])),
+): EdgeRange | undefined {
+  if (element.type !== 'effect' || element.shape?.kind !== 'timed' || element.effectRef?.subIndex !== undefined)
+    return undefined;
+  if (!element.claims.some((id) => byId.get(id)?.state === '確定')) return undefined;
+  const open = openClaims(element, recording, ctx, byId);
+  if (open.length === 0) return undefined;
+  let range: EdgeRange | undefined;
+  for (const id of open) {
+    const c = byId.get(id);
+    if (c?.state !== '仮説' || c.edge === undefined || c.subject === undefined || !('places' in c.subject))
+      return undefined;
+    const places = c.subject.places.map((p) => p.replaceAll('`', ''));
+    if (!element.places.some((p) => places.includes(p))) return undefined;
+    const s = c.edge.start ?? [0, 0];
+    const e = c.edge.end ?? [0, 0];
+    range =
+      range === undefined
+        ? { start: [s[0], s[1]], end: [e[0], e[1]] }
+        : {
+            start: [Math.min(range.start[0], s[0]), Math.max(range.start[1], s[1])],
+            end: [Math.min(range.end[0], e[0]), Math.max(range.end[1], e[1])],
+          };
+  }
+  if (range!.start[0] < 0 && !EDGE_EARLY_CLASSES.includes(classOf(element))) return undefined;
+  return range;
+}
+
+/** 2 つの範囲が同じか（どちらも無いときも同じ） */
+export function sameEdgeRange(a: EdgeRange | undefined, b: EdgeRange | undefined): boolean {
+  return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 }
 
 const SHOT_TRIGGERS: ReadonlySet<string> = new Set(SHOT_COUNT_KINDS);
@@ -526,6 +584,11 @@ export type SensitivityEntry = {
   /** 基準との差（compareValue の diff。計算しなかった・できなかったときは null） */
   minus: number | null;
   plus: number | null;
+  /**
+   * 端だけ未確定の要素（plan/design-minimal-edge.md 3.4 節）: P−・P+ の代わりに回した、端を広げる・縮める変換の範囲と基準との差。
+   * relevanceOf は、いまの要素の範囲（edgeRangeOf）と合わなければ古いとみる
+   */
+  edge?: { range: EdgeRange; widen: number | null; narrow: number | null };
   error?: string;
 };
 
@@ -533,7 +596,7 @@ export type SensitivityEntry = {
 export type SensitivityIndex = ReadonlyMap<string, SensitivityEntry>;
 
 /** 感度の計算の仕方を変えたら上げる（鍵が変わり、結果は古いとみなされる） */
-export const SENSITIVITY_VERSION = 1;
+export const SENSITIVITY_VERSION = 2;
 
 /** 感度を使う観測値（sim と比べるもの） */
 export function usesSensitivity(o: Observation): boolean {
@@ -605,7 +668,12 @@ export function relevanceOf(
           const key = keys.get(cacheKey) ?? sensitivityKey(o, rec, ctx);
           keys.set(cacheKey, key);
           const s = sensitivity.get(`${o.id}|${r.name}`);
-          return s !== undefined && s.key === key && !s.effective;
+          return (
+            s !== undefined &&
+            s.key === key &&
+            sameEdgeRange(s.edge?.range, edgeRangeOf(r, rec, ctx, byId)) &&
+            !s.effective
+          );
         };
         for (const e of elementsOf(rec, ctx)) {
           if (e.places.some((p) => subject.has(p))) continue;
@@ -619,9 +687,10 @@ export function relevanceOf(
             const key = keys.get(cacheKey) ?? sensitivityKey(o, rec, ctx);
             keys.set(cacheKey, key);
             const s = sensitivity.get(`${o.id}|${e.name}`);
-            if (s !== undefined && s.key === key) {
+            const edge = edgeRangeOf(e, rec, ctx, byId);
+            if (s !== undefined && s.key === key && sameEdgeRange(s.edge?.range, edge)) {
               if (!s.effective) continue;
-              reason = `${reason}・感度で効く`;
+              reason = `${reason}${edge === undefined ? '' : '（端）'}・感度で効く`;
               measured = true;
             } else unmeasured++;
           }
