@@ -226,6 +226,8 @@ export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
  * 解決済みの効果 1 件を totals に足す。単位の判断（比率か実数か）はここに閉じ込める。
  * casterAttack は 発動者のバフ前攻撃力 × value を固定加算し、flat（Stage 10。maxAmmo だけ）は value を発数として
  * maxAmmoFlat に加算し、それ以外は value を比率として加算する。
+ * 2 段目の段 6（plan/design-skill-stage6.md 1.3 節）: casterFinalMaxHp は 発動者の最終最大HP（casterMaxHp）× value を攻撃力に
+ * 固定加算する（casterAttack と同じ置き場所）。casterMaxHp が無ければ RangeError（黙って 0 にしない）
  */
 export function applyResolvedEffect(
   totals: BuffTotals,
@@ -235,6 +237,7 @@ export function applyResolvedEffect(
     target?: ResolvedEffect['target'];
   },
   casterBaseAttack: number,
+  casterMaxHp?: number,
 ): AppliedBuff {
   // Stage 11 モダニア: 使用武器の変更は値を足さず、武器を差し替える（1 体に 1 つ。後から付いたほうを使う）
   if (effect.stat === 'weapon') {
@@ -242,6 +245,14 @@ export function applyResolvedEffect(
   }
   if (effect.scaling === 'casterAttack') {
     const appliedAmount = casterBaseAttack * effect.value;
+    return {
+      totals: addFlatAttack(totals, appliedAmount, sourceKeyOf(effect), effect.target === 'self'),
+      appliedAmount,
+    };
+  }
+  if (effect.scaling === 'casterFinalMaxHp') {
+    if (casterMaxHp === undefined) throw new RangeError('casterFinalMaxHp needs the max HP of the caster');
+    const appliedAmount = casterMaxHp * effect.value;
     return {
       totals: addFlatAttack(totals, appliedAmount, sourceKeyOf(effect), effect.target === 'self'),
       appliedAmount,

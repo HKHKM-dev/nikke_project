@@ -551,3 +551,28 @@ describe('condition mode (Stage 18-C2)', () => {
     expect(enemyForCalc(fire, null, ['range-3min-jump'], 180)).toBe(fire);
   });
 });
+
+// 2 段目の段 6（plan/design-skill-stage6.md 1.4 節・論点 4・5）: HP の割合の想定
+describe('HP の割合の想定', () => {
+  it('defaults to full HP, updates per slot, resets when the character changes and round-trips', () => {
+    expect(INITIAL_TEAM_STATE.slots.every((s) => s.hpRatio === 1)).toBe(true);
+    let s = withCharacters([10, 20]);
+    s = teamReducer(s, { type: 'setHpRatio', index: 1, hpRatio: 0.69 });
+    expect(s.slots.map((x) => x.hpRatio)).toEqual([1, 0.69, 1, 1, 1]);
+    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
+    // 同じニケを選び直しても変えない。別のニケにしたら既定に戻す
+    expect(teamReducer(s, { type: 'selectCharacter', index: 1, resourceId: 20 }).slots[1]?.hpRatio).toBe(0.69);
+    expect(teamReducer(s, { type: 'selectCharacter', index: 1, resourceId: 30 }).slots[1]?.hpRatio).toBe(1);
+    expect(teamReducer(s, { type: 'clearSlot', index: 1 }).slots[1]?.hpRatio).toBe(1);
+  });
+
+  it('reads a slot without hpRatio (saved before 2 段目の段 6) as full HP and rejects out-of-range values', () => {
+    const raw = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
+    delete raw.slots[0]!.hpRatio;
+    expect(parseTeamState(JSON.stringify(raw), index)?.slots[0]?.hpRatio).toBe(1);
+    for (const bad of [0, -0.1, 1.01, '1']) {
+      raw.slots[0]!.hpRatio = bad;
+      expect(parseTeamState(JSON.stringify(raw), index), String(bad)).toBeNull();
+    }
+  });
+});

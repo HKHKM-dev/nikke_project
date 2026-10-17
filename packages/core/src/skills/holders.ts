@@ -122,6 +122,8 @@ export type HeldTrack = {
   sourceSlotIndex: number;
   /** 付けた枠のバフ前攻撃力（発動者基準の固定加算） */
   casterBaseAttack: number;
+  /** 2 段目の段 6: 付けた枠の最終最大HP（casterFinalMaxHp の固定加算。skills/timeline.ts の TimelineSlot.casterMaxHp） */
+  casterMaxHp?: number;
   origin: HeldOrigin;
   stage: HeldStage;
   /** 窓の始まり（昇順）。確率のきっかけは機会（opportunities）で持つ */
@@ -562,6 +564,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       holder,
       sourceSlotIndex,
       casterBaseAttack: slots[sourceSlotIndex]?.casterBaseAttack ?? 0,
+      casterMaxHp: slots[sourceSlotIndex]?.casterMaxHp,
       origin,
       stage,
       starts: [],
@@ -1343,7 +1346,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       for (const v of firingViews[holder]!) {
         // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す
         for (let k = activeAt(v.track, frame).length; k > 0; k--) {
-          buffs = applyResolvedEffect(buffs, v.effect, v.track.casterBaseAttack).totals;
+          buffs = applyResolvedEffect(buffs, v.effect, v.track.casterBaseAttack, v.track.casterMaxHp).totals;
           changed = true;
         }
       }
@@ -1705,7 +1708,7 @@ function passiveStatesOf(history: HolderHistory): (SlotBuffState | null)[] {
     const passiveEffects: AppliedEffect[] = [];
     for (const track of history.tracks) {
       if (track.holder !== index || track.origin.kind !== 'passive') continue;
-      const applied = applyResolvedEffect(buffs, track.origin.effect, track.casterBaseAttack);
+      const applied = applyResolvedEffect(buffs, track.origin.effect, track.casterBaseAttack, track.casterMaxHp);
       buffs = applied.totals;
       passiveEffects.push({
         ...track.origin.effect,

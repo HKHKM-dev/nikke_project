@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 271,
-  "checkedAt": "2026-10-06",
+  "checkedAt": "2026-10-17",
   "skills": {
     "skill1": {
       "effects": [
@@ -11,9 +11,10 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 2,
-          "assumes": {
-            "ja": "自分の HP が 70% 以上",
-            "en": "Own HP is 70% or above"
+          "condition": {
+            "selfHp": {
+              "atLeastRef": 1
+            }
           },
           "reads": [
             "hp"

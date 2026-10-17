@@ -1,6 +1,8 @@
 import {
   computeCombatAttack,
+  computeCombatStat,
   computeFixedSpecAttack,
+  computeFixedSpecHp,
   computeTeamDamage,
   fixedSpecGrowth,
   growthLimits,
@@ -158,6 +160,9 @@ export function App() {
             condition: slot.condition,
             conditionMode: slot.conditionMode,
             attackOverride: computeFixedSpecAttack(character).attack,
+            // 2 段目の段 6: 最終最大HP 基準の効果のための、スペック固定の最大HP と、HP の割合の想定
+            hpOverride: computeFixedSpecHp(character),
+            hpRatio: slot.hpRatio,
             skills: slotSkills,
           };
         }
@@ -167,13 +172,17 @@ export function App() {
         // マスタの読み込み前・入力がマスタと合わないときは素のステータスのまま（BuildSection が知らせる）
         const treasurePhase = effectiveTreasurePhase(slot, character);
         let attackOverride: number | undefined;
+        let hpOverride: number | undefined;
         let buildEffects: BuildEffect[] | undefined;
         if (masters && (!isEmptyBuild(slot.build) || treasurePhase > 0)) {
           try {
             attackOverride = computeCombatAttack(character, growth, slot.build, masters, { treasurePhase }).attack;
+            // 2 段目の段 6: 同じ育成入力から戦闘中の最大HP（バフ前）も作る（最終最大HP 基準の効果が読む）
+            hpOverride = computeCombatStat(character, growth, slot.build, masters, 'hp', { treasurePhase }).value;
             buildEffects = resolveBuildEffects(character, slot.build, masters, { treasurePhase }).effects;
           } catch {
             attackOverride = undefined;
+            hpOverride = undefined;
             buildEffects = undefined;
           }
         }
@@ -183,6 +192,8 @@ export function App() {
           condition: slot.condition,
           conditionMode: slot.conditionMode,
           attackOverride,
+          hpOverride,
+          hpRatio: slot.hpRatio,
           buildEffects,
           skills: slotSkills,
         };

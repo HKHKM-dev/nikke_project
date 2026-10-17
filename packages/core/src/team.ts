@@ -4,6 +4,7 @@ import type { BurstSchedule, BurstScheduleModel, BurstSummary } from './burst/sc
 import type { CadenceResult } from './cadence.ts';
 import {
   baseAttackOf,
+  baseMaxHpOf,
   hitRateOf,
   type EnemyEvent,
   type EnemyInput,
@@ -53,6 +54,16 @@ export type TeamSlotInput = {
   condition: SlotCondition;
   /** 戦闘中の攻撃力（バフ前）を直接指定する（射撃場スペック固定など）。指定時は growth からの算出をしない */
   attackOverride?: number;
+  /**
+   * 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: 戦闘中の最大HP（バフ前）を直接指定する（スペック固定・育成入力）。
+   * 指定時は growth からの算出をしない（attackOverride と同じ）
+   */
+  hpOverride?: number;
+  /**
+   * 2 段目の段 6（同 1.4 節）: その枠の HP の割合の想定（現在の HP ÷ 最終最大HP。0 より大きく 1 以下）。省略は 1（満タン）。
+   * 被弾の時刻はモデルに持たないので戦闘中は一定とみなし、HP の割合の条件（condition.selfHp）は編成の段で決まる
+   */
+  hpRatio?: number;
   /** 省略は { definition: null, levels: 全部 10 } と同じ（自分のスキルなし、味方の効果は受ける） */
   skills?: TeamSlotSkills;
   /**
@@ -305,6 +316,13 @@ export function validateTeamSlots(slots: readonly (TeamSlotInput | null)[]): voi
     const id = slot.character.resourceId;
     if (seen.has(id)) throw new RangeError(`character ${id} appears in more than one slot`);
     seen.add(id);
+    // 2 段目の段 6: HP の割合の想定は 0 より大きく 1 以下、最大HP は正の数
+    if (slot.hpRatio !== undefined && !(slot.hpRatio > 0 && slot.hpRatio <= 1)) {
+      throw new RangeError(`hpRatio must be in (0, 1], got ${slot.hpRatio}`);
+    }
+    if (slot.hpOverride !== undefined && !(Number.isFinite(slot.hpOverride) && slot.hpOverride > 0)) {
+      throw new RangeError(`hpOverride must be a positive number, got ${slot.hpOverride}`);
+    }
   }
 }
 
@@ -319,6 +337,8 @@ export function toTimelineSlots(slots: readonly (TeamSlotInput | null)[]): Timel
           levels: slot.skills?.levels ?? MAX_SKILL_LEVELS,
           // 循環参照を避けるため、発動者自身のバフは乗せない値（バフ前攻撃力）を使う
           casterBaseAttack: baseAttackOf(slot),
+          // 2 段目の段 6: 発動者の最終最大HP。最大HP を動かす効果がまだモデルに無いので、バフ前の最大HP（plan/design-skill-stage6.md 1.2 節）
+          casterMaxHp: baseMaxHpOf(slot),
           buildEffects: slot.buildEffects,
           hitRate: hitRateOf(slot.condition),
           coreHitRate: slot.condition.coreHitRate,

@@ -64,3 +64,34 @@ export function computeFixedSpecAttack(
   const gear = FIXED_SPEC_GEAR_ATTACK[character.class];
   return { attack: withCore + gear, growth, affectionRank, gradeBase, affection, withCore, gear };
 }
+
+/** 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: T9 Lv5 装備 4 部位の HP 合計（クラス別固定値。マスタの gear.json と同じ） */
+export const FIXED_SPEC_GEAR_HP: Record<NikkeClass, number> = {
+  Supporter: 220350,
+  Defender: 242387,
+  Attacker: 198316,
+};
+
+/** 2 段目の段 6: 好感度ランクによる HP 加算（クラス別固定値。マスタの affection.json と同じ） */
+export const AFFECTION_HP: Record<NikkeClass, Record<AffectionRank, number>> = {
+  Supporter: { 10: 10069, 30: 40997, 40: 58500 },
+  Defender: { 10: 11076, 30: 45097, 40: 64350 },
+  Attacker: { 10: 9062, 30: 36897, 40: 52650 },
+};
+
+/**
+ * 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: スペック固定の戦闘中の最大HP（バフ前）。攻撃力と同じ組み立て
+ * （コアは「突破後の素の HP + 好感度」に掛かり、装備には掛からない）。育成の層（fixedSpecBuild を computeCombatStat に通した HP）と
+ * 同値（build.test.ts）。録画 121 のラプラス：アルティメットヒーローの S1 の攻撃力▲で確かめた
+ */
+export function computeFixedSpecHp(
+  character: Pick<CharacterData, 'rarity' | 'class' | 'corporationSubType' | 'levelCurve' | 'statEnhance'>,
+): number {
+  const growth = fixedSpecGrowth(character);
+  const gradeBase = computeStat(character, 'hp', { ...growth, core: 0 });
+  const affection = AFFECTION_HP[character.class][fixedSpecAffectionRank(character)];
+  return (
+    applyCoreRatio(gradeBase + affection, growth.core, character.statEnhance.coreHp) +
+    FIXED_SPEC_GEAR_HP[character.class]
+  );
+}

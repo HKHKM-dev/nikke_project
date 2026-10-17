@@ -469,8 +469,15 @@ function withEarlierSequentialEffects(
   for (const w of pieces) {
     if (w.start !== start || w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex) continue;
     if (w.effect.source.skill !== skill || w.effect.effectIndex >= effectIndex) continue;
-    if (w.stack !== undefined || w.effect.scaling === 'casterAttack' || w.effect.stat === 'weapon') {
-      throw new RangeError('a sequential burst supports only plain timed effects (no stacks, casterAttack or weapon)');
+    if (
+      w.stack !== undefined ||
+      w.effect.scaling === 'casterAttack' ||
+      w.effect.scaling === 'casterFinalMaxHp' ||
+      w.effect.stat === 'weapon'
+    ) {
+      throw new RangeError(
+        'a sequential burst supports only plain timed effects (no stacks, casterAttack, casterFinalMaxHp or weapon)',
+      );
     }
     out = applyResolvedEffect(out, w.effect, 0).totals;
   }

@@ -29,6 +29,7 @@ import {
   type WithCharacterCondition,
 } from '@nikke/core';
 import { useState, type Dispatch } from 'react';
+import { formatPercent } from '../format.ts';
 import {
   NOTE_KIND_BADGE,
   noteBadgeLabel,
@@ -177,6 +178,78 @@ function withCharacterText(condition: WithCharacterCondition, characters: readon
   return `${name}が編成に${condition.present ? 'いる' : 'いない'}`;
 }
 
+/** 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 効果の自分の HP の割合の条件（無ければ undefined） */
+function selfHpOf(e: SkillEffect): { atLeastRef: number } | undefined {
+  return 'condition' in e ? e.condition?.selfHp : undefined;
+}
+
+type HpRatioInputProps = { value: number; onCommit: (ratio: number) => void };
+
+/**
+ * 2 段目の段 6: HP の割合の想定の入力欄（%。1〜100 の整数）。入力途中の空欄や範囲外はそのまま表示しておき、範囲の整数になった時点で
+ * 反映、フォーカスが外れたら範囲に収めて確定する（SkillLevelInput と同じ）
+ */
+function HpRatioInput({ value, onCommit }: HpRatioInputProps) {
+  const percent = Math.round(value * 100);
+  const [text, setText] = useState(String(percent));
+  const [lastValue, setLastValue] = useState(percent);
+  if (lastValue !== percent) {
+    setLastValue(percent);
+    setText(String(percent));
+  }
+  const commit = (raw: string, clamp: boolean) => {
+    const n = Number(raw);
+    if (raw.trim() !== '' && Number.isInteger(n) && n >= 1 && n <= 100) {
+      if (n !== percent) onCommit(n / 100);
+    } else if (clamp) {
+      const fixed = Number.isFinite(n) ? Math.min(100, Math.max(1, Math.round(n))) : percent;
+      setText(String(fixed));
+      if (fixed !== percent) onCommit(fixed / 100);
+    }
+  };
+  return (
+    <input
+      type="number"
+      min={1}
+      max={100}
+      step={1}
+      value={text}
+      aria-label="HP の割合の想定（%）"
+      onChange={(e) => {
+        setText(e.target.value);
+        commit(e.target.value, false);
+      }}
+      onBlur={(e) => commit(e.target.value, true)}
+    />
+  );
+}
+
+/**
+ * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節・論点 5）: 自分の HP の割合の条件。想定の HP の割合で効くかと、想定の入力欄。
+ * 被弾の時刻は計算に入れないので、戦闘中は想定の割合のまま
+ */
+function HpConditionNote({
+  threshold,
+  hpRatio,
+  onCommit,
+}: {
+  threshold: number;
+  hpRatio: number;
+  onCommit: (ratio: number) => void;
+}) {
+  const applies = hpRatio >= threshold;
+  return (
+    <li className={`note ${applies ? 'approx' : 'unsupported'}`}>
+      <span className="badge">HP</span> 自分の HP が {formatPercent(threshold, 2)} 以上のとき。
+      <label className="hp-ratio">
+        想定の HP の割合 <HpRatioInput value={hpRatio} onCommit={onCommit} /> %
+      </label>
+      {applies ? ' では効く' : ' では効かない（計算に入れない）'}
+      。被弾の時刻は計算に入れず、戦闘中はこの割合のまま（既定は満タン）
+    </li>
+  );
+}
+
 function hasComposition(e: SkillEffect): boolean {
   return (
     ('burstStepMix' in e && e.burstStepMix !== undefined) ||
@@ -199,6 +272,8 @@ type Props = {
   teamCharacters: readonly (CharacterData | null)[];
   /** 敵の属性（属性なしは null）。敵の属性の条件の表示用 */
   enemyElement: Element | null;
+  /** 2 段目の段 6: 枠の HP の割合の想定（HP の割合の条件の表示と入力欄） */
+  hpRatio: number;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -212,6 +287,7 @@ export function SkillSection({
   status,
   teamCharacters,
   enemyElement,
+  hpRatio,
   dispatch,
 }: Props) {
   // Stage 9: 宝物版に差し替えた説明文と定義を出す（計算と同じ applyTreasure を通す）
@@ -364,6 +440,22 @@ export function SkillSection({
                       />
                     ) : null,
                   ])}
+                </ul>
+              )}
+              {entry && entry.effects.some((e) => selfHpOf(e) !== undefined) && (
+                <ul className="notes">
+                  {entry.effects.flatMap((e, i) => {
+                    const hp = selfHpOf(e);
+                    if (hp === undefined) return [];
+                    return [
+                      <HpConditionNote
+                        key={`${i}-hp`}
+                        threshold={skillValue(skill, hp.atLeastRef, levels[slot]) / 100}
+                        hpRatio={hpRatio}
+                        onCommit={(ratio) => dispatch({ type: 'setHpRatio', index: slotIndex, hpRatio: ratio })}
+                      />,
+                    ];
+                  })}
                 </ul>
               )}
               {slot === 'burst' && <BurstDelayNote character={shown.character} />}
