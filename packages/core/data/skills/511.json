@@ -1,10 +1,26 @@
 {
   "formatVersion": 1,
   "resourceId": 511,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-17",
   "skills": {
     "skill1": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 4,
+          "assumes": {
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発の着弾のフレームで、HUD では発の 1 ヒットと同じ増分に出る（録画 124）。バーストゲージを溜めるかは確かめていない（溜めないとした。アニス：スター S1 の同じ形の追加ダメージは 1 ヒット分溜める（C-0198））",
+            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit lands with the shot and shows in the same HUD increment as the shot (recording 124). Whether it charges the Burst Gauge is not verified (taken as no charge; the same kind of additional damage of Anis: Sparkling Summer S1 charges one hit, C-0198)"
+          },
+          "claims": [
+            "C-0583"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "バースト 3 段階突入時の、最終最大HPに比例する自分の攻撃力▲（10 秒）は未対応",
@@ -28,15 +44,6 @@
             "kind": "timed",
             "stat": "chargeSpeed",
             "target": "self",
-            "trigger": "fullChargeShot"
-          }
-        },
-        {
-          "ja": "フルチャージ攻撃が命中した時の追加ダメージは未対応",
-          "en": "The additional damage when a fully charged attack hits is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
             "trigger": "fullChargeShot"
           }
         }
