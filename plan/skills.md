@@ -56,7 +56,7 @@ notes の種類: 未対応 121・前提の外 27・計算に無関係 28・補�
   - notes[2] 補足: 部隊構成による効果の「みんなの星消去」「私だけの星消去」と、フルバーストタイム終了時の付け直しは書かない。編成で決まる入れ替えで、戦闘中は片方しか付かず、付け直しは持続の状態を延ばすだけなので、値は変わらない（plan/design-skill-stage1.md 2.1 節）: C-0189（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・attack: C-0204（確定）、C-0203（確定）、C-0555（確定）
-  - effects[1] timed・fullBurstStart・projectileExplosionDamage（読む: 防御力）: C-0205（確定）、C-0587（確定）、C-0588（仮説）
+  - effects[1] timed・fullBurstStart・projectileExplosionDamage（読む: 防御力）: C-0205（確定）、C-0587（確定）、C-0588（確定）
   - effects[2] timed・fullBurstStart・attackDamage: C-0204（確定）
   - effects[3] heal・fullChargeShot: C-0576（確定）
 - **burst**: partial
