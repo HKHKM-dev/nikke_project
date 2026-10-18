@@ -14,27 +14,16 @@
   "hypotheses": [
     {
       "id": "H0",
-      "note": "いまのモデル（バーストの持続回復は未対応の notes）。アスカの S1 はどちらの録画でも付かない。持続回復が「回復効果が適用された時」を起こさない読みと同じ見え方"
+      "note": "持続回復が「回復効果が適用された時」を起こさない（定義する前のモデルの形。鈴原サクラの回復を外す）。アスカの S1 はどちらの録画でも付かない",
+      "override": {
+        "dropHeals": [
+          836
+        ]
+      }
     },
     {
       "id": "H1",
-      "note": "説明文の読みと C-0567・C-0578: 自分を含む候補から、枠の HP の割合の想定（満タン）の低い順・同値は枠の若い順に 2 機を選び、付いた時に 1 回だけ「回復効果が適用された時」を起こす（heal・lowestHpRatio・targetCountRef・durationRef）",
-      "override": {
-        "addEffects": [
-          {
-            "rid": 836,
-            "skill": "burst",
-            "effect": {
-              "kind": "heal",
-              "trigger": "burstUse",
-              "target": "lowestHpRatio",
-              "targetCountRef": 1,
-              "ref": 2,
-              "durationRef": 3
-            }
-          }
-        ]
-      }
+      "note": "いまのモデル（2026-10-18 に定義した。撮る前は override の addEffects で同じ効果を足していた）。説明文の読みと C-0567・C-0578: 自分を含む候補から、枠の HP の割合の想定（満タン）の低い順・同値は枠の若い順に 2 機を選び、付いた時に 1 回だけ「回復効果が適用された時」を起こす"
     }
   ],
   "targets": [
@@ -49,7 +38,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": true,
         "condition": "auto"
       },
@@ -66,7 +57,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": true,
         "condition": "auto"
       },
@@ -97,26 +90,96 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": true,
         "condition": "auto"
       },
       "note": "録画 B（鈴原サクラ 1 枠目・AI + ミハラ 2 枠目・AI + アスカ 3 枠目・撃たない操作）。H1 なら 2 機は鈴原サクラとミハラで、アスカの S1 は一度も付かない（撃つ 2 機が被弾して HP の割合が下がっても、選ばれるのは同じ 2 機）"
+    },
+    {
+      "id": "A-489-asuka-s1-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "recording": "489",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true,
+        "condition": "auto",
+        "manualBursts": "489-04"
+      },
+      "note": "読んだ後に足した（2026-10-18）。録画 489 のバーストの時刻（`489-04`。アスカの S1 が付いたフレームで代えた）を入力にした、アスカの S1 の切れ目。H0 なら付かず空、H1 なら各バーストから 1470f で切れる。D-b（1 秒ごとの刻みで起こす）なら約 2000f 後で、どちらとも違う"
+    },
+    {
+      "id": "A-491-asuka-s1-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "recording": "491",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true,
+        "condition": "auto",
+        "manualBursts": "491-04"
+      },
+      "note": "読んだ後に足した（2026-10-18）。録画 491 のバーストの時刻（`491-04`。アスカの S1 が付いたフレームで代えた）を入力にした、アスカの S1 の切れ目。H0 なら付かず空、H1 なら各バーストから 1470f で切れる。D-b（1 秒ごとの刻みで起こす）なら約 2000f 後で、どちらとも違う"
     }
   ],
   "predicted": {
     "at": "2026-10-18",
-    "commit": "fb558a9eb89f40142dc51e71582df20b36b62242",
+    "commit": "cb1bbd27288b0c0d21f960203144191c1ccf1e73",
     "values": {
       "H0": {
         "A-asuka-s1-starts": [],
         "A-asuka-s1-ends": [],
-        "B-asuka-s1-starts": []
+        "B-asuka-s1-starts": [],
+        "A-489-asuka-s1-ends": [],
+        "A-491-asuka-s1-ends": []
       },
       "H1": {
-        "A-asuka-s1-starts": [777, 3129, 5481, 7833, 10185],
-        "A-asuka-s1-ends": [2247, 4599, 6951, 9303, 10589],
-        "B-asuka-s1-starts": []
+        "A-asuka-s1-starts": [
+          777,
+          3129,
+          5481,
+          7833,
+          10185
+        ],
+        "A-asuka-s1-ends": [
+          2247,
+          4599,
+          6951,
+          9303,
+          10589
+        ],
+        "B-asuka-s1-starts": [],
+        "A-489-asuka-s1-ends": [
+          3059,
+          5417,
+          8130,
+          10482
+        ],
+        "A-491-asuka-s1-ends": [
+          3072,
+          5426,
+          8133,
+          10486
+        ]
       }
     }
   }
