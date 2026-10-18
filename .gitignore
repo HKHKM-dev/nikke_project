@@ -15,6 +15,7 @@ plan/.claude/
 plan/captures/*
 !plan/captures/index.md
 !plan/captures/guide.md
+!plan/captures/protocol.md
 !plan/captures/storage.md
 !plan/captures/tools.md
 !plan/captures/recordings.md

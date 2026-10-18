@@ -27,7 +27,8 @@ E:/nikke_project_captures/      このプロジェクトが採用した録画（
     prerelease/                 実装前に先行公開されたスキル画像
 
 D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
-  index.md                      録画の索引（命名規約・撮影プロトコル・台帳）
+  index.md                      録画の索引（命名規約・台帳・キャラの確かめ方）
+  protocol.md                   撮影の手順
   storage.md                    このファイル（置き場所・バックアップ・取り寄せ）
   tools.md                      解析ツール
   guide.md                      撮影と読み取りの手引き

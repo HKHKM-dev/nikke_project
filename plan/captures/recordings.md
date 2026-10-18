@@ -2,7 +2,7 @@
 
 - **このファイルは生成する（手で書かない）**。録画は `records/recordings/<録画 id>.json` に 1 本 1 ファイルで置き、`npm run records:table` で作り直す（[design-stage20.md](../design-stage20.md) 3.5 節）。
 - 武器・属性・レアはキャラのデータから引く。`—` は記録が無い値。
-- 置き場所・命名規約・撮影プロトコルと、録画ごとの注記（移動の経緯・的・撮影の注意・フレーム落ち）は [index.md](index.md)。
+- 録画ごとの条件・写っているもの・注意（的・フレーム落ちなど）は、その録画の JSON の `conditionNote`（下の表の「条件」の列）。命名規約は [index.md](index.md)、撮影の手順は [protocol.md](protocol.md)、置き場所は [storage.md](storage.md)。
 
 ## 録画
 
