@@ -64,9 +64,11 @@ describe('付与と解除の表示', () => {
 // 分類の設計書の論点 7（plan/design-indirect-notes.md 5 節）: 間接の notes は経路を添える
 describe('notes の印', () => {
   it('adds the path to an indirect note', () => {
-    const delta = definitionOf(20);
-    const [defense] = delta.skills.skill2.notes!;
+    // デルタ S2 の防御力▲ は効果にした（C-0589）ので、防御力の間接の notes が残るユニ S2 で見る
+    const [defense] = definitionOf(160).skills.skill2.notes!;
     expect(noteBadgeLabel(defense!)).toBe('間接（防御力）');
+    const [hp] = definitionOf(20).skills.skill1.notes!;
+    expect(noteBadgeLabel(hp!)).toBe('間接（HP）');
     expect(noteBadgeLabel({ kind: 'noDamage' })).toBe('計算に無関係');
   });
 });

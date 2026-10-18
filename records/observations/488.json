@@ -214,13 +214,31 @@
     "source": "V-0449",
     "readAt": "2026-10-18",
     "kind": "count",
-    "use": "record",
+    "use": "compare",
     "value": 1,
     "unit": "件",
     "description": "同じ 2 回目の一時停止の、シンデレラの「適用中の効果」にある発射体爆発ダメージ▲（発射体爆発ダメージ 92.03% 増加、残り 8.3 秒）の数",
     "method": {
       "tool": "ffmpeg で一時停止の画面（各キャラの「適用中の効果」）を切り出して目で読んだ",
       "note": "攻撃力 35.01%・攻撃ダメージ 34%（どれも残り 8.3 秒）と、S1 の攻撃力▲（汚れなきガラス。残り 0.9 秒）も付いている。美しさ（曇りなき鏡）は STACK 7"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "projectileExplosionDamage",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
     },
     "scope": {
       "slot": 3,
@@ -234,13 +252,107 @@
     "source": "V-0449",
     "readAt": "2026-10-18",
     "kind": "count",
-    "use": "record",
+    "use": "compare",
     "value": 1,
     "unit": "件",
     "description": "同じ 2 回目の一時停止の、デルタの「適用中の効果」にある発射体爆発ダメージ▲（発射体爆発ダメージ 92.03% 増加、残り 8.3 秒）の数",
     "method": {
       "tool": "ffmpeg で一時停止の画面（各キャラの「適用中の効果」）を切り出して目で読んだ",
-      "note": "デルタ（SR）にも付いている。V-0448 の録画 486（アニス：スターの防御力▲ が無い 1 回目のフルバースト）では、デルタに付かなかった（攻撃ダメージ 34% だけ）。デルタ自身の防御力▲（S2 のラストメモリー、防御力 51.42% 増加）で、デルタの最終防御力がアニス：スターの防御力▲ の前の値より高くなるためと読める（結論にしない）"
+      "note": "デルタ（SR）にも付いている。V-0448 の録画 486（アニス：スターの防御力▲ が無い 1 回目のフルバースト）では、デルタに付かなかった（攻撃ダメージ 34% だけ）。デルタ自身の防御力▲（S2 のラストメモリー、防御力 51.42% 増加）で、デルタの最終防御力がアニス：スターの防御力▲ の前の値より高くなるためと読める（V-0452 で結論にした。C-0589）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "projectileExplosionDamage",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill",
+      "frames": [3425, 4535]
+    }
+  },
+  {
+    "id": "488-13",
+    "recording": "488",
+    "source": "V-0452",
+    "readAt": "2026-10-18",
+    "kind": "count",
+    "use": "compare",
+    "value": 1,
+    "unit": "件",
+    "description": "同じ 2 回目の一時停止の、アニス：スター（RL）の「適用中の効果」にある、自分の S2 の発射体爆発ダメージ▲（発射体爆発ダメージ 92.03% 増加、残り 8.3 秒）の数",
+    "method": {
+      "tool": "ffmpeg で一時停止の画面（各キャラの「適用中の効果」）を切り出して目で読んだ",
+      "note": "アニス：スターの欄は、スターフォール・私だけの星（攻撃力 40.01%。どちらも持続効果）・スターダスト 3 つ（攻撃力 35.01%・発射体爆発ダメージ 92.03%・攻撃ダメージ 34%。どれも残り 8.3 秒）の 5 項目（488-10 と同じ画面）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "projectileExplosionDamage",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [3425, 4535]
+    }
+  },
+  {
+    "id": "488-14",
+    "recording": "488",
+    "source": "V-0452",
+    "readAt": "2026-10-18",
+    "kind": "count",
+    "use": "compare",
+    "value": [1],
+    "unit": "件",
+    "description": "デルタのバースト（II）の発動の後、同じ 2 回目の一時停止のデルタの「適用中の効果」に、S2 の防御力▲（ラストメモリー。防御力 51.42% 増加、残り 10.9 秒）が付いたか（1・0。1 回）",
+    "method": {
+      "tool": "ffmpeg で一時停止の画面（各キャラの「適用中の効果」）を切り出して目で読んだ",
+      "note": "デルタの欄は、スターフォール（持続効果）・リコレクション（最大HP 8.82% 増加。残り 9.6 秒）・リメンバーミー（敵を挑発。残り 0.8 秒）・ラストメモリー（残り 10.9 秒）・スターダスト（攻撃力 35.01%・発射体爆発ダメージ 92.03%・攻撃ダメージ 34%。どれも残り 8.3 秒）。リメンバーミー（10 秒維持）とラストメモリー（20 秒維持）の残りの差は 10.1 秒（486-08 は 10.0 秒。表示の丸めの幅）。デルタのバーストの発動は、この一時停止の約 9.1 秒前（I の発動の約 1 秒後。右のバースト欄の II → III の替わり目は 488-02）で、フルバースト開始（488-03）の約 7.8 秒前。アニス：スターの防御力▲ が切れた後（フルバースト開始の約 1.2 秒後）も、デルタの防御力▲ は付いている"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "defense",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
     },
     "scope": {
       "slot": 2,

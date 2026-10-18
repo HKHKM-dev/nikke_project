@@ -1,5 +1,6 @@
 // 分類の設計書の論点 7（plan/design-indirect-notes.md）: 間接の notes（indirect・path）と読む側の印（reads）の読み込み、最小構成の検査、
 // キャラ単位の判定、plan/skills.md の表示。録画とキャラは実データを使う（件数や ID の一覧は直書きしない）
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { loadClaims, loadRecordsData, loadRecordingsFile, recordingMap } from '../../../scripts/records-data.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
@@ -81,7 +82,27 @@ const ctx: RelevanceContext = {
   claims,
 };
 const rec = (id: string) => recordings.get(id)!;
-const named = (r: RecordingEntry, name: string) => elementsOf(r, ctx).find((e) => e.name === name)!;
+const named = (r: RecordingEntry, name: string, c: RelevanceContext = ctx) =>
+  elementsOf(r, c).find((e) => e.name === name)!;
+
+// デルタ S2 の防御力▲ は効果にした（2 段目の段 7。C-0589）。防御力の間接の notes のまま読む検査は、以前の定義（S2 が間接の notes だけ）に
+// デルタを差し替えた文脈で行う（録画 162・063 の編成と、読む側のアニス：スターは実データ）
+const oldDeltaRaw = JSON.parse(readFileSync(new URL('../../../data/skills/20.json', import.meta.url), 'utf8')) as {
+  skills: Record<string, unknown>;
+};
+oldDeltaRaw.skills.skill2 = {
+  effects: [],
+  notes: [
+    {
+      ja: 'バーストスキル使用時の自分の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）',
+      en: 'DEF up on self when using the Burst Skill does not change damage by itself (it matters only with an effect reading DEF in the team)',
+      kind: 'indirect',
+      path: 'defense',
+      claims: ['C-0081'],
+    },
+  ],
+};
+const oldCtx: RelevanceContext = { ...ctx, skills: new Map(ctx.skills).set(20, parseSkillDefinition(oldDeltaRaw)) };
 const obs = (patch: Partial<Observation>): Observation => ({
   id: '162-99',
   recording: '162',
@@ -96,43 +117,45 @@ const obs = (patch: Partial<Observation>): Observation => ({
 describe('最小構成の検査の間接の要素（plan/design-indirect-notes.md 2 節）', () => {
   // 162 はアニス：スター（1 枠目。S2 の対象が防御力の比べで決まる。reads: defense）・デルタ（2 枠目。S2 の防御力▲。間接の防御力）・
   // イサベル
-  const defense = () => named(rec('162'), 'デルタ skill2.notes[0]');
+  const defense = () => named(rec('162'), 'デルタ skill2.notes[0]', oldCtx);
   const hit = obs({ kind: 'hit', scope: { slot: 2, source: 'normal' } });
 
   it('lists indirect notes with their path, and readers with their reads', () => {
     expect(defense()).toMatchObject({ type: 'note', path: 'defense' });
-    expect(named(rec('162'), 'アニス：スター skill2.effects[1]').reads).toEqual(['defense']);
+    expect(named(rec('162'), 'アニス：スター skill2.effects[1]', oldCtx).reads).toEqual(['defense']);
   });
 
   it('is relevant only while a reader of the path can move the observation', () => {
-    expect(notRelevantReason(defense(), hit, rec('162'), ctx)).toBeUndefined();
+    expect(notRelevantReason(defense(), hit, rec('162'), oldCtx)).toBeUndefined();
     // 観測した枠が分からなければ効きうるとみる
-    expect(notRelevantReason(defense(), obs({ kind: 'hit' }), rec('162'), ctx)).toBeUndefined();
+    expect(notRelevantReason(defense(), obs({ kind: 'hit' }), rec('162'), oldCtx)).toBeUndefined();
     // 読む側（アニス：スター S2 の発射体爆発ダメージ▲）は値にだけ効くので、間隔には効かない
-    expect(notRelevantReason(defense(), obs({ kind: 'interval' }), rec('162'), ctx)).toBe(
+    expect(notRelevantReason(defense(), obs({ kind: 'interval' }), rec('162'), oldCtx)).toBe(
       '防御力を読む効果がこの観測値に効かない',
     );
     // 印か感度で効かないと分かった読む側は数えない
-    expect(notRelevantReason(defense(), hit, rec('162'), ctx, () => true)).toBe(
+    expect(notRelevantReason(defense(), hit, rec('162'), oldCtx, () => true)).toBe(
       '防御力を読む効果がこの観測値に効かない',
     );
     // 063 にはデルタがいるが、防御力を読む味方がいない
-    const inTeam063 = named(rec('063'), 'デルタ skill2.notes[0]');
-    expect(notRelevantReason(inTeam063, obs({ recording: '063' }), rec('063'), ctx)).toBe('防御力を読む味方がいない');
+    const inTeam063 = named(rec('063'), 'デルタ skill2.notes[0]', oldCtx);
+    expect(notRelevantReason(inTeam063, obs({ recording: '063' }), rec('063'), oldCtx)).toBe(
+      '防御力を読む味方がいない',
+    );
   });
 
   // 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 「自分と自分より最終防御力が低い味方」は発動者をいつも対象にする
   it('leaves out the hits of the reader itself, whose own target does not depend on DEF', () => {
     const own = obs({ kind: 'hit', scope: { slot: 1, source: 'normal' } });
-    expect(notRelevantReason(defense(), own, rec('162'), ctx)).toBe('防御力を読む効果がこの観測値に効かない');
+    expect(notRelevantReason(defense(), own, rec('162'), oldCtx)).toBe('防御力を読む効果がこの観測値に効かない');
     const both = obs({ kind: 'hit', scope: { slot: [1, 2], source: 'normal' } });
-    expect(notRelevantReason(defense(), both, rec('162'), ctx)).toBeUndefined();
+    expect(notRelevantReason(defense(), both, rec('162'), oldCtx)).toBeUndefined();
   });
 
   it('stays unconfirmed with readers even when the note cites a confirmed claim (its evidence had no reader)', () => {
     const e = defense();
     expect(e.claims).not.toEqual([]);
-    expect(unconfirmedReason(e, rec('162'), ctx)).toBe('間接（防御力）: 読む側のいる編成の根拠なし');
+    expect(unconfirmedReason(e, rec('162'), oldCtx)).toBe('間接（防御力）: 読む側のいる編成の根拠なし');
   });
 });
 
@@ -145,6 +168,19 @@ describe('2 段目の段 7: 防御力▲ の効果（plan/design-skill-stage7.md
     expect(up()).toMatchObject({ type: 'effect', shape: { kind: 'timed', stat: 'defense', target: 'self' } });
     expect(up()).not.toHaveProperty('path');
     expect(named(rec('163'), 'アニス：スター skill2.effects[1]').shape?.targetDefense).toBe('lowerThanSelf');
+  });
+
+  // デルタ S2（C-0589）も効果になった。162 は、アニス：スター（1 枠目。読む側）・デルタ（2 枠目）・イサベル
+  it('treats the DEF up of Delta, an effect since C-0589, as the indirect DEF path too', () => {
+    const delta = named(rec('162'), 'デルタ skill2.effects[0]');
+    expect(delta).toMatchObject({ type: 'effect', shape: { kind: 'timed', stat: 'defense', target: 'self' } });
+    expect(delta).not.toHaveProperty('path');
+    const in162 = (patch: Partial<Observation>) => obs({ kind: 'hit', ...patch });
+    expect(notRelevantReason(delta, in162({ scope: { slot: 2, source: 'normal' } }), rec('162'), ctx)).toBeUndefined();
+    expect(notRelevantReason(delta, in162({ scope: { slot: 3, source: 'normal' } }), rec('162'), ctx)).toBeUndefined();
+    expect(notRelevantReason(delta, in162({ scope: { slot: 1, source: 'normal' } }), rec('162'), ctx)).toBe(
+      '防御力を読む効果がこの観測値に効かない',
+    );
   });
 
   it('is relevant as the indirect DEF path: only through a reader, and not on the hits of the reader itself', () => {

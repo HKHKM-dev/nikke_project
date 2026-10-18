@@ -1,4 +1,5 @@
-// デルタ（20）を含む編成: 定義はダメージに効く効果を持たない（全スロット noEffect）。sim と calc の整合（V-0027、C-0081）。
+// デルタ（20）を含む編成: 定義はダメージに効く効果を持たない（S1 とバーストは noEffect。S2 の防御力▲ は自分に付く効果で、与ダメージの式は
+// 読まない。C-0589）。sim と calc の整合（V-0027、C-0081）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -57,12 +58,15 @@ const TEAMS: Record<string, { input: TeamInput; delta: number }> = {
 };
 
 describe('デルタの定義', () => {
-  it('is defined with notes only (no effects in any slot)', () => {
+  it('has no effects in S1 and the burst, and only the DEF up on herself in S2 (C-0081・C-0589)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${DELTA}.json`));
-    for (const slot of ['skill1', 'skill2', 'burst'] as const) {
+    for (const slot of ['skill1', 'burst'] as const) {
       expect(def.skills[slot].support).toBe('noEffect');
       expect(def.skills[slot].effects).toEqual([]);
     }
+    expect(def.skills.skill2.support).toBe('supported');
+    expect(def.skills.skill2.effects).toHaveLength(1);
+    expect(def.skills.skill2.effects[0]).toMatchObject({ kind: 'timed', stat: 'defense', target: 'self' });
   });
 });
 
@@ -71,8 +75,10 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, delta }
   const calc = computeTeamDamage(input);
   const plan = planTeamRun(input);
 
-  it('gives no buff windows or instants from Delta (C-0081)', () => {
-    expect(piecesOf(plan).filter((w) => w.sourceSlotIndex === delta)).toEqual([]);
+  it('gives no damage buff windows or instants from Delta, only the DEF up on herself (C-0081・C-0589)', () => {
+    const windows = piecesOf(plan).filter((w) => w.sourceSlotIndex === delta);
+    expect(windows.length).toBeGreaterThan(0);
+    expect(windows.every((w) => w.effect.stat === 'defense' && w.slotIndex === delta)).toBe(true);
     expect(plan.instants.filter((e) => e.sourceSlotIndex === delta)).toEqual([]);
   });
 

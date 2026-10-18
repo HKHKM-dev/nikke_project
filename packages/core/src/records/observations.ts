@@ -886,6 +886,29 @@ function burstBuffApplied(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
+ * 2 段目の段 7（デルタの防御力▲。V-0452）: n 回目（0 始まり）のフルバーストで、枠が受ける timed の効果（skill と stat で絞る。出どころの枠は
+ * 問わない）の窓が、そのフルバーストの窓の中（か、窓を開いた III の本当の発動から窓の始まりまで）に始まっていれば 1、無ければ 0。
+ * 録画では、フルバースト開始の直後の一時停止画面の適用中の効果の有無と比べる。対象が最終防御力の比べで決まる効果（targetDefense）が
+ * どの枠に付いたかを、フルバーストの時刻に依らずに比べる
+ */
+function fullBurstBuffApplied(result: SimResult, ctx: MetricContext): number {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const window = schedule.fullBurstWindows[Number(ctx.args.n)];
+  if (window === undefined) throw new Error(`${String(ctx.args.n)} 回目のフルバーストが無い`);
+  const slotIndex = slotIndexOf(ctx);
+  const applied = buffPiecesOf(result).some(
+    (p) =>
+      p.slotIndex === slotIndex &&
+      p.effect.source.skill === ctx.args.skill &&
+      p.effect.stat === ctx.args.stat &&
+      window.start - FULL_BURST_AFTER_ACTIVATION_FRAMES <= p.start &&
+      p.start < window.end,
+  );
+  return applied ? 1 : 0;
+}
+
+/**
  * 2 段目の段 3（同）: 枠の状態 state のスタック量の減少（stackChange の decrease）ごとに、減少のフレームから次のフレームへの
  * スタックの段の最大の差（負。付いている段より多く減らせば、付いている段の数だけ）。count を書くと最初の count 回。録画では、発動の
  * 直前（フルバーストの外の 1 ヒットの会心の比）と直後（一時停止画面）のスタック数の差と比べる
@@ -1123,6 +1146,8 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   fullBurstCrossingShotGauge: { args: ['slot'], sim: fullBurstCrossingShotGauge },
   // 2 段目の段 3（ソーダ：トゥインクルバニーのバースト。V-0437）: スタック数の条件で付いたか・スタック量の減少・フルバースト中の数え方
   burstBuffApplied: { args: ['slot', 'skill', 'stat'], sim: burstBuffApplied },
+  // 2 段目の段 7（V-0452）: フルバーストで、枠に効果（対象が最終防御力の比べで決まる発射体爆発ダメージ▲ など）が付いたか
+  fullBurstBuffApplied: { args: ['slot', 'skill', 'stat', 'n'], sim: fullBurstBuffApplied },
   stateStackDrops: { args: ['slot', 'state'], sim: stateStackDrops },
   fullBurstStackGainResidues: { args: ['slot', 'state', 'every'], sim: fullBurstStackGainResidues },
   shotGauge: { args: ['slot', 'n'], sim: shotGauge },

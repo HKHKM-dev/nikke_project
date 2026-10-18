@@ -1,6 +1,7 @@
 // 2 段目の段 7（plan/design-skill-stage7.md）: 防御力の経路。枠の防御力（バフ前。defenceOverride とスペック固定）、防御力▲（stat defense）、
 // 対象の絞り込み「自分と自分より最終防御力が低い味方」（targetDefense: lowerThanSelf。アニス：スター（17）の S2 の発射体爆発ダメージ▲。
-// C-0586）。撮影の見込みの編成（2.2 節の録画 A・B）と録画 163 の編成の対象の枠、sim と calc の整合
+// C-0587・C-0588）。撮影の見込みの編成（2.2 節の録画 A・B）と録画 163 の編成の対象の枠、sim と calc の整合。論点 4 の続き: 味方の
+// 防御力▲ も比べに入る（デルタ（20）の S2 を間接の notes から効果にした。C-0589。録画 486 でデルタが外れ、録画 488 で入る）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
@@ -13,10 +14,12 @@ import {
   FIXED_SPEC_ENEMY_DEFENCE,
 } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
+import { METRICS } from '../records/observations.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
+import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
+import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
 
@@ -96,6 +99,13 @@ function projectileFires(input: TeamInput, anis: number): Fire[] {
 /** 防御力▲ の件の小片 */
 const defenceUps = (input: TeamInput) => piecesOf(planTeamRun(input)).filter((p) => p.effect.stat === 'defense');
 
+/** 枠 source が付けた防御力▲ の件の小片 */
+const defenceUpsFrom = (input: TeamInput, source: number) =>
+  defenceUps(input).filter((p) => p.sourceSlotIndex === source);
+
+/** 小片が、発火の始まり start に効いているか */
+const activeAt = (p: { start: number; end: number }, start: number) => p.start <= start && start < p.end;
+
 describe('防御力▲ と targetDefense の読み込み', () => {
   const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
   const withEffect = (effect: object) =>
@@ -173,10 +183,15 @@ describe('自分と自分より最終防御力が低い味方（C-0586）', () =
 
   it('leaves out an ally with the same final DEF (録画 A の編成。論点 2)', () => {
     // フラワーが I を撃つので、アニス：スターはバーストを撃たず、防御力▲ も無い
-    expect(defenceUps(TIE)).toEqual([]);
+    expect(defenceUpsFrom(TIE, 1)).toEqual([]);
     const fires = projectileFires(TIE, 1);
     expect(fires.length).toBeGreaterThan(0);
-    for (const f of fires) expect(f.slots).toEqual([0, 1, 2]);
+    // フラワー（0）とアニス：スター（1）に付き、同値のシンデレラ（3）には付かない（デルタ（2）は下の C-0589）
+    for (const f of fires) {
+      expect(f.slots).toContain(0);
+      expect(f.slots).toContain(1);
+      expect(f.slots).not.toContain(3);
+    }
   });
 
   it('adds the ally once the DEF up of the burst lifts Anis: Star above it (録画 B の編成。論点 3)', () => {
@@ -219,6 +234,126 @@ describe('自分と自分より最終防御力が低い味方（C-0586）', () =
     const fires = projectileFires(REC163, 1);
     expect(fires.length).toBeGreaterThan(0);
     for (const f of fires) expect(f.slots).toEqual([0, 1, 2, 3]);
+  });
+});
+
+// 論点 4 の続き（C-0589）: デルタ（SR）の S2 の防御力▲ を間接の notes から効果にした。デルタの最終防御力に入るので、アニス：スターの
+// バーストの防御力▲ が無い録画 486 では、デルタは自分の防御力▲ でアニス：スターのバフ前を上回って対象から外れ、アニス：スターの
+// 防御力▲ が効いている間に始まる録画 488 では入る（デルタは SR で、発射体爆発ダメージ▲ は値に効かない。付くかどうかだけが変わる）
+describe('デルタの S2 の防御力▲（C-0589）', () => {
+  const delta = character(DELTA);
+  const deltaUp = Number(delta.skills.skill2.values[0]![9]) / 100;
+  const deltaSeconds = Number(delta.skills.skill2.values[1]![9]);
+
+  it('defines it as a timed DEF up on self at burst use, with the description values (Lv10: 51.42%, 20 s)', () => {
+    const def = definitionOf(DELTA);
+    expect(def.skills.skill2.effects).toHaveLength(1);
+    expect(def.skills.skill2.effects[0]).toMatchObject({
+      kind: 'timed',
+      trigger: 'burstUse',
+      target: 'self',
+      stat: 'defense',
+      ref: 1,
+      durationRef: 2,
+    });
+    // 間接の notes のままではない（効果にした）
+    expect((def.skills.skill2.notes ?? []).filter((n) => n.kind === 'indirect')).toEqual([]);
+    const [resolved] = resolveTimed(def, delta, MAX_SKILL_LEVELS);
+    expect(resolved).toMatchObject({ stat: 'defense', target: 'self', trigger: 'burstUse' });
+    expect(resolved!.value).toBeCloseTo(0.5142, 12);
+    expect(resolved!.value).toBeCloseTo(deltaUp, 12);
+    expect(resolved!.durationFrames).toBe(gameSecondsToFrames(deltaSeconds));
+    expect(deltaSeconds).toBe(20);
+  });
+
+  it('lifts the final DEF of Delta above the base DEF of Anis: Star, and not above her DEF with her burst DEF up', () => {
+    const base = fixedDefence(DELTA);
+    // バフ前はデルタのほうが低い（防御力▲ が無ければ、アニス：スターより低い味方として入る）
+    expect(base).toBeLessThan(fixedDefence(ANIS_STAR));
+    expect(base * (1 + deltaUp)).toBeGreaterThan(fixedDefence(ANIS_STAR));
+    expect(base * (1 + deltaUp)).toBeLessThan(fixedDefence(ANIS_STAR) * (1 + burstDefenceUp));
+  });
+
+  it('leaves Delta out while Anis: Star has no DEF up, and Delta has hers (録画 486 の編成)', () => {
+    const ups = defenceUpsFrom(TIE, 2);
+    expect(ups.length).toBeGreaterThan(0);
+    expect(ups.every((p) => p.slotIndex === 2)).toBe(true);
+    const fires = projectileFires(TIE, 1);
+    expect(fires.length).toBeGreaterThan(0);
+    for (const f of fires) {
+      // どのフルバーストの始まりにも、II のデルタのバーストの後で、デルタの防御力▲ が効いている
+      expect(ups.some((p) => activeAt(p, f.start))).toBe(true);
+      expect(f.slots).toEqual([0, 1]);
+    }
+  });
+
+  it('is what leaves Delta out: without it the 録画 486 composition targets her, as before (間接の notes の形)', () => {
+    const without = structuredClone(
+      readJson<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>('../../data/skills/20.json'),
+    );
+    without.skills.skill2 = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
+    const input = team(
+      [
+        fixedSlot(FLOWER),
+        fixedSlot(ANIS_STAR),
+        fixedSlot(DELTA, { skills: { definition: parseSkillDefinition(without), levels: MAX_SKILL_LEVELS } }),
+        fixedSlot(CINDERELLA),
+      ],
+      3,
+    );
+    expect(defenceUpsFrom(input, 2)).toEqual([]);
+    const fires = projectileFires(input, 1);
+    expect(fires.length).toBeGreaterThan(0);
+    for (const f of fires) expect(f.slots).toEqual([0, 1, 2]);
+  });
+
+  it('puts Delta in while the DEF up of Anis: Star lifts her above, and keeps her after it ends (録画 488 の編成)', () => {
+    const anisUps = defenceUpsFrom(CONTROL, 0);
+    const deltaUps = defenceUpsFrom(CONTROL, 1);
+    const fires = projectileFires(CONTROL, 0);
+    expect(fires.length).toBeGreaterThan(0);
+    for (const f of fires) {
+      const anisUp = anisUps.find((p) => activeAt(p, f.start));
+      expect(anisUp).toBeDefined();
+      // 比べる時に、デルタの防御力▲ も効いている（効いていなければ、入るのは当たり前）
+      expect(deltaUps.some((p) => activeAt(p, f.start))).toBe(true);
+      expect(f.slots).toEqual([0, 1, 2]);
+      // アニス：スターの防御力▲ が先に切れ、そのときデルタの防御力▲ はまだ効いている（比べ直せば、デルタが上回って外れる）が、
+      // 対象は維持される（C-0588）
+      expect(anisUp!.end).toBeLessThan(f.ends[0]!);
+      expect(deltaUps.some((p) => activeAt(p, anisUp!.end))).toBe(true);
+    }
+  });
+});
+
+// 指標 fullBurstBuffApplied（V-0452）: n 回目のフルバーストで、枠に効果が付いたか。録画 486・488 の一時停止の画面の「適用中の効果」と比べる
+describe('指標 fullBurstBuffApplied（録画 486・488 の画面との比べ）', () => {
+  const applied = (input: TeamInput, slot: number, n = 0, stat = 'projectileExplosionDamage') =>
+    METRICS.fullBurstBuffApplied!.sim(runSimulation(input), {
+      args: { slot, skill: 'skill2', stat, n },
+      input,
+    } as Parameters<(typeof METRICS)[string]['sim']>[1]);
+
+  it('marks who got the projectile explosion damage up at the first Full Burst', () => {
+    // 録画 486: フラワー・アニス：スターに付き、デルタ・シンデレラには付かない
+    expect([1, 2, 3, 4].map((slot) => applied(TIE, slot))).toEqual([1, 1, 0, 0]);
+    // 録画 488: アニス：スター・デルタ・シンデレラの 3 人とも付く
+    expect([1, 2, 3].map((slot) => applied(CONTROL, slot))).toEqual([1, 1, 1]);
+  });
+
+  it('is 0 for an effect the slot never gets, and rejects a Full Burst that does not exist', () => {
+    expect(applied(CONTROL, 3, 0, 'defense')).toBe(0);
+    expect(() => applied(CONTROL, 1, 99)).toThrow(/フルバースト/);
+  });
+
+  it('reads the DEF up of Delta with burstBuffApplied (録画 486・488 の画面のラストメモリー)', () => {
+    const delta = (input: TeamInput, slot: number) =>
+      METRICS.burstBuffApplied!.sim(runSimulation(input), {
+        args: { slot, skill: 'skill2', stat: 'defense', count: 1 },
+        input,
+      } as Parameters<(typeof METRICS)[string]['sim']>[1]);
+    expect(delta(TIE, 3)).toEqual([1]);
+    expect(delta(CONTROL, 2)).toEqual([1]);
   });
 });
 
