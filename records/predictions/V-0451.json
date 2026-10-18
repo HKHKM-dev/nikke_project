@@ -37,8 +37,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       },
       "note": "録画 A（鈴原サクラ 1 枠目・AI + アスカ 2 枠目・撃たない操作）。アスカの S1（回復効果が適用された時の攻撃力▲）の付き始め。H1 なら鈴原サクラのバーストのたびに付く。モデルは操作のアスカも撃つので、ゲージの溜まり方（バーストの時刻）は実機と違う。比べるのは、バーストの回数と、バーストから付き始めまでの差"
     },
@@ -54,8 +53,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       },
       "note": "録画 A のアスカの S1 の切れ目。付いた時に 1 回だけ起こす読み（D-a）なら付いてから 25 秒で切れる。1 秒ごとの刻みで起こす読み（D-b）なら最後の刻み（付いてから約 9〜10 秒）から 25 秒で、窓が約 34〜35 秒になる（予測ファイルの外。検証記録に手で書く）"
     },
@@ -85,8 +83,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       },
       "note": "録画 B（鈴原サクラ 1 枠目・AI + ミハラ 2 枠目・AI + アスカ 3 枠目・撃たない操作）。H1 なら 2 機は鈴原サクラとミハラで、アスカの S1 は一度も付かない（撃つ 2 機が被弾して HP の割合が下がっても、選ばれるのは同じ 2 機）"
     },
@@ -104,7 +101,6 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "condition": "auto",
         "manualBursts": "489-04"
       },
       "note": "読んだ後に足した（2026-10-18）。録画 489 のバーストの時刻（`489-04`。アスカの S1 が付いたフレームで代えた）を入力にした、アスカの S1 の切れ目。H0 なら付かず空、H1 なら各バーストから 1470f で切れる。D-b（1 秒ごとの刻みで起こす）なら約 2000f 後で、どちらとも違う"
@@ -123,7 +119,6 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "condition": "auto",
         "manualBursts": "491-04"
       },
       "note": "読んだ後に足した（2026-10-18）。録画 491 のバーストの時刻（`491-04`。アスカの S1 が付いたフレームで代えた）を入力にした、アスカの S1 の切れ目。H0 なら付かず空、H1 なら各バーストから 1470f で切れる。D-b（1 秒ごとの刻みで起こす）なら約 2000f 後で、どちらとも違う"
@@ -131,7 +126,7 @@
   ],
   "predicted": {
     "at": "2026-10-18",
-    "commit": "cb1bbd27288b0c0d21f960203144191c1ccf1e73",
+    "commit": "3ef590912b8df4eeffd0040105045475c1414151",
     "values": {
       "H0": {
         "A-asuka-s1-starts": [],
@@ -141,8 +136,8 @@
         "A-491-asuka-s1-ends": []
       },
       "H1": {
-        "A-asuka-s1-starts": [777, 3129, 5481, 7833, 10185],
-        "A-asuka-s1-ends": [2247, 4599, 6951, 9303, 10589],
+        "A-asuka-s1-starts": [772, 3124, 5476, 7828, 10180],
+        "A-asuka-s1-ends": [2242, 4594, 6946, 9298, 10589],
         "B-asuka-s1-starts": [],
         "A-489-asuka-s1-ends": [3059, 5417, 8130, 10482],
         "A-491-asuka-s1-ends": [3072, 5426, 8133, 10486]

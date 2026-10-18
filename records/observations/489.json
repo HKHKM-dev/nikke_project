@@ -92,7 +92,6 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "condition": "auto",
         "manualBursts": "489-04"
       }
     }
