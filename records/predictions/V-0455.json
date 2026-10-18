@@ -1,0 +1,137 @@
+{
+  "verification": "V-0455",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    },
+    {
+      "rid": 450,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-no",
+      "note": "いまのモデル（コアダメージ▲はシューティングスターのコアに乗らない。コア = 胴体 × 2・コアの会心 = 胴体 × 2.5。C-0297）。H-yes（コアの項 +1 が 1.4007 倍。コア = 胴体 × 2.4007・会心のコア = 胴体 × 2.9007）と H-mul（1 ヒット全体に 1.4007 を掛ける）は検証記録に手で書く"
+    }
+  ],
+  "targets": [
+    {
+      "id": "star-body",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": false,
+        "core": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目の窓のシューティングスターの胴体（会心なし。フルバーストなし）"
+    },
+    {
+      "id": "star-core",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": false,
+        "core": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じヒットのコア（H-no で胴体 × 2）"
+    },
+    {
+      "id": "star-core-crit",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": true,
+        "core": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じヒットのコアの会心（H-no で胴体 × 2.5）"
+    },
+    {
+      "id": "shot-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2500,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "アニス：スターの通常攻撃のコアの 1 ヒット（近。窓の外）。ナガの S2 が付いていることの確かめ（どの仮説でもコアの項に 0.4007 が乗る）"
+    },
+    {
+      "id": "shot-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ区間の通常攻撃の胴体の 1 ヒット"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-18",
+    "commit": "c6665d3d5c89e5ce0b33614d3664bfc82fabe6a7",
+    "values": {
+      "H-no": {
+        "star-body": 60902.2713624,
+        "star-core": 121804.5427248,
+        "star-core-crit": 152255.67840600002,
+        "shot-core": 414215.76370425004,
+        "shot-body": 172539.5775
+      }
+    }
+  }
+}

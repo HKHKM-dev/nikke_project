@@ -1,0 +1,107 @@
+{
+  "formatVersion": 1,
+  "resourceId": 450,
+  "checkedAt": "2026-10-18",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃 12 回ごとの味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "Cover HP recovery for all allies every 12 normal attacks does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover"
+        },
+        {
+          "ja": "バリア適用時の味方全体のコアダメージ▲（10 秒）は未対応（撮っていない。ナガの前にバリアが張られる編成でだけ起きる）",
+          "en": "Damage dealt when attacking core up for all allies when a shield is placed (10 s) is not modeled (not recorded; it occurs only in teams that place a shield in front of Naga)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "coreDamage",
+            "target": "allies",
+            "trigger": "unknown"
+          },
+          "reads": [
+            "barrier"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "topAttack",
+          "targetCountRef": 2,
+          "stat": "coreDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "「通常攻撃で 5 回攻撃した時」は撃った発の通算（1 トリガー = 1 回。ペレットの数ではない。ドレイクの S2 の C-0458 と同じ読み）で数え、5 発ごとに発火して 5 秒を数え直す（重ならない）。「攻撃力が最も高い味方」は最終攻撃力の順位（topAttack）で読む。2 機なので、2 人以下の編成では順位に依らず全員に付く",
+            "en": "\"After performing 5 normal attacks\" counts every normal shot fired (one trigger = one attack, not pellets; read as for Drake's S2, C-0458); each 5th shot fires it and restarts the 5 s (no stacking). \"The ally with the highest ATK\" is read as the final ATK ranking (topAttack). With 2 targets, every member of a team of 2 or fewer gets it regardless of ranking"
+          },
+          "claims": [
+            "C-0592",
+            "C-0593"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "通常攻撃 5 回ごとの、残りの HP の割合が最も低い味方 2 機への回復（スキル発動者の最終最大HP 基準）は未対応（撮っていない。回復を受けた時の効果を起こさない。回復量はダメージに関係しない）",
+          "en": "The heal every 5 normal attacks on the 2 allies with the lowest HP ratio (based on the caster's final max HP) is not modeled (not recorded; it does not trigger effects on being healed; the amount does not affect damage)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "lowestHpRatio",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の貫通特化（10 秒）は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く）",
+          "en": "Pierce on self (10 s) does not change damage by itself (it matters only with a Pierce Damage increase in the team)",
+          "kind": "indirect",
+          "path": "pierce",
+          "effect": {
+            "kind": "unknown"
+          }
+        },
+        {
+          "ja": "味方全体のスキル発動者基準の攻撃力▲（10 秒）は未対応（撮っていない）",
+          "en": "ATK up for all allies based on the caster's ATK (10 s) is not modeled (not recorded)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分がバリア適用状態のときの、追加の味方全体のスキル発動者基準の攻撃力▲（10 秒）は未対応（撮っていない。ナガの前にバリアが張られる編成でだけ起きる）",
+          "en": "The extra ATK up for all allies based on the caster's ATK (10 s) while a shield is placed in front of Naga is not modeled (not recorded; it occurs only in teams that place a shield in front of Naga)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          },
+          "reads": [
+            "barrier"
+          ]
+        }
+      ]
+    }
+  }
+}

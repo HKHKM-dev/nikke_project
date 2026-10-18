@@ -1,0 +1,98 @@
+[
+  {
+    "id": "507-01",
+    "recording": "507",
+    "source": "V-0455",
+    "readAt": "2026-10-19",
+    "kind": "hit",
+    "use": "compare",
+    "value": 60902,
+    "description": "シューティングスターの胴体の 1 ヒット（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "60,902 の単独の増分で 54 回。単騎の 211-01 と同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": false,
+        "core": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "507-02",
+    "recording": "507",
+    "source": "V-0455",
+    "readAt": "2026-10-19",
+    "kind": "hit",
+    "use": "compare",
+    "value": 146208,
+    "description": "シューティングスターのコアの 1 ヒット（会心なし。ナガの S2 のコアダメージ▲が付いている間）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "146,208 の単独の増分で 189 回（8 回の窓のどれにも出る）。胴体 × 2.4007（H-yes）。H-no のコア 121,805 は、ナガの S2 が切れていたとみられる 5 回だけ（V-0455「結果」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": false,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "507-03",
+    "recording": "507",
+    "source": "V-0455",
+    "readAt": "2026-10-19",
+    "kind": "hit",
+    "use": "compare",
+    "value": 176659,
+    "description": "シューティングスターのコアの 1 ヒットの会心（コアダメージ▲が付いている間）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "176,659 の単独の増分で 31 回。胴体 × 2.9007（H-yes）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": true,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  }
+]
