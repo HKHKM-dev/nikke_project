@@ -1,0 +1,29 @@
+{
+  "id": "502",
+  "date": "2026-10-18",
+  "folder": "range",
+  "file": "20261018-502_rl_anis-star_no-burst.mp4",
+  "original": "2026-10-18_23-24-15.mp4",
+  "durationSec": 241.7,
+  "frames": 14501,
+  "fps": 60,
+  "sizeMB": 292.6,
+  "sha256": "680bcdda9e92",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0453 条件 N。アニス：スター単騎・操作（AUTO 射撃 ON・オートバースト OFF）。バーストを一度も使わない。撮影順は B B B N N N"
+}

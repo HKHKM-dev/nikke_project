@@ -1,0 +1,60 @@
+{
+  "verification": "V-0453",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "M0",
+      "note": "いまのモデル（遠のコアの割合はバーストの使用・照準・姿勢・着地点によらず 1 行。C-0425 の 45/90）。H0・H-B・H-A・H-P・H-X は検証記録に手で書く"
+    }
+  ],
+  "targets": [
+    {
+      "id": "far-out-N",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "条件 N（バーストを一度も使わない）の 3 本の、遠（3 区間目）の通常攻撃のコア命中率"
+    },
+    {
+      "id": "far-out-B",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "条件 B（1 区間目で 1 回だけ手でバースト）の 3 本の、遠（3 区間目）のバーストの窓の外の通常攻撃のコア命中率。モデルの burst: true はクールタイムごとに使うが、窓の外の割合はバーストの使い方によらない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-18",
+    "commit": "fb47d83c07ff741682933555eb42669c3368ebc3",
+    "values": {
+      "M0": {
+        "far-out-N": 0.5,
+        "far-out-B": 0.5
+      }
+    }
+  }
+}

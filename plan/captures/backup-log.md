@@ -298,3 +298,9 @@
 - 2026-10-18 21:22 録画 494（I-DOLL・オーシャン + アスカ）: `range/20261018-494_smg+ar_ocean+asuka-idle.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-18 21:22 録画 495（アスカ + I-DOLL・オーシャン）: `range/20261018-495_smg+ar_asuka-idle+ocean.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-18 21:22 録画 496（アスカ + I-DOLL・オーシャン）: `range/20261018-496_smg+ar_asuka-idle+ocean.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-18 23:36 録画 499（アニス：スター単騎）: `range/20261018-499_rl_anis-star_burst-once.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-18 23:36 録画 500（アニス：スター単騎）: `range/20261018-500_rl_anis-star_burst-once.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-18 23:36 録画 501（アニス：スター単騎）: `range/20261018-501_rl_anis-star_burst-once.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-18 23:36 録画 502（アニス：スター単騎）: `range/20261018-502_rl_anis-star_no-burst.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-18 23:36 録画 503（アニス：スター単騎）: `range/20261018-503_rl_anis-star_no-burst.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-18 23:36 録画 504（アニス：スター単騎）: `range/20261018-504_rl_anis-star_no-burst.mp4` を同期（E: と I: で sha256 が一致）。
