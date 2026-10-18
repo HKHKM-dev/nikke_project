@@ -16,9 +16,7 @@
       "id": "H0",
       "note": "持続回復が「回復効果が適用された時」を起こさない（定義する前のモデルの形。鈴原サクラの回復を外す）。アスカの S1 はどちらの録画でも付かない",
       "override": {
-        "dropHeals": [
-          836
-        ]
+        "dropHeals": [836]
       }
     },
     {
@@ -38,9 +36,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "condition": "auto"
       },
@@ -57,9 +53,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "condition": "auto"
       },
@@ -90,9 +84,7 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "condition": "auto"
       },
@@ -110,9 +102,7 @@
       "recording": "489",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "condition": "auto",
         "manualBursts": "489-04"
@@ -131,9 +121,7 @@
       "recording": "491",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "condition": "auto",
         "manualBursts": "491-04"
@@ -153,33 +141,11 @@
         "A-491-asuka-s1-ends": []
       },
       "H1": {
-        "A-asuka-s1-starts": [
-          777,
-          3129,
-          5481,
-          7833,
-          10185
-        ],
-        "A-asuka-s1-ends": [
-          2247,
-          4599,
-          6951,
-          9303,
-          10589
-        ],
+        "A-asuka-s1-starts": [777, 3129, 5481, 7833, 10185],
+        "A-asuka-s1-ends": [2247, 4599, 6951, 9303, 10589],
         "B-asuka-s1-starts": [],
-        "A-489-asuka-s1-ends": [
-          3059,
-          5417,
-          8130,
-          10482
-        ],
-        "A-491-asuka-s1-ends": [
-          3072,
-          5426,
-          8133,
-          10486
-        ]
+        "A-489-asuka-s1-ends": [3059, 5417, 8130, 10482],
+        "A-491-asuka-s1-ends": [3072, 5426, 8133, 10486]
       }
     }
   }
