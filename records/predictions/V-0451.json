@@ -1,0 +1,123 @@
+{
+  "verification": "V-0451",
+  "team": [
+    {
+      "rid": 836,
+      "controlled": false
+    },
+    {
+      "rid": 830,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（バーストの持続回復は未対応の notes）。アスカの S1 はどちらの録画でも付かない。持続回復が「回復効果が適用された時」を起こさない読みと同じ見え方"
+    },
+    {
+      "id": "H1",
+      "note": "説明文の読みと C-0567・C-0578: 自分を含む候補から、枠の HP の割合の想定（満タン）の低い順・同値は枠の若い順に 2 機を選び、付いた時に 1 回だけ「回復効果が適用された時」を起こす（heal・lowestHpRatio・targetCountRef・durationRef）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 836,
+            "skill": "burst",
+            "effect": {
+              "kind": "heal",
+              "trigger": "burstUse",
+              "target": "lowestHpRatio",
+              "targetCountRef": 1,
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-asuka-s1-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "録画 A（鈴原サクラ 1 枠目・AI + アスカ 2 枠目・撃たない操作）。アスカの S1（回復効果が適用された時の攻撃力▲）の付き始め。H1 なら鈴原サクラのバーストのたびに付く。モデルは操作のアスカも撃つので、ゲージの溜まり方（バーストの時刻）は実機と違う。比べるのは、バーストの回数と、バーストから付き始めまでの差"
+    },
+    {
+      "id": "A-asuka-s1-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "録画 A のアスカの S1 の切れ目。付いた時に 1 回だけ起こす読み（D-a）なら付いてから 25 秒で切れる。1 秒ごとの刻みで起こす読み（D-b）なら最後の刻み（付いてから約 9〜10 秒）から 25 秒で、窓が約 34〜35 秒になる（予測ファイルの外。検証記録に手で書く）"
+    },
+    {
+      "id": "B-asuka-s1-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "team": [
+        {
+          "rid": 836,
+          "controlled": false
+        },
+        {
+          "rid": 161,
+          "controlled": false
+        },
+        {
+          "rid": 830,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "録画 B（鈴原サクラ 1 枠目・AI + ミハラ 2 枠目・AI + アスカ 3 枠目・撃たない操作）。H1 なら 2 機は鈴原サクラとミハラで、アスカの S1 は一度も付かない（撃つ 2 機が被弾して HP の割合が下がっても、選ばれるのは同じ 2 機）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-18",
+    "commit": "fb558a9eb89f40142dc51e71582df20b36b62242",
+    "values": {
+      "H0": {
+        "A-asuka-s1-starts": [],
+        "A-asuka-s1-ends": [],
+        "B-asuka-s1-starts": []
+      },
+      "H1": {
+        "A-asuka-s1-starts": [777, 3129, 5481, 7833, 10185],
+        "A-asuka-s1-ends": [2247, 4599, 6951, 9303, 10589],
+        "B-asuka-s1-starts": []
+      }
+    }
+  }
+}
