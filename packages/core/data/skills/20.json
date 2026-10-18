@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 20,
-  "checkedAt": "2026-09-28",
+  "checkedAt": "2026-10-18",
   "skills": {
     "skill1": {
       "effects": [],
@@ -18,15 +18,17 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "バーストスキル使用時の自分の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
-          "en": "DEF up on self when using the Burst Skill does not change damage by itself (it matters only with an effect reading DEF in the team)",
-          "kind": "indirect",
-          "path": "defense",
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "defense",
+          "ref": 1,
+          "durationRef": 2,
           "claims": [
-            "C-0081"
+            "C-0081",
+            "C-0589"
           ]
         }
       ]
