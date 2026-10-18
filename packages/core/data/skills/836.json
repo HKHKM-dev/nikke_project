@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 836,
-  "checkedAt": "2026-10-06",
+  "checkedAt": "2026-10-18",
   "skills": {
     "skill1": {
       "effects": [
@@ -53,21 +53,20 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "残りの HP の割合が最も低い味方 2 機の持続回復は未対応（HP を持たないので対象が決まらない。回復を受けた時の効果を起こさない。ほかにダメージとゲージには関係しない）",
-          "en": "The heal over time on the 2 allies with the lowest HP ratio is not modeled (HP is not modeled, so the targets are undetermined; it does not trigger effects on being healed; it does not otherwise affect damage or the burst gauge)",
-          "kind": "unimplemented",
-          "reads": [
-            "hp"
-          ],
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "burstUse"
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "lowestHpRatio",
+          "targetCountRef": 1,
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "「残りの HP の割合が最も低い味方 2 機」は、枠の HP の割合の想定（既定は満タン）で戦闘中一定とみなし、並んだときは枠の若い順に選ぶ（自分も候補。C-0567）。実機では被弾で HP の割合が下がった味方が先に選ばれうる（射撃場 3 分モードでも、撃つ枠には的の攻撃が当たる）。持続回復（1 秒間隔・10 秒間維持）は、付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（C-0578 と同じ）。満タンの味方にも付く。回復量はダメージに関係しない",
+            "en": "\"The 2 allies with the lowest remaining HP ratio\" use the HP ratio assumed for each slot (full by default), constant during battle; ties go to the leftmost slots (self included; C-0567). In game, allies whose HP ratio dropped from damage can be chosen first (in the 3-minute range mode, the target attacks the slots that fire). The heal over time (every 1 s for 10 s) triggers \"when healed\" once when applied, not on each tick (as C-0578). It also lands on allies at full HP. The healed amount does not affect damage"
           },
           "claims": [
+            "C-0590",
             "C-0316"
           ]
         }

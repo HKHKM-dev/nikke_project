@@ -54,7 +54,7 @@ function s1Windows(input: TeamInput) {
 describe('鈴原サクラの定義', () => {
   const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${SAKURA}.json`));
 
-  it('defines S1 as Damage Taken on all allies, and S2 and the burst without effects', () => {
+  it('defines S1 as Damage Taken on all allies, S2 without effects, and the burst as a heal over time on the 2 lowest-HP-ratio allies', () => {
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill1.effects[0]).toMatchObject({
       kind: 'timed',
@@ -64,8 +64,16 @@ describe('鈴原サクラの定義', () => {
     });
     expect(def.skills.skill2.effects).toEqual([]);
     expect(def.skills.skill2.support).toBe('noEffect');
-    expect(def.skills.burst.effects).toEqual([]);
-    expect(def.skills.burst.support).toBe('unsupported');
+    // V-0451・C-0590: 残りの HP の割合が最も低い味方 2 機に持続回復（付いた時に 1 回だけ healed を起こす）
+    expect(def.skills.burst.effects).toHaveLength(1);
+    expect(def.skills.burst.effects[0]).toMatchObject({
+      kind: 'heal',
+      trigger: 'burstUse',
+      target: 'lowestHpRatio',
+      targetCountRef: 1,
+      durationRef: 3,
+    });
+    expect(def.skills.burst.support).toBe('supported');
   });
 });
 
