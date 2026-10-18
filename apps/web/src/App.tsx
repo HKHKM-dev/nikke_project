@@ -43,6 +43,7 @@ import {
   takenResourceIds,
   teamReducer,
 } from './team.ts';
+import { hasLowestHpRatioHeal } from './skillLabels.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import { slotSkillsStatus, toSlotSkills, useSkillDefinitions } from './useSkillDefinitions.ts';
 
@@ -140,6 +141,8 @@ export function App() {
     () => team.slots.map((slot) => (slot.resourceId === null ? null : slotSkillsStatus(skills, slot.resourceId))),
     [team.slots, skills],
   );
+  // 2 段目の段 8: 編成に「残りの HP の割合が最も低い味方」を選ぶ回復があれば、各枠に HP の割合の想定の欄を出す
+  const hpRatioTargeted = skillsStatuses.some((s) => s?.kind === 'ready' && hasLowestHpRatioHeal(s.definition));
 
   // 枠ごとの計算入力。データが揃っていない枠は null（合計から除外）
   const slotInputs = useMemo<(TeamSlotInput | null)[]>(
@@ -329,6 +332,7 @@ export function App() {
                   teamCharacters={teamCharacters}
                   enemyElement={team.enemy.element}
                   slotResult={shown.ok ? (shown.result.slots[i] ?? null) : null}
+                  hpRatioTargeted={hpRatioTargeted}
                   dispatch={dispatch}
                 />
               );

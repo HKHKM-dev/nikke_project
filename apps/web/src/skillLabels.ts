@@ -376,6 +376,17 @@ export function formatInstant(effect: ResolvedInstantEffect): string {
   }
 }
 
+/** 2 段目の段 8（plan/design-skill-stage8.md 1.2 節）: 定義に「残りの HP の割合が最も低い味方」を選ぶ回復があるか（宝物版のスロットも見る） */
+export function hasLowestHpRatioHeal(definition: SkillDefinition): boolean {
+  const entries = [...Object.values(definition.skills), ...Object.values(definition.treasureSkills ?? {})];
+  return entries.some((entry) => entry.effects.some((e) => e.kind === 'heal' && e.target === 'lowestHpRatio'));
+}
+
+/** 2 段目の段 8（plan/design-skill-stage8.md 1.3 節）: 即時効果の対象の絞り込み。「（残りの HP の割合が最も低い味方 1 機）」。無ければ空文字 */
+export function formatInstantTarget(effect: ResolvedInstantEffect): string {
+  return effect.target === 'lowestHpRatio' ? `（残りの HP の割合が最も低い味方 ${effect.targetCount ?? 1} 機）` : '';
+}
+
 /** 「枠 2 ノワール スキル 1」。ニケ名がまだ無い（読み込み中）ときは「枠 2（読み込み中）スキル 1」 */
 export function formatEffectSource(effect: AppliedEffect, characterName: string | undefined): string {
   const who =

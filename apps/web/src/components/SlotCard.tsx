@@ -29,6 +29,7 @@ import {
   formatBuildEffectSource,
   formatEffectSource,
   formatInstant,
+  formatInstantTarget,
   formatTimedExtras,
   formatTimedTrigger,
   formatItemDuration,
@@ -39,7 +40,7 @@ import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
-import { SkillSection } from './SkillSection.tsx';
+import { HpRatioInput, SkillSection } from './SkillSection.tsx';
 
 const CLASS_LABEL: Record<NikkeClass, string> = { Attacker: '火力型', Defender: '防御型', Supporter: '支援型' };
 const BURST_LABEL: Record<BurstStep, string> = { Step1: 'I', Step2: 'II', Step3: 'III', AllStep: 'I〜III' };
@@ -69,6 +70,8 @@ type Props = {
   /** 敵の属性（属性なしは null）。敵の属性の条件（enemyElement）が今の敵で効くかの表示用 */
   enemyElement: Element | null;
   slotResult: TeamSlotResult | null;
+  /** 2 段目の段 8（plan/design-skill-stage8.md 1.2 節）: 編成に「残りの HP の割合が最も低い味方」を選ぶ回復があるか（HP の割合の想定の欄を出す） */
+  hpRatioTargeted: boolean;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -91,6 +94,7 @@ export function SlotCard({
   teamCharacters,
   enemyElement,
   slotResult,
+  hpRatioTargeted,
   dispatch,
 }: Props) {
   const limits = character ? growthLimits(character) : null;
@@ -339,6 +343,24 @@ export function SlotCard({
             hpRatio={slot.hpRatio}
             dispatch={dispatch}
           />
+          {/* 2 段目の段 8: 回復の対象（残りの HP の割合が最も低い味方）は、枠の HP の割合の想定の低い順・同じなら若い枠で選ぶ */}
+          {hpRatioTargeted && (
+            <ul className="notes">
+              <li className="note approx">
+                <span className="badge">HP</span>
+                <label className="hp-ratio">
+                  想定の HP の割合{' '}
+                  <HpRatioInput
+                    value={slot.hpRatio}
+                    onCommit={(ratio) => dispatch({ type: 'setHpRatio', index: slotIndex, hpRatio: ratio })}
+                  />{' '}
+                  %
+                </label>
+                。「残りの HP
+                の割合が最も低い味方」への回復は、この割合の低い枠から選ぶ（同じなら若い枠）。被弾の時刻は計算に入れず、戦闘中はこの割合のまま（既定は満タン）
+              </li>
+            </ul>
+          )}
           {slotResult && (
             <div className="received">
               <span className="skills-title">受けているバフ</span>
@@ -390,7 +412,8 @@ export function SlotCard({
                       <span className="amount">{formatInstant(x.instant.effect)}</span>
                       <small className="sub">
                         {formatTimedTrigger(x.instant.effect.trigger)} 枠 {x.instant.sourceSlotIndex + 1}{' '}
-                        {slotNames[x.instant.sourceSlotIndex] ?? ''}・{x.count} 回
+                        {slotNames[x.instant.sourceSlotIndex] ?? ''}
+                        {formatInstantTarget(x.instant.effect)}・{x.count} 回
                         {x.instant.effect.kind === 'cooldownReduction'
                           ? `（実際に縮んだ計 ${formatNumber(framesToGameSeconds(x.total), 2)} 秒）`
                           : x.instant.effect.kind === 'ammoRefill'

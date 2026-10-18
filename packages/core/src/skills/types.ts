@@ -199,20 +199,24 @@ export const BUFF_SCALINGS = [
  * N は targetCount / targetCountRef。passive と heal には書けない。
  * 対象の語彙編（plan/design-target-vocab.md 2.2 節）: longestChargeTime = 「基本チャージ時間が一番長い味方 N 機」
  * （CharacterData.shot.chargeTime の長い順。同値は枠の若い順。編成で決まるので最上位の skills/composition.ts で対象の枠を決める）。
- * N は topAttack と同じ欄。timed にだけ書ける
+ * N は topAttack と同じ欄。timed にだけ書ける。
+ * 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: lowestHpRatio = 「残りの HP の割合が最も低い味方 N 機」（枠の HP の割合の想定
+ * TeamSlotInput.hpRatio の低い順。同値は枠の若い順（C-0567）。自分も候補。想定は戦闘中一定なので skills/composition.ts で対象の枠を
+ * 決める）。N は topAttack と同じ欄。heal にだけ書ける
  */
-export type BuffTarget = 'self' | 'allies' | 'burstUsers' | 'topAttack' | 'longestChargeTime';
+export type BuffTarget = 'self' | 'allies' | 'burstUsers' | 'topAttack' | 'longestChargeTime' | 'lowestHpRatio';
 export const BUFF_TARGETS = [
   'self',
   'allies',
   'burstUsers',
   'topAttack',
   'longestChargeTime',
+  'lowestHpRatio',
 ] as const satisfies readonly BuffTarget[];
 
 /** 対象の語彙編: N 機を選ぶ対象（targetCount / targetCountRef を持つ） */
 export function isCountedTarget(target: BuffTarget): boolean {
-  return target === 'topAttack' || target === 'longestChargeTime';
+  return target === 'topAttack' || target === 'longestChargeTime' || target === 'lowestHpRatio';
 }
 
 /**
@@ -816,25 +820,27 @@ export type AmmoRefillEffect = TargetCountFields & {
  * V-0024: 維持時間（吸収回復などの「N 秒間維持」）を書くと、同じ効果の窓が付いている対象への付き直しでは healed を起こさず、
  * 窓を延ばすだけにする（plan/design-heal-window.md 1.1 節、C-0082）。書かなければ付くたびに healed を起こす
  */
-export type HealEffect = {
-  kind: 'heal';
-  trigger: EffectTrigger;
-  target: BuffTarget;
-  targetWeapon?: WeaponType;
-  targetElement?: Element;
-  /** 回復量（%）の description_value_NN（UI の表示用） */
-  ref: number;
-  /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */
-  durationRef?: number;
-  durationSeconds?: number;
-  /** 回復の語彙編（plan/design-heal-vocabulary.md 2.1 節）: バースト段階の構成の条件（アニス：スター S2 のみんなの星） */
-  burstStepMix?: BurstStepMixCondition;
-  /** 回復の語彙編: 同じ部隊の味方の条件 */
-  squad?: SquadCondition;
-  /** F5（plan/design-heal-vocabulary.md 3.3 節）: 編成に特定のキャラがいる条件 */
-  withCharacter?: WithCharacterCondition;
-  assumes?: LocalizedText;
-};
+export type HealEffect = TargetCountFields &
+  FixedTargetFields & {
+    kind: 'heal';
+    trigger: EffectTrigger;
+    /** 2 段目の段 8: lowestHpRatio（残りの HP の割合が最も低い味方 N 機。N は targetCount / targetCountRef）も書ける */
+    target: BuffTarget;
+    targetWeapon?: WeaponType;
+    targetElement?: Element;
+    /** 回復量（%）の description_value_NN（UI の表示用） */
+    ref: number;
+    /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */
+    durationRef?: number;
+    durationSeconds?: number;
+    /** 回復の語彙編（plan/design-heal-vocabulary.md 2.1 節）: バースト段階の構成の条件（アニス：スター S2 のみんなの星） */
+    burstStepMix?: BurstStepMixCondition;
+    /** 回復の語彙編: 同じ部隊の味方の条件 */
+    squad?: SquadCondition;
+    /** F5（plan/design-heal-vocabulary.md 3.3 節）: 編成に特定のキャラがいる条件 */
+    withCharacter?: WithCharacterCondition;
+    assumes?: LocalizedText;
+  };
 
 /**
  * ヘルム編: 「バーストゲージのチャージ X%」。編成のバーストゲージへ最大値の X% を足す（即時効果）。射撃の回数トリガーは
@@ -1555,7 +1561,7 @@ function parseTargetCount(v: Record<string, Json>, target: BuffTarget, path: str
     if (hasCount || hasRef)
       fail(
         path,
-        `targetCount / targetCountRef are only allowed with target "topAttack" or "longestChargeTime", got "${target}"`,
+        `targetCount / targetCountRef are only allowed with target "topAttack", "longestChargeTime" or "lowestHpRatio", got "${target}"`,
       );
     return {};
   }
@@ -1569,6 +1575,9 @@ function parseTargetCount(v: Record<string, Json>, target: BuffTarget, path: str
 /** 名前の付いた状態の語彙編: timed の name（ペルソナ編）は状態の付与に置き換えた */
 const NAME_REPLACED = 'name was replaced by a state grant (kind "state". plan/design-named-state.md)';
 
+/** 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: HP の割合の低い順の対象は、使い手のいる heal にだけ書ける */
+const LOWEST_HP_RATIO_HEAL_ONLY = 'lowestHpRatio is only allowed in heal';
+
 function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffect {
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'burstUsers') fail(`${path}.target`, 'burstUsers is not allowed in passive (it needs a full burst)');
@@ -1576,6 +1585,7 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   if (target === 'topAttack')
     fail(`${path}.target`, 'topAttack is not allowed in passive (the ranking changes during battle)');
   if (target === 'longestChargeTime') fail(`${path}.target`, 'longestChargeTime is only allowed in timed');
+  if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
   const targetSquad = parseTargetSquad(v, target, path);
@@ -1775,6 +1785,7 @@ function parseTimedFields(
     parseAppliedTrigger(v.trigger, `${path}.trigger`) ??
     parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
   // 同: { applied } の効果は条件・順位の対象・強化を書けない（使い手がいない。論点 6）
   if (isAppliedTrigger(trigger)) {
     if (v.condition !== undefined) fail(`${path}.condition`, 'an effect on an applied trigger cannot have a condition');
@@ -2671,6 +2682,14 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   if (kind === 'heal' && target === 'topAttack') fail(`${path}.target`, 'heal cannot target "topAttack"');
   // 対象の語彙編: 基本チャージ時間の順位は timed だけ（plan/design-target-vocab.md 2.2 節）
   if (target === 'longestChargeTime') fail(`${path}.target`, 'longestChargeTime is only allowed in timed');
+  // 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: HP の割合の低い順は heal だけ。武器・コードの絞り込みとは組み合わせない
+  if (target === 'lowestHpRatio') {
+    if (kind !== 'heal') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
+    for (const key of ['targetWeapon', 'targetElement']) {
+      if (v[key] !== undefined)
+        fail(`${path}.${key}`, 'lowestHpRatio cannot be combined with a weapon or element filter');
+    }
+  }
   // ヘルム編: ゲージは編成で 1 本なので、対象は味方全体だけ（絞り込みも書けない）
   if (kind === 'burstGauge') {
     if (target !== 'allies') fail(`${path}.target`, 'burstGauge must target "allies" (the team shares one gauge)');
@@ -2685,7 +2704,8 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   const effect = { kind, trigger, target, ref: parseRef(v.ref, `${path}.ref`) } as InstantEffect;
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
-  if (kind !== 'heal') Object.assign(effect, count);
+  // 2 段目の段 8: heal も N 機の対象（lowestHpRatio）の N を持つ
+  Object.assign(effect, count);
   if (hasDuration) Object.assign(effect, parseDuration(v, path));
   if (v.scaling !== undefined) {
     if (v.scaling !== 'flat') fail(`${path}.scaling`, `ammoRefill only takes "flat", got ${JSON.stringify(v.scaling)}`);
