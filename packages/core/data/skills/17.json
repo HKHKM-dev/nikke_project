@@ -276,7 +276,8 @@
             "C-0504",
             "C-0297",
             "C-0466",
-            "C-0521"
+            "C-0521",
+            "C-0594"
           ]
         },
         {
@@ -352,13 +353,13 @@
           ]
         },
         {
-          "ja": "コアダメージ▲がシューティングスターのコアに乗るかは確かめていない。モデルは乗せない（plan/design-anis-star-core-path.md 7 節の論点 4）",
-          "en": "Whether Core Damage up applies to Shooting Star core hits is not verified; the model does not apply it (plan/design-anis-star-core-path.md 7, item 4)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "autoAttack",
-            "trigger": "burstUse"
-          }
+          "ja": "コアダメージ▲（味方の効果）は、シューティングスターのコアにも通常攻撃と同じ形で乗る（コアの項 +1 に足す。乗るかはヒットの時点で付いているかで決まる）",
+          "en": "Core damage up from allies also applies to Shooting Star core hits, in the same form as normal attacks (added to the +1 core term; whether it applies depends on the buff being active at the hit)",
+          "kind": "modeling",
+          "refers": "effects[0]",
+          "claims": [
+            "C-0594"
+          ]
         },
         {
           "ja": "爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0424。単騎の録画 320・321 で同じ遠の区間の窓の中と外を比べても差は見分けられず、遠の割合は録画どうしで食い違う（C-0425。V-0297）。0.1〜0.2 程度の差は否定できない。plan/design-anis-star-core-path.md 11 節）",

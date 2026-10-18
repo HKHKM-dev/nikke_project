@@ -1,0 +1,179 @@
+{
+  "verification": "V-0454",
+  "team": [
+    {
+      "rid": 450,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-on",
+      "note": "いまのモデル（S2 の 1 つめを 5 発目から付け、コアのペレットのコアの項を (コア倍率 − 1 + 0.4007) にする）。H-off（乗らない）・H-mul（ペレット全体に 1.4007 を掛ける）・H-pellet（ペレットの数で数え、2 発目から付く）は検証記録に手で書く"
+    }
+  ],
+  "targets": [
+    {
+      "id": "pellet-first-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 60,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1〜4 発目（中近。S2 の 1 回目の前）の 1 ペレットの胴体（会心なし・距離ボーナスなし）。格子の基準"
+    },
+    {
+      "id": "pellet-first-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 60,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ発のコアのペレット（S2 の前。どの仮説でも胴体 + 1.0 単位）"
+    },
+    {
+      "id": "pellet-midnear-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "5 発目より後の中近のコアのペレット（H-on で胴体 + 1.4007 単位）"
+    },
+    {
+      "id": "pellet-near-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "近（1 回目）の 1 ペレットの胴体（距離ボーナスあり）"
+    },
+    {
+      "id": "pellet-near-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2500,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "近のコアのペレット（H-on）"
+    },
+    {
+      "id": "pellet-near-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2500,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "近のコアの会心のペレット（H-on）"
+    },
+    {
+      "id": "s2-first-start",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "coreDamage",
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "S2 の 1 回目の付き始めのフレーム（5 発目の発のフレーム。H-on）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-18",
+    "commit": "c6665d3d5c89e5ce0b33614d3664bfc82fabe6a7",
+    "values": {
+      "H-on": {
+        "pellet-first-body": 20444.16,
+        "pellet-first-core": 40888.32,
+        "pellet-midnear-core": 49080.294912,
+        "pellet-near-body": 26577.407999999996,
+        "pellet-near-core": 55213.54291199999,
+        "pellet-near-core-crit": 65435.62291199999,
+        "s2-first-start": [170]
+      }
+    }
+  }
+}

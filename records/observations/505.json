@@ -1,0 +1,191 @@
+[
+  {
+    "id": "505-01",
+    "recording": "505",
+    "source": "V-0454",
+    "readAt": "2026-10-18",
+    "kind": "hit",
+    "use": "compare",
+    "value": 20444,
+    "description": "1 ペレットの胴体（会心なし・距離ボーナスなし。格子の単位 u）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、発ごとの格子の分解（手。V-0454「読み方」）",
+      "note": "中近の発の増分は 0.5u = 10,222 の整数倍（例 163,552 = 8u）。格子の単位。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 60,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "505-02",
+    "recording": "505",
+    "source": "V-0454",
+    "readAt": "2026-10-18",
+    "kind": "hit",
+    "use": "compare",
+    "value": 59302,
+    "description": "中近のコアの会心のペレット 1 個（S2 が付いた後）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、発ごとの格子の分解（手。V-0454「読み方」）",
+      "note": "胴体 u・会心 1.5u の組では割り切れず、端数 0.4007u（約 8,192）が残る発（24 回）を、コアのペレット 1 個として分けた値。中近ではコア（2.4007u）+ 会心の胴体と、会心のコア（2.9007u）+ 胴体の組が同じ増分になるので、会心のコアの値で書く（コアの値は 0.5u 引いた 49,080）。どの発も 59,301〜59,302"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "505-03",
+    "recording": "505",
+    "source": "V-0454",
+    "readAt": "2026-10-18",
+    "kind": "hit",
+    "use": "compare",
+    "value": 55214,
+    "description": "近のコアのペレット 1 個（会心なし。S2 が付いた後）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、発ごとの格子の分解（手。V-0454「読み方」）",
+      "note": "近の格子（胴体 1.3u = 26,577・会心 +0.5u）で割り切れず、コアのペレット 1 個（会心なし）として分けた発 1 回。どれも 55,214"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2500,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "505-04",
+    "recording": "505",
+    "source": "V-0454",
+    "readAt": "2026-10-18",
+    "kind": "hit",
+    "use": "compare",
+    "value": 65436,
+    "description": "近のコアの会心のペレット 1 個（S2 が付いた後）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、発ごとの格子の分解（手。V-0454「読み方」）",
+      "note": "同じく会心のコアとして分けた発 13 回（コア + 会心の胴体の組と同じ増分）。どれも 65,436"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2500,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "505-05",
+    "recording": "505",
+    "source": "V-0454",
+    "readAt": "2026-10-18",
+    "kind": "count",
+    "use": "record",
+    "value": 42,
+    "description": "コアダメージ▲が乗ったコアのペレットでしか説明できない発の数（H-off・H-mul の格子では割り切れない発）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、発ごとの格子の分解（手。V-0454「読み方」）",
+      "note": "全 217 発（f5587・f5588 の 153,774 と 20,000 は 1 発の読みが割れたもの（足すと 173,774 で H-on の格子に乗る））。H-on の格子（S2 の後のコアのペレット 2.4007u・会心のコア 2.9007u、近は +0.3u）では全部の発が当たった数 10 以下で割り切れる（各増分の差は当たった数以内）。H-off（コア 2.0u）と H-mul（コア 2.8014u）の格子では、この 42 発がどれも割り切れない。コアのペレット 2 個以上の発 4 回を含む"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [835, 11410]
+    }
+  },
+  {
+    "id": "505-06",
+    "recording": "505",
+    "source": "V-0454",
+    "readAt": "2026-10-18",
+    "kind": "count",
+    "use": "record",
+    "value": 7,
+    "description": "コアダメージ▲が乗ったコアのペレットが初めて見えた発の番号（撃った順）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、発ごとの格子の分解（手。V-0454「読み方」）",
+      "note": "1〜5 発目には、端数 0.4007u の残る発が無い（中近では S2 の無いコアのペレット 2.0u が胴体の格子に乗るので、付く前のコアのペレットの有無は見えない）。H-on（6 発目から）とも、H-pellet（2 発目から）とも矛盾しない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [835, 11410]
+    }
+  },
+  {
+    "id": "505-07",
+    "recording": "505",
+    "source": "V-0454",
+    "readAt": "2026-10-18",
+    "kind": "total",
+    "use": "record",
+    "value": 44008422,
+    "description": "HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode final",
+      "note": "モデル（sim。条件は自動）は 43,901,052。コアに当たる割合は録画ごとに揺れるので比べる指定は書かない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [835, 11410]
+    }
+  }
+]

@@ -566,8 +566,9 @@ export function computeSkillHit(
     projectileExplosionMultiplier: explosionHitMultiplier(buffs),
     sustainedDamage: buffs.sustainedDamage,
     sustainedDamagePlacement,
-    // コアの経路編（plan/design-anis-star-core-path.md 3.1 節）: コアダメージ▲（buffs.coreDamage）は足さない（論点 4。未確認）
-    core: { rate: enemy.hasCore ? coreHitRate : 0, damage: character.shot.coreDamageRate - 1 },
+    // コアの経路編（plan/design-anis-star-core-path.md 3.1 節・11.3 節）: コアダメージ▲（buffs.coreDamage）は、通常攻撃と同じく
+    // コアの項に足す（論点 4。アニス：スターのシューティングスター。C-0594）
+    core: { rate: enemy.hasCore ? coreHitRate : 0, damage: character.shot.coreDamageRate - 1 + buffs.coreDamage },
   });
 }
 
