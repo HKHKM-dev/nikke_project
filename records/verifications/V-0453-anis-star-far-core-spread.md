@@ -72,7 +72,12 @@
 
 <!-- records:predictions:start -->
 
-（予測との比べの表は npm run records:check が書き込む）
+予測は 2026-10-18（commit fb47d83）に出した。
+
+| 指標                     | 実測         | 予測 M0 |
+| ------------------------ | ------------ | ------- |
+| far-out-N（coreHitRate） | （実測なし） | 0.5     |
+| far-out-B（coreHitRate） | （実測なし） | 0.5     |
 
 <!-- records:predictions:end -->
 
