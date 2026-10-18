@@ -18,7 +18,10 @@
           "assumes": {
             "ja": "支援型の味方全体（自分も支援型なので入る）への吸収回復（攻撃ダメージの X% 回復・5 秒）。付いた時に 1 回だけ「回復効果が適用された時」を起こし、窓の中の付き直しでは起こさない（C-0082）。満タンの味方にも起きるとみなす。「通常攻撃で 3 回攻撃した時」は撃った発の通算で数える。回復量はダメージに関係しない",
             "en": "An absorbing heal (X% of attack damage, 5 s) on all Supporter allies (herself included, as a Supporter). It triggers \"when healed\" once when applied, not on re-application inside the window (C-0082), and also on allies at full HP. \"After performing 3 normal attacks\" counts every normal shot fired. The healed amount does not affect damage"
-          }
+          },
+          "claims": [
+            "C-0598"
+          ]
         }
       ]
     },
@@ -49,7 +52,10 @@
           "assumes": {
             "ja": "火力型の味方全体（自分は支援型なので入らない）への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす（ヘルムの宝物版 S1 の C-0345 からの類推）。回復量はダメージに関係しない",
             "en": "A one-off heal on all Attacker allies (not herself, a Supporter) that triggers \"when healed\" even on allies at full HP (by analogy with Helm's treasure S1, C-0345). The healed amount does not affect damage"
-          }
+          },
+          "claims": [
+            "C-0597"
+          ]
         },
         {
           "kind": "timed",
@@ -58,7 +64,11 @@
           "targetClass": "Attacker",
           "stat": "attack",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-0595",
+            "C-0596"
+          ]
         }
       ],
       "notes": [

@@ -12458,6 +12458,246 @@
       "effective": true,
       "minus": -24403.540134913666,
       "plus": 0
+    },
+    {
+      "observation": "508-05",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "dcbc3e38876ab88f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-05",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "dcbc3e38876ab88f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-06",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "0bb093c495bbeba1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-06",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "0bb093c495bbeba1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-07",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "6d1455e76724dca6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-07",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "6d1455e76724dca6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-08",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "d10ae446ad66bfc1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-08",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "d10ae446ad66bfc1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-09",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "f9dc53b6dd471825",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-09",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "f9dc53b6dd471825",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-11",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "741a3bca3ff2711b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "508-11",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "741a3bca3ff2711b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-05",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "b2ead9d1ecfd7262",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-05",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "b2ead9d1ecfd7262",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-06",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "3d4a5cc9cb36a77c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-06",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "3d4a5cc9cb36a77c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-07",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "8e10c11e345d90c3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-07",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "8e10c11e345d90c3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-08",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "7674529f1005c3d4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-08",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "7674529f1005c3d4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-09",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "34c87a215c2daaea",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-09",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "34c87a215c2daaea",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-11",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "01765dde9dbcc94f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-11",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "01765dde9dbcc94f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-13",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "d8036f17d12daa5a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-13",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "d8036f17d12daa5a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-14",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "9f4215cb4a74d88c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-14",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "9f4215cb4a74d88c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-15",
+      "element": "エヌ : ミラクルフェアリー burst.effects[0]",
+      "key": "e6a93b99ecb51986",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "509-15",
+      "element": "エヌ : ミラクルフェアリー skill1.effects[0]",
+      "key": "e6a93b99ecb51986",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
