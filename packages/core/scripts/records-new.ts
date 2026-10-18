@@ -135,7 +135,7 @@ if (kind === 'verification') {
   writeFileSync(path, verificationTemplate(draft));
   format(path);
   console.log(
-    `${path} を作った（状態: 調査中）。問い・条件・次に撮るもの（撮影計画）を書く。予測は任意（撮影計画で仮説を見分けられるか確かめるなら、予測ファイル records/predictions/${id}.json を作って npm run records:predict -- ${id}）`,
+    `${path} を作った（状態: 調査中）。問い・条件・次に撮るもの（撮影計画。オーナーに頼む撮影は plan/captures/protocol.md「撮影の依頼」の型）を書く。予測は任意（撮影計画で仮説を見分けられるか確かめるなら、予測ファイル records/predictions/${id}.json を作って npm run records:predict -- ${id}）`,
   );
 } else if (kind === 'claim') {
   const from = values.from;
