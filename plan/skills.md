@@ -56,7 +56,7 @@ notes の種類: 未対応 122・前提の外 27・計算に無関係 28・補�
   - notes[2] 補足: 部隊構成による効果の「みんなの星消去」「私だけの星消去」と、フルバーストタイム終了時の付け直しは書かない。編成で決まる入れ替えで、戦闘中は片方しか付かず、付け直しは持続の状態を延ばすだけなので、値は変わらない（plan/design-skill-stage1.md 2.1 節）: C-0189（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・attack: C-0204（確定）、C-0203（確定）、C-0555（確定）
-  - effects[1] timed・fullBurstStart・projectileExplosionDamage（読む: 防御力）: C-0205（確定）、C-0586（仮説）
+  - effects[1] timed・fullBurstStart・projectileExplosionDamage（読む: 防御力）: C-0205（確定）、C-0587（確定）、C-0588（仮説）
   - effects[2] timed・fullBurstStart・attackDamage: C-0204（確定）
   - effects[3] heal・fullChargeShot: C-0576（確定）
 - **burst**: partial
@@ -64,7 +64,7 @@ notes の種類: 未対応 122・前提の外 27・計算に無関係 28・補�
   - effects[1] timed・burstUse・fixedChargeTime: C-0214（確定）、C-0520（仮説）
   - effects[2] timed・burstUse・attackDamage: C-0209（確定）、C-0203（確定）、C-0555（確定）、C-0520（仮説）
   - effects[3] state・burstUse・shootingStar: C-0211（確定）
-  - effects[4] timed・burstUse・defense: C-0586（仮説）
+  - effects[4] timed・burstUse・defense: C-0587（確定）
   - notes[0] 未対応: シューティングスターのコアに当たる割合は射撃場の的でしか測っていない。的の表に行の無い敵では、モデルのシューティングスターはコアに当たらない（plan/design-anis-star-core-path.md 3.2 節）: C-0466（確定）
   - notes[1] 未対応: コアダメージ▲がシューティングスターのコアに乗るかは確かめていない。モデルは乗せない（plan/design-anis-star-core-path.md 7 節の論点 4）: 根拠なし
   - notes[2] 未対応: 爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0424。単騎の録画 320・321 で同じ遠の区間の窓の中と外を比べても差は見分けられず、遠の割合は録画どうしで食い違う（C-0425。V-0297）。0.1〜0.2 程度の差は否定できない。plan/design-anis-star-core-path.md 11 節）: C-0424（確定）、C-0425（仮説）

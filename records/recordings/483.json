@@ -1,0 +1,47 @@
+{
+  "id": "483",
+  "date": "2026-10-18",
+  "folder": "range",
+  "file": "20261018-483_cinderella-control.mp4",
+  "original": "2026-10-18_05-53-18.mp4",
+  "durationSec": 201.4,
+  "frames": 12085,
+  "fps": 60,
+  "sizeMB": 244.1,
+  "sha256": "250a01966bef",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 4,
+      "rid": 511,
+      "name": "シンデレラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0448 録画 A（同値）2 本目"
+}
