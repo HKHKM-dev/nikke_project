@@ -1,5 +1,6 @@
 {
   "verification": "V-0457",
+  "note": "撮影の後（2026-10-19。録画 508・509）、1 ヒットの値を読む前に、eg-up・eg-after の setup にソルジャーE.G. の S1 の攻撃力▲を常時にした形（V-0241 の hit-on-* と同じ addEffects）を足して出し直した。S1 の▲はモデルでは期待値の窓で持つ（C-0372）ので、元の予測（commit 50d642a）の eg-up・eg-after は期待値で、1 ヒット（S1 が付いているか付いていないかのどちらか）と端数まで比べられない。仮説の override は setup の addEffects を置き換えるので、H2・H0 の addEffects にも同じ行を足した（S1 は自分にだけ付くので、flower-up・nmf-up の値は変わらない）",
   "team": [
     {
       "rid": 304,
@@ -37,6 +38,17 @@
               "ref": 4,
               "durationRef": 5
             }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
           }
         ]
       }
@@ -56,6 +68,17 @@
               "target": "allies",
               "targetClass": "Attacker",
               "ref": 3
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
             }
           }
         ]
@@ -81,9 +104,22 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "condition": "auto"
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
       },
-      "note": "1 回目のフルバースト中で、エヌ：ミラクルフェアリーのバーストの攻撃力▲の窓の中（モデルでは 896〜1484f）の、ソルジャーE.G. の胴体の 1 ヒット（会心なし・距離ボーナスなし）"
+      "note": "1 回目のフルバースト中で、エヌ：ミラクルフェアリーのバーストの攻撃力▲の窓の中（モデルでは 896〜1484f）の、ソルジャーE.G. の胴体の 1 ヒット（会心なし・距離ボーナスなし・S1 の攻撃力▲が付いている）"
     },
     {
       "id": "eg-after",
@@ -100,9 +136,22 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "condition": "auto"
+        "condition": "auto",
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
       },
-      "note": "同じフルバーストの、攻撃力▲が切れた後（モデルでは 1484〜1518f）のソルジャーE.G. の胴体の 1 ヒット。どの仮説でも同じ値（攻撃力▲の分を分ける基準）"
+      "note": "同じフルバーストの、攻撃力▲が切れた後（モデルでは 1484〜1518f）のソルジャーE.G. の胴体の 1 ヒット（S1 の攻撃力▲が付いている）。どの仮説でも同じ値（攻撃力▲の分を分ける基準）"
     },
     {
       "id": "flower-up",
