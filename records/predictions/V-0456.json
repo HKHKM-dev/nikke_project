@@ -1,0 +1,216 @@
+{
+  "verification": "V-0456",
+  "note": "撮影計画の見分けの確かめ。予測の編成には「撃たない」を書けないので、アスカは撃つものとして出す（アスカの S1 の窓は回復を受けた時だけで決まり、アスカの発はオーシャンの S1・S2 の時刻に効かない）",
+  "team": [
+    {
+      "rid": 830,
+      "controlled": true
+    },
+    {
+      "rid": 305,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（S1・S2 の回復は未対応の notes）。E-a（発動者自身）・E-d（満タンなら起きない）もアスカの見え方はこれと同じ"
+    },
+    {
+      "id": "H1",
+      "note": "S1・S2 ともミサト S1 と同じ規則（残りの HP の割合が最も低い味方 1 機・並んだときは若い枠。C-0567）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 305,
+            "skill": "skill1",
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "count": "lastShot"
+              },
+              "target": "lowestHpRatio",
+              "targetCountRef": 1,
+              "ref": 2
+            }
+          },
+          {
+            "rid": 305,
+            "skill": "skill2",
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "target": "lowestHpRatio",
+              "targetCountRef": 1,
+              "ref": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "S1 は発動者自身（並んだときは自分）、S2 は若い枠",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 305,
+            "skill": "skill1",
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "count": "lastShot"
+              },
+              "target": "self",
+              "ref": 2
+            }
+          },
+          {
+            "rid": 305,
+            "skill": "skill2",
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "target": "lowestHpRatio",
+              "targetCountRef": 1,
+              "ref": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "S1 は若い枠、S2 は発動者自身。アスカの S1 のアイコンでは H1 と見分けられない（S1 が 6.5 秒ごとにアスカを選び、窓が切れない）。回復の数字（S2 の帯の時刻にアスカの上に出るか）で分ける",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 305,
+            "skill": "skill1",
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "count": "lastShot"
+              },
+              "target": "lowestHpRatio",
+              "targetCountRef": 1,
+              "ref": 2
+            }
+          },
+          {
+            "rid": 305,
+            "skill": "skill2",
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "target": "self",
+              "ref": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-asuka-s1-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "A（アスカ 1 枠目・撃たない操作 + オーシャン 2 枠目・AI）で、アスカの S1（回復効果が適用された時の攻撃力▲）の窓の始まりの並び"
+    },
+    {
+      "id": "A-asuka-s1-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "A で、アスカの S1 の窓の終わりの並び"
+    },
+    {
+      "id": "B-asuka-s1-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "team": [
+        {
+          "rid": 305,
+          "controlled": false
+        },
+        {
+          "rid": 830,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "B（オーシャン 1 枠目・AI + アスカ 2 枠目・撃たない操作）で、アスカの S1 の窓の始まりの並び"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-18",
+    "commit": "fb558a9eb89f40142dc51e71582df20b36b62242",
+    "values": {
+      "H0": {
+        "A-asuka-s1-starts": [],
+        "A-asuka-s1-ends": [],
+        "B-asuka-s1-starts": []
+      },
+      "H1": {
+        "A-asuka-s1-starts": [305],
+        "A-asuka-s1-ends": [10589],
+        "B-asuka-s1-starts": []
+      },
+      "H2": {
+        "A-asuka-s1-starts": [883],
+        "A-asuka-s1-ends": [10589],
+        "B-asuka-s1-starts": []
+      },
+      "H3": {
+        "A-asuka-s1-starts": [305],
+        "A-asuka-s1-ends": [10589],
+        "B-asuka-s1-starts": []
+      }
+    }
+  }
+}

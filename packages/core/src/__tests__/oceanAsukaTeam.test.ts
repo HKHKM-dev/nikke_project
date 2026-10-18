@@ -61,8 +61,18 @@ describe('実戦寄りの編成（オーシャン + クラウン + アスカ + �
     expect(uses.length).toBeGreaterThan(0);
     const fromOcean = healsOf(plan).filter((h) => h.sourceSlotIndex === OCEAN);
     expect(fromOcean).toEqual(
-      uses.flatMap((frame) => PRACTICAL.slots.map((_, slotIndex) => ({ frame, sourceSlotIndex: OCEAN, slotIndex }))),
+      expect.arrayContaining(
+        uses.flatMap((frame) => PRACTICAL.slots.map((_, slotIndex) => ({ frame, sourceSlotIndex: OCEAN, slotIndex }))),
+      ),
     );
+  });
+
+  it('heals only the leftmost slot with S1 and S2 outside the burst uses (C-0591)', () => {
+    // S1（最後の弾丸）・S2（15 秒ごと）は残りの HP の割合が最も低い味方 1 機。想定はどの枠も満タンなので、若い枠（オーシャン自身）
+    const uses = new Set(plan.schedule!.activations.filter((a) => a.slotIndex === OCEAN).map((a) => a.frame));
+    const others = healsOf(plan).filter((h) => h.sourceSlotIndex === OCEAN && !uses.has(h.frame));
+    expect(others.length).toBeGreaterThan(0);
+    expect(new Set(others.map((h) => h.slotIndex))).toEqual(new Set([OCEAN]));
   });
 
   it('starts or extends an Asuka S1 window at each Ocean burst use', () => {
