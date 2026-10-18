@@ -980,7 +980,7 @@
     {
       "observation": "030-02",
       "element": "I-DOLL・オーシャン burst.effects[0]",
-      "key": "a19662a553186854",
+      "key": "2265007805404011",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -988,7 +988,7 @@
     {
       "observation": "030-02",
       "element": "ラピ burst.effects[1]",
-      "key": "a19662a553186854",
+      "key": "2265007805404011",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -1004,7 +1004,7 @@
     {
       "observation": "030-02",
       "element": "ラピ skill2.effects[1]",
-      "key": "a19662a553186854",
+      "key": "2265007805404011",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -6957,7 +6957,7 @@
     {
       "observation": "277-01",
       "element": "I-DOLL・オーシャン burst.effects[0]",
-      "key": "d2e7ed51c2e96d76",
+      "key": "30ab92fa59755c97",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -6965,7 +6965,7 @@
     {
       "observation": "277-02",
       "element": "I-DOLL・オーシャン burst.effects[0]",
-      "key": "496025dcc60d2585",
+      "key": "114ba0516af40c38",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -6973,7 +6973,7 @@
     {
       "observation": "277-03",
       "element": "I-DOLL・オーシャン burst.effects[0]",
-      "key": "906a54e5784e18ee",
+      "key": "4f8f6a96abf7409f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11964,6 +11964,198 @@
       "observation": "492-03",
       "element": "アスカ burst.effects[2]",
       "key": "acd4209ef2e92fa1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "493-03",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "5667124ddc883e3e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "493-03",
+      "element": "アスカ burst.effects[0]",
+      "key": "5667124ddc883e3e",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "493-03",
+      "element": "アスカ burst.effects[2]",
+      "key": "5667124ddc883e3e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "494-03",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "62f358c46e490ec1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "494-03",
+      "element": "アスカ burst.effects[0]",
+      "key": "62f358c46e490ec1",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "494-03",
+      "element": "アスカ burst.effects[2]",
+      "key": "62f358c46e490ec1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "495-05",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "ff1ea94830c009e9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "495-05",
+      "element": "アスカ burst.effects[0]",
+      "key": "ff1ea94830c009e9",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "495-05",
+      "element": "アスカ burst.effects[2]",
+      "key": "ff1ea94830c009e9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "495-07",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "5e13080ca96260ff",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "495-07",
+      "element": "アスカ burst.effects[0]",
+      "key": "5e13080ca96260ff",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "495-07",
+      "element": "アスカ burst.effects[2]",
+      "key": "5e13080ca96260ff",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "496-05",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "54524f554754e9d4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "496-05",
+      "element": "アスカ burst.effects[0]",
+      "key": "54524f554754e9d4",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "496-05",
+      "element": "アスカ burst.effects[2]",
+      "key": "54524f554754e9d4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "496-06",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "a1de62cf66748946",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "496-06",
+      "element": "アスカ burst.effects[0]",
+      "key": "a1de62cf66748946",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "496-06",
+      "element": "アスカ burst.effects[2]",
+      "key": "a1de62cf66748946",
       "effective": false,
       "minus": 0,
       "plus": 0
