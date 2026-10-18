@@ -27,7 +27,7 @@
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 // 効果と notes には、根拠の結論の ID（claims）を書ける（plan/skills-guide.md 3 節。実在の検査は records/skills.ts）。
 import { ELEMENTS } from '../element.ts';
-import type { Element, LocalizedText, SkillSlot, WeaponType } from '../types.ts';
+import type { Element, LocalizedText, NikkeClass, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
 import { NAMED_STATE_IDS, namedStateHolder, stateMatches, type NamedStateId, type StateHolder } from './states.ts';
 
@@ -230,6 +230,9 @@ export const EXCLUDE_SELF = ['always', 'unlessShort'] as const satisfies readonl
  * 対象の語彙編（同 2.3 節）: 「同じ部隊の味方全体に」。same = 対象の枠のキャラの CharacterData.squad が発動者と同じ枠だけ
  * （発動者自身も入る）。target が allies のときだけ書ける。編成で決まるので最上位の skills/composition.ts で対象の枠を決める
  */
+/** 2 段目の段 9（plan/design-skill-stage9.md 1.1 節）: 「〈クラス〉型の味方」の絞り込みに書けるクラス */
+export const NIKKE_CLASSES = ['Attacker', 'Defender', 'Supporter'] as const satisfies readonly NikkeClass[];
+
 export type TargetSquad = 'same';
 export const TARGET_SQUADS = ['same'] as const satisfies readonly TargetSquad[];
 
@@ -321,6 +324,8 @@ export type PassiveEffect = FixedTargetFields & {
   targetWeapon?: WeaponType;
   /** アスカ: 「〈コード〉コードの味方」。targetWeapon と同じ場所に書ける（plan/design-asuka.md 2.2 節） */
   targetElement?: Element;
+  /** 2 段目の段 9: 「〈クラス〉型の味方」。targetWeapon と同じ場所に書ける（plan/design-skill-stage9.md 1.1 節） */
+  targetClass?: NikkeClass;
   stat: BuffStat;
   /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す */
   scaling?: BuffScaling;
@@ -553,6 +558,8 @@ export type TimedEffect = TargetCountFields &
     targetWeapon?: WeaponType;
     /** アスカ: 「〈コード〉コードの味方」 */
     targetElement?: Element;
+    /** 2 段目の段 9: 「〈クラス〉型の味方」 */
+    targetClass?: NikkeClass;
     stat: BuffStat;
     /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す（passive と同じ規則） */
     scaling?: BuffScaling;
@@ -789,6 +796,7 @@ export type CooldownReductionEffect = TargetCountFields & {
   target: BuffTarget;
   targetWeapon?: WeaponType;
   targetElement?: Element;
+  targetClass?: NikkeClass;
   /** 秒数の description_value_NN */
   ref: number;
   /** アニス：スター編: バースト段階の構成の条件 */
@@ -808,6 +816,7 @@ export type AmmoRefillEffect = TargetCountFields & {
   target: BuffTarget;
   targetWeapon?: WeaponType;
   targetElement?: Element;
+  targetClass?: NikkeClass;
   /** % の description_value_NN（scaling 'flat' なら発数） */
   ref: number;
   scaling?: 'flat';
@@ -828,6 +837,8 @@ export type HealEffect = TargetCountFields &
     target: BuffTarget;
     targetWeapon?: WeaponType;
     targetElement?: Element;
+    /** 2 段目の段 9: 「〈クラス〉型の味方」（エヌ：ミラクルフェアリーの S1・バースト） */
+    targetClass?: NikkeClass;
     /** 回復量（%）の description_value_NN（UI の表示用） */
     ref: number;
     /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */
@@ -855,6 +866,7 @@ export type BurstGaugeEffect = TargetCountFields & {
   /** 絞り込みの欄は即時効果の型をそろえるためだけにある（検証で弾く） */
   targetWeapon?: WeaponType;
   targetElement?: Element;
+  targetClass?: NikkeClass;
   /** % の description_value_NN */
   ref: number;
   assumes?: LocalizedText;
@@ -1510,8 +1522,13 @@ function parseNamedStateId(v: Json, path: string, holder: StateHolder): NamedSta
 function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Record<string, Json>, path: string): void {
   if (!isEnemyHeldStat(stat)) return;
   if (target !== 'allies') fail(`${path}.target`, `${stat} must target "allies" (an enemy debuff), got "${target}"`);
-  if (v.targetWeapon !== undefined || v.targetElement !== undefined || v.targetSquad !== undefined)
-    fail(path, `${stat} cannot narrow its target by weapon, element or squad (an enemy debuff)`);
+  if (
+    v.targetWeapon !== undefined ||
+    v.targetElement !== undefined ||
+    v.targetClass !== undefined ||
+    v.targetSquad !== undefined
+  )
+    fail(path, `${stat} cannot narrow its target by weapon, element, class or squad (an enemy debuff)`);
   for (const key of ['excludeSelf', 'targetState', 'targetBurstStep', 'durationShots', 'durationShotsRef'] as const) {
     if (v[key] !== undefined) fail(`${path}.${key}`, `${stat} is held by the enemy, so it cannot have ${key}`);
   }
@@ -1541,6 +1558,15 @@ function parseTargetElement(v: Record<string, Json>, target: BuffTarget, path: s
   if (target === 'self')
     fail(`${path}.targetElement`, `only allowed with target "allies", "burstUsers" or "topAttack", got "${target}"`);
   return element;
+}
+
+/** 2 段目の段 9（plan/design-skill-stage9.md 1.1 節）: targetClass は targetWeapon・targetElement と同じく target が self 以外のときだけ */
+function parseTargetClass(v: Record<string, Json>, target: BuffTarget, path: string): NikkeClass | undefined {
+  if (v.targetClass === undefined) return undefined;
+  const nikkeClass = oneOf(NIKKE_CLASSES, v.targetClass, `${path}.targetClass`);
+  if (target === 'self')
+    fail(`${path}.targetClass`, `only allowed with target "allies", "burstUsers" or "topAttack", got "${target}"`);
+  return nikkeClass;
 }
 
 /** Stage 11: burstUsers はトリガーが fullBurstStart / fullBurstEnd のときだけ */
@@ -1588,6 +1614,7 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
+  const targetClass = parseTargetClass(v, target, path);
   const targetSquad = parseTargetSquad(v, target, path);
   if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
   // 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 最終防御力の比べは発火の瞬間に決めるので、常時の効果には書けない
@@ -1607,6 +1634,7 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
+  if (targetClass !== undefined) effect.targetClass = targetClass;
   if (targetSquad !== undefined) effect.targetSquad = targetSquad;
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) effect.decrease = true;
@@ -1795,6 +1823,7 @@ function parseTimedFields(
   validateBurstUsersTarget(target, trigger, path);
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
+  const targetClass = parseTargetClass(v, target, path);
   const targetSquad = parseTargetSquad(v, target, path);
   const count = parseTargetCount(v, target, path);
   let excludeSelf: ExcludeSelf | undefined;
@@ -1846,6 +1875,7 @@ function parseTimedFields(
   }
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
+  if (targetClass !== undefined) effect.targetClass = targetClass;
   if (targetSquad !== undefined) effect.targetSquad = targetSquad;
   if (excludeSelf !== undefined) effect.excludeSelf = excludeSelf;
   Object.assign(effect, persona);
@@ -2065,6 +2095,7 @@ const STATE_GRANT_KEYS: readonly string[] = [
   'target',
   'targetWeapon',
   'targetElement',
+  'targetClass',
   'targetSquad',
   'targetCount',
   'targetCountRef',
@@ -2651,6 +2682,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
         'target',
         'targetWeapon',
         'targetElement',
+        'targetClass',
         'targetCount',
         'targetCountRef',
         'ref',
@@ -2685,25 +2717,27 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   // 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: HP の割合の低い順は heal だけ。武器・コードの絞り込みとは組み合わせない
   if (target === 'lowestHpRatio') {
     if (kind !== 'heal') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
-    for (const key of ['targetWeapon', 'targetElement']) {
+    for (const key of ['targetWeapon', 'targetElement', 'targetClass']) {
       if (v[key] !== undefined)
-        fail(`${path}.${key}`, 'lowestHpRatio cannot be combined with a weapon or element filter');
+        fail(`${path}.${key}`, 'lowestHpRatio cannot be combined with a weapon, element or class filter');
     }
   }
   // ヘルム編: ゲージは編成で 1 本なので、対象は味方全体だけ（絞り込みも書けない）
   if (kind === 'burstGauge') {
     if (target !== 'allies') fail(`${path}.target`, 'burstGauge must target "allies" (the team shares one gauge)');
-    for (const key of ['targetWeapon', 'targetElement', 'targetCount', 'targetCountRef']) {
+    for (const key of ['targetWeapon', 'targetElement', 'targetClass', 'targetCount', 'targetCountRef']) {
       if (v[key] !== undefined) fail(`${path}.${key}`, 'burstGauge cannot narrow its target');
     }
   }
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
+  const targetClass = parseTargetClass(v, target, path);
   const count = parseTargetCount(v, target, path);
   // burstGauge は上で対象を allies に限り、絞り込みの欄も弾いてある
   const effect = { kind, trigger, target, ref: parseRef(v.ref, `${path}.ref`) } as InstantEffect;
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
+  if (targetClass !== undefined) effect.targetClass = targetClass;
   // 2 段目の段 8: heal も N 機の対象（lowestHpRatio）の N を持つ
   Object.assign(effect, count);
   if (hasDuration) Object.assign(effect, parseDuration(v, path));

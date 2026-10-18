@@ -36,7 +36,7 @@ import {
  */
 export type CompositionCharacter = BurstStepCharacter &
   Pick<CharacterData, 'squad' | 'resourceId'> &
-  Partial<Pick<CharacterData, 'weaponType' | 'element' | 'shot'>> & {
+  Partial<Pick<CharacterData, 'weaponType' | 'element' | 'shot' | 'class'>> & {
     /**
      * 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: 枠の HP の割合の想定（TeamSlotInput.hpRatio）。CharacterData には無く、
      * applyCompositionToTeam が枠の入力から足す。省略は満タン（最小構成の検査など、枠の入力の無い所）

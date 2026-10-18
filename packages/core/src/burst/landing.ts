@@ -94,6 +94,10 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [172], delays: { hitFrames: 0, effectFrames: 19 }, claim: 'C-0479' },
   // ソルジャーE.G.: III のタイマーの 00.00 からヒットまで 7f（動画で 29f。止まり 22f を含む）。バースト使用時の効果は無い（V-0247・V-0242）
   { resourceIds: [300], delays: { hitFrames: 7, effectFrames: 0 }, claim: 'C-0370' },
+  // エヌ：ミラクルフェアリー: II の発動（六角形が II から III に替わるフレーム）から効果（火力型の味方の攻撃力▲）まで、
+  // ソルジャーE.G. の 1 ヒットで挟んだ 20〜21f のうち 21f（止まりより前なので動画のフレームと同じ）。窓は遅れた始まりから数える。
+  // 回復（burst の effects[0]）も同じフレームに置く（見ていない）。バーストの倍率ダメージは無い（V-0457）
+  { resourceIds: [121], delays: { hitFrames: 0, effectFrames: 21 }, claim: 'C-0596' },
   // 雪子: III のタイマーの 00.00（hitFrameOf）にヒット（動画では 00.00 の 1f 前。フルバーストの入りの止まりの前）。
   // 効果（1more の攻撃力▲・真紅の華の分配ダメージ▲）の遅れは未測定。表に無いときの既定と同じ値で、測った値として置く
   { resourceIds: [871], delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-0419' },

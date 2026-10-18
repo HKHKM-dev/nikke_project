@@ -187,7 +187,7 @@ describe('同じ部隊に絞る（targetSquad）', () => {
     expect(() => parse({ ...passive, target: 'self' })).toThrow(/targetSquad: only allowed with target "allies"/);
     expect(() => parse({ ...passive, targetSquad: 'other' })).toThrow(/targetSquad/);
     expect(() => parse({ ...passive, stat: 'damageTaken' })).toThrow(
-      /cannot narrow its target by weapon, element or squad/,
+      /cannot narrow its target by weapon, element, class or squad/,
     );
   });
 });

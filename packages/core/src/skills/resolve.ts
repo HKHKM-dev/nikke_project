@@ -3,7 +3,16 @@
 // 名前の付いた状態の語彙編（plan/design-named-state.md 実装の別紙 1.2 節）: 付与（resolveStateGrants）と中身（resolveStateContents）を
 // 足した。resolveTimed は今のまま（timed と weaponChange。どれもトリガーを持つ）で、付与も中身も混ぜない。静的な付与の中身は
 // resolvePassives が常時パッシブとして集める。
-import type { CharacterData, Element, Locale, LocalizedText, ShotParams, SkillRaw, WeaponType } from '../types.ts';
+import type {
+  CharacterData,
+  Element,
+  Locale,
+  LocalizedText,
+  NikkeClass,
+  ShotParams,
+  SkillRaw,
+  WeaponType,
+} from '../types.ts';
 import { burstWindowTrimOf } from '../burst/landing.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { isChargeWeapon } from '../weapons.ts';
@@ -227,6 +236,8 @@ export type ResolvedEffect = {
   targetWeapon?: WeaponType;
   /** アスカ: 「〈コード〉コードの味方」。定義に無ければキーごと無い */
   targetElement?: Element;
+  /** 2 段目の段 9: 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
+  targetClass?: NikkeClass;
   /** Stage 11 アリス編: target が topAttack・longestChargeTime のときの N（解決済み）。それ以外はキーごと無い */
   targetCount?: number;
   /** 対象の語彙編: 「同じ部隊の味方全体に」。定義に無ければキーごと無い */
@@ -295,6 +306,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
       };
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.targetElement) r.targetElement = effect.targetElement;
+      if (effect.targetClass) r.targetClass = effect.targetClass;
       if (effect.targetSquad) r.targetSquad = effect.targetSquad;
       if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
       if (effect.assumes) r.assumes = effect.assumes;
@@ -486,6 +498,7 @@ function resolveItemFields(
   };
   if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
   if (effect.targetElement) r.targetElement = effect.targetElement;
+  if (effect.targetClass) r.targetClass = effect.targetClass;
   if (effect.targetSquad) r.targetSquad = effect.targetSquad;
   if (effect.excludeSelf) r.excludeSelf = effect.excludeSelf;
   if (effect.targetState) r.targetState = effect.targetState;
@@ -598,6 +611,7 @@ export function resolveStateContents(
         };
         if (grant.targetWeapon) r.targetWeapon = grant.targetWeapon;
         if (grant.targetElement) r.targetElement = grant.targetElement;
+        if (grant.targetClass) r.targetClass = grant.targetClass;
         if (grant.targetCount !== undefined) r.targetCount = grant.targetCount;
         if (grant.targetSquad) r.targetSquad = grant.targetSquad;
         if (grant.excludeSelf) r.excludeSelf = grant.excludeSelf;
@@ -847,6 +861,8 @@ export type ResolvedInstantEffect = {
   target: BuffTarget;
   targetWeapon?: WeaponType;
   targetElement?: Element;
+  /** 2 段目の段 9: 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
+  targetClass?: NikkeClass;
   /** Stage 11 アリス編: target が topAttack のときの N。2 段目の段 8: heal の lowestHpRatio の N も */
   targetCount?: number;
   /** 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: 編成で決まる対象の枠（heal の lowestHpRatio。skills/composition.ts が書く） */
@@ -899,6 +915,7 @@ export function resolveInstant(
       if (effect.kind === 'ammoRefill' && effect.scaling === 'flat') r.scaling = 'flat';
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.targetElement) r.targetElement = effect.targetElement;
+      if (effect.targetClass) r.targetClass = effect.targetClass;
       const count = resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
       if (effect.kind === 'heal' && effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
