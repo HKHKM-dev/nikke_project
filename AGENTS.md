@@ -68,7 +68,7 @@ NIKKE のダメージ計算ツール。
 | `records/claims/`・`plan/claims.md`                  | 結論（1 件 1 ファイルの JSON。ID・状態・話題・根拠の等級・根拠・モデル側）と、話題ごとの一覧（生成）。問いからいまの結論を引くのは一覧                             |
 | `records/verifications/`・`plan/verifications.md`    | 検証記録（1 回の検証を 1 ファイル。問い・予測・結果・結論）と、その一覧（生成。開いている検証が冒頭に出る。予測との比べと最小構成の警告も出る）                    |
 | `records/predictions/`                               | 予測（任意。検証記録ごとに 1 ファイル。編成・仮説・比べる指標と、`npm run records:predict` が書く値）。撮影計画で仮説を見分けられるか確かめるのに使う              |
-| `plan/captures/protocol.md`                          | 撮影の手順（編成と条件の選び方・撮る前の確かめ・映すもの・撮った後の取り込み）                                                                                     |
+| `plan/captures/protocol.md`                          | 撮影の手順（編成と条件の選び方・撮る前の確かめ・映すもの・撮った後の取り込み）と、オーナーに撮影を頼むときの型（撮影の依頼）                                       |
 | `plan/captures/index.md`                             | 命名規約・キャラ同定（録画の一覧の表は `plan/captures/recordings.md`。録画ごとの注記は録画の JSON の `conditionNote`）                                             |
 | `plan/captures/storage.md`・`plan/captures/tools.md` | 録画の置き場所・バックアップ・クラウド環境での取り寄せ（storage.md）と、解析ツール・フレーム番号の約束・証拠フレーム（tools.md）                                   |
 | `records/recordings/`・`plan/captures/recordings.md` | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性（1 本 1 ファイルの JSON）と、その一覧（生成。`npm run records:table`）                              |
