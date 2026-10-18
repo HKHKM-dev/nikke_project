@@ -1,0 +1,176 @@
+{
+  "verification": "V-0457",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 121,
+      "controlled": false
+    },
+    {
+      "rid": 300,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（plan/design-skill-stage9.md 2.1 節）。バーストの攻撃力▲（77.22%・10 秒）は火力型の味方（ソルジャーE.G.）にだけ付き、防御型のフラワーと支援型の自分には付かない"
+    },
+    {
+      "id": "H2",
+      "note": "クラスで絞らず、味方全体に付く。バーストの effects[1] を targetClass の無い形に置き換えて出す",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 121,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "attack",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0",
+      "note": "攻撃力▲が付かない（バーストの effects[1] を、値に効かない回復（effects[0] と同じ形。この編成には回復を受けた時の効果を持つ味方がいない）に置き換えて出す）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 121,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "heal",
+              "trigger": "burstUse",
+              "target": "allies",
+              "targetClass": "Attacker",
+              "ref": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "eg-up",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバースト中で、エヌ：ミラクルフェアリーのバーストの攻撃力▲の窓の中（モデルでは 896〜1484f）の、ソルジャーE.G. の胴体の 1 ヒット（会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "eg-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "同じフルバーストの、攻撃力▲が切れた後（モデルでは 1484〜1518f）のソルジャーE.G. の胴体の 1 ヒット。どの仮説でも同じ値（攻撃力▲の分を分ける基準）"
+    },
+    {
+      "id": "flower-up",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "同じ窓の中の、フラワー（防御型）の胴体の 1 ヒット（会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "nmf-up",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "note": "同じ窓の中の、エヌ：ミラクルフェアリー（支援型）自身の胴体の 1 ヒット（会心なし・距離ボーナスなし）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-18",
+    "commit": "50d642a2a0e4dfd7a7e6bffce363347bae091071",
+    "values": {
+      "H1": {
+        "eg-up": 31534.47855,
+        "eg-after": 18393.378750000003,
+        "flower-up": 124629.02999999998,
+        "nmf-up": 229472.71875
+      },
+      "H2": {
+        "eg-up": 31534.47855,
+        "eg-after": 18393.378750000003,
+        "flower-up": 221045.50124999997,
+        "nmf-up": 406848.86625
+      },
+      "H0": {
+        "eg-up": 18313.311599999997,
+        "eg-after": 18393.378750000003,
+        "flower-up": 124629.02999999998,
+        "nmf-up": 229472.71875
+      }
+    }
+  }
+}

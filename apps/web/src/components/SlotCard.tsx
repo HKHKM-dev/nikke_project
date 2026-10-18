@@ -10,7 +10,6 @@ import {
   type Element,
   type CharacterIndexEntry,
   type GrowthInput,
-  type NikkeClass,
   type AppliedTimedEffect,
   type BuildInput,
   type BuildMasters,
@@ -23,6 +22,7 @@ import {
 import type { Dispatch } from 'react';
 import { formatNumber, formatPercent } from '../format.ts';
 import {
+  CLASS_LABEL,
   SKILL_SLOT_LABEL,
   formatAppliedAmount,
   formatBuildEffect,
@@ -42,7 +42,6 @@ import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
 import { HpRatioInput, SkillSection } from './SkillSection.tsx';
 
-const CLASS_LABEL: Record<NikkeClass, string> = { Attacker: '火力型', Defender: '防御型', Supporter: '支援型' };
 const BURST_LABEL: Record<BurstStep, string> = { Step1: 'I', Step2: 'II', Step3: 'III', AllStep: 'I〜III' };
 
 type Props = {

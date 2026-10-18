@@ -14,6 +14,7 @@ import type {
   BuildEffect,
   BuildEffectSource,
   GearPart,
+  NikkeClass,
   AppliedTimedEffect,
   ResolvedInstantEffect,
   BuffStat,
@@ -33,6 +34,9 @@ import type {
   StateGrantEffect,
 } from '@nikke/core';
 import { formatNumber, formatPercent } from './format.ts';
+
+/** クラスの表示名（2 段目の段 9: 「〈クラス〉型の味方」の絞り込みにも使う） */
+export const CLASS_LABEL: Record<NikkeClass, string> = { Attacker: '火力型', Defender: '防御型', Supporter: '支援型' };
 
 export const SKILL_SLOT_LABEL: Record<SkillSlot, string> = {
   skill1: 'スキル 1',
@@ -384,7 +388,9 @@ export function hasLowestHpRatioHeal(definition: SkillDefinition): boolean {
 
 /** 2 段目の段 8（plan/design-skill-stage8.md 1.3 節）: 即時効果の対象の絞り込み。「（残りの HP の割合が最も低い味方 1 機）」。無ければ空文字 */
 export function formatInstantTarget(effect: ResolvedInstantEffect): string {
-  return effect.target === 'lowestHpRatio' ? `（残りの HP の割合が最も低い味方 ${effect.targetCount ?? 1} 機）` : '';
+  if (effect.target === 'lowestHpRatio') return `（残りの HP の割合が最も低い味方 ${effect.targetCount ?? 1} 機）`;
+  // 2 段目の段 9（plan/design-skill-stage9.md 1.1 節）: 「〈クラス〉型の味方」（エヌ：ミラクルフェアリーの回復）
+  return effect.targetClass ? `（${CLASS_LABEL[effect.targetClass]}の味方）` : '';
 }
 
 /** 「枠 2 ノワール スキル 1」。ニケ名がまだ無い（読み込み中）ときは「枠 2（読み込み中）スキル 1」 */
@@ -396,12 +402,14 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
   // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果。Stage 11: 「直前にバーストを使った味方」「最終攻撃力が最も高い味方 N 機」
   // アスカ: 「〈コード〉コードの味方」（「灼熱コードの SG の味方」のように武器種と並べる）
   const element = effect.targetElement ? `${ELEMENT_LABEL[effect.targetElement].ja}コードの` : '';
+  // 2 段目の段 9: 「〈クラス〉型の味方」
+  const nikkeClass = effect.targetClass ? `${CLASS_LABEL[effect.targetClass]}の` : '';
   // 対象の語彙編: 「同じ部隊の味方」「自分を除く」「基本チャージ時間が最も長い味方 N 機」
   const squad = effect.targetSquad === 'same' ? '同じ部隊の' : '';
   // ペルソナ編: 「基本バースト段階 III のペルソナ状態の味方」（状態の名前は目録の name）
   const step = effect.targetBurstStep ? `基本バースト段階 ${BURST_STEP_ROMAN[effect.targetBurstStep]} の` : '';
   const state = effect.targetState ? `${stateLabel(effect.targetState)}状態の` : '';
-  const weapon = `${squad}${step}${state}${element}${effect.targetWeapon ? `${effect.targetWeapon} の` : ''}`;
+  const weapon = `${squad}${step}${state}${nikkeClass}${element}${effect.targetWeapon ? `${effect.targetWeapon} の` : ''}`;
   const exclude =
     effect.excludeSelf === 'always'
       ? '自分を除く'

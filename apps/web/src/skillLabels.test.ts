@@ -126,3 +126,32 @@ describe('HP の割合で選ぶ回復の表示', () => {
     expect(formatInstantTarget({ ...heal, target: 'allies' })).toBe('');
   });
 });
+
+// 2 段目の段 9（plan/design-skill-stage9.md 1.1 節）: 対象の絞り込み「〈クラス〉型の味方」
+describe('クラスで絞る効果の表示', () => {
+  it('writes the class filter on a timed effect and on a heal', () => {
+    const effect: AppliedEffect = {
+      source: { resourceId: 121, skill: 'burst', name: { ja: 'B', en: 'B' } },
+      target: 'allies',
+      targetClass: 'Attacker',
+      stat: 'attack',
+      scaling: 'ratio',
+      value: 0.7722,
+      sourceSlotIndex: 1,
+      appliedAmount: 0.7722,
+    };
+    expect(formatEffectSource(effect, 'エヌ : ミラクルフェアリー')).toBe(
+      '枠 2 エヌ : ミラクルフェアリー バースト（火力型の味方）',
+    );
+    const heal: ResolvedInstantEffect = {
+      source: { resourceId: 121, skill: 'skill1', name: { ja: 'S1', en: 'S1' } },
+      kind: 'heal',
+      trigger: 'burstUse',
+      target: 'allies',
+      targetClass: 'Supporter',
+      value: 0.0607,
+      effectIndex: 0,
+    };
+    expect(formatInstantTarget(heal)).toBe('（支援型の味方）');
+  });
+});

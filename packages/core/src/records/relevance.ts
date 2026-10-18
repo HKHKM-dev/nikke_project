@@ -143,6 +143,8 @@ export type MinimalElement = {
     trigger?: string;
     targetWeapon?: string;
     targetElement?: string;
+    /** 2 段目の段 9: 対象の絞り込み「〈クラス〉型の味方」 */
+    targetClass?: string;
     /** 2 段目の段 7: 対象の絞り込み「自分より最終防御力が低い味方」（防御力▲ の読む側） */
     targetDefense?: string;
   };
@@ -196,6 +198,7 @@ function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<Minima
     ...(trigger !== undefined ? { trigger } : {}),
     ...(typeof v.targetWeapon === 'string' ? { targetWeapon: v.targetWeapon } : {}),
     ...(typeof v.targetElement === 'string' ? { targetElement: v.targetElement } : {}),
+    ...(typeof v.targetClass === 'string' ? { targetClass: v.targetClass } : {}),
     ...(typeof v.targetDefense === 'string' ? { targetDefense: v.targetDefense } : {}),
   };
 }
@@ -568,6 +571,9 @@ export function notRelevantReason(
       observed.every((c) => c !== undefined && c.element !== shape.targetElement)
     )
       return '対象のコードが観測した枠と違う';
+    // 2 段目の段 9（plan/design-skill-stage9.md 1.1 節）: 「〈クラス〉型の味方」も、武器種・コードと同じく観測した枠のクラスで外す
+    if (shape.targetClass !== undefined && observed.every((c) => c !== undefined && c.class !== shape.targetClass))
+      return '対象のクラスが観測した枠と違う';
   }
   if (cls === 'unknown') return undefined;
   const allowed = allowedClasses(o);
