@@ -761,7 +761,7 @@ notes の種類: 未対応 120・前提の外 27・計算に無関係 28・補�
 
 - **skill1**: supported
   - effects[0] timed・normalShot・hitRate: C-0183（確定）、C-0184（仮説）
-  - effects[1] heal・normalShot: C-0567（仮説）、C-0180（確定）
+  - effects[1] heal・normalShot: C-0567（確定）、C-0180（確定）
 - **skill2**: noEffect
   - notes[0] 前提の外: 射撃マニュアル状態の間の味方全体のバリアに与えるダメージ▲は、バリアの無い敵（射撃場の的）では効かない: C-0180（確定）
   - notes[1] 間接（HP）: 射撃マニュアルのフルスタック状態の間の自分の与えるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: C-0180（確定）
