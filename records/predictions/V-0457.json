@@ -102,7 +102,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": true,
         "condition": "auto",
         "addEffects": [
@@ -134,7 +136,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": true,
         "condition": "auto",
         "addEffects": [
@@ -169,7 +173,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": true,
         "condition": "auto"
       },
@@ -191,7 +197,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": true,
         "condition": "auto"
       },
@@ -199,24 +207,24 @@
     }
   ],
   "predicted": {
-    "at": "2026-10-18",
-    "commit": "50d642a2a0e4dfd7a7e6bffce363347bae091071",
+    "at": "2026-10-19",
+    "commit": "3be127cc21e2a651b5a8a1f4ef13e293ed89446b",
     "values": {
       "H1": {
-        "eg-up": 31534.47855,
-        "eg-after": 18393.378750000003,
+        "eg-up": 31677.800850000003,
+        "eg-after": 18456.6339,
         "flower-up": 124629.02999999998,
         "nmf-up": 229472.71875
       },
       "H2": {
-        "eg-up": 31534.47855,
-        "eg-after": 18393.378750000003,
+        "eg-up": 31677.800850000003,
+        "eg-after": 18456.6339,
         "flower-up": 221045.50124999997,
         "nmf-up": 406848.86625
       },
       "H0": {
-        "eg-up": 18313.311599999997,
-        "eg-after": 18393.378750000003,
+        "eg-up": 18456.6339,
+        "eg-after": 18456.6339,
         "flower-up": 124629.02999999998,
         "nmf-up": 229472.71875
       }
