@@ -36,7 +36,13 @@ import {
  */
 export type CompositionCharacter = BurstStepCharacter &
   Pick<CharacterData, 'squad' | 'resourceId'> &
-  Partial<Pick<CharacterData, 'weaponType' | 'element' | 'shot'>>;
+  Partial<Pick<CharacterData, 'weaponType' | 'element' | 'shot'>> & {
+    /**
+     * 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: 枠の HP の割合の想定（TeamSlotInput.hpRatio）。CharacterData には無く、
+     * applyCompositionToTeam が枠の入力から足す。省略は満タン（最小構成の検査など、枠の入力の無い所）
+     */
+    hpRatio?: number;
+  };
 
 /** 「基本バースト段階が N の味方」を数えるのに要る欄（基本バースト段階と、バーストの後の段階） */
 export type BurstStepCharacter = Pick<CharacterData, 'burstStep'> & {
@@ -147,6 +153,13 @@ export function fixedTargetsOf(
   selfIndex: number,
   states: readonly (readonly NamedStateId[] | undefined)[] = [],
 ): number[] | undefined {
+  // 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: 「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）は、枠の HP の
+  // 割合の想定（省略は満タン）の低い順・同値は枠の若い順（C-0567）。自分も候補。先頭の N 枠は skills/targets.ts が取る
+  if (effect.kind === 'heal') {
+    if (effect.target !== 'lowestHpRatio') return undefined;
+    const ratio = (i: number) => characters[i]?.hpRatio ?? 1;
+    return characters.flatMap((c, i) => (c === null ? [] : [i])).sort((a, b) => ratio(a) - ratio(b) || a - b);
+  }
   if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'state') return undefined;
   const squad = effect.targetSquad !== undefined;
   const longest = effect.target === 'longestChargeTime';
@@ -393,7 +406,10 @@ function otherGrantedStates(definitions: readonly (SkillDefinition | null | unde
  * 2 段目の段 1: 編成で決まる selfState は、ほかの枠の定義が付けうる状態を見て決める
  */
 export function applyCompositionToTeam<T extends TeamInput>(input: T): T {
-  const characters = input.slots.map((slot) => (slot === null ? null : slot.character));
+  // 2 段目の段 8: 枠の HP の割合の想定を、編成で決まる対象（lowestHpRatio）の並べ方に渡す
+  const characters = input.slots.map((slot) =>
+    slot === null ? null : slot.hpRatio === undefined ? slot.character : { ...slot.character, hpRatio: slot.hpRatio },
+  );
   const enemyElement = input.enemy.element;
   const filtered = input.slots.map((slot, i) => {
     const definition = slot?.skills?.definition;

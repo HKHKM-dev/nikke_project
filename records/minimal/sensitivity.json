@@ -1764,66 +1764,130 @@
     {
       "observation": "137-05",
       "element": "ミサト skill1.effects[0]",
-      "key": "3b45667af24069b7",
+      "key": "29aa15b09baa1135",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "137-05",
+      "element": "ミサト skill1.effects[1]",
+      "key": "29aa15b09baa1135",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "137-06",
+      "element": "ミサト skill1.effects[0]",
+      "key": "0e777b7b500f8cb2",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "137-06",
+      "element": "ミサト skill1.effects[1]",
+      "key": "0e777b7b500f8cb2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "137-07",
       "element": "ミサト skill1.effects[0]",
-      "key": "2c094913b21cc3c4",
+      "key": "7835c787dd41ba52",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "137-07",
+      "element": "ミサト skill1.effects[1]",
+      "key": "7835c787dd41ba52",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "137-08",
       "element": "ミサト skill1.effects[0]",
-      "key": "d2335c2fb29d2da4",
+      "key": "a0e891f5fd3767c6",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "137-08",
+      "element": "ミサト skill1.effects[1]",
+      "key": "a0e891f5fd3767c6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "139-05",
       "element": "ミサト skill1.effects[0]",
-      "key": "8b9db055923b9040",
+      "key": "414d51ff9288ffc4",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "139-05",
+      "element": "ミサト skill1.effects[1]",
+      "key": "414d51ff9288ffc4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "139-06",
       "element": "ミサト skill1.effects[0]",
-      "key": "0647b5d77f6b6bfa",
+      "key": "aea9a8ba007e6f57",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "139-06",
+      "element": "ミサト skill1.effects[1]",
+      "key": "aea9a8ba007e6f57",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "139-07",
       "element": "ミサト skill1.effects[0]",
-      "key": "782719b46885f57d",
+      "key": "c9848bb697951f7f",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "139-07",
+      "element": "ミサト skill1.effects[1]",
+      "key": "c9848bb697951f7f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "139-08",
       "element": "ミサト skill1.effects[0]",
-      "key": "3692aea012eadbc5",
+      "key": "24ae9f8c7ba20a8b",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "139-08",
-      "element": "ミサト skill1.effects[0]",
-      "key": "863fb9b63b0b75b9",
+      "element": "ミサト skill1.effects[1]",
+      "key": "24ae9f8c7ba20a8b",
       "effective": false,
       "minus": 0,
-      "plus": 0
+      "plus": null
     },
     {
       "observation": "144-05",
@@ -2116,26 +2180,50 @@
     {
       "observation": "154-04",
       "element": "ミサト skill1.effects[0]",
-      "key": "111c8931f54b6404",
+      "key": "683cbe7101732872",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "154-04",
+      "element": "ミサト skill1.effects[1]",
+      "key": "683cbe7101732872",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "154-05",
+      "element": "ミサト skill1.effects[0]",
+      "key": "c54a7bdcb3af3d19",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "154-05",
+      "element": "ミサト skill1.effects[1]",
+      "key": "c54a7bdcb3af3d19",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "154-06",
       "element": "ミサト skill1.effects[0]",
-      "key": "0751d026db62e4a3",
+      "key": "91969ed07e280c11",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "154-06",
-      "element": "ミサト skill1.effects[0]",
-      "key": "36782d1aa09c4a5b",
+      "element": "ミサト skill1.effects[1]",
+      "key": "91969ed07e280c11",
       "effective": false,
       "minus": 0,
-      "plus": 0
+      "plus": null
     },
     {
       "observation": "161-03",

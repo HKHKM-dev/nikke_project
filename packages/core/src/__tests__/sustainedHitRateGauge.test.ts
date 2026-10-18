@@ -11,6 +11,7 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { runFirstPass } from '../frame/firstPass.ts';
 import { bulletHitRateWithHitRateUp, hitRateSpanWith, hitRateSpansOf } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
+import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -148,7 +149,8 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
 
   it('does not apply the timed hit rate to manual slots', () => {
     const { first } = (() => {
-      const input = team([fixedSlot(833, false)]);
+      // 2 段目の段 8: ミサトの S1 の回復の対象（lowestHpRatio）は編成の段で決まるので、planTeamRun と同じく先に通す
+      const input = applyCompositionToTeam(team([fixedSlot(833, false)]));
       const frames = battleSecondsToFrames(input.durationSeconds);
       return {
         first: runFirstPass(toTimelineSlots(input.slots), {

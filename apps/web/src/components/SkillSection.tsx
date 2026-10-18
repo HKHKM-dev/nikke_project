@@ -195,7 +195,7 @@ type HpRatioInputProps = { value: number; onCommit: (ratio: number) => void };
  * 2 段目の段 6: HP の割合の想定の入力欄（%。1〜100 の整数）。入力途中の空欄や範囲外はそのまま表示しておき、範囲の整数になった時点で
  * 反映、フォーカスが外れたら範囲に収めて確定する（SkillLevelInput と同じ）
  */
-function HpRatioInput({ value, onCommit }: HpRatioInputProps) {
+export function HpRatioInput({ value, onCommit }: HpRatioInputProps) {
   const percent = Math.round(value * 100);
   const [text, setText] = useState(String(percent));
   const [lastValue, setLastValue] = useState(percent);

@@ -1,13 +1,20 @@
 // 2 段目の段 1（plan/design-skill-stage1.md 1.2・1.4 節）: スキルの欄の付与と解除の表示。定義は data/skills のもの（マナ・アニス：スター）
-import { parseSkillDefinition, type AppliedEffect, type SkillDefinition } from '@nikke/core';
+import {
+  parseSkillDefinition,
+  type AppliedEffect,
+  type ResolvedInstantEffect,
+  type SkillDefinition,
+} from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   formatAppliedAmount,
   formatEffectSource,
+  formatInstantTarget,
   formatRemoveState,
   formatStateGrant,
   formatTrigger,
+  hasLowestHpRatioHeal,
   noteBadgeLabel,
 } from './skillLabels.ts';
 
@@ -96,5 +103,24 @@ describe('効果の出どころの表示', () => {
     expect(formatEffectSource(effect, 'アニス：スター')).toBe(
       '枠 2 アニス：スター スキル 2（自分と自分より最終防御力が低い味方）',
     );
+  });
+});
+
+// 2 段目の段 8（plan/design-skill-stage8.md 1.2・1.3 節）: 「残りの HP の割合が最も低い味方 N 機」への回復
+describe('HP の割合で選ぶ回復の表示', () => {
+  it('finds the heal in a definition, and writes its target', () => {
+    expect(hasLowestHpRatioHeal(definitionOf(833))).toBe(true);
+    expect(hasLowestHpRatioHeal(definitionOf(830))).toBe(false);
+    const heal: ResolvedInstantEffect = {
+      source: { resourceId: 833, skill: 'skill1', name: { ja: 'S1', en: 'S1' } },
+      kind: 'heal',
+      trigger: 'burstUse',
+      target: 'lowestHpRatio',
+      targetCount: 1,
+      value: 0.0804,
+      effectIndex: 1,
+    };
+    expect(formatInstantTarget(heal)).toBe('（残りの HP の割合が最も低い味方 1 機）');
+    expect(formatInstantTarget({ ...heal, target: 'allies' })).toBe('');
   });
 });

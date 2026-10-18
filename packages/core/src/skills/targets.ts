@@ -7,6 +7,8 @@
 // skills/composition.ts が決めた枠（fixedTargets）で絞る。「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
 // ペルソナ編（plan/design-persona.md 3.2 節）: 「ペルソナ状態の」「基本バースト段階が N の」と allies の「自分を除く」も、編成で決まる
 // 対象として fixedTargets で絞る。名前の付いた状態の語彙編: 「〈名前〉状態の」は目録の id（静的な状態。skills/composition.ts）。
+// 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）も編成で決まる対象で、
+// fixedTargets（HP の割合の想定の低い順。同値は枠の若い順）の先頭 targetCount 枠に掛ける。
 import type { Element, WeaponType } from '../types.ts';
 import type { NamedStateId } from './states.ts';
 import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetDefense, TargetSquad } from './types.ts';
@@ -46,6 +48,7 @@ function needsFixedTargets(effect: TargetedEffect): boolean {
   return (
     effect.targetSquad !== undefined ||
     effect.target === 'longestChargeTime' ||
+    effect.target === 'lowestHpRatio' ||
     effect.targetState !== undefined ||
     effect.targetBurstStep !== undefined ||
     (effect.target === 'allies' && effect.excludeSelf !== undefined)
@@ -64,8 +67,9 @@ function fixedTargetOk(effect: TargetedEffect, targetSlotIndex: number): boolean
     }
     return true;
   }
-  const candidates =
-    effect.target === 'longestChargeTime' ? effect.fixedTargets.slice(0, effect.targetCount ?? 1) : effect.fixedTargets;
+  // 順位の順の対象（基本チャージ時間・2 段目の段 8 の HP の割合）は先頭の targetCount 枠
+  const ranked = effect.target === 'longestChargeTime' || effect.target === 'lowestHpRatio';
+  const candidates = ranked ? effect.fixedTargets.slice(0, effect.targetCount ?? 1) : effect.fixedTargets;
   return candidates.includes(targetSlotIndex);
 }
 
@@ -107,6 +111,7 @@ export function isEffectTarget(
         return weaponOk && context?.lowerDefense?.includes(targetSlotIndex) === true;
       return weaponOk;
     case 'longestChargeTime':
+    case 'lowestHpRatio':
       return weaponOk;
     case 'burstUsers':
       return weaponOk && context?.burstUsers?.includes(targetSlotIndex) === true;

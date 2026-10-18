@@ -847,8 +847,10 @@ export type ResolvedInstantEffect = {
   target: BuffTarget;
   targetWeapon?: WeaponType;
   targetElement?: Element;
-  /** Stage 11 アリス編: target が topAttack のときの N */
+  /** Stage 11 アリス編: target が topAttack のときの N。2 段目の段 8: heal の lowestHpRatio の N も */
   targetCount?: number;
+  /** 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: 編成で決まる対象の枠（heal の lowestHpRatio。skills/composition.ts が書く） */
+  fixedTargets?: readonly number[];
   /** V-0024: heal の維持時間（フレーム）。あれば、同じ効果の窓が付いている対象への付き直しでは回復の記録を作らない */
   durationFrames?: number;
   /** ルドミラ：ウィンターオーナー編: 弾丸チャージの発数（ammoRefill の scaling 'flat'）。value は発数のまま */
@@ -897,8 +899,9 @@ export function resolveInstant(
       if (effect.kind === 'ammoRefill' && effect.scaling === 'flat') r.scaling = 'flat';
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.targetElement) r.targetElement = effect.targetElement;
-      const count = effect.kind === 'heal' ? undefined : resolveTargetCount(effect, skill, levels[slot]);
+      const count = resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
+      if (effect.kind === 'heal' && effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
       if (effect.kind === 'heal' && (effect.durationRef !== undefined || effect.durationSeconds !== undefined)) {
         r.durationFrames = gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot]));
       }

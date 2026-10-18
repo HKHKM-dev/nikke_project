@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 833,
-  "checkedAt": "2026-10-03",
+  "checkedAt": "2026-10-18",
   "skills": {
     "skill1": {
       "effects": [
@@ -24,19 +24,22 @@
             "C-0183",
             "C-0184"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "通常攻撃 120 回ごとの味方 1 機の HP 回復は未対応（回復を受けた時の効果を起こさない。単騎ではダメージに関係しない）",
-          "en": "The HP restore on 1 ally every 120 normal attacks is not modeled (it does not trigger effects on being healed; it does not affect damage solo)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "normalShot"
+          "kind": "heal",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 5
+          },
+          "target": "lowestHpRatio",
+          "targetCountRef": 6,
+          "ref": 7,
+          "assumes": {
+            "ja": "「残りの HP の割合が最も低い味方」は、枠の HP の割合の想定（既定は満タン）で戦闘中一定とみなし、並んだときは枠の若い順に選ぶ（自分も候補。C-0567）。実機では被弾で HP の割合が下がった味方が選ばれうる（射撃場 3 分モードでも、撃つ枠には的の攻撃が当たる）。満タンの味方にも回復は起き、「回復効果が適用された時」を起こす。「通常攻撃で 120 回攻撃した時」は、命中率▲（effects[0]）と同じく撃った発の通算で数える。回復量はダメージに関係しない",
+            "en": "\"The ally with the lowest remaining HP ratio\" uses the HP ratio assumed for each slot (full by default), constant during battle; ties go to the leftmost slot (self included; C-0567). In game, an ally whose HP ratio dropped from damage can be chosen instead (in the 3-minute range mode, the target attacks the slots that fire). The heal also lands on allies at full HP and triggers \"when healed\". \"After performing 120 normal attacks\" counts every normal shot fired, as for the hit rate up (effects[0]). The healed amount does not affect damage"
           },
           "claims": [
+            "C-0567",
             "C-0180"
           ]
         }

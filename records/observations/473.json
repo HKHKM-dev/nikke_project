@@ -26,5 +26,38 @@
       "tool": "目視",
       "note": "戦闘履歴のパネルを目で読んだ（盾の欄が被ダメージだけかは確かめていない。V-0438「条件」）"
     }
+  },
+  {
+    "id": "473-03",
+    "recording": "473",
+    "kind": "timing",
+    "use": "compare",
+    "value": [],
+    "unit": "f",
+    "description": "B で、アスカの S1（回復効果が適用された時の攻撃力▲）の窓の始まりの並び（戦闘開始からのゲーム内のフレーム）。一度も付かなかったので空（`473-01` の読み直し）",
+    "source": "V-0438",
+    "readAt": "2026-10-18",
+    "method": {
+      "tool": "`473-01` の読み直し",
+      "note": "2 段目の段 8 の PR 1 で、ミサトの S1 の回復（残りの HP の割合が最も低い味方 1 機）を定義して比べるために足した。`473-01` では、戦闘の終わりまでの 60f ごとのどの切り出しにも S1 のアイコンが無かった"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
   }
 ]
