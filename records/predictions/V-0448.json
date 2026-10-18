@@ -84,8 +84,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       },
       "note": "録画 A。フラワーが I を撃った回（アニス：スターはバーストを撃たず、防御力は同値）のフルバースト中、美しさ 12 スタック・S1 の攻撃力▲の間のシンデレラのコアの 1 ヒット（会心なし）。モデルでは 2 回目のフルバースト（3119〜3707f）"
     },
@@ -101,10 +100,46 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       },
       "note": "同じ所の S1 の追加ダメージ（会心なし。C-0583）。モデルは発射体爆発ダメージ▲を追加ダメージに乗せない（アニス：スターの C-0205 と同じ読み）ので、どの仮説でも同じ値。HUD の増分を 1 ヒットと分けるのに使う（仮説の見分けには使わない）"
+    },
+    {
+      "id": "A-tie-fb1-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "録画 A の 1 回目のフルバースト（フラワー単独の I。アニス：スターのバーストは無く、防御力は同値）の、美しさ 4・5 スタックの段のシンデレラのコアの 1 ヒット（会心なし）。録画を読んだ後に足した指標（同値の見分けは、アニス：スターのバーストが無い 1 回目のほうが確実だった）"
+    },
+    {
+      "id": "A-tie-fb1-add",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 800,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "同じ所の S1 の追加ダメージ（会心なし）。録画を読んだ後に足した指標"
     },
     {
       "id": "B-def-on-core",
@@ -123,8 +158,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       },
       "team": [
         {
@@ -154,8 +188,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       },
       "team": [
         {
@@ -190,8 +223,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       },
       "team": [
         {
@@ -226,8 +258,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true,
-        "condition": "auto"
+        "burst": true
       },
       "team": [
         {
@@ -248,19 +279,23 @@
   ],
   "predicted": {
     "at": "2026-10-18",
-    "commit": "fda8836212cfe47364f97286f9b8d0d98e25bdcd",
+    "commit": "f56cf3c2dd64f9ab604c6b6c1d716c86491932b6",
     "values": {
       "H1": {
         "A-tie-core": 404177.8819,
         "A-tie-add": 515827.1442,
+        "A-tie-fb1-core": 379346.76936000003,
+        "A-tie-fb1-add": 484136.73647999996,
         "B-def-on-core": 784019.1041591999,
         "B-def-on-add": 593194.35168,
         "B-def-ended-core": 784019.1041591999,
-        "B-def-off-core": 464799.18575999996
+        "B-def-off-core": 464799.18576
       },
       "H2": {
-        "A-tie-core": 681763.6316855,
+        "A-tie-core": 681763.6316854998,
         "A-tie-add": 515827.1442,
+        "A-tie-fb1-core": 639878.7334212,
+        "A-tie-fb1-add": 484136.73647999996,
         "B-def-on-core": 784019.1041591999,
         "B-def-on-add": 593194.35168,
         "B-def-ended-core": 784019.1041591999,
@@ -269,10 +304,12 @@
       "H3": {
         "A-tie-core": 404177.8819,
         "A-tie-add": 515827.1442,
+        "A-tie-fb1-core": 379346.76936000003,
+        "A-tie-fb1-add": 484136.73647999996,
         "B-def-on-core": 464799.18576,
         "B-def-on-add": 593194.35168,
         "B-def-ended-core": 464799.18576,
-        "B-def-off-core": 464799.18575999996
+        "B-def-off-core": 464799.18576
       }
     }
   }
