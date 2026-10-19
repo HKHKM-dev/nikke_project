@@ -1,0 +1,86 @@
+{
+  "verification": "V-0461",
+  "note": "撮影はオートバースト OFF で、1 回目のチェーンを手で I-DOLL・フラワー → ソルジャーF.A. → シンデレラの順に押す。モデルのオートバーストも 1 回目のチェーンは同じ 3 枠（枠番号の若い順）なので、予測はオートバーストで出す。比べるのは 1 回目のフルバースト（n: 0）だけ",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 17,
+      "controlled": false
+    },
+    {
+      "rid": 301,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 511,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（C-0589）。デルタの防御力▲ はバースト使用時に付き（20 秒）、デルタの最終防御力に入る。デルタのバーストを使わない回は、デルタのバフ前の防御力（データの計算でアニス：スターより低い）で比べるので、デルタは対象に入る"
+    },
+    {
+      "id": "H0",
+      "note": "別の読み（V-0452 で退けた形）: デルタの防御力▲ は比べに入らず、デルタのバフ前の防御力がデータの計算より高い（アニス：スターのバフ前より高く、アニス：スターのバーストの防御力▲ の後より低い）。デルタの S2 の effects[0] を、同じ値の常時の防御力▲（passive）に置き換えて出す。録画 486（外れる）・488（入る）とはこの形でも合う",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 20,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "defense",
+              "ref": 1
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "delta-fb1",
+      "note": "1 回目のフルバーストで、デルタ（4 枠目）にアニス：スター S2 の発射体爆発ダメージ▲ が付くか（1・0）",
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 4,
+        "skill": "skill2",
+        "stat": "projectileExplosionDamage",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-20",
+    "commit": "b536898eac1ab7bf2f25fadbee161852f4d85986",
+    "values": {
+      "H1": {
+        "delta-fb1": 1
+      },
+      "H0": {
+        "delta-fb1": 0
+      }
+    }
+  }
+}
