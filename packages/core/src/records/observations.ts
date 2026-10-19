@@ -1106,6 +1106,16 @@ export const METRICS: Readonly<Record<string, Metric>> = {
       return frames.slice(1).map((f, i) => f - frames[i]!);
     },
   },
+  // 2 段目の段 9 の PR 2（V-0458）: 枠の [from, to) の発の、発と発の間の平均（(最後の発 − 最初の発) ÷ (発の数 − 1)）。HUD の増分のフレームの
+  // 1f の揺れが、両端の発にしか残らない（マガジンの中の 27・28f の並びは、揺れで隣どうしが 29・26f になることがある）
+  shotIntervalMean: {
+    args: ['slot'],
+    sim: (r, c) => {
+      const frames = shotFramesIn(r, c);
+      if (frames.length < 2) throw new Error(`枠 ${String(c.args.slot)} の発が 2 つ未満`);
+      return (frames[frames.length - 1]! - frames[0]!) / (frames.length - 1);
+    },
+  },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
   // 対象の語彙編（plan/design-target-vocab.md 4.1 節）: 同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比。
   // 敵に掛かる別枠の乗数（受けるダメージ▲）と攻撃力は比で消え、倍率グループの会心の項（クリティカルダメージ）だけが残る

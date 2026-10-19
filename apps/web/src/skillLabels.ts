@@ -5,6 +5,7 @@ import {
   SKILL_SLOTS,
   framesToGameSeconds,
   isStateContent,
+  isWhileEffect,
   namedStateName,
   staticStatesOf,
 } from '@nikke/core';
@@ -60,6 +61,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   maxAmmo: '最大装弾数',
   reloadSpeed: 'リロード速度',
   chargeSpeed: 'チャージ速度',
+  attackSpeed: '攻撃速度',
   hitRate: '命中率',
   infiniteAmmo: '装弾数無限',
   elementDamage: '有利コードの攻撃ダメージ',
@@ -167,8 +169,17 @@ export function formatTimedTrigger(trigger: ResolvedTrigger): string {
   return `${formatTrigger(trigger)} →`;
 }
 
-/** 件を持つ効果のきっかけ。「バースト使用時 →」。名前の付いた状態の語彙編: 状態の中身は「カモフラージュの間 →」（きっかけは付与のもの） */
+/**
+ * 件を持つ効果のきっかけ。「バースト使用時 →」。名前の付いた状態の語彙編: 状態の中身は「カモフラージュの間 →」（きっかけは付与のもの）。
+ * 2 段目の段 9 の PR 2: while の効果は「（発動者の）応急改造 フルスタックの間 →」
+ */
 export function formatItemTrigger(effect: AppliedTimedEffect): string {
+  if (isWhileEffect(effect)) {
+    const stacks = effect.whileStacks;
+    const level =
+      stacks === undefined ? '' : stacks === 'full' ? ' フルスタック' : ` ${formatNumber(stacks)} スタック以上`;
+    return `発動者の${stateLabel(effect.whileState)}${level}の間 →`;
+  }
   return isStateContent(effect) ? `${stateLabel(effect.whileState)}の間 →` : formatTimedTrigger(effect.trigger);
 }
 

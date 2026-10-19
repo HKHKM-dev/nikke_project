@@ -33,5 +33,115 @@
       "source": "normal",
       "frames": [929, 11155]
     }
+  },
+  {
+    "id": "510-02",
+    "recording": "510",
+    "source": "V-0458",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": 27.5714,
+    "unit": "f",
+    "description": "トーブの応急改造が 3 スタックの間の、ソルジャーF.A.（操作・SG）の 2 本目のマガジン（リロードの明けの f1176 から 15 発目の f1562 まで）の発と発の間の平均。(1,562 − 1,176) ÷ 14",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と reticle-ammo.ts --mode series（照準の横の残弾）。分け方は使い捨てのスクリプト",
+      "note": "ソルジャーF.A. の発は、総ダメージの増分のうちトーブの 1 ヒットの格子（灼熱の的。胴体 14,175 × 1.1 × (1 + 距離 0.3 + コア 1 + 会心 0・0.5・0.5524)）に ±2 で乗らないもの（ペレットの和。トーブの発と同じフレームなら和）。15 発のうち 14 発目（f1535 前後）は HUD が読めなかった間の後の増分で、平均は両端の発だけで決まる。間は 28・28・27・28・27・28・28・27・28・27・28・27（14 発目の前後を除く）。照準の横の残弾は、2 本目のマガジンの 15 から減る（最大装弾数 9 + 応急改造 2 × 3）。モデルのフレームは戦闘開始（f757）からで、モデルの 2 本目のマガジンは 418〜804f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 1,
+        "from": 410,
+        "to": 810
+      },
+      "tolerance": {
+        "abs": 0.15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [1176, 1562]
+    }
+  },
+  {
+    "id": "510-03",
+    "recording": "510",
+    "source": "V-0458",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": 141,
+    "unit": "f",
+    "description": "トーブの応急改造が 3 スタックの間の、ソルジャーF.A. の 1 本目のマガジンの最終弾（f1035）から 2 本目のマガジンの 1 発目（f1176）まで",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と reticle-ammo.ts --mode series（照準の横の残弾）。分け方は使い捨てのスクリプト",
+      "note": "ソルジャーF.A. の発は、総ダメージの増分のうちトーブの 1 ヒットの格子（灼熱の的。胴体 14,175 × 1.1 × (1 + 距離 0.3 + コア 1 + 会心 0・0.5・0.5524)）に ±2 で乗らないもの（ペレットの和。トーブの発と同じフレームなら和）。ほかの回も 141・142f（f1562 → 1704 など）。リロード 2 秒（117.6f）+ 24f（C-0148）で、攻撃速度▲の間も縮まない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [1035, 1176]
+    }
+  },
+  {
+    "id": "510-04",
+    "recording": "510",
+    "source": "V-0458",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": [40, 39, 39],
+    "unit": "f",
+    "description": "ソルジャーF.A. の戦闘の始めの 4 発（f769・809・848・887）の間。トーブの応急改造が 1・2 スタックの間（トーブの 10・20 ヒット目 f822・871 の後）も、間は 39・40f のまま",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と reticle-ammo.ts --mode series（照準の横の残弾）。分け方は使い捨てのスクリプト",
+      "note": "ソルジャーF.A. の発は、総ダメージの増分のうちトーブの 1 ヒットの格子（灼熱の的。胴体 14,175 × 1.1 × (1 + 距離 0.3 + コア 1 + 会心 0・0.5・0.5524)）に ±2 で乗らないもの（ペレットの和。トーブの発と同じフレームなら和）。トーブの 1 ヒット目は戦闘開始（f757）の +20f、30 ヒット目は +163f（f920）。その次のソルジャーF.A. の発は f925（+168f）で、f887 からの間は 38f（3 スタックになった後の数フレームだけ速いレート）。その後は 27・28f。モデルのフレームの [0, 131) の発（12・52・91・130f）と比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 0,
+        "to": 131
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [769, 887]
+    }
   }
 ]

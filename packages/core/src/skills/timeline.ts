@@ -195,6 +195,8 @@ const BUFF_FIELDS = [
   'maxAmmoFlat',
   'reloadSpeed',
   'chargeSpeed',
+  // 2 段目の段 9 の PR 2: 攻撃速度▲（射撃が変わるので鍵に入れる）
+  'attackSpeed',
   'chargeTimeFlat',
   'fixedChargeTime',
   // Stage 11 モダニア: 装弾数無限は射撃が変わるので鍵に入れる。命中率（hitRate）は条件が自動の枠だけ keyOf で足す

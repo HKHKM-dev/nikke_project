@@ -236,6 +236,19 @@ function triggerLabel(e: SkillEffect): string | undefined {
   return t.count;
 }
 
+/**
+ * 2 段目の段 9 の PR 2: 常時の効果の while（「temporaryModification のフルスタックの間」「〈状態〉 N スタック以上の間」「〈状態〉の間」）。
+ * while の無い効果は undefined
+ */
+function whileLabel(e: SkillEffect): string | undefined {
+  if (e.kind !== 'passive' || e.while === undefined) return undefined;
+  const { state, stacks, stacksRef } = e.while.selfState;
+  if (stacks === 'full') return `${state} のフルスタックの間`;
+  if (stacks !== undefined) return `${state} ${stacks} スタック以上の間`;
+  if (stacksRef !== undefined) return `${state} の説明文の値（${stacksRef}）スタック以上の間`;
+  return `${state} の間`;
+}
+
 /** 効果の短い説明（kind・トリガー・stat か damageType。状態の付与は状態と中身の stat、解除は外す状態） */
 export function effectLabel(e: SkillEffect): string {
   const detail =
@@ -250,7 +263,7 @@ export function effectLabel(e: SkillEffect): string {
             : 'damageType' in e
               ? e.damageType
               : undefined;
-  return [e.kind, triggerLabel(e), detail].filter((x) => x !== undefined).join('・');
+  return [e.kind, triggerLabel(e), whileLabel(e), detail].filter((x) => x !== undefined).join('・');
 }
 
 const NOTE_KIND_LABEL: Record<SkillNoteKind, string> = {

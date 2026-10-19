@@ -3,6 +3,7 @@
 // Stage 11 モダニア: 装弾数無限と使用武器の変更（殲滅モード）も射撃の実効値に入れた（plan/design-stage11-modernia.md 3.4 節）。
 // 射撃姿勢維持型（maintainFireStance > 0）の刻みも、CDN の項目からここで作る（plan/design-fire-stance-cadence.md。
 // Stage 11 の紅蓮BS の較正表 MEASURED_CHARGE_CADENCE を置き換えた）。
+// 2 段目の段 9 の PR 2: 攻撃速度▲を、レートの蓄積の倍率（rateScale）として足した（plan/design-skill-stage9.md 1.2 節。V-0458）。
 import type { BuffTotals, ChangedWeapon } from '../skills/buffs.ts';
 import { GAME_SECONDS_PER_FRAME } from '../time.ts';
 import type { ShotParams } from '../types.ts';
@@ -21,6 +22,7 @@ export type FiringBuffs = Pick<
   | 'maxAmmoFlat'
   | 'reloadSpeed'
   | 'chargeSpeed'
+  | 'attackSpeed'
   | 'chargeTimeFlat'
   | 'fixedChargeTime'
   | 'infiniteAmmo'
@@ -32,6 +34,7 @@ export const ZERO_FIRING_BUFFS: Readonly<FiringBuffs> = Object.freeze({
   maxAmmoFlat: 0,
   reloadSpeed: 0,
   chargeSpeed: 0,
+  attackSpeed: 0,
   chargeTimeFlat: 0,
   fixedChargeTime: 0,
   infiniteAmmo: 0,
@@ -64,6 +67,11 @@ export type FiringParams = {
    * 解放の分の後）からの経過を持ち越す（frame/shooter.ts の chargeElapsed。C-0541・C-0542）。ほかの 5 体はアニス：スターの形を当てている（未確認。V-0134）
    */
   downCharge: boolean;
+  /**
+   * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: レートの蓄積に掛ける倍率 1 + 攻撃速度（チャージ武器は 1）。
+   * マガジンの中の発と発の間だけを縮め、リロード・リロード明けの待ち・構えは変えない（V-0458 の録画 510〜512。C-0600）
+   */
+  rateScale: number;
   /** Stage 11 モダニア: 装弾数無限（撃っても残弾を減らさない） */
   infiniteAmmo: boolean;
   /** Stage 11 モダニア: 使用武器の変更（無ければ null = 基礎の武器）。射手は変更後の武器を別の状態で撃つ（frame/firstPass.ts） */
@@ -91,6 +99,7 @@ export function isZeroFiring(buffs: FiringBuffs): boolean {
     buffs.maxAmmoFlat === 0 &&
     buffs.reloadSpeed === 0 &&
     buffs.chargeSpeed === 0 &&
+    buffs.attackSpeed === 0 &&
     buffs.chargeTimeFlat === 0 &&
     buffs.fixedChargeTime === 0 &&
     buffs.infiniteAmmo === 0 &&
@@ -157,6 +166,9 @@ export function firingParams(
     chargeFrames: isChargeWeapon(shot) ? Math.max(0, chargeSecondsToFrames(chargeSecondsOf(shot, buffs))) : 0,
     stance,
     downCharge: isChargeWeapon(shot) && shot.inputType === 'DOWN_Charge',
+    // 2 段目の段 9 の PR 2: 攻撃速度▲は AR・SMG・SG にだけ書ける（skills/types.ts の validateAttackSpeed）。チャージ武器は発と発の間を
+    // チャージで決めるので掛けない
+    rateScale: isChargeWeapon(shot) ? 1 : Math.max(0, 1 + buffs.attackSpeed),
     infiniteAmmo: buffs.infiniteAmmo > 0,
     weapon: buffs.weapon,
   };

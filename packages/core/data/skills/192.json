@@ -44,25 +44,23 @@
       "effects": [],
       "notes": [
         {
-          "ja": "自分が応急改造のフルスタック状態の時のみの、味方全体のクリティカル確率▲（持続）は未対応（スタック数の条件。plan/design-skill-stage3.md 1.4 節）",
-          "en": "Critical Rate up on all allies only while self is at max Temporary Modification stacks (continuous) is not modeled (a stack count condition; plan/design-skill-stage3.md 1.4)",
+          "ja": "自分が応急改造のフルスタック状態の時のみの、味方全体のクリティカル確率▲（持続）は未対応（基礎版の応急改造は S1 の代用弾丸（攻撃した時の確率）から付き、確率のきっかけの付与は書けないので、モデルでは付かない。形は宝物版と同じ while で書ける。plan/design-skill-stage9.md 論点 7）",
+          "en": "Critical Rate up on all allies only while self is at max Temporary Modification stacks (continuous) is not modeled (in the base version Temporary Modification comes from Emergency-Crafted Bullets on a chance in skill 1, which grants cannot have, so it never applies in the model; the form is the same while as the treasure version; plan/design-skill-stage9.md issue 7)",
           "kind": "unimplemented",
           "effect": {
-            "kind": "timed",
+            "kind": "passive",
             "stat": "critRate",
-            "target": "allies",
-            "trigger": "applied"
+            "target": "allies"
           }
         },
         {
-          "ja": "自分が応急改造のフルスタック状態の時のみの、ショットガンを所持する味方全体の攻撃速度▲（持続）は未対応（スタック数の条件。攻撃速度は計算の語彙に無い）",
-          "en": "Attack Speed up on all allies with shotguns only while self is at max Temporary Modification stacks (continuous) is not modeled (a stack count condition; attack speed is not in the calculation vocabulary)",
+          "ja": "自分が応急改造のフルスタック状態の時のみの、ショットガンを所持する味方全体の攻撃速度▲（持続）は未対応（基礎版の応急改造は S1 の代用弾丸（攻撃した時の確率）から付き、確率のきっかけの付与は書けないので、モデルでは付かない。形は宝物版と同じ while で書ける。plan/design-skill-stage9.md 論点 7）",
+          "en": "Attack Speed up on all allies with shotguns only while self is at max Temporary Modification stacks (continuous) is not modeled (in the base version Temporary Modification comes from Emergency-Crafted Bullets on a chance in skill 1, which grants cannot have, so it never applies in the model; the form is the same while as the treasure version; plan/design-skill-stage9.md issue 7)",
           "kind": "unimplemented",
           "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "allies",
-            "trigger": "applied"
+            "kind": "passive",
+            "stat": "attackSpeed",
+            "target": "allies"
           }
         }
       ]
@@ -163,30 +161,41 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "自分が応急改造のフルスタック時のみの、味方全体のクリティカル確率▲（持続）は未対応（フルスタックの間だけ効く形の語彙が無い。plan/design-skill-stage9.md 1.3 節）",
-          "en": "Critical Rate up on all allies only at max Temporary Modification stacks on self (continuous) is not modeled (no vocabulary for an effect that lasts only while at max stacks; plan/design-skill-stage9.md 1.3)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "critRate",
-            "target": "allies",
-            "trigger": "applied"
+          "kind": "passive",
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 1,
+          "while": {
+            "selfState": {
+              "state": "temporaryModification",
+              "stacks": "full"
+            }
           },
-          "claims": ["C-0599"]
+          "claims": [
+            "C-0599",
+            "C-0601",
+            "C-0602"
+          ]
         },
         {
-          "ja": "自分が応急改造のフルスタック時のみの、ショットガンを所持する味方全体の攻撃速度▲（持続）は未対応（スタック数の条件。攻撃速度は計算の語彙に無い）",
-          "en": "Attack Speed up on all allies with shotguns only at max Temporary Modification stacks on self (continuous) is not modeled (a stack count condition; attack speed is not in the calculation vocabulary)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "allies",
-            "trigger": "applied"
-          }
+          "kind": "passive",
+          "target": "allies",
+          "targetWeapon": "SG",
+          "stat": "attackSpeed",
+          "ref": 2,
+          "while": {
+            "selfState": {
+              "state": "temporaryModification",
+              "stacks": "full"
+            }
+          },
+          "claims": [
+            "C-0600",
+            "C-0601",
+            "C-0602"
+          ]
         }
       ]
     },
