@@ -83,6 +83,12 @@ export function variantDefinition(
     for (const { x, k } of [...rest].reverse()) x.effects.splice(k, 1);
     return copy;
   }
+  // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果は、while を外して戦闘中ずっと効かせる
+  if (effect.kind === 'passive' && effect.while !== undefined) {
+    const { while: _while, ...always } = effect;
+    entry.effects[ref.index] = always;
+    return copy;
+  }
   if (effect.kind !== 'timed') return undefined;
   entry.effects[ref.index] = alwaysOn(effect, battleSeconds);
   return copy;

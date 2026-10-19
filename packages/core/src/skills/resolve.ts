@@ -45,6 +45,7 @@ import {
   type TargetCountFields,
   type TimerTrigger,
   type TargetSquad,
+  type PassiveEffect,
   type StateGrantEffect,
   type TimedEffect,
   staticStatesOf,
@@ -282,7 +283,6 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
   const statics = new Set(staticStatesOf(def));
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
-    const skill = character.skills[slot];
     for (const effect of entry.effects) {
       // 名前の付いた状態の語彙編（plan/design-named-state.md 3.4 節）: 静的な付与の中身は常時パッシブ（効果の並びの位置で足す）。
       // 2 段目の段 1: 静的かは状態ごと（staticStatesOf）
@@ -290,30 +290,36 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
         if (statics.has(effect.state)) resolved.push(...staticContentsOf(effect, character, slot, levels[slot]));
         continue;
       }
-      if (effect.kind !== 'passive') continue;
-      const r: ResolvedEffect = {
-        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
-        target: effect.target,
-        stat: effect.stat,
-        scaling: effect.scaling ?? 'ratio',
-        value: scaledValue(
-          skillValue(skill, effect.ref, levels[slot]),
-          effect.stat,
-          effect.scaling,
-          character,
-          effect.decrease,
-        ),
-      };
-      if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
-      if (effect.targetElement) r.targetElement = effect.targetElement;
-      if (effect.targetClass) r.targetClass = effect.targetClass;
-      if (effect.targetSquad) r.targetSquad = effect.targetSquad;
-      if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
-      if (effect.assumes) r.assumes = effect.assumes;
-      resolved.push(r);
+      // 2 段目の段 9 の PR 2: 状態の間だけ効く常時の効果（while）は常時の値に入れない（resolveWhileEffects）
+      if (effect.kind !== 'passive' || effect.while !== undefined) continue;
+      resolved.push(passiveValueOf(effect, character, slot, levels[slot]));
     }
   }
   return resolved;
+}
+
+/** 常時の効果 1 つを Lv の数値に解く（対象・値・仮定） */
+function passiveValueOf(
+  effect: PassiveEffect,
+  character: CharacterData,
+  slot: SkillSlot,
+  level: number,
+): ResolvedEffect {
+  const skill = character.skills[slot];
+  const r: ResolvedEffect = {
+    source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+    target: effect.target,
+    stat: effect.stat,
+    scaling: effect.scaling ?? 'ratio',
+    value: scaledValue(skillValue(skill, effect.ref, level), effect.stat, effect.scaling, character, effect.decrease),
+  };
+  if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
+  if (effect.targetElement) r.targetElement = effect.targetElement;
+  if (effect.targetClass) r.targetClass = effect.targetClass;
+  if (effect.targetSquad) r.targetSquad = effect.targetSquad;
+  if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
+  if (effect.assumes) r.assumes = effect.assumes;
+  return r;
 }
 
 /** 名前の付いた状態の語彙編: 静的な付与の中身（常時パッシブ。対象は持ち主 = 自分） */
@@ -405,6 +411,23 @@ export type ResolvedStateContent = ResolvedEffect & {
   /** 付与のスタックの最大数（解決済み）。値は 1 スタックあたり */
   maxStacks?: number;
 };
+
+/**
+ * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 解決した、状態の間だけ効く常時の効果（while）。状態の中身と同じく
+ * whileState を持つ件の効果で、違いは、窓が効果を出した枠（自分）のその状態の件（段 1）から作られ（skills/holders.ts）、効く相手が
+ * 効果の対象であること。値はスタックごとではない（maxStacks を持たない）。effectIndex は常時の効果のスロットの何番目か、subIndex は 0
+ */
+export type ResolvedWhileEffect = ResolvedStateContent & {
+  /** 状態の窓が効果を出した枠のものであることの印（状態の中身は状態の持ち主のもの） */
+  whileSource: true;
+  /** スタックの条件（解決済み。'full' は付与の上限の段、N は N 段以上）。無ければ状態が付いている間 */
+  whileStacks?: 'full' | number;
+};
+
+/** 2 段目の段 9 の PR 2: while の効果か */
+export function isWhileEffect(effect: ItemEffect): effect is ResolvedWhileEffect {
+  return 'whileSource' in effect;
+}
 
 /** 名前の付いた状態の語彙編: 件を持つ効果（持続バフと、状態の中身）。値の小片（ValuePiece）・AppliedTimedEffect の元 */
 export type ItemEffect = ResolvedTimedEffect | ResolvedStateContent;
@@ -622,6 +645,39 @@ export function resolveStateContents(
         if (grant.assumes) r.assumes = grant.assumes;
         out.push(r);
       });
+    });
+  }
+  return out;
+}
+
+/**
+ * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 定義の while の常時の効果を Lv の数値に解く。値と対象は常時の効果と同じに
+ * 解き、スタックの条件の stacksRef は、そのスロットの Lv の説明文の値を整数に丸めた stacks にする（条件の selfState と同じ）
+ */
+export function resolveWhileEffects(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedWhileEffect[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const out: ResolvedWhileEffect[] = [];
+  for (const slot of SKILL_SLOTS) {
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'passive' || effect.while === undefined) return;
+      const { state, stacks, stacksRef } = effect.while.selfState;
+      const r: ResolvedWhileEffect = {
+        ...passiveValueOf(effect, character, slot, levels[slot]),
+        effectIndex,
+        subIndex: 0,
+        whileState: state,
+        whileSource: true,
+      };
+      if (stacks !== undefined) r.whileStacks = stacks;
+      else if (stacksRef !== undefined)
+        r.whileStacks = Math.round(skillValue(character.skills[slot], stacksRef, levels[slot]));
+      out.push(r);
     });
   }
   return out;

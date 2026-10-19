@@ -42,12 +42,15 @@ export function reloadChunks(shot: Pick<ShotParams, 'maxAmmo' | 'reloadBullet'>)
   return Math.ceil(shot.maxAmmo / ammoPerChunk);
 }
 
-/** i 発目を撃った直後の発射レート（rpm）。MG は 1 発ごとに上昇し 1 フレーム 1 発（MAX_RPM）で頭打ち。 */
-export function rateAfterShots(shot: ShotParams, shotsFired: number): number {
+/**
+ * i 発目を撃った直後の発射レート（rpm）。MG は 1 発ごとに上昇し 1 フレーム 1 発（MAX_RPM）で頭打ち。
+ * 2 段目の段 9 の PR 2: rateScale（攻撃速度▲の 1 + Σ。frame/firing.ts の FiringParams）を掛けてから頭打ちにする（C-0600）
+ */
+export function rateAfterShots(shot: ShotParams, shotsFired: number, rateScale = 1): number {
   const rpm = hasSpinUp(shot)
     ? Math.min(shot.endRateOfFire, shot.rateOfFire + shotsFired * shot.rateOfFireChangePerShot)
     : shot.rateOfFire;
-  return Math.min(MAX_RPM, rpm);
+  return Math.min(MAX_RPM, rpm * rateScale);
 }
 
 /** 1 発分たまったか。rpm ÷ MAX_RPM の和が割り算の誤差で整数のすぐ下に出ても 1 発にする */
@@ -76,7 +79,7 @@ export function simulateShotFrames(
   let t = 0;
   while (frames.length < params.maxAmmo) {
     t += 1;
-    acc += rateAfterShots(shot, frames.length) / MAX_RPM;
+    acc += rateAfterShots(shot, frames.length, params.rateScale) / MAX_RPM;
     if (acc >= 1 - ACC_EPSILON) {
       acc -= 1;
       frames.push(t);

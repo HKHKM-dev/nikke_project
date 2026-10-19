@@ -30,6 +30,7 @@ import {
   resolveStateContents,
   resolveStateGrants,
   resolveTimed,
+  resolveWhileEffects,
   type AppliedEffect,
   type ResolvedEffect,
   type ResolvedInstantEffect,
@@ -39,6 +40,7 @@ import {
   type ResolvedStateGrant,
   type ResolvedTimedEffect,
   type ResolvedTrigger,
+  type ResolvedWhileEffect,
   type ItemEffect,
 } from './resolve.ts';
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type RankingRecord } from './ranking.ts';
@@ -110,7 +112,12 @@ export type HeldOrigin =
   | { kind: 'healWindow'; effect: ResolvedInstantEffect }
   | { kind: 'cycleEvery'; effect: ResolvedCycleEvery }
   /** 段 C: 持続ダメージが付ける敵の状態（持ち主は ENEMY。同じ状態の持続ダメージの効果をまとめる。frame/dot.ts の groupDotsByState） */
-  | { kind: 'enemyState'; state: NamedStateId; effects: readonly ResolvedDamageEffect[] };
+  | { kind: 'enemyState'; state: NamedStateId; effects: readonly ResolvedDamageEffect[] }
+  /**
+   * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果（while）。件は、出どころの枠のその状態の段 1 の件
+   * から作る（whileItems。始まりの列を持たない）
+   */
+  | { kind: 'while'; effect: ResolvedWhileEffect };
 
 /** 件（窓 [start, end)）。stack はスタックの段（1 始まり）、scale は確率のきっかけの付いている確率 */
 export type HeldItem = { start: number; end: number; stack?: number; scale?: number };
@@ -426,6 +433,35 @@ export function stacksHold(
   return level >= stacks;
 }
 
+/**
+ * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の件。効果を出した枠のその状態の件（段 1）のうち、スタックの条件を満たす
+ * 段の件（'full' は付与の上限の段、N は N 段以上、条件が無ければ全部）の和で、重なる件と接した件は 1 つにする（和集合の上書き延長と同じ
+ * 見え方）。スタックの条件の見方は stacksHold と同じ
+ */
+export function whileItems(
+  own: readonly { origin: HeldOrigin; items: readonly HeldItem[] }[],
+  stacks: 'full' | number | undefined,
+): HeldItem[] {
+  const spans: [number, number][] = [];
+  for (const { origin, items } of own) {
+    const max = origin.kind === 'state' ? origin.grant.maxStacks : undefined;
+    for (const it of items) {
+      if (it.start >= it.end) continue;
+      const holds =
+        stacks === undefined || (stacks === 'full' ? max !== undefined && it.stack === max : (it.stack ?? 1) >= stacks);
+      if (holds) spans.push([it.start, it.end]);
+    }
+  }
+  spans.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const out: HeldItem[] = [];
+  for (const [start, end] of spans) {
+    const last = out[out.length - 1];
+    if (last !== undefined && start <= last.end) last.end = Math.max(last.end, end);
+    else out.push({ start, end });
+  }
+  return out;
+}
+
 /** timed の件（段 A までの planBuffTimeline の distribute と同じ規則）。確率のきっかけと強化は呼ぶ側 */
 function timedItems(
   effect: ResolvedTimedEffect,
@@ -668,6 +704,19 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     });
   }
 
+  // ---- 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果（while）。対象ごとに件の列（段 1.5）。
+  // 件は出どころの枠の状態の件から作るので、始まりは登録しない（readWhileItems） ----
+  const whileTracks: HeldTrack[] = [];
+  slots.forEach((slot, sourceSlotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveWhileEffects(slot.definition, slot.character, slot.levels)) {
+      slots.forEach((target, holder) => {
+        if (target === null || !isEffectTarget(effect, sourceSlotIndex, holder, target.character)) return;
+        whileTracks.push(newTrack(holder, sourceSlotIndex, { kind: 'while', effect }, 1.5));
+      });
+    }
+  });
+
   // ---- 循環の間隔の変更（対象は自分） ----
   const cycleSources: CycleSource[] = [];
   slots.forEach((slot, slotIndex) => {
@@ -776,6 +825,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const fullBurstEnds = (): number[] => options.fullBurstWindows().map((w) => w.end);
   /** 件の列の件（入力が変わったときだけ作り直す） */
   const readItems = (track: HeldTrack): HeldItem[] => {
+    // 2 段目の段 9 の PR 2: while の件は、出どころの枠の状態の件から作る（入力の長さでなく、元の件が作り直されたかで見る）
+    if (track.origin.kind === 'while') return readWhileItems(track, track.origin.effect);
     const log = track.holder === ENEMY ? null : logs[track.holder];
     const windows = options.fullBurstWindows();
     const seen: HeldTrack['seen'] = [
@@ -837,6 +888,37 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const activeAt = (track: HeldTrack, frame: number): HeldItem[] =>
     readItems(track).filter((it) => it.start <= frame && frame < it.end);
 
+  /**
+   * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の件の列が見る、出どころの枠のその状態（家族の根なら家族のどれか）の
+   * 段 1 の件の列（出どころは問わない。条件の selfState が見るものと同じ）
+   */
+  const whileOwn = new Map<HeldTrack, HeldTrack[]>();
+  /** while の件を作った時の、元の状態の件（件の列ごとの items。作り直すと別の配列になる） */
+  const whileSeen = new Map<HeldTrack, readonly HeldItem[][]>();
+  const readWhileItems = (track: HeldTrack, effect: ResolvedWhileEffect): HeldItem[] => {
+    let own = whileOwn.get(track);
+    if (own === undefined) {
+      const family = statesMatching(effect.whileState);
+      own = tracks.filter(
+        (t) =>
+          t.holder === track.sourceSlotIndex &&
+          t.stage === 1 &&
+          t.origin.kind === 'state' &&
+          family.includes(t.origin.state),
+      );
+      whileOwn.set(track, own);
+    }
+    const deps = own.map((t) => readItems(t));
+    const seen = whileSeen.get(track);
+    if (seen !== undefined && seen.length === deps.length && seen.every((d, i) => d === deps[i])) return track.items;
+    whileSeen.set(track, deps);
+    track.items = whileItems(
+      own.map((t, i) => ({ origin: t.origin, items: deps[i]! })),
+      effect.whileStacks,
+    );
+    return track.items;
+  };
+
   /** 件の効いている値（確率のきっかけは付いている確率を掛けて丸めた値） */
   const valueOf = (effect: ItemEffect, item: HeldItem): number =>
     item.scale === undefined ? effect.value : chanceValueOf(effect.value, item.scale);
@@ -849,7 +931,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       for (const track of tracks) {
         if (track.holder !== holder) continue;
         const o = track.origin;
-        if (o.kind === 'timed') {
+        // 2 段目の段 9 の PR 2: while の効果も、件を持つ効果として同じに読む（段 1.5）
+        if (o.kind === 'timed' || o.kind === 'while') {
           if (test(track, o.effect)) views.push({ track, effect: o.effect });
         } else if (o.kind === 'state') {
           for (const c of o.contents) if (test(track, c)) views.push({ track, effect: c });
@@ -1387,7 +1470,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       amplifiers.length > 0 ||
       enemyStateSources.length > 0 ||
       removeSources.length > 0 ||
-      stackSources.length > 0,
+      stackSources.length > 0 ||
+      whileTracks.length > 0,
     registerBattleStart() {
       if (frames <= 0) return;
       register(emptyEvents(0), true);
@@ -1530,7 +1614,7 @@ function trackMatches(track: HeldTrack, filter: HeldItemFilter): boolean {
     const stats =
       o.kind === 'state'
         ? o.contents.map((c) => c.stat)
-        : o.kind === 'timed' || o.kind === 'passive'
+        : o.kind === 'timed' || o.kind === 'passive' || o.kind === 'while'
           ? [o.effect.stat]
           : [];
     if (!stats.includes(filter.stat)) return false;
@@ -1591,6 +1675,17 @@ export function hasOwnShotCountItem(
     if (o.kind === 'state') {
       return track.holder === slotIndex && track.shotCount && o.contents.some((c) => !isStateStat(c.stat));
     }
+    // 2 段目の段 9 の PR 2: while の件は、出どころの枠のその状態の件が、自分の射撃の回数のきっかけで付いた時（状態の件の列の shotCount）
+    if (o.kind === 'while') {
+      const family = statesMatching(o.effect.whileState);
+      return (
+        track.holder === slotIndex &&
+        !isStateStat(o.effect.stat) &&
+        history.tracks.some(
+          (t) => t.holder === slotIndex && t.origin.kind === 'state' && family.includes(t.origin.state) && t.shotCount,
+        )
+      );
+    }
     return false;
   });
   return (
@@ -1648,7 +1743,8 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
     }
   };
   const o = track.origin;
-  if (o.kind === 'timed') for (const item of track.items) push(o.effect, item);
+  // 2 段目の段 9 の PR 2: while の効果は timed と同じく件ごとに 1 つ（値はスタックごとではない）
+  if (o.kind === 'timed' || o.kind === 'while') for (const item of track.items) push(o.effect, item);
   if (o.kind === 'state') for (const item of track.items) for (const c of o.contents) push(c, item);
   return pieces;
 }
@@ -1795,7 +1891,8 @@ function passiveStatesOf(history: HolderHistory): (SlotBuffState | null)[] {
 export function valuePiecesOf(history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots'>): ValuePiece[] {
   const keyed: { piece: ValuePiece; key: number[] }[] = [];
   for (const track of history.tracks) {
-    if (track.origin.kind !== 'timed' && track.origin.kind !== 'state') continue;
+    const kind = track.origin.kind;
+    if (kind !== 'timed' && kind !== 'state' && kind !== 'while') continue;
     for (const piece of piecesOfTrack(track, history.slots)) keyed.push({ piece, key: pieceKey(piece) });
   }
   // 強化は、履歴を閉じる時に作った値の小片から（敵が持つ小片は、効果の対象の味方の各枠に写す）
