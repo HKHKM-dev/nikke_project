@@ -12956,6 +12956,54 @@
       "plus": null
     },
     {
+      "observation": "510-05",
+      "element": "トーブ treasureSkills.skill2.effects[0]",
+      "key": "fee7fbf96b5b8c74",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "510-05",
+      "element": "トーブ treasureSkills.skill2.effects[1]",
+      "key": "fee7fbf96b5b8c74",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "510-06",
+      "element": "トーブ treasureSkills.skill2.effects[0]",
+      "key": "d28f3bb6e030cbd7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "510-06",
+      "element": "トーブ treasureSkills.skill2.effects[1]",
+      "key": "d28f3bb6e030cbd7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "510-07",
+      "element": "トーブ treasureSkills.skill2.effects[0]",
+      "key": "39bd39f75705e406",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "510-07",
+      "element": "トーブ treasureSkills.skill2.effects[1]",
+      "key": "39bd39f75705e406",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "511-01",
       "element": "トーブ treasureSkills.skill2.effects[0]",
       "key": "0d0bffbd903c8bce",
@@ -13018,6 +13066,54 @@
       "effective": true,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "511-05",
+      "element": "トーブ treasureSkills.skill2.effects[0]",
+      "key": "0b975e7933055a20",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "511-05",
+      "element": "トーブ treasureSkills.skill2.effects[1]",
+      "key": "0b975e7933055a20",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "511-06",
+      "element": "トーブ treasureSkills.skill2.effects[0]",
+      "key": "df3e9e36e52b4fb3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "511-06",
+      "element": "トーブ treasureSkills.skill2.effects[1]",
+      "key": "df3e9e36e52b4fb3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "511-07",
+      "element": "トーブ treasureSkills.skill2.effects[0]",
+      "key": "466c9c7707cd88f2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "511-07",
+      "element": "トーブ treasureSkills.skill2.effects[1]",
+      "key": "466c9c7707cd88f2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "512-01",

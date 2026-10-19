@@ -143,5 +143,113 @@
       "source": "firing",
       "frames": [782, 900]
     }
+  },
+  {
+    "id": "511-05",
+    "recording": "511",
+    "source": "V-0465",
+    "readAt": "2026-10-20",
+    "kind": "count",
+    "use": "compare",
+    "value": 62,
+    "unit": "発",
+    "description": "トーブ（2 枠目・AI・宝物の段階 3）の 11 発目を撃った時の最大装弾数（10 発目の代用弾丸の後。枠アイコンの上の「残弾/最大」の最大）",
+    "method": {
+      "tool": "ffmpeg で枠アイコンの上の表示（1920×1080 の 1065,902 から 90×22）をフレームごとに並べた画像を目で読んだ（tools/captures/ammo.ts は背景が明るく読めなかった）",
+      "note": "表示が 51/60 → 53/62 に替わった最初のフレームは f835（残弾は 1 減ってから弾丸チャージの分だけ増える）。その後、次の代用弾丸まで最大は変わらない。1 回の代用弾丸で 1 スタック（案 A）なら 10・20・30 発目の後に 62・64・66、2 スタック（案 B）なら 64・66・66"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 11
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing",
+      "frames": [835, 835]
+    }
+  },
+  {
+    "id": "511-06",
+    "recording": "511",
+    "source": "V-0465",
+    "readAt": "2026-10-20",
+    "kind": "count",
+    "use": "compare",
+    "value": 64,
+    "unit": "発",
+    "description": "トーブ（2 枠目・AI・宝物の段階 3）の 21 発目を撃った時の最大装弾数（20 発目の代用弾丸の後。枠アイコンの上の「残弾/最大」の最大）",
+    "method": {
+      "tool": "ffmpeg で枠アイコンの上の表示（1920×1080 の 1065,902 から 90×22）をフレームごとに並べた画像を目で読んだ（tools/captures/ammo.ts は背景が明るく読めなかった）",
+      "note": "表示が 44/62 → 46/64 に替わった最初のフレームは f884（残弾は 1 減ってから弾丸チャージの分だけ増える）。その後、次の代用弾丸まで最大は変わらない。1 回の代用弾丸で 1 スタック（案 A）なら 10・20・30 発目の後に 62・64・66、2 スタック（案 B）なら 64・66・66"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 21
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing",
+      "frames": [884, 884]
+    }
+  },
+  {
+    "id": "511-07",
+    "recording": "511",
+    "source": "V-0465",
+    "readAt": "2026-10-20",
+    "kind": "count",
+    "use": "compare",
+    "value": 66,
+    "unit": "発",
+    "description": "トーブ（2 枠目・AI・宝物の段階 3）の 31 発目を撃った時の最大装弾数（30 発目の代用弾丸の後。枠アイコンの上の「残弾/最大」の最大）",
+    "method": {
+      "tool": "ffmpeg で枠アイコンの上の表示（1920×1080 の 1065,902 から 90×22）をフレームごとに並べた画像を目で読んだ（tools/captures/ammo.ts は背景が明るく読めなかった）",
+      "note": "表示が 37/64 → 40/66 に替わった最初のフレームは f933（残弾は 1 減ってから弾丸チャージの分だけ増える）。その後、次の代用弾丸まで最大は変わらない。1 回の代用弾丸で 1 スタック（案 A）なら 10・20・30 発目の後に 62・64・66、2 スタック（案 B）なら 64・66・66"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 31
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing",
+      "frames": [933, 933]
+    }
   }
 ]
