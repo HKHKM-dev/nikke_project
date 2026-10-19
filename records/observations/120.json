@@ -136,5 +136,75 @@
         "burst": false
       }
     }
+  },
+  {
+    "id": "120-06",
+    "recording": "120",
+    "source": "V-0467",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": 59.0667,
+    "unit": "f",
+    "description": "ネオン：ビジョン・アイ単騎（押下チャージ型・1 秒チャージ）の、マガジンの中の発と発の間の平均（6 発のマガジン 3 本。(最後の発 − 最初の発) の和 ÷ 間の数 = 886 ÷ 15）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。単騎なので 1 つの増分が 1 発）と使い捨てのスクリプト",
+      "note": "マガジンは f892〜1186（58・59・58・59・60）、f1386〜1682、f1883〜2179。2・3 本目は 2 発目（f1445・f1942 の頃）の増分が無く（119・118f の間）、発の抜け（的に当たらなかった発）とみて、間の数に入れた。解放（C-0143 の 23f）を足した 82f は無い。比べるモデルの範囲は 1 本目のマガジン"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 1,
+        "from": 0,
+        "to": 400
+      },
+      "tolerance": {
+        "abs": 0.2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "120-07",
+    "recording": "120",
+    "source": "V-0467",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": [201],
+    "unit": "f",
+    "description": "ネオン：ビジョン・アイ単騎のリロードを挟む間（最終弾 → 次のマガジンの 1 発目。3 か所の中央値）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。単騎なので 1 つの増分が 1 発）と使い捨てのスクリプト",
+      "note": "3 か所は 200・201・202f（f1186 → 1386、f1682 → 1883、f2179 → 2381）。モデル（リロード 117.6f + チャージ 59f + 解放 23f）は 199〜200f で、アニス：スター（C-0222）と同じく 1〜2f 長い（許容 ±2）。比べるモデルの範囲は 1 本目と 2 本目のマガジンの境"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 364,
+        "to": 565
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]
