@@ -120,6 +120,7 @@ describe('computeDamage', () => {
       maxAmmoFlat: 0,
       reloadSpeed: 0,
       chargeSpeed: 0,
+      attackSpeed: 0,
       chargeTimeFlat: 0,
       fixedChargeTime: 0,
       hitRate: 0,

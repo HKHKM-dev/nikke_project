@@ -247,8 +247,9 @@ export function stepShooter(
   if (blocked) return false;
   if (state.phase === 'priming') startMagazine(state);
   if (state.shotsInMagazine > 0 && !isChargeWeapon(shot)) {
-    // simulateShotFrames と同じ: 前の発射の翌フレームから毎フレーム蓄積し、1 発分たまったフレームで撃つ
-    state.acc += rateAfterShots(shot, state.shotsInMagazine) / MAX_RPM;
+    // simulateShotFrames と同じ: 前の発射の翌フレームから毎フレーム蓄積し、1 発分たまったフレームで撃つ。
+    // 2 段目の段 9 の PR 2: 攻撃速度▲はこのフレームのレートに掛ける（params.rateScale。C-0600）
+    state.acc += rateAfterShots(shot, state.shotsInMagazine, params.rateScale) / MAX_RPM;
     if (state.acc < 1 - ACC_EPSILON) return false;
     state.acc -= 1;
   }

@@ -72,6 +72,8 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * 窓のあいだ、自分の通常攻撃の 1 発の基礎を max(1, 攻撃力 − 防御力) から max(1, 攻撃力) にする
  * 持続ダメージ▲編（plan/design-sustained-damage-up.md 3 節）: sustainedDamage = 持続ダメージ▲。その枠の持続ダメージ（dot）の tick に
  * だけ掛ける（autoAttack には掛けない）。式の中の置き場所は skills/burstDamage.ts の SUSTAINED_DAMAGE_PLACEMENT
+ * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: attackSpeed = 攻撃速度▲（比率）。レートを蓄積して撃つ武器（AR・SMG・SG）の
+ * マガジンの中の発と発の間を、レート × (1 + Σ) にする（V-0458。C-0600）。リロード・リロード明けの 1 発目の待ち・構えは変えない。射撃に効く
  */
 export type BuffStat =
   | 'attack'
@@ -99,7 +101,8 @@ export type BuffStat =
   | 'trueDamageConversion'
   | 'sustainedDamage'
   | 'maxHp'
-  | 'defense';
+  | 'defense'
+  | 'attackSpeed';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -132,15 +135,21 @@ export const BUFF_STATS = [
   // 2 段目の段 7（plan/design-skill-stage7.md 1.3 節）: 防御力▲（比率）。与ダメージの式は読まず、対象の絞り込み
   // 「自分より最終防御力が低い味方」（targetDefense）だけが、発火のフレームの最終防御力として読む
   'defense',
+  // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: 攻撃速度▲（比率）。射手のレートの蓄積に (1 + Σ) を掛ける（frame/firing.ts）
+  'attackSpeed',
 ] as const satisfies readonly BuffStat[];
 
-/** Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限、アニス：スター編でチャージ時間の固定を足した */
+/**
+ * Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限、アニス：スター編でチャージ時間の固定、2 段目の段 9 の
+ * PR 2 で攻撃速度を足した
+ */
 export const FIRING_STATS = [
   'maxAmmo',
   'reloadSpeed',
   'chargeSpeed',
   'infiniteAmmo',
   'fixedChargeTime',
+  'attackSpeed',
 ] as const satisfies readonly BuffStat[];
 
 /** 射撃に効くか。Stage 11 モダニア: 解決後の使用武器の変更（stat 'weapon'。skills/resolve.ts の EffectStat）も射撃に効く */
@@ -346,9 +355,21 @@ export type PassiveEffect = FixedTargetFields & {
    * （TeamSlotInput.hpRatio）で戦闘中一定なので、編成の段（skills/composition.ts の resolveSelfHp）で決まる
    */
   condition?: EffectCondition;
+  /**
+   * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 「自分が〈状態〉（のフルスタック）状態の時のみ、…「持続」」。効果を出した
+   * 枠（自分）にその状態が付いていて、スタックの条件を満たすフレームの間だけ対象に効く（窓の積。skills/holders.ts）。condition とは
+   * 組み合わせない
+   */
+  while?: WhileCondition;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
+
+/**
+ * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果の条件。中身は条件の selfState と同じ形
+ * （stacks は 'full' か N、stacksRef も書ける）で、present: false は書けない
+ */
+export type WhileCondition = { selfState: SelfStateCondition };
 
 /**
  * Stage 6: 持続バフが付くきっかけ。
@@ -1631,6 +1652,7 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 常時の受けるダメージ▲（観測値の比べる設定が使う）は、いまのまま
   // 味方の各枠の常時の値に足す（敵の常時の件にするのは、敵の効果を外す語彙を足す時）
   validateDamageTaken(stat, target, v, path);
+  validateAttackSpeed(stat, v, path);
   const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
@@ -1640,8 +1662,46 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   if (parseDecrease(v, scaling, path)) effect.decrease = true;
   if (v.condition !== undefined)
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.passive);
+  if (v.while !== undefined) {
+    // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: HP の条件（編成の段で決まる）とは組み合わせない（使い手がいない）。
+    // 敵が持つ stat は、敵の件に写すので、自分の状態の件で切れない
+    if (v.condition !== undefined) fail(`${path}.while`, 'while cannot be combined with condition');
+    if (isEnemyHeldStat(stat)) fail(`${path}.while`, `${stat} is held by the enemy, so it cannot have while`);
+    effect.while = parseWhileCondition(v.while, `${path}.while`);
+  }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
+}
+
+/**
+ * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果の条件 { selfState }。selfState は条件と同じ形で
+ * 読み、present: false は書けない（「〜でない時のみ」の使い手がいない）
+ */
+function parseWhileCondition(v: Json, path: string): WhileCondition {
+  if (!isRecord(v)) fail(path, 'expected { selfState }');
+  for (const key of Object.keys(v))
+    if (key !== 'selfState') fail(`${path}.${key}`, 'unknown field (allowed: selfState)');
+  const selfState = parseSelfStateCondition(v.selfState, `${path}.selfState`);
+  if (!selfState.present) fail(`${path}.selfState.present`, 'while needs the state (present: false is not supported)');
+  return { selfState };
+}
+
+/** 2 段目の段 9 の PR 2: 攻撃速度▲を書ける武器種（レートを蓄積して撃ち、立ち上げの無い武器） */
+const ATTACK_SPEED_WEAPONS = ['AR', 'SMG', 'SG'] as const satisfies readonly WeaponType[];
+
+/**
+ * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: 攻撃速度▲は、AR・SMG・SG を所持する味方にだけ書ける（targetWeapon が要る）。
+ * チャージ武器（チャージの秒）・MG（立ち上げのレート）への効き方と「▼」は、使い手がいないので書けない
+ */
+function validateAttackSpeed(stat: BuffStat, v: Record<string, Json>, path: string): void {
+  if (stat !== 'attackSpeed') return;
+  if (!(ATTACK_SPEED_WEAPONS as readonly Json[]).includes(v.targetWeapon ?? null)) {
+    fail(
+      `${path}.targetWeapon`,
+      `attackSpeed needs targetWeapon ${ATTACK_SPEED_WEAPONS.join(', ')} (charge weapons and MG are not supported)`,
+    );
+  }
+  if (v.decrease !== undefined) fail(`${path}.decrease`, 'attackSpeed cannot decrease (no user)');
 }
 
 /** Stage 11 モダニア: decrease（「▼」）は true だけ・scaling が ratio / flat のときだけ */
@@ -1858,6 +1918,7 @@ function parseTimedFields(
     validateScaling(scaling, stat, path);
     validateFlatChargeTime(stat, scaling, v, path);
     validateDamageTaken(stat, target, v, path);
+    validateAttackSpeed(stat, v, path);
   }
   const effect: TimedFields = { trigger, target };
   if (stat !== undefined) {
@@ -3080,6 +3141,33 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
 }
 
 /**
+ * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の状態は、同じ定義に、その状態を自分に付けうる時間で変わる付与（対象が
+ * self か allies）が要る。スタックの条件（stacks・stacksRef）なら、その付与にスタックの上限が要る。静的な状態は常時の効果で書く
+ */
+function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
+  );
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'passive' || e.while === undefined) return;
+      const { state, stacks, stacksRef } = e.while.selfState;
+      const own = grants.filter(
+        (g) => stateMatches(state, g.state) && !isStaticStateGrant(g) && (g.target === 'self' || g.target === 'allies'),
+      );
+      const stacked = stacks !== undefined || stacksRef !== undefined;
+      const ok = own.some((g) => !stacked || g.maxStacks !== undefined || g.maxStacksRef !== undefined);
+      if (!ok) {
+        fail(
+          `${root}.${slot}.effects[${i}].while`,
+          `while on "${state}" needs a grant of the same state on self (target self or allies, not static${stacked ? ', with maxStacks' : ''}) in the definition`,
+        );
+      }
+    });
+  }
+}
+
+/**
  * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2・5.6 節）: 同じ定義の同じ状態の付与どうしの規則。中身（contents）を
  * 持つのは 1 つだけ、維持の形（秒・発数・出来事）とスタックの有無は同じ（即値は値も。Lv で決まる値は解決のときに見る）。
  * 中身を持たない付与も、中身の項目と合わせた timed として今の規則を通す（状態の窓を共有するので、stat ごとの規則がどの付与にも効く）
@@ -3163,6 +3251,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   validateStackChanges(skills, 'skills');
   validateFullStackTriggers(skills, 'skills');
   validateAppliedTriggers(skills, 'skills');
+  validateWhileEffects(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
   if (raw.states !== undefined) {
@@ -3183,6 +3272,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     validateStackChanges({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateFullStackTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateAppliedTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateWhileEffects({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;

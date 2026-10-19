@@ -104,6 +104,11 @@ export type BuffTotals = {
   reloadSpeed: number;
   /** Stage 10: チャージ速度の加算 */
   chargeSpeed: number;
+  /**
+   * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: 攻撃速度の加算。レートを蓄積して撃つ武器の発と発の間を、レート × (1 + Σ) に
+   * する（frame/firing.ts の FiringParams.rateScale。C-0600）。ダメージの式は読まない
+   */
+  attackSpeed: number;
   /** Stage 11 アリス編: チャージ時間から引く秒数（発動者基準のチャージ速度。scaling casterChargeTime） */
   chargeTimeFlat: number;
   /**
@@ -158,6 +163,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   maxAmmoFlat: 0,
   reloadSpeed: 0,
   chargeSpeed: 0,
+  attackSpeed: 0,
   chargeTimeFlat: 0,
   fixedChargeTime: 0,
   hitRate: 0,
@@ -191,6 +197,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   defense: 'defenseRatio',
   reloadSpeed: 'reloadSpeed',
   chargeSpeed: 'chargeSpeed',
+  attackSpeed: 'attackSpeed',
   hitRate: 'hitRate',
   infiniteAmmo: 'infiniteAmmo',
   elementDamage: 'elementDamage',
