@@ -5235,6 +5235,14 @@
       "plus": null
     },
     {
+      "observation": "226-06",
+      "element": "エマ：タクティカル・アップ skill2.effects[0]",
+      "key": "5ef5e3b0aded05df",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "227-01",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "5b56a8a498aca7ef",
@@ -5278,6 +5286,30 @@
       "observation": "227-02",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
       "key": "7da67d64083e87e5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "227-04",
+      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
+      "key": "f80198c3aebba6bc",
+      "effective": true,
+      "minus": -0.0816,
+      "plus": null
+    },
+    {
+      "observation": "227-04",
+      "element": "エマ：タクティカル・アップ burst.effects[1]",
+      "key": "f80198c3aebba6bc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "227-04",
+      "element": "エマ：タクティカル・アップ skill2.effects[0]",
+      "key": "f80198c3aebba6bc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -7390,6 +7422,30 @@
       "observation": "287-07",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
       "key": "792bed4abe44761b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "287-11",
+      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
+      "key": "f5f8ec506a6751fb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "287-11",
+      "element": "エマ：タクティカル・アップ burst.effects[1]",
+      "key": "f5f8ec506a6751fb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "287-11",
+      "element": "エマ：タクティカル・アップ skill2.effects[0]",
+      "key": "f5f8ec506a6751fb",
       "effective": false,
       "minus": 0,
       "plus": null

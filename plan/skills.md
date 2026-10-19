@@ -176,7 +176,7 @@ notes の種類: 未対応 116・前提の外 27・計算に無関係 28・補�
   - effects[1] state・fullChargeShot・camouflage: C-0314（確定）、C-0311（確定）
   - notes[0] 前提の外: カモフラージュの単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提。カモフラージュは 5 秒続く）: 根拠なし
 - **skill2**: supported
-  - effects[0] passive・critRate: C-0317（確定）、C-0268（仮説）、C-0235（仮説）
+  - effects[0] passive・critRate: C-0317（確定）、C-0268（確定）、C-0235（仮説）
   - effects[1] passive・chargeDamage: C-0020（確定）
   - effects[2] passive・attack: C-0020（確定）
   - effects[3] passive・projectileExplosionDamage: C-0374（確定）

@@ -274,5 +274,34 @@
       "slot": 2,
       "source": "burst"
     }
+  },
+  {
+    "recording": "287",
+    "source": "V-0469",
+    "readAt": "2026-10-20",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.1042,
+    "description": "I-DOLL・フラワー + ウンファ：TU + エマ：TU の、フラワー（部隊はリプレイス）の通常攻撃の 1 ヒットのうち会心の割合（10 ÷ 96）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。録画の置き場所のキャッシュ hud-jumps@2）と使い捨てのスクリプト",
+      "note": "前のフレームも読めた増分（gap 1）を、フラワーの 1 ヒットの格子（胴体 111,364（徹甲炸裂弾の外）と 141,236（中。× 1.268240。C-0153）× (1 + 1.0 × コア + 0.3 × 距離ボーナス + 0.5 × 会心)）に ±2 で当て、1 つの値にだけ乗ったものを数えた。標準誤差 0.031。ウンファの S2 の▲が付くなら 23.16%（約 4 標準誤差離れる）、付かないなら 15%（約 1.5 標準誤差）。許容 ±0.06（標準誤差の 2 倍）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.06
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "287-11"
   }
 ]
