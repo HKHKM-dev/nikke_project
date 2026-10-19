@@ -166,15 +166,16 @@
       "effects": [],
       "notes": [
         {
-          "ja": "自分が応急改造のフルスタック時のみの、味方全体のクリティカル確率▲（持続）は未対応（スタック数の条件。plan/design-skill-stage3.md 1.4 節）",
-          "en": "Critical Rate up on all allies only at max Temporary Modification stacks on self (continuous) is not modeled (a stack count condition; plan/design-skill-stage3.md 1.4)",
+          "ja": "自分が応急改造のフルスタック時のみの、味方全体のクリティカル確率▲（持続）は未対応（フルスタックの間だけ効く形の語彙が無い。plan/design-skill-stage9.md 1.3 節）",
+          "en": "Critical Rate up on all allies only at max Temporary Modification stacks on self (continuous) is not modeled (no vocabulary for an effect that lasts only while at max stacks; plan/design-skill-stage9.md 1.3)",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
             "stat": "critRate",
             "target": "allies",
             "trigger": "applied"
-          }
+          },
+          "claims": ["C-0599"]
         },
         {
           "ja": "自分が応急改造のフルスタック時のみの、ショットガンを所持する味方全体の攻撃速度▲（持続）は未対応（スタック数の条件。攻撃速度は計算の語彙に無い）",
