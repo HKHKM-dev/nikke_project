@@ -322,8 +322,8 @@ notes の種類: 未対応 116・前提の外 27・計算に無関係 28・補�
   - effects[2] state・emergencyCraftedBullets が適用された時・temporaryModification（maxAmmo）: C-0559（確定）
   - effects[3] timed・emergencyCraftedBullets が適用された時・critDamage: C-0560（確定）
 - **宝物版 skill2**: supported
-  - effects[0] passive・temporaryModification のフルスタックの間・critRate: C-0599（確定）、C-0601（確定）、C-0602（仮説）
-  - effects[1] passive・temporaryModification のフルスタックの間・attackSpeed: C-0600（確定）、C-0601（確定）、C-0602（仮説）
+  - effects[0] passive・temporaryModification のフルスタックの間・critRate: C-0599（確定）、C-0601（確定）、C-0602（確定）
+  - effects[1] passive・temporaryModification のフルスタックの間・attackSpeed: C-0600（確定）、C-0601（確定）、C-0602（確定）
 - **宝物版 burst**: unsupported
   - notes[0] 未対応: 味方全体の、スキル発動者基準の攻撃力▲（応急改造スタックコピー・15 秒）は未対応（スタック数で決まる値）: 根拠なし
   - notes[1] 未対応: ショットガンを所持する味方全体の、スキル発動者基準の攻撃力▲（応急改造スタックコピー・15 秒）は未対応（スタック数で決まる値）: 根拠なし
