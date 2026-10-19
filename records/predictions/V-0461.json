@@ -1,13 +1,9 @@
 {
   "verification": "V-0461",
-  "note": "撮影はオートバースト OFF で、1 回目のチェーンを手で I-DOLL・フラワー → ソルジャーF.A. → シンデレラの順に押す。モデルのオートバーストも 1 回目のチェーンは同じ 3 枠（枠番号の若い順）なので、予測はオートバーストで出す。比べるのは 1 回目のフルバースト（n: 0）だけ",
+  "note": "撮影（録画 513）はオーナーが枠順を替えて撮った（I-DOLL・フラワー・ソルジャーF.A.・シンデレラ（操作）・アニス：スター・デルタ）。撮影の後、読む前に、team と指標の枠（デルタは 5 枠目）をこの枠順に直して出し直した（撮影前の予測（commit b536898）は 2 枠目アニス：スター・3 枠目ソルジャーF.A.・4 枠目デルタ・5 枠目シンデレラ（操作）の枠順で、H1 1・H0 0）。撮影はオートバースト OFF で、1 回目のチェーンを手で I-DOLL・フラワー → ソルジャーF.A. → シンデレラの順に押した。モデルのオートバーストも 1 回目のチェーンは同じ 3 枠（枠番号の若い順）なので、予測はオートバーストで出す。比べるのは 1 回目のフルバースト（n: 0）だけ",
   "team": [
     {
       "rid": 304,
-      "controlled": false
-    },
-    {
-      "rid": 17,
       "controlled": false
     },
     {
@@ -15,12 +11,16 @@
       "controlled": false
     },
     {
-      "rid": 20,
+      "rid": 511,
+      "controlled": true
+    },
+    {
+      "rid": 17,
       "controlled": false
     },
     {
-      "rid": 511,
-      "controlled": true
+      "rid": 20,
+      "controlled": false
     }
   ],
   "fixedSpec": true,
@@ -52,11 +52,11 @@
   "targets": [
     {
       "id": "delta-fb1",
-      "note": "1 回目のフルバーストで、デルタ（4 枠目）にアニス：スター S2 の発射体爆発ダメージ▲ が付くか（1・0）",
+      "note": "1 回目のフルバーストで、デルタ（5 枠目）にアニス：スター S2 の発射体爆発ダメージ▲ が付くか（1・0）",
       "model": "sim",
       "metric": "fullBurstBuffApplied",
       "args": {
-        "slot": 4,
+        "slot": 5,
         "skill": "skill2",
         "stat": "projectileExplosionDamage",
         "n": 0
@@ -73,7 +73,7 @@
   ],
   "predicted": {
     "at": "2026-10-20",
-    "commit": "b536898eac1ab7bf2f25fadbee161852f4d85986",
+    "commit": "383c7aef058455ffaa6442b5b4b9ec8dc1e86487",
     "values": {
       "H1": {
         "delta-fb1": 1
