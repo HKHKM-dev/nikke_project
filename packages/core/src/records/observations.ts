@@ -1141,6 +1141,17 @@ export const METRICS: Readonly<Record<string, Metric>> = {
       return (frames[frames.length - 1]! - frames[0]!) / (frames.length - 1);
     },
   },
+  // シンデレラ S1 編（V-0463）: 枠の frame 以降の最初の発の、発射から着弾（発のゲージを足すフレーム）までのフレーム数（的の表の
+  // flightFrames と着地点の時間割りで決まる）。録画では、照準の横の残弾が減ったフレームから総ダメージの増分までを読む
+  shotFlightAt: {
+    args: ['slot', 'frame'],
+    sim: (r, c) => {
+      const frame = Number(c.args.frame);
+      const g = r.shotGauges.find((x) => x.slotIndex === slotIndexOf(c) && x.shotFrame >= frame);
+      if (g === undefined) throw new Error(`枠 ${String(c.args.slot)} のフレーム ${frame} 以降の発が無い`);
+      return g.frame - g.shotFrame;
+    },
+  },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
   // 対象の語彙編（plan/design-target-vocab.md 4.1 節）: 同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比。
   // 敵に掛かる別枠の乗数（受けるダメージ▲）と攻撃力は比で消え、倍率グループの会心の項（クリティカルダメージ）だけが残る

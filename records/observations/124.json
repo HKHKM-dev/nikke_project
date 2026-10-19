@@ -190,5 +190,145 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "id": "124-09",
+    "recording": "124",
+    "source": "V-0463",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": 11,
+    "unit": "f",
+    "description": "シンデレラ単騎の、中近（1 区間目）の発の、発射（照準の横の残弾が減ったフレーム）から着弾（総ダメージの増分）までのフレーム数の中央値",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の横の残弾。読めたフレームが続いて 1 減った所を発射とした）と、総ダメージの増分（hud-jumps のキャッシュ）の、発射の後 45f 以内の最初の増分",
+      "note": "照準の横の残弾は、マガジンの 1 発目の頃しか読めない（照準が的に重なる）。1 本の全部の組（発射:着弾までのフレーム数）は 847:11 1499:11 2151:12 2911:6 3563:6 4215:6 4972:18 5624:19 6276:19 6928:18 7694:14 8346:14 8998:14 9756:6 10409:6 11213:18。区間は戦闘の始めからの的のジャンプで分けた（1 中近・2 近・3 遠・4 中遠・5 近・6 遠。C-0031）。比べるモデルの範囲は、モデルのその区間の f600 の後の最初の発"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotFlightAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "124-10",
+    "recording": "124",
+    "source": "V-0463",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": 6,
+    "unit": "f",
+    "description": "シンデレラ単騎の、近（2・5 区間目）の発の、発射（照準の横の残弾が減ったフレーム）から着弾（総ダメージの増分）までのフレーム数の中央値",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の横の残弾。読めたフレームが続いて 1 減った所を発射とした）と、総ダメージの増分（hud-jumps のキャッシュ）の、発射の後 45f 以内の最初の増分",
+      "note": "照準の横の残弾は、マガジンの 1 発目の頃しか読めない（照準が的に重なる）。1 本の全部の組（発射:着弾までのフレーム数）は 847:11 1499:11 2151:12 2911:6 3563:6 4215:6 4972:18 5624:19 6276:19 6928:18 7694:14 8346:14 8998:14 9756:6 10409:6 11213:18。区間は戦闘の始めからの的のジャンプで分けた（1 中近・2 近・3 遠・4 中遠・5 近・6 遠。C-0031）。比べるモデルの範囲は、モデルのその区間の f3000 の後の最初の発"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotFlightAt",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "124-11",
+    "recording": "124",
+    "source": "V-0463",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": 18,
+    "unit": "f",
+    "description": "シンデレラ単騎の、遠（3・6 区間目）の発の、発射（照準の横の残弾が減ったフレーム）から着弾（総ダメージの増分）までのフレーム数の中央値",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の横の残弾。読めたフレームが続いて 1 減った所を発射とした）と、総ダメージの増分（hud-jumps のキャッシュ）の、発射の後 45f 以内の最初の増分",
+      "note": "照準の横の残弾は、マガジンの 1 発目の頃しか読めない（照準が的に重なる）。1 本の全部の組（発射:着弾までのフレーム数）は 847:11 1499:11 2151:12 2911:6 3563:6 4215:6 4972:18 5624:19 6276:19 6928:18 7694:14 8346:14 8998:14 9756:6 10409:6 11213:18。区間は戦闘の始めからの的のジャンプで分けた（1 中近・2 近・3 遠・4 中遠・5 近・6 遠。C-0031）。比べるモデルの範囲は、モデルのその区間の f5000 の後の最初の発"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotFlightAt",
+      "args": {
+        "slot": 1,
+        "frame": 5000
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "124-12",
+    "recording": "124",
+    "source": "V-0463",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": 14,
+    "unit": "f",
+    "description": "シンデレラ単騎の、中遠（4 区間目）の発の、発射（照準の横の残弾が減ったフレーム）から着弾（総ダメージの増分）までのフレーム数の中央値",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の横の残弾。読めたフレームが続いて 1 減った所を発射とした）と、総ダメージの増分（hud-jumps のキャッシュ）の、発射の後 45f 以内の最初の増分",
+      "note": "照準の横の残弾は、マガジンの 1 発目の頃しか読めない（照準が的に重なる）。1 本の全部の組（発射:着弾までのフレーム数）は 847:11 1499:11 2151:12 2911:6 3563:6 4215:6 4972:18 5624:19 6276:19 6928:18 7694:14 8346:14 8998:14 9756:6 10409:6 11213:18。区間は戦闘の始めからの的のジャンプで分けた（1 中近・2 近・3 遠・4 中遠・5 近・6 遠。C-0031）。比べるモデルの範囲は、モデルのその区間の f7000 の後の最初の発"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotFlightAt",
+      "args": {
+        "slot": 1,
+        "frame": 7000
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]
