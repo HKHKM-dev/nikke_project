@@ -377,7 +377,7 @@ notes の種類: 未対応 116・前提の外 27・計算に無関係 28・補�
   - effects[1] burstGaugeHit・15 秒ごと: C-0404（仮説）、C-0402（確定）、C-0453（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0160（確定）、C-0165（確定）
-  - effects[1] timed・burstUse・damageTaken: C-0160（確定）、C-0161（確定）、C-0162（確定）、C-0165（確定）、C-0153（仮説）
+  - effects[1] timed・burstUse・damageTaken: C-0160（確定）、C-0161（確定）、C-0162（確定）、C-0165（確定）、C-0153（確定）
   - effects[2] damage・burstUse・additional: C-0160（確定）、C-0163（確定）、C-0165（確定）
   - effects[3] damage・burstUse・additional: C-0160（確定）、C-0163（確定）、C-0165（確定）
   - notes[0] 補足: フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る: C-0011（確定）
@@ -823,7 +823,7 @@ notes の種類: 未対応 116・前提の外 27・計算に無関係 28・補�
 - **skill2**: supported
   - effects[0] damage・normalHit・additional: C-0276（確定）、C-0277（確定）
 - **burst**: supported
-  - effects[0] timed・burstUse・damageTaken: C-0138（確定）、C-0152（確定）、C-0153（仮説）、C-0494（確定）、C-0517（確定）
+  - effects[0] timed・burstUse・damageTaken: C-0138（確定）、C-0152（確定）、C-0153（確定）、C-0494（確定）、C-0517（確定）
 
 ## 870 クイーン（真）
 
