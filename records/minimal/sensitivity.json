@@ -1450,6 +1450,30 @@
       "plus": 0
     },
     {
+      "observation": "063-10",
+      "element": "アスカ burst.effects[0]",
+      "key": "4876e4cb80c23ea8",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "063-10",
+      "element": "アスカ burst.effects[2]",
+      "key": "4876e4cb80c23ea8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "063-13",
       "element": "アスカ burst.effects[0]",
       "key": "729d98ec0ac17019",
@@ -1573,6 +1597,30 @@
       "observation": "080-06",
       "element": "アスカ burst.effects[2]",
       "key": "4423f06c4fbbdeb9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "080-08",
+      "element": "アスカ burst.effects[0]",
+      "key": "0538d29b0f387d00",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "080-08",
+      "element": "アスカ burst.effects[2]",
+      "key": "0538d29b0f387d00",
       "effective": false,
       "minus": 0,
       "plus": 0

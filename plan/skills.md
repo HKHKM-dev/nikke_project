@@ -546,7 +546,7 @@ notes の種類: 未対応 116・前提の外 27・計算に無関係 28・補�
   - effects[0] burstGaugeHit・15 秒ごと: C-0178（確定）、C-0176（確定）
   - notes[0] 計算に無関係: 最終攻撃力が最も高い敵の攻撃力▼はダメージに関係しない: C-0072（確定）
 - **burst**: supported
-  - effects[0] burstDamage・skill: C-0072（確定）、C-0220（確定）
+  - effects[0] burstDamage・skill: C-0072（確定）、C-0220（確定）、C-0221（確定）
   - notes[0] 計算に無関係: 挑発はダメージに関係しない: C-0072（確定）
 
 ## 305 I-DOLL・オーシャン

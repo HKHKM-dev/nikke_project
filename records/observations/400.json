@@ -77,5 +77,35 @@
       "slot": 4,
       "source": "normal"
     }
+  },
+  {
+    "id": "400-04",
+    "recording": "400",
+    "source": "V-0470",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": [14, 14, 14, 14, 14, 14, 13, 14, 14],
+    "unit": "f",
+    "description": "I-DOLL・フラワー（I）+ アドミ（II）+ アリス（III・操作）+ I-DOLL・サン（III）で、I の発動（右のバースト欄の六角形が I から II に替わったフレーム。f1171・2373・3575・4776・5978・7179・8380・9614・10820）から、フラワーのバーストのヒット（HUD の 179,244 の増分）までの動画のフレーム数（9 回）",
+    "method": {
+      "tool": "tools/captures/read.ts --recipe burst-panel（I から II の替わり目）と hud.ts --mode jumps（総ダメージの増分。キャッシュ hud-jumps@2）",
+      "note": "増分は 179,244 の単独か、同じフレームのほかの発との和（4 回目・8 回目 189,217 = 179,244 + 9,973、5 回目 268,865）。7 回目は 13f（1f 前の f8391 に 166,172 の増分があり、同じフレームのほかのヒットとの和の読みの揺れか、録画の重複フレームの位置。V-0133 と同じ 1f の揺れ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 9
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
