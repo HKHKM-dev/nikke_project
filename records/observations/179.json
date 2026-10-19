@@ -134,5 +134,77 @@
         "burst": false
       }
     }
+  },
+  {
+    "id": "179-08",
+    "recording": "179",
+    "source": "V-0463",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": 19.6087,
+    "unit": "f",
+    "description": "シンデレラ単騎（AUTO・バーストなし）の、マガジンの中の発と発の間の平均（的のジャンプを挟まない 24 発のマガジンだけ。(最後の発 − 最初の発) の和 ÷ 間の数 = 4,059 ÷ 207）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。録画の置き場所のキャッシュ hud-jumps@2）と使い捨てのスクリプト（増分の間が 150f を超える所でマガジンに分けた）",
+      "note": "マガジンは 1・5・6・9・11・13・14・16・17 本目（24 発で、間がどれも 40f 以下）。間の内訳は 17f が 1・18f が 7・19f が 73・20f が 117・21f が 9。1 発目（フルチャージ）の後はチャージ速度 100%▲でチャージ 0 秒になり、発射レート 180rpm をゲーム内の時計で蓄積する刻み（20・20・19f、平均 19.61f）で撃つ読み（plan/design-cinderella-s1-charge.md）。HUD の増分の 1f の揺れは、平均では両端の発にしか残らない。許容 ±0.05。比べるモデルの範囲はモデルの 2 本目のマガジン（f720〜1171）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 1,
+        "from": 720,
+        "to": 1172
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "179-09",
+    "recording": "179",
+    "source": "V-0463",
+    "readAt": "2026-10-20",
+    "kind": "interval",
+    "use": "compare",
+    "value": [201],
+    "unit": "f",
+    "description": "シンデレラ単騎のリロードを挟む間（24 発のマガジンの最終弾 → 次の 24 発のマガジンの 1 発目。的のジャンプを挟まない組の中央値）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。録画の置き場所のキャッシュ hud-jumps@2）と使い捨てのスクリプト（増分の間が 150f を超える所でマガジンに分けた）",
+      "note": "組ごとの値は 201・200・201。▲がリロード完了で解除され、次のマガジンの 1 発目が▲の無い 1 秒のチャージ（59f）になる読みなら、リロード 117.6f + チャージ 59f + 解放 23f（押下チャージ型のリロードの後。C-0222）で約 200f。解除されなければ約 141f。アニス：スター（C-0222）と同じく、モデルより 1〜2f 長い（許容 ±2）。比べるモデルの範囲は 1 本目と 2 本目のマガジンの境（f520〜720）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 520,
+        "to": 721
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]

@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 511,
-  "checkedAt": "2026-10-17",
+  "checkedAt": "2026-10-20",
   "skills": {
     "skill1": {
       "effects": [
@@ -12,12 +12,16 @@
           },
           "damageType": "additional",
           "ref": 4,
+          "gaugeHits": [
+            0
+          ],
           "assumes": {
-            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発の着弾のフレームで、HUD では発の 1 ヒットと同じ増分に出る（録画 124）。バーストゲージを溜めるかは確かめていない（溜めないとした。アニス：スター S1 の同じ形の追加ダメージは 1 ヒット分溜める（C-0198））",
-            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit lands with the shot and shows in the same HUD increment as the shot (recording 124). Whether it charges the Burst Gauge is not verified (taken as no charge; the same kind of additional damage of Anis: Sparkling Summer S1 charges one hit, C-0198)"
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発の着弾のフレームで、HUD では発の 1 ヒットと同じ増分に出る（録画 124）。倍率の乗らない 1 ヒットのゲージ（target_burst_energy_pershot）を溜める（アニス：スター S1 の同じ形の追加ダメージと同じ。C-0198。録画 480・481 の 1 回目のフルバーストの時刻）",
+            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit lands with the shot and shows in the same HUD increment as the shot (recording 124). It charges the Burst Gauge by one unmultiplied hit (target_burst_energy_pershot), like the same kind of additional damage of Anis: Sparkling Summer S1 (C-0198; the first Full Burst of recordings 480 and 481)"
           },
           "claims": [
-            "C-0583"
+            "C-0583",
+            "C-0604"
           ]
         },
         {
@@ -35,19 +39,23 @@
             "C-0584",
             "C-0585"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "フルチャージ攻撃時の自分のチャージ速度▲（リロード完了で解除）は未対応",
-          "en": "The charge speed increase on self on fully charged attacks (removed on reload) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "chargeSpeed",
-            "target": "self",
-            "trigger": "fullChargeShot"
-          }
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "stat": "chargeSpeed",
+          "ref": 3,
+          "durationUntil": "reloadEnd",
+          "assumes": {
+            "ja": "チャージ速度 100%▲でチャージ時間は 0 秒になり、マガジンの 2 発目以降は発射レート（180rpm）で撃つ（plan/design-cinderella-s1-charge.md 1.2 節）。解除はリロードを込め終えたフレームで、次のマガジンの 1 発目は▲の無いチャージ",
+            "en": "With the 100% charge speed increase the charge time becomes 0 s and the 2nd and later shots of a magazine fire at the rate of fire (180 rpm; plan/design-cinderella-s1-charge.md 1.2). It is removed on the frame the reload finishes; the 1st shot of the next magazine charges without it"
+          },
+          "claims": [
+            "C-0603"
+          ]
         }
       ]
     },

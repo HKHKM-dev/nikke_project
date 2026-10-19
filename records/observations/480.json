@@ -331,5 +331,36 @@
       "slot": 3,
       "source": "normal"
     }
+  },
+  {
+    "id": "480-12",
+    "recording": "480",
+    "source": "V-0463",
+    "readAt": "2026-10-20",
+    "kind": "timing",
+    "use": "compare",
+    "value": 672,
+    "unit": "f",
+    "description": "ラム（1 枠目・SR）の 1 発目の増分から、1 回目のフルバーストの開始（III のタイマーの 00.00。480-02）までの動画のフレーム（f1074 → f1746）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。録画の置き場所のキャッシュ hud-jumps@2）と、480-02 のフルバーストの開始",
+      "note": "ラムの発は 427,027 の増分（82f ごと）で、即着弾の SR なので増分のフレームが発のフレーム。1 回目のフルバーストの入りの前に入りの止まり（C-0069）は無いので、動画のフレームの差がゲーム内のフレームの差。シンデレラの S1 の追加ダメージがゲージを溜めるか（plan/design-cinderella-s1-charge.md 4 節）を見分ける。II の発動（f1712）までにシンデレラの増分は 24 発（1 本目のマガジン）で、25 発目は II の後。許容 ±15（シンデレラの発の飛ぶ時間（約 10f。的の表に無く、モデルは 0）の分を見込む）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartFromFirstShot",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
   }
 ]

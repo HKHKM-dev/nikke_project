@@ -367,6 +367,18 @@ function slotIndexOf(ctx: MetricContext): number {
   return Number(ctx.args.slot) - 1;
 }
 
+/**
+ * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 3 節）: 引数 frame のフレーム。省略できる引数 fullBurst（n。0 始まり）があれば、
+ * frame は n 回目のフルバーストの開始からの相対。モデルの時刻表が変わっても、録画と同じ場面（何回目のフルバーストの中か）を指す
+ */
+function frameArgOf(result: SimResult, ctx: MetricContext): number {
+  const frame = Number(ctx.args.frame);
+  if (ctx.args.fullBurst === undefined) return frame;
+  const start = result.schedule?.fullBurstWindows[Number(ctx.args.fullBurst)]?.start;
+  if (start === undefined) throw new Error(`${String(ctx.args.fullBurst)} 回目のフルバーストが無い`);
+  return start + frame;
+}
+
 function slotOf<T>(slots: readonly (T | null)[], ctx: MetricContext): T {
   const slot = slots[slotIndexOf(ctx)];
   if (slot === null || slot === undefined) throw new Error(`枠 ${String(ctx.args.slot)} が無い`);
@@ -695,7 +707,7 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
     throw new Error(`hitDamage の source ${String(ctx.args.source)} は未対応`);
   const slot = slotOf(result.slots, ctx);
   const input = slotOf(ctx.input.slots, ctx);
-  const frame = Number(ctx.args.frame);
+  const frame = frameArgOf(result, ctx);
   const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
   const t = segment.trigger;
@@ -956,7 +968,7 @@ function perShotHitDamage(result: SimResult, ctx: MetricContext): number {
   if (PER_SHOT_DAMAGE_CORE) throw new Error('perShotHitDamage はコアの補正が乗る perShot に未対応');
   const slot = slotOf(result.slots, ctx);
   const input = slotOf(ctx.input.slots, ctx);
-  const frame = Number(ctx.args.frame);
+  const frame = frameArgOf(result, ctx);
   const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
   const t = segment.trigger;
@@ -1026,6 +1038,19 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     args: [],
     sim: (r) => r.schedule?.fullBurstWindows.map((w) => w.start) ?? [],
     calc: (r) => r.schedule?.fullBurstWindows.map((w) => w.start) ?? [],
+  },
+  // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 4 節）: 枠の 1 発目から n 回目（0 始まり）のフルバーストの入りまでのフレーム数。
+  // 録画では、即着弾の枠（SR）の 1 発目の増分から、III のタイマーの 00.00 までの動画のフレーム（間に入りの止まりが無い 1 回目に使う）。
+  // 戦闘開始のフレームを読まずに済む
+  fullBurstStartFromFirstShot: {
+    args: ['slot', 'n'],
+    sim: (r, c) => {
+      const start = r.schedule?.fullBurstWindows[Number(c.args.n)]?.start;
+      if (start === undefined) throw new Error(`${String(c.args.n)} 回目のフルバーストが無い`);
+      const first = slotOf(r.shots, c).frames[0];
+      if (first === undefined) throw new Error(`枠 ${String(c.args.slot)} の発が無い`);
+      return start - first;
+    },
   },
   /**
    * ゲーム内の fromSec 秒から toSec 秒までの、録画の動画のフレーム数。フルバーストの入りの止まり（C-0069）を足す。

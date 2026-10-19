@@ -160,8 +160,8 @@ export type HeldTrack = {
   opportunities: ChanceOpportunity[] | null;
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
   items: HeldItem[];
-  /** items を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・フルバーストの窓・閉じるフレーム・消費のフレーム・減少） */
-  seen: [number, number, number, number, number, number, number, number];
+  /** items を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・リロードの込め終わり・フルバーストの窓・閉じるフレーム・消費のフレーム・減少） */
+  seen: [number, number, number, number, number, number, number, number, number];
 };
 
 /** 強化（amplifies）の出どころ。受け付けと値は、ループの後に履歴を閉じる時に決める（amplify） */
@@ -483,6 +483,11 @@ function timedItems(
   if (effect.durationUntil === 'fullBurstEnd') {
     return itemsOfPairs(untilNextEndItems(starts, fullBurstEnds, frames));
   }
+  // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 持ち主のリロードの込め終わりまで。まだ込め終わっていない件は
+  // 戦闘の終わりまで開き、1 パス目が込め終わりを書いたら閉じる（読み直しの seen が reloadEnds の長さを見る）
+  if (effect.durationUntil === 'reloadEnd') {
+    return itemsOfPairs(untilNextEndItems(starts, log?.reloadEnds ?? [], frames));
+  }
   return effectItems(starts, effect, frames).map((w) => {
     const item: HeldItem = { start: w.start, end: w.end };
     if (w.stack !== undefined) item.stack = w.stack;
@@ -624,7 +629,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       shotCount: false,
       opportunities,
       items: [],
-      seen: [-1, -1, -1, -1, -1, -1, -1, -1],
+      seen: [-1, -1, -1, -1, -1, -1, -1, -1, -1],
     };
     tracks.push(track);
     return track;
@@ -834,6 +839,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       track.opportunities?.length ?? 0,
       log?.frames.length ?? 0,
       log?.weaponChangeEnds?.length ?? 0,
+      log?.reloadEnds?.length ?? 0,
       windows.length,
       track.closes.length,
       track.consumes.length,

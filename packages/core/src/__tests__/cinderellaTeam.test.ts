@@ -57,12 +57,37 @@ describe('シンデレラの定義', () => {
         trigger: { count: 'fullChargeShot' },
         damageType: 'additional',
         ref: 4,
-        claims: ['C-0583'],
+        // 2026-10-20: 1 ヒット分のバーストゲージを溜める（C-0604。録画 480・481 の 1 回目のフルバースト）
+        gaugeHits: [0],
+        claims: ['C-0583', 'C-0604'],
       },
     ]);
-    // バーストゲージを溜めるかは確かめていない（溜めない。gaugeHits を書かない）
-    expect(def.skills.skill1.effects[0]).not.toHaveProperty('gaugeHits');
-    expect(def.skills.skill1.support).toBe('partial');
+    expect(def.skills.skill1.support).toBe('supported');
+  });
+
+  it('defines the charge speed up of S1 until the reload ends (C-0603)', () => {
+    expect(definitionOf(CINDERELLA).skills.skill1.effects[2]).toMatchObject({
+      kind: 'timed',
+      trigger: { count: 'fullChargeShot' },
+      target: 'self',
+      stat: 'chargeSpeed',
+      ref: 3,
+      durationUntil: 'reloadEnd',
+      claims: ['C-0603'],
+    });
+  });
+
+  it('fires at 180 rpm after the first full charge and charges again after each reload (V-0463)', () => {
+    const plan = planTeamRun(team([CINDERELLA], false, 0));
+    const frames = plan.shots[0]!.frames;
+    const gaps = frames.slice(1).map((f, i) => f - frames[i]!);
+    // 1 本目のマガジン: 20・20・19f の繰り返し（間の数 23 で 451f）。リロードを挟んで 199〜200f
+    expect(gaps.slice(0, 6)).toEqual([20, 20, 19, 20, 20, 19]);
+    expect(frames[23]! - frames[0]!).toBe(451);
+    expect(gaps[23]).toBeGreaterThanOrEqual(199);
+    expect(gaps[23]).toBeLessThanOrEqual(200);
+    // 込め終わりで▲が切れるので、次のマガジンの 2 発目からまた 20f
+    expect(gaps[24]).toBe(20);
   });
 
   it('adds (attack − defence) × 136.6% to every full charge shot of the solo recordings (V-0445)', () => {

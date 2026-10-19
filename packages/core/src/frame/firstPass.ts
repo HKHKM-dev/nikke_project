@@ -98,7 +98,7 @@ import {
   shotCountWeight,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import type { ShotCountKind } from '../skills/types.ts';
+import { hasReloadEndEffect, type ShotCountKind } from '../skills/types.ts';
 import { dotTickTracker, groupDotsByState, type DotTickTracker } from './dot.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { timerFrames, type FrameRange } from '../skills/timeline.ts';
@@ -319,6 +319,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
           pelletHits: [],
         },
   );
+  // シンデレラ S1 編: リロードの込め終わりは、それで終わる効果（durationUntil: reloadEnd。対象は自分）を持つ枠だけが書く
+  const writesReloadEnds = slots.map((slot) => slot?.definition != null && hasReloadEndEffect(slot.definition));
   // 持ち主ごとの件の一覧（plan/design-holder-effects.md 段 A）。スキルの効果をすべて、受ける枠ごとの件の列で持つ
   const lists = createHolderLists(slots, { frames, scheduleModel, logs, fullBurstWindows: windowsOf });
   const trackEvents = lists.hasSources || instant.length > 0;
@@ -697,8 +699,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const partial = hideNow ? partialChargeShot(state, shot, model, params) : null;
       if (hideNow) hideShooter(state, shot, model, params);
       if (unhideNow) unhideShooter(state, shot, block!.end - block!.start, model, params);
-      if (!stepShooter(state, shot, model, params, blocked) && partial === null) return;
+      const reloading = state.phase === 'reloading';
+      const fired = stepShooter(state, shot, model, params, blocked);
       const log = logs[i]!;
+      // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 基礎の武器のリロードを込め終えた。込め終えたフレームまでが
+      // 「リロード完了時に解除」の窓（件の終わりは次のフレーム）
+      if (writesReloadEnds[i] && reloading && state.phase !== 'reloading' && params.weapon === null)
+        (log.reloadEnds ??= []).push(f + 1);
+      if (!fired && partial === null) return;
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
       if (params.weapon !== null) (log.weaponChangeShotFrames ??= []).push(f);

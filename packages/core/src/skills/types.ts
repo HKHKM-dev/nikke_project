@@ -653,10 +653,13 @@ export type Amplifies = { skill: SkillSlot; percent: number };
 /**
  * 防御力無視ダメージ編: 維持の終わりの出来事。
  * ペルソナ編（plan/design-persona.md 3.4 節）: battleEnd = 戦闘の終わりまで（トリガー付きの「持続」）。窓の終わりが時刻表に依らないので、
- * fullBurstEnd と違い 1 パス目で窓を追う stat とスタックにも書ける
+ * fullBurstEnd と違い 1 パス目で窓を追う stat とスタックにも書ける。
+ * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: reloadEnd = 持ち主（自分）のリロードが最大装弾数まで込め終わった
+ * フレームまで（「最大弾数リロード完了時に解除」）。窓の終わりは 1 パス目の射撃の列（ShotLog.reloadEnds）から作るので、1 パス目で窓を
+ * 追う stat にも書ける。timed の対象が自分のときだけ（スタック・状態の付与には書けない）
  */
-export type DurationUntil = 'fullBurstEnd' | 'battleEnd';
-export const DURATION_UNTILS = ['fullBurstEnd', 'battleEnd'] as const satisfies readonly DurationUntil[];
+export type DurationUntil = 'fullBurstEnd' | 'battleEnd' | 'reloadEnd';
+export const DURATION_UNTILS = ['fullBurstEnd', 'battleEnd', 'reloadEnd'] as const satisfies readonly DurationUntil[];
 
 /**
  * 発火の条件。名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）で、timed・付与・damage を 1 つの型にした。
@@ -1209,6 +1212,16 @@ export function staticStatesOf(definition: SkillDefinition | null | undefined): 
     }
   }
   return [...allStatic].flatMap(([state, all]) => (all && !removed.has(state) ? [state] : []));
+}
+
+/**
+ * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 定義に、リロードの込め終わりで終わる効果（durationUntil: reloadEnd。
+ * timed の自分だけ）があるか（宝物版・編成の条件を当てた後の定義を渡す）。1 パス目が、その枠の込め終わりのフレームを書くかを決める
+ */
+export function hasReloadEndEffect(definition: SkillDefinition): boolean {
+  return SKILL_SLOTS.some((slot) =>
+    definition.skills[slot].effects.some((e) => e.kind === 'timed' && e.durationUntil === 'reloadEnd'),
+  );
 }
 
 /**
@@ -1965,7 +1978,7 @@ function parseTimedFields(
   }
   if (byShots && v.condition !== undefined) fail(`${path}.condition`, 'a duration in shots cannot have a condition');
   if (
-    effect.durationUntil === 'fullBurstEnd' &&
+    (effect.durationUntil === 'fullBurstEnd' || effect.durationUntil === 'reloadEnd') &&
     (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)
   ) {
     fail(path, 'a duration until an event cannot stack');
@@ -2311,6 +2324,10 @@ function parseTimedDuration(
       );
     }
     if (target === 'topAttack') fail(`${path}.target`, 'a duration until an event cannot target "topAttack"');
+    // シンデレラ S1 編: リロードの込め終わりは持ち主の射撃の列にある。使い手は自分にだけ付ける（timed の自分）
+    if (until === 'reloadEnd' && (stat === undefined || target !== 'self')) {
+      fail(`${path}.durationUntil`, 'a duration until the reload ends is only supported for timed effects on "self"');
+    }
     return { durationUntil: until };
   }
   if (!hasShots && !hasShotsRef) return parseDuration(v, path);

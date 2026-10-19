@@ -5,9 +5,9 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`124-05`・`124-06`（録画 124 の追加ダメージの会心なし・会心。増分の差から出した値）・`178-06`・`178-07`・`179-06`・`179-07`（決めるのに使っていない録画 178・179 で同じ値）。(スペック固定の攻撃力 − 的の防御力) × 136.6%（会心は × 1.5）のモデルと、6 件とも 1 未満（合わせ込みの定数なし）。V-0445",
-  "model": "`data/skills/511.json` の skill1 の effects[0]（damage・fullChargeShot・additional）。射撃ごとの倍率ダメージ（perShot）として発に畳み込む。バーストゲージは溜めないとした（`assumes`。確かめていない）",
+  "model": "`data/skills/511.json` の skill1 の effects[0]（damage・fullChargeShot・additional）。射撃ごとの倍率ダメージ（perShot）として発に畳み込む。バーストゲージは 1 ヒット分溜める（`gaugeHits: [0]`。2026-10-20 に C-0604 で確かめた）",
   "replaces": [],
-  "updated": "2026-10-17",
+  "updated": "2026-10-20",
   "subject": {
     "places": ["data/skills/511.json の skill1 の effects[0]"]
   },
