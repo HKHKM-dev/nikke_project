@@ -21,6 +21,7 @@ node tools/captures/gauge.ts <動画> [--from N] [--to N] [--mode events|jumps|s
 node tools/captures/ammo.ts  <動画> [--crop 785,902,110,26] [--max 300] [--mode mags|series] [--from N] [--to N]
 node tools/captures/reticle-ammo.ts <動画> [--mode mags|series] [--from N] [--to N] [--max 300]   # 照準の左の残弾（操作キャラ。V-0163）
 node tools/captures/hud.ts   <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop 810,34,300,38]
+node tools/captures/hud.ts   <動画> --screen interception [--mode ...]   # 迎撃戦の画面上部の段階の数値（被ダメージ / 段階の HP）の左（V-0462）
 node tools/captures/aim.ts   <動画> [--from N] [--to N] [--step 60] [--csv out.csv] [--debug-dir DIR]
 node tools/captures/timer.ts <動画...> [--mode summary|changes]   # 残り時間の秒の変わり目と、1 秒あたりのフレーム数（V-0003）
 node tools/captures/banner.ts <動画> --hits f1,f2,... [--window 140]   # 左のスキルの帯の立ち上がりと、ヒットまでの差 D（V-0313）
@@ -57,7 +58,7 @@ node tools/captures/mask-tune.ts <録画 id> [--top 15] [--maxFp 0.02]   # 的�
 
 `ammo.ts` は枠アイコンの上の残弾表示「残弾/最大」を 1 フレームずつ読む（MG の射撃レートの再較正用、[../design-mg-fire-rate.md](../design-mg-fire-rate.md)）。**AI の味方の射撃フレームはこの表示からしか読めない。** 表示は中央揃えのプロポーショナルフォントなので、「/最大」の位置を先に探してから桁をテンプレート（`ammo-templates.json`、録画 41 の暗い背景のフレームから作成）と照合し、「残弾は増えない・リロード明けは最大」の制約で復号する。`mags` はマガジンごとの 1 発目・最終弾・次の最大の表示と 4f 以上止まった区間、`series` は残弾の列。`--crop` の既定は 4 人編成の 2 枠目・2 人編成の 1 枠目（枠の間隔は約 130px）。分割リロードの武器には使えない。録画 41 の全 12,573 フレームで約 30 秒。
 
-`hud.ts` は画面上部中央の HUD の総ダメージを全フレーム読む（Stage 19-D）。`final` は最後の値（単騎なら戦闘履歴の与ダメージと同じ）、`jumps` は増えたフレームと増分（単騎で 1 フレームに 1 ヒットなら 1 ヒットの値）。数字は見本（`hud-templates.json`、録画 46 の 5 フレームから作った）と照合し、0 と 8 は見本との照合の差が小さい（0.03 未満の）とき、字の 10px 以上の穴の数（0 は 1 個・8 は 2 個）で分ける（V-0327。それまでは 0 を 8 と読むことがあった）。総ダメージは減らないので最長の非減少列から外れた読み（残った誤読・先頭の桁の欠け）を落とす。2026-09-26 に録画 10・46・47 と旧の 5 本で、最終値と 1 ヒットの値が記録と一致することを確かめた（[../verification.md](../verification.md) Stage 19-D 節）。
+`hud.ts` は画面上部中央の HUD の総ダメージを全フレーム読む（Stage 19-D）。`final` は最後の値（単騎なら戦闘履歴の与ダメージと同じ）、`jumps` は増えたフレームと増分（単騎で 1 フレームに 1 ヒットなら 1 ヒットの値）。数字は見本（`hud-templates.json`、録画 46 の 5 フレームから作った）と照合し、0 と 8 は見本との照合の差が小さい（0.03 未満の）とき、字の 10px 以上の穴の数（0 は 1 個・8 は 2 個）で分ける（V-0327。それまでは 0 を 8 と読むことがあった）。総ダメージは減らないので最長の非減少列から外れた読み（残った誤読・先頭の桁の欠け）を落とす。2026-09-26 に録画 10・46・47 と旧の 5 本で、最終値と 1 ヒットの値が記録と一致することを確かめた（[../verification.md](../verification.md) Stage 19-D 節）。`--screen interception` は迎撃戦の段階の数値を読む別の読み方（`hud-interception.ts`。灰色のまま見本 `hud-interception-templates.json` と照合し、右側「/8,404,000」の位置から桁数と「1」の数を絞る）で、段階 1 だけ。録画 514〜519 で最後の値がリザルト画面の TOTAL DAMAGE と一致した（V-0462）。
 
 `aim.ts` は照準・的・コアの位置と大きさを、`--step` フレームごとに CSV で出す（Stage 18-B2 の試作、[../design-stage18.md](../design-stage18.md) 11.6 節）。
 

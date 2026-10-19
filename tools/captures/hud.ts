@@ -2,6 +2,12 @@
 // plan/design-stage19.md 2.7 節）。Stage 11 モダニア・17・18 で使い捨てのスクリプトで読んでいた読み方をツールにしたもの。
 //   node tools/captures/hud.ts <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop 810,34,300,38]
 //   node tools/captures/hud.ts <動画> --make-templates 6000:39174344,11400:79851043,...   # テンプレートを作り直す
+//   node tools/captures/hud.ts <動画> --screen interception [--mode ...]   # 迎撃戦の段階の数値（V-0462）
+//   node tools/captures/hud.ts --screen interception --make-templates 516:1300:896779,514:1090:79191,...  # 録画 id:フレーム:左の値
+//
+// --screen interception: 迎撃戦の画面上部のボスの段階の数値「被ダメージ/段階の HP」の左の値を読む。リザルト画面の TOTAL DAMAGE と
+// 同じ系列で増える（V-0462）。読み方は hud-interception.ts（灰色のまま見本と照合する）、見本は hud-interception-templates.json。
+// 段階 1（右側が 8,404,000）だけを読む。--crop は使わない。
 //
 // 表示は白（FB 中などは薄い赤）の斜体の数字で、カンマ区切り・中央揃え。min(R,G,B) を 2 値にして連結成分に分け、
 // 高さの揃った成分を数字、低くて下に寄った成分をカンマとして左から並べ、数字は見本（hud-templates.json）と
@@ -17,8 +23,21 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { cropFilter, parseCrop, rawFrames, type Crop } from './ffmpeg.ts';
 import { holes, type Component } from './hud-glyph.ts';
+import {
+  CROP as INTERCEPTION_CROP,
+  SCALE as INTERCEPTION_SCALE,
+  makeTemplates as makeInterceptionTemplates,
+  readStrip,
+  toStrip,
+  decodeTemplates,
+  encodeTemplates,
+  type InterceptionTemplatesFile,
+  type Strip,
+} from './hud-interception.ts';
+import { capturesDir } from './dirs.ts';
 
 const TEMPLATE_FILE = new URL('./hud-templates.json', import.meta.url);
+const INTERCEPTION_TEMPLATE_FILE = new URL('./hud-interception-templates.json', import.meta.url);
 /** 数字とみなす明るさ（min(R,G,B)） */
 const THRESHOLD = 150;
 /** 照合に使う大きさ（正規化した数字の画像） */
@@ -37,6 +56,7 @@ const { values, positionals } = parseArgs({
   allowPositionals: true,
   options: {
     crop: { type: 'string', default: '810,34,300,38' },
+    screen: { type: 'string', default: 'range' },
     mode: { type: 'string', default: 'final' },
     from: { type: 'string', default: '0' },
     to: { type: 'string' },
@@ -44,11 +64,17 @@ const { values, positionals } = parseArgs({
   },
 });
 
+const interception = values.screen === 'interception';
+if (!interception && values.screen !== 'range') {
+  console.error('--screen は range か interception');
+  process.exit(1);
+}
 const video = positionals[0];
-if (!video) {
+if (!video && !(interception && values['make-templates'] !== undefined)) {
   console.error(
-    'usage: node tools/captures/hud.ts <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop x,y,w,h]\n' +
-      '       node tools/captures/hud.ts <動画> --make-templates frame:value,... [--crop x,y,w,h]',
+    'usage: node tools/captures/hud.ts <動画> [--screen range|interception] [--mode final|jumps|series] [--from N] [--to N] [--crop x,y,w,h]\n' +
+      '       node tools/captures/hud.ts <動画> --make-templates frame:value,... [--crop x,y,w,h]\n' +
+      '       node tools/captures/hud.ts --screen interception --make-templates 録画id:frame:value,...',
   );
   process.exit(1);
 }
@@ -222,6 +248,47 @@ async function* frames(first: number, last: number | undefined): AsyncGenerator<
   }
 }
 
+/** 迎撃戦: 段階の数値の切り出しを 4 倍に拡大し、せん断した帯にして返す */
+async function* strips(
+  path: string,
+  first: number,
+  last: number | undefined,
+): AsyncGenerator<{ n: number; strip: Strip }> {
+  const c = INTERCEPTION_CROP;
+  const w = c.w * INTERCEPTION_SCALE;
+  const h = c.h * INTERCEPTION_SCALE;
+  const select = last === undefined ? `gte(n\\,${first})` : `between(n\\,${first}\\,${last})`;
+  const args = ['-v', 'error', '-i', path, '-vf', `select='${select}',${cropFilter(c)},scale=${w}:${h}:flags=bicubic`];
+  args.push('-fps_mode', 'passthrough');
+  if (last !== undefined) args.push('-frames:v', String(last - first + 1));
+  args.push('-f', 'rawvideo', '-pix_fmt', 'rgb24', 'pipe:1');
+  let n = first;
+  for await (const rgb of rawFrames(args, w * h * 3)) {
+    yield { n, strip: toStrip(rgb) };
+    n++;
+  }
+}
+
+/** 迎撃戦の見本を作る。spec は「録画 id:フレーム:左の値」のカンマ区切り（値は数字だけ） */
+async function makeInterception(spec: string): Promise<void> {
+  const samples: Parameters<typeof makeInterceptionTemplates>[0] = [];
+  for (const item of spec.split(',')) {
+    const [recording, frame, value] = item.split(':').map((v) => v.trim());
+    const entry = JSON.parse(
+      readFileSync(new URL(`../../records/recordings/${recording}.json`, import.meta.url), 'utf8'),
+    ) as { folder: string; file: string };
+    const path = `${capturesDir()}/${entry.folder}/${entry.file}`;
+    for await (const { strip } of strips(path, Number(frame), Number(frame))) {
+      samples.push({ strip, recording: recording!, frame: Number(frame), value: Number(value) });
+    }
+  }
+  const templates = makeInterceptionTemplates(samples);
+  writeFileSync(INTERCEPTION_TEMPLATE_FILE, `${JSON.stringify(encodeTemplates(templates), null, 2)}\n`);
+  console.log(
+    `hud-interception-templates.json: 字 ${Object.keys(templates.glyphs).length} 種（${samples.length} フレームから）、中心 ${templates.center}`,
+  );
+}
+
 async function makeTemplates(spec: string): Promise<void> {
   const samples = spec.split(',').map((s) => {
     const [frame, value] = s.split(':').map((v) => Number(v.trim()));
@@ -287,16 +354,30 @@ function longestNonDecreasing(values: readonly number[]): Set<number> {
 
 async function main(): Promise<void> {
   if (values['make-templates'] !== undefined) {
-    await makeTemplates(values['make-templates']);
+    if (interception) await makeInterception(values['make-templates']);
+    else await makeTemplates(values['make-templates']);
     return;
   }
-  const templates = JSON.parse(readFileSync(TEMPLATE_FILE, 'utf8')) as Templates;
   const reads: { n: number; value: number }[] = [];
   let total = 0;
-  for await (const { n, bin } of frames(Number(values.from), values.to === undefined ? undefined : Number(values.to))) {
-    total++;
-    const value = readValue(glyphs(components(bin, crop.w, crop.h), templates.digitHeight), templates);
-    if (value !== null) reads.push({ n, value });
+  const from = Number(values.from);
+  const to = values.to === undefined ? undefined : Number(values.to);
+  if (interception) {
+    const t = decodeTemplates(
+      JSON.parse(readFileSync(INTERCEPTION_TEMPLATE_FILE, 'utf8')) as InterceptionTemplatesFile,
+    );
+    for await (const { n, strip } of strips(video!, from, to)) {
+      total++;
+      const r = readStrip(strip, t);
+      if (r !== null) reads.push({ n, value: r.value });
+    }
+  } else {
+    const templates = JSON.parse(readFileSync(TEMPLATE_FILE, 'utf8')) as Templates;
+    for await (const { n, bin } of frames(from, to)) {
+      total++;
+      const value = readValue(glyphs(components(bin, crop.w, crop.h), templates.digitHeight), templates);
+      if (value !== null) reads.push({ n, value });
+    }
   }
   const keep = longestNonDecreasing(reads.map((r) => r.value));
   const kept = reads.filter((_, i) => keep.has(i));

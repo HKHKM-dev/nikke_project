@@ -28,5 +28,25 @@
     },
     "source": "V-0462",
     "readAt": "2026-10-20"
+  },
+  {
+    "id": "515-03",
+    "recording": "515",
+    "kind": "hit",
+    "use": "record",
+    "value": [27383, 41074],
+    "unit": "ダメージ",
+    "description": "段階の数値の増分（10 個）の 1 ヒットの格子。フルチャージの胴体 27,383（8 回）と、その 1.5 倍の会心 41,074（1 回）。ほかは 21,567 が 1 回",
+    "method": {
+      "tool": "hud.ts --screen interception --mode jumps",
+      "note": "増分を ±1 で格子に当てた"
+    },
+    "source": "V-0462",
+    "readAt": "2026-10-20",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [954, 1870]
+    }
   }
 ]
