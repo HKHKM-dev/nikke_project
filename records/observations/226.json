@@ -131,5 +131,35 @@
       "source": "normal",
       "frames": [4784, 6956]
     }
+  },
+  {
+    "recording": "226",
+    "source": "V-0469",
+    "readAt": "2026-10-20",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.1648,
+    "description": "エマ：TU 単騎の、通常攻撃の 1 ヒットのうち会心の割合（815 ÷ 4,944）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。録画の置き場所のキャッシュ hud-jumps@2）と使い捨てのスクリプト",
+      "note": "前のフレームも読めた増分（gap 1）を、エマの 1 ヒットの格子（胴体 5,560.25（環境コントロールの外）と 5,777（中。× 1.039）× (1 + 1.0 × コア + 0.3 × 距離ボーナス + 0.7351 × 会心)。V-0210 と同じ）に ±2 で当て、1 つの値にだけ乗ったものを数えた（格子の値は ±3 で互いに重ならない）。標準誤差 0.0053。モデル（素の会心率 15%）より 1.5 ポイント高い。227 も同じ向きに高いので、差（V-0469）で見る。許容 ±0.03（510-01 と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "id": "226-06"
   }
 ]
