@@ -5,7 +5,7 @@
 - 移した節（古い文書の「index.md「○○」」はここで読み替える）:
   - 置き場所・バックアップ・クラウド環境での取り寄せ → [storage.md](storage.md)（2026-10-11。[../design-investigation-review.md](../design-investigation-review.md) 7.2 節）
   - フレーム番号の約束・解析ツール・証拠フレームの切り出し → [tools.md](tools.md)（2026-10-11。同上）
-  - 撮影プロトコル（撮る前の確かめ・実戦で映すものを含む） → [protocol.md](protocol.md)（2026-10-18）
+  - 撮影プロトコル（撮る前の確かめを含む） → [protocol.md](protocol.md)（2026-10-18）
   - 録画ごとの注記 → 各録画の JSON の `conditionNote`（元の文は [backup-log-old.md](backup-log-old.md) の末尾。2026-10-11）
 
 ## 命名規約
