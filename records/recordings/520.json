@@ -1,0 +1,36 @@
+{
+  "id": "520",
+  "date": "2026-10-20",
+  "folder": "range",
+  "file": "20261020-520_ar_tove_s2-auto-off.mp4",
+  "original": "2026-10-20_01-38-38.mp4",
+  "durationSec": 198.8,
+  "frames": 11927,
+  "fps": 60,
+  "sizeMB": 240.8,
+  "sha256": "7873fc8279dd",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 192,
+      "name": "トーブ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0458 の B の反復（C-0602。backlog 2-41）。ソルジャーF.A.（AI）+ トーブ（宝物の段階 3・操作）。戦闘の途中でトーブの AUTO 射撃を OFF にした（時刻は検証記録）。灼熱のタブ（512 と同じ）。枠順は戦闘履歴のパネル、オートバースト OFF は左上のボタン、スペック固定 ON・3 分モードは出撃画面で確かめた"
+}
