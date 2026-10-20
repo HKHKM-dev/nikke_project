@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
 import type { EnemyInput } from '../damage.ts';
-import { enemyLandingsOf, parseEnemyPresets, targetProfileForEnemy } from '../enemies.ts';
+import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets, targetProfileForEnemy } from '../enemies.ts';
 import {
   computeFixedSpecAttack,
   computeFixedSpecDefence,
@@ -19,7 +19,7 @@ import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { gameSecondsToFrames } from '../time.ts';
+import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
 import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
 
@@ -75,6 +75,16 @@ const WAITING: TeamInput = {
   ),
   enemy: { ...custom, target: profile, landings: enemyLandingsOf(master, [], 180, profile) },
 };
+// 同じく、射撃場の的のジャンプ（3 分モード）も入れたもの（録画 484・485 の比べる設定と同じ出来事）。シンデレラ S1 のチャージ速度▲
+// （plan/design-cinderella-s1-charge.md）の後は、II の CT 待ちで防御力▲ が切れた後に始まる回が、こちらにだけある
+const JUMPING: TeamInput = {
+  ...WAITING,
+  enemy: {
+    ...WAITING.enemy,
+    events: enemyEventsOf(master, ['range-3min-jump'], 180),
+    landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
+  },
+};
 
 /** バーストの防御力▲（説明文の値。スキル Lv10）の % を割合にしたもの */
 const burstDefenceUp = Number(character(ANIS_STAR).skills.burst.values[4]![9]) / 100;
@@ -105,6 +115,18 @@ const defenceUpsFrom = (input: TeamInput, source: number) =>
 
 /** 小片が、発火の始まり start に効いているか */
 const activeAt = (p: { start: number; end: number }, start: number) => p.start <= start && start < p.end;
+
+/**
+ * 枠 anis のアニス：スターの防御力▲（自分のバースト）が、発火の始まりに効いているか。シンデレラ S1 のチャージ速度▲（2026-10-20。
+ * plan/design-cinderella-s1-charge.md）でシンデレラの発が速くなり、どの編成でもアニス：スターがバーストを撃つ回と撃たない回が混ざる
+ */
+const anisUpAt = (input: TeamInput, anis: number) => {
+  const ups = defenceUpsFrom(input, anis).filter((p) => p.slotIndex === anis);
+  return (f: Fire) => ups.some((p) => activeAt(p, f.start));
+};
+
+/** 戦闘の終わりで切れていない発火（維持の終わりを比べる） */
+const notCut = (f: Fire) => f.ends.every((e) => e < battleSecondsToFrames(180));
 
 describe('防御力▲ と targetDefense の読み込み', () => {
   const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
@@ -182,9 +204,8 @@ describe('自分と自分より最終防御力が低い味方（C-0586）', () =
   });
 
   it('leaves out an ally with the same final DEF (録画 A の編成。論点 2)', () => {
-    // フラワーが I を撃つので、アニス：スターはバーストを撃たず、防御力▲ も無い
-    expect(defenceUpsFrom(TIE, 1)).toEqual([]);
-    const fires = projectileFires(TIE, 1);
+    // アニス：スターの防御力▲ の無い回（フラワーだけが I を撃った回。録画 482・483 の 1 回目のフルバースト）
+    const fires = projectileFires(TIE, 1).filter((f) => !anisUpAt(TIE, 1)(f));
     expect(fires.length).toBeGreaterThan(0);
     // フラワー（0）とアニス：スター（1）に付き、同値のシンデレラ（3）には付かない（デルタ（2）は下の C-0589）
     for (const f of fires) {
@@ -196,7 +217,7 @@ describe('自分と自分より最終防御力が低い味方（C-0586）', () =
 
   it('adds the ally once the DEF up of the burst lifts Anis: Star above it (録画 B の編成。論点 3)', () => {
     const ups = defenceUps(CONTROL);
-    const fires = projectileFires(CONTROL, 0);
+    const fires = projectileFires(CONTROL, 0).filter((f) => anisUpAt(CONTROL, 0)(f) && notCut(f));
     expect(fires.length).toBeGreaterThan(0);
     for (const f of fires) {
       expect(f.slots).toEqual([0, 1, 2]);
@@ -209,12 +230,13 @@ describe('自分と自分より最終防御力が低い味方（C-0586）', () =
   });
 
   it('drops the ally again at a full burst that starts after the DEF up has ended (同値に戻る)', () => {
-    const ups = defenceUps(WAITING).filter((u) => u.slotIndex === 0);
-    const active = (f: Fire) => ups.some((u) => u.start <= f.start && f.start < u.end);
-    const fires = projectileFires(WAITING, 0);
-    expect(fires.some(active)).toBe(true);
-    expect(fires.some((f) => !active(f))).toBe(true);
-    for (const f of fires) expect(f.slots.includes(2)).toBe(active(f));
+    // 録画 B の編成の 3 つの条件（射撃場の的・画面の既定・的のジャンプあり）のどれかに II の CT 待ちで防御力▲ が切れた後に始まる回がある
+    const both = [CONTROL, WAITING, JUMPING].flatMap((input) =>
+      projectileFires(input, 0).map((f) => ({ f, active: anisUpAt(input, 0)(f) })),
+    );
+    expect(both.some((x) => x.active)).toBe(true);
+    expect(both.some((x) => !x.active)).toBe(true);
+    for (const { f, active } of both) expect(f.slots.includes(2)).toBe(active);
   });
 
   it('compares the final DEF without rounding (論点 5)', () => {
@@ -278,7 +300,8 @@ describe('デルタの S2 の防御力▲（C-0589）', () => {
     const ups = defenceUpsFrom(TIE, 2);
     expect(ups.length).toBeGreaterThan(0);
     expect(ups.every((p) => p.slotIndex === 2)).toBe(true);
-    const fires = projectileFires(TIE, 1);
+    // アニス：スターの防御力▲ の無い回（録画 486 の画面の回）
+    const fires = projectileFires(TIE, 1).filter((f) => !anisUpAt(TIE, 1)(f));
     expect(fires.length).toBeGreaterThan(0);
     for (const f of fires) {
       // どのフルバーストの始まりにも、II のデルタのバーストの後で、デルタの防御力▲ が効いている
@@ -302,7 +325,7 @@ describe('デルタの S2 の防御力▲（C-0589）', () => {
       3,
     );
     expect(defenceUpsFrom(input, 2)).toEqual([]);
-    const fires = projectileFires(input, 1);
+    const fires = projectileFires(input, 1).filter((f) => !anisUpAt(input, 1)(f));
     expect(fires.length).toBeGreaterThan(0);
     for (const f of fires) expect(f.slots).toEqual([0, 1, 2]);
   });
@@ -310,7 +333,7 @@ describe('デルタの S2 の防御力▲（C-0589）', () => {
   it('puts Delta in while the DEF up of Anis: Star lifts her above, and keeps her after it ends (録画 488 の編成)', () => {
     const anisUps = defenceUpsFrom(CONTROL, 0);
     const deltaUps = defenceUpsFrom(CONTROL, 1);
-    const fires = projectileFires(CONTROL, 0);
+    const fires = projectileFires(CONTROL, 0).filter((f) => anisUpAt(CONTROL, 0)(f) && notCut(f));
     expect(fires.length).toBeGreaterThan(0);
     for (const f of fires) {
       const anisUp = anisUps.find((p) => activeAt(p, f.start));

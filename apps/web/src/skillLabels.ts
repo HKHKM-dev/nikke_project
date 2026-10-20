@@ -189,6 +189,8 @@ export function formatItemDuration(effect: AppliedTimedEffect): string {
   if (effect.durationShots !== undefined) return `・${effect.durationShots} 発`;
   if (effect.durationUntil === 'ammoSpent') return '・撃ち切りまで';
   if (effect.durationUntil === 'battleEnd') return '・持続';
+  // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 最大弾数リロード完了時に解除
+  if (effect.durationUntil === 'reloadEnd') return '・リロード完了まで';
   return `・${formatNumber(framesToGameSeconds(effect.durationFrames), 0)} 秒`;
 }
 

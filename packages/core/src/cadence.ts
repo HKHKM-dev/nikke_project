@@ -58,7 +58,9 @@ export const ACC_EPSILON = 1e-9;
 
 /**
  * 各発の発射フレーム（1 発目 = 0）。
- * - チャージ武器: 毎発 チャージ時間 + 解放遅延（実測 82f）。押下チャージ型は解放遅延を足さない（C-0222）
+ * - チャージ武器: 毎発 チャージ時間 + 解放遅延（実測 82f）。押下チャージ型は解放遅延を足さない（C-0222）。
+ *   シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.2 節）: 押下チャージ型は、発射レートの 1 発分より短くなったら、射手（frame/shooter.ts）と同じく
+ *   発射レートの蓄積も待つ（チャージを待つ間は 1 発分で止める）
  * - それ以外: 発射レートを 1 フレームごとに蓄積し、1 発分たまったフレームで発射（端数は持ち越し）。
  *   21-C3: 蓄積はゲーム内の時計（C-0058）。AR 720rpm は 5f が 9 回と 4f が 1 回の繰り返し、MG はレート上昇に従って間隔が縮む。
  */
@@ -72,7 +74,27 @@ export function simulateShotFrames(
   const frames: number[] = [0];
   if (isChargeWeapon(shot)) {
     const interval = chargeShotIntervalFrames(params, model);
-    for (let i = 1; i < params.maxAmmo; i++) frames.push(i * interval);
+    const rate = rateAfterShots(shot, 1) / MAX_RPM;
+    if (!params.downCharge || interval * rate >= 1 - ACC_EPSILON) {
+      for (let i = 1; i < params.maxAmmo; i++) frames.push(i * interval);
+      return frames;
+    }
+    let charged = 0;
+    let gate = 0;
+    let t = 0;
+    while (frames.length < params.maxAmmo) {
+      t += 1;
+      charged += 1;
+      gate += rate;
+      if (charged < interval) {
+        gate = Math.min(gate, 1);
+        continue;
+      }
+      if (gate < 1 - ACC_EPSILON) continue;
+      gate -= 1;
+      charged = 0;
+      frames.push(t);
+    }
     return frames;
   }
   let acc = 0;

@@ -236,7 +236,14 @@ export function stepShooter(
     state.chargeElapsed += 1;
     state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - state.chargeElapsed);
   }
+  // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.2 節）: 押下チャージ型のマガジンの 2 発目以降は、AR・SMG・SG と同じく前の発の
+  // 翌フレームから発射レートを蓄積し、1 発分たまるまで撃たない（チャージ 0 秒のシンデレラは 180rpm の 20・20・19f）。チャージを待つ間は
+  // 1 発分で止める（貯め込まない）。チャージが発射レートの 1 発分より長いうちは、満ちた時には 1 発分たまっているので変わらない。
+  // 入力が UP のチャージ武器は発射レート（どれも 60rpm）より速く撃つので掛けない（紅蓮BS 43f・アリス 31f。C-0149・C-0523）
+  const rateGated = params.downCharge && state.phase === 'ready' && state.shotsInMagazine > 0;
+  if (rateGated) state.acc += rateAfterShots(shot, state.shotsInMagazine) / MAX_RPM;
   if (state.wait > 0) {
+    if (rateGated) state.acc = Math.min(state.acc, 1);
     state.wait -= 1;
     return false;
   }
@@ -250,6 +257,10 @@ export function stepShooter(
     // simulateShotFrames と同じ: 前の発射の翌フレームから毎フレーム蓄積し、1 発分たまったフレームで撃つ。
     // 2 段目の段 9 の PR 2: 攻撃速度▲はこのフレームのレートに掛ける（params.rateScale。C-0600）
     state.acc += rateAfterShots(shot, state.shotsInMagazine, params.rateScale) / MAX_RPM;
+    if (state.acc < 1 - ACC_EPSILON) return false;
+    state.acc -= 1;
+  }
+  if (rateGated) {
     if (state.acc < 1 - ACC_EPSILON) return false;
     state.acc -= 1;
   }
