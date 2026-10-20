@@ -313,4 +313,10 @@
 - 2026-10-19 23:40 録画 511（ソルジャーF.A. + トーブ）: `range/20261019-511_ar_tove_s2-attack-speed.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-19 23:40 録画 512（ソルジャーF.A. + トーブ）: `range/20261019-512_ar_tove_s2-auto-off.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-20 01:03 録画 513（I-DOLL・フラワー + ソルジャーF.A. + シンデレラ + アニス：スター + デルタ）: `range/20261020-513_delta-def-status-pause.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-20 01:21 録画 514（ソルジャーE.G.単騎）: `interception/20261020-514_special_blacksmith_soldier-eg.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-20 01:21 録画 515（ココア単騎）: `interception/20261020-515_special_blacksmith_cocoa.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-20 01:21 録画 516（リター単騎）: `interception/20261020-516_special_blacksmith_liter.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-20 01:21 録画 517（エマ単騎）: `interception/20261020-517_special_blacksmith_emma.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-20 01:21 録画 518（ソルジャーF.A.単騎）: `interception/20261020-518_special_blacksmith_soldier-fa.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-20 01:21 録画 519（I-DOLL・フラワー単騎）: `interception/20261020-519_special_blacksmith_idoll-flower.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-20 01:45 録画 520（ソルジャーF.A. + トーブ）: `range/20261020-520_ar_tove_s2-auto-off.mp4` を同期（E: と I: で sha256 が一致）。

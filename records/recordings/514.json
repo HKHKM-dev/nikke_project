@@ -1,0 +1,30 @@
+{
+  "id": "514",
+  "date": "2026-10-20",
+  "folder": "interception",
+  "file": "20261020-514_special_blacksmith_soldier-eg.mp4",
+  "original": "2026-10-20_01-03-22.mp4",
+  "durationSec": 40.5,
+  "frames": 2429,
+  "fps": 60,
+  "sizeMB": 48.9,
+  "sha256": "6f065d5dc738",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "ブラックスミス",
+    "element": null,
+    "level": 200
+  },
+  "mode": "interception-special",
+  "fixedSpec": null,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "特殊個体：ブラックスミス（Lv.200 固定）の模擬戦闘（本番と同じ戦闘で、回数に数えない）。単騎・スペック固定の選択肢なし（実ビルド）。交戦の途中で戦闘不能になって終わる。パーツ（対物ライフル）のある敵。V-0462"
+}
