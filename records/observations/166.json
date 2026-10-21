@@ -7,12 +7,7 @@
     "kind": "position",
     "use": "record",
     "unit": "px",
-    "value": [
-      542,
-      382,
-      158,
-      138
-    ],
+    "value": [542, 382, 158, 138],
     "description": "遠（3 区間目）の的の、足元の y・上端の y・高さ・幅（1920×1080。外接矩形。的だけが取れたコマの中央値）。足元で分けると遠 A（V-0228「結果」）",
     "method": {
       "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
@@ -24,13 +19,7 @@
     "recording": "166",
     "kind": "rate",
     "use": "record",
-    "value": [
-      0.787,
-      0.943,
-      0.69,
-      0.758,
-      0.828
-    ],
+    "value": [0.787, 0.943, 0.69, 0.758, 0.828],
     "unit": "割合",
     "description": "ノワール（SG）単騎・AUTO・スペック固定 ON の 180 秒で、的のジャンプで分けた区間（中近 → 近 → 遠 → 中遠 → 近）ごとの、当たったペレットの割合（当たった数 ÷（トリガー数 × 10））。近は増分から数えた値、ほかは見積もり",
     "method": {
@@ -45,16 +34,7 @@
     "recording": "166",
     "kind": "count",
     "use": "record",
-    "value": [
-      30,
-      12,
-      4,
-      1,
-      2,
-      19,
-      12,
-      10
-    ],
+    "value": [30, 12, 4, 1, 2, 19, 12, 10],
     "unit": "トリガー",
     "description": "ノワール（SG）単騎・AUTO・スペック固定 ON の近の 2 区間（近 1 回目・近 2 回目）で、当たったペレットが 10・9・8・7 以下だったトリガーの数（区間ごとに 4 つずつ）",
     "method": {
@@ -69,10 +49,7 @@
     "recording": "166",
     "kind": "rate",
     "use": "record",
-    "value": [
-      0.2822,
-      0.2472
-    ],
+    "value": [0.2822, 0.2472],
     "unit": "割合",
     "description": "ノワール（SG）単騎・AUTO・スペック固定 ON の近の 2 区間（近 1 回目・近 2 回目）の、当たったペレット 1 個あたりの「会心 + 2 × コア」のぶん（会心率 + 2 × コア命中率。近の増分から一意に出る）",
     "method": {
@@ -85,11 +62,7 @@
   {
     "id": "166-05",
     "recording": "166",
-    "recordings": [
-      "166",
-      "210",
-      "228"
-    ],
+    "recordings": ["166", "210", "228"],
     "kind": "rate",
     "use": "record",
     "source": "V-0474",
@@ -137,9 +110,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "condition": "auto"
       }
