@@ -114,8 +114,9 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(targetRateOf(profile.coreHitRate, MG, at('farB'))).toBe(0.9588);
     expect(targetRateOf(profile.coreHitRate, RL, at('nearA'))).toBe(1);
     expect(targetRateOf(profile.coreHitRate, SR, at('farB'))).toBe(1);
-    expect(targetRateOf(profile.coreHitRate, SG, at('nearA'))).toBe(0.042);
-    expect(targetRateOf(profile.coreHitRate, SG, at('nearB'))).toBe(0.042);
+    // C-0610: SG の近のコア命中率はスペック固定によらず 0.052（V-0474）。近の着地点で分けない
+    expect(targetRateOf(profile.coreHitRate, SG, at('nearA'))).toBe(0.052);
+    expect(targetRateOf(profile.coreHitRate, SG, at('nearB'))).toBe(0.052);
     // C-0156: SG の弾丸命中率だけ近の着地点ごと。ほかの武器種は近の帯の値を共通に使う
     expect(targetRateOf(profile.bulletHitRate, SG, at('nearA'))).toBe(0.845);
     expect(targetRateOf(profile.bulletHitRate, SG, at('nearB'))).toBe(0.951);
