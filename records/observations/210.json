@@ -131,7 +131,12 @@
     "kind": "position",
     "use": "record",
     "unit": "px",
-    "value": [534, 388, 146, 132],
+    "value": [
+      534,
+      388,
+      146,
+      132
+    ],
     "description": "遠（3 区間目）の的の、足元の y・上端の y・高さ・幅（1920×1080。外接矩形。的だけが取れたコマの中央値）。足元で分けると遠 B（V-0228「結果」）",
     "method": {
       "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
@@ -143,7 +148,9 @@
     "recording": "210",
     "kind": "timing",
     "use": "compare",
-    "value": [884],
+    "value": [
+      884
+    ],
     "unit": "f",
     "description": "クイーン（真）（SG・操作）単騎・風圧の的で、S1 の戦闘開始時の攻撃力▲が切れたフレーム（戦闘開始からのゲーム内のフレーム）。▲の中の最後のトリガーと、▲の外の最初のトリガーのあいだの中点",
     "source": "V-0283",
@@ -165,7 +172,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       }
     }
@@ -177,7 +186,13 @@
     "use": "record",
     "source": "V-0287",
     "readAt": "2026-10-07",
-    "value": [31.84, 68.31, 107.92, 144.72, 177.77],
+    "value": [
+      31.84,
+      68.31,
+      107.92,
+      144.72,
+      177.77
+    ],
     "unit": "秒",
     "description": "的のジャンプの始まりの、戦闘開始から数えたゲーム内の秒（SG・クイーン（真）単騎・AUTO。1〜5 回目）",
     "method": {
@@ -194,7 +209,13 @@
     "recording": "210",
     "kind": "rate",
     "use": "record",
-    "value": [0.756, 0.95, 0.637, 0.769, 0.873],
+    "value": [
+      0.756,
+      0.95,
+      0.637,
+      0.769,
+      0.873
+    ],
     "unit": "割合",
     "description": "クイーン（真）（SG）単騎・AUTO・スペック固定 ON の 180 秒で、的のジャンプで分けた区間（中近 → 近 → 遠 → 中遠 → 近）ごとの、当たったペレットの割合（当たった数 ÷（トリガー数 × 10））。近は増分から数えた値、ほかは見積もり",
     "method": {
@@ -209,7 +230,16 @@
     "recording": "210",
     "kind": "count",
     "use": "record",
-    "value": [28, 14, 0, 2, 11, 16, 8, 5],
+    "value": [
+      28,
+      14,
+      0,
+      2,
+      11,
+      16,
+      8,
+      5
+    ],
     "unit": "トリガー",
     "description": "クイーン（真）（SG）単騎・AUTO・スペック固定 ON の近の 2 区間（近 1 回目・近 2 回目）で、当たったペレットが 10・9・8・7 以下だったトリガーの数（区間ごとに 4 つずつ）",
     "method": {
@@ -224,7 +254,10 @@
     "recording": "210",
     "kind": "rate",
     "use": "record",
-    "value": [0.2464, 0.1891],
+    "value": [
+      0.2464,
+      0.1891
+    ],
     "unit": "割合",
     "description": "クイーン（真）（SG）単騎・AUTO・スペック固定 ON の近の 2 区間（近 1 回目・近 2 回目）の、当たったペレット 1 個あたりの「会心 + 2 × コア」のぶん（会心率 + 2 × コア命中率。近の増分から一意に出る）",
     "method": {
@@ -233,5 +266,43 @@
     },
     "source": "V-0474",
     "readAt": "2026-10-21"
+  },
+  {
+    "id": "210-11",
+    "recording": "210",
+    "kind": "rate",
+    "use": "compare",
+    "source": "V-0474",
+    "readAt": "2026-10-22",
+    "value": 0.0332,
+    "unit": "割合",
+    "description": "クイーン（真）（SG）単騎・AUTO・スペック固定 ON の近の 2 区間を合わせた、当たったペレット 1 個あたりのコア命中率の見積もり（「会心 + 2 × コア」から会心率 0.154（C-0159）を引いて 2 で割る）",
+    "method": {
+      "tool": "recipe:sg-pellets@4 の「会心 + 2 × コア」の観測値（210-10）の注記の個数",
+      "note": "会心 + 2 × コア 169 ÷ 当たったペレット 767。風圧の的。15 秒の後の 1 ペレットの胴体 38,784（228-02）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
   }
 ]
