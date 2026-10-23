@@ -7,14 +7,23 @@
 // 初回は --resync --dry-run で送られるものを見てから --resync（4.3 節）。フィルタを変えたら、その対だけ --resync する。
 // 記録は NIKKE_SYNC_STATE_DIR（無ければホームの下の .nikke-sync。追跡しない）の sync.log に 1 回 1 行、rclone の出力は
 // last-<対>.log に残す。
+import { spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { capturesDir } from '../captures/dirs.ts';
-import { driveCaptures, driveUnavailable, lsjson, rclone } from './rclone.ts';
-import { bisyncArgs, hookShouldSkip, isConflictName, type Lock, lockIsLive, type Pair } from './sync-lib.ts';
+import { driveCaptures, driveSync, driveUnavailable, lsjson, rclone } from './rclone.ts';
+import {
+  bisyncArgs,
+  hookShouldSkip,
+  isConflictName,
+  type Lock,
+  lockIsLive,
+  memoryProjectName,
+  type Pair,
+} from './sync-lib.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -29,14 +38,46 @@ const { values } = parseArgs({
 });
 const hook = values.hook;
 
-// 段 ① は録画まわりだけ。private/・scratch/・メモリの対は段 ② で足す（設計書 9 節）
-const PAIRS: Pair[] = [
+/** メインのチェックアウト（git worktree list の先頭）。private/・scratch/ はここにだけある */
+function mainCheckout(): string {
+  const r = spawnSync('git', ['worktree', 'list', '--porcelain'], { cwd: ROOT, encoding: 'utf8' });
+  const m = /^worktree (.+)$/m.exec(r.stdout ?? '');
+  return m?.[1] ?? ROOT;
+}
+const main = mainCheckout();
+const claudeDir = process.env['CLAUDE_CONFIG_DIR'] ?? join(homedir(), '.claude');
+
+// 対の定義。フィルタは中身で持ち、回すときに記録の場所へ写す（bisync が隣に指紋を書くため）
+type PairDef = Omit<Pair, 'filters'> & { filterText: string };
+const PAIRS: PairDef[] = [
   {
     name: 'captures',
     local: capturesDir(),
     remote: driveCaptures(),
-    filters: join(ROOT, 'tools/drive/filters/captures.txt'),
+    filterText: readFileSync(join(ROOT, 'tools/drive/filters/captures.txt'), 'utf8'),
     checkAccess: true,
+  },
+  // 段 ②: private/・scratch/・Claude のメモリと全体の指示（設計書 4.1 節。Drive の nikke_sync/ の下）
+  {
+    name: 'private',
+    local: join(main, 'private'),
+    remote: `${driveSync()}/private`,
+    filterText: '# サービスアカウントの鍵（*.json）は同期しない（設計書 4.1 節）\n- *.json\n',
+    checkAccess: false,
+  },
+  {
+    name: 'scratch',
+    local: join(main, 'scratch'),
+    remote: `${driveSync()}/scratch`,
+    filterText: '- desktop.ini\n',
+    checkAccess: false,
+  },
+  {
+    name: 'claude',
+    local: claudeDir,
+    remote: `${driveSync()}/claude`,
+    filterText: `# 全体の CLAUDE.md と、このプロジェクトのメモリだけ（設計書 4.1 節）\n+ /CLAUDE.md\n+ /projects/${memoryProjectName(main)}/memory/**\n- **\n`,
+    checkAccess: false,
   },
 ];
 
@@ -89,7 +130,7 @@ function log(line: string): void {
   appendFileSync(join(stateDir, 'sync.log'), `${new Date().toISOString()} ${line}\n`);
 }
 
-function hasTestFile(pair: Pair): { local: boolean; remote: boolean } {
+function hasTestFile(pair: PairDef): { local: boolean; remote: boolean } {
   const remote = lsjson(pair.remote, ['--files-only', '--max-depth', '1', '--include', 'RCLONE_TEST']);
   return { local: existsSync(join(pair.local, 'RCLONE_TEST')), remote: (remote ?? []).length > 0 };
 }
@@ -165,10 +206,18 @@ try {
         }
       }
     }
+    // 初めての対は Drive にフォルダが無い。空打ちでは数えるだけ、本番の --resync では作ってから回す
+    if (values.resync && lsjson(pair.remote, ['--max-depth', '1']) === null) {
+      if (values['dry-run']) {
+        console.log(`${pair.name}: Drive に ${pair.remote} がまだ無い。本番の --resync で作り、ローカルを上げる`);
+        continue;
+      }
+      rclone(['mkdir', pair.remote]);
+    }
     // bisync はフィルタの指紋（.md5）をフィルタの隣に書く。リポジトリの中だと worktree ごとに無くなるので、
     // 記録の場所に写して使う（中身が変わったときだけ書き直す。変われば --resync が要る）
     const filters = join(stateDir, `filters-${pair.name}.txt`);
-    const text = readFileSync(pair.filters, 'utf8');
+    const text = pair.filterText;
     if (!existsSync(filters) || readFileSync(filters, 'utf8') !== text) writeFileSync(filters, text);
     const args = bisyncArgs(
       { ...pair, filters },

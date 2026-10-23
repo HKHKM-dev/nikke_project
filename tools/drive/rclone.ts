@@ -55,3 +55,8 @@ export function driveHash(file: string, kind: 'sha256' | 'md5'): string | null {
   const m = /^([0-9a-f]{32,64})\s/.exec(r.stdout.trim());
   return m ? m[1]! : null;
 }
+
+/** Drive の nikke_sync（private/・scratch/・Claude のメモリと全体の指示。plan/design-cloud-environment.md 4.1 節） */
+export function driveSync(): string {
+  return `${remoteName()}:nikke_sync`;
+}

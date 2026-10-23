@@ -3,22 +3,63 @@
   "hooks": {
     "SessionStart": [
       {
-        "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\"", "timeout": 60 }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\"",
+            "timeout": 60
+          }
+        ]
       },
       {
         "hooks": [
-          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/tools/drive/sync.ts\" --hook", "timeout": 600, "async": true }
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/drive/sync.ts\" --hook",
+            "timeout": 600,
+            "async": true
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/drive/cloud-sync.ts\" --pull",
+            "timeout": 120
+          }
         ]
       }
     ],
     "UserPromptSubmit": [
       {
-        "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\"", "timeout": 60 }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\"",
+            "timeout": 60
+          }
+        ]
       }
     ],
     "Stop": [
       {
-        "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\"", "timeout": 60 }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\"",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/drive/cloud-sync.ts\" --push",
+            "timeout": 120
+          }
+        ]
       }
     ]
   }

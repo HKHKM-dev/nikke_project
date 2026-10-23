@@ -32,7 +32,8 @@
     "records:renumber": "node packages/core/scripts/records-renumber.ts",
     "skills:catalog": "node packages/core/scripts/skill-catalog.ts",
     "drive:sync": "node tools/drive/sync.ts",
-    "drive:conflicts": "node tools/drive/sync.ts --conflicts"
+    "drive:conflicts": "node tools/drive/sync.ts --conflicts",
+    "drive:gateway-check": "node tools/drive/gateway-check.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

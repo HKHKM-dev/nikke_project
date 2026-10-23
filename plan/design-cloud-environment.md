@@ -1,7 +1,7 @@
 # クラウド環境 設計書（PC が使えないときも、クラウドのセッションで続ける）
 
 - 対象: Google Drive との同期（新しい `tools/drive/`。デスクトップの rclone の双方向同期と、Apps Script の受け口）、クラウドのセッションのフック（`.claude/settings.json`）、録画の道具の Drive への書き方（`tools/captures/intake.ts`・`dirs.ts`、`packages/core/scripts/records-renumber.ts`）、文書（[captures/storage.md](captures/storage.md)・[captures/tools.md](captures/tools.md)・AGENTS.md・新しい手引き）
-- 状態: **項目 1〜11 は 2026-10-23 に決まった（11.1 節）。段 ① を実装中（12.1 節）**
+- 状態: **項目 1〜11 は 2026-10-23 に決まった（11.1 節）。段 ①（12.1 節）は 2026-10-23 にマージ。段 ② を実装中（12.2 節）**
 - 関連: [design-cloud-environment-notes.md](design-cloud-environment-notes.md)（調べたことの根拠と出典）、[captures/storage.md](captures/storage.md)「バックアップ」「クラウド環境での取り寄せ」、[design-records-automation.md](design-records-automation.md) 3.3 節（`intake.ts`）、[design-recording-renumber.md](design-recording-renumber.md) 5 節（Drive 側の名前の変え方）
 - 作成日: 2026-10-23
 - 調べた時点: main の 3e052720（#642）。件数・容量は 2026-10-23 の手元とクラウドの調べで、判断の材料。以後は書き直さない
@@ -330,6 +330,15 @@
   - bisync はフィルタの指紋（`.md5`）をフィルタの隣に書くので、リポジトリの中では worktree ごとに無くなる。フィルタは記録の場所（`.nikke-sync/`）に写して使う
 - 分かったこと: 2026-10-23 の時点で、Drive for desktop が `H:/record` を上げていない（試しのファイルが 5 分たっても Drive に無い。10-22 に作られた `既読未分類` も無い）。取り込み元の写しからの Drive の中のコピーは、写しが Drive にあるときだけ使い、無ければ E: から上げる（4.4 節）ので、取り込みは止まらない。同じ日にオーナーが Drive for desktop を設定し直した後は、`H:/record` に置いた試しのファイルが 10 秒以内に `record` に上がり（`既読未分類` も上がった）、そこからの Drive の中のコピーも SHA256 が一致した（試しのファイルは片付けた）
 - 残り: 実際の取り込み（`intake.ts`）は次の撮影のときに確かめる。デスクトップのセッションの始めの同期は、マージの後のセッションで記録（`sync.log`）を見る
+
+### 12.2 段 ②（2026-10-23。受け口と小さいファイルの往復）
+
+- 足したもの:
+  - デスクトップの同期の対 ・・（。Drive の の下。 は鍵の を外し、 は全体の CLAUDE.md とこのプロジェクトのメモリだけ）。フィルタは対の定義に中身で持つ
+  - Apps Script の受け口（・）。DriveApp だけを使う（高度なサービスは要らない）。中身の差し替えは、新しく作って古い方をごみ箱へ移す
+  - クラウドの往復（。SessionStart で 、Stop で ）、受け口を呼ぶ 、決まりごとの （テストは ）、動作確認の - 手引き [cloud-guide.md](cloud-guide.md)。AGENTS.md の「離席と再開」から指し、「記録の置き場所」に 1 行・ の行にクラウドのことを足した（項目 10）。[captures/storage.md](captures/storage.md) のクラウドで切り出したフレームの扱いを直した
+- 確かめたこと: デスクトップの 3 つの対の初回の で ができ（ は owner.md だけ）、4 つの対のふだんの同期は約 10 秒で何も送らない。CI と同じ確認が通る。クラウドでない環境と受け口の URL が無い環境では、往復のフックが何もせずに抜ける
+- 残り（オーナーの準備の後）: 、クラウドのセッションでの往復（owner.md とメモリが見える・直したものが D: に届く・衝突が両方残る・証拠フレームが E: に届く）
 
 ## この設計の外
 

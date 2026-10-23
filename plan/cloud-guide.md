@@ -1,0 +1,55 @@
+# クラウドで作業するときの手引き
+
+- 何のための文書か: デスクトップの PC が使えないとき（停電・故障・不在）も、スマホや MacBook からクラウドのセッションで続けるための手順。どこに何があるか・始め方・離席と再開・同期と衝突・準備・困ったとき
+- 関連: [design-cloud-environment.md](design-cloud-environment.md)（決めたことと理由）、[captures/storage.md](captures/storage.md)「バックアップ」（E: と Drive の録画まわりの同期。ここには書き写さない）・「クラウド環境での取り寄せ」（録画の取り寄せ）
+- 作成日: 2026-10-23
+
+## どこに何があるか
+
+| もの                                     | 正の置き場所                                        | デスクトップ                                        | クラウドのセッション                                                                                          |
+| ---------------------------------------- | --------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| コード・記録・設計書                     | GitHub                                              | worktree                                            | `/home/user/nikke_project`                                                                                    |
+| `private/`・`scratch/`                   | Drive の `nikke_sync/private`・`scratch`            | メインのチェックアウト（`D:/nikke_project/`）の直下 | リポジトリの直下（セッションの始めに置かれる）                                                                |
+| Claude のメモリと全体の指示（CLAUDE.md） | Drive の `nikke_sync/claude/`                       | Claude Code の設定のフォルダ（自動メモリ）          | `~/.claude/CLAUDE.md` に、全体の指示とメモリの索引・書き方が置かれる。本文は `~/.claude/projects/…/memory/`   |
+| 録画・スクショ・証拠フレーム・参照資料   | E: と Drive の `nikke_project_captures/`            | `E:/nikke_project_captures/`                        | 録画は `node tools/captures/fetch.ts <録画 id>` で取り寄せる。切り出した証拠フレームは応答の終わりに Drive へ |
+| 取り込む前の録画                         | `H:/record` と Drive の「マイ コンピュータ/record」 | Drive for desktop が上げる                          | Drive から取り込む（設計書 6.3 節。段 ③）                                                                     |
+
+## クラウドのセッションの始め方
+
+1. スマホか MacBook の Claude アプリ（または claude.ai/code）で、このリポジトリのクラウドのセッションを始める（環境は「デフォルト」）。
+2. 始めのフック（`tools/drive/cloud-sync.ts --pull`）が、Drive から `private/`・`scratch/`・メモリ・全体の CLAUDE.md を取って置く。最初の応答はこれを待つ。
+3. 応答の終わりのフック（`--push`）が、直したもの・増やしたもの・消したものを Drive に戻す（衝突は下）。デスクトップには、次のデスクトップのセッションの始めの同期で届く。
+
+クラウドでは自動メモリが使えないので、メモリは `~/.claude/CLAUDE.md` に書かれた決まりで読み書きする（同じ形式。設計書 6.1 節）。
+
+## 離席と再開
+
+- 離席や電源を切る前は `npm run drive:sync` を回し、続ける作業はデスクトップのアプリの「クラウドで続ける」で移す（AGENTS.md「離席と再開」）。
+- PC が突然止まったときは、push 済みのブランチと、最後の節目までに Drive に上がったものから続ける（未 push の作業は PC が直るまで待つ）。
+
+## 衝突
+
+- 前に取った（同期した）ときから両側で変わったファイルは、両方を残し、名前に側を付ける: `<名前>.conflict-desktop.<拡張子>`・`<名前>.conflict-drive.<拡張子>`（デスクトップの同期）、`<名前>.conflict-cloud.<拡張子>`（クラウドの応答の終わり）。
+- 一覧は、デスクトップで `npm run drive:conflicts`。中身を見て 1 つにまとめ、別名の方を消す。
+
+## 準備（オーナーが 1 回だけ）
+
+デスクトップの rclone の準備は [captures/storage.md](captures/storage.md)「バックアップ」の「準備」。クラウドの側は次のとおり。
+
+1. Apps Script の受け口を公開する。
+   1. [script.google.com](https://script.google.com/) で新しいプロジェクトを作り、`tools/drive/gateway/Code.gs` の中身を貼る。プロジェクトの設定で「appsscript.json をエディタで表示」を入れ、`tools/drive/gateway/appsscript.json` の中身を貼る。
+   2. プロジェクトの設定の「スクリプト プロパティ」に、`KEY`（長い乱数の合言葉）・`ROOT_SYNC`（`nikke_sync` のフォルダ ID）・`ROOT_CAPTURES`（`nikke_project_captures`）・`ROOT_RECORD`（「マイ コンピュータ/record」）を入れる。フォルダ ID は、Drive でフォルダを開いた URL の `folders/` の後ろ。
+   3. 「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」（実行するユーザー: 自分、アクセスできるユーザー: 全員）。認可の画面で、メインのアカウントで許可する。表示されたウェブアプリの URL を控える。
+2. 動作を確かめる: デスクトップで `NIKKE_DRIVE_GATEWAY_URL` と `NIKKE_DRIVE_GATEWAY_KEY` を入れて `npm run drive:gateway-check`（試しのファイルを作り、ごみ箱へ移して片付ける）。
+3. クラウドの環境（claude.ai/code の環境の設定）に足す:
+   - 通信の許可（Custom）: `script.google.com` と `script.googleusercontent.com`
+   - 環境変数: `NIKKE_DRIVE_GATEWAY_URL=<ウェブアプリの URL>`
+   - 合言葉: ネットワークシークレットの Body parameter 型（ホスト `script.google.com`、名前 `key`）。使えなければ環境変数 `NIKKE_DRIVE_GATEWAY_KEY=<合言葉>`（VM の中から見える）
+4. 合言葉が漏れたら、スクリプト プロパティの `KEY` を変え、クラウドの環境の値も替える。受け口ができるのは 3 つのフォルダの中だけで、消すのはごみ箱への移動だけ（設計書 5 節）。
+
+## 困ったとき
+
+- デスクトップの同期の重大なエラー（終了コード 7）・同名の複製: [captures/storage.md](captures/storage.md)「バックアップ」。
+- クラウドで「Drive との往復に失敗した」と出る: 受け口の URL・合言葉・通信の許可を確かめる。デスクトップで `npm run drive:gateway-check` が通るかを見る。
+- クラウドで Claude が自分で打つ curl などは、auto mode の判定で止まることがある。同期はフックで行うので、この判定は受けない。
+- クラウドの Node は 22（リポジトリの `.nvmrc` は 24）。
