@@ -1,19 +1,19 @@
 {
-  "id": "537",
+  "id": "542",
   "date": "2026-10-23",
   "folder": "range",
-  "file": "20261023-537_sg_soda-tb-burst_anis-star-1.mp4",
-  "original": "2026-10-23_23-13-37.mp4",
-  "durationSec": 203.1,
-  "frames": 12184,
+  "file": "20261023-542_sg_soda-tb-burst_nopause.mp4",
+  "original": "2026-10-23_23-09-53.mp4",
+  "durationSec": 210.3,
+  "frames": 12616,
   "fps": 60,
-  "sizeMB": 246.2,
-  "sha256": "ebfdbfe1ace9",
+  "sizeMB": 255.1,
+  "sha256": "e5720b51c060",
   "team": [
     {
       "slot": 1,
-      "rid": 17,
-      "name": "アニス：スター",
+      "rid": 822,
+      "name": "ラム",
       "controlled": false
     },
     {
@@ -37,5 +37,5 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0475 の B（アニス：スター・デルタ・ソーダ：トゥインクルバニー）1 本目。戦闘中の一時停止なし"
+  "conditionNote": "V-0479 の A（ラム・デルタ・ソーダ：トゥインクルバニー）。戦闘中の一時停止なし"
 }
