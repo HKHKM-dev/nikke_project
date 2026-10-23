@@ -78,6 +78,8 @@
 
 ## 5. 道具・記録の整備
 
+- クラウド環境の道具の直し（衝突の別名が応答のたびに増える・高速スタートアップでの起動の時刻・フックで黙って飛ばす・テストの無いところ）→ [design-cloud-environment-log.md](design-cloud-environment-log.md) 12.5 節
+
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
 - キャラ × スロットの中身は [skills.md](skills.md) の「未対応」の notes が正（[design-skill-note-kinds.md](design-skill-note-kinds.md)）。ここには、片づけるのに要るものの種類ごとに 1 行を置く。前提の外（被弾・パーツ・バリアなど）は課題にしない。
