@@ -1,7 +1,7 @@
 # クラウド環境 設計書（PC が使えないときも、クラウドのセッションで続ける）
 
 - 対象: Google Drive との同期（新しい `tools/drive/`。デスクトップの rclone の双方向同期と、Apps Script の受け口）、クラウドのセッションのフック（`.claude/settings.json`）、録画の道具の Drive への書き方（`tools/captures/intake.ts`・`dirs.ts`、`packages/core/scripts/records-renumber.ts`）、文書（[captures/storage.md](captures/storage.md)・[captures/tools.md](captures/tools.md)・AGENTS.md・新しい手引き）
-- 状態: **項目 1〜11 は 2026-10-23 に決まった（11.1 節）。段 ①（12.1 節）は 2026-10-23 にマージ。段 ② を実装中（12.2 節）**
+- 状態: **項目 1〜11 は 2026-10-23 に決まった（11.1 節）。段 ①（12.1 節）は 2026-10-23 にマージ。段 ②（12.2 節）を 2026-10-23 に実装。段 ③（クラウドでの取り込み）は残り**
 - 関連: [design-cloud-environment-notes.md](design-cloud-environment-notes.md)（調べたことの根拠と出典）、[captures/storage.md](captures/storage.md)「バックアップ」「クラウド環境での取り寄せ」、[design-records-automation.md](design-records-automation.md) 3.3 節（`intake.ts`）、[design-recording-renumber.md](design-recording-renumber.md) 5 節（Drive 側の名前の変え方）
 - 作成日: 2026-10-23
 - 調べた時点: main の 3e052720（#642）。件数・容量は 2026-10-23 の手元とクラウドの調べで、判断の材料。以後は書き直さない
@@ -340,7 +340,9 @@
   - 手引き [cloud-guide.md](cloud-guide.md)。AGENTS.md の「離席と再開」から指し、「記録の置き場所」に 1 行・`private/` の行にクラウドのことを足した（項目 10）。[captures/storage.md](captures/storage.md) のクラウドで切り出したフレームの扱いを直した
 - 確かめたこと: デスクトップの 3 つの対の初回の `--resync` で `nikke_sync/` ができ（`private` は owner.md だけ）、4 つの対のふだんの同期は約 10 秒で何も送らない。CI と同じ確認が通る。クラウドでない環境と受け口の URL が無い環境では、往復のフックが何もせずに抜ける
 - 受け口（2026-10-23。オーナーが公開した後の `npm run drive:gateway-check`）: 書き込み・一覧と中身・衝突の別名（`.conflict-cloud`）・同じ中身は何もしない・3MB・証拠フレームの下への書き込み・移動と改名（`moveTo` で動いた）・録画の上には書けない・合言葉が違えば断る、の 9 つがどれも通った（試しのファイルはごみ箱へ移した）
-- 残り（オーナーの準備の後）: クラウドのセッションでの往復（owner.md とメモリが見える・直したものが D: に届く・衝突が両方残る・証拠フレームが E: に届く）
+- クラウドのセッション（2026-10-23。ブランチ `claude/cloud-env-stage2`）: クラウドで書いた `scratch/_cloud-check.md` が応答の終わりに Drive に戻り、デスクトップの同期で D: に届いた（応答の終わりのフックは、セッションの始めのフックが基準を作ったときだけ戻すので、始めの取り込みも動いた）。試しのファイルは片付けた
+- 合言葉: ネットワークシークレットの Body parameter 型では受け口に届かなかったので、環境変数 `NIKKE_DRIVE_GATEWAY_KEY` に入れた（5.2 節の「使えなければ環境変数」）
+- 残り: クラウドの側の衝突と、クラウドで切り出した証拠フレームが E: に届くことは、実際の作業の中で確かめる（owner.md とメモリが見える・直したものが D: に届く・衝突が両方残る・証拠フレームが E: に届く）
 
 ## この設計の外
 
