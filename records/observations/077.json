@@ -794,5 +794,35 @@
       "slot": "all",
       "source": "burstChain"
     }
+  },
+  {
+    "id": "077-46",
+    "recording": "077",
+    "source": "V-0483",
+    "readAt": "2026-10-23",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 2.78,
+    "unit": "%",
+    "description": "I-DOLL・フラワー単騎・AUTO で、チェーンの外の S2（フラワーカラー）の 6 回に溜まったゲージ（本当の量。6 回の平均）",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel（BURST バーの充填の px を、境目の画素の中間の明るさまで足して 1px 未満まで読む。V-0483「読み方」）",
+      "note": "伸び（077-25 の表示の 5f 前）の前（2〜12f 前）と後（1〜11f 後）の充填の平均の差は、f1728 +3.74・f3496 +3.83・f5263 +3.62・f7030 +4.01・f7913 +3.81・f9680 +3.56px（平均 3.76px）。C-0084 の 1px ≈ 0.74% で本当の量にした。同じ読み方で、f1701 の的の 1 ヒット（70,000 = 7%。C-0083）は +9.50px で、比で直すと 1 回目は 3.74 ÷ 9.50 × 7% = 2.76%"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

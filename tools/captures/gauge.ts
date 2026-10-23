@@ -1,5 +1,5 @@
 // 画面右の「BURST」ゲージバーを画素で読み、フレームごとの充填率を出す（Stage 7 のゲージ較正用）。
-//   node tools/captures/gauge.ts <動画> [--from N] [--to N] [--step 1] [--mode series|jumps|events] [--side right|left]
+//   node tools/captures/gauge.ts <動画> [--from N] [--to N] [--step 1] [--mode series|jumps|events] [--side right|left] [--subpixel]
 //
 // バーは 1920×1080 で x 1793〜1905・y 442（113px）。充填部は輝度 約 171、未充填部は 約 110 なので、
 // 行の画素がすべてどちらかに近いフレームだけを「バーが見えている」とみなし、明るい画素の割合を充填率にする。
@@ -13,6 +13,8 @@
 //   series  各フレームの充填率（%）。見えていないフレームは「-」
 //   jumps   充填率が増えたフレームと増分（1 発ずつの読み取り用）
 //   events  「溜め始め」「満タン」「バー消失」のフレーム。1 回目の溜め始めからの相対フレームも出す
+// --subpixel（series だけ）: 充填を % ではなく px で、境目の画素の中間の明るさも足して 1px 未満まで出す（画素ごとに
+//   (輝度 − 未充填) ÷ (充填 − 未充填) を 0..1 に切って足す。V-0483）。背景の動く録画は 1 フレームが ±1px ほど揺れるので、区間の中央値をとる
 import { parseArgs } from 'node:util';
 import { rawFrames } from './ffmpeg.ts';
 
@@ -37,6 +39,7 @@ const { values, positionals } = parseArgs({
     step: { type: 'string', default: '1' },
     mode: { type: 'string', default: 'events' },
     side: { type: 'string', default: 'right' },
+    subpixel: { type: 'boolean', default: false },
   },
 });
 
@@ -69,6 +72,14 @@ function readFill(frame: Buffer): number | null {
   return filled / BAR.w;
 }
 
+/** --subpixel: 1 行ぶんの充填の px（境目の画素の中間の明るさも足す）。バー以外の UI が重なっていれば null */
+function readSubpixel(frame: Buffer): number | null {
+  if (readFill(frame) === null) return null;
+  let px = 0;
+  for (let x = 0; x < BAR.w; x++) px += Math.min(1, Math.max(0, (frame[x]! - EMPTY) / (FILLED - EMPTY)));
+  return px;
+}
+
 const select = to === undefined ? `gte(n\\,${from})` : `between(n\\,${from}\\,${to})`;
 const args = [
   '-v',
@@ -84,10 +95,10 @@ const args = [
   '-',
 ];
 
-const series: { frame: number; fill: number | null }[] = [];
+const series: { frame: number; fill: number | null; px: number | null }[] = [];
 let n = from;
 for await (const buf of rawFrames(args, BAR.w * BAR.h)) {
-  series.push({ frame: n, fill: readFill(buf) });
+  series.push({ frame: n, fill: readFill(buf), px: values.subpixel ? readSubpixel(buf) : null });
   n += 1;
 }
 
@@ -97,7 +108,8 @@ if (mode === 'series') {
   const out: string[] = [];
   for (let i = 0; i < series.length; i += step) {
     const s = series[i]!;
-    out.push(`${s.frame}:${s.fill === null ? '-' : pct(s.fill)}`);
+    const v = values.subpixel ? (s.px === null ? '-' : s.px.toFixed(2)) : s.fill === null ? '-' : pct(s.fill);
+    out.push(`${s.frame}:${v}`);
   }
   console.log(out.join(' '));
 } else if (mode === 'jumps') {

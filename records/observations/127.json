@@ -200,5 +200,35 @@
       "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
       "note": "使えたコマ 41 / 101。四分位: 足元 524〜542・高さ 144〜160。足元の y は半分の解像度で測るので 2px 刻み"
     }
+  },
+  {
+    "id": "127-13",
+    "recording": "127",
+    "source": "V-0483",
+    "readAt": "2026-10-23",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 2.79,
+    "unit": "%",
+    "description": "I-DOLL・フラワー単騎・AUTO で、S2（フラワーカラー）の 1 回目に溜まったゲージ（本当の量）",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel（BURST バーの充填の px を、境目の画素の中間の明るさまで足して 1px 未満まで読む。V-0483「読み方」）",
+      "note": "f1654 の伸び（127-06 の表示の 5f 前）の前（2〜12f 前）と後（1〜11f 後）の充填の平均の差は +3.74px。27f 前の 9 ヒット目（f1627。70,000 = 7%。C-0083）は +9.40px で、比で 3.74 ÷ 9.40 × 7% = 2.79%（C-0084 の 1px ≈ 0.74% なら 2.77%）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

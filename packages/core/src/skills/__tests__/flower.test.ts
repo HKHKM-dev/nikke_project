@@ -136,6 +136,13 @@ describe('S2 のゲージ（1 パス目）', () => {
     expect(delayed.schedule!.gaugeFullFrames[0]).toBe(without.schedule!.gaugeFullFrames[0]);
   });
 
+  // V-0483: 1 回の量は的の 1 ヒット（target_burst_energy_pershot = 28,000。フルチャージ倍率なし）。照合の指標 timerGauge が読む記録
+  it('records one target hit of gauge (28,000) at each 15 s fire', () => {
+    expect(withGauge.timerGauges.map((g) => g.fireFrame)).toEqual(timerFrames(15, withGauge.frames));
+    expect(withGauge.timerGauges.every((g) => g.energy === 28_000 && g.frame === g.fireFrame)).toBe(true);
+    expect(without.timerGauges).toEqual([]);
+  });
+
   it('does not change the shots themselves', () => {
     expect(shotsOf(withGauge).slice(0, 14)).toEqual(shotsOf(without).slice(0, 14));
   });

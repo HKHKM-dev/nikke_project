@@ -88,5 +88,35 @@
       "tool": "ffmpeg（1 フレームずつ切り出して元のフレーム番号を焼き込み、チャージの表示と照準の横の残弾を目で読む。SR はスコープの横の CHARGE の表示を型合わせで探して切り出し、RL は aim.ts の照準の位置で切り出した）・timer.ts --mode changes・reload.ts --mode fit",
       "note": "撃ったフレーム（残弾が 1 減った）844。和は 70"
     }
+  },
+  {
+    "id": "135-06",
+    "recording": "135",
+    "source": "V-0483",
+    "readAt": "2026-10-23",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 2.81,
+    "unit": "%",
+    "description": "I-DOLL・フラワー単騎・AUTO で、S2（フラワーカラー）の 1 回目に溜まったゲージ（本当の量）",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel（BURST バーの充填の px を、境目の画素の中間の明るさまで足して 1px 未満まで読む。V-0483「読み方」）",
+      "note": "f1661 の伸び（135-02 の表示の 5f 前）の前（2〜12f 前）と後（1〜11f 後）の充填の平均の差は +3.78px。27f 前の 9 ヒット目（f1634。70,000 = 7%。C-0083）は +9.43px で、比で 3.78 ÷ 9.43 × 7% = 2.81%（C-0084 の 1px ≈ 0.74% なら 2.80%）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

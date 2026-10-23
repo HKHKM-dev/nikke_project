@@ -143,6 +143,8 @@ export type SimResult = {
   damagePerSecond: DamagePerSecond;
   /** 発のゲージ（着弾のフレーム。1 パス目の記録。照合用） */
   shotGauges: TeamPlan['shotGauges'];
+  /** フラワー編（V-0483）: 周期のゲージ（1 パス目の記録。照合用） */
+  timerGauges: TeamPlan['timerGauges'];
   /** 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 5）: 1 パス目の件の一覧の履歴（観測値の指標が読む） */
   history: TeamPlan['history'];
   /** trace: false なら空 */
@@ -168,11 +170,22 @@ export function runSimulation(simInput: SimInput): SimResult {
   const trace = input.trace ?? false;
 
   // 1 パス目（calc と共通）: 射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動。2 パス目がこの下のフレームループ
-  const { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, shotGauges, history } =
-    planTeamRun({
-      ...input,
-      model,
-    });
+  const {
+    frames,
+    shots,
+    schedule,
+    timeline,
+    skillHits,
+    instants,
+    untargetable,
+    landing,
+    shotGauges,
+    timerGauges,
+    history,
+  } = planTeamRun({
+    ...input,
+    model,
+  });
   // Stage 16-B: 1 秒ごとのダメージ（タイムラインの表示用）
   // 最後のフレーム（180 秒の戦闘では 179.996 秒）が入る秒までの列（V-0086）
   const seconds = frames > 0 ? Math.floor(framesToGameSeconds(frames - 1)) + 1 : 0;
@@ -428,6 +441,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     landings: landing?.spans ?? [],
     damagePerSecond: perSecond,
     shotGauges,
+    timerGauges,
     history,
     events,
   };

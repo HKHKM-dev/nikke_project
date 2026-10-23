@@ -18,7 +18,7 @@ node tools/captures/still.ts   <動画> --frame 947 --out out.png [--crop x,y,w,
 npm run drive:sync [-- --pair captures] [--resync] [--dry-run]   # E: と Drive の双方向同期（storage.md「バックアップ」）。npm run drive:conflicts で衝突の一覧
 node tools/captures/diff.ts    <動画> --crop x,y,w,h [--from N] [--to N] --peaks [--csv out.csv]
 node tools/captures/probe-result.ts <動画...> [--list] [--out-dir DIR] [--samples 3]
-node tools/captures/gauge.ts <動画> [--from N] [--to N] [--mode events|jumps|series] [--step 1]
+node tools/captures/gauge.ts <動画> [--from N] [--to N] [--mode events|jumps|series] [--step 1] [--subpixel]
 node tools/captures/ammo.ts  <動画> [--crop 785,902,110,26] [--max 300] [--mode mags|series] [--from N] [--to N]
 node tools/captures/reticle-ammo.ts <動画> [--mode mags|series] [--from N] [--to N] [--max 300]   # 照準の左の残弾（操作キャラ。V-0163）
 node tools/captures/hud.ts   <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop 810,34,300,38]
@@ -56,7 +56,7 @@ node tools/captures/mask-tune.ts <録画 id> [--top 15] [--maxFp 0.02]   # 的�
 
 `intake.ts` は録画の取り込み（design-records-automation.md 3.3 節）。元ファイルを命名規約でリネームして置き場所の種別フォルダへ移し（`--copy` で元を残す）、素性（長さ・フレーム数・fps・大きさ・sha256）を取って `records/recordings/<録画 id>.json` を書く。編成・的・モード・スペック固定などは引数で渡し、無い項目は空（null）で出して人が埋める。日付は `--date`、無ければ元のファイル名の日付、無ければ更新日時。最後に、移した録画を Drive の `nikke_project_captures/<種別>/` に置き（[storage.md](storage.md)「バックアップ」）、Drive の SHA256（無ければ md5）を突き合わせて、[backup-log.md](backup-log.md) に 1 行足す（sha256 の値は録画の JSON にあるので書かない）。取り込み元が `H:/record/` の下で、Drive for desktop が上げた写しが「マイ コンピュータ/record」にあれば（環境変数 `NIKKE_DRIVE_RECORD_FOLDER_ID`）、動かす前に Drive の中でコピーして上げ直さない（E: の更新時刻は Drive の写しにそろえる）。無ければ E: から上げる。Drive に同じ名前が既にあるときは、動かす前に止める。上げられない・ハッシュが違うときは終了コード 1（移動と JSON は済んでいる。`npm run drive:sync` で上げる）。rclone の準備が無い環境・`--no-backup` では Drive に置かない。クラウド環境では、元ファイルを `drive:<record の中のパス>` で指す（一覧は `--list-record`）。サービスアカウントで「マイ コンピュータ/record」から取り寄せて Drive の sha256 と突き合わせ、受け口の `move` で種別フォルダへ規約名で移す（[../cloud-guide.md](../cloud-guide.md)「クラウドで録画を取り込む」）。取り込んだ後は `npm run records:table` と、キャラの確かめに `probe-result.ts --list`。
 
-`gauge.ts` は画面右の BURST バー（x 1793〜1905・y 442）の充填率を 1 フレームずつ読む（Stage 7 のゲージ較正用）。バーストの欄を左に出した録画は `--side left`（x 8〜124。較正していない）。`events` は溜め始め・満タン・バー消失、`jumps` は 1 フレームで跳ねた増分（SR / SG の 1 発ずつ）、`series` は充填率の列。フルバースト中・CT 待ち・チェーン中はバーの位置に別の UI が出るので読めない（`-`）。**ゲージの較正を撮るときは、誰を操作しているか（照準画面が出ているニケ）を台帳に書く**。操作キャラと AI でゲージ量が違うらしい（[../verification.md](../verification.md) Stage 7 節）。
+`gauge.ts` は画面右の BURST バー（x 1793〜1905・y 442）の充填率を 1 フレームずつ読む（Stage 7 のゲージ較正用）。バーストの欄を左に出した録画は `--side left`（x 8〜124。較正していない）。`events` は溜め始め・満タン・バー消失、`jumps` は 1 フレームで跳ねた増分（SR / SG の 1 発ずつ）、`series` は充填率の列（`--subpixel` を付けると、境目の画素の中間の明るさも足した充填の px で、1px 未満まで出す。V-0483）。フルバースト中・CT 待ち・チェーン中はバーの位置に別の UI が出るので読めない（`-`）。**ゲージの較正を撮るときは、誰を操作しているか（照準画面が出ているニケ）を台帳に書く**。操作キャラと AI でゲージ量が違うらしい（[../verification.md](../verification.md) Stage 7 節）。
 
 `ammo.ts` は枠アイコンの上の残弾表示「残弾/最大」を 1 フレームずつ読む（MG の射撃レートの再較正用、[../design-mg-fire-rate.md](../design-mg-fire-rate.md)）。**AI の味方の射撃フレームはこの表示からしか読めない。** 表示は中央揃えのプロポーショナルフォントなので、「/最大」の位置を先に探してから桁をテンプレート（`ammo-templates.json`、録画 41 の暗い背景のフレームから作成）と照合し、「残弾は増えない・リロード明けは最大」の制約で復号する。`mags` はマガジンごとの 1 発目・最終弾・次の最大の表示と 4f 以上止まった区間、`series` は残弾の列。`--crop` の既定は 4 人編成の 2 枠目・2 人編成の 1 枠目（枠の間隔は約 130px）。分割リロードの武器には使えない。録画 41 の全 12,573 フレームで約 30 秒。
 

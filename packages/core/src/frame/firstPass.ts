@@ -200,6 +200,11 @@ export type FirstPassResult = {
    */
   shotGauges: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
   /**
+   * フラワー編（V-0483）: 周期のゲージ（burstGaugeHit）で溜めたゲージ（予約した順）。fireFrame は発火、frame は足すフレーム（発火 +
+   * delayFrames）。照合用
+   */
+  timerGauges: { slotIndex: number; fireFrame: number; frame: number; energy: number }[];
+  /**
    * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 件の一覧の履歴。planTeamRun が区間を作る
    * （skills/holders.ts の buffTimelineOf）
    */
@@ -600,6 +605,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   // delayFrames があれば発火の後のヒットのフレームに足し、戦闘の終わりを越えるものは足さない（C-0453。plan/design-timer-ceil.md 7 節）
   // 2 段目の段 1: 時間で変わるゲージ速度の枠の周期のゲージは、発火のフレームの頭でその速度で予約する（発火のフレーム → 枠と遅れ）
   const timedTimerGauges = new Map<number, { slotIndex: number; delayFrames: number }[]>();
+  const timerGauges: FirstPassResult['timerGauges'] = [];
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
     const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
@@ -609,7 +615,10 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         if (at >= frames) continue;
         if (timedGauge[i])
           timedTimerGauges.set(fire, [...(timedTimerGauges.get(fire) ?? []), { slotIndex: i, delayFrames }]);
-        else pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+        else {
+          timerGauges.push({ slotIndex: i, fireFrame: fire, frame: at, energy });
+          pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+        }
       }
     }
   });
@@ -671,7 +680,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     for (const i of timedGaugeSlots) gaugeScale[i] = 1 + gaugeSpeed[i]! + lists.gaugeSpeedAt(i, f);
     for (const t of timedTimerGauges.get(f) ?? []) {
       const at = f + t.delayFrames;
-      pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + targetEnergies[t.slotIndex]! * gaugeScale[t.slotIndex]!);
+      const energy = targetEnergies[t.slotIndex]! * gaugeScale[t.slotIndex]!;
+      timerGauges.push({ slotIndex: t.slotIndex, fireFrame: f, frame: at, energy });
+      pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
     }
     // 1. 射手（V-0030: 前のフレームまでに予約した段のヒットのゲージも、このフレームのゲージに入れる）
     let gauge = pendingGauge.get(f) ?? 0;
@@ -993,6 +1004,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     cycleGaugeHits,
     dotGauges,
     shotGauges,
+    timerGauges,
     history,
   };
 }
