@@ -41,7 +41,7 @@
 ## 3. 起案
 
 - `npm run records:new -- verification --title "<題名>" --name <短い名前> --topic "<話題>" --question "<問い>"` で、次の空き番号の `records/verifications/V-NNNN-<短い名前>.md` を状態 `調査中` で作る（ほかのブランチが使っている番号は避ける）。
-- 番号がほかのブランチと重なったら、`npm run records:renumber -- <古い ID> <新しい ID>` で、ファイル名と参照ごと振り直す（検証記録・結論・観測値・録画。AGENTS.md「コミット手順」の 1。録画は E: と Google Drive のファイル名も変える。[design-recording-renumber.md](design-recording-renumber.md)）。
+- 番号がほかのブランチと重なったら、AGENTS.md「コミット手順」の 1 のとおり `records:renumber` で振り直す。
 - 読み直しなら、冒頭の「録画」に録画を挙げる。別の検証の途中で出た問いなら「派生元」を書く。
 - 仮説の出どころ（どの録画のどの値・残差から立てたか）を書いておく。結論の `decidedOn` のもとになる（8 節）。
 
@@ -107,4 +107,3 @@
 - 機構の変更に合わせて既存の観測値の比べ方（比べるフレーム・`setup`）を直すときは、変更と同じ PR で直し、理由に結論の ID を書く。
 - 既存のテストの数値が変わったら、その理由と根拠の ID を PR に書く。根拠のある変更なら、実測との乖離が広がっても行う（AGENTS.md）。
 - 確定の結論の根拠の観測値が許容外になれば `npm test` が落ちる。比べ方の誤りなら直し、結論が誤りなら棄却して置き換える。
-- スキル定義・録画の台帳・観測値の比べる指定を変えたら `npm run records:minimal` を回す（7 節）。
