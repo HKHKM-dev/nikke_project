@@ -1,7 +1,6 @@
 # 検証の手順
 
 - 1 つの問いを、撮って（か既存の録画を読み直して）、読んで、モデルと比べ、結論にするまでの共通の流れ。キャラのスキルの定義に固有の手順は [skills-guide.md](skills-guide.md)、機構（射撃・ゲージ・バーストの段・時計・的・1 発の式・的の表）の検証は付録 A。
-- 2026-10-11 に skills-guide.md の 1.3・1.6〜1.9・2 節をここに移し、機構の検証にも当てはまる形に書き直した（[design-investigation-review.md](design-investigation-review.md) 6 節）。
 - 規則の出どころ: [AGENTS.md](../AGENTS.md)「事実と記録」、[design-investigation-review.md](design-investigation-review.md) 1 節（確定の条件と予測の扱い。2026-10-10 のオーナーの決定）、[design-records-automation.md](design-records-automation.md)（道具）、[design-minimal-relevance.md](design-minimal-relevance.md)（最小構成の検査）。
 
 ## 1. 問いと最小構成

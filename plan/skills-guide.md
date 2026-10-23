@@ -1,9 +1,8 @@
 # キャラのスキルを定義する手順
 
-- キャラ 1 体のスキルを `packages/core/data/skills/{resourceId}.json` に定義し、撮影で確かめるまでの手順。2026-09-28 にオーナーが決めた方針（0 節）でまとめた。
-- Stage 11 の手順（[design-stage11.md](design-stage11.md) 1・8 節）を、Stage 20 の記録の構造（検証記録・観測値・結論）に合わせて書き直したもの。以後はこちらに従う。
+- キャラ 1 体のスキルを `packages/core/data/skills/{resourceId}.json` に定義し、撮影で確かめるまでの手順。方針は 0 節。
 - DSL の語彙と検証の規則は `packages/core/src/skills/types.ts`、原則は [design-stage4.md](design-stage4.md) 2 節。
-- **検証の共通の流れ（起案・撮影計画・撮る・読む・比べる・結論・閉じる）と、確定にできる条件は [verification-guide.md](verification-guide.md)**。ここに残すのは、スキル定義に固有の手順（0・1.1・1.2・1.4・1.5・3・4 節）。2026-10-11 に 1.3・1.6〜1.9・2 節を移した（見出しは、閉じた記録が節の番号で指しているので残す）。
+- **検証の共通の流れ（起案・撮影計画・撮る・読む・比べる・結論・閉じる）と、確定にできる条件は [verification-guide.md](verification-guide.md)**。ここに残すのは、スキル定義に固有の手順（0・1.1・1.2・1.4・1.5・3・4 節）。抜けた番号の節（1.3・1.6〜1.9・2 節）は verification-guide.md にある（見出しは、閉じた記録が節の番号で指しているので残す）。
 
 ## 0. 方針
 

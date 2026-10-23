@@ -1,7 +1,6 @@
 # 録画の置き場所とバックアップ
 
 - 関連: [index.md](index.md)（命名規約・撮影プロトコル・台帳・キャラの確かめ方）、[tools.md](tools.md)（解析ツール）、[backup-log.md](backup-log.md)（同期の記録）
-- 2026-10-11 に index.md の「置き場所」「バックアップ」「クラウド環境での取り寄せ」を移した（[../design-investigation-review.md](../design-investigation-review.md) 7.2 節）。
 
 ## 置き場所
 
