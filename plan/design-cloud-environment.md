@@ -339,7 +339,8 @@
   - クラウドの往復（`tools/drive/cloud-sync.ts`。SessionStart で `--pull`、Stop で `--push`）、受け口を呼ぶ `gateway.ts`、決まりごとの `cloud-lib.ts`（テストは `cloud-lib.test.ts`）、動作確認の `npm run drive:gateway-check`
   - 手引き [cloud-guide.md](cloud-guide.md)。AGENTS.md の「離席と再開」から指し、「記録の置き場所」に 1 行・`private/` の行にクラウドのことを足した（項目 10）。[captures/storage.md](captures/storage.md) のクラウドで切り出したフレームの扱いを直した
 - 確かめたこと: デスクトップの 3 つの対の初回の `--resync` で `nikke_sync/` ができ（`private` は owner.md だけ）、4 つの対のふだんの同期は約 10 秒で何も送らない。CI と同じ確認が通る。クラウドでない環境と受け口の URL が無い環境では、往復のフックが何もせずに抜ける
-- 残り（オーナーの準備の後）: `npm run drive:gateway-check`、クラウドのセッションでの往復（owner.md とメモリが見える・直したものが D: に届く・衝突が両方残る・証拠フレームが E: に届く）
+- 受け口（2026-10-23。オーナーが公開した後の `npm run drive:gateway-check`）: 書き込み・一覧と中身・衝突の別名（`.conflict-cloud`）・同じ中身は何もしない・3MB・証拠フレームの下への書き込み・移動と改名（`moveTo` で動いた）・録画の上には書けない・合言葉が違えば断る、の 9 つがどれも通った（試しのファイルはごみ箱へ移した）
+- 残り（オーナーの準備の後）: クラウドのセッションでの往復（owner.md とメモリが見える・直したものが D: に届く・衝突が両方残る・証拠フレームが E: に届く）
 
 ## この設計の外
 
