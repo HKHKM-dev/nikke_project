@@ -1402,6 +1402,22 @@
       "plus": 0
     },
     {
+      "observation": "063-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "39777cd717830976",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "063-06",
       "element": "アスカ burst.effects[0]",
       "key": "53808e26bb6b289b",
@@ -1424,6 +1440,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "063-06",
+      "element": "アスカ skill2.effects[0]",
+      "key": "53808e26bb6b289b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "063-07",
@@ -1450,6 +1482,22 @@
       "plus": 0
     },
     {
+      "observation": "063-07",
+      "element": "アスカ skill2.effects[0]",
+      "key": "b347313d2b287c40",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "063-10",
       "element": "アスカ burst.effects[0]",
       "key": "4876e4cb80c23ea8",
@@ -1472,6 +1520,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "063-10",
+      "element": "アスカ skill2.effects[0]",
+      "key": "4876e4cb80c23ea8",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "063-13",
@@ -1498,6 +1562,22 @@
       "plus": 0
     },
     {
+      "observation": "063-13",
+      "element": "アスカ skill2.effects[0]",
+      "key": "729d98ec0ac17019",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "078-05",
       "element": "アスカ burst.effects[0]",
       "key": "2b15bc7cf596685b",
@@ -1520,6 +1600,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "078-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "2b15bc7cf596685b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "079-01",
@@ -1602,6 +1698,22 @@
       "plus": 0
     },
     {
+      "observation": "080-06",
+      "element": "アスカ skill2.effects[0]",
+      "key": "4423f06c4fbbdeb9",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "080-08",
       "element": "アスカ burst.effects[0]",
       "key": "0538d29b0f387d00",
@@ -1626,6 +1738,22 @@
       "plus": 0
     },
     {
+      "observation": "080-08",
+      "element": "アスカ skill2.effects[0]",
+      "key": "0538d29b0f387d00",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "080-09",
       "element": "アスカ burst.effects[0]",
       "key": "326947f006e07647",
@@ -1648,6 +1776,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "080-09",
+      "element": "アスカ skill2.effects[0]",
+      "key": "326947f006e07647",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "084-01",
@@ -6868,6 +7012,22 @@
     },
     {
       "observation": "264-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "0a3607efab87503c",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "264-03",
       "element": "ヘルム treasureSkills.burst.effects[2]",
       "key": "0a3607efab87503c",
       "effective": false,
@@ -6900,6 +7060,22 @@
     },
     {
       "observation": "264-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "0cd12f3cb503d94b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "264-04",
       "element": "ヘルム treasureSkills.burst.effects[2]",
       "key": "0cd12f3cb503d94b",
       "effective": false,
@@ -6932,6 +7108,22 @@
     },
     {
       "observation": "264-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "e13676be34a374a1",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "264-05",
       "element": "ヘルム treasureSkills.burst.effects[2]",
       "key": "e13676be34a374a1",
       "effective": false,
@@ -6964,6 +7156,22 @@
     },
     {
       "observation": "265-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "e12201ad9b02bc42",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "265-03",
       "element": "ヘルム treasureSkills.burst.effects[2]",
       "key": "e12201ad9b02bc42",
       "effective": false,
@@ -6996,6 +7204,22 @@
     },
     {
       "observation": "265-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "6ce5e28a95e431a5",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "265-04",
       "element": "ヘルム treasureSkills.burst.effects[2]",
       "key": "6ce5e28a95e431a5",
       "effective": false,
@@ -7025,6 +7249,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "265-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "1d7db238306b21cf",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "265-05",
@@ -7083,6 +7323,22 @@
       "plus": 0
     },
     {
+      "observation": "284-06",
+      "element": "アスカ skill2.effects[0]",
+      "key": "a2a67cae799d6f7d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "284-07",
       "element": "アスカ burst.effects[0]",
       "key": "1f4749b9561e28c8",
@@ -7107,6 +7363,22 @@
       "plus": 0
     },
     {
+      "observation": "284-07",
+      "element": "アスカ skill2.effects[0]",
+      "key": "1f4749b9561e28c8",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "284-08",
       "element": "アスカ burst.effects[0]",
       "key": "02bd52de6d01504d",
@@ -7129,6 +7401,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "284-08",
+      "element": "アスカ skill2.effects[0]",
+      "key": "02bd52de6d01504d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "285-05",
@@ -8819,6 +9107,38 @@
       "plus": 0
     },
     {
+      "observation": "461-01",
+      "element": "アスカ skill2.effects[0]",
+      "key": "c7f63af7cea48e34",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "461-01",
+      "element": "アスカ skill2.effects[1]",
+      "key": "c7f63af7cea48e34",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "461-02",
       "element": "アスカ burst.effects[0]",
       "key": "82ce3556d0554c5f",
@@ -8841,6 +9161,38 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "461-02",
+      "element": "アスカ skill2.effects[0]",
+      "key": "82ce3556d0554c5f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "461-02",
+      "element": "アスカ skill2.effects[1]",
+      "key": "82ce3556d0554c5f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "461-03",
@@ -8867,6 +9219,38 @@
       "plus": 0
     },
     {
+      "observation": "461-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "103282f3bf4bc4dc",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "461-03",
+      "element": "アスカ skill2.effects[1]",
+      "key": "103282f3bf4bc4dc",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "461-04",
       "element": "アスカ burst.effects[0]",
       "key": "d04f0bd2064d826f",
@@ -8889,6 +9273,38 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "461-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "d04f0bd2064d826f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "461-04",
+      "element": "アスカ skill2.effects[1]",
+      "key": "d04f0bd2064d826f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "461-05",
@@ -8915,6 +9331,38 @@
       "plus": 0
     },
     {
+      "observation": "461-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "794f35c7edc06e9e",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "461-05",
+      "element": "アスカ skill2.effects[1]",
+      "key": "794f35c7edc06e9e",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "461-06",
       "element": "アスカ burst.effects[0]",
       "key": "c882dcf05641c0bb",
@@ -8937,6 +9385,38 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "461-06",
+      "element": "アスカ skill2.effects[0]",
+      "key": "c882dcf05641c0bb",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "461-06",
+      "element": "アスカ skill2.effects[1]",
+      "key": "c882dcf05641c0bb",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "461-07",
@@ -8963,6 +9443,38 @@
       "plus": 0
     },
     {
+      "observation": "461-07",
+      "element": "アスカ skill2.effects[0]",
+      "key": "551576ac3f4ec1cb",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "461-07",
+      "element": "アスカ skill2.effects[1]",
+      "key": "551576ac3f4ec1cb",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "462-01",
       "element": "アスカ burst.effects[0]",
       "key": "1a0c8cb9c696d6e2",
@@ -8985,6 +9497,38 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "462-01",
+      "element": "アスカ skill2.effects[0]",
+      "key": "1a0c8cb9c696d6e2",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "462-01",
+      "element": "アスカ skill2.effects[1]",
+      "key": "1a0c8cb9c696d6e2",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "462-02",
@@ -9011,6 +9555,38 @@
       "plus": 0
     },
     {
+      "observation": "462-02",
+      "element": "アスカ skill2.effects[0]",
+      "key": "2f2176e063280681",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "462-02",
+      "element": "アスカ skill2.effects[1]",
+      "key": "2f2176e063280681",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "462-03",
       "element": "アスカ burst.effects[0]",
       "key": "b477e27987e964ba",
@@ -9033,6 +9609,38 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "462-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "b477e27987e964ba",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "462-03",
+      "element": "アスカ skill2.effects[1]",
+      "key": "b477e27987e964ba",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "462-04",
@@ -9059,6 +9667,38 @@
       "plus": 0
     },
     {
+      "observation": "462-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "84c536bc1703a9c1",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "462-04",
+      "element": "アスカ skill2.effects[1]",
+      "key": "84c536bc1703a9c1",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "462-05",
       "element": "アスカ burst.effects[0]",
       "key": "e92e1ed15ec4a6a0",
@@ -9081,6 +9721,38 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "462-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "e92e1ed15ec4a6a0",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "462-05",
+      "element": "アスカ skill2.effects[1]",
+      "key": "e92e1ed15ec4a6a0",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "462-06",
@@ -9107,6 +9779,38 @@
       "plus": 0
     },
     {
+      "observation": "462-06",
+      "element": "アスカ skill2.effects[0]",
+      "key": "4b692a0eb7fae0ad",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "462-06",
+      "element": "アスカ skill2.effects[1]",
+      "key": "4b692a0eb7fae0ad",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "462-07",
       "element": "アスカ burst.effects[0]",
       "key": "4e5961c21032acad",
@@ -9129,6 +9833,38 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "462-07",
+      "element": "アスカ skill2.effects[0]",
+      "key": "4e5961c21032acad",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "462-07",
+      "element": "アスカ skill2.effects[1]",
+      "key": "4e5961c21032acad",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "463-01",
@@ -9690,6 +10426,22 @@
     },
     {
       "observation": "472-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "4f10044d9e06065a",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "472-04",
       "element": "ミサト skill1.effects[0]",
       "key": "4f10044d9e06065a",
       "effective": false,
@@ -9722,6 +10474,22 @@
     },
     {
       "observation": "473-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "1b8957fbb3f8b340",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "473-03",
       "element": "ミサト skill1.effects[0]",
       "key": "1b8957fbb3f8b340",
       "effective": false,
@@ -9754,6 +10522,22 @@
     },
     {
       "observation": "474-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "4fb3717a27f43795",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "474-03",
       "element": "マナ burst.effects[0]",
       "key": "4fb3717a27f43795",
       "effective": false,
@@ -9794,6 +10578,22 @@
     },
     {
       "observation": "474-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "602cbf8bdd418be6",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "474-04",
       "element": "マナ burst.effects[0]",
       "key": "602cbf8bdd418be6",
       "effective": false,
@@ -9834,6 +10634,22 @@
     },
     {
       "observation": "474-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "1c328b2de18bf44c",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "474-05",
       "element": "マナ burst.effects[0]",
       "key": "1c328b2de18bf44c",
       "effective": false,
@@ -9874,6 +10690,22 @@
     },
     {
       "observation": "475-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "0b13f4ee0e7c7377",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "475-03",
       "element": "マナ burst.effects[0]",
       "key": "0b13f4ee0e7c7377",
       "effective": false,
@@ -9914,6 +10746,22 @@
     },
     {
       "observation": "475-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "8574e2e7862c0eac",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "475-04",
       "element": "マナ burst.effects[0]",
       "key": "8574e2e7862c0eac",
       "effective": false,
@@ -9954,6 +10802,22 @@
     },
     {
       "observation": "475-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "1bc250f99a65d2c6",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "475-05",
       "element": "マナ burst.effects[0]",
       "key": "1bc250f99a65d2c6",
       "effective": false,
@@ -9994,6 +10858,22 @@
     },
     {
       "observation": "476-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "64dd8a0ce6c87c6f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "476-04",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "64dd8a0ce6c87c6f",
       "effective": true,
@@ -10034,6 +10914,22 @@
     },
     {
       "observation": "476-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "207c52f6108f1f7d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "476-05",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "207c52f6108f1f7d",
       "effective": true,
@@ -10071,6 +10967,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "476-06",
+      "element": "アスカ skill2.effects[0]",
+      "key": "536fe3e031063aed",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "476-06",
@@ -10114,6 +11026,22 @@
     },
     {
       "observation": "476-07",
+      "element": "アスカ skill2.effects[0]",
+      "key": "8e2632fe925d3c87",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "476-07",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "8e2632fe925d3c87",
       "effective": true,
@@ -10154,6 +11082,22 @@
     },
     {
       "observation": "476-08",
+      "element": "アスカ skill2.effects[0]",
+      "key": "12e4a7f213bc8a9d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "476-08",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "12e4a7f213bc8a9d",
       "effective": true,
@@ -10191,6 +11135,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "476-10",
+      "element": "アスカ skill2.effects[0]",
+      "key": "bd52f6253e4c70e4",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "476-10",
@@ -10234,6 +11194,22 @@
     },
     {
       "observation": "476-11",
+      "element": "アスカ skill2.effects[0]",
+      "key": "1d1fb959143859bc",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "476-11",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "1d1fb959143859bc",
       "effective": true,
@@ -10271,6 +11247,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "477-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "073a05fabf8d5303",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "477-04",
@@ -10314,6 +11306,22 @@
     },
     {
       "observation": "477-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "6206232407f827a9",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "477-05",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "6206232407f827a9",
       "effective": true,
@@ -10351,6 +11359,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "477-06",
+      "element": "アスカ skill2.effects[0]",
+      "key": "2c308fdec7624dd1",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "477-06",
@@ -10394,6 +11418,22 @@
     },
     {
       "observation": "477-07",
+      "element": "アスカ skill2.effects[0]",
+      "key": "66521aa496861ab3",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "477-07",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "66521aa496861ab3",
       "effective": true,
@@ -10434,6 +11474,22 @@
     },
     {
       "observation": "477-08",
+      "element": "アスカ skill2.effects[0]",
+      "key": "763c47bc90a2b361",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "477-08",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "763c47bc90a2b361",
       "effective": true,
@@ -10471,6 +11527,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "477-10",
+      "element": "アスカ skill2.effects[0]",
+      "key": "3b574833752ff7ec",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "477-10",
@@ -10514,6 +11586,22 @@
     },
     {
       "observation": "477-11",
+      "element": "アスカ skill2.effects[0]",
+      "key": "c1c477c940ff5ad4",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "477-11",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "c1c477c940ff5ad4",
       "effective": true,
@@ -10554,6 +11642,22 @@
     },
     {
       "observation": "478-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "3c599be1600bab22",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "478-03",
       "element": "アニス：スター burst.effects[0]",
       "key": "3c599be1600bab22",
       "effective": false,
@@ -10610,6 +11714,22 @@
     },
     {
       "observation": "478-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "65d36d6cd3c95209",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "478-04",
       "element": "アニス：スター burst.effects[0]",
       "key": "65d36d6cd3c95209",
       "effective": false,
@@ -10666,6 +11786,22 @@
     },
     {
       "observation": "478-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "1edf59aeceef4ecb",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "478-05",
       "element": "アニス：スター burst.effects[0]",
       "key": "1edf59aeceef4ecb",
       "effective": false,
@@ -10722,6 +11858,22 @@
     },
     {
       "observation": "479-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "d1936c4c70939df9",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "479-03",
       "element": "アニス：スター burst.effects[0]",
       "key": "d1936c4c70939df9",
       "effective": false,
@@ -10778,6 +11930,22 @@
     },
     {
       "observation": "479-04",
+      "element": "アスカ skill2.effects[0]",
+      "key": "538359a79bd19a76",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "479-04",
       "element": "アニス：スター burst.effects[0]",
       "key": "538359a79bd19a76",
       "effective": false,
@@ -10831,6 +11999,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "479-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "b2d87901248bad44",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "479-05",
@@ -12017,6 +13201,22 @@
       "plus": 0
     },
     {
+      "observation": "489-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "c3031d60c6fe4301",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "490-03",
       "element": "アスカ burst.effects[0]",
       "key": "072ca6ea2fa1f735",
@@ -12039,6 +13239,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "490-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "072ca6ea2fa1f735",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "491-05",
@@ -12065,6 +13281,22 @@
       "plus": 0
     },
     {
+      "observation": "491-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "58f96e76304e25df",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "492-03",
       "element": "アスカ burst.effects[0]",
       "key": "acd4209ef2e92fa1",
@@ -12089,6 +13321,22 @@
       "plus": 0
     },
     {
+      "observation": "492-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "acd4209ef2e92fa1",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "493-03",
       "element": "I-DOLL・オーシャン burst.effects[0]",
       "key": "5667124ddc883e3e",
@@ -12119,6 +13367,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "493-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "5667124ddc883e3e",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "494-03",
@@ -12153,6 +13417,22 @@
       "plus": 0
     },
     {
+      "observation": "494-03",
+      "element": "アスカ skill2.effects[0]",
+      "key": "62f358c46e490ec1",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "495-05",
       "element": "I-DOLL・オーシャン burst.effects[0]",
       "key": "ff1ea94830c009e9",
@@ -12183,6 +13463,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "495-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "ff1ea94830c009e9",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "495-07",
@@ -12217,6 +13513,22 @@
       "plus": 0
     },
     {
+      "observation": "495-07",
+      "element": "アスカ skill2.effects[0]",
+      "key": "5e13080ca96260ff",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "496-05",
       "element": "I-DOLL・オーシャン burst.effects[0]",
       "key": "54524f554754e9d4",
@@ -12249,6 +13561,22 @@
       "plus": 0
     },
     {
+      "observation": "496-05",
+      "element": "アスカ skill2.effects[0]",
+      "key": "54524f554754e9d4",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "496-06",
       "element": "I-DOLL・オーシャン burst.effects[0]",
       "key": "a1de62cf66748946",
@@ -12279,6 +13607,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "496-06",
+      "element": "アスカ skill2.effects[0]",
+      "key": "a1de62cf66748946",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "497-02",
@@ -12303,6 +13647,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "497-02",
+      "element": "アスカ skill2.effects[0]",
+      "key": "79091c22e3be357b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "497-02",
@@ -12335,6 +13695,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "498-01",
+      "element": "アスカ skill2.effects[0]",
+      "key": "e97f6c441fc52957",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 25],
+          "end": [0, 25]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     },
     {
       "observation": "498-01",

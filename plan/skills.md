@@ -22,7 +22,7 @@ notes の種類: 未対応 115・前提の外 27・計算に無関係 28・補�
   - notes[0] 計算に無関係: 挑発はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0227（確定）
-  - effects[1] timed・burstUse・attack: C-0457（確定）、C-0469（確定）、C-0513（仮説）
+  - effects[1] timed・burstUse・attack: C-0457（確定）、C-0469（確定）、C-0513（仮説）、C-0611（仮説）
 
 ## 16 ラピ：レッドフード
 
@@ -761,10 +761,10 @@ notes の種類: 未対応 115・前提の外 27・計算に無関係 28・補�
   - effects[0] timed・healed・attack: C-0464（確定）、C-0087（確定）
   - notes[0] 前提の外: 戦闘開始時のバリアに与えるダメージ▲は、射撃場の敵にバリアが無いのでダメージに関係しない: C-0443（範囲外）
 - **skill2**: supported
-  - effects[0] timed・fullBurstStart・coreDamage: C-0075（確定）
-  - effects[1] timed・fullBurstStart・elementDamage（読む: バリア）: C-0075（確定）、C-0557（確定）
+  - effects[0] timed・fullBurstStart・coreDamage: C-0075（確定）、C-0613（仮説）
+  - effects[1] timed・fullBurstStart・elementDamage（読む: バリア）: C-0075（確定）、C-0557（確定）、C-0613（仮説）
 - **burst**: supported
-  - effects[0] timed・burstUse・attackDamage: C-0076（確定）、C-0514（仮説）
+  - effects[0] timed・burstUse・attackDamage: C-0076（確定）、C-0514（仮説）、C-0612（仮説）
   - effects[1] heal・burstUse: C-0464（確定）、C-0082（確定）
   - effects[2] timed・burstUse・hitRate: C-0076（確定）
   - notes[0] 間接（貫通）: 貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体に乗るかは確かめていない）: C-0076（確定）
