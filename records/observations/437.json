@@ -70,5 +70,62 @@
       "slot": "all",
       "source": "target"
     }
+  },
+  {
+    "id": "437-05",
+    "recording": "437",
+    "use": "record",
+    "source": "V-0477",
+    "readAt": "2026-10-23",
+    "unit": "f",
+    "kind": "interval",
+    "value": [0, 0, 0, 0],
+    "description": "I-DOLL・サン（操作・撃たない）のバーストの最大装弾数▲の切れ目 E（照準の横の残弾が 533 から 060 に替わった最初のフレーム）から、同じ回の画面中央上のフルバーストのタイマーが 00.00 になった最初のフレーム F を引いた差（読めた回の順）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series（f1500〜12000）と、ffmpeg の切り出しの一覧（照準の横の残弾は reticle-ammo の位置から 110×40・フルバーストのタイマー 880,185 から 150×50）",
+      "note": "T3 1726・A 1725・E 2334・F 2334、T3 4103・A 4102・E 4711・F 4711、T3 6481・A 6479・E 7088・F 7088、T3 8858・A 8857・E 9465・F 9465。E の直前のフレームはどの回も 533 と読めた。5 回目（T3 11341）は T3 + 600f より前に戦闘が終わった"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "437-06",
+    "recording": "437",
+    "use": "record",
+    "source": "V-0477",
+    "readAt": "2026-10-23",
+    "unit": "f",
+    "kind": "interval",
+    "value": [-1, -1, -2, -1],
+    "description": "同じ回の、最大装弾数▲の付き始め A（照準の横の 060 が赤くなった最初のフレーム）から III のタイマーの 00.00（T3）を引いた差（付き始めの読めた回の順）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series（f1500〜12000）と、ffmpeg の切り出しの一覧（照準の横の残弾は reticle-ammo の位置から 110×40・フルバーストのタイマー 880,185 から 150×50）",
+      "note": "T3 1726・A 1725、T3 4103・A 4102、T3 6481・A 6479、T3 8858・A 8857。T3 は burst-panel のレシピ（III のタイマーの 00.00）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "437-07",
+    "recording": "437",
+    "use": "record",
+    "source": "V-0477",
+    "readAt": "2026-10-23",
+    "unit": "f",
+    "kind": "interval",
+    "value": [608, 608, 607, 607],
+    "description": "同じ回の、III のタイマーの 00.00（T3）から最大装弾数▲の切れ目 E までの動画のフレーム数（読めた回の順）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series（f1500〜12000）と、ffmpeg の切り出しの一覧（照準の横の残弾は reticle-ammo の位置から 110×40・フルバーストのタイマー 880,185 から 150×50）",
+      "note": "T3 1726・A 1725・E 2334・F 2334、T3 4103・A 4102・E 4711・F 4711、T3 6481・A 6479・E 7088・F 7088、T3 8858・A 8857・E 9465・F 9465"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
   }
 ]
