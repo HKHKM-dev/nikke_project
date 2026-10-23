@@ -352,7 +352,8 @@
   - Drive API のラッパ（`tools/captures/drive.ts`）に、更新時刻と、1 ファイルのハッシュ（`checksums`）
   - 手引き [cloud-guide.md](cloud-guide.md) に「クラウドで録画を取り込む」と、クラウドの環境の `NIKKE_DRIVE_RECORD_FOLDER_ID`。[captures/tools.md](captures/tools.md)・[captures/storage.md](captures/storage.md) の取り込みと振り直しの説明
 - 確かめたこと（デスクトップ）: `H:/record/Captures/` に試しのファイルを置くと、`--list-record` に出て、サービスアカウントで取り寄せたものが Drive の sha256・md5 と一致した（試しのファイルは消した）。CI と同じ確認が通る
-- 残り（オーナーのクラウドのセッションで確かめる。9 節の段 ③）: record から `nikke_project_captures` への `move`（「マイ コンピュータ」の中から外へ `moveTo` で動くか、コピーと元のごみ箱への移動になるか）、PC を付けた後に E: に規約名で届き、`H:/record` から消えること
+- クラウドのセッション（2026-10-23。PC を切って、ブランチ `claude/cloud-env-stage3`）: `H:/record` に置いた試しの録画が `--list-record` に出て、`drive:` で取り込めた（record から `nikke_project_captures/range/` へ `moveTo` で動いた。sha256 が一致）。PC を付けると `H:/record` から消え、`npm run drive:sync` で E: に規約名で届き、sha256 が台帳と一致した。試しの録画は E: から消して同期で Drive のごみ箱へ移し、台帳と backup-log の行はコミットしていない
+- そのとき直したこと: クラウドで書く backup-log の時刻が UTC になっていたので、日本の時刻で書くようにした
 
 ## この設計の外
 

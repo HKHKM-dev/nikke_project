@@ -341,7 +341,7 @@ async function moveInDrive(): Promise<boolean> {
     const how =
       r.how === 'move' ? 'クラウドで record から移した' : 'クラウドで record からコピーし、元をごみ箱へ移した';
     console.log(`${remoteFile} に置いた（${how}。${matched} が一致）`);
-    appendBackupLog(how, matched, 'record の写し');
+    appendBackupLog(how, matched, 'record の写しと Drive');
     return true;
   } catch (e) {
     console.error(`Drive の中で移せなかった: ${(e as Error).message}`);
@@ -382,22 +382,23 @@ function placed(how: string, matched: 'sha256' | 'md5'): true {
 }
 
 // backup-log.md に 1 行足す（日付・足したもの・ハッシュの突き合わせの結果。backup-log.md の冒頭の決まり）
-function appendBackupLog(how: string, matched: 'sha256' | 'md5', compared = 'E:'): void {
+function appendBackupLog(how: string, matched: 'sha256' | 'md5', compared = 'E: と Drive'): void {
   const logPath = `${ROOT}plan/captures/backup-log.md`;
   if (!existsSync(logPath)) {
     console.error(`${logPath} が無いので、同期の記録は足していない`);
     return;
   }
-  const now = new Date();
+  // 日本の時刻で書く（クラウドの時計は UTC。これまでの行も日本の時刻）
+  const now = new Date(Date.now() + 9 * 3600 * 1000);
   const pad = (n: number) => String(n).padStart(2, '0');
-  const stamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const stamp = `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())} ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}`;
   const team =
     entry.team.length === 0
       ? ''
       : `（${entry.team.map((m) => m.name).join(' + ')}${entry.team.length === 1 ? '単騎' : ''}）`;
   // 1 行の書式（2026-10-11。plan/design-investigation-review.md 7.3 節）。sha256 の値は records/recordings/<録画 id>.json にある
   const origin = values.copy ? ' 取り込み元の元ファイルは残した（`--copy`）。' : '';
-  const line = `- ${stamp} 録画 ${values.id}${team}: \`${folder}/${file}\` を Drive に置いた（${how}。${compared} と Drive で ${matched} が一致）。${origin}`;
+  const line = `- ${stamp} 録画 ${values.id}${team}: \`${folder}/${file}\` を Drive に置いた（${how}。${compared} で ${matched} が一致）。${origin}`;
   appendFileSync(logPath, `${line}\n`);
   console.log(`${logPath} に同期の記録を足した`);
 }
