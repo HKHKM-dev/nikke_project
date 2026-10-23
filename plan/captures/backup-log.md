@@ -335,3 +335,6 @@
 - 2026-10-22 01:18 録画 533（ノワール単騎）: `range/20261022-533_sg_noir_auto_spec-off_nocube.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-22 01:18 録画 534（ノワール単騎）: `range/20261022-534_sg_noir_auto_spec-off_nocube.mp4` を同期（E: と I: で sha256 が一致）。
 - 2026-10-22 01:18 録画 535（ノワール単騎）: `range/20261022-535_sg_noir_auto_spec-off_nocube.mp4` を同期（E: と I: で sha256 が一致）。
+- 2026-10-23 23:33 録画 536（ラム + デルタ + ソーダ：トゥインクルバニー）: `range/20261023-536_sg_soda-tb-burst_nopause.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-23 23:34 録画 537（アニス：スター + デルタ + ソーダ：トゥインクルバニー）: `range/20261023-537_sg_soda-tb-burst_anis-star-1.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-23 23:34 録画 538（アニス：スター + デルタ + ソーダ：トゥインクルバニー）: `range/20261023-538_sg_soda-tb-burst_anis-star-2.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
