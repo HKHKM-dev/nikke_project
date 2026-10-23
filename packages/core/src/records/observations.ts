@@ -1197,6 +1197,16 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   stateStackDrops: { args: ['slot', 'state'], sim: stateStackDrops },
   fullBurstStackGainResidues: { args: ['slot', 'state', 'every'], sim: fullBurstStackGainResidues },
   shotGauge: { args: ['slot', 'n'], sim: shotGauge },
+  // フラワー編（V-0483）: 枠の n 回目（1 始まり）の周期のゲージ（burstGaugeHit）の量（バーの最大に対する %）
+  timerGauge: {
+    args: ['slot', 'n'],
+    sim: (r, c) => {
+      const n = Number(c.args.n);
+      const g = r.timerGauges.filter((x) => x.slotIndex === slotIndexOf(c))[n - 1];
+      if (g === undefined) throw new Error(`枠 ${String(c.args.slot)} の ${n} 回目の周期のゲージが無い`);
+      return Math.round((g.energy / BURST_GAUGE_MAX) * 10_000) / 100;
+    },
+  },
   // 比べる設定の拡張（plan/design-compare-setup-extension.md 5 節）: 右のバースト欄の表示の時刻
   ctEndToFullBurstStart: {
     args: ['slot', 'n'],

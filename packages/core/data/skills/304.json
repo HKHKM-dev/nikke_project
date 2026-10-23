@@ -25,8 +25,8 @@
             "everySeconds": 15
           },
           "assumes": {
-            "ja": "周期の 15 秒は録画から読んだ値（説明文に無い）。1 回の量は的の 1 ヒットぶん（フルチャージ倍率なし）とみた",
-            "en": "The 15 s period is read from recordings (not in the description); one activation is taken as one target hit of gauge (no full-charge multiplier)"
+            "ja": "周期の 15 秒は録画から読んだ値（説明文に無い）。1 回の量は的の 1 ヒットぶん（フルチャージ倍率なし。バーを 1px 未満まで読んで確かめた）",
+            "en": "The 15 s period is read from recordings (not in the description); one activation is one target hit of gauge (no full-charge multiplier; confirmed by sub-pixel bar reads)"
           },
           "claims": [
             "C-0178",

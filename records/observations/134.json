@@ -168,5 +168,35 @@
       "slot": "all",
       "source": "burstChain"
     }
+  },
+  {
+    "id": "134-09",
+    "recording": "134",
+    "source": "V-0483",
+    "readAt": "2026-10-23",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 2.8,
+    "unit": "%",
+    "description": "I-DOLL・フラワー単騎・操作（的以外を撃つ）で、S2（フラワーカラー）の 3・6・8 回目に溜まったゲージ（本当の量。3 回の平均）",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel（BURST バーの充填の px を、境目の画素の中間の明るさまで足して 1px 未満まで読む。V-0483「読み方」）",
+      "note": "伸びの前（2〜12f 前）と後（1〜11f 後）の充填の平均の差は、f3457 で 103.28 → 107.26（+3.98px）、f6107 で 33.87 → 37.49（+3.62px）、f7873 で 50.89 → 54.62（+3.73px）。平均 3.78px を C-0084 の 1px ≈ 0.74% で本当の量にした。ほかの回（134-04）は、帯の前後に撃った発の伸びが重なる（f1690・f2574）か、バーが読めない（f6994）ので除いた。同じ読み方で、物 1 個に届いた伸び（134-01 のうち f3023・f5786・f6546）は +4.53・+4.63・+4.78px"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 1,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 0.3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

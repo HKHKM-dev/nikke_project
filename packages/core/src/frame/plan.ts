@@ -155,6 +155,8 @@ export type TeamPlan = {
   dotGauges: FirstPassResult['dotGauges'];
   /** 発のゲージ（着弾のフレーム。1 パス目の記録。frame/firstPass.ts） */
   shotGauges: FirstPassResult['shotGauges'];
+  /** フラワー編（V-0483）: 周期のゲージ（1 パス目の記録） */
+  timerGauges: FirstPassResult['timerGauges'];
   /** 持ち主ごとの一覧編（plan/design-holder-effects.md 2.9 節）: 1 パス目の件の一覧の履歴 */
   history: HolderHistory;
 };
@@ -201,7 +203,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
             hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, up),
         }),
   });
-  const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges } = first;
+  const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges, timerGauges } = first;
   // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間は、1 パス目の件の一覧の履歴から作る
   const sustainedHitRateUp = input.sustainedHitRateUp ?? true;
   const timeline = buffTimelineOf(first.history, schedule, landing, sustainedHitRateUp);
@@ -229,6 +231,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     cycleGaugeHits,
     dotGauges,
     shotGauges,
+    timerGauges,
     history: first.history,
   };
 }

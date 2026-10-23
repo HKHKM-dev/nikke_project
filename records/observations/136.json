@@ -62,5 +62,35 @@
       "source": "gauge"
     },
     "id": "136-04"
+  },
+  {
+    "id": "136-05",
+    "recording": "136",
+    "source": "V-0483",
+    "readAt": "2026-10-23",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 2.81,
+    "unit": "%",
+    "description": "I-DOLL・フラワー単騎・操作で、撃っていない間の S2（フラワーカラー）の 1・2 回目に溜まったゲージ（本当の量。2 回の平均）",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel（BURST バーの充填の px を、境目の画素の中間の明るさまで足して 1px 未満まで読む。V-0483「読み方」）",
+      "note": "伸びは f1645・f2528（136-02）。前後の区間（f1100〜1639・f1650〜2520・f2533〜2900）の充填の中央値は 11.70・15.41・19.30px で、増分は 3.71・3.89px（平均 3.80px）。px を本当の量にするのは C-0084 の 1px ≈ 0.74%。この録画は背景の明るさで 1 フレームの読みが ±1px ほど揺れるので、区間の中央値をとった。同じ読み方で、f4406 の手前の遮蔽物に届いた爆発（136-03）は 40.39 → 45.08px（+4.69px）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
