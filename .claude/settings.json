@@ -4,6 +4,11 @@
     "SessionStart": [
       {
         "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\"", "timeout": 60 }]
+      },
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/tools/drive/sync.ts\" --hook", "timeout": 600, "async": true }
+        ]
       }
     ],
     "UserPromptSubmit": [

@@ -37,6 +37,10 @@ NIKKE のダメージ計算ツール。
   - Claude Code: `.claude/worktrees/<session-name>`
   - Antigravity: `.antigrav/worktrees/<topic>`
 
+## 離席と再開
+
+- 離席や PC の電源を切る前は `npm run drive:sync` を回し（録画まわりを Google Drive にそろえる。`plan/captures/storage.md`「バックアップ」）、続ける作業はデスクトップのアプリの「クラウドで続ける」で移す（`plan/design-cloud-environment.md`）。
+
 ## 事実と記録
 
 - 結論の一覧は `plan/claims.md`（生成）、その根拠は検証記録（`records/verifications/`）と観測値（`records/observations/`）にある。2026-09-26 までの根拠は `plan/verification.md` と `plan/captures/legacy-usage.md`（どちらも凍結）。これと矛盾する変更は、オーナーに確認してから行う。結論を訂正するときは、古い結論を消さずに棄却にする。

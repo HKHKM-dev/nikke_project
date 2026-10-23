@@ -5,13 +5,17 @@
 //        [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."] [--copy] [--no-backup]
 // 命名規約は plan/captures/index.md「命名規約」（<YYYYMMDD>-<番号 3〜4 桁>_<識別子>.mp4。識別子は英小文字・数字・-・_・+）。
 // 日付は --date、無ければ元のファイル名の YYYY-MM-DD、無ければファイルの更新日時。既定は移動（--copy で元を残す）。
-// 最後に、移した録画を Google Drive のバックアップ先（dirs.ts の backupDir()）へ robocopy で同期し、両方の sha256 を突き合わせる
-// （plan/captures/storage.md「バックアップ」）。バックアップ先が無い環境と --no-backup では同期しない。同期に失敗したら終了コード 1。
-// 同期できたら plan/captures/backup-log.md に 1 行足す（sha256 の値は JSON にあるので書かない）。
+// 最後に、移した録画を Google Drive の nikke_project_captures の同じ種別フォルダに置き、Drive の SHA256 を台帳の sha256 と突き合わせる
+// （plan/captures/storage.md「バックアップ」。plan/design-cloud-environment.md 4.4 節）。取り込み元の写しが Drive の
+// 「マイ コンピュータ/record」にあれば（Drive for desktop が上げている。フォルダ ID は NIKKE_DRIVE_RECORD_FOLDER_ID）、Drive の中で
+// コピーして上げ直さない。無ければ E: から上げる。rclone の準備が無い環境・クラウド環境・--no-backup では置かない。
+// 置けなかったら終了コード 1。置けたら plan/captures/backup-log.md に 1 行足す（sha256 の値は JSON にあるので書かない）。
 // 取り込んだ後は npm run records:table（台帳の表）と、キャラの確かめに node tools/captures/probe-result.ts <動画> --list。
+import { createHash } from 'node:crypto';
 import {
   appendFileSync,
   copyFileSync,
+  createReadStream,
   existsSync,
   mkdirSync,
   readdirSync,
@@ -19,10 +23,10 @@ import {
   renameSync,
   statSync,
   unlinkSync,
+  utimesSync,
   writeFileSync,
 } from 'node:fs';
-import { spawnSync } from 'node:child_process';
-import { basename, dirname, join } from 'node:path';
+import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import {
@@ -34,7 +38,9 @@ import {
 } from '../../packages/core/src/records/recordings.ts';
 import type { CharacterData, Element } from '../../packages/core/src/types.ts';
 import { recordingIdsInBranches } from '../../packages/core/scripts/records-data.ts';
-import { backupDir, capturesDir } from './dirs.ts';
+import { driveCaptures, driveHash, driveUnavailable, lsjson, rclone, remoteName } from '../drive/rclone.ts';
+import { relUnder, splitRel } from '../drive/sync-lib.ts';
+import { capturesDir, recordDir } from './dirs.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
@@ -135,6 +141,40 @@ const file = `${date.replace(/-/g, '')}-${values.id}_${values.name}.mp4`;
 const dir = join(capturesDir(), folder);
 const dest = join(dir, file);
 if (existsSync(dest)) fail(`${dest} が既にある`);
+
+// Drive に置く準備（動かす前に確かめる）。取り込み元の写しが Drive の record にあれば、ここで Drive の中でコピーしておく
+// （E: へ動かすと、Drive for desktop が record の写しを消す）
+const driveSkip = values['no-backup'] ? '--no-backup' : driveUnavailable();
+const remoteFile = `${driveCaptures()}/${folder}/${file}`;
+let serverCopied = false;
+if (driveSkip === null) {
+  if ((lsjson(remoteFile) ?? []).length > 0) fail(`${remoteFile} が既にある（上書きしない）`);
+  serverCopied = copyFromRecord(source);
+}
+
+/** 取り込み元が H:/record の下で、その写しが Drive の record に同じ大きさであれば、Drive の中で種別フォルダへ規約名でコピーする */
+function copyFromRecord(src: string): boolean {
+  const root = recordDir();
+  const folderId = process.env['NIKKE_DRIVE_RECORD_FOLDER_ID'];
+  const rel = root === null ? null : relUnder(root, src);
+  if (rel === null || !folderId) return false;
+  const { dir: relDir, name } = splitRel(rel);
+  // rclone は「パソコン」のフォルダを自分では見つけられないので、フォルダ ID を指して読む
+  const entries = lsjson(`${remoteName()},root_folder_id=${folderId}:${relDir}`, ['--files-only', '--max-depth', '1']);
+  const hit = entries?.find((e) => e.Name === name && e.Size === statSync(src).size);
+  if (hit?.ID === undefined) {
+    console.log('Drive の record に取り込み元の写しが無い（まだ上がっていない）ので、E: から上げる');
+    return false;
+  }
+  // コピー先はリモートの名前を付けて書く（付けないとローカルのパスと見なされ、手元へダウンロードされる。2026-10-23 の試し）
+  const r = rclone(['backend', 'copyid', `${remoteName()}:`, hit.ID, remoteFile]);
+  if (r.status !== 0) {
+    console.error(`Drive の中のコピーに失敗した（E: から上げる）: ${r.stderr.trim()}`);
+    return false;
+  }
+  return true;
+}
+
 mkdirSync(dir, { recursive: true });
 if (values.copy) copyFileSync(source, dest);
 else {
@@ -193,63 +233,60 @@ const missing = [
 if (missing.length > 0) console.log(`人が埋める項目: ${missing.join('、')}`);
 console.log(`次: npm run records:table、キャラの確かめは node tools/captures/probe-result.ts "${dest}" --list`);
 
-// バックアップ先の同じ種別フォルダへこの 1 本だけを robocopy し（/E は付けない）、sha256 を突き合わせる。
-async function backup(): Promise<boolean> {
-  const root = backupDir();
-  if (values['no-backup'] || root === null) {
-    console.log(`Drive への同期はしていない（${values['no-backup'] ? '--no-backup' : 'バックアップ先が無い環境'}）`);
+async function md5(path: string): Promise<string> {
+  const hash = createHash('md5');
+  for await (const chunk of createReadStream(path)) hash.update(chunk as Buffer);
+  return hash.digest('hex');
+}
+
+/** Drive の写しのハッシュを E: と比べる（Drive が SHA256 を持っていなければ md5）。一致したハッシュの名前、違えば null */
+async function verifyDrive(): Promise<'sha256' | 'md5' | null> {
+  const s = driveHash(remoteFile, 'sha256');
+  if (s !== null) {
+    if (s === fullDigest) return 'sha256';
+    console.error(`sha256 が一致しない（${dest}: ${digest}、${remoteFile}: ${s.slice(0, 12)}）`);
+    return null;
+  }
+  const m = driveHash(remoteFile, 'md5');
+  const local = await md5(dest);
+  if (m !== null && m === local) return 'md5';
+  console.error(`Drive のハッシュを突き合わせられない（${remoteFile}: sha256 なし・md5 ${m ?? 'なし'}）`);
+  return null;
+}
+
+// Drive の同じ種別フォルダに置き、ハッシュを突き合わせる
+async function syncToDrive(): Promise<boolean> {
+  if (driveSkip !== null) {
+    console.log(`Drive には置いていない（${driveSkip}）。次の npm run drive:sync で上がる`);
     return true;
   }
-  if (!existsSync(root)) {
-    console.error(`バックアップ先 ${root} が無い（Google Drive for desktop がマウントされていない？）`);
-    return false;
-  }
-  const backupFile = join(root, folder, file);
-  if (existsSync(backupFile)) {
-    console.error(`${backupFile} が既にある（上書きしない）`);
-    return false;
-  }
-  if (process.platform === 'win32') {
-    // Git Bash の中で動かしても、node から直に起動するので /R:1 などはパスに変換されない
-    const r = spawnSync(
-      'robocopy',
-      [dirname(dest), join(root, folder), file, '/R:1', '/W:1', '/NP', '/NJH', '/NJS', '/NFL', '/NDL'],
-      {
-        stdio: 'inherit',
-      },
-    );
-    // 終了コードは 0〜7 が正常、8 以上が失敗
-    if (r.error || r.status === null || r.status >= 8) {
-      console.error(`robocopy が失敗した（終了コード ${r.status ?? r.error?.message}）`);
-      return false;
+  if (serverCopied) {
+    const matched = await verifyDrive();
+    if (matched !== null) {
+      // E: の更新時刻を Drive の写しにそろえ、次の同期で同じファイルと見なさせる（上げ直さない）
+      const copied = lsjson(remoteFile)?.[0];
+      if (copied !== undefined) utimesSync(dest, new Date(), new Date(copied.ModTime));
+      return placed('Drive の中で取り込み元の写しからコピーした', matched);
     }
-  } else {
-    mkdirSync(join(root, folder), { recursive: true });
-    copyFileSync(dest, backupFile);
+    console.error('Drive の中のコピーが E: と違うので、E: から上げ直す');
   }
-  if (!existsSync(backupFile)) {
-    console.error(`${backupFile} ができていない`);
+  const r = rclone(['copyto', dest, remoteFile]);
+  if (r.status !== 0) {
+    console.error(`Drive に上げられなかった: ${r.stderr.trim()}`);
     return false;
   }
-  const backupDigest = await sha256(backupFile);
-  if (backupDigest !== fullDigest) {
-    console.error(
-      `sha256 が一致しない（${dest}: ${fullDigest.slice(0, 12)}、${backupFile}: ${backupDigest.slice(0, 12)}）`,
-    );
-    return false;
-  }
-  console.log(`${backupFile} に同期した（sha256 ${digest} が一致）`);
-  appendBackupLog(root);
+  const matched = await verifyDrive();
+  return matched !== null && placed('E: から上げた', matched);
+}
+
+function placed(how: string, matched: 'sha256' | 'md5'): true {
+  console.log(`${remoteFile} に置いた（${how}。${matched} が一致）`);
+  appendBackupLog(how, matched);
   return true;
 }
 
-// 置き場所の呼び名。ドライブ文字で始まれば E: のようにドライブだけ、それ以外はパスのまま
-function placeLabel(path: string): string {
-  return /^[A-Za-z]:/.exec(path)?.[0] ?? path;
-}
-
-// backup-log.md に 1 行足す（日付・足したもの・sha256 の突き合わせの結果。backup-log.md の冒頭の決まり）
-function appendBackupLog(root: string): void {
+// backup-log.md に 1 行足す（日付・足したもの・ハッシュの突き合わせの結果。backup-log.md の冒頭の決まり）
+function appendBackupLog(how: string, matched: 'sha256' | 'md5'): void {
   const logPath = `${ROOT}plan/captures/backup-log.md`;
   if (!existsSync(logPath)) {
     console.error(`${logPath} が無いので、同期の記録は足していない`);
@@ -262,18 +299,16 @@ function appendBackupLog(root: string): void {
     entry.team.length === 0
       ? ''
       : `（${entry.team.map((m) => m.name).join(' + ')}${entry.team.length === 1 ? '単騎' : ''}）`;
-  const from = placeLabel(capturesDir());
-  const to = placeLabel(root);
   // 1 行の書式（2026-10-11。plan/design-investigation-review.md 7.3 節）。sha256 の値は records/recordings/<録画 id>.json にある
   const origin = values.copy ? ' 取り込み元の元ファイルは残した（`--copy`）。' : '';
-  const line = `- ${stamp} 録画 ${values.id}${team}: \`${folder}/${file}\` を同期（${from} と ${to} で sha256 が一致）。${origin}`;
+  const line = `- ${stamp} 録画 ${values.id}${team}: \`${folder}/${file}\` を Drive に置いた（${how}。E: と Drive で ${matched} が一致）。${origin}`;
   appendFileSync(logPath, `${line}\n`);
   console.log(`${logPath} に同期の記録を足した`);
 }
 
-if (!(await backup())) {
+if (!(await syncToDrive())) {
   console.error(
-    '取り込み（移動と records/recordings の JSON）は済んでいる。同期は plan/captures/storage.md「バックアップ」の手順で手で行う',
+    '取り込み（移動と records/recordings の JSON）は済んでいる。Drive へは npm run drive:sync で上げる（plan/captures/storage.md「バックアップ」）',
   );
   process.exit(1);
 }
