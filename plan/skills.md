@@ -166,7 +166,7 @@ notes の種類: 未対応 115・前提の外 27・計算に無関係 28・補�
   - notes[0] 計算に無関係: フォーメーションAS 適用中の陽動発動不可はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0337（確定）、C-0497（確定）
-  - effects[1] timed・burstUse・damageTaken: C-0335（確定）、C-0336（仮説）、C-0379（仮説）
+  - effects[1] timed・burstUse・damageTaken: C-0335（確定）、C-0336（仮説）、C-0379（仮説）、C-0619（仮説）
   - notes[0] 間接（HP）: 味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 
 ## 95 ウンファ：タクティカル・アップ

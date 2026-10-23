@@ -346,3 +346,4 @@
 2026-10-23 15:28 に、録画 538 を 544 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261023-544_sg_soda-tb-burst_anis-star-2.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 1 件。中身は変えていないので sha256 は台帳のまま）。
 
 - 2026-10-23 23:51 録画 540（I-DOLL・フラワー + エヌ : ミラクルフェアリー + アスカ）: `range/20261023-540_rl_anne-miracle-fairy_asuka-noshoot.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-23 23:55 録画 541（エマ：タクティカル・アップ + ウンファ：タクティカル・アップ）: `range/20261023-541_mg_emma-tu_eunhwa-tu_manual-burst.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
