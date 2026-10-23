@@ -334,11 +334,12 @@
 ### 12.2 段 ②（2026-10-23。受け口と小さいファイルの往復）
 
 - 足したもの:
-  - デスクトップの同期の対 ・・（。Drive の の下。 は鍵の を外し、 は全体の CLAUDE.md とこのプロジェクトのメモリだけ）。フィルタは対の定義に中身で持つ
-  - Apps Script の受け口（・）。DriveApp だけを使う（高度なサービスは要らない）。中身の差し替えは、新しく作って古い方をごみ箱へ移す
-  - クラウドの往復（。SessionStart で 、Stop で ）、受け口を呼ぶ 、決まりごとの （テストは ）、動作確認の - 手引き [cloud-guide.md](cloud-guide.md)。AGENTS.md の「離席と再開」から指し、「記録の置き場所」に 1 行・ の行にクラウドのことを足した（項目 10）。[captures/storage.md](captures/storage.md) のクラウドで切り出したフレームの扱いを直した
-- 確かめたこと: デスクトップの 3 つの対の初回の で ができ（ は owner.md だけ）、4 つの対のふだんの同期は約 10 秒で何も送らない。CI と同じ確認が通る。クラウドでない環境と受け口の URL が無い環境では、往復のフックが何もせずに抜ける
-- 残り（オーナーの準備の後）: 、クラウドのセッションでの往復（owner.md とメモリが見える・直したものが D: に届く・衝突が両方残る・証拠フレームが E: に届く）
+  - デスクトップの同期の対 `private`・`scratch`・`claude`（`tools/drive/sync.ts`。Drive の `nikke_sync/` の下。`private` は鍵の `*.json` を外し、`claude` は全体の CLAUDE.md とこのプロジェクトのメモリだけ）。フィルタは対の定義に中身で持つ
+  - Apps Script の受け口（`tools/drive/gateway/Code.gs`・`appsscript.json`）。DriveApp だけを使う（高度なサービスは要らない）。中身の差し替えは、新しく作って古い方をごみ箱へ移す
+  - クラウドの往復（`tools/drive/cloud-sync.ts`。SessionStart で `--pull`、Stop で `--push`）、受け口を呼ぶ `gateway.ts`、決まりごとの `cloud-lib.ts`（テストは `cloud-lib.test.ts`）、動作確認の `npm run drive:gateway-check`
+  - 手引き [cloud-guide.md](cloud-guide.md)。AGENTS.md の「離席と再開」から指し、「記録の置き場所」に 1 行・`private/` の行にクラウドのことを足した（項目 10）。[captures/storage.md](captures/storage.md) のクラウドで切り出したフレームの扱いを直した
+- 確かめたこと: デスクトップの 3 つの対の初回の `--resync` で `nikke_sync/` ができ（`private` は owner.md だけ）、4 つの対のふだんの同期は約 10 秒で何も送らない。CI と同じ確認が通る。クラウドでない環境と受け口の URL が無い環境では、往復のフックが何もせずに抜ける
+- 残り（オーナーの準備の後）: `npm run drive:gateway-check`、クラウドのセッションでの往復（owner.md とメモリが見える・直したものが D: に届く・衝突が両方残る・証拠フレームが E: に届く）
 
 ## この設計の外
 
