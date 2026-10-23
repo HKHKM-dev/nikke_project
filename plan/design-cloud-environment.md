@@ -1,7 +1,7 @@
 # クラウド環境 設計書（PC が使えないときも、クラウドのセッションで続ける）
 
 - 対象: Google Drive との同期（新しい `tools/drive/`。デスクトップの rclone の双方向同期と、Apps Script の受け口）、クラウドのセッションのフック（`.claude/settings.json`）、録画の道具の Drive への書き方（`tools/captures/intake.ts`・`dirs.ts`、`packages/core/scripts/records-renumber.ts`）、文書（[captures/storage.md](captures/storage.md)・[captures/tools.md](captures/tools.md)・AGENTS.md・新しい手引き）
-- 状態: **起案（2026-10-23）。項目 1〜9・11 は 2026-10-23 に決まった。項目 10 は保留（段 ② の前に決める）。11.1 節**
+- 状態: **項目 1〜11 は 2026-10-23 に決まった（11.1 節）。段 ① を実装中（12.1 節）**
 - 関連: [design-cloud-environment-notes.md](design-cloud-environment-notes.md)（調べたことの根拠と出典）、[captures/storage.md](captures/storage.md)「バックアップ」「クラウド環境での取り寄せ」、[design-records-automation.md](design-records-automation.md) 3.3 節（`intake.ts`）、[design-recording-renumber.md](design-recording-renumber.md) 5 節（Drive 側の名前の変え方）
 - 作成日: 2026-10-23
 - 調べた時点: main の 3e052720（#642）。件数・容量は 2026-10-23 の手元とクラウドの調べで、判断の材料。以後は書き直さない
@@ -261,7 +261,7 @@
 | 通しの試験                     | 1 節の完成の条件                                              | PC を切った状態で、スマホから始めて PR まで                                                                                                                                                                                                        |
 
 - 段ごとに PR にする（実装と確かめが済んだ時点。AGENTS.md「コミット手順」）。この設計書は段 ① の PR に含め、以後の段で 12 節に実施を書き足す。
-- 手引き `plan/cloud.md`（どこに何があるか、再開の手順、衝突の扱い、コマンド）を段 ② で新しく作り、AGENTS.md の「記録の置き場所」に 1 行足す案（項目 10。保留）。
+- 手引き `plan/cloud-guide.md`（どこに何があるか、クラウドのセッションの始め方、再開の手順、同期と衝突の扱い、コマンド、準備、困ったとき）を段 ② で新しく作り、AGENTS.md の「記録の置き場所」に 1 行足す（項目 10）。録画まわりの同期の手順は storage.md に置いたまま、手引きからは指すだけにする。「離席の前」の規則は段 ① で AGENTS.md に入れる。
 
 ## 10. 気をつけること
 
@@ -273,7 +273,7 @@
 - クラウドの Node は 22（リポジトリの `.nvmrc` は 24）。クラウドで `npm test` を通せるかは段 ② で確かめる。
 - Claude が自分で打つ通信は、auto mode の判定で止まることがある。同期はフックで行う。`fetch.ts` は今もクラウドで動いている（オーナー）。
 - 電源断の途中の同期は、次回に `--recover`・`--resilient` で直す。
-- 同期は節目だけなので、離席の前の `npm run drive:sync` を忘れると、その分はクラウドから見えない（どこに書くかは項目 10 とあわせて決める）。
+- 同期は節目だけなので、離席の前の `npm run drive:sync` を忘れると、その分はクラウドから見えない（AGENTS.md の「離席と再開」に規則として書いた。段 ①）。
 
 ## 11. 承認を求める項目
 
@@ -302,7 +302,7 @@
 - 項目 7（衝突の名前）: 承認
 - 項目 8（WIP の退避）: 不要とする（作らない。7 節）。節目だけにする形をいったん選んだ後、その読み方を確かめる問いで不要と決めた。これに合わせて、完成の条件から WIP の部分を外し（1 節）、離席の前の手の操作は `npm run drive:sync` だけにした（4.2 節）
 - 項目 9（クラウドでの取り込みの降ろし直し）: 承認
-- 項目 10（手引き `plan/cloud.md` と AGENTS.md）: 保留。段 ② の前に決める
+- 項目 10（手引きと AGENTS.md）: 案のとおり新しい手引きを作る。名前は今ある手引き（`verification-guide.md`・`skills-guide.md`・`captures/guide.md`）に合わせて `plan/cloud-guide.md` にする。段 ② で作り、録画まわりの同期の手順は storage.md に置いたまま手引きから指す。AGENTS.md には、表の 1 行（段 ②）と「離席の前」の規則 1 行（段 ①）を足す（9 節）。いったん保留にした後、選び方の説明を受けて決めた
 - 項目 11（段階の順と確かめ）: 承認。WIP の段を除いたので、段は ① 録画まわりの自動同期 → ② 受け口と小さいファイルの往復 → ③ クラウドでの取り込み → 通しの試験（9 節）
 
 ## 12. 実施
@@ -318,7 +318,7 @@
   - `still.ts`: `frames/` に切り出したら Drive にも上げる
   - `records-renumber.ts`: I: を置き場所から外し、Drive の中の改名（`rclone moveto`）を足す。Drive に古い名前と新しい名前の両方があれば、どれも変える前に止める
   - `dirs.ts`: `backupDir()`（I: のパス）を外し、取り込み元の `recordDir()` を足す
-  - 文書: [captures/storage.md](captures/storage.md)「運用」「バックアップ」、[captures/tools.md](captures/tools.md)
+  - 文書: [captures/storage.md](captures/storage.md)「運用」「バックアップ」、[captures/tools.md](captures/tools.md)、AGENTS.md に「離席と再開」の規則（項目 10）
 - 確かめたこと（rclone の準備の前）: CI と同じ確認（format:check・lint・typecheck・test・build）が通る。rclone が無い環境では、`npm run drive:sync` は理由を出して終了コード 1、フックとクラウド環境では何もせず 0 で抜ける
 - 残り（オーナーの準備の後）: 9 節の段 ① の確かめ（空打ち・初回の `--resync`・Drive の中のコピーと更新時刻・セッションの始めの同期）
 
