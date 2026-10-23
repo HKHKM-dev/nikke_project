@@ -1,7 +1,7 @@
 # クラウド環境 設計書（PC が使えないときも、クラウドのセッションで続ける）
 
 - 対象: Google Drive との同期（新しい `tools/drive/`。デスクトップの rclone の双方向同期と、Apps Script の受け口）、クラウドのセッションのフック（`.claude/settings.json`）、作業中のブランチの退避（`tools/git/`）、録画の道具の Drive への書き方（`tools/captures/intake.ts`・`dirs.ts`、`packages/core/scripts/records-renumber.ts`）、文書（[captures/storage.md](captures/storage.md)・[captures/tools.md](captures/tools.md)・AGENTS.md・新しい手引き）
-- 状態: **起案（2026-10-23）。承認待ち（11 節）**
+- 状態: **起案（2026-10-23）。承認待ち（11 節。項目 1 は 2026-10-23 に承認。11.1 節）**
 - 関連: [captures/storage.md](captures/storage.md)「バックアップ」「クラウド環境での取り寄せ」、[design-records-automation.md](design-records-automation.md) 3.3 節（`intake.ts`）、[design-recording-renumber.md](design-recording-renumber.md) 5 節（Drive 側の名前の変え方）
 - 作成日: 2026-10-23
 - 調べた時点: main の 3e052720（#642）。件数・容量は 2026-10-23 の手元とクラウドの調べで、判断の材料。以後は書き直さない
@@ -340,6 +340,10 @@
 9. クラウドでの取り込みは、デスクトップでの降ろし直しを許す（6.3 節）。【推奨】
 10. 手引き `plan/cloud.md` を段 ② で作り、AGENTS.md に 1 行足す（9 節）。
 11. 段階の順と確かめ（9 節）。
+
+### 11.1 決まったこと
+
+- 項目 1（全体の形）: 承認（2026-10-23。オーナー）
 
 ## 12. 実施（承認後に書く）
 
