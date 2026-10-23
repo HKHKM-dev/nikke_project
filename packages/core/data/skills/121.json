@@ -50,11 +50,12 @@
           "targetClass": "Attacker",
           "ref": 3,
           "assumes": {
-            "ja": "火力型の味方全体（自分は支援型なので入らない）への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす（ヘルムの宝物版 S1 の C-0345 からの類推）。回復量はダメージに関係しない",
-            "en": "A one-off heal on all Attacker allies (not herself, a Supporter) that triggers \"when healed\" even on allies at full HP (by analogy with Helm's treasure S1, C-0345). The healed amount does not affect damage"
+            "ja": "火力型の味方全体（自分は支援型なので入らない）への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす（V-0480 で確かめた）。火力型の味方にだけ付くのは、同じ行の攻撃力▲（C-0595）からの類推。回復量はダメージに関係しない",
+            "en": "A one-off heal on all Attacker allies (not herself, a Supporter) that triggers \"when healed\" even on allies at full HP (verified in V-0480). That it applies only to Attackers is by analogy with the attack buff on the same line (C-0595). The healed amount does not affect damage"
           },
           "claims": [
-            "C-0597"
+            "C-0618",
+            "C-0617"
           ]
         },
         {
