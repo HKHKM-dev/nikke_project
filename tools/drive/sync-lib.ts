@@ -137,3 +137,8 @@ export function topFolder(rel: string): string {
   const i = rel.indexOf('/');
   return i < 0 ? '' : rel.slice(0, i);
 }
+
+/** 自動メモリのフォルダの名前（Claude Code と同じく、チェックアウトのパスの英数字以外を - にする。D:/nikke_project → D--nikke-project） */
+export function memoryProjectName(checkout: string): string {
+  return checkout.replace(/[^a-zA-Z0-9]/g, '-');
+}
