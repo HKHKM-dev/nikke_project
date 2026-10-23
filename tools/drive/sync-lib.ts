@@ -79,9 +79,12 @@ export function splitRel(rel: string): { dir: string; name: string } {
   return i < 0 ? { dir: '', name: rel } : { dir: rel.slice(0, i), name: rel.slice(i + 1) };
 }
 
-/** SessionStart フックの同期を飛ばすか（前の成功から minutes 分たっていない） */
-export function hookShouldSkip(lastOk: number | null, now: number, minutes = 30): boolean {
-  return lastOk !== null && now >= lastOk && now - lastOk < minutes * 60_000;
+/**
+ * SessionStart フックの同期を飛ばすか（前の成功から minutes 分たっていない）。前の成功が PC の起動（bootAt）より前なら飛ばさない
+ * （PC を切っている間にクラウドで書いたものを、付けた後の最初のセッションで降ろす。plan/design-cloud-environment-log.md 12.4 節）
+ */
+export function hookShouldSkip(lastOk: number | null, now: number, bootAt: number, minutes = 30): boolean {
+  return lastOk !== null && lastOk >= bootAt && now >= lastOk && now - lastOk < minutes * 60_000;
 }
 
 export type Lock = { pid: number; time: number };

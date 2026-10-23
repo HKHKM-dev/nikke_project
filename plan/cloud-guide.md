@@ -62,4 +62,5 @@ PC が使えないときに撮った録画は、Drive for desktop が「マイ �
 - デスクトップの同期の重大なエラー（終了コード 7）・同名の複製: [captures/storage.md](captures/storage.md)「バックアップ」。
 - クラウドで「Drive との往復に失敗した」と出る: 受け口の URL・合言葉・通信の許可を確かめる。デスクトップで `npm run drive:gateway-check` が通るかを見る。
 - クラウドで Claude が自分で打つ curl などは、auto mode の判定で止まることがある。同期はフックで行うので、この判定は受けない。
+- クラウドでは `gh` のトークンが使えない（2026-10-23 の通しの試験）。PR は GitHub の MCP の道具で出す（作成と自動マージの予約）。
 - クラウドの Node は 22（リポジトリの `.nvmrc` は 24）。
