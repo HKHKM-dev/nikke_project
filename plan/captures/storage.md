@@ -67,7 +67,7 @@ D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
 `E:/nikke_project_captures/` は、Google Drive のマイドライブの `nikke_project_captures` と、デスクトップの rclone の双方向同期（bisync）でそろえる（2026-10-23 から。[../design-cloud-environment.md](../design-cloud-environment.md) 4 節）。片側で消したものは、Drive ではごみ箱へ、E: では `E:/nikke_sync_trash/captures/` へ移る（どちらも戻せる）。`derived/` と `desktop.ini` は同期しない（`tools/drive/filters/captures.txt`）。
 
 - 回すのは作業の節目（2026-10-23 のオーナーの決定）:
-  - 道具の終わり: `intake.ts` が取り込んだ録画を Drive に置き、`still.ts` が `frames/` に切り出した証拠フレームを上げ、`npm run records:renumber -- <古い番号> <新しい番号>` が Drive でも名前を変える（Drive の中で変えるので上げ直さない。[backup-log.md](backup-log.md) に段落を足す。[../design-recording-renumber.md](../design-recording-renumber.md) 5 節。手でリネームしない）
+  - 道具の終わり: `intake.ts` が取り込んだ録画を Drive に置き、`still.ts` が `frames/` に切り出した証拠フレームを上げ、`npm run records:renumber -- <古い番号> <新しい番号>` が Drive でも名前を変える（Drive の中で変えるので上げ直さない。クラウドでは受け口で変える。[backup-log.md](backup-log.md) に段落を足す。[../design-recording-renumber.md](../design-recording-renumber.md) 5 節。手でリネームしない）
   - デスクトップのセッションの始め: SessionStart フックが裏で `npm run drive:sync` を回す（30 分以内に回っていれば飛ばす）
   - 離席の前: 手で `npm run drive:sync` を回す（「クラウドで続ける」の前にも。Claude に頼んでもよい）
 - 衝突（前の同期から両側で変わった）ファイルは両方を残し、名前に側を付ける（`<名前>.conflict-desktop.<拡張子>` と `<名前>.conflict-drive.<拡張子>`）。一覧は `npm run drive:conflicts`。中身を見て 1 つにまとめ、別名の方を消す。
