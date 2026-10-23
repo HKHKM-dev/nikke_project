@@ -1,7 +1,7 @@
 // デスクトップと Google Drive の双方向同期（plan/design-cloud-environment.md 4 節）。rclone bisync で対ごとに回す。
 //   npm run drive:sync [-- --pair captures] [--resync] [--dry-run]
 //   npm run drive:conflicts                  衝突で別名にしたファイル（*.conflict-*）の一覧（両側）
-//   node tools/drive/sync.ts --hook          SessionStart フックから（30 分以内に回っていれば・回っている途中なら飛ばす。
+//   node tools/drive/sync.ts --hook          SessionStart フックから（PC を付けてから 30 分以内に回っていれば・回っている途中なら飛ばす。
 //                                            rclone の準備が無い環境とクラウド環境では何もしない。失敗しても終了コード 0）
 // 回すのは作業の節目だけ（道具の終わり・デスクトップのセッションの始め・離席の前の手の操作。2026-10-23 のオーナーの決定）。
 // 初回は --resync --dry-run で送られるものを見てから --resync（4.3 節）。フィルタを変えたら、その対だけ --resync する。
@@ -9,7 +9,7 @@
 // last-<対>.log に残す。
 import { spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { homedir } from 'node:os';
+import { homedir, uptime } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -173,7 +173,13 @@ if (values.conflicts) {
 }
 
 mkdirSync(stateDir, { recursive: true });
-if (hook && hookShouldSkip(readJson<{ time: number }>(lastOkPath)?.time ?? null, Date.now())) process.exit(0);
+if (
+  hook &&
+  hookShouldSkip(readJson<{ time: number }>(lastOkPath)?.time ?? null, Date.now(), Date.now() - uptime() * 1000)
+) {
+  log('hook skip（前の成功から 30 分たっていない）');
+  process.exit(0);
+}
 if (!(await takeLock())) done(1, 'ほかの同期が回っていて、ロックが取れなかった');
 
 let failed = 0;

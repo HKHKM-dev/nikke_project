@@ -82,11 +82,14 @@ describe('drive/sync-lib', () => {
 
   it('フックの同期は、前の成功から 30 分たつまで飛ばす', () => {
     const now = Date.UTC(2026, 9, 23, 12, 0);
-    expect(hookShouldSkip(null, now)).toBe(false);
-    expect(hookShouldSkip(now - 29 * 60_000, now)).toBe(true);
-    expect(hookShouldSkip(now - 31 * 60_000, now)).toBe(false);
+    const boot = now - 3600_000;
+    expect(hookShouldSkip(null, now, boot)).toBe(false);
+    expect(hookShouldSkip(now - 29 * 60_000, now, boot)).toBe(true);
+    expect(hookShouldSkip(now - 31 * 60_000, now, boot)).toBe(false);
     // 時計が戻ったときは飛ばさない
-    expect(hookShouldSkip(now + 60_000, now)).toBe(false);
+    expect(hookShouldSkip(now + 60_000, now, boot)).toBe(false);
+    // 前の成功が PC の起動より前（切る前の同期）なら、30 分たっていなくても飛ばさない
+    expect(hookShouldSkip(now - 20 * 60_000, now, now - 5 * 60_000)).toBe(false);
   });
 
   it('ロックは、持ち主が生きていて 2 時間たっていないときだけ効く', () => {
