@@ -46,11 +46,12 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "最大装弾数は C-0017 の形（加算して四捨五入。Lv10 で 533）。残弾は増やさず、リロードで新しい最大まで込める。窓はバースト使用から値 2 の秒（ゲーム内の時計）。録画では III の発動（欄の 00.00）から 607〜609f で切れ、モデルの 588f より長い（数え方は確かめていない）",
-            "en": "Max ammo follows C-0017 (additive ratio, rounded; 533 at Lv10). Current ammo is not increased; a reload fills to the new maximum. The window lasts value 2 seconds of game time from the Burst use. In recordings it ended 607–609 frames after the III activation (00.00 on the burst bar), longer than the model's 588 frames (how it is counted is unchecked)"
+            "ja": "最大装弾数は C-0017 の形（加算して四捨五入。Lv10 で 533）。残弾は増やさず、リロードで新しい最大まで込める。窓はバースト使用から値 2 の秒（ゲーム内の時計）。録画では III の発動（欄の 00.00）から 607〜609f で切れ、モデルの 588f より長い（フルバーストのタイマーの 00.00 で切れる。C-0616。数 f の差は直さない）",
+            "en": "Max ammo follows C-0017 (additive ratio, rounded; 533 at Lv10). Current ammo is not increased; a reload fills to the new maximum. The window lasts value 2 seconds of game time from the Burst use. In recordings it ended 607–609 frames after the III activation (00.00 on the burst bar), longer than the model's 588 frames (it ends on the frame the Full Burst timer reaches 00.00; C-0616. The few-frame difference is left as is)"
           },
           "claims": [
             "C-0364",
+            "C-0616",
             "C-0017",
             "C-0275"
           ]
