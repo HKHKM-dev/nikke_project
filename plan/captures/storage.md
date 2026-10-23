@@ -20,7 +20,7 @@ E:/nikke_project_captures/      このプロジェクトが採用した録画（
   burst/                        バーストゲージ・フルバースト
   ui/                           ステータス画面・ShiftyPad などの画面録画と、録画に付かないスクショ
   frames/*.jpg                  証拠フレーム（台帳の `frames/…` はここを指す）
-  derived/<録画 id>/            解析ツールの中間出力のキャッシュ（read.ts のレシピ・coverage.ts など。追跡しない。作り直せる）
+  derived/<録画 id>/            解析ツールの中間出力のキャッシュ（read.ts のレシピなど。追跡しない。作り直せる）
   reference/                    録画ではない参照資料（画像）。下の「参照資料」
     tooltips/                   ゲーム内の用語のツールチップ（ファイル名は用語）
     prerelease/                 実装前に先行公開されたスキル画像
@@ -45,7 +45,7 @@ D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
    - スクショは、関連する録画と同じ種別フォルダに置く。録画に付かないスクショ（ステータス画面だけ など）は `ui/` に置く（名前は [index.md](index.md)「命名規約」）。
    - 例外: 旧プロジェクトの録画（`L-` の番号）は移さない（[index.md](index.md)「旧プロジェクトの録画」）。
 3. 録画は `records/recordings/<録画 id>.json` を 1 本足し、`npm run records:table` で録画の一覧（[recordings.md](recordings.md)）を作り直す。採用しなかった録画にも通し番号を振って載せ、採用しなかった理由を `conditionNote` に書く。スクショは `records/recordings/` に載せない（録画に付くものはファイル名の番号で結びつく。録画に付かないものは、それを読んだ記録（検証記録など）にファイル名を書く）。証拠フレームは `E:/nikke_project_captures/frames/` に切り出す（コミットしない）。
-4. Google Drive に同期する（下記「バックアップ」）。移した録画・スクショ・証拠フレームはどれも `E:/nikke_project_captures/` の下にある。録画は `intake.ts` が取り込みの最後に Drive に置き、ハッシュを突き合わせる（[tools.md](tools.md)「解析ツール」の `intake.ts`）。`frames/` に切り出した証拠フレームは `still.ts` が上げる。ほかに足したもの（スクショ・手で置いたもの）は、デスクトップのセッションの始めか、離席の前の `npm run drive:sync` で上がる。
+4. Google Drive に同期する（下記「バックアップ」）。移した録画・スクショ・証拠フレームはどれも `E:/nikke_project_captures/` の下にある。録画は `intake.ts` が取り込みの最後に Drive に置き、ハッシュを突き合わせる（`intake.ts` の冒頭のコメント）。`frames/` に切り出した証拠フレームは `still.ts` が上げる。ほかに足したもの（スクショ・手で置いたもの）は、デスクトップのセッションの始めか、離席の前の `npm run drive:sync` で上がる。
 
 ### 参照資料（`reference/`）
 

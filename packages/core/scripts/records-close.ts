@@ -2,7 +2,7 @@
 //   npm run records:close -- V-NNNN [--mark] [--no-ci]
 // 完了にできるかを検査する（結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない（上なら gradeReason に理由）・
 // 確定の反復実測の結論に decidedOn がある・最小構成の警告・指標なし・許容外・合う仮説が 2 つ以上は人の判断（judgment）で上書き・
-// 「次に撮るもの」「分かったこと」が空でない）。撮る前の予測と読みの順は
+// 確定の結論の根拠の観測値のうち compare の無いものに scope がある・「次に撮るもの」「分かったこと」が空でない）。撮る前の予測と読みの順は
 // 見ない（plan/design-investigation-review.md 1 節）。通れば --mark で状態を完了に書き換え、records:check と CI と同じ確認を回し
 // （--no-ci で省く）、PR の題名の案を出す。roadmap.md の更新と PR は人（エージェント）が行う。
 import { spawnSync } from 'node:child_process';

@@ -3,10 +3,10 @@
 - 関連: [protocol.md](protocol.md)（撮影の手順）、[storage.md](storage.md)（置き場所・バックアップ・クラウド環境での取り寄せ）、[tools.md](tools.md)（解析ツール・フレーム番号の約束・証拠フレーム）、[guide.md](guide.md)（撮影と読み取りの落とし穴）、[recordings.md](recordings.md)（録画の一覧。生成）、[../verification-guide.md](../verification-guide.md)（検証の流れ）
 - 録画ごとの条件と素性は `records/recordings/<録画 id>.json` が正で、一覧 [recordings.md](recordings.md) は `npm run records:table` で作る。録画から読んだ値は観測値（`records/observations/`）、その結論は [../claims.md](../claims.md)。動画と証拠フレームは Git に入らない（公開リポジトリ。置き場所は [storage.md](storage.md)）。
 - 移した節（古い文書の「index.md「○○」」はここで読み替える）:
-  - 置き場所・バックアップ・クラウド環境での取り寄せ → [storage.md](storage.md)（2026-10-11。[../design-investigation-review.md](../design-investigation-review.md) 7.2 節）
-  - フレーム番号の約束・解析ツール・証拠フレームの切り出し → [tools.md](tools.md)（2026-10-11。同上）
-  - 撮影プロトコル（撮る前の確かめを含む） → [protocol.md](protocol.md)（2026-10-18）
-  - 録画ごとの注記 → 各録画の JSON の `conditionNote`（元の文は [backup-log-old.md](backup-log-old.md) の末尾。2026-10-11）
+  - 置き場所・バックアップ・クラウド環境での取り寄せ → [storage.md](storage.md)
+  - フレーム番号の約束・解析ツール・証拠フレームの切り出し → [tools.md](tools.md)
+  - 撮影プロトコル（撮る前の確かめを含む） → [protocol.md](protocol.md)
+  - 録画ごとの注記 → 各録画の JSON の `conditionNote`
 
 ## 命名規約
 
@@ -44,29 +44,29 @@ interception の例: 20261001-066_special_boss-name.mp4 （種類_ボス英名�
 
 表は [recordings.md](recordings.md) にある（`records/recordings/<録画 id>.json` から `npm run records:table` で生成する。手で書かない。条件を直すときは JSON を直して作り直す）。
 
-録画ごとの条件・写っているもの・注意は、その録画の JSON の `conditionNote` に書く（一覧の表の「条件」の列に出る）。2026-10-11 に、ここにあった録画ごとの注記を移した（[../design-investigation-review.md](../design-investigation-review.md) 7.2 節）。録画ごとの条件は JSON に、注記の元の文（移動の経緯を含む）は [backup-log-old.md](backup-log-old.md) の末尾に、撮影の注意は [guide.md](guide.md)「射撃場の条件」に、キャラの取り違えは下の「過去の取り違え」にある。
+録画ごとの条件・写っているもの・注意は、その録画の JSON の `conditionNote` に書く（一覧の表の「条件」の列に出る）。撮影の注意は [guide.md](guide.md)「射撃場の条件」に、キャラの取り違えは下の「過去の取り違え」にある。
 
 ### 旧プロジェクトの録画（参照のみ。移動しない）
 
 旧プロジェクト（`D:\NIKKE_Damage_Calculator`）で撮った録画を、Stage 18-A の検算のために、このリポジトリの読み方で読み直した。
 
 - **2026-09-29 にオーナーがフォルダごと `E:/record/nikke/` から `E:/old_nikkecalc/` へ移した**（中の構成とファイル名はそのまま）。旧の資料と、この日より前の文書に出てくる `E:/record/nikke/` は `E:/old_nikkecalc/` と読み替える。
-- このプロジェクトの置き場所（`E:/nikke_project_captures/`）へは移動もコピーもしない（design-stage18.md 2 節。[storage.md](storage.md)「運用」の 2 の例外。2026-09-26 に取り込み元を 2 つにして「読んだものは移す」にしたときも、オーナーの判断で例外のまま残した）。
+- このプロジェクトの置き場所（`E:/nikke_project_captures/`）へは移動もコピーもしない（design-stage18.md 2 節。[storage.md](storage.md)「運用」の 2 の例外）。
 - 番号は旧のタグに `L-` を付けて呼ぶ（`L-AD` など）。キャラと条件は旧の台帳（旧 `docs/動画計測.md`）のまま。
 - 読み方: `fps=60,crop=190:38:865:34` で HUD の総ダメージを切り出し、Stage 17 と同じ型の当てはめで読んだ。HUD の最後の値は、5 本とも旧の戦闘結果と 1 の位まで一致した。
 - どれも射撃場・3 分モード・スペック固定 ON・灼熱の的・単騎・完全放置（AUTO）。
 
 表は [recordings.md](recordings.md) の「旧プロジェクトの録画」。
 
-### 素性（`node tools/captures/probe.ts` の出力）
+### 素性
 
 表は [recordings.md](recordings.md) の「素性」。
 
-フレーム落ちのある録画（001・007・010・011。時間計測の母数に使わない）は、録画の JSON の `conditionNote` に書いた（2026-10-11 に、ここから移した）。
+フレーム落ちのある録画（001・007・010・011。時間計測の母数に使わない）は、録画の JSON の `conditionNote` に書いた。
 
 ### 用途と証拠（2026-09-26 までの旧台帳の記述）
 
-[legacy-usage.md](legacy-usage.md) に移した（2026-09-27、Stage 20-C。凍結して書き換えない）。
+[legacy-usage.md](legacy-usage.md)（凍結）。
 
 ## 誰が写っているかの確かめ方
 
