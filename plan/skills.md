@@ -338,7 +338,7 @@ notes の種類: 未対応 115・前提の外 27・計算に無関係 28・補�
   - effects[0] damage・coreHit・additional: C-0249（仮説）、C-0251（確定）
   - effects[1] timed・fullBurstStart・critRate: C-0249（仮説）
 - **burst**: supported
-  - effects[0] timed・burstUse・attack: C-0250（仮説）、C-0252（確定）、C-0510（仮説）
+  - effects[0] timed・burstUse・attack: C-0250（仮説）、C-0252（確定）、C-0510（確定）
   - effects[1] timed・burstUse・reloadSpeed: C-0250（仮説）、C-0252（確定）
 
 ## 225 紅蓮：ブラックシャドウ
@@ -862,4 +862,4 @@ notes の種類: 未対応 115・前提の外 27・計算に無関係 28・補�
   - notes[1] 計算に無関係: 真紅の守護（水冷コードの敵から受けるダメージ▼）はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-0351（確定）
-  - effects[1] timed・burstUse・attack: C-0352（確定）、C-0511（仮説）
+  - effects[1] timed・burstUse・attack: C-0352（確定）、C-0614（確定）

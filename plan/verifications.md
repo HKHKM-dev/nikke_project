@@ -3760,19 +3760,18 @@
   - 録画: 192
   - 観測値: 192-11、192-12、192-13、192-14、192-15
   - 結論: C-0510
-  - 派生した検証: V-0393
+  - 派生した検証: V-0393、V-0475
   - 予測（2026-10-10、commit 8a564a5）との比べ:
     - effect-first-1（burstEffectFirstShot）: 実測なし。H0 0
     - effect-first-2（burstEffectFirstShot）: 実測なし。H0 0
     - effect-first-3（burstEffectFirstShot）: 実測なし。H0 0
     - effect-first-4（burstEffectFirstShot）: 実測なし。H0 0
     - effect-first-5（burstEffectFirstShot）: 実測なし。H0 0
-    - window-end-1（buffWindowEndFromFullBurstEnd）: 実測 -1.5（192-11）。H0 0（+1.5、**許容外**）
+    - window-end-1（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
     - window-end-2（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
-    - window-end-3（buffWindowEndFromFullBurstEnd）: 実測 -2（192-12）。H0 0（+2、**許容外**）
+    - window-end-3（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
     - window-end-4（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
-    - window-end-5（buffWindowEndFromFullBurstEnd）: 実測 -2（192-13）。H0 0（+2、**許容外**）
-    - 許容内の指標: H0 0/3。合う仮説は無い
+    - window-end-5（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
 - **[V-0393](../records/verifications/V-0393-yukiko-burst-effect-window.md)** 雪子の 1more の攻撃力▲も、フルバーストのタイマーの 00.00 で切れ、補正はその 2f 後まで乗るか（録画 258 の読み直し）
   - 問い: 雪子（III）のバーストの 1more の攻撃力▲（風圧・バースト使用時・10 秒）は、ルドミラ：WO（C-0510）と同じく、画面中央上のフルバーストのタイマーが 00.00 になるフレームで切れ、フルバースト補正はその 2f 後まで乗るか
   - 話題: スキル・キャラ固有・日付: 2026-10-10・状態: 完了・Stage: backlog 2-4（plan/burst-effect-delay-candidates.md の P3。III の自分への効果）
@@ -3782,11 +3781,10 @@
   - 派生元: V-0392
   - 派生した検証: V-0394、V-0396
   - 予測（2026-10-10、commit d7ec959）との比べ:
-    - window-end-1（buffWindowEndFromFullBurstEnd）: 実測 -4.5（258-14）。H0 0（+4.5、**許容外**）
+    - window-end-1（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
     - window-end-2（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
     - window-end-3（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
     - window-end-4（buffWindowEndFromFullBurstEnd）: 実測なし。H0 0
-    - 許容内の指標: H0 0/1。合う仮説は無い
 - **[V-0394](../records/verifications/V-0394-burst3-ct-start.md)** III の CT が明けるフレームは、III のタイマーの 00.00 の何 f 前か（CT が律速のチェーン。既存の録画の読み直し）
   - 問い: CT が律速で III を待ったチェーンで、III のキャラの CT が明けたフレーム（右のバースト欄の顔の CT の表示が消えたフレーム）から III のタイマーの 00.00 までは、録画 192・258 と同じく 6f か
   - 話題: バーストの段階とフルバースト・日付: 2026-10-10・状態: 完了・Stage: backlog 2-31（III の起点。plan/design-burst-hit-origin.md 8 節の「分からないこと」）・backlog 2-4 の P3
@@ -4441,6 +4439,13 @@
   - 録画: 166、210、228、253、522、523、524、525、526、527、528、529、530、531、532、533、534、535
   - 観測値: 166-02、166-03、166-04、166-05、166-06、210-08、210-09、210-10、210-11、228-05、228-06、228-07、228-08、253-03、253-04、253-05、253-06、522-01、522-02、522-03、522-04、522-05、523-01、523-02、523-03、523-04、524-01、524-02、524-03、524-04、525-01、525-02、525-03、525-04、526-01、526-02、526-03、526-04、527-01、527-02、527-03、527-04、528-01、528-02、528-03、528-04、529-01、529-02、529-03、529-04、529-05、529-06、530-01、530-02、530-03、530-04、530-05、531-01、531-02、531-03、531-04、531-05、532-01、532-02、532-03、532-04、532-05、533-01、533-02、533-03、533-04、533-05、534-01、534-02、534-03、534-04、534-05、535-01、535-02、535-03、535-04、535-05
   - 結論: C-0610
+- **[V-0475](../records/verifications/V-0475-burst-use-effect-edge-repeat.md)** ルドミラ：WO と雪子のバースト使用時の効果の切れ目は、キャラごとの値で再現するか（新しく撮る）
+  - 問い: III のバースト使用時の自分の攻撃力▲の切れ目（補正の切れ目との差）と付き始めは、録画 192・258 で決めたキャラごとの値（ルドミラ：WO・雪子）で、別の録画でも再現するか
+  - 話題: スキル・キャラ固有・日付: 2026-10-23・状態: 完了・Stage: backlog 2-4（plan/burst-effect-delay-candidates.md の P3。III の自分への効果）
+  - 録画: 536、537、538、539
+  - 観測値: 536-01、536-02、536-03、536-04、536-05、536-06、536-07、537-01、537-02、537-03、537-04、537-05、537-06、537-07、538-01、538-02、538-03、538-04、538-05、538-06、538-07、539-01、539-02、539-03、539-04、539-05、539-06
+  - 結論: C-0510、C-0614
+  - 派生元: V-0392
 - **[V-0476](../records/verifications/V-0476-rapi-asuka-burst-effect-start.md)** ラピ・アスカのバースト使用時の▲の付き始めは、III の CT の明けから何 f 後か（録画 018・461・462 の読み直し）
   - 問い: ラピ（C-0513）とアスカ（C-0514）のバースト使用時の▲は、III の CT の明けの頃（雪子の形。C-0511）と、明けの 4〜6f 後（ルドミラ：WO の形。C-0510）のどちらで付くか
   - 話題: スキル・キャラ固有・日付: 2026-10-23・状態: 完了・Stage: backlog 2-4（plan/burst-effect-delay-candidates.md 2.7 節の「見分けられない」の行）

@@ -71,20 +71,22 @@
 
 予測は 2026-10-10（commit 8a564a5）に出した。
 
-| 指標                                          | 実測             | 予測 H0               |
-| --------------------------------------------- | ---------------- | --------------------- |
-| effect-first-1（burstEffectFirstShot）        | （実測なし）     | 0                     |
-| effect-first-2（burstEffectFirstShot）        | （実測なし）     | 0                     |
-| effect-first-3（burstEffectFirstShot）        | （実測なし）     | 0                     |
-| effect-first-4（burstEffectFirstShot）        | （実測なし）     | 0                     |
-| effect-first-5（burstEffectFirstShot）        | （実測なし）     | 0                     |
-| window-end-1（buffWindowEndFromFullBurstEnd） | -1.5（`192-11`） | 0（+1.5、**許容外**） |
-| window-end-2（buffWindowEndFromFullBurstEnd） | （実測なし）     | 0                     |
-| window-end-3（buffWindowEndFromFullBurstEnd） | -2（`192-12`）   | 0（+2、**許容外**）   |
-| window-end-4（buffWindowEndFromFullBurstEnd） | （実測なし）     | 0                     |
-| window-end-5（buffWindowEndFromFullBurstEnd） | -2（`192-13`）   | 0（+2、**許容外**）   |
+| 指標                                          | 実測         | 予測 H0 |
+| --------------------------------------------- | ------------ | ------- |
+| effect-first-1（burstEffectFirstShot）        | （実測なし） | 0       |
+| effect-first-2（burstEffectFirstShot）        | （実測なし） | 0       |
+| effect-first-3（burstEffectFirstShot）        | （実測なし） | 0       |
+| effect-first-4（burstEffectFirstShot）        | （実測なし） | 0       |
+| effect-first-5（burstEffectFirstShot）        | （実測なし） | 0       |
+| window-end-1（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| window-end-2（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| window-end-3（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| window-end-4（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| window-end-5（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
 
 <!-- records:predictions:end -->
+
+2026-10-23 の追記: C-0510 を確定にしたとき（V-0475）、`192-11`〜`192-13` を比べる観測値から記録にしたので、上の表に実測は出ない（読んだ値は下の文と観測値のとおり。予測 H0 から −1.5〜−2f で外れた）。
 
 2026-10-10 に読んだ（予測の commit bf15570 の後）。III のタイマーの 00.00 は f1477・3854・6231・8609・10987（右のバースト欄の切り出し）。
 
