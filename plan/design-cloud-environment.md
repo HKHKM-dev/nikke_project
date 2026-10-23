@@ -344,6 +344,16 @@
 - 合言葉: ネットワークシークレットの Body parameter 型では受け口に届かなかったので、環境変数 `NIKKE_DRIVE_GATEWAY_KEY` に入れた（5.2 節の「使えなければ環境変数」）
 - 残り: クラウドの側の衝突と、クラウドで切り出した証拠フレームが E: に届くことは、実際の作業の中で確かめる（owner.md とメモリが見える・直したものが D: に届く・衝突が両方残る・証拠フレームが E: に届く）
 
+### 12.3 段 ③（2026-10-23。クラウドでの取り込み）
+
+- 足したもの:
+  - `intake.ts` の `drive:<record の中のパス>` と `--list-record`。サービスアカウントで record をたどって取り寄せ（`.part` に書いてから名前を変える）、Drive の sha256（無ければ md5）と突き合わせ、受け口の `move` で種別フォルダへ規約名で移す。種別フォルダに同じ名前があれば取り寄せる前に止める。移せなかったら終了コード 1（録画の JSON と手元の録画は書いてある。消して回し直す）。日付をファイルの更新時刻から決めるときは日本の日付にする（クラウドの時計は UTC）
+  - `records:renumber` は、クラウド環境で受け口の URL があれば、Drive の一覧を受け口の `snapshot`（変えるファイルの親のフォルダ）で取り、名前を受け口の `move` で変える
+  - Drive API のラッパ（`tools/captures/drive.ts`）に、更新時刻と、1 ファイルのハッシュ（`checksums`）
+  - 手引き [cloud-guide.md](cloud-guide.md) に「クラウドで録画を取り込む」と、クラウドの環境の `NIKKE_DRIVE_RECORD_FOLDER_ID`。[captures/tools.md](captures/tools.md)・[captures/storage.md](captures/storage.md) の取り込みと振り直しの説明
+- 確かめたこと（デスクトップ）: `H:/record/Captures/` に試しのファイルを置くと、`--list-record` に出て、サービスアカウントで取り寄せたものが Drive の sha256・md5 と一致した（試しのファイルは消した）。CI と同じ確認が通る
+- 残り（オーナーのクラウドのセッションで確かめる。9 節の段 ③）: record から `nikke_project_captures` への `move`（「マイ コンピュータ」の中から外へ `moveTo` で動くか、コピーと元のごみ箱への移動になるか）、PC を付けた後に E: に規約名で届き、`H:/record` から消えること
+
 ## この設計の外
 
 - `D:/old_nikkecalc` と `E:/old_nikkecalc` のクラウドでの作業（後回し。1 節）

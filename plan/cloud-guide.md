@@ -12,7 +12,7 @@
 | `private/`・`scratch/`                   | Drive の `nikke_sync/private`・`scratch`            | メインのチェックアウト（`D:/nikke_project/`）の直下 | リポジトリの直下（セッションの始めに置かれる）                                                                |
 | Claude のメモリと全体の指示（CLAUDE.md） | Drive の `nikke_sync/claude/`                       | Claude Code の設定のフォルダ（自動メモリ）          | `~/.claude/CLAUDE.md` に、全体の指示とメモリの索引・書き方が置かれる。本文は `~/.claude/projects/…/memory/`   |
 | 録画・スクショ・証拠フレーム・参照資料   | E: と Drive の `nikke_project_captures/`            | `E:/nikke_project_captures/`                        | 録画は `node tools/captures/fetch.ts <録画 id>` で取り寄せる。切り出した証拠フレームは応答の終わりに Drive へ |
-| 取り込む前の録画                         | `H:/record` と Drive の「マイ コンピュータ/record」 | Drive for desktop が上げる                          | Drive から取り込む（設計書 6.3 節。段 ③）                                                                     |
+| 取り込む前の録画                         | `H:/record` と Drive の「マイ コンピュータ/record」 | Drive for desktop が上げる                          | Drive から取り込む（下の「クラウドで録画を取り込む」）                                                        |
 
 ## クラウドのセッションの始め方
 
@@ -26,6 +26,16 @@
 
 - 離席や電源を切る前は `npm run drive:sync` を回し、続ける作業はデスクトップのアプリの「クラウドで続ける」で移す（AGENTS.md「離席と再開」）。
 - PC が突然止まったときは、push 済みのブランチと、最後の節目までに Drive に上がったものから続ける（未 push の作業は PC が直るまで待つ）。
+
+## クラウドで録画を取り込む
+
+PC が使えないときに撮った録画は、Drive for desktop が「マイ コンピュータ/record」に上げている。クラウドのセッションで次のように取り込む（設計書 6.3 節）。
+
+1. `node tools/captures/intake.ts --list-record` で record の中を見る。
+2. `node tools/captures/intake.ts drive:<record の中のパス> --id NNN --name <識別子> ...`（ほかの引数はデスクトップと同じ。[captures/tools.md](captures/tools.md) の `intake.ts`。`--copy` は使えない）。録画を取り寄せて `~/nikke_project_captures/<種別>/` に規約名で置き、Drive の sha256 と突き合わせ、`records/recordings/<録画 id>.json` を書き、Drive の中で record から `nikke_project_captures/<種別>/` へ移す。[captures/backup-log.md](captures/backup-log.md) に 1 行足す。
+3. PC を付けると、Drive for desktop が `H:/record` の写しを消し、デスクトップの同期が E: の種別フォルダに録画を降ろす（数百 MB。設計書 6.3 節）。
+
+録画の番号の振り直し（`npm run records:renumber`）も、クラウドでは Drive の名前を受け口で変える（E: は、PC を付けた後の同期で新しい名前のものを降ろし直し、古い名前のものを `E:/nikke_sync_trash/captures/` へ移す）。
 
 ## 衝突
 
@@ -43,7 +53,7 @@
 2. 動作を確かめる: デスクトップで `NIKKE_DRIVE_GATEWAY_URL` と `NIKKE_DRIVE_GATEWAY_KEY` を入れて `npm run drive:gateway-check`（試しのファイルを作り、ごみ箱へ移して片付ける）。
 3. クラウドの環境（claude.ai/code の環境の設定）に足す:
    - 通信の許可（Custom）: `script.google.com` と `script.googleusercontent.com`
-   - 環境変数: `NIKKE_DRIVE_GATEWAY_URL=<ウェブアプリの URL>`
+   - 環境変数: `NIKKE_DRIVE_GATEWAY_URL=<ウェブアプリの URL>`、`NIKKE_DRIVE_RECORD_FOLDER_ID=<「マイ コンピュータ/record」のフォルダ ID>`（クラウドでの取り込み。録画の取り寄せの `NIKKE_DRIVE_SA_KEY`・`NIKKE_DRIVE_FOLDER_ID` も使う。[captures/storage.md](captures/storage.md)「クラウド環境での取り寄せ」）
    - 合言葉: ネットワークシークレットの Body parameter 型（ホスト `script.google.com`、名前 `key`）。使えなければ環境変数 `NIKKE_DRIVE_GATEWAY_KEY=<合言葉>`（VM の中から見える）
 4. 合言葉が漏れたら、スクリプト プロパティの `KEY` を変え、クラウドの環境の値も替える。受け口ができるのは 3 つのフォルダの中だけで、消すのはごみ箱への移動だけ（設計書 5 節）。
 

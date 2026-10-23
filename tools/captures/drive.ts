@@ -13,7 +13,7 @@ const FOLDER_MIME = 'application/vnd.google-apps.folder';
 
 type ServiceAccountKey = { client_email: string; private_key: string; token_uri?: string };
 
-export type DriveFile = { id: string; name: string; mimeType: string; size?: string };
+export type DriveFile = { id: string; name: string; mimeType: string; size?: string; modifiedTime?: string };
 
 function loadKey(): ServiceAccountKey {
   const raw = process.env.NIKKE_DRIVE_SA_KEY?.trim();
@@ -89,7 +89,7 @@ export class Drive {
     do {
       const res = await this.get('/files', {
         q,
-        fields: 'nextPageToken, files(id, name, mimeType, size)',
+        fields: 'nextPageToken, files(id, name, mimeType, size, modifiedTime)',
         pageSize: '1000',
         includeItemsFromAllDrives: 'true',
         orderBy: 'name',
@@ -113,6 +113,13 @@ export class Drive {
       current = hits[0]!;
     }
     return current;
+  }
+
+  /** 1 ファイルのハッシュ（Drive が持っている値。クラウドでの取り込みの突き合わせに使う） */
+  async checksums(fileId: string): Promise<{ md5?: string; sha256?: string }> {
+    const res = await this.get(`/files/${encodeURIComponent(fileId)}`, { fields: 'md5Checksum, sha256Checksum' });
+    const j = (await res.json()) as { md5Checksum?: string; sha256Checksum?: string };
+    return { md5: j.md5Checksum, sha256: j.sha256Checksum };
   }
 
   isFolder(file: DriveFile): boolean {

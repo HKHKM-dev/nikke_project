@@ -14,7 +14,8 @@
 //   番号は場所を出す（人が見る）。録画の置き場所（E:）の動画・スクショ・証拠フレーム・中間出力のキャッシュの名前も変え
 //   （tools/captures/renumber-files.ts）、Drive の nikke_project_captures でも同じ名前に変え（rclone moveto。Drive の中なので上げ直さない。
 //   derived は同期しないので変えない。plan/design-cloud-environment.md 4.4 節）、plan/captures/backup-log.md に段落を足す。置き場所が
-//   無い環境では Rename-Item の行を、rclone の準備が無い環境では rclone moveto の行を出す（オーナーが回す）。
+//   無い環境では Rename-Item の行を、rclone の準備が無い環境では rclone moveto の行を出す（オーナーが回す）。クラウド環境では
+//   Drive の名前を受け口（tools/drive/gateway.ts の move）で変える（plan/design-cloud-environment.md 6.3 節）。
 // - リベース・マージの途中では動かない（main と自分のブランチが同じ番号を足していると、どちらの参照か見分けられない）。リベースを
 //   中止し（git rebase --abort）、自分のブランチで振り直してから取り込み直す。
 // 振り直した後は npm run records:check（生成物を作り直して検査する。録画は npm run records:table も）。
@@ -33,7 +34,14 @@ import {
 } from '../src/records/renumber.ts';
 import { capturesDir } from '../../../tools/captures/dirs.ts';
 import { driveCaptures, driveUnavailable, lsjson, rclone } from '../../../tools/drive/rclone.ts';
-import { classifyDriveRenames, type DriveRename, driveRenames, topFolder } from '../../../tools/drive/sync-lib.ts';
+import { gatewayUrl, move, snapshot } from '../../../tools/drive/gateway.ts';
+import {
+  classifyDriveRenames,
+  type DriveRename,
+  driveRenames,
+  splitRel,
+  topFolder,
+} from '../../../tools/drive/sync-lib.ts';
 import {
   applyCaptureRenames,
   type CapturePlan,
@@ -170,6 +178,7 @@ let applied: CapturePlan['renames'] = [];
 let wanted: DriveRename[] = [];
 let drive: ReturnType<typeof classifyDriveRenames> | undefined;
 let driveSkip: string | null = null;
+let viaGateway = false;
 const driveApplied: DriveRename[] = [];
 if (kind === 'recording') {
   const newFile = renumberedName(ledger!.file, oldId, newId)!;
@@ -186,7 +195,22 @@ if (kind === 'recording') {
   // Drive は、どれかを変える前に一覧で確かめる（古い名前と新しい名前の両方があれば上書きしないで止める）
   wanted = driveRenames([...capture.renames, ...capture.done]);
   driveSkip = wanted.length === 0 ? null : driveUnavailable();
-  if (wanted.length > 0 && driveSkip === null) {
+  // クラウドでは rclone が無いので、受け口で一覧を取って移す（plan/design-cloud-environment.md 6.3 節）
+  if (driveSkip !== null && process.env['CLAUDE_CODE_REMOTE'] === 'true' && gatewayUrl() !== null) {
+    driveSkip = null;
+    viaGateway = true;
+  }
+  if (wanted.length > 0 && driveSkip === null && viaGateway) {
+    const names = new Set<string>();
+    for (const d of new Set(wanted.flatMap((r) => [splitRel(r.from).dir, splitRel(r.to).dir]))) {
+      try {
+        for (const f of (await snapshot('captures', d, 0)).files) names.add(f.path);
+      } catch (e) {
+        fail(`Drive の ${d === '' ? '根' : d} の一覧を受け口で取れなかった: ${(e as Error).message}`);
+      }
+    }
+    drive = classifyDriveRenames(wanted, (p) => names.has(p));
+  } else if (wanted.length > 0 && driveSkip === null) {
     const names = new Set<string>();
     for (const f of new Set(wanted.flatMap((r) => [topFolder(r.from), topFolder(r.to)]))) {
       const listing = lsjson(f === '' ? driveCaptures() : `${driveCaptures()}/${f}`, [
@@ -199,6 +223,8 @@ if (kind === 'recording') {
       for (const e of listing) names.add(f === '' ? e.Name : `${f}/${e.Name}`);
     }
     drive = classifyDriveRenames(wanted, (p) => names.has(p));
+  }
+  if (drive !== undefined) {
     if (drive.both.length > 0)
       fail(
         `Drive に古い名前と新しい名前の両方がある（上書きしない）:\n${drive.both.map((r) => `  ${r.from} / ${r.to}`).join('\n')}`,
@@ -213,10 +239,18 @@ if (kind === 'recording') {
       process.exit(1);
     }
     for (const d of drive?.apply ?? []) {
-      const m = rclone(['moveto', `${driveCaptures()}/${d.from}`, `${driveCaptures()}/${d.to}`]);
-      if (m.status !== 0) {
+      const error = viaGateway
+        ? await move('captures', d.from, d.to).then(
+            () => null,
+            (e: Error) => e.message,
+          )
+        : (() => {
+            const m = rclone(['moveto', `${driveCaptures()}/${d.from}`, `${driveCaptures()}/${d.to}`]);
+            return m.status === 0 ? null : m.stderr.trim();
+          })();
+      if (error !== null) {
         console.error(
-          `Drive の名前を変えている途中で失敗した（リポジトリは書き換えていない。直してから回し直す）: ${d.from} → ${d.to}: ${m.stderr.trim()}`,
+          `Drive の名前を変えている途中で失敗した（リポジトリは書き換えていない。直してから回し直す）: ${d.from} → ${d.to}: ${error}`,
         );
         for (const a of applied) console.error(`  変えた: ${a.label} ${a.from} → ${a.to}`);
         for (const a of driveApplied) console.error(`  変えた: Drive ${a.from} → ${a.to}`);
