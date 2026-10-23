@@ -1,7 +1,7 @@
 # 設計書: 弾丸命中率をフレームごとの被覆率から出す
 
 - 対象: `D:\nikke_project`
-- 状態: **止めた**（2026-10-03 起案、2026-10-04 オーナー承認。同日、段 2 の関門に通らず、オーナーの判断で止めた。経過の最後）。core には入れていない
+- 状態: **止めた**（2026-10-03 起案、2026-10-04 オーナー承認。同日、段 2 の関門に通らず、オーナーの判断で止めた。経過の最後）。core には入れていない。道具（`coverage.ts`・`sg-dots.ts`・`sg-map.ts`・`mask-tune.ts` とその部品）は 2026-10-23 にリポジトリから消した（git の履歴にある）
 - 別紙: [確かめ方](design-bullet-hit-rate-frame-coverage-verify.md)（5 節の本文）、[レビューと直しの記録](design-bullet-hit-rate-frame-coverage-reviews.md)（版ごとの判断と根拠）
 - 関連: [design-stage18.md](design-stage18.md) 11 節（的の形と照準）・12 節（着地点ごとの表）、[design-sg-hit-rate.md](design-sg-hit-rate.md) 10 節、[design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)（持続の▲の N）
 - 根拠: C-0034・C-0036・C-0037・C-0038・C-0039・C-0040・C-0041・C-0043・C-0045・C-0046・C-0108・C-0156・C-0157・C-0168・C-0173・C-0183・C-0192。課題は `plan/backlog.md` 2-1

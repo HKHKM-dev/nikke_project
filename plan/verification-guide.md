@@ -7,7 +7,7 @@
 
 - 1 回の検証は 1 つの問いで、検証記録 1 ファイルにする（書式は [records/verifications/README.md](../records/verifications/README.md)）。
 - 問いは「<事象> を <仮説> と読んで、モデルは実測と合うか」。解釈が割れるなら、仮説を分ける。
-- 編成は、観測したい事象に効きうる未確定の要素が最も少ないものにする（最小構成。AGENTS.md「事実と記録」）。単騎で観測できる事象は単騎で確かめる。多人数でも、観測したい事象のほかが機構の確定したキャラだけなら、機構の根拠にしてよい。未確定の要素が 2 つ以上混ざる録画は、残差の推移の記録と仮説の出どころにとどめる。
+- 編成は最小構成にする（多人数の録画の扱いも含めて AGENTS.md「事実と記録」）。
 - 新しく撮る前に、既にある結論・観測値・録画で答えられないかを探す（[claims.md](claims.md)・[residuals.md](residuals.md)・[captures/recordings.md](captures/recordings.md)）。過去の録画の読み直しでも確定にできる（2.2 節）。
 
 ## 2. 検証の型と、確定にできる条件
@@ -23,9 +23,8 @@
 
 ### 2.2 確定にできる条件（この節が正）
 
-- 確定にするのは、根拠の等級が厳密一致・反復実測・データ明記のときだけ（AGENTS.md。等級の決め方は [claims.md](claims.md) の冒頭）。
-  - 厳密一致: 合わせ込みの定数を持たない式やデータから計算した値と、実測が端数まで一致した。
-  - 反復実測: 値を決めるのに使っていない実測でも再現した。**仮説・値・読み方を決めるのに使った録画（結論の `decidedOn`）は再現に数えない**。それらのほかに、別の録画で 1 回以上の再現が要る。同じ録画でも、決めた回より後の回が合えば再現に数える（回で数える。機械は録画で数えるので、人が `gradeReason` に、どの回で決めてどの回で再現したかを書く）。
+- 確定にするのは、根拠の等級が厳密一致・反復実測・データ明記のときだけ（等級の定義は [claims.md](claims.md) の冒頭）。
+  - 反復実測の再現には、**仮説・値・読み方を決めるのに使った録画（結論の `decidedOn`）を数えない**。同じ録画でも、決めた回より後の回が合えば再現に数える（回で数える。機械は録画で数えるので、人が `gradeReason` に、どの回で決めてどの回で再現したかを書く）。
 - **撮る前の予測は確定の条件にしない**（読み直しも、読む前の予測は要らない）。予測は撮影計画の道具（4 節）。
 - 1 つの値を多くの録画にまとめて合わせたときは、値を決めるのに要った録画（決めた組）と再現を分け、決めた組だけの値で残りの録画が合うことを検証記録に書く。
 - 結論の一部にだけ再現が無いときは、その部分を別の結論（仮説）に分ける。
@@ -83,7 +82,7 @@
 
 ## 9. 閉じる・PR
 
-- 検証記録の「結果」「分かったこと・分からないこと」「次に撮るもの」を書き、冒頭の「結論」に ID を足し、`npm run records:close -- V-NNNN --mark` で閉じる前の検査を通して状態を `完了` にする。検査は、結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない（上なら `gradeReason`）・確定の反復実測に `decidedOn` がある・この記録の観測値の組に最小構成の警告が無い・確定の結論に指標がある（等級の候補が出る）・この記録の根拠の観測値が許容内・予測と合う仮説が 2 つ以上でない（この 4 つは `judgment` で上書きできる。データ明記は指標を問わない）・確定の結論の根拠の観測値に `scope` がある・本文の節が空でない（[design-records-automation.md](design-records-automation.md) 3.7 節）。CI と同じ確認も回る（急ぐときは `--no-ci`）。
+- 検証記録の「結果」「分かったこと・分からないこと」「次に撮るもの」を書き、冒頭の「結論」に ID を足し、`npm run records:close -- V-NNNN --mark` で閉じる前の検査を通して状態を `完了` にする。落ちた検査は道具が出す（検査の一覧は `packages/core/scripts/records-close.ts` の冒頭。`judgment` で上書きできるものは 8 節）。CI と同じ確認も回る（急ぐときは `--no-ci`）。
 - 閉じた記録にも、録画・観測値・表・結果を書き足してよい（[design-investigation-review.md](design-investigation-review.md) 4.2 節）。結論の根拠が変わったら `records:close` を回し直す。
 - [roadmap.md](roadmap.md) を更新し（Stage にしたときはその節、そうでなければ今後の課題）、[AGENTS.md](../AGENTS.md)「コミット手順」で PR を出す。題名の案は `records:close` が出す。
 
@@ -91,15 +90,15 @@
 
 結論の対象の `--mechanism` の語彙（`claims.ts` の `CLAIM_MECHANISMS`）ごとに、見るものと置き場所をまとめる。指標の全部は `observations.ts` の `METRICS`、レシピの全部は `records:read -- --list`、解析ツールの全部は [captures/tools.md](captures/tools.md)。
 
-| 機構            | 見るもの                                          | モデル側の主な置き場所                                              | 代表の指標                                                                                                | 読む道具                                                                                           | 手引き（[captures/guide.md](captures/guide.md)） |
-| --------------- | ------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| `firing`        | 発の間隔・リロード・チャージ・ハイドからの 1 発目 | `cadence.ts`・`weapons.ts`・`frame/shooter.ts`・`frame/firing.ts`   | `shotCount`・`shotIntervals`・`shotIntervalMean`・`magazineShots`・`reloadFramesAt`・`reloadToNextShotAt` | レシピ `reload-segments`・`hud-jumps`・`charge-shots`、`reload.ts`・`ammo.ts`・`hud.ts`            | 画面の読み方・動画と道具                         |
-| `gauge`         | バーストゲージの溜まり方と満タン                  | `burst/controller.ts`・`frame/firstPass.ts`                         | `gaugeFullFrame`・`gaugeFullShotIndex`・`shotGauge`                                                       | `gauge.ts`（BURST バーの px）                                                                      | 画面の読み方                                     |
-| `burstChain`    | バーストの段・CT・フルバーストの入り              | `burst/schedule.ts`・`burst/controller.ts`・`burst/dynamic.ts`      | `fullBurstStarts`・`fullBurstStartIntervals`・`burstActivationSlots`・`cooldownCutFrames`                 | `hud.ts`、レシピ `burst-panel`（右のバースト欄の替わり目・00.00・CT の明け）                       | 画面の読み方                                     |
-| `clock`         | ゲーム内の時計と動画のフレーム・止まり            | `time.ts`・`burst/schedule.ts`（`videoFrameOf`）                    | `videoFramesBetween`                                                                                      | `timer.ts`・`timer-ticks.ts`                                                                       | 動画と道具                                       |
-| `target`        | 的のジャンプ・着地点・狙えない時間                | `data/enemies.json` の出来事・`frame/events.ts`・`frame/landing.ts` | （時刻は記録の観測値が多い）                                                                              | レシピ `near-landing`・`midfar-landing`・`smg-mags`（中遠の着地点の注記）、`aim.ts`・`coverage.ts` | 射撃場の条件                                     |
-| `damageFormula` | 1 ヒットの値（バフの掛かり方・会心・コア・距離）  | `damage.ts`                                                         | `hitDamage`・`perShotHitDamage`・`burstHitDamage`・`dotHitDamage`・`skillHitDamage`                       | レシピ `hud-jumps`、`hud.ts`。スキルの帯は `banner.ts`                                             | 画面の読み方                                     |
-| `targetTable`   | 的の表のコア命中率・弾丸命中率                    | `data/enemies.json` の `range-bigarms`                              | `coreHitRate`・`bulletHitRate`                                                                            | レシピ `sg-pellets`・`smg-mags`・`smg-cores`・`charge-shots`                                       | 射撃場の条件                                     |
+| 機構            | 見るもの                                          | モデル側の主な置き場所                                              | 代表の指標                                                                                                | 読む道具                                                                                | 手引き（[captures/guide.md](captures/guide.md)） |
+| --------------- | ------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `firing`        | 発の間隔・リロード・チャージ・ハイドからの 1 発目 | `cadence.ts`・`weapons.ts`・`frame/shooter.ts`・`frame/firing.ts`   | `shotCount`・`shotIntervals`・`shotIntervalMean`・`magazineShots`・`reloadFramesAt`・`reloadToNextShotAt` | レシピ `reload-segments`・`hud-jumps`・`charge-shots`、`reload.ts`・`ammo.ts`・`hud.ts` | 画面の読み方・動画と道具                         |
+| `gauge`         | バーストゲージの溜まり方と満タン                  | `burst/controller.ts`・`frame/firstPass.ts`                         | `gaugeFullFrame`・`gaugeFullShotIndex`・`shotGauge`                                                       | `gauge.ts`（BURST バーの px）                                                           | 画面の読み方                                     |
+| `burstChain`    | バーストの段・CT・フルバーストの入り              | `burst/schedule.ts`・`burst/controller.ts`・`burst/dynamic.ts`      | `fullBurstStarts`・`fullBurstStartIntervals`・`burstActivationSlots`・`cooldownCutFrames`                 | `hud.ts`、レシピ `burst-panel`（右のバースト欄の替わり目・00.00・CT の明け）            | 画面の読み方                                     |
+| `clock`         | ゲーム内の時計と動画のフレーム・止まり            | `time.ts`・`burst/schedule.ts`（`videoFrameOf`）                    | `videoFramesBetween`                                                                                      | `timer.ts`・`timer-ticks.ts`                                                            | 動画と道具                                       |
+| `target`        | 的のジャンプ・着地点・狙えない時間                | `data/enemies.json` の出来事・`frame/events.ts`・`frame/landing.ts` | （時刻は記録の観測値が多い）                                                                              | レシピ `near-landing`・`midfar-landing`・`smg-mags`（中遠の着地点の注記）、`aim.ts`     | 射撃場の条件                                     |
+| `damageFormula` | 1 ヒットの値（バフの掛かり方・会心・コア・距離）  | `damage.ts`                                                         | `hitDamage`・`perShotHitDamage`・`burstHitDamage`・`dotHitDamage`・`skillHitDamage`                       | レシピ `hud-jumps`、`hud.ts`。スキルの帯は `banner.ts`                                  | 画面の読み方                                     |
+| `targetTable`   | 的の表のコア命中率・弾丸命中率                    | `data/enemies.json` の `range-bigarms`                              | `coreHitRate`・`bulletHitRate`                                                                            | レシピ `sg-pellets`・`smg-mags`・`smg-cores`・`charge-shots`                            | 射撃場の条件                                     |
 
 ## 付録 B. 機構を変えたとき
 
