@@ -1,0 +1,200 @@
+{
+  "verification": "V-0479",
+  "note": "撮影の依頼の B（アニス：スター（I）+ デルタ（II）+ ソーダ：トゥインクルバニー（III・操作・AUTO 射撃 ON）、オートバースト ON・灼熱のタブ・スペック固定 ON・一時停止なし）の予測。H-a（ヒットの時点の撃つ側のバフを全部見る）は setup の上書きで表せないので、値は検証記録の「予測」に手で書いた。比べる観測値は B の録画 543・544（observations。A の録画 542 は同じ指標でも編成が違うので結び付けない）",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 314,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-b",
+      "note": "いまのモデル（C-0582 の案 1）。発動の直前のバフに、同じ発動で自分に付いた burst スロットの効果だけを足す。アニス：スターのフルバーストの始まりの攻撃力▲・攻撃ダメージ▲は発動の後に付くので乗らない"
+    },
+    {
+      "id": "H-a",
+      "note": "ヒットの時点の撃つ側のバフを全部見る。モデルに無い読みなので、アニス：スター S2 の攻撃力▲（effects[0]）と攻撃ダメージ▲（effects[2]）のきっかけを、フルバーストの始まりからアニス：スターのバースト使用（I。ソーダ：トゥインクルバニーの III の発動より前で、10 秒の維持がヒットまで続く）に替えて、ヒットに乗る値を出す近似。ソーダ：トゥインクルバニーの S1 の攻撃ダメージ▲（未対応）がヒットの前に付いた回は、この値より大きくなる（検証記録の「予測」）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 17,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 1,
+              "durationRef": 2,
+              "condition": {
+                "selfState": "myOwnStar"
+              }
+            }
+          },
+          {
+            "rid": 17,
+            "skill": "skill2",
+            "replace": 2,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "attackDamage",
+              "ref": 6,
+              "durationRef": 7
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "soda-burst-1",
+      "note": "ソーダ：トゥインクルバニーの 1 回目のバーストスキルダメージ（会心なし）",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "observations": ["543-08", "544-08"]
+    },
+    {
+      "id": "soda-burst-2",
+      "note": "ソーダ：トゥインクルバニーの 2 回目のバーストスキルダメージ（会心なし）",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "observations": ["543-09", "544-09"]
+    },
+    {
+      "id": "soda-burst-3",
+      "note": "ソーダ：トゥインクルバニーの 3 回目のバーストスキルダメージ（会心なし）",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "observations": ["543-10", "544-10"]
+    },
+    {
+      "id": "soda-burst-4",
+      "note": "ソーダ：トゥインクルバニーの 4 回目のバーストスキルダメージ（会心なし）",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "observations": ["543-11", "544-11"]
+    },
+    {
+      "id": "soda-burst-5",
+      "note": "ソーダ：トゥインクルバニーの 5 回目のバーストスキルダメージ（会心なし）",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "observations": ["543-12", "544-12"]
+    },
+    {
+      "id": "soda-burst-delays",
+      "note": "III のタイマーの 00.00 からバーストスキルダメージのヒットまでの動画のフレーム（5 回）",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "observations": ["543-07", "544-07"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-23",
+    "commit": "039f89a1d75f8f5099dab24e53ff807eb338c079",
+    "values": {
+      "H-b": {
+        "soda-burst-1": 1245002.036,
+        "soda-burst-2": 1245002.036,
+        "soda-burst-3": 753157.4520000002,
+        "soda-burst-4": 753157.4520000002,
+        "soda-burst-5": 753157.452,
+        "soda-burst-delays": [118, 118, 118, 118, 118]
+      },
+      "H-a": {
+        "soda-burst-1": 1905690.5434800007,
+        "soda-burst-2": 1905690.5434800005,
+        "soda-burst-3": 1246618.8009200003,
+        "soda-burst-4": 1246618.80092,
+        "soda-burst-5": 1246618.8009200003,
+        "soda-burst-delays": [118, 118, 118, 118, 118]
+      }
+    }
+  }
+}
