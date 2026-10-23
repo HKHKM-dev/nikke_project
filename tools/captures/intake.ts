@@ -166,7 +166,8 @@ function copyFromRecord(src: string): boolean {
     console.log('Drive の record に取り込み元の写しが無い（まだ上がっていない）ので、E: から上げる');
     return false;
   }
-  const r = rclone(['backend', 'copyid', `${remoteName()}:`, hit.ID, `nikke_project_captures/${folder}/${file}`]);
+  // コピー先はリモートの名前を付けて書く（付けないとローカルのパスと見なされ、手元へダウンロードされる。2026-10-23 の試し）
+  const r = rclone(['backend', 'copyid', `${remoteName()}:`, hit.ID, remoteFile]);
   if (r.status !== 0) {
     console.error(`Drive の中のコピーに失敗した（E: から上げる）: ${r.stderr.trim()}`);
     return false;

@@ -160,16 +160,25 @@ try {
           );
         } else {
           if (!t.local) writeFileSync(join(pair.local, 'RCLONE_TEST'), '');
-          if (!t.remote) rclone(['touch', `${pair.remote}/RCLONE_TEST`]);
+          // Drive 側はローカルのものを写す（更新時刻をそろえる。別々に作ると bisync が食い違いと見る）
+          rclone(['copyto', join(pair.local, 'RCLONE_TEST'), `${pair.remote}/RCLONE_TEST`]);
         }
       }
     }
-    const args = bisyncArgs(pair, {
-      resync: values.resync,
-      dryRun: values['dry-run'],
-      checkAccess,
-      verbose: !hook || values['dry-run'],
-    });
+    // bisync はフィルタの指紋（.md5）をフィルタの隣に書く。リポジトリの中だと worktree ごとに無くなるので、
+    // 記録の場所に写して使う（中身が変わったときだけ書き直す。変われば --resync が要る）
+    const filters = join(stateDir, `filters-${pair.name}.txt`);
+    const text = readFileSync(pair.filters, 'utf8');
+    if (!existsSync(filters) || readFileSync(filters, 'utf8') !== text) writeFileSync(filters, text);
+    const args = bisyncArgs(
+      { ...pair, filters },
+      {
+        resync: values.resync,
+        dryRun: values['dry-run'],
+        checkAccess,
+        verbose: !hook || values['dry-run'],
+      },
+    );
     const started = Date.now();
     const r = rclone(args, !hook);
     if (hook) writeFileSync(join(stateDir, `last-${pair.name}.log`), `${r.stdout}${r.stderr}`);
