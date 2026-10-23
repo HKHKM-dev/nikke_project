@@ -1,0 +1,5 @@
+# rclone bisync のフィルタ（E:/nikke_project_captures ⇄ Drive の nikke_project_captures。plan/design-cloud-environment.md 4.1 節）。
+# 変えたら、この対だけ --resync が要る（npm run drive:sync -- --pair captures --resync --dry-run で見てから）。
+# desktop.ini は Windows のフォルダの設定のファイル。derived/ は作り直せる中間出力のキャッシュ。
+- desktop.ini
+- /derived/**

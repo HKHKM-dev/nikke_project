@@ -11,9 +11,10 @@
 // - 録画（3〜4 桁の番号。L- は扱わない。plan/design-recording-renumber.md）は、records/recordings/<録画>.json と
 //   records/observations/<録画>.json を移し、観測値の ID の頭（<録画>-NN）ごと置き換える。文書の中は確かさの高い形（「録画」の後の
 //   番号の並び・バッククォートの番号・観測値の ID・ファイル名・records/ の JSON の文字列）だけを置き換え、同じ行に「録画」がある素の
-//   番号は場所を出す（人が見る）。録画の置き場所（E:）とバックアップ先（I:）の動画・スクショ・証拠フレーム・中間出力のキャッシュの
-//   名前も変え（tools/captures/renumber-files.ts）、plan/captures/backup-log.md に段落を足す。置き場所が無い環境では Rename-Item の
-//   行を出す（オーナーが回す）。
+//   番号は場所を出す（人が見る）。録画の置き場所（E:）の動画・スクショ・証拠フレーム・中間出力のキャッシュの名前も変え
+//   （tools/captures/renumber-files.ts）、Drive の nikke_project_captures でも同じ名前に変え（rclone moveto。Drive の中なので上げ直さない。
+//   derived は同期しないので変えない。plan/design-cloud-environment.md 4.4 節）、plan/captures/backup-log.md に段落を足す。置き場所が
+//   無い環境では Rename-Item の行を、rclone の準備が無い環境では rclone moveto の行を出す（オーナーが回す）。
 // - リベース・マージの途中では動かない（main と自分のブランチが同じ番号を足していると、どちらの参照か見分けられない）。リベースを
 //   中止し（git rebase --abort）、自分のブランチで振り直してから取り込み直す。
 // 振り直した後は npm run records:check（生成物を作り直して検査する。録画は npm run records:table も）。
@@ -30,7 +31,9 @@ import {
   renumberProblems,
   renumberRecordingInText,
 } from '../src/records/renumber.ts';
-import { backupDir, capturesDir } from '../../../tools/captures/dirs.ts';
+import { capturesDir } from '../../../tools/captures/dirs.ts';
+import { driveCaptures, driveUnavailable, lsjson, rclone } from '../../../tools/drive/rclone.ts';
+import { classifyDriveRenames, type DriveRename, driveRenames, topFolder } from '../../../tools/drive/sync-lib.ts';
 import {
   applyCaptureRenames,
   type CapturePlan,
@@ -163,13 +166,15 @@ if (mentioned.length > 0)
 
 let capture: CapturePlan | undefined;
 let applied: CapturePlan['renames'] = [];
+// Drive の名前（E: と同じに変える）
+let wanted: DriveRename[] = [];
+let drive: ReturnType<typeof classifyDriveRenames> | undefined;
+let driveSkip: string | null = null;
+const driveApplied: DriveRename[] = [];
 if (kind === 'recording') {
   const newFile = renumberedName(ledger!.file, oldId, newId)!;
   capture = planCaptureRenames({
-    roots: [
-      { label: 'E:', dir: capturesDir() },
-      { label: 'I:', dir: backupDir() ?? 'I:/マイドライブ/nikke_project_captures' },
-    ],
+    roots: [{ label: 'E:', dir: capturesDir() }],
     folder: ledger!.folder,
     file: ledger!.file,
     oldId,
@@ -178,6 +183,27 @@ if (kind === 'recording') {
     mentioned: (frame) => [...texts.values()].some((t) => t.includes(frame)),
   });
   if (capture.problems.length > 0) fail(`録画の置き場所で止めた:\n${capture.problems.map((p) => `  ${p}`).join('\n')}`);
+  // Drive は、どれかを変える前に一覧で確かめる（古い名前と新しい名前の両方があれば上書きしないで止める）
+  wanted = driveRenames([...capture.renames, ...capture.done]);
+  driveSkip = wanted.length === 0 ? null : driveUnavailable();
+  if (wanted.length > 0 && driveSkip === null) {
+    const names = new Set<string>();
+    for (const f of new Set(wanted.flatMap((r) => [topFolder(r.from), topFolder(r.to)]))) {
+      const listing = lsjson(f === '' ? driveCaptures() : `${driveCaptures()}/${f}`, [
+        '--files-only',
+        '--max-depth',
+        '1',
+      ]);
+      if (listing === null)
+        fail(`Drive の ${f === '' ? '根' : f} の一覧を取れなかった（rclone の準備とネットワークを確かめる）`);
+      for (const e of listing) names.add(f === '' ? e.Name : `${f}/${e.Name}`);
+    }
+    drive = classifyDriveRenames(wanted, (p) => names.has(p));
+    if (drive.both.length > 0)
+      fail(
+        `Drive に古い名前と新しい名前の両方がある（上書きしない）:\n${drive.both.map((r) => `  ${r.from} / ${r.to}`).join('\n')}`,
+      );
+  }
   if (!dryRun) {
     const r = applyCaptureRenames(capture.renames, ledger!.file, newFile);
     applied = r.applied;
@@ -185,6 +211,18 @@ if (kind === 'recording') {
       console.error(`名前を変えている途中で失敗した（リポジトリは書き換えていない。直してから回し直す）: ${r.error}`);
       for (const a of applied) console.error(`  変えた: ${a.label} ${a.from} → ${a.to}`);
       process.exit(1);
+    }
+    for (const d of drive?.apply ?? []) {
+      const m = rclone(['moveto', `${driveCaptures()}/${d.from}`, `${driveCaptures()}/${d.to}`]);
+      if (m.status !== 0) {
+        console.error(
+          `Drive の名前を変えている途中で失敗した（リポジトリは書き換えていない。直してから回し直す）: ${d.from} → ${d.to}: ${m.stderr.trim()}`,
+        );
+        for (const a of applied) console.error(`  変えた: ${a.label} ${a.from} → ${a.to}`);
+        for (const a of driveApplied) console.error(`  変えた: Drive ${a.from} → ${a.to}`);
+        process.exit(1);
+      }
+      driveApplied.push(d);
     }
   }
 }
@@ -224,12 +262,14 @@ for (const p of files) {
   if (!dryRun) writeFileSync(`${ROOT}${p}`, out);
 }
 const BACKUP_LOG = 'plan/captures/backup-log.md';
-if (!dryRun && applied.length > 0) {
+if (!dryRun && (applied.length > 0 || driveApplied.length > 0)) {
   // 前例（2026-10-05・06 の振り直し）と同じく、段落で書く
   const d = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');
   const when = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  const labels = [...new Set(applied.map((a) => a.label))].join(' と ');
+  const labels = [...new Set([...applied.map((a) => a.label), ...(driveApplied.length > 0 ? ['Drive'] : [])])].join(
+    ' と ',
+  );
   const video = applied.find((a) => a.kind === 'video');
   const others = applied.length - applied.filter((a) => a.kind === 'video').length;
   appendFileSync(
@@ -282,7 +322,19 @@ if (capture !== undefined) {
     console.log('この環境に無い置き場所。オーナーが回す（PowerShell）:');
     for (const r of listed) console.log(`  ${renameCommand(r)}`);
   }
-  if (!dryRun && applied.length > 0) console.log(`${BACKUP_LOG} に段落を足した`);
+  if (drive !== undefined) {
+    if (drive.apply.length > 0)
+      console.log(dryRun ? 'Drive の名前を変える（--dry-run。変えていない）:' : 'Drive の名前を変えた:');
+    for (const r of drive.apply) console.log(`  Drive ${r.from} → ${r.to}`);
+    if (drive.done.length > 0) console.log('Drive はもう変えてあった:');
+    for (const r of drive.done) console.log(`  Drive ${r.from} → ${r.to}`);
+    for (const r of drive.missing)
+      console.log(`注意: Drive に ${r.from} が無い（E: で ${r.to} にした。次の npm run drive:sync で上がる）`);
+  } else if (driveSkip !== null) {
+    console.log(`Drive では変えていない（${driveSkip}）。デスクトップで回す（rclone）:`);
+    for (const r of wanted) console.log(`  rclone moveto "${driveCaptures()}/${r.from}" "${driveCaptures()}/${r.to}"`);
+  }
+  if (!dryRun && (applied.length > 0 || driveApplied.length > 0)) console.log(`${BACKUP_LOG} に段落を足した`);
 }
 if (changed.some((c) => /\.(ts|tsx|mts|cts|js|mjs|cjs)$/.test(c.path)))
   console.log('コードの中も置き換えた。テストが例として使っている ID なら戻す（npm test で確かめる）');

@@ -147,7 +147,7 @@
 ### 4.2 回し方
 
 - `npm run drive:sync`（`tools/drive/sync.ts`）が 4 つの対を順に bisync する。回すのは作業の節目（2026-10-23 のオーナーの決定。11.1 節）:
-  - 道具の終わり: `intake.ts`・証拠フレームを切り出す道具・`records:renumber` が、終わりに `captures` の対を回す
+  - 道具の終わり: `intake.ts`・証拠フレームを切り出す道具（`still.ts`）・`records:renumber` が、終わりに扱ったファイルだけを Drive に置く（対の全体は回さない。両側に同じファイルができるので、次の bisync は何も送らない）
   - セッションの始め: デスクトップの SessionStart フックが、裏で全部の対を回す（`async`。応答は待たせない。クラウドで書いたものを取り込む）
   - 離席の前: 手で `npm run drive:sync` を回す。「クラウドで続ける」の前にも回す（Claude に頼んでもよい）
 - 節目と節目の間の変更は、PC が突然止まるとクラウドから見えない（2026-10-23 のオーナーの判断で許す）。
@@ -305,7 +305,22 @@
 - 項目 10（手引き `plan/cloud.md` と AGENTS.md）: 保留。段 ② の前に決める
 - 項目 11（段階の順と確かめ）: 承認。WIP の段を除いたので、段は ① 録画まわりの自動同期 → ② 受け口と小さいファイルの往復 → ③ クラウドでの取り込み → 通しの試験（9 節）
 
-## 12. 実施（承認後に書く）
+## 12. 実施
+
+### 12.1 段 ①（2026-10-23。録画まわりの自動同期）
+
+- 足したもの:
+  - `tools/drive/sync.ts`（`npm run drive:sync`・`npm run drive:conflicts`）: `captures` の対を rclone bisync で回す。4.2 節の設定・ロック・フックの間引き（30 分）・記録（ホームの下の `.nikke-sync/`）
+  - `tools/drive/rclone.ts`（rclone の呼び出しと、Drive に書けるかの判定）、`tools/drive/sync-lib.ts`（引数・衝突の名前・仕分けなど。テストは `sync-lib.test.ts`）、`tools/drive/filters/captures.txt`
+  - `.claude/settings.json` の SessionStart フック（`sync.ts --hook`。`async`。rclone の準備が無い環境とクラウド環境では何もしない）
+- 変えたもの:
+  - `intake.ts`: I: への robocopy をやめ、Drive の `nikke_project_captures/<種別>/` に置く（4.4 節）。Drive の中のコピーは、取り込み元を動かす前に行う（動かすと Drive for desktop が `record` の写しを消すため）。コピーした後は、E: の更新時刻を Drive の写しにそろえる（次の bisync で同じファイルと見なさせる）
+  - `still.ts`: `frames/` に切り出したら Drive にも上げる
+  - `records-renumber.ts`: I: を置き場所から外し、Drive の中の改名（`rclone moveto`）を足す。Drive に古い名前と新しい名前の両方があれば、どれも変える前に止める
+  - `dirs.ts`: `backupDir()`（I: のパス）を外し、取り込み元の `recordDir()` を足す
+  - 文書: [captures/storage.md](captures/storage.md)「運用」「バックアップ」、[captures/tools.md](captures/tools.md)
+- 確かめたこと（rclone の準備の前）: CI と同じ確認（format:check・lint・typecheck・test・build）が通る。rclone が無い環境では、`npm run drive:sync` は理由を出して終了コード 1、フックとクラウド環境では何もせず 0 で抜ける
+- 残り（オーナーの準備の後）: 9 節の段 ① の確かめ（空打ち・初回の `--resync`・Drive の中のコピーと更新時刻・セッションの始めの同期）
 
 ## この設計の外
 

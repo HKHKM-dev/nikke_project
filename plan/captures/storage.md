@@ -46,7 +46,7 @@ D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
    - スクショは、関連する録画と同じ種別フォルダに置く。録画に付かないスクショ（ステータス画面だけ など）は `ui/` に置く（名前は [index.md](index.md)「命名規約」）。
    - 例外: 旧プロジェクトの録画（`L-` の番号）は移さない（[index.md](index.md)「旧プロジェクトの録画」）。
 3. 録画は `records/recordings/<録画 id>.json` を 1 本足し、`npm run records:table` で録画の一覧（[recordings.md](recordings.md)）を作り直す。採用しなかった録画にも通し番号を振って載せ、採用しなかった理由を `conditionNote` に書く。スクショは `records/recordings/` に載せない（録画に付くものはファイル名の番号で結びつく。録画に付かないものは、それを読んだ記録（検証記録など）にファイル名を書く）。証拠フレームは `E:/nikke_project_captures/frames/` に切り出す（コミットしない）。
-4. Google Drive に同期する（下記）。移した録画・スクショ・証拠フレームはどれも `E:/nikke_project_captures/` の下にあるので、フォルダ全体を同期すれば全部バックアップされる。録画は `intake.ts` が取り込みの最後に同期し、sha256 も突き合わせる（[tools.md](tools.md)「解析ツール」の `intake.ts`）。スクショと証拠フレームは手で同期する。
+4. Google Drive に同期する（下記「バックアップ」）。移した録画・スクショ・証拠フレームはどれも `E:/nikke_project_captures/` の下にある。録画は `intake.ts` が取り込みの最後に Drive に置き、ハッシュを突き合わせる（[tools.md](tools.md)「解析ツール」の `intake.ts`）。`frames/` に切り出した証拠フレームは `still.ts` が上げる。ほかに足したもの（スクショ・手で置いたもの）は、デスクトップのセッションの始めか、離席の前の `npm run drive:sync` で上がる。
 
 ### 参照資料（`reference/`）
 
@@ -64,36 +64,51 @@ D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
 
 ## バックアップ
 
-`E:/nikke_project_captures/` と、旧プロジェクトのアーカイブ `E:/old_nikkecalc/` を Google Drive にバックアップする（Drive 上は同じ名前のフォルダ）。Google Drive for desktop がストリーミングモードで 2 アカウント分マウントされている。**使うのはメインアカウント側の `I:`**（別アカウントの `J:` は使わない）。
+`E:/nikke_project_captures/` は、Google Drive のマイドライブの `nikke_project_captures` と、デスクトップの rclone の双方向同期（bisync）でそろえる（2026-10-23 から。[../design-cloud-environment.md](../design-cloud-environment.md) 4 節）。片側で消したものは、Drive ではごみ箱へ、E: では `E:/nikke_sync_trash/captures/` へ移る（どちらも戻せる）。`derived/` と `desktop.ini` は同期しない（`tools/drive/filters/captures.txt`）。
+
+- 回すのは作業の節目（2026-10-23 のオーナーの決定）:
+  - 道具の終わり: `intake.ts` が取り込んだ録画を Drive に置き、`still.ts` が `frames/` に切り出した証拠フレームを上げ、`npm run records:renumber -- <古い番号> <新しい番号>` が Drive でも名前を変える（Drive の中で変えるので上げ直さない。[backup-log.md](backup-log.md) に段落を足す。[../design-recording-renumber.md](../design-recording-renumber.md) 5 節。手でリネームしない）
+  - デスクトップのセッションの始め: SessionStart フックが裏で `npm run drive:sync` を回す（30 分以内に回っていれば飛ばす）
+  - 離席の前: 手で `npm run drive:sync` を回す（「クラウドで続ける」の前にも。Claude に頼んでもよい）
+- 衝突（前の同期から両側で変わった）ファイルは両方を残し、名前に側を付ける（`<名前>.conflict-desktop.<拡張子>` と `<名前>.conflict-drive.<拡張子>`）。一覧は `npm run drive:conflicts`。中身を見て 1 つにまとめ、別名の方を消す。
+- 実行の記録は、ホームの下の `.nikke-sync/sync.log`（1 回 1 行。フックで回した rclone の出力は `last-captures.log`）。
+- 重大なエラー（終了コード 7）が出たら、`npm run drive:sync -- --pair captures --resync --dry-run` で何が動くかを見てから `--resync` する（`--resync` はローカルが勝つ）。フィルタを変えたときも `--resync` が要る。
+- Drive に同名の複製ができたら `rclone dedupe` で直す。
+- Drive for desktop の `I:` は見るためだけに使い、ここから書かない（2 つの道具で同じフォルダに書かない）。
+- 取り込み元の `H:/record/` は、Drive for desktop が「マイ コンピュータ/record」として同期している（rclone では扱わない）。
+
+### 準備（オーナーが 1 回だけ）
+
+1. rclone を入れる（`winget install Rclone.Rclone`）。
+2. Google Cloud の今のプロジェクト（サービスアカウントと同じでよい）で、OAuth の同意画面を External で作り、公開の状態を「本番」にする（「テスト」のままだと認可が 7 日で切れる）。認証情報で「デスクトップアプリ」の OAuth クライアント ID を作る。
+3. rclone のリモートを作る: `rclone config create gdrive drive client_id <クライアント ID> client_secret <クライアント シークレット> scope drive`。ブラウザが開くので、メインのアカウントで認可する（「このアプリは Google で確認されていません」の画面は、自分のアプリなので進めてよい）。名前を gdrive 以外にするなら、環境変数 `NIKKE_RCLONE_REMOTE` に入れる。
+4. 取り込み元の写しを Drive の中でコピーさせる（上げ直さない）なら、ユーザーの環境変数 `NIKKE_DRIVE_RECORD_FOLDER_ID` に「マイ コンピュータ/record」のフォルダ ID を入れる。無ければ E: から上げる。
+5. 初回: `npm run drive:sync -- --resync --dry-run` で送られるものを見る（2026-10-23 の見込みは、Drive に無い証拠フレーム 30 枚だけ。[../design-cloud-environment-notes.md](../design-cloud-environment-notes.md) 2.5 節）。合っていれば `npm run drive:sync -- --resync`（両側の根に `RCLONE_TEST` を置いてから、両側を合わせる）。
+
+鍵（rclone の設定ファイルのトークンと、クライアント シークレット）はリポジトリに置かない。
+
+### 旧プロジェクトのアーカイブ
+
+`E:/old_nikkecalc/` は、今までどおり手の robocopy で Google Drive に写す（Drive 上は同じ名前のフォルダ）。Google Drive for desktop がストリーミングモードで 2 アカウント分マウントされている。**使うのはメインアカウント側の `I:`**（別アカウントの `J:` は使わない）。
 
 ```bash
-robocopy "E:/nikke_project_captures" "I:/マイドライブ/nikke_project_captures" /E /R:1 /W:1
 robocopy "E:/old_nikkecalc" "I:/マイドライブ/old_nikkecalc" /E /R:1 /W:1
 ```
 
 - `/E` はサブディレクトリを含めて差分コピーする。コピー元で消したファイルはコピー先に残る（`/MIR` のようにミスが伝播しない）。リネームすると**コピー先に旧名が残る**ので、必要なら手で消す。
 - **Git Bash から実行しない。** `/E` がパス `E:/` に変換されて「無効なパラメーター」になる。PowerShell か cmd から実行する（パスも `\` 区切りで渡す）。
-- 録画の番号の振り直しは `npm run records:renumber -- <古い番号> <新しい番号>` が E: と I: の両方で名前を変え（I: の中で変えるので上げ直しは要らない）、[backup-log.md](backup-log.md) に段落を足す（[../design-recording-renumber.md](../design-recording-renumber.md) 5 節）。手でリネームしない。
-- 録画・スクショを足したタイミングで実行する。`intake.ts` で取り込んだ録画は、取り込みの中で 1 本ずつ同期される（失敗したら終了コード 1 で知らせるので、そのときは手で実行する）。
 - robocopy の終了コードは 0〜7 が正常（1 = コピーした、0 = 差分なし）。8 以上が失敗。
+- 写したら sha256 で中身を突き合わせる。`probe.ts` はどのディレクトリにも使える（`node tools/captures/probe.ts "I:/マイドライブ/old_nikkecalc"`）。見るのは `.mp4` だけなので、ほかは PowerShell の `Get-FileHash`（既定で SHA256）で突き合わせる。
 
-同期したら sha256 で中身を突き合わせる。`probe.ts` はどのディレクトリにも使える:
-
-```bash
-node tools/captures/probe.ts "I:/マイドライブ/nikke_project_captures"
-```
-
-`probe.ts` が見るのは `.mp4` だけなので、スクショと証拠フレームは PowerShell の `Get-FileHash`（既定で SHA256）で突き合わせる。
-
-同期の実行の記録は [backup-log.md](backup-log.md) にある（同期したら足す。`intake.ts` で同期した録画は `intake.ts` が 1 行足す。2026-10-05 までは [backup-log-old.md](backup-log-old.md)。凍結）。
+同期の実行の記録は [backup-log.md](backup-log.md) にある（同期したら足す。`intake.ts` で Drive に置いた録画は `intake.ts` が 1 行足す。2026-10-05 までは [backup-log-old.md](backup-log-old.md)。凍結）。
 
 ### 冗長性の現状と限界
 
-| 対象               | 冗長                                                                                                                               |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| 台帳               | Git → GitHub（`HKHKM-dev/nikke_project`）                                                                                          |
-| 録画・証拠フレーム | E: の実体 + Google Drive（`I:`）。**別拠点にコピーがある**                                                                         |
-| 取り込み元         | `H:/record/` にあるのは未読のものだけ（読んだものは移す）。バックアップ対象外。`E:/old_nikkecalc/` は Google Drive（`I:`）にもある |
+| 対象               | 冗長                                                                                                                                                                                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 台帳               | Git → GitHub（`HKHKM-dev/nikke_project`）                                                                                                                                                             |
+| 録画・証拠フレーム | E: の実体 + Google Drive（rclone の双方向同期。消したものは Drive のごみ箱と E: の退避フォルダに残る）。**別拠点にコピーがある**                                                                      |
+| 取り込み元         | `H:/record/` にあるのは未読のものだけ（読んだものは移す）。Drive for desktop が「マイ コンピュータ/record」として同期している（2026-09-28 から）。`E:/old_nikkecalc/` は Google Drive（`I:`）にもある |
 
 **注意: `I:` のローカル表示の空きは Drive 本体の容量ではなく、Google Drive デスクトップアプリのローカルキャッシュ置き場の空きに連動する。** 表示が少なくなってきたら、まずキャッシュドライブの設定を疑うこと。
 

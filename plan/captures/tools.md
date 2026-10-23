@@ -14,7 +14,8 @@
 ```bash
 node tools/captures/probe.ts                        # 全録画の素性を表で出力（records/recordings/ の素性の項目に写す）
 node tools/captures/fetch.ts <録画 id | 相対パス>... [--legacy] [--force]   # Drive から取り寄せる（storage.md「クラウド環境での取り寄せ」）
-node tools/captures/still.ts   <動画> --frame 947 --out out.png [--crop x,y,w,h] [--scale 900]
+node tools/captures/still.ts   <動画> --frame 947 --out out.png [--crop x,y,w,h] [--scale 900]   # frames/ に切り出したら Drive にも上げる
+npm run drive:sync [-- --pair captures] [--resync] [--dry-run]   # E: と Drive の双方向同期（storage.md「バックアップ」）。npm run drive:conflicts で衝突の一覧
 node tools/captures/diff.ts    <動画> --crop x,y,w,h [--from N] [--to N] --peaks [--csv out.csv]
 node tools/captures/probe-result.ts <動画...> [--list] [--out-dir DIR] [--samples 3]
 node tools/captures/gauge.ts <動画> [--from N] [--to N] [--mode events|jumps|series] [--step 1]
@@ -52,7 +53,7 @@ node tools/captures/mask-tune.ts <録画 id> [--top 15] [--maxFp 0.02]   # 的�
 - `charge-shots`: SR・RL 単騎・スペック固定 ON・3 分モードの録画で、区間（1〜6）ごとの撃った発・総ダメージに出ない発（発の刻みの抜け）・フルチャージで出た発・そのうちコアを外した発と、撃った発の合計（V-0090 の読み方。[../design-charge-shots.md](../design-charge-shots.md)）。総ダメージの増分（hud-jumps のキャッシュ）を `--opt body=<胴体の 1 発>` の格子で発に分け、刻み・リロードの空き・装弾数（増分の列から測る）の格子をたどって、抜け・部分チャージの発・ジャンプの窓を見つける。抜けがコンテナの発（C-0108）か外れかは分けない（画面を見て人が分ける）。窓がリロードと重なって 5 つ見つからなければ誤りにするので、`--opt cuts=<f>,…`（窓の前の最後の発の動画のフレーム）を与える。`--opt start=<戦闘開始の動画のフレーム>` で注記のフレームを戦闘開始からの数でも書く。
 - `burst-panel`: 右のバースト欄の表示の時刻（[../design-burst-panel-recipe.md](../design-burst-panel-recipe.md)）。I → II・II → III の六角形の替わり目（前の段の色の最後のフレームの次）、III のタイマーの 00.00（II → III の後、バーの行が紫になった最初のフレーム）、段ごとの CT の明け（顔の枠の CT の秒が消えたフレーム。値は段の表示の事象の 15f 前までにあるものだけで、ほかの候補は note に並べる。偽物が混ざるので画で確かめる）。欄を全フレーム切り出した特徴を `derived/<録画 id>/burst-panel@1.tsv` にキャッシュする（1 本 20〜60 秒）。手読みの値との照合は V-0447。新しい CT の秒（「40」など）・候補が 2 人の段の 2 人目の顔・欄を左に出した録画は読まない
 
-`intake.ts` は録画の取り込み（design-records-automation.md 3.3 節）。元ファイルを命名規約でリネームして置き場所の種別フォルダへ移し（`--copy` で元を残す）、素性（長さ・フレーム数・fps・大きさ・sha256）を取って `records/recordings/<録画 id>.json` を書く。編成・的・モード・スペック固定などは引数で渡し、無い項目は空（null）で出して人が埋める。日付は `--date`、無ければ元のファイル名の日付、無ければ更新日時。最後に、移した録画を [storage.md](storage.md)「バックアップ」の先（`I:/マイドライブ/nikke_project_captures/<種別>/`。環境変数 `NIKKE_BACKUP_DIR` で変えられる）へ robocopy で 1 本だけ同期し、両方の sha256 を突き合わせて、[backup-log.md](backup-log.md) に 1 行足す（sha256 の値は録画の JSON にあるので書かない）。同期先が無い・既に同じ名前がある・sha256 が違うときは終了コード 1（移動と JSON は済んでいる）。クラウド環境（Windows 以外で `NIKKE_BACKUP_DIR` が無い）と `--no-backup` では同期しない。取り込んだ後は `npm run records:table` と、キャラの確かめに `probe-result.ts --list`。
+`intake.ts` は録画の取り込み（design-records-automation.md 3.3 節）。元ファイルを命名規約でリネームして置き場所の種別フォルダへ移し（`--copy` で元を残す）、素性（長さ・フレーム数・fps・大きさ・sha256）を取って `records/recordings/<録画 id>.json` を書く。編成・的・モード・スペック固定などは引数で渡し、無い項目は空（null）で出して人が埋める。日付は `--date`、無ければ元のファイル名の日付、無ければ更新日時。最後に、移した録画を Drive の `nikke_project_captures/<種別>/` に置き（[storage.md](storage.md)「バックアップ」）、Drive の SHA256（無ければ md5）を突き合わせて、[backup-log.md](backup-log.md) に 1 行足す（sha256 の値は録画の JSON にあるので書かない）。取り込み元が `H:/record/` の下で、Drive for desktop が上げた写しが「マイ コンピュータ/record」にあれば（環境変数 `NIKKE_DRIVE_RECORD_FOLDER_ID`）、動かす前に Drive の中でコピーして上げ直さない（E: の更新時刻は Drive の写しにそろえる）。無ければ E: から上げる。Drive に同じ名前が既にあるときは、動かす前に止める。上げられない・ハッシュが違うときは終了コード 1（移動と JSON は済んでいる。`npm run drive:sync` で上げる）。rclone の準備が無い環境・クラウド環境・`--no-backup` では Drive に置かない。取り込んだ後は `npm run records:table` と、キャラの確かめに `probe-result.ts --list`。
 
 `gauge.ts` は画面右の BURST バー（x 1793〜1905・y 442）の充填率を 1 フレームずつ読む（Stage 7 のゲージ較正用）。バーストの欄を左に出した録画は `--side left`（x 8〜124。較正していない）。`events` は溜め始め・満タン・バー消失、`jumps` は 1 フレームで跳ねた増分（SR / SG の 1 発ずつ）、`series` は充填率の列。フルバースト中・CT 待ち・チェーン中はバーの位置に別の UI が出るので読めない（`-`）。**ゲージの較正を撮るときは、誰を操作しているか（照準画面が出ているニケ）を台帳に書く**。操作キャラと AI でゲージ量が違うらしい（[../verification.md](../verification.md) Stage 7 節）。
 

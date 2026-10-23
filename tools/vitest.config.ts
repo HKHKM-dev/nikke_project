@@ -4,6 +4,6 @@ export default defineConfig({
   test: {
     name: 'tools',
     environment: 'node',
-    include: ['captures/**/*.test.ts'],
+    include: ['captures/**/*.test.ts', 'drive/**/*.test.ts'],
   },
 });
