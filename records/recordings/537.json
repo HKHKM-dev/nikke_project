@@ -1,0 +1,41 @@
+{
+  "id": "537",
+  "date": "2026-10-23",
+  "folder": "range",
+  "file": "20261023-537_sr+sr+mg_ram+delta+ludmilla-wo_fire_ludmilla-wo-auto.mp4",
+  "original": "2026-10-23_22-54-48.mp4",
+  "durationSec": 201.9,
+  "frames": 12113,
+  "fps": 60,
+  "sizeMB": 244.6,
+  "sha256": "0a2fd5ff620f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 194,
+      "name": "ルドミラ：ウィンターオーナー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0475。ラム（AI）・デルタ（AI）・ルドミラ：ウィンターオーナー（操作・AUTO 射撃 ON）。オートバースト ON。出撃画面（灼熱タブ・3 分・スペック固定）と最後の戦闘履歴（キャラ名）が写っている"
+}

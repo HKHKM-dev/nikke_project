@@ -6163,182 +6163,6 @@
       "plus": 0
     },
     {
-      "observation": "258-01",
-      "element": "雪子 burst.effects[1]",
-      "key": "3611b4989ffa6415",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "258-02",
-      "element": "雪子 burst.effects[1]",
-      "key": "452486a355c0bfcc",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "258-03",
-      "element": "雪子 burst.effects[1]",
-      "key": "e217d286e11e7505",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "258-04",
-      "element": "雪子 burst.effects[1]",
-      "key": "09b002aed64d9fdd",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "258-05",
-      "element": "雪子 burst.effects[1]",
-      "key": "d49ba30ffa601de4",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "258-06",
-      "element": "雪子 burst.effects[1]",
-      "key": "596248378469db86",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "258-07",
-      "element": "雪子 burst.effects[1]",
-      "key": "34081fec48d1dd9d",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "258-08",
-      "element": "雪子 burst.effects[1]",
-      "key": "7f90f94fd5a4c4ea",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "258-10",
-      "element": "雪子 burst.effects[1]",
-      "key": "1732cd635ee8f852",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "258-12",
-      "element": "雪子 burst.effects[1]",
-      "key": "1770862dffc5e41e",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "258-20",
-      "element": "雪子 burst.effects[1]",
-      "key": "10989b9dae5f40ee",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
       "observation": "259-01",
       "element": "クイーン（真） burst.effects[1]",
       "key": "4d08db3b1a69d1b0",
@@ -6373,22 +6197,6 @@
         "range": {
           "start": [0, 12],
           "end": [0, 12]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "259-01",
-      "element": "雪子 burst.effects[1]",
-      "key": "4d08db3b1a69d1b0",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
         },
         "widen": 0,
         "narrow": 0
@@ -6435,22 +6243,6 @@
       }
     },
     {
-      "observation": "259-04",
-      "element": "雪子 burst.effects[1]",
-      "key": "c3b9461d6138bf0c",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
       "observation": "259-05",
       "element": "クイーン（真） burst.effects[1]",
       "key": "51990feee8e14439",
@@ -6485,22 +6277,6 @@
         "range": {
           "start": [0, 12],
           "end": [0, 12]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "259-05",
-      "element": "雪子 burst.effects[1]",
-      "key": "51990feee8e14439",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
         },
         "widen": 0,
         "narrow": 0
@@ -6547,22 +6323,6 @@
       }
     },
     {
-      "observation": "259-06",
-      "element": "雪子 burst.effects[1]",
-      "key": "06af970910ecaac6",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
       "observation": "259-07",
       "element": "クイーン（真） burst.effects[1]",
       "key": "517fc4d996996432",
@@ -6597,22 +6357,6 @@
         "range": {
           "start": [0, 12],
           "end": [0, 12]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "259-07",
-      "element": "雪子 burst.effects[1]",
-      "key": "517fc4d996996432",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
         },
         "widen": 0,
         "narrow": 0
@@ -6659,22 +6403,6 @@
       }
     },
     {
-      "observation": "259-08",
-      "element": "雪子 burst.effects[1]",
-      "key": "20ec97e9f8f84b6a",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
       "observation": "259-11",
       "element": "クイーン（真） burst.effects[1]",
       "key": "c37d82f40b8dbf95",
@@ -6709,22 +6437,6 @@
         "range": {
           "start": [0, 12],
           "end": [0, 12]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "259-11",
-      "element": "雪子 burst.effects[1]",
-      "key": "c37d82f40b8dbf95",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
         },
         "widen": 0,
         "narrow": 0
@@ -6771,22 +6483,6 @@
       }
     },
     {
-      "observation": "259-12",
-      "element": "雪子 burst.effects[1]",
-      "key": "657802de39cc5089",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
       "observation": "259-13",
       "element": "クイーン（真） burst.effects[1]",
       "key": "81d9bf5a074847c3",
@@ -6821,22 +6517,6 @@
         "range": {
           "start": [0, 12],
           "end": [0, 12]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "259-13",
-      "element": "雪子 burst.effects[1]",
-      "key": "81d9bf5a074847c3",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
         },
         "widen": 0,
         "narrow": 0

@@ -65,14 +65,16 @@
 
 予測は 2026-10-10（commit d7ec959）に出した。
 
-| 指標                                          | 実測             | 予測 H0               |
-| --------------------------------------------- | ---------------- | --------------------- |
-| window-end-1（buffWindowEndFromFullBurstEnd） | -4.5（`258-14`） | 0（+4.5、**許容外**） |
-| window-end-2（buffWindowEndFromFullBurstEnd） | （実測なし）     | 0                     |
-| window-end-3（buffWindowEndFromFullBurstEnd） | （実測なし）     | 0                     |
-| window-end-4（buffWindowEndFromFullBurstEnd） | （実測なし）     | 0                     |
+| 指標                                          | 実測         | 予測 H0 |
+| --------------------------------------------- | ------------ | ------- |
+| window-end-1（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| window-end-2（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| window-end-3（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| window-end-4（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
 
 <!-- records:predictions:end -->
+
+2026-10-23 の追記: C-0511 を C-0614 で置き換えて確定にしたとき（V-0475）、`258-14` を比べる観測値から記録にしたので、上の表に実測は出ない（読んだ値は下の文と観測値のとおり。予測 H0 から −4.5f で外れた）。
 
 2026-10-10 に読んだ（予測の commit 814277b の後）。
 

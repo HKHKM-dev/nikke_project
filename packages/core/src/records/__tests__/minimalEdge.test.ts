@@ -63,31 +63,37 @@ describe('結論の edge', () => {
   });
 });
 
-// 録画 258 は雪子のバーストを使う編成。雪子 burst の effects[1]（1more の攻撃力▲）は C-0352（確定）と C-0511（仮説・edge）に結ぶ
+// 録画 258 は雪子のバーストを使う編成。雪子 burst の effects[1]（1more の攻撃力▲）は C-0352（確定）と C-0614 に結ぶ。
+// C-0614 は確定なので、ここでは仮説・edge に戻した形（確定にする前の C-0511 と同じ）を基にする
 const rec = recordings.get('258')!;
 const yukiko = elementsOf(rec, ctx).find((e) => e.places.includes('data/skills/871.json の burst の effects[1]'))!;
-const withClaims = (patch: (byId: Map<string, Claim>) => void) => {
+const asOpenEdge = (c: Claim, edge: NonNullable<Claim['edge']>) => {
+  c.state = '仮説';
+  c.edge = edge;
+};
+const withClaims = (patch: (byId: Map<string, Claim>) => void = () => {}) => {
   const byId = new Map(claims.map((c) => [c.id, structuredClone(c)]));
+  asOpenEdge(byId.get('C-0614')!, { start: [0, 7], end: [0, 7] });
   patch(byId);
   return { ...ctx, claims: [...byId.values()] };
 };
 
 describe('端だけ未確定の判定', () => {
   it('returns the range of the open edge hypothesis', () => {
-    expect(edgeRangeOf(yukiko, rec, ctx)).toEqual({ start: [0, 7], end: [0, 7] });
+    expect(edgeRangeOf(yukiko, rec, withClaims())).toEqual({ start: [0, 7], end: [0, 7] });
   });
 
   it('is not edge-only without edge, without a confirmed claim, with another open claim, or for another place', () => {
-    const noEdge = withClaims((m) => delete m.get('C-0511')!.edge);
+    const noEdge = withClaims((m) => delete m.get('C-0614')!.edge);
     expect(edgeRangeOf(yukiko, rec, noEdge)).toBeUndefined();
     const noConfirmed = withClaims((m) => (m.get('C-0352')!.state = '仮説'));
     expect(edgeRangeOf(yukiko, rec, noConfirmed)).toBeUndefined();
     const otherPlace = withClaims(
-      (m) => (m.get('C-0511')!.subject = { places: ['data/skills/871.json の burst の effects[0]'] }),
+      (m) => (m.get('C-0614')!.subject = { places: ['data/skills/871.json の burst の effects[0]'] }),
     );
     expect(edgeRangeOf(yukiko, rec, otherPlace)).toBeUndefined();
     const mixed = { ...yukiko, claims: [...yukiko.claims, 'C-0510'] };
-    const both = withClaims((m) => delete m.get('C-0510')!.edge);
+    const both = withClaims((m) => (m.get('C-0510')!.state = '仮説'));
     expect(edgeRangeOf(mixed, rec, both)).toBeUndefined();
   });
 
@@ -96,7 +102,7 @@ describe('端だけ未確定の判定', () => {
     const two = withClaims((m) => {
       const c = m.get('C-0510')!;
       c.subject = { places: ['data/skills/871.json の burst の effects[1]'] };
-      c.edge = { start: [-2, 3], end: [1, 9] };
+      asOpenEdge(c, { start: [-2, 3], end: [1, 9] });
     });
     expect(edgeRangeOf(mixed, rec, two)).toEqual({ start: [-2, 7], end: [0, 9] });
   });
@@ -158,6 +164,7 @@ describe('sim で端を動かす', () => {
 });
 
 describe('感度で外れる組と残る組', () => {
+  const openCtx = withClaims();
   const o = observations.find((x) => x.id === '258-04')!;
   const slot = rec.team.findIndex((m) => m.rid === 871);
   const windows = itemsOf(runSimulation(buildTeamInput(rec, o.compare!.setup, data)).history, {
@@ -166,7 +173,7 @@ describe('感度で外れる組と残る組', () => {
     skill: 'burst',
     effectIndex: 1,
   });
-  const entryOf = (obs: Observation) => sensitivityOf(obs, ctx).find((e) => e.element === yukiko.name)!;
+  const entryOf = (obs: Observation) => sensitivityOf(obs, openCtx).find((e) => e.element === yukiko.name)!;
 
   it('drops the element for an observation far from the edges (258-04)', () => {
     const e = entryOf(o);
@@ -189,12 +196,12 @@ describe('感度で外れる組と残る組', () => {
 
   it('treats a result of another range, or of P−・P+, as stale', () => {
     const c: Claim = { ...claims.find((x) => x.id === 'C-0350')!, minimal: undefined, observations: [o.id] };
-    const key = sensitivityKey(o, rec, ctx);
+    const key = sensitivityKey(o, rec, openCtx);
     const run = (entry: Partial<SensitivityEntry>) =>
       relevanceOf(
         [c],
         observations,
-        ctx,
+        openCtx,
         new Map([
           [
             `${o.id}|${yukiko.name}`,
