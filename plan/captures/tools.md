@@ -1,7 +1,7 @@
 # 解析ツール
 
 - 関連: [protocol.md](protocol.md)（撮影の手順）、[index.md](index.md)（命名規約・台帳・キャラの確かめ方）、[storage.md](storage.md)（置き場所・バックアップ・取り寄せ）、[guide.md](guide.md)（撮影と読み取りの落とし穴）、[../verification-guide.md](../verification-guide.md)（検証の流れ）
-- 2026-10-11 に index.md の「フレーム番号の約束」「解析ツール」「証拠フレームの切り出し」を移した（[../design-investigation-review.md](../design-investigation-review.md) 7.2 節）。ツールの座標や既定値は、ツールの冒頭のコメントが正。
+- ツールの座標や既定値は、ツールの冒頭のコメントが正。
 
 ## フレーム番号の約束
 
