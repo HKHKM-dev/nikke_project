@@ -17,8 +17,8 @@
 // 射撃に効く効果も即時効果も無い編成では、射撃の列は planShots、時刻表は planDynamicSchedule と 1 フレームも違わない（1.3 節）。
 //
 // Stage 11（plan/design-stage11.md 3 節）: 対象 burstUsers（「直前にバーストスキルを使用した味方」）は発火ごとに対象が変わるので、
-// 窓を対象の枠ごとに持つ。回復（heal）は手順 3 の最初に当て、射撃の回数起点なら次のフレームに送って healed を立てる
-// （skills/heals.ts の healFrameOf）。
+// 窓を対象の枠ごとに持つ。回復（heal）は手順 3 の最初に当て、射撃の回数起点なら、撃った枠より後ろの枠にはこのフレーム、
+// 自分と前の枠には次のフレームに送って healed を立てる（skills/heals.ts の healFrameOf。V-0490、C-0628）。
 //
 // Stage 11 アリス編（plan/design-stage11.md 19.3 節）: 対象「最終攻撃力が最も高い味方 N 機」（topAttack）の射撃系・即時効果があるときだけ、
 // 攻撃力の timed 効果の窓も同じ TriggerTracker で追い（射撃には使わず順位のためだけ）、発火のフレームで順位を出して対象を決める。
@@ -959,11 +959,12 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (t.onBurstUse && burstEffects.some((a) => a.slotIndex === t.slotIndex)) reserveDotTicks(t, f);
     }
 
-    // 回復を先に当てる。射撃の回数起点は次のフレームに送り（窓の開始と同じ規則）、それ以外はこのフレームの healed に立てる
+    // 回復を先に当てる。射撃の回数起点は、撃った枠より後ろの枠にはこのフレーム、ほかの枠には次のフレームに送り（V-0490）、
+    // それ以外はこのフレームの healed に立てる
     for (const src of heals) {
       if (!src.fires(ev)) continue;
-      const at = healFrameOf(src.effect, f);
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev))) {
+        const at = healFrameOf(src.effect, f, src.sourceSlotIndex, target);
         if (at < frames && !lists.applyHeal(src.effect, src.sourceSlotIndex, target, at)) continue;
         if (at === f) {
           healed[target] = true;

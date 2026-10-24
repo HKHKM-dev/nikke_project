@@ -34,7 +34,8 @@
             "en": "Every 10 normal attacks (the 10th, 20th, 30th... overall) heal all allies and trigger \"when healed\" each time (a one-off heal; it counts as applied even at full HP, as read for Helm's treasure S1 in C-0345). Metal γ, the condition, lasts from the start to the end of battle (it is removed only when an ally is incapacitated, which does not happen on the range), so no condition is written. The healed amount does not affect damage"
           },
           "claims": [
-            "C-0570"
+            "C-0570",
+            "C-0628"
           ]
         }
       ],

@@ -189,5 +189,39 @@
         "condition": "auto"
       }
     }
+  },
+  {
+    "id": "475-08",
+    "recording": "475",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0490",
+    "readAt": "2026-10-24",
+    "value": 57573,
+    "description": "マナ（1 枠目）の 10 発目と同じフレーム（f854）のアスカ（2 枠目）の 10 発目（コア・会心なし、距離ボーナスあり）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "475-01 と同じ分け方（読み直し）。増分 94,685 からマナ ×1.3（37,112）を引いた値（S1 ありの組の倍率 1.3）"
+    },
+    "note": "S1 の付き始めの 1 発。475-01 の「1 発のずれ」を 1 発の値で比べる（V-0490）",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 57,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
   }
 ]
