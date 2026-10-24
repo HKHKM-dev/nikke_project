@@ -133,20 +133,23 @@ describe('持続の命中率▲（C-0170）', () => {
     const note = calc.slots[LITER]!.notes.find((x) => x.code === 'auto-condition')!;
     expect(note.message.ja).toContain('C-0170');
     expect(note.message.ja).toContain('C-0192');
-    // ドレイク（SG）は弾丸命中率に効かせない
+    // ドレイク（SG）は近だけ弾丸命中率に効かせる（C-0631）
     const drake = calc.slots[1]!.notes.find((x) => x.code === 'auto-condition')!;
-    expect(drake.message.ja).toContain('C-0157');
+    expect(drake.message.ja).toContain('C-0631');
     expect(drake.message.ja).not.toContain('C-0192');
   });
 
-  it('keeps the plan value (constant N only) for the gauge of the first pass, and SG parts have no table bullet hit rate', () => {
+  it('keeps the plan value (constant N only) for the gauge of the first pass, and SG parts carry the table bullet hit rate at near only', () => {
     const spans = hitRateSpansOf(plan.landing, input.slots.length)[LITER]!;
     const inBuff = spans.find((s) => s.start <= nearFb.start + 10 && nearFb.start + 10 < s.end)!;
     const parts = landingPartsOf(plan.landing, input.slots[LITER]!, LITER, 'near');
     expect(inBuff.hitRate).toBe(parts[0]!.condition.hitRate);
     expect(inBuff.hitRate).toBe(parts[0]!.tableBulletHitRate);
     expect(
-      landingPartsOf(plan.landing, input.slots[1]!, 1, 'near').every((p) => p.tableBulletHitRate === undefined),
+      landingPartsOf(plan.landing, input.slots[1]!, 1, 'near').every((p) => p.tableBulletHitRate !== undefined),
+    ).toBe(true);
+    expect(
+      landingPartsOf(plan.landing, input.slots[1]!, 1, 'midNear').every((p) => p.tableBulletHitRate === undefined),
     ).toBe(true);
   });
 

@@ -7,6 +7,7 @@
 //   持続の▲（フルバーストの頭などで配られるもの。C-0170）が効いている区間は、使う時点で区間の N で出し直す（landingPartsWith）。
 // - 弾丸命中率: 的の表の値。通常攻撃のダメージと 1 パス目のゲージに掛ける（Stage 15 の condition.hitRate と同じ扱い）。
 //   AR・SMG・MG は命中率▲ N で外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にする（C-0192・C-0519。確かめたのは SMG の遠と中遠 B・C だけ。plan/design-hit-rate-up-bullet-h2.md）。
+//   SG は近（近 A・近 B）だけ同じ式にし（C-0631）、中近・中遠・遠は表の値のまま（C-0527）。
 //   コア命中率と同じく、計画は常時の N で出し、持続の▲の区間は landingPartsWith で出し直す（1 パス目のゲージは計画の値のまま）。
 // - 表が null（未測定）の項目・的の表の無い敵・並びより後の区間は、手入力の値（slot.condition）を使い、注記を出す。
 // - 配分（中遠の 3 か所）の区間は、着地点ごとの 1 トリガーの値を重みで足す（Σ w_k × T_k）。
@@ -163,7 +164,8 @@ export function coreHitRateWithHitRateUp(p: number, hitRateUp: number): number {
 
 /**
  * C-0192: 命中率▲ N で、弾丸命中率 p の外れの割合 1 − p を (1 − p) ^ (1 ÷ (1 − N)²) にする（H2）。N ≥ 1 なら 1。
- * N ≤ 0 は変えない（命中率▼の効き方は測っていない）。確かめたのは SMG の遠と中遠 B・C だけ（C-0519。plan/design-hit-rate-up-bullet-h2.md）
+ * N ≤ 0 は変えない（命中率▼の効き方は測っていない）。確かめたのは SMG の遠と中遠 B・C（C-0519）と SG の近（C-0631）だけ
+ * （plan/design-hit-rate-up-bullet-h2.md）
  */
 export function bulletHitRateWithHitRateUp(p: number, hitRateUp: number): number {
   if (hitRateUp <= 0) return p;
@@ -171,9 +173,16 @@ export function bulletHitRateWithHitRateUp(p: number, hitRateUp: number): number
   return 1 - (1 - p) ** (1 / (1 - hitRateUp) ** 2);
 }
 
-/** 命中率▲を弾丸命中率に効かせる武器種（AR・SMG・MG。SG は C-0157 と H2 が合わないので効かせない） */
-export function hitRateUpRaisesBulletHitRate(character: Pick<CharacterData, 'weaponType'>): boolean {
+/**
+ * 命中率▲を弾丸命中率に効かせるか。AR・SMG・MG はどの着地点も。SG は近（近 A・近 B）だけ（C-0631）で、中近・中遠・遠は
+ * 効かせない（中近・遠では H2 ほど上がらない（C-0527）が、効き方の式は決まっていない）
+ */
+export function hitRateUpRaisesBulletHitRate(
+  character: Pick<CharacterData, 'weaponType'>,
+  landing: Pick<LandingPoint, 'band'>,
+): boolean {
   const weapon = character.weaponType;
+  if (weapon === 'SG') return landing.band === 'near';
   return weapon === 'AR' || weapon === 'SMG' || weapon === 'MG';
 }
 
@@ -203,7 +212,7 @@ export function autoConditionAt(
     hitRate:
       bullet === null
         ? (manual.hitRate ?? 1)
-        : hitRateUpRaisesBulletHitRate(character)
+        : hitRateUpRaisesBulletHitRate(character, landing)
           ? bulletHitRateWithHitRateUp(bullet, hitRateUp)
           : bullet,
     ...(hits === null || hits === 1 ? {} : { hitsPerShot: hits }),
@@ -287,7 +296,7 @@ export function planLandings(
                 condition: autoConditionAt(profile, landing, slot.character, hitRateUp[i]!, slot.condition),
                 measuredHitRate: bullet !== null,
                 ...(table === null ? {} : { tableCoreHitRate: table }),
-                ...(bullet === null || !hitRateUpRaisesBulletHitRate(slot.character)
+                ...(bullet === null || !hitRateUpRaisesBulletHitRate(slot.character, landing)
                   ? {}
                   : { tableBulletHitRate: bullet }),
               };
@@ -631,7 +640,7 @@ export function landingNotes(
     (id): id is string => id !== null && id in profile.mixes,
   );
   const n = plan.hitRateUp[slotIndex] ?? 0;
-  const raisesBullet = hitRateUpRaisesBulletHitRate(slot.character);
+  const raisesBullet = weapon === 'AR' || weapon === 'SMG' || weapon === 'MG';
   const ja = [
     `${profile.name.ja}の表（単騎 AUTO の実測）でコア命中率・距離ボーナス・弾丸命中率を決めた`,
     ...mixes.map((id) => mixLabel(profile, id).ja),
@@ -639,7 +648,9 @@ export function landingNotes(
     'フルバースト中などに配られる持続の命中率▲も、効いている区間で N に足してコア命中率に効かせた（C-0170。仮説）',
     raisesBullet
       ? '命中率▲（常時 + 持続）で弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0192・C-0519。確かめたのは SMG の遠と中遠 B・C だけで、ほかの帯と AR・MG には同じ式を当てた）。持続の▲による上がりも、1 パス目のゲージ（C-0362）と命中の回数（C-0363。仮説）に入れた'
-      : '命中率▲は弾丸命中率に効かせていない（未実装。SG の近 A では上がるが（C-0157）、効き方の式が決まっていない）',
+      : weapon === 'SG'
+        ? '命中率▲（常時 + 持続）で、近（近 A・近 B）の弾丸命中率の外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（C-0631。確かめたのは常時の▲ 5.09% だけ）。中近・中遠・遠の弾丸命中率には効かせていない（未実装。中近・遠では H2 ほど上がらない（C-0527）が、効き方の式は決まっていない）'
+        : '命中率▲は弾丸命中率に効かせていない（未実装）',
   ];
   const en = [
     `Core hit rate, distance bonus and bullet hit rate come from the ${profile.name.en} table (solo AUTO recordings)`,
@@ -648,7 +659,9 @@ export function landingNotes(
     'timed hit rate buffs (e.g. given at full burst) are added to N while active and change core hit rate (C-0170; hypothesis)',
     raisesBullet
       ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) (C-0192, C-0519; checked only for SMG at far range and mid-far landings B and C, and the same formula is used for the other bands and for AR and MG); the rise from timed buffs is also fed into the burst gauge (C-0362) and the hit counts (C-0363; hypothesis)'
-      : 'hit rate buffs do not change bullet hit rate (not modeled; they raise it for SG at near A (C-0157), but the formula is unknown)',
+      : weapon === 'SG'
+        ? 'hit rate buffs (constant + timed) turn the bullet miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) at near range (landings A and B) (C-0631; checked only for a constant 5.09% buff); they do not change bullet hit rate at mid-near, mid-far or far range (not modeled; the rise there is smaller than this formula (C-0527), but the formula is unknown)'
+        : 'hit rate buffs do not change bullet hit rate (not modeled)',
   ];
   notes.push({ level: 'approx', code: 'auto-condition', message: { ja: ja.join('。'), en: en.join('; ') } });
   if (n < 0) {
