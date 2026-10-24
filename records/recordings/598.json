@@ -1,0 +1,29 @@
+{
+  "id": "598",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-598_smg_idoll-ocean_auto.mp4",
+  "original": "2026-10-24_23-00-13.mp4",
+  "durationSec": 199.6,
+  "frames": 11974,
+  "fps": 60,
+  "sizeMB": 241.9,
+  "sha256": "6370cea426e6",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 305,
+      "name": "I-DOLL・オーシャン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0491。I-DOLL・オーシャン単騎・操作（AUTO"
+}
