@@ -1,0 +1,196 @@
+{
+  "verification": "V-0491",
+  "note": "撮影計画の予測（ノワール単騎・スペック固定 OFF・AUTO・オートバースト OFF。キューブありの録画の、近の区間の当たったペレットの割合）。H0 はいまのモデル（SG の弾丸命中率に命中率▲を効かせない。C-0157。的の表の近 A 0.845・近 B 0.951）。ほかの仮説はモデルのコードで表せないので、的の表の値に N 0.0509 で式を当てた値を manual の弾丸命中率で入れた（-A は near-a だけ、-B は near-b だけで比べる）。tolerance は、キューブあり・なし 6 本ずつで見込む差（A − B）の σ の 2 倍（区間の散らばりは V-0408・V-0411 の 12 本の近の区間から。検証記録の「予測」）。判定の指標（λ。上がりが H2 の何倍か）は、キューブなしの録画で測った割合から出すので、検証記録の「予測」に手で書いた。build は V-0225 のノワール（スペック固定 OFF・キューブなし）で、弾丸命中率には効かない",
+  "team": [
+    {
+      "rid": 271,
+      "controlled": true,
+      "build": {
+        "attack": 448870,
+        "overload": {
+          "head": [
+            {
+              "option": "chargeDamage",
+              "level": 7
+            },
+            {
+              "option": "chargeSpeed",
+              "level": 15
+            }
+          ],
+          "body": [
+            {
+              "option": "defence",
+              "level": 9
+            },
+            {
+              "option": "attack",
+              "level": 9
+            }
+          ],
+          "arm": [
+            {
+              "option": "maxAmmo",
+              "level": 11
+            },
+            {
+              "option": "critDamage",
+              "level": 11
+            }
+          ],
+          "leg": [
+            {
+              "option": "chargeDamage",
+              "level": 11
+            },
+            {
+              "option": "elementDamage",
+              "level": 11
+            }
+          ]
+        },
+        "cube": null,
+        "collection": {
+          "rarity": "SR",
+          "level": 5
+        },
+        "skillLevels": {
+          "skill1": 4,
+          "skill2": 5,
+          "burst": 4
+        }
+      }
+    }
+  ],
+  "fixedSpec": false,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "効かない（いまのモデル。C-0157 の未反映）"
+    },
+    {
+      "id": "H1-A",
+      "note": "m × (1 − N)。近 A（0.845 → 0.8529）",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.8529
+      }
+    },
+    {
+      "id": "H1-B",
+      "note": "m × (1 − N)。近 B（0.951 → 0.9535）",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.9535
+      }
+    },
+    {
+      "id": "H2-A",
+      "note": "m ^ (1 ÷ (1 − N)²)（C-0192 の形）。近 A（0.845 → 0.8738）",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.8738
+      }
+    },
+    {
+      "id": "H2-B",
+      "note": "m ^ (1 ÷ (1 − N)²)（C-0192 の形）。近 B（0.951 → 0.9648）",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.9648
+      }
+    },
+    {
+      "id": "H3-A",
+      "note": "p ÷ (1 − N)²（上限 1）。近 A（0.845 → 0.9381）",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.9381
+      }
+    },
+    {
+      "id": "H3-B",
+      "note": "p ÷ (1 − N)²（上限 1）。近 B（0.951 → 1）",
+      "override": {
+        "condition": "manual",
+        "hitRate": 1
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "near-a",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 4000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false,
+        "nearLanding": ["A", "A"]
+      },
+      "tolerance": {
+        "abs": 0.032
+      },
+      "note": "近の着地点が A（照準の高さの的の幅 360 前後。C-0155）の区間の、当たったペレットの割合（当たった数の合計 ÷（トリガー数の合計 × 10））。キューブありの録画を合わせた値"
+    },
+    {
+      "id": "near-b",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 4000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false,
+        "nearLanding": ["B", "B"]
+      },
+      "tolerance": {
+        "abs": 0.014
+      },
+      "note": "近の着地点が B（的の幅 410 以上。C-0155）の区間の、当たったペレットの割合。キューブありの録画を合わせた値"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-24",
+    "commit": "23feebf3f57820022a2e954870d34d17b40ae369",
+    "values": {
+      "H0": {
+        "near-a": 0.845,
+        "near-b": 0.951
+      },
+      "H1-A": {
+        "near-a": 0.8529,
+        "near-b": 0.8529
+      },
+      "H1-B": {
+        "near-a": 0.9535,
+        "near-b": 0.9535
+      },
+      "H2-A": {
+        "near-a": 0.8738,
+        "near-b": 0.8738
+      },
+      "H2-B": {
+        "near-a": 0.9648,
+        "near-b": 0.9648
+      },
+      "H3-A": {
+        "near-a": 0.9381,
+        "near-b": 0.9381
+      },
+      "H3-B": {
+        "near-a": 1,
+        "near-b": 1
+      }
+    }
+  }
+}
