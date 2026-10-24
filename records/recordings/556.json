@@ -1,0 +1,29 @@
+{
+  "id": "556",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-556_rl_idoll-flower_manual-core.mp4",
+  "original": "2026-10-24_12-03-55.mp4",
+  "durationSec": 48,
+  "frames": 2878,
+  "fps": 60,
+  "sizeMB": 58.2,
+  "sha256": "cdb6e9c74d1e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "I-DOLL・フラワー単騎・操作（オート射撃 OFF・オートバースト OFF。画面左上のボタンで確かめた）。V-0487 の撮影の依頼の ※1: 戦闘が始まってすぐ、的のコアをフルチャージで撃ち続け、1 回目の満タン（BURST バーが消える）の後に一時停止のパネルを映して退出"
+}

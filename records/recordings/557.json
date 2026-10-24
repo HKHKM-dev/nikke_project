@@ -1,0 +1,29 @@
+{
+  "id": "557",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-557_rl_idoll-flower_manual-core.mp4",
+  "original": "2026-10-24_12-05-06.mp4",
+  "durationSec": 41.3,
+  "frames": 2479,
+  "fps": 60,
+  "sizeMB": 50.1,
+  "sha256": "6dc1dfc9e653",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "I-DOLL・フラワー単騎・操作（オート射撃 OFF・オートバースト OFF。画面左上のボタンで確かめた）。V-0487 の撮影の依頼の ※1（556 と同じ）。満タンの 14 ヒット目は胴体"
+}
