@@ -352,3 +352,6 @@
 - 2026-10-24 02:39 録画 547（アニス：スター + クラウン）: `range/20261024-547_rl_anis-star-late-fire_crown-ai-1.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 02:39 録画 548（アニス：スター + クラウン）: `range/20261024-548_rl_anis-star-late-fire_crown-ai-2.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 02:39 録画 549（アニス：スター + クラウン）: `range/20261024-549_rl_anis-star-late-fire_crown-ai-3.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 12:08 録画 550（ウンファ：タクティカル・アップ単騎）: `range/20261024-550_sr_unfa_manual.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 12:19 録画 551（ウンファ単騎）: `range/20261024-551_sr_unfa_manual.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 12:35 録画 553（ウンファ単騎）: `range/20261024-553_sr_unfa_manual.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
