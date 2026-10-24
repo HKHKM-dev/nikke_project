@@ -157,7 +157,7 @@
   - `--conflict-loser pathname --conflict-suffix conflict-desktop,conflict-drive`（衝突の名前に側を付ける。拡張子は保つ）
   - `--backup-dir1`（ローカルで消すものを、同じドライブの退避フォルダへ移す）
   - `--max-delete 50`（既定）。Drive 側の削除はごみ箱へ（rclone の既定）
-  - `captures` は `--check-access`（E: が外れていて全部消えたと見なす事故を防ぐ。両側の根に `RCLONE_TEST` を置く）
+  - `captures` と `private` は `--check-access --check-filename SYNC_MARKER_DO_NOT_DELETE.txt`（E: が外れていて全部消えたと見なす事故を防ぐ。両側の根に目印を置く。rclone の既定の名前 `RCLONE_TEST` は試しのファイルと間違えるので、名前と中身で役目を示す。2026-10-24 のオーナーの決定）。`private` はファイルが `owner.md` だけなので、目印が無いと、クラウドで追記するたびに bisync が「全部が変わった」と見て止まる（`Safety abort: all files were changed`。2026-10-24 に起きた。[design-cloud-environment-log.md](design-cloud-environment-log.md) 12.2 節）
 - 結果（送った数・衝突・エラー）を、ローカルのログ（追跡しない）に 1 回 1 行で足す。衝突は `npm run drive:conflicts` で一覧にする。
 
 ### 4.3 初回（既存のコピーの採用）

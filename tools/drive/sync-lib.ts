@@ -9,9 +9,20 @@ export type Pair = {
   remote: string;
   /** フィルタのファイル（リポジトリの中。変えたら、その対だけ --resync が要る） */
   filters: string;
-  /** 両側の根に RCLONE_TEST を置き、ドライブが外れていて全部消えたと見なす事故を防ぐ */
+  /**
+   * 両側の根に目印（SYNC_MARKER）を置き、ドライブが外れていて全部消えたと見なす事故を防ぐ。変わらないファイルが 1 つあるので、
+   * ファイルの少ない対で全部が変わったと見なす安全停止にも当たらない
+   */
   checkAccess: boolean;
 };
+
+/** bisync の --check-access の目印（rclone の既定の RCLONE_TEST は試しのファイルと間違えるので、名前で役目を示す） */
+export const SYNC_MARKER = 'SYNC_MARKER_DO_NOT_DELETE.txt';
+
+/** 目印の中身（両側で同じなら何でもよい。開いた人に役目を伝える） */
+export const SYNC_MARKER_TEXT =
+  'rclone bisync の目印（npm run drive:sync の --check-access が両側の根にあるかを見る）。\n' +
+  '消すと同期が止まる。plan/design-cloud-environment.md 4.2 節。\n';
 
 /** デスクトップの同期が衝突のときに付ける名前（Path1 = ローカル、Path2 = Drive の順）。拡張子は保つ */
 export const CONFLICT_SUFFIXES = ['conflict-desktop', 'conflict-drive'] as const;
@@ -59,7 +70,7 @@ export function bisyncArgs(
     '--drive-skip-gdocs',
     '--fast-list',
   ];
-  if (opts.checkAccess) args.push('--check-access');
+  if (opts.checkAccess) args.push('--check-access', '--check-filename', SYNC_MARKER);
   if (opts.resync) args.push('--resync');
   if (opts.dryRun) args.push('--dry-run');
   if (opts.verbose) args.push('-v');

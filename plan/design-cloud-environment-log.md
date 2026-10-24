@@ -41,6 +41,7 @@
 - 受け口（2026-10-23。オーナーが公開した後の `npm run drive:gateway-check`）: 書き込み・一覧と中身・衝突の別名（`.conflict-cloud`）・同じ中身は何もしない・3MB・証拠フレームの下への書き込み・移動と改名（`moveTo` で動いた）・録画の上には書けない・合言葉が違えば断る、の 9 つがどれも通った（試しのファイルはごみ箱へ移した）
 - クラウドのセッション（2026-10-23。ブランチ `claude/cloud-env-stage2`）: クラウドで書いた `scratch/_cloud-check.md` が応答の終わりに Drive に戻り、デスクトップの同期で D: に届いた。そのセッションの答え: 文脈に「メモリ（クラウド）」の節・メモリの索引・日本語で答える指示（CLAUDE.md・AGENTS.md・システム）が入っていた。`private/owner.md` が読め、メモリのフォルダ（`~/.claude/projects/-home-user-nikke-project/memory`）は索引と同じ件数のファイルがあり、基準（`~/.cache/nikke-sync/base.json`）もあった。試しのファイルは片付けた
 - 合言葉: ネットワークシークレットの Body parameter 型では受け口に届かなかったので、環境変数 `NIKKE_DRIVE_GATEWAY_KEY` に入れた（5.2 節の「使えなければ環境変数」）
+- 2026-10-24 に直したこと: クラウドで `private/owner.md` に追記した後、デスクトップの同期で `private` の対が `Safety abort: all files were changed on Path2` で止まった（同期するファイルが owner.md だけなので、1 件の変更が「全部」になる）。ローカルが前の同期から変わっておらず、Drive の版がローカルに 1 行足しただけと確かめてから、オーナーの了承を得てその対だけ `--force` で 1 回回し、Drive の版を降ろした。再発を防ぐため、`private` にも目印を置いて `--check-access` を付け、目印の名前を `RCLONE_TEST` から `SYNC_MARKER_DO_NOT_DELETE.txt` に変えた（中身に役目を書く。本体の 4.2 節）
 - 残り: クラウドの側の衝突と、クラウドで切り出した証拠フレームが E: に届くことは、実際の作業の中で確かめる（owner.md とメモリが見える・直したものが D: に届く・衝突が両方残る・証拠フレームが E: に届く）
 
 ### 12.3 段 ③（2026-10-23。クラウドでの取り込み）
