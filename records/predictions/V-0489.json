@@ -1,0 +1,195 @@
+{
+  "verification": "V-0489",
+  "team": [
+    {
+      "rid": 90,
+      "controlled": true
+    },
+    {
+      "rid": 450
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-shot",
+      "note": "いまのモデル（C-0593）。撃った発を 5 発ごとに数えて付け、付くたびに 5 秒を数え直す"
+    },
+    {
+      "id": "H-pellet",
+      "note": "当たったペレットを 5 個ごとに数える読み。ナガは 1 発で 5 個以上当てるのがふつう（中近の期待値 7.78 個）で、モデルの回数トリガーは 1 発で 2 回発火できない（pelletHit の every 5 は 1 発の量が every を超えて止まる）ので、毎発で付き直る形（normalShot の every 1）で近似する。5 個に届かない発があっても、撃つ間は 5 秒のうちに必ず届くので、付いている時間は変わらない",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 450,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "normalShot",
+                "every": 1
+              },
+              "target": "topAttack",
+              "targetCountRef": 2,
+              "stat": "coreDamage",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "s2-first-start",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "coreDamage",
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "エマ（1 枠目）が受けるナガの S2 のコアダメージ▲の 1 回目の付き始め（H-shot はナガの 5 発目の次のフレーム、H-pellet は 1 発目の次のフレーム）。エマの MG のコアのヒットの値の替わり目で読む"
+    },
+    {
+      "id": "s2-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "coreDamage"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "付き始めの全部（切れた後の付き直しを含む）。ジャンプの時刻は録画ごとに揺れる（C-0552・C-0553）ので、ジャンプの後の付き直しは録画で読んだ窓（jumpWindows）で出し直してから比べる"
+    },
+    {
+      "id": "s2-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "coreDamage"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "切れ目の全部（最後は戦闘の終わり）。H-shot はジャンプの前に最後に 5 発目になった発から 5 秒で切れる"
+    },
+    {
+      "id": "emma-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 140,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "エマの胴体のヒット（会心なし）。格子の単位"
+    },
+    {
+      "id": "emma-core-early",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 140,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "ナガの 1〜5 発目の間（f140）のエマのコアのヒット（会心なし）。H-shot は▲なし、H-pellet は▲あり"
+    },
+    {
+      "id": "emma-core-on",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "▲が付いている間のエマのコアのヒット（会心なし）。どちらの仮説でも同じ（替わり目を読むための値）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-24",
+    "commit": "b9f55452c45195d564e2dc40ee46e1a272aa9013",
+    "values": {
+      "H-shot": {
+        "s2-first-start": [170],
+        "s2-starts": [170, 2152, 4328, 6583, 8760],
+        "s2-ends": [2130, 4308, 6484, 8739, 10589],
+        "emma-body": 5560.2525,
+        "emma-core-early": 11120.505,
+        "emma-core-on": 13348.49817675
+      },
+      "H-pellet": {
+        "s2-first-start": [13],
+        "s2-starts": [13],
+        "s2-ends": [10589],
+        "emma-body": 5560.2525,
+        "emma-core-early": 13348.49817675,
+        "emma-core-on": 13348.49817675
+      }
+    }
+  }
+}
