@@ -41,6 +41,10 @@
     "method": {
       "tool": "reload.ts --mode fit",
       "note": "どれもバーが 365px まで満ちて消えた回（取り消しなし）。1〜4 回目は、的のヒット f1329・2032・2689・3349 の 1〜2f 前に始まるので、この 4 つのヒットは最後の弾丸（307-03 と同じ読み方）。f1561 のヒットはリロードの間に無く、2 本目のマガジンの最後の弾丸でない発。5 回目（f4028）の前には的のヒットが無い（6 発とも空）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
     }
   },
   {
@@ -56,6 +60,10 @@
     "method": {
       "tool": "gauge.ts --mode series、hud.ts --mode jumps（レシピ hud-jumps@2 のキャッシュ）、reload.ts --mode fit + 使い捨てのスクリプト（V-0484「読み方」）",
       "note": "直前のフレームとヒットの後 30f までの差。バーは 22→42・42→61・61→81px（gauge.ts の 19.5・37.2・54.0・71.7% を 113px に換算）。ヒットの後のバーは次のヒットまで動かない（遅れて伸びない）。3 発とも総ダメージの増分は 425,695"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
     }
   },
   {
@@ -71,6 +79,10 @@
     "method": {
       "tool": "gauge.ts --mode series、hud.ts --mode jumps（レシピ hud-jumps@2 のキャッシュ）、reload.ts --mode fit + 使い捨てのスクリプト（V-0484「読み方」）",
       "note": "それまでの発は空に撃って総ダメージが増えず、バーは 0px（2.7% を 113px に換算）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
     }
   },
   {
@@ -86,6 +98,10 @@
     "method": {
       "tool": "gauge.ts --mode series、hud.ts --mode jumps（レシピ hud-jumps@2 のキャッシュ）、reload.ts --mode fit + 使い捨てのスクリプト（V-0484「読み方」）",
       "note": "バーは 3→22px。総ダメージの増分は 489,293 で、最後の弾丸のヒット（425,695）の 1.149 倍。最後の弾丸の 232f 後で、最後の弾丸をトリガーにする効果（S1 のチャージダメージ▲（2 発）か S2 の防御力▼（5 秒））の中の発"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
     }
   },
   {
@@ -101,6 +117,10 @@
     "method": {
       "tool": "gauge.ts --mode series、hud.ts --mode jumps（レシピ hud-jumps@2 のキャッシュ）、reload.ts --mode fit + 使い捨てのスクリプト（V-0484「読み方」）",
       "note": "f3349 の 81px から録画の終わりの近く（f4560）まで 81px のまま。f3675・3820・4405 の前後に読みが一度下がって戻る所がある（バーの上に別の表示が重なった間）が、戻った値は同じ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
     }
   }
 ]
