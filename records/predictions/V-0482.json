@@ -1,0 +1,95 @@
+{
+  "verification": "V-0482",
+  "note": "撮り方 1（アニス：スター（AI）+ クラウン（操作・AUTO 射撃 ON）+ デルタ（AI）、オートバースト OFF）の予測。モデルで表せるのは A（いまのモデル。味方に ×1.06）と N（味方に効かない）だけで、問いの本体の K（1 回ごとに +1,680）・M（クラウンの伸びに合わせた ×2.68）と、撮り方 2 の仮説は、モデルの時刻表（このファイルと同じ編成の sim の発のゲージの並び）から足し直して検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": false
+    },
+    {
+      "rid": 330,
+      "controlled": true
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "A",
+      "note": "いまのモデル。S1 の effects[0] で味方全員のゲージに ×1.06"
+    },
+    {
+      "id": "N",
+      "note": "S1 のゲージ速度はアニス：スター自身にだけ効き、味方には効かない（effects[0] の対象を自分にした近似）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 17,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "burstGaugeSpeed",
+              "ref": 5
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-frame-0",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "残り時間 02:59 になったフレームから、1 回目に BURST バーが消えたフレームまでの動画のフレーム数"
+    },
+    {
+      "id": "gauge-full-crown-hit-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "1 回目に BURST バーが消えたときの、戦闘の最初から数えたクラウンのヒットの番号（総ダメージの増分から数える）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-23",
+    "commit": "87c95de70d4aa46c97ee1c2d1be7a114052333d5",
+    "values": {
+      "A": {
+        "gauge-full-frame-0": 480,
+        "gauge-full-crown-hit-0": 300
+      },
+      "N": {
+        "gauge-full-frame-0": 578,
+        "gauge-full-crown-hit-0": 301
+      }
+    }
+  }
+}

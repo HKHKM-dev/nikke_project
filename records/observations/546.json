@@ -1,0 +1,103 @@
+[
+  {
+    "id": "546-01",
+    "recording": "546",
+    "source": "V-0482",
+    "readAt": "2026-10-24",
+    "use": "record",
+    "kind": "gauge",
+    "unit": "px/ヒット",
+    "value": [0.364, 0.355, 0.371, 0.364],
+    "description": "クラウン（操作・AUTO）だけの区間の、クラウン 1 ヒットあたりの BURST バーの伸び（アニス：スター（AI）の最初の着弾から満タンまで。区間はアニス：スターの着弾とデルタの発のフレームで切る）。K（1 回ごとに +1,680）の 0.361 と合い、A（×1.06）の 0.143・N の 0.135 と合わない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "区間（フレーム）: 971〜1029・1038〜1088・1089〜1119・1149〜1199。区間の中のバーの px を、クラウンの累積ヒットに直線で当てはめた傾き。ヒットの数は総ダメージの増分を 1 ヒットの値（胴体 4,477・会心 6,716・コア 8,955・コアの会心 11,194）で割り切れる最少の数に分けた。デルタの発の後の約 22f はバーの行にバフのアイコンが重なり gauge.ts の読みが乱れる（165-41 と同じ）ので、アイコンの出ているフレームの前後 2f と、6px 以下の読みを外した。8f の区間（アニス：スターの着弾 → デルタの発）は点が少ないので外した"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge",
+      "frames": [971, 1200]
+    }
+  },
+  {
+    "id": "546-02",
+    "recording": "546",
+    "source": "V-0482",
+    "readAt": "2026-10-24",
+    "use": "record",
+    "kind": "gauge",
+    "unit": "px",
+    "value": [7.6, 7.6],
+    "description": "デルタ（AI）の 2・3 発目の、1 発のバーの伸び（同じフレームのクラウンのヒットの分を 0.361px/ヒットで引いた）。K（足す形）の 7.37・A の 7.57 と読み取りの幅で合い、M（クラウンに合わせた掛け算 ×2.68）の 19.14 と合わない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "デルタの発の前のフレームと、アイコンが消えた後のフレームのバーの差から、間のクラウンの 26 ヒットの分を引いた。1 発目はバーが 0px 付近で読めない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge",
+      "frames": [1038, 1144]
+    }
+  },
+  {
+    "id": "546-03",
+    "recording": "546",
+    "source": "V-0482",
+    "readAt": "2026-10-24",
+    "use": "compare",
+    "kind": "interval",
+    "unit": "f",
+    "value": 315,
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えたフレームまで。予測ファイルの A（480）・N（578）と合わない。手で足し直した K（物 2 個で 313、物なしで 316）と合う",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode series",
+      "note": "戦闘開始 f885（+90f の変わり目）、バーが消えたのは f1200（アニス：スターの 4 発目の後、クラウンのヒットで満タン）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "546-04",
+    "recording": "546",
+    "source": "V-0482",
+    "readAt": "2026-10-24",
+    "use": "compare",
+    "kind": "count",
+    "unit": "ヒット",
+    "value": 208,
+    "description": "1 回目に BURST バーが消えたフレームのクラウンのヒットの、戦闘の最初から数えた番号。予測ファイルの A（300）・N（301）と合わない。K の手の予測は 213（物 2 個）〜216（物なし）で、モデルのクラウンの撃ち始めの時刻表との違いの分ずれる",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "満タンのフレームの前までのクラウンのヒット 207 に、満タンのフレームの 1 ヒットを足した"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  }
+]

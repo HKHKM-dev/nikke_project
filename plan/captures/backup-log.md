@@ -347,3 +347,8 @@
 
 - 2026-10-23 23:51 録画 540（I-DOLL・フラワー + エヌ : ミラクルフェアリー + アスカ）: `range/20261023-540_rl_anne-miracle-fairy_asuka-noshoot.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-23 23:55 録画 541（エマ：タクティカル・アップ + ウンファ：タクティカル・アップ）: `range/20261023-541_mg_emma-tu_eunhwa-tu_manual-burst.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 02:39 録画 545（アニス：スター + クラウン + デルタ）: `range/20261024-545_mg_crown_anis-star-ai_delta-1.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 02:39 録画 546（アニス：スター + クラウン + デルタ）: `range/20261024-546_mg_crown_anis-star-ai_delta-2.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 02:39 録画 547（アニス：スター + クラウン）: `range/20261024-547_rl_anis-star-late-fire_crown-ai-1.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 02:39 録画 548（アニス：スター + クラウン）: `range/20261024-548_rl_anis-star-late-fire_crown-ai-2.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 02:39 録画 549（アニス：スター + クラウン）: `range/20261024-549_rl_anis-star-late-fire_crown-ai-3.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "547-01",
+    "recording": "547",
+    "source": "V-0482",
+    "readAt": "2026-10-24",
+    "use": "record",
+    "kind": "gauge",
+    "unit": "px/ヒット",
+    "value": [0.257, 0.246, 0.222, 0.362, 0.362],
+    "description": "クラウン（AI）の 1 ヒットあたりの BURST バーの伸びを、アニス：スター（操作）が AUTO 射撃 OFF で撃たない間・AUTO 射撃を ON にしてから最初の発射まで（チャージ）・発射から着弾まで（飛ぶ間）・最初の着弾の後の 2 区間の順に並べたもの。840（0.248）は着弾まで続き、着弾の後に 1,680（0.361）になる（W2）。撃たない間は 0（0.135）と合わない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "区間の端は 547-02 のフレーム。撃たない間はバーが見え始めた f990 から。区間の中のバーの px を、クラウンの累積ヒットに直線で当てはめた傾き（ヒットの数の分け方は 545-01 と同じ）。この録画はバーにアイコンが重ならない"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge",
+      "frames": [990, 1214]
+    }
+  },
+  {
+    "id": "547-02",
+    "recording": "547",
+    "source": "V-0482",
+    "readAt": "2026-10-24",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [825, 1019, 1081, 1095],
+    "description": "戦闘開始（残り時間 02:59 が出たフレーム）・AUTO 射撃のボタンが点いたフレーム・アニス：スターの最初の発射（照準の横の残弾が 6 → 5）・最初の着弾（総ダメージの増分）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・reticle-ammo.ts --mode series・hud.ts --mode jumps",
+      "note": "ボタンは画面左上の 30×30px の赤み（R − B）で見た。照準が的のほうへ動き出したのはボタンより 8f ほど前（548・549）。ボタンから発射まではどの録画も 62f、飛ぶ時間は 14f（C-0413 の中近）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [790, 1214]
+    }
+  },
+  {
+    "id": "547-03",
+    "recording": "547",
+    "source": "V-0482",
+    "readAt": "2026-10-24",
+    "use": "record",
+    "kind": "gauge",
+    "unit": "px",
+    "value": [25, 14],
+    "description": "アニス：スター（操作）の 1・2 発目の着弾のバーの伸び。2 発目は 103,880（10.39%。C-0198）の 14px と合い、1 発目はそれに物 2 個（7.42%。C-0283）を足した 17.81% と合う",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "着弾の前のフレームと着弾のフレームのバーの差"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [990, 1214]
+    }
+  }
+]
