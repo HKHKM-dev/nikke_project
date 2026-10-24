@@ -21,16 +21,44 @@ export function trackedRoots(places: { repo: string; memoryDir: string; memoryPr
   ];
 }
 
-/** 手元（パス → md5）を、前に取ったときの基準と比べる。変わった・増えたものは put、消えたものは trash */
+/**
+ * 手元の版を受け口へ送るか。基準（前に取った・戻した版）と同じか、前に衝突を返された版のままなら送らない
+ * （送り直すと、受け口が同じ中身の衝突ファイルを次の番号で作り続ける）
+ */
+export function shouldPut(md5: string, base: string | undefined, conflicted: string | undefined): boolean {
+  return md5 !== base && md5 !== conflicted;
+}
+
+/** put の結果を基準に書き込む。衝突なら基準は動かさず、衝突を返された手元の版の md5 を覚える */
+export function settlePut(
+  base: Record<string, string>,
+  conflicts: Record<string, string>,
+  path: string,
+  localMd5: string,
+  result: { md5: string; conflict?: boolean },
+): void {
+  if (result.conflict) {
+    conflicts[path] = localMd5;
+    return;
+  }
+  base[path] = result.md5;
+  delete conflicts[path];
+}
+
+/**
+ * 手元（パス → md5）を、前に取ったときの基準と比べる。変わった・増えたものは put、消えたものは trash。
+ * 前に衝突を返された版のままのもの（conflicts）は put しない
+ */
 export function diffAgainstBase(
   local: ReadonlyMap<string, string>,
   base: Readonly<Record<string, string>>,
+  conflicts: Readonly<Record<string, string>> = {},
 ): { put: { path: string; baseMd5: string | null }[]; trash: { path: string; baseMd5: string }[] } {
   const put: { path: string; baseMd5: string | null }[] = [];
   const trash: { path: string; baseMd5: string }[] = [];
   for (const [path, md5] of local) {
     const was = base[path];
-    if (was !== md5) put.push({ path, baseMd5: was ?? null });
+    if (shouldPut(md5, was, conflicts[path])) put.push({ path, baseMd5: was ?? null });
   }
   for (const [path, md5] of Object.entries(base)) if (!local.has(path)) trash.push({ path, baseMd5: md5 });
   return { put, trash };

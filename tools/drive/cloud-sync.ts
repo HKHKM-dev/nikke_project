@@ -10,7 +10,7 @@ import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { capturesDir } from '../captures/dirs.ts';
-import { cloudClaudeMd, diffAgainstBase, localPathOf, trackedRoots } from './cloud-lib.ts';
+import { cloudClaudeMd, diffAgainstBase, localPathOf, settlePut, shouldPut, trackedRoots } from './cloud-lib.ts';
 import { gatewayUrl, put, snapshot, trash } from './gateway.ts';
 import { memoryProjectName } from './sync-lib.ts';
 
@@ -29,13 +29,19 @@ const places = {
 };
 const stateDir = join(homedir(), '.cache', 'nikke-sync');
 const basePath = join(stateDir, 'base.json');
-type Base = { files: Record<string, string>; frames: Record<string, string> };
+// conflicts: 衝突を返された手元の版の md5。同じ版のままなら次の応答の終わりに送り直さない
+type Base = {
+  files: Record<string, string>;
+  frames: Record<string, string>;
+  conflicts: { files: Record<string, string>; frames: Record<string, string> };
+};
 
 const md5 = (buf: Buffer) => createHash('md5').update(buf).digest('hex');
 
 function readBase(): Base | null {
   try {
-    return JSON.parse(readFileSync(basePath, 'utf8')) as Base;
+    const base = JSON.parse(readFileSync(basePath, 'utf8')) as Omit<Base, 'conflicts'> & Partial<Base>;
+    return { ...base, conflicts: base.conflicts ?? { files: {}, frames: {} } };
   } catch {
     return null;
   }
@@ -71,11 +77,12 @@ function localFiles(): Map<string, { md5: string; buf: Buffer }> {
 async function push(base: Base): Promise<string[]> {
   const notes: string[] = [];
   const local = localFiles();
-  const d = diffAgainstBase(new Map([...local].map(([p, v]) => [p, v.md5])), base.files);
+  const d = diffAgainstBase(new Map([...local].map(([p, v]) => [p, v.md5])), base.files, base.conflicts.files);
   for (const p of d.put) {
-    const r = await put('sync', p.path, local.get(p.path)!.buf, p.baseMd5);
+    const { buf, md5: sum } = local.get(p.path)!;
+    const r = await put('sync', p.path, buf, p.baseMd5);
     if (r.conflict) notes.push(`衝突: ${p.path}（Drive 側も変わっていたので、クラウドの版を ${r.path} として置いた）`);
-    else base.files[p.path] = r.md5;
+    settlePut(base.files, base.conflicts.files, p.path, sum, r);
   }
   for (const t of d.trash) {
     const r = await trash('sync', t.path, t.baseMd5);
@@ -87,11 +94,11 @@ async function push(base: Base): Promise<string[]> {
   for (const rel of walk(frames)) {
     const buf = readFileSync(join(frames, rel));
     const sum = md5(buf);
-    if (base.frames[rel] === sum) continue;
+    if (!shouldPut(sum, base.frames[rel], base.conflicts.frames[rel])) continue;
     const r = await put('captures', `frames/${rel}`, buf, base.frames[rel] ?? null);
     if (r.conflict)
       notes.push(`衝突: frames/${rel}（同じ名前で中身の違う証拠フレームが Drive にあったので ${r.path} として置いた）`);
-    else base.frames[rel] = r.md5;
+    settlePut(base.frames, base.conflicts.frames, rel, sum, r);
   }
   saveBase(base);
   if (d.put.length + d.trash.length > 0)
@@ -109,7 +116,12 @@ async function pull(): Promise<string[]> {
     ...(await snapshot('sync', 'scratch', 5_000_000)).files,
     ...(await snapshot('sync', 'claude', 5_000_000)).files,
   ];
-  const base: Base = { files: {}, frames: old?.frames ?? {} };
+  // 手元のファイルは Drive の版で上書きするので、ファイルの衝突の記憶は上書きしたものの分を捨てる（下）。証拠フレームは触らないので残す
+  const base: Base = {
+    files: {},
+    frames: old?.frames ?? {},
+    conflicts: { files: {}, frames: old?.conflicts.frames ?? {} },
+  };
   let globalMd = '';
   for (const f of files) {
     if (f.content === undefined || f.md5 === undefined) {
@@ -127,6 +139,8 @@ async function pull(): Promise<string[]> {
     writeFileSync(to, buf);
     base.files[f.path] = f.md5;
   }
+  for (const [path, sum] of Object.entries(old?.conflicts.files ?? {}))
+    if (base.files[path] === undefined) base.conflicts.files[path] = sum;
   // Drive で消えたもの（前に取ったときのままの手元のファイル）は手元からも消す
   for (const [path, v] of localFiles())
     if (base.files[path] === undefined && old?.files[path] === v.md5) {

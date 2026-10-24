@@ -1,6 +1,6 @@
 // クラウドのセッションと Drive の nikke_sync の往復の決まりごと（plan/design-cloud-environment.md 6.1・6.2 節）。受け口は呼ばない。
 import { describe, expect, it } from 'vitest';
-import { cloudClaudeMd, diffAgainstBase, localPathOf, trackedRoots } from './cloud-lib.ts';
+import { cloudClaudeMd, diffAgainstBase, localPathOf, settlePut, shouldPut, trackedRoots } from './cloud-lib.ts';
 
 const places = {
   repo: '/home/user/nikke_project',
@@ -41,6 +41,39 @@ describe('drive/cloud-lib', () => {
       { path: 'scratch/new.md', baseMd5: null },
     ]);
     expect(d.trash).toEqual([{ path: 'scratch/gone.md', baseMd5: 'g' }]);
+  });
+
+  it('衝突を返された版のままなら put し直さない。手元がさらに変われば送る', () => {
+    const d = diffAgainstBase(
+      new Map([
+        ['private/owner.md', 'b'],
+        ['scratch/x.md', 'y2'],
+      ]),
+      { 'private/owner.md': 'a', 'scratch/x.md': 'x' },
+      { 'private/owner.md': 'b', 'scratch/x.md': 'y1' },
+    );
+    expect(d.put).toEqual([{ path: 'scratch/x.md', baseMd5: 'x' }]);
+    expect(d.trash).toEqual([]);
+  });
+
+  it('送るかどうか（証拠フレームも同じ決まり）', () => {
+    expect(shouldPut('a', 'a', undefined)).toBe(false);
+    expect(shouldPut('b', 'a', 'b')).toBe(false);
+    expect(shouldPut('b', undefined, undefined)).toBe(true);
+    expect(shouldPut('c', 'a', 'b')).toBe(true);
+  });
+
+  it('put の結果: 衝突なら基準は動かさず手元の版を覚え、通れば基準を進めて衝突の記憶を消す', () => {
+    const base: Record<string, string> = { 'private/owner.md': 'a' };
+    const conflicts: Record<string, string> = {};
+    settlePut(base, conflicts, 'private/owner.md', 'b', { md5: 'b', conflict: true });
+    expect(base).toEqual({ 'private/owner.md': 'a' });
+    expect(conflicts).toEqual({ 'private/owner.md': 'b' });
+    // 次の応答の終わり: 手元が同じ版のままなら送らない
+    expect(diffAgainstBase(new Map([['private/owner.md', 'b']]), base, conflicts).put).toEqual([]);
+    settlePut(base, conflicts, 'private/owner.md', 'c', { md5: 'c' });
+    expect(base).toEqual({ 'private/owner.md': 'c' });
+    expect(conflicts).toEqual({});
   });
 
   it('クラウドの CLAUDE.md は、全体の指示・メモリの置き場所と書き方・索引を持つ', () => {
