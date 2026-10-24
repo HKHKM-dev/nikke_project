@@ -398,3 +398,9 @@
 2026-10-24 05:40 に、録画 560 を 579 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`interception/20261024-579_special_blacksmith_emma.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
 
 2026-10-24 05:41 に、録画 573 を 580 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`interception/20261024-580_special_blacksmith_liter.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+- 2026-10-24 14:25 録画 562（アニス：スター + イサベル）: `range/20261024-562_sg_isabel_anis-star-ai-1.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 14:25 録画 563（アニス：スター + イサベル）: `range/20261024-563_sg_isabel_anis-star-ai-2.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 14:25 録画 564（アニス：スター + イサベル）: `range/20261024-564_sg_isabel_anis-star-ai-3.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 14:26 録画 565（イサベル単騎）: `range/20261024-565_sg_isabel_solo-gauge-1.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 14:26 録画 566（イサベル単騎）: `range/20261024-566_sg_isabel_solo-gauge-2.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
