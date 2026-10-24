@@ -1,0 +1,35 @@
+{
+  "id": "582",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-582_emma-naga-s2-count.mp4",
+  "original": "2026-10-24_16-19-48.mp4",
+  "durationSec": 200.8,
+  "frames": 12047,
+  "fps": 60,
+  "sizeMB": 243.4,
+  "sha256": "580dc6596d56",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 90,
+      "name": "エマ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 450,
+      "name": "ナガ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0489。エマ（1 枠目・操作・AUTO 射撃 ON）+ ナガ（2 枠目・AI）。オートバースト OFF・バーストは使っていない。最後の戦闘履歴（キャラ名・枠順・Lv.400）で確かめた。バーストの欄は右"
+}

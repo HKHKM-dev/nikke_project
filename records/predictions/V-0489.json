@@ -55,8 +55,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": false,
-        "condition": "auto"
+        "burst": false
       },
       "tolerance": {
         "abs": 3
@@ -75,8 +74,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": false,
-        "condition": "auto"
+        "burst": false
       },
       "tolerance": {
         "abs": 3
@@ -95,8 +93,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": false,
-        "condition": "auto"
+        "burst": false
       },
       "tolerance": {
         "abs": 3
@@ -117,8 +114,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": false,
-        "condition": "auto"
+        "burst": false
       },
       "tolerance": {
         "abs": 1
@@ -139,8 +135,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": false,
-        "condition": "auto"
+        "burst": false
       },
       "tolerance": {
         "abs": 1
@@ -161,8 +156,7 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": false,
-        "condition": "auto"
+        "burst": false
       },
       "tolerance": {
         "abs": 1
@@ -172,7 +166,7 @@
   ],
   "predicted": {
     "at": "2026-10-24",
-    "commit": "b9f55452c45195d564e2dc40ee46e1a272aa9013",
+    "commit": "af0a2ce03322a6b114c9038356f6bcebacfb75c3",
     "values": {
       "H-shot": {
         "s2-first-start": [170],
