@@ -1,0 +1,93 @@
+{
+  "verification": "V-0488",
+  "note": "撮り方 1（アニス：スター（AI）+ イサベル（操作・AUTO 射撃 ON）、オートバースト OFF）と撮り方 2（イサベル単騎・操作・AUTO 射撃 ON）の予測。モデルはいまの置き方 P（SG はペレットごと。plan/design-anis-star-ally-gauge.md 5 節の論点 3）だけを表せる。S（1 発に 1 回）・N（足さない）は、同じ編成のモデルの発のゲージの並び（shotGauges）から足し直して検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": false
+    },
+    {
+      "rid": 231,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "P",
+      "note": "いまのモデル。アニス：スターの足す量を、イサベルの当たったペレット 1 つごとに足す"
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-frame-0",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮り方 1: 残り時間 02:59 になったフレームから、1 回目に BURST バーが消えたフレームまで"
+    },
+    {
+      "id": "gauge-full-shot-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "撮り方 1: 1 回目に BURST バーが消えたときの、戦闘の最初から数えたイサベルの発の番号（的に当たった発で数える）"
+    },
+    {
+      "id": "solo-gauge-full-shot-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "team": [
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "撮り方 2（イサベル単騎）: 1 回目に BURST バーが消えたときの、イサベルの発の番号。ペレットの当たり方はモデルの区間の弾丸命中率なので、比べるときは録画で数えた当たった数で読み直す（C-0150）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-24",
+    "commit": "d5145a7bc305691623187201e8256f6de269526f",
+    "values": {
+      "P": {
+        "gauge-full-frame-0": 616,
+        "gauge-full-shot-0": 14,
+        "solo-gauge-full-shot-0": 33
+      }
+    }
+  }
+}

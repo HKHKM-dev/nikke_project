@@ -1,0 +1,29 @@
+{
+  "id": "565",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-565_sg_isabel_solo-gauge-1.mp4",
+  "original": "2026-10-24_14-23-30.mp4",
+  "durationSec": 42.8,
+  "frames": 2568,
+  "fps": 60,
+  "sizeMB": 52.3,
+  "sha256": "0b7a22db89d5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0488 の撮り方 2（イサベル単騎・操作・AUTO 射撃 ON、オートバースト OFF）。1 回目の満タンの後に一時停止の画面を映した。枠順は一時停止の画面で確かめた"
+}
