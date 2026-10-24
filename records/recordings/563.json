@@ -1,0 +1,35 @@
+{
+  "id": "563",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-563_sg_isabel_anis-star-ai-2.mp4",
+  "original": "2026-10-24_14-22-10.mp4",
+  "durationSec": 27.4,
+  "frames": 1644,
+  "fps": 60,
+  "sizeMB": 33.2,
+  "sha256": "1b2518502125",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0488 の撮り方 1（562 と同じ）。1 回目の満タンの後に一時停止の画面を映した。枠順は一時停止の画面で確かめた"
+}
