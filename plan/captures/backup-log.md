@@ -368,3 +368,10 @@
 2026-10-24 04:53 に、録画 551 を 557 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261024-557_rl_idoll-flower_manual-core.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
 
 2026-10-24 04:54 に、録画 550 を 556 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261024-556_rl_idoll-flower_manual-core.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+- 2026-10-24 12:19 録画 554（デルタ単騎）: `range/20261024-554_sr_delta_normal-enemy.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 12:19 録画 555（デルタ単騎）: `range/20261024-555_sr_delta_normal-enemy.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+
+2026-10-24 03:45 に、録画 551 を 554 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261024-554_sr_delta_normal-enemy.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 03:46 に、録画 552 を 555 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261024-555_sr_delta_normal-enemy.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
