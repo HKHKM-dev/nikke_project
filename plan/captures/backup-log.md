@@ -406,3 +406,7 @@
 - 2026-10-24 14:26 録画 566（イサベル単騎）: `range/20261024-566_sg_isabel_solo-gauge-2.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 16:41 録画 581（エマ + ナガ）: `range/20261024-581_emma-naga-s2-count.mp4` を Drive に置いた（Drive の中で取り込み元の写しからコピーした。E: と Drive で sha256 が一致）。
 - 2026-10-24 16:41 録画 582（エマ + ナガ）: `range/20261024-582_emma-naga-s2-count.mp4` を Drive に置いた（Drive の中で取り込み元の写しからコピーした。E: と Drive で sha256 が一致）。
+- 2026-10-24 16:44 録画 583（アスカ + マナ）: `range/20261024-583_ar+ar_asuka+mana_asuka-control-1.mp4` を Drive に置いた（Drive の中で取り込み元の写しからコピーした。E: と Drive で sha256 が一致）。
+- 2026-10-24 16:45 録画 584（アスカ + マナ）: `range/20261024-584_ar+ar_asuka+mana_asuka-control-2.mp4` を Drive に置いた（Drive の中で取り込み元の写しからコピーした。E: と Drive で sha256 が一致）。
+- 2026-10-24 16:45 録画 585（アスカ + マナ）: `range/20261024-585_ar+ar_asuka+mana_mana-control-1.mp4` を Drive に置いた（Drive の中で取り込み元の写しからコピーした。E: と Drive で sha256 が一致）。
+- 2026-10-24 16:45 録画 586（アスカ + マナ）: `range/20261024-586_ar+ar_asuka+mana_mana-control-2.mp4` を Drive に置いた（Drive の中で取り込み元の写しからコピーした。E: と Drive で sha256 が一致）。
