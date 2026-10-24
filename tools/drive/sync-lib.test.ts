@@ -11,6 +11,7 @@ import {
   type Pair,
   relUnder,
   splitRel,
+  SYNC_MARKER,
   topFolder,
   trashDir,
 } from './sync-lib.ts';
@@ -36,16 +37,18 @@ describe('drive/sync-lib', () => {
     expect(value('--max-delete')).toBe('50');
     expect(args).toContain('--suffix-keep-extension');
     expect(args).toContain('--check-access');
+    expect(value('--check-filename')).toBe(SYNC_MARKER);
     expect(args).not.toContain('--resync');
     expect(args).not.toContain('--dry-run');
   });
 
-  it('初回の空打ちは --resync と --dry-run を付け、RCLONE_TEST が無ければ --check-access を外せる', () => {
+  it('初回の空打ちは --resync と --dry-run を付け、目印が無ければ --check-access を外せる', () => {
     const args = bisyncArgs(pair, { resync: true, dryRun: true, checkAccess: false, verbose: true });
     expect(args).toContain('--resync');
     expect(args).toContain('--dry-run');
     expect(args).toContain('-v');
     expect(args).not.toContain('--check-access');
+    expect(args).not.toContain('--check-filename');
   });
 
   it('退避先は Path1 の外（同じドライブの nikke_sync_trash/<対>）', () => {
@@ -58,7 +61,7 @@ describe('drive/sync-lib', () => {
     expect(isConflictName('owner.conflict-drive.md')).toBe(true);
     expect(isConflictName('owner.conflict-cloud.md')).toBe(true);
     expect(isConflictName('064_f100.conflict-drive2.jpg')).toBe(true);
-    expect(isConflictName('RCLONE_TEST.conflict-desktop')).toBe(true);
+    expect(isConflictName('SYNC_MARKER_DO_NOT_DELETE.conflict-desktop.txt')).toBe(true);
     expect(isConflictName('owner.md')).toBe(false);
     expect(isConflictName('conflict-desktop.md')).toBe(false);
     expect(isConflictName('20261002-951_rl_conflict-x.mp4')).toBe(false);
@@ -77,7 +80,7 @@ describe('drive/sync-lib', () => {
     expect(splitRel('Captures/a.mp4')).toEqual({ dir: 'Captures', name: 'a.mp4' });
     expect(splitRel('a.mp4')).toEqual({ dir: '', name: 'a.mp4' });
     expect(topFolder('range/a.mp4')).toBe('range');
-    expect(topFolder('RCLONE_TEST')).toBe('');
+    expect(topFolder(SYNC_MARKER)).toBe('');
   });
 
   it('フックの同期は、前の成功から 30 分たつまで飛ばす', () => {

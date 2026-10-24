@@ -355,3 +355,4 @@
 - 2026-10-24 12:08 録画 550（ウンファ：タクティカル・アップ単騎）: `range/20261024-550_sr_unfa_manual.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 12:19 録画 551（ウンファ単騎）: `range/20261024-551_sr_unfa_manual.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 12:35 録画 553（ウンファ単騎）: `range/20261024-553_sr_unfa_manual.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 13:36 `npm run drive:sync`（デスクトップ）: 4 つの対が通った。クラウドで足した `scratch/blablalink/` の 2 件は 13:29 のフックの同期で降りていた。`private` の対は、Drive の `owner.md`（クラウドでの追記）を見て安全停止（`Safety abort: all files were changed`）していたので、ローカルが前の同期から変わっていないことを確かめてから、その対だけ `--force` で 1 回回して降ろした（ローカルの古い版は `nikke_sync_trash/private/` へ）。13:42 に `captures` と `private` の両側の根に目印 `SYNC_MARKER_DO_NOT_DELETE.txt` を置いた（[../design-cloud-environment.md](../design-cloud-environment.md) 4.2 節）。旧い目印 `RCLONE_TEST` は、目印を変える変更のマージの後に消す。

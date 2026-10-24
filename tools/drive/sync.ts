@@ -23,6 +23,8 @@ import {
   lockIsLive,
   memoryProjectName,
   type Pair,
+  SYNC_MARKER,
+  SYNC_MARKER_TEXT,
 } from './sync-lib.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
@@ -63,7 +65,8 @@ const PAIRS: PairDef[] = [
     local: join(main, 'private'),
     remote: `${driveSync()}/private`,
     filterText: '# サービスアカウントの鍵（*.json）は同期しない（設計書 4.1 節）\n- *.json\n',
-    checkAccess: false,
+    // ファイルが owner.md だけなので、目印が無いとクラウドで追記するたびに全部が変わったと見なして止まる（設計書 4.2 節）
+    checkAccess: true,
   },
   {
     name: 'scratch',
@@ -130,9 +133,9 @@ function log(line: string): void {
   appendFileSync(join(stateDir, 'sync.log'), `${new Date().toISOString()} ${line}\n`);
 }
 
-function hasTestFile(pair: PairDef): { local: boolean; remote: boolean } {
-  const remote = lsjson(pair.remote, ['--files-only', '--max-depth', '1', '--include', 'RCLONE_TEST']);
-  return { local: existsSync(join(pair.local, 'RCLONE_TEST')), remote: (remote ?? []).length > 0 };
+function hasMarker(pair: PairDef): { local: boolean; remote: boolean } {
+  const remote = lsjson(pair.remote, ['--files-only', '--max-depth', '1', '--include', SYNC_MARKER]);
+  return { local: existsSync(join(pair.local, SYNC_MARKER)), remote: (remote ?? []).length > 0 };
 }
 
 /** 衝突で別名にしたファイル（ローカルを歩く。derived は見ない） */
@@ -190,25 +193,25 @@ try {
     const mode = `${hook ? 'hook' : 'manual'}${values.resync ? ' resync' : ''}${values['dry-run'] ? ' dry-run' : ''}`;
     let checkAccess = pair.checkAccess;
     if (pair.checkAccess) {
-      const t = hasTestFile(pair);
+      const t = hasMarker(pair);
       if (!t.local || !t.remote) {
         if (!values.resync) {
           failed++;
-          log(`${mode} ${pair.name} skipped (RCLONE_TEST が無い)`);
+          log(`${mode} ${pair.name} skipped (${SYNC_MARKER} が無い)`);
           console.error(
-            `${pair.name}: 根に RCLONE_TEST が無い（${t.local ? '' : 'ローカル '}${t.remote ? '' : 'Drive'}）。初回の --resync で置く`,
+            `${pair.name}: 根に ${SYNC_MARKER} が無い（${t.local ? '' : 'ローカル '}${t.remote ? '' : 'Drive'}）。初回の --resync で置く`,
           );
           continue;
         }
         if (values['dry-run']) {
           checkAccess = false;
           console.log(
-            `${pair.name}: RCLONE_TEST が無いので、空打ちでは --check-access を外した（本番の --resync で置く）`,
+            `${pair.name}: ${SYNC_MARKER} が無いので、空打ちでは --check-access を外した（本番の --resync で置く）`,
           );
         } else {
-          if (!t.local) writeFileSync(join(pair.local, 'RCLONE_TEST'), '');
+          if (!t.local) writeFileSync(join(pair.local, SYNC_MARKER), SYNC_MARKER_TEXT);
           // Drive 側はローカルのものを写す（更新時刻をそろえる。別々に作ると bisync が食い違いと見る）
-          rclone(['copyto', join(pair.local, 'RCLONE_TEST'), `${pair.remote}/RCLONE_TEST`]);
+          rclone(['copyto', join(pair.local, SYNC_MARKER), `${pair.remote}/${SYNC_MARKER}`]);
         }
       }
     }

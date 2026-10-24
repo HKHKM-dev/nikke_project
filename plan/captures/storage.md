@@ -72,6 +72,8 @@ D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
 - 衝突（前の同期から両側で変わった）ファイルは両方を残し、名前に側を付ける（`<名前>.conflict-desktop.<拡張子>` と `<名前>.conflict-drive.<拡張子>`）。一覧は `npm run drive:conflicts`。中身を見て 1 つにまとめ、別名の方を消す。
 - 実行の記録は、ホームの下の `.nikke-sync/sync.log`（1 回 1 行。フックで回した rclone の出力は `last-captures.log`）。
 - 重大なエラー（終了コード 7）が出たら、`npm run drive:sync -- --pair captures --resync --dry-run` で何が動くかを見てから `--resync` する（`--resync` はローカルが勝つ）。フィルタを変えたときも `--resync` が要る。
+- `captures` と `private` の根には、両側に目印 `SYNC_MARKER_DO_NOT_DELETE.txt` がある（`--check-access` が見る。消すと同期が止まる）。無いと言われたら、ドライブがつながっているかを確かめてから、その対を `--resync --dry-run` で見て `--resync`（目印を置き直す）。
+- `Safety abort: all files were changed` で止まったら、片側で全部のファイルが変わっている。その側の中身を見てから直す（2026-10-24 に目印の無かった `private` で起きた。[../design-cloud-environment-log.md](../design-cloud-environment-log.md) 12.2 節）。
 - Drive に同名の複製ができたら `rclone dedupe` で直す。
 - Drive for desktop の `I:` は見るためだけに使い、ここから書かない（2 つの道具で同じフォルダに書かない）。
 - 取り込み元の `H:/record/` は、Drive for desktop が「マイ コンピュータ/record」として同期している（rclone では扱わない）。
@@ -82,7 +84,7 @@ D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
 2. Google Cloud の今のプロジェクト（サービスアカウントと同じでよい）で、OAuth の同意画面を External で作り、公開の状態を「本番」にする（「テスト」のままだと認可が 7 日で切れる）。認証情報で「デスクトップアプリ」の OAuth クライアント ID を作る。
 3. rclone のリモートを作る: `rclone config create gdrive drive client_id <クライアント ID> client_secret <クライアント シークレット> scope drive`。ブラウザが開くので、メインのアカウントで認可する（「このアプリは Google で確認されていません」の画面は、自分のアプリなので進めてよい）。名前を gdrive 以外にするなら、環境変数 `NIKKE_RCLONE_REMOTE` に入れる。
 4. 取り込み元の写しを Drive の中でコピーさせる（上げ直さない）なら、ユーザーの環境変数 `NIKKE_DRIVE_RECORD_FOLDER_ID` に「マイ コンピュータ/record」のフォルダ ID を入れる。無ければ E: から上げる。
-5. 初回: `npm run drive:sync -- --resync --dry-run` で送られるものを見る（2026-10-23 の見込みは、Drive に無い証拠フレーム 30 枚だけ。[../design-cloud-environment-notes.md](../design-cloud-environment-notes.md) 2.5 節）。合っていれば `npm run drive:sync -- --resync`（両側の根に `RCLONE_TEST` を置いてから、両側を合わせる）。
+5. 初回: `npm run drive:sync -- --resync --dry-run` で送られるものを見る（2026-10-23 の見込みは、Drive に無い証拠フレーム 30 枚だけ。[../design-cloud-environment-notes.md](../design-cloud-environment-notes.md) 2.5 節）。合っていれば `npm run drive:sync -- --resync`（`captures` と `private` の両側の根に目印 `SYNC_MARKER_DO_NOT_DELETE.txt` を置いてから、両側を合わせる）。
 
 鍵（rclone の設定ファイルのトークンと、クライアント シークレット）はリポジトリに置かない。
 
