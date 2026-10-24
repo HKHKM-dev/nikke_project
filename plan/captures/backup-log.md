@@ -356,3 +356,15 @@
 - 2026-10-24 12:19 録画 551（ウンファ単騎）: `range/20261024-551_sr_unfa_manual.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 12:35 録画 553（ウンファ単騎）: `range/20261024-553_sr_unfa_manual.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 13:36 `npm run drive:sync`（デスクトップ）: 4 つの対が通った。クラウドで足した `scratch/blablalink/` の 2 件は 13:29 のフックの同期で降りていた。`private` の対は、Drive の `owner.md`（クラウドでの追記）を見て安全停止（`Safety abort: all files were changed`）していたので、ローカルが前の同期から変わっていないことを確かめてから、その対だけ `--force` で 1 回回して降ろした（ローカルの古い版は `nikke_sync_trash/private/` へ）。13:42 に `captures` と `private` の両側の根に目印 `SYNC_MARKER_DO_NOT_DELETE.txt` を置いた（[../design-cloud-environment.md](../design-cloud-environment.md) 4.2 節）。旧い目印 `RCLONE_TEST` は、目印を変える変更のマージの後に消す。
+- 2026-10-24 12:12 録画 556（I-DOLL・フラワー単騎）: `range/20261024-556_rl_idoll-flower_manual-core.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 12:12 録画 557（I-DOLL・フラワー単騎）: `range/20261024-557_rl_idoll-flower_manual-core.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 12:12 録画 558（I-DOLL・フラワー単騎）: `range/20261024-558_rl_idoll-flower_manual-core.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 12:12 録画 559（I-DOLL・フラワー単騎）: `range/20261024-559_rl_idoll-flower_manual-core.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+
+2026-10-24 04:50 に、録画 553 を 559 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261024-559_rl_idoll-flower_manual-core.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 04:51 に、録画 552 を 558 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261024-558_rl_idoll-flower_manual-core.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 04:53 に、録画 551 を 557 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261024-557_rl_idoll-flower_manual-core.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 04:54 に、録画 550 を 556 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261024-556_rl_idoll-flower_manual-core.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
