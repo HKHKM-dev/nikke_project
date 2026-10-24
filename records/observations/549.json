@@ -12,6 +12,11 @@
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
       "note": "区間の端は 549-02 のフレーム。撃たない間はバーが見え始めた f990 から。区間の中のバーの px を、クラウンの累積ヒットに直線で当てはめた傾き（ヒットの数の分け方は 545-01 と同じ）。この録画はバーにアイコンが重ならない"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge",
+      "frames": [990, 1244]
     }
   },
   {
@@ -27,6 +32,11 @@
     "method": {
       "tool": "tools/captures/timer.ts --mode changes・reticle-ammo.ts --mode series・hud.ts --mode jumps",
       "note": "ボタンは画面左上の 30×30px の赤み（R − B）で見た。照準が的のほうへ動き出したのはボタンより 8f ほど前（548・549）。ボタンから発射まではどの録画も 62f、飛ぶ時間は 14f（C-0413 の中近）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [790, 1244]
     }
   },
   {
@@ -42,6 +52,11 @@
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
       "note": "着弾の前のフレームと着弾のフレームのバーの差"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [990, 1244]
     }
   }
 ]
