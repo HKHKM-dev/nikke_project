@@ -382,13 +382,21 @@ describe('命中率▲と弾丸命中率（C-0192。plan/design-hit-rate-up-bull
     expect(bulletHitRateWithHitRateUp(1, 0.3)).toBe(1);
   });
 
-  it('raises AR, SMG and MG only; SG, SR and RL keep the table value', () => {
-    expect([AR, SMG, MG].every(hitRateUpRaisesBulletHitRate)).toBe(true);
-    expect([SG, SR, RL].some(hitRateUpRaisesBulletHitRate)).toBe(false);
+  it('raises AR, SMG and MG at every landing and SG at near only (C-0631); SR and RL keep the table value', () => {
     const far = profile.landings.find((l) => l.id === 'farA')!;
     const nearA = profile.landings.find((l) => l.id === 'nearA')!;
+    const nearB = profile.landings.find((l) => l.id === 'nearB')!;
+    const midNear = profile.landings.find((l) => l.id === 'midNear')!;
+    const all = profile.landings;
+    expect([AR, SMG, MG].every((c) => all.every((l) => hitRateUpRaisesBulletHitRate(c, l)))).toBe(true);
+    expect([SR, RL].some((c) => all.some((l) => hitRateUpRaisesBulletHitRate(c, l)))).toBe(false);
+    expect(all.filter((l) => hitRateUpRaisesBulletHitRate(SG, l)).map((l) => l.id)).toEqual(['nearA', 'nearB']);
     expect(autoConditionAt(profile, far, SMG, 0.1512, MANUAL).hitRate).toBe(bulletHitRateWithHitRateUp(0.8068, 0.1512));
-    expect(autoConditionAt(profile, nearA, SG, 0.1512, MANUAL).hitRate).toBe(0.845);
+    // SG: 近だけ式を当て、中近・遠は表の値のまま（C-0527）
+    expect(autoConditionAt(profile, nearA, SG, 0.0509, MANUAL).hitRate).toBe(bulletHitRateWithHitRateUp(0.845, 0.0509));
+    expect(autoConditionAt(profile, nearB, SG, 0.0509, MANUAL).hitRate).toBe(bulletHitRateWithHitRateUp(0.951, 0.0509));
+    expect(autoConditionAt(profile, midNear, SG, 0.0509, MANUAL).hitRate).toBe(0.778);
+    expect(autoConditionAt(profile, far, SG, 0.0509, MANUAL).hitRate).toBe(0.668);
     expect(autoConditionAt(profile, far, SR, 0.1512, MANUAL).hitRate).toBe(1);
     // 表が null（未測定）なら手入力の値のまま
     const unmeasured = { ...profile, bulletHitRate: { ...profile.bulletHitRate, SMG: null } };

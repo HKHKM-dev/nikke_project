@@ -424,3 +424,15 @@
 - 2026-10-24 23:27 録画 598（I-DOLL・オーシャン単騎）: `range/20261024-598_smg_idoll-ocean_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 23:27 録画 599（I-DOLL・オーシャン単騎）: `range/20261024-599_smg_idoll-ocean_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 23:28 録画 600（I-DOLL・オーシャン単騎）: `range/20261024-600_smg_idoll-ocean_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:30 録画 601（ノワール単騎）: `range/20261024-601_sg_noir_auto_cube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:30 録画 602（ノワール単騎）: `range/20261024-602_sg_noir_auto_cube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:30 録画 603（ノワール単騎）: `range/20261024-603_sg_noir_auto_cube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:30 録画 604（ノワール単騎）: `range/20261024-604_sg_noir_auto_cube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:30 録画 605（ノワール単騎）: `range/20261024-605_sg_noir_auto_cube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:30 録画 606（ノワール単騎）: `range/20261024-606_sg_noir_auto_cube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:31 録画 607（ノワール単騎）: `range/20261024-607_sg_noir_auto_nocube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:31 録画 608（ノワール単騎）: `range/20261025-608_sg_noir_auto_nocube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:31 録画 609（ノワール単騎）: `range/20261025-609_sg_noir_auto_nocube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:31 録画 610（ノワール単騎）: `range/20261025-610_sg_noir_auto_nocube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:31 録画 611（ノワール単騎）: `range/20261025-611_sg_noir_auto_nocube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 00:31 録画 612（ノワール単騎）: `range/20261025-612_sg_noir_auto_nocube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
