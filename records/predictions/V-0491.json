@@ -1,0 +1,132 @@
+{
+  "verification": "V-0491",
+  "note": "撮る前の予測。H1-* は指標ごとの対立仮説で、帯の値を condition manual の coreHitRate・hitRate で一様に置き換える形でしか書けないので、それぞれ自分の指標（note に書いたもの）だけで比べる（V-0199 と同じ書き方）。指標の値は 1 本ごとの予測で、判定は撮った本数を合わせた率で行う（検証記録の「読み方」4）。許容の幅（tolerance）は、計画の本数（AR 9 本・SMG 5 本）を合わせたときの H0 と自分の H1 の 2σ（2 項分布）の和で、差がこれより大きければ 2 つの仮説の合う範囲が重ならない（検証記録の「予測」）。records:predict の「見分けられない」は全部の仮説の組で見るので、H0 と自分の H1 の組は検証記録の表で手で確かめた",
+  "team": [
+    {
+      "rid": 308,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "的の表のとおり（C-0544。range-bigarms の帯の値）。AR の遠のコア命中率 0.0704、SMG の遠のコア命中率 0.0342、AR の中遠の弾丸命中率 0.9969"
+    },
+    {
+      "id": "H1-ar-far",
+      "note": "AR の遠のコア命中率は V-0423 の 3 本の値（`423-14`。録画 423〜425）。ar-far-core だけで比べる",
+      "override": {
+        "condition": "manual",
+        "coreHitRate": 0.0535
+      }
+    },
+    {
+      "id": "H1-smg-far",
+      "note": "SMG の遠のコア命中率は V-0423 の 2 本の値（`426-13`。録画 426・427）。smg-far-core だけで比べる",
+      "override": {
+        "condition": "manual",
+        "coreHitRate": 0.0489
+      }
+    },
+    {
+      "id": "H1-ar-midfar",
+      "note": "AR の中遠の弾丸命中率は V-0423 の 3 本の値（`423-15`。録画 423〜425）。ar-midfar-bullet だけで比べる",
+      "override": {
+        "condition": "manual",
+        "hitRate": 0.9879
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "ar-far-core",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "判定の指標。I-DOLL・サン（AR）単騎の遠（3・6 区間目）のコア命中率（区間の頭を除かない全部のヒット）。9 本を合わせた率で判定する。幅は遠のヒット 3,420（1 本約 380 × 9）のときの 2σ の和（H0 0.0088・H1-ar-far 0.0077）",
+      "tolerance": {
+        "abs": 0.0164
+      }
+    },
+    {
+      "id": "smg-far-core",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "team": [
+        {
+          "rid": 305,
+          "controlled": true
+        }
+      ],
+      "note": "判定の指標。I-DOLL・オーシャン（SMG）単騎の遠（3・6 区間目）のコア命中率（区間の頭を除かない全部のヒット）。5 本を合わせた率で判定する。幅は遠のヒット 2,965（1 本約 593 × 5）のときの 2σ の和（H0 0.0067・H1-smg-far 0.0079）",
+      "tolerance": {
+        "abs": 0.0146
+      }
+    },
+    {
+      "id": "ar-midfar-bullet",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7800
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "判定の指標。I-DOLL・サン（AR）単騎の中遠（4 区間目）の完全なマガジンの弾丸命中率（当たったヒット ÷ 撃った数）。9 本を合わせた率で判定する。幅は撃った数 1,980（1 本約 220 × 9）のときの 2σ の和（H0 0.0025・H1-ar-midfar 0.0049）",
+      "tolerance": {
+        "abs": 0.0074
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-24",
+    "commit": "23feebf3f57820022a2e954870d34d17b40ae369",
+    "values": {
+      "H0": {
+        "ar-far-core": 0.0704,
+        "smg-far-core": 0.0342,
+        "ar-midfar-bullet": 0.9969
+      },
+      "H1-ar-far": {
+        "ar-far-core": 0.0535,
+        "smg-far-core": 0.0535,
+        "ar-midfar-bullet": 1
+      },
+      "H1-smg-far": {
+        "ar-far-core": 0.0489,
+        "smg-far-core": 0.0489,
+        "ar-midfar-bullet": 1
+      },
+      "H1-ar-midfar": {
+        "ar-far-core": 1,
+        "smg-far-core": 1,
+        "ar-midfar-bullet": 0.9879
+      }
+    }
+  }
+}
