@@ -1098,6 +1098,18 @@ export type BurstGaugeHitEffect = {
 };
 
 /**
+ * アニス：スター S1 の味方のゲージ編（plan/design-anis-star-ally-gauge.md 2 節）: 「味方全体のバーストゲージのチャージ速度 N%▲」の味方の分。
+ * 持つ枠のほかの枠のゲージ 1 回（通常攻撃の弾のヒットと、射撃ごとの倍率ダメージのゲージのヒット）ごとに、持つ枠の 1 発のゲージ × N%
+ * （ref）を足す。持つ枠の 1 発のゲージは、持つ枠の最初の発が着弾する前は burstEnergyPerShot、着弾から targetBurstEnergyPerShot
+ * （C-0244・C-0245・C-0246・C-0620）。持つ枠自身の分は passive の burstGaugeSpeed（対象 self）で書く。1 つの定義に 1 つまで
+ */
+export type AllyGaugeAddEffect = {
+  kind: 'allyGaugeAdd';
+  ref: number;
+  assumes?: LocalizedText;
+};
+
+/**
  * アニス：スター編: 「バースト再突入 N 段階に変更」（plan/design-anis-star-rest.md 3 節）。持つ枠のバーストの次の段階（CDN の
  * change_burst_step。BurstUnit.nextStep）を step に差し替える。I を撃った後にもう一度 I に入れば、このチェーンで未使用の
  * 別の I の枠が撃つ。編成の条件（burstStepMix・squad）を付けられる。どのスロットにも書けるが、1 つの定義に 1 つまで
@@ -1247,6 +1259,7 @@ export type SkillEffect = (
   | AutoAttackEffect
   | BurstGaugeHitEffect
   | BurstReentryEffect
+  | AllyGaugeAddEffect
   | StateGrantEffect
   | RemoveStateEffect
   | StackChangeEffect
@@ -1277,6 +1290,7 @@ export const SKILL_EFFECT_KINDS = [
   'autoAttack',
   'burstGaugeHit',
   'burstReentry',
+  'allyGaugeAdd',
   'state',
   'removeState',
   'stackChange',
@@ -2741,6 +2755,19 @@ function parseBurstReentryEffect(v: Record<string, Json>, path: string): BurstRe
   return effect;
 }
 
+function parseAllyGaugeAddEffect(v: Record<string, Json>, path: string): AllyGaugeAddEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'ref', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+  }
+  const ref = v.ref;
+  if (typeof ref !== 'number' || !Number.isInteger(ref) || ref < 1) {
+    fail(`${path}.ref`, `expected a positive integer, got ${JSON.stringify(ref)}`);
+  }
+  const effect: AllyGaugeAddEffect = { kind: 'allyGaugeAdd', ref };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
   // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）
   const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds'] : [];
@@ -2933,12 +2960,13 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'autoAttack') return parseAutoAttackEffect(v, path);
   if (v.kind === 'burstGaugeHit') return parseBurstGaugeHitEffect(v, path);
   if (v.kind === 'burstReentry') return parseBurstReentryEffect(v, path);
+  if (v.kind === 'allyGaugeAdd') return parseAllyGaugeAddEffect(v, path);
   if (v.kind === 'state') return parseStateGrantEffect(v, path);
   if (v.kind === 'removeState') return parseRemoveStateEffect(v, path);
   if (v.kind === 'stackChange') return parseStackChangeEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry", "state", "removeState" or "stackChange", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry", "allyGaugeAdd", "state", "removeState" or "stackChange", got ${JSON.stringify(v.kind)}`,
   );
 }
 
@@ -3261,6 +3289,9 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   // アニス：スター編: バースト再突入は 1 つの定義に 1 つまで（次の段階は 1 つしか持てない）
   if (SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects).filter((e) => e.kind === 'burstReentry').length > 1) {
     fail('skills', 'at most one burstReentry effect per definition');
+  }
+  if (SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects).filter((e) => e.kind === 'allyGaugeAdd').length > 1) {
+    fail('skills', 'at most one allyGaugeAdd effect per definition');
   }
   validateCycles(skills, 'skills');
   validateFixedChargeTimeCount(skills, 'skills');

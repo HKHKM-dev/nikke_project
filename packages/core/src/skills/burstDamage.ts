@@ -244,6 +244,26 @@ export function resolveShotGauges(
 }
 
 /**
+ * アニス：スター S1 の味方のゲージ編（plan/design-anis-star-ally-gauge.md 2 節）: 定義の allyGaugeAdd の割合（説明文の % を 100 で割った値）。
+ * 無ければ null（parseSkillDefinition が 1 つまでに限っている）
+ */
+export function resolveAllyGaugeAdd(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): number | null {
+  for (const slot of SKILL_SLOTS) {
+    for (const effect of def.skills[slot].effects) {
+      if (effect.kind !== 'allyGaugeAdd') continue;
+      const raw = skillValue(character.skills[slot], effect.ref, levels[slot]);
+      if (raw < 0) throw new RangeError(`skill ${character.skills[slot].id}: allyGaugeAdd must be >= 0, got ${raw}`);
+      return raw / 100;
+    }
+  }
+  return null;
+}
+
+/**
  * ニヒリスター編: 定義の各 dot 効果を Lv の数値に解決する（1 tick の倍率・間隔・維持秒）。support が 'unsupported' のスキルは空。
  * 間隔が維持時間より長いと 1 tick も出ないので拒否する（durationRef は Lv で決まるのでここで見る）
  */

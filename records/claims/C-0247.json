@@ -5,7 +5,7 @@
   "topic": "バーストゲージ",
   "grade": "推論",
   "basis": "値の一致からの推論（1,680 = 6% × 28,000、840 = 6% × 14,000）。14,000 が使われる理由は読んでいない。`183-02`・`188-01`・`190-01`・`191-01`。V-0158。撃つ前から撃った後への切り替わりは、最初の発の着弾（C-0620。V-0482）。アニス：スター自身のゲージが的で初めて溜まる時点と同じだが、量が 6% × 自分の 1 発のゲージになる理由は推論のまま。V-0482",
-  "model": "未反映（モデルは S1 の effects[0] で味方全員のゲージに ×1.06 を掛ける。`frame/firstPass.ts`・`burst/dynamic.ts` の gaugeSpeed）",
+  "model": "量の出し方として使っている（allyGaugeAdd は 6% × 自分の 1 発のゲージ。最初の発の着弾の前は burst_energy_pershot、後は target_burst_energy_pershot）。値は C-0245・C-0246 と同じ（plan/design-anis-star-ally-gauge.md）",
   "replaces": [],
   "updated": "2026-10-24"
 }

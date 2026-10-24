@@ -72,6 +72,7 @@ import { SG_PELLET_GAUGE_HIT_RATE, burstUnitOf, energyPerTrigger, partialGaugeRa
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
 import {
   resolveDamageGauges,
+  resolveAllyGaugeAdd,
   resolveDotEffects,
   resolveShotGauges,
   resolveTimerGauges,
@@ -406,6 +407,16 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     const pelletRate = pellets[i] && span?.measured !== true ? SG_PELLET_GAUGE_HIT_RATE : 1;
     return energy * (spanValueAt(i, f)?.hitRate ?? 1) * pelletRate;
   };
+  /**
+   * アニス：スター S1 の味方のゲージ編: 枠 i の 1 発のゲージ（energyAt の値）が、ゲージ何回ぶんか（弾のヒットの期待値。SG は当たった
+   * ペレットの数）。1 回のゲージ（targetBurstEnergyPerShot × フルチャージ倍率 × いまのゲージ速度）で割る
+   */
+  const gaugeHitsOf = (i: number, shotEnergy: number): number => {
+    const shot = slots[i]!.character.shot;
+    const charge = i === controlledSlot && shot.chargeTime > 0 ? shot.fullChargeBurstEnergy : 1;
+    const unit = targetEnergies[i]! * charge * (timedGauge[i] ? gaugeScale[i]! : 1 + gaugeSpeed[i]!);
+    return unit > 0 ? shotEnergy / unit : 0;
+  };
   // plan/design-anis-star-gauge-timing.md 3 節: 枠 i がフレーム f に撃った発の飛ぶ時間（ゲージはその後のフレームに溜まる）
   const flights = slots.map((_, i) => options.flights?.[i] ?? null);
   /**
@@ -579,8 +590,35 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const dotGauges: FirstPassResult['dotGauges'] = [];
   const pendingGauge = new Map<number, number>();
   const shotGauges: FirstPassResult['shotGauges'] = [];
-  /** 枠 i の発のゲージを、着弾のフレーム（f + 飛ぶ時間）に入れる。f のフレームならこのフレームのゲージに返す */
-  const landingGauge = (i: number, at: number, f: number, energy: number): number => {
+  // アニス：スター S1 の味方のゲージ編（plan/design-anis-star-ally-gauge.md 3 節）: allyGaugeAdd を持つ枠（1 つまで）は、ほかの枠の
+  // ゲージ 1 回（弾のヒット・射撃ごとの倍率ダメージのゲージのヒット）ごとに、自分の 1 発のゲージ × 割合を足す。1 発のゲージは自分の
+  // 最初の発の着弾のフレームから targetBurstEnergyPerShot、その前は burstEnergyPerShot（C-0246・C-0620）。回数は着くフレームに数え、
+  // そのフレームの射撃の後に、そのフレームの量で足す（着弾と同じフレームの回は切り替わった後の量。境のフレームは確かめていない）
+  const allyAdd = (() => {
+    for (const [i, slot] of slots.entries()) {
+      if (slot === null || slot.definition === null) continue;
+      const ratio = resolveAllyGaugeAdd(slot.definition, slot.character, slot.levels);
+      if (ratio === null || ratio === 0) continue;
+      const shot = slot.character.shot;
+      return { slotIndex: i, before: shot.burstEnergyPerShot * ratio, after: shot.targetBurstEnergyPerShot * ratio };
+    }
+    return null;
+  })();
+  /** 持つ枠の最初の発の着弾のフレーム（まだ撃っていなければ null） */
+  let allyAddLanding: number | null = null;
+  /** フレーム → そのフレームに着く、ほかの枠のゲージの回数（期待値） */
+  const pendingAllyHits = new Map<number, number>();
+  const reserveAllyHits = (i: number, at: number, hits: number): void => {
+    if (allyAdd === null) return;
+    if (i === allyAdd.slotIndex) {
+      if (allyAddLanding === null || at < allyAddLanding) allyAddLanding = at;
+      return;
+    }
+    if (hits > 0 && at < frames) pendingAllyHits.set(at, (pendingAllyHits.get(at) ?? 0) + hits);
+  };
+  /** 枠 i の発のゲージを、着弾のフレーム（f + 飛ぶ時間）に入れる。f のフレームならこのフレームのゲージに返す。hits はその回数（期待値） */
+  const landingGauge = (i: number, at: number, f: number, energy: number, hits: number): number => {
+    reserveAllyHits(i, at, hits);
     if (energy > 0 && at < frames) shotGauges.push({ slotIndex: i, shotFrame: f, frame: at, energy });
     if (at === f) return energy;
     if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
@@ -742,10 +780,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       };
       if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
       shotCounts[i]! += 1;
+      const shotEnergy = energyAt(i, f);
       const energy =
-        energyAt(i, f) * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +
+        shotEnergy * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +
         (obstacles[i]!.get(shotCounts[i]!) ?? 0) * obstacleEnergyAt(i);
-      gauge += landingGauge(i, f + shotFlightAt(i, f), f, energy);
+      gauge += landingGauge(i, f + shotFlightAt(i, f), f, energy, gaugeHitsOf(i, shotEnergy));
     });
     // ヘルム編: ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
     for (const t of damageGaugeTrackers) {
@@ -757,7 +796,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       // 射撃ごとの倍率ダメージのヒット（S1 の追加ダメージなど）も、発の着弾から数える（飛ぶ時間。plan/design-anis-star-gauge-timing.md 3.1 節）
       const flight = shotFlightAt(t.slotIndex, f);
       const energy = targetEnergyNow(t.slotIndex, t.energy);
-      for (const d of t.gaugeHits) gauge += landingGauge(t.slotIndex, f + flight + d, f, energy);
+      for (const d of t.gaugeHits) gauge += landingGauge(t.slotIndex, f + flight + d, f, energy, 1);
     }
     // モラン編: 射撃の回数でゲージだけを溜める効果。発火した射撃のフレームのゲージに足す
     for (const t of shotGaugeTrackers) {
@@ -821,6 +860,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
           effect: c.effect,
           amount: c.effect.value,
         });
+      }
+    }
+    // アニス：スター S1 の味方のゲージ編: このフレームに着いたほかの枠のゲージの回数に、このフレームの量を足す
+    if (allyAdd !== null) {
+      const hits = pendingAllyHits.get(f);
+      if (hits !== undefined) {
+        pendingAllyHits.delete(f);
+        gauge += hits * (allyAddLanding !== null && f >= allyAddLanding ? allyAdd.after : allyAdd.before);
       }
     }
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）

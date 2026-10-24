@@ -5,7 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
-import { resolvePerShotDamage } from '../burstDamage.ts';
+import { resolveAllyGaugeAdd, resolvePerShotDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives } from '../resolve.ts';
 import { burstUnitOf } from '../../burst/dynamic.ts';
 import { applyComposition, burstStepMixAllows } from '../composition.ts';
@@ -32,14 +32,16 @@ function withFirstEffect(effect: Record<string, unknown>): unknown {
 }
 
 describe('アニス：スター（17）の定義', () => {
-  it('resolves the burst gauge speed up for all allies and the self ATK up of My Own Star', () => {
+  it('resolves the burst gauge speed up for herself, the ally gauge bonus and the self ATK up of My Own Star', () => {
     const passives = resolvePassives(def, anis, MAX_SKILL_LEVELS);
+    // 味方の分は ×1.06 でなく 1 回ごとに足す形（allyGaugeAdd。C-0244。plan/design-anis-star-ally-gauge.md 2 節）
     expect(passives.map((e) => [e.stat, e.target])).toEqual([
-      ['burstGaugeSpeed', 'allies'],
+      ['burstGaugeSpeed', 'self'],
       ['attack', 'self'],
     ]);
     expect(passives[0]!.value).toBeCloseTo(0.06, 12);
     expect(passives[1]!.value).toBeCloseTo(0.4001, 12);
+    expect(resolveAllyGaugeAdd(def, anis, MAX_SKILL_LEVELS)).toBeCloseTo(0.06, 12);
   });
 
   it('resolves the Burst cooldown cut at battle start and at the end of Full Burst, and the S2 heal', () => {
@@ -69,12 +71,12 @@ describe('アニス：スター（17）の定義', () => {
     expect(lv1[0]!.multiplier).toBeCloseTo(0.71, 12);
   });
 
-  it('defines every line of S1, with the measured ally gauge bonus noted as unimplemented (V-0158)', () => {
+  it('defines every line of S1, with the homing flight time noted as unimplemented', () => {
     expect(def.skills.skill1.support).toBe('partial');
-    // V-0158 の味方のゲージと、誘導弾の飛ぶ時間の未実装の分（plan/design-anis-star-gauge-timing.md 3 節）。2 段目の段 1: 消去と
+    // 誘導弾の飛ぶ時間の未実装の分（plan/design-anis-star-gauge-timing.md 3 節）。2 段目の段 1: 消去と
     // フルバースト終了時の付け直しを書かないことの補足（私だけの星の付与を指す）
-    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['unimplemented', 'unimplemented', 'modeling']);
-    expect(def.skills.skill1.notes?.[2]?.refers).toBe('effects[1]');
+    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['unimplemented', 'modeling']);
+    expect(def.skills.skill1.notes?.[1]?.refers).toBe('effects[1]');
   });
 
   it('re-enters Burst Stage I only with Everyone’s Star', () => {
@@ -126,6 +128,7 @@ describe('バースト段階の構成の条件（burstStepMix）', () => {
       'cooldownReduction',
       'cooldownReduction',
       'damage',
+      'allyGaugeAdd',
     ]);
     expect(staticStatesOf(team)).toEqual(['myOwnStar']);
     expect(burstReentryStepOf(team)).toBeNull();
@@ -140,11 +143,18 @@ describe('バースト段階の構成の条件（burstStepMix）', () => {
       'cooldownReduction',
       'cooldownReduction',
       'damage',
+      'allyGaugeAdd',
     ]);
     expect(staticStatesOf(solo)).toEqual(['myOwnStar']);
     const withFlower = applyComposition(def, [anis, flower], 0);
     // みんなの星は中身の無い静的な状態の付与（S1 の末尾）。バースト再突入は burstReentry のまま
-    expect(withFlower.skills.skill1.effects.map((e) => e.kind)).toEqual(['passive', 'damage', 'burstReentry', 'state']);
+    expect(withFlower.skills.skill1.effects.map((e) => e.kind)).toEqual([
+      'passive',
+      'damage',
+      'burstReentry',
+      'state',
+      'allyGaugeAdd',
+    ]);
     expect(staticStatesOf(withFlower)).toEqual(['everyonesStar']);
     expect(resolvePassives(withFlower, anis, MAX_SKILL_LEVELS).map((e) => e.stat)).toEqual(['burstGaugeSpeed']);
     expect(resolveInstant(withFlower, anis, MAX_SKILL_LEVELS).map((e) => e.kind)).toEqual(['heal']);
