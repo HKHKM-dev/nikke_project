@@ -404,3 +404,5 @@
 - 2026-10-24 14:25 録画 564（アニス：スター + イサベル）: `range/20261024-564_sg_isabel_anis-star-ai-3.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 14:26 録画 565（イサベル単騎）: `range/20261024-565_sg_isabel_solo-gauge-1.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-24 14:26 録画 566（イサベル単騎）: `range/20261024-566_sg_isabel_solo-gauge-2.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 16:41 録画 581（エマ + ナガ）: `range/20261024-581_emma-naga-s2-count.mp4` を Drive に置いた（Drive の中で取り込み元の写しからコピーした。E: と Drive で sha256 が一致）。
+- 2026-10-24 16:41 録画 582（エマ + ナガ）: `range/20261024-582_emma-naga-s2-count.mp4` を Drive に置いた（Drive の中で取り込み元の写しからコピーした。E: と Drive で sha256 が一致）。
