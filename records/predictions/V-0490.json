@@ -1,0 +1,106 @@
+{
+  "verification": "V-0490",
+  "note": "撮る前の予測（backlog 2-37）。V-0439 の編成の枠順を入れ替えた 2 体（◎アスカ（操作）→ マナ（AI））。どちらもバースト段階 III なのでバーストは撃たない（オートバースト OFF。setup の burst: false）。見るのは、マナの通常攻撃 10 発目と同じフレームのアスカの 10 発目に S1（回復効果が適用された時、攻撃力▲）が乗るか。このファイルで出せるのはいまのモデル（回復は 10 発目の次のフレーム。skills/heals.ts の healFrameOf）だけで、同じフレームに入る仮説（HS）の値はモデルを切り替えないと出ないので、検証記録の「予測」に手で書く。この枠順では、枠の順で処理される仮説（HO）の見え方はいまのモデルと同じ",
+  "team": [
+    {
+      "rid": 830,
+      "controlled": true
+    },
+    {
+      "rid": 290,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "HN",
+      "note": "いまのモデル: 射撃の回数起点の回復は、トリガーになった発の次のフレームに入る（healFrameOf）。アスカの S1 はマナの 10 発目の次のフレームから付き、同じフレームのアスカの 10 発目は S1 なし、11 発目から S1 あり。前の枠のアスカが先に撃つ（枠の順で処理される）仮説 HO も、この枠順では同じ見え方"
+    }
+  ],
+  "targets": [
+    {
+      "id": "asuka-s1-start",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack",
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "モデルの確かめ（録画とは比べない）。アスカの S1 の最初の窓の始まり（モデルのフレーム）。マナの 10 発目（57f）の次のフレームなら 58"
+    },
+    {
+      "id": "asuka-hit-9th",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 52,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "アスカの 9 発目（52f。マナの 9 発目と同じフレーム）。どの仮説でも S1 なし（読みの基準）"
+    },
+    {
+      "id": "asuka-hit-10th",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 57,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "判定の指標。マナの 10 発目と同じフレーム（57f）のアスカの 10 発目。HN・HO は S1 なし、HS（発と同じフレームに入る。検証記録に手で書く）は S1 あり（asuka-hit-11th と同じ値）"
+    },
+    {
+      "id": "asuka-hit-11th",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 62,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "アスカの 11 発目（62f）。どの仮説でも S1 あり（読みの基準）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-24",
+    "commit": "6c397e1cf80f2dc1f59c7d455f0974c06a425dae",
+    "values": {
+      "HN": {
+        "asuka-s1-start": [58],
+        "asuka-hit-9th": 29215.84848,
+        "asuka-hit-10th": 29215.84848,
+        "asuka-hit-11th": 57572.99547999999
+      }
+    }
+  }
+}
