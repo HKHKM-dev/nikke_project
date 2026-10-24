@@ -96,6 +96,7 @@ const KIND_CLASS: Record<string, ElementClass> = {
   burstGauge: 'burstTiming',
   burstGaugeHit: 'burstTiming',
   burstReentry: 'burstTiming',
+  allyGaugeAdd: 'burstTiming',
   ammoRefill: 'firing',
   cycle: 'firing',
   cycleEvery: 'firing',
