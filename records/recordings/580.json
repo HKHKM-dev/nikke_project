@@ -1,0 +1,30 @@
+{
+  "id": "580",
+  "date": "2026-10-24",
+  "folder": "interception",
+  "file": "20261024-580_special_blacksmith_liter.mp4",
+  "original": "2026-10-24_13-45-36.mp4",
+  "durationSec": 42.5,
+  "frames": 2548,
+  "fps": 60,
+  "sizeMB": 51.5,
+  "sha256": "7810f4264d0b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "ブラックスミス",
+    "element": null,
+    "level": 200
+  },
+  "mode": "interception-special",
+  "fixedSpec": null,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "特殊個体：ブラックスミス（Lv.200 固定）の模擬戦闘（回数に数えない）。単騎・スペック固定の選択肢なし（実ビルド。2026-10-24 に ShiftyPad から取った育成）。交戦の途中で戦闘不能になって終わる。パーツ（対物ライフル）のある敵。V-0486 リターはキューブを外して撮った（撮る直前のキャラ画面のスクリーンショット：攻撃力 438,002・キューブ空き。2026-10-24 のオーナーの判断）。"
+}

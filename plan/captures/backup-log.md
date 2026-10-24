@@ -375,3 +375,26 @@
 2026-10-24 03:45 に、録画 551 を 554 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261024-554_sr_delta_normal-enemy.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
 
 2026-10-24 03:46 に、録画 552 を 555 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261024-555_sr_delta_normal-enemy.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+- 2026-10-24 13:52 録画 574（ソルジャーE.G.単騎）: `interception/20261024-574_special_blacksmith_soldier-eg.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 13:52 録画 575（ソルジャーF.A.単騎）: `interception/20261024-575_special_blacksmith_soldier-fa.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 13:52 録画 577（I-DOLL・フラワー単騎）: `interception/20261024-577_special_blacksmith_idoll-flower.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 13:52 録画 578（ココア単騎）: `interception/20261024-578_special_blacksmith_cocoa.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 13:53 録画 579（エマ単騎）: `interception/20261024-579_special_blacksmith_emma.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-24 13:53 録画 580（リター単騎）: `interception/20261024-580_special_blacksmith_liter.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+
+2026-10-24 05:27 に、録画 561 を 567 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`interception/20261024-580_special_blacksmith_liter.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 05:34 に、録画 567 を 573 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`interception/20261024-580_special_blacksmith_liter.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 05:35 に、録画 556 を 574 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`interception/20261024-574_special_blacksmith_soldier-eg.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 05:37 に、録画 557 を 575 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`interception/20261024-575_special_blacksmith_soldier-fa.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 05:38 に、録画 558 を 577 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`interception/20261024-577_special_blacksmith_idoll-flower.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 05:39 に、録画 559 を 578 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`interception/20261024-578_special_blacksmith_cocoa.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 05:40 に、録画 560 を 579 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`interception/20261024-579_special_blacksmith_emma.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-10-24 05:41 に、録画 573 を 580 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`interception/20261024-580_special_blacksmith_liter.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。

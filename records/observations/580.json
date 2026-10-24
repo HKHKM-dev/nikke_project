@@ -1,0 +1,126 @@
+[
+  {
+    "id": "580-01",
+    "recording": "580",
+    "kind": "total",
+    "use": "record",
+    "value": 1876378,
+    "unit": "ダメージ",
+    "description": "戦闘の終わりの戦闘履歴のパネルの、リター（単騎）の与ダメージ",
+    "method": {
+      "tool": "目視",
+      "note": "パネルの 1 行目を拡大して読んだ（f2325〜2535。パネルの区間は probe-result.ts --list）"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "target",
+      "frames": [922, 2535]
+    }
+  },
+  {
+    "id": "580-02",
+    "recording": "580",
+    "kind": "total",
+    "use": "record",
+    "value": 1876378,
+    "unit": "ダメージ",
+    "description": "戦闘の終わりのリザルト画面の TOTAL DAMAGE（数え上がりが止まった後の値）。パネルの与ダメージ（-01）と同じ。段階の数値の最後の読み（hud.ts --screen interception --mode jumps）と同じ",
+    "method": {
+      "tool": "目視",
+      "note": "リザルト画面の数字を、パネルが開く前の最後のフレームで読んだ"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "target",
+      "frames": [922, 2535]
+    }
+  },
+  {
+    "id": "580-03",
+    "recording": "580",
+    "kind": "hit",
+    "use": "record",
+    "value": [3828, 4977, 6851, 7657, 8000, 8805, 10680, 11828],
+    "unit": "ダメージ",
+    "description": "段階の数値の増分（265 個）の 1 ヒットの格子（キューブなし）。胴体 3,828（20 回）・距離ボーナスの乗った胴体 4,977（152 回）・会心 6,851（3 回。比 1.7896）・コア 7,657（2 回）・距離ボーナスの乗った会心 8,000（43 回）・距離ボーナスの乗ったコア 8,805（35 回）・コア会心 10,680・距離ボーナスの乗ったコア会心 11,828（9 回）。セルの比はどれも倍率グループ（1 + コア 1 + 会心 0.7896 + 距離 0.3）どおり",
+    "method": {
+      "tool": "hud.ts --screen interception --mode jumps",
+      "note": "増分を ±1 で格子と、その 2〜3 個の和に当てた。265 個がどれも分けられた"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [922, 1909]
+    }
+  },
+  {
+    "id": "580-04",
+    "recording": "580",
+    "kind": "count",
+    "use": "record",
+    "value": 326,
+    "unit": "発",
+    "description": "照準の横の残弾から数えた、撃った数（f795〜1915）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series",
+      "note": "照準の横の残弾の減りを足した（リロードで増えたときは直前が 1 なら 1 を足し、それより多ければ残弾を残したリロードとして足さない。キャラの最大を超える読みは捨てた）。最後に読めた残弾の後（倒れる直前）の発は数えていない"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [795, 1915]
+    }
+  },
+  {
+    "id": "580-05",
+    "recording": "580",
+    "kind": "count",
+    "use": "record",
+    "value": 305,
+    "unit": "ヒット",
+    "spread": {
+      "kind": "range",
+      "low": 303,
+      "high": 307
+    },
+    "description": "ボスの段階の数値（TOTAL DAMAGE）に入ったヒットの数。パーツ（対物ライフル）に入った分は無い（パネルの与ダメージと同じ）",
+    "method": {
+      "tool": "hud.ts --screen interception --mode jumps の増分を、1 ヒットの格子のセルのちょうどの和（最少の発の数）に分けた",
+      "note": "増分 265 個（ヒット 267）を格子に分け、最初に読めた値（f922 の前で 233,889）は分けたヒットの平均 6,151.6 で割った（約 38）。ゲージの最後の値 1,876,378 ÷ 平均 6,151.6 = 305"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [795, 1915]
+    }
+  },
+  {
+    "id": "580-06",
+    "recording": "580",
+    "kind": "count",
+    "use": "record",
+    "value": [267, 46, 55, 242],
+    "unit": "ヒット",
+    "description": "格子に分けたヒットの [数, コア, 会心, 距離ボーナスあり]。格子に分けた 267 ヒットのうちコア 46・会心 55・距離ボーナスあり 242",
+    "method": {
+      "tool": "hud.ts --screen interception --mode jumps の増分を、1 ヒットの格子のセルのちょうどの和（最少の発の数）に分けた"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [795, 1915]
+    }
+  }
+]
