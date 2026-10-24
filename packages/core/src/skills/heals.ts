@@ -5,7 +5,17 @@
 // （plan/design-heal-window.md 1.1 節、C-0082。件は効果ごと・対象の枠ごと。skills/holders.ts の applyHeal）。
 import { isResolvedShotCount, type ResolvedInstantEffect } from './resolve.ts';
 
-/** 回復の起きるフレーム。射撃の回数起点ならトリガーの次のフレーム（窓の開始と同じ規則） */
-export function healFrameOf(effect: Pick<ResolvedInstantEffect, 'trigger'>, fireFrame: number): number {
-  return isResolvedShotCount(effect.trigger) ? fireFrame + 1 : fireFrame;
+/**
+ * 回復の起きるフレーム。射撃の回数起点は、受ける枠が撃った枠より後ろならトリガーと同じフレーム（同じフレームの後ろの枠の発に
+ * 間に合う）、ほかの枠（自分と前の枠）にはトリガーの次のフレーム（窓の開始と同じ規則）。V-0490: マナ（撃つ枠）の 10 発目と同じ
+ * フレームのアスカの発は、アスカが後ろの枠なら回復で付いた S1 あり、前の枠なら S1 なし（操作の別によらない）
+ */
+export function healFrameOf(
+  effect: Pick<ResolvedInstantEffect, 'trigger'>,
+  fireFrame: number,
+  sourceSlotIndex: number,
+  targetSlotIndex: number,
+): number {
+  if (!isResolvedShotCount(effect.trigger)) return fireFrame;
+  return targetSlotIndex > sourceSlotIndex ? fireFrame : fireFrame + 1;
 }

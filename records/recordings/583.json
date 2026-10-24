@@ -1,0 +1,35 @@
+{
+  "id": "583",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-583_ar+ar_asuka+mana_asuka-control-1.mp4",
+  "original": "2026-10-24_16-24-48.mp4",
+  "durationSec": 199,
+  "frames": 11941,
+  "fps": 60,
+  "sizeMB": 241.3,
+  "sha256": "26c77822736b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 290,
+      "name": "マナ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0490（回復のフレームと枠順）の録画。アスカ（1 枠目）→ マナ（2 枠目）。操作は アスカ（AUTO 射撃 ON）。オートバースト OFF。編成・枠順は戦闘履歴、操作は画面中央のキャラ、オート射撃・オートバーストは左上のボタンで確かめた"
+}

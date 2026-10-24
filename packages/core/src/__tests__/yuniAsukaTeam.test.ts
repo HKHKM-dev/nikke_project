@@ -62,17 +62,18 @@ describe('録画 078 の編成（V-0024）', () => {
   const plan = planTeamRun(REC078);
   const ASUKA = 1;
 
+  // 回復はユニ自身には次のフレーム、後ろの枠のアスカには同じフレーム（V-0490、C-0628）
   it('heals each slot once, on the first full charge shot (refreshes do not count)', () => {
     const first = plan.shots[YUNI]!.frames[0]!;
     expect(plan.shots[YUNI]!.frames.length).toBeGreaterThan(50);
     expect(healsOf(plan)).toEqual([
+      { frame: first, sourceSlotIndex: YUNI, slotIndex: ASUKA },
       { frame: first + 1, sourceSlotIndex: YUNI, slotIndex: YUNI },
-      { frame: first + 1, sourceSlotIndex: YUNI, slotIndex: ASUKA },
     ]);
   });
 
   it('gives Asuka S1 for 25 s from the first full charge shot, and never again', () => {
-    const start = plan.shots[YUNI]!.frames[0]! + 1;
+    const start = plan.shots[YUNI]!.frames[0]!;
     const s1 = piecesOf(plan)
       .filter((w) => w.slotIndex === ASUKA && w.effect.stat === 'attack')
       .map((w) => ({ start: w.start, end: w.end }));

@@ -82,7 +82,7 @@
 - ダメージに効く効果の無いキャラの定義（2026-09-28）→ 完了: V-0026・V-0027・V-0031、C-0081・C-0092
 - ヘルムの残り（2026-09-28 起票）→ 一部完了: V-0033・V-0034・V-0038・V-0231・V-0247・V-0350、C-0094・C-0097・C-0103・C-0104・C-0345・C-0087（確定）、[design-helm.md](design-helm.md)・[design-heal-vocabulary.md](design-heal-vocabulary.md)。残りは backlog 2-12
 - 回復の語彙の F4（ミサト S1 の「残りの HP の割合が最も低い味方 1 機」の並んだときの規則。2026-10-17）→ 完了: V-0438・V-0450、C-0567（確定。若い枠を選ぶ）、[design-heal-vocabulary.md](design-heal-vocabulary.md) 3.2 節。語彙は [design-skill-stages.md](design-skill-stages.md) の段 8
-- 回復の語彙の F2（マナ S1 の通常攻撃 10 回ごとの回復。2026-10-17）→ 完了: V-0439、C-0570（確定）、[design-heal-vocabulary.md](design-heal-vocabulary.md) 5 節。回復のフレームの 1 発のずれは backlog 2-37
+- 回復の語彙の F2（マナ S1 の通常攻撃 10 回ごとの回復。2026-10-17）→ 完了: V-0439、C-0570（確定）、[design-heal-vocabulary.md](design-heal-vocabulary.md) 5 節。回復のフレームの 1 発のずれは V-0490 で解いた（射撃の回数起点の回復は、同じフレームの後ろの枠の発に間に合い、前の枠の発には間に合わない。C-0628（確定）。モデルの `healFrameOf` を直した。2026-10-24）
 - 回復の語彙の F3（アニス：スター S2 のみんなの星の時の回復。2026-10-17）→ 完了: V-0440、C-0576（確定）、[design-heal-vocabulary.md](design-heal-vocabulary.md) 5 節
 - OL の「チャージダメージ倍率▲」（2026-09-28 起票）→ 完了: V-0047・V-0048・V-0050・V-0053、C-0121〜C-0123・C-0126・C-0127・C-0134
 - 持続ダメージの語彙 `dot`（2026-09-28）→ 完了: V-0032・V-0039・V-0040・V-0051・V-0052・V-0054・V-0060・V-0064・V-0067、[design-nihilister.md](design-nihilister.md)・[design-kurumi.md](design-kurumi.md)・[design-damage-taken.md](design-damage-taken.md)
