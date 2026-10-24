@@ -10,7 +10,7 @@ export const RECORDING_FOLDERS = ['range', 'interception', 'raid', 'skill', 'bur
 export type RecordingFolder = (typeof RECORDING_FOLDERS)[number];
 
 /** 撮ったモード。null は台帳に書かれていない */
-export const RECORDING_MODES = ['range-3min', 'interception-special'] as const;
+export const RECORDING_MODES = ['range-3min', 'range-normal', 'interception-special'] as const;
 export type RecordingMode = (typeof RECORDING_MODES)[number];
 
 const ELEMENTS: readonly Element[] = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'];
@@ -186,6 +186,7 @@ const ELEMENT_JA: Record<Element, string> = {
 };
 const MODE_JA: Record<RecordingMode, string> = {
   'range-3min': '射撃場 3 分',
+  'range-normal': '射撃場 通常敵戦',
   'interception-special': '迎撃戦（特殊個体）',
 };
 
