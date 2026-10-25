@@ -5,7 +5,8 @@
 - 日付: 2026-10-26
 - Stage: plan/design-shot-count-trigger-frame.md 5.4 節（S-C）。backlog 2-38
 - 派生元: `V-0489`
-- 状態: 調査中
+- 結論: `C-0653`
+- 状態: 完了
 
 ## 条件
 
