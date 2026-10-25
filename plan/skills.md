@@ -331,7 +331,7 @@ notes の種類: 未対応 114・前提の外 27・計算に無関係 28・補�
 ## 194 ルドミラ：ウィンターオーナー
 
 - **skill1**: supported
-  - effects[0] timed・normalHit・damageTaken: C-0138（確定）、C-0257（仮説）、C-0251（確定）
+  - effects[0] timed・normalHit・damageTaken: C-0138（確定）、C-0257（仮説）、C-0251（確定）、C-0645（確定）
   - effects[1] damage・normalHit・additional: C-0163（確定）、C-0257（仮説）、C-0251（確定）
   - effects[2] ammoRefill・normalHit: C-0257（仮説）、C-0251（確定）、C-0256（確定）
 - **skill2**: supported
@@ -784,7 +784,7 @@ notes の種類: 未対応 114・前提の外 27・計算に無関係 28・補�
 ## 836 鈴原サクラ
 
 - **skill1**: supported
-  - effects[0] timed・normalHit・damageTaken: C-0138（確定）、C-0152（確定）、C-0315（確定）、C-0367（確定）
+  - effects[0] timed・normalHit・damageTaken: C-0138（確定）、C-0152（確定）、C-0315（確定）、C-0367（確定）、C-0645（確定）
 - **skill2**: noEffect
   - notes[0] 間接（HP）: 通常攻撃 60 回ごとの、残りの HP の割合が最も低い味方 2 機の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: C-0316（確定）、C-0321（確定）
   - notes[1] 計算に無関係: 通常攻撃 120 回ごとの、残りの HP の割合が最も低い味方 2 機の受けるダメージ▼は、防御系でダメージに関係しない: C-0316（確定）、C-0321（確定）
