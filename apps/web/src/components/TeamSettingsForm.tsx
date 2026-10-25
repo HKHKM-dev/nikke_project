@@ -1,7 +1,6 @@
 import {
   ELEMENTS,
   ELEMENT_LABEL,
-  ENEMY_CONTENT_LABEL,
   TEAM_SIZE,
   enemyInputOf,
   matchingEnemyPreset,
@@ -28,7 +27,7 @@ type Props = {
   dispatch: Dispatch<TeamAction>;
 };
 
-/** 編成共通の設定: 敵・戦闘時間・スペック固定・バースト */
+/** 編成共通の設定: 敵名・属性（最低限）と詳細設定（折りたたみ） */
 export function TeamSettingsForm({
   enemy,
   enemyPresets,
@@ -48,12 +47,13 @@ export function TeamSettingsForm({
       type: 'setEnemyEventSets',
       enemyEventSets: on ? [...enemyEventSets.filter((x) => x !== id), id] : enemyEventSets.filter((x) => x !== id),
     });
+
   return (
     <fieldset className="panel settings">
-      <legend>敵・共通条件</legend>
-      <div className="settings-grid">
+      <legend>敵条件</legend>
+      <div className="settings-simple">
         <label className="field">
-          <span>敵のプリセット</span>
+          <span>敵名</span>
           <select
             value={preset?.id ?? ''}
             onChange={(e) => {
@@ -64,23 +64,13 @@ export function TeamSettingsForm({
             <option value="">カスタム</option>
             {enemyPresets.map((p) => (
               <option key={p.id} value={p.id}>
-                {ENEMY_CONTENT_LABEL[p.content].ja}: {p.name.ja}
+                {p.name.ja}
               </option>
             ))}
           </select>
         </label>
         <label className="field">
-          <span>防御力</span>
-          <input
-            type="number"
-            min={0}
-            step={1}
-            value={enemy.defence}
-            onChange={(e) => setEnemy({ defence: Number(e.target.value) })}
-          />
-        </label>
-        <label className="field">
-          <span>属性</span>
+          <span>敵属性</span>
           <select
             value={enemy.element ?? ''}
             onChange={(e) => setEnemy({ element: e.target.value === '' ? null : (e.target.value as Element) })}
@@ -93,61 +83,84 @@ export function TeamSettingsForm({
             ))}
           </select>
         </label>
-        <label className="field">
-          <span>戦闘時間（秒）</span>
-          <input
-            type="number"
-            min={0}
-            step={1}
-            value={durationSeconds}
-            onChange={(e) => dispatch({ type: 'setDuration', durationSeconds: Number(e.target.value) })}
-          />
-        </label>
-        <label className="field checkbox">
-          <input type="checkbox" checked={enemy.hasCore} onChange={(e) => setEnemy({ hasCore: e.target.checked })} />
-          <span>コアあり</span>
-        </label>
-        {availableSets.map((set) => (
-          <label key={set.id} className="field checkbox" title={set.source}>
-            <input
-              type="checkbox"
-              checked={enemyEventSets.includes(set.id)}
-              onChange={(e) => toggleEventSet(set.id, e.target.checked)}
-            />
-            <span>{set.name.ja}</span>
-          </label>
-        ))}
-        <label className="field checkbox">
-          <input
-            type="checkbox"
-            checked={fixedSpec}
-            onChange={(e) => dispatch({ type: 'setFixedSpec', fixedSpec: e.target.checked })}
-          />
-          <span>射撃場スペック固定</span>
-        </label>
-        <label className="field checkbox">
-          <input
-            type="checkbox"
-            checked={burst}
-            onChange={(e) => dispatch({ type: 'setBurst', burst: e.target.checked })}
-          />
-          <span>バースト</span>
-        </label>
-        <label className="field">
-          <span>操作キャラ</span>
-          <select
-            value={controlledSlot}
-            disabled={!burst}
-            onChange={(e) => dispatch({ type: 'setControlledSlot', controlledSlot: Number(e.target.value) })}
-          >
-            {Array.from({ length: TEAM_SIZE }, (_, i) => (
-              <option key={i} value={i}>
-                枠 {i + 1}
-              </option>
-            ))}
-          </select>
-        </label>
       </div>
+      <details className="settings-advanced">
+        <summary>詳細設定（戦闘時間・スペック固定・ステータス等）</summary>
+        <div className="settings-advanced-body">
+          <div className="settings-advanced-grid">
+            <label className="field">
+              <span>戦闘時間（秒）</span>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                value={durationSeconds}
+                onChange={(e) => dispatch({ type: 'setDuration', durationSeconds: Number(e.target.value) })}
+              />
+            </label>
+            <label className="field">
+              <span>操作キャラ</span>
+              <select
+                value={controlledSlot}
+                disabled={!burst}
+                onChange={(e) => dispatch({ type: 'setControlledSlot', controlledSlot: Number(e.target.value) })}
+              >
+                {Array.from({ length: TEAM_SIZE }, (_, i) => (
+                  <option key={i} value={i}>
+                    枠 {i + 1}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field">
+              <span>防御力</span>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                value={enemy.defence}
+                onChange={(e) => setEnemy({ defence: Number(e.target.value) })}
+              />
+            </label>
+            <label className="field checkbox">
+              <input
+                type="checkbox"
+                checked={enemy.hasCore}
+                onChange={(e) => setEnemy({ hasCore: e.target.checked })}
+              />
+              <span>コアあり</span>
+            </label>
+          </div>
+          <div className="settings-options">
+            <label className="field checkbox">
+              <input
+                type="checkbox"
+                checked={burst}
+                onChange={(e) => dispatch({ type: 'setBurst', burst: e.target.checked })}
+              />
+              <span>バースト</span>
+            </label>
+            <label className="field checkbox">
+              <input
+                type="checkbox"
+                checked={fixedSpec}
+                onChange={(e) => dispatch({ type: 'setFixedSpec', fixedSpec: e.target.checked })}
+              />
+              <span>射撃場スペック固定</span>
+            </label>
+            {availableSets.map((set) => (
+              <label key={set.id} className="field checkbox" title={set.source}>
+                <input
+                  type="checkbox"
+                  checked={enemyEventSets.includes(set.id)}
+                  onChange={(e) => toggleEventSet(set.id, e.target.checked)}
+                />
+                <span>{set.name.ja}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </details>
     </fieldset>
   );
 }

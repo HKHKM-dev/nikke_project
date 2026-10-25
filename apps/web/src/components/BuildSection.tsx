@@ -123,7 +123,7 @@ export function BuildSection({
         {combat && (
           <span className="build-attack">
             {' '}
-            戦闘中の攻撃力 <strong>{formatNumber(combat.attack)}</strong>
+            （攻撃力 <strong>{formatNumber(combat.attack)}</strong>）
           </span>
         )}
       </summary>
@@ -133,7 +133,7 @@ export function BuildSection({
         <p className="hint">スペック固定: 好感度 rank{shown.affectionRank}・装備 T9 Lv5 × 4・キューブ等なし</p>
       )}
       <div className="build-grid">
-        <label className="field">
+        <label className="field" title={`rank ${AFFECTION_RANK_MIN}〜${AFFECTION_RANK_MAX}`}>
           <span>好感度</span>
           <input
             type="number"
@@ -146,14 +146,11 @@ export function BuildSection({
               set({ affectionRank: clampInt(Number(e.target.value), AFFECTION_RANK_MIN, AFFECTION_RANK_MAX) })
             }
           />
-          <small>
-            rank {AFFECTION_RANK_MIN}〜{AFFECTION_RANK_MAX}
-          </small>
         </label>
         {GEAR_PARTS.map((part) => {
           const gear = shown.gear[part];
           return (
-            <div className="field gear" key={part}>
+            <div className="field gear" key={part} title={`Lv 0〜${GEAR_LEVEL_MAX}`}>
               <span>装備 {GEAR_PART_LABEL[part]}</span>
               <span className="gear-inputs">
                 <select
@@ -161,7 +158,6 @@ export function BuildSection({
                   disabled={disabled}
                   onChange={(e) => {
                     const type = e.target.value as GearType | '';
-                    // OL のオプション行は OL 装備だけ。ほかの種類に変えたら捨てる
                     const overload = type === 'OL' ? gear?.overload : undefined;
                     setGear(
                       part,
@@ -193,7 +189,6 @@ export function BuildSection({
                   {Array.from({ length: OVERLOAD_LINE_MAX }, (_, i) => {
                     const lines = gear.overload ?? [];
                     const line = lines[i];
-                    // 前の行が空なら次の行は入れられない（行は詰めて持つ）
                     if (i > lines.length) return null;
                     return (
                       <span className="gear-inputs" key={i}>
@@ -237,11 +232,10 @@ export function BuildSection({
                   })}
                 </span>
               )}
-              <small>Lv 0〜{GEAR_LEVEL_MAX}</small>
             </div>
           );
         })}
-        <div className="field gear">
+        <div className="field gear" title={`Lv ${CUBE_LEVEL_MIN}〜${CUBE_LEVEL_MAX}`}>
           <span>キューブ</span>
           <span className="gear-inputs">
             <select
@@ -274,11 +268,8 @@ export function BuildSection({
               }
             />
           </span>
-          <small>
-            Lv {CUBE_LEVEL_MIN}〜{CUBE_LEVEL_MAX}
-          </small>
         </div>
-        <div className="field gear">
+        <div className="field gear" title={hasTreasure ? '宝物（SR Lv15 相当）' : `Lv 0〜${COLLECTION_LEVEL_MAX}`}>
           <span>コレクション</span>
           <span className="gear-inputs">
             <select
@@ -309,7 +300,6 @@ export function BuildSection({
               }
             />
           </span>
-          <small>{hasTreasure ? '宝物（SR Lv15 相当）' : `Lv 0〜${COLLECTION_LEVEL_MAX}`}</small>
         </div>
         <div className="field gear">
           <span>リサイクルルーム</span>
@@ -333,7 +323,7 @@ export function BuildSection({
           </span>
         </div>
         <label className="field">
-          <span>その他の攻撃力加算</span>
+          <span>その他攻撃加算</span>
           <input
             type="number"
             min={0}
@@ -345,46 +335,46 @@ export function BuildSection({
         </label>
       </div>
       {combatError && <p className="error">育成入力を計算に使えません: {combatError}</p>}
-      {combat && (
-        <p className="hint build-breakdown">
-          {formatNumber(combat.attack)} = round(({formatNumber(combat.gradeBase)} 素 + {formatNumber(combat.affection)}{' '}
-          好感度
-          {combat.recycleRoom > 0 && ` + ${formatNumber(combat.recycleRoom)} リサイクル`}) × (1 + コア {growth.core}{' '}
-          段)) = {formatNumber(combat.withCore)} + {formatNumber(combat.gear)} 装備
-          {combat.cube > 0 && ` + ${formatNumber(combat.cube)} キューブ`}
-          {combat.collection > 0 && ` + ${formatNumber(combat.collection)} コレクション`}
-          {combat.extra > 0 && ` + ${formatNumber(combat.extra)} その他`}
-        </p>
-      )}
-      {effects && (effects.effects.length > 0 || effects.notes.length > 0) && (
-        <div className="build-effects">
-          <span className="skills-title">効果</span>
-          <ul className="received-list">
-            {effects.effects.map((e, i) => (
-              <li key={i}>
-                <span className="amount">{formatBuildEffect(e)}</span>
-                <small className="sub">{formatBuildEffectSource(e.source)}</small>
-              </li>
-            ))}
-            {effects.notes.map((n, i) => (
-              <li key={`note-${i}`} className={n.level === 'unsupported' ? 'note-unsupported' : 'note-ignored'}>
-                <span className="amount">{n.level === 'unsupported' ? '未対応' : '計算に無関係'}</span>
-                <small className="sub">
-                  {formatBuildEffectSource(n.source)}: {n.message.ja}
-                </small>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
       <details className="build-json">
-        <summary>育成の JSON</summary>
+        <summary>攻撃力の合成内訳・育成 JSON</summary>
+        {combat && (
+          <p className="hint build-breakdown">
+            {formatNumber(combat.attack)} = round(({formatNumber(combat.gradeBase)} 素 +{' '}
+            {formatNumber(combat.affection)} 好感度
+            {combat.recycleRoom > 0 && ` + ${formatNumber(combat.recycleRoom)} リサイクル`}) × (1 + コア {growth.core}{' '}
+            段)) = {formatNumber(combat.withCore)} + {formatNumber(combat.gear)} 装備
+            {combat.cube > 0 && ` + ${formatNumber(combat.cube)} キューブ`}
+            {combat.collection > 0 && ` + ${formatNumber(combat.collection)} コレクション`}
+            {combat.extra > 0 && ` + ${formatNumber(combat.extra)} その他`}
+          </p>
+        )}
+        {effects && (effects.effects.length > 0 || effects.notes.length > 0) && (
+          <div className="build-effects">
+            <span className="skills-title">効果</span>
+            <ul className="received-list">
+              {effects.effects.map((e, i) => (
+                <li key={i}>
+                  <span className="amount">{formatBuildEffect(e)}</span>
+                  <small className="sub">{formatBuildEffectSource(e.source)}</small>
+                </li>
+              ))}
+              {effects.notes.map((n, i) => (
+                <li key={`note-${i}`} className={n.level === 'unsupported' ? 'note-unsupported' : 'note-ignored'}>
+                  <span className="amount">{n.level === 'unsupported' ? '未対応' : '計算に無関係'}</span>
+                  <small className="sub">
+                    {formatBuildEffectSource(n.source)}: {n.message.ja}
+                  </small>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div className="data-grid">
           <label className="field">
             <span>書き出し</span>
             <textarea
               readOnly
-              rows={6}
+              rows={5}
               value={serializeSlotBuild({ growth: savedGrowth, build })}
               onFocus={(e) => e.currentTarget.select()}
             />
@@ -392,7 +382,7 @@ export function BuildSection({
           <label className="field">
             <span>取り込み</span>
             <textarea
-              rows={6}
+              rows={5}
               value={jsonText}
               disabled={disabled}
               placeholder='{ "affectionRank": 30, "gear": { "head": { "type": "OL", "level": 5 } } }'

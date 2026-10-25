@@ -293,7 +293,7 @@
     {
       "id": "range-bigarms-fire",
       "name": {
-        "ja": "ユニオン射撃場 BigArms（灼熱）",
+        "ja": "射撃場BigArms（灼熱）",
         "en": "Union Shooting Range BigArms (Fire)"
       },
       "content": "range",
@@ -311,7 +311,7 @@
     {
       "id": "range-bigarms-wind",
       "name": {
-        "ja": "ユニオン射撃場 BigArms（風圧）",
+        "ja": "射撃場BigArms（風圧）",
         "en": "Union Shooting Range BigArms (Wind)"
       },
       "content": "range",
@@ -329,7 +329,7 @@
     {
       "id": "range-bigarms-iron",
       "name": {
-        "ja": "ユニオン射撃場 BigArms（鉄甲）",
+        "ja": "射撃場BigArms（鉄甲）",
         "en": "Union Shooting Range BigArms (Iron)"
       },
       "content": "range",
@@ -347,7 +347,7 @@
     {
       "id": "range-bigarms-electric",
       "name": {
-        "ja": "ユニオン射撃場 BigArms（電撃）",
+        "ja": "射撃場BigArms（電撃）",
         "en": "Union Shooting Range BigArms (Electric)"
       },
       "content": "range",
@@ -365,7 +365,7 @@
     {
       "id": "range-bigarms-water",
       "name": {
-        "ja": "ユニオン射撃場 BigArms（水冷）",
+        "ja": "射撃場BigArms（水冷）",
         "en": "Union Shooting Range BigArms (Water)"
       },
       "content": "range",

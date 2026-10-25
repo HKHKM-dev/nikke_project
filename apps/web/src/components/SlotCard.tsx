@@ -1,46 +1,25 @@
 import {
-  BURST_GAUGE_MAX,
   ELEMENT_LABEL,
   WEAPON_LABEL,
-  energyPerTrigger,
   growthLimits,
   isChargeWeapon,
   type BurstStep,
   type CharacterData,
-  type Element,
   type CharacterIndexEntry,
   type GrowthInput,
-  type AppliedTimedEffect,
   type BuildInput,
   type BuildMasters,
   type SkillLevels,
   type TeamSlotResult,
-  type ItemEffect,
-  framesToGameSeconds,
-  isStateContent,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
-import { formatNumber, formatPercent } from '../format.ts';
-import {
-  CLASS_LABEL,
-  SKILL_SLOT_LABEL,
-  formatAppliedAmount,
-  formatBuildEffect,
-  formatBuildEffectSource,
-  formatEffectSource,
-  formatInstant,
-  formatInstantTarget,
-  formatTimedExtras,
-  formatTimedTrigger,
-  formatItemDuration,
-  formatItemTrigger,
-  stateLabel,
-} from '../skillLabels.ts';
+import { formatNumber } from '../format.ts';
+import { CLASS_LABEL } from '../skillLabels.ts';
 import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
-import { HpRatioInput, SkillSection } from './SkillSection.tsx';
+import { HpRatioInput, SkillSection, hasSelfHpCondition } from './SkillSection.tsx';
 
 const BURST_LABEL: Record<BurstStep, string> = { Step1: 'I', Step2: 'II', Step3: 'III', AllStep: 'I〜III' };
 
@@ -53,24 +32,14 @@ type Props = {
   loading: boolean;
   error: string | undefined;
   fixedSpec: boolean;
-  /** clamp・スペック固定を反映した実際に計算へ渡す育成値 */
   effectiveGrowth: GrowthInput;
-  /** スペック固定を反映した実際に計算へ渡すスキル Lv */
   effectiveSkillLevels: SkillLevels;
-  /** Stage 12: スペック固定を反映した実際に計算へ渡す育成入力 */
   effectiveBuild: BuildInput;
   masters: BuildMasters | null;
   mastersError: string | null;
   skillsStatus: SlotSkillsStatus;
-  /** 枠番号 → ニケ名（バフの発動元表示用）。未選択・読み込み中は undefined */
-  slotNames: readonly (string | undefined)[];
-  /** 枠番号 → キャラ（編成の条件の表示用）。空枠・読み込み中は null */
-  teamCharacters: readonly (CharacterData | null)[];
-  /** 敵の属性（属性なしは null）。敵の属性の条件（enemyElement）が今の敵で効くかの表示用 */
-  enemyElement: Element | null;
-  slotResult: TeamSlotResult | null;
-  /** 2 段目の段 8（plan/design-skill-stage8.md 1.2 節）: 編成に「残りの HP の割合が最も低い味方」を選ぶ回復があるか（HP の割合の想定の欄を出す） */
   hpRatioTargeted: boolean;
+  slotResult: TeamSlotResult | null;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -89,71 +58,18 @@ export function SlotCard({
   masters,
   mastersError,
   skillsStatus,
-  slotNames,
-  teamCharacters,
-  enemyElement,
-  slotResult,
   hpRatioTargeted,
+  slotResult,
   dispatch,
 }: Props) {
   const limits = character ? growthLimits(character) : null;
   const condition = slot.condition;
-  // 同じ効果の件をまとめて「10 秒 × 9 回」と見せる（持ち主ごとの一覧編の段 D の 6: まとめは core の skills/summaries.ts が履歴から作る。
-  // スタックする効果は段 1 だけを数え、命中率（状態だけの stat）も並べる。状態の中身は付与の中身の何番目か（subIndex）でも分ける）
-  const subIndexOf = (e: ItemEffect) => (isStateContent(e) ? e.subIndex : '');
-  const timedSummary = (slotResult?.effects ?? []).map((summary) => {
-    // 区間に出ない件（命中率）でも値が出るように、比率の効果は値そのものを仮に入れる（下で区間の値に置き換える）
-    let effect: AppliedTimedEffect = {
-      ...summary.effect,
-      sourceSlotIndex: summary.sourceSlotIndex,
-      appliedAmount:
-        summary.effect.scaling === 'casterAttack' || summary.effect.scaling === 'casterFinalMaxHp'
-          ? 0
-          : summary.effect.value,
-    };
-    // appliedAmount は区間依存なので、代表区間（最初の区間）に出ていればそれを使う
-    const applied = slotResult?.segments
-      .flatMap((seg) => seg.timedEffects)
-      .find(
-        (e) =>
-          e.sourceSlotIndex === effect.sourceSlotIndex &&
-          e.source.skill === effect.source.skill &&
-          e.effectIndex === effect.effectIndex &&
-          subIndexOf(e) === subIndexOf(effect),
-      );
-    if (applied) effect = applied;
-    return { effect, count: summary.count, skips: summary.skips };
-  });
-  /** Stage 11 モダニア: 射撃ごとの追加ダメージの合計（1 トリガーの値に畳み込んだ分） */
-  const perShotDamage = (slotResult?.segments ?? []).reduce((sum, g) => sum + g.trigger.perShot * g.triggers, 0);
+  const treasurePhase = character ? effectiveTreasurePhase(slot, character) : 0;
+  const showHpRatio =
+    hpRatioTargeted || (character !== undefined && hasSelfHpCondition(character, skillsStatus, treasurePhase));
 
-  // Stage 10: 受けた即時効果（CT 短縮・弾丸チャージ。Stage 11 で回復も）を効果ごとにまとめる
-  const instantSummary = (() => {
-    const byKey = new Map<
-      string,
-      { instant: NonNullable<typeof slotResult>['instants'][number]; count: number; total: number }
-    >();
-    for (const x of slotResult?.instants ?? []) {
-      const key = `${x.sourceSlotIndex}:${x.effect.source.skill}:${x.effect.effectIndex}`;
-      const found = byKey.get(key);
-      if (found) {
-        found.count += 1;
-        found.total += x.amount;
-        continue;
-      }
-      byKey.set(key, { instant: x, count: 1, total: x.amount });
-    }
-    return [...byKey.values()];
-  })();
-
-  // Stage 11 紅蓮BS: 循環の間隔の変更（「スキル 1 の段を毎回進める」）を効果ごとにまとめたもの（core の skills/summaries.ts）
-  const cycleSummary = slotResult?.cycleChanges ?? [];
-
-  // Stage 18-C2: 条件が自動の枠で使った条件の平均（的の表の無い敵では null）
-  const autoCondition = slotResult?.autoCondition ?? null;
-  // 手入力の値（コア命中率・弾丸命中率・距離ボーナス）。自動の枠でも残し、未測定の項目・的の表の無い敵で使う
   const manualFields = character && (
-    <>
+    <div className="manual-fields">
       <label className="field">
         <span>コア命中率</span>
         <input
@@ -203,11 +119,11 @@ export function SlotCard({
         />
         <span>距離ボーナス{character.bonusRange === null ? '（なし）' : ''}</span>
       </label>
-    </>
+    </div>
   );
 
   const growthField = (key: keyof GrowthInput, name: string, min: number, max: number) => (
-    <label className="field">
+    <label className="field" title={`${min}〜${max}`}>
       <span>{name}</span>
       <input
         type="number"
@@ -220,9 +136,6 @@ export function SlotCard({
           dispatch({ type: 'setGrowth', index: slotIndex, growth: { ...slot.growth, [key]: Number(e.target.value) } })
         }
       />
-      <small>
-        {min}〜{max}
-      </small>
     </label>
   );
 
@@ -238,251 +151,104 @@ export function SlotCard({
       />
       {error && <p className="error">読み込みに失敗しました: {error}</p>}
       {loading && <p className="hint">キャラデータを読み込み中…</p>}
+      {character && (
+        <div className="slot-damage-display">
+          <span className="slot-damage-label">総ダメージ</span>
+          <span className="slot-damage-val">{slotResult ? formatNumber(slotResult.totalDamage) : '—'}</span>
+        </div>
+      )}
       {character && limits && (
-        <>
-          <p className="meta">
-            {WEAPON_LABEL[character.weaponType].ja} / {ELEMENT_LABEL[character.element].ja} /{' '}
-            {CLASS_LABEL[character.class]} / バースト {BURST_LABEL[character.burstStep]} / 装弾数{' '}
-            {character.shot.maxAmmo} / リロード {character.shot.reloadTime}s / 武器倍率 {character.shot.damage / 100}%
-            <br />
-            バースト CT {character.burstSkill.cooldownSeconds}s / ゲージ 1 トリガー{' '}
-            {formatNumber((energyPerTrigger(character.shot, true) / BURST_GAUGE_MAX) * 100, 2)}%
-            {character.shot.chargeTime > 0 &&
-              `（AI ${formatNumber((energyPerTrigger(character.shot, false) / BURST_GAUGE_MAX) * 100, 2)}%）`}
-          </p>
-          <div className="growth-row">
-            {growthField('level', 'レベル', 1, limits.levelMax)}
-            {growthField('grade', '限界突破', 0, limits.gradeMax)}
-            {growthField('core', 'コア強化', 0, limits.coreMax)}
-          </div>
-          <BuildSection
-            slotIndex={slotIndex}
-            character={character}
-            build={slot.build}
-            effectiveBuild={effectiveBuild}
-            growth={effectiveGrowth}
-            savedGrowth={slot.growth}
-            treasurePhase={effectiveTreasurePhase(slot, character)}
-            masters={masters}
-            mastersError={mastersError}
-            disabled={fixedSpec}
-            dispatch={dispatch}
-          />
-          <label className="field">
-            <span>条件</span>
-            <select
-              value={slot.conditionMode}
-              onChange={(e) =>
-                dispatch({
-                  type: 'setConditionMode',
-                  index: slotIndex,
-                  conditionMode: e.target.value === 'manual' ? 'manual' : 'auto',
-                })
-              }
-            >
-              <option value="auto">自動（射撃場の表）</option>
-              <option value="manual">手入力</option>
-            </select>
-          </label>
-          {slot.conditionMode === 'auto' && slotResult && (
-            <p className="meta auto-condition">
-              {autoCondition ? (
-                <>
-                  コア命中率 {formatPercent(autoCondition.coreHitRate, 1)}・距離ボーナス{' '}
-                  {character.bonusRange === null ? 'なし' : `${formatPercent(autoCondition.distanceBonus, 1)} の発`}
-                  ・弾丸命中率 {formatPercent(autoCondition.hitRate, 1)}
-                  <small>
-                    （着地点ごとの値の発数平均
-                    {autoCondition.hitRateUp > 0
-                      ? autoCondition.timedHitRateUp
-                        ? `。命中率▲（常時 + 持続の▲の発数平均） ${formatPercent(autoCondition.hitRateUp, 2)} 込み`
-                        : `。常時の命中率▲ ${formatPercent(autoCondition.hitRateUp, 2)} 込み`
-                      : ''}
-                    ）
-                  </small>
-                </>
-              ) : (
-                'この敵の条件は未測定なので、手入力の値で計算しています'
-              )}
+        <details className="slot-settings">
+          <summary>設定（Lv・スキル・育成・射撃条件）</summary>
+          <div className="slot-settings-body">
+            <p className="meta" title={WEAPON_LABEL[character.weaponType].ja}>
+              {character.weaponType} / {ELEMENT_LABEL[character.element].ja} / {CLASS_LABEL[character.class]} / B
+              {BURST_LABEL[character.burstStep]}（CT {character.burstSkill.cooldownSeconds}s）
             </p>
-          )}
-          {slot.conditionMode === 'auto' && autoCondition ? (
-            <details className="manual-condition">
-              <summary>手入力の値（自動で未測定の項目に使う）</summary>
-              {manualFields}
-            </details>
-          ) : (
-            manualFields
-          )}
-          {isChargeWeapon(character.shot) && (
-            <label className="field checkbox">
-              <input
-                type="checkbox"
-                checked={condition.fullCharge}
-                onChange={(e) =>
-                  dispatch({
-                    type: 'setSlotCondition',
-                    index: slotIndex,
-                    condition: { ...condition, fullCharge: e.target.checked },
-                  })
-                }
-              />
-              <span>フルチャージで撃つ</span>
-            </label>
-          )}
-          <SkillSection
-            slotIndex={slotIndex}
-            character={character}
-            levels={effectiveSkillLevels}
-            treasurePhase={effectiveTreasurePhase(slot, character)}
-            disabled={fixedSpec}
-            status={skillsStatus}
-            teamCharacters={teamCharacters}
-            enemyElement={enemyElement}
-            hpRatio={slot.hpRatio}
-            dispatch={dispatch}
-          />
-          {/* 2 段目の段 8: 回復の対象（残りの HP の割合が最も低い味方）は、枠の HP の割合の想定の低い順・同じなら若い枠で選ぶ */}
-          {hpRatioTargeted && (
-            <ul className="notes">
-              <li className="note approx">
-                <span className="badge">HP</span>
-                <label className="hp-ratio">
-                  想定の HP の割合{' '}
+            <div className="growth-row">
+              {growthField('level', 'Lv', 1, limits.levelMax)}
+              {growthField('grade', '限界突破', 0, limits.gradeMax)}
+              {growthField('core', 'コア強化', 0, limits.coreMax)}
+            </div>
+            <SkillSection
+              slotIndex={slotIndex}
+              character={character}
+              levels={effectiveSkillLevels}
+              treasurePhase={treasurePhase}
+              disabled={fixedSpec}
+              status={skillsStatus}
+              dispatch={dispatch}
+            />
+            <BuildSection
+              slotIndex={slotIndex}
+              character={character}
+              build={slot.build}
+              effectiveBuild={effectiveBuild}
+              growth={effectiveGrowth}
+              savedGrowth={slot.growth}
+              treasurePhase={treasurePhase}
+              masters={masters}
+              mastersError={mastersError}
+              disabled={fixedSpec}
+              dispatch={dispatch}
+            />
+            <details className="build condition-details">
+              <summary>
+                射撃条件（{slot.conditionMode === 'auto' ? '自動' : '手入力'}
+                {showHpRatio && slot.hpRatio < 1 ? `・HP ${Math.round(slot.hpRatio * 100)}%` : ''}）
+              </summary>
+              <label className="field">
+                <span>条件</span>
+                <select
+                  value={slot.conditionMode}
+                  onChange={(e) =>
+                    dispatch({
+                      type: 'setConditionMode',
+                      index: slotIndex,
+                      conditionMode: e.target.value === 'manual' ? 'manual' : 'auto',
+                    })
+                  }
+                >
+                  <option value="auto">自動（射撃場の表）</option>
+                  <option value="manual">手入力</option>
+                </select>
+              </label>
+              {isChargeWeapon(character.shot) && (
+                <label className="field checkbox">
+                  <input
+                    type="checkbox"
+                    checked={condition.fullCharge}
+                    onChange={(e) =>
+                      dispatch({
+                        type: 'setSlotCondition',
+                        index: slotIndex,
+                        condition: { ...condition, fullCharge: e.target.checked },
+                      })
+                    }
+                  />
+                  <span>フルチャージで撃つ</span>
+                </label>
+              )}
+              {showHpRatio && (
+                <label className="field">
+                  <span>想定 HP (%)</span>
                   <HpRatioInput
                     value={slot.hpRatio}
                     onCommit={(ratio) => dispatch({ type: 'setHpRatio', index: slotIndex, hpRatio: ratio })}
-                  />{' '}
-                  %
+                  />
                 </label>
-                。「残りの HP
-                の割合が最も低い味方」への回復は、この割合の低い枠から選ぶ（同じなら若い枠）。被弾の時刻は計算に入れず、戦闘中はこの割合のまま（既定は満タン）
-              </li>
-            </ul>
-          )}
-          {slotResult && (
-            <div className="received">
-              <span className="skills-title">受けているバフ</span>
-              {slotResult.passiveEffects.length === 0 &&
-              slotResult.buildEffects.length === 0 &&
-              slotResult.effects.every((e) => e.stateOnly) &&
-              slotResult.instants.length === 0 &&
-              slotResult.cycleChanges.length === 0 &&
-              slotResult.states.length === 0 ? (
-                <p className="hint">なし</p>
-              ) : (
-                <ul className="received-list">
-                  {slotResult.passiveEffects.map((e, i) => (
-                    <li key={i}>
-                      <span className="amount">{formatAppliedAmount(e)}</span>
-                      <small className="sub">
-                        {formatEffectSource(e, slotNames[e.sourceSlotIndex])}
-                        {e.assumes ? `・仮定: ${e.assumes.ja}` : ''}
-                      </small>
-                    </li>
-                  ))}
-                  {slotResult.buildEffects.map((e, i) => (
-                    <li key={`build-${i}`}>
-                      <span className="amount">{formatBuildEffect(e)}</span>
-                      <small className="sub">育成 {formatBuildEffectSource(e.source)}</small>
-                    </li>
-                  ))}
-                  {timedSummary.map((t, i) => (
-                    <li key={`timed-${i}`}>
-                      <span className="amount">{formatAppliedAmount(t.effect)}</span>
-                      <small className="sub">
-                        {formatItemTrigger(t.effect)}{' '}
-                        {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}
-                        {formatItemDuration(t.effect)}{' '}
-                        {/* ソルジャーE.G. 編: 確率のきっかけの窓は期待値の小片なので、回数ではなく「期待値」と出す */}
-                        {!isStateContent(t.effect) &&
-                        typeof t.effect.trigger === 'object' &&
-                        'chance' in t.effect.trigger
-                          ? '（期待値）'
-                          : `× ${t.count} 回`}
-                        {formatTimedExtras(t.effect)}
-                        {t.skips > 0 ? `・条件を満たさず発動せず ${t.skips} 回` : ''}
-                        {t.effect.assumes ? `・仮定: ${t.effect.assumes.ja}` : ''}
-                      </small>
-                    </li>
-                  ))}
-                  {instantSummary.map((x, i) => (
-                    <li key={`instant-${i}`}>
-                      <span className="amount">{formatInstant(x.instant.effect)}</span>
-                      <small className="sub">
-                        {formatTimedTrigger(x.instant.effect.trigger)} 枠 {x.instant.sourceSlotIndex + 1}{' '}
-                        {slotNames[x.instant.sourceSlotIndex] ?? ''}
-                        {formatInstantTarget(x.instant.effect)}・{x.count} 回
-                        {x.instant.effect.kind === 'cooldownReduction'
-                          ? `（実際に縮んだ計 ${formatNumber(framesToGameSeconds(x.total), 2)} 秒）`
-                          : x.instant.effect.kind === 'ammoRefill'
-                            ? `（計 ${x.total} 発）`
-                            : ''}
-                        {x.instant.effect.assumes ? `・仮定: ${x.instant.effect.assumes.ja}` : ''}
-                      </small>
-                    </li>
-                  ))}
-                  {/* 2 段目の段 1: 付いた名前の付いた状態（中身の無い状態も。plan/design-skill-stage1.md 1.4 節） */}
-                  {slotResult.states.map((x) => (
-                    <li key={`state-${x.sourceSlotIndex}-${x.state}`}>
-                      <span className="amount">状態: {stateLabel(x.state)}</span>
-                      <small className="sub">
-                        枠 {x.sourceSlotIndex + 1} {slotNames[x.sourceSlotIndex] ?? ''}・
-                        {x.isStatic ? '戦闘の始めから終わりまで' : `${x.count} 回`}
-                        {x.undispellable ? '・解除不可' : ''}
-                      </small>
-                    </li>
-                  ))}
-                  {cycleSummary.map(({ count, ...w }) => (
-                    <li key={`cycle-${w.source.skill}-${w.effectIndex}`}>
-                      <span className="amount">
-                        {SKILL_SLOT_LABEL[w.targetSkill]} の段を{w.every === 1 ? '毎回' : ` ${w.every} 回ごとに`}進める
-                      </span>
-                      <small className="sub">
-                        {SKILL_SLOT_LABEL[w.source.skill]}・{formatNumber(framesToGameSeconds(w.end - w.start), 0)} 秒 ×{' '}
-                        {count} 回
-                      </small>
-                    </li>
-                  ))}
-                </ul>
               )}
-            </div>
-          )}
-          {slotResult && slotResult.notes.length > 0 && (
-            <ul className="notes">
-              {slotResult.notes.map((note) => (
-                <li key={note.code} className={`note ${note.level}`}>
-                  <span className="badge">{note.level === 'unsupported' ? '未対応' : '近似'}</span> {note.message.ja}
-                </li>
-              ))}
-            </ul>
-          )}
-          {slotResult && (
-            <dl className="mini">
-              <dt>攻撃力（バフ後）</dt>
-              <dd>{formatNumber(slotResult.segments[0]?.trigger.attack ?? slotResult.baseAttack)}</dd>
-              <dt>通常攻撃</dt>
-              <dd>
-                {formatNumber(slotResult.normalDamage)}
-                {perShotDamage > 0 && `（うち毎発の追加ダメージ ${formatNumber(perShotDamage)}）`}
-              </dd>
-              <dt>バーストスキル</dt>
-              <dd>
-                {slotResult.burst.hit
-                  ? `${formatNumber(slotResult.burst.totalDamage)}（${slotResult.burst.activations.length} 回 × ${formatNumber(
-                      slotResult.burst.hit.perActivation,
-                    )}）`
-                  : '—'}
-              </dd>
-              <dt>DPS</dt>
-              <dd>{formatNumber(slotResult.dps)}</dd>
-              <dt>総ダメージ</dt>
-              <dd className="total">{formatNumber(slotResult.totalDamage)}</dd>
-              <dt>寄与率</dt>
-              <dd>{formatPercent(slotResult.share, 1)}</dd>
-            </dl>
-          )}
-        </>
+              {slot.conditionMode === 'auto' ? (
+                <details className="manual-condition">
+                  <summary>手入力の値（未測定の敵で使用）</summary>
+                  {manualFields}
+                </details>
+              ) : (
+                manualFields
+              )}
+            </details>
+          </div>
+        </details>
       )}
     </fieldset>
   );

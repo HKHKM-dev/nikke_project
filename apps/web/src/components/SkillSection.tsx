@@ -43,17 +43,19 @@ import {
 import { clampSkillLevel, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 
+const SHORT_SKILL_LABEL: Record<SkillSlot, string> = {
+  skill1: 'S1',
+  skill2: 'S2',
+  burst: 'バースト',
+};
+
 /**
  * バーストの着弾編（plan/design-burst-landing.md 6 節の 3）: 実測値の表に載ったキャラだけ、発動からヒットと効果の発火までの
  * 遅れを出す（表に無いキャラは未測定だが、何も出さない）
  */
 function BurstDelayNote({ character }: { character: CharacterData }) {
-  // 分かれたヒット編: 宝物の印のある行は、burst が宝物版のときだけ（plan/design-burst-split-hits.md 4.5 節）
   const row = measuredBurstDelayRow(character);
   if (row === null) return null;
-  // 遅れは段の表示から数えた値なので、発動からの時刻はそれを足す: I・II は六角形の替わり目（本当の発動の 5f 後）、III はタイマーの
-  // 00.00（本当の発動の 6f 後）。遅れ 0 の効果は発動のまま、遅れ 0 の III のヒットは 00.00（burst/landing.ts の withBurstDelays・
-  // burst/schedule.ts の hitFrameOf と同じ。plan/design-burst-hit-origin.md 4・8 節）
   const step3 = character.burstStep === 'Step3';
   const origin =
     character.burstStep === 'Step1' || character.burstStep === 'Step2'
@@ -64,7 +66,6 @@ function BurstDelayNote({ character }: { character: CharacterData }) {
   const sec = (frames: number, atOriginWhenZero = false) =>
     framesToGameSeconds(frames > 0 || atOriginWhenZero ? origin + frames : 0).toFixed(2);
   const { hitFrames, effectFrames, hitOffsets = [0] } = row.delays;
-  // 分かれたヒット編: 等分した複数のヒットに分かれるときは、各ヒットの時刻を並べる
   const hits =
     hitOffsets.length > 1
       ? `${hitOffsets.length} 回に等分して発動の ${hitOffsets.map((o) => sec(hitFrames + o, step3)).join('・')} 秒後`
@@ -76,7 +77,6 @@ function BurstDelayNote({ character }: { character: CharacterData }) {
         {`バーストスキルダメージは${hits}、バーストスキル使用時の効果は ${sec(effectFrames)} 秒後に出る（${row.claim}）`}
       </li>
       {row.sameActivationBuffsOnHit === true && (
-        // plan/design-burst-landing.md 10 節: 同じ発動の▲がヒットに乗る行（結論は burst の定義の claims）
         <li className="note approx">
           <span className="badge">実測</span> バーストスキルダメージには、同じ発動で自分に付いた効果が乗る
         </li>
@@ -116,7 +116,6 @@ type LevelInputProps = {
  */
 function SkillLevelInput({ value, disabled, onCommit }: LevelInputProps) {
   const [text, setText] = useState(String(value));
-  // 外から値が変わったとき（スペック固定・復元など）は表示を合わせる（レンダー中に前回値と比べて更新する）
   const [lastValue, setLastValue] = useState(value);
   if (lastValue !== value) {
     setLastValue(value);
@@ -189,6 +188,19 @@ function selfHpOf(e: SkillEffect): { atLeastRef: number } | undefined {
   return 'condition' in e ? e.condition?.selfHp : undefined;
 }
 
+/** 自分のスキル定義に HP の割合の条件（selfHp）が含まれるか */
+export function hasSelfHpCondition(
+  character: CharacterData,
+  status: SlotSkillsStatus,
+  treasurePhase: TreasurePhase,
+): boolean {
+  if (status.kind !== 'ready') return false;
+  const shown = applyTreasure(character, status.definition, treasurePhase);
+  return SKILL_SLOTS.some((slot) =>
+    (shown.definition?.skills[slot]?.effects ?? []).some((e) => selfHpOf(e) !== undefined),
+  );
+}
+
 type HpRatioInputProps = { value: number; onCommit: (ratio: number) => void };
 
 /**
@@ -232,7 +244,6 @@ export function HpRatioInput({ value, onCommit }: HpRatioInputProps) {
 
 /**
  * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節・論点 5）: 自分の HP の割合の条件。想定の HP の割合で効くかと、想定の入力欄。
- * 被弾の時刻は計算に入れないので、戦闘中は想定の割合のまま
  */
 function HpConditionNote({
   threshold,
@@ -265,7 +276,7 @@ function hasComposition(e: SkillEffect): boolean {
   );
 }
 
-type Props = {
+type InputProps = {
   slotIndex: number;
   character: CharacterData;
   /** 実際に計算へ渡す Lv（スペック固定なら全部 10） */
@@ -274,42 +285,37 @@ type Props = {
   treasurePhase: TreasurePhase;
   disabled: boolean;
   status: SlotSkillsStatus;
-  /** 枠番号 → キャラ（編成の条件が今の編成で効くかの表示用）。空枠・読み込み中は null */
-  teamCharacters: readonly (CharacterData | null)[];
-  /** 敵の属性（属性なしは null）。敵の属性の条件の表示用 */
-  enemyElement: Element | null;
-  /** 2 段目の段 6: 枠の HP の割合の想定（HP の割合の条件の表示と入力欄） */
-  hpRatio: number;
   dispatch: Dispatch<TeamAction>;
 };
 
-/** 枠のスキル Lv 入力と、宝物の段階、定義の対応状況・説明文 */
-export function SkillSection({
-  slotIndex,
-  character,
-  levels,
-  treasurePhase,
-  disabled,
-  status,
-  teamCharacters,
-  enemyElement,
-  hpRatio,
-  dispatch,
-}: Props) {
-  // Stage 9: 宝物版に差し替えた説明文と定義を出す（計算と同じ applyTreasure を通す）
-  const shown = applyTreasure(character, status.kind === 'ready' ? status.definition : null, treasurePhase);
-  const treasureShown = new Set(treasureSlots(character, treasurePhase));
+/** 枠カード内のスキル Lv 入力と宝物の段階（スキル名・説明文は「ニケごとの詳細」に出す） */
+export function SkillSection({ slotIndex, character, levels, treasurePhase, disabled, status, dispatch }: InputProps) {
   const treasure = character.treasure;
-  // 編成の条件の判定用。自分の枠は表示中のキャラで埋める（読み込み中で null でも同じ部隊の判定に自分の部隊が要る）
-  const compositionCharacters = teamCharacters.map((c, i) => (i === slotIndex ? character : c));
-  const headline =
+  const shown = applyTreasure(character, status.kind === 'ready' ? status.definition : null, treasurePhase);
+  const allUnsupported =
+    status.kind === 'ready' &&
+    SKILL_SLOTS.every((s) => {
+      const sup = shown.definition?.skills[s]?.support;
+      return sup === 'unsupported' || sup === 'noEffect';
+    });
+  const hasUnsupported =
+    status.kind === 'ready' &&
+    SKILL_SLOTS.some((s) => {
+      const sup = shown.definition?.skills[s]?.support;
+      return sup === 'unsupported' || sup === 'partial';
+    });
+  const overallBadge =
     status.kind === 'undefined'
-      ? { badge: SUPPORT_BADGE.undefined, text: 'スキル定義なし（通常攻撃のみで計算。味方からのバフは受ける）' }
+      ? SUPPORT_BADGE.undefined
       : status.kind === 'loading'
-        ? { badge: SUPPORT_BADGE.loading, text: 'スキル定義を読み込み中…' }
+        ? SUPPORT_BADGE.loading
         : status.kind === 'error'
-          ? { badge: SUPPORT_BADGE.error, text: `スキル定義を読み込めませんでした: ${status.message}` }
-          : null;
+          ? SUPPORT_BADGE.error
+          : allUnsupported
+            ? SUPPORT_BADGE.unsupported
+            : hasUnsupported
+              ? SUPPORT_BADGE.partial
+              : SUPPORT_BADGE.supported;
 
   const setLevel = (slot: SkillSlot, level: number) =>
     dispatch({ type: 'setSkillLevels', index: slotIndex, skillLevels: { ...levels, [slot]: level } });
@@ -317,12 +323,8 @@ export function SkillSection({
   return (
     <div className="skills">
       <div className="skills-head">
-        <span className="skills-title">スキル</span>
-        {headline && (
-          <span className={`note ${headline.badge.className}`}>
-            <span className="badge">{headline.badge.label}</span> {headline.text}
-          </span>
-        )}
+        <span className="skills-title">スキル Lv</span>
+        {overallBadge && <span className={`badge ${overallBadge.className}`}>{overallBadge.label}</span>}
         {treasure && (
           <label className="treasure-phase" title={treasure.name.ja}>
             <span>宝物</span>
@@ -345,71 +347,86 @@ export function SkillSection({
           </label>
         )}
       </div>
+      <div className="growth-row skill-levels-row">
+        {SKILL_SLOTS.map((slot) => (
+          <label
+            key={slot}
+            className="field"
+            title={`${SKILL_SLOT_LABEL[slot]}: ${shown.character.skills[slot].name.ja}`}
+          >
+            <span>{SHORT_SKILL_LABEL[slot]}</span>
+            <SkillLevelInput value={levels[slot]} disabled={disabled} onCommit={(level) => setLevel(slot, level)} />
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+type DetailsProps = {
+  slotIndex: number;
+  character: CharacterData;
+  levels: SkillLevels;
+  treasurePhase: TreasurePhase;
+  status: SlotSkillsStatus;
+  teamCharacters: readonly (CharacterData | null)[];
+  enemyElement: Element | null;
+  hpRatio: number;
+  dispatch: Dispatch<TeamAction>;
+};
+
+/** ニケごとの詳細に出すスキル名・対応状況・説明文・条件（開発・検証用の注記はさらに折りたたむ） */
+export function SkillDetailsSection({
+  slotIndex,
+  character,
+  levels,
+  treasurePhase,
+  status,
+  teamCharacters,
+  enemyElement,
+  hpRatio,
+  dispatch,
+}: DetailsProps) {
+  const shown = applyTreasure(character, status.kind === 'ready' ? status.definition : null, treasurePhase);
+  const treasureShown = new Set(treasureSlots(character, treasurePhase));
+  const compositionCharacters = teamCharacters.map((c, i) => (i === slotIndex ? character : c));
+
+  return (
+    <details className="segments skill-details-panel">
+      <summary>スキルの説明・対応状況</summary>
+      {status.kind === 'undefined' && (
+        <p className="hint">スキル定義なし（通常攻撃のみで計算。味方からのバフは受ける）</p>
+      )}
+      {status.kind === 'loading' && <p className="hint">スキル定義を読み込み中…</p>}
+      {status.kind === 'error' && <p className="error">スキル定義を読み込めませんでした: {status.message}</p>}
       <div className="skill-row">
         {SKILL_SLOTS.map((slot) => {
           const skill = shown.character.skills[slot];
           const entry = shown.definition?.skills[slot] ?? null;
           const badge = entry ? SUPPORT_BADGE[entry.support] : null;
+          const userNotes = (entry?.notes ?? []).filter((n) => n.kind === 'unimplemented' || n.kind === 'outOfScope');
+          const devNotes = (entry?.notes ?? []).filter((n) => n.kind !== 'unimplemented' && n.kind !== 'outOfScope');
+          const hasStateEffects =
+            entry !== null &&
+            entry.effects.some((e) => e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange');
+          const hasAssumes = entry !== null && entry.effects.some((e) => e.assumes);
+          const hasBurstDelay = slot === 'burst' && measuredBurstDelayRow(shown.character) !== null;
+          const hasDelayedHits =
+            entry !== null && entry.effects.some((e) => e.kind === 'damage' && e.delayFrames !== undefined);
+          const hasDevInfo = hasStateEffects || hasAssumes || hasBurstDelay || hasDelayedHits || devNotes.length > 0;
+
           return (
-            <details key={slot} className="skill">
-              <summary>
+            <div key={slot} className="skill-detail-item">
+              <div className="skill-detail-header">
                 <span className="skill-name">
-                  {SKILL_SLOT_LABEL[slot]}: {skill.name.ja}
+                  <strong>
+                    {SKILL_SLOT_LABEL[slot]}（Lv{levels[slot]}）: {skill.name.ja}
+                  </strong>
                 </span>
                 {treasureShown.has(slot) && <span className="badge treasure">宝物版</span>}
                 {badge && <span className={`badge ${badge.className}`}>{badge.label}</span>}
-              </summary>
-              <label className="field skill-level">
-                <span>Lv</span>
-                <SkillLevelInput value={levels[slot]} disabled={disabled} onCommit={(level) => setLevel(slot, level)} />
-              </label>
+              </div>
               <pre className="skill-desc">{renderSkillDescription(skill, levels[slot], 'ja')}</pre>
-              {entry && entry.effects.some((e) => e.assumes) && (
-                <ul className="notes">
-                  {entry.effects
-                    .filter((e) => e.assumes)
-                    .map((e, i) => (
-                      <li key={i} className="note approx">
-                        <span className="badge">仮定</span> {e.assumes!.ja}
-                      </li>
-                    ))}
-                </ul>
-              )}
-              {/* 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.7 節）: 付与する状態と、その中身。2 段目の段 1: 解除も。
-                  段 3: スタック量の増減も */}
-              {entry &&
-                entry.effects.some(
-                  (e) => e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange',
-                ) && (
-                  <ul className="notes">
-                    {entry.effects.flatMap((e, i) =>
-                      e.kind === 'state'
-                        ? [
-                            <li key={i} className="note modeling">
-                              <span className="badge">状態</span> {formatStateGrant(e, shown.definition ?? null)}
-                            </li>,
-                          ]
-                        : e.kind === 'removeState'
-                          ? [
-                              <li key={i} className="note modeling">
-                                <span className="badge">解除</span> {formatRemoveState(e)}
-                              </li>,
-                            ]
-                          : e.kind === 'stackChange'
-                            ? [
-                                <li key={i} className="note modeling">
-                                  <span className="badge">スタック</span>{' '}
-                                  {formatStackChange(
-                                    e,
-                                    e.amount ?? Math.round(skillValue(skill, e.amountRef!, levels[slot])),
-                                    (ref) => Math.round(skillValue(skill, ref, levels[slot])),
-                                  )}
-                                </li>,
-                              ]
-                            : [],
-                    )}
-                  </ul>
-                )}
               {entry && entry.effects.some(hasComposition) && (
                 <ul className="notes">
                   {entry.effects.flatMap((e, i) => [
@@ -464,21 +481,76 @@ export function SkillSection({
                   })}
                 </ul>
               )}
-              {slot === 'burst' && <BurstDelayNote character={shown.character} />}
-              {entry && <DelayedHitNotes effects={entry.effects} />}
-              {entry?.notes && entry.notes.length > 0 && (
+              {userNotes.length > 0 && (
                 <ul className="notes">
-                  {entry.notes.map((n, i) => (
+                  {userNotes.map((n, i) => (
                     <li key={i} className={`note ${NOTE_KIND_BADGE[n.kind].className}`}>
                       <span className="badge">{noteBadgeLabel(n)}</span> {n.ja}
                     </li>
                   ))}
                 </ul>
               )}
-            </details>
+              {hasDevInfo && (
+                <details className="dev-notes-details">
+                  <summary>検証・内部モデルの注記</summary>
+                  {entry && hasAssumes && (
+                    <ul className="notes">
+                      {entry.effects
+                        .filter((e) => e.assumes)
+                        .map((e, i) => (
+                          <li key={i} className="note approx">
+                            <span className="badge">仮定</span> {e.assumes!.ja}
+                          </li>
+                        ))}
+                    </ul>
+                  )}
+                  {entry && hasStateEffects && (
+                    <ul className="notes">
+                      {entry.effects.flatMap((e, i) =>
+                        e.kind === 'state'
+                          ? [
+                              <li key={i} className="note modeling">
+                                <span className="badge">状態</span> {formatStateGrant(e, shown.definition ?? null)}
+                              </li>,
+                            ]
+                          : e.kind === 'removeState'
+                            ? [
+                                <li key={i} className="note modeling">
+                                  <span className="badge">解除</span> {formatRemoveState(e)}
+                                </li>,
+                              ]
+                            : e.kind === 'stackChange'
+                              ? [
+                                  <li key={i} className="note modeling">
+                                    <span className="badge">スタック</span>{' '}
+                                    {formatStackChange(
+                                      e,
+                                      e.amount ?? Math.round(skillValue(skill, e.amountRef!, levels[slot])),
+                                      (ref) => Math.round(skillValue(skill, ref, levels[slot])),
+                                    )}
+                                  </li>,
+                                ]
+                              : [],
+                      )}
+                    </ul>
+                  )}
+                  {slot === 'burst' && <BurstDelayNote character={shown.character} />}
+                  {entry && <DelayedHitNotes effects={entry.effects} />}
+                  {devNotes.length > 0 && (
+                    <ul className="notes">
+                      {devNotes.map((n, i) => (
+                        <li key={i} className={`note ${NOTE_KIND_BADGE[n.kind].className}`}>
+                          <span className="badge">{noteBadgeLabel(n)}</span> {n.ja}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </details>
+              )}
+            </div>
           );
         })}
       </div>
-    </div>
+    </details>
   );
 }
