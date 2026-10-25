@@ -46,7 +46,7 @@ import {
   type Observation,
   jumpWindowsOf,
 } from '../observations.ts';
-import { extractGeneratedSection, normalizeTable, type ProjectRecording } from '../recordings.ts';
+import { extractGeneratedSection, type ProjectRecording } from '../recordings.ts';
 import { relevanceCounts, relevanceOf } from '../relevance.ts';
 import { definitionPlacesByClaim } from '../skills.ts';
 import { verificationsByClaim } from '../verifications.ts';
@@ -80,8 +80,8 @@ describe('records/observations', () => {
     const doc = readFileSync(RESIDUALS_PATH, 'utf8');
     const section = extractGeneratedSection(doc, 'residuals');
     const expected = renderResiduals(residuals, observations, claimsByObservation(claims));
-    expect(normalizeTable(section)).toEqual(normalizeTable(expected));
-    expect(section).toContain(expected.split('\n')[0]!);
+    // prettier の対象外なので、生成の結果と 1 字まで同じ（plan/design-generated-table-width.md）
+    expect(section).toBe(`\n\n${expected}\n\n`);
   });
 });
 

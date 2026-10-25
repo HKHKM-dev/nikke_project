@@ -331,30 +331,6 @@ export function extractGeneratedSection(doc: string, name: string): string {
   return doc.slice(start + marker(name, false).length, end);
 }
 
-/** 表の比較用に、整形（列の幅そろえ・区切り行）の違いを落とす */
-export function normalizeTable(markdown: string): string[] {
-  return markdown
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.startsWith('|') && !/^\|[\s|:-]+\|$/.test(line))
-    .map((line) =>
-      line
-        .slice(1, -1)
-        .split(/(?<!\\)\|/)
-        .map((cell) => cell.trim())
-        .join('|'),
-    );
-}
-
-/** 生成した文書の比較用に、空行と表の整形（列の幅そろえ・区切り行）の違いを落とす */
-export function normalizeGeneratedDoc(markdown: string): string[] {
-  return markdown
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line !== '' && !/^\|[\s|:-]+\|$/.test(line))
-    .map((line) => (line.startsWith('|') ? (normalizeTable(line)[0] ?? line) : line));
-}
-
 const RECORDINGS_DOC_HEADER = `# 録画の一覧
 
 - **このファイルは生成する（手で書かない）**。録画は \`records/recordings/<録画 id>.json\` に 1 本 1 ファイルで置き、\`npm run records:table\` で作り直す（[design-stage20.md](../design-stage20.md) 3.5 節）。
