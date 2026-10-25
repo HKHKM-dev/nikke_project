@@ -164,18 +164,13 @@ export function App() {
             condition: slot.condition,
             conditionMode: slot.conditionMode,
             attackOverride: computeFixedSpecAttack(character).attack,
-            // 2 段目の段 6: 最終最大HP 基準の効果のための、スペック固定の最大HP と、HP の割合の想定
             hpOverride: computeFixedSpecHp(character),
             hpRatio: slot.hpRatio,
-            // 2 段目の段 7: 最終防御力の比べ（自分より最終防御力が低い味方）のための、スペック固定の防御力
             defenceOverride: computeFixedSpecDefence(character),
             skills: slotSkills,
           };
         }
         const growth = clampGrowth(character, slot.growth);
-        // Stage 12: 育成入力か宝物のステータスがあれば、戦闘中の攻撃力（バフ前）を computeCombatAttack で作る。
-        // Stage 13: 同じ入力から効果層（OL・キューブ・コレクション → 常時バフ）を resolveBuildEffects で作る。
-        // マスタの読み込み前・入力がマスタと合わないときは素のステータスのまま（BuildSection が知らせる）
         const treasurePhase = effectiveTreasurePhase(slot, character);
         let attackOverride: number | undefined;
         let hpOverride: number | undefined;
@@ -184,9 +179,7 @@ export function App() {
         if (masters && (!isEmptyBuild(slot.build) || treasurePhase > 0)) {
           try {
             attackOverride = computeCombatAttack(character, growth, slot.build, masters, { treasurePhase }).attack;
-            // 2 段目の段 6: 同じ育成入力から戦闘中の最大HP（バフ前）も作る（最終最大HP 基準の効果が読む）
             hpOverride = computeCombatStat(character, growth, slot.build, masters, 'hp', { treasurePhase }).value;
-            // 2 段目の段 7: 防御力（バフ前）も（最終防御力の比べが読む）
             defenceOverride = computeCombatStat(character, growth, slot.build, masters, 'defence', {
               treasurePhase,
             }).value;
@@ -217,7 +210,6 @@ export function App() {
   const teamInput = useMemo<TeamInput>(
     () => ({
       slots: slotInputs,
-      // Stage 18-C2: 出来事に加えて、的の条件の表と着地点（条件が自動の枠が使う）
       enemy: enemyForCalc(team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds),
       durationSeconds: team.durationSeconds,
       burst: team.burst,
@@ -281,16 +273,20 @@ export function App() {
   const slotNames = team.slots.map((s) =>
     s.resourceId === null ? undefined : cache.characters.get(s.resourceId)?.name.ja,
   );
-  // 編成の条件（burstStepMix・squad）の表示用。空枠・読み込み中の枠は null（計算でも空枠は数えない）
   const teamCharacters = team.slots.map((s) =>
     s.resourceId === null ? null : (cache.characters.get(s.resourceId) ?? null),
   );
+  const allEffectiveSkillLevels = team.slots.map((s) => effectiveSkillLevels(s, team.fixedSpec));
+  const allTreasurePhases = team.slots.map((s) => {
+    const character = s.resourceId === null ? undefined : cache.characters.get(s.resourceId);
+    return character ? effectiveTreasurePhase(s, character) : 0;
+  });
+  const allHpRatios = team.slots.map((s) => s.hpRatio);
 
   return (
     <main className="app">
       <header>
         <h1>NIKKE ダメージ計算</h1>
-        <p>単体ボス・5 人編成の総ダメージ期待値（実戦とは未照合）</p>{' '}
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
@@ -326,13 +322,10 @@ export function App() {
                   effectiveBuild={character ? effectiveBuild(slot, team.fixedSpec, character) : slot.build}
                   masters={masters}
                   mastersError={mastersError}
-                  effectiveSkillLevels={effectiveSkillLevels(slot, team.fixedSpec)}
+                  effectiveSkillLevels={allEffectiveSkillLevels[i]!}
                   skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
-                  slotNames={slotNames}
-                  teamCharacters={teamCharacters}
-                  enemyElement={team.enemy.element}
-                  slotResult={shown.ok ? (shown.result.slots[i] ?? null) : null}
                   hpRatioTargeted={hpRatioTargeted}
+                  slotResult={shown.ok ? (shown.result.slots[i] ?? null) : null}
                   dispatch={dispatch}
                 />
               );
@@ -347,6 +340,14 @@ export function App() {
               loadingCount={loadingCount}
               skillsLoadingCount={skillsLoadingCount}
               fixedSpec={team.fixedSpec}
+              slotNames={slotNames}
+              teamCharacters={teamCharacters}
+              enemyElement={team.enemy.element}
+              effectiveSkillLevels={allEffectiveSkillLevels}
+              treasurePhases={allTreasurePhases}
+              skillsStatuses={skillsStatuses}
+              hpRatios={allHpRatios}
+              dispatch={dispatch}
             />
           ) : (
             <p className="error">{shown.error}</p>

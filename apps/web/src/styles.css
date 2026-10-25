@@ -6,47 +6,44 @@
     'Segoe UI',
     'Noto Sans JP',
     sans-serif;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 body {
   margin: 0;
   padding: 0 16px;
 }
 .app {
-  max-width: 1400px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 16px 0 48px;
+  padding: 12px 0 40px;
 }
 header h1 {
-  margin: 0 0 4px;
-  font-size: 1.5rem;
-}
-header p {
-  margin: 0 0 16px;
-  opacity: 0.75;
+  margin: 0 0 10px;
+  font-size: 1.35rem;
 }
 
 /* 共通のパネルとフォーム */
 .panel {
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   border-radius: 8px;
-  padding: 12px 16px;
+  padding: 10px 12px;
   margin: 0;
   min-width: 0;
 }
 .panel legend {
   font-weight: 600;
   padding: 0 4px;
+  font-size: 0.92rem;
 }
 .field {
   display: grid;
-  grid-template-columns: 8em minmax(0, 1fr);
+  grid-template-columns: 7em minmax(0, 1fr);
   gap: 4px 8px;
   align-items: center;
-  margin: 8px 0;
+  margin: 5px 0;
 }
 .field > span {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 .field > small {
   grid-column: 2;
@@ -58,150 +55,247 @@ header p {
 .field select {
   width: 100%;
   box-sizing: border-box;
-  padding: 4px 6px;
+  padding: 3px 6px;
   font: inherit;
+  font-size: 0.88rem;
 }
 .field.checkbox {
   grid-template-columns: auto minmax(0, 1fr);
 }
 .meta {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   opacity: 0.8;
+  margin: 4px 0;
+}
+.slot .meta {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 編成共通の設定 */
-.settings-grid {
+.settings-simple {
   display: grid;
-  gap: 0 24px;
+  gap: 8px 24px;
   grid-template-columns: minmax(0, 1fr);
 }
-@media (min-width: 900px) {
-  .settings-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+@media (min-width: 640px) {
+  .settings-simple {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .settings-grid .field.checkbox {
-    grid-column: 1 / -1;
+}
+.settings-simple .field {
+  margin: 2px 0;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px 10px;
+}
+.settings-advanced {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  font-size: 0.85rem;
+}
+.settings-advanced > summary {
+  cursor: pointer;
+  opacity: 0.8;
+}
+.settings-advanced-body {
+  margin-top: 8px;
+}
+.settings-advanced-grid {
+  display: grid;
+  gap: 6px 16px;
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 640px) {
+  .settings-advanced-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+@media (min-width: 960px) {
+  .settings-advanced-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.settings-advanced-grid .field {
+  margin: 2px 0;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 4px 8px;
+}
+.settings-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  align-items: center;
+  margin-top: 8px;
+}
+.settings-options .field.checkbox {
+  margin: 0;
 }
 
 /* 枠カード */
 .slots {
   display: grid;
-  gap: 16px;
+  gap: 10px;
   grid-template-columns: minmax(0, 1fr);
-  margin: 16px 0;
+  margin: 12px 0;
 }
-@media (min-width: 900px) {
+@media (min-width: 700px) {
   .slots {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (min-width: 1300px) {
+@media (min-width: 1020px) {
   .slots {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+@media (min-width: 1280px) {
+  .slots {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+.slot {
+  padding: 8px 10px;
+}
 .slot .field {
-  grid-template-columns: 6.5em minmax(0, 1fr);
+  grid-template-columns: 5.5em minmax(0, 1fr);
 }
 .picker {
   display: grid;
-  gap: 6px;
-  margin: 4px 0 8px;
+  gap: 4px;
+  margin: 2px 0 6px;
 }
 .picker input,
 .picker select {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  padding: 4px 6px;
+  padding: 3px 6px;
   font: inherit;
+  font-size: 0.85rem;
 }
 .picker-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 6px;
+  gap: 4px;
 }
 .picker button {
   font: inherit;
-  padding: 4px 10px;
+  font-size: 0.8rem;
+  padding: 3px 8px;
+}
+.slot-damage-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 8px;
+  margin: 6px 0;
+  border-radius: 4px;
+  background: color-mix(in srgb, currentColor 6%, transparent);
+}
+.slot-damage-label {
+  font-size: 0.82rem;
+  opacity: 0.8;
+}
+.slot-damage-val {
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.slot-settings {
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+.slot-settings > summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+.slot-settings-body {
+  margin-top: 6px;
 }
 .growth-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin: 8px 0;
+  gap: 6px;
+  margin: 6px 0;
 }
 .growth-row .field {
   grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
   margin: 0;
 }
-.growth-row .field > small {
-  grid-column: 1;
-}
-.mini {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: 2px 12px;
-  margin: 10px 0 0;
-  padding-top: 8px;
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-}
-.mini dt {
-  opacity: 0.8;
-}
-.mini dd {
-  margin: 0;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.mini dd.total {
-  font-weight: 700;
+.growth-row .field > span {
+  font-size: 0.78rem;
+  opacity: 0.85;
 }
 
 /* 1 体分の結果（詳細） */
 .result h2 {
-  margin: 8px 0 12px;
-  font-size: 1.2rem;
+  margin: 4px 0 8px;
+  font-size: 1.15rem;
 }
 .result h3 {
-  margin: 16px 0 8px;
-  font-size: 1rem;
+  margin: 12px 0 6px;
+  font-size: 0.95rem;
+}
+.result h4 {
+  margin: 10px 0 4px;
+  font-size: 0.9rem;
+}
+.breakdown-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+.breakdown-header h2 {
+  margin: 0;
+}
+.burst-headline {
+  margin: 0;
+  font-size: 0.85rem;
 }
 .summary {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
-  gap: 4px 16px;
-  margin: 0;
+  gap: 3px 16px;
+  margin: 6px 0;
+  max-width: 420px;
 }
 .summary dt {
   opacity: 0.8;
+  font-size: 0.88rem;
 }
 .summary dd {
   margin: 0;
   font-variant-numeric: tabular-nums;
   text-align: right;
+  font-size: 0.88rem;
 }
 .summary dd.total {
-  font-size: 1.4rem;
+  font-size: 1.15rem;
   font-weight: 700;
 }
 .notes {
   list-style: none;
   padding: 0;
-  margin: 12px 0 0;
+  margin: 8px 0 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 .note {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 .badge {
   display: inline-block;
-  padding: 0 6px;
+  padding: 0 5px;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   margin-right: 4px;
 }
@@ -213,7 +307,6 @@ header p {
   background: #ef6c00;
   color: #fff;
 }
-/* スキル定義の notes の種類（plan/design-skill-note-kinds.md 2.3 節） */
 .note.out-of-scope .badge {
   background: #455a64;
   color: #fff;
@@ -223,7 +316,6 @@ header p {
   background: #757575;
   color: #fff;
 }
-/* 分類の設計書の論点 7（plan/design-indirect-notes.md 5 節）: 間接 */
 .note.indirect .badge {
   background: #5e35b1;
   color: #fff;
@@ -231,7 +323,7 @@ header p {
 .breakdown {
   border-collapse: collapse;
   width: 100%;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 .breakdown th {
   text-align: left;
@@ -255,12 +347,12 @@ header p {
 .team-table {
   border-collapse: collapse;
   width: 100%;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   white-space: nowrap;
 }
 .team-table th,
 .team-table td {
-  padding: 6px 8px;
+  padding: 5px 8px;
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -282,36 +374,65 @@ header p {
   border-top: 2px solid color-mix(in srgb, currentColor 35%, transparent);
 }
 .team-table .grand-total {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 .team-table .sub {
   opacity: 0.65;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+}
+.simple-breakdown-table {
+  max-width: 480px;
+}
+.simple-breakdown-table .damage-cell {
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 .details {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 .slot-detail > summary {
   cursor: pointer;
-  padding: 6px 0;
+  padding: 4px 0;
+  font-size: 0.9rem;
 }
 .slot-detail .result {
   border: none;
-  padding: 0 0 8px 16px;
+  padding: 4px 0 8px 14px;
+  border-left: 2px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 0;
+  margin-left: 4px;
 }
-.slot-detail .result h2 {
-  font-size: 1rem;
+.segments {
+  margin-top: 8px;
 }
-.scope {
-  font-size: 0.8rem;
-  opacity: 0.7;
-  margin-top: 16px;
+.segments > summary {
+  cursor: pointer;
+  font-size: 0.88rem;
+  padding: 3px 0;
+}
+.verification-details {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+}
+.verification-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  margin: 6px 0;
+}
+.model-select-field {
+  grid-template-columns: max-content 13em;
+  margin: 0;
 }
 .error {
   color: #c62828;
 }
 .hint {
   opacity: 0.7;
+  font-size: 0.85rem;
+  margin: 4px 0;
 }
 .slot .field.checkbox {
   grid-template-columns: auto minmax(0, 1fr);
@@ -319,53 +440,61 @@ header p {
 
 /* スキル（Stage 4） */
 .skills {
-  margin: 10px 0 0;
-  padding-top: 8px;
+  margin: 6px 0;
+  padding-top: 6px;
   border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
 }
 .skills-head {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 12px;
-  align-items: baseline;
+  gap: 4px 8px;
+  align-items: center;
 }
 .skills-title {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
+}
+.skill-levels-row {
+  margin: 4px 0 0;
 }
 .skill-row {
   display: grid;
-  gap: 4px;
-  margin-top: 4px;
-}
-.skill > summary {
-  cursor: pointer;
-  display: flex;
   gap: 8px;
+  margin-top: 6px;
+}
+.skill-detail-item {
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+  border-radius: 6px;
+}
+.skill-detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   align-items: center;
-  font-size: 0.9rem;
-  padding: 2px 0;
+  font-size: 0.88rem;
 }
 .skill-name {
   flex: 1 1 auto;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.skill-level {
-  grid-template-columns: 2em 5em !important;
-  margin: 4px 0;
 }
 .skill-desc {
   white-space: pre-wrap;
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   opacity: 0.85;
-  margin: 4px 0;
-  padding: 6px 8px;
+  margin: 4px 0 0;
+  padding: 5px 8px;
   border-radius: 4px;
   background: color-mix(in srgb, currentColor 6%, transparent);
+}
+.dev-notes-details {
+  margin-top: 6px;
+  font-size: 0.8rem;
+}
+.dev-notes-details > summary {
+  cursor: pointer;
+  opacity: 0.75;
 }
 .badge.supported {
   background: #2e7d32;
@@ -383,17 +512,21 @@ header p {
   background: #757575;
   color: #fff;
 }
-/* Stage 9: 宝物版で計算しているスロット */
 .badge.treasure {
   background: #6a1b9a;
   color: #fff;
 }
 .treasure-phase {
   display: inline-flex;
-  gap: 6px;
+  gap: 4px;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   margin-left: auto;
+}
+.treasure-phase select {
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 1px 4px;
 }
 .badge.undefined,
 .badge.loading {
@@ -406,13 +539,13 @@ header p {
   color: #fff;
 }
 .received {
-  margin: 10px 0 0;
-  padding-top: 8px;
+  margin: 8px 0;
+  padding-top: 6px;
   border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
 }
 .received .hint {
   margin: 2px 0 0;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 .received-list {
   list-style: none;
@@ -420,7 +553,7 @@ header p {
   margin: 4px 0 0;
   display: grid;
   gap: 2px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 .received-list li {
   display: flex;
@@ -436,16 +569,16 @@ header p {
   font-size: 0.75rem;
 }
 
-/* Stage 12: 育成入力（折り畳み） */
+/* Stage 12: 育成入力・射撃条件（折り畳み） */
 .build {
-  margin: 4px 0 8px;
-  padding: 4px 8px;
-  border: 1px solid #d0d0d0;
+  margin: 5px 0 0;
+  padding: 3px 7px;
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
   border-radius: 4px;
 }
 .build > summary {
   cursor: pointer;
-  font-size: 0.9em;
+  font-size: 0.82rem;
 }
 .build-attack strong {
   font-variant-numeric: tabular-nums;
@@ -457,16 +590,13 @@ header p {
 }
 .build-grid .field.gear {
   display: grid;
-  grid-template-columns: 6.5em minmax(0, 1fr);
+  grid-template-columns: 5.5em minmax(0, 1fr);
   align-items: center;
-  gap: 2px 8px;
-}
-.build-grid .field.gear > small {
-  grid-column: 2;
+  gap: 2px 6px;
 }
 .gear-inputs {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 4.5em;
+  grid-template-columns: minmax(0, 1fr) 3.8em;
   gap: 4px;
 }
 .gear-inputs.three {
@@ -477,18 +607,18 @@ header p {
   min-width: 0;
   width: 100%;
   box-sizing: border-box;
-  padding: 4px 6px;
+  padding: 3px 5px;
   font: inherit;
+  font-size: 0.82rem;
 }
 .build-breakdown {
   font-variant-numeric: tabular-nums;
 }
-
-/* Stage 13: OL のオプション行と効果層の一覧 */
 .ol-lines {
-  grid-column: 2;
+  grid-column: 1 / -1;
   display: grid;
   gap: 2px;
+  margin-top: 2px;
 }
 .build-effects {
   margin-top: 6px;
@@ -501,17 +631,23 @@ header p {
 }
 
 /* Stage 14: JSON の書き出し / 取り込み、未対応の一覧 */
+.notes-summary,
+.data-panel {
+  margin-top: 10px;
+}
+.notes-summary > summary,
 .data-panel > summary,
 .build-json > summary {
   cursor: pointer;
+  font-size: 0.9rem;
 }
 .build-json {
   margin-top: 6px;
-  font-size: 0.9em;
+  font-size: 0.82rem;
 }
 .data-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
   gap: 8px;
   margin-top: 6px;
 }
@@ -519,7 +655,7 @@ header p {
   width: 100%;
   box-sizing: border-box;
   font-family: ui-monospace, monospace;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 .data-buttons {
   display: flex;
@@ -579,13 +715,10 @@ header p {
   opacity: 0.6;
 }
 
-/* Stage 18-C2: 条件が自動の枠（使った条件の平均と、手入力の値の折り畳み） */
-.auto-condition small {
-  opacity: 0.8;
-}
+/* Stage 18-C2: 条件が自動の枠 */
 .manual-condition {
-  margin: 4px 0 8px;
-  font-size: 0.9em;
+  margin: 4px 0 2px;
+  font-size: 0.82rem;
 }
 .manual-condition > summary {
   cursor: pointer;

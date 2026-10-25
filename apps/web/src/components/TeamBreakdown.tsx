@@ -3,13 +3,20 @@ import {
   ENEMY_EVENT_KIND_LABEL,
   WEAPON_LABEL,
   slotsByStep,
+  type CharacterData,
+  type Element,
+  type SkillLevels,
   type TeamResult,
   type TeamSlotResult,
+  type TreasurePhase,
   type TriggerDamage,
   framesToGameSeconds,
   gameSecondsToFrame,
 } from '@nikke/core';
+import type { Dispatch } from 'react';
 import { formatNumber, formatPercent } from '../format.ts';
+import type { TeamAction } from '../team.ts';
+import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { DamageTimeline, landingLabel } from './DamageTimeline.tsx';
 import { ResultPanel } from './ResultPanel.tsx';
 
@@ -17,8 +24,8 @@ import { ResultPanel } from './ResultPanel.tsx';
 export type ModelKind = 'calc' | 'sim';
 
 const MODEL_LABEL: Record<ModelKind, string> = {
-  calc: 'calc',
-  sim: 'sim',
+  calc: 'calc（区間期待値）',
+  sim: 'sim（フレーム逐次）',
 };
 
 type Props = {
@@ -32,6 +39,14 @@ type Props = {
   /** スキル定義を読み込み中で、まだバフなしで計算している枠の数 */
   skillsLoadingCount: number;
   fixedSpec: boolean;
+  slotNames: readonly (string | undefined)[];
+  teamCharacters: readonly (CharacterData | null)[];
+  enemyElement: Element | null;
+  effectiveSkillLevels: readonly SkillLevels[];
+  treasurePhases: readonly TreasurePhase[];
+  skillsStatuses: readonly (SlotSkillsStatus | null)[];
+  hpRatios: readonly number[];
+  dispatch: Dispatch<TeamAction>;
 };
 
 const STEP_LABEL = { Step1: 'I', Step2: 'II', Step3: 'III' } as const;
@@ -58,13 +73,19 @@ export function TeamBreakdown({
   loadingCount,
   skillsLoadingCount,
   fixedSpec,
+  slotNames,
+  teamCharacters,
+  enemyElement,
+  effectiveSkillLevels,
+  treasurePhases,
+  skillsStatuses,
+  hpRatios,
+  dispatch,
 }: Props) {
   const filled = result.slots.filter((s): s is TeamSlotResult => s !== null);
   const attackLabel = fixedSpec ? '攻撃力（スペック固定: 好感度 + 装備込み）' : '攻撃力（素）';
   const schedule = result.schedule;
   const byStep = schedule ? slotsByStep(schedule) : null;
-  // Stage 11 アリス編: フルバースト開始時の「最終攻撃力が最も高い味方 N 機」の対象（同じ発火の同じ対象はまとめる）
-  // 持ち主ごとの一覧編（段 D の 6）: 順位の記録は履歴から
   const rankings = result.history.rankings;
   const rankingLabel = (frame: number): string => {
     const seen = new Set<string>();
@@ -86,7 +107,6 @@ export function TeamBreakdown({
   };
   const missingSteps = byStep ? BURST_STEP_KEYS.filter((step) => byStep[step].length === 0) : [];
   const summary = result.burstSummary;
-  // Stage 16-B: 敵の出来事（種類ごとの回数と区間）
   const eventKinds = [...new Set(result.enemyEvents.map((e) => e.kind))];
   const eventsLabel = eventKinds
     .map((kind) => {
@@ -95,7 +115,6 @@ export function TeamBreakdown({
       return `${ENEMY_EVENT_KIND_LABEL[kind].ja} ${list.length} 回（${spans} 秒）`;
     })
     .join(' / ');
-  // Stage 18-C2: 着地点の区間（条件が自動の枠があるときだけ）
   const landingsLabel = result.landings
     .map(
       (s) =>
@@ -105,54 +124,237 @@ export function TeamBreakdown({
 
   return (
     <section className="panel result breakdown-panel">
-      <h2>編成の内訳</h2>
-      <label className="field">
-        <span>計算モデル</span>
-        <select value={model} onChange={(e) => onModelChange(e.target.value === 'sim' ? 'sim' : 'calc')}>
-          {(Object.keys(MODEL_LABEL) as ModelKind[]).map((m) => (
-            <option key={m} value={m}>
-              {MODEL_LABEL[m]}
-            </option>
+      <div className="breakdown-header">
+        <h2>総ダメージ</h2>
+      </div>
+
+      {filled.length > 0 ? (
+        <div className="table-scroll">
+          <table className="team-table simple-breakdown-table">
+            <thead>
+              <tr>
+                <th>枠</th>
+                <th>ニケ</th>
+                <th>総ダメージ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filled.map((s) => (
+                <tr key={s.index}>
+                  <td>{s.index + 1}</td>
+                  <td>{s.character.name.ja}</td>
+                  <td className="damage-cell">{formatNumber(s.totalDamage)}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colSpan={2}>合計（{result.filledCount} 体）</th>
+                <td className="grand-total">{formatNumber(result.totalDamage)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      ) : (
+        <p className="hint">枠 1〜5 にニケを選択すると総ダメージが表示されます。</p>
+      )}
+
+      {loadingCount > 0 && <p className="hint">読み込み中の枠: {loadingCount}</p>}
+      {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中の枠: {skillsLoadingCount}</p>}
+
+      {filled.length > 0 && (
+        <details className="segments">
+          <summary>詳細内訳（通常・バースト・スキル・DPS・タイムライン等）</summary>
+          {schedule && summary && (
+            <p className="hint burst-headline">
+              フルバースト {summary.fullBursts} 回（稼働率 {formatPercent(summary.fullBurstUptime)}
+              {summary.meanCycleSeconds !== null && `・平均サイクル ${formatNumber(summary.meanCycleSeconds, 1)} 秒`}
+              {summary.firstFullBurstSeconds !== null && `・初回 ${formatNumber(summary.firstFullBurstSeconds, 1)} 秒`}
+              ）
+              {summary.fullBursts === 0 &&
+                ` — フルバーストしません（${missingSteps.length > 0 ? `バースト ${missingSteps.map((s) => STEP_LABEL[s]).join('・')} のニケがいない` : 'チェーンがつながらない'}）`}
+              {summary.chainTimeouts > 0 && ` — チェーン失敗 ${summary.chainTimeouts} 回`}
+            </p>
+          )}
+
+          {result.damagePerSecond && (
+            <DamageTimeline
+              perSecond={result.damagePerSecond}
+              events={result.enemyEvents}
+              landings={result.landings}
+              fullBursts={schedule?.fullBurstWindows ?? []}
+            />
+          )}
+
+          <div className="table-scroll">
+            <table className="team-table">
+              <thead>
+                <tr>
+                  <th>枠</th>
+                  <th>ニケ</th>
+                  <th>通常攻撃</th>
+                  <th>バーストスキル</th>
+                  <th>スキルダメージ</th>
+                  <th>DPS</th>
+                  <th>総ダメージ</th>
+                  <th>寄与率</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filled.map((s) => (
+                  <tr key={s.index}>
+                    <td>{s.index + 1}</td>
+                    <td>
+                      {s.character.name.ja}
+                      <small className="sub"> {WEAPON_LABEL[s.character.weaponType].ja}</small>
+                    </td>
+                    <td>{formatNumber(s.normalDamage)}</td>
+                    <td>
+                      {s.burst.hit ? formatNumber(s.burst.totalDamage) : '—'}
+                      {s.burst.hit && <small className="sub"> ×{s.burst.activations.length}</small>}
+                    </td>
+                    <td>
+                      {s.skillHits.activations.length > 0 ? formatNumber(s.skillHits.totalDamage) : '—'}
+                      {s.skillHits.activations.length > 0 && (
+                        <small className="sub"> ×{s.skillHits.activations.length}</small>
+                      )}
+                    </td>
+                    <td>{formatNumber(s.dps)}</td>
+                    <td>{formatNumber(s.totalDamage)}</td>
+                    <td>{formatPercent(s.share, 1)}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colSpan={5}>合計（{result.filledCount} 体）</th>
+                  <td>{formatNumber(result.totalDps)}</td>
+                  <td className="grand-total">{formatNumber(result.totalDamage)}</td>
+                  <td>100%</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </details>
+      )}
+
+      {filled.length > 0 && (
+        <div className="details">
+          <h3>ニケごとの詳細</h3>
+          {filled.map((s) => (
+            <details key={s.index} className="slot-detail">
+              <summary>
+                枠 {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
+                {formatPercent(s.share, 1)}） / DPS {formatNumber(s.dps)}
+              </summary>
+              <ResultPanel
+                slotIndex={s.index}
+                character={s.character}
+                slot={s}
+                attackLabel={attackLabel}
+                slotNames={slotNames}
+                teamCharacters={teamCharacters}
+                enemyElement={enemyElement}
+                effectiveSkillLevels={effectiveSkillLevels[s.index]!}
+                treasurePhase={treasurePhases[s.index] ?? 0}
+                skillsStatus={skillsStatuses[s.index] ?? { kind: 'loading' }}
+                hpRatio={hpRatios[s.index] ?? 1}
+                dispatch={dispatch}
+              />
+            </details>
           ))}
-        </select>
-      </label>
-      {compare && filled.length > 0 && (
-        <p className="hint">
-          calc との差: 合計 {formatDiff(result.totalDamage - compare.totalDamage, compare.totalDamage)}
-        </p>
+        </div>
       )}
-      {filled.length > 0 && eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}
-      {filled.length > 0 && landingsLabel !== '' && (
-        <p className="hint">的の着地点（条件が自動の枠に効く）: {landingsLabel} 秒</p>
-      )}
-      {filled.length > 0 && result.damagePerSecond && (
-        <DamageTimeline
-          perSecond={result.damagePerSecond}
-          events={result.enemyEvents}
-          landings={result.landings}
-          fullBursts={schedule?.fullBurstWindows ?? []}
-        />
-      )}
-      {filled.length > 0 && schedule && summary && (
-        <>
-          <p className="hint">
-            フルバースト {summary.fullBursts} 回（稼働率 {formatPercent(summary.fullBurstUptime)}
-            {summary.meanCycleSeconds !== null && `・平均サイクル ${formatNumber(summary.meanCycleSeconds, 1)} 秒`}
-            {summary.firstFullBurstSeconds !== null && `・初回 ${formatNumber(summary.firstFullBurstSeconds, 1)} 秒`}
-            ）。発動:{' '}
-            {BURST_STEP_KEYS.map((step) => {
-              const names = (byStep?.[step] ?? []).map((i) => {
-                const s = filled.find((f) => f.index === i);
-                return s ? `枠 ${i + 1} ${s.character.name.ja}` : `枠 ${i + 1}`;
-              });
-              return `${STEP_LABEL[step]}: ${names.length > 0 ? names.join('・') : '—'}`;
-            }).join(' / ')}
-            {summary.fullBursts === 0 &&
-              `。フルバーストしません（${missingSteps.length > 0 ? `バースト ${missingSteps.map((s) => STEP_LABEL[s]).join('・')} のニケがいない` : 'チェーンがつながらない'}）`}
-            {summary.chainTimeouts > 0 && `。チェーン失敗 ${summary.chainTimeouts} 回`}
-          </p>
+
+      <details className="segments verification-details">
+        <summary>
+          計算モデル・検証用の詳細（モデル: {model}
+          {compare && filled.length > 0
+            ? ` / calc との差: ${formatDiff(result.totalDamage - compare.totalDamage, compare.totalDamage)}`
+            : ''}
+          ）
+        </summary>
+        <div className="verification-controls">
+          <label className="field model-select-field">
+            <span>計算モデル</span>
+            <select value={model} onChange={(e) => onModelChange(e.target.value === 'sim' ? 'sim' : 'calc')}>
+              {(Object.keys(MODEL_LABEL) as ModelKind[]).map((m) => (
+                <option key={m} value={m}>
+                  {MODEL_LABEL[m]}
+                </option>
+              ))}
+            </select>
+          </label>
+          {compare && filled.length > 0 && (
+            <p className="hint">
+              calc との差: 合計 {formatDiff(result.totalDamage - compare.totalDamage, compare.totalDamage)}
+            </p>
+          )}
+        </div>
+        {filled.length > 0 && eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}
+        {filled.length > 0 && landingsLabel !== '' && (
+          <p className="hint">的の着地点（条件が自動の枠に効く）: {landingsLabel} 秒</p>
+        )}
+        {filled.length > 0 && (
+          <>
+            <h4>攻撃力・トリガー数・モデル差</h4>
+            <div className="table-scroll">
+              <table className="team-table">
+                <thead>
+                  <tr>
+                    <th>枠</th>
+                    <th>ニケ</th>
+                    <th>{attackLabel}</th>
+                    <th>攻撃力（バフ後）</th>
+                    <th>1 トリガー</th>
+                    <th>秒間トリガー</th>
+                    <th>総ダメージ</th>
+                    {compare && <th>calc との差</th>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filled.map((s) => (
+                    <tr key={s.index}>
+                      <td>{s.index + 1}</td>
+                      <td>{s.character.name.ja}</td>
+                      <td>{formatNumber(s.baseAttack)}</td>
+                      <td>{formatNumber(triggerRange(s, (t) => t.attack))}</td>
+                      <td>
+                        {formatNumber(triggerRange(s, (t) => t.perTrigger))}
+                        {s.segments.length > 1 && (
+                          <small className="sub"> 〜 {formatNumber(triggerRange(s, (t) => t.perTrigger, true))}</small>
+                        )}
+                      </td>
+                      <td>{formatNumber(s.cadence.triggersPerSecond, 3)}</td>
+                      <td>{formatNumber(s.totalDamage)}</td>
+                      {compare && (
+                        <td>
+                          {formatDiff(
+                            s.totalDamage - (compare.slots[s.index]?.totalDamage ?? 0),
+                            compare.slots[s.index]?.totalDamage ?? 0,
+                          )}
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+        {filled.length > 0 && schedule && summary && (
           <details className="segments">
-            <summary>バーストの時刻表（{schedule.activations.length} 回の発動）</summary>
+            <summary>
+              バーストの時刻表（{schedule.activations.length} 回の発動 —{' '}
+              {BURST_STEP_KEYS.map((step) => {
+                const names = (byStep?.[step] ?? []).map((i) => {
+                  const s = filled.find((f) => f.index === i);
+                  return s ? `枠 ${i + 1} ${s.character.name.ja}` : `枠 ${i + 1}`;
+                });
+                return `${STEP_LABEL[step]}: ${names.length > 0 ? names.join('・') : '—'}`;
+              }).join(' / ')}
+              ）
+            </summary>
             <div className="table-scroll">
               <table className="team-table">
                 <thead>
@@ -191,98 +393,8 @@ export function TeamBreakdown({
               </table>
             </div>
           </details>
-        </>
-      )}
-      {filled.length > 0 && (
-        <div className="table-scroll">
-          <table className="team-table">
-            <thead>
-              <tr>
-                <th>枠</th>
-                <th>ニケ</th>
-                <th>{attackLabel}</th>
-                <th>攻撃力（バフ後）</th>
-                <th>1 トリガー</th>
-                <th>秒間トリガー</th>
-                <th>通常攻撃</th>
-                <th>バーストスキル</th>
-                <th>スキルダメージ</th>
-                <th>DPS</th>
-                <th>総ダメージ</th>
-                <th>寄与率</th>
-                {compare && <th>calc との差</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {filled.map((s) => (
-                <tr key={s.index}>
-                  <td>{s.index + 1}</td>
-                  <td>
-                    {s.character.name.ja}
-                    <small className="sub"> {WEAPON_LABEL[s.character.weaponType].ja}</small>
-                  </td>
-                  <td>{formatNumber(s.baseAttack)}</td>
-                  <td>{formatNumber(triggerRange(s, (t) => t.attack))}</td>
-                  <td>
-                    {formatNumber(triggerRange(s, (t) => t.perTrigger))}
-                    {s.segments.length > 1 && (
-                      <small className="sub"> 〜 {formatNumber(triggerRange(s, (t) => t.perTrigger, true))}</small>
-                    )}
-                  </td>
-                  <td>{formatNumber(s.cadence.triggersPerSecond, 3)}</td>
-                  <td>{formatNumber(s.normalDamage)}</td>
-                  <td>
-                    {s.burst.hit ? formatNumber(s.burst.totalDamage) : '—'}
-                    {s.burst.hit && <small className="sub"> ×{s.burst.activations.length}</small>}
-                  </td>
-                  <td>
-                    {s.skillHits.activations.length > 0 ? formatNumber(s.skillHits.totalDamage) : '—'}
-                    {s.skillHits.activations.length > 0 && (
-                      <small className="sub"> ×{s.skillHits.activations.length}</small>
-                    )}
-                  </td>
-                  <td>{formatNumber(s.dps)}</td>
-                  <td>{formatNumber(s.totalDamage)}</td>
-                  <td>{formatPercent(s.share, 1)}</td>
-                  {compare && (
-                    <td>
-                      {formatDiff(
-                        s.totalDamage - (compare.slots[s.index]?.totalDamage ?? 0),
-                        compare.slots[s.index]?.totalDamage ?? 0,
-                      )}
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <th colSpan={9}>合計（{result.filledCount} 体）</th>
-                <td>{formatNumber(result.totalDps)}</td>
-                <td className="grand-total">{formatNumber(result.totalDamage)}</td>
-                <td>100%</td>
-                {compare && <td>{formatDiff(result.totalDamage - compare.totalDamage, compare.totalDamage)}</td>}
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      )}
-      {loadingCount > 0 && <p className="hint">読み込み中の枠: {loadingCount}</p>}
-      {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中の枠: {skillsLoadingCount}</p>}
-      {filled.length > 0 && (
-        <div className="details">
-          <h3>ニケごとの詳細</h3>
-          {filled.map((s) => (
-            <details key={s.index} className="slot-detail">
-              <summary>
-                枠 {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
-                {formatPercent(s.share, 1)}）
-              </summary>
-              <ResultPanel character={s.character} slot={s} attackLabel={attackLabel} />
-            </details>
-          ))}
-        </div>
-      )}
+        )}
+      </details>
     </section>
   );
 }
