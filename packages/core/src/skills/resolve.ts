@@ -387,6 +387,8 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   amplifies?: Amplifies;
   /** 最小構成の検査の窓の端編（plan/design-minimal-edge.md 3.3 節）: 定義の edgeShift を写したもの */
   edgeShift?: EdgeShift;
+  /** 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 定義の delayFrames を写したもの（skills/holders.ts の startOfFire） */
+  delayFrames?: number;
 };
 
 /**
@@ -481,6 +483,7 @@ export function resolveTimed(
       const r: ResolvedTimedEffect = { ...window, stat: effect.stat, scaling: effect.scaling ?? 'ratio', value };
       if (effect.amplifies !== undefined) r.amplifies = effect.amplifies;
       if (effect.edgeShift !== undefined) r.edgeShift = effect.edgeShift;
+      if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       resolved.push(r);
     });
   }
@@ -925,6 +928,8 @@ export type ResolvedInstantEffect = {
   fixedTargets?: readonly number[];
   /** V-0024: heal の維持時間（フレーム）。あれば、同じ効果の窓が付いている対象への付き直しでは回復の記録を作らない */
   durationFrames?: number;
+  /** 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: heal の delayFrames（skills/heals.ts の healFrameOf） */
+  delayFrames?: number;
   /** ルドミラ：ウィンターオーナー編: 弾丸チャージの発数（ammoRefill の scaling 'flat'）。value は発数のまま */
   scaling?: 'flat';
   value: number;
@@ -978,6 +983,7 @@ export function resolveInstant(
       if (effect.kind === 'heal' && (effect.durationRef !== undefined || effect.durationSeconds !== undefined)) {
         r.durationFrames = gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot]));
       }
+      if (effect.kind === 'heal' && effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });

@@ -89,14 +89,15 @@ describe('burstGaugeHit の検証', () => {
     expect(() => parseSkillDefinition(entry({ ...GAUGE, ref: 1 }))).toThrow(/ref: unknown field/);
   });
 
-  // 周期のスキルのヒットのゲージ（plan/design-timer-ceil.md 7 節）: delayFrames は時間の周期のトリガーだけ
-  it('takes a positive integer delayFrames only with a timer trigger', () => {
+  // 周期のスキルのヒットのゲージ（plan/design-timer-ceil.md 7 節）: delayFrames は正の整数。回数トリガーの遅れ編
+  // （plan/design-shot-count-trigger-frame.md 6 節）から、射撃の回数のトリガーにも書ける（周期のゲージの列には入らない）
+  it('takes a positive integer delayFrames with a timer or shot count trigger', () => {
     const delayed = parseSkillDefinition(entry({ ...GAUGE, delayFrames: 101 }));
     expect(delayed.skills.skill2.effects[0]).toMatchObject({ kind: 'burstGaugeHit', delayFrames: 101 });
     expect(resolveTimerGauges(delayed)).toEqual([{ everySeconds: 15, delayFrames: 101 }]);
-    expect(() =>
-      parseSkillDefinition(entry({ ...GAUGE, trigger: { count: 'normalShot', every: 10 }, delayFrames: 6 })),
-    ).toThrow(/delayFrames needs a timer trigger/);
+    const shot = parseSkillDefinition(entry({ ...GAUGE, trigger: { count: 'normalShot', every: 10 }, delayFrames: 6 }));
+    expect(shot.skills.skill2.effects[0]).toMatchObject({ kind: 'burstGaugeHit', delayFrames: 6 });
+    expect(resolveTimerGauges(shot)).toEqual([]);
     for (const d of [0, -1, 1.5, '6']) {
       expect(() => parseSkillDefinition(entry({ ...GAUGE, delayFrames: d }))).toThrow(/delayFrames/);
     }

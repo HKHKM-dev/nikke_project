@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { healFrameOf } from '../heals.ts';
 import type { ResolvedInstantEffect } from '../resolve.ts';
 
-type Trigger = Pick<ResolvedInstantEffect, 'trigger'>;
+type Trigger = Pick<ResolvedInstantEffect, 'trigger' | 'delayFrames'>;
 
 const SHOT_COUNT: Trigger = { trigger: { count: 'normalShot', every: 10 } };
 const FIRE = 57;
@@ -34,6 +34,19 @@ describe('healFrameOf', () => {
     ];
     for (const t of triggers) {
       for (const target of [0, 1, 2]) expect(healFrameOf(t, FIRE, 1, target)).toBe(FIRE);
+    }
+  });
+
+  // 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節の論点 2）: delayFrames を書いた回復は、どの枠にも d 後（C-0652）
+  it('heals every slot delayFrames after the trigger when the shot count heal is delayed', () => {
+    const delayed: Trigger = { ...SHOT_COUNT, delayFrames: 6 };
+    for (const [source, target] of [
+      [1, 0],
+      [1, 1],
+      [0, 1],
+      [4, 1],
+    ] as const) {
+      expect(healFrameOf(delayed, FIRE, source, target)).toBe(FIRE + 6);
     }
   });
 });

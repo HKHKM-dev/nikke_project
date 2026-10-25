@@ -30,9 +30,10 @@
           "trigger": {
             "count": "lastShot"
           },
+          "delayFrames": 6,
           "assumes": {
-            "ja": "対象「最終攻撃力が最も高い敵 3 機」は単体ボスで 1 機で、付けるたびに 1 回溜める（3 機いるときに 3 回溜めるかは確かめていない）。実測では撃った 6f 後に溜まるが、モデルは撃ったフレームに置く（レイヴンの S1 を付けたときと同じ）",
-            "en": "The 3 enemies with the highest final ATK are the lone boss, so each taunt charges once (whether 3 enemies charge 3 times is unverified). In recordings the gauge rises 6 frames after the shot; the model puts it on the shot frame (same as applying Raven S1)"
+            "ja": "対象「最終攻撃力が最も高い敵 3 機」は単体ボスで 1 機で、付けるたびに 1 回溜める（3 機いるときに 3 回溜めるかは確かめていない）。撃った 6f 後に溜まる（C-0480。delayFrames）",
+            "en": "The 3 enemies with the highest final ATK are the lone boss, so each taunt charges once (whether 3 enemies charge 3 times is unverified). The gauge rises 6 frames after the shot (C-0480; delayFrames)"
           },
           "claims": [
             "C-0480"
@@ -138,9 +139,10 @@
           "trigger": {
             "count": "lastShot"
           },
+          "delayFrames": 6,
           "assumes": {
-            "ja": "対象「最終攻撃力が最も高い敵 3 機」は単体ボスで 1 機で、付けるたびに 1 回溜める（3 機いるときに 3 回溜めるかは確かめていない）。実測では撃った 6f 後に溜まるが、モデルは撃ったフレームに置く（レイヴンの S1 を付けたときと同じ）。宝物版の S2 も挑発の行は同じなので、同じとみた",
-            "en": "The 3 enemies with the highest final ATK are the lone boss, so each taunt charges once (whether 3 enemies charge 3 times is unverified). In recordings the gauge rises 6 frames after the shot; the model puts it on the shot frame (same as applying Raven S1). The treasure S2 has the same taunt line, so it is taken as the same"
+            "ja": "対象「最終攻撃力が最も高い敵 3 機」は単体ボスで 1 機で、付けるたびに 1 回溜める（3 機いるときに 3 回溜めるかは確かめていない）。撃った 6f 後に溜まる（C-0480。delayFrames）。宝物版の S2 も挑発の行は同じなので、同じとみた",
+            "en": "The 3 enemies with the highest final ATK are the lone boss, so each taunt charges once (whether 3 enemies charge 3 times is unverified). The gauge rises 6 frames after the shot (C-0480; delayFrames). The treasure S2 has the same taunt line, so it is taken as the same"
           },
           "claims": [
             "C-0480"

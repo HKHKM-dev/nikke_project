@@ -4663,9 +4663,10 @@
   - 派生元: V-0497
   - 予測（2026-10-25、commit e0e009e）との比べ:
     - asuka-s1-start（buffWindowStarts）: 実測なし。HN [305]
-    - asuka-hit-before（hitDamage）: 実測なし。HN 29,215.848
-    - asuka-hit-judge（hitDamage）: 実測なし。HN 57,572.995
-    - asuka-hit-after（hitDamage）: 実測なし。HN 57,572.995
+    - asuka-hit-before（hitDamage）: 実測 29,216（0659-03）。HN 29,215.848（-0.152、許容内）
+    - asuka-hit-judge（hitDamage）: 実測 29,216（0659-04）。HN 57,572.995（+28,356.995、**許容外**）
+    - asuka-hit-after（hitDamage）: 実測 57,573（0659-05）。HN 57,572.995（-0.005、許容内）
+    - 許容内の指標: HN 2/3。合う仮説は無い
 - **[V-0500](../records/verifications/V-0500-naga-s2-back-slot-delay.md)** ナガの S2 のコアダメージ▲は、後ろの枠のエマにも 5 の倍数の発の約 6f 後から乗るか（V-0489 の枠順を入れ替える）
   - 問い: ナガ（1 枠目）の S2 の「通常攻撃で 5 回攻撃した時」のコアダメージ▲は、後ろの枠のエマ（2 枠目・操作）のコアのヒットに、5 の倍数の発の HUD の増分の何フレーム後から乗るか。V-0489（エマが前の枠）と同じ 6f か、枠の順で 1f 早まるか
   - 話題: スキル・キャラ固有・日付: 2026-10-26・状態: 完了・Stage: plan/design-shot-count-trigger-frame.md 5.4 節（S-C）。backlog 2-38

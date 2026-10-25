@@ -43,17 +43,32 @@
     "source": "V-0499",
     "readAt": "2026-10-26",
     "kind": "hit",
-    "use": "record",
+    "use": "compare",
     "value": 29216,
     "description": "ミサトの 120 発目と同じフレーム t のアスカの発（f1132。コア・会心なし、距離ボーナスあり。S1 なし）",
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "増分 37545 からミサトの 8,329 を引いた値（S1 なしの組の倍率 1.3）"
     },
-    "note": "予測ファイルの asuka-hit-before と同じ値（モデル 29,215.848）。比べる指定は、結論の下書きを作るときに付ける。HN・HD とも S1 なし",
-    "scope": {
-      "slot": 1,
-      "source": "normal"
+    "note": "予測ファイルの asuka-hit-before と同じ指定（モデル 29,215.848）。HN・HD とも S1 なし",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 302,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
     }
   },
   {
@@ -62,17 +77,32 @@
     "source": "V-0499",
     "readAt": "2026-10-26",
     "kind": "hit",
-    "use": "record",
+    "use": "compare",
     "value": 29216,
     "description": "判定の発: ミサトの 120 発目の 5f 後のアスカの発（f1137。コア・会心なし、距離ボーナスあり）。S1 なしの値",
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "増分 29,216（単独）"
     },
-    "note": "予測ファイルの asuka-hit-judge（いまのモデル HN は S1 ありの 57,572.995）と合わず、HD（S1 なしの 29,215.848）と合う。いまのモデルは回復の遅れを入れていない（未実装）ので、比べる指定は付けずに記録にする（C-0593 の付き始めの遅れと同じ扱い）",
-    "scope": {
-      "slot": 1,
-      "source": "normal"
+    "note": "予測ファイルの asuka-hit-judge と同じ指定（モデルではミサトの 120 発目が 304f、回復が 310f（delayFrames 6）で、307f のアスカの発は S1 なし）。HN（遅れを入れる前のモデル）は S1 ありの 57,572.995 で合わなかった",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 307,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
     }
   },
   {
@@ -81,17 +111,32 @@
     "source": "V-0499",
     "readAt": "2026-10-26",
     "kind": "hit",
-    "use": "record",
+    "use": "compare",
     "value": 57573,
     "description": "アスカの S1 ありの最初の発（f1142 = t + 10。コア・会心なし、距離ボーナスあり）",
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "増分 57573（単独。S1 ありの組の倍率 1.3）"
     },
-    "note": "予測ファイルの asuka-hit-after と同じ値（モデル 57,572.995）。比べる指定は、結論の下書きを作るときに付ける。HN・HD とも S1 あり",
-    "scope": {
-      "slot": 1,
-      "source": "normal"
+    "note": "予測ファイルの asuka-hit-after と同じ指定（モデル 57,572.995）。HN・HD とも S1 あり",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 312,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
     }
   }
 ]

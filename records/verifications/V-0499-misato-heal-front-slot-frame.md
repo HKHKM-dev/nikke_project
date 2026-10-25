@@ -48,12 +48,12 @@
 
 予測は 2026-10-25（commit e0e009e）に出した。
 
-| 指標                               | 実測         | 予測 HN    |
-| ---------------------------------- | ------------ | ---------- |
-| asuka-s1-start（buffWindowStarts） | （実測なし） | [305]      |
-| asuka-hit-before（hitDamage）      | （実測なし） | 29,215.848 |
-| asuka-hit-judge（hitDamage）       | （実測なし） | 57,572.995 |
-| asuka-hit-after（hitDamage）       | （実測なし） | 57,572.995 |
+| 指標                               | 実測                | 予測 HN                               |
+| ---------------------------------- | ------------------- | ------------------------------------- |
+| asuka-s1-start（buffWindowStarts） | （実測なし）        | [305]                                 |
+| asuka-hit-before（hitDamage）      | 29,216（`0659-03`） | 29,215.848（-0.152、許容内）          |
+| asuka-hit-judge（hitDamage）       | 29,216（`0659-04`） | 57,572.995（+28,356.995、**許容外**） |
+| asuka-hit-after（hitDamage）       | 57,573（`0659-05`） | 57,572.995（-0.005、許容内）          |
 
 <!-- records:predictions:end -->
 

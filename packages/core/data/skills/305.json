@@ -14,8 +14,8 @@
           "targetCountRef": 1,
           "ref": 2,
           "assumes": {
-            "ja": "「残りの HP の割合が最も低い味方」は、枠の HP の割合の想定（既定は満タン）で戦闘中一定とみなし、並んだときは枠の若い順に選ぶ（自分も候補。C-0591。ミサト S1 の C-0567 と同じ）。実機では被弾で HP の割合が下がった味方が選ばれうる（射撃場 3 分モードでも、撃つ枠には的の攻撃が当たる）。満タンの味方にも回復は起き、「回復効果が適用された時」を起こす。回復量はダメージに関係しない。「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（外れた時に起きないかは確かめていない）",
-            "en": "\"The ally with the lowest remaining HP ratio\" uses the HP ratio assumed for each slot (full by default), constant during battle; ties go to the leftmost slot (self included; C-0591, as for Misato S1 in C-0567). In game, an ally whose HP ratio dropped from damage can be chosen instead (in the 3-minute range mode, the target attacks the slots that fire). The heal also lands on allies at full HP and triggers \"when healed\". The healed amount does not affect damage. \"When the last bullet hits\" fires on the shot that empties the magazine (whether a miss skips it is unverified)"
+            "ja": "「残りの HP の割合が最も低い味方」は、枠の HP の割合の想定（既定は満タン）で戦闘中一定とみなし、並んだときは枠の若い順に選ぶ（自分も候補。C-0591。ミサト S1 の C-0567 と同じ）。実機では被弾で HP の割合が下がった味方が選ばれうる（射撃場 3 分モードでも、撃つ枠には的の攻撃が当たる）。満タンの味方にも回復は起き、「回復効果が適用された時」を起こす。回復量はダメージに関係しない。「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（外れた時に起きないかは確かめていない）。回復はきっかけの約 6f 後に起きる見込み（C-0650。仮説で、遅れは入れていない）",
+            "en": "\"The ally with the lowest remaining HP ratio\" uses the HP ratio assumed for each slot (full by default), constant during battle; ties go to the leftmost slot (self included; C-0591, as for Misato S1 in C-0567). In game, an ally whose HP ratio dropped from damage can be chosen instead (in the 3-minute range mode, the target attacks the slots that fire). The heal also lands on allies at full HP and triggers \"when healed\". The healed amount does not affect damage. \"When the last bullet hits\" fires on the shot that empties the magazine (whether a miss skips it is unverified). The heal is expected to land about 6 frames after the trigger (C-0650; a hypothesis, the delay is not modeled)"
           },
           "claims": [
             "C-0591",

@@ -61,12 +61,12 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, naga })
   const calc = computeTeamDamage(input);
   const plan = planTeamRun(input);
 
-  it('gives core damage up to min(2, team size) slots after the 5th shot (C-0592・C-0593)', () => {
+  it('gives core damage up to min(2, team size) slots 6 frames after the 5th shot (C-0592・C-0593・C-0653)', () => {
     const fifth = plan.shots[naga]!.frames[4]!;
     const segmentAt = (frame: number) => sim.timeline.segments.find((s) => s.start <= frame && frame < s.end)!;
-    // 5 発目の発のフレームまでは誰にも付いていない。付くのは次のフレームから
-    for (const slot of segmentAt(fifth).slots) expect(slot?.buffs.coreDamage ?? 0).toBe(0);
-    const after = segmentAt(fifth + 1);
+    // 5 発目の 5f 後までは誰にも付いていない。付くのは 6f 後から（delayFrames。枠の順に依らない）
+    for (const slot of segmentAt(fifth + 5).slots) expect(slot?.buffs.coreDamage ?? 0).toBe(0);
+    const after = segmentAt(fifth + 6);
     const buffed = after.slots.filter((slot) => slot !== null && Math.abs(slot.buffs.coreDamage - CORE_DAMAGE) < 1e-9);
     expect(buffed.length).toBe(Math.min(2, input.slots.length));
   });
