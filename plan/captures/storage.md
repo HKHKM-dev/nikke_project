@@ -1,6 +1,6 @@
 # 録画の置き場所とバックアップ
 
-- 関連: [index.md](index.md)（命名規約・撮影プロトコル・台帳・キャラの確かめ方）、[tools.md](tools.md)（解析ツール）、[backup-log.md](backup-log.md)（同期の記録）
+- 関連: [index.md](index.md)（命名規約・撮影プロトコル・台帳・キャラの確かめ方）、[tools.md](tools.md)（解析ツール）、[backup-log.md](backup-log.md)（ふだんと違う同期の記録）
 
 ## 置き場所
 
@@ -101,7 +101,7 @@ robocopy "E:/old_nikkecalc" "I:/マイドライブ/old_nikkecalc" /E /R:1 /W:1
 - robocopy の終了コードは 0〜7 が正常（1 = コピーした、0 = 差分なし）。8 以上が失敗。
 - 写したら sha256 で中身を突き合わせる。`probe.ts` はどのディレクトリにも使える（`node tools/captures/probe.ts "I:/マイドライブ/old_nikkecalc"`）。見るのは `.mp4` だけなので、ほかは PowerShell の `Get-FileHash`（既定で SHA256）で突き合わせる。
 
-同期の実行の記録は [backup-log.md](backup-log.md) にある（同期したら足す。`intake.ts` で Drive に置いた録画は `intake.ts` が 1 行足す。2026-10-05 までは [backup-log-old.md](backup-log-old.md)。凍結）。
+`intake.ts` で Drive に置いた録画は、`intake.ts` が録画の JSON（`records/recordings/<録画 id>.json`）に `backup`（置いた日時・経路・一致したハッシュ）を書く（2026-10-25 から。[../design-workflow-simplification.md](../design-workflow-simplification.md) 2 節）。`backup` の無い録画は、`intake.ts` が置けたと確かめていない。手で同期したとき・番号の振り直し・失敗と直しのような、ふだんと違う出来事は [backup-log.md](backup-log.md) に段落で足す（2026-10-25 までは [backup-log-old2.md](backup-log-old2.md)、2026-10-05 までは [backup-log-old.md](backup-log-old.md)。どちらも凍結）。
 
 ### 冗長性の現状と限界
 
