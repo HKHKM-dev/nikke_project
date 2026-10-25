@@ -99,7 +99,7 @@ describe('dot の解決', () => {
 });
 
 describe('dotTickFrames（付いた瞬間と、1.5 秒後から 1 秒ごと。C-0101）', () => {
-  // 1 秒 = 1 ÷ 0.017 ≒ 58.82f。0 と、1 回目の 1f 前から k + 0.5 秒（k = 1 … 9）に達した最初のフレーム（C-0454。録画 081 と同じ列）
+  // 1 秒 = 1 ÷ 0.017 ≒ 58.82f。0 と、1 回目の 1f 前から k + 0.5 秒（k = 1 … 9）に達した最初のフレーム（C-0454。録画 0081 と同じ列）
   const OFFSETS = [0, 88, 147, 205, 264, 323, 382, 441, 499, 558];
 
   it('gives 10 ticks: one at the fire, then from 1.5 s every second, at the first frame reaching each time', () => {
@@ -142,7 +142,7 @@ describe('dotTickFrames（付いた瞬間と、1.5 秒後から 1 秒ごと。C-
 });
 
 describe('dotTickFrames の afterInterval（付いた 1 間隔後から間隔ごと。C-0130）', () => {
-  // 1・2・3・4・5 秒後に達した最初のフレーム（59・118・177・236・295f。C-0454。録画 093 の 093-03 と同じ列）
+  // 1・2・3・4・5 秒後に達した最初のフレーム（59・118・177・236・295f。C-0454。録画 0093 の 0093-03 と同じ列）
   const OFFSETS = [59, 118, 177, 236, 295];
 
   it('gives floor(duration / interval) ticks from one interval after the fire, none at the fire', () => {

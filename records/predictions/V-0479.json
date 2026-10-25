@@ -1,6 +1,6 @@
 {
   "verification": "V-0479",
-  "note": "撮影の依頼の B（アニス：スター（I）+ デルタ（II）+ ソーダ：トゥインクルバニー（III・操作・AUTO 射撃 ON）、オートバースト ON・灼熱のタブ・スペック固定 ON・一時停止なし）の予測。H-a（ヒットの時点の撃つ側のバフを全部見る）は setup の上書きで表せないので、値は検証記録の「予測」に手で書いた。比べる観測値は B の録画 543・544（observations。A の録画 542 は同じ指標でも編成が違うので結び付けない）",
+  "note": "撮影の依頼の B（アニス：スター（I）+ デルタ（II）+ ソーダ：トゥインクルバニー（III・操作・AUTO 射撃 ON）、オートバースト ON・灼熱のタブ・スペック固定 ON・一時停止なし）の予測。H-a（ヒットの時点の撃つ側のバフを全部見る）は setup の上書きで表せないので、値は検証記録の「予測」に手で書いた。比べる観測値は B の録画 0543・0544（observations。A の録画 0542 は同じ指標でも編成が違うので結び付けない）",
   "team": [
     {
       "rid": 17,
@@ -78,7 +78,7 @@
       "tolerance": {
         "abs": 1
       },
-      "observations": ["543-08", "544-08"]
+      "observations": ["0543-08", "0544-08"]
     },
     {
       "id": "soda-burst-2",
@@ -97,7 +97,7 @@
       "tolerance": {
         "abs": 1
       },
-      "observations": ["543-09", "544-09"]
+      "observations": ["0543-09", "0544-09"]
     },
     {
       "id": "soda-burst-3",
@@ -116,7 +116,7 @@
       "tolerance": {
         "abs": 1
       },
-      "observations": ["543-10", "544-10"]
+      "observations": ["0543-10", "0544-10"]
     },
     {
       "id": "soda-burst-4",
@@ -135,7 +135,7 @@
       "tolerance": {
         "abs": 1
       },
-      "observations": ["543-11", "544-11"]
+      "observations": ["0543-11", "0544-11"]
     },
     {
       "id": "soda-burst-5",
@@ -154,7 +154,7 @@
       "tolerance": {
         "abs": 1
       },
-      "observations": ["543-12", "544-12"]
+      "observations": ["0543-12", "0544-12"]
     },
     {
       "id": "soda-burst-delays",
@@ -172,7 +172,7 @@
       "tolerance": {
         "abs": 1
       },
-      "observations": ["543-07", "544-07"]
+      "observations": ["0543-07", "0544-07"]
     }
   ],
   "predicted": {

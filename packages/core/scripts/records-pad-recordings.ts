@@ -96,7 +96,29 @@ export async function padAllRecordings(dryRun: boolean): Promise<void> {
   const local = plans.flatMap((p) => p.plan.renames);
   if (local.some((r) => !r.apply)) fail(`録画の置き場所（${capturesDir()}）が無い。デスクトップで回す`);
 
-  const wanted = driveRenames(plans.flatMap((p) => [...p.plan.renames, ...p.plan.done]));
+  // E: でもう変えてあるスクショと証拠フレーム（回し直し）。計画の done は動画だけなので、E: の今の名前から古い名前を引き、Drive でも変える
+  const doneOnE: { from: string; to: string; kind: string }[] = [];
+  const list = (d: string) => (existsSync(d) ? readdirSync(d) : []);
+  const frames = list(`${capturesDir()}/frames`);
+  for (const p of plans) {
+    if (p.plan.done.length === 0) continue;
+    const stem = p.ledger.file.replace(/\.[^.]+$/, '');
+    const newStem = renumberedName(p.ledger.file, p.ledger.id, p.to)!.replace(/\.[^.]+$/, '');
+    for (const n of list(`${capturesDir()}/${p.ledger.folder}`))
+      if (n.startsWith(`${newStem}_`) && !/\.(mp4|mkv|mov)$/i.test(n))
+        doneOnE.push({
+          from: `${p.ledger.folder}/${stem}${n.slice(newStem.length)}`,
+          to: `${p.ledger.folder}/${n}`,
+          kind: 'screenshot',
+        });
+    for (const n of frames) {
+      const head = [newStem, p.to].find((h) => n.startsWith(`${h}_f`) && /^\d/.test(n.slice(h.length + 2)));
+      if (head === undefined) continue;
+      const old = head === newStem ? stem : p.ledger.id;
+      doneOnE.push({ from: `frames/${old}${n.slice(head.length)}`, to: `frames/${n}`, kind: 'frame' });
+    }
+  }
+  const wanted = driveRenames([...plans.flatMap((p) => [...p.plan.renames, ...p.plan.done]), ...doneOnE]);
   const driveSkip = driveUnavailable();
   if (driveSkip !== null) fail(`Drive の名前を変えられない（${driveSkip}）。rclone の準備を確かめる`);
   const names = new Set<string>();

@@ -1,7 +1,7 @@
 // Stage 8: 編成単位の確認（plan/design-stage8.md 8.4・8.5 節）。
 // - sim と calc が射撃の列・時刻表・区間・倍率ダメージの発動を共有し、倍率ダメージの合計が厳密一致する
 // - 通常攻撃の差は離散化だけ（枠 5%・編成 3%）
-// - 録画 21（クイーン（真）の分配ダメージ 6,323,975）と録画 20（マナのゲージ速度で 1 回目の満タン）の回帰
+// - 録画 0021（クイーン（真）の分配ダメージ 6,323,975）と録画 0020（マナのゲージ速度で 1 回目の満タン）の回帰
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { slotPieces } from './historyHelpers.ts';
@@ -122,8 +122,8 @@ describe('ドレイク: 10 回攻撃ごとの倍率ダメージ', () => {
   });
 });
 
-describe('ドレイク: フルバースト中の倍率ダメージ（録画 37）', () => {
-  // 録画 37: S2 / ペレットの比がフルバーストの外 118,059 / 25,672 と中 409,932 / 89,141 で同じ 4.5987
+describe('ドレイク: フルバースト中の倍率ダメージ（録画 0037）', () => {
+  // 録画 0037: S2 / ペレットの比がフルバーストの外 118,059 / 25,672 と中 409,932 / 89,141 で同じ 4.5987
   const input: TeamInput = { slots: [822, 20, 101].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
   const calc = computeTeamDamage(input);
   const drake = calc.slots[2]!;
@@ -150,7 +150,7 @@ describe('イサベル: 使用回数別の段階とフルバースト 5 秒', ()
   });
 
   it('adds the tier-2 / tier-3 additional damage from the 3rd / 4th burst on (the tier before this activation)', () => {
-    // 録画 38: 段階 2 の追加ダメージは 3 回目、段階 3 は 4 回目から（バーストは同じ発動で上がる前の段階を見る）
+    // 録画 0038: 段階 2 の追加ダメージは 3 回目、段階 3 は 4 回目から（バーストは同じ発動で上がる前の段階を見る）
     const uses = isabel.burst.activations.length;
     expect(uses).toBeGreaterThanOrEqual(5);
     const byRef = (m: number) => isabel.skillHits.activations.filter((a) => Math.abs(a.hit.multiplier - m) < 1e-9);
@@ -177,7 +177,7 @@ describe('イサベル: 使用回数別の段階とフルバースト 5 秒', ()
   });
 });
 
-describe('録画 38: イサベル（III）+ ラム（I）+ デルタ（II）の実測値', () => {
+describe('録画 0038: イサベル（III）+ ラム（I）+ デルタ（II）の実測値', () => {
   // 灼熱の的・距離ボーナスなしの数値で比べる。段階 2・3 の追加ダメージには、同じ発動の受けるダメージ 39.96%▲（段階 1）が
   // 乗る（C-0163。plan/design-burst-landing.md 3 節の sequential）
   const input: TeamInput = { slots: [822, 20, 231].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
@@ -206,7 +206,7 @@ describe('録画 38: イサベル（III）+ ラム（I）+ デルタ（II）の�
   });
 });
 
-describe('録画 21: クイーン（真）のバースト 6,323,975（分配ダメージ 90.01%▲）', () => {
+describe('録画 0021: クイーン（真）のバースト 6,323,975（分配ダメージ 90.01%▲）', () => {
   // エーテル（I）+ デルタ（II）+ クイーン（真）（III）、クイーンを操作
   const input: TeamInput = {
     slots: [291, 20, 870].map(fixedSlot),
@@ -230,7 +230,7 @@ describe('録画 21: クイーン（真）のバースト 6,323,975（分配ダ�
   });
 });
 
-describe('録画 20: マナのゲージ速度 70.4%', () => {
+describe('録画 0020: マナのゲージ速度 70.4%', () => {
   const input: TeamInput = {
     slots: [291, 20, 290].map(fixedSlot),
     enemy,
@@ -240,7 +240,7 @@ describe('録画 20: マナのゲージ速度 70.4%', () => {
   };
   const { schedule } = planTeamRun(input);
 
-  // 実測は観測値 020-06（総ダメージが最初に増えてから本当の満タンまで。V-0028 で表示の 99.1% の 267f から直した）
+  // 実測は観測値 0020-06（総ダメージが最初に増えてから本当の満タンまで。V-0028 で表示の 99.1% の 267f から直した）
   it('fills the first gauge within ±40f of the recording', () => {
     const firstShot = Math.min(...input.slots.map((s) => computeCadence(s!.character.shot).firstShotFrames));
     const predicted = schedule!.gaugeFullFrames[0]! - firstShot;

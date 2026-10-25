@@ -1,6 +1,6 @@
 // 使用武器変更の武器のパラメータ（plan/design-true-damage-element.md 9 節）: 変更後の武器のチャージ時間・フルチャージ倍率・最大装弾数と、
 // 撃ち切りで終わる変更。ウンファ：TU（95）のバーストの徹甲炸裂弾（C-0313）で、語彙の検証・解決・1 パス目と区間の窓の一致・
-// sim と calc の整合を見る。編成は録画 232（I-DOLL・フラワー + ウンファ：TU。V-0207）と同じ
+// sim と calc の整合を見る。編成は録画 0232（I-DOLL・フラワー + ウンファ：TU。V-0207）と同じ
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from './fixtures.ts';
@@ -192,7 +192,7 @@ const REC232: TeamInput = {
   controlledSlot: 0,
 };
 
-describe('録画 232 の編成（フラワー + ウンファ：TU）', () => {
+describe('録画 0232 の編成（フラワー + ウンファ：TU）', () => {
   const plan = planTeamRun(REC232);
   const uses = plan.schedule!.activations.filter((a) => a.slotIndex === 1).map((a) => a.frame);
   const shots = plan.shots[1]!;
@@ -243,7 +243,7 @@ describe('録画 232 の編成（フラワー + ウンファ：TU）', () => {
     expect(taken.every((w) => w.end - w.start === gameSecondsToFrames(10))).toBe(true);
   });
 
-  it('matches the Explosive Round of recording 232 within 1: body, core in the distance bonus, core crit, core (232-10。C-0313)', () => {
+  it('matches the Explosive Round of recording 232 within 1: body, core in the distance bonus, core crit, core (0232-10。C-0313)', () => {
     const sim = runSimulation(REC232);
     const hit = (frame: number, args: Record<string, boolean>) =>
       METRICS.hitDamage!.sim!(sim, { args: { slot: 2, frame, ...args }, input: REC232 } as never) as number;
@@ -259,18 +259,18 @@ describe('録画 232 の編成（フラワー + ウンファ：TU）', () => {
   });
 });
 
-describe('録画 287 の編成（フラワー + ウンファ：TU + エマ：TU）', () => {
+describe('録画 0287 の編成（フラワー + ウンファ：TU + エマ：TU）', () => {
   // 発射体爆発ダメージ▲（フォーメーション。C-0374）と防御力無視ダメージ▲（C-0375）が 1 つの和で炸裂弾に乗る（C-0376）
   const file = loadRecordingsFile();
   const input = buildTeamInput(
-    recordingMap(file).get('287')!,
+    recordingMap(file).get('0287')!,
     { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] },
     loadRecordsData(file),
   );
   const plan = planTeamRun(input);
   const windows = piecesOf(plan).filter((w) => w.slotIndex === 1 && w.effect.stat === 'weapon');
 
-  it('matches the Explosive Rounds of recording 287 within 1: core, core in the distance bonus, core crit (287-08 の 2〜5 回目。C-0376)', () => {
+  it('matches the Explosive Rounds of recording 287 within 1: core, core in the distance bonus, core crit (0287-08 の 2〜5 回目。C-0376)', () => {
     // 1 回目（2,206,017）は着弾の前にカモフラージュが外れた回（直接攻撃での解除。前提の外）で、比べない
     const sim = runSimulation(input);
     const hit = (frame: number, args: Record<string, boolean>) =>

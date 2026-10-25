@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "バーストの段階とフルバースト",
   "grade": "反復実測",
-  "basis": "`018-01`・`019-01`・`020-01`・`021-01`・`047-01`・`079-02`（ヘルムのゲージのチャージがあっても CT で 5 回）、verification.md Stage 7",
+  "basis": "`0018-01`・`0019-01`・`0020-01`・`0021-01`・`0047-01`・`0079-02`（ヘルムのゲージのチャージがあっても CT で 5 回）、verification.md Stage 7",
   "model": "`burst/dynamic.ts`",
   "replaces": ["C-0023"],
   "updated": "2026-10-11",
@@ -13,19 +13,19 @@
   },
   "decidedOn": [
     {
-      "recording": "018",
+      "recording": "0018",
       "role": "仮説の出どころ"
     },
     {
-      "recording": "019",
+      "recording": "0019",
       "role": "仮説の出どころ"
     },
     {
-      "recording": "020",
+      "recording": "0020",
       "role": "仮説の出どころ"
     },
     {
-      "recording": "021",
+      "recording": "0021",
       "role": "仮説の出どころ"
     }
   ]

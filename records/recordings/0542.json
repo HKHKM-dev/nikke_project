@@ -1,0 +1,41 @@
+{
+  "id": "0542",
+  "date": "2026-10-23",
+  "folder": "range",
+  "file": "20261023-0542_sg_soda-tb-burst_nopause.mp4",
+  "original": "2026-10-23_23-09-53.mp4",
+  "durationSec": 210.3,
+  "frames": 12616,
+  "fps": 60,
+  "sizeMB": 255.1,
+  "sha256": "e5720b51c060",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 314,
+      "name": "ソーダ：トゥインクルバニー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0479 の A（ラム・デルタ・ソーダ：トゥインクルバニー）。戦闘中の一時停止なし"
+}

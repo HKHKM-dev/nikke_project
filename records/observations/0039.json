@@ -1,0 +1,493 @@
+[
+  {
+    "id": "0039-01",
+    "recording": "0039",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0016",
+    "readAt": "2026-09-28",
+    "value": [30, 67],
+    "unit": "秒",
+    "description": "的のジャンプの 1・2 回目で、的が空中か画面にいない最初の秒（1 秒刻み。戦闘開始から動画のフレームを 0.017 秒で数えた。フルバーストの入りの止まりの分は差し引いていない）",
+    "method": {
+      "tool": "ffmpeg（戦闘時刻をそろえて 1 秒おきに切り出し）",
+      "note": "戦闘開始 f934（残り時間の変わり目が +320f・+89f と続いた所）。22〜35 秒・58〜71 秒の画面を並べた。直前の秒には的が元の位置にいる。±1 秒。1 回目は 30・31 秒とも空中"
+    }
+  },
+  {
+    "id": "0039-02",
+    "recording": "0039",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0017",
+    "readAt": "2026-09-28",
+    "value": [22.2, 22, 22.3, 22.1, 21.8],
+    "unit": "f",
+    "description": "フルバーストを 1 回またぐごとに、3 分モードの残り時間の秒の刻みの位相がずれた分（読めた回を順に。フルバーストの入りで残り時間が止まった長さ）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes",
+      "note": "秒の変わり目が 56〜62f（2 秒分は 116〜122f）の間隔で続く区間ごとに、共通の傾き（この録画は 58.886 f/秒）で切片を当てはめ、フルバーストをまたぐ前後の区間の切片の差を傾きで割った余りを取った。フルバーストの残り時間の表示が秒の数字に重なる区間は使わない。フルバーストの無い区間のずれは ±1f 以内"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
+    }
+  },
+  {
+    "id": "0039-03",
+    "recording": "0039",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0021",
+    "readAt": "2026-09-28",
+    "value": [29, 29, 29],
+    "unit": "f",
+    "description": "1 回目のフルバーストの入りで、バーストの段が続いたフレーム数: I の段（BURST バーが消えてから I の発動まで）、II の段（I の発動から II の発動まで）、III の段（II の発動から「FULL BURST!」の表示の始まりまで）。どの段も CT は明けていた",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events・ffmpeg（右のバースト欄を 1 フレームずつ並べた一覧）",
+      "note": "段の始まり: I は BURST バーが消えたフレーム f1260、II は II のアイコンに替わったフレーム f1289（II のタイマーの 09.52 の 28f 前）、III は III のタイマーが出たフレーム f1318（09.98 か 09.97）、フルバーストは III のタイマーが 00.00 になったフレーム f1347。II・III のタイマーの最後の表示はどちらも 09.52"
+    }
+  },
+  {
+    "id": "0039-04",
+    "recording": "0039",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0025",
+    "readAt": "2026-09-28",
+    "value": [9, 7, 6, 7],
+    "unit": "f",
+    "description": "BURST バーが 100%（113px すべて）光ってから、バーが消えて I のアイコンに替わるまでのフレーム数（フルバーストの入りの順。100% を経ずに消えた回と、味方の体力バーが重なって消えたと読み違えた回は除く）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series",
+      "note": "100% と消えたフレーム: f1251→1260・f2274→2281・f4602→4608・f9255→9262"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0039-05",
+    "recording": "0039",
+    "kind": "interval",
+    "use": "compare",
+    "value": 326,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I のアイコンに替わる（本当の満タン）までのフレーム数",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode events",
+      "note": "02:59 は f934（残り時間の変わり目が +320f・+89f と続いた所）、消えたのは f1260。照合の許容は ±40f（モデルで満タンを決める発が SG のトリガーなので、当たったペレットの揺れの 1 トリガーぶん。2026-10-02 にオーナーが決定。V-0077 の照合の条件の案 3）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 40
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0039-06",
+    "recording": "0039",
+    "source": "V-0140",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [26, 26, 27, 26],
+    "unit": "f",
+    "description": "リター（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、1〜4 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1347・3731・5873・8249）から、ドレイクのバーストの 1 ヒット目（f1373・3757・5900・8275）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧・hud.ts --mode jumps",
+      "note": "5 回目（始まり f10527、1 ヒット目 f10554）は 27f。2・3 ヒット目は 1 ヒット目から 27〜28f おき（f1401・1429、3784・3812、5927・5955、8302・8330、10581・10609）。1 ヒットの値はリターのバフで回ごとに違う（2,993,453・2,169,079 など。ほかの発と重なった増分もある）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0039-07",
+    "recording": "0039",
+    "source": "V-0144",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 28, 56],
+    "unit": "f",
+    "description": "リター（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、1 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f1373・1401・1429）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0140・0039-06 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0039-08",
+    "recording": "0039",
+    "source": "V-0144",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 27, 55],
+    "unit": "f",
+    "description": "リター（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、2 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f3757・3784・3812）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0140・0039-06 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0039-09",
+    "recording": "0039",
+    "source": "V-0144",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 27, 55],
+    "unit": "f",
+    "description": "リター（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、3 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f5900・5927・5955）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0140・0039-06 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0039-10",
+    "recording": "0039",
+    "source": "V-0144",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 27, 55],
+    "unit": "f",
+    "description": "リター（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、4 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f8275・8302・8330）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0140・0039-06 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0039-11",
+    "recording": "0039",
+    "source": "V-0144",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 27, 55],
+    "unit": "f",
+    "description": "リター（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、5 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f10554・10581・10609）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0140・0039-06 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0039-12",
+    "recording": "0039",
+    "kind": "interval",
+    "use": "record",
+    "value": [26, 29],
+    "unit": "f",
+    "description": "1 回目のフルバーストの入りで、ゲージが律速の I（リター）の発動の、BURST バーが消えたフレーム（満タンの発）から、欄の I の顔に新しい CT の秒（「20」）が出たフレームまでと、II のアイコンに替わったフレームまで",
+    "source": "V-0189",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "ffmpeg（右のバースト欄 1740,420 から 180×150 を切り出し、フレーム番号を付けて 1 フレームずつ並べた一覧。番号は動画の先頭から数えたフレーム（018〜021 は可変フレームレートなので、パケットの時刻の並びから引いた））・tools/captures/hud.ts --mode jumps",
+      "note": "バーが消えたのは f1260（総ダメージの HUD の増分も f1260）。I の顔はそのあいだ明るいまま（CT は明けている）。顔の後ろの緑の光が消えて暗くなったのが f1285、「20」が f1286、II のアイコンが f1289"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0039-13",
+    "recording": "0039",
+    "kind": "interval",
+    "use": "compare",
+    "value": 23.3,
+    "unit": "f",
+    "description": "1 回目の満タン（BURST バーが消えた発）から、I の本当の発動（CT が走り出す）までのフレーム数。欄に新しい CT の秒が出たフレームから、C-0258 の表示の遅れ（新しい CT の秒は本当の発動の約 2.7f 後）を引いて出した",
+    "source": "V-0189",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "読んだ値からの計算（読み方 A）",
+      "note": "`0039-12` のバー消失 → 新しい CT の秒 26f から 2.7f を引いた。2.7f は V-0164 の録画 0018・0019・0021 の「CT の 0 → 新しい CT の秒」の平均から「CT の 0 → 本当の発動」の平均を引いた値（3.3・2.5・2.3f）の平均（C-0258。`0018-18`・`0018-19`・`0019-12`・`0019-14`・`0021-18`・`0021-19`）。この検証のデータには合わせていない。録画ごとの幅は ±0.5f ほど"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToActivation",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0039-14",
+    "recording": "0039",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0265",
+    "readAt": "2026-10-07",
+    "value": 838582,
+    "description": "リター（I）+ デルタ（II）+ ドレイク（III・宝物 3 段階）で、フルバーストの中のリターの▲の窓の外の、ドレイクの S2「5 回攻撃」の 1 ヒット（会心なし）。f1660・4115・6306・8782 の増分がどれも 838,582 で、ほかの発が乗っていない。攻撃力▲はドレイクの宝物版 S1 の 2 つ",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps。録画の全体）のうち、gap 1（前のフレームが読めた）で 30 万以上のものを、予測ファイル（V-0265）のドレイクの S2 の値（窓 3 種 × 毎回のヒット・「5 回攻撃」・その和 × 会心の有無 × 仮説 3 つ）とリターの 1 発（0・27,911・35,664・43,417）の和に突き合わせ、ちょうど一致したものを全部挙げた（9 か所）。ペレットやほかの発と混ざった増分は分解していない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0039-15",
+    "recording": "0039",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0265",
+    "readAt": "2026-10-07",
+    "value": 1248514,
+    "description": "同じ窓（リターの▲の外）で、同じ発に出たドレイクの S2 の毎回のヒットと「5 回攻撃」の和（どちらも会心なし）。f1856 の増分 1,248,514",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps。録画の全体）のうち、gap 1（前のフレームが読めた）で 30 万以上のものを、予測ファイル（V-0265）のドレイクの S2 の値（窓 3 種 × 毎回のヒット・「5 回攻撃」・その和 × 会心の有無 × 仮説 3 つ）とリターの 1 発（0・27,911・35,664・43,417）の和に突き合わせ、ちょうど一致したものを全部挙げた（9 か所）。ペレットやほかの発と混ざった増分は分解していない。モデルの n 4・5（同じ発の 2 つ）の和で比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "count": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0039-16",
+    "recording": "0039",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0265",
+    "readAt": "2026-10-07",
+    "value": 1717653,
+    "description": "1 回目のフルバーストの中の、リターのバーストの攻撃力▲（66%）の窓の中で、同じ発に出たドレイクの S2 の毎回のヒットと「5 回攻撃」の和（どちらも会心なし）。f1463 の増分 1,745,564 からリターの 1 発（胴体。前後のフレームの増分と同じ 27,911）を引いた値。ペレット（9 × 122,636 + 163,515 = 1,267,239）は f1457 の増分に乗っている",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps。録画の全体）のうち、gap 1（前のフレームが読めた）で 30 万以上のものを、予測ファイル（V-0265）のドレイクの S2 の値（窓 3 種 × 毎回のヒット・「5 回攻撃」・その和 × 会心の有無 × 仮説 3 つ）とリターの 1 発（0・27,911・35,664・43,417）の和に突き合わせ、ちょうど一致したものを全部挙げた（9 か所）。ペレットやほかの発と混ざった増分は分解していない。モデルの n 1・2（f500 の同じ発の 2 つ）の和で比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "count": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0039-17",
+    "recording": "0039",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0265",
+    "readAt": "2026-10-07",
+    "value": 1820152,
+    "description": "2 回目以降のフルバーストの頭の、リターの S1（14.42%）とバースト（66%）の攻撃力▲の窓の中で、同じ発に出たドレイクの S2 の毎回のヒットと「5 回攻撃」の和（どちらも会心なし）。f3919・6110・10615 の増分がどれも 1,820,152 で、ほかの発が乗っていない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps。録画の全体）のうち、gap 1（前のフレームが読めた）で 30 万以上のものを、予測ファイル（V-0265）のドレイクの S2 の値（窓 3 種 × 毎回のヒット・「5 回攻撃」・その和 × 会心の有無 × 仮説 3 つ）とリターの 1 発（0・27,911・35,664・43,417）の和に突き合わせ、ちょうど一致したものを全部挙げた（9 か所）。ペレットやほかの発と混ざった増分は分解していない。録画の窓（2・3・5 回目のフルバースト）はモデルの射撃の列と発の位置がずれるので、同じ攻撃力▲の組み合わせのモデルの n 55・56（5 回目のフルバーストの同じ発の 2 つ）の和で比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "n": 55,
+        "count": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0039-18",
+    "recording": "0039",
+    "readAt": "2026-10-08",
+    "kind": "interval",
+    "use": "compare",
+    "source": "V-0359",
+    "value": [136.5, 294.7, 482.4, 482.4],
+    "unit": "f",
+    "description": "1〜4 回目のフルバーストの始まりに縮んだバーストスキルクールタイム（リター（I）+ デルタ（II）+ ドレイク（III））。1 回目: リターの CT（発動 f1283.3、明け f2345.6（0.01 の表示 f2345）、止まり 22.65f）から 2.326 秒、デルタの CT（発動 f1312.3（「40」が f1315））の 20 → 19（f2405）から 2.318 秒・12 → 11（f2875）から 2.328 秒。2 回目: デルタ（発動 f3695.3）の 19 → 18（f4688）・11 → 10（f5159）から 5.018・5.011 秒。3 回目: デルタ（発動 f5838.3）の 11 → 10（f7115）・3 → 2（f7585）から 8.199・8.209 秒。4 回目: デルタ（発動 f8213.3）の 13 → 12（f9373）・5 → 4（f9843）から 8.199・8.209 秒。対照: リターの CT の明け f2345.6 → 次の明け f3523.6（0.01 の表示 f3523。間にフルバーストが無い）は 1,178.0f で、CT 20 秒（1,176.5f）+ 発動の遅れ 1.5f と合う",
+    "method": {
+      "tool": "ffmpeg の select・crop・drawtext・tile で並べた右のバースト欄・timer.ts --mode steps",
+      "note": "右のバースト欄（1700,400 から 220×190）を ffmpeg の select・crop・drawtext・tile で 1 フレームずつ並べて目で読んだ。CT の残り秒は 1 秒以上は四捨五入の整数（039 のリターの「2」→「1」が CT の 0 の 1.5 秒前、「1」→「0.99」が 1.0 秒前で確かめた）。発動は欄の顔に新しい CT の秒（「40」「20」）が出たフレーム − 2.7（C-0258）、CT が明けた後に撃った回は CT の 0 + 0.7。チェーンが II でデルタの CT を待つあいだ（チェーンが切れる回を含む）の整数の秒の切り替わり（v → v − 1 の最初のフレームの 0.5f 前を、残り v − 0.5 秒とする）から、CT▼ = 40 − (v − 0.5) − (切り替わり − 発動 − 間の止まり) × 0.017 秒。止まりは timer.ts --mode steps の段（フルバーストの入り。2f 未満の段は数えない）。読んだ切り替わりは、どれもその CT が明ける前で、フルバーストの時刻（読み済み）とは別の値。5 回目の後はチェーンが無く読めない。値は読んだ秒（2.32・5.01・8.2・8.2 秒。小数 2 桁）を 0.017 秒で割ったゲーム内のフレーム（小数 1 桁に丸め。単位の換算だけで、読んだ値は変えていない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "cooldownCutFrames",
+      "args": {
+        "slot": 2,
+        "n": "0,1,2,3"
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "burstChain",
+      "frames": [1283, 9843]
+    }
+  }
+]

@@ -5,9 +5,9 @@
 //                                                     └──最後の発動から 600f 候補なし（タイムアウト）──▶ charging
 //
 // - charging: ゲージを足す（上限で止める）。ready / chain / fullBurst の間は足さない（フルバースト後は 0 から）。
-// - ready: I の候補（CT 明け）が出るまで時間制限なしで待つ（録画 19）。
+// - ready: I の候補（CT 明け）が出るまで時間制限なしで待つ（録画 0019）。
 // - chain: 段階 step の候補が出たら発動し、発動したニケの nextStep に進む。最後の発動から
-//   chainTimeoutFrames 候補が出なければチェーン失敗でゲージ 0（録画 22）。
+//   chainTimeoutFrames 候補が出なければチェーン失敗でゲージ 0（録画 0022）。
 // - 候補の順: その段階の専任（burstStep が一致）→ AllStep、それぞれ枠番号の若い順。CT が明けていて、このチェーンで未使用のもの。
 // 定数の根拠は plan/design-stage7.md 0 節・1 節。演出時間は録画からの目視で、tools/captures/gauge.ts で較正する。
 import { gameSecondsToFrames } from '../time.ts';
@@ -49,7 +49,7 @@ export const FULL_BURST_START_DELAY_FRAMES = FULL_BURST_AFTER_ACTIVATION_FRAMES;
  * （BurstUnit.fullBurstFrames。イサベル 5 秒、モダニア 15 秒）を優先し、それがない枠だけこの値を使う（plan/design-stage8.md 3.3 節）
  */
 export const FULL_BURST_FRAMES = gameSecondsToFrames(10);
-/** チェーン中に次の段階の候補が出ないまま待てるフレーム（ゲーム内のチェーン待ちのタイマー 10 秒。録画 22 で約 600f） */
+/** チェーン中に次の段階の候補が出ないまま待てるフレーム（ゲーム内のチェーン待ちのタイマー 10 秒。録画 0022 で約 600f） */
 export const BURST_CHAIN_TIMEOUT_FRAMES = gameSecondsToFrames(10);
 
 export type BurstTiming = {

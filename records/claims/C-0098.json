@@ -4,7 +4,7 @@
   "state": "仮説",
   "topic": "スキル・キャラ固有",
   "grade": "推論",
-  "basis": "説明文の読み（plan/design-helm.md 1 節）。録画 079 の予測は V-0033",
+  "basis": "説明文の読み（plan/design-helm.md 1 節）。録画 0079 の予測は V-0033",
   "model": "`data/skills/352.json` の skills.skill2 の effects[0]、skills.burst の effects[0]（skills.skill1 は C-0097）",
   "replaces": [],
   "updated": "2026-09-28"

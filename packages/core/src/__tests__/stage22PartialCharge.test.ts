@@ -97,7 +97,7 @@ describe('部分チャージの 1 発の値とゲージ', () => {
 describe('回数トリガー', () => {
   const log: ShotLog = { frames: [69, 151, 200, 233], fullCharge: true, partialShots: [{ frame: 200, progress: 0.3 }] };
 
-  it('does not count a partial-charge shot as fullChargeShot, but counts it as a shot (紅蓮BS の S1。046-20)', () => {
+  it('does not count a partial-charge shot as fullChargeShot, but counts it as a shot (紅蓮BS の S1。0046-20)', () => {
     expect(cycleShotFrames(log, { count: 'fullChargeShot', every: 1 })).toEqual([69, 151, 233]);
     expect(cycleShotFrames(log, { count: 'normalShot', every: 1 })).toEqual([69, 151, 200, 233]);
     const events = replayEvents(null, [log], 300);

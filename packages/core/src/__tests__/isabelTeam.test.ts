@@ -48,9 +48,9 @@ function team(ids: number[], controlledSlot: number): TeamInput {
 }
 
 const ISABEL = 231;
-// 録画 038 の編成と、イサベルが III の実戦寄りの 5 人（Stage 8 の編成）
+// 録画 0038 の編成と、イサベルが III の実戦寄りの 5 人（Stage 8 の編成）
 const TEAMS: Record<string, { input: TeamInput; isabel: number }> = {
-  '録画 038 の編成（ラム + デルタ + イサベル）': { input: team([822, 20, ISABEL], 2), isabel: 2 },
+  '録画 0038 の編成（ラム + デルタ + イサベル）': { input: team([822, 20, ISABEL], 2), isabel: 2 },
   '実戦寄り（エーテル + デルタ + イサベル + ドレイク + クイーン（真））': {
     input: team([291, 20, ISABEL, 101, 870], 2),
     isabel: 2,

@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "命中率・距離",
   "grade": "反復実測",
-  "basis": "verification.md Stage 18-A「距離帯と区間の並び」（旧の単騎 14 本を写し、録画 30・35・54・56・57〜62・旧の 5 本で検算）",
+  "basis": "verification.md Stage 18-A「距離帯と区間の並び」（旧の単騎 14 本を写し、録画 0030・0035・0054・0056・0057〜0062・旧の 5 本で検算）",
   "model": "`data/enemies.json` の `range-3min-jump` の `landings`・`enemies.ts` の `enemyLandingsOf`",
   "replaces": [],
   "updated": "2026-10-11",

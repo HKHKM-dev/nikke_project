@@ -20,11 +20,11 @@ const claim = (patch: Partial<Claim>): Claim => ({
   state: '確定',
   topic: 'スキル・キャラ固有',
   grade: '厳密一致',
-  basis: '`101-01`',
+  basis: '`0101-01`',
   model: 'm',
   replaces: [],
   updated: '2026-10-07',
-  observations: ['101-01'],
+  observations: ['0101-01'],
   ...patch,
 });
 
@@ -47,7 +47,7 @@ describe('結論の subject・when・minimal', () => {
       ),
     ).toEqual([]);
     const mark = { element: 'イサベル skill2.notes[0]', reason: 'r', decided: '2026-10-07' };
-    expect(validateMinimalFields(claim({ minimal: [{ observations: ['101-01'], ...mark }] }))).toEqual([]);
+    expect(validateMinimalFields(claim({ minimal: [{ observations: ['0101-01'], ...mark }] }))).toEqual([]);
     expect(validateMinimalFields(claim({ minimal: [{ observations: '*', ...mark }] }))).toEqual([]);
   });
 
@@ -81,7 +81,7 @@ describe('結論の subject・when・minimal', () => {
     const bad = (minimal: unknown) => validateMinimalFields(claim({ minimal: minimal as Claim['minimal'] }));
     const ok = { observations: '*', element: 'e', reason: 'r', decided: '2026-10-07' };
     expect(bad([])).toEqual([expect.stringMatching(/1 つ以上/)]);
-    expect(bad([{ ...ok, observations: ['102-01'] }])).toEqual([expect.stringMatching(/根拠に無い/)]);
+    expect(bad([{ ...ok, observations: ['0102-01'] }])).toEqual([expect.stringMatching(/根拠に無い/)]);
     expect(bad([{ ...ok, observations: [] }])).toEqual([expect.stringMatching(/ID の並びか/)]);
     expect(bad([{ ...ok, element: ' ' }])).toEqual([expect.stringMatching(/element が空/)]);
     expect(bad([{ ...ok, reason: '' }])).toEqual([expect.stringMatching(/reason が空/)]);

@@ -1,0 +1,125 @@
+[
+  {
+    "id": "0037-01",
+    "recording": "0037",
+    "kind": "interval",
+    "use": "compare",
+    "value": 326,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I のアイコンに替わる（本当の満タン）までのフレーム数",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode events",
+      "note": "02:59 は f848（残り時間の変わり目が +320f・+89f と続いた所）、消えたのは f1174。照合の許容は ±40f（モデルで満タンを決める発が SG のトリガーなので、当たったペレットの揺れの 1 トリガーぶん。2026-10-02 にオーナーが決定。V-0077 の照合の条件の案 3）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 40
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0037-02",
+    "recording": "0037",
+    "source": "V-0140",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [26, 27],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、1・2 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1262・3639）から、ドレイクのバーストの 1 ヒット目（HUD の 1,201,793 の増分。f1288・3666）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧・hud.ts --mode jumps",
+      "note": "録画のフルバーストは 2 回だけ。2・3 ヒット目は 1 回目が f1315・1343、2 回目が f3693・3721（1 ヒット目から 27f・28f おき。値はほかの発と重なった増分を含む）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0037-03",
+    "recording": "0037",
+    "source": "V-0144",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 27, 55],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、1 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f1288・1315・1343）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0140・0037-02 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0037-04",
+    "recording": "0037",
+    "source": "V-0144",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [0, 27, 55],
+    "unit": "f",
+    "description": "ラム（I）+ デルタ（II）+ ドレイク（III・宝物あり）で、2 回目のバーストの倍率ダメージの 1 ヒット目から 2・3 ヒット目までの動画のフレーム数（ヒットは f3666・3693・3721）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0140・0037-02 を読んだときのヒットのフレーム（その検証記録の注記）を観測値にした。予測の後に読んだ値ではない（実装の照合）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

@@ -15,7 +15,7 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない。録画 305・306 では、的のジャンプの前後で外れた最後の弾丸の後だけ付かなかった）",
+            "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない。録画 0305・0306 では、的のジャンプの前後で外れた最後の弾丸の後だけ付かなかった）",
             "en": "The last bullet always hits (not applying it on a miss is not modeled; in recordings 305 and 306 it was not applied only after a last bullet that missed around the target jumps)"
           },
           "claims": [

@@ -1,0 +1,541 @@
+[
+  {
+    "id": "0081-01",
+    "recording": "0081",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0031",
+    "readAt": "2026-09-28",
+    "value": 344596,
+    "description": "ココアのフルチャージの 1 発（コア）。1・2 回目のココアのバーストの後（S2 のスタックと、フルスタックならバーストの敵の攻撃力▼が付いた状態）。動画の f2729（ニヒリスターの発と重ならない単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "戦闘開始は f824（timer.ts --mode changes の +319f の画面の切り替えの次の +89f の変わり目。C-0078）。モデルのフレームは動画のフレーム − 824（フルバーストが無いので止まりは入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1905,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-02",
+    "recording": "0081",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0031",
+    "readAt": "2026-09-28",
+    "value": 396285,
+    "description": "ココアのフルチャージの 1 発（コア・距離ボーナス）。5 回目のココアのバーストの後。動画の f7179（単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "0081-01 と同じ読み方。距離ボーナスの付く発は f5063〜7188 に出た"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6355,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-03",
+    "recording": "0081",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0031",
+    "readAt": "2026-09-28",
+    "value": 344596,
+    "description": "ココアのフルチャージの 1 発（コア）。戦闘の終わりの近く（9 回目のココアのバーストの後）。動画の f11292（単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "0081-01 と同じ読み方"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 10468,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-04",
+    "recording": "0081",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0031",
+    "readAt": "2026-09-28",
+    "value": 98,
+    "description": "ココアの 1 発の数と、その値がすべてスキルなしのモデルの 8 通り（コア・会心・距離の組）のどれかだったこと。最初の 1 発（f895）は戦闘の頭で、ニヒリスターの 1 発と同じフレームの 760,887 = 344,596（コア）+ 416,290（ニヒリスターのコア）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分 271 件を、ココアの 8 通り・ニヒリスターの 8 通り・ニヒリスターのバーストの倍率ダメージ・火傷の tick・S2 の値（どれも会心あり・なし）の組み合わせに分けた。分け方はどの増分でも 1 通り。分けられなかったのは、的のジャンプの始まりの直後の 5 件（f2735・4883・7216・9360・11328）だけで、チャージの途中の発とみられる（どちらの発かは分からない）"
+    }
+  },
+  {
+    "id": "0081-05",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 520363,
+    "description": "ニヒリスターのフルチャージの 1 発（コア・会心）。1 回目のバーストの後（最大装弾数▲の窓の中）。動画の f2328（単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分を、ココア・ニヒリスターの 1 発（各 8 通り）・バーストの倍率ダメージ・火傷の tick・S2（会心あり・なし）の組み合わせに分けた（0081-04 の注）。戦闘開始は f824 で、モデルのフレームは動画のフレーム − 824"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1504,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-06",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 478734,
+    "description": "ニヒリスターのフルチャージの 1 発（コア・距離ボーナス）。5 回目のバーストの後。動画の f6449（単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分を、ココア・ニヒリスターの 1 発（各 8 通り）・バーストの倍率ダメージ・火傷の tick・S2（会心あり・なし）の組み合わせに分けた（0081-04 の注）。戦闘開始は f824 で、モデルのフレームは動画のフレーム − 824"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 5625,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-07",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 520363,
+    "description": "ニヒリスターのフルチャージの 1 発（コア・会心）。8 回目のバーストの後・戦闘の終わりの近く。動画の f11010（単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分を、ココア・ニヒリスターの 1 発（各 8 通り）・バーストの倍率ダメージ・火傷の tick・S2（会心あり・なし）の組み合わせに分けた（0081-04 の注）。戦闘開始は f824 で、モデルのフレームは動画のフレーム − 824"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 10186,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-08",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 191250,
+    "description": "ニヒリスターのバーストの倍率ダメージ（158.59%）の 1 回目（会心なし）。動画の f1372 の増分 207,156 から、同じフレームの火傷の 1 tick 15,906 を引いた値",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分を、ココア・ニヒリスターの 1 発（各 8 通り）・バーストの倍率ダメージ・火傷の tick・S2（会心あり・なし）の組み合わせに分けた（0081-04 の注）。戦闘開始は f824 で、モデルのフレームは動画のフレーム − 824"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-09",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 286875,
+    "description": "ニヒリスターのバーストの倍率ダメージの 2 回目（会心）。動画の f2552 の増分 302,781 から、同じフレームの火傷の 1 tick 15,906 を引いた値",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分を、ココア・ニヒリスターの 1 発（各 8 通り）・バーストの倍率ダメージ・火傷の tick・S2（会心あり・なし）の組み合わせに分けた（0081-04 の注）。戦闘開始は f824 で、モデルのフレームは動画のフレーム − 824"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-10",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15906,
+    "description": "火傷の 1 tick（会心なし）。1 回目のバーストの 2 回目の tick。動画の f1460（単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分を、ココア・ニヒリスターの 1 発（各 8 通り）・バーストの倍率ダメージ・火傷の tick・S2（会心あり・なし）の組み合わせに分けた（0081-04 の注）。戦闘開始は f824 で、モデルのフレームは動画のフレーム − 824"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-11",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 23860,
+    "description": "火傷の 1 tick（会心）。1 回目のバーストの 3 回目の tick。動画の f1519（単独の増分）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分を、ココア・ニヒリスターの 1 発（各 8 通り）・バーストの倍率ダメージ・火傷の tick・S2（会心あり・なし）の組み合わせに分けた（0081-04 の注）。戦闘開始は f824 で、モデルのフレームは動画のフレーム − 824"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-12",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "timing",
+    "use": "record",
+    "value": [0, 88, 147, 205, 264, 323, 382, 441, 499, 558],
+    "unit": "f",
+    "description": "1 回目のバーストの倍率ダメージのフレーム（f1372）から、火傷の各 tick までのフレーム数",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "tick の値は 15,906（会心 23,860）で、どの tick もほかの成分と分けられた。2〜9 回目のバーストでも、どの tick も 1 回目の列と ±2f 以内（最後の tick は 557〜560f）。1 回目の tick はどの回もバーストの倍率ダメージと同じフレーム"
+    }
+  },
+  {
+    "id": "0081-13",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "count",
+    "use": "record",
+    "value": [10, 10, 10, 10, 10, 10, 10, 10, 9],
+    "description": "バーストごとの火傷の tick の数（1〜9 回目）。9 回目は戦闘の終わり（f11412 ごろ）で切れた",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分を、ココア・ニヒリスターの 1 発（各 8 通り）・バーストの倍率ダメージ・火傷の tick・S2（会心あり・なし）の組み合わせに分けた（0081-04 の注）。戦闘開始は f824 で、モデルのフレームは動画のフレーム − 824"
+    }
+  },
+  {
+    "id": "0081-14",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "timing",
+    "use": "record",
+    "value": [1372, 2552, 3736, 5006, 6184, 7368, 8547, 9727, 10906],
+    "unit": "f",
+    "description": "ニヒリスターのバーストの倍率ダメージが出た動画のフレーム（1〜9 回目）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "モデルの II の発動（ゲーム内の秒から換算した動画のフレーム）は 1374・2550・3761・5011・6187・7363・8539・9839・11015 で、3・8・9 回目は録画のほうが 25〜112f 早い"
+    }
+  },
+  {
+    "id": "0081-15",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "timing",
+    "use": "record",
+    "value": [1430, 2019, 2610, 3199, 3792, 4381, 4972, 5562, 6151, 6743, 7332, 7922, 8512, 9102, 9692, 10282, 10873],
+    "unit": "f",
+    "description": "S2（メギドフレイム）のダメージが出た動画のフレーム（17 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "間隔は 589〜593f（平均 590.2f。ゲーム内の約 10.0 秒）で、リロード・的のジャンプ・バーストに関係なく一定。1 回目は戦闘開始（f824）から 606f"
+    }
+  },
+  {
+    "id": "0081-16",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "hit",
+    "use": "record",
+    "value": 135837,
+    "description": "S2 の 1 ヒット（会心なし）。12 件がこの値、5 件が会心の 203,756。どちらも (最終攻撃力 − 防御) × 112.64% と、その会心（× 1.5）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "動画の f2610 ほか（単独の増分）。f1430 は、前のフレームの読みの 8 が紛れて 203,748 と読めた（2 つの増分の和は 203,756）"
+    }
+  },
+  {
+    "id": "0081-17",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "count",
+    "use": "record",
+    "value": [12, 12, 12, 12],
+    "description": "バーストの後のマガジンのニヒリスターの発数（f1507〜2410・f5345〜6249・f7597〜8499・f9906〜10808。どれもリロードをはさまずに 82f 間隔で 12 発）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "ニヒリスターの 1 発のフレームの列を、100f より長い空き（リロード・ジャンプ）で区切った。バーストの窓の外のマガジンは 6 発（f895〜1305 など）"
+    }
+  },
+  {
+    "id": "0081-18",
+    "recording": "0081",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "kind": "count",
+    "use": "record",
+    "value": 107,
+    "description": "ニヒリスターのフルチャージの 1 発の数と、その値がすべてスキルなしのモデルの 8 通りのどれかだったこと（バーストの後も同じ）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分を、ココア・ニヒリスターの 1 発（各 8 通り）・バーストの倍率ダメージ・火傷の tick・S2（会心あり・なし）の組み合わせに分けた（0081-04 の注）。戦闘開始は f824 で、モデルのフレームは動画のフレーム − 824"
+    }
+  },
+  {
+    "id": "0081-19",
+    "recording": "0081",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0032",
+    "readAt": "2026-09-28",
+    "value": 17,
+    "description": "S2（メギドフレイム）のダメージの回数（180 秒）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "フレームの列は 0081-15。モデルは戦闘開始から 10 秒ごと（CT 10 秒）で、1 回目が録画より約 18f、17 回目が約 50f 早い（plan/design-nihilister.md 8.2 節の論点 2・3）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 2,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-20",
+    "recording": "0081",
+    "source": "V-0131",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "compare",
+    "value": [9, 9, 8, 9, 8, 9, 9, 10, 9],
+    "unit": "f",
+    "description": "ココア（I）+ ニヒリスター（II）で、II の発動（右のバースト欄の六角形が II から III に替わったフレーム。f1363・2543・3728・4997・6176・7359・8538・9717・10897）から、ニヒリスターのバーストの倍率ダメージのヒット（0081-14 のフレーム）までの動画のフレーム数（1〜9 回目）",
+    "method": {
+      "tool": "still.ts・右のバースト欄を 1 フレームずつ並べた一覧・hud.ts --mode jumps",
+      "note": "どの回も、ニヒリスターの顔が CT の 20 に替わってから 3f 後に六角形が替わる。8f・10f の回は、替わり目の前後で II のタイマーの表示が 2 フレーム続く（録画の重複フレーム）ので、1f の揺れは録画の側とみる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 2,
+        "count": 9
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0081-21",
+    "recording": "0081",
+    "source": "V-0313",
+    "readAt": "2026-10-08",
+    "kind": "interval",
+    "use": "record",
+    "value": [12, 14, 13, 14, 13, 11, 12, 12, 13, 14, 13, 11, 13, 15, 17, 12, 13],
+    "unit": "f",
+    "description": "ニヒリスター（AI）の S2 の、左の「スキル2」の帯が出たフレームから倍率ダメージのヒット（`0081-15`）までの動画のフレーム数（回ごと。−1 は読めない回）",
+    "method": {
+      "tool": "使い捨てのスクリプト（左の欄 crop 0,578,100,36 の灰色の平均の明るさ）",
+      "note": "各ヒットの 140f 前から 5f 後までで、明るさが 1 フレームで +4 以上・3 フレームで +15 以上上がった所（帯が滑り込み始めたフレーム）を全部挙げ、予測の D の近くのものを採った（ほかの立ち上がりは、ほかのキャラの帯）。帯の文字は録画ごとに 1 回、画で確かめた（V-0313「結果」）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0081-22",
+    "recording": "0081",
+    "source": "V-0382",
+    "readAt": "2026-10-09",
+    "kind": "interval",
+    "use": "compare",
+    "value": [67],
+    "unit": "f",
+    "description": "ココア（I）+ ニヒリスター（II・操作）で、1 回目のバーストの直前の満タン（BURST バーが消えた発。f1305）から、ニヒリスターのバーストの倍率ダメージのヒット（0081-14 の f1372）までの動画のフレーム数。9 回のうちゲージが律速（満タン → II の替わり目が 58f）なのは 1 回目だけ",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "満タンのフレームに HUD の増分 760,887（ココアとニヒリスターのコアの和。0081-04）がある。2〜9 回目は満タン（f2364・〜3528 以前・4878・6001・7188・8417・9622・10726）→ II の替わり目が 95〜179f で、実機の CT が律速"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToBurstHit",
+      "args": {
+        "slot": 2,
+        "n": "0"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  }
+]

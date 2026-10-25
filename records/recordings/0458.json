@@ -1,0 +1,29 @@
+{
+  "id": "0458",
+  "date": "2026-10-12",
+  "folder": "range",
+  "file": "20261012-0458_sr_takina_sky.mp4",
+  "original": "2026-10-12_12-22-05.mp4",
+  "durationSec": 199,
+  "frames": 11937,
+  "fps": 60,
+  "sizeMB": 240.9,
+  "sha256": "b4eddb31603b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 861,
+      "name": "たきな",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0430 撮影 B（1 本目）。たきな単騎・操作・AUTO 射撃 OFF・オートバースト OFF。戦闘開始から 180 秒、的の上の空（霧）に向けて撃ち続ける（遮蔽物から出ているが、的には当てない）"
+}

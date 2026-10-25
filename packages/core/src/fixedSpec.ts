@@ -82,7 +82,7 @@ export const AFFECTION_HP: Record<NikkeClass, Record<AffectionRank, number>> = {
 /**
  * 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: スペック固定の戦闘中の最大HP（バフ前）。攻撃力と同じ組み立て
  * （コアは「突破後の素の HP + 好感度」に掛かり、装備には掛からない）。育成の層（fixedSpecBuild を computeCombatStat に通した HP）と
- * 同値（build.test.ts）。録画 121 のラプラス：アルティメットヒーローの S1 の攻撃力▲で確かめた
+ * 同値（build.test.ts）。録画 0121 のラプラス：アルティメットヒーローの S1 の攻撃力▲で確かめた
  */
 export function computeFixedSpecHp(
   character: Pick<CharacterData, 'rarity' | 'class' | 'corporationSubType' | 'levelCurve' | 'statEnhance'>,

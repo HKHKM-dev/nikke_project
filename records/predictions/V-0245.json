@@ -36,7 +36,7 @@
         "events": ["range-3min-jump"]
       },
       "note": "フルバーストの中のミランダの会心率（モデルの 1 回目のフルバーストは 397〜997f。その開始から 2 秒後）。録画では、フルバーストの中のミランダの発のうち会心の割合を数える（V-0217 の fb-miranda-crit-rate と同じ数え方）",
-      "observations": ["285-10"]
+      "observations": ["0285-10"]
     },
     {
       "id": "after-fb-miranda-crit-rate",
@@ -51,7 +51,7 @@
         "events": ["range-3min-jump"]
       },
       "note": "1 回目のフルバーストの終わり（997f）の 2 秒後の、ミランダの会心率（対照。S2 の窓の外で素の 0.15）。録画では、フルバーストの外のミランダの発のうち会心の割合を数える",
-      "observations": ["285-11"]
+      "observations": ["0285-11"]
     },
     {
       "id": "fb-miranda-body",
@@ -68,7 +68,7 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "fb-miranda-crit-rate と同じ発の 1 発（胴体・会心なし・距離ボーナスなし）。格子で会心を決めるときの基準（C-0323 で確定した値。V-0217 の 245-04 と同じ条件）"
+      "note": "fb-miranda-crit-rate と同じ発の 1 発（胴体・会心なし・距離ボーナスなし）。格子で会心を決めるときの基準（C-0323 で確定した値。V-0217 の 0245-04 と同じ条件）"
     },
     {
       "id": "fb-miranda-crit",
@@ -85,7 +85,7 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "fb-miranda-body の会心（同じく格子の基準。V-0217 の 245-05 と同じ条件）"
+      "note": "fb-miranda-body の会心（同じく格子の基準。V-0217 の 0245-05 と同じ条件）"
     }
   ],
   "predicted": {

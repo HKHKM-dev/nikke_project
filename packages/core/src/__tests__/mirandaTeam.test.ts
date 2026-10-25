@@ -1,8 +1,8 @@
 // ミランダ（32）を含む編成: S1 の 2 つの命中率▲（味方全体 5.44%・SMG の味方 3.79%）が SMG の自分には和で区間の N に入り、
 // 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0186。持続の▲の入れ方は C-0170）、宝物版 S1 の攻撃力▲（C-0187）、
 // sim と calc の整合。V-0114。宝物版のバーストの対象（自分を除く上位 2 機、足りなければ自分。C-0322）と、宝物版 S2 の
-// フルバーストタイムの発動時の効果（C-0323・C-0324）を、録画 244・245 と同じ編成で見る（V-0216〜V-0218）。
-// 宝物版 S2 の 3 行目（自分を除く 1 位に「1 発間」のクリティカル確率▲。topAttack × durationShots。C-0334）は、録画 262 と
+// フルバーストタイムの発動時の効果（C-0323・C-0324）を、録画 0244・0245 と同じ編成で見る（V-0216〜V-0218）。
+// 宝物版 S2 の 3 行目（自分を除く 1 位に「1 発間」のクリティカル確率▲。topAttack × durationShots。C-0334）は、録画 0262 と
 // 同じ編成で見る（V-0229。plan/design-ranked-shot-duration.md）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -95,7 +95,7 @@ const TRIO: TeamInput = {
   controlledSlot: 2,
 };
 
-// V-0229 の撮影（録画 262）と同じ: TRIO で操作枠をミランダ（撃たない）に替えた編成
+// V-0229 の撮影（録画 0262）と同じ: TRIO で操作枠をミランダ（撃たない）に替えた編成
 const TRIO_LINE3: TeamInput = {
   slots: [fixedSlot(32, true, 3), fixedSlot(20, true), fixedSlot(308, true)],
   enemy: rangeEnemy,

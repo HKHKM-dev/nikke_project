@@ -57,7 +57,7 @@ describe('シンデレラの定義', () => {
         trigger: { count: 'fullChargeShot' },
         damageType: 'additional',
         ref: 4,
-        // 2026-10-20: 1 ヒット分のバーストゲージを溜める（C-0604。録画 480・481 の 1 回目のフルバースト）
+        // 2026-10-20: 1 ヒット分のバーストゲージを溜める（C-0604。録画 0480・0481 の 1 回目のフルバースト）
         gaugeHits: [0],
         claims: ['C-0583', 'C-0604'],
       },
@@ -104,7 +104,7 @@ describe('シンデレラの定義', () => {
 });
 
 describe.each([
-  ['シンデレラ単騎（録画 124 の編成）', team([CINDERELLA], false, 0)],
+  ['シンデレラ単騎（録画 0124 の編成）', team([CINDERELLA], false, 0)],
   ['ラム + デルタ + シンデレラ（段 6 の PR 2 の撮影の編成）', team([RAM, DELTA, CINDERELLA], true, 2)],
 ])('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);

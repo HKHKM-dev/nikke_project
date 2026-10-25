@@ -75,7 +75,7 @@ function intervalCounts(frames: number[]): Record<number, number> {
 /** リロードの秒 → 端数つきのフレーム数（Stage 24） */
 const R = (seconds: number): number => seconds / 0.017;
 describe('computeCadence (calibrated against recordings)', () => {
-  it('AR 720 rpm: 60 rounds span 290f with a 4f gap at intervals 11・21・31・41・51 (004-01・004-02・007-01・007-02)', () => {
+  it('AR 720 rpm: 60 rounds span 290f with a 4f gap at intervals 11・21・31・41・51 (0004-01・0004-02・0007-01・0007-02)', () => {
     const c = computeCadence(shot({}));
     expect(c.magazineFrames).toBe(290);
     expect(intervalCounts(c.shotFrames)).toEqual({ 4: 5, 5: 54 });
@@ -86,7 +86,7 @@ describe('computeCadence (calibrated against recordings)', () => {
     expect(c.reloadFrames).toBeCloseTo(R(1), 9);
   });
 
-  it('AR: the next magazine fires 82.8f after the last shot (reload 58.8f + 24f, C-0148; measured 82f in 004-01・073), 100.5f for 1.3 s (007-01: 100f)', () => {
+  it('AR: the next magazine fires 82.8f after the last shot (reload 58.8f + 24f, C-0148; measured 82f in 0004-01・073), 100.5f for 1.3 s (0007-01: 100f)', () => {
     const c = computeCadence(shot({}));
     expect(c.reloadFirstShotFrames).toBe(24);
     expect(c.reloadFrames + c.reloadFirstShotFrames).toBeCloseTo(R(1) + 24, 9);
@@ -98,14 +98,14 @@ describe('computeCadence (calibrated against recordings)', () => {
     expect(Math.abs(folkwang.reloadFrames + folkwang.reloadFirstShotFrames - 100)).toBeLessThanOrEqual(1);
   });
 
-  it('SMG 1440 rpm: 120 rounds span 292f with 65 gaps of 2f and 54 of 3f (005-01・005-02); next magazine after 82.8f (measured 83f; 098: 82.9f)', () => {
+  it('SMG 1440 rpm: 120 rounds span 292f with 65 gaps of 2f and 54 of 3f (0005-01・0005-02); next magazine after 82.8f (measured 83f; 098: 82.9f)', () => {
     const c = computeCadence(shot({ maxAmmo: 120, rateOfFire: 1440, endRateOfFire: 1440 }));
     expect(c.magazineFrames).toBe(292);
     expect(intervalCounts(c.shotFrames)).toEqual({ 2: 65, 3: 54 });
     expect(c.reloadFrames + c.reloadFirstShotFrames).toBeCloseTo(R(1) + 24, 9);
   });
 
-  it('SG 90 rpm: 39f and 40f gaps, 9 rounds span 314f (008-01: 314・315f)', () => {
+  it('SG 90 rpm: 39f and 40f gaps, 9 rounds span 314f (0008-01: 314・315f)', () => {
     const c = computeCadence(shot({ maxAmmo: 9, reloadTime: 1.86, rateOfFire: 90, endRateOfFire: 90 }));
     expect(c.magazineFrames).toBe(314);
     expect(intervalCounts(c.shotFrames)).toEqual({ 39: 6, 40: 2 });
@@ -144,17 +144,17 @@ describe('computeCadence (calibrated against recordings)', () => {
     expect(Math.abs(c.cycleFrames - 563)).toBeLessThanOrEqual(5);
   });
 
-  // 2026-09-24 の再確認（plan/design-mg-fire-rate.md）。録画 35（エマ AI）・41（クラウン AI）の残弾表示を 1 フレームずつ読んだ、
+  // 2026-09-24 の再確認（plan/design-mg-fire-rate.md）。録画 0035（エマ AI）・41（クラウン AI）の残弾表示を 1 フレームずつ読んだ、
   // 描画が軽い場面のマガジン。重い場面（描画落ち）と 3 分モードの的が狙えない区間はモデルに入れない（撮影環境の性質）
   describe('MG re-check against recordings 35 and 41 (light scenes)', () => {
-    it('300 rounds span 388f, inside the measured 386–391f (041-04)', () => {
+    it('300 rounds span 388f, inside the measured 386–391f (0041-04)', () => {
       const c = computeCadence(MG);
       expect(c.magazineFrames).toBe(388);
       expect(c.magazineFrames).toBeGreaterThanOrEqual(386);
       expect(c.magazineFrames).toBeLessThanOrEqual(391);
     });
 
-    it('spin-up has the measured shape and is at most 2f behind it (035-02・041-07; 4f before Stage 21-C3)', () => {
+    it('spin-up has the measured shape and is at most 2f behind it (0035-02・0041-07; 4f before Stage 21-C3)', () => {
       // k 発目（1 発目 = 0）の累積フレーム。軽い場面の 4 マガジンで同じ値。どの換算でも ±1f には入らない（V-0011）
       const measured: Record<number, number> = {
         1: 23,

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "0555-01",
+    "recording": "0555",
+    "use": "record",
+    "source": "V-0485",
+    "readAt": "2026-10-24",
+    "kind": "gauge",
+    "value": [1, 10, 19, 28, 36, 46, 55, 63, 72, 81, 90, 99, 108, 113],
+    "unit": "px",
+    "description": "デルタ（SR・操作・オート射撃・フルチャージ）単騎の通常敵戦で、2〜15 発目の直後の BURST バーの長さ（113px 中）。1 発目の後は 0px。当たったものは 0555-03",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode jumps・series",
+      "note": "発は f643 前後・723・806・888・970・1052・（リロード）1223・1305・1387・1469・1551・1633・（リロード）1804・1886・1968・2050。充填率 0.9・8.8・16.8・24.8・31.9・40.7・48.7・55.8・63.7・71.7・79.6・87.6・95.6・100%。発と発の間にスコープがバーに重なって値が揺れるフレームは除いた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [620, 2060]
+    }
+  },
+  {
+    "id": "0555-02",
+    "recording": "0555",
+    "use": "record",
+    "source": "V-0485",
+    "readAt": "2026-10-24",
+    "kind": "count",
+    "value": 16,
+    "unit": "発",
+    "description": "同じ録画で、BURST バーが消えた（本当の満タン）発の番号（1 発目から数える）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events・tools/captures/reticle-ammo.ts --mode series",
+      "note": "15 発目（f1968）で 113px、16 発目（f2050）でバーが消えた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [620, 2060]
+    }
+  },
+  {
+    "id": "0555-03",
+    "recording": "0555",
+    "use": "record",
+    "source": "V-0485",
+    "readAt": "2026-10-24",
+    "kind": "count",
+    "value": [14, 2, 0],
+    "unit": "発",
+    "description": "同じ録画の 16 発を、当たったもので分けた数 [通常の敵（TARGET の帯の無い敵）, コンテナ, ターゲット]。通常の敵の発は、ダメージの数字が敵の上に出て総ダメージの HUD が増える。コンテナの発は、爆発して HUD が増えない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/still.ts（発の 3f 前と 10f 後）",
+      "note": "通常の敵: 1〜9・11・12・14〜16 発目（HUD の増分は 208,626・260,783・156,470・104,313）。コンテナ: 10・13 発目（爆発。HUD は増えない）。ターゲットに当たった発は無い（TARGET の帯の出る敵を画で見つけていない）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [620, 2060]
+    }
+  },
+  {
+    "id": "0555-04",
+    "recording": "0555",
+    "use": "record",
+    "source": "V-0485",
+    "readAt": "2026-10-24",
+    "kind": "gauge",
+    "value": [9, 9, 9, 8, 10, 9, 8, 9, 9, 9],
+    "unit": "px",
+    "description": "同じ録画で、通常の敵に当たった発のうち、前後のバーがどちらも 1〜112px で読めるものの、1 発の伸び（発の順）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series",
+      "note": "3〜9・11・12・14 発目。ターゲットと同じ量なら 1 発 18px"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [620, 2060]
+    }
+  }
+]

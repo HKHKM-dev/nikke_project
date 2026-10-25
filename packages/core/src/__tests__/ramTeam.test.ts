@@ -48,10 +48,10 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 const RAM = 822;
 const REM = 820;
 const EMILIA = 821;
-// 録画 047 の編成（ラム + デルタ + 紅蓮BS）と、ラムが唯一の I で III が 2 体の編成（S1 の CT 短縮を入れると周期が変わる編成）は、
+// 録画 0047 の編成（ラム + デルタ + 紅蓮BS）と、ラムが唯一の I で III が 2 体の編成（S1 の CT 短縮を入れると周期が変わる編成）は、
 // 同じ部隊の味方がいない。レム・エミリア（ラムと同じ部隊 CE003）を入れた編成では、フルバースト終了のたびにラムの CT が縮む
 const TEAMS: Record<string, { input: TeamInput; ram: number; sameSquad: boolean }> = {
-  '録画 047 の編成（ラム + デルタ + 紅蓮BS）': {
+  '録画 0047 の編成（ラム + デルタ + 紅蓮BS）': {
     input: team([fixedSlot(RAM), fixedSlot(20), fixedSlot(225)], 2),
     ram: 0,
     sameSquad: false,

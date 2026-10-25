@@ -47,7 +47,7 @@ export type ClaimFile = {
    * 書けば records:close の等級の検査が注意にとどまり、claims.md の等級の候補の行に出る
    */
   gradeReason?: string;
-  /** 根拠。観測値はバッククォートで囲んだ ID で書く（`012-01`〜`012-04` のような範囲も可） */
+  /** 根拠。観測値はバッククォートで囲んだ ID で書く（`0012-01`〜`0012-04` のような範囲も可） */
   basis: string;
   /** モデル側（どのコード・データに入っているか。未実装・未反映ならそう書く） */
   model: string;
@@ -299,7 +299,7 @@ const OBSERVATION_ID = /`((?:\d{3,}|L-[A-Z]{1,3})-\d{2,})`/g;
 const OBSERVATION_RANGE = /`((?:\d{3,}|L-[A-Z]{1,3}))-(\d{2,})`\s*〜\s*`\1-(\d{2,})`/g;
 const CLAIM_ID = /^C-(\d{4,})$/;
 
-/** 根拠の文から、バッククォートで囲んだ観測値の ID を拾う。「`012-01`〜`012-04`」は 012-01〜012-04 に展開する */
+/** 根拠の文から、バッククォートで囲んだ観測値の ID を拾う。「`0012-01`〜`0012-04`」は 0012-01〜0012-04 に展開する */
 export function observationIdsIn(text: string): string[] {
   const ids: string[] = [];
   let rest = text;
@@ -467,7 +467,7 @@ const CLAIMS_HEADER = `# 結論の台帳
 - 撮る前の予測は確定の条件にしない。過去の録画の読み直しでも確定にできる（[design-investigation-review.md](design-investigation-review.md) 1 節。2026-10-10 のオーナーの決定）。「決めるのに使った録画」は、仮説・値・読み方を決めるのに使った録画（結論の \`decidedOn\`）。機械の等級の候補は、反復実測の再現にこれらの録画を数えない。
 - 「人の判断」の印は、機械の確定の条件（比べる指標・最小構成の警告・許容外・合う仮説が 1 つ）の一部をオーナーの判断で上書きして確定にした結論（結論の \`judgment\`。[design-investigation-review.md](design-investigation-review.md) 3 節）。2026-10-11 より前の判断は、根拠の文に書いてあり、印が付かないことがある。
 - 訂正は、古い結論を消さずに状態を \`棄却\` にし、新しい結論の「置き換え」に古い ID を書く。ID は変えない・使い回さない。
-- 根拠の \`010-01\` などは観測値の ID（\`records/observations/<録画 id>.json\`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
+- 根拠の \`0010-01\` などは観測値の ID（\`records/observations/<録画 id>.json\`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）`;
 
 /**

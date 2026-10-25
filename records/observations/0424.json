@@ -1,0 +1,445 @@
+[
+  {
+    "id": "0424-01",
+    "recording": "0424",
+    "kind": "rate",
+    "use": "record",
+    "unit": "割合",
+    "value": [0.2179, 0.4296, 0.0536, 0.1827, 0.4964, 0],
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの、的のジャンプで分けた区間（中近 → 近 → 遠 → 中遠 → 近 → 短い遠）ごとのコア命中率（コアのヒット ÷ 当たったヒット。区間の頭を除かない全部のヒット）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "hud-jumps@2 のキャッシュの増分を、胴体 9,972.6445（モデルの 1 ヒット。距離ボーナスなし・非会心）×（1 + コア 1 + 会心 0.5 + 距離ボーナス 0.3）の 8 通りと、攻撃力▲の状態の胴体 10,880.55（増分から測った値。下の注）の 8 通りの、1 ヒットごとに四捨五入した値の和で、差 0 で読んだ（使い捨てのスクリプト scratchpad/read-b/cores.ts）。前のフレームも読めた増分は 1 ヒット、読めなかった後の増分は（読めなかったフレーム数 ÷ 5）ヒットまで。1 つの増分のヒットは同じ距離ボーナス。ヒットの数・コアの数・距離ボーナスが一通りに決まらない増分は落とした。攻撃力▲の状態: 的が操作キャラを攻撃する（画面が赤くなる）と I-DOLL・サンの S2（攻撃を受けた時、確率で攻撃力▲）が起き、1 ヒットの値が約 1.091 倍になる区間が戦闘の後半に出る（スキル定義は「被弾を扱わないので起きない」としている）。増分 1471 個のうち分解できた 1462・決まらず落とした 8・格子に乗らず落とした 1。区間ごとのコア / ヒットは 51 / 234・122 / 284・17 / 317・55 / 301・136 / 274・0 / 61、距離ボーナスの乗ったヒットは 234・0・0・301・0・0、会心の割合は 0.154・0.173・0.170・0.150・0.164・0.115。区間の切れ目（ジャンプの前の最後の増分）は f2324・f4360・f6794・f8937・f10889（区間は 中近 → 近 → 遠 → 中遠 → 近 → 短い遠。距離ボーナスの替わり目と、aim.ts の的の足元の y の替わり目で確かめた）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [853, 11432]
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-02",
+    "recording": "0424",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.4624,
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの近のコア命中率（近の 2 区間を合わせた、コア 258 ÷ 当たったヒット 558。区間の頭を除かない全部のヒット）。表（range-bigarms の AR）と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "0424-01 と同じ読み。近の着地点は 2 区間目 A（幅 372px）・5 区間目 B（幅 425px）。"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [2467, 10889]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "tolerance": {
+        "abs": 0.0418
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "B"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-03",
+    "recording": "0424",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.2179,
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの中近のコア命中率（コア 51 ÷ 当たったヒット 234。区間の頭を除かない全部のヒット）。表（range-bigarms の AR）と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "0424-01 と同じ読み。"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [853, 2324]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.0549
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "B"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-04",
+    "recording": "0424",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.1827,
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの中遠のコア命中率（コア 55 ÷ 当たったヒット 301。区間の頭を除かない全部のヒット）。表（range-bigarms の AR）と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "0424-01 と同じ読み。中遠の着地点は B（足元の y 572）。"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [6917, 8937]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7800
+      },
+      "tolerance": {
+        "abs": 0.0375
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "B"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-05",
+    "recording": "0424",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.045,
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの遠のコア命中率（遠の 2 区間を合わせた、コア 17 ÷ 当たったヒット 378。区間の頭を除かない全部のヒット）。表（range-bigarms の AR）と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "0424-01 と同じ読み。遠の着地点は 3 区間目 B（足元 534）・6 区間目 B（足元 534）。"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [4608, 11432]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5500
+      },
+      "tolerance": {
+        "abs": 0.0263
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "B"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-06",
+    "recording": "0424",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 1,
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの近の完全なマガジンの弾丸命中率 = 当たったヒット 180 ÷ 撃った数 180（3 本 × 60）。表と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "0424-01 と同じ分け方。完全なマガジンは、増分の間が 40f 以上空いた所で切った連射のうち、ジャンプに接しない（前後の空きがリロード）・決まらない増分を含まない・区間をまたがないもの。マガジンごとの当たった数は 60（f3668〜）・60（f9461〜）・60（f10266〜）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [2467, 10889]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "tolerance": {
+        "abs": 0.0074
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "B"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-07",
+    "recording": "0424",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.9944,
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの中近の完全なマガジンの弾丸命中率 = 当たったヒット 179 ÷ 撃った数 180（3 本 × 60）。表と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "0424-01 と同じ分け方。完全なマガジンは、増分の間が 40f 以上空いた所で切った連射のうち、ジャンプに接しない（前後の空きがリロード）・決まらない増分を含まない・区間をまたがないもの。マガジンごとの当たった数は 60（f853〜）・60（f1255〜）・59（f1662〜）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [853, 2324]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.0091
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "B"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-08",
+    "recording": "0424",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.9917,
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの中遠の完全なマガジンの弾丸命中率 = 当たったヒット 238 ÷ 撃った数 240（4 本 × 60）。表と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "0424-01 と同じ分け方。完全なマガジンは、増分の間が 40f 以上空いた所で切った連射のうち、ジャンプに接しない（前後の空きがリロード）・決まらない増分を含まない・区間をまたがないもの。マガジンごとの当たった数は 60（f7319〜）・60（f7721〜）・59（f8123〜）・59（f8525〜）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [6917, 8937]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7800
+      },
+      "tolerance": {
+        "abs": 0.0072
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "B"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-09",
+    "recording": "0424",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.9917,
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの遠の完全なマガジンの弾丸命中率 = 当たったヒット 119 ÷ 撃った数 120（2 本 × 60）。表と比べる。幅は表の値の 2 項分布の 2σ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（hud-jumps@2 のキャッシュ）+ 使い捨てのスクリプト",
+      "note": "0424-01 と同じ分け方。完全なマガジンは、増分の間が 40f 以上空いた所で切った連射のうち、ジャンプに接しない（前後の空きがリロード）・決まらない増分を含まない・区間をまたがないもの。マガジンごとの当たった数は 59（f5009〜）・60（f5411〜）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [4608, 11432]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5500
+      },
+      "tolerance": {
+        "abs": 0.0306
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "B"
+      }
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-10",
+    "recording": "0424",
+    "kind": "position",
+    "use": "record",
+    "unit": "px",
+    "value": [572, 534, 534],
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの、中遠（4 区間目）・遠（3 区間目）・短い遠（6 区間目）の的の足元の y（1920×1080。外接矩形の下端の中央値）。着地点は 中遠 B・遠 B・短い遠 B",
+    "method": {
+      "tool": "tools/captures/aim.ts --step 5（f0〜12300）+ 使い捨てのスクリプト（scratchpad/read-b/aimseg2.ts）",
+      "note": "中遠は区間の頭 150f と尾 30f を除き fx 0.45 未満のコマの中央値（C-0044。V-0386 の境目は 568〜576 が B、558〜565 が C、579 以上が A）。遠は V-0228 の読み方の 3 のコマの選び方（tgt_clipped 0・fx 0.3 未満・高さ 110〜190・幅 80〜170・足元 515〜552）で、540 以上が遠 A、536 以下が遠 B（C-0477）。区間の切れ目（ジャンプの前の最後の増分）は f2324・f4360・f6794・f8937・f10889（区間は 中近 → 近 → 遠 → 中遠 → 近 → 短い遠。距離ボーナスの替わり目と、aim.ts の的の足元の y の替わり目で確かめた）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": "all",
+      "source": "target",
+      "frames": [853, 11432]
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-11",
+    "recording": "0424",
+    "kind": "size",
+    "use": "record",
+    "unit": "px",
+    "value": [372, 425],
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの近の 2 区間（2・5 区間目）の、照準の高さ ±30px での的の幅（的のふだんの姿勢のコマの中央値）。近の着地点（C-0155）は A・B",
+    "method": {
+      "tool": "tools/captures/aim.ts --step 5 + 使い捨てのスクリプト（scratchpad/read-b/aimseg2.ts）",
+      "note": "near-landing レシピと同じ規則（的の上端の y が 250 以上・fx 0.45 未満のコマの tgt_band_w の中央値。近 A は 356〜372px、近 B は 409px 以上、外は決めない）を、5f おきの測定で区間の全部に当てた（レシピは 20f おきで、SG 単騎の区間の求め方を使う）"
+    },
+    "source": "V-0423",
+    "scope": {
+      "slot": "all",
+      "source": "target",
+      "frames": [2467, 10889]
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-12",
+    "recording": "0424",
+    "kind": "count",
+    "use": "record",
+    "unit": "コマ",
+    "value": [1, 23, 31, 0, 37, 0, 0, 33, 31, 0, 7, 0],
+    "description": "I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モードの、区間（中近 → 近 → 遠 → 中遠 → 近 → 短い遠）ごとの 60f ごとの照準の色（白・水色の順に区間ごとに 2 つずつ）",
+    "method": {
+      "tool": "tools/captures/aim.ts --step 5 の aim_color（60 の倍数のフレームを取った）+ 使い捨てのスクリプト（scratchpad/read-b/aimseg2.ts・minority.ts）",
+      "note": "区間はトリガーの最初と最後（f853〜2324・f2467〜4360・f4608〜6794・f6917〜8937・f9058〜10889・f11010〜11432）。色の無い・unknown のコマは数えていない（0・0・0・0・0・0 コマ）。5f ごとの全部のコマでは 6/288・379/0・437/0・4/400・359/0・84/0（白/水色）。距離ボーナスの有無は同じ区間の増分の格子（0424-01 か smg-cores の注記）。少ないほうの色のコマの多くはリロードの間（前の増分から 40f 以上空いた所）"
+    },
+    "source": "V-0422",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [853, 11432]
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-13",
+    "recording": "0424",
+    "kind": "timing",
+    "use": "record",
+    "unit": "秒",
+    "value": [26.09, 62.47, 102.08, 138.47, 171.61],
+    "description": "的のジャンプで的が浮いた（足が地面を離れた）最初のフレームの、戦闘開始から数えたゲーム内の秒（I-DOLL・サン（AR）単騎・AUTO 射撃 ON・オートバースト OFF・スペック固定 ON・灼熱 BigArms・3 分モード。1〜5 回目）",
+    "method": {
+      "tool": "timer.ts --mode changes・--mode ticks・aim.ts（的の外接矩形）",
+      "note": "戦闘開始 f841（残り時間の変わり目が +320f・+89f と続いた所の後のほう。0371-14 と同じ）。浮いたフレームは 2377・4517・6848・8989・10939 で、timer.ts --mode ticks（止まりを除いたティック × 0.017 秒）で秒にした。戦闘の終わり（残り時間 00:00 の後に画面が切り替わる変わり目）は f11438（戦闘開始から 180.08 秒。最後の変わり目の前の変わり目のティックに、そこからのフレーム数 × 0.017 秒を足した）で、5 回目は終わりの 8.47 秒前。読み方: 各回の停止の前の最後の増分 L の L−10〜L+160 を aim.ts で 1f ごとに測り（背景は f1000〜11000 の 400f ごと）、的の上端の y が数フレーム止まった後に 40px 以上一度に上がり、下端（足元）も 30px 以上上がった最初のフレームを浮いたフレームとした（0371-14 の「下端が 30px 以上上がって 2f 続いた」と同じ所。近の的は下端が探す範囲の端 702 に掛かるので、上端の跳びで決めた）。立ち上がり（上端が段階的に上がる）や、爆発・数字の重なりで外接矩形が一瞬ずれたコマを拾った回は、画を 1〜3f おきに並べて足が地面を離れたコマを確かめた"
+    },
+    "source": "V-0427",
+    "scope": {
+      "slot": "all",
+      "source": "target"
+    },
+    "readAt": "2026-10-11"
+  },
+  {
+    "id": "0424-14",
+    "recording": "0424",
+    "source": "V-0429",
+    "readAt": "2026-10-12",
+    "kind": "timing",
+    "use": "record",
+    "value": [2858, 3493, 4277, 4862, 5584, 5886, 6305, 7742, 8415, 9066, 9663, 10023, 10853],
+    "unit": "f",
+    "description": "I-DOLL・サン単騎・AUTO の 3 分モードで、敵の攻撃の被弾の赤い画面の始まりの動画のフレーム（戦闘開始 f841 から戦闘の終わりまでの全部）。ゲーム内の秒は 34.27・45.07・58.40・68.34・80.61・85.74・92.86・117.29・128.71・139.78・149.93・156.05・170.15",
+    "method": {
+      "tool": "ffmpeg の縮小フレーム（scratchpad/scan.ts）+ 使い捨てのスクリプト（scratchpad/an.ts・sun2.ts）、tools/captures/timer-ticks.ts、hud-jumps@2 のキャッシュ",
+      "note": "画面を 32×18 に縮めた各フレームの左右の端 3 列の (R − G) の平均が、その 180〜30f 前の中央値より 6 以上高い区間のうち、長さ 85〜115f・高さ 40 以上のもの（0243-11 と同じ読み方。243 で 0243-11 の 3 つと一致した）。ゲーム内の秒は timer-ticks.ts の gameTicksAt。戦闘の終わりの直前の約 30f・高さ約 20 の弱い赤（どの録画にも同じ時刻に出る）は数えない。f7717 の前後は画で、赤い画面と敵の光線を確かめた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [841, 11420]
+    }
+  },
+  {
+    "id": "0424-15",
+    "recording": "0424",
+    "source": "V-0429",
+    "readAt": "2026-10-12",
+    "kind": "timing",
+    "use": "record",
+    "value": [3493, 4277, 4862, 5584, 7742, 9066, 10023],
+    "unit": "f",
+    "description": "同じ録画で、赤い画面（0424-14）のうち、その始まりの −10〜+130f に S2 の攻撃力▲（9.09%）の付いた 1 ヒットが出た（▲の付いていない区間から入った）ものの始まり。その 1 ヒット目は 3516・4305・4864・5583・7766・9064・10045。▲の区間の中で始まった赤い画面（5886）は、起きたかを見分けられない。▲の付いたヒットは、どれもこれらの赤い画面の後の約 300f（5 秒）の中にある",
+    "method": {
+      "tool": "ffmpeg の縮小フレーム（scratchpad/scan.ts）+ 使い捨てのスクリプト（scratchpad/an.ts・sun2.ts）、tools/captures/timer-ticks.ts、hud-jumps@2 のキャッシュ",
+      "note": "hud-jumps@2 のキャッシュの前のフレームも読めた増分（1 ヒット）を、▲なしの胴体 9,972.6445 と▲ありの 10,880.55（0423-01 の注記）の（1 + コア 1 + 会心 0.5 + 距離ボーナス 0.3）の 8 通りずつの格子で分けた（±1）。赤い画面の検出は約 2f 遅れることがあるので窓の始まりを −10f にした。▲の区間の終わり（▲の付いた最後のヒット）は、起きた赤い画面の始まりから 253〜293f（リロードで切れる回を含む）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [841, 11420]
+    }
+  }
+]

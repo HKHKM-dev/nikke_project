@@ -175,7 +175,7 @@ describe('runFirstPass: firing windows (1.1)', () => {
   };
 
   it('a window opened by a burst at frame f is not seen by the shot at f, only from f + 1', () => {
-    const character = synthetic(1, 'Step3', 40, sr, ['100', '5']);
+    const character = synthetic(1, 'Step3', 40, sr, ['0100', '5']);
     const def = defWith(1, [
       { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'chargeSpeed', ref: 1, durationRef: 2 },
     ]);

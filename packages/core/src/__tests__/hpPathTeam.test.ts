@@ -186,7 +186,7 @@ describe('自分の HP の割合の条件（selfHp）', () => {
 });
 
 describe.each([
-  ['ラプラス：アルティメットヒーロー単騎（録画 121 の編成）', team([fixedSlot(LAPLACE)])],
+  ['ラプラス：アルティメットヒーロー単騎（録画 0121 の編成）', team([fixedSlot(LAPLACE)])],
   ['ノワール + デルタ（HP の割合 0.5）', team([fixedSlot(NOIR, { hpRatio: 0.5 }), fixedSlot(DELTA)], true)],
 ])('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);

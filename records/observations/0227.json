@@ -1,0 +1,112 @@
+[
+  {
+    "id": "0227-01",
+    "recording": "0227",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11554,
+    "description": "エマ：TU（操作）+ ウンファ：TU（AI）の、戦闘開始から 890〜908f のエマのコアの会心でない 1 ヒット",
+    "source": "V-0210",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は f812（timer.ts の +319f の次の +90f の変わり目）。この間の会心でないコアの増分はすべて 11,554（▲ありの系列。▲なしなら 11,121）。会心は 15,801"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0227-02",
+    "recording": "0227",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11554,
+    "description": "エマ：TU（操作）+ ウンファ：TU（AI）の、戦闘開始から 1212〜1260f のエマのコアの会心でない 1 ヒット",
+    "source": "V-0210",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1179〜1209f は胴体（5,777）と胴体の会心（10,024）で、どちらも▲ありの系列。会心でないコアは 1212f から"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0227-03",
+    "recording": "0227",
+    "kind": "count",
+    "use": "record",
+    "value": 0,
+    "description": "エマ：TU（操作）+ ウンファ：TU（AI）で、戦闘開始から終わりまでのエマのヒットのうち、▲なしの系列（× 1.039 の乗らない値）に乗ったものの数。▲ありの系列は 4,874 増分",
+    "source": "V-0210",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・使い捨てのスクリプト",
+      "note": "増分を、▲なしの胴体 5,560.25 と▲ありの胴体 5,777（× 1.039）の 2 つの格子（1 ヒット = 胴体 ×(1 + 1.0×コア + 0.3×距離ボーナス + 0.7351×会心)。会心の項は S2 の効果 1 の▲込み。C-0266）に当て、どちらか一方にだけ乗る増分（同じ値の 2 ヒットの和を含む）で分けた。ウンファの SR の発（数十万の増分）とそれが乗った増分は、どちらの格子にも乗らないので数えていない。モデル（A1）の窓が 1 フレーム切れる所（1764・4117・6470・8823f）の近くでも、6470・8823f のヒットは▲あり（動画とゲーム内のフレームの対応に数フレームの幅があるので、切れ目の有無は判定しない）"
+    }
+  },
+  {
+    "recording": "0227",
+    "source": "V-0469",
+    "readAt": "2026-10-20",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.2461,
+    "description": "エマ：TU（操作）+ ウンファ：TU（AI）の、エマの通常攻撃の 1 ヒットのうち会心の割合（1,191 ÷ 4,840）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。録画の置き場所のキャッシュ hud-jumps@2）と使い捨てのスクリプト",
+      "note": "前のフレームも読めた増分（gap 1）を、エマの 1 ヒットの格子（胴体 5,777（環境コントロールは切れ目なく付く。C-0306）× (1 + 1.0 × コア + 0.3 × 距離ボーナス + 0.7351 × 会心)）に ±2 で当て、1 つの値にだけ乗ったものを数えた（ウンファの SR の発と、それが乗った増分は乗らない）。標準誤差 0.0062。単騎の 226（0226-06）との差は +0.0813（ウンファの S2 の▲ 8.16% と合う。付かないなら 0）。許容 ±0.03"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "id": "0227-04"
+  }
+]

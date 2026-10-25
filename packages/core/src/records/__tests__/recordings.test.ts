@@ -38,20 +38,22 @@ describe('records/recordings', () => {
     expect(validateRecordings(file, knownRids)).toEqual([]);
   });
 
-  it('allows gaps and more than 3 digits, but not duplicates (Stage 20-A)', () => {
-    expect(validateRecordings({ recordings: [first, numbered('003'), numbered('1000')] }, knownRids)).toEqual([]);
-    expect(validateRecordings({ recordings: [numbered('12')] }, knownRids)).toContainEqual('12: id は 3 桁以上の数字');
-    expect(validateRecordings({ recordings: [first, numbered('001')] }, knownRids)).toContainEqual(
-      '001: id が重複している',
+  it('allows gaps and more than 4 digits, but not duplicates (Stage 20-A・plan/design-recording-id-4digit.md)', () => {
+    expect(validateRecordings({ recordings: [first, numbered('0003'), numbered('10000')] }, knownRids)).toEqual([]);
+    expect(validateRecordings({ recordings: [numbered('123')] }, knownRids)).toContainEqual(
+      '123: id は 4 桁以上の数字',
+    );
+    expect(validateRecordings({ recordings: [first, numbered('0001')] }, knownRids)).toContainEqual(
+      '0001: id が重複している',
     );
   });
 
   it('sorts the project recordings by number and then the legacy ones by id (Stage 20-C)', () => {
     const legacy = file.recordings.filter(isLegacy);
-    const shuffled: RecordingEntry[] = [numbered('1000'), ...[...legacy].reverse(), numbered('003'), first];
+    const shuffled: RecordingEntry[] = [numbered('1000'), ...[...legacy].reverse(), numbered('0003'), first];
     expect(sortRecordings(shuffled).map((e) => e.id)).toEqual([
       first.id,
-      '003',
+      '0003',
       '1000',
       ...legacy.map((e) => e.id).sort((a, b) => a.localeCompare(b)),
     ]);
@@ -73,10 +75,10 @@ describe('records/recordings', () => {
       },
       knownRids,
     );
-    expect(errors.filter((e) => e.startsWith('002:'))).toEqual([]);
-    expect(errors).toContainEqual('001: 枠は 1 から枠順に並べる（2 番目が 3）');
-    expect(errors).toContainEqual('001: rid 999999 のキャラのデータが無い');
-    expect(errors).toContainEqual('001: 操作した枠が 2 つ以上ある');
+    expect(errors.filter((e) => e.startsWith('0002:'))).toEqual([]);
+    expect(errors).toContainEqual('0001: 枠は 1 から枠順に並べる（2 番目が 3）');
+    expect(errors).toContainEqual('0001: rid 999999 のキャラのデータが無い');
+    expect(errors).toContainEqual('0001: 操作した枠が 2 つ以上ある');
   });
 
   it('accepts a build only on fixed-spec OFF recordings and checks its shape (Stage 13 の残り)', () => {
@@ -93,7 +95,7 @@ describe('records/recordings', () => {
           { ...first, fixedSpec: true, team: [{ ...member, build: { attack: 400000 } }] },
           {
             ...first,
-            id: '002',
+            id: '0002',
             fixedSpec: false,
             // 型の外の値（JSON から読んだ壊れた育成）
             team: [{ ...member, build: { attack: 0.5, skillLevels: { skill3: 1 } } as unknown as RecordingBuild }],
@@ -102,9 +104,9 @@ describe('records/recordings', () => {
       },
       knownRids,
     );
-    expect(errors).toContainEqual('001: 育成（build）はスペック固定 OFF の録画にだけ書く');
-    expect(errors).toContainEqual('002 枠 1: build.attack は正の整数');
-    expect(errors).toContainEqual('002 枠 1: build.skillLevels の skill3 はスロットでない');
+    expect(errors).toContainEqual('0001: 育成（build）はスペック固定 OFF の録画にだけ書く');
+    expect(errors).toContainEqual('0002 枠 1: build.attack は正の整数');
+    expect(errors).toContainEqual('0002 枠 1: build.skillLevels の skill3 はスロットでない');
   });
 
   it('checks the shape of the Drive backup record (plan/design-workflow-simplification.md 2 節)', () => {

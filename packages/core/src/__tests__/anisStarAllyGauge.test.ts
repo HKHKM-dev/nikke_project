@@ -42,7 +42,7 @@ function fixedSlot(id: number): TeamSlotInput {
   };
 }
 
-// V-0482 の撮り方 1（録画 545・546）: アニス：スター（AI）+ クラウン（操作・AUTO）+ デルタ（AI）
+// V-0482 の撮り方 1（録画 0545・0546）: アニス：スター（AI）+ クラウン（操作・AUTO）+ デルタ（AI）
 const TEAM: TeamInput = {
   slots: [fixedSlot(17), fixedSlot(330), fixedSlot(20)],
   enemy: rangeEnemy,
@@ -87,7 +87,7 @@ describe('アニス：スター S1 の味方のゲージ（allyGaugeAdd）', () 
   it('adds 840 per ally gauge event before her first landing and 1,680 from it (C-0246・C-0620)', () => {
     const expected = firstFullFrame(TEAM, (i, f) => (i === 0 ? 0 : f >= landing ? 1_680 : 840));
     expect(plan.schedule!.gaugeFullFrames[0]).toBe(expected);
-    // ×1.06 のときより早く満タンになる（V-0482 の録画 545・546 は戦闘開始から 314・315f）
+    // ×1.06 のときより早く満タンになる（V-0482 の録画 0545・0546 は戦闘開始から 314・315f）
     expect(expected).toBeLessThan(firstFullFrame(TEAM, (i) => (i === 0 ? 0 : 0.06 * 1_000))!);
     expect(plan.schedule!.gaugeFullFrames[0]).toBe(316);
   });

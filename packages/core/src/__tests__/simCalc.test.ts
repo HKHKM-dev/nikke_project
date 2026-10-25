@@ -92,7 +92,7 @@ const team: TeamSlotInput[] = [
       fullChargeDamage: 2.5,
     },
     'Step3',
-    '200',
+    '0200',
     '10',
   ),
   slot(
@@ -108,7 +108,7 @@ const team: TeamSlotInput[] = [
       fullChargeDamage: 3.5,
     },
     'Step2',
-    '150',
+    '0150',
   ),
   slot(
     5,
@@ -242,7 +242,7 @@ const timedTeam: TeamSlotInput[] = [
       fullChargeDamage: 3.5,
     },
     'Step2',
-    '150',
+    '0150',
     null,
     alliesBuff,
   ),

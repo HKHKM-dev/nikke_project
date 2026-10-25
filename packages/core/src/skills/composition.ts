@@ -51,7 +51,7 @@ export type BurstStepCharacter = Pick<CharacterData, 'burstStep'> & {
 
 /**
  * 基本バースト段階が step の味方に数えるか。バーストの後に同じ段階へ再突入するキャラ（burstSkill.nextStep が burstStep と同じ。
- * アビスタなど）は数えない（C-0555。ゲーム内の用語のツールチップと録画 460）。全段階（AllStep）のキャラは burstStep が
+ * アビスタなど）は数えない（C-0555。ゲーム内の用語のツールチップと録画 0460）。全段階（AllStep）のキャラは burstStep が
  * Step1〜Step3 のどれとも一致しないので数えない（C-0203）
  */
 export function countsAsBurstStep(c: BurstStepCharacter, step: string): boolean {

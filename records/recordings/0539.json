@@ -1,0 +1,41 @@
+{
+  "id": "0539",
+  "date": "2026-10-23",
+  "folder": "range",
+  "file": "20261023-0539_sr+sr+mg_ram+delta+yukiko_wind_yukiko-auto.mp4",
+  "original": "2026-10-23_23-02-09.mp4",
+  "durationSec": 345.3,
+  "frames": 20718,
+  "fps": 60,
+  "sizeMB": 416.2,
+  "sha256": "37d859f7888d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 871,
+      "name": "雪子",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0475。ラム（AI）・デルタ（AI）・雪子（操作・AUTO 射撃 ON）。オートバースト ON。出撃画面（風圧タブ・3 分・スペック固定）と最後の戦闘履歴（キャラ名）が写っている。戦闘の後、結果の画面のまま約 150 秒撮り続けている（f12000 ごろより後に戦闘は無い）"
+}

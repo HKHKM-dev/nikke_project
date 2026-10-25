@@ -89,7 +89,7 @@
         "events": ["range-3min-jump"]
       },
       "note": "対照: どの効果の窓の外（20 秒ほど）のエマの 1 ヒット（コア・会心なし・距離ボーナスなし）。V-0209 の hit-out-window と同じ条件",
-      "observations": ["293-07"]
+      "observations": ["0293-07"]
     },
     {
       "id": "hit-env-only",
@@ -107,7 +107,7 @@
         "events": ["range-3min-jump"]
       },
       "note": "環境コントロールだけ（60〜70 秒の窓。バーストの窓の外）。× 1.039（C-0305。同じ録画での確かめ）",
-      "observations": ["293-06"]
+      "observations": ["0293-06"]
     },
     {
       "id": "hit-burst-only",
@@ -142,7 +142,7 @@
         "events": ["range-3min-jump"]
       },
       "note": "判定の指標。環境コントロールの窓（30〜40 秒）の中で撃ったバースト（32.33 秒）の後、40 秒より前。H1 は攻撃力▲ × (1 + 3.9% + 3.9%)、H0 は攻撃力▲ × 1.039",
-      "observations": ["293-02"]
+      "observations": ["0293-02"]
     },
     {
       "id": "hit-after-env",
@@ -160,7 +160,7 @@
         "events": ["range-3min-jump"]
       },
       "note": "環境コントロールの窓の終わり（40 秒）からバーストの窓の終わり（42.33 秒）まで。H0・H1 とも攻撃力▲だけ（強化は環境コントロールの窓の外では効かない読み）",
-      "observations": ["293-03"]
+      "observations": ["0293-03"]
     },
     {
       "id": "hit-burst3",

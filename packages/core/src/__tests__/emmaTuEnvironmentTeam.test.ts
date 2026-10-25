@@ -58,7 +58,7 @@ function environmentWindows(input: TeamInput) {
 }
 
 describe('環境コントロールの窓', () => {
-  it('opens at battle start and every 30 s after, for 10 s each, without Eunhwa: TU (録画 226 の編成。C-0305)', () => {
+  it('opens at battle start and every 30 s after, for 10 s each, without Eunhwa: TU (録画 0226 の編成。C-0305)', () => {
     const windows = environmentWindows(team([fixedSlot(EMMA)], 0, false));
     expect(windows.map((w) => w.start)).toEqual(
       // 30 秒ごとの周期は発動のたびに数え直す（k × ceil(30 ÷ 0.017)。C-0502）
@@ -70,7 +70,7 @@ describe('環境コントロールの窓', () => {
     }
   });
 
-  it('opens every 10 s with Eunhwa: TU, so it covers the whole battle but for rounding gaps of 1 frame (録画 227 の編成。C-0306)', () => {
+  it('opens every 10 s with Eunhwa: TU, so it covers the whole battle but for rounding gaps of 1 frame (録画 0227 の編成。C-0306)', () => {
     const input = team([fixedSlot(EMMA), fixedSlot(EUNHWA)], 0, false);
     const windows = environmentWindows(input);
     expect(windows[0]!.start).toBe(0);
@@ -109,8 +109,8 @@ describe('環境コントロールの持続回復（C-0578）', () => {
 });
 
 const TEAMS: Record<string, TeamInput> = {
-  '録画 226 の編成（エマ：TU 単騎・バーストなし）': team([fixedSlot(EMMA)], 0, false),
-  '録画 227 の編成（エマ：TU + ウンファ：TU・バーストなし）': team([fixedSlot(EMMA), fixedSlot(EUNHWA)], 0, false),
+  '録画 0226 の編成（エマ：TU 単騎・バーストなし）': team([fixedSlot(EMMA)], 0, false),
+  '録画 0227 の編成（エマ：TU + ウンファ：TU・バーストなし）': team([fixedSlot(EMMA), fixedSlot(EUNHWA)], 0, false),
   'F5 の編成（エマ：TU + アスカ・バーストなし）': team([fixedSlot(EMMA), fixedSlot(ASUKA)], 1, false),
   '実戦寄り（エマ：TU + ウンファ：TU + クラウン + アリス + リター）': team(
     [fixedSlot(EMMA), fixedSlot(EUNHWA), fixedSlot(330), fixedSlot(191), fixedSlot(82)],

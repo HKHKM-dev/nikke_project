@@ -1,6 +1,6 @@
 // Stage 11 モダニア編: モダニア（260）を含む編成の窓の一致・射撃・sim と calc の整合（plan/design-stage11-modernia.md 7.2〜7.5 節）。
-// 録画 44（I-DOLL・フラワー + デルタ + モダニア（操作））の予測と実測値の回帰、実戦寄りの編成（リター + クラウン + モダニア + アリス + アドミ）。
-// 実測値は plan/verification.md Stage 11 モダニア節（録画 44・45、2026-09-24）。
+// 録画 0044（I-DOLL・フラワー + デルタ + モダニア（操作））の予測と実測値の回帰、実戦寄りの編成（リター + クラウン + モダニア + アリス + アドミ）。
+// 実測値は plan/verification.md Stage 11 モダニア節（録画 0044・0045、2026-09-24）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -52,7 +52,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 const REC44 = team([fixedSlot(304), fixedSlot(20), fixedSlot(260)], 2);
 const PRACTICAL = team([fixedSlot(82), fixedSlot(330), fixedSlot(260), fixedSlot(191), fixedSlot(172)], 2);
 const TEAMS: Record<string, TeamInput> = {
-  '録画 44（I-DOLL・フラワー + デルタ + モダニア）': REC44,
+  '録画 0044（I-DOLL・フラワー + デルタ + モダニア）': REC44,
   '実戦寄り（リター + クラウン + モダニア + アリス + アドミ）': PRACTICAL,
 };
 
@@ -60,7 +60,7 @@ function segmentAt(result: TeamResult, slotIndex: number, frame: number) {
   return result.slots[slotIndex]!.segments.find((g) => g.ranges.some((r) => r.start <= frame && frame < r.end))!;
 }
 
-describe('録画 44 の予測（7.5）', () => {
+describe('録画 0044 の予測（7.5）', () => {
   const plan = planTeamRun(REC44);
   const calc = computeTeamDamage(REC44);
   const fb = plan.schedule!.fullBurstWindows;
@@ -75,7 +75,7 @@ describe('録画 44 の予測（7.5）', () => {
     expect(fb.every((w) => w.burstUsers.includes(2))).toBe(true);
     // Stage 21-C3 で 2〜3 回目以降が 1〜3f 早まった（rpm の蓄積をゲーム内の時計にした。21-B までは 724・3634・6544・9454）。
     // C-0073 で段の間隔を 20f → 29f にして、724・3633・6542・9451 から 27〜32f 遅くなった。
-    // V-0028 で 1 発のゲージを ×1.2 → ×1.0 にして、751・3661・6572・9483 から遅くなった。録画 44 の 1 回目のフルバーストは
+    // V-0028 で 1 発のゲージを ×1.2 → ×1.0 にして、751・3661・6572・9483 から遅くなった。録画 0044 の 1 回目のフルバーストは
     // 約 499f で、×1.2 でもモデルが遅かった。V-0035 で S1 の追加ダメージのヒットもゲージを溜めるようにして（C-0105）、
     // 833・3857・6970・10108 から早くなった。Stage 22-A でフラワー・デルタ（チャージ武器）の 1 発目が 13f 早くなって
     // 497・3253・6001・8739 から早くなった。Stage 22-C でモダニア（MG）の戦闘開始の 1 発目が 20f → 12f になり、
@@ -131,7 +131,7 @@ describe('録画 44 の予測（7.5）', () => {
       expect(inside).toHaveLength(w.end - w.start); // 毎フレーム 1 発（4200 rpm は 1 フレーム 1 発で止まる）
       expect(inside.some((f) => last.has(f))).toBe(false);
       if (w.end >= plan.frames) continue;
-      // 終わったら基礎の MG を最大装弾数（224）まで込め直して戻り、リロード明けと同じ 24f の後に撃つ（録画 44: 約 22〜23f 後、
+      // 終わったら基礎の MG を最大装弾数（224）まで込め直して戻り、リロード明けと同じ 24f の後に撃つ（録画 0044: 約 22〜23f 後、
       // 4 回とも 224。Stage 24 の前は 20f）
       expect(shots.find((f) => f >= w.end)).toBe(w.end + 24);
       const nextLast = plan.shots[2]!.lastShotFrames!.find((f) => f >= w.end);
@@ -161,15 +161,15 @@ describe('録画 44 の予測（7.5）', () => {
   });
 });
 
-describe('モダニア単騎（録画 45 の編成。V-0035）', () => {
-  it('fills the gauge on the frame of the 500th shot: 1,000 per shot + 1,000 per additional damage hit (C-0105、045-03)', () => {
+describe('モダニア単騎（録画 0045 の編成。V-0035）', () => {
+  it('fills the gauge on the frame of the 500th shot: 1,000 per shot + 1,000 per additional damage hit (C-0105、0045-03)', () => {
     const plan = planTeamRun(team([fixedSlot(260)], 0));
     const shots = plan.shots[0]!.frames;
     expect(plan.schedule!.gaugeFullFrames[0]).toBe(shots[499]);
   });
 });
 
-describe('録画 44 の実測（1 発の数値、2026-09-24）', () => {
+describe('録画 0044 の実測（1 発の数値、2026-09-24）', () => {
   const calc = computeTeamDamage(REC44);
   const plan = planTeamRun(REC44);
   const fb = plan.schedule!.fullBurstWindows;
@@ -246,7 +246,7 @@ describe('射手: 装弾数無限と基礎の武器に戻るとき（3.4・7.3�
     expect(state.phase).toBe('ready');
   });
 
-  it('brings the base MG back fully reloaded: the spin-up carries over while firing, restarts after a reload (録画 44)', () => {
+  it('brings the base MG back fully reloaded: the spin-up carries over while firing, restarts after a reload (録画 0044)', () => {
     const params = firingParams(mg);
     const state = initialShooter(mg, DEFAULT_WEAPON_MODEL, params);
     for (let f = 0; f < 200; f++) stepShooter(state, mg, DEFAULT_WEAPON_MODEL, params);

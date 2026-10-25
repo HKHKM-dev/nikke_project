@@ -1,0 +1,96 @@
+[
+  {
+    "id": "0556-01",
+    "recording": "0556",
+    "source": "V-0487",
+    "readAt": "2026-10-24",
+    "kind": "count",
+    "use": "compare",
+    "value": 14,
+    "unit": "ヒット",
+    "description": "I-DOLL・フラワー（RL・操作・オート射撃 OFF・オートバースト OFF）単騎で的のコアを撃ち、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号。モデルには、爆発が壊した物（0556-02）を入力する",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series --subpixel + 使い捨てのスクリプト（V-0487「読み方」）",
+      "note": "ヒットは f893・f975・f1055・f1129・f1203・f1278・f1479・f1556・f1630・f1707・f1795・f1871・f2096・f2197。14 ヒット目 f2197 でバーが消えた。1〜13 ヒット目の直後のバーの px は 0.62・2.39・11.75・21.07・30.23・44.10・53.75・63.07・72.61・85.84・95.00・104.41・113.00。S2 の 3〜4px は 9 ヒット目（f1630）の後・10 ヒット目の前（f1686、72.5 → 76.3px）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 6,
+            "count": "0556-02"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "0556-02",
+    "recording": "0556",
+    "source": "V-0487",
+    "readAt": "2026-10-24",
+    "use": "input",
+    "kind": "count",
+    "unit": "個",
+    "value": 1,
+    "description": "6 ヒット目（f1278、戦闘開始から 485f）の爆発で崩れた、的以外の物の数。的の右の縦長のコンテナの柱（f1278 で崩れる。f1203 の 5 ヒット目では残っている）。0556-01 のモデルの物のゲージの入力",
+    "method": {
+      "tool": "録画の画を目で見た（still.ts と同じ select=eq(n,N) の切り出し）",
+      "note": "崩れる前後のフレームで、物が爆発とともに崩れ、後のフレームで無くなっているのを見た"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0556-03",
+    "recording": "0556",
+    "source": "V-0487",
+    "readAt": "2026-10-24",
+    "kind": "gauge",
+    "use": "record",
+    "unit": "px",
+    "value": [4.52],
+    "description": "的のヒットと同じフレームに出た余分なバーの伸び（そのヒットの伸びから、ふつうのヒットの伸び 9.35px（この 4 本のふつうのヒットの平均）を引いた値）。物 1 個の 35,000（14,000 × フルチャージ倍率 2.5。C-0177）は約 4.73px",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series --subpixel + 使い捨てのスクリプト（V-0487「読み方」）",
+      "note": "6 ヒット目: 30.23 → 44.10 の +13.87px"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0556-04",
+    "recording": "0556",
+    "source": "V-0487",
+    "readAt": "2026-10-24",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [100, 182, 262, 336, 410, 485, 686, 763, 837, 914, 1002, 1078, 1303, 1404],
+    "description": "戦闘の最初から 1 回目の満タンまでの各ヒットの、戦闘開始からのフレーム。戦闘開始は S2 の表示（banner.ts --mode white の f1689）の 896f 前（f793）とした（0077-25 の 892f は帯の立ち上がり、white は約 4f 遅い）。余分が出たのは 6 ヒット目（485f）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/banner.ts --mode white",
+      "note": "動画のフレームは f893・f975・f1055・f1129・f1203・f1278・f1479・f1556・f1630・f1707・f1795・f1871・f2096・f2197"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  }
+]

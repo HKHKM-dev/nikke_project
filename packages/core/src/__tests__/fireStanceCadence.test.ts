@@ -21,7 +21,7 @@ describe('姿勢の長さと満ちてから撃つまで（設計書 3.3 節）',
 });
 
 describe('発と発の間・ハイドからの 1 発目・リロード', () => {
-  it('fires レイヴン every 119f and 86f from hiding (122-13・122-14)', () => {
+  it('fires レイヴン every 119f and 86f from hiding (0122-13・0122-14)', () => {
     const c = computeCadence(character(851).shot);
     expect(c.shotFrames).toEqual([0, 119, 238, 357, 476, 595]);
     expect(c.firstShotFrames).toBe(86);
@@ -29,7 +29,7 @@ describe('発と発の間・ハイドからの 1 発目・リロード', () => {
     expect(c.reloadFrames).toBeCloseTo(2 / 0.017 + 11, 9);
   });
 
-  it('fires A2 every 120f and 94f from hiding (123-06・123-07)', () => {
+  it('fires A2 every 120f and 94f from hiding (0123-06・0123-07)', () => {
     const c = computeCadence(character(811).shot);
     expect(c.shotFrames).toEqual([0, 120, 240, 360, 480, 600]);
     expect(c.firstShotFrames).toBe(94);
@@ -101,7 +101,7 @@ describe('敵のジャンプの明けからの 1 発目（C-0229。V-0143）', (
   it('fires the RL (input UP) 1f earlier than from the battle start', () => {
     expect(fromWindowEnd(851)).toBe(85); // 戦闘開始 86f
     expect(fromWindowEnd(811)).toBe(93); // 94f
-    expect(fromWindowEnd(225)).toBe(29); // 30f（046-19 の明けは 29・30f）
+    expect(fromWindowEnd(225)).toBe(29); // 30f（0046-19 の明けは 29・30f）
     expect(fromWindowEnd(304)).toBe(70); // 71f（射撃姿勢維持型でない RL も構え + チャージ + 満ちてから撃つまで − 1。C-0232）
   });
 

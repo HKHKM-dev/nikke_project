@@ -1,0 +1,29 @@
+{
+  "id": "0505",
+  "date": "2026-10-18",
+  "folder": "range",
+  "file": "20261018-0505_sg_naga_solo_s2-core-1.mp4",
+  "original": "2026-10-18_23-35-35.mp4",
+  "durationSec": 198.7,
+  "frames": 11921,
+  "fps": 60,
+  "sizeMB": 240.8,
+  "sha256": "78c81cc97c02",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 450,
+      "name": "ナガ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0454。ナガ単騎・操作（AUTO 射撃 ON・オートバースト OFF）。戦闘開始から最後まで AUTO で撃つ"
+}

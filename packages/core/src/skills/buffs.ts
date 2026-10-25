@@ -62,7 +62,7 @@ export type BuffTotals = {
    * コレクションの「チャージダメージ X% 倍率▲」。C-0099・C-0122・C-0126）
    */
   chargeDamageMultiplier: number;
-  /** Stage 8: 分配ダメージの加算。distributed の倍率ダメージにだけ (1 + distributedDamage) を掛ける（録画 21 で別枠の乗数と確認） */
+  /** Stage 8: 分配ダメージの加算。distributed の倍率ダメージにだけ (1 + distributedDamage) を掛ける（録画 0021 で別枠の乗数と確認） */
   distributedDamage: number;
   /**
    * 受けるダメージ編: 敵の受けるダメージの加算。与ダメージのすべて（通常攻撃・射撃ごとの倍率ダメージ・倍率ダメージ・持続ダメージ）に

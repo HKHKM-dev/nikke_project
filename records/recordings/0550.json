@@ -1,0 +1,29 @@
+{
+  "id": "0550",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-0550_sr_unfa_manual.mp4",
+  "original": "2026-10-24_02-54-23.mp4",
+  "durationSec": 88.3,
+  "frames": 5299,
+  "fps": 60,
+  "sizeMB": 107.1,
+  "sha256": "c928d11feb14",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0484 の撮影のつもりで撮ったが、戦闘履歴のパネル（f5200）の名前はウンファ：タクティカル・アップ（95）で、計画のウンファ（92）ではない（ファイル名の unfa はそのまま）。単騎・操作（AUTO 射撃 OFF）・オートバースト OFF。マガジンの最後の弾丸だけを的に当てる撮り方（V-0250 の撮影計画）。的のヒットは 5 回"
+}

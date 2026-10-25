@@ -1,0 +1,36 @@
+{
+  "id": "0495",
+  "date": "2026-10-18",
+  "folder": "range",
+  "file": "20261018-0495_smg+ar_asuka-idle+ocean.mp4",
+  "original": "2026-10-18_21-14-47.mp4",
+  "durationSec": 197.5,
+  "frames": 11848,
+  "fps": 60,
+  "sizeMB": 239,
+  "sha256": "8f42871b371b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true,
+      "fires": false
+    },
+    {
+      "slot": 2,
+      "rid": 305,
+      "name": "I-DOLL・オーシャン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0456 の A（1 本目）。アスカ（1 枠目・操作・AUTO 射撃 OFF・撃たない）+ オーシャン（2 枠目・AI）。オートバースト OFF"
+}

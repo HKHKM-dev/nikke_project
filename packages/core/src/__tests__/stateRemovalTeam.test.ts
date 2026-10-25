@@ -215,7 +215,7 @@ describe('マナ（2 段目の段 1 の 2.2 節）', () => {
     ]);
   });
 
-  it('gives the same gauge as the old passive while Mana bursts in every Full Burst (録画 020 の編成)', () => {
+  it('gives the same gauge as the old passive while Mana bursts in every Full Burst (録画 0020 の編成)', () => {
     const slots = (mana: unknown) => [slotOf(291), slotOf(20), slotOf(MANA, mana)];
     const now = run(slots(undefined), 'Electronic', 2);
     const before = run(slots(manaBeforeStage1()), 'Electronic', 2);
@@ -228,7 +228,7 @@ describe('マナ（2 段目の段 1 の 2.2 節）', () => {
     expect(solo.schedule!.gaugeFullFrames).toEqual(soloBefore.schedule!.gaugeFullFrames);
   });
 
-  it('does not re-grant Metal σ after a Full Burst in which Mana did not burst (録画 043 の形の編成)', () => {
+  it('does not re-grant Metal σ after a Full Burst in which Mana did not burst (録画 0043 の形の編成)', () => {
     // フラワー（I）+ クラウン（II）+ アリス（III）+ マナ（III）。III の候補は枠の若い順なので、アリスとマナが交互に撃つ
     const m = 3;
     const slots = (mana: unknown) => [slotOf(304), slotOf(330), slotOf(191), slotOf(MANA, mana)];

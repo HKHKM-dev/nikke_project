@@ -1,0 +1,29 @@
+{
+  "id": "0653",
+  "date": "2026-10-25",
+  "folder": "range",
+  "file": "20261025-0653_ar_idoll-sun_auto.mp4",
+  "original": "2026-10-25_15-18-03.mp4",
+  "durationSec": 198.8,
+  "frames": 11929,
+  "fps": 60,
+  "sizeMB": 241.4,
+  "sha256": "ab431874d7f5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0495。I-DOLL・サン単騎・操作（AUTO 射撃 ON）・オートバースト OFF。同じ日に続けて撮った 14 本の 11 本目"
+}

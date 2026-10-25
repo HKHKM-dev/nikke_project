@@ -126,7 +126,7 @@ if (fromDrive !== null) {
 // 2026-10-25 から 4 桁だけ（plan/design-recording-id-4digit.md 6 節）
 if (!/^\d{4}$/.test(values.id)) fail('--id は 4 桁の数字（0001〜9999）');
 if (!/^[a-z0-9][a-z0-9_+-]*$/.test(values.name)) fail('--name は英小文字・数字・-・_・+');
-// 命名規約では編成をファイル名に入れない（plan/captures/index.md「命名規約」。録画 400〜402・407。plan/design-investigation-review.md 5 節）
+// 命名規約では編成をファイル名に入れない（plan/captures/index.md「命名規約」。録画 0400〜0402・0407。plan/design-investigation-review.md 5 節）
 if (values.name.includes('+'))
   console.log(
     '注意: 識別子に + が入っている。命名規約では編成をファイル名に入れず、測定対象を 1 体だけ書く（編成は records/recordings/<録画 id>.json の team）',

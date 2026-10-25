@@ -60,7 +60,7 @@
           "damageType": "skill",
           "delayFrames": 45,
           "assumes": {
-            "ja": "戦闘開始から約 15 秒ごと（CT 15 秒は録画 038・162・165 から読んだ値。C-0402）。最終防御力が最も高い敵 5 機を単体ボスで 1 体として 1 ヒット。発動からヒットまで 45f（C-0453。単騎の録画 008 の 1 回目のヒットが ceil の周期 883 の 45f 後）",
+            "ja": "戦闘開始から約 15 秒ごと（CT 15 秒は録画 0038・0162・0165 から読んだ値。C-0402）。最終防御力が最も高い敵 5 機を単体ボスで 1 体として 1 ヒット。発動からヒットまで 45f（C-0453。単騎の録画 0008 の 1 回目のヒットが ceil の周期 883 の 45f 後）",
             "en": "Every ~15 s from the start of combat (the 15 s cooldown read from recordings 038, 162 and 165; C-0402). The 5 highest-DEF enemies hit once as a single boss. 45 f from activation to hit (C-0453: in solo recording 008 the first hit lands 45 f after the ceil period of 883)"
           },
           "claims": [

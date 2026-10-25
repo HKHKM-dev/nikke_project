@@ -65,7 +65,7 @@ export type Verification = {
 const FILE_NAME = /^(V-\d{4,})-[a-z0-9][a-z0-9-]*\.md$/;
 const V_ID = /^V-\d{4,}$/;
 
-/** 「`064`〜`069`、`071`」のような ID の並びを読む。範囲（〜）は ranges が true のときだけ許す */
+/** 「`0064`〜`0069`、`0071`」のような ID の並びを読む。範囲（〜）は ranges が true のときだけ許す */
 function parseIdList(value: string, ranges: boolean): string[] | undefined {
   const ids: string[] = [];
   for (const part of value.split('、').map((p) => p.trim())) {

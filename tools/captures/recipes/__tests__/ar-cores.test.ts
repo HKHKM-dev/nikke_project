@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { arCuts, arGridValues, readArIncrement, tallyAr, type ArGrid } from '../ar-cores.ts';
 
-// I-DOLL・サン（スペック固定 ON）と、S2 の攻撃力▲の状態の胴体（`423-01`）
+// I-DOLL・サン（スペック固定 ON）と、S2 の攻撃力▲の状態の胴体（`0423-01`）
 const sun: ArGrid = { bodies: [9972.6445, 10880.55], core: 1, crit: 0.5, distance: 0.3 };
 const v = (core: 0 | 1, crit: 0 | 1, dist: 0 | 1, atk = 0) =>
   Math.round(sun.bodies[atk]! * (1 + core + 0.5 * crit + 0.3 * dist));

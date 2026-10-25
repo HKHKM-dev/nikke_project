@@ -26,7 +26,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "observations": ["046-02"],
+      "observations": ["0046-02"],
       "note": "紅蓮BS 単騎（046 の組み方）の与ダメージ。H1 ならこれより約 1% 小さい"
     },
     {
@@ -42,7 +42,7 @@
         "burst": false,
         "condition": "auto"
       },
-      "observations": ["055-02"],
+      "observations": ["0055-02"],
       "note": "紅蓮BS 単騎（055 の組み方。自動バースト OFF）の与ダメージ"
     },
     {
@@ -57,7 +57,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "observations": ["046-03"],
+      "observations": ["0046-03"],
       "note": "同じ枠の射撃の数（着地の回数 5 × 本数が母数。コアの当たりでは動かない）"
     }
   ],

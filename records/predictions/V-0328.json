@@ -53,7 +53,7 @@
         "condition": "auto"
       },
       "note": "判定の指標。遠の着地点が遠 A（足元 540 以上）の録画の、3 区間目の完全なマガジンの弾丸命中率の平均 p̄_A",
-      "observations": ["329-06"]
+      "observations": ["0329-06"]
     },
     {
       "id": "far-b",
@@ -69,7 +69,7 @@
         "condition": "auto"
       },
       "note": "判定の指標。遠の着地点が遠 B（足元 536 以下）の録画の、3 区間目の完全なマガジンの弾丸命中率の平均 p̄_B",
-      "observations": ["330-06"]
+      "observations": ["0330-06"]
     }
   ],
   "predicted": {

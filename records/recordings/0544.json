@@ -1,0 +1,41 @@
+{
+  "id": "0544",
+  "date": "2026-10-23",
+  "folder": "range",
+  "file": "20261023-0544_sg_soda-tb-burst_anis-star-2.mp4",
+  "original": "2026-10-23_23-17-06.mp4",
+  "durationSec": 201.9,
+  "frames": 12112,
+  "fps": 60,
+  "sizeMB": 244.8,
+  "sha256": "d43e00e854d3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 314,
+      "name": "ソーダ：トゥインクルバニー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0479 の B（アニス：スター・デルタ・ソーダ：トゥインクルバニー）2 本目。戦闘中の一時停止なし"
+}

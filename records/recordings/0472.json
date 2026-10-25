@@ -1,0 +1,36 @@
+{
+  "id": "0472",
+  "date": "2026-10-17",
+  "folder": "range",
+  "file": "20261017-0472_smg+ar_asuka-idle+misato.mp4",
+  "original": "2026-10-17_19-50-42.mp4",
+  "durationSec": 199.8,
+  "frames": 11987,
+  "fps": 60,
+  "sizeMB": 242,
+  "sha256": "f35d0269d9b9",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true,
+      "fires": false
+    },
+    {
+      "slot": 2,
+      "rid": 833,
+      "name": "ミサト",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0438（回復の語彙 F4）の A。アスカ（1 枠目・操作・AUTO 射撃 OFF・撃たない）+ ミサト（2 枠目・AI）。オートバースト OFF。戦闘履歴のパネルで枠順とアスカの与ダメージ・盾・緑の欄が 0 を確かめた"
+}

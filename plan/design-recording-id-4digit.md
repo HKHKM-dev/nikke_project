@@ -1,7 +1,7 @@
 # 録画の番号を 4 桁にそろえる 設計書
 
 - 対象: 録画の番号（`records/recordings/<録画>.json` の `id`）と、それを指す所のすべて（リポジトリの中の文書・データ・コード、録画の置き場所 `E:/nikke_project_captures/`、Google Drive の `nikke_project_captures`）。道具は `npm run records:renumber`（`packages/core/scripts/records-renumber.ts`・`packages/core/src/records/renumber.ts`・`tools/captures/renumber-files.ts`）と `tools/captures/intake.ts`
-- 状態: **起案（2026-10-25）**。11 節をオーナーが決める
+- 状態: **完了（2026-10-25）**（承認は 11.1 節。実施は 13 節）
 - 関連: [design-recording-renumber.md](design-recording-renumber.md)（1 本ずつの振り直し。参照の形と E:・Drive の名前の変え方はそこで決めたものを使う）、[captures/index.md](captures/index.md)「命名規約」、[design-cloud-environment.md](design-cloud-environment.md) 4 節（Drive の同期）
 - 作成日: 2026-10-25
 - 調べた時点: main の 78b51782（#690）。件数はその時点の調べで、判断の材料。以後は書き直さない
@@ -127,6 +127,10 @@ Drive も同じもの（`derived` は同期しないので除く）。`reference
 4. テストのコードは自動では置き換えず、落ちる所だけ手で直す（4 節）。**推奨: そうする**。
 5. 道具が E: と Drive の名前を変え、その後に captures の対を `--resync` する（5 節）。**推奨: そうする**。
 
+### 11.1 決まったこと（2026-10-25）
+
+1〜5 とも推奨のとおり（オーナーの決定）。
+
 ## 12. dry-run の結果（2026-10-25。main の 78b51782 の上）
 
 道具（6 節）を実装し、`npm run records:renumber -- --pad-all --dry-run` を回した（書き換えていない。Drive は一覧だけ取った）。
@@ -136,6 +140,18 @@ Drive も同じもの（`derived` は同期しないので除く）。`reference
 - E: で変える 1,198 件（動画 634・証拠フレーム 215・`derived/` 349）。Drive で変える 849 件（動画と証拠フレーム）。Drive に無いもの・両方にあるもの・止める理由は無い。
 - 注意 9 件: `derived/` の 074・101〜104・109〜112 は、キャッシュの sha256 が台帳と違うので変えない（作り直されるだけ。1 本ずつの道具と同じ扱い）。
 
+## 13. 実施の記録（2026-10-25）
+
+- `drive:sync` で E: と Drive がそろっていることを見てから `--pad-all` を回した。1 回目はセッションの終わりで、E: の 1,198 件を変えた後、Drive の 240 件で止まった（リポジトリは書き換えていない）。その間のフックの同期は、captures の対が削除の上限で止まった（5 節の見込みのとおり。何も消していない）。
+- 回し直しで、E: で変えてあった証拠フレームが Drive の計画から漏れていた（計画の「もう変えてあった」は動画だけ）。E: の今の名前から古い名前を引いて Drive の計画に足すようにし、2 回目で Drive の残り 609 件を変えた（計 849 件）。
+- captures の対を `--resync --dry-run`（送るもの 0）→ `--resync` → ふだんの同期（変更なし）。
+- 生成物を作り直した（`records:table`・`records:check`・`records:minimal`）。番号の 0 を除いて main と比べ、中身が変わっていないことを見た。
+- テストのコード（4 節。自動では置き換えない）は、録画の番号と観測値の ID を組ごとそろえて 4 桁にした（頭が録画の番号の `NNN-NN` と、引用符の `NNN`・`observations/NNN.json`。`renumber.test.ts` は例の番号なので除いた）。レシピのテストの見本のファイル（`fixtures/buff-edge-*.json`・`fb-window-*.json`）も 4 桁にした。
+- 録画の台帳の検査（`recordings.ts`）も 4 桁以上を求めるようにした。
+- 置き換えの形を説明する設計書（この設計書と [design-recording-renumber.md](design-recording-renumber.md)）は、例が説明として壊れるので置き換えを戻した。
+- 手順書: [captures/index.md](captures/index.md)「命名規約」・[captures/protocol.md](captures/protocol.md)・[captures/tools.md](captures/tools.md)・[cloud-guide.md](cloud-guide.md)・[verification-guide.md](verification-guide.md) を 4 桁にした。
+
 ## 経過
 
 - 2026-10-25: 起案。オーナーの指示（番号を `0001`〜`9999` にそろえる）から。
+- 2026-10-25: 11 節をオーナーが推奨のとおりに決めた（11.1 節）。実施した（13 節）。

@@ -3,7 +3,7 @@
 //   burstHit = max(1, 攻撃力(バフ後) − 防御力) × X/100 × (1 + 会心期待値 [+ 0.5]) × (1 + Σ attackDamage) × 属性有利
 // 武器倍率・チャージ倍率・コア・距離は掛けない。
 // Stage 8: トリガー付きの倍率ダメージ（damage。「10 回攻撃した時 X% のダメージ」など）も同じ式で計算する（computeSkillHit）。
-// 分配ダメージには (1 + Σ distributedDamage) を別の乗数で掛ける（録画 21 のクイーン（真）の 1.9001 倍。plan/design-stage8.md 2.4 節）。
+// 分配ダメージには (1 + Σ distributedDamage) を別の乗数で掛ける（録画 0021 のクイーン（真）の 1.9001 倍。plan/design-stage8.md 2.4 節）。
 // 持続ダメージ▲編: 持続ダメージ（dot）の tick には Σ sustainedDamage を SUSTAINED_DAMAGE_PLACEMENT の置き場所で掛ける。
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
 import { defenceAfterDown, explosionHitMultiplier, FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
@@ -32,7 +32,7 @@ import {
 
 /**
  * バースト発動時の即時ダメージにフルバースト補正 +0.5 を乗せるか。
- * **2026-09-22 の射撃場実測で「乗せない」と確定**（plan/verification.md Stage 5 節、録画 18・19）:
+ * **2026-09-22 の射撃場実測で「乗せない」と確定**（plan/verification.md Stage 5 節、録画 0018・0019）:
  * ラピのバースト 657.72% が 208,131 × 3 = 624,393 =（素の攻撃力 − 防御）× 6.5772、
  * ノワールのバースト 351.64% が 480,611 =（バフ後 136,777 − 100）× 3.5164 で、どちらも +0.5 が乗っていない。
  * コア・距離も乗らないことを同時に確認した。

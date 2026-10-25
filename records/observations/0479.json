@@ -1,0 +1,195 @@
+[
+  {
+    "id": "0479-01",
+    "recording": "0479",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0440",
+    "readAt": "2026-10-17",
+    "value": [903, 908, 923],
+    "unit": "f",
+    "description": "アスカの S1（攻撃力▲）が付いた所: S1 なしの最後の 1 発・S1 ありの最初の 1 発・アニス：スターの最初の 1 発（フルチャージの弾の着弾）の動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode changes",
+      "note": "HUD の増分を、アスカの S1 なし（22,474 の倍率 1・1.3・1.5・1.8・2・2.3・2.5・2.8 の組、±2）・S1 あり（44,287 の同じ組）と、それ以外（アニス：スター・フラワーの 1 発と、2 発が重なった・割れた読み）に分けた。戦闘開始は f837（timer.ts の +320f 前後の変わり目の次の変わり目。C-0078）。アスカの最初の 1 発は f849。S1 ありの最初の 1 発は戦闘開始から 71f、アニス：スターの弾の着弾は 86f"
+    },
+    "note": "S1 は、アニス：スターの最初のフルチャージの弾が着く前（発射のころ）に付いた。モデルの最初の回復は 1.19 秒（71f）。それより前のアスカの 1 発はすべて S1 なし",
+    "scope": {
+      "slot": [1, 3],
+      "source": "skill",
+      "frames": [837, 923]
+    }
+  },
+  {
+    "id": "0479-02",
+    "recording": "0479",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0440",
+    "readAt": "2026-10-17",
+    "value": 0,
+    "description": "S1 ありの最初の 1 発の後（f908〜11303、戦闘の終わりまで）のアスカの 1 発のうち、S1 なしの組の数。S1 ありの組は 1102 件",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "0479-01 と同じ分け方。どの組にも当たらない増分は 222 件（アニス：スター・フラワーの 1 発と、重なった・割れた読み）。300,000 を超える増分（アニス：スターの弾）の間隔は最長 437f"
+    },
+    "note": "S1 は最初に付いてから戦闘の終わりまで一度も切れなかった。ゲーム内の 25 秒（約 1471f）を 7 回ほど跨いでいる",
+    "scope": {
+      "slot": [1, 3],
+      "source": "skill",
+      "frames": [908, 11303]
+    }
+  },
+  {
+    "id": "0479-03",
+    "recording": "0479",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0440",
+    "readAt": "2026-10-17",
+    "value": 29216,
+    "description": "アスカの S1 なしの 1 発（コア・会心なし、距離ボーナスあり。アニス：スターの最初の 1 発より前）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "0479-01 と同じ分け方。S1 なしの組は 12 件（29216 が 8 件、40453・51690 が各 2 件）で、倍率 1（距離なし）は出なかった（アスカは操作）"
+    },
+    "note": "予測ファイルの asuka-hit-before-first-heal（距離なし）とは args が違うので結び付けない",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 30,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0479-04",
+    "recording": "0479",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0440",
+    "readAt": "2026-10-17",
+    "value": 44287,
+    "description": "アスカの S1 ありの 1 発（コア・会心・距離なし）。50 秒ごろ",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "0479-01 と同じ分け方。戦闘開始から 3000f の近くでは f3839 にこの値が出ている"
+    },
+    "note": "予測ファイルの asuka-hit-50s と同じ指標",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0479-05",
+    "recording": "0479",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0440",
+    "readAt": "2026-10-17",
+    "value": 44287,
+    "description": "アスカの S1 ありの 1 発（コア・会心・距離なし）。150 秒ごろ",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "0479-01 と同じ分け方。戦闘開始から 9000f の近くでは f9841 にこの値が出ている"
+    },
+    "note": "予測ファイルの asuka-hit-150s と同じ指標",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 9000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0479-06",
+    "recording": "0479",
+    "kind": "total",
+    "use": "record",
+    "source": "V-0440",
+    "readAt": "2026-10-17",
+    "value": [40534524, 15802833, 75028193],
+    "description": "戦闘履歴の与ダメージ（アニス：スター・I-DOLL・フラワー・アスカ。180 秒）",
+    "method": {
+      "tool": "probe-result.ts・hud.ts --mode final",
+      "note": "戦闘履歴のパネル（f11880 前後）を目で読んだ。3 体の和 131,365,550 は HUD の最終値と一致"
+    },
+    "note": "同じパネルの 3 段目（緑の ✱ の欄。回復量と読める）は、アニス：スター 670,800・フラワー 0・アスカ 0",
+    "scope": {
+      "slot": "all",
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0479-07",
+    "recording": "0479",
+    "kind": "total",
+    "use": "compare",
+    "source": "V-0440",
+    "readAt": "2026-10-17",
+    "value": 75028193,
+    "description": "アスカの与ダメージ（アニス：スター + I-DOLL・フラワー + アスカ・180 秒。戦闘履歴）",
+    "method": {
+      "tool": "probe-result.ts",
+      "note": "0479-06 のアスカの値"
+    },
+    "note": "予測ファイルの asuka-total と同じ指標。コア命中率と的のジャンプの窓の残差が乗る（参考）",
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 3
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  }
+]

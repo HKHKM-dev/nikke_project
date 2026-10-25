@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "反復実測",
-  "basis": "V-0057 の段 A の 39 本（AR・SMG・SR・RL・MG・SG の単騎。録画ごとの「完了 − 遡った 0 の点」の観測値。例 `073-08`・`054-12`・`072-09`・`075-11`）と、V-0058 の `098-02`（チャイム・1 秒）・`099-02`（ルドミラ：ウィンターオーナー・3 秒）。各点の残差は最大 0.55f。丸めを変えた当てはめでも 60f は 4.6〜8.4SE 外れ、58.82f の切り上げの形だけが −2.1SE（V-0058）。V-0057・V-0058 2026-10-10 の既存の確定の点検（plan/design-investigation-review.md 1.4 節）で足した: 決めるのに使っていない録画での再現: ルドミラ（SMG・2.76 秒）単騎の 305（V-0264）の最終弾 → 完了 174.0f（305-01）と、段 B のチャイム（SMG・1 秒）の 71.0f（098-01）の差 103.0f は、58.82f/秒の 103.5f に合い、60f/秒の 105.6f から 2.6f 外れる（バーで数えても 305-03 と 098-02 の差 102.8f）。最終弾 → 次の 1 発目 186f（305-04）も、丸めないリロードに 24f を足したモデルの 186.35f と許容内。",
+  "basis": "V-0057 の段 A の 39 本（AR・SMG・SR・RL・MG・SG の単騎。録画ごとの「完了 − 遡った 0 の点」の観測値。例 `0073-08`・`0054-12`・`0072-09`・`0075-11`）と、V-0058 の `0098-02`（チャイム・1 秒）・`0099-02`（ルドミラ：ウィンターオーナー・3 秒）。各点の残差は最大 0.55f。丸めを変えた当てはめでも 60f は 4.6〜8.4SE 外れ、58.82f の切り上げの形だけが −2.1SE（V-0058）。V-0057・V-0058 2026-10-10 の既存の確定の点検（plan/design-investigation-review.md 1.4 節）で足した: 決めるのに使っていない録画での再現: ルドミラ（SMG・2.76 秒）単騎の 305（V-0264）の最終弾 → 完了 174.0f（0305-01）と、段 B のチャイム（SMG・1 秒）の 71.0f（0098-01）の差 103.0f は、58.82f/秒の 103.5f に合い、60f/秒の 105.6f から 2.6f 外れる（バーで数えても 0305-03 と 0098-02 の差 102.8f）。最終弾 → 次の 1 発目 186f（0305-04）も、丸めないリロードに 24f を足したモデルの 186.35f と許容内。",
   "model": "`weapons.ts` の `reloadSecondsToFrames`（端数つき。`firingParams` の `reloadChunkFrames`）と、`frame/shooter.ts` の `nextChunkFrames`（1 回分ごとに端数を持ち越して切り捨てる。最初の端数は 0.5）。Stage 24",
   "replaces": [],
   "updated": "2026-10-11",
@@ -13,159 +13,159 @@
   },
   "decidedOn": [
     {
-      "recording": "001",
+      "recording": "0001",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "002",
+      "recording": "0002",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "003",
+      "recording": "0003",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "004",
+      "recording": "0004",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "005",
+      "recording": "0005",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "006",
+      "recording": "0006",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "007",
+      "recording": "0007",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "008",
+      "recording": "0008",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "010",
+      "recording": "0010",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "012",
+      "recording": "0012",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "014",
+      "recording": "0014",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "023",
+      "recording": "0023",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "024",
+      "recording": "0024",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "028",
+      "recording": "0028",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "029",
+      "recording": "0029",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "031",
+      "recording": "0031",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "032",
+      "recording": "0032",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "033",
+      "recording": "0033",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "034",
+      "recording": "0034",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "045",
+      "recording": "0045",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "054",
+      "recording": "0054",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "056",
+      "recording": "0056",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "057",
+      "recording": "0057",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "058",
+      "recording": "0058",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "059",
+      "recording": "0059",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "060",
+      "recording": "0060",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "061",
+      "recording": "0061",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "062",
+      "recording": "0062",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "072",
+      "recording": "0072",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "073",
+      "recording": "0073",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "075",
+      "recording": "0075",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "076",
+      "recording": "0076",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "077",
+      "recording": "0077",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "082",
+      "recording": "0082",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "086",
+      "recording": "0086",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "087",
+      "recording": "0087",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "088",
+      "recording": "0088",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "089",
+      "recording": "0089",
       "role": "読み方を合わせた"
     },
     {
-      "recording": "090",
+      "recording": "0090",
       "role": "読み方を合わせた"
     }
   ]

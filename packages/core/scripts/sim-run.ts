@@ -20,7 +20,7 @@
 // --skill-levels resourceId:slot=Lv をカンマ区切り（slot は skill1・skill2・burst。例 191:skill2=4,260:burst=4）。省略は全部 Lv10
 // （実ビルドの録画と比べるとき用。V-0065）。
 // --jump-windows で、出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の
-// setup.jumpWindows と同じ）。観測値の id（例 056-11。records/observations/<録画>.json の値）か、[始まり, 終わり, …] の秒を
+// setup.jumpWindows と同じ）。観測値の id（例 0056-11。records/observations/<録画>.json の値）か、[始まり, 終わり, …] の秒を
 // カンマ区切りで渡す。--events に狙えない窓を持つ出来事のセットが要る。
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -123,7 +123,7 @@ const { values } = parseArgs({
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--near A,B] [--far A,B] [--shot-counting hybrid|firingSlots|average] [--skill-levels 191:skill2=4] [--jump-windows 056-11]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--near A,B] [--far A,B] [--shot-counting hybrid|firingSlots|average] [--skill-levels 191:skill2=4] [--jump-windows 0056-11]',
   );
   process.exit(2);
 }

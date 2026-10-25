@@ -43,8 +43,8 @@ const ctx: RelevanceContext = {
 const rec = (id: string) => recordings.get(id)!;
 const named = (r: RecordingEntry, name: string) => elementsOf(r, ctx).find((e) => e.name === name)!;
 const obs = (patch: Partial<Observation>): Observation => ({
-  id: '162-99',
-  recording: '162',
+  id: '0162-99',
+  recording: '0162',
   kind: 'hit',
   use: 'record',
   value: 1,
@@ -69,7 +69,7 @@ describe('plan/minimal.md（実データ）', () => {
 
 describe('要素を並べる（2 節の 2）', () => {
   it('lists effects and notes of every slot, but not noDamage notes', () => {
-    const els = elementsOf(rec('162'), ctx);
+    const els = elementsOf(rec('0162'), ctx);
     expect(els.some((e) => e.name === 'イサベル skill2.effects[0]')).toBe(true);
     const def = data.skills.get(17)!;
     def.skills.skill2.notes?.forEach((n, j) => {
@@ -78,14 +78,14 @@ describe('要素を並べる（2 節の 2）', () => {
   });
 
   it('uses the treasure version of the slots the recording had', () => {
-    const els = elementsOf(rec('079'), ctx);
+    const els = elementsOf(rec('0079'), ctx);
     expect(els.some((e) => e.name.startsWith('ヘルム treasureSkills.skill1.'))).toBe(true);
     expect(els.some((e) => e.name.startsWith('ヘルム skill1.'))).toBe(false);
   });
 
   it('merges a modeling note with refers into the effect it points to', () => {
     // アスカ（830）の burst の notes[1] は refers effects[2]
-    const r: RecordingEntry = { ...rec('162'), team: [{ slot: 1, rid: 830, name: 'アスカ', controlled: true }] };
+    const r: RecordingEntry = { ...rec('0162'), team: [{ slot: 1, rid: 830, name: 'アスカ', controlled: true }] };
     const e = named(r, 'アスカ burst.effects[2]');
     expect(e.places).toContain('data/skills/830.json の burst の notes[1]');
     expect(elementsOf(r, ctx).some((x) => x.name === 'アスカ burst.notes[1]')).toBe(false);
@@ -116,35 +116,35 @@ describe('未確定かを決める（2 節の 3）', () => {
 
   it('is unconfirmed without claims, and confirmed when all claims are 確定 or 範囲外', () => {
     const list = [claim({ id: 'C-9001', state: '確定' }), claim({ id: 'C-9002', state: '範囲外' })];
-    expect(unconfirmedReason(el([]), rec('162'), ctx, byId(list))).toBe('根拠なし');
-    expect(unconfirmedReason(el(['C-9001', 'C-9002']), rec('162'), ctx, byId(list))).toBeUndefined();
+    expect(unconfirmedReason(el([]), rec('0162'), ctx, byId(list))).toBe('根拠なし');
+    expect(unconfirmedReason(el(['C-9001', 'C-9002']), rec('0162'), ctx, byId(list))).toBeUndefined();
   });
 
   it('counts a 仮説 only when its when holds in the recording', () => {
     // 162 はアニス：スター（Step1）・デルタ（Step2）・イサベル（Step3）。AllStep のキャラはいない
     const list = [claim({ id: 'C-9003', when: { teamHas: { burstStage: 'AllStep' } } }), claim({ id: 'C-9004' })];
-    expect(unconfirmedReason(el(['C-9003']), rec('162'), ctx, byId(list))).toBeUndefined();
-    expect(unconfirmedReason(el(['C-9004']), rec('162'), ctx, byId(list))).toBe('仮説 C-9004');
+    expect(unconfirmedReason(el(['C-9003']), rec('0162'), ctx, byId(list))).toBeUndefined();
+    expect(unconfirmedReason(el(['C-9004']), rec('0162'), ctx, byId(list))).toBe('仮説 C-9004');
   });
 
   it('evaluates when', () => {
-    expect(whenHolds({ teamHas: { rid: 231 } }, rec('162'), ctx)).toBe(true);
-    expect(whenHolds({ teamHas: { rid: 231, weaponType: 'RL' } }, rec('162'), ctx)).toBe(false);
-    expect(whenHolds({ teamHas: { burstStage: 'Step3', weaponType: 'SG' } }, rec('162'), ctx)).toBe(true);
-    expect(whenHolds({ enemyElement: rec('162').target.element! }, rec('162'), ctx)).toBe(true);
-    expect(whenHolds({ sameStatSources: { stat: 'damageTaken', atLeast: 9 } }, rec('162'), ctx)).toBe(false);
+    expect(whenHolds({ teamHas: { rid: 231 } }, rec('0162'), ctx)).toBe(true);
+    expect(whenHolds({ teamHas: { rid: 231, weaponType: 'RL' } }, rec('0162'), ctx)).toBe(false);
+    expect(whenHolds({ teamHas: { burstStage: 'Step3', weaponType: 'SG' } }, rec('0162'), ctx)).toBe(true);
+    expect(whenHolds({ enemyElement: rec('0162').target.element! }, rec('0162'), ctx)).toBe(true);
+    expect(whenHolds({ sameStatSources: { stat: 'damageTaken', atLeast: 9 } }, rec('0162'), ctx)).toBe(false);
   });
 });
 
 describe('録画で起きうるか（2 節の 4）', () => {
   it('drops burst-slot and burstUse elements in a single-unit recording (C-0024)', () => {
-    const solo = rec('045');
+    const solo = rec('0045');
     const burst = elementsOf(solo, ctx).find((e) => e.skillSlot === 'burst')!;
     expect(impossibleReason(burst, solo)).toBe('単騎（C-0024）');
   });
 
   it('drops shot-triggered elements of a slot that did not fire', () => {
-    const r = rec('248');
+    const r = rec('0248');
     const shot = elementsOf(r, ctx).find(
       (e) =>
         e.slot === 3 &&
@@ -181,21 +181,21 @@ describe('静的な判定（4.2 節）', () => {
     const o = obs({
       compare: { model: 'sim', metric: 'hitDamage', args: { slot: 1 }, tolerance: { abs: 1 }, setup: { enemy: 'x' } },
     });
-    expect(notRelevantReason(el({ kind: 'damage' }), o, rec('162'), ctx)).toBe('別のヒット');
+    expect(notRelevantReason(el({ kind: 'damage' }), o, rec('0162'), ctx)).toBe('別のヒット');
   });
 
   it('excludes a self effect of another slot from a hit or rate of the observed slot', () => {
     const o = obs({ kind: 'rate', scope: { slot: 1, source: 'normal' } });
-    expect(notRelevantReason(el({ kind: 'timed', stat: 'hitRate', target: 'self' }, 2), o, rec('162'), ctx)).toBe(
+    expect(notRelevantReason(el({ kind: 'timed', stat: 'hitRate', target: 'self' }, 2), o, rec('0162'), ctx)).toBe(
       '対象が観測した枠でない',
     );
     expect(
-      notRelevantReason(el({ kind: 'timed', stat: 'hitRate', target: 'allies' }, 2), o, rec('162'), ctx),
+      notRelevantReason(el({ kind: 'timed', stat: 'hitRate', target: 'allies' }, 2), o, rec('0162'), ctx),
     ).toBeUndefined();
     // 時刻・回数の観測値では対象で外さない
     const t = obs({ kind: 'timing', scope: { slot: 1, source: 'gauge' } });
     expect(
-      notRelevantReason(el({ kind: 'timed', stat: 'hitRate', target: 'self' }, 2), t, rec('162'), ctx),
+      notRelevantReason(el({ kind: 'timed', stat: 'hitRate', target: 'self' }, 2), t, rec('0162'), ctx),
     ).toBeUndefined();
   });
 
@@ -203,29 +203,31 @@ describe('静的な判定（4.2 節）', () => {
     // 162 の枠 3 はイサベル（SG）
     const o = obs({ kind: 'hit', scope: { slot: 3, source: 'normal' } });
     const e = el({ kind: 'timed', stat: 'attack', target: 'allies', targetWeapon: 'RL' }, 1);
-    expect(notRelevantReason(e, o, rec('162'), ctx)).toBe('対象の武器種が観測した枠と違う');
+    expect(notRelevantReason(e, o, rec('0162'), ctx)).toBe('対象の武器種が観測した枠と違う');
   });
 
   it('excludes classes that cannot move the kind of observation, and never excludes unknown or a character without definition', () => {
     const interval = obs({ kind: 'interval' });
-    expect(notRelevantReason(el({ kind: 'timed', stat: 'attack' }), interval, rec('162'), ctx)).toMatch(/効かない分類/);
-    expect(notRelevantReason(el({ kind: 'timed', stat: 'reloadSpeed' }), interval, rec('162'), ctx)).toBeUndefined();
-    expect(notRelevantReason(el({ kind: 'unknown' }), interval, rec('162'), ctx)).toBeUndefined();
+    expect(notRelevantReason(el({ kind: 'timed', stat: 'attack' }), interval, rec('0162'), ctx)).toMatch(
+      /効かない分類/,
+    );
+    expect(notRelevantReason(el({ kind: 'timed', stat: 'reloadSpeed' }), interval, rec('0162'), ctx)).toBeUndefined();
+    expect(notRelevantReason(el({ kind: 'unknown' }), interval, rec('0162'), ctx)).toBeUndefined();
     const total = obs({ kind: 'total' });
-    expect(notRelevantReason(el({ kind: 'timed', stat: 'attack' }), total, rec('162'), ctx)).toBeUndefined();
+    expect(notRelevantReason(el({ kind: 'timed', stat: 'attack' }), total, rec('0162'), ctx)).toBeUndefined();
     const nodef: MinimalElement = { slot: 1, name: 'n', places: [], type: 'noDefinition', claims: [] };
-    expect(notRelevantReason(nodef, obs({ kind: 'position' }), rec('162'), ctx)).toBeUndefined();
+    expect(notRelevantReason(nodef, obs({ kind: 'position' }), rec('0162'), ctx)).toBeUndefined();
   });
 
   it('lets burst timing move an interval of the burst chain or the clock, but not a firing interval (10.5 節)', () => {
     const ct = el({ kind: 'cooldownReduction', target: 'self', trigger: 'fullBurstEnd' });
-    expect(notRelevantReason(ct, obs({ kind: 'interval' }), rec('162'), ctx)).toMatch(/効かない分類/);
+    expect(notRelevantReason(ct, obs({ kind: 'interval' }), rec('0162'), ctx)).toMatch(/効かない分類/);
     for (const source of ['burstChain', 'clock'] as const)
       expect(
-        notRelevantReason(ct, obs({ kind: 'interval', scope: { slot: 'all', source } }), rec('162'), ctx),
+        notRelevantReason(ct, obs({ kind: 'interval', scope: { slot: 'all', source } }), rec('0162'), ctx),
       ).toBeUndefined();
     expect(
-      notRelevantReason(ct, obs({ kind: 'interval', scope: { slot: 'all', source: 'firing' } }), rec('162'), ctx),
+      notRelevantReason(ct, obs({ kind: 'interval', scope: { slot: 'all', source: 'firing' } }), rec('0162'), ctx),
     ).toMatch(/効かない分類/);
   });
 
@@ -234,9 +236,9 @@ describe('静的な判定（4.2 節）', () => {
     expect(classOf(el({ kind: 'timed', stat: 'maxHp', target: 'self' }))).toBe('damageValue');
     const timing = obs({ kind: 'timing', scope: { slot: 1, source: 'gauge' } });
     const defDown = el({ kind: 'timed', stat: 'enemyDefenseDown', target: 'enemy' });
-    expect(notRelevantReason(defDown, timing, rec('162'), ctx)).toMatch(/効かない分類/);
+    expect(notRelevantReason(defDown, timing, rec('0162'), ctx)).toMatch(/効かない分類/);
     expect(
-      notRelevantReason(defDown, obs({ kind: 'hit', scope: { slot: 1, source: 'normal' } }), rec('162'), ctx),
+      notRelevantReason(defDown, obs({ kind: 'hit', scope: { slot: 1, source: 'normal' } }), rec('0162'), ctx),
     ).toBe(undefined);
   });
 
@@ -244,11 +246,11 @@ describe('静的な判定（4.2 節）', () => {
     const heal = el({ kind: 'heal', target: 'allies', trigger: 'burstUse' });
     const count = obs({ kind: 'count', scope: { slot: 1, source: 'gauge' } });
     // 162 には回復を受けた時の効果を持つキャラがいない
-    expect(notRelevantReason(heal, count, rec('162'), ctx)).toBe('回復を受けた時の効果を持つ味方がいない');
+    expect(notRelevantReason(heal, count, rec('0162'), ctx)).toBe('回復を受けた時の効果を持つ味方がいない');
     // クラウン（330）の定義には trigger: healed がある
     const withCrown: RecordingEntry = {
-      ...rec('162'),
-      team: [...rec('162').team, { slot: 5, rid: 330, name: 'クラウン', controlled: false }],
+      ...rec('0162'),
+      team: [...rec('0162').team, { slot: 5, rid: 330, name: 'クラウン', controlled: false }],
     };
     expect(notRelevantReason(heal, count, withCrown, ctx)).toBeUndefined();
   });
@@ -257,7 +259,7 @@ describe('静的な判定（4.2 節）', () => {
 describe('対象と印（2 節の 1・4.3 節）', () => {
   // イサベル skill2.effects[1]（S2 のヒットのゲージ）は仮説 C-0404 の要素。162 の観測値に立つ確定の結論を作り、対象・印で外れるかを見る
   // 回数の観測値には、ゲージ（バーストの時刻）が効きうる
-  const o = observations.find((x) => x.recording === '162' && x.invalid === undefined && x.kind === 'count')!;
+  const o = observations.find((x) => x.recording === '0162' && x.invalid === undefined && x.kind === 'count')!;
   const base: Claim = {
     id: 'C-9100',
     text: 't',
@@ -299,10 +301,10 @@ describe('対象と印（2 節の 1・4.3 節）', () => {
 
 describe('観測値の ID のまとめ方', () => {
   it('compresses consecutive ids of the same recording', () => {
-    expect(compressIds(['010-01', '010-02', '010-03', '013-05', '013-07', 'L-AD-01'])).toEqual([
-      '`010-01`〜`010-03`',
-      '`013-05`',
-      '`013-07`',
+    expect(compressIds(['0010-01', '0010-02', '0010-03', '0013-05', '0013-07', 'L-AD-01'])).toEqual([
+      '`0010-01`〜`0010-03`',
+      '`0013-05`',
+      '`0013-07`',
       '`L-AD-01`',
     ]);
   });

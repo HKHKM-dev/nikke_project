@@ -40,14 +40,14 @@ function file(over: Partial<PredictionFile> = {}): PredictionFile {
     fixedSpec: true,
     hypotheses: [{ id: 'H1' }, { id: 'H2', override: { durationSeconds: 90 } }],
     targets: [
-      { id: 'shots', model: 'sim', metric: 'shotCount', args: { slot: 1 }, setup: SETUP, observations: ['101-09'] },
+      { id: 'shots', model: 'sim', metric: 'shotCount', args: { slot: 1 }, setup: SETUP, observations: ['0101-09'] },
       {
         id: 'total',
         model: 'sim',
         metric: 'slotTotalDamage',
         args: { slot: 1 },
         setup: SETUP,
-        observations: ['101-01'],
+        observations: ['0101-01'],
       },
     ],
     predicted: null,
@@ -103,17 +103,17 @@ describe('records/predictions', () => {
 
   it('links a target to observations by explicit ids or by the same metric・args・setup of the same verification', () => {
     const f = file();
-    expect(observationsOfTarget(f, f.targets[1]!, observations).map((o) => o.id)).toEqual(['101-01']);
-    // 101-01（slotTotalDamage・slot 1・近 A・B・録画 101 のジャンプの窓・source V-0063）が自動で結び付く。
-    // 102-01 は setup の jumpWindows（録画 102 の窓）が違うので結び付かない（V-0086）
+    expect(observationsOfTarget(f, f.targets[1]!, observations).map((o) => o.id)).toEqual(['0101-01']);
+    // 0101-01（slotTotalDamage・slot 1・近 A・B・録画 0101 のジャンプの窓・source V-0063）が自動で結び付く。
+    // 0102-01 は setup の jumpWindows（録画 0102 の窓）が違うので結び付かない（V-0086）
     const auto = {
       id: 'a',
       model: 'sim' as const,
       metric: 'slotTotalDamage',
       args: { slot: 1 },
-      setup: { ...SETUP, nearLanding: ['A', 'B'] as ['A', 'B'], jumpWindows: '101-19' },
+      setup: { ...SETUP, nearLanding: ['A', 'B'] as ['A', 'B'], jumpWindows: '0101-19' },
     };
-    expect(observationsOfTarget(f, auto, observations).map((o) => o.id)).toEqual(['101-01']);
+    expect(observationsOfTarget(f, auto, observations).map((o) => o.id)).toEqual(['0101-01']);
     const other = { ...f, verification: 'V-0001' };
     expect(observationsOfTarget(other, auto, observations)).toEqual([]);
   });
@@ -133,7 +133,7 @@ describe('records/predictions', () => {
     expect(lines[0]).toBe('  - 予測（2026-10-02、commit abc1234）との比べ:');
     expect(
       lines.some((l) =>
-        l.includes('shots（shotCount）: 実測 189（101-09）。H1 189（+0、許容内）、H2 170（-19、**許容外**）'),
+        l.includes('shots（shotCount）: 実測 189（0101-09）。H1 189（+0、許容内）、H2 170（-19、**許容外**）'),
       ),
     ).toBe(true);
     expect(lines.at(-1)).toBe('    - 許容内の指標: H1 2/2・H2 0/2。合う仮説は H1 だけ');
@@ -164,13 +164,13 @@ describe('records/predictions', () => {
         at: '2026-10-02',
         commit: 'abc1234def',
         values: { H1: { shots: 189, total: 29_000_000 }, H2: { shots: 170, total: 20_000_000 } },
-        seen: { '101': ['101-09', '101-99'] },
+        seen: { '0101': ['0101-09', '0101-99'] },
       },
     });
     const cmp = comparePredictions(f, observations);
     expect(cmp.score.get('H1')).toEqual({ ok: 2, total: 2 });
     expect(renderPredictionTable(cmp)).not.toContain('後付け');
-    // 控えの観測値は検証しない（101-99 は無い観測値）
+    // 控えの観測値は検証しない（0101-99 は無い観測値）
     expect(validatePredictions([f], ctx)).toEqual([]);
   });
 
@@ -267,57 +267,57 @@ describe('gradeCandidate（等級の候補）', () => {
   });
   const residuals = new Map<string, { status: string; diff: number | null; value: number | number[]; metric?: string }>(
     [
-      ['101-09', { status: 'ok', diff: 0, value: 189 }],
-      ['102-09', { status: 'ok', diff: 1, value: 188 }],
-      ['101-01', { status: 'ok', diff: 0.01, value: 29_066_175 }],
-      ['074-08', { status: 'outside', diff: 0.05, value: 63_036_302 }],
-      ['079-07', { status: 'ok', diff: 0.621, value: 10_854_092, metric: 'burstHitDamage' }],
-      ['012-01', { status: 'ok', diff: -0.12, value: 47_172, metric: 'hitDamage' }],
-      ['013-01', { status: 'ok', diff: 1.2, value: 47_172, metric: 'hitDamage' }],
-      ['047-11', { status: 'ok', diff: 0.5, value: 1_200, metric: 'gaugeFullFrame' }],
+      ['0101-09', { status: 'ok', diff: 0, value: 189 }],
+      ['0102-09', { status: 'ok', diff: 1, value: 188 }],
+      ['0101-01', { status: 'ok', diff: 0.01, value: 29_066_175 }],
+      ['0074-08', { status: 'outside', diff: 0.05, value: 63_036_302 }],
+      ['0079-07', { status: 'ok', diff: 0.621, value: 10_854_092, metric: 'burstHitDamage' }],
+      ['0012-01', { status: 'ok', diff: -0.12, value: 47_172, metric: 'hitDamage' }],
+      ['0013-01', { status: 'ok', diff: 1.2, value: 47_172, metric: 'hitDamage' }],
+      ['0047-11', { status: 'ok', diff: 0.5, value: 1_200, metric: 'gaugeFullFrame' }],
     ],
   );
   it('is undefined without compared observations, 厳密一致 for an exact integer match, 反復実測 across recordings, else 単独実測', () => {
     expect(gradeCandidate(claim('verification.md Stage 2'), residuals)).toBeUndefined();
-    expect(gradeCandidate(claim('`101-16`'), residuals)).toBeUndefined();
-    expect(gradeCandidate(claim('`101-09`'), residuals)).toBe('厳密一致');
-    expect(gradeCandidate(claim('`101-01`・`102-09`'), residuals)).toBe('反復実測');
-    expect(gradeCandidate(claim('`101-01`'), residuals)).toBe('単独実測');
-    expect(gradeCandidate(claim('`074-08`'), residuals)).toBe('単独実測');
-    expect(gradeCandidate(claim('`101-09`'), residuals, new Set(['101-09']))).toBeUndefined();
+    expect(gradeCandidate(claim('`0101-16`'), residuals)).toBeUndefined();
+    expect(gradeCandidate(claim('`0101-09`'), residuals)).toBe('厳密一致');
+    expect(gradeCandidate(claim('`0101-01`・`0102-09`'), residuals)).toBe('反復実測');
+    expect(gradeCandidate(claim('`0101-01`'), residuals)).toBe('単独実測');
+    expect(gradeCandidate(claim('`0074-08`'), residuals)).toBe('単独実測');
+    expect(gradeCandidate(claim('`0101-09`'), residuals, new Set(['0101-09']))).toBeUndefined();
   });
   it('counts a 1-hit value within 1 of the model as 厳密一致 (the model keeps fractions; 3.5 節)', () => {
-    expect(gradeCandidate(claim('`079-07`'), residuals)).toBe('厳密一致');
-    expect(gradeCandidate(claim('`012-01`'), residuals)).toBe('厳密一致');
+    expect(gradeCandidate(claim('`0079-07`'), residuals)).toBe('厳密一致');
+    expect(gradeCandidate(claim('`0012-01`'), residuals)).toBe('厳密一致');
     // 1 以上ずれた 1 ヒット、1 ヒットでない指標の端数の差は厳密一致にしない
-    expect(gradeCandidate(claim('`013-01`'), residuals)).toBe('単独実測');
-    expect(gradeCandidate(claim('`047-11`'), residuals)).toBe('単独実測');
+    expect(gradeCandidate(claim('`0013-01`'), residuals)).toBe('単独実測');
+    expect(gradeCandidate(claim('`0047-11`'), residuals)).toBe('単独実測');
   });
   it('does not count recordings used to decide the hypothesis, value or reading (decidedOn。plan/design-investigation-review.md 1.3 節)', () => {
     const decided = (basis: string, decidedOn: Claim['decidedOn']): Claim => ({ ...claim(basis), decidedOn });
-    // 仮説の出どころの録画（101）を除くと、再現は 102 の 1 本で足りる
+    // 仮説の出どころの録画（0101）を除くと、再現は 102 の 1 本で足りる
     expect(
-      gradeCandidate(decided('`101-01`・`102-09`', [{ recording: '101', role: '仮説の出どころ' }]), residuals),
+      gradeCandidate(decided('`0101-01`・`0102-09`', [{ recording: '0101', role: '仮説の出どころ' }]), residuals),
     ).toBe('反復実測');
     // 2 本とも決めるのに使った録画なら、再現が残らない
     expect(
       gradeCandidate(
-        decided('`101-01`・`102-09`', [
-          { recording: '101', role: '仮説の出どころ' },
-          { recording: '102', role: '読み方を合わせた' },
+        decided('`0101-01`・`0102-09`', [
+          { recording: '0101', role: '仮説の出どころ' },
+          { recording: '0102', role: '読み方を合わせた' },
         ]),
         residuals,
       ),
     ).toBe('単独実測');
     // 厳密一致は、値か読み方を合わせた録画のものを数えない。仮説の出どころの録画のものは数える
-    expect(gradeCandidate(decided('`101-09`', [{ recording: '101', role: '値を合わせた' }]), residuals)).toBe(
+    expect(gradeCandidate(decided('`0101-09`', [{ recording: '0101', role: '値を合わせた' }]), residuals)).toBe(
       '単独実測',
     );
-    expect(gradeCandidate(decided('`101-09`', [{ recording: '101', role: '仮説の出どころ' }]), residuals)).toBe(
+    expect(gradeCandidate(decided('`0101-09`', [{ recording: '0101', role: '仮説の出どころ' }]), residuals)).toBe(
       '厳密一致',
     );
     // 空の並びは、決めるのに使った録画が無い（今までどおり）
-    expect(gradeCandidate(decided('`101-01`・`102-09`', []), residuals)).toBe('反復実測');
+    expect(gradeCandidate(decided('`0101-01`・`0102-09`', []), residuals)).toBe('反復実測');
   });
   it('an observation is a dummy for the type', () => {
     const o: Observation = observations[0]!;

@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "バーストゲージ",
   "grade": "反復実測",
-  "basis": "verification.md Stage 7（録画 23〜25）、`023-02`（デルタ操作のフルチャージの 1 発でバー 17〜18px = 本当の約 13.3%。53,000 × 2.5）。V-0034",
+  "basis": "verification.md Stage 7（録画 0023〜0025）、`0023-02`（デルタ操作のフルチャージの 1 発でバー 17〜18px = 本当の約 13.3%。53,000 × 2.5）。V-0034",
   "model": "`burst/dynamic.ts`（`controlledSlot`）",
   "replaces": [],
   "updated": "2026-10-11",
@@ -13,19 +13,19 @@
   },
   "decidedOn": [
     {
-      "recording": "018",
+      "recording": "0018",
       "role": "仮説の出どころ"
     },
     {
-      "recording": "019",
+      "recording": "0019",
       "role": "仮説の出どころ"
     },
     {
-      "recording": "021",
+      "recording": "0021",
       "role": "仮説の出どころ"
     },
     {
-      "recording": "022",
+      "recording": "0022",
       "role": "仮説の出どころ"
     }
   ]

@@ -1,6 +1,6 @@
 // アニス：スター（17）のバーストのコアの経路（plan/design-anis-star-core-path.md 3.1・3.2 節）: 自動攻撃の core と、的の表の
 // coreHitRate.autoAttacks。行が無いあいだは数値が変わらないこと（退化）と、行があるときの式（boost に 割合 × (コア倍率 − 1)）を見る。
-// 実データの行は C-0466（単騎の録画 164・211 の合計）。式と引き方のテストの行の値はテスト用
+// 実データの行は C-0466（単騎の録画 0164・0211 の合計）。式と引き方のテストの行の値はテスト用
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage } from '../calc/model.ts';
@@ -68,7 +68,7 @@ function soloSlot(definition: unknown): TeamSlotInput {
   };
 }
 
-// 録画 164 と同じ: アニス：スター単騎・操作・オートバースト ON・BigArms 灼熱の 3 分モード
+// 録画 0164 と同じ: アニス：スター単騎・操作・オートバースト ON・BigArms 灼熱の 3 分モード
 function solo(enemy: EnemyInput, definition: unknown = raw): TeamInput {
   return { slots: [soloSlot(definition)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 };
 }

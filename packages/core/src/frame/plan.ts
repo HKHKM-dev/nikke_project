@@ -514,7 +514,7 @@ export function burstSnapshotState(
  * 撃つ側のバフは発動のフレーム activationFrame の時点（preActivation なら直前）で固定し、敵の側のデバフ（damageTaken。2 段目の段 2 の
  * enemyDefenseDown も）だけ
  * ヒットのフレーム hitFrame の時点の値を使う。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで
- * 付く S2 の攻撃ダメージ▲は乗らない（`079-07`）。遅れの無いキャラ（hitFrame = activationFrame）は burstSnapshotState と同じ。
+ * 付く S2 の攻撃ダメージ▲は乗らない（`0079-07`）。遅れの無いキャラ（hitFrame = activationFrame）は burstSnapshotState と同じ。
  * sameActivation（同じ発動の▲がヒットに乗る行のキャラだけ。plan/design-burst-landing.md 10 節の案 1、C-0582）を渡すと、
  * 撃つ側のバフに、同じ発動で自分に付いた burst スロットの効果を足す（withSameActivationEffects）
  */
@@ -585,7 +585,7 @@ function withSameActivationEffects(
 
 /**
  * バーストヒットに「発動直前」のバフを使うか。false なら発動フレームの区間（その発動で付くバフ込み）を使う。
- * **2026-09-22 の射撃場実測で true と確定**（plan/verification.md Stage 6 節、録画 18）:
+ * **2026-09-22 の射撃場実測で true と確定**（plan/verification.md Stage 6 節、録画 0018）:
  * ラピのバーストは自分に攻撃力 +60.75%（10 秒）を付けるが、そのバーストのダメージは 208,131 × 3 = 624,393 で
  * 素の攻撃力基準だった（バフ込みなら 1 発 334,704 になるはず）。
  */

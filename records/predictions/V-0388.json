@@ -1,6 +1,6 @@
 {
   "verification": "V-0388",
-  "note": "新しい録画（R1。plan/burst-effect-delay-candidates.md 2 節）。録画 042 と同じ編成: I-DOLL・フラワー（I・AI）+ アドミ（II・AI）+ アリス（III・操作）+ I-DOLL・サン（III・AI）・灼熱の的・3 分モード・スペック固定 ON・オートバースト ON。比べるのは、アドミの II の発動（六角形の替わり目）から、バースト使用時の効果（クリティカルダメージ▲）の発火までのモデルのフレーム数。II の発動はフルバーストの入りの止まりより前なので、替わり目からの動画のフレームの差と比べる（遅れの定数を替わり目から数える約束。plan/design-activation-stall-video.md 3.5 節・backlog 2-30）。遅れ 0 の仮説は遅れの表（burst/landing.ts）で切り替わるので、このファイルの範囲外（検証記録に手で書く）",
+  "note": "新しい録画（R1。plan/burst-effect-delay-candidates.md 2 節）。録画 0042 と同じ編成: I-DOLL・フラワー（I・AI）+ アドミ（II・AI）+ アリス（III・操作）+ I-DOLL・サン（III・AI）・灼熱の的・3 分モード・スペック固定 ON・オートバースト ON。比べるのは、アドミの II の発動（六角形の替わり目）から、バースト使用時の効果（クリティカルダメージ▲）の発火までのモデルのフレーム数。II の発動はフルバーストの入りの止まりより前なので、替わり目からの動画のフレームの差と比べる（遅れの定数を替わり目から数える約束。plan/design-activation-stall-video.md 3.5 節・backlog 2-30）。遅れ 0 の仮説は遅れの表（burst/landing.ts）で切り替わるので、このファイルの範囲外（検証記録に手で書く）",
   "team": [
     {
       "rid": 304,
@@ -23,7 +23,7 @@
   "hypotheses": [
     {
       "id": "H1",
-      "note": "いまのモデル。遅れの表（MEASURED_BURST_DELAYS）のアドミの行（C-0479。録画 042 の 16〜22f の幅の真ん中 19f）で、バースト使用時の効果は II の発動の 19f 後に付く"
+      "note": "いまのモデル。遅れの表（MEASURED_BURST_DELAYS）のアドミの行（C-0479。録画 0042 の 16〜22f の幅の真ん中 19f）で、バースト使用時の効果は II の発動の 19f 後に付く"
     }
   ],
   "targets": [

@@ -30,13 +30,13 @@ describe('candidates', () => {
   });
 });
 
-describe('detectEntries（録画 434 の 1 回目のフルバーストの前後）', () => {
-  const fixture = JSON.parse(readFileSync(new URL('./fixtures/fb-window-434.json', import.meta.url), 'utf8')) as {
+describe('detectEntries（録画 0434 の 1 回目のフルバーストの前後）', () => {
+  const fixture = JSON.parse(readFileSync(new URL('./fixtures/fb-window-0434.json', import.meta.url), 'utf8')) as {
     rows: [number, number, number, number][];
   };
   const rows = fixture.rows.map(([frame, value, increment, readGap]) => ({ frame, value, increment, readGap }));
 
-  it('リロードの途切れ（83f）は入りにせず、止まりの後の最初の増分を入りにする（434-01 の E f1747・P f1719）', () => {
+  it('リロードの途切れ（83f）は入りにせず、止まりの後の最初の増分を入りにする（0434-01 の E f1747・P f1719）', () => {
     expect(detectEntries(rows, drake, 100000, 3)).toEqual([{ e: 1747, p: 1719 }]);
   });
 

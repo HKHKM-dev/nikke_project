@@ -1,0 +1,56 @@
+[
+  {
+    "id": "0583-01",
+    "recording": "0583",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0490",
+    "readAt": "2026-10-24",
+    "value": [864, 864, 869],
+    "unit": "f",
+    "description": "アスカ（1 枠目）の S1（攻撃力▲）が付いた所: S1 なしの最後の 1 発・マナ（2 枠目）の 10 発目・S1 ありの最初の 1 発の動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分（hud.ts --mode jumps）を、マナの 1 発（28,547 の倍率 1・1.3・1.5・1.8・2・2.3・2.5・2.8 の組）とアスカの S1 なし（22,474 の同じ組）・S1 あり（44,287 の同じ組）の、単独か 2 発の和に分けた（±3。V-0439 と同じ読み方）。最初の 13 件の増分はどれも 2 発の和で、分け方は 1 通り。戦闘開始は f807（timer.ts --mode changes の +319〜321f の次の変わり目）。最初の増分は f819（戦闘開始から 12f）で、その後 2 体は 4〜5f ごとに同じフレームで撃つ"
+    },
+    "note": "操作はアスカ。マナの 1〜10 発目と同じフレームのアスカの 1 発はすべて S1 なし（10 件）で、S1 ありはアスカの 11 発目から。アスカが後ろの枠だった 474・475 では、同じフレームのアスカの 10 発目にもう S1 が乗っていた（0474-08・0475-08）",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0583-02",
+    "recording": "0583",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0490",
+    "readAt": "2026-10-24",
+    "value": 29216,
+    "description": "マナの 10 発目と同じフレーム（f864）のアスカの 10 発目（コア・会心なし、距離ボーナスあり）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 66,328 から マナ ×1.3（37,112） を引いた値（S1 なしの組の倍率 1.3）"
+    },
+    "note": "予測ファイルの asuka-hit-10th の判定の指標",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 57,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  }
+]

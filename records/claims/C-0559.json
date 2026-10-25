@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
-  "basis": "`467-03`・`468-03`（95 発目（2 本目のマガジンの 1 発目）の最大装弾数 66。説明文の 60 + 2 × 3 と一致。この後のリロードの明けも、2 本ともどれも 66）。単騎の操作キャラには枠アイコンの上の「残弾/最大」が出ず、マガジンの途中の最大は読めなかった（1 回の代用弾丸で付くスタックの数は C-0561）。V-0435",
+  "basis": "`0467-03`・`0468-03`（95 発目（2 本目のマガジンの 1 発目）の最大装弾数 66。説明文の 60 + 2 × 3 と一致。この後のリロードの明けも、2 本ともどれも 66）。単騎の操作キャラには枠アイコンの上の「残弾/最大」が出ず、マガジンの途中の最大は読めなかった（1 回の代用弾丸で付くスタックの数は C-0561）。V-0435",
   "model": "`data/skills/192.json` の treasureSkills.skill1 の effects[2]（付与 `temporaryModification`・`{ applied: emergencyCraftedBullets }`・`maxStacksRef` 4・`durationRef` 5・中身に最大装弾数▲ `flat`・`ref` 3）。付き直しは `skills/stacks.ts` の `STACK_REFRESH`",
   "replaces": [],
   "updated": "2026-10-17",
@@ -14,7 +14,7 @@
   "decidedOn": [],
   "minimal": [
     {
-      "observations": ["467-03", "468-03"],
+      "observations": ["0467-03", "0468-03"],
       "element": "トーブ treasureSkills.skill2.notes[1]",
       "reason": "ショットガンを所持する味方だけの攻撃速度▲で、AR のトーブには付かない（単騎）",
       "decided": "2026-10-17"

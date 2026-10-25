@@ -1,0 +1,241 @@
+[
+  {
+    "id": "0486-01",
+    "recording": "0486",
+    "kind": "timing",
+    "use": "record",
+    "value": [2594],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5f"
+    },
+    "source": "V-0452",
+    "readAt": "2026-10-18"
+  },
+  {
+    "id": "0486-02",
+    "recording": "0486",
+    "kind": "timing",
+    "use": "record",
+    "value": [2623],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6f"
+    },
+    "source": "V-0452",
+    "readAt": "2026-10-18"
+  },
+  {
+    "id": "0486-03",
+    "recording": "0486",
+    "source": "V-0452",
+    "readAt": "2026-10-18",
+    "kind": "timing",
+    "use": "record",
+    "value": [2663, 3626, 3677, 5621],
+    "unit": "f",
+    "description": "一時停止の区間（動画のフレーム。一時停止の概要ページが出始めたフレームと、閉じ始めの前のフレーム。戦闘の序盤の一時停止を除く）: II（デルタ）の発動の約 0.5 秒後（フルバースト開始の前）は f2663〜3626、フルバースト開始の約 0.3 秒後は f3677〜5621（動画の終わり）",
+    "method": {
+      "tool": "ffmpeg で一時停止の概要ページ（青いヘッダー）が出ているフレームを数えた",
+      "note": "II の発動の後の一時停止の再開（f3627）の後、FULL BURST の表示（f3632 付近）、フルバーストのタイマー 09.88（f3654 付近）、09.73（f3665）で、09.71 のまま止まり（f3666〜3676）、次の一時停止の概要ページが出た（f3677）。タイマーの 09.71 はフルバースト開始（00.00）の約 0.3 秒後で、同じ画面のスターダストの残り 9.7 秒と合う。±10f の幅。II の発動の後の一時停止の前の最後の戦闘のフレームは f2660 付近（II の発動の約 0.5 秒後。同じ画面のリメンバーミーの残り 9.5 秒）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
+    }
+  },
+  {
+    "id": "0486-04",
+    "recording": "0486",
+    "source": "V-0452",
+    "readAt": "2026-10-18",
+    "kind": "count",
+    "use": "compare",
+    "value": 1,
+    "unit": "件",
+    "description": "フルバースト開始の約 0.3 秒後の一時停止の、I-DOLL・フラワー（RL）の「適用中の効果」にある、アニス：スター S2 の発射体爆発ダメージ▲（発射体爆発ダメージ 92.03% 増加、残り 9.7 秒）の数",
+    "method": {
+      "tool": "ffmpeg で一時停止の画面（各キャラの「適用中の効果」）を切り出して目で読んだ",
+      "note": "フラワーの欄は、スターフォール（持続効果）・スターダスト 2 つ（発射体爆発ダメージ 92.03%・攻撃ダメージ 34%。どちらも残り 9.7 秒）の 3 項目。フルバーストの 1 回目で、I はフラワーだけが撃ち、アニス：スターのバーストの防御力▲ は無い（V-0448 の録画 A の 1 回目と同じ形）。フラワーの防御力（14,606）はアニス：スターのバフ前（21,962）より低い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "projectileExplosionDamage",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [3677, 5621]
+    }
+  },
+  {
+    "id": "0486-05",
+    "recording": "0486",
+    "source": "V-0452",
+    "readAt": "2026-10-18",
+    "kind": "count",
+    "use": "compare",
+    "value": 1,
+    "unit": "件",
+    "description": "同じ一時停止の、アニス：スター（RL）の「適用中の効果」にある、自分の S2 の発射体爆発ダメージ▲（発射体爆発ダメージ 92.03% 増加、残り 9.7 秒）の数",
+    "method": {
+      "tool": "ffmpeg で一時停止の画面（各キャラの「適用中の効果」）を切り出して目で読んだ",
+      "note": "アニス：スターの欄は、スターフォール・みんなの星（バースト再突入 I に変更。どちらも持続効果）・スターダスト 2 つ（発射体爆発ダメージ 92.03%・攻撃ダメージ 34%。どちらも残り 9.7 秒）の 4 項目で、防御力▲ は無い（バーストを撃っていない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "projectileExplosionDamage",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill",
+      "frames": [3677, 5621]
+    }
+  },
+  {
+    "id": "0486-06",
+    "recording": "0486",
+    "source": "V-0452",
+    "readAt": "2026-10-18",
+    "kind": "count",
+    "use": "compare",
+    "value": 0,
+    "unit": "件",
+    "description": "同じ一時停止の、デルタ（SR）の「適用中の効果」にある、アニス：スター S2 の発射体爆発ダメージ▲ の数（付いていない）",
+    "method": {
+      "tool": "ffmpeg で一時停止の画面（各キャラの「適用中の効果」）を切り出して目で読んだ",
+      "note": "デルタの欄を最後まで送って読んだ（5 項目）: スターフォール（持続効果）・リコレクション（最大HP 8.82% 増加。残り 9.7 秒）・リメンバーミー（敵を挑発。残り 9.2 秒）・ラストメモリー（防御力 51.42% 増加。残り 19.2 秒）・スターダスト（攻撃ダメージ 34%。残り 9.7 秒）。発射体爆発ダメージ▲ は付いていない。デルタのバフ前の防御力（15,111）はアニス：スターのバフ前（21,962）より低いが、自分の防御力▲（ラストメモリー）で 22,882 になる（データの計算）。488 では、アニス：スターの防御力▲ が効いている間のフルバーストで付いている（0488-12）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "projectileExplosionDamage",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill",
+      "frames": [3677, 5621]
+    }
+  },
+  {
+    "id": "0486-07",
+    "recording": "0486",
+    "source": "V-0452",
+    "readAt": "2026-10-18",
+    "kind": "count",
+    "use": "compare",
+    "value": 0,
+    "unit": "件",
+    "description": "同じ一時停止の、シンデレラ（RL）の「適用中の効果」にある、アニス：スター S2 の発射体爆発ダメージ▲ の数（付いていない。アニス：スターと同じ防御力）",
+    "method": {
+      "tool": "ffmpeg で一時停止の画面（各キャラの「適用中の効果」）を切り出して目で読んだ",
+      "note": "シンデレラの欄を最後まで送って読んだ（5 項目）: スターフォール・汚れなきガラス（チャージ速度 100% 増加）・曇りなき鏡（最大HP 1.6% 増加。STACK2。どれも持続効果）・汚れなきガラス（最終最大HPの 2.71% 分、攻撃力を上げる。残り 9.2 秒）・スターダスト（攻撃ダメージ 34%。残り 9.7 秒）。V-0448 の録画 A の 1 回目（482・483）の値の読みと同じく、同値の味方は含まれない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 4,
+        "skill": "skill2",
+        "stat": "projectileExplosionDamage",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "skill",
+      "frames": [3677, 5621]
+    }
+  },
+  {
+    "id": "0486-08",
+    "recording": "0486",
+    "source": "V-0452",
+    "readAt": "2026-10-18",
+    "kind": "count",
+    "use": "compare",
+    "value": [1],
+    "unit": "件",
+    "description": "デルタのバースト（II）の発動の後、デルタの「適用中の効果」に、S2 の防御力▲（ラストメモリー。防御力 51.42% 増加、残り 19.2 秒）が付いたか（1・0。1 回）",
+    "method": {
+      "tool": "ffmpeg で一時停止の画面（各キャラの「適用中の効果」）を切り出して目で読んだ",
+      "note": "フルバースト開始の約 0.3 秒後の一時停止。同じ画面のリメンバーミー（デルタのバーストの挑発。10 秒維持）は残り 9.2 秒で、ラストメモリーの残りとの差は 10.0 秒（20 秒と 10 秒の維持と合う）。デルタのバーストの発動は、この一時停止の約 0.8 秒前（フルバースト開始の約 0.5 秒前。右のバースト欄の II → III の替わり目は 0486-02）。488 でも付いている（0488-14）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "defense",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill",
+      "frames": [3677, 5621]
+    }
+  }
+]

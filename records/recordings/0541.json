@@ -1,0 +1,35 @@
+{
+  "id": "0541",
+  "date": "2026-10-23",
+  "folder": "range",
+  "file": "20261023-0541_mg_emma-tu_eunhwa-tu_manual-burst.mp4",
+  "original": "2026-10-23_23-50-17.mp4",
+  "durationSec": 200.4,
+  "frames": 12022,
+  "fps": 60,
+  "sizeMB": 243.2,
+  "sha256": "c287ec6ee9bf",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0478（エマ：TU の強化の中で環境コントロールが付き直したとき）の録画。エマ：TU（操作）+ ウンファ：TU・スペック固定 ON・AUTO 射撃 ON・オートバースト OFF（エマのバーストだけ手で撃つ。ウンファのバーストは撃たない）"
+}

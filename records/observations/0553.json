@@ -1,0 +1,126 @@
+[
+  {
+    "id": "0553-01",
+    "recording": "0553",
+    "kind": "total",
+    "use": "record",
+    "value": 2314396,
+    "description": "ウンファ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f3339。増分は 5 個"
+    },
+    "source": "V-0484",
+    "readAt": "2026-10-24"
+  },
+  {
+    "id": "0553-02",
+    "recording": "0553",
+    "kind": "count",
+    "use": "record",
+    "value": 5,
+    "unit": "トリガー",
+    "description": "ウンファ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 5 個。前の増分から 30f 未満の増分（0 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 40f）から発の数を決めた（2 発になった組 0 個）"
+    },
+    "source": "V-0484",
+    "readAt": "2026-10-24"
+  },
+  {
+    "id": "0553-03",
+    "recording": "0553",
+    "source": "V-0484",
+    "readAt": "2026-10-24",
+    "use": "record",
+    "kind": "timing",
+    "value": [1228.9, 1962.8, 2650.9, 3337.1, 3960.9],
+    "unit": "f",
+    "description": "ウンファ単騎・操作で、リロードが始まったフレーム（RELOADING のバーの伸びを長さ 0 に遡った点）。直前の発がマガジンの最後の弾丸",
+    "method": {
+      "tool": "reload.ts --mode fit",
+      "note": "どれもバーが 364〜365px まで満ちて消えた回（取り消しなし）。1〜4 回目は、的のヒット f1231・1965・2653・3339 の 1〜2f 前に始まるので、この 4 つのヒットは最後の弾丸。f1453 のヒットは 2 本目のマガジンの最後の弾丸でない発。5 回目（f3961）の前には的のヒットが無い（6 発とも空）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0553-04",
+    "recording": "0553",
+    "source": "V-0484",
+    "readAt": "2026-10-24",
+    "use": "record",
+    "kind": "gauge",
+    "value": [20, 19, 20],
+    "unit": "px",
+    "description": "ウンファ（92）単騎・操作で、フルチャージの最後の弾丸が的に当たったときの BURST バーの伸び（バーが 0px でない所から。f1965・2653・3339）",
+    "method": {
+      "tool": "gauge.ts --mode series、hud.ts --mode jumps（レシピ hud-jumps@2 のキャッシュ）、reload.ts --mode fit + 使い捨てのスクリプト（V-0484「読み方」）",
+      "note": "直前のフレームとヒットの後 30f までの差。バーは 22→42・42→61・61→81px（gauge.ts の 19.5・37.2・54.0・71.7% を 113px に換算。f2677 の 1 フレームだけの 100% は別の表示の重なり）。ヒットの後のバーは次のヒットまで動かない。3 発とも総ダメージの増分は 425,695"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0553-05",
+    "recording": "0553",
+    "source": "V-0484",
+    "readAt": "2026-10-24",
+    "use": "record",
+    "kind": "gauge",
+    "value": 3,
+    "unit": "px",
+    "description": "ウンファ（92）単騎・操作で、戦闘の最初の的のヒット（1 本目のマガジンの最後の弾丸。フルチャージ。f1231）の直後の BURST バーの px",
+    "method": {
+      "tool": "gauge.ts --mode series、hud.ts --mode jumps（レシピ hud-jumps@2 のキャッシュ）、reload.ts --mode fit + 使い捨てのスクリプト（V-0484「読み方」）",
+      "note": "それまでの発は空に撃って総ダメージが増えず、バーは 0px（2.7% を 113px に換算）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0553-06",
+    "recording": "0553",
+    "source": "V-0484",
+    "readAt": "2026-10-24",
+    "use": "record",
+    "kind": "gauge",
+    "value": 19,
+    "unit": "px",
+    "description": "ウンファ（92）単騎・操作で、最後の弾丸でない発（2 本目のマガジンの 1 発目。f1453）が的に当たったときの BURST バーの伸び（対照）",
+    "method": {
+      "tool": "gauge.ts --mode series、hud.ts --mode jumps（レシピ hud-jumps@2 のキャッシュ）、reload.ts --mode fit + 使い捨てのスクリプト（V-0484「読み方」）",
+      "note": "バーは 3→22px（直前に 1.8% と 2.7% の間で揺れる。2.7% から数えた）。総ダメージの増分は 611,616 で、最後の弾丸のヒット（425,695）の 1.437 倍（0551-06 の 1.149 倍と違う。部位の違いか、確かめていない）。最後の弾丸の 222f 後で、最後の弾丸をトリガーにする効果の中の発"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0553-07",
+    "recording": "0553",
+    "source": "V-0484",
+    "readAt": "2026-10-24",
+    "use": "record",
+    "kind": "gauge",
+    "value": 0,
+    "unit": "px",
+    "description": "ウンファ（92）単騎・操作で、最後の弾丸まで 6 発とも空に撃ったマガジン（リロードの始まり f3961 の前）と、その後の構えの間の BURST バーの伸び",
+    "method": {
+      "tool": "gauge.ts --mode series、hud.ts --mode jumps（レシピ hud-jumps@2 のキャッシュ）、reload.ts --mode fit + 使い捨てのスクリプト（V-0484「読み方」）",
+      "note": "f3339 の 81px から録画の終わりの近く（f4489）まで 81px のまま。f3605・3752 の前後に読みが一度下がって戻る所がある（バーの上に別の表示が重なった間）が、戻った値は同じ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  }
+]

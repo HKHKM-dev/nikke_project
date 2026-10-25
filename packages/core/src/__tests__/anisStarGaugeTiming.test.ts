@@ -54,7 +54,7 @@ function fixedSlot(id: number): TeamSlotInput {
   };
 }
 
-// 録画 164 と同じ: アニス：スター単騎・操作・オートバースト ON・BigArms 灼熱の 3 分モード
+// 録画 0164 と同じ: アニス：スター単騎・操作・オートバースト ON・BigArms 灼熱の 3 分モード
 function solo(enemy: EnemyInput, extra: Partial<TeamInput> = {}): TeamInput {
   return { slots: [fixedSlot(17)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0, ...extra };
 }
@@ -107,7 +107,7 @@ describe('ゲージの時刻（1 パス目）', () => {
 
   it('adds the obstacle gauge to the shot that broke them (C-0177・C-0243)', () => {
     const run = planTeamRun(solo(withFlight, { obstacleBreaks: [{ slotIndex: 0, shot: 1, count: 2 }] }));
-    // 物 2 個 = 14,000 × 2.5 × 1.06 × 2 = 74,200。1 発 103,880 と合わせて 9 発目で満タン（録画 161・181）
+    // 物 2 個 = 14,000 × 2.5 × 1.06 × 2 = 74,200。1 発 103,880 と合わせて 9 発目で満タン（録画 0161・0181）
     expect(run.schedule!.gaugeFullFrames[0]).toBe(run.shots[0]!.frames[8]! + 14);
   });
 

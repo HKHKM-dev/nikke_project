@@ -200,7 +200,7 @@
         "dropHeals": [330]
       },
       "note": "サンの 1 発（胴体・会心なし・距離ボーナスなし）。最初のバーストより前",
-      "observations": ["302-03"]
+      "observations": ["0302-03"]
     },
     {
       "id": "sun-fb-nonuser",
@@ -220,7 +220,7 @@
         "dropHeals": [330]
       },
       "note": "レイヴンが III を撃った回のフルバーストの中のサンの 1 発。H1 では攻撃ダメージ▲だけが乗り、H2 では攻撃力▲も乗る",
-      "observations": ["302-02"]
+      "observations": ["0302-02"]
     },
     {
       "id": "sun-fb-user",
@@ -240,7 +240,7 @@
         "dropHeals": [330]
       },
       "note": "サンが III を撃った回のフルバーストの中のサンの 1 発（攻撃力▲と攻撃ダメージ▲が乗る）",
-      "observations": ["302-01"]
+      "observations": ["0302-01"]
     },
     {
       "id": "cocoa-reload-base",

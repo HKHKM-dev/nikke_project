@@ -26,12 +26,12 @@ function treasureCharacter(): CharacterData {
   return makeCharacter(
     {},
     {
-      skills: { skill1: raw(1, '10'), skill2: raw(2, '10'), burst: raw(3, '200') },
+      skills: { skill1: raw(1, '10'), skill2: raw(2, '10'), burst: raw(3, '0200') },
       treasure: {
         favoriteId: 200001,
         name: { ja: '宝物', en: 'Treasure' },
         unlockOrder: ['skill2', 'burst', 'skill1'],
-        skills: { skill1: raw(51, '20'), skill2: raw(52, '20'), burst: raw(53, '400') },
+        skills: { skill1: raw(51, '20'), skill2: raw(52, '20'), burst: raw(53, '0400') },
       },
     },
   );

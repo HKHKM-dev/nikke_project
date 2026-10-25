@@ -1,0 +1,121 @@
+[
+  {
+    "id": "0578-01",
+    "recording": "0578",
+    "kind": "total",
+    "use": "record",
+    "value": 322220,
+    "unit": "ダメージ",
+    "description": "戦闘の終わりの戦闘履歴のパネルの、ココア（単騎）の与ダメージ",
+    "method": {
+      "tool": "目視",
+      "note": "パネルの 1 行目を拡大して読んだ（f2250〜2385。パネルの区間は probe-result.ts --list）"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "target",
+      "frames": [982, 2385]
+    }
+  },
+  {
+    "id": "0578-02",
+    "recording": "0578",
+    "kind": "total",
+    "use": "record",
+    "value": 322220,
+    "unit": "ダメージ",
+    "description": "戦闘の終わりのリザルト画面の TOTAL DAMAGE（数え上がりが止まった後の値）。パネルの与ダメージ（-01）と同じ。段階の数値の最後の読み（hud.ts --screen interception --mode jumps）と同じ",
+    "method": {
+      "tool": "目視",
+      "note": "リザルト画面の数字を、パネルが開く前の最後のフレームで読んだ"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "target",
+      "frames": [982, 2385]
+    }
+  },
+  {
+    "id": "0578-03",
+    "recording": "0578",
+    "kind": "hit",
+    "use": "record",
+    "value": [27383, 41074],
+    "unit": "ダメージ",
+    "description": "段階の数値の増分（7 個）と最初に読めた値（41,074）の 1 ヒットの格子。フルチャージの胴体 27,383（8 回。54,766 = 2 個・82,149 = 3 個を含む）と、その 1.5 倍の会心 41,074（2 回）。ほかは 21,008 が 1 回（録画 0515 の 21,567 と同じく、格子に乗らない 1 発）",
+    "method": {
+      "tool": "hud.ts --screen interception --mode jumps",
+      "note": "増分を ±1 で格子と、その 2〜3 個の和に当てた"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [982, 1896]
+    }
+  },
+  {
+    "id": "0578-04",
+    "recording": "0578",
+    "kind": "count",
+    "use": "record",
+    "value": 11,
+    "unit": "発",
+    "description": "照準の横の残弾から数えた、撃った数（f902〜1909）。最初に読めた残弾が 5 なので、その前の 1 発を足した",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series",
+      "note": "照準の横の残弾の減りを足した（リロードで増えたときは直前が 1 なら 1 を足し、それより多ければ残弾を残したリロードとして足さない。キャラの最大を超える読みは捨てた）。最後に読めた残弾の後（倒れる直前）の発は数えていない"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "firing",
+      "frames": [902, 1909]
+    }
+  },
+  {
+    "id": "0578-05",
+    "recording": "0578",
+    "kind": "count",
+    "use": "record",
+    "value": 11,
+    "unit": "発",
+    "description": "ボスの段階の数値（TOTAL DAMAGE）に入った発の数。11 発のどれもゲージに入った",
+    "method": {
+      "tool": "hud.ts --screen interception --mode jumps の増分を、1 ヒットの格子のセルのちょうどの和（最少の発の数）に分けた",
+      "note": "最初に読めた値（f982 の前で 41,074 = 会心 1）・胴体 8・会心 1・21,008 が 1 で 11 発"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [902, 1909]
+    }
+  },
+  {
+    "id": "0578-06",
+    "recording": "0578",
+    "kind": "count",
+    "use": "record",
+    "value": [10, 0, 2, 0],
+    "unit": "ヒット",
+    "description": "格子に分けたヒットの [数, コア, 会心, 距離ボーナスあり]。格子に分けた 10 ヒット（21,008 を除く）のうちコア 0・会心 2・距離ボーナスあり 0",
+    "method": {
+      "tool": "hud.ts --screen interception --mode jumps の増分を、1 ヒットの格子のセルのちょうどの和（最少の発の数）に分けた"
+    },
+    "source": "V-0486",
+    "readAt": "2026-10-24",
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [902, 1909]
+    }
+  }
+]

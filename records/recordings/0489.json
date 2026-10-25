@@ -1,0 +1,36 @@
+{
+  "id": "0489",
+  "date": "2026-10-18",
+  "folder": "range",
+  "file": "20261018-0489_smg+ar_sakura+asuka-idle.mp4",
+  "original": "2026-10-18_20-52-12.mp4",
+  "durationSec": 197.7,
+  "frames": 11864,
+  "fps": 60,
+  "sizeMB": 239.5,
+  "sha256": "df456b23c1cb",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true,
+      "fires": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0451 の録画 A（1 本目）。鈴原サクラ（1 枠目・AI）+ アスカ（2 枠目・操作・AUTO 射撃 OFF・撃たない）。オートバースト ON。戦闘履歴のパネルで枠順とアスカの与ダメージ・盾・緑の欄が 0 を確かめた"
+}

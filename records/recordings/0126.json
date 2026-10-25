@@ -1,0 +1,29 @@
+{
+  "id": "0126",
+  "date": "2026-10-02",
+  "folder": "range",
+  "file": "20261002-0126_rl_idoll-flower.mp4",
+  "original": "2026-10-02_23-24-52.mp4",
+  "durationSec": 202.2,
+  "frames": 12131,
+  "fps": 60,
+  "sizeMB": 245.3,
+  "sha256": "e9258c89a240",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。V-0104。最初の 1 秒ほどに出撃画面（灼熱タブ・3 分モード・スペック固定 ON・編成はこのキャラ 1 体）、最後に戦闘履歴の画面（キャラ名）が写っている。戦闘中の画面左上で AUTO 射撃 ON・自動バースト OFF を確かめた"
+}

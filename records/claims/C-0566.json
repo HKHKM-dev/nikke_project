@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
-  "basis": "`469-01`・`470-01`。V-0432。読み方（3 ヒットの値の分け方）は録画 469 で組み、録画 470 で再現した",
+  "basis": "`0469-01`・`0470-01`。V-0432。読み方（3 ヒットの値の分け方）は録画 0469 で組み、録画 0470 で再現した",
   "model": "`frame/plan.ts` の damage の selfState（発火のフレームより前に付いた件だけを見る）と、`data/skills/161.json` の burst の effects[1]・skill2 の effects[1]",
   "replaces": [],
   "updated": "2026-10-17",
@@ -13,7 +13,7 @@
   },
   "decidedOn": [
     {
-      "recording": "469",
+      "recording": "0469",
       "role": "読み方を合わせた"
     }
   ]

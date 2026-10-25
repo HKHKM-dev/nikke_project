@@ -119,7 +119,7 @@ describe('バースト段階の構成の条件（burstStepMix）', () => {
     expect(burstStepMixAllows(absent, [anis, avistar, flower], 0)).toBe(false);
   });
 
-  it('gives My Own Star with a re-entering Burst I ally only (録画 460)', () => {
+  it('gives My Own Star with a re-entering Burst I ally only (録画 0460)', () => {
     const team = applyComposition(def, [anis, avistar, delta], 0);
     // 2 段目の段 1（plan/design-skill-stage1.md 2.1 節）: 私だけの星は静的な状態の付与（中身に攻撃力▲）
     expect(team.skills.skill1.effects.map((e) => e.kind)).toEqual([

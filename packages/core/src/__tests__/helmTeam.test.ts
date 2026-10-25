@@ -50,14 +50,14 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 const HELM = 352;
 const rec079 = (phase: TreasurePhase) => team([fixedSlot(822), fixedSlot(20), fixedSlot(HELM, phase)], 2);
 const TEAMS: Record<string, { input: TeamInput; helm: number }> = {
-  '録画 079 の編成（ラム + デルタ + ヘルム・宝物 3）': { input: rec079(3), helm: 2 },
+  '録画 0079 の編成（ラム + デルタ + ヘルム・宝物 3）': { input: rec079(3), helm: 2 },
   '実戦寄り（リター + クラウン + ヘルム・宝物 3 + アリス + アドミ）': {
     input: team([fixedSlot(82), fixedSlot(330), fixedSlot(HELM, 3), fixedSlot(191), fixedSlot(172)], 2),
     helm: 2,
   },
 };
 
-describe('録画 079 の編成（V-0033）', () => {
+describe('録画 0079 の編成（V-0033）', () => {
   const plan = planTeamRun(rec079(3));
   const HELM_SLOT = 2;
 
@@ -91,7 +91,7 @@ describe('録画 079 の編成（V-0033）', () => {
   });
 });
 
-describe('録画 079 の編成: バーストのヒットの遅れ（C-0167）', () => {
+describe('録画 0079 の編成: バーストのヒットの遅れ（C-0167）', () => {
   const input = rec079(3);
   const sim = runSimulation(input);
   const calc = computeTeamDamage(input);
@@ -107,7 +107,7 @@ describe('録画 079 の編成: バーストのヒットの遅れ（C-0167）', 
     );
   });
 
-  it('fixes the caster-side buffs at the use: the full burst attack damage of S2 is not on the hit (079-07)', () => {
+  it('fixes the caster-side buffs at the use: the full burst attack damage of S2 is not on the hit (0079-07)', () => {
     const plan = planTeamRun(input);
     const uses = plan.schedule!.activations.filter((a) => a.slotIndex === HELM_SLOT && a.frame + 59 < plan.frames);
     expect(uses.length).toBeGreaterThan(0);
@@ -122,7 +122,7 @@ describe('録画 079 の編成: バーストのヒットの遅れ（C-0167）', 
   });
 });
 
-describe('ヘルム単騎（録画 082 の編成。V-0034）', () => {
+describe('ヘルム単騎（録画 0082 の編成。V-0034）', () => {
   it('fills the gauge on the frame of the 3rd shot: 14.0% + charge 14.31% + additional damage hit 5.6% per shot (C-0103, V-0034)', () => {
     const plan = planTeamRun(team([fixedSlot(HELM, 3)], 0));
     const shots = plan.shots[0]!.frames;

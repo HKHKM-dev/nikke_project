@@ -128,7 +128,7 @@ describe('状態の付与の検証（parseSkillDefinition）', () => {
   });
 });
 
-describe('ウンファ：TU のカモフラージュ（付与をまたぐ和集合。録画 233 の編成）', () => {
+describe('ウンファ：TU のカモフラージュ（付与をまたぐ和集合。録画 0233 の編成）', () => {
   // フラワー（I）+ ウンファ：TU（II）+ サン（III・操作）。モデルではフルバーストの中の炸裂弾がフルチャージの発として付け直し、
   // バースト使用時の窓と重なる（plan/design-named-state-impl.md 2 節）
   const input = team([slotOf(FLOWER), slotOf(EUNHWA), slotOf(SUN)], 'Fire', 2);

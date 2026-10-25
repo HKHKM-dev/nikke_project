@@ -1,0 +1,29 @@
+{
+  "id": "0427",
+  "date": "2026-10-11",
+  "folder": "range",
+  "file": "20261011-0427_smg_idoll-ocean_auto.mp4",
+  "original": "2026-10-11_06-53-46.mp4",
+  "durationSec": 198.1,
+  "frames": 11885,
+  "fps": 60,
+  "sizeMB": 239.8,
+  "sha256": "cfe7b82d5792",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 305,
+      "name": "I-DOLL・オーシャン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0422・V-0423（V-0427）。I-DOLL・オーシャン単騎・操作（AUTO 射撃 ON）・オートバースト OFF。180 秒を撃ち切り、戦闘中は操作しない（V-0416 の撮影計画の C。同じ日に続けて撮った 2 本の 2 本目）"
+}

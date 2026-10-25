@@ -1,0 +1,41 @@
+{
+  "id": "0484",
+  "date": "2026-10-18",
+  "folder": "range",
+  "file": "20261018-0484_cinderella-control.mp4",
+  "original": "2026-10-18_05-57-13.mp4",
+  "durationSec": 200.2,
+  "frames": 12014,
+  "fps": 60,
+  "sizeMB": 242.6,
+  "sha256": "59bf5dde7b9b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 511,
+      "name": "シンデレラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0448 録画 B（対照）1 本目。アニス：スター・デルタ・シンデレラ（操作・AUTO 射撃 ON）。3 分を最後まで撃ち、終わりに戦闘履歴を映す"
+}

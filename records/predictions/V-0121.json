@@ -56,7 +56,7 @@
         "condition": "auto"
       },
       "note": "フルバーストの入りどうしの間隔（動画のフレーム）の最初の 3 つ。みんなの星なので CT▼ は無く、H1・H0 とも CT 40 秒で決まる見込み",
-      "observations": ["163-02"]
+      "observations": ["0163-02"]
     }
   ],
   "predicted": {

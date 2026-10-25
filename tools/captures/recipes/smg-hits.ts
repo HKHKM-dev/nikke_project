@@ -313,7 +313,7 @@ export function segmentOf(frame: number, cuts: readonly number[]): number {
  *   距離ボーナスの付かない着地点（B・C）のときだけで、付く着地点（A）なら 3 回目と同じ決め方。
  * - 3 回目（遠 → 中遠）は、前の切れ目から間隔（offsets）の 0.6〜1.15 倍の所に切れたまとまりがあればそれ、無ければ
  *   前の切れ目 + 間隔に一番近いまとまりの終わり。
- * offsets はジャンプの間隔の代表値（f。録画 138 の 2,037・2,432・2,032・2,061）
+ * offsets はジャンプの間隔の代表値（f。録画 0138 の 2,037・2,432・2,032・2,061）
  */
 export function detectCuts(
   rows: readonly HudIncrement[],

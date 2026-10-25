@@ -66,7 +66,7 @@ describe('S2 のゲージ（1 パス目）', () => {
     shotsOf(plan).filter((f) => f <= plan.schedule!.gaugeFullFrames[0]!).length;
 
   it('adds one target hit of gauge on each last bullet, so the first full comes 3 shots earlier', () => {
-    // 1 発 5,000。200 発で 1,000,000。満タンまでに最後の弾丸（60・120・180 発目）が 3 回で、197 発目で届く（C-0480 の 369-01・370-01）
+    // 1 発 5,000。200 発で 1,000,000。満タンまでに最後の弾丸（60・120・180 発目）が 3 回で、197 発目で届く（C-0480 の 0369-01・0370-01）
     expect(moran.shot.targetBurstEnergyPerShot).toBe(5000);
     expect(moran.shot.maxAmmo).toBe(60);
     expect(indexOfFull(without)).toBe(200);

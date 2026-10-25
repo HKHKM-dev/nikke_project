@@ -4,7 +4,7 @@
   "state": "棄却",
   "topic": "バーストゲージ",
   "grade": "反復実測",
-  "basis": "verification.md Stage 7「単騎の録画によるゲージの較正」（録画 23〜35）",
+  "basis": "verification.md Stage 7「単騎の録画によるゲージの較正」（録画 0023〜0035）",
   "model": "`burst/dynamic.ts` から外した（V-0028。C-0083）。×1.2 は BURST バーの表示の縮尺（C-0084）を 1px ≈ 0.885% と読んだぶん",
   "replaces": [],
   "updated": "2026-09-28"

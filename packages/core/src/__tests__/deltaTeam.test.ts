@@ -45,9 +45,9 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 }
 
 const DELTA = 20;
-// 録画 063 の編成（フラワー + デルタ + アスカ）と、デルタが II の実戦寄りの 5 人
+// 録画 0063 の編成（フラワー + デルタ + アスカ）と、デルタが II の実戦寄りの 5 人
 const TEAMS: Record<string, { input: TeamInput; delta: number }> = {
-  '録画 063 の編成（フラワー + デルタ + アスカ）': {
+  '録画 0063 の編成（フラワー + デルタ + アスカ）': {
     input: team([fixedSlot(304), fixedSlot(DELTA), fixedSlot(830)], 2),
     delta: 1,
   },

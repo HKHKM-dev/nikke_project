@@ -26,7 +26,7 @@ export const WEAPON_LABEL: Record<WeaponType, { ja: string; en: string }> = {
 export type WeaponModel = {
   /**
    * チャージ武器の発と発の間のうち、チャージ（chargeSecondsToFrames）の外の長さ。Stage 23: 23f（C-0535）。
-   * 撃った後に表示が出ない 13f・100% のまま待つ 9f・満ちてから撃つまで 1f の和（075-05）。発と発の間は
+   * 撃った後に表示が出ない 13f・100% のまま待つ 9f・満ちてから撃つまで 1f の和（0075-05）。発と発の間は
    * 1 秒チャージで 59 + 23 = 82f、1.5 秒チャージで 89 + 23 = 112f。22 までは 1 秒 = 60f のチャージとの差だった（C-0001）。
    * 押下チャージ型（DOWN_Charge）は発と発の間に足さない（C-0222。frame/firing.ts の chargeShotIntervalFrames）
    * 射撃姿勢維持型（frame/firing.ts の stanceFrames）には使わない（姿勢の長さ + aimInFrames。plan/design-fire-stance-cadence.md）
@@ -65,7 +65,7 @@ export type WeaponModel = {
   aimInFrames: number;
   /**
    * 射撃姿勢維持型でない入力が UP のチャージ武器が、チャージが満ちてから撃つまで（マガジンの中もハイドからも 1f。
-   * 075-05・077-26。C-0232）。chargeReleaseFrames（23f）の内訳の 1 つで、ハイドからの 1 発目（cadence.ts の firstShotFrames）にだけ使う
+   * 0075-05・0077-26。C-0232）。chargeReleaseFrames（23f）の内訳の 1 つで、ハイドからの 1 発目（cadence.ts の firstShotFrames）にだけ使う
    */
   chargeFullToShotFrames: number;
   /**

@@ -179,10 +179,10 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, kurumi 
   });
 });
 
-// V-0113: クルミ単騎の録画 057〜062 の 1 回目の満タン。弾とハッキングの tick を 4,000 ずつ足した合計が、1,000,000 にちょうど
+// V-0113: クルミ単騎の録画 0057〜0062 の 1 回目の満タン。弾とハッキングの tick を 4,000 ずつ足した合計が、1,000,000 にちょうど
 // 届いたヒットのフレームで満タンになる（付けた回は足さない）。数は観測値から読む（テストに実測値を直書きしない）
 type Observation = { id: string; value: number | number[] };
-const observations = readJson<Observation[]>('../../../../records/observations/057.json');
+const observations = readJson<Observation[]>('../../../../records/observations/0057.json');
 const obs = (id: string): Observation['value'] => {
   const o = observations.find((x) => x.id === id);
   if (o === undefined) throw new Error(`observation ${id} not found`);
@@ -214,8 +214,8 @@ describe('recordings 057–062 (Kurumi solo): the first full gauge (V-0113)', ()
     expect(without.schedule!.gaugeFullFrames[0]!).toBeGreaterThan(full);
   });
 
-  it('counts the same hits and ticks up to the full gauge as the recordings (057-10, 057-11)', () => {
-    for (const hits of obs('057-10') as number[]) expect(shots.filter((f) => f <= full)).toHaveLength(hits);
-    for (const n of obs('057-11') as number[]) expect(ticks.filter((f) => f <= full)).toHaveLength(n);
+  it('counts the same hits and ticks up to the full gauge as the recordings (0057-10, 0057-11)', () => {
+    for (const hits of obs('0057-10') as number[]) expect(shots.filter((f) => f <= full)).toHaveLength(hits);
+    for (const n of obs('0057-11') as number[]) expect(ticks.filter((f) => f <= full)).toHaveLength(n);
   });
 });
