@@ -23,7 +23,7 @@ function fixedSlot(id: number): TeamSlotInput {
     character: c,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 0, distanceBonus: true },
+    condition: { coreHitRate: 0, distanceBonus: true, fullCharge: true },
     skills: {
       definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
       levels: MAX_SKILL_LEVELS,
