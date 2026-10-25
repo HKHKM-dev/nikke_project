@@ -88,7 +88,7 @@ export type ShotParams = {
 
 /**
  * 飛ぶ弾の性質。単位は CDN の生値のまま（換算は分かっていない）。2026-10-02 時点で飛ぶ弾は RL だけで、
- * 誘導弾・弾速 100 が多数、紅蓮：ブラックシャドウ・レイヴンは直進弾・弾速 400。RL のコア命中率との関係は plan/roadmap.md「今後の課題」
+ * 誘導弾・弾速 100 が多数、紅蓮：ブラックシャドウ・レイヴンは直進弾・弾速 400。RL のコア命中率との関係は plan/design-rl-core-by-projectile.md
  */
 export type ProjectileSpec = {
   /** 弾速（spot_projectile_speed） */
