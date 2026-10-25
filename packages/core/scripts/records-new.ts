@@ -9,7 +9,9 @@
 //   最小構成の検査（同 5 節）は、下書きを確定とみて根拠の観測値の組を判定する。text と model は人が書く。
 //   --decided-on は、仮説・値・読み方を決めるのに使った録画（decidedOn。plan/design-investigation-review.md 1.3 節）。等級の候補は、
 //   反復実測の再現にこれらの録画を数えない。仮説を立てた録画が無ければ none。
-import { spawnSync } from 'node:child_process';
+// --push: 作ったファイルだけを commit して git push -u origin HEAD する（番号をほかのブランチから見えるようにする。main の上や
+//   ブランチが無いときはしない）。付けなければ push を促す 1 行を出す（plan/design-workflow-simplification.md 4 節）。
+import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import {
@@ -56,13 +58,14 @@ const { values, positionals } = parseArgs({
     subject: { type: 'string', multiple: true },
     mechanism: { type: 'string' },
     'decided-on': { type: 'string', multiple: true },
+    push: { type: 'boolean', default: false },
   },
 });
 
 const USAGE =
-  'usage: npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN]\n' +
+  'usage: npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN] [--push]\n' +
   '       npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>] [--subject "<定義の場所>" … | --mechanism <機構>]\n' +
-  '         [--decided-on <録画>:<仮説|値|読み方> … | --decided-on none]\n' +
+  '         [--decided-on <録画>:<仮説|値|読み方> … | --decided-on none] [--push]\n' +
   `話題: ${CLAIM_TOPICS.join(' / ')}\n` +
   `機構: ${CLAIM_MECHANISMS.join(' / ')}`;
 
@@ -109,6 +112,49 @@ function freeId(prefix: 'V' | 'C', own: readonly string[]): string {
   return id;
 }
 
+/**
+ * 番号を押さえる。--push なら作ったファイルだけを commit して push する。並行するセッションに見えるのは origin だけなので、取った番号は
+ * push するまでほかのブランチと重なりうる（plan/design-workflow-simplification.md 4 節）。失敗しても作ったファイルは残す
+ */
+function reserve(path: string, id: string): void {
+  const rel = path.slice(ROOT.length);
+  if (!values.push) {
+    console.log(
+      `番号 ${id} はまだほかのブランチから見えない。${rel} を commit して、すぐ push する（PR は出さない。--push で道具が行う）`,
+    );
+    return;
+  }
+  const git = (a: string[]): string =>
+    execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', timeout: 60_000, stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+  let branch = '';
+  try {
+    branch = git(['symbolic-ref', '--short', '-q', 'HEAD']);
+  } catch {
+    // ブランチが無い（detached HEAD）
+  }
+  if (branch === '' || branch === 'main') {
+    console.log(
+      `注意: ${branch === '' ? 'ブランチが無い' : 'main の上にいる'}ので push しなかった。トピックブランチで ${rel} を commit して push する`,
+    );
+    return;
+  }
+  try {
+    git(['add', '--', rel]);
+    git(['commit', '--quiet', '-m', `${id} の番号を押さえる`, '--', rel]);
+  } catch (e) {
+    console.log(`注意: commit できなかった（${(e as Error).message.split('\n')[0]}）。${rel} を commit して push する`);
+    return;
+  }
+  try {
+    git(['push', '--quiet', '-u', 'origin', 'HEAD']);
+    console.log(`${rel} を commit して origin/${branch} に push した（番号 ${id} がほかのブランチから見える）`);
+  } catch (e) {
+    console.log(
+      `注意: push できなかった（${(e as Error).message.split('\n')[0]}）。commit はしたので、git push -u origin HEAD を回す`,
+    );
+  }
+}
+
 const kind = positionals[0];
 const verifications = loadVerifications();
 const today = todayLocal();
@@ -137,6 +183,7 @@ if (kind === 'verification') {
   console.log(
     `${path} を作った（状態: 調査中）。問い・条件・次に撮るもの（撮影計画。オーナーに頼む撮影は plan/captures/protocol.md「撮影の依頼」の型）を書く。予測は任意（撮影計画で仮説を見分けられるか確かめるなら、予測ファイル records/predictions/${id}.json を作って npm run records:predict -- ${id}）`,
   );
+  reserve(path, id);
 } else if (kind === 'claim') {
   const from = values.from;
   if (!from) fail('--from V-NNNN が要る');
@@ -242,6 +289,7 @@ if (kind === 'verification') {
     console.log(
       `subject の定義の場所（${subject.places.join('、')}）の claims にも ${id} を足す（records:check が確かめる）`,
     );
+  reserve(path, id);
   void loadSkillDefinitions;
 } else {
   fail('verification か claim を指定する');

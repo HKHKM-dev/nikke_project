@@ -35,7 +35,7 @@
 
 ## 撮った後（取り込み）
 
-- 撮り終えたら、**すぐに** `tools/captures/intake.ts` で取り込む（コマンドは [../verification-guide.md](../verification-guide.md) 5 節）。`records/recordings/<録画 id>.json` を後からまとめて埋めない。
+- 撮り終えたら、**すぐに** `tools/captures/intake.ts` で取り込む（コマンドは [../verification-guide.md](../verification-guide.md) 5 節）。`records/recordings/<録画 id>.json` を後からまとめて埋めない。取り込んだら台帳をすぐ commit して push する（録画の番号を押さえる。[../verification-guide.md](../verification-guide.md) 3 節）。
 - オート射撃・オートバーストの値は、画（左上のボタン）で確かめる。
 - まず一時停止 / 戦闘履歴のパネルで編成と枠順を確かめ、その編成で予測を出し直す。設計書の古い編成で撮られることがある（[../verification.md](../verification.md)「録画 43」）。
 - 操作枠（`controlled`）を書く。バーストゲージのフルチャージ倍率は操作キャラにだけ乗る（C-0007）。
