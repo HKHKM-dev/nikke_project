@@ -11,6 +11,7 @@ import { reloadSegments } from './reload-segments.ts';
 import { sgPellets } from './sg-pellets.ts';
 import { smgCores } from './smg-cores.ts';
 import { smgMags } from './smg-mags.ts';
+import { fbWindowCores } from './fb-window-cores.ts';
 import type { Recipe } from './types.ts';
 
 export const RECIPES: readonly Recipe[] = [
@@ -26,6 +27,7 @@ export const RECIPES: readonly Recipe[] = [
   buffEdge,
   chargeShots,
   burstPanel,
+  fbWindowCores,
 ];
 
 export function findRecipe(name: string): Recipe | undefined {

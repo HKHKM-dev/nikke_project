@@ -1,0 +1,43 @@
+{
+  "id": "634",
+  "date": "2026-10-25",
+  "folder": "range",
+  "file": "20261025-634_smg+sr+sg_sakura+delta+drake_drake-control.mp4",
+  "original": "2026-10-25_03-27-31.mp4",
+  "durationSec": 204.9,
+  "frames": 12291,
+  "fps": 60,
+  "sizeMB": 248.1,
+  "sha256": "ae03271abaa5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": true,
+      "fires": false,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0492（撮り直し）。A（▲あり）。鈴原サクラ（AI）・デルタ（AI）・ドレイク（操作・撃たない・宝物 3 段階）。AUTO 射撃 OFF・オートバースト ON。B の 6 本（625〜630）の後に A の 6 本を続けて撮った（2026-10-24 のオーナーの判断。A の 4 本目）。オート射撃のボタンが消えていること（画面左上）と、戦闘履歴のパネルの編成（鈴原サクラ・デルタ・ドレイク）を確かめた。ドレイクの与ダメージはバーストの分（434 と同じ大きさ）"
+}
