@@ -35,6 +35,7 @@
 
 - `node tools/captures/sg-dots.ts 109 --pellets <sg-pellets の debug 出力>`（発ごとの照準・基準点・区間を `sg-dots@<版>.shots.tsv` に書く）
 - `node tools/captures/sg-map.ts 109 --smg 152`（地図・判定 1・判定 2）
+- この記録の道具（`sg-dots.ts`・`sg-map.ts`・`coverage.ts`）は #661 でリポジトリから消した（コミット `3888bb2`）。中身はその親で読める（例: `git show 3888bb2^:tools/captures/sg-map.ts`）。
 
 ## 結果
 
