@@ -2,6 +2,8 @@
 // 自分の最初の発の着弾の前は 840、着弾から 1,680 を足す（C-0244〜C-0246・C-0620）。自分の分は ×1.06 のまま（C-0198）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { SG_PELLET_GAUGE_HIT_RATE } from '../burst/dynamic.ts';
+import type { BuildEffect } from '../buildEffects.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -51,15 +53,21 @@ const TEAM: TeamInput = {
   controlledSlot: 1,
 };
 
+type ShotGauge = ReturnType<typeof planTeamRun>['shotGauges'][number];
+
 /** 発のゲージの並び（shotGauges）から、1 回目の満タンのフレームを出す。add は枠ごとの 1 回あたりの上乗せ（フレームで変わる） */
 function firstFullFrame(input: TeamInput, add: (slotIndex: number, frame: number) => number): number | undefined {
+  return firstFullFrameBy(input, (g) => {
+    const shot = input.slots[g.slotIndex]!.character.shot;
+    return (g.energy / shot.targetBurstEnergyPerShot) * add(g.slotIndex, g.frame);
+  });
+}
+
+/** firstFullFrame と同じ。extra は発のゲージ 1 件ごとの上乗せの合計 */
+function firstFullFrameBy(input: TeamInput, extra: (g: ShotGauge) => number): number | undefined {
   const plan = planTeamRun(input);
   const byFrame = new Map<number, number>();
-  for (const g of plan.shotGauges) {
-    const shot = input.slots[g.slotIndex]!.character.shot;
-    const hits = g.energy / shot.targetBurstEnergyPerShot;
-    byFrame.set(g.frame, (byFrame.get(g.frame) ?? 0) + g.energy + hits * add(g.slotIndex, g.frame));
-  }
+  for (const g of plan.shotGauges) byFrame.set(g.frame, (byFrame.get(g.frame) ?? 0) + g.energy + extra(g));
   let sum = 0;
   for (const f of [...byFrame.keys()].sort((a, b) => a - b)) {
     sum += byFrame.get(f)!;
@@ -96,6 +104,69 @@ describe('アニス：スター S1 の味方のゲージ（allyGaugeAdd）', () 
     const without: TeamInput = { ...TEAM, slots: [TEAM.slots[1]!, TEAM.slots[2]!], controlledSlot: 0 };
     const p = planTeamRun(without);
     expect(p.schedule!.gaugeFullFrames[0]).toBe(firstFullFrame(without, () => 0));
+  });
+
+  describe('SG の味方（C-0627・V-0488）', () => {
+    // V-0488 の撮り方 1（録画 0562〜0564）: アニス：スター（AI）+ イサベル（SG・操作・AUTO）。イサベルは手入力の条件にして、
+    // 1 発の当たったペレットの数の期待値を shotCount × SG_PELLET_GAUGE_HIT_RATE × 弾丸命中率 でここから出す
+    const hitRate = 0.9;
+    const sgTeam = (buildEffects?: readonly BuildEffect[]): TeamInput => {
+      const isabel = fixedSlot(231);
+      return {
+        ...TEAM,
+        slots: [
+          fixedSlot(17),
+          { ...isabel, condition: { ...isabel.condition, hitRate }, conditionMode: 'manual', buildEffects },
+        ],
+      };
+    };
+    const shot = sgTeam().slots[1]!.character.shot;
+    const pellets = shot.shotCount * SG_PELLET_GAUGE_HIT_RATE * hitRate;
+    /** イサベルの発 1 件に、当たったペレットの数 × 840（アニス：スターの最初の着弾の前）／1,680（着弾から）を足す */
+    const perPellet = (landingFrame: number) => (g: ShotGauge) =>
+      g.slotIndex === 0 ? 0 : pellets * (g.frame >= landingFrame ? 1_680 : 840);
+    const landingOf = (p: ReturnType<typeof planTeamRun>): number =>
+      Math.min(...p.shotGauges.filter((g) => g.slotIndex === 0).map((g) => g.frame));
+
+    it('adds 840 / 1,680 per hit pellet of each shot', () => {
+      const team = sgTeam();
+      const p = planTeamRun(team);
+      const full = p.schedule!.gaugeFullFrames[0]!;
+      const landingFrame = landingOf(p);
+      const isabel = p.shotGauges.filter((g) => g.slotIndex === 1 && g.frame <= full);
+      expect(shot.shotCount).toBeGreaterThan(1);
+      // 満タンまでのイサベルのゲージは、どれも通常攻撃の発（当たったペレットの数 × targetBurstEnergyPerShot。C-0150）
+      for (const g of isabel) expect(g.energy).toBeCloseTo(shot.targetBurstEnergyPerShot * pellets, 6);
+      // 840 の領分（最初の着弾の前）と 1,680 の領分の両方に、イサベルの発がある
+      expect(isabel.some((g) => g.frame < landingFrame)).toBe(true);
+      expect(isabel.some((g) => g.frame >= landingFrame)).toBe(true);
+      expect(full).toBe(firstFullFrameBy(team, perPellet(landingFrame)));
+      // 1 発に 1 回だけ足す（V-0488 の仮説 S）より早く満タンになる
+      const perShot = firstFullFrameBy(team, (g) => (g.slotIndex === 0 ? 0 : g.frame >= landingFrame ? 1_680 : 840));
+      expect(full).toBeLessThan(perShot!);
+    });
+
+    it('does not scale the added amount by the ally’s gauge speed', () => {
+      const speed = 0.5;
+      const team = sgTeam([
+        {
+          source: { kind: 'cube', name: { ja: 'クオンタム', en: 'Quantum' }, skillId: 4013011, level: 1 },
+          stat: 'burstGaugeSpeed',
+          value: speed,
+        },
+      ]);
+      const p = planTeamRun(team);
+      const full = p.schedule!.gaugeFullFrames[0]!;
+      const landingFrame = landingOf(p);
+      const isabel = p.shotGauges.filter((g) => g.slotIndex === 1 && g.frame <= full);
+      expect(isabel.length).toBeGreaterThan(0);
+      // イサベル自身のゲージには速度が掛かる
+      for (const g of isabel) expect(g.energy).toBeCloseTo(shot.targetBurstEnergyPerShot * pellets * (1 + speed), 6);
+      // 足す量（回数 × 840／1,680）には掛からない
+      expect(full).toBe(firstFullFrameBy(team, perPellet(landingFrame)));
+      const scaled = firstFullFrameBy(team, (g) => perPellet(landingFrame)(g) * (1 + speed));
+      expect(full).not.toBe(scaled);
+    });
   });
 
   it('allows at most one allyGaugeAdd per definition', () => {
