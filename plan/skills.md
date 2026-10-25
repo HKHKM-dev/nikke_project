@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 61・効果 244（根拠あり 235）・notes 225（根拠あり 67）
+件数: キャラ 61・効果 245（根拠あり 236）・notes 224（根拠あり 68）
 
-notes の種類: 未対応 113・前提の外 27・計算に無関係 28・補足 11・間接 46
+notes の種類: 未対応 111・前提の外 27・計算に無関係 28・補足 12・間接 46
 
-スロット: supported 99・partial 15・unsupported 52・noEffect 32
+スロット: supported 101・partial 13・unsupported 52・noEffect 32
 
 ## 10 ラピ
 
@@ -847,18 +847,18 @@ notes の種類: 未対応 113・前提の外 27・計算に無関係 28・補�
 
 ## 871 雪子
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] timed・battleStart・attack: C-0347（確定）
   - effects[1] timed・fullBurstEnd・attack: C-0347（確定）
   - effects[2] damage・burstUse・distributed: C-0358（確定）、C-0428（確定）
   - effects[3] state・battleStart・persona: C-0354（確定）
-  - notes[0] 未対応: ペルソナ - コノハナサクヤの 3 秒ごとの味方全体の回復（メディア）は未対応（回復を受けた時の効果を持つ味方の発動を変える）: 根拠なし
-- **skill2**: partial
+  - effects[4] heal・3 秒ごと: C-0647（確定）
+- **skill2**: supported
   - effects[0] passive・attackDamage: C-0348（確定）
   - effects[1] timed・burstUse・distributedDamage: C-0349（確定）
   - effects[2] timed・burstStage3Enter・elementDamage: C-0350（確定）、C-0360（確定）
   - effects[3] state・burstUse・followUp（attack）: C-0355（確定）、C-0555（確定）
-  - notes[0] 未対応: 真紅の華の 3 秒ごとの味方全体の回復（メディラマ）は未対応（回復を受けた時の効果を持つ味方の発動を変える）: 根拠なし
+  - notes[0] 補足: 真紅の華の 3 秒ごとの味方全体の回復（メディラマ）は、S1 のメディア（skill1 の effects[4]）と同じフレームに起き、ほかのフレームには起きないので、別に定義しない（回復を受けた時の効果の発動は S1 の回復の定義で入る）: C-0648（確定）
   - notes[1] 計算に無関係: 真紅の守護（水冷コードの敵から受けるダメージ▼）はダメージに関係しない: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-0351（確定）

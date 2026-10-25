@@ -52,18 +52,21 @@
           "claims": [
             "C-0354"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "ペルソナ - コノハナサクヤの 3 秒ごとの味方全体の回復（メディア）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
-          "en": "The ally heal every 3 sec from Persona - Konohana Sakuya (Media) is not modeled (it changes allies' effects triggered by being healed)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "timer"
-          }
+          "kind": "heal",
+          "target": "allies",
+          "ref": 2,
+          "trigger": {
+            "everySeconds": 3
+          },
+          "assumes": {
+            "ja": "ペルソナ - コノハナサクヤ（戦闘の終わりまで続く。C-0354）の効果 1（メディア）。戦闘開始から 3 秒ごと（3 秒・6 秒…。0 秒には起きない）に、味方全体に 1 回の回復が起きる",
+            "en": "Effect 1 (Media) of Persona - Konohana Sakuya (lasts until the end of battle, C-0354). One heal on all allies every 3 s from battle start (3 s, 6 s, …; not at 0 s)"
+          },
+          "claims": [
+            "C-0647"
+          ]
         }
       ]
     },
@@ -126,14 +129,17 @@
       ],
       "notes": [
         {
-          "ja": "真紅の華の 3 秒ごとの味方全体の回復（メディラマ）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
-          "en": "The ally heal every 3 sec from Crimson Flower (Mediarama) is not modeled (it changes allies' effects triggered by being healed)",
-          "kind": "unimplemented",
+          "ja": "真紅の華の 3 秒ごとの味方全体の回復（メディラマ）は、S1 のメディア（skill1 の effects[4]）と同じフレームに起き、ほかのフレームには起きないので、別に定義しない（回復を受けた時の効果の発動は S1 の回復の定義で入る）",
+          "en": "The ally heal every 3 s from Scarlet Flower (Mediarama) lands on the same frames as S1's Media (skill1 effects[4]) and on no other frame, so it is not defined separately (allies' effects triggered by being healed come from S1's heal)",
+          "kind": "modeling",
           "effect": {
             "kind": "heal",
             "target": "allies",
             "trigger": "timer"
-          }
+          },
+          "claims": [
+            "C-0648"
+          ]
         },
         {
           "ja": "真紅の守護（水冷コードの敵から受けるダメージ▼）はダメージに関係しない",

@@ -5477,7 +5477,7 @@
     {
       "observation": "0259-01",
       "element": "クイーン（真） burst.effects[1]",
-      "key": "ebd6cf4bc26ace48",
+      "key": "5b9e26fbcf2b0d0c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5493,7 +5493,7 @@
     {
       "observation": "0259-01",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "ebd6cf4bc26ace48",
+      "key": "5b9e26fbcf2b0d0c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5501,7 +5501,7 @@
     {
       "observation": "0259-01",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "ebd6cf4bc26ace48",
+      "key": "5b9e26fbcf2b0d0c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5517,7 +5517,7 @@
     {
       "observation": "0259-04",
       "element": "クイーン（真） burst.effects[1]",
-      "key": "dfb23d2dc881b124",
+      "key": "0db33435d42a0510",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5533,7 +5533,7 @@
     {
       "observation": "0259-04",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "dfb23d2dc881b124",
+      "key": "0db33435d42a0510",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5541,7 +5541,7 @@
     {
       "observation": "0259-04",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "dfb23d2dc881b124",
+      "key": "0db33435d42a0510",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5557,7 +5557,7 @@
     {
       "observation": "0259-05",
       "element": "クイーン（真） burst.effects[1]",
-      "key": "8a918b3e08f9c6d1",
+      "key": "3206f42ae46d4f4d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5573,7 +5573,7 @@
     {
       "observation": "0259-05",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "8a918b3e08f9c6d1",
+      "key": "3206f42ae46d4f4d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5581,7 +5581,7 @@
     {
       "observation": "0259-05",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "8a918b3e08f9c6d1",
+      "key": "3206f42ae46d4f4d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5597,7 +5597,7 @@
     {
       "observation": "0259-06",
       "element": "クイーン（真） burst.effects[1]",
-      "key": "c0043f597bdb3b5e",
+      "key": "eb762a79d3a176ca",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5613,7 +5613,7 @@
     {
       "observation": "0259-06",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "c0043f597bdb3b5e",
+      "key": "eb762a79d3a176ca",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5621,7 +5621,7 @@
     {
       "observation": "0259-06",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "c0043f597bdb3b5e",
+      "key": "eb762a79d3a176ca",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5637,7 +5637,7 @@
     {
       "observation": "0259-07",
       "element": "クイーン（真） burst.effects[1]",
-      "key": "eb2da029f912cfea",
+      "key": "687674a940ebe8ae",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5653,7 +5653,7 @@
     {
       "observation": "0259-07",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "eb2da029f912cfea",
+      "key": "687674a940ebe8ae",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5661,7 +5661,7 @@
     {
       "observation": "0259-07",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "eb2da029f912cfea",
+      "key": "687674a940ebe8ae",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5677,7 +5677,7 @@
     {
       "observation": "0259-08",
       "element": "クイーン（真） burst.effects[1]",
-      "key": "9aacacb9f1fcbbe2",
+      "key": "2ed662990b6831a6",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5693,7 +5693,7 @@
     {
       "observation": "0259-08",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "9aacacb9f1fcbbe2",
+      "key": "2ed662990b6831a6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5701,7 +5701,7 @@
     {
       "observation": "0259-08",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "9aacacb9f1fcbbe2",
+      "key": "2ed662990b6831a6",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5717,7 +5717,7 @@
     {
       "observation": "0259-11",
       "element": "クイーン（真） burst.effects[1]",
-      "key": "705cf6e40408ff1d",
+      "key": "f5ae3f603d337361",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5733,7 +5733,7 @@
     {
       "observation": "0259-11",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "705cf6e40408ff1d",
+      "key": "f5ae3f603d337361",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5741,7 +5741,7 @@
     {
       "observation": "0259-11",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "705cf6e40408ff1d",
+      "key": "f5ae3f603d337361",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5757,7 +5757,7 @@
     {
       "observation": "0259-12",
       "element": "クイーン（真） burst.effects[1]",
-      "key": "5966146e4535e041",
+      "key": "31f926fa77aad89d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5773,7 +5773,7 @@
     {
       "observation": "0259-12",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "5966146e4535e041",
+      "key": "31f926fa77aad89d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5781,7 +5781,7 @@
     {
       "observation": "0259-12",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "5966146e4535e041",
+      "key": "31f926fa77aad89d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5797,7 +5797,7 @@
     {
       "observation": "0259-13",
       "element": "クイーン（真） burst.effects[1]",
-      "key": "0057e5ca7dac67ab",
+      "key": "3938174ea3ad4187",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5813,7 +5813,7 @@
     {
       "observation": "0259-13",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "0057e5ca7dac67ab",
+      "key": "3938174ea3ad4187",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5821,7 +5821,7 @@
     {
       "observation": "0259-13",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "0057e5ca7dac67ab",
+      "key": "3938174ea3ad4187",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5837,7 +5837,7 @@
     {
       "observation": "0261-01",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "f30824a867a90c97",
+      "key": "57070d0cc88dbc3b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5845,7 +5845,7 @@
     {
       "observation": "0261-01",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "f30824a867a90c97",
+      "key": "57070d0cc88dbc3b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5861,7 +5861,7 @@
     {
       "observation": "0261-02",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "18fedaed2e10ca4e",
+      "key": "513b53756b292d9a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5869,7 +5869,7 @@
     {
       "observation": "0261-02",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "18fedaed2e10ca4e",
+      "key": "513b53756b292d9a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5885,7 +5885,7 @@
     {
       "observation": "0261-03",
       "element": "クイーン（真） skill1.effects[4]",
-      "key": "37dba3c9d7e9453e",
+      "key": "ba9dde09c9ce9f6a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -5893,7 +5893,7 @@
     {
       "observation": "0261-03",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "37dba3c9d7e9453e",
+      "key": "ba9dde09c9ce9f6a",
       "effective": false,
       "minus": null,
       "plus": null,
