@@ -84,7 +84,7 @@ Stage 15-B（迎撃戦）の一次データは、戦闘の後に出るキャラ�
 
 - [captures/tools.md](captures/tools.md) の表に `result-screen.ts` を足す。
 - [captures/guide.md](captures/guide.md) に 1 行: TOTAL DAMAGE は止まってから読む・盾の欄は回数ではない（根拠はこの設計書の 1 節）。
-- [backlog.md](backlog.md) 7 節の 15-B から「リザルト画面の読み取りの道具」を消す（Lv200 固定の入力が残るので、roadmap の Stage 15 の行はそのまま）。
+- [backlog.md](backlog.md) 7 節の 15-B から「リザルト画面の読み取りの道具」を消す。Lv200 固定の専用の入力も作らないと決まった（#696）ので行が空になり、行を消して roadmap の Stage 15 を完了にした。
 - design-stage12.md 17 節の 4 の行の後に、状況の 1 行（道具はこの設計書）。
 
 ## 5. 決めたこと（2026-10-25。どれも推奨案で承認）
