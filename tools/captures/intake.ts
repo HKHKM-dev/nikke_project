@@ -1,9 +1,9 @@
 // 録画の取り込み（plan/design-records-automation.md 3.3 節）: 命名規約でリネームして置き場所に移し、素性（長さ・フレーム数・fps・
 // 大きさ・sha256）を取り、records/recordings/<録画 id>.json を書く。編成・的・条件は引数で受け、無ければ空で出す（人が埋める）。
-//   node tools/captures/intake.ts <元ファイル> --id NNN --name <種別内の識別子> [--folder range] [--date YYYY-MM-DD]
+//   node tools/captures/intake.ts <元ファイル> --id NNNN --name <種別内の識別子> [--folder range] [--date YYYY-MM-DD]
 //        [--rid 271,870] [--controlled 1] [--target BigArms --element Fire] [--mode range-3min]
 //        [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."] [--copy] [--no-backup]
-// 命名規約は plan/captures/index.md「命名規約」（<YYYYMMDD>-<番号 3〜4 桁>_<識別子>.mp4。識別子は英小文字・数字・-・_・+）。
+// 命名規約は plan/captures/index.md「命名規約」（<YYYYMMDD>-<番号 4 桁>_<識別子>.mp4。識別子は英小文字・数字・-・_・+）。
 // 日付は --date、無ければ元のファイル名の YYYY-MM-DD、無ければファイルの更新日時。既定は移動（--copy で元を残す）。
 // 最後に、移した録画を Google Drive の nikke_project_captures の同じ種別フォルダに置き、Drive の SHA256 を台帳の sha256 と突き合わせる
 // （plan/captures/storage.md「バックアップ」。plan/design-cloud-environment.md 4.4 節）。取り込み元の写しが Drive の
@@ -77,7 +77,7 @@ const { values, positionals } = parseArgs({
 });
 
 const USAGE =
-  'usage: node tools/captures/intake.ts <元ファイル | drive:<record の中のパス>> --id NNN --name <識別子> [--folder range]\n' +
+  'usage: node tools/captures/intake.ts <元ファイル | drive:<record の中のパス>> --id NNNN --name <識別子> [--folder range]\n' +
   '       [--date YYYY-MM-DD] [--rid 271,870] [--controlled 1] [--target BigArms --element Fire] [--mode range-3min]\n' +
   '       [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."] [--copy] [--no-backup]\n' +
   '       node tools/captures/intake.ts --list-record（Drive の record の一覧）';
@@ -123,7 +123,8 @@ if (fromDrive !== null) {
   if (values.copy) fail('drive: から取り込むときは --copy を使えない（record の写しは移す）');
   if (gatewayUrl() === null) fail('環境変数 NIKKE_DRIVE_GATEWAY_URL が無い（Drive の中で移すのに受け口を使う）');
 }
-if (!/^\d{3,}$/.test(values.id)) fail('--id は 3 桁以上の数字');
+// 2026-10-25 から 4 桁だけ（plan/design-recording-id-4digit.md 6 節）
+if (!/^\d{4}$/.test(values.id)) fail('--id は 4 桁の数字（0001〜9999）');
 if (!/^[a-z0-9][a-z0-9_+-]*$/.test(values.name)) fail('--name は英小文字・数字・-・_・+');
 // 命名規約では編成をファイル名に入れない（plan/captures/index.md「命名規約」。録画 400〜402・407。plan/design-investigation-review.md 5 節）
 if (values.name.includes('+'))
@@ -152,11 +153,12 @@ if (existsSync(recordPath)) fail(`${recordPath} が既にある`);
 // plan/design-investigation-review.md 4.3 節）
 const branches = recordingIdsInBranches();
 if (branches.note !== '') console.error(`注意: ${branches.note}`);
-if (branches.ids.includes(values.id)) {
+// 数として比べる（ブランチの歴史には 4 桁にそろえる前の 3 桁の番号が残る）
+if (branches.ids.some((x) => /^\d+$/.test(x) && Number(x) === Number(values.id))) {
   const used = [...readdirSync(`${ROOT}records/recordings`).map((n) => n.replace(/\.json$/, '')), ...branches.ids];
   const max = Math.max(...used.filter((x) => /^\d+$/.test(x)).map(Number));
   fail(
-    `録画 ${values.id} はほかのブランチ（か main）が records/recordings/${values.id}.json を足している。次の空き番号は ${String(max + 1).padStart(3, '0')}`,
+    `録画 ${values.id} はほかのブランチ（か main）が records/recordings/ に足している。次の空き番号は ${String(max + 1).padStart(4, '0')}`,
   );
 }
 

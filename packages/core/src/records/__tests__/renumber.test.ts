@@ -4,6 +4,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   mentions,
+  padRecordingId,
+  padRecordingsInText,
   rangesContaining,
   recordingMentions,
   renumberInText,
@@ -153,5 +155,49 @@ describe('records/renumber（録画）', () => {
     expect(recordingMentions('{ "recording": "952" }', '952', true)).toBe(1);
     expect(recordingMentions('{ "recording": "952" }', '952', false)).toBe(0);
     expect(recordingMentions('952 本・V-0952・録画 952 本', '952', false)).toBe(0);
+  });
+});
+
+describe('records/renumber（録画の番号を 4 桁にそろえる）', () => {
+  // 実在の番号と重ならないように、録画の集合を渡す（ここでは 41・950〜953・978 を録画とする）
+  const recordings = new Set([41, 950, 951, 952, 953, 978]);
+  const observations = new Set(['951-01', '951-03', '978-06', '953-06']);
+  const md = { recordings, observations, json: false };
+
+  it('pads recordings in lists, backquotes, observation ids and file names, keeping ranges as they are', () => {
+    const text = [
+      '- 録画: `951`、`978`',
+      '録画 950〜953・41 の読み直し。録画（951）の中で。`950`〜`952`・`9510` と 1951・951,000',
+      '根拠: `951-01`〜`951-03`・`952-01`・`953-06`〜`978-06`。`20261002-951_rl_x.mp4`・`20260922-41_SG_x_f100.jpg`',
+      '`951_f1200_ammo.jpg`・`derived/951/`・`derived\\978\\a.json`',
+    ].join('\n');
+    const r = padRecordingsInText(text, md);
+    expect(r.text).toBe(
+      [
+        '- 録画: `0951`、`0978`',
+        '録画 0950〜0953・0041 の読み直し。録画（0951）の中で。`0950`〜`0952`・`9510` と 1951・951,000',
+        '根拠: `0951-01`〜`0951-03`・`952-01`・`0953-06`〜`0978-06`。`20261002-0951_rl_x.mp4`・`20260922-0041_SG_x_f100.jpg`',
+        '`0951_f1200_ammo.jpg`・`derived/0951/`・`derived\\0978\\a.json`',
+      ].join('\n'),
+    );
+    expect(r.count).toBe(17);
+    // 何度回しても同じ
+    expect(padRecordingsInText(r.text, md)).toEqual({ text: r.text, count: 0 });
+  });
+
+  it('leaves numbers that are not recordings', () => {
+    const text =
+      '録画 13 本 / 録画 2245 / `41` / `046-03`〜`06` / 952 本 / 録画 954 / V-0951・C-0951・2026-10-25・`0951`';
+    expect(padRecordingsInText(text, md)).toEqual({ text, count: 0 });
+  });
+
+  it('pads JSON strings only under records/', () => {
+    const text = '{ "id": "951", "recording": "978", "value": "954", "recordings": ["950", "41"] }';
+    expect(padRecordingsInText(text, { ...md, json: true }).text).toBe(
+      '{ "id": "0951", "recording": "0978", "value": "954", "recordings": ["0950", "41"] }',
+    );
+    expect(padRecordingsInText(text, md).count).toBe(0);
+    expect(padRecordingId('41')).toBe('0041');
+    expect(padRecordingId('0951')).toBe('0951');
   });
 });

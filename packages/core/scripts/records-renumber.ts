@@ -53,11 +53,23 @@ import { ROOT, idsInBranches, observationIdsInBranches, recordingIdsInBranches }
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
-  options: { 'dry-run': { type: 'boolean', default: false } },
+  options: { 'dry-run': { type: 'boolean', default: false }, 'pad-all': { type: 'boolean', default: false } },
 });
 
 const USAGE =
-  'usage: npm run records:renumber -- <古い ID> <新しい ID> [--dry-run]（V-NNNN・C-NNNN・<録画>-NN・録画の番号 NNN）';
+  'usage: npm run records:renumber -- <古い ID> <新しい ID> [--dry-run]（V-NNNN・C-NNNN・<録画>-NN・録画の番号 NNNN）\n' +
+  '       npm run records:renumber -- --pad-all [--dry-run]（2〜3 桁の録画の番号を 4 桁にそろえる。plan/design-recording-id-4digit.md）';
+
+if (values['pad-all']) {
+  if (positionals.length > 0) {
+    console.error('--pad-all は ID を取らない');
+    console.error(USAGE);
+    process.exit(1);
+  }
+  const { padAllRecordings } = await import('./records-pad-recordings.ts');
+  await padAllRecordings(values['dry-run']);
+  process.exit(0);
+}
 
 function fail(message: string): never {
   console.error(message);
@@ -73,6 +85,8 @@ if (oldId === undefined || newId === undefined || positionals.length !== 2) fail
 const problems = renumberProblems(oldId, newId);
 if (problems.length > 0) fail(problems.join('\n'));
 const kind = renumberKind(oldId)!;
+// 録画の番号は 2026-10-25 から 4 桁だけ（plan/design-recording-id-4digit.md 6 節）。古い番号は古い文を読むため 3 桁も受ける
+if (kind === 'recording' && !/^\d{4}$/.test(newId)) fail('録画の新しい番号は 4 桁（0001〜9999）');
 const dryRun = values['dry-run'];
 
 for (const p of ['rebase-merge', 'rebase-apply', 'MERGE_HEAD', 'CHERRY_PICK_HEAD']) {
@@ -144,7 +158,9 @@ const branches =
       ? recordingIdsInBranches()
       : idsInBranches();
 if (branches.note !== '') console.error(`注意: ${branches.note}`);
-if (branches.ids.includes(newId)) fail(`${newId} はどれかのブランチ（手元か origin。main を含む）が足したことがある`);
+// 録画は数として比べる（ブランチの歴史には 4 桁にそろえる前の 3 桁の番号が残る）
+const sameId = (x: string) => (kind === 'recording' ? /^\d+$/.test(x) && Number(x) === Number(newId) : x === newId);
+if (branches.ids.some(sameId)) fail(`${newId} はどれかのブランチ（手元か origin。main を含む）が足したことがある`);
 
 const TEXT = /\.(md|json|ts|tsx|mts|cts|js|mjs|cjs|ya?ml|txt|csv|html|css)$/;
 const files = [
