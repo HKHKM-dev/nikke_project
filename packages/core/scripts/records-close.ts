@@ -4,7 +4,7 @@
 // 確定の反復実測の結論に decidedOn がある・最小構成の警告・指標なし・許容外・合う仮説が 2 つ以上は人の判断（judgment）で上書き・
 // 確定の結論の根拠の観測値のうち compare の無いものに scope がある・「次に撮るもの」「分かったこと」が空でない）。撮る前の予測と読みの順は
 // 見ない（plan/design-investigation-review.md 1 節）。通れば --mark で状態を完了に書き換え、records:check と CI と同じ確認を回し
-// （--no-ci で省く）、PR の題名の案を出す。roadmap.md の更新と PR は人（エージェント）が行う。
+// （--no-ci で省く）、PR の題名の案を出す。roadmap.md の更新（項目の状態が変わったときだけ）と PR は人（エージェント）が行う。
 import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
@@ -124,4 +124,6 @@ if (!values['no-ci']) {
     run(cmd);
 }
 console.log(`PR の題名の案: ${prTitle(verification)}`);
-console.log('残り: plan/roadmap.md を更新し、AGENTS.md「コミット手順」で PR を出す');
+console.log(
+  '残り: 項目の状態が変わったときだけ plan/roadmap.md の 1 行を更新し、AGENTS.md「コミット手順」で PR を出す',
+);
