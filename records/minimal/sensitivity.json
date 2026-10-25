@@ -1740,7 +1740,7 @@
     {
       "observation": "0137-05",
       "element": "ミサト skill1.effects[0]",
-      "key": "a830f8221109a3cd",
+      "key": "edf7e5093bacbb50",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -1748,7 +1748,7 @@
     {
       "observation": "0137-06",
       "element": "ミサト skill1.effects[0]",
-      "key": "5ae5015532e2929a",
+      "key": "593612e46e29cd5b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -1756,7 +1756,7 @@
     {
       "observation": "0137-07",
       "element": "ミサト skill1.effects[0]",
-      "key": "d9db2c510c163bfa",
+      "key": "4f99e0d062396a7b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -1764,7 +1764,7 @@
     {
       "observation": "0137-08",
       "element": "ミサト skill1.effects[0]",
-      "key": "8c9e66eff19168ce",
+      "key": "329fb9e25d1d8e67",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -1772,7 +1772,7 @@
     {
       "observation": "0139-05",
       "element": "ミサト skill1.effects[0]",
-      "key": "f54dc3e745b176c8",
+      "key": "69c97a6aabc3b341",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -1780,7 +1780,7 @@
     {
       "observation": "0139-06",
       "element": "ミサト skill1.effects[0]",
-      "key": "bfcdd662c846440b",
+      "key": "3a4bc1c9ec60752e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -1788,7 +1788,7 @@
     {
       "observation": "0139-07",
       "element": "ミサト skill1.effects[0]",
-      "key": "5651425ee54f5593",
+      "key": "e1b2c405ec7a1d76",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -1796,7 +1796,7 @@
     {
       "observation": "0139-08",
       "element": "ミサト skill1.effects[0]",
-      "key": "ce6f18743dbc773f",
+      "key": "546c6bdf06ac9a6a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2028,7 +2028,7 @@
     {
       "observation": "0154-04",
       "element": "ミサト skill1.effects[0]",
-      "key": "6414665da4a58f52",
+      "key": "cdda5f5c439aa6d3",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2036,7 +2036,7 @@
     {
       "observation": "0154-05",
       "element": "ミサト skill1.effects[0]",
-      "key": "cd0a84b00d3fb239",
+      "key": "f10d040b7a903ed4",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -2044,7 +2044,7 @@
     {
       "observation": "0154-06",
       "element": "ミサト skill1.effects[0]",
-      "key": "81f667d4b187bbb1",
+      "key": "b6accb3fa9ad38ec",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8621,7 +8621,7 @@
     {
       "observation": "0472-04",
       "element": "アスカ burst.effects[0]",
-      "key": "dd40b2775109895e",
+      "key": "a57b7e3af666f517",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -8637,15 +8637,23 @@
     {
       "observation": "0472-04",
       "element": "アスカ burst.effects[2]",
-      "key": "dd40b2775109895e",
+      "key": "a57b7e3af666f517",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0472-04",
+      "element": "ミサト burst.effects[0]",
+      "key": "a57b7e3af666f517",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0472-04",
       "element": "ミサト skill1.effects[0]",
-      "key": "dd40b2775109895e",
+      "key": "a57b7e3af666f517",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8653,7 +8661,7 @@
     {
       "observation": "0473-03",
       "element": "アスカ burst.effects[0]",
-      "key": "5e0efdb3b068eb90",
+      "key": "f5bc1238a87bb055",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -8669,15 +8677,23 @@
     {
       "observation": "0473-03",
       "element": "アスカ burst.effects[2]",
-      "key": "5e0efdb3b068eb90",
+      "key": "f5bc1238a87bb055",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0473-03",
+      "element": "ミサト burst.effects[0]",
+      "key": "f5bc1238a87bb055",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0473-03",
       "element": "ミサト skill1.effects[0]",
-      "key": "5e0efdb3b068eb90",
+      "key": "f5bc1238a87bb055",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11101,7 +11117,7 @@
     {
       "observation": "0497-02",
       "element": "アスカ burst.effects[0]",
-      "key": "f0123506ac964b53",
+      "key": "f32a965d9587f136",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11117,15 +11133,23 @@
     {
       "observation": "0497-02",
       "element": "アスカ burst.effects[2]",
-      "key": "f0123506ac964b53",
+      "key": "f32a965d9587f136",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0497-02",
+      "element": "ミサト burst.effects[0]",
+      "key": "f32a965d9587f136",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0497-02",
       "element": "ミサト skill1.effects[0]",
-      "key": "f0123506ac964b53",
+      "key": "f32a965d9587f136",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11133,7 +11157,7 @@
     {
       "observation": "0498-01",
       "element": "アスカ burst.effects[0]",
-      "key": "8cb85a8a4375559b",
+      "key": "7cc1a24b0b2552c2",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11149,15 +11173,23 @@
     {
       "observation": "0498-01",
       "element": "アスカ burst.effects[2]",
-      "key": "8cb85a8a4375559b",
+      "key": "7cc1a24b0b2552c2",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0498-01",
+      "element": "ミサト burst.effects[0]",
+      "key": "7cc1a24b0b2552c2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0498-01",
       "element": "ミサト skill1.effects[0]",
-      "key": "8cb85a8a4375559b",
+      "key": "7cc1a24b0b2552c2",
       "effective": false,
       "minus": 0,
       "plus": 0

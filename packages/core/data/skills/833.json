@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 833,
-  "checkedAt": "2026-10-18",
+  "checkedAt": "2026-10-25",
   "skills": {
     "skill1": {
       "effects": [
@@ -74,18 +74,19 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体の持続回復は未対応（回復を受けた時の効果を起こさない。単騎ではダメージに関係しない）",
-          "en": "The heal over time on all allies is not modeled (it does not trigger effects on being healed; it does not affect damage solo)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "burstUse"
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "持続回復（1 秒間隔・5 秒間維持）は、付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（ゲーム内の用語のツールチップの読み。C-0578 と同じ）。自分を含む味方全体に、満タンの味方にも付く。付く時刻はモデルのバーストの使用のフレーム（ミサトのバーストの効果の付き始めは未測定）。回復量はダメージに関係しない",
+            "en": "The heal over time (every 1 s for 5 s) triggers \"when healed\" once when applied, not on each 1-second tick (reading of the in-game term tooltip; as C-0578). It lands on all allies including self, also at full HP. Applied at the model's burst use frame (when Misato's burst effects actually start is unmeasured). The healed amount does not affect damage"
           },
           "claims": [
+            "C-0646",
             "C-0180"
           ]
         }

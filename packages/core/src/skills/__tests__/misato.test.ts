@@ -1,6 +1,6 @@
 // ミサト（833）: S1「射撃マニュアル」の命中率▲（60 発ごとに自分に 1 スタック・3 スタック・5 秒）の解決と、
-// S1 の回復（2 段目の段 8。残りの HP の割合が最も低い味方 1 機。C-0567）、ダメージに効く効果の無い S2（noEffect）と、回復だけのバースト
-// （unsupported。回復は未対応）。V-0110。
+// S1 の回復（2 段目の段 8。残りの HP の割合が最も低い味方 1 機。C-0567）、ダメージに効く効果の無い S2（noEffect）と、
+// バーストの味方全体の持続回復（5 秒間維持。C-0646）。V-0110。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { gameSecondsToFrames } from '../../time.ts';
@@ -37,7 +37,7 @@ describe('ミサト（833）の定義', () => {
 
   it('resolves the S1 heal on the ally with the lowest HP ratio every 120 normal shots (2 段目の段 8)', () => {
     const instant = resolveInstant(def, misato, MAX_SKILL_LEVELS);
-    expect(instant).toHaveLength(1);
+    expect(instant).toHaveLength(2);
     expect(instant[0]).toMatchObject({
       kind: 'heal',
       target: 'lowestHpRatio',
@@ -47,9 +47,21 @@ describe('ミサト（833）の定義', () => {
     expect(instant[0]!.value).toBeCloseTo(0.0804, 12);
   });
 
-  it('defines nothing else (S2 has no effect on damage; the burst heal is not modeled)', () => {
+  it('resolves the burst heal over time on all allies for 5 s (C-0646)', () => {
+    const burst = resolveInstant(def, misato, MAX_SKILL_LEVELS)[1]!;
+    expect(burst).toMatchObject({
+      kind: 'heal',
+      target: 'allies',
+      trigger: 'burstUse',
+      durationFrames: gameSecondsToFrames(5),
+    });
+    expect(burst.source.skill).toBe('burst');
+    expect(burst.value).toBeCloseTo(0.0506, 12);
+    expect(def.skills.burst.support).toBe('supported');
+  });
+
+  it('defines nothing else (S2 has no effect on damage)', () => {
     expect(def.skills.skill2.support).toBe('noEffect');
-    expect(def.skills.burst.support).toBe('unsupported');
     expect(resolvePassives(def, misato, MAX_SKILL_LEVELS)).toEqual([]);
   });
 });
