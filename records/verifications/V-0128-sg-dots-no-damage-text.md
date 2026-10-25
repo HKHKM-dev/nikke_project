@@ -33,6 +33,7 @@
 - 取り込み（2026-10-04）: `node tools/captures/intake.ts <元ファイル> --id 166 --name sg_noir_nodmg --rid 271 --controlled 1 --target BigArms --element Fire --mode range-3min --fixed-spec on --auto-fire on --auto-burst off`
 - 当たったペレット: `npm run records:read -- 166 --recipe sg-pellets --source V-0128 --opt pellet=27964 --opt debug=1`（標準エラーを保存。1 ペレットの胴体はスペック固定 ON の録画 0074 の `0074-09`）
 - 着弾点: `node tools/captures/sg-dots.ts 166 --pellets <上の標準エラー> --pellet 27964 --verbose`
+- `sg-dots.ts` は #661 でリポジトリから消した（コミット `3888bb2`）。中身はその親で読める（`git show 3888bb2^:tools/captures/sg-dots.ts`）。
 
 ## 結果
 

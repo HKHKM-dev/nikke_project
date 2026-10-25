@@ -1,4 +1,4 @@
-// 射撃場の録画から照準の中心・コア・的を読む部品（aim.ts と coverage.ts が使う。Stage 18-B2 の試作から切り出した。
+// 射撃場の録画から照準の中心・コア・的を読む部品（aim.ts が使う。Stage 18-B2 の試作から切り出した。
 // plan/design-stage18.md 11 節、plan/design-bullet-hit-rate-frame-coverage.md 2 節）。読み方の説明は aim.ts の冒頭。
 import { spawnSync } from 'node:child_process';
 import { rawFrames } from './ffmpeg.ts';
