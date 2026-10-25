@@ -104,7 +104,7 @@ export type RecordingBackup = {
 
 /** このプロジェクトが採用した録画（E:/nikke_project_captures/<folder>/） */
 export type ProjectRecording = RecordingConditions & {
-  /** 3 桁の通し番号 */
+  /** 4 桁の通し番号（2026-10-25 に 4 桁にそろえた。plan/design-recording-id-4digit.md） */
   id: string;
   date: string;
   folder: RecordingFolder;
@@ -170,8 +170,8 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
     if (isLegacy(entry)) {
       if (!/^L-[A-Z]{1,3}$/.test(entry.id)) errors.push(`${at}: 旧の録画の id は L-<旧のタグ>`);
     } else {
-      // Stage 20-A・20-C: 桁は 3 桁以上。抜けは許す（plan/design-stage20.md 3.5・3.6 節）
-      if (!/^\d{3,}$/.test(entry.id)) errors.push(`${at}: id は 3 桁以上の数字`);
+      // Stage 20-A・20-C: 抜けは許す（plan/design-stage20.md 3.5・3.6 節）。桁は 4 桁以上（plan/design-recording-id-4digit.md）
+      if (!/^\d{4,}$/.test(entry.id)) errors.push(`${at}: id は 4 桁以上の数字`);
       const number = Number(entry.id);
       if (!RECORDING_FOLDERS.includes(entry.folder)) errors.push(`${at}: folder が語彙に無い: ${entry.folder}`);
       const m = /^(\d{4})(\d{2})(\d{2})-(\d{2,})_/.exec(entry.file);

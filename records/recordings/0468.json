@@ -1,0 +1,30 @@
+{
+  "id": "0468",
+  "date": "2026-10-17",
+  "folder": "range",
+  "file": "20261017-0468_ar_tove.mp4",
+  "original": "2026-10-17_18-45-42.mp4",
+  "durationSec": 199,
+  "frames": 11937,
+  "fps": 60,
+  "sizeMB": 241.1,
+  "sha256": "65e732b734fe",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 192,
+      "name": "トーブ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0435。トーブ単騎（宝物の段階 3）。出撃画面（風圧のタブ・スペック固定 ON）と戦闘履歴を映す"
+}

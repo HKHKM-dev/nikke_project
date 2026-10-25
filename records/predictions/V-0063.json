@@ -29,8 +29,8 @@
         "condition": "auto",
         "nearLanding": ["A", "B"]
       },
-      "note": "録画 101・102 の与ダメージ（近の着地点 A・B）",
-      "observations": ["101-01", "102-01"]
+      "note": "録画 0101・0102 の与ダメージ（近の着地点 A・B）",
+      "observations": ["0101-01", "0102-01"]
     },
     {
       "id": "shots",

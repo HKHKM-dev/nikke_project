@@ -114,7 +114,7 @@ describe('runSimulation with the fixed burst cycle', () => {
   it('fires the burst skill of the assigned slot 9 times and sums 9 × perActivation', () => {
     const step2 = slot(4, {}, 'Step2'); // 定義なし
     const buster = slot(5, {}, 'Step3', '351.64');
-    const other = slot(6, {}, 'Step3', '100'); // 同じ段階の 2 体目は発動しない
+    const other = slot(6, {}, 'Step3', '0100'); // 同じ段階の 2 体目は発動しない
     const step1 = slot(7, {}, 'Step1', '50');
     const sim = runSimulation({
       slots: [step2, buster, other, step1],

@@ -1,0 +1,29 @@
+{
+  "id": "0559",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-0559_rl_idoll-flower_manual-core.mp4",
+  "original": "2026-10-24_12-07-17.mp4",
+  "durationSec": 46.4,
+  "frames": 2781,
+  "fps": 60,
+  "sizeMB": 56.2,
+  "sha256": "7dc41ced27aa",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "I-DOLL・フラワー単騎・操作（オート射撃 OFF・オートバースト OFF。画面左上のボタンで確かめた）。V-0487 の撮影の依頼の ※2（558 と同じ。最初のヒットは戦闘開始の約 345f 後）。一時停止のパネルで単騎の I-DOLL・フラワー・Lv.400 を確かめた。被弾の赤い表示で BURST バーの読みが乱れる所がある"
+}

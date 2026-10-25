@@ -1,0 +1,43 @@
+{
+  "id": "0435",
+  "date": "2026-10-11",
+  "folder": "range",
+  "file": "20261011-0435_smg+sr+sg_sakura+delta+drake_drake-control.mp4",
+  "original": "2026-10-11_07-26-38.mp4",
+  "durationSec": 202.5,
+  "frames": 12150,
+  "fps": 60,
+  "sizeMB": 245.3,
+  "sha256": "9ec0bd02b183",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": true,
+      "fires": false,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0424（V-0427）。V-0354 の A（▲あり）の撮り直し。鈴原サクラ（AI）・デルタ（AI）・ドレイク（操作・撃たない・宝物 3 段階）。AUTO 射撃 OFF・オートバースト ON。A の 3 本を続けて撮り、続けて B の 3 本（437〜439）を撮った（V-0416 の撮影計画の I。A の 2 本目）"
+}

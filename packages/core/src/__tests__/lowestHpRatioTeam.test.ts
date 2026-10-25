@@ -1,6 +1,6 @@
 // 2 段目の段 8（plan/design-skill-stage8.md）: 対象「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）。枠の HP の割合の
 // 想定（TeamSlotInput.hpRatio）の低い順・同値は枠の若い順（C-0567）。ミサト（833）の S1 の回復と、回復を受けた時のアスカ（830）の S1
-// （F4 の録画 472・473 の編成）、sim と calc の整合
+// （F4 の録画 0472・0473 の編成）、sim と calc の整合
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
@@ -52,7 +52,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
   return { slots, enemy, durationSeconds: 180, burst: false, controlledSlot };
 }
 
-// 録画 472（A）: アスカ（1 枠目・操作）+ ミサト（2 枠目）。録画 473（B）: ミサト（1 枠目）+ アスカ（2 枠目・操作）
+// 録画 0472（A）: アスカ（1 枠目・操作）+ ミサト（2 枠目）。録画 0473（B）: ミサト（1 枠目）+ アスカ（2 枠目・操作）
 const A = team([fixedSlot(ASUKA), fixedSlot(MISATO)], 0);
 const B = team([fixedSlot(MISATO), fixedSlot(ASUKA)], 1);
 
@@ -135,8 +135,8 @@ function asukaS1(input: TeamInput, asuka: number) {
   );
 }
 
-describe('ミサトの S1 の回復と、回復を受けた時のアスカの S1（F4 の録画 472・473 の編成）', () => {
-  it('heals Asuka in the first slot every time, and keeps her S1 up from the first heal to the end (録画 472)', () => {
+describe('ミサトの S1 の回復と、回復を受けた時のアスカの S1（F4 の録画 0472・0473 の編成）', () => {
+  it('heals Asuka in the first slot every time, and keeps her S1 up from the first heal to the end (録画 0472)', () => {
     const plan = planTeamRun(A);
     const heals = plan.history.heals.filter((h) => h.sourceSlotIndex === 1);
     expect(heals.length).toBeGreaterThan(0);
@@ -147,7 +147,7 @@ describe('ミサトの S1 の回復と、回復を受けた時のアスカの S1
     expect(Math.max(...pieces.map((p) => p.end))).toBe(plan.frames);
   });
 
-  it('heals Misato herself in the first slot, so Asuka never gets her S1 (録画 473)', () => {
+  it('heals Misato herself in the first slot, so Asuka never gets her S1 (録画 0473)', () => {
     const heals = planTeamRun(B).history.heals.filter((h) => h.sourceSlotIndex === 0);
     expect(heals.length).toBeGreaterThan(0);
     expect(heals.every((h) => h.slotIndex === 0)).toBe(true);
@@ -164,8 +164,8 @@ describe('ミサトの S1 の回復と、回復を受けた時のアスカの S1
 });
 
 describe.each([
-  ['録画 472 の編成（アスカ 1 枠目）', A],
-  ['録画 473 の編成（ミサト 1 枠目）', B],
+  ['録画 0472 の編成（アスカ 1 枠目）', A],
+  ['録画 0473 の編成（ミサト 1 枠目）', B],
 ])('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
   const calc = computeTeamDamage(input);

@@ -1,0 +1,42 @@
+{
+  "id": "0438",
+  "date": "2026-10-11",
+  "folder": "range",
+  "file": "20261011-0438_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4",
+  "original": "2026-10-11_07-37-06.mp4",
+  "durationSec": 201,
+  "frames": 12058,
+  "fps": 60,
+  "sizeMB": 243.4,
+  "sha256": "7b815a4bc6c1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true,
+      "fires": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0424（V-0427）。V-0354 の B（対照）の撮り直し。鈴原サクラ（AI）・デルタ（AI）・I-DOLL・サン（操作・撃たない）。AUTO 射撃 OFF・オートバースト ON。A の 3 本（434〜436）の後に、B の 3 本を続けて撮った（V-0416 の撮影計画の I。B の 2 本目）"
+}

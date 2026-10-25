@@ -20,7 +20,7 @@ describe('game time (Stage 21-B: 0.017 s per frame)', () => {
   it('converts lengths by rounding down (7 s = 411f as in recording 56), without dropping an exact frame count by float error', () => {
     expect(gameSecondsToFrames(180)).toBe(10588); // 10588.2…
     expect(gameSecondsToFrames(10)).toBe(588); // 588.2…
-    expect(gameSecondsToFrames(7)).toBe(411); // 411.8…（クラウンの S2。録画 56 の▲の発の区間。056-04）
+    expect(gameSecondsToFrames(7)).toBe(411); // 411.8…（クラウンの S2。録画 0056 の▲の発の区間。0056-04）
     expect(gameSecondsToFrames(0.017 * 3)).toBe(3);
     expect(gameSecondsToFrames(0.01)).toBe(0);
     expect(() => gameSecondsToFrames(-1)).toThrow(RangeError);

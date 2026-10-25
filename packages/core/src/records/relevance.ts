@@ -745,7 +745,7 @@ export function relevanceCounts(results: readonly ClaimRelevance[]): Map<string,
 /** 結論の文の先頭（全文は claims.md） */
 const short = (text: string) => ([...text].length > 80 ? `${[...text].slice(0, 80).join('')}…` : text);
 
-/** 観測値の ID の並びを、同じ録画の連番は「`010-01`〜`010-04`」にまとめる（結論の根拠の書き方と同じ） */
+/** 観測値の ID の並びを、同じ録画の連番は「`0010-01`〜`0010-04`」にまとめる（結論の根拠の書き方と同じ） */
 export function compressIds(ids: readonly string[]): string[] {
   const out: string[] = [];
   let run: { rec: string; from: string; to: string; last: number; width: number } | undefined;

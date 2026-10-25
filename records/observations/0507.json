@@ -1,0 +1,113 @@
+[
+  {
+    "id": "0507-01",
+    "recording": "0507",
+    "source": "V-0455",
+    "readAt": "2026-10-19",
+    "kind": "hit",
+    "use": "compare",
+    "value": 60902,
+    "description": "シューティングスターの胴体の 1 ヒット（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "60,902 の単独の増分で 54 回。単騎の 0211-01 と同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": false,
+        "core": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0507-02",
+    "recording": "0507",
+    "source": "V-0455",
+    "readAt": "2026-10-19",
+    "kind": "hit",
+    "use": "compare",
+    "value": 146208,
+    "description": "シューティングスターのコアの 1 ヒット（会心なし。ナガの S2 のコアダメージ▲が付いている間）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "146,208 の単独の増分で 189 回（8 回の窓のどれにも出る）。胴体 × 2.4007（H-yes）。H-no のコア 121,805 は、ナガの S2 が切れていたとみられる 5 回だけ（V-0455「結果」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": false,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0507-03",
+    "recording": "0507",
+    "source": "V-0455",
+    "readAt": "2026-10-19",
+    "kind": "hit",
+    "use": "compare",
+    "value": 176659,
+    "description": "シューティングスターのコアの 1 ヒットの会心（コアダメージ▲が付いている間）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "176,659 の単独の増分で 31 回。胴体 × 2.9007（H-yes）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": true,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0507-04",
+    "recording": "0507",
+    "source": "V-0466",
+    "readAt": "2026-10-20",
+    "kind": "timing",
+    "use": "record",
+    "value": [2701, 2866, 7244, 7350],
+    "unit": "f",
+    "description": "ナガの S2 のコアダメージ▲が切れていた 2 回（シューティングスターのコアが 121,805。f2982・f2997 と f7356・f7371・f7385）の前の、ナガの発の途切れ（途切れの前の最後の発・後の最初の発の動画のフレーム）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と使い捨てのスクリプト（増分を、シューティングスターの値・アニス：スターの発の値・ナガの発（ペレットの和。約 39f ごと・9 発でリロード 112f）に分けた）",
+      "note": "途切れは 165f（2701 → 2866）と 106f（7244 → 7350）で、どちらも 5 秒（294f）より短い。途切れの外では、ナガは約 39f ごとに撃っている（ペレットは 1 発 10 個）。1 回目の切れ目の前後: f2967 のシューティングスターは▲あり（176,659）、f2982・f2997 は▲なし、f3011 から▲あり。2 回目: f7260 まで▲あり（胴体のヒットで値は見えないが、f7215 のコアは 146,208）、f7356〜7385 は▲なし、f7433 から▲あり。ナガの発の増分は、同じフレームのほかのヒットと重なると分けられないものがあり、発の番号（5 発ごとの位置）は数えていない"
+    }
+  }
+]

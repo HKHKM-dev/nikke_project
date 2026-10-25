@@ -40,7 +40,7 @@
         "condition": "auto"
       },
       "note": "風圧・2 回目のフルバーストの中（III の発動から 10 秒の中・バースト 3 段階突入から 10 秒の中）の 1 発（胴体）。S2 の攻撃ダメージ▲・1more の攻撃力▲・バースト 3 段階突入時の有利コードの▲・フルバースト補正",
-      "observations": ["258-01"]
+      "observations": ["0258-01"]
     },
     {
       "id": "fb-wind-crit",
@@ -77,7 +77,7 @@
         "condition": "auto"
       },
       "note": "風圧・2 回目のフルバーストの終わりの 29f（バースト 3 段階突入（II の発動）から 10 秒の後、フルバーストと 1more の中）の 1 発（胴体）。有利コードの▲が 10 秒で外れていれば、fb-wind-body から▲だけが抜ける",
-      "observations": ["258-02"]
+      "observations": ["0258-02"]
     },
     {
       "id": "pre-wind-body",
@@ -96,7 +96,7 @@
         "condition": "auto"
       },
       "note": "風圧・2 回目の II の発動から III の発動までの 29f（有利コードの▲だけ。フルバーストと 1more の前）の 1 発（胴体）",
-      "observations": ["258-03"]
+      "observations": ["0258-03"]
     },
     {
       "id": "post-wind-body",
@@ -115,7 +115,7 @@
         "condition": "auto"
       },
       "note": "風圧・2 回目のフルバースト終了から 15 秒の中（S1 のフルバースト終了時の攻撃力▲）の 1 発（胴体）",
-      "observations": ["258-04"]
+      "observations": ["0258-04"]
     },
     {
       "id": "clean-wind-body",
@@ -134,7 +134,7 @@
         "condition": "auto"
       },
       "note": "風圧・フルバースト終了から 15 秒の後から次の I の前までの 1 発（胴体）。S2 の攻撃ダメージ▲だけ（有利の 1.1 は乗る）",
-      "observations": ["258-05"]
+      "observations": ["0258-05"]
     },
     {
       "id": "early-fire-body",
@@ -153,7 +153,7 @@
         "condition": "auto"
       },
       "note": "灼熱・戦闘開始から最初の I の前（S1 の戦闘開始時の攻撃力▲）の 1 発（胴体）",
-      "observations": ["260-04"]
+      "observations": ["0260-04"]
     },
     {
       "id": "fb-fire-body",
@@ -172,7 +172,7 @@
         "condition": "auto"
       },
       "note": "灼熱・2 回目のフルバーストの中の 1 発（胴体）。有利でも 1more でもないので、S2 の攻撃ダメージ▲とフルバースト補正だけ",
-      "observations": ["260-01"]
+      "observations": ["0260-01"]
     },
     {
       "id": "post-fire-body",
@@ -191,7 +191,7 @@
         "condition": "auto"
       },
       "note": "灼熱・2 回目のフルバースト終了から 15 秒の中の 1 発（胴体）",
-      "observations": ["260-02"]
+      "observations": ["0260-02"]
     },
     {
       "id": "clean-fire-body",
@@ -210,7 +210,7 @@
         "condition": "auto"
       },
       "note": "灼熱・フルバースト終了から 15 秒の後の 1 発（胴体）。基準",
-      "observations": ["260-03"]
+      "observations": ["0260-03"]
     },
     {
       "id": "burst-fire",
@@ -227,7 +227,7 @@
         "condition": "auto"
       },
       "note": "灼熱・3 回目（n は 0 始まり。2 回目以降はどの回も同じ値）のバーストの分配ダメージのヒット（発動の直前のバフ）",
-      "observations": ["260-05"]
+      "observations": ["0260-05"]
     },
     {
       "id": "burst-wind",
@@ -244,7 +244,7 @@
         "condition": "auto"
       },
       "note": "風圧・3 回目（n は 0 始まり。2 回目以降はどの回も同じ値）のバーストの分配ダメージのヒット。発動の直前に付いているバースト 3 段階突入時の有利コードの▲が乗り、同じ発動で付く 1more の攻撃力▲と真紅の華の分配ダメージ▲は乗らない",
-      "observations": ["258-06"]
+      "observations": ["0258-06"]
     },
     {
       "id": "onemore-wind",
@@ -261,7 +261,7 @@
         "condition": "auto"
       },
       "note": "風圧・3 回目（n は 0 始まり。2 回目以降はどの回も同じ値）の 1more の分配ダメージのヒット（バーストのヒットの 24f 後。そのフレームのバフ: フルバースト補正・1more の攻撃力▲・有利コードの▲・真紅の華の分配ダメージ▲）",
-      "observations": ["258-07"]
+      "observations": ["0258-07"]
     },
     {
       "id": "onemore-count-wind",
@@ -277,7 +277,7 @@
         "condition": "auto"
       },
       "note": "風圧・1more の分配ダメージの回数（バーストのたびに 1 回）",
-      "observations": ["258-08"]
+      "observations": ["0258-08"]
     },
     {
       "id": "onemore-count-fire",
@@ -293,7 +293,7 @@
         "condition": "auto"
       },
       "note": "灼熱・1more の分配ダメージの回数（0 回）",
-      "observations": ["260-06"]
+      "observations": ["0260-06"]
     }
   ],
   "predicted": {

@@ -49,8 +49,8 @@ function modernia(overrides: Partial<CharacterData> = {}): CharacterData {
     weaponType: 'MG',
     burstSkill: { ...base.burstSkill, durationSeconds: 15, changeWeapon: { rateOfFire: 4200, shotId: 2 } },
     skills: {
-      skill1: raw(flat('3.05', '200', '14.25', '5', '10', '5.04', '5', '10')),
-      skill2: raw(flat('8.56', '15', '200', '29.38', '10')),
+      skill1: raw(flat('3.05', '0200', '14.25', '5', '10', '5.04', '5', '10')),
+      skill2: raw(flat('8.56', '15', '0200', '29.38', '10')),
       burst: raw(flat('2.24', '15')),
     },
     ...overrides,
@@ -191,7 +191,7 @@ describe('resolve (Stage 11 モダニア)', () => {
     expect(weapon!.weapon!.id).toBe('1.burst.1');
   });
 
-  it('multiplies the weapon damage by hitsPerShot (録画 44: 2 hits of 2.24%)', () => {
+  it('multiplies the weapon damage by hitsPerShot (録画 0044: 2 hits of 2.24%)', () => {
     const twoHits = parseSkillDefinition(
       definition({
         ...MODERNIA_DEF,

@@ -158,7 +158,7 @@
           "ref": 1,
           "damageType": "skill",
           "assumes": {
-            "ja": "攻撃範囲内の敵は単体ボス。合計 3009.6% を 3 ヒットに等分し、遅れの表（burst/landing.ts）の時刻に出す（録画 37: 1,201,793 × 3）",
+            "ja": "攻撃範囲内の敵は単体ボス。合計 3009.6% を 3 ヒットに等分し、遅れの表（burst/landing.ts）の時刻に出す（録画 0037: 1,201,793 × 3）",
             "en": "Enemies in range are a lone boss. The total 3009.6% is split equally into 3 hits at the times in the delay table (burst/landing.ts) (recording 37: 1,201,793 × 3)"
           },
           "claims": [

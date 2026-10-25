@@ -1,0 +1,29 @@
+{
+  "id": "0122",
+  "date": "2026-10-02",
+  "folder": "range",
+  "file": "20261002-0122_rl_raven.mp4",
+  "original": "2026-10-02_20-53-47.mp4",
+  "durationSec": 200.2,
+  "frames": 12010,
+  "fps": 60,
+  "sizeMB": 242.6,
+  "sha256": "273d0bce7467",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。V-0098。最初の 1 秒ほどに出撃画面（灼熱タブ・3 分モード・スペック固定 ON・編成はこのキャラ 1 体）、最後に戦闘履歴の画面（キャラ名）が写っている"
+}

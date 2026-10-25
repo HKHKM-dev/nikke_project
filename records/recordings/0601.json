@@ -1,0 +1,29 @@
+{
+  "id": "0601",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-0601_sg_noir_auto_cube.mp4",
+  "original": "2026-10-24_23-35-12.mp4",
+  "durationSec": 200.4,
+  "frames": 12026,
+  "fps": 60,
+  "sizeMB": 242.9,
+  "sha256": "20e0a5ddddc1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 OFF）。V-0493 のキューブあり（命中率▲のキューブ（赤い箱の絵）Lv7。冒頭のキャラ画面のキューブの欄とスキル（照準の印の段階 3）で確かめた）（撮った順の 1 本目）。出撃画面でスペック固定 OFF と編成（真ん中の枠に 1 体）を確かめた。**画面左上のオートバーストのボタンが点いていた（ON。計画は OFF）**。ノワールはバーストの段が III だけで、単騎ではチェーンが始まらない（C-0024）。175 秒の時点のバースト欄は I の段のままで、バーストは出ていない。AUTO 射撃 ON。末尾のリザルト画面の立ち絵でノワールと確かめた"
+}

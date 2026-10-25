@@ -1,0 +1,41 @@
+{
+  "id": "0509",
+  "date": "2026-10-19",
+  "folder": "range",
+  "file": "20261019-0509_rl_anne-miracle-fairy.mp4",
+  "original": "2026-10-19_00-36-46.mp4",
+  "durationSec": 199.3,
+  "frames": 11960,
+  "fps": 60,
+  "sizeMB": 241.6,
+  "sha256": "a59ad89d8328",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 121,
+      "name": "エヌ : ミラクルフェアリー",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0457（撮影の依頼の A）。I-DOLL・フラワー（AI）+ エヌ：ミラクルフェアリー（AI）+ ソルジャーE.G.（操作・AUTO 射撃 ON）・オートバースト ON"
+}

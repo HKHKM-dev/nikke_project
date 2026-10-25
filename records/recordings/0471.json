@@ -1,0 +1,41 @@
+{
+  "id": "0471",
+  "date": "2026-10-17",
+  "folder": "range",
+  "file": "20261017-0471_sg_soda-tb-burst_pause-2.mp4",
+  "original": "2026-10-17_19-41-41.mp4",
+  "durationSec": 237.1,
+  "frames": 14223,
+  "fps": 60,
+  "sizeMB": 286.7,
+  "sha256": "1419fd57c4b3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 314,
+      "name": "ソーダ：トゥインクルバニー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0437。463 と同じ編成と手順（2 本目）"
+}

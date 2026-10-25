@@ -1,5 +1,5 @@
 // ユニ（160）を含む編成: S2 の吸収回復（維持時間のある heal）は、付き直しでは healed を起こさない
-// （plan/design-heal-window.md 1.1 節。V-0024・C-0082）。録画 078 の編成と、実戦寄りの編成で sim と calc の整合を見る。
+// （plan/design-heal-window.md 1.1 節。V-0024・C-0082）。録画 0078 の編成と、実戦寄りの編成で sim と calc の整合を見る。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -51,14 +51,14 @@ const REC078 = team([fixedSlot(160), fixedSlot(830)], 1);
 // アリスの S1（topAttack）が順位を見るので、1 パス目のループの回復も通る
 const PRACTICAL = team([fixedSlot(82), fixedSlot(160), fixedSlot(830), fixedSlot(191), fixedSlot(330)], 2);
 const TEAMS: Record<string, TeamInput> = {
-  '録画 078 の編成（ユニ + アスカ）': REC078,
+  '録画 0078 の編成（ユニ + アスカ）': REC078,
   '実戦寄り（リター + ユニ + アスカ + アリス + クラウン）': PRACTICAL,
 };
 
 const YUNI = 0;
 const S1 = gameSecondsToFrames(25);
 
-describe('録画 078 の編成（V-0024）', () => {
+describe('録画 0078 の編成（V-0024）', () => {
   const plan = planTeamRun(REC078);
   const ASUKA = 1;
 

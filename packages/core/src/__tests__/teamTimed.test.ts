@@ -25,7 +25,7 @@ const unsupported: SkillEntry = { support: 'unsupported', effects: [] };
 const supported = (effects: SkillEntry['effects']): SkillEntry => ({ support: 'supported', effects });
 
 /** values: [1] = 比率 %、[2] = 維持秒数、[3] = バーストスキル倍率 % */
-function raw(id: number, ratio = '50', seconds = '10', burstPercent = '100'): SkillRaw {
+function raw(id: number, ratio = '50', seconds = '10', burstPercent = '0100'): SkillRaw {
   return {
     id,
     name: { ja: `S${id}`, en: `S${id}` },
@@ -220,7 +220,7 @@ describe('timed buff targets and levels', () => {
       values: [
         Array.from({ length: 10 }, (_, i) => String(10 + i * 5)),
         Array.from({ length: 10 }, (_, i) => String(5 + i)),
-        tenLevels('100'),
+        tenLevels('0100'),
       ],
     } satisfies SkillRaw;
     const make = (level: number): TeamSlotInput =>

@@ -1,5 +1,5 @@
 // Stage 11: クラウン（330）を含む編成の回帰と、sim と calc の整合（plan/design-stage11.md 7.4・7.5 節）。
-// 録画 41（I-DOLL・フラワー + クラウン + デルタ（操作）+ ラピ）の実測値を固定する。数値は plan/verification.md Stage 11 節。
+// 録画 0041（I-DOLL・フラワー + クラウン + デルタ（操作）+ ラピ）の実測値を固定する。数値は plan/verification.md Stage 11 節。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { healsOf, slotPieces } from './historyHelpers.ts';
@@ -40,7 +40,7 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
   return slot;
 }
 
-// 録画 41 の的は属性なし（有利コードの補正なし）
+// 録画 0041 の的は属性なし（有利コードの補正なし）
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
@@ -49,7 +49,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 
 const REC41 = team([fixedSlot(304), fixedSlot(330), fixedSlot(20), fixedSlot(10)], 2);
 const TEAMS: Record<string, TeamInput> = {
-  '録画 41（I-DOLL・フラワー + クラウン + デルタ + ラピ）': REC41,
+  '録画 0041（I-DOLL・フラワー + クラウン + デルタ + ラピ）': REC41,
   '実戦寄り（リター + クラウン + ドレイク宝物 3 + ラピ）': team(
     [fixedSlot(82), fixedSlot(330), fixedSlot(101, 3), fixedSlot(10)],
     2,
@@ -58,14 +58,14 @@ const TEAMS: Record<string, TeamInput> = {
 
 /**
  * 1 ヒットの表示値（非会心）。倍率グループ = 1 + コア + 距離 + フルバースト（+ 会心 0.5）。
- * 表示は四捨五入（録画 41 の読み取りで確認）
+ * 表示は四捨五入（録画 0041 の読み取りで確認）
  */
 function popup(t: TriggerDamage, extra: { core?: boolean; crit?: boolean; distance?: boolean }): number {
   const boost = 1 + (extra.core ? 1 : 0) + (extra.crit ? 0.5 : 0) + (extra.distance ? 0.3 : 0) + t.boost.fullBurst;
   return t.baseHit * t.weaponMultiplier * t.chargeMultiplier * boost * t.attackDamageMultiplier;
 }
 
-describe('録画 41: クラウンの S1・S2・バースト（7.5）', () => {
+describe('録画 0041: クラウンの S1・S2・バースト（7.5）', () => {
   const calc = computeTeamDamage(REC41);
   const plan = planTeamRun(REC41);
   const segmentsOf = (i: number): SlotSegmentResult[] => calc.slots[i]!.segments;
@@ -125,7 +125,7 @@ describe('録画 41: クラウンの S1・S2・バースト（7.5）', () => {
     for (const i of [0, 1, 2, 3]) {
       const s2 = slotPieces(calc, i).filter((w) => !isStateContent(w.effect) && w.effect.trigger === 'healed');
       expect(s2.map((w) => w.start)).toEqual(heals.filter((f) => f < plan.frames));
-      // 7 秒 = 411f（Stage 21-B。録画 56 の▲の発の区間と同じ。056-04）
+      // 7 秒 = 411f（Stage 21-B。録画 0056 の▲の発の区間と同じ。0056-04）
       expect(s2.every((w) => w.end - w.start === gameSecondsToFrames(7) || w.end === plan.frames)).toBe(true);
     }
     // クラウンの枠の即時効果にも回復が記録される

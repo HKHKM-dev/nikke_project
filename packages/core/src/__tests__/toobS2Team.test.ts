@@ -1,5 +1,5 @@
 // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2・1.3 節）: 攻撃速度▲（attackSpeed）と、状態の間だけ効く常時の効果（while）。
-// トーブ（192・宝物の段階 3）の S2 と、ソルジャーF.A.（301・SG）の編成（V-0458 の録画 510〜512。C-0599〜C-0602）、sim と calc の整合
+// トーブ（192・宝物の段階 3）の S2 と、ソルジャーF.A.（301・SG）の編成（V-0458 の録画 0510〜0512。C-0599〜C-0602）、sim と calc の整合
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
@@ -48,7 +48,7 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
-/** 録画 510・511 と同じ枠順（1 枠目ソルジャーF.A.（操作）・2 枠目トーブ（宝物の段階 3）） */
+/** 録画 0510・0511 と同じ枠順（1 枠目ソルジャーF.A.（操作）・2 枠目トーブ（宝物の段階 3）） */
 const team = (treasurePhase: TreasurePhase): TeamInput => ({
   slots: [fixedSlot(FA), fixedSlot(TOOB, treasurePhase)],
   enemy,

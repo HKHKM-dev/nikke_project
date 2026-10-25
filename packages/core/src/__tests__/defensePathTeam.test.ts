@@ -1,7 +1,7 @@
 // 2 段目の段 7（plan/design-skill-stage7.md）: 防御力の経路。枠の防御力（バフ前。defenceOverride とスペック固定）、防御力▲（stat defense）、
 // 対象の絞り込み「自分と自分より最終防御力が低い味方」（targetDefense: lowerThanSelf。アニス：スター（17）の S2 の発射体爆発ダメージ▲。
-// C-0587・C-0588）。撮影の見込みの編成（2.2 節の録画 A・B）と録画 163 の編成の対象の枠、sim と calc の整合。論点 4 の続き: 味方の
-// 防御力▲ も比べに入る（デルタ（20）の S2 を間接の notes から効果にした。C-0589。録画 486 でデルタが外れ、録画 488 で入る）
+// C-0587・C-0588）。撮影の見込みの編成（2.2 節の録画 A・B）と録画 0163 の編成の対象の枠、sim と calc の整合。論点 4 の続き: 味方の
+// 防御力▲ も比べに入る（デルタ（20）の S2 を間接の notes から効果にした。C-0589。録画 0486 でデルタが外れ、録画 0488 で入る）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
@@ -61,7 +61,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 const TIE = team([fixedSlot(FLOWER), fixedSlot(ANIS_STAR), fixedSlot(DELTA), fixedSlot(CINDERELLA)], 3);
 // 同じく録画 B（対照）: アニス：スター（I）・デルタ（II）・シンデレラ（III・操作）
 const CONTROL = team([fixedSlot(ANIS_STAR), fixedSlot(DELTA), fixedSlot(CINDERELLA)], 2);
-// 録画 163 の編成: デルタ・アニス：スター（操作）・フラワー・イサベル
+// 録画 0163 の編成: デルタ・アニス：スター（操作）・フラワー・イサベル
 const REC163 = team([fixedSlot(DELTA), fixedSlot(ANIS_STAR), fixedSlot(FLOWER), fixedSlot(ISABEL)], 1);
 // 録画 B の編成を、画面の既定（カスタムの敵に射撃場の的の表・条件は自動）で: II（デルタ）の CT 待ちで、アニス：スターの
 // 防御力▲（10 秒）が切れた後に始まるフルバーストがある
@@ -75,7 +75,7 @@ const WAITING: TeamInput = {
   ),
   enemy: { ...custom, target: profile, landings: enemyLandingsOf(master, [], 180, profile) },
 };
-// 同じく、射撃場の的のジャンプ（3 分モード）も入れたもの（録画 484・485 の比べる設定と同じ出来事）。シンデレラ S1 のチャージ速度▲
+// 同じく、射撃場の的のジャンプ（3 分モード）も入れたもの（録画 0484・0485 の比べる設定と同じ出来事）。シンデレラ S1 のチャージ速度▲
 // （plan/design-cinderella-s1-charge.md）の後は、II の CT 待ちで防御力▲ が切れた後に始まる回が、こちらにだけある
 const JUMPING: TeamInput = {
   ...WAITING,
@@ -204,7 +204,7 @@ describe('自分と自分より最終防御力が低い味方（C-0586）', () =
   });
 
   it('leaves out an ally with the same final DEF (録画 A の編成。論点 2)', () => {
-    // アニス：スターの防御力▲ の無い回（フラワーだけが I を撃った回。録画 482・483 の 1 回目のフルバースト）
+    // アニス：スターの防御力▲ の無い回（フラワーだけが I を撃った回。録画 0482・0483 の 1 回目のフルバースト）
     const fires = projectileFires(TIE, 1).filter((f) => !anisUpAt(TIE, 1)(f));
     expect(fires.length).toBeGreaterThan(0);
     // フラワー（0）とアニス：スター（1）に付き、同値のシンデレラ（3）には付かない（デルタ（2）は下の C-0589）
@@ -252,7 +252,7 @@ describe('自分と自分より最終防御力が低い味方（C-0586）', () =
     expect(above.every((f) => !f.slots.includes(2))).toBe(true);
   });
 
-  it('targets every ally of the 録画 163 composition, as the approximation of C-0210 did (2.1 節の退化)', () => {
+  it('targets every ally of the 録画 0163 composition, as the approximation of C-0210 did (2.1 節の退化)', () => {
     const fires = projectileFires(REC163, 1);
     expect(fires.length).toBeGreaterThan(0);
     for (const f of fires) expect(f.slots).toEqual([0, 1, 2, 3]);
@@ -260,8 +260,8 @@ describe('自分と自分より最終防御力が低い味方（C-0586）', () =
 });
 
 // 論点 4 の続き（C-0589）: デルタ（SR）の S2 の防御力▲ を間接の notes から効果にした。デルタの最終防御力に入るので、アニス：スターの
-// バーストの防御力▲ が無い録画 486 では、デルタは自分の防御力▲ でアニス：スターのバフ前を上回って対象から外れ、アニス：スターの
-// 防御力▲ が効いている間に始まる録画 488 では入る（デルタは SR で、発射体爆発ダメージ▲ は値に効かない。付くかどうかだけが変わる）
+// バーストの防御力▲ が無い録画 0486 では、デルタは自分の防御力▲ でアニス：スターのバフ前を上回って対象から外れ、アニス：スターの
+// 防御力▲ が効いている間に始まる録画 0488 では入る（デルタは SR で、発射体爆発ダメージ▲ は値に効かない。付くかどうかだけが変わる）
 describe('デルタの S2 の防御力▲（C-0589）', () => {
   const delta = character(DELTA);
   const deltaUp = Number(delta.skills.skill2.values[0]![9]) / 100;
@@ -296,11 +296,11 @@ describe('デルタの S2 の防御力▲（C-0589）', () => {
     expect(base * (1 + deltaUp)).toBeLessThan(fixedDefence(ANIS_STAR) * (1 + burstDefenceUp));
   });
 
-  it('leaves Delta out while Anis: Star has no DEF up, and Delta has hers (録画 486 の編成)', () => {
+  it('leaves Delta out while Anis: Star has no DEF up, and Delta has hers (録画 0486 の編成)', () => {
     const ups = defenceUpsFrom(TIE, 2);
     expect(ups.length).toBeGreaterThan(0);
     expect(ups.every((p) => p.slotIndex === 2)).toBe(true);
-    // アニス：スターの防御力▲ の無い回（録画 486 の画面の回）
+    // アニス：スターの防御力▲ の無い回（録画 0486 の画面の回）
     const fires = projectileFires(TIE, 1).filter((f) => !anisUpAt(TIE, 1)(f));
     expect(fires.length).toBeGreaterThan(0);
     for (const f of fires) {
@@ -310,7 +310,7 @@ describe('デルタの S2 の防御力▲（C-0589）', () => {
     }
   });
 
-  it('is what leaves Delta out: without it the 録画 486 composition targets her, as before (間接の notes の形)', () => {
+  it('is what leaves Delta out: without it the 録画 0486 composition targets her, as before (間接の notes の形)', () => {
     const without = structuredClone(
       readJson<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>('../../data/skills/20.json'),
     );
@@ -330,7 +330,7 @@ describe('デルタの S2 の防御力▲（C-0589）', () => {
     for (const f of fires) expect(f.slots).toEqual([0, 1, 2]);
   });
 
-  it('puts Delta in while the DEF up of Anis: Star lifts her above, and keeps her after it ends (録画 488 の編成)', () => {
+  it('puts Delta in while the DEF up of Anis: Star lifts her above, and keeps her after it ends (録画 0488 の編成)', () => {
     const anisUps = defenceUpsFrom(CONTROL, 0);
     const deltaUps = defenceUpsFrom(CONTROL, 1);
     const fires = projectileFires(CONTROL, 0).filter((f) => anisUpAt(CONTROL, 0)(f) && notCut(f));
@@ -349,8 +349,8 @@ describe('デルタの S2 の防御力▲（C-0589）', () => {
   });
 });
 
-// 指標 fullBurstBuffApplied（V-0452）: n 回目のフルバーストで、枠に効果が付いたか。録画 486・488 の一時停止の画面の「適用中の効果」と比べる
-describe('指標 fullBurstBuffApplied（録画 486・488 の画面との比べ）', () => {
+// 指標 fullBurstBuffApplied（V-0452）: n 回目のフルバーストで、枠に効果が付いたか。録画 0486・0488 の一時停止の画面の「適用中の効果」と比べる
+describe('指標 fullBurstBuffApplied（録画 0486・0488 の画面との比べ）', () => {
   const applied = (input: TeamInput, slot: number, n = 0, stat = 'projectileExplosionDamage') =>
     METRICS.fullBurstBuffApplied!.sim(runSimulation(input), {
       args: { slot, skill: 'skill2', stat, n },
@@ -358,9 +358,9 @@ describe('指標 fullBurstBuffApplied（録画 486・488 の画面との比べ�
     } as Parameters<(typeof METRICS)[string]['sim']>[1]);
 
   it('marks who got the projectile explosion damage up at the first Full Burst', () => {
-    // 録画 486: フラワー・アニス：スターに付き、デルタ・シンデレラには付かない
+    // 録画 0486: フラワー・アニス：スターに付き、デルタ・シンデレラには付かない
     expect([1, 2, 3, 4].map((slot) => applied(TIE, slot))).toEqual([1, 1, 0, 0]);
-    // 録画 488: アニス：スター・デルタ・シンデレラの 3 人とも付く
+    // 録画 0488: アニス：スター・デルタ・シンデレラの 3 人とも付く
     expect([1, 2, 3].map((slot) => applied(CONTROL, slot))).toEqual([1, 1, 1]);
   });
 
@@ -369,7 +369,7 @@ describe('指標 fullBurstBuffApplied（録画 486・488 の画面との比べ�
     expect(() => applied(CONTROL, 1, 99)).toThrow(/フルバースト/);
   });
 
-  it('reads the DEF up of Delta with burstBuffApplied (録画 486・488 の画面のラストメモリー)', () => {
+  it('reads the DEF up of Delta with burstBuffApplied (録画 0486・0488 の画面のラストメモリー)', () => {
     const delta = (input: TeamInput, slot: number) =>
       METRICS.burstBuffApplied!.sim(runSimulation(input), {
         args: { slot, skill: 'skill2', stat: 'defense', count: 1 },
@@ -383,7 +383,7 @@ describe('指標 fullBurstBuffApplied（録画 486・488 の画面との比べ�
 describe.each([
   ['録画 A の編成（同値）', TIE],
   ['録画 B の編成（対照）', CONTROL],
-  ['録画 163 の編成', REC163],
+  ['録画 0163 の編成', REC163],
   ['録画 B の編成（画面の既定の条件。防御力▲ が切れた回あり）', WAITING],
 ])('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);

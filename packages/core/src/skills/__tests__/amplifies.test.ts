@@ -114,7 +114,7 @@ describe('amplifies の窓', () => {
     const { first, timeline: t } = run([slotOf([atStart, later], [amplify as SkillEffect]), slotOf([], [])]);
     // 窓の中の発動は 10 秒・110 秒（105 秒の窓）・150 秒（140 秒の窓）。発動から 10 秒を、参照する件が効いている所（その値 × 100%）と
     // 切れた所（発動の瞬間の値 × 200%）に分ける。30 秒の発動は 35 秒の窓に重なるが、発動の瞬間に効いていないので付かない（V-0230 の
-    // 263-05）。受けるダメージ▲は敵の件（plan/design-holder-effects.md 2.8 節）なので、小片も敵が持つ
+    // 0263-05）。受けるダメージ▲は敵の件（plan/design-holder-effects.md 2.8 節）なので、小片も敵が持つ
     const pieces = [
       [588, 882, 0.039],
       [882, 1176, 0.078],
@@ -139,7 +139,7 @@ describe('amplifies の窓', () => {
     );
     expect(first.history.conditionSkips.map((s) => s.frame)).toContain(1764);
     expect(first.history.conditionSkips.map((s) => s.frame)).not.toContain(588);
-    // 受けるダメージ▲の合計は、参照する窓が切れた後も発動から 10 秒は 2 倍（V-0230 の 263-03）
+    // 受けるダメージ▲の合計は、参照する窓が切れた後も発動から 10 秒は 2 倍（V-0230 の 0263-03）
     const at = (frame: number) =>
       t.segments.find((s) => s.start <= frame && frame < s.end)!.slots[0]!.buffs.damageTaken;
     expect(at(600)).toBeCloseTo(0.078, 12);

@@ -1,0 +1,53 @@
+{
+  "id": "0513",
+  "date": "2026-10-20",
+  "folder": "range",
+  "file": "20261020-0513_delta-def-status-pause.mp4",
+  "original": "2026-10-20_00-57-51.mp4",
+  "durationSec": 50.6,
+  "frames": 3036,
+  "fps": 60,
+  "sizeMB": 60.9,
+  "sha256": "9276f8da0a58",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 511,
+      "name": "シンデレラ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 5,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0461（C-0589 の反復）。1 回目のチェーンを I-DOLL・フラワー → ソルジャーF.A. → シンデレラで回し（デルタとアニス：スターのバーストを使わない）、フルバースト開始の約 3.3 秒後の一時停止で、各キャラの「適用中の効果」を映す（戦闘は短く、3 分を撃ち切らない）。オートバーストのボタンは、戦闘開始の約 2 秒後（動画の約 14.9〜15.1 秒）に一度だけ約 0.2 秒点き、ほかは消えている（バーストの前後は OFF）"
+}

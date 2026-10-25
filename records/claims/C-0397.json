@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "反復実測",
-  "basis": "`305-01`・`305-02`・`305-03`・`305-04`・`306-01`・`306-02`・`306-03`・`306-04`。V-0264",
+  "basis": "`0305-01`・`0305-02`・`0305-03`・`0305-04`・`0306-01`・`0306-02`・`0306-03`・`0306-04`。V-0264",
   "model": "frame/firing.ts の firingParams（speedScaledSeconds の subtract）と cadence.ts の reloadFirstShotFrames（24f）。キューブの写像は buildEffects.ts の CUBE_SKILL_EFFECTS。照合は records/observations.ts の reloadToNextShotAt",
   "replaces": ["C-0331"],
   "updated": "2026-10-11",
@@ -13,15 +13,15 @@
   },
   "decidedOn": [
     {
-      "recording": "250",
+      "recording": "0250",
       "role": "仮説の出どころ"
     },
     {
-      "recording": "251",
+      "recording": "0251",
       "role": "仮説の出どころ"
     },
     {
-      "recording": "252",
+      "recording": "0252",
       "role": "仮説の出どころ"
     }
   ]

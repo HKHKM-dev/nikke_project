@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
-  "basis": "`469-08`・`470-08`。録画 469 の 5 回（39・40・39・39・39f）で最も多い値の 39f を決め、録画 470 の 5 回（39・38・39・39・39f）で再現した（ずれは ±1f）。plan/design-mihara-burst-hits.md 2 節",
+  "basis": "`0469-08`・`0470-08`。録画 0469 の 5 回（39・40・39・39・39f）で最も多い値の 39f を決め、録画 0470 の 5 回（39・38・39・39・39f）で再現した（ずれは ±1f）。plan/design-mihara-burst-hits.md 2 節",
   "model": "`burst/landing.ts` の分かれたヒットの表のミハラの行（hitFrames 17）",
   "replaces": [],
   "updated": "2026-10-17",
@@ -13,7 +13,7 @@
   },
   "decidedOn": [
     {
-      "recording": "469",
+      "recording": "0469",
       "role": "値を合わせた"
     }
   ]

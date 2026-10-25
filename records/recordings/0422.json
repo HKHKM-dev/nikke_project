@@ -1,0 +1,29 @@
+{
+  "id": "0422",
+  "date": "2026-10-11",
+  "folder": "range",
+  "file": "20261011-0422_rl_scarlet-black-shadow_auto.mp4",
+  "original": "2026-10-11_06-28-01.mp4",
+  "durationSec": 199.9,
+  "frames": 11993,
+  "fps": 60,
+  "sizeMB": 242,
+  "sha256": "2ec1b4e3b982",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 225,
+      "name": "紅蓮：ブラックシャドウ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0416・V-0417・V-0418（V-0427）。紅蓮：ブラックシャドウ単騎・操作（AUTO 射撃 ON）・オートバースト OFF。180 秒を撃ち切り、戦闘中は操作しない（V-0416 の撮影計画の A。同じ日に続けて撮った 2 本の 2 本目）"
+}

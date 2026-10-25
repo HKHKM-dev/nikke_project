@@ -1,0 +1,29 @@
+{
+  "id": "0017",
+  "date": "2026-09-22",
+  "folder": "range",
+  "file": "20260922-0017_SG_noir.mp4",
+  "original": "2026-09-22 22-37-03.mp4",
+  "durationSec": 29.7,
+  "frames": 1781,
+  "fps": 60,
+  "sizeMB": 23.2,
+  "sha256": "1b7b2f7a5e8c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": null,
+  "fixedSpec": true,
+  "autoFire": null,
+  "autoBurst": null,
+  "conditionNote": "BigArms（**灼熱**・防100）。Stage 2-B の SG の発射間隔と 3 分割リロードの較正。末尾の一時停止の画面でキャラを確かめた"
+}

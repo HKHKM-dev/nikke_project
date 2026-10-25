@@ -27,7 +27,7 @@ export const FULL_BURST_BOOST = 0.5;
 
 /**
  * Stage 8: バースト以外の倍率ダメージ（damage）が**フルバースト中に出たとき**、フルバースト補正 +0.5 を乗せるか。
- * **2026-09-23 の射撃場実測で「乗せる」と確定**（plan/verification.md Stage 8 節、録画 36〜38）:
+ * **2026-09-23 の射撃場実測で「乗せる」と確定**（plan/verification.md Stage 8 節、録画 0036〜0038）:
  * ドレイク S2 は通常時 118,059 = (攻撃力 − 防御力) × 98.55%、フルバースト中 409,932 で、どちらもペレットとの比が 4.5987 と同じ
  * （ペレットの倍率グループは 1.0 → 1.5）。イサベルの段階 2 の追加ダメージ 758,766 = 299.7% × 1.5 × 受けるダメージ 1.3996。
  * バーストスキルダメージ（burstDamage）には乗らない（BURST_SKILL_FULL_BURST_BONUS）のと違う。
@@ -37,14 +37,14 @@ export const SKILL_HIT_FULL_BURST_BONUS = true;
 
 /**
  * Stage 11 モダニア: 射撃ごとの倍率ダメージ（perShot）にコアの補正を乗せるか（仮）。
- * Stage 8 の倍率ダメージ（コアは乗らない）に合わせて false。録画 44 の 1 で確かめる（plan/design-stage11-modernia.md 7.5 節）
+ * Stage 8 の倍率ダメージ（コアは乗らない）に合わせて false。録画 0044 の 1 で確かめる（plan/design-stage11-modernia.md 7.5 節）
  */
 export const PER_SHOT_DAMAGE_CORE = false;
 
 /**
  * アニス：スター S2・バースト編: 発射体爆発ダメージ▲（projectileExplosionDamage）の式の中の置き場所（plan/design-anis-star-s2-burst.md 2.1 節）。
  * attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ)（E1）、separate = 別の乗数 (1 + Σ発射体爆発ダメージ)（E2）、
- * none = RL の通常攻撃には掛けない（E0）。**E1 と確定**: 録画 162・163 のフルバーストの 1 ヒット（V-0124。C-0205）
+ * none = RL の通常攻撃には掛けない（E0）。**E1 と確定**: 録画 0162・0163 のフルバーストの 1 ヒット（V-0124。C-0205）
  */
 export const PROJECTILE_EXPLOSION_BUCKET: 'attackDamage' | 'separate' | 'none' = 'attackDamage';
 
@@ -66,7 +66,7 @@ export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotal
 
 /**
  * 発射体の爆発のヒット 1 つに掛ける、発射体爆発ダメージ▲の乗数（武器によらない形）。通常攻撃（爆発を持つ武器）と、
- * 発射体の爆発の自動攻撃（autoAttack の projectileExplosion。V-0124 の 162-12）で使う
+ * 発射体の爆発の自動攻撃（autoAttack の projectileExplosion。V-0124 の 0162-12）で使う
  */
 export function explosionHitMultiplier(buffs: BuffTotals): number {
   const up = buffs.projectileExplosionDamage;
@@ -359,7 +359,7 @@ export const DISTANCE_BONUS = 0.3;
 
 /**
  * 2 段目の段 2（plan/design-skill-stage2.md）: 敵の防御力▼の後の防御力。防御力 × (1 − Σ enemyDefenseDown)（Σ は 0〜1 に収める）。
- * 端数は丸めない（録画 305・306 の読み直し。V-0433）。通常攻撃・倍率ダメージ・持続ダメージで、攻撃力から引くのはこの値
+ * 端数は丸めない（録画 0305・0306 の読み直し。V-0433）。通常攻撃・倍率ダメージ・持続ダメージで、攻撃力から引くのはこの値
  */
 export function defenceAfterDown(enemy: EnemyInput, buffs: BuffTotals): number {
   const down = Math.min(1, Math.max(0, buffs.enemyDefenseDown));

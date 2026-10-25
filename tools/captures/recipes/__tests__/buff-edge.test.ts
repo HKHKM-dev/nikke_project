@@ -46,27 +46,27 @@ describe('commonRange', () => {
   });
 });
 
-// 手で読んだ境（V-0378 の 302-23、V-0389 の 402-10、V-0368 の 042-32・042-33）と同じになる
+// 手で読んだ境（V-0378 の 0302-23、V-0389 の 0402-10、V-0368 の 0042-32・0042-33）と同じになる
 describe('手で読んだ境との一致', () => {
   const crown = { tol: 2, from: -200, to: 60, edge: 'start' as const };
 
-  it('録画 302: クラウンの攻撃ダメージ▲の▲の無い最後の発・▲の乗った最初の発（302-23）', () => {
-    const es = edges('302', SUN_OFF, CROWN_ON, crown);
+  it('録画 0302: クラウンの攻撃ダメージ▲の▲の無い最後の発・▲の乗った最初の発（0302-23）', () => {
+    const es = edges('0302', SUN_OFF, CROWN_ON, crown);
     expect(es.map((e) => e.before)).toEqual([-9, -7, -7, -10, -10, -7, -8, -9, -11]);
     expect(es.map((e) => e.after)).toEqual([3, 0, -1, 1, -3, -1, -2, -3, -5]);
     expect(es.every((e) => e.conflicts.length === 0)).toBe(true);
-    expect(rangeOf(es[0]!)).toEqual({ low: -8, high: 3 }); // 302-14
+    expect(rangeOf(es[0]!)).toEqual({ low: -8, high: 3 }); // 0302-14
     expect(commonRange(es)).toEqual({ low: -6, high: -5 });
   });
 
-  it('録画 402: 同じ（402-10。6 回目は発動の前がリロードで -149f）', () => {
-    const es = edges('402', SUN_OFF, CROWN_ON, crown);
+  it('録画 0402: 同じ（0402-10。6 回目は発動の前がリロードで -149f）', () => {
+    const es = edges('0402', SUN_OFF, CROWN_ON, crown);
     expect(es.map((e) => e.before)).toEqual([-9, -11, -10, -9, -6, -149, -6, -11, -8]);
     expect(es.map((e) => e.after)).toEqual([3, -5, -5, -3, 0, 0, 0, -5, -1]);
   });
 
-  it('録画 042: アドミのクリティカルダメージ▲の付き始め（042-32 の 16〜22f）', () => {
-    const es = edges('042', SUN_OFF, ADMI_ON, { tol: 1.5, from: -30, to: 50, edge: 'start' });
+  it('録画 0042: アドミのクリティカルダメージ▲の付き始め（0042-32 の 16〜22f）', () => {
+    const es = edges('0042', SUN_OFF, ADMI_ON, { tol: 1.5, from: -30, to: 50, edge: 'start' });
     expect(es[6]!.before).toBe(8);
     expect(es[6]!.after).toBe(24);
     expect(es[8]!.after).toBe(22);
@@ -74,8 +74,8 @@ describe('手で読んだ境との一致', () => {
     expect(commonRange(es)).toEqual({ low: 16, high: 22 });
   });
 
-  it('録画 042: 切れ目（042-33 の▲の乗った最後の発と▲の無い最初の発）', () => {
-    const es = edges('042', SUN_OFF_FB, ADMI_ON_FB, { tol: 1.5, from: 590, to: 638, edge: 'end' });
+  it('録画 0042: 切れ目（0042-33 の▲の乗った最後の発と▲の無い最初の発）', () => {
+    const es = edges('0042', SUN_OFF_FB, ADMI_ON_FB, { tol: 1.5, from: 590, to: 638, edge: 'end' });
     expect(es.flatMap((e) => (e.before === undefined ? [] : [e.before]))).toEqual([614, 605, 614, 617, 600, 621]);
     expect(es.flatMap((e) => (e.after === undefined ? [] : [e.after]))).toEqual([635]);
   });

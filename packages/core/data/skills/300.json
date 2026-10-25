@@ -37,7 +37,7 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "説明文にきっかけが無いアクティブ型のスキルで、射撃に依らず戦闘開始から 9 秒ごとに付く（CT 9 秒は録画 282 から読んだ値）。最大装弾数は C-0017 の形（加算して四捨五入。Lv10 で 128）。残弾は増やさず、リロードで新しい最大まで込める",
+            "ja": "説明文にきっかけが無いアクティブ型のスキルで、射撃に依らず戦闘開始から 9 秒ごとに付く（CT 9 秒は録画 0282 から読んだ値）。最大装弾数は C-0017 の形（加算して四捨五入。Lv10 で 128）。残弾は増やさず、リロードで新しい最大まで込める",
             "en": "An active skill with no trigger in the description: applied every 9 s from the start of combat regardless of firing (the 9 s cooldown was read from recording 282). Max ammo follows C-0017 (additive ratio, rounded; 128 at Lv10). Current ammo is not increased; a reload fills to the new maximum"
           },
           "claims": [

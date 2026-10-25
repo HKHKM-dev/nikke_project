@@ -4,7 +4,7 @@
   "state": "棄却",
   "topic": "バーストの段階とフルバースト",
   "grade": "推論",
-  "basis": "verification.md「較正した定数」（録画 18 の 60f 刻みの目視。未較正）",
+  "basis": "verification.md「較正した定数」（録画 0018 の 60f 刻みの目視。未較正）",
   "model": "`burst/controller.ts` の `BURST_READY_DELAY_FRAMES` 等",
   "replaces": [],
   "updated": "2026-09-28"

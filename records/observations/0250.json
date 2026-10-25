@@ -1,0 +1,239 @@
+[
+  {
+    "id": "0250-01",
+    "recording": "0250",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0221",
+    "readAt": "2026-10-06",
+    "value": 111004,
+    "description": "マナ単騎（スペック固定 OFF・キューブなし）の 1 ヒット（胴体・非会心・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "HUD の総ダメージの増分（hud-jumps のキャッシュ。1,712 個）を値ごとに数えた。単騎の AR なので 1 増分 1 ヒット。値ごとの数: 胴体 111,004 が 587 個・胴体（距離）144,305 が 387 個・コア 235,871 が 301 個・コア（距離）269,172 が 131 個（ほかは会心の 194,301・227,602・319,168・352,469 など）。H0 のコア 222,007・255,308 と H2 のコア 249,736・283,037 は 1 つも無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0250-02",
+    "recording": "0250",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0221",
+    "readAt": "2026-10-06",
+    "value": 235871,
+    "description": "同じ録画の 1 ヒット（コア・非会心・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "HUD の総ダメージの増分（hud-jumps のキャッシュ。1,712 個）を値ごとに数えた。単騎の AR なので 1 増分 1 ヒット。値ごとの数: 胴体 111,004 が 587 個・胴体（距離）144,305 が 387 個・コア 235,871 が 301 個・コア（距離）269,172 が 131 個（ほかは会心の 194,301・227,602・319,168・352,469 など）。H0 のコア 222,007・255,308 と H2 のコア 249,736・283,037 は 1 つも無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0250-03",
+    "recording": "0250",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0221",
+    "readAt": "2026-10-06",
+    "value": 144305,
+    "description": "同じ録画の 1 ヒット（胴体・非会心・距離ボーナスあり）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "HUD の総ダメージの増分（hud-jumps のキャッシュ。1,712 個）を値ごとに数えた。単騎の AR なので 1 増分 1 ヒット。値ごとの数: 胴体 111,004 が 587 個・胴体（距離）144,305 が 387 個・コア 235,871 が 301 個・コア（距離）269,172 が 131 個（ほかは会心の 194,301・227,602・319,168・352,469 など）。H0 のコア 222,007・255,308 と H2 のコア 249,736・283,037 は 1 つも無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0250-04",
+    "recording": "0250",
+    "kind": "hit",
+    "use": "compare",
+    "source": "V-0221",
+    "readAt": "2026-10-06",
+    "value": 269172,
+    "description": "同じ録画の 1 ヒット（コア・非会心・距離ボーナスあり）",
+    "method": {
+      "tool": "recipe:hud-jumps@2",
+      "note": "HUD の総ダメージの増分（hud-jumps のキャッシュ。1,712 個）を値ごとに数えた。単騎の AR なので 1 増分 1 ヒット。値ごとの数: 胴体 111,004 が 587 個・胴体（距離）144,305 が 387 個・コア 235,871 が 301 個・コア（距離）269,172 が 131 個（ほかは会心の 194,301・227,602・319,168・352,469 など）。H0 のコア 222,007・255,308 と H2 のコア 249,736・283,037 は 1 つも無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0250-05",
+    "recording": "0250",
+    "kind": "count",
+    "use": "compare",
+    "source": "V-0222",
+    "readAt": "2026-10-06",
+    "value": 140,
+    "unit": "発",
+    "description": "マナ単騎（キューブなし）のリロードを終えた直後の照準の横の残弾（最大装弾数）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode mags",
+      "note": "node tools/captures/reticle-ammo.ts --mode mags。マガジンの最大の表示は、戦闘の始め（f1463）と 11 回のリロード明けのすべてで 140（ほかの増えは数字の読み違い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 100
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0250-06",
+    "recording": "0250",
+    "kind": "interval",
+    "use": "record",
+    "value": [109, 112, 110, 110, 110, 110, 110, 110, 110, 109, 110],
+    "unit": "f",
+    "description": "マナ のマガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで（取り消し 6 回・窓をまたいだ回 3 回・最終弾の読み違い 1 回を除いた全部の回）",
+    "method": {
+      "tool": "recipe:reload-segments@1",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 2265・3057・3194・3998・5746・6550・7526・8275・9079・10003・10807。窓をまたいだ回は、完了 → 次の増分がこの録画の中央値 + 5f を超える回"
+    },
+    "source": "V-0224",
+    "readAt": "2026-10-06",
+    "invalid": {
+      "reason": "hud.ts が HUD の 0 を 8 と読んだ増分（V-0327）を含むキャッシュ（hud-jumps@1）で読んでいた。レシピ reload-segments を直した読み（キャッシュ hud-jumps@2）で回し直すと [109,112,110,110,110,110,110,110,110,109 → [109,112,110,110,110,110,110,110,110,110。直した値は 0250-10（V-0327）",
+      "date": "2026-10-08"
+    }
+  },
+  {
+    "id": "0250-07",
+    "recording": "0250",
+    "kind": "interval",
+    "use": "record",
+    "value": [17, 17, 12, 12, 12, 12, 12, 16, 12, 12, 12, 12],
+    "unit": "f",
+    "description": "マナ のリロード完了から次の発（総ダメージの増分）まで（取り消し・窓をまたいだ回を除いた全部の回）",
+    "method": {
+      "tool": "recipe:reload-segments@1",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 2265・3057・3194・3998・5746・6550・7354・7526・8275・9079・10003・10807"
+    },
+    "source": "V-0224",
+    "readAt": "2026-10-06"
+  },
+  {
+    "id": "0250-08",
+    "recording": "0250",
+    "kind": "interval",
+    "use": "record",
+    "value": [109.58, 109.97, 110.03, 110.04, 109.83, 109.87, 109.94, 109.97, 110.14, 110.12, 110.04, 110.14],
+    "unit": "f",
+    "description": "マナ のリロードのバーが 0 から満ちるまでの長さ（溝の幅 ÷ バーの伸び。直線の当てはめ）",
+    "method": {
+      "tool": "recipe:reload-segments@1",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。当てはめの残差が 3px を超える回は除いた。取り消し・窓をまたいだ回も除いた"
+    },
+    "source": "V-0224",
+    "readAt": "2026-10-06"
+  },
+  {
+    "id": "0250-09",
+    "recording": "0250",
+    "source": "V-0228",
+    "readAt": "2026-10-06",
+    "kind": "position",
+    "use": "record",
+    "unit": "px",
+    "value": [540, 388, 150, 140],
+    "description": "遠（3 区間目）の的の、足元の y・上端の y・高さ・幅（1920×1080。外接矩形。的だけが取れたコマの中央値）。足元で分けると遠 A（V-0228「結果」）",
+    "method": {
+      "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
+      "note": "使えたコマ 31 / 101。四分位: 足元 534〜540・高さ 136〜154。足元の y は半分の解像度で測るので 2px 刻み"
+    }
+  },
+  {
+    "id": "0250-10",
+    "recording": "0250",
+    "kind": "interval",
+    "use": "record",
+    "value": [109, 112, 110, 110, 110, 110, 110, 110, 110, 110, 110],
+    "unit": "f",
+    "description": "マナ のマガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで（取り消し 6 回・窓をまたいだ回 3 回・最終弾の読み違い 1 回を除いた全部の回）",
+    "method": {
+      "tool": "recipe:reload-segments@2",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 2265・3057・3194・3998・5746・6550・7526・8275・9079・10003・10807。窓をまたいだ回は、完了 → 次の増分がこの録画の中央値 + 5f を超える回"
+    },
+    "source": "V-0327",
+    "readAt": "2026-10-08"
+  }
+]

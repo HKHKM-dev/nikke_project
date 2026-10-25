@@ -1,0 +1,668 @@
+[
+  {
+    "id": "0045-01",
+    "recording": "0045",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0015",
+    "readAt": "2026-09-27",
+    "value": [28.82, 64.97, 141.22],
+    "unit": "秒",
+    "description": "モダニア（MG）単騎: 的のジャンプの始まり（1・2・4 回目）。HUD の止まりで読めた回",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode changes",
+      "note": "戦闘開始 f814 から 1 フレーム 0.017 秒で数えた。停止の前の最後の増分"
+    }
+  },
+  {
+    "id": "0045-02",
+    "recording": "0045",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0015",
+    "readAt": "2026-09-27",
+    "value": [30, 106, 143, 176],
+    "unit": "秒",
+    "description": "モダニア（MG）単騎: 的が空中か画面にいない最初の秒（1・3・4・5 回目。1 秒刻み）",
+    "method": {
+      "tool": "ffmpeg（戦闘時刻をそろえて 1 秒おきに切り出し）",
+      "note": "戦闘開始 f814（残り時間の変わり目が +320f・+89f と続いた所）から 1 フレーム 0.017 秒で数えた秒ごとの画面で、的が空中か画面にいない最初の秒。直前の秒には的が元の位置にいる。±1 秒。画面左上のボタンは AUTO 射撃・オートバーストとも ON（単騎なのでフルバーストは起きない）"
+    }
+  },
+  {
+    "id": "0045-03",
+    "recording": "0045",
+    "kind": "count",
+    "use": "compare",
+    "value": 500,
+    "unit": "ヒット",
+    "description": "モダニア（MG・操作）単騎で、戦闘の最初のヒットから数えて、BURST バーが消えた（本当の満タン）ヒットの番号",
+    "source": "V-0035",
+    "readAt": "2026-09-29",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "戦闘開始 f814。最初のヒットは f826、バーが消えたのは f1666（その 1 つ前のヒット f1665 までは 113px）。総ダメージの増分は 1 フレームに 1 発で、どれも通常攻撃 1 ヒットと S1 の追加ダメージ 1 ヒットの和（胴体 9,298・コア 18,596 と追加ダメージ 3,678、会心とスタックの倍率つき）。例外は 2 つ: f1502 の 44,548（2 発）と、f1591〜1609 の総ダメージが読めない 19 フレームの 436,278（2 スタックの値の組でちょうど 19 発になる組しか無い）。1 本目のマガジンは f1213 で撃ち切り、リロードの後 f1409 から撃ち直す。照合（V-0085）: モデルは全発が当たるので、モデルの満タンの発の番号は当たった発の番号と比べる（実際には撃ち始めの 2 発が外れていて、撃った発では 502 発目。`0045-05`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-04",
+    "recording": "0045",
+    "kind": "gauge",
+    "use": "record",
+    "value": [65, 480],
+    "unit": "ヒット",
+    "description": "モダニア（MG・操作）単騎で、戦闘の最初のヒットから数えて、BURST バーが初めて 1px 光ったヒットと、113px（すべて）光ったヒットの番号",
+    "source": "V-0035",
+    "readAt": "2026-09-29",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series",
+      "note": "1px は f979、112px は 476 ヒット目（f1642）、113px は f1646 で、バーが消えるまで戻らない。1px ぶんは 3〜5 ヒット（約 3.7 ヒット）。f1591〜1606 はバーの位置に別の表示が重なって読めない"
+    }
+  },
+  {
+    "id": "0045-05",
+    "recording": "0045",
+    "kind": "count",
+    "use": "record",
+    "value": [300, 298],
+    "unit": "発",
+    "description": "モダニア（MG・操作）単騎の 1 本目のマガジンで、撃った発の数（照準の横の残弾表示）と、総ダメージが増えた発の数（外れた 2 発はどちらも撃ち始めのスピンアップの中）",
+    "source": "V-0035",
+    "readAt": "2026-09-29",
+    "method": {
+      "tool": "ffmpeg（照準の横の残弾表示を 1 フレームずつ切り出して目で読む）・tools/captures/hud.ts --mode jumps",
+      "note": "残弾は f826 299・f848 298・f862 297・f871 296・f878 295・f884 294 と減り、総ダメージは f826・848・862・885 に増える（4・5 発目の f871・f878 は増えない）。以後、f1000 212・f1050 162・f1100 112・f1150 063 と、総ダメージが増えた数より 2 多い数を撃っている。f1200 の 013 から最後の f1213 まで 13 ヒット"
+    }
+  },
+  {
+    "id": "0045-06",
+    "recording": "0045",
+    "kind": "interval",
+    "use": "record",
+    "value": [148, 148, 148, 148, 148, 148, 148, 148, 148, 148, 147, 148, 147, 147, 148, 148, 148],
+    "unit": "f",
+    "description": "モダニア（MG・リロード 2.3 秒）単騎で、マガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで。取り消し・窓をまたいだ回・最終弾の読み違いを除いた全部の回",
+    "method": {
+      "tool": "tools/captures/reload.ts --shots（hud.ts --mode jumps の出力）",
+      "note": "完了のフレーム: 2408・3091・3622・4138・5228・5698・6169・6639・7109・7579・8049・8519・8989・9667・10199・10715・11201。窓をまたいだ回は、完了 → 次の増分がこの録画の中央値 + 5f を超える回。読み違いは、バーの伸びを遡った 0 の点が最終弾から 3f 以上離れた回。"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
+  },
+  {
+    "id": "0045-07",
+    "recording": "0045",
+    "kind": "interval",
+    "use": "record",
+    "value": [
+      147.95, 147.82, 147.91, 147.5, 147.87, 147.79, 147.88, 147.93, 147.91, 147.85, 147.9, 147.89, 147.9, 147.87,
+      147.87, 148.85, 147.84, 145.58
+    ],
+    "unit": "f",
+    "description": "モダニア（MG・リロード 2.3 秒）単騎で、リロード完了から、RELOADING のバーの伸びを長さ 0 に遡った点を引いた長さ（バーだけで出す最終弾 → 完了）。取り消し・窓をまたいだ回を除いた全部の回",
+    "method": {
+      "tool": "tools/captures/reload.ts --shots（hud.ts --mode jumps の出力）",
+      "note": "リロード全体の長さとフレームに直線を当てはめ（長さが見えた最大の 10〜90%、残差 4px を超える点を落として当てはめ直す）、残差が 3px を超える回は除いた。完了のフレーム: 2408・3091・3622・4138・4624・5228・5698・6169・6639・7109・7579・8049・8519・8989・9667・10199・10715・11201"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
+  },
+  {
+    "id": "0045-08",
+    "recording": "0045",
+    "source": "V-0158",
+    "readAt": "2026-10-04",
+    "use": "record",
+    "kind": "rate",
+    "unit": "px/ヒット",
+    "value": [0.268, 0.273, 0.268, 0.278],
+    "description": "モダニア（操作）単騎の、1 ヒットあたりのバーの伸び。f1000〜1056（15px・56 ヒット）、f1060〜1116（15px・55）、f1120〜1176（15px・56）、f1480〜1536（15px・54）。1 ヒット 2,000（C-0105）の 0.270px と合う",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps + tools/captures/gauge.ts --mode series",
+      "note": "V-0158 の読み直し（比べの基準）"
+    }
+  },
+  {
+    "id": "0045-09",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15272,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 1 のときの、通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f1447。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 500,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-10",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 24569,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 1 のときの、通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f1126。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 500,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-11",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 16597,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 2 のときの、通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f1969。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-12",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 25894,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 2 のときの、通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f1579。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-13",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 27219,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 3 のときの、通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f2024。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-14",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 19246,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 4 のときの、通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f2456。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-15",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 28544,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 4 のときの、通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f2215。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-16",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 20571,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 5 のときの、通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスなし）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f4636。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2000,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-17",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 29869,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 5 のときの、通常攻撃の会心の 1 ヒット（コア・距離ボーナスなし）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f4413。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2000,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-18",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 23361,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 5 のときの、通常攻撃の会心の 1 ヒット（コア以外・距離ボーナスあり）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f4855。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2000,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-19",
+    "recording": "0045",
+    "kind": "hit",
+    "use": "compare",
+    "value": 32659,
+    "unit": "ダメージ",
+    "description": "モダニアの S1 のスタック 5 のときの、通常攻撃の会心の 1 ヒット（コア・距離ボーナスあり）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分（1 発 = 通常攻撃 1 ヒット + S1 の追加ダメージ 1 ヒット）を、スタック k（0〜5）ごとの格子（通常攻撃のコア・会心・距離 × 追加ダメージの会心）に分け、通常攻撃が会心の発から追加ダメージ（会心なら会心の値）を引いた。最初は f4878。同じ値が何度も出る。スタックは会心の発の値で決まり、0 → 1 → … の順に並ぶ（V-0179 の結果）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2000,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-20",
+    "recording": "0045",
+    "kind": "count",
+    "use": "compare",
+    "value": 300,
+    "unit": "発",
+    "description": "モダニアの S1 のスタック 0 のときの最大装弾数（リロードを終えた直後の照準の横の残弾）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "戦闘開始の表示。リロードで残弾が増えた直後の 6 フレームがどれも同じ値。スタックはそのフレームの総ダメージの格子から決めた。スタック 3 の間にはリロードが無い。f10266 の 1 フレームだけの 285 は読み違い（前後は 265）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 100
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-21",
+    "recording": "0045",
+    "kind": "count",
+    "use": "compare",
+    "value": 285,
+    "unit": "発",
+    "description": "モダニアの S1 のスタック 1 のときの最大装弾数（リロードを終えた直後の照準の横の残弾）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "f1361・3091・9667 のリロード明け。リロードで残弾が増えた直後の 6 フレームがどれも同じ値。スタックはそのフレームの総ダメージの格子から決めた。スタック 3 の間にはリロードが無い。f10266 の 1 フレームだけの 285 は読み違い（前後は 265）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 500
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-22",
+    "recording": "0045",
+    "kind": "count",
+    "use": "compare",
+    "value": 270,
+    "unit": "発",
+    "description": "モダニアの S1 のスタック 2 のときの最大装弾数（リロードを終えた直後の照準の横の残弾）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "f1892・3622・10199。リロードで残弾が増えた直後の 6 フレームがどれも同じ値。スタックはそのフレームの総ダメージの格子から決めた。スタック 3 の間にはリロードが無い。f10266 の 1 フレームだけの 285 は読み違い（前後は 265）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 900
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-23",
+    "recording": "0045",
+    "kind": "count",
+    "use": "compare",
+    "value": 240,
+    "unit": "発",
+    "description": "モダニアの S1 のスタック 4 のときの最大装弾数（リロードを終えた直後の照準の横の残弾）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "f2408・4138・10715。リロードで残弾が増えた直後の 6 フレームがどれも同じ値。スタックはそのフレームの総ダメージの格子から決めた。スタック 3 の間にはリロードが無い。f10266 の 1 フレームだけの 285 は読み違い（前後は 265）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1600
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-24",
+    "recording": "0045",
+    "kind": "count",
+    "use": "compare",
+    "value": 224,
+    "unit": "発",
+    "description": "モダニアの S1 のスタック 5 のときの最大装弾数（リロードを終えた直後の照準の横の残弾）",
+    "source": "V-0179",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "f4624〜8989 の 9 回と f11201。リロードで残弾が増えた直後の 6 フレームがどれも同じ値。スタックはそのフレームの総ダメージの格子から決めた。スタック 3 の間にはリロードが無い。f10266 の 1 フレームだけの 285 は読み違い（前後は 265）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 2000
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0045-25",
+    "recording": "0045",
+    "source": "V-0228",
+    "readAt": "2026-10-06",
+    "kind": "position",
+    "use": "record",
+    "unit": "px",
+    "value": [542, 386, 156, 156],
+    "description": "遠（3 区間目）の的の、足元の y・上端の y・高さ・幅（1920×1080。外接矩形。的だけが取れたコマの中央値）。足元で分けると遠 A（V-0228「結果」）",
+    "method": {
+      "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
+      "note": "使えたコマ 9 / 101。四分位: 足元 518〜542・高さ 142〜160。足元の y は半分の解像度で測るので 2px 刻み"
+    }
+  }
+]

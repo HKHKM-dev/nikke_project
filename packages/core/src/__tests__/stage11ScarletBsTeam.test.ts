@@ -1,5 +1,5 @@
 // Stage 11 紅蓮BS 編: 紅蓮：ブラックシャドウ（225）を含む編成の射撃の刻み・循環の段・1 発の値・sim と calc の整合
-// （plan/design-stage11-scarlet-bs.md 7.3〜7.5 節）。実測値は録画 46（単騎）・47（ラム + デルタ + 紅蓮BS（操作））、2026-09-24。
+// （plan/design-stage11-scarlet-bs.md 7.3〜7.5 節）。実測値は録画 0046（単騎）・47（ラム + デルタ + 紅蓮BS（操作））、2026-09-24。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence } from '../cadence.ts';
@@ -52,8 +52,8 @@ const REC46 = team([fixedSlot(225)], 0);
 const REC47 = team([fixedSlot(822), fixedSlot(20), fixedSlot(225)], 2);
 const PRACTICAL = team([fixedSlot(82), fixedSlot(330), fixedSlot(225), fixedSlot(191), fixedSlot(172)], 2);
 const TEAMS: Record<string, TeamInput> = {
-  '録画 46（紅蓮BS 単騎）': REC46,
-  '録画 47（ラム + デルタ + 紅蓮BS）': REC47,
+  '録画 0046（紅蓮BS 単騎）': REC46,
+  '録画 0047（ラム + デルタ + 紅蓮BS）': REC47,
   '実戦寄り（リター + クラウン + 紅蓮BS + アリス + アドミ）': PRACTICAL,
 };
 
@@ -66,10 +66,10 @@ const skillHitShown = (h: SkillHitEvent, ticks = 1) =>
   Math.round((h.hit.baseHit * h.effect.multiplier * (1 + h.hit.boost.fullBurst)) / ticks);
 
 describe('射撃の刻みの較正（3.3・7.3）', () => {
-  it('fires 紅蓮BS every 43f and 172f across a reload (録画 46。046-21)', () => {
+  it('fires 紅蓮BS every 43f and 172f across a reload (録画 0046。0046-21)', () => {
     const cadence = computeCadence(character(225).shot);
     expect(cadence.shotFrames).toEqual([0, 43, 86, 129, 172, 215, 258, 301, 344]);
-    // Stage 22-A: 戦闘開始の 1 発目は 43 − 13 = 30f（046-19）。リロードの後は 43f のまま
+    // Stage 22-A: 戦闘開始の 1 発目は 43 − 13 = 30f（0046-19）。リロードの後は 43f のまま
     expect(cadence.firstShotFrames).toBe(30);
     expect(cadence.reloadFirstShotFrames).toBe(43);
     // Stage 24: リロード 2 秒 ÷ 0.017 + 11f（C-0149）。射手は端数を持ち越すので、172f と 171f が約 2:1 で混ざる（実測は 172f）
@@ -87,7 +87,7 @@ describe('射撃の刻みの較正（3.3・7.3）', () => {
   });
 });
 
-describe('録画 47 の予測（7.5）', () => {
+describe('録画 0047 の予測（7.5）', () => {
   const plan = planTeamRun(REC47);
   const fb = plan.schedule!.fullBurstWindows;
   const shots = plan.shots[2]!.frames;
@@ -97,7 +97,7 @@ describe('録画 47 の予測（7.5）', () => {
   it('opens 5 full bursts of 10 s, 40 s apart, with 紅蓮BS as III', () => {
     // Stage 21-B: 40 秒 = 2,352f、10 秒 = 588f。C-0073 で段の間隔を 20f → 29f にして 470 → 497。
     // V-0028 で 1 発のゲージを ×1.2 → ×1.0 にして 497 → 646、V-0030 で S1 の段のヒットのゲージ（C-0085）を入れて 497 に戻った
-    // （録画 47 の 1 回目は約 486f）。Stage 22-A で戦闘開始の 1 発目が 13f 早くなって 497 → 484。
+    // （録画 0047 の 1 回目は約 486f）。Stage 22-A で戦闘開始の 1 発目が 13f 早くなって 497 → 484。
     // C-0232 でラム（SR）・デルタ（SR）の戦闘開始の 1 発目が 1f 遅くなって 484 → 485。C-0285 で満タン → I を 29f → 23f にして 485 → 479。
     // III の起点（段の長さ 28f、窓は III の発動の 6f 後から。plan/design-burst-hit-origin.md 8 節）で 479 → 483
     expect(fb.map((w) => w.start)).toEqual([0, 1, 2, 3, 4].map((k) => 483 + k * gameSecondsToFrames(40)));
@@ -133,7 +133,7 @@ describe('録画 47 の予測（7.5）', () => {
     expect(hits).toHaveLength(stepAt.size);
   });
 
-  it('matches FB1 of 録画 47: C just before, 13 tiers A → A inside, B on the 2nd shot after', () => {
+  it('matches FB1 of 録画 0047: C just before, 13 tiers A → A inside, B on the 2nd shot after', () => {
     const w = cycleItemsOf(plan)[0]!;
     const before = shots.filter((f) => f < w.start);
     const inside = shots.filter((f) => f >= w.start && f < w.end);
@@ -159,7 +159,7 @@ describe('S1 の段のヒットで溜まるゲージ（V-0030・C-0085）', () =
     expect(plan.cycleGaugeHits.every((h) => h.energy === 25_000)).toBe(true);
   });
 
-  it('fills at the 20th shot with 10 skill hits before it (20 × 37,500 + 10 × 25,000 = 1,000,000。録画 46・55・70・71)', () => {
+  it('fills at the 20th shot with 10 skill hits before it (20 × 37,500 + 10 × 25,000 = 1,000,000。録画 0046・0055・0070・0071)', () => {
     const full = plan.schedule!.gaugeFullFrames[0]!;
     expect(full).toBe(shots[19]);
     expect(plan.cycleGaugeHits.filter((h) => h.frame <= full)).toHaveLength(10);
@@ -172,7 +172,7 @@ describe('S1 の段のヒットで溜まるゲージ（V-0030・C-0085）', () =
   });
 });
 
-describe('録画 46・47 の実測（1 発の数値、2026-09-24）', () => {
+describe('録画 0046・0047 の実測（1 発の数値、2026-09-24）', () => {
   const calc = computeTeamDamage(REC47);
   const plan = planTeamRun(REC47);
   const hits = plan.skillHits.filter((h) => h.slotIndex === 2);

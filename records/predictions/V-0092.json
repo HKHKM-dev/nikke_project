@@ -26,7 +26,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "observations": ["046-03"],
+      "observations": ["0046-03"],
       "note": "紅蓮BS 単騎（046 の組み方）の 180 秒の射撃の数（部分チャージの発を含む）"
     },
     {
@@ -41,7 +41,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "observations": ["046-04"],
+      "observations": ["0046-04"],
       "note": "同じ枠の S1 の段の数（フルチャージの発 3 発ごと。部分チャージの発は数えない）"
     },
     {
@@ -57,7 +57,7 @@
         "burst": false,
         "condition": "auto"
       },
-      "observations": ["055-03"],
+      "observations": ["0055-03"],
       "note": "紅蓮BS 単騎（055 の組み方。自動バースト OFF）の射撃の数"
     },
     {
@@ -73,7 +73,7 @@
         "burst": false,
         "condition": "auto"
       },
-      "observations": ["055-04"],
+      "observations": ["0055-04"],
       "note": "同じ枠の S1 の段の数"
     }
   ],

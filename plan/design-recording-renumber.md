@@ -3,6 +3,7 @@
 - 対象: `npm run records:renumber`（`packages/core/scripts/records-renumber.ts`・`packages/core/src/records/renumber.ts`）、録画の置き場所（`E:/nikke_project_captures/`）と Google Drive のバックアップ先（`I:/マイドライブ/nikke_project_captures/`）
 - 状態: **完了（2026-10-17）**（承認は 2026-10-17。10 節。実施は 11 節）
 - 関連: [backlog.md](backlog.md) 5-4、[design-investigation-review.md](design-investigation-review.md) 4.3・5 節、[design-investigation-review-log.md](design-investigation-review-log.md) 11.11 節（検証記録・結論・観測値の振り直し）、[captures/index.md](captures/index.md)「命名規約」、[captures/storage.md](captures/storage.md)「バックアップ」、[captures/backup-log.md](captures/backup-log.md)
+- 2026-10-25 に、全部の録画の番号を 4 桁にそろえた（[design-recording-id-4digit.md](design-recording-id-4digit.md)）。この設計書の例の番号（「録画 124」など）は、そろえる前の書き方のまま
 - 作成日: 2026-10-17
 - 調べた時点: main の d9160808（#596）。件数はその時点の調べで、判断の材料。以後は書き直さない
 

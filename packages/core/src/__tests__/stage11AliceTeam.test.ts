@@ -1,5 +1,5 @@
 // Stage 11 アリス編: アリス（191）を含む編成の順位・窓の一致と、sim と calc の整合（plan/design-stage11.md 22.3〜22.6 節）。
-// 録画 42（I-DOLL・フラワー + アドミ + アリス（操作）+ I-DOLL・サン）・録画 43（I-DOLL・フラワー + クラウン + アリス（操作）+ マナ + アドミ）の
+// 録画 0042（I-DOLL・フラワー + アドミ + アリス（操作）+ I-DOLL・サン）・録画 0043（I-DOLL・フラワー + クラウン + アリス（操作）+ マナ + アドミ）の
 // 実測値を固定する。数値は plan/verification.md Stage 11 アリス節。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -51,9 +51,9 @@ const REC43 = team([fixedSlot(304), fixedSlot(330), fixedSlot(191), fixedSlot(29
 /** 設計書 22.6 節の（撮らなかった）編成。アドミだけで同じフレームの規則が分かれる */
 const SUN43 = team([fixedSlot(304), fixedSlot(330), fixedSlot(172), fixedSlot(191), fixedSlot(308)], 3);
 const TEAMS: Record<string, TeamInput> = {
-  '録画 42（I-DOLL・フラワー + アドミ + アリス + I-DOLL・サン）': REC42,
-  '録画 43（I-DOLL・フラワー + クラウン + アリス + マナ + アドミ）': REC43,
-  '録画 43 の代案（I-DOLL・フラワー + クラウン + アドミ + アリス + I-DOLL・サン）': SUN43,
+  '録画 0042（I-DOLL・フラワー + アドミ + アリス + I-DOLL・サン）': REC42,
+  '録画 0043（I-DOLL・フラワー + クラウン + アリス + マナ + アドミ）': REC43,
+  '録画 0043 の代案（I-DOLL・フラワー + クラウン + アドミ + アリス + I-DOLL・サン）': SUN43,
   '実戦寄り（リター + クラウン + アリス + ドレイク宝物 3 + ラピ）': team(
     [fixedSlot(82), fixedSlot(330), fixedSlot(191), fixedSlot(101, 3), fixedSlot(10)],
     2,
@@ -68,7 +68,7 @@ function intervalsInFullBursts(frames: readonly number[], windows: readonly { st
   });
 }
 
-/** 操作キャラの 1 発（非会心・丸める前）。攻撃力は整数に丸めてから防御力を引く（capture-pitfalls）。表示とは 1 以内で合う（録画 41 と同じ） */
+/** 操作キャラの 1 発（非会心・丸める前）。攻撃力は整数に丸めてから防御力を引く（capture-pitfalls）。表示とは 1 以内で合う（録画 0041 と同じ） */
 function aliceHit(
   attack: number,
   charge: number,
@@ -93,7 +93,7 @@ function mode(values: readonly number[]): number {
   return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0])[0]![0];
 }
 
-describe('録画 42: アリスの S1 は自分とアドミに付く（22.5、実測）', () => {
+describe('録画 0042: アリスの S1 は自分とアドミに付く（22.5、実測）', () => {
   const plan = planTeamRun(REC42);
   const calc = computeTeamDamage(REC42);
   const windows = plan.schedule!.fullBurstWindows;
@@ -185,7 +185,7 @@ describe('録画 42: アリスの S1 は自分とアドミに付く（22.5、実
   });
 });
 
-describe('録画 43: 同じフレームのバフも順位に入る（22.6、RANK_INCLUDES_SAME_FRAME、実測）', () => {
+describe('録画 0043: 同じフレームのバフも順位に入る（22.6、RANK_INCLUDES_SAME_FRAME、実測）', () => {
   const plan = planTeamRun(REC43);
   const calc = computeTeamDamage(REC43);
   const windows = plan.schedule!.fullBurstWindows;
@@ -215,7 +215,7 @@ describe('録画 43: 同じフレームのバフも順位に入る（22.6、RANK
   });
 });
 
-describe('録画 43 の代案（サン）: アドミには一度も付かない', () => {
+describe('録画 0043 の代案（サン）: アドミには一度も付かない', () => {
   const plan = planTeamRun(SUN43);
 
   it('gives アリス’s S1 to アリス + クラウン (never アドミ), since クラウン’s same-frame +51,921 counts', () => {

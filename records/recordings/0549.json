@@ -1,0 +1,36 @@
+{
+  "id": "0549",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-0549_rl_anis-star-late-fire_crown-ai-3.mp4",
+  "original": "2026-10-24_02-37-53.mp4",
+  "durationSec": 28.7,
+  "frames": 1720,
+  "fps": 60,
+  "sizeMB": 34.8,
+  "sha256": "2af4b57c2579",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true,
+      "note": "操作・AUTO 射撃は途中で ON"
+    },
+    {
+      "slot": 2,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0482 の撮り方 2: AUTO 射撃 OFF で始め、f1050（戦闘開始から 205f）に AUTO 射撃を ON にした（台帳の autoFire は始めの値）。クラウン AI・オートバースト OFF。枠順は一時停止の画面で確かめた"
+}

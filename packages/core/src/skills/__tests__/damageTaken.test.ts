@@ -73,7 +73,7 @@ describe('computeBurstHit の damageTakenMultiplier', () => {
     expect(base.damageTakenMultiplier).toBe(1);
     expect(up.damageTakenMultiplier).toBe(1.1806);
     expect(up.perActivation).toBeCloseTo(base.perActivation * 1.1806, 6);
-    // 1 tick の会心なし: (79,201 − 100) × 52.24% × 1.1806 = 48,785.18（録画 095 の 48,785）
+    // 1 tick の会心なし: (79,201 − 100) × 52.24% × 1.1806 = 48,785.18（録画 0095 の 48,785）
     expect(up.perActivation / up.boost.total).toBeCloseTo(48785.181, 2);
   });
 });

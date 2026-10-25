@@ -20,7 +20,7 @@ const empty: SkillRaw = { id: 0, name: { ja: '', en: '' }, description: { ja: ''
 
 /** バーストスキル（倍率 300%）を持つ AR。hitRate は条件に入れる */
 function slot(resourceId: number, burstStep: 'Step1' | 'Step2' | 'Step3', condition: Partial<SlotCondition> = {}) {
-  const burst: SkillRaw = { ...empty, id: resourceId * 10 + 3, values: [tenLevels('300')] };
+  const burst: SkillRaw = { ...empty, id: resourceId * 10 + 3, values: [tenLevels('0300')] };
   const character = makeCharacter({}, { resourceId, burstStep, skills: { skill1: empty, skill2: empty, burst } });
   const definition: SkillDefinition = {
     formatVersion: 1,

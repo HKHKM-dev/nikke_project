@@ -1,5 +1,5 @@
 // Stage 21-B: ゲーム内の秒の持続を、録画の実測と比べる（plan/design-stage21.md 3.4・5 節）。
-// 録画 56（クラウン単騎 AUTO）の S2「攻撃ダメージ 20.99%▲・7 秒間」は、▲の付いた発の区間が 411f（056-04。前後の素の発と
+// 録画 0056（クラウン単騎 AUTO）の S2「攻撃ダメージ 20.99%▲・7 秒間」は、▲の付いた発の区間が 411f（0056-04。前後の素の発と
 // 1 フレームで接している 2・3 回目）。モデルでも、回復した発の次のフレームから 411f のあいだ▲が付く。
 import { describe, expect, it } from 'vitest';
 import { loadObservations, loadRecordingsFile, loadRecordsData, recordingMap } from '../../../scripts/records-data.ts';
@@ -10,11 +10,11 @@ import { piecesOf } from '../../__tests__/historyHelpers.ts';
 
 const file = loadRecordingsFile();
 const data = loadRecordsData(file);
-const measured = loadObservations().find((o) => o.id === '056-04')!;
+const measured = loadObservations().find((o) => o.id === '0056-04')!;
 
-describe('録画 56: クラウンの S2 の 7 秒（056-04）', () => {
+describe('録画 0056: クラウンの S2 の 7 秒（0056-04）', () => {
   const input = buildTeamInput(
-    recordingMap(file).get('056')!,
+    recordingMap(file).get('0056')!,
     { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], burst: false, condition: 'auto', midFarLanding: 'A' },
     data,
   );

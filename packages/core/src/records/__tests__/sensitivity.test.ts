@@ -56,11 +56,11 @@ describe('観測値ごとの感度', () => {
   // 162 はアニス：スター（操作）・デルタ・イサベル。sim と比べる確定の結論の根拠の観測値を 1 つ取る
   const o = observations.find(
     (x) =>
-      x.recording === '162' &&
+      x.recording === '0162' &&
       usesSensitivity(x) &&
       claims.some((c) => c.state === '確定' && c.observations.includes(x.id)),
   )!;
-  const rec = recordings.get('162')!;
+  const rec = recordings.get('0162')!;
 
   it('lists the unconfirmed effects of the recording, with the key of the current inputs', () => {
     const entries = sensitivityOf(o, ctx);

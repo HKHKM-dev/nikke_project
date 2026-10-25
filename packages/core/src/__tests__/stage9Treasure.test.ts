@@ -1,5 +1,5 @@
 // Stage 9: 宝物版スキルの回帰（plan/design-stage9.md 8.2・8.3 節）。
-// ユーザーのドレイクは宝物（ヴィランのフィギュア）を 3 段階目まで解放している。録画 36・37 はすでに宝物版の数値で読み取ってあるので、
+// ユーザーのドレイクは宝物（ヴィランのフィギュア）を 3 段階目まで解放している。録画 0036・0037 はすでに宝物版の数値で読み取ってあるので、
 // 段階 3 のドレイクで実測値を固定する（新規撮影なし）。段階 0（省略）は Stage 8 と同じになる。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -81,7 +81,7 @@ describe('ドレイクの宝物（データ）', () => {
   });
 });
 
-describe('録画 36: ドレイク単騎（宝物 3 段階）', () => {
+describe('録画 0036: ドレイク単騎（宝物 3 段階）', () => {
   const input: TeamInput = { slots: [fixedSlot(101, 3)], enemy, durationSeconds: 60 };
   const calc = computeTeamDamage(input);
   const drake = calc.slots[0]!;
@@ -114,7 +114,7 @@ describe('録画 36: ドレイク単騎（宝物 3 段階）', () => {
   });
 });
 
-describe('録画 37: ラム + デルタ + ドレイク（宝物 3 段階）', () => {
+describe('録画 0037: ラム + デルタ + ドレイク（宝物 3 段階）', () => {
   const input: TeamInput = {
     slots: [fixedSlot(822), fixedSlot(20), fixedSlot(101, 3)],
     enemy,
@@ -167,7 +167,7 @@ describe('録画 37: ラム + デルタ + ドレイク（宝物 3 段階）', ()
     // 1 回目の発動の前に攻撃ダメージは付いていない（付くのは発動の後の 10 秒）。フルバースト補正も乗らない
     expect(hit.attackDamageMultiplier).toBe(1);
     expect(hit.boost.fullBurst).toBe(0);
-    // 録画 37: 総ダメージが f1286・f1314・f1342 に 1,201,793 ずつ増えた（= 1003.2% × 3、非会心）。合計で比べる
+    // 録画 0037: 総ダメージが f1286・f1314・f1342 に 1,201,793 ずつ増えた（= 1003.2% × 3、非会心）。合計で比べる
     const nonCrit = hit.perActivation / hit.boost.total;
     expect(Math.abs(nonCrit - 3 * 1201793)).toBeLessThanOrEqual(3);
   });

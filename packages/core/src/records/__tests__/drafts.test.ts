@@ -101,11 +101,11 @@ describe('claimDraft（結論の下書きの状態）', () => {
     topic: '命中率・距離',
     text: undefined,
     today: '2026-10-02',
-    observations: [obs('101-01'), obs('102-01')],
+    observations: [obs('0101-01'), obs('0102-01')],
     gradeCandidate: '反復実測',
     compared: new Map([
-      ['101-01', true],
-      ['102-01', true],
+      ['0101-01', true],
+      ['0102-01', true],
     ]),
     subject: { mechanism: 'targetTable' },
     minimal: [],
@@ -118,7 +118,7 @@ describe('claimDraft（結論の下書きの状態）', () => {
     expect(d.reasons).toEqual([]);
     expect(d.file.state).toBe('確定');
     expect(d.file.grade).toBe('反復実測');
-    expect(d.file.basis).toBe('`101-01`・`102-01`。V-0099');
+    expect(d.file.basis).toBe('`0101-01`・`0102-01`。V-0099');
     expect(d.file.text).toContain('書く');
     expect(d.file.decidedOn).toEqual([]);
   });
@@ -132,7 +132,7 @@ describe('claimDraft（結論の下書きの状態）', () => {
     // 厳密一致なら問わない
     expect(claimDraft({ ...noDecided, gradeCandidate: '厳密一致' }).reasons).toEqual([]);
     // 書けば結論のファイルに入る
-    const given = [{ recording: '101', role: '仮説の出どころ' as const }];
+    const given = [{ recording: '0101', role: '仮説の出どころ' as const }];
     expect(claimDraft({ ...base, decidedOn: given }).file.decidedOn).toEqual(given);
   });
 
@@ -148,31 +148,31 @@ describe('claimDraft（結論の下書きの状態）', () => {
         ...base,
         minimal: [
           {
-            observation: '101-01',
-            recordings: ['101'],
+            observation: '0101-01',
+            recordings: ['0101'],
             elements: [{ name: 'a skill1.effects[0]', reason: '根拠なし' }],
             marked: [],
           },
         ],
       }).reasons[0],
-    ).toContain('最小構成の警告がある（a skill1.effects[0]（101-01））');
+    ).toContain('最小構成の警告がある（a skill1.effects[0]（0101-01））');
     // 印だけの組は警告ではない
     expect(
-      claimDraft({ ...base, minimal: [{ observation: '101-01', recordings: ['101'], elements: [], marked: ['a'] }] })
+      claimDraft({ ...base, minimal: [{ observation: '0101-01', recordings: ['0101'], elements: [], marked: ['a'] }] })
         .reasons,
     ).toEqual([]);
     // 結論の対象が無い・compare も scope も無い観測値（設計書 9 節の 2）
     const { subject: _subject, ...noSubject } = base;
     expect(claimDraft(noSubject).reasons[0]).toContain('結論の対象');
-    const bare = { ...obs('103-01'), scope: undefined };
+    const bare = { ...obs('0103-01'), scope: undefined };
     expect(claimDraft({ ...base, observations: [bare] }).reasons.some((r) => r.includes('scope の無い観測値'))).toBe(
       true,
     );
     expect(claimDraft(base).file.subject).toEqual({ mechanism: 'targetTable' });
     expect(
-      claimDraft({ ...base, observations: [obs('101-01'), obs('102-01', '2026-10-02', true)] }).reasons[0],
+      claimDraft({ ...base, observations: [obs('0101-01'), obs('0102-01', '2026-10-02', true)] }).reasons[0],
     ).toContain('失効');
-    expect(claimDraft({ ...base, compared: new Map([['101-01', false]]) }).reasons[0]).toContain('許容外');
+    expect(claimDraft({ ...base, compared: new Map([['0101-01', false]]) }).reasons[0]).toContain('許容外');
   });
 
   it('予測は任意: 順と日付は見ず、仮説が 2 つ以上あって 2 つ以上と合うときだけ理由にする（同 1.3 節）', () => {
@@ -193,7 +193,7 @@ describe('claimDraft（結論の下書きの状態）', () => {
     expect(claimDraft({ ...base, prediction: { file, targets: [], score: score(1, 0) } }).reasons).toEqual([]);
     const late = {
       ...file,
-      predicted: { at: '2026-10-03', commit: 'abc1234', values: {}, seen: { '101': ['101-01'] } },
+      predicted: { at: '2026-10-03', commit: 'abc1234', values: {}, seen: { '0101': ['0101-01'] } },
     };
     expect(claimDraft({ ...base, prediction: { file: late, targets: [], score: score(1, 0) } }).reasons).toEqual([]);
     expect(claimDraft({ ...base, prediction: { file: late, targets: [], score: score(0, 0) } }).reasons).toEqual([]);
@@ -275,7 +275,7 @@ describe('最小構成の警告', () => {
   });
 
   it('通常攻撃の条件: 射撃場の的の表に、その武器種のコア命中率と弾丸命中率がある', () => {
-    const recording = recordings.get('101')!;
+    const recording = recordings.get('0101')!;
     expect(normalConditionMeasured(data.characters.get(307)!, recording, data.enemies)).toBe(true);
     // SR の弾丸命中率も表にある（C-0168）
     const sr = [...data.characters.values()].find((c) => c.weaponType === 'SR');
@@ -304,9 +304,9 @@ describe('最小構成の警告', () => {
     expect(normalConditionMeasured(data.characters.get(307)!, water, split)).toBe(true);
   });
 
-  it('編成の条件で外れる効果は見ない（録画 192 のラムの S1 の CT▼。同じ部隊の味方がいない）', () => {
+  it('編成の条件で外れる効果は見ない（録画 0192 のラムの S1 の CT▼。同じ部隊の味方がいない）', () => {
     const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims };
-    const names = elementsOf(recordings.get('192')!, ctx).map((e) => e.name);
+    const names = elementsOf(recordings.get('0192')!, ctx).map((e) => e.name);
     expect(names.some((n) => n.startsWith('ラム skill1.effects['))).toBe(false);
     // 外さずに見ると、CT▼ の根拠の C-0235（仮説）でラムが未確定になる
     expect(mechanismConfirmed(data.skills.get(822), states)).toBe(false);

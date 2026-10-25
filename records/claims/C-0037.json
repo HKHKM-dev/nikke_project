@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "命中率・距離",
   "grade": "反復実測",
-  "basis": "verification.md Stage 18-B「撮影 2」（録画 63）・Stage 18-B2「命中率▲で照準円は小さくなる」（録画 69）",
+  "basis": "verification.md Stage 18-B「撮影 2」（録画 0063）・Stage 18-B2「命中率▲で照準円は小さくなる」（録画 0069）",
   "model": "`frame/landing.ts` の `coreHitRateWithHitRateUp`（N ≥ 1 で 1）",
   "replaces": [],
   "updated": "2026-10-11",

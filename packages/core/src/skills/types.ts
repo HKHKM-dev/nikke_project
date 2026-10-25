@@ -36,7 +36,7 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
 
 /**
  * 何が上がるか。Stage 8 の 2 つ:
- * distributedDamage = 分配ダメージの乗数 (1 + Σ)。distributed の倍率ダメージにだけ掛かる（録画 21 で別枠の乗数と確認）。
+ * distributedDamage = 分配ダメージの乗数 (1 + Σ)。distributed の倍率ダメージにだけ掛かる（録画 0021 で別枠の乗数と確認）。
  * burstGaugeSpeed = バーストゲージのチャージ速度 (1 + Σ)。対象の枠の射撃で溜まるゲージに掛かる。Stage 8 では passive にだけ
  * 書けた（timed に書くと 時刻表 → バフ窓 → ゲージ → 時刻表 と循環したため）。2 段目の段 1（plan/design-skill-stage1.md 1.6 節）で、
  * 1 パス目がフレームごとに件を作るようになったので、timed と状態の中身にも書ける（f − 1 までに付いた件を、射手と同じに読む）。
@@ -188,9 +188,9 @@ export function isFlagStat(stat: BuffStat): boolean {
  * どう算出するか。ratio = 対象自身の基礎値に対する比率、casterAttack = 発動者のバフ前攻撃力 × 比率の固定加算、
  * flat = 実数の固定加算（Stage 10。stat が maxAmmo のときだけ。値は発数で 100 で割らない）、
  * casterChargeTime = 発動者の基礎チャージ時間 × 比率の秒数を対象のチャージ時間から引く（Stage 11 アリス編。stat が chargeSpeed のときだけ。
- * 「スキル発動者基準でチャージ速度 X%▲」。録画 42 でアドミ（1 秒）が 0.175 秒縮んだ。plan/design-stage11.md 27 節）、
+ * 「スキル発動者基準でチャージ速度 X%▲」。録画 0042 でアドミ（1 秒）が 0.175 秒縮んだ。plan/design-stage11.md 27 節）、
  * casterFinalMaxHp = 発動者の最終最大HP × 比率を攻撃力に固定加算する（2 段目の段 6。stat が attack のときだけ。「スキル発動者の
- * 最終最大HP の X% 分の攻撃力▲」。plan/design-skill-stage6.md 1.3 節。録画 121 のラプラス：アルティメットヒーロー）
+ * 最終最大HP の X% 分の攻撃力▲」。plan/design-skill-stage6.md 1.3 節。録画 0121 のラプラス：アルティメットヒーロー）
  */
 export type BuffScaling = 'ratio' | 'casterAttack' | 'flat' | 'casterChargeTime' | 'casterFinalMaxHp';
 export const BUFF_SCALINGS = [
@@ -495,7 +495,7 @@ export type EventCountTrigger = {
 
 /**
  * ニヒリスター編: 時間の周期のトリガー。戦闘開始から k × everySeconds 秒（k = 1, 2, …）に発火する。射撃・リロード・
- * 的のジャンプ・バーストに関係しない（録画 081 の S2。C-0091）。CT が説明文にも CDN にも無いアクティブ型のスキル用で、
+ * 的のジャンプ・バーストに関係しない（録画 0081 の S2。C-0091）。CT が説明文にも CDN にも無いアクティブ型のスキル用で、
  * 値は実測の即値。damage・dot・autoAttack・burstGaugeHit と timed に書ける。ソルジャーE.G. 編（plan/design-soldier-eg.md 3.2 節）で、
  * 1 パス目で窓を追う stat（最大装弾数など）の timed にも書けるようにした（1 パス目が周期のフレームで窓を登録する。frame/firstPass.ts）
  */
@@ -917,7 +917,7 @@ export type WeaponChangeEffect = {
   damageRef: number;
   /**
    * 1 発のヒット数（即値。省略 1）。説明文にも CDN にも無いので実測で書く。モダニアの殲滅モードは射撃場の的で 2
-   * （録画 44。照準範囲内の敵の数か弾の数かは未確定）。会心はヒットごとに判定されるので、期待値は武器倍率 × ヒット数と同じ
+   * （録画 0044。照準範囲内の敵の数か弾の数かは未確定）。会心はヒットごとに判定されるので、期待値は武器倍率 × ヒット数と同じ
    */
   hitsPerShot?: number;
   /** 防御力無視ダメージ編: 変更後の武器の 1 発を防御力無視ダメージにする（「最終攻撃力の X% の防御力無視ダメージ」） */
@@ -962,7 +962,7 @@ export type CycleStep = {
 /**
  * Stage 11 紅蓮BS: 「攻撃回数別の効果」「各段階の効果のみ適用」の循環。trigger の回数（射撃の通算カウンタの every の倍数）ごとに
  * steps を 1 段ずつ順に発動し、最後の次は最初に戻る。段のポインタはカウンタと別に 1 つだけ持ち、戦闘中ずっと続く
- * （リロードでもフルバーストでも戻さない）。録画 46・47 で確認（plan/design-stage11-scarlet-bs.md 0.3 節）。
+ * （リロードでもフルバーストでも戻さない）。録画 0046・0047 で確認（plan/design-stage11-scarlet-bs.md 0.3 節）。
  * 回数トリガーの「N 回ごとに同じ効果」（damage の every）とは別物
  */
 export type CycleEffect = {
@@ -976,7 +976,7 @@ export type CycleEffect = {
 
 /**
  * Stage 11 紅蓮BS: 「スキル N の（フルチャージ）攻撃回数の条件が … に変更」。維持時間のあいだ、自分のスロット slot の cycle を
- * every 回ごとに進める（通算カウンタの every の倍数。1 なら毎回）。カウンタ自体は変えない（録画 47 の 5 回の FB で確認）。
+ * every 回ごとに進める（通算カウンタの every の倍数。1 なら毎回）。カウンタ自体は変えない（録画 0047 の 5 回の FB で確認）。
  * 対象は常に自分。件は持ち主ごとの一覧の履歴（cycleEvery の件）に置き、区間には入れない
  */
 export type CycleEveryEffect = {
@@ -1069,7 +1069,7 @@ export type AutoAttackEffect = {
   gaugePerHit?: true;
   /**
    * ヒットが発射体の爆発か。発射体爆発ダメージ▲を、RL の通常攻撃と同じ形（damage.ts の explosionHitMultiplier）で掛ける
-   * （アニス：スターのシューティングスター。V-0124 の 162-12。plan/design-anis-star-s2-burst.md 9.3 節の a）
+   * （アニス：スターのシューティングスター。V-0124 の 0162-12。plan/design-anis-star-s2-burst.md 9.3 節の a）
    */
   projectileExplosion?: true;
   /**

@@ -46,7 +46,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 
 // roadmap の起票の編成（リター + ニヒリスター + アリス + 紅蓮BS + モダニア）。リターの S1 の最大装弾数▲は味方全体なので、全枠が窓を持つ
 const LRNAM = team([fixedSlot(82), fixedSlot(261), fixedSlot(191), fixedSlot(225), fixedSlot(260)], 2);
-// 録画 37: 窓を持つのはドレイク（バーストの自分への最大装弾数▲）だけ
+// 録画 0037: 窓を持つのはドレイク（バーストの自分への最大装弾数▲）だけ
 const REC37 = team([fixedSlot(822), fixedSlot(20), fixedSlot(101, 3)], 2);
 // Stage 8 の 5 人: 射撃の窓が 1 つも掛からない
 const STAGE8 = team([fixedSlot(291), fixedSlot(20), fixedSlot(231), fixedSlot(101), fixedSlot(870)], 2);
@@ -56,7 +56,7 @@ const relDiff = (a: number, b: number) => (a - b) / b;
 describe('calc のハイブリッド: 既定は変えない', () => {
   it.each([
     ['LRNAM', LRNAM],
-    ['録画 37', REC37],
+    ['録画 0037', REC37],
   ] as const)('%s: 省略と hybrid は同じ結果', (_, input) => {
     expect(computeTeamDamage(input)).toEqual(computeTeamDamage(input, { shotCounting: 'hybrid' }));
   });

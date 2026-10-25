@@ -174,9 +174,9 @@ describe('scaleBasisPoints と applyChargeBuffs（実測）', () => {
   it('multiplies the collection and skill multipliers together as one group, then adds OL (C-0122, C-0126)', () => {
     const charge = (chargeDamage: number, chargeDamageMultiplier: number, fullChargeDamage: number) =>
       applyChargeBuffs(fullChargeDamage, true, { ...ZERO_BUFFS, chargeDamage, chargeDamageMultiplier });
-    expect(charge(0.1181, 0.0947, 3.5)).toBeCloseTo(3.9496, 12); // アリス（089-01）
-    expect(charge(0.1111, 0.0947, 2.5)).toBeCloseTo(2.8479, 12); // ヘルム（088-01）
-    expect(charge(0.1111, 0.0947 + 1.584, 2.5)).toBeCloseTo(6.8079, 12); // ヘルムのバーストの後（091-01）
+    expect(charge(0.1181, 0.0947, 3.5)).toBeCloseTo(3.9496, 12); // アリス（0089-01）
+    expect(charge(0.1111, 0.0947, 2.5)).toBeCloseTo(2.8479, 12); // ヘルム（0088-01）
+    expect(charge(0.1111, 0.0947 + 1.584, 2.5)).toBeCloseTo(6.8079, 12); // ヘルムのバーストの後（0091-01）
   });
 });
 

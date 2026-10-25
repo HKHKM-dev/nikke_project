@@ -1,0 +1,171 @@
+[
+  {
+    "id": "0224-01",
+    "recording": "0224",
+    "source": "V-0204",
+    "readAt": "2026-10-05",
+    "kind": "interval",
+    "use": "compare",
+    "value": [24, 23, 23, 23, 22],
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ クイーン（真）（III・操作）で、1〜5 回目のフルバーストの始まり（III のタイマーが 00.00 になったフレーム。f1511・3931・6514・9084・11464）から、クイーン（真）のバーストの倍率ダメージのヒット（f1535・3954・6537・9107・11486）までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "still.ts と同じ select で右のバースト欄を 1 フレームずつ並べた一覧（ffmpeg の select=between(n,…)・crop・tile）・HUD を 1 フレームずつ並べた一覧（FULL BURST の表示の中なので目で読んだ）",
+      "note": "22f の 5 回目は、始まりの前に III のタイマーの 09.52 が 2 フレーム続く（録画の重複フレームの位置）。ヒットのフレームは、総ダメージの差がちょうどヒットの値（1 回目 6,323,975、2〜5 回目 4,206,947）になるフレーム"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0224-02",
+    "recording": "0224",
+    "source": "V-0204",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 6323975,
+    "description": "クイーン（真）の 1 回目のバーストの倍率ダメージの 1 ヒット（会心なし。ヒットは f1535）",
+    "method": {
+      "tool": "HUD を 1 フレームずつ並べた一覧",
+      "note": "ヒットの前後の総ダメージ 9,032,129 → 15,356,104"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0224-03",
+    "recording": "0224",
+    "source": "V-0204",
+    "readAt": "2026-10-05",
+    "kind": "hit",
+    "use": "record",
+    "value": 4206947,
+    "description": "クイーン（真）の 2 回目のバーストの倍率ダメージの 1 ヒット（会心なし。ヒットは f3954）。3〜5 回目も同じ値",
+    "method": {
+      "tool": "HUD を 1 フレームずつ並べた一覧",
+      "note": "比べる観測値にしない（遅れの検証の問いの外）。1 回目との違いは、1 回目のフルバーストが S1 の戦闘開始時の攻撃力▲（15 秒）の窓の中にあり、2 回目以降は外にあるため（定義の skill1 の battleStart の効果。2026-10-06 に別の検証のセッションの指摘で、S2 のせいとした注記を直した）。2026-10-05 のいまのモデルも 2 回目以降をこの値（4,206,946.955）で出し、端数まで合う"
+    }
+  },
+  {
+    "id": "0224-07",
+    "recording": "0224",
+    "source": "V-0394",
+    "readAt": "2026-10-10",
+    "kind": "timing",
+    "use": "record",
+    "value": [8],
+    "unit": "f",
+    "description": "CT が律速の III の回の、III のキャラの CT が明けたフレーム（B）から III のタイマーの 00.00（Z）までの動画のフレーム数。ココア + デルタ + クイーン（真）（操作）の 5 回目（CT が律速）。B・N・Z は f11456・11460・11464（B → Z が 8f、N → Z が 4f）。1〜4 回目は CT が明けていて B は無い（N → Z は 3f）",
+    "method": {
+      "tool": "右のバースト欄（crop=240:180:1680:400）を III のタイマーの 00.00 の 15f 前から 1 フレームずつ並べた一覧（目で読んだ）",
+      "note": "B は III のキャラの顔の CT の秒（0.0x）が消えて顔が明るくなった最初のフレーム、N は新しい CT の秒（「40」）が出たフレーム、Z は III のタイマーの 00.00。CT が律速の回（III の段に入った後も顔に CT の秒が出ていた回）だけ B を読んだ"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0224-04",
+    "recording": "0224",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "compare",
+    "value": [111, 110],
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ クイーン（真）（III・操作）で、1・3 回目のフルバーストの直前の満タン（BURST バーが消えた発。f1424・6427）から、クイーン（真）のバーストの倍率ダメージのヒット（f1535・6537）までの動画のフレーム数。実機とモデルの両方でゲージが律速（満タン → 00.00 が 87〜90f）の回だけ",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "満タンのフレームに HUD の増分（1 回目 353,790）。2・4 回目も実機ではゲージが律速（満タン f3844・8997 → 00.00 が 87f、→ ヒット 110f）だが、モデルの 2・4 回目は I が CT 律速なので比べない。5 回目は満タン f11366 → 00.00 が 98f で、I の段が長い（実機の CT が律速）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToBurstHit",
+      "args": {
+        "slot": 3,
+        "n": "0,2"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0224-05",
+    "recording": "0224",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "record",
+    "value": [87, 87, 87, 87, 98],
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ クイーン（真）（III・操作）で、ゲージが律速の回の満タン（BURST バーが消えた発。f1424・3844・6427・8997・11366）から、フルバーストのタイマーが 00.00 になった最初のフレーム（f1511・3931・6514・9084・11464。既存の観測値の起点）までの動画のフレーム数",
+    "method": {
+      "tool": "gauge.ts --mode series（BURST バーが読めなくなったフレーム）・hud.ts --mode jumps",
+      "note": "モデルの III の発動（フルバーストの入り）は満タンから 83f（23 + 1 + 29 + 1 + 29）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0224-06",
+    "recording": "0224",
+    "source": "V-0391",
+    "readAt": "2026-10-10",
+    "kind": "interval",
+    "use": "record",
+    "value": 3,
+    "unit": "f",
+    "description": "ココア（I）+ デルタ（II）+ クイーン（真）（III・操作）の 1 回目のフルバーストで、右のバースト欄の III のキャラの顔が CT の秒（「40」）に替わったフレーム（f1508）から、フルバーストのタイマーが 00.00 になった最初のフレーム（f1511）までの動画のフレーム数",
+    "method": {
+      "tool": "ffmpeg（右のバースト欄 1740,420 から 180×150 を切り出し、1 フレームずつ並べた一覧）",
+      "note": "III の段のタイマーは 00.00 の 1f 前（f1510）の 09.52 まで 1 フレームごとに減り続ける（ゲーム内の時間は 00.00 の直前まで止まっていない）。六角形は白く光った後、「40」と同じフレームか 1f 前に赤い III に替わる"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  }
+]

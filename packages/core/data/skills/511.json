@@ -16,7 +16,7 @@
             0
           ],
           "assumes": {
-            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発の着弾のフレームで、HUD では発の 1 ヒットと同じ増分に出る（録画 124）。倍率の乗らない 1 ヒットのゲージ（target_burst_energy_pershot）を溜める（アニス：スター S1 の同じ形の追加ダメージと同じ。C-0198。録画 480・481 の 1 回目のフルバーストの時刻）",
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発の着弾のフレームで、HUD では発の 1 ヒットと同じ増分に出る（録画 0124）。倍率の乗らない 1 ヒットのゲージ（target_burst_energy_pershot）を溜める（アニス：スター S1 の同じ形の追加ダメージと同じ。C-0198。録画 0480・0481 の 1 回目のフルバーストの時刻）",
             "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit lands with the shot and shows in the same HUD increment as the shot (recording 124). It charges the Burst Gauge by one unmultiplied hit (target_burst_energy_pershot), like the same kind of additional damage of Anis: Sparkling Summer S1 (C-0198; the first Full Burst of recordings 480 and 481)"
           },
           "claims": [

@@ -1,0 +1,41 @@
+{
+  "id": "0481",
+  "date": "2026-10-17",
+  "folder": "range",
+  "file": "20261017-0481_sr+sr+rl_ram+delta+cinderella_cinderella-control.mp4",
+  "original": "2026-10-17_22-50-35.mp4",
+  "durationSec": 202.9,
+  "frames": 12171,
+  "fps": 60,
+  "sizeMB": 245.9,
+  "sha256": "655c72521850",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 511,
+      "name": "シンデレラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0446。ラム・デルタ・シンデレラ（操作・AUTO 射撃 ON）・オートバースト ON。3 分モードを最後まで撃ち続け、終わりに戦闘履歴の画面を映す（V-0446 の撮影計画。2 本のうちの 2 本目）"
+}

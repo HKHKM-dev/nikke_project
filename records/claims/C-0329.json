@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "厳密一致",
-  "basis": "`251-01`。V-0223",
+  "basis": "`0251-01`。V-0223",
   "model": "frame/firing.ts の effectiveMaxAmmo（OL・キューブ・スキルの maxAmmoRatio の和で四捨五入）。キューブの写像は buildEffects.ts の CUBE_SKILL_EFFECTS（Stage 13）",
   "replaces": [],
   "updated": "2026-10-06",

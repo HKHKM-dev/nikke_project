@@ -261,8 +261,8 @@ describe('groupTimeline', () => {
 
   it('rounds the numeric part of the key so floating-point noise does not split a state', () => {
     // 同じ +50% を「1 件で 50%」と「2 件で 30% + 20%」で組む。加算経路が違うので最下位ビットがずれうる
-    const one = run([timedSlot(1, 'Step3', [timed('battleStart')], '50', '180')]).timeline;
-    const twoSlot = timedSlot(2, 'Step3', [timed('battleStart'), timed('battleStart', { ref: 3 })], '30', '180')!;
+    const one = run([timedSlot(1, 'Step3', [timed('battleStart')], '50', '0180')]).timeline;
+    const twoSlot = timedSlot(2, 'Step3', [timed('battleStart'), timed('battleStart', { ref: 3 })], '30', '0180')!;
     const two = run([
       {
         ...twoSlot,
@@ -272,7 +272,7 @@ describe('groupTimeline', () => {
             ...twoSlot.character.skills,
             burst: {
               ...twoSlot.character.skills.burst,
-              values: [tenLevels('30'), tenLevels('180'), tenLevels('20')],
+              values: [tenLevels('30'), tenLevels('0180'), tenLevels('20')],
             },
           },
         },
@@ -283,7 +283,7 @@ describe('groupTimeline', () => {
     const numeric = (key: string | null | undefined): string => (key ?? '').split('|').slice(0, 7).join('|');
     expect(numeric(two.segments[0]?.slotKeys[0])).toBe(numeric(one.segments[0]?.slotKeys[0]));
     // 意味のある差（0.001）は別の鍵になる
-    const other = run([timedSlot(3, 'Step3', [timed('battleStart')], '50.1', '180')]).timeline;
+    const other = run([timedSlot(3, 'Step3', [timed('battleStart')], '50.1', '0180')]).timeline;
     expect(numeric(other.segments[0]?.slotKeys[0])).not.toBe(numeric(one.segments[0]?.slotKeys[0]));
   });
 

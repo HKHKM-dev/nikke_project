@@ -1,0 +1,35 @@
+{
+  "id": "0507",
+  "date": "2026-10-19",
+  "folder": "range",
+  "file": "20261019-0507_rl_anis-star+naga_star-core-damage.mp4",
+  "original": "2026-10-19_00-08-50.mp4",
+  "durationSec": 199.9,
+  "frames": 11992,
+  "fps": 60,
+  "sizeMB": 242.2,
+  "sha256": "63ce88d56c88",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 450,
+      "name": "ナガ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0455。アニス：スター（操作・AUTO 射撃 ON）+ ナガ（AI）・オートバースト OFF。バーストはアニス：スターだけを手で使う"
+}

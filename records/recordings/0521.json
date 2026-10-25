@@ -1,0 +1,100 @@
+{
+  "id": "0521",
+  "date": "2026-10-20",
+  "folder": "range",
+  "file": "20261020-0521_smg_liter_cube-assault7_fixed-off.mp4",
+  "original": "2026-10-20_23-22-50.mp4",
+  "durationSec": 115.6,
+  "frames": 6936,
+  "fps": 60,
+  "sizeMB": 139.6,
+  "sha256": "deb355f1460b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": true,
+      "note": "単騎・AUTO。レリックアサルトキューブ Lv7 **あり**。コレクション SR Lv15",
+      "cube": "assault-7",
+      "build": {
+        "attack": 438912,
+        "overload": {
+          "head": [
+            {
+              "option": "elementDamage",
+              "level": 6
+            },
+            {
+              "option": "critDamage",
+              "level": 7
+            },
+            {
+              "option": "maxAmmo",
+              "level": 2
+            }
+          ],
+          "body": [
+            {
+              "option": "defence",
+              "level": 13
+            },
+            {
+              "option": "attack",
+              "level": 12
+            },
+            {
+              "option": "chargeSpeed",
+              "level": 8
+            }
+          ],
+          "arm": [
+            {
+              "option": "critRate",
+              "level": 5
+            },
+            {
+              "option": "hitRate",
+              "level": 2
+            },
+            {
+              "option": "defence",
+              "level": 10
+            }
+          ],
+          "leg": [
+            {
+              "option": "chargeSpeed",
+              "level": 11
+            },
+            {
+              "option": "critDamage",
+              "level": 11
+            },
+            {
+              "option": "defence",
+              "level": 11
+            }
+          ]
+        },
+        "cube": {
+          "id": 1000301,
+          "level": 7
+        },
+        "collection": {
+          "rarity": "SR",
+          "level": 15
+        }
+      }
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 **OFF**。単騎・操作キャラ・AUTO 射撃 ON・オートバースト OFF）。撮影の前にキャラ画面（攻撃力 438,912）・装備 4 部位の OL の行・キューブの画面（レリックアサルトキューブ Lv7。攻撃力 910、スキルの段階 3・1）を映した。最初のヒットは f2514。残り 01:50 の一時停止のパネルでリター 1 体（LV.728、与ダメージ 98,858,921）を確かめ、そこで終えた（180 秒の最後までは撮っていない）。V-0473"
+}

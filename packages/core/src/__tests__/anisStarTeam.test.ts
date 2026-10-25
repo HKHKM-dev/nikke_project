@@ -53,7 +53,7 @@ const SOLO: TeamInput = {
   burst: false,
   controlledSlot: 0,
 };
-// V-0115 の録画 150 と同じ: アニス：スター（AI）+ I-DOLL・フラワー（操作・撃たないが、モデルは撃つ）（みんなの星）
+// V-0115 の録画 0150 と同じ: アニス：スター（AI）+ I-DOLL・フラワー（操作・撃たないが、モデルは撃つ）（みんなの星）
 const WITH_FLOWER: TeamInput = {
   slots: [fixedSlot(17, true), fixedSlot(304, true)],
   enemy: rangeEnemy,
@@ -96,7 +96,7 @@ const REENTRY: TeamInput = {
   controlledSlot: 0,
 };
 
-// V-0122 の撮影（録画 162）と同じ: アニス：スター（操作）+ デルタ + イサベル、オートバースト ON（私だけの星）
+// V-0122 の撮影（録画 0162）と同じ: アニス：スター（操作）+ デルタ + イサベル、オートバースト ON（私だけの星）
 const CT_CUT: TeamInput = {
   slots: [fixedSlot(17, true), fixedSlot(20, true), fixedSlot(231, true)],
   enemy: rangeEnemy,
@@ -182,7 +182,7 @@ describe('私だけの星とみんなの星（バースト段階の構成の分�
 // 枠の合計が 5% を少し超える（calc のハイブリッドの近似。plan/backlog.md 4-5）。バースト段階の構成の条件とは別なので、5% の検査は外す
 describe.each([
   ['アニス：スター単騎（V-0116 の撮影の条件）', SOLO, true],
-  ['アニス：スター + I-DOLL・フラワー（録画 150 の編成）', WITH_FLOWER, true],
+  ['アニス：スター + I-DOLL・フラワー（録画 0150 の編成）', WITH_FLOWER, true],
   ['実戦寄り（アニス：スター + クラウン + デルタ + アリス + モダニア）', PRACTICAL, true],
   ['実戦寄り（クラウンをリターに替えた編成）', PRACTICAL_WITH_LITER, false],
   ['バースト再突入（V-0121 の撮影の条件）', REENTRY, true],

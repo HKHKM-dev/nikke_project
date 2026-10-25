@@ -56,7 +56,7 @@ function fixedSlot(id: number): TeamSlotInput {
   };
 }
 
-// 録画 232・401 と同じ: I-DOLL・フラワー（操作・撃たない扱いはしない）+ ウンファ：TU・BigArms 灼熱の 3 分モード
+// 録画 0232・0401 と同じ: I-DOLL・フラワー（操作・撃たない扱いはしない）+ ウンファ：TU・BigArms 灼熱の 3 分モード
 function team(enemy: EnemyInput): TeamInput {
   return { slots: [fixedSlot(304), fixedSlot(95)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 };
 }

@@ -60,7 +60,7 @@ describe('drive/sync-lib', () => {
     expect(isConflictName('owner.conflict-desktop.md')).toBe(true);
     expect(isConflictName('owner.conflict-drive.md')).toBe(true);
     expect(isConflictName('owner.conflict-cloud.md')).toBe(true);
-    expect(isConflictName('064_f100.conflict-drive2.jpg')).toBe(true);
+    expect(isConflictName('0064_f100.conflict-drive2.jpg')).toBe(true);
     expect(isConflictName('SYNC_MARKER_DO_NOT_DELETE.conflict-desktop.txt')).toBe(true);
     expect(isConflictName('owner.md')).toBe(false);
     expect(isConflictName('conflict-desktop.md')).toBe(false);

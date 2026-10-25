@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "反復実測",
-  "basis": "verification.md Stage 2-B、録画 35・41 での MG の再確認",
+  "basis": "verification.md Stage 2-B、録画 0035・0041 での MG の再確認",
   "model": "`cadence.ts` のレート蓄積",
   "replaces": [],
   "updated": "2026-10-11",
@@ -13,7 +13,7 @@
   },
   "decidedOn": [
     {
-      "recording": "003",
+      "recording": "0003",
       "role": "仮説の出どころ"
     }
   ]

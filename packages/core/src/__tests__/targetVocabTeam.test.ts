@@ -58,7 +58,7 @@ function passiveFrom(input: TeamInput, from: number, to: number, stat: string): 
 }
 
 describe('同じ部隊の味方全体に（targetSquad）', () => {
-  it('gives Emma: TU S2 critical damage to herself but not to Delta (録画 022 の編成。C-0266)', () => {
+  it('gives Emma: TU S2 critical damage to herself but not to Delta (録画 0022 の編成。C-0266)', () => {
     const input = team([fixedSlot(EMMA), fixedSlot(20)], 1);
     expect(passiveFrom(input, 0, 0, 'critDamage')).toBeCloseTo(0.2351, 6);
     expect(passiveFrom(input, 0, 1, 'critDamage')).toBe(0);
@@ -83,7 +83,7 @@ describe('基本チャージ時間が一番長い味方（longestChargeTime）',
   const chargeWindows = (input: TeamInput) =>
     piecesOf(planTeamRun(input)).filter((w) => w.effect.source.resourceId === MANA && w.effect.stat === 'chargeSpeed');
 
-  it('cuts 0.18 s from Delta at every full burst start (録画 020 の編成。C-0267)', () => {
+  it('cuts 0.18 s from Delta at every full burst start (録画 0020 の編成。C-0267)', () => {
     const input = team([fixedSlot(291), fixedSlot(20), fixedSlot(MANA)], 2);
     const windows = chargeWindows(input);
     const sim = runSimulation(input);
@@ -92,7 +92,7 @@ describe('基本チャージ時間が一番長い味方（longestChargeTime）',
     expect(windows.every((w) => w.slotIndex === 1 && w.effect.value === 0.18)).toBe(true);
   });
 
-  it('picks the slot with the longest base charge time (録画 043 の編成: アリスの 1.5 秒)', () => {
+  it('picks the slot with the longest base charge time (録画 0043 の編成: アリスの 1.5 秒)', () => {
     const input = team([fixedSlot(304), fixedSlot(330), fixedSlot(191), fixedSlot(MANA), fixedSlot(172)], 2);
     const windows = chargeWindows(input);
     expect(windows.length).toBeGreaterThan(0);
@@ -101,13 +101,13 @@ describe('基本チャージ時間が一番長い味方（longestChargeTime）',
 });
 
 const TEAMS: Record<string, TeamInput> = {
-  '録画 022 の編成（エマ：TU + デルタ）': team([fixedSlot(EMMA), fixedSlot(20)], 1),
+  '録画 0022 の編成（エマ：TU + デルタ）': team([fixedSlot(EMMA), fixedSlot(20)], 1),
   'エマ：TU + ウンファ：TU + デルタ + 紅蓮BS': team(
     [fixedSlot(EMMA), fixedSlot(EUNHWA), fixedSlot(20), fixedSlot(225)],
     3,
   ),
-  '録画 020 の編成（エーテル + デルタ + マナ）': team([fixedSlot(291), fixedSlot(20), fixedSlot(MANA)], 2),
-  '録画 043 の編成（フラワー + クラウン + アリス + マナ + アドミ）': team(
+  '録画 0020 の編成（エーテル + デルタ + マナ）': team([fixedSlot(291), fixedSlot(20), fixedSlot(MANA)], 2),
+  '録画 0043 の編成（フラワー + クラウン + アリス + マナ + アドミ）': team(
     [fixedSlot(304), fixedSlot(330), fixedSlot(191), fixedSlot(MANA), fixedSlot(172)],
     2,
   ),

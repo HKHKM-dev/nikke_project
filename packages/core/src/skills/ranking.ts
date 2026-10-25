@@ -10,7 +10,7 @@ import { applyAttackBuffs, applyResolvedEffect, type BuffTotals } from './buffs.
 import type { ResolvedEffect } from './resolve.ts';
 import { matchesTargetFilter, type TargetedEffect } from './targets.ts';
 
-/** 同じフレームに始まった攻撃力の件を順位に入れるか（26 節 3。録画 43 で確かめる） */
+/** 同じフレームに始まった攻撃力の件を順位に入れるか（26 節 3。録画 0043 で確かめる） */
 export const RANK_INCLUDES_SAME_FRAME = true;
 
 /** 順位の材料にする 1 つの件（攻撃力の timed 効果が 1 枠に効いている区間） */

@@ -1,0 +1,150 @@
+[
+  {
+    "recording": "0043",
+    "id": "0043-01",
+    "kind": "timing",
+    "use": "record",
+    "value": [30.43],
+    "unit": "秒",
+    "description": "的のジャンプの始まり（HUD の総ダメージが止まり始めた所）の、戦闘開始から数えたゲーム内の秒。1 回目",
+    "method": {
+      "note": "Stage 16-B で読んだ HUD の停止の始まりのフレーム（verification.md「停止の時刻」）を、戦闘開始（残り時間 02:59 が出たフレーム。timer.ts）から 1 フレーム 0.017 秒で数えた。フルバーストの入りで残り時間が止まる分（C-0049）は差し引いていない（1 回あたり約 0.4 秒大きく出る）"
+    },
+    "source": "V-0007",
+    "readAt": "2026-09-27"
+  },
+  {
+    "id": "0043-02",
+    "recording": "0043",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0016",
+    "readAt": "2026-09-28",
+    "value": [31, 68],
+    "unit": "秒",
+    "description": "的のジャンプの 1・2 回目で、的が空中か画面にいない最初の秒（1 秒刻み。戦闘開始から動画のフレームを 0.017 秒で数えた。フルバーストの入りの止まりの分は差し引いていない）",
+    "method": {
+      "tool": "ffmpeg（戦闘時刻をそろえて 1 秒おきに切り出し）",
+      "note": "戦闘開始 f941（残り時間の変わり目が +320f・+89f と続いた所）。22〜35 秒・58〜71 秒の画面を並べた。直前の秒には的が元の位置にいる。±1 秒。この時間帯はフルバースト中が多い"
+    }
+  },
+  {
+    "id": "0043-03",
+    "recording": "0043",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0017",
+    "readAt": "2026-09-28",
+    "value": [22.7, 23.6, 23.3, 23.2, 23.2, 23.9, 24.5, 22.7, 22.7],
+    "unit": "f",
+    "description": "フルバーストを 1 回またぐごとに、3 分モードの残り時間の秒の刻みの位相がずれた分（読めた回を順に。フルバーストの入りで残り時間が止まった長さ）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes",
+      "note": "秒の変わり目が 56〜62f（2 秒分は 116〜122f）の間隔で続く区間ごとに、傾きを 58.84 f/秒に固定して切片を当てはめ、フルバーストをまたぐ前後の区間の切片の差を 58.84 で割った余りを取った（この録画は区間の中の間隔もふだんより長く、当てはめた傾きが 59.0〜59.1 になるため。区間の中の遅れが 1 回あたり 2〜3f 混ざる）。フルバーストの残り時間の表示が秒の数字に重なる区間は使わない。フルバーストの無い区間のずれは ±1f 以内"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
+    }
+  },
+  {
+    "id": "0043-04",
+    "recording": "0043",
+    "kind": "interval",
+    "value": [20.3, 46.9],
+    "unit": "f",
+    "description": "バーストの CT の、発動から 0 になるまでの動画のフレームが、CT の秒 ÷ 0.017 を超えた分（フラワー 20 秒・アリス 40 秒）。あいだにあるフルバーストの入りの止まりは 1・2 回（残り時間のずれの合計 23.9・46.4f。傾き 58.84 で出した、`0043-03`）",
+    "method": {
+      "tool": "ffmpeg（領域を切り出して 1 フレームずつ並べた一覧）",
+      "note": "フラワー: 発動 5987（I → II のアイコンの 2f 前。042 で段のタイマーから出した位置に合わせた）、CT の残り 0.03 が f7182 → 0 は 7183.8。アリス: 発動 3641（欄に「40」）、残り 0.03 が f6039 → 0 は 6040.8"
+    },
+    "use": "record",
+    "source": "V-0017",
+    "readAt": "2026-09-28",
+    "scope": {
+      "slot": "all",
+      "source": "clock"
+    }
+  },
+  {
+    "id": "0043-05",
+    "recording": "0043",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0025",
+    "readAt": "2026-09-28",
+    "value": [12, 2, 14, 31, 2, 31, 13],
+    "unit": "f",
+    "description": "BURST バーが 100%（113px すべて）光ってから、バーが消えて I のアイコンに替わるまでのフレーム数（フルバーストの入りの順。100% を経ずに消えた回と、味方の体力バーが重なって消えたと読み違えた回は除く）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series",
+      "note": "100% と消えたフレーム: f2135→2147・f4539→4541・f5641→5655・f6885→6916・f8143→8145・f9314→9345・f10602→10615"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0043-06",
+    "recording": "0043",
+    "kind": "interval",
+    "use": "compare",
+    "value": 244,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I のアイコンに替わる（本当の満タン）までのフレーム数",
+    "source": "V-0028",
+    "readAt": "2026-09-28",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode events",
+      "note": "02:59 は f941（残り時間の変わり目が +320f・+89f と続いた所）、消えたのは f1185"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "invalid": {
+      "reason": "「消えた」とした f1185 は、II の段の表示を gauge.ts --mode events が満タンと拾った後のフレームだった。バーは f1154 で消えて I の段に替わっていた。読み直した値は 0043-07（V-0077）",
+      "date": "2026-10-02"
+    }
+  },
+  {
+    "id": "0043-07",
+    "recording": "0043",
+    "kind": "interval",
+    "use": "compare",
+    "source": "V-0077",
+    "readAt": "2026-10-02",
+    "value": 213,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I のアイコンに替わる（本当の満タン）までのフレーム数",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series・tools/captures/still.ts（右のバースト欄を切り出して目で見た）",
+      "note": "02:59 は f941、消えたのは f1154。f1153 はバーが約 94px（100% を経ずに消えた回）。f1154 はアリスの 2 発目（総ダメージの増分 767,043）のフレームで、I の段の六角形が出ている。0043-06 の読み直し"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

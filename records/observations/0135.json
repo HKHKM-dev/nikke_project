@@ -1,0 +1,122 @@
+[
+  {
+    "id": "0135-01",
+    "recording": "0135",
+    "source": "V-0107",
+    "readAt": "2026-10-03",
+    "kind": "count",
+    "use": "compare",
+    "value": 14,
+    "unit": "ヒット",
+    "description": "I-DOLL・フラワー（RL・AUTO・オートバースト OFF）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号",
+    "method": {
+      "tool": "gauge.ts --mode series・hud.ts --mode jumps（レシピ hud-jumps@1 のキャッシュ）+ 使い捨てのスクリプト（V-0107「読み方」）",
+      "note": "1 ヒット目 f858（戦闘開始 f774 から 84f）、14 ヒット目 f2162 で消えた。1〜13 ヒット目の直後のバーの px は 0・2・11・21・30・44・54・63・73・86・95・105・113 で、9 ヒット目（f1634。胴体）の 27f 後の f1661 に発の無いまま 3〜4px 伸びた。0077-19・0126-05・0127-05 と同じ。9 ヒット目が胴体の値なのも 077・126・127 と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0135-02",
+    "recording": "0135",
+    "source": "V-0108",
+    "readAt": "2026-10-03",
+    "kind": "timing",
+    "use": "record",
+    "value": 1666,
+    "unit": "f",
+    "description": "I-DOLL・フラワー単騎・AUTO で、1 回目に左下に S2（フラワーカラー）の表示が出た動画のフレーム",
+    "method": {
+      "tool": "使い捨てのスクリプト（左下のスキルの表示「スキル2 フラワーカラー」の白い帯（動画の x 58〜168・y 580〜610）の明るい画素の割合で拾った。V-0108「読み方」）",
+      "note": "9 ヒット目の 27f 後に発の無いままバーが 3〜4px 伸びた f1661 の 5f 後（戦闘開始 f774 から 892f）"
+    }
+  },
+  {
+    "id": "0135-03",
+    "recording": "0135",
+    "source": "V-0149",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [11],
+    "description": "I-DOLL・フラワー（RL・オートバースト OFF）単騎・AUTO の、ハイドからの 1 発目の構え（待ちの始まり → チャージの表示が 100% を超えたフレーム）。戦闘開始だけ。明けは RELOADING のバーが消えたフレーム（reload.ts --mode fit の取り消された区間の終わり）、戦闘開始は残り時間の表示が出たフレーム（timer.ts の +89f 前後の変わり目。03:00 が 1 フレームだけ出るフレーム）",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ切り出して元のフレーム番号を焼き込み、チャージの表示と照準の横の残弾を目で読む。SR はスコープの横の CHARGE の表示を型合わせで探して切り出し、RL は aim.ts の照準の位置で切り出した）・timer.ts --mode changes・reload.ts --mode fit",
+      "note": "戦闘開始 774、787 の 108% から出て伸びで遡り、100% を超えたフレームは 785"
+    }
+  },
+  {
+    "id": "0135-04",
+    "recording": "0135",
+    "source": "V-0149",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [58],
+    "description": "I-DOLL・フラワー（RL・オートバースト OFF）単騎・AUTO の、同じ 1 発目のチャージ（100% を超えたフレーム → 満ちた（最大の %）フレーム）。戦闘開始だけ。明けは RELOADING のバーが消えたフレーム（reload.ts --mode fit の取り消された区間の終わり）、戦闘開始は残り時間の表示が出たフレーム（timer.ts の +89f 前後の変わり目。03:00 が 1 フレームだけ出るフレーム）",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ切り出して元のフレーム番号を焼き込み、チャージの表示と照準の横の残弾を目で読む。SR はスコープの横の CHARGE の表示を型合わせで探して切り出し、RL は aim.ts の照準の位置で切り出した）・timer.ts --mode changes・reload.ts --mode fit",
+      "note": "250% のフレーム 843"
+    }
+  },
+  {
+    "id": "0135-05",
+    "recording": "0135",
+    "source": "V-0149",
+    "readAt": "2026-10-04",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [1],
+    "description": "I-DOLL・フラワー（RL・オートバースト OFF）単騎・AUTO の、同じ 1 発目の満ちてから撃つまで（満ちたフレーム → 撃ったフレーム）。戦闘開始だけ。明けは RELOADING のバーが消えたフレーム（reload.ts --mode fit の取り消された区間の終わり）、戦闘開始は残り時間の表示が出たフレーム（timer.ts の +89f 前後の変わり目。03:00 が 1 フレームだけ出るフレーム）",
+    "method": {
+      "tool": "ffmpeg（1 フレームずつ切り出して元のフレーム番号を焼き込み、チャージの表示と照準の横の残弾を目で読む。SR はスコープの横の CHARGE の表示を型合わせで探して切り出し、RL は aim.ts の照準の位置で切り出した）・timer.ts --mode changes・reload.ts --mode fit",
+      "note": "撃ったフレーム（残弾が 1 減った）844。和は 70"
+    }
+  },
+  {
+    "id": "0135-06",
+    "recording": "0135",
+    "source": "V-0483",
+    "readAt": "2026-10-23",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 2.81,
+    "unit": "%",
+    "description": "I-DOLL・フラワー単騎・AUTO で、S2（フラワーカラー）の 1 回目に溜まったゲージ（本当の量）",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel（BURST バーの充填の px を、境目の画素の中間の明るさまで足して 1px 未満まで読む。V-0483「読み方」）",
+      "note": "f1661 の伸び（0135-02 の表示の 5f 前）の前（2〜12f 前）と後（1〜11f 後）の充填の平均の差は +3.78px。27f 前の 9 ヒット目（f1634。70,000 = 7%。C-0083）は +9.43px で、比で 3.78 ÷ 9.43 × 7% = 2.81%（C-0084 の 1px ≈ 0.74% なら 2.80%）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

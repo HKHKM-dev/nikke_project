@@ -82,7 +82,7 @@ describe('クイーン（真）の S1 の有利コードの攻撃ダメージ▲
 });
 
 describe('クイーン（真）の S1 の 1more の分配ダメージ（C-0310）', () => {
-  // 録画 229・230 と同じ、ラム（I）+ デルタ（II）+ クイーン（真）（III・操作）
+  // 録画 0229・0230 と同じ、ラム（I）+ デルタ（II）+ クイーン（真）（III・操作）
   const minimal = team([822, 20, QUEEN], 2, 'Wind');
   const q = 2;
   const raw = readJson<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(

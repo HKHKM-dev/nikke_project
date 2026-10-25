@@ -1,0 +1,283 @@
+[
+  {
+    "id": "0463-01",
+    "recording": "0463",
+    "source": "V-0437",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": [1, 1, 0, 0, 0],
+    "description": "ソーダ：トゥインクルバニーのバーストの発動ごとに、自分に攻撃力▲（65.25%・15 秒）が付いたか（1・0。5 回）",
+    "method": {
+      "tool": "一時停止画面の適用中の効果と、画面右下のゴールデンチップの数（目視。証拠フレームは frames/463_*.png）",
+      "note": "一時停止（f1590〜2070・4470〜4890・7290〜7755・10155〜10485・12885〜13050）の適用中の効果に「攻撃力65.25%増加」があるか。どの回も攻撃力▲・命中率▲の残りが 14.6 秒（発動から約 0.4 秒）で、ソーダ：トゥインクルバニーはまだ撃っていない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attack",
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0463-02",
+    "recording": "0463",
+    "source": "V-0437",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": [1, 1, 1, 0, 0],
+    "description": "ソーダ：トゥインクルバニーのバーストの発動ごとに、自分に命中率▲（38.91%・15 秒）が付いたか（1・0。5 回）",
+    "method": {
+      "tool": "一時停止画面の適用中の効果と、画面右下のゴールデンチップの数（目視。証拠フレームは frames/463_*.png）",
+      "note": "一時停止の適用中の効果に「命中率38.91%増加」があるか。発動の直前のゴールデンチップの数は 50・38・27・15・5"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "hitRate",
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0463-03",
+    "recording": "0463",
+    "source": "V-0437",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "compare",
+    "value": [-17, -17, -17],
+    "description": "ソーダ：トゥインクルバニーの 1〜3 回目のバーストの、発動の直前から直後へのゴールデンチップの数の差",
+    "method": {
+      "tool": "一時停止画面の適用中の効果と、画面右下のゴールデンチップの数（目視。証拠フレームは frames/463_*.png）",
+      "note": "直前 50・38・27（画面右下の数。1 回目は戦闘開始の直後の一時停止の STACK50）、直後 33・21・10（画面右下の数と一時停止画面の STACK）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "stateStackDrops",
+      "args": {
+        "slot": 3,
+        "state": "goldenChip",
+        "count": 3
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0463-04",
+    "recording": "0463",
+    "source": "V-0437",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "record",
+    "value": [15, 1, 5, 1],
+    "description": "ソーダ：トゥインクルバニーの 4・5 回目のバーストの、発動の直前と直後のゴールデンチップの数（直前・直後・直前・直後）。17 個より少なくても 0 にならず 1 個残る",
+    "method": {
+      "tool": "一時停止画面の適用中の効果と、画面右下のゴールデンチップの数（目視。証拠フレームは frames/463_*.png）",
+      "note": "画面右下の数が発動の直後に 1 になり、一時停止画面の STACK も 1（ソーダ：トゥインクルバニーはまだ撃っていない）。モデルの発動の前の数は S2 の持続時間▲（未対応）でずれるので、比べる指定は書かない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0463-05",
+    "recording": "0463",
+    "source": "V-0437",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 753157,
+    "description": "ソーダ：トゥインクルバニーの 3 回目のバーストのバーストスキルダメージ（会心なし。攻撃力▲の付かない回）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "バーストの増分 f2153 1245002・f4979 1245002・f7845 753157・f10569 753157・f13136 753157。3〜5 回目は同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0463-06",
+    "recording": "0463",
+    "source": "V-0437",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1245002,
+    "description": "ソーダ：トゥインクルバニーの 1 回目のバーストスキルダメージ（会心なし）。同じ発動の攻撃力▲（65.25%）が乗った値（攻撃力 × 1.6525 から防御 100 を引いた式で、小数を切り捨てた値と一致する）。3〜5 回目（▲なし）は 0463-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f2153（一時停止の明けの後。一時停止の明けから約 1.3 秒後）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0463-07",
+    "recording": "0463",
+    "source": "V-0437",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "record",
+    "value": [38, 27, 15, 5],
+    "description": "ソーダ：トゥインクルバニーの 2〜5 回目のバーストの直前のゴールデンチップの数。フルバースト中の増え方（S1）の記録。S2 の持続時間▲（未対応。1〜3 回目は +2 秒・+3 秒、4 回目は +2 秒、5 回目はなし）でフルバーストが延びるので、モデルとは比べない",
+    "method": {
+      "tool": "一時停止画面の適用中の効果と、画面右下のゴールデンチップの数（目視。証拠フレームは frames/463_*.png）",
+      "note": "2 回目のフルバーストは、一時停止の前の 1 発（f4449）を 1 発目として 3・6・9・12・15・18 発目で増えた（数え直しと合う）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0463-08",
+    "recording": "0463",
+    "source": "V-0443",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "record",
+    "value": [12, 15, 18, 21, 24, 51, 54, 57, 60, 63, 66, 93, 96, 99, 102, 105, 135, 138, 141, 144, 177, 180, 183],
+    "description": "ソーダ：トゥインクルバニーの通常攻撃（戦闘開始からの通し番号）のうち、フルバースト中にゴールデンチップが 1 個増えた発（S1）。どれも 3 の倍数",
+    "method": {
+      "tool": "HUD の総ダメージの増分（hud.ts --mode jumps）と照準の左の残弾（reticle-ammo.ts --mode series）でソーダ：トゥインクルバニーの発を並べ、画面右下のゴールデンチップの数（黄色の数字を追って切り抜いて照合。目視で確かめた）と突き合わせた。証拠フレームは frames/463_s1count-*.png",
+      "note": "発は戦闘開始からの通し番号（フルバーストの外の発も数える）。フルバーストの中の発で 3 の倍数のものは、どれも 1 個増えた。増えなかった 3 の倍数の発（27・69・108・147・186）は、どれも画面中央のフルバーストの残り時間が 00.00 になった後（f2968・5935・8664・11250・13677）。弾倉の最後の 1 発は残弾の表示が 0 にならないので、HUD の増分（前の発から約 39f 後）で確かめた。一時停止をまたぐ発は、残弾の表示（一時停止の前後で同じ値）で数えた（f4449 の後は f4936 まで 7 発のまま）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0463-09",
+    "recording": "0463",
+    "source": "V-0443",
+    "readAt": "2026-10-17",
+    "kind": "count",
+    "use": "record",
+    "value": [10, 50, 92, 135, 175],
+    "description": "ソーダ：トゥインクルバニーの 1〜5 回目のフルバーストの、フルバーストの中の最初の通常攻撃の通し番号（S1 の数え方の仮説を見分ける）",
+    "method": {
+      "tool": "HUD の総ダメージの増分（hud.ts --mode jumps）と照準の左の残弾（reticle-ammo.ts --mode series）でソーダ：トゥインクルバニーの発を並べ、画面右下のゴールデンチップの数（黄色の数字を追って切り抜いて照合。目視で確かめた）と突き合わせた。証拠フレームは frames/463_s1count-*.png",
+      "note": "フルバーストの始まり（画面右下の数が 17 減った・15 → 1 になったフレーム）の後の最初の発の通し番号。2 回目は f4405〜4408 に 38 → 21 で、その前の f4387 の発は外、f4449 が最初。3 回目は f7229〜7235 に 27 → 10 で、f7238 が最初。4 回目は始まりから一時停止までに発が無く、一時停止の明けの f10494 が最初"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0463-10",
+    "recording": "0463",
+    "source": "V-0444",
+    "readAt": "2026-10-17",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1245002,
+    "description": "ソーダ：トゥインクルバニーの 2 回目のバーストスキルダメージ（会心なし）。同じ発動の攻撃力▲（65.25%）が乗った値（攻撃力 × 1.6525 から防御 100 を引いた式で、小数を切り捨てた値と一致する）。3〜5 回目（▲なし）は 0463-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f4979（一時停止の明けの後。一時停止の明けから約 1.3 秒後）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0463-11",
+    "recording": "0463",
+    "source": "V-0444",
+    "readAt": "2026-10-17",
+    "kind": "interval",
+    "use": "record",
+    "value": [127, 128, 129, 129, 128],
+    "unit": "f",
+    "description": "III（ソーダ：トゥインクルバニー）の発動（00.00）から一時停止の入りまでと、一時停止の明けからバーストスキルダメージのヒットまでの、動画のフレームの和（一時停止を挟んだ回）。一時停止の入りと明けの演出のあいだゲームが進むかが分からないので、遅れの値には使わない",
+    "method": {
+      "tool": "tools/captures/dups.ts --mode diff・hud.ts --mode jumps",
+      "note": "入りは前のフレームとの差が 30 を超えた最初のフレーム、明けは一時停止の画が動いた（差 9 以上）最初のフレーム。00.00 f1534・4413・7239・10104・12829、入り f1585・4462・7288・10154・12877、明け f2077・4900・7765・10490・13056、ヒット f2153・4979・7845・10569・13136"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  }
+]

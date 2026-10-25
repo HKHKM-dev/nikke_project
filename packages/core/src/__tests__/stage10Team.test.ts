@@ -1,5 +1,5 @@
 // Stage 10: 射撃に効くバフ・CT 短縮・弾丸チャージを含む編成の回帰と、sim と calc の整合（plan/design-stage10.md 8.4・8.5 節）。
-// 実データのキャラ（スペック固定）で、既存の録画 19・37 の弾数表示と、撮影予定の録画 A・B の編成を固定する。
+// 実データのキャラ（スペック固定）で、既存の録画 0019・0037 の弾数表示と、撮影予定の録画 A・B の編成を固定する。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -63,19 +63,19 @@ function magazineSizes(log: ShotLog): number[] {
 }
 
 const TEAMS: Record<string, TeamInput> = {
-  '録画 37（ラム + デルタ + ドレイク宝物 3）': team([fixedSlot(822), fixedSlot(20), fixedSlot(101, 3)], 2),
-  '録画 19（エーテル + デルタ + ノワール）': team([fixedSlot(291), fixedSlot(20), fixedSlot(271)], 2),
+  '録画 0037（ラム + デルタ + ドレイク宝物 3）': team([fixedSlot(822), fixedSlot(20), fixedSlot(101, 3)], 2),
+  '録画 0019（エーテル + デルタ + ノワール）': team([fixedSlot(291), fixedSlot(20), fixedSlot(271)], 2),
   '録画 A（リター + デルタ + ドレイク宝物 3）': team([fixedSlot(82), fixedSlot(20), fixedSlot(101, 3)], 2),
-  // 録画 40 と同じ枠順（アドミ・ユニ・ラム（操作）・クイーン（真））
+  // 録画 0040 と同じ枠順（アドミ・ユニ・ラム（操作）・クイーン（真））
   '録画 B（アドミ + ユニ + ラム + クイーン（真））': team(
     [fixedSlot(172), fixedSlot(160), fixedSlot(822), fixedSlot(870)],
     2,
   ),
 };
 
-describe('録画 37: ドレイクの最大装弾数（8.5）', () => {
+describe('録画 0037: ドレイクの最大装弾数（8.5）', () => {
   it('holds 20 in the full burst with treasure phase 3 (9 × (1 + 0.7218 + 0.5014))', () => {
-    const input = TEAMS['録画 37（ラム + デルタ + ドレイク宝物 3）']!;
+    const input = TEAMS['録画 0037（ラム + デルタ + ドレイク宝物 3）']!;
     const plan = planTeamRun(input);
     const sizes = magazineSizes(plan.shots[2]!);
     expect(sizes[0]).toBe(9);
@@ -92,8 +92,8 @@ describe('録画 37: ドレイクの最大装弾数（8.5）', () => {
   });
 });
 
-describe('録画 19: ノワールの最大装弾数 +5 発と弾丸チャージ 39.88%（8.5）', () => {
-  const plan = planTeamRun(TEAMS['録画 19（エーテル + デルタ + ノワール）']!);
+describe('録画 0019: ノワールの最大装弾数 +5 発と弾丸チャージ 39.88%（8.5）', () => {
+  const plan = planTeamRun(TEAMS['録画 0019（エーテル + デルタ + ノワール）']!);
   const fbStarts = plan.schedule!.fullBurstWindows.map((w) => w.start);
 
   it('refills every ally at every full burst start, with the max raised in the same frame', () => {
@@ -111,7 +111,7 @@ describe('録画 19: ノワールの最大装弾数 +5 発と弾丸チャージ 
 
   it('keeps the first gauge-full frame (no firing buff before the first full burst)', () => {
     const base = planTeamRun({
-      ...TEAMS['録画 19（エーテル + デルタ + ノワール）']!,
+      ...TEAMS['録画 0019（エーテル + デルタ + ノワール）']!,
       slots: [fixedSlot(291), fixedSlot(20), { ...fixedSlot(271), skills: undefined }],
     });
     expect(plan.schedule!.gaugeFullFrames[0]).toBe(base.schedule!.gaugeFullFrames[0]);
@@ -119,7 +119,7 @@ describe('録画 19: ノワールの最大装弾数 +5 発と弾丸チャージ 
   });
 });
 
-describe('録画 39（録画 A）: リターの CT 短縮と最大装弾数', () => {
+describe('録画 0039（録画 A）: リターの CT 短縮と最大装弾数', () => {
   const plan = planTeamRun(TEAMS['録画 A（リター + デルタ + ドレイク宝物 3）']!);
   const schedule = plan.schedule!;
   const starts = schedule.fullBurstWindows.map((w) => w.start);
@@ -153,7 +153,7 @@ describe('録画 39（録画 A）: リターの CT 短縮と最大装弾数', ()
   });
 });
 
-describe('録画 40（録画 B）: アドミのリロード速度・ユニのチャージ速度と最大装弾数', () => {
+describe('録画 0040（録画 B）: アドミのリロード速度・ユニのチャージ速度と最大装弾数', () => {
   const input = TEAMS['録画 B（アドミ + ユニ + ラム + クイーン（真））']!;
   const calc = computeTeamDamage(input);
   const ram = calc.slots[2]!;
@@ -163,7 +163,7 @@ describe('録画 40（録画 B）: アドミのリロード速度・ユニのチ
     expect(stats).toEqual(new Set(['reloadSpeed', 'critDamage', 'chargeSpeed', 'maxAmmo']));
     expect(ram.segments.some((g) => g.triggerSource === 'shots')).toBe(true);
     // ユニ S2（フルチャージ攻撃ごとに +1 発、5 秒）はユニが撃ち続けるので途切れにくい
-    // 録画 40: AI のユニの射撃もフルチャージ攻撃に数えられ、アドミ・ユニ 3/7・4/7、クイーン（真）2/10
+    // 録画 0040: AI のユニの射撃もフルチャージ攻撃に数えられ、アドミ・ユニ 3/7・4/7、クイーン（真）2/10
     const plan = planTeamRun(input);
     expect(magazineSizes(plan.shots[2]!).filter((n) => n === 7).length).toBeGreaterThan(0);
     const max = (i: number) =>

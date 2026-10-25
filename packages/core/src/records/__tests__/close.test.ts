@@ -14,7 +14,7 @@ const doc = (extra: string[] = [], sections: Partial<Record<string, string>> = {
       '- 問い: q',
       '- 話題: 命中率・距離',
       '- 日付: 2026-10-02',
-      '- 録画: `101`',
+      '- 録画: `0101`',
       '- 結論: `C-0001`',
       '- 状態: 調査中',
       ...extra,
@@ -40,18 +40,18 @@ const claim = (patch: Partial<Claim> = {}): Claim => ({
   state: '確定',
   topic: '命中率・距離',
   grade: '反復実測',
-  basis: '`101-01`。V-0099',
+  basis: '`0101-01`。V-0099',
   model: 'm',
   replaces: [],
   updated: '2026-10-02',
-  observations: ['101-01'],
+  observations: ['0101-01'],
   subject: { mechanism: 'targetTable' },
   decidedOn: [],
   ...patch,
 });
 const obs: Observation = {
-  id: '101-01',
-  recording: '101',
+  id: '0101-01',
+  recording: '0101',
   kind: 'total',
   use: 'compare',
   value: 1,
@@ -75,7 +75,7 @@ describe('closeChecks', () => {
 
   it('結論が無い・根拠に結び付かない・等級が候補より上', () => {
     expect(closeChecks({ ...base, claims: [] }).errors[0]).toContain('結論 C-0001 が無い');
-    const untied = claim({ basis: '`074-01`', observations: ['074-01'] });
+    const untied = claim({ basis: '`0074-01`', observations: ['0074-01'] });
     expect(closeChecks({ ...base, claims: [untied] }).errors[0]).toContain('観測値も ID');
     const tiedById = claim({ basis: 'V-0099 の読み', observations: [] });
     expect(closeChecks({ ...base, claims: [tiedById] }).errors).toEqual([]);
@@ -121,7 +121,7 @@ describe('closeChecks', () => {
     expect(closeChecks({ ...base, claims: [{ ...noDecided, state: '仮説' }] }).errors).toEqual([]);
     // 書いてあれば通る（空でもよい）
     expect(
-      closeChecks({ ...base, claims: [claim({ decidedOn: [{ recording: '101', role: '仮説の出どころ' }] })] }).errors,
+      closeChecks({ ...base, claims: [claim({ decidedOn: [{ recording: '0101', role: '仮説の出どころ' }] })] }).errors,
     ).toEqual([]);
   });
 
@@ -150,10 +150,10 @@ describe('closeChecks', () => {
       elements: [{ name: 'a', reason: '根拠なし' }],
       marked: [],
     });
-    // 失効した観測値で、ほかの記録の観測値（050-01）の組にだけ警告がある
+    // 失効した観測値で、ほかの記録の観測値（0050-01）の組にだけ警告がある
     const r = closeChecks({
       ...base,
-      minimal: new Map([['C-0001', [pair('050-01')]]]),
+      minimal: new Map([['C-0001', [pair('0050-01')]]]),
       observations: [{ ...obs, invalid: { reason: '読み違い', date: '2026-10-02' } }],
     });
     expect(r.errors).toEqual([]);
@@ -163,8 +163,8 @@ describe('closeChecks', () => {
 
   it('確定の結論で、この記録の観測値の組に最小構成の警告があれば誤り（設計書 11 節）', () => {
     const pair = {
-      observation: '101-01',
-      recordings: ['101'],
+      observation: '0101-01',
+      recordings: ['0101'],
       elements: [{ name: 'a', reason: '根拠なし' }],
       marked: [],
     };
@@ -192,8 +192,8 @@ describe('closeChecks', () => {
       closeChecks({ ...base, gradeCandidates: new Map(), claims: [claim({ grade: 'データ明記' })] }).errors,
     ).toEqual([]);
     // この記録の根拠の観測値が許容外
-    expect(closeChecks({ ...base, outside: new Set(['101-01']) }).errors[0]).toContain('許容外（101-01）');
-    expect(closeChecks({ ...base, outside: new Set(['101-01']), claims: [judged('許容外')] }).errors).toEqual([]);
+    expect(closeChecks({ ...base, outside: new Set(['0101-01']) }).errors[0]).toContain('許容外（0101-01）');
+    expect(closeChecks({ ...base, outside: new Set(['0101-01']), claims: [judged('許容外')] }).errors).toEqual([]);
     // 予測と合う仮説が 2 つ以上
     expect(closeChecks({ ...base, predictionFits: ['H1', 'H2'] }).errors[0]).toContain('合う仮説が 2 つ（H1・H2）');
     expect(
@@ -201,8 +201,8 @@ describe('closeChecks', () => {
     ).toEqual([]);
     // この記録の観測値の組の最小構成の警告は、人の判断なら注意にとどめる
     const pair = {
-      observation: '101-01',
-      recordings: ['101'],
+      observation: '0101-01',
+      recordings: ['0101'],
       elements: [{ name: 'a', reason: '根拠なし' }],
       marked: [],
     };

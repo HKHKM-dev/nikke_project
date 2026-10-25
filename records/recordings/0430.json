@@ -1,0 +1,30 @@
+{
+  "id": "0430",
+  "date": "2026-10-11",
+  "folder": "range",
+  "file": "20261011-0430_sg_drake_auto.mp4",
+  "original": "2026-10-11_07-06-24.mp4",
+  "durationSec": 202.4,
+  "frames": 12144,
+  "fps": 60,
+  "sizeMB": 245.1,
+  "sha256": "a15e85b2a7da",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0419（V-0427）。ドレイク（宝物 3 段階）単騎・操作（AUTO 射撃 ON）・オートバースト OFF。180 秒を撃ち切り、戦闘中は操作しない（V-0416 の撮影計画の E。1 本）"
+}

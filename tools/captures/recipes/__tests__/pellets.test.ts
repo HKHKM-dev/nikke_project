@@ -35,7 +35,7 @@ describe('solveUnits（スペック固定 ON）', () => {
   });
 });
 
-/** ノワール（スペック固定 OFF・キューブなし。109-02）: 胴体 117,573・会心 195,688・コア 235,144〜235,146 */
+/** ノワール（スペック固定 OFF・キューブなし。0109-02）: 胴体 117,573・会心 195,688・コア 235,144〜235,146 */
 const B = 117573;
 const FAR: ExactValues = { body: B, critAdd: 78115, coreAdd: 117571, slack: 2 };
 const NEAR: ExactValues = { body: 152845, critAdd: 78115, coreAdd: 117571, slack: 2 };
@@ -63,7 +63,7 @@ describe('solveExact（スペック固定 OFF）', () => {
   it('regime: 近の 10 個は近以外の 7 個 + コア 3 個とも読めることがあるので unknown。近以外の発は far', () => {
     expect(regimeOfExact(9 * 152845, NEAR, FAR, 10)).toBe('near');
     expect(regimeOfExact(9 * B, NEAR, FAR, 10)).toBe('far');
-    // キューブあり（110-02）: 胴体 117,812・近の胴体 153,155。近の 10 個 = 13B − 6 で、7 個 + コア 3 個（2B − 2）と同じ値
+    // キューブあり（0110-02）: 胴体 117,812・近の胴体 153,155。近の 10 個 = 13B − 6 で、7 個 + コア 3 個（2B − 2）と同じ値
     const B2 = 117812;
     const far2: ExactValues = { body: B2, critAdd: 78273, coreAdd: B2 - 2, slack: 2 };
     const near2: ExactValues = { body: 153155, critAdd: 78274, coreAdd: B2 - 2, slack: 2 };

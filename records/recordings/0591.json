@@ -1,0 +1,29 @@
+{
+  "id": "0591",
+  "date": "2026-10-24",
+  "folder": "range",
+  "file": "20261024-0591_ar_idoll-sun_auto.mp4",
+  "original": "2026-10-24_22-32-58.mp4",
+  "durationSec": 200.9,
+  "frames": 12054,
+  "fps": 60,
+  "sizeMB": 244,
+  "sha256": "16fea5ab331e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0491。I-DOLL・サン単騎・操作（AUTO"
+}

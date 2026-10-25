@@ -1,5 +1,5 @@
 // レイヴン（851）を含む編成: S1 のスタックする持続ダメージと、付けたとき・tick のゲージ（plan/design-raven-s1.md）。
-// sim と calc の整合と、tick のスタック・ゲージの予約。録画 141 の観測値を入力にした tick・スタック・満タンの確かめ（6 節）。
+// sim と calc の整合と、tick のスタック・ゲージの予約。録画 0141 の観測値を入力にした tick・スタック・満タンの確かめ（6 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -166,10 +166,10 @@ describe('the gauge of the damage over time moves the bursts earlier', () => {
   });
 });
 
-// plan/design-raven-s1.md 6 節: 録画 141（レイヴン単騎・操作）の付いたフレームを入力にして、tick とスタックと満タンを確かめる。
+// plan/design-raven-s1.md 6 節: 録画 0141（レイヴン単騎・操作）の付いたフレームを入力にして、tick とスタックと満タンを確かめる。
 // 値は観測値から読む（テストに実測値を直書きしない）
 type Observation = { id: string; value: number | number[] };
-const observations = readJson<Observation[]>('../../../../records/observations/141.json');
+const observations = readJson<Observation[]>('../../../../records/observations/0141.json');
 const obs = (id: string): Observation['value'] => {
   const o = observations.find((x) => x.id === id);
   if (o === undefined) throw new Error(`observation ${id} not found`);
@@ -177,11 +177,11 @@ const obs = (id: string): Observation['value'] => {
 };
 
 describe('recording 141 (Raven solo, manual)', () => {
-  const applications = obs('141-03') as number[];
-  const tickFrames = obs('141-01') as number[];
-  const stacks = obs('141-02') as number[];
-  const hits = obs('141-08') as number[];
-  const full = obs('141-07') as number;
+  const applications = obs('0141-03') as number[];
+  const tickFrames = obs('0141-01') as number[];
+  const stacks = obs('0141-02') as number[];
+  const hits = obs('0141-08') as number[];
+  const full = obs('0141-07') as number;
   const model = dotTicks(applications, 1, 5, 1_000_000, 'afterInterval', 10);
 
   it('gives the observed ticks within 1 frame and the observed stacks (C-0182)', () => {

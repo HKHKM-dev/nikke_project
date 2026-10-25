@@ -28,11 +28,11 @@ const claim = (patch: Partial<Claim>): Claim => ({
   state: '仮説',
   topic: 'スキル・キャラ固有',
   grade: '単独実測',
-  basis: '`101-01`',
+  basis: '`0101-01`',
   model: 'm',
   replaces: [],
   updated: '2026-10-17',
-  observations: ['101-01'],
+  observations: ['0101-01'],
   subject: { places: ['data/skills/871.json の burst の effects[1]'] },
   ...patch,
 });
@@ -63,9 +63,9 @@ describe('結論の edge', () => {
   });
 });
 
-// 録画 258 は雪子のバーストを使う編成。雪子 burst の effects[1]（1more の攻撃力▲）は C-0352（確定）と C-0614 に結ぶ。
+// 録画 0258 は雪子のバーストを使う編成。雪子 burst の effects[1]（1more の攻撃力▲）は C-0352（確定）と C-0614 に結ぶ。
 // C-0614 は確定なので、ここでは仮説・edge に戻した形（確定にする前の C-0511 と同じ）を基にする
-const rec = recordings.get('258')!;
+const rec = recordings.get('0258')!;
 const yukiko = elementsOf(rec, ctx).find((e) => e.places.includes('data/skills/871.json の burst の effects[1]'))!;
 const asOpenEdge = (c: Claim, edge: NonNullable<Claim['edge']>) => {
   c.state = '仮説';
@@ -109,7 +109,7 @@ describe('端だけ未確定の判定', () => {
 
   it('does not make an earlier start on an effect read in the first pass edge-only', () => {
     // アニス：スター burst の effects[1] はチャージ時間の固定（射撃の分類）
-    const anis = recordings.get('162')!;
+    const anis = recordings.get('0162')!;
     const e = elementsOf(anis, ctx).find((x) => x.places.includes('data/skills/17.json の burst の effects[1]'))!;
     const early = withClaims((m) => (m.get('C-0520')!.edge = { start: [-1, 3], end: [0, 3] }));
     expect(edgeRangeOf(e, anis, early)).toBeUndefined();
@@ -144,7 +144,7 @@ describe('sim で端を動かす', () => {
   });
 
   it('moves the windows of the effect in the simulation', () => {
-    const o = observations.find((x) => x.id === '258-04')!;
+    const o = observations.find((x) => x.id === '0258-04')!;
     const slot = rec.team.findIndex((m) => m.rid === 871);
     const filter = { sourceSlotIndex: slot, kind: 'timed' as const, skill: 'burst' as const, effectIndex: 1 };
     const base = itemsOf(runSimulation(buildTeamInput(rec, o.compare!.setup, data)).history, filter);
@@ -165,7 +165,7 @@ describe('sim で端を動かす', () => {
 
 describe('感度で外れる組と残る組', () => {
   const openCtx = withClaims();
-  const o = observations.find((x) => x.id === '258-04')!;
+  const o = observations.find((x) => x.id === '0258-04')!;
   const slot = rec.team.findIndex((m) => m.rid === 871);
   const windows = itemsOf(runSimulation(buildTeamInput(rec, o.compare!.setup, data)).history, {
     sourceSlotIndex: slot,
@@ -175,7 +175,7 @@ describe('感度で外れる組と残る組', () => {
   });
   const entryOf = (obs: Observation) => sensitivityOf(obs, openCtx).find((e) => e.element === yukiko.name)!;
 
-  it('drops the element for an observation far from the edges (258-04)', () => {
+  it('drops the element for an observation far from the edges (0258-04)', () => {
     const e = entryOf(o);
     expect(e.edge?.range).toEqual({ start: [0, 7], end: [0, 7] });
     expect(e.effective).toBe(false);
@@ -187,7 +187,7 @@ describe('感度で外れる組と残る組', () => {
     for (const frame of [windows[0]!.start + 3, windows[0]!.end + 3]) {
       const near: Observation = {
         ...o,
-        id: '258-04',
+        id: '0258-04',
         compare: { ...o.compare!, args: { ...o.compare!.args, slot: holder + 1, frame } },
       };
       expect(entryOf(near).effective).toBe(true);

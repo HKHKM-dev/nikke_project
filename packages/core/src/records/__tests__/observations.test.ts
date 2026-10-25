@@ -150,19 +150,19 @@ describe('records/claims・plan/claims.md', () => {
   });
 
   it('expands observation ranges', () => {
-    expect(observationIdsIn('`012-01`〜`012-04`・`014-01`、verification.md Stage 4')).toEqual([
-      '012-01',
-      '012-02',
-      '012-03',
-      '012-04',
-      '014-01',
+    expect(observationIdsIn('`0012-01`〜`0012-04`・`0014-01`、verification.md Stage 4')).toEqual([
+      '0012-01',
+      '0012-02',
+      '0012-03',
+      '0012-04',
+      '0014-01',
     ]);
     expect(observationIdsIn('verification.md Stage 2-B')).toEqual([]);
     // Stage 20-A: 桁を決め打ちしない。範囲は始めの ID の桁にそろえる
-    expect(observationIdsIn('`1000-01`、`010-100`、`010-099`〜`010-101`、`L-AD-01`')).toEqual([
-      '010-099',
-      '010-100',
-      '010-101',
+    expect(observationIdsIn('`1000-01`、`0010-100`、`0010-099`〜`0010-101`、`L-AD-01`')).toEqual([
+      '0010-099',
+      '0010-100',
+      '0010-101',
       '1000-01',
       'L-AD-01',
     ]);
@@ -180,9 +180,9 @@ describe('records/claims・plan/claims.md', () => {
       replaces: [],
       updated: '2026-09-27',
     });
-    const read = toClaims([file('C-10000', 'x'), file('C-0002', '`001-01`、verification.md'), file('C-0010', 'y')]);
+    const read = toClaims([file('C-10000', 'x'), file('C-0002', '`0001-01`、verification.md'), file('C-0010', 'y')]);
     expect(read.map((c) => c.id)).toEqual(['C-0002', 'C-0010', 'C-10000']);
-    expect(read[0]!.observations).toEqual(['001-01']);
+    expect(read[0]!.observations).toEqual(['0001-01']);
   });
 
   it('reports broken claims', () => {
@@ -555,56 +555,56 @@ describe('照合の部品', () => {
   });
 
   it('reports unknown metrics, missing args, calc-less metrics and unknown presets', () => {
-    const base = observations.find((o) => o.id === '047-02')!;
-    const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '047-99'): Observation => ({
+    const base = observations.find((o) => o.id === '0047-02')!;
+    const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '0047-99'): Observation => ({
       ...base,
       id,
       compare: { ...base.compare!, ...patch },
     });
     const errors = validateObservations(
       [
-        broken({ metric: 'nope' }, '047-91'),
-        broken({ args: {} }, '047-92'),
-        broken({ metric: 'shotCount', model: 'calc' }, '047-93'),
-        broken({ setup: { enemy: 'nope' } }, '047-94'),
-        broken({ setup: { enemy: 'range-bigarms-fire', events: ['nope'] } }, '047-95'),
+        broken({ metric: 'nope' }, '0047-91'),
+        broken({ args: {} }, '0047-92'),
+        broken({ metric: 'shotCount', model: 'calc' }, '0047-93'),
+        broken({ setup: { enemy: 'nope' } }, '0047-94'),
+        broken({ setup: { enemy: 'range-bigarms-fire', events: ['nope'] } }, '0047-95'),
         { ...base, id: '999-01', recording: '999' },
-        { ...base, id: '047-96', use: 'input' },
+        { ...base, id: '0047-96', use: 'input' },
         broken({}, '047-7'),
-        broken({}, '047-100'),
+        broken({}, '0047-100'),
       ],
       recordings,
       data.enemies,
     );
     expect(errors).toEqual([
-      '047-91: metric が語彙に無い: nope',
-      '047-92: slotTotalDamage の引数 slot が無い',
-      '047-93: shotCount は calc の出力に無い',
-      '047-94: 敵のプリセット nope が無い',
-      '047-95: 出来事のセット nope は range-bigarms-fire に無い',
+      '0047-91: metric が語彙に無い: nope',
+      '0047-92: slotTotalDamage の引数 slot が無い',
+      '0047-93: shotCount は calc の出力に無い',
+      '0047-94: 敵のプリセット nope が無い',
+      '0047-95: 出来事のセット nope は range-bigarms-fire に無い',
       '999-01: 録画 999 が records/recordings/ に無い',
-      '047-96: compare は use が compare のときだけ',
+      '0047-96: compare は use が compare のときだけ',
       '047-7: id は <録画 id>-<2 桁以上の連番>',
     ]);
   });
 
   it('builds the team like npm run sim --fixed-spec and refuses what it cannot build', () => {
-    const rec47 = recordings.get('047') as ProjectRecording;
+    const rec47 = recordings.get('0047') as ProjectRecording;
     const input = buildTeamInput(rec47, { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] }, data);
     expect(input.slots.map((s) => s!.character.resourceId)).toEqual([822, 20, 225]);
     expect(input.controlledSlot).toBe(2);
     expect(input.enemy.events).toHaveLength(5);
     expect(input.slots[0]!.condition).toEqual({ coreHitRate: 1, distanceBonus: true, fullCharge: true, hitRate: 1 });
     const setup = { enemy: 'range-bigarms-fire' };
-    expect(() => buildTeamInput(recordings.get('048')!, setup, data)).toThrow(/スペック固定 OFF/);
-    expect(() => buildTeamInput(recordings.get('001')!, setup, data)).toThrow(/記録が無い/);
+    expect(() => buildTeamInput(recordings.get('0048')!, setup, data)).toThrow(/スペック固定 OFF/);
+    expect(() => buildTeamInput(recordings.get('0001')!, setup, data)).toThrow(/記録が無い/);
     expect(() => buildTeamInput({ ...rec47, team: [{ ...rec47.team[0]!, cube: 'assault-7' }] }, setup, data)).toThrow(
       /キューブ/,
     );
   });
 
   it('builds a fixed-spec OFF slot from the recorded build (Stage 13 の残り)', () => {
-    const rec086 = recordings.get('086') as ProjectRecording;
+    const rec086 = recordings.get('0086') as ProjectRecording;
     const mana = data.characters.get(290) ?? loadRecordsData(file, [290]).characters.get(290)!;
     const withMana = { ...data, characters: new Map([...data.characters, [290, mana]]) };
     const build = {
@@ -658,7 +658,7 @@ describe('照合の部品', () => {
     );
     expect(() => buildTeamInput(rec, setup, { ...withMana, buildMasters: undefined })).toThrow(/マスタ/);
     expect(() =>
-      buildTeamInput(recordings.get('047')!, { enemy: 'range-bigarms-fire', buildEffectsOff: ['cube'] }, data),
+      buildTeamInput(recordings.get('0047')!, { enemy: 'range-bigarms-fire', buildEffectsOff: ['cube'] }, data),
     ).toThrow(/buildEffectsOff/);
   });
 
@@ -681,9 +681,9 @@ describe('照合の部品', () => {
     expect(at('0, 1')).toEqual([80, 12]);
     expect(() => at(2)).toThrow(/2 回目のフルバーストが無い/);
 
-    // 録画 039（リター + デルタ + ドレイク）: リターの S1 の CT▼ はスタックして、デルタの CT を 1・2・3 回目以降で長く縮める（C-0460）
+    // 録画 0039（リター + デルタ + ドレイク）: リターの S1 の CT▼ はスタックして、デルタの CT を 1・2・3 回目以降で長く縮める（C-0460）
     const input = buildTeamInput(
-      recordings.get('039')!,
+      recordings.get('0039')!,
       { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] },
       data,
     );
@@ -732,9 +732,9 @@ describe('照合の部品', () => {
     } as unknown as SimResult;
     expect(residues.sim(sim, { args: { slot: 1, every: 3 }, input })).toEqual([(2 + 2 + 3) % 3]);
 
-    // 録画 363（ココア + デルタ + 紅蓮：ブラックシャドウ）: S2 で毎回 14 発撃ち、通算のカウンタなので余りはいつも 0（C-0490・C-0492）
+    // 録画 0363（ココア + デルタ + 紅蓮：ブラックシャドウ）: S2 で毎回 14 発撃ち、通算のカウンタなので余りはいつも 0（C-0490・C-0492）
     const team = buildTeamInput(
-      recordings.get('363')!,
+      recordings.get('0363')!,
       { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] },
       data,
     );
@@ -746,7 +746,7 @@ describe('照合の部品', () => {
   });
 
   it('builds automatic conditions with the target profile and a fixed mid-far landing (Stage 18-C)', () => {
-    const rec54 = recordings.get('054') as ProjectRecording;
+    const rec54 = recordings.get('0054') as ProjectRecording;
     const manual = buildTeamInput(rec54, { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] }, data);
     expect(manual.slots[0]!.conditionMode).toBeUndefined();
     // 的の表は手入力の枠にも付ける（飛ぶ時間。plan/design-anis-star-gauge-timing.md 3.3 節）。命中率・コアは手入力のまま
@@ -790,8 +790,8 @@ describe('照合の部品', () => {
   });
 
   it('builds the obstacle breaks from input observations, and reports bad ones (plan/design-anis-star-gauge-timing.md 2.2 節)', () => {
-    const o = observations.find((x) => x.id === '161-13')!;
-    const input = buildTeamInput(recordings.get('161') as ProjectRecording, o.compare!.setup, data);
+    const o = observations.find((x) => x.id === '0161-13')!;
+    const input = buildTeamInput(recordings.get('0161') as ProjectRecording, o.compare!.setup, data);
     expect(input.obstacleBreaks).toEqual([{ slotIndex: 0, shot: 1, count: 2 }]);
     const withObstacles = (count: string, id: string): Observation => ({
       ...o,
@@ -801,23 +801,23 @@ describe('照合の部品', () => {
     expect(
       validateObservations(
         [
-          ...observations.filter((x) => x.recording === '161' || x.id === '181-04'),
-          withObstacles('161-99', '161-91'),
-          withObstacles('161-13', '161-92'),
-          withObstacles('181-04', '161-93'),
+          ...observations.filter((x) => x.recording === '0161' || x.id === '0181-04'),
+          withObstacles('0161-99', '0161-91'),
+          withObstacles('0161-13', '0161-92'),
+          withObstacles('0181-04', '0161-93'),
         ],
         recordings,
         data.enemies,
       ),
     ).toEqual([
-      '161-91: obstacles の観測値 161-99 が無い',
-      '161-92: obstacles の観測値 161-13 の use は input',
-      '161-93: obstacles の観測値は同じ録画のもの',
+      '0161-91: obstacles の観測値 0161-99 が無い',
+      '0161-92: obstacles の観測値 0161-13 の use は input',
+      '0161-93: obstacles の観測値は同じ録画のもの',
     ]);
   });
 
   it('reads the core hit rate of a segment, with or without the timed hit rate and the treasure (V-0165)', () => {
-    const rec132 = recordings.get('132') as ProjectRecording;
+    const rec132 = recordings.get('0132') as ProjectRecording;
     const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto' as const };
     const rate = (extra: Record<string, unknown>, frame: number, baseFrame?: number): number => {
       const input = buildTeamInput(rec132, { ...setup, ...extra }, data);
@@ -840,7 +840,7 @@ describe('照合の部品', () => {
   });
 
   it('reads the bullet hit rate of a segment from the target table (backlog 2-25)', () => {
-    const rec145 = recordings.get('145') as ProjectRecording;
+    const rec145 = recordings.get('0145') as ProjectRecording;
     const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto' as const };
     const rate = (frame: number, extra: Record<string, unknown> = {}): number => {
       const input = buildTeamInput(rec145, { ...setup, ...extra }, data);
@@ -861,7 +861,7 @@ describe('照合の部品', () => {
   });
 
   it('drops the heal effects of the listed characters only (V-0231)', () => {
-    const rec182 = recordings.get('182') as ProjectRecording;
+    const rec182 = recordings.get('0182') as ProjectRecording;
     const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] };
     const heals = (extra: Record<string, unknown>, slot: number): number => {
       const def = buildTeamInput(rec182, { ...setup, ...extra }, data).slots[slot]!.skills!.definition!;
@@ -878,7 +878,7 @@ describe('照合の部品', () => {
   });
 
   it('reports a mid-far, near or far landing without automatic conditions, or an unknown one', () => {
-    const base = observations.find((o) => o.id === '054-02')!;
+    const base = observations.find((o) => o.id === '0054-02')!;
     const withSetup = (setup: Record<string, unknown>, id: string): Observation => ({
       ...base,
       id,
@@ -887,28 +887,28 @@ describe('照合の部品', () => {
     expect(
       validateObservations(
         [
-          withSetup({ condition: 'manual', farLanding: undefined }, '054-91'),
-          withSetup({ midFarLanding: 'D' }, '054-92'),
-          withSetup({ condition: 'maybe', midFarLanding: undefined, farLanding: undefined }, '054-93'),
-          withSetup({ nearLanding: ['A', 'C'] }, '054-94'),
+          withSetup({ condition: 'manual', farLanding: undefined }, '0054-91'),
+          withSetup({ midFarLanding: 'D' }, '0054-92'),
+          withSetup({ condition: 'maybe', midFarLanding: undefined, farLanding: undefined }, '0054-93'),
+          withSetup({ nearLanding: ['A', 'C'] }, '0054-94'),
           withSetup(
             { condition: 'manual', midFarLanding: undefined, nearLanding: ['A'], farLanding: undefined },
-            '054-95',
+            '0054-95',
           ),
-          withSetup({ farLanding: ['A', 'C'] }, '054-96'),
-          withSetup({ condition: 'manual', midFarLanding: undefined, farLanding: ['B'] }, '054-97'),
+          withSetup({ farLanding: ['A', 'C'] }, '0054-96'),
+          withSetup({ condition: 'manual', midFarLanding: undefined, farLanding: ['B'] }, '0054-97'),
         ],
         recordings,
         data.enemies,
       ),
     ).toEqual([
-      '054-91: midFarLanding は condition が auto のときだけ',
-      '054-92: midFarLanding は A・B・C',
-      '054-93: condition は auto か manual',
-      '054-94: nearLanding は A・B の並び（1 回目・2 回目の順）',
-      '054-95: nearLanding は condition が auto のときだけ',
-      '054-96: farLanding は A・B の並び（1 回目・2 回目の順）',
-      '054-97: farLanding は condition が auto のときだけ',
+      '0054-91: midFarLanding は condition が auto のときだけ',
+      '0054-92: midFarLanding は A・B・C',
+      '0054-93: condition は auto か manual',
+      '0054-94: nearLanding は A・B の並び（1 回目・2 回目の順）',
+      '0054-95: nearLanding は condition が auto のときだけ',
+      '0054-96: farLanding は A・B の並び（1 回目・2 回目の順）',
+      '0054-97: farLanding は condition が auto のときだけ',
     ]);
   });
 
@@ -921,11 +921,11 @@ describe('照合の部品', () => {
     expect(jumpWindowsOf([2, 1])).toBeUndefined();
     expect(jumpWindowsOf([1, 3, 2, 4])).toBeUndefined();
     expect(jumpWindowsOf(5)).toBeUndefined();
-    const rec074 = recordings.get('074') as ProjectRecording;
+    const rec074 = recordings.get('0074') as ProjectRecording;
     const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto' as const };
     const windows = [10, 12, 50, 52.5];
-    const withValues = { ...data, observationValues: new Map([['074-99', windows]]) };
-    const input = buildTeamInput(rec074, { ...setup, jumpWindows: '074-99' }, withValues);
+    const withValues = { ...data, observationValues: new Map([['0074-99', windows]]) };
+    const input = buildTeamInput(rec074, { ...setup, jumpWindows: '0074-99' }, withValues);
     expect(input.enemy.events).toEqual([
       { kind: 'untargetable', start: 10, end: 12 },
       { kind: 'untargetable', start: 50, end: 52.5 },
@@ -935,9 +935,9 @@ describe('照合の部品', () => {
       [12, 52.5],
       [52.5, 180],
     ]);
-    expect(() => buildTeamInput(rec074, { ...setup, jumpWindows: '074-98' }, withValues)).toThrow(/jumpWindows/);
-    const base = observations.find((o) => o.id === '074-08')!;
-    const ref = observations.find((o) => o.id === '102-15')!;
+    expect(() => buildTeamInput(rec074, { ...setup, jumpWindows: '0074-98' }, withValues)).toThrow(/jumpWindows/);
+    const base = observations.find((o) => o.id === '0074-08')!;
+    const ref = observations.find((o) => o.id === '0102-15')!;
     const withRef = (jumpWindows: string, id: string): Observation => ({
       ...base,
       id,
@@ -947,41 +947,41 @@ describe('照合の部品', () => {
       validateObservations(
         [
           ref,
-          { ...ref, id: '102-98', value: [3, 2] },
-          withRef('074-97', '074-91'),
-          withRef('102-15', '074-92'),
-          withRef('102-98', '074-93'),
+          { ...ref, id: '0102-98', value: [3, 2] },
+          withRef('0074-97', '0074-91'),
+          withRef('0102-15', '0074-92'),
+          withRef('0102-98', '0074-93'),
         ],
         recordings,
         data.enemies,
       ),
     ).toEqual([
-      '074-91: jumpWindows の観測値 074-97 が無い',
-      '074-92: jumpWindows の観測値は同じ録画のもの',
-      '074-93: jumpWindows の観測値は同じ録画のもの',
-      '074-93: jumpWindows の観測値 102-98 は [始まり, 終わり, …] の昇順の窓の並びでない',
+      '0074-91: jumpWindows の観測値 0074-97 が無い',
+      '0074-92: jumpWindows の観測値は同じ録画のもの',
+      '0074-93: jumpWindows の観測値は同じ録画のもの',
+      '0074-93: jumpWindows の観測値 0102-98 は [始まり, 終わり, …] の昇順の窓の並びでない',
     ]);
   });
 });
 
 describe('観測値の形の拡張（Stage 20-E）', () => {
-  const record = observations.find((o) => o.id === '047-03')!;
-  const compared = observations.find((o) => o.id === '047-02')!;
+  const record = observations.find((o) => o.id === '0047-03')!;
+  const compared = observations.find((o) => o.id === '0047-02')!;
 
   it('checks recordings, unit, spread, readAt and invalid', () => {
     const errors = validateObservations(
       [
-        { ...record, id: '047-81', recordings: ['047', '046'] },
-        { ...record, id: '046-82', recording: '046', recordings: ['046', '999'] },
-        { ...compared, id: '046-83', recording: '046', recordings: ['046', '047'] },
-        { ...record, id: '047-84', value: 10, unit: ' ', spread: { kind: 'range', low: 12, high: 11 } },
-        { ...record, id: '047-85', value: 10, spread: { kind: 'ci95', low: 11, high: 13 } },
-        { ...record, id: '047-86', readAt: '9/27', invalid: { reason: '', date: '2026-09-27' } },
+        { ...record, id: '0047-81', recordings: ['0047', '0046'] },
+        { ...record, id: '0046-82', recording: '0046', recordings: ['0046', '999'] },
+        { ...compared, id: '0046-83', recording: '0046', recordings: ['0046', '0047'] },
+        { ...record, id: '0047-84', value: 10, unit: ' ', spread: { kind: 'range', low: 12, high: 11 } },
+        { ...record, id: '0047-85', value: 10, spread: { kind: 'ci95', low: 11, high: 13 } },
+        { ...record, id: '0047-86', readAt: '9/27', invalid: { reason: '', date: '2026-09-27' } },
         {
           ...record,
-          id: '046-87',
-          recording: '046',
-          recordings: ['046', '047', 'L-AD'],
+          id: '0046-87',
+          recording: '0046',
+          recordings: ['0046', '0047', 'L-AD'],
           value: 0.3,
           unit: '倍',
           spread: { kind: 'range', low: 0.2, high: 0.4 },
@@ -992,15 +992,15 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
       data.enemies,
     );
     expect(errors).toEqual([
-      '047-81: recording は recordings のうち最も若い番号にし、recordings にも含める',
-      '046-82: 録画 999 が records/recordings/ に無い',
-      '046-83: 複数の録画にまたがる観測値は compare に使わない',
-      '047-84: unit が空',
-      '047-84: spread は low ≤ high',
-      '047-84: 値が spread の外にある',
-      '047-85: 値が spread の外にある',
-      '047-86: readAt は YYYY-MM-DD',
-      '047-86: invalid には reason と date（YYYY-MM-DD）が要る',
+      '0047-81: recording は recordings のうち最も若い番号にし、recordings にも含める',
+      '0046-82: 録画 999 が records/recordings/ に無い',
+      '0046-83: 複数の録画にまたがる観測値は compare に使わない',
+      '0047-84: unit が空',
+      '0047-84: spread は low ≤ high',
+      '0047-84: 値が spread の外にある',
+      '0047-85: 値が spread の外にある',
+      '0047-86: readAt は YYYY-MM-DD',
+      '0047-86: invalid には reason と date（YYYY-MM-DD）が要る',
     ]);
   });
 
@@ -1014,7 +1014,7 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
     expect(
       renderResiduals([], [{ ...record, value: 12, unit: 'px', spread: { kind: 'ci95', low: 10, high: 14 } }]),
     ).toContain('| 12 px（95% 区間 10〜14） |');
-    expect(invalidReasonsOf([invalid, record])).toEqual(new Map([['047-02', '読み違い']]));
+    expect(invalidReasonsOf([invalid, record])).toEqual(new Map([['0047-02', '読み違い']]));
   });
 
   it('keeps an invalid basis on a claim, but fails a 確定 claim with no valid basis left', () => {
@@ -1031,17 +1031,17 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
       observations: obs,
     });
     const list = [
-      claim('C-0001', '確定', ['010-01']),
-      claim('C-0002', '確定', ['010-01', '010-02']),
-      claim('C-0003', '棄却', ['010-01']),
+      claim('C-0001', '確定', ['0010-01']),
+      claim('C-0002', '確定', ['0010-01', '0010-02']),
+      claim('C-0003', '棄却', ['0010-01']),
       claim('C-0004', '確定', []),
     ];
-    const ids = new Set(['010-01', '010-02']);
-    const invalid = new Set(['010-01']);
+    const ids = new Set(['0010-01', '0010-02']);
+    const invalid = new Set(['0010-01']);
     expect(validateClaims(list, ids, invalid)).toEqual(['C-0001: 確定の結論の根拠の観測値が、すべて失効している']);
-    expect(gatedObservations(list, invalid)).toEqual(new Set(['010-02']));
-    expect(renderClaims(list, new Map(), new Map([['010-01', '読み違い']]))).toContain(
-      '  - **失効した根拠**: 010-01（読み違い）',
+    expect(gatedObservations(list, invalid)).toEqual(new Set(['0010-02']));
+    expect(renderClaims(list, new Map(), new Map([['0010-01', '読み違い']]))).toContain(
+      '  - **失効した根拠**: 0010-01（読み違い）',
     );
   });
 });

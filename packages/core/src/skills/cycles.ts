@@ -2,12 +2,12 @@
 // 「スキル 1 のフルチャージ攻撃回数の条件が 1 回 / 2 回 / 3 回に変更」）を Lv の数値に解決し、射撃の列から各段の発動を決める
 // （plan/design-stage11-scarlet-bs.md 2・3 節）。
 //
-// 規則（録画 46・47 で確認。同 0.3 節）:
+// 規則（録画 0046・0047 で確認。同 0.3 節）:
 //   n = 戦闘開始からの通算の射撃回数（trigger の count の列）、step = 段のポインタ
 //   各射撃で n += 1。間隔の変更の窓 [start, end) に入る射撃は窓の every、入らない射撃は cycle の every を使い、
 //   n がその倍数なら steps[step] を発動して step を 1 つ進める（最後の次は最初）。
 // 窓の中の毎回の段はカウンタを戻さないので、窓の後の最初の段は「通算の every の倍数」の射撃に戻る
-// （録画 47 の FB 明けの段が 1 発目の回と 2 発目の回に分かれたのはこのため）。
+// （録画 0047 の FB 明けの段が 1 発目の回と 2 発目の回に分かれたのはこのため）。
 import { gameSecondsToFrames } from '../time.ts';
 import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import type { CharacterData, LocalizedText, SkillRaw } from '../types.ts';

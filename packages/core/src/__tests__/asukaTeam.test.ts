@@ -50,11 +50,11 @@ const REC063 = team([fixedSlot(304), fixedSlot(20), fixedSlot(830)], 2);
 // 順位（アリスの S1。topAttack）が S1 の攻撃力▲の窓を見るので、1 パス目のループの回復も通る
 const PRACTICAL = team([fixedSlot(82), fixedSlot(330), fixedSlot(830), fixedSlot(191), fixedSlot(172)], 2);
 const TEAMS: Record<string, TeamInput> = {
-  '録画 063 の編成（フラワー + デルタ + アスカ）': REC063,
+  '録画 0063 の編成（フラワー + デルタ + アスカ）': REC063,
   '実戦寄り（リター + クラウン + アスカ + アリス + アドミ）': PRACTICAL,
 };
 
-describe('録画 063 の編成の窓（4 節）', () => {
+describe('録画 0063 の編成の窓（4 節）', () => {
   const plan = planTeamRun(REC063);
   const ASUKA = 2;
   const windowsOf = (slotIndex: number, stat: string) =>
@@ -66,7 +66,7 @@ describe('録画 063 の編成の窓（4 節）', () => {
     const expected = activations.map((a) => ({ start: a, end: Math.min(a + s1, plan.frames) }));
     const s1Windows = windowsOf(ASUKA, 'attack').map((w) => ({ start: w.start, end: w.end }));
     expect(s1Windows).toEqual(expected);
-    // 次のバーストまで約 16 秒切れる（録画 063。V-0022）
+    // 次のバーストまで約 16 秒切れる（録画 0063。V-0022）
     s1Windows.slice(0, -1).forEach((w, k) => {
       const gap = activations[k + 1]! - w.end;
       expect(gap).toBeGreaterThan(gameSecondsToFrames(10));

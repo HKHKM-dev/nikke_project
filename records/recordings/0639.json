@@ -1,0 +1,42 @@
+{
+  "id": "0639",
+  "date": "2026-10-25",
+  "folder": "range",
+  "file": "20261025-0639_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4",
+  "original": "2026-10-25_12-01-54.mp4",
+  "durationSec": 206.8,
+  "frames": 12410,
+  "fps": 60,
+  "sizeMB": 250.5,
+  "sha256": "813137139006",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true,
+      "fires": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0492（B の撮り直し）。B（対照）。鈴原サクラ（AI）・デルタ（AI）・I-DOLL・サン（操作・撃たない）。AUTO 射撃 OFF・オートバースト ON。A の 6 本（631〜636）の後、同じ日に B の 6 本（637〜642）を続けて撮った（B の 3 本目）。オート射撃のボタンが消えていること（画面左上）と、戦闘履歴のパネルの編成（鈴原サクラ・デルタ・I-DOLL・サン。サンの与ダメージ 0）を確かめた"
+}

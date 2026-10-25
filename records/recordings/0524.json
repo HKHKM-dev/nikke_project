@@ -1,0 +1,29 @@
+{
+  "id": "0524",
+  "date": "2026-10-22",
+  "folder": "range",
+  "file": "20261022-0524_sg_noir_auto_spec-on.mp4",
+  "original": "2026-10-22_00-32-01.mp4",
+  "durationSec": 198.3,
+  "frames": 11900,
+  "fps": 60,
+  "sizeMB": 240.4,
+  "sha256": "7579e9084ee3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0474 のスペック固定 ON（撮った順の 3 本目）。出撃画面でスペック固定 ON（WARNING の表示）と編成（真ん中の枠に 1 体）、戦闘中の画面左上で AUTO 射撃 ON・オートバースト OFF を確かめた。キューブの装備画面は映していない（依頼どおり）。末尾のリザルト画面の立ち絵でノワールと確かめた"
+}

@@ -48,7 +48,7 @@
         "burst": false,
         "condition": "auto"
       },
-      "observations": ["056-02"],
+      "observations": ["0056-02"],
       "note": "クラウン（MG）単騎 AUTO・自動バースト OFF の与ダメージ。MG は B・C で距離ボーナスが乗り A で乗らないので、A と B・C の差が固定で動く大きさの目安（SMG・SR は逆向き）"
     },
     {

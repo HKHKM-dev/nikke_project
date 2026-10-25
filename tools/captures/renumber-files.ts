@@ -142,8 +142,10 @@ export function planCaptureRenames(input: {
     else if (!existsSync(join(root.dir, folder, file))) plan.notes.push(`${root.label} に ${folder}/${file} が無い`);
     // 新しい番号のファイルが既にあれば止める。動画をもう変えてあれば（回し直し）、新しい番号のものはこの録画のものと読む
     if (!doneVideo) {
+      // 4 桁にそろえるとき（数として同じ番号）は、古い番号のファイルを新しい番号のものと読まない
+      const sameNumber = Number(newId) === Number(oldId);
       const taken = [
-        ...numbered(root.dir, newId),
+        ...numbered(root.dir, newId).filter((p) => !sameNumber || p.split('/')[1]!.split(/[-_]/)[1] === newId),
         ...list(join(root.dir, 'frames'))
           .filter((n) => n.startsWith(`${newId}_f`) || n.startsWith(`${newStem}_f`))
           .map((n) => `frames/${n}`),

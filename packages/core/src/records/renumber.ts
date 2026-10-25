@@ -287,3 +287,44 @@ export function recordingMentions(text: string, id: string, json: boolean): numb
   if (json) n += [...text.matchAll(new RegExp(`"${id}"`, 'g'))].length;
   return n;
 }
+
+// ---- 録画の番号を 4 桁にそろえる（plan/design-recording-id-4digit.md 3 節）----
+// 数として同じ番号にするので、範囲は展開せず、並びの中の番号をそれぞれ 4 桁にする。素の番号は置き換えない（残っても同じ録画と読める）。
+
+export type PadOptions = {
+  /** 録画の番号（数）。これに当たる 2〜3 桁の番号だけを 4 桁にする */
+  recordings: ReadonlySet<number>;
+  /** 観測値の ID（頭が 3 桁のもの。これだけを観測値として置き換える） */
+  observations: ReadonlySet<string>;
+  /** records/ の下の JSON（"<録画>" の文字列も置き換える） */
+  json: boolean;
+};
+
+/** 録画の番号を 4 桁にした形 */
+export const padRecordingId = (id: string): string => String(Number(id)).padStart(4, '0');
+
+/** 文の中の録画の番号を 4 桁にする。count は置き換えた番号の数。何度回しても同じ結果になる */
+export function padRecordingsInText(text: string, opts: PadOptions): { text: string; count: number } {
+  let count = 0;
+  /** 2〜3 桁（バッククォートの並びは 3 桁だけ）で、録画の番号に当たるか */
+  const known = (s: string, min: number) => s.length >= min && s.length <= 3 && opts.recordings.has(Number(s));
+  const pad = (s: string, min: number) => {
+    if (!known(s, min)) return s;
+    count++;
+    return padRecordingId(s);
+  };
+  let out = text.replace(
+    REC_LIST,
+    (_whole, head: string, list: string) => head + list.replace(/\d{2,4}/g, (n) => pad(n, 2)),
+  );
+  // 2 桁のバッククォートは観測値の略記（`046-03`〜`06` の 06）などで、録画でない
+  out = out.replace(BT_LIST, (whole: string) => whole.replace(/(?<=`)\d{2,4}(?=`)/g, (n) => pad(n, 3)));
+  out = out.replace(REC_OBS, (whole: string, rec: string, nn: string) =>
+    rec.length === 3 && opts.observations.has(whole) ? `${pad(rec, 3)}-${nn}` : whole,
+  );
+  out = out.replace(FILE_HEAD, (_whole, date: string, rec: string) => `${date}-${pad(rec, 2)}_`);
+  out = out.replace(/(?<![0-9A-Za-z_-])(\d{3})_f(?=\d)/g, (_whole, rec: string) => `${pad(rec, 3)}_f`);
+  out = out.replace(/(derived[/\\])(\d{3})(?=[/\\])/g, (_whole, head: string, rec: string) => head + pad(rec, 3));
+  if (opts.json) out = out.replace(/"(\d{3})"/g, (_whole, rec: string) => `"${pad(rec, 3)}"`);
+  return { text: out, count };
+}

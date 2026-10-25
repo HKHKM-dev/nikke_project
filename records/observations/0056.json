@@ -1,0 +1,589 @@
+[
+  {
+    "id": "0056-01",
+    "recording": "0056",
+    "kind": "rate",
+    "use": "input",
+    "value": 0.963,
+    "description": "クラウン（MG・単騎 AUTO）のコア命中率（5,257 ヒット）。射撃場の条件の既定値の根拠（既定の変更は保留）",
+    "source": "verification.md Stage 17「射撃場の条件（AI のコア命中率・距離ボーナス）の読み取り」",
+    "method": {
+      "note": "HUD の総ダメージの 1 フレームごとの増分を、スペック固定の 1 ヒットの値（コア × 会心 × 距離）に当てはめた"
+    }
+  },
+  {
+    "id": "0056-02",
+    "recording": "0056",
+    "kind": "total",
+    "use": "compare",
+    "value": 51422094,
+    "description": "クラウン（MG）の与ダメージ（単騎 AUTO・自動バースト OFF・180 秒）。結論には結び付けない",
+    "source": "verification.md Stage 17「読んだ条件を入れた sim との照合」（戦闘履歴）・Stage 18-C",
+    "method": {
+      "note": "戦闘履歴の与ダメージ（HUD の最後の値と 1 の位まで一致）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "0056-11"
+      }
+    }
+  },
+  {
+    "id": "0056-03",
+    "recording": "0056",
+    "kind": "rate",
+    "use": "record",
+    "value": 58.834,
+    "unit": "f/秒",
+    "description": "残り時間の表示 1 秒あたりの動画のフレーム数（02:56 → 00:07 の 169 秒）。単騎・バーストなし",
+    "source": "V-0002",
+    "method": {
+      "note": "残り時間の秒の 1 の位（1920x1080 の x 1852・y 26・14x18）を min(R,G,B) > 90 で 2 値にし、変わったフレームを拾う（使い捨てのスクリプト）。秒の値は、離れた 2 フレームの表示を目で読んで決めた"
+    },
+    "readAt": "2026-09-27"
+  },
+  {
+    "recording": "0056",
+    "id": "0056-04",
+    "kind": "interval",
+    "use": "record",
+    "value": [408, 411, 411, 409, 405],
+    "unit": "f",
+    "description": "クラウンの S2 の「攻撃ダメージ 20.99%▲・7 秒間」が付いた発の区間の長さ（最初の▲の発 〜 最後の▲の発。1〜5 回目）。2・3 回目は前後の素の発と 1 フレームで接していて境目がはっきりしている",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "1 発の値（コア・会心・距離の組み合わせ）が 1.2099 倍になった発を▲とした。1 回目は前 3f・後 6f、4 回目は後 3f、5 回目は前 3f・後 10f の読めない間がある"
+    },
+    "source": "V-0004",
+    "readAt": "2026-09-27"
+  },
+  {
+    "recording": "0056",
+    "id": "0056-05",
+    "kind": "count",
+    "use": "record",
+    "value": 492,
+    "unit": "f",
+    "description": "重複フレームの数（f900〜11000 の 10,101 フレーム）。単騎・バーストなし。S2 の▲の 2・3 回目の区間（411f）の中には 33・54",
+    "method": {
+      "tool": "dups.ts"
+    },
+    "source": "V-0004",
+    "readAt": "2026-09-27"
+  },
+  {
+    "recording": "0056",
+    "id": "0056-06",
+    "kind": "timing",
+    "use": "record",
+    "value": [65.21, 104.81, 174.23],
+    "unit": "秒",
+    "description": "的のジャンプの始まりの、戦闘開始から数えたゲーム内の秒（単騎・バーストなし）。2・3・5 回目。距離ボーナスの有無が切り替わる所の直前の止まりの、前の最後の増分（1・4 回目は見えない）",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode changes",
+      "note": "戦闘開始 f831（残り時間 02:59 が出たフレーム）から 1 フレーム 0.017 秒で数えた"
+    },
+    "source": "V-0007",
+    "readAt": "2026-09-27",
+    "scope": {
+      "slot": "all",
+      "source": "target"
+    }
+  },
+  {
+    "id": "0056-07",
+    "recording": "0056",
+    "kind": "timing",
+    "use": "record",
+    "source": "V-0036",
+    "readAt": "2026-09-29",
+    "value": [28.63, 141.7],
+    "unit": "秒",
+    "description": "クラウン（MG）単騎で、0056-06 で読めなかった 1・4 回目の的のジャンプの、戦闘開始から数えたゲーム内の秒（1 回目は止まる前の最後の増分、4 回目は的が浮き始めたフレーム）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・ffmpeg（的の周りを 5〜6 フレームおきに切り出す）",
+      "note": "戦闘開始 f831。1 回目はリロード明けの 1 発（f2515、残弾 299）の後に撃たなくなり（スピンアップの 2 発目は約 13f 後のはず）、的が跳び上がって見えるのは f2562 ごろ。4 回目はリロード（f9019〜9181 ごろ）と重なり、的が浮き始めたのは f9166 ごろ（エマの 0072-02 の 141.87 秒と同じ組）。1 回目では、撃たなくなってから的が浮いて見えるまで約 0.6〜0.8 秒"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "target"
+    }
+  },
+  {
+    "id": "0056-08",
+    "recording": "0056",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0036",
+    "readAt": "2026-09-29",
+    "value": [898, 1163, 1069, 1035, 960, 130],
+    "unit": "ヒット",
+    "description": "クラウン（MG）単騎の、的のジャンプの始まり（28.63・65.21・104.81・141.0・174.23 秒）で切った区間ごとのヒット数（合計 5,258。0056-01 の 5,257 と同じ）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1 フレームの増分を 1 ヒットの値（胴体 4,477・コア 8,955 と、会心・距離・S2 の倍率の組。最大 15,168）で割り切れる数に分けた。読めないフレームが 18〜20f 続いた所の 12 個は、前後の 1 ヒットの値で割って見積もった。4 回目の始まりは、浮き始め（141.70 秒）から 1 回目の遅れ（約 0.7 秒）を引いた見積もり"
+    }
+  },
+  {
+    "id": "0056-09",
+    "recording": "0056",
+    "kind": "interval",
+    "use": "record",
+    "value": [159, 159, 159, 159, 159, 159, 159, 159, 159, 159, 159, 158],
+    "unit": "f",
+    "description": "クラウン（MG・リロード 2.5 秒）単騎で、マガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで。取り消し・窓をまたいだ回・最終弾の読み違いを除いた全部の回",
+    "method": {
+      "tool": "tools/captures/reload.ts --shots（hud.ts --mode jumps の出力）",
+      "note": "完了のフレーム: 1387・1944・2502・3749・4306・5071・6185・7506・8620・9803・10360・10917。窓をまたいだ回は、完了 → 次の増分がこの録画の中央値 + 5f を超える回。読み違いは、バーの伸びを遡った 0 の点が最終弾から 3f 以上離れた回。"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
+  },
+  {
+    "id": "0056-10",
+    "recording": "0056",
+    "kind": "interval",
+    "use": "record",
+    "value": [159.17, 159.18, 159.26, 159.13, 160.17, 159.98, 160.28, 159.54, 159.17, 159.17, 159.23, 158.85, 159.82],
+    "unit": "f",
+    "description": "クラウン（MG・リロード 2.5 秒）単騎で、リロード完了から、RELOADING のバーの伸びを長さ 0 に遡った点を引いた長さ（バーだけで出す最終弾 → 完了）。取り消し・窓をまたいだ回を除いた全部の回",
+    "method": {
+      "tool": "tools/captures/reload.ts --shots（hud.ts --mode jumps の出力）",
+      "note": "リロード全体の長さとフレームに直線を当てはめ（長さが見えた最大の 10〜90%、残差 4px を超える点を落として当てはめ直す）、残差が 3px を超える回は除いた。完了のフレーム: 1387・1944・2502・3191・3749・4306・5071・6185・7506・8620・9803・10360・10917"
+    },
+    "source": "V-0057",
+    "readAt": "2026-09-30"
+  },
+  {
+    "id": "0056-11",
+    "recording": "0056",
+    "kind": "timing",
+    "use": "input",
+    "value": [29.308, 31.297, 65.875, 67.864, 105.077, 107.066, 141.457, 143.446, 174.658, 176.647],
+    "unit": "秒",
+    "description": "クラウン（MG）単騎・AUTO で、的のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
+    "source": "V-0088",
+    "readAt": "2026-10-02",
+    "method": {
+      "tool": "recipe:hud-jumps@2（hud-jumps@1 のキャッシュ）",
+      "note": "V-0086 の読み方。戦闘開始は動画 f830（最初の発 f842 の 12f 前。C-0114。0056-06〜0056-08 の f831 と 1f 違う）。フレームは戦闘開始から数え、1f = 0.017 秒。終わりは着地の後の最初の発（動画 f2683・4834・7140・9280・11233）の 12f 前。始まりは終わりの 2 秒前と、ジャンプの前の最後の発（f2515・4667・6996・9019・11099）の 1f 後の遅いほうで、5 回とも 2 秒前のほうが遅い（最後の発の 1f 後より 38・37・14・131・4f 後）。4 回目の前の最後の発はマガジンの最終弾（リロードと重なる）。5 回目の前は f11080 の後 18f 読めず、f11099 の増分は複数のヒットをまとめたもの。窓（戦闘開始からのフレーム）: 1724〜1841・3875〜3992・6181〜6298・8321〜8438・10274〜10391。最後の増分 f11422 は戦闘開始から 10,592f で、モデルの 180 秒（最後のフレーム 10,588f）より 4f 後"
+    }
+  },
+  {
+    "id": "0056-12",
+    "recording": "0056",
+    "kind": "interval",
+    "use": "record",
+    "value": [10, 8, 13, 13, 31],
+    "unit": "f",
+    "description": "クラウン（MG）単騎・AUTO で、的のジャンプの着地の後の最初の発から次の発までの間隔（1〜5 回目）。戦闘開始とリロード明けでは 23f（読みが 2 ヒットにまとまった回は 36f）",
+    "source": "V-0088",
+    "readAt": "2026-10-02",
+    "method": {
+      "tool": "recipe:hud-jumps@2（hud-jumps@1 のキャッシュ）",
+      "note": "着地の後の最初の発は動画 f2683・4834・7140・9280・11233。その後の間隔は 1 回目 10・8・6・5、2 回目 8・6・5・5、3 回目 13・10・8・6、4 回目 13・10・8・11、5 回目 31・6・5・5。戦闘開始（f842）の後は 23・13・18・6、リロード明けの多くは 23・13・10・8 か 36・10・8・6（読みがまとまって崩れた回もある）。5 回目の最初の発の増分（9,751）は 1 ヒットの値の組に当てはまらず、読みが割れているかもしれない"
+    }
+  },
+  {
+    "id": "0056-13",
+    "recording": "0056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5417,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア以外・会心なし・距離ボーナスなし）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f2683）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "0056-11"
+      }
+    }
+  },
+  {
+    "id": "0056-14",
+    "recording": "0056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 8126,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア以外・会心・距離ボーナスなし）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f2515）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "0056-11"
+      }
+    }
+  },
+  {
+    "id": "0056-15",
+    "recording": "0056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 10835,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスなし）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f2305）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "0056-11"
+      }
+    }
+  },
+  {
+    "id": "0056-16",
+    "recording": "0056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13543,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア・会心・距離ボーナスなし）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f2323）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "0056-11"
+      }
+    }
+  },
+  {
+    "id": "0056-17",
+    "recording": "0056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 7042,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア以外・会心なし・距離ボーナスあり）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f6197）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "0056-11"
+      }
+    }
+  },
+  {
+    "id": "0056-18",
+    "recording": "0056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 9751,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア以外・会心・距離ボーナスあり）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f11233）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "0056-11"
+      }
+    }
+  },
+  {
+    "id": "0056-19",
+    "recording": "0056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 12460,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスあり）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f5907）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "0056-11"
+      }
+    }
+  },
+  {
+    "id": "0056-20",
+    "recording": "0056",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15168,
+    "unit": "ダメージ",
+    "description": "クラウンの S2 の攻撃ダメージ▲の窓の中の、通常攻撃の 1 ヒット（コア・会心・距離ボーナスあり）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "総ダメージの増分を「窓の外の胴体 × (1 + コア + 会心 + 距離) × {1, 1.2099}」の格子の 1〜3 ヒットの和に分けた。窓の中の 1 ヒットの増分のうち、この組の値（最初は f5913）。同じ値が窓の中で何度も出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "0056-11"
+      }
+    }
+  },
+  {
+    "id": "0056-21",
+    "recording": "0056",
+    "kind": "count",
+    "use": "compare",
+    "value": [857, 855.6, 847, 851.3, 850.3, 858.5],
+    "unit": "ヒット",
+    "description": "クラウンの S2 の回復ごとの、前の回復（1 回目は戦闘の最初のヒット）から次の窓の最初の▲のヒットの手前までの、通常攻撃のヒットの数（6 回）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓の最初の▲のヒットは f2304（▲なしのコアと▲ありのコアの 2 ヒットの増分 19,790 の後の方）・4068・5907・7745・9446（f2304 と同じ形）・11077。増分は格子の 1〜3 ヒットの和に分けて数え、隣り合う 2 フレームに割れた読み（和が 2 ヒットの値）は 2 ヒット。HUD が 18〜20 フレーム読めない区間（各回 1〜3 か所）は、増分の和を前後 400f の 1 ヒットの平均で割って見積もった（1 か所あたり ±0.5〜1 ヒット）ので、小数。許容 ±5 は読んだ後に、見積もりの幅と外れの数のばらつき（860 発で約 ±2）から決めた（撮る前・読む前には決めていない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "healHitCounts",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto",
+        "midFarLanding": "A",
+        "jumpWindows": "0056-11"
+      }
+    }
+  },
+  {
+    "id": "0056-22",
+    "recording": "0056",
+    "kind": "count",
+    "use": "record",
+    "value": [860, 860, 860, 860, 860, 860],
+    "unit": "発",
+    "description": "クラウンの S2 の回復ごとの、前の回復（1 回目は戦闘の最初の発）から次の窓の最初の▲の発の手前までに撃った発の数（6 回）",
+    "source": "V-0178",
+    "readAt": "2026-10-05",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "照準の横の残弾を 7,433 フレーム読み、減った量を足した。リロードは 17 回とも、直前に読めた残弾が 001（1 回だけ 002）で、000 は読めていない。マガジンは 300 発なので、リロードごとに読めなかった最後の発を足した（1 回目は戦闘開始の 300 から）。窓の最初の▲のヒットのフレームまでの発の数は 861・1,721・2,581・3,441・4,301・5,161（その発を含む）で、間はどれもちょうど 860。孤立した読み違い（前後より大きいか小さい 1 フレーム）は落とした"
+    }
+  },
+  {
+    "id": "0056-23",
+    "recording": "0056",
+    "kind": "interval",
+    "use": "record",
+    "source": "V-0196",
+    "readAt": "2026-10-05",
+    "value": [11, 12, 11, 11],
+    "unit": "f",
+    "description": "クラウン（MG）単騎・AUTO の 1〜4 回目のジャンプの明けで、照準が的へ動き出したフレーム（f2636・4777・7106・9246）から最初の発（照準の横の残弾が減ったフレーム）まで",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（残弾）・ffmpeg（f7114〜7125 の画）・使い捨てのスクリプト（tools/captures/aim-lib.ts の findAim で照準の中心を毎フレーム）",
+      "note": "最初の増分は動き出しから 47・57・34・34f。1 回目は照準の移動が約 570px で、コアへの跳びは動き出しから 43f。3 回目は照準の移動が約 15px で、最初の発（f7117）の照準はコアの真上にあった（画で確かめた）が、その発は総ダメージに出ない。5 回目は照準が取れず除いた"
+    }
+  },
+  {
+    "id": "0056-24",
+    "recording": "0056",
+    "kind": "count",
+    "use": "record",
+    "source": "V-0196",
+    "readAt": "2026-10-05",
+    "value": [420, 186, 4],
+    "unit": "hit",
+    "description": "クラウン（MG）単騎・AUTO の撃ち始め 21 回（窓の明け 5・リロードなどの明け 16）の最初の 20 ヒットの数・そのうちコアを外したヒットの数・そのうち照準がコアに着く前のフレームのヒットの数（0072-15 と同じ読み方）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（増分を 1 ヒットの値 4477 ×（1 + コア 1 + 会心 0.5 + 距離 0.3）× S2 の攻撃ダメージ▲（1.2099）の有無の表で分け、2 ヒットの和も分けた）・使い捨てのスクリプト（tools/captures/aim-lib.ts の findAim で照準の中心を毎フレーム）",
+      "note": "窓の明け 100 ヒット中 48 外し・着く前 0、リロードなどの明け 320 ヒット中 138 外し・着く前 4。リロードの明けの照準の移動は 15〜240px（多くは 15〜45px で、動き出しから 3f で止まる）。最後に外したのは 7〜20 ヒット目。動き出しが読めなかった 5 回は「着く前」を 0 に数えた"
+    }
+  },
+  {
+    "id": "0056-25",
+    "recording": "0056",
+    "source": "V-0228",
+    "readAt": "2026-10-06",
+    "kind": "position",
+    "use": "record",
+    "unit": "px",
+    "value": [539, 379, 155, 143],
+    "description": "遠（3 区間目）の的の、足元の y・上端の y・高さ・幅（1920×1080。外接矩形。的だけが取れたコマの中央値）。足元で分けると間（足元では決まらない）（V-0228「結果」）",
+    "method": {
+      "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
+      "note": "使えたコマ 16 / 101。四分位: 足元 536〜542・高さ 150〜164。足元の y は半分の解像度で測るので 2px 刻み"
+    }
+  }
+]

@@ -43,7 +43,7 @@
         "burst": false
       },
       "note": "環境コントロールの受けるダメージ▲の窓の中（S1 ありなら S1 と ▲の両方）。H0 は ▲だけ",
-      "observations": ["476-10", "477-10"]
+      "observations": ["0476-10", "0477-10"]
     },
     {
       "id": "asuka-hit-20s",
@@ -62,7 +62,7 @@
         "burst": false
       },
       "note": "受けるダメージ▲の窓の外・S1 の窓の中。Da は S1 あり（D-b も S1 あり。D-b の判定の指標の値はこれと同じ）",
-      "observations": ["476-11", "477-11"]
+      "observations": ["0476-11", "0477-11"]
     },
     {
       "id": "asuka-hit-27s",
@@ -99,7 +99,7 @@
         "burst": false
       },
       "note": "判定の指標。2 回目の切れ目（3235〜3530f）の中",
-      "observations": ["476-07", "477-07"]
+      "observations": ["0476-07", "0477-07"]
     },
     {
       "id": "asuka-hit-147s",
@@ -118,7 +118,7 @@
         "burst": false
       },
       "note": "判定の指標。5 回目の切れ目（8530〜8825f）の中",
-      "observations": ["476-08", "477-08"]
+      "observations": ["0476-08", "0477-08"]
     },
     {
       "id": "asuka-total",

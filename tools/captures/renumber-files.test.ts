@@ -30,8 +30,8 @@ afterEach(() => rmSync(tmp, { recursive: true, force: true }));
 describe('captures/renumber-files', () => {
   it('renames the number part of a file name, including the 2-digit writing', () => {
     expect(renumberedName(FILE, '951', '9605')).toBe('20261002-9605_rl_x.mp4');
-    expect(renumberedName('20260922-09_SG_x.mp4', '009', '960')).toBe('20260922-960_SG_x.mp4');
-    expect(renumberedName('20260922-09_SG_x.mp4', '010', '960')).toBeUndefined();
+    expect(renumberedName('20260922-0009_SG_x.mp4', '0009', '960')).toBe('20260922-960_SG_x.mp4');
+    expect(renumberedName('20260922-0009_SG_x.mp4', '0010', '960')).toBeUndefined();
   });
 
   it('renames the video, screenshots, frames and the cache on both places, and fixes the cache meta', () => {
@@ -121,12 +121,12 @@ describe('captures/renumber-files', () => {
       `Rename-Item -LiteralPath '${join(tmp, 'none', 'range', FILE)}' -NewName '20261002-9605_rl_x.mp4'`,
     );
     // 2 桁の時代の録画: 動画の名前で始まる証拠フレームも変える
-    touch(e, 'range/20260922-09_SG_x.mp4');
-    touch(e, 'frames/20260922-09_SG_x_f100_ammo.jpg');
+    touch(e, 'range/20260922-0009_SG_x.mp4');
+    touch(e, 'frames/20260922-0009_SG_x_f100_ammo.jpg');
     const early = planCaptureRenames({
       ...base([{ label: 'E:', dir: e }]),
-      file: '20260922-09_SG_x.mp4',
-      oldId: '009',
+      file: '20260922-0009_SG_x.mp4',
+      oldId: '0009',
     });
     expect(early.renames.map((r) => r.to)).toEqual([
       'range/20260922-9605_SG_x.mp4',

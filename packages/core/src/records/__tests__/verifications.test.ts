@@ -64,7 +64,7 @@ describe('records/verifications・plan/verifications.md', () => {
     const v = parseVerification(
       'V-0012-aim-circle.md',
       doc('V-0012', [
-        ...header('完了', ['- Stage: 18-B2', '- 録画: `064`〜`066`、`L-AD`', '- 結論: `C-0038`、`C-0044`']),
+        ...header('完了', ['- Stage: 18-B2', '- 録画: `0064`〜`0066`、`L-AD`', '- 結論: `C-0038`、`C-0044`']),
       ]),
     );
     expect(v.problems).toEqual([]);
@@ -75,7 +75,7 @@ describe('records/verifications・plan/verifications.md', () => {
       topic: '命中率・距離',
       state: '完了',
       stage: '18-B2',
-      recordings: ['064', '065', '066', 'L-AD'],
+      recordings: ['0064', '0065', '0066', 'L-AD'],
       claims: ['C-0038', 'C-0044'],
     });
     expect([...v.sections.keys()]).toEqual([...VERIFICATION_SECTIONS]);
@@ -93,7 +93,7 @@ describe('records/verifications・plan/verifications.md', () => {
         '- 問い: q2',
         '- 状態: 調査中',
         '- メモ: x',
-        '- 録画: 064, 065',
+        '- 録画: 0064, 0065',
         '',
         'ここに文',
         '## 条件',
@@ -113,7 +113,7 @@ describe('records/verifications・plan/verifications.md', () => {
       'V-0004: 本文に「## 結果」が無い',
       'V-0004: 本文に「## 分かったこと・分からないこと」が無い',
       'V-0004: 本文に「## 次に撮るもの」が無い',
-      'V-0004: 「録画」はバッククォートで囲んだ ID を「、」で区切って書く: 064, 065',
+      'V-0004: 「録画」はバッククォートで囲んだ ID を「、」で区切って書く: 0064, 0065',
     ]);
     expect(parseVerification('V-0005-x.md', doc('V-0006', header('調査中'))).problems).toEqual([
       'V-0006: ファイル名の ID と 1 行目の ID が違う',
@@ -198,7 +198,7 @@ describe('records/verifications・plan/verifications.md', () => {
       record('V-0015', '調査中', ['- 訂正: `V-0010`']),
     ];
     expect(check(list)).toEqual([]);
-    const text = renderVerifications(list, [{ ...observations[0]!, id: '064-01', source: 'V-0010' }]);
+    const text = renderVerifications(list, [{ ...observations[0]!, id: '0064-01', source: 'V-0010' }]);
     const open = text.slice(text.indexOf('## 開いている検証'), text.indexOf('## 全件'));
     expect(open).toContain('**V-0012** 題名 V-0012（状態: 保留・依存: V-0010） — **再開できる**');
     expect(open).toContain(
@@ -209,7 +209,7 @@ describe('records/verifications・plan/verifications.md', () => {
     expect(open).not.toContain('V-0010**');
     const all = text.slice(text.indexOf('## 全件'));
     expect(all).toContain('[V-0010](../records/verifications/V-0010-x.md)');
-    expect(all).toMatch(/V-0010-x\.md\)\*\* [^\n]*\n(?: {2}- [^\n]*\n)*? {2}- 観測値: 064-01\n/);
+    expect(all).toMatch(/V-0010-x\.md\)\*\* [^\n]*\n(?: {2}- [^\n]*\n)*? {2}- 観測値: 0064-01\n/);
     expect(all).toContain('  - 止めている検証: V-0012、V-0013');
     expect(all).toContain('  - 派生した検証: V-0012');
     expect(all).toContain('  - 訂正された（訂正した記録）: V-0015');
@@ -220,7 +220,7 @@ describe('文書の中の ID の参照', () => {
   it('picks prefixed ids, but not numbers, file names or code blocks', () => {
     const text = [
       'C-0001 と `C-0002`、V-0003。`C-20260926-1` や XC-0004、C-12 は拾わない。',
-      '`L-AD` と `L-AD-01` は拾い、囲まない L-AI と `064`・`064-01` は拾わない。',
+      '`L-AD` と `L-AD-01` は拾い、囲まない L-AI と `0064`・`0064-01` は拾わない。',
       '```',
       'C-0005',
       '```',

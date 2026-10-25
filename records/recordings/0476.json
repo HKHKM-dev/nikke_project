@@ -1,0 +1,35 @@
+{
+  "id": "0476",
+  "date": "2026-10-17",
+  "folder": "range",
+  "file": "20261017-0476_mg+ar_emma-tu+asuka_asuka-control.mp4",
+  "original": "2026-10-17_20-14-10.mp4",
+  "durationSec": 200.1,
+  "frames": 12005,
+  "fps": 60,
+  "sizeMB": 242.5,
+  "sha256": "98949a06d456",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0441（エマ：TU の持続回復の F5）の録画。エマ：TU（AI）・アスカ（操作・AUTO 射撃 ON）。オートバースト OFF"
+}

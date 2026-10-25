@@ -1,5 +1,5 @@
 // 録画をレシピで読み、観測値にする（plan/design-records-automation.md 3.4 節）。
-//   node tools/captures/read.ts <録画 id> --recipe <名前> --source V-NNNN [--opt key=value ...] [--write] [--against 074-14,074-18]
+//   node tools/captures/read.ts <録画 id> --recipe <名前> --source V-NNNN [--opt key=value ...] [--write] [--against 0074-14,0074-18]
 //   node tools/captures/read.ts --list                     # レシピの一覧と --opt の説明
 //
 // - 録画の実体は records/recordings/<録画 id>.json から引く（このリポジトリの録画は置き場所の <folder>/<file>、旧の録画は path）。

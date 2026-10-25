@@ -90,7 +90,7 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [260], delays: { hitFrames: 0, effectFrames: 6 }, windowFromActivation: true, claim: 'C-0452' },
   // アドミ: II の発動（六角形が II から III に替わるフレーム）から効果（味方全体のリロード速度▲・クリティカルダメージ▲）まで、
   // 味方の会心の発で挟んだ 16〜22f の真ん中の 19f（止まりより前なので動画のフレームと同じ）。窓は遅れた始まりから数える。
-  // バーストの倍率ダメージは無い。録画 042 の読み直しで値を出し、録画 400（撮る前に予測を固定。V-0388）で再現した
+  // バーストの倍率ダメージは無い。録画 0042 の読み直しで値を出し、録画 0400（撮る前に予測を固定。V-0388）で再現した
   { resourceIds: [172], delays: { hitFrames: 0, effectFrames: 19 }, claim: 'C-0479' },
   // ソルジャーE.G.: III のタイマーの 00.00 からヒットまで 7f（動画で 29f。止まり 22f を含む）。バースト使用時の効果は無い（V-0247・V-0242）
   { resourceIds: [300], delays: { hitFrames: 7, effectFrames: 0 }, claim: 'C-0370' },

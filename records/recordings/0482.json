@@ -1,0 +1,47 @@
+{
+  "id": "0482",
+  "date": "2026-10-18",
+  "folder": "range",
+  "file": "20261018-0482_cinderella-control.mp4",
+  "original": "2026-10-18_05-49-48.mp4",
+  "durationSec": 205.8,
+  "frames": 12347,
+  "fps": 60,
+  "sizeMB": 249.2,
+  "sha256": "537879feec48",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 4,
+      "rid": 511,
+      "name": "シンデレラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0448 録画 A（同値）1 本目。I-DOLL・フラワー・アニス：スター・デルタ・シンデレラ（操作・AUTO 射撃 ON）。3 分を最後まで撃ち、終わりに戦闘履歴を映す"
+}

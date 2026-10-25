@@ -1,0 +1,29 @@
+{
+  "id": "0121",
+  "date": "2026-10-02",
+  "folder": "range",
+  "file": "20261002-0121_rl_laplace-uh.mp4",
+  "original": "2026-10-02_20-49-49.mp4",
+  "durationSec": 227.9,
+  "frames": 13674,
+  "fps": 60,
+  "sizeMB": 275.9,
+  "sha256": "e5d487bbe758",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 103,
+      "name": "ラプラス：アルティメットヒーロー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "単騎・AUTO。V-0100。最初の 1 秒ほどに出撃画面（灼熱タブ・3 分モード・スペック固定 ON・編成はこのキャラ 1 体）、最後に戦闘履歴の画面（キャラ名）が写っている。照準の横の残弾は 120 から始まる（SMG と同じ数なので、弾数で武器種を決めない）"
+}

@@ -33,7 +33,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "observations": ["046-03"],
+      "observations": ["0046-03"],
       "note": "紅蓮BS 単騎（046 の組み方）の 180 秒の射撃の数。弾丸命中率では動かない（見分けは与ダメージと列の抜け）"
     },
     {
@@ -48,7 +48,7 @@
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
-      "observations": ["046-02"],
+      "observations": ["0046-02"],
       "note": "同じ枠の与ダメージ。H1 で下がる大きさの目安"
     },
     {
@@ -64,7 +64,7 @@
         "burst": false,
         "condition": "auto"
       },
-      "observations": ["055-03"],
+      "observations": ["0055-03"],
       "note": "紅蓮BS 単騎（055 の組み方。自動バースト OFF）の射撃の数"
     },
     {
@@ -80,7 +80,7 @@
         "burst": false,
         "condition": "auto"
       },
-      "observations": ["055-02"],
+      "observations": ["0055-02"],
       "note": "同じ枠の与ダメージ"
     }
   ],

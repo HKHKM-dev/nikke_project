@@ -589,7 +589,7 @@ export const LANDING_AIM_MISS_FRAMES = 50;
 
 /**
  * 着地の後の 1 発目を除いて決めた RL の弾の種類の行（直進弾 100・誘導弾 100・曲射 1500。C-0174・C-0175・C-0242）。
- * その 1 発目は遠・中遠の区間で外すことがあり（V-0097 の 077-18・121-05）、モデルに入っていない
+ * その 1 発目は遠・中遠の区間で外すことがあり（V-0097 の 0077-18・0121-05）、モデルに入っていない
  */
 const FIRST_SHOT_EXCLUDED_ROWS: ReadonlySet<string> = new Set([
   'ProjectileDirect:100',

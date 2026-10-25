@@ -1,0 +1,29 @@
+{
+  "id": "0454",
+  "date": "2026-10-11",
+  "folder": "range",
+  "file": "20261011-0454_mg_crown_auto.mp4",
+  "original": "2026-10-11_16-50-55.mp4",
+  "durationSec": 200,
+  "frames": 12002,
+  "fps": 60,
+  "sizeMB": 242.7,
+  "sha256": "cef7908bed68",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0415 の撮り足し。単騎・AUTO 射撃 ON・自動バースト OFF。最後の戦闘履歴（キャラの印・1 体）で確かめた"
+}
