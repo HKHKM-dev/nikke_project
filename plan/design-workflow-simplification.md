@@ -109,6 +109,27 @@
 
 **効果**: 検証の PR で手で回す生成が 1 つ減り、回し忘れが無くなる。閉じるのは 1.5 分ほど延びる。
 
+**判断（2026-10-25）**: 進める。ただし案を 1 点変える（閉じる道具に入れるのに加えて、回し忘れを `npm test` で落とす）。オーナーの確認を待って実装する。
+
+- 必要性: ある。
+  - 決まりは 3 か所にある（AGENTS.md の最小構成の検査の段落、verification-guide.md 7 節、skills-guide.md 4 節のチェックリスト）。
+  - いまの main は揃っている（`npm run records:minimal` を回しても差分が出ない）。
+  - ただし、古い感度が main に入ったことは 5 回ある。`plan/minimal.md` の「感度の結果が無いか古い要素」の行を足した PR は #410・#440・#495・#528・#622 で、直したのは後の PR（#404・#443・#497・#552・#623）。#528 から #552 までの間には、古い要素が 106 まで溜まった。#495・#622 は感度を回したあとに入力を変えていた（#622 は最後の commit で比べる指定を変えた。#623 の本文）。#410・#440 は検証記録を触らない PR だった。
+- 案の妥当性: 半分だけ足りる。
+  - `records:close` は、`--mark` の有無にかかわらず `records:check` を回し、`--no-ci` でなければ CI と同じ確認も回す（`--no-ci` で省けるのは CI と同じ確認だけ）。`records:check` を `records:minimal` に替えても、`--no-ci` の扱いはそのままでよい。
+  - 時間は案の見積もりより短い。手元で `records:check` が約 1 分 40 秒、`records:minimal` が約 2 分（感度の計算は約 40 秒で、残りは中で回る `records:check`）。閉じるのが延びるのは約 40 秒。
+  - 防げるのは、閉じる道具を通る検証の PR だけで、それも閉じるのが最後の手のときだけ。#495・#622 のように閉じた後（回した後）に入力を変えると防げず、検証記録を触らない #410・#440 も防げない。
+- 代わりの案（`npm test` で古さを検出する）との比べ:
+  - 古さを見分ける道具はもうある。感度の結果は 1 件ごとに入力（版・録画の台帳・比べる指定・編成の定義）のハッシュ `key` を持ち（`sensitivityKey`）、`relevanceOf` は鍵の合わない結果を使わずに静的な判定で代え、その数を `unmeasured` に数える。`records:check` は、それを `plan/minimal.md` の太字の行に書くだけで、落とさない。`npm test` の一致の検査（`relevance.test.ts`）も、古い感度のまま作った minimal.md と一致するので通る。
+  - そこで、`relevance.test.ts` の実データの検査に「`unmeasured` の合計が 0」を足す（数行）。CI で全部の PR に効き、ふだんの時間は延びない。上の 5 回はどれも、この行が出ていたので落ちた。
+  - これだけだと、検証の PR は閉じるときに `npm test` で落ちてから `records:minimal` を回し、閉じ直すことになる（確定にした結論の根拠の観測値が新しいと感度の結果が無いので、多くの検証の PR で起きる）。そこで閉じる道具にも入れる（案のとおり）。
+- 変えた案:
+  1. `records:close` が `records:check` の代わりに `records:minimal` を回す（案のとおり）。
+  2. `relevance.test.ts` に「感度の結果が無いか古い要素が 0」を足し、落ちたときの文に `npm run records:minimal` を回すことを書く（足す）。
+  3. 3 か所の決まりは AGENTS.md の 1 行にまとめる。中身は「スキル定義・録画の台帳・観測値の比べる指定を変えたら `records:minimal` を回す。検証の PR は `records:close` が回し、回し忘れは `npm test` が落とす」。verification-guide.md と skills-guide.md はそこを指すだけにする。
+  4. AGENTS.md「コミット手順」の 2 に「検証の PR は `records:close --mark` が回す」と添える（案のとおり）。
+  5. design-records-automation.md 3.7 節の「通れば `npm run records:check` → …」と、design-minimal-relevance.md 10.6 節の「定義・録画・比べる指定を変えた PR では `npm run records:minimal` を回す」を合わせる。
+
 ## 4. 番号を取ったらすぐ push する
 
 **いま**
