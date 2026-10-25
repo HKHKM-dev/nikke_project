@@ -9,22 +9,20 @@
 //   取らない。plan/design-investigation-review.md 4.3 節）。
 //   同じレシピ・同じ版の観測値が既にあれば、同じ値なら足さず、違えば差を出して止まる（人が invalid を付けるか、版を上げる）。
 // - --against は、既存の観測値（ID）の値を並べて出す（レシピの出力と目で比べる。旧の観測値の確かめ用）。
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { observationIdsInBranches } from '../../packages/core/scripts/records-data.ts';
 import type { Observation } from '../../packages/core/src/records/observations.ts';
 import { todayLocal } from '../../packages/core/src/records/predictions.ts';
-import { isLegacy, type RecordingEntry } from '../../packages/core/src/records/recordings.ts';
-import { capturesDir, legacyVideoPath } from './dirs.ts';
+import { capturesDir } from './dirs.ts';
 import { RECIPES, findRecipe } from './recipes/index.ts';
 import { toolName, type RecipeContext, type RecipeObservation } from './recipes/types.ts';
-
-const ROOT = fileURLToPath(new URL('../../', import.meta.url));
-const RECORDINGS_DIR = `${ROOT}records/recordings/`;
-const OBSERVATIONS_DIR = `${ROOT}records/observations/`;
+import {
+  existingVideoOf,
+  loadObservations,
+  loadRecording,
+  prepareObservations,
+  writeObservations,
+} from './records-io.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -61,37 +59,8 @@ if (!values.source && values.write) {
   process.exit(1);
 }
 
-function loadRecording(recordingId: string): RecordingEntry {
-  const path = `${RECORDINGS_DIR}${recordingId}.json`;
-  if (!existsSync(path)) throw new Error(`records/recordings/${recordingId}.json が無い`);
-  return JSON.parse(readFileSync(path, 'utf8')) as RecordingEntry;
-}
-
-function videoOf(entry: RecordingEntry): string {
-  return isLegacy(entry) ? legacyVideoPath(entry.path) : join(capturesDir(), entry.folder, entry.file);
-}
-
-function loadObservations(recordingId: string): Observation[] {
-  const path = `${OBSERVATIONS_DIR}${recordingId}.json`;
-  return existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as Observation[]) : [];
-}
-
-function nextId(recordingId: string, existing: readonly Observation[], taken: ReadonlySet<string>): string {
-  const used = new Set([...existing.map((o) => o.id), ...taken]);
-  for (let n = 1; ; n++) {
-    const candidate = `${recordingId}-${String(n).padStart(2, '0')}`;
-    if (!used.has(candidate)) return candidate;
-  }
-}
-
-function sameValue(a: number | number[], b: number | number[]): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
-}
-
 const recording = loadRecording(id);
-const video = videoOf(recording);
-if (!existsSync(video))
-  throw new Error(`録画の実体が無い: ${video}（クラウド環境では tools/captures/fetch.ts で取り寄せる）`);
+const video = existingVideoOf(recording);
 const options: Record<string, string> = {};
 for (const o of values.opt) {
   const at = o.indexOf('=');
@@ -108,36 +77,11 @@ const ctx: RecipeContext = {
   log: (m) => console.error(m),
 };
 const produced = await recipe.run(ctx);
-const existing = loadObservations(id);
-const tool = toolName(recipe);
-const branches = observationIdsInBranches(id);
-if (branches.note !== '') console.error(`注意: ${branches.note}`);
-const taken = new Set(branches.ids);
-const finished: Observation[] = [];
-for (const p of produced) {
-  const prior = existing.find((o) => o.method?.tool === tool && o.kind === p.kind && o.description === p.description);
-  if (prior) {
-    if (sameValue(prior.value, p.value)) {
-      console.error(`${prior.id}: 同じレシピの同じ値がある（足さない）`);
-      continue;
-    }
-    console.error(
-      `${prior.id}: 同じレシピの値が違う。前 ${JSON.stringify(prior.value)} → 今 ${JSON.stringify(p.value)}`,
-    );
-    process.exitCode = 2;
-    continue;
-  }
-  finished.push({
-    id: nextId(id, [...existing, ...finished], taken),
-    recording: id,
-    ...p,
-    source: ctx.source,
-    readAt: ctx.readAt,
-  } as Observation);
-}
-const ownFirst = nextId(id, existing, new Set());
-if (finished.length > 0 && finished[0]!.id !== ownFirst)
-  console.error(`${ownFirst} はほかのブランチ（か main）が使ったので、${finished[0]!.id} から振った`);
+const { existing, finished } = prepareObservations(id, produced, {
+  tool: toolName(recipe),
+  source: ctx.source,
+  readAt: ctx.readAt,
+});
 console.log(JSON.stringify(finished, null, 2));
 if (values.against) {
   const want = values.against.split(',').map((s) => s.trim());
@@ -152,12 +96,7 @@ if (values.against) {
     console.error(o ? `${w}: ${JSON.stringify(o.value)}  ${o.description.slice(0, 80)}` : `${w}: 無い`);
   }
 }
-if (values.write && finished.length > 0) {
-  const path = `${OBSERVATIONS_DIR}${id}.json`;
-  writeFileSync(path, `${JSON.stringify([...existing, ...finished], null, 2)}\n`);
-  spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['prettier', '--write', path], { stdio: 'inherit' });
-  console.error(`${path} に ${finished.length} 件を足した（${finished.map((o) => o.id).join('・')}）`);
-}
+if (values.write) writeObservations(id, existing, finished);
 
 /** 型の確認用（RecipeObservation は Observation から id などを除いたもの） */
 export type { RecipeObservation };
