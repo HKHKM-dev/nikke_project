@@ -106,6 +106,24 @@ describe('records/recordings', () => {
     expect(errors).toContainEqual('002 枠 1: build.attack は正の整数');
     expect(errors).toContainEqual('002 枠 1: build.skillLevels の skill3 はスロットでない');
   });
+
+  it('checks the shape of the Drive backup record (plan/design-workflow-simplification.md 2 節)', () => {
+    const placed = {
+      ...first,
+      backup: { at: '2026-10-25T00:31+09:00', via: 'cloud-move', matched: 'sha256' } as const,
+    };
+    expect(validateRecordings({ recordings: [placed] }, knownRids)).toEqual([]);
+    // 型の外の値（JSON から読んだ壊れた記録）
+    const broken = {
+      ...first,
+      backup: { at: '2026-10-25 00:31', via: 'rclone', matched: 'crc' },
+    } as unknown as ProjectRecording;
+    expect(validateRecordings({ recordings: [broken] }, knownRids)).toEqual([
+      `${first.id}: backup.at は日本の時刻（YYYY-MM-DDTHH:MM+09:00）`,
+      `${first.id}: backup.via が語彙に無い: rclone`,
+      `${first.id}: backup.matched は sha256 か md5: crc`,
+    ]);
+  });
 });
 
 describe('plan/captures/recordings.md', () => {

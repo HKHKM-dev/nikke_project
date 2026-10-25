@@ -10,7 +10,7 @@
 
 `records:renumber` は検証記録・結論・観測値の番号を振り直す（log 11.11 節）。録画の番号は扱わなかった。録画の番号を変えると、リポジトリの外のファイル名（E: と Drive の動画・証拠フレーム・派生のキャッシュ）と、観測値の ID の頭（`NNN-xx`）も変わるため。
 
-録画の番号が重なったことは 2 回ある（[captures/backup-log-old.md](captures/backup-log-old.md) の 2026-10-05 の 213〜217 → 221〜225、[captures/backup-log.md](captures/backup-log.md) の 2026-10-06 の 213〜215 → 228〜230）。どちらも、E: と I: のファイル名と台帳を手で書き換えた。その後 `intake.ts` は、どれかのブランチ（main を含む）が足したことのある番号を避けるようになった（log 11.11 節）が、2 つのセッションがまだ commit していない番号を同時に取ると、まだ重なりうる。
+録画の番号が重なったことは 2 回ある（[captures/backup-log-old.md](captures/backup-log-old.md) の 2026-10-05 の 213〜217 → 221〜225、[captures/backup-log-old2.md](captures/backup-log-old2.md) の 2026-10-06 の 213〜215 → 228〜230）。どちらも、E: と I: のファイル名と台帳を手で書き換えた。その後 `intake.ts` は、どれかのブランチ（main を含む）が足したことのある番号を避けるようになった（log 11.11 節）が、2 つのセッションがまだ commit していない番号を同時に取ると、まだ重なりうる。
 
 ## 1. 録画の番号が出てくる所（d9160808 の時点）
 

@@ -52,7 +52,7 @@
 
 ## 5. 撮る・取り込む
 
-- 撮り終えたら、すぐに取り込む: `node tools/captures/intake.ts <元ファイル> --id NNN --name <識別子> --rid ... --controlled ... --target BigArms --element Fire --mode range-3min --fixed-spec on|off ...`（リネーム・移動・素性・`records/recordings/<録画 id>.json`・Drive への同期と sha256 の突き合わせ・backup-log.md への記録。オプションは `intake.ts` の冒頭）。
+- 撮り終えたら、すぐに取り込む: `node tools/captures/intake.ts <元ファイル> --id NNN --name <識別子> --rid ... --controlled ... --target BigArms --element Fire --mode range-3min --fixed-spec on|off ...`（リネーム・移動・素性・`records/recordings/<録画 id>.json`・Drive への同期と sha256 の突き合わせ・録画の JSON の `backup` への記録。オプションは `intake.ts` の冒頭）。
 - 空いた項目を埋めて `npm run records:table`（録画の一覧 [captures/recordings.md](captures/recordings.md)）。命名規約は [captures/index.md](captures/index.md)「命名規約」。
 
 ## 6. 読む

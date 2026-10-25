@@ -91,6 +91,8 @@
 
 ほかに直すもの: `intake.ts` の冒頭のコメント、[captures/storage.md](captures/storage.md)「バックアップ」と道具の終わりの行、[cloud-guide.md](cloud-guide.md) の取り込みの手順、[verification-guide.md](verification-guide.md) の取り込みの行（「backup-log.md への記録」→ 録画の JSON の `backup`）。`records:renumber` は直さない（段落はふだんと違う出来事として、新しい backup-log.md に書く）。
 
+**実施（2026-10-25）**: オーナーの承認を受けて、上の変えた案のとおりに直した。凍結した backup-log-old2.md の中の出来事を指していた参照（検証記録の振り直しの注記と、design-recording-renumber.md・design-records-automation.md）は、出来事のある凍結した文書へ向け直した。
+
 ## 3. `records:minimal` を閉じる道具に入れる
 
 **いま**

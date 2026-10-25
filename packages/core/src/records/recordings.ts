@@ -88,6 +88,20 @@ type RecordingConditions = {
   conditionNote: string;
 };
 
+/** Drive に置いた経路（plan/design-workflow-simplification.md 2 節）: E: から上げた・Drive の中で record の写しからコピーした・
+ * クラウドで record から移した・クラウドで record からコピーして元をごみ箱へ移した */
+export const BACKUP_VIAS = ['upload', 'drive-copy', 'cloud-move', 'cloud-copy'] as const;
+export type BackupVia = (typeof BACKUP_VIAS)[number];
+
+/** intake.ts が録画を Drive に置き、ハッシュが一致した記録 */
+export type RecordingBackup = {
+  /** 置いた日時（日本の時刻。例: 2026-10-25T00:31+09:00） */
+  at: string;
+  via: BackupVia;
+  /** 一致したハッシュ（Drive が SHA256 を持っていなければ md5） */
+  matched: 'sha256' | 'md5';
+};
+
 /** このプロジェクトが採用した録画（E:/nikke_project_captures/<folder>/） */
 export type ProjectRecording = RecordingConditions & {
   /** 3 桁の通し番号 */
@@ -103,6 +117,11 @@ export type ProjectRecording = RecordingConditions & {
   sizeMB: number;
   /** sha256 の先頭 12 桁 */
   sha256: string;
+  /**
+   * Drive に置いた記録（2026-10-25 から intake.ts が書く）。無ければ intake.ts は置けたと確かめていない（それより前の録画と手で
+   * 同期した録画は plan/captures/backup-log.md・backup-log-old2.md・backup-log-old.md）
+   */
+  backup?: RecordingBackup;
 };
 
 /** 旧プロジェクトの録画（置き場所は旧のまま。番号は L-<旧のタグ>） */
@@ -130,6 +149,16 @@ export function sortRecordings(entries: readonly RecordingEntry[]): RecordingEnt
   return [...project, ...legacy];
 }
 
+function validateBackup(backup: RecordingBackup, at: string): string[] {
+  const errors: string[] = [];
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}\+09:00$/.test(backup.at))
+    errors.push(`${at}: backup.at は日本の時刻（YYYY-MM-DDTHH:MM+09:00）`);
+  if (!BACKUP_VIAS.includes(backup.via)) errors.push(`${at}: backup.via が語彙に無い: ${backup.via}`);
+  if (backup.matched !== 'sha256' && backup.matched !== 'md5')
+    errors.push(`${at}: backup.matched は sha256 か md5: ${backup.matched}`);
+  return errors;
+}
+
 /** 検証。問題があれば 1 件 1 行で返す（空なら問題なし） */
 export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<number>): string[] {
   const errors: string[] = [];
@@ -152,6 +181,7 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
         if (Number(m[4]) !== number) errors.push(`${at}: file の番号と id が違う`);
       }
       if (!/^[0-9a-f]{12}$/.test(entry.sha256)) errors.push(`${at}: sha256 は先頭 12 桁の 16 進`);
+      if (entry.backup !== undefined) errors.push(...validateBackup(entry.backup, at));
     }
     if (entry.mode !== null && !RECORDING_MODES.includes(entry.mode))
       errors.push(`${at}: mode が語彙に無い: ${entry.mode}`);

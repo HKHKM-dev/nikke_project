@@ -9,7 +9,8 @@
 // （plan/captures/storage.md「バックアップ」。plan/design-cloud-environment.md 4.4 節）。取り込み元の写しが Drive の
 // 「マイ コンピュータ/record」にあれば（Drive for desktop が上げている。フォルダ ID は NIKKE_DRIVE_RECORD_FOLDER_ID）、Drive の中で
 // コピーして上げ直さない。無ければ E: から上げる。rclone の準備が無い環境・--no-backup では置かない（クラウド環境は下の drive: で取り込む）。
-// 置けなかったら終了コード 1。置けたら plan/captures/backup-log.md に 1 行足す（sha256 の値は JSON にあるので書かない）。
+// 置けなかったら終了コード 1。置けたら録画の JSON に backup（日時・経路・一致したハッシュ）を書き足す（backup-log.md には書かない。
+// plan/design-workflow-simplification.md 2 節）。JSON は置く前に書くので、backup の無い JSON は置けたと確かめていない。
 // クラウド環境では、元ファイルを drive:<record の中の相対パス> で指す（plan/design-cloud-environment.md 6.3 節）。サービスアカウントで
 // record から取り寄せ（Drive の sha256 と突き合わせる）、受け口の move で種別フォルダへ規約名で移す（移せなければコピーと元のごみ箱への
 // 移動）。PC を付けると Drive for desktop が H:/record の写しを消し、bisync が E: に降ろす。--copy は使えない。record の一覧は --list-record。
@@ -17,7 +18,6 @@
 // 取り込んだ後は npm run records:table（台帳の表）と、キャラの確かめに node tools/captures/probe-result.ts <動画> --list。
 import { createHash } from 'node:crypto';
 import {
-  appendFileSync,
   copyFileSync,
   createReadStream,
   existsSync,
@@ -34,9 +34,11 @@ import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import {
+  type BackupVia,
   RECORDING_FOLDERS,
   RECORDING_MODES,
   type ProjectRecording,
+  type RecordingBackup,
   type RecordingFolder,
   type RecordingMode,
 } from '../../packages/core/src/records/recordings.ts';
@@ -338,11 +340,9 @@ async function moveInDrive(): Promise<boolean> {
   }
   try {
     const r = await move('record', fromDrive!, `${folder}/${file}`);
-    const how =
-      r.how === 'move' ? 'クラウドで record から移した' : 'クラウドで record からコピーし、元をごみ箱へ移した';
-    console.log(`${remoteFile} に置いた（${how}。${matched} が一致）`);
-    appendBackupLog(how, matched, 'record の写しと Drive');
-    return true;
+    return r.how === 'move'
+      ? placed('クラウドで record から移した', 'cloud-move', matched)
+      : placed('クラウドで record からコピーし、元をごみ箱へ移した', 'cloud-copy', matched);
   } catch (e) {
     console.error(`Drive の中で移せなかった: ${(e as Error).message}`);
     return false;
@@ -362,7 +362,7 @@ async function syncToDrive(): Promise<boolean> {
       // E: の更新時刻を Drive の写しにそろえ、次の同期で同じファイルと見なさせる（上げ直さない）
       const copied = lsjson(remoteFile)?.[0];
       if (copied !== undefined) utimesSync(dest, new Date(), new Date(copied.ModTime));
-      return placed('Drive の中で取り込み元の写しからコピーした', matched);
+      return placed('Drive の中で取り込み元の写しからコピーした', 'drive-copy', matched);
     }
     console.error('Drive の中のコピーが E: と違うので、E: から上げ直す');
   }
@@ -372,35 +372,18 @@ async function syncToDrive(): Promise<boolean> {
     return false;
   }
   const matched = await verifyDrive();
-  return matched !== null && placed('E: から上げた', matched);
+  return matched !== null && placed('E: から上げた', 'upload', matched);
 }
 
-function placed(how: string, matched: 'sha256' | 'md5'): true {
+// 置けたら録画の JSON に backup を書き足す（plan/design-workflow-simplification.md 2 節。backup-log.md には書かない）
+function placed(how: string, via: BackupVia, matched: RecordingBackup['matched']): true {
   console.log(`${remoteFile} に置いた（${how}。${matched} が一致）`);
-  appendBackupLog(how, matched);
-  return true;
-}
-
-// backup-log.md に 1 行足す（日付・足したもの・ハッシュの突き合わせの結果。backup-log.md の冒頭の決まり）
-function appendBackupLog(how: string, matched: 'sha256' | 'md5', compared = 'E: と Drive'): void {
-  const logPath = `${ROOT}plan/captures/backup-log.md`;
-  if (!existsSync(logPath)) {
-    console.error(`${logPath} が無いので、同期の記録は足していない`);
-    return;
-  }
-  // 日本の時刻で書く（クラウドの時計は UTC。これまでの行も日本の時刻）
+  // 日本の時刻で書く（クラウドの時計は UTC）
   const now = new Date(Date.now() + 9 * 3600 * 1000);
-  const pad = (n: number) => String(n).padStart(2, '0');
-  const stamp = `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())} ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}`;
-  const team =
-    entry.team.length === 0
-      ? ''
-      : `（${entry.team.map((m) => m.name).join(' + ')}${entry.team.length === 1 ? '単騎' : ''}）`;
-  // 1 行の書式（2026-10-11。plan/design-investigation-review.md 7.3 節）。sha256 の値は records/recordings/<録画 id>.json にある
-  const origin = values.copy ? ' 取り込み元の元ファイルは残した（`--copy`）。' : '';
-  const line = `- ${stamp} 録画 ${values.id}${team}: \`${folder}/${file}\` を Drive に置いた（${how}。${compared} で ${matched} が一致）。${origin}`;
-  appendFileSync(logPath, `${line}\n`);
-  console.log(`${logPath} に同期の記録を足した`);
+  entry.backup = { at: `${now.toISOString().slice(0, 16)}+09:00`, via, matched };
+  writeFileSync(recordPath, `${JSON.stringify(entry, null, 2)}\n`);
+  console.log(`${recordPath} に Drive に置いた記録（backup）を書いた`);
+  return true;
 }
 
 if (!(await syncToDrive())) {
