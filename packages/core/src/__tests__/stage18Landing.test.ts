@@ -562,6 +562,31 @@ describe('編成（自動の条件）', () => {
     expect(withCube.hitRate).toBeLessThan(1);
   });
 
+  it('says where hit rate up changes bullet hit rate from the same judge as the model (SG: by whether the plan has near)', () => {
+    const note = (c: CharacterData, events: boolean) =>
+      computeTeamDamage(input([slot(c, true)], enemy({ events }))).slots[0]!.notes.find(
+        (x) => x.code === 'auto-condition',
+      )!.message;
+    // 3 分のモードは近を含む。無ければ初期位置（中近）だけ
+    const withNear = note(SG, true);
+    expect(withNear.ja).toContain('C-0631');
+    expect(withNear.en).toContain('C-0631');
+    expect(withNear.ja).not.toContain('C-0192');
+    const midNearOnly = note(SG, false);
+    expect(midNearOnly.ja).toContain('命中率▲は弾丸命中率に効かせていない（未実装');
+    expect(midNearOnly.ja).toContain('近の着地点が無い');
+    expect(midNearOnly.ja).toContain('C-0527');
+    expect(midNearOnly.en).toContain('C-0527');
+    expect(midNearOnly.ja).not.toContain('C-0631');
+    expect(midNearOnly.en).not.toContain('C-0631');
+    // AR・SMG・MG はどの着地点にも効かせる。SR・RL は効かせない
+    for (const events of [true, false]) {
+      expect(note(AR, events).ja).toContain('C-0192');
+      expect(note(SR, events).ja).toContain('命中率▲は弾丸命中率に効かせていない（未実装）');
+      expect(note(SR, events).ja).not.toContain('C-0527');
+    }
+  });
+
   it('writes the notes: table, mix, unmeasured cells, RL/SR first shot, MG spin-up, and unmeasured landings', () => {
     const codes = (c: CharacterData, duration = 180, target = profile) =>
       computeTeamDamage({

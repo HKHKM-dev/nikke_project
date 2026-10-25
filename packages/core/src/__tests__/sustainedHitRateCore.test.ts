@@ -137,6 +137,7 @@ describe('持続の命中率▲（C-0170）', () => {
     const drake = calc.slots[1]!.notes.find((x) => x.code === 'auto-condition')!;
     expect(drake.message.ja).toContain('C-0631');
     expect(drake.message.ja).not.toContain('C-0192');
+    expect(drake.message.ja).not.toContain('近の着地点が無い');
   });
 
   it('keeps the plan value (constant N only) for the gauge of the first pass, and SG parts carry the table bullet hit rate at near only', () => {
