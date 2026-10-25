@@ -6,10 +6,7 @@
 // 台帳に書く前の裏取りに使う。戦闘中に ESC で出る「一時停止」と、戦闘終了後の
 // 「戦闘履歴」はレイアウトが同じで、画面上の位置もほぼ固定。
 //
-// 検出は 2 つの特徴の AND:
-//   1. 中央のカードが明るく、周囲が暗い（パネルが開くと背景が暗幕になる）
-//   2. カード上部に青いヘッダー帯がある（これが無いと射撃場の出撃画面を拾ってしまう）
-// 実測（録画 0004・0017・0021）では パネル 60〜87% に対し 出撃画面・戦闘中は 0〜24% と離れている。
+// 検出（暗幕 + 青いヘッダー帯の AND）は result-screen-lib.ts にあり、result-screen.ts（リザルト画面の読み取り）と共通。
 //
 // 切り出した画像の文字は OCR せず目視で読む。名前欄は長いと横スクロールで切れるので
 // （録画 0021 のクイーン（真）は「ーン（真）」しか写らないフレームがある）、
@@ -17,23 +14,21 @@
 import { mkdirSync } from 'node:fs';
 import { basename, extname, join } from 'node:path';
 import { parseArgs } from 'node:util';
-import { type Crop, ffprobe, parseCrop, rawFrames, writeStill } from './ffmpeg.ts';
+import { ffprobe, parseCrop, rawFrames, writeStill } from './ffmpeg.ts';
+import {
+  PANEL_CROP,
+  PANEL_DETECT,
+  PANEL_THRESHOLDS,
+  isPanel,
+  measurePanel,
+  runsOf,
+  scaleCrop,
+  type PanelFeatures,
+  type Run as Span,
+} from './result-screen-lib.ts';
 
-/** 判定用の縮小サイズ。パネルが開いているかが分かれば十分なので粗くてよい */
-const DETECT_W = 64;
-const DETECT_H = 36;
-
-/** パネル内部の白いカード（画面サイズに対する割合） */
-const CARD = { x0: 0.37, y0: 0.22, x1: 0.64, y1: 0.85 };
-/** パネル上部の青いヘッダー帯（画面サイズに対する割合） */
-const HEADER = { x0: 0.36, y0: 0.03, x1: 0.65, y1: 0.2 };
-
-/** 既定の切り出し範囲（1920×1080 基準）。一時停止・戦闘履歴のどちらも収まる */
-const DEFAULT_CROP: Crop = { x: 640, y: 40, w: 660, h: 990 };
-const DEFAULT_CROP_BASE = { width: 1920, height: 1080 };
-
-type Sample = { frame: number; contrast: number; blue: number };
-type Run = { from: number; to: number; contrast: number; blue: number };
+type Sample = { frame: number } & PanelFeatures;
+type Run = Span & PanelFeatures;
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -42,8 +37,8 @@ const { values, positionals } = parseArgs({
     'out-dir': { type: 'string', default: '.' },
     step: { type: 'string', default: '15' },
     samples: { type: 'string', default: '3' },
-    contrast: { type: 'string', default: '60' },
-    blue: { type: 'string', default: '40' },
+    contrast: { type: 'string', default: String(PANEL_THRESHOLDS.contrast) },
+    blue: { type: 'string', default: String(PANEL_THRESHOLDS.blue * 100) },
     crop: { type: 'string' },
     scale: { type: 'string', default: '900' },
   },
@@ -59,74 +54,29 @@ const sampleCount = Math.max(1, Number(values.samples));
 const contrastThreshold = Number(values.contrast);
 const blueThreshold = Number(values.blue) / 100;
 
-/** 縮小フレームを走査して、カードの明暗差と青ヘッダーの占有率を出す */
-function measure(frame: Buffer): { contrast: number; blue: number } {
-  const px = (v: number, n: number) => Math.round(v * n);
-  const card = { x0: px(CARD.x0, DETECT_W), x1: px(CARD.x1, DETECT_W), y0: px(CARD.y0, DETECT_H), y1: px(CARD.y1, DETECT_H) }; // prettier-ignore
-  const head = { x0: px(HEADER.x0, DETECT_W), x1: px(HEADER.x1, DETECT_W), y0: px(HEADER.y0, DETECT_H), y1: px(HEADER.y1, DETECT_H) }; // prettier-ignore
-
-  let inner = 0;
-  let innerCount = 0;
-  let outer = 0;
-  let outerCount = 0;
-  let blueHit = 0;
-  let blueCount = 0;
-  for (let y = 0; y < DETECT_H; y += 1) {
-    for (let x = 0; x < DETECT_W; x += 1) {
-      const offset = (y * DETECT_W + x) * 3;
-      const r = frame[offset]!;
-      const g = frame[offset + 1]!;
-      const b = frame[offset + 2]!;
-      const luma = (r * 299 + g * 587 + b * 114) / 1000;
-      if (x >= card.x0 && x < card.x1 && y >= card.y0 && y < card.y1) {
-        inner += luma;
-        innerCount += 1;
-      } else {
-        outer += luma;
-        outerCount += 1;
-      }
-      if (x >= head.x0 && x < head.x1 && y >= head.y0 && y < head.y1) {
-        blueCount += 1;
-        // NIKKE のパネルのヘッダーは彩度の高い青。背景の暗幕や白いカードとは離れている。
-        if (b > r + 40 && b > 110) blueHit += 1;
-      }
-    }
-  }
-  return { contrast: inner / innerCount - outer / outerCount, blue: blueHit / blueCount };
-}
-
 async function scan(video: string): Promise<Sample[]> {
-  const filters = [`select='not(mod(n,${step}))'`, `scale=${DETECT_W}:${DETECT_H}`, 'format=rgb24'];
+  const filters = [`select='not(mod(n,${step}))'`, `scale=${PANEL_DETECT.w}:${PANEL_DETECT.h}`, 'format=rgb24'];
   const args = ['-v', 'error', '-i', video, '-vf', filters.join(','), '-fps_mode', 'vfr', '-f', 'rawvideo', '-'];
   const samples: Sample[] = [];
   let index = 0;
-  for await (const frame of rawFrames(args, DETECT_W * DETECT_H * 3)) {
-    samples.push({ frame: index * step, ...measure(frame) });
+  for await (const frame of rawFrames(args, PANEL_DETECT.w * PANEL_DETECT.h * 3)) {
+    samples.push({ frame: index * step, ...measurePanel(frame) });
     index += 1;
   }
   return samples;
 }
 
-/** 閾値を超えたサンプルを、連続したものどうしでまとめる */
+/** 閾値を超えたサンプルの区間と、区間の中の特徴の最大 */
 function toRuns(samples: Sample[]): Run[] {
-  const runs: Run[] = [];
-  let current: Run | null = null;
-  for (const s of samples) {
-    const hit = s.contrast >= contrastThreshold && s.blue >= blueThreshold;
-    if (hit) {
-      if (current === null) current = { from: s.frame, to: s.frame, contrast: s.contrast, blue: s.blue };
-      else {
-        current.to = s.frame;
-        current.contrast = Math.max(current.contrast, s.contrast);
-        current.blue = Math.max(current.blue, s.blue);
-      }
-    } else if (current !== null) {
-      runs.push(current);
-      current = null;
-    }
-  }
-  if (current !== null) runs.push(current);
-  return runs;
+  const threshold = { contrast: contrastThreshold, blue: blueThreshold };
+  return runsOf(samples, (s) => isPanel(s, threshold)).map((r) => {
+    const inRun = samples.filter((s) => s.frame >= r.from && s.frame <= r.to);
+    return {
+      ...r,
+      contrast: Math.max(...inRun.map((s) => s.contrast)),
+      blue: Math.max(...inRun.map((s) => s.blue)),
+    };
+  });
 }
 
 /**
@@ -136,17 +86,6 @@ function toRuns(samples: Sample[]): Run[] {
 function pickFrames(run: Run): number[] {
   const length = run.to - run.from;
   return Array.from({ length: sampleCount }, (_, i) => run.from + Math.round((length * (i + 1)) / (sampleCount + 1)));
-}
-
-function scaledDefaultCrop(width: number, height: number): Crop {
-  const sx = width / DEFAULT_CROP_BASE.width;
-  const sy = height / DEFAULT_CROP_BASE.height;
-  return {
-    x: Math.round(DEFAULT_CROP.x * sx),
-    y: Math.round(DEFAULT_CROP.y * sy),
-    w: Math.round(DEFAULT_CROP.w * sx),
-    h: Math.round(DEFAULT_CROP.h * sy),
-  };
 }
 
 for (const video of positionals) {
@@ -169,7 +108,7 @@ for (const video of positionals) {
     continue;
   }
 
-  const crop = values.crop ? parseCrop(values.crop) : scaledDefaultCrop(probe.width, probe.height);
+  const crop = values.crop ? parseCrop(values.crop) : scaleCrop(PANEL_CROP, probe.width, probe.height);
   if (!values.list) mkdirSync(values['out-dir'], { recursive: true });
 
   for (const [i, run] of runs.entries()) {

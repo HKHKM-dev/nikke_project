@@ -303,6 +303,10 @@ const missing = [
 ];
 if (missing.length > 0) console.log(`人が埋める項目: ${missing.join('、')}`);
 console.log(`次: npm run records:table、キャラの確かめは node tools/captures/probe-result.ts "${dest}" --list`);
+if (folder === 'interception')
+  console.log(
+    `リザルト画面の読み取りは、読む検証を起案してから node tools/captures/result-screen.ts cut ${values.id}（plan/design-result-screen.md）`,
+  );
 
 async function md5(path: string): Promise<string> {
   const hash = createHash('md5');

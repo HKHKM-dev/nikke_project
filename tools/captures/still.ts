@@ -5,12 +5,10 @@
 // 証拠フレームの置き場所（<録画の置き場所>/frames/）に切り出したら、Drive の nikke_project_captures/frames/ にも上げる
 // （道具の終わりの同期。plan/design-cloud-environment.md 4.2 節）。上げられなくても切り出しは済んでいて、次の同期で上がる。
 import { mkdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname } from 'node:path';
 import { parseArgs } from 'node:util';
-import { driveCaptures, driveUnavailable, rclone } from '../drive/rclone.ts';
-import { relUnder } from '../drive/sync-lib.ts';
-import { capturesDir } from './dirs.ts';
 import { parseCrop, writeStill } from './ffmpeg.ts';
+import { uploadFrame } from './frames-upload.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -35,16 +33,4 @@ writeStill(video, Number(values.frame), values.out, {
   scale: values.scale ? Number(values.scale) : undefined,
 });
 
-const rel = relUnder(join(capturesDir(), 'frames'), values.out);
-if (rel !== null) {
-  const skip = driveUnavailable();
-  if (skip !== null) console.log(`Drive には上げていない（${skip}）`);
-  else {
-    const r = rclone(['copyto', values.out, `${driveCaptures()}/frames/${rel}`]);
-    console.log(
-      r.status === 0
-        ? `Drive の frames/${rel} にも上げた`
-        : `注意: Drive に上げられなかった（次の npm run drive:sync で上がる）: ${r.stderr.trim()}`,
-    );
-  }
-}
+uploadFrame(values.out);
