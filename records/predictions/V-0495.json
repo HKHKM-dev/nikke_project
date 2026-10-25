@@ -1,0 +1,58 @@
+{
+  "verification": "V-0495",
+  "note": "撮る前の予測。H1 は遠の帯の値を condition manual の coreHitRate で一様に置き換える形でしか書けないので、ar-far-core だけで比べる（V-0491 と同じ書き方）。指標の値は 1 本ごとの予測で、判定は撮った本数を合わせた率で行う（検証記録の「読み方」3）。許容の幅（tolerance）は、計画の本数（14 本。遠のヒット約 5,320）を合わせたときの H0 と H1 の 2σ の和に、V-0491 の 9 本の録画ごとのばらつきの倍率 1.26 を掛けたもの（H0 0.0088・H1 0.0078）",
+  "team": [
+    {
+      "rid": 308,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "的の表のとおり（C-0633。range-bigarms の AR の遠の帯の値 0.0704）"
+    },
+    {
+      "id": "H1",
+      "note": "V-0423 の 3 本の値（`423-14`。録画 423〜425）",
+      "override": {
+        "condition": "manual",
+        "coreHitRate": 0.0535
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "ar-far-core",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "note": "判定の指標。I-DOLL・サン（AR）単騎の遠（3・6 区間目）のコア命中率（区間の頭を除かない全部のヒット）。14 本を合わせた率で判定する",
+      "tolerance": {
+        "abs": 0.0166
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-25",
+    "commit": "d893f82b96343488549d0c2d85f4a4494d201f29",
+    "values": {
+      "H0": {
+        "ar-far-core": 0.0704
+      },
+      "H1": {
+        "ar-far-core": 0.0535
+      }
+    }
+  }
+}
