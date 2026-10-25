@@ -175,6 +175,21 @@
 - クラウドの環境のセットアップスクリプトに `npm ci` を足す（Node 24 を選べるならそれも）。オーナーが環境の設定で行う。
 - 手引き（storage.md の準備の 3、cloud-guide.md「困ったとき」）に 1 行ずつ足す。セットアップスクリプトに足せないなら、SessionStart のフックで「クラウドで `node_modules` が無ければ `npm ci`」を回す形にする（フックは待ち時間が延びるので、スクリプトの方を推す）。
 
+**判断（2026-10-25）**
+
+案の向き（クラウドで `npm ci`）は要る。ただし手当てはセットアップスクリプトではなく、SessionStart のフックに変える。Node 24 は入れない。クラウドのセッションで次を確かめた。
+
+- 必要性: このセッションでも `node_modules` は無く、Node は v22.22.0。`npm ci` なしでは、`format:check` は全体の prettier（3.8.1）で 3 ファイルに警告を出し、`lint`・`typecheck`・`build` は依存が無くて止まり、`test` は `vitest` が無くて止まる。`records:check` を回すと、手を入れていない検証記録と residuals.md に書式の差分が出た（見直しと同じ。捨てた）。`tools/format-retry.ts` の `require.resolve` も `npx prettier` も、`node_modules` が無いと `NODE_PATH` の全体の prettier に落ちるため。`npm ci` の後は、Node 22 のまま CI と同じ 5 つの確認が全部通り、`records:check` の差分も出なかった。Node 24 からの API は使っていない。
+- (a) セットアップスクリプト: スクリプトが走るのはキャッシュを作るときだけで（初回・スクリプトか通信の許可を変えたとき・約 7 日ごと）、ほかのセッションはファイルシステムのスナップショットから始まる（Claude Code の手引き「Configure cloud environments › Environment caching」）。lockfile が変わっても入れ直されないので、古さの確かめが別に要る。オーナーの手作業も要る。
+- (b) SessionStart のフック: 始めと再開のたびに走るので、lockfile が変わっても追いつく。`package-lock.json` の sha256 を `node_modules` に控えて、同じなら何もしない。`npm ci` は npm のキャッシュが温かいとき 3.7 秒、空のとき 4.6 秒だった。同じイベントのフックは並んで走る（Claude Code の手引き「Hooks」）ので、始めの待ち時間は `cloud-sync.ts --pull` と長い方になる。手引き（同「Install dependencies with a SessionStart hook」）が勧める形でもある。
+- (c) 道具がプロジェクトの prettier を必ず使う: 書式の差分にしか効かず、`npm test` などは回らないまま。(b) で `node_modules` があれば、`npx` も `require.resolve` もプロジェクトの版を引くので重なる。
+- Node 24: クラウドに入っているのは 20・21・22 だけ（同「Installed tools」）。セットアップスクリプトで入れることはできるが、Node 22 で全部通り、版の違いは CI（`.nvmrc` の 24）が見るので、入れない。
+
+決めた形:
+
+- `tools/cloud/npm-ci.ts` を SessionStart のフックに足す。`CLAUDE_CODE_REMOTE=true` のときだけ動き、`package-lock.json` の sha256 が `node_modules/.npm-ci.sha256` と違うか無いときに `npm ci` を回し、通ったら控えを書く。失敗しても終了コード 0 で、失敗したことをフックの出力に出す（セッションの中で手で `npm ci` する）。
+- セットアップスクリプトは ffmpeg だけのまま。storage.md の準備の 3 に「`npm ci` は始めのフックが回すので足さない」、cloud-guide.md の「始め方」と「困ったとき」に 1 行ずつ足す。
+
 ## 6. 使われていないレシピ `charge-shots`
 
 **いま**

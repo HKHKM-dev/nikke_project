@@ -17,7 +17,7 @@
 ## クラウドのセッションの始め方
 
 1. スマホか MacBook の Claude アプリ（または claude.ai/code）で、このリポジトリのクラウドのセッションを始める（環境は「デフォルト」）。
-2. 始めのフック（`tools/drive/cloud-sync.ts --pull`）が、Drive から `private/`・`scratch/`・メモリ・全体の CLAUDE.md を取って置く。最初の応答はこれを待つ。
+2. 始めのフック（`tools/drive/cloud-sync.ts --pull`）が、Drive から `private/`・`scratch/`・メモリ・全体の CLAUDE.md を取って置く。最初の応答はこれを待つ。並んで走る `tools/cloud/npm-ci.ts` が、`node_modules` が無いか `package-lock.json` と合わなければ `npm ci` を回す（数秒）。
 3. 応答の終わりのフック（`--push`）が、直したもの・増やしたもの・消したものを Drive に戻す（衝突は下）。デスクトップには、次のデスクトップのセッションの始めの同期で届く。
 
 クラウドでは自動メモリが使えないので、メモリは `~/.claude/CLAUDE.md` に書かれた決まりで読み書きする（同じ形式。設計書 6.1 節）。
@@ -63,4 +63,5 @@ PC が使えないときに撮った録画は、Drive for desktop が「マイ �
 - クラウドで「Drive との往復に失敗した」と出る: 受け口の URL・合言葉・通信の許可を確かめる。デスクトップで `npm run drive:gateway-check` が通るかを見る。
 - クラウドで Claude が自分で打つ curl などは、auto mode の判定で止まることがある。同期はフックで行うので、この判定は受けない。
 - クラウドでは `gh` のトークンが使えない（2026-10-23 の通しの試験）。PR は GitHub の MCP の道具で出す（作成と自動マージの予約）。
-- クラウドの Node は 22（リポジトリの `.nvmrc` は 24）。
+- クラウドの Node は 22（リポジトリの `.nvmrc` は 24）。CI と同じ確認は 22 でも通る（`npm ci` の EBADENGINE の警告は出る）。
+- 「npm ci が失敗した」と出たか、セッションの途中でブランチを替えて `package-lock.json` が変わった: セッションの中で `npm ci` を回す。`node_modules` が無いまま生成の道具を回すと、全体の別の版の prettier が整形し、手を入れていないファイルに書式の差分が出る。
