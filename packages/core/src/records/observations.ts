@@ -446,6 +446,20 @@ function cycleWindowResidues(result: SimResult, ctx: MetricContext): number[] {
   return out;
 }
 
+/** 雪子編（V-0501）: 枠が出した回復のフレーム（同じフレームの対象ごとの記録・ほかの効果の回復は 1 つにまとめる）の昇順 */
+function healFramesOf(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const frames = result.history.heals.filter((h) => h.sourceSlotIndex === slotIndex).map((h) => h.frame);
+  return [...new Set(frames)].sort((a, b) => a - b);
+}
+
+/** 雪子編（V-0501）: 枠が出した n 回目（0 始まり）の回復のフレームを、動画のフレームにする */
+function healVideoFrame(result: SimResult, ctx: MetricContext): number {
+  const frame = healFramesOf(result, ctx)[Number(ctx.args.n)];
+  if (frame === undefined) throw new Error(`枠 ${String(ctx.args.slot)} の ${String(ctx.args.n)} 回目の回復が無い`);
+  return videoFrameOf(result.schedule, frame);
+}
+
 /**
  * クラウン編（V-0178）: その枠が出した回復（heal）ごとに、前の回復（初回は戦闘の始め）からその回復までに撃った通常攻撃の
  * 当たる数の期待値（発ごとの区間の弾丸命中率の和）。録画の総ダメージの増分から数えたヒット数と比べる
@@ -1107,6 +1121,12 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
   healHitCounts: { args: ['slot'], sim: healHitCounts },
+  // 雪子編（V-0501）: 枠が出した n 回目（0 始まり）の回復の、録画の動画のフレーム（戦闘開始から。フルバーストの入りの止まりを足す）。
+  // 録画では、回復の数字が画面に出たフレームと比べる（戦闘開始時の回復の数字は開始の 2f 後に出る。`0476-12`）
+  healVideoFrame: { args: ['slot', 'n'], sim: healVideoFrame },
+  // 雪子編（V-0501）: 枠が出した回復のフレームの数（同じフレームの回復は 1 つ）。録画では、回復の数字が出たフレームの数と比べる
+  // （同じフレームに 2 つの回復が重なっても数字の出始めは 1 つ）
+  healFrameCount: { args: ['slot'], sim: (r, c) => healFramesOf(r, c).length },
   maxAmmoAt: { args: ['slot', 'frame'], sim: maxAmmoAt },
   // 2 段目の段 4（V-0435）: n 発目の最大装弾数と、弾丸チャージの発数
   maxAmmoAtShot: { args: ['slot', 'shot'], sim: maxAmmoAtShot },
