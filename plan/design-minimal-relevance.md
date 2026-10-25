@@ -256,7 +256,7 @@ O に `compare` が無いとき（`scope` を使う）と、E がモデルに無
 - **対象**: 確定の結論の根拠で sim と比べる観測値と、その録画の、根拠が確定でなく録画で起きうる定義の効果の組（結論の対象かどうかは結論ごとに違うので問わない）。notes・定義の無いキャラ・通常攻撃の条件は、静的な判定のまま。
 - **P+**: timed の効果のきっかけを `battleStart`、維持を比べる指定の戦闘の長さ（`durationSeconds`、省略は 180 秒）にし、ほかの維持の欄（`durationRef`・`durationShots` など）と `condition` を外す。passive は P− だけ（もともと常に効く）。
 - **計算できない形**: 外すと観測量そのものが無くなるもの（持続ダメージの tick やバーストのヒットを数える観測値で、その効果を外したとき）は、効きうるとみる（結果に `error` を残す）。
-- 計算は数秒で済む（同じ録画・同じ指定の sim を使い回す）。定義・録画・比べる指定を変えた PR では `npm run records:minimal` を回す（`records:check` まで回る）。
+- 計算は数秒で済む（同じ録画・同じ指定の sim を使い回す）。定義・録画・比べる指定を変えた PR では `npm run records:minimal` を回す（`records:check` まで回る）。2026-10-25 から、検証の PR では `records:close` が回し、鍵の合わない結果が残ると `npm test` が落ちる（[design-workflow-simplification.md](design-workflow-simplification.md) 3 節）。
 
 ### 10.7 PR 5: records:new・records:close への組み込み（2026-10-08）
 

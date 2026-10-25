@@ -67,7 +67,7 @@
 ## 7. 比べる
 
 - `npm run records:check` で、残差の一覧（[residuals.md](residuals.md)）・結論の一覧（[claims.md](claims.md)）・検証記録の一覧（[verifications.md](verifications.md)。予測ファイルがあれば「予測との比べ」）・対応状況（[skills.md](skills.md)）・最小構成の検査（[minimal.md](minimal.md)）を作り直す。
-- スキル定義・録画の台帳・観測値の比べる指定（と、結論の状態・`edge`）を変えたら、`npm run records:minimal` で感度を計算し直す（[design-minimal-relevance.md](design-minimal-relevance.md) 10.6 節）。
+- 最小構成の検査の感度（`npm run records:minimal`）は、閉じるとき（9 節）に `records:close` が計算し直す。それより前に見たいときは手で回す（[AGENTS.md](../AGENTS.md) の最小構成の検査の段落）。
 - 合わないときは、まず読み取りと条件を疑う。機構の話にするのは、未確定の要素を 1 つにした編成で切り分けてから。残差を係数で埋めない（AGENTS.md）。
 
 ## 8. 結論

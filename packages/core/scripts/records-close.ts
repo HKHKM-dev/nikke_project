@@ -3,8 +3,8 @@
 // 完了にできるかを検査する（結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない（上なら gradeReason に理由）・
 // 確定の反復実測の結論に decidedOn がある・最小構成の警告・指標なし・許容外・合う仮説が 2 つ以上は人の判断（judgment）で上書き・
 // 確定の結論の根拠の観測値のうち compare の無いものに scope がある・「次に撮るもの」「分かったこと」が空でない）。撮る前の予測と読みの順は
-// 見ない（plan/design-investigation-review.md 1 節）。通れば --mark で状態を完了に書き換え、records:check と CI と同じ確認を回し
-// （--no-ci で省く）、PR の題名の案を出す。roadmap.md の更新（項目の状態が変わったときだけ）と PR は人（エージェント）が行う。
+// 見ない（plan/design-investigation-review.md 1 節）。通れば --mark で状態を完了に書き換え、records:minimal（感度を計算し直し、records:check も回る）と
+// CI と同じ確認（--no-ci で省く）を回し、PR の題名の案を出す。roadmap.md の更新（項目の状態が変わったときだけ）と PR は人（エージェント）が行う。
 import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
@@ -118,7 +118,7 @@ const run = (cmd: string): void => {
     process.exit(1);
   }
 };
-run('npm run records:check');
+run('npm run records:minimal');
 if (!values['no-ci']) {
   for (const cmd of ['npm run format:check', 'npm run lint', 'npm run typecheck', 'npm test', 'npm run build'])
     run(cmd);
