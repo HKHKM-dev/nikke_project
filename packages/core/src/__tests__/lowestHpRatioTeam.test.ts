@@ -100,7 +100,7 @@ describe('lowestHpRatio の読み込み', () => {
       target: 'lowestHpRatio',
       targetCountRef: 6,
       ref: 7,
-      claims: ['C-0567', 'C-0180'],
+      claims: ['C-0567', 'C-0180', 'C-0652'],
     });
     expect(s1.notes).toBeUndefined();
     expect(s1.support).toBe('supported');
