@@ -1,0 +1,40 @@
+{
+  "id": "0661",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0661_sg+mg_naga+emma_emma-control-back-1.mp4",
+  "original": "2026-10-26_00-37-56.mp4",
+  "durationSec": 436.1,
+  "frames": 26164,
+  "fps": 60,
+  "sizeMB": 524.1,
+  "sha256": "b111fc257363",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 450,
+      "name": "ナガ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 90,
+      "name": "エマ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0500（S-C）。ナガ（1 枠目・AI）→ エマ（2 枠目・操作）。V-0489 の録画 0581・0582 の枠順を入れ替えたもの。戦闘の後もリザルト画面のまま約 4 分撮り続けている",
+  "backup": {
+    "at": "2026-10-26T00:50+09:00",
+    "via": "drive-copy",
+    "matched": "sha256"
+  }
+}

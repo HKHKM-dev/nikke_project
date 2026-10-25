@@ -41,13 +41,15 @@
           "stat": "coreDamage",
           "ref": 3,
           "durationRef": 4,
+          "delayFrames": 6,
           "assumes": {
             "ja": "「通常攻撃で 5 回攻撃した時」は撃った発の通算（1 トリガー = 1 回。ペレットの数ではない。ドレイクの S2 の C-0458 と同じ読み）で数え、5 発ごとに発火して 5 秒を数え直す（重ならない）。「攻撃力が最も高い味方」は最終攻撃力の順位（topAttack）で読む。2 機なので、2 人以下の編成では順位に依らず全員に付く",
             "en": "\"After performing 5 normal attacks\" counts every normal shot fired (one trigger = one attack, not pellets; read as for Drake's S2, C-0458); each 5th shot fires it and restarts the 5 s (no stacking). \"The ally with the highest ATK\" is read as the final ATK ranking (topAttack). With 2 targets, every member of a team of 2 or fewer gets it regardless of ranking"
           },
           "claims": [
             "C-0592",
-            "C-0593"
+            "C-0593",
+            "C-0653"
           ]
         }
       ],

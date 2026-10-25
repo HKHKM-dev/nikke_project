@@ -344,7 +344,7 @@ notes の種類: 未対応 111・前提の外 27・計算に無関係 28・補�
 ## 225 紅蓮：ブラックシャドウ
 
 - **skill1**: supported
-  - effects[0] cycle・fullChargeShot: C-0047（確定）、C-0085（確定）
+  - effects[0] cycle・fullChargeShot: C-0047（確定）、C-0085（確定）、C-0651（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・maxAmmo: C-0490（確定）
   - effects[1] ammoRefill・fullBurstStart: C-0490（確定）
@@ -552,7 +552,7 @@ notes の種類: 未対応 111・前提の外 27・計算に無関係 28・補�
 ## 305 I-DOLL・オーシャン
 
 - **skill1**: supported
-  - effects[0] heal・lastShot: C-0591（確定）、C-0254（確定）
+  - effects[0] heal・lastShot: C-0591（確定）、C-0254（確定）、C-0650（仮説）
 - **skill2**: supported
   - effects[0] heal・15 秒ごと: C-0591（確定）、C-0254（確定）
 - **burst**: supported
@@ -672,7 +672,7 @@ notes の種類: 未対応 111・前提の外 27・計算に無関係 28・補�
   - notes[0] 間接（遮蔽物）: 通常攻撃 12 回ごとの味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）: 根拠なし
   - notes[1] 未対応（読む: バリア）: バリア適用時の味方全体のコアダメージ▲（10 秒）は未対応（撮っていない。ナガの前にバリアが張られる編成でだけ起きる）: 根拠なし
 - **skill2**: partial
-  - effects[0] timed・normalShot・coreDamage: C-0592（確定）、C-0593（確定）
+  - effects[0] timed・normalShot・coreDamage: C-0592（確定）、C-0593（確定）、C-0653（確定）
   - notes[0] 未対応: 通常攻撃 5 回ごとの、残りの HP の割合が最も低い味方 2 機への回復（スキル発動者の最終最大HP 基準）は未対応（撮っていない。回復を受けた時の効果を起こさない。回復量はダメージに関係しない）: 根拠なし
 - **burst**: unsupported
   - notes[0] 間接（貫通）: 自分の貫通特化（10 秒）は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く）: 根拠なし
@@ -774,7 +774,7 @@ notes の種類: 未対応 111・前提の外 27・計算に無関係 28・補�
 
 - **skill1**: supported
   - effects[0] timed・normalShot・hitRate: C-0183（確定）、C-0184（仮説）
-  - effects[1] heal・normalShot: C-0567（確定）、C-0180（確定）
+  - effects[1] heal・normalShot: C-0567（確定）、C-0180（確定）、C-0652（確定）
 - **skill2**: noEffect
   - notes[0] 前提の外: 射撃マニュアル状態の間の味方全体のバリアに与えるダメージ▲は、バリアの無い敵（射撃場の的）では効かない: C-0180（確定）
   - notes[1] 間接（HP）: 射撃マニュアルのフルスタック状態の間の自分の与えるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: C-0180（確定）

@@ -643,6 +643,12 @@ export type TimedEffect = TargetCountFields &
      * 順位の対象には書けない
      */
     amplifies?: Amplifies;
+    /**
+     * 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 射撃の回数のきっかけで、窓をきっかけの射撃のフレームの
+     * delayFrames 後から始める（1 以上の整数。書かなければ次のフレームから）。測った遅れを即値で書き、根拠の結論を claims に結ぶ。
+     * 確率のきっかけ・付与には書けない
+     */
+    delayFrames?: number;
     /** 常に満たすとみなした条件。UI に「仮定」として出す */
     assumes?: LocalizedText;
   };
@@ -874,6 +880,11 @@ export type HealEffect = TargetCountFields &
     squad?: SquadCondition;
     /** F5（plan/design-heal-vocabulary.md 3.3 節）: 編成に特定のキャラがいる条件 */
     withCharacter?: WithCharacterCondition;
+    /**
+     * 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 射撃の回数のきっかけで、回復をきっかけの射撃のフレームの
+     * delayFrames 後のフレームの始めに起こす（1 以上の整数。どの枠にもそのフレームから効き、C-0628 の枠の順の規則は当てない）
+     */
+    delayFrames?: number;
     assumes?: LocalizedText;
   };
 
@@ -1090,8 +1101,10 @@ export type BurstGaugeHitEffect = {
   kind: 'burstGaugeHit';
   trigger: TimerTrigger | ShotCountTrigger;
   /**
-   * 周期のスキルのヒットのゲージ（C-0404・C-0409）: 発火のフレームの delayFrames 後に足す（1 以上の整数。時間の周期のトリガーだけ）。
-   * 同じスキルの倍率ダメージの delayFrames（C-0453）と揃える（plan/design-timer-ceil.md 7 節）
+   * 周期のスキルのヒットのゲージ（C-0404・C-0409）: 発火のフレームの delayFrames 後に足す（1 以上の整数）。
+   * 同じスキルの倍率ダメージの delayFrames（C-0453）と揃える（plan/design-timer-ceil.md 7 節）。
+   * 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 射撃の回数のトリガーにも書け、発火した射撃のフレームの
+   * delayFrames 後のゲージに足す（モラン S2 の挑発。C-0480）
    */
   delayFrames?: number;
   assumes?: LocalizedText;
@@ -1749,6 +1762,17 @@ function parsePositiveInt(v: Json, path: string): number {
 }
 
 /**
+ * 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: timed・heal の delayFrames。射撃の回数のきっかけ
+ * （確率のきっかけを除く）だけに書ける
+ */
+function parseShotCountDelay(v: Json, trigger: EffectTrigger, path: string): number {
+  if (!isShotCountTrigger(trigger) || isChanceTrigger(trigger)) {
+    fail(path, 'delayFrames needs a shot count trigger ({ count }) without a chance');
+  }
+  return parsePositiveInt(v, path);
+}
+
+/**
  * 文字列なら BuffTrigger、オブジェクトなら回数トリガー。時間の周期のトリガー（{ everySeconds }）は allowTimer のとき
  * （damage・dot・autoAttack・burstGaugeHit・timed・heal）だけ
  */
@@ -2018,6 +2042,11 @@ function parseTimedFields(
     if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
+  }
+  // 回数トリガーの遅れ編: 付与（stat が undefined）には書けない（付与の欄の一覧に無い）。確率のきっかけの検査より先に見る
+  if (v.delayFrames !== undefined) {
+    if (stat === undefined) fail(`${path}.delayFrames`, 'delayFrames cannot be used in a state grant');
+    effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
   }
   if (stat !== undefined) {
     validateFixedChargeTime({ kind: 'timed', ...effect, stat }, path);
@@ -2732,8 +2761,8 @@ function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstG
   }
   const effect: BurstGaugeHitEffect = { kind: 'burstGaugeHit', trigger };
   if (v.delayFrames !== undefined) {
-    // 周期のスキルのヒットのゲージは、ヒットのフレームで溜まる（C-0404・C-0409 の HUD の読み。plan/design-timer-ceil.md 7 節）
-    if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames needs a timer trigger ({ everySeconds })');
+    // 周期のスキルのヒットのゲージは、ヒットのフレームで溜まる（C-0404・C-0409 の HUD の読み。plan/design-timer-ceil.md 7 節）。
+    // 回数トリガーの遅れ編: 射撃の回数のトリガーは、発火した射撃の後に遅れて溜まる（モラン S2 の挑発。C-0480）。上で両方に限ってある
     const d = v.delayFrames;
     if (typeof d !== 'number' || !Number.isInteger(d) || d < 1) {
       fail(`${path}.delayFrames`, `expected a positive integer, got ${JSON.stringify(d)}`);
@@ -2769,8 +2798,8 @@ function parseAllyGaugeAddEffect(v: Record<string, Json>, path: string): AllyGau
 }
 
 function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
-  // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）
-  const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds'] : [];
+  // 維持時間は heal だけ（plan/design-heal-window.md 1.1 節）。回数トリガーの遅れ編: delayFrames も heal だけ
+  const durationKeys = kind === 'heal' ? ['durationRef', 'durationSeconds', 'delayFrames'] : [];
   // 編成の条件は cooldownReduction と heal（回復の語彙編。plan/design-heal-vocabulary.md 2.1 節）。heal は withCharacter も（F5。3.3 節）
   const compositionKeys =
     kind === 'cooldownReduction'
@@ -2849,6 +2878,10 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   if (v.scaling !== undefined) {
     if (v.scaling !== 'flat') fail(`${path}.scaling`, `ammoRefill only takes "flat", got ${JSON.stringify(v.scaling)}`);
     (effect as AmmoRefillEffect).scaling = 'flat';
+  }
+  // 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: heal だけ（欄の一覧で弾いてある）
+  if (v.delayFrames !== undefined) {
+    (effect as HealEffect).delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

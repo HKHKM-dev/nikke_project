@@ -53,7 +53,8 @@ describe('モラン（281）', () => {
     expect(def.skills.skill2).toMatchObject({ support: 'supported', effects: [expect.objectContaining(GAUGE)] });
     expect(def.skills.burst).toMatchObject({ support: 'unsupported', effects: [] });
     expect(def.treasureSkills?.skill2).toMatchObject({ support: 'partial', effects: [expect.objectContaining(GAUGE)] });
-    expect(resolveShotGauges(def, moran, MAX_SKILL_LEVELS)).toEqual([{ count: 'lastShot', every: 1 }]);
+    // 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 撃った 6f 後に溜まる（C-0480）
+    expect(resolveShotGauges(def, moran, MAX_SKILL_LEVELS)).toEqual([{ count: 'lastShot', every: 1, delayFrames: 6 }]);
     expect(resolveTimerGauges(def)).toEqual([]);
   });
 });

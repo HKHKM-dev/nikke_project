@@ -1,0 +1,117 @@
+{
+  "verification": "V-0500",
+  "note": "撮る前の予測（plan/design-shot-count-trigger-frame.md 5.4 節の S-C）。V-0489 の編成の枠順を入れ替えた ナガ（1 枠目・AI）→ ◎エマ（2 枠目・操作）。どちらもバーストは撃たない（オートバースト OFF。setup の burst: false）。見るのは、ナガの 5 の倍数の発の後、エマのコアのヒットに S2 のコアダメージ▲が乗り始めるフレームと、切れるフレーム。このファイルで出せるのはいまのモデル（HN）だけで、H6・H5 は検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 450
+    },
+    {
+      "rid": 90,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "HN",
+      "note": "いまのモデル（C-0593）: 射撃の回数トリガーの窓は、発火した発の次のフレームから（skills/holders.ts の startOfFire）。枠の順に依らない"
+    }
+  ],
+  "targets": [
+    {
+      "id": "s2-first-start",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "coreDamage",
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "エマ（2 枠目）が受けるナガの S2 のコアダメージ▲の 1 回目の付き始め（モデルのフレーム。HN はナガの 5 発目の次のフレーム）。録画とは、ナガの 5 発目の増分からの相対で比べる（検証記録の「予測」）"
+    },
+    {
+      "id": "emma-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 140,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "エマの胴体のヒット（会心なし）。格子の単位"
+    },
+    {
+      "id": "emma-core-early",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 140,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "ナガの 1〜4 発目の間のエマのコアのヒット（会心なし）。▲なしの値"
+    },
+    {
+      "id": "emma-core-on",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "▲が付いている間のエマのコアのヒット（会心なし）。どの仮説でも同じ（替わり目を読むための値）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-26",
+    "commit": "58b7b8a5e691da5a73d930f9c049402d7708e2fc",
+    "values": {
+      "HN": {
+        "s2-first-start": [170],
+        "emma-body": 5560.2525,
+        "emma-core-early": 11120.505,
+        "emma-core-on": 13348.49817675
+      }
+    }
+  }
+}

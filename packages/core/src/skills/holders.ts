@@ -306,9 +306,13 @@ export type HolderLists = {
   history(): HolderHistory;
 };
 
-/** 窓の始まり。射撃の回数のきっかけは次のフレームから */
-export function startOfFire(trigger: ResolvedTrigger, frame: number): number {
-  return isResolvedShotCount(trigger) ? frame + 1 : frame;
+/**
+ * 窓の始まり。射撃の回数のきっかけは次のフレームから。回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）:
+ * timed の delayFrames があれば、きっかけの delayFrames 後から（ナガ S2 は 6。C-0593・C-0653）
+ */
+export function startOfFire(trigger: ResolvedTrigger, frame: number, delayFrames?: number): number {
+  if (!isResolvedShotCount(trigger)) return frame;
+  return frame + (delayFrames ?? 1);
 }
 
 /** 戦闘開始時の窓（ループの前に登録する）か */
@@ -1331,7 +1335,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         skipEffect(src.sourceSlotIndex, src.effect, f);
         continue;
       }
-      fireTimed(src, battleStartOnly ? 0 : startOfFire(src.effect.trigger, f), fireContextOf(src.effect.trigger, ev));
+      fireTimed(
+        src,
+        battleStartOnly ? 0 : startOfFire(src.effect.trigger, f, src.effect.delayFrames),
+        fireContextOf(src.effect.trigger, ev),
+      );
     }
     // 2 段目の段 1: 解除（閉じるのは発火の次のフレームなので、段の中の順は同じフレームの判定に効かない。plan/design-skill-stage1.md 1.2 節）
     for (const r of stage1Removes) {
@@ -1391,7 +1399,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         skipEffect(src.sourceSlotIndex, src.effect, f);
         continue;
       }
-      fireTimed(src, battleStartOnly ? 0 : startOfFire(src.effect.trigger, f), fireContextOf(src.effect.trigger, ev));
+      fireTimed(
+        src,
+        battleStartOnly ? 0 : startOfFire(src.effect.trigger, f, src.effect.delayFrames),
+        fireContextOf(src.effect.trigger, ev),
+      );
     }
     for (const r of stage15Removes) {
       if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
@@ -1428,7 +1440,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     for (const src of stage2Timed) {
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
-      const start = battleStartOnly ? 0 : startOfFire(src.effect.trigger, f);
+      const start = battleStartOnly ? 0 : startOfFire(src.effect.trigger, f, src.effect.delayFrames);
       if (start >= frames) continue;
       // 2 段目の段 7: 最終防御力の比べの対象（発火のフレームの最終防御力。段 1・1.5 の防御力▲ の件。同じフレームに付いたものも入れる）
       if (dependsOnDefense(src.effect)) {

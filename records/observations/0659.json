@@ -1,0 +1,142 @@
+[
+  {
+    "id": "0659-01",
+    "recording": "0659",
+    "source": "V-0499",
+    "readAt": "2026-10-26",
+    "kind": "timing",
+    "use": "record",
+    "value": [1132, 1138],
+    "unit": "f",
+    "description": "アスカ（1 枠目・操作。オート射撃を遅らせて ON）+ ミサト（2 枠目・AI）で、ミサトの 120 発目（1 本目のマガジンの最後の発）のフレーム t と、アスカの S1（回復効果が適用された時の攻撃力▲）のアイコンが出た最初のフレーム。差 6f",
+    "method": {
+      "tool": "hud.ts --mode jumps・ffmpeg の切り出し（ミサトの顔の上の残弾の表示）・アイコンの並びの青の画素の割合（V-0497 と同じ使い捨てのスクリプト）",
+      "note": "hud.ts --mode jumps の増分を、アスカの S1 なし（22,474 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8）・S1 あり（44,287 × 同じ倍率）の 1 発以下と、ミサトの 1 発（8,329・11,533・14,737・17,940）0〜2 発の和に分けた（±3。V-0490 と同じ読み方）。分け方が 1 通りでない増分は無い。ミサトの 1 本目のマガジンのヒットは 117 個で、最後のヒットが f1132（その後 80f ほどミサトのヒットが無い）。ミサトの顔の上の残弾は f1132 に 1/120 から 0/120 に替わり、最後のヒットが 120 発目と同じフレーム。アイコンは x 906〜989・y 1044〜1069 を 1f ごとに読み、出る前 0.03・出た後 0.47 で 1f で替わった。出たのは攻撃力▲の形（切り出しの画で確かめた）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0659-02",
+    "recording": "0659",
+    "source": "V-0499",
+    "readAt": "2026-10-26",
+    "kind": "timing",
+    "use": "record",
+    "value": [1132, 1137, 1142],
+    "unit": "f",
+    "description": "ミサトの 120 発目 t・判定の発（[t + 1, t + 5] のアスカの発。t + 5。S1 なし）・アスカの S1 ありの最初の 1 発（t + 10）の動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、アスカの S1 なし（22,474 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8）・S1 あり（44,287 × 同じ倍率）の 1 発以下と、ミサトの 1 発（8,329・11,533・14,737・17,940）0〜2 発の和に分けた（±3。V-0490 と同じ読み方）。分け方が 1 通りでない増分は無い。戦闘の最初の増分（ミサト）は f840、アスカの最初の発は f916（76f 遅らせて撃ち始めた）。アスカは t（f1132。増分 37545 = 29,216 + 8,329）・t + 5（f1137。29,216 単独）は S1 なし、t + 10（f1142。57573 単独）から S1 あり"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0659-03",
+    "recording": "0659",
+    "source": "V-0499",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 29216,
+    "description": "ミサトの 120 発目と同じフレーム t のアスカの発（f1132。コア・会心なし、距離ボーナスあり。S1 なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 37545 からミサトの 8,329 を引いた値（S1 なしの組の倍率 1.3）"
+    },
+    "note": "予測ファイルの asuka-hit-before と同じ指定（モデル 29,215.848）。HN・HD とも S1 なし",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 302,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0659-04",
+    "recording": "0659",
+    "source": "V-0499",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 29216,
+    "description": "判定の発: ミサトの 120 発目の 5f 後のアスカの発（f1137。コア・会心なし、距離ボーナスあり）。S1 なしの値",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 29,216（単独）"
+    },
+    "note": "予測ファイルの asuka-hit-judge と同じ指定（モデルではミサトの 120 発目が 304f、回復が 310f（delayFrames 6）で、307f のアスカの発は S1 なし）。HN（遅れを入れる前のモデル）は S1 ありの 57,572.995 で合わなかった",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 307,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0659-05",
+    "recording": "0659",
+    "source": "V-0499",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 57573,
+    "description": "アスカの S1 ありの最初の発（f1142 = t + 10。コア・会心なし、距離ボーナスあり）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 57573（単独。S1 ありの組の倍率 1.3）"
+    },
+    "note": "予測ファイルの asuka-hit-after と同じ指定（モデル 57,572.995）。HN・HD とも S1 あり",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 312,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  }
+]

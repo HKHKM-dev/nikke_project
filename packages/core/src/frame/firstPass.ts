@@ -529,8 +529,16 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
   });
   // モラン編（plan/design-moran.md 3 節）: 射撃の回数でゲージだけを溜める効果（burstGaugeHit）。射撃を数えて、発火した射撃の
-  // フレームのゲージに足す（付けるのは撃った時でヒットではないので、飛ぶ時間は足さない）
-  const shotGaugeTrackers: { slotIndex: number; count: ShotCountKind; every: number; energy: number; n: number }[] = [];
+  // フレームのゲージに足す（付けるのは撃った時でヒットではないので、飛ぶ時間は足さない）。回数トリガーの遅れ編
+  // （plan/design-shot-count-trigger-frame.md 6 節）: delayFrames があれば、発火した射撃の delayFrames 後のゲージに足す（C-0480）
+  const shotGaugeTrackers: {
+    slotIndex: number;
+    count: ShotCountKind;
+    every: number;
+    energy: number;
+    n: number;
+    delayFrames: number;
+  }[] = [];
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
     for (const t of resolveShotGauges(slot.definition, slot.character, slot.levels)) {
@@ -541,6 +549,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         every: t.every,
         energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
         n: 0,
+        delayFrames: t.delayFrames ?? 0,
       });
     }
   });
@@ -798,13 +807,18 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const energy = targetEnergyNow(t.slotIndex, t.energy);
       for (const d of t.gaugeHits) gauge += landingGauge(t.slotIndex, f + flight + d, f, energy, 1);
     }
-    // モラン編: 射撃の回数でゲージだけを溜める効果。発火した射撃のフレームのゲージに足す
+    // モラン編: 射撃の回数でゲージだけを溜める効果。発火した射撃のフレームのゲージに足す（遅れがあれば、そのフレームに予約する）
     for (const t of shotGaugeTrackers) {
       const shot = shotEvents[t.slotIndex];
       if (shot === null || shot === undefined) continue;
       const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
       t.n = counted.count;
-      if (counted.fired) gauge += targetEnergyNow(t.slotIndex, t.energy);
+      if (!counted.fired) continue;
+      const energy = targetEnergyNow(t.slotIndex, t.energy);
+      if (t.delayFrames === 0) gauge += energy;
+      else if (f + t.delayFrames < frames) {
+        pendingGauge.set(f + t.delayFrames, (pendingGauge.get(f + t.delayFrames) ?? 0) + energy);
+      }
     }
     // レイヴン編: ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
     // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）
