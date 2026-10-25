@@ -1,5 +1,6 @@
 // ミサト（833）を含む編成: S1「射撃マニュアル」のスタック（60 発ごとに自分に命中率 5.04%▲・3 スタック・5 秒）が区間の N に入り、
 // 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0183・C-0184。持続の▲の入れ方は C-0170）と、sim と calc の整合。V-0110。
+// バーストの味方全体の持続回復（1 秒間隔・5 秒間維持）は、付いた時に 1 回だけ回復を起こす（C-0646。仮説）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
@@ -13,6 +14,7 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
+import { piecesOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -72,6 +74,41 @@ const PRACTICAL: TeamInput = {
   controlledSlot: 1,
 };
 
+// ミサト（I）+ デルタ（II）+ アスカ（III・操作）。ミサトを 1 枠目にして、S1 の回復（HP の割合で選ぶ 1 機。C-0567）は
+// ミサト自身に当て、アスカの回復を受けた時の S1 にはバーストの持続回復だけが効くようにする
+const MISATO = 833;
+const ASUKA = 830;
+const BURST_HEAL: TeamInput = {
+  slots: [fixedSlot(MISATO, false), fixedSlot(20, false), fixedSlot(ASUKA, false)],
+  enemy: plainEnemy,
+  durationSeconds: 180,
+  burst: true,
+  controlledSlot: 2,
+};
+
+describe('バーストの持続回復（C-0646）', () => {
+  const plan = planTeamRun(BURST_HEAL);
+  const uses = plan.schedule!.activations.filter((a) => a.slotIndex === 0).map((a) => a.frame);
+  const burstHeals = plan.instants.filter(
+    (i) => i.sourceSlotIndex === 0 && i.effect.kind === 'heal' && i.effect.source.skill === 'burst',
+  );
+
+  it('heals every ally once per burst at the burst use, not on each 1-second tick', () => {
+    expect(uses.length).toBeGreaterThan(1);
+    for (const slot of [0, 1, 2]) {
+      expect(burstHeals.filter((i) => i.slotIndex === slot).map((i) => i.frame)).toEqual(uses);
+    }
+  });
+
+  it("opens Asuka's S1 (when healed) at each burst of Misato", () => {
+    const starts = piecesOf(plan)
+      .filter((p) => p.slotIndex === 2 && p.effect.source.resourceId === ASUKA && p.effect.source.skill === 'skill1')
+      .map((p) => p.start);
+    expect(starts[0]).toBe(uses[0]);
+    for (const f of uses) expect(starts).toContain(f);
+  });
+});
+
 describe('射撃マニュアルのスタック（ミサト単騎・条件は自動）', () => {
   const plan = planTeamRun(SOLO);
   const sim = runSimulation(SOLO);
@@ -113,6 +150,7 @@ describe('射撃マニュアルのスタック（ミサト単騎・条件は自�
 describe.each([
   ['ミサト単騎（V-0110 の撮影の条件）', SOLO],
   ['実戦寄り（リター + ミサト + デルタ + アリス + モダニア）', PRACTICAL],
+  ['バーストの持続回復（ミサト + デルタ + アスカ）', BURST_HEAL],
 ] as const)('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
   const calc = computeTeamDamage(input);
