@@ -1,0 +1,40 @@
+{
+  "id": "0660",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0660_ar+smg_asuka+misato_asuka-late-fire-2.mp4",
+  "original": "2026-10-26_00-04-58.mp4",
+  "durationSec": 28.6,
+  "frames": 1714,
+  "fps": 60,
+  "sizeMB": 34.6,
+  "sha256": "54f1121e655f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 833,
+      "name": "ミサト",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0499（S-A の撮り直し）。アスカ（1 枠目・操作）→ ミサト（2 枠目・AI）。アスカのオート射撃を OFF で始め、戦闘開始から約 1 秒後に ON にした。戦闘開始から約 10 秒で止めた",
+  "backup": {
+    "at": "2026-10-26T00:13+09:00",
+    "via": "drive-copy",
+    "matched": "sha256"
+  }
+}
