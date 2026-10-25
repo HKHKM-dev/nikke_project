@@ -467,3 +467,17 @@
 - 2026-10-25 12:18 録画 640（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-640_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-25 12:18 録画 641（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-641_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-25 12:18 録画 642（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-642_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:42 録画 643（I-DOLL・サン単騎）: `range/20261025-643_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:43 録画 644（I-DOLL・サン単騎）: `range/20261025-644_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:43 録画 645（I-DOLL・サン単騎）: `range/20261025-645_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:43 録画 646（I-DOLL・サン単騎）: `range/20261025-646_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:43 録画 647（I-DOLL・サン単騎）: `range/20261025-647_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:43 録画 648（I-DOLL・サン単騎）: `range/20261025-648_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:43 録画 649（I-DOLL・サン単騎）: `range/20261025-649_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:43 録画 650（I-DOLL・サン単騎）: `range/20261025-650_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:44 録画 651（I-DOLL・サン単騎）: `range/20261025-651_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:44 録画 652（I-DOLL・サン単騎）: `range/20261025-652_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:44 録画 653（I-DOLL・サン単騎）: `range/20261025-653_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:44 録画 654（I-DOLL・サン単騎）: `range/20261025-654_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:44 録画 655（I-DOLL・サン単騎）: `range/20261025-655_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 15:44 録画 656（I-DOLL・サン単騎）: `range/20261025-656_ar_idoll-sun_auto.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
