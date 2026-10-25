@@ -12,7 +12,6 @@ import {
 } from '../../../scripts/records-data.ts';
 import {
   isLegacy,
-  normalizeGeneratedDoc,
   renderRecordingsDoc,
   replaceGeneratedSection,
   sortRecordings,
@@ -130,9 +129,8 @@ describe('records/recordings', () => {
 
 describe('plan/captures/recordings.md', () => {
   it('matches records/recordings (npm run records:table)', () => {
-    expect(normalizeGeneratedDoc(readFileSync(RECORDINGS_DOC_PATH, 'utf8'))).toEqual(
-      normalizeGeneratedDoc(renderRecordingsDoc(file, characters)),
-    );
+    // prettier の対象外なので、生成の結果と 1 字まで同じ（plan/design-generated-table-width.md）
+    expect(readFileSync(RECORDINGS_DOC_PATH, 'utf8')).toBe(renderRecordingsDoc(file, characters));
   });
 
   it('replaces only the marked section', () => {
