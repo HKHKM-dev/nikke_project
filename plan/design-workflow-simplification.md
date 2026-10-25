@@ -129,6 +129,7 @@
   3. 3 か所の決まりは AGENTS.md の 1 行にまとめる。中身は「スキル定義・録画の台帳・観測値の比べる指定を変えたら `records:minimal` を回す。検証の PR は `records:close` が回し、回し忘れは `npm test` が落とす」。verification-guide.md と skills-guide.md はそこを指すだけにする。
   4. AGENTS.md「コミット手順」の 2 に「検証の PR は `records:close --mark` が回す」と添える（案のとおり）。
   5. design-records-automation.md 3.7 節の「通れば `npm run records:check` → …」と、design-minimal-relevance.md 10.6 節の「定義・録画・比べる指定を変えた PR では `npm run records:minimal` を回す」を合わせる。
+- 実装（2026-10-25）: オーナーの確認を受けて、変えた案の 1〜5 をこのブランチで行った。テストは、感度の鍵を壊すと落ちることを確かめた。
 
 ## 4. 番号を取ったらすぐ push する
 

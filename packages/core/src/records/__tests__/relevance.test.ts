@@ -59,6 +59,12 @@ describe('plan/minimal.md（実データ）', () => {
       renderMinimal(relevanceOf(claims, observations, ctx, loadSensitivity()), claims),
     );
   });
+
+  // 感度の結果の鍵が今の入力と合う（plan/design-workflow-simplification.md 3 節）。スキル定義・録画の台帳・比べる指定を変えて回し忘れると落ちる
+  it('has fresh sensitivity results (npm run records:minimal)', () => {
+    const unmeasured = relevanceOf(claims, observations, ctx, loadSensitivity()).reduce((n, r) => n + r.unmeasured, 0);
+    expect(unmeasured, '感度の結果が無いか古い要素がある。npm run records:minimal で計算し直す').toBe(0);
+  });
 });
 
 describe('要素を並べる（2 節の 2）', () => {

@@ -22,7 +22,7 @@ NIKKE のダメージ計算ツール。
 - 撮影待ちの間は、トピックブランチを保持する（撮影計画や予測の commit もそのブランチで行う）。
 - PR を出す手順:
   1. `git fetch origin && git rebase origin/main`（main を取り込むときはマージではなくリベース）。生成物が衝突したら `git checkout --ours -- <ファイル>` で main の版に戻し、作り直してから `git rebase --continue` する。自分のブランチで足した ID が main と重なっていたら、リベースを中止し（`git rebase --abort`）、自分のブランチで `npm run records:renumber -- <古い ID> <新しい ID>` で振り直してから取り込み直す（`plan/design-stage20.md` 3.6 節。録画の番号も同じ道具で、E: と Google Drive のファイル名ごと振り直す。`plan/design-recording-renumber.md`）
-  2. CI と同じ確認を通す: `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`
+  2. CI と同じ確認を通す: `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`（検証の PR は `records:close --mark` が回す）
   3. `git push -u origin HEAD`（リベースで履歴を書き換えたときは `--force-with-lease`）
   4. `gh pr create`
   5. `gh pr merge --auto --squash`（作成直後に自動マージを予約する。マージ方式はスカッシュ）
@@ -90,4 +90,4 @@ NIKKE のダメージ計算ツール。
 
 検証の流れ（起案 → 撮影計画（予測は任意）→ 撮る → 取り込み → レシピで読む → 比べる → 結論の下書き → 閉じる）の道具は `npm run records:new`・`records:predict`・`records:read`・`records:check`・`records:close` と `tools/captures/intake.ts`（`plan/design-records-automation.md` 2 節。手順は `plan/verification-guide.md`）。
 
-最小構成の検査（確定の結論 × 根拠の観測値の組に、効きうる未確定の要素を出す）は `plan/minimal.md`（生成）。スキル定義・録画の台帳・観測値の比べる指定を変えたら `npm run records:minimal` で感度を計算し直す（`plan/design-minimal-relevance.md` 10.6 節）。
+最小構成の検査（確定の結論 × 根拠の観測値の組に、効きうる未確定の要素を出す）は `plan/minimal.md`（生成）。スキル定義・録画の台帳・観測値の比べる指定（と、結論の状態・`edge`）を変えたら `npm run records:minimal` で感度を計算し直す（`plan/design-minimal-relevance.md` 10.6 節）。検証の PR は `records:close` が回し、回し忘れは `npm test` が落とす。

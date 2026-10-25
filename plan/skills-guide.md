@@ -125,5 +125,5 @@
 - [ ] `npm run records:close -- V-NNNN --mark` が通っている（結論の根拠・等級の候補・反復実測の `decidedOn`・本文の節・確定の結論の根拠の観測値の `scope`）。この記録の観測値の組に最小構成の警告があると誤りになる（効かない理由を結論の `minimal` に印として書くか、仮説にする。[design-minimal-relevance.md](design-minimal-relevance.md) 11.3 節）
 - [ ] 既存のテストの数値が変わっていない（変わったなら、その理由と根拠の ID を PR に書く）
 - [ ] 実戦的な編成で sim と calc が整合するテストがある
-- [ ] `npm run records:check` と `npm run records:table` の生成物がコミットされている。スキル定義・録画の台帳・観測値の比べる指定を変えたなら `npm run records:minimal` も回した
+- [ ] `npm run records:check` と `npm run records:table` の生成物がコミットされている。感度（`npm run records:minimal`）は AGENTS.md の最小構成の検査の段落
 - [ ] CI と同じ確認が通る（`npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`）

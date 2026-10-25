@@ -148,7 +148,7 @@
   - 結論の `確定` の等級が 1〜3。等級が機械の候補より上でない（上なら `gradeReason` に理由が要る。3.5 節）。
   - 「次に撮るもの」の節が空でない（「なし」でもよい）。
   - 最小構成の警告があるのに結論を作っている（7 節の 5 で落とすと決めたとき）。
-- 通れば `npm run records:check` → `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build` を回し、PR の題名の案（`<題名>（V-NNNN、C-NNNN）`）を出す。`roadmap.md` の更新と PR の作成は人（エージェント）が行う。
+- 通れば `npm run records:minimal`（2026-10-25 に `records:check` から替えた。中で `records:check` も回る。[design-workflow-simplification.md](design-workflow-simplification.md) 3 節）→ `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build` を回し、PR の題名の案（`<題名>（V-NNNN、C-NNNN）`）を出す。`roadmap.md` の更新と PR の作成は人（エージェント）が行う。
 
 ## 4. 自動化しないこと
 
