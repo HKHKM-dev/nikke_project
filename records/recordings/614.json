@@ -1,0 +1,42 @@
+{
+  "id": "614",
+  "date": "2026-10-25",
+  "folder": "range",
+  "file": "20261025-614_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4",
+  "original": "2026-10-25_01-23-44.mp4",
+  "durationSec": 201.4,
+  "frames": 12081,
+  "fps": 60,
+  "sizeMB": 244.3,
+  "sha256": "9ecf71269803",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true,
+      "fires": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "採用しない（2026-10-25 のオーナーの判断で、オート射撃 OFF で撮り直す）。V-0492。B（対照）。鈴原サクラ（AI）・デルタ（AI）・I-DOLL・サン（操作・撃たない）。AUTO 射撃 ON・オートバースト ON（撮影の依頼は AUTO 射撃 OFF だったが、画面左上のボタンは 12 本とも点いていて、操作枠も撃っている。取り込みのときに画で確かめた）。B の 6 本（613〜618）を撮った後に A の 6 本（619〜624）を続けて撮った（2026-10-24 のオーナーの判断。B の 2 本目）"
+}

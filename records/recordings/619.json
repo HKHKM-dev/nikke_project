@@ -1,0 +1,43 @@
+{
+  "id": "619",
+  "date": "2026-10-25",
+  "folder": "range",
+  "file": "20261025-619_smg+sr+sg_sakura+delta+drake_drake-control.mp4",
+  "original": "2026-10-25_01-43-04.mp4",
+  "durationSec": 199.3,
+  "frames": 11958,
+  "fps": 60,
+  "sizeMB": 241.7,
+  "sha256": "b39883c40c96",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": true,
+      "fires": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "採用しない（2026-10-25 のオーナーの判断で、オート射撃 OFF で撮り直す）。V-0492。A（▲あり）。鈴原サクラ（AI）・デルタ（AI）・ドレイク（操作・撃たない・宝物 3 段階）。AUTO 射撃 ON・オートバースト ON（撮影の依頼は AUTO 射撃 OFF だったが、画面左上のボタンは 12 本とも点いていて、操作枠も撃っている。取り込みのときに画で確かめた）。B の 6 本（613〜618）の後に A の 6 本を続けて撮った（2026-10-24 のオーナーの判断。A の 1 本目）"
+}

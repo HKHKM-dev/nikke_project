@@ -436,3 +436,33 @@
 - 2026-10-25 00:31 録画 610（ノワール単騎）: `range/20261025-610_sg_noir_auto_nocube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-25 00:31 録画 611（ノワール単騎）: `range/20261025-611_sg_noir_auto_nocube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
 - 2026-10-25 00:31 録画 612（ノワール単騎）: `range/20261025-612_sg_noir_auto_nocube.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:09 録画 613（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-613_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:09 録画 614（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-614_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:09 録画 615（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-615_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:09 録画 616（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-616_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:10 録画 617（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-617_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:10 録画 618（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-618_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:10 録画 619（鈴原サクラ + デルタ + ドレイク）: `range/20261025-619_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:10 録画 620（鈴原サクラ + デルタ + ドレイク）: `range/20261025-620_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:10 録画 621（鈴原サクラ + デルタ + ドレイク）: `range/20261025-621_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:10 録画 622（鈴原サクラ + デルタ + ドレイク）: `range/20261025-622_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:11 録画 623（鈴原サクラ + デルタ + ドレイク）: `range/20261025-623_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 02:11 録画 624（鈴原サクラ + デルタ + ドレイク）: `range/20261025-624_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:39 録画 625（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-625_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:40 録画 626（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-626_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:40 録画 627（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-627_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:40 録画 628（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-628_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:40 録画 629（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-629_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:40 録画 630（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-630_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:40 録画 631（鈴原サクラ + デルタ + ドレイク）: `range/20261025-631_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:41 録画 632（鈴原サクラ + デルタ + ドレイク）: `range/20261025-632_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:41 録画 633（鈴原サクラ + デルタ + ドレイク）: `range/20261025-633_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:41 録画 634（鈴原サクラ + デルタ + ドレイク）: `range/20261025-634_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:41 録画 635（鈴原サクラ + デルタ + ドレイク）: `range/20261025-635_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 03:41 録画 636（鈴原サクラ + デルタ + ドレイク）: `range/20261025-636_smg+sr+sg_sakura+delta+drake_drake-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 12:18 録画 637（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-637_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 12:18 録画 638（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-638_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 12:18 録画 639（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-639_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 12:18 録画 640（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-640_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 12:18 録画 641（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-641_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
+- 2026-10-25 12:18 録画 642（鈴原サクラ + デルタ + I-DOLL・サン）: `range/20261025-642_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` を Drive に置いた（クラウドで record から移した。record の写しと Drive で sha256 が一致）。
