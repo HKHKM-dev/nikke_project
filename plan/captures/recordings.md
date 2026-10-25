@@ -642,6 +642,12 @@
 | 0654 | `20261025-0654_ar_idoll-sun_auto.mp4` | ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0495。I-DOLL・サン単騎・操作（AUTO 射撃 ON）・オートバースト OFF。同じ日に続けて撮った 14 本の 12 本目 |
 | 0655 | `20261025-0655_ar_idoll-sun_auto.mp4` | ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0495。I-DOLL・サン単騎・操作（AUTO 射撃 ON）・オートバースト OFF。同じ日に続けて撮った 14 本の 13 本目 |
 | 0656 | `20261025-0656_ar_idoll-sun_auto.mp4` | ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0495。I-DOLL・サン単騎・操作（AUTO 射撃 ON）・オートバースト OFF。同じ日に続けて撮った 14 本の 14 本目 |
+| 0657 | `20261025-0657_ar+smg_asuka+misato_asuka-control-1.mp4` | ◎アスカ（830、AR・灼熱・SSR） + ミサト（833、SMG・鉄甲・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0499（S-A）。アスカ（1 枠目・操作・AUTO で撃つ）→ ミサト（2 枠目・AI）。戦闘開始から約 10 秒で止めた |
+| 0658 | `20261025-0658_ar+smg_asuka+misato_asuka-control-2.mp4` | ◎アスカ（830、AR・灼熱・SSR） + ミサト（833、SMG・鉄甲・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0499（S-A）。アスカ（1 枠目・操作・AUTO で撃つ）→ ミサト（2 枠目・AI）。戦闘開始から約 10 秒で止めた |
+| 0659 | `20261026-0659_ar+smg_asuka+misato_asuka-late-fire-1.mp4` | ◎アスカ（830、AR・灼熱・SSR） + ミサト（833、SMG・鉄甲・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0499（S-A の撮り直し）。アスカ（1 枠目・操作）→ ミサト（2 枠目・AI）。アスカのオート射撃を OFF で始め、戦闘開始から約 1 秒後に ON にした。戦闘開始から約 10 秒で止めた |
+| 0660 | `20261026-0660_ar+smg_asuka+misato_asuka-late-fire-2.mp4` | ◎アスカ（830、AR・灼熱・SSR） + ミサト（833、SMG・鉄甲・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0499（S-A の撮り直し）。アスカ（1 枠目・操作）→ ミサト（2 枠目・AI）。アスカのオート射撃を OFF で始め、戦闘開始から約 1 秒後に ON にした。戦闘開始から約 10 秒で止めた |
+| 0661 | `20261026-0661_sg+mg_naga+emma_emma-control-back-1.mp4` | ナガ（450、SG・電撃・SSR） + ◎エマ（90、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0500（S-C）。ナガ（1 枠目・AI）→ エマ（2 枠目・操作）。V-0489 の録画 0581・0582 の枠順を入れ替えたもの。戦闘の後もリザルト画面のまま約 4 分撮り続けている |
+| 0662 | `20261026-0662_sg+mg_naga+emma_emma-control-back-2.mp4` | ナガ（450、SG・電撃・SSR） + ◎エマ（90、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0500（S-C）。ナガ（1 枠目・AI）→ エマ（2 枠目・操作）。V-0489 の録画 0581・0582 の枠順を入れ替えたもの |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
@@ -1295,3 +1301,9 @@
 | 0654 | `range/20261025-0654_ar_idoll-sun_auto.mp4` | `2026-10-25_15-21-28.mp4` | 199.5 s | 11971 | 60.00 | 242.3 MB | `1430a3d5c04f` |
 | 0655 | `range/20261025-0655_ar_idoll-sun_auto.mp4` | `2026-10-25_15-24-52.mp4` | 199.1 s | 11945 | 60.00 | 241.8 MB | `0f248d05c18e` |
 | 0656 | `range/20261025-0656_ar_idoll-sun_auto.mp4` | `2026-10-25_15-28-17.mp4` | 215.1 s | 12906 | 60.00 | 260.9 MB | `2f438b74e1d4` |
+| 0657 | `range/20261025-0657_ar+smg_asuka+misato_asuka-control-1.mp4` | `2026-10-25_23-50-54.mp4` | 32.0 s | 1920 | 60.00 | 38.8 MB | `56befc102fe8` |
+| 0658 | `range/20261025-0658_ar+smg_asuka+misato_asuka-control-2.mp4` | `2026-10-25_23-51-32.mp4` | 28.9 s | 1736 | 60.00 | 35.0 MB | `b8647d5b5b48` |
+| 0659 | `range/20261026-0659_ar+smg_asuka+misato_asuka-late-fire-1.mp4` | `2026-10-26_00-04-22.mp4` | 29.3 s | 1757 | 60.00 | 35.5 MB | `7b76e288dec6` |
+| 0660 | `range/20261026-0660_ar+smg_asuka+misato_asuka-late-fire-2.mp4` | `2026-10-26_00-04-58.mp4` | 28.6 s | 1714 | 60.00 | 34.6 MB | `54f1121e655f` |
+| 0661 | `range/20261026-0661_sg+mg_naga+emma_emma-control-back-1.mp4` | `2026-10-26_00-37-56.mp4` | 436.1 s | 26164 | 60.00 | 524.1 MB | `b111fc257363` |
+| 0662 | `range/20261026-0662_sg+mg_naga+emma_emma-control-back-2.mp4` | `2026-10-26_00-45-18.mp4` | 198.7 s | 11919 | 60.00 | 240.7 MB | `e9ce384de58d` |
