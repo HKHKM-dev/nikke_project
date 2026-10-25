@@ -69,20 +69,22 @@ export function TeamSettingsForm({
             ))}
           </select>
         </label>
-        <label className="field">
-          <span>敵属性</span>
-          <select
-            value={enemy.element ?? ''}
-            onChange={(e) => setEnemy({ element: e.target.value === '' ? null : (e.target.value as Element) })}
-          >
-            <option value="">なし</option>
-            {ELEMENTS.map((el) => (
-              <option key={el} value={el}>
-                {ELEMENT_LABEL[el].ja}
-              </option>
-            ))}
-          </select>
-        </label>
+        {!preset && (
+          <label className="field">
+            <span>敵属性</span>
+            <select
+              value={enemy.element ?? ''}
+              onChange={(e) => setEnemy({ element: e.target.value === '' ? null : (e.target.value as Element) })}
+            >
+              <option value="">なし</option>
+              {ELEMENTS.map((el) => (
+                <option key={el} value={el}>
+                  {ELEMENT_LABEL[el].ja}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
       <details className="settings-advanced">
         <summary>詳細設定（戦闘時間・スペック固定・ステータス等）</summary>

@@ -245,15 +245,23 @@ header h1 {
   margin: 10px 0 4px;
   font-size: 0.9rem;
 }
-.breakdown-header {
+.team-total-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
+  justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 6px;
+  padding: 8px 12px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  border-radius: 6px;
+  margin-bottom: 8px;
 }
-.breakdown-header h2 {
-  margin: 0;
+.team-total-label {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.team-total-val {
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 .burst-headline {
   margin: 0;

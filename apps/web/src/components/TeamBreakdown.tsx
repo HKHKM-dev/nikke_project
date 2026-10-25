@@ -124,36 +124,10 @@ export function TeamBreakdown({
 
   return (
     <section className="panel result breakdown-panel">
-      <div className="breakdown-header">
-        <h2>総ダメージ</h2>
-      </div>
-
       {filled.length > 0 ? (
-        <div className="table-scroll">
-          <table className="team-table simple-breakdown-table">
-            <thead>
-              <tr>
-                <th>枠</th>
-                <th>ニケ</th>
-                <th>総ダメージ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filled.map((s) => (
-                <tr key={s.index}>
-                  <td>{s.index + 1}</td>
-                  <td>{s.character.name.ja}</td>
-                  <td className="damage-cell">{formatNumber(s.totalDamage)}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <th colSpan={2}>合計（{result.filledCount} 体）</th>
-                <td className="grand-total">{formatNumber(result.totalDamage)}</td>
-              </tr>
-            </tfoot>
-          </table>
+        <div className="team-total-bar">
+          <span className="team-total-label">合計総ダメージ（{result.filledCount} 体）</span>
+          <span className="team-total-val">{formatNumber(result.totalDamage)}</span>
         </div>
       ) : (
         <p className="hint">枠 1〜5 にニケを選択すると総ダメージが表示されます。</p>
@@ -235,35 +209,33 @@ export function TeamBreakdown({
               </tfoot>
             </table>
           </div>
-        </details>
-      )}
 
-      {filled.length > 0 && (
-        <div className="details">
-          <h3>ニケごとの詳細</h3>
-          {filled.map((s) => (
-            <details key={s.index} className="slot-detail">
-              <summary>
-                枠 {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
-                {formatPercent(s.share, 1)}） / DPS {formatNumber(s.dps)}
-              </summary>
-              <ResultPanel
-                slotIndex={s.index}
-                character={s.character}
-                slot={s}
-                attackLabel={attackLabel}
-                slotNames={slotNames}
-                teamCharacters={teamCharacters}
-                enemyElement={enemyElement}
-                effectiveSkillLevels={effectiveSkillLevels[s.index]!}
-                treasurePhase={treasurePhases[s.index] ?? 0}
-                skillsStatus={skillsStatuses[s.index] ?? { kind: 'loading' }}
-                hpRatio={hpRatios[s.index] ?? 1}
-                dispatch={dispatch}
-              />
-            </details>
-          ))}
-        </div>
+          <div className="details">
+            <h3>ニケごとの詳細</h3>
+            {filled.map((s) => (
+              <details key={s.index} className="slot-detail">
+                <summary>
+                  枠 {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
+                  {formatPercent(s.share, 1)}） / DPS {formatNumber(s.dps)}
+                </summary>
+                <ResultPanel
+                  slotIndex={s.index}
+                  character={s.character}
+                  slot={s}
+                  attackLabel={attackLabel}
+                  slotNames={slotNames}
+                  teamCharacters={teamCharacters}
+                  enemyElement={enemyElement}
+                  effectiveSkillLevels={effectiveSkillLevels[s.index]!}
+                  treasurePhase={treasurePhases[s.index] ?? 0}
+                  skillsStatus={skillsStatuses[s.index] ?? { kind: 'loading' }}
+                  hpRatio={hpRatios[s.index] ?? 1}
+                  dispatch={dispatch}
+                />
+              </details>
+            ))}
+          </div>
+        </details>
       )}
 
       <details className="segments verification-details">
