@@ -1,5 +1,6 @@
-import { ELEMENT_LABEL, type CharacterIndexEntry } from '@nikke/core';
-import { useMemo, useState } from 'react';
+import type { CharacterIndexEntry } from '@nikke/core';
+import { useMemo } from 'react';
+import { hasUnsupportedSkill } from '../skillSupport.ts';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -10,42 +11,35 @@ type Props = {
   onClear: () => void;
 };
 
-export function characterLabel(entry: CharacterIndexEntry): string {
-  return `${entry.name.ja} — ${entry.weaponType} ${ELEMENT_LABEL[entry.element].ja}`;
+export function characterLabel(entry: CharacterIndexEntry, isUnsupported = false): string {
+  return `${entry.name.ja}${isUnsupported ? '（未）' : ''}`;
 }
 
 export function CharacterPicker({ index, excludeIds, value, onSelect, onClear }: Props) {
-  const [filter, setFilter] = useState('');
   const options = useMemo(() => {
-    const q = filter.trim().toLowerCase();
-    const matches = (e: CharacterIndexEntry) =>
-      q === '' || e.name.ja.toLowerCase().includes(q) || e.name.en.toLowerCase().includes(q);
     return index
-      .filter((e) => e.resourceId === value || (!excludeIds.has(e.resourceId) && matches(e)))
+      .filter((e) => e.resourceId === value || !excludeIds.has(e.resourceId))
       .sort((a, b) => a.name.ja.localeCompare(b.name.ja, 'ja'));
-  }, [index, excludeIds, value, filter]);
+  }, [index, excludeIds, value]);
 
   return (
     <div className="picker">
-      <input
-        type="search"
-        value={filter}
-        placeholder="名前で絞り込み"
-        aria-label="ニケを検索"
-        onChange={(e) => setFilter(e.target.value)}
-      />
       <div className="picker-row">
         <select
           value={value ?? ''}
           aria-label="ニケを選択"
           onChange={(e) => {
-            if (e.target.value !== '') onSelect(Number(e.target.value));
+            if (e.target.value === '') {
+              onClear();
+            } else {
+              onSelect(Number(e.target.value));
+            }
           }}
         >
-          <option value="">— ニケを選ぶ —</option>
+          <option value="">なし</option>
           {options.map((entry) => (
             <option key={entry.resourceId} value={entry.resourceId}>
-              {characterLabel(entry)}
+              {characterLabel(entry, hasUnsupportedSkill(entry.resourceId))}
             </option>
           ))}
         </select>

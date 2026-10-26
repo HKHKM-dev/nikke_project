@@ -41,7 +41,9 @@ export function TeamSettingsForm({
 }: Props) {
   const setEnemy = (patch: Partial<EnemyInput>) => dispatch({ type: 'setEnemy', enemy: { ...enemy, ...patch } });
   const preset = matchingEnemyPreset(enemyPresets, enemy);
-  const availableSets = eventSets.filter((set) => preset?.eventSets.includes(set.id) ?? false);
+  const isBigArms = preset?.targetProfile === 'range-bigarms' || (enemy.defence === 100 && enemy.hasCore === true);
+  const activePreset = preset ?? (isBigArms ? enemyPresets.find((p) => p.content === 'range') : undefined);
+  const availableSets = eventSets.filter((set) => activePreset?.eventSets.includes(set.id) ?? false);
   const toggleEventSet = (id: string, on: boolean) =>
     dispatch({
       type: 'setEnemyEventSets',
@@ -55,36 +57,46 @@ export function TeamSettingsForm({
         <label className="field">
           <span>敵名</span>
           <select
-            value={preset?.id ?? ''}
+            value={isBigArms ? 'range-bigarms' : (preset?.id ?? '')}
             onChange={(e) => {
-              const picked = enemyPresets.find((p) => p.id === e.target.value);
-              if (picked) dispatch({ type: 'setEnemy', enemy: enemyInputOf(picked) });
+              if (e.target.value === 'range-bigarms') {
+                const defaultRange = enemyPresets.find((p) => p.content === 'range') ?? enemyPresets[0];
+                if (defaultRange) {
+                  setEnemy({ defence: defaultRange.defence, hasCore: defaultRange.hasCore });
+                }
+              } else if (e.target.value === '') {
+                // カスタム
+              } else {
+                const picked = enemyPresets.find((p) => p.id === e.target.value);
+                if (picked) dispatch({ type: 'setEnemy', enemy: enemyInputOf(picked) });
+              }
             }}
           >
+            <option value="range-bigarms">射撃場BigArms</option>
             <option value="">カスタム</option>
-            {enemyPresets.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name.ja}
+            {enemyPresets
+              .filter((p) => p.content !== 'range')
+              .map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name.ja}
+                </option>
+              ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>敵属性</span>
+          <select
+            value={enemy.element ?? ''}
+            onChange={(e) => setEnemy({ element: e.target.value === '' ? null : (e.target.value as Element) })}
+          >
+            <option value="">なし</option>
+            {ELEMENTS.map((el) => (
+              <option key={el} value={el}>
+                {ELEMENT_LABEL[el].ja}
               </option>
             ))}
           </select>
         </label>
-        {!preset && (
-          <label className="field">
-            <span>敵属性</span>
-            <select
-              value={enemy.element ?? ''}
-              onChange={(e) => setEnemy({ element: e.target.value === '' ? null : (e.target.value as Element) })}
-            >
-              <option value="">なし</option>
-              {ELEMENTS.map((el) => (
-                <option key={el} value={el}>
-                  {ELEMENT_LABEL[el].ja}
-                </option>
-              ))}
-            </select>
-          </label>
-        )}
       </div>
       <details className="settings-advanced">
         <summary>詳細設定（戦闘時間・スペック固定・ステータス等）</summary>
