@@ -650,7 +650,7 @@
 | 0662 | `20261026-0662_sg+mg_naga+emma_emma-control-back-2.mp4` | ナガ（450、SG・電撃・SSR） + ◎エマ（90、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0500（S-C）。ナガ（1 枠目・AI）→ エマ（2 枠目・操作）。V-0489 の録画 0581・0582 の枠順を入れ替えたもの |
 | 0663 | `20261026-0663_mg_elegg_s2-gauge-solo-1.mp4` | ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0504 編成 A。エレグ単騎・操作・撃たない。戦闘開始から約 30 秒で止めた |
 | 0664 | `20261026-0664_mg_elegg_s2-gauge-solo-2.mp4` | ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0504 編成 A。エレグ単騎・操作・撃たない。戦闘開始から約 30 秒で止めた |
-| 0665 | `20261026-0665_smg+sg+mg+ar_sakura+fa+elegg+idoll-sun_elegg-control-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎エレグ（500、MG・電撃・SSR） + I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0504 編成 B。エレグは 3 枠目・操作・撃たない |
+| 0665 | `20261026-0665_smg+sg+mg+ar_sakura+fa+elegg+idoll-sun_elegg-control-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎エレグ（500、MG・電撃・SSR） + I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0504 編成 B。エレグは 3 枠目・操作・撃たない。2026-10-26 に完全な版（record の「2026-10-26_20-21-22 - コピー.mp4」）に差し替えた。最初に取り込んだ版は Drive for desktop が上げている途中の 149 秒分（sha256 9c5aabcda0dc）だった。フレーム番号は前の版と同じ |
 | 0666 | `20261026-0666_smg+sg+mg+ar_sakura+fa+elegg+idoll-sun_elegg-control-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎エレグ（500、MG・電撃・SSR） + I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0504 編成 B。エレグは 3 枠目・操作・撃たない |
 | 0667 | `20261026-0667_burst_sun-mana_left.mp4` | I-DOLL・サン（308、AR・鉄甲・R） + マナ（290、AR・風圧・SSR） + ◎デルタ（20、SR・風圧・SR） + ラム（822、SR・風圧・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0518 の A（1 枠目 I-DOLL・サン・2 枠目マナ・3 枠目デルタ（操作）・4 枠目ラム）。オートバースト ON |
 | 0668 | `20261026-0668_burst_sun-mana_left.mp4` | I-DOLL・サン（308、AR・鉄甲・R） + マナ（290、AR・風圧・SSR） + ◎デルタ（20、SR・風圧・SR） + ラム（822、SR・風圧・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0518 の A（1 枠目 I-DOLL・サン・2 枠目マナ・3 枠目デルタ（操作）・4 枠目ラム）。オートバースト ON |
@@ -1317,7 +1317,7 @@
 | 0662 | `range/20261026-0662_sg+mg_naga+emma_emma-control-back-2.mp4` | `2026-10-26_00-45-18.mp4` | 198.7 s | 11919 | 60.00 | 240.7 MB | `e9ce384de58d` |
 | 0663 | `range/20261026-0663_mg_elegg_s2-gauge-solo-1.mp4` | `2026-10-26_20-16-22.mp4` | 45.0 s | 2698 | 60.00 | 54.2 MB | `c4a1c1eb7736` |
 | 0664 | `range/20261026-0664_mg_elegg_s2-gauge-solo-2.mp4` | `2026-10-26_20-17-18.mp4` | 45.2 s | 2709 | 60.00 | 54.3 MB | `0d266339616a` |
-| 0665 | `range/20261026-0665_smg+sg+mg+ar_sakura+fa+elegg+idoll-sun_elegg-control-1.mp4` | `2026-10-26_20-21-22.mp4` | 149.2 s | — | 60.00 | 181.0 MB | `9c5aabcda0dc` |
+| 0665 | `range/20261026-0665_smg+sg+mg+ar_sakura+fa+elegg+idoll-sun_elegg-control-1.mp4` | `2026-10-26_20-21-22.mp4` | 199.8 s | 11987 | 60.00 | 242.0 MB | `13d29ae6887d` |
 | 0666 | `range/20261026-0666_smg+sg+mg+ar_sakura+fa+elegg+idoll-sun_elegg-control-2.mp4` | `2026-10-26_20-24-46.mp4` | 201.5 s | 12090 | 60.00 | 244.0 MB | `9d73f7f081dc` |
 | 0667 | `range/20261026-0667_burst_sun-mana_left.mp4` | `2026-10-26_20-37-28.mp4` | 246.7 s | 14800 | 60.00 | 298.0 MB | `bbcf15332b8f` |
 | 0668 | `range/20261026-0668_burst_sun-mana_left.mp4` | `2026-10-26_20-41-40.mp4` | 201.3 s | 12079 | 60.00 | 243.9 MB | `bb962de66a2a` |
