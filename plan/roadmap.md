@@ -48,7 +48,7 @@
 - 録画の番号を 4 桁にそろえる（2026-10-25 起票）→ 完了（2026-10-25）: [design-recording-id-4digit.md](design-recording-id-4digit.md)
 - 回数トリガーで付く持続の効果の付き始めの遅れ（2026-10-24 起票）→ 第 1 段（ナガ・ミサト・モラン）は実装した（[design-shot-count-trigger-frame.md](design-shot-count-trigger-frame.md)）。残りは backlog 2-38
 - クラウド環境（2026-10-23 起票）→ 実装済み（2026-10-23）: [design-cloud-environment.md](design-cloud-environment.md)・手引き [cloud-guide.md](cloud-guide.md)
-- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 段 1〜9 を閉じた。段 10（数で決まる値）を起案し、論点はオーナーの判断待ち: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの設計書はそこから）
+- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 段 1〜9 を閉じた。段 10（数で決まる値）を進める: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの設計書はそこから）
 - 効果を持ち主ごとの一覧で持つ組み直し（2026-10-15 起票）→ 段 A〜E 実装済み（2026-10-15）: [design-holder-effects.md](design-holder-effects.md)
 - 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: [design-stage22.md](design-stage22.md) 8 節。残りは backlog 3 節
 - 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは backlog 1.2 節
