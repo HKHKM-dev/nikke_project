@@ -130,7 +130,8 @@
             "en": "The 3 lowest-HP enemies are a lone boss, so it lands once"
           },
           "claims": [
-            "C-0458"
+            "C-0458",
+            "C-0660"
           ]
         },
         {
@@ -146,7 +147,8 @@
             "en": "The lowest-HP enemy is the lone boss"
           },
           "claims": [
-            "C-0458"
+            "C-0458",
+            "C-0660"
           ]
         }
       ]

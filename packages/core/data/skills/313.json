@@ -18,7 +18,8 @@
             "en": "Counts pellets that hit the target and fires once on the shot where the total reaches a multiple of 30 (the remainder carries over). Pellet hits are counted as expected values (SG: 10 × the share of pellets that hit; the range target table gives the share per segment, manual input uses hit rate × 0.75). The 2 enemies nearest the crosshair are a lone boss, so it lands once. The hit is on the shot frame (about 6 frames after the shot in the recordings)"
           },
           "claims": [
-            "C-0408"
+            "C-0408",
+            "C-0659"
           ]
         }
       ]

@@ -121,5 +121,47 @@
       "source": "skill",
       "frames": [2877, 4866]
     }
+  },
+  {
+    "recording": "0390",
+    "readAt": "2026-10-26",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "id": "0390-06",
+    "source": "V-0505",
+    "value": 6,
+    "spread": {
+      "kind": "range",
+      "low": 6,
+      "high": 6
+    },
+    "description": "プリバティ：アンカインド・メイド単騎（スペック固定 OFF）で、S1 のヒットの、きっかけのトリガーの HUD の増分からのフレーム数 D。読めた 12 回とも 6（除いた 1 回は、T の直前が読めない f3916）。12 回とも T の 1 つ前のフレームは重複フレームでない",
+    "method": {
+      "tool": "hud.ts --mode jumps（録画の全体）・dups.ts --mode list（録画の全体）+ 使い捨てのスクリプト",
+      "note": "S1 のヒットは HUD の増分のうち 816,383・1,224,575（スペック固定 OFF の S1 の 1 ヒットと会心。0390-03） のもの。その直前の増分（ペレットの格子に乗るプリバティの発）をきっかけの発 T とした。S1 の増分と T の増分がどちらも gap 1（直前のフレームが読めた）で、S1 が単独の増分の回だけ使った。D = S1 のフレーム − T のフレーム。重複フレームは dups.ts の既定のしきい値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "tolerance": {
+        "abs": 0
+      },
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "pelletHits": [
+          {
+            "slot": 1,
+            "counts": "0390-02"
+          }
+        ]
+      }
+    }
   }
 ]
