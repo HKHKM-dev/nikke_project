@@ -3,7 +3,7 @@
 - 関連: [design-elegg.md](design-elegg.md)（段 1・段 2 の見込み。5 節）、[design-named-state.md](design-named-state.md) 8.3 節（敵に付く状態）、[design-kurumi-s2.md](design-kurumi-s2.md) 2.1 節（窓の中だけ数える `during`）、V-0443（窓の外も数えて窓の中だけ発火する `firesDuring`）、[design-ludmilla-wo.md](design-ludmilla-wo.md) 2.2 節（`normalHit`）、[design-shot-count-trigger-frame.md](design-shot-count-trigger-frame.md)（回数トリガーの付き始めの遅れ）、[skills-guide.md](skills-guide.md)、[verification-guide.md](verification-guide.md)
 - 作成日: 2026-10-26
 - 根拠: まだ無い（検証記録は承認の後、段 2 の実装の後に起こす）
-- 状態: 起案（オーナーの承認待ち）。段 2（バースト）は別のセッションが設計中で、2026-10-26 の時点で origin にブランチも PR も無い
+- 状態: 7 節の論点は推奨どおり（2026-10-26 のオーナーの承認）。実装と撮影の依頼は段 2（バースト）の実装の後。段 2 の設計は `plan/design-elegg.md` 8 節（別のセッションが起案中。ブランチ `claude/wizardly-archimedes-tv7gcm`）
 
 ## 1. 何を足すか
 
@@ -16,14 +16,14 @@
 
 どちらも、エレグのバーストが敵に付けるブームインストールの間だけ起きる。ブームインストールの状態（付与・10 秒・中身の防御力▼）は段 2 が定義する。段 3 はそれを条件として見るだけで、状態を定義しない。
 
-- **状態の名前（仮）**: `boomInstall`（英語版の状態名 BOOM Install の lowerCamelCase。[design-named-state.md](design-named-state.md) 5.1 節の付け方。`design-elegg.md` 2 節もこの名前）。段 2 で別の名前に決まれば、それに合わせる（7 節の論点 5）。
+- **状態の名前**: `boomInstall`（英語版の状態名 BOOM Install の lowerCamelCase。[design-named-state.md](design-named-state.md) 5.1 節の付け方）。段 2 の設計（`design-elegg.md` 8.2 節の案 A）も同じ名前で目録に足す。段 2 の実装で別の名前になれば、それに合わせる（7 節の論点 5）。
 
 ## 2. 段 2 に頼ること
 
-段 3 は、段 2 の実装で次が揃っていることを前提にする。揃っていなければ、段 3 の実装の PR で足す。
+段 3 は、段 2 の実装で 1 と 3 が揃っていることを前提にする。2 は段 2 の設計（`design-elegg.md` 8.2 節）で段 3 に回されたので、段 3 の実装の PR で足す。1 が案 B（`timed` で書く）になったら、状態の付与への書き換えも段 3 で行う。
 
 1. ブームインストールが、敵が持つ名前の付いた状態（目録の `holder: 'enemy'`）として付与で付く（[design-named-state.md](design-named-state.md) 8.3 節の `kind: 'state'`・`target: 'enemy'`）。
-2. 条件 `enemyState` が、付与で付いた敵の状態も見る。いまの `enemyState` が見るのは持続ダメージの付ける状態（`skills/holders.ts` の段 C の `enemyStateSources`）だけで、`frame/plan.ts` の `enemySpans` も `origin.kind === 'enemyState'` の件だけを拾う。8.3 節の見込みどおり「dot が付ける状態と同じ列にまとめる」が要る。
+2. 条件 `enemyState` が、付与で付いた敵の状態も見る。いまの `enemyState` が見るのは持続ダメージの付ける状態（`skills/holders.ts` の段 C の `enemyStateSources`）だけで、`frame/plan.ts` の `enemySpans` も `origin.kind === 'enemyState'` の件だけを拾う。8.3 節の見込みどおり「dot が付ける状態と同じ列にまとめる」が要る（**段 3 で足す**）。
 3. 状態の付き始め（バーストの使用か、バーストのヒットか）と終わり（10 秒）の結論。段 3 の回数の判定（3 節）はこの区間から数えるので、区間の端が数フレームずれても見分けには効かない（MG はおよそ 1 フレームに 1 発で、仮説の差は数十発。4.2 節）が、付き始めの遅れは段 2 の結論を使う。
 
 ## 3. 語彙
@@ -158,7 +158,7 @@
 
 - `packages/core/data/skills/500.json`: skill1 の notes[1] を 3.1 節の `damage` に、skill2 の notes[0] を 3.2 節の `timed` に替える。数え方が K2・K3 なら 3.3 節の形にする。`claims` に結論を書く。
 - `packages/core/src/skills/types.ts`: `CONDITION_KEYS_OF.timed` に `enemyState`。K2・K3 なら `during` のオブジェクトの形と `reset: 'windowStart'`。
-- `skills/holders.ts`: 段 1.5 の `timed` の条件の判定に `enemyState`（2 節の 2 で付与の件が見えていること）。
+- `skills/holders.ts`・`frame/plan.ts`: 付与で付いた敵の状態の窓を、dot の状態の区間と同じ列にまとめ、`damage` と `timed`（段 1.5）の条件 `enemyState` がどちらも見るようにする（2 節の 2）。
 - テスト（`skills/__tests__/elegg.test.ts`）: 定義の読み込み、ブームインストールの窓の外で S1・S2 が起きないこと、窓の中で決まった数え方の命中で起きること、S2 の▲がエレグ自身と味方に `casterAttack` で乗ること。
 - `plan/design-elegg.md` 5 節から、この文書へのリンクを足す（実装の PR で）。
 
@@ -174,7 +174,7 @@
 
 ## 8. 進め方（承認の後）
 
-1. 段 2 の実装（状態の付与と `enemyState` の見え方）が main に入るのを待つ。
+1. 段 2 の実装（敵に付く状態の付与）が main に入るのを待つ。
 2. `records:new` で検証記録を起こし、U0〜U8 の問い・窓ごとの予測（K1・K2・K3）・撮影の依頼（[captures/protocol.md](captures/protocol.md)「撮影の依頼」の型）を書く。
 3. 撮影・取り込み・読み取り（`records:read`）。比べる・結論の下書き。
 4. 6 節の変更・テスト・`records:minimal`・`records:close -- V-NNNN --mark`・`npm run ci`。実装と結論を 1 つの PR にする。
@@ -182,3 +182,4 @@
 ## 経過
 
 - 2026-10-26: 起案。段 2 は並行して設計中（origin にブランチ・PR は無い）。状態の名前は仮に `boomInstall`。
+- 2026-10-26: 論点 1〜7 は推奨どおり（オーナーの承認）。段 2 の設計（`design-elegg.md` 8 節）が同じ名前 `boomInstall` を使い、`enemyState` で付与の窓を見るのを段 3 に回したので、2 節・6 節を合わせた。
