@@ -209,8 +209,8 @@ notes の種類: 未対応 107・前提の外 27・計算に無関係 28・補�
   - effects[2] timed・fullBurstStart・maxAmmo: C-0471（確定）
   - effects[3] timed・fullBurstStart・hitRate: C-0640（確定）、C-0641（仮説）、C-0486（仮説）
 - **宝物版 skill2**: supported
-  - effects[0] damage・normalShot・skill: C-0458（確定）
-  - effects[1] damage・normalShot・skill: C-0458（確定）
+  - effects[0] damage・normalShot・skill: C-0458（確定）、C-0660（確定）
+  - effects[1] damage・normalShot・skill: C-0458（確定）、C-0660（確定）
 - **宝物版 burst**: supported
   - effects[0] burstDamage・skill: C-0228（確定）
   - effects[1] timed・burstUse・attackDamage: C-0420（確定）
@@ -351,7 +351,7 @@ notes の種類: 未対応 107・前提の外 27・計算に無関係 28・補�
 ## 225 紅蓮：ブラックシャドウ
 
 - **skill1**: supported
-  - effects[0] cycle・fullChargeShot: C-0047（確定）、C-0085（確定）、C-0651（確定）
+  - effects[0] cycle・fullChargeShot: C-0047（確定）、C-0085（確定）、C-0651（確定）、C-0661（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・maxAmmo: C-0490（確定）
   - effects[1] ammoRefill・fullBurstStart: C-0490（確定）
@@ -597,7 +597,7 @@ notes の種類: 未対応 107・前提の外 27・計算に無関係 28・補�
 ## 313 プリバティ：アンカインド・メイド
 
 - **skill1**: supported
-  - effects[0] damage・pelletHit・skill: C-0408（確定）
+  - effects[0] damage・pelletHit・skill: C-0408（確定）、C-0659（確定）
 - **skill2**: unsupported
   - notes[0] 未対応: 通常攻撃 1 回でペレットが 5 個以上命中した時の自分のリロード速度▲（2 秒）は未対応: 根拠なし
   - notes[1] 未対応: フルバーストタイム中のペレット 30 回命中ごとの、自分の弾丸チャージと攻撃力▲（5 スタック・2 秒）は未対応: 根拠なし
@@ -803,7 +803,7 @@ notes の種類: 未対応 107・前提の外 27・計算に無関係 28・補�
 ## 851 レイヴン
 
 - **skill1**: supported
-  - effects[0] dot・fullChargeShot: C-0181（確定）、C-0182（確定）、C-0111（確定）、C-0112（確定）
+  - effects[0] dot・fullChargeShot: C-0181（確定）、C-0182（確定）、C-0111（確定）、C-0112（確定）、C-0661（確定）
   - effects[1] timed・fullBurstStart・attack: C-0185（確定）
 - **skill2**: noEffect
   - notes[0] 前提の外: 戦闘開始時とフルバーストタイム発動時の自分のパーツダメージ▲（急所攻略）は、射撃場の的にパーツが無いので効かない: C-0365（確定）

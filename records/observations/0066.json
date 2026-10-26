@@ -27,5 +27,41 @@
       "tool": "hud.ts --mode jumps",
       "note": "1 発の増分は 21,814.8 ×（命中数 + コアの数 + 0.5 × 会心の数）なので、命中数は増分から一意には決まらない（コア 1 = 会心 2）。上限（コア・会心なし）で数えた"
     }
+  },
+  {
+    "recording": "0066",
+    "readAt": "2026-10-26",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "id": "0066-03",
+    "source": "V-0505",
+    "value": 6,
+    "spread": {
+      "kind": "range",
+      "low": 5,
+      "high": 6
+    },
+    "description": "プリバティ：アンカインド・メイド単騎で、S1 のヒットの、きっかけの発の HUD の増分からのフレーム数 D の最頻値。読めた 15 回の内訳: 6 × 12・5 × 3（除いた 2 回は、S1 か T の直前が読めない f2285・f3391）。5 の 3 回（f1031・f1149・f2389）は、どれも T の 1 つ前のフレームが重複フレーム。T の 1 つ前が重複フレームでない 7 回は、どれも 6",
+    "method": {
+      "tool": "hud.ts --mode jumps（録画の全体）・dups.ts --mode list（録画の全体）+ 使い捨てのスクリプト",
+      "note": "S1 のヒットは HUD の増分のうち 242,994（スペック固定 ON の S1 の 1 ヒット。0066-01） のもの。その直前の増分（ペレットの格子に乗るプリバティの発）をきっかけの発 T とした。S1 の増分と T の増分がどちらも gap 1（直前のフレームが読めた）で、S1 が単独の増分の回だけ使った。D = S1 のフレーム − T のフレーム。重複フレームは dups.ts の既定のしきい値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "tolerance": {
+        "abs": 0
+      },
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
   }
 ]

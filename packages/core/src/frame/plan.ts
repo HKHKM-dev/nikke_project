@@ -432,7 +432,7 @@ export function planSkillHits(
       }
     }
     // Stage 11 紅蓮BS: 段の循環。射撃の列を通算で数え、間隔の変更の窓に入る射撃は窓の間隔で段を進める（skills/cycles.ts）。
-    // 値は射撃の回数トリガーの倍率ダメージと同じく、その射撃と同じバフ
+    // 値は射撃の回数トリガーの倍率ダメージと同じく、ヒットのフレームのバフ（段の delayFrames があれば射撃の d 後）
     for (const cycle of resolveCycles(definition, slot.character, levels)) {
       // 段 D の 2: 間隔の変更の件（持ち主はその枠。時刻の順）
       const windows = itemsOf(history, { holder: slotIndex, kind: 'cycleEvery' }).flatMap((i) =>
@@ -442,7 +442,11 @@ export function planSkillHits(
       );
       const shotFrames = cycleShotFrames(shots[slotIndex], cycle.trigger);
       for (const fire of cycleFires(cycle.trigger.every, cycle.steps.length, shotFrames, windows)) {
-        push(fire.frame, cycle.steps[fire.step]!, false);
+        // 回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md 6.6 節）: 段の delayFrames があれば、射撃の d 後に
+        // そのフレームのバフで出す（紅蓮BS は A 10・B 9・C 9。C-0651）。戦闘の終わりを越えるヒットは出さない
+        const step = cycle.steps[fire.step]!;
+        const at = fire.frame + (step.delayFrames ?? 0);
+        if (at < frames) push(at, step, false);
       }
     }
   });

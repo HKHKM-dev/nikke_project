@@ -10,6 +10,7 @@
           "trigger": {
             "count": "fullChargeShot"
           },
+          "gaugeOnApplyDelayFrames": 6,
           "ref": 1,
           "intervalSeconds": 1,
           "durationRef": 2,
@@ -18,14 +19,15 @@
           "gaugeOnApply": true,
           "gaugeOnTick": true,
           "assumes": {
-            "ja": "撃ったフルチャージの発はすべて敵に付く（空に撃っても、照準線に最も近い敵に付く）。敵は 1 体。tick は付けた 1 秒後から 1 秒ごとで、全スタックの和が 1 つのダメージ。付け直すたびに全スタックの時間が付け直され、最後に付けてから 5 秒で全スタックが消える。付けたときと tick ごとに、射手の 1 ヒットぶんのゲージを溜める。上限の 10 スタックは説明文の値（録画では 7 スタックまで）。付けたのは実測では撃った 6f 後で、モデルは撃ったフレームに置く。フルバースト補正と攻撃ダメージ▲は、tick ごとにその時点の状態で乗る（ニヒリスターの火傷から推す）",
-            "en": "Every full-charge shot applies it to the enemy (even a shot into the sky applies it to the enemy nearest the crosshair). One enemy. Ticks every second from 1 s after application, with all stacks summed into one damage. Each re-application refreshes all stacks, and all stacks expire 5 s after the last application. Each application and each tick charges the Burst gauge by one hit of the shooter. The 10-stack cap is from the description (recordings reached 7). It was applied 6 frames after the shot; the model applies it on the shot frame. The Full Burst bonus and ATK damage up apply per tick by the state at that tick (inferred from Nihilister's burn)"
+            "ja": "撃ったフルチャージの発はすべて敵に付く（空に撃っても、照準線に最も近い敵に付く）。敵は 1 体。tick は付けた 1 秒後から 1 秒ごとで、全スタックの和が 1 つのダメージ。付け直すたびに全スタックの時間が付け直され、最後に付けてから 5 秒で全スタックが消える。付けたときと tick ごとに、射手の 1 ヒットぶんのゲージを溜める。上限の 10 スタックは説明文の値（録画では 7 スタックまで）。付けたときのゲージは撃った 6f 後に足す（C-0181）。付けたのも実測では撃った 6f 後だが、tick の時刻はモデルでは撃ったフレームから数える（未実装）。フルバースト補正と攻撃ダメージ▲は、tick ごとにその時点の状態で乗る（ニヒリスターの火傷から推す）",
+            "en": "Every full-charge shot applies it to the enemy (even a shot into the sky applies it to the enemy nearest the crosshair). One enemy. Ticks every second from 1 s after application, with all stacks summed into one damage. Each re-application refreshes all stacks, and all stacks expire 5 s after the last application. Each application and each tick charges the Burst gauge by one hit of the shooter. The 10-stack cap is from the description (recordings reached 7). The gauge from an application is added 6 frames after the shot. The application itself was also 6 frames after the shot, but the model still counts ticks from the shot frame (not implemented). The Full Burst bonus and ATK damage up apply per tick by the state at that tick (inferred from Nihilister's burn)"
           },
           "claims": [
             "C-0181",
             "C-0182",
             "C-0111",
-            "C-0112"
+            "C-0112",
+            "C-0661"
           ]
         },
         {

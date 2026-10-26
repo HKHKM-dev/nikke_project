@@ -115,5 +115,41 @@
       "slot": "all",
       "source": "target"
     }
+  },
+  {
+    "recording": "0430",
+    "readAt": "2026-10-26",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "id": "0430-07",
+    "source": "V-0506",
+    "value": 6,
+    "spread": {
+      "kind": "range",
+      "low": 5,
+      "high": 6
+    },
+    "description": "ドレイク（宝物 3 段階）単騎で、S2 のヒットの、きっかけの発（5 の倍数の発）の HUD の増分からのフレーム数 D の最頻値。読めた 35 回の内訳: 6 × 33・5 × 2（除いた 1 回は、S2 の直前が読めない f4824）。5 の 2 回（f7658・f10055）は、どちらも T の 1 つ前のフレームが重複フレーム。T の 1 つ前が重複フレームでない 24 回は、どれも 6",
+    "method": {
+      "tool": "hud.ts --mode jumps（録画の全体）・dups.ts --mode list（録画の全体）+ 使い捨てのスクリプト",
+      "note": "S2 のヒットは HUD の増分のうち 241,509・362,263・359,568・418,597 のもの（ペレットの格子に乗らない。C-0458 の値と会心の組）。その直前の増分（ドレイクの発）をきっかけの発 T とした。S2 の増分と T の増分がどちらも gap 1 で、S2 が単独の増分の回だけ使った。D = S2 のフレーム − T のフレーム。重複フレームは dups.ts の既定のしきい値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "tolerance": {
+        "abs": 0
+      },
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
   }
 ]

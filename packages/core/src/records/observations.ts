@@ -428,8 +428,11 @@ function cycleWindowResidues(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
   const every = Number(ctx.args.every);
   const shots = slotOf(result.shots, ctx).frames;
+  // 段を出した射撃のフレーム（回数トリガーの遅れ編の第 2 段: 段のヒットは射撃の delayFrames 後。C-0651）
   const tiers = new Set(
-    result.skillHits.filter((h) => h.slotIndex === slotIndex && h.effect.cycle !== undefined).map((h) => h.frame),
+    result.skillHits
+      .filter((h) => h.slotIndex === slotIndex && h.effect.cycle !== undefined)
+      .map((h) => h.frame - (h.effect.delayFrames ?? 0)),
   );
   const out: number[] = [];
   // 持ち主ごとの一覧編（段 D の 5）: 間隔の変更の件（時刻の順）
@@ -1267,6 +1270,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   skillHitMeanInterval: { args: ['slot', 'skill'], sim: skillHitMeanInterval },
   skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
+  skillHitShotDelay: { args: ['slot', 'skill'], sim: skillHitShotDelay },
   skillHitBurstOrdinals: { args: ['slot', 'skill'], sim: skillHitBurstOrdinals },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
@@ -1489,6 +1493,26 @@ function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {
   const count = Number(ctx.args.count);
   if (hits.length < count) throw new Error(`発動が ${hits.length} 回しかない`);
   return hits.slice(0, count).map((h) => shots.filter((f) => f <= h.frame).length);
+}
+
+/**
+ * 回数トリガーの遅れ編の第 2 段（V-0505・V-0506）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）のヒットが、その枠の直前の
+ * 発（ヒットと同じフレームの発を含む）の何フレーム後に出たかの最頻値（同じ数なら小さいほう）。録画では、きっかけの発の HUD の増分から
+ * ヒットの増分までのフレーム数の最頻値と比べる
+ */
+function skillHitShotDelay(result: SimResult, ctx: MetricContext): number {
+  const shots = slotOf(result.shots, ctx).frames;
+  const counts = new Map<number, number>();
+  for (const h of result.skillHits) {
+    if (h.slotIndex !== slotIndexOf(ctx) || h.effect.source.skill !== ctx.args.skill || h.effect.dot !== undefined) {
+      continue;
+    }
+    const shot = shots.filter((f) => f <= h.frame).at(-1);
+    if (shot === undefined) continue;
+    counts.set(h.frame - shot, (counts.get(h.frame - shot) ?? 0) + 1);
+  }
+  if (counts.size === 0) throw new Error('発動が無い');
+  return [...counts].sort((a, b) => b[1] - a[1] || a[0] - b[0])[0]![0];
 }
 
 /**

@@ -817,7 +817,8 @@ export type DamageEffect = {
    * 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3 節）: きっかけのフレームの delayFrames 後に出す（1 以上の整数）。
    * バフとフルバースト補正はそのフレームのもの（同じ発動で付いた効果も入る。発動の直前のバフで固定する規則は当てない）。
    * きっかけは burstUse（クイーン（真）S1 の「1more が適用された時」。C-0310）と、ペルソナ編の { applied }（追撃が付いたフレームから数える）と、
-   * 時間の周期のトリガー（周期のスキルの発動からヒットまで。C-0453）
+   * 時間の周期のトリガー（周期のスキルの発動からヒットまで。C-0453）。回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md
+   * 6.6 節）: 射撃の回数のきっかけ（確率を除く）にも書ける（プリバティ：UM S1・ドレイク S2 は 6。C-0659・C-0660）。gaugeHits とは組み合わせない
    */
   delayFrames?: number;
   /**
@@ -987,6 +988,11 @@ export type CycleStep = {
    * 1 ヒットで射手の targetBurstEnergyPerShot（フルチャージ倍率なし）を溜める。省略は溜めない
    */
   gaugeHits?: number[];
+  /**
+   * 回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md 6.6 節）: 段のダメージを、段を出した射撃の delayFrames 後に
+   * 出す（1 以上の整数）。紅蓮BS は A 10・B 9・C 9（C-0651。射撃のフレームは撃ったフレーム。C-0661）。gaugeHits は射撃から数えたまま
+   */
+  delayFrames?: number;
   assumes?: LocalizedText;
 };
 
@@ -1065,6 +1071,11 @@ export type DotEffect = {
    * 倍率なし）を発火のフレームに足す（C-0181）。トリガーは射撃の回数トリガーだけ
    */
   gaugeOnApply?: true;
+  /**
+   * 回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md 6.6 節）: 付けたときのゲージ（gaugeOnApply）を、発火の
+   * フレームの delayFrames 後に足す（1 以上の整数。レイヴンは 6。C-0181・C-0661）。tick の時刻は動かさない
+   */
+  gaugeOnApplyDelayFrames?: number;
   /**
    * レイヴン編（2.2 節）: tick ごとに、射手の 1 ヒットぶんのバーストゲージを tick のフレームに足す。スタックの数によらない
    * （C-0181）。firstTick: afterInterval で、維持が間隔の整数倍のときだけ（8 節の 2。解決のときに見る）。トリガーは射撃の回数トリガーか、
@@ -2590,7 +2601,7 @@ function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
     const stepPath = `${path}.steps[${i}]`;
     if (!isRecord(raw)) fail(stepPath, 'expected an object');
     for (const key of Object.keys(raw)) {
-      if (!['kind', 'ref', 'damageType', 'gaugeHits', 'assumes'].includes(key)) {
+      if (!['kind', 'ref', 'damageType', 'gaugeHits', 'delayFrames', 'assumes'].includes(key)) {
         fail(`${stepPath}.${key}`, 'unknown field');
       }
     }
@@ -2601,6 +2612,7 @@ function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
       damageType: oneOf(SKILL_DAMAGE_TYPES, raw.damageType, `${stepPath}.damageType`),
     };
     if (raw.gaugeHits !== undefined) step.gaugeHits = parseGaugeHits(raw.gaugeHits, `${stepPath}.gaugeHits`, 1);
+    if (raw.delayFrames !== undefined) step.delayFrames = parsePositiveInt(raw.delayFrames, `${stepPath}.delayFrames`);
     if (raw.assumes !== undefined) step.assumes = parseLocalizedText(raw.assumes, `${stepPath}.assumes`);
     return step;
   });
@@ -2659,15 +2671,21 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   if (v.delayFrames !== undefined) {
     // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: いま要るのはバースト使用時と、
     // ペルソナ編の「〈効果名〉が適用された時」（クイーン（真）S1 の追撃。plan/design-persona.md 9.3 節）と、
-    // 周期のスキルの発動からヒットまでの遅れ（時間の周期のトリガー。C-0453。plan/design-timer-ceil.md 2 節の論点 4）
-    if (trigger !== 'burstUse' && !isAppliedTrigger(trigger) && !isTimerTrigger(trigger)) {
-      fail(`${path}.delayFrames`, 'delayFrames needs the trigger "burstUse", { applied } or { everySeconds }');
+    // 周期のスキルの発動からヒットまでの遅れ（時間の周期のトリガー。C-0453。plan/design-timer-ceil.md 2 節の論点 4）。
+    // 回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md 6.6 節）: 射撃の回数のきっかけ（確率を除く）も
+    if (isShotCountTrigger(trigger)) {
+      effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
+      // ゲージのヒットのフレームは測っていない（ゲージは 1 パス目で射撃から数える）
+      if (effect.gaugeHits !== undefined) fail(`${path}.delayFrames`, 'delayFrames cannot be used with gaugeHits');
+    } else {
+      if (trigger !== 'burstUse' && !isAppliedTrigger(trigger) && !isTimerTrigger(trigger)) {
+        fail(
+          `${path}.delayFrames`,
+          'delayFrames needs the trigger "burstUse", { applied }, { everySeconds } or a shot count trigger',
+        );
+      }
+      effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
     }
-    const d = v.delayFrames;
-    if (typeof d !== 'number' || !Number.isInteger(d) || d < 1) {
-      fail(`${path}.delayFrames`, `expected a positive integer, got ${JSON.stringify(d)}`);
-    }
-    effect.delayFrames = d;
   }
   if (v.perBurstHit !== undefined) {
     // ミハラのバースト編（plan/design-mihara-burst-hits.md 3.2 節）: バーストの倍率ダメージのヒットに合わせる
@@ -2721,6 +2739,7 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
         'state',
         'maxStacksRef',
         'gaugeOnApply',
+        'gaugeOnApplyDelayFrames',
         'gaugeOnTick',
         'assumes',
         'claims',
@@ -2770,6 +2789,14 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
       );
     }
     effect[key] = true;
+  }
+  if (v.gaugeOnApplyDelayFrames !== undefined) {
+    if (effect.gaugeOnApply !== true) fail(`${path}.gaugeOnApplyDelayFrames`, 'needs gaugeOnApply');
+    effect.gaugeOnApplyDelayFrames = parseShotCountDelay(
+      v.gaugeOnApplyDelayFrames,
+      effect.trigger,
+      `${path}.gaugeOnApplyDelayFrames`,
+    );
   }
   if (effect.gaugeOnTick === true && effect.firstTick !== 'afterInterval') {
     fail(`${path}.gaugeOnTick`, 'needs firstTick afterInterval');
@@ -3250,6 +3277,10 @@ function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' 
     // ルドミラ：ウィンターオーナー編: スキルのスロットにも書ける（plan/design-ludmilla-wo.md 2.4 節）。burst は先頭が burstDamage
     if (slot === 'burst' && effects[0]?.kind !== 'burstDamage') {
       fail(`${path}.sequential`, 'the first effect of a sequential burst must be burstDamage');
+    }
+    // 回数トリガーの遅れ編の第 2 段: 順番の効果は、射撃の回数の発火の次のフレームから窓を数える（frame/plan.ts）。遅れたヒットとの順は決めていない
+    if (effects.some((e) => e.kind === 'damage' && e.delayFrames !== undefined && isShotCountTrigger(e.trigger))) {
+      fail(`${path}.sequential`, 'a sequential skill cannot have a delayed shot count damage');
     }
     entry.sequential = true;
   }

@@ -83,6 +83,7 @@ describe('dot の解決（スタックとゲージ）', () => {
       firstTick: 'afterInterval',
       maxStacks: 10,
       gaugeOnApply: true,
+      gaugeOnApplyDelayFrames: 6,
       gaugeOnTick: true,
     });
   });

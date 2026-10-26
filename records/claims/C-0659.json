@@ -1,0 +1,29 @@
+{
+  "id": "C-0659",
+  "text": "プリバティ：アンカインド・メイドの S1 の倍率ダメージのヒットは、当たったペレットの累計が 30 の倍数に届いたトリガーの HUD の増分の 6f 後に出る（C-0408 の「約 6f」の値）。5f に見える回は、どれもトリガーの増分の 1 つ前が動画の重複フレームの回",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0066-03`・`0390-06`。V-0505",
+  "model": "反映: `data/skills/313.json` の skill1 の effects[0] の `delayFrames: 6`（`damage` の `delayFrames` を射撃の回数のきっかけに開いた。plan/design-shot-count-trigger-frame.md 6.6 節）。ヒットは `frame/plan.ts` の `planSkillHits` が発の 6f 後に、そのフレームのバフで出す",
+  "replaces": [],
+  "updated": "2026-10-26",
+  "subject": {
+    "places": ["data/skills/313.json の skill1 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0066",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": "プリバティ：アンカインド・メイド skill2.notes[0]",
+      "reason": "リロード速度▲はリロードの長さ（射撃の時刻）だけを変える。根拠の観測値は、きっかけの発から S1 のヒットまでのフレーム数で、射撃の時刻に依らない（C-0408 の minimal と同じ理由）",
+      "decided": "2026-10-26"
+    }
+  ],
+  "gradeReason": "5 と 6 の候補は 0066 から立てた（decidedOn）。読む前に判定を固定し、候補・値・読み方を決めるのに使っていない 0390 で 12 回とも 6 だった。遅れを入れたモデルと skillHitShotDelay で合う"
+}

@@ -74,6 +74,8 @@ function resolveCycleEffect(
       effectIndex,
       cycle: { step: i, steps: effect.steps.length },
     };
+    // 回数トリガーの遅れ編の第 2 段: 段のダメージの遅れ（frame/plan.ts が射撃の delayFrames 後に出す。C-0651）
+    if (step.delayFrames !== undefined) r.delayFrames = step.delayFrames;
     const assumes = step.assumes ?? effect.assumes;
     if (assumes) r.assumes = assumes;
     return r;
