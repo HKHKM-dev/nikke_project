@@ -1,5 +1,5 @@
 // エレグ（500）の定義（plan/design-elegg.md 段 1）。S2 の「ターゲットが出現した時、味方全体にバーストゲージのチャージ 100%」を、
-// 戦闘開始の burstGauge で入れる（C-0662）。ほかの行は notes。
+// 戦闘開始の burstGauge で入れる（C-0662）。段 3（plan/design-elegg-s3.md）: S2 の前半の攻撃力▲（C-0696・C-0697）。S1 の分配ダメージは notes
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
@@ -23,7 +23,9 @@ const def = parseSkillDefinition(raw);
 /** S2 のゲージを落とした定義 */
 function withoutGauge(): SkillDefinition {
   const copy = structuredClone(raw);
-  copy.skills.skill2!.effects = [];
+  copy.skills.skill2!.effects = copy.skills.skill2!.effects.filter(
+    (e) => (e as { kind: string }).kind !== 'burstGauge',
+  );
   return parseSkillDefinition(copy);
 }
 
@@ -49,9 +51,11 @@ function solo(definition: SkillDefinition): TeamInput {
 
 describe('エレグ（500）', () => {
   it('models the S2 gauge charge at battle start', () => {
-    expect(def.skills.skill2).toMatchObject({
-      support: 'partial',
-      effects: [expect.objectContaining({ kind: 'burstGauge', trigger: 'battleStart', target: 'allies', ref: 4 })],
+    expect(def.skills.skill2.effects[0]).toMatchObject({
+      kind: 'burstGauge',
+      trigger: 'battleStart',
+      target: 'allies',
+      ref: 4,
     });
   });
 
@@ -163,5 +167,58 @@ describe('エレグ（500）のバースト', () => {
     expect(withBurst([damage, grant({ state: 'persona' })])).toThrow(/held by the ally/);
     expect(withBurst([damage, grant({ target: 'allies' })])).toThrow(/held by the enemy/);
     expect(withBurst([damage, grant({ contents: undefined })])).toThrow(/needs contents/);
+  });
+});
+
+// 段 3（plan/design-elegg-s3.md 3.2 節）: S2 の前半。命中を通算で数え、60 の倍数に届いた時に敵がブームインストール状態なら、
+// 味方全体にエレグのバフ前攻撃力 × 13.09% の固定加算（5 秒。C-0696・C-0697）
+describe('エレグ（500）の S2 の攻撃力▲', () => {
+  it('defines the attack increase with the enemy state condition', () => {
+    expect(def.skills.skill2.support).toBe('supported');
+    expect(def.skills.skill2.effects[1]).toMatchObject({
+      kind: 'timed',
+      trigger: { count: 'normalHit', everyRef: 1 },
+      condition: { enemyState: 'boomInstall' },
+      target: 'allies',
+      stat: 'attack',
+      scaling: 'casterAttack',
+    });
+  });
+
+  it('applies only while the enemy is in BOOM Install, and lasts 5 seconds', () => {
+    const plan = planTeamRun(teamC());
+    const windows = plan.timeline.segments;
+    const boom = plan.schedule!.activations.filter((a) => a.slotIndex === 2).map((a) => a.hitFrame!);
+    const flat = computeFixedSpecAttack(elegg).attack * 0.1309;
+    const on = windows.filter((s) => s.slots[0]!.buffs.attackFlat > 0);
+    expect(on.length).toBeGreaterThan(0);
+    for (const s of on) {
+      // どの▲も、ブームインストールの窓 [ヒット, ヒット + 588) の中で付き、付いてから 294f（5 秒）で切れる
+      expect(boom.some((h) => h < s.start && s.end <= h + 588 + 294)).toBe(true);
+      expect(s.slots[0]!.buffs.attackFlat).toBeCloseTo(flat, 0);
+    }
+    // 1 回目のブームインストールの前は付かない（通算の 60 の倍数に届いても、状態の外）
+    const first = boom[0]!;
+    expect(windows.filter((s) => s.end <= first).every((s) => s.slots[0]!.buffs.attackFlat === 0)).toBe(true);
+  });
+
+  it('accepts enemyState in a timed condition only for enemy-held states', () => {
+    const timed = (state: string) => ({
+      kind: 'timed',
+      trigger: { count: 'normalHit', everyRef: 1 },
+      condition: { enemyState: state },
+      target: 'allies',
+      stat: 'attack',
+      scaling: 'casterAttack',
+      ref: 2,
+      durationRef: 3,
+    });
+    const with2 = (effect: unknown) => () => {
+      const copy = structuredClone(raw);
+      copy.skills.skill2!.effects = [effect];
+      return parseSkillDefinition(copy);
+    };
+    expect(with2(timed('boomInstall'))).not.toThrow();
+    expect(with2(timed('persona'))).toThrow();
   });
 });

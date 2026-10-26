@@ -190,5 +190,101 @@
       "tool": "hud.ts --mode jumps",
       "note": "組の頭のフレームの増分をそのまま書いた（ほかの 1 ヒットとの重なりは分けていない。値は 138,184〜143,623 で揃っていない）。比べる前に、組の 2・3 つ目と重なりを読み分ける"
     }
+  },
+  {
+    "id": "0711-14",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13906,
+    "description": "エレグのコアの 1 ヒット（距離ボーナス・会心なし・フルバースト・防御力▼）。1 回目の窓の、S2 の▲の前",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f953〜1013 の増分で繰り返す値（f1013 は通算の命中 60 の発で、▲はその後）。比べるフレームはゲーム内の 140（モデルのブームインストールの始まり 87 と S2 の▲の始まり 161 の間）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 140,
+        "core": true,
+        "distance": false,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0711-15",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15727,
+    "description": "エレグのコアの 1 ヒット（距離ボーナス・会心なし・フルバースト・防御力▼・S2 の攻撃力▲）。1 回目の窓の、S2 の▲の後",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1015〜1060 の増分で繰り返す値。▲の前の 13,906 の 1.131 倍。比べるフレームはゲーム内の 200（モデルの S2 の▲の始まり 161 と鈴原サクラの受けるダメージ▲ 305 の間）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": true,
+        "distance": false,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0711-16",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 20640,
+    "description": "エレグのコアの 1 ヒット（距離ボーナスあり・会心なし・フルバースト・防御力▼・S2 の攻撃力▲・鈴原サクラの受けるダメージ▲）。3 回目の窓",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f5813〜6043 の増分で繰り返す値（▲の前の f5790〜5811 は 18,250）。比べるフレームはゲーム内の 4900（モデルの 3 回目の窓で、▲と鈴原サクラの▲が両方付いている区間 4879〜4980）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4900,
+        "core": true,
+        "distance": true,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

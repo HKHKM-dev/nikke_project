@@ -190,5 +190,69 @@
       "tool": "hud.ts --mode jumps",
       "note": "組の頭のフレームの増分をそのまま書いた（ほかの 1 ヒットとの重なりは分けていない。値は 138,184〜143,623 で揃っていない）。比べる前に、組の 2・3 つ目と重なりを読み分ける"
     }
+  },
+  {
+    "id": "0712-14",
+    "recording": "0712",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13906,
+    "description": "エレグのコアの 1 ヒット（距離ボーナス・会心なし・フルバースト・防御力▼）。1 回目の窓の、S2 の▲の前",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f962〜1024 の増分で繰り返す値。比べるフレームはゲーム内の 140（モデルのブームインストールの始まり 87 と S2 の▲の始まり 161 の間）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 140,
+        "core": true,
+        "distance": false,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0712-15",
+    "recording": "0712",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15727,
+    "description": "エレグのコアの 1 ヒット（距離ボーナス・会心なし・フルバースト・防御力▼・S2 の攻撃力▲）。1 回目の窓の、S2 の▲の後",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1026〜1072 の増分で繰り返す値。比べるフレームはゲーム内の 200"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": true,
+        "distance": false,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

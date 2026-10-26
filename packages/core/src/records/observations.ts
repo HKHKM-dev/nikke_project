@@ -139,6 +139,12 @@ export type CompareSetup = {
    */
   dropHeals?: number[];
   /**
+   * エレグの段 3（plan/design-elegg-s3.md 経過）: 定義から効果を落とす。モデルには撃たない枠が無いので、録画で撃たなかった枠の、射撃の
+   * 回数で起きる効果（実機では起きない）を外して比べる。rid のキャラの skill（treasure なら宝物版）の effects の index（0 始まり）。
+   * addEffects より前に落とす
+   */
+  dropEffects?: DroppedEffect[];
+  /**
    * 比べる設定の拡張（plan/design-compare-setup-extension.md 2 節）: バーストの遅れの表（burst/landing.ts）を rid ごとに上書きする。
    * row が null なら表の行を外す（遅れ 0）。予測の仮説の override と、条件の違いを試す観測値に使う。省略は表のまま
    */
@@ -1939,6 +1945,28 @@ function comparesDefence(definition: SkillDefinition | null): boolean {
   return entries.some((entry) => entry.effects.some((e) => 'targetDefense' in e && e.targetDefense !== undefined));
 }
 
+/** CompareSetup.dropEffects の 1 件 */
+export type DroppedEffect = { rid: number; skill: SkillSlot; index: number; treasure?: boolean };
+
+/** 定義の効果を落とした写しを返す（CompareSetup.dropEffects）。番号は落とす前の定義の番号 */
+function withoutEffects(definition: SkillDefinition | null, drops: readonly DroppedEffect[]): SkillDefinition | null {
+  if (definition === null || drops.length === 0) return definition;
+  const out: SkillDefinition = { ...definition, skills: { ...definition.skills } };
+  if (definition.treasureSkills !== undefined) out.treasureSkills = { ...definition.treasureSkills };
+  for (const d of drops) {
+    const group = d.treasure === true ? out.treasureSkills : out.skills;
+    const entry = group?.[d.skill];
+    if (group === undefined || entry === undefined || !(d.index in entry.effects)) {
+      throw new Error(
+        `dropEffects: rid ${d.rid} の ${d.treasure === true ? '宝物版の ' : ''}${d.skill} に ${d.index} 番目の効果が無い`,
+      );
+    }
+    const original = (d.treasure === true ? definition.treasureSkills : definition.skills)![d.skill]!.effects[d.index];
+    group[d.skill] = { ...entry, effects: entry.effects.filter((e) => e !== original) };
+  }
+  return out;
+}
+
 /** drop なら、定義の各スロット（基礎版・宝物版）から回復（heal）を落とした写しを返す（CompareSetup.dropHeals） */
 function withoutHealsIf(definition: SkillDefinition | null, drop: boolean): SkillDefinition | null {
   if (definition === null || !drop) return definition;
@@ -2004,7 +2032,10 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     const character =
       delayOverrides.length === 0 ? base : { ...base, burstDelayOverride: burstDelayOverrideOf(delayOverrides[0]!) };
     const definition = withoutHealsIf(
-      data.skills.get(member.rid) ?? null,
+      withoutEffects(
+        data.skills.get(member.rid) ?? null,
+        (setup.dropEffects ?? []).filter((d) => d.rid === member.rid),
+      ),
       setup.dropHeals?.includes(member.rid) === true,
     );
     const adds = (setup.addEffects ?? []).filter((a) => a.rid === member.rid);

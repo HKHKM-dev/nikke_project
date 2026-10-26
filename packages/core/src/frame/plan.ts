@@ -275,8 +275,9 @@ export function planSkillHits(
   const hits: SkillHitEvent[] = [];
   // クルミ S2 編: damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間。段 C: 敵の状態の件（どの出どころの件でもよい）
   const enemySpans = new Map<NamedStateId, { start: number; end: number }[]>();
-  for (const item of itemsOf(history, { holder: ENEMY, kind: 'enemyState' })) {
-    if (item.origin.kind !== 'enemyState') continue;
+  // エレグの段 3（plan/design-elegg-s3.md 2 節の 2）: 敵に付く状態の付与の件（ブームインストール）も同じ列に入れる
+  for (const item of itemsOf(history, { holder: ENEMY })) {
+    if (item.origin.kind !== 'enemyState' && item.origin.kind !== 'state') continue;
     enemySpans.set(item.origin.state, [...(enemySpans.get(item.origin.state) ?? []), item]);
   }
   // 段 D の 2: 下位効果のスタック適用が見る値の小片（区間に足すのと同じ。状態だけの stat は入れない）

@@ -13214,6 +13214,54 @@
       "plus": 0
     },
     {
+      "observation": "0663-01",
+      "element": "エレグ skill2.effects[1]",
+      "key": "7805f404e41a9b45",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0664-01",
+      "element": "エレグ skill2.effects[1]",
+      "key": "149efbb5ca518bf6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0665-06",
+      "element": "エレグ skill2.effects[1]",
+      "key": "345dc948d6398d63",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0665-07",
+      "element": "エレグ skill2.effects[1]",
+      "key": "77be781dc1bdaf28",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0666-06",
+      "element": "エレグ skill2.effects[1]",
+      "key": "8866cac645c4b423",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0666-07",
+      "element": "エレグ skill2.effects[1]",
+      "key": "174c1ad7ab4e29e8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0667-01",
       "element": "マナ burst.effects[0]",
       "key": "d73421a17309ccce",
@@ -13620,6 +13668,150 @@
       "effective": true,
       "minus": -15552.822499999997,
       "plus": -15552.822499999997
+    },
+    {
+      "observation": "0690-06",
+      "element": "エレグ skill2.effects[1]",
+      "key": "4766b24a048a3b49",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0690-07",
+      "element": "エレグ skill2.effects[1]",
+      "key": "7f0416aefdd4fb57",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0690-08",
+      "element": "エレグ skill2.effects[1]",
+      "key": "ada14651474ed96c",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0690-09",
+      "element": "エレグ skill2.effects[1]",
+      "key": "ffd4a2a23589618f",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0690-10",
+      "element": "エレグ skill2.effects[1]",
+      "key": "6521621056d2ade7",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0690-11",
+      "element": "エレグ skill2.effects[1]",
+      "key": "da5801959984612a",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0690-12",
+      "element": "エレグ skill2.effects[1]",
+      "key": "5b6456ce79d0fc2d",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0691-06",
+      "element": "エレグ skill2.effects[1]",
+      "key": "c066bb71584f17e2",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0691-07",
+      "element": "エレグ skill2.effects[1]",
+      "key": "c6ce584df25dc704",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0691-08",
+      "element": "エレグ skill2.effects[1]",
+      "key": "3a97de044c91cb13",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0691-10",
+      "element": "エレグ skill2.effects[1]",
+      "key": "92bdcb5fb44896f0",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0691-11",
+      "element": "エレグ skill2.effects[1]",
+      "key": "a06b84e1aacd4e78",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0692-06",
+      "element": "エレグ skill2.effects[1]",
+      "key": "c997df2d4fbce086",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0692-07",
+      "element": "エレグ skill2.effects[1]",
+      "key": "35fca24f61d45176",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0693-06",
+      "element": "エレグ skill2.effects[1]",
+      "key": "7ef35f09cc7b136e",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0693-07",
+      "element": "エレグ skill2.effects[1]",
+      "key": "121e67a28e52ce05",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 500 の skill2 に 1 番目の効果が無い"
     },
     {
       "observation": "0700-04",
