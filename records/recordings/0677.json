@@ -1,0 +1,47 @@
+{
+  "id": "0677",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0677_ar+sg+ar_tove+fa+eg_eg-control.mp4",
+  "original": "2026-10-26_23-28-23.mp4",
+  "durationSec": 201.4,
+  "frames": 12081,
+  "fps": 60,
+  "sizeMB": 244.3,
+  "sha256": "fc29a1185394",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 192,
+      "name": "トーブ",
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0523 の撮り方 A（2 本目）。トーブ（宝物の段階 3）・ソルジャーF.A.・ソルジャーE.G.（操作・AUTO 射撃 ON）・オートバースト ON",
+  "backup": {
+    "at": "2026-10-26T23:42+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
