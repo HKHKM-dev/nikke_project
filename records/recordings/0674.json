@@ -1,0 +1,52 @@
+{
+  "id": "0674",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0674_burst_delta-fa_ct.mp4",
+  "original": "2026-10-26_22-06-34.mp4",
+  "durationSec": 201.8,
+  "frames": 12107,
+  "fps": 60,
+  "sizeMB": 244.5,
+  "sha256": "faa95aeae4a3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0520（1 枠目デルタ・2 枠目ソルジャーF.A.・3 枠目 I-DOLL・フラワー（操作）・4 枠目 I-DOLL・サン）。オートバースト ON",
+  "backup": {
+    "at": "2026-10-26T22:14+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
