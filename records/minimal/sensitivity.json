@@ -1010,12 +1010,92 @@
       "plus": null
     },
     {
+      "observation": "0036-05",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "26b6701519234444",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0036-05",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "26b6701519234444",
+      "effective": true,
+      "minus": -123449.77800000002,
+      "plus": null
+    },
+    {
+      "observation": "0036-06",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "5666a9843ef4a8c5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0036-06",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "5666a9843ef4a8c5",
+      "effective": true,
+      "minus": -185174.66700000002,
+      "plus": null
+    },
+    {
+      "observation": "0036-07",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "8d200d76a08b09e3",
+      "effective": true,
+      "minus": 123449.77799999999,
+      "plus": null
+    },
+    {
+      "observation": "0036-07",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "8d200d76a08b09e3",
+      "effective": true,
+      "minus": -123449.77800000005,
+      "plus": null
+    },
+    {
+      "observation": "0036-08",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "e6ce4e0f7b1703a2",
+      "effective": true,
+      "minus": 123449.77799999999,
+      "plus": null
+    },
+    {
+      "observation": "0036-08",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "e6ce4e0f7b1703a2",
+      "effective": true,
+      "minus": -123449.77800000005,
+      "plus": null
+    },
+    {
       "observation": "0037-01",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "4fefc4aa30808129",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0037-01",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "4fefc4aa30808129",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0037-01",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "4fefc4aa30808129",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0037-02",
@@ -1026,6 +1106,22 @@
       "plus": 0
     },
     {
+      "observation": "0037-02",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "11eacd2d98f45088",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0037-02",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "11eacd2d98f45088",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0037-03",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "40f7436cebe26ff7",
@@ -1034,12 +1130,44 @@
       "plus": 0
     },
     {
+      "observation": "0037-03",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "40f7436cebe26ff7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0037-03",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "40f7436cebe26ff7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0037-04",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "d9c3ecb730f512aa",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0037-04",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "d9c3ecb730f512aa",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0037-04",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "d9c3ecb730f512aa",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0038-07",
@@ -1146,12 +1274,44 @@
       "plus": 0
     },
     {
+      "observation": "0039-05",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "5c4aa593123bc7a6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0039-05",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "5c4aa593123bc7a6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0039-06",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "949bd89c77831915",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0039-06",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "949bd89c77831915",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0039-06",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "949bd89c77831915",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0039-07",
@@ -1162,12 +1322,44 @@
       "plus": 0
     },
     {
+      "observation": "0039-07",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "c604d08331e1ac14",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0039-07",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "c604d08331e1ac14",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0039-08",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "bcc8929eb08c859d",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0039-08",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "bcc8929eb08c859d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0039-08",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "bcc8929eb08c859d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0039-09",
@@ -1178,12 +1370,44 @@
       "plus": 0
     },
     {
+      "observation": "0039-09",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "8ffc1961029cc7a6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0039-09",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "8ffc1961029cc7a6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0039-10",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "9d14d5a45bae3f6f",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0039-10",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "9d14d5a45bae3f6f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0039-10",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "9d14d5a45bae3f6f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0039-11",
@@ -1194,12 +1418,44 @@
       "plus": 0
     },
     {
+      "observation": "0039-11",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "38fffbbfa1248030",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0039-11",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "38fffbbfa1248030",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0039-13",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "9d3f23f5adf2e6be",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0039-13",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "9d3f23f5adf2e6be",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0039-13",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "9d3f23f5adf2e6be",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0039-14",
@@ -1210,12 +1466,44 @@
       "plus": 0
     },
     {
+      "observation": "0039-14",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "96502e1f82860e62",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0039-14",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "96502e1f82860e62",
+      "effective": true,
+      "minus": -720523.0418975999,
+      "plus": null
+    },
+    {
       "observation": "0039-15",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "d45fa3be5a06c619",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0039-15",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "d45fa3be5a06c619",
+      "effective": true,
+      "minus": -765496.3537403997,
+      "plus": null
+    },
+    {
+      "observation": "0039-15",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "d45fa3be5a06c619",
+      "effective": true,
+      "minus": -720523.0418975998,
+      "plus": null
     },
     {
       "observation": "0039-16",
@@ -1226,6 +1514,22 @@
       "plus": 0
     },
     {
+      "observation": "0039-16",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "3867890910cda368",
+      "effective": true,
+      "minus": 274615.01978760003,
+      "plus": null
+    },
+    {
+      "observation": "0039-16",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "3867890910cda368",
+      "effective": true,
+      "minus": -1189662.0733871998,
+      "plus": null
+    },
+    {
       "observation": "0039-17",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "dcc4e78af2233279",
@@ -1234,12 +1538,46 @@
       "plus": 0
     },
     {
+      "observation": "0039-17",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "dcc4e78af2233279",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 55 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0039-17",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "dcc4e78af2233279",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 55 回目の倍率ダメージが無い"
+    },
+    {
       "observation": "0039-18",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "141fce879e183fb4",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0039-18",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "141fce879e183fb4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0039-18",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "141fce879e183fb4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0040-06",
@@ -4571,12 +4909,44 @@
       "plus": 0
     },
     {
+      "observation": "0222-01",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "df4b8aa4f51ce93d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-01",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "df4b8aa4f51ce93d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0222-03",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "a6c09a41c35aa940",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0222-03",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "a6c09a41c35aa940",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-03",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "a6c09a41c35aa940",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0222-04",
@@ -4587,12 +4957,44 @@
       "plus": 0
     },
     {
+      "observation": "0222-04",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "b1f7617e0255ea03",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-04",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "b1f7617e0255ea03",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0222-05",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "75180c37e8149b42",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0222-05",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "75180c37e8149b42",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-05",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "75180c37e8149b42",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0222-06",
@@ -4603,12 +5005,44 @@
       "plus": 0
     },
     {
+      "observation": "0222-06",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "bc10362cfa0ebdfd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-06",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "bc10362cfa0ebdfd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0222-07",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "acb1a4d936e749d4",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0222-07",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "acb1a4d936e749d4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-07",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "acb1a4d936e749d4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0222-08",
@@ -4619,12 +5053,44 @@
       "plus": 0
     },
     {
+      "observation": "0222-08",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "4b9fce6a9edebc09",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-08",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "4b9fce6a9edebc09",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0222-09",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "bc4dc48fa3fe2ac8",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0222-09",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "bc4dc48fa3fe2ac8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-09",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "bc4dc48fa3fe2ac8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0222-10",
@@ -4635,12 +5101,44 @@
       "plus": 0
     },
     {
+      "observation": "0222-10",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "60393bb40281ce2b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-10",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "60393bb40281ce2b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0222-11",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "d3ff1b013317d58a",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0222-11",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "d3ff1b013317d58a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-11",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "d3ff1b013317d58a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0222-12",
@@ -4651,12 +5149,44 @@
       "plus": 0
     },
     {
+      "observation": "0222-12",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "04d7c75645de6185",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-12",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "04d7c75645de6185",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0222-15",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "88578ce2a7f0c6f9",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0222-15",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "88578ce2a7f0c6f9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-15",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "88578ce2a7f0c6f9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0222-16",
@@ -4667,12 +5197,44 @@
       "plus": 0
     },
     {
+      "observation": "0222-16",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "106d0a0d0d953d12",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-16",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "106d0a0d0d953d12",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0222-17",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "aedc9fceae320ff7",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0222-17",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "aedc9fceae320ff7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-17",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "aedc9fceae320ff7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0222-18",
@@ -4683,6 +5245,22 @@
       "plus": 0
     },
     {
+      "observation": "0222-18",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "c85eed3d35faacba",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-18",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "c85eed3d35faacba",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0222-19",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "f6655f304209a3ed",
@@ -4691,12 +5269,44 @@
       "plus": 0
     },
     {
+      "observation": "0222-19",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "f6655f304209a3ed",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-19",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "f6655f304209a3ed",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0222-21",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "ae33df26c17707fd",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0222-21",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "ae33df26c17707fd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0222-21",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "ae33df26c17707fd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0224-01",
@@ -7587,12 +8197,44 @@
       "plus": 0
     },
     {
+      "observation": "0365-01",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "1a6b3230d935ed0f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0365-01",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "1a6b3230d935ed0f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0365-02",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "d373f31707a000b6",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0365-02",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "d373f31707a000b6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0365-02",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "d373f31707a000b6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0365-03",
@@ -7603,6 +8245,22 @@
       "plus": 0
     },
     {
+      "observation": "0365-03",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "eab3a2432372f81c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0365-03",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "eab3a2432372f81c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0365-04",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "dd094345cf00f1b6",
@@ -7611,6 +8269,22 @@
       "plus": 0
     },
     {
+      "observation": "0365-04",
+      "element": "ドレイク treasureSkills.skill2.effects[0]",
+      "key": "dd094345cf00f1b6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0365-04",
+      "element": "ドレイク treasureSkills.skill2.effects[1]",
+      "key": "dd094345cf00f1b6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0366-01",
       "element": "ラピ burst.effects[1]",
       "key": "f4b8b343266551fe",
@@ -7729,6 +8403,15 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "0390-04",
+      "element": "プリバティ：アンカインド・メイド skill1.effects[0]",
+      "key": "a2640b1f8888ae7a",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 発動が 0 回しかない"
     },
     {
       "observation": "0401-01",
