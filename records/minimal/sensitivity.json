@@ -12924,6 +12924,70 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0667-01",
+      "element": "マナ burst.effects[0]",
+      "key": "d73421a17309ccce",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0667-01",
+      "element": "マナ burst.effects[1]",
+      "key": "d73421a17309ccce",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0668-01",
+      "element": "マナ burst.effects[0]",
+      "key": "494afd2be9b5d69a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0668-01",
+      "element": "マナ burst.effects[1]",
+      "key": "494afd2be9b5d69a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0669-01",
+      "element": "マナ burst.effects[0]",
+      "key": "08c28e4bbe27f798",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0669-01",
+      "element": "マナ burst.effects[1]",
+      "key": "08c28e4bbe27f798",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0670-01",
+      "element": "マナ burst.effects[0]",
+      "key": "4200e4407d9d29c1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0670-01",
+      "element": "マナ burst.effects[1]",
+      "key": "4200e4407d9d29c1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

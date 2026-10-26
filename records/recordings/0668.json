@@ -1,0 +1,52 @@
+{
+  "id": "0668",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0668_burst_sun-mana_left.mp4",
+  "original": "2026-10-26_20-41-40.mp4",
+  "durationSec": 201.3,
+  "frames": 12079,
+  "fps": 60,
+  "sizeMB": 243.9,
+  "sha256": "bb962de66a2a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 290,
+      "name": "マナ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0518 の A（1 枠目 I-DOLL・サン・2 枠目マナ・3 枠目デルタ（操作）・4 枠目ラム）。オートバースト ON",
+  "backup": {
+    "at": "2026-10-26T20:54+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
