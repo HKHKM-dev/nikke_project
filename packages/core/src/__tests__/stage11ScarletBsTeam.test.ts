@@ -65,6 +65,9 @@ function segmentAt(result: TeamResult, slotIndex: number, frame: number) {
 const skillHitShown = (h: SkillHitEvent, ticks = 1) =>
   Math.round((h.hit.baseHit * h.effect.multiplier * (1 + h.hit.boost.fullBurst)) / ticks);
 
+/** 段のダメージの、段を出した射撃からの遅れ（A・B・C。C-0651。回数トリガーの遅れ編の第 2 段） */
+const TIER_DELAYS = [10, 9, 9];
+
 describe('射撃の刻みの較正（3.3・7.3）', () => {
   it('fires 紅蓮BS every 43f and 172f across a reload (録画 0046。0046-21)', () => {
     const cadence = computeCadence(character(225).shot);
@@ -92,7 +95,8 @@ describe('録画 0047 の予測（7.5）', () => {
   const fb = plan.schedule!.fullBurstWindows;
   const shots = plan.shots[2]!.frames;
   const hits = plan.skillHits.filter((h) => h.slotIndex === 2);
-  const stepAt = new Map(hits.map((h) => [h.frame, h.effect.cycle!.step]));
+  // 段のヒットは射撃の A 10・B 9・C 9f 後（C-0651）。射撃のフレームに戻して段を引く
+  const stepAt = new Map(hits.map((h) => [h.frame - TIER_DELAYS[h.effect.cycle!.step]!, h.effect.cycle!.step]));
 
   it('opens 5 full bursts of 10 s, 40 s apart, with 紅蓮BS as III', () => {
     // Stage 21-B: 40 秒 = 2,352f、10 秒 = 588f。C-0073 で段の間隔を 20f → 29f にして 470 → 497。
@@ -154,9 +158,15 @@ describe('S1 の段のヒットで溜まるゲージ（V-0030・C-0085）', () =
     const delays = [[5], [5, 19, 33], [5]];
     const expected = plan.skillHits
       .filter((h) => h.slotIndex === 0 && h.effect.cycle !== undefined)
-      .flatMap((h) => delays[h.effect.cycle!.step]!.map((d) => h.frame + d));
+      .flatMap((h) => delays[h.effect.cycle!.step]!.map((d) => h.frame - TIER_DELAYS[h.effect.cycle!.step]! + d));
     expect(plan.cycleGaugeHits.map((h) => h.frame)).toEqual(expected);
     expect(plan.cycleGaugeHits.every((h) => h.energy === 25_000)).toBe(true);
+  });
+
+  it('puts the tier damage 10f (A) and 9f (B・C) after the shot (C-0651)', () => {
+    const tiers = plan.skillHits.filter((h) => h.slotIndex === 0 && h.effect.cycle !== undefined);
+    expect(tiers.length).toBeGreaterThan(30);
+    for (const h of tiers) expect(shots).toContain(h.frame - TIER_DELAYS[h.effect.cycle!.step]!);
   });
 
   it('fills at the 20th shot with 10 skill hits before it (20 × 37,500 + 10 × 25,000 = 1,000,000。録画 0046・0055・0070・0071)', () => {

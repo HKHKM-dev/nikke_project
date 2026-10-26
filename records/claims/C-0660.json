@@ -1,11 +1,11 @@
 {
   "id": "C-0660",
   "text": "ドレイク（宝物あり）の宝物版 S2 の倍率ダメージ（5 回攻撃・10 回攻撃とも）のヒットは、きっかけの発の HUD の増分の 6f 後に出る。5f に見える回は、どれもきっかけの増分の 1 つ前が動画の重複フレームの回",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
-  "grade": "単独実測",
+  "grade": "反復実測",
   "basis": "`0016-03`・`0430-07`。V-0506",
-  "model": "未実装: `data/skills/101.json` の treasureSkills.skill2 の effects[0]・effects[1] は、ヒットをきっかけの発の射撃のフレームに出す（`delayFrames` なし）。`damage` の `delayFrames` を射撃の回数のきっかけに開いてから `delayFrames: 6` を書く（plan/design-shot-count-trigger-frame.md 6 節の第 2 段）。宝物なしの skill2 の遅れは測っていない",
+  "model": "反映: `data/skills/101.json` の treasureSkills.skill2 の effects[0]・effects[1] の `delayFrames: 6`（plan/design-shot-count-trigger-frame.md 6.6 節）。宝物なしの skill2 は測っていないので入れず、効果の `assumes` に書いた",
   "replaces": [],
   "updated": "2026-10-26",
   "subject": {
@@ -23,5 +23,6 @@
       "recording": "0036",
       "role": "値を合わせた"
     }
-  ]
+  ],
+  "gradeReason": "6 の値は 0039・0036 で決まっていた（decidedOn）。読む前に判定を固定し、決めるのに使っていない 0430 で 35 回のうち 33 回が 6 だった（5 の 2 回はどちらもきっかけの増分の 1 つ前が重複フレーム）。遅れを入れたモデルと skillHitShotDelay で合う"
 }

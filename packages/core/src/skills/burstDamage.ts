@@ -110,6 +110,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     maxStacks: number;
     /** レイヴン編: 付けたとき・tick ごとに射手の 1 ヒットぶんのゲージを溜める（C-0181。frame/firstPass.ts） */
     gaugeOnApply?: true;
+    /** 回数トリガーの遅れ編の第 2 段: 付けたときのゲージを発火の何フレーム後に足すか（レイヴンは 6。frame/firstPass.ts） */
+    gaugeOnApplyDelayFrames?: number;
     gaugeOnTick?: true;
     /** アニス：スター S2・バースト編: 周期の自動攻撃（autoAttack）を dot の形にしたもの。表示のラベルだけが変わる */
     autoAttack?: true;
@@ -164,6 +166,10 @@ export function resolveDamageEffects(
       // 射撃ごとの倍率ダメージは発動を作らず、1 トリガーの値に畳み込む（resolvePerShotDamage）。
       // クルミ S2 編: 条件つきは畳み込まない（1 パス目の後に絞るので）。2 段目の段 10（plan/design-skill-stage10.md 3.2 節）: 条件つきは、
       // 射撃ごとの発動として 1 件ずつ出す（ネオン：ビジョン・アイの S1 の超火力状態の追加効果。条件 selfState を射撃のフレームで見る）
+      // 回数トリガーの遅れ編の第 2 段: 畳み込む効果は射撃と同じフレームに乗るので、遅れを書けない
+      if (isPerShotTrigger(trigger) && effect.delayFrames !== undefined) {
+        throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot have delayFrames`);
+      }
       if (isPerShotTrigger(trigger) && effect.condition === undefined) return;
       const r: ResolvedDamageEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -321,6 +327,9 @@ export function resolveDotEffects(
           ...(!auto && effect.state !== undefined ? { state: effect.state } : {}),
           maxStacks,
           ...(!auto && effect.gaugeOnApply === true ? { gaugeOnApply: true as const } : {}),
+          ...(!auto && effect.gaugeOnApplyDelayFrames !== undefined
+            ? { gaugeOnApplyDelayFrames: effect.gaugeOnApplyDelayFrames }
+            : {}),
           ...(gaugeOnTick ? { gaugeOnTick: true as const } : {}),
           ...(auto ? { autoAttack: true as const } : {}),
         },

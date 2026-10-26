@@ -1,12 +1,15 @@
 // 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 射撃の回数のきっかけの timed・heal・burstGaugeHit に
 // delayFrames を書ける。timed の窓はきっかけの d 後から（startOfFire）、heal は d 後（healFrameOf。heals.test.ts）、
-// ゲージは d 後に足す（frame/firstPass.ts）。定義はナガ S2（C-0593・C-0653）・ミサト S1（C-0652）・モラン S2（C-0480）
+// ゲージは d 後に足す（frame/firstPass.ts）。定義はナガ S2（C-0593・C-0653）・ミサト S1（C-0652）・モラン S2（C-0480）。
+// 第 2 段（6.6 節）は下の 2 つの describe
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
-import { resolveShotGauges } from '../burstDamage.ts';
+import { resolveDamageEffects, resolveDotEffects, resolveShotGauges } from '../burstDamage.ts';
+import { resolveCycles } from '../cycles.ts';
 import { startOfFire } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
+import { applyTreasure } from '../treasure.ts';
 import { parseSkillDefinition } from '../types.ts';
 
 function readJson<T>(path: string): T {
@@ -65,5 +68,95 @@ describe('定義の delayFrames', () => {
   it('charges the taunt gauge of Moran S2 six frames after the last bullet (C-0480)', () => {
     const def = parseSkillDefinition(readJson('../../../data/skills/281.json'));
     expect(resolveShotGauges(def, moran, MAX_SKILL_LEVELS)).toEqual([{ count: 'lastShot', every: 1, delayFrames: 6 }]);
+  });
+});
+
+// 回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md 6.6 節）: damage の delayFrames を射撃の回数のきっかけにも、
+// cycle の段にも書ける。dot は付けたときのゲージだけを gaugeOnApplyDelayFrames 後に足す。定義はプリバティ：UM S1（C-0659）・
+// ドレイク S2（宝物版。C-0660）・紅蓮BS S1 の段（C-0651）・レイヴン S1（C-0181）。RL の射撃のフレームは撃ったフレーム（C-0661）
+const rawPrivaty = readJson<{ skills: Record<string, { effects: Record<string, unknown>[]; sequential?: true }> }>(
+  '../../../data/skills/313.json',
+);
+const privaty = readJson<CharacterData>('../../../data/characters/313.json');
+const drake = readJson<CharacterData>('../../../data/characters/101.json');
+const scarlet = readJson<CharacterData>('../../../data/characters/225.json');
+const raven = readJson<CharacterData>('../../../data/characters/851.json');
+
+/** 313.json を写して、skill1 の effects[0] の欄を差し替えた定義を検証にかける */
+function withPrivatyS1(fields: Record<string, unknown>, sequential = false): unknown {
+  const copy = structuredClone(rawPrivaty);
+  copy.skills.skill1!.effects[0] = { ...copy.skills.skill1!.effects[0], ...fields };
+  if (sequential) copy.skills.skill1!.sequential = true;
+  return copy;
+}
+
+describe('damage の delayFrames（射撃の回数のきっかけ）', () => {
+  it('takes a positive integer delayFrames on a shot count damage', () => {
+    expect(parseSkillDefinition(rawPrivaty).skills.skill1.effects[0]).toMatchObject({ kind: 'damage', delayFrames: 6 });
+    for (const d of [0, -1, 1.5, '6']) {
+      expect(() => parseSkillDefinition(withPrivatyS1({ delayFrames: d }))).toThrow(/delayFrames/);
+    }
+  });
+
+  it('rejects delayFrames with gaugeHits or in a sequential skill', () => {
+    // 確率のきっかけは damage にそもそも書けない（timed だけ）
+    expect(() => parseSkillDefinition(withPrivatyS1({ gaugeHits: [0] }))).toThrow(
+      /delayFrames cannot be used with gaugeHits/,
+    );
+    expect(() => parseSkillDefinition(withPrivatyS1({}, true))).toThrow(/a sequential skill cannot have a delayed/);
+  });
+
+  it('rejects delayFrames on a per-shot damage (every 1), which is folded into the shot', () => {
+    const def = parseSkillDefinition(withPrivatyS1({ trigger: { count: 'normalShot', every: 1 } }));
+    expect(() => resolveDamageEffects(def, privaty, MAX_SKILL_LEVELS)).toThrow(/cannot have delayFrames/);
+  });
+
+  it('delays Privaty S1 and the treasure Drake S2 by six frames (C-0659・C-0660)', () => {
+    const s1 = resolveDamageEffects(parseSkillDefinition(rawPrivaty), privaty, MAX_SKILL_LEVELS);
+    expect(s1.map((e) => e.delayFrames)).toEqual([6]);
+    const def = parseSkillDefinition(readJson('../../../data/skills/101.json'));
+    const treasure = applyTreasure(drake, def, 3);
+    const s2 = resolveDamageEffects(treasure.definition!, treasure.character, MAX_SKILL_LEVELS).filter(
+      (e) => e.source.skill === 'skill2',
+    );
+    expect(s2.map((e) => e.delayFrames)).toEqual([6, 6]);
+    // 宝物なしの S2 は測っていない
+    const plain = resolveDamageEffects(def, drake, MAX_SKILL_LEVELS).filter((e) => e.source.skill === 'skill2');
+    expect(plain.map((e) => e.delayFrames)).toEqual([undefined]);
+  });
+});
+
+describe('cycle の段と dot の付けたときのゲージの遅れ', () => {
+  it('delays the tiers of Scarlet: Black Shadow S1 by 10, 9 and 9 frames (C-0651)', () => {
+    const [cycle] = resolveCycles(
+      parseSkillDefinition(readJson('../../../data/skills/225.json')),
+      scarlet,
+      MAX_SKILL_LEVELS,
+    );
+    expect(cycle!.steps.map((s) => s.delayFrames)).toEqual([10, 9, 9]);
+    // ゲージは射撃から数えたまま（C-0085）
+    expect(cycle!.gaugeHits).toEqual([[5], [5, 19, 33], [5]]);
+  });
+
+  it('adds the apply gauge of Raven S1 six frames after the shot (C-0181)', () => {
+    const [shock] = resolveDotEffects(
+      parseSkillDefinition(readJson('../../../data/skills/851.json')),
+      raven,
+      MAX_SKILL_LEVELS,
+    );
+    expect(shock!.dot!.gaugeOnApplyDelayFrames).toBe(6);
+  });
+
+  it('needs gaugeOnApply and a shot count trigger without a chance for gaugeOnApplyDelayFrames', () => {
+    const raw = readJson<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(
+      '../../../data/skills/851.json',
+    );
+    const withShock = (fields: Record<string, unknown>): unknown => {
+      const copy = structuredClone(raw);
+      copy.skills.skill1!.effects[0] = { ...copy.skills.skill1!.effects[0], ...fields };
+      return copy;
+    };
+    expect(() => parseSkillDefinition(withShock({ gaugeOnApply: undefined }))).toThrow(/needs gaugeOnApply/);
+    expect(() => parseSkillDefinition(withShock({ gaugeOnApplyDelayFrames: 0 }))).toThrow(/gaugeOnApplyDelayFrames/);
   });
 });

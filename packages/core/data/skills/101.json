@@ -34,8 +34,8 @@
           "damageType": "skill",
           "ref": 3,
           "assumes": {
-            "ja": "対象「残りの HP が最も低い敵 3 機」は単体ボスで 1 ヒット",
-            "en": "The 3 lowest-HP enemies are a lone boss, so it lands once"
+            "ja": "対象「残りの HP が最も低い敵 3 機」は単体ボスで 1 ヒット。ヒットは発のフレームに置く（宝物版は 6f 後と測った（C-0660）が、宝物なしは測っていない。未実装）",
+            "en": "The 3 lowest-HP enemies are a lone boss, so it lands once. The hit is placed on the shot frame (the treasure version lands 6 frames later, but this version has not been measured; not implemented)"
           }
         }
       ]
@@ -123,11 +123,12 @@
             "count": "normalShot",
             "everyRef": 1
           },
+          "delayFrames": 6,
           "damageType": "skill",
           "ref": 3,
           "assumes": {
-            "ja": "対象「残りの HP が最も低い敵 3 機」は単体ボスで 1 ヒット",
-            "en": "The 3 lowest-HP enemies are a lone boss, so it lands once"
+            "ja": "対象「残りの HP が最も低い敵 3 機」は単体ボスで 1 ヒット。ヒットはきっかけの発の 6f 後（C-0660）",
+            "en": "The 3 lowest-HP enemies are a lone boss, so it lands once. The hit lands 6 frames after the triggering shot"
           },
           "claims": [
             "C-0458",
@@ -140,11 +141,12 @@
             "count": "normalShot",
             "everyRef": 4
           },
+          "delayFrames": 6,
           "damageType": "skill",
           "ref": 6,
           "assumes": {
-            "ja": "対象「残りの HP が最も低い敵 1 機」は単体ボス",
-            "en": "The lowest-HP enemy is the lone boss"
+            "ja": "対象「残りの HP が最も低い敵 1 機」は単体ボス。ヒットはきっかけの発の 6f 後（C-0660）",
+            "en": "The lowest-HP enemy is the lone boss. The hit lands 6 frames after the triggering shot"
           },
           "claims": [
             "C-0458",

@@ -428,8 +428,11 @@ function cycleWindowResidues(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
   const every = Number(ctx.args.every);
   const shots = slotOf(result.shots, ctx).frames;
+  // 段を出した射撃のフレーム（回数トリガーの遅れ編の第 2 段: 段のヒットは射撃の delayFrames 後。C-0651）
   const tiers = new Set(
-    result.skillHits.filter((h) => h.slotIndex === slotIndex && h.effect.cycle !== undefined).map((h) => h.frame),
+    result.skillHits
+      .filter((h) => h.slotIndex === slotIndex && h.effect.cycle !== undefined)
+      .map((h) => h.frame - (h.effect.delayFrames ?? 0)),
   );
   const out: number[] = [];
   // 持ち主ごとの一覧編（段 D の 5）: 間隔の変更の件（時刻の順）

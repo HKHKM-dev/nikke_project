@@ -65,7 +65,8 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, privaty
     const expected: number[] = [];
     log.frames.forEach((f, k) => {
       const next = total + log.pelletHits![k]!;
-      if (Math.floor(next / 30 + 1e-9) > Math.floor(total / 30 + 1e-9)) expected.push(f);
+      // ヒットは発の 6f 後（C-0659。delayFrames）
+      if (Math.floor(next / 30 + 1e-9) > Math.floor(total / 30 + 1e-9) && f + 6 < plan.frames) expected.push(f + 6);
       total = next;
     });
     expect(s1.length).toBeGreaterThan(10);

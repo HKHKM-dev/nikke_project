@@ -559,6 +559,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const dotGaugeTrackers: {
     slotIndex: number;
     effects: { count: ShotCountKind; every: number; n: number; onApply: boolean }[];
+    /** 回数トリガーの遅れ編の第 2 段: 付けたときのゲージを発火の何フレーム後に足すか（0 は発火のフレーム。C-0181） */
+    applyDelay: number;
     onBurstUse: boolean;
     tracker: DotTickTracker;
     onTick: boolean;
@@ -588,6 +590,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       dotGaugeTrackers.push({
         slotIndex: i,
         effects,
+        applyDelay: Math.max(0, ...group.map((e) => e.dot!.gaugeOnApplyDelayFrames ?? 0)),
         onBurstUse,
         tracker: dotTickTracker(dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick),
         onTick,
@@ -837,8 +840,15 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (!fired) continue;
       if (apply) {
         const energy = targetEnergyNow(t.slotIndex, t.energy);
-        gauge += energy;
-        dotGauges.push({ slotIndex: t.slotIndex, kind: 'apply', frame: f, energy });
+        // 回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md 6.6 節）: 付けたのは撃った 6f 後（C-0181）。
+        // モデルの射撃のフレームは撃ったフレーム（C-0661）なので、その applyDelay 後のゲージに足す
+        if (t.applyDelay === 0) {
+          gauge += energy;
+          dotGauges.push({ slotIndex: t.slotIndex, kind: 'apply', frame: f, energy });
+        } else if (f + t.applyDelay < frames) {
+          pendingGauge.set(f + t.applyDelay, (pendingGauge.get(f + t.applyDelay) ?? 0) + energy);
+          dotGauges.push({ slotIndex: t.slotIndex, kind: 'apply', frame: f + t.applyDelay, energy });
+        }
       }
       reserveDotTicks(t, f);
     }

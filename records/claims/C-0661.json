@@ -5,7 +5,7 @@
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "反復実測",
   "basis": "`0421-12`・`0422-12`（紅蓮BS 単騎・AUTO・バーストなしの 2 本の 1 区間目。モデルの射撃のフレームと撃ったフレームの差の中央値が 0、着弾との差の中央値が −4。読む前に固定した判定（V-0519「予測」。commit 334c926）で、2 本とも HF）・`0122-26`（レイヴン単騎。較正に使った録画で記録）。V-0519",
-  "model": "`cadence.ts` の `firstShotFrames`・`frame/firing.ts` の `stanceFrames`（C-0218 のモデル側。撃ったフレームで較正した値）。通常攻撃のダメージ・ゲージも射撃のフレームに置き、着弾の遅れは持たない。C-0651・C-0181 の遅れは未実装",
+  "model": "`cadence.ts` の `firstShotFrames`・`frame/firing.ts` の `stanceFrames`（C-0218 のモデル側。撃ったフレームで較正した値）。通常攻撃のダメージ・ゲージも射撃のフレームに置き、着弾の遅れは持たない。C-0651（段のダメージ）・C-0181（付けたときのゲージ）の遅れは、この読みで `delayFrames`・`gaugeOnApplyDelayFrames` に入れた",
   "replaces": [],
   "updated": "2026-10-26",
   "subject": {

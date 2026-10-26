@@ -110,7 +110,8 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, raven: 
     const own = plan.dotGauges.filter((g) => g.slotIndex === slotIndex);
     const applies = own.filter((g) => g.kind === 'apply');
     const reserved = own.filter((g) => g.kind === 'tick');
-    expect(applies.map((g) => g.frame)).toEqual(fires);
+    // 付けたときのゲージは撃った 6f 後（C-0181。gaugeOnApplyDelayFrames。plan/design-shot-count-trigger-frame.md 6.6 節）
+    expect(applies.map((g) => g.frame)).toEqual(fires.map((f) => f + 6).filter((f) => f < plan.frames));
     // ループの中で予約した tick は、ループの後の dotTicks と同じ列（plan/design-raven-s1.md 8 節の 2）
     expect(reserved.map((g) => g.frame)).toEqual(ticks.map((h) => h.frame));
     for (const g of own) expect(g.energy).toBe(raven.shot.targetBurstEnergyPerShot);
