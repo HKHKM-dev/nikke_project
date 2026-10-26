@@ -764,6 +764,12 @@ export type BurstDamageEffect = {
   /** description_value_NN の NN（1 始まり）。値は % 表記（"351.64"）。100 で割るのは resolveBurstDamage の責務 */
   ref: number;
   damageType: BurstDamageType;
+  /**
+   * 2 段目の段 10（plan/design-skill-stage10.md 2.2 節）: 「N 回順番に攻撃」の回数の description_value_NN。1 回の発動の倍率は
+   * ref の値 × 回数で、遅れの表（burst/landing.ts）の分かれたヒット（hitOffsets。長さは回数と同じ）で等分すると、各ヒットが ref の値に
+   * なる（シンデレラのバースト。V-0502）。省略は 1 回
+   */
+  hitsRef?: number;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -812,6 +818,12 @@ export type DamageEffect = {
    * ときだけ書ける（delayFrames とは組み合わせない）。C-0565
    */
   perBurstHit?: true;
+  /**
+   * 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 値 × 数。「〈名前〉スタックコピー」は、倍率に、効果の発火のフレームの自分のその
+   * 状態のスタック数（発火のフレームより前に付いた件。条件 selfState と同じ見え方）を掛ける。0 なら出さない。trigger が burstUse の
+   * ときだけ書ける（シンデレラのバーストの追加ダメージ。V-0502）
+   */
+  perCount?: { state: NamedStateId };
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -2544,6 +2556,7 @@ function parseCycleEveryEffect(v: Record<string, Json>, path: string): CycleEver
 function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDamageEffect {
   const damageType = oneOf(BURST_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: BurstDamageEffect = { kind: 'burstDamage', ref: parseRef(v.ref, `${path}.ref`), damageType };
+  if (v.hitsRef !== undefined) effect.hitsRef = parseRef(v.hitsRef, `${path}.hitsRef`);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -2585,6 +2598,14 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     if (trigger !== 'burstUse') fail(`${path}.perBurstHit`, 'perBurstHit needs the trigger "burstUse"');
     if (effect.delayFrames !== undefined) fail(`${path}.perBurstHit`, 'perBurstHit cannot be used with delayFrames');
     effect.perBurstHit = true;
+  }
+  if (v.perCount !== undefined) {
+    // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 値 × 状態のスタック数。使い手（シンデレラ）のいるバースト使用時だけ
+    const per = v.perCount;
+    if (!isRecord(per)) fail(`${path}.perCount`, 'expected an object');
+    if (trigger !== 'burstUse') fail(`${path}.perCount`, 'perCount needs the trigger "burstUse"');
+    for (const key of Object.keys(per)) if (key !== 'state') fail(`${path}.perCount.${key}`, 'unknown field');
+    effect.perCount = { state: parseNamedStateId(per.state, `${path}.perCount.state`, 'ally') };
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

@@ -307,6 +307,15 @@ export function planSkillHits(
         })),
       );
     };
+    // 2 段目の段 10: perCount が読む、自分のその状態のスタック数（selfStateHolds と同じ件。静的な状態は 1）
+    const selfStackCount = (state: NamedStateId, frame: number): number => {
+      let level = [...ownStatics].some((s) => stateMatches(state, s)) ? 1 : 0;
+      for (const i of ownStateItems) {
+        if (i.origin.kind !== 'state' || !stateMatches(state, i.origin.state)) continue;
+        if (i.start < frame && frame < i.end) level = Math.max(level, i.stack ?? 1);
+      }
+      return level;
+    };
     // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
     const delays = burstDelaysOf(slot.character);
     if (sequential && delays.hitFrames !== delays.effectFrames) {
@@ -380,18 +389,22 @@ export function planSkillHits(
         : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
       for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds)) continue;
+        // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 「〈名前〉スタックコピー」は発火のフレームのスタック数を倍率に掛ける
+        // （条件 selfState と同じく、発火のフレームより前に付いた件の段の最大。0 なら出さない。V-0502）
+        const copied = effect.perCount === undefined ? undefined : selfStackCount(effect.perCount.state, frame);
+        if (copied === 0) continue;
         if (effect.perBurstHit === true) {
           // ミハラのバースト編（plan/design-mihara-burst-hits.md 3.2 節）: 条件は発火のフレームで 1 回判定し（C-0566）、
           // その発動のバーストの倍率ダメージのヒットのそれぞれに、等分しない倍率で出す（C-0565）
           const activation = mine.find((a) => effectFrameOf(a) === frame);
           if (activation === undefined) throw new RangeError(`no burst activation fires at frame ${frame}`);
           for (const hit of hitFramesOf(activation)) {
-            if (hit < frames) push(hit, effect, pre, undefined, activation.frame);
+            if (hit < frames) push(hit, effect, pre, copied, activation.frame);
           }
           continue;
         }
         if (frame + delay >= frames) continue;
-        push(frame + delay, effect, pre);
+        push(frame + delay, effect, pre, copied);
       }
     }
     // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。

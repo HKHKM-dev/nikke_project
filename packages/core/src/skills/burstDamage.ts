@@ -94,6 +94,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   delayFrames?: number;
   /** ミハラのバースト編: バーストの倍率ダメージの分かれたヒットのそれぞれに出す（frame/plan.ts の planSkillHits） */
   perBurstHit?: true;
+  /** 2 段目の段 10: 倍率に掛ける、発火のフレームの自分のその状態のスタック数（frame/plan.ts の planSkillHits） */
+  perCount?: { state: NamedStateId };
   /**
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
@@ -129,10 +131,13 @@ export function resolveBurstDamage(
   const resolved: ResolvedBurstDamage[] = [];
   for (const effect of entry.effects) {
     if (effect.kind !== 'burstDamage') continue;
+    // 2 段目の段 10（plan/design-skill-stage10.md 2.2 節）: 「N 回順番に攻撃」は、1 回の発動の倍率を回数倍にする（遅れの表の分かれた
+    // ヒットで等分すると、各ヒットが説明文の値になる。回数と分かれたヒットの数がそろうかは burstDelaysOf の側で確かめる）
+    const hits = effect.hitsRef === undefined ? 1 : skillValue(skill, effect.hitsRef, levels.burst);
     const r: ResolvedBurstDamage = {
       source: { resourceId: character.resourceId, skill: 'burst', name: skill.name },
       damageType: effect.damageType,
-      multiplier: skillValue(skill, effect.ref, levels.burst) / 100,
+      multiplier: (skillValue(skill, effect.ref, levels.burst) / 100) * hits,
     };
     if (effect.assumes) r.assumes = effect.assumes;
     resolved.push(r);
@@ -174,6 +179,7 @@ export function resolveDamageEffects(
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if (effect.perBurstHit === true) r.perBurstHit = true;
+      if (effect.perCount !== undefined) r.perCount = effect.perCount;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });

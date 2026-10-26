@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 61・効果 245（根拠あり 236）・notes 224（根拠あり 68）
+件数: キャラ 61・効果 247（根拠あり 238）・notes 224（根拠あり 69）
 
 notes の種類: 未対応 111・前提の外 27・計算に無関係 28・補足 12・間接 46
 
-スロット: supported 101・partial 13・unsupported 52・noEffect 32
+スロット: supported 101・partial 14・unsupported 51・noEffect 32
 
 ## 10 ラピ
 
@@ -730,8 +730,10 @@ notes の種類: 未対応 111・前提の外 27・計算に無関係 28・補�
   - effects[0] state・battleStart・decoy: C-0584（確定）
   - effects[1] state・burstStage3Enter・decoy: C-0584（確定）
   - effects[2] state・3 秒ごと・beauty（maxHp）: C-0584（確定）
-- **burst**: unsupported
-  - notes[0] 未対応: ランダムな敵への 10 回の倍率ダメージと、美しさのスタックに応じた追加ダメージは未対応: 根拠なし
+- **burst**: partial
+  - effects[0] burstDamage・skill: C-0654（確定）、C-0655（確定）
+  - effects[1] damage・burstUse・additional: C-0656（確定）
+  - notes[0] 未対応: 追加ダメージの攻撃力は、ヒットの時の最終最大HP で S1 の攻撃力▲を読み直す（バーストのヒットは発動の時の値のまま）。モデルは発動の時の値で固定する（未実装。1 回目のバーストの途中で美しさが増えた後のヒットだけが違う）: C-0657（仮説）
 
 ## 811 A2
 
