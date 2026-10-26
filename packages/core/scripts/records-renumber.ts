@@ -18,7 +18,7 @@
 //   Drive の名前を受け口（tools/drive/gateway.ts の move）で変える（plan/design-cloud-environment.md 6.3 節）。
 // - リベース・マージの途中では動かない（main と自分のブランチが同じ番号を足していると、どちらの参照か見分けられない）。リベースを
 //   中止し（git rebase --abort）、自分のブランチで振り直してから取り込み直す。
-// 振り直した後は npm run records:check（生成物を作り直して検査する。録画は npm run records:table も）。
+// 振り直した後は npm run records:check（生成物を作り直して検査する）。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -53,23 +53,11 @@ import { ROOT, idsInBranches, observationIdsInBranches, recordingIdsInBranches }
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
-  options: { 'dry-run': { type: 'boolean', default: false }, 'pad-all': { type: 'boolean', default: false } },
+  options: { 'dry-run': { type: 'boolean', default: false } },
 });
 
 const USAGE =
-  'usage: npm run records:renumber -- <古い ID> <新しい ID> [--dry-run]（V-NNNN・C-NNNN・<録画>-NN・録画の番号 NNNN）\n' +
-  '       npm run records:renumber -- --pad-all [--dry-run]（2〜3 桁の録画の番号を 4 桁にそろえる。plan/design-recording-id-4digit.md）';
-
-if (values['pad-all']) {
-  if (positionals.length > 0) {
-    console.error('--pad-all は ID を取らない');
-    console.error(USAGE);
-    process.exit(1);
-  }
-  const { padAllRecordings } = await import('./records-pad-recordings.ts');
-  await padAllRecordings(values['dry-run']);
-  process.exit(0);
-}
+  'usage: npm run records:renumber -- <古い ID> <新しい ID> [--dry-run]（V-NNNN・C-NNNN・<録画>-NN・録画の番号 NNNN）\n';
 
 function fail(message: string): never {
   console.error(message);
@@ -297,7 +285,7 @@ for (const p of files) {
   let count: number;
   if (kind === 'recording') {
     const r = renumberRecordingInText(text, oldId, newId, { observations: observationIds, json: isRecordsJson(p) });
-    // 生成物は records:check・records:table で作り直すので、人が見る所に出さない
+    // 生成物は records:check で作り直すので、人が見る所に出さない
     if (!GENERATED.has(p)) for (const x of r.manual) manual.push(spot(p, x));
     out = r.text;
     count = r.count;
@@ -388,7 +376,4 @@ if (capture !== undefined) {
 }
 if (changed.some((c) => /\.(ts|tsx|mts|cts|js|mjs|cjs)$/.test(c.path)))
   console.log('コードの中も置き換えた。テストが例として使っている ID なら戻す（npm test で確かめる）');
-if (!dryRun)
-  console.log(
-    `次に npm run records:check（生成物を作り直して検査する）${kind === 'recording' ? 'と npm run records:table（録画の一覧）' : ''}`,
-  );
+if (!dryRun) console.log('次に npm run records:check（生成物を作り直して検査する）');

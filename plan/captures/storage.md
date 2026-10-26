@@ -44,7 +44,7 @@ D:/nikke_project/plan/captures/ リポジトリ側（Git 追跡）
    - ドライブをまたぐので、コピー → sha256 の一致を確かめる → 取り込み元から消す、の順に行う。
    - スクショは、関連する録画と同じ種別フォルダに置く。録画に付かないスクショ（ステータス画面だけ など）は `ui/` に置く（名前は [index.md](index.md)「命名規約」）。
    - 例外: 旧プロジェクトの録画（`L-` の番号）は移さない（[index.md](index.md)「旧プロジェクトの録画」）。
-3. 録画は `records/recordings/<録画 id>.json` を 1 本足し、`npm run records:table` で録画の一覧（[recordings.md](recordings.md)）を作り直す。採用しなかった録画にも通し番号を振って載せ、採用しなかった理由を `conditionNote` に書く。スクショは `records/recordings/` に載せない（録画に付くものはファイル名の番号で結びつく。録画に付かないものは、それを読んだ記録（検証記録など）にファイル名を書く）。証拠フレームは `E:/nikke_project_captures/frames/` に切り出す（コミットしない）。
+3. 録画は `records/recordings/<録画 id>.json` を 1 本足し、`npm run records:check` で録画の一覧（[recordings.md](recordings.md)）を作り直す。採用しなかった録画にも通し番号を振って載せ、採用しなかった理由を `conditionNote` に書く。スクショは `records/recordings/` に載せない（録画に付くものはファイル名の番号で結びつく。録画に付かないものは、それを読んだ記録（検証記録など）にファイル名を書く）。証拠フレームは `E:/nikke_project_captures/frames/` に切り出す（コミットしない）。
 4. Google Drive に同期する（下記「バックアップ」）。移した録画・スクショ・証拠フレームはどれも `E:/nikke_project_captures/` の下にある。録画は `intake.ts` が取り込みの最後に Drive に置き、ハッシュを突き合わせる（`intake.ts` の冒頭のコメント）。`frames/` に切り出した証拠フレームは `still.ts` が上げる。ほかに足したもの（スクショ・手で置いたもの）は、デスクトップのセッションの始めか、離席の前の `npm run drive:sync` で上がる。
 
 ### 参照資料（`reference/`）
@@ -130,13 +130,14 @@ robocopy "E:/old_nikkecalc" "I:/マイドライブ/old_nikkecalc" /E /R:1 /W:1
 ### 使い方
 
 ```bash
-node tools/captures/fetch.ts 040 063                # 録画 id で取り寄せ、sha256 の先頭 12 桁を台帳と突き合わせる
+node tools/captures/fetch.ts 0040 0063              # 録画 id で取り寄せ、sha256 の先頭 12 桁を台帳と突き合わせる
 node tools/captures/fetch.ts frames/<名前>.jpg      # 相対パスでも取れる。フォルダを指すと中身を全部取る
 node tools/captures/fetch.ts --list range           # Drive 上のフォルダの中身を見る
 node tools/captures/fetch.ts L-AD                   # 旧プロジェクトの録画（台帳の path から old_nikkecalc の下を引く）
 node tools/captures/fetch.ts --legacy リザルト      # --legacy を付けると相対パスは old_nikkecalc の下（--list にも効く）
 ```
 
+- `npm run records:read` は、無い録画をこれで取り寄せてから読む。手で回すのは、解析ツール（`hud.ts` など）を直に使うとき。
 - 置き場所は環境変数 `NIKKE_CAPTURES_DIR`。無ければ Windows は `E:/nikke_project_captures`、それ以外はホームの下の `nikke_project_captures`（`tools/captures/dirs.ts`）。種別フォルダの構成は E: と同じ。旧プロジェクトのものは `NIKKE_LEGACY_DIR`（無ければ `E:/old_nikkecalc`、それ以外はホームの下の `old_nikkecalc`）。
 - 旧プロジェクトの録画は台帳に sha256 が無いので、突き合わせない。
 - 既にあるファイルは取り直さない（録画は sha256 が台帳と違えば取り直す）。`--force` で取り直す。

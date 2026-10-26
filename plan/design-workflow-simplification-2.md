@@ -1,6 +1,6 @@
 # 繰り返しの業務の簡素化の案・第 2 回（2026-10-25 の定期の見直し）
 
-- 何のための文書か: 検証 1 件ごと・撮影ごと・PR ごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。オーナーの判断を受けてから直す（まだ何も変えていない）。
+- 何のための文書か: 検証 1 件ごと・撮影ごと・PR ごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-10-26 にオーナーが全部を推奨どおりに承認し、実施した（10 節）。
 - 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)（2026-10-24。1〜5 節は実施済み、6・7 節は見送り）。そこで扱ったものは繰り返さない。
 - 調べた範囲: [AGENTS.md](../AGENTS.md)、[verification-guide.md](verification-guide.md)、[skills-guide.md](skills-guide.md)、[captures/protocol.md](captures/protocol.md)・[captures/storage.md](captures/storage.md)、[cloud-guide.md](cloud-guide.md)、`.claude/settings.json` のフック、`tools/`・`packages/core/scripts/` の道具、Claude Code のメモリ。
 - 調べ方: origin/main（7a49143）の直近のコミットで触るファイルと行を数え、道具の参照と観測値の `method.tool` を数えた。
@@ -19,6 +19,8 @@
 | 8   | Claude Code のメモリの古い項目を直す・消す                                                 | 毎セッション読む索引の古い指示                                      | 進めてよいか       |
 
 推奨は 1〜6 と 8 を進め、7 は枝を消すことをオーナーが決めてから行う。
+
+**判断（2026-10-26）**: 全部を推奨どおりに進める。7 の枝は 4 本とも消す（`cool-lamport` の 12.5 節も入れ直さない）。
 
 ## 1. 取り込みをまとめて行う（`intake.ts`）
 
@@ -149,3 +151,14 @@
 - クラウドの準備が 2 か所（storage.md のサービスアカウント、cloud-guide.md の受け口）にあること: オーナーが 1 回だけ行う手順で、繰り返さないので動かさない。
 - 検証記録の長さ（1 件 9〜14KB）: 節は `records:close` が見ていて、削れる決まった節は無い。
 - [captures/guide.md](captures/guide.md)（40KB）: 目安の 50KB に近い。超えそうになったら話題ごとに分ける（今は分けない）。
+
+## 10. 実施（2026-10-26）
+
+- 1: 案のとおり。`intake.ts` は元ファイルを複数受け、1 本ずつ子のプロセスで取り込む。番号は `--id` から順に、無ければ空いている番号から順に取る。終わりに `records:table` を回し、録画の JSON と一覧を commit して push する（既定。`--no-push` でしない）。`--treasure` は、枠が `--rid` にあることと、そのキャラが宝物を持つことを、録画を動かす前に確かめる。道具が埋めない項目を手で埋めた後は `records:check`（3）。小さな動画 2 本で、番号・名前・宝物の段階・一覧の作り直しを確かめた（JSON は消した）。
+- 2: 案のとおり。無い録画は、`NIKKE_DRIVE_SA_KEY` があれば `fetch.ts` を呼んで取り寄せる。録画は , か空白で並べる。クラウドで録画 `0194`・`0068` を取り寄せて読めることを確かめた（書いていない）。
+- 3: 案のとおり。`records:check` は録画の一覧とスキルの分類も作り、`records/recordings` も整形する。作り直しても生成物に差分が出ないことを確かめた。
+- 4: 案のとおり。加えて、2 つのファイルの今の表を一度だけ詰めた形にし、冒頭に書き方の 1 行を足した。
+- 5: 案のとおり。ただし 4 節は 5 項目にした（`decidedOn` があることも `records:close` が見ているため）。skills-guide.md は 22.5KB から 18.2KB（見込みの 12〜13KB に届かないのは、表に決まりの短い文を残したため）。
+- 6: 案のとおり。ci.yml は段のまま。`records:new` の `--push` は無くし、`--no-push` にした。押さえる処理は `packages/core/scripts/reserve.ts` に移し、`intake.ts` と共用にした。
+- 7: `--pad-all` と `records-pad-recordings.ts`、`renumber.ts` の 4 桁にそろえる関数とテストを消した（[design-recording-id-4digit.md](design-recording-id-4digit.md) 13 節に 1 行）。storage.md の例を 4 桁にした。枝は、クラウドのセッションからは消せない（このセッションのブランチのほかへの push を通信の中継が 403 で止める）ので、オーナーが GitHub で消す: `claude/cool-lamport-gf532m`・`claude/laughing-maxwell-n39fa0`・`claude/practical-cerf-5eifxm`・`claude/hopeful-carson-44x2yo`。
+- 8: 案のとおり（チップの「着手前にオーナーに確かめる」は `check-parallel-work.md` に移した）。メモリはリポジトリの外なので、この PR には入らない。
