@@ -81,6 +81,18 @@ export const NAMED_STATES = {
   emergencyCraftedBullets: { name: { ja: '代用弾丸', en: 'Emergency-Crafted Bullets' }, holder: 'ally' },
   /** 同: 応急改造（トーブの S1。代用弾丸が適用される時に味方全体。最大装弾数▲・3 スタック・5 秒。S2・バーストが見る） */
   temporaryModification: { name: { ja: '応急改造', en: 'Temporary Modification' }, holder: 'ally' },
+  /**
+   * 2 段目の段 10（plan/design-skill-stage10.md 3.2 節）: 火力チャージ（ネオン：ビジョン・アイのバースト。火力ゲージが 100 未満の時。
+   * 10 秒・解除不可。その間の通常攻撃と終わりに火力ゲージをチャージする。V-0503）
+   */
+  firepowerCharge: { name: { ja: '火力チャージ', en: 'Firepower Charge' }, holder: 'ally' },
+  /** 同: 超火力（ネオン：ビジョン・アイのバースト。火力ゲージが 100 の時。攻撃ダメージ▲・10 秒。S1・S2 の超火力の追加効果が見る） */
+  superFirepower: { name: { ja: '超火力', en: 'Super Firepower' }, holder: 'ally' },
+  /**
+   * 同: 超火力チャージ（ネオン：ビジョン・アイの S2。フルバーストの終わりに、火力ゲージの値をスタック数にして付く。1 スタックが
+   * バーストゲージのチャージ速度▲。5 秒。画面の適用中の効果の名前。V-0503）
+   */
+  superFirepowerCharge: { name: { ja: '超火力チャージ', en: 'Super Firepower Charge' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

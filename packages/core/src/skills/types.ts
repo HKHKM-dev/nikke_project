@@ -29,6 +29,7 @@
 import { ELEMENTS } from '../element.ts';
 import type { Element, LocalizedText, NikkeClass, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
+import { COUNTER_IDS, counterMax, type CounterId } from './counters.ts';
 import { NAMED_STATE_IDS, namedStateHolder, stateMatches, type NamedStateId, type StateHolder } from './states.ts';
 
 export type { SkillSlot };
@@ -688,7 +689,14 @@ export type EffectCondition = {
   selfState?: SelfStateCondition;
   usedBurst?: true;
   selfHp?: SelfHpCondition;
+  selfCounter?: SelfCounterCondition;
 };
+
+/**
+ * 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: 自分のカウンタの値の条件。atLeast = 「N 以上（N の場合）なら」、below =
+ * 「N 未満なら」（ちょうど片方）。発火のフレームの前のフレームの終わりの値を見る（同じフレームの増減は見ない。skills/holders.ts）
+ */
+export type SelfCounterCondition = { counter: CounterId; atLeast?: number; below?: number };
 
 /**
  * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 自分の HP の割合の条件。atLeastRef = 「自分の HP が X% 以上なら」の X の
@@ -1173,6 +1181,12 @@ export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scal
    * 持続の長さは変えない。読むのは解除（後の語彙）・効果解除（後の語彙）と、画面の状態の表示
    */
   undispellable?: true;
+  /**
+   * 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 1 回の発火で付けるスタックの数を、発火のフレームの前のフレームの終わりの自分の
+   * カウンタの値にする（0 なら付けない）。超火力チャージ（ネオン：ビジョン・アイの S2）は、火力ゲージの値をスタック数にして付く（V-0503）。
+   * maxStacks（即値）がカウンタの上限以上であること
+   */
+  stacksFrom?: { counter: CounterId };
 };
 
 /**
@@ -1214,6 +1228,33 @@ export type StackChangeEffect = {
   condition?: EffectCondition;
   assumes?: LocalizedText;
 };
+
+/**
+ * 2 段目の段 10（plan/design-skill-stage10.md 2.3・2.4 節）: 「〈カウンタ〉N チャージ」「〈カウンタ〉N 消費」。発火のフレームの、そのフレームの
+ * すべての判定の後に、自分のカウンタに N を足す（decrease なら減らす）。結果は 0 と上限の間で切る。トリガーは parseTrigger のものと、
+ * { ended: 状態 }（自分のその状態の件が外れたフレーム。段 4 の 1.3 節）
+ */
+export type CounterChangeEffect = {
+  kind: 'counterChange';
+  counter: CounterId;
+  trigger: EffectTrigger | EndedTrigger;
+  target: 'self';
+  /** 足す（減らす）値（即値）。amountRef とちょうど片方 */
+  amount?: number;
+  /** 足す（減らす）値の description_value_NN（整数に丸める） */
+  amountRef?: number;
+  decrease?: true;
+  condition?: EffectCondition;
+  assumes?: LocalizedText;
+};
+
+/** 2 段目の段 10（plan/design-skill-stage4.md 1.3 節の形）: 「〈名前〉状態が終了した時」。いまは counterChange にだけ書ける */
+export type EndedTrigger = { ended: NamedStateId };
+
+/** 2 段目の段 10: { ended } のトリガーか */
+export function isEndedTrigger(t: unknown): t is EndedTrigger {
+  return typeof t === 'object' && t !== null && 'ended' in t;
+}
 
 /**
  * 名前の付いた状態の語彙編（同 5.2 節）: 静的な付与の形か（戦闘開始時・戦闘の終わりまで・自分・発火の条件なし・スタックなし）。
@@ -1288,6 +1329,7 @@ export type SkillEffect = (
   | StateGrantEffect
   | RemoveStateEffect
   | StackChangeEffect
+  | CounterChangeEffect
 ) &
   ClaimRefs &
   IndirectReads;
@@ -1319,6 +1361,7 @@ export const SKILL_EFFECT_KINDS = [
   'state',
   'removeState',
   'stackChange',
+  'counterChange',
 ] as const satisfies readonly SkillEffect['kind'][];
 type MissingEffectKind = Exclude<SkillEffect['kind'], (typeof SKILL_EFFECT_KINDS)[number]>;
 const _allEffectKinds: [MissingEffectKind] extends [never] ? true : never = true;
@@ -2070,12 +2113,15 @@ function parseTimedFields(
 
 /** 名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）: 効果の種類ごとに受ける条件の鍵 */
 const CONDITION_KEYS_OF = {
-  timed: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst'],
+  // 2 段目の段 10: selfCounter（カウンタの値。付与の条件にも使う）
+  timed: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst', 'selfCounter'],
   damage: ['inFullBurst', 'enemyState', 'selfState'],
   // 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除は、段 1.5 の判定に入る鍵と usedBurst
   removeState: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst'],
   // 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 常時の効果は、自分の HP の割合の条件だけ（編成の段で決まる）
   passive: ['selfHp'],
+  // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減は、自分の状態とカウンタの値
+  counterChange: ['selfState', 'selfCounter'],
 } as const satisfies Record<string, readonly ConditionKey[]>;
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける */
@@ -2117,8 +2163,24 @@ function parseCondition(c: Json, path: string, allowed: readonly ConditionKey[])
     condition.usedBurst = true;
   }
   if (c.selfHp !== undefined) condition.selfHp = parseSelfHpCondition(c.selfHp, `${path}.selfHp`);
+  if (c.selfCounter !== undefined)
+    condition.selfCounter = parseSelfCounterCondition(c.selfCounter, `${path}.selfCounter`);
   if (Object.keys(condition).length === 0) fail(path, `expected at least one of ${allowed.join(', ')}`);
   return condition;
+}
+
+/** 2 段目の段 10: 自分のカウンタの値の条件。{ counter, atLeast } か { counter, below }（ちょうど片方。0 と上限の間の整数） */
+function parseSelfCounterCondition(v: Json, path: string): SelfCounterCondition {
+  if (!isRecord(v)) fail(path, 'expected { counter, atLeast } or { counter, below }');
+  for (const key of Object.keys(v))
+    if (!['counter', 'atLeast', 'below'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+  const counter = oneOf(COUNTER_IDS, v.counter, `${path}.counter`);
+  if ((v.atLeast === undefined) === (v.below === undefined)) fail(path, 'expected exactly one of atLeast and below');
+  const key = v.atLeast !== undefined ? 'atLeast' : 'below';
+  const n = parsePositiveInt(v[key], `${path}.${key}`);
+  if (n > counterMax(counter))
+    fail(`${path}.${key}`, `expected at most the max of ${counter} (${counterMax(counter)}), got ${n}`);
+  return { counter, [key]: n };
 }
 
 /** 2 段目の段 6: 自分の HP の割合の条件。{ atLeastRef }（「自分の HP が X% 以上なら」） */
@@ -2190,6 +2252,20 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
       fail(`${path}.undispellable`, `expected true, got ${JSON.stringify(v.undispellable)}`);
     effect.undispellable = true;
   }
+  if (v.stacksFrom !== undefined) {
+    // 2 段目の段 10: スタックの数をカウンタの値から取る
+    const from = v.stacksFrom;
+    if (!isRecord(from)) fail(`${path}.stacksFrom`, 'expected { counter }');
+    for (const key of Object.keys(from)) if (key !== 'counter') fail(`${path}.stacksFrom.${key}`, 'unknown field');
+    const counter = oneOf(COUNTER_IDS, from.counter, `${path}.stacksFrom.counter`);
+    if (effect.maxStacks === undefined || effect.maxStacks < counterMax(counter)) {
+      fail(
+        `${path}.maxStacks`,
+        `stacksFrom needs maxStacks of at least the max of ${counter} (${counterMax(counter)})`,
+      );
+    }
+    effect.stacksFrom = { counter };
+  }
   if (v.contents !== undefined) {
     if (!Array.isArray(v.contents) || v.contents.length === 0) fail(`${path}.contents`, 'expected a non-empty array');
     effect.contents = v.contents.map((item, i) => parseStateContentItem(item, v, `${path}.contents[${i}]`));
@@ -2238,6 +2314,7 @@ const STATE_GRANT_KEYS: readonly string[] = [
   'durationUntil',
   'maxStacks',
   'maxStacksRef',
+  'stacksFrom',
   'condition',
   'burstStepMix',
   'squad',
@@ -3018,10 +3095,55 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'state') return parseStateGrantEffect(v, path);
   if (v.kind === 'removeState') return parseRemoveStateEffect(v, path);
   if (v.kind === 'stackChange') return parseStackChangeEffect(v, path);
+  if (v.kind === 'counterChange') return parseCounterChangeEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry", "allyGaugeAdd", "state", "removeState" or "stackChange", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
   );
+}
+
+/** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減。対象は自分だけ */
+function parseCounterChangeEffect(v: Record<string, Json>, path: string): CounterChangeEffect {
+  for (const key of Object.keys(v)) {
+    if (
+      ![
+        'kind',
+        'counter',
+        'trigger',
+        'target',
+        'amount',
+        'amountRef',
+        'decrease',
+        'condition',
+        'assumes',
+        'claims',
+      ].includes(key)
+    ) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const counter = oneOf(COUNTER_IDS, v.counter, `${path}.counter`);
+  let trigger: EffectTrigger | EndedTrigger;
+  if (isRecord(v.trigger) && v.trigger.ended !== undefined) {
+    for (const key of Object.keys(v.trigger)) if (key !== 'ended') fail(`${path}.trigger.${key}`, 'unknown field');
+    trigger = { ended: parseNamedStateId(v.trigger.ended, `${path}.trigger.ended`, 'ally') };
+  } else {
+    trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  }
+  if (v.target !== 'self') fail(`${path}.target`, `expected "self", got ${JSON.stringify(v.target)}`);
+  const effect: CounterChangeEffect = { kind: 'counterChange', counter, trigger, target: 'self' };
+  if ((v.amount === undefined) === (v.amountRef === undefined))
+    fail(path, 'expected exactly one of amount and amountRef');
+  if (v.amount !== undefined) effect.amount = parsePositiveInt(v.amount, `${path}.amount`);
+  else effect.amountRef = parseRef(v.amountRef, `${path}.amountRef`);
+  if (v.decrease !== undefined) {
+    if (v.decrease !== true) fail(`${path}.decrease`, `expected true, got ${JSON.stringify(v.decrease)}`);
+    effect.decrease = true;
+  }
+  if (v.condition !== undefined)
+    effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange);
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
 }
 
 /**

@@ -17,8 +17,10 @@ import { burstWindowTrimOf } from '../burst/landing.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { isChargeWeapon } from '../weapons.ts';
 import type { ChangedWeapon } from './buffs.ts';
+import type { CounterId } from './counters.ts';
 import {
   SKILL_SLOTS,
+  isEndedTrigger,
   isFlagStat,
   isShotCountTrigger,
   type BuffScaling,
@@ -33,6 +35,7 @@ import {
   type DurationUntil,
   type EffectCondition,
   type EffectTrigger,
+  type EndedTrigger,
   type EventCountKind,
   type ExcludeSelf,
   type TargetDefense,
@@ -552,6 +555,8 @@ export type ResolvedStateGrant = ResolvedItemFields & {
   isStatic: boolean;
   /** 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印（同じ定義の同じ状態の付与で揃う） */
   undispellable?: true;
+  /** 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 1 回の発火で付けるスタックの数を、自分のカウンタの値にする */
+  stacksFrom?: { counter: CounterId };
 };
 
 /**
@@ -576,6 +581,7 @@ export function resolveStateGrants(
       const window = resolveItemFields(effect, character, slot, levels[slot], effectIndex);
       const grant: ResolvedStateGrant = { ...window, state: effect.state, isStatic: statics.has(effect.state) };
       if (effect.undispellable) grant.undispellable = true;
+      if (effect.stacksFrom !== undefined) grant.stacksFrom = effect.stacksFrom;
       untrimmed.push(grant);
     });
   }
@@ -760,6 +766,50 @@ export function resolveStackChanges(
         effectIndex,
         state: effect.state,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        amount,
+      };
+      if (effect.decrease) r.decrease = true;
+      if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
+      out.push(r);
+    });
+  }
+  return out;
+}
+
+/**
+ * 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: 解決したカウンタの増減（counterChange）。対象は自分。amount は足す（decrease なら
+ * 減らす）値（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）。trigger の { ended } はそのまま
+ */
+export type ResolvedCounterChange = {
+  source: ResolvedEffect['source'];
+  effectIndex: number;
+  counter: CounterId;
+  trigger: ResolvedTrigger | EndedTrigger;
+  amount: number;
+  decrease?: true;
+  condition?: EffectCondition;
+};
+
+/** 2 段目の段 10: 定義のカウンタの増減を Lv の数値に解く */
+export function resolveCounterChanges(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedCounterChange[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const out: ResolvedCounterChange[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const skill = character.skills[slot];
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'counterChange') return;
+      const amount = effect.amount ?? Math.round(skillValue(skill, effect.amountRef!, levels[slot]));
+      const r: ResolvedCounterChange = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        effectIndex,
+        counter: effect.counter,
+        trigger: isEndedTrigger(effect.trigger) ? effect.trigger : resolveTrigger(effect.trigger, skill, levels[slot]),
         amount,
       };
       if (effect.decrease) r.decrease = true;

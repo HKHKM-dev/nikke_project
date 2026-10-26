@@ -93,7 +93,7 @@ describe('data/skills', () => {
                 : effect.kind === 'state'
                   ? (effect.contents ?? []).flatMap((c) => (c.ref === undefined ? [] : [c.ref]))
                   : // 2 段目の段 3: スタック量の増加は、足す数の amountRef
-                    effect.kind === 'stackChange'
+                    effect.kind === 'stackChange' || effect.kind === 'counterChange'
                     ? effect.amountRef === undefined
                       ? []
                       : [effect.amountRef]

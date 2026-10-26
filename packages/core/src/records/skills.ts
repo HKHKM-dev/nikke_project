@@ -233,6 +233,7 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if ('everySeconds' in t) return `${t.everySeconds} 秒ごと`;
   if ('applied' in t) return `${t.applied} が適用された時`;
   if ('fullStack' in t) return `${t.fullStack} のフルスタック`;
+  if ('ended' in t) return `${t.ended} が終了した時`;
   return t.count;
 }
 
@@ -258,11 +259,13 @@ export function effectLabel(e: SkillEffect): string {
         ? e.state
         : e.kind === 'stackChange'
           ? `${e.state}${e.decrease ? '（減少）' : ''}`
-          : 'stat' in e
-            ? e.stat
-            : 'damageType' in e
-              ? e.damageType
-              : undefined;
+          : e.kind === 'counterChange'
+            ? `${e.counter}${e.decrease ? '（減少）' : ''}`
+            : 'stat' in e
+              ? e.stat
+              : 'damageType' in e
+                ? e.damageType
+                : undefined;
   return [e.kind, triggerLabel(e), whileLabel(e), detail].filter((x) => x !== undefined).join('・');
 }
 
