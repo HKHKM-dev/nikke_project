@@ -4693,7 +4693,7 @@
 - **[V-0504](../records/verifications/V-0504-elegg-s2-gauge.md)** エレグの S2 のターゲット出現時のバーストゲージ 100%
   - 問い: エレグの S2 の「ターゲットが出現した時、味方全体にバーストゲージのチャージ 100%（戦闘中 1 回）」を、射撃場の的について戦闘開始の次のフレームにゲージを満タンにする効果（burstGauge・battleStart）と読んで、モデルは実測と合うか
   - 話題: スキル・キャラ固有・日付: 2026-10-26・状態: 調査中・Stage: plan/design-elegg.md 3 節（段 1）
-  - 予測（2026-10-26、commit b520c77）との比べ:
+  - 予測（2026-10-26、commit 68ad36d）との比べ:
     - gauge-full-1（gaugeFullFrame）: 実測なし。H0 320、H1 1
     - full-burst-starts（fullBurstStarts）: 実測なし。H0 [405, 2,757, 5,109, 7,461, 9,813]、H1 [86, 2,438, 4,790, 7,142, 9,494]
-    - activation-slots（burstActivationSlots）: 実測なし。H0 [1, 2, 3, 1, 2, 3, 1, 2, 3]、H1 [1, 2, 3, 1, 2, 3, 1, 2, 3]
+    - activation-slots（burstActivationSlots）: 実測なし。H0 [1, 2, 4, 1, 2, 4, 1, 2, 4]、H1 [1, 2, 4, 1, 2, 4, 1, 2, 4]

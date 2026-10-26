@@ -1,6 +1,6 @@
 {
   "verification": "V-0504",
-  "note": "撮る前の予測（plan/design-elegg.md 3.2 節の U4）。編成は B（鈴原サクラ 1 枠目・ソルジャーF.A. 2 枠目・I-DOLL・サン 3 枠目・◎エレグ 4 枠目）。モデルには撃たない枠が無いので、エレグも撃つ。1 回目の満タンまでは H1 ではエレグの弾が効かない。H1 はエレグの S2 のゲージを addEffects で入れた形。単騎（A）の予測は検証記録の「予測」に手で書く",
+  "note": "撮る前の予測（plan/design-elegg.md 3.2 節の U4）。編成は B（鈴原サクラ 1 枠目・ソルジャーF.A. 2 枠目・◎エレグ 3 枠目・I-DOLL・サン 4 枠目）。モデルには撃たない枠が無いので、エレグも撃つ。1 回目の満タンまでは H1 ではエレグの弾が効かない。H1 はエレグの S2 のゲージを addEffects で入れた形。単騎（A）の予測は検証記録の「予測」に手で書く",
   "team": [
     {
       "rid": 836
@@ -9,11 +9,11 @@
       "rid": 301
     },
     {
-      "rid": 308
-    },
-    {
       "rid": 500,
       "controlled": true
+    },
+    {
+      "rid": 308
     }
   ],
   "fixedSpec": true,
@@ -80,22 +80,22 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "バーストを撃った枠の並び（最初の 9 回）。II が毎回 2 枠目（ソルジャーF.A.）で、4 枠目（エレグ）が出ないことを見る"
+      "note": "バーストを撃った枠の並び（最初の 9 回）。II が毎回 2 枠目（ソルジャーF.A.）で、3 枠目（エレグ）が出ないことを見る"
     }
   ],
   "predicted": {
     "at": "2026-10-26",
-    "commit": "b520c77bc130aca1d7e346660c1be97654ce2c6c",
+    "commit": "68ad36de396ede539ee39c37bef8072eb9057490",
     "values": {
       "H0": {
         "gauge-full-1": 320,
         "full-burst-starts": [405, 2757, 5109, 7461, 9813],
-        "activation-slots": [1, 2, 3, 1, 2, 3, 1, 2, 3]
+        "activation-slots": [1, 2, 4, 1, 2, 4, 1, 2, 4]
       },
       "H1": {
         "gauge-full-1": 1,
         "full-burst-starts": [86, 2438, 4790, 7142, 9494],
-        "activation-slots": [1, 2, 3, 1, 2, 3, 1, 2, 3]
+        "activation-slots": [1, 2, 4, 1, 2, 4, 1, 2, 4]
       }
     }
   }
