@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 18,
-  "checkedAt": "2026-10-07",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
       "effects": [
@@ -19,6 +19,25 @@
           "claims": [
             "C-0410"
           ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 8,
+          "condition": {
+            "selfState": "superFirepower"
+          },
+          "assumes": {
+            "ja": "火力爆発の超火力状態の追加効果。超火力の間のフルチャージの通常攻撃 1 発ごとに 1 回（全弾命中の前提。射撃場の的は「ターゲット」とみる）",
+            "en": "Super Firepower bonus of Firepower Burst: once per full-charge normal shot while in Super Firepower (every shot is assumed to hit; the range target is taken as a \"target\")"
+          },
+          "claims": [
+            "C-0410",
+            "C-0665"
+          ]
         }
       ],
       "notes": [
@@ -32,18 +51,6 @@
             "target": "self",
             "trigger": "damaged"
           }
-        },
-        {
-          "ja": "超火力状態のときの追加ダメージ（262.79%）は未対応（超火力はバーストの火力ゲージで決まる）",
-          "en": "The extra hit in the Super Firepower state (262.79%) is not modeled (that state depends on the Burst's firepower gauge)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "unknown"
-          },
-          "claims": [
-            "C-0410"
-          ]
         }
       ]
     },
@@ -55,22 +62,94 @@
           "target": "self",
           "stat": "attack",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-0665"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "firepowerGauge",
+          "trigger": "battleStart",
+          "target": "self",
+          "amountRef": 8,
+          "claims": [
+            "C-0667"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "firepowerGauge",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "target": "self",
+          "amount": 2,
+          "condition": {
+            "selfState": "firepowerCharge"
+          },
+          "claims": [
+            "C-0667"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "firepowerGauge",
+          "trigger": {
+            "ended": "firepowerCharge"
+          },
+          "target": "self",
+          "amountRef": 9,
+          "claims": [
+            "C-0667"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "superFirepowerCharge",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "durationRef": 3,
+          "maxStacks": 100,
+          "stacksFrom": {
+            "counter": "firepowerGauge"
+          },
+          "condition": {
+            "selfCounter": {
+              "counter": "firepowerGauge",
+              "atLeast": 1
+            }
+          },
+          "contents": [
+            {
+              "stat": "burstGaugeSpeed",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "フルバーストの終わりに、火力ゲージの値をスタック数にして付く（1 スタックがバーストゲージのチャージ速度▲。画面の適用中の効果の超火力チャージ）",
+            "en": "At Full Burst end, granted with the Firepower Gauge value as its stacks (each stack is burst gauge charge speed up; shown as Super Firepower Charge in the active effects)"
+          },
+          "claims": [
+            "C-0666"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 6,
+          "durationRef": 7,
+          "condition": {
+            "selfState": "superFirepower"
+          },
+          "claims": [
+            "C-0665"
+          ]
         }
       ],
-      "notes": [
-        {
-          "ja": "火力ゲージ（戦闘開始時 100、火力チャージ状態の通常攻撃で 2、終了時 45）と、フルバースト終了時のゲージ量に比例するバーストゲージのチャージ速度▲・超火力の攻撃力▲は未対応",
-          "en": "The firepower gauge (100 at battle start, +2 per normal attack in Firepower Charge, +45 when it ends), the burst-gauge charge speed up scaled by it at Full Burst end, and the Super Firepower ATK up are not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "self",
-            "trigger": "unknown"
-          }
-        }
-      ]
+      "notes": []
     },
     "burst": {
       "effects": [
@@ -80,21 +159,90 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 10,
-          "durationRef": 11
+          "durationRef": 11,
+          "claims": [
+            "C-0665"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "firepowerCharge",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationRef": 2,
+          "undispellable": true,
+          "condition": {
+            "selfCounter": {
+              "counter": "firepowerGauge",
+              "below": 100
+            }
+          },
+          "claims": [
+            "C-0667"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "firepowerGauge",
+          "trigger": "burstUse",
+          "target": "self",
+          "amount": 1,
+          "condition": {
+            "selfCounter": {
+              "counter": "firepowerGauge",
+              "below": 100
+            }
+          },
+          "claims": [
+            "C-0667"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "superFirepower",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationRef": 5,
+          "condition": {
+            "selfCounter": {
+              "counter": "firepowerGauge",
+              "atLeast": 100
+            }
+          },
+          "contents": [
+            {
+              "stat": "attackDamage",
+              "ref": 4
+            }
+          ],
+          "claims": [
+            "C-0667",
+            "C-0665"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "firepowerGauge",
+          "trigger": "burstUse",
+          "target": "self",
+          "amount": 100,
+          "decrease": true,
+          "condition": {
+            "selfCounter": {
+              "counter": "firepowerGauge",
+              "atLeast": 100
+            }
+          },
+          "assumes": {
+            "ja": "画面の火力ゲージは超火力の間に約 10 秒かけて 0 まで減り、フルバーストの終わりより前に 0 になる。ゲージを読むのはバーストの使用とフルバーストの終わりだけなので、使った時に 100 減らす",
+            "en": "On screen the gauge drains to 0 over about 10 s of Super Firepower, reaching 0 before Full Burst ends. The gauge is read only at Burst use and Full Burst end, so 100 is removed at use"
+          },
+          "claims": [
+            "C-0667"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "火力ゲージが 100 のときの超火力（攻撃ダメージ▲）と、100 未満のときの火力チャージは未対応",
-          "en": "Super Firepower (attack damage up) when the firepower gauge is 100 and Firepower Charge when it is below 100 are not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "self",
-            "trigger": "burstUse"
-          }
-        },
         {
           "ja": "爆発範囲▲は未対応（爆発範囲はダメージの式に無い）",
           "en": "Explosion range up is not modeled (explosion range is not in the damage formula)",

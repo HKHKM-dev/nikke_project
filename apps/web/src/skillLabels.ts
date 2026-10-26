@@ -3,7 +3,10 @@ import {
   ELEMENT_LABEL,
   INDIRECT_PATH_NAMES,
   SKILL_SLOTS,
+  counterMax,
+  counterName,
   framesToGameSeconds,
+  isEndedTrigger,
   isStateContent,
   isWhileEffect,
   namedStateName,
@@ -14,6 +17,7 @@ import type {
   AppliedEffect,
   BuildEffect,
   BuildEffectSource,
+  CounterChangeEffect,
   GearPart,
   NikkeClass,
   AppliedTimedEffect,
@@ -23,6 +27,7 @@ import type {
   EffectCondition,
   NamedStateId,
   RemoveStateEffect,
+  SelfCounterCondition,
   SelfStateCondition,
   StackChangeEffect,
   ResolvedTrigger,
@@ -214,7 +219,10 @@ export function formatStateGrant(effect: StateGrantEffect, definition: SkillDefi
       : contents === undefined
         ? '中身なし（ほかの効果が、対象の絞り込み・条件・きっかけでこの状態を見る）'
         : `中身${effect.contents === undefined ? '（同じ状態のほかの付与）' : ''}: ${contents.map((c) => BUFF_STAT_LABEL[c.stat]).join('・')}`;
-  return `${head}。${contentText}${effect.undispellable ? '。解除不可' : ''}`;
+  // 2 段目の段 10: スタックの数をカウンタの値から取る付与
+  const stacksFrom =
+    effect.stacksFrom === undefined ? '' : `。スタック数は${counterName(effect.stacksFrom.counter).ja}の値`;
+  return `${head}。${contentText}${stacksFrom}${effect.undispellable ? '。解除不可' : ''}`;
 }
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 定義の解除。「マターシグマを解除（自分がマターシグマ状態なら）」 */
@@ -255,7 +263,27 @@ function formatGrantCondition(condition: EffectCondition | undefined, stacksOf?:
   if (condition.inFullBurst === true) parts.push('フルバーストタイムなら');
   if (condition.selfState !== undefined) parts.push(selfStateText(condition.selfState, 'なら', 'でなければ', stacksOf));
   if (condition.usedBurst === true) parts.push('直前に自分がバーストを使用していれば');
+  if (condition.selfCounter !== undefined) parts.push(selfCounterText(condition.selfCounter));
   return parts.join('・');
+}
+
+/** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値の条件。「火力ゲージが 100 以上なら」「火力ゲージが 100 未満なら」 */
+function selfCounterText(c: SelfCounterCondition): string {
+  const name = counterName(c.counter).ja;
+  return c.atLeast !== undefined
+    ? `${name}が ${formatNumber(c.atLeast)} 以上なら`
+    : `${name}が ${formatNumber(c.below!)} 未満なら`;
+}
+
+/**
+ * 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: 定義のカウンタの増減。「火力ゲージ +2（自分が火力チャージ状態なら）」
+ * 「火力ゲージ −100」。amount は解いた値（amountRef は Lv の説明文の値）。増減はそのフレームのすべての判定の後に足す
+ */
+export function formatCounterChange(effect: CounterChangeEffect, amount: number): string {
+  const conditions = formatGrantCondition(effect.condition);
+  const trigger = isEndedTrigger(effect.trigger) ? `${stateLabel(effect.trigger.ended)}が終了した時に ` : '';
+  const change = `${effect.decrease ? '−' : '+'}${formatNumber(amount)}`;
+  return `${trigger}${counterName(effect.counter).ja} ${change}（上限 ${formatNumber(counterMax(effect.counter))}）${conditions === '' ? '' : `（${conditions}）`}`;
 }
 
 /** バーストスロットの倍率ダメージ（burstDamage）の種別 */

@@ -162,13 +162,9 @@ export function resolveDamageEffects(
       if (effect.kind !== 'damage') return;
       const trigger = resolveTrigger(effect.trigger, skill, levels[slot]);
       // 射撃ごとの倍率ダメージは発動を作らず、1 トリガーの値に畳み込む（resolvePerShotDamage）。
-      // クルミ S2 編: 条件つきは畳み込まない（1 パス目の後に絞るので）。使うキャラが無いので拒否する
-      if (isPerShotTrigger(trigger)) {
-        if (effect.condition !== undefined) {
-          throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot have a condition`);
-        }
-        return;
-      }
+      // クルミ S2 編: 条件つきは畳み込まない（1 パス目の後に絞るので）。2 段目の段 10（plan/design-skill-stage10.md 3.2 節）: 条件つきは、
+      // 射撃ごとの発動として 1 件ずつ出す（ネオン：ビジョン・アイの S1 の超火力状態の追加効果。条件 selfState を射撃のフレームで見る）
+      if (isPerShotTrigger(trigger) && effect.condition === undefined) return;
       const r: ResolvedDamageEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         damageType: effect.damageType,
@@ -374,6 +370,8 @@ export function resolvePerShotDamage(
     for (const effect of entry.effects) {
       if (effect.kind !== 'damage') continue;
       if (!isPerShotTrigger(resolveTrigger(effect.trigger, skill, levels[slot]))) continue;
+      // 2 段目の段 10: 条件つきは畳み込まない（resolveDamageEffects が射撃ごとの発動として出す）
+      if (effect.condition !== undefined) continue;
       if (character.weaponType === 'SG') {
         throw new RangeError(
           `skill ${skill.id}: damage on every shot is not supported for SG (per pellet or per trigger)`,

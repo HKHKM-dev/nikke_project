@@ -36,6 +36,7 @@ import {
   SKILL_SLOT_LABEL,
   SUPPORT_BADGE,
   formatRemoveState,
+  formatCounterChange,
   formatStackChange,
   formatStateGrant,
   treasurePhaseLabel,
@@ -408,7 +409,13 @@ export function SkillDetailsSection({
           const devNotes = (entry?.notes ?? []).filter((n) => n.kind !== 'unimplemented' && n.kind !== 'outOfScope');
           const hasStateEffects =
             entry !== null &&
-            entry.effects.some((e) => e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange');
+            entry.effects.some(
+              (e) =>
+                e.kind === 'state' ||
+                e.kind === 'removeState' ||
+                e.kind === 'stackChange' ||
+                e.kind === 'counterChange',
+            );
           const hasAssumes = entry !== null && entry.effects.some((e) => e.assumes);
           const hasBurstDelay = slot === 'burst' && measuredBurstDelayRow(shown.character) !== null;
           const hasDelayedHits =
@@ -530,7 +537,17 @@ export function SkillDetailsSection({
                                     )}
                                   </li>,
                                 ]
-                              : [],
+                              : e.kind === 'counterChange'
+                                ? [
+                                    <li key={i} className="note modeling">
+                                      <span className="badge">カウンタ</span>{' '}
+                                      {formatCounterChange(
+                                        e,
+                                        e.amount ?? Math.round(skillValue(skill, e.amountRef!, levels[slot])),
+                                      )}
+                                    </li>,
+                                  ]
+                                : [],
                       )}
                     </ul>
                   )}

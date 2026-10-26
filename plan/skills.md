@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 61・効果 248（根拠あり 239）・notes 223（根拠あり 69）
+件数: キャラ 61・効果 258（根拠あり 251）・notes 220（根拠あり 68）
 
-notes の種類: 未対応 110・前提の外 27・計算に無関係 28・補足 12・間接 46
+notes の種類: 未対応 107・前提の外 27・計算に無関係 28・補足 12・間接 46
 
-スロット: supported 101・partial 15・unsupported 50・noEffect 32
+スロット: supported 103・partial 13・unsupported 50・noEffect 32
 
 ## 10 ラピ
 
@@ -72,17 +72,24 @@ notes の種類: 未対応 110・前提の外 27・計算に無関係 28・補�
 
 ## 18 ネオン：ビジョン・アイ
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] damage・fullChargeShot・additional: C-0410（確定）
+  - effects[1] damage・fullChargeShot・additional: C-0410（確定）、C-0665（確定）
   - notes[0] 前提の外: 攻撃を受けた時の無敵・デバフ免疫・受けるHP回復量▲は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きる（C-0551）: 根拠なし
-  - notes[1] 未対応: 超火力状態のときの追加ダメージ（262.79%）は未対応（超火力はバーストの火力ゲージで決まる）: C-0410（確定）
-- **skill2**: partial
-  - effects[0] timed・fullBurstStart・attack: 根拠なし
-  - notes[0] 未対応: 火力ゲージ（戦闘開始時 100、火力チャージ状態の通常攻撃で 2、終了時 45）と、フルバースト終了時のゲージ量に比例するバーストゲージのチャージ速度▲・超火力の攻撃力▲は未対応: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・attack: C-0665（確定）
+  - effects[1] counterChange・battleStart・firepowerGauge: C-0667（確定）
+  - effects[2] counterChange・normalShot・firepowerGauge: C-0667（確定）
+  - effects[3] counterChange・firepowerCharge が終了した時・firepowerGauge: C-0667（確定）
+  - effects[4] state・fullBurstEnd・superFirepowerCharge（burstGaugeSpeed）: C-0666（仮説）
+  - effects[5] timed・fullBurstStart・attack: C-0665（確定）
 - **burst**: partial
-  - effects[0] timed・burstUse・attackDamage: 根拠なし
-  - notes[0] 未対応: 火力ゲージが 100 のときの超火力（攻撃ダメージ▲）と、100 未満のときの火力チャージは未対応: 根拠なし
-  - notes[1] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い）: 根拠なし
+  - effects[0] timed・burstUse・attackDamage: C-0665（確定）
+  - effects[1] state・burstUse・firepowerCharge: C-0667（確定）
+  - effects[2] counterChange・burstUse・firepowerGauge: C-0667（確定）
+  - effects[3] state・burstUse・superFirepower（attackDamage）: C-0667（確定）、C-0665（確定）
+  - effects[4] counterChange・burstUse・firepowerGauge（減少）: C-0667（確定）
+  - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い）: 根拠なし
 
 ## 20 デルタ
 

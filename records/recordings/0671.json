@@ -1,0 +1,46 @@
+{
+  "id": "0671",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0671_sr+sr+rl_ram+delta+neon-ve_neon-control.mp4",
+  "original": "2026-10-26_21-11-58.mp4",
+  "durationSec": 201.8,
+  "frames": 12105,
+  "fps": 60,
+  "sizeMB": 244.4,
+  "sha256": "d6fbf6ce4bd3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 18,
+      "name": "ネオン：ビジョン・アイ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0503 の撮り方 A（1 本目）。ラム・デルタ・ネオン：ビジョン・アイ（操作・AUTO 射撃 ON）・オートバースト ON",
+  "backup": {
+    "at": "2026-10-26T21:27+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

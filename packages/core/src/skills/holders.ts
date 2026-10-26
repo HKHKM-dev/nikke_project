@@ -23,6 +23,7 @@ import {
   isResolvedShotCount,
   isResolvedTimer,
   isStateContent,
+  resolveCounterChanges,
   resolveInstant,
   resolvePassives,
   resolveRemoveStates,
@@ -32,6 +33,7 @@ import {
   resolveTimed,
   resolveWhileEffects,
   type AppliedEffect,
+  type ResolvedCounterChange,
   type ResolvedEffect,
   type ResolvedInstantEffect,
   type ResolvedRemoveState,
@@ -44,6 +46,7 @@ import {
   type ItemEffect,
 } from './resolve.ts';
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type RankingRecord } from './ranking.ts';
+import { counterMax, type CounterId } from './counters.ts';
 import { stackItems, STACK_REFRESH, type StackDecrease } from './stacks.ts';
 import { statesMatching, type NamedStateId } from './states.ts';
 import { canEverTarget, dependsOnDefense, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
@@ -59,6 +62,7 @@ import {
 import {
   SKILL_SLOTS,
   conditionReadsItems,
+  isEndedTrigger,
   isEnemyHeldStat,
   isFiringStat,
   isHitStateStat,
@@ -205,7 +209,12 @@ export type HolderHistory = {
   /** ループで分かったフルバーストの窓（終わりで閉じる件を作り直すのに使う） */
   fullBurstWindows: readonly FullBurstWindow[];
   logs: readonly (ShotLog | null)[];
+  /** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値が変わった記録（フレームの順。value は変わった後の値） */
+  counters: readonly CounterRecord[];
 };
+
+/** 2 段目の段 10: カウンタの値が変わった記録 1 つ */
+export type CounterRecord = { frame: number; slotIndex: number; counter: CounterId; value: number };
 
 export type HolderListsOptions = {
   frames: number;
@@ -260,6 +269,9 @@ type StackSource = {
   fires: TriggerTracker;
   track: HeldTrack;
 };
+
+/** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減 1 つ（対象は自分）。{ ended } のトリガーは fires を持たない */
+type CounterSource = { sourceSlotIndex: number; effect: ResolvedCounterChange; fires: TriggerTracker | null };
 
 /** 1 パス目のループが使う、持ち主ごとの件の一覧 */
 export type HolderLists = {
@@ -776,6 +788,25 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
+  // ---- 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減（対象は自分。値は枠 × カウンタごとに 1 つ） ----
+  const counterSources: CounterSource[] = [];
+  slots.forEach((slot, sourceSlotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveCounterChanges(slot.definition, slot.character, slot.levels)) {
+      counterSources.push({
+        sourceSlotIndex,
+        effect,
+        fires: isEndedTrigger(effect.trigger) ? null : firesOf(effect.trigger, sourceSlotIndex),
+      });
+    }
+  });
+  const counterKey = (slotIndex: number, counter: CounterId): string => `${slotIndex}:${counter}`;
+  const counterValues = new Map<string, number>();
+  const counterRecords: CounterRecord[] = [];
+  /** 枠のカウンタの、いまの値（そのフレームの増減は、すべての判定の後に足すので、前のフレームの終わりの値） */
+  const counterValue = (slotIndex: number, counter: CounterId): number =>
+    counterValues.get(counterKey(slotIndex, counter)) ?? 0;
+
   // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ） ----
   const consuming: { holder: number; state: NamedStateId }[] = [];
   slots.forEach((slot, holder) => {
@@ -965,15 +996,20 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 条件 selfState が見る、枠の静的な状態と、段 1 の状態の件の列（持ち主 → 状態）。
   // 静的な状態を見る selfState は編成の段（skills/composition.ts）で決まるので、ここに来るのは時間で変わる状態がほとんど
   const staticStates = slots.map((slot) => new Set(staticStatesOf(slot?.definition)));
+  // 2 段目の段 10（plan/design-skill-stage10.md 3.2 節）: 段 1.5（条件つきの付与）の状態の件も入れ、前のフレームまでに付いた件だけを見る
+  // （同じフレームの条件つきどうしは連鎖させない。超火力（カウンタの条件で付く）を、後のフルバーストの開始の条件が見る）
   const stateTracks = slots.map((_, holder) => {
     const byState = new Map<NamedStateId, HeldTrack[]>();
     for (const track of tracks) {
       const o = track.origin;
-      if (track.holder !== holder || track.stage !== 1 || o.kind !== 'state') continue;
+      if (track.holder !== holder || (track.stage !== 1 && track.stage !== 1.5) || o.kind !== 'state') continue;
       byState.set(o.state, [...(byState.get(o.state) ?? []), track]);
     }
     return byState;
   });
+  /** selfState が見る件: 段 1 はそのフレームに効いている件、段 1.5 は前のフレームまでに付いた件 */
+  const selfStateItemsAt = (track: HeldTrack, frame: number): HeldItem[] =>
+    track.stage === 1 ? activeAt(track, frame) : activeAt(track, frame).filter((it) => it.start < frame);
 
   // ゲージ: 時間で変わるバーストゲージのチャージ速度の件（2 段目の段 1。plan/design-skill-stage1.md 1.6 節。段によらない。状態の中身も）
   const gaugeViews = viewsOf((_, e) => e.stat === 'burstGaugeSpeed');
@@ -986,13 +1022,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
       const own = family.flatMap((s) => stateTracks[sourceSlotIndex]?.get(s) ?? []);
       if (stacks === undefined) {
-        const has = isStatic || own.some((t) => activeAt(t, frame).length > 0);
+        const has = isStatic || own.some((t) => selfStateItemsAt(t, frame).length > 0);
         if (has !== present) return false;
       } else if (
         !stacksHold(
           stacks,
           isStatic,
-          own.map((t) => ({ origin: t.origin, items: activeAt(t, frame) })),
+          own.map((t) => ({ origin: t.origin, items: selfStateItemsAt(t, frame) })),
         )
       ) {
         // 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件（段 1 の状態の件の、そのフレームの段の最大）
@@ -1011,6 +1047,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     if (condition.inFullBurst === true) {
       if (!options.fullBurstWindows().some((w) => w.start <= frame && frame < w.end)) return false;
+    }
+    // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値（前のフレームの終わりの値）
+    if (condition.selfCounter !== undefined) {
+      const { counter, atLeast, below } = condition.selfCounter;
+      const value = counterValue(sourceSlotIndex, counter);
+      if (atLeast !== undefined && value < atLeast) return false;
+      if (below !== undefined && value >= below) return false;
     }
     return true;
   };
@@ -1117,6 +1160,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const fireGrant = (g: GrantSource, start: number, context: FireContext, byShots = false): number[] => {
     if (start >= frames) return [];
     const group = g.group;
+    // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: スタックの数をカウンタの値から取る（0 なら付けない）
+    const count =
+      g.grant.stacksFrom === undefined ? 1 : counterValue(group.sourceSlotIndex, g.grant.stacksFrom.counter);
+    if (count <= 0) return [];
     const targets: number[] = [];
     const shots = isResolvedShotCount(g.grant.trigger);
     slots.forEach((target, holder) => {
@@ -1124,7 +1171,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!isEffectTarget(g.grant, group.sourceSlotIndex, holder, target.character, context)) return;
       const track = group.tracks[holder];
       if (!track) throw new Error(`no state track for ${group.state} on slot ${holder}`);
-      insertSorted(track.starts, start);
+      for (let k = 0; k < count; k++) insertSorted(track.starts, start);
       if (shots || byShots) track.shotCount = true;
       const record: AppliedRecord = {
         frame: start,
@@ -1303,6 +1350,65 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   const ampFires = new Map(amplifiers.map((amp) => [amp, firesOf(amp.effect.trigger, amp.sourceSlotIndex)]));
 
+  /**
+   * 2 段目の段 10（plan/design-skill-stage4.md 1.3 節）: { ended } の発火。持ち主（自分）のその状態の件（段によらない）の終わりがこの
+   * フレームで、このフレームに続く件が無い
+   */
+  const endedAt = (holder: number, state: NamedStateId, frame: number): boolean => {
+    const own = tracks.filter(
+      (t) => t.holder === holder && t.origin.kind === 'state' && statesMatching(state).includes(t.origin.state),
+    );
+    const items = own.flatMap((t) => readItems(t));
+    return items.some((it) => it.end === frame) && !items.some((it) => it.start <= frame && frame < it.end);
+  };
+  /**
+   * 2 段目の段 10: カウンタの増減の条件。selfState は段によらずそのフレームに効いている状態の件を見る（増減はすべての判定の後に足すので、
+   * 同じフレームの付与も入れてよい）。selfCounter は前のフレームの終わりの値
+   */
+  const counterConditionHolds = (condition: EffectCondition, slotIndex: number, frame: number): boolean => {
+    if (condition.selfState !== undefined) {
+      const { state, present } = condition.selfState;
+      const own = tracks.filter(
+        (t) => t.holder === slotIndex && t.origin.kind === 'state' && statesMatching(state).includes(t.origin.state),
+      );
+      const has =
+        statesMatching(state).some((s) => staticStates[slotIndex]?.has(s) === true) ||
+        own.some((t) => activeAt(t, frame).length > 0);
+      if (has !== present) return false;
+    }
+    return condition.selfCounter === undefined || holdsAt({ selfCounter: condition.selfCounter }, slotIndex, frame);
+  };
+  /** 2 段目の段 10: このフレームのカウンタの増減を、すべての判定の後に足す（0 と上限の間で切る） */
+  const registerCounters = (ev: FrameEvents, battleStartOnly: boolean): void => {
+    if (counterSources.length === 0) return;
+    const f = ev.frame;
+    const deltas = new Map<string, { slotIndex: number; counter: CounterId; delta: number }>();
+    for (const src of counterSources) {
+      const t = src.effect.trigger;
+      let fired: boolean;
+      if (isEndedTrigger(t)) fired = !battleStartOnly && endedAt(src.sourceSlotIndex, t.ended, f);
+      else if (battleStartOnly) fired = atBattleStart(t);
+      else fired = t !== 'battleStart' && src.fires!(ev);
+      if (!fired) continue;
+      const condition = src.effect.condition;
+      if (condition !== undefined && !counterConditionHolds(condition, src.sourceSlotIndex, f)) {
+        skipEffect(src.sourceSlotIndex, src.effect, f);
+        continue;
+      }
+      const key = counterKey(src.sourceSlotIndex, src.effect.counter);
+      const d = deltas.get(key) ?? { slotIndex: src.sourceSlotIndex, counter: src.effect.counter, delta: 0 };
+      d.delta += src.effect.decrease === true ? -src.effect.amount : src.effect.amount;
+      deltas.set(key, d);
+    }
+    for (const [key, { slotIndex, counter, delta }] of deltas) {
+      const before = counterValues.get(key) ?? 0;
+      const after = Math.max(0, Math.min(counterMax(counter), before + delta));
+      if (after === before) continue;
+      counterValues.set(key, after);
+      counterRecords.push({ frame: battleStartOnly ? 0 : f, slotIndex, counter, value: after });
+    }
+  };
+
   /** 段 1〜2 と強化の発火（手順 3。battleStartOnly ならループの前の戦闘開始時の分だけ） */
   const register = (ev: FrameEvents, battleStartOnly: boolean): void => {
     const f = ev.frame;
@@ -1464,6 +1570,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const start = battleStartOnly ? 0 : startOfFire(amp.effect.trigger, f);
       if (start < frames) amp.starts.push(start);
     }
+    // 2 段目の段 10: カウンタの増減は、このフレームのすべての判定の後
+    registerCounters(ev, battleStartOnly);
   };
   const emptyEvents = (frame: number): FrameEvents => ({
     frame,
@@ -1489,7 +1597,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       enemyStateSources.length > 0 ||
       removeSources.length > 0 ||
       stackSources.length > 0 ||
-      whileTracks.length > 0,
+      whileTracks.length > 0 ||
+      counterSources.length > 0,
     registerBattleStart() {
       if (frames <= 0) return;
       register(emptyEvents(0), true);
@@ -1585,6 +1694,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         heals,
         fullBurstWindows: [...options.fullBurstWindows()],
         logs,
+        counters: counterRecords,
       };
     },
   };

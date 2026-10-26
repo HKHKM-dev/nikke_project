@@ -901,6 +901,54 @@ function stateStacksAt(result: SimResult, slotIndex: number, state: string, fram
 }
 
 /**
+ * 2 段目の段 10（plan/design-skill-stage10.md 3.2 節。V-0503）: 枠のバーストの発動ごとに、その発動の効果の発火のフレームの前の、枠の
+ * カウンタ counter の値（その発動での増減の前）。count を書くと最初の count 回。録画では、発動の直前の画面のカウンタの表示（火力ゲージ）と
+ * 比べる
+ */
+function counterAtBursts(result: SimResult, ctx: MetricContext): number[] {
+  if (result.schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const counter = String(ctx.args.counter);
+  const records = result.history.counters.filter((c) => c.slotIndex === slotIndex && c.counter === counter);
+  const values = result.schedule.activations
+    .filter((a) => a.slotIndex === slotIndex)
+    .map((a) => {
+      const at = effectFrameOf(a);
+      return records.filter((c) => c.frame < at).at(-1)?.value ?? 0;
+    });
+  return firstCount(values, ctx, 'バーストの発動');
+}
+
+/**
+ * 2 段目の段 10（V-0503）: 枠のバーストの発動ごとに、その発動の効果の発火のフレームに、枠に状態 state が付いた（付いた記録がある）なら 1、
+ * 無ければ 0。count を書くと最初の count 回。録画では、その回のフルバーストの 1 ヒットに状態の中身が乗ったか（超火力）と比べる
+ */
+function stateAppliedAtBursts(result: SimResult, ctx: MetricContext): number[] {
+  if (result.schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const state = String(ctx.args.state);
+  const applied = new Set(
+    result.history.applications.filter((a) => a.slotIndex === slotIndex && a.state === state).map((a) => a.frame),
+  );
+  const values = result.schedule.activations
+    .filter((a) => a.slotIndex === slotIndex)
+    .map((a) => (applied.has(effectFrameOf(a)) ? 1 : 0));
+  return firstCount(values, ctx, 'バーストの発動');
+}
+
+/**
+ * 2 段目の段 10（V-0503）: フルバーストの窓ごとに、窓の終わりのフレームの、枠の状態 state のスタックの段の最大（付いていなければ 0）。
+ * count を書くと最初の count 回。録画では、フルバーストの終わりの直後の一時停止画面の適用中の効果のスタック数（超火力チャージ）と比べる
+ */
+function stateStacksAtFullBurstEnds(result: SimResult, ctx: MetricContext): number[] {
+  if (result.schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const state = String(ctx.args.state);
+  const values = result.schedule.fullBurstWindows.map((w) => stateStacksAt(result, slotIndex, state, w.end));
+  return firstCount(values, ctx, 'フルバースト');
+}
+
+/**
  * 2 段目の段 3（ソーダ：トゥインクルバニーのバースト。V-0437）: 枠のバーストの発動ごとに、その発動から次の発動まで（最後は戦闘の
  * 終わりまで）に始まった、枠が自分に付けた timed の効果（skill と stat で絞る。状態だけの stat も入れる）の窓があれば 1、無ければ 0。
  * count を書くと最初の count 回。録画では、発動の直後の一時停止画面の適用中の効果と比べる。条件（スタック数など）で付いたかを、
@@ -1232,6 +1280,10 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   // 2 段目の段 7（V-0452）: フルバーストで、枠に効果（対象が最終防御力の比べで決まる発射体爆発ダメージ▲ など）が付いたか
   fullBurstBuffApplied: { args: ['slot', 'skill', 'stat', 'n'], sim: fullBurstBuffApplied },
   stateStackDrops: { args: ['slot', 'state'], sim: stateStackDrops },
+  // 2 段目の段 10（V-0503）: カウンタの値・状態が付いた回・フルバーストの終わりのスタック数
+  counterAtBursts: { args: ['slot', 'counter'], sim: counterAtBursts },
+  stateAppliedAtBursts: { args: ['slot', 'state'], sim: stateAppliedAtBursts },
+  stateStacksAtFullBurstEnds: { args: ['slot', 'state'], sim: stateStacksAtFullBurstEnds },
   fullBurstStackGainResidues: { args: ['slot', 'state', 'every'], sim: fullBurstStackGainResidues },
   shotGauge: { args: ['slot', 'n'], sim: shotGauge },
   // フラワー編（V-0483）: 枠の n 回目（1 始まり）の周期のゲージ（burstGaugeHit）の量（バーの最大に対する %）
