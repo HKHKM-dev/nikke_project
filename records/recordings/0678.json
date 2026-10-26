@@ -1,0 +1,47 @@
+{
+  "id": "0678",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0678_sg+ar+ar_fa+eg+tove_autofire-off.mp4",
+  "original": "2026-10-26_23-39-34.mp4",
+  "durationSec": 80.3,
+  "frames": 4818,
+  "fps": 60,
+  "sizeMB": 97.4,
+  "sha256": "82bec1a0eed8",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 192,
+      "name": "トーブ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0523 の撮り方 B（任意の 1 本）。ソルジャーF.A.・ソルジャーE.G.・トーブ（宝物の段階 3・操作）・オートバースト ON。トーブのバーストの直後にオート射撃を約 10 秒 OFF にする操作を 2 回。途中で止めた",
+  "backup": {
+    "at": "2026-10-26T23:43+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
