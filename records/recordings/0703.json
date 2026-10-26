@@ -1,0 +1,40 @@
+{
+  "id": "0703",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0703_naga-heal-asuka.mp4",
+  "original": "2026-10-26_22-55-59.mp4",
+  "durationSec": 200.6,
+  "frames": 12038,
+  "fps": 60,
+  "sizeMB": 243.1,
+  "sha256": "0f49876ad400",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 450,
+      "name": "ナガ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0508 の撮り方 G。ナガ（1 枠目・AI）+ アスカ（2 枠目・操作・AUTO 射撃 ON）。オートバースト OFF（左上のボタンで確かめた）。戦闘履歴のパネルは映っていない。結果画面（MVP アスカ）と戦闘中の下のキャラ欄で編成を確かめた",
+  "backup": {
+    "at": "2026-10-26T23:46+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

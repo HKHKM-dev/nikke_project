@@ -11405,7 +11405,7 @@
     {
       "observation": "0507-01",
       "element": "アニス：スター burst.effects[0]",
-      "key": "985c95585a30b95b",
+      "key": "4a2f93f6c1aa1383",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -11414,7 +11414,7 @@
     {
       "observation": "0507-01",
       "element": "アニス：スター burst.effects[1]",
-      "key": "985c95585a30b95b",
+      "key": "4a2f93f6c1aa1383",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11430,7 +11430,7 @@
     {
       "observation": "0507-01",
       "element": "アニス：スター burst.effects[2]",
-      "key": "985c95585a30b95b",
+      "key": "4a2f93f6c1aa1383",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11446,7 +11446,7 @@
     {
       "observation": "0507-02",
       "element": "アニス：スター burst.effects[0]",
-      "key": "e51a1a6146b602d0",
+      "key": "84206ec1ef2e2efc",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -11455,7 +11455,7 @@
     {
       "observation": "0507-02",
       "element": "アニス：スター burst.effects[1]",
-      "key": "e51a1a6146b602d0",
+      "key": "84206ec1ef2e2efc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11471,7 +11471,7 @@
     {
       "observation": "0507-02",
       "element": "アニス：スター burst.effects[2]",
-      "key": "e51a1a6146b602d0",
+      "key": "84206ec1ef2e2efc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11487,7 +11487,7 @@
     {
       "observation": "0507-03",
       "element": "アニス：スター burst.effects[0]",
-      "key": "64ac498c8b1ac6d3",
+      "key": "3bd8e6e25a8c019b",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -11496,7 +11496,7 @@
     {
       "observation": "0507-03",
       "element": "アニス：スター burst.effects[1]",
-      "key": "64ac498c8b1ac6d3",
+      "key": "3bd8e6e25a8c019b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11512,7 +11512,7 @@
     {
       "observation": "0507-03",
       "element": "アニス：スター burst.effects[2]",
-      "key": "64ac498c8b1ac6d3",
+      "key": "3bd8e6e25a8c019b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12644,6 +12644,54 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0581-01",
+      "element": "エマ burst.effects[0]",
+      "key": "bff5d19530342f24",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0581-02",
+      "element": "エマ burst.effects[0]",
+      "key": "c2cb2008b4ac559f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0581-03",
+      "element": "エマ burst.effects[0]",
+      "key": "a2bdbcf646b7e2ab",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0582-01",
+      "element": "エマ burst.effects[0]",
+      "key": "c9f5c0092e91ab28",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0582-02",
+      "element": "エマ burst.effects[0]",
+      "key": "a46e1194096b7a63",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0582-03",
+      "element": "エマ burst.effects[0]",
+      "key": "51a34002f0ac3507",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0583-02",
@@ -13572,6 +13620,118 @@
       "effective": true,
       "minus": -15552.822499999997,
       "plus": -15552.822499999997
+    },
+    {
+      "observation": "0700-04",
+      "element": "アスカ burst.effects[0]",
+      "key": "b79f106d147df5d8",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0700-04",
+      "element": "アスカ burst.effects[2]",
+      "key": "b79f106d147df5d8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0700-04",
+      "element": "エマ burst.effects[0]",
+      "key": "b79f106d147df5d8",
+      "effective": true,
+      "minus": -21813.189999999995,
+      "plus": null
+    },
+    {
+      "observation": "0700-05",
+      "element": "アスカ burst.effects[0]",
+      "key": "ceb9e2437cf792b2",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0700-05",
+      "element": "アスカ burst.effects[2]",
+      "key": "ceb9e2437cf792b2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0700-05",
+      "element": "エマ burst.effects[0]",
+      "key": "ceb9e2437cf792b2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0703-03",
+      "element": "アスカ burst.effects[0]",
+      "key": "8abab7f6326e779f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0703-03",
+      "element": "アスカ burst.effects[2]",
+      "key": "8abab7f6326e779f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0703-04",
+      "element": "アスカ burst.effects[0]",
+      "key": "af22c08bdb77e374",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0703-04",
+      "element": "アスカ burst.effects[2]",
+      "key": "af22c08bdb77e374",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

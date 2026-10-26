@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 313,
-  "checkedAt": "2026-10-09",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
       "effects": [
@@ -53,40 +53,44 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "自分の攻撃ダメージ▲（10 秒）は未対応",
-          "en": "The attack damage increase on self (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attackDamage",
-            "target": "self",
-            "trigger": "burstUse"
-          }
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0679"
+          ]
         },
         {
-          "ja": "自分のクリティカルダメージ▲（10 秒）は未対応",
-          "en": "The critical damage increase on self (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "critDamage",
-            "target": "self",
-            "trigger": "burstUse"
-          }
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0679"
+          ]
         },
         {
-          "ja": "敵全体へのバーストスキルダメージは未対応",
-          "en": "The burst skill damage on all enemies is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstDamage",
-            "trigger": "burstUse"
-          }
+          "kind": "burstDamage",
+          "ref": 5,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「敵全体」は単体ボス",
+            "en": "The target (敵全体) is the lone boss"
+          },
+          "claims": [
+            "C-0679",
+            "C-0680"
+          ]
         }
-      ]
+      ],
+      "notes": []
     }
   }
 }

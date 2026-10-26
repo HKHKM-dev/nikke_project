@@ -136,6 +136,8 @@ export type FirstPassOptions = {
    * （TeamInput.manualBursts）。動的サイクルだけ。省略はオートバースト
    */
   manualBursts?: readonly number[];
+  /** バーストを使わない枠（0 始まり。TeamInput.noBurstSlots）。動的サイクルだけ。省略は全員使う */
+  noBurstSlots?: readonly number[];
   /** Stage 16-B: 敵を狙えない窓（昇順・重なりなし。frame/events.ts の untargetableRanges）。省略・空なら今までと同じ */
   untargetable?: readonly FrameRange[];
   /**
@@ -262,9 +264,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   let controller: BurstControllerState | null = null;
   let fixed: BurstSchedule | null = null;
   if (options.manualBursts !== undefined && !options.burst) throw new RangeError('manualBursts needs burst');
+  if (options.noBurstSlots !== undefined && !options.burst) throw new RangeError('noBurstSlots needs burst');
   if (options.burst) {
     if (burstModel === 'fixed') {
       if (options.manualBursts !== undefined) throw new RangeError('manualBursts needs the dynamic burst model');
+      if (options.noBurstSlots !== undefined) throw new RangeError('noBurstSlots needs the dynamic burst model');
       fixed = planFixedCycle(
         slots.map((s) =>
           s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) },
@@ -273,7 +277,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       );
     } else {
       controller = initialBurstController(
-        slots.map((s) => (s === null ? null : burstUnitOf(s.character, s.definition))),
+        slots.map((s, i) =>
+          s === null || options.noBurstSlots?.includes(i) === true ? null : burstUnitOf(s.character, s.definition),
+        ),
         options.timing ?? DEFAULT_BURST_TIMING,
         options.manualBursts ?? null,
       );

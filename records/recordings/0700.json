@@ -1,0 +1,40 @@
+{
+  "id": "0700",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0700_emma-burst-heal.mp4",
+  "original": "2026-10-26_22-44-26.mp4",
+  "durationSec": 199.1,
+  "frames": 11946,
+  "fps": 60,
+  "sizeMB": 241.1,
+  "sha256": "8231edae5928",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 90,
+      "name": "エマ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0515 の撮り方 E。エマ（1 枠目・操作・撃たない）+ アスカ（2 枠目・AI）。オートバースト ON・AUTO 射撃 OFF（左上のボタンで確かめた）。最後の戦闘履歴（キャラ名・枠順・Lv.400。エマの与ダメージ 0）で確かめた",
+  "backup": {
+    "at": "2026-10-26T23:46+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

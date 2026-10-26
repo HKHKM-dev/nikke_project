@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 302,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
       "effects": [],
@@ -40,20 +40,20 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体の攻撃力▲（10 秒）は未対応（単騎ではバーストを撃たず、撮っていない）",
-          "en": "The attack increase on all allies (10 s) is not modeled (burst is not used in solo, not recorded)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0684"
+          ]
         }
-      ]
+      ],
+      "notes": []
     }
   }
 }

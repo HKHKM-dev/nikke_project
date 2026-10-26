@@ -10,7 +10,7 @@
     "description": "シューティングスターの胴体の 1 ヒット（会心なし）",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
-      "note": "60,902 の単独の増分で 54 回。単騎の 0211-01 と同じ値"
+      "note": "60,902 の単独の増分で 54 回。単騎の 0211-01 と同じ値 比べる条件のナガのバーストを外した（2026-10-26。録画ではアニス：スターのバーストだけを手で使い、ナガはバーストを使っていない。ナガのバーストの効果を定義したため。V-0508）"
     },
     "compare": {
       "model": "sim",
@@ -27,7 +27,8 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "noBurstSlots": [2]
       }
     }
   },
@@ -42,7 +43,7 @@
     "description": "シューティングスターのコアの 1 ヒット（会心なし。ナガの S2 のコアダメージ▲が付いている間）",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
-      "note": "146,208 の単独の増分で 189 回（8 回の窓のどれにも出る）。胴体 × 2.4007（H-yes）。H-no のコア 121,805 は、ナガの S2 が切れていたとみられる 5 回だけ（V-0455「結果」）"
+      "note": "146,208 の単独の増分で 189 回（8 回の窓のどれにも出る）。胴体 × 2.4007（H-yes）。H-no のコア 121,805 は、ナガの S2 が切れていたとみられる 5 回だけ（V-0455「結果」） 比べる条件のナガのバーストを外した（2026-10-26。録画ではアニス：スターのバーストだけを手で使い、ナガはバーストを使っていない。ナガのバーストの効果を定義したため。V-0508）"
     },
     "compare": {
       "model": "sim",
@@ -59,7 +60,8 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "noBurstSlots": [2]
       }
     }
   },
@@ -74,7 +76,7 @@
     "description": "シューティングスターのコアの 1 ヒットの会心（コアダメージ▲が付いている間）",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
-      "note": "176,659 の単独の増分で 31 回。胴体 × 2.9007（H-yes）"
+      "note": "176,659 の単独の増分で 31 回。胴体 × 2.9007（H-yes） 比べる条件のナガのバーストを外した（2026-10-26。録画ではアニス：スターのバーストだけを手で使い、ナガはバーストを使っていない。ナガのバーストの効果を定義したため。V-0508）"
     },
     "compare": {
       "model": "sim",
@@ -91,7 +93,8 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "burst": true
+        "burst": true,
+        "noBurstSlots": [2]
       }
     }
   },

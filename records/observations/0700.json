@@ -1,0 +1,127 @@
+[
+  {
+    "id": "0700-01",
+    "recording": "0700",
+    "kind": "timing",
+    "use": "record",
+    "value": [2288, 4642, 7085, 9440],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25f"
+    },
+    "source": "V-0515",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0700-02",
+    "recording": "0700",
+    "kind": "timing",
+    "use": "record",
+    "value": [4636, 9433],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f6990"
+    },
+    "source": "V-0515",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0700-03",
+    "recording": "0700",
+    "readAt": "2026-10-26",
+    "source": "V-0515",
+    "kind": "timing",
+    "use": "record",
+    "value": [16, 21, 1486, 1491, -2, 120, 1446, 1528, 17, 22, 1489, 1494, 19, 25, 1477, 1559],
+    "unit": "f",
+    "description": "エマのバースト（I の替わり目）からの、アスカの S1 なしの最後の発・S1 ありの最初の発・S1 ありの最後の発・S1 なしの最初の発（回ごとに 4 つずつ）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "回の順は I の替わり目 2288・4642・7085・9440（0700-01）。I だけでチェーンが切れる（II がいない）ので、アスカはバーストを使っていない。S1 は替わり目の 19〜21f 後に付き（3 回の範囲の共通部分）、そこから 1,470f 前後（ゲーム内の 25 秒）で外れる。4642 の回は付き始めの前後にアスカの発が無い（リロード）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0700-04",
+    "recording": "0700",
+    "readAt": "2026-10-26",
+    "source": "V-0515",
+    "kind": "hit",
+    "use": "compare",
+    "value": 44287,
+    "unit": "ダメージ",
+    "description": "エマのバーストの後の窓の中のアスカの胴体の 1 ヒット（会心でない・距離ボーナスなし。S1 あり）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "窓の中の増分（S1 なしは 22,474）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0700-05",
+    "recording": "0700",
+    "readAt": "2026-10-26",
+    "source": "V-0515",
+    "kind": "hit",
+    "use": "compare",
+    "value": 22474,
+    "unit": "ダメージ",
+    "description": "エマのバーストの前（戦闘の始め）のアスカの胴体の 1 ヒット（会心でない・距離ボーナスなし。S1 なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "戦闘の始めと、窓が外れた後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

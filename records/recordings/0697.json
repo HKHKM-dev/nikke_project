@@ -1,0 +1,46 @@
+{
+  "id": "0697",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0697_product08-burst.mp4",
+  "original": "2026-10-26_22-36-13.mp4",
+  "durationSec": 201.6,
+  "frames": 12093,
+  "fps": 60,
+  "sizeMB": 244.2,
+  "sha256": "408811632250",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 302,
+      "name": "プロダクト08",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0513 の撮り方 C。デルタ（1 枠目・AI）+ I-DOLL・サン（2 枠目・AI）+ プロダクト08（3 枠目・操作・AUTO 射撃 ON）。オートバースト ON（左上のボタンで確かめた）。最後の戦闘履歴（キャラ名・枠順・Lv.400）で確かめた",
+  "backup": {
+    "at": "2026-10-26T23:45+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

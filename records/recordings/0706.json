@@ -1,0 +1,46 @@
+{
+  "id": "0706",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0706_naga-barrier-burst.mp4",
+  "original": "2026-10-26_22-19-08.mp4",
+  "durationSec": 201.9,
+  "frames": 12114,
+  "fps": 60,
+  "sizeMB": 244.6,
+  "sha256": "798c6c8d650d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 450,
+      "name": "ナガ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0508 の撮り方 A。ナガ（1 枠目・AI）+ I-DOLL・サン（2 枠目・AI）+ ラム（3 枠目・操作・AUTO 射撃 ON）。オートバースト ON（左上のボタンで確かめた）。最後の戦闘履歴（キャラ名・枠順・Lv.400）で確かめた。計画の 2 本のうち 1 本だけ撮った",
+  "backup": {
+    "at": "2026-10-26T23:42+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

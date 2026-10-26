@@ -77,5 +77,116 @@
       "slot": "all",
       "source": "target"
     }
+  },
+  {
+    "id": "0308-06",
+    "recording": "0308",
+    "source": "V-0507",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 620687,
+    "unit": "ダメージ",
+    "description": "たきな単騎・操作の 1 発目（戦闘開始から 228f。f983）の的のヒット。コアの会心でない 1 ヒットに、S1 の戦闘開始時の攻撃力▲が乗った値",
+    "method": {
+      "tool": "hud.ts --mode jumps（0308-01 の増分）",
+      "note": "0308-01 の 1 つ目の増分。戦闘開始は f755（0308-02 の note）。たきなのほかのスキルの発は無い（S2 の 1 回目は f1645。0308-02）。1 フレームに 1 ヒットだけで、ほかのヒットと重ならない。コアの会心でない ▲なしの値（0308-08）との比は 1.8012"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0308-07",
+    "recording": "0308",
+    "source": "V-0507",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 430745,
+    "unit": "ダメージ",
+    "description": "たきな単騎・操作の 2 発目（戦闘開始から 316f。f1071）の的のヒット。コアの会心の 1 ヒットで、S1 の攻撃力▲は乗っていない",
+    "method": {
+      "tool": "hud.ts --mode jumps（0308-01 の増分）",
+      "note": "0308-01 の 2 つ目の増分。S2 の 1 回目（f1645）より前。▲なしのコアの会心でない値（0308-08）の 1.25 倍（コア 2.0 に会心 0.5 を足した倍率グループの比）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 400,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0308-08",
+    "recording": "0308",
+    "source": "V-0507",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 344596,
+    "unit": "ダメージ",
+    "description": "たきな単騎・操作の 3 発目（f8652）の的のヒット。コアの会心でない 1 ヒットで、S1 の攻撃力▲も S2 の受けるダメージ▲も乗っていない（対照）",
+    "method": {
+      "tool": "hud.ts --mode jumps（0308-01 の増分）",
+      "note": "0308-01 の 3 つ目の増分。S2 の 8 回目（f7826）から 826f 後で、5 秒（約 294f）の受けるダメージ▲は切れている。9 回目（f8709）より前"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 7000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
   }
 ]

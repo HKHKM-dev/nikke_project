@@ -1,0 +1,153 @@
+[
+  {
+    "id": "0706-01",
+    "recording": "0706",
+    "kind": "timing",
+    "use": "record",
+    "value": [1183, 3561, 5938, 8315, 10693],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・0・0・0f"
+    },
+    "source": "V-0508",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0706-02",
+    "recording": "0706",
+    "kind": "timing",
+    "use": "record",
+    "value": [1212, 3590, 5967, 8345, 10722],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・6・0f"
+    },
+    "source": "V-0508",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0706-03",
+    "recording": "0706",
+    "kind": "timing",
+    "use": "record",
+    "value": [1241, 3619, 5996, 8374, 10751],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0508",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0706-04",
+    "recording": "0706",
+    "kind": "timing",
+    "use": "record",
+    "value": [3554, 5932, 8309, 10687],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0508",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0706-05",
+    "recording": "0706",
+    "kind": "timing",
+    "use": "record",
+    "value": [3612, 5990, 8367, 10745],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0508",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0706-06",
+    "recording": "0706",
+    "readAt": "2026-10-26",
+    "source": "V-0508",
+    "kind": "hit",
+    "use": "compare",
+    "value": 30439,
+    "unit": "ダメージ",
+    "description": "フルバーストの中（ナガの S1 のコアダメージ▲とバーストの攻撃力▲が両方付いている間）の I-DOLL・サンの胴体の 1 ヒット（会心でない・距離ボーナスあり）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "1 回目のフルバースト（0706-03 の 1 つ目の f1241 から）の中の増分で、どの回のフルバーストでも出る。バーストの攻撃力▲が 16.18% 分だけ（バリア適用状態の追加なし）なら 22,232、攻撃力▲なしなら 17,951（どちらもモデルの倍率グループ 1.8 から計算）。胴体はコアダメージ▲に依らない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0706-07",
+    "recording": "0706",
+    "readAt": "2026-10-26",
+    "source": "V-0508",
+    "kind": "hit",
+    "use": "compare",
+    "value": 68529,
+    "unit": "ダメージ",
+    "description": "フルバーストの中（ナガの S1 のコアダメージ▲とバーストの攻撃力▲が両方付いている間）の I-DOLL・サンのコアの 1 ヒット（会心でない・距離ボーナスあり）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "同じ窓の増分。S1 のコアダメージ▲（85.17%）が無ければ 54,126（S2 のコアダメージ▲とバーストの攻撃力▲だけ。フルバーストの中で S1 の窓が先に切れた後の値と同じ）。バーストの攻撃力▲が切れた後は 17,951（f1815〜1824 の並び。窓の終わりの順はモデルと同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 500,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

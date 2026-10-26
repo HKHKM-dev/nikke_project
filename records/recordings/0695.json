@@ -1,0 +1,52 @@
+{
+  "id": "0695",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0695_lud-bel-lap-priv-burst.mp4",
+  "original": "2026-10-26_22-28-09.mp4",
+  "durationSec": 218.5,
+  "frames": 13110,
+  "fps": 60,
+  "sizeMB": 264.4,
+  "sha256": "d3610920be55",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 60,
+      "name": "ベロータ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 103,
+      "name": "ラプラス：アルティメットヒーロー",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 313,
+      "name": "プリバティ：アンカインド・メイド",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0509〜V-0512 の撮り方 B。ルドミラ（1 枠目・AI）+ ベロータ（2 枠目・AI）+ ラプラス：アルティメットヒーロー（3 枠目・操作・撃たない）+ プリバティ：アンカインド・メイド（4 枠目・AI）。オートバースト ON・AUTO 射撃 OFF（左上のボタンで確かめた）。最後の戦闘履歴（キャラ名・枠順・Lv.400）で確かめた。計画の 2 本より 1 本多く撮った",
+  "backup": {
+    "at": "2026-10-26T23:43+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

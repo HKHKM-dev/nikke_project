@@ -1,30 +1,37 @@
 {
   "formatVersion": 1,
   "resourceId": 450,
-  "checkedAt": "2026-10-18",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "applied": "barrier"
+          },
+          "target": "allies",
+          "stat": "coreDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "reads": [
+            "barrier"
+          ],
+          "assumes": {
+            "ja": "「バリア適用時」は、編成のどの枠の付与でも、ナガにバリア（家族 barrier）が付いたフレームで発火する",
+            "en": "\"When a shield is placed\" fires on the frame a barrier (family barrier) lands on Naga, from any slot"
+          },
+          "claims": [
+            "C-0671"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "通常攻撃 12 回ごとの味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
           "en": "Cover HP recovery for all allies every 12 normal attacks does not change damage by itself (it matters only with an effect reading cover in the team)",
           "kind": "indirect",
           "path": "cover"
-        },
-        {
-          "ja": "バリア適用時の味方全体のコアダメージ▲（10 秒）は未対応（撮っていない。ナガの前にバリアが張られる編成でだけ起きる）",
-          "en": "Damage dealt when attacking core up for all allies when a shield is placed (10 s) is not modeled (not recorded; it occurs only in teams that place a shield in front of Naga)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "coreDamage",
-            "target": "allies",
-            "trigger": "unknown"
-          },
-          "reads": [
-            "barrier"
-          ]
         }
       ]
     },
@@ -51,23 +58,60 @@
             "C-0593",
             "C-0653"
           ]
+        },
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 5
+          },
+          "target": "lowestHpRatio",
+          "targetCountRef": 6,
+          "ref": 7,
+          "assumes": {
+            "ja": "「通常攻撃で 5 回攻撃した時」は撃った発の通算で数える（コアダメージ▲と同じ）。「残りの HP の割合が最も低い味方 2 機」は、枠の HP の割合の想定（既定は満タン）で戦闘中一定とみなし、並んだときは枠の若い順（C-0567）。満タンの味方にも付き、「回復効果が適用された時」を起こす。回復量はダメージに関係しない",
+            "en": "\"After performing 5 normal attacks\" counts every normal shot (as the Core Damage up). \"The 2 allies with the lowest remaining HP ratio\" use the assumed HP ratio of each slot (full by default), constant during battle; ties go to the leftmost slots (C-0567). It also lands on allies at full HP and triggers \"when healed\". The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-0673"
+          ]
         }
       ],
-      "notes": [
-        {
-          "ja": "通常攻撃 5 回ごとの、残りの HP の割合が最も低い味方 2 機への回復（スキル発動者の最終最大HP 基準）は未対応（撮っていない。回復を受けた時の効果を起こさない。回復量はダメージに関係しない）",
-          "en": "The heal every 5 normal attacks on the 2 allies with the lowest HP ratio (based on the caster's final max HP) is not modeled (not recorded; it does not trigger effects on being healed; the amount does not affect damage)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "lowestHpRatio",
-            "trigger": "normalShot"
-          }
-        }
-      ]
+      "notes": []
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-0672"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 4,
+          "durationRef": 5,
+          "condition": {
+            "selfState": "barrier"
+          },
+          "reads": [
+            "barrier"
+          ],
+          "claims": [
+            "C-0672"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "自分の貫通特化（10 秒）は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く）",
@@ -77,31 +121,6 @@
           "effect": {
             "kind": "unknown"
           }
-        },
-        {
-          "ja": "味方全体のスキル発動者基準の攻撃力▲（10 秒）は未対応（撮っていない）",
-          "en": "ATK up for all allies based on the caster's ATK (10 s) is not modeled (not recorded)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
-        },
-        {
-          "ja": "自分がバリア適用状態のときの、追加の味方全体のスキル発動者基準の攻撃力▲（10 秒）は未対応（撮っていない。ナガの前にバリアが張られる編成でだけ起きる）",
-          "en": "The extra ATK up for all allies based on the caster's ATK (10 s) while a shield is placed in front of Naga is not modeled (not recorded; it occurs only in teams that place a shield in front of Naga)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "burstUse"
-          },
-          "reads": [
-            "barrier"
-          ]
         }
       ]
     }
