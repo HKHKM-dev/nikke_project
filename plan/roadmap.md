@@ -47,7 +47,7 @@
 - 1 行の形: 題名（起票日）→ 状態・設計書（あれば）・残りの行き先（backlog の行）。題名は変えない（検証記録・設計書が題名で指す）。
 - 2026-10-25 までに閉じた課題（完了・打ち切り）は [roadmap-archive.md](roadmap-archive.md)「今後の課題」にある。
 
-- エレグ（500）の定義（2026-10-26 起票）→ 承認。段 1（S2 のターゲット出現時のゲージ 100%）は撮影待ち: [design-elegg.md](design-elegg.md)
+- エレグ（500）の定義（2026-10-26 起票）→ 段 1（S2 のターゲット出現時のゲージ 100%）は実装した。段 2・3 は未起案: [design-elegg.md](design-elegg.md)
 - 録画の番号を 4 桁にそろえる（2026-10-25 起票）→ 完了（2026-10-25）: [design-recording-id-4digit.md](design-recording-id-4digit.md)
 - 回数トリガーで付く持続の効果の付き始めの遅れ（2026-10-24 起票）→ 第 1 段（ナガ・ミサト・モラン）は実装した（[design-shot-count-trigger-frame.md](design-shot-count-trigger-frame.md)）。残りは backlog 2-38
 - クラウド環境（2026-10-23 起票）→ 実装済み（2026-10-23）: [design-cloud-environment.md](design-cloud-environment.md)・手引き [cloud-guide.md](cloud-guide.md)

@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 500,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
       "effects": [],
@@ -32,7 +32,21 @@
       ]
     },
     "skill2": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "burstGauge",
+          "trigger": "battleStart",
+          "target": "allies",
+          "ref": 4,
+          "assumes": {
+            "ja": "ターゲットが出現した時を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる）",
+            "en": "Treats the appearance of the stage target as the start of battle (the shooting-range target is a stage target present from the start)"
+          },
+          "claims": [
+            "C-0662"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "通常攻撃 60 回命中ごとの、対象がブームインストール状態のときの味方全体の攻撃力▲（5 秒）は未対応",
@@ -43,16 +57,6 @@
             "stat": "attack",
             "target": "allies",
             "trigger": "normalHit"
-          }
-        },
-        {
-          "ja": "ターゲットが出現した時の味方全体のバーストゲージのチャージ 100%（戦闘中 1 回）は未対応",
-          "en": "The 100% burst gauge charge for all allies when a target appears (once per combat) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstGauge",
-            "target": "allies",
-            "trigger": "battleStart"
           }
         }
       ]

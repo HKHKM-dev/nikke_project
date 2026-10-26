@@ -1,0 +1,51 @@
+[
+  {
+    "id": "0664-01",
+    "recording": "0664",
+    "source": "V-0504",
+    "readAt": "2026-10-26",
+    "kind": "interval",
+    "use": "compare",
+    "value": 0,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I の六角形に替わるまでのフレーム数（`0466-07` と同じ読み方）。エレグ単騎・撃たない操作枠で、撃つ前に満タンになっている",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode series・tools/captures/still.ts で右のバースト欄を 1 フレームずつ切り出して目で見た",
+      "note": "戦闘開始は f821（WARNING の画面の後の変わり目。残り時間の表示が出たフレーム）。その前のフレームは HUD の無い画面で、f821 の最初の HUD に BURST バーは無く、もう I の六角形とチェーンのタイマー（00.00）が出ている。満タンはこのフレームより前のこともありうる（HUD が出る前は読めない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge",
+      "frames": [821, 821]
+    }
+  },
+  {
+    "id": "0664-02",
+    "recording": "0664",
+    "source": "V-0504",
+    "readAt": "2026-10-26",
+    "kind": "timing",
+    "use": "record",
+    "value": [821, 2520],
+    "unit": "f",
+    "description": "I の六角形とチェーンのタイマー（緑のバー）が出たまま、チェーンが切れずに続いた区間（戦闘開始から一時停止のパネルの前まで）。単騎はバースト II だけで I がいないので I が撃たれず、ゲージは 0 に戻らない（約 600f で切れる C-0009 は、段の替わった後のチェーンの話）",
+    "method": {
+      "tool": "tools/captures/still.ts で右のバースト欄を 300f ほどおきに切り出して目で見た",
+      "note": "録画は約 29 秒で止めた。戦闘中 1 回かは、この録画では見られない"
+    }
+  }
+]

@@ -213,7 +213,7 @@ const TRIG_INFO: Record<string, Info> = {
   hpThreshold: ['HP が閾値を越えた時（HP の経路の読む側）', 'indirect'],
   coverHealed: ['遮蔽物の HP を回復した時（壊れていない遮蔽物への回復で起きる。ツールチップ）', 'gap'],
   multiHit: ['N 機以上に同時に命中', 'oos'],
-  enemyEvent: ['ターゲットの出現', 'oos'],
+  enemyEvent: ['ターゲットの出現', 'ok', 'battleStart（射撃場の的は戦闘の始めからいるターゲットとみなす。V-0504）'],
   decoyPresent: ['デコイが存在する時（デコイの経路の読む側）', 'indirect'],
   barrierApplied: ['バリア適用時（バリアの経路の読む側）', 'indirect'],
   'implicit:burstUse': ['（バーストのスロットで書かれていない＝バースト使用時）', 'ok'],
