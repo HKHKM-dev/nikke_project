@@ -25,8 +25,8 @@
     },
     {
       "slot": 3,
-      "rid": 300,
-      "name": "ソルジャーE.G.",
+      "rid": 308,
+      "name": "I-DOLL・サン",
       "controlled": true
     }
   ],
@@ -38,7 +38,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0523 の撮り方 A（1 本目）。トーブ（宝物の段階 3）・ソルジャーF.A.・ソルジャーE.G.（操作・AUTO 射撃 ON）・オートバースト ON",
+  "conditionNote": "V-0523 の撮り方 A（1 本目）。トーブ（宝物の段階 3）・ソルジャーF.A.・I-DOLL・サン（操作・AUTO 射撃 ON）・オートバースト ON。依頼の 3 枠目はソルジャーE.G. だったが、I-DOLL・サンで撮られた（戦闘履歴のパネルで確かめた。ファイル名の eg は取り込みの時の誤りで、I-DOLL・サン）。出撃画面で灼熱のタブ・スペック固定 ON、左上のボタンで AUTO 射撃・オートバースト ON を確かめた",
   "backup": {
     "at": "2026-10-26T23:42+09:00",
     "via": "cloud-move",

@@ -25,8 +25,8 @@
     },
     {
       "slot": 3,
-      "rid": 300,
-      "name": "ソルジャーE.G.",
+      "rid": 308,
+      "name": "I-DOLL・サン",
       "controlled": true
     }
   ],
@@ -38,7 +38,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0523 の撮り方 A（2 本目）。トーブ（宝物の段階 3）・ソルジャーF.A.・ソルジャーE.G.（操作・AUTO 射撃 ON）・オートバースト ON",
+  "conditionNote": "V-0523 の撮り方 A（2 本目）。0676 と同じ編成（トーブ・ソルジャーF.A.・I-DOLL・サン（操作））。ファイル名の eg は取り込みの時の誤りで、I-DOLL・サン（戦闘履歴のパネルで確かめた）",
   "backup": {
     "at": "2026-10-26T23:42+09:00",
     "via": "cloud-move",
