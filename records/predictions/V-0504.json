@@ -51,9 +51,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 30
@@ -67,9 +65,7 @@
       "args": {},
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "フルバーストの入りのフレームの並び。比べるのは 1 回目だけ（2 回目以降はモデルでエレグが撃つ分のゲージが入る）"
     },
@@ -82,9 +78,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 3
@@ -100,9 +94,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "バーストを撃った枠の並び（最初の 9 回）。II が毎回 2 枠目（ソルジャーF.A.）で、3 枠目（エレグ）が出ないことを見る"
     }
@@ -113,55 +105,15 @@
     "values": {
       "H0": {
         "gauge-full-1": 320,
-        "full-burst-starts": [
-          405,
-          2757,
-          5109,
-          7461,
-          9813
-        ],
-        "chain-1-video": [
-          349,
-          378,
-          407
-        ],
-        "activation-slots": [
-          1,
-          2,
-          4,
-          1,
-          2,
-          4,
-          1,
-          2,
-          4
-        ]
+        "full-burst-starts": [405, 2757, 5109, 7461, 9813],
+        "chain-1-video": [349, 378, 407],
+        "activation-slots": [1, 2, 4, 1, 2, 4, 1, 2, 4]
       },
       "H1": {
         "gauge-full-1": 1,
-        "full-burst-starts": [
-          86,
-          2438,
-          4790,
-          7142,
-          9494
-        ],
-        "chain-1-video": [
-          30,
-          59,
-          88
-        ],
-        "activation-slots": [
-          1,
-          2,
-          4,
-          1,
-          2,
-          4,
-          1,
-          2,
-          4
-        ]
+        "full-burst-starts": [86, 2438, 4790, 7142, 9494],
+        "chain-1-video": [30, 59, 88],
+        "activation-slots": [1, 2, 4, 1, 2, 4, 1, 2, 4]
       }
     }
   }
