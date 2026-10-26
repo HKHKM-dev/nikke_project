@@ -128,3 +128,4 @@
 - 2026-10-26: オーナーが段 10 の論点 1〜6 を推奨どおりに決めた（[design-skill-stage10.md](design-skill-stage10.md)）。PR 1（シンデレラのバースト）に着手した。
 - 2026-10-26: 段 10 の PR 1 を出した（シンデレラのバースト。値 × 状態のスタック数 `perCount` と順番の攻撃の回数 `hitsRef` を足し、録画 0480・0481 の読み直しで確かめた。V-0502、C-0654〜C-0657。[design-skill-stage10.md](design-skill-stage10.md)）。次は PR 2（ネオン：ビジョン・アイの火力ゲージ。撮影）。
 - 2026-10-26: 段 10 の PR 2 を出した（ネオン：ビジョン・アイの火力ゲージ。カウンタの語彙 counterChange・selfCounter・{ ended }・付与の stacksFrom を足し、撮影で確かめた。V-0503、C-0665〜C-0667。[design-skill-stage10.md](design-skill-stage10.md)）。次は PR 3（トーブの宝物版のバースト。撮影）。
+- 2026-10-27: 段 10 の PR 3 を出した（トーブの宝物版のバースト。付与の stacksFrom を状態のスタック数に広げ、撮影で確かめた。V-0523、C-0668〜C-0670。[design-skill-stage10.md](design-skill-stage10.md)）。段 10 を閉じた。段 11 以降は [design-skill-stage10.md](design-skill-stage10.md) 4 節の候補から決める。

@@ -569,7 +569,11 @@ function stateGroupsOf(
 
 /** 状態の付与の段（{ applied } のほか）。2 段目の段 1: 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節） */
 function stageOfGrant(grant: ResolvedStateGrant): HeldStage {
-  return dependsOnRank(grant) ? 2 : conditionReadsItems(grant.condition) ? 1.5 : 1;
+  if (dependsOnRank(grant)) return 2;
+  // 2 段目の段 10 の PR 3: 自分の状態のスタック数を数で読む付与も、件を見るので段 1.5
+  return conditionReadsItems(grant.condition) || (grant.stacksFrom !== undefined && 'state' in grant.stacksFrom)
+    ? 1.5
+    : 1;
 }
 
 /** 2 段目の段 3: スタック量の増加の段（件を見る条件つきは段 1.5） */
@@ -1010,6 +1014,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** selfState が見る件: 段 1 はそのフレームに効いている件、段 1.5 は前のフレームまでに付いた件 */
   const selfStateItemsAt = (track: HeldTrack, frame: number): HeldItem[] =>
     track.stage === 1 ? activeAt(track, frame) : activeAt(track, frame).filter((it) => it.start < frame);
+  /** 2 段目の段 10 の PR 3: 枠のその状態の、フレームのスタックの段の最大（selfState と同じ件。無ければ 0） */
+  const stackLevelAt = (holder: number, state: NamedStateId, frame: number): number => {
+    let level = 0;
+    for (const t of stateTracks[holder]?.get(state) ?? []) {
+      for (const it of selfStateItemsAt(t, frame)) level = Math.max(level, it.stack ?? 1);
+    }
+    return level;
+  };
 
   // ゲージ: 時間で変わるバーストゲージのチャージ速度の件（2 段目の段 1。plan/design-skill-stage1.md 1.6 節。段によらない。状態の中身も）
   const gaugeViews = viewsOf((_, e) => e.stat === 'burstGaugeSpeed');
@@ -1160,9 +1172,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const fireGrant = (g: GrantSource, start: number, context: FireContext, byShots = false): number[] => {
     if (start >= frames) return [];
     const group = g.group;
-    // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: スタックの数をカウンタの値から取る（0 なら付けない）
+    // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3。発火のフレームの
+    // 段の最大。条件 selfState と同じ件を見る）から取る（0 なら付けない）。付いた後は、数え元が変わっても段は変わらない（V-0523）
+    const from = g.grant.stacksFrom;
     const count =
-      g.grant.stacksFrom === undefined ? 1 : counterValue(group.sourceSlotIndex, g.grant.stacksFrom.counter);
+      from === undefined
+        ? 1
+        : 'counter' in from
+          ? counterValue(group.sourceSlotIndex, from.counter)
+          : stackLevelAt(group.sourceSlotIndex, from.state, start);
     if (count <= 0) return [];
     const targets: number[] = [];
     const shots = isResolvedShotCount(g.grant.trigger);
@@ -1484,12 +1502,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         if (start < frames) insertSorted(c.track.starts, start);
       }
     }
-    // 段 1.5: 条件つきの付与と効果。判定は段 1 の件だけを見る（条件つきどうしは連鎖させない）
+    // 段 1.5: 条件つきの付与と効果（と、状態のスタック数を数で読む付与。2 段目の段 10 の PR 3）。判定は段 1 の件だけを見る（条件つきどうしは
+    // 連鎖させない）
     for (const g of stage15Grants) {
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
       if (
         !usedBurstHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex) ||
-        !holdsAt(g.grant.condition!, g.group.sourceSlotIndex, f)
+        (g.grant.condition !== undefined && !holdsAt(g.grant.condition, g.group.sourceSlotIndex, f))
       ) {
         skipGrant(g, f);
         continue;
