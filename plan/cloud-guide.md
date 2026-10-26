@@ -32,7 +32,7 @@
 PC が使えないときに撮った録画は、Drive for desktop が「マイ コンピュータ/record」に上げている。クラウドのセッションで次のように取り込む（設計書 6.3 節）。
 
 1. `node tools/captures/intake.ts --list-record` で record の中を見る。
-2. `node tools/captures/intake.ts drive:<record の中のパス> --id NNNN --name <識別子> ...`（ほかの引数はデスクトップと同じ。`intake.ts` の冒頭のコメント。`--copy` は使えない）。録画を取り寄せて `~/nikke_project_captures/<種別>/` に規約名で置き、Drive の sha256 と突き合わせ、`records/recordings/<録画 id>.json` を書き、Drive の中で record から `nikke_project_captures/<種別>/` へ移し、録画の JSON に `backup`（置いた日時・経路・一致したハッシュ）を書き足す。
+2. `node tools/captures/intake.ts drive:<record の中のパス>... --name <識別子>,... ...`（ほかの引数はデスクトップと同じ。まとめて取り込める。`intake.ts` の冒頭のコメント。`--copy` は使えない）。録画を取り寄せて `~/nikke_project_captures/<種別>/` に規約名で置き、Drive の sha256 と突き合わせ、`records/recordings/<録画 id>.json` を書き、Drive の中で record から `nikke_project_captures/<種別>/` へ移し、録画の JSON に `backup`（置いた日時・経路・一致したハッシュ）を書き足す。
 3. PC を付けると、Drive for desktop が `H:/record` の写しを消し、デスクトップの同期が E: の種別フォルダに録画を降ろす（数百 MB。設計書 6.3 節）。
 
 録画の番号の振り直し（`npm run records:renumber`）も、クラウドでは Drive の名前を受け口で変える（E: は、PC を付けた後の同期で新しい名前のものを降ろし直し、古い名前のものを `E:/nikke_sync_trash/captures/` へ移す）。

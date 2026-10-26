@@ -1,7 +1,7 @@
 # 録画の索引（命名・台帳・キャラの確かめ方）
 
 - 関連: [protocol.md](protocol.md)（撮影の手順）、[storage.md](storage.md)（置き場所・バックアップ・クラウド環境での取り寄せ）、[tools.md](tools.md)（解析ツール・フレーム番号の約束・証拠フレーム）、[guide.md](guide.md)（撮影と読み取りの落とし穴）、[recordings.md](recordings.md)（録画の一覧。生成）、[../verification-guide.md](../verification-guide.md)（検証の流れ）
-- 録画ごとの条件と素性は `records/recordings/<録画 id>.json` が正で、一覧 [recordings.md](recordings.md) は `npm run records:table` で作る。録画から読んだ値は観測値（`records/observations/`）、その結論は [../claims.md](../claims.md)。動画と証拠フレームは Git に入らない（公開リポジトリ。置き場所は [storage.md](storage.md)）。
+- 録画ごとの条件と素性は `records/recordings/<録画 id>.json` が正で、一覧 [recordings.md](recordings.md) は `npm run records:check` で作る。録画から読んだ値は観測値（`records/observations/`）、その結論は [../claims.md](../claims.md)。動画と証拠フレームは Git に入らない（公開リポジトリ。置き場所は [storage.md](storage.md)）。
 - 移した節（古い文書の「index.md「○○」」はここで読み替える）:
   - 置き場所・バックアップ・クラウド環境での取り寄せ → [storage.md](storage.md)
   - フレーム番号の約束・解析ツール・証拠フレームの切り出し → [tools.md](tools.md)
@@ -42,7 +42,7 @@ interception の例: 20261001-0066_special_boss-name.mp4 （種類_ボス英名�
 
 ### 録画の一覧
 
-表は [recordings.md](recordings.md) にある（`records/recordings/<録画 id>.json` から `npm run records:table` で生成する。手で書かない。条件を直すときは JSON を直して作り直す）。
+表は [recordings.md](recordings.md) にある（`records/recordings/<録画 id>.json` から `npm run records:check` で生成する。手で書かない。条件を直すときは JSON を直して作り直す）。
 
 録画ごとの条件・写っているもの・注意は、その録画の JSON の `conditionNote` に書く（一覧の表の「条件」の列に出る）。撮影の注意は [guide.md](guide.md)「射撃場の条件」に、キャラの取り違えは下の「過去の取り違え」にある。
 

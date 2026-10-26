@@ -59,17 +59,28 @@
   - 数値は書かず、`ref` で説明文の値を指す。
   - スロットの対応状況（`support`）は書かない。効果の有無と、未対応（`unimplemented`）の notes の有無から読み込みで決まる（`supported`・`partial`・`unsupported`・`noEffect`。[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）。効果の無いスロットには、理由の notes が要る。
   - いつも満たすとみなした条件は、効果の `assumes` に書く。
-  - HP の経路（[design-skill-stage6.md](design-skill-stage6.md)）: 「スキル発動者の最終最大HP の X% 分の攻撃力▲」は `scaling: "casterFinalMaxHp"`（`stat: "attack"` だけ。発動者の最終最大HP × X% を攻撃力に固定加算する。最終最大HP はバフ前の最大HP（スペック固定は `computeFixedSpecHp`）に最大HP▲ を足した値。例はラプラス：アルティメットヒーローの S1）。「自分の HP が X% 以上なら」は `condition.selfHp: { "atLeastRef": N }`（いまは `passive` だけ。枠の HP の割合の想定 `hpRatio`（既定は満タン）で、編成の段で決まる。例はノワールの S1）。HP は被弾で減りうるので、HP の条件を `assumes` で決めない（[design-skill-catalog.md](design-skill-catalog.md) の論点 12）。 最大HP▲ は `stat: "maxHp"`（比率）で、発動者の最終最大HP 基準の攻撃力▲が、効いている間の最終最大HP を読み直す（区間の頭・順位のフレームの値。段 6 の PR 2。例はシンデレラの美しさ）。「最大HP のみ▲」は HP の割合を下げる扱い（段 6 の設計の論点 8）が要るので、その形を足すまで `maxHp` で書かず notes のままにする（`definitions.test.ts` が見張る）。デコイは目録の `decoy`（中身なし・持続）で、「デコイが存在する時」は `condition.selfState: "decoy"`。
-  - 防御力の経路（[design-skill-stage7.md](design-skill-stage7.md)）: 「自分と自分より最終防御力が低い味方」は `target: "allies"` に `targetDefense: "lowerThanSelf"`（`timed` だけ。発火の瞬間の最終防御力で比べ、同値は含まず、維持の間は対象を変えない。自分を除く・状態・段階・部隊の絞り込みとは組み合わせない。読む側の印 `reads: ["defense"]` も書く。例はアニス：スターの S2）。最終防御力はバフ前の防御力（スペック固定は `computeFixedSpecDefence`）×（1 + 防御力▲ の和）。防御力▲ は `stat: "defense"`（比率）で、与ダメージの式は読まない。防御力▲ は、比べの自分の側（アニス：スターのバースト）と、読む側と組む録画が読み直せたもの（デルタの S2。録画 0486・0488。C-0589）を効果にし、そのほかの味方の防御力▲ は、読む側と組む録画を撮る時まで間接の notes のままにする（段 7 の設計の論点 4）。最終防御力の比べには、味方の防御力▲ も入る（C-0587・C-0589）。
-  - クラスでの絞り込み（[design-skill-stage9.md](design-skill-stage9.md)）: 「〈クラス〉型の味方」は `targetClass`（`"Attacker"`・`"Defender"`・`"Supporter"`。火力型・防御型・支援型）。武器種（`targetWeapon`）・コード（`targetElement`）と同じく、自分のほかの対象の効果に書け、並べて書けば全部を満たす枠だけ。自分もクラスが合えば入る（例はエヌ：ミラクルフェアリーの S1・バースト）。
-  - HP の順の対象（[design-skill-stage8.md](design-skill-stage8.md)）: 「残りの HP の割合が最も低い味方 N 機」は `target: "lowestHpRatio"` と `targetCount`（または `targetCountRef`）（`heal` だけ。武器・コードの絞り込みとは組み合わせない。例はミサトの S1）。並べ方は枠の HP の割合の想定（段 6 の `hpRatio`。既定は満タン）の低い順・同値は枠の若い順（C-0567）で、自分も候補。被弾を扱わないので、実機では被弾した味方が選ばれうることを `assumes` に書く。「残りの HP の数値が最も低い味方」は、使い手を定義する時に足す（段 8 の設計の論点 2）。
-  - 名前の付いた状態（「〈名前〉」：機能…・〜状態なら・〜状態の味方・〜が適用された時）は、状態の付与（`kind: 'state'`）と中身（`contents`）で書き、名前は目録（`skills/states.ts`）の id で指す。目録に無い状態は id を足す（英語版の説明文の状態名の lowerCamelCase。[design-named-state.md](design-named-state.md) 5 節）。
-    - ほかの行から参照されない名前（効果の呼び名）も、状態の付与で書いて目録に足す（[design-skill-catalog.md](design-skill-catalog.md) の論点 4）。中身にできない項目（自分の維持の別の効果・即時・別の対象・ダメージ・自動攻撃）は別の効果で書き、付与は中身なしで足す（[design-skill-stage1.md](design-skill-stage1.md) 1.4 節）。
-    - 「自分が〈状態〉なら・でなければ」は `condition.selfState`（`"<id>"` か `{ "state": "<id>", "present": false }`）。静的な状態を見るものは編成の段で決まる。「解除不可」は付与の `undispellable: true`（同 1.1・1.3 節）。
-    - 「〈名前〉解除」は `kind: 'removeState'`（自分の状態だけ。発火の次のフレームで外れ、同じフレームの判定には付いている）。「直前に自分がバーストを使用していれば」は `condition.usedBurst: true`（フルバーストの開始・終了のきっかけだけ）。静的な状態（戦闘の始めから終わりまで付いている）かは状態ごとに決まり、その状態のどの付与も「戦闘開始時・持続・自分・条件なし」で、外す効果も無い時だけ静的になる（同 1.2・1.4・1.5 節。例はマナの S2）。
-    - 「〈名前〉のスタック量 N 個▲」は `kind: 'stackChange'`（自分の状態だけ。`amountRef` か `amount`）。上限・維持・中身は同じ定義のその状態の付与（スタックを持つ。対象は自分）のもの。「フルバーストタイム持続中に N 回」は、回数のきっかけの `during: "fullBurst"` と `reset`（`damage` と同じ意味）で、`timed`・付与にも書ける（[design-skill-stage3.md](design-skill-stage3.md) 1.1・1.2 節）。「窓の外の発も数え、付くのは窓の中だけ」は `firesDuring: "fullBurst"`（同 1.6 節。例はソーダ：トゥインクルバニーの S1）。「〈名前〉のフルスタック状態の時、スタック解除後」の回復は、トリガー `{ "fullStack": "<id>" }`（回復だけ。その状態の付与は自分にスタックで付き、射撃の回数のきっかけ。発火したらスタックを全部外す。同 1.3 節。例はクラウンの S2）。
-    - 「〈名前〉が適用される時・適用された時」は、トリガー `{ "applied": "<id>" }` を `damage` のほか `timed`・状態の付与にも書ける（その状態が自分に付いた記録のフレームから。付き直しごと。条件・`topAttack`・強化は書けず、`{ applied }` の付与で付いた状態で、ほかの `{ applied }` を起こさない）。名前の付いた即時効果（「〈名前〉：弾丸チャージ X%」）は、即時効果を別の効果で書き、付与を維持 0 秒（`durationSeconds: 0`。中身なし）で足して、付いた記録だけを作る（[design-skill-stage4.md](design-skill-stage4.md) 1.1・1.2 節。例はトーブの宝物版 S1）。
-    - 「自分がバリア適用状態なら」は `condition.selfState: 'barrier'`（目録の家族 `barrier` の根で、名前の無いバリアにも名前の付いたバリアにも当たる）。名前の無いバリア（「バリア」「共用バリア」）の付与は `state: 'barrier'`（中身なし。共用バリアは張った本人だけ。被弾で割れる分は扱わない）（[design-skill-stage5.md](design-skill-stage5.md) 1.1・1.2 節。例はラムのバーストとアスカ S2）。
+  - 説明文の言い回しと語彙の対応は下の表。欄の条件・組み合わせの制約・既定は `skills/types.ts` の注記と、表の設計書の節にある（ここには書き写さない）。語彙を足したら、表に 1 行足す。
+
+    <!-- prettier-ignore -->
+    | 言い回し | 書き方 | 決まり・例 | 設計書 |
+    | --- | --- | --- | --- |
+    | スキル発動者の最終最大HP の X% 分の攻撃力▲ | `scaling: "casterFinalMaxHp"` | 例: ラプラス：アルティメットヒーローの S1 | [design-skill-stage6.md](design-skill-stage6.md) |
+    | 自分の HP が X% 以上なら | `condition.selfHp: { "atLeastRef": N }` | HP は被弾で減りうるので `assumes` で決めない（[design-skill-catalog.md](design-skill-catalog.md) の論点 12）。例: ノワールの S1 | 同上 |
+    | 最大HP▲ | `stat: "maxHp"` | 「最大HP のみ▲」は形を足すまで notes のまま（`definitions.test.ts` が見張る）。例: シンデレラの美しさ | 同上 |
+    | デコイ・デコイが存在する時 | 目録の `decoy`・`condition.selfState: "decoy"` | — | 同上 |
+    | 自分と自分より最終防御力が低い味方 | `target: "allies"` と `targetDefense: "lowerThanSelf"` | 読む側の印 `reads: ["defense"]` も書く。例: アニス：スターの S2 | [design-skill-stage7.md](design-skill-stage7.md) |
+    | 防御力▲ | `stat: "defense"` | 効果にするのは、比べの自分の側と、読む側と組む録画が読み直せたものだけ。ほかは間接の notes（段 7 の論点 4）。例: デルタの S2 | 同上 |
+    | 〈クラス〉型の味方 | `targetClass` | 例: エヌ：ミラクルフェアリーの S1・バースト | [design-skill-stage9.md](design-skill-stage9.md) |
+    | 残りの HP の割合が最も低い味方 N 機 | `target: "lowestHpRatio"` と `targetCount`（`targetCountRef`） | 被弾した味方が選ばれうることを `assumes` に書く。例: ミサトの S1 | [design-skill-stage8.md](design-skill-stage8.md) |
+    | 「〈名前〉」：機能…・〜状態の味方 | 状態の付与 `kind: "state"` と `contents`。名前は目録（`skills/states.ts`）の id | 目録に無い状態は id を足す（英語版の状態名の lowerCamelCase）。ほかから参照されない名前も付与で書く（[design-skill-catalog.md](design-skill-catalog.md) の論点 4） | [design-named-state.md](design-named-state.md) 5 節・[design-skill-stage1.md](design-skill-stage1.md) 1.4 節 |
+    | 自分が〈状態〉なら・でなければ／解除不可 | `condition.selfState`／付与の `undispellable: true` | — | [design-skill-stage1.md](design-skill-stage1.md) 1.1・1.3 節 |
+    | 〈名前〉解除／直前に自分がバーストを使用していれば | `kind: "removeState"`／`condition.usedBurst: true` | 例: マナの S2 | 同 1.2・1.4・1.5 節 |
+    | 〈名前〉のスタック量 N 個▲ | `kind: "stackChange"` | — | [design-skill-stage3.md](design-skill-stage3.md) 1.1 節 |
+    | フルバーストタイム持続中に N 回／窓の外の発も数え、付くのは窓の中だけ | 回数のきっかけの `during: "fullBurst"` と `reset`／`firesDuring: "fullBurst"` | 例: ソーダ：トゥインクルバニーの S1 | 同 1.2・1.6 節 |
+    | 〈名前〉のフルスタック状態の時、スタック解除後（回復） | トリガー `{ "fullStack": "<id>" }` | 例: クラウンの S2 | 同 1.3 節 |
+    | 〈名前〉が適用される時・適用された時／〈名前〉：弾丸チャージ X% | トリガー `{ "applied": "<id>" }`／即時効果と、維持 0 秒の付与 | 例: トーブの宝物版 S1 | [design-skill-stage4.md](design-skill-stage4.md) 1.1・1.2 節 |
+    | 自分がバリア適用状態なら／バリア・共用バリア | `condition.selfState: "barrier"`／付与の `state: "barrier"` | 例: ラムのバースト・アスカの S2 | [design-skill-stage5.md](design-skill-stage5.md) 1.1・1.2 節 |
+
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。
 - **テスト**
@@ -121,9 +132,6 @@
 - [ ] 説明文の全行が、定義の効果か notes のどちらかに入っている
 - [ ] 効果の `assumes` と、notes の種類（`kind`）が実態と合っている（[skills.md](skills.md) の対応状況が意図どおり）
 - [ ] 定義のどの効果にも `claims` がある（[skills.md](skills.md) のそのキャラに「根拠なし」の効果が残っていない）
-- [ ] 反復実測の結論に `decidedOn`（仮説・値・読み方を決めるのに使った録画。無ければ `[]`）が書いてある
-- [ ] `npm run records:close -- V-NNNN --mark` が通っている（結論の根拠・等級の候補・反復実測の `decidedOn`・本文の節・確定の結論の根拠の観測値の `scope`）。この記録の観測値の組に最小構成の警告があると誤りになる（効かない理由を結論の `minimal` に印として書くか、仮説にする。[design-minimal-relevance.md](design-minimal-relevance.md) 11.3 節）
 - [ ] 既存のテストの数値が変わっていない（変わったなら、その理由と根拠の ID を PR に書く）
 - [ ] 実戦的な編成で sim と calc が整合するテストがある
-- [ ] `npm run records:check` と `npm run records:table` の生成物がコミットされている。感度（`npm run records:minimal`）は AGENTS.md の最小構成の検査の段落
-- [ ] CI と同じ確認が通る（`npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`）
+- 結論の根拠・等級・`decidedOn`・本文の節・最小構成の警告・生成物・CI と同じ確認は `npm run records:close -- V-NNNN --mark` が見る（[verification-guide.md](verification-guide.md) 9 節）。最小構成の警告で落ちたら、効かない理由を結論の `minimal` に印として書くか、仮説にする（[design-minimal-relevance.md](design-minimal-relevance.md) 11.3 節）

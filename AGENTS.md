@@ -21,8 +21,8 @@ NIKKE のダメージ計算ツール。
 - 設計の承認は対話で得て、実装と同じ PR に含める。
 - 撮影待ちの間は、トピックブランチを保持する（撮影計画や予測の commit もそのブランチで行う）。
 - PR を出す手順:
-  1. `git fetch origin && git rebase origin/main`（main を取り込むときはマージではなくリベース）。生成物が衝突したら `git checkout --ours -- <ファイル>` で main の版に戻し、作り直してから `git rebase --continue` する。自分のブランチで足した ID が main と重なっていたら、リベースを中止し（`git rebase --abort`）、自分のブランチで `npm run records:renumber -- <古い ID> <新しい ID>` で振り直してから取り込み直す（`plan/design-stage20.md` 3.6 節。録画の番号も同じ道具で、E: と Google Drive のファイル名ごと振り直す。`plan/design-recording-renumber.md`）
-  2. CI と同じ確認を通す: `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build`（検証の PR は `records:close --mark` が回す）
+  1. `git fetch origin && git rebase origin/main`（main を取り込むときはマージではなくリベース）。生成物が衝突したら `git checkout --ours -- <ファイル>` で main の版に戻し、`npm run records:check`（生成物を全部作り直す。感度も要るなら `records:minimal`）で作り直してから `git rebase --continue` する。自分のブランチで足した ID が main と重なっていたら、リベースを中止し（`git rebase --abort`）、自分のブランチで `npm run records:renumber -- <古い ID> <新しい ID>` で振り直してから取り込み直す（`plan/design-stage20.md` 3.6 節。録画の番号も同じ道具で、E: と Google Drive のファイル名ごと振り直す。`plan/design-recording-renumber.md`）
+  2. CI と同じ確認を通す: `npm run ci`（検証の PR は `records:close --mark` が回す）
   3. `git push -u origin HEAD`（リベースで履歴を書き換えたときは `--force-with-lease`）
   4. `gh pr create`
   5. `gh pr merge --auto --squash`（作成直後に自動マージを予約する。マージ方式はスカッシュ）
@@ -75,7 +75,7 @@ NIKKE のダメージ計算ツール。
 | `plan/captures/protocol.md`                          | 撮影の手順（編成と条件の選び方・撮る前の確かめ・映すもの・撮った後の取り込み）と、オーナーに撮影を頼むときの型（撮影の依頼）                                                                                                                                |
 | `plan/captures/index.md`                             | 命名規約・キャラ同定（録画の一覧の表は `plan/captures/recordings.md`。録画ごとの注記は録画の JSON の `conditionNote`）                                                                                                                                      |
 | `plan/captures/storage.md`・`plan/captures/tools.md` | 録画の置き場所・バックアップ・クラウド環境での取り寄せ（storage.md）と、解析ツール・フレーム番号の約束・証拠フレーム（tools.md）                                                                                                                            |
-| `records/recordings/`・`plan/captures/recordings.md` | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性（1 本 1 ファイルの JSON）と、その一覧（生成。`npm run records:table`）                                                                                                                       |
+| `records/recordings/`・`plan/captures/recordings.md` | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性（1 本 1 ファイルの JSON）と、その一覧（生成。`npm run records:check`）                                                                                                                       |
 | `records/observations/`・`plan/residuals.md`         | 録画から読んだ値（観測値）と、モデルとの残差の一覧（生成。`npm run records:check`）                                                                                                                                                                         |
 | `plan/verification.md`                               | 2026-09-26 までの実測と確認の記録（凍結。書き足さない）                                                                                                                                                                                                     |
 | `plan/captures/guide.md`                             | 撮影と読み取りの落とし穴の話題別の索引（根拠は ID か、上の文書へのリンクで指す）                                                                                                                                                                            |

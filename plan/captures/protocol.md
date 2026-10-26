@@ -35,11 +35,11 @@
 
 ## 撮った後（取り込み）
 
-- 撮り終えたら、**すぐに** `tools/captures/intake.ts` で取り込む（コマンドは [../verification-guide.md](../verification-guide.md) 5 節）。`records/recordings/<録画 id>.json` を後からまとめて埋めない。取り込んだら台帳をすぐ commit して push する（録画の番号を押さえる。[../verification-guide.md](../verification-guide.md) 3 節）。
+- 撮り終えたら、**すぐに** `tools/captures/intake.ts` で 1 回の撮影の録画をまとめて取り込む（コマンドは [../verification-guide.md](../verification-guide.md) 5 節。番号を取り、台帳を commit して push するところまで道具が行う）。`records/recordings/<録画 id>.json` を後からまとめて埋めない。
 - オート射撃・オートバーストの値は、画（左上のボタン）で確かめる。
 - まず一時停止 / 戦闘履歴のパネルで編成と枠順を確かめ、その編成で予測を出し直す。設計書の古い編成で撮られることがある（[../verification.md](../verification.md)「録画 0043」）。
 - 操作枠（`controlled`）を書く。バーストゲージのフルチャージ倍率は操作キャラにだけ乗る（C-0007）。
-- 宝物ありの枠は、取り込んだ後に `team` へ `treasurePhase` を足す（`intake.ts` は宝物の段階を受けない。足さないとモデルは基礎版で回る。V-0231）。段階は画面から読まず、オーナーに確かめる（[guide.md](guide.md)「原則」）。
+- 宝物ありの枠は、取り込みに `--treasure <枠>:<段階>` を付ける（`team` の `treasurePhase` になる。無いとモデルは基礎版で回る。V-0231）。段階は画面から読まず、オーナーに確かめる（[guide.md](guide.md)「原則」）。
 - 条件の補足（`conditionNote`）に、録画ごとの条件・写っているもの・注意を書く（バーストの欄を左で撮ったなど）。
 - ゲームの更新（メンテナンス）の後の最初の撮影なら、[index.md](index.md)「ゲームの更新の境目」に境目の録画を足す。
 

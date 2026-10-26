@@ -150,8 +150,10 @@ Drive も同じもの（`derived` は同期しないので除く）。`reference
 - 録画の台帳の検査（`recordings.ts`）も 4 桁以上を求めるようにした。
 - 置き換えの形を説明する設計書（この設計書と [design-recording-renumber.md](design-recording-renumber.md)）は、例が説明として壊れるので置き換えを戻した。
 - 手順書: [captures/index.md](captures/index.md)「命名規約」・[captures/protocol.md](captures/protocol.md)・[captures/tools.md](captures/tools.md)・[cloud-guide.md](cloud-guide.md)・[verification-guide.md](verification-guide.md) を 4 桁にした。
+- 2026-10-26: 4 桁にそろえる前から残っていたブランチを消すと決めたので（[design-workflow-simplification-2.md](design-workflow-simplification-2.md) 7 節）、`--pad-all`（`records-pad-recordings.ts`）と `renumber.ts` の `padRecordingId`・`padRecordingsInText` を消した。中身は、この設計書を足した後の main の履歴（`git log -- packages/core/scripts/records-pad-recordings.ts`）にある。
 
 ## 経過
 
 - 2026-10-25: 起案。オーナーの指示（番号を `0001`〜`9999` にそろえる）から。
 - 2026-10-25: 11 節をオーナーが推奨のとおりに決めた（11.1 節）。実施した（13 節）。
+- 2026-10-26: 一度きりの道具（`--pad-all`）を消した（13 節の終わり）。

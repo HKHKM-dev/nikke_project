@@ -2,6 +2,7 @@
 
 - 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。オーナーの判断を受けてから直す（まだ何も変えていない）。
 - 調べた範囲: [AGENTS.md](../AGENTS.md)「コミット手順」、[verification-guide.md](verification-guide.md)、[captures/protocol.md](captures/protocol.md)、[cloud-guide.md](cloud-guide.md)、`.claude/settings.json` のフック、`tools/`・`packages/core/scripts/` の道具。
+- 次の回: [design-workflow-simplification-2.md](design-workflow-simplification-2.md)（2026-10-25）。
 - 調べ方: origin/main の直近 50 件のコミットで毎回触るファイルを数え、観測値（`records/observations/`）の `method` から道具とレシピの使われ方を数えた。
 
 ## 0. 案の一覧
