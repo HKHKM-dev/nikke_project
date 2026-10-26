@@ -26,7 +26,6 @@ import {
   type TeamSlotInput,
 } from '@nikke/core';
 import { useEffect, useMemo, useReducer, useState } from 'react';
-import { DataPanel } from './components/DataPanel.tsx';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
 import { TeamBreakdown, type ModelKind } from './components/TeamBreakdown.tsx';
@@ -353,7 +352,6 @@ export function App() {
             <p className="error">{shown.error}</p>
           )}
           <NotesSummary slots={summarySlots} enemyNotes={shown.ok ? shown.result.enemyNotes : []} />
-          <DataPanel team={team} index={index} dispatch={dispatch} />
         </>
       )}
     </main>

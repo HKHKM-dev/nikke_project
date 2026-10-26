@@ -29,10 +29,10 @@ import {
   type OverloadOption,
   type TreasurePhase,
 } from '@nikke/core';
-import { useState, type Dispatch } from 'react';
+import type { Dispatch } from 'react';
 import { formatNumber } from '../format.ts';
 import { GEAR_PART_LABEL, formatBuildEffect, formatBuildEffectSource } from '../skillLabels.ts';
-import { readSlotBuildJson, serializeSlotBuild, type TeamAction } from '../team.ts';
+import type { TeamAction } from '../team.ts';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
 
@@ -72,26 +72,13 @@ export function BuildSection({
   build,
   effectiveBuild,
   growth,
-  savedGrowth,
+  savedGrowth: _savedGrowth,
   treasurePhase,
   masters,
   mastersError,
   disabled,
   dispatch,
 }: Props) {
-  const [jsonText, setJsonText] = useState('');
-  const [jsonMessage, setJsonMessage] = useState<string | null>(null);
-  const importJson = () => {
-    const result = readSlotBuildJson(jsonText);
-    if (!result.ok) {
-      setJsonMessage(`取り込めませんでした: ${result.error}`);
-      return;
-    }
-    dispatch({ type: 'setBuild', index: slotIndex, build: result.value.build });
-    if (result.value.growth !== null) dispatch({ type: 'setGrowth', index: slotIndex, growth: result.value.growth });
-    setJsonText('');
-    setJsonMessage(null);
-  };
   const set = (patch: Partial<BuildInput>) =>
     dispatch({ type: 'setBuild', index: slotIndex, build: { ...build, ...patch } });
   const setGear = (part: GearPart, gear: BuildInput['gear'][GearPart]) =>
@@ -336,7 +323,7 @@ export function BuildSection({
       </div>
       {combatError && <p className="error">育成入力を計算に使えません: {combatError}</p>}
       <details className="build-json">
-        <summary>攻撃力の合成内訳・育成 JSON</summary>
+        <summary>攻撃力の合成内訳</summary>
         {combat && (
           <p className="hint build-breakdown">
             {formatNumber(combat.attack)} = round(({formatNumber(combat.gradeBase)} 素 +{' '}
@@ -369,33 +356,6 @@ export function BuildSection({
             </ul>
           </div>
         )}
-        <div className="data-grid">
-          <label className="field">
-            <span>書き出し</span>
-            <textarea
-              readOnly
-              rows={5}
-              value={serializeSlotBuild({ growth: savedGrowth, build })}
-              onFocus={(e) => e.currentTarget.select()}
-            />
-          </label>
-          <label className="field">
-            <span>取り込み</span>
-            <textarea
-              rows={5}
-              value={jsonText}
-              disabled={disabled}
-              placeholder='{ "affectionRank": 30, "gear": { "head": { "type": "OL", "level": 5 } } }'
-              onChange={(e) => setJsonText(e.target.value)}
-            />
-            <span className="data-buttons">
-              <button type="button" disabled={disabled || jsonText.trim() === ''} onClick={importJson}>
-                取り込む
-              </button>
-            </span>
-          </label>
-        </div>
-        {jsonMessage && <p className="error">{jsonMessage}</p>}
       </details>
     </details>
   );
