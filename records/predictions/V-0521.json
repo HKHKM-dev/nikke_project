@@ -1,0 +1,351 @@
+{
+  "verification": "V-0521",
+  "note": "撮る前の予測（plan/design-elegg.md 8.3 節の B1〜B5）。編成は C（鈴原サクラ 1 枠目・I-DOLL・サン 2 枠目・◎エレグ 3 枠目）。モデルには撃たない枠が無いので、エレグも撃つ（エレグの弾が効くのはゲージだけ。8.5 節）。ブームインストールは、値の同じ timed の enemyDefenseDown で入れた（8.2 節）。いまのモデル（効果なし）は、バーストのヒットが出ないので仮説に入れない",
+  "team": [
+    {
+      "rid": 836
+    },
+    {
+      "rid": 308
+    },
+    {
+      "rid": 500,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Hb",
+      "note": "バーストスキルダメージ（ref 3）・防御力▼（ref 4・durationRef 5）・分配ダメージ▲（ref 1・durationRef 2）。ヒットと効果は発動のフレーム（遅れ 0）。ヒットは発動の直前の値を見るので、同じ発動の▼は乗らない（H-b）。▼の窓は発動の次のフレームから 588f（W0）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "burstDamage",
+              "ref": 3,
+              "damageType": "skill"
+            }
+          },
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "ref": 4,
+              "durationRef": 5
+            }
+          },
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "distributedDamage",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "Ha",
+      "note": "Hb で、ヒットだけを 1f 遅らせ、同じ発動の▼がヒットに乗る形（H-a）。▼の窓は Hb と同じ",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "burstDamage",
+              "ref": 3,
+              "damageType": "skill"
+            }
+          },
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "ref": 4,
+              "durationRef": 5
+            }
+          },
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "distributedDamage",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ],
+        "burstDelays": [
+          {
+            "rid": 500,
+            "row": {
+              "hitFrames": 1,
+              "effectFrames": 0
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のエレグのバーストスキルダメージ（会心なし）"
+    },
+    {
+      "id": "burst-hit-1-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同（会心）"
+    },
+    {
+      "id": "burst-hit-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "エレグの 1〜3 回目の発動（II の六角形の替わり目）からヒットまで（動画のフレーム）。発動から数えるので、2 回目以降もエレグの弾のゲージに依らない"
+    },
+    {
+      "id": "chain-1-video",
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "1 回目のチェーンの I・II の替わり目と III の 00.00 の、戦闘開始からの動画のフレーム（C-0662 の形の確かめ。▼の付き始めと切れ目のフレームの起点）"
+    },
+    {
+      "id": "sun-hit-40",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 40,
+        "core": false,
+        "distance": false,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "I-DOLL・サンの胴体・距離なし・会心なしの 1 ヒット（ゲーム内のフレーム 40。▼の前（エレグの発動の前））。Hb のモデルでは、エレグの発動は 52、▼の窓は [52, 640)、フルバーストは [86, 674)、鈴原サクラの受けるダメージ▲は [305, 599)。▼の有無で値を見分ける組を出すためのもので、許容は付けない"
+    },
+    {
+      "id": "sun-hit-60",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 60,
+        "core": false,
+        "distance": false,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "I-DOLL・サンの胴体・距離なし・会心なしの 1 ヒット（ゲーム内のフレーム 60。▼の付き始めの後（III のフルバーストの入りの前））。Hb のモデルでは、エレグの発動は 52、▼の窓は [52, 640)、フルバーストは [86, 674)、鈴原サクラの受けるダメージ▲は [305, 599)。▼の有無で値を見分ける組を出すためのもので、許容は付けない"
+    },
+    {
+      "id": "sun-hit-630",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 630,
+        "core": false,
+        "distance": false,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "I-DOLL・サンの胴体・距離なし・会心なしの 1 ヒット（ゲーム内のフレーム 630。▼の切れ目の前（フルバーストの中））。Hb のモデルでは、エレグの発動は 52、▼の窓は [52, 640)、フルバーストは [86, 674)、鈴原サクラの受けるダメージ▲は [305, 599)。▼の有無で値を見分ける組を出すためのもので、許容は付けない"
+    },
+    {
+      "id": "sun-hit-650",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 650,
+        "core": false,
+        "distance": false,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "I-DOLL・サンの胴体・距離なし・会心なしの 1 ヒット（ゲーム内のフレーム 650。▼の切れ目の後（フルバーストの中））。Hb のモデルでは、エレグの発動は 52、▼の窓は [52, 640)、フルバーストは [86, 674)、鈴原サクラの受けるダメージ▲は [305, 599)。▼の有無で値を見分ける組を出すためのもので、許容は付けない"
+    },
+    {
+      "id": "sakura-hit-40",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 40,
+        "core": false,
+        "distance": false,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "鈴原サクラの胴体・距離なし・会心なしの 1 ヒット（ゲーム内のフレーム 40。▼の前（エレグの発動の前））。Hb のモデルでは、エレグの発動は 52、▼の窓は [52, 640)、フルバーストは [86, 674)、鈴原サクラの受けるダメージ▲は [305, 599)。▼の有無で値を見分ける組を出すためのもので、許容は付けない"
+    },
+    {
+      "id": "sakura-hit-60",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 60,
+        "core": false,
+        "distance": false,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "鈴原サクラの胴体・距離なし・会心なしの 1 ヒット（ゲーム内のフレーム 60。▼の付き始めの後（III のフルバーストの入りの前））。Hb のモデルでは、エレグの発動は 52、▼の窓は [52, 640)、フルバーストは [86, 674)、鈴原サクラの受けるダメージ▲は [305, 599)。▼の有無で値を見分ける組を出すためのもので、許容は付けない"
+    },
+    {
+      "id": "sakura-hit-630",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 630,
+        "core": false,
+        "distance": false,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "鈴原サクラの胴体・距離なし・会心なしの 1 ヒット（ゲーム内のフレーム 630。▼の切れ目の前（フルバーストの中））。Hb のモデルでは、エレグの発動は 52、▼の窓は [52, 640)、フルバーストは [86, 674)、鈴原サクラの受けるダメージ▲は [305, 599)。▼の有無で値を見分ける組を出すためのもので、許容は付けない"
+    },
+    {
+      "id": "sakura-hit-650",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 650,
+        "core": false,
+        "distance": false,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "鈴原サクラの胴体・距離なし・会心なしの 1 ヒット（ゲーム内のフレーム 650。▼の切れ目の後（フルバーストの中））。Hb のモデルでは、エレグの発動は 52、▼の窓は [52, 640)、フルバーストは [86, 674)、鈴原サクラの受けるダメージ▲は [305, 599)。▼の有無で値を見分ける組を出すためのもので、許容は付けない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-26",
+    "commit": "662fd89f3ed8c5982df0a7eb0ee7d42ff4237c49",
+    "values": {
+      "Hb": {
+        "burst-hit-1": 316105.8450000001,
+        "burst-hit-1-crit": 474158.76750000013,
+        "burst-hit-delays": [-6, -6, -6],
+        "chain-1-video": [30, 59, 88],
+        "sun-hit-40": 9972.6445,
+        "sun-hit-60": 9977.887144,
+        "sun-hit-630": 14966.830716,
+        "sun-hit-650": 14958.96675,
+        "sakura-hit-40": 7047.899100000002,
+        "sakura-hit-60": 7051.074624000001,
+        "sakura-hit-630": 10576.611936,
+        "sakura-hit-650": 10571.84865
+      },
+      "Ha": {
+        "burst-hit-1": 316218.702624,
+        "burst-hit-1-crit": 474328.05393600004,
+        "burst-hit-delays": [1, 1, 1],
+        "chain-1-video": [30, 59, 88],
+        "sun-hit-40": 9972.6445,
+        "sun-hit-60": 9977.887144,
+        "sun-hit-630": 14966.830716,
+        "sun-hit-650": 14958.96675,
+        "sakura-hit-40": 7047.899100000002,
+        "sakura-hit-60": 7051.074624000001,
+        "sakura-hit-630": 10576.611936,
+        "sakura-hit-650": 10571.84865
+      }
+    }
+  }
+}

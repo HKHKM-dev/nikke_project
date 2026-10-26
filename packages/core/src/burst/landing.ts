@@ -53,6 +53,11 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // フルバーストの始まりの表示より 2〜35f 前に発火する。モデルは発動より前に置けないので 0（発動と同じフレーム）。
   // 宝物なしは未測定（plan/design-burst-split-hits.md 7 節の論点 4）
   { resourceIds: [352], treasure: true, delays: { hitFrames: 59, effectFrames: 0 }, claim: 'C-0167' },
+  // エレグ: II の発動（六角形の替わり目）からヒットまで 30f（動画で 51f。III の 00.00 の後のフルバーストの入りの止まり 22f を含み、
+  // 止まりが明ける所に出る）。バースト使用時の効果（分配ダメージ▲）は遅れ 0。ブームインストールはヒットから付く（トリガー burstHit。
+  // plan/design-elegg.md 8.9 節）。この編成では II から III の 00.00 までがどの回も同じで、ヒットが II の発動に結び付くか III の 00.00 に
+  // 結び付くかは見分けていない
+  { resourceIds: [500], delays: { hitFrames: 30, effectFrames: 0 }, claim: 'C-0689' },
   // I-DOLL・フラワー: I の発動（六角形が I から II に替わるフレーム。本当の発動の 5f 後）からヒットまで 14f。バースト使用時の効果は無い
   { resourceIds: [304], delays: { hitFrames: 14, effectFrames: 0 }, claim: 'C-0220' },
   // ニヒリスター: II の発動（六角形の替わり目）からヒットと火傷の付与（1 回目の tick はヒットと同じフレーム。C-0101）まで、どちらも 9f

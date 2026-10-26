@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 61・効果 260（根拠あり 253）・notes 218（根拠あり 68）
+件数: キャラ 61・効果 263（根拠あり 256）・notes 216（根拠あり 68）
 
-notes の種類: 未対応 105・前提の外 27・計算に無関係 28・補足 12・間接 46
+notes の種類: 未対応 103・前提の外 27・計算に無関係 28・補足 12・間接 46
 
-スロット: supported 104・partial 13・unsupported 49・noEffect 32
+スロット: supported 105・partial 13・unsupported 48・noEffect 32
 
 ## 10 ラピ
 
@@ -712,9 +712,10 @@ notes の種類: 未対応 105・前提の外 27・計算に無関係 28・補�
 - **skill2**: partial
   - effects[0] burstGauge・battleStart: C-0662（確定）
   - notes[0] 未対応: 通常攻撃 60 回命中ごとの、対象がブームインストール状態のときの味方全体の攻撃力▲（5 秒）は未対応: 根拠なし
-- **burst**: unsupported
-  - notes[0] 未対応: 味方全体の分配ダメージ▲（10 秒）は未対応: 根拠なし
-  - notes[1] 未対応: 照準線に最も近い敵 1 機へのバーストスキルダメージと、ブームインストール（防御力▼・10 秒）は未対応: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-0689（確定）
+  - effects[1] state・burstHit・boomInstall（enemyDefenseDown）: C-0690（確定）
+  - effects[2] timed・burstUse・distributedDamage: C-0691（確定）
 
 ## 501 トロニー
 

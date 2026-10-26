@@ -664,6 +664,10 @@
 | 0676 | `20261026-0676_ar+sg+ar_tove+fa+eg_eg-control.mp4` | トーブ（192、AR・水冷・SSR、宝物 3） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0523 の撮り方 A（1 本目）。トーブ（宝物の段階 3）・ソルジャーF.A.・I-DOLL・サン（操作・AUTO 射撃 ON）・オートバースト ON。依頼の 3 枠目はソルジャーE.G. だったが、I-DOLL・サンで撮られた（戦闘履歴のパネルで確かめた。ファイル名の eg は取り込みの時の誤りで、I-DOLL・サン）。出撃画面で灼熱のタブ・スペック固定 ON、左上のボタンで AUTO 射撃・オートバースト ON を確かめた |
 | 0677 | `20261026-0677_ar+sg+ar_tove+fa+eg_eg-control.mp4` | トーブ（192、AR・水冷・SSR、宝物 3） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0523 の撮り方 A（2 本目）。0676 と同じ編成（トーブ・ソルジャーF.A.・I-DOLL・サン（操作））。ファイル名の eg は取り込みの時の誤りで、I-DOLL・サン（戦闘履歴のパネルで確かめた） |
 | 0678 | `20261026-0678_sg+ar+ar_fa+eg+tove_autofire-off.mp4` | ソルジャーF.A.（301、SG・鉄甲・R） + I-DOLL・サン（308、AR・鉄甲・R） + ◎トーブ（192、AR・水冷・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0523 の撮り方 B（任意の 1 本）。ソルジャーF.A.・I-DOLL・サン・トーブ（宝物の段階 3・操作）・オートバースト ON。トーブのバーストの直後にオート射撃を約 10 秒 OFF にする操作を 2 回。途中（残り 01:55）で止めた。ファイル名の eg は取り込みの時の誤りで、I-DOLL・サン（一時停止のパネルで確かめた） |
+| 0690 | `20261026-0690_smg+ar+mg_sakura+idoll-sun+elegg_elegg-burst-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0521 の編成 C。鈴原サクラ（AI）・I-DOLL・サン（AI）・エレグ（操作・撃たない）。オートバースト ON。最後に戦闘履歴が写っている |
+| 0691 | `20261026-0691_smg+ar+mg_sakura+idoll-sun+elegg_elegg-burst-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0521 の編成 C。鈴原サクラ（AI）・I-DOLL・サン（AI）・エレグ（操作・撃たない）。オートバースト ON。最後に戦闘履歴が写っている |
+| 0692 | `20261026-0692_smg+mg+mg_sakura+yukiko+elegg_elegg-burst-dist-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + 雪子（871、MG・灼熱・SSR） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0522 の編成 D。鈴原サクラ（AI）・雪子（AI）・エレグ（操作・撃たない）。オートバースト ON。最後に戦闘履歴が写っている |
+| 0693 | `20261026-0693_smg+mg+mg_sakura+yukiko+elegg_elegg-burst-dist-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + 雪子（871、MG・灼熱・SSR） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0522 の編成 D。鈴原サクラ（AI）・雪子（AI）・エレグ（操作・撃たない）。オートバースト ON。最後に戦闘履歴が写っている |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
@@ -1339,3 +1343,7 @@
 | 0676 | `range/20261026-0676_ar+sg+ar_tove+fa+eg_eg-control.mp4` | `2026-10-26_23-24-56.mp4` | 202.2 s | 12129 | 60.00 | 245.4 MB | `f6dac947c15e` |
 | 0677 | `range/20261026-0677_ar+sg+ar_tove+fa+eg_eg-control.mp4` | `2026-10-26_23-28-23.mp4` | 201.4 s | 12081 | 60.00 | 244.3 MB | `fc29a1185394` |
 | 0678 | `range/20261026-0678_sg+ar+ar_fa+eg+tove_autofire-off.mp4` | `2026-10-26_23-39-34.mp4` | 80.3 s | 4818 | 60.00 | 97.4 MB | `82bec1a0eed8` |
+| 0690 | `range/20261026-0690_smg+ar+mg_sakura+idoll-sun+elegg_elegg-burst-1.mp4` | `2026-10-26_23-04-24.mp4` | 201.0 s | 12058 | 60.00 | 243.4 MB | `d24b1f5b79ce` |
+| 0691 | `range/20261026-0691_smg+ar+mg_sakura+idoll-sun+elegg_elegg-burst-2.mp4` | `2026-10-26_23-07-50.mp4` | 204.3 s | 12258 | 60.00 | 247.4 MB | `aa3c1479d82b` |
+| 0692 | `range/20261026-0692_smg+mg+mg_sakura+yukiko+elegg_elegg-burst-dist-1.mp4` | `2026-10-26_23-11-27.mp4` | 202.3 s | 12138 | 60.00 | 245.1 MB | `f3d177ac7658` |
+| 0693 | `range/20261026-0693_smg+mg+mg_sakura+yukiko+elegg_elegg-burst-dist-2.mp4` | `2026-10-26_23-14-55.mp4` | 203.0 s | 12177 | 60.00 | 246.2 MB | `9996d124578d` |

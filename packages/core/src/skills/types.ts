@@ -380,6 +380,9 @@ export type WhileCondition = { selfState: SelfStateCondition };
  * Stage 8: burstStageNEnter = バースト N 段階突入時。1 はゲージ満タン（とリエントリー）、2 / 3 は発動の結果その段階に進んだ時
  * （通常は I / II の発動フレーム）。固定サイクルでは 3 つとも発動フレーム。
  * Stage 11: healed = 自分に回復効果が適用された時（heal 効果の対象になった時。HP は持たず、満タンでも適用とみなす）。
+ * エレグのバースト編（plan/design-elegg.md 8.9 節）: burstHit = 自分のバーストの倍率ダメージのヒット（遅れの表の hitFrames のフレーム。
+ * 分かれたヒットは 1 ヒット目）。burst スロットの timed・付与にだけ書ける（validateBurstHitTriggers）。burstUse の効果の発火
+ * （effectFrames）とヒットが違うフレームのキャラで、ヒットから付く効果（ブームインストール）を書く
  */
 export type BuffTrigger =
   | 'battleStart'
@@ -389,7 +392,8 @@ export type BuffTrigger =
   | 'burstStage1Enter'
   | 'burstStage2Enter'
   | 'burstStage3Enter'
-  | 'healed';
+  | 'healed'
+  | 'burstHit';
 export const BUFF_TRIGGERS = [
   'battleStart',
   'burstUse',
@@ -399,6 +403,7 @@ export const BUFF_TRIGGERS = [
   'burstStage2Enter',
   'burstStage3Enter',
   'healed',
+  'burstHit',
 ] as const satisfies readonly BuffTrigger[];
 
 /** Stage 11: 対象 burstUsers を書けるトリガー */
@@ -1183,8 +1188,14 @@ export type StateContentItem = Pick<TimedEffect, 'stat' | 'ref' | 'scaling' | 'd
  */
 export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scaling' | 'decrease' | 'amplifies'> & {
   kind: 'state';
-  /** 目録の id（持ち主が味方の状態） */
+  /** 目録の id（持ち主が味方の状態。enemy なら敵の状態） */
   state: NamedStateId;
+  /**
+   * エレグのバースト編（plan/design-elegg.md 8.2 節。plan/design-named-state.md 8.3 節）: JSON の target: "enemy"（敵に付く状態の付与。
+   * 敵は 1 体の前提）。状態の件の列の持ち主は敵（skills/holders.ts の ENEMY）。中身は敵が持つ stat（isEnemyHeldStat）だけで、
+   * 敵の件の timed と同じく味方全体の区間の値に写すので、target は "allies" に読み替えて持つ
+   */
+  enemy?: true;
   /** 状態の間だけ持ち主に効く中身（同 5.3 節） */
   contents?: StateContentItem[];
   /**
@@ -2248,7 +2259,32 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   for (const key of Object.keys(v)) {
     if (!STATE_GRANT_KEYS.includes(key)) fail(`${path}.${key}`, 'unknown field');
   }
-  const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
+  // エレグのバースト編: target: "enemy" は敵に付く状態の付与。敵の件の timed と同じく target: "allies" に読み替えて残りの欄を読む
+  const onEnemy = v.target === 'enemy';
+  if (onEnemy) {
+    for (const key of [
+      'targetWeapon',
+      'targetElement',
+      'targetClass',
+      'targetSquad',
+      'targetState',
+      'targetBurstStep',
+      'targetDefense',
+      'excludeSelf',
+      'fixedTargets',
+      'targetCount',
+      'targetCountRef',
+      'maxStacks',
+      'maxStacksRef',
+      'undispellable',
+      'stacksFrom',
+      'condition',
+    ]) {
+      if (v[key] !== undefined) fail(`${path}.${key}`, 'not allowed in a grant on the enemy (target "enemy")');
+    }
+    v = { ...v, target: 'allies' };
+  }
+  const state = parseNamedStateId(v.state, `${path}.state`, onEnemy ? 'enemy' : 'ally');
   // トリガーの確率のきっかけは書けない（窓が期待値の小片になり、見る側の「付いているか」に使えない）。
   // 2 段目の段 4: { applied } は書ける（連鎖させない。同じ定義の中の連鎖は validateAppliedTriggers）
   const fields = parseTimedFields(v, path, undefined, false);
@@ -2263,6 +2299,13 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
     fail(`${path}.condition.selfState`, `a grant of "${state}" cannot look at its own state`);
   }
   const effect: StateGrantEffect = { kind: 'state', state, ...fields };
+  if (onEnemy) {
+    if (isAppliedTrigger(fields.trigger))
+      fail(`${path}.trigger`, 'a grant on the enemy cannot be triggered by { applied }');
+    if (v.contents === undefined)
+      fail(`${path}.contents`, 'a grant on the enemy needs contents (no reader of the state yet)');
+    effect.enemy = true;
+  }
   // 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印
   if (v.undispellable !== undefined) {
     if (v.undispellable !== true)
@@ -2295,7 +2338,7 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   }
   if (v.contents !== undefined) {
     if (!Array.isArray(v.contents) || v.contents.length === 0) fail(`${path}.contents`, 'expected a non-empty array');
-    effect.contents = v.contents.map((item, i) => parseStateContentItem(item, v, `${path}.contents[${i}]`));
+    effect.contents = v.contents.map((item, i) => parseStateContentItem(item, v, `${path}.contents[${i}]`, onEnemy));
   }
   // 2 段目の段 4（plan/design-skill-stage4.md 1.2 節）: 維持 0 秒の付与は、名前の付いた即時効果の付いた記録だけを作る（窓は無い）
   if (effect.durationSeconds === 0) {
@@ -2355,14 +2398,25 @@ const STATE_GRANT_KEYS: readonly string[] = [
  * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節）: 中身の 1 項目。付与の欄（grant）と合わせた timed を
  * parseTimedEffect に通して、stat ごとの規則を確かめる
  */
-function parseStateContentItem(item: Json, grant: Record<string, Json>, path: string): StateContentItem {
+function parseStateContentItem(
+  item: Json,
+  grant: Record<string, Json>,
+  path: string,
+  onEnemy = false,
+): StateContentItem {
   if (!isRecord(item)) fail(path, 'expected an object');
   for (const key of Object.keys(item)) {
     if (!['stat', 'ref', 'scaling', 'decrease', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
   }
   const timed = parseTimedEffect(contentAsTimed(grant, item), path);
-  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 状態は味方が持つので、敵の件（受けるダメージ▲）は中身にできない
-  if (timed.stat === 'damageTaken') fail(`${path}.stat`, 'damageTaken is held by the enemy, not by a state of an ally');
+  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 味方の状態の中身に敵の件（受けるダメージ▲）は書けない。
+  // エレグのバースト編: 敵に付く状態の中身は、敵が持つ stat だけ
+  if (onEnemy) {
+    if (!isEnemyHeldStat(timed.stat))
+      fail(`${path}.stat`, `a state on the enemy holds only enemy-held stats, got ${timed.stat}`);
+  } else if (timed.stat === 'damageTaken') {
+    fail(`${path}.stat`, 'damageTaken is held by the enemy, not by a state of an ally');
+  }
   const out: StateContentItem = { stat: timed.stat };
   if (timed.ref !== undefined) out.ref = timed.ref;
   if (timed.scaling !== undefined) out.scaling = timed.scaling;
@@ -3275,6 +3329,7 @@ function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' 
     fail(`${path}.support`, 'support is derived from effects and notes (plan/design-skill-note-kinds.md); remove it');
   if (!Array.isArray(v.effects)) fail(`${path}.effects`, 'expected an array');
   const effects = v.effects.map((e, i) => parseEffect(e, `${path}.effects[${i}]`, slot));
+  validateBurstHitTriggers(effects, slot, path);
   let notes: SkillNote[] | undefined;
   if (v.notes !== undefined) {
     if (!Array.isArray(v.notes)) fail(`${path}.notes`, 'expected an array');
@@ -3302,6 +3357,21 @@ function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' 
   }
   if (notes !== undefined) entry.notes = notes;
   return entry;
+}
+
+/**
+ * エレグのバースト編（plan/design-elegg.md 8.9 節）: トリガー burstHit は、バーストの倍率ダメージ（burstDamage）のある burst スロットの
+ * timed・付与にだけ書ける（ヒットの無いバースト・ほかのスロットでは発火のフレームが決まらない）
+ */
+function validateBurstHitTriggers(effects: readonly SkillEffect[], slot: SkillSlot, path: string): void {
+  effects.forEach((e, i) => {
+    if (!('trigger' in e) || e.trigger !== 'burstHit') return;
+    const at = `${path}.effects[${i}].trigger`;
+    if (e.kind !== 'timed' && e.kind !== 'state')
+      fail(at, `burstHit is allowed only in timed and state grants, not in ${e.kind}`);
+    if (slot !== 'burst') fail(at, 'burstHit is allowed only in the burst slot');
+    if (!effects.some((x) => x.kind === 'burstDamage')) fail(at, 'burstHit needs a burstDamage in the same slot');
+  });
 }
 
 /**

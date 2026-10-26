@@ -8,6 +8,7 @@
 // （plan/design-stage11.md 3 節）。
 import {
   effectFrameOf,
+  hitFrameOf,
   type BurstActivation,
   type BurstSchedule,
   type BurstScheduleModel,
@@ -102,6 +103,11 @@ export type FrameEvents = {
    * 自分の burstUse・{ count: burstUse } はこちらで判定する。遅れの無いキャラは activations と同じ
    */
   burstEffects: readonly BurstActivation[];
+  /**
+   * エレグのバースト編（plan/design-elegg.md 8.9 節）: このフレームにバーストの倍率ダメージがヒットした発動（hitFrameOf がこのフレーム。
+   * 分かれたヒットは 1 ヒット目）。トリガー burstHit が見る。省略は無し
+   */
+  burstHits?: readonly BurstActivation[];
   fullBurstStart: boolean;
   /** フルバーストが終わった（戦闘時間で切られた最後の窓の end = frames は来ない） */
   fullBurstEnd: boolean;
@@ -201,6 +207,8 @@ export function createTriggerTracker(
       return (ev) => ev.frame === 0;
     case 'burstUse':
       return (ev) => ev.burstEffects.some((a) => a.slotIndex === slotIndex);
+    case 'burstHit':
+      return (ev) => (ev.burstHits ?? []).some((a) => a.slotIndex === slotIndex);
     case 'fullBurstStart':
       return (ev) => ev.fullBurstStart;
     case 'fullBurstEnd':
@@ -289,6 +297,13 @@ export function replayEvents(
     for (const a of schedule.activations) {
       const f = effectFrameOf(a);
       if (f < frames) (at(f).burstEffects as BurstActivation[]).push(a);
+    }
+    // エレグのバースト編: ヒットのフレーム（トリガー burstHit）
+    for (const a of schedule.activations) {
+      const f = hitFrameOf(a);
+      if (f >= frames) continue;
+      const ev = at(f);
+      ev.burstHits = [...(ev.burstHits ?? []), a];
     }
     for (const w of schedule.fullBurstWindows) {
       if (w.start < frames) {

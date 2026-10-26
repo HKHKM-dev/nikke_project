@@ -62,26 +62,44 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体の分配ダメージ▲（10 秒）は未対応",
-          "en": "The distributed damage increase on all allies (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "distributedDamage",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
+          "kind": "burstDamage",
+          "ref": 3,
+          "damageType": "skill",
+          "claims": [
+            "C-0689"
+          ]
         },
         {
-          "ja": "照準線に最も近い敵 1 機へのバーストスキルダメージと、ブームインストール（防御力▼・10 秒）は未対応",
-          "en": "The burst skill damage and Boom Install (defense decrease, 10 s) on the enemy nearest the crosshair are not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstDamage",
-            "trigger": "burstUse"
+          "kind": "state",
+          "state": "boomInstall",
+          "trigger": "burstHit",
+          "target": "enemy",
+          "durationRef": 5,
+          "contents": [
+            {
+              "stat": "enemyDefenseDown",
+              "ref": 4
+            }
+          ],
+          "claims": [
+            "C-0690"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "distributedDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0691"
+          ],
+          "assumes": {
+            "ja": "維持は説明文の 10 秒（窓の切れ目は測っていない）",
+            "en": "Lasts the 10 s in the description (the end of the window is not measured)"
           }
         }
       ]

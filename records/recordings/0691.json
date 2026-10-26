@@ -1,0 +1,46 @@
+{
+  "id": "0691",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0691_smg+ar+mg_sakura+idoll-sun+elegg_elegg-burst-2.mp4",
+  "original": "2026-10-26_23-07-50.mp4",
+  "durationSec": 204.3,
+  "frames": 12258,
+  "fps": 60,
+  "sizeMB": 247.4,
+  "sha256": "aa3c1479d82b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 500,
+      "name": "エレグ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0521 の編成 C。鈴原サクラ（AI）・I-DOLL・サン（AI）・エレグ（操作・撃たない）。オートバースト ON。最後に戦闘履歴が写っている",
+  "backup": {
+    "at": "2026-10-26T23:47+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
