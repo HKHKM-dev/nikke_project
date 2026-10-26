@@ -219,9 +219,14 @@ export function formatStateGrant(effect: StateGrantEffect, definition: SkillDefi
       : contents === undefined
         ? '中身なし（ほかの効果が、対象の絞り込み・条件・きっかけでこの状態を見る）'
         : `中身${effect.contents === undefined ? '（同じ状態のほかの付与）' : ''}: ${contents.map((c) => BUFF_STAT_LABEL[c.stat]).join('・')}`;
-  // 2 段目の段 10: スタックの数をカウンタの値から取る付与
+  // 2 段目の段 10: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3。付いた時の数で固定）から取る付与
+  const from = effect.stacksFrom;
   const stacksFrom =
-    effect.stacksFrom === undefined ? '' : `。スタック数は${counterName(effect.stacksFrom.counter).ja}の値`;
+    from === undefined
+      ? ''
+      : 'counter' in from
+        ? `。スタック数は${counterName(from.counter).ja}の値`
+        : `。スタック数は付いた時の自分の${namedStateName(from.state).ja}のスタック数（コピー）`;
   return `${head}。${contentText}${stacksFrom}${effect.undispellable ? '。解除不可' : ''}`;
 }
 

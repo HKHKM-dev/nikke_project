@@ -49,6 +49,7 @@ import {
   type TimerTrigger,
   type TargetSquad,
   type PassiveEffect,
+  type StacksFrom,
   type StateGrantEffect,
   type TimedEffect,
   staticStatesOf,
@@ -555,8 +556,11 @@ export type ResolvedStateGrant = ResolvedItemFields & {
   isStatic: boolean;
   /** 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印（同じ定義の同じ状態の付与で揃う） */
   undispellable?: true;
-  /** 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 1 回の発火で付けるスタックの数を、自分のカウンタの値にする */
-  stacksFrom?: { counter: CounterId };
+  /**
+   * 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 1 回の発火で付けるスタックの数を、自分のカウンタの値（PR 2）か、自分の状態の
+   * スタック数（PR 3）にする
+   */
+  stacksFrom?: StacksFrom;
 };
 
 /**

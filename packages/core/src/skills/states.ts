@@ -82,6 +82,19 @@ export const NAMED_STATES = {
   /** 同: 応急改造（トーブの S1。代用弾丸が適用される時に味方全体。最大装弾数▲・3 スタック・5 秒。S2・バーストが見る） */
   temporaryModification: { name: { ja: '応急改造', en: 'Temporary Modification' }, holder: 'ally' },
   /**
+   * 2 段目の段 10 の PR 3（plan/design-skill-stage10.md 3.3 節）: その場しのぎの奇跡（トーブの宝物版のバースト。味方全体。スキル発動者
+   * 基準の攻撃力▲・応急改造スタックコピー・15 秒）。付いた時のトーブの応急改造のスタック数で付く（V-0523）
+   */
+  miracleOfMakeshifts: { name: { ja: 'その場しのぎの奇跡', en: 'Miracle of Makeshifts' }, holder: 'ally' },
+  /**
+   * 同: ショットガンを所持する味方全体へのその場しのぎの奇跡。ゲームでは同じ名前の 2 つ目の効果で、ショットガンの味方には味方全体の分と
+   * 重なって乗る（V-0523）。同じ状態の付与は 1 つの件の列にまとまり中身も 1 つなので、別の状態にする
+   */
+  miracleOfMakeshiftsShotgun: {
+    name: { ja: 'その場しのぎの奇跡（ショットガン）', en: 'Miracle of Makeshifts (Shotgun)' },
+    holder: 'ally',
+  },
+  /**
    * 2 段目の段 10（plan/design-skill-stage10.md 3.2 節）: 火力チャージ（ネオン：ビジョン・アイのバースト。火力ゲージが 100 未満の時。
    * 10 秒・解除不可。その間の通常攻撃と終わりに火力ゲージをチャージする。V-0503）
    */

@@ -200,29 +200,60 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体の、スキル発動者基準の攻撃力▲（応急改造スタックコピー・15 秒）は未対応（スタック数で決まる値）",
-          "en": "ATK up of the skill user's ATK on all allies (mirrors the Temporary Modification stack count, 15 s) is not modeled (a value set by a stack count)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
+          "kind": "state",
+          "state": "miracleOfMakeshifts",
+          "trigger": "burstUse",
+          "target": "allies",
+          "durationRef": 2,
+          "maxStacks": 3,
+          "stacksFrom": {
+            "state": "temporaryModification"
+          },
+          "contents": [
+            {
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "応急改造スタックコピー: バーストを使った時のトーブの応急改造のスタック数で付き、維持の間は、後で応急改造が減っても変わらない（V-0523）。上限は応急改造の上限（3 スタック。説明文に出ないので即値）",
+            "en": "Mirrors the Temporary Modification stack count: it is granted with the stack count Tove has when the Burst is used, and keeps it for the duration even if Temporary Modification drops later (V-0523). The cap is that of Temporary Modification (3 stacks; not in the description, so written as a literal)"
+          },
+          "claims": [
+            "C-0668",
+            "C-0669",
+            "C-0670"
+          ]
         },
         {
-          "ja": "ショットガンを所持する味方全体の、スキル発動者基準の攻撃力▲（応急改造スタックコピー・15 秒）は未対応（スタック数で決まる値）",
-          "en": "ATK up of the skill user's ATK on all allies with shotguns (mirrors the Temporary Modification stack count, 15 s) is not modeled (a value set by a stack count)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
+          "kind": "state",
+          "state": "miracleOfMakeshiftsShotgun",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetWeapon": "SG",
+          "durationRef": 4,
+          "maxStacks": 3,
+          "stacksFrom": {
+            "state": "temporaryModification"
+          },
+          "contents": [
+            {
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "応急改造スタックコピー: バーストを使った時のトーブの応急改造のスタック数で付き、維持の間は、後で応急改造が減っても変わらない（V-0523）。上限は応急改造の上限（3 スタック。説明文に出ないので即値）。ショットガンの味方には、effects[0] と重なって乗る（V-0523）",
+            "en": "Mirrors the Temporary Modification stack count: it is granted with the stack count Tove has when the Burst is used, and keeps it for the duration even if Temporary Modification drops later (V-0523). The cap is that of Temporary Modification (3 stacks; not in the description, so written as a literal). On allies with shotguns it stacks with effects[0] (V-0523)"
+          },
+          "claims": [
+            "C-0669",
+            "C-0670"
+          ]
         }
       ]
     }

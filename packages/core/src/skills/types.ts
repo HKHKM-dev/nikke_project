@@ -1195,10 +1195,16 @@ export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scal
   /**
    * 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 1 回の発火で付けるスタックの数を、発火のフレームの前のフレームの終わりの自分の
    * カウンタの値にする（0 なら付けない）。超火力チャージ（ネオン：ビジョン・アイの S2）は、火力ゲージの値をスタック数にして付く（V-0503）。
-   * maxStacks（即値）がカウンタの上限以上であること
+   * maxStacks（即値）がカウンタの上限以上であること。
+   * 2 段目の段 10 の PR 3（同 3.3 節）: { state } は、発火のフレームの自分のその状態のスタック数（段 1 の件。条件 selfState が見るものと
+   * 同じ）。その場しのぎの奇跡（トーブの宝物版のバースト）は、応急改造のスタック数で付き、後で応急改造が減っても維持の間は変わらない
+   * （V-0523）。maxStacks（即値）を書く
    */
-  stacksFrom?: { counter: CounterId };
+  stacksFrom?: StacksFrom;
 };
+
+/** 2 段目の段 10: 付与のスタックの数の出どころ（カウンタの値か、自分の状態のスタック数） */
+export type StacksFrom = { counter: CounterId } | { state: NamedStateId };
 
 /**
  * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 「〈名前〉解除」（Removes）。発火のフレーム f に、持ち主（自分）のその状態の件
@@ -2264,18 +2270,28 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
     effect.undispellable = true;
   }
   if (v.stacksFrom !== undefined) {
-    // 2 段目の段 10: スタックの数をカウンタの値から取る
+    // 2 段目の段 10: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3）から取る
     const from = v.stacksFrom;
-    if (!isRecord(from)) fail(`${path}.stacksFrom`, 'expected { counter }');
-    for (const key of Object.keys(from)) if (key !== 'counter') fail(`${path}.stacksFrom.${key}`, 'unknown field');
-    const counter = oneOf(COUNTER_IDS, from.counter, `${path}.stacksFrom.counter`);
-    if (effect.maxStacks === undefined || effect.maxStacks < counterMax(counter)) {
-      fail(
-        `${path}.maxStacks`,
-        `stacksFrom needs maxStacks of at least the max of ${counter} (${counterMax(counter)})`,
-      );
+    if (!isRecord(from) || Object.keys(from).length !== 1)
+      fail(`${path}.stacksFrom`, 'expected { counter } or { state }');
+    for (const key of Object.keys(from)) {
+      if (key !== 'counter' && key !== 'state') fail(`${path}.stacksFrom.${key}`, 'unknown field');
     }
-    effect.stacksFrom = { counter };
+    if (from.state !== undefined) {
+      const source = parseNamedStateId(from.state, `${path}.stacksFrom.state`, 'ally');
+      if (source === state) fail(`${path}.stacksFrom.state`, `a grant of "${state}" cannot count its own stacks`);
+      if (effect.maxStacks === undefined) fail(`${path}.maxStacks`, 'stacksFrom { state } needs maxStacks');
+      effect.stacksFrom = { state: source };
+    } else {
+      const counter = oneOf(COUNTER_IDS, from.counter, `${path}.stacksFrom.counter`);
+      if (effect.maxStacks === undefined || effect.maxStacks < counterMax(counter)) {
+        fail(
+          `${path}.maxStacks`,
+          `stacksFrom needs maxStacks of at least the max of ${counter} (${counterMax(counter)})`,
+        );
+      }
+      effect.stacksFrom = { counter };
+    }
   }
   if (v.contents !== undefined) {
     if (!Array.isArray(v.contents) || v.contents.length === 0) fail(`${path}.contents`, 'expected a non-empty array');
