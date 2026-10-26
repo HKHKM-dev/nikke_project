@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 511,
-  "checkedAt": "2026-10-20",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
       "effects": [
@@ -114,16 +114,54 @@
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "hitsRef": 2,
+          "assumes": {
+            "ja": "ランダムな敵への 10 回の順番の攻撃は、敵 1 体の前提ではすべてその敵に当たる。1 ヒットは説明文の値で、ヒットの時刻は遅れの表の分かれたヒット",
+            "en": "With a single enemy, all 10 sequential hits on random enemies land on that enemy. Each hit is the description value, timed by the split hits of the burst delay table"
+          },
+          "claims": [
+            "C-0654",
+            "C-0655"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 3,
+          "damageType": "additional",
+          "perBurstHit": true,
+          "condition": {
+            "selfState": "beauty"
+          },
+          "perCount": {
+            "state": "beauty"
+          },
+          "assumes": {
+            "ja": "美しさスタックコピーは、バーストを使った時の美しさのスタック数を倍率に掛け、10 回のヒットのそれぞれに 1 回ずつ出す",
+            "en": "Beauty stack copy multiplies the value by the Beauty stacks at Burst use, once on each of the 10 hits"
+          },
+          "claims": [
+            "C-0656"
+          ]
+        }
+      ],
       "notes": [
         {
-          "ja": "ランダムな敵への 10 回の倍率ダメージと、美しさのスタックに応じた追加ダメージは未対応",
-          "en": "The 10 hits on random enemies and the additional damage by Beauty stacks are not modeled",
+          "ja": "追加ダメージの攻撃力は、ヒットの時の最終最大HP で S1 の攻撃力▲を読み直す（バーストのヒットは発動の時の値のまま）。モデルは発動の時の値で固定する（未実装。1 回目のバーストの途中で美しさが増えた後のヒットだけが違う）",
+          "en": "The additional damage re-reads the S1 ATK up with the final max HP at each hit (the burst hits keep the value at activation). The model fixes it at activation (not modeled; only the hits after Beauty grows during the first Burst differ)",
           "kind": "unimplemented",
           "effect": {
-            "kind": "burstDamage",
+            "kind": "damage",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0657"
+          ]
         }
       ]
     }

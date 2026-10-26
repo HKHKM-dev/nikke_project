@@ -362,5 +362,310 @@
         "burst": true
       }
     }
+  },
+  {
+    "id": "0481-13",
+    "recording": "0481",
+    "source": "V-0502",
+    "readAt": "2026-10-26",
+    "kind": "timing",
+    "use": "compare",
+    "value": [76, 75, 75, 76, 74],
+    "unit": "f",
+    "description": "1〜5 回目のフルバーストの始まり（III のタイマーの 00.00。f1654・4035・6417・8810・11195）から、シンデレラのバーストの 1 ヒット目までの動画のフレーム数。フルバーストの入りの止まり（C-0069）を含む",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、レシピ burst-panel@1 の III のタイマーの 00.00",
+      "note": "1 ヒット目は f1730・4110・6492・8886・11269"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0481-14",
+    "recording": "0481",
+    "source": "V-0502",
+    "readAt": "2026-10-26",
+    "kind": "timing",
+    "use": "compare",
+    "value": [0, 12, 24, 35, 47, 59, 71, 81, 93, 105],
+    "unit": "f",
+    "description": "1 回目のバーストの 10 ヒット（ランダムな敵への順番の攻撃）の、1 ヒット目からのずれ（動画のフレーム）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、レシピ burst-panel@1 の III のタイマーの 00.00",
+      "note": "1 回目のバースト（f1730〜1835）の増分のフレームの差"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0481-15",
+    "recording": "0481",
+    "source": "V-0502",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 24085010,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストの 10 ヒットのバースト分の和（会心なし）。1 ヒット 2,408,501 の 10 倍（バーストのヒットは発動の時の値で 10 ヒットとも同じ）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、レシピ burst-panel@1 の III のタイマーの 00.00",
+      "note": "バーストの 10 ヒットの増分は、どれも「バーストのヒット（会心あり・なし）+ 追加ダメージ（会心あり・なし）」の 1 つの増分に出る。同じ回の「B + 追加」と「B + 追加会心」の差 Δ は追加ダメージの会心の上乗せ（0.5 倍）で、フルバースト中の追加ダメージ（会心なし）は 3Δ。バーストのヒット B は増分から 3Δ を引いた値（フルバースト補正は乗らない）。どれもモデルを使わずに増分だけから出る。ほかの発と同じフレームに重なった増分（格子に当たらないもの）は使わない。B + 追加 2,714,252・B + 追加会心 2,816,169（1 回目のバースト（f1730〜1835）の「B + 追加」5 個・「B + 追加会心」1 個・「B 会心 + 追加」1 個）。許容 abs 30 は 1 ヒットの丸めの幅 ±3 の 10 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0481-16",
+    "recording": "0481",
+    "source": "V-0502",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 25661560,
+    "unit": "ダメージ",
+    "description": "2 回目のバーストの 10 ヒットのバースト分の和（会心なし）。1 ヒット 2,566,156 の 10 倍",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、レシピ burst-panel@1 の III のタイマーの 00.00",
+      "note": "バーストの 10 ヒットの増分は、どれも「バーストのヒット（会心あり・なし）+ 追加ダメージ（会心あり・なし）」の 1 つの増分に出る。同じ回の「B + 追加」と「B + 追加会心」の差 Δ は追加ダメージの会心の上乗せ（0.5 倍）で、フルバースト中の追加ダメージ（会心なし）は 3Δ。バーストのヒット B は増分から 3Δ を引いた値（フルバースト補正は乗らない）。どれもモデルを使わずに増分だけから出る。ほかの発と同じフレームに重なった増分（格子に当たらないもの）は使わない。B + 追加 3,543,454・B + 追加会心 3,869,220（2 回目のバースト（f4110〜4216）の「B + 追加」9 個・「B 会心 + 追加」1 個と、3 回目のバーストの「B + 追加会心」）。3〜5 回目も同じ増分の組（美しさ 12 スタック）。許容 abs 30 は 1 ヒットの丸めの幅 ±3 の 10 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0481-17",
+    "recording": "0481",
+    "source": "V-0502",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 38492330,
+    "unit": "ダメージ",
+    "description": "2 回目以降のバーストの 10 ヒットのバースト分の和（会心あり）。1 ヒット 3,849,233（B 会心 + 追加 4,826,531 から 3Δ を引いた値）の 10 倍。会心の上乗せ 0.5 だけで、フルバースト補正は乗らない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、レシピ burst-panel@1 の III のタイマーの 00.00",
+      "note": "バーストの 10 ヒットの増分は、どれも「バーストのヒット（会心あり・なし）+ 追加ダメージ（会心あり・なし）」の 1 つの増分に出る。同じ回の「B + 追加」と「B + 追加会心」の差 Δ は追加ダメージの会心の上乗せ（0.5 倍）で、フルバースト中の追加ダメージ（会心なし）は 3Δ。バーストのヒット B は増分から 3Δ を引いた値（フルバースト補正は乗らない）。どれもモデルを使わずに増分だけから出る。ほかの発と同じフレームに重なった増分（格子に当たらないもの）は使わない。許容 abs 30 は 1 ヒットの丸めの幅 ±3 の 10 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0481-18",
+    "recording": "0481",
+    "source": "V-0502",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 305751,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストの追加ダメージの 1 ヒット（会心なし。美しさ 4 スタック）。フルバースト補正が乗る",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、レシピ burst-panel@1 の III のタイマーの 00.00",
+      "note": "バーストの 10 ヒットの増分は、どれも「バーストのヒット（会心あり・なし）+ 追加ダメージ（会心あり・なし）」の 1 つの増分に出る。同じ回の「B + 追加」と「B + 追加会心」の差 Δ は追加ダメージの会心の上乗せ（0.5 倍）で、フルバースト中の追加ダメージ（会心なし）は 3Δ。バーストのヒット B は増分から 3Δ を引いた値（フルバースト補正は乗らない）。どれもモデルを使わずに増分だけから出る。ほかの発と同じフレームに重なった増分（格子に当たらないもの）は使わない。3Δ = 3 × (2,816,169 − 2,714,252)。許容 abs 3 は丸めの幅"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0481-19",
+    "recording": "0481",
+    "source": "V-0502",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 977298,
+    "unit": "ダメージ",
+    "description": "2 回目のバーストの追加ダメージの 1 ヒット（会心なし。美しさ 12 スタック）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、レシピ burst-panel@1 の III のタイマーの 00.00",
+      "note": "バーストの 10 ヒットの増分は、どれも「バーストのヒット（会心あり・なし）+ 追加ダメージ（会心あり・なし）」の 1 つの増分に出る。同じ回の「B + 追加」と「B + 追加会心」の差 Δ は追加ダメージの会心の上乗せ（0.5 倍）で、フルバースト中の追加ダメージ（会心なし）は 3Δ。バーストのヒット B は増分から 3Δ を引いた値（フルバースト補正は乗らない）。どれもモデルを使わずに増分だけから出る。ほかの発と同じフレームに重なった増分（格子に当たらないもの）は使わない。3Δ = 3 × (3,869,220 − 3,543,454)。許容 abs 3 は丸めの幅"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 10,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0481-20",
+    "recording": "0481",
+    "source": "V-0502",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1303064,
+    "unit": "ダメージ",
+    "description": "2 回目のバーストの追加ダメージの 1 ヒット（会心あり。美しさ 12 スタック）。12 スタック分が 1 つの会心で乗る（スタックごとのヒットなら、会心の上乗せはヒットごとにばらつく）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、レシピ burst-panel@1 の III のタイマーの 00.00",
+      "note": "バーストの 10 ヒットの増分は、どれも「バーストのヒット（会心あり・なし）+ 追加ダメージ（会心あり・なし）」の 1 つの増分に出る。同じ回の「B + 追加」と「B + 追加会心」の差 Δ は追加ダメージの会心の上乗せ（0.5 倍）で、フルバースト中の追加ダメージ（会心なし）は 3Δ。バーストのヒット B は増分から 3Δ を引いた値（フルバースト補正は乗らない）。どれもモデルを使わずに増分だけから出る。ほかの発と同じフレームに重なった増分（格子に当たらないもの）は使わない。B + 追加会心 3,869,220 から B を引いた値。許容 abs 3 は丸めの幅"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 10,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0481-21",
+    "recording": "0481",
+    "source": "V-0502",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "record",
+    "value": [2716754, 2819506],
+    "unit": "ダメージ",
+    "description": "1 回目のバーストで美しさが 5 スタックに増えた後の 2 ヒットの増分（B + 追加・B + 追加会心）。B は発動の時の値（4 スタックの攻撃力）のままで、追加ダメージだけが 5 スタックの攻撃力（S1 の攻撃力▲が最終最大HP を読み直した値）× コピーした 4 スタックの値になる",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と、レシピ burst-panel@1 の III のタイマーの 00.00",
+      "note": "1 回目のバーストの 9・10 ヒット目（f1823・1835）。美しさの 5 スタック目の後。4 スタックの攻撃力の B 2,408,501 と、5 スタックの攻撃力の追加ダメージ（4 スタック分）308,254・会心 411,005 の和が 2,716,755・2,819,506。追加ダメージも発動の時の値なら 2,714,252・2,816,169、コピーが 5 スタックなら 2,793,818 で、どちらも合わない。モデルは追加ダメージの攻撃力を発動の時の値で固定するので比べない（未実装）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
   }
 ]

@@ -5,7 +5,7 @@
 - 前提: [design-skill-stage3.md](design-skill-stage3.md)（スタックの見る側と操作。段 3 で残した「スタック数で決まる値」）、[design-skill-stage4.md](design-skill-stage4.md) 1.3 節（`{ ended }` の形だけ決めた）、[design-named-state.md](design-named-state.md) 8.5 節（段の位置と循環の禁止）
 - いまの未対応: [skills.md](skills.md)（生成）の「未対応」の notes が正（[design-skill-note-kinds.md](design-skill-note-kinds.md)）
 - 作成日: 2026-10-25
-- 状態: 決定（2026-10-26。オーナーが論点 1〜6 を推奨どおりに決めた）。PR 1 に着手
+- 状態: 決定（2026-10-26。オーナーが論点 1〜6 を推奨どおりに決めた）。PR 1 は既存の録画の読み直しで確かめて完了（2026-10-26。V-0502、C-0654〜C-0657）
 
 ## 0. 範囲の選び方
 
@@ -71,6 +71,7 @@
 
 - 「ランダムな敵に 最終攻撃力の X% のダメージ」「N 回順番に攻撃」。敵 1 体の前提では、N 回のヒットがすべてその敵に当たる（`assumes` に書く）。
 - **形**: `burstDamage` に `hitDelays?: number[]`（バーストの発動からの各ヒットの遅れ。フレーム。昇順。長さ N）。段の `gaugeHits`（`DamageEffect`）と同じ流儀で、遅れは録画で読む即値。省略はいままでどおり 1 ヒット。
+- **実装で決めたこと（2026-10-26）**: ヒットの遅れの列は、定義の欄ではなく、既存の分かれたヒットの表（`burst/landing.ts` の `MEASURED_BURST_DELAYS` の `hitFrames`・`hitOffsets`。[design-burst-split-hits.md](design-burst-split-hits.md)）に置いた。キャラごとの実測の遅れはこの表に置く決まりで、ラピ・ミハラの分かれたヒットと同じ所になる。表は 1 回の発動の倍率をヒットの数で等分するので、`burstDamage` には回数の欄 `hitsRef`（回数の description_value。倍率を回数倍にする）だけを足した。回数と表のヒットの数がそろうことはテストで確かめる。論点 4 の決定（遅れの列で書き、自動攻撃にしない）の中身は変えていない。
 - 自動攻撃（`autoAttack`。周期と維持で書く）にしないのは、ヒットの間が等間隔かが分からず、回数が説明文で決まっているため（論点 4）。録画で等間隔と分かっても、回数で書く形のほうが説明文に近い。
 - ヒットがバーストゲージを溜めるかは、いまのバーストスキルダメージと同じ扱い（溜めない）にし、録画のゲージで食い違えば直す。
 
@@ -156,8 +157,8 @@
 
 ## 5. 実装の置き場所
 
-- `skills/types.ts`（`perCount`、`burstDamage.hitDelays`、PR 2 の `counterChange`・`selfCounter`・`{ ended }` の型と検証）。
-- `skills/burstDamage.ts`・`frame/plan.ts`（順番の攻撃のヒットを時刻表に置く。値 × 数の読み）。
+- `skills/types.ts`（`perCount`、`burstDamage.hitsRef`（実装で `hitDelays` から替えた。2.2 節）、PR 2 の `counterChange`・`selfCounter`・`{ ended }` の型と検証）。
+- `skills/burstDamage.ts`・`frame/plan.ts`・`burst/landing.ts`（順番の攻撃の回数と、遅れの表のヒット。値 × 数の読み）。
 - `skills/holders.ts`（値 × 数が読む件。PR 2: カウンタの値の列を 1 パス目で持つ。PR 3: 状態の中身の値を付いた時の数で固定する）。
 - `skills/states.ts`（目録: 火力チャージ・超火力と、火力ゲージ（カウンタの区分か別の目録か））。
 - `records/relevance.ts`（最小構成の検査: 値 × 数の効果は、数の出どころの状態・カウンタの効果と組で効く）、`apps/web/src/skillLabels.ts`（表示）。
@@ -191,3 +192,4 @@
 
 - 2026-10-25: 起案（オーナーの指示: 段 10 を起案する）。[skills.md](skills.md) の未対応の notes を [design-skill-stages.md](design-skill-stages.md) 3 節の家族ごとに分け、使い手・効き方・撮影の手間・土台で段 10 の対象を選んだ（0 節）。シンデレラのバーストは、既存の録画 0480・0481 で読める見込み。論点 1〜6 はオーナーの判断待ち。
 - 2026-10-26: オーナーが論点 1〜6 を推奨どおりに決めた。PR 1（シンデレラのバースト）に着手した。
+- 2026-10-26: PR 1 を実装し、既存の録画 0480・0481 の読み直しで確かめた（V-0502）。読む前の仮説の H1（追加ダメージは 28.9% × 美しさのスタック数の 1 ヒット）に合った。10 ヒットはどれも説明文の値で、フルバースト補正は乗らない（C-0654）。1 ヒット目は 00.00 から動画で 76f、以降は約 12f おき（C-0655）。追加ダメージは 10 ヒットのそれぞれに、バーストを使った時の美しさのスタック数を掛けて出る（C-0656）。追加ダメージの攻撃力はヒットの時の最終最大HP で読み直す（C-0657。仮説。未実装）。ヒットの遅れは、定義の欄ではなく既存の遅れの表に置いた（2.2 節）。
