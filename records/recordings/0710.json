@@ -43,7 +43,7 @@
   "fixedSpec": true,
   "autoFire": false,
   "autoBurst": true,
-  "conditionNote": "V-0517 の撮り方 H（撮り直し）。ラム（1 枠目・AI）+ I-DOLL・サン（2 枠目・AI）+ フォルクヴァン（3 枠目・操作・撃たない）+ アスカ（4 枠目・AI）。オートバースト ON・AUTO 射撃 OFF（計画）",
+  "conditionNote": "V-0517 の撮り方 H（撮り直し）。ラム（1 枠目・AI）+ I-DOLL・サン（2 枠目・AI）+ フォルクヴァン（3 枠目・操作・撃たない）+ アスカ（4 枠目・AI）。オートバースト ON・AUTO 射撃 OFF。最後の戦闘履歴（キャラ名・枠順・Lv.400。フォルクヴァンの与ダメージ 0）で確かめた。III はいつも I-DOLL・サン（右のバースト欄）",
   "backup": {
     "at": "2026-10-27T01:34+09:00",
     "via": "cloud-move",

@@ -1,0 +1,195 @@
+[
+  {
+    "id": "0708-01",
+    "recording": "0708",
+    "kind": "timing",
+    "use": "record",
+    "value": [1429, 3807, 6161, 8538, 10894],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25f"
+    },
+    "source": "V-0516",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0708-02",
+    "recording": "0708",
+    "kind": "timing",
+    "use": "record",
+    "value": [1458, 6190, 10924],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・24f"
+    },
+    "source": "V-0516",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0708-03",
+    "recording": "0708",
+    "kind": "timing",
+    "use": "record",
+    "value": [1487, 6219, 10952],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0516",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0708-04",
+    "recording": "0708",
+    "kind": "timing",
+    "use": "record",
+    "value": [3801, 6155, 8532, 10888],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0516",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0708-05",
+    "recording": "0708",
+    "readAt": "2026-10-27",
+    "source": "V-0516",
+    "kind": "hit",
+    "use": "compare",
+    "value": 18054,
+    "unit": "ダメージ",
+    "description": "ブランのバーストの後、フルバーストの前（受けるダメージ▲だけが付いている間）の I-DOLL・サンの胴体の 1 ヒット（会心でない・距離ボーナスあり）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "II → III の替わり目からフルバーストの始まりまでの増分（1461〜1481 の 5 発）。▲なしは 12,964（受けるダメージの別の乗数 1.3926 で 18,054）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 380,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0708-06",
+    "recording": "0708",
+    "readAt": "2026-10-27",
+    "source": "V-0516",
+    "kind": "hit",
+    "use": "compare",
+    "value": 61674,
+    "unit": "ダメージ",
+    "description": "ブランのバーストの後、フルバーストの前のアスカの胴体の 1 ヒット（会心でない・距離ボーナスなし。受けるダメージ▲と S1 の攻撃力▲）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "f6190（II → III の替わり目と同じフレーム）から f6214 の 5 発。▲なしは 22,474"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 380,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0708-07",
+    "recording": "0708",
+    "readAt": "2026-10-27",
+    "source": "V-0516",
+    "kind": "hit",
+    "use": "compare",
+    "value": 57573,
+    "unit": "ダメージ",
+    "description": "フルバーストの始まりから 1,500f より後（ブランの発動の回復だけなら S1 が切れている時刻）のアスカの胴体の 1 ヒット（会心でない・距離ボーナスあり。S1 の攻撃力▲）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "2 回目のチェーンのフルバーストの始まりから 1,500〜2,070f の増分（S1 ありの胴体の値のうち最も多い値）。S1 なしは 29,216。モデルのフレーム 2200 は、ブランの発動の回復の窓（25 秒）が切れた後で、S2 の回復の窓の中"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 2200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0708-08",
+    "recording": "0708",
+    "readAt": "2026-10-27",
+    "source": "V-0516",
+    "kind": "timing",
+    "use": "record",
+    "value": [2076, 2081, 2025, 2107],
+    "unit": "f",
+    "description": "チェーンごとの、フルバーストの始まり（III のタイマーが 00.00 のフレーム）から、アスカの S1 の乗った最後の発と、S1 の外れた最初の発まで（チェーンごとに 2 つ）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "アスカの 1 ヒットをモデルの S1 あり・なしの格子に当てた。3 回目のチェーンは録画の終わりまで S1 が続く（入れない）。フルバーストの終わりの S2 の回復から 25 秒なら、フルバーストの入りの止まり 22f + 588f + 1,470f = 2,080f。ブランの発動から 25 秒（S2 の回復なし）なら、フルバーストの始まりから 1,470f + 22f − 29f（1,463f）ほどで切れる"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
+  }
+]

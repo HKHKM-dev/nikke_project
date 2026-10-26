@@ -24,18 +24,22 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "フルバーストタイム終了時の味方全体の持続回復は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
-          "en": "The heal over time on all allies when Full Burst ends is not modeled (it changes the activation of allies with on-healed effects)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "fullBurstEnd"
-          }
-        },
+          "kind": "heal",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "ref": 1,
+          "assumes": {
+            "ja": "味方全体の持続回復（1 秒間隔・5 秒）は、フルバーストの終わりに 1 回だけ「回復効果が適用された時」を起こす（1 秒ごとの回復では起こさない）。満タンの味方にも付く",
+            "en": "The heal over time on all allies (every 1 s for 5 s) triggers \"when healed\" once when Full Burst ends (not on each 1 s tick). It also lands on allies at full HP"
+          },
+          "claims": [
+            "C-0694"
+          ]
+        }
+      ],
+      "notes": [
         {
           "ja": "フルバーストタイム終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼は未対応",
           "en": "The burst skill cooldown reduction on self when Full Burst ends, if an ally of the same squad is present, is not modeled",
@@ -49,33 +53,41 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体の持続回復（8 秒）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
-          "en": "The heal over time on all allies (8 s) is not modeled (it changes the activation of allies with on-healed effects)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "assumes": {
+            "ja": "味方全体の持続回復（1 秒間隔・8 秒）は、使った時に 1 回だけ「回復効果が適用された時」を起こすとする（1 秒ごとの回復で起こさないことは、S2 の持続回復で確かめた。C-0694）。満タンの味方にも付く。回復量はダメージに関係しない",
+            "en": "The heal over time on all allies (every 1 s for 8 s) is taken to trigger \"when healed\" once on use (that the 1 s ticks do not trigger it was checked on the S2 heal over time; C-0694). It also lands on allies at full HP. The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-0693"
+          ]
         },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 7,
+          "durationRef": 8,
+          "assumes": {
+            "ja": "敵 1 体。敵全体の受けるダメージ▲を、味方全体の受けるダメージの別の乗数として書く",
+            "en": "One enemy. The damage-taken increase on all enemies is written as the separate damage-taken multiplier for all allies"
+          },
+          "claims": [
+            "C-0692"
+          ]
+        }
+      ],
+      "notes": [
         {
           "ja": "残りの HP が最も低い味方 1 機への不屈はダメージに関係しない",
           "en": "Indomitability on the ally with the lowest HP does not affect damage",
           "kind": "noDamage"
-        },
-        {
-          "ja": "敵全体の受けるダメージ▲（10 秒）は未対応",
-          "en": "The damage-taken increase on all enemies (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "damageTaken",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
         },
         {
           "ja": "残りの HP が最も低い味方 1 機への最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
