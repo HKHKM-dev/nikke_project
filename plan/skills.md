@@ -78,17 +78,17 @@ notes の種類: 未対応 107・前提の外 27・計算に無関係 28・補�
   - notes[0] 前提の外: 攻撃を受けた時の無敵・デバフ免疫・受けるHP回復量▲は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きる（C-0551）: 根拠なし
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・attack: C-0665（確定）
-  - effects[1] counterChange・battleStart・firepowerGauge: C-0664（確定）
-  - effects[2] counterChange・normalShot・firepowerGauge: C-0664（確定）
-  - effects[3] counterChange・firepowerCharge が終了した時・firepowerGauge: C-0664（確定）
+  - effects[1] counterChange・battleStart・firepowerGauge: C-0667（確定）
+  - effects[2] counterChange・normalShot・firepowerGauge: C-0667（確定）
+  - effects[3] counterChange・firepowerCharge が終了した時・firepowerGauge: C-0667（確定）
   - effects[4] state・fullBurstEnd・superFirepowerCharge（burstGaugeSpeed）: C-0666（仮説）
   - effects[5] timed・fullBurstStart・attack: C-0665（確定）
 - **burst**: partial
   - effects[0] timed・burstUse・attackDamage: C-0665（確定）
-  - effects[1] state・burstUse・firepowerCharge: C-0664（確定）
-  - effects[2] counterChange・burstUse・firepowerGauge: C-0664（確定）
-  - effects[3] state・burstUse・superFirepower（attackDamage）: C-0664（確定）、C-0665（確定）
-  - effects[4] counterChange・burstUse・firepowerGauge（減少）: C-0664（確定）
+  - effects[1] state・burstUse・firepowerCharge: C-0667（確定）
+  - effects[2] counterChange・burstUse・firepowerGauge: C-0667（確定）
+  - effects[3] state・burstUse・superFirepower（attackDamage）: C-0667（確定）、C-0665（確定）
+  - effects[4] counterChange・burstUse・firepowerGauge（減少）: C-0667（確定）
   - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い）: 根拠なし
 
 ## 20 デルタ

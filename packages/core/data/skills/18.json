@@ -74,7 +74,7 @@
           "target": "self",
           "amountRef": 8,
           "claims": [
-            "C-0664"
+            "C-0667"
           ]
         },
         {
@@ -89,7 +89,7 @@
             "selfState": "firepowerCharge"
           },
           "claims": [
-            "C-0664"
+            "C-0667"
           ]
         },
         {
@@ -101,7 +101,7 @@
           "target": "self",
           "amountRef": 9,
           "claims": [
-            "C-0664"
+            "C-0667"
           ]
         },
         {
@@ -178,7 +178,7 @@
             }
           },
           "claims": [
-            "C-0664"
+            "C-0667"
           ]
         },
         {
@@ -194,7 +194,7 @@
             }
           },
           "claims": [
-            "C-0664"
+            "C-0667"
           ]
         },
         {
@@ -216,7 +216,7 @@
             }
           ],
           "claims": [
-            "C-0664",
+            "C-0667",
             "C-0665"
           ]
         },
@@ -238,7 +238,7 @@
             "en": "On screen the gauge drains to 0 over about 10 s of Super Firepower, reaching 0 before Full Burst ends. The gauge is read only at Burst use and Full Burst end, so 100 is removed at use"
           },
           "claims": [
-            "C-0664"
+            "C-0667"
           ]
         }
       ],
