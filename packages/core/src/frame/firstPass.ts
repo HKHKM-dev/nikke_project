@@ -80,6 +80,7 @@ import {
 import {
   effectFrameOf,
   hexagonFrameOf,
+  hitFrameOf,
   type BurstActivation,
   type BurstSchedule,
   type BurstScheduleModel,
@@ -674,6 +675,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   });
   /** 着弾編: 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
+  /** エレグのバースト編（plan/design-elegg.md 8.9 節）: 先のフレームのバーストのヒット（トリガー burstHit） */
+  const pendingBurstHits = new Map<number, BurstActivation[]>();
   const cycleGaugeHits: FirstPassResult['cycleGaugeHits'] = [];
   /**
    * V-0030: 段の循環。このフレームの射撃を数え、段のヒットのゲージを当たるフレームに予約する。間隔の変更の件は、このフレームに
@@ -917,6 +920,13 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (at === f) burstEffects.push(a);
       else if (at < frames) pendingBurstEffects.set(at, [...(pendingBurstEffects.get(at) ?? []), a]);
     }
+    // エレグのバースト編: ヒットのフレームも同じに積む（遅れの無いキャラは本当の発動か、III なら 00.00。hitFrameOf）
+    for (const a of now) {
+      const at = hitFrameOf(a);
+      if (at < frames) pendingBurstHits.set(at, [...(pendingBurstHits.get(at) ?? []), a]);
+    }
+    const burstHits = pendingBurstHits.get(f);
+    if (burstHits !== undefined) pendingBurstHits.delete(f);
     const windows = windowsOf();
     let fullBurstStart = false;
     let fullBurstStartUsers: readonly number[] = [];
@@ -969,6 +979,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       shots: shotEvents,
       activations: now,
       burstEffects,
+      ...(burstHits !== undefined ? { burstHits } : {}),
       fullBurstStart,
       fullBurstEnd,
       gaugeFull,

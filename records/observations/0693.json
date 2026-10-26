@@ -1,0 +1,154 @@
+[
+  {
+    "id": "0693-01",
+    "recording": "0693",
+    "kind": "timing",
+    "use": "record",
+    "value": [917, 3294, 5672, 8049, 10426],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0f"
+    },
+    "source": "V-0522",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0693-02",
+    "recording": "0693",
+    "kind": "timing",
+    "use": "record",
+    "value": [946, 3323, 5701, 8079, 10456],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・6・6f"
+    },
+    "source": "V-0522",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0693-03",
+    "recording": "0693",
+    "kind": "timing",
+    "use": "record",
+    "value": [975, 3353, 5730, 8108, 10485],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0522",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0693-04",
+    "recording": "0693",
+    "kind": "timing",
+    "use": "record",
+    "value": [3288, 5666, 8043, 10420],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0522",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0693-05",
+    "recording": "0693",
+    "kind": "timing",
+    "use": "record",
+    "value": [3346, 5724, 8101, 10478],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0522",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0693-06",
+    "recording": "0693",
+    "source": "V-0522",
+    "readAt": "2026-10-26",
+    "kind": "timing",
+    "use": "compare",
+    "value": [30, 59, 88],
+    "unit": "f",
+    "description": "1 回目のチェーンの I → II・II → III の六角形の替わり目と III のタイマーの 00.00 の、戦闘開始（残り時間の 02:59 が出たフレーム）からの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@1 の 1 つ目の値から戦闘開始のフレームを引いた",
+      "note": "戦闘開始は f887（timer.ts --mode changes の 3 つ目の変わり目。V-0504 の `0665-07` と同じ読み方）。替わり目は `0693-01`〜`0693-03` の 1 つ目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0693-07",
+    "recording": "0693",
+    "source": "V-0522",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5413968,
+    "description": "雪子のバーストの分配ダメージのヒット（会心なし）。1 回目の発動",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f974 の単独の増分（II → III の替わり目 f946 の 28f 後）。2 回目以降（5,523,438・3,272,772・4,909,158）は記録にとどめる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0693-08",
+    "recording": "0693",
+    "source": "V-0522",
+    "readAt": "2026-10-26",
+    "kind": "total",
+    "use": "record",
+    "value": 1689144,
+    "description": "エレグ（3 枠目）の与ダメージ（最後の戦闘履歴のパネル）。5 回のバーストスキルダメージの和（316,106 × 3 + 370,413 × 2。370,413 は鈴原サクラの受けるダメージ▲（×1.1718）の窓の中の回）と端数まで一致し、通常攻撃の分が無い（エレグは撃っていない）",
+    "method": {
+      "tool": "ffmpeg で戦闘履歴のパネルを切り出して目で見た",
+      "note": "パネルの枠順・キャラ名も目で確かめた。316,106 はモデルのバーストスキルダメージ（会心なし。C-0689）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  }
+]

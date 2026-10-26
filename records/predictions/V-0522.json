@@ -1,0 +1,159 @@
+{
+  "verification": "V-0522",
+  "note": "撮る前の予測（plan/design-elegg.md 8.3 節の B6）。編成は D（鈴原サクラ 1 枠目・雪子 2 枠目・◎エレグ 3 枠目）。モデルには撃たない枠が無いので、エレグも撃つ。エレグのバーストスキルダメージと防御力▼は V-0521 の Hb の形で入れ（編成 C の結論が確定したら、その形に合わせて出し直す）、分配ダメージ▲の有無だけを仮説で分ける",
+  "team": [
+    {
+      "rid": 836
+    },
+    {
+      "rid": 871
+    },
+    {
+      "rid": 500,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Hd0",
+      "note": "エレグの分配ダメージ▲なし（バーストスキルダメージと防御力▼だけ）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "burstDamage",
+              "ref": 3,
+              "damageType": "skill"
+            }
+          },
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "Hd1",
+      "note": "エレグの分配ダメージ▲（timed・burstUse・allies・distributedDamage・ref 1・durationRef 2）が、約 29f 後に発動する雪子のバーストの分配ダメージに、雪子の真紅の華の▲と足し合わせた別の乗数 (1 + Σ) で乗る",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "burstDamage",
+              "ref": 3,
+              "damageType": "skill"
+            }
+          },
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "ref": 4,
+              "durationRef": 5
+            }
+          },
+          {
+            "rid": 500,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "distributedDamage",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "yukiko-burst-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目の雪子のバーストの分配ダメージのヒット（会心なし）"
+    },
+    {
+      "id": "yukiko-burst-1-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同（会心）"
+    },
+    {
+      "id": "chain-1-video",
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "1 回目のチェーンの I・II の替わり目と III の 00.00 の、戦闘開始からの動画のフレーム（エレグの発動が雪子の発動より前か）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-26",
+    "commit": "662fd89f3ed8c5982df0a7eb0ee7d42ff4237c49",
+    "values": {
+      "Hd0": {
+        "yukiko-burst-1": 3875012.380561624,
+        "yukiko-burst-1-crit": 5812518.5708424365,
+        "chain-1-video": [30, 59, 88]
+      },
+      "Hd1": {
+        "yukiko-burst-1": 5414942.300596814,
+        "yukiko-burst-1-crit": 8122413.45089522,
+        "chain-1-video": [30, 59, 88]
+      }
+    }
+  }
+}

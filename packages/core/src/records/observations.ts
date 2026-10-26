@@ -197,7 +197,9 @@ export type AddedEffect = {
 };
 
 /**
- * 定義に効果を足して読み直す（読み込みの検査をそのまま通す）。support は読み込みで決まる欄なので、JSON に戻すときに外す
+ * 定義に効果を足して読み直す（読み込みの検査をそのまま通す）。support は読み込みで決まる欄なので、JSON に戻すときに外す。
+ * エレグのバースト編: 敵に付く状態の付与は、読み込みで target を "allies" に読み替えて enemy の印を付けるので、JSON の形
+ * （target: "enemy"）に戻す
  */
 export function withAddedEffects(definition: SkillDefinition, adds: readonly AddedEffect[]): SkillDefinition {
   if (adds.length === 0) return definition;
@@ -206,7 +208,14 @@ export function withAddedEffects(definition: SkillDefinition, adds: readonly Add
     treasureSkills?: Record<string, { support?: unknown; effects: unknown[] }>;
   };
   for (const group of [json.skills, json.treasureSkills ?? {}]) {
-    for (const slot of SKILL_SLOTS) delete group[slot]?.support;
+    for (const slot of SKILL_SLOTS) {
+      delete group[slot]?.support;
+      for (const effect of (group[slot]?.effects ?? []) as Record<string, unknown>[]) {
+        if (effect.kind !== 'state' || effect.enemy !== true) continue;
+        delete effect.enemy;
+        effect.target = 'enemy';
+      }
+    }
   }
   for (const add of adds) {
     const group = add.treasure === true ? json.treasureSkills : json.skills;

@@ -254,6 +254,11 @@ type StateGroup = {
   /** 状態の件が確定する段（付与のいちばん後の段） */
   stage: HeldStage;
   tracks: (HeldTrack | null)[];
+  /**
+   * エレグのバースト編（plan/design-elegg.md 8.2 節）: 敵に付く状態（付与の enemy）の、敵の 1 つの件の列。味方の tracks は全部 null。
+   * 中身は敵の件の timed と同じく、対象の味方の各枠の区間の値に写す（piecesOfTrack）。ほかは null
+   */
+  enemy: HeldTrack | null;
 };
 
 type CycleSource = { slotIndex: number; effect: ResolvedCycleEvery; fires: TriggerTracker; track: HeldTrack };
@@ -553,6 +558,7 @@ function stateGroupsOf(
           contents: contents.filter((c) => c.whileState === grant.state),
           stage: 1,
           tracks: slots.map(() => null),
+          enemy: null,
         };
         groups.push(group);
       }
@@ -717,6 +723,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const stateGroups = stateGroupsOf(slots, firesOf, appliedStageOf);
   for (const group of stateGroups) {
     const grant = group.grants[0]!.grant;
+    // エレグのバースト編: 敵に付く状態は、敵の 1 つの件の列（対象の味方が編成にいれば）
+    if (grant.enemy === true) {
+      if (slots.some((t, holder) => t !== null && canEverTarget(grant, group.sourceSlotIndex, holder, t.character))) {
+        group.enemy = newTrack(
+          ENEMY,
+          group.sourceSlotIndex,
+          { kind: 'state', state: group.state, grant, contents: group.contents },
+          group.stage,
+        );
+      }
+      continue;
+    }
     slots.forEach((target, holder) => {
       if (target === null) return;
       if (!group.grants.some((g) => canEverTarget(g.grant, group.sourceSlotIndex, holder, target.character))) return;
@@ -1184,6 +1202,19 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     if (count <= 0) return [];
     const targets: number[] = [];
     const shots = isResolvedShotCount(g.grant.trigger);
+    // エレグのバースト編: 敵に付く状態は、対象の味方があれば敵の件の列に 1 回だけ足す（付いた記録は作らない。{ applied } で見る
+    // 語彙は味方の状態だけ）
+    if (group.enemy !== null) {
+      const on = slots.some(
+        (target, holder) =>
+          target !== null && isEffectTarget(g.grant, group.sourceSlotIndex, holder, target.character, context),
+      );
+      if (on) {
+        for (let k = 0; k < count; k++) insertSorted(group.enemy.starts, start);
+        if (shots || byShots) group.enemy.shotCount = true;
+      }
+      return targets;
+    }
     slots.forEach((target, holder) => {
       if (target === null) return;
       if (!isEffectTarget(g.grant, group.sourceSlotIndex, holder, target.character, context)) return;
@@ -1871,11 +1902,15 @@ export type ValuePiece = {
 function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValuePiece[] {
   const pieces: ValuePiece[] = [];
   const push = (effect: ItemEffect, item: HeldItem): void => {
-    // 段 C: 敵の件は、効果の対象の味方の各枠に写す
+    // 段 C: 敵の件は、効果の対象の味方の各枠に写す。エレグのバースト編: 敵に付く状態の中身も（対象は付与の対象）
     const holders =
-      track.holder === ENEMY && !isStateContent(effect)
-        ? alliesOf(effect, track.sourceSlotIndex, slots)
-        : [track.holder];
+      track.holder !== ENEMY
+        ? [track.holder]
+        : track.origin.kind === 'state'
+          ? alliesOf(track.origin.grant, track.sourceSlotIndex, slots)
+          : !isStateContent(effect)
+            ? alliesOf(effect, track.sourceSlotIndex, slots)
+            : [track.holder];
     for (const slotIndex of holders) {
       const piece: ValuePiece = {
         slotIndex,
@@ -1897,7 +1932,11 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
 }
 
 /** 段 C: 敵の件の効果を写す味方の枠（効果の対象。敵の件の効果は味方全体で、絞り込みを持たない） */
-function alliesOf(effect: ResolvedTimedEffect, sourceSlotIndex: number, slots: readonly TimelineSlot[]): number[] {
+function alliesOf(
+  effect: Parameters<typeof isEffectTarget>[0],
+  sourceSlotIndex: number,
+  slots: readonly TimelineSlot[],
+): number[] {
   return slots.flatMap((target, holder) =>
     target !== null && isEffectTarget(effect, sourceSlotIndex, holder, target.character) ? [holder] : [],
   );

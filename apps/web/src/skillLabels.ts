@@ -96,6 +96,7 @@ export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
   burstStage2Enter: 'バースト 2 段階突入時',
   burstStage3Enter: 'バースト 3 段階突入時',
   healed: '回復を受けた時',
+  burstHit: 'バーストのヒット時',
 };
 
 /** Stage 8: 「通常攻撃 10 回ごと」「バースト使用 2 回目以降」。文字列のトリガーは BUFF_TRIGGER_LABEL */

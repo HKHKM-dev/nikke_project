@@ -444,7 +444,7 @@ export function impossibleReason(element: MinimalElement, recording: RecordingEn
   if (member?.bursts === false || single) {
     const why = single ? '単騎（C-0024）' : 'バーストを使わない枠';
     if (element.skillSlot === 'burst' && element.type !== 'noDefinition') return why;
-    if (trigger === 'burstUse') return why;
+    if (trigger === 'burstUse' || trigger === 'burstHit') return why;
   }
   if (single && trigger !== undefined && FULL_BURST_TRIGGERS.has(trigger)) return '単騎（C-0024）';
   return undefined;

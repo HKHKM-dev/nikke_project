@@ -106,6 +106,11 @@ export const NAMED_STATES = {
    * バーストゲージのチャージ速度▲。5 秒。画面の適用中の効果の名前。V-0503）
    */
   superFirepowerCharge: { name: { ja: '超火力チャージ', en: 'Super Firepower Charge' }, holder: 'ally' },
+  /**
+   * エレグのバースト編（plan/design-elegg.md 8.2 節）: ブームインストール（エレグのバースト。敵に付く。中身は防御力▼・10 秒。
+   * バーストのヒットから付く。V-0521。S1・S2 の「対象がブームインストール状態なら」が見る（段 3））
+   */
+  boomInstall: { name: { ja: 'ブームインストール', en: 'BOOM Install' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

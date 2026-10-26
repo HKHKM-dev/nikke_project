@@ -561,6 +561,8 @@ export type ResolvedStateGrant = ResolvedItemFields & {
    * スタック数（PR 3）にする
    */
   stacksFrom?: StacksFrom;
+  /** エレグのバースト編（plan/design-elegg.md 8.2 節）: 敵に付く状態の付与（件の列の持ち主は敵。target は "allies" に読み替えてある） */
+  enemy?: true;
 };
 
 /**
@@ -586,6 +588,7 @@ export function resolveStateGrants(
       const grant: ResolvedStateGrant = { ...window, state: effect.state, isStatic: statics.has(effect.state) };
       if (effect.undispellable) grant.undispellable = true;
       if (effect.stacksFrom !== undefined) grant.stacksFrom = effect.stacksFrom;
+      if (effect.enemy) grant.enemy = true;
       untrimmed.push(grant);
     });
   }
