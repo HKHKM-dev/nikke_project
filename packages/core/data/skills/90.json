@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 90,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
       "effects": [],
@@ -30,19 +30,23 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体の HP 回復と吸収回復（攻撃ダメージの X% 回復・5 秒）は未対応（回復を受けた時の効果を持つ味方の発動を変える）",
-          "en": "The HP restore and lifesteal (restore X% of attack damage, 5 s) on all allies are not modeled (they change the activation of allies with on-healed effects)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "assumes": {
+            "ja": "味方全体の 1 回の回復と、吸収回復（攻撃ダメージの X% 回復・5 秒）は、どちらも使った時に付き、そのフレームに 1 回だけ「回復効果が適用された時」を起こす（吸収回復は窓の中の命中では起こさない。C-0082）。満タンの味方にも付く。回復量はダメージに関係しない",
+            "en": "The one-off heal and the lifesteal (X% of attack damage, 5 s) on all allies both land on use and trigger \"when healed\" once on that frame (the lifesteal does not on hits inside its window; C-0082). They also land on allies at full HP. The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-0686",
+            "C-0687"
+          ]
         }
-      ]
+      ],
+      "notes": []
     }
   }
 }

@@ -1,20 +1,32 @@
 {
   "formatVersion": 1,
   "resourceId": 861,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0658"
+          ]
+        }
+      ],
       "notes": [
         {
-          "ja": "戦闘開始時とフルバーストタイム終了時の自分の攻撃力▲（5 秒）は未対応",
-          "en": "The attack increase on self at the start of combat and when Full Burst ends (5 s) is not modeled",
+          "ja": "フルバーストタイム終了時の自分の攻撃力▲（5 秒）は未対応（撮っていない。戦闘開始時の分は effects[0]）",
+          "en": "The attack increase on self when Full Burst ends (5 s) is not modeled (not recorded; the start-of-combat part is effects[0])",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
             "stat": "attack",
             "target": "self",
-            "trigger": "unknown"
+            "trigger": "fullBurstEnd"
           }
         },
         {

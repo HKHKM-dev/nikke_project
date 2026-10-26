@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 103,
-  "checkedAt": "2026-10-17",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
       "effects": [
@@ -45,7 +45,19 @@
       ]
     },
     "skill2": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 6,
+          "durationRef": 7,
+          "claims": [
+            "C-0681"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "使用武器変更中の通常攻撃によるオーバーエネルギー（最大HP▲の段階）は未対応（最大HP は S1 の攻撃力▲に効く）",
@@ -60,40 +72,43 @@
           "claims": [
             "C-0577"
           ]
-        },
-        {
-          "ja": "バースト 3 段階突入時の自分の攻撃ダメージ▲（10 秒）は未対応",
-          "en": "The attack damage increase on self on entering burst stage 3 (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attackDamage",
-            "target": "self",
-            "trigger": "burstStage3Enter"
-          }
         }
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "自分の攻撃力▲（10 秒）は未対応",
-          "en": "The attack increase on self (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
-            "trigger": "burstUse"
-          }
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0682"
+          ]
         },
         {
-          "ja": "敵全体へのバーストスキルダメージと、オーバーエネルギーの段階に応じた追加ダメージは未対応",
-          "en": "The burst skill damage on all enemies and the additional damage by Over Energy stage are not modeled",
+          "kind": "burstDamage",
+          "ref": 3,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「敵全体」は単体ボス",
+            "en": "The target (all enemies) is the lone boss"
+          },
+          "claims": [
+            "C-0682",
+            "C-0683"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "オーバーエネルギーの段階に応じた、照準線に最も近い敵 1 機への追加ダメージは未対応（オーバーエネルギー（S2）が未対応。段 11 以降の使用武器の変更と一緒に扱う）",
+          "en": "The additional damage to the enemy nearest the crosshair scaled by the Over Energy stage is not modeled (Over Energy (S2) is not modeled; handled with the weapon change in stage 11 or later)",
           "kind": "unimplemented",
           "effect": {
-            "kind": "burstDamage",
+            "kind": "damage",
             "trigger": "burstUse"
           }
         }

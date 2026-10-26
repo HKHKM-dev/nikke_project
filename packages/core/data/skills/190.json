@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 190,
-  "checkedAt": "2026-10-16",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
       "effects": [
@@ -42,17 +42,22 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "最終攻撃力が最も高い敵 10 機へのダメージは未対応",
-          "en": "The damage to the 10 enemies with the highest final attack is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstDamage",
-            "trigger": "burstUse"
-          }
-        },
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「最終攻撃力が最も高い敵 10 機」は単体ボス",
+            "en": "The target (最終攻撃力が最も高い敵 10 機) is the lone boss"
+          },
+          "claims": [
+            "C-0674",
+            "C-0675"
+          ]
+        }
+      ],
+      "notes": [
         {
           "ja": "自分の HP が 50% 以上の時の味方全体の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
           "en": "The defense increase on all allies while own HP is 50% or more does not change damage by itself (it matters only with an effect reading DEF in the team)",

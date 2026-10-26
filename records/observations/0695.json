@@ -1,0 +1,444 @@
+[
+  {
+    "id": "0695-01",
+    "recording": "0695",
+    "kind": "timing",
+    "use": "record",
+    "value": [1486, 2747, 4011, 5391, 6714, 8094, 9499, 10746],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・0・0・0・0・0・0・0f"
+    },
+    "source": "V-0509",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0695-02",
+    "recording": "0695",
+    "kind": "timing",
+    "use": "record",
+    "value": [1515, 2776, 4040, 5420, 6743, 8124, 9529, 10775],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・0・0・0・0・6・6・0f"
+    },
+    "source": "V-0509",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0695-03",
+    "recording": "0695",
+    "kind": "timing",
+    "use": "record",
+    "value": [1544, 2805, 4069, 5449, 6772, 8153, 9558, 10804],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0509",
+    "readAt": "2026-10-26"
+  },
+  {
+    "recording": "0695",
+    "source": "V-0509",
+    "readAt": "2026-10-26",
+    "id": "0695-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 143280,
+    "unit": "ダメージ",
+    "description": "ルドミラのバーストのヒット（会心でない）。I の発動の後の、ほかの枠の格子に当たらない増分（5 回とも同じ値）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "I の替わり目（0695-01）から 96〜97f の増分。会心は 214,921（0 回）。S1 の防御力▼が切れていた回は 143,266（0 回）。最初の回は f2843。モデルは敵の防御力▼の後の防御力を丸めず 91.6 で持つ。100 × (1 − 8.4%) を 92 に丸めると端数まで合う（V-0509「分かったこと」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0695",
+    "source": "V-0509",
+    "readAt": "2026-10-26",
+    "id": "0695-05",
+    "kind": "timing",
+    "use": "compare",
+    "value": [96, 96, 96, 96, 96],
+    "unit": "f",
+    "description": "ルドミラのバーストのヒットの、I の替わり目からの動画のフレーム数（読めた回だけ。ほかの増分と重なった回を除く）",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@1",
+      "note": "I の替わり目は 0695-01"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0695",
+    "source": "V-0510",
+    "readAt": "2026-10-26",
+    "id": "0695-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 182287,
+    "unit": "ダメージ",
+    "description": "ベロータのバーストのヒット（会心でない）。II の替わり目の後の、ほかの枠の格子に当たらない増分（6 回とも同じ値）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "II の替わり目（0695-02）から 15〜16f の増分。会心は 273,430（1 回）。モデルは敵の防御力▼の後の防御力を丸めず 91.6 で持つ。100 × (1 − 8.4%) を 92 に丸めると端数まで合う（V-0509「分かったこと」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0695",
+    "source": "V-0510",
+    "readAt": "2026-10-26",
+    "id": "0695-07",
+    "kind": "timing",
+    "use": "compare",
+    "value": [16, 16, 16, 16, 15, 15, 16],
+    "unit": "f",
+    "description": "ベロータのバーストのヒットの、II の替わり目からの動画のフレーム数（読めた回だけ）",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@1",
+      "note": "II の替わり目は 0695-02"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 2,
+        "count": 7
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0695",
+    "source": "V-0510",
+    "readAt": "2026-10-26",
+    "id": "0695-08",
+    "kind": "interval",
+    "use": "compare",
+    "value": 109.2,
+    "unit": "f",
+    "description": "ベロータの通常攻撃の、連続した 2 発の間の平均。バーストのチャージ速度▲の窓（II の替わり目から 610f）の中（2 発とも同じ側）",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@1 + 使い捨てのスクリプト（V-0510「読み方」）",
+      "note": "ベロータの発はモデルの 1 ヒットの格子（RL のフルチャージ。胴体・コア × 会心 × 防御力▼の有無）に当たる増分。105〜130f の間だけを使う（リロード・的のジャンプ・フルバーストの入りの止まりを挟む間を除く）。窓は II の替わり目の後 610f（ゲーム内の 10 秒 588f と、フルバーストの入りの止まり 22f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowShotIntervalMean",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "chargeSpeed",
+        "inside": true,
+        "minGap": 105,
+        "maxGap": 130
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "recording": "0695",
+    "source": "V-0510",
+    "readAt": "2026-10-26",
+    "id": "0695-09",
+    "kind": "interval",
+    "use": "compare",
+    "value": 112.11,
+    "unit": "f",
+    "description": "ベロータの通常攻撃の、連続した 2 発の間の平均。バーストのチャージ速度▲の窓（II の替わり目から 610f）の外（2 発とも同じ側）",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@1 + 使い捨てのスクリプト（V-0510「読み方」）",
+      "note": "ベロータの発はモデルの 1 ヒットの格子（RL のフルチャージ。胴体・コア × 会心 × 防御力▼の有無）に当たる増分。105〜130f の間だけを使う（リロード・的のジャンプ・フルバーストの入りの止まりを挟む間を除く）。窓は II の替わり目の後 610f（ゲーム内の 10 秒 588f と、フルバーストの入りの止まり 22f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowShotIntervalMean",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "chargeSpeed",
+        "inside": false,
+        "minGap": 105,
+        "maxGap": 130
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "recording": "0695",
+    "source": "V-0512",
+    "readAt": "2026-10-26",
+    "id": "0695-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13723512,
+    "unit": "ダメージ",
+    "description": "ラプラス：アルティメットヒーローのバーストのヒット（会心でない。撃たない操作枠）。III（ラプラス：アルティメットヒーロー）のタイマーの 00.00 の 1〜2f 前の増分",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "読めた 3 回のうち 3 回が 13,723,512（残りなし）。戦闘履歴の与ダメージはこのヒットの和だけ。S2 のバースト 3 段階突入時の攻撃ダメージ▲と、同じ発動の攻撃力▲が乗り、フルバーストの補正は乗らない値。モデルは攻撃力を効果ごとに丸め（C-0400）、モデルは敵の防御力▼の後の防御力を丸めず 91.6 で持つ。100 × (1 − 8.4%) を 92 に丸めると端数まで合う（V-0509「分かったこと」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 20
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0695",
+    "source": "V-0512",
+    "readAt": "2026-10-26",
+    "id": "0695-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": [-2, -1, -2],
+    "unit": "f",
+    "description": "ラプラス：アルティメットヒーローのバーストのヒットの、III のタイマーの 00.00 からの動画のフレーム数（読めた回だけ。負は 00.00 より前）",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@1",
+      "note": "00.00 は 0695-03"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 3
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0695",
+    "source": "V-0511",
+    "readAt": "2026-10-26",
+    "id": "0695-12",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1412848,
+    "unit": "ダメージ",
+    "description": "プリバティ：アンカインド・メイドのバーストの 2 ヒット（どちらも会心でない 706,424）の和。2 ヒットとも読めた回は 4 回",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "III（プリバティ：アンカインド・メイド）のタイマーの 00.00 から 48〜49f と、その 21〜22f 後の増分（f2854・f5498・f8201・f10853）。同じ発動の攻撃ダメージ▲が乗った値を 2 等分した値。モデルは敵の防御力▼の後の防御力を丸めず 91.6 で持つ。100 × (1 − 8.4%) を 92 に丸めると端数まで合う（V-0509「分かったこと」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 4,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0695",
+    "source": "V-0511",
+    "readAt": "2026-10-26",
+    "id": "0695-13",
+    "kind": "timing",
+    "use": "compare",
+    "value": [49, 49, 48, 49],
+    "unit": "f",
+    "description": "プリバティ：アンカインド・メイドのバーストの 1 ヒット目の、III のタイマーの 00.00 からの動画のフレーム数（読めた回だけ）",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@1",
+      "note": "00.00 は 0695-03"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 4,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0695",
+    "source": "V-0511",
+    "readAt": "2026-10-26",
+    "id": "0695-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": [0, 21],
+    "unit": "f",
+    "description": "プリバティ：アンカインド・メイドのバーストの 2 ヒットの、1 ヒット目からのずれ（動画のフレーム）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "2 ヒットとも読めた回の 2 ヒット目のずれ: 21・21・21・21f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 4,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "burst"
+    }
+  }
+]

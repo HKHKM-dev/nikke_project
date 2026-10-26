@@ -47,6 +47,7 @@
 - 1 行の形: 題名（起票日）→ 状態・設計書（あれば）・残りの行き先（backlog の行）。題名は変えない（検証記録・設計書が題名で指す）。
 - 2026-10-25 までに閉じた課題（完了・打ち切り）は [roadmap-archive.md](roadmap-archive.md)「今後の課題」にある。
 
+- 語彙はあるのに撮っていない効果の撮影（2026-10-26 起票）→ 1 回目を定義、ブラン・フォルクヴァンの撮り直し待ち: [design-skill-unrecorded.md](design-skill-unrecorded.md)
 - エレグ（500）の定義（2026-10-26 起票）→ 段 1（S2 のターゲット出現時のゲージ 100%）と段 2（バースト）は実装した。段 3 は未起案: [design-elegg.md](design-elegg.md)
 - 録画の番号を 4 桁にそろえる（2026-10-25 起票）→ 完了（2026-10-25）: [design-recording-id-4digit.md](design-recording-id-4digit.md)
 - 回数トリガーで付く持続の効果の付き始めの遅れ（2026-10-24 起票）→ 第 1 段（ナガ・ミサト・モラン）と第 2 段（プリバティ・ドレイク・紅蓮BS・レイヴン）は実装した（[design-shot-count-trigger-frame.md](design-shot-count-trigger-frame.md)）。残りは backlog 2-38

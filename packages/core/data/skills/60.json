@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 60,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
       "effects": [],
@@ -37,29 +37,33 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "攻撃範囲内の敵へのダメージは未対応",
-          "en": "The damage to enemies in range is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstDamage",
-            "trigger": "burstUse"
-          }
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「攻撃範囲内の敵」は単体ボス",
+            "en": "The target (攻撃範囲内の敵) is the lone boss"
+          },
+          "claims": [
+            "C-0676",
+            "C-0677"
+          ]
         },
         {
-          "ja": "味方全体のチャージ速度▲（10 秒）は未対応",
-          "en": "The charge speed increase on all allies (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "chargeSpeed",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "chargeSpeed",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-0678"
+          ]
         }
-      ]
+      ],
+      "notes": []
     }
   }
 }

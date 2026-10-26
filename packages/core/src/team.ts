@@ -136,6 +136,12 @@ export type TeamInput = {
    * II・III はオートと同じ。burst が true の動的サイクルだけ。録画の照合（records/observations.ts）だけが使う。利用者の計算には出さない
    */
   manualBursts?: readonly number[];
+  /**
+   * 語彙はあるのに撮っていない効果の撮影（plan/design-skill-unrecorded.md 5 節）: バーストを使わない枠（0 始まり）。オートバースト OFF で
+   * 手で撃たなかった枠（録画 0507 のナガ）を、チェーンの候補から外す。burst が true の動的サイクルだけ。録画の照合
+   * （records/observations.ts）だけが使う。利用者の計算には出さない
+   */
+  noBurstSlots?: readonly number[];
 };
 
 /** 枠 slotIndex の shot 発目（1 始まり）が、障害物を count 個壊した */

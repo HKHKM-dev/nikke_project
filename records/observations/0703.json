@@ -1,0 +1,116 @@
+[
+  {
+    "id": "0703-01",
+    "recording": "0703",
+    "readAt": "2026-10-26",
+    "source": "V-0508",
+    "kind": "timing",
+    "use": "record",
+    "value": [973, 992],
+    "unit": "f",
+    "description": "ナガの 5 発目の増分のフレームと、アスカの S1（攻撃力▲）が乗った最初の発のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "ナガの発（SG のペレットの和の大きい増分）は f816・856・895・934・973。アスカの発は f821〜910 の 17 発が S1 なし（胴体・コア × 距離の格子）、f992 から S1 あり"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0703-02",
+    "recording": "0703",
+    "readAt": "2026-10-26",
+    "source": "V-0508",
+    "kind": "count",
+    "use": "record",
+    "value": 0,
+    "unit": "発",
+    "description": "アスカの S1 が乗った最初の発（f992）より後の、S1 なしの発の数",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "f992〜11270 のアスカの発 1,105 発はすべて S1 ありの格子に当たった（ナガの 5 発ごとの回復で 25 秒の窓が付き直し続ける）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0703-03",
+    "recording": "0703",
+    "readAt": "2026-10-26",
+    "source": "V-0508",
+    "kind": "hit",
+    "use": "compare",
+    "value": 29216,
+    "unit": "ダメージ",
+    "description": "ナガの 5 発目より前のアスカの胴体の 1 ヒット（会心でない・距離ボーナスあり。S1 なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "f836 など"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 50,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0703-04",
+    "recording": "0703",
+    "readAt": "2026-10-26",
+    "source": "V-0508",
+    "kind": "hit",
+    "use": "compare",
+    "value": 44287,
+    "unit": "ダメージ",
+    "description": "ナガの 5 発目より後のアスカの胴体の 1 ヒット（会心でない・距離ボーナスなし。S1 あり）",
+    "method": {
+      "tool": "hud.ts --mode jumps + 使い捨てのスクリプト（モデルの格子に当てる）",
+      "note": "戦闘の中ほどの増分（384 回出た値）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 5000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

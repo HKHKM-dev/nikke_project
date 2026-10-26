@@ -1,0 +1,15 @@
+{
+  "id": "C-0672",
+  "text": "ナガのバーストの「味方全体にスキル発動者基準で攻撃力 X%▲（10 秒）」と、自分がバリア適用状態のときの追加の攻撃力▲は、どちらも発動者（ナガ）の攻撃力の割合を味方全体の攻撃力に足す。ラムのバーストのバリアの直後のナガのバーストでは、両方が付く",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0706-06`・`0706-07`（フルバーストの中の I-DOLL・サンの胴体とコアの 1 ヒットが、発動者基準の攻撃力▲ 16.18% と、バリア適用状態の追加の 31.02% の両方が乗ったモデルの値と一致。追加が無ければ胴体は 22,232、攻撃力▲が無ければ 17,951）。ラムのバーストのバリアの直後のナガのバーストで、5 回のフルバーストのどれも同じ値。値は説明文から計算し、合わせ込みの定数は無い。V-0508",
+  "model": "`data/skills/450.json` の burst の effects[0]・effects[1]（`timed`・`burstUse`・`allies`・`attack`・`casterAttack`。effects[1] は `condition.selfState: barrier`）",
+  "replaces": [],
+  "updated": "2026-10-26",
+  "subject": {
+    "places": ["data/skills/450.json の burst の effects[0]", "data/skills/450.json の burst の effects[1]"]
+  },
+  "decidedOn": []
+}

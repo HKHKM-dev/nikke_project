@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 226,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
       "effects": [],
@@ -41,14 +41,9 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃時の自分の HP 回復は未対応（回復を受けた時の効果を起こしうる）",
-          "en": "The HP restore on self on fully charged attacks is not modeled (it can trigger on-healed effects)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "self",
-            "trigger": "fullChargeShot"
-          }
+          "ja": "フルチャージ攻撃時の自分の HP 回復は、ダメージに関係しない（自分にだけ付き、ラプンツェル：ピュアグレイスに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）",
+          "en": "The HP restore on self on fully charged attacks does not affect damage (it applies only to self, and Rapunzel: Pure Grace has no effects that trigger on being healed, so it never changes any ally's skill activation)",
+          "kind": "noDamage"
         },
         {
           "ja": "バリア適用状態の時の自分の現在のHP▼は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
@@ -64,24 +59,25 @@
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0685"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "自分の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
           "en": "The max HP increase on self does not change damage by itself (it matters only with an effect reading HP in the team)",
           "kind": "indirect",
           "path": "hp"
-        },
-        {
-          "ja": "味方全体の攻撃ダメージ▲（10 秒）は未対応",
-          "en": "The attack damage increase on all allies (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attackDamage",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
         }
       ]
     }

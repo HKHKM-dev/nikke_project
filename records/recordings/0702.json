@@ -1,0 +1,52 @@
+{
+  "id": "0702",
+  "date": "2026-10-26",
+  "folder": "range",
+  "file": "20261026-0702_blanc-burst-heal.mp4",
+  "original": "2026-10-26_22-51-55.mp4",
+  "durationSec": 202.4,
+  "frames": 12145,
+  "fps": 60,
+  "sizeMB": 245.1,
+  "sha256": "1c3dbf323fb3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 270,
+      "name": "ブラン",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0516 の撮り方 F。ラム（1 枠目・AI）+ I-DOLL・サン（2 枠目・AI）+ ブラン（3 枠目・操作・撃たない）+ アスカ（4 枠目・AI）。オートバースト OFF・AUTO 射撃 OFF（左上のボタンで確かめた）。バーストはラム → ブラン → I-DOLL・サンの順に手で使った（計画）。最後の戦闘履歴（キャラ名・枠順・Lv.400。ブランの与ダメージ 0）で確かめた",
+  "backup": {
+    "at": "2026-10-26T23:46+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

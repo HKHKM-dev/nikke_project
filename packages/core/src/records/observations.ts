@@ -148,6 +148,11 @@ export type CompareSetup = {
    * 値は昇順の 0 以上の整数の配列。TeamInput.manualBursts）。省略はオートバースト
    */
   manualBursts?: string;
+  /**
+   * 語彙はあるのに撮っていない効果の撮影（plan/design-skill-unrecorded.md 5 節）: バーストを使わない枠（1 始まり。オートバースト OFF で
+   * 手で撃たなかった枠。TeamInput.noBurstSlots）。burst が true のときだけ。省略は全員使う
+   */
+  noBurstSlots?: number[];
 };
 
 /** CompareSetup.burstDelays の 1 件 */
@@ -603,6 +608,34 @@ function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
     .sort((a, b) => a - b)
     .map((f) => (ctx.args.video === true ? videoFrameOf(result.schedule, f) : f));
   return ctx.args.count === undefined ? starts : starts.slice(0, Number(ctx.args.count));
+}
+
+/**
+ * ベロータのバースト編（V-0510）: 枠の、受けた効果（skill と stat で絞る）の窓の中（inside: true）か外（inside: false）の、連続した
+ * 2 発の間の平均（両方の発が同じ側のものだけ）。minGap より短い間と maxGap より長い間（リロード・的のジャンプ・フルバーストの入りの
+ * 止まりを挟む間）は除く。録画とモデルで発の時刻をそろえずに、チャージ速度▲などの射撃の速さの▲の効きを比べる
+ */
+function buffWindowShotIntervalMean(result: SimResult, ctx: MetricContext): number {
+  const slotIndex = slotIndexOf(ctx);
+  const windows = buffPiecesOf(result).filter(
+    (w) => w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
+  );
+  if (windows.length === 0) throw new Error(`枠 ${String(ctx.args.slot)} に ${String(ctx.args.stat)} の窓が無い`);
+  const inside = (f: number) => windows.some((w) => w.start <= f && f < w.end);
+  const want = ctx.args.inside === true;
+  const minGap = ctx.args.minGap === undefined ? 0 : Number(ctx.args.minGap);
+  const maxGap = ctx.args.maxGap === undefined ? Infinity : Number(ctx.args.maxGap);
+  const frames = slotOf(result.shots, ctx).frames;
+  const gaps: number[] = [];
+  for (let i = 1; i < frames.length; i++) {
+    const a = frames[i - 1]!;
+    const b = frames[i]!;
+    const d = b - a;
+    if (d < minGap || d > maxGap) continue;
+    if (inside(a) === want && inside(b) === want) gaps.push(d);
+  }
+  if (gaps.length === 0) throw new Error('間が無い');
+  return gaps.reduce((s, d) => s + d, 0) / gaps.length;
 }
 
 /**
@@ -1212,6 +1245,10 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },
+  buffWindowShotIntervalMean: {
+    args: ['slot', 'skill', 'stat', 'inside'],
+    sim: buffWindowShotIntervalMean,
+  },
   buffWindowEndFromFullBurstEnd: { args: ['slot', 'skill', 'stat', 'n'], sim: buffWindowEndFromFullBurstEnd },
   chanceActiveRatio: { args: ['slot', 'skill'], sim: chanceActiveRatio },
   chanceExpiries: { args: ['slot', 'skill'], sim: chanceExpiries },
@@ -1810,6 +1847,13 @@ export function validateObservations(
           errors.push(`${at}: burstDelays の hitOffsets は 0 から始まる昇順の整数`);
       }
     }
+    if (c.setup.noBurstSlots !== undefined) {
+      if (c.setup.burst !== true) errors.push(`${at}: noBurstSlots は burst が true のときだけ書く`);
+      const size = recordings.get(o.recording)?.team.length;
+      for (const s of c.setup.noBurstSlots)
+        if (!Number.isInteger(s) || s < 1 || (size !== undefined && s > size))
+          errors.push(`${at}: noBurstSlots の枠 ${String(s)} が編成の外`);
+    }
     if (c.setup.manualBursts !== undefined) {
       if (c.setup.burst === false) errors.push(`${at}: manualBursts は burst が false のときには書かない`);
       const ref = observations.find((x) => x.id === c.setup.manualBursts);
@@ -2048,6 +2092,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       : { sustainedDamagePlacement: setup.sustainedDamagePlacement }),
     ...(setup.attackRounding === undefined ? {} : { attackRounding: setup.attackRounding }),
     ...(manualBursts === undefined ? {} : { manualBursts }),
+    ...(setup.noBurstSlots === undefined ? {} : { noBurstSlots: setup.noBurstSlots.map((s) => s - 1) }),
   };
 }
 
@@ -2168,6 +2213,7 @@ function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
   if (setup?.nearLanding !== undefined) entries.push(['near', setup.nearLanding.join('・')]);
   if (setup?.farLanding !== undefined) entries.push(['far', setup.farLanding.join('・')]);
   if (setup?.manualBursts !== undefined) entries.push(['manualBursts', setup.manualBursts]);
+  if (setup?.noBurstSlots !== undefined) entries.push(['noBurstSlots', setup.noBurstSlots.join('・')]);
   for (const d of setup?.burstDelays ?? []) {
     const r = d.row;
     const row =
