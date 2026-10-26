@@ -9,14 +9,20 @@
   "replaces": [],
   "updated": "2026-10-26",
   "subject": {
-    "places": [
-      "data/skills/192.json の treasureSkills.burst の effects[1]"
-    ]
+    "places": ["data/skills/192.json の treasureSkills.burst の effects[1]"]
   },
   "decidedOn": [
     {
       "recording": "0676",
       "role": "読み方を合わせた"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["0676-13", "0677-13"],
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "reason": "effects[0]（味方全体の分）の値と窓は C-0668（確定）。仮説の C-0670（付いた後に応急改造が減った時に値を保つか）は、A の録画ではトーブが撃ち続けて応急改造が 3 スタックのまま（C-0559）なので、窓の中の値に効かない",
+      "decided": "2026-10-27"
     }
   ]
 }

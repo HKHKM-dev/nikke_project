@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 61・効果 260（根拠あり 251）・notes 218（根拠あり 68）
+件数: キャラ 61・効果 260（根拠あり 253）・notes 218（根拠あり 68）
 
 notes の種類: 未対応 105・前提の外 27・計算に無関係 28・補足 12・間接 46
 
@@ -332,8 +332,8 @@ notes の種類: 未対応 105・前提の外 27・計算に無関係 28・補�
   - effects[0] passive・temporaryModification のフルスタックの間・critRate: C-0599（確定）、C-0601（確定）、C-0602（確定）
   - effects[1] passive・temporaryModification のフルスタックの間・attackSpeed: C-0600（確定）、C-0601（確定）、C-0602（確定）
 - **宝物版 burst**: supported
-  - effects[0] state・burstUse・miracleOfMakeshifts（attack）: 根拠なし
-  - effects[1] state・burstUse・miracleOfMakeshiftsShotgun（attack）: 根拠なし
+  - effects[0] state・burstUse・miracleOfMakeshifts（attack）: C-0668（確定）、C-0669（確定）、C-0670（仮説）
+  - effects[1] state・burstUse・miracleOfMakeshiftsShotgun（attack）: C-0669（確定）、C-0670（仮説）
 
 ## 194 ルドミラ：ウィンターオーナー
 

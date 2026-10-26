@@ -4,17 +4,7 @@
     "recording": "0676",
     "kind": "timing",
     "use": "record",
-    "value": [
-      1339,
-      2540,
-      3719,
-      4921,
-      6100,
-      7302,
-      8481,
-      9778,
-      10957
-    ],
+    "value": [1339, 2540, 3719, 4921, 6100, 7302, 8481, 9778, 10957],
     "unit": "f",
     "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
     "method": {
@@ -29,17 +19,7 @@
     "recording": "0676",
     "kind": "timing",
     "use": "record",
-    "value": [
-      1368,
-      2569,
-      3748,
-      4950,
-      6129,
-      7428,
-      8607,
-      9808,
-      10987
-    ],
+    "value": [1368, 2569, 3748, 4950, 6129, 7428, 8607, 9808, 10987],
     "unit": "f",
     "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
     "method": {
@@ -54,13 +34,7 @@
     "recording": "0676",
     "kind": "timing",
     "use": "record",
-    "value": [
-      1397,
-      3778,
-      6158,
-      8636,
-      11016
-    ],
+    "value": [1397, 3778, 6158, 8636, 11016],
     "unit": "f",
     "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
     "method": {
@@ -75,15 +49,7 @@
     "recording": "0676",
     "kind": "timing",
     "use": "record",
-    "value": [
-      2534,
-      3713,
-      4915,
-      6094,
-      7296,
-      8475,
-      10951
-    ],
+    "value": [2534, 3713, 4915, 6094, 7296, 8475, 10951],
     "unit": "f",
     "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
     "method": {
@@ -98,15 +64,7 @@
     "recording": "0676",
     "kind": "timing",
     "use": "record",
-    "value": [
-      2563,
-      3742,
-      4944,
-      6123,
-      8601,
-      9802,
-      10981
-    ],
+    "value": [2563, 3742, 4944, 6123, 8601, 9802, 10981],
     "unit": "f",
     "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
     "method": {
@@ -121,11 +79,7 @@
     "recording": "0676",
     "kind": "timing",
     "use": "record",
-    "value": [
-      3770,
-      6151,
-      11009
-    ],
+    "value": [3770, 6151, 11009],
     "unit": "f",
     "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
     "method": {
@@ -193,9 +147,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true
       }
     },
@@ -233,9 +185,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true
       }
     },
@@ -273,9 +223,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true
       }
     },
@@ -313,9 +261,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true
       }
     },
@@ -353,9 +299,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true
       }
     },
@@ -371,12 +315,7 @@
     "readAt": "2026-10-27",
     "kind": "count",
     "use": "record",
-    "value": [
-      1888,
-      1,
-      3,
-      668
-    ],
+    "value": [1888, 1, 3, 668],
     "unit": "発",
     "description": "1 ヒットの格子に乗った増分の分け方: [窓の中の▲ありの格子, 窓の中の▲なしの格子, 窓の外の▲ありの格子, 窓の外の▲なしの格子]（トーブ・I-DOLL・サンの発。窓は I の替わり目の −1〜+882f、フルバーストの回は入りの止まりの分 +24f を足した近似）",
     "method": {
@@ -395,11 +334,7 @@
     "readAt": "2026-10-27",
     "kind": "count",
     "use": "record",
-    "value": [
-      116,
-      4,
-      52
-    ],
+    "value": [116, 4, 52],
     "unit": "発",
     "description": "ソルジャーF.A. の発（格子に乗らない 60,000 以上の増分で、前後 6f のトーブ・サンの発が窓の中と決まるもの）のうち、ペレットの値を H1（2 つの効果が重なる。28,661.8）・H2（ショットガンの分だけ。27,171.4）にしてペレットの和の格子（胴体・コア・会心・距離ボーナス・フルバースト。ペレットごとの丸めの幅）に乗った数: [H1 に乗った, H2 に乗った, どちらにも乗らない]",
     "method": {

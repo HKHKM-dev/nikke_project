@@ -2272,7 +2272,8 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   if (v.stacksFrom !== undefined) {
     // 2 段目の段 10: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3）から取る
     const from = v.stacksFrom;
-    if (!isRecord(from) || Object.keys(from).length !== 1) fail(`${path}.stacksFrom`, 'expected { counter } or { state }');
+    if (!isRecord(from) || Object.keys(from).length !== 1)
+      fail(`${path}.stacksFrom`, 'expected { counter } or { state }');
     for (const key of Object.keys(from)) {
       if (key !== 'counter' && key !== 'state') fail(`${path}.stacksFrom.${key}`, 'unknown field');
     }

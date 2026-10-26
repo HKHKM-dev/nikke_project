@@ -11766,6 +11766,246 @@
       "plus": null
     },
     {
+      "observation": "0510-01",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "e7e6f1750d2809b8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-01",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "e7e6f1750d2809b8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-02",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "c7429d3ebfc6c5ab",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-02",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "c7429d3ebfc6c5ab",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-03",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "bc2e402580b6d048",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-03",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "bc2e402580b6d048",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-04",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "43984300f96a039f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-04",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "43984300f96a039f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-05",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "6531ed4900e72576",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-05",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "6531ed4900e72576",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-06",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "9d35484ed4b879ad",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-06",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "9d35484ed4b879ad",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-07",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "e6348e13e66caf04",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0510-07",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "e6348e13e66caf04",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-01",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "34546fb748993890",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-01",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "34546fb748993890",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-02",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "04e62bdca9a249b3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-02",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "04e62bdca9a249b3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-03",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "6b2002b348a30eb0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-03",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "6b2002b348a30eb0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-04",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "058e2156b1b6af27",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-04",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "058e2156b1b6af27",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-05",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "318b2b6752f6f54e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-05",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "318b2b6752f6f54e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-06",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "52fda5e055d5f0e5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-06",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "52fda5e055d5f0e5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-07",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "c83b969dcc8bd61c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0511-07",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "c83b969dcc8bd61c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0512-01",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "2cbba69fc4c85ed4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0512-01",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "2cbba69fc4c85ed4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0513-05",
       "element": "アニス：スター burst.effects[0]",
       "key": "4b97e42a7a2aacdb",
@@ -13172,6 +13412,166 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0676-09",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "cf3399cb5a9a78c0",
+      "effective": true,
+      "minus": -1023.0805,
+      "plus": -1023.0805
+    },
+    {
+      "observation": "0676-09",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "cf3399cb5a9a78c0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0676-10",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "8ee29b4ad33813c5",
+      "effective": true,
+      "minus": -1534.6207500000019,
+      "plus": -1534.6207500000019
+    },
+    {
+      "observation": "0676-10",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "8ee29b4ad33813c5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0676-11",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "5fb3172ba2dd3518",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0676-11",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "5fb3172ba2dd3518",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0676-12",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "04cc61c168b4e69a",
+      "effective": true,
+      "minus": -1086.3709999999955,
+      "plus": -1086.3709999999955
+    },
+    {
+      "observation": "0676-12",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "04cc61c168b4e69a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0676-13",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "253c0fb452f75355",
+      "effective": true,
+      "minus": -1490.2421999999933,
+      "plus": -1490.2421999999933
+    },
+    {
+      "observation": "0676-13",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "253c0fb452f75355",
+      "effective": true,
+      "minus": -15552.822499999997,
+      "plus": -15552.822499999997
+    },
+    {
+      "observation": "0677-09",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "cdbd906c8ea32203",
+      "effective": true,
+      "minus": -1023.0805,
+      "plus": -1023.0805
+    },
+    {
+      "observation": "0677-09",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "cdbd906c8ea32203",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0677-10",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "356505b341f2bfaa",
+      "effective": true,
+      "minus": -1534.6207500000019,
+      "plus": -1534.6207500000019
+    },
+    {
+      "observation": "0677-10",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "356505b341f2bfaa",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0677-11",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "ac295620317aae23",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0677-11",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "ac295620317aae23",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0677-12",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "f1c42412f1e13209",
+      "effective": true,
+      "minus": -1086.3709999999955,
+      "plus": -1086.3709999999955
+    },
+    {
+      "observation": "0677-12",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "f1c42412f1e13209",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0677-13",
+      "element": "トーブ treasureSkills.burst.effects[0]",
+      "key": "9a977aa3b6e6bb8e",
+      "effective": true,
+      "minus": -1490.2421999999933,
+      "plus": -1490.2421999999933
+    },
+    {
+      "observation": "0677-13",
+      "element": "トーブ treasureSkills.burst.effects[1]",
+      "key": "9a977aa3b6e6bb8e",
+      "effective": true,
+      "minus": -15552.822499999997,
+      "plus": -15552.822499999997
     }
   ]
 }

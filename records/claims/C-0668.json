@@ -9,9 +9,7 @@
   "replaces": [],
   "updated": "2026-10-26",
   "subject": {
-    "places": [
-      "data/skills/192.json の treasureSkills.burst の effects[0]"
-    ]
+    "places": ["data/skills/192.json の treasureSkills.burst の effects[0]"]
   },
   "decidedOn": [
     {
