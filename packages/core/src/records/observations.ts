@@ -871,6 +871,18 @@ function burstActivationSlots(result: { schedule: BurstSchedule | null }, ctx: M
   return schedule.activations.slice(0, n).map((a) => a.slotIndex + 1);
 }
 
+/**
+ * エレグ編（V-0504）: 最初の n 回の発動の段の表示（I・II は六角形の替わり目、III はタイマーの 00.00。activationVideoFrameOf）の、
+ * 戦闘開始からの録画の動画のフレーム（それより前の発動の止まり・フルバーストの入りの止まりを含む）
+ */
+function burstActivationVideoFrames(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const n = Number(ctx.args.n);
+  if (schedule.activations.length < n) throw new Error(`発動が ${schedule.activations.length} 回しかない`);
+  return schedule.activations.slice(0, n).map((a) => activationVideoFrameOf(schedule, a));
+}
+
 /** 結果を最初の count 個に切る（count が無ければそのまま。足りなければ誤り） */
 function firstCount(values: number[], ctx: MetricContext, what: string): number[] {
   if (ctx.args.count === undefined) return values;
@@ -1027,6 +1039,11 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     args: ['n'],
     sim: (r, c) => burstActivationSlots(r, c),
     calc: (r, c) => burstActivationSlots(r, c),
+  },
+  burstActivationVideoFrames: {
+    args: ['n'],
+    sim: (r, c) => burstActivationVideoFrames(r, c),
+    calc: (r, c) => burstActivationVideoFrames(r, c),
   },
   fullBurstToNextActivation: {
     args: ['n'],

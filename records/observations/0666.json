@@ -1,0 +1,185 @@
+[
+  {
+    "id": "0666-01",
+    "recording": "0666",
+    "kind": "timing",
+    "use": "record",
+    "value": [895, 3272, 5649, 8027, 10404],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・6・0f"
+    },
+    "source": "V-0504",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0666-02",
+    "recording": "0666",
+    "kind": "timing",
+    "use": "record",
+    "value": [924, 3301, 5678, 8056, 10433],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0f"
+    },
+    "source": "V-0504",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0666-03",
+    "recording": "0666",
+    "kind": "timing",
+    "use": "record",
+    "value": [953, 3330, 5708, 8085, 10462],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0504",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0666-04",
+    "recording": "0666",
+    "kind": "timing",
+    "use": "record",
+    "value": [3266, 5643, 8020, 10398],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0504",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0666-05",
+    "recording": "0666",
+    "kind": "timing",
+    "use": "record",
+    "value": [3324, 5701, 8078, 10456],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0504",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0666-06",
+    "recording": "0666",
+    "source": "V-0504",
+    "readAt": "2026-10-26",
+    "kind": "interval",
+    "use": "compare",
+    "value": 0,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始）から、1 回目に BURST バーが消えて I の六角形に替わるまでのフレーム数（`0466-07` と同じ読み方）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes・tools/captures/gauge.ts --mode series・tools/captures/still.ts で右のバースト欄を 1 フレームずつ切り出して目で見た",
+      "note": "戦闘開始は f865（WARNING の画面の後の変わり目。残り時間の表示が出たフレーム）。その前のフレームは HUD の無い画面で、f865 の最初の HUD に BURST バーは無く、もう I の六角形とチェーンのタイマー（00.00）が出ている。満タンはこのフレームより前のこともありうる（HUD が出る前は読めない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge",
+      "frames": [865, 865]
+    }
+  },
+  {
+    "id": "0666-07",
+    "recording": "0666",
+    "source": "V-0504",
+    "readAt": "2026-10-26",
+    "kind": "timing",
+    "use": "compare",
+    "value": [30, 59, 88],
+    "unit": "f",
+    "description": "1 回目のチェーンの I → II・II → III の六角形の替わり目と III のタイマーの 00.00 の、戦闘開始（残り時間の 02:59 が出たフレーム）からの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@1 の 1 つ目の値から戦闘開始のフレームを引いた",
+      "note": "戦闘開始は f865（timer.ts --mode changes）。替わり目は `0666-01`〜`0666-03` の 1 つ目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain",
+      "frames": [865, 953]
+    }
+  },
+  {
+    "id": "0666-08",
+    "recording": "0666",
+    "source": "V-0504",
+    "readAt": "2026-10-26",
+    "kind": "timing",
+    "use": "record",
+    "value": [1631, 2049],
+    "unit": "f",
+    "description": "1 回目のフルバーストの後、BURST バーが溜まり始めたフレームと満タンになったフレーム。間はバーが少しずつ伸び、満タンへの跳びは無い（S2 のチャージは 2 回目には入らない）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events",
+      "note": "溜め始め・満タンのイベント。間の伸びは --mode series で見た"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge",
+      "frames": [1631, 2049]
+    }
+  },
+  {
+    "id": "0666-09",
+    "recording": "0666",
+    "source": "V-0504",
+    "readAt": "2026-10-26",
+    "kind": "count",
+    "use": "record",
+    "value": 0,
+    "unit": "回",
+    "description": "エレグ（3 枠目）がバーストを撃った回数。どのチェーンでも、II の段の候補の 1 人目はソルジャーF.A.（右のバースト欄の顔。I → II の替わり目 895・3272・5649・8027・10404f の 12f 後）で、II の段はすぐ III に替わった。HUD の総ダメージの増分の最大は 325,106 で、エレグのバーストスキルダメージ（最終攻撃力の 800%。スペック固定で約 80 万）に届く増分は無い",
+    "method": {
+      "tool": "tools/captures/still.ts で右のバースト欄を切り出して目で見た・tools/captures/hud.ts --mode jumps",
+      "note": "25 万を超える増分は、どれもフルバースト中（ソルジャーF.A. の SG の 1 トリガー）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burstChain",
+      "frames": [895, 10404]
+    }
+  }
+]

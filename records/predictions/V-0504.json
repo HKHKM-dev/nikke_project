@@ -1,0 +1,120 @@
+{
+  "verification": "V-0504",
+  "note": "撮る前の予測（plan/design-elegg.md 3.2 節の U4）。編成は B（鈴原サクラ 1 枠目・ソルジャーF.A. 2 枠目・◎エレグ 3 枠目・I-DOLL・サン 4 枠目）。モデルには撃たない枠が無いので、エレグも撃つ。1 回目の満タンまでは H1 ではエレグの弾が効かない。H1 はエレグの S2 のゲージを addEffects で入れた形。単騎（A）の予測は検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 836
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 500,
+      "controlled": true
+    },
+    {
+      "rid": 308
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（エレグの S2 のゲージなし）"
+    },
+    {
+      "id": "H1",
+      "note": "エレグの S2 のゲージ: 戦闘開始の次のフレームに 100%（burstGauge・battleStart・allies・ref 4）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "effect": {
+              "kind": "burstGauge",
+              "trigger": "battleStart",
+              "target": "allies",
+              "ref": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-1",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "1 回目の満タンのフレーム（ゲーム内。戦闘開始から）"
+    },
+    {
+      "id": "full-burst-starts",
+      "model": "sim",
+      "metric": "fullBurstStarts",
+      "args": {},
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "フルバーストの入りのフレームの並び。比べるのは 1 回目だけ（2 回目以降はモデルでエレグが撃つ分のゲージが入る）"
+    },
+    {
+      "id": "chain-1-video",
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "1 回目のチェーンの I・II の六角形の替わり目と III の 00.00 の、戦闘開始（残り時間の 02:59 が出たフレーム）からの動画のフレーム（2026-10-26 に撮った後で足した指標。値を見る前に H0・H1 の形は決まっていた）"
+    },
+    {
+      "id": "activation-slots",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 9
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "バーストを撃った枠の並び（最初の 9 回）。II が毎回 2 枠目（ソルジャーF.A.）で、3 枠目（エレグ）が出ないことを見る"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-26",
+    "commit": "1ae9d06b0c92f4fac350ce11146b8638d03515a8",
+    "values": {
+      "H0": {
+        "gauge-full-1": 320,
+        "full-burst-starts": [405, 2757, 5109, 7461, 9813],
+        "chain-1-video": [349, 378, 407],
+        "activation-slots": [1, 2, 4, 1, 2, 4, 1, 2, 4]
+      },
+      "H1": {
+        "gauge-full-1": 1,
+        "full-burst-starts": [86, 2438, 4790, 7142, 9494],
+        "chain-1-video": [30, 59, 88],
+        "activation-slots": [1, 2, 4, 1, 2, 4, 1, 2, 4]
+      }
+    }
+  }
+}
