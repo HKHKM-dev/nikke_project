@@ -4,11 +4,11 @@
   "folder": "range",
   "file": "20261026-0665_smg+sg+mg+ar_sakura+fa+elegg+idoll-sun_elegg-control-1.mp4",
   "original": "2026-10-26_20-21-22.mp4",
-  "durationSec": 149.2,
-  "frames": null,
+  "durationSec": 199.8,
+  "frames": 11987,
   "fps": 60,
-  "sizeMB": 181,
-  "sha256": "9c5aabcda0dc",
+  "sizeMB": 242,
+  "sha256": "13d29ae6887d",
   "team": [
     {
       "slot": 1,
@@ -43,10 +43,5 @@
   "fixedSpec": true,
   "autoFire": false,
   "autoBurst": true,
-  "conditionNote": "V-0504 編成 B。エレグは 3 枠目・操作・撃たない",
-  "backup": {
-    "at": "2026-10-26T20:33+09:00",
-    "via": "cloud-move",
-    "matched": "sha256"
-  }
+  "conditionNote": "V-0504 編成 B。エレグは 3 枠目・操作・撃たない。2026-10-26 に完全な版（record の「2026-10-26_20-21-22 - コピー.mp4」）に差し替えた。最初に取り込んだ版は Drive for desktop が上げている途中の 149 秒分（sha256 9c5aabcda0dc）だった。フレーム番号は前の版と同じ"
 }
