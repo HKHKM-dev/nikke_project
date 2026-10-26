@@ -43,5 +43,10 @@
   "fixedSpec": true,
   "autoFire": false,
   "autoBurst": true,
-  "conditionNote": "V-0504 編成 B。エレグは 3 枠目・操作・撃たない。2026-10-26 に完全な版（record の「2026-10-26_20-21-22 - コピー.mp4」）に差し替えた。最初に取り込んだ版は Drive for desktop が上げている途中の 149 秒分（sha256 9c5aabcda0dc）だった。フレーム番号は前の版と同じ"
+  "conditionNote": "V-0504 編成 B。エレグは 3 枠目・操作・撃たない。2026-10-26 に完全な版（record の「2026-10-26_20-21-22 - コピー.mp4」）に差し替えた。最初に取り込んだ版は Drive for desktop が上げている途中の 149 秒分（sha256 9c5aabcda0dc）だった。フレーム番号は前の版と同じ",
+  "backup": {
+    "at": "2026-10-26T22:05+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
 }
