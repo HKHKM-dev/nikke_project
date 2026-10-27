@@ -30,6 +30,7 @@ export class LatestComputeQueue {
   #seq = 0;
   #inFlight: number | null = null;
   #pending: TeamInput | null = null;
+  #stopped: string | null = null;
   readonly #send: (request: ComputeRequest) => void;
   readonly #deliver: (computed: Computed) => void;
 
@@ -44,6 +45,10 @@ export class LatestComputeQueue {
   }
 
   request(input: TeamInput): void {
+    if (this.#stopped !== null) {
+      this.#deliver({ ok: false, error: this.#stopped });
+      return;
+    }
     this.#pending = input;
     if (this.#inFlight === null) this.#flush();
   }
@@ -58,11 +63,20 @@ export class LatestComputeQueue {
     this.#deliver(response.computed);
   }
 
-  /** Worker が答えられなくなったとき（読み込みの失敗など）。待っている入力も捨てて、エラーを出す */
+  /** 計算中の要求に答えが届かないとき（結果を受け取れないなど）。待っている入力も捨てて、エラーを出す。次の入力はまた送る */
   fail(error: string): void {
     this.#inFlight = null;
     this.#pending = null;
     this.#deliver({ ok: false, error });
+  }
+
+  /**
+   * Worker が止まったとき（読み込みの失敗など）。止まった Worker に送っても答えは来ないので、後の入力にも同じエラーをすぐ返す
+   * （送ると計算中のまま戻らない）
+   */
+  stop(error: string): void {
+    this.#stopped = error;
+    this.fail(error);
   }
 
   #flush(): void {

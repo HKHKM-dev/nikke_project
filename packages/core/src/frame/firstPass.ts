@@ -419,10 +419,13 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
    * アニス：スター S1 の味方のゲージ編: 枠 i の 1 発のゲージ（energyAt の値）が、ゲージ何回ぶんか（弾のヒットの期待値。SG は当たった
    * ペレットの数）。1 回のゲージ（targetBurstEnergyPerShot × フルチャージ倍率 × いまのゲージ速度）で割る
    */
-  const gaugeHitsOf = (i: number, shotEnergy: number): number => {
+  /** 枠 i の 1 発のゲージに乗るフルチャージ倍率（C-0007。操作キャラのチャージ武器だけ。energyPerTrigger と同じ） */
+  const chargeGaugeOf = (i: number): number => {
     const shot = slots[i]!.character.shot;
-    const charge = i === controlledSlot && shot.chargeTime > 0 ? shot.fullChargeBurstEnergy : 1;
-    const unit = targetEnergies[i]! * charge * (timedGauge[i] ? gaugeScale[i]! : 1 + gaugeSpeed[i]!);
+    return i === controlledSlot && shot.chargeTime > 0 ? shot.fullChargeBurstEnergy : 1;
+  };
+  const gaugeHitsOf = (i: number, shotEnergy: number): number => {
+    const unit = targetEnergies[i]! * chargeGaugeOf(i) * (timedGauge[i] ? gaugeScale[i]! : 1 + gaugeSpeed[i]!);
     return unit > 0 ? shotEnergy / unit : 0;
   };
   // plan/design-anis-star-gauge-timing.md 3 節: 枠 i がフレーム f に撃った発の飛ぶ時間（ゲージはその後のフレームに溜まる）
@@ -810,8 +813,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
       shotCounts[i]! += 1;
       const shotEnergy = energyAt(i, f);
+      // 2 段目の段 11: チャージしない変更後の武器の発には、基礎の武器のフルチャージ倍率を掛けない（2026-10-27 のオーナー決定。
+      // 変更後の武器の発のゲージは確かめていない。V-0528）。ヒットの数（gaugeHitsOf）は 1 発 1 ヒットのまま
+      const gainEnergy = uncharged ? shotEnergy / chargeGaugeOf(i) : shotEnergy;
       const energy =
-        shotEnergy * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +
+        gainEnergy * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +
         (obstacles[i]!.get(shotCounts[i]!) ?? 0) * obstacleEnergyAt(i);
       gauge += landingGauge(i, f + shotFlightAt(i, f), f, energy, gaugeHitsOf(i, shotEnergy));
     });

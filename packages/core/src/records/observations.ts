@@ -1935,19 +1935,23 @@ function comparesDefence(definition: SkillDefinition | null): boolean {
 export type DroppedEffect = { rid: number; skill: SkillSlot; index: number; treasure?: boolean };
 
 /** 定義の効果を落とした写しを返す（CompareSetup.dropEffects）。番号は落とす前の定義の番号 */
-function withoutEffects(definition: SkillDefinition | null, drops: readonly DroppedEffect[]): SkillDefinition | null {
+export function withoutEffects(
+  definition: SkillDefinition | null,
+  drops: readonly DroppedEffect[],
+): SkillDefinition | null {
   if (definition === null || drops.length === 0) return definition;
   const out: SkillDefinition = { ...definition, skills: { ...definition.skills } };
   if (definition.treasureSkills !== undefined) out.treasureSkills = { ...definition.treasureSkills };
   for (const d of drops) {
     const group = d.treasure === true ? out.treasureSkills : out.skills;
     const entry = group?.[d.skill];
-    if (group === undefined || entry === undefined || !(d.index in entry.effects)) {
+    // 番号は落とす前の定義で引く（同じスロットから 2 件以上落とすとき、落とした後の写しの番号はずれる）
+    const original = (d.treasure === true ? definition.treasureSkills : definition.skills)?.[d.skill]?.effects[d.index];
+    if (group === undefined || entry === undefined || original === undefined) {
       throw new Error(
         `dropEffects: rid ${d.rid} の ${d.treasure === true ? '宝物版の ' : ''}${d.skill} に ${d.index} 番目の効果が無い`,
       );
     }
-    const original = (d.treasure === true ? definition.treasureSkills : definition.skills)![d.skill]!.effects[d.index];
     group[d.skill] = { ...entry, effects: entry.effects.filter((e) => e !== original) };
   }
   return out;

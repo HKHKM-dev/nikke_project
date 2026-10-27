@@ -858,7 +858,8 @@ export type DamageEffect = {
   /**
    * ミハラのバースト編（plan/design-mihara-burst-hits.md 3.2 節）: バーストの倍率ダメージの分かれたヒットのそれぞれと同じフレームに出す
    * （倍率は等分しない。条件は効果の発火のフレームで 1 回判定する。フルバースト補正はヒットのフレームで決める）。trigger が burstUse の
-   * ときだけ書ける（delayFrames とは組み合わせない）。C-0565
+   * ときだけ書ける（delayFrames とは組み合わせない）。C-0565。撃つ側のバフはヒットの時点で取る（C-0657。ミハラ（161）は
+   * 根拠を撮影待ち。plan/design-mihara-burst-hits.md 8 節）
    */
   perBurstHit?: true;
   /**

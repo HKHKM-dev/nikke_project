@@ -140,4 +140,19 @@ describe('LatestComputeQueue (B-2)', () => {
     s.queue.request(input(3));
     expect(s.sent.map((r) => r.input.durationSeconds)).toEqual([1, 3]);
   });
+
+  it('answers every later input with the error once the worker has stopped, without sending it', () => {
+    const { sent, delivered, queue } = setup();
+    queue.request(input(1));
+    queue.stop('worker stopped');
+    expect(delivered).toEqual([{ ok: false, error: 'worker stopped' }]);
+    // 止まった Worker に送ると答えが来ず、計算中のまま戻らない
+    queue.request(input(2));
+    expect(sent.map((r) => r.input.durationSeconds)).toEqual([1]);
+    expect(queue.busy).toBe(false);
+    expect(delivered).toEqual([
+      { ok: false, error: 'worker stopped' },
+      { ok: false, error: 'worker stopped' },
+    ]);
+  });
 });

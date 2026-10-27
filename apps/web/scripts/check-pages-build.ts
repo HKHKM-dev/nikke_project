@@ -28,7 +28,7 @@ export function checkPagesBuild(distDir: string, base: string): string[] {
   if (!bundles.some((f) => quoted.some((q) => readFileSync(join(assets, f), 'utf8').includes(q)))) {
     problems.push(`no bundle embeds the base path "${base}" (data fetches would miss the sub path)`);
   }
-  const workers = bundles.filter((f) => /^worker-.+.js$/.test(f));
+  const workers = bundles.filter((f) => /^worker-.+\.js$/.test(f));
   if (workers.length === 0) {
     problems.push('no worker bundle (assets/worker-*.js) in the build');
   } else if (

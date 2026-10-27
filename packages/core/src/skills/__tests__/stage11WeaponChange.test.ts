@@ -140,6 +140,14 @@ describe('ラプラス：アルティメットヒーローの S1（V-0528）', (
     ).toEqual([53, 48, 42, 36]);
   });
 
+  it('gives a changed shot the gauge of one base shot without the full-charge multiplier (2026-10-27 owner decision)', () => {
+    const gaugeAt = new Map(r.shotGauges.filter((g) => g.slotIndex === 0).map((g) => [g.shotFrame, g.energy]));
+    const base = log.frames.find((f) => !changed.has(f))!;
+    const changedShot = log.weaponChangeShotFrames![0]!;
+    expect(c.shot.fullChargeBurstEnergy).toBeGreaterThan(1);
+    expect(gaugeAt.get(changedShot)! * c.shot.fullChargeBurstEnergy).toBeCloseTo(gaugeAt.get(base)!, 9);
+  });
+
   it('records the ammo decrease when each change ends', () => {
     const decreases = r.instants.filter((x) => x.effect.kind === 'ammoDecrease');
     expect(decreases.map((x) => x.frame)).toEqual(log.weaponChangeEnds);

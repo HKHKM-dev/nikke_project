@@ -502,7 +502,7 @@ export function ResultPanel({
                   <td>×{formatNumber(seg.trigger.attackDamageMultiplier, 4)}</td>
                   <td>{formatNumber(seg.trigger.perTrigger)}</td>
                   <td>
-                    {formatNumber(seg.triggers, 1)}
+                    {formatNumber(seg.triggers)}
                     {seg.partialCharge && (
                       <small
                         className="sub"

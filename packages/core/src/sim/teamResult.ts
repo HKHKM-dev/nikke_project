@@ -1,6 +1,6 @@
-// Stage 16（plan/design-stage16.md 3 節 16-A）: sim の結果を calc と同じ形（TeamResult）にする。画面は同じ内訳の表で出す。
-// 通常攻撃は calc と同じグループ（同じバフ状態）に集計し、トリガー数は sim が実際に撃った数（triggerSource: 'shots'）。
-// バーストスキルと倍率ダメージは sim の発動列をそのまま使う（calc と同じ 1 パス目の値）。
+// Stage 16（plan/design-stage16.md 3 節 16-A）: sim の結果を画面の形（TeamResult。2026-10-27 の一本化まで calc と共通だった形）にする。
+// 通常攻撃は同じバフ状態のグループに集計し、トリガー数は sim が実際に撃った数（triggerSource: 'shots'）。
+// バーストスキルと倍率ダメージは sim の発動列（1 パス目の値）をそのまま使う。一本化は plan/design-unify-sim-calc.md。
 import { summarizeSchedule } from '../burst/schedule.ts';
 import { enemyEventNotes } from '../frame/events.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';

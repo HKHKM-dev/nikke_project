@@ -105,6 +105,12 @@ describe('parseGrids', () => {
     expect(() => parseGrids('サン=2')).toThrow();
     expect(() => parseGrids('a=1@1;a=2@1')).toThrow(/重なる/);
   });
+
+  it('壊れたフレームの並びと、2 つのペレット数を受けない', () => {
+    for (const bad of ['a=1@1300++', 'a=1@+1300', 'a=1@1300+', 'a=1@1++2'])
+      expect(() => parseGrids(bad)).toThrow(/形が違う/);
+    expect(() => parseGrids('a=1@1300/x10/x5')).toThrow(/ペレット数が 2 つある/);
+  });
 });
 
 describe('pelletSums', () => {

@@ -21,7 +21,9 @@ export function useTeamComputation(input: TeamInput): { computed: Computed | nul
         }),
     );
     worker.addEventListener('message', (e: MessageEvent<ComputeResponse>) => queue.receive(e.data));
-    worker.addEventListener('error', (e) => queue.fail(`計算の Worker が止まりました: ${e.message || '不明なエラー'}`));
+    worker.addEventListener('error', (e) =>
+      queue.stop(`計算の Worker が止まりました（画面を読み込み直してください）: ${e.message || '不明なエラー'}`),
+    );
     worker.addEventListener('messageerror', () => queue.fail('計算の結果を受け取れませんでした'));
     queueRef.current = queue;
     return () => {
