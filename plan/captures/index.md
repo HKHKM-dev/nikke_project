@@ -60,7 +60,7 @@ interception の例: 20261001-0066_special_boss-name.mp4 （種類_ボス英名�
 
 ### 素性
 
-表は [recordings.md](recordings.md) の「素性」。
+尺・フレーム数・平均 fps・サイズ・sha256（先頭 12）は、録画の JSON（`records/recordings/<録画 id>.json`）にある（一覧の表には載せない）。
 
 フレーム落ちのある録画（0001・0007・0010・0011。時間計測の母数に使わない）は、録画の JSON の `conditionNote` に書いた。
 

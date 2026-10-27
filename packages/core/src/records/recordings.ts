@@ -287,23 +287,6 @@ export function renderRecordingTable(file: RecordingsFile, characters: ReadonlyM
   );
 }
 
-/** 素性（probe.ts の出力） */
-export function renderProvenanceTable(file: RecordingsFile): string {
-  const rows = file.recordings
-    .filter((e): e is ProjectRecording => !isLegacy(e))
-    .map((e) => [
-      e.id,
-      `\`${e.folder}/${e.file}\``,
-      `\`${e.original}\``,
-      `${e.durationSec.toFixed(1)} s`,
-      e.frames === null ? '—' : String(e.frames),
-      e.fps.toFixed(2),
-      `${e.sizeMB.toFixed(1)} MB`,
-      `\`${e.sha256}\``,
-    ]);
-  return table(['#', 'ファイル', '元ファイル名', '尺', 'フレーム数', '平均 fps', 'サイズ', 'sha256（先頭 12）'], rows);
-}
-
 /** 旧プロジェクトの録画 */
 export function renderLegacyTable(file: RecordingsFile, characters: ReadonlyMap<number, CharacterData>): string {
   const rows = file.recordings
@@ -333,11 +316,11 @@ export function extractGeneratedSection(doc: string, name: string): string {
 
 const RECORDINGS_DOC_HEADER = `# 録画の一覧
 
-- **このファイルは生成する（手で書かない）**。録画は \`records/recordings/<録画 id>.json\` に 1 本 1 ファイルで置き、\`npm run records:table\` で作り直す（[design-stage20.md](../design-stage20.md) 3.5 節）。
+- **このファイルは生成する（手で書かない）**。録画は \`records/recordings/<録画 id>.json\` に 1 本 1 ファイルで置き、\`npm run records:check\` で作り直す（[design-stage20.md](../design-stage20.md) 3.5 節）。素性（尺・フレーム数・fps・サイズ・sha256）は録画の JSON にだけある。
 - 武器・属性・レアはキャラのデータから引く。\`—\` は記録が無い値。
 - 録画ごとの条件・写っているもの・注意（的・フレーム落ちなど）は、その録画の JSON の \`conditionNote\`（下の表の「条件」の列）。命名規約は [index.md](index.md)、撮影の手順は [protocol.md](protocol.md)、置き場所は [storage.md](storage.md)。`;
 
-/** plan/captures/recordings.md の全文（録画の一覧・旧プロジェクトの録画・素性の 3 つの表） */
+/** plan/captures/recordings.md の全文（録画の一覧・旧プロジェクトの録画の 2 つの表。素性は録画の JSON にだけ置く） */
 export function renderRecordingsDoc(file: RecordingsFile, characters: ReadonlyMap<number, CharacterData>): string {
   return [
     RECORDINGS_DOC_HEADER,
@@ -345,8 +328,6 @@ export function renderRecordingsDoc(file: RecordingsFile, characters: ReadonlyMa
     renderRecordingTable(file, characters),
     '## 旧プロジェクトの録画（参照のみ。移動しない）',
     renderLegacyTable(file, characters),
-    '## 素性（`node tools/captures/probe.ts` の出力）',
-    renderProvenanceTable(file),
   ]
     .join('\n\n')
     .concat('\n');

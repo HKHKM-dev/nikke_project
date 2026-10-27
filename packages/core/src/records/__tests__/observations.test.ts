@@ -40,6 +40,7 @@ import {
   buildTeamInput,
   compareValue,
   invalidReasonsOf,
+  renderOtherRows,
   renderResiduals,
   runObservations,
   validateObservations,
@@ -79,7 +80,12 @@ describe('records/observations', () => {
   it('matches plan/residuals.md (npm run records:check)', () => {
     const doc = readFileSync(RESIDUALS_PATH, 'utf8');
     const section = extractGeneratedSection(doc, 'residuals');
-    const expected = renderResiduals(residuals, observations, claimsByObservation(claims));
+    const expected = renderResiduals(
+      residuals,
+      observations,
+      claimsByObservation(claims),
+      new Map(loadVerifications().map((v) => [v.id, v.topic])),
+    );
     // prettier の対象外なので、生成の結果と 1 字まで同じ（plan/design-generated-table-width.md）
     expect(section).toBe(`\n\n${expected}\n\n`);
   });
@@ -1012,7 +1018,7 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
     expect(text).toContain('比べられない 0・失効 1。');
     expect(text).toContain('（失効: 読み違い）');
     expect(
-      renderResiduals([], [{ ...record, value: 12, unit: 'px', spread: { kind: 'ci95', low: 10, high: 14 } }]),
+      renderOtherRows([{ ...record, value: 12, unit: 'px', spread: { kind: 'ci95', low: 10, high: 14 } }]).join('\n'),
     ).toContain('| 12 px（95% 区間 10〜14） |');
     expect(invalidReasonsOf([invalid, record])).toEqual(new Map([['0047-02', '読み違い']]));
   });
