@@ -532,7 +532,7 @@ describe('編成（自動の条件）', () => {
     expect(a![2]!.normalDamage).toBeCloseTo(b![2]!.normalDamage, 6);
   });
 
-  it('uses the initial landing (中近) without the 3-minute mode, on the average-rate path of calc', () => {
+  it('uses the initial landing (中近) without the 3-minute mode, and matches the manual 中近 condition', () => {
     const calc = computeTeamDamage(input(team(true), enemy({ events: false })));
     expect(calc.landings).toEqual([{ start: 0, end: battleSecondsToFrames(180), landing: 'midNear', band: 'midNear' }]);
     const midNear: SlotCondition = { coreHitRate: 0.2281, distanceBonus: true, fullCharge: true, hitRate: 0.9963 };
@@ -540,7 +540,8 @@ describe('編成（自動の条件）', () => {
       input([slot(weapon('AR', { min: 25, max: 45 }, 1), false, { condition: midNear })], enemy({ events: false })),
     );
     const ar = computeTeamDamage(input([team(true)[0]!], enemy({ events: false })));
-    expect(ar.slots[0]!.segments.every((s) => s.triggerSource === 'average')).toBe(true);
+    // 一本化の段 A-1: calc もグループごとに射撃の列の発数を数える。着地点が 1 つなら手入力の同じ条件と同じ発数・同じ値
+    expect(ar.slots[0]!.segments.every((s) => s.triggerSource === 'shots')).toBe(true);
     expect(ar.totalDamage).toBeCloseTo(manual.totalDamage, 6);
   });
 

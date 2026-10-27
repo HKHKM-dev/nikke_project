@@ -1,7 +1,11 @@
-// Stage 5 / 6: sim（フレーム逐次）と calc（区間期待値）の整合。plan/design-stage6.md 6.4 節の 3 段で固定する。
+// Stage 5 / 6: sim（フレーム逐次）と calc（区間の集計）の整合。plan/design-stage6.md 6.4 節の 3 段で固定してきた:
 //   1. 厳密一致する量（区間分割・バフ・1 トリガー値・バーストスキル・フルバースト時間）
 //   2. 離散化誤差の上限（グループのトリガー数は「1 マガジン × 区間数」未満、枠 5%・編成 3%）
 //   3. 長時間での収束（calc は sim の長時間平均）
+// 一本化の段 A-1（plan/design-unify-sim-calc.md 5.4 節。2026-10-27）: calc も全グループを射撃の列から数えるので、calc と sim は
+// 通常攻撃の発数まで一致する（段 1 に足した）。段 2・3 は、平均レートの閉じた式（cadence.ts。2026-09-22 の射撃場の録画で較正）と
+// 共通のフレームループの射手（frame/shooter.ts）の独立した検算として残す: 「平均レート × 秒数」で置いた通常攻撃の合計（2026-10-27
+// までの calc の 'average' の経路と同じ値。averageRateTotal）と、射撃の列から数えた sim の値を比べる。
 // Stage 6 の持続バフは describe('with timed buffs') で扱う。
 import { describe, expect, it } from 'vitest';
 import { slotPieces } from './historyHelpers.ts';
@@ -13,7 +17,7 @@ import { simTeamResult } from '../sim/teamResult.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, TimedEffect } from '../skills/types.ts';
 import { computeTeamDamage } from '../calc/model.ts';
-import { type SlotCondition, type TeamSlotInput } from '../team.ts';
+import { type SlotCondition, type TeamSlotInput, type TeamSlotResult } from '../team.ts';
 import type { BurstStep, ShotParams, SkillRaw } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
 import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';
@@ -118,6 +122,17 @@ const team: TeamSlotInput[] = [
   ),
 ];
 
+/**
+ * 平均レートの検算の基準: 通常攻撃をグループごとに「常時分の平均レート（cadence）× 秒数 × 1 トリガーの値」で置いた枠の合計
+ * （バーストスキルと倍率ダメージは同じ値）。射撃に効く持続バフの無い編成でだけ意味がある（cadence は常時分の射撃バフまで）
+ */
+function averageRateTotal(c: TeamSlotResult): number {
+  const normal = c.segments.reduce((a, g) => a + c.cadence.triggersPerSecond * g.seconds * g.trigger.perTrigger, 0);
+  return normal + c.burst.totalDamage + c.skillHits.totalDamage;
+}
+
+const relDiff = (a: number, b: number) => Math.abs(a - b) / b;
+
 // Stage 5 / 6 のテストは固定 20 秒サイクルで書いてある（Stage 7 の退化テストを兼ねる）。動的サイクルは末尾の Stage 7 節
 function both(durationSeconds: number, burst: boolean, burstModel: BurstScheduleModel = 'fixed') {
   const input = { slots: team, enemy, durationSeconds, burst, burstModel };
@@ -152,6 +167,16 @@ describe('sim vs calc: quantities that must match exactly', () => {
     }
   });
 
+  it('count the same normal-attack triggers per group and give the same totals (一本化の段 A-1)', () => {
+    for (let i = 0; i < team.length; i++) {
+      const c = calc.slots[i]!;
+      expect(c.segments.every((g) => g.triggerSource === 'shots')).toBe(true);
+      expect(c.segments.map((g) => g.triggers)).toEqual(simGroupTotals(sim, i).map((g) => g.triggers));
+      expect(relDiff(sim.slots[i]!.totalDamage, c.totalDamage)).toBeLessThan(1e-9);
+    }
+    expect(relDiff(sim.totalDamage, calc.totalDamage)).toBeLessThan(1e-9);
+  });
+
   it('give identical burst skill totals and activation counts', () => {
     for (let i = 0; i < team.length; i++) {
       const s = sim.slots[i]!;
@@ -167,8 +192,8 @@ describe('sim vs calc: quantities that must match exactly', () => {
   });
 });
 
-describe('sim vs calc: discretization error bounds', () => {
-  it('without burst, trigger counts differ by less than one magazine per slot', () => {
+describe('frame loop vs average rate: discretization error bounds', () => {
+  it('without burst, trigger counts differ from rate × seconds by less than one magazine per slot', () => {
     const { sim, calc } = both(180, false);
     for (let i = 0; i < team.length; i++) {
       const s = sim.slots[i]!;
@@ -177,34 +202,37 @@ describe('sim vs calc: discretization error bounds', () => {
       expect(Math.abs(simIntervalTotals(s).nonFullBurst.triggers - expected)).toBeLessThanOrEqual(
         s.character.shot.maxAmmo,
       );
-      expect(Math.abs(s.totalDamage - c.totalDamage) / c.totalDamage).toBeLessThan(0.03);
+      expect(relDiff(s.totalDamage, averageRateTotal(c))).toBeLessThan(0.03);
     }
   });
 
   it('with burst, the 5-slot totals agree within 3% and every slot within 5%', () => {
     const { sim, calc } = both(180, true);
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
+    const averageTotal = calc.slots.reduce((a, c) => a + (c === null ? 0 : averageRateTotal(c)), 0);
+    expect(relDiff(sim.totalDamage, averageTotal)).toBeLessThan(0.03);
     for (let i = 0; i < team.length; i++) {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;
-      expect(Math.abs(s.totalDamage - c.totalDamage) / c.totalDamage, `slot ${i}`).toBeLessThan(0.05);
+      expect(relDiff(s.totalDamage, averageRateTotal(c)), `slot ${i}`).toBeLessThan(0.05);
       // グループのトリガー数は「1 マガジン × そのグループに含まれる区間数」を超えてずれない
       const groups = simGroupTotals(sim, i);
       c.segments.forEach((g, j) => {
         const bound = s.character.shot.maxAmmo * g.ranges.length;
-        expect(Math.abs(groups[j]!.triggers - g.triggers), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
+        const average = c.cadence.triggersPerSecond * g.seconds;
+        expect(Math.abs(groups[j]!.triggers - average), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
       });
     }
   });
 });
 
-describe('sim vs calc: convergence', () => {
+describe('frame loop vs average rate: convergence', () => {
   it(
     'the relative difference shrinks as the battle gets longer and is below 0.5% at 18,000 s',
     () => {
       const diffs = [180, 1800, 18000].map((d) => {
         const { sim, calc } = both(d, true);
-        return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
+        const averageTotal = calc.slots.reduce((a, c) => a + (c === null ? 0 : averageRateTotal(c)), 0);
+        return relDiff(sim.totalDamage, averageTotal);
       });
       expect(diffs[2]).toBeLessThan(0.005);
       expect(diffs[2]).toBeLessThanOrEqual(diffs[0]! + 1e-12);
@@ -270,7 +298,9 @@ describe('sim vs calc with timed buffs: quantities that must match exactly', () 
       expect(c.segments[1]!.seconds).toBeCloseTo(framesToGameSeconds(9 * H), 9);
       const groups = simGroupTotals(sim, i);
       expect(groups.map((g) => g.seconds)).toEqual(c.segments.map((g) => g.seconds));
+      expect(groups.map((g) => g.triggers)).toEqual(c.segments.map((g) => g.triggers));
     }
+    expect(relDiff(sim.totalDamage, calc.totalDamage)).toBeLessThan(1e-9);
   });
 
   it('put the buffs on the right slots', () => {
@@ -308,18 +338,20 @@ describe('sim vs calc with timed buffs: quantities that must match exactly', () 
   });
 });
 
-describe('sim vs calc with timed buffs: discretization error bounds', () => {
+describe('frame loop vs average rate with timed buffs: discretization error bounds', () => {
   it('stays within one magazine per segment and 5% / 3% on the totals', () => {
     const { sim, calc } = bothTimed(180);
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
+    const averageTotal = calc.slots.reduce((a, c) => a + (c === null ? 0 : averageRateTotal(c)), 0);
+    expect(relDiff(sim.totalDamage, averageTotal)).toBeLessThan(0.03);
     for (let i = 0; i < timedTeam.length; i++) {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;
-      expect(Math.abs(s.totalDamage - c.totalDamage) / c.totalDamage, `slot ${i}`).toBeLessThan(0.05);
+      expect(relDiff(s.totalDamage, averageRateTotal(c)), `slot ${i}`).toBeLessThan(0.05);
       const groups = simGroupTotals(sim, i);
       c.segments.forEach((g, j) => {
         const bound = s.character.shot.maxAmmo * g.ranges.length;
-        expect(Math.abs(groups[j]!.triggers - g.triggers), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
+        const average = c.cadence.triggersPerSecond * g.seconds;
+        expect(Math.abs(groups[j]!.triggers - average), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
       });
     }
   });
@@ -329,7 +361,8 @@ describe('sim vs calc with timed buffs: discretization error bounds', () => {
     () => {
       const diffs = [180, 1800, 18000].map((d) => {
         const { sim, calc } = bothTimed(d);
-        return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
+        const averageTotal = calc.slots.reduce((a, c) => a + (c === null ? 0 : averageRateTotal(c)), 0);
+        return relDiff(sim.totalDamage, averageTotal);
       });
       expect(diffs[2]).toBeLessThan(0.005);
     },
@@ -357,7 +390,9 @@ describe('sim vs calc on the dynamic cycle: quantities that must match exactly',
         c.burst.activations.map((a) => a.seconds),
       );
       expect(simSlot.burst.damage).toBeCloseTo(c.burst.totalDamage, 6);
+      expect(c.segments.map((g) => g.triggers)).toEqual(simGroupTotals(sim, i).map((g) => g.triggers));
     }
+    expect(relDiff(sim.totalDamage, calc.totalDamage)).toBeLessThan(1e-9);
   });
 
   it('bursts fewer times than the fixed 20 s cycle (every nike here has a 40 s cooldown)', () => {
@@ -373,18 +408,20 @@ describe('sim vs calc on the dynamic cycle: quantities that must match exactly',
   });
 });
 
-describe('sim vs calc on the dynamic cycle: discretization error bounds', () => {
+describe('frame loop vs average rate on the dynamic cycle: discretization error bounds', () => {
   it('stays within one magazine per segment and 5% / 3% on the totals', () => {
     const { sim, calc } = bothTimed(180, true, 'dynamic');
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
+    const averageTotal = calc.slots.reduce((a, c) => a + (c === null ? 0 : averageRateTotal(c)), 0);
+    expect(relDiff(sim.totalDamage, averageTotal)).toBeLessThan(0.03);
     for (let i = 0; i < timedTeam.length; i++) {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;
-      expect(Math.abs(s.totalDamage - c.totalDamage) / c.totalDamage, `slot ${i}`).toBeLessThan(0.05);
+      expect(relDiff(s.totalDamage, averageRateTotal(c)), `slot ${i}`).toBeLessThan(0.05);
       const groups = simGroupTotals(sim, i);
       c.segments.forEach((g, j) => {
         const bound = s.character.shot.maxAmmo * g.ranges.length;
-        expect(Math.abs(groups[j]!.triggers - g.triggers), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
+        const average = c.cadence.triggersPerSecond * g.seconds;
+        expect(Math.abs(groups[j]!.triggers - average), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
       });
     }
   });
@@ -394,7 +431,8 @@ describe('sim vs calc on the dynamic cycle: discretization error bounds', () => 
     () => {
       const diffs = [180, 1800, 18000].map((d) => {
         const { sim, calc } = bothTimed(d, true, 'dynamic');
-        return Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage;
+        const averageTotal = calc.slots.reduce((a, c) => a + (c === null ? 0 : averageRateTotal(c)), 0);
+        return relDiff(sim.totalDamage, averageTotal);
       });
       expect(diffs[2]).toBeLessThan(0.005);
     },
@@ -403,7 +441,7 @@ describe('sim vs calc on the dynamic cycle: discretization error bounds', () => 
 });
 
 // Stage 13: 育成入力の効果層（OL・キューブ・コレクション）を付けた編成（plan/design-stage12.md 3.4 節）。
-// 常時バフの合成だけなので、区間・1 トリガー値は厳密一致し、差は通常攻撃のトリガー数の期待値だけ（Stage 11 までと同じ範囲）
+// 常時バフの合成だけなので、区間・1 トリガー値は厳密一致し、平均レート（常時分の射撃バフ込み）との差は離散化だけ
 const effect = (stat: BuildEffect['stat'], value: number): BuildEffect => ({
   source: { kind: 'overload', name: { ja: '', en: '' }, level: 15 },
   stat,
@@ -443,15 +481,18 @@ describe('sim vs calc with build effects (Stage 13)', () => {
       expect(c.passiveBuffs).toEqual(sim.slots[i]!.passiveBuffs);
       expect(c.buildEffects).toEqual(sim.slots[i]!.buildEffects);
       expect(c.buildEffects).toBe(buildTeam[i]!.buildEffects);
+      expect(c.segments.map((g) => g.triggers)).toEqual(simGroupTotals(sim, i).map((g) => g.triggers));
     }
+    expect(relDiff(sim.totalDamage, calc.totalDamage)).toBeLessThan(1e-9);
   });
 
-  it('stays within 5% per slot and 3% on the total, and beats the same team without effects', () => {
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
+  it('stays within 5% per slot and 3% on the total of the average rate, and beats the same team without effects', () => {
+    const averageTotal = calc.slots.reduce((a, c) => a + (c === null ? 0 : averageRateTotal(c)), 0);
+    expect(relDiff(sim.totalDamage, averageTotal)).toBeLessThan(0.03);
     for (let i = 0; i < buildTeam.length; i++) {
       const s = sim.slots[i]!;
       const c = calc.slots[i]!;
-      expect(Math.abs(s.totalDamage - c.totalDamage) / c.totalDamage, `slot ${i}`).toBeLessThan(0.05);
+      expect(relDiff(s.totalDamage, averageRateTotal(c)), `slot ${i}`).toBeLessThan(0.05);
     }
     const plain = computeTeamDamage({ ...input, slots: team });
     expect(calc.totalDamage).toBeGreaterThan(plain.totalDamage);
@@ -479,20 +520,21 @@ describe('simTeamResult: sim in the TeamResult shape', () => {
     }
   });
 
-  it('matches calc except for the normal-attack trigger counts', () => {
+  it('matches calc in every group (一本化の段 A-1: the trigger counts too)', () => {
     expect(view.schedule).toEqual(calc.schedule);
     expect(view.burstSummary).toEqual(calc.burstSummary);
     for (let i = 0; i < team.length; i++) {
       const v = view.slots[i]!;
       const c = calc.slots[i]!;
-      expect(v.segments.map((g) => [g.ranges, g.seconds, g.fullBurst, g.trigger.perTrigger])).toEqual(
-        c.segments.map((g) => [g.ranges, g.seconds, g.fullBurst, g.trigger.perTrigger]),
+      expect(v.segments.map((g) => [g.ranges, g.seconds, g.fullBurst, g.trigger.perTrigger, g.triggers])).toEqual(
+        c.segments.map((g) => [g.ranges, g.seconds, g.fullBurst, g.trigger.perTrigger, g.triggers]),
       );
       expect(v.burst).toEqual(c.burst);
       expect(v.skillHits).toEqual(c.skillHits);
       expect(v.cadence).toEqual(c.cadence);
       expect(v.skillSupport).toEqual(c.skillSupport);
       expect(v.segments.every((g) => g.triggerSource === 'shots')).toBe(true);
+      expect(relDiff(v.totalDamage, c.totalDamage)).toBeLessThan(1e-9);
     }
   });
 });

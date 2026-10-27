@@ -47,6 +47,7 @@
 - 1 行の形: 題名（起票日）→ 状態・設計書（あれば）・残りの行き先（backlog の行）。題名は変えない（検証記録・設計書が題名で指す）。
 - 2026-10-25 までに閉じた課題（完了・打ち切り）は [roadmap-archive.md](roadmap-archive.md)「今後の課題」にある。
 
+- sim と calc の一本化とレスポンス保証（2026-10-27 起票）→ 承認（2026-10-27）。段 A-1（calc は全グループを射撃の列から数える）は実装した。残りは backlog 5 節: [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節
 - 語彙はあるのに撮っていない効果の撮影（2026-10-26 起票）→ 完了（2026-10-27。フォルクヴァンの回復の定義は backlog 6 節）: [design-skill-unrecorded.md](design-skill-unrecorded.md)
 - エレグ（500）の定義（2026-10-26 起票）→ 段 1（S2 のターゲット出現時のゲージ 100%）・段 2（バースト）・段 3 の S2（ブームインストール中の攻撃力▲）は実装した。S1 の分配ダメージは値の式が分からず未対応（別の検証で乗数を分ける）: [design-elegg.md](design-elegg.md)・[design-elegg-s3.md](design-elegg-s3.md)
 - 録画の番号を 4 桁にそろえる（2026-10-25 起票）→ 完了（2026-10-25）: [design-recording-id-4digit.md](design-recording-id-4digit.md)
@@ -57,7 +58,7 @@
 - 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: [design-stage22.md](design-stage22.md) 8 節。残りは backlog 3 節
 - 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは backlog 1.2 節
 - ヘルムの残り（2026-09-28 起票）→ 一部完了: [design-helm.md](design-helm.md)・[design-heal-vocabulary.md](design-heal-vocabulary.md)。backlog の行（2-12）は閉じた
-- calc のハイブリッド（[design-stage10.md](design-stage10.md) 5 節）の限界（2026-09-28 起票）→ 保留: [design-calc-hybrid.md](design-calc-hybrid.md) 10 節。見直しは backlog 4-5
+- calc のハイブリッド（[design-stage10.md](design-stage10.md) 5 節）の限界（2026-09-28 起票）→ 完了（2026-10-27。全グループを射撃の列から数える形に一本化。[design-unify-sim-calc.md](design-unify-sim-calc.md)）: [design-calc-hybrid.md](design-calc-hybrid.md) 10 節
 - SG の命中率（2026-10-01）→ 一部完了: [design-sg-hit-rate.md](design-sg-hit-rate.md)。残りは backlog 2-1
 - 命中率▲が弾丸命中率に効く式（2026-10-03 起票）→ 一部完了: [design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)。残りは backlog 2-1
 - バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 一部完了: まとめは [burst-effect-delay-candidates.md](burst-effect-delay-candidates.md)「まとめ」、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)・[design-burst-effect-window-end.md](design-burst-effect-window-end.md)。残りは backlog 2-4

@@ -173,7 +173,9 @@ describe('ウンファ：TU のカモフラージュ（付与をまたぐ和集�
   });
 });
 
-describe('calc の射撃の数え方（自分の射撃の回数で開いた状態の窓。plan/design-named-state-impl.md 1.6 節）', () => {
+describe('calc の射撃の数え方（一本化の段 A-1。plan/design-unify-sim-calc.md 5.1 節）', () => {
+  // 2026-10-27 まで（plan/design-named-state-impl.md 1.6 節）: 自分の射撃の回数で開いた状態の窓を持つ枠は全グループを射撃の列から
+  // 数え、持たない枠は窓の外を平均レートで置いた。いまはどの枠もどのグループも射撃の列から数える
   // バーストの受けるダメージ▲（weaponChangeShot）を外し、自分の射撃の回数で開く窓をカモフラージュのフルチャージの付与だけにする
   const withoutBurstTaken = () => {
     const raw = structuredClone(rawDefinition(EUNHWA));
@@ -193,10 +195,10 @@ describe('calc の射撃の数え方（自分の射撃の回数で開いた状�
     expect(sources(withoutBurstTaken())).toEqual(new Set(['shots']));
   });
 
-  it('keeps the average rate outside the windows when no grant counts its own shots', () => {
+  it('counts every group from the shots also when no grant counts its own shots', () => {
     const raw = withoutBurstTaken();
     raw.skills.skill1!.effects = raw.skills.skill1!.effects.filter((x) => typeof x.trigger === 'string');
-    expect(sources(raw)).toContain('average');
+    expect(sources(raw)).toEqual(new Set(['shots']));
   });
 });
 

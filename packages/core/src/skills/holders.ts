@@ -1844,7 +1844,8 @@ export function activeItemsAt(
 
 /**
  * 段 D の 3（ルドミラ：ウィンターオーナー編。plan/design-ludmilla-wo.md 2.5 節）: 枠 slotIndex に、枠自身の射撃の回数で開いた件があるか
- * （calc の射撃の数え方。calc/model.ts）。timed（強化を含む）は自分の射撃の回数のトリガー、状態は自分の射撃の回数のトリガーの付与が
+ * （2026-10-27 までの calc の射撃の数え方が読んだ。一本化の段 A-1 で calc は全グループを射撃の列から数えるようになり、いまは履歴の
+ * 形を確かめるテストだけが使う）。timed（強化を含む）は自分の射撃の回数のトリガー、状態は自分の射撃の回数のトリガーの付与が
  * 発火を足した件（shotCount）。区間に足す件だけを見る（状態だけの stat は除く）。敵の件は、効果の対象の味方の枠の件として見る
  */
 export function hasOwnShotCountItem(

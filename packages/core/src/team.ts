@@ -210,11 +210,11 @@ export type SlotSegmentResult = {
   passiveEffects: AppliedEffect[];
   timedEffects: AppliedTimedEffect[];
   trigger: TriggerDamage;
-  /** calc: triggersPerSecond × seconds（小数）か射撃の列の発数（triggerSource）/ sim: 実際に撃った数（整数） */
+  /** 1 パス目の射撃の列のうち、この区間に入る発数（整数）。一本化の段 A-1 から calc も sim と同じ数 */
   triggers: number;
   /**
-   * Stage 10: トリガー数の出どころ。'average' = 平均レート × 秒数（常時分の射撃バフは平均レートに畳み込む）、
-   * 'shots' = 持続の射撃バフ（最大装弾数・リロード速度・チャージ速度の timed）が掛かっているので、射撃の列の発数を数えた
+   * Stage 10: トリガー数の出どころ。'shots' = 1 パス目の射撃の列の発数を数えた。'average'（平均レート × 秒数）は、一本化の段 A-1
+   * （plan/design-unify-sim-calc.md 5.1 節）で calc からも無くなり、いまはどのモデルも出さない（型は段 A-2 で消す）
    */
   triggerSource: 'average' | 'shots';
   damage: number;
