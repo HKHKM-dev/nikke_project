@@ -7,11 +7,9 @@
 // 雪子が撃つ（plan/design-persona.md 9.1 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { runSimulation } from '../sim/engine.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { MAX_SKILL_LEVELS, isStateContent } from '../skills/resolve.ts';
 import { appliedFrames } from '../skills/timeline.ts';
@@ -258,17 +256,5 @@ describe('追撃とバトンタッチ（ココア + ユニ + クイーン（真�
     ]);
     expect(stateItemsOf(fire)).toEqual([]);
     expect(piecesOf(fire).some((w) => isStateContent(w.effect))).toBe(false);
-  });
-
-  it('agrees between sim and calc', () => {
-    const sim = runSimulation(wind);
-    const calc = runTeam(wind);
-    expect(sim.schedule).toEqual(calc.schedule);
-    wind.slots.forEach((_, i) => {
-      expect(sim.slots[i]!.skillHits.damage).toBe(calc.slots[i]!.skillHits.totalDamage);
-      const s = sim.slots[i]!.totalDamage;
-      const c = calc.slots[i]!.totalDamage;
-      expect(Math.abs(s - c) / c).toBeLessThan(0.05);
-    });
   });
 });

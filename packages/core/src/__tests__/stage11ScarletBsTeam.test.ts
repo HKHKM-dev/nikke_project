@@ -1,11 +1,10 @@
-// Stage 11 紅蓮BS 編: 紅蓮：ブラックシャドウ（225）を含む編成の射撃の刻み・循環の段・1 発の値・sim と calc の整合
+// Stage 11 紅蓮BS 編: 紅蓮：ブラックシャドウ（225）を含む編成の射撃の刻み・循環の段・1 発の値・射撃の列のグループ分け
 // （plan/design-stage11-scarlet-bs.md 7.3〜7.5 節）。実測値は録画 0046（単騎）・47（ラム + デルタ + 紅蓮BS（操作））、2026-09-24。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { stanceFrames } from '../frame/firing.ts';
 import { countShotsInRanges, planShots } from '../frame/shots.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
@@ -222,42 +221,15 @@ describe('録画 0046・0047 の実測（1 発の数値、2026-09-24）', () => 
   });
 });
 
-describe.each(Object.entries(TEAMS))('sim vs calc (7.4): %s', (_name, input) => {
-  const sim = runSimulation(input);
+describe.each(Object.entries(TEAMS))('編成 (7.4): %s', (_name, input) => {
   const calc = runTeam(input);
   const plan = planTeamRun(input);
-
-  it('agree exactly on the schedule, the instants, the skill hits and the shot-counted groups', () => {
-    expect(sim.schedule).toEqual(calc.schedule);
-    expect(sim.instants).toEqual(plan.instants);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!;
-      const c = calc.slots[i]!;
-      expect(s.skillHits.damage).toBe(c.skillHits.totalDamage);
-      expect(s.burst.damage).toBe(c.burst.totalDamage);
-      const groups = simGroupTotals(sim, i);
-      c.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
-    });
-  });
 
   it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
     input.slots.forEach((_, i) => {
       const frames = plan.shots[i]!.frames;
       const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
       expect(total).toBe(frames.length);
-    });
-  });
-
-  it('stays within 5% per slot and 3% for the team', () => {
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!.totalDamage;
-      const c = calc.slots[i]!.totalDamage;
-      expect(Math.abs(s - c) / c).toBeLessThan(0.05);
     });
   });
 });

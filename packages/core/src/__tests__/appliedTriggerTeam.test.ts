@@ -7,7 +7,6 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { hasOwnShotCountItem, itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { appliedFrames } from '../skills/timeline.ts';
@@ -284,27 +283,9 @@ const TEAMS: Record<string, TeamInput> = {
   ),
 };
 
-describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, input) => {
-  const sim = runSimulation(input);
+describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const calc = runTeam(input);
   const plan = planTeamRun(input);
-
-  it('agree exactly on the schedule, the instants and the shot-counted groups', () => {
-    expect(sim.schedule).toEqual(calc.schedule);
-    expect(sim.instants).toEqual(plan.instants);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!;
-      const c = calc.slots[i]!;
-      expect(s.skillHits.damage).toBe(c.skillHits.totalDamage);
-      expect(s.burst.damage).toBe(c.burst.totalDamage);
-      const groups = simGroupTotals(sim, i);
-      c.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
-    });
-  });
 
   it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
     input.slots.forEach((_, i) => {
@@ -312,10 +293,5 @@ describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, input) => {
       const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
       expect(total).toBe(frames.length);
     });
-  });
-
-  it('counts Torb by its shots in calc, so the totals agree with sim', () => {
-    expect(calc.slots[0]!.segments.every((g) => g.triggerSource === 'shots')).toBe(true);
-    expect(calc.slots[0]!.totalDamage).toBeCloseTo(sim.slots[0]!.totalDamage, 3);
   });
 });

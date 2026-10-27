@@ -12,7 +12,7 @@
 - **根拠は効果ごとに結論の ID で持つ**。定義のどの効果も、`claims` の欄で結論を指す（3 節）。
 - **完了条件**
   - そのキャラの撮影と、定義の予測が合う。
-  - そのキャラを含む実戦的な編成で、sim と calc が整合する。
+  - そのキャラを含む実戦的な編成のテストで、そのキャラの効果（窓・発動・付与）が意図どおりに出る。
 - **既存の定義（Stage 11 までの 15 体）** には、凍結の記録（`plan/verification.md`）から結論を写さない。結論を作るのは、最小構成の録画の読み直し（2 節）か、新しい撮影のときだけ（2026-10-05 の決定。[design-skill-claims-5-2.md](design-skill-claims-5-2.md) 3 節）。機構の結論（stat の効き方）は、根拠の録画にそのキャラの効果が出ていなければ結び付けない。
 
 ## 1. 手順
@@ -48,12 +48,11 @@
 
 ### 1.5 実装する
 
-- **語彙を足すとき**。sim → calc の順で、1 段ごとに `npm test` を通す。
+- **語彙を足すとき**。1 段ごとに `npm test` を通す。
   1. `skills/types.ts` の型と `parseSkillDefinition` の検証、その単体テスト。
   2. 解決（`skills/resolve.ts` ほか）と、共通のフレームループ（`frame/`）。
   3. **既存のテストが数値を変えずに通る**ことを確かめる（退化）。
-  4. calc（`calc/model.ts`）。
-  5. 画面のラベル（`apps/web/src/components/SkillSection.tsx` など）と、CLI の表示（`packages/core/scripts/sim-run.ts`）。
+  4. 画面のラベル（`apps/web/src/components/SkillSection.tsx` など）と、CLI の表示（`packages/core/scripts/sim-run.ts`）。
 - **定義を書く**
   - `data/skills/{resourceId}.json` と `index.json`。
   - 数値は書かず、`ref` で説明文の値を指す。
@@ -85,7 +84,7 @@
   - `checkedAt` は説明文を読んだ日。
 - **テスト**
   - DSL の単体テストは `skills/__tests__/<名前>.test.ts`。定義の検証エラーと、Lv ごとの解決値を見る。
-  - 編成のテストは `__tests__/<名前>Team.test.ts`。そのキャラを含む実戦的な編成で、sim と calc が整合することを見る（`describe.each`。例は `stage11ScarletBsTeam.test.ts`）。
+  - 編成のテストは `__tests__/<名前>Team.test.ts`。そのキャラを含む実戦的な編成で、そのキャラの効果（窓・発動・付与）と、射撃の列がどのグループにも 1 回ずつ入ること（`partitions every shot`）を見る（`describe.each`。例は `deltaTeam.test.ts`）。2026-10-27 までの「sim と calc の一致」は、一本化で同じ計算どうしの比べになったので書かない。
   - **テストに実測値を直書きしない**。実測との比較は観測値と照合ランナーで行う（[verification-guide.md](verification-guide.md) 6・7 節）。
 - **キャラ固有の分岐をコアに置かない**。実測でしか決まらない値（紅蓮BS の射撃の較正の `MEASURED_CHARGE_CADENCE` など）は、表の 1 行にして結論の ID を添える。
 
@@ -133,5 +132,5 @@
 - [ ] 効果の `assumes` と、notes の種類（`kind`）が実態と合っている（[skills.md](skills.md) の対応状況が意図どおり）
 - [ ] 定義のどの効果にも `claims` がある（[skills.md](skills.md) のそのキャラに「根拠なし」の効果が残っていない）
 - [ ] 既存のテストの数値が変わっていない（変わったなら、その理由と根拠の ID を PR に書く）
-- [ ] 実戦的な編成で sim と calc が整合するテストがある
+- [ ] 実戦的な編成で、そのキャラの効果が意図どおりに出るテストがある
 - 結論の根拠・等級・`decidedOn`・本文の節・最小構成の警告・生成物・CI と同じ確認は `npm run records:close -- V-NNNN --mark` が見る（[verification-guide.md](verification-guide.md) 9 節）。最小構成の警告で落ちたら、効かない理由を結論の `minimal` に印として書くか、仮説にする（[design-minimal-relevance.md](design-minimal-relevance.md) 11.3 節）

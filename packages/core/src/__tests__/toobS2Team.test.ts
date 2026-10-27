@@ -1,5 +1,5 @@
 // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2・1.3 節）: 攻撃速度▲（attackSpeed）と、状態の間だけ効く常時の効果（while）。
-// トーブ（192・宝物の段階 3）の S2 と、ソルジャーF.A.（301・SG）の編成（V-0458 の録画 0510〜0512。C-0599〜C-0602）、sim と calc の整合
+// トーブ（192・宝物の段階 3）の S2 と、ソルジャーF.A.（301・SG）の編成（V-0458 の録画 0510〜0512。C-0599〜C-0602）、射撃の列のグループ分け
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
@@ -15,7 +15,6 @@ import {
 import { firingParams, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { variantDefinition } from '../records/sensitivity.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { whileItems, type HeldOrigin } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveWhileEffects } from '../skills/resolve.ts';
 import { applyTreasure, type TreasurePhase } from '../skills/treasure.ts';
@@ -251,20 +250,13 @@ describe('トーブ（宝物の段階 3）+ ソルジャーF.A.', () => {
   });
 });
 
-describe('sim vs calc: トーブ（宝物の段階 3）+ ソルジャーF.A.', () => {
+describe('編成: トーブ（宝物の段階 3）+ ソルジャーF.A.', () => {
   const TEAM = team(3);
-  const sim = runSimulation(TEAM);
   const calc = runTeam(TEAM);
   const plan = planTeamRun(TEAM);
 
-  it('agree on the shot-counted groups and partition every shot into one group', () => {
+  it('partitions every shot into exactly one group', () => {
     TEAM.slots.forEach((_, i) => {
-      const groups = simGroupTotals(sim, i);
-      calc.slots[i]!.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
       const frames = plan.shots[i]!.frames;
       const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
       expect(total).toBe(frames.length);

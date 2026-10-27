@@ -1,5 +1,5 @@
 // ミサト（833）を含む編成: S1「射撃マニュアル」のスタック（60 発ごとに自分に命中率 5.04%▲・3 スタック・5 秒）が区間の N に入り、
-// 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0183・C-0184。持続の▲の入れ方は C-0170）と、sim と calc の整合。V-0110。
+// 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0183・C-0184。持続の▲の入れ方は C-0170）と、射撃の列のグループ分け。V-0110。
 // バーストの味方全体の持続回復（1 秒間隔・5 秒間維持）は、付いた時に 1 回だけ回復を起こす（C-0646。仮説）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -10,7 +10,7 @@ import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { coreHitRateWithHitRateUp, landingPartsWith } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
+import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -60,7 +60,7 @@ const SOLO: TeamInput = {
   controlledSlot: 0,
 };
 // 実戦寄り（リター + ミサト + デルタ + アリス + モダニア）。手入力の条件とバーストあり。クラウンはミサトが居なくても
-// sim と calc の差が 5% を超える（クラウン側の差）ので入れない
+// 2026-10-27 までの calc との差が 5% を超えた（クラウン側の差）ので入れていない
 const PRACTICAL: TeamInput = {
   slots: [
     fixedSlot(82, false),
@@ -152,37 +152,15 @@ describe.each([
   ['ミサト単騎（V-0110 の撮影の条件）', SOLO],
   ['実戦寄り（リター + ミサト + デルタ + アリス + モダニア）', PRACTICAL],
   ['バーストの持続回復（ミサト + デルタ + アスカ）', BURST_HEAL],
-] as const)('sim vs calc: %s', (_name, input) => {
-  const sim = runSimulation(input);
+] as const)('編成: %s', (_name, input) => {
   const calc = runTeam(input);
   const plan = planTeamRun(input);
-
-  it('agree exactly on the schedule and the shot-counted groups', () => {
-    expect(sim.schedule).toEqual(calc.schedule);
-    input.slots.forEach((_, i) => {
-      const groups = simGroupTotals(sim, i);
-      calc.slots[i]!.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
-    });
-  });
 
   it('partitions every shot into exactly one group', () => {
     input.slots.forEach((_, i) => {
       const frames = plan.shots[i]!.frames;
       const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
       expect(total).toBe(frames.length);
-    });
-  });
-
-  it('stays within 5% per slot and 3% for the team', () => {
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!.totalDamage;
-      const c = calc.slots[i]!.totalDamage;
-      expect(Math.abs(s - c) / c).toBeLessThan(0.05);
     });
   });
 });

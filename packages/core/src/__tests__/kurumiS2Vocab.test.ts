@@ -6,7 +6,6 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { runTeam } from './runTeam.ts';
 import { dotActiveSpans, dotTickFrames } from '../frame/dot.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
@@ -198,15 +197,12 @@ describe.each([
     expect(none.skillHits.filter((h) => h.slotIndex === 0 && h.effect.source.skill === 'skill2')).toHaveLength(0);
   });
 
-  it('adds the same additional damage in sim and calc', () => {
+  it('adds the additional damage without changing the first pass', () => {
     const base = planTeamRun(teamWith(null));
     // S2 を足しても 1 パス目（射撃・時刻表）は変わらない
     expect(plan.shots[0]!.frames).toEqual(base.shots[0]!.frames);
     expect(plan.schedule!.fullBurstWindows).toEqual(base.schedule!.fullBurstWindows);
-    const sim = runSimulation(input).totalDamage - runSimulation(teamWith(null)).totalDamage;
-    const calc = runTeam(input).totalDamage - runTeam(teamWith(null)).totalDamage;
-    expect(sim).toBeGreaterThan(0);
-    expect(calc).toBeCloseTo(sim, 0);
+    expect(runSimulation(input).totalDamage).toBeGreaterThan(runSimulation(teamWith(null)).totalDamage);
   });
 });
 

@@ -7,7 +7,6 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { runSimulation } from '../sim/engine.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { MAX_SKILL_LEVELS, isStateContent } from '../skills/resolve.ts';
 import { activeItemsAt, itemsOf } from '../skills/holders.ts';
@@ -161,15 +160,6 @@ describe('ウンファ：TU のカモフラージュ（付与をまたぐ和集�
     const ups = plan.timeline.segments.map((s) => s.slots[e]!.buffs.trueDamage);
     expect(Math.max(...ups)).toBeCloseTo(0.4224, 12);
     expect(ups.every((v) => v === 0 || Math.abs(v - 0.4224) < 1e-12)).toBe(true);
-  });
-
-  it('agrees between sim and calc', () => {
-    const sim = runSimulation(input);
-    const calc = runTeam(input);
-    expect(sim.schedule).toEqual(calc.schedule);
-    expect(Math.abs(sim.slots[e]!.totalDamage - calc.slots[e]!.totalDamage) / calc.slots[e]!.totalDamage).toBeLessThan(
-      0.05,
-    );
   });
 });
 

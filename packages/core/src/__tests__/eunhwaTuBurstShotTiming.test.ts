@@ -3,7 +3,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { hexagonFrameOf } from '../burst/schedule.ts';
-import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -114,14 +113,6 @@ describe('使用武器変更の最初の発（1 パス目）', () => {
 
   it('keeps the charge weapon wait without the table (25f after the hexagon change)', () => {
     for (const s of firstShotsOf(withoutTable)) expect(s.delay).toBe(25);
-  });
-
-  it('shares the shots between sim and calc', () => {
-    const input = team(withTable);
-    const sim = runSimulation(input);
-    const calc = runTeam(input);
-    expect(calc.schedule?.activations).toEqual(sim.schedule?.activations);
-    expect(sim.shots[1]!.weaponChangeShotFrames).toEqual(planTeamRun(input).shots[1]!.weaponChangeShotFrames);
   });
 });
 

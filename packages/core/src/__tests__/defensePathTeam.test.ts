@@ -1,6 +1,6 @@
 // 2 段目の段 7（plan/design-skill-stage7.md）: 防御力の経路。枠の防御力（バフ前。defenceOverride とスペック固定）、防御力▲（stat defense）、
 // 対象の絞り込み「自分と自分より最終防御力が低い味方」（targetDefense: lowerThanSelf。アニス：スター（17）の S2 の発射体爆発ダメージ▲。
-// C-0587・C-0588）。撮影の見込みの編成（2.2 節の録画 A・B）と録画 0163 の編成の対象の枠、sim と calc の整合。論点 4 の続き: 味方の
+// C-0587・C-0588）。撮影の見込みの編成（2.2 節の録画 A・B）と録画 0163 の編成の対象の枠、射撃の列のグループ分け。論点 4 の続き: 味方の
 // 防御力▲ も比べに入る（デルタ（20）の S2 を間接の notes から効果にした。C-0589。録画 0486 でデルタが外れ、録画 0488 で入る）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -16,7 +16,7 @@ import {
 } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { METRICS } from '../records/observations.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
+import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -384,27 +384,9 @@ describe.each([
   ['録画 B の編成（対照）', CONTROL],
   ['録画 0163 の編成', REC163],
   ['録画 B の編成（画面の既定の条件。防御力▲ が切れた回あり）', WAITING],
-])('sim vs calc: %s', (_name, input) => {
-  const sim = runSimulation(input);
+])('編成: %s', (_name, input) => {
   const calc = runTeam(input);
   const plan = planTeamRun(input);
-
-  it('agree exactly on the schedule, the instants and the shot-counted groups', () => {
-    expect(sim.schedule).toEqual(calc.schedule);
-    expect(sim.instants).toEqual(plan.instants);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!;
-      const c = calc.slots[i]!;
-      expect(s.skillHits.damage).toBe(c.skillHits.totalDamage);
-      expect(s.burst.damage).toBe(c.burst.totalDamage);
-      const groups = simGroupTotals(sim, i);
-      c.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
-    });
-  });
 
   it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
     input.slots.forEach((_, i) => {
