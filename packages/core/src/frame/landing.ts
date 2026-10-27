@@ -374,6 +374,26 @@ export function landingPartsWith(
 }
 
 /**
+ * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 即着弾に替えた使用武器の変更（ChangedWeapon.targetRowKey）が効いている区間の
+ * 配分。条件のコア命中率を、的の表の coreHitRate.weaponChanges の行（着地点の id → 帯 → all）に替える。行が無い・null、着地点の無い
+ * 配分（手入力）はそのまま。命中率▲は掛けない（使い手のいる変更の行は 1 で、▲の効き方を確かめていない）
+ */
+export function weaponChangeParts(
+  enemy: EnemyInput,
+  parts: readonly LandingPart[],
+  rowKey: string | undefined,
+): readonly LandingPart[] {
+  if (rowKey === undefined) return parts;
+  const row = enemy.target?.coreHitRate.weaponChanges?.[rowKey];
+  if (row === undefined || row === null) return parts;
+  return parts.map((p) => {
+    if (p.landing === null) return p;
+    const rate = row[p.landing.id] ?? row[p.landing.band] ?? row.all;
+    return rate === undefined ? p : { ...p, condition: { ...p.condition, coreHitRate: rate } };
+  });
+}
+
+/**
  * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2 節）: 配分の 1 発のコアの命中の期待値
  * （Σ w × 弾丸命中率 × コア命中率）。敵のコアの有無は見ない（1 パス目が掛ける）
  */

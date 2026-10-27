@@ -28,6 +28,7 @@ import {
   type BuffTarget,
   type AppliedTrigger,
   type FullStackTrigger,
+  type WeaponChangeEndTrigger,
   type BasicBurstStep,
   type BuffTrigger,
   type Amplifies,
@@ -66,7 +67,13 @@ export type ResolvedTrigger =
   | { count: EventCountKind; atLeast: number }
   | TimerTrigger
   | AppliedTrigger
-  | FullStackTrigger;
+  | FullStackTrigger
+  | WeaponChangeEndTrigger;
+
+/** 2 段目の段 11: 使用武器の変更の終わりのきっかけ（{ weaponChangeEnd }）か */
+export function isResolvedWeaponChangeEnd(t: ResolvedTrigger): t is WeaponChangeEndTrigger {
+  return typeof t === 'object' && 'weaponChangeEnd' in t;
+}
 
 /** 2 段目の段 3: フルスタックの消費のきっかけ（{ fullStack }）か */
 export function isResolvedFullStack(t: ResolvedTrigger): t is FullStackTrigger {
@@ -890,6 +897,8 @@ export type ChangedWeaponOverrides = {
   /** フルチャージダメージ（倍率。3 = 300%） */
   fullChargeDamage?: number;
   maxAmmo?: number;
+  /** 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 即着弾でチャージしない武器にする（instantFire） */
+  instantFire?: boolean;
 };
 
 /** 変更後の武器の ShotParams（WEAPON_CHANGE_CORE と、スピンアップなし = rateOfFire と endRateOfFire を同じにする） */
@@ -909,6 +918,10 @@ export function changedWeaponShot(
     ...(overrides.chargeTime !== undefined ? { chargeTime: overrides.chargeTime } : {}),
     ...(overrides.fullChargeDamage !== undefined ? { fullChargeDamage: overrides.fullChargeDamage } : {}),
     ...(overrides.maxAmmo !== undefined ? { maxAmmo: overrides.maxAmmo } : {}),
+    // 2 段目の段 11: 即着弾でチャージしない（チャージ時間 0・押下型・Instant。飛ぶ弾の欄は外す）
+    ...(overrides.instantFire === true
+      ? { chargeTime: 0, fullChargeDamage: 1, inputType: 'DOWN', fireType: 'Instant', projectile: undefined }
+      : {}),
   };
 }
 
@@ -921,9 +934,16 @@ function resolveWeaponChange(
   effectIndex: number,
 ): ResolvedTimedEffect {
   const skill = character.skills[slot];
-  const change = character.burstSkill.changeWeapon;
-  if (change === undefined || change === null) {
-    throw new RangeError(`character ${character.resourceId}: weaponChange needs burstSkill.changeWeapon (CDN data)`);
+  // 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: CDN に変更後のレートが無い変更は、定義の即値（rateOfFire。録画で読む）
+  const cdn = slot === 'burst' ? character.burstSkill.changeWeapon : undefined;
+  if (cdn != null && effect.rateOfFire !== undefined) {
+    throw new RangeError(`skill ${skill.id}: rateOfFire is given by CDN (burstSkill.changeWeapon); do not write it`);
+  }
+  const rateOfFire = cdn?.rateOfFire ?? effect.rateOfFire;
+  if (rateOfFire === undefined) {
+    throw new RangeError(
+      `character ${character.resourceId}: weaponChange needs burstSkill.changeWeapon (CDN data) or rateOfFire`,
+    );
   }
   const damage = skillValue(skill, effect.damageRef, level) / 100;
   const hits = effect.hitsPerShot ?? 1;
@@ -942,6 +962,7 @@ function resolveWeaponChange(
     }
     overrides.maxAmmo = n;
   }
+  if (effect.instantFire === true) overrides.instantFire = true;
   const untilEmpty = effect.maxAmmoRef !== undefined;
   const r: ResolvedTimedEffect = {
     source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -952,9 +973,11 @@ function resolveWeaponChange(
     weapon: {
       id: `${character.resourceId}.${slot}.${effectIndex}`,
       hits,
-      shot: changedWeaponShot(character.shot, damage, change.rateOfFire, hits, overrides),
+      shot: changedWeaponShot(character.shot, damage, rateOfFire, hits, overrides),
       ...(effect.trueDamage ? { trueDamage: true as const } : {}),
       ...(effect.projectileExplosion ? { projectileExplosion: true as const } : {}),
+      ...(effect.firstShotDelayFrames !== undefined ? { firstShotDelayFrames: effect.firstShotDelayFrames } : {}),
+      ...(effect.instantFire ? { targetRowKey: `${character.resourceId}:${slot}` } : {}),
     },
     trigger: resolveTrigger(effect.trigger, skill, level),
     durationFrames: untilEmpty ? 0 : gameSecondsToFrames(durationSecondsOf(effect, skill, level)),
@@ -1013,7 +1036,8 @@ export function resolveInstant(
         effect.kind !== 'cooldownReduction' &&
         effect.kind !== 'ammoRefill' &&
         effect.kind !== 'heal' &&
-        effect.kind !== 'burstGauge'
+        effect.kind !== 'burstGauge' &&
+        effect.kind !== 'ammoDecrease'
       )
         return;
       const raw = skillValue(skill, effect.ref, levels[slot]);

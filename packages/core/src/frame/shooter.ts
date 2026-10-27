@@ -289,6 +289,19 @@ export function refillAmmo(
 }
 
 /**
+ * 2 段目の段 11（plan/design-skill-stage11.md 2.2 節）: 残弾数減少。残弾から amount を減らす（0 で止める）。0 になったら、
+ * リロード中でなければリロードを始める（最後の弾丸を撃ったときと同じ。チャージの途中なら取りやめる）。値の端数処理は呼ぶ側で行う
+ */
+export function drainAmmo(state: ShooterState, amount: number, params: FiringParams): void {
+  if (amount <= 0 || params.infiniteAmmo) return;
+  state.ammo = Math.max(0, state.ammo - amount);
+  if (state.ammo > 0 || state.phase === 'reloading') return;
+  if (state.phase === 'priming') startMagazine(state);
+  // このフレームの射手は進め終えているので、最終弾の直後と同じく −1 する（1 回分の完了は L フレーム後）
+  state.wait = Math.max(0, startReload(state, params) - 1);
+}
+
+/**
  * ルドミラ：ウィンターオーナー編（V-0163）: 最後の弾丸を撃ったのと同じフレームの弾丸チャージで残弾が戻ったら、始めたリロードを
  * 取り消して、そのマガジンのまま撃ち続ける（マガジンの状態・MG のレートの蓄積はそのまま。残弾が 0 にならなかったのと同じ）。
  * 呼ぶのは、このフレームに撃った発が最後の弾丸だったときだけ（後のフレームの弾丸チャージはリロード中に弾を足すだけ。refillAmmo）

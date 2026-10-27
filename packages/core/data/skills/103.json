@@ -19,28 +19,77 @@
           "claims": [
             "C-0579"
           ]
+        },
+        {
+          "kind": "state",
+          "state": "warmUp",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "maxStacksRef": 3,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "chargeSpeed",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "フルチャージの発（照準の横の残弾が減ったフレーム）ごとに 1 スタック。チャージ速度▲の効き方はいままでの規則（チャージ時間の短縮）のまま",
+            "en": "One stack per fully charged shot. Charge speed works by the existing rule"
+          },
+          "claims": [
+            "C-0698"
+          ]
+        },
+        {
+          "kind": "weaponChange",
+          "trigger": {
+            "fullStack": "warmUp"
+          },
+          "damageRef": 5,
+          "maxAmmoRef": 6,
+          "rateOfFire": 1440,
+          "instantFire": true,
+          "firstShotDelayFrames": 25,
+          "assumes": {
+            "ja": "変更後の武器の形は CDN に無いので録画で読んだ（V-0528）: 即着弾でチャージしない・1440rpm・満タン（最大装弾数）で始まり撃ち切りで終わる・最初の発はフルスタックになった 5 発目の 27f 後（窓が射手に見えるフレームから 25f）。コア命中率は的の表の coreHitRate.weaponChanges の行。変更後の武器の発のバーストゲージは確かめていない（モデルは変更前の武器のフルチャージの 1 発と同じ量）。追加効果「貫通特化」は書かない（敵 1 体の前提では、貫通ダメージ▲を持つ味方がいる時だけ効きうる。敵 1 体で乗るかは確かめていない。定義のある味方に貫通ダメージ▲は無い）",
+            "en": "The changed weapon is not in CDN, so it was read from recordings (V-0528): instant hit, no charge, 1440 rpm, starts with a full magazine and ends when empty, first shot 27 f after the fifth shot. Core hit rate from the target table row coreHitRate.weaponChanges. Burst gauge per changed shot is unverified (the model uses the base weapon's fully charged shot). Pierce is not written (against a single enemy it could matter only with an ally having Pierce Damage up; unverified; no defined ally has it)"
+          },
+          "claims": [
+            "C-0699",
+            "C-0701"
+          ]
+        },
+        {
+          "kind": "ammoDecrease",
+          "trigger": {
+            "weaponChangeEnd": true
+          },
+          "target": "self",
+          "ref": 7,
+          "assumes": {
+            "ja": "変更前の武器は、変更が終わると満タンで戻り（C-0273 のモダニアと同じ扱い）、この残弾数減少で 0 になってリロードする",
+            "en": "The base weapon comes back full when the change ends (as Modernia), and this ammo decrease empties it so it reloads"
+          },
+          "claims": [
+            "C-0700"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "フルチャージ攻撃時のウォームアップ（チャージ速度▲・5 スタック）は未対応",
-          "en": "Warm-up (charge speed increase, 5 stacks) on fully charged attacks is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "chargeSpeed",
-            "target": "self",
-            "trigger": "fullChargeShot"
-          }
-        },
-        {
-          "ja": "ウォームアップのフルスタックの後の使用武器変更（エレクトリックパワー・フル・フルチャージ）と、終了時の残弾数減少は未対応",
-          "en": "The weapon change after full Warm-up stacks (Electric Power: Full Full Charge) and the ammo decrease when it ends are not modeled",
+          "ja": "変更後の武器が 6 区間目（5 回目の着地の後の遠）でコアを外す発（V-0528）は未対応（的の表の行はどの区間もコア命中率 1）",
+          "en": "Changed-weapon shots missing the core in the sixth segment (far, after the fifth landing; V-0528) are not modeled (the target table row is a core hit rate of 1 everywhere)",
           "kind": "unimplemented",
           "effect": {
             "kind": "weaponChange",
             "trigger": "fullChargeShot"
-          }
+          },
+          "claims": [
+            "C-0701"
+          ]
         }
       ]
     },

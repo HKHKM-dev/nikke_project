@@ -17,6 +17,16 @@ export type ChangedWeapon = {
   trueDamage?: true;
   /** 変更後の武器の発が発射体の爆発を持つか（WeaponChangeEffect.projectileExplosion。発射体爆発ダメージ▲が乗る） */
   projectileExplosion?: true;
+  /**
+   * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 変更の窓が射手に見える最初のフレームから最初の発までの待ち
+   * （WeaponChangeEffect.firstShotDelayFrames）。省略は weaponChangeShooter の待ち
+   */
+  firstShotDelayFrames?: number;
+  /**
+   * 同: 的の表の変更後の武器の行の鍵（`<resourceId>:<スロット>`。coreHitRate.weaponChanges）。即着弾に替えた変更
+   * （instantFire）だけが持ち、通常攻撃のコア命中率をこの行から引く（行が無ければ基礎の武器の行のまま）
+   */
+  targetRowKey?: string;
 };
 
 /**

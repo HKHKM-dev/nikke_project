@@ -140,7 +140,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 1,
-        "frame": 500,
+        "frame": 100,
         "core": false,
         "crit": false,
         "distance": false
@@ -173,7 +173,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 1,
-        "frame": 500,
+        "frame": 100,
         "core": false,
         "crit": true,
         "distance": false
@@ -206,7 +206,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 1,
-        "frame": 500,
+        "frame": 100,
         "core": true,
         "crit": false,
         "distance": false
@@ -239,7 +239,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 1,
-        "frame": 500,
+        "frame": 100,
         "core": true,
         "crit": true,
         "distance": false
@@ -266,6 +266,274 @@
     "method": {
       "tool": "hud.ts --mode jumps（レシピ hud-jumps@1 のキャッシュ）+ 使い捨てのスクリプト（V-0442「読み方」）",
       "note": "段ごとの、変わる前の武器の発のフレーム（動画）: 1 段目 f850〜1758（10 発）・2 段目 f2438〜3346（10 発）・3 段目 f3894〜4783（9 発）・4 段目 f5368〜6248（8 発）・5 段目 f6920〜10726（30 発）。2 回のマガジンごとに 1 段上がり、5 段目は戦闘の終わりまで続く。胴体・会心の値も、その段のコアの 0.5・0.75・1.25 倍に差 1 以内で並ぶ。モデルにはオーバーエネルギーが無いので、比べる観測値にしない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0121-14",
+    "recording": "0121",
+    "source": "V-0528",
+    "readAt": "2026-10-27",
+    "kind": "interval",
+    "use": "compare",
+    "value": [53, 48, 42, 36, 27],
+    "unit": "f",
+    "description": "ラプラス：アルティメットヒーロー単騎（AUTO）の 2 回目のマガジンの、変更前の武器のフルチャージの 5 発の発と発の間（4 つ）と、5 発目から変更後の武器の最初の発までの間（ウォームアップのチャージ速度▲と、フルスタックで起こす使用武器の変更の最初の発の待ち）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）と tools/captures/hud.ts --mode jumps（総ダメージの増分。単騎なので 1 つの増分が 1 発）と使い捨てのスクリプト（V-0528「読み方」）",
+      "note": "発のフレーム（動画）は、変更前の武器の 5 発が照準の横の残弾の減ったフレーム（RL の弾は着くまで飛ぶので、総ダメージの増分は 13〜15f 後）、変更後の武器の最初の発は残弾が 120 から減ったフレーム（総ダメージの増分と同じフレーム。即着弾）: f1563・f1616・f1664・f1706・f1742・f1769。マガジンごとに同じ並びで、ほかのマガジンも同じ（1f の揺れを除く）。5 発目の 4f 後に照準の横の残弾が 120 に替わる（変更後の武器が満タンで始まる）。比べるモデルの範囲は 2 回目のマガジン"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 797,
+        "to": 1004
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0121-15",
+    "recording": "0121",
+    "source": "V-0528",
+    "readAt": "2026-10-27",
+    "kind": "count",
+    "use": "compare",
+    "value": 120,
+    "unit": "発",
+    "description": "ラプラス：アルティメットヒーロー単騎（AUTO）の、1 回の使用武器の変更（エレクトリックパワー・フル・フルチャージ）で撃った変更後の武器の発の数（撃ち切りまで）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）と tools/captures/hud.ts --mode jumps（総ダメージの増分。単騎なので 1 つの増分が 1 発）と使い捨てのスクリプト（V-0528「読み方」）",
+      "note": "2 回目のマガジンの変更後の武器の総ダメージの増分（f1769〜2061。1 つの増分が 1 発で、割れた読み・2 発の合わさった増分の無いマガジン）の数。照準の横の残弾も 120 から 0 まで 1 ずつ減る。比べるモデルの範囲は 2 回目のマガジンの変更の窓"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1,
+        "from": 1003,
+        "to": 1296
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0121-16",
+    "recording": "0121",
+    "source": "V-0528",
+    "readAt": "2026-10-27",
+    "kind": "interval",
+    "use": "compare",
+    "value": 2.4538,
+    "unit": "f",
+    "description": "ラプラス：アルティメットヒーロー単騎（AUTO）の、1 回の使用武器の変更の変更後の武器の発と発の間の平均（（最後の発 − 最初の発）÷（発の数 − 1））",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）と tools/captures/hud.ts --mode jumps（総ダメージの増分。単騎なので 1 つの増分が 1 発）と使い捨てのスクリプト（V-0528「読み方」）",
+      "note": "2 回目のマガジンの変更後の武器の総ダメージの増分（f1769〜2061・120 発）。間は 2f と 3f の並び。ゲーム内の 1 秒は動画の 58.82f（C-0048）なので、1440rpm（24 発/秒）なら 2.451f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 1,
+        "from": 1003,
+        "to": 1296
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0121-17",
+    "recording": "0121",
+    "source": "V-0528",
+    "readAt": "2026-10-27",
+    "kind": "interval",
+    "use": "compare",
+    "value": [230],
+    "unit": "f",
+    "description": "ラプラス：アルティメットヒーロー単騎（AUTO）の、1 回目の使用武器の変更の最後の発から、次のマガジンの変更前の武器の最初の発までの間（変更の終わりの残弾数減少で始まるリロードと、その後のチャージ）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）と tools/captures/hud.ts --mode jumps（総ダメージの増分。単騎なので 1 つの増分が 1 発）と使い捨てのスクリプト（V-0528「読み方」）",
+      "note": "変更後の武器の最後の発（総ダメージの増分。f1333）から、次のマガジンの変更前の武器の最初の発（照準の横の残弾が 120 から減ったフレーム。f1563）まで。照準の横の残弾は、最後の発の 159〜161f 後に 120 に戻る（リロードの込め終わり）。2 回目以降の変更の後は、的のジャンプが間に入るマガジン（1 回目の着地の前後）を除いて同じ長さ。比べるモデルの範囲は 1 回目と 2 回目のマガジンの境"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 567,
+        "to": 798
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0121-18",
+    "recording": "0121",
+    "source": "V-0528",
+    "readAt": "2026-10-27",
+    "kind": "hit",
+    "use": "compare",
+    "value": 43357,
+    "unit": "ダメージ",
+    "description": "ラプラス：アルティメットヒーロー単騎（スペック固定 ON）の、使用武器の変更（エレクトリックパワー・フル・フルチャージ）の変更後の武器の 1 ヒット（コア・距離ボーナスなし）。戦闘の始まりの 2 回のマガジン（S2 のオーバーエネルギーの段階が上がる前）の値",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）と tools/captures/hud.ts --mode jumps（総ダメージの増分。単騎なので 1 つの増分が 1 発）と使い捨てのスクリプト（V-0528「読み方」）",
+      "note": "1・2 回目のマガジンの変更後の武器の総ダメージの増分のうち、いちばん多い 2 つの値（コアと、その 1.25 倍のコア・会心）。この 2 つのマガジンでは胴体の値は出ていない（コアに当たらない発が無い）。変更前の武器のコアの 1 ヒット（`0121-11`）の 1.512 倍（説明文の値 9.45% × コア 2 ÷（2.5% × フルチャージ 2.5 × コア 2））"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0121-19",
+    "recording": "0121",
+    "source": "V-0528",
+    "readAt": "2026-10-27",
+    "kind": "hit",
+    "use": "compare",
+    "value": 54196,
+    "unit": "ダメージ",
+    "description": "ラプラス：アルティメットヒーロー単騎（スペック固定 ON）の、使用武器の変更（エレクトリックパワー・フル・フルチャージ）の変更後の武器の 1 ヒット（コア・会心・距離ボーナスなし）。戦闘の始まりの 2 回のマガジン（S2 のオーバーエネルギーの段階が上がる前）の値",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）と tools/captures/hud.ts --mode jumps（総ダメージの増分。単騎なので 1 つの増分が 1 発）と使い捨てのスクリプト（V-0528「読み方」）",
+      "note": "1・2 回目のマガジンの変更後の武器の総ダメージの増分のうち、いちばん多い 2 つの値（コアと、その 1.25 倍のコア・会心）。この 2 つのマガジンでは胴体の値は出ていない（コアに当たらない発が無い）。変更前の武器のコアの 1 ヒット（`0121-11`）の 1.512 倍（説明文の値 9.45% × コア 2 ÷（2.5% × フルチャージ 2.5 × コア 2））"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 400,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0121-20",
+    "recording": "0121",
+    "source": "V-0528",
+    "readAt": "2026-10-27",
+    "kind": "rate",
+    "use": "compare",
+    "value": 1,
+    "description": "ラプラス：アルティメットヒーロー単騎（AUTO）の、使用武器の変更の変更後の武器の発のうち、コアに当たった発の割合（1〜5 区間目。中近・近・遠・中遠・近）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と使い捨てのスクリプト（V-0528「読み方」）",
+      "note": "区間ごとの総ダメージの増分の数は 243・340・351・367・275・86（1〜6 区間目。変更前の武器の発・割れた読み・2 発の合わさった増分を含む）。1〜5 区間目の変更後の武器の増分は、どれもその段のコアか、その 1.25 倍（コア・会心）で、胴体（コアの 0.5 倍）・胴体・会心（0.75 倍）は 0。6 区間目（5 回目の着地の後の遠）では胴体が 6 個（`0121-21`）。比べるモデルのフレームは 1 回目のマガジンの変更の窓（中近）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 400
+      },
+      "tolerance": {
+        "abs": 0.005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0121-21",
+    "recording": "0121",
+    "source": "V-0528",
+    "readAt": "2026-10-27",
+    "kind": "count",
+    "use": "record",
+    "value": 6,
+    "unit": "個",
+    "description": "ラプラス：アルティメットヒーロー単騎（AUTO）の 6 区間目（5 回目の着地の後の遠。戦闘の終わりまで）の、変更後の武器の総ダメージの増分のうち、胴体（その段のコアの 0.5 倍）の値の数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と使い捨てのスクリプト（V-0528「読み方」）",
+      "note": "6 区間目の増分の数は 86。ほかはコアとコア・会心。1〜5 区間目には胴体が無い（`0121-20`）。3 区間目（遠）でも胴体は出ていないので、遠の着地点だけでは説明がつかない。モデル（的の表の coreHitRate.weaponChanges の行は all 1）には入れていない"
     },
     "scope": {
       "slot": 1,

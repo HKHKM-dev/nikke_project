@@ -111,6 +111,11 @@ export const NAMED_STATES = {
    * バーストのヒットから付く。V-0521。S1・S2 の「対象がブームインストール状態なら」が見る（段 3））
    */
   boomInstall: { name: { ja: 'ブームインストール', en: 'BOOM Install' }, holder: 'enemy' },
+  /**
+   * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: ウォームアップ（ラプラス：アルティメットヒーローの S1。フルチャージして攻撃した
+   * 時にチャージ速度▲のスタック。フルスタックで外して使用武器の変更）
+   */
+  warmUp: { name: { ja: 'ウォームアップ', en: 'Warm Up' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

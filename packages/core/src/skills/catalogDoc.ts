@@ -129,7 +129,11 @@ const KIND_INFO: Record<string, Info> = {
   'buffOp:stackChange': ['スタック量の増減', 'ok', 'stackChange（増加と decrease の減少。2 段目の段 3）'],
   'instant:ammoRefill': ['弾丸チャージ', 'ok', 'ammoRefill'],
   'instant:forceReload': ['強制リロード', 'gap', 'なし'],
-  'instant:ammoDrain': ['残弾数の減少', 'gap', 'なし（自分）'],
+  'instant:ammoDrain': [
+    '残弾数の減少',
+    'ok',
+    'ammoDecrease（自分。いまは使用武器の変更の終わりのきっかけだけ。2 段目の段 11）',
+  ],
   'instant:burstGauge': ['バーストゲージのチャージ', 'ok', 'burstGauge'],
   'instant:burstCooldown': [
     'バーストスキルクールタイム▼（即時。いま残っているクールタイムを減らす）',
@@ -201,7 +205,11 @@ const TRIG_INFO: Record<string, Info> = {
   partialChargeShot: ['フルチャージでない通常攻撃', 'gap'],
   reloadComplete: ['リロード完了時', 'gap'],
   teamAmmo: ['味方の消費した弾の合計', 'gap'],
-  fullStackConsume: ['フルスタックでスタック解除後', 'ok', 'トリガー { fullStack }（回復だけ。2 段目の段 3）'],
+  fullStackConsume: [
+    'フルスタックでスタック解除後',
+    'ok',
+    'トリガー { fullStack }（回復と使用武器の変更。2 段目の段 3・段 11）',
+  ],
   resourceEvent: ['固有のカウンタの出来事', 'gap'],
   skillEvent: ['ほかのスキルの発動・命中', 'gap'],
   limited: ['戦闘中 N 回', 'gap'],

@@ -372,7 +372,14 @@ export type FlightFramesTable = {
  * コア命中率の表。武器種の行（通常攻撃）に、周期の自動攻撃のヒットの行 autoAttacks（キーは flightFrames.autoAttacks と同じ
  * `<resourceId>:<スキルのスロット>`）を足したもの。自動攻撃の行が無い・null はコアに当たらない（0。手入力の値は使わない）
  */
-export type CoreHitRateTable = TargetRateTable & { autoAttacks?: Readonly<Record<string, TargetRateRow | null>> };
+export type CoreHitRateTable = TargetRateTable & {
+  autoAttacks?: Readonly<Record<string, TargetRateRow | null>>;
+  /**
+   * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 即着弾に替えた使用武器の変更（instantFire）の発の行。キーは
+   * `<resourceId>:<スキルのスロット>`。変更の窓の通常攻撃のコア命中率をこの行から引く（行が無い・null は基礎の武器の行のまま）
+   */
+  weaponChanges?: Readonly<Record<string, TargetRateRow | null>>;
+};
 
 /** 的の条件の表。射撃場の BigArms のように、属性だけ違う敵で 1 つを共有する */
 export type TargetProfile = {

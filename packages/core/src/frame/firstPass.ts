@@ -109,6 +109,7 @@ import {
   hideShooter,
   initialShooter,
   refillAmmo,
+  drainAmmo,
   resumeAfterLastShotRefill,
   resumeShooter,
   partialChargeShot,
@@ -758,6 +759,10 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
           changedShooters[i] = weaponChangeShooter(params.weapon.shot, model, params);
           const firstHit = weaponChangeFirstHitAt(i, params.weapon.id, f);
           if (firstHit !== null) changedShooters[i]!.wait = Math.max(0, firstHit - f);
+          // 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 定義の即値の待ち（録画で読む）
+          else if (params.weapon.firstShotDelayFrames !== undefined) {
+            changedShooters[i]!.wait = params.weapon.firstShotDelayFrames;
+          }
         } else {
           changedShooters[i] = null;
           resumeShooter(shooters[i]!, slot.character.shot, model, params);
@@ -780,6 +785,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
       if (params.weapon !== null) (log.weaponChangeShotFrames ??= []).push(f);
+      // 2 段目の段 11: チャージしない変更後の武器の発は fullChargeShot に数えない
+      const uncharged = log.fullCharge && params.weapon !== null && !isChargeWeapon(params.weapon.shot);
+      if (uncharged) (log.unchargedShotFrames ??= []).push(f);
       // 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節の論点 8）: 撃ち切りで終わる変更は、最後の弾丸を
       // 撃ったら次のフレームで基礎の武器に戻す（変更後の武器はリロードしない）。件の終わりも同じ列から作る（skills/holders.ts）
       if (params.weapon !== null && state.lastShot && lists.openWeaponChange(i, params.weapon.id, f + 1)) {
@@ -794,7 +802,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       log.pelletHits!.push(pelletCount);
       shotEvents[i] = {
         lastShot: state.lastShot,
-        fullCharge: log.fullCharge && !isPartial,
+        fullCharge: log.fullCharge && !isPartial && !uncharged,
         hits,
         coreHits,
         pellets: pelletCount,
@@ -980,6 +988,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     // 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: このフレームにフルスタックになった状態を消費する（回復のきっかけ { fullStack }）。
     // フルスタックになる件は、射撃の回数のきっかけの付与なので前のフレームまでに登録済み
     const fullStacks = lists.consumeFullStacks(f);
+    // 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節）: このフレームに使用武器の変更（撃ち切り）が終わった枠
+    const weaponChangeEnds = logs.flatMap((log, i) => (log?.weaponChangeEnds?.at(-1) === f ? [i] : []));
     const ev: FrameEvents = {
       frame: f,
       shots: shotEvents,
@@ -993,6 +1003,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       fullBurstEndUsers,
       healed,
       ...(fullStacks.length > 0 ? { fullStacks } : {}),
+      ...(weaponChangeEnds.length > 0 ? { weaponChangeEnds } : {}),
     };
     // V-0113: バースト使用時に付く持続ダメージ（クルミのハッキング）。付け直しと同じで、延びた tick のゲージを予約する
     // （burstUse のトリガーの判定と同じく、このフレームの効果の発火 burstEffects で見る）
@@ -1056,6 +1067,20 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         const state = shooters[target];
         const slot = slots[target];
         if (!state || !slot) continue;
+        // 2 段目の段 11（plan/design-skill-stage11.md 2.2 節）: 残弾数減少は基礎の武器の残弾から残弾 × X% を減らす（端数は切り上げ）
+        if (src.effect.kind === 'ammoDecrease') {
+          const params = paramsAt(target, f);
+          const before = state.ammo;
+          drainAmmo(state, Math.ceil(state.ammo * src.effect.value - 1e-9), params);
+          instants.push({
+            frame: f,
+            sourceSlotIndex: src.sourceSlotIndex,
+            slotIndex: target,
+            effect: src.effect,
+            amount: state.ammo - before,
+          });
+          continue;
+        }
         // 2 段目の段 4（C-0561。仮説）: 射撃の回数のきっかけの弾丸チャージは、同じ発のきっかけで付く件（f + 1 から。`{ applied }` の
         // 付与で付く応急改造を含む）を入れた最大装弾数で数える。残弾に足すのは発のフレーム f のまま
         const params = paramsAt(target, isResolvedShotCount(src.effect.trigger) ? f + 1 : f);

@@ -41,6 +41,11 @@ export type ShotLog = {
    */
   weaponChangeShotFrames?: number[];
   /**
+   * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: チャージしない変更後の武器（instantFire）で撃った射撃のフレーム（frames の
+   * 部分列）。fullChargeShot に数えない。1 パス目が書く。省略は無し
+   */
+  unchargedShotFrames?: number[];
+  /**
    * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: frames と同じ並びの、発ごとの命中の期待値と
    * コアの命中の期待値（1 パス目が書く）。省略は命中 1・コア 0（手で作る列・planShots の列）
    */
@@ -58,7 +63,8 @@ export type PartialShot = { frame: number; progress: number };
 /** Stage 22-B: fullChargeShot に数える発か（チャージ武器で、部分チャージの発でない） */
 export function fullChargeFrameSet(log: ShotLog): (frame: number) => boolean {
   if (!log.fullCharge) return () => false;
-  const partial = new Set((log.partialShots ?? []).map((p) => p.frame));
+  // 2 段目の段 11: チャージしない変更後の武器の発も除く
+  const partial = new Set([...(log.partialShots ?? []).map((p) => p.frame), ...(log.unchargedShotFrames ?? [])]);
   return (frame) => !partial.has(frame);
 }
 
