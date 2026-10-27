@@ -44,6 +44,7 @@ import {
   renderResiduals,
   runObservations,
   validateObservations,
+  withoutEffects,
   type Observation,
   jumpWindowsOf,
 } from '../observations.ts';
@@ -1049,6 +1050,27 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
     expect(gatedObservations(list, invalid)).toEqual(new Set(['0010-02']));
     expect(renderClaims(list, new Map(), new Map([['0010-01', '読み違い']]))).toContain(
       '  - **失効した根拠**: 0010-01（読み違い）',
+    );
+  });
+});
+
+describe('withoutEffects（CompareSetup.dropEffects）', () => {
+  const elegg = data.skills.get(500)!;
+  const burst = elegg.skills.burst!.effects;
+
+  it('drops effects by their index in the definition before any drop, so several drops from one slot work', () => {
+    const out = withoutEffects(elegg, [
+      { rid: 500, skill: 'burst', index: 0 },
+      { rid: 500, skill: 'burst', index: burst.length - 1 },
+    ])!;
+    expect(out.skills.burst!.effects).toEqual(burst.slice(1, -1));
+    // 元の定義は変えない
+    expect(elegg.skills.burst!.effects).toBe(burst);
+  });
+
+  it('throws for an index the slot does not have', () => {
+    expect(() => withoutEffects(elegg, [{ rid: 500, skill: 'burst', index: burst.length }])).toThrow(
+      /dropEffects: rid 500 の burst に/,
     );
   });
 });

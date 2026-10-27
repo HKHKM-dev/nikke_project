@@ -162,7 +162,7 @@ export type HeldTrack = {
    */
   decreases: StackDecrease[];
   /**
-   * 状態: 射撃の回数のきっかけの付与が発火を足したか（calc の射撃の数え方の判定 hasOwnShotCountItem が読む）。2 段目の段 4
+   * 状態: 射撃の回数のきっかけの付与が発火を足したか（hasOwnShotCountItem が読む。2026-10-27 の一本化の後は、履歴の形を確かめるテストだけ）。2 段目の段 4
    * （plan/design-skill-stage4.md 1.1 節）: timed・状態の { applied } が、出どころの枠の射撃の回数のきっかけで付いた記録から発火を足したか
    */
   shotCount: boolean;

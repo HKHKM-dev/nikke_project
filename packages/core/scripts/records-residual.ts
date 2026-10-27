@@ -22,7 +22,7 @@ for (const k of keys) {
   const hit = observations.filter((o) =>
     byId.has(k)
       ? o.id === k
-      : /^V-\d{4}$/.test(k)
+      : /^V-\d{4,}$/.test(k)
         ? o.source === k
         : o.recording === k || (o.recordings ?? []).includes(k),
   );

@@ -236,11 +236,13 @@ export function parseGrids(text: string): GridSpec[] {
     .map((t) => t.trim())
     .filter((t) => t !== '')
     .map((t) => {
-      const m = /^([^=]+)=(\d+)@([\d+]+)((?:\/[x*][\d.,]+)*)$/.exec(t);
+      const m = /^([^=]+)=(\d+)@(\d+(?:\+\d+)*)((?:\/[x*][\d.,]+)*)$/.exec(t);
       if (m === null)
         throw new Error(`--opt grid の形が違う（<名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>]）: ${t}`);
       const parts = m[4]!.split('/').filter((x) => x !== '');
-      const pellets = parts.find((x) => x.startsWith('x'));
+      const pelletParts = parts.filter((x) => x.startsWith('x'));
+      if (pelletParts.length > 1) throw new Error(`--opt grid のペレット数が 2 つある: ${t}`);
+      const pellets = pelletParts[0];
       const scales = parts.filter((x) => x.startsWith('*')).flatMap((x) => parseNumbers(x.slice(1), 'grid の倍率'));
       return {
         name: m[1]!.trim(),
