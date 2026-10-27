@@ -1936,7 +1936,8 @@ function parseTrigger(
   }
   // 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節）: 使用武器の変更の終わりのきっかけは ammoDecrease だけ
   if (v.weaponChangeEnd !== undefined) {
-    if (!allowWeaponChangeEnd) fail(path, 'a weapon change end trigger ({ weaponChangeEnd }) is only allowed in ammoDecrease');
+    if (!allowWeaponChangeEnd)
+      fail(path, 'a weapon change end trigger ({ weaponChangeEnd }) is only allowed in ammoDecrease');
     for (const key of Object.keys(v)) if (key !== 'weaponChangeEnd') fail(`${path}.${key}`, 'unknown field');
     if (v.weaponChangeEnd !== true) {
       fail(`${path}.weaponChangeEnd`, `expected true, got ${JSON.stringify(v.weaponChangeEnd)}`);
@@ -3122,7 +3123,8 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   );
   // 2 段目の段 11（plan/design-skill-stage11.md 2.2 節）: 残弾数減少は、いまは使用武器の変更の終わりのきっかけで自分にだけ
   if (kind === 'ammoDecrease') {
-    if (!isWeaponChangeEndTrigger(trigger)) fail(`${path}.trigger`, 'ammoDecrease needs the trigger { weaponChangeEnd: true }');
+    if (!isWeaponChangeEndTrigger(trigger))
+      fail(`${path}.trigger`, 'ammoDecrease needs the trigger { weaponChangeEnd: true }');
     if (v.target !== 'self') fail(`${path}.target`, 'ammoDecrease must target "self"');
     for (const key of ['targetWeapon', 'targetElement', 'targetClass', 'targetCount', 'targetCountRef']) {
       if (v[key] !== undefined) fail(`${path}.${key}`, 'ammoDecrease cannot narrow its target');

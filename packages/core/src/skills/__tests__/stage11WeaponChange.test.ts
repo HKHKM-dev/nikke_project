@@ -132,7 +132,12 @@ describe('ラプラス：アルティメットヒーローの S1（V-0528）', (
     expect(base[5]! - window[119]!).toBe(230);
     // 変更後の武器の発は fullChargeShot に数えない（ウォームアップは次のマガジンで 0 から）
     expect(log.unchargedShotFrames).toEqual(changedShots);
-    expect(base.slice(5, 10).map((f, i, xs) => (i === 0 ? 0 : f - xs[i - 1]!)).slice(1)).toEqual([53, 48, 42, 36]);
+    expect(
+      base
+        .slice(5, 10)
+        .map((f, i, xs) => (i === 0 ? 0 : f - xs[i - 1]!))
+        .slice(1),
+    ).toEqual([53, 48, 42, 36]);
   });
 
   it('records the ammo decrease when each change ends', () => {
