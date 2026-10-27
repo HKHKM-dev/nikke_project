@@ -24,7 +24,7 @@ import {
   type TeamResult,
   type TeamSlotInput,
 } from '@nikke/core';
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useReducer, useState } from 'react';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
 import { TeamBreakdown } from './components/TeamBreakdown.tsx';
@@ -206,9 +206,11 @@ export function App() {
   );
   // 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 計算は runSimulation → simTeamResult の 1 本。
   // 2026-10-27 までは calc と sim の切り替え（保存キー nikke-web.model）があり、sim の表示では 1 パス目を 2 回回していた
+  // (B) の段 B-1（6.2 節）: 計算は入力の遅れた版で回し、欄の表示は計算を待たずに先に描く
+  const deferredInput = useDeferredValue(teamInput);
   const computed = useMemo<Computed>(
-    () => compute(() => simTeamResult(teamInput, runSimulation(teamInput))),
-    [teamInput],
+    () => compute(() => simTeamResult(deferredInput, runSimulation(deferredInput))),
+    [deferredInput],
   );
 
   const loadingCount = team.slots.filter(
