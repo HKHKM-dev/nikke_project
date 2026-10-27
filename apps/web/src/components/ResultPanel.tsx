@@ -4,6 +4,7 @@ import {
   energyPerTrigger,
   framesToGameSeconds,
   isStateContent,
+  isTimedItem,
   type AppliedTimedEffect,
   type CharacterData,
   type Element,
@@ -271,7 +272,7 @@ export function ResultPanel({
                 <small className="sub">
                   {formatItemTrigger(t.effect)} {formatEffectSource(t.effect, slotNames[t.effect.sourceSlotIndex])}
                   {formatItemDuration(t.effect)}{' '}
-                  {!isStateContent(t.effect) && typeof t.effect.trigger === 'object' && 'chance' in t.effect.trigger
+                  {isTimedItem(t.effect) && typeof t.effect.trigger === 'object' && 'chance' in t.effect.trigger
                     ? '（期待値）'
                     : `× ${t.count} 回`}
                   {formatTimedExtras(t.effect)}

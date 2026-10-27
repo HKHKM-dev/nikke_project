@@ -102,6 +102,7 @@ export type BuffStat =
   | 'trueDamageConversion'
   | 'sustainedDamage'
   | 'maxHp'
+  | 'maxHpOnly'
   | 'defense'
   | 'attackSpeed';
 export const BUFF_STATS = [
@@ -130,9 +131,11 @@ export const BUFF_STATS = [
   'trueDamageConversion',
   'sustainedDamage',
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 最大HP▲（比率）。与ダメージの式は読まず、発動者の最終最大HP 基準の
-  // 攻撃力▲（casterFinalMaxHp）だけが読む。「最大HP のみ▲」は効いている間 HP の割合を下げる（同 2.4 節。論点 8 の決定）ので、
-  // その形を足すまでこの stat では書かない（notes のまま。definitions.test.ts）
+  // 攻撃力▲（casterFinalMaxHp）だけが読む。「最大HP のみ▲」はこの stat では書かない（definitions.test.ts）
   'maxHp',
+  // 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: 最大HP のみ▲（比率）。最終最大HP への足し方は maxHp と同じ。効いている
+  // 間 HP の割合を下げる読み（段 6 の論点 8）は、HP の割合を読む側（selfHp・lowestHpRatio）が枠の想定で一定のままなので未実装
+  'maxHpOnly',
   // 2 段目の段 7（plan/design-skill-stage7.md 1.3 節）: 防御力▲（比率）。与ダメージの式は読まず、対象の絞り込み
   // 「自分より最終防御力が低い味方」（targetDefense）だけが、発火のフレームの最終防御力として読む
   'defense',
@@ -359,7 +362,7 @@ export type PassiveEffect = FixedTargetFields & {
   /**
    * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 「自分が〈状態〉（のフルスタック）状態の時のみ、…「持続」」。効果を出した
    * 枠（自分）にその状態が付いていて、スタックの条件を満たすフレームの間だけ対象に効く（窓の積。skills/holders.ts）。condition とは
-   * 組み合わせない
+   * 組み合わせない。2 段目の段 11 の PR 2: カウンタの値の条件 { selfCounter: { counter, atLeast } } も（そのカウンタが N 以上の間）
    */
   while?: WhileCondition;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
@@ -370,7 +373,10 @@ export type PassiveEffect = FixedTargetFields & {
  * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果の条件。中身は条件の selfState と同じ形
  * （stacks は 'full' か N、stacksRef も書ける）で、present: false は書けない
  */
-export type WhileCondition = { selfState: SelfStateCondition };
+export type WhileCondition =
+  | { selfState: SelfStateCondition }
+  // 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: 自分のカウンタが atLeast 以上の間（前のフレームの終わりの値。below は使い手がいない）
+  | { selfCounter: { counter: CounterId; atLeast: number } };
 
 /**
  * Stage 6: 持続バフが付くきっかけ。
@@ -777,12 +783,17 @@ export function isFirstPassTrackedStat(stat: BuffStat): boolean {
   // 2 段目の段 7: 防御力▲ は、1 パス目の発火の対象の絞り込み（最終防御力の比べ）が読むので、攻撃力と同じに扱う
   return (
     stat === 'attack' ||
-    stat === 'maxHp' ||
+    isMaxHpStat(stat) ||
     stat === 'defense' ||
     stat === 'burstGaugeSpeed' ||
     isFiringStat(stat) ||
     isStateStat(stat)
   );
+}
+
+/** 2 段目の段 11 の PR 2: 最終最大HP に足す stat か（最大HP▲・最大HP のみ▲） */
+export function isMaxHpStat(stat: BuffStat | 'weapon' | undefined): boolean {
+  return stat === 'maxHp' || stat === 'maxHpOnly';
 }
 
 /** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */
@@ -1318,7 +1329,7 @@ export type StackChangeEffect = {
 export type CounterChangeEffect = {
   kind: 'counterChange';
   counter: CounterId;
-  trigger: EffectTrigger | EndedTrigger;
+  trigger: EffectTrigger | EndedTrigger | CounterFullTrigger;
   target: 'self';
   /** 足す（減らす）値（即値）。amountRef とちょうど片方 */
   amount?: number;
@@ -1331,6 +1342,17 @@ export type CounterChangeEffect = {
 
 /** 2 段目の段 10（plan/design-skill-stage4.md 1.3 節の形）: 「〈名前〉状態が終了した時」。いまは counterChange にだけ書ける */
 export type EndedTrigger = { ended: NamedStateId };
+
+/**
+ * 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: 「〈カウンタ〉が最大になった時」。自分のそのカウンタが上限に届いたフレームの
+ * 次のフレームに発火する（条件は前のフレームの終わりの値を見る段 10 の規則と同じ）。いまは counterChange にだけ書ける
+ */
+export type CounterFullTrigger = { counterFull: CounterId };
+
+/** 2 段目の段 11 の PR 2: { counterFull } のトリガーか */
+export function isCounterFullTrigger(t: unknown): t is CounterFullTrigger {
+  return typeof t === 'object' && t !== null && 'counterFull' in t;
+}
 
 /** 2 段目の段 10: { ended } のトリガーか */
 export function isEndedTrigger(t: unknown): t is EndedTrigger {
@@ -1854,9 +1876,18 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
  * 読み、present: false は書けない（「〜でない時のみ」の使い手がいない）
  */
 function parseWhileCondition(v: Json, path: string): WhileCondition {
-  if (!isRecord(v)) fail(path, 'expected { selfState }');
-  for (const key of Object.keys(v))
-    if (key !== 'selfState') fail(`${path}.${key}`, 'unknown field (allowed: selfState)');
+  if (!isRecord(v)) fail(path, 'expected { selfState } or { selfCounter }');
+  const keys = Object.keys(v);
+  for (const key of keys)
+    if (key !== 'selfState' && key !== 'selfCounter')
+      fail(`${path}.${key}`, 'unknown field (allowed: selfState, selfCounter)');
+  if (keys.length !== 1) fail(path, 'expected exactly one of selfState and selfCounter');
+  if (v.selfCounter !== undefined) {
+    const c = parseSelfCounterCondition(v.selfCounter, `${path}.selfCounter`);
+    if (c.atLeast === undefined || c.atLeast < 1)
+      fail(`${path}.selfCounter`, 'while needs { counter, atLeast } with atLeast of at least 1');
+    return { selfCounter: { counter: c.counter, atLeast: c.atLeast } };
+  }
   const selfState = parseSelfStateCondition(v.selfState, `${path}.selfState`);
   if (!selfState.present) fail(`${path}.selfState.present`, 'while needs the state (present: false is not supported)');
   return { selfState };
@@ -3321,10 +3352,14 @@ function parseCounterChangeEffect(v: Record<string, Json>, path: string): Counte
     }
   }
   const counter = oneOf(COUNTER_IDS, v.counter, `${path}.counter`);
-  let trigger: EffectTrigger | EndedTrigger;
+  let trigger: EffectTrigger | EndedTrigger | CounterFullTrigger;
   if (isRecord(v.trigger) && v.trigger.ended !== undefined) {
     for (const key of Object.keys(v.trigger)) if (key !== 'ended') fail(`${path}.trigger.${key}`, 'unknown field');
     trigger = { ended: parseNamedStateId(v.trigger.ended, `${path}.trigger.ended`, 'ally') };
+  } else if (isRecord(v.trigger) && v.trigger.counterFull !== undefined) {
+    for (const key of Object.keys(v.trigger))
+      if (key !== 'counterFull') fail(`${path}.trigger.${key}`, 'unknown field');
+    trigger = { counterFull: oneOf(COUNTER_IDS, v.trigger.counterFull, `${path}.trigger.counterFull`) };
   } else {
     trigger = parseTrigger(v.trigger, `${path}.trigger`);
   }
@@ -3587,9 +3622,22 @@ function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
     (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
   );
+  const counterChanges = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is CounterChangeEffect & ClaimRefs => e.kind === 'counterChange',
+  );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       if (e.kind !== 'passive' || e.while === undefined) return;
+      // 2 段目の段 11 の PR 2: カウンタの while は、同じ定義にそのカウンタを増やす counterChange が要る
+      if ('selfCounter' in e.while) {
+        const { counter } = e.while.selfCounter;
+        if (!counterChanges.some((c) => c.counter === counter && c.decrease !== true))
+          fail(
+            `${root}.${slot}.effects[${i}].while`,
+            `while on "${counter}" needs a counterChange that increases it in the definition`,
+          );
+        return;
+      }
       const { state, stacks, stacksRef } = e.while.selfState;
       const own = grants.filter(
         (g) => stateMatches(state, g.state) && !isStaticStateGrant(g) && (g.target === 'self' || g.target === 'allies'),

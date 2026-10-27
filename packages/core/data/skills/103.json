@@ -104,22 +104,116 @@
           "claims": [
             "C-0681"
           ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "overEnergy",
+          "trigger": {
+            "count": "weaponChangeShot",
+            "everyRef": 8
+          },
+          "target": "self",
+          "amountRef": 9,
+          "claims": [
+            "C-0702"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "overEnergy",
+          "trigger": {
+            "counterFull": "overEnergy"
+          },
+          "target": "self",
+          "amountRef": 1,
+          "decrease": true,
+          "claims": [
+            "C-0702"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "overEnergyStage",
+          "trigger": {
+            "counterFull": "overEnergy"
+          },
+          "target": "self",
+          "amount": 1,
+          "claims": [
+            "C-0702"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "maxHpOnly",
+          "ref": 2,
+          "while": {
+            "selfCounter": {
+              "counter": "overEnergyStage",
+              "atLeast": 1
+            }
+          },
+          "claims": [
+            "C-0577",
+            "C-0702"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "maxHpOnly",
+          "ref": 3,
+          "while": {
+            "selfCounter": {
+              "counter": "overEnergyStage",
+              "atLeast": 2
+            }
+          },
+          "claims": [
+            "C-0577",
+            "C-0702"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "maxHpOnly",
+          "ref": 4,
+          "while": {
+            "selfCounter": {
+              "counter": "overEnergyStage",
+              "atLeast": 3
+            }
+          },
+          "claims": [
+            "C-0577",
+            "C-0702"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "maxHpOnly",
+          "ref": 5,
+          "while": {
+            "selfCounter": {
+              "counter": "overEnergyStage",
+              "atLeast": 4
+            }
+          },
+          "claims": [
+            "C-0577",
+            "C-0702"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "使用武器変更中の通常攻撃によるオーバーエネルギー（最大HP▲の段階）は未対応（最大HP は S1 の攻撃力▲に効く）",
-          "en": "Over Energy (max HP increase by stage) from normal attacks during the weapon change is not modeled (max HP affects the S1 attack increase)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "maxHp",
-            "target": "self",
-            "trigger": "normalShot"
-          },
-          "claims": [
-            "C-0577"
-          ]
+          "ja": "最大HP のみ▲ で HP の割合が下がる分（現在の HP は増えない）は、それ自体は与ダメージを変えない（HP の割合を読む効果のある編成でだけ効く）。モデルは HP の割合を読む効果（自分の HP の割合の条件・HP の割合の低い味方を対象にする効果）に、枠の HP の割合の想定のまま渡す（下がる分は未実装）",
+          "en": "The lower HP ratio from the max-HP-only increase (current HP does not increase) does not change damage by itself (it matters only with an effect reading the HP ratio in the team). The model gives effects that read the HP ratio (own HP ratio conditions, effects targeting the ally with the lowest HP ratio) the slot's assumed HP ratio (the decrease is not modeled)",
+          "kind": "indirect",
+          "path": "hp"
         }
       ]
     },

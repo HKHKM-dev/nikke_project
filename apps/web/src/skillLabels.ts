@@ -6,8 +6,10 @@ import {
   counterMax,
   counterName,
   framesToGameSeconds,
+  isCounterWhileEffect,
   isEndedTrigger,
   isStateContent,
+  isTimedItem,
   isWhileEffect,
   namedStateName,
   staticStatesOf,
@@ -77,6 +79,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   trueDamage: '防御力無視ダメージ',
   trueDamageConversion: '通常攻撃が防御力無視ダメージに変化',
   maxHp: '最大HP',
+  maxHpOnly: '最大HP のみ',
   defense: '防御力',
 };
 
@@ -188,12 +191,15 @@ export function formatItemTrigger(effect: AppliedTimedEffect): string {
       stacks === undefined ? '' : stacks === 'full' ? ' フルスタック' : ` ${formatNumber(stacks)} スタック以上`;
     return `発動者の${stateLabel(effect.whileState)}${level}の間 →`;
   }
+  // 2 段目の段 11 の PR 2: カウンタの while の効果は「オーバーエネルギーの段階 2 以上の間 →」
+  if (isCounterWhileEffect(effect))
+    return `${counterName(effect.whileCounter.counter).ja} ${formatNumber(effect.whileCounter.atLeast)} 以上の間 →`;
   return isStateContent(effect) ? `${stateLabel(effect.whileState)}の間 →` : formatTimedTrigger(effect.trigger);
 }
 
 /** 件を持つ効果の維持。「・10 秒」「・持続」。状態の中身は状態の件の間なので空文字 */
 export function formatItemDuration(effect: AppliedTimedEffect): string {
-  if (isStateContent(effect)) return '';
+  if (!isTimedItem(effect)) return '';
   if (effect.durationShots !== undefined) return `・${effect.durationShots} 発`;
   if (effect.durationUntil === 'ammoSpent') return '・撃ち切りまで';
   if (effect.durationUntil === 'battleEnd') return '・持続';
@@ -388,9 +394,9 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
  */
 export function formatTimedExtras(effect: AppliedTimedEffect): string {
   const parts: string[] = [];
-  if (effect.maxStacks !== undefined) parts.push(`最大 ${effect.maxStacks} スタック`);
-  // 名前の付いた状態の語彙編: 状態の中身の条件・維持は付与のもの（きっかけの欄に「〈名前〉の間」と出す）
-  if (isStateContent(effect)) return parts.length === 0 ? '' : `（${parts.join('・')}）`;
+  if ('maxStacks' in effect && effect.maxStacks !== undefined) parts.push(`最大 ${effect.maxStacks} スタック`);
+  // 名前の付いた状態の語彙編: 状態の中身の条件・維持は付与のもの（きっかけの欄に「〈名前〉の間」と出す）。段 11 の PR 2: カウンタの while も
+  if (!isTimedItem(effect)) return parts.length === 0 ? '' : `（${parts.join('・')}）`;
   const condition = effect.condition;
   if (condition?.selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[condition.selfBuffed]}増加状態なら`);
   if (condition?.inFullBurst === true) parts.push('フルバーストタイムなら');

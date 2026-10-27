@@ -50,7 +50,7 @@ import { stackItems } from './stacks.ts';
 import { isEffectTarget } from './targets.ts';
 import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
 import type { NamedStateId } from './states.ts';
-import { SKILL_SLOTS, isStateStat, type BuffStat, type SkillDefinition } from './types.ts';
+import { SKILL_SLOTS, isMaxHpStat, isStateStat, type BuffStat, type SkillDefinition } from './types.ts';
 
 /** 枠 1 つ分の入力。TeamSlotInput ではなく必要な情報だけを受けて循環 import を避ける（planFixedCycle と同じ流儀） */
 export type TimelineSlot = {
@@ -433,7 +433,7 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
     slot === null
       ? 0
       : sources
-          .filter((s) => s.effect.stat === 'maxHp' && isEffectTarget(s.effect, s.slotIndex, holder, slot.character))
+          .filter((s) => isMaxHpStat(s.effect.stat) && isEffectTarget(s.effect, s.slotIndex, holder, slot.character))
           .reduce((sum, s) => sum + s.effect.value, 0),
   );
   return slots.map((slot, index) => {
@@ -544,7 +544,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
     // （常時 + 区間の頭で効いている小片）。最大HP▲ の小片の端は区間の境目なので、区間の中では同じ値
     const maxHpUp = passive.map((base) => base?.buffs.maxHpRatio ?? 0);
     for (const p of buffPieces) {
-      if (p.effect.stat !== 'maxHp' || p.start > start || p.end <= start) continue;
+      if (!isMaxHpStat(p.effect.stat) || p.start > start || p.end <= start) continue;
       maxHpUp[p.slotIndex] = (maxHpUp[p.slotIndex] ?? 0) + p.effect.value;
     }
     const finalMaxHpOf = (slotIndex: number): number | undefined => {

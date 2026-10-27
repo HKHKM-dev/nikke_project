@@ -235,6 +235,7 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if ('fullStack' in t) return `${t.fullStack} のフルスタック`;
   if ('ended' in t) return `${t.ended} が終了した時`;
   if ('weaponChangeEnd' in t) return '使用武器の変更が終了した時';
+  if ('counterFull' in t) return `${t.counterFull} が最大になった時`;
   return t.count;
 }
 
@@ -244,6 +245,7 @@ function triggerLabel(e: SkillEffect): string | undefined {
  */
 function whileLabel(e: SkillEffect): string | undefined {
   if (e.kind !== 'passive' || e.while === undefined) return undefined;
+  if ('selfCounter' in e.while) return `${e.while.selfCounter.counter} ${e.while.selfCounter.atLeast} 以上の間`;
   const { state, stacks, stacksRef } = e.while.selfState;
   if (stacks === 'full') return `${state} のフルスタックの間`;
   if (stacks !== undefined) return `${state} ${stacks} スタック以上の間`;

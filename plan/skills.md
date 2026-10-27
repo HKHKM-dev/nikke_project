@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 61・効果 287（根拠あり 280）・notes 195（根拠あり 70）
+件数: キャラ 61・効果 294（根拠あり 287）・notes 195（根拠あり 69）
 
-notes の種類: 未対応 78・前提の外 27・計算に無関係 32・補足 12・間接 46
+notes の種類: 未対応 77・前提の外 27・計算に無関係 32・補足 12・間接 47
 
-スロット: supported 117・partial 14・unsupported 33・noEffect 34
+スロット: supported 118・partial 13・unsupported 33・noEffect 34
 
 ## 10 ラピ
 
@@ -224,9 +224,16 @@ notes の種類: 未対応 78・前提の外 27・計算に無関係 32・補足
   - effects[2] weaponChange・warmUp のフルスタック: C-0699（確定）
   - effects[3] ammoDecrease・使用武器の変更が終了した時: C-0700（確定）
   - notes[0] 未対応: 変更後の武器が 6 区間目（5 回目の着地の後の遠）でコアを外す発（V-0528）は未対応（的の表の行はどの区間もコア命中率 1）: C-0701（仮説）
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] timed・burstStage3Enter・attackDamage: C-0681（確定）
-  - notes[0] 未対応: 使用武器変更中の通常攻撃によるオーバーエネルギー（最大HP▲の段階）は未対応（最大HP は S1 の攻撃力▲に効く）: C-0577（仮説）
+  - effects[1] counterChange・weaponChangeShot・overEnergy: C-0702（確定）
+  - effects[2] counterChange・overEnergy が最大になった時・overEnergy（減少）: C-0702（確定）
+  - effects[3] counterChange・overEnergy が最大になった時・overEnergyStage: C-0702（確定）
+  - effects[4] passive・overEnergyStage 1 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
+  - effects[5] passive・overEnergyStage 2 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
+  - effects[6] passive・overEnergyStage 3 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
+  - effects[7] passive・overEnergyStage 4 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
+  - notes[0] 間接（HP）: 最大HP のみ▲ で HP の割合が下がる分（現在の HP は増えない）は、それ自体は与ダメージを変えない（HP の割合を読む効果のある編成でだけ効く）。モデルは HP の割合を読む効果（自分の HP の割合の条件・HP の割合の低い味方を対象にする効果）に、枠の HP の割合の想定のまま渡す（下がる分は未実装）: 根拠なし
 - **burst**: partial
   - effects[0] timed・burstUse・attack: C-0682（確定）
   - effects[1] burstDamage・skill: C-0682（確定）、C-0683（確定）

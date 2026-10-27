@@ -16,6 +16,13 @@ export const COUNTERS = {
    * 火力チャージ状態の終わりに 45。100 のバーストで超火力にして 100 消費する。上限 100（V-0503）
    */
   firepowerGauge: { name: { ja: '火力ゲージ', en: 'Firepower Gauge' }, max: 100 },
+  /**
+   * オーバーエネルギー（ラプラス：アルティメットヒーローの S2）。使用武器の変更の中の通常攻撃 12 回ごとに 5（%）、100 で 0 に戻して段階を 1 上げる。
+   * 上限 100（説明文の description_value_01。V-0529）
+   */
+  overEnergy: { name: { ja: 'オーバーエネルギー', en: 'Over Energy' }, max: 100 },
+  /** オーバーエネルギーの段階（同じ S2）。オーバーエネルギーが 100 になるたびに 1 上がる。上限 4（説明文の 1〜4 段階。V-0529） */
+  overEnergyStage: { name: { ja: 'オーバーエネルギーの段階', en: 'Over Energy stage' }, max: 4 },
 } as const satisfies Record<string, CounterInfo>;
 
 export type CounterId = keyof typeof COUNTERS;

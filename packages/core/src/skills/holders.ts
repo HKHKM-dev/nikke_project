@@ -43,6 +43,10 @@ import {
   type ResolvedTimedEffect,
   type ResolvedTrigger,
   type ResolvedWhileEffect,
+  type ResolvedCounterWhileEffect,
+  isCounterWhileEffect,
+  isTimedItem,
+  resolveCounterWhileEffects,
   type ItemEffect,
 } from './resolve.ts';
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type RankingRecord } from './ranking.ts';
@@ -63,6 +67,8 @@ import {
   SKILL_SLOTS,
   conditionReadsItems,
   isEndedTrigger,
+  isMaxHpStat,
+  isCounterFullTrigger,
   isEnemyHeldStat,
   isFiringStat,
   isHitStateStat,
@@ -119,9 +125,9 @@ export type HeldOrigin =
   | { kind: 'enemyState'; state: NamedStateId; effects: readonly ResolvedDamageEffect[] }
   /**
    * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果（while）。件は、出どころの枠のその状態の段 1 の件
-   * から作る（whileItems。始まりの列を持たない）
+   * から作る（whileItems。始まりの列を持たない）。2 段目の段 11 の PR 2: カウンタの while は、出どころの枠のカウンタの記録から作る
    */
-  | { kind: 'while'; effect: ResolvedWhileEffect };
+  | { kind: 'while'; effect: ResolvedWhileEffect | ResolvedCounterWhileEffect };
 
 /** 件（窓 [start, end)）。stack はスタックの段（1 始まり）、scale は確率のきっかけの付いている確率 */
 export type HeldItem = { start: number; end: number; stack?: number; scale?: number };
@@ -752,7 +758,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const whileTracks: HeldTrack[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
-    for (const effect of resolveWhileEffects(slot.definition, slot.character, slot.levels)) {
+    for (const effect of [
+      ...resolveWhileEffects(slot.definition, slot.character, slot.levels),
+      ...resolveCounterWhileEffects(slot.definition, slot.character, slot.levels),
+    ]) {
       slots.forEach((target, holder) => {
         if (target === null || !isEffectTarget(effect, sourceSlotIndex, holder, target.character)) return;
         whileTracks.push(newTrack(holder, sourceSlotIndex, { kind: 'while', effect }, 1.5));
@@ -818,16 +827,23 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       counterSources.push({
         sourceSlotIndex,
         effect,
-        fires: isEndedTrigger(effect.trigger) ? null : firesOf(effect.trigger, sourceSlotIndex),
+        fires:
+          isEndedTrigger(effect.trigger) || isCounterFullTrigger(effect.trigger)
+            ? null
+            : firesOf(effect.trigger, sourceSlotIndex),
       });
     }
   });
   const counterKey = (slotIndex: number, counter: CounterId): string => `${slotIndex}:${counter}`;
   const counterValues = new Map<string, number>();
   const counterRecords: CounterRecord[] = [];
+  /** 戦闘開始時の増減の記録（フレーム 0 から効く。段 11 の PR 2 のカウンタの while） */
+  const battleStartCounterRecords = new Set<CounterRecord>();
   /** 枠のカウンタの、いまの値（そのフレームの増減は、すべての判定の後に足すので、前のフレームの終わりの値） */
   const counterValue = (slotIndex: number, counter: CounterId): number =>
     counterValues.get(counterKey(slotIndex, counter)) ?? 0;
+  /** 2 段目の段 11 の PR 2: 枠のカウンタが上限に届いたフレームの次のフレーム（{ counterFull } の発火。届くたびに書き替える） */
+  const counterFullAt = new Map<string, number>();
 
   // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ）。
   // 段 11（plan/design-skill-stage11.md 2.1 節）: 使用武器の変更のきっかけ { fullStack } の状態も ----
@@ -893,7 +909,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** 件の列の件（入力が変わったときだけ作り直す） */
   const readItems = (track: HeldTrack): HeldItem[] => {
     // 2 段目の段 9 の PR 2: while の件は、出どころの枠の状態の件から作る（入力の長さでなく、元の件が作り直されたかで見る）
-    if (track.origin.kind === 'while') return readWhileItems(track, track.origin.effect);
+    if (track.origin.kind === 'while') {
+      const effect = track.origin.effect;
+      return isCounterWhileEffect(effect) ? readCounterWhileItems(track, effect) : readWhileItems(track, effect);
+    }
     const log = track.holder === ENEMY ? null : logs[track.holder];
     const windows = options.fullBurstWindows();
     const seen: HeldTrack['seen'] = [
@@ -984,6 +1003,32 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       own.map((t, i) => ({ origin: t.origin, items: deps[i]! })),
       effect.whileStacks,
     );
+    return track.items;
+  };
+
+  /**
+   * 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: カウンタの while の件。出どころの枠のそのカウンタが atLeast 以上の間。
+   * 記録の値はそのフレームのすべての判定の後に足したものなので、効くのは次のフレームから（戦闘開始時の増減はフレーム 0 から）。
+   * カウンタの記録が増えた時だけ作り直す
+   */
+  const counterWhileSeen = new Map<HeldTrack, number>();
+  const readCounterWhileItems = (track: HeldTrack, effect: ResolvedCounterWhileEffect): HeldItem[] => {
+    if (counterWhileSeen.get(track) === counterRecords.length) return track.items;
+    counterWhileSeen.set(track, counterRecords.length);
+    const { counter, atLeast } = effect.whileCounter;
+    const items: HeldItem[] = [];
+    let open: number | null = null;
+    for (const r of counterRecords) {
+      if (r.slotIndex !== track.sourceSlotIndex || r.counter !== counter) continue;
+      const from = battleStartCounterRecords.has(r) ? 0 : r.frame + 1;
+      if (r.value >= atLeast) open ??= from;
+      else if (open !== null) {
+        if (open < from) items.push({ start: open, end: Math.min(from, frames) });
+        open = null;
+      }
+    }
+    if (open !== null && open < frames) items.push({ start: open, end: frames });
+    track.items = items;
     return track.items;
   };
 
@@ -1122,7 +1167,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const rankSlots = rankSlotsOf(slots, passive);
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
   // 発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）の順位の値が読む
-  const maxHpViews = viewsOf((_, e) => e.stat === 'maxHp');
+  const maxHpViews = viewsOf((_, e) => isMaxHpStat(e.stat));
   const finalMaxHpAt = (slotIndex: number, frame: number): number | undefined => {
     const base = slots[slotIndex]?.casterMaxHp;
     if (base === undefined) return undefined;
@@ -1455,6 +1500,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const t = src.effect.trigger;
       let fired: boolean;
       if (isEndedTrigger(t)) fired = !battleStartOnly && endedAt(src.sourceSlotIndex, t.ended, f);
+      else if (isCounterFullTrigger(t))
+        fired = !battleStartOnly && counterFullAt.get(counterKey(src.sourceSlotIndex, t.counterFull)) === f;
       else if (battleStartOnly) fired = atBattleStart(t);
       else fired = t !== 'battleStart' && src.fires!(ev);
       if (!fired) continue;
@@ -1473,7 +1520,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const after = Math.max(0, Math.min(counterMax(counter), before + delta));
       if (after === before) continue;
       counterValues.set(key, after);
-      counterRecords.push({ frame: battleStartOnly ? 0 : f, slotIndex, counter, value: after });
+      const record: CounterRecord = { frame: battleStartOnly ? 0 : f, slotIndex, counter, value: after };
+      counterRecords.push(record);
+      if (battleStartOnly) battleStartCounterRecords.add(record);
+      if (after === counterMax(counter)) counterFullAt.set(key, (battleStartOnly ? 0 : f) + 1);
     }
   };
 
@@ -1875,6 +1925,8 @@ export function hasOwnShotCountItem(
     }
     // 2 段目の段 9 の PR 2: while の件は、出どころの枠のその状態の件が、自分の射撃の回数のきっかけで付いた時（状態の件の列の shotCount）
     if (o.kind === 'while') {
+      // 2 段目の段 11 の PR 2: カウンタの while は数えない（この関数を読むのはテストだけで、使い手の定義に射撃の回数の見る側がいない）
+      if (isCounterWhileEffect(o.effect)) return false;
       const family = statesMatching(o.effect.whileState);
       return (
         track.holder === slotIndex &&
@@ -1996,7 +2048,7 @@ function amplify(
         r.sourceSlotIndex === sourceSlotIndex &&
         r.effect.source.skill === skill &&
         r.effect.stat === effect.stat &&
-        (isStateContent(r.effect) || r.effect.amplifies === undefined),
+        (!isTimedItem(r.effect) || r.effect.amplifies === undefined),
     );
     const activeAt = (holder: number, frame: number) =>
       referenced.filter((r) => r.holder === holder && r.item.start <= frame && frame < r.item.end);
@@ -2063,7 +2115,7 @@ function passiveStatesOf(history: HolderHistory): (SlotBuffState | null)[] {
   // 2 段目の段 6 の PR 2: 発動者の最終最大HP は、発動者の常時の最大HP▲ を入れた値（resolvePassiveStates と同じ）
   const passiveMaxHp = history.slots.map(() => 0);
   for (const track of history.tracks) {
-    if (track.origin.kind === 'passive' && track.origin.effect.stat === 'maxHp' && track.holder >= 0)
+    if (track.origin.kind === 'passive' && isMaxHpStat(track.origin.effect.stat) && track.holder >= 0)
       passiveMaxHp[track.holder] = (passiveMaxHp[track.holder] ?? 0) + track.origin.effect.value;
   }
   return history.slots.map((slot, index) => {

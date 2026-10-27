@@ -6,7 +6,7 @@ import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
 import { ENEMY, valuePiecesOf } from '../holders.ts';
-import { MAX_SKILL_LEVELS, isStateContent, resolveTimed } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, isTimedItem, resolveTimed } from '../resolve.ts';
 import type { TimelineSlot } from '../timeline.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEffect } from '../types.ts';
 import type { SkillRaw } from '../../types.ts';
@@ -129,7 +129,7 @@ describe('amplifies の窓', () => {
     );
     // 値の小片では、効果の対象の枠（味方全体）ごとの小片に写す
     const written = valuePiecesOf(first.history).filter(
-      (w) => !isStateContent(w.effect) && w.effect.amplifies !== undefined,
+      (w) => isTimedItem(w.effect) && w.effect.amplifies !== undefined,
     );
     expect(written.map((w) => [w.slotIndex, w.start, w.end, Number(w.effect.value.toFixed(6))])).toEqual(
       pieces.flatMap((p) => [

@@ -21,6 +21,7 @@ import type { CounterId } from './counters.ts';
 import {
   SKILL_SLOTS,
   isEndedTrigger,
+  isCounterFullTrigger,
   isFlagStat,
   isShotCountTrigger,
   type BuffScaling,
@@ -37,6 +38,7 @@ import {
   type EffectCondition,
   type EffectTrigger,
   type EndedTrigger,
+  type CounterFullTrigger,
   type EventCountKind,
   type ExcludeSelf,
   type TargetDefense,
@@ -437,13 +439,38 @@ export type ResolvedWhileEffect = ResolvedStateContent & {
   whileStacks?: 'full' | number;
 };
 
-/** 2 段目の段 9 の PR 2: while の効果か */
+/** 2 段目の段 9 の PR 2: while の効果か（状態の while） */
 export function isWhileEffect(effect: ItemEffect): effect is ResolvedWhileEffect {
-  return 'whileSource' in effect;
+  return 'whileSource' in effect && 'whileState' in effect;
 }
 
-/** 名前の付いた状態の語彙編: 件を持つ効果（持続バフと、状態の中身）。値の小片（ValuePiece）・AppliedTimedEffect の元 */
-export type ItemEffect = ResolvedTimedEffect | ResolvedStateContent;
+/**
+ * 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: 解決した、カウンタが N 以上の間だけ効く常時の効果（while の selfCounter）。
+ * 窓は効果を出した枠（自分）のカウンタの記録から作る（skills/holders.ts）。状態の中身ではない（whileState を持たない）。effectIndex は
+ * 常時の効果のスロットの何番目か、subIndex は 0
+ */
+export type ResolvedCounterWhileEffect = ResolvedEffect & {
+  effectIndex: number;
+  subIndex: 0;
+  whileSource: true;
+  whileCounter: { counter: CounterId; atLeast: number };
+};
+
+/** 2 段目の段 11 の PR 2: カウンタの while の効果か */
+export function isCounterWhileEffect(effect: ItemEffect): effect is ResolvedCounterWhileEffect {
+  return 'whileCounter' in effect;
+}
+
+/** 件を持つ効果のうち、きっかけと維持を持つ持続バフか（状態の中身・カウンタの while でない） */
+export function isTimedItem(effect: ItemEffect): effect is ResolvedTimedEffect {
+  return 'trigger' in effect;
+}
+
+/**
+ * 名前の付いた状態の語彙編: 件を持つ効果（持続バフと、状態の中身）。値の小片（ValuePiece）・AppliedTimedEffect の元。
+ * 2 段目の段 11 の PR 2: カウンタの while の効果も
+ */
+export type ItemEffect = ResolvedTimedEffect | ResolvedStateContent | ResolvedCounterWhileEffect;
 
 /** 名前の付いた状態の語彙編: 状態の中身か（トリガーと維持を持たない） */
 export function isStateContent(effect: ItemEffect): effect is ResolvedStateContent {
@@ -688,7 +715,7 @@ export function resolveWhileEffects(
   const out: ResolvedWhileEffect[] = [];
   for (const slot of SKILL_SLOTS) {
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      if (effect.kind !== 'passive' || effect.while === undefined) return;
+      if (effect.kind !== 'passive' || effect.while === undefined || !('selfState' in effect.while)) return;
       const { state, stacks, stacksRef } = effect.while.selfState;
       const r: ResolvedWhileEffect = {
         ...passiveValueOf(effect, character, slot, levels[slot]),
@@ -701,6 +728,31 @@ export function resolveWhileEffects(
       else if (stacksRef !== undefined)
         r.whileStacks = Math.round(skillValue(character.skills[slot], stacksRef, levels[slot]));
       out.push(r);
+    });
+  }
+  return out;
+}
+
+/** 2 段目の段 11 の PR 2: 定義のカウンタの while の常時の効果を Lv の数値に解く */
+export function resolveCounterWhileEffects(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedCounterWhileEffect[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const out: ResolvedCounterWhileEffect[] = [];
+  for (const slot of SKILL_SLOTS) {
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'passive' || effect.while === undefined || !('selfCounter' in effect.while)) return;
+      out.push({
+        ...passiveValueOf(effect, character, slot, levels[slot]),
+        effectIndex,
+        subIndex: 0,
+        whileSource: true,
+        whileCounter: { ...effect.while.selfCounter },
+      });
     });
   }
   return out;
@@ -792,13 +844,13 @@ export function resolveStackChanges(
 
 /**
  * 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: 解決したカウンタの増減（counterChange）。対象は自分。amount は足す（decrease なら
- * 減らす）値（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）。trigger の { ended } はそのまま
+ * 減らす）値（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）。trigger の { ended }・{ counterFull }（段 11 の PR 2）はそのまま
  */
 export type ResolvedCounterChange = {
   source: ResolvedEffect['source'];
   effectIndex: number;
   counter: CounterId;
-  trigger: ResolvedTrigger | EndedTrigger;
+  trigger: ResolvedTrigger | EndedTrigger | CounterFullTrigger;
   amount: number;
   decrease?: true;
   condition?: EffectCondition;
@@ -823,7 +875,10 @@ export function resolveCounterChanges(
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         effectIndex,
         counter: effect.counter,
-        trigger: isEndedTrigger(effect.trigger) ? effect.trigger : resolveTrigger(effect.trigger, skill, levels[slot]),
+        trigger:
+          isEndedTrigger(effect.trigger) || isCounterFullTrigger(effect.trigger)
+            ? effect.trigger
+            : resolveTrigger(effect.trigger, skill, levels[slot]),
         amount,
       };
       if (effect.decrease) r.decrease = true;

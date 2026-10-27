@@ -8,6 +8,7 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
+import { runSimulation } from '../sim/engine.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -97,7 +98,9 @@ describe('発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）
     const calc = runTeam(input);
     const c = character(LAPLACE);
     const expected = Math.round(computeFixedSpecAttack(c).attack + skillRatio(LAPLACE, 1) * computeFixedSpecHp(c));
-    const segments = calc.slots[0]!.segments;
+    // 2 段目の段 11 の PR 2: S2 のオーバーエネルギーの段階の最大HP のみ▲ で最終最大HP が上がるので、最初の段階の前の区間だけを見る（C-0577）
+    const firstStage = runSimulation(input).history.counters.find((x) => x.counter === 'overEnergyStage')!.frame;
+    const segments = calc.slots[0]!.segments.filter((s) => s.ranges.every((r) => r.end <= firstStage));
     expect(segments.length).toBeGreaterThan(0);
     for (const s of segments) expect(s.trigger.attack).toBe(expected);
   });
