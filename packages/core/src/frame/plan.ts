@@ -333,12 +333,16 @@ export function planSkillHits(
       pre: boolean,
       stacks?: number,
       activationFrame = frame - delays.effectFrames,
+      shooterAtHit = false,
     ): void => {
       // バースト使用時の倍率ダメージは、撃つ側のバフを発動の時点で固定する（burstHitBuffs）。発動は発火の effectFrames 前
-      // （ミハラのバースト編: 分かれたヒットごとに出す damage は、発動のフレームを渡す）
-      const atHit = pre
-        ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre)
-        : burstSnapshotState(timeline, frame, slotIndex, pre).buffs;
+      // （ミハラのバースト編: 分かれたヒットごとに出す damage は、発動のフレームを渡す）。
+      // 2 段目の段 10（C-0657。V-0527）: バーストのヒットごとに出す追加ダメージ（perBurstHit）は、撃つ側のバフもヒットの時点の値で出す
+      // （シンデレラの S1 の攻撃力▲は、ヒットの時の最終最大HP を読み直す。バーストのヒットは発動の時点のまま）
+      const atHit =
+        pre && !shooterAtHit
+          ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre)
+          : burstSnapshotState(timeline, frame, slotIndex, pre).buffs;
       // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
       // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
       const skill = effect.source.skill;
@@ -401,7 +405,7 @@ export function planSkillHits(
           const activation = mine.find((a) => effectFrameOf(a) === frame);
           if (activation === undefined) throw new RangeError(`no burst activation fires at frame ${frame}`);
           for (const hit of hitFramesOf(activation)) {
-            if (hit < frames) push(hit, effect, pre, copied, activation.frame);
+            if (hit < frames) push(hit, effect, pre, copied, activation.frame, true);
           }
           continue;
         }

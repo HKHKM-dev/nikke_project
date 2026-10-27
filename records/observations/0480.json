@@ -667,5 +667,41 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0480-22",
+    "recording": "0480",
+    "source": "V-0527",
+    "readAt": "2026-10-27",
+    "kind": "hit",
+    "use": "compare",
+    "value": 411005,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストの 10 ヒット目（f1927。美しさが 5 スタックに増えた後）の追加ダメージ（会心あり。コピーした 4 スタック分）。0480-21 の B + 追加会心 2,819,506 から、発動の時の値の B 2,408,501（0480-15 の 1 ヒット）を引いた値。発動の時の攻撃力なら 407,668",
+    "method": {
+      "tool": "0480-21 と 0480-15 の値の差（V-0527「読み方」）",
+      "note": "許容 abs 3 は丸めの幅（V-0502 の 0480-20 と同じ）。9 ヒット目（B + 追加 2,716,754）も 5 スタックの攻撃力の値だが、モデルでは美しさの 5 スタック目が 9 ヒット目の 2f 後に付くので比べない（V-0527「結果」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 9,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
   }
 ]

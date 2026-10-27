@@ -9901,7 +9901,7 @@
     {
       "observation": "0480-05",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "7a17d96d8bc38ccc",
+      "key": "3c4b17766f1eb0d5",
       "effective": true,
       "minus": -156353.223,
       "plus": 0
@@ -9909,7 +9909,7 @@
     {
       "observation": "0480-06",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "49380c11975d06a0",
+      "key": "e406708263a0f7e1",
       "effective": true,
       "minus": -199543.914,
       "plus": 0
@@ -9917,7 +9917,7 @@
     {
       "observation": "0480-09",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "9365c071d1cc2394",
+      "key": "3bc6a6e2aa479a8d",
       "effective": true,
       "minus": -172567.16749999998,
       "plus": 0
@@ -9925,7 +9925,7 @@
     {
       "observation": "0480-10",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "8bd14793421fb55c",
+      "key": "b8c2ef1c3ba717c5",
       "effective": true,
       "minus": -220236.765,
       "plus": 0
@@ -9933,7 +9933,7 @@
     {
       "observation": "0480-11",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "a7b4c71f4dfbc1f2",
+      "key": "0c1a8540180c84c3",
       "effective": true,
       "minus": 0,
       "plus": 130641.46159999998
@@ -9941,7 +9941,7 @@
     {
       "observation": "0480-12",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "9088e030bc513a3d",
+      "key": "48bf5e539b1ed194",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -9949,7 +9949,7 @@
     {
       "observation": "0480-13",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "fb5ec1b002bcc5cd",
+      "key": "caefdbd3ac4e7ac4",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -9957,7 +9957,7 @@
     {
       "observation": "0480-14",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "7b09961e4023922d",
+      "key": "f6ebe1f92767e5a4",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -9965,7 +9965,7 @@
     {
       "observation": "0480-15",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "1ab1e5b17068b8d2",
+      "key": "ec24b22227fb5e23",
       "effective": true,
       "minus": -13105046.256000007,
       "plus": 0
@@ -9973,7 +9973,7 @@
     {
       "observation": "0480-16",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "1fa067ce522bd99f",
+      "key": "a4561ec997393da6",
       "effective": true,
       "minus": -14681591.120000007,
       "plus": 0
@@ -9981,7 +9981,7 @@
     {
       "observation": "0480-17",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "0ec90e9ba6ce39d4",
+      "key": "4241c734c3823ecd",
       "effective": true,
       "minus": -22022386.68000001,
       "plus": 0
@@ -9989,7 +9989,7 @@
     {
       "observation": "0480-18",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "64b8eab2b5aeba45",
+      "key": "dc03bf05ca27ec8c",
       "effective": true,
       "minus": -166365.162,
       "plus": 0
@@ -9997,7 +9997,7 @@
     {
       "observation": "0480-19",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "ff567ec5fb9e77fc",
+      "key": "0fa2c79e1a448b65",
       "effective": true,
       "minus": -559136.97,
       "plus": 0
@@ -10005,15 +10005,23 @@
     {
       "observation": "0480-20",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "9d56f55c8e2589af",
+      "key": "cc6abb176b47d7d6",
       "effective": true,
       "minus": -745515.9600000001,
       "plus": 0
     },
     {
+      "observation": "0480-22",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "bb6766511e6f1396",
+      "effective": true,
+      "minus": -225156.43200000006,
+      "plus": 0
+    },
+    {
       "observation": "0481-05",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "a8df093324bb8654",
+      "key": "505207bcec06874d",
       "effective": true,
       "minus": -156353.223,
       "plus": 0
@@ -10021,7 +10029,7 @@
     {
       "observation": "0481-06",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "af306f77c281d9c8",
+      "key": "5e5042a8eeeed319",
       "effective": true,
       "minus": -199543.914,
       "plus": 0
@@ -10029,7 +10037,7 @@
     {
       "observation": "0481-09",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "e76341035c9343cc",
+      "key": "0a6bd6acf229efd5",
       "effective": true,
       "minus": -172567.16749999998,
       "plus": 0
@@ -10037,7 +10045,7 @@
     {
       "observation": "0481-10",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "28914dd50bc610d4",
+      "key": "f7822c0e298c9dcd",
       "effective": true,
       "minus": -220236.765,
       "plus": 0
@@ -10045,7 +10053,7 @@
     {
       "observation": "0481-11",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "a57c8fc51c702cea",
+      "key": "7b59c09eddba716b",
       "effective": true,
       "minus": 0,
       "plus": 130641.46159999998
@@ -10053,7 +10061,7 @@
     {
       "observation": "0481-12",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "fb5bdc322766ec95",
+      "key": "2eefcc8532e693fc",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10061,7 +10069,7 @@
     {
       "observation": "0481-13",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "74c6e4e2bc481f65",
+      "key": "0c5700954439c8ac",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10069,7 +10077,7 @@
     {
       "observation": "0481-14",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "553057ec065417c5",
+      "key": "7f889c87cd407e0c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10077,7 +10085,7 @@
     {
       "observation": "0481-15",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "6b706b7fd6be0aea",
+      "key": "ffe367a038dfdf6b",
       "effective": true,
       "minus": -13105046.256000007,
       "plus": 0
@@ -10085,7 +10093,7 @@
     {
       "observation": "0481-16",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "8d4d73f4cc17f837",
+      "key": "f3ce7eff61383e8e",
       "effective": true,
       "minus": -14681591.120000007,
       "plus": 0
@@ -10093,7 +10101,7 @@
     {
       "observation": "0481-17",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "27f44a896ee2fbdc",
+      "key": "2c67d50a9d6d0a45",
       "effective": true,
       "minus": -22022386.68000001,
       "plus": 0
@@ -10101,7 +10109,7 @@
     {
       "observation": "0481-18",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "14f4b798855d699d",
+      "key": "4f3ccb8bceaab6f4",
       "effective": true,
       "minus": -166365.162,
       "plus": 0
@@ -10109,7 +10117,7 @@
     {
       "observation": "0481-19",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "8ca853af24de3e54",
+      "key": "405f8430bc9d7f4d",
       "effective": true,
       "minus": -559136.97,
       "plus": 0
@@ -10117,15 +10125,23 @@
     {
       "observation": "0481-20",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "e3c1a3dee62c9397",
+      "key": "35aff4b9cb687aee",
       "effective": true,
       "minus": -745515.9600000001,
       "plus": 0
     },
     {
+      "observation": "0481-22",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "7b6753a7a870dade",
+      "effective": true,
+      "minus": -225156.43200000006,
+      "plus": 0
+    },
+    {
       "observation": "0482-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "b62ac0827fbe243b",
+      "key": "80ece1b551cc17ba",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10133,7 +10149,7 @@
     {
       "observation": "0482-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "b62ac0827fbe243b",
+      "key": "80ece1b551cc17ba",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10149,7 +10165,7 @@
     {
       "observation": "0482-09",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "b62ac0827fbe243b",
+      "key": "80ece1b551cc17ba",
       "effective": true,
       "minus": -206408.89190999998,
       "plus": 0
@@ -10157,7 +10173,7 @@
     {
       "observation": "0482-10",
       "element": "アニス：スター burst.effects[0]",
-      "key": "288d7f9c2b37601b",
+      "key": "41ce5d57ed65329a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10165,7 +10181,7 @@
     {
       "observation": "0482-10",
       "element": "アニス：スター burst.effects[1]",
-      "key": "288d7f9c2b37601b",
+      "key": "41ce5d57ed65329a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10181,7 +10197,7 @@
     {
       "observation": "0482-10",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "288d7f9c2b37601b",
+      "key": "41ce5d57ed65329a",
       "effective": true,
       "minus": -263426.85737999994,
       "plus": 0
@@ -10189,7 +10205,7 @@
     {
       "observation": "0483-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "4b7a671719e6d1fa",
+      "key": "f5f985c83815ac1b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10197,7 +10213,7 @@
     {
       "observation": "0483-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "4b7a671719e6d1fa",
+      "key": "f5f985c83815ac1b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10213,7 +10229,7 @@
     {
       "observation": "0483-09",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "4b7a671719e6d1fa",
+      "key": "f5f985c83815ac1b",
       "effective": true,
       "minus": -206408.89190999998,
       "plus": 0
@@ -10221,7 +10237,7 @@
     {
       "observation": "0483-10",
       "element": "アニス：スター burst.effects[0]",
-      "key": "7fe344514cc06cda",
+      "key": "75568cc2641f4ffb",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10229,7 +10245,7 @@
     {
       "observation": "0483-10",
       "element": "アニス：スター burst.effects[1]",
-      "key": "7fe344514cc06cda",
+      "key": "75568cc2641f4ffb",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10245,7 +10261,7 @@
     {
       "observation": "0483-10",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "7fe344514cc06cda",
+      "key": "75568cc2641f4ffb",
       "effective": true,
       "minus": -263426.85737999994,
       "plus": 0
@@ -10253,7 +10269,7 @@
     {
       "observation": "0484-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "6fcf13e6d775a0fb",
+      "key": "ae58b7912ab2117a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10261,7 +10277,7 @@
     {
       "observation": "0484-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "6fcf13e6d775a0fb",
+      "key": "ae58b7912ab2117a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10277,7 +10293,7 @@
     {
       "observation": "0484-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "6fcf13e6d775a0fb",
+      "key": "ae58b7912ab2117a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10293,7 +10309,7 @@
     {
       "observation": "0484-07",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "6fcf13e6d775a0fb",
+      "key": "ae58b7912ab2117a",
       "effective": true,
       "minus": -390053.5687002499,
       "plus": 0
@@ -10301,7 +10317,7 @@
     {
       "observation": "0484-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "408085824a6124d7",
+      "key": "a7fcaeb5c49e002e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10309,7 +10325,7 @@
     {
       "observation": "0484-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "408085824a6124d7",
+      "key": "a7fcaeb5c49e002e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10325,7 +10341,7 @@
     {
       "observation": "0484-08",
       "element": "アニス：スター burst.effects[2]",
-      "key": "408085824a6124d7",
+      "key": "a7fcaeb5c49e002e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10341,7 +10357,7 @@
     {
       "observation": "0484-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "408085824a6124d7",
+      "key": "a7fcaeb5c49e002e",
       "effective": true,
       "minus": -295117.26509999996,
       "plus": 0
@@ -10349,7 +10365,7 @@
     {
       "observation": "0485-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "be137ff1f121e206",
+      "key": "094d3262cd407daf",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10357,7 +10373,7 @@
     {
       "observation": "0485-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "be137ff1f121e206",
+      "key": "094d3262cd407daf",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10373,7 +10389,7 @@
     {
       "observation": "0485-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "be137ff1f121e206",
+      "key": "094d3262cd407daf",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10389,7 +10405,7 @@
     {
       "observation": "0485-07",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "be137ff1f121e206",
+      "key": "094d3262cd407daf",
       "effective": true,
       "minus": -390053.5687002499,
       "plus": 0
@@ -10397,7 +10413,7 @@
     {
       "observation": "0485-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "8676e675c7961df2",
+      "key": "94c6962ee45900c3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10405,7 +10421,7 @@
     {
       "observation": "0485-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "8676e675c7961df2",
+      "key": "94c6962ee45900c3",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10421,7 +10437,7 @@
     {
       "observation": "0485-08",
       "element": "アニス：スター burst.effects[2]",
-      "key": "8676e675c7961df2",
+      "key": "94c6962ee45900c3",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10437,7 +10453,7 @@
     {
       "observation": "0485-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "8676e675c7961df2",
+      "key": "94c6962ee45900c3",
       "effective": true,
       "minus": -295117.26509999996,
       "plus": 0
@@ -10445,7 +10461,7 @@
     {
       "observation": "0486-04",
       "element": "アニス：スター burst.effects[0]",
-      "key": "c9b393db162a24e4",
+      "key": "c70962744f3e9bfd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10453,7 +10469,7 @@
     {
       "observation": "0486-04",
       "element": "アニス：スター burst.effects[1]",
-      "key": "c9b393db162a24e4",
+      "key": "c70962744f3e9bfd",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10469,7 +10485,7 @@
     {
       "observation": "0486-04",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "c9b393db162a24e4",
+      "key": "c70962744f3e9bfd",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10477,7 +10493,7 @@
     {
       "observation": "0486-05",
       "element": "アニス：スター burst.effects[0]",
-      "key": "25a54a90fbf3410f",
+      "key": "6bff8b336cd39d36",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10485,7 +10501,7 @@
     {
       "observation": "0486-05",
       "element": "アニス：スター burst.effects[1]",
-      "key": "25a54a90fbf3410f",
+      "key": "6bff8b336cd39d36",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10501,7 +10517,7 @@
     {
       "observation": "0486-05",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "25a54a90fbf3410f",
+      "key": "6bff8b336cd39d36",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10509,7 +10525,7 @@
     {
       "observation": "0486-06",
       "element": "アニス：スター burst.effects[0]",
-      "key": "6e256599d0353da6",
+      "key": "5976bcba050c374f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10517,7 +10533,7 @@
     {
       "observation": "0486-06",
       "element": "アニス：スター burst.effects[1]",
-      "key": "6e256599d0353da6",
+      "key": "5976bcba050c374f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10533,7 +10549,7 @@
     {
       "observation": "0486-06",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "6e256599d0353da6",
+      "key": "5976bcba050c374f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10541,7 +10557,7 @@
     {
       "observation": "0486-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "78d253b649157b39",
+      "key": "a49b9181f4efb5e8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10549,7 +10565,7 @@
     {
       "observation": "0486-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "78d253b649157b39",
+      "key": "a49b9181f4efb5e8",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10565,7 +10581,7 @@
     {
       "observation": "0486-07",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "78d253b649157b39",
+      "key": "a49b9181f4efb5e8",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10573,7 +10589,7 @@
     {
       "observation": "0486-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "573a7d09372bd5dc",
+      "key": "69438b8a98b29445",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10581,7 +10597,7 @@
     {
       "observation": "0486-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "573a7d09372bd5dc",
+      "key": "69438b8a98b29445",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10597,7 +10613,7 @@
     {
       "observation": "0486-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "573a7d09372bd5dc",
+      "key": "69438b8a98b29445",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10605,7 +10621,7 @@
     {
       "observation": "0487-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "43602daafd770f3f",
+      "key": "acbfa0edf6303fc6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10613,7 +10629,7 @@
     {
       "observation": "0487-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "43602daafd770f3f",
+      "key": "acbfa0edf6303fc6",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10629,7 +10645,7 @@
     {
       "observation": "0487-09",
       "element": "アニス：スター burst.effects[2]",
-      "key": "43602daafd770f3f",
+      "key": "acbfa0edf6303fc6",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10645,7 +10661,7 @@
     {
       "observation": "0487-09",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "43602daafd770f3f",
+      "key": "acbfa0edf6303fc6",
       "effective": true,
       "minus": 0,
       "plus": 390053.5687002499
@@ -10653,7 +10669,7 @@
     {
       "observation": "0487-10",
       "element": "アニス：スター burst.effects[0]",
-      "key": "41c068eef52e58db",
+      "key": "f3753569a0dbde5a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10661,7 +10677,7 @@
     {
       "observation": "0487-10",
       "element": "アニス：スター burst.effects[1]",
-      "key": "41c068eef52e58db",
+      "key": "f3753569a0dbde5a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10677,7 +10693,7 @@
     {
       "observation": "0487-10",
       "element": "アニス：スター burst.effects[2]",
-      "key": "41c068eef52e58db",
+      "key": "f3753569a0dbde5a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10693,7 +10709,7 @@
     {
       "observation": "0487-10",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "41c068eef52e58db",
+      "key": "f3753569a0dbde5a",
       "effective": true,
       "minus": 0,
       "plus": 295117.26509999996
@@ -10701,7 +10717,7 @@
     {
       "observation": "0488-06",
       "element": "アニス：スター burst.effects[0]",
-      "key": "f8f0655dc623edee",
+      "key": "43e288c614114c47",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10709,7 +10725,7 @@
     {
       "observation": "0488-06",
       "element": "アニス：スター burst.effects[1]",
-      "key": "f8f0655dc623edee",
+      "key": "43e288c614114c47",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10725,7 +10741,7 @@
     {
       "observation": "0488-06",
       "element": "アニス：スター burst.effects[2]",
-      "key": "f8f0655dc623edee",
+      "key": "43e288c614114c47",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10741,7 +10757,7 @@
     {
       "observation": "0488-06",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "f8f0655dc623edee",
+      "key": "43e288c614114c47",
       "effective": true,
       "minus": 0,
       "plus": 390053.5687002499
@@ -10749,7 +10765,7 @@
     {
       "observation": "0488-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "eff147a18688e6a2",
+      "key": "9fb71ff29ae053d3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10757,7 +10773,7 @@
     {
       "observation": "0488-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "eff147a18688e6a2",
+      "key": "9fb71ff29ae053d3",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10773,7 +10789,7 @@
     {
       "observation": "0488-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "eff147a18688e6a2",
+      "key": "9fb71ff29ae053d3",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10789,7 +10805,7 @@
     {
       "observation": "0488-07",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "eff147a18688e6a2",
+      "key": "9fb71ff29ae053d3",
       "effective": true,
       "minus": 0,
       "plus": 295117.26509999996
@@ -10797,7 +10813,7 @@
     {
       "observation": "0488-11",
       "element": "アニス：スター burst.effects[0]",
-      "key": "5e7b1a8b4518cb96",
+      "key": "cffcda44d4c6999f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10805,23 +10821,7 @@
     {
       "observation": "0488-11",
       "element": "アニス：スター burst.effects[1]",
-      "key": "5e7b1a8b4518cb96",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "0488-11",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "5e7b1a8b4518cb96",
+      "key": "cffcda44d4c6999f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10836,8 +10836,24 @@
     },
     {
       "observation": "0488-11",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "cffcda44d4c6999f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0488-11",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "5e7b1a8b4518cb96",
+      "key": "cffcda44d4c6999f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10845,7 +10861,7 @@
     {
       "observation": "0488-12",
       "element": "アニス：スター burst.effects[0]",
-      "key": "cdd04fb2713dc367",
+      "key": "e6be2c055d4a5d1e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10853,7 +10869,7 @@
     {
       "observation": "0488-12",
       "element": "アニス：スター burst.effects[1]",
-      "key": "cdd04fb2713dc367",
+      "key": "e6be2c055d4a5d1e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10869,7 +10885,7 @@
     {
       "observation": "0488-12",
       "element": "アニス：スター burst.effects[2]",
-      "key": "cdd04fb2713dc367",
+      "key": "e6be2c055d4a5d1e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10885,7 +10901,7 @@
     {
       "observation": "0488-12",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "cdd04fb2713dc367",
+      "key": "e6be2c055d4a5d1e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10893,7 +10909,7 @@
     {
       "observation": "0488-13",
       "element": "アニス：スター burst.effects[0]",
-      "key": "7551af656bc8ea64",
+      "key": "3cb2c0be4513557d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10901,7 +10917,7 @@
     {
       "observation": "0488-13",
       "element": "アニス：スター burst.effects[1]",
-      "key": "7551af656bc8ea64",
+      "key": "3cb2c0be4513557d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10917,7 +10933,7 @@
     {
       "observation": "0488-13",
       "element": "アニス：スター burst.effects[2]",
-      "key": "7551af656bc8ea64",
+      "key": "3cb2c0be4513557d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10933,7 +10949,7 @@
     {
       "observation": "0488-13",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "7551af656bc8ea64",
+      "key": "3cb2c0be4513557d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10941,7 +10957,7 @@
     {
       "observation": "0488-14",
       "element": "アニス：スター burst.effects[0]",
-      "key": "903b2fbe89a7f755",
+      "key": "f3730119d2f4e8bc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10949,7 +10965,7 @@
     {
       "observation": "0488-14",
       "element": "アニス：スター burst.effects[1]",
-      "key": "903b2fbe89a7f755",
+      "key": "f3730119d2f4e8bc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10965,7 +10981,7 @@
     {
       "observation": "0488-14",
       "element": "アニス：スター burst.effects[2]",
-      "key": "903b2fbe89a7f755",
+      "key": "f3730119d2f4e8bc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10981,7 +10997,7 @@
     {
       "observation": "0488-14",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "903b2fbe89a7f755",
+      "key": "f3730119d2f4e8bc",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11768,7 +11784,7 @@
     {
       "observation": "0513-05",
       "element": "アニス：スター burst.effects[0]",
-      "key": "4b97e42a7a2aacdb",
+      "key": "8ffda34d54095f7a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11776,7 +11792,7 @@
     {
       "observation": "0513-05",
       "element": "アニス：スター burst.effects[1]",
-      "key": "4b97e42a7a2aacdb",
+      "key": "8ffda34d54095f7a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11792,7 +11808,7 @@
     {
       "observation": "0513-05",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "4b97e42a7a2aacdb",
+      "key": "8ffda34d54095f7a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11800,7 +11816,7 @@
     {
       "observation": "0513-06",
       "element": "アニス：スター burst.effects[0]",
-      "key": "588dbf6f4568ff4c",
+      "key": "551144f8b8a343a5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11808,7 +11824,7 @@
     {
       "observation": "0513-06",
       "element": "アニス：スター burst.effects[1]",
-      "key": "588dbf6f4568ff4c",
+      "key": "551144f8b8a343a5",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11824,7 +11840,7 @@
     {
       "observation": "0513-06",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "588dbf6f4568ff4c",
+      "key": "551144f8b8a343a5",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11832,7 +11848,7 @@
     {
       "observation": "0513-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "53074f286aaba0a1",
+      "key": "430216db0633cf80",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11840,7 +11856,7 @@
     {
       "observation": "0513-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "53074f286aaba0a1",
+      "key": "430216db0633cf80",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11856,7 +11872,7 @@
     {
       "observation": "0513-07",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "53074f286aaba0a1",
+      "key": "430216db0633cf80",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11864,7 +11880,7 @@
     {
       "observation": "0513-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "e5741f1d926289ca",
+      "key": "657cf3fe1d3b141b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11872,7 +11888,7 @@
     {
       "observation": "0513-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "e5741f1d926289ca",
+      "key": "657cf3fe1d3b141b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11888,7 +11904,7 @@
     {
       "observation": "0513-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "e5741f1d926289ca",
+      "key": "657cf3fe1d3b141b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11896,7 +11912,7 @@
     {
       "observation": "0513-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "c5282d1ecc621c5f",
+      "key": "1cbffe29e0cf1726",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11904,7 +11920,7 @@
     {
       "observation": "0513-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "c5282d1ecc621c5f",
+      "key": "1cbffe29e0cf1726",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11920,7 +11936,7 @@
     {
       "observation": "0513-09",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "c5282d1ecc621c5f",
+      "key": "1cbffe29e0cf1726",
       "effective": false,
       "minus": 0,
       "plus": 0
