@@ -80,6 +80,8 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   sustainedDamage: 'damageValue',
   // 2 段目の段 6 の PR 2: 最大HP▲ は発動者の最終最大HP 基準の攻撃力▲を通して値に効く（notes のときと同じ分類）
   maxHp: 'damageValue',
+  // 2 段目の段 11 の PR 2: 最大HP のみ▲ も同じ（最終最大HP への足し方が最大HP▲ と同じ）
+  maxHpOnly: 'damageValue',
   // 2 段目の段 7: 防御力▲ は、対象の絞り込み（自分より最終防御力が低い味方）を通して値に効く（防御力▲ だけの効果は、経路 defense の
   // 間接の要素と同じに見る。notRelevantReason）
   defense: 'damageValue',

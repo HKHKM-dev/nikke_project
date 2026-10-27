@@ -4,10 +4,10 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { FIXED_BURST_CYCLE, isFullBurstFrame, planFixedCycle } from '../../burst/fixedCycle.ts';
 import { slotsByStep } from '../../burst/schedule.ts';
-import { MAX_SKILL_LEVELS, isStateContent, type ItemEffect } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, isTimedItem, type ItemEffect } from '../resolve.ts';
 
 /** 件を持つ効果のトリガー（名前の付いた状態の中身はトリガーを持たない） */
-const triggerOf = (e: ItemEffect) => (isStateContent(e) ? undefined : e.trigger);
+const triggerOf = (e: ItemEffect) => (isTimedItem(e) ? e.trigger : undefined);
 import { groupTimeline, triggerFrames, type TimelineSlot } from '../timeline.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { itemsOf } from '../holders.ts';

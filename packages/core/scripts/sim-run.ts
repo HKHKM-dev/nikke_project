@@ -58,7 +58,13 @@ import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simIntervalTotals } from '../src/sim/engine.ts';
 import { simTeamResult } from '../src/sim/teamResult.ts';
 import { firingParams } from '../src/frame/firing.ts';
-import { MAX_SKILL_LEVELS, isStateContent, type ResolvedTrigger, type SkillLevels } from '../src/skills/resolve.ts';
+import {
+  MAX_SKILL_LEVELS,
+  isCounterWhileEffect,
+  isStateContent,
+  type ResolvedTrigger,
+  type SkillLevels,
+} from '../src/skills/resolve.ts';
 import { itemsOf } from '../src/skills/holders.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../src/skills/composition.ts';
@@ -608,7 +614,7 @@ for (const [i, slot] of slots.entries()) {
         .map(
           ({ e, n }) =>
             // 名前の付いた状態の語彙編: 状態の中身はトリガーの代わりに、効いている状態（while:camouflage）
-            `${isStateContent(e) ? `while:${e.whileState}` : triggerLabel(e.trigger)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
+            `${isStateContent(e) ? `while:${e.whileState}` : isCounterWhileEffect(e) ? `while:${e.whileCounter.counter}>=${e.whileCounter.atLeast}` : triggerLabel(e.trigger)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
         )
         .join(', '),
     })),

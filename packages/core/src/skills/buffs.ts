@@ -204,6 +204,8 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   burstGaugeSpeed: 'burstGaugeSpeed',
   maxAmmo: 'maxAmmoRatio',
   maxHp: 'maxHpRatio',
+  // 2 段目の段 11 の PR 2: 最大HP のみ▲ も最終最大HP には同じに足す（HP の割合を下げる読みは未実装。skills/types.ts の BUFF_STATS）
+  maxHpOnly: 'maxHpRatio',
   defense: 'defenseRatio',
   reloadSpeed: 'reloadSpeed',
   chargeSpeed: 'chargeSpeed',

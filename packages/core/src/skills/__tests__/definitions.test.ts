@@ -247,17 +247,20 @@ describe('data/skills', () => {
       }
     });
 
-    // 2 段目の段 6 の論点 8（plan/design-skill-stage6.md 2.4 節）: 「最大HP のみ▲」は効いている間 HP の割合を下げる扱いが要るので、その形を
-    // 足すまで maxHp では書かない（notes のまま）。スロットの説明文に「最大HPのみ」があれば、そのスロットに maxHp の効果を書かない
-    // （同じスロットに最大HP▲ と最大HP のみ▲ の両方がある定義を書く時は、この検査を行ごとに直す）
-    it('does not write a max HP only up as maxHp yet', () => {
+    // 2 段目の段 6 の論点 8（plan/design-skill-stage6.md 2.4 節）: 「最大HP のみ▲」は効いている間 HP の割合を下げる読みなので、maxHp では
+    // 書かない。2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）で stat maxHpOnly を足した: スロットの説明文に「最大HPのみ」が
+    // あればそのスロットに maxHp の効果を書かず、maxHpOnly の効果はその説明文のスロットにだけ書く（同じスロットに最大HP▲ と最大HP のみ▲ の
+    // 両方がある定義を書く時は、この検査を行ごとに直す）
+    it('writes a max HP only up as maxHpOnly, not maxHp', () => {
       for (const slot of SKILL_SLOTS) {
-        const writesMaxHp = def.skills[slot].effects.some(
-          (e) =>
-            ('stat' in e && e.stat === 'maxHp') ||
-            (e.kind === 'state' && (e.contents ?? []).some((c) => c.stat === 'maxHp')),
-        );
-        if (writesMaxHp) expect(character.skills[slot].description.ja, slot).not.toMatch(/最大HPのみ/);
+        const writes = (stat: string) =>
+          def.skills[slot].effects.some(
+            (e) =>
+              ('stat' in e && e.stat === stat) ||
+              (e.kind === 'state' && (e.contents ?? []).some((c) => c.stat === stat)),
+          );
+        if (writes('maxHp')) expect(character.skills[slot].description.ja, slot).not.toMatch(/最大HPのみ/);
+        if (writes('maxHpOnly')) expect(character.skills[slot].description.ja, slot).toMatch(/最大HPのみ/);
       }
     });
   });

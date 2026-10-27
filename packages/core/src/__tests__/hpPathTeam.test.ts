@@ -97,7 +97,9 @@ describe('発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）
     const calc = runTeam(input);
     const c = character(LAPLACE);
     const expected = Math.round(computeFixedSpecAttack(c).attack + skillRatio(LAPLACE, 1) * computeFixedSpecHp(c));
-    const segments = calc.slots[0]!.segments;
+    // 2 段目の段 11 の PR 2: S2 のオーバーエネルギーの段階の最大HP のみ▲ で最終最大HP が上がるので、最初の段階の前の区間だけを見る（C-0577）
+    const firstStage = runSimulation(input).history.counters.find((x) => x.counter === 'overEnergyStage')!.frame;
+    const segments = calc.slots[0]!.segments.filter((s) => s.ranges.every((r) => r.end <= firstStage));
     expect(segments.length).toBeGreaterThan(0);
     for (const s of segments) expect(s.trigger.attack).toBe(expected);
   });
