@@ -58,8 +58,7 @@
             "en": "The changed weapon is not in CDN, so it was read from recordings (V-0528): instant hit, no charge, 1440 rpm, starts with a full magazine and ends when empty, first shot 27 f after the fifth shot. Core hit rate from the target table row coreHitRate.weaponChanges. Burst gauge per changed shot is unverified (the model uses the base weapon's fully charged shot). Pierce is not written (against a single enemy it could matter only with an ally having Pierce Damage up; unverified; no defined ally has it)"
           },
           "claims": [
-            "C-0699",
-            "C-0701"
+            "C-0699"
           ]
         },
         {

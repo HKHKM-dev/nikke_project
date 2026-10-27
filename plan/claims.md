@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 455・仮説 82・棄却 113・範囲外 2（計 652）
+件数: 確定 454・仮説 83・棄却 113・範囲外 2（計 652）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -4026,12 +4026,12 @@
   - 検証記録: V-0528
   - 定義: `data/skills/103.json` の skill1 の effects[3]
 - **C-0701** 射撃場の的（BigArms・3 分モード）で、ラプラス：アルティメットヒーローの S1 の変更後の武器の発は、1〜5 区間目（中近・近・遠・中遠・近）ですべてコアに当たる。6 区間目（5 回目の着地の後の遠）は胴体に当たる発がある（未解明。モデルに入れていない）
-  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-27
+  - 状態: 仮説・等級: 反復実測・更新日: 2026-10-27
   - 根拠: `0121-20`・`0121-21`・`0130-15`・`0130-16`・`0131-15`・`0131-16`（1〜5 区間目の変更後の武器の増分に、胴体の値が 3 本とも無い。6 区間目の胴体の数は記録）。V-0528
   - モデル側: `data/enemies.json` の range-bigarms の coreHitRate.weaponChanges の `103:skill1`（all 1）。`frame/landing.ts` の weaponChangeParts が、即着弾に替えた変更（instantFire）の区間のコア命中率をこの行から引く。6 区間目の胴体は `data/skills/103.json` の skill1 の notes[0]（未対応）
   - 決めるのに使った録画: 0121（仮説の出どころ）
   - 検証記録: V-0528
-  - 定義: `data/skills/103.json` の skill1 の effects[2]、`data/skills/103.json` の skill1 の notes[0]
+  - 定義: `data/skills/103.json` の skill1 の notes[0]
 
 ## 敵・的・場面
 
