@@ -3,7 +3,8 @@
 // 窓の値の式と、sim と calc の整合、順位（アリスの S1）に期待値の攻撃力が入ること。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -162,7 +163,7 @@ const TEAMS: Record<string, TeamInput> = {
 
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule and the shot-counted groups', () => {

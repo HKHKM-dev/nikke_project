@@ -7,7 +7,7 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -58,7 +58,7 @@ const TEAMS: Record<string, { input: TeamInput; naga: number }> = {
 
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, naga }) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('gives core damage up to min(2, team size) slots 6 frames after the 5th shot (C-0592・C-0593・C-0653)', () => {

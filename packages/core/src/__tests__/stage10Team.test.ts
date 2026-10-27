@@ -6,11 +6,11 @@ import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { firingParams } from '../frame/firing.ts';
-import type { ShotLog } from '../frame/shots.ts';
+import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -81,7 +81,7 @@ describe('録画 0037: ドレイクの最大装弾数（8.5）', () => {
     expect(sizes[0]).toBe(9);
     expect(sizes.every((n) => n === 9 || n <= 20)).toBe(true);
     // 区間の実効の最大装弾数（V-0028 でフルバーストの枠が動き、20 発を撃ち切るマガジンが枠に収まらなくなったので、発数ではなく値で見る）
-    const calc = computeTeamDamage(input);
+    const calc = runTeam(input);
     const slot = calc.slots[2]!;
     expect(Math.max(...slot.segments.map((g) => firingParams(slot.character.shot, g.buffs).maxAmmo))).toBe(20);
   });
@@ -138,7 +138,7 @@ describe('録画 0039（録画 A）: リターの CT 短縮と最大装弾数', 
 
   it('raises the max ammo as recording 39 showed (rounded to nearest): Delta 6 → 9, Liter 120 → 174, Drake 9 → 24', () => {
     // 区間のバフ合計から実効の最大装弾数を出し、区間ごとの最大を取る（射撃の回数はリロードの位相で変わるので使わない）
-    const calc = computeTeamDamage(TEAMS['録画 A（リター + デルタ + ドレイク宝物 3）']!);
+    const calc = runTeam(TEAMS['録画 A（リター + デルタ + ドレイク宝物 3）']!);
     const max = (i: number) =>
       Math.max(...calc.slots[i]!.segments.map((g) => firingParams(calc.slots[i]!.character.shot, g.buffs).maxAmmo));
     expect(max(0)).toBe(174);
@@ -155,7 +155,7 @@ describe('録画 0039（録画 A）: リターの CT 短縮と最大装弾数', 
 
 describe('録画 0040（録画 B）: アドミのリロード速度・ユニのチャージ速度と最大装弾数', () => {
   const input = TEAMS['録画 B（アドミ + ユニ + ラム + クイーン（真））']!;
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const ram = calc.slots[2]!;
 
   it('puts reload speed (アドミ) and charge speed / +1 round (ユニ) on ラム, counted from the shot log', () => {
@@ -191,7 +191,7 @@ describe('録画 0040（録画 B）: アドミのリロード速度・ユニの�
 
 describe.each(Object.entries(TEAMS))('sim vs calc (8.4): %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the skill hits, the bursts and the shot-counted groups', () => {

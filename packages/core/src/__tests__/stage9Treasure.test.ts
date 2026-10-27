@@ -9,7 +9,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { type TeamInput, type TeamSlotInput, type TeamSlotResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
@@ -83,7 +83,7 @@ describe('ドレイクの宝物（データ）', () => {
 
 describe('録画 0036: ドレイク単騎（宝物 3 段階）', () => {
   const input: TeamInput = { slots: [fixedSlot(101, 3)], enemy, durationSeconds: 60 };
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const drake = calc.slots[0]!;
   const hits = drake.skillHits.activations;
 
@@ -106,7 +106,7 @@ describe('録画 0036: ドレイク単騎（宝物 3 段階）', () => {
   });
 
   it('is at least as strong as the base version, and phase 0 is the base version', () => {
-    const base = computeTeamDamage({ ...input, slots: [fixedSlot(101, 0)] }).slots[0]!;
+    const base = runTeam({ ...input, slots: [fixedSlot(101, 0)] }).slots[0]!;
     expect(base.treasurePhase).toBe(0);
     expect(base.treasureSlots).toEqual([]);
     expect(byMultiplier(base.skillHits.activations, 2.016)).toHaveLength(0);
@@ -121,7 +121,7 @@ describe('録画 0037: ラム + デルタ + ドレイク（宝物 3 段階）', 
     durationSeconds: 180,
     burst: true,
   };
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const drake = calc.slots[2]!;
   const windows = calc.schedule!.fullBurstWindows;
   const inFb = (a: SkillHit) =>

@@ -482,7 +482,8 @@ export function ResultPanel({
                 <th>倍率グループ</th>
                 <th>攻撃ダメージ</th>
                 <th>1 トリガー</th>
-                <th>トリガー数</th>
+                {/* 一本化の段 A-2: 全区間が射撃の列の発数になったので、2026-10-27 までの「（実数）」の印は消した */}
+                <th title="1 パス目の射撃の列から数えた発数">トリガー数</th>
                 <th>ダメージ</th>
                 <th>持続バフ</th>
               </tr>
@@ -501,14 +502,6 @@ export function ResultPanel({
                   <td>{formatNumber(seg.trigger.perTrigger)}</td>
                   <td>
                     {formatNumber(seg.triggers, 1)}
-                    {seg.triggerSource === 'shots' && (
-                      <small
-                        className="sub"
-                        title="トリガー数は 1 パス目の射撃の列から数えた発数（2026-10-27 の一本化から、すべての区間。それまでは最大装弾数・リロード速度・チャージ速度の持続バフが掛かっている区間だけで、ほかは平均レート × 秒数）"
-                      >
-                        （実数）
-                      </small>
-                    )}
                     {seg.partialCharge && (
                       <small
                         className="sub"

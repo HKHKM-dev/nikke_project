@@ -4,7 +4,8 @@
 // 防御力▲ も比べに入る（デルタ（20）の S2 を間接の notes から効果にした。C-0589。録画 0486 でデルタが外れ、録画 0488 で入る）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets, targetProfileForEnemy } from '../enemies.ts';
 import {
@@ -191,9 +192,7 @@ describe('防御力▲ と targetDefense の読み込み', () => {
   });
 
   it('rejects a negative defenceOverride', () => {
-    expect(() => computeTeamDamage(team([fixedSlot(ANIS_STAR, { defenceOverride: -1 })], 0))).toThrow(
-      /defenceOverride/,
-    );
+    expect(() => runTeam(team([fixedSlot(ANIS_STAR, { defenceOverride: -1 })], 0))).toThrow(/defenceOverride/);
   });
 });
 
@@ -387,7 +386,7 @@ describe.each([
   ['録画 B の編成（画面の既定の条件。防御力▲ が切れた回あり）', WAITING],
 ])('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the instants and the shot-counted groups', () => {

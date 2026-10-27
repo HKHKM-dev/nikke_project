@@ -6,7 +6,8 @@
 // 同じ編成で見る（V-0229。plan/design-ranked-shot-duration.md）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -220,7 +221,7 @@ describe.each([
   ['実戦寄り（ミランダ + リター + デルタ + アリス + モダニア）', PRACTICAL],
 ] as const)('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule and the shot-counted groups', () => {

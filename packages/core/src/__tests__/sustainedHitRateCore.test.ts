@@ -5,7 +5,7 @@
 //   3. 手入力の枠と、持続の▲の無い区間は今までと同じ
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -73,7 +73,7 @@ describe('持続の命中率▲（C-0170）', () => {
   const input = team(true);
   const plan = planTeamRun(input);
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const fb = plan.schedule!.fullBurstWindows;
   const nearFb = fb.find((w) =>
     plan.timeline.segments.some((s) => s.start <= w.start && w.start < s.end && s.landing === 'near'),
@@ -173,6 +173,6 @@ describe('持続の命中率▲（C-0170）', () => {
     // この編成では動かなくなった。1 パス目が▲を落とすことは sustainedHitRateGauge.test.ts で見る）。持続の▲の分だけダメージが減る
     expect(a.schedule!.fullBurstWindows.length).toBe(sim.schedule!.fullBurstWindows.length);
     expect(a.totalDamage).toBeLessThan(sim.totalDamage);
-    expect(computeTeamDamage(off).totalDamage).toBeLessThan(calc.totalDamage);
+    expect(runTeam(off).totalDamage).toBeLessThan(calc.totalDamage);
   });
 });

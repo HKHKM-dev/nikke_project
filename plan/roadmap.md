@@ -3,7 +3,7 @@
 - 関連: [requirements.md](requirements.md)
 - 番号規則: Stage・バージョンはすべて 1 始まりの整数。
 - 各 Stage は前段が動いて検証済みであることを前提にする。Stage 名は仮。
-- **基本原則（2026-09-22 改定）**: 各 Stage とも **sim → calc の順** で並行開発する。UI は最小限にとどめ、ヘッドレスなシミュレータコアと自動テストで小規模な PDCA サイクルを回す。
+- **基本原則（2026-10-27 改定）**: 計算のモデルは共通のフレームループ（1 パス目）と 2 パス目の集計の 1 本（[design-unify-sim-calc.md](design-unify-sim-calc.md)）。メカニクスは 1 パス目に足し、UI は最小限にとどめ、ヘッドレスなコアと自動テストで小規模な PDCA サイクルを回す。2026-09-22〜10-27 は「各 Stage とも sim → calc の順で並行開発する」だった
 - 書き方（2026-10-25 から。[design-workflow-simplification.md](design-workflow-simplification.md) 1 節）: Stage も課題も 1 つを 1 行にし、状態と設計書と残りの行き先だけを書く。V-/C- の ID と経過は書かない（設計書・[claims.md](claims.md)・[verifications.md](verifications.md)・[backlog.md](backlog.md) が持つ）。行は状態が変わったときだけ直す。
 - 表は詰めた形（`| a | b |`）で書き、前に `<!-- prettier-ignore -->` を置く（列幅をそろえ直すと 1 行の変更で表の全部の行が差分に出て、並行するブランチと衝突するため。[design-workflow-simplification-2.md](design-workflow-simplification-2.md) 4 節）。
 - 2026-10-25 までの中身（各 Stage の成果物と節、閉じた課題を含む「今後の課題」の全項目と経過）は [roadmap-archive.md](roadmap-archive.md)（凍結）。
@@ -47,7 +47,7 @@
 - 1 行の形: 題名（起票日）→ 状態・設計書（あれば）・残りの行き先（backlog の行）。題名は変えない（検証記録・設計書が題名で指す）。
 - 2026-10-25 までに閉じた課題（完了・打ち切り）は [roadmap-archive.md](roadmap-archive.md)「今後の課題」にある。
 
-- sim と calc の一本化とレスポンス保証（2026-10-27 起票）→ 承認（2026-10-27）。段 A-1（calc は全グループを射撃の列から数える）は実装した。残りは backlog 5 節: [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節
+- sim と calc の一本化とレスポンス保証（2026-10-27 起票）→ 承認（2026-10-27）。段 A-1（calc は全グループを射撃の列から数える）・A-2（2 パス目を二分探索の集計に、calc/model.ts と画面の切り替えを廃止）は実装した。残りは backlog 5 節: [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節
 - 語彙はあるのに撮っていない効果の撮影（2026-10-26 起票）→ 完了（2026-10-27。フォルクヴァンの回復の定義は backlog 6 節）: [design-skill-unrecorded.md](design-skill-unrecorded.md)
 - エレグ（500）の定義（2026-10-26 起票）→ 段 1（S2 のターゲット出現時のゲージ 100%）・段 2（バースト）・段 3 の S2（ブームインストール中の攻撃力▲）は実装した。S1 の分配ダメージは値の式が分からず未対応（別の検証で乗数を分ける）: [design-elegg.md](design-elegg.md)・[design-elegg-s3.md](design-elegg-s3.md)
 - 録画の番号を 4 桁にそろえる（2026-10-25 起票）→ 完了（2026-10-25）: [design-recording-id-4digit.md](design-recording-id-4digit.md)

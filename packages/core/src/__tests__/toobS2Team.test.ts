@@ -2,7 +2,8 @@
 // トーブ（192・宝物の段階 3）の S2 と、ソルジャーF.A.（301・SG）の編成（V-0458 の録画 0510〜0512。C-0599〜C-0602）、sim と calc の整合
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { rateAfterShots, simulateShotFrames } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
 import {
@@ -253,7 +254,7 @@ describe('トーブ（宝物の段階 3）+ ソルジャーF.A.', () => {
 describe('sim vs calc: トーブ（宝物の段階 3）+ ソルジャーF.A.', () => {
   const TEAM = team(3);
   const sim = runSimulation(TEAM);
-  const calc = computeTeamDamage(TEAM);
+  const calc = runTeam(TEAM);
   const plan = planTeamRun(TEAM);
 
   it('agree on the shot-counted groups and partition every shot into one group', () => {

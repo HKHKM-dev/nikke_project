@@ -1,4 +1,4 @@
-// Stage 5: ヘッドレスの実行口。sim（フレーム逐次）と calc（2 区間の期待値）の枠別・区間別の内訳を表で出す。
+// Stage 5: ヘッドレスの実行口。枠別・区間別の内訳を表で出す（一本化の段 A-2 までは sim と calc を並べていた）。
 //   node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--controlled 3] [--defence 100] [--element Fire] [--build builds.json]
 // Stage 7: バーストは既定で動的サイクル（ゲージ・CT・チェーン）。--fixed-cycle で Stage 5 / 6 の固定 20 秒サイクル。
 // --controlled は操作キャラの枠（1 始まり）。省略は全員 AI 扱い（SR / RL のフルチャージ倍率がゲージに乗らない）。
@@ -17,6 +17,7 @@
 // 配分）。自動の枠は、使った条件の発数平均を出す。
 // 一本化の段 A-1（plan/design-unify-sim-calc.md 5.1 節）: calc は全グループを射撃の列から数える（sim と同じ数）。数え方を選ぶ
 // --shot-counting（plan/design-calc-hybrid.md）は 2026-10-27 に消した。
+// 一本化の段 A-2（同 5.2 節）: 計算は runSimulation → simTeamResult の 1 本で、sim と calc を並べる列（同じ値）は消した。
 // --skill-levels resourceId:slot=Lv をカンマ区切り（slot は skill1・skill2・burst。例 191:skill2=4,260:burst=4）。省略は全部 Lv10
 // （実ビルドの録画と比べるとき用。V-0065）。
 // --jump-windows で、出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の
@@ -54,15 +55,14 @@ import {
 } from '../src/records/observations.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
-import { runSimulation, simGroupTotals, simIntervalTotals } from '../src/sim/engine.ts';
+import { runSimulation, simIntervalTotals } from '../src/sim/engine.ts';
+import { simTeamResult } from '../src/sim/teamResult.ts';
 import { firingParams } from '../src/frame/firing.ts';
 import { MAX_SKILL_LEVELS, isStateContent, type ResolvedTrigger, type SkillLevels } from '../src/skills/resolve.ts';
 import { itemsOf } from '../src/skills/holders.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../src/skills/composition.ts';
 import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
-import { computeTeamDamage } from '../src/calc/model.ts';
-import { planTeamRun } from '../src/frame/plan.ts';
 import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';
@@ -141,7 +141,7 @@ for (const entry of values.treasure?.split(',') ?? []) {
   treasurePhases.set(id!, phase!);
 }
 
-// スキル Lv（省略した枠・スロットは Lv10。範囲は computeTeamDamage が検証する）
+// スキル Lv（省略した枠・スロットは Lv10。範囲は runSimulation が検証する）
 const skillLevelsById = new Map<number, SkillLevels>();
 for (const entry of values['skill-levels']?.split(',') ?? []) {
   const m = /^\s*(\d+):(skill1|skill2|burst)=(\d+)\s*$/.exec(entry);
@@ -217,7 +217,7 @@ const slots: TeamSlotInput[] = ids.map((id) => {
   const definition = skillIndex.resourceIds.includes(id)
     ? parseSkillDefinition(readJson(join(DATA_DIR, `skills/${id}.json`)))
     : null;
-  // 段階の範囲・宝物の有無は computeTeamDamage が検証する（RangeError）
+  // 段階の範囲・宝物の有無は runSimulation が検証する（RangeError）
   const skills = {
     definition,
     levels: skillLevelsById.get(id) ?? MAX_SKILL_LEVELS,
@@ -406,9 +406,7 @@ if (compositionRows.length > 0) {
   console.table(compositionRows);
 }
 const sim = runSimulation(input);
-const calc = computeTeamDamage(input);
-// Stage 11 紅蓮BS: 射撃の列（循環の窓ごとの並びの表示用）
-const plan = planTeamRun(input);
+const result = simTeamResult(input, sim);
 
 const fmt = (n: number, digits = 0) => n.toLocaleString('en-US', { maximumFractionDigits: digits });
 const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
@@ -427,7 +425,7 @@ console.log(
     }`,
 );
 // Stage 18-C: 着地点の区間
-if (calc.landings.length > 0 && target !== undefined) {
+if (result.landings.length > 0 && target !== undefined) {
   const labelOf = (id: string | null): string => {
     if (id === null) return 'unmeasured';
     const band = target.landings.find((l) => l.id === id)?.band ?? id;
@@ -435,7 +433,7 @@ if (calc.landings.length > 0 && target !== undefined) {
     return id in target.mixes ? `${name} (mix)` : `${name} [${id}]`;
   };
   console.log(
-    `landings ${calc.landings.map((s) => `${framesToGameSeconds(s.start).toFixed(1)}-${framesToGameSeconds(s.end).toFixed(1)}s ${labelOf(s.landing)}`).join(', ')}`,
+    `landings ${result.landings.map((s) => `${framesToGameSeconds(s.start).toFixed(1)}-${framesToGameSeconds(s.end).toFixed(1)}s ${labelOf(s.landing)}`).join(', ')}`,
   );
 }
 if (eventSetIds.length > 0) {
@@ -443,11 +441,11 @@ if (eventSetIds.length > 0) {
     `enemy events ${eventSetIds.join(', ')}${jumpWindows === undefined ? '' : ` (jump windows ${values['jump-windows']})`}: ${enemyEvents.map((e) => `${e.kind} ${e.start.toFixed(1)}-${e.end.toFixed(1)}s`).join(', ')}`,
   );
 }
-if (calc.schedule && calc.burstSummary) {
-  const byStep = slotsByStep(calc.schedule);
+if (result.schedule && result.burstSummary) {
+  const byStep = slotsByStep(result.schedule);
   const who = (list: number[]) =>
     list.length === 0 ? '-' : list.map((i) => `slot ${i + 1} ${slots[i]!.character.name.ja}`).join(' / ');
-  const b = calc.burstSummary;
+  const b = result.burstSummary;
   const sec = (v: number | null) => (v === null ? '-' : `${v.toFixed(2)}s`);
   console.log(
     `full bursts ${b.fullBursts} (first ${sec(b.firstFullBurstSeconds)}, mean cycle ${sec(b.meanCycleSeconds)}, ` +
@@ -456,28 +454,28 @@ if (calc.schedule && calc.burstSummary) {
   );
   const STEP = { Step1: 'I', Step2: 'II', Step3: 'III' } as const;
   console.table(
-    calc.schedule.activations.map((a) => ({
+    result.schedule.activations.map((a) => ({
       time: `${framesToGameSeconds(a.frame).toFixed(2)}s`,
       frame: a.frame,
       step: STEP[a.step],
       nike: `slot ${a.slotIndex + 1} ${slots[a.slotIndex]!.character.name.ja}`,
       fullBurst: a.startsFullBurst
-        ? `start (${framesToGameSeconds((calc.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.end ?? a.frame) - a.frame).toFixed(1)}s)`
+        ? `start (${framesToGameSeconds((result.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.end ?? a.frame) - a.frame).toFixed(1)}s)`
         : '',
       // Stage 11: そのフルバーストを開いたチェーンで撃った枠（「直前にバーストスキルを使用した味方」）
       burstUsers: a.startsFullBurst
-        ? (calc.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.burstUsers ?? [])
+        ? (result.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.burstUsers ?? [])
             .map((i) => i + 1)
             .join(',')
         : '',
     })),
   );
-  if (calc.schedule.chainTimeouts.length > 0) {
+  if (result.schedule.chainTimeouts.length > 0) {
     console.log(
-      `chain timeouts at ${calc.schedule.chainTimeouts.map((f) => `${framesToGameSeconds(f).toFixed(2)}s`).join(', ')}`,
+      `chain timeouts at ${result.schedule.chainTimeouts.map((f) => `${framesToGameSeconds(f).toFixed(2)}s`).join(', ')}`,
     );
   }
-  const starts = calc.schedule.fullBurstWindows.map((w) => w.start);
+  const starts = result.schedule.fullBurstWindows.map((w) => w.start);
   console.log(
     `full burst intervals ${starts
       .slice(1)
@@ -487,9 +485,9 @@ if (calc.schedule && calc.burstSummary) {
 }
 
 // Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」の発火ごとの順位。同じ発火の同じ対象（S1 の 2 効果など）はまとめる
-if (calc.history.rankings.length > 0) {
+if (result.history.rankings.length > 0) {
   const merged = new Map<string, Record<string, string | number>>();
-  for (const r of calc.history.rankings) {
+  for (const r of result.history.rankings) {
     const key = `${r.frame}.${r.sourceSlotIndex}.${r.effect.source.skill}.${r.targets.join(',')}`;
     if (merged.has(key)) continue;
     merged.set(key, {
@@ -529,7 +527,7 @@ if (sim.instants.length > 0) {
 
 const rows = slots.map((slot, i) => {
   const s = sim.slots[i]!;
-  const c = calc.slots[i]!;
+  const c = result.slots[i]!;
   return {
     slot: i + 1,
     name: slot.character.name.ja,
@@ -538,25 +536,21 @@ const rows = slots.map((slot, i) => {
     // Stage 9: 宝物の段階（宝物版で計算したスロット数）
     treasure: c.treasurePhase === 0 ? '-' : `${c.treasurePhase} (${c.treasureSlots.join('+')})`,
     attack: fmt(c.segments[0]?.trigger.attack ?? c.baseAttack),
-    'sim normal (nonFB/FB triggers)': `${fmt(simIntervalTotals(s).nonFullBurst.damage)} (${simIntervalTotals(s).nonFullBurst.triggers}/${simIntervalTotals(s).fullBurst.triggers})`,
-    'calc normal': fmt(c.normalDamage),
+    'normal (nonFB/FB triggers)': `${fmt(c.normalDamage)} (${simIntervalTotals(s).nonFullBurst.triggers}/${simIntervalTotals(s).fullBurst.triggers})`,
     segments: c.segments.length,
-    'burst skill (sim=calc)': `${fmt(s.burst.damage)} (${s.burst.activations.length}× ${fmt(s.burst.hit?.perActivation ?? 0)})`,
+    'burst skill': `${fmt(s.burst.damage)} (${s.burst.activations.length}× ${fmt(s.burst.hit?.perActivation ?? 0)})`,
     // Stage 8: トリガー付きの倍率ダメージ（damage）
-    'skill hits (sim=calc)': `${fmt(s.skillHits.damage)} (${s.skillHits.frames.length}×)`,
-    'sim total': fmt(s.totalDamage),
-    'calc total': fmt(c.totalDamage),
-    diff: pct((s.totalDamage - c.totalDamage) / (c.totalDamage || 1)),
+    'skill hits': `${fmt(s.skillHits.damage)} (${s.skillHits.frames.length}×)`,
+    total: fmt(c.totalDamage),
+    share: pct(c.share),
   };
 });
 console.table(rows);
 
-console.log(
-  `TOTAL sim ${fmt(sim.totalDamage)}  calc ${fmt(calc.totalDamage)}  diff ${pct((sim.totalDamage - calc.totalDamage) / (calc.totalDamage || 1))}`,
-);
+console.log(`TOTAL ${fmt(result.totalDamage)}`);
 
-// Stage 18-C: 自動の枠で使った条件の平均（1 パス目の射撃の列の発数で重みを付けた。calc と sim で同じ値）
-const autoRows = calc.slots.flatMap((c, i) =>
+// Stage 18-C: 自動の枠で使った条件の平均（1 パス目の射撃の列の発数で重みを付けた）
+const autoRows = result.slots.flatMap((c, i) =>
   c?.autoCondition
     ? [
         {
@@ -575,23 +569,22 @@ if (autoRows.length > 0) {
   console.log('auto conditions (shot-weighted means)');
   console.table(autoRows);
 }
-const noteLines = calc.slots.flatMap((c, i) =>
+const noteLines = result.slots.flatMap((c, i) =>
   (c?.notes ?? [])
     .filter((n) => n.code.startsWith('auto-') || n.code.startsWith('landing-') || n.code === 'hit-rate')
     .map((n) => `  [slot ${i + 1}] ${n.level}: ${n.message.ja}`),
 );
 if (noteLines.length > 0) console.log(`condition notes\n${noteLines.join('\n')}`);
 
-// Stage 6: バフ状態ごとの区間表（枠ごと）。sim はフレームで数えた実トリガー数、calc は射撃の列から数えた発数（一本化の段 A-1 から。
-// 2026-10-27 まではレート × 秒数と、持続の射撃バフの区間の発数）
+// Stage 6: バフ状態ごとの区間表（枠ごと）。発数は 1 パス目の射撃の列から数えた数（一本化の段 A-1 から。2026-10-27 までの calc は
+// レート × 秒数と、持続の射撃バフの区間の発数）
 for (const [i, slot] of slots.entries()) {
-  const c = calc.slots[i];
+  const c = result.slots[i];
   if (!c) continue;
-  const simGroups = simGroupTotals(sim, i);
   console.log(`
 [slot ${i + 1}] ${slot.character.name.ja} — segments`);
   console.table(
-    c.segments.map((g, j) => ({
+    c.segments.map((g) => ({
       ranges: g.ranges
         .map((r) => `${framesToGameSeconds(r.start).toFixed(1)}-${framesToGameSeconds(r.end).toFixed(1)}s`)
         .join(' '),
@@ -607,8 +600,8 @@ for (const [i, slot] of slots.entries()) {
         g.trigger.perShot > 0
           ? `${fmt(g.trigger.perTrigger)} (${fmt(g.trigger.normal)}+${fmt(g.trigger.perShot)})`
           : fmt(g.trigger.perTrigger),
-      'triggers sim/calc': `${simGroups[j]?.triggers ?? 0} / ${g.triggers}`,
-      'damage sim/calc': `${fmt(simGroups[j]?.damage ?? 0)} / ${fmt(g.damage)}`,
+      triggers: g.triggers,
+      damage: fmt(g.damage),
       timed: compactTimed(g.timedEffects)
         .map(
           ({ e, n }) =>
@@ -619,7 +612,7 @@ for (const [i, slot] of slots.entries()) {
     })),
   );
   // Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった回数（持ち主ごとの一覧編: 履歴の判定の記録）
-  const skips = calc.history.conditionSkips.filter((x) => x.sourceSlotIndex === i);
+  const skips = result.history.conditionSkips.filter((x) => x.sourceSlotIndex === i);
   if (skips.length > 0) {
     console.log(
       `condition skips: ${skips.length} (${skips.map((x) => framesToGameSeconds(x.frame).toFixed(2)).join(', ')}s)`,
@@ -631,7 +624,7 @@ for (const [i, slot] of slots.entries()) {
 }
 
 /** 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md）: delayFrames のある倍率ダメージの遅れと、出た秒・1 回の値 */
-function printDelayedHits(c: NonNullable<(typeof calc.slots)[number]>): void {
+function printDelayedHits(c: NonNullable<(typeof result.slots)[number]>): void {
   const delayed = c.skillHits.activations.filter((a) => a.effect.delayFrames !== undefined);
   if (delayed.length === 0) return;
   const byEffect = new Map<string, typeof delayed>();
@@ -648,7 +641,7 @@ function printDelayedHits(c: NonNullable<(typeof calc.slots)[number]>): void {
 }
 
 /** ニヒリスター編: 持続ダメージの内訳（効果ごとの tick の数・合計と、付いた回ごとの最初の tick の秒。plan/design-nihilister.md 2.1 節） */
-function printDots(c: NonNullable<(typeof calc.slots)[number]>): void {
+function printDots(c: NonNullable<(typeof result.slots)[number]>): void {
   const ticks = c.skillHits.activations.filter((a) => a.effect.dot !== undefined);
   if (ticks.length === 0) return;
   const byEffect = new Map<
@@ -695,7 +688,7 @@ function printDots(c: NonNullable<(typeof calc.slots)[number]>): void {
  * Stage 11 紅蓮BS: 段の循環の内訳（段ごとの回数・合計）と、間隔の変更の窓ごとの並び
  * （窓の前の段なしの発数 p・窓の中の段・窓の後の最初の段が何発目か。plan/design-stage11-scarlet-bs.md 0.3・7.5 節）
  */
-function printCycles(slotIndex: number, c: NonNullable<(typeof calc.slots)[number]>): void {
+function printCycles(slotIndex: number, c: NonNullable<(typeof result.slots)[number]>): void {
   const cycled = c.skillHits.activations.filter((a) => a.effect.cycle !== undefined);
   if (cycled.length === 0) return;
   const letter = (step: number) => String.fromCharCode(65 + step);
@@ -712,10 +705,10 @@ function printCycles(slotIndex: number, c: NonNullable<(typeof calc.slots)[numbe
       .map(([step, s]) => `${letter(step)} ${(s.multiplier * 100).toFixed(2)}% ×${s.n} = ${fmt(s.damage)}`)
       .join(', ')}`,
   );
-  const shots = plan.shots[slotIndex]?.frames ?? [];
+  const shots = sim.shots[slotIndex]?.frames ?? [];
   const stepAt = new Map(cycled.map((a) => [gameSecondsToFrame(a.seconds), a.effect.cycle!.step]));
   // 持ち主ごとの一覧編: 間隔の変更の件（時刻の順）
-  const rows = itemsOf(calc.history, { holder: slotIndex, kind: 'cycleEvery' }).map((w) => {
+  const rows = itemsOf(result.history, { holder: slotIndex, kind: 'cycleEvery' }).map((w) => {
     const before = shots.filter((f) => f < w.start);
     let lastTier = before.length - 1;
     while (lastTier >= 0 && !stepAt.has(before[lastTier]!)) lastTier -= 1;

@@ -14,7 +14,6 @@ export * from './build.ts';
 export * from './buildEffects.ts';
 export * from './team.ts';
 export * from './frame/plan.ts';
-export * from './calc/model.ts';
 export * from './skills/types.ts';
 export * from './skills/states.ts';
 export * from './skills/counters.ts';

@@ -8,7 +8,7 @@ import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { type SlotCondition, type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
@@ -55,23 +55,23 @@ function team(hitRate: number | undefined, extra: Partial<TeamInput> = {}): Team
 
 describe('命中率（hitRate）: 退化', () => {
   it('omitted and 1.0 give exactly the same result (the shooting range)', () => {
-    const none = computeTeamDamage(team(undefined));
-    const one = computeTeamDamage(team(1));
+    const none = runTeam(team(undefined));
+    const one = runTeam(team(1));
     expect(one.totalDamage).toBe(none.totalDamage);
     expect(one.schedule).toEqual(none.schedule);
     expect(one.slots.every((s) => s!.notes.every((n) => n.code !== 'hit-rate'))).toBe(true);
   });
 
   it('rejects values outside 0..1', () => {
-    expect(() => computeTeamDamage(team(1.2))).toThrow(RangeError);
-    expect(() => computeTeamDamage(team(-0.1))).toThrow(RangeError);
+    expect(() => runTeam(team(1.2))).toThrow(RangeError);
+    expect(() => runTeam(team(-0.1))).toThrow(RangeError);
   });
 });
 
 describe('命中率（hitRate）: 掛かり方', () => {
   it('scales the normal attack (incl. per-shot extra damage) linearly without burst', () => {
-    const full = computeTeamDamage(team(1, { burst: false }));
-    const half = computeTeamDamage(team(0.5, { burst: false }));
+    const full = runTeam(team(1, { burst: false }));
+    const half = runTeam(team(0.5, { burst: false }));
     expect(half.totalDamage / full.totalDamage).toBeCloseTo(0.5, 12);
     const t = (hitRate: number) =>
       computeTriggerDamage({
@@ -95,15 +95,15 @@ describe('命中率（hitRate）: 掛かり方', () => {
   });
 
   it('a lower hit rate delays the first full burst on the dynamic cycle', () => {
-    const full = computeTeamDamage(team(1));
-    const low = computeTeamDamage(team(0.5));
+    const full = runTeam(team(1));
+    const low = runTeam(team(0.5));
     expect(low.burstSummary!.firstFullBurstSeconds!).toBeGreaterThan(full.burstSummary!.firstFullBurstSeconds!);
     expect(low.burstSummary!.fullBursts).toBeLessThanOrEqual(full.burstSummary!.fullBursts);
   });
 
   it('does not scale burst skill damage (same activations on the fixed cycle)', () => {
-    const full = computeTeamDamage(team(1, { burstModel: 'fixed' }));
-    const low = computeTeamDamage(team(0.5, { burstModel: 'fixed' }));
+    const full = runTeam(team(1, { burstModel: 'fixed' }));
+    const low = runTeam(team(0.5, { burstModel: 'fixed' }));
     for (let i = 0; i < 3; i++) {
       expect(low.slots[i]!.burst.totalDamage).toBeCloseTo(full.slots[i]!.burst.totalDamage, 6);
     }
@@ -113,7 +113,7 @@ describe('命中率（hitRate）: 掛かり方', () => {
   it('adds an approx note below 1.0, in calc and sim alike', () => {
     expect(conditionNotes({ hitRate: 1 })).toEqual([]);
     expect(conditionNotes({ hitRate: 0.75 })[0]).toMatchObject({ level: 'approx', code: 'hit-rate' });
-    const calc = computeTeamDamage(team(0.75));
+    const calc = runTeam(team(0.75));
     const sim = runSimulation(team(0.75));
     expect(calc.slots[0]!.notes.map((n) => n.code)).toContain('hit-rate');
     expect(sim.slots[0]!.notes).toEqual(calc.slots[0]!.notes);
@@ -121,7 +121,7 @@ describe('命中率（hitRate）: 掛かり方', () => {
 
   it('sim and calc share the schedule and per-trigger damage and stay within 3% (dynamic cycle)', () => {
     const input = team(0.7);
-    const calc = computeTeamDamage(input);
+    const calc = runTeam(input);
     const sim = runSimulation(input);
     expect(sim.schedule).toEqual(calc.schedule);
     expect(sim.timeline.segments).toEqual(calc.timeline.segments);

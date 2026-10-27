@@ -12,7 +12,7 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -47,7 +47,7 @@ function fixedSlot(id: number): TeamSlotInput {
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: false };
 
 function both(input: TeamInput) {
-  return { sim: runSimulation(input), calc: computeTeamDamage(input) };
+  return { sim: runSimulation(input), calc: runTeam(input) };
 }
 
 // エーテル（I）+ デルタ（II）+ イサベル（III）+ ドレイク（III）+ クイーン（真）（III）
@@ -99,7 +99,7 @@ describe('sim vs calc with Stage 8 definitions', () => {
 
 describe('ドレイク: 10 回攻撃ごとの倍率ダメージ', () => {
   const drake = fixedSlot(101);
-  const team = computeTeamDamage({ slots: [drake], enemy, durationSeconds: 60 });
+  const team = runTeam({ slots: [drake], enemy, durationSeconds: 60 });
   const d = team.slots[0]!;
 
   it('fires without bursts and counts across reloads (9-round magazine)', () => {
@@ -125,7 +125,7 @@ describe('ドレイク: 10 回攻撃ごとの倍率ダメージ', () => {
 describe('ドレイク: フルバースト中の倍率ダメージ（録画 0037）', () => {
   // 録画 0037: S2 / ペレットの比がフルバーストの外 118,059 / 25,672 と中 409,932 / 89,141 で同じ 4.5987
   const input: TeamInput = { slots: [822, 20, 101].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const drake = calc.slots[2]!;
   const windows = calc.schedule!.fullBurstWindows;
   const inFb = (s: number) => windows.some((w) => w.start <= gameSecondsToFrame(s) && gameSecondsToFrame(s) < w.end);
@@ -140,7 +140,7 @@ describe('ドレイク: フルバースト中の倍率ダメージ（録画 0037
 
 describe('イサベル: 使用回数別の段階とフルバースト 5 秒', () => {
   const input: TeamInput = { slots: [291, 20, 231].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const isabel = calc.slots[2]!;
 
   it('shortens every full burst to 5 s', () => {
@@ -181,7 +181,7 @@ describe('録画 0038: イサベル（III）+ ラム（I）+ デルタ（II）�
   // 灼熱の的・距離ボーナスなしの数値で比べる。段階 2・3 の追加ダメージには、同じ発動の受けるダメージ 39.96%▲（段階 1）が
   // 乗る（C-0163。plan/design-burst-landing.md 3 節の sequential）
   const input: TeamInput = { slots: [822, 20, 231].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
-  const isabel = computeTeamDamage(input).slots[2]!;
+  const isabel = runTeam(input).slots[2]!;
   /** 非会心の値（倍率グループから会心期待値を外す） */
   const nonCrit = (hit: { perActivation: number; boost: { crit: number; total: number } }) =>
     (hit.perActivation / hit.boost.total) * (hit.boost.total - hit.boost.crit);
@@ -215,7 +215,7 @@ describe('録画 0021: クイーン（真）のバースト 6,323,975（分配�
     burst: true,
     controlledSlot: 2,
   };
-  const queen = computeTeamDamage(input).slots[2]!;
+  const queen = runTeam(input).slots[2]!;
   const first = queen.burst.activations[0]!.hit;
 
   it('applies the distributed damage buff entered at stage 3 (II) to the III burst', () => {

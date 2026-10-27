@@ -423,17 +423,6 @@ header h1 {
   padding-top: 8px;
   border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
 }
-.verification-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
-  align-items: center;
-  margin: 6px 0;
-}
-.model-select-field {
-  grid-template-columns: max-content 13em;
-  margin: 0;
-}
 .error {
   color: #c62828;
 }

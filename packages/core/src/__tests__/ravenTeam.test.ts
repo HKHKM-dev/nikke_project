@@ -9,9 +9,9 @@ import { energyPerTrigger } from '../burst/dynamic.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { dotTicks, planTeamRun } from '../frame/plan.ts';
-import type { ShotLog } from '../frame/shots.ts';
+import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 
@@ -87,7 +87,7 @@ describe('レイヴンの定義', () => {
 
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, raven: slotIndex }) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
   const ticks = plan.skillHits.filter((h) => h.slotIndex === slotIndex && h.effect.dot !== undefined);
   const fires = fullChargeFrames(plan.shots[slotIndex]!);

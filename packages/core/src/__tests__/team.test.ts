@@ -3,7 +3,7 @@ import { computeDamage, type EnemyInput } from '../damage.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, SkillEntry } from '../skills/types.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { TEAM_SIZE, type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
@@ -24,10 +24,10 @@ const sr = slot(3, { maxAmmo: 6, rateOfFire: 60, endRateOfFire: 60, chargeTime: 
 
 const relDiff = (a: number, b: number): number => Math.abs(a / b - 1);
 
-describe('computeTeamDamage', () => {
+describe('runTeam', () => {
   it('sums the per-slot results in slot order and skips empty slots', () => {
     const input = { slots: [ar, smg, null, sr], enemy, durationSeconds: 180 };
-    const team = computeTeamDamage(input);
+    const team = runTeam(input);
     const shots = planTeamRun(input).shots;
     const individual = [ar, smg, sr].map((s) =>
       computeDamage({ character: s.character, growth, enemy, condition: { ...condition, durationSeconds: 180 } }),
@@ -60,7 +60,7 @@ describe('computeTeamDamage', () => {
   });
 
   it('returns zero totals for an all-empty team', () => {
-    const team = computeTeamDamage({ slots: [null, null, null], enemy, durationSeconds: 180 });
+    const team = runTeam({ slots: [null, null, null], enemy, durationSeconds: 180 });
     expect(team.slots).toEqual([null, null, null]);
     expect(team.filledCount).toBe(0);
     expect(team.totalDps).toBe(0);
@@ -70,7 +70,7 @@ describe('computeTeamDamage', () => {
   });
 
   it('shares are each slot’s fraction of the total and add up to 1', () => {
-    const team = computeTeamDamage({ slots: [ar, smg, sr], enemy, durationSeconds: 180 });
+    const team = runTeam({ slots: [ar, smg, sr], enemy, durationSeconds: 180 });
     const shares = team.slots.map((s) => s?.share ?? 0);
     expect(shares.reduce((a, b) => a + b, 0)).toBeCloseTo(1, 12);
     for (const s of team.slots) {
@@ -80,7 +80,7 @@ describe('computeTeamDamage', () => {
 
   it('a single-slot team counts the shots of that character and shares the whole total', () => {
     const input = { slots: [sr], enemy, durationSeconds: 90 };
-    const team = computeTeamDamage(input);
+    const team = runTeam(input);
     const single = computeDamage({
       character: sr.character,
       growth,
@@ -99,7 +99,7 @@ describe('computeTeamDamage', () => {
   });
 
   it('applies attackOverride and duration per slot independently', () => {
-    const team = computeTeamDamage({
+    const team = runTeam({
       slots: [slot(1, {}, { attackOverride: 5000 }), slot(2)],
       enemy,
       durationSeconds: 90,
@@ -112,19 +112,19 @@ describe('computeTeamDamage', () => {
 
   it('passes the weapon model through to every slot', () => {
     const model = { ...DEFAULT_WEAPON_MODEL, chargeReleaseFrames: 0 };
-    const withModel = computeTeamDamage({ slots: [sr], enemy, durationSeconds: 180, model });
-    const withoutModel = computeTeamDamage({ slots: [sr], enemy, durationSeconds: 180 });
+    const withModel = runTeam({ slots: [sr], enemy, durationSeconds: 180, model });
+    const withoutModel = runTeam({ slots: [sr], enemy, durationSeconds: 180 });
     expect(withModel.slots[0]?.cadence.cycleFrames).toBeLessThan(withoutModel.slots[0]?.cadence.cycleFrames ?? 0);
   });
 
   it('rejects duplicate characters and out-of-range slot counts', () => {
-    expect(() => computeTeamDamage({ slots: [ar, slot(1)], enemy, durationSeconds: 180 })).toThrow(RangeError);
-    expect(() => computeTeamDamage({ slots: [], enemy, durationSeconds: 180 })).toThrow(RangeError);
+    expect(() => runTeam({ slots: [ar, slot(1)], enemy, durationSeconds: 180 })).toThrow(RangeError);
+    expect(() => runTeam({ slots: [], enemy, durationSeconds: 180 })).toThrow(RangeError);
     expect(() =>
-      computeTeamDamage({ slots: Array.from({ length: TEAM_SIZE + 1 }, () => null), enemy, durationSeconds: 180 }),
+      runTeam({ slots: Array.from({ length: TEAM_SIZE + 1 }, () => null), enemy, durationSeconds: 180 }),
     ).toThrow(RangeError);
     // 空枠は重複判定の対象外
-    expect(() => computeTeamDamage({ slots: [null, null, ar, null, null], enemy, durationSeconds: 180 })).not.toThrow();
+    expect(() => runTeam({ slots: [null, null, ar, null, null], enemy, durationSeconds: 180 })).not.toThrow();
   });
 });
 
@@ -191,16 +191,16 @@ const caster = slot(
 // 枠 C: 定義なし（skills 省略）
 const plain = slot(13);
 
-describe('computeTeamDamage with passives', () => {
+describe('runTeam with passives', () => {
   it('leaves a team without definitions identical to Stage 3 and reports no skill support', () => {
-    const team = computeTeamDamage({ slots: [ar, smg], enemy, durationSeconds: 180 });
+    const team = runTeam({ slots: [ar, smg], enemy, durationSeconds: 180 });
     for (const s of team.slots) {
       expect(s?.passiveBuffs).toEqual(ZERO_BUFFS);
       expect(s?.passiveEffects).toEqual([]);
       expect(s?.skillSupport).toBeNull();
       expect(s?.segments[0]?.trigger.attack).toBe(s?.baseAttack);
     }
-    const withNull = computeTeamDamage({
+    const withNull = runTeam({
       slots: [{ ...ar, skills: { definition: null, levels: MAX_SKILL_LEVELS } }],
       enemy,
       durationSeconds: 180,
@@ -210,7 +210,7 @@ describe('computeTeamDamage with passives', () => {
   });
 
   it('applies self effects only to the source and allies effects to every slot, including ones without skills', () => {
-    const team = computeTeamDamage({ slots: [buffer, plain, null, caster], enemy, durationSeconds: 180 });
+    const team = runTeam({ slots: [buffer, plain, null, caster], enemy, durationSeconds: 180 });
     const [a, c, , b] = team.slots;
     // 枠 A: 自分の +20% と B からの固定加算 1000 × 0.1、自分の会心ダメ +10%
     expect(a?.passiveBuffs).toEqual({
@@ -248,11 +248,11 @@ describe('computeTeamDamage with passives', () => {
 
   it('bases casterAttack on the caster’s pre-buff attack, even when the caster is buffed', () => {
     // A の +20% は A 自身にしか掛からず、B の固定加算は B のバフ前攻撃力（1000）を基準にする
-    const team = computeTeamDamage({ slots: [buffer, caster], enemy, durationSeconds: 180 });
+    const team = runTeam({ slots: [buffer, caster], enemy, durationSeconds: 180 });
     expect(team.slots[0]?.passiveBuffs.attackFlat).toBe(100);
     expect(team.slots[1]?.passiveBuffs.attackFlat).toBe(100);
     // スペック固定など attackOverride があればそれが基準
-    const fixed = computeTeamDamage({
+    const fixed = runTeam({
       slots: [plain, { ...caster, attackOverride: 5000 }],
       enemy,
       durationSeconds: 180,
@@ -262,8 +262,8 @@ describe('computeTeamDamage with passives', () => {
   });
 
   it('removing a slot removes only the effects it was giving', () => {
-    const full = computeTeamDamage({ slots: [buffer, plain, caster], enemy, durationSeconds: 180 });
-    const withoutCaster = computeTeamDamage({ slots: [buffer, plain, null], enemy, durationSeconds: 180 });
+    const full = runTeam({ slots: [buffer, plain, caster], enemy, durationSeconds: 180 });
+    const withoutCaster = runTeam({ slots: [buffer, plain, null], enemy, durationSeconds: 180 });
     expect(withoutCaster.slots[1]?.passiveBuffs).toEqual({ ...ZERO_BUFFS, critDamage: 0.1 });
     expect(withoutCaster.slots[0]?.passiveBuffs).toEqual({
       ...ZERO_BUFFS,
@@ -290,8 +290,8 @@ describe('computeTeamDamage with passives', () => {
       ),
       skills: { ...buffer.skills!, levels: { skill1: 1, skill2: 10, burst: 10 } },
     };
-    const lv1 = computeTeamDamage({ slots: [leveled], enemy, durationSeconds: 180 });
-    const lv10 = computeTeamDamage({
+    const lv1 = runTeam({ slots: [leveled], enemy, durationSeconds: 180 });
+    const lv10 = runTeam({
       slots: [{ ...leveled, skills: { ...leveled.skills!, levels: MAX_SKILL_LEVELS } }],
       enemy,
       durationSeconds: 180,

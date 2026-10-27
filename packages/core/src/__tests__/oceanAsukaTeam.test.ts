@@ -8,7 +8,8 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -88,7 +89,7 @@ describe('実戦寄りの編成（オーシャン + クラウン + アスカ + �
 
 describe('sim vs calc: 実戦寄りの編成', () => {
   const sim = runSimulation(PRACTICAL);
-  const calc = computeTeamDamage(PRACTICAL);
+  const calc = runTeam(PRACTICAL);
   const plan = planTeamRun(PRACTICAL);
 
   it('agree exactly on the schedule, the instants and the shot-counted groups', () => {

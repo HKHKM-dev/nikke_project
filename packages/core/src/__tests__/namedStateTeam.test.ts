@@ -3,7 +3,7 @@
 // calc の射撃の数え方（中身の窓の shotCount）。定義は data/skills のもの（ウンファ：TU・クイーン（真）・雪子）と、それを書き換えたもの
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -165,7 +165,7 @@ describe('ウンファ：TU のカモフラージュ（付与をまたぐ和集�
 
   it('agrees between sim and calc', () => {
     const sim = runSimulation(input);
-    const calc = computeTeamDamage(input);
+    const calc = runTeam(input);
     expect(sim.schedule).toEqual(calc.schedule);
     expect(Math.abs(sim.slots[e]!.totalDamage - calc.slots[e]!.totalDamage) / calc.slots[e]!.totalDamage).toBeLessThan(
       0.05,
@@ -187,7 +187,7 @@ describe('calc の射撃の数え方（一本化の段 A-1。plan/design-unify-s
     return raw;
   };
   const sources = (raw: RawDefinition) => {
-    const calc = computeTeamDamage(team([slotOf(FLOWER), slotOf(EUNHWA, raw), slotOf(SUN)], 'Fire', 2));
+    const calc = runTeam(team([slotOf(FLOWER), slotOf(EUNHWA, raw), slotOf(SUN)], 'Fire', 2));
     return new Set(calc.slots[1]!.segments.map((g) => g.triggerSource));
   };
 

@@ -76,7 +76,7 @@
 <!-- prettier-ignore -->
 | # | 課題 | 残り | 出どころ |
 | --- | --- | --- | --- |
-| 5-5 | sim と calc の一本化の残りの段 | A-2（`runSimulation` の 2 パス目を二分探索の集計へ・`computeTeamDamage` の包み化・画面の切り替えと二重計算の廃止・用語と requirements・README の改訂）、A-3（records 層の `'calc'` の経路の廃止。任意） | [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節 |
+| 5-5 | sim と calc の一本化の残りの段 | A-3（records 層の `'calc'` の経路（`Metric.calc`・`CompareSpec.model` の `'calc'`）の廃止。任意）。A-1・A-2 は実装した | [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節 |
 | 5-6 | 画面のレスポンス（`useDeferredValue` → Web Worker。1 パス目のキャッシュは 5-7 の後に判断） | B-1 → B-2。B-3 は保留 | [design-unify-sim-calc.md](design-unify-sim-calc.md) 6・8 節 |
 | 5-7 | 1 パス目の最適化（件の一覧の読み直し `readItems`・`closedStateItems`・`stackItems` が重い） | 着手は未定。優先は 5-6 の B-3 より上 | [design-unify-sim-calc.md](design-unify-sim-calc.md) 3.4・9 節 |
 

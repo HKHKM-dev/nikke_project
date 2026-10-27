@@ -3,7 +3,7 @@
 // （同じフレームに付いた件も見る）、枠に付いた状態のまとめ。定義は data/skills のもの（クイーン（真）・アニス：スター）と、それを書き換えたもの
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -193,7 +193,7 @@ describe('時間で変わる状態を見る selfState（クイーン（真）の
 
 describe('枠に付いた状態のまとめ（アニス：スター。plan/design-skill-stage1.md 1.4 節）', () => {
   it('shows My Own Star as a static, undispellable state when Anis: Star is alone', () => {
-    const calc = computeTeamDamage(team([slotOf(ANIS)], null, 0));
+    const calc = runTeam(team([slotOf(ANIS)], null, 0));
     const [star, shooting, ...rest] = calc.slots[0]!.states;
     expect(star).toEqual({ state: 'myOwnStar', sourceSlotIndex: 0, count: 1, isStatic: true, undispellable: true });
     // バーストのたびに付くシューティングスター（中身の無い呼び名の状態。付いた回数はバーストの回数）
@@ -210,7 +210,7 @@ describe('枠に付いた状態のまとめ（アニス：スター。plan/desig
   });
 
   it("shows Everyone's Star with another Burst I ally", () => {
-    const calc = computeTeamDamage(team([slotOf(ANIS), slotOf(FLOWER)], null, 0));
+    const calc = runTeam(team([slotOf(ANIS), slotOf(FLOWER)], null, 0));
     expect(calc.slots[0]!.states.map((s) => [s.state, s.isStatic, s.undispellable])).toEqual([
       ['everyonesStar', true, true],
       ['shootingStar', false, false],

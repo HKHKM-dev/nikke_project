@@ -2,7 +2,7 @@
 // 誘導弾の飛ぶ時間（C-0413）、シューティングスターの飛ぶ時間（C-0504）。どれも 1 パス目のゲージの量と時刻だけを変える。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -131,7 +131,7 @@ describe('ゲージの時刻（1 パス目）', () => {
   it('shares the schedule between sim and calc', () => {
     const input = solo(withFlight, { obstacleBreaks: [{ slotIndex: 0, shot: 1, count: 2 }] });
     const sim = runSimulation(input);
-    const calc = computeTeamDamage(input);
+    const calc = runTeam(input);
     expect(calc.schedule?.gaugeFullFrames).toEqual(sim.schedule?.gaugeFullFrames);
     expect(calc.schedule?.activations).toEqual(sim.schedule?.activations);
   });

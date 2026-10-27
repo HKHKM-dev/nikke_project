@@ -2,7 +2,8 @@
 // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）の美しさ（最大HP▲）と S1 の最終最大HP 基準の攻撃力▲の読み直し。sim と calc の整合
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -91,7 +92,7 @@ describe('シンデレラの定義', () => {
   });
 
   it('adds (attack − defence) × 136.6% to every full charge shot of the solo recordings (V-0445)', () => {
-    const calc = computeTeamDamage(team([CINDERELLA], false, 0));
+    const calc = runTeam(team([CINDERELLA], false, 0));
     const c = character(CINDERELLA);
     const expected = (computeFixedSpecAttack(c).attack - FIXED_SPEC_ENEMY_DEFENCE) * 1.366;
     for (const s of calc.slots[0]!.segments) {
@@ -108,7 +109,7 @@ describe.each([
   ['ラム + デルタ + シンデレラ（段 6 の PR 2 の撮影の編成）', team([RAM, DELTA, CINDERELLA], true, 2)],
 ])('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the instants and the shot-counted groups', () => {
@@ -190,7 +191,7 @@ describe('美しさと S1 の攻撃力▲の読み直し（段 6 の PR 2）', (
   });
 
   it('reads the final max HP again while the attack up of S1 lasts (H1 of V-0446)', () => {
-    const calc = computeTeamDamage(input);
+    const calc = runTeam(input);
     const window = itemsOf(plan.history, { holder: 2, sourceSlotIndex: 2, kind: 'timed', stat: 'attack' })[0]!;
     const beautyStarts = itemsOf(plan.history, { holder: 2, state: 'beauty' }).map((i) => i.start);
     const ranges = calc.slots[2]!.segments.flatMap((g) => g.ranges.map((r) => ({ ...r, attack: g.trigger.attack })));
@@ -229,7 +230,7 @@ describe('最大HP▲ を読む発動者の最終最大HP（常時の効果・�
       },
     });
     const slot: TeamSlotInput = { ...fixedSlot(CINDERELLA), skills: { definition, levels: MAX_SKILL_LEVELS } };
-    const calc = computeTeamDamage({ slots: [slot], enemy, durationSeconds: 180, burst: false, controlledSlot: 0 });
+    const calc = runTeam({ slots: [slot], enemy, durationSeconds: 180, burst: false, controlledSlot: 0 });
     const c = character(CINDERELLA);
     const s1 = Number(c.skills.skill1.values[0]![9]) / 100;
     const up = Number(c.skills.skill2.values[1]![9]) / 100;

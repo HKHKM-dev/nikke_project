@@ -5,13 +5,17 @@
 // フレームループは「区間をまたいだら参照を差し替える」だけにする（毎フレーム式を評価しない）。
 // Stage 7: 時刻表を動的サイクル（burst/dynamic.ts。射手を回してゲージを溜め、状態機械で発動を決める）にした。
 // 射撃は時刻表に依存しないので 2 パス（1 パス目 = planTeamSchedule で時刻表、2 パス目 = 下のフレームループ）で済む。
-// calc（calc/model.ts）はこの sim の期待値モデルで、両者の差は発射サイクルの離散化（マガジンの位相と端数）だけになる（__tests__/simCalc.test.ts）。
+// 当時の calc（calc/model.ts）はこの sim の期待値モデルで、両者の差は発射サイクルの離散化（マガジンの位相と端数）だけだった（__tests__/simCalc.test.ts）。
 // Stage 8: 1 パス目を frame/plan.ts の planTeamRun（射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動）にまとめた。
 // 射撃は 1 パス目の射撃の列（frame/shots.ts）をそのまま使い、倍率ダメージ（damage）は発動フレームで足す。
 // Stage 10: 1 パス目の射撃の列と時刻表は frame/firstPass.ts のフレームループ（射撃に効くバフ・CT 短縮・弾丸チャージ込み）で作る。
 // 2 パス目は変えない（射撃の列を読み、区間ごとの 1 トリガー値を足す）。
 // Stage 16-B（plan/design-stage16.md 9 節）: 敵の出来事は 1 パス目で効く。タイムラインの表示用に 1 秒ごとのダメージを足し上げる。
 // Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す（calc と同じ関数）。
+// 一本化の段 A-2（plan/design-unify-sim-calc.md 5.2 節。2026-10-27 オーナー決定）: 計算の入口はこの runSimulation だけになった
+// （画面・CLI・records 層は simTeamResult(input, runSimulation(input))。calc/model.ts は消した）。2 パス目はフレームループをやめ、
+// 区間ごとに射撃の列から二分探索で発数を引き（countShotsInRanges）、1 秒ごとのダメージは射撃の列・バーストのヒット・倍率ダメージの
+// 列から直接足す。フレームループは trace（出来事の列）のときだけ回し、値は作らない（__tests__/calcShots.test.ts で一致を固定）。
 import { hitFramesOf, type BurstActivation, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
 import {
@@ -49,14 +53,14 @@ import {
   type SkillHitEvent,
   type TeamPlan,
 } from '../frame/plan.ts';
-import { type DamagePerSecond, type PartialChargeTotals, type TeamInput } from '../team.ts';
+import { validateTeamSlots, type DamagePerSecond, type PartialChargeTotals, type TeamInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds } from '../time.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { firingParams } from '../frame/firing.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import type { InstantApplication } from '../frame/firstPass.ts';
-import type { ShotLog } from '../frame/shots.ts';
+import { countShotsInRanges, partialShotsInRanges, type ShotLog } from '../frame/shots.ts';
 
 export type SimInput = TeamInput & {
   /** true なら全イベントを events に残す（テスト・デバッグ用。既定 false） */
@@ -87,7 +91,7 @@ export type SimSlotSegment = {
   passiveEffects: AppliedEffect[];
   timedEffects: AppliedTimedEffect[];
   trigger: TriggerDamage;
-  /** この区間に実際に撃った数（整数） */
+  /** この区間に実際に撃った数（整数。1 パス目の射撃の列から数えた発数） */
   triggers: number;
   damage: number;
   /** Stage 22-B: triggers・damage のうち部分チャージの発。無ければキーごと無い */
@@ -155,21 +159,21 @@ type Runner = {
   index: number;
   /** 射撃の列 */
   shots: readonly number[];
-  /** 次に撃つ射撃の添字 */
-  nextShot: number;
   /** Stage 22-B: 部分チャージの発のフレーム → チャージの進み */
   partial: ReadonlyMap<number, number>;
   result: SimSlotResult;
 };
 
 export function runSimulation(simInput: SimInput): SimResult {
+  // 宝物版への差し替えの前に確かめる（2026-10-27 までの computeTeamDamage と同じ順）
+  validateTeamSlots(simInput.slots);
   // Stage 9: 宝物版への差し替えは最上位で 1 回だけ（planTeamRun の外でもバーストの定義と character を読むため）
   const input = applyCompositionToTeam(applyTreasureToTeam(simInput));
   const { slots, enemy } = input;
   const model = input.model ?? DEFAULT_WEAPON_MODEL;
   const trace = input.trace ?? false;
 
-  // 1 パス目（calc と共通）: 射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動。2 パス目がこの下のフレームループ
+  // 1 パス目: 射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動。2 パス目はこの下の区間ごとの集計
   const {
     frames,
     shots,
@@ -210,9 +214,21 @@ export function runSimulation(simInput: SimInput): SimResult {
     };
     const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
     const perShot = perShotDamageOf(slot);
-    // 区間ごとの 1 トリガー値を先に計算しておく（フレームループでは参照するだけ）
+    const shotFrames = shots[index]?.frames ?? [];
+    // 区間ごとの 1 トリガー値と発数。一本化の段 A-2: 発数は射撃の列から二分探索で引く（区間は [0, frames) を隙間なく覆う）
     const segments: SimSlotSegment[] = timeline.segments.map((segment) => {
       const state = segment.slots[index] ?? EMPTY_BUFF_STATE;
+      const trigger = landingTriggerDamage(
+        { ...base, buffs: state.buffs, perShot },
+        // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す
+        landingPartsWith(landing, slot, index, segment.landing, state.buffs.hitRate),
+        segment.fullBurst,
+      );
+      const range = [{ start: segment.start, end: segment.end }];
+      const triggers = countShotsInRanges(shotFrames, range);
+      // Stage 22-B: 部分チャージの発（C-0109）は、その発のチャージの進みで値を出し直す
+      const partial = partialShotsInRanges(shots[index]?.partialShots, range);
+      const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
       return {
         start: segment.start,
         end: segment.end,
@@ -221,27 +237,16 @@ export function runSimulation(simInput: SimInput): SimResult {
         buffs: state.buffs,
         passiveEffects: state.passiveEffects,
         timedEffects: state.timedEffects,
-        trigger: landingTriggerDamage(
-          { ...base, buffs: state.buffs, perShot },
-          // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す
-          landingPartsWith(landing, slot, index, segment.landing, state.buffs.hitRate),
-          segment.fullBurst,
-        ),
-        triggers: 0,
-        damage: 0,
+        trigger,
+        triggers,
+        damage: trigger.perTrigger * (triggers - partial.length) + partialDamage,
+        ...(partial.length > 0 ? { partialCharge: { triggers: partial.length, damage: partialDamage } } : {}),
       };
     });
-    const autoCondition = autoConditionSummary(
-      landing,
-      slot,
-      index,
-      shots[index]?.frames ?? [],
-      hitRateUpSpansOf(timeline, index),
-    );
+    const autoCondition = autoConditionSummary(landing, slot, index, shotFrames, hitRateUpSpansOf(timeline, index));
     return {
       index,
-      shots: shots[index]?.frames ?? [],
-      nextShot: 0,
+      shots: shotFrames,
       partial: new Map((shots[index]?.partialShots ?? []).map((p) => [p.frame, p.progress])),
       result: {
         index,
@@ -275,7 +280,6 @@ export function runSimulation(simInput: SimInput): SimResult {
     };
   });
 
-  const events: SimEvent[] = [];
   // 着弾編: バーストの倍率ダメージはヒットのフレーム（発動 + 遅れ）に出す。遅れの無いキャラは発動のフレーム（時刻表の順のまま）。
   // 分かれたヒット編: 分かれたヒットはヒットごとに、倍率の share ぶんを出す（plan/design-burst-split-hits.md 4 節）
   const burstHits = (schedule?.activations ?? [])
@@ -287,133 +291,76 @@ export function runSimulation(simInput: SimInput): SimResult {
     .sort((a, b) => a.frame - b.frame);
   // 分かれたヒット編: 発動ごとの、当たったヒットの部分（結果の burst.hits は発動ごとに 1 つで、値はその和）
   const burstParts = new Map<BurstActivation, { index: number; parts: { hit: BurstHitResult; share: number }[] }>();
-  const fullBurstWindows = schedule?.fullBurstWindows ?? [];
-  const gaugeFull = new Set(schedule?.gaugeFullFrames ?? []);
-  const chainTimeouts = new Set(schedule?.chainTimeouts ?? []);
-  let nextActivation = 0;
-  let nextSkillHit = 0;
-  let nextInstant = 0;
-  let windowIndex = 0;
-  let inFullBurst = false;
-  let segIndex = 0;
-  // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 4）: 記録の出来事は、区間に足す値の小片の始まりと終わり
-  // （状態だけの stat は区間の効果に入らないので出さない）
-  const pieces = trace ? valuePiecesOf(history).filter((p) => !isStateStat(p.effect.stat)) : [];
-
-  for (let f = 0; f < frames; f++) {
-    while (segIndex + 1 < timeline.segments.length && timeline.segments[segIndex]!.end <= f) segIndex += 1;
-    while (windowIndex < fullBurstWindows.length && fullBurstWindows[windowIndex]!.end <= f) windowIndex += 1;
-    const window = fullBurstWindows[windowIndex];
-    const fb = window !== undefined && window.start <= f;
-    if (trace) {
-      if (inFullBurst && !fb) events.push({ frame: f, kind: 'fullBurstEnd' });
-      if (gaugeFull.has(f)) events.push({ frame: f, kind: 'gaugeFull' });
-      if (chainTimeouts.has(f)) events.push({ frame: f, kind: 'chainTimeout' });
-      for (const w of pieces) {
-        if (w.start === f) events.push({ frame: f, kind: 'buffStart', slot: w.slotIndex, effect: w.effect });
-        if (w.end === f) events.push({ frame: f, kind: 'buffEnd', slot: w.slotIndex, effect: w.effect });
-      }
-      if (fb && !inFullBurst) events.push({ frame: f, kind: 'fullBurstStart' });
+  // バーストのヒット（ヒットのフレーム順。同じフレームなら時刻表の順 = I → II → III）。値は burstHits と同じ並び（出さないヒットは null）
+  const burstHitDamages = burstHits.map(({ activation, frame: f, share }): number | null => {
+    const index = activation.slotIndex;
+    const runner = runners[index];
+    if (!runner) return null;
+    const slot = slots[index]!;
+    const buffs = burstHitBuffs(
+      timeline,
+      activation.frame,
+      f,
+      index,
+      BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
+      sameActivationPiecesOf(history, slot.character),
+    );
+    const trigger = computeTriggerDamage({
+      character: slot.character,
+      growth: slot.growth,
+      enemy,
+      attackOverride: slot.attackOverride,
+      attackRounding: input.attackRounding,
+      buffs,
+      condition: { ...slot.condition, fullBurst: false },
+    });
+    const hit = slotBurstHit(
+      slot.skills?.definition,
+      slot.skills?.levels ?? MAX_SKILL_LEVELS,
+      slot.character,
+      enemy,
+      trigger,
+      buffs,
+    );
+    if (hit === null) return null;
+    const result = runner.result.burst;
+    let entry = burstParts.get(activation);
+    if (entry === undefined) {
+      entry = { index: result.activations.length, parts: [] };
+      burstParts.set(activation, entry);
+      result.activations.push(f);
     }
-    // バーストのヒット（そのフレームの通常攻撃より先。同じフレームなら時刻表の順 = I → II → III）
-    while (burstHits[nextActivation]?.frame === f) {
-      const { activation, share } = burstHits[nextActivation]!;
-      nextActivation += 1;
-      const { slotIndex: index, step } = activation;
-      const runner = runners[index];
-      if (!runner) continue;
-      const slot = slots[index]!;
-      const buffs = burstHitBuffs(
-        timeline,
-        activation.frame,
-        f,
-        index,
-        BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
-        sameActivationPiecesOf(history, slot.character),
-      );
-      const trigger = computeTriggerDamage({
-        character: slot.character,
-        growth: slot.growth,
-        enemy,
-        attackOverride: slot.attackOverride,
-        attackRounding: input.attackRounding,
-        buffs,
-        condition: { ...slot.condition, fullBurst: false },
-      });
-      const hit = slotBurstHit(
-        slot.skills?.definition,
-        slot.skills?.levels ?? MAX_SKILL_LEVELS,
-        slot.character,
-        enemy,
-        trigger,
-        buffs,
-      );
-      if (hit === null) continue;
-      const result = runner.result.burst;
-      let entry = burstParts.get(activation);
-      if (entry === undefined) {
-        entry = { index: result.activations.length, parts: [] };
-        burstParts.set(activation, entry);
-        result.activations.push(f);
-      }
-      entry.parts.push({ hit, share });
-      const combined = combineBurstHitParts(entry.parts);
-      result.hits[entry.index] = combined;
-      if (entry.index === 0) result.hit = combined;
-      const damage = hit.perActivation * share;
-      addPerSecond(index, f, damage);
-      if (trace) events.push({ frame: f, kind: 'burst', slot: index, step, damage });
-    }
-    // Stage 8: 倍率ダメージ（damage）。値は 1 パス目で計算済み（calc と同じ）
-    while (skillHits[nextSkillHit]?.frame === f) {
-      const h = skillHits[nextSkillHit]!;
-      nextSkillHit += 1;
-      const runner = runners[h.slotIndex];
-      if (!runner) continue;
-      runner.result.skillHits.frames.push(f);
-      runner.result.skillHits.damage += h.hit.perActivation;
-      addPerSecond(h.slotIndex, f, h.hit.perActivation);
-      if (trace)
-        events.push({ frame: f, kind: 'skillHit', slot: h.slotIndex, effect: h.effect, damage: h.hit.perActivation });
-    }
-    if (trace) {
-      while (instants[nextInstant]?.frame === f) {
-        const x = instants[nextInstant]!;
-        nextInstant += 1;
-        events.push({ frame: f, kind: x.effect.kind, slot: x.slotIndex, source: x.sourceSlotIndex, amount: x.amount });
-      }
-    }
-    inFullBurst = fb;
-    // 通常射撃（枠順）。射撃は 1 パス目の射撃の列どおり
-    for (const runner of runners) {
-      if (runner === null) continue;
-      if (runner.shots[runner.nextShot] !== f) continue;
-      runner.nextShot += 1;
-      const segment = runner.result.segments[segIndex]!;
-      // Stage 22-B: 部分チャージの発は、その発のチャージの進みで 1 トリガーの値を出し直す
-      const progress = runner.partial.get(f);
-      const damage =
-        progress === undefined
-          ? segment.trigger.perTrigger
-          : partialChargeTriggerDamage(segment.trigger, progress).perTrigger;
-      segment.triggers += 1;
-      segment.damage += damage;
-      if (progress !== undefined) {
-        segment.partialCharge ??= { triggers: 0, damage: 0 };
-        segment.partialCharge.triggers += 1;
-        segment.partialCharge.damage += damage;
-      }
-      addPerSecond(runner.index, f, damage);
-      if (trace)
-        events.push({
-          frame: f,
-          kind: 'trigger',
-          slot: runner.index,
-          fullBurst: fb,
-          damage,
-        });
+    entry.parts.push({ hit, share });
+    const combined = combineBurstHitParts(entry.parts);
+    result.hits[entry.index] = combined;
+    if (entry.index === 0) result.hit = combined;
+    const damage = hit.perActivation * share;
+    addPerSecond(index, f, damage);
+    return damage;
+  });
+  // Stage 8: 倍率ダメージ（damage）。値は 1 パス目で計算済み（フレーム順）
+  for (const h of skillHits) {
+    if (h.frame >= frames) continue;
+    const runner = runners[h.slotIndex];
+    if (!runner) continue;
+    runner.result.skillHits.frames.push(h.frame);
+    runner.result.skillHits.damage += h.hit.perActivation;
+    addPerSecond(h.slotIndex, h.frame, h.hit.perActivation);
+  }
+  // 通常射撃。区間の発数とダメージは上で引いた。1 秒ごとのダメージは射撃の列を 1 回なめて足す（O(発数)）
+  for (const runner of runners) {
+    if (runner === null) continue;
+    let segIndex = 0;
+    for (const f of runner.shots) {
+      if (f >= frames) break;
+      while (segIndex + 1 < timeline.segments.length && timeline.segments[segIndex]!.end <= f) segIndex += 1;
+      addPerSecond(runner.index, f, shotDamage(runner, runner.result.segments[segIndex]!, f));
     }
   }
+
+  const events = trace
+    ? traceEvents(frames, schedule, timeline, history, burstHits, burstHitDamages, skillHits, instants, runners)
+    : [];
 
   // 枠 0 から順に加算する（calc と同じ流儀）
   let totalDamage = 0;
@@ -445,6 +392,92 @@ export function runSimulation(simInput: SimInput): SimResult {
     history,
     events,
   };
+}
+
+type BurstHitAt = { activation: BurstActivation; frame: number; share: number };
+
+/** 1 発のダメージ（区間の 1 トリガー値。Stage 22-B: 部分チャージの発は、その発のチャージの進みで出し直す） */
+function shotDamage(runner: Runner, segment: SimSlotSegment, frame: number): number {
+  const progress = runner.partial.get(frame);
+  return progress === undefined
+    ? segment.trigger.perTrigger
+    : partialChargeTriggerDamage(segment.trigger, progress).perTrigger;
+}
+
+/**
+ * 一本化の段 A-2: trace のときだけ回すフレームループ。出来事の列を作るだけで、値（区間の発数・ダメージ・1 秒ごとのダメージ）は
+ * runSimulation の集計が作る。同じフレームの中の順は、状態の出来事 → バーストのヒット（時刻表の順 = I → II → III）→ 倍率ダメージ →
+ * 即時効果 → 通常射撃（枠順）
+ */
+function traceEvents(
+  frames: number,
+  schedule: BurstSchedule | null,
+  timeline: BuffTimeline,
+  history: TeamPlan['history'],
+  burstHits: readonly BurstHitAt[],
+  burstHitDamages: readonly (number | null)[],
+  skillHits: readonly SkillHitEvent[],
+  instants: readonly InstantApplication[],
+  runners: readonly (Runner | null)[],
+): SimEvent[] {
+  const events: SimEvent[] = [];
+  const fullBurstWindows = schedule?.fullBurstWindows ?? [];
+  const gaugeFull = new Set(schedule?.gaugeFullFrames ?? []);
+  const chainTimeouts = new Set(schedule?.chainTimeouts ?? []);
+  // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 4）: 記録の出来事は、区間に足す値の小片の始まりと終わり
+  // （状態だけの stat は区間の効果に入らないので出さない）
+  const pieces = valuePiecesOf(history).filter((p) => !isStateStat(p.effect.stat));
+  const nextShot = runners.map(() => 0);
+  let nextBurstHit = 0;
+  let nextSkillHit = 0;
+  let nextInstant = 0;
+  let windowIndex = 0;
+  let inFullBurst = false;
+  let segIndex = 0;
+
+  for (let f = 0; f < frames; f++) {
+    while (segIndex + 1 < timeline.segments.length && timeline.segments[segIndex]!.end <= f) segIndex += 1;
+    while (windowIndex < fullBurstWindows.length && fullBurstWindows[windowIndex]!.end <= f) windowIndex += 1;
+    const window = fullBurstWindows[windowIndex];
+    const fb = window !== undefined && window.start <= f;
+    if (inFullBurst && !fb) events.push({ frame: f, kind: 'fullBurstEnd' });
+    if (gaugeFull.has(f)) events.push({ frame: f, kind: 'gaugeFull' });
+    if (chainTimeouts.has(f)) events.push({ frame: f, kind: 'chainTimeout' });
+    for (const w of pieces) {
+      if (w.start === f) events.push({ frame: f, kind: 'buffStart', slot: w.slotIndex, effect: w.effect });
+      if (w.end === f) events.push({ frame: f, kind: 'buffEnd', slot: w.slotIndex, effect: w.effect });
+    }
+    if (fb && !inFullBurst) events.push({ frame: f, kind: 'fullBurstStart' });
+    while (burstHits[nextBurstHit]?.frame === f) {
+      const { activation } = burstHits[nextBurstHit]!;
+      const damage = burstHitDamages[nextBurstHit] ?? null;
+      nextBurstHit += 1;
+      if (damage === null) continue;
+      events.push({ frame: f, kind: 'burst', slot: activation.slotIndex, step: activation.step, damage });
+    }
+    while (skillHits[nextSkillHit]?.frame === f) {
+      const h = skillHits[nextSkillHit]!;
+      nextSkillHit += 1;
+      if (!runners[h.slotIndex]) continue;
+      events.push({ frame: f, kind: 'skillHit', slot: h.slotIndex, effect: h.effect, damage: h.hit.perActivation });
+    }
+    while (instants[nextInstant]?.frame === f) {
+      const x = instants[nextInstant]!;
+      nextInstant += 1;
+      events.push({ frame: f, kind: x.effect.kind, slot: x.slotIndex, source: x.sourceSlotIndex, amount: x.amount });
+    }
+    inFullBurst = fb;
+    // 通常射撃（枠順）。射撃は 1 パス目の射撃の列どおり
+    for (const runner of runners) {
+      if (runner === null) continue;
+      const next = nextShot[runner.index]!;
+      if (runner.shots[next] !== f) continue;
+      nextShot[runner.index] = next + 1;
+      const damage = shotDamage(runner, runner.result.segments[segIndex]!, f);
+      events.push({ frame: f, kind: 'trigger', slot: runner.index, fullBurst: fb, damage });
+    }
+  }
+  return events;
 }
 
 export type SimIntervalTotals = { triggers: number; damage: number };

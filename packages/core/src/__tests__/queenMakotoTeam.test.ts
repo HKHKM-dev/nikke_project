@@ -9,7 +9,7 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS, resolvePassives } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, Element } from '../types.ts';
@@ -135,7 +135,7 @@ describe('クイーン（真）の S1 の 1more の分配ダメージ（C-0310�
 
 describe('sim vs calc: エーテル + デルタ + イサベル + ドレイク + クイーン（真）・風圧の敵', () => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
 
   it('agree exactly on the schedule and the shot-counted groups', () => {
     expect(sim.schedule).toEqual(calc.schedule);

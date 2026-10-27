@@ -9,7 +9,8 @@ import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS, isStateContent } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput, type SlotSegmentResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -66,7 +67,7 @@ function popup(t: TriggerDamage, extra: { core?: boolean; crit?: boolean; distan
 }
 
 describe('録画 0041: クラウンの S1・S2・バースト（7.5）', () => {
-  const calc = computeTeamDamage(REC41);
+  const calc = runTeam(REC41);
   const plan = planTeamRun(REC41);
   const segmentsOf = (i: number): SlotSegmentResult[] => calc.slots[i]!.segments;
   /** attackDamage（小数 4 桁）と FB の組で区間を 1 つ選ぶ */
@@ -141,7 +142,7 @@ describe('録画 0041: クラウンの S1・S2・バースト（7.5）', () => {
 
 describe.each(Object.entries(TEAMS))('sim vs calc (7.4): %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the heals, the skill hits, the bursts and the shot-counted groups', () => {

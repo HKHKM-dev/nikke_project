@@ -2,7 +2,8 @@
 // plan/design-anis-star-s1.md）、フルチャージの発ごとの追加ダメージ（perShot）、フルバースト終了時の CT▼、sim と calc の整合。V-0116。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -109,7 +110,7 @@ const SOLO_BURST: TeamInput = { ...SOLO, burst: true };
 
 describe('S2 とバースト（plan/design-anis-star-s2-burst.md）', () => {
   it('fires Shooting Stars every 0.25 s for 10 s after each Burst (40 hits)', () => {
-    const calc = computeTeamDamage(SOLO_BURST);
+    const calc = runTeam(SOLO_BURST);
     const uses = calc.schedule!.activations.filter((a) => a.slotIndex === 0);
     expect(uses.length).toBeGreaterThan(0);
     const stars = calc.slots[0]!.skillHits.activations.filter((a) => a.effect.dot?.autoAttack === true);
@@ -154,7 +155,7 @@ describe('みんなの星のバースト再突入 I 段階（V-0121）', () => {
 });
 
 describe('私だけの星とみんなの星（バースト段階の構成の分岐）', () => {
-  const attackOf = (input: TeamInput) => computeTeamDamage(input).slots[0]!.segments[0]!.trigger.attack;
+  const attackOf = (input: TeamInput) => runTeam(input).slots[0]!.segments[0]!.trigger.attack;
 
   it('gives My Own Star ATK up (40.01%) only without another Burst I ally', () => {
     expect(attackOf(SOLO)).toBe(Math.round(80485 * 1.4001)); // C-0027
@@ -172,7 +173,7 @@ describe('私だけの星とみんなの星（バースト段階の構成の分�
 
   it('adds the additional damage to every Full Charge shot in both branches', () => {
     for (const input of [SOLO, WITH_FLOWER]) {
-      const trigger = computeTeamDamage(input).slots[0]!.segments[0]!.trigger;
+      const trigger = runTeam(input).slots[0]!.segments[0]!.trigger;
       expect(trigger.perShot).toBeGreaterThan(0);
     }
   });
@@ -190,7 +191,7 @@ describe.each([
   ['アニス：スター単騎・オートバースト ON（R1 の条件）', SOLO_BURST, true],
 ] as const)('sim vs calc: %s', (_name, input, checkTotals) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule and the shot-counted groups', () => {

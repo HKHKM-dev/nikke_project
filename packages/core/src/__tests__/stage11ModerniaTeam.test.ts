@@ -11,7 +11,8 @@ import { initialShooter, resumeShooter, stepShooter } from '../frame/shooter.ts'
 import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput, TeamResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -62,7 +63,7 @@ function segmentAt(result: TeamResult, slotIndex: number, frame: number) {
 
 describe('録画 0044 の予測（7.5）', () => {
   const plan = planTeamRun(REC44);
-  const calc = computeTeamDamage(REC44);
+  const calc = runTeam(REC44);
   const fb = plan.schedule!.fullBurstWindows;
   const shots = plan.shots[2]!.frames;
   const windows = piecesOf(plan).filter((w) => w.slotIndex === 2);
@@ -170,7 +171,7 @@ describe('モダニア単騎（録画 0045 の編成。V-0035）', () => {
 });
 
 describe('録画 0044 の実測（1 発の数値、2026-09-24）', () => {
-  const calc = computeTeamDamage(REC44);
+  const calc = runTeam(REC44);
   const plan = planTeamRun(REC44);
   const fb = plan.schedule!.fullBurstWindows;
   const attack = piecesOf(plan).filter((w) => w.slotIndex === 2 && w.effect.stat === 'attack');
@@ -267,7 +268,7 @@ describe('射手: 装弾数無限と基礎の武器に戻るとき（3.4・7.3�
 
 describe.each(Object.entries(TEAMS))('sim vs calc (7.4): %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the instants, the skill hits and the shot-counted groups', () => {

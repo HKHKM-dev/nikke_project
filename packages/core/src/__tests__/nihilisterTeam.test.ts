@@ -10,7 +10,8 @@ import { gameSecondsToFrames } from '../time.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { timerFrames } from '../skills/timeline.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -73,7 +74,7 @@ describe('ニヒリスターの定義', () => {
 
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, nihilister }) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
   const mine = plan.schedule!.activations.filter((a) => a.slotIndex === nihilister);
   // バースト使用時の効果（火傷・最大装弾数▲）は、発動の 9f 後の効果の発火から（C-0219）。戦闘の終わり以降は発火しない

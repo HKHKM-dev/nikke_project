@@ -7,7 +7,8 @@ import { makeCharacter } from './fixtures.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { buildTeamInput, METRICS } from '../records/observations.ts';
 import { shotCountWeight } from '../skills/triggers.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
@@ -216,7 +217,7 @@ describe('録画 0232 の編成（フラワー + ウンファ：TU）', () => {
   });
 
   it('counts the round in calc and sim alike, as a true-damage full charge of 105.6% × (300% + Charge Damage up)', () => {
-    const calc = computeTeamDamage(REC232);
+    const calc = runTeam(REC232);
     const sim = runSimulation(REC232);
     const groups = simGroupTotals(sim, 1);
     const rounds = calc.slots[1]!.segments.filter((g) => g.buffs.weapon !== null);

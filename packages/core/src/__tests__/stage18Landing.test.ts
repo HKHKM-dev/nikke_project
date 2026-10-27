@@ -5,7 +5,7 @@
 //   4. 編成: 手入力は何も変わらない、自動は calc と sim で通常攻撃が一致、配分の区間は固定した 3 回の重み付きの和、ゲージ、注記
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import {
   enemyEventsOf,
@@ -450,9 +450,9 @@ describe('編成（自動の条件）', () => {
   it('changes nothing for manual slots, even with the target profile attached', () => {
     const plain = input(team(false), enemy({ target: false }));
     const withTarget = input(team(false), enemy());
-    const calc = computeTeamDamage(withTarget);
+    const calc = runTeam(withTarget);
     const sim = runSimulation(withTarget);
-    expect(calc.totalDamage).toBe(computeTeamDamage(plain).totalDamage);
+    expect(calc.totalDamage).toBe(runTeam(plain).totalDamage);
     expect(sim.totalDamage).toBe(runSimulation(plain).totalDamage);
     expect(sim.timeline.segments.length).toBe(runSimulation(plain).timeline.segments.length);
     expect(calc.landings).toEqual([]);
@@ -460,18 +460,18 @@ describe('編成（自動の条件）', () => {
   });
 
   it('uses the manual values with a note when the enemy has no target profile', () => {
-    const auto = computeTeamDamage(input(team(true), enemy({ target: false })));
-    expect(auto.totalDamage).toBe(computeTeamDamage(input(team(false), enemy({ target: false }))).totalDamage);
+    const auto = runTeam(input(team(true), enemy({ target: false })));
+    expect(auto.totalDamage).toBe(runTeam(input(team(false), enemy({ target: false }))).totalDamage);
     expect(auto.slots[0]!.notes.map((n) => n.code)).toContain('auto-condition-no-target');
     expect(auto.slots[0]!.autoCondition).toBeNull();
   });
 
   it('lowers the total and keeps calc equal to sim for normal attacks (both count the shot list)', () => {
     const auto = input(team(true), enemy());
-    const calc = computeTeamDamage(auto);
+    const calc = runTeam(auto);
     const sim = runSimulation(auto);
     const simTeam = simTeamResult(auto, sim);
-    expect(calc.totalDamage).toBeLessThan(computeTeamDamage(input(team(false), enemy())).totalDamage);
+    expect(calc.totalDamage).toBeLessThan(runTeam(input(team(false), enemy())).totalDamage);
     for (let i = 0; i < 3; i++) {
       expect(calc.slots[i]!.normalDamage).toBeCloseTo(sim.slots[i]!.normalDamage, 3);
       expect(calc.slots[i]!.autoCondition).toEqual(sim.slots[i]!.autoCondition);
@@ -486,7 +486,7 @@ describe('編成（自動の条件）', () => {
   });
 
   it('gives each landing its own distance bonus and table values (SMG: off at 遠, on at 中遠 A)', () => {
-    const calc = computeTeamDamage(input(team(true), enemy({ fixed: { midFar: 'midFarA' } })));
+    const calc = runTeam(input(team(true), enemy({ fixed: { midFar: 'midFarA' } })));
     const smg = calc.slots[1]!;
     const at = (sec: number) =>
       smg.segments.find((s) =>
@@ -533,13 +533,13 @@ describe('編成（自動の条件）', () => {
   });
 
   it('uses the initial landing (中近) without the 3-minute mode, and matches the manual 中近 condition', () => {
-    const calc = computeTeamDamage(input(team(true), enemy({ events: false })));
+    const calc = runTeam(input(team(true), enemy({ events: false })));
     expect(calc.landings).toEqual([{ start: 0, end: battleSecondsToFrames(180), landing: 'midNear', band: 'midNear' }]);
     const midNear: SlotCondition = { coreHitRate: 0.2281, distanceBonus: true, fullCharge: true, hitRate: 0.9963 };
-    const manual = computeTeamDamage(
+    const manual = runTeam(
       input([slot(weapon('AR', { min: 25, max: 45 }, 1), false, { condition: midNear })], enemy({ events: false })),
     );
-    const ar = computeTeamDamage(input([team(true)[0]!], enemy({ events: false })));
+    const ar = runTeam(input([team(true)[0]!], enemy({ events: false })));
     // 一本化の段 A-1: calc もグループごとに射撃の列の発数を数える。着地点が 1 つなら手入力の同じ条件と同じ発数・同じ値
     expect(ar.slots[0]!.segments.every((s) => s.triggerSource === 'shots')).toBe(true);
     expect(ar.totalDamage).toBeCloseTo(manual.totalDamage, 6);
@@ -554,8 +554,8 @@ describe('編成（自動の条件）', () => {
       },
     ];
     const e = enemy();
-    const plain = computeTeamDamage(input([team(true)[0]!], e)).slots[0]!.autoCondition!;
-    const withCube = computeTeamDamage(input([slot(AR, true, { buildEffects: cube })], e)).slots[0]!.autoCondition!;
+    const plain = runTeam(input([team(true)[0]!], e)).slots[0]!.autoCondition!;
+    const withCube = runTeam(input([slot(AR, true, { buildEffects: cube })], e)).slots[0]!.autoCondition!;
     expect(withCube.hitRateUp).toBe(0.0509);
     expect(withCube.coreHitRate / plain.coreHitRate).toBeCloseTo(1 / 0.9491 ** 2, 9);
     // C-0192: AR の弾丸命中率も上がる
@@ -565,9 +565,8 @@ describe('編成（自動の条件）', () => {
 
   it('says where hit rate up changes bullet hit rate from the same judge as the model (SG: by whether the plan has near)', () => {
     const note = (c: CharacterData, events: boolean) =>
-      computeTeamDamage(input([slot(c, true)], enemy({ events }))).slots[0]!.notes.find(
-        (x) => x.code === 'auto-condition',
-      )!.message;
+      runTeam(input([slot(c, true)], enemy({ events }))).slots[0]!.notes.find((x) => x.code === 'auto-condition')!
+        .message;
     // 3 分のモードは近を含む。無ければ初期位置（中近）だけ
     const withNear = note(SG, true);
     expect(withNear.ja).toContain('C-0631');
@@ -590,7 +589,7 @@ describe('編成（自動の条件）', () => {
 
   it('writes the notes: table, mix, unmeasured cells, RL/SR first shot, MG spin-up, and unmeasured landings', () => {
     const codes = (c: CharacterData, duration = 180, target = profile) =>
-      computeTeamDamage({
+      runTeam({
         slots: [slot(c, true)],
         enemy: {
           defence: 100,

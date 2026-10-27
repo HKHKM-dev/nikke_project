@@ -1,5 +1,6 @@
-// Stage 3〜: 編成の入力（枠・条件・スキル）と結果の型、入力の検証。calc（calc/model.ts）と sim（sim/engine.ts）で共通。
+// Stage 3〜: 編成の入力（枠・条件・スキル）と結果の型、入力の検証。結果（TeamResult）は sim/teamResult.ts の simTeamResult が作る。
 // Stage 16（plan/design-stage16.md 2 節）: 1 パス目は frame/plan.ts、calc モデルは calc/model.ts に分けた。
+// 一本化の段 A-2（plan/design-unify-sim-calc.md 5.2 節）: calc/model.ts は消し、計算は runSimulation（sim/engine.ts）の 1 本になった。
 import type { BurstSchedule, BurstScheduleModel, BurstSummary } from './burst/schedule.ts';
 import type { CadenceResult } from './cadence.ts';
 import {
@@ -200,7 +201,7 @@ export function validateObstacleBreaks(
 
 export type { AppliedEffect, AppliedTimedEffect };
 
-/** 1 つのバフ状態でいた区間の結果。calc はグループ単位、sim は区間単位で埋める */
+/** 1 つのバフ状態でいたグループ（同じバフ状態の区間をまとめたもの）の結果 */
 export type SlotSegmentResult = {
   /** 含まれる区間 [start, end) の列（フレーム）。グループは離れた複数区間を含みうる */
   ranges: { start: number; end: number }[];
@@ -210,13 +211,13 @@ export type SlotSegmentResult = {
   passiveEffects: AppliedEffect[];
   timedEffects: AppliedTimedEffect[];
   trigger: TriggerDamage;
-  /** 1 パス目の射撃の列のうち、この区間に入る発数（整数）。一本化の段 A-1 から calc も sim と同じ数 */
+  /** 1 パス目の射撃の列のうち、このグループに入る発数（整数） */
   triggers: number;
   /**
    * Stage 10: トリガー数の出どころ。'shots' = 1 パス目の射撃の列の発数を数えた。'average'（平均レート × 秒数）は、一本化の段 A-1
-   * （plan/design-unify-sim-calc.md 5.1 節）で calc からも無くなり、いまはどのモデルも出さない（型は段 A-2 で消す）
+   * （plan/design-unify-sim-calc.md 5.1 節）で calc からも無くなり、段 A-2 で型からも消した
    */
-  triggerSource: 'average' | 'shots';
+  triggerSource: 'shots';
   damage: number;
   /** Stage 22-B: triggers・damage のうち部分チャージの発（C-0109）。無ければキーごと無い */
   partialCharge?: PartialChargeTotals;
@@ -305,14 +306,14 @@ export type TeamResult = {
   enemyNotes: ModelNote[];
   /** Stage 18-C: 着地点の区間（フレーム）。条件が自動の枠が無い、または的の表の無い敵では空 */
   landings: LandingFrameSpan[];
-  /** Stage 16-B: 1 秒ごとのダメージ（編成の合計と枠ごと。sim だけ。calc は null） */
-  damagePerSecond: DamagePerSecond | null;
+  /** Stage 16-B: 1 秒ごとのダメージ（編成の合計と枠ごと。一本化の段 A-2 までは calc では null） */
+  damagePerSecond: DamagePerSecond;
 };
 
 /** Stage 16-B: 1 秒ごとのダメージ。添字 k は [k, k + 1) 秒（最後の 1 つは戦闘時間で切れた端数を含む） */
 export type DamagePerSecond = { total: number[]; slots: (number[] | null)[] };
 
-/** 操作キャラの枠が編成の範囲内の埋まった枠か検証する。sim と calc で共通 */
+/** 操作キャラの枠が編成の範囲内の埋まった枠か検証する */
 export function validateControlledSlot(
   slots: readonly (TeamSlotInput | null)[],
   controlledSlot: number | null | undefined,
@@ -323,7 +324,7 @@ export function validateControlledSlot(
   }
 }
 
-/** 枠数と重複を検証する。sim と calc で共通 */
+/** 枠数と重複を検証する */
 export function validateTeamSlots(slots: readonly (TeamSlotInput | null)[]): void {
   if (slots.length < 1 || slots.length > TEAM_SIZE) {
     throw new RangeError(`slots must have 1..${TEAM_SIZE} entries, got ${slots.length}`);
@@ -347,7 +348,7 @@ export function validateTeamSlots(slots: readonly (TeamSlotInput | null)[]): voi
   }
 }
 
-/** TeamSlotInput を timeline.ts の入力に落とす（sim と calc で共通） */
+/** TeamSlotInput を timeline.ts の入力に落とす */
 export function toTimelineSlots(slots: readonly (TeamSlotInput | null)[]): TimelineSlot[] {
   return slots.map((slot) =>
     slot === null

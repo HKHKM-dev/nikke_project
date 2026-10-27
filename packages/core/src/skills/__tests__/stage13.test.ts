@@ -12,7 +12,7 @@ import {
 } from '../../buildEffects.ts';
 import { ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE, computeTriggerDamage, type EnemyInput } from '../../damage.ts';
 import { elementMultiplier } from '../../element.ts';
-import { computeTeamDamage } from '../../calc/model.ts';
+import { runTeam } from '../../__tests__/runTeam.ts';
 import { type TeamSlotInput } from '../../team.ts';
 import type { BuildMasters, CharacterData, OverloadOption } from '../../types.ts';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
@@ -404,7 +404,7 @@ describe('新 stat の式（3.3）', () => {
   });
 });
 
-describe('computeTeamDamage with build effects', () => {
+describe('runTeam with build effects', () => {
   const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
   const slot = (buildEffects?: BuildEffect[]): TeamSlotInput => ({
     character: makeCharacter(),
@@ -416,8 +416,8 @@ describe('computeTeamDamage with build effects', () => {
 
   it('an empty list is the same as none (degenerate)', () => {
     const input = (s: TeamSlotInput) => ({ slots: [s], enemy, durationSeconds: 180, burst: true });
-    const none = computeTeamDamage(input(slot()));
-    const empty = computeTeamDamage(input(slot([])));
+    const none = runTeam(input(slot()));
+    const empty = runTeam(input(slot([])));
     expect(empty.totalDamage).toBe(none.totalDamage);
     expect(none.slots[0]!.buildEffects).toEqual([]);
   });
@@ -427,8 +427,8 @@ describe('computeTeamDamage with build effects', () => {
       { source: { kind: 'overload', name: { ja: '', en: '' }, level: 15 }, stat: 'attack', value: 0.1463 },
     ];
     const input = (s: TeamSlotInput) => ({ slots: [s], enemy, durationSeconds: 180 });
-    const base = computeTeamDamage(input(slot()));
-    const ol = computeTeamDamage(input(slot(effects)));
+    const base = runTeam(input(slot()));
+    const ol = runTeam(input(slot(effects)));
     expect(ol.slots[0]!.buildEffects).toEqual(effects);
     expect(ol.slots[0]!.passiveBuffs.attackRatio).toBeCloseTo(0.1463, 12);
     expect(ol.totalDamage / base.totalDamage).toBeCloseTo((10000 * 1.1463 - 100) / (10000 - 100), 9);

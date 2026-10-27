@@ -9,7 +9,8 @@ import { gameSecondsToFrames } from '../time.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -117,7 +118,7 @@ describe('ラムの定義', () => {
 
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, ram, sameSquad }) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it.runIf(!sameSquad)('does not cut the burst cooldown of Ram without an ally from the same squad (C-0080)', () => {

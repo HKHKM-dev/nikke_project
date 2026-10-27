@@ -3,7 +3,7 @@
 // records:check は、同じ検証記録を source にする観測値と突き合わせて、仮説ごとに合うかを plan/verifications.md に出す（3.5 節）。
 // 予測は任意の道具で、確定の条件ではない。撮る前の順番も問わない（plan/design-investigation-review.md 1 節。2026-10-10 の
 // オーナーの決定）。撮影計画で、その録画で仮説を見分けられるかを確かめるのに使う。
-import { computeTeamDamage } from '../calc/model.ts';
+import { simTeamResult } from '../sim/teamResult.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import type { TeamInput, TeamResult } from '../team.ts';
 import {
@@ -299,7 +299,8 @@ export function runPredictions(
         values[h.id]![t.id] = metric.sim(run.sim, ctx);
       } else {
         if (metric.calc === undefined) throw new Error(`${t.metric} は calc の出力に無い`);
-        run.calc ??= computeTeamDamage(run.input);
+        // 一本化の段 A-2: calc の指標も同じ runSimulation の結果を画面の形にして読む（段 A-3 で 'calc' の経路ごと消す候補）
+        run.calc ??= simTeamResult(run.input, (run.sim ??= runSimulation(run.input)));
         values[h.id]![t.id] = metric.calc(run.calc, ctx);
       }
     }

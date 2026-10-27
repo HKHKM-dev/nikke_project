@@ -10,7 +10,7 @@ import { MAX_SKILL_LEVELS, isStateContent, type ItemEffect } from '../skills/res
 /** 窓の効果のトリガー（名前の付いた状態の中身はトリガーを持たない） */
 const triggerOf = (e: ItemEffect) => (isStateContent(e) ? undefined : e.trigger);
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { battleSecondsToFrames, framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
@@ -57,7 +57,7 @@ const enemy = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire' as const, has
 
 describe('録画 0014: クイーン（真）の戦闘開始時 攻撃力 +50.28%（15 秒）', () => {
   // バーストなし（burst: false）でも battleStart は発火する。180 秒を「0〜15 秒」「15 秒〜」に割る
-  const team = computeTeamDamage({ slots: [slot], enemy, durationSeconds: 180 });
+  const team = runTeam({ slots: [slot], enemy, durationSeconds: 180 });
   const s = team.slots[0]!;
 
   it('splits the battle at 15 s', () => {
@@ -91,7 +91,7 @@ describe('録画 0014: クイーン（真）の戦闘開始時 攻撃力 +50.28%
   });
 
   it('adds the fullBurstEnd window on top once bursts are running', () => {
-    const withBurst = computeTeamDamage({
+    const withBurst = runTeam({
       slots: [slot],
       enemy,
       durationSeconds: 180,
