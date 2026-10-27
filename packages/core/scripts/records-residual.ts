@@ -2,12 +2,7 @@
 // 使い方: npm run records:residual -- <観測値 ID|録画 id|V-NNNN>[,...] [...]
 // 引いた観測値のうち比べるものはモデルと比べて residuals.md と同じ列で、比べないものは値を出す。
 import { claimsByObservation } from '../src/records/claims.ts';
-import {
-  renderOtherRows,
-  renderResidualRows,
-  runObservations,
-  type Observation,
-} from '../src/records/observations.ts';
+import { renderOtherRows, renderResidualRows, runObservations, type Observation } from '../src/records/observations.ts';
 import { loadClaims, loadObservations, loadRecordsData, loadRecordingsFile, recordingMap } from './records-data.ts';
 
 const keys = process.argv
@@ -39,8 +34,16 @@ const file = loadRecordingsFile();
 const residuals = runObservations(picked, recordingMap(file), loadRecordsData(file));
 const claimsOf = claimsByObservation(loadClaims());
 const others = picked.filter((o) => o.use !== 'compare');
-if (residuals.length > 0) console.log([`比べた観測値 ${residuals.length} 件`, '', ...renderResidualRows(residuals, claimsOf)].join('\n'));
+if (residuals.length > 0)
+  console.log([`比べた観測値 ${residuals.length} 件`, '', ...renderResidualRows(residuals, claimsOf)].join('\n'));
 if (others.length > 0) {
-  console.log([...(residuals.length > 0 ? [''] : []), `モデルと比べない観測値 ${others.length} 件`, '', ...renderOtherRows(others, claimsOf)].join('\n'));
+  console.log(
+    [
+      ...(residuals.length > 0 ? [''] : []),
+      `モデルと比べない観測値 ${others.length} 件`,
+      '',
+      ...renderOtherRows(others, claimsOf),
+    ].join('\n'),
+  );
 }
 if (missing.length > 0) process.exit(1);

@@ -1,6 +1,6 @@
 # 繰り返しの業務の簡素化の案・第 3 回（2026-10-26 の定期の見直し）
 
-- 何のための文書か: 検証 1 件ごと・撮影ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。**承認待ち**。
+- 何のための文書か: 検証 1 件ごと・撮影ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-10-27 にオーナーが全部を推奨どおりに承認し（Antigravity は今も使う）、実施した（6 節）。
 - 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)（2026-10-24）・[design-workflow-simplification-2.md](design-workflow-simplification-2.md)（2026-10-25。全部を実施済み）。そこで扱ったもの（取り込み・読みの一括、生成のコマンド、表の列幅、skills-guide.md、`npm run ci`、`--pad-all`、メモリの 3 項目）は繰り返さない。
 - 調べた範囲: [AGENTS.md](../AGENTS.md)、[verification-guide.md](verification-guide.md)、[records/verifications/README.md](../records/verifications/README.md)、生成物（`plan/*.md`・[captures/recordings.md](captures/recordings.md)）、レシピと解析ツール（`tools/captures/`）、観測値の `method`、`npm test` の時間、Claude Code のメモリ。
 - 調べ方: origin/main（8251a15）で、V-0480 以降の検証記録 43 件の観測値の `method.tool` と「読み方」を読み、生成物の節ごとの大きさと、直近 50 件のコミットで触るファイルを数えた。
@@ -16,6 +16,8 @@
 | 4 | Claude Code のメモリの古い項目を直す（`records-layout` の誤った指示・`pr-workflow` の経緯） | 毎セッション読む索引の誤り | 進めてよいか |
 
 推奨は 1〜4 を全部進める。3 の併用ルールは、Antigravity を使わなくなっていれば縮める。
+
+**判断（2026-10-27）**: 全部を推奨どおりに進める。Antigravity は今も使うので、併用ルールは今のまま。
 
 ## 1. 「増分を格子に当てる」読み方をレシピにする
 
@@ -103,3 +105,10 @@
 - 検証記録の「読み方」に取り込みの引数を書くこと（V-05xx の 24 件のうち 11 件）: 撮影の前に取り込みの段取りを決めておく役があり、取り込みは 1 度きりなので、書き写しの手間は小さい。
 - 設計書が 127 本あること: 繰り返し読むものではなく、roadmap.md と backlog.md から節で指して引く。まとめて移すとリンクが壊れるので、動かさない。
 - `sync-after-merge` のフック・[captures/guide.md](captures/guide.md)（40KB）: 前の回の 9 節と同じ判断。
+
+## 6. 実施（2026-10-27）
+
+- 1: `buff-edge` を版 2 にした（[design-buff-edge-recipe.md](design-buff-edge-recipe.md) 8 節）。案のほかに、境を何人かの発で挟めるよう `pair` を格子の組（`サン,デルタ>サン▲,デルタ▲`）にし、格子のフレームを選ぶ `segments` を足した。版 1 の `slot`・`off`・`on` はそのまま使える。録画 0697（V-0513）・0708（V-0516）で、使い捨てのスクリプトの `0697-08`・`0708-08` の値と全部一致した（8.1 節）。SG のペレットの和はテストだけで、録画では確かめていない（次に SG の入る検証で確かめる）。
+- 2: 調べ直すと、residuals.md の 2.0MB のうち 1.4MB は「モデルと比べない観測値」の表（4,183 行）だった。これも同じ理由（見張る行でない）で一覧から外し、`records:residual` で引けるようにした（比べる観測値と同じく、観測値 ID・録画 id・V-NNNN で引く）。residuals.md は 34KB になった。話題ごとの件数は、観測値の `source` の検証記録の話題で数える（`verification.md` などの古い観測値は「ほか」）。録画の一覧の「素性」の表を外し、recordings.md は 0.45MB から 0.36MB。
+- 3: 案のとおり（併用ルールは今のまま）。AGENTS.md は 15.6KB から 10.7KB。records/verifications/README.md の検査の列挙は `records-close.ts` の冒頭を指す 1 行にした。
+- 4: 案のとおり。メモリはリポジトリの外なので、この PR には入らない。

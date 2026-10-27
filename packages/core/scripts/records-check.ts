@@ -95,12 +95,16 @@ const residuals = runObservations(observations, recordings, data);
 const doc = readFileSync(RESIDUALS_PATH, 'utf8');
 writeFileSync(
   RESIDUALS_PATH,
-  replaceGeneratedSection(doc, 'residuals', renderResiduals(
+  replaceGeneratedSection(
+    doc,
+    'residuals',
+    renderResiduals(
       residuals,
       observations,
       claimsByObservation(claims),
       new Map(verifications.map((v) => [v.id, v.topic])),
-    )),
+    ),
+  ),
 );
 // 等級の候補（plan/design-records-automation.md 3.5 節）。書いた等級と違えば claims.md に出す。落とさない
 const residualOf = new Map(
