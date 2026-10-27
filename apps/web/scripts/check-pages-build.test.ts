@@ -31,5 +31,6 @@ describe('GitHub Pages build (Stage 14)', () => {
     const problems = checkPagesBuild(outDir, '/other/');
     expect(problems).toContain('index.html has no script under /other/assets/');
     expect(problems.some((p) => p.includes('no bundle embeds'))).toBe(true);
+    expect(problems).toContain('no bundle refers to the worker under /other/assets/');
   });
 });
