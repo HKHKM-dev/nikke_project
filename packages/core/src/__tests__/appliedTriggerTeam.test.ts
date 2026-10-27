@@ -2,7 +2,8 @@
 // 付いた即時効果の付いた記録）、トーブ（192）の宝物版 S1（代用弾丸が適用される時、味方全体に応急改造とクリティカルダメージ▲）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -285,7 +286,7 @@ const TEAMS: Record<string, TeamInput> = {
 
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the instants and the shot-counted groups', () => {

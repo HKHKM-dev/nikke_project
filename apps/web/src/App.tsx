@@ -4,7 +4,6 @@ import {
   computeFixedSpecAttack,
   computeFixedSpecDefence,
   computeFixedSpecHp,
-  computeTeamDamage,
   fixedSpecGrowth,
   growthLimits,
   isEmptyBuild,
@@ -28,7 +27,7 @@ import {
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
-import { TeamBreakdown, type ModelKind } from './components/TeamBreakdown.tsx';
+import { TeamBreakdown } from './components/TeamBreakdown.tsx';
 import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
 import {
   INITIAL_TEAM_STATE,
@@ -67,17 +66,6 @@ function readSavedTeam(): string | null {
 }
 
 type Computed = { ok: true; result: TeamResult } | { ok: false; error: string };
-
-/** Stage 16: 表示する計算モデル。閲覧者ごとの好みなので編成の保存形式には入れない */
-const MODEL_STORAGE_KEY = 'nikke-web.model';
-
-function readSavedModel(): ModelKind {
-  try {
-    return localStorage.getItem(MODEL_STORAGE_KEY) === 'sim' ? 'sim' : 'calc';
-  } catch {
-    return 'calc';
-  }
-}
 
 function compute(run: () => TeamResult): Computed {
   try {
@@ -216,23 +204,12 @@ export function App() {
     }),
     [slotInputs, team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds, team.burst, team.controlledSlot],
   );
-  const computed = useMemo<Computed>(() => compute(() => computeTeamDamage(teamInput)), [teamInput]);
-
-  // Stage 16: sim（フレーム逐次）。選んだときだけ回し、calc と同じ内訳の表で出す（plan/design-stage16.md 3 節 16-A）
-  const [model, setModel] = useState<ModelKind>(readSavedModel);
-  const changeModel = (next: ModelKind) => {
-    setModel(next);
-    try {
-      localStorage.setItem(MODEL_STORAGE_KEY, next);
-    } catch {
-      // 保存できなくても表示は切り替える
-    }
-  };
-  const simComputed = useMemo<Computed | null>(
-    () => (model === 'sim' ? compute(() => simTeamResult(teamInput, runSimulation(teamInput))) : null),
-    [model, teamInput],
+  // 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 計算は runSimulation → simTeamResult の 1 本。
+  // 2026-10-27 までは calc と sim の切り替え（保存キー nikke-web.model）があり、sim の表示では 1 パス目を 2 回回していた
+  const computed = useMemo<Computed>(
+    () => compute(() => simTeamResult(teamInput, runSimulation(teamInput))),
+    [teamInput],
   );
-  const shown = simComputed ?? computed;
 
   const loadingCount = team.slots.filter(
     (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
@@ -324,18 +301,15 @@ export function App() {
                   effectiveSkillLevels={allEffectiveSkillLevels[i]!}
                   skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
                   hpRatioTargeted={hpRatioTargeted}
-                  slotResult={shown.ok ? (shown.result.slots[i] ?? null) : null}
+                  slotResult={computed.ok ? (computed.result.slots[i] ?? null) : null}
                   dispatch={dispatch}
                 />
               );
             })}
           </section>
-          {shown.ok ? (
+          {computed.ok ? (
             <TeamBreakdown
-              result={shown.result}
-              model={model}
-              onModelChange={changeModel}
-              compare={model === 'sim' && computed.ok ? computed.result : null}
+              result={computed.result}
               loadingCount={loadingCount}
               skillsLoadingCount={skillsLoadingCount}
               fixedSpec={team.fixedSpec}
@@ -349,9 +323,9 @@ export function App() {
               dispatch={dispatch}
             />
           ) : (
-            <p className="error">{shown.error}</p>
+            <p className="error">{computed.error}</p>
           )}
-          <NotesSummary slots={summarySlots} enemyNotes={shown.ok ? shown.result.enemyNotes : []} />
+          <NotesSummary slots={summarySlots} enemyNotes={computed.ok ? computed.result.enemyNotes : []} />
         </>
       )}
     </main>

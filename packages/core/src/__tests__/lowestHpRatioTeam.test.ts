@@ -3,7 +3,8 @@
 // （F4 の録画 0472・0473 の編成）、sim と calc の整合
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import {
   computeFixedSpecAttack,
@@ -168,7 +169,7 @@ describe.each([
   ['録画 0473 の編成（ミサト 1 枠目）', B],
 ])('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the instants and the shot-counted groups', () => {

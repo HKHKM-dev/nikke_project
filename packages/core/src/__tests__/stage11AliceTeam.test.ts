@@ -10,7 +10,8 @@ import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -80,7 +81,7 @@ function aliceHit(
 }
 
 /** 枠 i のフレーム f を含む区間の結果 */
-function segmentAt(calc: ReturnType<typeof computeTeamDamage>, i: number, f: number) {
+function segmentAt(calc: ReturnType<typeof runTeam>, i: number, f: number) {
   const g = calc.slots[i]!.segments.find((s) => s.ranges.some((r) => r.start <= f && f < r.end));
   if (!g) throw new Error(`no segment for slot ${i} at ${f}`);
   return g;
@@ -95,7 +96,7 @@ function mode(values: readonly number[]): number {
 
 describe('録画 0042: アリスの S1 は自分とアドミに付く（22.5、実測）', () => {
   const plan = planTeamRun(REC42);
-  const calc = computeTeamDamage(REC42);
+  const calc = runTeam(REC42);
   const windows = plan.schedule!.fullBurstWindows;
 
   it('opens 9 full bursts, III alternating アリス / サン, and ranks アリス then アドミ every time', () => {
@@ -187,7 +188,7 @@ describe('録画 0042: アリスの S1 は自分とアドミに付く（22.5、�
 
 describe('録画 0043: 同じフレームのバフも順位に入る（22.6、RANK_INCLUDES_SAME_FRAME、実測）', () => {
   const plan = planTeamRun(REC43);
-  const calc = computeTeamDamage(REC43);
+  const calc = runTeam(REC43);
   const windows = plan.schedule!.fullBurstWindows;
 
   it('gives アリス’s S1 to マナ + アリス on アリス’s rounds and マナ + クラウン on マナ’s (recording: 2,580,367 / 1,274,396)', () => {
@@ -235,7 +236,7 @@ describe('録画 0043 の代案（サン）: アドミには一度も付かな�
 
 describe.each(Object.entries(TEAMS))('sim vs calc (22.4): %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the rankings, the instants, the skill hits and the shot-counted groups', () => {

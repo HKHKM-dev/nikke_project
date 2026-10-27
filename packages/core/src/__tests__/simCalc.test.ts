@@ -16,7 +16,7 @@ import { runSimulation, simGroupTotals, simIntervalTotals } from '../sim/engine.
 import { simTeamResult } from '../sim/teamResult.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, TimedEffect } from '../skills/types.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { type SlotCondition, type TeamSlotInput, type TeamSlotResult } from '../team.ts';
 import type { BurstStep, ShotParams, SkillRaw } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
@@ -136,7 +136,7 @@ const relDiff = (a: number, b: number) => Math.abs(a - b) / b;
 // Stage 5 / 6 のテストは固定 20 秒サイクルで書いてある（Stage 7 の退化テストを兼ねる）。動的サイクルは末尾の Stage 7 節
 function both(durationSeconds: number, burst: boolean, burstModel: BurstScheduleModel = 'fixed') {
   const input = { slots: team, enemy, durationSeconds, burst, burstModel };
-  return { sim: runSimulation(input), calc: computeTeamDamage(input) };
+  return { sim: runSimulation(input), calc: runTeam(input) };
 }
 
 describe('sim vs calc: quantities that must match exactly', () => {
@@ -279,7 +279,7 @@ const timedTeam: TeamSlotInput[] = [
 
 function bothTimed(durationSeconds: number, burst = true, burstModel: BurstScheduleModel = 'fixed') {
   const input = { slots: timedTeam, enemy, durationSeconds, burst, burstModel };
-  return { sim: runSimulation(input), calc: computeTeamDamage(input) };
+  return { sim: runSimulation(input), calc: runTeam(input) };
 }
 
 describe('sim vs calc with timed buffs: quantities that must match exactly', () => {
@@ -333,7 +333,7 @@ describe('sim vs calc with timed buffs: quantities that must match exactly', () 
   });
 
   it('give a bigger total than the same team without the timed buffs', () => {
-    const plain = computeTeamDamage({ slots: team, enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
+    const plain = runTeam({ slots: team, enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
     expect(calc.totalDamage).toBeGreaterThan(plain.totalDamage);
   });
 });
@@ -471,7 +471,7 @@ const buildTeam: TeamSlotInput[] = team.map((s, i) => ({
 describe('sim vs calc with build effects (Stage 13)', () => {
   const input = { slots: buildTeam, enemy, durationSeconds: 180, burst: true, burstModel: 'dynamic' as const };
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
 
   it('share the same schedule, segmentation and per-segment trigger damage', () => {
     expect(sim.schedule).toEqual(calc.schedule);
@@ -494,7 +494,7 @@ describe('sim vs calc with build effects (Stage 13)', () => {
       const c = calc.slots[i]!;
       expect(relDiff(s.totalDamage, averageRateTotal(c)), `slot ${i}`).toBeLessThan(0.05);
     }
-    const plain = computeTeamDamage({ ...input, slots: team });
+    const plain = runTeam({ ...input, slots: team });
     expect(calc.totalDamage).toBeGreaterThan(plain.totalDamage);
   });
 });
@@ -503,7 +503,7 @@ describe('sim vs calc with build effects (Stage 13)', () => {
 describe('simTeamResult: sim in the TeamResult shape', () => {
   const input = { slots: team, enemy, durationSeconds: 180, burst: true };
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const view = simTeamResult(input, sim);
 
   it('keeps the sim totals', () => {

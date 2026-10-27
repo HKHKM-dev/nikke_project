@@ -2,7 +2,8 @@
 // S1（支援型の味方への吸収回復）とバースト（火力型の味方への回復と攻撃力▲）、sim と calc の整合
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import {
   computeFixedSpecAttack,
@@ -163,7 +164,7 @@ describe('エヌ：ミラクルフェアリーの絞り込み（防御型・支�
 
 describe('sim vs calc: 防御型・支援型・火力型・支援型の編成', () => {
   const sim = runSimulation(TEAM);
-  const calc = computeTeamDamage(TEAM);
+  const calc = runTeam(TEAM);
   const plan = planTeamRun(TEAM);
 
   it('agree exactly on the schedule, the instants and the shot-counted groups', () => {

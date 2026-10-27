@@ -20,20 +20,8 @@ import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { DamageTimeline, landingLabel } from './DamageTimeline.tsx';
 import { ResultPanel } from './ResultPanel.tsx';
 
-/** Stage 16: 表示する計算モデル（plan/design-stage16.md 1 節） */
-export type ModelKind = 'calc' | 'sim';
-
-const MODEL_LABEL: Record<ModelKind, string> = {
-  calc: 'calc（区間期待値）',
-  sim: 'sim（フレーム逐次）',
-};
-
 type Props = {
   result: TeamResult;
-  model: ModelKind;
-  onModelChange: (model: ModelKind) => void;
-  /** sim を表示しているときの calc の結果（差を並べる）。calc の表示では null */
-  compare: TeamResult | null;
   /** ニケは選ばれているがデータ読み込み中で合計に入っていない枠の数 */
   loadingCount: number;
   /** スキル定義を読み込み中で、まだバフなしで計算している枠の数 */
@@ -58,18 +46,8 @@ function triggerRange(slot: TeamSlotResult, pick: (t: TriggerDamage) => number, 
   return max ? Math.max(...values) : Math.min(...values);
 }
 
-/** 差の表示（符号付き。基準が 0 なら率は出さない） */
-function formatDiff(value: number, base: number): string {
-  const sign = value > 0 ? '+' : value < 0 ? '−' : '±';
-  const rate = base !== 0 ? `（${sign}${formatPercent(Math.abs(value) / base, 2)}）` : '';
-  return `${sign}${formatNumber(Math.abs(value))}${rate}`;
-}
-
 export function TeamBreakdown({
   result,
-  model,
-  onModelChange,
-  compare,
   loadingCount,
   skillsLoadingCount,
   fixedSpec,
@@ -151,14 +129,12 @@ export function TeamBreakdown({
             </p>
           )}
 
-          {result.damagePerSecond && (
-            <DamageTimeline
-              perSecond={result.damagePerSecond}
-              events={result.enemyEvents}
-              landings={result.landings}
-              fullBursts={schedule?.fullBurstWindows ?? []}
-            />
-          )}
+          <DamageTimeline
+            perSecond={result.damagePerSecond}
+            events={result.enemyEvents}
+            landings={result.landings}
+            fullBursts={schedule?.fullBurstWindows ?? []}
+          />
 
           <div className="table-scroll">
             <table className="team-table">
@@ -239,37 +215,15 @@ export function TeamBreakdown({
       )}
 
       <details className="segments verification-details">
-        <summary>
-          計算モデル・検証用の詳細（モデル: {model}
-          {compare && filled.length > 0
-            ? ` / calc との差: ${formatDiff(result.totalDamage - compare.totalDamage, compare.totalDamage)}`
-            : ''}
-          ）
-        </summary>
-        <div className="verification-controls">
-          <label className="field model-select-field">
-            <span>計算モデル</span>
-            <select value={model} onChange={(e) => onModelChange(e.target.value === 'sim' ? 'sim' : 'calc')}>
-              {(Object.keys(MODEL_LABEL) as ModelKind[]).map((m) => (
-                <option key={m} value={m}>
-                  {MODEL_LABEL[m]}
-                </option>
-              ))}
-            </select>
-          </label>
-          {compare && filled.length > 0 && (
-            <p className="hint">
-              calc との差: 合計 {formatDiff(result.totalDamage - compare.totalDamage, compare.totalDamage)}
-            </p>
-          )}
-        </div>
+        {/* 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 2026-10-27 までは、ここに計算モデル（calc / sim）の切り替えと「calc との差」があった */}
+        <summary>検証用の詳細</summary>
         {filled.length > 0 && eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}
         {filled.length > 0 && landingsLabel !== '' && (
           <p className="hint">的の着地点（条件が自動の枠に効く）: {landingsLabel} 秒</p>
         )}
         {filled.length > 0 && (
           <>
-            <h4>攻撃力・トリガー数・モデル差</h4>
+            <h4>攻撃力・トリガー数</h4>
             <div className="table-scroll">
               <table className="team-table">
                 <thead>
@@ -281,7 +235,6 @@ export function TeamBreakdown({
                     <th>1 トリガー</th>
                     <th>秒間トリガー</th>
                     <th>総ダメージ</th>
-                    {compare && <th>calc との差</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -299,14 +252,6 @@ export function TeamBreakdown({
                       </td>
                       <td>{formatNumber(s.cadence.triggersPerSecond, 3)}</td>
                       <td>{formatNumber(s.totalDamage)}</td>
-                      {compare && (
-                        <td>
-                          {formatDiff(
-                            s.totalDamage - (compare.slots[s.index]?.totalDamage ?? 0),
-                            compare.slots[s.index]?.totalDamage ?? 0,
-                          )}
-                        </td>
-                      )}
                     </tr>
                   ))}
                 </tbody>

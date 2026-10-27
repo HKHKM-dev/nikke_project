@@ -8,7 +8,8 @@ import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -78,7 +79,7 @@ describe('クルミの定義', () => {
 
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, kurumi }) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
   const ticks = plan.skillHits.filter((h) => h.slotIndex === kurumi && h.effect.dot !== undefined);
 

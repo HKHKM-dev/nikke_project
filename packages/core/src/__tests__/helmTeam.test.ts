@@ -9,7 +9,8 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { hexagonFrameOf } from '../burst/schedule.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -94,7 +95,7 @@ describe('録画 0079 の編成（V-0033）', () => {
 describe('録画 0079 の編成: バーストのヒットの遅れ（C-0167）', () => {
   const input = rec079(3);
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const HELM_SLOT = 2;
 
   it('lands the burst 59 frames after 00.00 of each use (6 frames after the activation), inside the full burst', () => {
@@ -132,7 +133,7 @@ describe('ヘルム単騎（録画 0082 の編成。V-0034）', () => {
 
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, helm }) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('gives the normal crit rate to allies and the charge damage multiplier only to Helm', () => {

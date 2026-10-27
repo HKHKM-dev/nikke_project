@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { dotActiveSpans, dotTickFrames } from '../frame/dot.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
@@ -204,7 +204,7 @@ describe.each([
     expect(plan.shots[0]!.frames).toEqual(base.shots[0]!.frames);
     expect(plan.schedule!.fullBurstWindows).toEqual(base.schedule!.fullBurstWindows);
     const sim = runSimulation(input).totalDamage - runSimulation(teamWith(null)).totalDamage;
-    const calc = computeTeamDamage(input).totalDamage - computeTeamDamage(teamWith(null)).totalDamage;
+    const calc = runTeam(input).totalDamage - runTeam(teamWith(null)).totalDamage;
     expect(sim).toBeGreaterThan(0);
     expect(calc).toBeCloseTo(sim, 0);
   });

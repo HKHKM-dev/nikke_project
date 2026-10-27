@@ -3,7 +3,7 @@
 // 実データの行は C-0466（単騎の録画 0164・0211 の合計）。式と引き方のテストの行の値はテスト用
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -152,7 +152,7 @@ describe('的の表の coreHitRate.autoAttacks（3.2 節）', () => {
     for (const target of [withStarRow({ all: 1 }), profile]) {
       const after = solo(rangeEnemy(target));
       const sim = runSimulation(after);
-      const calc = computeTeamDamage(after);
+      const calc = runTeam(after);
       expect(calc.totalDamage).toBeCloseTo(sim.totalDamage, 0);
       expect(sim.totalDamage).toBeGreaterThan(runSimulation(before).totalDamage);
     }

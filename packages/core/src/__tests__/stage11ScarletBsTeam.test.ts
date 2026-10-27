@@ -7,10 +7,10 @@ import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { stanceFrames } from '../frame/firing.ts';
-import { planShots } from '../frame/shots.ts';
+import { countShotsInRanges, planShots } from '../frame/shots.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun, type SkillHitEvent } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput, type TeamResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
@@ -183,7 +183,7 @@ describe('S1 の段のヒットで溜まるゲージ（V-0030・C-0085）', () =
 });
 
 describe('録画 0046・0047 の実測（1 発の数値、2026-09-24）', () => {
-  const calc = computeTeamDamage(REC47);
+  const calc = runTeam(REC47);
   const plan = planTeamRun(REC47);
   const hits = plan.skillHits.filter((h) => h.slotIndex === 2);
   const w = cycleItemsOf(plan)[0]!;
@@ -224,7 +224,7 @@ describe('録画 0046・0047 の実測（1 発の数値、2026-09-24）', () => 
 
 describe.each(Object.entries(TEAMS))('sim vs calc (7.4): %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the instants, the skill hits and the shot-counted groups', () => {

@@ -6,7 +6,8 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { METRICS } from '../records/observations.ts';
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
@@ -122,7 +123,7 @@ describe('ソーダ：トゥインクルバニーのバースト（ラム + デ�
       (up) => (up ? Math.floor(attack * 1.6525) : attack) - FIXED_SPEC_ENEMY_DEFENCE,
     );
     const sim = runSimulation(recordingTeam()).slots[S]!.burst.hits.map((h) => h.baseHit);
-    const calc = computeTeamDamage(recordingTeam()).slots[S]!.burst.activations.map((a) => a.hit.baseHit);
+    const calc = runTeam(recordingTeam()).slots[S]!.burst.activations.map((a) => a.hit.baseHit);
     for (const values of [sim, calc]) {
       expect(values.length).toBe(expected.length);
       values.forEach((v, i) => expect(v).toBe(expected[i]));
@@ -202,7 +203,7 @@ const TEAMS: Record<string, TeamInput> = {
 
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the instants, the skill hits and the shot-counted groups', () => {

@@ -3,7 +3,8 @@
 // バーストの味方全体の持続回復（1 秒間隔・5 秒間維持）は、付いた時に 1 回だけ回復を起こす（C-0646。仮説）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -139,7 +140,7 @@ describe('射撃マニュアルのスタック（ミサト単騎・条件は自�
   });
 
   it('reports the shot-weighted N below 3 stacks (the first 180 shots and the rebuilds after the jumps)', () => {
-    const calc = computeTeamDamage(SOLO);
+    const calc = runTeam(SOLO);
     const summary = calc.slots[0]!.autoCondition!;
     expect(summary.timedHitRateUp).toBe(true);
     expect(summary.hitRateUp).toBeGreaterThan(2 * STACK);
@@ -153,7 +154,7 @@ describe.each([
   ['バーストの持続回復（ミサト + デルタ + アスカ）', BURST_HEAL],
 ] as const)('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule and the shot-counted groups', () => {

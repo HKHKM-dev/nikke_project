@@ -1,6 +1,6 @@
 // Stage 9: 宝物（お気に入りアイテム）版スキルへの差し替え（plan/design-stage9.md 4 節）。
 // 宝物の段階 N（1..3）では CharacterData.treasure.unlockOrder の先頭 N 個のスロットが宝物版になる。
-// 差し替えは computeTeamDamage / runSimulation の最上位で 1 回だけ行い、その先の解決（resolvePassives / resolveTimed /
+// 差し替えは runSimulation（一本化の段 A-2 までは computeTeamDamage も）の最上位で 1 回だけ行い、その先の解決（resolvePassives / resolveTimed /
 // 倍率ダメージ / 時刻表）は差し替え後の character と definition を読むだけにする。引数は書き換えない。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, SkillSlot } from '../types.ts';

@@ -3,7 +3,8 @@
 // 自分の HP の割合の条件（condition.selfHp。枠の HP の割合の想定 hpRatio。ノワール（271）の S1）。sim と calc の整合
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -93,7 +94,7 @@ describe('発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）
 
   it('adds X% of the fixed-spec max HP to the attack of Laplace from the start of battle (C-0579)', () => {
     const input = team([fixedSlot(LAPLACE)]);
-    const calc = computeTeamDamage(input);
+    const calc = runTeam(input);
     const c = character(LAPLACE);
     const expected = Math.round(computeFixedSpecAttack(c).attack + skillRatio(LAPLACE, 1) * computeFixedSpecHp(c));
     const segments = calc.slots[0]!.segments;
@@ -103,13 +104,13 @@ describe('発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）
 
   it('uses the max HP given by hpOverride (growth only without it)', () => {
     const c = character(LAPLACE);
-    const withHp = computeTeamDamage(team([fixedSlot(LAPLACE, { hpOverride: 1_000_000 })]));
+    const withHp = runTeam(team([fixedSlot(LAPLACE, { hpOverride: 1_000_000 })]));
     const base = computeFixedSpecAttack(c).attack;
     expect(withHp.slots[0]!.segments[0]!.trigger.attack).toBe(Math.round(base + skillRatio(LAPLACE, 1) * 1_000_000));
   });
 
   it('rejects an hpOverride that is not a positive number', () => {
-    expect(() => computeTeamDamage(team([fixedSlot(LAPLACE, { hpOverride: 0 })]))).toThrow(/hpOverride/);
+    expect(() => runTeam(team([fixedSlot(LAPLACE, { hpOverride: 0 })]))).toThrow(/hpOverride/);
   });
 });
 
@@ -164,7 +165,7 @@ describe('自分の HP の割合の条件（selfHp）', () => {
   // ノワール S1: 自分の HP が 70% 以上なら味方全体に攻撃力▲（発動者基準）。想定の既定は満タン（plan/design-skill-stage6.md 論点 4）
   const attackUp = (hpRatio: number | undefined) => {
     const noir = fixedSlot(NOIR, hpRatio === undefined ? {} : { hpRatio });
-    const calc = computeTeamDamage(team([noir, fixedSlot(DELTA)]));
+    const calc = runTeam(team([noir, fixedSlot(DELTA)]));
     return calc.slots.map((s) => s!.segments[0]!.trigger.buffs.attackFlat);
   };
 
@@ -190,7 +191,7 @@ describe.each([
   ['ノワール + デルタ（HP の割合 0.5）', team([fixedSlot(NOIR, { hpRatio: 0.5 }), fixedSlot(DELTA)], true)],
 ])('sim vs calc: %s', (_name, input) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the instants and the shot-counted groups', () => {

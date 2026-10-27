@@ -1,7 +1,7 @@
 // Stage 22-B: チャージの途中で攻撃できる的がいなくなると、その時点のチャージで撃つ（部分チャージ。C-0109、plan/design-stage22.md 3.2 節）。
 import { describe, expect, it } from 'vitest';
 import { partialGaugeRatio } from '../burst/dynamic.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import { firstShotFrames } from '../cadence.ts';
 import { computeTriggerDamage, partialChargeTriggerDamage, type EnemyEvent, type EnemyInput } from '../damage.ts';
 import { initialShooter, partialChargeShot, stepShooter } from '../frame/shooter.ts';
@@ -138,7 +138,7 @@ describe('編成（sim と calc）', () => {
 
   it('gives the same shots and damage in sim and calc, partial-charge shots included', () => {
     const sim = runSimulation(input);
-    const calc = computeTeamDamage(input);
+    const calc = runTeam(input);
     const simTeam = simTeamResult(input, sim);
     const c = calc.slots[0]!;
     expect(c.normalDamage).toBeCloseTo(sim.slots[0]!.normalDamage, 3);

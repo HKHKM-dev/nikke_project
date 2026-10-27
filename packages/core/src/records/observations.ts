@@ -13,7 +13,7 @@ import {
   videoFrameOf,
   type BurstSchedule,
 } from '../burst/schedule.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { simTeamResult } from '../sim/teamResult.ts';
 import { reloadFirstShotFrames } from '../cadence.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
@@ -2200,7 +2200,8 @@ export function runObservations(
         predicted = metric.sim(run.sim, ctx);
       } else {
         if (metric.calc === undefined) throw new Error(`${c.metric} は calc の出力に無い`);
-        run.calc ??= computeTeamDamage(run.input);
+        // 一本化の段 A-2: calc の指標も同じ runSimulation の結果を画面の形にして読む（段 A-3 で 'calc' の経路ごと消す候補）
+        run.calc ??= simTeamResult(run.input, (run.sim ??= runSimulation(run.input)));
         predicted = metric.calc(run.calc, ctx);
       }
       const { diff, ok } = compareValue(o.value, predicted, c.tolerance);

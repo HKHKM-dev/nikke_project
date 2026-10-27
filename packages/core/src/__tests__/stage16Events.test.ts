@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { initialBurstController, stepBurstController, type BurstUnit } from '../burst/controller.ts';
 import { computeCadence } from '../cadence.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyEvent, EnemyInput } from '../damage.ts';
 import { enemyEventsOf, expandEnemyEvents, parseEnemyPresets } from '../enemies.ts';
 import { enemyEventNotes, untargetableRanges } from '../frame/events.ts';
@@ -253,12 +253,13 @@ describe('編成（calc と sim の両方に効く）', () => {
   const jumps = enemyEventsOf(master, ['range-3min-jump'], 180);
 
   it('is unchanged with no events or an empty list', () => {
-    const none = computeTeamDamage(input());
-    expect(computeTeamDamage(input([])).totalDamage).toBe(none.totalDamage);
+    const none = runTeam(input());
+    expect(runTeam(input([])).totalDamage).toBe(none.totalDamage);
     expect(runSimulation(input([])).totalDamage).toBe(runSimulation(input()).totalDamage);
     expect(none.enemyEvents).toEqual([]);
     expect(none.enemyNotes).toEqual([]);
-    expect(none.damagePerSecond).toBeNull();
+    // 一本化の段 A-2 から、1 秒ごとのダメージは画面の形（TeamResult）でも常に出る（それまでの calc は null）
+    expect(none.damagePerSecond.total).toHaveLength(180);
   });
 
   it('stops every shot and every burst inside the jumps, in both models', () => {
@@ -277,10 +278,10 @@ describe('編成（calc と sim の両方に効く）', () => {
   });
 
   it('lowers the total, and calc equals sim for normal attacks because both count the shot list', () => {
-    const calc = computeTeamDamage(input(jumps));
+    const calc = runTeam(input(jumps));
     const sim = runSimulation(input(jumps));
     const simTeam = simTeamResult(input(jumps), sim);
-    expect(calc.totalDamage).toBeLessThan(computeTeamDamage(input()).totalDamage);
+    expect(calc.totalDamage).toBeLessThan(runTeam(input()).totalDamage);
     for (let i = 0; i < slots.length; i++) {
       const c = calc.slots[i]!;
       expect(c.segments.every((s) => s.triggerSource === 'shots')).toBe(true);
@@ -307,7 +308,7 @@ describe('編成（calc と sim の両方に効く）', () => {
       { kind: 'invulnerable', start: 10, end: 20 },
       { kind: 'barrier', start: 50, end: 60 },
     ];
-    expect(computeTeamDamage(input(shown)).totalDamage).toBe(computeTeamDamage(input()).totalDamage);
+    expect(runTeam(input(shown)).totalDamage).toBe(runTeam(input()).totalDamage);
     expect(enemyEventNotes(shown).map((n) => [n.level, n.code])).toEqual([
       ['unsupported', 'enemy-invulnerable'],
       ['unsupported', 'enemy-barrier'],

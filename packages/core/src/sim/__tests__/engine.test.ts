@@ -180,7 +180,7 @@ describe('runSimulation with the fixed burst cycle', () => {
     expect(empty.schedule?.activations).toEqual([]);
   });
 
-  it('rejects duplicate characters like computeTeamDamage', () => {
+  it('rejects duplicate characters', () => {
     expect(() => runSimulation({ slots: [ar, slot(1)], enemy, durationSeconds: 1 })).toThrow(RangeError);
   });
 });

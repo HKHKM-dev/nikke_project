@@ -8,7 +8,8 @@ import { slotPieces } from './historyHelpers.ts';
 import type { EnemyInput } from '../damage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, SkillEntry } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
@@ -81,8 +82,8 @@ describe('6.3 A: a battleStart buff lasting the whole battle equals the same eff
 
   for (const burst of [false, true]) {
     it(`matches exactly with burst=${burst}`, () => {
-      const t = computeTeamDamage({ slots: [asTimed], enemy, durationSeconds: 180, burst });
-      const p = computeTeamDamage({ slots: [asPassive], enemy, durationSeconds: 180, burst });
+      const t = runTeam({ slots: [asTimed], enemy, durationSeconds: 180, burst });
+      const p = runTeam({ slots: [asPassive], enemy, durationSeconds: 180, burst });
       expect(t.totalDamage).toBe(p.totalDamage);
       expect(t.slots[0]?.segments.map((s) => s.buffs)).toEqual(p.slots[0]?.segments.map((s) => s.buffs));
       expect(t.slots[0]?.segments.map((s) => s.trigger.perTrigger)).toEqual(
@@ -101,7 +102,7 @@ describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first
 
   it('splits 180 s into three buff states and matches the hand calculation', () => {
     const input = { slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' as const };
-    const r = computeTeamDamage(input);
+    const r = runTeam(input);
     const s = r.slots[0]!;
     // Stage 21-B: 通常 10 秒 = H、フルバースト 9 回 = 9H、残りがバフありの通常（180 秒 = FRAMES）
     expect(s.segments.map((g) => [g.fullBurst, g.buffs.attackRatio !== 0])).toEqual([
@@ -121,8 +122,7 @@ describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first
   });
 
   it('is on for the whole battle except the first 10 s', () => {
-    const s = computeTeamDamage({ slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' })
-      .slots[0]!;
+    const s = runTeam({ slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' }).slots[0]!;
     const buffedSeconds = s.segments.filter((g) => g.buffs.attackRatio !== 0).reduce((a, g) => a + g.seconds, 0);
     expect(buffedSeconds).toBeCloseTo(framesToGameSeconds(FRAMES - H), 9);
   });
@@ -136,8 +136,8 @@ describe('6.3 C: a zero-duration buff is the same as no effect at all', () => {
       ]),
     });
     const none = skillSlot(22, {});
-    const a = computeTeamDamage({ slots: [zero], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
-    const b = computeTeamDamage({ slots: [none], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
+    const a = runTeam({ slots: [zero], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
+    const b = runTeam({ slots: [none], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
     expect(a.totalDamage).toBe(b.totalDamage);
     expect(slotPieces(a, 0)).toEqual([]);
   });
@@ -152,7 +152,7 @@ describe('6.2 degeneration: without timed effects the model is Stage 5’s two i
       burst: true,
       burstModel: 'fixed' as const,
     };
-    const t = computeTeamDamage(input);
+    const t = runTeam(input);
     const shots = planTeamRun(input).shots;
     for (const s of t.slots) {
       if (s === null) continue;
@@ -176,7 +176,7 @@ describe('6.2 degeneration: without timed effects the model is Stage 5’s two i
   });
 
   it('gives a single group without a burst schedule', () => {
-    const t = computeTeamDamage({ slots: [plain(1)], enemy, durationSeconds: 180 });
+    const t = runTeam({ slots: [plain(1)], enemy, durationSeconds: 180 });
     expect(t.slots[0]?.segments).toHaveLength(1);
     expect(t.slots[0]?.segments[0]?.fullBurst).toBe(false);
     expect(t.slots[0]?.segments[0]?.seconds).toBeCloseTo(framesToGameSeconds(FRAMES), 9);
@@ -191,7 +191,7 @@ describe('timed buff targets and levels', () => {
         { kind: 'timed', trigger: 'burstUse', target: 'allies', stat: 'attack', ref: 1, durationRef: 2 },
       ]),
     });
-    const t = computeTeamDamage({
+    const t = runTeam({
       slots: [caster, plain(2)],
       enemy,
       durationSeconds: 180,
@@ -211,7 +211,7 @@ describe('timed buff targets and levels', () => {
         { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 1, durationRef: 2 },
       ]),
     });
-    const t = computeTeamDamage({
+    const t = runTeam({
       slots: [caster, plain(2)],
       enemy,
       durationSeconds: 180,
@@ -245,8 +245,8 @@ describe('timed buff targets and levels', () => {
         scaling,
         { skill1: 10, skill2: 10, burst: level },
       );
-    const r1 = computeTeamDamage({ slots: [make(1)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
-    const r10 = computeTeamDamage({ slots: [make(10)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
+    const r1 = runTeam({ slots: [make(1)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
+    const r10 = runTeam({ slots: [make(10)], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
     const lv1 = r1.slots[0]!;
     const lv10 = r10.slots[0]!;
     // Lv1: +10% / 5 秒、Lv10: +55% / 14 秒
@@ -268,7 +268,7 @@ describe('burst hit buff snapshot', () => {
     });
 
   it('uses the buffs from just before the activation, so its own buff does not apply', () => {
-    const s = computeTeamDamage({
+    const s = runTeam({
       slots: [lapi(10, 25)],
       enemy,
       durationSeconds: 180,
@@ -283,7 +283,7 @@ describe('burst hit buff snapshot', () => {
   });
 
   it('differs per activation when a buff outlives the cycle', () => {
-    const s = computeTeamDamage({
+    const s = runTeam({
       slots: [lapi(20, 26)],
       enemy,
       durationSeconds: 180,
@@ -306,7 +306,7 @@ describe('burst hit buff snapshot', () => {
 
   it('keeps the representative hit even for a slot that never activates', () => {
     const second = lapi(10, 30);
-    const t = computeTeamDamage({
+    const t = runTeam({
       slots: [lapi(10, 25), second],
       enemy,
       durationSeconds: 180,

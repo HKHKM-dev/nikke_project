@@ -9,7 +9,8 @@ import { activationFramesOfSlot, effectFrameOf, hexagonFrameOf, hitFrameOf } fro
 import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -73,7 +74,7 @@ describe('イサベルの定義', () => {
 
 describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, { input, isabel }) => {
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
   const uses = activationFramesOfSlot(plan.schedule!, isabel);
   const mine = plan.schedule!.activations.filter((a) => a.slotIndex === isabel);

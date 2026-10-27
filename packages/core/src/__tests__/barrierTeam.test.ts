@@ -2,7 +2,8 @@
 // 使い手はラム（822）のバーストのバリアと、アスカ（830）の S2 の「自分がバリア適用状態なら有利コードの攻撃ダメージ▲」
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -111,7 +112,7 @@ describe('ラムのバーストのバリアとアスカ S2（plan/design-skill-s
 describe('sim vs calc: ラム + デルタ + アスカ（風圧）', () => {
   const input = teamOf([RUM, DELTA, ASUKA], 'Wind');
   const sim = runSimulation(input);
-  const calc = computeTeamDamage(input);
+  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('agree exactly on the schedule, the instants and the shot-counted groups', () => {
