@@ -1,0 +1,57 @@
+[
+  {
+    "id": "0717-01",
+    "recording": "0717",
+    "source": "V-0526",
+    "readAt": "2026-10-27",
+    "kind": "count",
+    "use": "compare",
+    "value": [0, 60],
+    "unit": "スタック",
+    "description": "1〜2 回目のフルバーストの終わりの直後の一時停止画面の、ネオン：ビジョン・アイの適用中の効果「超火力チャージ」（バーストゲージのチャージ速度 5% 増加）のスタック数（付いていなければ 0）",
+    "method": {
+      "tool": "ffmpeg で一時停止画面（f2130〜2385・4845〜5040）の適用中の効果を切り出して目で読んだ",
+      "note": "火力ゲージ 0 の回は適用中の効果なし。付いた回の残りは 2 回目 4.0 秒（5 秒の維持）。説明は「バーストゲージのチャージ速度5%増加」"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "stateStacksAtFullBurstEnds",
+      "args": {
+        "slot": 3,
+        "state": "superFirepowerCharge",
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0717-02",
+    "recording": "0717",
+    "source": "V-0526",
+    "readAt": "2026-10-27",
+    "kind": "count",
+    "use": "record",
+    "value": [0, 60],
+    "unit": "火力ゲージ",
+    "description": "同じ 2 回の、一時停止の直前（4〜60f 前）のネオン：ビジョン・アイの横の火力ゲージの表示の値",
+    "method": {
+      "tool": "ffmpeg で一時停止の直前の 4 フレームを切り出して目で読んだ（「火力」の縦のバーの下の 3 桁）",
+      "note": "2 回目は、一時停止の約 1 秒前までは 13〜15 で、火力チャージの終わりの +45 で 60 になってから一時停止した（0716・0718。0717 は 1 秒前から 60）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    }
+  }
+]

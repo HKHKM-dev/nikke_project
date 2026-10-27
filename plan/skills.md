@@ -81,7 +81,7 @@ notes の種類: 未対応 80・前提の外 27・計算に無関係 32・補足
   - effects[1] counterChange・battleStart・firepowerGauge: C-0667（確定）
   - effects[2] counterChange・normalShot・firepowerGauge: C-0667（確定）
   - effects[3] counterChange・firepowerCharge が終了した時・firepowerGauge: C-0667（確定）
-  - effects[4] state・fullBurstEnd・superFirepowerCharge（burstGaugeSpeed）: C-0666（仮説）
+  - effects[4] state・fullBurstEnd・superFirepowerCharge（burstGaugeSpeed）: C-0666（確定）
   - effects[5] timed・fullBurstStart・attack: C-0665（確定）
 - **burst**: partial
   - effects[0] timed・burstUse・attackDamage: C-0665（確定）
