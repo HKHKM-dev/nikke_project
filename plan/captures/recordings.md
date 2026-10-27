@@ -684,6 +684,9 @@
 | 0710 | `20261027-0710_folkwang-burst-heal-2.mp4` | ラム（822、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎フォルクヴァン（242、AR・水冷・SSR） + アスカ（830、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0517 の撮り方 H（撮り直し）。ラム（1 枠目・AI）+ I-DOLL・サン（2 枠目・AI）+ フォルクヴァン（3 枠目・操作・撃たない）+ アスカ（4 枠目・AI）。オートバースト ON・AUTO 射撃 OFF。最後の戦闘履歴（キャラ名・枠順・Lv.400。フォルクヴァンの与ダメージ 0）で確かめた。III はいつも I-DOLL・サン（右のバースト欄） |
 | 0711 | `20261027-0711_smg+ar+mg_sakura+idoll-sun+elegg_elegg-hits-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0524（エレグの段 3）。エレグ（操作・撃つ） |
 | 0712 | `20261027-0712_smg+ar+mg_sakura+idoll-sun+elegg_elegg-hits-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0524（エレグの段 3）。エレグ（操作・撃つ） |
+| 0713 | `20261027-0713_sg+ar+ar_fa+sun+tove_autofire-off-after.mp4` | ソルジャーF.A.（301、SG・鉄甲・R） + I-DOLL・サン（308、AR・鉄甲・R） + ◎トーブ（192、AR・水冷・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0525 の撮り方 A（1 本目）。ソルジャーF.A.・I-DOLL・サン・トーブ（宝物の段階 3・操作）・オートバースト ON。トーブのバーストの直後にオート射撃を約 10 秒 OFF にする操作を 2 回。途中で止めた。出撃画面で灼熱のタブ・スペック固定 ON、一時停止のパネルで編成を確かめた |
+| 0714 | `20261027-0714_sg+ar+ar_fa+sun+tove_autofire-off-after.mp4` | ソルジャーF.A.（301、SG・鉄甲・R） + I-DOLL・サン（308、AR・鉄甲・R） + ◎トーブ（192、AR・水冷・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0525 の撮り方 A（2 本目）。0713 と同じ編成と操作。出撃画面で灼熱のタブ・スペック固定 ON、一時停止のパネルで編成を確かめた |
+| 0715 | `20261027-0715_sg+ar+ar_fa+sun+tove_autofire-off-before.mp4` | ソルジャーF.A.（301、SG・鉄甲・R） + I-DOLL・サン（308、AR・鉄甲・R） + ◎トーブ（192、AR・水冷・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0525 の撮り方 B（任意の 1 本）。A と同じ編成。トーブのバーストの約 7 秒前にオート射撃を OFF、約 1 秒前に ON に戻す操作。途中で止めた。出撃画面で灼熱のタブ・スペック固定 ON、一時停止のパネルで編成を確かめた |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
@@ -1379,3 +1382,6 @@
 | 0710 | `range/20261027-0710_folkwang-burst-heal-2.mp4` | `2026-10-27_01-22-31.mp4` | 203.1 s | 12183 | 60.00 | 246.1 MB | `935bfd1f86ac` |
 | 0711 | `range/20261027-0711_smg+ar+mg_sakura+idoll-sun+elegg_elegg-hits-1.mp4` | `2026-10-27_01-37-16.mp4` | 202.2 s | 12132 | 60.00 | 245.0 MB | `1397b4260a92` |
 | 0712 | `range/20261027-0712_smg+ar+mg_sakura+idoll-sun+elegg_elegg-hits-2.mp4` | `2026-10-27_01-40-43.mp4` | 203.8 s | 12227 | 60.00 | 246.8 MB | `f7cb43e37c72` |
+| 0713 | `range/20261027-0713_sg+ar+ar_fa+sun+tove_autofire-off-after.mp4` | `2026-10-27_21-58-57.mp4` | 78.4 s | 4704 | 60.00 | 95.1 MB | `83c2e71e3f61` |
+| 0714 | `range/20261027-0714_sg+ar+ar_fa+sun+tove_autofire-off-after.mp4` | `2026-10-27_22-02-43.mp4` | 83.7 s | 5020 | 60.00 | 101.4 MB | `17b0658a1096` |
+| 0715 | `range/20261027-0715_sg+ar+ar_fa+sun+tove_autofire-off-before.mp4` | `2026-10-27_22-12-21.mp4` | 85.2 s | 5109 | 60.00 | 103.3 MB | `c840c5bc194d` |

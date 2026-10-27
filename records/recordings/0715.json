@@ -1,0 +1,47 @@
+{
+  "id": "0715",
+  "date": "2026-10-27",
+  "folder": "range",
+  "file": "20261027-0715_sg+ar+ar_fa+sun+tove_autofire-off-before.mp4",
+  "original": "2026-10-27_22-12-21.mp4",
+  "durationSec": 85.2,
+  "frames": 5109,
+  "fps": 60,
+  "sizeMB": 103.3,
+  "sha256": "c840c5bc194d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 192,
+      "name": "トーブ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0525 の撮り方 B（任意の 1 本）。A と同じ編成。トーブのバーストの約 7 秒前にオート射撃を OFF、約 1 秒前に ON に戻す操作。途中で止めた。出撃画面で灼熱のタブ・スペック固定 ON、一時停止のパネルで編成を確かめた",
+  "backup": {
+    "at": "2026-10-27T22:18+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

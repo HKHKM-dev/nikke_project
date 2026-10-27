@@ -333,8 +333,8 @@ notes の種類: 未対応 80・前提の外 27・計算に無関係 32・補足
   - effects[0] passive・temporaryModification のフルスタックの間・critRate: C-0599（確定）、C-0601（確定）、C-0602（確定）
   - effects[1] passive・temporaryModification のフルスタックの間・attackSpeed: C-0600（確定）、C-0601（確定）、C-0602（確定）
 - **宝物版 burst**: supported
-  - effects[0] state・burstUse・miracleOfMakeshifts（attack）: C-0668（確定）、C-0669（確定）、C-0670（仮説）
-  - effects[1] state・burstUse・miracleOfMakeshiftsShotgun（attack）: C-0669（確定）、C-0670（仮説）
+  - effects[0] state・burstUse・miracleOfMakeshifts（attack）: C-0668（確定）、C-0669（確定）、C-0670（確定）
+  - effects[1] state・burstUse・miracleOfMakeshiftsShotgun（attack）: C-0669（確定）、C-0670（確定）
 
 ## 194 ルドミラ：ウィンターオーナー
 

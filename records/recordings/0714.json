@@ -1,0 +1,47 @@
+{
+  "id": "0714",
+  "date": "2026-10-27",
+  "folder": "range",
+  "file": "20261027-0714_sg+ar+ar_fa+sun+tove_autofire-off-after.mp4",
+  "original": "2026-10-27_22-02-43.mp4",
+  "durationSec": 83.7,
+  "frames": 5020,
+  "fps": 60,
+  "sizeMB": 101.4,
+  "sha256": "17b0658a1096",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 192,
+      "name": "トーブ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0525 の撮り方 A（2 本目）。0713 と同じ編成と操作。出撃画面で灼熱のタブ・スペック固定 ON、一時停止のパネルで編成を確かめた",
+  "backup": {
+    "at": "2026-10-27T22:17+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
