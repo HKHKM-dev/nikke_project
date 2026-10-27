@@ -4,7 +4,7 @@
 
 - **Web 版**: https://hkhkm-dev.github.io/nikke_project/ （GitHub Pages）
 - `packages/core` … Blablalink 公開 CDN からのデータ取得、キャラデータ、育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム・OL オプション）、ステータス・ダメージ計算。計算は、共通のフレームループ（`frame/`。射撃の列・バーストの時刻表・バフの区間）と、それを区間ごとに集計する 2 パス目（`sim/`）の 1 本（2026-10-27 までは区間の期待値の calc とフレーム逐次の sim の 2 つのモデルがあった。[design-unify-sim-calc.md](plan/design-unify-sim-calc.md)）
-- `apps/web` … Web アプリ。総ダメージと枠ごと・区間ごとの内訳、1 秒ごとのダメージのタイムラインを出す。編成はブラウザの localStorage に保存し、JSON で書き出し / 取り込みできる
+- `apps/web` … Web アプリ。総ダメージと枠ごと・区間ごとの内訳、1 秒ごとのダメージのタイムラインを出す。編成はブラウザの localStorage に保存し、JSON で書き出し / 取り込みできる。計算は Web Worker で回し、計算中も入力の欄は止まらない（計算中は前の結果に「計算中…」の印を出す）
 - `plan/` … 要件定義・ロードマップ・設計書・検証記録（[verification.md](plan/verification.md)）
 
 ## できること

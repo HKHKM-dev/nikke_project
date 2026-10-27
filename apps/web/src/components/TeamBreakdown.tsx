@@ -22,6 +22,8 @@ import { ResultPanel } from './ResultPanel.tsx';
 
 type Props = {
   result: TeamResult;
+  /** (B) の段 B-2: 入力が変わって計算し直している間。result は前の入力の結果 */
+  computing: boolean;
   /** ニケは選ばれているがデータ読み込み中で合計に入っていない枠の数 */
   loadingCount: number;
   /** スキル定義を読み込み中で、まだバフなしで計算している枠の数 */
@@ -48,6 +50,7 @@ function triggerRange(slot: TeamSlotResult, pick: (t: TriggerDamage) => number, 
 
 export function TeamBreakdown({
   result,
+  computing,
   loadingCount,
   skillsLoadingCount,
   fixedSpec,
@@ -103,8 +106,15 @@ export function TeamBreakdown({
   return (
     <section className="panel result breakdown-panel">
       {filled.length > 0 ? (
-        <div className="team-total-bar">
-          <span className="team-total-label">合計総ダメージ（{result.filledCount} 体）</span>
+        <div className="team-total-bar" data-computing={computing}>
+          <span className="team-total-label">
+            合計総ダメージ（{result.filledCount} 体）
+            {computing && (
+              <span className="team-total-computing" role="status">
+                計算中…
+              </span>
+            )}
+          </span>
           <span className="team-total-val">{formatNumber(result.totalDamage)}</span>
         </div>
       ) : (

@@ -1,7 +1,8 @@
 // Stage 14: GitHub Pages 用のビルド成果物（vite build の出力）がサブパス（base）で動くかを確かめる（plan/design-stage12.md 4.1 節）。
 //   node apps/web/scripts/check-pages-build.ts apps/web/dist /nikke_project/
 // 見るもの: index.html が参照するスクリプト・スタイルが base の下にあること、バンドルに base が埋め込まれていること
-// （データの fetch は import.meta.env.BASE_URL を前に付ける）、データ（キャラ・スキル定義・育成のマスタ・敵のプリセット）が同梱されていること。
+// （データの fetch は import.meta.env.BASE_URL を前に付ける）、データ（キャラ・スキル定義・育成のマスタ・敵のプリセット）が同梱されていること、
+// 計算の Web Worker（src/worker.ts。plan/design-unify-sim-calc.md 6.2 節）の束があり、画面の束が base の下のそれを指していること。
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../../../packages/core/src/load.ts';
@@ -26,6 +27,17 @@ export function checkPagesBuild(distDir: string, base: string): string[] {
   const quoted = ['"', "'", '`'].map((q) => `${q}${base}${q}`);
   if (!bundles.some((f) => quoted.some((q) => readFileSync(join(assets, f), 'utf8').includes(q)))) {
     problems.push(`no bundle embeds the base path "${base}" (data fetches would miss the sub path)`);
+  }
+  const workers = bundles.filter((f) => /^worker-.+.js$/.test(f));
+  if (workers.length === 0) {
+    problems.push('no worker bundle (assets/worker-*.js) in the build');
+  } else if (
+    !bundles.some((f) => {
+      const text = readFileSync(join(assets, f), 'utf8');
+      return workers.some((w) => text.includes(`${base}assets/${w}`));
+    })
+  ) {
+    problems.push(`no bundle refers to the worker under ${base}assets/`);
   }
   const data = [
     'characters/index.json',

@@ -11,8 +11,6 @@ import {
   loadCharacterIndex,
   loadEnemyPresets,
   resolveBuildEffects,
-  runSimulation,
-  simTeamResult,
   type BuildEffect,
   type BuildEffectNote,
   type BuildMasters,
@@ -21,10 +19,9 @@ import {
   type EnemyPresetMaster,
   type GrowthInput,
   type TeamInput,
-  type TeamResult,
   type TeamSlotInput,
 } from '@nikke/core';
-import { useDeferredValue, useEffect, useMemo, useReducer, useState } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
 import { TeamBreakdown } from './components/TeamBreakdown.tsx';
@@ -44,6 +41,7 @@ import {
 import { hasLowestHpRatioHeal } from './skillLabels.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import { slotSkillsStatus, toSlotSkills, useSkillDefinitions } from './useSkillDefinitions.ts';
+import { useTeamComputation } from './useTeamComputation.ts';
 
 const BASE_URL = import.meta.env.BASE_URL;
 
@@ -62,16 +60,6 @@ function readSavedTeam(): string | null {
     return localStorage.getItem(STORAGE_KEY);
   } catch {
     return null;
-  }
-}
-
-type Computed = { ok: true; result: TeamResult } | { ok: false; error: string };
-
-function compute(run: () => TeamResult): Computed {
-  try {
-    return { ok: true, result: run() };
-  } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
 }
 
@@ -206,12 +194,9 @@ export function App() {
   );
   // 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 計算は runSimulation → simTeamResult の 1 本。
   // 2026-10-27 までは calc と sim の切り替え（保存キー nikke-web.model）があり、sim の表示では 1 パス目を 2 回回していた
-  // (B) の段 B-1（6.2 節）: 計算は入力の遅れた版で回し、欄の表示は計算を待たずに先に描く
-  const deferredInput = useDeferredValue(teamInput);
-  const computed = useMemo<Computed>(
-    () => compute(() => simTeamResult(deferredInput, runSimulation(deferredInput))),
-    [deferredInput],
-  );
+  // (B) の段 B-2（6.2 節）: 計算は Web Worker で回し、欄の表示は計算を待たない。計算中は前の結果を出したまま印を出し、
+  // 古い入力の結果は捨てる（compute.ts の LatestComputeQueue）。B-1 の useDeferredValue では計算がメインスレッドを塞いでいた
+  const { computed, computing } = useTeamComputation(teamInput);
 
   const loadingCount = team.slots.filter(
     (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
@@ -241,7 +226,7 @@ export function App() {
           character,
           skills: skillsStatuses[i] ?? { kind: 'loading' },
           treasurePhase,
-          modelNotes: computed.ok ? (computed.result.slots[i]?.notes ?? []) : [],
+          modelNotes: computed?.ok ? (computed.result.slots[i]?.notes ?? []) : [],
           buildNotes,
         };
       }),
@@ -303,15 +288,20 @@ export function App() {
                   effectiveSkillLevels={allEffectiveSkillLevels[i]!}
                   skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
                   hpRatioTargeted={hpRatioTargeted}
-                  slotResult={computed.ok ? (computed.result.slots[i] ?? null) : null}
+                  slotResult={computed?.ok ? (computed.result.slots[i] ?? null) : null}
                   dispatch={dispatch}
                 />
               );
             })}
           </section>
-          {computed.ok ? (
+          {computed === null ? (
+            <section className="panel result breakdown-panel">
+              <p className="hint">計算中…</p>
+            </section>
+          ) : computed.ok ? (
             <TeamBreakdown
               result={computed.result}
+              computing={computing}
               loadingCount={loadingCount}
               skillsLoadingCount={skillsLoadingCount}
               fixedSpec={team.fixedSpec}
@@ -325,9 +315,12 @@ export function App() {
               dispatch={dispatch}
             />
           ) : (
-            <p className="error">{computed.error}</p>
+            <p className="error">
+              {computed.error}
+              {computing && '（計算中…）'}
+            </p>
           )}
-          <NotesSummary slots={summarySlots} enemyNotes={computed.ok ? computed.result.enemyNotes : []} />
+          <NotesSummary slots={summarySlots} enemyNotes={computed?.ok ? computed.result.enemyNotes : []} />
         </>
       )}
     </main>

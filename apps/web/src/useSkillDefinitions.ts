@@ -59,7 +59,9 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
     }
   }, [wantedKey, baseUrl, index]);
 
-  return { index, indexError, definitions, errors };
+  // 返す物は中身が変わるまで同じにする。App.tsx の計算の入力（teamInput）がこれに依存し、毎回作り直すと、計算の結果が
+  // 届いて描き直すたびに入力が変わって計算を出し直し続ける（(B) の段 B-2。plan/design-unify-sim-calc.md 経過）
+  return useMemo(() => ({ index, indexError, definitions, errors }), [index, indexError, definitions, errors]);
 }
 
 export function slotSkillsStatus(cache: SkillDefinitionCache, resourceId: number): SlotSkillsStatus {
