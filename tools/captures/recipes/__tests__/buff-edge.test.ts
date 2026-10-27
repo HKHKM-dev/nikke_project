@@ -1,6 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { classify, commonRange, edgeOf, rangeOf, withScales, type Edge } from '../buff-edge.ts';
+import {
+  classify,
+  commonRange,
+  edgeBy,
+  edgeOf,
+  matchGrids,
+  parsePair,
+  parseGrids,
+  pelletSums,
+  rangeOf,
+  roleOf,
+  withScales,
+  type Edge,
+} from '../buff-edge.ts';
 
 // fixtures は録画の HUD の増分（hud-jumps@2 のキャッシュ）のうち、事象の前後の行だけ（[フレーム, 増分]）
 type Fixture = { recording: string; events: number[]; rows: [number, number][] };
@@ -78,5 +91,71 @@ describe('手で読んだ境との一致', () => {
     const es = edges('0042', SUN_OFF_FB, ADMI_ON_FB, { tol: 1.5, from: 590, to: 638, edge: 'end' });
     expect(es.flatMap((e) => (e.before === undefined ? [] : [e.before]))).toEqual([614, 605, 614, 617, 600, 621]);
     expect(es.flatMap((e) => (e.after === undefined ? [] : [e.after]))).toEqual([635]);
+  });
+});
+
+// 版 2: 何人かの格子（--opt grid）
+describe('parseGrids', () => {
+  it('名前・枠・モデルのフレーム・ペレット数・倍率を読む', () => {
+    expect(parseGrids('サン=2@1300; サン▲=2@380+600/*1.091,1.2;ナガ=1@1300/x10')).toEqual([
+      { name: 'サン', slot: 2, frames: [1300], pellets: 1, scales: [] },
+      { name: 'サン▲', slot: 2, frames: [380, 600], pellets: 1, scales: [1.091, 1.2] },
+      { name: 'ナガ', slot: 1, frames: [1300], pellets: 10, scales: [] },
+    ]);
+    expect(() => parseGrids('サン=2')).toThrow();
+    expect(() => parseGrids('a=1@1;a=2@1')).toThrow(/重なる/);
+  });
+});
+
+describe('pelletSums', () => {
+  const cell = (core: boolean, crit: boolean, distance: boolean, value: number) => ({ core, crit, distance, value });
+  it('同じ距離のペレットの値（四捨五入）を 1〜N 個足した和', () => {
+    const cells = [cell(false, false, false, 10.4), cell(true, false, false, 20), cell(false, false, true, 13)];
+    expect(pelletSums(cells, 2)).toEqual([10, 13, 20, 26, 30, 40]);
+  });
+});
+
+describe('matchGrids・roleOf', () => {
+  const grids = [
+    { name: 'なし', values: SUN_OFF },
+    { name: 'あり', values: ADMI_ON },
+    { name: 'ほか', values: [17785] },
+  ];
+  it('合う格子の名前と、境の役', () => {
+    expect(matchGrids(14959, grids, 1.5)).toEqual(['なし']);
+    expect(roleOf(['なし'], ['なし'], ['あり'])).toBe('before');
+    expect(roleOf(['あり'], ['なし'], ['あり'])).toBe('after');
+    expect(roleOf(matchGrids(9973, grids, 1.5), ['なし'], ['あり'])).toBe('both');
+    // 後の格子に合っても、ほかの格子にも合えば区別できない
+    expect(roleOf(matchGrids(17785, grids, 1.5), ['なし'], ['あり'])).toBe('both');
+    expect(roleOf(['ほか'], ['なし'], ['あり'])).toBe('none');
+    // 何人かの組: 組の中の 2 つに合っても、同じ組なら役が決まる
+    expect(roleOf(['なし', 'ほか'], ['なし', 'ほか'], ['あり'])).toBe('before');
+    expect(roleOf(['なし', 'あり'], ['なし', 'ほか'], ['あり'])).toBe('both');
+    expect(
+      parsePair(
+        'サン, デルタ>サン▲,デルタ▲',
+        ['サン', 'デルタ', 'サン▲', 'デルタ▲'].map((name) => ({ name })),
+      ),
+    ).toEqual({
+      before: ['サン', 'デルタ'],
+      after: ['サン▲', 'デルタ▲'],
+    });
+    expect(() => parsePair('サン>サン', [{ name: 'サン' }])).toThrow(/両側/);
+  });
+
+  it('2 つの格子の境は、版 1 の off・on と同じ（録画 0302）', () => {
+    const { events, rows } = fixture('0302');
+    const g = [
+      { name: 'なし', values: withScales(SUN_OFF, SUN_S2) },
+      { name: 'あり', values: withScales(CROWN_ON, SUN_S2) },
+    ];
+    const es = events.map((e) =>
+      edgeBy(rows, e, { role: (inc) => roleOf(matchGrids(inc, g, 2), ['なし'], ['あり']), from: -200, to: 60 }),
+    );
+    expect(es.map((e) => [e.before, e.after])).toEqual(
+      edges('0302', SUN_OFF, CROWN_ON, { tol: 2, from: -200, to: 60, edge: 'start' }).map((e) => [e.before, e.after]),
+    );
+    expect(commonRange(es)).toEqual({ low: -6, high: -5 });
   });
 });

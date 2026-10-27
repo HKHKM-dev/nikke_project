@@ -59,6 +59,7 @@
 ## 6. 読む
 
 - 読み取りはレシピで: `npm run records:read -- <録画 id>[,<録画 id>...] --recipe <名前> --source V-NNNN --write`（録画は , で並べて 1 回で読める。クラウドで録画が手元に無ければ、道具が Drive から取り寄せる）。レシピと `--opt` の一覧は `npm run records:read -- --list`。観測値が `records/observations/<録画 id>.json` に足され、`source` に検証記録の ID、`method.tool` にレシピ名と版が入る。
+- HUD の増分を何人かの 1 ヒットの格子（コア × 会心 × 距離 × ▲の有無。SG はペレットの和）に当て、誰のどの発か・▲が乗っているかを決め、事象の前後で窓の端を挟むのは、レシピ `buff-edge` の `--opt grid`・`pair`（格子はモデルのフレームで指す。事象の時刻は `burst-panel` の観測値の ID で渡せる）。使い捨てのスクリプトで書き直さない（[design-buff-edge-recipe.md](design-buff-edge-recipe.md) 8 節）。
 - レシピに無い値は、解析ツール（[captures/tools.md](captures/tools.md)）か目で読み、同じファイルに手で書く（`method.note` に読み方）。観測値の形は `packages/core/src/records/observations.ts` の型（[design-records-automation.md](design-records-automation.md) 3.4 節）。
 - モデルと比べる値は、比べる指定（`compare`。指標は照合ランナー `observations.ts` の `METRICS`）を書く。要る指標が無ければ `METRICS` に足す（足した PR に入れる）。予測ファイルの指標と `metric`・`args`・`setup` を同じにすると、予測と自動で結び付く。
 - 繰り返し使う読み方はレシピにする（`tools/captures/recipes/`）。読み取りの落とし穴は [captures/guide.md](captures/guide.md)。
@@ -66,6 +67,7 @@
 ## 7. 比べる
 
 - `npm run records:check` で、生成物を全部作り直す: 録画の一覧（[captures/recordings.md](captures/recordings.md)）・スキルの効果の分類（[skill-catalog.md](skill-catalog.md)）・残差の一覧（[residuals.md](residuals.md)）・結論の一覧（[claims.md](claims.md)）・検証記録の一覧（[verifications.md](verifications.md)。予測ファイルがあれば「予測との比べ」）・対応状況（[skills.md](skills.md)）・最小構成の検査（[minimal.md](minimal.md)）を作り直す。
+- 残差の一覧には見る行（許容外・比べられない・失効）しか載らない。自分の観測値の残差は `npm run records:residual -- V-NNNN`（録画 id・観測値 ID でも引ける。許容内の行も同じ列で出す）。
 - 最小構成の検査の感度（`npm run records:minimal`）は、閉じるとき（9 節）に `records:close` が計算し直す。それより前に見たいときは手で回す（[AGENTS.md](../AGENTS.md) の最小構成の検査の段落）。
 - 合わないときは、まず読み取りと条件を疑う。機構の話にするのは、未確定の要素を 1 つにした編成で切り分けてから。残差を係数で埋めない（AGENTS.md）。
 
@@ -98,7 +100,7 @@
 | `burstChain`    | バーストの段・CT・フルバーストの入り              | `burst/schedule.ts`・`burst/controller.ts`・`burst/dynamic.ts`      | `fullBurstStarts`・`fullBurstStartIntervals`・`burstActivationSlots`・`cooldownCutFrames`                 | `hud.ts`、レシピ `burst-panel`（右のバースト欄の替わり目・00.00・CT の明け）                       | 画面の読み方                                     |
 | `clock`         | ゲーム内の時計と動画のフレーム・止まり            | `time.ts`・`burst/schedule.ts`（`videoFrameOf`）                    | `videoFramesBetween`                                                                                      | `timer.ts`・`timer-ticks.ts`                                                                       | 動画と道具                                       |
 | `target`        | 的のジャンプ・着地点・狙えない時間                | `data/enemies.json` の出来事・`frame/events.ts`・`frame/landing.ts` | （時刻は記録の観測値が多い）                                                                              | レシピ `near-landing`・`midfar-landing`・`far-landing`・`smg-mags`（中遠の着地点の注記）、`aim.ts` | 射撃場の条件                                     |
-| `damageFormula` | 1 ヒットの値（バフの掛かり方・会心・コア・距離）  | `damage.ts`                                                         | `hitDamage`・`perShotHitDamage`・`burstHitDamage`・`dotHitDamage`・`skillHitDamage`                       | レシピ `hud-jumps`、`hud.ts`。スキルの帯は `banner.ts`                                             | 画面の読み方                                     |
+| `damageFormula` | 1 ヒットの値（バフの掛かり方・会心・コア・距離）  | `damage.ts`                                                         | `hitDamage`・`perShotHitDamage`・`burstHitDamage`・`dotHitDamage`・`skillHitDamage`                       | レシピ `hud-jumps`・`buff-edge`、`hud.ts`。スキルの帯は `banner.ts`                                | 画面の読み方                                     |
 | `targetTable`   | 的の表のコア命中率・弾丸命中率                    | `data/enemies.json` の `range-bigarms`                              | `coreHitRate`・`bulletHitRate`                                                                            | レシピ `sg-pellets`・`smg-mags`・`smg-cores`・`ar-cores`・`charge-shots`                           | 射撃場の条件                                     |
 
 ## 付録 B. 機構を変えたとき

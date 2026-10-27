@@ -45,8 +45,7 @@ NIKKE のダメージ計算ツール。
 ## 事実と記録
 
 - 結論の一覧は `plan/claims.md`（生成）、その根拠は検証記録（`records/verifications/`）と観測値（`records/observations/`）にある。2026-09-26 までの根拠は `plan/verification.md` と `plan/captures/legacy-usage.md`（どちらも凍結）。これと矛盾する変更は、オーナーに確認してから行う。結論を訂正するときは、古い結論を消さずに棄却にする。
-- 新しく結論を確定にするのは、根拠の等級が厳密一致・反復実測・データ明記のときだけ（等級の決め方は `plan/claims.md` の冒頭）。
-- 撮る前の予測は確定の条件にしない。過去の録画の読み直しでも確定にできる。反復実測の再現には、仮説・値・読み方を決めるのに使った録画を数えない（結論の `decidedOn` に書く）。2026-10-10 のオーナーの決定（`plan/design-investigation-review.md` 1 節）。
+- 新しく結論を確定にできる条件（根拠の等級・撮る前の予測の扱い・再現に数えない録画）は `plan/verification-guide.md` 2.2 節が正。
 - 1 つの事実は 1 か所に置く。実測値は観測値か検証記録に置き、ほかの文書は ID（`C-NNNN`・`V-NNNN`・観測値の ID）で指して数値を書き写さない。検証記録へはパスのリンクを張らず ID で指す。件数は文書に書かず、生成物に出す。
 - 手書きのファイルは 50KB、検証記録は 30KB を目安にし、超えそうなら分ける。
 - 検証の編成は、観測したい事象に影響しうる未確定の要素が最も少ないものを選ぶ（最小構成）。単騎で観測できる事象は単騎で確かめる。
@@ -66,26 +65,29 @@ NIKKE のダメージ計算ツール。
 
 リポジトリの記録を正とする。どのエージェントも同じものを読めるようにするため、エージェント固有のメモ（Claude Code のメモリなど）には、そのエージェントでしか意味のない手順と、ここへのポインタだけを置く。経緯や知見をそちらにだけ書かない。
 
-| 置き場所                                             | 置くもの                                                                                                                                                                                                                                                    |
-| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AGENTS.md`                                          | 両エージェントが守る短い規則                                                                                                                                                                                                                                |
-| `plan/roadmap.md`・設計書・`plan/backlog.md`         | 計画・決定・Stage の状況。roadmap は Stage と課題を 1 つ 1 行で持ち、ID と経過は書かない（2026-10-25 までの中身は `plan/roadmap-archive.md`。凍結）。残タスクの棚卸し（種類ごとの 1 行の一覧。経過と数値は書かない）は `plan/backlog.md`                    |
-| `records/claims/`・`plan/claims.md`                  | 結論（1 件 1 ファイルの JSON。ID・状態・話題・根拠の等級・根拠・モデル側）と、話題ごとの一覧（生成）。問いからいまの結論を引くのは一覧                                                                                                                      |
-| `records/verifications/`・`plan/verifications.md`    | 検証記録（1 回の検証を 1 ファイル。問い・予測・結果・結論）と、その一覧（生成。開いている検証が冒頭に出る。予測との比べと最小構成の警告も出る）                                                                                                             |
-| `records/predictions/`                               | 予測（任意。検証記録ごとに 1 ファイル。編成・仮説・比べる指標と、`npm run records:predict` が書く値）。撮影計画で仮説を見分けられるか確かめるのに使う                                                                                                       |
-| `plan/captures/protocol.md`                          | 撮影の手順（編成と条件の選び方・撮る前の確かめ・映すもの・撮った後の取り込み）と、オーナーに撮影を頼むときの型（撮影の依頼）                                                                                                                                |
-| `plan/captures/index.md`                             | 命名規約・キャラ同定（録画の一覧の表は `plan/captures/recordings.md`。録画ごとの注記は録画の JSON の `conditionNote`）                                                                                                                                      |
-| `plan/captures/storage.md`・`plan/captures/tools.md` | 録画の置き場所・バックアップ・クラウド環境での取り寄せ（storage.md）と、解析ツール・フレーム番号の約束・証拠フレーム（tools.md）                                                                                                                            |
-| `records/recordings/`・`plan/captures/recordings.md` | 録画ごとの条件（編成・操作枠・的・モード・スペック固定）と素性（1 本 1 ファイルの JSON）と、その一覧（生成。`npm run records:check`）                                                                                                                       |
-| `records/observations/`・`plan/residuals.md`         | 録画から読んだ値（観測値）と、モデルとの残差の一覧（生成。`npm run records:check`）                                                                                                                                                                         |
-| `plan/verification.md`                               | 2026-09-26 までの実測と確認の記録（凍結。書き足さない）                                                                                                                                                                                                     |
-| `plan/captures/guide.md`                             | 撮影と読み取りの落とし穴の話題別の索引（根拠は ID か、上の文書へのリンクで指す）                                                                                                                                                                            |
-| `plan/game-help.md`                                  | ゲーム内のヘルプ（ⓘ）の書き起こし                                                                                                                                                                                                                           |
-| `plan/verification-guide.md`                         | 検証の共通の流れ（起案から閉じるまで）と、確定にできる条件                                                                                                                                                                                                  |
-| `plan/cloud-guide.md`                                | クラウドで作業するときの手引き（どこに何があるか・始め方・離席と再開・同期と衝突・準備・困ったとき）                                                                                                                                                        |
-| `plan/skills-guide.md`                               | キャラのスキルを定義する手順（検証の流れは `plan/verification-guide.md`）                                                                                                                                                                                   |
-| `packages/core/data/skills/`・`plan/skills.md`       | スキル定義（効果ごとの根拠の結論 ID は `claims` の欄）と、キャラ × スロットの対応状況の一覧（生成。`npm run records:check`）                                                                                                                                |
-| `private/`（メインのチェックアウト直下、追跡しない） | 所持キャラ・宝物・育成状況・ローカルのパスなど個人の情報。worktree には無いので絶対パスで読む（クラウドのセッションでは、始めのフックがリポジトリの直下に置く。`plan/cloud-guide.md`）。worktree のエージェントは書き込めないので、足すものはオーナーに渡す |
+<!-- prettier-ignore -->
+| 置き場所 | 置くもの |
+| --- | --- |
+| `AGENTS.md` | 両エージェントが守る短い規則 |
+| `plan/roadmap.md`・設計書・`plan/backlog.md` | 計画・決定・Stage と課題の状況（roadmap は 1 つ 1 行）と、残タスクの棚卸し（backlog） |
+| `records/claims/`・`plan/claims.md` | 結論（1 件 1 ファイル）と、話題ごとの一覧（生成。問いから結論を引くのはここ） |
+| `records/verifications/`・`plan/verifications.md` | 検証記録（1 回の検証を 1 ファイル）と、その一覧（生成） |
+| `records/predictions/` | 予測（任意。検証記録ごとに 1 ファイル） |
+| `records/recordings/`・`plan/captures/recordings.md` | 録画ごとの条件と素性（1 本 1 ファイル）と、その一覧（生成） |
+| `records/observations/`・`plan/residuals.md` | 録画から読んだ値（観測値）と、モデルとの残差の見る行（生成。全部は `npm run records:residual`） |
+| `packages/core/data/skills/`・`plan/skills.md` | スキル定義と、キャラ × スロットの対応状況（生成） |
+| `plan/verification-guide.md` | 検証の流れと、確定にできる条件 |
+| `plan/skills-guide.md` | キャラのスキルを定義する手順 |
+| `plan/captures/protocol.md` | 撮影の手順と、撮影の依頼の型 |
+| `plan/captures/index.md` | 命名規約・キャラ同定 |
+| `plan/captures/storage.md`・`plan/captures/tools.md` | 録画の置き場所・バックアップ・取り寄せ（storage）と、解析ツール（tools） |
+| `plan/captures/guide.md` | 撮影と読み取りの落とし穴の索引 |
+| `plan/game-help.md` | ゲーム内のヘルプ（ⓘ）の書き起こし |
+| `plan/cloud-guide.md` | クラウドで作業するときの手引き |
+| `plan/verification.md`・`plan/roadmap-archive.md` | 2026-09-26・2026-10-25 までの記録（凍結。書き足さない） |
+| `private/`（メインのチェックアウト直下、追跡しない） | 所持キャラ・宝物・育成状況・ローカルのパスなど個人の情報。worktree には無いので絶対パスで読む（クラウドでは始めのフックがリポジトリの直下に置く）。worktree のエージェントは書き込めないので、足すものはオーナーに渡す |
+
+生成物は `npm run records:check` で作り直す（感度も要るなら `records:minimal`）。各文書の役目と書き方の決まりは、その文書の冒頭にある。
 
 新しい知見は、まず検証記録（数値は観測値）に根拠つきで書き、撮影や読み取りで繰り返し効くものは `guide.md` に 1〜2 行で足す。
 

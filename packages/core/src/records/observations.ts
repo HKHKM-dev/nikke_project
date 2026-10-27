@@ -42,6 +42,7 @@ import {
 import type { TeamInput, TeamResult, TeamSlotInput } from '../team.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import type { BuildMasters, CharacterData, EnemyPresetMaster } from '../types.ts';
+import { CLAIM_TOPICS } from './claims.ts';
 import type { RecordingBuild, RecordingEntry } from './recordings.ts';
 
 /** 何を読んだか（人と検索のため）。Stage 20-E: 大きさ（照準円の半径など）・位置（着地点の y など）・ゲージを足した */
@@ -2278,21 +2279,18 @@ function cell(text: string): string {
   return text.replace(/\|/g, '\\|');
 }
 
-/** 残差の一覧の本文（生成する部分） */
-export function renderResiduals(
+const RESIDUAL_HEADER = [
+  '| 観測値 | 読んだもの | 比べる値 | モデル | 実測 | 予測 | 差 | 許容 | 判定 | 結論 |',
+  '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+];
+
+/** 比べた観測値の表（見出しつき）。残差の一覧と records:residual が共有する */
+export function renderResidualRows(
   residuals: readonly Residual[],
-  observations: readonly Observation[],
   claimsOf: ReadonlyMap<string, readonly string[]> = new Map(),
-): string {
+): string[] {
   const claimText = (id: string) => (claimsOf.get(id) ?? []).join('・') || '—';
-  const count = (s: ResidualStatus) => residuals.filter((r) => r.status === s).length;
-  const invalid = count('invalid') > 0 ? `・失効 ${count('invalid')}` : '';
-  const lines = [
-    `比べた観測値 ${residuals.length} 件: 許容内 ${count('ok')}・許容外 ${count('outside')}・比べられない ${count('error')}${invalid}。`,
-    '',
-    '| 観測値 | 読んだもの | 比べる値 | モデル | 実測 | 予測 | 差 | 許容 | 判定 | 結論 |',
-    '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
-  ];
+  const lines = [...RESIDUAL_HEADER];
   for (const r of residuals) {
     const o = r.observation;
     const c = o.compare!;
@@ -2311,11 +2309,58 @@ export function renderResiduals(
       ].join(' | ')} |`,
     );
   }
-  const others = observations.filter((o) => o.use !== 'compare');
-  lines.push('', `### モデルと比べない観測値（${others.length} 件）`, '');
-  lines.push('| 観測値 | 使い道 | 読んだもの | 値 | 結論 |', '| --- | --- | --- | --- | --- |');
-  for (const o of others) {
+  return lines;
+}
+
+/** モデルと比べない観測値の表（見出しつき） */
+export function renderOtherRows(
+  observations: readonly Observation[],
+  claimsOf: ReadonlyMap<string, readonly string[]> = new Map(),
+): string[] {
+  const claimText = (id: string) => (claimsOf.get(id) ?? []).join('・') || '—';
+  const lines = ['| 観測値 | 使い道 | 読んだもの | 値 | 結論 |', '| --- | --- | --- | --- | --- |'];
+  for (const o of observations) {
     lines.push(`| ${[o.id, o.use, cell(o.description), cell(fmtObserved(o)), claimText(o.id)].join(' | ')} |`);
   }
+  return lines;
+}
+
+/**
+ * 残差の一覧の本文（生成する部分）。件数（判定ごと・話題ごと）と、見る行（許容外・比べられない・失効）だけを載せる。
+ * 許容内の行とモデルと比べない観測値は npm run records:residual で引く（plan/design-workflow-simplification-3.md 2 節）。
+ * topicOf は検証記録 ID → 話題（観測値の source で引く。無ければ「—」）
+ */
+export function renderResiduals(
+  residuals: readonly Residual[],
+  observations: readonly Observation[],
+  claimsOf: ReadonlyMap<string, readonly string[]> = new Map(),
+  topicOf: ReadonlyMap<string, string> = new Map(),
+): string {
+  const count = (rs: readonly Residual[], s: ResidualStatus) => rs.filter((r) => r.status === s).length;
+  const invalid = count(residuals, 'invalid') > 0 ? `・失効 ${count(residuals, 'invalid')}` : '';
+  const others = observations.filter((o) => o.use !== 'compare');
+  const lines = [
+    `比べた観測値 ${residuals.length} 件: 許容内 ${count(residuals, 'ok')}・許容外 ${count(residuals, 'outside')}・比べられない ${count(residuals, 'error')}${invalid}。モデルと比べない観測値 ${others.length} 件。`,
+    '',
+    '| 話題 | 許容内 | 許容外 | 比べられない | 失効 |',
+    '| --- | --- | --- | --- | --- |',
+  ];
+  const byTopic = new Map<string, Residual[]>();
+  for (const r of residuals) {
+    const t = topicOf.get(r.observation.source) ?? 'ほか（verification.md など）';
+    byTopic.set(t, [...(byTopic.get(t) ?? []), r]);
+  }
+  const order = (t: string) => {
+    const i = (CLAIM_TOPICS as readonly string[]).indexOf(t);
+    return i < 0 ? CLAIM_TOPICS.length : i;
+  };
+  for (const [t, rs] of [...byTopic].sort(([a], [b]) => order(a) - order(b))) {
+    lines.push(
+      `| ${[t, count(rs, 'ok'), count(rs, 'outside'), count(rs, 'error'), count(rs, 'invalid')].join(' | ')} |`,
+    );
+  }
+  const attention = residuals.filter((r) => r.status !== 'ok');
+  lines.push('', `### 見る行（許容外・比べられない・失効。${attention.length} 件）`, '');
+  lines.push(...renderResidualRows(attention, claimsOf));
   return lines.join('\n');
 }
