@@ -67,7 +67,7 @@ NIKKE のダメージ計算ツール。
 | 置き場所 | 置くもの |
 | --- | --- |
 | `AGENTS.md` | 両エージェントが守る短い規則 |
-| `plan/roadmap.md`・設計書・`plan/backlog.md` | 計画・決定・Stage と課題の状況（roadmap は 1 つ 1 行）と、残タスクの棚卸し（backlog） |
+| `plan/roadmap.md`・設計書・`plan/backlog.md` | 計画・決定・Stage の状況（roadmap は 1 つ 1 行）と、課題と残タスクの棚卸し（backlog） |
 | `records/claims/`・`plan/claims.md` | 結論（1 件 1 ファイル）と、話題ごとの一覧（生成。問いから結論を引くのはここ） |
 | `records/verifications/`・`plan/verifications.md` | 検証記録（1 回の検証を 1 ファイル）と、その一覧（生成） |
 | `records/predictions/` | 予測（任意。検証記録ごとに 1 ファイル） |
