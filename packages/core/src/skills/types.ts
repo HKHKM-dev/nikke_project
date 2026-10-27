@@ -533,9 +533,26 @@ export function isFullStackTrigger(t: unknown): t is FullStackTrigger {
   return typeof t === 'object' && t !== null && 'fullStack' in t;
 }
 
+/**
+ * 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節。論点 1）: 「〈使用武器の変更〉状態が終了した時」。自分の使用武器の変更（撃ち切りで
+ * 終わるもの）が終わって基礎の武器に戻ったフレーム（1 パス目の ShotLog.weaponChangeEnds）に発火する。残弾数減少（ammoDecrease）に
+ * だけ書ける
+ */
+export type WeaponChangeEndTrigger = { weaponChangeEnd: true };
+
+export function isWeaponChangeEndTrigger(t: unknown): t is WeaponChangeEndTrigger {
+  return typeof t === 'object' && t !== null && 'weaponChangeEnd' in t;
+}
+
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガーか時間の周期のトリガー（ペルソナ編: 効果名のトリガー） */
 export type EffectTrigger =
-  BuffTrigger | ShotCountTrigger | EventCountTrigger | TimerTrigger | AppliedTrigger | FullStackTrigger;
+  | BuffTrigger
+  | ShotCountTrigger
+  | EventCountTrigger
+  | TimerTrigger
+  | AppliedTrigger
+  | FullStackTrigger
+  | WeaponChangeEndTrigger;
 
 export function isAppliedTrigger(t: unknown): t is AppliedTrigger {
   return typeof t === 'object' && t !== null && 'applied' in t;
@@ -934,13 +951,33 @@ export type BurstGaugeEffect = TargetCountFields & {
   assumes?: LocalizedText;
 };
 
-export type InstantEffect = CooldownReductionEffect | AmmoRefillEffect | HealEffect | BurstGaugeEffect;
+/**
+ * 2 段目の段 11（plan/design-skill-stage11.md 2.2 節）: 「残弾数 X% 減少」。発火の瞬間に、対象（自分）の基礎の武器の残弾から
+ * 残弾 × X% を減らす（端数は切り上げ。100% なら 0）。0 になったらリロードを始める（即時効果）。いまはきっかけ { weaponChangeEnd }
+ * （使用武器の変更が終わった時）にだけ書ける
+ */
+export type AmmoDecreaseEffect = TargetCountFields & {
+  kind: 'ammoDecrease';
+  trigger: EffectTrigger;
+  target: 'self';
+  /** 絞り込みの欄は即時効果の型をそろえるためだけにある（検証で弾く） */
+  targetWeapon?: WeaponType;
+  targetElement?: Element;
+  targetClass?: NikkeClass;
+  /** % の description_value_NN */
+  ref: number;
+  assumes?: LocalizedText;
+};
+
+export type InstantEffect =
+  CooldownReductionEffect | AmmoRefillEffect | HealEffect | BurstGaugeEffect | AmmoDecreaseEffect;
 export type InstantKind = InstantEffect['kind'];
 export const INSTANT_KINDS = [
   'cooldownReduction',
   'ammoRefill',
   'heal',
   'burstGauge',
+  'ammoDecrease',
 ] as const satisfies readonly InstantKind[];
 
 /**
@@ -980,6 +1017,21 @@ export type WeaponChangeEffect = {
   /** 維持秒数の description_value_NN。durationSeconds とちょうど片方（maxAmmoRef を書いたらどちらも書かない） */
   durationRef?: number;
   durationSeconds?: number;
+  /**
+   * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節。論点 2）: 変更後の武器の発射レート（rpm・即値。録画で読む）。CDN に変更後の
+   * レート（burstSkill.changeWeapon）が無い変更（バースト以外のスロットからの変更）にだけ書く。CDN の値があるキャラには書けない
+   */
+  rateOfFire?: number;
+  /**
+   * 同: 変更後の武器は即着弾（fireType Instant）でチャージしない（基礎の武器がチャージ武器・飛ぶ弾でも）。録画で読む。
+   * chargeTimeSeconds・fullChargeDamage とは組み合わせない
+   */
+  instantFire?: true;
+  /**
+   * 同: 変更の窓が射手に見える最初のフレーム（窓の始まりの次のフレーム）から、変更後の武器の最初の発までの待ち（フレーム・即値。
+   * 録画で読む）。省略はいままでどおり（skills/../frame/shooter.ts の weaponChangeShooter の待ち）
+   */
+  firstShotDelayFrames?: number;
   assumes?: LocalizedText;
 };
 
@@ -1867,6 +1919,7 @@ function parseTrigger(
   allowDuring = false,
   allowChance = false,
   allowFullStack = false,
+  allowWeaponChangeEnd = false,
 ): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
@@ -1874,11 +1927,22 @@ function parseTrigger(
   if (v.applied !== undefined) {
     fail(path, 'an applied trigger ({ applied }) is only allowed in damage, timed and state grants');
   }
-  // 2 段目の段 3: フルスタックの消費のきっかけは heal だけ（plan/design-skill-stage3.md 1.3 節）
+  // 2 段目の段 3: フルスタックの消費のきっかけは heal だけ（plan/design-skill-stage3.md 1.3 節）。段 11 から weaponChange も
+  // （plan/design-skill-stage11.md 2.1 節）
   if (v.fullStack !== undefined) {
-    if (!allowFullStack) fail(path, 'a full-stack trigger ({ fullStack }) is only allowed in heal');
+    if (!allowFullStack) fail(path, 'a full-stack trigger ({ fullStack }) is only allowed in heal and weaponChange');
     for (const key of Object.keys(v)) if (key !== 'fullStack') fail(`${path}.${key}`, 'unknown field');
     return { fullStack: parseNamedStateId(v.fullStack, `${path}.fullStack`, 'ally') };
+  }
+  // 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節）: 使用武器の変更の終わりのきっかけは ammoDecrease だけ
+  if (v.weaponChangeEnd !== undefined) {
+    if (!allowWeaponChangeEnd)
+      fail(path, 'a weapon change end trigger ({ weaponChangeEnd }) is only allowed in ammoDecrease');
+    for (const key of Object.keys(v)) if (key !== 'weaponChangeEnd') fail(`${path}.${key}`, 'unknown field');
+    if (v.weaponChangeEnd !== true) {
+      fail(`${path}.weaponChangeEnd`, `expected true, got ${JSON.stringify(v.weaponChangeEnd)}`);
+    }
+    return { weaponChangeEnd: true };
   }
   if (v.everySeconds !== undefined) {
     if (!allowTimer)
@@ -2590,6 +2654,9 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
         'maxAmmoRef',
         'durationRef',
         'durationSeconds',
+        'rateOfFire',
+        'instantFire',
+        'firstShotDelayFrames',
         'assumes',
         'claims',
       ].includes(key)
@@ -2607,7 +2674,8 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
   }
   const effect: WeaponChangeEffect = {
     kind: 'weaponChange',
-    trigger: parseTrigger(v.trigger, `${path}.trigger`),
+    // 2 段目の段 11: 状態のフルスタックで起こす変更（plan/design-skill-stage11.md 2.1 節）
+    trigger: parseTrigger(v.trigger, `${path}.trigger`, false, false, false, true),
     damageRef: parseRef(v.damageRef, `${path}.damageRef`),
     ...(untilEmpty ? { maxAmmoRef: parseRef(v.maxAmmoRef, `${path}.maxAmmoRef`) } : parseDuration(v, path)),
   };
@@ -2626,6 +2694,22 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
     effect.fullChargeDamage = percent;
   }
   if (v.hitsPerShot !== undefined) effect.hitsPerShot = parsePositiveInt(v.hitsPerShot, `${path}.hitsPerShot`);
+  // 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: CDN に無い変更後の武器の形（録画で読む即値）
+  if (v.rateOfFire !== undefined) effect.rateOfFire = parsePositiveInt(v.rateOfFire, `${path}.rateOfFire`);
+  if (v.instantFire !== undefined) {
+    if (v.instantFire !== true) fail(`${path}.instantFire`, `expected true, got ${JSON.stringify(v.instantFire)}`);
+    if (effect.chargeTimeSeconds !== undefined || effect.fullChargeDamage !== undefined) {
+      fail(`${path}.instantFire`, 'instantFire cannot be combined with chargeTimeSeconds or fullChargeDamage');
+    }
+    effect.instantFire = true;
+  }
+  if (v.firstShotDelayFrames !== undefined) {
+    const n = v.firstShotDelayFrames;
+    if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
+      fail(`${path}.firstShotDelayFrames`, `expected a non-negative integer, got ${JSON.stringify(n)}`);
+    }
+    effect.firstShotDelayFrames = n;
+  }
   if (v.trueDamage !== undefined) {
     if (v.trueDamage !== true) fail(`${path}.trueDamage`, `expected true, got ${JSON.stringify(v.trueDamage)}`);
     effect.trueDamage = true;
@@ -3035,7 +3119,17 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
     false,
     false,
     kind === 'heal',
+    kind === 'ammoDecrease',
   );
+  // 2 段目の段 11（plan/design-skill-stage11.md 2.2 節）: 残弾数減少は、いまは使用武器の変更の終わりのきっかけで自分にだけ
+  if (kind === 'ammoDecrease') {
+    if (!isWeaponChangeEndTrigger(trigger))
+      fail(`${path}.trigger`, 'ammoDecrease needs the trigger { weaponChangeEnd: true }');
+    if (v.target !== 'self') fail(`${path}.target`, 'ammoDecrease must target "self"');
+    for (const key of ['targetWeapon', 'targetElement', 'targetClass', 'targetCount', 'targetCountRef']) {
+      if (v[key] !== undefined) fail(`${path}.${key}`, 'ammoDecrease cannot narrow its target');
+    }
+  }
   // 回復で回復を起こすと連鎖が閉じないので、heal のトリガーに healed は書けない（plan/design-stage11.md 3.3 節）
   if (kind === 'heal' && trigger === 'healed') fail(`${path}.trigger`, 'heal cannot be triggered by "healed"');
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
@@ -3179,7 +3273,13 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   }
   if (v.kind === 'timed') return parseTimedEffect(v, path);
   if (v.kind === 'damage') return parseDamageEffect(v, path);
-  if (v.kind === 'cooldownReduction' || v.kind === 'ammoRefill' || v.kind === 'heal' || v.kind === 'burstGauge') {
+  if (
+    v.kind === 'cooldownReduction' ||
+    v.kind === 'ammoRefill' ||
+    v.kind === 'heal' ||
+    v.kind === 'burstGauge' ||
+    v.kind === 'ammoDecrease'
+  ) {
     return parseInstantEffect(v, path, v.kind);
   }
   if (v.kind === 'weaponChange') return parseWeaponChangeEffect(v, path);
@@ -3196,7 +3296,7 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'counterChange') return parseCounterChangeEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
   );
 }
 

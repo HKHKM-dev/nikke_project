@@ -108,6 +108,8 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
   if ('applied' in trigger) return `${stateLabel(trigger.applied)}が適用された時`;
   // 2 段目の段 3: 「リラックスのフルスタックで解除した時」
   if ('fullStack' in trigger) return `${stateLabel(trigger.fullStack)}のフルスタックで解除した時`;
+  // 2 段目の段 11: 「使用武器の変更が終了した時」
+  if ('weaponChangeEnd' in trigger) return '使用武器の変更が終了した時';
   if ('every' in trigger) {
     const what = {
       normalShot: '通常攻撃',
@@ -424,6 +426,9 @@ export function formatInstant(effect: ResolvedInstantEffect): string {
         : `回復 ${formatPercent(effect.value, 2)}（${formatNumber(framesToGameSeconds(effect.durationFrames), 0)} 秒間維持）`;
     case 'burstGauge':
       return `バーストゲージのチャージ ${formatPercent(effect.value, 2)}`;
+    // 2 段目の段 11: 「残弾数 100% 減少」
+    case 'ammoDecrease':
+      return `残弾数 ${formatPercent(effect.value, 2)} 減少`;
   }
 }
 

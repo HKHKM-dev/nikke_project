@@ -829,11 +829,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const counterValue = (slotIndex: number, counter: CounterId): number =>
     counterValues.get(counterKey(slotIndex, counter)) ?? 0;
 
-  // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ） ----
+  // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ）。
+  // 段 11（plan/design-skill-stage11.md 2.1 節）: 使用武器の変更のきっかけ { fullStack } の状態も ----
   const consuming: { holder: number; state: NamedStateId }[] = [];
   slots.forEach((slot, holder) => {
     if (slot === null || slot.definition === null) return;
-    for (const effect of resolveInstant(slot.definition, slot.character, slot.levels)) {
+    const effects = [
+      ...resolveInstant(slot.definition, slot.character, slot.levels),
+      ...resolveTimed(slot.definition, slot.character, slot.levels).filter((e) => e.stat === 'weapon'),
+    ];
+    for (const effect of effects) {
       if (!isResolvedFullStack(effect.trigger)) continue;
       const state = effect.trigger.fullStack;
       if (!consuming.some((c) => c.holder === holder && c.state === state)) consuming.push({ holder, state });

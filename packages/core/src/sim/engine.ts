@@ -30,6 +30,7 @@ import {
   autoConditionSummary,
   hitRateUpSpansOf,
   landingPartsWith,
+  weaponChangeParts,
   landingTriggerDamage,
   slotConditionNotes,
   type AutoConditionSummary,
@@ -75,7 +76,7 @@ export type SimEvent =
   | { frame: number; kind: 'skillHit'; slot: number; effect: SkillHitEvent['effect']; damage: number }
   | {
       frame: number;
-      kind: 'cooldownReduction' | 'ammoRefill' | 'heal' | 'burstGauge';
+      kind: 'cooldownReduction' | 'ammoRefill' | 'heal' | 'burstGauge' | 'ammoDecrease';
       slot: number;
       source: number;
       amount: number;
@@ -220,8 +221,13 @@ export function runSimulation(simInput: SimInput): SimResult {
       const state = segment.slots[index] ?? EMPTY_BUFF_STATE;
       const trigger = landingTriggerDamage(
         { ...base, buffs: state.buffs, perShot },
-        // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す
-        landingPartsWith(landing, slot, index, segment.landing, state.buffs.hitRate),
+        // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す。2 段目の段 11: 即着弾に替えた使用武器の
+        // 変更の区間は、的の表の変更後の武器の行のコア命中率
+        weaponChangeParts(
+          enemy,
+          landingPartsWith(landing, slot, index, segment.landing, state.buffs.hitRate),
+          state.buffs.weapon?.targetRowKey,
+        ),
         segment.fullBurst,
       );
       const range = [{ start: segment.start, end: segment.end }];

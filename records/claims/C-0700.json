@@ -1,0 +1,20 @@
+{
+  "id": "C-0700",
+  "text": "ラプラス：アルティメットヒーローの S1 の「エレクトリックパワー・フル・フルチャージ状態が終了した時、自分に残弾数 X% 減少」（100%）で、変更前の武器は残弾が 0 になってリロードし、変更後の武器の最後の発から次の変更前の武器の最初の発まで 230f 空く（リロードとチャージの既存のモデルのまま）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0121-17`・`0130-12`・`0131-12`（1 回目と 2 回目のマガジンの境。モデルの値は残弾数減少のリロードとチャージの既存の規則から出て、合わせた値は無い）。V-0528",
+  "model": "`data/skills/103.json` の skill1 の effects[3]（`ammoDecrease`・`{ weaponChangeEnd: true }`・ref 7）。`frame/firstPass.ts` が変更の終わりのフレームに `frame/shooter.ts` の drainAmmo を当てる（変更前の武器は終わりに満タンで戻り、この効果で 0 になる）",
+  "replaces": [],
+  "updated": "2026-10-27",
+  "subject": {
+    "places": ["data/skills/103.json の skill1 の effects[3]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0121",
+      "role": "仮説の出どころ"
+    }
+  ]
+}

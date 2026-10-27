@@ -20,6 +20,7 @@ import {
   isResolvedEventCount,
   isResolvedFullStack,
   isResolvedTimer,
+  isResolvedWeaponChangeEnd,
   isResolvedShotCount,
   type ResolvedTrigger,
 } from './resolve.ts';
@@ -123,6 +124,11 @@ export type FrameEvents = {
    * フルスタックの消費のきっかけは 1 パス目で当てる回復にだけ書ける。省略は無し
    */
   fullStacks?: readonly FullStackEvent[];
+  /**
+   * 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節）: このフレームに使用武器の変更（撃ち切り）が終わって基礎の武器に戻った枠
+   * （ShotLog.weaponChangeEnds）。トリガー { weaponChangeEnd } が見る。省略は無し
+   */
+  weaponChangeEnds?: readonly number[];
 };
 
 /** 2 段目の段 3: フルスタックになって外れた状態 */
@@ -188,6 +194,8 @@ export function createTriggerTracker(
   if (isResolvedFullStack(t)) {
     return (ev) => (ev.fullStacks ?? []).some((x) => x.slotIndex === slotIndex && x.state === t.fullStack);
   }
+  // 2 段目の段 11: 使用武器の変更の終わり（1 パス目の撃ち切りの終わりの列）
+  if (isResolvedWeaponChangeEnd(t)) return (ev) => (ev.weaponChangeEnds ?? []).includes(slotIndex);
   // ペルソナ編: 効果名のトリガーは 1 パス目の履歴の記録（HolderHistory.applications）で決まる。出来事の列では追わない
   if (isResolvedApplied(t)) {
     throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);
@@ -290,6 +298,12 @@ export function replayEvents(
       if (changed.has(f)) shot.weaponChange = true;
       (at(f).shots as (ShotEvent | null)[])[slotIndex] = shot;
     });
+    // 2 段目の段 11: 使用武器の変更の終わり（トリガー { weaponChangeEnd }）
+    for (const f of log.weaponChangeEnds ?? []) {
+      if (f >= frames) continue;
+      const ev = at(f);
+      ev.weaponChangeEnds = [...(ev.weaponChangeEnds ?? []), slotIndex];
+    }
   });
   if (schedule !== null) {
     for (const a of schedule.activations) if (a.frame < frames) (at(a.frame).activations as BurstActivation[]).push(a);

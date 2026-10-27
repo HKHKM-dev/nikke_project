@@ -234,6 +234,7 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if ('applied' in t) return `${t.applied} が適用された時`;
   if ('fullStack' in t) return `${t.fullStack} のフルスタック`;
   if ('ended' in t) return `${t.ended} が終了した時`;
+  if ('weaponChangeEnd' in t) return '使用武器の変更が終了した時';
   return t.count;
 }
 

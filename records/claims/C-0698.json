@@ -1,0 +1,20 @@
+{
+  "id": "C-0698",
+  "text": "ラプラス：アルティメットヒーローの S1 のウォームアップ（フルチャージして攻撃した時、チャージ速度 X%▲・N スタック・持続）は、変更前の武器のフルチャージの発ごとに 1 スタック付き、変更前の武器の発と発の間はいままでのチャージ速度▲の規則でスタックの数だけ縮む",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0121-14`・`0130-09`・`0131-09`（2 回目のマガジンの変更前の武器の 5 発の間が、どれもモデルと同じ。3 本の録画のどのマガジンも同じ並び）。V-0528",
+  "model": "`data/skills/103.json` の skill1 の effects[1]（状態の付与 warmUp・`{ count: fullChargeShot }`・中身 chargeSpeed の ref 2・maxStacksRef 3）。チャージ速度▲の効き方は `frame/shooter.ts` の既存の規則。変更後の武器の発は fullChargeShot に数えない（`frame/firstPass.ts` の unchargedShotFrames）",
+  "replaces": [],
+  "updated": "2026-10-27",
+  "subject": {
+    "places": ["data/skills/103.json の skill1 の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0121",
+      "role": "仮説の出どころ"
+    }
+  ]
+}

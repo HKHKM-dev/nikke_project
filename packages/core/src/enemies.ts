@@ -313,10 +313,13 @@ function parseAutoAttackRows(
 /** コア命中率の表（武器種の行と、自動攻撃の行 autoAttacks。plan/design-anis-star-core-path.md 3.2 節） */
 function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<string>): CoreHitRateTable {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
-  const { autoAttacks, ...weapons } = v;
+  const { autoAttacks, weaponChanges, ...weapons } = v;
   const table: CoreHitRateTable = parseRateTable(weapons, path, keys);
   if (autoAttacks !== undefined)
     table.autoAttacks = parseAutoAttackRows(autoAttacks, `${path}.autoAttacks`, keys, RATE);
+  // 2 段目の段 11: 即着弾に替えた使用武器の変更の行（キーは自動攻撃と同じ形）
+  if (weaponChanges !== undefined)
+    table.weaponChanges = parseAutoAttackRows(weaponChanges, `${path}.weaponChanges`, keys, RATE);
   return table;
 }
 

@@ -76,7 +76,8 @@ describe('発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）
 
   it('defines S1 of Laplace: Ultimate Hero as a battle-long attack up from the caster final max HP', () => {
     const def = definitionOf(LAPLACE);
-    expect(def.skills.skill1.effects).toMatchObject([
+    // 2 段目の段 11 の PR 1 から、S1 の effects[1] 以降にウォームアップと使用武器の変更がある（stage11WeaponChange.test.ts）
+    expect(def.skills.skill1.effects.slice(0, 1)).toMatchObject([
       {
         kind: 'timed',
         trigger: 'battleStart',
