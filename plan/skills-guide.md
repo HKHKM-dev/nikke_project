@@ -45,6 +45,7 @@
 - オーナーの承認は対話で得てから実装する（設計書だけの PR は出さない）。
 - 大きさは 50KB を目安にする。実測値は書かず、検証記録と観測値を ID で指す。
 - 語彙が足りているなら設計書は作らず、検証記録だけで進める。
+- 設計書の「経過」には、設計か実装が変わったときだけ 1 行書く。モデルを変えずに仮説を確定にしただけ（再現の撮影など）なら書かない（結論の状態と根拠は [claims.md](claims.md)・[verifications.md](verifications.md) が持つ。[design-workflow-simplification-4.md](design-workflow-simplification-4.md) 4 節）。
 
 ### 1.5 実装する
 

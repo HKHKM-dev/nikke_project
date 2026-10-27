@@ -1,6 +1,6 @@
 // スキルの効果の分類の一覧（plan/skill-catalog.md。plan/design-skill-catalog.md の論点 2）を、全キャラの説明文から作り直す
 // （前の中身は読まない）。データを取り込み直した（npm run fetch-data）後に回す。最新かは npm test が確かめる。
-// 使い方: npm run skills:catalog（ルート。一覧は prettier の対象外なので整形しない）
+// 使い方: npm run records:check が回す（一覧は prettier の対象外なので整形しない）
 import { writeFileSync } from 'node:fs';
 import { classifyCharacters } from '../src/skills/catalog.ts';
 import { renderSkillCatalog } from '../src/skills/catalogDoc.ts';

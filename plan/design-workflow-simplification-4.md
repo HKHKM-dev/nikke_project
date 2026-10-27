@@ -1,6 +1,6 @@
 # 繰り返しの業務の簡素化の案・第 4 回（2026-10-27 の定期の見直し）
 
-- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。オーナーの判断を待つ（0 節の「判断してほしいこと」）。
+- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-10-28 にオーナーが全部を推奨どおりに承認し、実施した（6 節）。
 - 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)（2026-10-24）・[design-workflow-simplification-2.md](design-workflow-simplification-2.md)（2026-10-25）・[design-workflow-simplification-3.md](design-workflow-simplification-3.md)（2026-10-26。どれも実施済み）。そこで扱ったものは繰り返さない。
 - 調べた範囲: [AGENTS.md](../AGENTS.md)「コミット手順」、[verification-guide.md](verification-guide.md)、[skills-guide.md](skills-guide.md)、[captures/protocol.md](captures/protocol.md)、[roadmap.md](roadmap.md)・[backlog.md](backlog.md)、`package.json` のスクリプト、解析ツールとレシピ（`tools/captures/`）、`packages/core/src/__tests__/` の編成のテスト。
 - 調べ方: origin/main（198f33d）で、直近 50 件のコミットが触るファイルを数え、観測値の `method.tool` をツールごとに数え、`records:check`・`records:minimal`・`npm test` の時間を測った（クラウドの 4 コア）。
@@ -91,6 +91,11 @@
 - **凍結の記録**（`backup-log-old*.md`・`legacy-usage.md`・`verification.md`）: 繰り返し読むものではなく、書き足さないので手間にならない。
 - **verification-guide.md・records/verifications/README.md**: 第 3 回で重なりを除いた後で、繰り返し読むのに要らない部分は見つからなかった。
 
-## 6. 判断
+## 6. 判断と実施
 
-（オーナーの判断を待つ）
+**判断（2026-10-28）**: 全部を推奨どおりに進める。
+
+- 1: 案のとおり。外したのは、「sim vs calc」の describe の中の自己比較の `it`（36 本は機械的に。アリス編・モダニア編・stage8・トーブの 4 本は手で、キャラ固有の確かめを別の `it` に残した）と、ほかの 10 本に混ざっていた同じ形の比べ（`stage16Events`・`stage22PartialCharge`・`eunhwaTuWeaponChange` など。中の意味のある `expect` は残した）。`simCalc.test.ts` は `cadenceConvergence.test.ts` にし、平均レートとの検算（1 マガジン以内・18,000 秒で 0.5% 未満）と、時刻表・区間・バフの載り方、画面の形への写し方だけにした（持続バフ・動的サイクルの収束は、前から 18,000 秒の値しか見ていなかったので、その 1 本だけ回す）。テストは 2,544 件から 2,353 件、`npm test` は 1 分 33 秒から 1 分 11 秒（クラウドの 4 コア）。いちばん長いファイルは 24 秒から 11 秒。
+- 2: `npm run pr:prep`（`tools/git/pr-prep.ts`・`pr-prep-lib.ts`）。生成物の一覧は `records-data.ts` の `GENERATED_PATHS` に 1 か所で持つ。案のほかに、生成物だけを触ったコミットが main の版を取って空になったら飛ばす。使い捨ての worktree で、生成物が 2 回衝突するブランチ（うち 1 つは生成物だけのコミット）を取り込み、main と生成物の差分が無くなること、足した V- が main と重なると振り直しの番号の案を出して止まることを確かめた。`records:close` は `--ci` のときだけ CI を回す（前の `--no-ci` は受け付けて何もしない）。あわせて、`tools/vitest.config.ts` が `tools/cloud/` のテストを拾っていなかったので、`cloud/`・`git/` を足した。
+- 3: 案から 1 点変えた。閉じた行の移し先にした roadmap-archive.md は凍結（書き足さない）なので、backlog.md 8 節の中に「8.2 閉じた課題」を置いてそこへ移した（閉じた課題は 4 行でなく 5 行。「効果を持ち主ごとの一覧で持つ組み直し」も実装済み）。「一部完了」で backlog の行が閉じている 3 行（ヘルムの残り・検証の自動化・射撃場の SMG の中近）は、状態を変えずに 8.1 に置いた（閉じるかはオーナーの判断）。
+- 4: 案のとおり。`skills:catalog` の名前を出していた生成物の冒頭（`catalogDoc.ts`）とテストの題名も `records:check` に直した。
