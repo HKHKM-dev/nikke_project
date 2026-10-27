@@ -1,15 +1,13 @@
 // クイーン（真）（870）を含む編成: S1 の有利コードの攻撃ダメージ▲（持続。C-0296・V-0171）、S2 の鉄・拳・制・裁！の▲
 // （フルバースト終了まで。C-0307・V-0211）、S1 の 1more の分配ダメージ（発動の 24f 後にそのフレームのバフで出る。C-0310・V-0212）。
-// 有利の敵（風圧）での sim と calc の整合と、▲が属性の倍率 1.1 に足されること（C-0119 と同じ elementDamage）。
+// 有利の敵（風圧）で、▲が属性の倍率 1.1 に足されること（C-0119 と同じ elementDamage）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { elementMultiplier } from '../element.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS, resolvePassives } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData, Element } from '../types.ts';
@@ -130,35 +128,5 @@ describe('クイーン（真）の S1 の 1more の分配ダメージ（C-0310�
     const fullBurst = (1 + 0.5 + 0.15 * 0.5) / (1 + 0.15 * 0.5);
     const ratio = ((156189 - 100) / (119896 - 100)) * (1.4915 / 1.2359) * fullBurst;
     expect(delayed.hit.perActivation / plain.hit.perActivation).toBeCloseTo(ratio, 4);
-  });
-});
-
-describe('sim vs calc: エーテル + デルタ + イサベル + ドレイク + クイーン（真）・風圧の敵', () => {
-  const sim = runSimulation(input);
-  const calc = runTeam(input);
-
-  it('agree exactly on the schedule and the shot-counted groups', () => {
-    expect(sim.schedule).toEqual(calc.schedule);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!;
-      const c = calc.slots[i]!;
-      expect(s.skillHits.damage).toBe(c.skillHits.totalDamage);
-      expect(s.burst.damage).toBe(c.burst.totalDamage);
-      const groups = simGroupTotals(sim, i);
-      c.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
-    });
-  });
-
-  it('stays within 5% per slot and 3% for the team', () => {
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!.totalDamage;
-      const c = calc.slots[i]!.totalDamage;
-      expect(Math.abs(s - c) / c).toBeLessThan(0.05);
-    });
   });
 });

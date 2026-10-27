@@ -2,7 +2,7 @@
 //   1. データ: 的の条件の表（range-bigarms）と出来事のセットの着地点、その検証
 //   2. 着地点の時間割り（enemyLandingsOf）と、区間ごとの距離ボーナスの付き方（Stage 17・18-A の単騎と同じ）
 //   3. 中遠の配分（3 か所を 0.3 : 0.3 : 0.4）と、命中率▲（1/(1 − N)²、上限 1）
-//   4. 編成: 手入力は何も変わらない、自動は calc と sim で通常攻撃が一致、配分の区間は固定した 3 回の重み付きの和、ゲージ、注記
+//   4. 編成: 手入力は何も変わらない、自動は条件の表で 1 トリガーを出す、配分の区間は固定した 3 回の重み付きの和、ゲージ、注記
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { runTeam } from './runTeam.ts';

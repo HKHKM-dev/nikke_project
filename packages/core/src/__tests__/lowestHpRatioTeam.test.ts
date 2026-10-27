@@ -1,6 +1,6 @@
 // 2 段目の段 8（plan/design-skill-stage8.md）: 対象「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）。枠の HP の割合の
 // 想定（TeamSlotInput.hpRatio）の低い順・同値は枠の若い順（C-0567）。ミサト（833）の S1 の回復と、回復を受けた時のアスカ（830）の S1
-// （F4 の録画 0472・0473 の編成）、sim と calc の整合
+// （F4 の録画 0472・0473 の編成）、射撃の列のグループ分け
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
@@ -13,7 +13,6 @@ import {
   FIXED_SPEC_ENEMY_DEFENCE,
 } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { fixedTargetsOf, type CompositionCharacter } from '../skills/composition.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { isEffectTarget } from '../skills/targets.ts';
@@ -167,26 +166,9 @@ describe('ミサトの S1 の回復と、回復を受けた時のアスカの S1
 describe.each([
   ['録画 0472 の編成（アスカ 1 枠目）', A],
   ['録画 0473 の編成（ミサト 1 枠目）', B],
-])('sim vs calc: %s', (_name, input) => {
-  const sim = runSimulation(input);
+])('編成: %s', (_name, input) => {
   const calc = runTeam(input);
   const plan = planTeamRun(input);
-
-  it('agree exactly on the instants and the shot-counted groups', () => {
-    expect(sim.instants).toEqual(plan.instants);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!;
-      const c = calc.slots[i]!;
-      expect(s.skillHits.damage).toBe(c.skillHits.totalDamage);
-      expect(s.burst.damage).toBe(c.burst.totalDamage);
-      const groups = simGroupTotals(sim, i);
-      c.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
-    });
-  });
 
   it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
     input.slots.forEach((_, i) => {

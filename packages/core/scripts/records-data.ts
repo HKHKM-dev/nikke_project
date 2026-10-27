@@ -38,6 +38,17 @@ export const MINIMAL_PATH = `${ROOT}plan/minimal.md`;
 export const SKILL_CATALOG_PATH = `${ROOT}plan/skill-catalog.md`;
 /** 最小構成の検査の感度の結果（records:minimal が書く。plan/design-minimal-relevance.md 10.6 節） */
 export const SENSITIVITY_PATH = `${ROOT}records/minimal/sensitivity.json`;
+/** records:check（と records:minimal）が丸ごと書く生成物（ROOT からの相対パス。tools/git/pr-prep.ts が衝突を main の版で解く） */
+export const GENERATED_PATHS: readonly string[] = [
+  RECORDINGS_DOC_PATH,
+  RESIDUALS_PATH,
+  CLAIMS_PATH,
+  VERIFICATIONS_PATH,
+  SKILLS_DOC_PATH,
+  MINIMAL_PATH,
+  SKILL_CATALOG_PATH,
+  SENSITIVITY_PATH,
+].map((p) => p.slice(ROOT.length));
 
 /** 検証記録のファイルの絶対パス */
 export function verificationPath(v: Pick<Verification, 'file'>): string {

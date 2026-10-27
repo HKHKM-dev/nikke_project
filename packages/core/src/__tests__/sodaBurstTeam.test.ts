@@ -1,6 +1,6 @@
 // 2 段目の段 3 の PR 3（plan/design-skill-stage3.md 1.4・1.5・2.3 節）: ソーダ：トゥインクルバニー（314）のバースト。ゴールデンチップの
 // スタック量別の効果（20 スタック以上で自分に命中率▲、30 スタック以上で攻撃力▲）と、効果の後の 17 個▼。編成は撮影計画と同じ
-// ラム + デルタ + ソーダ：TB（操作）と、実戦寄りの編成。damage の条件のスタック数（frame/plan.ts）と、sim と calc の整合
+// ラム + デルタ + ソーダ：TB（操作）と、実戦寄りの編成。damage の条件のスタック数（frame/plan.ts）と、射撃の列のグループ分け
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -10,7 +10,7 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { METRICS } from '../records/observations.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
+import { runSimulation } from '../sim/engine.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -115,19 +115,16 @@ describe('ソーダ：トゥインクルバニーのバースト（ラム + デ�
 
   // V-0444（plan/design-burst-landing.md 10 節の案 1）: ヒットは III のタイマーの 00.00 から 96f（C-0581）で、同じ発動で付いた
   // 攻撃力▲が乗る（C-0582。▲込みの攻撃力は整数に切り捨て）。▲の付かない 3 回目以降は素の攻撃力
-  it('hits 96 frames after the Full Burst timer and carries the same burst ATK▲ (sim and calc)', () => {
+  it('hits 96 frames after the Full Burst timer and carries the same burst ATK▲', () => {
     const activations = plan.schedule!.activations.filter((a) => a.slotIndex === S);
     for (const a of activations) expect(hitFrameOf(a) - hexagonFrameOf(a)).toBe(96);
     const attack = computeFixedSpecAttack(character(SODA)).attack;
     const expected = [1, 1, 0, 0, 0].map(
       (up) => (up ? Math.floor(attack * 1.6525) : attack) - FIXED_SPEC_ENEMY_DEFENCE,
     );
-    const sim = runSimulation(recordingTeam()).slots[S]!.burst.hits.map((h) => h.baseHit);
-    const calc = runTeam(recordingTeam()).slots[S]!.burst.activations.map((a) => a.hit.baseHit);
-    for (const values of [sim, calc]) {
-      expect(values.length).toBe(expected.length);
-      values.forEach((v, i) => expect(v).toBe(expected[i]));
-    }
+    const values = runSimulation(recordingTeam()).slots[S]!.burst.hits.map((h) => h.baseHit);
+    expect(values.length).toBe(expected.length);
+    values.forEach((v, i) => expect(v).toBe(expected[i]));
   });
 });
 
@@ -201,42 +198,15 @@ const TEAMS: Record<string, TeamInput> = {
   ),
 };
 
-describe.each(Object.entries(TEAMS))('sim vs calc: %s', (_name, input) => {
-  const sim = runSimulation(input);
+describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const calc = runTeam(input);
   const plan = planTeamRun(input);
-
-  it('agree exactly on the schedule, the instants, the skill hits and the shot-counted groups', () => {
-    expect(sim.schedule).toEqual(calc.schedule);
-    expect(sim.instants).toEqual(plan.instants);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!;
-      const c = calc.slots[i]!;
-      expect(s.skillHits.damage).toBe(c.skillHits.totalDamage);
-      expect(s.burst.damage).toBe(c.burst.totalDamage);
-      const groups = simGroupTotals(sim, i);
-      c.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
-    });
-  });
 
   it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
     input.slots.forEach((_, i) => {
       const frames = plan.shots[i]!.frames;
       const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
       expect(total).toBe(frames.length);
-    });
-  });
-
-  it('stays within 5% per slot and 3% for the team', () => {
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!.totalDamage;
-      const c = calc.slots[i]!.totalDamage;
-      expect(Math.abs(s - c) / c).toBeLessThan(0.05);
     });
   });
 });

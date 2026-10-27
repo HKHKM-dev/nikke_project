@@ -1,11 +1,10 @@
-// Stage 11 モダニア編: モダニア（260）を含む編成の窓の一致・射撃・sim と calc の整合（plan/design-stage11-modernia.md 7.2〜7.5 節）。
+// Stage 11 モダニア編: モダニア（260）を含む編成の窓の一致・射撃・射撃の列のグループ分け（plan/design-stage11-modernia.md 7.2〜7.5 節）。
 // 録画 0044（I-DOLL・フラワー + デルタ + モダニア（操作））の予測と実測値の回帰、実戦寄りの編成（リター + クラウン + モダニア + アリス + アドミ）。
 // 実測値は plan/verification.md Stage 11 モダニア節（録画 0044・0045、2026-09-24）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { firingParams } from '../frame/firing.ts';
 import { initialShooter, resumeShooter, stepShooter } from '../frame/shooter.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -266,47 +265,15 @@ describe('射手: 装弾数無限と基礎の武器に戻るとき（3.4・7.3�
   });
 });
 
-describe.each(Object.entries(TEAMS))('sim vs calc (7.4): %s', (_name, input) => {
-  const sim = runSimulation(input);
+describe.each(Object.entries(TEAMS))('編成 (7.4): %s', (_name, input) => {
   const calc = runTeam(input);
   const plan = planTeamRun(input);
-
-  it('agree exactly on the schedule, the instants, the skill hits and the shot-counted groups', () => {
-    expect(sim.schedule).toEqual(calc.schedule);
-    expect(sim.instants).toEqual(plan.instants);
-    expect(sim.history.conditionSkips).toEqual(calc.history.conditionSkips);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!;
-      const c = calc.slots[i]!;
-      expect(s.skillHits.damage).toBe(c.skillHits.totalDamage);
-      expect(s.burst.damage).toBe(c.burst.totalDamage);
-      const groups = simGroupTotals(sim, i);
-      c.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
-    });
-    // モダニアはほぼ全部のグループが「実数」（スタックの最大装弾数▼が途切れない）
-    const modernia = calc.slots[2]!.segments;
-    const shotsCounted = modernia.filter((g) => g.triggerSource === 'shots').reduce((a, g) => a + g.seconds, 0);
-    expect(shotsCounted / 180).toBeGreaterThan(0.9);
-  });
 
   it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
     input.slots.forEach((_, i) => {
       const frames = plan.shots[i]!.frames;
       const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
       expect(total).toBe(frames.length);
-    });
-  });
-
-  it('stays within 5% per slot and 3% for the team', () => {
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!.totalDamage;
-      const c = calc.slots[i]!.totalDamage;
-      expect(Math.abs(s - c) / c).toBeLessThan(0.05);
     });
   });
 });

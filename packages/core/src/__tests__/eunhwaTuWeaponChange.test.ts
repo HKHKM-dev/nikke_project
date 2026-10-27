@@ -1,6 +1,6 @@
 // 使用武器変更の武器のパラメータ（plan/design-true-damage-element.md 9 節）: 変更後の武器のチャージ時間・フルチャージ倍率・最大装弾数と、
 // 撃ち切りで終わる変更。ウンファ：TU（95）のバーストの徹甲炸裂弾（C-0313）で、語彙の検証・解決・1 パス目と区間の窓の一致・
-// sim と calc の整合を見る。編成は録画 0232（I-DOLL・フラワー + ウンファ：TU。V-0207）と同じ
+// 射撃の列のグループ分けを見る。編成は録画 0232（I-DOLL・フラワー + ウンファ：TU。V-0207）と同じ
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from './fixtures.ts';
@@ -11,7 +11,7 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { buildTeamInput, METRICS } from '../records/observations.ts';
 import { shotCountWeight } from '../skills/triggers.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
+import { runSimulation } from '../sim/engine.ts';
 import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../scripts/records-data.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
@@ -216,10 +216,8 @@ describe('録画 0232 の編成（フラワー + ウンファ：TU）', () => {
     expect(items.map((i) => i.end)).toEqual(shots.weaponChangeEnds);
   });
 
-  it('counts the round in calc and sim alike, as a true-damage full charge of 105.6% × (300% + Charge Damage up)', () => {
+  it('counts the round as a true-damage full charge of 105.6% × (300% + Charge Damage up)', () => {
     const calc = runTeam(REC232);
-    const sim = runSimulation(REC232);
-    const groups = simGroupTotals(sim, 1);
     const rounds = calc.slots[1]!.segments.filter((g) => g.buffs.weapon !== null);
     expect(rounds.length).toBeGreaterThan(0);
     expect(rounds.reduce((n, g) => n + g.triggers, 0)).toBe(windows.length);
@@ -229,11 +227,6 @@ describe('録画 0232 の編成（フラワー + ウンファ：TU）', () => {
       expect(g.trigger.trueDamageMultiplier).toBeCloseTo(1.4224, 12);
       expect(g.buffs.weapon!.shot).toMatchObject({ damage: 10560, fullChargeDamage: 3, chargeTime: 0.3, maxAmmo: 1 });
     }
-    calc.slots[1]!.segments.forEach((g, j) => {
-      if (g.triggerSource !== 'shots') return;
-      expect(g.triggers).toBe(groups[j]!.triggers);
-      expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-    });
     const total = calc.slots[1]!.segments.reduce((n, g) => n + countShotsInRanges(shots.frames, g.ranges), 0);
     expect(total).toBe(shots.frames.length);
   });

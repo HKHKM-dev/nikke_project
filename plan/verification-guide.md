@@ -85,9 +85,9 @@
 
 ## 9. 閉じる・PR
 
-- 検証記録の「結果」「分かったこと・分からないこと」「次に撮るもの」を書き、冒頭の「結論」に ID を足し、`npm run records:close -- V-NNNN --mark` で閉じる前の検査を通して状態を `完了` にする。落ちた検査は道具が出す（検査の一覧は `packages/core/scripts/records-close.ts` の冒頭。`judgment` で上書きできるものは 8 節）。CI と同じ確認も回る（急ぐときは `--no-ci`）。
+- 検証記録の「結果」「分かったこと・分からないこと」「次に撮るもの」を書き、冒頭の「結論」に ID を足し、`npm run records:close -- V-NNNN --mark` で閉じる前の検査を通して状態を `完了` にする。落ちた検査は道具が出す（検査の一覧は `packages/core/scripts/records-close.ts` の冒頭。`judgment` で上書きできるものは 8 節）。CI と同じ確認は PR の前の `npm run pr:prep` が回す（閉じるときにも回したければ `--ci`）。
 - 閉じた記録にも、録画・観測値・表・結果を書き足してよい（[design-investigation-review.md](design-investigation-review.md) 4.2 節）。結論の根拠が変わったら `records:close` を回し直す。
-- [roadmap.md](roadmap.md) は、Stage か今後の課題の項目の状態が変わったときだけ、その 1 行を更新する（ID と経過は書かない）。[AGENTS.md](../AGENTS.md)「コミット手順」で PR を出す。題名の案は `records:close` が出す。
+- 課題の状態が変わったら [backlog.md](backlog.md) の行を直す（ID と経過は書かない。Stage の状態が変わったときだけ [roadmap.md](roadmap.md) の 1 行も）。commit して `npm run pr:prep -- --push` を回し、[AGENTS.md](../AGENTS.md)「コミット手順」で PR を出す。題名の案は `records:close` が出す。
 
 ## 付録 A. 機構の検証
 

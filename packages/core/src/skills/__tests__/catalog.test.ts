@@ -10,7 +10,7 @@ const { characters, defined } = loadCatalogInput();
 const { lines, effects } = classifyCharacters(characters, defined);
 
 describe('skill catalog', () => {
-  it('matches plan/skill-catalog.md (npm run skills:catalog)', () => {
+  it('matches plan/skill-catalog.md (npm run records:check)', () => {
     expect(readFileSync(SKILL_CATALOG_PATH, 'utf8')).toBe(renderSkillCatalog(lines, effects));
   });
 

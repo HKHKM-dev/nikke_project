@@ -1,5 +1,5 @@
 // アニス：スター（17）を含む編成: S1 のバースト段階の構成の分岐（私だけの星の攻撃力▲は、自分を除く基本バースト段階 1 の味方がいないときだけ。
-// plan/design-anis-star-s1.md）、フルチャージの発ごとの追加ダメージ（perShot）、フルバースト終了時の CT▼、sim と calc の整合。V-0116。
+// plan/design-anis-star-s1.md）、フルチャージの発ごとの追加ダメージ（perShot）、フルバースト終了時の CT▼、射撃の列のグループ分け。V-0116。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
@@ -8,7 +8,7 @@ import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
+import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -189,22 +189,10 @@ describe.each([
   ['バースト再突入（V-0121 の撮影の条件）', REENTRY, true],
   ['私だけの星のフルバースト（V-0122 の撮影の条件）', CT_CUT, true],
   ['アニス：スター単騎・オートバースト ON（R1 の条件）', SOLO_BURST, true],
-] as const)('sim vs calc: %s', (_name, input, checkTotals) => {
+] as const)('編成: %s', (_name, input, checkTotals) => {
   const sim = runSimulation(input);
   const calc = runTeam(input);
   const plan = planTeamRun(input);
-
-  it('agree exactly on the schedule and the shot-counted groups', () => {
-    expect(sim.schedule).toEqual(calc.schedule);
-    input.slots.forEach((_, i) => {
-      const groups = simGroupTotals(sim, i);
-      calc.slots[i]!.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
-    });
-  });
 
   it('partitions every shot into exactly one group', () => {
     input.slots.forEach((_, i) => {

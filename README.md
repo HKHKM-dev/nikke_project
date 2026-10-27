@@ -35,7 +35,7 @@ Node.js 24 以上が必要です。
 ```bash
 npm install
 npm run fetch-data   # Blablalink CDN からキャラデータと育成のマスタを取得して packages/core/data に書き出す
-npm run skills:catalog   # データを取り込み直したら、スキルの効果の分類の一覧（plan/skill-catalog.md）を作り直す
+npm run records:check    # データを取り込み直したら、生成物（スキルの効果の分類の一覧 plan/skill-catalog.md ほか）を作り直す
 npm test
 npm run dev          # apps/web を起動
 npm run sim -- --ids 82,330 --build builds.json   # 内訳を CLI で出す（条件は既定で自動。--condition manual で手入力）

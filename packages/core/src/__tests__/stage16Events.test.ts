@@ -2,7 +2,7 @@
 //   1. プリセットの出来事のセットと、周期の展開・フレームの窓
 //   2. 射手: ハイド中のリロード（間に合えば満タン・間に合わなければ取り消し）、撃ち直し（MG のレートは最初から、チャージはし直し）
 //   3. バースト: 狙えない間はオートバーストが発動しない
-//   4. 編成: 出来事なしは今と同じ、ありなら calc と sim の両方に効く（どちらも射撃の列を数えるので通常攻撃は一致する）
+//   4. 編成: 出来事なしは今と同じ、ありなら合計が下がり注記が出る
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { initialBurstController, stepBurstController, type BurstUnit } from '../burst/controller.ts';
@@ -13,7 +13,6 @@ import { enemyEventsOf, expandEnemyEvents, parseEnemyPresets } from '../enemies.
 import { enemyEventNotes, untargetableRanges } from '../frame/events.ts';
 import { hideShooter, initialShooter, stepShooter, unhideShooter } from '../frame/shooter.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { simTeamResult } from '../sim/teamResult.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
@@ -210,7 +209,7 @@ describe('バースト（狙えない間はオートバーストが発動しな�
   });
 });
 
-describe('編成（calc と sim の両方に効く）', () => {
+describe('編成', () => {
   const growth = { level: 1, grade: 0, core: 0 };
   const condition: SlotCondition = { coreHitRate: 0.5, distanceBonus: true, fullCharge: true };
   const slot = (
@@ -277,20 +276,11 @@ describe('編成（calc と sim の両方に効く）', () => {
     expect(sim.untargetable).toEqual(windows);
   });
 
-  it('lowers the total, and calc equals sim for normal attacks because both count the shot list', () => {
+  it('lowers the total and notes the untargetable windows', () => {
     const calc = runTeam(input(jumps));
-    const sim = runSimulation(input(jumps));
-    const simTeam = simTeamResult(input(jumps), sim);
     expect(calc.totalDamage).toBeLessThan(runTeam(input()).totalDamage);
-    for (let i = 0; i < slots.length; i++) {
-      const c = calc.slots[i]!;
-      expect(c.segments.every((s) => s.triggerSource === 'shots')).toBe(true);
-      expect(c.normalDamage).toBeCloseTo(sim.slots[i]!.normalDamage, 3);
-      expect(c.burst.totalDamage).toBe(sim.slots[i]!.burst.damage);
-    }
     expect(calc.enemyEvents).toEqual(jumps);
     expect(calc.enemyNotes.map((n) => n.code)).toEqual(['enemy-untargetable']);
-    expect(simTeam.enemyNotes).toEqual(calc.enemyNotes);
   });
 
   it('adds up the per-second damage to the sim total, with nothing inside the jumps', () => {

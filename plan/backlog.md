@@ -1,9 +1,9 @@
 # 残タスクの棚卸し
 
-- 関連: [roadmap.md](roadmap.md)「今後の課題」（課題ごとの状態と設計書。経過は設計書と検証記録、2026-10-25 までは [roadmap-archive.md](roadmap-archive.md) にも）、[verifications.md](verifications.md)、[claims.md](claims.md)、[residuals.md](residuals.md)、[skills.md](skills.md)、[design-records-automation-log.md](design-records-automation-log.md) 8.6 節
+- 関連: [roadmap.md](roadmap.md)（Stage の一覧）、[roadmap-archive.md](roadmap-archive.md)「今後の課題」（2026-10-25 までの課題の全項目と経過）、[verifications.md](verifications.md)、[claims.md](claims.md)、[residuals.md](residuals.md)、[skills.md](skills.md)、[design-records-automation-log.md](design-records-automation-log.md) 8.6 節
 - 作成日: 2026-10-06（main の PR #344 の時点）
 - 何のための文書か: いま残っている仕事を、種類ごとに 1 行ずつ並べたもの。経過や数値は書かず、検証記録・結論・観測値の ID と、設計書の節で指す。件数は生成物（上の一覧）に出る。
-- 更新の仕方: 課題が閉じたら行を消す（経過は設計書と検証記録に残るので、ここには残さない）。新しい課題は roadmap に 1 行で起票してから、ここに 1 行足す。棚卸しをやり直したら作成日を書き換える。
+- 更新の仕方: 課題が閉じたら行を消す（経過は設計書と検証記録に残るので、ここには残さない）。設計書のある課題は 8 節に 1 行で起票し、閉じたら 8.2 節に移す（ほかの文書が題名で指すため）。種類ごとの行（1〜7 節）が要る課題は、その節にも 1 行足す。棚卸しをやり直したら作成日を書き換える。
 - 表は詰めた形（`| a | b |`）で書き、前に `<!-- prettier-ignore -->` を置く（列幅をそろえ直すと 1 行の変更で表の全部の行が差分に出て、並行するブランチと衝突するため。[design-workflow-simplification-2.md](design-workflow-simplification-2.md) 4 節）。
 
 ## 1. 撮影待ちの調査
@@ -97,3 +97,39 @@
 | --- | --- | --- |
 | 16-C | 乱数と分布 | 凍結（オーナー決定） |
 | 17 | 射撃場の既定値（AUTO の操作キャラの既定など） | 保留（design-stage17.md 9.3 節） |
+
+## 8. 課題（設計書のあるもの）
+
+- 2026-10-27 まで [roadmap.md](roadmap.md)「今後の課題」にあったものを移した（[design-workflow-simplification-4.md](design-workflow-simplification-4.md) 3 節）。2026-10-25 までに閉じた課題は [roadmap-archive.md](roadmap-archive.md)「今後の課題」にある。
+- 1 行の形: 題名（起票日）→ 状態・設計書（あれば）・残りの行き先（この文書の節か行）。題名は変えない（検証記録・設計書が題名で指す）。行は状態が変わったときだけ直す。
+
+### 8.1 開いている課題
+
+- sim と calc の一本化とレスポンス保証（2026-10-27 起票）→ 承認（2026-10-27）。(A) 一本化は完了（2026-10-27。段 A-1〜A-3）。残りの (B) レスポンスは 5 節: [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節
+- エレグ（500）の定義（2026-10-26 起票）→ 段 1（S2 のターゲット出現時のゲージ 100%）・段 2（バースト）・段 3 の S2（ブームインストール中の攻撃力▲）は実装した。S1 の分配ダメージは値の式が分からず未対応（別の検証で乗数を分ける）: [design-elegg.md](design-elegg.md)・[design-elegg-s3.md](design-elegg-s3.md)
+- 回数トリガーで付く持続の効果の付き始めの遅れ（2026-10-24 起票）→ 第 1 段（ナガ・ミサト・モラン）と第 2 段（プリバティ・ドレイク・紅蓮BS・レイヴン）は実装した（[design-shot-count-trigger-frame.md](design-shot-count-trigger-frame.md)）。残りは 2-38
+- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 段 1〜10 を閉じた。段 11（使用武器の変更の形）に着手: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの設計書はそこから）
+- 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: [design-stage22.md](design-stage22.md) 8 節。残りは 3 節
+- 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは 1.2 節
+- ヘルムの残り（2026-09-28 起票）→ 一部完了: [design-helm.md](design-helm.md)・[design-heal-vocabulary.md](design-heal-vocabulary.md)。行（2-12）は閉じた
+- SG の命中率（2026-10-01）→ 一部完了: [design-sg-hit-rate.md](design-sg-hit-rate.md)。残りは 2-1
+- 命中率▲が弾丸命中率に効く式（2026-10-03 起票）→ 一部完了: [design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)。残りは 2-1
+- バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 一部完了: まとめは [burst-effect-delay-candidates.md](burst-effect-delay-candidates.md)「まとめ」、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)・[design-burst-effect-window-end.md](design-burst-effect-window-end.md)。残りは 2-4
+- 検証の自動化（2026-10-01 起票）→ 一部完了: [design-records-automation.md](design-records-automation.md) 8 節。行（4-1）は閉じた
+- アニス：スター（17）の S1（2026-10-03）→ 一部完了: [design-anis-star-s1.md](design-anis-star-s1.md)・[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md)・[design-anis-star-ally-gauge.md](design-anis-star-ally-gauge.md)。残りは 6 節
+- 防御力無視ダメージ・有利コードの攻撃ダメージ等の語彙（2026-10-05）→ 一部完了: [design-true-damage-element.md](design-true-damage-element.md)・[design-delayed-skill-hit.md](design-delayed-skill-hit.md)。残りは 6 節
+- 対象の語彙（2026-10-05）→ 一部完了: [design-target-vocab.md](design-target-vocab.md)・[design-ranked-shot-duration.md](design-ranked-shot-duration.md)。残りは 6 節
+- アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
+- 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
+- エーテルの S2 の防御力▼（2026-10-07）→ 一部完了（設計書なし）。残りは 1.3 節
+- ミハラ：ボンディングチェーン（162）の S1（2026-10-07）→ 一部完了（設計書なし。定義は未）。残りは 1.3 節
+- 射撃場の SMG の中近の弾丸命中率（2026-10-05 起票）→ 一部完了: [design-far-landings.md](design-far-landings.md)。行（2-25）は閉じた
+- 点検で仮説にした結論の再現（2-33。2026-10-11）→ 一部完了。残りは 2-33・1.2 節
+
+### 8.2 閉じた課題（2026-10-26 から）
+
+- 語彙はあるのに撮っていない効果の撮影（2026-10-26 起票）→ 完了（2026-10-27。フォルクヴァンの回復の定義は 6 節）: [design-skill-unrecorded.md](design-skill-unrecorded.md)
+- 録画の番号を 4 桁にそろえる（2026-10-25 起票）→ 完了（2026-10-25）: [design-recording-id-4digit.md](design-recording-id-4digit.md)
+- クラウド環境（2026-10-23 起票）→ 実装済み（2026-10-23）: [design-cloud-environment.md](design-cloud-environment.md)・手引き [cloud-guide.md](cloud-guide.md)
+- 効果を持ち主ごとの一覧で持つ組み直し（2026-10-15 起票）→ 段 A〜E 実装済み（2026-10-15）: [design-holder-effects.md](design-holder-effects.md)
+- calc のハイブリッド（[design-stage10.md](design-stage10.md) 5 節）の限界（2026-09-28 起票）→ 完了（2026-10-27。全グループを射撃の列から数える形に一本化。[design-unify-sim-calc.md](design-unify-sim-calc.md)）: [design-calc-hybrid.md](design-calc-hybrid.md) 10 節

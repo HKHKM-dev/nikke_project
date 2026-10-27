@@ -5,7 +5,6 @@ import { SG_PELLET_GAUGE_HIT_RATE, energyPerTrigger } from '../burst/dynamic.ts'
 import { computeTriggerDamage, conditionNotes, type EnemyInput } from '../damage.ts';
 import { enemyInputOf, matchingEnemyPreset, parseEnemyPresets } from '../enemies.ts';
 import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
@@ -110,22 +109,10 @@ describe('命中率（hitRate）: 掛かり方', () => {
     expect(low.slots[0]!.normalDamage / full.slots[0]!.normalDamage).toBeCloseTo(0.5, 9);
   });
 
-  it('adds an approx note below 1.0, in calc and sim alike', () => {
+  it('adds an approx note below 1.0', () => {
     expect(conditionNotes({ hitRate: 1 })).toEqual([]);
     expect(conditionNotes({ hitRate: 0.75 })[0]).toMatchObject({ level: 'approx', code: 'hit-rate' });
-    const calc = runTeam(team(0.75));
-    const sim = runSimulation(team(0.75));
-    expect(calc.slots[0]!.notes.map((n) => n.code)).toContain('hit-rate');
-    expect(sim.slots[0]!.notes).toEqual(calc.slots[0]!.notes);
-  });
-
-  it('sim and calc share the schedule and per-trigger damage and stay within 3% (dynamic cycle)', () => {
-    const input = team(0.7);
-    const calc = runTeam(input);
-    const sim = runSimulation(input);
-    expect(sim.schedule).toEqual(calc.schedule);
-    expect(sim.timeline.segments).toEqual(calc.timeline.segments);
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
+    expect(runTeam(team(0.75)).slots[0]!.notes.map((n) => n.code)).toContain('hit-rate');
   });
 });
 

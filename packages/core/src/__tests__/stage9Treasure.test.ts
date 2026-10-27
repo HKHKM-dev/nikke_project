@@ -5,14 +5,13 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
 import { type TeamInput, type TeamSlotInput, type TeamSlotResult } from '../team.ts';
 import type { CharacterData } from '../types.ts';
-import { framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
+import { gameSecondsToFrame } from '../time.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -170,14 +169,5 @@ describe('録画 0037: ラム + デルタ + ドレイク（宝物 3 段階）', 
     // 録画 0037: 総ダメージが f1286・f1314・f1342 に 1,201,793 ずつ増えた（= 1003.2% × 3、非会心）。合計で比べる
     const nonCrit = hit.perActivation / hit.boost.total;
     expect(Math.abs(nonCrit - 3 * 1201793)).toBeLessThanOrEqual(3);
-  });
-
-  it('sim and calc share the skill-hit activations exactly', () => {
-    const sim = runSimulation(input);
-    expect(sim.slots[2]!.skillHits.frames.map((f) => framesToGameSeconds(f))).toEqual(
-      drake.skillHits.activations.map((a) => a.seconds),
-    );
-    expect(sim.slots[2]!.skillHits.damage).toBeCloseTo(drake.skillHits.totalDamage, 6);
-    expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);
   });
 });

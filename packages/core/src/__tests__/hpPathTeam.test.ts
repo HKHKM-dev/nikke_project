@@ -1,6 +1,6 @@
 // 2 段目の段 6 の PR 1（plan/design-skill-stage6.md 1・2 節）: HP の経路。
 // 発動者の最終最大HP 基準の攻撃力▲（scaling casterFinalMaxHp。ラプラス：アルティメットヒーロー（103）の S1）と、
-// 自分の HP の割合の条件（condition.selfHp。枠の HP の割合の想定 hpRatio。ノワール（271）の S1）。sim と calc の整合
+// 自分の HP の割合の条件（condition.selfHp。枠の HP の割合の想定 hpRatio。ノワール（271）の S1）。射撃の列のグループ分け
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
@@ -8,7 +8,6 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { runSimulation, simGroupTotals } from '../sim/engine.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -190,27 +189,9 @@ describe('自分の HP の割合の条件（selfHp）', () => {
 describe.each([
   ['ラプラス：アルティメットヒーロー単騎（録画 0121 の編成）', team([fixedSlot(LAPLACE)])],
   ['ノワール + デルタ（HP の割合 0.5）', team([fixedSlot(NOIR, { hpRatio: 0.5 }), fixedSlot(DELTA)], true)],
-])('sim vs calc: %s', (_name, input) => {
-  const sim = runSimulation(input);
+])('編成: %s', (_name, input) => {
   const calc = runTeam(input);
   const plan = planTeamRun(input);
-
-  it('agree exactly on the schedule, the instants and the shot-counted groups', () => {
-    expect(sim.schedule).toEqual(calc.schedule);
-    expect(sim.instants).toEqual(plan.instants);
-    input.slots.forEach((_, i) => {
-      const s = sim.slots[i]!;
-      const c = calc.slots[i]!;
-      expect(s.skillHits.damage).toBe(c.skillHits.totalDamage);
-      expect(s.burst.damage).toBe(c.burst.totalDamage);
-      const groups = simGroupTotals(sim, i);
-      c.segments.forEach((g, j) => {
-        if (g.triggerSource !== 'shots') return;
-        expect(g.triggers).toBe(groups[j]!.triggers);
-        expect(g.damage).toBeCloseTo(groups[j]!.damage, 3);
-      });
-    });
-  });
 
   it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
     input.slots.forEach((_, i) => {

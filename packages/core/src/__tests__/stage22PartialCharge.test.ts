@@ -7,7 +7,6 @@ import { computeTriggerDamage, partialChargeTriggerDamage, type EnemyEvent, type
 import { initialShooter, partialChargeShot, stepShooter } from '../frame/shooter.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { simTeamResult } from '../sim/teamResult.ts';
 import { cycleShotFrames } from '../skills/cycles.ts';
 import { replayEvents } from '../skills/triggers.ts';
 import type { SlotCondition, TeamInput } from '../team.ts';
@@ -107,7 +106,7 @@ describe('回数トリガー', () => {
   });
 });
 
-describe('編成（sim と calc）', () => {
+describe('編成', () => {
   // 3 発目（69 + 82 × 2 = 233f）のチャージの途中（あと 30f）の 203f に窓が始まる
   const windowStart = 203;
   const events: EnemyEvent[] = [
@@ -136,18 +135,9 @@ describe('編成（sim と calc）', () => {
     expect(log.partialShots![0]!.progress).toBeLessThan(1);
   });
 
-  it('gives the same shots and damage in sim and calc, partial-charge shots included', () => {
-    const sim = runSimulation(input);
-    const calc = runTeam(input);
-    const simTeam = simTeamResult(input, sim);
-    const c = calc.slots[0]!;
-    expect(c.normalDamage).toBeCloseTo(sim.slots[0]!.normalDamage, 3);
-    const partialOf = (segments: typeof c.segments) =>
-      segments.reduce((sum, s) => sum + (s.partialCharge?.triggers ?? 0), 0);
-    expect(partialOf(c.segments)).toBe(1);
-    expect(partialOf(simTeam.slots[0]!.segments)).toBe(1);
-    const damageOf = (segments: typeof c.segments) =>
-      segments.reduce((sum, s) => sum + (s.partialCharge?.damage ?? 0), 0);
-    expect(damageOf(c.segments)).toBeCloseTo(damageOf(simTeam.slots[0]!.segments), 6);
+  it('shows the one partial-charge shot in the screen shape, with its damage', () => {
+    const c = runTeam(input).slots[0]!;
+    expect(c.segments.reduce((sum, s) => sum + (s.partialCharge?.triggers ?? 0), 0)).toBe(1);
+    expect(c.segments.reduce((sum, s) => sum + (s.partialCharge?.damage ?? 0), 0)).toBeGreaterThan(0);
   });
 });

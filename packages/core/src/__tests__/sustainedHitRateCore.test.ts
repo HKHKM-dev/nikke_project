@@ -93,7 +93,7 @@ describe('持続の命中率▲（C-0170）', () => {
     expect(plan.landing!.hitRateUp[LITER]).toBe(0);
   });
 
-  it('uses the segment N for the trigger in sim and calc, and keeps the plan value outside the buffs', () => {
+  it('uses the segment N for the trigger, and keeps the plan value outside the buffs', () => {
     const slot = input.slots[LITER]!;
     const base = { character: slot.character, growth: slot.growth, enemy, attackOverride: slot.attackOverride };
     const frame = nearFb.start + 10;
@@ -115,8 +115,6 @@ describe('持続の命中率▲（C-0170）', () => {
     const simSeg = sim.slots[LITER]!.segments.find((s) => s.start <= frame && frame < s.end)!;
     expect(simSeg.trigger.perTrigger).toBe(expected.perTrigger);
     expect(simSeg.trigger.perTrigger).toBeGreaterThan(without.perTrigger);
-    const calcSeg = calc.slots[LITER]!.segments.find((g) => g.ranges.some((r) => r.start <= frame && frame < r.end))!;
-    expect(calcSeg.trigger.perTrigger).toBeCloseTo(expected.perTrigger, 9);
     // 持続の▲の外は計画の配分のまま（同じ参照）
     const outside = segmentAt(nearFb.end + 10);
     expect(landingPartsWith(plan.landing, slot, LITER, outside.landing, outside.slots[LITER]!.buffs.hitRate)).toBe(

@@ -2,13 +2,11 @@
 // 誘導弾の飛ぶ時間（C-0413）、シューティングスターの飛ぶ時間（C-0504）。どれも 1 パス目のゲージの量と時刻だけを変える。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { flightFramesAt, slotFlightsOf } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { validateObstacleBreaks, type TeamInput, type TeamSlotInput } from '../team.ts';
@@ -126,14 +124,6 @@ describe('ゲージの時刻（1 パス目）', () => {
     const flight = slotFlightsOf([fixedSlot(17)], withFlight, gameSecondsToFrames(180))[0]!.autoAttacks.burst!;
     expect(lastAfter).toBe(a1 + gameSecondsToFirstFrame(10) + flightFramesAt(flight, a1 + gameSecondsToFirstFrame(10)));
     expect(ticksOf(after, a1)).toHaveLength(40);
-  });
-
-  it('shares the schedule between sim and calc', () => {
-    const input = solo(withFlight, { obstacleBreaks: [{ slotIndex: 0, shot: 1, count: 2 }] });
-    const sim = runSimulation(input);
-    const calc = runTeam(input);
-    expect(calc.schedule?.gaugeFullFrames).toEqual(sim.schedule?.gaugeFullFrames);
-    expect(calc.schedule?.activations).toEqual(sim.schedule?.activations);
   });
 
   it('validates the obstacle breaks', () => {

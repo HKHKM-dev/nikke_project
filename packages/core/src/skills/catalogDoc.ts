@@ -528,7 +528,7 @@ export function renderSkillCatalog(lines: readonly CatalogLine[], effects: reado
   p('# スキルの効果の分類');
   p();
   p(
-    '- **このファイルは生成する（手で書かない）**。`npm run skills:catalog` で作り直す。データを取り込み直して説明文が変わったら作り直す（最新かは `npm test` が確かめる）。作り方と区分の意味は [design-skill-catalog.md](design-skill-catalog.md) 1 節（論点 2）、読みの詳細は [design-skill-catalog-classes.md](design-skill-catalog-classes.md)（以下「分類の別紙」）、ツールチップとの突き合わせは [design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md)（T1〜T6）',
+    '- **このファイルは生成する（手で書かない）**。`npm run records:check` で作り直す。データを取り込み直して説明文が変わったら作り直す（最新かは `npm test` が確かめる）。作り方と区分の意味は [design-skill-catalog.md](design-skill-catalog.md) 1 節（論点 2）、読みの詳細は [design-skill-catalog-classes.md](design-skill-catalog-classes.md)（以下「分類の別紙」）、ツールチップとの突き合わせは [design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md)（T1〜T6）',
   );
   p(
     `- 元データ: \`packages/core/data/characters/*.json\` の説明文（日本語）。キャラ ${chars.size}・スロット ${slotsAll.size}（宝物版を含む）・■ の行 ${L.length}・効果の句 ${E.length}`,
