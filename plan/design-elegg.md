@@ -3,7 +3,7 @@
 - 関連: [skills-guide.md](skills-guide.md)、[design-helm.md](design-helm.md) 2.2 節（即時効果 `burstGauge`）、[design-moran.md](design-moran.md)（ゲージだけの効果を先に入れた前例）、[design-named-state.md](design-named-state.md)（名前の付いた状態）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md)（「ターゲットの出現」は前提の外（構造）に分けている）
 - 作成日: 2026-10-26
 - 根拠: C-0662（V-0504）
-- 状態: 段 1 は実装した（2026-10-26。V-0504・C-0662）。段 2 は実装した（2026-10-26。8 節。V-0521・V-0522、C-0689〜C-0691）。段 3 は未起案
+- 状態: 段 1 は実装した（2026-10-26。V-0504・C-0662）。段 2 は実装した（2026-10-26。8 節。V-0521・V-0522、C-0689〜C-0691）。段 3 は [design-elegg-s3.md](design-elegg-s3.md)（S2 は実装した。V-0524、C-0696・C-0697。S1 は未対応）
 
 ## 1. 何を足すか
 
@@ -80,7 +80,7 @@ AGENTS.md の「機構が確定したキャラ」にならないと、エレグ�
 ## 5. 段 2・段 3（後で）
 
 - 段 2（バースト）: 8 節で起案した（2026-10-26）。
-- 段 3（ブームインストール中の回数トリガー）: S1 の分配ダメージは今の語彙（`damage` の条件 `enemyState`）で書ける。S2 の攻撃力▲は `timed` の条件に `enemyState` を足す必要がある（`skills/types.ts` の `CONDITION_KEYS_OF`）。確かめるのは、回数を常に数えて 100・60 回目に状態を見るのか、状態の間だけ数えるのか。分配ダメージを単体で全額とする仮定（`BurstDamageType` の注記）にも結論を結び付ける。
+- 段 3（ブームインストール中の回数トリガー）: 設計と結果は [design-elegg-s3.md](design-elegg-s3.md)。起票のときの見込み: S1 の分配ダメージは今の語彙（`damage` の条件 `enemyState`）で書ける。S2 の攻撃力▲は `timed` の条件に `enemyState` を足す必要がある（`skills/types.ts` の `CONDITION_KEYS_OF`）。確かめるのは、回数を常に数えて 100・60 回目に状態を見るのか、状態の間だけ数えるのか。分配ダメージを単体で全額とする仮定（`BurstDamageType` の注記）にも結論を結び付ける。
 - 段 2・3 は、段 1 の道具が使えるようになってから起案し直す。
 
 ## 6. 論点（オーナーの判断）

@@ -87,6 +87,10 @@
     "method": {
       "tool": "recipe:burst-panel@1 の II → III の替わり目に 51 を足した",
       "note": "替わり目は `0712-02`"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
     }
   },
   {
@@ -101,6 +105,10 @@
     "method": {
       "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
       "note": "照準の左の残弾（最大 300）の減りをマガジンをまたいで足した。1 桁の読み違い（前後の読みと食い違う値）は落とし、表示の 0 は読めないので最後の読みの後の連続フレームに置いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
     }
   },
   {
@@ -116,6 +124,10 @@
     "method": {
       "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
       "note": "組は同じ値の 3 ヒットで、頭から 24f・36f 後に 2・3 つ目が出る（どの組も同じ間隔）。HUD の読めない区間に頭が入った組は、2・3 つ目から頭を出した"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
     }
   },
   {
@@ -130,6 +142,10 @@
     "method": {
       "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
       "note": "遅れ 8f は S2 の▲の切れ目（窓 1 の後）から外れの数に依らずに決めた。リロード明けの最初の発の後に 1〜数発増える所がある。ジャンプの間（約 2 秒どこにも増分の無い区間）にはエレグは撃っていない（0〜1 発）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
     }
   },
   {
@@ -145,6 +161,10 @@
     "method": {
       "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
       "note": "窓ごとに、エレグのコアの 1 ヒットが ×1.131 の段に上がった最初のフレーム（前の段の最後: f1024・3421・（窓 3 はリロード明けで前の段のコアが無い）・8103・10568）。f3421（発 1213）は通算の命中 1200 で、同じ発の S1 の組の頭 f3429 は HUD の読めない区間（f3429〜3448）に入り、2・3 つ目（f3453・3465）で見えた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
     }
   },
   {
@@ -160,6 +180,10 @@
     "method": {
       "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
       "note": "窓 1 の後。f1796 までエレグのコア 14,738、f1798 から 16,289→13,031（÷1.131）。窓の中の最後の S2 の発火は、リロード明けの発 308（f1502。通算の命中 300）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
     }
   },
   {
@@ -175,6 +199,10 @@
     "method": {
       "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
       "note": "発 f1502、組の頭 f1510。ほかの組も、外れの数を窓ごとに一定とすれば同じ 8f でそろう（7〜9f の範囲。10f 以上は 1 回目の窓で余りが負になる）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
     }
   },
   {
