@@ -1,12 +1,15 @@
 // Stage 6: calc の区間モデル（持続バフ）。plan/design-stage6.md 6.2〜6.3 節。
 //   6.2 退化テスト: timed 効果がなければ Stage 5 の 2 区間モデルと厳密一致する
 //   6.3 ロードマップの完了条件: 持続時間がサイクル長以上なら常時バフと一致する
+// 一本化の段 A-1（plan/design-unify-sim-calc.md 5.1 節）: 区間の通常攻撃は平均レート × 秒数ではなく、1 パス目の射撃の列の発数 ×
+// 1 トリガーの値。平均レート × 秒数とは 1 マガジン未満の離散化の差だけ
 import { describe, expect, it } from 'vitest';
 import { slotPieces } from './historyHelpers.ts';
 import type { EnemyInput } from '../damage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, SkillEntry } from '../skills/types.ts';
-import { computeTeamDamage } from '../calc/model.ts';
+import { computeTeamDamage, countShotsInRanges } from '../calc/model.ts';
+import { planTeamRun } from '../frame/plan.ts';
 import { type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
@@ -97,7 +100,8 @@ describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first
   });
 
   it('splits 180 s into three buff states and matches the hand calculation', () => {
-    const r = computeTeamDamage({ slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' });
+    const input = { slots: [slot20s], enemy, durationSeconds: 180, burst: true, burstModel: 'fixed' as const };
+    const r = computeTeamDamage(input);
     const s = r.slots[0]!;
     // Stage 21-B: 通常 10 秒 = H、フルバースト 9 回 = 9H、残りがバフありの通常（180 秒 = FRAMES）
     expect(s.segments.map((g) => [g.fullBurst, g.buffs.attackRatio !== 0])).toEqual([
@@ -109,8 +113,9 @@ describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first
     s.segments.forEach((g, i) => expect(g.seconds).toBeCloseTo(expectedSeconds[i]!, 9));
     expect(slotPieces(r, 0)).toHaveLength(1);
     expect(slotPieces(r, 0)[0]).toMatchObject({ start: H, end: FRAMES });
-    const rate = s.cadence.triggersPerSecond;
-    const expected = s.segments.reduce((a, g) => a + rate * g.seconds * g.trigger.perTrigger, 0);
+    // グループごとに、1 パス目の射撃の列のうち区間に入る発数 × 1 トリガーの値
+    const frames = planTeamRun(input).shots[0]!.frames;
+    const expected = s.segments.reduce((a, g) => a + countShotsInRanges(frames, g.ranges) * g.trigger.perTrigger, 0);
     expect(s.normalDamage).toBeCloseTo(expected, 6);
     expect(s.segments.reduce((a, g) => a + g.damage, 0)).toBeCloseTo(s.normalDamage, 6);
   });
@@ -139,24 +144,30 @@ describe('6.3 C: a zero-duration buff is the same as no effect at all', () => {
 });
 
 describe('6.2 degeneration: without timed effects the model is Stage 5’s two intervals', () => {
-  it('gives exactly two groups of 90 s each and the plain rate × seconds product', () => {
-    const t = computeTeamDamage({
+  it('gives exactly two groups of 90 s each and the shot count × per-trigger product', () => {
+    const input = {
       slots: [plain(1), sr(3)],
       enemy,
       durationSeconds: 180,
       burst: true,
-      burstModel: 'fixed',
-    });
+      burstModel: 'fixed' as const,
+    };
+    const t = computeTeamDamage(input);
+    const shots = planTeamRun(input).shots;
     for (const s of t.slots) {
       if (s === null) continue;
       expect(s.segments).toHaveLength(2);
       // 通常 9H + 5f（9 サイクルの後の 5f。180 秒は 10,589f。V-0086）、フルバースト 9H
       expect(s.segments.map((g) => g.fullBurst)).toEqual([false, true]);
       const secs = [framesToGameSeconds(9 * H + 5), framesToGameSeconds(9 * H)];
-      const rate = s.cadence.triggersPerSecond;
+      const frames = shots[s.index]!.frames;
       for (const i of [0, 1]) {
         expect(s.segments[i]!.seconds).toBeCloseTo(secs[i]!, 9);
-        expect(s.segments[i]!.damage).toBeCloseTo(rate * s.segments[i]!.trigger.perTrigger * secs[i]!, 6);
+        const count = countShotsInRanges(frames, s.segments[i]!.ranges);
+        expect(s.segments[i]!.triggers).toBe(count);
+        expect(s.segments[i]!.damage).toBeCloseTo(count * s.segments[i]!.trigger.perTrigger, 6);
+        // Stage 5 の 2 区間の期待値（平均レート × 秒数）とは 1 マガジン未満の離散化の差だけ
+        expect(Math.abs(count - s.cadence.triggersPerSecond * secs[i]!)).toBeLessThanOrEqual(s.character.shot.maxAmmo);
       }
       expect(s.segments[1]!.trigger.boost.fullBurst).toBe(0.5);
       expect(s.normalDamage + s.burst.totalDamage).toBeCloseTo(s.totalDamage, 6);

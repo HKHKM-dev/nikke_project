@@ -2,7 +2,7 @@
 //   node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--controlled 3] [--defence 100] [--element Fire] [--build builds.json]
 // Stage 7: バーストは既定で動的サイクル（ゲージ・CT・チェーン）。--fixed-cycle で Stage 5 / 6 の固定 20 秒サイクル。
 // --controlled は操作キャラの枠（1 始まり）。省略は全員 AI 扱い（SR / RL のフルチャージ倍率がゲージに乗らない）。
-// Stage 10: CT 短縮・弾丸チャージ（即時効果）の記録と、射撃に効くバフの区間（calc が射撃の列から数えた区間は * 付き）を出す。
+// Stage 10: CT 短縮・弾丸チャージ（即時効果）の記録と、射撃に効くバフの区間を出す。
 // 育成値は既定 Lv200・3 凸・コア 0。条件は 18-C2 から既定が自動（射撃場の表。画面の既定と同じ）で、手入力はコア命中率 1・距離ボーナスあり・フルチャージ。
 // スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
 // Stage 12: --build は resourceId → 育成入力（BuildInput の各項目と任意の growth）の JSON。--fixed-spec のときは使わない。
@@ -15,8 +15,8 @@
 // --mid-far A|B|C で中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。--near A,B で近の 1 回目・2 回目の
 // 着地点を固定する（C-0155。省略は 2 か所の配分）。--far A,B で遠の 1 回目・2 回目の着地点を固定する（C-0477。省略は 2 か所の
 // 配分）。自動の枠は、使った条件の発数平均を出す。
-// calc の数え方（plan/design-calc-hybrid.md）: --shot-counting hybrid|firingSlots|average で、枠ごとの表にその数え方の calc の列を足す
-// （既定の calc の列は変えない。既定は hybrid）。
+// 一本化の段 A-1（plan/design-unify-sim-calc.md 5.1 節）: calc は全グループを射撃の列から数える（sim と同じ数）。数え方を選ぶ
+// --shot-counting（plan/design-calc-hybrid.md）は 2026-10-27 に消した。
 // --skill-levels resourceId:slot=Lv をカンマ区切り（slot は skill1・skill2・burst。例 191:skill2=4,260:burst=4）。省略は全部 Lv10
 // （実ビルドの録画と比べるとき用。V-0065）。
 // --jump-windows で、出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の
@@ -112,8 +112,6 @@ const { values } = parseArgs({
     'mid-far': { type: 'string' },
     near: { type: 'string' },
     far: { type: 'string' },
-    // plan/design-calc-hybrid.md: 別の数え方の calc を並べて出す（hybrid・firingSlots・average）
-    'shot-counting': { type: 'string' },
     // 実ビルドの録画と比べるときのスキル Lv（resourceId:slot=Lv をカンマ区切り。省略は全部 Lv10）
     'skill-levels': { type: 'string' },
     // 録画で読んだ的のジャンプの窓（観測値の id か秒の並び。V-0088）
@@ -123,7 +121,7 @@ const { values } = parseArgs({
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--near A,B] [--far A,B] [--shot-counting hybrid|firingSlots|average] [--skill-levels 191:skill2=4] [--jump-windows 0056-11]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--near A,B] [--far A,B] [--skill-levels 191:skill2=4] [--jump-windows 0056-11]',
   );
   process.exit(2);
 }
@@ -357,16 +355,6 @@ const input = {
   burstModel: values['fixed-cycle'] ? ('fixed' as const) : ('dynamic' as const),
   controlledSlot: values.controlled === undefined ? null : Number(values.controlled) - 1,
 };
-const shotCounting = values['shot-counting'];
-if (
-  shotCounting !== undefined &&
-  shotCounting !== 'hybrid' &&
-  shotCounting !== 'firingSlots' &&
-  shotCounting !== 'average'
-) {
-  console.error(`--shot-counting takes hybrid, firingSlots or average, got ${shotCounting}`);
-  process.exit(2);
-}
 // 編成の条件（burstStepMix・squad・withCharacter・enemyElement）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
 const compositionCharacters = slots.map((s) => s.character);
 // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 編成で決まる自分の状態の条件（selfState）
@@ -419,8 +407,6 @@ if (compositionRows.length > 0) {
 }
 const sim = runSimulation(input);
 const calc = computeTeamDamage(input);
-// 比べる数え方の calc（比較の列だけに使う。列の見出しの (b) は「比べる側」の意味）
-const calcB = shotCounting === undefined ? null : computeTeamDamage(input, { shotCounting });
 // Stage 11 紅蓮BS: 射撃の列（循環の窓ごとの並びの表示用）
 const plan = planTeamRun(input);
 
@@ -561,27 +547,12 @@ const rows = slots.map((slot, i) => {
     'sim total': fmt(s.totalDamage),
     'calc total': fmt(c.totalDamage),
     diff: pct((s.totalDamage - c.totalDamage) / (c.totalDamage || 1)),
-    ...(calcB === null ? {} : bColumns(i, s.totalDamage)),
   };
 });
 console.table(rows);
 
-/** 比べる数え方の calc の合計と sim との差、射撃の列から数えたグループの数（既定の calc → 比べる側） */
-function bColumns(i: number, simTotal: number): Record<string, string> {
-  const c = calc.slots[i]!;
-  const b = calcB!.slots[i]!;
-  const shotGroups = (r: typeof c) => r.segments.filter((g) => g.triggerSource === 'shots').length;
-  return {
-    'shots groups (calc→b)': `${shotGroups(c)}/${c.segments.length} → ${shotGroups(b)}/${b.segments.length}`,
-    'calc (b) total': fmt(b.totalDamage),
-    'diff (b)': pct((simTotal - b.totalDamage) / (b.totalDamage || 1)),
-  };
-}
 console.log(
-  `TOTAL sim ${fmt(sim.totalDamage)}  calc ${fmt(calc.totalDamage)}  diff ${pct((sim.totalDamage - calc.totalDamage) / (calc.totalDamage || 1))}` +
-    (calcB === null
-      ? ''
-      : `  calc (b) ${fmt(calcB.totalDamage)}  diff (b) ${pct((sim.totalDamage - calcB.totalDamage) / (calcB.totalDamage || 1))}`),
+  `TOTAL sim ${fmt(sim.totalDamage)}  calc ${fmt(calc.totalDamage)}  diff ${pct((sim.totalDamage - calc.totalDamage) / (calc.totalDamage || 1))}`,
 );
 
 // Stage 18-C: 自動の枠で使った条件の平均（1 パス目の射撃の列の発数で重みを付けた。calc と sim で同じ値）
@@ -611,7 +582,8 @@ const noteLines = calc.slots.flatMap((c, i) =>
 );
 if (noteLines.length > 0) console.log(`condition notes\n${noteLines.join('\n')}`);
 
-// Stage 6: バフ状態ごとの区間表（枠ごと）。sim はフレームで数えた実トリガー数、calc はレート × 秒数
+// Stage 6: バフ状態ごとの区間表（枠ごと）。sim はフレームで数えた実トリガー数、calc は射撃の列から数えた発数（一本化の段 A-1 から。
+// 2026-10-27 まではレート × 秒数と、持続の射撃バフの区間の発数）
 for (const [i, slot] of slots.entries()) {
   const c = calc.slots[i];
   if (!c) continue;
@@ -635,7 +607,7 @@ for (const [i, slot] of slots.entries()) {
         g.trigger.perShot > 0
           ? `${fmt(g.trigger.perTrigger)} (${fmt(g.trigger.normal)}+${fmt(g.trigger.perShot)})`
           : fmt(g.trigger.perTrigger),
-      'triggers sim/calc': `${simGroups[j]?.triggers ?? 0} / ${g.triggers.toFixed(1)}${g.triggerSource === 'shots' ? '*' : ''}`,
+      'triggers sim/calc': `${simGroups[j]?.triggers ?? 0} / ${g.triggers}`,
       'damage sim/calc': `${fmt(simGroups[j]?.damage ?? 0)} / ${fmt(g.damage)}`,
       timed: compactTimed(g.timedEffects)
         .map(

@@ -16,18 +16,13 @@
 // Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、グループ（鍵に着地点が入る）の着地点の条件で 1 トリガーの値を出す
 // （中遠のような配分は Σ w_k × T_k。frame/landing.ts）。手入力の枠は今と同じ。
 // ハイブリッドの限界（plan/design-calc-hybrid.md）: 案 (b)「射撃の窓を持つ枠は全グループを射撃の列から数える」を
-// options.shotCounting = 'firingSlots' で試作した。
-// 2026-09-28: design-stage10.md 5 節の案 (a)（全グループをバフ込みの平均レートで置く）を 'average' で選べるようにした。
-// 既定はハイブリッドのまま（2026-09-28 オーナー決定。実装されたキャラが増えてから、負荷と精度のバランスで改めて決める。同 10 節）。
+// options.shotCounting = 'firingSlots' で試作し、2026-09-28 に案 (a)（全グループをバフ込みの平均レート）も 'average' で選べるようにした。
+// 一本化の段 A-1（plan/design-unify-sim-calc.md 5.1 節。2026-10-27 オーナー決定）: 通常攻撃のトリガー数は全枠・全グループで
+// 1 パス目の射撃の列から数える（calc の通常攻撃 = sim）。ハイブリッド・案 (a)・案 (b) と数え方の選択（ShotCounting）は消した。
+// 平均レート（computeCadence）は表示用の cadence にだけ残る。段 A-2 で computeTeamDamage は simTeamResult(runSimulation) の包みになる。
 import { burstHitsOfSlot, summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
-import {
-  baseAttackOf,
-  computeDamage,
-  computeTriggerDamage,
-  modelNotes,
-  partialChargeTriggerDamage,
-} from '../damage.ts';
+import { baseAttackOf, computeTriggerDamage, modelNotes, partialChargeTriggerDamage } from '../damage.ts';
 import { enemyEventNotes } from '../frame/events.ts';
 import {
   autoConditionSummary,
@@ -45,13 +40,11 @@ import {
   sameActivationPiecesOf,
 } from '../frame/plan.ts';
 import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
-import { hasOwnShotCountItem } from '../skills/holders.ts';
 import { cycleSummariesOf, effectSummariesOf, stateSummariesOf } from '../skills/summaries.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges, type SlotBuffState } from '../skills/timeline.ts';
+import { EMPTY_BUFF_STATE, groupTimeline, mergeAdjacentRanges } from '../skills/timeline.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
-import { isFiringStat } from '../skills/types.ts';
 import {
   skillSupportOf,
   treasureOf,
@@ -98,35 +91,14 @@ function lowerBound(frames: readonly number[], value: number): number {
   return lo;
 }
 
-/** Stage 10: 持続の射撃バフ（最大装弾数・リロード速度・チャージ速度・装弾数無限・使用武器変更の timed）が掛かっている状態か */
-function hasFiringItem(state: SlotBuffState): boolean {
-  return state.timedEffects.some((e) => isFiringStat(e.stat));
-}
-
-/**
- * 通常攻撃のトリガー数を射撃の列から数える範囲（plan/design-calc-hybrid.md）。
- * - 'hybrid'（既定）: 持続の射撃バフが掛かっているグループだけ（plan/design-stage10.md 5 節）
- * - 'average'（design-stage10.md 5 節の案 (a)）: 数えない。持続の射撃バフもグループのバフ込みの平均レートに畳み込む
- * - 'firingSlots'（比較用。案 (b)）: 持続の射撃バフが 1 つでも掛かる枠は、その枠の全グループ
- * 敵を狙えない窓があるときは、どれでも全枠の全グループを数える（Stage 16-B。平均レートでは置けないため）
- */
-export type ShotCounting = 'average' | 'hybrid' | 'firingSlots';
-
-export type CalcOptions = {
-  /** 省略は 'hybrid' */
-  shotCounting?: ShotCounting;
-};
-
-export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {}): TeamResult {
+export function computeTeamDamage(teamInput: TeamInput): TeamResult {
   validateTeamSlots(teamInput.slots);
   // Stage 9: 宝物版への差し替えは最上位で 1 回だけ（planTeamRun の外でも definition と character を読むため）
   const input = applyCompositionToTeam(applyTreasureToTeam(teamInput));
   const { slots, enemy, durationSeconds, model } = input;
   if (durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
 
-  const { frames, shots, schedule, timeline, skillHits, instants, untargetable, landing, history } = planTeamRun(input);
-  // Stage 16-B: 狙えない窓があると平均レートでは置けない（撃てない時間・撃ち直し・ハイド中のリロード）ので、全グループで射撃の列を数える
-  const countAllShots = untargetable.length > 0;
+  const { frames, shots, schedule, timeline, skillHits, instants, landing, history } = planTeamRun(input);
 
   const computed = slots.map((slot, index) => {
     if (slot === null) return null;
@@ -144,61 +116,32 @@ export function computeTeamDamage(teamInput: TeamInput, options: CalcOptions = {
     const segments: SlotSegmentResult[] = [];
     let normalDamage = 0;
     const shotFrames = shots[index]?.frames ?? [];
-    const groups = groupTimeline(timeline, index);
-    // 案 (b)（plan/design-calc-hybrid.md）: 射撃の窓を持つ枠は、窓の外のグループも射撃の列から数える
-    const shotCounting = options.shotCounting ?? 'hybrid';
-    // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.5 節）: 自分の射撃の回数で開く窓を持つ枠は、'hybrid' でも
-    // 全グループを射撃の列から数える（窓の中だけ数えると、窓の外の平均レートが残りの発数を外す）
-    const countSlotShots =
-      (shotCounting === 'firingSlots' && groups.some((g) => hasFiringItem(g.state))) ||
-      (shotCounting === 'hybrid' && hasOwnShotCountItem(history, index));
-    for (const group of groups) {
+    for (const group of groupTimeline(timeline, index)) {
       const state = group.state;
       // C-0170: 持続の命中率▲が効いているグループは、その N でコア命中率を出し直す（自動の枠は N が鍵に入るのでグループ内で同じ）
       const parts = landingPartsWith(landing, slot, index, group.landing, state.buffs.hitRate);
       const ranges = mergeAdjacentRanges(group.segments.map((s) => ({ start: s.start, end: s.end })));
-      const common = {
+      // 一本化の段 A-1: どのグループも 1 パス目の射撃の列の発数を数える（sim と同じ数。2026-10-27 までは持続の射撃バフが
+      // 掛かっているグループだけで、ほかは平均レート × 秒数だった。plan/design-stage10.md 5 節）
+      const trigger = landingTriggerDamage({ ...base, buffs: state.buffs, perShot }, parts, group.fullBurst);
+      const triggers = countShotsInRanges(shotFrames, ranges);
+      // Stage 22-B: 部分チャージの発（C-0109）は、その発のチャージの進みで値を出し直す
+      const partial = partialShotsInRanges(shots[index]?.partialShots, ranges);
+      const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
+      const damage = trigger.perTrigger * (triggers - partial.length) + partialDamage;
+      segments.push({
         ranges,
         seconds: group.seconds,
         fullBurst: group.fullBurst,
         buffs: state.buffs,
         passiveEffects: state.passiveEffects,
         timedEffects: state.timedEffects,
-      };
-      // Stage 10: 持続の射撃バフが掛かっているグループは、射撃の列の発数を数える（plan/design-stage10.md 5 節。'hybrid' のとき）
-      if (countAllShots || countSlotShots || (shotCounting === 'hybrid' && hasFiringItem(state))) {
-        const trigger = landingTriggerDamage({ ...base, buffs: state.buffs, perShot }, parts, group.fullBurst);
-        const triggers = countShotsInRanges(shotFrames, ranges);
-        // Stage 22-B: 部分チャージの発（C-0109）は、その発のチャージの進みで値を出し直す
-        const partial = partialShotsInRanges(shots[index]?.partialShots, ranges);
-        const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
-        const damage = trigger.perTrigger * (triggers - partial.length) + partialDamage;
-        segments.push({
-          ...common,
-          trigger,
-          triggers,
-          triggerSource: 'shots',
-          damage,
-          ...(partial.length > 0 ? { partialCharge: { triggers: partial.length, damage: partialDamage } } : {}),
-        });
-        normalDamage += damage;
-        continue;
-      }
-      const result = computeDamage({
-        ...base,
-        buffs: state.buffs,
-        perShot,
-        firing: firingParams(slot.character.shot, state.buffs),
-        condition: { ...parts[0]!.condition, fullBurst: group.fullBurst, durationSeconds: group.seconds },
+        trigger,
+        triggers,
+        triggerSource: 'shots',
+        damage,
+        ...(partial.length > 0 ? { partialCharge: { triggers: partial.length, damage: partialDamage } } : {}),
       });
-      const triggers = result.cadence.triggersPerSecond * group.seconds;
-      // Stage 18-C: 配分の区間は、1 トリガーの値だけ配分の重みで足し合わせる（発射サイクルは条件に依らない）
-      const trigger =
-        parts.length === 1
-          ? result
-          : landingTriggerDamage({ ...base, buffs: state.buffs, perShot }, parts, group.fullBurst);
-      const damage = parts.length === 1 ? result.totalDamage : trigger.perTrigger * triggers;
-      segments.push({ ...common, trigger, triggers, triggerSource: 'average', damage });
       normalDamage += damage;
     }
 
