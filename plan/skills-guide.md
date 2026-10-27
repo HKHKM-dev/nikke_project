@@ -133,4 +133,4 @@
 - [ ] 定義のどの効果にも `claims` がある（[skills.md](skills.md) のそのキャラに「根拠なし」の効果が残っていない）
 - [ ] 既存のテストの数値が変わっていない（変わったなら、その理由と根拠の ID を PR に書く）
 - [ ] 実戦的な編成で、そのキャラの効果が意図どおりに出るテストがある
-- 結論の根拠・等級・`decidedOn`・本文の節・最小構成の警告・生成物・CI と同じ確認は `npm run records:close -- V-NNNN --mark` が見る（[verification-guide.md](verification-guide.md) 9 節）。最小構成の警告で落ちたら、効かない理由を結論の `minimal` に印として書くか、仮説にする（[design-minimal-relevance.md](design-minimal-relevance.md) 11.3 節）
+- 結論の根拠・等級・`decidedOn`・本文の節・最小構成の警告・生成物は `npm run records:close -- V-NNNN --mark` が、CI と同じ確認は `npm run pr:prep` が見る（[verification-guide.md](verification-guide.md) 9 節）。最小構成の警告で落ちたら、効かない理由を結論の `minimal` に印として書くか、仮説にする（[design-minimal-relevance.md](design-minimal-relevance.md) 11.3 節）

@@ -1,10 +1,11 @@
 // 検証記録を閉じる（plan/design-records-automation.md 3.7 節）。
-//   npm run records:close -- V-NNNN [--mark] [--no-ci]
+//   npm run records:close -- V-NNNN [--mark] [--ci]
 // 完了にできるかを検査する（結論がこの記録の観測値を根拠にしている・等級が機械の候補より上でない（上なら gradeReason に理由）・
 // 確定の反復実測の結論に decidedOn がある・最小構成の警告・指標なし・許容外・合う仮説が 2 つ以上は人の判断（judgment）で上書き・
 // 確定の結論の根拠の観測値のうち compare の無いものに scope がある・「次に撮るもの」「分かったこと」が空でない）。撮る前の予測と読みの順は
 // 見ない（plan/design-investigation-review.md 1 節）。通れば --mark で状態を完了に書き換え、records:minimal（感度を計算し直し、records:check も回る）と
-// CI と同じ確認（npm run ci。--no-ci で省く）を回し、PR の題名の案を出す。roadmap.md の更新（項目の状態が変わったときだけ）と PR は人（エージェント）が行う。
+// PR の題名の案を出す。CI と同じ確認（npm run ci）は --ci のときだけ回す（ふつうは PR の前の npm run pr:prep が回す。
+// plan/design-workflow-simplification-4.md 2 節。--no-ci は前の既定の名残で、何もしない）。backlog.md の更新と PR は人（エージェント）が行う。
 import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
@@ -29,11 +30,15 @@ import {
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
-  options: { mark: { type: 'boolean', default: false }, 'no-ci': { type: 'boolean', default: false } },
+  options: {
+    mark: { type: 'boolean', default: false },
+    ci: { type: 'boolean', default: false },
+    'no-ci': { type: 'boolean', default: false },
+  },
 });
 const id = positionals[0];
 if (!id || !/^V-\d{4,}$/.test(id)) {
-  console.error('usage: npm run records:close -- V-NNNN [--mark] [--no-ci]');
+  console.error('usage: npm run records:close -- V-NNNN [--mark] [--ci]');
   process.exit(1);
 }
 const verifications = loadVerifications();
@@ -119,8 +124,8 @@ const run = (cmd: string): void => {
   }
 };
 run('npm run records:minimal');
-if (!values['no-ci']) run('npm run ci');
+if (values.ci) run('npm run ci');
 console.log(`PR の題名の案: ${prTitle(verification)}`);
 console.log(
-  '残り: 項目の状態が変わったときだけ plan/roadmap.md の 1 行を更新し、AGENTS.md「コミット手順」で PR を出す',
+  '残り: 課題の状態が変わったら plan/backlog.md の行を直し（Stage の状態が変わったときだけ plan/roadmap.md）、commit して npm run pr:prep -- --push の後に PR を出す（AGENTS.md「コミット手順」）',
 );

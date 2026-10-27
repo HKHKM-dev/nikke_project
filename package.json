@@ -32,7 +32,7 @@
     "records:new": "node packages/core/scripts/records-new.ts",
     "records:close": "node packages/core/scripts/records-close.ts",
     "records:renumber": "node packages/core/scripts/records-renumber.ts",
-    "skills:catalog": "node packages/core/scripts/skill-catalog.ts",
+    "pr:prep": "node tools/git/pr-prep.ts",
     "drive:sync": "node tools/drive/sync.ts",
     "drive:conflicts": "node tools/drive/sync.ts --conflicts",
     "drive:gateway-check": "node tools/drive/gateway-check.ts"

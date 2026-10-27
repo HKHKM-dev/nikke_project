@@ -22,11 +22,9 @@ NIKKE のダメージ計算ツール。
 - 設計の承認は対話で得て、実装と同じ PR に含める。
 - 撮影待ちの間は、トピックブランチを保持する（撮影計画や予測の commit もそのブランチで行う）。
 - PR を出す手順:
-  1. `git fetch origin && git rebase origin/main`（main を取り込むときはマージではなくリベース）。生成物が衝突したら `git checkout --ours -- <ファイル>` で main の版に戻し、`npm run records:check`（生成物を全部作り直す。感度も要るなら `records:minimal`）で作り直してから `git rebase --continue` する。自分のブランチで足した ID が main と重なっていたら、リベースを中止し（`git rebase --abort`）、自分のブランチで `npm run records:renumber -- <古い ID> <新しい ID>` で振り直してから取り込み直す（`plan/design-stage20.md` 3.6 節。録画の番号も同じ道具で、E: と Google Drive のファイル名ごと振り直す。`plan/design-recording-renumber.md`）
-  2. CI と同じ確認を通す: `npm run ci`（検証の PR は `records:close --mark` が回す）
-  3. `git push -u origin HEAD`（リベースで履歴を書き換えたときは `--force-with-lease`）
-  4. `gh pr create`
-  5. `gh pr merge --auto --squash`（作成直後に自動マージを予約する。マージ方式はスカッシュ）
+  1. commit してから `npm run pr:prep -- --push`: main をリベースで取り込み（マージはしない）、生成物の衝突は main の版を取って最後に 1 回だけ作り直し、CI と同じ確認（`npm run ci`）を通して push する（`tools/git/pr-prep.ts` の冒頭）。止まったら、道具が出す直し方に従う: 生成物でないファイルの衝突は直して `git add` し、もう一度回す。自分のブランチで足した ID が main と重なっていたら、出たコマンド（`npm run records:renumber -- <古い ID> <新しい ID>`。`plan/design-stage20.md` 3.6 節。録画の番号も同じ道具で、E: と Google Drive のファイル名ごと振り直す。`plan/design-recording-renumber.md`）で振り直して commit し、もう一度回す
+  2. `gh pr create`
+  3. `gh pr merge --auto --squash`（作成直後に自動マージを予約する。マージ方式はスカッシュ）
 - マージの後は、メインのチェックアウトの main を origin/main へ早送りし、マージ済みのブランチを origin/main に揃える（スカッシュマージでは、揃えないと差分の表示にマージ済みの変更が残る）。Claude Code ではフック（`.claude/settings.json` → `tools/git/sync-after-merge.ts`）が、セッションの開始・発言・応答の終わりに行う。
 - worktree では最初に `npm ci`。
 
